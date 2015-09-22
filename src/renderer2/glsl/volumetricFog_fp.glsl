@@ -33,14 +33,8 @@ void main()
 
 	float depthSolid = texture2D(u_DepthMap, st).r;
 
-//#if 0 //defined(GLHW_ATI_DX10) || defined(GLHW_NV_DX10)
-//
-//	float depthBack = texture2D(u_DepthMapBack, st).a;
-//	float depthFront = texture2D(u_DepthMapFront, st).a;
-//#else
 	float depthBack  = DecodeDepth(texture2D(u_DepthMapBack, st));
 	float depthFront = DecodeDepth(texture2D(u_DepthMapFront, st));
-//#endif
 
 	if (depthSolid < depthFront)
 	{

@@ -71,7 +71,7 @@ extern int gl_NormalFontBase;
 
 #ifdef LEGACY_DEBUG
 #define RENLOG r_logFile->integer
-#define Ren_LogComment(...) //if (RENLOG) { GLimp_LogComment(va(__VA_ARGS__)); }
+#define Ren_LogComment(...) if (RENLOG) { ri.Printf(PRINT_DEVELOPER, __VA_ARGS__); }
 #define Ren_Developer(...) ri.Printf(PRINT_DEVELOPER, __VA_ARGS__)
 #else
 #define RENLOG 0

@@ -911,18 +911,7 @@ void GL_SetDefaultState(void)
 
 	// initialize downstream texture units if we're running
 	// in a multitexture environment
-	if (glConfig.driverType == GLDRV_OPENGL3)
-	{
-		i = 31;
-	}
-	else if (GLEW_ARB_multitexture)
-	{
-		i = glConfig.maxActiveTextures - 1;
-	}
-	else
-	{
-		i = 0;
-	}
+	i = glConfig.maxActiveTextures - 1;
 
 	for (; i >= 0; i--)
 	{
@@ -1030,11 +1019,7 @@ void GfxInfo_f(void)
 	*/
 
 	Ren_Print("GL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
-
-	if (glConfig.driverType != GLDRV_OPENGL3)
-	{
-		Ren_Print("GL_MAX_TEXTURE_UNITS_ARB: %d\n", glConfig.maxActiveTextures);
-	}
+	Ren_Print("GL_MAX_TEXTURE_UNITS_ARB: %d\n", glConfig.maxActiveTextures);
 
 	/*
 	   if(glConfig.fragmentProgramAvailable)
@@ -1098,7 +1083,6 @@ void GfxInfo_f(void)
 	Ren_Print("texturemode: %s\n", r_textureMode->string);
 	Ren_Print("picmip: %d\n", r_picmip->integer);
 
-	if (glConfig.driverType == GLDRV_OPENGL3)
 	{
 		int contextFlags, profile;
 
@@ -1125,31 +1109,6 @@ void GfxInfo_f(void)
 		{
 			Ren_Print(S_COLOR_RED "Context is NOT forward compatible\n");
 		}
-	}
-
-	if (glConfig.hardwareType == GLHW_ATI)
-	{
-		Ren_Print("HACK: ATI approximations\n");
-	}
-
-	if (glConfig.textureCompression != TC_NONE)
-	{
-		Ren_Print("Using S3TC (DXTC) texture compression\n");
-	}
-
-	if (glConfig.hardwareType == GLHW_ATI_DX10)
-	{
-		Ren_Print("Using ATI DirectX 10 hardware features\n");
-	}
-
-	if (glConfig.hardwareType == GLHW_NV_DX10)
-	{
-		Ren_Print("Using NVIDIA DirectX 10 hardware features\n");
-	}
-
-	if (glConfig.hardwareType == GLHW_GENERIC_GL3)
-	{
-		Ren_Print("Using generic OpenGL 3 hardware features\n");
 	}
 
 	if (glConfig2.vboVertexSkinningAvailable)
@@ -1599,7 +1558,6 @@ void R_Init(void)
 
 	R_InitFBOs();
 
-	if (glConfig.driverType == GLDRV_OPENGL3)
 	{
 		tr.vao = 0;
 		glGenVertexArrays(1, &tr.vao);
@@ -1667,7 +1625,6 @@ void RE_Shutdown(qboolean destroyWindow)
 		R_ShutdownVBOs();
 		R_ShutdownFBOs();
 
-		if (glConfig.driverType == GLDRV_OPENGL3)
 		{
 			glDeleteVertexArrays(1, &tr.vao);
 			tr.vao = 0;

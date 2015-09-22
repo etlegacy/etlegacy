@@ -1419,7 +1419,7 @@ static void DrawNode_r(bspNode_t *node, int planeBits)
             }
         }
 
-       GLimp_LogComment("--- DrawNode_r( node = %li, isLeaf = %i ) ---\n", (long)(node - tr.world->nodes), node->contents == -1);
+       Ren_LogComment("--- DrawNode_r( node = %li, isLeaf = %i ) ---\n", (long)(node - tr.world->nodes), node->contents == -1);
 
         if (node->contents != -1) // && !(node->contents & CONTENTS_TRANSLUCENT))
         {
@@ -1755,8 +1755,8 @@ static void PushNode(link_t * traversalStack, bspNode_t * node)
 
             traversalStack->numElements += 2;
 #endif
-            GLimp_LogComment("traversal-stack <-- node %i\n", node->children[0] - tr.world->nodes);
-            GLimp_LogComment("traversal-stack <-- node %i\n", node->children[1] - tr.world->nodes);
+            Ren_LogComment("traversal-stack <-- node %i\n", node->children[0] - tr.world->nodes);
+            Ren_LogComment("traversal-stack <-- node %i\n", node->children[1] - tr.world->nodes);
         }
     }
 }

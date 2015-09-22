@@ -874,23 +874,6 @@ static void GLSL_BuildShaderExtraDef()
 		BUFFEXT("#ifndef GLDRV_MESA\n#define GLDRV_MESA 1\n#endif\n");
 	}
 
-	if (glConfig.hardwareType == GLHW_ATI)
-	{
-		BUFFEXT("#ifndef GLHW_ATI\n#define GLHW_ATI 1\n#endif\n");
-	}
-	else if (glConfig.hardwareType == GLHW_ATI_DX10)
-	{
-		BUFFEXT("#ifndef GLHW_ATI_DX10\n#define GLHW_ATI_DX10 1\n#endif\n");
-	}
-	else if (glConfig.hardwareType == GLHW_NV_DX10)
-	{
-		BUFFEXT("#ifndef GLHW_NV_DX10\n#define GLHW_NV_DX10 1\n#endif\n");
-	}
-	else if (glConfig.hardwareType == GLHW_GENERIC_GL3)
-	{
-		BUFFEXT("#ifndef GLHW_GENERIC_GL3\n#define GLHW_GENERIC_GL3 1\n#endif\n");
-	}
-
 	if (r_shadows->integer >= SHADOWING_ESM16 && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable)
 	{
 		if (r_shadows->integer == SHADOWING_ESM16 || r_shadows->integer == SHADOWING_ESM32)
@@ -915,13 +898,11 @@ static void GLSL_BuildShaderExtraDef()
 		{
 			BUFFEXT("#ifndef VSM\n#define VSM 1\n#endif\n");
 
-			if (glConfig.hardwareType == GLHW_ATI)
-			{
-				BUFFEXT("#ifndef VSM_CLAMP\n#define VSM_CLAMP 1\n#endif\n");
-			}
+			//FIXME: this was enabled for ati card.. Should not be needed anymore? Remove from GLSL code in that case
+			//BUFFEXT("#ifndef VSM_CLAMP\n#define VSM_CLAMP 1\n#endif\n");
 		}
 
-		if ((glConfig.hardwareType == GLHW_NV_DX10 || glConfig.hardwareType == GLHW_ATI_DX10) && r_shadows->integer == SHADOWING_VSM32)
+		if (r_shadows->integer == SHADOWING_VSM32)
 		{
 			BUFFEXT("#ifndef VSM_EPSILON\n#define VSM_EPSILON 0.000001\n#endif\n");
 		}

@@ -124,7 +124,6 @@ static qboolean GLimp_InitOpenGLContext()
 	}
 
 	Com_Printf("Using enhanced renderer in GL 3.x mode\n");
-	glConfig.driverType = GLDRV_OPENGL3;
 #endif
 
 	return qtrue;
@@ -180,28 +179,6 @@ static qboolean GLimp_CheckForVersionExtension(const char *ext, int coresince, q
 static void GLimp_InitExtensionsR2(void)
 {
 	Com_Printf("Initializing OpenGL extensions\n");
-
-	// GL_ARB_multitexture
-	if (glConfig.driverType != GLDRV_OPENGL3)
-	{
-		if (GLEW_ARB_multitexture)
-		{
-			glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &glConfig.maxActiveTextures);
-
-			if (glConfig.maxActiveTextures > 1)
-			{
-				Com_Printf("...found OpenGL extension - GL_ARB_multitexture\n");
-			}
-			else
-			{
-				Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_multitexture, < 2 texture units");
-			}
-		}
-		else
-		{
-			Ren_Fatal(MSG_ERR_OLD_VIDEO_DRIVER "\nYour GL driver is missing support for: GL_ARB_multitexture");
-		}
-	}
 
 	// GL_ARB_depth_texture
 	GLimp_CheckForVersionExtension("GL_ARB_depth_texture", 130, qtrue, NULL);
@@ -482,6 +459,8 @@ static void GLimp_InitExtensions(void)
 	{
 		Com_Printf("...not using GL_ARB_multitexture, < 2 texture units\n");
 	}
+#elif defined(FEATURE_RENDERER2)
+    glConfig.maxActiveTextures = 32;
 #else
 	if (GLEW_ARB_multitexture)
 	{
@@ -518,127 +497,12 @@ static void GLimp_InitExtensions(void)
 // FIXME: rework & add latest gfx cards
 void GLimp_SetHardware(void)
 {
-	if (glConfig.driverType != GLDRV_OPENGL3 &&
-	    (Q_stristr(glConfig.renderer_string, "mesa") ||
+	if (Q_stristr(glConfig.renderer_string, "mesa") ||
 	     Q_stristr(glConfig.renderer_string, "gallium") ||
 	     Q_stristr(glConfig.vendor_string, "nouveau") ||
-	     Q_stristr(glConfig.vendor_string, "mesa")))
+	     Q_stristr(glConfig.vendor_string, "mesa"))
 	{
 		glConfig.driverType = GLDRV_MESA;
-	}
-
-	if (Q_stristr(glConfig.vendor_string, "Intel"))
-	{
-		// FIXME: filter out HD Graphics from first generation ("Westmere")
-		if (Q_stristr(glConfig.renderer_string, "HD Graphics") ||     // proprietary driver
-		    Q_stristr(glConfig.renderer_string, "Iris Graphics") ||
-		    Q_stristr(glConfig.renderer_string, "Iris Pro Graphics") ||
-		    Q_stristr(glConfig.renderer_string, "Sandybridge") ||     // open source driver (Mesa DRI)
-		    Q_stristr(glConfig.renderer_string, "Ivybridge") ||
-		    Q_stristr(glConfig.renderer_string, "Haswell") ||
-		    Q_stristr(glConfig.renderer_string, "Broadwell") ||
-		    Q_stristr(glConfig.renderer_string, "Skylake") ||
-		    Q_stristr(glConfig.renderer_string, "Kaby Lake") ||
-		    Q_stristr(glConfig.renderer_string, "Cannonlake"))
-		{
-			glConfig.hardwareType = GLHW_GENERIC_GL3;
-		}
-		else
-		{
-			Com_Printf("Warning: unknown HD/Iris Graphics series\n");
-			//glConfig.hardwareType = GLHW_GENERIC;
-		}
-	}
-	else if (Q_stristr(glConfig.renderer_string, "geforce"))
-	{
-		if (Q_stristr(glConfig.renderer_string, "8400") ||
-		    Q_stristr(glConfig.renderer_string, "8500") ||
-		    Q_stristr(glConfig.renderer_string, "8600") ||
-		    Q_stristr(glConfig.renderer_string, "8800") ||
-		    Q_stristr(glConfig.renderer_string, "9500") ||
-		    Q_stristr(glConfig.renderer_string, "9600") ||
-		    Q_stristr(glConfig.renderer_string, "9800") ||
-		    Q_stristr(glConfig.renderer_string, "gts 240") ||
-		    Q_stristr(glConfig.renderer_string, "gts 250") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 260") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 275") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 280") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 285") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 295") ||
-		    Q_stristr(glConfig.renderer_string, "gt 320") ||
-		    Q_stristr(glConfig.renderer_string, "gt 330") ||
-		    Q_stristr(glConfig.renderer_string, "gt 340") ||
-		    Q_stristr(glConfig.renderer_string, "gt 415") ||
-		    Q_stristr(glConfig.renderer_string, "gt 420") ||
-		    Q_stristr(glConfig.renderer_string, "gt 425") ||
-		    Q_stristr(glConfig.renderer_string, "gt 430") ||
-		    Q_stristr(glConfig.renderer_string, "gt 435") ||
-		    Q_stristr(glConfig.renderer_string, "gt 440") ||
-		    Q_stristr(glConfig.renderer_string, "gt 520") ||
-		    Q_stristr(glConfig.renderer_string, "gt 525") ||
-		    Q_stristr(glConfig.renderer_string, "gt 540") ||
-		    Q_stristr(glConfig.renderer_string, "gt 550") ||
-		    Q_stristr(glConfig.renderer_string, "gt 555") ||
-		    Q_stristr(glConfig.renderer_string, "gts 450") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 460") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 470") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 480") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 485") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 560") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 570") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 580") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 590") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 630") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 640") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 645") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 670") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 680") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 690") ||
-		    Q_stristr(glConfig.renderer_string, "gtx 770"))
-		{
-			glConfig.hardwareType = GLHW_NV_DX10;
-		}
-		else
-		{
-			Com_Printf("Warning: unknown GeForce series\n");
-			//glConfig.hardwareType = GLHW_GENERIC;
-		}
-
-	}
-	else if (Q_stristr(glConfig.renderer_string, "quadro fx"))
-	{
-		if (Q_stristr(glConfig.renderer_string, "3600"))
-		{
-			glConfig.hardwareType = GLHW_NV_DX10;
-		}
-		else
-		{
-			Com_Printf("Warning: unknown Quadro series\n");
-			//glConfig.hardwareType = GLHW_GENERIC;
-		}
-	}
-	else if (Q_stristr(glConfig.renderer_string, "gallium") &&
-	         Q_stristr(glConfig.renderer_string, " amd "))
-	{
-		// anything prior to R600 is listed as ATI.
-		glConfig.hardwareType = GLHW_ATI_DX10;
-	}
-	else if (Q_stristr(glConfig.renderer_string, "rv770") ||
-	         Q_stristr(glConfig.renderer_string, "eah4850") ||
-	         Q_stristr(glConfig.renderer_string, "eah4870") ||
-	         // previous three are too specific?
-	         Q_stristr(glConfig.renderer_string, "radeon hd"))
-	{
-		glConfig.hardwareType = GLHW_ATI_DX10;
-	}
-	else if (Q_stristr(glConfig.renderer_string, "radeon"))
-	{
-		glConfig.hardwareType = GLHW_ATI;
-	}
-	else
-	{
-		Com_Printf("Warning: unknown gfx card - hardware type not set\n");
-		//glConfig.hardwareType = GLHW_GENERIC;
 	}
 }
 
@@ -687,25 +551,13 @@ void RE_InitOpenGl(void)
 	//Clear the screen with a black color thanks
 	Glimp_ClearScreen();
 
-#ifdef FEATURE_RENDERER2
-	if (glConfig.driverType != GLDRV_OPENGL3)
-	{
-		glConfig.driverType = GLDRV_ICD;
-	}
-#else
-	// This values force the UI to disable driver selection
 	glConfig.driverType = GLDRV_ICD;
-#endif
 	glConfig.hardwareType = GLHW_GENERIC;
 
 	// Get extension strings
-	if (glConfig.driverType != GLDRV_OPENGL3)
-	{
-		Q_strncpyz(glConfig.extensions_string, ( char * ) glGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
-	}
-
-#ifndef FEATURE_RENDERER_GLES
-	else
+#ifndef FEATURE_RENDERER2
+	Q_strncpyz(glConfig.extensions_string, ( char * ) glGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
+#else
 	{
 		int i = 0, exts = 0;
 		glGetIntegerv(GL_NUM_EXTENSIONS, &exts);
@@ -721,7 +573,7 @@ void RE_InitOpenGl(void)
 			Q_strcat(glConfig.extensions_string, sizeof(glConfig.extensions_string), va("%s ", glGetStringi(GL_EXTENSIONS, i)));
 		}
 	}
-#endif // FEATURE_RENDERER_GLES
+#endif
 
 	// initialize extensions
 	GLimp_SetHardware();

@@ -9213,6 +9213,8 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	}
 
 	// make sure rows and cols are powers of 2
+	// In opengl 3.2 NPOT textures are a part of the core
+	/*
 	for (i = 0; (1 << i) < cols; i++)
 	{
 	}
@@ -9223,6 +9225,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	{
 		Ren_Drop("Draw_StretchRaw: size not a power of 2: %i by %i", cols, rows);
 	}
+	*/
 
 
 	RB_SetGL2D();

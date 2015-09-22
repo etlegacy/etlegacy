@@ -366,10 +366,14 @@ typedef enum
 	GLDRV_ICD,                  // driver is integrated with window system
 	GLDRV_STANDALONE,           // deprecated
 	GLDRV_VOODOO,               // deprecated
+	/*
 	// renderer2 BEGIN
 	GLDRV_OPENGL3,              // new driver system
-	GLDRV_MESA                  // crap
+	GLDRV_MESA,                 // crap
+	GLDRV_OPENGL_REQUESTED
 	// renderer2 END
+	 */
+			GLDRV_MESA
 } glDriverType_t;
 
 typedef enum
@@ -379,12 +383,14 @@ typedef enum
 	GLHW_RIVA128,           // deprecated
 	GLHW_RAGEPRO,           // deprecated
 	GLHW_PERMEDIA2,         // deprecated
+	/*
 	// renderer2 BEGIN
 	GLHW_ATI,               // where you don't have proper GLSL support
 	GLHW_ATI_DX10,          // ATI Radeon HD series DX10 hardware
 	GLHW_NV_DX10,           // Geforce 8/9 class DX10 hardware
 	GLHW_GENERIC_GL3        // other OpenGL 3.2 capable hardware (Intel Mesa)
 	// renderer2 END
+	 */
 } glHardwareType_t;
 
 typedef struct

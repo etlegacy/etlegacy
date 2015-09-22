@@ -1233,7 +1233,7 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 
 		if (image->filterType == FT_DEFAULT)
 		{
-			if (glConfig.driverType == GLDRV_OPENGL3 || glConfig2.framebufferObjectAvailable)
+			if (glConfig2.framebufferObjectAvailable)
 			{
 				glGenerateMipmapEXT(image->type);
 				glTexParameteri(image->type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);   // default to trilinear
@@ -1247,7 +1247,7 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 			}
 		}
 
-		if (glConfig.driverType != GLDRV_OPENGL3 && !glConfig2.framebufferObjectAvailable && !glConfig2.generateMipmapAvailable)
+		if (!glConfig2.framebufferObjectAvailable && !glConfig2.generateMipmapAvailable)
 		{
 			if (image->filterType == FT_DEFAULT && !(image->bits & (IF_DEPTH16 | IF_DEPTH24 | IF_DEPTH32 | IF_PACKED_DEPTH24_STENCIL8)))
 			{
@@ -2861,20 +2861,7 @@ static void R_CreateCurrentRenderImage(void)
 
 static void R_CreateDepthRenderImage(void)
 {
-#if 0
-	if (glConfig2.framebufferPackedDepthStencilAvailable)
-	{
-		tr.depthRenderImage = R_CreateRenderImage("_depthRender", qfalse, IF_PACKED_DEPTH24_STENCIL8, FT_NEAREST, WT_CLAMP);
-	}
-	else if (glConfig.hardwareType == GLHW_ATI || glConfig.hardwareType == GLHW_ATI_DX10) // || glConfig.hardwareType == GLHW_NV_DX10)
-	{
-		tr.depthRenderImage = R_CreateRenderImage("_depthRender", qfalse, IF_DEPTH16, FT_NEAREST, WT_CLAMP);
-	}
-	else
-#endif
-	{
-		tr.depthRenderImage = R_CreateRenderImage("_depthRender", qfalse, IF_DEPTH24, FT_NEAREST, WT_CLAMP);
-	}
+	tr.depthRenderImage = R_CreateRenderImage("_depthRender", qfalse, IF_DEPTH24, FT_NEAREST, WT_CLAMP);
 }
 
 static void R_CreatePortalRenderImage(void)
@@ -2891,46 +2878,19 @@ static void R_CreatePortalRenderImage(void)
 
 static void R_CreateOcclusionRenderFBOImage(void)
 {
-#if 0
-	if (glConfig.hardwareType == GLHW_ATI_DX10 || glConfig.hardwareType == GLHW_NV_DX10)
-	{
-		tr.occlusionRenderFBOImage = R_CreateRenderImage("_occlusionFBORender", qfalse, IF_ALPHA16F, FT_NEAREST, WT_CLAMP);
-	}
-	else if (glConfig2.framebufferPackedDepthStencilAvailable)
-	{
-		tr.occlusionRenderFBOImage = R_CreateRenderImage("_occlusionFBORender", qfalse, IF_ALPHA32F, FT_NEAREST, WT_CLAMP);
-	}
-	else
-#endif
-	{
-		tr.occlusionRenderFBOImage = R_CreateRenderImage("_occlusionFBORender", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
-	}
+	tr.occlusionRenderFBOImage = R_CreateRenderImage("_occlusionFBORender", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
 }
 
 static void R_CreateDepthToColorFBOImages(void)
 {
-#if 0
-	if (glConfig.hardwareType == GLHW_ATI_DX10)
-	{
-		tr.depthToColorBackFacesFBOImage  = R_CreateRenderImage("_depthToColorBackFacesFBORender", qfalse, IF_ALPHA16F, FT_NEAREST, WT_CLAMP);
-		tr.depthToColorFrontFacesFBOImage = R_CreateRenderImage("_depthToColorFrontFacesFBORender", qfalse, IF_ALPHA16F, FT_NEAREST, WT_CLAMP);
-	}
-	else if (glConfig.hardwareType == GLHW_NV_DX10)
-	{
-		tr.depthToColorBackFacesFBOImage  = R_CreateRenderImage("_depthToColorBackFacesFBORender", qfalse, IF_ALPHA32F, FT_NEAREST, WT_CLAMP);
-		tr.depthToColorFrontFacesFBOImage = R_CreateRenderImage("_depthToColorFrontFacesFBORender", qfalse, IF_ALPHA32F, FT_NEAREST, WT_CLAMP);
-	}
-	else if (glConfig2.framebufferPackedDepthStencilAvailable)
-	{
-		tr.depthToColorBackFacesFBOImage  = R_CreateRenderImage("_depthToColorBackFacesFBORender", qfalse, IF_ALPHA32F, FT_NEAREST, WT_CLAMP);
-		tr.depthToColorFrontFacesFBOImage = R_CreateRenderImage("_depthToColorFrontFacesFBORender", qfalse, IF_ALPHA32F, FT_NEAREST, WT_CLAMP);
-	}
-	else
-#endif
-	{
-		tr.depthToColorBackFacesFBOImage  = R_CreateRenderImage("_depthToColorBackFacesFBORender", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
-		tr.depthToColorFrontFacesFBOImage = R_CreateRenderImage("_depthToColorFrontFacesFBORender", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
-	}
+
+	//FIXME which one should we use? Read up!
+	/*
+    tr.depthToColorBackFacesFBOImage  = R_CreateRenderImage("_depthToColorBackFacesFBORender", qfalse, IF_ALPHA32F, FT_NEAREST, WT_CLAMP);
+    tr.depthToColorFrontFacesFBOImage = R_CreateRenderImage("_depthToColorFrontFacesFBORender", qfalse, IF_ALPHA32F, FT_NEAREST, WT_CLAMP);
+     */
+	tr.depthToColorBackFacesFBOImage  = R_CreateRenderImage("_depthToColorBackFacesFBORender", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
+	tr.depthToColorFrontFacesFBOImage = R_CreateRenderImage("_depthToColorFrontFacesFBORender", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
 }
 
 // clean up this mess some day ...
@@ -3035,47 +2995,29 @@ static void R_CreateShadowMapFBOImage(void)
 	{
 		size = shadowMapResolutions[i];
 
-		if (glConfig.driverType == GLDRV_OPENGL3 || (glConfig.hardwareType == GLHW_NV_DX10 || glConfig.hardwareType == GLHW_ATI_DX10))
+		// we can do the most expensive filtering types with OpenGL 3 hardware
+		if (r_shadows->integer == SHADOWING_ESM32)
 		{
-			// we can do the most expensive filtering types with OpenGL 3 hardware
-			if (r_shadows->integer == SHADOWING_ESM32)
+			bits = IF_ALPHA32F;
+		}
+		else if (r_shadows->integer == SHADOWING_VSM32)
+		{
+			bits = IF_LA32F;
+		}
+		else if (r_shadows->integer == SHADOWING_EVSM32)
+		{
+			if (r_evsmPostProcess->integer)
 			{
 				bits = IF_ALPHA32F;
 			}
-			else if (r_shadows->integer == SHADOWING_VSM32)
-			{
-				bits = IF_LA32F;
-			}
-			else if (r_shadows->integer == SHADOWING_EVSM32)
-			{
-				if (r_evsmPostProcess->integer)
-				{
-					bits = IF_ALPHA32F;
-				}
-				else
-				{
-					bits = IF_RGBA32F;
-				}
-			}
 			else
 			{
-				bits = IF_RGBA16F;
+				bits = IF_RGBA32F;
 			}
 		}
 		else
 		{
-			if (r_shadows->integer == SHADOWING_ESM16)
-			{
-				bits = IF_ALPHA16F;
-			}
-			else if (r_shadows->integer == SHADOWING_ESM16)
-			{
-				bits = IF_LA16F;
-			}
-			else
-			{
-				bits = IF_RGBA16F;
-			}
+			bits = IF_RGBA16F;
 		}
 
 		tr.shadowMapFBOImage[i] = R_CreateRenderImageSize(va("_shadowMapFBO%d", i), size, size, bits, filter, WT_EDGE_CLAMP);
@@ -3086,47 +3028,29 @@ static void R_CreateShadowMapFBOImage(void)
 	{
 		size = sunShadowMapResolutions[i];
 
-		if (glConfig.driverType == GLDRV_OPENGL3 || (glConfig.hardwareType == GLHW_NV_DX10 || glConfig.hardwareType == GLHW_ATI_DX10))
+		// we can do the most expensive filtering types with OpenGL 3 hardware
+		if (r_shadows->integer == SHADOWING_ESM32)
 		{
-			// we can do the most expensive filtering types with OpenGL 3 hardware
-			if (r_shadows->integer == SHADOWING_ESM32)
+			bits = IF_ALPHA32F;
+		}
+		else if (r_shadows->integer == SHADOWING_VSM32)
+		{
+			bits = IF_LA32F;
+		}
+		else if (r_shadows->integer == SHADOWING_EVSM32)
+		{
+			if (r_evsmPostProcess->integer)
 			{
-				bits = IF_ALPHA32F;
-			}
-			else if (r_shadows->integer == SHADOWING_VSM32)
-			{
-				bits = IF_LA32F;
-			}
-			else if (r_shadows->integer == SHADOWING_EVSM32)
-			{
-				if (r_evsmPostProcess->integer)
-				{
-					bits = IF_DEPTH24;
-				}
-				else
-				{
-					bits = IF_RGBA32F;
-				}
+				bits = IF_DEPTH24;
 			}
 			else
 			{
-				bits = IF_RGBA16F;
+				bits = IF_RGBA32F;
 			}
 		}
 		else
 		{
-			if (r_shadows->integer == SHADOWING_ESM16)
-			{
-				bits = IF_ALPHA16F;
-			}
-			else if (r_shadows->integer == SHADOWING_VSM16)
-			{
-				bits = IF_LA16F;
-			}
-			else
-			{
-				bits = IF_RGBA16F;
-			}
+			bits = IF_RGBA16F;
 		}
 
 		tr.sunShadowMapFBOImage[i] = R_CreateRenderImageSize(va("_sunShadowMapFBO%d", i), size, size, bits, filter, WT_EDGE_CLAMP);
@@ -3152,46 +3076,28 @@ static void R_CreateShadowCubeFBOImage(void)
 	{
 		size = shadowMapResolutions[j];
 
-		if (glConfig.driverType == GLDRV_OPENGL3 || (glConfig.hardwareType == GLHW_NV_DX10 || glConfig.hardwareType == GLHW_ATI_DX10))
+		if (r_shadows->integer == SHADOWING_ESM32)
 		{
-			if (r_shadows->integer == SHADOWING_ESM32)
+			bits = IF_ALPHA32F;
+		}
+		else if (r_shadows->integer == SHADOWING_VSM32)
+		{
+			bits = IF_LA32F;
+		}
+		else if (r_shadows->integer == SHADOWING_EVSM32)
+		{
+			if (r_evsmPostProcess->integer)
 			{
 				bits = IF_ALPHA32F;
 			}
-			else if (r_shadows->integer == SHADOWING_VSM32)
-			{
-				bits = IF_LA32F;
-			}
-			else if (r_shadows->integer == SHADOWING_EVSM32)
-			{
-				if (r_evsmPostProcess->integer)
-				{
-					bits = IF_ALPHA32F;
-				}
-				else
-				{
-					bits = IF_RGBA32F;
-				}
-			}
 			else
 			{
-				bits = IF_RGBA16F;
+				bits = IF_RGBA32F;
 			}
 		}
 		else
 		{
-			if (r_shadows->integer == SHADOWING_VSM16)
-			{
-				bits = IF_ALPHA16F;
-			}
-			else if (r_shadows->integer == SHADOWING_VSM16)
-			{
-				bits = IF_LA16F;
-			}
-			else
-			{
-				bits = IF_RGBA16F;
-			}
+			bits = IF_RGBA16F;
 		}
 
 		tr.shadowCubeFBOImage[j] = R_CreateCubeRenderImage(va("_shadowCubeFBO%d", j), 0, size, size, bits, filter, WT_EDGE_CLAMP);

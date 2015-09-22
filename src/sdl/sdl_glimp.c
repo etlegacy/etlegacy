@@ -142,14 +142,6 @@ void GLimp_Minimize(void)
 	SDL_MinimizeWindow(main_window);
 }
 
-/**
- * @brief Logs OpenGL commands when com_developer cvar is enabled
- */
-void GLimp_LogComment(const char *comment)
-{
-	//Ren_Developer("%s", comment); // FIXME
-}
-
 qboolean GLimp_GetModeInfo(int *width, int *height, float *windowAspect, int mode)
 {
 	vidmode_t *vm;

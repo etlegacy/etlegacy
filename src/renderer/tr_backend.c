@@ -850,16 +850,19 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 		start = ri.Milliseconds();
 	}
 
-	// make sure rows and cols are powers of 2
-	for (i = 0 ; (1 << i) < cols ; i++)
+	if (!GL_ARB_texture_non_power_of_two)
 	{
-	}
-	for (j = 0 ; (1 << j) < rows ; j++)
-	{
-	}
-	if ((1 << i) != cols || (1 << j) != rows)
-	{
-		Ren_Drop("Draw_StretchRaw: size not a power of 2: %i by %i", cols, rows);
+		// make sure rows and cols are powers of 2
+		for (i = 0; (1 << i) < cols; i++)
+		{
+		}
+		for (j = 0; (1 << j) < rows; j++)
+		{
+		}
+		if ((1 << i) != cols || (1 << j) != rows)
+		{
+			Ren_Drop("Draw_StretchRaw: size not a power of 2: %i by %i", cols, rows);
+		}
 	}
 
 	GL_Bind(tr.scratchImage[client]);
