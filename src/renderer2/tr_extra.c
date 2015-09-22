@@ -1118,8 +1118,7 @@ static void m4_submat(matrix_t mr, matrix3x3_t mb, int i, int j)
 		{
 			idst = ti;
 		}
-		else
-		if (ti > i)
+		else if (ti > i)
 		{
 			idst = ti - 1;
 		}
@@ -1130,8 +1129,7 @@ static void m4_submat(matrix_t mr, matrix3x3_t mb, int i, int j)
 			{
 				jdst = tj;
 			}
-			else
-			if (tj > j)
+			else if (tj > j)
 			{
 				jdst = tj - 1;
 			}

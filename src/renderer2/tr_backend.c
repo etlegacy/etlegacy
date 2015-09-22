@@ -187,7 +187,7 @@ static void RB_RenderDrawSurfaces(qboolean opaque, qboolean depthFill, int drawS
 			break;
 		}
 
-		if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && r_dynamicEntityOcclusionCulling->integer && !entity->occlusionQuerySamples)
+		if (glConfig2.occlusionQueryBits && r_dynamicEntityOcclusionCulling->integer && !entity->occlusionQuerySamples)
 		{
 			continue;
 		}
@@ -818,7 +818,7 @@ static void RB_RenderInteractions()
 		surface               = ia->surface;
 		shader                = ia->surfaceShader;
 
-		if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA)
+		if (glConfig2.occlusionQueryBits )
 		{
 			// skip all interactions of this light because it failed the occlusion query
 			if (r_dynamicLightOcclusionCulling->integer && !ia->occlusionQuerySamples)
@@ -1080,7 +1080,7 @@ static void RB_RenderInteractionsShadowMapped()
 			deformType = DEFORM_TYPE_NONE;
 		}
 
-		if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && r_dynamicLightOcclusionCulling->integer && !ia->occlusionQuerySamples)
+		if (glConfig2.occlusionQueryBits && r_dynamicLightOcclusionCulling->integer && !ia->occlusionQuerySamples)
 		{
 			// skip all interactions of this light because it failed the occlusion query
 			goto skipInteraction;
@@ -1842,7 +1842,7 @@ static void RB_RenderInteractionsShadowMapped()
 				goto skipInteraction;
 			}
 
-			if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && r_dynamicEntityOcclusionCulling->integer && !entity->occlusionQuerySamples)
+			if (glConfig2.occlusionQueryBits && r_dynamicEntityOcclusionCulling->integer && !entity->occlusionQuerySamples)
 			{
 				goto skipInteraction;
 			}
@@ -2388,7 +2388,7 @@ void RB_RenderInteractionsDeferred()
 	{
 		backEnd.currentLight = light = ia->light;
 
-		if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && r_dynamicLightOcclusionCulling->integer && !ia->occlusionQuerySamples)
+		if (glConfig2.occlusionQueryBits && r_dynamicLightOcclusionCulling->integer && !ia->occlusionQuerySamples)
 		{
 			// skip all interactions of this light because it failed the occlusion query
 			goto skipInteraction;
@@ -2397,7 +2397,7 @@ void RB_RenderInteractionsDeferred()
 skipInteraction:
 		if (!ia->next)
 		{
-			if ((glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && r_dynamicLightOcclusionCulling->integer && ia->occlusionQuerySamples) ||
+			if ((glConfig2.occlusionQueryBits && r_dynamicLightOcclusionCulling->integer && ia->occlusionQuerySamples) ||
 			    !r_dynamicLightOcclusionCulling->integer)
 			{
 				GL_CheckErrors();
@@ -3027,7 +3027,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 			deformType = DEFORM_TYPE_NONE;
 		}
 
-		if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && r_dynamicLightOcclusionCulling->integer && !ia->occlusionQuerySamples)
+		if (glConfig2.occlusionQueryBits && r_dynamicLightOcclusionCulling->integer && !ia->occlusionQuerySamples)
 		{
 			// skip all interactions of this light because it failed the occlusion query
 			goto skipInteraction;
@@ -6059,7 +6059,7 @@ void RB_RenderLightOcclusionQueries()
 {
 	Ren_LogComment("--- RB_RenderLightOcclusionQueries ---\n");
 
-	if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && r_dynamicLightOcclusionCulling->integer && !(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
+	if (glConfig2.occlusionQueryBits && r_dynamicLightOcclusionCulling->integer && !(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
 	{
 		int           i;
 		interaction_t *ia;
@@ -6638,7 +6638,7 @@ void RB_RenderEntityOcclusionQueries()
 {
 	Ren_LogComment("--- RB_RenderEntityOcclusionQueries ---\n");
 
-	if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && !(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
+	if (glConfig2.occlusionQueryBits && !(backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
 	{
 		int           i;
 		trRefEntity_t *entity, *multiQueryEntity;
@@ -6832,7 +6832,7 @@ void RB_RenderBspOcclusionQueries()
 {
 	Ren_LogComment("--- RB_RenderBspOcclusionQueries ---\n");
 
-	if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && r_dynamicBspOcclusionCulling->integer)
+	if (glConfig2.occlusionQueryBits && r_dynamicBspOcclusionCulling->integer)
 	{
 		//int             j;
 		bspNode_t *node;
@@ -6907,7 +6907,7 @@ void RB_CollectBspOcclusionQueries()
 {
 	Ren_LogComment("--- RB_CollectBspOcclusionQueries ---\n");
 
-	if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && r_dynamicBspOcclusionCulling->integer)
+	if (glConfig2.occlusionQueryBits && r_dynamicBspOcclusionCulling->integer)
 	{
 		int       j = 0;
 		bspNode_t *node;
@@ -7878,7 +7878,7 @@ static void RB_RenderDebugUtils()
 
 		for (iaCount = 0, ia = &backEnd.viewParms.interactions[0]; iaCount < backEnd.viewParms.numInteractions; )
 		{
-			if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA)
+			if (glConfig2.occlusionQueryBits)
 			{
 				if (!ia->occlusionQuerySamples)
 				{

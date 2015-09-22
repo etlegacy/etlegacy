@@ -2306,7 +2306,7 @@ void R_AddWorldSurfaces(void)
 		R_MarkLeaves();
 
 		// update the bsp nodes with the dynamic occlusion query results
-		if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && r_dynamicBspOcclusionCulling->integer)
+		if (glConfig2.occlusionQueryBits && r_dynamicBspOcclusionCulling->integer)
 		{
 			R_CoherentHierachicalCulling();
 		}

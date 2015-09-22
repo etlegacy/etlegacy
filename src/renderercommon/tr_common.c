@@ -308,7 +308,7 @@ static void GLimp_InitExtensionsR2(void)
 	GL_CheckErrors();
 
 	glConfig2.framebufferPackedDepthStencilAvailable = qfalse;
-	if (GLimp_CheckForVersionExtension("GL_EXT_packed_depth_stencil", 300, qfalse, r_ext_packed_depth_stencil) && glConfig.driverType != GLDRV_MESA)
+	if (GLimp_CheckForVersionExtension("GL_EXT_packed_depth_stencil", 300, qfalse, r_ext_packed_depth_stencil))
 	{
 		glConfig2.framebufferPackedDepthStencilAvailable = qtrue;
 	}
@@ -494,18 +494,6 @@ static void GLimp_InitExtensions(void)
 }
 #endif
 
-// FIXME: rework & add latest gfx cards
-void GLimp_SetHardware(void)
-{
-	if (Q_stristr(glConfig.renderer_string, "mesa") ||
-	     Q_stristr(glConfig.renderer_string, "gallium") ||
-	     Q_stristr(glConfig.vendor_string, "nouveau") ||
-	     Q_stristr(glConfig.vendor_string, "mesa"))
-	{
-		glConfig.driverType = GLDRV_MESA;
-	}
-}
-
 void Glimp_ClearScreen(void)
 {
 	qglClearColor(0, 0, 0, 1);
@@ -576,7 +564,6 @@ void RE_InitOpenGl(void)
 #endif
 
 	// initialize extensions
-	GLimp_SetHardware();
 #ifdef FEATURE_RENDERER2
 	GLimp_InitExtensionsR2(); // renderer2
 #else

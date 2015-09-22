@@ -2743,7 +2743,7 @@ void R_AddLightInteractions()
 			// ignore if not in PVS
 			if (!r_noLightVisCull->integer)
 			{
-				if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && r_dynamicBspOcclusionCulling->integer)
+				if (glConfig2.occlusionQueryBits && r_dynamicBspOcclusionCulling->integer)
 				{
 					int numVisibleLeafs = 0;
 
@@ -2975,7 +2975,7 @@ void R_AddLightBoundsToVisBounds()
 			// ignore if not in PVS
 			if (!r_noLightVisCull->integer)
 			{
-				if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA && r_dynamicBspOcclusionCulling->integer)
+				if (glConfig2.occlusionQueryBits && r_dynamicBspOcclusionCulling->integer)
 				{
 					int numVisibleLeafs = 0;
 

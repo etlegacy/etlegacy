@@ -45,16 +45,6 @@
 #   endif
 #endif // FEATURE_RENDERER_GLES
 
-/*
-#ifndef FEATURE_RENDERER2
-#ifdef BUNDLED_SDL
-#    include "SDL_opengl.h"
-#else
-#    include <SDL2/SDL_opengl.h>
-#endif
-#endif
-*/
-
 #ifdef FEATURE_RENDERER_GLES
 #   define qglMultiTexCoord2fARB(t, s)                             glMultiTexCoord4f(t, s, 0, 1.0f)
 #   define qglActiveTextureARB                                     glActiveTexture

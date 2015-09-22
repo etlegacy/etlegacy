@@ -911,6 +911,21 @@ void Tess_SurfaceDecal(srfDecal_t *srf)
 	tess.numVertexes += srf->numVerts;
 }
 
+static void Tess_DrawCurrent()
+{
+	if (tess.multiDrawPrimitives >= MAX_MULTIDRAW_PRIMITIVES)
+	{
+		Tess_EndBegin();
+
+		if (tess.multiDrawPrimitives != 0)
+		{
+			// Just to make coverity happy
+			tess.multiDrawPrimitives = 0;
+			Ren_Fatal("Something went really wrong on clearing multiDrawPrimitives\n");
+		}
+	}
+}
+
 /*
 ==============
 Tess_SurfaceFace
@@ -930,10 +945,7 @@ static void Tess_SurfaceFace(srfSurfaceFace_t *srf)
 	    !ShaderRequiresCPUDeforms(tess.surfaceShader) &&
 	    tess.stageIteratorFunc != &Tess_StageIteratorSky)
 	{
-		if (tess.multiDrawPrimitives >= MAX_MULTIDRAW_PRIMITIVES)
-		{
-			Tess_EndBegin();
-		}
+		Tess_DrawCurrent();
 
 		R_BindVBO(srf->vbo);
 		R_BindIBO(srf->ibo);
@@ -1023,10 +1035,7 @@ static void Tess_SurfaceGrid(srfGridMesh_t *srf)
 
 	if (r_vboCurves->integer && srf->vbo && srf->ibo && !ShaderRequiresCPUDeforms(tess.surfaceShader))
 	{
-		if (tess.multiDrawPrimitives >= MAX_MULTIDRAW_PRIMITIVES)
-		{
-			Tess_EndBegin();
-		}
+		Tess_DrawCurrent();
 
 		R_BindVBO(srf->vbo);
 		R_BindIBO(srf->ibo);
@@ -1116,10 +1125,7 @@ static void Tess_SurfaceTriangles(srfTriangles_t *srf)
 
 	if (r_vboTriangles->integer && srf->vbo && srf->ibo && !ShaderRequiresCPUDeforms(tess.surfaceShader))
 	{
-		if (tess.multiDrawPrimitives >= MAX_MULTIDRAW_PRIMITIVES)
-		{
-			Tess_EndBegin();
-		}
+		Tess_DrawCurrent();
 
 		R_BindVBO(srf->vbo);
 		R_BindIBO(srf->ibo);

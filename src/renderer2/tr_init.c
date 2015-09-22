@@ -1583,7 +1583,7 @@ void R_Init(void)
 		ri.Cvar_AssertCvarRange(r_ext_texture_filter_anisotropic, 0, glConfig2.maxTextureAnisotropy, qfalse);
 	}
 
-	if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA)
+	if (glConfig2.occlusionQueryBits)
 	{
 		glGenQueries(MAX_OCCLUSION_QUERIES, tr.occlusionQueryObjects);
 	}
@@ -1630,7 +1630,7 @@ void RE_Shutdown(qboolean destroyWindow)
 			tr.vao = 0;
 		}
 
-		if (glConfig2.occlusionQueryBits && glConfig.driverType != GLDRV_MESA)
+		if (glConfig2.occlusionQueryBits)
 		{
 			glDeleteQueries(MAX_OCCLUSION_QUERIES, tr.occlusionQueryObjects);
 

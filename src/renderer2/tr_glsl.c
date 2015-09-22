@@ -869,11 +869,6 @@ static void GLSL_BuildShaderExtraDef()
 
 	BUFFEXT("#ifndef r_NPOTScale\n#define r_NPOTScale vec2(%f, %f)\n#endif\n", npotWidthScale, npotHeightScale);
 
-	if (glConfig.driverType == GLDRV_MESA)
-	{
-		BUFFEXT("#ifndef GLDRV_MESA\n#define GLDRV_MESA 1\n#endif\n");
-	}
-
 	if (r_shadows->integer >= SHADOWING_ESM16 && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable)
 	{
 		if (r_shadows->integer == SHADOWING_ESM16 || r_shadows->integer == SHADOWING_ESM32)
@@ -974,7 +969,7 @@ static void GLSL_BuildShaderExtraDef()
 		BUFFEXT("#ifndef r_precomputedLighting\n#define r_precomputedLighting 1\n#endif\n");
 	}
 
-	if (r_heatHazeFix->integer && glConfig2.framebufferBlitAvailable && /*glConfig.hardwareType != GLHW_ATI && glConfig.hardwareType != GLHW_ATI_DX10 &&*/ glConfig.driverType != GLDRV_MESA)
+	if (r_heatHazeFix->integer && glConfig2.framebufferBlitAvailable)
 	{
 		BUFFEXT("#ifndef r_heatHazeFix\n#define r_heatHazeFix 1\n#endif\n");
 	}

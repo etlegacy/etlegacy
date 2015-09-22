@@ -1264,10 +1264,14 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 					Cvar_Set("r_fullscreen", "1");
 				}
 				// some desktops might freeze without restarting the video subsystem
-				if (cls.glconfig.driverType == GLDRV_MESA)
+				if (Q_stristr(cls.glconfig.renderer_string, "mesa") ||
+					Q_stristr(cls.glconfig.renderer_string, "gallium") ||
+					Q_stristr(cls.glconfig.vendor_string, "nouveau") ||
+					Q_stristr(cls.glconfig.vendor_string, "mesa"))
 				{
 					Cbuf_ExecuteText(EXEC_APPEND, "vid_restart\n");
 				}
+
 				return;
 			}
 		}

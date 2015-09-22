@@ -2,8 +2,6 @@
 
 uniform float u_DeformParms[MAX_SHADER_DEFORM_PARMS];
 
-#if !defined(GLDRV_MESA)
-
 float triangle(float x)
 {
 	return max(1.0 - abs(x), 0);
@@ -190,6 +188,3 @@ vec4 DeformPosition2(const vec4 pos, const vec3 normal, const vec2 st, float tim
 
 	return deformed;
 }
-
-
-#endif // !defined(GLDRV_MESA)

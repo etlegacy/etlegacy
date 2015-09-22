@@ -2239,7 +2239,7 @@ static void Render_heatHaze(int stage)
 
 	Ren_LogComment("--- Render_heatHaze ---\n");
 
-	if (r_heatHazeFix->integer && glConfig2.framebufferBlitAvailable && glConfig.driverType != GLDRV_MESA)
+	if (r_heatHazeFix->integer && glConfig2.framebufferBlitAvailable )
 	{
 		FBO_t    *previousFBO;
 		uint32_t stateBits;
@@ -2417,7 +2417,7 @@ static void Render_heatHaze(int stage)
 	}
 
 	// bind u_ContrastMap
-	if (r_heatHazeFix->integer && glConfig2.framebufferBlitAvailable && glConfig.driverType != GLDRV_MESA)
+	if (r_heatHazeFix->integer && glConfig2.framebufferBlitAvailable)
 	{
 		SelectTexture(TEX_CONTRAST);
 		GL_Bind(tr.occlusionRenderFBOImage);

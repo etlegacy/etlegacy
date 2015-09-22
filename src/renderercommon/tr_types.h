@@ -366,14 +366,6 @@ typedef enum
 	GLDRV_ICD,                  // driver is integrated with window system
 	GLDRV_STANDALONE,           // deprecated
 	GLDRV_VOODOO,               // deprecated
-	/*
-	// renderer2 BEGIN
-	GLDRV_OPENGL3,              // new driver system
-	GLDRV_MESA,                 // crap
-	GLDRV_OPENGL_REQUESTED
-	// renderer2 END
-	 */
-			GLDRV_MESA
 } glDriverType_t;
 
 typedef enum
