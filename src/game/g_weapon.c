@@ -486,7 +486,7 @@ void Weapon_Syringe(gentity_t *ent)
 
 	if (traceEnt->client->ps.pm_type == PM_DEAD)
 	{
-		qboolean usedSyringe = qfalse;
+		qboolean usedSyringe;
 
 		if (traceEnt->client->sess.sessionTeam != ent->client->sess.sessionTeam)
 		{
@@ -497,8 +497,8 @@ void Weapon_Syringe(gentity_t *ent)
 		usedSyringe = ReviveEntity(ent, traceEnt);
 
 		// syringe "hit"
-		// FIXME: we no longer track the syringe - it's no real weapon and messes up the total weapon stats (see acc)
-		// - add a new award 'most revives'?
+		// we no longer track the syringe - it's no real weapon and messes up the total weapon stats (see acc)
+		// FIXME: add a new award 'most revives' instead?
 		//if (g_gamestate.integer == GS_PLAYING)
 		//{
 		//ent->client->sess.aWeaponStats[WS_SYRINGE].hits++;
@@ -1035,6 +1035,8 @@ static qboolean TryConstructing(gentity_t *ent)
 						G_Script_ScriptEvent(constructible, "buildstart", "stage3");
 						constructible->s.frame = 3;
 						break;
+					default:
+						break;
 					}
 				}
 			}
@@ -1182,6 +1184,8 @@ static qboolean TryConstructing(gentity_t *ent)
 				case 3:
 					G_Script_ScriptEvent(constructible, "built", "stage3");
 					break;
+				default:
+					break;
 				}
 			}
 		}
@@ -1203,16 +1207,16 @@ static qboolean TryConstructing(gentity_t *ent)
 		{
 			if (!constructible->count2 || constructible->grenadeFired == 1)
 			{
-				gentity_t *tent = NULL;
+				gentity_t *tent;
 				gentity_t *e;
 
-				e = G_Spawn();
-
+				e               = G_Spawn();
 				e->r.svFlags    = SVF_BROADCAST;
 				e->classname    = "explosive_indicator";
 				e->s.pos.trType = TR_STATIONARY;
 				e->s.eType      = ET_EXPLOSIVE_INDICATOR;
 
+				// Find the trigger_objective_info that targets us (if not set before)
 				while ((tent = G_Find(tent, FOFS(target), constructible->targetname)) != NULL)
 				{
 					if (tent->s.eType == ET_OID_TRIGGER)
@@ -1221,19 +1225,7 @@ static qboolean TryConstructing(gentity_t *ent)
 						{
 							e->s.eType = ET_TANK_INDICATOR;
 						}
-					}
-				}
-
-				// Find the trigger_objective_info that targets us (if not set before)
-				{
-					gentity_t *tent = NULL;
-
-					while ((tent = G_Find(tent, FOFS(target), constructible->targetname)) != NULL)
-					{
-						if (tent->s.eType == ET_OID_TRIGGER)
-						{
-							e->parent = tent;
-						}
+						e->parent = tent;
 					}
 				}
 
@@ -1402,6 +1394,8 @@ void AutoBuildConstruction(gentity_t *constructible)
 			case 3:
 				G_Script_ScriptEvent(constructible, "built", "stage3");
 				break;
+			default:
+				break;
 			}
 		}
 	}
@@ -1423,14 +1417,16 @@ void AutoBuildConstruction(gentity_t *constructible)
 	{
 		if (!constructible->count2 || constructible->grenadeFired == 1)
 		{
-			gentity_t *tent = NULL;
-			gentity_t *e    = G_Spawn();
+			gentity_t *tent;
+			gentity_t *e;
 
+			e               = G_Spawn();
 			e->r.svFlags    = SVF_BROADCAST;
 			e->classname    = "explosive_indicator";
 			e->s.pos.trType = TR_STATIONARY;
 			e->s.eType      = ET_EXPLOSIVE_INDICATOR;
 
+			// Find the trigger_objective_info that targets us (if not set before)
 			while ((tent = G_Find(tent, FOFS(target), constructible->targetname)) != NULL)
 			{
 				if (tent->s.eType == ET_OID_TRIGGER)
@@ -1439,19 +1435,7 @@ void AutoBuildConstruction(gentity_t *constructible)
 					{
 						e->s.eType = ET_TANK_INDICATOR;
 					}
-				}
-			}
-
-			// Find the trigger_objective_info that targets us (if not set before)
-			{
-				gentity_t *tent = NULL;
-
-				while ((tent = G_Find(tent, FOFS(target), constructible->targetname)) != NULL)
-				{
-					if (tent->s.eType == ET_OID_TRIGGER)
-					{
-						e->parent = tent;
-					}
+					e->parent = tent;
 				}
 			}
 
@@ -2818,6 +2802,8 @@ void artilleryThink_real(gentity_t *ent)
 		G_AddEvent(ent, EV_GENERAL_SOUND_VOLUME, GAMESOUND_WPN_ARTILLERY_FLY_3);
 		ent->s.onFireStart = 255;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -3016,6 +3002,7 @@ void Weapon_Artillery(gentity_t *ent)
 			// spotter round is always dead on (OK, unrealistic but more fun)
 			bomboffset[0] = crandom() * 50; // was 0; changed per id request to prevent spotter round assassinations
 			bomboffset[1] = crandom() * 50; // was 0;
+			bomboffset[2] = 0;
 		}
 		else
 		{
@@ -3030,6 +3017,7 @@ void Weapon_Artillery(gentity_t *ent)
 
 			bomboffset[0] = crandom() * 250;
 			bomboffset[1] = crandom() * 250;
+
 		}
 		bomboffset[2] = 0;
 
@@ -3056,6 +3044,8 @@ void Weapon_Artillery(gentity_t *ent)
 		// build arty falling sound effect in front of bomb drop
 		bomb2               = G_Spawn();
 		bomb2->think        = artilleryThink;
+
+
 		bomb2->s.eType      = ET_MISSILE;
 		bomb2->r.svFlags    = SVF_NOCLIENT;
 		bomb2->r.ownerNum   = ent->s.number;
@@ -3268,6 +3258,8 @@ void Bullet_Fire(gentity_t *ent, float spread, int damage, qboolean distance_fal
 		{
 			spread *= .65f;
 		}
+		break;
+	default:
 		break;
 	}
 
@@ -4090,31 +4082,36 @@ void FireWeapon(gentity_t *ent)
 	}
 
 	// covert ops disguise handling
-	if (ent->client->ps.powerups[PW_OPS_DISGUISED] &&
-	    ent->s.weapon != WP_SMOKE_BOMB &&
-	    ent->s.weapon != WP_SATCHEL &&
-	    ent->s.weapon != WP_SATCHEL_DET &&
-	    ent->s.weapon != WP_BINOCULARS)
+	if (ent->client->ps.powerups[PW_OPS_DISGUISED])
 	{
-		if (!(ent->s.weapon == WP_KNIFE || // FIXME: do a switch
-		      ent->s.weapon == WP_KNIFE_KABAR ||
-		      ent->s.weapon == WP_STEN ||
-		      ent->s.weapon == WP_SILENCER ||
-		      ent->s.weapon == WP_SILENCED_COLT ||
-		      ent->s.weapon == WP_AKIMBO_SILENCEDCOLT ||
-		      ent->s.weapon == WP_AKIMBO_SILENCEDLUGER ||
-		      ent->s.weapon == WP_K43 ||
-		      ent->s.weapon == WP_K43_SCOPE ||
-		      ent->s.weapon == WP_GARAND ||
-		      ent->s.weapon == WP_GRENADE_LAUNCHER ||
-		      ent->s.weapon == WP_GRENADE_PINEAPPLE ||
-		      ent->s.weapon == WP_GARAND_SCOPE))
+		switch (ent->s.weapon)
 		{
-			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
-		}
-		else if (G_PlayerCanBeSeenByOthers(ent))
-		{
-			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
+			case WP_SMOKE_BOMB: // never loose disguise
+			case WP_SATCHEL:
+			case WP_SATCHEL_DET:
+			case WP_BINOCULARS:
+				break;
+			case WP_KNIFE:       // in case of covert ops weapon disguise is lost when seen by others AND 'low noise' weapon is used
+			case WP_KNIFE_KABAR:
+			case WP_STEN:
+			case WP_SILENCER:
+			case WP_SILENCED_COLT:
+			case WP_AKIMBO_SILENCEDCOLT:
+			case WP_AKIMBO_SILENCEDLUGER:
+			case WP_K43:
+			case WP_K43_SCOPE:
+			case WP_GARAND:
+			case WP_GARAND_SCOPE:
+			case WP_GRENADE_LAUNCHER:
+			case WP_GRENADE_PINEAPPLE:
+				if (G_PlayerCanBeSeenByOthers(ent))
+				{
+					ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
+				}
+				break;
+			default: // luger, akimbo luger, colt, akimbo colt, fg42, fg42_scoped
+				ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
+				break;
 		}
 	}
 
