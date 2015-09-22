@@ -1064,7 +1064,7 @@ static void CM_TraceThroughVerticalCylinder(traceWork_t *tw, vec3_t origin, floa
 	{
 		float sqrtd = SquareRootFloat(d);
 		// = (- b + sqrtd) * 0.5f;// / (2.0f * a);
-		int fraction = (-b - sqrtd) * 0.5f;   // / (2.0f * a);
+		float fraction = (-b - sqrtd) * 0.5f;   // / (2.0f * a);
 
 		if (fraction < 0)
 		{
@@ -1554,7 +1554,7 @@ static void CM_Trace(trace_t *results, const vec3_t start, const vec3_t end,
 				CM_TestCapsuleInCapsule(&tw, model);
 			}
 			else
-#endif
+#else // this is dead code when ALWAYS_BBOX_VS_BBOX or ALWAYS_CAPSULE_VS_CAPSULE are active
 			if (model == CAPSULE_MODEL_HANDLE)
 			{
 				if (tw.sphere.use)
@@ -1567,6 +1567,7 @@ static void CM_Trace(trace_t *results, const vec3_t start, const vec3_t end,
 				}
 			}
 			else
+#endif
 			{
 				CM_TestInLeaf(&tw, &cmod->leaf);
 			}
@@ -1594,7 +1595,7 @@ static void CM_Trace(trace_t *results, const vec3_t start, const vec3_t end,
 				CM_TraceCapsuleThroughCapsule(&tw, model);
 			}
 			else
-#endif
+#else // this is dead code when ALWAYS_BBOX_VS_BBOX or ALWAYS_CAPSULE_VS_CAPSULE are active
 			if (model == CAPSULE_MODEL_HANDLE)
 			{
 				if (tw.sphere.use)
@@ -1607,6 +1608,7 @@ static void CM_Trace(trace_t *results, const vec3_t start, const vec3_t end,
 				}
 			}
 			else
+#endif
 			{
 				CM_TraceThroughLeaf(&tw, &cmod->leaf);
 			}
