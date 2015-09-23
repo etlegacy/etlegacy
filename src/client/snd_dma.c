@@ -588,11 +588,15 @@ void S_Base_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t 
 
 	for (i = 0; i < MAX_CHANNELS ; i++, ch++)
 	{
-		if (ch->entnum == entnum && ch->thesfx == sfx)
+		if (ch->entnum == entnum && ch->thesfx)
 		{
-			if (time - ch->allocTime < 50) // double played in one frame
+			if (ch->thesfx == sfx && time - ch->allocTime < 50) // double played in one frame
 			{
 				return;
+			}
+			else if (ch->entchannel == entchannel && (flags & SND_CUTOFF_ALL)) // cut the sounds that are flagged to be cut
+			{
+				S_ChannelFree(ch);
 			}
 		}
 	}
