@@ -1207,7 +1207,7 @@ static qboolean TryConstructing(gentity_t *ent)
 		{
 			if (!constructible->count2 || constructible->grenadeFired == 1)
 			{
-				gentity_t *tent;
+				gentity_t *tent = NULL;
 				gentity_t *e;
 
 				e               = G_Spawn();
@@ -1417,7 +1417,7 @@ void AutoBuildConstruction(gentity_t *constructible)
 	{
 		if (!constructible->count2 || constructible->grenadeFired == 1)
 		{
-			gentity_t *tent;
+			gentity_t *tent = NULL;
 			gentity_t *e;
 
 			e               = G_Spawn();
