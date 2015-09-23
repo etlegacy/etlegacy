@@ -1911,7 +1911,7 @@ static void R_CoherentHierachicalCulling()
 		R_BindNullFBO();
 	}
 
-	SetMacrosAndSelectProgram(gl_genericShader);
+	SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
 	GL_Cull(CT_TWO_SIDED);
 
@@ -1924,7 +1924,7 @@ static void R_CoherentHierachicalCulling()
 	           tr.viewParms.viewportWidth, tr.viewParms.viewportHeight);
 
 	// set uniforms
-	GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CONST, AGEN_CONST);
+	GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_CONST, AGEN_CONST);
 	SetUniformVec4(UNIFORM_COLOR, colorWhite);
 
 	// set up the transformation matrix

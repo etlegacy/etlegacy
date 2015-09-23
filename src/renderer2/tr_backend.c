@@ -522,7 +522,7 @@ static void Render_lightVolume(interaction_t *ia)
 
 			Ren_LogComment("--- Render_lightVolume_omni ---\n");
 
-			SetMacrosAndSelectProgram(gl_volumetricLightingShader);
+			SetMacrosAndSelectProgram(trProg.gl_volumetricLightingShader);
 			GL_Cull(CT_TWO_SIDED);
 			GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 
@@ -1623,7 +1623,7 @@ static void RB_RenderInteractionsShadowMapped()
 							GL_Cull(CT_TWO_SIDED);
 							GL_State(GLS_DEPTHTEST_DISABLE);
 
-							SetMacrosAndSelectProgram(gl_debugShadowMapShader);
+							SetMacrosAndSelectProgram(trProg.gl_debugShadowMapShader);
 							SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 							SelectTexture(TEX_CURRENT);
@@ -1653,9 +1653,9 @@ static void RB_RenderInteractionsShadowMapped()
 
 								GL_PushMatrix();
 
-								SetMacrosAndSelectProgram(gl_genericShader);
+								SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
-								GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
+								GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 								SetUniformVec4(UNIFORM_COLOR, colorBlack);
 
 								GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
@@ -1719,7 +1719,7 @@ static void RB_RenderInteractionsShadowMapped()
 								// draw light volume
 								if (light->isStatic && light->frustumVBO && light->frustumIBO)
 								{
-									GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CUSTOM_RGB, AGEN_CUSTOM);
+									GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 									SetUniformVec4(UNIFORM_COLOR, colorYellow);
 
 									R_BindVBO(light->frustumVBO);
@@ -2648,7 +2648,7 @@ skipInteraction:
 
 					if (light->l.rlType == RL_OMNI)
 					{
-						SetMacrosAndSelectProgram(gl_deferredLightingShader_omniXYZ,
+						SetMacrosAndSelectProgram(trProg.gl_deferredLightingShader_omniXYZ,
 						                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
 						                          USE_NORMAL_MAPPING, r_normalMapping->integer,
 						                          USE_SHADOWING, qfalse,
@@ -2726,7 +2726,7 @@ skipInteraction:
 					}
 					else if (light->l.rlType == RL_PROJ)
 					{
-						SetMacrosAndSelectProgram(gl_deferredLightingShader_projXYZ,
+						SetMacrosAndSelectProgram(trProg.gl_deferredLightingShader_projXYZ,
 						                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
 						                          USE_NORMAL_MAPPING, r_normalMapping->integer,
 						                          USE_SHADOWING, qfalse,
@@ -2804,7 +2804,7 @@ skipInteraction:
 					}
 					else if (light->l.rlType == RL_DIRECTIONAL)
 					{
-						SetMacrosAndSelectProgram(gl_deferredLightingShader_directionalSun,
+						SetMacrosAndSelectProgram(trProg.gl_deferredLightingShader_directionalSun,
 						                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
 						                          USE_NORMAL_MAPPING, r_normalMapping->integer,
 						                          USE_SHADOWING, qfalse,
@@ -4176,7 +4176,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 
 					if (light->l.rlType == RL_OMNI)
 					{
-						SetMacrosAndSelectProgram(gl_deferredLightingShader_omniXYZ,
+						SetMacrosAndSelectProgram(trProg.gl_deferredLightingShader_omniXYZ,
 						                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
 						                          USE_NORMAL_MAPPING, r_normalMapping->integer,
 						                          USE_SHADOWING, shadowCompare,
@@ -4252,7 +4252,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 					}
 					else if (light->l.rlType == RL_PROJ)
 					{
-						SetMacrosAndSelectProgram(gl_deferredLightingShader_projXYZ,
+						SetMacrosAndSelectProgram(trProg.gl_deferredLightingShader_projXYZ,
 						                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
 						                          USE_NORMAL_MAPPING, r_normalMapping->integer,
 						                          USE_SHADOWING, shadowCompare,
@@ -4337,7 +4337,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 					else if (light->l.rlType == RL_DIRECTIONAL)
 					{
 						shadowCompare = (r_shadows->integer >= SHADOWING_ESM16 && !light->l.noShadows); // && light->shadowLOD >= 0);
-						SetMacrosAndSelectProgram(gl_deferredLightingShader_directionalSun,
+						SetMacrosAndSelectProgram(trProg.gl_deferredLightingShader_directionalSun,
 						                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
 						                          USE_NORMAL_MAPPING, r_normalMapping->integer,
 						                          USE_SHADOWING, shadowCompare,
@@ -4475,7 +4475,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 						GL_Cull(CT_TWO_SIDED);
 						GL_State(GLS_DEPTHTEST_DISABLE);
 
-						SetMacrosAndSelectProgram(gl_debugShadowMapShader);
+						SetMacrosAndSelectProgram(trProg.gl_debugShadowMapShader);
 						SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 						// bind u_ColorMap
@@ -4509,9 +4509,9 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 							GL_Cull(CT_TWO_SIDED);
 
-							SetMacrosAndSelectProgram(gl_genericShader);
+							SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
-							GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
+							GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 							SetUniformVec4(UNIFORM_COLOR, colorBlack);
 
 							SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, light->shadowMatrices[frustumIndex]);
@@ -4608,7 +4608,7 @@ static void RB_RenderInteractionsDeferredShadowMapped()
 							// draw light volume
 							if (light->isStatic && light->frustumVBO && light->frustumIBO)
 							{
-								GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CUSTOM_RGB, AGEN_CUSTOM);
+								GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 								SetUniformVec4(UNIFORM_COLOR, colorYellow);
 
 								R_BindVBO(light->frustumVBO);
@@ -4972,7 +4972,7 @@ void RB_RenderScreenSpaceAmbientOcclusion(qboolean deferred)
 	}
 
 	// enable shader, set arrays
-	SetMacrosAndSelectProgram(gl_ssao);
+	SetMacrosAndSelectProgram(trProg.gl_ssao);
 
 	GL_State(GLS_DEPTHTEST_DISABLE);    // | GLS_DEPTHMASK_TRUE);
 	GL_Cull(CT_TWO_SIDED);
@@ -5024,7 +5024,7 @@ void RB_RenderDepthOfField()
 	}
 
 	// enable shader, set arrays
-	SetMacrosAndSelectProgram(gl_depthOfField);
+	SetMacrosAndSelectProgram(trProg.gl_depthOfField);
 
 	GL_State(GLS_DEPTHTEST_DISABLE);    // | GLS_DEPTHMASK_TRUE);
 	GL_Cull(CT_TWO_SIDED);
@@ -5106,7 +5106,7 @@ void RB_RenderGlobalFog()
 	// go back to the world modelview matrix
 	backEnd.orientation = backEnd.viewParms.world;
 
-	SetMacrosAndSelectProgram(gl_fogGlobalShader);
+	SetMacrosAndSelectProgram(trProg.gl_fogGlobalShader);
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // world space
 
 	{
@@ -5201,7 +5201,7 @@ void RB_RenderBloom()
 		{
 			if (HDR_ENABLED())
 			{
-				SetMacrosAndSelectProgram(gl_toneMappingShader, BRIGHTPASS_FILTER, qtrue);
+				SetMacrosAndSelectProgram(trProg.gl_toneMappingShader, BRIGHTPASS_FILTER, qtrue);
 
 				SetUniformFloat(UNIFORM_HDRKEY, backEnd.hdrKey);
 				SetUniformFloat(UNIFORM_HDRAVERAGELUMINANCE, backEnd.hdrAverageLuminance);
@@ -5211,7 +5211,7 @@ void RB_RenderBloom()
 			}
 			else
 			{
-				SetMacrosAndSelectProgram(gl_contrastShader);
+				SetMacrosAndSelectProgram(trProg.gl_contrastShader);
 				SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 				SelectTexture(TEX_COLOR);
 			}
@@ -5219,7 +5219,7 @@ void RB_RenderBloom()
 		}
 		else if (HDR_ENABLED())
 		{
-			SetMacrosAndSelectProgram(gl_toneMappingShader, BRIGHTPASS_FILTER, qtrue);
+			SetMacrosAndSelectProgram(trProg.gl_toneMappingShader, BRIGHTPASS_FILTER, qtrue);
 
 			SetUniformFloat(UNIFORM_HDRKEY, backEnd.hdrKey);
 			SetUniformFloat(UNIFORM_HDRAVERAGELUMINANCE, backEnd.hdrAverageLuminance);
@@ -5232,7 +5232,7 @@ void RB_RenderBloom()
 		else
 		{
 			// render contrast downscaled to 1/4th of the screen
-			SetMacrosAndSelectProgram(gl_contrastShader);
+			SetMacrosAndSelectProgram(trProg.gl_contrastShader);
 			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 			SelectTexture(TEX_COLOR);
@@ -5250,7 +5250,7 @@ void RB_RenderBloom()
 		DRAWVIEWQUAD();
 
 		// render bloom in multiple passes
-		SetMacrosAndSelectProgram(gl_bloomShader);
+		SetMacrosAndSelectProgram(trProg.gl_bloomShader);
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 		SetUniformFloat(UNIFORM_BLURMAGNITUDE, r_bloomBlur->value);
 
@@ -5273,12 +5273,12 @@ void RB_RenderBloom()
 
 				if (i == 0)
 				{
-					SetMacrosAndSelectProgram(gl_blurXShader);
+					SetMacrosAndSelectProgram(trProg.gl_blurXShader);
 
 				}
 				else
 				{
-					SetMacrosAndSelectProgram(gl_blurYShader);
+					SetMacrosAndSelectProgram(trProg.gl_blurYShader);
 				}
 
 				SelectTexture(TEX_COLOR);
@@ -5305,7 +5305,7 @@ void RB_RenderBloom()
 				R_BindFBO(tr.geometricRenderFBO);
 				glDrawBuffers(1, geometricRenderTargets);
 
-				SetMacrosAndSelectProgram(gl_screenShader);
+				SetMacrosAndSelectProgram(trProg.gl_screenShader);
 
 				GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 				glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
@@ -5319,7 +5319,7 @@ void RB_RenderBloom()
 			{
 				R_BindFBO(tr.deferredRenderFBO);
 
-				SetMacrosAndSelectProgram(gl_screenShader);
+				SetMacrosAndSelectProgram(trProg.gl_screenShader);
 				GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 				glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
 
@@ -5333,7 +5333,7 @@ void RB_RenderBloom()
 			{
 				R_BindNullFBO();
 
-				SetMacrosAndSelectProgram(gl_screenShader);
+				SetMacrosAndSelectProgram(trProg.gl_screenShader);
 				GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 				glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
 
@@ -5371,7 +5371,7 @@ void RB_RenderRotoscope(void)
 	GL_Cull(CT_TWO_SIDED);
 
 	// enable shader, set arrays
-	SetMacrosAndSelectProgram(gl_rotoscopeShader);
+	SetMacrosAndSelectProgram(trProg.gl_rotoscopeShader);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	SetUniformFloat(UNIFORM_BLURMAGNITUDE, r_rotoscopeBlur->value);
 
@@ -5407,7 +5407,7 @@ void RB_CameraPostFX(void)
 	GL_Cull(CT_TWO_SIDED);
 
 	// enable shader, set arrays
-	SetMacrosAndSelectProgram(gl_cameraEffectsShader);
+	SetMacrosAndSelectProgram(trProg.gl_cameraEffectsShader);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	//glUniform1f(tr.cameraEffectsShader.u_BlurMagnitude, r_bloomBlur->value);
 
@@ -5575,7 +5575,7 @@ void RB_RenderDeferredShadingResultToFrameBuffer()
 	if (!(backEnd.refdef.rdflags & RDF_NOWORLDMODEL) && r_hdrRendering->integer)
 	{
 		R_BindNullFBO();
-		SetMacrosAndSelectProgram(gl_toneMappingShader, BRIGHTPASS_FILTER, qfalse);
+		SetMacrosAndSelectProgram(trProg.gl_toneMappingShader, BRIGHTPASS_FILTER, qfalse);
 
 		SetUniformFloat(UNIFORM_HDRKEY, backEnd.hdrKey);
 		SetUniformFloat(UNIFORM_HDRAVERAGELUMINANCE, backEnd.hdrAverageLuminance);
@@ -5588,7 +5588,7 @@ void RB_RenderDeferredShadingResultToFrameBuffer()
 	}
 	else
 	{
-		SetMacrosAndSelectProgram(gl_screenShader);
+		SetMacrosAndSelectProgram(trProg.gl_screenShader);
 		glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
@@ -5656,13 +5656,13 @@ void RB_RenderDeferredHDRResultToFrameBuffer()
 
 	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
-		SetMacrosAndSelectProgram(gl_screenShader);
+		SetMacrosAndSelectProgram(trProg.gl_screenShader);
 		glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	}
 	else
 	{
-		SetMacrosAndSelectProgram(gl_toneMappingShader, BRIGHTPASS_FILTER, qfalse);
+		SetMacrosAndSelectProgram(trProg.gl_toneMappingShader, BRIGHTPASS_FILTER, qfalse);
 
 		SetUniformFloat(UNIFORM_HDRKEY, backEnd.hdrKey);
 		SetUniformFloat(UNIFORM_HDRAVERAGELUMINANCE, backEnd.hdrAverageLuminance);
@@ -6081,16 +6081,16 @@ void RB_RenderLightOcclusionQueries()
 			startTime = ri.Milliseconds();
 		}
 
-		SetMacrosAndSelectProgram(gl_genericShader);
+		SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
-		GLSL_SetRequiredVertexPointers(gl_genericShader);
+		GLSL_SetRequiredVertexPointers(trProg.gl_genericShader);
 
 		GL_Cull(CT_TWO_SIDED);
 
 		GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
 
 		// set uniforms
-		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
+		GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 		SetUniformVec4(UNIFORM_COLOR, colorBlack);
 
 		// bind u_ColorMap
@@ -6655,16 +6655,16 @@ void RB_RenderEntityOcclusionQueries()
 			startTime = ri.Milliseconds();
 		}
 
-		SetMacrosAndSelectProgram(gl_genericShader);
+		SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
-		GLSL_SetRequiredVertexPointers(gl_genericShader);
+		GLSL_SetRequiredVertexPointers(trProg.gl_genericShader);
 
 		GL_Cull(CT_TWO_SIDED);
 
 		GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
 
 		// set uniforms
-		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CONST, AGEN_CONST);
+		GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_CONST, AGEN_CONST);
 		SetUniformVec4(UNIFORM_COLOR, colorBlue);
 
 		// bind u_ColorMap
@@ -6838,13 +6838,13 @@ void RB_RenderBspOcclusionQueries()
 		bspNode_t *node;
 		link_t    *l, *next, *sentinel;
 
-		SetMacrosAndSelectProgram(gl_genericShader);
+		SetMacrosAndSelectProgram(trProg.gl_genericShader);
 		GL_Cull(CT_TWO_SIDED);
 
 		GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
 
 		// set uniforms
-		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CONST, AGEN_CONST);
+		GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_CONST, AGEN_CONST);
 		SetUniformVec4(UNIFORM_COLOR, colorBlue);
 		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
 		SetUniformInt(UNIFORM_ALPHATEST, 0);
@@ -7011,14 +7011,14 @@ static void RB_RenderDebugUtils()
 		vec3_t        minSize = { -2, -2, -2 };
 		vec3_t        maxSize = { 2, 2, 2 };
 
-		SetMacrosAndSelectProgram(gl_genericShader);
+		SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
 		//GL_State(GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA);
 		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 		GL_Cull(CT_TWO_SIDED);
 
 		// set uniforms
-		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CUSTOM_RGB, AGEN_CUSTOM);
+		GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 
 		// bind u_ColorMap
 		SelectTexture(TEX_COLOR);
@@ -7381,13 +7381,13 @@ static void RB_RenderDebugUtils()
 		vec3_t        mins = { -1, -1, -1 };
 		vec3_t        maxs = { 1, 1, 1 };
 
-		SetMacrosAndSelectProgram(gl_genericShader);
+		SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
 		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 		GL_Cull(CT_TWO_SIDED);
 
 		// set uniforms
-		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
+		GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 		SetUniformVec4(UNIFORM_COLOR, colorBlack);
 
 		// bind u_ColorMap
@@ -7557,13 +7557,13 @@ static void RB_RenderDebugUtils()
 		vec3_t        mins = { -1, -1, -1 };
 		vec3_t        maxs = { 1, 1, 1 };
 
-		SetMacrosAndSelectProgram(gl_genericShader);
+		SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
 		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 		GL_Cull(CT_TWO_SIDED);
 
 		// set uniforms
-		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
+		GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 		SetUniformVec4(UNIFORM_COLOR, colorBlack);
 
 		// bind u_ColorMap
@@ -7649,12 +7649,12 @@ static void RB_RenderDebugUtils()
 		static refSkeleton_t skeleton;
 		refSkeleton_t        *skel;
 
-		SetMacrosAndSelectProgram(gl_genericShader);
+		SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
 		GL_Cull(CT_TWO_SIDED);
 
 		// set uniforms
-		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
+		GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 		SetUniformVec4(UNIFORM_COLOR, colorBlack);
 
 		// bind u_ColorMap
@@ -7856,13 +7856,13 @@ static void RB_RenderDebugUtils()
 		int           iaCount;
 		vec4_t        quadVerts[4];
 
-		SetMacrosAndSelectProgram(gl_genericShader);
+		SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
 		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 		GL_Cull(CT_TWO_SIDED);
 
 		// set uniforms
-		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CUSTOM_RGB, AGEN_CUSTOM);
+		GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 
 		// bind u_ColorMap
 		SelectTexture(TEX_COLOR);
@@ -7945,7 +7945,7 @@ static void RB_RenderDebugUtils()
 			return;
 		}
 
-		SetMacrosAndSelectProgram(gl_reflectionShader,
+		SetMacrosAndSelectProgram(trProg.gl_reflectionShader,
 		                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
 		                          USE_VERTEX_SKINNING, qfalse,
 		                          USE_VERTEX_ANIMATION, qfalse,
@@ -7983,12 +7983,12 @@ static void RB_RenderDebugUtils()
 			cubemapProbe_t *cubeProbeNearest;
 			cubemapProbe_t *cubeProbeSecondNearest;
 
-			SetMacrosAndSelectProgram(gl_genericShader);
+			SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
-			GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
+			GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 			SetUniformVec4(UNIFORM_COLOR, colorBlack);
 
-			GLSL_SetRequiredVertexPointers(gl_genericShader);
+			GLSL_SetRequiredVertexPointers(trProg.gl_genericShader);
 
 			GL_State(GLS_DEFAULT);
 			GL_Cull(CT_TWO_SIDED);
@@ -8057,12 +8057,12 @@ static void RB_RenderDebugUtils()
 
 		Ren_LogComment("--- r_showLightGrid > 0: Rendering light grid\n");
 
-		SetMacrosAndSelectProgram(gl_genericShader);
+		SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
-		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
+		GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 		SetUniformVec4(UNIFORM_COLOR, colorBlack);
 
-		GLSL_SetRequiredVertexPointers(gl_genericShader);
+		GLSL_SetRequiredVertexPointers(trProg.gl_genericShader);
 
 		GL_State(GLS_DEFAULT);
 		GL_Cull(CT_TWO_SIDED);
@@ -8140,9 +8140,9 @@ static void RB_RenderDebugUtils()
 			return;
 		}
 
-		SetMacrosAndSelectProgram(gl_genericShader);
+		SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
-		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CUSTOM_RGB, AGEN_CUSTOM);
+		GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 
 		// bind u_ColorMap
 		SelectTexture(TEX_COLOR);
@@ -8239,7 +8239,7 @@ static void RB_RenderDebugUtils()
 					}
 
 					// set uniforms
-					GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
+					GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 					SetUniformVec4(UNIFORM_COLOR, colorBlack);
 
 					GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
@@ -8300,7 +8300,7 @@ static void RB_RenderDebugUtils()
 					Tess_UpdateVBOs(ATTR_POSITION | ATTR_COLOR);
 					Tess_DrawElements();
 
-					GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_CUSTOM_RGB, AGEN_CUSTOM);
+					GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_CUSTOM_RGB, AGEN_CUSTOM);
 				}
 			} // i == 1
 			else
@@ -8485,13 +8485,13 @@ static void RB_RenderDebugUtils()
 			return;
 		}
 
-		SetMacrosAndSelectProgram(gl_genericShader);
+		SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
 		GL_State(GLS_POLYMODE_LINE | GLS_DEPTHTEST_DISABLE);
 		GL_Cull(CT_TWO_SIDED);
 
 		// set uniforms
-		GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
+		GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 		SetUniformVec4(UNIFORM_COLOR, colorBlack);
 
 		// set up the transformation matrix
@@ -9233,9 +9233,9 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	glVertexAttrib4f(ATTR_INDEX_NORMAL, 0, 0, 1, 1);
 	glVertexAttrib4f(ATTR_INDEX_COLOR, tr.identityLight, tr.identityLight, tr.identityLight, 1);
 
-	SetMacrosAndSelectProgram(gl_genericShader);
+	SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
-	GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
+	GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 	SetUniformVec4(UNIFORM_COLOR, colorBlack);
 
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
@@ -9757,12 +9757,12 @@ void RB_ShowImages(void)
 
 	glFinish();
 
-	SetMacrosAndSelectProgram(gl_genericShader);
+	SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
 	GL_Cull(CT_TWO_SIDED);
 
 	// set uniforms
-	GLSL_SetUniform_ColorModulate(gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
+	GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_VERTEX, AGEN_VERTEX);
 	SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
 
 	SelectTexture(TEX_COLOR);
@@ -9809,7 +9809,7 @@ static void RB_ColorCorrection()
 	Ren_LogComment("--- RB_ColorCorrection ---\n");
 
 	// enable shader, set arrays
-	SetMacrosAndSelectProgram(gl_colorCorrection);
+	SetMacrosAndSelectProgram(trProg.gl_colorCorrection);
 
 	//glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
 

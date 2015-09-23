@@ -123,49 +123,7 @@ const GLShaderType_t shaderTypes[] =
 
 const int numberofshaderTypes = ARRAY_LEN(shaderTypes);
 
-programInfo_t *gl_genericShader;
-programInfo_t *gl_lightMappingShader;
-programInfo_t *gl_vertexLightingShader_DBS_entity;
-programInfo_t *gl_vertexLightingShader_DBS_world;
-programInfo_t *gl_forwardLightingShader_omniXYZ;
-programInfo_t *gl_forwardLightingShader_projXYZ;
-programInfo_t *gl_forwardLightingShader_directionalSun;
-programInfo_t *gl_deferredLightingShader_omniXYZ;
-programInfo_t *gl_deferredLightingShader_projXYZ;
-programInfo_t *gl_deferredLightingShader_directionalSun;
-programInfo_t *gl_geometricFillShader;
-programInfo_t *gl_shadowFillShader;
-programInfo_t *gl_reflectionShader;
-programInfo_t *gl_skyboxShader;
-programInfo_t *gl_fogQuake3Shader;
-programInfo_t *gl_fogGlobalShader;
-programInfo_t *gl_heatHazeShader;
-programInfo_t *gl_screenShader;
-programInfo_t *gl_portalShader;
-programInfo_t *gl_toneMappingShader;
-programInfo_t *gl_contrastShader;
-programInfo_t *gl_cameraEffectsShader;
-programInfo_t *gl_blurXShader;
-programInfo_t *gl_blurYShader;
-programInfo_t *gl_debugShadowMapShader;
-
-programInfo_t *gl_liquidShader;
-programInfo_t *gl_rotoscopeShader;
-programInfo_t *gl_bloomShader;
-programInfo_t *gl_refractionShader;
-programInfo_t *gl_depthToColorShader;
-programInfo_t *gl_volumetricFogShader;
-programInfo_t *gl_volumetricLightingShader;
-programInfo_t *gl_dispersionShader;
-
-programInfo_t *gl_depthOfField;
-programInfo_t *gl_ssao;
-
-//Jacker
-programInfo_t *gl_colorCorrection;
-
-//This is set with the GLSL_SelectPermutation
-shaderProgram_t *selectedProgram;
+trPrograms_t trProg;
 
 int GLSL_GetMacroByName(const char *name)
 {
@@ -281,7 +239,6 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 				}
 				else
 				{
-					Ren_Fatal("PERKELE: %s", token);
 					Ren_Warning("WARNING: Macro '%s' for shaderdef '%s' was not recognized\n", token, defname);
 					goto parseerror;
 				}
@@ -2204,7 +2161,7 @@ void GLSL_SelectPermutation(programInfo_t *programlist)
 	}
 	else
 	{
-		selectedProgram = programlist->list->current = prog;
+		trProg.selectedProgram = programlist->list->current = prog;
 		GLSL_BindProgram(prog);
 	}
 }
@@ -2357,54 +2314,56 @@ void GLSL_CompileGPUShaders(void)
 
 	startTime = ri.Milliseconds();
 
-	gl_genericShader      = GLSL_GetShaderProgram("generic");
-	gl_lightMappingShader = GLSL_GetShaderProgram("lightMapping");
+	Com_Memset(&trProg, 0, sizeof(trPrograms_t));
 
-	gl_vertexLightingShader_DBS_entity = GLSL_GetShaderProgram("vertexLighting_DBS_entity");
-	gl_vertexLightingShader_DBS_world  = GLSL_GetShaderProgram("vertexLighting_DBS_world");
+	trProg.gl_genericShader      = GLSL_GetShaderProgram("generic");
+	trProg.gl_lightMappingShader = GLSL_GetShaderProgram("lightMapping");
+
+	trProg.gl_vertexLightingShader_DBS_entity = GLSL_GetShaderProgram("vertexLighting_DBS_entity");
+	trProg.gl_vertexLightingShader_DBS_world  = GLSL_GetShaderProgram("vertexLighting_DBS_world");
 
 	if (DS_STANDARD_ENABLED())
 	{
-		gl_geometricFillShader                   = GLSL_GetShaderProgram("geometricFill");
-		gl_deferredLightingShader_omniXYZ        = GLSL_GetShaderProgram("deferredLighting_omniXYZ");
-		gl_deferredLightingShader_projXYZ        = GLSL_GetShaderProgram("deferredLighting_projXYZ");
-		gl_deferredLightingShader_directionalSun = GLSL_GetShaderProgram("deferredLighting_directionalSun");
+		trProg.gl_geometricFillShader                   = GLSL_GetShaderProgram("geometricFill");
+		trProg.gl_deferredLightingShader_omniXYZ        = GLSL_GetShaderProgram("deferredLighting_omniXYZ");
+		trProg.gl_deferredLightingShader_projXYZ        = GLSL_GetShaderProgram("deferredLighting_projXYZ");
+		trProg.gl_deferredLightingShader_directionalSun = GLSL_GetShaderProgram("deferredLighting_directionalSun");
 	}
 	else
 	{
-		gl_forwardLightingShader_omniXYZ        = GLSL_GetShaderProgram("forwardLighting_omniXYZ");
-		gl_forwardLightingShader_projXYZ        = GLSL_GetShaderProgram("forwardLighting_projXYZ");
-		gl_forwardLightingShader_directionalSun = GLSL_GetShaderProgram("forwardLighting_directionalSun");
+		trProg.gl_forwardLightingShader_omniXYZ        = GLSL_GetShaderProgram("forwardLighting_omniXYZ");
+		trProg.gl_forwardLightingShader_projXYZ        = GLSL_GetShaderProgram("forwardLighting_projXYZ");
+		trProg.gl_forwardLightingShader_directionalSun = GLSL_GetShaderProgram("forwardLighting_directionalSun");
 	}
 
-	gl_shadowFillShader     = GLSL_GetShaderProgram("shadowFill");
-	gl_reflectionShader     = GLSL_GetShaderProgram("reflection");
-	gl_skyboxShader         = GLSL_GetShaderProgram("skybox");
-	gl_fogQuake3Shader      = GLSL_GetShaderProgram("fogQuake3");
-	gl_fogGlobalShader      = GLSL_GetShaderProgram("fogGlobal");
-	gl_heatHazeShader       = GLSL_GetShaderProgram("heatHaze");
-	gl_screenShader         = GLSL_GetShaderProgram("screen");
-	gl_portalShader         = GLSL_GetShaderProgram("portal");
-	gl_toneMappingShader    = GLSL_GetShaderProgram("toneMapping");
-	gl_contrastShader       = GLSL_GetShaderProgram("contrast");
-	gl_cameraEffectsShader  = GLSL_GetShaderProgram("cameraEffects");
-	gl_blurXShader          = GLSL_GetShaderProgram("blurX");
-	gl_blurYShader          = GLSL_GetShaderProgram("blurY");
-	gl_debugShadowMapShader = GLSL_GetShaderProgram("debugShadowMap");
+	trProg.gl_shadowFillShader     = GLSL_GetShaderProgram("shadowFill");
+	trProg.gl_reflectionShader     = GLSL_GetShaderProgram("reflection");
+	trProg.gl_skyboxShader         = GLSL_GetShaderProgram("skybox");
+	trProg.gl_fogQuake3Shader      = GLSL_GetShaderProgram("fogQuake3");
+	trProg.gl_fogGlobalShader      = GLSL_GetShaderProgram("fogGlobal");
+	trProg.gl_heatHazeShader       = GLSL_GetShaderProgram("heatHaze");
+	trProg.gl_screenShader         = GLSL_GetShaderProgram("screen");
+	trProg.gl_portalShader         = GLSL_GetShaderProgram("portal");
+	trProg.gl_toneMappingShader    = GLSL_GetShaderProgram("toneMapping");
+	trProg.gl_contrastShader       = GLSL_GetShaderProgram("contrast");
+	trProg.gl_cameraEffectsShader  = GLSL_GetShaderProgram("cameraEffects");
+	trProg.gl_blurXShader          = GLSL_GetShaderProgram("blurX");
+	trProg.gl_blurYShader          = GLSL_GetShaderProgram("blurY");
+	trProg.gl_debugShadowMapShader = GLSL_GetShaderProgram("debugShadowMap");
 
-	gl_liquidShader             = GLSL_GetShaderProgram("liquid");
-	gl_rotoscopeShader          = GLSL_GetShaderProgram("rotoscope");
-	gl_bloomShader              = GLSL_GetShaderProgram("bloom");
-	gl_refractionShader         = GLSL_GetShaderProgram("refraction");
-	gl_depthToColorShader       = GLSL_GetShaderProgram("depthToColor");
-	gl_volumetricFogShader      = GLSL_GetShaderProgram("volumetricFog");
-	gl_volumetricLightingShader = GLSL_GetShaderProgram("lightVolume_omni");
-	gl_dispersionShader         = GLSL_GetShaderProgram("dispersion");
+	trProg.gl_liquidShader             = GLSL_GetShaderProgram("liquid");
+	trProg.gl_rotoscopeShader          = GLSL_GetShaderProgram("rotoscope");
+	trProg.gl_bloomShader              = GLSL_GetShaderProgram("bloom");
+	trProg.gl_refractionShader         = GLSL_GetShaderProgram("refraction");
+	trProg.gl_depthToColorShader       = GLSL_GetShaderProgram("depthToColor");
+	trProg.gl_volumetricFogShader      = GLSL_GetShaderProgram("volumetricFog");
+	trProg.gl_volumetricLightingShader = GLSL_GetShaderProgram("lightVolume_omni");
+	trProg.gl_dispersionShader         = GLSL_GetShaderProgram("dispersion");
 
-	gl_depthOfField = GLSL_GetShaderProgram("depthOfField");
-	gl_ssao         = GLSL_GetShaderProgram("SSAO");
+	trProg.gl_depthOfField = GLSL_GetShaderProgram("depthOfField");
+	trProg.gl_ssao         = GLSL_GetShaderProgram("SSAO");
 
-	gl_colorCorrection = GLSL_GetShaderProgram("colorCorrection");
+	trProg.gl_colorCorrection = GLSL_GetShaderProgram("colorCorrection");
 
 	endTime = ri.Milliseconds();
 
@@ -2439,7 +2398,7 @@ void GLSL_ShutdownGPUShaders(void)
 
 	Com_Dealloc(definitionText);
 
-	glState.currentProgram = 0;
+	Com_Memset(&trProg, 0, sizeof(trPrograms_t));
 	glUseProgram(0);
 }
 
@@ -2524,7 +2483,7 @@ void GLSL_SetUniform_DeformParms(deformStage_t deforms[], int numDeforms)
 		default:
 			break;
 		}
-		GLSL_SetUniformFloatARR(selectedProgram, UNIFORM_DEFORMPARMS, deformParms, MAX_SHADER_DEFORM_PARMS);
+		GLSL_SetUniformFloatARR(trProg.selectedProgram, UNIFORM_DEFORMPARMS, deformParms, MAX_SHADER_DEFORM_PARMS);
 	}
 }
 

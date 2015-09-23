@@ -875,7 +875,7 @@ void Tess_StageIteratorSky(void)
 			R_BindVBO(tess.vbo);
 			R_BindIBO(tess.ibo);
 
-			SetMacrosAndSelectProgram(gl_skyboxShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
+			SetMacrosAndSelectProgram(trProg.gl_skyboxShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
 
 			SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);   // in world space
 			SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
@@ -895,7 +895,7 @@ void Tess_StageIteratorSky(void)
 				SetUniformVec4(UNIFORM_PORTALPLANE, plane);
 			}
 
-			GLSL_SetRequiredVertexPointers(gl_skyboxShader);
+			GLSL_SetRequiredVertexPointers(trProg.gl_skyboxShader);
 
 			// bind u_ColorMap
 			SelectTexture(TEX_COLOR);

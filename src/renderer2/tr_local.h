@@ -3023,48 +3023,53 @@ typedef struct
 	int numUsedOcclusionQueryObjects;
 } trGlobals_t;
 
-extern programInfo_t *gl_genericShader;
-extern programInfo_t *gl_lightMappingShader;
-extern programInfo_t *gl_vertexLightingShader_DBS_entity;
-extern programInfo_t *gl_vertexLightingShader_DBS_world;
-extern programInfo_t *gl_forwardLightingShader_omniXYZ;
-extern programInfo_t *gl_forwardLightingShader_projXYZ;
-extern programInfo_t *gl_forwardLightingShader_directionalSun;
-extern programInfo_t *gl_deferredLightingShader_omniXYZ;
-extern programInfo_t *gl_deferredLightingShader_projXYZ;
-extern programInfo_t *gl_deferredLightingShader_directionalSun;
-extern programInfo_t *gl_geometricFillShader;
-extern programInfo_t *gl_shadowFillShader;
-extern programInfo_t *gl_reflectionShader;
-extern programInfo_t *gl_skyboxShader;
-extern programInfo_t *gl_fogQuake3Shader;
-extern programInfo_t *gl_fogGlobalShader;
-extern programInfo_t *gl_heatHazeShader;
-extern programInfo_t *gl_screenShader;
-extern programInfo_t *gl_portalShader;
-extern programInfo_t *gl_toneMappingShader;
-extern programInfo_t *gl_contrastShader;
-extern programInfo_t *gl_cameraEffectsShader;
-extern programInfo_t *gl_blurXShader;
-extern programInfo_t *gl_blurYShader;
-extern programInfo_t *gl_debugShadowMapShader;
+typedef struct trPrograms_s
+{
+	programInfo_t *gl_genericShader;
+	programInfo_t *gl_lightMappingShader;
+	programInfo_t *gl_vertexLightingShader_DBS_entity;
+	programInfo_t *gl_vertexLightingShader_DBS_world;
+	programInfo_t *gl_forwardLightingShader_omniXYZ;
+	programInfo_t *gl_forwardLightingShader_projXYZ;
+	programInfo_t *gl_forwardLightingShader_directionalSun;
+	programInfo_t *gl_deferredLightingShader_omniXYZ;
+	programInfo_t *gl_deferredLightingShader_projXYZ;
+	programInfo_t *gl_deferredLightingShader_directionalSun;
+	programInfo_t *gl_geometricFillShader;
+	programInfo_t *gl_shadowFillShader;
+	programInfo_t *gl_reflectionShader;
+	programInfo_t *gl_skyboxShader;
+	programInfo_t *gl_fogQuake3Shader;
+	programInfo_t *gl_fogGlobalShader;
+	programInfo_t *gl_heatHazeShader;
+	programInfo_t *gl_screenShader;
+	programInfo_t *gl_portalShader;
+	programInfo_t *gl_toneMappingShader;
+	programInfo_t *gl_contrastShader;
+	programInfo_t *gl_cameraEffectsShader;
+	programInfo_t *gl_blurXShader;
+	programInfo_t *gl_blurYShader;
+	programInfo_t *gl_debugShadowMapShader;
 
-extern programInfo_t *gl_liquidShader;
-extern programInfo_t *gl_rotoscopeShader;
-extern programInfo_t *gl_bloomShader;
-extern programInfo_t *gl_refractionShader;
-extern programInfo_t *gl_depthToColorShader;
-extern programInfo_t *gl_volumetricFogShader;
-extern programInfo_t *gl_volumetricLightingShader;
-extern programInfo_t *gl_dispersionShader;
+	programInfo_t *gl_liquidShader;
+	programInfo_t *gl_rotoscopeShader;
+	programInfo_t *gl_bloomShader;
+	programInfo_t *gl_refractionShader;
+	programInfo_t *gl_depthToColorShader;
+	programInfo_t *gl_volumetricFogShader;
+	programInfo_t *gl_volumetricLightingShader;
+	programInfo_t *gl_dispersionShader;
 
-extern programInfo_t *gl_depthOfField;
-extern programInfo_t *gl_ssao;
+	programInfo_t *gl_depthOfField;
+	programInfo_t *gl_ssao;
 
-extern programInfo_t *gl_colorCorrection;
+	programInfo_t *gl_colorCorrection;
 
-//This is set with the GLSL_SelectPermutation
-extern shaderProgram_t *selectedProgram;
+	//This is set with the GLSL_SelectPermutation
+	shaderProgram_t *selectedProgram;
+} trPrograms_t;
+
+extern trPrograms_t trProg;
 
 extern const matrix_t quakeToOpenGLMatrix;
 extern const matrix_t openGLToQuakeMatrix;
@@ -4226,18 +4231,18 @@ void GLSL_SetUniform_DeformParms(deformStage_t deforms[], int numDeforms);
 void GLSL_SetUniform_ColorModulate(programInfo_t *prog, int colorGen, int alphaGen);
 void GLSL_SetUniform_AlphaTest(uint32_t stateBits);
 
-#define SelectTexture(tex) GLSL_SelectTexture(selectedProgram, tex)
-#define SetUniformBoolean(uniformNum, value) GLSL_SetUniformBoolean(selectedProgram, uniformNum, value)
-#define SetUniformInt(uniformNum, value) GLSL_SetUniformInt(selectedProgram, uniformNum, value)
-#define SetUniformFloat(uniformNum, value) GLSL_SetUniformFloat(selectedProgram, uniformNum, value)
-#define SetUniformFloat5(uniformNum, value) GLSL_SetUniformFloat5(selectedProgram, uniformNum, value)
-#define SetUniformVec2(uniformNum, value) GLSL_SetUniformVec2(selectedProgram, uniformNum, value)
-#define SetUniformVec3(uniformNum, value) GLSL_SetUniformVec3(selectedProgram, uniformNum, value)
-#define SetUniformVec4(uniformNum, value) GLSL_SetUniformVec4(selectedProgram, uniformNum, value)
-#define SetUniformMatrix16(uniformNum, value) GLSL_SetUniformMatrix16(selectedProgram, uniformNum, value)
-#define SetUniformFloatARR(uniformNum, value, size) GLSL_SetUniformFloatARR(selectedProgram, uniformNum, value, size)
-#define SetUniformVec4ARR(uniformNum, value, size) GLSL_SetUniformVec4ARR(selectedProgram, uniformNum, value, size)
-#define SetUniformMatrix16ARR(uniformNum, value, size) GLSL_SetUniformMatrix16ARR(selectedProgram, uniformNum, value, size)
+#define SelectTexture(tex) GLSL_SelectTexture(trProg.selectedProgram, tex)
+#define SetUniformBoolean(uniformNum, value) GLSL_SetUniformBoolean(trProg.selectedProgram, uniformNum, value)
+#define SetUniformInt(uniformNum, value) GLSL_SetUniformInt(trProg.selectedProgram, uniformNum, value)
+#define SetUniformFloat(uniformNum, value) GLSL_SetUniformFloat(trProg.selectedProgram, uniformNum, value)
+#define SetUniformFloat5(uniformNum, value) GLSL_SetUniformFloat5(trProg.selectedProgram, uniformNum, value)
+#define SetUniformVec2(uniformNum, value) GLSL_SetUniformVec2(trProg.selectedProgram, uniformNum, value)
+#define SetUniformVec3(uniformNum, value) GLSL_SetUniformVec3(trProg.selectedProgram, uniformNum, value)
+#define SetUniformVec4(uniformNum, value) GLSL_SetUniformVec4(trProg.selectedProgram, uniformNum, value)
+#define SetUniformMatrix16(uniformNum, value) GLSL_SetUniformMatrix16(trProg.selectedProgram, uniformNum, value)
+#define SetUniformFloatARR(uniformNum, value, size) GLSL_SetUniformFloatARR(trProg.selectedProgram, uniformNum, value, size)
+#define SetUniformVec4ARR(uniformNum, value, size) GLSL_SetUniformVec4ARR(trProg.selectedProgram, uniformNum, value, size)
+#define SetUniformMatrix16ARR(uniformNum, value, size) GLSL_SetUniformMatrix16ARR(trProg.selectedProgram, uniformNum, value, size)
 
 #define SelectProgram(program) Ren_LogComment("SelectProgram called: (%s:%d)\n", __FILE__, __LINE__); GLSL_SelectPermutation(program)
 #define SetMacrosAndSelectProgram(program, ...) GLSL_SetMacroStates(program, NUMARGS(__VA_ARGS__), ## __VA_ARGS__); SelectProgram(program)
