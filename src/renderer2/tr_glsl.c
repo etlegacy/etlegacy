@@ -901,15 +901,6 @@ static void GLSL_BuildShaderExtraDef()
 		}
 	}
 
-	if (r_deferredShading->integer && glConfig2.maxColorAttachments >= 4 && glConfig2.textureFloatAvailable &&
-	    glConfig2.drawBuffersAvailable && glConfig2.maxDrawBuffers >= 4)
-	{
-		if (r_deferredShading->integer == DS_STANDARD)
-		{
-			BUFFEXT("#ifndef r_DeferredShading\n#define r_DeferredShading 1\n#endif\n");
-		}
-	}
-
 	if (r_hdrRendering->integer && glConfig2.framebufferObjectAvailable && glConfig2.textureFloatAvailable)
 	{
 		BUFFEXT("#ifndef r_HDRRendering\n#define r_HDRRendering 1\n#endif\n");
@@ -2322,19 +2313,9 @@ void GLSL_CompileGPUShaders(void)
 	trProg.gl_vertexLightingShader_DBS_entity = GLSL_GetShaderProgram("vertexLighting_DBS_entity");
 	trProg.gl_vertexLightingShader_DBS_world  = GLSL_GetShaderProgram("vertexLighting_DBS_world");
 
-	if (DS_STANDARD_ENABLED())
-	{
-		trProg.gl_geometricFillShader                   = GLSL_GetShaderProgram("geometricFill");
-		trProg.gl_deferredLightingShader_omniXYZ        = GLSL_GetShaderProgram("deferredLighting_omniXYZ");
-		trProg.gl_deferredLightingShader_projXYZ        = GLSL_GetShaderProgram("deferredLighting_projXYZ");
-		trProg.gl_deferredLightingShader_directionalSun = GLSL_GetShaderProgram("deferredLighting_directionalSun");
-	}
-	else
-	{
-		trProg.gl_forwardLightingShader_omniXYZ        = GLSL_GetShaderProgram("forwardLighting_omniXYZ");
-		trProg.gl_forwardLightingShader_projXYZ        = GLSL_GetShaderProgram("forwardLighting_projXYZ");
-		trProg.gl_forwardLightingShader_directionalSun = GLSL_GetShaderProgram("forwardLighting_directionalSun");
-	}
+	trProg.gl_forwardLightingShader_omniXYZ        = GLSL_GetShaderProgram("forwardLighting_omniXYZ");
+	trProg.gl_forwardLightingShader_projXYZ        = GLSL_GetShaderProgram("forwardLighting_projXYZ");
+	trProg.gl_forwardLightingShader_directionalSun = GLSL_GetShaderProgram("forwardLighting_directionalSun");
 
 	trProg.gl_shadowFillShader     = GLSL_GetShaderProgram("shadowFill");
 	trProg.gl_reflectionShader     = GLSL_GetShaderProgram("reflection");

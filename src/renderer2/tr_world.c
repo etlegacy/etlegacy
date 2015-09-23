@@ -1898,11 +1898,7 @@ static void R_CoherentHierachicalCulling()
 		startTime = ri.Milliseconds();
 	}
 
-	if (DS_STANDARD_ENABLED())
-	{
-		R_BindFBO(tr.geometricRenderFBO);
-	}
-	else if (HDR_ENABLED())
+	if (HDR_ENABLED())
 	{
 		R_BindFBO(tr.deferredRenderFBO);
 	}

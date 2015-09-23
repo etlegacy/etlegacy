@@ -40,8 +40,6 @@
 #   include "../rendererGLES/tr_local.h"
 #else // OpenGL 2 renderer
 #   include "../renderer/tr_local.h"
-#include "tr_public.h"
-
 #endif
 
 qboolean GL_CheckForExtension(const char *ext)
@@ -613,10 +611,5 @@ void QDECL Com_Error(int level, const char *error, ...)
 	va_end(argptr);
 
 	ri.Error(level, "%s", text);
-}
-#else
-void make_osx_happy(void)
-{
-	//This is here just so that osx:s compiler is happy and does not whine about not having anything to link
 }
 #endif

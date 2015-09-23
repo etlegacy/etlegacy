@@ -490,50 +490,8 @@ void R_InitFBOs(void)
 	// make sure the render thread is stopped
 	R_IssuePendingRenderCommands();
 
-	if (DS_STANDARD_ENABLED())
-	{
-		// geometricRender FBO as G-Buffer for deferred shading
-		Ren_Developer("Deferred Shading enabled\n");
-
-		if (glConfig2.textureNPOTAvailable)
-		{
-			width  = glConfig.vidWidth;
-			height = glConfig.vidHeight;
-		}
-		else
-		{
-			width  = NearestPowerOfTwo(glConfig.vidWidth);
-			height = NearestPowerOfTwo(glConfig.vidHeight);
-		}
-
-
-		tr.geometricRenderFBO = R_CreateFBO("_geometricRender", width, height);
-		R_BindFBO(tr.geometricRenderFBO);
-
-		R_CreateFBODepthBuffer(tr.geometricRenderFBO, GL_DEPTH_COMPONENT24);
-		R_AttachFBOTextureDepth(tr.depthRenderImage->texnum);
-
-		// enable all attachments as draw buffers
-		//glDrawBuffersARB(4, geometricRenderTargets);
-
-		R_CreateFBOColorBuffer(tr.geometricRenderFBO, GL_RGBA, 0);
-		R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.deferredRenderFBOImage->texnum, 0);
-
-		R_CreateFBOColorBuffer(tr.geometricRenderFBO, GL_RGBA, 1);
-		R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.deferredDiffuseFBOImage->texnum, 1);
-
-		R_CreateFBOColorBuffer(tr.geometricRenderFBO, GL_RGBA, 2);
-		R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.deferredNormalFBOImage->texnum, 2);
-
-		R_CreateFBOColorBuffer(tr.geometricRenderFBO, GL_RGBA, 3);
-		R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.deferredSpecularFBOImage->texnum, 3);
-
-		R_CheckFBO(tr.geometricRenderFBO);
-	}
-	else
 	{
 		// forward shading
-
 		if (glConfig2.textureNPOTAvailable)
 		{
 			width  = glConfig.vidWidth;

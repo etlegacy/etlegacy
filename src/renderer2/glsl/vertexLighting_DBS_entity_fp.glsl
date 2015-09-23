@@ -216,14 +216,7 @@ void main()
 	// convert normal to [0,1] color space
 	N = N * 0.5 + 0.5;
 
-#if defined(r_DeferredShading)
-	gl_FragData[0] = color;
-	gl_FragData[1] = vec4(diffuse.rgb, 0.0);
-	gl_FragData[2] = vec4(N, 0.0);
-	gl_FragData[3] = vec4(specular, 0.0);
-#else
 	gl_FragColor = color;
-#endif
 
 	// gl_FragColor = vec4(vec3(NL, NL, NL), diffuse.a);
 

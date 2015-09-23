@@ -135,15 +135,7 @@ void main()
 	color.rgb *= light;
 	color.rgb += specular;
 
-#if defined(r_DeferredShading)
-	gl_FragData[0] = color;                                 // var_Color;
-	gl_FragData[1] = vec4(diffuse.rgb, var_LightColor.a);   // vec4(var_Color.rgb, 1.0 - var_Color.a);
-	gl_FragData[2] = vec4(N, var_LightColor.a);
-	gl_FragData[3] = vec4(specular, var_LightColor.a);
-#else
 	gl_FragColor = color;
-#endif
-
 
 #elif 1
 
@@ -193,14 +185,7 @@ void main()
 	color = vec4(vec3(var_LightColor.a), 1.0);
 #endif
 
-#if defined(r_DeferredShading)
-	gl_FragData[0] = color;
-	gl_FragData[1] = vec4(diffuse.rgb, var_LightColor.a);
-	gl_FragData[2] = vec4(N, var_LightColor.a);
-	gl_FragData[3] = vec4(0.0, 0.0, 0.0, var_LightColor.a);
-#else
 	gl_FragColor = color;
-#endif
 
 #else // USE_NORMAL_MAPPING
 
@@ -252,15 +237,7 @@ void main()
 	vec4 color = vec4(diffuse.rgb * light, var_LightColor.a);
 	// vec4 color = vec4(vec3(NL, NL, NL), diffuse.a);
 
-#if defined(r_DeferredShading)
-	gl_FragData[0] = color;                                 // var_Color;
-	gl_FragData[1] = vec4(diffuse.rgb, var_LightColor.a);   // vec4(var_Color.rgb, 1.0 - var_Color.a);
-	gl_FragData[2] = vec4(N, var_LightColor.a);
-	gl_FragData[3] = vec4(0.0, 0.0, 0.0, var_LightColor.a);
-#else
 	gl_FragColor = color;
-#endif
-
 
 #endif // USE_NORMAL_MAPPING
 

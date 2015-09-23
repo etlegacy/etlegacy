@@ -238,13 +238,6 @@ cvar_t *r_showBspNodes;
 cvar_t *r_showParallelShadowSplits;
 cvar_t *r_showDecalProjectors;
 
-cvar_t *r_showDeferredDiffuse;
-cvar_t *r_showDeferredNormal;
-cvar_t *r_showDeferredSpecular;
-cvar_t *r_showDeferredPosition;
-cvar_t *r_showDeferredRender;
-cvar_t *r_showDeferredLight;
-
 cvar_t *r_vboFaces;
 cvar_t *r_vboCurves;
 cvar_t *r_vboTriangles;
@@ -262,7 +255,6 @@ cvar_t *r_mergeClusterCurves;
 cvar_t *r_mergeClusterTriangles;
 #endif
 
-cvar_t *r_deferredShading;
 cvar_t *r_parallaxMapping;
 cvar_t *r_parallaxDepthScale;
 
@@ -1169,7 +1161,6 @@ void R_Register(void)
 	r_simpleMipMaps           = ri.Cvar_Get("r_simpleMipMaps", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_uiFullScreen            = ri.Cvar_Get("r_uifullscreen", "0", 0);
 	r_subdivisions            = ri.Cvar_Get("r_subdivisions", "4", CVAR_ARCHIVE | CVAR_LATCH);
-	r_deferredShading         = ri.Cvar_Get("r_deferredShading", "0", CVAR_CHEAT | CVAR_LATCH);
 	r_parallaxMapping         = ri.Cvar_Get("r_parallaxMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_dynamicLightCastShadows = ri.Cvar_Get("r_dynamicLightCastShadows", "1", CVAR_ARCHIVE);
 	r_precomputedLighting     = ri.Cvar_Get("r_precomputedLighting", "1", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1269,12 +1260,6 @@ void R_Register(void)
 	r_chcIgnoreLeaves               = ri.Cvar_Get("r_chcIgnoreLeaves", "0", CVAR_CHEAT);
 
 	r_hdrRendering = ri.Cvar_Get("r_hdrRendering", "0", CVAR_ARCHIVE | CVAR_LATCH);
-
-	// HACK turn off HDR for development
-	if (r_deferredShading->integer)
-	{
-		ri.Cvar_AssertCvarRange(r_hdrRendering, 0, 0, qtrue);
-	}
 
 	r_hdrMinLuminance        = ri.Cvar_Get("r_hdrMinLuminance", "0.18", CVAR_CHEAT);
 	r_hdrMaxLuminance        = ri.Cvar_Get("r_hdrMaxLuminance", "3000", CVAR_CHEAT);
@@ -1455,13 +1440,6 @@ void R_Register(void)
 	r_showBspNodes             = ri.Cvar_Get("r_showBspNodes", "0", CVAR_CHEAT);
 	r_showParallelShadowSplits = ri.Cvar_Get("r_showParallelShadowSplits", "0", CVAR_CHEAT | CVAR_LATCH);
 	r_showDecalProjectors      = ri.Cvar_Get("r_showDecalProjectors", "0", CVAR_CHEAT);
-
-	r_showDeferredDiffuse  = ri.Cvar_Get("r_showDeferredDiffuse", "0", CVAR_CHEAT);
-	r_showDeferredNormal   = ri.Cvar_Get("r_showDeferredNormal", "0", CVAR_CHEAT);
-	r_showDeferredSpecular = ri.Cvar_Get("r_showDeferredSpecular", "0", CVAR_CHEAT);
-	r_showDeferredPosition = ri.Cvar_Get("r_showDeferredPosition", "0", CVAR_CHEAT);
-	r_showDeferredRender   = ri.Cvar_Get("r_showDeferredRender", "0", CVAR_CHEAT);
-	r_showDeferredLight    = ri.Cvar_Get("r_showDeferredLight", "0", CVAR_CHEAT);
 
 	r_detailTextures = ri.Cvar_Get("r_detailtextures", "1", CVAR_ARCHIVE | CVAR_LATCH);
 

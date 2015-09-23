@@ -134,16 +134,8 @@ void R_PerformanceCounters(void)
 #endif
 	else if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
 	{
-		if (DS_STANDARD_ENABLED())
-		{
-			Ren_Print("deferred shading times: g-buffer:%i lighting:%i translucent:%i\n", backEnd.pc.c_deferredGBufferTime,
-			          backEnd.pc.c_deferredLightingTime, backEnd.pc.c_forwardTranslucentTime);
-		}
-		else
-		{
-			Ren_Print("forward shading times: ambient:%i lighting:%i\n", backEnd.pc.c_forwardAmbientTime,
-			          backEnd.pc.c_forwardLightingTime);
-		}
+		Ren_Print("forward shading times: ambient:%i lighting:%i\n", backEnd.pc.c_forwardAmbientTime,
+				  backEnd.pc.c_forwardLightingTime);
 	}
 	else if (r_speeds->integer == RSPEEDS_CHC)
 	{

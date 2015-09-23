@@ -100,8 +100,6 @@ typedef enum
 
 } renderSpeeds_t;
 
-#define DS_STANDARD_ENABLED() ((r_deferredShading->integer == DS_STANDARD && glConfig2.maxColorAttachments >= 4 && glConfig2.drawBuffersAvailable && glConfig2.maxDrawBuffers >= 4))
-
 #define HDR_ENABLED() ((r_hdrRendering->integer && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable))
 
 #define REF_CUBEMAP_SIZE    32
@@ -2778,9 +2776,6 @@ typedef struct
 	int c_forwardLightingTime;
 	int c_forwardTranslucentTime;
 
-	int c_deferredGBufferTime;
-	int c_deferredLightingTime;
-
 	int c_multiDrawElements;
 	int c_multiDrawPrimitives;
 	int c_multiVboIndexes;
@@ -3032,10 +3027,6 @@ typedef struct trPrograms_s
 	programInfo_t *gl_forwardLightingShader_omniXYZ;
 	programInfo_t *gl_forwardLightingShader_projXYZ;
 	programInfo_t *gl_forwardLightingShader_directionalSun;
-	programInfo_t *gl_deferredLightingShader_omniXYZ;
-	programInfo_t *gl_deferredLightingShader_projXYZ;
-	programInfo_t *gl_deferredLightingShader_directionalSun;
-	programInfo_t *gl_geometricFillShader;
 	programInfo_t *gl_shadowFillShader;
 	programInfo_t *gl_reflectionShader;
 	programInfo_t *gl_skyboxShader;
@@ -3263,13 +3254,6 @@ extern cvar_t *r_showBspNodes;
 extern cvar_t *r_showParallelShadowSplits;
 extern cvar_t *r_showDecalProjectors;
 
-extern cvar_t *r_showDeferredDiffuse;
-extern cvar_t *r_showDeferredNormal;
-extern cvar_t *r_showDeferredSpecular;
-extern cvar_t *r_showDeferredPosition;
-extern cvar_t *r_showDeferredRender;
-extern cvar_t *r_showDeferredLight;
-
 extern cvar_t *r_vboFaces;
 extern cvar_t *r_vboCurves;
 extern cvar_t *r_vboTriangles;
@@ -3287,7 +3271,6 @@ extern cvar_t *r_mergeClusterCurves;
 extern cvar_t *r_mergeClusterTriangles;
 #endif
 
-extern cvar_t *r_deferredShading;
 extern cvar_t *r_parallaxMapping;
 extern cvar_t *r_parallaxDepthScale;
 

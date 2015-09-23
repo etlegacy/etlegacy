@@ -2946,24 +2946,15 @@ static void R_CreateDownScaleFBOImages(void)
 
 static void R_CreateDeferredRenderFBOImages(void)
 {
-	if (DS_STANDARD_ENABLED())
-	{
-		tr.deferredDiffuseFBOImage  = R_CreateRenderImage("_deferredDiffuseFBO", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
-		tr.deferredNormalFBOImage   = R_CreateRenderImage("_deferredNormalFBO", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
-		tr.deferredSpecularFBOImage = R_CreateRenderImage("_deferredSpecularFBO", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
-	}
-	else //if(DS_PREPASS_LIGHTING_ENABLED())
-	{
-		tr.deferredNormalFBOImage = R_CreateRenderImage("_deferredNormalFBO", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
+	tr.deferredNormalFBOImage = R_CreateRenderImage("_deferredNormalFBO", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
 
-		if (HDR_ENABLED())
-		{
-			tr.lightRenderFBOImage = R_CreateRenderImage("_lightRenderFBO", qfalse, IF_RGBA16F, FT_NEAREST, WT_CLAMP);
-		}
-		else
-		{
-			tr.lightRenderFBOImage = R_CreateRenderImage("_lightRenderFBO", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
-		}
+	if (HDR_ENABLED())
+	{
+		tr.lightRenderFBOImage = R_CreateRenderImage("_lightRenderFBO", qfalse, IF_RGBA16F, FT_NEAREST, WT_CLAMP);
+	}
+	else
+	{
+		tr.lightRenderFBOImage = R_CreateRenderImage("_lightRenderFBO", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
 	}
 
 	if (HDR_ENABLED())

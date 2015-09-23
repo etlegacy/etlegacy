@@ -24,12 +24,5 @@ void main()
 
 	vec4 color = textureCube(u_ColorMap, I).rgba;
 
-#if defined(r_DeferredShading)
-	gl_FragData[0] = color;
-	gl_FragData[1] = vec4(0.0);
-	gl_FragData[2] = vec4(0.0);
-	gl_FragData[3] = vec4(0.0);
-#else
 	gl_FragColor = color;
-#endif
 }
