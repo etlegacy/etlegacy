@@ -21,73 +21,73 @@ vec4 DeformPosition(const int deformGen,
                     const vec3 normal,
                     const vec2 st)
 {
-    vec4 deformed = pos;
+	vec4 deformed = pos;
 
-    switch(deformGen)
-    {
-    	case DGEN_WAVE_SIN:
-    	{
-    		float off = (pos.x + pos.y + pos.z) * spread;
-        float scale = wave.x  + sin(off + wave.z + (time * wave.w)) * wave.y;
-        vec3 offset = normal * scale;
+	switch(deformGen)
+	{
+		case DGEN_WAVE_SIN:
+		{
+			float off = (pos.x + pos.y + pos.z) * spread;
+			float scale = wave.x  + sin(off + wave.z + (time * wave.w)) * wave.y;
+			vec3 offset = normal * scale;
 
-        deformed.xyz += offset;
-        break;
-    	}
-    	case DGEN_WAVE_SQUARE:
-    	{
-    		float off = (pos.x + pos.y + pos.z) * spread;
-        float scale = wave.x  + sign(sin(off + wave.z + (time * wave.w))) * wave.y;
-        vec3 offset = normal * scale;
+			deformed.xyz += offset;
+			break;
+		}
+		case DGEN_WAVE_SQUARE:
+		{
+			float off = (pos.x + pos.y + pos.z) * spread;
+			float scale = wave.x  + sign(sin(off + wave.z + (time * wave.w))) * wave.y;
+			vec3 offset = normal * scale;
 
-        deformed.xyz += offset;
-    		break;
-    	}
-  		case DGEN_WAVE_TRIANGLE:
-  		{
-  			float off = (pos.x + pos.y + pos.z) * spread;
-        float scale = wave.x  + triangle(off + wave.z + (time * wave.w)) * wave.y;
-        vec3 offset = normal * scale;
+			deformed.xyz += offset;
+			break;
+		}
+		case DGEN_WAVE_TRIANGLE:
+		{
+			float off = (pos.x + pos.y + pos.z) * spread;
+			float scale = wave.x  + triangle(off + wave.z + (time * wave.w)) * wave.y;
+			vec3 offset = normal * scale;
 
-        deformed.xyz += offset;
-  			break;
-  		}
-			case DGEN_WAVE_SAWTOOTH:
-			{
-				float off = (pos.x + pos.y + pos.z) * spread;
-        float scale = wave.x  + sawtooth(off + wave.z + (time * wave.w)) * wave.y;
-        vec3 offset = normal * scale;
+			deformed.xyz += offset;
+			break;
+		}
+		case DGEN_WAVE_SAWTOOTH:
+		{
+			float off = (pos.x + pos.y + pos.z) * spread;
+			float scale = wave.x  + sawtooth(off + wave.z + (time * wave.w)) * wave.y;
+			vec3 offset = normal * scale;
 
-        deformed.xyz += offset;
-				break;
-			}
-			case DGEN_WAVE_INVERSE_SAWTOOTH:
-			{
-				float off = (pos.x + pos.y + pos.z) * spread;
-        float scale = wave.x + (1.0 - sawtooth(off + wave.z + (time * wave.w))) * wave.y;
-        vec3 offset = normal * scale;
+			deformed.xyz += offset;
+			break;
+		}
+		case DGEN_WAVE_INVERSE_SAWTOOTH:
+		{
+			float off = (pos.x + pos.y + pos.z) * spread;
+			float scale = wave.x + (1.0 - sawtooth(off + wave.z + (time * wave.w))) * wave.y;
+			vec3 offset = normal * scale;
 
-        deformed.xyz += offset;
-				break;
-			}
-			case DGEN_BULGE:
-			{
-				float bulgeWidth = bulge.x;
-        float bulgeHeight = bulge.y;
-        float bulgeSpeed = bulge.z;
+			deformed.xyz += offset;
+			break;
+		}
+		case DGEN_BULGE:
+		{
+			float bulgeWidth = bulge.x;
+			float bulgeHeight = bulge.y;
+			float bulgeSpeed = bulge.z;
 
-        float now = time * bulgeSpeed;
+			float now = time * bulgeSpeed;
 
-        float off = (M_PI * 0.25) * st.x * bulgeWidth + now;
-        float scale = sin(off) * bulgeHeight;
-        vec3 offset = normal * scale;
+			float off = (M_PI * 0.25) * st.x * bulgeWidth + now;
+			float scale = sin(off) * bulgeHeight;
+			vec3 offset = normal * scale;
 
-        deformed.xyz += offset;
-				break;
-			}
-    }
+			deformed.xyz += offset;
+			break;
+		}
+	}
 
-    return deformed;
+	return deformed;
 }
 
 float WaveValue(float func, float base, float amplitude, float phase, float freq, float time)
