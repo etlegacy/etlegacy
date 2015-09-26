@@ -89,11 +89,12 @@ void G_PrintConfigs(gentity_t *ent)
 }
 
 /**
- * @brief Checks is config file is in paths (used before initiating a vote for configs)
+ * @brief Checks if config file is in paths (used before initiating a vote for configs)
  */
 qboolean G_isValidConfig(gentity_t *ent, const char *configname)
 {
-	char filename[MAX_QPATH];
+	fileHandle_t f;
+	char         filename[MAX_QPATH];
 
 	if (configname[0])
 	{
@@ -105,11 +106,13 @@ qboolean G_isValidConfig(gentity_t *ent, const char *configname)
 		return qfalse;
 	}
 
-	if (!trap_FS_FOpenFile(va("configs/%s.config", filename), NULL, FS_READ))
+	if (!trap_FS_FOpenFile(va("configs/%s.config", filename), &f, FS_READ))
 	{
 		G_refPrintf(ent, "^3Warning: No config with filename '%s' found\n", filename);
 		return qfalse;
 	}
+
+	trap_FS_FCloseFile(f);
 
 	return qtrue;
 }
@@ -431,7 +434,8 @@ void G_configLoadAndSet(const char *name)
 // Force settings to predefined state.
 qboolean G_configSet(const char *configname)
 {
-	char filename[MAX_QPATH];
+	fileHandle_t f;
+	char         filename[MAX_QPATH];
 
 	if (configname[0])
 	{
@@ -447,13 +451,15 @@ qboolean G_configSet(const char *configname)
 	}
 
 	G_Printf("Will try to load config: \"configs/%s.config\"\n", filename);
-	if (!trap_FS_FOpenFile(va("configs/%s.config", filename), NULL, FS_READ))
+	if (!trap_FS_FOpenFile(va("configs/%s.config", filename), &f, FS_READ))
 	{
 		G_Printf("^3Warning: No config with filename '%s' found\n", filename);
 		return qfalse;
 	}
 
 	G_configLoadAndSet(filename);
+
+	trap_FS_FCloseFile(f);
 
 	//TODO: handle the mapscript hash and run the map script
 	// the current map script will be on 'level.scriptEntity'

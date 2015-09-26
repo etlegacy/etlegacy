@@ -102,7 +102,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	switch (command)
 	{
 	case UI_KEY_EVENT:
-		_UI_KeyEvent(arg0, arg1);
+		_UI_KeyEvent(arg0, (qboolean) arg1);
 		return 0;
 	case UI_MOUSE_EVENT:
 		_UI_MouseEvent(arg0, arg1);
@@ -120,7 +120,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case UI_CONSOLE_COMMAND:
 		return UI_ConsoleCommand(arg0);
 	case UI_DRAW_CONNECT_SCREEN:
-		UI_DrawConnectScreen(arg0);
+		UI_DrawConnectScreen((qboolean) arg0);
 		return 0;
 	case UI_CHECKEXECKEY:
 		return UI_CheckExecKey(arg0);
@@ -449,7 +449,7 @@ void Text_PaintChar(float x, float y, float w, float h, float scale, float s, fl
 
 void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontHelper_t *font)
 {
-	vec4_t      newColor;
+	vec4_t      newColor = { 0, 0, 0, 0 };
 	glyphInfo_t *glyph;
 
 	scalex *= Q_UTF8_GlyphScale(font);
@@ -532,7 +532,7 @@ void Text_Paint(float x, float y, float scale, vec4_t color, const char *text, f
 
 void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, const char *cursor, int limit, int style)
 {
-	vec4_t       newColor;
+	vec4_t       newColor = { 0, 0, 0, 0 };
 	glyphInfo_t  *glyph, *glyph2;
 	fontHelper_t *font    = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
 	float        useScale = scale * Q_UTF8_GlyphScale(font);
@@ -627,7 +627,7 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 
 static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit)
 {
-	vec4_t      newColor;
+	vec4_t      newColor= { 0, 0, 0, 0 };
 	glyphInfo_t *glyph;
 	if (text)
 	{
@@ -1513,7 +1513,7 @@ static void UI_DrawMapCinematic(rectDef_t *rect, float scale, vec4_t color, qboo
 				ui_currentMap.integer = 0;
 				trap_Cvar_Set("ui_currentMap", "0");
 			}
-			map = 0;
+			//map = 0; // not used for real
 		}
 
 		UI_DrawMapPreview(rect, scale, color, net);
@@ -2462,7 +2462,7 @@ static void UI_BuildPlayerList(void)
 	trap_GetClientState(&cs);
 	trap_GetConfigString(CS_PLAYERS + cs.clientNum, info, MAX_INFO_STRING);
 	uiInfo.playerNumber = cs.clientNum;
-	uiInfo.teamLeader   = atoi(Info_ValueForKey(info, "tl"));
+	uiInfo.teamLeader   = (qboolean) atoi(Info_ValueForKey(info, "tl"));
 	team                = atoi(Info_ValueForKey(info, "t"));
 	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
 	count              = atoi(Info_ValueForKey(info, "sv_maxclients"));
@@ -2537,13 +2537,9 @@ static void UI_DrawServerRefreshDate(rectDef_t *rect, float scale, vec4_t color,
 {
 	if (uiInfo.serverStatus.refreshActive)
 	{
-		vec4_t lowLight, newColor;
+		vec4_t lowLight = { (0.8 * color[0]), (0.8 * color[1]), (0.8 * color[2]), (0.8 * color[3]) }, newColor;
 		int    serverCount;
 
-		lowLight[0] = 0.8 * color[0];
-		lowLight[1] = 0.8 * color[1];
-		lowLight[2] = 0.8 * color[2];
-		lowLight[3] = 0.8 * color[3];
 		LerpColor(color, lowLight, newColor, 0.5 + 0.5 * sin((float)(uiInfo.uiDC.realTime / PULSE_DIVISOR)));
 
 		serverCount = trap_LAN_GetServerCount(ui_netSource.integer);
@@ -7085,10 +7081,13 @@ static void UI_FeederSelection(float feederID, int index)
 
 		if (mapName && *mapName)
 		{
+			fileHandle_t f;
+
 			// First check if the corresponding map is downloaded to prevent warning about missing levelshot
-			if (trap_FS_FOpenFile(va("maps/%s.bsp", Info_ValueForKey(info, "mapname")), NULL, FS_READ))
+			if (trap_FS_FOpenFile(va("maps/%s.bsp", Info_ValueForKey(info, "mapname")), &f, FS_READ))
 			{
 				uiInfo.serverStatus.currentServerPreview = trap_R_RegisterShaderNoMip(va("levelshots/%s", Info_ValueForKey(info, "mapname")));
+				trap_FS_FCloseFile(f);
 			}
 			else
 			{
@@ -7690,9 +7689,6 @@ void _UI_SetActiveMenu(uiMenuCommand_t menu)
 	// enusure minumum menu data is cached
 	if (Menu_Count() > 0)
 	{
-		vec3_t v;
-		v[0] = v[1] = v[2] = 0;
-
 		menutype = menu;
 
 		switch (menu)
