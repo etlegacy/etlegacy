@@ -418,12 +418,6 @@ typedef struct serverFilter_s
 	const char *basedir;
 } serverFilter_t;
 
-typedef struct
-{
-	char adrstr[MAX_ADDRESSLENGTH];
-	int start;
-} pinglist_t;
-
 typedef struct serverStatus_s
 {
 	int refreshtime;
