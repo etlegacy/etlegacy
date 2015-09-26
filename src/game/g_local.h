@@ -2132,6 +2132,7 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 qboolean G_configSet(const char *configname);
 void G_ConfigCheckLocked();
 void G_PrintConfigs(gentity_t *ent);
+qboolean G_isValidConfig(gentity_t *ent, const char *configname);
 
 // g_match.c
 void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod);

@@ -74,7 +74,8 @@ void G_PrintConfigs(gentity_t *ent)
 	for (i = 0; i < numconfigs; i++, configPointer += namelen + 1)
 	{
 		namelen = strlen(configPointer);
-		strcpy(filename, Q_StrReplace(configPointer, ".config", ""));
+		Q_strncpyz(filename, Q_StrReplace(configPointer, ".config", ""),sizeof(filename));
+
 		if (!Q_stricmp(filename, g_customConfig.string))
 		{
 			G_refPrintf(ent, "^7Config: ^3%s ^2- in use", filename);
@@ -84,7 +85,33 @@ void G_PrintConfigs(gentity_t *ent)
 			G_refPrintf(ent, "^7Config: ^3%s", filename);
 		}
 	}
-	G_Printf("Config list done\n");
+	G_Printf("Config list done.\n");
+}
+
+/**
+ * @brief Checks is config file is in paths (used before initiating a vote for configs)
+ */
+qboolean G_isValidConfig(gentity_t *ent, const char *configname)
+{
+	char filename[MAX_QPATH];
+
+	if (configname[0])
+	{
+		Q_strncpyz(filename, configname, sizeof(filename));
+	}
+	else
+	{
+		G_refPrintf(ent, "^7No config set.");
+		return qfalse;
+	}
+
+	if (!trap_FS_FOpenFile(va("configs/%s.config", filename), NULL, FS_READ))
+	{
+		G_refPrintf(ent, "^3Warning: No config with filename '%s' found\n", filename);
+		return qfalse;
+	}
+
+	return qtrue;
 }
 
 qboolean G_ParseSettings(int handle, qboolean setvars, config_t *config)
