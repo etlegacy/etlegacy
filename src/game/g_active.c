@@ -2104,7 +2104,7 @@ void ClientEndFrame(gentity_t *ent)
 	}
 
 	// don't count skulled player time
-	if (g_gamestate.integer == GS_PLAYING && !(ent->client->ps.pm_flags & PMF_LIMBO || ent->client->ps.stats[STAT_HEALTH] <= 0))
+	if (g_gamestate.integer == GS_PLAYING && !(ent->client->sess.sessionTeam == TEAM_SPECTATOR || ent->client->ps.pm_flags & PMF_LIMBO || ent->client->ps.stats[STAT_HEALTH] <= 0))
 	{
 		ent->client->sess.time_played += level.time - level.previousTime;
 	}
