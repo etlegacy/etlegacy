@@ -3025,16 +3025,10 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 
 	if (trap_Argc() > 1 && (i = G_voteCmdCheck(ent, arg1, arg2, fRefCommand)) != G_NOTFOUND)
 	{
-		if (i != G_OK)
+		if (i != G_OK) // only G_OK continues, G_INVALID & other are dropped here
 		{
-			if (i == G_NOTFOUND)
-			{
-				return qfalse;                  // Command error
-			}
-			else
-			{
-				return qtrue;
-			}
+			// no output here
+			return qfalse;                  // Command error
 		}
 	}
 	else
