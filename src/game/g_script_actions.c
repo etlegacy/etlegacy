@@ -3637,7 +3637,7 @@ qboolean G_ScriptAction_TeamVoiceAnnounce(gentity_t *ent, char *params)
 
 /*
 ===================
-G_ScriptAction_Announce
+G_ScriptAction_Announce_Icon
 
   syntax: wm_announce_icon <icon number> <"text to send to all clients">
 ===================
@@ -3675,6 +3675,9 @@ qboolean G_ScriptAction_Announce_Icon(gentity_t *ent, char *params)
 	Bot_Util_SendTrigger(ent, NULL, token, "announce_icon");
 #endif
 
+	// log script wm_announce_icon actions (ETPro behavior)
+	G_LogPrintf("legacy announce: \"%s\"\n", token);
+
 	return qtrue;
 }
 
@@ -3705,6 +3708,9 @@ qboolean G_ScriptAction_Announce(gentity_t *ent, char *params)
 #ifdef FEATURE_OMNIBOT
 	Bot_Util_SendTrigger(ent, NULL, token, "announce");
 #endif
+
+	// log script wm_announce actions (ETPro behavior)
+	G_LogPrintf("legacy announce: \"%s\"\n", token);
 
 	return qtrue;
 }

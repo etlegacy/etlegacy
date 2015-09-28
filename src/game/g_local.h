@@ -196,8 +196,6 @@ int G_GetWeaponClassForMOD(meansOfDeath_t mod);
 
 #define MAX_NETNAME         36
 
-#define CFOFS(x) ((int)&(((gclient_t *)0)->x))
-
 #define MAX_COMMANDER_TEAM_SOUNDS 16
 
 typedef struct commanderTeamChat_s
@@ -1950,8 +1948,6 @@ void G_PredictPmove(gentity_t *ent, float frametime);
 
 // g_buddy_list.c
 
-#define MAX_FIRE_TEAMS 8
-
 typedef struct
 {
 	char name[32];
@@ -2320,8 +2316,6 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent);
 
 qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 
-#define LOGOPTS_SCRIPTEVENTS 32 // Log script events (dyna-defuse/-planted/objective)
-
 // Spawnflags
 
 // trigger_objective_info spawnflags (objective info display)
@@ -2361,9 +2355,9 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 
 // MAPVOTE - used when mapvoting is enabled
 #define MAPVOTE_TIE_LEASTPLAYED 1
-#define MAPVOTE_ALT_INTERMISSION 2
+#define MAPVOTE_ALT_INTERMISSION 2 // unused
 #define MAPVOTE_MULTI_VOTE 4
-#define MAPVOTE_NO_RANDOMIZE 8
+#define MAPVOTE_NO_RANDOMIZE 8     // unused
 #define MAPVOTE_NEXTMAP_VOTEMAP 16
 
 typedef enum

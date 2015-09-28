@@ -849,7 +849,21 @@ void G_Script_ScriptEvent(gentity_t *ent, char *eventStr, char *params)
 		G_Script_ScriptChange(ent, i);
 	}
 
-#ifdef FEATURE_OMNIBOT
+	// log script trigger stolen & returned actions (ETPro behavior)
+	if (!Q_stricmp(eventStr, "trigger"))
+	{
+		if (!Q_stricmp(params, "stolen"))
+		{
+			G_LogPrintf("legacy popup: %s stole \"%s\"\n",
+						Q_stricmp(ent->classname, "team_CTF_redflag") ? "axis" : "allies", ent->message);
+		}
+		else if (!Q_stricmp(params, "returned"))
+		{
+			G_LogPrintf("legacy popup: %s returned \"%s\"\n",
+						Q_stricmp(ent->classname, "team_CTF_redflag") ? "allies" : "axis", ent->message);
+		}
+	}
+
 	// skip these
 	if (!Q_stricmp(eventStr, "trigger") ||
 	    !Q_stricmp(eventStr, "activate") ||
@@ -863,36 +877,28 @@ void G_Script_ScriptEvent(gentity_t *ent, char *eventStr, char *params)
 
 	if (!Q_stricmp(eventStr, "defused"))
 	{
-		Bot_Util_SendTrigger(ent, NULL,
-		                     va("Defused at %s.", ent->parent ? ent->parent->track : ent->track),
-		                     eventStr);
-
+#ifdef FEATURE_OMNIBOT
+		Bot_Util_SendTrigger(ent, NULL, va("Defused at %s.", ent->parent ? ent->parent->track : ent->track), eventStr);
+#endif
 		// log script defused actions (ETPro behavior)
-		G_LogPrintf("legacy popup: %s defused \"%s\"\n",
-		            params,
-		            ent->parent ? ent->parent->track : ent->track);
+		G_LogPrintf("legacy popup: %s defused \"%s\"\n", params, ent->parent ? ent->parent->track : ent->track);
 	}
 	else if (!Q_stricmp(eventStr, "dynamited"))
 	{
-		Bot_Util_SendTrigger(ent, NULL,
-		                     va("Planted at %s.", ent->parent ? ent->parent->track : ent->track),
-		                     eventStr);
-
+#ifdef FEATURE_OMNIBOT
+		Bot_Util_SendTrigger(ent, NULL, va("Planted at %s.", ent->parent ? ent->parent->track : ent->track), eventStr);
+#endif
 		// log script dynamited actions (ETPro behavior)
-		G_LogPrintf("legacy popup: %s planted \"%s\"\n",
-		            params,
-		            ent->parent ? ent->parent->track : ent->track);
+		G_LogPrintf("legacy popup: %s planted \"%s\"\n", params, ent->parent ? ent->parent->track : ent->track);
 	}
+#ifdef FEATURE_OMNIBOT
 	else if (!Q_stricmp(eventStr, "destroyed"))
 	{
-		Bot_Util_SendTrigger(ent, NULL,
-		                     va("%s Destroyed.", ent->parent ? ent->parent->track : ent->track),
-		                     eventStr);
+		Bot_Util_SendTrigger(ent, NULL, va("%s Destroyed.", ent->parent ? ent->parent->track : ent->track), eventStr);
 	}
 	else if (!Q_stricmp(eventStr, "exploded"))
 	{
-		Bot_Util_SendTrigger(ent, NULL,
-		                     va("Explode_%s Exploded.", _GetEntityName(ent)), eventStr);
+		Bot_Util_SendTrigger(ent, NULL, va("Explode_%s Exploded.", _GetEntityName(ent)), eventStr);
 	}
 #endif
 }
