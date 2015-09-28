@@ -2607,7 +2607,7 @@ void CL_InitRef(void)
 #if defined(_WIN32)
 	Com_sprintf(dllName, sizeof(dllName), "renderer_%s_" ARCH_STRING DLL_EXT, cl_renderer->string);
 #elif defined(__APPLE__)
-	Com_sprintf(dllName, sizeof(dllName), "librenderer_%s_", cl_renderer->string);
+	Com_sprintf(dllName, sizeof(dllName), "librenderer_%s" DLL_EXT, cl_renderer->string);
 #else // *nix
 	Com_sprintf(dllName, sizeof(dllName), "librenderer_%s_" ARCH_STRING DLL_EXT, cl_renderer->string);
 #endif
@@ -2617,7 +2617,7 @@ void CL_InitRef(void)
 #if defined(_WIN32)
 		Com_sprintf(dllName, sizeof(dllName), "renderer_opengl1_" ARCH_STRING DLL_EXT);
 #elif defined(__APPLE__)
-		Com_sprintf(dllName, sizeof(dllName), "renderer_opengl1_");
+		Com_sprintf(dllName, sizeof(dllName), "librenderer_opengl1" DLL_EXT);
 #else // *nix
 		Com_sprintf(dllName, sizeof(dllName), "librenderer_opengl1_" ARCH_STRING DLL_EXT);
 #endif

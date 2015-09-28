@@ -1,4 +1,13 @@
 #RENDERER BUILDS
+
+if(NOT APPLE)
+	set(R1_NAME renderer_opengl1_${ARCH})
+	set(R2_NAME renderer_opengl2_${ARCH})
+else()
+	set(R1_NAME renderer_opengl1${LIB_SUFFIX})
+	set(R2_NAME renderer_opengl2${LIB_SUFFIX})
+endif()
+
 if(RENDERER_DYNAMIC)
 	MESSAGE("Will build dynamic renderer libraries")
 	add_definitions( "-DUSE_RENDERER_DLOPEN" )
@@ -10,30 +19,30 @@ endif(RENDERER_DYNAMIC)
 if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 
 	if(FEATURE_RENDERER_GLES)
-		add_library(renderer_opengl1_${ARCH} ${REND_LIBTYPE} ${RENDERERGLES_FILES} ${RENDERER_COMMON})
+		add_library(${R1_NAME} ${REND_LIBTYPE} ${RENDERERGLES_FILES} ${RENDERER_COMMON})
 	else()
-		add_library(renderer_opengl1_${ARCH} ${REND_LIBTYPE} ${RENDERER1_FILES} ${RENDERER_COMMON})
+		add_library(${R1_NAME} ${REND_LIBTYPE} ${RENDERER1_FILES} ${RENDERER_COMMON})
 	endif()
 
 	if(NOT FEATURE_RENDERER_GLES)
 		if(BUNDLED_GLEW)
-			add_dependencies(renderer_opengl1_${ARCH} bundled_glew)
+			add_dependencies(${R1_NAME} bundled_glew)
 		endif(BUNDLED_GLEW)
 	endif(NOT FEATURE_RENDERER_GLES)
 
 	if(BUNDLED_JPEG)
-		add_dependencies(renderer_opengl1_${ARCH} bundled_jpeg)
+		add_dependencies(${R1_NAME} bundled_jpeg)
 	endif(BUNDLED_JPEG)
 
 	if(BUNDLED_FREETYPE)
-		add_dependencies(renderer_opengl1_${ARCH} bundled_freetype)
+		add_dependencies(${R1_NAME} bundled_freetype)
 	endif(BUNDLED_FREETYPE)
 
-	target_link_libraries(renderer_opengl1_${ARCH} ${RENDERER_LIBRARIES})
+	target_link_libraries(${R1_NAME} ${RENDERER_LIBRARIES})
 
 	# install the dynamic lib only
 	if(RENDERER_DYNAMIC)
-		set_target_properties(renderer_opengl1_${ARCH}
+		set_target_properties(${R1_NAME}
 			PROPERTIES
 			LIBRARY_OUTPUT_DIRECTORY ""
 			LIBRARY_OUTPUT_DIRECTORY_DEBUG ""
@@ -41,23 +50,23 @@ if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 		)
 
 		if(WIN32)
-            set_target_properties(renderer_opengl1_${ARCH} PROPERTIES PREFIX "")
+            set_target_properties(${R1_NAME} PROPERTIES PREFIX "")
 		endif(WIN32)
 
 		if(WIN32)
-			install(TARGETS renderer_opengl1_${ARCH}
+			install(TARGETS ${R1_NAME}
 				LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
 				ARCHIVE DESTINATION "${INSTALL_DEFAULT_BINDIR}"
 			)
 		else(WIN32)
-			install(TARGETS renderer_opengl1_${ARCH}
+			install(TARGETS ${R1_NAME}
 				LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}"
 				ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}"
 			)
 		endif(WIN32)
 	endif(RENDERER_DYNAMIC)
 	if(NOT RENDERER_DYNAMIC)
-		list(APPEND CLIENT_LIBRARIES renderer_opengl1_${ARCH})
+		list(APPEND CLIENT_LIBRARIES ${R1_NAME})
 	endif(NOT RENDERER_DYNAMIC)
 endif(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 if(FEATURE_RENDERER2)
@@ -130,19 +139,19 @@ if(FEATURE_RENDERER2)
 
 	# increased default hunkmegs value
 	add_definitions(-DFEATURE_INC_HUNKMEGS)
-	add_library(renderer_opengl2_${ARCH} ${REND_LIBTYPE} ${RENDERER2_FILES} ${RENDERER_COMMON} ${RENDERER2_SHADERS})
+	add_library(${R2_NAME} ${REND_LIBTYPE} ${RENDERER2_FILES} ${RENDERER_COMMON} ${RENDERER2_SHADERS})
 	if(BUNDLED_GLEW)
-			add_dependencies(renderer_opengl2_${ARCH} bundled_glew)
+			add_dependencies(${R2_NAME} bundled_glew)
 	endif(BUNDLED_GLEW)
 	if(BUNDLED_JPEG)
-		add_dependencies(renderer_opengl2_${ARCH} bundled_jpeg)
+		add_dependencies(${R2_NAME} bundled_jpeg)
 	endif(BUNDLED_JPEG)
 	if(BUNDLED_FREETYPE)
-		add_dependencies(renderer_opengl2_${ARCH} bundled_freetype)
+		add_dependencies(${R2_NAME} bundled_freetype)
 	endif(BUNDLED_FREETYPE)
-	target_link_libraries(renderer_opengl2_${ARCH} ${RENDERER_LIBRARIES})
+	target_link_libraries(${R2_NAME} ${RENDERER_LIBRARIES})
 
-	set_target_properties(renderer_opengl2_${ARCH}
+	set_target_properties(${R2_NAME}
 		PROPERTIES COMPILE_DEFINITIONS "FEATURE_RENDERER2"
 		LIBRARY_OUTPUT_DIRECTORY ""
 		LIBRARY_OUTPUT_DIRECTORY_DEBUG ""
@@ -150,21 +159,21 @@ if(FEATURE_RENDERER2)
 	)
 
 	if(WIN32)
-    	set_target_properties(renderer_opengl2_${ARCH} PROPERTIES PREFIX "")
+    	set_target_properties(${R2_NAME} PROPERTIES PREFIX "")
     endif(WIN32)
 
 	if(WIN32)
-		install(TARGETS renderer_opengl2_${ARCH}
+		install(TARGETS ${R2_NAME}
 			LIBRARY DESTINATION "${INSTALL_DEFAULT_BINDIR}"
 			ARCHIVE DESTINATION "${INSTALL_DEFAULT_BINDIR}"
 		)
 	else(WIN32)
-		install(TARGETS renderer_opengl2_${ARCH}
+		install(TARGETS ${R2_NAME}
 			LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}"
 			ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}"
 		)
 	endif(WIN32)
 	if(NOT RENDERER_DYNAMIC)
-		list(APPEND CLIENT_LIBRARIES renderer_opengl2_${ARCH})
+		list(APPEND CLIENT_LIBRARIES ${R2_NAME})
 	endif()
 endif(FEATURE_RENDERER2)
