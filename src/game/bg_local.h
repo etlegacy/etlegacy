@@ -42,11 +42,6 @@
 
 #define JUMP_VELOCITY   270
 
-#define TIMER_LAND      130
-#define TIMER_GESTURE   (34 * 66 + 50)
-
-#define DOUBLE_TAP_DELAY    400
-
 #define MAX_MG42_HEAT   1500.f
 
 // all of the locals will be zeroed before each

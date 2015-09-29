@@ -831,7 +831,7 @@ struct gclient_s
 
 	int airOutTime;
 
-	int lastKillTime;               // for multiple kill rewards
+	int lastKillTime;               // for multiple kill rewards FIXME: implement this/make available to Lua
 
 	// timeResidual is used to handle events that happen every second
 	// like health / armor countdowns and regeneration
@@ -839,17 +839,8 @@ struct gclient_s
 
 	float currentAimSpreadScale;
 
-	gentity_t *persistantPowerup;
-	int portalID;
-	int ammoTimes[WP_NUM_WEAPONS];
-	int invulnerabilityTime;
-
-	gentity_t *cameraPortal;    // grapple hook if out
-	vec3_t cameraOrigin;
-
 	int dropWeaponTime;          // last time a weapon was dropped
 	int limboDropWeapon;         // weapon to drop in limbo
-	int deployQueueNumber;       // player order in reinforcement FIFO queue
 	int lastBurnTime;            // last time index for flamethrower burn
 	int PCSpecialPickedUpCount;           // used to count # of times somebody's picked up this LTs ammo (or medic health) (for scoring)
 	int saved_persistant[MAX_PERSISTANT]; // Save ps->persistant here during Limbo
@@ -857,7 +848,6 @@ struct gclient_s
 	gentity_t *touchingTOI;               // the trigger_objective_info a player is touching this frame
 
 	int lastConstructibleBlockingWarnTime;
-	int lastConstructibleBlockingWarnEnt;
 
 	int landmineSpottedTime;
 	gentity_t *landmineSpotted;
@@ -872,7 +862,7 @@ struct gclient_s
 
 	// zinx etpro antiwarp
 	int lastUpdateFrame;
-	int frameOffset;
+	int frameOffset; // unused - FIXME?
 	qboolean warping;
 	qboolean warped;
 	int lastCmdRealTime;
@@ -1001,9 +991,6 @@ typedef struct level_locals_s
 	int teamScores[TEAM_NUM_TEAMS];
 	int lastTeamLocationTime;           // last time of client team location update
 
-	qboolean newSession;                // don't use any old session data, because
-	                                    // we changed gametype
-
 	qboolean restarted;                 // waiting for a map_restart to fire
 
 	int numConnectedClients;
@@ -1033,7 +1020,6 @@ typedef struct level_locals_s
 	// frag can be watched.  Disable future
 	// kills during this delay
 	int intermissiontime;               // time the intermission was started
-	char *changemap;
 	int exitTime;
 	vec3_t intermission_origin;         // also used for spectator spawns
 	vec3_t intermission_angle;
@@ -1041,11 +1027,6 @@ typedef struct level_locals_s
 
 	int bodyQueIndex;                   // dead bodies
 	gentity_t *bodyQue[BODY_QUEUE_SIZE];
-
-	int portalSequence;
-
-	int reloadPauseTime;                // don't think AI/client's until this time has elapsed
-	int reloadDelayTime;                // don't start loading the savegame until this has expired
 
 	vec3_t spawntargets[MAX_MULTI_SPAWNTARGETS];      // coordinates of spawn targets
 	int numspawntargets;         // # spawntargets in this map
@@ -1097,9 +1078,6 @@ typedef struct level_locals_s
 	int numBrushModels;
 	gentity_t *gameManager;
 
-	// record last time we loaded, so we can hack around sighting issues on reload
-	int lastLoadTime;
-
 	qboolean doorAllowTeams;    // used by bots to decide whether or not to use team travel flags
 
 	// for multiplayer fireteams
@@ -1134,7 +1112,6 @@ typedef struct level_locals_s
 	int axisBombCounter, alliedBombCounter;
 	int axisArtyCounter, alliedArtyCounter; // arty/airstrike rate limiting
 	int axisAutoSpawn, alliesAutoSpawn;
-	int axisMG42Counter, alliesMG42Counter;
 
 	limbo_cam_t limboCams[MAX_LIMBO_CAMS];
 	int numLimboCams;
@@ -1144,13 +1121,11 @@ typedef struct level_locals_s
 	float teamXP[SK_NUM_SKILLS][2];
 
 	commanderTeamChat_t commanderSounds[2][MAX_COMMANDER_TEAM_SOUNDS];
-	int commanderSoundInterval[2];
-	int commanderLastSoundTime[2];
 
 	qboolean tempTraceIgnoreEnts[MAX_GENTITIES];
 
 #ifdef FEATURE_OMNIBOT
-	//Omni-bot time triggers
+	// Omni-bot time triggers
 	qboolean twoMinute;
 	qboolean thirtySecond;
 #endif
@@ -1242,11 +1217,9 @@ void RespawnItem(gentity_t *ent);
 
 gentity_t *Drop_Item(gentity_t *ent, gitem_t *item, float angle, qboolean novelocity);
 gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNum);
-void SetRespawn(gentity_t *ent, float delay);
 void G_SpawnItem(gentity_t *ent, gitem_t *item);
 void FinishSpawningItem(gentity_t *ent);
-void Think_Weapon(gentity_t *ent);
-int ArmorIndex(gentity_t *ent);
+
 void Fill_Clip(playerState_t *ps, int weapon);
 int Add_Ammo(gentity_t *ent, int weapon, int count, qboolean fillClip);
 void Touch_Item(gentity_t *ent, gentity_t *other, trace_t *trace);
@@ -1299,7 +1272,6 @@ void G_FreeEntity(gentity_t *e);
 void G_ClientSound(gentity_t *ent, int soundIndex);
 
 void G_TouchTriggers(gentity_t *ent);
-void G_TouchSolids(gentity_t *ent);
 
 float *tv(float x, float y, float z);
 char *vtos(const vec3_t v);
@@ -1373,7 +1345,7 @@ gentity_t *G_BuildLeg(gentity_t *ent, grefEntity_t *refent, qboolean newRefent);
 
 // g_missile.c
 void G_RunMissile(gentity_t *ent);
-int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allowBounce);
+int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allowBounce); // unused
 
 // server side flamethrower collision
 void G_RunFlamechunk(gentity_t *ent);
@@ -1392,7 +1364,6 @@ gentity_t *G_TestEntityPosition(gentity_t *ent);
 void G_RunMover(gentity_t *ent);
 qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **obstacle);
 void Use_BinaryMover(gentity_t *ent, gentity_t *other, gentity_t *activator);
-void G_Activate(gentity_t *ent, gentity_t *activator);
 
 void G_TryDoor(gentity_t *ent, gentity_t *other, gentity_t *activator);
 
@@ -1402,9 +1373,6 @@ void InitMover(gentity_t *ent);
 void SetMoverState(gentity_t *ent, moverState_t moverState, int time);
 
 void func_constructible_underconstructionthink(gentity_t *ent);
-
-// g_tramcar.c
-void Reached_Tramcar(gentity_t *ent);
 
 // g_trigger.c
 void Think_SetupObjectiveInfo(gentity_t *ent);
@@ -1443,8 +1411,6 @@ void SetClientViewAngle(gentity_t *ent, vec3_t angle);
 gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles);
 void respawn(gentity_t *ent);
 void BeginIntermission(void);
-void InitClientPersistant(gclient_t *client);
-void InitClientResp(gclient_t *client);
 void InitBodyQue(void);
 void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean restoreHealth);
 void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod);
@@ -1452,7 +1418,6 @@ void AddScore(gentity_t *ent, int score);
 void AddKillScore(gentity_t *ent, int score);
 void CalculateRanks(void);
 qboolean SpotWouldTelefrag(gentity_t *spot);
-qboolean G_CheckForExistingModelInfo(bg_playerclass_t *classInfo, const char *modelName, animModelInfo_t **modelInfo);
 
 void SetWolfSpawnWeapons(gclient_t *client);
 void limbo(gentity_t *ent, qboolean makeCorpse);
@@ -1489,9 +1454,7 @@ void Svcmd_ShuffleTeams_f(qboolean restart);
 void FireWeapon(gentity_t *ent);
 void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk);
 
-// p_hud.c
 void MoveClientToIntermission(gentity_t *client);
-void G_SetStats(gentity_t *ent);
 void G_SendScore(gentity_t *client);
 
 // g_cmds.c
@@ -1539,8 +1502,6 @@ qboolean G_DoAntiwarp(gentity_t *ent);
 qboolean ReadyToCallArtillery(gentity_t *ent);
 // to call airstrike?
 qboolean ReadyToCallAirstrike(gentity_t *ent);
-// to use smoke grenade?
-qboolean ReadyToThrowSmoke(gentity_t *ent);
 // Are we ready to construct?  Optionally, will also update the time while we are constructing
 qboolean ReadyToConstruct(gentity_t *ent, gentity_t *constructible, qboolean updateState);
 
@@ -1946,20 +1907,7 @@ void G_PredictPmove(gentity_t *ent, float frametime);
 #define BODY_CLASS(ENT) ENT->s.modelindex2
 #define BODY_CHARACTER(ENT) ENT->s.onFireStart
 
-// g_buddy_list.c
-
-typedef struct
-{
-	char name[32];
-	char clientbits[8];
-	char requests[8];
-	int leader;
-	qboolean open;
-	qboolean valid;
-} fireteam_t;
-
 void Cmd_FireTeam_MP_f(gentity_t *ent);
-int G_IsOnAFireTeam(int clientNum);
 
 void G_RemoveFromAllIgnoreLists(int clientNum);
 
@@ -2065,9 +2013,6 @@ void G_PrintClientSpammyCenterPrint(int entityNum, char *text);
 #define AP(x) trap_SendServerCommand(-1, x)                     // Print to all
 #define CP(x) trap_SendServerCommand(ent - g_entities, x)       // Print to an ent
 #define CPx(x, y) trap_SendServerCommand(x, y)                  // Print to id = x
-
-#define PAUSE_NONE      0x00    // Match is NOT paused.
-#define PAUSE_UNPAUSING 0x01    // Pause is about to expire
 
 #define HELP_COLUMNS    4
 
@@ -2264,10 +2209,7 @@ qboolean G_AvailableAirstrikes(gentity_t *ent);
 qboolean G_AvailableArtillery(gentity_t *ent);
 void G_AddAirstrikeToCounters(gentity_t *ent);
 void G_AddArtilleryToCounters(gentity_t *ent);
-gentity_t *G_FindSmokeBomb(gentity_t *start);
-gentity_t *G_FindLandmine(gentity_t *start);
-gentity_t *G_FindDynamite(gentity_t *start);
-gentity_t *G_FindSatchels(gentity_t *start);
+
 void G_SetTargetName(gentity_t *ent, char *targetname);
 void G_KillEnts(const char *target, gentity_t *ignore, gentity_t *killer, meansOfDeath_t mod);
 void trap_EngineerTrace(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask);

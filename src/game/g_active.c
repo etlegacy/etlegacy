@@ -1180,12 +1180,6 @@ void ClientThink_real(gentity_t *ent)
 		client->pmext.centerangles[PITCH] = ent->tagParent->r.currentAngles[PITCH];
 	}
 
-	/*if (client->cameraPortal) {
-	    G_SetOrigin( client->cameraPortal, client->ps.origin );
-	    trap_LinkEntity(client->cameraPortal);
-	    VectorCopy( client->cameraOrigin, client->cameraPortal->s.origin2);
-	}*/
-
 	client->ps.ammo[WP_ARTY] = 0;
 	if (!G_AvailableAirstrikes(ent))
 	{

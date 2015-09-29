@@ -842,8 +842,6 @@ static void HandleEntsThatBlockConstructible(gentity_t *constructor, gentity_t *
 			if ((level.time - check->client->lastConstructibleBlockingWarnTime) >= MIN_BLOCKINGWARNING_INTERVAL)
 			{
 				trap_SendServerCommand(check->s.number, "cp \"Warning, leave the construction area...\" 1");
-				// store the entity num to warn the bot
-				check->client->lastConstructibleBlockingWarnEnt  = constructible - g_entities;
 				check->client->lastConstructibleBlockingWarnTime = level.time;
 			}
 		}

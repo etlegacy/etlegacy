@@ -3367,7 +3367,6 @@ void ExitLevel(void)
 		trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
 	}
 
-	level.changemap        = NULL;
 	level.intermissiontime = 0;
 
 	// reset all the scores so we don't enter the intermission again

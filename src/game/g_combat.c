@@ -822,21 +822,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		self->die = body_die;
 	}
 
-	if (meansOfDeath == MOD_MACHINEGUN)
-	{
-		switch (self->client->sess.sessionTeam)
-		{
-		case TEAM_AXIS:
-			level.axisMG42Counter = level.time;
-			break;
-		case TEAM_ALLIES:
-			level.alliesMG42Counter = level.time;
-			break;
-		default:
-			break;
-		}
-	}
-
 	G_FadeItems(self, MOD_SATCHEL);
 
 	CalculateRanks();

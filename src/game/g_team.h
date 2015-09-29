@@ -36,12 +36,12 @@
 #define INCLUDE_G_TEAM_H
 
 // more #defs for GT_WOLF gametype
-#define WOLF_CAPTURE_BONUS      15      // capturing major game objective
+#define WOLF_CAPTURE_BONUS      15      // unused - capturing major game objective
 #define WOLF_STEAL_OBJ_BONUS    10      // stealing objective (first part of capture)
 #define WOLF_SECURE_OBJ_BONUS   10      // securing objective from slain enemy
 #define WOLF_MEDIC_BONUS        2       // medic resurrect teammate
 #define WOLF_REPAIR_BONUS       2       // engineer repair (mg42 etc) bonus
-#define WOLF_DYNAMITE_BONUS     5       // engineer dynamite barriacade (dynamite only flag)
+#define WOLF_DYNAMITE_BONUS     5       // unused - engineer dynamite barriacade (dynamite only flag)
 #define WOLF_FRAG_CARRIER_BONUS 10      // bonus for fragging enemy carrier
 #define WOLF_FLAG_DEFENSE_BONUS 5       // bonus for frag when shooter or target near flag position
 #define WOLF_CP_CAPTURE         3       // uncapped checkpoint bonus
@@ -68,7 +68,7 @@
 #define ALLIED_CONSTRUCTIBLE        8
 #define CONSTRUCTIBLE_BLOCK_PATHS_WHEN_BUILD    16
 #define CONSTRUCTIBLE_NO_AAS_BLOCKING           32
-#define CONSTRUCTIBLE_AAS_SCRIPTED              64
+//#define CONSTRUCTIBLE_AAS_SCRIPTED              64
 
 #define EXPLOSIVE_START_INVIS       1
 #define EXPLOSIVE_TOUCHABLE         2
@@ -89,13 +89,8 @@ void Team_DroppedFlagThink(gentity_t *ent);
 void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker);
 
 void Team_ReturnFlag(gentity_t *ent);
-void Team_FreeEntity(gentity_t *ent);
 gentity_t *SelectCTFSpawnPoint(team_t team, int teamstate, vec3_t origin, vec3_t angles, int spawnObjective);
 
-gentity_t *SelectPlayerSpawnPoint(team_t team, int teamstate, vec3_t origin, vec3_t angles);
-
-int Team_GetLocation(gentity_t *ent);
-qboolean Team_GetLocationMsg(gentity_t *ent, char *loc, int loclen);
 void TeamplayInfoMessage(team_t team);
 void CheckTeamStatus(void);
 

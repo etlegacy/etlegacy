@@ -4833,54 +4833,6 @@ void SP_func_invisible_user(gentity_t *ent)
 }
 
 /*
-==========
-G_Activate
-
-  Generic activation routine for doors
-==========
-*/
-void G_Activate(gentity_t *ent, gentity_t *activator)
-{
-	if ((ent->s.apos.trType == TR_STATIONARY && ent->s.pos.trType == TR_STATIONARY)
-	    && ent->active == qfalse)
-	{
-		// trigger the ent if possible, if not, then we'll just wait at the marker until it opens, which could be never(!?)
-		if (ent->key < 0)      // ent force locked
-		{
-			return;
-		}
-
-		if (!Q_stricmp(ent->classname, "script_mover"))        // dont activate script_mover's
-		{
-			return;
-		}
-
-		// hack fix for bigdoor1 on tram1_21
-
-		if (!(ent->teammaster))
-		{
-			ent->active = qtrue;
-			Use_BinaryMover(ent, activator, activator);
-			G_UseTargets(ent->teammaster, activator);
-			return;
-		}
-
-		if (ent->team && ent != ent->teammaster)
-		{
-			ent->teammaster->active = qtrue;
-			Use_BinaryMover(ent->teammaster, activator, activator);
-			G_UseTargets(ent->teammaster, activator);
-		}
-		else
-		{
-			ent->active = qtrue;
-			Use_BinaryMover(ent, activator, activator);
-			G_UseTargets(ent->teammaster, activator);
-		}
-	}
-}
-
-/*
 ==============
 InitConstructible
 ==============
