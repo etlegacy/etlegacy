@@ -164,7 +164,7 @@ if(BUILD_CLIENT)
 			find_package(Theora REQUIRED)
 			list(APPEND CLIENT_LIBRARIES ${THEORA_LIBRARY})
 			include_directories(SYSTEM ${THEORA_INCLUDE_DIR})
-		else() # BUNDLED_OGG_VORBIS
+		else() # BUNDLED_THEORA
 			list(APPEND CLIENT_LIBRARIES ${THEORA_BUNDLED_LIBRARIES})
 			include_directories(SYSTEM ${THEORA_BUNDLED_INCLUDE_DIR})
 		endif()
