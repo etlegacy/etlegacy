@@ -368,6 +368,14 @@ typedef int clipHandle_t;
 #define BIT(x)              (1 << x)
 #endif
 
+#define SIZE_KB(bytes) ((bytes) >> 10)
+#define SIZE_MB(bytes) ((bytes) >> 20)
+#define SIZE_GB(bytes) ((bytes) >> 30)
+
+#define SIZE_KB_FLOAT(bytes) ((bytes) * (1.0f / 1024.0f))
+#define SIZE_MB_FLOAT(bytes) ((bytes) * (1.0f / 1048576.0f))
+#define SIZE_GB_FLOAT(bytes) ((bytes) * (1.0f / 1073741824.0f))
+
 #define ENABLEBIT(x, y) x |= BIT(y)
 #define CLEARBIT(x, y) x  &= ~BIT(y)
 #define TOGGLEBIT(x, y) x ^= BIT(y)
@@ -963,7 +971,10 @@ float DistanceFromVectorSquared(vec3_t p, vec3_t lp1, vec3_t lp2);
 
 //=============================================
 
-float Com_Clamp(float min, float max, float value);
+qboolean Com_PowerOf2(int x);
+
+#define Com_ByteClamp(x) ((x < 0) ? 0 : (x > 255) ? 255 : x)
+#define Com_Clamp(min, max , value) ((value < min) ? min : (value > max) ? max : value)
 
 char *COM_SkipPath(char *pathname);
 void COM_FixPath(char *pathname);
@@ -1925,6 +1936,18 @@ typedef enum
 	GS_RESET
 } gamestate_t;
 
+typedef struct rectDef_s
+{
+	float x;    // horiz position
+	float y;    // vert position
+	float w;    // width
+	float h;    // height;
+} rectDef_t;
+
+//typedef rectDef_t Rectangle;
+
+#define RectangleSet(rect, v1, v2, v3, v4) ((rect.x) = (v1), (rect.y) = (v2), (rect.w) = (v3), (rect.h) = (v4))
+
 #if defined(_MSC_VER) && (_MSC_VER < 1800)
 float rint(float v);
 #endif
@@ -1942,8 +1965,10 @@ typedef struct demoPlayInfo_s
 //c99 issue pre 2013 VS do not have support for this
 #if defined(_MSC_VER) && (_MSC_VER < 1800)
 // source http://smackerelofopinion.blogspot.fi/2011/10/determining-number-of-arguments-in-c.html
+#define NUMARGSFAST PP_NARG_FAST
 #define NUMARGS PP_NARG
 #define PP_NARG(...)  EXPAND((PP_NARG_(__VA_ARGS__, PP_RSEQ_N()) - (sizeof("" #__VA_ARGS__) == 1)))
+#define PP_NARG_FAST(...)  EXPAND(PP_NARG_(__VA_ARGS__, PP_RSEQ_N()))
 #define PP_NARG_(...)  EXPAND(PP_ARG_N(__VA_ARGS__))
 
 #define PP_ARG_N( \

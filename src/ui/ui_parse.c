@@ -38,8 +38,8 @@
 
 void Tooltip_ComputePosition(itemDef_t *item)
 {
-	Rectangle *itemRect = &item->window.rectClient;
-	Rectangle *tipRect  = &item->toolTipData->window.rectClient;
+	rectDef_t *itemRect = &item->window.rectClient;
+	rectDef_t *tipRect  = &item->toolTipData->window.rectClient;
 
 	DC->textFont(item->toolTipData->font);
 

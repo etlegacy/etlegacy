@@ -125,23 +125,11 @@
 #define SLIDER_THUMB_HEIGHT 12.0    // 20.0
 #define NUM_CROSSHAIRS      16
 
-typedef struct rectDef_s
-{
-	float x;    // horiz position
-	float y;    // vert position
-	float w;    // width
-	float h;    // height;
-} rectDef_t;
-
-typedef rectDef_t Rectangle;
-
-#define RectangleSet(rect, v1, v2, v3, v4) ((rect.x) = (v1), (rect.y) = (v2), (rect.w) = (v3), (rect.h) = (v4))
-
 // FIXME: do something to separate text vs window stuff
 typedef struct
 {
-	Rectangle rect;                 // client coord rectangle
-	Rectangle rectClient;           // screen coord rectangle
+	rectDef_t rect;                 // client coord rectangle
+	rectDef_t rectClient;           // screen coord rectangle
 	const char *name;               //
 	const char *model;              //
 	const char *group;              // if it belongs to a group
@@ -153,8 +141,8 @@ typedef struct
 	int ownerDrawFlags;             // show flags for ownerdraw items
 	float borderSize;               //
 	int flags;                      // visible, focus, mouseover, cursor
-	Rectangle rectEffects;          // for various effects
-	Rectangle rectEffects2;         // for various effects
+	rectDef_t rectEffects;          // for various effects
+	rectDef_t rectEffects2;         // for various effects
 	int offsetTime;                 // time based value for various effects
 	int nextTime;                   // time next effect should cycle
 	vec4_t foreColor;               // text color
@@ -267,7 +255,7 @@ typedef struct modelDef_s
 typedef struct itemDef_s
 {
 	Window window;                  // common positional, border, style, layout info
-	Rectangle textRect;             // rectangle the text ( if any ) consumes
+	rectDef_t textRect;             // rectangle the text ( if any ) consumes
 	int type;                       // text, button, radiobutton, checkbox, textfield, listbox, combo
 	int alignment;                  // left center right
 	int textalignment;              // ( optional ) alignment for text within rect based on text width
@@ -704,7 +692,7 @@ void BG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontHelp
 
 void AdjustFrom640(float *x, float *y, float *w, float *h);
 
-void Cui_WideRect(Rectangle *rect);
+void Cui_WideRect(rectDef_t *rect);
 float Cui_WideX(float x);
 float Cui_WideXoffset(void);
 void C_PanelButtonsSetup(panel_button_t **buttons, float xoffset);      // called from UI & CGAME

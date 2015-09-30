@@ -73,7 +73,7 @@ static int  allocPoint, outOfMemory;
 /**
  * @brief Convert rectangle-coordinates for use with the current aspectratio.
  */
-void Cui_WideRect(Rectangle *rect)
+void Cui_WideRect(rectDef_t *rect)
 {
 	rect->x *= DC->xscale;
 	rect->y *= DC->yscale;

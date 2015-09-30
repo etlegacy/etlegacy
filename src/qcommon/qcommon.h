@@ -839,7 +839,7 @@ qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring);
 
 void FS_Rename(const char *from, const char *to);
 
-void FS_FilenameCompletion(const char *dir, const char *ext,
+void FS_FilenameCompletion(const char *dir, int numext, const char **ext,
                            qboolean stripExt, void (*callback)(const char *s), qboolean allowNonPureFilesOnDisk);
 
 #if !defined(DEDICATED)
@@ -893,10 +893,9 @@ void Console_AutoComplete(field_t *field, int *completionOffset);
 void Field_Clear(field_t *edit);
 void Field_AutoComplete(field_t *edit);
 void Field_CompleteKeyname(void);
-void Field_CompleteFilename(const char *dir,
-                            const char *ext, qboolean stripExt, qboolean allowNonPureFilesOnDisk);
-void Field_CompleteCommand(char *cmd,
-                           qboolean doCommands, qboolean doCvars);
+void Field_CompleteFilenameMultiple(const char *dir, int numext, const char **ext, qboolean allowNonPureFilesOnDisk);
+void Field_CompleteFilename(const char *dir, const char *ext, qboolean stripExt, qboolean allowNonPureFilesOnDisk);
+void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars);
 
 /*
 ==============================================================

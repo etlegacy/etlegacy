@@ -72,40 +72,92 @@ qboolean initTrails = qfalse;
 
 int numTrailsInuse;
 
+void CG_KillTrail(trailJunc_t *t);
+
 /*
-===============
-CG_ClearTrails
-===============
+===========
+CG_FreeTrailJunc
+===========
 */
-void CG_ClearTrails(void)
+static void CG_FreeTrailJunc(trailJunc_t *junc)
 {
-	int i;
-
-	memset(trailJuncs, 0, sizeof(trailJunc_t) * MAX_TRAILJUNCS);
-
-	freeTrails   = trailJuncs;
-	activeTrails = NULL;
-	headTrails   = NULL;
-
-	for (i = 0 ; i < MAX_TRAILJUNCS ; i++)
+	// kill any juncs after us, so they aren't left hanging
+	if (junc->nextJunc)
 	{
-		trailJuncs[i].nextGlobal = &trailJuncs[i + 1]; // FIXME: Array 'trailJuncs[4096]' index 4096 out of bounds
-
-		if (i > 0)
-		{
-			trailJuncs[i].prevGlobal = &trailJuncs[i - 1];
-		}
-		else
-		{
-			trailJuncs[i].prevGlobal = NULL;
-		}
-
-		trailJuncs[i].inuse = qfalse;
+		CG_KillTrail(junc);
 	}
-	trailJuncs[MAX_TRAILJUNCS - 1].nextGlobal = NULL;
 
-	initTrails     = qtrue;
-	numTrailsInuse = 0;
+	// make it non-active
+	junc->inuse = qfalse;
+	junc->freed = qtrue;
+	if (junc->nextGlobal)
+	{
+		junc->nextGlobal->prevGlobal = junc->prevGlobal;
+	}
+	if (junc->prevGlobal)
+	{
+		junc->prevGlobal->nextGlobal = junc->nextGlobal;
+	}
+	if (junc == activeTrails)
+	{
+		activeTrails = junc->nextGlobal;
+	}
+
+	// if it's a head, remove it
+	if (junc == headTrails)
+	{
+		headTrails = junc->nextHead;
+	}
+	if (junc->nextHead)
+	{
+		junc->nextHead->prevHead = junc->prevHead;
+	}
+	if (junc->prevHead)
+	{
+		junc->prevHead->nextHead = junc->nextHead;
+	}
+	junc->nextHead = NULL;
+	junc->prevHead = NULL;
+
+	// stick it in the free list
+	junc->prevGlobal = NULL;
+	junc->nextGlobal = freeTrails;
+	if (freeTrails)
+	{
+		freeTrails->prevGlobal = junc;
+	}
+	freeTrails = junc;
+
+	numTrailsInuse--;
+}
+
+/*
+===========
+CG_KillTrail
+===========
+*/
+void CG_KillTrail(trailJunc_t *t)
+{
+	trailJunc_t *next;
+
+	if (!t->inuse && t->freed)
+	{
+		return;
+	}
+	next = t->nextJunc;
+	if (next < &trailJuncs[0] || next >= &trailJuncs[MAX_TRAILJUNCS])
+	{
+		next = NULL;
+	}
+	t->nextJunc = NULL;
+	if (next && next->nextJunc && next->nextJunc == t)
+	{
+		next->nextJunc = NULL;
+	}
+	if (next)
+	{
+		CG_FreeTrailJunc(next);
+	}
 }
 
 /*
@@ -113,7 +165,7 @@ void CG_ClearTrails(void)
 CG_SpawnTrailJunc
 ===============
 */
-trailJunc_t *CG_SpawnTrailJunc(trailJunc_t *headJunc)
+static trailJunc_t *CG_SpawnTrailJunc(trailJunc_t *headJunc)
 {
 	trailJunc_t *j;
 
@@ -424,94 +476,6 @@ int CG_AddSmokeJunc(int headJuncIndex, void *usedby, qhandle_t shader, vec3_t po
 	return ((int)(j - trailJuncs) + 1);
 }
 
-void CG_KillTrail(trailJunc_t *t);
-
-/*
-===========
-CG_FreeTrailJunc
-===========
-*/
-void CG_FreeTrailJunc(trailJunc_t *junc)
-{
-	// kill any juncs after us, so they aren't left hanging
-	if (junc->nextJunc)
-	{
-		CG_KillTrail(junc);
-	}
-
-	// make it non-active
-	junc->inuse = qfalse;
-	junc->freed = qtrue;
-	if (junc->nextGlobal)
-	{
-		junc->nextGlobal->prevGlobal = junc->prevGlobal;
-	}
-	if (junc->prevGlobal)
-	{
-		junc->prevGlobal->nextGlobal = junc->nextGlobal;
-	}
-	if (junc == activeTrails)
-	{
-		activeTrails = junc->nextGlobal;
-	}
-
-	// if it's a head, remove it
-	if (junc == headTrails)
-	{
-		headTrails = junc->nextHead;
-	}
-	if (junc->nextHead)
-	{
-		junc->nextHead->prevHead = junc->prevHead;
-	}
-	if (junc->prevHead)
-	{
-		junc->prevHead->nextHead = junc->nextHead;
-	}
-	junc->nextHead = NULL;
-	junc->prevHead = NULL;
-
-	// stick it in the free list
-	junc->prevGlobal = NULL;
-	junc->nextGlobal = freeTrails;
-	if (freeTrails)
-	{
-		freeTrails->prevGlobal = junc;
-	}
-	freeTrails = junc;
-
-	numTrailsInuse--;
-}
-
-/*
-===========
-CG_KillTrail
-===========
-*/
-void CG_KillTrail(trailJunc_t *t)
-{
-	trailJunc_t *next;
-
-	if (!t->inuse && t->freed)
-	{
-		return;
-	}
-	next = t->nextJunc;
-	if (next < &trailJuncs[0] || next >= &trailJuncs[MAX_TRAILJUNCS])
-	{
-		next = NULL;
-	}
-	t->nextJunc = NULL;
-	if (next && next->nextJunc && next->nextJunc == t)
-	{
-		next->nextJunc = NULL;
-	}
-	if (next)
-	{
-		CG_FreeTrailJunc(next);
-	}
-}
-
 /*
 ==============
 CG_AddTrailToScene
@@ -528,7 +492,7 @@ static polyVert_t outVerts[MAX_TRAIL_VERTS * 3];
 #define TRAIL_FADE_CLOSE_DIST   64.0
 #define TRAIL_FADE_FAR_SCALE    4.0
 
-void CG_AddTrailToScene(trailJunc_t *trail, int iteration, int numJuncs)
+static void CG_AddTrailToScene(trailJunc_t *trail, int iteration, int numJuncs)
 {
 	int         k, i, n, l, numOutVerts;
 	polyVert_t  mid;
@@ -970,4 +934,43 @@ void CG_AddTrails(void)
 		}
 		j = jNext;
 	}
+}
+
+/*
+===============
+CG_ClearTrails
+===============
+*/
+void CG_ClearTrails(void)
+{
+	int i;
+
+	memset(trailJuncs, 0, sizeof(trailJunc_t) * MAX_TRAILJUNCS);
+
+	freeTrails   = trailJuncs;
+	activeTrails = NULL;
+	headTrails   = NULL;
+
+	for (i = 0 ; i < MAX_TRAILJUNCS ; i++)
+	{
+		if(i < (MAX_TRAILJUNCS - 1))
+		{
+			trailJuncs[i].nextGlobal = &trailJuncs[i + 1];
+		}
+
+		if (i > 0)
+		{
+			trailJuncs[i].prevGlobal = &trailJuncs[i - 1];
+		}
+		else
+		{
+			trailJuncs[i].prevGlobal = NULL;
+		}
+
+		trailJuncs[i].inuse = qfalse;
+	}
+	trailJuncs[MAX_TRAILJUNCS - 1].nextGlobal = NULL;
+
+	initTrails     = qtrue;
+	numTrailsInuse = 0;
 }

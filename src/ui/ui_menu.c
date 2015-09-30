@@ -257,7 +257,7 @@ void Menu_UpdatePosition(menuDef_t *menu)
 	int        i;
 	float      x, y;
 	float      xoffset = Cui_WideXoffset();
-	Rectangle  *r;
+	rectDef_t  *r;
 	qboolean   fullscreenItem = qfalse;
 	qboolean   fullscreenMenu = qfalse;
 	qboolean   centered       = qfalse;

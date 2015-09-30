@@ -37,6 +37,10 @@ if(BUNDLED_OGG_VORBIS)
 	add_dependencies(etl bundled_ogg bundled_ogg_vorbis bundled_ogg_vorbis_file)
 endif(BUNDLED_OGG_VORBIS)
 
+if(BUNDLED_THEORA)
+	add_dependencies(etl bundled_theora)
+endif(BUNDLED_THEORA)
+
 target_link_libraries(etl
 	${CLIENT_LIBRARIES}
 	${SDL_LIBRARIES}

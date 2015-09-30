@@ -2115,7 +2115,9 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 		if (!cg.hyperspace)
 		{
 			CG_AddFlameChunks();
-			CG_AddTrails();         // this must come last, so the trails dropped this frame get drawn
+
+			// this must come last, so the trails dropped this frame get drawn
+			CG_AddTrails();
 		}
 
 		DEBUGTIME

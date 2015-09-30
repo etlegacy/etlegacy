@@ -35,17 +35,20 @@
 
 #include "q_shared.h"
 
-float Com_Clamp(float min, float max, float value)
+qboolean Com_PowerOf2(int x)
 {
-	if (value < min)
+	int             bitsSet = 0;
+	int             i;
+
+	for(i = 0; i < sizeof(int) * 8; ++i)
 	{
-		return min;
+		if (x & (1 << i))
+		{
+			++bitsSet;
+		}
 	}
-	if (value > max)
-	{
-		return max;
-	}
-	return value;
+
+	return (qboolean)(bitsSet <= 1);
 }
 
 /**

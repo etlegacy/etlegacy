@@ -33,6 +33,7 @@ cmake_dependent_option(BUNDLED_CURL		"Use bundled CURL library instead of the sy
 cmake_dependent_option(BUNDLED_JPEG		"Use bundled JPEG library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_LUA		"Use bundled LUA library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_OGG_VORBIS	"Use bundled OGG library instead of the system one."	ON "BUNDLED_LIBS" OFF)
+cmake_dependent_option(BUNDLED_THEORA	"Use bundled Theora library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_GLEW		"Use bundled GLEW library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_FREETYPE		"Use bundled Freetype2 library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_JANSSON		"Use bundled Jansson library."	OFF "BUNDLED_LIBS" OFF)
@@ -43,6 +44,7 @@ cmake_dependent_option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is
 # Optional features
 option(FEATURE_CURL		"Enable auto-download support using cURL (client)"			ON)
 option(FEATURE_OGG_VORBIS	"Enable OGG Vorbis support (client)"					ON)
+option(FEATURE_THEORA	"Enable Theora video support (client)"					ON)
 option(FEATURE_OPENAL		"Enable OpenAL sound backend (client)"					OFF)
 option(FEATURE_FREETYPE		"Enable Freetype font library support (client)"				ON)
 option(FEATURE_TRACKER		"Enable extended server statistics (server)"				OFF)

@@ -4680,31 +4680,34 @@ void FS_Flush(fileHandle_t f)
 	fflush(fsh[f].handleFiles.file.o);
 }
 
-void FS_FilenameCompletion(const char *dir, const char *ext,
+void FS_FilenameCompletion(const char *dir, int numext, const char **ext,
                            qboolean stripExt, void (*callback)(const char *s), qboolean allowNonPureFilesOnDisk)
 {
 	char **filenames;
 	int  nfiles;
-	int  i;
+	int  i,j;
 	char filename[MAX_STRING_CHARS];
 
-	filenames = FS_ListFilteredFiles(dir, ext, NULL, &nfiles, allowNonPureFilesOnDisk);
-
-	FS_SortFileList(filenames, nfiles);
-
-	for (i = 0; i < nfiles; i++)
+	for(j = 0; j < numext; j++)
 	{
-		FS_ConvertPath(filenames[i]);
-		Q_strncpyz(filename, filenames[i], MAX_STRING_CHARS);
+		filenames = FS_ListFilteredFiles(dir, ext[j], NULL, &nfiles, allowNonPureFilesOnDisk);
 
-		if (stripExt)
+		FS_SortFileList(filenames, nfiles);
+
+		for (i = 0; i < nfiles; i++)
 		{
-			COM_StripExtension(filename, filename, sizeof(filename));
-		}
+			FS_ConvertPath(filenames[i]);
+			Q_strncpyz(filename, filenames[i], MAX_STRING_CHARS);
 
-		callback(filename);
+			if (stripExt)
+			{
+				COM_StripExtension(filename, filename, sizeof(filename));
+			}
+
+			callback(filename);
+		}
+		FS_FreeFileList(filenames);
 	}
-	FS_FreeFileList(filenames);
 }
 
 // CVE-2006-2082

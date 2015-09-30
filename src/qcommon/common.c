@@ -2982,7 +2982,7 @@ void Com_Init(char *commandLine)
 		// Don't play intro movie if already played
 		if (!com_introPlayed->integer)
 		{
-			Cbuf_AddText("cinematic etintro.roq\n");
+			Cbuf_AddText("cinematic etintro.ogv\n");
 			Cvar_Set("com_introPlayed", "1");
 		}
 	}
@@ -3648,20 +3648,38 @@ void Field_CompleteKeyname(void)
 
 /*
 ===============
-Field_CompleteFilename
+Field_CompleteFilenameMultiple
 ===============
 */
-void Field_CompleteFilename(const char *dir,
-                            const char *ext, qboolean stripExt, qboolean allowNonPureFilesOnDisk)
+void Field_CompleteFilenameMultiple(const char *dir, int numext, const char **ext, qboolean allowNonPureFilesOnDisk)
 {
 	matchCount       = 0;
 	shortestMatch[0] = 0;
 
-	FS_FilenameCompletion(dir, ext, stripExt, FindMatches, allowNonPureFilesOnDisk);
+	FS_FilenameCompletion(dir, numext, ext, qfalse, FindMatches, allowNonPureFilesOnDisk);
 
 	if (!Field_Complete())
 	{
-		FS_FilenameCompletion(dir, ext, stripExt, PrintMatches, allowNonPureFilesOnDisk);
+		FS_FilenameCompletion(dir, numext, ext, qfalse, PrintMatches, allowNonPureFilesOnDisk);
+	}
+}
+
+/*
+===============
+Field_CompleteFilename
+===============
+*/
+void Field_CompleteFilename(const char *dir, const char *ext, qboolean stripExt, qboolean allowNonPureFilesOnDisk)
+{
+	matchCount       = 0;
+	shortestMatch[0] = 0;
+	const char *tmp[] = { ext };
+
+	FS_FilenameCompletion(dir, 1, tmp, stripExt, FindMatches, allowNonPureFilesOnDisk);
+
+	if (!Field_Complete())
+	{
+		FS_FilenameCompletion(dir, 1, tmp, stripExt, PrintMatches, allowNonPureFilesOnDisk);
 	}
 }
 

@@ -2885,7 +2885,6 @@ void CL_Init(void)
 	Cmd_AddCommand("vid_restart", CL_Vid_Restart_f);
 	Cmd_AddCommand("ui_restart", CL_UI_Restart_f);
 	Cmd_AddCommand("disconnect", CL_Disconnect_f);
-	Cmd_AddCommand("cinematic", CL_PlayCinematic_f);
 	Cmd_AddCommand("connect", CL_Connect_f);
 	Cmd_AddCommand("reconnect", CL_Reconnect_f);
 	Cmd_AddCommand("localservers", CL_LocalServers_f);
@@ -2926,6 +2925,8 @@ void CL_Init(void)
 	// Avi recording
 	Cmd_AddCommand("video", CL_Video_f);
 	Cmd_AddCommand("stopvideo", CL_StopVideo_f);
+
+	CIN_Init();
 
 	CL_DemoInit();
 
@@ -2975,6 +2976,8 @@ void CL_Shutdown(void)
 	}
 
 	CL_Disconnect(qtrue);
+
+	CIN_Shutdown();
 
 	S_Shutdown();
 	DL_Shutdown();

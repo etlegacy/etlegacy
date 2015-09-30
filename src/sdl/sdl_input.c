@@ -1271,19 +1271,18 @@ static void IN_ProcessEvents(void)
 
 void IN_Frame(void)
 {
-	qboolean loading;
+	// If not DISCONNECTED (main menu), ACTIVE (in game) or CINEMATIC (playing video), we're loading
+	qboolean loading = (cls.state != CA_DISCONNECTED && cls.state != CA_ACTIVE);
+	qboolean cinematic = (cls.state == CA_CINEMATIC);
 
 	//IN_JoyMove();
-
-	// If not DISCONNECTED (main menu) or ACTIVE (in game), we're loading
-	loading = (cls.state != CA_DISCONNECTED && cls.state != CA_ACTIVE);
 
 	if (!cls.glconfig.isFullscreen && (Key_GetCatcher() & KEYCATCH_CONSOLE))
 	{
 		// Console is down in windowed mode
 		IN_DeactivateMouse();
 	}
-	else if (!cls.glconfig.isFullscreen && loading)
+	else if (!cls.glconfig.isFullscreen && loading && !cinematic)
 	{
 		// Loading in windowed mode
 		IN_DeactivateMouse();
