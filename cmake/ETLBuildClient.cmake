@@ -38,6 +38,7 @@ if(BUNDLED_OGG_VORBIS)
 endif(BUNDLED_OGG_VORBIS)
 
 if(BUNDLED_THEORA)
+	add_dependencies(bundled_theora bundled_ogg bundled_ogg_vorbis bundled_ogg_vorbis_file)
 	add_dependencies(etl bundled_theora)
 endif(BUNDLED_THEORA)
 
