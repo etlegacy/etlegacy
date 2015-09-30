@@ -81,6 +81,7 @@ Dependencies
 * **libcurl** (optional, enabled by default)
 * **Lua** version 5.3 (optional, enabled by default)
 * **Ogg Vorbis** (optional, enabled by default)
+* **Theora** (optional, enabled by defaul)
 * **Freetype** version 2 (optional, enabled by default)
 * **OpenAL** (optional)
 * **Jansson** (optional)

@@ -67,9 +67,11 @@
 #define COLOR_TEXT_NORMAL RGB(192, 192, 192)
 #define COLOR_TEXT_EDIT   RGB(255, 255, 255)
 #define COLOR_TEXT_ERROR1 RGB(255, 0, 0)
-#define COLOR_TEXT_ERROR2 RGB(0, 0, 0)
+#define COLOR_TEXT_ERROR2 COLOR_TEXT_NORMAL //RGB(0, 0, 0)
 #define COLOR_BCK_NORMAL  RGB(28, 47, 54)
 #define COLOR_BCK_ERROR   RGB(28, 47, 54)
+
+#define COMPONENT_ZERO 0, 0, 0, 0
 
 typedef struct
 {
@@ -107,6 +109,63 @@ typedef struct
 
 static WinConData s_wcd;
 
+static void CON_ResizeWindowsCon(float cx, float cy)
+{
+	float sx, sy, x, y, w, h;
+
+	if (cx < SYSCON_DEFAULT_WIDTH)
+	{
+		cx = SYSCON_DEFAULT_WIDTH;
+	}
+	if (cy < SYSCON_DEFAULT_HEIGHT)
+	{
+		cy = SYSCON_DEFAULT_HEIGHT;
+	}
+
+	sx = (float)cx / SYSCON_DEFAULT_WIDTH;
+	sy = (float)cy / SYSCON_DEFAULT_HEIGHT;
+
+	x = 5;
+	w = cx - 15;
+	if(s_wcd.hwndErrorBox)
+	{
+		SetWindowPos(s_wcd.hwndErrorBox, NULL, x, 5, w, 30, 0);
+
+		y = 40;
+		h = cy - 72;
+	}
+	else
+	{
+		y = 5;
+		h = cy - 65;
+	}
+	SetWindowPos(s_wcd.hwndBuffer, NULL, x, y, w, h, 0);
+
+	if(s_wcd.hwndInputLine)
+	{
+		y = y + h + 8;
+		h = 20;
+		SetWindowPos(s_wcd.hwndInputLine, NULL, x, y, w, h, 0);
+	}
+
+	y = y + h + 4;
+	w = 72 * sx;
+	h = 24;
+	SetWindowPos(s_wcd.hwndButtonCopy, NULL, x, y, w, h, 0);
+
+	x = x + w + 2;
+	if(s_wcd.hwndButtonClear)
+	{
+		SetWindowPos(s_wcd.hwndButtonClear, NULL, x, y, w, h, 0);
+	}
+
+	x = cx - 15 - w;
+	SetWindowPos(s_wcd.hwndButtonQuit, NULL, x, y, w, h, 0);
+
+	s_wcd.windowWidth  = cx;
+	s_wcd.windowHeight = cy;
+}
+
 /*
 ==============
 ConWndProc
@@ -122,44 +181,7 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	switch (uMsg)
 	{
 	case WM_SIZE:
-		cx = LOWORD(lParam);
-		cy = HIWORD(lParam);
-
-		if (cx < SYSCON_DEFAULT_WIDTH)
-		{
-			cx = SYSCON_DEFAULT_WIDTH;
-		}
-		if (cy < SYSCON_DEFAULT_HEIGHT)
-		{
-			cy = SYSCON_DEFAULT_HEIGHT;
-		}
-
-		sx = (float)cx / SYSCON_DEFAULT_WIDTH;
-		sy = (float)cy / SYSCON_DEFAULT_HEIGHT;
-
-		x = 5;
-		y = 40;
-		w = cx - 15;
-		h = cy - 100;
-		SetWindowPos(s_wcd.hwndBuffer, NULL, x, y, w, h, 0);
-
-		y = y + h + 8;
-		h = 20;
-		SetWindowPos(s_wcd.hwndInputLine, NULL, x, y, w, h, 0);
-
-		y = y + h + 4;
-		w = 72 * sx;
-		h = 24;
-		SetWindowPos(s_wcd.hwndButtonCopy, NULL, x, y, w, h, 0);
-
-		x = x + w + 2;
-		SetWindowPos(s_wcd.hwndButtonClear, NULL, x, y, w, h, 0);
-
-		x = cx - 15 - w;
-		SetWindowPos(s_wcd.hwndButtonQuit, NULL, x, y, w, h, 0);
-
-		s_wcd.windowWidth  = cx;
-		s_wcd.windowHeight = cy;
+		CON_ResizeWindowsCon(LOWORD(lParam), HIWORD(lParam));
 		break;
 	case WM_ACTIVATE:
 		if (LOWORD(wParam) != WA_INACTIVE)
@@ -738,28 +760,28 @@ void Sys_CreateConsole(void)
 	// create the input line
 	s_wcd.hwndInputLine = CreateWindowEx(WS_EX_CLIENTEDGE,
 	                                     "edit", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOHSCROLL,
-	                                     6, 400, 528, 20,
+										 0, 0, 0, 0,
 	                                     s_wcd.hWnd,
 	                                     ( HMENU ) INPUT_ID,    // child window ID
 	                                     g_wv.hInstance, NULL);
 
 	// create the buttons
 	s_wcd.hwndButtonCopy = CreateWindow("button", NULL, BS_PUSHBUTTON | WS_VISIBLE | WS_CHILD,
-	                                    5, 425, 72, 24,
+										0, 0, 0, 0,
 	                                    s_wcd.hWnd,
 	                                    ( HMENU ) COPY_ID,          // child window ID
 	                                    g_wv.hInstance, NULL);
 	SendMessage(s_wcd.hwndButtonCopy, WM_SETTEXT, 0, ( LPARAM ) "Copy");
 
 	s_wcd.hwndButtonClear = CreateWindow("button", NULL, BS_PUSHBUTTON | WS_VISIBLE | WS_CHILD,
-	                                     82, 425, 72, 24,
+										 0, 0, 0, 0,
 	                                     s_wcd.hWnd,
 	                                     ( HMENU ) CLEAR_ID,        // child window ID
 	                                     g_wv.hInstance, NULL);
 	SendMessage(s_wcd.hwndButtonClear, WM_SETTEXT, 0, ( LPARAM ) "Clear");
 
 	s_wcd.hwndButtonQuit = CreateWindow("button", NULL, BS_PUSHBUTTON | WS_VISIBLE | WS_CHILD,
-	                                    462, 425, 72, 24,
+										0, 0, 0, 0,
 	                                    s_wcd.hWnd,
 	                                    ( HMENU ) QUIT_ID,          // child window ID
 	                                    g_wv.hInstance, NULL);
@@ -769,7 +791,7 @@ void Sys_CreateConsole(void)
 	s_wcd.hwndBuffer = CreateWindowEx(WS_EX_CLIENTEDGE,
 	                                  "edit", NULL, WS_CHILD | WS_VISIBLE | WS_VSCROLL /* | WS_BORDER*/ |
 	                                  ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY,
-	                                  6, 40, 526, 354,
+									  0, 0, 0, 0,
 	                                  s_wcd.hWnd,
 	                                  ( HMENU ) EDIT_ID,    // child window ID
 	                                  g_wv.hInstance, NULL);
@@ -779,6 +801,8 @@ void Sys_CreateConsole(void)
 #else
 	s_wcd.SysInputLineWndProc = ( WNDPROC ) SetWindowLong(s_wcd.hwndInputLine, GWL_WNDPROC, ( long ) InputLineWndProc);
 #endif
+
+	CON_ResizeWindowsCon(s_wcd.windowWidth, s_wcd.windowHeight);
 
 	SendMessage(s_wcd.hwndBuffer, WM_SETFONT, ( WPARAM ) s_wcd.hfBufferFont, FALSE);
 	SendMessage(s_wcd.hwndInputLine, WM_SETFONT, ( WPARAM ) s_wcd.hfBufferFont, FALSE);
@@ -989,16 +1013,23 @@ void Sys_SetErrorText(const char *buf)
 
 	if (!s_wcd.hwndErrorBox)
 	{
+		//RECT windowRect;
+		//GetWindowRect(s_wcd.hWnd, &windowRect);
+
 		s_wcd.hwndErrorBox = CreateWindow("static", NULL, WS_CHILD | WS_VISIBLE | SS_SUNKEN,
-		                                  6, 5, 526, 30,
+										  0, 0, 0, 0,
 		                                  s_wcd.hWnd,
 		                                  ( HMENU ) ERRORBOX_ID,            // child window ID
 		                                  g_wv.hInstance, NULL);
-		SendMessage(s_wcd.hwndErrorBox, WM_SETFONT, ( WPARAM ) s_wcd.hfBufferFont, 0);
-		SetWindowText(s_wcd.hwndErrorBox, s_wcd.errorString);
-
 		DestroyWindow(s_wcd.hwndInputLine);
 		s_wcd.hwndInputLine = NULL;
+
+		DestroyWindow(s_wcd.hwndButtonClear);
+		s_wcd.hwndButtonClear = NULL;
+
+		CON_ResizeWindowsCon(s_wcd.windowWidth, s_wcd.windowHeight);
+		SendMessage(s_wcd.hwndErrorBox, WM_SETFONT, ( WPARAM ) s_wcd.hfBufferFont, 0);
+		SetWindowText(s_wcd.hwndErrorBox, s_wcd.errorString);
 	}
 }
 

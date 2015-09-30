@@ -33,7 +33,7 @@
 */
 /**
 * @file cl_ogv.c
-* @brief Thearo decoding
+* @brief Theora decoding
 */
 
 #include "client.h"
@@ -68,7 +68,7 @@ typedef struct
 
 	yuv_buffer      th_yuvbuffer;
 
-	int             VFrameCount;	// output video-stream
+	ogg_int64_t     VFrameCount;	// output video-stream
 	ogg_int64_t     Vtime_unit;
 	int             currentTime;	// input from Run-function
 
@@ -217,21 +217,10 @@ static qboolean OGV_LoadAudio(cinematic_t *cin)
 
 	vorbis_block_clear(&vb);
 
-	if(g_ogm->currentTime + MIN_AUDIO_PRELOAD > (int)(g_ogm->vd.granulepos * 1000 / g_ogm->vi.rate))
-	{
-		return qtrue;
-	}
-	else
-	{
-		return qfalse;
-	}
+	return (qboolean)(g_ogm->currentTime + MIN_AUDIO_PRELOAD > (int)(g_ogm->vd.granulepos * 1000 / g_ogm->vi.rate));
 }
 
 /*
-how many >> are needed to make y==x (shifting y>>i)
-return: -1	-> no match
-		>=0	-> number of shifts
-*/
 static int OGV_FindSizeShift(int x, int y)
 {
 	int             i;
@@ -265,6 +254,7 @@ static qboolean OGV_CheckFrame(yuv_buffer *yuv, theora_info *info)
 
 	return qtrue;
 }
+*/
 
 static qboolean OGV_yuv_to_rgb24(yuv_buffer *yuv, theora_info *info, uint32_t *output)
 {
@@ -299,7 +289,7 @@ static qboolean OGV_yuv_to_rgb24(yuv_buffer *yuv, theora_info *info, uint32_t *o
 			int g = Com_ByteClamp((y * 298 - 100 * v - 208 * u + 128) >> 8);
 			int b = Com_ByteClamp((y * 298 + 516 * u + 128) >> 8);
 
-			*output = LittleLong((r) | (g << 8) | (b << 16) | (255 << 24));
+			*output = (uint32_t)LittleLong((r) | (g << 8) | (b << 16) | (255 << 24));
 			++output;
 
 			y_p++;
