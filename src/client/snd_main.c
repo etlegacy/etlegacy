@@ -534,15 +534,7 @@ void S_Play_f(void)
 	for (i = 1; i < c; i++)
 	{
 		Q_strncpyz(tempBuffer, Cmd_Argv(i), MAX_QPATH);
-		if (!strrchr(tempBuffer, '.'))
-		{
-#if 1
-			// Just add the .wav ending to be compatible with vanilla clients
-			Q_strcat(tempBuffer, MAX_QPATH, ".wav");
-#else
-			Com_Printf("Warning: S_Play_f sound name '%s' has no file extension\n", tempBuffer);
-#endif
-		}
+		COM_DefaultExtension(tempBuffer, sizeof(tempBuffer), ".wav");
 
 		h = si.RegisterSound(tempBuffer, qfalse); // TODO: detect compression via extension? ioq uses qfalse by default
 
