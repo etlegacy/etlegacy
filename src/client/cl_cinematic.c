@@ -351,7 +351,7 @@ cinHandle_t CIN_PlayCinematic(const char *name, int x, int y, int w, int h, int 
 
     // Fill it in
     cin->playing = qtrue;
-    Q_strcpy(cin->name, name);
+    Q_strncpyz(cin->name, name, MAX_OSPATH);
     cin->flags = flags;
     cin->file = file;
     cin->size = size;
