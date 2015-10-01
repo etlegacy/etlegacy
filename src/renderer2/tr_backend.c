@@ -785,9 +785,8 @@ static void RB_RenderInteractions()
 
 	Ren_LogComment("--- RB_RenderInteractions ---\n");
 
-	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
+	R2_TIMING(RSPEEDS_SHADING_TIMES)
 	{
-		glFinish();
 		startTime = ri.Milliseconds();
 	}
 
@@ -992,9 +991,8 @@ skipInteraction:
 
 	GL_CheckErrors();
 
-	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
+	R2_TIMING(RSPEEDS_SHADING_TIMES)
 	{
-		glFinish();
 		backEnd.pc.c_forwardLightingTime = ri.Milliseconds() - startTime;
 	}
 }
@@ -1030,9 +1028,8 @@ static void RB_RenderInteractionsShadowMapped()
 
 	Ren_LogComment("--- RB_RenderInteractionsShadowMapped ---\n");
 
-	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
+	R2_TIMING(RSPEEDS_SHADING_TIMES)
 	{
-		glFinish();
 		startTime = ri.Milliseconds();
 	}
 
@@ -2137,9 +2134,8 @@ skipInteraction:
 
 	GL_CheckErrors();
 
-	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
+	R2_TIMING(RSPEEDS_SHADING_TIMES)
 	{
-		glFinish();
 		backEnd.pc.c_forwardLightingTime = ri.Milliseconds() - startTime;
 	}
 }
@@ -2969,7 +2965,7 @@ static int LightOcclusionResultAvailable(trRefLight_t *light)
 
 	if (light->occlusionQueryObject > 0)
 	{
-		glFinish();
+		GL_JOIN();
 
 		available = 0;
 		//if(glIsQuery(light->occlusionQueryObjects[backEnd.viewParms.viewCount]))
@@ -2994,7 +2990,7 @@ static void GetLightOcclusionQueryResult(trRefLight_t *light)
 
 	if (light->occlusionQueryObject > 0)
 	{
-		glFinish();
+		GL_JOIN();
 
 #if 0
 		if (!glIsQuery(node->occlusionQueryObjects[backEnd.viewParms.viewCount]))
@@ -3079,9 +3075,8 @@ void RB_RenderLightOcclusionQueries()
 
 		glVertexAttrib4f(ATTR_INDEX_COLOR, 1.0f, 0.0f, 0.0f, 0.05f);
 
-		if (r_speeds->integer == RSPEEDS_OCCLUSION_QUERIES)
+		R2_TIMING(RSPEEDS_OCCLUSION_QUERIES)
 		{
-			glFinish();
 			startTime = ri.Milliseconds();
 		}
 
@@ -3240,11 +3235,9 @@ void RB_RenderLightOcclusionQueries()
 			}
 		}
 
-		if (r_speeds->integer == RSPEEDS_OCCLUSION_QUERIES)
+		R2_TIMING(RSPEEDS_OCCLUSION_QUERIES)
 		{
-			glFinish();
 			backEnd.pc.c_occlusionQueriesResponseTime = ri.Milliseconds() - startTime;
-
 			startTime = ri.Milliseconds();
 		}
 
@@ -3323,9 +3316,8 @@ void RB_RenderLightOcclusionQueries()
 			oldLight = light;
 		}
 
-		if (r_speeds->integer == RSPEEDS_OCCLUSION_QUERIES)
+		R2_TIMING(RSPEEDS_OCCLUSION_QUERIES)
 		{
-			glFinish();
 			backEnd.pc.c_occlusionQueriesFetchTime = ri.Milliseconds() - startTime;
 		}
 	}
@@ -3597,7 +3589,7 @@ static int EntityOcclusionResultAvailable(trRefEntity_t *entity)
 
 	if (entity->occlusionQueryObject > 0)
 	{
-		glFinish();
+		GL_JOIN();
 
 		available = 0;
 		//if(glIsQuery(light->occlusionQueryObjects[backEnd.viewParms.viewCount]))
@@ -3622,7 +3614,7 @@ static void GetEntityOcclusionQueryResult(trRefEntity_t *entity)
 
 	if (entity->occlusionQueryObject > 0)
 	{
-		glFinish();
+		GL_JOIN();
 
 		available = 0;
 		while (!available)
@@ -3695,9 +3687,8 @@ void RB_RenderEntityOcclusionQueries()
 
 		glVertexAttrib4f(ATTR_INDEX_COLOR, 1.0f, 0.0f, 0.0f, 0.05f);
 
-		if (r_speeds->integer == RSPEEDS_OCCLUSION_QUERIES)
+		R2_TIMING(RSPEEDS_OCCLUSION_QUERIES)
 		{
-			glFinish();
 			startTime = ri.Milliseconds();
 		}
 
@@ -3851,11 +3842,9 @@ void RB_RenderEntityOcclusionQueries()
 			}
 		}
 
-		if (r_speeds->integer == RSPEEDS_OCCLUSION_QUERIES)
+		R2_TIMING(RSPEEDS_OCCLUSION_QUERIES)
 		{
-			glFinish();
 			backEnd.pc.c_occlusionQueriesResponseTime = ri.Milliseconds() - startTime;
-
 			startTime = ri.Milliseconds();
 		}
 
@@ -3962,7 +3951,7 @@ void RB_CollectBspOcclusionQueries()
 		int       avCount = 0;
 		GLint     available;
 
-		glFinish();
+		GL_JOIN();
 
 		sentinel = &tr.occlusionQueryList;
 		for (l = sentinel->next; l != sentinel; l = l->next)
@@ -5596,7 +5585,7 @@ static void RB_RenderViewFront(void)
 	// sync with gl if needed
 	if (r_finish->integer == 1 && !glState.finishCalled)
 	{
-		glFinish();
+		GL_JOIN();
 		glState.finishCalled = qtrue;
 	}
 	if (r_finish->integer == 0)
@@ -5793,9 +5782,8 @@ static void RB_RenderViewFront(void)
 
 	GL_CheckErrors();
 
-	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
+	R2_TIMING(RSPEEDS_SHADING_TIMES)
 	{
-		glFinish();
 		startTime = ri.Milliseconds();
 	}
 
@@ -5823,9 +5811,8 @@ static void RB_RenderViewFront(void)
 	// try to cull bsp nodes for the next frame using hardware occlusion queries
 	RB_RenderBspOcclusionQueries();
 
-	if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
+	R2_TIMING(RSPEEDS_SHADING_TIMES)
 	{
-		glFinish();
 		backEnd.pc.c_forwardAmbientTime = ri.Milliseconds() - startTime;
 	}
 
@@ -6023,12 +6010,11 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	R_IssuePendingRenderCommands();
 
 	// we definately want to sync every frame for the cinematics
-	glFinish();
+	GL_JOIN();
 
 	start = end = 0;
 	if (r_speeds->integer)
 	{
-		glFinish();
 		start = ri.Milliseconds();
 	}
 
@@ -6068,9 +6054,8 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 
 	RE_UploadCinematic(w, h, cols, rows, data, client, dirty);
 
-	if (r_speeds->integer)
+	R2_TIMING_SIMPLE();
 	{
-		glFinish();
 		end = ri.Milliseconds();
 		Ren_Print("glTexSubImage2D %i, %i: %i msec\n", cols, rows, end - start);
 	}
@@ -6575,8 +6560,6 @@ void RB_ShowImages(void)
 
 	GL_Clear(GL_COLOR_BUFFER_BIT);
 
-	glFinish();
-
 	SetMacrosAndSelectProgram(trProg.gl_genericShader);
 
 	GL_Cull(CT_TWO_SIDED);
@@ -6615,8 +6598,6 @@ void RB_ShowImages(void)
 
 		Tess_InstantQuad(quadVerts);
 	}
-
-	glFinish();
 
 	end = ri.Milliseconds();
 	Ren_Print("%i msec to draw all images\n", end - start);
@@ -6713,7 +6694,7 @@ const void *RB_SwapBuffers(const void *data)
 
 	if (!glState.finishCalled)
 	{
-		glFinish();
+		GL_JOIN();
 	}
 
 	Ren_LogComment("***************** RB_SwapBuffers *****************\n\n\n");

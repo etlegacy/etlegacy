@@ -4230,4 +4230,14 @@ void GLSL_SetUniform_AlphaTest(uint32_t stateBits);
 #define SelectProgram(program) Ren_LogComment("SelectProgram called: (%s:%d)\n", __FILE__, __LINE__); GLSL_SelectPermutation(program)
 #define SetMacrosAndSelectProgram(program, ...) GLSL_SetMacroStates(program, NUMARGS(__VA_ARGS__), ## __VA_ARGS__); SelectProgram(program)
 
+#if 0
+#define GL_JOIN() glFinish()
+#define R2_TIMING(rule) if (r_speeds->integer == rule) GL_JOIN(); if (r_speeds->integer == rule)
+#define R2_TIMING_SIMPLE() if (r_speeds->integer) GL_JOIN(); if (r_speeds->integer)
+#else
+#define GL_JOIN()
+#define R2_TIMING(rule) if (r_speeds->integer == rule)
+#define R2_TIMING_SIMPLE() if (r_speeds->integer)
+#endif
+
 #endif // TR_LOCAL_H

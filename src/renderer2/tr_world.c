@@ -1892,9 +1892,8 @@ static void R_CoherentHierachicalCulling()
 
 	Ren_LogComment("tr.viewCount = %i, tr.viewCountNoReset = %i\n", tr.viewCount, tr.viewCountNoReset);
 
-	if (r_speeds->integer)
+	R2_TIMING_SIMPLE();
 	{
-		glFinish();
 		startTime = ri.Milliseconds();
 	}
 
@@ -2261,9 +2260,8 @@ static void R_CoherentHierachicalCulling()
 
 	//Ren_Print("--- R_CHC++ end ---\n");
 
-	if (r_speeds->integer)
+	R2_TIMING_SIMPLE();
 	{
-		glFinish();
 		tr.pc.c_CHCTime = ri.Milliseconds() - startTime;
 	}
 }
