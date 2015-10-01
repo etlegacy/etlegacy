@@ -359,8 +359,8 @@ run_clean() {
 			cd ${_SRC}/libs/ogg; make clean
 			einfo "Cleaning libvorbis..."
 			cd ${_SRC}/libs/vorbis; make clean
-			einfo "Cleaning libtheora..."
-			cd ${_SRC}/libs/theora; make clean
+			# einfo "Cleaning libtheora..."
+			# cd ${_SRC}/libs/theora; make clean
 		fi
 		cd ${_SRC}/libs
 		git clean -d -f
