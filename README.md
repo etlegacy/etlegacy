@@ -81,7 +81,7 @@ Dependencies
 * **libcurl** (optional, enabled by default)
 * **Lua** version 5.3 (optional, enabled by default)
 * **Ogg Vorbis** (optional, enabled by default)
-* **Theora** (optional, enabled by defaul)
+* **Theora** (optional, enabled by default)
 * **Freetype** version 2 (optional, enabled by default)
 * **OpenAL** (optional)
 * **Jansson** (optional)
@@ -234,7 +234,7 @@ This will put an 'etlegacy' folder into your user folder.
 Then brew the following packages in the terminal app:
 
     $ brew cask install xquartz
-    $ brew install --universal gnu-sed cmake glew sdl2 jpeg-turbo curl lua libogg libvorbis freetype
+    $ brew install --universal gnu-sed cmake glew sdl2 jpeg-turbo curl lua libogg libvorbis libtheora freetype
 
 The --universal flag ensures both 32bit and 64bit libraries are installed. Although your system curl library supports both architectures, you also need to install its headers.
 

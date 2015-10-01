@@ -232,6 +232,7 @@ generate_configuration() {
 	BUNDLED_JPEG=${BUNDLED_JPEG:-1}
 	BUNDLED_LUA=${BUNDLED_LUA:-1}
 	BUNDLED_OGG=${BUNDLED_OGG:-1}
+	BUNDLED_THEORA=${BUNDLED_THEORA:-1}
 	BUNDLED_GLEW=${BUNDLED_GLEW:-1}
 	BUNDLED_FREETYPE=${BUNDLED_FREETYPE:-1}
 	BUNDLED_JANSSON=${BUNDLED_JANSSON:-0}
@@ -274,6 +275,7 @@ generate_configuration() {
 		-DBUNDLED_LUA=${BUNDLED_LUA}
 		-DBUNDLED_CURL=${BUNDLED_CURL}
 		-DBUNDLED_OGG_VORBIS=${BUNDLED_OGG}
+		-DBUNDLED_THEORA=${BUNDLED_THEORA}
 		-DBUNDLED_GLEW=${BUNDLED_GLEW}
 		-DBUNDLED_FREETYPE=${BUNDLED_FREETYPE}
 		-DBUNDLED_JANSSON=${BUNDLED_JANSSON}
@@ -355,6 +357,8 @@ run_clean() {
 			cd ${_SRC}/libs/ogg; make clean
 			einfo "Cleaning libvorbis..."
 			cd ${_SRC}/libs/vorbis; make clean
+			einfo "Cleaning libtheora..."
+			cd ${_SRC}/libs/theora; make clean
 		fi
 		cd ${_SRC}/libs
 		git clean -d -f
