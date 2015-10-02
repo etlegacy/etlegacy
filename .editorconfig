@@ -12,3 +12,6 @@ trim_trailing_whitespace = false
 
 [*.bat]
 end_of_line = crlf
+
+[*NSIS.template.in]
+charset = latin1
