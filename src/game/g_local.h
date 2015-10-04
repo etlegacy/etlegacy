@@ -1382,6 +1382,7 @@ void TeleportPlayer(gentity_t *player, vec3_t origin, vec3_t angles);
 void mg42_fire(gentity_t *other);
 void mg42_stopusing(gentity_t *self);
 void aagun_fire(gentity_t *other);
+void aagun_stopusing(gentity_t *self);
 
 float AngleDifference(float ang1, float ang2);
 qboolean G_FlingClient(gentity_t *vic, int flingType);

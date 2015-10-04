@@ -1303,6 +1303,10 @@ void G_SetEntState(gentity_t *ent, entState_t state)
 			// stop using the mg42
 			mg42_stopusing(ent);
 		}
+		else if (!Q_stricmp(ent->classname, "misc_aagun"))
+		{
+			aagun_stopusing(ent);
+		}
 
 		if (ent->s.eType == ET_COMMANDMAP_MARKER)
 		{
@@ -1337,6 +1341,10 @@ void G_SetEntState(gentity_t *ent, entState_t state)
 		if (!Q_stricmp(ent->classname, "misc_mg42"))
 		{
 			mg42_stopusing(ent);
+		}
+		else if(!Q_stricmp(ent->classname, "misc_aagun"))
+		{
+			aagun_stopusing(ent);
 		}
 		else if (ent->s.eType == ET_WOLF_OBJECTIVE)
 		{
