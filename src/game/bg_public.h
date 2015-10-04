@@ -1105,7 +1105,7 @@ typedef enum
 
 extern const char *eventnames[EV_MAX_EVENTS];
 
-typedef enum
+typedef enum // unused
 {
 	BOTH_DEATH1 = 0,
 	BOTH_DEAD1,
@@ -1600,7 +1600,7 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 #define MASK_ALL                (-1)
 #define MASK_SOLID              (CONTENTS_SOLID)
 #define MASK_PLAYERSOLID        (CONTENTS_SOLID | CONTENTS_PLAYERCLIP | CONTENTS_BODY)
-#define MASK_DEADSOLID          (CONTENTS_SOLID | CONTENTS_PLAYERCLIP)
+//#define MASK_DEADSOLID          (CONTENTS_SOLID | CONTENTS_PLAYERCLIP) // unused
 #define MASK_WATER              (CONTENTS_WATER | CONTENTS_LAVA | CONTENTS_SLIME)
 //#define	MASK_OPAQUE				(CONTENTS_SOLID|CONTENTS_SLIME|CONTENTS_LAVA)
 #define MASK_OPAQUE             (CONTENTS_SOLID | CONTENTS_LAVA)        // modified since slime is no longer deadly

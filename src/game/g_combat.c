@@ -1265,7 +1265,6 @@ static grefEntity_t refent;
 
 void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, int mod)
 {
-	gclient_t   *client;
 	int         take;
 	int         knockback;
 	qboolean    wasAlive, onSameTeam;
@@ -1432,11 +1431,9 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		break;
 	}
 
-	client = targ->client;
-
-	if (client)
+	if (targ->client)
 	{
-		if (client->noclip || client->ps.powerups[PW_INVULNERABLE])
+		if (targ->client->noclip || targ->client->ps.powerups[PW_INVULNERABLE])
 		{
 			return;
 		}
@@ -1476,7 +1473,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	}
 
 	// set weapons means less knockback
-	if (client && (IS_MORTAR_WEAPON_SET(client->ps.weapon) || client->ps.weapon == WP_MOBILE_BROWNING_SET || client->ps.weapon == WP_MOBILE_MG42_SET))
+	if (targ->client && IS_SET_WEAPON(targ->client->ps.weapon))
 	{
 		knockback *= 0.5;
 	}
@@ -1664,7 +1661,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		targ->client->ps.eFlags |= EF_HEADSHOT;
 
 		// Record the headshot
-		if (client && attacker && attacker->client
+		if (targ->client && attacker && attacker->client
 #ifndef DEBUG_STATS
 		    && attacker->client->sess.sessionTeam != targ->client->sess.sessionTeam
 #endif
@@ -1726,28 +1723,28 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	// add to the damage inflicted on a player this frame
 	// the total will be turned into screen blends and view angle kicks
 	// at the end of the frame
-	if (client)
+	if (targ->client)
 	{
 		if (attacker)
 		{
-			client->ps.persistant[PERS_ATTACKER] = attacker->s.number;
+			targ->client->ps.persistant[PERS_ATTACKER] = attacker->s.number;
 		}
 		else
 		{
-			client->ps.persistant[PERS_ATTACKER] = ENTITYNUM_WORLD;
+			targ->client->ps.persistant[PERS_ATTACKER] = ENTITYNUM_WORLD;
 		}
-		client->damage_blood     += take;
-		client->damage_knockback += knockback;
+		targ->client->damage_blood     += take;
+		targ->client->damage_knockback += knockback;
 
 		if (dir)
 		{
-			VectorCopy(dir, client->damage_from);
-			client->damage_fromWorld = qfalse;
+			VectorCopy(dir, targ->client->damage_from);
+			targ->client->damage_fromWorld = qfalse;
 		}
 		else
 		{
-			VectorCopy(targ->r.currentOrigin, client->damage_from);
-			client->damage_fromWorld = qtrue;
+			VectorCopy(targ->r.currentOrigin, targ->client->damage_from);
+			targ->client->damage_fromWorld = qtrue;
 		}
 	}
 
@@ -1796,7 +1793,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		//G_Printf("health at: %d\n", targ->health);
 		if (targ->health <= 0)
 		{
-			if (client && !wasAlive)
+			if (targ->client && !wasAlive)
 			{
 				targ->flags |= FL_NO_KNOCKBACK;
 				// special hack to not count attempts for body gibbage
@@ -1816,7 +1813,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 				targ->sound2to1 = mod;
 				targ->sound2to3 = (dflags & DAMAGE_RADIUS) ? 1 : 0;
 
-				if (client)
+				if (targ->client)
 				{
 					if (G_GetTeamFromEntity(inflictor) != G_GetTeamFromEntity(targ))
 					{
