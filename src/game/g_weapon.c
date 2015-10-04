@@ -45,7 +45,7 @@ vec3_t muzzleTrace;
 
 // forward dec
 void Bullet_Fire(gentity_t *ent, float spread, int damage, qboolean distance_falloff);
-qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, float spread, int damage, qboolean distance_falloff);
+qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, int damage, qboolean distance_falloff);
 
 qboolean G_ModIsExplosive(meansOfDeath_t mod)
 {
@@ -2413,7 +2413,6 @@ evilbanigoto:
 									pm->s.effect3Time = hit->parent->s.teamNum;
 									pm->s.teamNum     = ent->client->sess.sessionTeam;
 								}
-
 								//trap_SendServerCommand(-1, "cp \"Axis engineer disarmed the Dynamite!\" 2");
 							}
 							else         // TEAM_ALLIES
@@ -2438,7 +2437,6 @@ evilbanigoto:
 									pm->s.effect3Time = hit->parent->s.teamNum;
 									pm->s.teamNum     = ent->client->sess.sessionTeam;
 								}
-
 								//trap_SendServerCommand(-1, "cp \"Allied engineer disarmed the Dynamite!\" 2");
 							}
 
@@ -2711,7 +2709,7 @@ void weapon_callAirStrike(gentity_t *ent)
 		VectorNormalize(bombaxis);
 
 		VectorCopy(bombaxis, pos);
-		VectorScale(pos, (float)(-.5f * BOMBSPREAD * NUMBOMBS), pos);
+		VectorScale(pos, (-.5f * BOMBSPREAD * NUMBOMBS), pos);
 		VectorAdd(ent->s.pos.trBase, pos, pos);   // first bomb position
 		VectorScale(bombaxis, BOMBSPREAD, bombaxis);   // bomb drop direction offset
 
@@ -3015,7 +3013,6 @@ void Weapon_Artillery(gentity_t *ent)
 
 			bomboffset[0] = crandom() * 250;
 			bomboffset[1] = crandom() * 250;
-
 		}
 		bomboffset[2] = 0;
 
@@ -3042,8 +3039,6 @@ void Weapon_Artillery(gentity_t *ent)
 		// build arty falling sound effect in front of bomb drop
 		bomb2               = G_Spawn();
 		bomb2->think        = artilleryThink;
-
-
 		bomb2->s.eType      = ET_MISSILE;
 		bomb2->r.svFlags    = SVF_NOCLIENT;
 		bomb2->r.ownerNum   = ent->s.number;
@@ -3205,26 +3200,18 @@ Bullet_Endpos
 */
 void Bullet_Endpos(gentity_t *ent, float spread, vec3_t *end)
 {
-	float    r, u;
-	qboolean randSpread = qtrue;
-	int      dist       = MAX_TRACE;
-
-	r = crandom() * spread;
-	u = crandom() * spread;
-
 	if (weaponTable[ent->s.weapon].isScoped)
 	{
 		// aim dir already accounted for sway of scoped weapons in CalcMuzzlePoints()
-		dist      *= 2;
-		randSpread = qfalse;
+		VectorMA(muzzleTrace, 2 * MAX_TRACE, forward, *end);
 	}
-
-	VectorMA(muzzleTrace, dist, forward, *end);
-
-	if (randSpread)
+	else
 	{
-		VectorMA(*end, r, right, *end);
-		VectorMA(*end, u, up, *end);
+		VectorMA(muzzleTrace, MAX_TRACE, forward, *end);
+
+		// random spread
+		VectorMA(*end, (crandom() * spread), right, *end);
+		VectorMA(*end, (crandom() * spread), up, *end);
 	}
 }
 
@@ -3265,7 +3252,7 @@ void Bullet_Fire(gentity_t *ent, float spread, int damage, qboolean distance_fal
 
 	G_HistoricalTraceBegin(ent);
 
-	Bullet_Fire_Extended(ent, ent, muzzleTrace, end, spread, damage, distance_falloff);
+	Bullet_Fire_Extended(ent, ent, muzzleTrace, end, damage, distance_falloff);
 
 	G_HistoricalTraceEnd(ent);
 }
@@ -3279,7 +3266,7 @@ Bullet_Fire_Extended
     uses for this include shooting through entities (windows, doors, other players, etc.) and reflecting bullets
 ==============
 */
-qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, float spread, int damage, qboolean distance_falloff)
+qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, int damage, qboolean distance_falloff)
 {
 	trace_t   tr;
 	gentity_t *tent;
@@ -3437,7 +3424,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 			{
 				// start new bullet at position this hit the bmodel and continue to the end position (ignoring shot-through bmodel in next trace)
 				// spread = 0 as this is an extension of an already spread shot
-				return Bullet_Fire_Extended(traceEnt, attacker, tr.endpos, end, 0, damage, distance_falloff);
+				return Bullet_Fire_Extended(traceEnt, attacker, tr.endpos, end, damage, distance_falloff);
 			}
 		}
 	}
