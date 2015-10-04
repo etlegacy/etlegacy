@@ -99,7 +99,7 @@ typedef enum
 // Worldspawn spawnflags to indicate if a gametype is not supported
 #define NO_GT_WOLF      1
 #define NO_STOPWATCH    2
-#define NO_CHECKPOINT   4
+#define NO_CHECKPOINT   4 // unused
 #define NO_LMS          8
 
 #define MAX_CONSTRUCT_STAGES 3
@@ -1340,7 +1340,7 @@ gentity_t *G_BuildLeg(gentity_t *ent, grefEntity_t *refent, qboolean newRefent);
 #define DAMAGE_HALF_KNOCKBACK       0x00000002  // do less knockback
 #define DAMAGE_NO_KNOCKBACK         0x00000008  // do not affect velocity, just view angles
 #define DAMAGE_NO_PROTECTION        0x00000020  // armor, shields, invulnerability, and godmode have no effect
-#define DAMAGE_NO_TEAM_PROTECTION   0x00000010  // Unused. Armor, shields, invulnerability, and godmode have no effect
+#define DAMAGE_NO_TEAM_PROTECTION   0x00000010  // unused. Armor, shields, invulnerability, and godmode have no effect
 #define DAMAGE_DISTANCEFALLOFF      0x00000040  // distance falloff
 
 // g_missile.c

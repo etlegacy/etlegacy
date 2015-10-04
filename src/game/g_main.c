@@ -3505,11 +3505,9 @@ void G_LogExit(const char *string)
 	// Send gameCompleteStatus message to master servers
 	trap_SendConsoleCommand(EXEC_APPEND, "gameCompleteStatus\n");
 
-	// FIXME: do a switch
 	if (g_gametype.integer == GT_WOLF_STOPWATCH)
 	{
-		char cs[MAX_STRING_CHARS];
-		int  winner, defender;
+		int winner, defender;
 
 		trap_GetConfigstring(CS_MULTI_INFO, cs, sizeof(cs));
 		defender = atoi(Info_ValueForKey(cs, "d")); // defender
@@ -3542,10 +3540,9 @@ void G_LogExit(const char *string)
 	}
 	else if (g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
-		char cs[MAX_STRING_CHARS];
-		int  winner;
-		int  highestskillpoints, highestskillpointsclient, j, teamNum;
-		int  highestskillpointsincrease;
+		int winner;
+		int highestskillpoints, highestskillpointsclient, j, teamNum;
+		int highestskillpointsincrease;
 
 		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 		winner = atoi(Info_ValueForKey(cs, "w"));
@@ -3709,7 +3706,7 @@ void G_LogExit(const char *string)
 			trap_Cvar_Update(&g_currentRound);
 		}
 	}
-	else if (g_gametype.integer == GT_WOLF)
+	else if (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_MAPVOTE)
 	{
 		G_StoreMapXP();
 	}
