@@ -938,7 +938,6 @@ void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damag
 		tent->s.otherEntityNum2 = activator->s.number;  // store the user id, so the client can position the tracer
 		tent->s.effect1Time     = seed;
 	}
-
 	if (traceEnt->takedamage)
 	{
 		G_Damage(traceEnt, ent, activator, forward, tr.endpos, damage, 0, mod);
@@ -1026,12 +1025,15 @@ void aagun_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 	if (owner && owner->client)
 	{
-		ent->r.ownerNum       = ent->s.number;
-		ent->s.otherEntityNum = ent->s.number;
-
 		owner->client->ps.persistant[PERS_HWEAPON_USE] = 0;
+		ent->r.ownerNum                                = ent->s.number;
+		ent->s.otherEntityNum                          = ent->s.number;
 		owner->client->ps.viewlocked                   = VIEWLOCK_NONE;
 		owner->active                                  = qfalse;
+
+		other->client->ps.weapHeat[WP_DUMMY_MG42] = ent->mg42weapHeat;
+		ent->backupWeaponTime                     = owner->client->ps.weaponTime;
+		owner->backupWeaponTime                   = owner->client->ps.weaponTime;
 	}
 
 	trap_LinkEntity(ent);
