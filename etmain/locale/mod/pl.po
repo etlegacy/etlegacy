@@ -1,7 +1,7 @@
-# Polish translation for ET:Legacy mod
-# Copyright (C) 2012-2015 ET: Legacy Team
-# This file is distributed under the same license as the ET:Legacy package.
-
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Jan Simek
+# This file is distributed under the same license as the PACKAGE package.
+# 
 # Translators:
 # jakub.strelcow <jakubstrelcow@gmail.com>, 2015
 # Rafał Pawlak <rafal1137@yahoo.pl>, 2015
