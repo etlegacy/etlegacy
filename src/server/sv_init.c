@@ -242,6 +242,12 @@ void SV_SetUserinfo(int index, const char *val)
 
 	Q_strncpyz(svs.clients[index].userinfo, val, sizeof(svs.clients[index].userinfo));
 	Q_strncpyz(svs.clients[index].name, Info_ValueForKey(val, "name"), sizeof(svs.clients[index].name));
+
+	// Save userinfo changes to demo (also in SV_UpdateUserinfo_f() in sv_client.c)
+	if (sv.demoState == DS_RECORDING)
+	{
+		SV_DemoWriteClientUserinfo(&svs.clients[index], val);
+	}
 }
 
 /*
@@ -261,12 +267,6 @@ void SV_GetUserinfo(int index, char *buffer, int bufferSize)
 	}
 
 	Q_strncpyz(buffer, svs.clients[index].userinfo, bufferSize);
-
-	// Save userinfo changes to demo (also in SV_UpdateUserinfo_f() in sv_client.c)
-	if (sv.demoState == DS_RECORDING)
-	{
-		SV_DemoWriteClientUserinfo(&svs.clients[index], buffer);
-	}
 }
 
 /*
