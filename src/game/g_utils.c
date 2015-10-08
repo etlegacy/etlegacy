@@ -1749,8 +1749,8 @@ team_t G_GetTeamFromEntity(gentity_t *ent)
 	case ET_CONSTRUCTIBLE:
 		return ent->s.teamNum;
 	case ET_MG42_BARREL:
+	case ET_AAGUN:
 		return G_GetTeamFromEntity(&g_entities[ent->r.ownerNum]);
-
 	default:
 		break;
 	}
