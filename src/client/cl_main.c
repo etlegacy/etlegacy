@@ -1053,7 +1053,7 @@ void CL_Rcon_f(void)
 {
 	char message[MAX_RCON_MESSAGE];
 
-	if (!rcon_client_password->string)
+	if (!rcon_client_password->string[0])
 	{
 		Com_Printf("You must set 'rconpassword' before\n"
 		           "issuing an rcon command.\n");
