@@ -220,7 +220,7 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 			realweap = WP_MOBILE_MG42;
 		}
 	}
-	else if (cg.predictedPlayerEntity.currentState.eFlags & EF_MG42_ACTIVE)
+	else if ((cg.predictedPlayerEntity.currentState.eFlags & EF_MG42_ACTIVE) ||(cg.predictedPlayerEntity.currentState.eFlags & EF_AAGUN_ACTIVE))
 	{
 		realweap = WP_MOBILE_MG42;
 	}

@@ -3287,7 +3287,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 	// allow the gun to be completely removed
 	if ((!cg_drawGun.integer))
 	{
-		if ((cg.predictedPlayerState.eFlags & EF_FIRING) && !(cg.predictedPlayerState.eFlags & (EF_MG42_ACTIVE | EF_MOUNTEDTANK)))
+		if ((cg.predictedPlayerState.eFlags & EF_FIRING) && !(cg.predictedPlayerState.eFlags & (EF_MG42_ACTIVE | EF_AAGUN_ACTIVE | EF_MOUNTEDTANK)))
 		{
 			vec3_t origin;
 
@@ -6566,7 +6566,7 @@ void CG_SpawnTracer(int sourceEnt, vec3_t pstart, vec3_t pend)
 	VectorCopy(pend, end);
 
 	// make MG42 tracers line up
-	if (cg_entities[sourceEnt].currentState.eFlags & EF_MG42_ACTIVE)
+	if (cg_entities[sourceEnt].currentState.eFlags & EF_MG42_ACTIVE) // FIXME: AAGUN
 	{
 		start[2] -= 42;
 	}
@@ -6926,7 +6926,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 	}
 
 	// snap tracers for MG42 to viewangle of client when antilag is enabled
-	if (cgs.antilag && otherEntNum2 == cg.snap->ps.clientNum && (cg_entities[otherEntNum2].currentState.eFlags & EF_MG42_ACTIVE))
+	if (cgs.antilag && otherEntNum2 == cg.snap->ps.clientNum && (cg_entities[otherEntNum2].currentState.eFlags & EF_MG42_ACTIVE)) // FIXME: AAGUN
 	{
 		vec3_t  muzzle, forward, right, up;
 		float   r, u;
@@ -7145,10 +7145,9 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 	else        // (not flesh)
 	{   // all bullet weapons have the same fx, and this stops pvs issues causing grenade explosions
 		int fromweap = WP_MP40; // cg_entities[sourceEntityNum].currentState.weapon;
+		// FIXME: remove fromweap (use WP_MP40) or DO different fx for different weapons
 
-		if (!fromweap ||
-		    (cg_entities[sourceEntityNum].currentState.eFlags & EF_MG42_ACTIVE) ||
-		    (cg_entities[sourceEntityNum].currentState.eFlags & EF_MOUNTEDTANK))        // mounted
+		if (!fromweap || (cg_entities[sourceEntityNum].currentState.eFlags & (EF_MG42_ACTIVE | EF_AAGUN_ACTIVE | EF_MOUNTEDTANK))) // mounted
 		{
 			fromweap = WP_MP40;
 		}

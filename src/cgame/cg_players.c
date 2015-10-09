@@ -2537,7 +2537,7 @@ void CG_Player(centity_t *cent)
 		for (num = 0 ; num < cg.snap->numEntities ; num++)
 		{
 			mg42 = &cg_entities[cg.snap->entities[num].number];
-			if (mg42->currentState.eType == ET_MG42_BARREL &&
+			if ((mg42->currentState.eType == ET_MG42_BARREL || mg42->currentState.eType == ET_AAGUN) &&
 			    mg42->currentState.otherEntityNum == cent->currentState.number)
 			{
 				// found it, clamp behind gun
@@ -2545,7 +2545,16 @@ void CG_Player(centity_t *cent)
 
 				//AngleVectors (mg42->s.apos.trBase, forward, right, up);
 				AngleVectors(cent->lerpAngles, forward, right, up);
-				VectorMA(mg42->currentState.pos.trBase, -36, forward, playerOrigin);
+
+				if (cent->currentState.eFlags & EF_AAGUN_ACTIVE)
+				{
+					VectorMA(mg42->currentState.pos.trBase, -40, forward, playerOrigin);
+				}
+				else
+				{
+					VectorMA(mg42->currentState.pos.trBase, -36, forward, playerOrigin);
+				}
+
 				playerOrigin[2] = cent->lerpOrigin[2];
 				break;
 			}

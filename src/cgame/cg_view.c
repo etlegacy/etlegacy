@@ -1273,7 +1273,15 @@ int CG_CalcViewValues(void)
 		vec3_t    forward;
 
 		AngleVectors(ps->viewangles, forward, NULL, NULL);
-		VectorMA(mg42->currentState.pos.trBase, -36, forward, cg.refdef_current->vieworg);
+		if (ps->eFlags & EF_AAGUN_ACTIVE)
+		{
+			VectorMA(mg42->currentState.pos.trBase, -40, forward, cg.refdef_current->vieworg);
+		}
+		else
+		{
+			VectorMA(mg42->currentState.pos.trBase, -36, forward, cg.refdef_current->vieworg);
+		}
+
 		cg.refdef_current->vieworg[2] = ps->origin[2];
 		VectorCopy(ps->viewangles, cg.refdefViewAngles);
 	}

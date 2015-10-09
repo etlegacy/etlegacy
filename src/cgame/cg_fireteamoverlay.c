@@ -529,7 +529,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 				curWeap = WP_MOBILE_MG42;
 			}
 		}
-		else if (cg.predictedPlayerEntity.currentState.eFlags & EF_MG42_ACTIVE)
+		else if ((cg.predictedPlayerEntity.currentState.eFlags & EF_MG42_ACTIVE) || (cg.predictedPlayerEntity.currentState.eFlags & EF_AAGUN_ACTIVE))
 		{
 			curWeap = WP_MOBILE_MG42;
 		}
