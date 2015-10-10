@@ -264,11 +264,9 @@ void CG_NewClientInfo(int clientNum)
 		}
 	}
 
-	// diguiseName
-	v = Info_ValueForKey(configstring, "dn");
-	Q_strncpyz(newInfo.disguiseName, v, sizeof(newInfo.disguiseName));
-	Q_strncpyz(newInfo.cleandisguiseName, v, sizeof(newInfo.cleandisguiseName));
-	Q_CleanStr(newInfo.cleandisguiseName);
+	// disguise clientNum
+	v                         = Info_ValueForKey(configstring, "dn");
+	newInfo.disguiseClientNum = atoi(v);
 
 	// disguiseRank
 	v                    = Info_ValueForKey(configstring, "dr");

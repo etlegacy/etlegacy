@@ -534,7 +534,6 @@ typedef struct
 // client model and other color coded effects
 // this is regenerated each time a client's configstring changes,
 // usually as a result of a userinfo (name, model, etc) change
-#define MAX_CUSTOM_SOUNDS   32
 typedef struct clientInfo_s
 {
 	qboolean infoValid;
@@ -564,8 +563,7 @@ typedef struct clientInfo_s
 	int skill[SK_NUM_SKILLS];
 	int skillpoints[SK_NUM_SKILLS]; // filled OOB by +wstats
 
-	char disguiseName[MAX_QPATH];
-	char cleandisguiseName[MAX_QPATH];
+	int disguiseClientNum;
 	int disguiseRank;
 
 	int weapon;

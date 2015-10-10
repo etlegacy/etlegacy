@@ -889,8 +889,8 @@ struct gclient_s
 
 	int deathTime;                  // if we are dead, when did we die
 
-	char disguiseNetname[MAX_NETNAME];
-	int disguiseRank;
+	int disguiseClientNum;
+	int disguiseRank; // FIXME: remove this, we have disguiseClientNum @ client side and rank is available for each client
 
 	int medals;
 	float acc;

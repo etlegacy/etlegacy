@@ -4295,11 +4295,6 @@ static void PM_Weapon(void)
 
 	pm->ps->weaponstate = WEAPON_FIRING;
 
-	// reset player disguise on firing
-	//if( pm->ps->weapon != WP_SMOKE_BOMB && pm->ps->weapon != WP_SATCHEL && pm->ps->weapon != WP_SATCHEL_DET ) { //  not for these weapons
-	//  pm->ps->powerups[PW_OPS_DISGUISED] = 0;
-	//}
-
 	// check for out of ammo
 
 	ammoNeeded = GetAmmoTableData(pm->ps->weapon)->uses;

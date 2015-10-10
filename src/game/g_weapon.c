@@ -4092,10 +4092,12 @@ void FireWeapon(gentity_t *ent)
 				if (G_PlayerCanBeSeenByOthers(ent))
 				{
 					ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
+					ent->client->disguiseClientNum = -1;
 				}
 				break;
 			default: // luger, akimbo luger, colt, akimbo colt, fg42, fg42_scoped
 				ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
+				ent->client->disguiseClientNum = -1;
 				break;
 		}
 	}

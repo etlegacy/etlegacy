@@ -2107,7 +2107,7 @@ void ClientUserinfoChanged(int clientNum)
 
 	// send over a subset of the userinfo keys so other clients can
 	// print scoreboards, display models, and play custom sounds
-	s = va("n\\%s\\t\\%i\\c\\%i\\lc\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%s\\dr\\%i\\w\\%i\\lw\\%i\\sw\\%i\\mu\\%i\\ref\\%i\\u\\%u",
+	s = va("n\\%s\\t\\%i\\c\\%i\\lc\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%i\\dr\\%i\\w\\%i\\lw\\%i\\sw\\%i\\mu\\%i\\ref\\%i\\u\\%u",
 	       client->pers.netname,
 	       client->sess.sessionTeam,
 	       client->sess.playerType,
@@ -2115,7 +2115,7 @@ void ClientUserinfoChanged(int clientNum)
 	       client->sess.rank,
 	       medalStr,
 	       skillStr,
-	       client->disguiseNetname,
+	       client->disguiseClientNum,
 	       client->disguiseRank,
 	       client->sess.playerWeapon,
 	       client->sess.latchPlayerWeapon,
@@ -3029,10 +3029,11 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		client->maxlivescalced = set;
 	}
 
-	client->pers       = saved;
-	client->sess       = savedSess;
-	client->ps.ping    = savedPing;
-	client->ps.teamNum = savedTeam;
+	client->pers              = saved;
+	client->sess              = savedSess;
+	client->ps.ping           = savedPing;
+	client->ps.teamNum        = savedTeam;
+	client->disguiseClientNum = -1;
 
 	if (inIntermission)
 	{

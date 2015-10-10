@@ -1525,12 +1525,20 @@ static void CG_DrawCrosshairNames(void)
 					if (cg_drawCrosshairNames.integer == 2)
 					{
 						// Draw with full coloring
-						s = va("%s", cgs.clientinfo[cg.crosshairClientNum].disguiseName);
+						// fail safe - this should always be the case here - cg.crosshairClientNum is in game and disguised ...
+						if (cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum > -1)
+						{
+							s = va("%s", cgs.clientinfo[cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum].name);
+						}
 					}
 					else
 					{
-						// Draw them with a single color (white)
-						Q_ColorizeString('7', cgs.clientinfo[cg.crosshairClientNum].cleandisguiseName, colorized, colorizedBufferLength);
+						// Draw them with a single color (white) // FIXME: name already clean
+						// fail safe - this should always be the case here - cg.crosshairClientNum is in game and disguised ...
+						if (cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum > -1)
+						{
+							Q_ColorizeString('7', cgs.clientinfo[cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum].cleanname, colorized, colorizedBufferLength);
+						}
 						s = colorized;
 					}
 					w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
