@@ -471,7 +471,7 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 
 	// reset player disguise on stealing docs
 	other->client->ps.powerups[PW_OPS_DISGUISED] = 0;
-	other->client->disguiseClientNum = -1;
+	other->client->disguiseClientNum             = -1;
 
 	if (team == TEAM_AXIS)
 	{
@@ -1089,7 +1089,7 @@ void checkpoint_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 	// reset player disguise on touching flag
 	other->client->ps.powerups[PW_OPS_DISGUISED] = 0;
-	other->client->disguiseClientNum = -1;
+	other->client->disguiseClientNum             = -1;
 }
 
 void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace);
@@ -1197,7 +1197,7 @@ void checkpoint_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 
 	// reset player disguise on touching flag
 	other->client->ps.powerups[PW_OPS_DISGUISED] = 0;
-	other->client->disguiseClientNum = -1;
+	other->client->disguiseClientNum             = -1;
 
 	// Run script trigger
 	if (self->count == TEAM_AXIS)
@@ -1338,7 +1338,7 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 
 	// reset player disguise on touching flag
 	other->client->ps.powerups[PW_OPS_DISGUISED] = 0;
-	other->client->disguiseClientNum = -1;
+	other->client->disguiseClientNum             = -1;
 
 	// Run script trigger
 	if (self->count == TEAM_AXIS)

@@ -1342,7 +1342,7 @@ void G_SetEntState(gentity_t *ent, entState_t state)
 		{
 			mg42_stopusing(ent);
 		}
-		else if(!Q_stricmp(ent->classname, "misc_aagun"))
+		else if (!Q_stricmp(ent->classname, "misc_aagun"))
 		{
 			aagun_stopusing(ent);
 		}

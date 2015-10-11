@@ -1022,7 +1022,7 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 		case EV_FIRE_WEAPON_MG42:
 			// reset player disguise on firing mounted mg
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
-			ent->client->disguiseClientNum = -1;
+			ent->client->disguiseClientNum             = -1;
 			mg42_fire(ent);
 
 			// Only 1 stats bin for mg42
@@ -1039,7 +1039,7 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 
 			// reset player disguise on firing tank mg
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
-			ent->client->disguiseClientNum = -1;
+			ent->client->disguiseClientNum             = -1;
 
 			mountedmg42_fire(ent);
 			// Only 1 stats bin for mg42
@@ -1060,7 +1060,7 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 		case EV_FIRE_WEAPON_AAGUN:
 			// reset player disguise on firing aagun
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
-			ent->client->disguiseClientNum = -1;
+			ent->client->disguiseClientNum             = -1;
 
 			aagun_fire(ent);
 			break;

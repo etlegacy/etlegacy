@@ -5798,7 +5798,7 @@ void PmoveSingle(pmove_t *pmove)
 			if (!weaponTable[pm->ps->weapon].isScoped &&          // don't allow binocs if using the sniper scope
 			    !BG_PlayerMounted(pm->ps->eFlags) &&           // or if mounted on a weapon
 			    // don't allow binocs w/ mounted mob. MG42 or mortar either.
-				!IS_SET_WEAPON(pm->ps->weapon))
+			    !IS_SET_WEAPON(pm->ps->weapon))
 			{
 				pm->ps->eFlags |= EF_ZOOMING;
 			}

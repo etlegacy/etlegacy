@@ -578,7 +578,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 	// Make sure covert ops lose their disguises
 	self->client->ps.powerups[PW_OPS_DISGUISED] = 0;
-	self->client->disguiseClientNum = -1;
+	self->client->disguiseClientNum             = -1;
 
 	self->client->ps.persistant[PERS_KILLED]++;
 

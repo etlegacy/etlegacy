@@ -2488,7 +2488,7 @@ qboolean G_FlingClient(gentity_t *vic, int flingType)
 		VectorSet(dir, crandom() * 50, crandom() * 50, 10);
 	}
 	else if (flingType == 1)
-	{	//throw
+	{   //throw
 		AngleVectors(vic->client->ps.viewangles, dir, NULL, NULL);
 		dir[2] = .25f;
 	}
@@ -2500,7 +2500,7 @@ qboolean G_FlingClient(gentity_t *vic, int flingType)
 	VectorNormalize(dir);
 	VectorScale(dir, 1500, flingvec);
 	VectorAdd(vic->s.pos.trDelta, flingvec, vic->s.pos.trDelta);
-	VectorAdd(vic->client->ps.velocity, flingvec,  vic->client->ps.velocity);
+	VectorAdd(vic->client->ps.velocity, flingvec, vic->client->ps.velocity);
 
 	return qtrue;
 }

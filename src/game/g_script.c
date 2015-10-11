@@ -855,12 +855,12 @@ void G_Script_ScriptEvent(gentity_t *ent, char *eventStr, char *params)
 		if (!Q_stricmp(params, "stolen"))
 		{
 			G_LogPrintf("legacy popup: %s stole \"%s\"\n",
-						Q_stricmp(ent->classname, "team_CTF_redflag") ? "axis" : "allies", ent->message);
+			            Q_stricmp(ent->classname, "team_CTF_redflag") ? "axis" : "allies", ent->message);
 		}
 		else if (!Q_stricmp(params, "returned"))
 		{
 			G_LogPrintf("legacy popup: %s returned \"%s\"\n",
-						Q_stricmp(ent->classname, "team_CTF_redflag") ? "allies" : "axis", ent->message);
+			            Q_stricmp(ent->classname, "team_CTF_redflag") ? "allies" : "axis", ent->message);
 		}
 	}
 

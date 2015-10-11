@@ -2445,6 +2445,8 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	client->pers.connected   = CON_CONNECTING;
 	client->pers.connectTime = level.time;
 
+	client->disguiseClientNum = -1;
+
 	// Set the client ip and guid
 	Q_strncpyz(client->pers.client_ip, cs_ip, MAX_IP4_LENGTH);
 	Q_strncpyz(client->pers.cl_guid, cs_guid, MAX_GUID_LENGTH + 1);

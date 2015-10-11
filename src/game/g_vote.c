@@ -1081,7 +1081,7 @@ int G_Config_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, 
 			return G_INVALID;
 		}
 
-		if (!G_isValidConfig(ent , arg2))
+		if (!G_isValidConfig(ent, arg2))
 		{
 			return G_INVALID;
 		}

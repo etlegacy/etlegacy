@@ -1397,20 +1397,20 @@ static void Svcmd_Fling(int flingType) // 0 = fling, 1 = throw, 2 = launch
 
 	switch (flingType)
 	{
-		case 0:
-			Q_strncpyz(fling, "fling", sizeof(fling));
-			Q_strncpyz(pastTense, "flung", sizeof(pastTense));
-			break;
-		case 1:
-			Q_strncpyz(fling, "throw", sizeof(fling));
-			Q_strncpyz(pastTense, "thrown", sizeof(pastTense));
-			break;
-		case 2:
-			Q_strncpyz(fling, "launch", sizeof(fling));
-			Q_strncpyz(pastTense, "launched", sizeof(pastTense));
-			break;
-		default:
-			return;
+	case 0:
+		Q_strncpyz(fling, "fling", sizeof(fling));
+		Q_strncpyz(pastTense, "flung", sizeof(pastTense));
+		break;
+	case 1:
+		Q_strncpyz(fling, "throw", sizeof(fling));
+		Q_strncpyz(pastTense, "thrown", sizeof(pastTense));
+		break;
+	case 2:
+		Q_strncpyz(fling, "launch", sizeof(fling));
+		Q_strncpyz(pastTense, "launched", sizeof(pastTense));
+		break;
+	default:
+		return;
 	}
 
 	// ignore in intermission
@@ -1436,7 +1436,7 @@ static void Svcmd_Fling(int flingType) // 0 = fling, 1 = throw, 2 = launch
 			vic = g_entities + level.sortedClients[i];
 
 			if (!(vic->client->sess.sessionTeam == TEAM_AXIS ||
-				  vic->client->sess.sessionTeam == TEAM_ALLIES))
+			      vic->client->sess.sessionTeam == TEAM_ALLIES))
 			{
 				continue;
 			}
