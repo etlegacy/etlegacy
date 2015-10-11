@@ -1265,9 +1265,9 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 				}
 				// some desktops might freeze without restarting the video subsystem
 				if (Q_stristr(cls.glconfig.renderer_string, "mesa") ||
-					Q_stristr(cls.glconfig.renderer_string, "gallium") ||
-					Q_stristr(cls.glconfig.vendor_string, "nouveau") ||
-					Q_stristr(cls.glconfig.vendor_string, "mesa"))
+				    Q_stristr(cls.glconfig.renderer_string, "gallium") ||
+				    Q_stristr(cls.glconfig.vendor_string, "nouveau") ||
+				    Q_stristr(cls.glconfig.vendor_string, "mesa"))
 				{
 					Cbuf_ExecuteText(EXEC_APPEND, "vid_restart\n");
 				}

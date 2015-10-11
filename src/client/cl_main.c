@@ -2639,13 +2639,13 @@ void CL_InitRef(void)
 
 	ri.Cmd_AddSystemCommand    = Cmd_AddSystemCommand;
 	ri.Cmd_RemoveSystemCommand = Cmd_RemoveCommand;
-	ri.Cmd_Argc          = Cmd_Argc;
-	ri.Cmd_Argv          = Cmd_Argv;
-	ri.Cmd_ExecuteText   = Cbuf_ExecuteText;
-	ri.Printf            = CL_RefPrintf;
-	ri.Error             = Com_Error;
-	ri.Milliseconds      = CL_ScaledMilliseconds;
-	ri.RealTime          = Com_RealTime;
+	ri.Cmd_Argc                = Cmd_Argc;
+	ri.Cmd_Argv                = Cmd_Argv;
+	ri.Cmd_ExecuteText         = Cbuf_ExecuteText;
+	ri.Printf                  = CL_RefPrintf;
+	ri.Error                   = Com_Error;
+	ri.Milliseconds            = CL_ScaledMilliseconds;
+	ri.RealTime                = Com_RealTime;
 #ifdef ZONE_DEBUG
 	ri.Z_MallocDebug = CL_RefMallocDebug;
 #else
