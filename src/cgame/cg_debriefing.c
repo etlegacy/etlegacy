@@ -546,10 +546,10 @@ panel_button_t debriefPlayerInfoHS =
 	panel_button_t debriefPlayerInfoSkills ## number = {      \
 		NULL,                                       \
 		NULL,                                       \
-		{ 18 + (94 * (number % 2)),      140 + (number / 2 * 24),                        12, 12 },     \
-		{ number,                        0,                                              0,  0, 0, 0, 0, 0},            \
+		{ 18 + (94 * (number % 2)),      140 + (number / 2 * 24),                       12, 12 }, \
+		{ number,                        0,                                             0,  0, 0, 0, 0, 0},            \
 		&debriefPlayerInfoFont,          /* font     */  \
-		NULL,                            /* keyDown    */                      \
+		NULL,                            /* keyDown    */                  \
 		NULL,                            /* keyUp  */                      \
 		CG_Debriefing_PlayerSkills_Draw,            \
 		NULL,                                       \

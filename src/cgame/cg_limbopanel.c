@@ -3497,14 +3497,14 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 			return qtrue;
 		}
 		break;
-    case WP_MOBILE_MG42_SET:
-        // add alt weapons
-        wcount = wcount + CG_LimboPanel_TeamCount(WP_MOBILE_MG42);
-        if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxMg42s))
-        {
-            return qtrue;
-        }
-        break;
+	case WP_MOBILE_MG42_SET:
+		// add alt weapons
+		wcount = wcount + CG_LimboPanel_TeamCount(WP_MOBILE_MG42);
+		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxMg42s))
+		{
+			return qtrue;
+		}
+		break;
 	case WP_MOBILE_BROWNING:
 		// add alt weapons
 		wcount = wcount + CG_LimboPanel_TeamCount(WP_MOBILE_BROWNING_SET);
@@ -3513,14 +3513,14 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 			return qtrue;
 		}
 		break;
-    case WP_MOBILE_BROWNING_SET:
-        // add alt weapons
-        wcount = wcount + CG_LimboPanel_TeamCount(WP_MOBILE_BROWNING);
-        if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxMg42s))
-        {
-            return qtrue;
-        }
-        break;
+	case WP_MOBILE_BROWNING_SET:
+		// add alt weapons
+		wcount = wcount + CG_LimboPanel_TeamCount(WP_MOBILE_BROWNING);
+		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxMg42s))
+		{
+			return qtrue;
+		}
+		break;
 	case WP_FLAMETHROWER:
 		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxFlamers))
 		{
@@ -3543,22 +3543,22 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 			return qtrue;
 		}
 		break;
-    case WP_GPG40:
-        // add alt weapons
-        wcount = wcount + CG_LimboPanel_TeamCount(WP_KAR98);
-        if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxRiflegrenades))
-        {
-            return qtrue;
-        }
-        break;
-    case WP_M7:
-        // add alt weapons
-        wcount = wcount + CG_LimboPanel_TeamCount(WP_CARBINE);
-        if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxRiflegrenades))
-        {
-            return qtrue;
-        }
-        break;
+	case WP_GPG40:
+		// add alt weapons
+		wcount = wcount + CG_LimboPanel_TeamCount(WP_KAR98);
+		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxRiflegrenades))
+		{
+			return qtrue;
+		}
+		break;
+	case WP_M7:
+		// add alt weapons
+		wcount = wcount + CG_LimboPanel_TeamCount(WP_CARBINE);
+		if (wcount >= CG_LimboPanel_MaxCount(count, cg.maxRiflegrenades))
+		{
+			return qtrue;
+		}
+		break;
 	default:
 		break;
 	}

@@ -871,34 +871,34 @@ pmoveExt_t oldpmext[CMD_BACKUP];
 
 const char *predictionStrings[] =
 {
-		"OK",
-		"PM TYPE FLAGS TIME",
-		"origin",
-		"velocity",
-		"eFlags",
-		"weapon time",
-		"groundEntityNum",
-		"--",                    // 7
-		"speed || delta_angles",
-		"anim || timer",
-		"--",                    // 10
-		"eventSequence",
-		"events || eventParms",
-		"externalEvent",
-		"clientNum",
-		"weapon || weaponState",
-		"viewangles",
-		"viewheight",
-		"damage event ...",
-		"stats",
-		"persistant",            // 20
-		"powerups",
-		"ammo",
-		"viewlocked",
-		"onFireStart",
-		"--",
-		"--",
-		"grenadeTimeLeft",       // 27
+	"OK",
+	"PM TYPE FLAGS TIME",
+	"origin",
+	"velocity",
+	"eFlags",
+	"weapon time",
+	"groundEntityNum",
+	"--",                   // 7
+	"speed || delta_angles",
+	"anim || timer",
+	"--",                   // 10
+	"eventSequence",
+	"events || eventParms",
+	"externalEvent",
+	"clientNum",
+	"weapon || weaponState",
+	"viewangles",
+	"viewheight",
+	"damage event ...",
+	"stats",
+	"persistant",           // 20
+	"powerups",
+	"ammo",
+	"viewlocked",
+	"onFireStart",
+	"--",
+	"--",
+	"grenadeTimeLeft",      // 27
 };
 
 void CG_PredictPlayerState(void)

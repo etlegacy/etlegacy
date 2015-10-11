@@ -2038,8 +2038,8 @@ static void CG_PlayerSprites(centity_t *cent)
 		}
 		else
 		{
-			fireteamData_t* ft;
-	
+			fireteamData_t *ft;
+
 			if ((ft = CG_IsOnFireteam(cent->currentState.number)))
 			{
 				if (ft == CG_IsOnFireteam(cgs.clientinfo[cg.clientNum].disguiseClientNum) && cgs.clientinfo[cent->currentState.number].selected)

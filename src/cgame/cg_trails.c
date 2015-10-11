@@ -953,7 +953,7 @@ void CG_ClearTrails(void)
 
 	for (i = 0 ; i < MAX_TRAILJUNCS ; i++)
 	{
-		if(i < (MAX_TRAILJUNCS - 1))
+		if (i < (MAX_TRAILJUNCS - 1))
 		{
 			trailJuncs[i].nextGlobal = &trailJuncs[i + 1];
 		}

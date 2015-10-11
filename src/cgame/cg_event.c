@@ -1288,7 +1288,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 			// trying to make this a little more interesting
 			if (type == FXTYPE_FABRIC)     // fabric
 			{
-				le->pos.trType = TR_GRAVITY_FLOAT;     // the fabric stuff will change to use something that looks better
+				le->pos.trType   = TR_GRAVITY_FLOAT;   // the fabric stuff will change to use something that looks better
 				le->bounceFactor = 0.0;
 				materialmul      = 0.3;     // rotation speed
 			}
@@ -1660,7 +1660,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 			// trying to make this a little more interesting
 			if (type == FXTYPE_FABRIC)     // "fabric"
 			{
-				le->pos.trType = TR_GRAVITY_FLOAT;     // the fabric stuff will change to use something that looks better
+				le->pos.trType   = TR_GRAVITY_FLOAT;   // the fabric stuff will change to use something that looks better
 				le->bounceFactor = 0.0;
 				materialmul      = 0.3;     // rotation speed
 			}
@@ -1907,70 +1907,70 @@ void CG_Shard(centity_t *cent, vec3_t origin, vec3_t dir)
 
 		switch (type)
 		{
-			case FXTYPE_WOOD:
-				rval = rand() % 2;
+		case FXTYPE_WOOD:
+			rval = rand() % 2;
 
-				if (rval)
-				{
-					re->hModel = cgs.media.shardWood1;
-				}
-				else
-				{
-					re->hModel = cgs.media.shardWood2;
-				}
+			if (rval)
+			{
+				re->hModel = cgs.media.shardWood1;
+			}
+			else
+			{
+				re->hModel = cgs.media.shardWood2;
+			}
 			break;
-			case FXTYPE_GLASS:
-				rval = rand() % 2;
+		case FXTYPE_GLASS:
+			rval = rand() % 2;
 
-				if (rval)
-				{
-					re->hModel = cgs.media.shardGlass1;
-				}
-				else
-				{
-					re->hModel = cgs.media.shardGlass2;
-				}
+			if (rval)
+			{
+				re->hModel = cgs.media.shardGlass1;
+			}
+			else
+			{
+				re->hModel = cgs.media.shardGlass2;
+			}
 			break;
-			case FXTYPE_METAL:
-				rval = rand() % 2;
+		case FXTYPE_METAL:
+			rval = rand() % 2;
 
-				if (rval)
-				{
-					re->hModel = cgs.media.shardMetal1;
-				}
-				else
-				{
-					re->hModel = cgs.media.shardMetal2;
-				}
+			if (rval)
+			{
+				re->hModel = cgs.media.shardMetal1;
+			}
+			else
+			{
+				re->hModel = cgs.media.shardMetal2;
+			}
 			break;
-			case FXTYPE_BRICK:  // rubble
-			case FXTYPE_STONE:
-				rval = rand() % 3; // note: there is debBlock 0-5
+		case FXTYPE_BRICK:      // rubble
+		case FXTYPE_STONE:
+			rval = rand() % 3;     // note: there is debBlock 0-5
 
-				if (rval == 1)
-				{
-					//re->hModel = cgs.media.shardRubble1;
-					re->hModel = cgs.media.debBlock[0];
-				}
-				else if (rval == 2)
-				{
-					//re->hModel = cgs.media.shardRubble2;
-					re->hModel = cgs.media.debBlock[1];
-				}
-				else
-				{
-					//re->hModel = cgs.media.shardRubble3;
-					re->hModel = cgs.media.debBlock[2];
-				}
+			if (rval == 1)
+			{
+				//re->hModel = cgs.media.shardRubble1;
+				re->hModel = cgs.media.debBlock[0];
+			}
+			else if (rval == 2)
+			{
+				//re->hModel = cgs.media.shardRubble2;
+				re->hModel = cgs.media.debBlock[1];
+			}
+			else
+			{
+				//re->hModel = cgs.media.shardRubble3;
+				re->hModel = cgs.media.debBlock[2];
+			}
 			break;
-			//case ceramic:
-			//rval = rand()%2;
-			//if (rval)
-			//  re->hModel = cgs.media.shardCeramic1;
-			//else
-			//  re->hModel = cgs.media.shardCeramic2;
-			default: // FXTYPE_GIBS, FXTYPE_FABRIC
-				CG_Printf("CG_Debris has an unknown type\n");
+		//case ceramic:
+		//rval = rand()%2;
+		//if (rval)
+		//  re->hModel = cgs.media.shardCeramic1;
+		//else
+		//  re->hModel = cgs.media.shardCeramic2;
+		default:     // FXTYPE_GIBS, FXTYPE_FABRIC
+			CG_Printf("CG_Debris has an unknown type\n");
 			break;
 		}
 
