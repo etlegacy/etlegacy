@@ -1272,7 +1272,7 @@ static void IN_ProcessEvents(void)
 void IN_Frame(void)
 {
 	// If not DISCONNECTED (main menu), ACTIVE (in game) or CINEMATIC (playing video), we're loading
-	qboolean loading = (cls.state != CA_DISCONNECTED && cls.state != CA_ACTIVE);
+	qboolean loading   = (cls.state != CA_DISCONNECTED && cls.state != CA_ACTIVE);
 	qboolean cinematic = (cls.state == CA_CINEMATIC);
 
 	//IN_JoyMove();

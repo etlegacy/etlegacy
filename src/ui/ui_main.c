@@ -627,7 +627,7 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 
 static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit)
 {
-	vec4_t      newColor= { 0, 0, 0, 0 };
+	vec4_t      newColor = { 0, 0, 0, 0 };
 	glyphInfo_t *glyph;
 	if (text)
 	{
