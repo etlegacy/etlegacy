@@ -505,13 +505,13 @@ void Cmd_Init(void);
 
 // We need to use EXPAND because the Microsoft MSVC preprocessor does not expand the va_args the same way as other preprocessors
 // http://stackoverflow.com/questions/5134523/msvc-doesnt-expand-va-args-correctly
-#define EXPAND( x ) x
+#define EXPAND(x) x
 #define GET_MACRO(_1, _2, _3, _4, NAME, ...) NAME
 #define Cmd_AddCommand1(x) Cmd_AddSystemCommand(x, NULL, NULL, NULL)
 #define Cmd_AddCommand2(x, y) Cmd_AddSystemCommand(x, y, NULL, NULL)
 #define Cmd_AddCommand3(x, y, z) Cmd_AddSystemCommand(x, y, z, NULL)
 #define Cmd_AddCommand4(x, y, z, i) Cmd_AddSystemCommand(x, y, z, i)
-#define Cmd_AddCommand(...) EXPAND(GET_MACRO(__VA_ARGS__, Cmd_AddCommand4, Cmd_AddCommand3, Cmd_AddCommand2, Cmd_AddCommand1)(__VA_ARGS__))
+#define Cmd_AddCommand(...) EXPAND(GET_MACRO(__VA_ARGS__, Cmd_AddCommand4, Cmd_AddCommand3, Cmd_AddCommand2, Cmd_AddCommand1) (__VA_ARGS__))
 
 void Cmd_AddSystemCommand(const char *cmd_name, xcommand_t function, const char *description, completionFunc_t complete);
 

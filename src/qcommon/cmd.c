@@ -787,7 +787,8 @@ void Cmd_AddSystemCommand(const char *cmd_name, xcommand_t function, const char 
 	cmd->complete = complete;
 	cmd->next     = cmd_functions;
 	cmd_functions = cmd;
-	if(description && description[0])
+	
+	if (description && description[0])
 	{
 		cmd->description = CopyString(description);
 	}
@@ -1051,7 +1052,7 @@ void Cmd_List_f(void)
 			continue;
 		}
 
-		if(cmd->description)
+		if (cmd->description)
 		{
 			Com_Printf("%s : %s\n", cmd->name, cmd->description);
 		}

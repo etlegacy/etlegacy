@@ -4685,10 +4685,10 @@ void FS_FilenameCompletion(const char *dir, int numext, const char **ext,
 {
 	char **filenames;
 	int  nfiles;
-	int  i,j;
+	int  i, j;
 	char filename[MAX_STRING_CHARS];
 
-	for(j = 0; j < numext; j++)
+	for (j = 0; j < numext; j++)
 	{
 		filenames = FS_ListFilteredFiles(dir, ext[j], NULL, &nfiles, allowNonPureFilesOnDisk);
 
@@ -4876,27 +4876,27 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 		{
 			switch (err)
 			{
-				case UNZ_END_OF_LIST_OF_FILE: // if the actual file was the latest
-					if (!quiet || fs_debug->integer)
-					{
-						Com_Printf(S_COLOR_YELLOW "FS_Unzip: End of files in '%s'.\n", filename);
-					}
+			case UNZ_END_OF_LIST_OF_FILE:     // if the actual file was the latest
+				if (!quiet || fs_debug->integer)
+				{
+					Com_Printf(S_COLOR_YELLOW "FS_Unzip: End of files in '%s'.\n", filename);
+				}
 				break;
-				case UNZ_PARAMERROR:
-					Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file in '%s' [file is NULL].\n", newFilePath);
+			case UNZ_PARAMERROR:
+				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file in '%s' [file is NULL].\n", newFilePath);
 				break;
-				case UNZ_BADZIPFILE:
-					Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file in '%s' [bad zip file].\n", newFilePath);
+			case UNZ_BADZIPFILE:
+				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file in '%s' [bad zip file].\n", newFilePath);
 				break;
-				case UNZ_INTERNALERROR:
-					Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file in '%s' [internal error].\n", newFilePath);
+			case UNZ_INTERNALERROR:
+				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file in '%s' [internal error].\n", newFilePath);
 				break;
-				case UNZ_CRCERROR:
-					Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file in '%s' [crc error].\n", newFilePath);
+			case UNZ_CRCERROR:
+				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file in '%s' [crc error].\n", newFilePath);
 				break;
 
-				default:
-					Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file in '%s' [unknown error %i].\n", newFilePath, err);
+			default:
+				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file in '%s' [unknown error %i].\n", newFilePath, err);
 				break;
 			}
 

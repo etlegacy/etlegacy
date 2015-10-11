@@ -37,10 +37,10 @@
 
 qboolean Com_PowerOf2(int x)
 {
-	int             bitsSet = 0;
-	int             i;
+	int bitsSet = 0;
+	int i;
 
-	for(i = 0; i < sizeof(int) * 8; ++i)
+	for (i = 0; i < sizeof(int) * 8; ++i)
 	{
 		if (x & (1 << i))
 		{

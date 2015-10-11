@@ -540,8 +540,8 @@ void *Hunk_Alloc(int size, ha_pref preference);
 typedef enum
 {
 	CIN_system = BIT(0),
-	CIN_loop = BIT(1),
-	CIN_hold = BIT(2),
+	CIN_loop   = BIT(1),
+	CIN_hold   = BIT(2),
 	CIN_silent = BIT(3),
 	CIN_shader = BIT(4)
 } CIN_Flags;
@@ -974,7 +974,7 @@ float DistanceFromVectorSquared(vec3_t p, vec3_t lp1, vec3_t lp2);
 qboolean Com_PowerOf2(int x);
 
 #define Com_ByteClamp(x) ((x < 0) ? 0 : (x > 255) ? 255 : x)
-#define Com_Clamp(min, max , value) ((value < min) ? min : (value > max) ? max : value)
+#define Com_Clamp(min, max, value) ((value < min) ? min : (value > max) ? max : value)
 
 char *COM_SkipPath(char *pathname);
 void COM_FixPath(char *pathname);
