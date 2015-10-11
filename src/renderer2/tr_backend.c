@@ -805,7 +805,7 @@ static void RB_RenderInteractions()
 		surface               = ia->surface;
 		shader                = ia->surfaceShader;
 
-		if (glConfig2.occlusionQueryBits )
+		if (glConfig2.occlusionQueryBits)
 		{
 			// skip all interactions of this light because it failed the occlusion query
 			if (r_dynamicLightOcclusionCulling->integer && !ia->occlusionQuerySamples)
@@ -3238,7 +3238,7 @@ void RB_RenderLightOcclusionQueries()
 		R2_TIMING(RSPEEDS_OCCLUSION_QUERIES)
 		{
 			backEnd.pc.c_occlusionQueriesResponseTime = ri.Milliseconds() - startTime;
-			startTime = ri.Milliseconds();
+			startTime                                 = ri.Milliseconds();
 		}
 
 		// go back to the world modelview matrix
@@ -3845,7 +3845,7 @@ void RB_RenderEntityOcclusionQueries()
 		R2_TIMING(RSPEEDS_OCCLUSION_QUERIES)
 		{
 			backEnd.pc.c_occlusionQueriesResponseTime = ri.Milliseconds() - startTime;
-			startTime = ri.Milliseconds();
+			startTime                                 = ri.Milliseconds();
 		}
 
 		// go back to the world modelview matrix
@@ -6029,7 +6029,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	}
 	if ((1 << i) != cols || (1 << j) != rows)
 	{
-		Ren_Drop("Draw_StretchRaw: size not a power of 2: %i by %i", cols, rows);
+	    Ren_Drop("Draw_StretchRaw: size not a power of 2: %i by %i", cols, rows);
 	}
 	*/
 

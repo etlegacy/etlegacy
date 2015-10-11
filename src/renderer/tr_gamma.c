@@ -45,27 +45,27 @@ typedef struct shaderProgram_s
 	GLint currentMapUniform;
 } shaderProgram_t;
 
-image_t *screenImage = NULL;
+image_t         *screenImage = NULL;
 shaderProgram_t gammaProgram;
 
 const char *simpleGammaVert = "#version 110\n"
-		"void main(void) {\n"
-		"gl_Position = gl_Vertex;\n"
-		"gl_TexCoord[0] = gl_MultiTexCoord0;\n"
-		"}\n";
+                              "void main(void) {\n"
+                              "gl_Position = gl_Vertex;\n"
+                              "gl_TexCoord[0] = gl_MultiTexCoord0;\n"
+                              "}\n";
 
 const char *simpleGammaFrag = "#version 110\n"
-		"uniform sampler2D u_CurrentMap;\n"
-		"uniform float u_gamma;\n"
-		"void main(void) {\n"
-		"gl_FragColor = vec4(pow(texture2D(u_CurrentMap, vec2(gl_TexCoord[0])).rgb, vec3(1.0 / u_gamma)), 1);\n"
-		"}\n";
+                              "uniform sampler2D u_CurrentMap;\n"
+                              "uniform float u_gamma;\n"
+                              "void main(void) {\n"
+                              "gl_FragColor = vec4(pow(texture2D(u_CurrentMap, vec2(gl_TexCoord[0])).rgb, vec3(1.0 / u_gamma)), 1);\n"
+                              "}\n";
 
 static void R_BuildGammaProgram(void)
 {
 	GLint compiled;
 
-	gammaProgram.vertexShader = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+	gammaProgram.vertexShader   = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
 	gammaProgram.fragmentShader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 
 	glShaderSourceARB(gammaProgram.vertexShader, 1, (const GLcharARB **)&simpleGammaVert, NULL);
@@ -77,10 +77,10 @@ static void R_BuildGammaProgram(void)
 	glGetObjectParameterivARB(gammaProgram.vertexShader, GL_COMPILE_STATUS, &compiled);
 	if (!compiled)
 	{
-		GLint blen = 0;
+		GLint   blen = 0;
 		GLsizei slen = 0;
 
-		glGetShaderiv(gammaProgram.vertexShader, GL_INFO_LOG_LENGTH , &blen);
+		glGetShaderiv(gammaProgram.vertexShader, GL_INFO_LOG_LENGTH, &blen);
 		if (blen > 1)
 		{
 			GLchar *compiler_log = (GLchar *) malloc(blen);
@@ -100,7 +100,7 @@ static void R_BuildGammaProgram(void)
 	}
 
 	gammaProgram.program = glCreateProgramObjectARB();
-	if(!gammaProgram.program)
+	if (!gammaProgram.program)
 	{
 		Ren_Fatal("Failed to create program\n");
 	}
@@ -119,14 +119,14 @@ static void R_BuildGammaProgram(void)
 	glUseProgramObjectARB(gammaProgram.program);
 
 	gammaProgram.currentMapUniform = glGetUniformLocation(gammaProgram.program, "u_CurrentMap");
-	gammaProgram.gammaUniform = glGetUniformLocation(gammaProgram.program, "u_gamma");
+	gammaProgram.gammaUniform      = glGetUniformLocation(gammaProgram.program, "u_gamma");
 
 	glUseProgramObjectARB(0);
 }
 
 void R_ScreenGamma(void)
 {
-	if(gammaProgram.program)
+	if (gammaProgram.program)
 	{
 		glUseProgramObjectARB(gammaProgram.program);
 
@@ -135,13 +135,13 @@ void R_ScreenGamma(void)
 
 		GL_Bind(screenImage);
 		// We will copy the current buffer into the screenImage
-		qglCopyTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, glConfig.vidWidth, glConfig.vidHeight, 0 );
+		qglCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, glConfig.vidWidth, glConfig.vidHeight, 0);
 
-		qglTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-		qglTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		qglTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-		qglTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 		glUniform1f(gammaProgram.gammaUniform, r_gamma->value);
 
@@ -149,14 +149,14 @@ void R_ScreenGamma(void)
 		// and we want to be sure that R1 runs even with a toaster.
 		glBegin(GL_QUADS);
 		{
-			glTexCoord2f(0.0,0.0);
-			glVertex3f(-1.0f,-1.0f,0.0f);
-			glTexCoord2f(1.0,0.0);
-			glVertex3f(1.0f,-1.0f,0.0f);
-			glTexCoord2f(1.0,1.0);
-			glVertex3f(1.0f,1.0f,0.0f);
-			glTexCoord2f(0.0,1.0);
-			glVertex3f(-1.0f,1.0f,0.0f);
+			glTexCoord2f(0.0, 0.0);
+			glVertex3f(-1.0f, -1.0f, 0.0f);
+			glTexCoord2f(1.0, 0.0);
+			glVertex3f(1.0f, -1.0f, 0.0f);
+			glTexCoord2f(1.0, 1.0);
+			glVertex3f(1.0f, 1.0f, 0.0f);
+			glTexCoord2f(0.0, 1.0);
+			glVertex3f(-1.0f, 1.0f, 0.0f);
 		}
 		glEnd();
 
@@ -166,23 +166,23 @@ void R_ScreenGamma(void)
 
 void R_InitGamma(void)
 {
-	if(!GLEW_ARB_fragment_program)
+	if (!GLEW_ARB_fragment_program)
 	{
 		return;
 	}
 
-	if(ri.Cvar_VariableIntegerValue("r_ignorehwgamma"))
+	if (ri.Cvar_VariableIntegerValue("r_ignorehwgamma"))
 	{
 		return;
 	}
 
 	byte *data = (byte *)ri.Hunk_AllocateTempMemory(glConfig.vidWidth * glConfig.vidHeight * 4);
-	if(!data)
+	if (!data)
 	{
 		return;
 	}
 
-	screenImage = R_CreateImage("screenBufferImage_skies", data,glConfig.vidWidth, glConfig.vidHeight, qfalse, qfalse, GL_CLAMP_TO_EDGE);
+	screenImage = R_CreateImage("screenBufferImage_skies", data, glConfig.vidWidth, glConfig.vidHeight, qfalse, qfalse, GL_CLAMP_TO_EDGE);
 	ri.Hunk_FreeTempMemory(data);
 
 	Com_Memset(&gammaProgram, 0, sizeof(shaderProgram_t));
@@ -191,7 +191,7 @@ void R_InitGamma(void)
 
 void R_ShutdownGamma(void)
 {
-	if(gammaProgram.program)
+	if (gammaProgram.program)
 	{
 		if (gammaProgram.vertexShader)
 		{
@@ -209,7 +209,7 @@ void R_ShutdownGamma(void)
 		Com_Memset(&gammaProgram, 0, sizeof(shaderProgram_t));
 	}
 
-	if(screenImage)
+	if (screenImage)
 	{
 		screenImage = NULL;
 	}

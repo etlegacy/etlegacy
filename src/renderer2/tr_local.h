@@ -4232,8 +4232,8 @@ void GLSL_SetUniform_AlphaTest(uint32_t stateBits);
 
 #if 0
 #define GL_JOIN() glFinish()
-#define R2_TIMING(rule) if (r_speeds->integer == rule) GL_JOIN(); if (r_speeds->integer == rule)
-#define R2_TIMING_SIMPLE() if (r_speeds->integer) GL_JOIN(); if (r_speeds->integer)
+#define R2_TIMING(rule) if (r_speeds->integer == rule) { GL_JOIN(); } if (r_speeds->integer == rule)
+#define R2_TIMING_SIMPLE() if (r_speeds->integer) { GL_JOIN(); } if (r_speeds->integer)
 #else
 #define GL_JOIN()
 #define R2_TIMING(rule) if (r_speeds->integer == rule)

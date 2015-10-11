@@ -135,7 +135,7 @@ void R_PerformanceCounters(void)
 	else if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
 	{
 		Ren_Print("forward shading times: ambient:%i lighting:%i\n", backEnd.pc.c_forwardAmbientTime,
-				  backEnd.pc.c_forwardLightingTime);
+		          backEnd.pc.c_forwardLightingTime);
 	}
 	else if (r_speeds->integer == RSPEEDS_CHC)
 	{

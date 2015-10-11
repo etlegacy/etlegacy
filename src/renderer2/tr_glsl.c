@@ -732,50 +732,50 @@ static void GLSL_BuildShaderExtraDef()
 	BUFFEXT("#ifndef MAX_SHADOWMAPS\n#define MAX_SHADOWMAPS %i\n#endif\n", MAX_SHADOWMAPS);
 	BUFFEXT("#ifndef MAX_SHADER_DEFORM_PARMS\n#define MAX_SHADER_DEFORM_PARMS %i\n#endif\n", MAX_SHADER_DEFORM_PARMS);
 	BUFFEXT("#ifndef deform_t\n"
-					"#define deform_t\n"
-					"#define DEFORM_WAVE %i\n"
-					"#define DEFORM_BULGE %i\n"
-					"#define DEFORM_MOVE %i\n"
-					"#endif\n",
-			DEFORM_WAVE,
-			DEFORM_BULGE,
-			DEFORM_MOVE);
+	        "#define deform_t\n"
+	        "#define DEFORM_WAVE %i\n"
+	        "#define DEFORM_BULGE %i\n"
+	        "#define DEFORM_MOVE %i\n"
+	        "#endif\n",
+	        DEFORM_WAVE,
+	        DEFORM_BULGE,
+	        DEFORM_MOVE);
 
 	BUFFEXT("#ifndef genFunc_t\n"
-					"#define genFunc_t\n"
-					"#define GF_NONE %i\n"
-					"#define GF_SIN %i\n"
-					"#define GF_SQUARE %i\n"
-					"#define GF_TRIANGLE %i\n"
-					"#define GF_SAWTOOTH %i\n"
-					"#define GF_INVERSE_SAWTOOTH %i\n"
-					"#define GF_NOISE %i\n"
-					"#endif\n",
-			GF_NONE,
-			GF_SIN,
-			GF_SQUARE,
-			GF_TRIANGLE,
-			GF_SAWTOOTH,
-			GF_INVERSE_SAWTOOTH,
-			GF_NOISE);
+	        "#define genFunc_t\n"
+	        "#define GF_NONE %i\n"
+	        "#define GF_SIN %i\n"
+	        "#define GF_SQUARE %i\n"
+	        "#define GF_TRIANGLE %i\n"
+	        "#define GF_SAWTOOTH %i\n"
+	        "#define GF_INVERSE_SAWTOOTH %i\n"
+	        "#define GF_NOISE %i\n"
+	        "#endif\n",
+	        GF_NONE,
+	        GF_SIN,
+	        GF_SQUARE,
+	        GF_TRIANGLE,
+	        GF_SAWTOOTH,
+	        GF_INVERSE_SAWTOOTH,
+	        GF_NOISE);
 
 	BUFFEXT("#ifndef deformGen_t\n"
-					"#define deformGen_t\n"
-					"#define DGEN_WAVE_SIN %i\n"
-					"#define DGEN_WAVE_SQUARE %i\n"
-					"#define DGEN_WAVE_TRIANGLE %i\n"
-					"#define DGEN_WAVE_SAWTOOTH %i\n"
-					"#define DGEN_WAVE_INVERSE_SAWTOOTH %i\n"
-					"#define DGEN_BULGE %i\n"
-					"#define DGEN_MOVE %i\n"
-					"#endif\n",
-			DGEN_WAVE_SIN,
-			DGEN_WAVE_SQUARE,
-			DGEN_WAVE_TRIANGLE,
-			DGEN_WAVE_SAWTOOTH,
-			DGEN_WAVE_INVERSE_SAWTOOTH,
-			DGEN_BULGE,
-			DGEN_MOVE);
+	        "#define deformGen_t\n"
+	        "#define DGEN_WAVE_SIN %i\n"
+	        "#define DGEN_WAVE_SQUARE %i\n"
+	        "#define DGEN_WAVE_TRIANGLE %i\n"
+	        "#define DGEN_WAVE_SAWTOOTH %i\n"
+	        "#define DGEN_WAVE_INVERSE_SAWTOOTH %i\n"
+	        "#define DGEN_BULGE %i\n"
+	        "#define DGEN_MOVE %i\n"
+	        "#endif\n",
+	        DGEN_WAVE_SIN,
+	        DGEN_WAVE_SQUARE,
+	        DGEN_WAVE_TRIANGLE,
+	        DGEN_WAVE_SAWTOOTH,
+	        DGEN_WAVE_INVERSE_SAWTOOTH,
+	        DGEN_BULGE,
+	        DGEN_MOVE);
 
 	/*
 	 BUFFEXT("#ifndef colorGen_t\n"

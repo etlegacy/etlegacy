@@ -2065,7 +2065,7 @@ static void Render_heatHaze(int stage)
 
 	Ren_LogComment("--- Render_heatHaze ---\n");
 
-	if (r_heatHazeFix->integer && glConfig2.framebufferBlitAvailable )
+	if (r_heatHazeFix->integer && glConfig2.framebufferBlitAvailable)
 	{
 		FBO_t    *previousFBO;
 		uint32_t stateBits;

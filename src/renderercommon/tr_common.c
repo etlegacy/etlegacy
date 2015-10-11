@@ -458,7 +458,7 @@ static void GLimp_InitExtensions(void)
 		Com_Printf("...not using GL_ARB_multitexture, < 2 texture units\n");
 	}
 #elif defined(FEATURE_RENDERER2)
-    glConfig.maxActiveTextures = 32;
+	glConfig.maxActiveTextures = 32;
 #else
 	if (GLEW_ARB_multitexture)
 	{
@@ -537,7 +537,7 @@ void RE_InitOpenGl(void)
 	//Clear the screen with a black color thanks
 	Glimp_ClearScreen();
 
-	glConfig.driverType = GLDRV_ICD;
+	glConfig.driverType   = GLDRV_ICD;
 	glConfig.hardwareType = GLHW_GENERIC;
 
 	// Get extension strings

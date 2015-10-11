@@ -2886,9 +2886,9 @@ static void R_CreateDepthToColorFBOImages(void)
 
 	//FIXME which one should we use? Read up!
 	/*
-    tr.depthToColorBackFacesFBOImage  = R_CreateRenderImage("_depthToColorBackFacesFBORender", qfalse, IF_ALPHA32F, FT_NEAREST, WT_CLAMP);
-    tr.depthToColorFrontFacesFBOImage = R_CreateRenderImage("_depthToColorFrontFacesFBORender", qfalse, IF_ALPHA32F, FT_NEAREST, WT_CLAMP);
-     */
+	tr.depthToColorBackFacesFBOImage  = R_CreateRenderImage("_depthToColorBackFacesFBORender", qfalse, IF_ALPHA32F, FT_NEAREST, WT_CLAMP);
+	tr.depthToColorFrontFacesFBOImage = R_CreateRenderImage("_depthToColorFrontFacesFBORender", qfalse, IF_ALPHA32F, FT_NEAREST, WT_CLAMP);
+	 */
 	tr.depthToColorBackFacesFBOImage  = R_CreateRenderImage("_depthToColorBackFacesFBORender", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
 	tr.depthToColorFrontFacesFBOImage = R_CreateRenderImage("_depthToColorFrontFacesFBORender", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
 }
