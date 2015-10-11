@@ -1416,12 +1416,10 @@ static void CG_DrawCrosshairNames(void)
 	float      *color;
 	float      w;
 	const char *s;
-	size_t     colorizedBufferLength = 32;
-	char       colorized[32]         = { 0 };
-	int        playerHealth          = 0;
-	qboolean   drawStuff             = qfalse;
-	qboolean   isTank                = qfalse;
-	int        maxHealth             = 1;
+	int        playerHealth = 0;
+	qboolean   drawStuff    = qfalse;
+	qboolean   isTank       = qfalse;
+	int        maxHealth    = 1;
 	float      dist; // Distance to the entity under the crosshair
 	float      zChange;
 	qboolean   hitClient = qfalse;
@@ -1529,6 +1527,8 @@ static void CG_DrawCrosshairNames(void)
 						if (cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum > -1)
 						{
 							s = va("%s", cgs.clientinfo[cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum].name);
+							w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+							CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
 						}
 					}
 					else
@@ -1537,13 +1537,16 @@ static void CG_DrawCrosshairNames(void)
 						// fail safe - this should always be the case here - cg.crosshairClientNum is in game and disguised ...
 						if (cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum > -1)
 						{
-							Q_ColorizeString('7', cgs.clientinfo[cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum].cleanname, colorized, colorizedBufferLength);
-						}
-						s = colorized;
-					}
-					w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+							size_t colorizedBufferLength = 32;
+							char   colorized[32]         = { 0 };
 
-					CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
+							Q_ColorizeString('7', cgs.clientinfo[cgs.clientinfo[cg.crosshairClientNum].disguiseClientNum].cleanname, colorized, colorizedBufferLength);
+
+							s = colorized;
+							w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+							CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
+						}
+					}
 				}
 				if (cg_drawCrosshairInfo.integer & CROSSHAIR_CLASS)
 				{
@@ -1573,7 +1576,8 @@ static void CG_DrawCrosshairNames(void)
 			else
 			{
 				// don't show the name after you look away, should this be a disguised covert
-				cg.crosshairClientTime = 0;
+				// removed to grant covert ops more power
+				//cg.crosshairClientTime = 0;
 				return;
 			}
 		}
@@ -1608,6 +1612,9 @@ static void CG_DrawCrosshairNames(void)
 			}
 			else
 			{
+				size_t colorizedBufferLength = 32;
+				char   colorized[32]         = { 0 };
+
 				// Draw them with a single color (white)
 				Q_ColorizeString('7', cgs.clientinfo[cg.crosshairClientNum].cleanname, colorized, colorizedBufferLength);
 				s = colorized;
