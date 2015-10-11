@@ -1157,12 +1157,14 @@ qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t 
 	{
 		if ((g_maxlives.integer > 0 ||
 		     (g_alliedmaxlives.integer > 0 && ent->client->sess.sessionTeam == TEAM_ALLIES) ||
-		     (g_axismaxlives.integer > 0 && ent->client->sess.sessionTeam == TEAM_AXIS))
-
-		    && ent->client->ps.persistant[PERS_RESPAWNS_LEFT] == 0 && oldTeam != TEAM_SPECTATOR)
+		     (g_axismaxlives.integer > 0 && ent->client->sess.sessionTeam == TEAM_AXIS)) &&
+		    ent->client->ps.persistant[PERS_RESPAWNS_LEFT] == 0 && oldTeam != TEAM_SPECTATOR)
 		{
-			CP("cp \"You can't switch teams because you are out of lives.\n\" 3");
-			return qfalse;  // ignore the request
+			if (g_gamestate.integer == GS_PLAYING) // but allow changing team in warmup
+			{
+				CP("cp \"You can't switch teams because you are out of lives.\n\" 3");
+				return qfalse;  // ignore the request
+			}
 		}
 	}
 
@@ -1395,31 +1397,31 @@ void StopFollowing(gentity_t *ent)
 /* unused
 int G_NumPlayersWithWeapon(weapon_t weap, team_t team)
 {
-	int i, j, cnt = 0;
+    int i, j, cnt = 0;
 
-	for (i = 0; i < level.numConnectedClients; i++)
-	{
-		j = level.sortedClients[i];
+    for (i = 0; i < level.numConnectedClients; i++)
+    {
+        j = level.sortedClients[i];
 
-		if (level.clients[j].sess.playerType != PC_SOLDIER)
-		{
-			continue;
-		}
+        if (level.clients[j].sess.playerType != PC_SOLDIER)
+        {
+            continue;
+        }
 
-		if (level.clients[j].sess.sessionTeam != team)
-		{
-			continue;
-		}
+        if (level.clients[j].sess.sessionTeam != team)
+        {
+            continue;
+        }
 
-		if (level.clients[j].sess.latchPlayerWeapon != weap && level.clients[j].sess.playerWeapon != weap)
-		{
-			continue;
-		}
+        if (level.clients[j].sess.latchPlayerWeapon != weap && level.clients[j].sess.playerWeapon != weap)
+        {
+            continue;
+        }
 
-		cnt++;
-	}
+        cnt++;
+    }
 
-	return cnt;
+    return cnt;
 }
 */
 
@@ -3605,7 +3607,7 @@ qboolean Do_Activate2_f(gentity_t *ent, gentity_t *traceEnt)
 						G_DebugAddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 5.f, "stealing uniform");
 
 						ent->client->disguiseClientNum = traceEnt->s.clientNum;
-						ent->client->disguiseRank = g_entities[traceEnt->s.clientNum].client ? g_entities[traceEnt->s.clientNum].client->sess.rank : 0;
+						ent->client->disguiseRank      = g_entities[traceEnt->s.clientNum].client ? g_entities[traceEnt->s.clientNum].client->sess.rank : 0;
 
 						CPx(ent->s.number, va("cp \"Uniform of %s^7 has been stolen\" 1", g_entities[traceEnt->s.clientNum].client->pers.netname));
 
