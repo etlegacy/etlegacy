@@ -772,6 +772,8 @@ const char *CG_GetPMItemText(centity_t *cent)
 	return NULL;
 }
 
+static int lastSoundTime = 0;
+
 void CG_PlayPMItemSound(centity_t *cent)
 {
 	switch (cent->currentState.effect1Time)
@@ -807,16 +809,22 @@ void CG_PlayPMItemSound(centity_t *cent)
 		{
 			break;
 		}
-		if (cgs.clientinfo[cg.clientNum].team != cent->currentState.effect2Time)
+
+		// don't spam landmine spotted sounds ... play once per 10 secs
+		if (!lastSoundTime || cg.time > lastSoundTime)
 		{
-			// inverted teams
-			if (cent->currentState.effect2Time == TEAM_AXIS)
+			if (cgs.clientinfo[cg.clientNum].team != cent->currentState.effect2Time)
 			{
-				CG_SoundPlaySoundScript("allies_hq_mines_spotted", NULL, -1, qtrue);
-			}
-			else
-			{
-				CG_SoundPlaySoundScript("axis_hq_mines_spotted", NULL, -1, qtrue);
+				// inverted teams
+				if (cent->currentState.effect2Time == TEAM_AXIS)
+				{
+					CG_SoundPlaySoundScript("allies_hq_mines_spotted", NULL, -1, qtrue);
+				}
+				else
+				{
+					CG_SoundPlaySoundScript("axis_hq_mines_spotted", NULL, -1, qtrue);
+				}
+				lastSoundTime = cg.time + 10000; // 10 secs
 			}
 		}
 		break;
