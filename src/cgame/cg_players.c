@@ -2029,36 +2029,31 @@ static void CG_PlayerSprites(centity_t *cent)
 		CG_PlayerFloatSprite(cent, cgs.media.balloonShader, height, numIcons++);
 	}
 
-	// draw disguised icon over disguised teammates and the fireteam icon of uniform source for enemies
-	if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED))
-	{
-		if (sameTeam)
-		{
-			CG_PlayerFloatSprite(cent, cgs.media.friendShader, height + 8, numIcons++);
-		}
-		else
-		{
-			fireteamData_t *ft;
-
-			if ((ft = CG_IsOnFireteam(cent->currentState.number)))
-			{
-				if (ft == CG_IsOnFireteam(cgs.clientinfo[cg.clientNum].disguiseClientNum) && cgs.clientinfo[cent->currentState.number].selected)
-				{
-					CG_PlayerFloatSprite(cent, cgs.media.fireteamicons[ft->ident], 56, numIcons++);
-					return;
-				}
-			}
-		}
-	}
-
 	{
 		fireteamData_t *ft;
+
+		// draw disguised icon over disguised teammates and the fireteam icon of uniform source for enemies
+		if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED))
+		{
+			if (sameTeam)
+			{
+				CG_PlayerFloatSprite(cent, cgs.media.friendShader, height + 8, numIcons++);
+			}
+
+			if (cgs.clientinfo[cg.clientNum].disguiseClientNum > -1 &&
+			    !sameTeam &&
+			    ft == CG_IsOnFireteam(cgs.clientinfo[cg.clientNum].disguiseClientNum)
+			    /*&& cgs.clientinfo[cent->currentState.number].selected*/)
+			{
+				CG_PlayerFloatSprite(cent, cgs.media.fireteamicons[ft->ident], height + 8, numIcons++);
+			}
+		}
 
 		if ((ft = CG_IsOnFireteam(cent->currentState.number)))
 		{
 			if (ft == CG_IsOnFireteam(cg.clientNum) && cgs.clientinfo[cent->currentState.number].selected)
 			{
-				CG_PlayerFloatSprite(cent, cgs.media.fireteamicons[ft->ident], 56, numIcons++);
+				CG_PlayerFloatSprite(cent, cgs.media.fireteamicons[ft->ident], height + 8, numIcons++);
 			}
 		}
 	}
