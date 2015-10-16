@@ -1605,6 +1605,9 @@ static void CG_DrawCrosshairNames(void)
 		// draw the name and class
 		if (cg_drawCrosshairNames.integer > 0)
 		{
+			char   colorized[32]         = { 0 };
+			size_t colorizedBufferLength = 32;
+
 			if (cg_drawCrosshairNames.integer == 2)
 			{
 				// Draw them with full colors
@@ -1612,9 +1615,6 @@ static void CG_DrawCrosshairNames(void)
 			}
 			else
 			{
-				size_t colorizedBufferLength = 32;
-				char   colorized[32]         = { 0 };
-
 				// Draw them with a single color (white)
 				Q_ColorizeString('7', cgs.clientinfo[cg.crosshairClientNum].cleanname, colorized, colorizedBufferLength);
 				s = colorized;

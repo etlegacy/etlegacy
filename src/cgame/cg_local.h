@@ -3022,7 +3022,7 @@ void CG_UICurrentSquadSetup(void);
 void CG_CampaignBriefingSetup(void);
 
 // Fireteam stuff
-#define /*fireteamData_t**/ CG_IsOnFireteam(/*int*/ clientNum) /*{ return*/ cgs.clientinfo[clientNum].fireteamData   /*}*/
+fireteamData_t *CG_IsOnFireteam(int clientNum);
 fireteamData_t *CG_IsOnSameFireteam(int clientNum, int clientNum2);
 fireteamData_t *CG_IsFireTeamLeader(int clientNum);
 

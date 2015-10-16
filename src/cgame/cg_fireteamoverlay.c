@@ -179,6 +179,16 @@ void CG_ParseFireteams()
 	CG_SortClientFireteam();
 }
 
+// Fireteam that the specified client is a part of
+fireteamData_t *CG_IsOnFireteam(int clientNum)
+{
+	if (cgs.clientinfo[clientNum].team == TEAM_SPECTATOR)
+	{
+		return NULL;
+	}
+	return cgs.clientinfo[clientNum].fireteamData;
+}
+
 // Fireteam that both specified clients are on, if they both are on the same team
 fireteamData_t *CG_IsOnSameFireteam(int clientNum, int clientNum2)
 {

@@ -2042,7 +2042,7 @@ static void CG_PlayerSprites(centity_t *cent)
 
 			if (cgs.clientinfo[cg.clientNum].disguiseClientNum > -1 &&
 			    !sameTeam &&
-			    ft == CG_IsOnFireteam(cgs.clientinfo[cg.clientNum].disguiseClientNum)
+			    (ft = CG_IsOnFireteam(cgs.clientinfo[cg.clientNum].disguiseClientNum))
 			    /*&& cgs.clientinfo[cent->currentState.number].selected*/)
 			{
 				CG_PlayerFloatSprite(cent, cgs.media.fireteamicons[ft->ident], height + 8, numIcons++);
@@ -2051,7 +2051,7 @@ static void CG_PlayerSprites(centity_t *cent)
 
 		if ((ft = CG_IsOnFireteam(cent->currentState.number)))
 		{
-			if (ft == CG_IsOnFireteam(cg.clientNum) && cgs.clientinfo[cent->currentState.number].selected)
+			if ((ft == CG_IsOnFireteam(cg.clientNum)) && cgs.clientinfo[cent->currentState.number].selected)
 			{
 				CG_PlayerFloatSprite(cent, cgs.media.fireteamicons[ft->ident], height + 8, numIcons++);
 			}
