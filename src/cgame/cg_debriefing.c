@@ -2345,16 +2345,6 @@ void CG_Debrieing_SetSelectedClient(int clientNum)
 	}
 }
 
-void CG_Debriefing_HTMLButton_Draw(panel_button_t *button)
-{
-	if (cgs.dbMode != 0)
-	{
-		return;
-	}
-
-	CG_PanelButtonsRender_Button(button);
-}
-
 qboolean CG_Debriefing_ChatButton_KeyDown(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
@@ -2541,87 +2531,6 @@ qboolean CG_TeamDebriefingMapList_KeyDown(panel_button_t *button, int key)
 	return qfalse;
 }
 
-void CG_TeamDebriefingOutcome_Draw(panel_button_t *button)
-{
-	const char *cs;
-	char       *s, *p;
-	char       buffer[1024];
-	float      y;
-
-	if (cgs.tdbSelectedMap == 0)
-	{
-		return;
-	}
-	else
-	{
-		if (cg.teamWonRounds[1] & (1 << (cgs.tdbSelectedMap - 1)))
-		{
-			cs = cgs.campaignData.arenas[cgs.tdbMapListOffset - 1].axiswintext;
-		}
-		else if (cg.teamWonRounds[0]  & (1 << (cgs.tdbSelectedMap - 1)))
-		{
-			cs = cgs.campaignData.arenas[cgs.tdbMapListOffset - 1].alliedwintext;
-		}
-		else
-		{
-			return;
-		}
-	}
-
-	Q_strncpyz(buffer, cs, sizeof(buffer));
-	while ((s = strchr(buffer, '*')))
-	{
-		*s = '\n';
-	}
-
-	BG_FitTextToWidth_Ext(buffer, button->font->scalex, button->rect.w - 16, sizeof(buffer), button->font->font);
-
-	y = button->rect.y + 12;
-
-	s = p = buffer;
-	while (*p)
-	{
-		if (*p == '\n')
-		{
-			*p++ = '\0';
-			CG_Text_Paint_Ext(button->rect.x + 4, y, button->font->scalex, button->font->scaley, button->font->colour, s, 0, 0, 0, button->font->font);
-			y += 8;
-			s  = p;
-		}
-		else
-		{
-			p++;
-		}
-	}
-}
-
-void CG_TeamDebriefingMapList_Draw(panel_button_t *button)
-{
-	int   i;
-	float y = button->rect.y + 12;
-
-	for (i = 0; i + cgs.tdbMapListOffset <= MAX_MAPS_PER_CAMPAIGN && i < 4; i++)
-	{
-		if (cgs.tdbSelectedMap == i + cgs.tdbMapListOffset)
-		{
-			vec4_t clr = { 1.f, 1.f, 1.f, 0.3f };
-
-			CG_FillRect(button->rect.x, y - 10, button->rect.w, 12, clr);
-		}
-
-		if (i + cgs.tdbMapListOffset == 0)
-		{
-			CG_Text_Paint_Ext(button->rect.x, y, button->font->scalex, button->font->scaley, button->font->colour, "Campaign Overview", 0, 0, 0, button->font->font);
-		}
-		else
-		{
-			CG_Text_Paint_Ext(button->rect.x, y, button->font->scalex, button->font->scaley, button->font->colour, cgs.campaignData.arenas[i + cgs.tdbMapListOffset - 1].longname, 0, 0, 0, button->font->font);
-		}
-
-		y += 12;
-	}
-}
-
 int CG_TeamDebriefing_CalcXP(team_t team, int mapindex, int skillindex)
 {
 	int j, cnt = 0;
@@ -2687,22 +2596,6 @@ void CG_TeamDebriefingTeamSkillXP_Draw(panel_button_t *button)
 	}
 
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", xp), 0, 0, 0, button->font->font);
-}
-
-void CG_TeamDebriefingMapShot_Draw(panel_button_t *button)
-{
-	if (cgs.tdbSelectedMap == 0)
-	{
-		CG_DrawPicST(button->rect.x, button->rect.y, button->rect.w, button->rect.h, 0, 0, 0.6875, 1, trap_R_RegisterShaderNoMip("gfx/loading/map_back"));
-	}
-	else
-	{
-		CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, trap_R_RegisterShaderNoMip(va("levelshots/%s_cc.tga", cgs.campaignData.mapnames[cgs.tdbSelectedMap - 1])));
-	}
-}
-
-void CG_TeamDebriefingMapWinner_Draw(panel_button_t *button)
-{
 }
 
 void CG_PanelButtonsRender_Button_Ext(rectDef_t *r, const char *text)

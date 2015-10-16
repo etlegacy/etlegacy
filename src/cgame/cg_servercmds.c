@@ -1515,8 +1515,6 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
 	}
 	ci = &cgs.clientinfo[clientNum];
 
-	cgs.currentVoiceClient = clientNum;
-
 	voiceChatList = CG_VoiceChatListForClient(clientNum);
 
 	if (CG_GetVoiceChat(voiceChatList, cmd, &snd, &sprite, &chat))

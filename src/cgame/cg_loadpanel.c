@@ -618,17 +618,6 @@ void CG_LoadPanel_KeyHandling(int key, qboolean down)
 	}
 }
 
-qboolean CG_LoadPanel_ContinueButtonKeyDown(panel_button_t *button, int key)
-{
-	if (key == K_MOUSE1)
-	{
-		CG_EventHandling(CGAME_EVENT_GAMEVIEW, qfalse);
-		return qtrue;
-	}
-
-	return qfalse;
-}
-
 void CG_LoadPanel_DrawPin(const char *text, float px, float py, float sx, float sy, qhandle_t shader, float pinsize, float backheight)
 {
 	static vec4_t colourFadedBlack = { 0.f, 0.f, 0.f, 0.4f };

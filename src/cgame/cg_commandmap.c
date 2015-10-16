@@ -36,7 +36,6 @@
 
 static mapEntityData_t mapEntities[MAX_GENTITIES];
 static int             mapEntityCount = 0;
-static int             mapEntityTime  = 0;
 static qboolean        expanded       = qfalse;
 
 qboolean ccInitial = qtrue;
@@ -245,7 +244,6 @@ void CG_ParseMapEntityInfo(int axis_number, int allied_number)
 	int i, offset = 3;
 
 	mapEntityCount = 0;
-	mapEntityTime  = cg.time;
 
 	for (i = 0; i < axis_number; i++)
 	{

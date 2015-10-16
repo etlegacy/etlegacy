@@ -47,7 +47,6 @@
 #include "cg_public.h"
 #include "../ui/ui_shared.h"
 
-#define MAX_LOCATIONS       256
 
 #define STATS_FADE_TIME     200.0f
 #define FADE_TIME           200
@@ -506,9 +505,6 @@ typedef struct localEntity_s
 	struct localEntity_s *chain;        // used for grouping entities (like for flamethrower junctions)
 	int onFireStart, onFireEnd;
 	int ownerNum;
-	int lastSpiritDmgTime;
-
-	int loopingSound;
 
 	int breakCount;                     // break-up this many times before we can break no more
 	float sizeScale;
@@ -553,9 +549,7 @@ typedef struct clientInfo_s
 	int breathPuffTime;
 	int cls;
 	int latchedcls;
-	int blinkTime;
 
-	int handshake;
 	int rank;
 	qboolean ccSelected;
 	int fireteam;
@@ -1813,8 +1807,6 @@ typedef struct cgs_s
 	int maxclients;
 	char mapname[MAX_QPATH];
 	char rawmapname[MAX_QPATH];
-	char redTeam[MAX_QPATH];                // A team
-	char blueTeam[MAX_QPATH];               // B team
 	float weaponRestrictions;
 
 	int voteTime;
@@ -1863,7 +1855,6 @@ typedef struct cgs_s
 	// player/AI model scripting (client repository)
 	animScriptData_t animScriptData;
 
-	int currentVoiceClient;
 	int currentRound;
 	float nextTimeLimit;
 	int minclients;
@@ -1913,8 +1904,6 @@ typedef struct cgs_s
 	int autoMapExpandTime;
 
 	qboolean autoMapOff;                // is automap on or off
-
-	bg_character_t *offscreenCmdr;
 
 	int aviDemoRate;                                    // Demo playback recording
 	int aReinfOffset[TEAM_NUM_TEAMS];                   // Team reinforcement offsets
@@ -2342,10 +2331,7 @@ void CG_DrawTopBottom_NoScale(float x, float y, float w, float h, float size);
 void CG_DrawBottom_NoScale(float x, float y, float w, float h, float size);
 
 // localization functions
-void CG_InitTranslation(void); // TODO: replace with tinygettext
 char *CG_TranslateString(const char *string);
-void CG_SaveTransTable(void);
-void CG_ReloadTranslation(void);
 
 void CG_InitStatsDebug(void);
 void CG_StatsDebugAddText(const char *text);
@@ -2607,17 +2593,7 @@ void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y);
 void CG_DrawExpandedAutoMap(void);
 void CG_DrawAutoMap(float x, float y, float w, float h);
 
-qboolean CG_DrawLimboMenu(void);
-qboolean CG_DrawObjectivePanel(void);
 qboolean CG_DrawFireTeamMenu(void);
-
-qboolean CG_LimboMenuClick(int key);
-qboolean CG_FireTeamClick(int key);
-qboolean CG_ObjectiveMenuClick(int key);
-
-void CG_GameViewMenuClick(int key);
-void CG_GetLimboWeaponAnim(const char **torso_anim, const char **legs_anim);
-int CG_GetLimboSelectedWeapon(void);
 
 qboolean CG_DrawMissionBriefing(void);
 void CG_MissionBriefingClick(int key);
@@ -2636,33 +2612,12 @@ typedef struct
 	const char *pendingLegsAnim;
 } pendingAnimation_t;
 
-typedef struct
-{
-	lerpFrame_t legs;
-	lerpFrame_t torso;
-	lerpFrame_t headAnim;
-
-	vec3_t headOrigin;          // used for centering talking heads
-
-	vec3_t viewAngles;
-	vec3_t moveAngles;
-
-	pendingAnimation_t pendingAnimations[4];
-	int numPendingAnimations;
-
-	float y, z;
-
-	int teamNum;
-	int classNum;
-} playerInfo_t;
-
 typedef enum
 {
 	ANIM_IDLE = 0,
 	ANIM_RAISE,
 } animType_t;
 
-qboolean CG_DrawGameView(void);
 void CG_ParseFireteams(void);
 void CG_ParseOIDInfos(void);
 oidInfo_t *CG_OIDInfoForEntityNum(int num);
@@ -2935,8 +2890,6 @@ int trap_Key_GetKey(const char *binding);
 qboolean trap_Key_GetOverstrikeMode(void);
 void trap_Key_SetOverstrikeMode(qboolean state);
 
-void trap_SendMoveSpeedsToGame(int entnum, char *movespeeds);
-
 void trap_UI_Popup(int arg0);
 
 void trap_UI_ClosePopup(const char *arg0);
@@ -2972,7 +2925,6 @@ void trap_R_Finish(void);
 
 bg_playerclass_t *CG_PlayerClassForClientinfo(clientInfo_t *ci, centity_t *cent);
 
-void CG_FitTextToWidth(char *instr, int w, int size);
 void CG_FitTextToWidth2(char *instr, float scale, float w, int size);
 void CG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontHelper_t *font);
 int CG_TrimLeftPixels(char *instr, float scale, float w, int size);
@@ -3014,8 +2966,6 @@ fireteamData_t *CG_IsOnSameFireteam(int clientNum, int clientNum2);
 #define UI_COMMAND_MAP 1
 #define UI_SQUAD_SELECT 2
 
-void CG_DrawUITabs(void);
-void CG_DrawUICurrentSquad(void);
 qboolean CG_UICommonClick(void);
 void CG_DrawUISelectedSoldier(void);
 void CG_UICurrentSquadSetup(void);
@@ -3221,8 +3171,6 @@ qboolean CG_Debriefing_Draw(void);
 void CG_ChatPanel_Setup(void);
 
 void CG_Debriefing_ChatEditFinish(panel_button_t *button);
-void CG_Debriefing_BackButton_Draw(panel_button_t *button);
-void CG_Debriefing_HTMLButton_Draw(panel_button_t *button);
 void CG_Debriefing_NextButton_Draw(panel_button_t *button);
 void CG_Debriefing_ChatButton_Draw(panel_button_t *button);
 void CG_Debriefing_ReadyButton_Draw(panel_button_t *button);
@@ -3265,11 +3213,7 @@ void CG_Debriefing_Shutdown(void);
 qboolean CG_Debriefing_ServerCommand(const char *cmd);
 void CG_Debriefing_MouseEvent(int x, int y);
 
-void CG_TeamDebriefingOutcome_Draw(panel_button_t *button);
-void CG_TeamDebriefingMapList_Draw(panel_button_t *button);
 qboolean CG_TeamDebriefingMapList_KeyDown(panel_button_t *button, int key);
-void CG_TeamDebriefingMapWinner_Draw(panel_button_t *button);
-void CG_TeamDebriefingMapShot_Draw(panel_button_t *button);
 void CG_TeamDebriefingTeamXP_Draw(panel_button_t *button);
 void CG_TeamDebriefingTeamSkillXP_Draw(panel_button_t *button);
 
@@ -3280,12 +3224,9 @@ void CG_LoadPanel_RenderCampaignPins(panel_button_t *button);
 void CG_LoadPanel_RenderMissionDescriptionText(panel_button_t *button);
 void CG_LoadPanel_RenderCampaignTypeText(panel_button_t *button);
 void CG_LoadPanel_RenderCampaignNameText(panel_button_t *button);
-void CG_LoadPanel_RenderPercentageMeter(panel_button_t *button);
-void CG_LoadPanel_RenderContinueButton(panel_button_t *button);
 void CG_LoadPanel_RenderLoadingBar(panel_button_t *button);
 void CG_LoadPanel_LoadingBarText(panel_button_t *button);
 void CG_LoadPanel_KeyHandling(int key, qboolean down);
-qboolean CG_LoadPanel_ContinueButtonKeyDown(panel_button_t *button, int key);
 void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh);
 
 qboolean CG_Debriefing2_Maps_KeyDown(panel_button_t *button, int key);

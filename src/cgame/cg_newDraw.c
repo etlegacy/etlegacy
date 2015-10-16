@@ -545,8 +545,6 @@ qboolean CG_OwnerDrawVisible(int flags)
 	return qfalse;
 }
 
-#define PIC_WIDTH 12
-
 /*
 ==============
 CG_DrawWeapStability
