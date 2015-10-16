@@ -769,6 +769,12 @@ void Cmd_AddSystemCommand(const char *cmd_name, xcommand_t function, const char 
 {
 	cmd_function_t *cmd;
 
+	if (!cmd_name || !cmd_name[0])
+	{
+		Com_Printf(S_COLOR_RED "Cmd_AddSystemCommand can't add NULL or empty command name\n");
+		return;
+	}
+
 	// fail if the command already exists
 	if (Cmd_FindCommand(cmd_name))
 	{
@@ -787,7 +793,7 @@ void Cmd_AddSystemCommand(const char *cmd_name, xcommand_t function, const char 
 	cmd->complete = complete;
 	cmd->next     = cmd_functions;
 	cmd_functions = cmd;
-	
+
 	if (description && description[0])
 	{
 		cmd->description = CopyString(description);
@@ -843,6 +849,12 @@ void Cmd_RemoveCommand(const char *cmd_name)
 {
 	cmd_function_t *cmd, **back = &cmd_functions;
 
+	if (!cmd_name || !cmd_name[0])
+	{
+		Com_Printf(S_COLOR_RED "Cmd_RemoveCommand called with an empty command name\n");
+		return;
+	}
+
 	while (1)
 	{
 		cmd = *back;
@@ -854,10 +866,9 @@ void Cmd_RemoveCommand(const char *cmd_name)
 		if (!strcmp(cmd_name, cmd->name))
 		{
 			*back = cmd->next;
-			if (cmd->name)
-			{
-				Z_Free(cmd->name);
-			}
+
+			Z_Free(cmd->name);
+
 			if (cmd->description)
 			{
 				Z_Free(cmd->description);
@@ -878,7 +889,7 @@ void Cmd_RemoveCommandSafe(const char *cmd_name)
 {
 	cmd_function_t *cmd;
 
-	if (!cmd_name[0])
+	if (!cmd_name || !cmd_name[0])
 	{
 		Com_Printf(S_COLOR_RED "Cmd_RemoveCommandSafe called with an empty command name\n");
 		return;
