@@ -2209,7 +2209,7 @@ void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surface)
 
 	Ren_LogComment("--- Tess_SurfaceVBOMDMMesh ---\n");
 
-	if (!surface->vbo || !surface->ibo)
+	if (!surface->vbo || !surface->ibo[0])
 	{
 		return;
 	}
