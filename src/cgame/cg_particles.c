@@ -1421,62 +1421,6 @@ void CG_ParticleBulletDebris(vec3_t org, vec3_t vel, int duration)
 	p->vel[2]  += -20;
 }
 
-// bullets hitting dirt
-
-void CG_ParticleDirtBulletDebris(vec3_t org, vec3_t vel, int duration)
-{
-	int         r = rand() % 3;
-	cparticle_t *p;
-
-	if (!free_particles)
-	{
-		return;
-	}
-
-	p                = free_particles;
-	free_particles   = p->next;
-	p->next          = active_particles;
-	active_particles = p;
-	p->time          = cg.time;
-
-	p->endtime   = cg.time + duration;
-	p->startfade = cg.time + duration / 2;
-
-	p->color    = EMISIVEFADE;
-	p->alpha    = 1.0f;
-	p->alphavel = 0;
-
-	p->height    = 1.2f;
-	p->width     = 1.2f;
-	p->endheight = 4.5f;
-	p->endwidth  = 4.5f;
-
-	if (r == 0)
-	{
-		p->pshader = cgs.media.dirtParticle1Shader;
-	}
-	else if (r == 1)
-	{
-		p->pshader = cgs.media.dirtParticle2Shader;
-	}
-	else
-	{  // r = 2 - no shader ...
-		p->pshader = 0; // cgs.media.dirtParticle3Shader; FIXME: activate this?
-	}
-
-	p->type = P_SMOKE;
-
-	VectorCopy(org, p->org);
-
-	p->vel[0]   = vel[0];
-	p->vel[1]   = vel[1];
-	p->vel[2]   = vel[2];
-	p->accel[0] = p->accel[1] = p->accel[2] = 0;
-
-	p->accel[2] = -330;
-	p->vel[2]  += -20;
-}
-
 // the core of the dirt explosion
 void CG_ParticleDirtBulletDebris_Core(vec3_t org, vec3_t vel, int duration, float width, float height, float alpha, qhandle_t shader)
 {
@@ -2226,53 +2170,4 @@ void CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir)
 
 		p->alpha = 0.75f;
 	}
-}
-
-void CG_ParticleMisc(qhandle_t pshader, vec3_t origin, int size, int duration, float alpha)
-{
-	cparticle_t *p;
-
-	if (!pshader)
-	{
-		CG_Printf("CG_ParticleImpactSmokePuff pshader == ZERO!\n");
-	}
-
-	if (!free_particles)
-	{
-		return;
-	}
-
-	p                = free_particles;
-	free_particles   = p->next;
-	p->next          = active_particles;
-	active_particles = p;
-	p->time          = cg.time;
-	p->alpha         = 1.0f;
-	p->alphavel      = 0;
-	p->roll          = rand() % 179;
-
-	p->pshader = pshader;
-
-	if (duration > 0)
-	{
-		p->endtime = cg.time + duration;
-	}
-	else
-	{
-		p->endtime = duration;
-	}
-
-	p->startfade = cg.time;
-
-	p->width  = size;
-	p->height = size;
-
-	p->endheight = size;
-	p->endwidth  = size;
-
-	p->type = P_SPRITE;
-
-	VectorCopy(origin, p->org);
-
-	p->rotate = qfalse;
 }

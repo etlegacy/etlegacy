@@ -497,7 +497,6 @@ typedef struct localEntity_s
 
 	refEntity_t refEntity;
 
-	int lightOverdraw;
 	int lastTrailTime;
 	int headJuncIndex, headJuncIndex2;
 	float effectWidth;
@@ -544,7 +543,6 @@ typedef struct clientInfo_s
 	int score;                      // updated by score servercmds
 	int location[3];                // location in 3d for team mode (was 2d before)
 	int health;                     // you only get this info about your teammates
-	int curWeapon;
 	int powerups;                   // so can display quad/flag status
 	int breathPuffTime;
 	int cls;
@@ -2438,8 +2436,6 @@ void CG_DrawTracer(vec3_t start, vec3_t finish);
 void CG_MG42EFX(centity_t *cent);
 void CG_MortarEFX(centity_t *cent);
 
-void CG_MissileHitWall2(int weapon, int clientNum, vec3_t origin, vec3_t dir);
-
 void CG_MissileHitPlayer(centity_t *cent, int weapon, vec3_t origin, vec3_t dir, int entityNum);
 qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle);
 void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityNum, int otherEntNum2, float waterfraction, int seed);
@@ -2469,11 +2465,9 @@ void CG_ParticleSnow(qhandle_t pshader, vec3_t origin, vec3_t origin2, int turb,
 void CG_ParticleSmoke(qhandle_t pshader, centity_t *cent);
 void CG_ParticleSnowFlurry(qhandle_t pshader, centity_t *cent);
 void CG_ParticleBulletDebris(vec3_t org, vec3_t vel, int duration);
-void CG_ParticleDirtBulletDebris(vec3_t org, vec3_t vel, int duration);
 void CG_ParticleDirtBulletDebris_Core(vec3_t org, vec3_t vel, int duration, float width, float height, float alpha, qhandle_t shader);
 void CG_ParticleSparks(vec3_t org, vec3_t vel, int duration, float x, float y, float speed);
 void CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir);
-void CG_ParticleMisc(qhandle_t pshader, vec3_t origin, int size, int duration, float alpha);
 
 void CG_ParticleExplosion(char *animStr, vec3_t origin, vec3_t vel, int duration, int sizeStart, int sizeEnd, qboolean dlight);
 
@@ -2593,8 +2587,6 @@ void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y);
 void CG_DrawExpandedAutoMap(void);
 void CG_DrawAutoMap(float x, float y, float w, float h);
 
-qboolean CG_DrawFireTeamMenu(void);
-
 qboolean CG_DrawMissionBriefing(void);
 void CG_MissionBriefingClick(int key);
 
@@ -2604,13 +2596,6 @@ qboolean CG_FindArenaInfo(char *filename, char *mapname, arenaInfo_t *info);
 void CG_LoadRankIcons(void);
 qboolean CG_DrawStatsRanksMedals(void);
 void CG_StatsRanksMedalsClick(int key);
-
-typedef struct
-{
-	int pendingAnimationTime;
-	const char *pendingTorsoAnim;
-	const char *pendingLegsAnim;
-} pendingAnimation_t;
 
 typedef enum
 {
@@ -3213,8 +3198,6 @@ void CG_Debriefing_Shutdown(void);
 qboolean CG_Debriefing_ServerCommand(const char *cmd);
 void CG_Debriefing_MouseEvent(int x, int y);
 
-qboolean CG_TeamDebriefingMapList_KeyDown(panel_button_t *button, int key);
-void CG_TeamDebriefingTeamXP_Draw(panel_button_t *button);
 void CG_TeamDebriefingTeamSkillXP_Draw(panel_button_t *button);
 
 const char *CG_PickupItemText(int item);

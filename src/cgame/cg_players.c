@@ -429,8 +429,7 @@ bg_playerclass_t *CG_PlayerClassForClientinfo(clientInfo_t *ci, centity_t *cent)
 	{
 		team = ci->team == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS;
 
-		// rain - fixed incorrect class determination (was & 6,
-		// should be & 7)
+		// fixed incorrect class determination (was & 6, should be & 7)
 		cls = (cent->currentState.powerups >> PW_OPS_CLASS_1) & 7;
 
 		return BG_GetPlayerClassInfo(team, cls);
@@ -776,7 +775,7 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 	else
 	{
 		// move at normal speed
-		lf->animSpeedScale       = 1.0;
+		lf->animSpeedScale       = 1.0f;
 		lf->oldFrameSnapshotTime = cg.latestSnapshotTime;
 	}
 	// adjust with manual setting (pain anims)
@@ -826,9 +825,9 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 					lf->animSpeedScale = ANIM_SCALEMAX_HIGH - (ANIM_SCALEMAX_HIGH - ANIM_SCALEMAX_LOW) * (float)(anim->moveSpeed - ANIM_SPEEDMAX_HIGH) / (float)(ANIM_SPEEDMAX_LOW - ANIM_SPEEDMAX_HIGH);
 				}
 			}
-			else if (lf->animSpeedScale > 4.0)
+			else if (lf->animSpeedScale > 4)
 			{
-				lf->animSpeedScale = 4.0;
+				lf->animSpeedScale = 4.0f;
 			}
 
 		}
@@ -1283,7 +1282,7 @@ static void CG_SwingAngles(float destination, float swingTolerance, float clampT
 	scale *= 0.05;
 	if (scale < 0.5)
 	{
-		scale = 0.5;
+		scale = 0.5f;
 	}
 
 	// swing towards the destination angle
@@ -1345,14 +1344,14 @@ static void CG_AddPainTwitch(centity_t *cent, vec3_t torsoAngles)
 		// we need to inititialize this stuff
 		cent->pe.painAnimLegs  = -1;
 		cent->pe.painAnimTorso = -1;
-		cent->pe.animSpeed     = 1.0;
+		cent->pe.animSpeed     = 1.0f;
 	}
 
 	if (cent->currentState.eFlags & EF_DEAD)
 	{
 		cent->pe.painAnimLegs  = -1;
 		cent->pe.painAnimTorso = -1;
-		cent->pe.animSpeed     = 1.0;
+		cent->pe.animSpeed     = 1.0f;
 		return;
 	}
 
@@ -1757,7 +1756,7 @@ static void CG_BreathPuffs(centity_t *cent, refEntity_t *head)
 	AxisToAngles(maxis, mang);
 	AngleVectors(mang, forward, NULL, up);
 
-	//push the origin out a tad so it's not right in the guys face (tad==4)
+	// push the origin out a tad so it's not right in the guys face (tad==4)
 	VectorMA(morg, 4, forward, morg);
 
 	forward[0] = up[0] * 8 + forward[0] * 5;

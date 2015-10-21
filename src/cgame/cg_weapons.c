@@ -6014,7 +6014,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 	qhandle_t   mod      = 0, mark = 0, shader = 0;
 	sfxHandle_t sfx      = 0, sfx2 = 0;
 	qboolean    isSprite = qfalse;
-	int         duration = 600, lightOverdraw = 0, i, j, markDuration = -1, volume = 127; // keep -1 markDuration for temporary marks
+	int         duration = 600, i, j, markDuration = -1, volume = 127; // keep -1 markDuration for temporary marks
 	trace_t     trace;
 	vec3_t      lightColor = { 1, 1, 0 }, tmpv, tmpv2, sprOrg, sprVel;
 	float       radius     = 32, light = 0, sfx2range = 0;
@@ -6455,7 +6455,6 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 		le = CG_MakeExplosion(origin, dir, mod, shader, duration, isSprite);
 
 		le->light         = light;
-		le->lightOverdraw = lightOverdraw;
 		VectorCopy(lightColor, le->lightColor);
 	}
 

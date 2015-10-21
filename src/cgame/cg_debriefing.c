@@ -2512,25 +2512,6 @@ float CG_Debriefing_CalcCampaignProgress(void)
 	return 0;
 }
 
-qboolean CG_TeamDebriefingMapList_KeyDown(panel_button_t *button, int key)
-{
-	if (key == K_MOUSE1)
-	{
-		int pos = ((cgs.cursorY - button->rect.y) / 12) + cgs.tdbMapListOffset;
-
-		if (pos < 0 || pos > cgs.campaignData.mapCount)
-		{
-			return qfalse;
-		}
-
-		cgs.tdbSelectedMap = pos;
-
-		return qtrue;
-	}
-
-	return qfalse;
-}
-
 int CG_TeamDebriefing_CalcXP(team_t team, int mapindex, int skillindex)
 {
 	int j, cnt = 0;
@@ -2571,14 +2552,6 @@ int CG_TeamDebriefing_CalcXP(team_t team, int mapindex, int skillindex)
 	}
 
 	return cnt;
-}
-
-void CG_TeamDebriefingTeamXP_Draw(panel_button_t *button)
-{
-	team_t team = button->data[0] == 0 ? TEAM_AXIS : TEAM_ALLIES;
-	int    xp   = CG_TeamDebriefing_CalcXP(team, cgs.tdbSelectedMap - 1, -1);
-
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%s XP: %i", team == TEAM_AXIS ? "Axis" : "Allies", xp), 0, 0, 0, button->font->font);
 }
 
 void CG_TeamDebriefingTeamSkillXP_Draw(panel_button_t *button)
