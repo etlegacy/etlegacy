@@ -964,6 +964,7 @@ static qboolean SV_SetupDownloadFile(client_t *cl, msg_t *msg)
 				cl->bFallback = qfalse;
 				if (SV_CheckFallbackURL(cl, msg))
 				{
+					FS_FCloseFile(downloadFileHandle);
 					return qtrue;
 				}
 
@@ -974,6 +975,7 @@ static qboolean SV_SetupDownloadFile(client_t *cl, msg_t *msg)
 		{
 			if (SV_CheckFallbackURL(cl, msg))
 			{
+				FS_FCloseFile(downloadFileHandle);
 				return qtrue;
 			}
 
