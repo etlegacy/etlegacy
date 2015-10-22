@@ -1828,7 +1828,6 @@ float *tv(float x, float y, float z)
 /**
  * @brief Searches the string for the given key and returns
  * the associated value, or an empty string.
- * FIXME: overflow check?
  */
 char *Info_ValueForKey(const char *s, const char *key)
 {
@@ -1843,9 +1842,14 @@ char *Info_ValueForKey(const char *s, const char *key)
 		return "";
 	}
 
-	if (strlen(s) >= BIG_INFO_STRING)
+	if (strlen(s) >= BIG_INFO_STRING) // BIG_INFO_VALUE
 	{
 		Com_Error(ERR_DROP, "Info_ValueForKey: oversize infostring [%s] [%s]", s, key);
+	}
+
+	if (strlen(key) >= BIG_INFO_KEY)
+	{
+		Com_Error(ERR_DROP, "Info_ValueForKey: oversize key [%s] [%s]", s, key);
 	}
 
 	valueindex ^= 1;
