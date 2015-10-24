@@ -116,6 +116,12 @@ void Weapon_Knife(gentity_t *ent, int modnum)
 
 	damage = GetWeaponTableData(ent->s.weapon)->damage;   // default knife damage for frontal attacks (10)
 
+	// no damage
+	if (!damage)
+	{
+		return;
+	}
+
 	// Covert ops deal double damage with a knife
 	if (ent->client->sess.playerType == PC_COVERTOPS)
 	{
