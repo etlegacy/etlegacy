@@ -1986,6 +1986,29 @@ static void CG_PlayerSprites(centity_t *cent)
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
 		CG_PlayerFloatText(cent, ci->name, height + 16);
+
+		// show some useful icons to spectators ...
+		if (cent->currentState.powerups & (1 << PW_INVULNERABLE))
+		{
+			CG_PlayerFloatSprite(cent, cgs.media.spawnInvincibleShader, height, numIcons++);
+		}
+		if (cent->currentState.eFlags & EF_CONNECTION)
+		{
+			CG_PlayerFloatSprite(cent, cgs.media.disconnectIcon, height, numIcons++);
+		}
+		if (cent->currentState.eFlags & EF_TALK)
+		{
+			CG_PlayerFloatSprite(cent, cgs.media.balloonShader, height, numIcons++);
+		}
+
+		//{ FIXME: do this for ettv
+		//	fireteamData_t *ft;
+		//
+		//	if ((ft = CG_IsOnFireteam(ci->clientNum)))
+		//	{
+		//		CG_PlayerFloatSprite(cent, cgs.media.fireteamicons[ft->ident], height + 8, numIcons++);
+		//	}
+		//}
 		return;
 	}
 
@@ -2039,13 +2062,14 @@ static void CG_PlayerSprites(centity_t *cent)
 				CG_PlayerFloatSprite(cent, cgs.media.friendShader, height + 8, numIcons++);
 			}
 
-			if (cgs.clientinfo[cg.clientNum].disguiseClientNum > -1 &&
-			    !sameTeam &&
-			    (ft = CG_IsOnFireteam(cgs.clientinfo[cg.clientNum].disguiseClientNum))
-			    /*&& cgs.clientinfo[cent->currentState.number].selected*/)
-			{
-				CG_PlayerFloatSprite(cent, cgs.media.fireteamicons[ft->ident], height + 8, numIcons++);
-			}
+			// FIXME: get the selected info somehow w/o increasing config string ...
+			//if (cgs.clientinfo[cg.clientNum].disguiseClientNum > -1 &&
+			//    !sameTeam &&
+			//    (ft = CG_IsOnFireteam(cgs.clientinfo[cg.clientNum].disguiseClientNum))
+			//    /*&& cgs.clientinfo[cent->currentState.number].selected*/)
+			//{
+			//	CG_PlayerFloatSprite(cent, cgs.media.fireteamicons[ft->ident], height + 8, numIcons++);
+			//}
 		}
 
 		if ((ft = CG_IsOnFireteam(cent->currentState.number)))
