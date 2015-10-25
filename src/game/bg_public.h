@@ -146,20 +146,6 @@ typedef enum
 	STATE_UNDERCONSTRUCTION // ent is being constructed
 } entState_t;
 
-typedef enum
-{
-	SELECT_BUDDY_ALL = 0,
-	SELECT_BUDDY_1,
-	SELECT_BUDDY_2,
-	SELECT_BUDDY_3,
-	SELECT_BUDDY_4,
-	SELECT_BUDDY_5,
-	SELECT_BUDDY_6,
-
-	SELECT_BUDDY_LAST // must be the last one in the enum
-
-} SelectBuddyFlag;
-
 #define MAX_TAGCONNECTS     64
 
 // zoom sway values
