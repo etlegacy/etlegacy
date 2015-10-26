@@ -134,7 +134,7 @@ char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag)
 			if (clientNum == cg.clientNum)
 			{
 				locStr = va("^3     ");
-				CG_Printf("same client\n");
+				// CG_Printf("same client\n");
 			}
 			else
 			{
