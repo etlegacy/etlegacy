@@ -31,11 +31,11 @@ msgstr ""
 msgid "%s (UPDATE AVAILABLE)"
 msgstr "%s (ДОСТУПНО ОБНОВЛЕНИЕ)"
 
-#~ msgid "MOUSE1"
-#~ msgstr "МЫШЬ1"
+msgid "MOUSE1"
+msgstr "МЫШЬ1"
 
-#~ msgid "MOUSE2"
-#~ msgstr "МЫШЬ2"
+msgid "MOUSE2"
+msgstr "МЫШЬ2"
 
-#~ msgid "SPACE"
-#~ msgstr ""
+msgid "SPACE"
+msgstr ""

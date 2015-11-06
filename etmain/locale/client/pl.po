@@ -19,11 +19,11 @@ msgstr ""
 msgid "%s (UPDATE AVAILABLE)"
 msgstr "%s (AKTUALIZACJA DOSTEPNA)"
 
-#~ msgid "MOUSE1"
-#~ msgstr "MYSZ1"
+msgid "MOUSE1"
+msgstr "MYSZ1"
 
-#~ msgid "MOUSE2"
-#~ msgstr "MYSZ2"
+msgid "MOUSE2"
+msgstr "MYSZ2"
 
-#~ msgid "SPACE"
-#~ msgstr ""
+msgid "SPACE"
+msgstr "SPACJA"

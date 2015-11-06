@@ -14,11 +14,11 @@ msgstr ""
 msgid "%s (UPDATE AVAILABLE)"
 msgstr "%s (UPDATE VERFÜGBAR)"
 
-#~ msgid "MOUSE1"
-#~ msgstr "MAUS1"
+msgid "MOUSE1"
+msgstr "MAUS1"
 
-#~ msgid "MOUSE2"
-#~ msgstr "MAUS2"
+msgid "MOUSE2"
+msgstr "MAUS2"
 
-#~ msgid "SPACE"
-#~ msgstr ""
+msgid "SPACE"
+msgstr ""

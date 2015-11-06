@@ -15,11 +15,11 @@ msgstr ""
 msgid "%s (UPDATE AVAILABLE)"
 msgstr ""
 
-#~ msgid "MOUSE1"
-#~ msgstr ""
+msgid "MOUSE1"
+msgstr ""
 
-#~ msgid "MOUSE2"
-#~ msgstr ""
+msgid "MOUSE2"
+msgstr ""
 
-#~ msgid "SPACE"
-#~ msgstr ""
+msgid "SPACE"
+msgstr ""
