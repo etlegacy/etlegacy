@@ -1449,11 +1449,12 @@ void R_SetColorMappings(void)
 		}
 		s_intensitytable[i] = j;
 	}
-
+/*
 	if (glConfig.deviceSupportsGamma)
 	{
 		re.GLimp_SetGamma(s_gammatable, s_gammatable, s_gammatable);
 	}
+*/
 }
 
 /*
