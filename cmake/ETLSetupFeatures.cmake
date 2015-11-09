@@ -257,3 +257,23 @@ if(FEATURE_CURSES)
 	list(APPEND COMMON_SRC "src/sys/con_curses.c")
 	add_definitions(-DFEATURE_CURSES)
 endif(FEATURE_CURSES)
+
+if(FEATURE_DBMS)
+	add_definitions(-DFEATURE_DBMS)
+
+	FILE(GLOB DBMS_SRC
+		"src/db/db_sql.h"
+		"src/db/db_sqlite3.c"
+	)
+	
+	if(NOT BUNDLED_SQLITE3)
+		include_directories(SYSTEM ${SQLITE3_INCLUDE_DIR})
+	else() # BUNDLED_SQLITE3
+		include_directories(SYSTEM ${SQLITE3_BUNDLED_INCLUDE_DIR})
+	endif()
+
+	set(SERVER_SRC ${SERVER_SRC} ${DBMS_SRC})
+
+	#list(APPEND SERVER_LIBRARIES ${SQLITE3_LIBRARIES})
+
+endif(FEATURE_DBMS)

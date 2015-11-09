@@ -37,6 +37,7 @@ cmake_dependent_option(BUNDLED_THEORA		"Use bundled Theora library instead of th
 cmake_dependent_option(BUNDLED_GLEW		"Use bundled GLEW library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_FREETYPE		"Use bundled Freetype2 library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_JANSSON		"Use bundled Jansson library."				OFF "BUNDLED_LIBS" OFF)
+cmake_dependent_option(BUNDLED_SQLITE3		"Use bundled SQLITE3 library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 
 # no support for 32 bit binaries on OpenBSD/amd64
 cmake_dependent_option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is incompatible with 2.60b)" ON "NOT CMAKE_SYSTEM MATCHES OpenBSD*" OFF)
@@ -63,6 +64,7 @@ option(FEATURE_GETTEXT		"Enable localization using tinygettext"					ON)
 option(FEATURE_JANSSON		"Enable JSON support (client)"						OFF)
 option(FEATURE_SERVERMDX	"Enable MDX support on server side"					ON)
 option(FEATURE_LIVEAUTH		"Enable ET:Live authentification support"				ON)
+option(FEATURE_DBMS			"Enable dbms support (sqlite3)"				OFF)
 option(FORCE_DEBUG		"Force enable legacy debug macros"					OFF)
 
 cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot in mod code (Windows, linux and OS X only)"	ON "WIN32 OR APPLE OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)

@@ -15,4 +15,10 @@ if(BUNDLED_CURL)
 	add_dependencies(etlded bundled_curl)
 endif(BUNDLED_CURL)
 
+if(FEATURE_DBMS)
+	if(BUNDLED_SQLITE3)
+		add_dependencies(etlded bundled_sqlite3)
+	endif(BUNDLED_SQLITE3)
+endif()
+
 install(TARGETS etlded RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}")
