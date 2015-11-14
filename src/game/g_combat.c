@@ -275,7 +275,7 @@ void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int da
 {
 	if (self->health <= GIB_HEALTH)
 	{
-		GibEntity(self, 0);
+		GibEntity(self, ENTITYNUM_WORLD);
 	}
 }
 

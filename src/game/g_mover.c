@@ -479,6 +479,7 @@ qboolean G_TryPushingEntity(gentity_t *check, gentity_t *pusher, vec3_t move, ve
 
 // referenced in G_MoverPush()
 extern void LandMineTrigger(gentity_t *self);
+extern void GibEntity(gentity_t *self, int killer);
 
 /*
 ============
@@ -631,6 +632,28 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 	for (e = 0; e < moveEntities; e++)
 	{
 		check = &g_entities[moveList[e]];
+
+		// some situations in front of mover should gib players (by damage)
+		if (check->s.eType == ET_PLAYER && check->client)
+		{
+			if (check->s.groundEntityNum != pusher->s.number)
+			{
+				if (check->client->ps.eFlags & (EF_DEAD | EF_PRONE | EF_PRONE_MOVING))
+				{
+					trap_LinkEntity(check);
+					G_Damage(check, pusher, pusher, NULL, NULL, 9999, 0, MOD_CRUSH);
+					moveList[e] = ENTITYNUM_NONE;	// prevent re-linking later on
+					continue;
+				}
+			}
+		}
+		if (check->s.eType == ET_CORPSE) // always gib corpses ...
+		{
+			trap_LinkEntity(check);
+			GibEntity(check, ENTITYNUM_WORLD);
+			moveList[e] = ENTITYNUM_NONE; // prevent re-linking later on
+			continue;
+		}
 
 		// the entity needs to be pushed
 		pushedStackDepth = 0;   // new push, reset stack depth
