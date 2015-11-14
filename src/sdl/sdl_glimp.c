@@ -656,7 +656,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 
 		if (!main_window)
 		{
-			Com_DPrintf("SDL_CreateWindow failed: %s\n", SDL_GetError());
+			Com_Printf("SDL_CreateWindow failed: %s\n", SDL_GetError());
 			continue;
 		}
 
@@ -678,7 +678,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 
 			if (SDL_SetWindowDisplayMode(main_window, &modefullScreen) < 0)
 			{
-				Com_DPrintf("SDL_SetWindowDisplayMode failed: %s\n", SDL_GetError());
+				Com_Printf("SDL_SetWindowDisplayMode failed: %s\n", SDL_GetError());
 				continue;
 			}
 		}
@@ -710,7 +710,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 
 		if ((SDL_glContext = SDL_GL_CreateContext(main_window)) == NULL)
 		{
-			Com_DPrintf("SDL_GL_CreateContext failed: %s\n", SDL_GetError());
+			Com_Printf("SDL_GL_CreateContext failed: %s\n", SDL_GetError());
 			continue;
 		}
 
