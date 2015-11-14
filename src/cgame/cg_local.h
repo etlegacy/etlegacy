@@ -539,7 +539,7 @@ typedef struct clientInfo_s
 	char cleanname[MAX_QPATH];
 	team_t team;
 
-	int botSkill;                   // 0 = not bot, 1-5 = bot
+	int botSkill;                   // OBSOLETE remove!
 	int score;                      // updated by score servercmds
 	int location[3];                // location in 3d for team mode (was 2d before)
 	int health;                     // you only get this info about your teammates
