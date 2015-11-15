@@ -260,6 +260,10 @@ etl_bin.pk3 and will be extracted at runtime, so you can delete those. The clien
 (and can safely be renamed), while the dedicated server is just a command-line binary named "etlded".
 
 
+### Renderer 2
+
+For rennderer 2 you have to install [sed](http://gnuwin32.sourceforge.net/packages/sed.htm) on Windows and gsed on Linux.
+
 
 LICENSE
 =======
