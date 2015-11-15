@@ -36,7 +36,7 @@ menuDef {
 
 // Audio //
 #define AUDIO_Y 32
-	SUBWINDOW( 6, AUDIO_Y, (SUBWINDOW_WIDTH), 90, _("AUDIO") )
+	SUBWINDOW( 6, AUDIO_Y, (SUBWINDOW_WIDTH), 102, _("AUDIO") )
 	CVARFLOATLABEL( 8, AUDIO_Y+16, (SUBWINDOW_WIDTH)-4, 10, "s_volume", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-6), 8 )
 	SLIDER( 8, AUDIO_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Effects Volume:"), .2, 8, "s_volume" .7 0 1, _("Set the effects volume") )
 	CVARFLOATLABEL( 8, AUDIO_Y+28, (SUBWINDOW_WIDTH)-4, 10, "s_musicvolume", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-6), 8 )
@@ -45,15 +45,16 @@ menuDef {
 	YESNO( 8, AUDIO_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Doppler FX:"), .2, 8, "s_doppler", _("Enables or disables the doppler effect") )
 	YESNO( 8, AUDIO_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Mute When Minimized:"), .2, 8, "s_muteWhenMinimized", _("Enables or disables sound when window is minimized") )
 	YESNO( 8, AUDIO_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Mute When Unfocused:"), .2, 8, "s_muteWhenUnfocused", _("Enables or disables sound when window is unfocused") )
+	MULTI( 8, AUDIO_Y+88, (SUBWINDOW_WIDTH)-4, 10, _("Sound Control System:"), .2, 8, "s_initsound", cvarFloatList { _("Disabled") 0 _("Base") 1 _("OpenAL") 2 }, _("Set the sound quality") )
 
 // Networking //
-#define NETWORKING_Y 128
+#define NETWORKING_Y 136
 	SUBWINDOW( 6, NETWORKING_Y, (SUBWINDOW_WIDTH), 42, _("NETWORKING") )
 	MULTIACTION( 8, NETWORKING_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Max Packets:"), .2, 8, "ui_cl_maxpackets", cvarFloatList { _("Very Low") 15 _("Low") 30 _("Medium") 60 _("High") 100 }, uiScript update "ui_cl_maxpackets", _("Cap for upstream data packet transmissions") )
 	MULTIACTION( 8, NETWORKING_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Packet Duplication:"), .2, 8, "ui_cl_packetdup", cvarFloatList { _("No") 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", _("Number of duplicates for every data packet sent upstream, minimized packetloss") )
 
 // Downloads //
-#define DOWNLOADS_Y 176
+#define DOWNLOADS_Y 180
 	SUBWINDOW( 6, DOWNLOADS_Y, (SUBWINDOW_WIDTH), 52, _("DOWNLOADS") )
 #ifndef LEGACY
 	YESNO( 8, DOWNLOADS_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Check for Updates on Start-Up:"), .2, 8, "cl_autoupdate", _("Automatically check for updates?") )
@@ -65,6 +66,6 @@ menuDef {
 	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("BACK"), .3, 14, uiScript vidReset ; close options_system ; open options )
 	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("APPLY"), .3, 14,
 		conditionalScript vidrestartIsRequired 2
-		( "open vid_restart" )
+		( "open vid_restart" ) 
 		( "uiScript systemCvarsApply ; close options_system ; open options" ) )
 }
