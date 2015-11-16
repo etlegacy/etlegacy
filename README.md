@@ -262,7 +262,7 @@ etl_bin.pk3 and will be extracted at runtime, so you can delete those. The clien
 
 ### Renderer 2
 
-For rennderer 2 you have to install [sed](http://gnuwin32.sourceforge.net/packages/sed.htm) on Windows and gsed on Linux.
+Compiling renderer 2 requires GNU sed (gsed) to be installed. On Windows download sed from [GnuWin](http://gnuwin32.sourceforge.net/packages/sed.htm).
 
 
 LICENSE
