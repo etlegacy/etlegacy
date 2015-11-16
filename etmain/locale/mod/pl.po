@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-08-31 20:36+0000\n"
+"PO-Revision-Date: 2015-11-16 18:45+0000\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/etlegacy/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -3328,6 +3328,7 @@ msgid "Anisotropic Filter:"
 msgstr "Filtr Anizotropowy:"
 
 #: etmain/ui/options_graphics.menu:64 etmain/ui/options_graphics.menu:71
+#: etmain/ui/options_system.menu:48
 msgid "Disabled"
 msgstr "Wyłączone"
 
@@ -6881,3 +6882,144 @@ msgstr "Nagroda za brak przyjaciół"
 
 msgid "Welcome Newbie! Award"
 msgstr "Nagroda Witamy Początkującego"
+
+msgid ""
+"\n"
+"ET: Legacy with OpenGL 3.x renderer can not run on this machine since it is missing one or more required OpenGL extensions. Please update your video card drivers and try again.\n"
+msgstr "\nET: Legacy z silnikiem OpenGL 3.x nie może ruszyć na tej maszynie ponieważ brakuje jednego lub więcej rozszerzeń OpenGL. Proszę zaktualizuj sterowniki karty graficznej i spróbuj ponownie.\n"
+
+msgid "Gib command not allowed during intermission.\n"
+msgstr "Komenda gib nie dostępna podczas przerw.\n"
+
+msgid "^9%d players gibbed."
+msgstr "^9%d graczy zgibowanych."
+
+msgid "There is no player to gib."
+msgstr "Nie ma graczy do zgibowania."
+
+msgid "Error - can't gib - %s."
+msgstr "Błąd - nie można gibować - %s."
+
+msgid "Player must be on a team to be gibbed.\n"
+msgstr "Gracz musi być w zespole aby być zgibowany.\n"
+
+msgid "^7%s^7 was gibbed."
+msgstr "^7%s^7 został zgibowany."
+
+msgid "Die command not allowed during intermission.\n"
+msgstr "Komenda Die nie dostępna podczas przerw.\n"
+
+msgid "^9%d players died."
+msgstr "^9%d graczy umarło."
+
+msgid "There is no player to die.\n"
+msgstr "Nie ma graczy do zabicia.\n"
+
+msgid "Error - can't execute die command - %s.\n"
+msgstr "Błąd - nie można wykonać komendy die - %s.\n"
+
+msgid "Player must be on a team to die.\n"
+msgstr "Gracz musi być w zespole aby umrzeć.\n"
+
+msgid "^7%s^7 died."
+msgstr "^7%s^7 umarło."
+
+msgid "Freeze command not allowed during intermission.\n"
+msgstr "Komenda Freeze nie dostępna podczas przerw.\n"
+
+msgid "^9%d players are frozen."
+msgstr "^9%d graczy jest zamrożonych."
+
+msgid "No players in team or they are already frozen.\n"
+msgstr "Brak graczy w zespole lub są już zamrożeni.\n"
+
+msgid "Error - can't freeze - %s.\n"
+msgstr "Błąd - nie można zamrozić - %s.\n"
+
+msgid "Player must be on a team to be frozen.\n"
+msgstr "Gracz musi być w zespole aby zostać zamrożony.\n"
+
+msgid "^7%s^7 is frozen."
+msgstr "^7%s^7 jest zamrożony."
+
+msgid "^9%d players are unfrozen."
+msgstr "^9%d graczy jest odmrożonych."
+
+msgid "No players in team or they are already unfrozen.\n"
+msgstr "Brak graczy w zespole lub są już odmrożeni.\n"
+
+msgid "Error - can't unfreeze - %s.\n"
+msgstr "Błąd - nie można odmrozić - %s.\n"
+
+msgid "Player must be on a team to be unfrozen.\n"
+msgstr "Gracz musi być w zespole aby zostać odmrożony.\n"
+
+msgid "^7%s^7 is unfrozen."
+msgstr "^7%s^7 jest zamrożony."
+
+msgid "Burn command not allowed during intermission.\n"
+msgstr "Komenda Burn nie jest dostępna podczas przerw.\n"
+
+msgid "^9%d players burned."
+msgstr "^9%d graczy podpalonych."
+
+msgid "No players in team or they are already burned.\n"
+msgstr "Brak graczy w zespole lub są już podpaleni.\n"
+
+msgid "Error - can't burn - %s.\n"
+msgstr "Błąd - nie można podpalić - %s.\n"
+
+msgid "Player must be on a team to be burned.\n"
+msgstr "Gracz musi być w zespole aby zostać podpalony.\n"
+
+msgid "^7%s^7 is burned."
+msgstr "^7%s^7 jest podpalony."
+
+msgid "Pip command not allowed during intermission.\n"
+msgstr "Komenda Pip nie jest dostępna podczas przerw.\n"
+
+msgid "^9%d players pipped."
+msgstr "^9%d graczy podświetlonych."
+
+msgid "No players in team or they are already pipped.\n"
+msgstr "Brak graczy w zespole lub są już podświetleni.\n"
+
+msgid "Error - can't pip - %s.\n"
+msgstr "Błąd - nie można podświetlić - %s.\n"
+
+msgid "Player must be on a team to be pipped.\n"
+msgstr "Gracz musi być w zespole aby zostać podświetlony.\n"
+
+msgid "^7%s^7 is pipped."
+msgstr "^7%s^7 jest podświetlony."
+
+msgid "%s command not allowed during intermission.\n"
+msgstr "Komenda %s nie jest dostępna podczas przerw.\n"
+
+msgid "^9%d players %s."
+msgstr "^9%d graczy %s."
+
+msgid "No players in team or they are already %s.\n"
+msgstr "Brak graczy w zespole lub są już %s.\n"
+
+msgid "Player must be on a team to be %s.\n"
+msgstr "Gracz musi być w zespole aby zostać %s.\n"
+
+msgid "^7%s^7 was %s."
+msgstr "^7%s^7 został %s."
+
+#: etmain/ui/options_system.menu:48
+msgid "System Sound Control:"
+msgstr "System Kontroli Dźwięku:"
+
+#: etmain/ui/options_system.menu:48
+msgid "Base"
+msgstr "Bazowa"
+
+#: etmain/ui/options_system.menu:48
+msgid "OpenAL"
+msgstr "OpenAL"
+
+#: etmain/ui/options_system.menu:48
+msgid "Set the system sound control"
+msgstr "Ustaw system kontroli dźwięku"
