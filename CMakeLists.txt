@@ -13,9 +13,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 include(GetGitRevisionDescription)
 include(CMakeDependentOption)
 
-# Find and setup programs the build needs
-include(cmake/ETLPrograms.cmake)
-
 #-----------------------------------------------------------------
 # Options
 #-----------------------------------------------------------------
@@ -77,6 +74,9 @@ cmake_dependent_option(ET_KEY	"Copy existing etkey file from ET_FS_BASEPATH)"			
 #-----------------------------------------------------------------
 # Setup
 #-----------------------------------------------------------------
+
+# Find and setup programs the build needs
+include(cmake/ETLPrograms.cmake)
 
 # Setup some basic helper variables
 include(cmake/ETLCommon.cmake)
