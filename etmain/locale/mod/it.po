@@ -1,35 +1,49 @@
-# Italian translation for ET:Legacy mod
+# Translation pot file for the ET: Legacy mod
 # Copyright (C) 2012-2015 ET: Legacy Team
 # This file is distributed under the same license as the ET:Legacy package.
-
+# Translators:
+# redtide <transifex.redtide@gmail.com>, 2015
+msgid ""
+msgstr ""
+"Project-Id-Version: ET:Legacy\n"
+"Report-Msgid-Bugs-To: mail@etlegacy.com\n"
+"POT-Creation-Date: 2015-01-10 20:22+0100\n"
+"PO-Revision-Date: 2015-11-18 13:37+0000\n"
+"Last-Translator: redtide <transifex.redtide@gmail.com>\n"
+"Language-Team: Italian (http://www.transifex.com/etlegacy/etlegacy/language/it/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: it\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: etmain/ui/credits_activision.menu:66
 msgid "PRODUCED BY ACTIVISION"
-msgstr ""
+msgstr "PRODOTTO DA ACTIVISION"
 
 #: etmain/ui/credits_activision.menu:82
 msgid "Producer"
-msgstr ""
+msgstr "Produttore"
 
 #: etmain/ui/credits_activision.menu:84
 msgid "Associate Producer"
-msgstr ""
+msgstr "Produttore Associato"
 
 #: etmain/ui/credits_activision.menu:86
 msgid "Installer"
-msgstr ""
+msgstr "Installatore"
 
 #: etmain/ui/credits_activision.menu:88
 msgid "Production Coordinator"
-msgstr ""
+msgstr "Coordinatore di produzione"
 
 #: etmain/ui/credits_activision.menu:90
 msgid "Production Tester"
-msgstr ""
+msgstr "Tester di produzione"
 
 #: etmain/ui/credits_activision.menu:92
 msgid "Sr. Executive Producer"
-msgstr ""
+msgstr "Produttore Esecutivo Superiore"
 
 #: etmain/ui/credits_activision.menu:94
 msgid "VP North American Studios"
@@ -49,15 +63,15 @@ msgstr ""
 
 #: etmain/ui/credits_activision.menu:104
 msgid "Testers:"
-msgstr ""
+msgstr "Testers:"
 
 #: etmain/ui/credits_activision.menu:110
 msgid "Network"
-msgstr ""
+msgstr "Rete"
 
 #: etmain/ui/credits_activision.menu:112
 msgid "Compatibility"
-msgstr ""
+msgstr "Compatibilità"
 
 #: etmain/ui/credits_activision.menu:114
 msgid "QA Manager"
@@ -114,7 +128,7 @@ msgstr ""
 #: etmain/ui/profile.menu:71 etmain/ui/profile_rename.menu:67
 #: etmain/ui/viewreplay.menu:58
 msgid "BACK"
-msgstr ""
+msgstr "INDIETRO"
 
 #: etmain/ui/credits_activision.menu:131 etmain/ui/credits_et260.menu:136
 msgid "ADDITIONAL"
@@ -130,7 +144,7 @@ msgstr ""
 
 #: etmain/ui/credits_additional.menu:161
 msgid "Programming"
-msgstr ""
+msgstr "Programmazione"
 
 #: etmain/ui/credits_additional.menu:168
 msgid "PUNKBUSTER BY EVEN BALANCE, INC."
@@ -138,11 +152,11 @@ msgstr ""
 
 #: etmain/ui/credits_additional.menu:181
 msgid "President"
-msgstr ""
+msgstr "Presidente"
 
 #: etmain/ui/credits_additional.menu:183
 msgid "Senior Project Leader"
-msgstr ""
+msgstr "Capo Progetto Superiore"
 
 #: etmain/ui/credits_additional.menu:190
 msgid "VOICE ARTISTS"
@@ -150,25 +164,25 @@ msgstr ""
 
 #: etmain/ui/credits_additional.menu:203
 msgid "Voice of Allied / Axis soldiers"
-msgstr ""
+msgstr "Voce dei soldati Allied / Axis"
 
 #: etmain/ui/credits_additional.menu:205
 msgid "Voice of Axis Commander"
-msgstr ""
+msgstr "Voce del Comandante Axis"
 
 #: etmain/ui/credits_additional.menu:207
 msgid "Voice of Allied Commander"
-msgstr ""
+msgstr "Voce del Comandante Allied"
 
 #: etmain/ui/credits_additional.menu:214
 msgid "SPECIAL THANKS TO"
-msgstr ""
+msgstr "RINGRAZIAMENTI SPECIALI A"
 
 #: etmain/ui/credits_additional.menu:226
 msgid ""
 "Return to Castle Wolfenstein was developed by Gray Matter Studios & Nerve "
 "Software."
-msgstr ""
+msgstr "Return to Castle Wolfenstein è stato sviluppato da Gray Matter Studios & Nerve Software."
 
 #: etmain/ui/credits_additional.menu:227
 msgid "We would like to thank both developers for their help and support"
@@ -225,8 +239,8 @@ msgstr ""
 #: etmain/ui/credits_etlegacy.menu:150
 msgid ""
 "Many thanks to Splash Damage for their release of the source code, ioWolfET "
-"& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for "
-"their inspirations."
+"& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for"
+" their inspirations."
 msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:159 etmain/ui/credits_halloffame.menu:85
@@ -316,9 +330,9 @@ msgid ""
 "© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
 "Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
 "Software name, and the id logo are either registered trademarks or "
-"trademarks of Id Software, Inc. in the United States and/or other countries. "
-"All other trademarks and trade names are the properties of their respective "
-"owners."
+"trademarks of Id Software, Inc. in the United States and/or other countries."
+" All other trademarks and trade names are the properties of their respective"
+" owners."
 msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:66
@@ -970,8 +984,8 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid ""
-"Specifies the maximum download rate from the server for players with missing "
-"files"
+"Specifies the maximum download rate from the server for players with missing"
+" files"
 msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:160
@@ -1147,8 +1161,8 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:43
 msgid ""
-"Specifies if the server should be \"dedicated\" for LAN or Internet play (no "
-"client)"
+"Specifies if the server should be \"dedicated\" for LAN or Internet play (no"
+" client)"
 msgstr ""
 
 #: etmain/ui/hostgame.menu:44
@@ -1333,8 +1347,8 @@ msgstr ""
 
 #: etmain/ui/ingame_tapout.menu:50
 msgid ""
-"This server has Max Lives enabled. Tapping out now will lose a life. Are you "
-"sure?"
+"This server has Max Lives enabled. Tapping out now will lose a life. Are you"
+" sure?"
 msgstr ""
 
 #: etmain/ui/ingame_vote_bot.menu:31
@@ -3054,7 +3068,8 @@ msgid "Side Print:"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:118
-msgid "Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages"
+msgid ""
+"Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:120
@@ -3098,8 +3113,8 @@ msgstr ""
 #: etmain/ui/options_graphics_gamma.menu:34
 #: etmain/ui/options_system_gamma.menu:37
 msgid ""
-"1. Move the slider below and/or the brightness on your monitor until you can "
-"see 16"
+"1. Move the slider below and/or the brightness on your monitor until you can"
+" see 16"
 msgstr ""
 
 #: etmain/ui/options_graphics_gamma.menu:35
@@ -3312,6 +3327,7 @@ msgid "Anisotropic Filter:"
 msgstr ""
 
 #: etmain/ui/options_graphics.menu:64 etmain/ui/options_graphics.menu:71
+#: etmain/ui/options_system.menu:48
 msgid "Disabled"
 msgstr ""
 
@@ -3580,7 +3596,8 @@ msgid "Displays only game servers offering this Mod"
 msgstr ""
 
 #: etmain/ui/playonline.menu:85 etmain/ui/playonline.menu:97
-msgid "Includes or excludes servers with desired map name from the server list"
+msgid ""
+"Includes or excludes servers with desired map name from the server list"
 msgstr ""
 
 #: etmain/ui/playonline.menu:97
@@ -3721,7 +3738,8 @@ msgid ""
 msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
-msgid "Enter the alias here that you would like displayed to others on servers"
+msgid ""
+"Enter the alias here that you would like displayed to others on servers"
 msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
@@ -3753,7 +3771,8 @@ msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:112
 msgid ""
-"Choose invert mouse if you prefer flight-simulator style mouse pitch controls"
+"Choose invert mouse if you prefer flight-simulator style mouse pitch "
+"controls"
 msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:116 etmain/ui/profile_create.menu:110
@@ -5296,8 +5315,8 @@ msgstr ""
 #: src/ui/ui_main.c:5878
 #, c-format
 msgid ""
-"^3Check your filters - no servers found!              Filtered/Total: %04i/"
-"%04i"
+"^3Check your filters - no servers found!              Filtered/Total: "
+"%04i/%04i"
 msgstr ""
 
 #: src/ui/ui_main.c:5883
@@ -6035,7 +6054,8 @@ msgid "You are already on a fireteam, leave it first"
 msgstr ""
 
 msgid ""
-"The other player must be on the same fireteam for you to give admin rights to"
+"The other player must be on the same fireteam for you to give admin rights "
+"to"
 msgstr ""
 
 msgid "You must be a fireteam admin to give admin rights to someone else"
@@ -6151,7 +6171,8 @@ msgid ""
 "^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
 msgstr ""
 
-msgid "^7----------------------------------------------------------------------\n"
+msgid ""
+"^7----------------------------------------------------------------------\n"
 msgstr ""
 
 msgid ""
@@ -6159,7 +6180,8 @@ msgid ""
 "Specials\n"
 msgstr ""
 
-msgid "^7-------------------------------------------------------------------------------\n"
+msgid ""
+"^7-------------------------------------------------------------------------------\n"
 msgstr ""
 
 msgid ""
@@ -6604,19 +6626,29 @@ msgstr ""
 msgid "Includes or excludes password protected servers from the server list"
 msgstr ""
 
-msgid "Includes or excludes servers where team mates can damage each other from the server list"
+msgid ""
+"Includes or excludes servers where team mates can damage each other from the"
+" server list"
 msgstr ""
 
-msgid "Includes or excludes servers that limit the number of player lives per match from the server list"
+msgid ""
+"Includes or excludes servers that limit the number of player lives per match"
+" from the server list"
 msgstr ""
 
-msgid "Includes or excludes servers that limit the number of\n available heavy weapons from the server list"
+msgid ""
+"Includes or excludes servers that limit the number of\n"
+" available heavy weapons from the server list"
 msgstr ""
 
-msgid "Includes or excludes servers with support for modem players from the server list"
+msgid ""
+"Includes or excludes servers with support for modem players from the server "
+"list"
 msgstr ""
 
-msgid "Includes or excludes servers that enforce balanced teams from the server list"
+msgid ""
+"Includes or excludes servers that enforce balanced teams from the server "
+"list"
 msgstr ""
 
 msgid "Includes or excludes servers with bots from the server list"
@@ -6658,7 +6690,9 @@ msgstr ""
 msgid "Select Member #8:"
 msgstr ""
 
-msgid "Couldn't load an official pak file; verify your installation and make sure it has been updated to the latest version."
+msgid ""
+"Couldn't load an official pak file; verify your installation and make sure "
+"it has been updated to the latest version."
 msgstr ""
 
 msgid "Private"
@@ -6846,4 +6880,145 @@ msgid "I Ain't Got No Friends Award"
 msgstr ""
 
 msgid "Welcome Newbie! Award"
+msgstr ""
+
+msgid ""
+"\n"
+"ET: Legacy with OpenGL 3.x renderer can not run on this machine since it is missing one or more required OpenGL extensions. Please update your video card drivers and try again.\n"
+msgstr ""
+
+msgid "Gib command not allowed during intermission.\n"
+msgstr ""
+
+msgid "^9%d players gibbed."
+msgstr ""
+
+msgid "There is no player to gib."
+msgstr ""
+
+msgid "Error - can't gib - %s."
+msgstr ""
+
+msgid "Player must be on a team to be gibbed.\n"
+msgstr ""
+
+msgid "^7%s^7 was gibbed."
+msgstr ""
+
+msgid "Die command not allowed during intermission.\n"
+msgstr ""
+
+msgid "^9%d players died."
+msgstr ""
+
+msgid "There is no player to die.\n"
+msgstr ""
+
+msgid "Error - can't execute die command - %s.\n"
+msgstr ""
+
+msgid "Player must be on a team to die.\n"
+msgstr ""
+
+msgid "^7%s^7 died."
+msgstr ""
+
+msgid "Freeze command not allowed during intermission.\n"
+msgstr ""
+
+msgid "^9%d players are frozen."
+msgstr ""
+
+msgid "No players in team or they are already frozen.\n"
+msgstr ""
+
+msgid "Error - can't freeze - %s.\n"
+msgstr ""
+
+msgid "Player must be on a team to be frozen.\n"
+msgstr ""
+
+msgid "^7%s^7 is frozen."
+msgstr ""
+
+msgid "^9%d players are unfrozen."
+msgstr ""
+
+msgid "No players in team or they are already unfrozen.\n"
+msgstr ""
+
+msgid "Error - can't unfreeze - %s.\n"
+msgstr ""
+
+msgid "Player must be on a team to be unfrozen.\n"
+msgstr ""
+
+msgid "^7%s^7 is unfrozen."
+msgstr ""
+
+msgid "Burn command not allowed during intermission.\n"
+msgstr ""
+
+msgid "^9%d players burned."
+msgstr ""
+
+msgid "No players in team or they are already burned.\n"
+msgstr ""
+
+msgid "Error - can't burn - %s.\n"
+msgstr ""
+
+msgid "Player must be on a team to be burned.\n"
+msgstr ""
+
+msgid "^7%s^7 is burned."
+msgstr ""
+
+msgid "Pip command not allowed during intermission.\n"
+msgstr ""
+
+msgid "^9%d players pipped."
+msgstr ""
+
+msgid "No players in team or they are already pipped.\n"
+msgstr ""
+
+msgid "Error - can't pip - %s.\n"
+msgstr ""
+
+msgid "Player must be on a team to be pipped.\n"
+msgstr ""
+
+msgid "^7%s^7 is pipped."
+msgstr ""
+
+msgid "%s command not allowed during intermission.\n"
+msgstr ""
+
+msgid "^9%d players %s."
+msgstr ""
+
+msgid "No players in team or they are already %s.\n"
+msgstr ""
+
+msgid "Player must be on a team to be %s.\n"
+msgstr ""
+
+msgid "^7%s^7 was %s."
+msgstr ""
+
+#: etmain/ui/options_system.menu:48
+msgid "System Sound Control:"
+msgstr ""
+
+#: etmain/ui/options_system.menu:48
+msgid "Base"
+msgstr ""
+
+#: etmain/ui/options_system.menu:48
+msgid "OpenAL"
+msgstr ""
+
+#: etmain/ui/options_system.menu:48
+msgid "Set the system sound control"
 msgstr ""
