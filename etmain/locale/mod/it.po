@@ -3,12 +3,13 @@
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
 # redtide <transifex.redtide@gmail.com>, 2015
+# redtide <transifex.redtide@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-11-18 13:37+0000\n"
+"PO-Revision-Date: 2015-11-19 20:26+0000\n"
 "Last-Translator: redtide <transifex.redtide@gmail.com>\n"
 "Language-Team: Italian (http://www.transifex.com/etlegacy/etlegacy/language/it/)\n"
 "MIME-Version: 1.0\n"
@@ -148,7 +149,7 @@ msgstr "Programmazione"
 
 #: etmain/ui/credits_additional.menu:168
 msgid "PUNKBUSTER BY EVEN BALANCE, INC."
-msgstr ""
+msgstr "PUNKBUSTER DI EVEN BALANCE, INC."
 
 #: etmain/ui/credits_additional.menu:181
 msgid "President"
@@ -160,7 +161,7 @@ msgstr "Capo Progetto Superiore"
 
 #: etmain/ui/credits_additional.menu:190
 msgid "VOICE ARTISTS"
-msgstr ""
+msgstr "ARTISTI VOCE"
 
 #: etmain/ui/credits_additional.menu:203
 msgid "Voice of Allied / Axis soldiers"
@@ -198,11 +199,11 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:66 etmain/ui/credits_quit.menu:62
 msgid "DEVELOPED BY ET: LEGACY TEAM"
-msgstr ""
+msgstr "SVILUPPATO DA ET: LEGACY TEAM"
 
 #: etmain/ui/credits_etlegacy.menu:85
 msgid "^1PROGRAMMING"
-msgstr ""
+msgstr "^1PROGRAMMAZIONE"
 
 #: etmain/ui/credits_etlegacy.menu:98
 msgid "Project founder, coding & management"
@@ -230,7 +231,7 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:126
 msgid "AROS and MorphOS"
-msgstr ""
+msgstr "AROS e MorphOS"
 
 #: etmain/ui/credits_etlegacy.menu:135
 msgid "^1GREETINGS"
@@ -249,7 +250,7 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:171
 msgid "See HALL OF FAME below"
-msgstr ""
+msgstr "Vedi ALBO D'ORO sotto"
 
 #: etmain/ui/credits_etlegacy.menu:178 etmain/ui/credits_quit.menu:245
 #: etmain/ui/profile_create_initial.menu:127
@@ -262,7 +263,7 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
-msgstr ""
+msgstr "ALBO D'ORO"
 
 #: etmain/ui/credits_et260.menu:66
 msgid "ET 2.60 UPDATE"
@@ -296,7 +297,7 @@ msgstr ""
 
 #: etmain/ui/credits_halloffame.menu:106
 msgid "^1TRANSLATIONS"
-msgstr ""
+msgstr "^1TRADUZIONI"
 
 #: etmain/ui/credits_idsoftware.menu:66
 msgid "EXECUTIVE PRODUCED BY ID SOFTWARE"
@@ -304,7 +305,7 @@ msgstr ""
 
 #: etmain/ui/credits_idsoftware.menu:82
 msgid "Executive Producer"
-msgstr ""
+msgstr "Produttore Esecutivo"
 
 #: etmain/ui/credits_idsoftware.menu:84
 msgid "Additional Programming"
@@ -323,7 +324,7 @@ msgstr ""
 
 #: etmain/ui/credits_quit.menu:84
 msgid "^1ORIGINAL DEVELOPERS"
-msgstr ""
+msgstr "^1SVILUPPATORI ORIGINALI"
 
 #: etmain/ui/credits_quit.menu:261
 msgid ""
@@ -337,7 +338,7 @@ msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:66
 msgid "DEVELOPED BY SPLASH DAMAGE"
-msgstr ""
+msgstr "SVILUPPATO DA SPLASH DAMAGE"
 
 #: etmain/ui/credits_splashdamage.menu:82
 msgid "Game Designer / Managing Director"
@@ -365,15 +366,15 @@ msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:115
 msgid "PROGRAMMING"
-msgstr ""
+msgstr "PROGRAMMAZIONE"
 
 #: etmain/ui/credits_splashdamage.menu:130
 msgid "Programmer"
-msgstr ""
+msgstr "Programmatore"
 
 #: etmain/ui/credits_splashdamage.menu:132
 msgid "Programmer / Artist"
-msgstr ""
+msgstr "Programmatore / Artista"
 
 #: etmain/ui/credits_splashdamage.menu:139
 msgid "DESIGN"
@@ -434,7 +435,7 @@ msgstr ""
 #: etmain/ui/vid_confirm.menu:84 etmain/ui/vid_confirm.menu:86
 #: etmain/ui/vid_restart.menu:50 etmain/ui/viewreplay_delete.menu:53
 msgid "YES"
-msgstr ""
+msgstr "SI"
 
 #: etmain/ui/etlegacywebsite.menu:53 etmain/ui/etlegacywebsite.menu:55
 #: etmain/ui/hostgame_advanced_default.menu:127
@@ -447,11 +448,11 @@ msgstr ""
 #: etmain/ui/vid_confirm.menu:89 etmain/ui/vid_restart.menu:51
 #: etmain/ui/viewreplay_delete.menu:54
 msgid "NO"
-msgstr ""
+msgstr "NO"
 
 #: etmain/ui/hostgame_advanced_default.menu:123
 msgid "DEFAULT SERVER SETTINGS"
-msgstr ""
+msgstr "IMPOSTAZIONI PREDEFINITE SERVER"
 
 #: etmain/ui/hostgame_advanced_default.menu:124
 msgid "Reset server settings to default?"
@@ -459,7 +460,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:25
 msgid "HOST GAME: ADVANCED"
-msgstr ""
+msgstr "SERVER: AVANZATE"
 
 #: etmain/ui/hostgame_advanced.menu:31
 msgid "GENERAL"
@@ -528,7 +529,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:41
 msgid "MATCH"
-msgstr ""
+msgstr "PARTITA"
 
 #: etmain/ui/hostgame_advanced.menu:42
 msgid "Wait for Ready:"
@@ -583,7 +584,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Nobody"
-msgstr ""
+msgstr "Nessuno"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Enemies Only"
@@ -753,7 +754,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:69
 msgid "ADMIN"
-msgstr ""
+msgstr "AMMINISTRATORE"
 
 #: etmain/ui/hostgame_advanced.menu:70
 msgid "Pure Server:"
@@ -816,7 +817,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:80
 msgid "ALLOW VOTES"
-msgstr ""
+msgstr "PERMETTI VOTAZIONI"
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Game config:"
@@ -938,7 +939,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:99 etmain/ui/playonline.menu:64
 msgid "MESSAGE OF THE DAY"
-msgstr ""
+msgstr "MESSAGGIO DEL GIORNO"
 
 #: etmain/ui/hostgame_advanced.menu:110
 msgid "Line 1:"
@@ -968,7 +969,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:157
 msgid "DOWNLOAD"
-msgstr ""
+msgstr "SCARICAMENTO"
 
 #: etmain/ui/hostgame_advanced.menu:158
 msgid "Client Downloads:"
@@ -1011,11 +1012,11 @@ msgstr ""
 #: etmain/ui/hostgame_advanced.menu:166 etmain/ui/hostgame_extended.menu:37
 #: etmain/ui/options_controls.menu:122
 msgid "DEFAULT"
-msgstr ""
+msgstr "PREDEFINITO"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:52
 msgid "START DEDICATED SERVER"
-msgstr ""
+msgstr "AVVIA SERVER DEDICATO"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:53
 msgid "Starting a Dedicated Server will"
@@ -1043,14 +1044,14 @@ msgstr ""
 
 #: etmain/ui/hostgame_extended.menu:25
 msgid "HOST GAME: EXTENDED"
-msgstr ""
+msgstr "SERVER: ESTESO"
 
 #: etmain/ui/hostgame_extended.menu:31 etmain/ui/ingame_vote.menu:86
 #: etmain/ui/ingame_vote.menu:87 etmain/ui/ingame_vote_misc.menu:38
 #: etmain/ui/ingame_vote_misc_refrcon.menu:37
 #: etmain/ui/options_customise_hud.menu:126
 msgid "MISC"
-msgstr ""
+msgstr "VARIE"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Country Flags:"
@@ -1060,12 +1061,12 @@ msgstr ""
 #: etmain/ui/hostgame.menu:43 etmain/ui/options_customise_game.menu:42
 #: etmain/ui/options_system.menu:53
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #: etmain/ui/hostgame_extended.menu:32
 #: etmain/ui/options_customise_game.menu:42
 msgid "Yes"
-msgstr ""
+msgstr "Si"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Enable Country Flags on the server"
@@ -1074,19 +1075,19 @@ msgstr ""
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
 #: etmain/ui/options_graphics.menu:52
 msgid "ADVANCED"
-msgstr ""
+msgstr "AVANZATE"
 
 #: etmain/ui/hostgame.menu:31 etmain/ui/main.menu:106
 msgid "HOST GAME"
-msgstr ""
+msgstr "SERVER"
 
 #: etmain/ui/hostgame.menu:37
 msgid "SETTINGS"
-msgstr ""
+msgstr "IMPOSTAZIONI"
 
 #: etmain/ui/hostgame.menu:38
 msgid "Server Name:"
-msgstr ""
+msgstr "Nome Server:"
 
 #: etmain/ui/hostgame.menu:38
 msgid "Specifies the name of your game server"
@@ -1153,11 +1154,11 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:43
 msgid "Yes - LAN"
-msgstr ""
+msgstr "Si - LAN"
 
 #: etmain/ui/hostgame.menu:43
 msgid "Yes - Internet"
-msgstr ""
+msgstr "Si - Internet"
 
 #: etmain/ui/hostgame.menu:43
 msgid ""
@@ -1171,7 +1172,7 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:47
 msgid "FEATURES"
-msgstr ""
+msgstr "CARATTERISTICHE"
 
 #: etmain/ui/hostgame.menu:58
 msgid "Friendly Fire"
@@ -1219,7 +1220,7 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:113
 msgid "NAME"
-msgstr ""
+msgstr "NOME"
 
 #: etmain/ui/hostgame.menu:133
 msgid "Select the campaign or map that the server should load"
@@ -1227,36 +1228,36 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:142 etmain/ui/playonline.menu:219
 msgid "PREVIEW"
-msgstr ""
+msgstr "ANTEPRIMA"
 
 #: etmain/ui/hostgame.menu:159
 msgid "DETAILS"
-msgstr ""
+msgstr "DETTAGLI"
 
 #: etmain/ui/hostgame.menu:196
 msgid "START SERVER"
-msgstr ""
+msgstr "AVVIA SERVER"
 
 #: etmain/ui/ingame_disconnect.menu:50 etmain/ui/ingame_main.menu:45
 msgid "DISCONNECT"
-msgstr ""
+msgstr "DISCONNETTI"
 
 #: etmain/ui/ingame_disconnect.menu:51
 msgid "Do you want to disconnect"
-msgstr ""
+msgstr "Vuoi disconnetterti"
 
 #: etmain/ui/ingame_disconnect.menu:52
 msgid "from the server?"
-msgstr ""
+msgstr "dal server?"
 
 #: etmain/ui/ingame_main.menu:31 etmain/ui/main.menu:101
 msgid "MENU"
-msgstr ""
+msgstr "MENU"
 
 #: etmain/ui/ingame_main.menu:34 etmain/ui/ingame_vote_disabled.menu:50
 #: etmain/ui/ingame_vote.menu:35
 msgid "VOTE"
-msgstr ""
+msgstr "VOTA"
 
 #: etmain/ui/ingame_main.menu:39 etmain/ui/ingame_vote.menu:53
 msgid "REFEREE"
@@ -1264,7 +1265,7 @@ msgstr ""
 
 #: etmain/ui/ingame_main.menu:40 etmain/ui/ingame_vote.menu:71
 msgid "RCON"
-msgstr ""
+msgstr "RCON"
 
 #: etmain/ui/ingame_main.menu:41 etmain/ui/ingame_serverinfo.menu:52
 #: etmain/ui/playonline.menu:650 etmain/ui/playonline_serverinfo.menu:52
@@ -1274,66 +1275,66 @@ msgstr ""
 #: etmain/ui/ingame_main.menu:42 etmain/ui/main.menu:108
 #: etmain/ui/options.menu:29
 msgid "OPTIONS"
-msgstr ""
+msgstr "OPZIONI"
 
 #: etmain/ui/ingame_main.menu:43 etmain/ui/main.menu:111
 msgid "CREDITS"
-msgstr ""
+msgstr "CREDITI"
 
 #: etmain/ui/ingame_main.menu:46 etmain/ui/main.menu:113
 #: etmain/ui/quit.menu:54
 msgid "EXIT GAME"
-msgstr ""
+msgstr "ESCI"
 
 #: etmain/ui/ingame_messagemode.menu:42
 msgid "SEND MESSAGE"
-msgstr ""
+msgstr "INVIA MESSAGGIO"
 
 #: etmain/ui/ingame_messagemode.menu:55 etmain/ui/ingame_messagemode.menu:57
 msgid "Say:"
-msgstr ""
+msgstr "Messaggio:"
 
 #: etmain/ui/ingame_messagemode.menu:55 etmain/ui/ingame_messagemode.menu:57
 msgid "Enter text here - press ESCAPE twice to cancel"
-msgstr ""
+msgstr "Inserisci qui il testo - premi due volte ESCAPE per annullare"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "To:"
-msgstr ""
+msgstr "A:"
 
 #: etmain/ui/ingame_messagemode.menu:59
 #: etmain/ui/options_customise_game.menu:73 etmain/ui/playonline.menu:83
 #: etmain/ui/playonline.menu:84
 msgid "All"
-msgstr ""
+msgstr "Tutti"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Team"
-msgstr ""
+msgstr "Team"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Fireteam"
-msgstr ""
+msgstr "Fireteam"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "Select the destination of your message"
-msgstr ""
+msgstr "Seleziona i destinatari del tuo messaggio"
 
 #: etmain/ui/ingame_messagemode.menu:60
 msgid "CANCEL"
-msgstr ""
+msgstr "ANNULLA"
 
 #: etmain/ui/ingame_messagemode.menu:61
 msgid "SEND"
-msgstr ""
+msgstr "INVIA"
 
 #: etmain/ui/ingame_serverinfo.menu:77 etmain/ui/playonline_serverinfo.menu:77
 msgid "REFRESH"
-msgstr ""
+msgstr "AGGIORNA"
 
 #: etmain/ui/ingame_serverinfo.menu:78
 msgid "ADD TO FAVORITES"
-msgstr ""
+msgstr "AGGIUNGI AI FAVORITI"
 
 #: etmain/ui/ingame_tapoutlms.menu:49 etmain/ui/ingame_tapout.menu:49
 msgid "RESPAWNING"
@@ -1398,7 +1399,7 @@ msgstr ""
 #: etmain/ui/ingame_vote_map.menu:34 etmain/ui/ingame_vote_map.menu:37
 #: etmain/ui/ingame_vote.menu:88 etmain/ui/ingame_vote.menu:89
 msgid "MAPS"
-msgstr ""
+msgstr "MAPPE"
 
 #: etmain/ui/ingame_vote_map.menu:38
 msgid "CAMPAIGNS"
@@ -1411,23 +1412,23 @@ msgstr ""
 #: etmain/ui/ingame_vote_misc_refrcon.menu:75
 #: etmain/ui/ingame_vote_misc_refrcon.menu:78
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: etmain/ui/ingame_vote.menu:90 etmain/ui/ingame_vote.menu:91
 #: etmain/ui/ingame_vote_players.menu:25 src/cgame/cg_scoreboard.c:205
 #: src/cgame/cg_scoreboard.c:811 src/cgame/cg_scoreboard.c:818
 #: src/cgame/cg_scoreboard.c:828 src/cgame/cg_scoreboard.c:832
 msgid "PLAYERS"
-msgstr ""
+msgstr "GIOCATORI"
 
 #: etmain/ui/ingame_vote.menu:92
 msgid "BOTS"
-msgstr ""
+msgstr "BOTS"
 
 #: etmain/ui/ingame_vote_misc.menu:41
 #: etmain/ui/ingame_vote_misc_refrcon.menu:40
 msgid "START MATCH"
-msgstr ""
+msgstr "AVVIA PARTITA"
 
 #: etmain/ui/ingame_vote_misc.menu:42
 #: etmain/ui/ingame_vote_misc_refrcon.menu:41
@@ -1437,12 +1438,12 @@ msgstr ""
 #: etmain/ui/ingame_vote_misc.menu:43
 #: etmain/ui/ingame_vote_misc_refrcon.menu:42
 msgid "RESTART MAP"
-msgstr ""
+msgstr "RIAVVIA MAPPA"
 
 #: etmain/ui/ingame_vote_misc.menu:44
 #: etmain/ui/ingame_vote_misc_refrcon.menu:43
 msgid "NEXT MAP"
-msgstr ""
+msgstr "PROSSIMA MAPPA"
 
 #: etmain/ui/ingame_vote_misc.menu:45
 #: etmain/ui/ingame_vote_misc_refrcon.menu:44
@@ -1452,12 +1453,12 @@ msgstr ""
 #: etmain/ui/ingame_vote_misc.menu:46
 #: etmain/ui/ingame_vote_misc_refrcon.menu:45
 msgid "ANTI-LAG ON"
-msgstr ""
+msgstr "ANTI-LAG ATTIVO"
 
 #: etmain/ui/ingame_vote_misc.menu:47
 #: etmain/ui/ingame_vote_misc_refrcon.menu:46
 msgid "ANTI-LAG OFF"
-msgstr ""
+msgstr "ANTI-LAG INATTIVO"
 
 #: etmain/ui/ingame_vote_misc.menu:49
 #: etmain/ui/ingame_vote_misc_refrcon.menu:48
@@ -1467,7 +1468,7 @@ msgstr ""
 #: etmain/ui/ingame_vote_misc.menu:50
 #: etmain/ui/ingame_vote_misc_refrcon.menu:49
 msgid "SWAP TEAMS"
-msgstr ""
+msgstr "INVERTI TEAMS"
 
 #: etmain/ui/ingame_vote_misc.menu:51
 #: etmain/ui/ingame_vote_misc_refrcon.menu:50
@@ -1482,12 +1483,12 @@ msgstr ""
 #: etmain/ui/ingame_vote_misc.menu:53
 #: etmain/ui/ingame_vote_misc_refrcon.menu:52
 msgid "FRIENDLY FIRE ON"
-msgstr ""
+msgstr "FUOCO AMICO ATTIVO"
 
 #: etmain/ui/ingame_vote_misc.menu:54
 #: etmain/ui/ingame_vote_misc_refrcon.menu:53
 msgid "FRIENDLY FIRE OFF"
-msgstr ""
+msgstr "FUOCO AMICO INATTIVO"
 
 #: etmain/ui/ingame_vote_misc.menu:55
 #: etmain/ui/ingame_vote_misc_refrcon.menu:54
@@ -1516,12 +1517,12 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:62
 #: etmain/ui/options_customise_hud.menu:63 etmain/ui/options_graphics.menu:55
 msgid "None"
-msgstr ""
+msgstr "Nessuno"
 
 #: etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Enemies"
-msgstr ""
+msgstr "Nemici"
 
 #: etmain/ui/ingame_vote_misc.menu:61
 msgid "Select the warm-up damage mode to vote on"
@@ -1554,7 +1555,7 @@ msgstr ""
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:80
 msgid "PAUSE"
-msgstr ""
+msgstr "PAUSA"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:81
 msgid "UNPAUSE"
@@ -1616,11 +1617,11 @@ msgstr ""
 #: etmain/ui/ingame_vote_players.menu:70
 #: etmain/ui/ingame_vote_players_warn.menu:64 src/cgame/cg_fireteams.c:362
 msgid "WARN"
-msgstr ""
+msgstr "AVVISA"
 
 #: etmain/ui/ingame_vote_players.menu:71
 msgid "BAN"
-msgstr ""
+msgstr "CACCIA"
 
 #: etmain/ui/ingame_vote_players_warn.menu:51
 msgid "WARN PLAYER"
@@ -1636,31 +1637,31 @@ msgstr ""
 
 #: etmain/ui/main.menu:105 etmain/ui/playonline.menu:56
 msgid "PLAY ONLINE"
-msgstr ""
+msgstr "GIOCA ONLINE"
 
 #: etmain/ui/main.menu:107 etmain/ui/viewreplay.menu:29
 msgid "REPLAYS"
-msgstr ""
+msgstr "REGISTRAZIONI"
 
 #: etmain/ui/main.menu:109 etmain/ui/profile.menu:29
 msgid "PROFILE"
-msgstr ""
+msgstr "PROFILO"
 
 #: etmain/ui/main.menu:110 etmain/ui/mods.menu:29
 msgid "MODS"
-msgstr ""
+msgstr "MODS"
 
 #: etmain/ui/main.menu:112
 msgid "ETLEGACY.COM"
-msgstr ""
+msgstr "ETLEGACY.COM"
 
 #: etmain/ui/main.menu:118
 msgid "^1SECURITY INFORMATION"
-msgstr ""
+msgstr "^1INFORMAZIONI SICUREZZA"
 
 #: etmain/ui/main.menu:119
 msgid "You are running old software"
-msgstr ""
+msgstr "Versione obsoleta"
 
 #: etmain/ui/main.menu:120
 msgid ""
@@ -1670,16 +1671,16 @@ msgstr ""
 
 #: etmain/ui/main.menu:121
 msgid "UPGRADE NOW"
-msgstr ""
+msgstr "AGGIORNA ADESSO"
 
 #: etmain/ui/main_quickconnect.menu:58
 msgid "CONNECT TO SERVER"
-msgstr ""
+msgstr "CONNETTI A UN SERVER"
 
 #: etmain/ui/main_quickconnect.menu:69
 #: etmain/ui/playonline_connecttoip.menu:62
 msgid "Server IP:"
-msgstr ""
+msgstr "IP Server:"
 
 #: etmain/ui/main_quickconnect.menu:71
 #: etmain/ui/playonline_connecttoip.menu:64
@@ -1697,7 +1698,7 @@ msgstr ""
 #: etmain/ui/main_quickconnect.menu:87
 #: etmain/ui/playonline_connecttoip.menu:67 etmain/ui/popup_password.menu:87
 msgid "CONNECT"
-msgstr ""
+msgstr "CONNETTI"
 
 #: etmain/ui/mods.menu:50
 msgid "Select the modification to play"
@@ -1705,23 +1706,23 @@ msgstr ""
 
 #: etmain/ui/mods.menu:59
 msgid "LOAD MOD"
-msgstr ""
+msgstr "CARICA MOD"
 
 #: etmain/ui/options_clean.menu:30 etmain/ui/options.menu:37
 msgid "CLEAN"
-msgstr ""
+msgstr "PULISCI"
 
 #: etmain/ui/options_clean.menu:34
 msgid "HOMEPATH CLEAN UP"
-msgstr ""
+msgstr "PULIZIA HOMEPATH"
 
 #: etmain/ui/options_clean.menu:35
 msgid "This will delete all unnecessary files from you fs_homepath."
-msgstr ""
+msgstr "Questo cancellerà tutti i file non necessari in fs_homepath."
 
 #: etmain/ui/options_clean.menu:36
 msgid "A simple clean will remove tmp- and custom pk3 files."
-msgstr ""
+msgstr "La pulizia semplice rimuoverà i file pk3 personalizzati e temporanei."
 
 #: etmain/ui/options_clean.menu:37
 msgid ""
@@ -1731,50 +1732,50 @@ msgstr ""
 
 #: etmain/ui/options_clean.menu:38
 msgid "^1WARNING: Use at your own risk!"
-msgstr ""
+msgstr "^1ATTENZIONE: Usalo a tuo rischio!"
 
 #: etmain/ui/options_clean.menu:39
 msgid "Consult our wiki for documentation."
-msgstr ""
+msgstr "Consulta la nostra documentazioni wiki."
 
 #: etmain/ui/options_clean.menu:40
 msgid "Press '^7ABORT^9' if you don't know what you are doing here."
-msgstr ""
+msgstr "Premi '^7ANNULLA^9' se non sai cosa stai facendo qui."
 
 #: etmain/ui/options_clean.menu:43
 msgid "ABORT"
-msgstr ""
+msgstr "ANNULLA"
 
 #: etmain/ui/options_clean.menu:44
 msgid "SIMPLE CLEAN"
-msgstr ""
+msgstr "PULIZIA SEMPLICE"
 
 #: etmain/ui/options_clean.menu:45
 msgid "FULL CLEAN"
-msgstr ""
+msgstr "PULIZIA COMPLETA"
 
 #: etmain/ui/options_controls_default.menu:52
 msgid "DEFAULT CONTROLS"
-msgstr ""
+msgstr "CONTROLLI PREDEFINITI"
 
 #: etmain/ui/options_controls_default.menu:53
 msgid "Reset controls to default?"
-msgstr ""
+msgstr "Reimpostare i controlli predefiniti?"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
 msgid "Handedness:"
-msgstr ""
+msgstr "Uso mano:"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
 msgid "Right"
-msgstr ""
+msgstr "Destra"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
 msgid "Left"
-msgstr ""
+msgstr "Sinistra"
 
 #: etmain/ui/options_controls_default.menu:54
 #: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
@@ -1785,51 +1786,51 @@ msgstr ""
 
 #: etmain/ui/options_controls.menu:25 etmain/ui/options.menu:34
 msgid "CONTROLS"
-msgstr ""
+msgstr "CONTROLLI"
 
 #: etmain/ui/options_controls.menu:32
 msgid "MOVE"
-msgstr ""
+msgstr "MOVIMENTO"
 
 #: etmain/ui/options_controls.menu:33
 msgid "Forward:"
-msgstr ""
+msgstr "Avanti:"
 
 #: etmain/ui/options_controls.menu:34
 msgid "Back:"
-msgstr ""
+msgstr "Indietro:"
 
 #: etmain/ui/options_controls.menu:35
 msgid "Move Left:"
-msgstr ""
+msgstr "Muovi Sinistra:"
 
 #: etmain/ui/options_controls.menu:36
 msgid "Move Right:"
-msgstr ""
+msgstr "Muovi Destra:"
 
 #: etmain/ui/options_controls.menu:37
 msgid "Lean Left:"
-msgstr ""
+msgstr "Inclina Sinistra:"
 
 #: etmain/ui/options_controls.menu:38
 msgid "Lean Right:"
-msgstr ""
+msgstr "Inclina Destra:"
 
 #: etmain/ui/options_controls.menu:39
 msgid "Jump:"
-msgstr ""
+msgstr "Salta:"
 
 #: etmain/ui/options_controls.menu:40
 msgid "Crouch:"
-msgstr ""
+msgstr "Accovacciato:"
 
 #: etmain/ui/options_controls.menu:41
 msgid "Prone:"
-msgstr ""
+msgstr "Prono:"
 
 #: etmain/ui/options_controls.menu:42
 msgid "Walk:"
-msgstr ""
+msgstr "Cammina:"
 
 #: etmain/ui/options_controls.menu:43
 msgid "Sprint:"
@@ -1871,11 +1872,11 @@ msgstr ""
 
 #: etmain/ui/options_controls.menu:52
 msgid "0.015 (lowest allowed)"
-msgstr ""
+msgstr "0.015 (minimo consentito)"
 
 #: etmain/ui/options_controls.menu:52
 msgid "0.022 (default)"
-msgstr ""
+msgstr "0.022 (predefinito)"
 
 #: etmain/ui/options_controls.menu:52
 msgid "Up-Down Motion Of The Crosshair While Moving."
@@ -1883,27 +1884,27 @@ msgstr ""
 
 #: etmain/ui/options_controls.menu:56 etmain/ui/options_customise_game.menu:62
 msgid "CHAT"
-msgstr ""
+msgstr "CHAT"
 
 #: etmain/ui/options_controls.menu:57
 msgid "Chat:"
-msgstr ""
+msgstr "Chat:"
 
 #: etmain/ui/options_controls.menu:58
 msgid "Team Chat:"
-msgstr ""
+msgstr "Team Chat:"
 
 #: etmain/ui/options_controls.menu:59
 msgid "Fire-Team Chat:"
-msgstr ""
+msgstr "Fire-Team Chat:"
 
 #: etmain/ui/options_controls.menu:60
 msgid "Quick Chat:"
-msgstr ""
+msgstr "Chat Rapida:"
 
 #: etmain/ui/options_controls.menu:61
 msgid "Fire-Team Quick Chat:"
-msgstr ""
+msgstr "Chat Rapida Fire-Team:"
 
 #: etmain/ui/options_controls.menu:65
 msgid "POP-UPS"
@@ -1943,39 +1944,39 @@ msgstr ""
 
 #: etmain/ui/options_controls.menu:78
 msgid "USE WEAPONS"
-msgstr ""
+msgstr "UTILIZZO ARMI"
 
 #: etmain/ui/options_controls.menu:79
 msgid "Attack:"
-msgstr ""
+msgstr "Attacco:"
 
 #: etmain/ui/options_controls.menu:80
 msgid "Switch to Alternate:"
-msgstr ""
+msgstr "Passa ad Alternativa:"
 
 #: etmain/ui/options_controls.menu:81
 msgid "Reload Weapon:"
-msgstr ""
+msgstr "Ricarica Arma:"
 
 #: etmain/ui/options_controls.menu:82
 msgid "Binoculars Zoom:"
-msgstr ""
+msgstr "Zoom Binocolo:"
 
 #: etmain/ui/options_controls.menu:83
 msgid "Use (Activate):"
-msgstr ""
+msgstr "Usa (Aziona):"
 
 #: etmain/ui/options_controls.menu:87
 msgid "SELECT WEAPONS"
-msgstr ""
+msgstr "SELEZIONA ARMI"
 
 #: etmain/ui/options_controls.menu:88
 msgid "Next Weapon:"
-msgstr ""
+msgstr "Arma Successiva:"
 
 #: etmain/ui/options_controls.menu:89
 msgid "Previous Weapon:"
-msgstr ""
+msgstr "Arma Precedente:"
 
 #: etmain/ui/options_controls.menu:90
 msgid "Slot 1 - Melee:"
@@ -1991,40 +1992,40 @@ msgstr ""
 
 #: etmain/ui/options_controls.menu:93
 msgid "Slot 4 - Grenade:"
-msgstr ""
+msgstr "Slot 4 - Grenata:"
 
 #: etmain/ui/options_controls.menu:94
 msgid "Slot 5 - Special 1:"
-msgstr ""
+msgstr "Slot 5 - Speciale 1:"
 
 #: etmain/ui/options_controls.menu:95
 msgid "Slot 6 - Special 2:"
-msgstr ""
+msgstr "Slot 6 - Speciale 2:"
 
 #: etmain/ui/options_controls.menu:96
 msgid "Slot 7 - Special 3:"
-msgstr ""
+msgstr "Slot 7 - Speciale 3:"
 
 #: etmain/ui/options_controls.menu:97
 msgid "Slot 8 - Binoculars:"
-msgstr ""
+msgstr "Slot 8 - Binocolo:"
 
 #: etmain/ui/options_controls.menu:101
 #: etmain/ui/options_customise_game.menu:77
 msgid "MISCELLANEOUS"
-msgstr ""
+msgstr "VARIE"
 
 #: etmain/ui/options_controls.menu:102
 msgid "Vote Yes:"
-msgstr ""
+msgstr "Vota Si:"
 
 #: etmain/ui/options_controls.menu:103
 msgid "Take Screenshot:"
-msgstr ""
+msgstr "Salva Schermata:"
 
 #: etmain/ui/options_controls.menu:104
 msgid "Vote No:"
-msgstr ""
+msgstr "Vota No:"
 
 #: etmain/ui/options_controls.menu:105
 msgid "Record Replay:"
@@ -2036,52 +2037,52 @@ msgstr ""
 
 #: etmain/ui/options_controls.menu:110
 msgid "Select All Members:"
-msgstr ""
+msgstr "Seleziona Tutti i Membri:"
 
 #: etmain/ui/options_controls.menu:111
 msgid "Select Member #1:"
-msgstr ""
+msgstr "Seleziona Membro #1:"
 
 #: etmain/ui/options_controls.menu:112
 msgid "Select Member #2:"
-msgstr ""
+msgstr "Seleziona Membro #2:"
 
 #: etmain/ui/options_controls.menu:113
 msgid "Select Member #3:"
-msgstr ""
+msgstr "Seleziona Membro #3:"
 
 #: etmain/ui/options_controls.menu:114
 msgid "Select Member #4:"
-msgstr ""
+msgstr "Seleziona Membro #4:"
 
 #: etmain/ui/options_controls.menu:115
 msgid "Select Member #5:"
-msgstr ""
+msgstr "Seleziona Membro #5:"
 
 #: etmain/ui/options_controls.menu:116
 msgid "Select Member #6:"
-msgstr ""
+msgstr "Seleziona Membro #6:"
 
 #: etmain/ui/options_controls.menu:117
 msgid "Deselect All:"
-msgstr ""
+msgstr "Deseleziona Tutti:"
 
 #: etmain/ui/options_controls.menu:118
 msgid "Fire-Team Admin:"
-msgstr ""
+msgstr "Amministratore Fire-Team:"
 
 #: etmain/ui/options_customise_game.menu:29 etmain/ui/options.menu:32
 msgid "GAME"
-msgstr ""
+msgstr "GIOCO"
 
 #: etmain/ui/options_customise_game.menu:33 src/cgame/cg_scoreboard.c:205
 msgid "PLAYER"
-msgstr ""
+msgstr "GIOCATORE"
 
 #: etmain/ui/options_customise_game.menu:34
 #: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
 msgid "Player Alias:"
-msgstr ""
+msgstr "Alias Giocatore:"
 
 #: etmain/ui/options_customise_game.menu:34
 msgid "Enter the name that you wish to be known by to others on servers"
@@ -2090,12 +2091,12 @@ msgstr ""
 #: etmain/ui/options_customise_game.menu:36
 #: etmain/ui/profile_create_initial.menu:101 etmain/ui/profile_create.menu:94
 msgid "Language:"
-msgstr ""
+msgstr "Lingua:"
 
 #: etmain/ui/options_customise_game.menu:36
 #: etmain/ui/profile_create_initial.menu:101 etmain/ui/profile_create.menu:94
 msgid "Set your desired language"
-msgstr ""
+msgstr "Imposta la tua lingua preferita"
 
 #: etmain/ui/options_customise_game.menu:40
 msgid "PHYSICS"
@@ -2119,35 +2120,35 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:46
 msgid "WEAPONS"
-msgstr ""
+msgstr "ARMI"
 
 #: etmain/ui/options_customise_game.menu:47
 msgid "Automatic Reload:"
-msgstr ""
+msgstr "Ricarica Automatica:"
 
 #: etmain/ui/options_customise_game.menu:47
 msgid "Automatically reload when ammunition clip runs out"
-msgstr ""
+msgstr "Ricarica automaticamente quando si svuota il caricatore"
 
 #: etmain/ui/options_customise_game.menu:48
 msgid "Autoswitch:"
-msgstr ""
+msgstr "Cambio Automatico:"
 
 #: etmain/ui/options_customise_game.menu:48
 msgid "Automatically switch to a new weapon when out of ammunition"
-msgstr ""
+msgstr "Cambia automaticamente arma esaurite le munizioni"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "Weapon Icon Flash:"
-msgstr ""
+msgstr "Flash Icona Arma:"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "2 colors"
-msgstr ""
+msgstr "2 colori"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "3 colors"
-msgstr ""
+msgstr "3 colori"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "Flash weapon icon when firing, reloading, or switching"
@@ -2315,7 +2316,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:70
 msgid "SOUND"
-msgstr ""
+msgstr "SUONO"
 
 #: etmain/ui/options_customise_game.menu:71
 msgid "Announcer:"
@@ -2431,7 +2432,7 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:28 etmain/ui/options.menu:33
 #: etmain/ui/viewreplay.menu:62
 msgid "VIEW"
-msgstr ""
+msgstr "VISTA"
 
 #: etmain/ui/options_customise_hud.menu:32
 msgid "HUD DISPLAY"
@@ -2567,71 +2568,71 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "Show Clock:"
-msgstr ""
+msgstr "Mostra Orologio:"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "24 hours"
-msgstr ""
+msgstr "24 ore"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "24 hours + seconds"
-msgstr ""
+msgstr "24 ore + secondi"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "12 hours"
-msgstr ""
+msgstr "12 ore"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "12 hours + seconds"
-msgstr ""
+msgstr "12 ore + secondi"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "Displays local time"
-msgstr ""
+msgstr "Mostra ora locale"
 
 #: etmain/ui/options_customise_hud.menu:46
 msgid "Show FPS:"
-msgstr ""
+msgstr "Mostra FPS:"
 
 #: etmain/ui/options_customise_hud.menu:46
 msgid "Displays Frames Per Second"
-msgstr ""
+msgstr "Visualizza Frame Per Secondo"
 
 #: etmain/ui/options_customise_hud.menu:47
 msgid "Show Ping:"
-msgstr ""
+msgstr "Mostra Ping:"
 
 #: etmain/ui/options_customise_hud.menu:47
 msgid "Displays ping"
-msgstr ""
+msgstr "Visualizza ping"
 
 #: etmain/ui/options_customise_hud.menu:48
 msgid "Show Lagometer:"
-msgstr ""
+msgstr "Mostra Lagometer:"
 
 #: etmain/ui/options_customise_hud.menu:48
 msgid "Displays lagometer"
-msgstr ""
+msgstr "Visualizza lagometer"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Switch HUD:"
-msgstr ""
+msgstr "Scambia HUD:"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Standard Hud"
-msgstr ""
+msgstr "HUD Standard"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Alternate Hud 1"
-msgstr ""
+msgstr "HUD Alternativo 1"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Alternate Hud 2"
-msgstr ""
+msgstr "HUD Alternativo 2"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Switches between different HUD"
-msgstr ""
+msgstr "Scambia HUD differenti"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Modify Selected HUD:"
@@ -2786,11 +2787,11 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:69
 msgid "CROSSHAIR"
-msgstr ""
+msgstr "MIRINO"
 
 #: etmain/ui/options_customise_hud.menu:70
 msgid "Crosshair Size:"
-msgstr ""
+msgstr "Grandezza Mirino:"
 
 #: etmain/ui/options_customise_hud.menu:70
 #: etmain/ui/options_customise_hud.menu:114
@@ -3017,7 +3018,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:106
 msgid "MOVEMENT"
-msgstr ""
+msgstr "MOVIMENTO"
 
 #: etmain/ui/options_customise_hud.menu:107
 msgid "Bob up:"
@@ -3045,7 +3046,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:113
 msgid "FONTS"
-msgstr ""
+msgstr "CARATTERI"
 
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Fonts Size:"
@@ -3103,7 +3104,7 @@ msgstr ""
 #: etmain/ui/options_graphics_gamma.menu:28
 #: etmain/ui/options_system_gamma.menu:31
 msgid "CALIBRATE BRIGHTNESS"
-msgstr ""
+msgstr "REGOLA LUMINOSITA"
 
 #: etmain/ui/options_graphics_gamma.menu:33
 #: etmain/ui/options_system_gamma.menu:36
@@ -3405,19 +3406,19 @@ msgstr ""
 
 #: etmain/ui/options_graphics.menu:73
 msgid "SET RECOMMENDED"
-msgstr ""
+msgstr "IMPOSTA RACCOMANDATO"
 
 #: etmain/ui/options_graphics.menu:78 etmain/ui/options_system.menu:66
 msgid "APPLY"
-msgstr ""
+msgstr "APPLICA"
 
 #: etmain/ui/options.menu:35 etmain/ui/options_system.menu:35
 msgid "SYSTEM"
-msgstr ""
+msgstr "SISTEMA"
 
 #: etmain/ui/options_system.menu:39
 msgid "AUDIO"
-msgstr ""
+msgstr "AUDIO"
 
 #: etmain/ui/options_system.menu:41
 msgid "Effects Volume:"
@@ -3481,7 +3482,7 @@ msgstr ""
 
 #: etmain/ui/options_system.menu:51
 msgid "NETWORKING"
-msgstr ""
+msgstr "RETE"
 
 #: etmain/ui/options_system.menu:52
 msgid "Max Packets:"
@@ -3507,7 +3508,7 @@ msgstr ""
 
 #: etmain/ui/options_system.menu:57
 msgid "DOWNLOADS"
-msgstr ""
+msgstr "SCARICAMENTI"
 
 #: etmain/ui/options_system.menu:59
 msgid "Check for Updates on Start-Up:"
@@ -3535,39 +3536,39 @@ msgstr ""
 
 #: etmain/ui/playonline_connecttoip.menu:51 etmain/ui/playonline.menu:649
 msgid "CONNECT TO IP"
-msgstr ""
+msgstr "CONNETTI A IP"
 
 #: etmain/ui/playonline_deletefavs.menu:50
 msgid "DELETE SERVER FAVOURITES"
-msgstr ""
+msgstr "CANCELLA SERVER PREFERITI"
 
 #: etmain/ui/playonline_deletefavs.menu:51
 msgid "Do you really want to"
-msgstr ""
+msgstr "Sei sicuro di volere"
 
 #: etmain/ui/playonline_deletefavs.menu:52
 msgid "delete YOUR favourites?"
-msgstr ""
+msgstr "cancellare i TUOI preferiti?"
 
 #: etmain/ui/playonline.menu:80
 msgid "FILTERS"
-msgstr ""
+msgstr "FILTRI"
 
 #: etmain/ui/playonline.menu:82
 msgid "Source:"
-msgstr ""
+msgstr "Fonte:"
 
 #: etmain/ui/playonline.menu:82
 msgid "Local"
-msgstr ""
+msgstr "Locale"
 
 #: etmain/ui/playonline.menu:82
 msgid "Internet"
-msgstr ""
+msgstr "Internet"
 
 #: etmain/ui/playonline.menu:82
 msgid "Favorites"
-msgstr ""
+msgstr "Preferiti"
 
 #: etmain/ui/playonline.menu:82
 msgid ""
@@ -3609,53 +3610,53 @@ msgstr ""
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Filter Disabled"
-msgstr ""
+msgstr "Filtra Disabilitati"
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Only show..."
-msgstr ""
+msgstr "Mostra..."
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Don't show..."
-msgstr ""
+msgstr "Non mostrare..."
 
 #: etmain/ui/playonline.menu:194 etmain/ui/playonline.menu:648
 msgid "REFRESH LIST"
-msgstr ""
+msgstr "AGGIORNA LISTA"
 
 #: etmain/ui/playonline.menu:194
 msgid "Refresh servers list"
-msgstr ""
+msgstr "Aggiorna la lista server"
 
 #: etmain/ui/playonline.menu:195 etmain/ui/playonline.menu:652
 msgid "RESET FILTERS"
-msgstr ""
+msgstr "REIMPOSTA FILTRI"
 
 #: etmain/ui/playonline.menu:195
 msgid "Reset all filters to their defaults"
-msgstr ""
+msgstr "Reimposta tutti i filtri predefiniti"
 
 #: etmain/ui/playonline.menu:234
 msgid "SERVER BROWSER"
-msgstr ""
+msgstr "SERVER BROWSER"
 
 #: etmain/ui/playonline.menu:332
 msgid "SERVER NAME"
-msgstr ""
+msgstr "NOME SERVER"
 
 #: etmain/ui/playonline.menu:343
 msgid "Click here to sort by Server Name"
-msgstr ""
+msgstr "Clicca qui per ordinare per Nome Server"
 
 #: etmain/ui/playonline.menu:373
 msgid "MAP NAME"
-msgstr ""
+msgstr "NOME MAPPA"
 
 #: etmain/ui/playonline.menu:384
 msgid "Click here to sort by Campaign or Map name"
@@ -3663,27 +3664,27 @@ msgstr ""
 
 #: etmain/ui/playonline.menu:414
 msgid "#PLAYERS"
-msgstr ""
+msgstr "#GIOCATORI"
 
 #: etmain/ui/playonline.menu:425
 msgid "Click here to sort by Player Count"
-msgstr ""
+msgstr "Clicca qui per ordinare per Numero Giocatori"
 
 #: etmain/ui/playonline.menu:455
 msgid "TYPE"
-msgstr ""
+msgstr "TIPO"
 
 #: etmain/ui/playonline.menu:466
 msgid "Click here to sort by Game Type"
-msgstr ""
+msgstr "Clicca qui per ordinare per Tipo Gioco"
 
 #: etmain/ui/playonline.menu:496
 msgid "PING"
-msgstr ""
+msgstr "PING"
 
 #: etmain/ui/playonline.menu:651
 msgid "DELETE FAVS"
-msgstr ""
+msgstr "CANCELLA PREF"
 
 #: etmain/ui/playonline.menu:656 etmain/ui/playonline_serverinfo.menu:78
 msgid "JOIN SERVER"
@@ -3691,23 +3692,23 @@ msgstr ""
 
 #: etmain/ui/popup_autoupdate.menu:51
 msgid "UPDATE AVAILABLE"
-msgstr ""
+msgstr "AGGIORNAMENTO DISPONIBILE"
 
 #: etmain/ui/popup_errormessage.menu:52
 #: etmain/ui/popup_errormessage_pb.menu:52
 #: etmain/ui/popup_hostgameerrormessage.menu:52
 msgid "ERROR"
-msgstr ""
+msgstr "ERRORE"
 
 #: etmain/ui/popup_errormessage.menu:59
 #: etmain/ui/popup_errormessage_pb.menu:57
 #: etmain/ui/popup_serverredirect.menu:79
 msgid "RECONNECT"
-msgstr ""
+msgstr "RICONNETTI"
 
 #: etmain/ui/popup_password.menu:73
 msgid "PASSWORD REQUIRED"
-msgstr ""
+msgstr "PASSWORD RICHIESTA"
 
 #: etmain/ui/popup_password.menu:84
 msgid "Enter the server password"
@@ -3723,11 +3724,11 @@ msgstr ""
 
 #: etmain/ui/profile_create_error.menu:51
 msgid "CREATION ERROR"
-msgstr ""
+msgstr "ERRORE CREAZIONE"
 
 #: etmain/ui/profile_create_initial.menu:85 etmain/ui/profile_create.menu:78
 msgid "CREATE PROFILE"
-msgstr ""
+msgstr "CREA PROFILO"
 
 #: etmain/ui/profile_create_initial.menu:87 etmain/ui/profile_create.menu:80
 msgid ""
@@ -3777,7 +3778,7 @@ msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:116 etmain/ui/profile_create.menu:110
 msgid "DEFAULT SETTINGS"
-msgstr ""
+msgstr "IMPOSTAZIONI PREDEFINITE"
 
 #: etmain/ui/profile_create_initial.menu:125
 msgid "^1LET'S KEEP ET ALIVE!"
@@ -3789,12 +3790,12 @@ msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:130
 msgid "QUIT"
-msgstr ""
+msgstr "ESCI"
 
 #: etmain/ui/profile_create_initial.menu:131 etmain/ui/profile_create.menu:120
 #: etmain/ui/profile.menu:62
 msgid "CREATE"
-msgstr ""
+msgstr "CREA"
 
 #: etmain/ui/profile_create.menu:106
 msgid "Choose invert mouse if you prefer flight-simulator mouse pitch"
@@ -3814,31 +3815,31 @@ msgstr ""
 
 #: etmain/ui/profile_delete.menu:50
 msgid "DELETE PROFILE"
-msgstr ""
+msgstr "ELIMINA PROFILO"
 
 #: etmain/ui/profile_delete.menu:51 etmain/ui/viewreplay_delete.menu:51
 msgid "Are you sure?"
-msgstr ""
+msgstr "Sei sicuro?"
 
 #: etmain/ui/profile.menu:63 etmain/ui/viewreplay.menu:59
 msgid "DELETE"
-msgstr ""
+msgstr "CANCELLA"
 
 #: etmain/ui/profile.menu:66 etmain/ui/profile_rename.menu:69
 msgid "RENAME"
-msgstr ""
+msgstr "RINOMINA"
 
 #: etmain/ui/profile.menu:67
 msgid "SET AS DEFAULT"
-msgstr ""
+msgstr "IMPOSTA PREDEFINITO"
 
 #: etmain/ui/profile.menu:72
 msgid "SELECT PROFILE"
-msgstr ""
+msgstr "SELEZIONA PROFILO"
 
 #: etmain/ui/profile_rename.menu:55
 msgid "RENAME PROFILE"
-msgstr ""
+msgstr "RINOMINA PROFILO"
 
 #: etmain/ui/profile_rename.menu:65
 msgid "New Profile Name:"
@@ -3858,7 +3859,7 @@ msgstr ""
 
 #: etmain/ui/rec_restart.menu:53 etmain/ui/vid_restart.menu:47
 msgid "CHANGE VIDEO SETTINGS"
-msgstr ""
+msgstr "CAMBIA IMPOSTAZIONI VIDEO"
 
 #: etmain/ui/rec_restart.menu:55
 msgid ""
@@ -3874,7 +3875,7 @@ msgstr ""
 
 #: etmain/ui/vid_confirm.menu:61
 msgid "CONFIRM VIDEO CHANGE"
-msgstr ""
+msgstr "CONFERMA VARIAZIONI"
 
 #: etmain/ui/vid_confirm.menu:63
 msgid "Use this video mode?"
@@ -3905,7 +3906,7 @@ msgstr ""
 #: etmain/ui/wm_quickmessageAlt.menu:33 etmain/ui/wm_quickmessage.menu:34
 #: src/cgame/cg_fireteams.c:341
 msgid "MESSAGE"
-msgstr ""
+msgstr "MESSAGGIO"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:83 etmain/ui/wm_quickmessageAlt.menu:83
 msgid "1. Statements"
@@ -4588,7 +4589,7 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:1717
 msgid "SPECTATOR"
-msgstr ""
+msgstr "SPETTATORE"
 
 #: src/cgame/cg_draw.c:1744
 #, c-format
@@ -4628,31 +4629,31 @@ msgstr ""
 #: src/cgame/cg_draw.c:1898
 #, c-format
 msgid "VOTE(%i): %s"
-msgstr ""
+msgstr "VOTA(%i): %s"
 
 #: src/cgame/cg_draw.c:1905
 #, c-format
 msgid "YES:%i, NO:%i"
-msgstr ""
+msgstr "SI:%i, NO:%i"
 
 #: src/cgame/cg_draw.c:1909
 msgid "Can't vote as Spectator"
-msgstr ""
+msgstr "Non puoi votare da Spettatore"
 
 #: src/cgame/cg_draw.c:1913
 #, c-format
 msgid "YES(%s):%i, NO(%s):%i"
-msgstr ""
+msgstr "SI(%s):%i, NO(%s):%i"
 
 #: src/cgame/cg_draw.c:1920
 #, c-format
 msgid "YOU VOTED ON: %s"
-msgstr ""
+msgstr "HAI VOTATO: %s"
 
 #: src/cgame/cg_draw.c:1925
 #, c-format
 msgid "Y:%i, N:%i"
-msgstr ""
+msgstr "S:%i, N:%i"
 
 #: src/cgame/cg_draw.c:1928
 msgid "Your complaint has been filed"
@@ -4905,7 +4906,7 @@ msgstr ""
 
 #: src/cgame/cg_fireteams.c:356
 msgid "INVITE"
-msgstr ""
+msgstr "INVITA"
 
 #: src/cgame/cg_fireteams.c:365
 msgid "SET ADMIN"
@@ -5372,34 +5373,34 @@ msgid "You are near"
 msgstr ""
 
 msgid "joined the Axis team\n"
-msgstr ""
+msgstr "si è unito al team Axis\n"
 
 msgid "joined the Allies team\n"
-msgstr ""
+msgstr "si è unito al team Allies\n"
 
 msgid "entered the game\n"
-msgstr ""
+msgstr "è entrato in gioco\n"
 
 msgid "rediscovered gravity"
-msgstr ""
+msgstr "ha riscoperto la forza di gravità"
 
 msgid "was crushed"
 msgstr ""
 
 msgid "drowned"
-msgstr ""
+msgstr "è annegato"
 
 msgid "slagged"
 msgstr ""
 
 msgid "was killed"
-msgstr ""
+msgstr "è stato ucciso"
 
 msgid "got buried under a pile of rubble"
 msgstr ""
 
 msgid "was incinerated"
-msgstr ""
+msgstr "è stato incenerito"
 
 msgid "had an appointment with the map mortar"
 msgstr ""
@@ -5880,22 +5881,22 @@ msgid "^1Spam Protection^7: VoiceChat ignored"
 msgstr ""
 
 msgid "Mines have been reported in this area."
-msgstr ""
+msgstr "Delle mine sono state individuate in quest'area."
 
 msgid "'s Landmine"
-msgstr ""
+msgstr " dalla sua mina esplosiva"
 
 msgid "'s Mobile MG 42"
-msgstr ""
+msgstr " con il suo MG 42 Mobile"
 
 msgid "'s Mobile Browning"
 msgstr ""
 
 msgid "'s rifle grenade"
-msgstr ""
+msgstr " con la sua granata da fucile"
 
 msgid "'s support fire"
-msgstr ""
+msgstr " con il suo fuoco di supporto"
 
 msgid "'s crew-served MG"
 msgstr ""
@@ -5933,10 +5934,10 @@ msgid "Warning, leave the construction area..."
 msgstr ""
 
 msgid "got caught in"
-msgstr ""
+msgstr "è stato inglobato da"
 
 msgid "'s construction madness"
-msgstr ""
+msgstr " nella sua follia ingegneristica"
 
 #: src/qcommon/download.c:244
 msgid "Need paks: %s\n"
@@ -5946,19 +5947,19 @@ msgid "Not enough players to start match!\n"
 msgstr ""
 
 msgid "'s flamethrower"
-msgstr ""
+msgstr " con il suo lanciafiamme"
 
 msgid "'s Satchel Charge"
-msgstr ""
+msgstr " con la sua carica esplosiva"
 
 msgid "You cannot arm dynamite near a friendly objective!"
 msgstr ""
 
 msgid "'s tank-mounted MG42"
-msgstr ""
+msgstr " col suo MG 42 montato su carro armato"
 
 msgid "'s dynamite"
-msgstr ""
+msgstr " con la sua dinamite"
 
 msgid "Timelimit hit.\n"
 msgstr ""
@@ -6255,7 +6256,7 @@ msgid "A vote is already in progress.\n"
 msgstr ""
 
 msgid "called a vote.\n"
-msgstr ""
+msgstr "ha richiesto una votazione.\n"
 
 msgid "^5Vote passed!\n"
 msgstr ""
@@ -6279,49 +6280,49 @@ msgid "Not allowed to call a vote as a spectator.\n"
 msgstr ""
 
 msgid "called a vote."
-msgstr ""
+msgstr "ha richiesto una votazione."
 
 msgid "Vote cast.\n"
 msgstr ""
 
 msgid "'s KA-BAR"
-msgstr ""
+msgstr " con il suo KA-BAR"
 
 msgid "'s .45ACP 1911"
-msgstr ""
+msgstr " con la sua .45ACP 1911"
 
 msgid "'s Thompson"
-msgstr ""
+msgstr " con il suo Thompson"
 
 msgid "'s MP 40"
-msgstr ""
+msgstr " con il suo MP 40"
 
 msgid "'s knife"
-msgstr ""
+msgstr " con il suo pugnale"
 
 msgid "'s Luger 9mm"
-msgstr ""
+msgstr " con la sua Luger 9mm"
 
 msgid "'s Panzerfaust"
-msgstr ""
+msgstr " con il suo Panzerfaust"
 
 msgid "'s Garand"
-msgstr ""
+msgstr " con il suo Garand"
 
 msgid "'s Sten"
-msgstr ""
+msgstr " con il suo Sten"
 
 msgid "'s FG 42"
-msgstr ""
+msgstr " con il suo FG 42"
 
 msgid "'s K43"
-msgstr ""
+msgstr " con il suo K43"
 
 msgid "'s Bazooka"
-msgstr ""
+msgstr " con il suo Bazooka"
 
 msgid "'s Akimbo .45ACP 1911s"
-msgstr ""
+msgstr " con la sua Akimbo .45ACP 1911s"
 
 msgid "Server disconnected"
 msgstr ""
@@ -6333,7 +6334,7 @@ msgid "Server disconnected for unknown reason"
 msgstr ""
 
 msgid "'s Akimbo Luger 9mms"
-msgstr ""
+msgstr " con la sua Akimbo Luger 9mms"
 
 msgid "Cheats are not enabled on this server.\n"
 msgstr ""
@@ -6441,58 +6442,58 @@ msgid "^3moved to spectator for inactivity!\n"
 msgstr ""
 
 msgid "was killed by"
-msgstr ""
+msgstr "è stato ucciso da"
 
 msgid "was stabbed by"
-msgstr ""
+msgstr "è stato accoltellato da"
 
 msgid "was blasted by"
-msgstr ""
+msgstr "è stato fatto saltare da"
 
 msgid "was exploded by"
-msgstr ""
+msgstr "è stato esploso da"
 
 msgid "was cooked by"
-msgstr ""
+msgstr "è stato cucinato da"
 
 msgid "never saw"
-msgstr ""
+msgstr "non ha mai visto"
 
 msgid "'s mortar round coming"
-msgstr ""
+msgstr " col suo colpo di mortaio"
 
 msgid "was perforated by"
-msgstr ""
+msgstr "è stato perforato da"
 
 msgid "'s tank-mounted MG 42"
-msgstr ""
+msgstr " col suo MG 42 montato su carro armato"
 
 msgid "was shelled by"
-msgstr ""
+msgstr "è stato bombardato da"
 
 msgid "'s artillery support"
-msgstr ""
+msgstr " con la sua artiglieria di supporto"
 
 msgid "^2swapped places with^7"
 msgstr ""
 
 msgid "failed to spot"
-msgstr ""
+msgstr "non è riuscito a individuare"
 
 msgid "was mown down by"
-msgstr ""
+msgstr "è stato falciato da"
 
 msgid "was silenced by"
-msgstr ""
+msgstr "è stato silenziato da"
 
 msgid "was sniped by"
-msgstr ""
+msgstr "è stato centrato da"
 
 msgid "stood on"
 msgstr ""
 
 msgid "'s airstrike marker"
-msgstr ""
+msgstr "con il suo marcatore attacco aereo"
 
 msgid "- Small Health"
 msgstr ""
@@ -6664,7 +6665,7 @@ msgid "Sets field of view"
 msgstr ""
 
 msgid "Selfkill:"
-msgstr ""
+msgstr "Suicidio:"
 
 msgid "Fireteam Chat:"
 msgstr ""
@@ -6679,16 +6680,16 @@ msgid "Not Ready:"
 msgstr ""
 
 msgid "CONTROLS: ADVANCED"
-msgstr ""
+msgstr "CONTROLLI: AVANZATE"
 
 msgid "Deselect All Members:"
-msgstr ""
+msgstr "Deseleziona Tutti:"
 
 msgid "Select Member #7:"
-msgstr ""
+msgstr "Seleziona Membro #7:"
 
 msgid "Select Member #8:"
-msgstr ""
+msgstr "Seleziona Membro #8:"
 
 msgid ""
 "Couldn't load an official pak file; verify your installation and make sure "
