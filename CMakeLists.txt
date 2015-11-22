@@ -20,7 +20,7 @@ include(CMakeDependentOption)
 option(BUILD_SERVER		"Build the dedicated server executable"				ON)
 option(BUILD_CLIENT		"Build the client executable"					ON)
 option(BUILD_MOD		"Build the mod libraries"					ON)
-option(RPI		"Build RPI version"					OFF)
+option(RPI			"Build RPI version"						OFF)
 
 cmake_dependent_option(BUILD_MOD_PK3		"Pack the mod libraries into etl_bin.pk3"		ON "ZIP_EXECUTABLE" OFF)
 cmake_dependent_option(BUILD_PAK3_PK3		"Pack updated game scripts into pak3.pk3"		ON "ZIP_EXECUTABLE" OFF)
