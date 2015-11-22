@@ -745,7 +745,7 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 
 	for (i = 0; i < 3; i++)
 	{
-		if (abs(ps2->viewangles[i] - ps1->viewangles[i]) > MAX_PREDICT_VIEWANGLES_DELTA)
+		if (fabsf(ps2->viewangles[i] - ps1->viewangles[i]) > MAX_PREDICT_VIEWANGLES_DELTA)
 		{
 			return 16;
 		}
