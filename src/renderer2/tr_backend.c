@@ -6000,7 +6000,7 @@ Used for cinematics.
 */
 void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty)
 {
-	int i, j;
+	//int i, j;
 	int start, end;
 
 	if (!tr.registered)
