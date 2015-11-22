@@ -1508,7 +1508,7 @@ static void CG_DrawCrosshairNames(void)
 				CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
 				return;
 			}
-			else if (dist > 512)
+			else
 			{
 				if (!cg_drawCrosshairNames.integer && !cg_drawCrosshairInfo.integer)
 				{
@@ -1572,13 +1572,6 @@ static void CG_DrawCrosshairNames(void)
 				}
 
 				maxHealth = 100;
-			}
-			else
-			{
-				// don't show the name after you look away, should this be a disguised covert
-				// removed to grant covert ops more power
-				//cg.crosshairClientTime = 0;
-				return;
 			}
 		}
 		else
