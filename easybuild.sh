@@ -176,6 +176,9 @@ parse_commandline() {
 		elif [ "$var" = "-debug" ]; then
 			einfo "Will enable debug build"
 			RELEASE_TYPE="Debug"
+		elif [ "$var" = "-db" ]; then
+			einfo "Will enable database"
+			FEATURE_DBMS=1
 		elif [ "$var" = "-r2" ]; then
 			einfo "Will enable renderer2"
 			FEATURE_RENDERER2=1
@@ -516,7 +519,7 @@ print_help() {
 	ehead "help - print this help"
 	echo
 	einfo "Properties"
-	ehead "-64, -debug, -clang, -r2, -dynamic, -systemlib, -noob, --noupdate"
+	ehead "-64, -debug, -clang, -db -r2, -dynamic, -systemlib, -noob, --noupdate"
 	echo
 }
 
