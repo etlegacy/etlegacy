@@ -1842,7 +1842,7 @@ z_streamp strm;
 
 	if (strm == Z_NULL || strm->state == Z_NULL)
 	{
-		return -1L << 16;
+		return (long)(((unsigned long)0 - 1) << 16);
 	}
 	state = (struct inflate_state FAR *)strm->state;
 	return ((long)(state->back) << 16) +
