@@ -12,6 +12,7 @@ project(ETLEGACY C CXX)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 include(GetGitRevisionDescription)
 include(CMakeDependentOption)
+find_program(ZIP_EXECUTABLE zip PATHS ${CMAKE_BINARY_DIR})
 
 #-----------------------------------------------------------------
 # Options

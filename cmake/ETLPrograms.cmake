@@ -8,7 +8,6 @@ if(FEATURE_RENDERER2)
 endif(FEATURE_RENDERER2)
 
 # Enable pk3 creation if zip executable is found. Download it on Windows
-find_program(ZIP_EXECUTABLE zip PATHS ${CMAKE_BINARY_DIR})
 if(NOT ZIP_EXECUTABLE AND WIN32)
 	message(STATUS "Downloading zip.exe to " ${CMAKE_BINARY_DIR}/zip.exe)
 	file(DOWNLOAD http://stahlworks.com/dev/zip.exe ${CMAKE_BINARY_DIR}/zip.exe SHOW_PROGRESS TIMEOUT 10)
