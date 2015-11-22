@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-11-16 10:05+0000\n"
-"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
+"PO-Revision-Date: 2015-11-21 21:51+0000\n"
+"Last-Translator: Joshua <git@sky-e.de>\n"
 "Language-Team: German (http://www.transifex.com/etlegacy/etlegacy/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -3866,13 +3866,13 @@ msgstr "ÄNDERE VIDEO EINSTELLUNGEN"
 msgid ""
 "Set recommended video settings\n"
 "and return to the main menu?"
-msgstr ""
+msgstr "Empfohlene Videoeinstellungen setzen\nund zum Hauptmenü zurückkehren"
 
 #: etmain/ui/rec_restart.menu:57
 msgid ""
 "Set recommended video settings\n"
 "and return to the ingame menu?"
-msgstr ""
+msgstr "Empfohlene Videoeinstellungen setzen\nund zum Menü zurückkehren"
 
 #: etmain/ui/vid_confirm.menu:61
 msgid "CONFIRM VIDEO CHANGE"
@@ -3901,7 +3901,7 @@ msgstr "LÖSCHE WIEDERHOLUNG"
 
 #: etmain/ui/viewreplay.menu:50
 msgid "Select the replay to view or delete"
-msgstr ""
+msgstr "Wähle die Wiederholung zum anschauen oder löschen aus"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:33 etmain/ui/wm_ftquickmessage.menu:33
 #: etmain/ui/wm_quickmessageAlt.menu:33 etmain/ui/wm_quickmessage.menu:34
@@ -3919,7 +3919,7 @@ msgstr "2. Anforderungen"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:85 etmain/ui/wm_quickmessageAlt.menu:85
 msgid "3. Commands"
-msgstr ""
+msgstr "3. Befehle"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:86 etmain/ui/wm_quickmessageAlt.menu:86
 msgid "4. Talk"
@@ -3965,12 +3965,12 @@ msgstr "6. Ich Verteidige"
 #: etmain/ui/wm_ftquickmessageAlt.menu:101
 #: etmain/ui/wm_quickmessageAlt.menu:101
 msgid "7. I'm Attacking."
-msgstr ""
+msgstr "7. Ich greife an"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:102
 #: etmain/ui/wm_quickmessageAlt.menu:102
 msgid "8. Taking Fire!"
-msgstr ""
+msgstr "8. Unter Beschuss!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:103
 #: etmain/ui/wm_quickmessageAlt.menu:103
@@ -3985,7 +3985,7 @@ msgstr "0. Getarnter Feind"
 #: etmain/ui/wm_ftquickmessageAlt.menu:110
 #: etmain/ui/wm_quickmessageAlt.menu:110
 msgid "1. Need Medic!"
-msgstr ""
+msgstr "1. Brauche Sanitäter!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:111
 #: etmain/ui/wm_quickmessageAlt.menu:111
@@ -3995,12 +3995,12 @@ msgstr "2. Brauche Munition!"
 #: etmain/ui/wm_ftquickmessageAlt.menu:112
 #: etmain/ui/wm_quickmessageAlt.menu:112
 msgid "3. Need Backup!"
-msgstr ""
+msgstr "3. Brauche Verstärkung!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:113
 #: etmain/ui/wm_quickmessageAlt.menu:113
 msgid "4. Need Engineer!"
-msgstr ""
+msgstr "4. Brauche Ingenieur!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:114
 #: etmain/ui/wm_quickmessageAlt.menu:114
@@ -4010,7 +4010,7 @@ msgstr ""
 #: etmain/ui/wm_ftquickmessageAlt.menu:115
 #: etmain/ui/wm_quickmessageAlt.menu:115
 msgid "6. Hold Fire!"
-msgstr ""
+msgstr "6. Feuer einstellen!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:116
 #: etmain/ui/wm_quickmessageAlt.menu:116
@@ -4060,12 +4060,12 @@ msgstr ""
 #: etmain/ui/wm_ftquickmessageAlt.menu:130
 #: etmain/ui/wm_quickmessageAlt.menu:130
 msgid "8. Reinforce Offense"
-msgstr ""
+msgstr "8. Verstärkt die Offensive"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:131
 #: etmain/ui/wm_quickmessageAlt.menu:131
 msgid "9. Reinforce Defense"
-msgstr ""
+msgstr "9. Verstärkt die Verteidigung"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:137
 #: etmain/ui/wm_ftquickmessageAlt.menu:148
@@ -4111,17 +4111,17 @@ msgstr "4. Hi"
 #: etmain/ui/wm_ftquickmessageAlt.menu:152
 #: etmain/ui/wm_quickmessageAlt.menu:152
 msgid "5. Bye"
-msgstr ""
+msgstr "5. Tschüss"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:153
 #: etmain/ui/wm_quickmessageAlt.menu:153
 msgid "6. Great Shot"
-msgstr ""
+msgstr "6. Guter Schuss"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:154
 #: etmain/ui/wm_quickmessageAlt.menu:154
 msgid "7. Cheer"
-msgstr ""
+msgstr "7. Jubeln"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:155
 #: etmain/ui/wm_quickmessageAlt.menu:155
@@ -4151,7 +4151,7 @@ msgstr "4. Entschuldigung"
 #: etmain/ui/wm_ftquickmessageAlt.menu:165
 #: etmain/ui/wm_quickmessageAlt.menu:165
 msgid "5. Hold Fire!"
-msgstr ""
+msgstr "5. Feuer einstellen!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:166
 #: etmain/ui/wm_quickmessageAlt.menu:166
@@ -4166,7 +4166,7 @@ msgstr ""
 #: etmain/ui/wm_ftquickmessageAlt.menu:173
 #: etmain/ui/wm_quickmessageAlt.menu:174
 msgid "3. Command Completed"
-msgstr ""
+msgstr "3. Befehl ausgeführt"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:174
 #: etmain/ui/wm_quickmessageAlt.menu:175
@@ -4213,7 +4213,7 @@ msgstr ""
 
 #: etmain/ui/wm_ftquickmessage.menu:85 etmain/ui/wm_quickmessage.menu:86
 msgid "C. Commands"
-msgstr ""
+msgstr "C. Befehle"
 
 #: etmain/ui/wm_ftquickmessage.menu:86 etmain/ui/wm_quickmessage.menu:87
 msgid "T. Talk"
@@ -4380,7 +4380,7 @@ msgstr "H. Hi"
 
 #: etmain/ui/wm_ftquickmessage.menu:152 etmain/ui/wm_quickmessage.menu:152
 msgid "B. Bye"
-msgstr ""
+msgstr "B. Tschüss"
 
 #: etmain/ui/wm_ftquickmessage.menu:153 etmain/ui/wm_quickmessage.menu:153
 msgid "S. Great Shot"
@@ -4400,15 +4400,15 @@ msgstr "G. Gutes Spiel"
 
 #: etmain/ui/wm_ftquickmessage.menu:172 etmain/ui/wm_quickmessage.menu:172
 msgid "A. Command Acknowledged"
-msgstr ""
+msgstr "A. Befehl angenommen"
 
 #: etmain/ui/wm_ftquickmessage.menu:173 etmain/ui/wm_quickmessage.menu:173
 msgid "D. Command Declined"
-msgstr ""
+msgstr "D. Befehl abgelehnt"
 
 #: etmain/ui/wm_ftquickmessage.menu:174 etmain/ui/wm_quickmessage.menu:174
 msgid "C. Command Completed"
-msgstr ""
+msgstr "C. Befehl ausgeführt"
 
 #: etmain/ui/wm_ftquickmessage.menu:175 etmain/ui/wm_quickmessage.menu:175
 msgid "P. Destroy Primary Objective"
@@ -4440,7 +4440,7 @@ msgstr ""
 
 #: etmain/ui/wm_quickmessageAlt.menu:173
 msgid "2. Command Declined"
-msgstr ""
+msgstr "2. Befehl abgelehnt"
 
 #: src/cgame/cg_consolecmds.c:362 src/cgame/cg_consolecmds.c:400
 #: src/cgame/cg_consolecmds.c:436
@@ -4483,7 +4483,7 @@ msgstr "Niemals"
 #: src/cgame/cg_debriefing.c:1341
 #, c-format
 msgid "%d maps ago"
-msgstr ""
+msgstr "vor %d Karten"
 
 #: src/cgame/cg_debriefing.c:1347
 #, c-format
