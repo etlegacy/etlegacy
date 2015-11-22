@@ -37,6 +37,8 @@
  *        - implement loading from disk (if there is any file, if not prepare first start)
  *        - implement version system & auto updates
  *        - ...
+ *
+ *        Tutorial: http://zetcode.com/db/sqlitec/
  */
 
 #include "../qcommon/q_shared.h"
@@ -44,28 +46,110 @@
 
 #include <sqlite3.h>
 
-sqlite3      *db; // memory database
-// sqlite3_stmt *stmt;
+sqlite3 *db;      // our memory database
+char    *dbname = "test.db"; // FIXME: URL of database ... CVAR?
 
-int init(char *dbname)
+int DB_Init()
 {
-	// FIXME: replace this with loadOrSaveDb
-	int result = sqlite3_open(dbname, &db);
+	int result;
 
-	if (result != SQLITE_OK)
+	Com_Printf("SQLite3 database %s init - libversion %s\n", dbname, sqlite3_libversion());
+
+	if (FS_SV_FileExists(dbname)) // FIXME
 	{
-		Com_Printf("Failed to open database %s\n", sqlite3_errstr(result));
-		sqlite3_close(db);
-		return 1;
+		result = DB_LoadOrSaveDb(db, dbname, 0);
+
+		if (result != SQLITE_OK)
+		{
+			Com_Printf("SQLite3 WARNING can't load database file %s\n", dbname); // how to deal with this?
+			return 1;
+		}
+
+		// FIXME: check for updates ...if version is behind current version update the db ...
 	}
-	Com_Printf("DB %s init\n", dbname);
+	else
+	{
+		Com_Printf("SQLite3 no database %s found ... creating now\n", dbname);
+		result = DB_Create();
+
+		if (result != SQLITE_OK)
+		{
+			Com_Printf("SQLite3 WARNING can't create memory database\n"); // how to deal with this?
+			return 1;
+		}
+
+		// save db
+		result = DB_LoadOrSaveDb(db, dbname, 1);
+
+		if (result != SQLITE_OK)
+		{
+			Com_Printf("SQLite3 WARNING can't save memory database file\n"); // how to deal with this?
+			return 1;
+		}
+	}
 
 	return 0;
 }
 
-int close()
+int DB_Create_Scheme()
+{
+	int          result;
+	sqlite3_stmt *res;
+	char         *err_msg = 0;
+
+	// CREATE TABLES & POPULATE
+
+	// version
+	char *sql = "DROP TABLE IF EXISTS ETL_VERSION;"
+	            "CREATE TABLE ETL_VERSION (Id INT, name TEXT, sql TEXT, created TEXT);"
+	            "INSERT INTO ETL_VERSION VALUES (1, 'ET: L DBMS', '', CURRENT_TIMESTAMP);"; // FIXME: separate version inserts for updates ...
+
+	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
+
+	if (result != SQLITE_OK)
+	{
+		Com_Printf("SQLite3 failed to create table version: %s\n", err_msg);
+		return 1;
+	}
+
+	// session - server side tracking of players, client side tracking of online games
+	// ban ?!
+	// server - store available maps, uptime & such
+	// favourite?!
+	// ...
+
+	return 0;
+}
+
+int DB_Create()
+{
+	int result;
+
+	result = sqlite3_open(":memory:", &db);
+
+	if (result != SQLITE_OK)
+	{
+		Com_Printf("SQLite3 failed to open memory database - error: %s\n", sqlite3_errstr(result));
+		(void) sqlite3_close(db);
+		return 1;
+	}
+
+	DB_Create_Scheme();
+
+	Com_Printf("SQLite3 database %s created\n", dbname);
+	return 0;
+}
+
+
+int DB_Close()
 {
 	int result = sqlite3_close(db);
+
+	if (result != SQLITE_OK)
+	{
+		Com_Printf("SQLite3 failed to close database.\n");
+		return 1;
+	}
 
 	Com_Printf("SQLite3 database closed.\n");
 	return 0;
@@ -92,7 +176,7 @@ int close()
  * If the backup process is successfully completed, SQLITE_OK is returned.
  * Otherwise, if an error occurs, an SQLite error code is returned.
  */
-int backupDb(const char *zFilename, void (*xProgress)(int, int)) // Progress function to invoke
+int DB_BackupDB(const char *zFilename, void (*xProgress)(int, int)) // Progress function to invoke
 {
 	int            rc;        // Function return code
 	sqlite3        *pFile;    // Database connection opened on zFilename
@@ -102,12 +186,10 @@ int backupDb(const char *zFilename, void (*xProgress)(int, int)) // Progress fun
 	rc = sqlite3_open(zFilename, &pFile);
 	if (rc == SQLITE_OK)
 	{
-
 		// Open the sqlite3_backup object used to accomplish the transfer
 		pBackup = sqlite3_backup_init(pFile, "main", db, "main");
 		if (pBackup)
 		{
-
 			// Each iteration of this loop copies 5 database pages from database
 			// pDb to the backup database. If the return value of backup_step()
 			// indicates that there are still further pages to copy, sleep for
@@ -115,10 +197,7 @@ int backupDb(const char *zFilename, void (*xProgress)(int, int)) // Progress fun
 			do
 			{
 				rc = sqlite3_backup_step(pBackup, 5);
-				xProgress(
-				    sqlite3_backup_remaining(pBackup),
-				    sqlite3_backup_pagecount(pBackup)
-				    );
+				xProgress(sqlite3_backup_remaining(pBackup), sqlite3_backup_pagecount(pBackup));
 				if (rc == SQLITE_OK || rc == SQLITE_BUSY || rc == SQLITE_LOCKED)
 				{
 					sqlite3_sleep(250);
@@ -127,13 +206,13 @@ int backupDb(const char *zFilename, void (*xProgress)(int, int)) // Progress fun
 			while (rc == SQLITE_OK || rc == SQLITE_BUSY || rc == SQLITE_LOCKED);
 
 			// Release resources allocated by backup_init().
-			(void)sqlite3_backup_finish(pBackup);
+			(void) sqlite3_backup_finish(pBackup);
 		}
 		rc = sqlite3_errcode(pFile);
 	}
 
 	// Close the database connection opened on database file zFilename and return the result of this function.
-	(void)sqlite3_close(pFile);
+	(void) sqlite3_close(pFile);
 	return rc;
 }
 
@@ -154,7 +233,7 @@ int backupDb(const char *zFilename, void (*xProgress)(int, int)) // Progress fun
  * If the operation is successful, SQLITE_OK is returned. Otherwise, if
  * an error occurs, an SQLite error code is returned.
  */
-int loadOrSaveDb(sqlite3 *pInMemory, const char *zFilename, int isSave)
+int DB_LoadOrSaveDb(sqlite3 *pInMemory, const char *zFilename, int isSave)
 {
 	int            rc;      // Function return code
 	sqlite3        *pFile;  // Database connection opened on zFilename
@@ -188,8 +267,8 @@ int loadOrSaveDb(sqlite3 *pInMemory, const char *zFilename, int isSave)
 		pBackup = sqlite3_backup_init(pTo, "main", pFrom, "main");
 		if (pBackup)
 		{
-			(void)sqlite3_backup_step(pBackup, -1);
-			(void)sqlite3_backup_finish(pBackup);
+			(void) sqlite3_backup_step(pBackup, -1);
+			(void) sqlite3_backup_finish(pBackup);
 		}
 		rc = sqlite3_errcode(pTo);
 	}

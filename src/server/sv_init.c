@@ -38,6 +38,11 @@
 #include "sv_tracker.h"
 #endif
 
+#ifdef FEATURE_DBMS
+#include "../db/db_sql.h"
+#endif
+
+
 // Attack log file is started when server is init (!= sv_running 1!)
 // we even log attacks when the server is waiting for rcon and doesn't run a map
 int attHandle = 0; // server attack log file handle
@@ -1148,6 +1153,12 @@ void SV_Init(void)
 
 #ifdef FEATURE_TRACKER
 	Tracker_Init();
+#endif
+
+#ifdef FEATURE_DBMS
+	DB_Init();
+
+	DB_Close(); // FIXME
 #endif
 }
 

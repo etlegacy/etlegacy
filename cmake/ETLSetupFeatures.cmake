@@ -203,6 +203,27 @@ if(BUILD_CLIENT OR BUILD_SERVER)
 		set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/dl_main_stubs.c")
 		set(SERVER_SRC ${SERVER_SRC} "src/qcommon/dl_main_stubs.c")
 	endif(FEATURE_CURL)
+	
+	if(FEATURE_DBMS)
+		if(NOT BUNDLED_SQLITE3)
+			find_package(SQLite3 REQUIRED)
+			list(APPEND CLIENT_LIBRARIES ${SQLITE3_LIBRARY})
+			list(APPEND SERVER_LIBRARIES ${SQLITE3_LIBRARY})
+			include_directories(SYSTEM ${SQLITE3_INCLUDE_DIR})
+		else() # BUNDLED_SQLITE3
+			list(APPEND CLIENT_LIBRARIES ${SQLITE3_BUNDLED_LIBRARIES})
+			list(APPEND SERVER_LIBRARIES ${SQLITE3_BUNDLED_LIBRARIES})
+			include_directories(SYSTEM ${SQLITE3_BUNDLED_INCLUDE_DIR})
+		endif()
+		add_definitions(-DFEATURE_DBMS)
+		FILE(GLOB DBMS_SRC
+			"src/db/db_sql.h"
+			"src/db/db_sqlite3.c"
+		)
+		set(CLIENT_SRC ${CLIENT_SRC} ${DBMS_SRC})
+		set(SERVER_SRC ${SERVER_SRC} ${DBMS_SRC})
+	endif(FEATURE_DBMS)
+	
 endif()
 
 #-----------------------------------------------------------------
@@ -258,19 +279,4 @@ if(FEATURE_CURSES)
 	add_definitions(-DFEATURE_CURSES)
 endif(FEATURE_CURSES)
 
-if(FEATURE_DBMS)
-	if(NOT BUNDLED_SQLITE3)
-		find_package(SQLite3 REQUIRED)
-		list(APPEND SERVER_LIBRARIES ${SQLITE3_LIBRARY})
-		include_directories(SYSTEM ${SQLITE3_INCLUDE_DIR})
-	else() # BUNDLED_SQLITE3
-		list(APPEND SERVER_LIBRARIES ${SQLITE3_BUNDLED_LIBRARIES})
-		include_directories(SYSTEM ${SQLITE3_BUNDLED_INCLUDE_DIR})
-	endif()
-	add_definitions(-DFEATURE_DBMS)
-	FILE(GLOB DBMS_SRC
-		"src/db/db_sql.h"
-		"src/db/db_sqlite3.c"
-	)
-	set(SERVER_SRC ${SERVER_SRC} ${DBMS_SRC})
-endif(FEATURE_DBMS)
+

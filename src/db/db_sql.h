@@ -36,7 +36,9 @@
 #ifndef INCLUDE_DB_SQL_H
 #define INCLUDE_DB_SQL_H
 
-int init(char *dbname);
-int close();
+#define ETL_DBMS_VERSION 1
+
+int DB_Init(void);
+int DB_Close(void);
 
 #endif // INCLUDE_DB_SQL_H
