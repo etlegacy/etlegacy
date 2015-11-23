@@ -589,7 +589,7 @@ typedef struct
 
 	float xadjust;           // for wide aspect screens
 
-	float displayFrac;       // aproaches finalFrac at scr_conspeed
+	float displayFrac;       // aproaches finalFrac at con_openspeed
 	float finalFrac;         // 0.0 to 1.0 lines of console to display
 	float desiredFrac;       // for variable console heights
 

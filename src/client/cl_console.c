@@ -44,7 +44,7 @@ int g_console_field_width = DEFAULT_CONSOLE_WIDTH;
 
 console_t con;
 
-cvar_t *con_conspeed;
+cvar_t *con_openspeed;
 cvar_t *con_autoclear;
 
 vec4_t console_highlightcolor = { 0.5, 0.5, 0.2, 0.45 };
@@ -290,7 +290,7 @@ void Con_Init(void)
 {
 	int i;
 
-	con_conspeed  = Cvar_Get("scr_conspeed", "3", 0);
+	con_openspeed = Cvar_Get("con_openspeed", "3", 0);
 	con_autoclear = Cvar_Get("con_autoclear", "1", CVAR_ARCHIVE);
 
 	Field_Clear(&g_consoleField);
@@ -718,7 +718,7 @@ void Con_RunConsole(void)
 	// scroll towards the destination height
 	if (con.finalFrac < con.displayFrac)
 	{
-		con.displayFrac -= con_conspeed->value * cls.realFrametime * 0.001;
+		con.displayFrac -= con_openspeed->value * cls.realFrametime * 0.001;
 
 		if (con.finalFrac > con.displayFrac)
 		{
@@ -727,7 +727,7 @@ void Con_RunConsole(void)
 	}
 	else if (con.finalFrac > con.displayFrac)
 	{
-		con.displayFrac += con_conspeed->value * cls.realFrametime * 0.001;
+		con.displayFrac += con_openspeed->value * cls.realFrametime * 0.001;
 
 		if (con.finalFrac < con.displayFrac)
 		{
@@ -739,7 +739,7 @@ void Con_RunConsole(void)
 	if (con.displayFrac > 0)
 	{
 		const float scrolldiff   = MAX(0.5f, abs(con.bottomDisplayedLine - con.scrollIndex));
-		int         nudgingValue = con_conspeed->value * cls.realFrametime * 0.005 * scrolldiff;
+		int         nudgingValue = con_openspeed->value * cls.realFrametime * 0.005 * scrolldiff;
 
 		// nudge might turn out to be 0 so just bump it to 1 so we actually move towards our goal
 		if (nudgingValue <= 0)
