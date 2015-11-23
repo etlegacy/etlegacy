@@ -38,6 +38,9 @@
 
 #define ETL_DBMS_VERSION 1
 
+//extern cvar_t *db_mode;
+//extern cvar_t *db_url;
+
 int DB_Init(void);
 int DB_Close(void);
 

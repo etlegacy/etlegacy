@@ -46,22 +46,39 @@
 
 #include <sqlite3.h>
 
-sqlite3 *db;      // our memory database
-char    *dbname = "test.db"; // FIXME: URL of database ... CVAR?
+cvar_t *db_mode; // 0 - disabled, 1 - sqlite3 memory db, 2 - sqlite3 file db
+cvar_t *db_url;
+
+sqlite3 *db;      // our sqlite3 database
 
 int DB_Init()
 {
 	int result;
 
-	Com_Printf("SQLite3 database %s init - libversion %s\n", dbname, sqlite3_libversion());
+	db_mode = Cvar_Get("db_mode", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	db_url  = Cvar_Get("db_url", "etl.db", CVAR_ARCHIVE | CVAR_LATCH);
 
-	if (FS_SV_FileExists(dbname)) // FIXME
+	if (!db_url->string[0])
 	{
-		result = DB_LoadOrSaveDb(db, dbname, 0);
+		Com_Printf("SQLite3 can't init database - empty url\n");
+		return 1;
+	}
+
+	if (db_mode->integer < 1 || db_mode->integer > 2)
+	{
+		Com_Printf("SQLite3 DBMS disabled\n");
+		return 1;
+	}
+
+	Com_Printf("SQLite3 database %s init - libversion %s\n", db_url->string, sqlite3_libversion());
+
+	if (FS_SV_FileExists(db_url->string)) // FIXME
+	{
+		result = DB_LoadOrSaveDb(db, db_url->string, 0);
 
 		if (result != SQLITE_OK)
 		{
-			Com_Printf("SQLite3 WARNING can't load database file %s\n", dbname); // how to deal with this?
+			Com_Printf("SQLite3 WARNING can't load database file %s\n", db_url->string); // how to deal with this?
 			return 1;
 		}
 
@@ -69,7 +86,7 @@ int DB_Init()
 	}
 	else
 	{
-		Com_Printf("SQLite3 no database %s found ... creating now\n", dbname);
+		Com_Printf("SQLite3 no database %s found ... creating now\n", db_url->string);
 		result = DB_Create();
 
 		if (result != SQLITE_OK)
@@ -79,7 +96,7 @@ int DB_Init()
 		}
 
 		// save db
-		result = DB_LoadOrSaveDb(db, dbname, 1);
+		result = DB_LoadOrSaveDb(db, db_url->string, 1);
 
 		if (result != SQLITE_OK)
 		{
@@ -91,6 +108,7 @@ int DB_Init()
 	return 0;
 }
 
+// FIXME: split this into client and server DB?!
 int DB_Create_Scheme()
 {
 	int          result;
@@ -98,8 +116,9 @@ int DB_Create_Scheme()
 	char         *err_msg = 0;
 
 	// CREATE TABLES & POPULATE
+	// FIXME: set keys & such for all tables
 
-	// version
+	// version table
 	char *sql = "DROP TABLE IF EXISTS ETL_VERSION;"
 	            "CREATE TABLE ETL_VERSION (Id INT, name TEXT, sql TEXT, created TEXT);"
 	            "INSERT INTO ETL_VERSION VALUES (1, 'ET: L DBMS', '', CURRENT_TIMESTAMP);"; // FIXME: separate version inserts for updates ...
@@ -112,12 +131,50 @@ int DB_Create_Scheme()
 		return 1;
 	}
 
-	// session - server side tracking of players, client side tracking of online games
-	// ban ?!
-	// server - store available maps, uptime & such
-	// favourite?!
-	// ...
+	// ban/mute table (ensure we can also do IP range ban entries)
+	//
+	// type = mute/ban
+	// af = AddressFamily
+	sql = "DROP TABLE IF EXISTS BAN;"
+	      "CREATE TABLE BAN (Id INT, address TEXT, guid TEXT, type INT, reason TEXT, af INT, lenght TEXT, created TEXT, updated TEXT);";
 
+	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
+
+	if (result != SQLITE_OK)
+	{
+		Com_Printf("SQLite3 failed to create table ban: %s\n", err_msg);
+		return 1;
+	}
+
+	// player/client table
+	// FIXME: do we want to track player names as PB did?
+	sql = "DROP TABLE IF EXISTS PLAYER;"
+	      "CREATE TABLE PLAYER (Id INT, name TEXT, guid TEXT, user TEXT, password TEXT, mail TEXT, created TEXT, updated TEXT);";
+
+	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
+
+	if (result != SQLITE_OK)
+	{
+		Com_Printf("SQLite3 failed to create table player: %s\n", err_msg);
+		return 1;
+	}
+
+	// session table - server side tracking of players, client side tracking of games
+	// note: we might drop lenght field (created = start, updated = end of session
+	sql = "DROP TABLE IF EXISTS SESSION;"
+	      "CREATE TABLE SESSION (Id INT, pId, INT, address TEXT, port INT, type INT, duration TEXT, map TEXT, lenght TEXT, created TEXT, updated TEXT);";
+
+	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
+
+	if (result != SQLITE_OK)
+	{
+		Com_Printf("SQLite3 failed to create table session: %s\n", err_msg);
+		return 1;
+	}
+
+	// FIXME:
+	// add server table - store available maps, uptime & such
+	// add favourite table ?! (client)
 	return 0;
 }
 
@@ -126,6 +183,7 @@ int DB_Create()
 	int result;
 
 	result = sqlite3_open(":memory:", &db);
+	// FIXME: set name of DB
 
 	if (result != SQLITE_OK)
 	{
@@ -136,10 +194,9 @@ int DB_Create()
 
 	DB_Create_Scheme();
 
-	Com_Printf("SQLite3 database %s created\n", dbname);
+	Com_Printf("SQLite3 database %s created\n", db_url->string);
 	return 0;
 }
-
 
 int DB_Close()
 {
