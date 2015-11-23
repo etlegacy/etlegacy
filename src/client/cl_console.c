@@ -107,7 +107,7 @@ void Con_Clear_f(void)
 
 	con.totalLines = 0;
 
-	Con_Bottom();
+	Con_ScrollBottom();
 }
 
 /**
@@ -790,14 +790,12 @@ static void Con_CheckLimits(void)
 	}
 }
 
-
 /**
  * @brief Page up
  */
 void Con_PageUp(void)
 {
-	con.scrollIndex -= con.visibleLines / 2;
-	Con_CheckLimits();
+	Con_ScrollUp(con.visibleLines / 2);
 }
 
 /**
@@ -805,14 +803,31 @@ void Con_PageUp(void)
  */
 void Con_PageDown(void)
 {
-	con.scrollIndex += con.visibleLines / 2;
+	Con_ScrollDown(con.visibleLines / 2);
+}
+
+/**
+ * @brief Scroll up
+ */
+void Con_ScrollUp(int lines)
+{
+	con.scrollIndex -= lines;
+	Con_CheckLimits();
+}
+
+/**
+ * @brief Scroll down
+ */
+void Con_ScrollDown(int lines)
+{
+	con.scrollIndex += lines;
 	Con_CheckLimits();
 }
 
 /**
  * @brief Scroll to top
  */
-void Con_Top(void)
+void Con_ScrollTop(void)
 {
 	con.scrollIndex = con.current - con.totalLines + con.visibleLines;
 	Con_CheckLimits();
@@ -821,7 +836,7 @@ void Con_Top(void)
 /**
  * @brief Scroll to bottom
  */
-void Con_Bottom(void)
+void Con_ScrollBottom(void)
 {
 	con.scrollIndex = con.current;
 	Con_CheckLimits();

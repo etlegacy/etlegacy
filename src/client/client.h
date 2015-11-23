@@ -624,8 +624,10 @@ void Con_RunConsole(void);
 
 void Con_PageUp(void);
 void Con_PageDown(void);
-void Con_Top(void);
-void Con_Bottom(void);
+void Con_ScrollUp(int lines);
+void Con_ScrollDown(int lines);
+void Con_ScrollTop(void);
+void Con_ScrollBottom(void);
 void Con_Close(void);
 
 // cl_scrn.c

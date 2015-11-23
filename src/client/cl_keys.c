@@ -694,24 +694,28 @@ void Console_Key(int key)
 		return;
 	}
 
-	if (key == K_MWHEELUP)       // added some mousewheel functionality to the console
+	if (key == K_MWHEELUP)           // added some mousewheel functionality to the console
 	{
-		Con_PageUp();
-		if (keys[K_CTRL].down)     // hold <ctrl> to accelerate scrolling
+		if (keys[K_CTRL].down)       // hold <ctrl> to accelerate scrolling
 		{
-			Con_PageUp();
-			Con_PageUp();
+			Con_ScrollUp(con.visibleLines);
+		}
+		else
+		{
+			Con_ScrollUp(con.visibleLines / 4);
 		}
 		return;
 	}
 
-	if (key == K_MWHEELDOWN)     // added some mousewheel functionality to the console
+	if (key == K_MWHEELDOWN)         // added some mousewheel functionality to the console
 	{
-		Con_PageDown();
-		if (keys[K_CTRL].down)     // hold <ctrl> to accelerate scrolling
+		if (keys[K_CTRL].down)       // hold <ctrl> to accelerate scrolling
 		{
-			Con_PageDown();
-			Con_PageDown();
+			Con_ScrollDown(con.visibleLines);
+		}
+		else
+		{
+			Con_ScrollDown(con.visibleLines / 4);
 		}
 		return;
 	}
@@ -719,14 +723,14 @@ void Console_Key(int key)
 	// ctrl-home = top of console
 	if ((key == K_HOME || key == K_KP_HOME) && keys[K_CTRL].down)
 	{
-		Con_Top();
+		Con_ScrollTop();
 		return;
 	}
 
 	// ctrl-end = bottom of console
 	if ((key == K_END || key == K_KP_END) && keys[K_CTRL].down)
 	{
-		Con_Bottom();
+		Con_ScrollBottom();
 		return;
 	}
 
