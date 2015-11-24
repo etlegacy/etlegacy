@@ -7000,3 +7000,9 @@ msgstr ""
 #: etmain/ui/options_system.menu:48
 msgid "Set the system sound control"
 msgstr ""
+
+msgid "No can do!"
+msgstr ""
+
+msgid "Right away!"
+msgstr ""
