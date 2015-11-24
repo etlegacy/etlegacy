@@ -169,12 +169,13 @@ QM_MENU_END
 
 QM_MENU_START( "wm_ftquickobjectives_alt" )
 
-	QM_MENU_ITEM_TEAM( _("1. Command Acknowledged"),		exec "VoiceFireteamChat CommandAcknowledged"; 		close wm_ftquickobjectives_alt, 	"1", 0 )
-	QM_MENU_ITEM_TEAM( _("3. Command Completed"),			exec "VoiceFireteamChat CommandCompleted";			close wm_ftquickobjectives_alt, 	"3", 2 )
+	QM_MENU_ITEM_TEAM( _("1. Command Acknowledged"),		exec "VoiceFireteamChat CommandAcknowledged"; 		close wm_ftquickobjectives_alt, "1", 0 )
+	QM_MENU_ITEM_TEAM( _("2. Command Declined"),			exec "VoiceFireteamChat CommandDeclined";			close wm_ftquickobjectives_alt,	"2", 1 )
+	QM_MENU_ITEM_TEAM( _("3. Command Completed"),			exec "VoiceFireteamChat CommandCompleted";			close wm_ftquickobjectives_alt, "3", 2 )
 	QM_MENU_ITEM_TEAM( _("4. Destroy Primary Objective"),	exec "VoiceFireteamChat DestroyPrimary"; 			close wm_ftquickobjectives_alt,	"4", 3 )
 	QM_MENU_ITEM_TEAM( _("5. Destroy Secondary Objective"),	exec "VoiceFireteamChat DestroySecondary";			close wm_ftquickobjectives_alt,	"5", 4 )
 	QM_MENU_ITEM_TEAM( _("6. Destroy Construction"),		exec "VoiceFireteamChat DestroyConstruction";		close wm_ftquickobjectives_alt,	"6", 5 )
-	QM_MENU_ITEM_TEAM( _("7. Commencing Construction"),		exec "VoiceFireteamChat ConstructionCommencing";	close wm_ftquickobjectives_alt, 	"7", 6 )
+	QM_MENU_ITEM_TEAM( _("7. Commencing Construction"),		exec "VoiceFireteamChat ConstructionCommencing";	close wm_ftquickobjectives_alt, "7", 6 )
 	QM_MENU_ITEM_TEAM( _("8. Repair Vehicle"),				exec "VoiceFireteamChat RepairVehicle";				close wm_ftquickobjectives_alt,	"8", 7 )
 	QM_MENU_ITEM_TEAM( _("9. Disable Vehicle"),				exec "VoiceFireteamChat DestroyVehicle";			close wm_ftquickobjectives_alt,	"9", 8 )
 	QM_MENU_ITEM_TEAM( _("0. Escort Vehicle"),				exec "VoiceFireteamChat EscortVehicle";				close wm_ftquickobjectives_alt,	"0", 9 )
