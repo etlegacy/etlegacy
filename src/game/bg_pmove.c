@@ -2376,7 +2376,7 @@ static void PM_BeginWeaponReload(int weapon)
 	switch (weapon)
 	{
 	// if ((weapon <= WP_NONE || weapon > WP_DYNAMITE) && !(weapon >= WP_KAR98 && weapon < WP_NUM_WEAPONS))
-	// FIXME: case WP_AMMO ?
+	case WP_AMMO:
 	case WP_SMOKETRAIL:
 	case WP_MAPMORTAR:
 	case VERYBIGEXPLOSION:
@@ -4053,7 +4053,7 @@ static void PM_Weapon(void)
 		return;
 	}
 
-	// player is underwater - no fire
+	// player is underwater - no fire FIXME: weapon table nounderwaterfire
 	if (pm->waterlevel == 3)
 	{
 		switch (pm->ps->weapon)
@@ -4775,8 +4775,6 @@ static void PM_Weapon(void)
 	}
 
 	// add the recoil amount to the aimSpreadScale
-	//pm->ps->aimSpreadScale += 3.0*aimSpreadScaleAdd;
-	//if (pm->ps->aimSpreadScale > 255) pm->ps->aimSpreadScale = 255;
 	pm->ps->aimSpreadScaleFloat += 3.0 * aimSpreadScaleAdd;
 	if (pm->ps->aimSpreadScaleFloat > 255)
 	{
