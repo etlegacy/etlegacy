@@ -494,6 +494,32 @@ panel_button_t playerSkillIcon2 =
 
 // =======================
 
+panel_button_t spawnPointText =
+{
+	NULL,
+	"SPAWN",
+	{ 116,                     16, 0, 0 },
+	{ 0,                       0,  0, 0, 0, 0, 0, 0},
+	&spawnLimboFont,           /* font        */
+	NULL,                      /* keyDown  */
+	NULL,                      /* keyUp    */
+	BG_PanelButtonsRender_Text,
+	NULL,
+};
+
+panel_button_t spawnPointButton =
+{
+	NULL,
+	NULL,
+	{ 156,                    5,   15, 15 },
+	{ 0,                      0,   0,  0, 0, 0, 0, 0},
+	NULL,                     /* font     */
+	CG_LimboPanel_SpawnPointButton_KeyDown, /* keyDown  */
+	NULL,                     /* keyUp    */
+	CG_LimboPanel_SpawnPointButton_Draw,
+	NULL,
+};
+
 panel_button_t mapTimeCounter =
 {
 	NULL,
@@ -524,7 +550,7 @@ panel_button_t mapTimeCounterText =
 {
 	NULL,
 	"MISSION TIME",
-	{ 172,                     16, 0, 0 },
+	{ 176,                     16, 0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
 	&spawnLimboFont,           /* font        */
 	NULL,                      /* keyDown  */
@@ -1005,6 +1031,7 @@ panel_button_t *limboPanelButtons[] =
 
 	&respawnCounter,          &respawnCounterText,
 	&mapTimeCounter,          &mapTimeCounter2,           &mapTimeCounterText,
+	&spawnPointText,          &spawnPointButton,
 
 	&playerSkillCounter0,     &playerSkillCounter1,       &playerSkillCounter2,
 	&playerSkillIcon0,        &playerSkillIcon1,          &playerSkillIcon2,
@@ -1038,6 +1065,21 @@ panel_button_t *limboPanelButtons[] =
 	NULL,
 };
 
+qboolean CG_LimboPanel_SpawnPointButton_KeyDown(panel_button_t *button, int key)
+{
+	if (key == K_MOUSE1)
+	{
+		SOUND_SELECT;
+
+		trap_SendClientCommand("setspawnpt 0\n");
+		cgs.ccSelectedSpawnPoint = 0;
+
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
 qboolean CG_LimboPanel_BriefingButton_KeyDown(panel_button_t *button, int key)
 {
 	if (cg_gameType.integer == GT_WOLF_LMS)
@@ -1063,6 +1105,19 @@ qboolean CG_LimboPanel_BriefingButton_KeyDown(panel_button_t *button, int key)
 	}
 
 	return qfalse;
+}
+
+void CG_LimboPanel_SpawnPointButton_Draw(panel_button_t *button)
+{
+	if (CG_LimboPanel_GetSpawnPoint() == 0)
+	{
+		CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, BG_CursorInRect(&button->rect) ? cgs.media.limboBriefingButtonOn : cgs.media.limboBriefingButtonOff);
+	}
+	else
+	{
+		CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, BG_CursorInRect(&button->rect) ? cgs.media.limboBriefingButtonStopOn : cgs.media.limboBriefingButtonStopOff);
+
+	}
 }
 
 void CG_LimboPanel_BriefingButton_Draw(panel_button_t *button)
@@ -3042,6 +3097,11 @@ void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float
 }
 
 // Utility funcs
+int CG_LimboPanel_GetSpawnPoint(void)
+{
+	return cgs.ccSelectedSpawnPoint;
+}
+
 team_t CG_LimboPanel_GetTeam(void)
 {
 	return teamOrder[cgs.ccSelectedTeam];

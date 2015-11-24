@@ -1043,7 +1043,6 @@ typedef struct
 	int spawnTeams_changeTime[MAX_SPAWNPOINTS];
 	int spawnPlayerCounts[MAX_SPAWNPOINTS];
 	int spawnCount;
-	int selectedSpawnPoint;
 
 	cg_string_t aStringPool[MAX_STRINGS];
 	int demohelpWindow;
@@ -1928,6 +1927,7 @@ typedef struct cgs_s
 	mapEntityData_t ccMenuEnt;
 	int ccSelectedLayer;
 	int ccSelectedObjective;
+	int ccSelectedSpawnPoint;
 	int ccSelectedTeam;                     // ( 1 = ALLIES, 0 = AXIS )
 	int ccSelectedWeaponNumber;
 	int ccSelectedClass;
@@ -3055,7 +3055,9 @@ qboolean CG_LimboPanel_MinusButton_KeyDown(panel_button_t *button, int key);
 qboolean CG_LimboPanel_CancelButton_KeyDown(panel_button_t *button, int key);
 qboolean CG_LimboPanel_Filter_KeyDown(panel_button_t *button, int key);
 qboolean CG_LimboPanel_BriefingButton_KeyDown(panel_button_t *button, int key);
+qboolean CG_LimboPanel_SpawnPointButton_KeyDown(panel_button_t *button, int key);
 
+void CG_LimboPanel_SpawnPointButton_Draw(panel_button_t *button);
 void CG_LimboPanel_BriefingButton_Draw(panel_button_t *button);
 void CG_LimboPanel_ClassBar_Draw(panel_button_t *button);
 void CG_LimboPanel_Filter_Draw(panel_button_t *button);
@@ -3084,6 +3086,7 @@ void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float
 void CG_LimboPanel_RequestObjective(void);
 void CG_LimboPanel_RequestWeaponStats(void);
 qboolean CG_LimboPanel_Draw(void);
+int CG_LimboPanel_GetSpawnPoint(void);
 team_t CG_LimboPanel_GetTeam(void);
 team_t CG_LimboPanel_GetRealTeam(void);
 bg_character_t *CG_LimboPanel_GetCharacter(void);

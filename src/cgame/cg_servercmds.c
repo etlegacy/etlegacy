@@ -2658,7 +2658,7 @@ static void CG_ServerCommand(void)
 	}
 	else if (!Q_stricmp(cmd, "setspawnpt"))
 	{
-		cg.selectedSpawnPoint = atoi(CG_Argv(1)) + 1;
+		cgs.ccSelectedSpawnPoint = atoi(CG_Argv(1)) + 1;
 		return;
 	}
 	else if (!strcmp(cmd, "rockandroll"))         // map loaded, game is ready to begin. - FIXME: obsolete?
