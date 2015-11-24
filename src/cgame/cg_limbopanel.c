@@ -497,9 +497,9 @@ panel_button_t playerSkillIcon2 =
 panel_button_t spawnPointText =
 {
 	NULL,
-	"SPAWN",
-	{ 116,                     16, 0, 0 },
-	{ 0,                       0,  0, 0, 0, 0, 0, 0},
+	"AUTOSPAWN",
+	{ 150,                     392, 0, 0 },
+	{ 0,                       0,   0, 0, 0, 0, 0, 0},
 	&spawnLimboFont,           /* font        */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
@@ -511,7 +511,7 @@ panel_button_t spawnPointButton =
 {
 	NULL,
 	NULL,
-	{ 156,                    5,   15, 15 },
+	{ 132,                    381, 15, 15 },
 	{ 0,                      0,   0,  0, 0, 0, 0, 0},
 	NULL,                     /* font     */
 	CG_LimboPanel_SpawnPointButton_KeyDown, /* keyDown  */
@@ -1111,12 +1111,11 @@ void CG_LimboPanel_SpawnPointButton_Draw(panel_button_t *button)
 {
 	if (CG_LimboPanel_GetSpawnPoint() == 0)
 	{
-		CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, BG_CursorInRect(&button->rect) ? cgs.media.limboBriefingButtonOn : cgs.media.limboBriefingButtonOff);
+		CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, BG_CursorInRect(&button->rect) ? cgs.media.limboLight_on2 : cgs.media.limboLight_on);
 	}
 	else
 	{
-		CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, BG_CursorInRect(&button->rect) ? cgs.media.limboBriefingButtonStopOn : cgs.media.limboBriefingButtonStopOff);
-
+		CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.limboLight_off);
 	}
 }
 
