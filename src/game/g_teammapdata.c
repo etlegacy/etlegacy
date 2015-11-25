@@ -346,6 +346,9 @@ qboolean G_VisibleFromBinoculars(gentity_t *viewer, gentity_t *ent, vec3_t origi
 	VectorCopy(viewer->client->ps.origin, vieworg);
 	vieworg[2] += viewer->client->ps.viewheight;
 
+	// check if head is visible
+	origin[2] += ent->client->ps.viewheight;
+
 	if (!G_CullPointAndRadius(origin, 0))
 	{
 		return qfalse;
@@ -387,6 +390,9 @@ qboolean G_VisibleFromBinoculars_Box(gentity_t *viewer, gentity_t *ent, vec3_t o
 
 	VectorCopy(viewer->client->ps.origin, vieworg);
 	vieworg[2] += viewer->client->ps.viewheight;
+
+	// check if head is visible
+	origin[2] += ent->client->ps.viewheight;
 
 	if (!G_CullPointAndRadius(origin, 0))
 	{
