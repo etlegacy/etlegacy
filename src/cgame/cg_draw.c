@@ -1642,7 +1642,7 @@ static void CG_DrawCrosshairNames(void)
 			// identifyClientHealth is sent as unsigned char and negative numbers are not transmitted - see SpectatorThink()
 			// this results in player health values behind max health
 			// adjust dead player health bogus values for the health bar
-			if (playerHealth > 140)
+			if (playerHealth > 156)
 			{
 				playerHealth = 0;
 			}
