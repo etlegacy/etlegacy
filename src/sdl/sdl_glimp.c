@@ -795,6 +795,14 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
  */
 void GLimp_Init(glconfig_t *glConfig, windowContext_t *context)
 {
+	SDL_version compiled;
+	SDL_version linked;
+
+	SDL_VERSION(&compiled);
+	SDL_GetVersion(&linked);
+
+	Com_Printf("SDL build version %d.%d.%d - link version %d.%d.%d.\n", compiled.major, compiled.minor, compiled.patch, linked.major, linked.minor, linked.patch);
+
 	GLimp_InitCvars();
 
 	if (Cvar_VariableIntegerValue("com_abnormalExit"))
