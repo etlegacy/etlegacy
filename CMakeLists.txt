@@ -12,7 +12,6 @@ project(ETLEGACY C CXX)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 include(GetGitRevisionDescription)
 include(CMakeDependentOption)
-find_program(ZIP_EXECUTABLE zip PATHS ${CMAKE_BINARY_DIR})
 
 #-----------------------------------------------------------------
 # Options
@@ -23,8 +22,8 @@ option(BUILD_CLIENT		"Build the client executable"					ON)
 option(BUILD_MOD		"Build the mod libraries"					ON)
 option(RPI			"Build RPI version"						OFF)
 
-cmake_dependent_option(BUILD_MOD_PK3		"Pack the mod libraries into etl_bin.pk3"		ON "ZIP_EXECUTABLE" OFF)
-cmake_dependent_option(BUILD_PAK3_PK3		"Pack updated game scripts into pak3.pk3"		ON "ZIP_EXECUTABLE" OFF)
+option(BUILD_MOD_PK3		"Pack the mod libraries into etl_bin.pk3"			ON)
+option(BUILD_PAK3_PK3		"Pack updated game scripts into pak3.pk3"			ON)
 
 option(BUNDLED_LIBS				"Use all available bundled libraries instead of system libs."	ON)
 cmake_dependent_option(BUNDLED_SDL		"Use bundled SDL library instead of the system one."	ON "BUNDLED_LIBS" OFF)
@@ -35,7 +34,7 @@ cmake_dependent_option(BUNDLED_OGG_VORBIS	"Use bundled OGG library instead of th
 cmake_dependent_option(BUNDLED_THEORA		"Use bundled Theora library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_GLEW		"Use bundled GLEW library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_FREETYPE		"Use bundled Freetype2 library instead of the system one."	ON "BUNDLED_LIBS" OFF)
-cmake_dependent_option(BUNDLED_JANSSON		"Use bundled Jansson library."				OFF "BUNDLED_LIBS" OFF)
+cmake_dependent_option(BUNDLED_JANSSON		"Use bundled Jansson library instead of the system one."	OFF "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_SQLITE3		"Use bundled SQLITE3 library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 
 # no support for 32 bit binaries on OpenBSD/amd64
