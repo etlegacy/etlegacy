@@ -5064,12 +5064,12 @@ msgstr ""
 
 #: src/cgame/cg_popupmessages.c:722
 #, c-format
-msgid "%sSpotted by ^7%s%s at %s"
+msgid "Spotted by %s^7 at %s"
 msgstr ""
 
 #: src/cgame/cg_popupmessages.c:726
 #, c-format
-msgid "%sSpotted by ^7%s"
+msgid "Spotted by %s"
 msgstr ""
 
 #: src/cgame/cg_popupmessages.c:733
