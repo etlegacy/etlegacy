@@ -347,7 +347,10 @@ qboolean G_VisibleFromBinoculars(gentity_t *viewer, gentity_t *ent, vec3_t origi
 	vieworg[2] += viewer->client->ps.viewheight;
 
 	// check if head is visible
-	origin[2] += ent->client->ps.viewheight;
+	if (ent->methodOfDeath != MOD_LANDMINE)
+	{
+		origin[2] += ent->client->ps.viewheight;
+	}
 
 	if (!G_CullPointAndRadius(origin, 0))
 	{
@@ -392,7 +395,10 @@ qboolean G_VisibleFromBinoculars_Box(gentity_t *viewer, gentity_t *ent, vec3_t o
 	vieworg[2] += viewer->client->ps.viewheight;
 
 	// check if head is visible
-	origin[2] += ent->client->ps.viewheight;
+	if (ent->methodOfDeath != MOD_LANDMINE)
+	{
+		origin[2] += ent->client->ps.viewheight;
+	}
 
 	if (!G_CullPointAndRadius(origin, 0))
 	{
