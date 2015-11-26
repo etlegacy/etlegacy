@@ -673,8 +673,6 @@ void CG_DrawPMItemsBig(void)
 	CG_Text_Paint_Ext(Ccg_WideX(SCREEN_WIDTH) - 4 - w, y + 56, fontScale, fontScale, colourText, cg_pmWaitingListBig->message, 0, 0, 0, &cgs.media.limboFont2);
 }
 
-#define TXTCOLOR_OBJ "^O"
-
 const char *CG_GetPMItemText(centity_t *cent)
 {
 	switch (cent->currentState.effect1Time)
@@ -723,13 +721,13 @@ const char *CG_GetPMItemText(centity_t *cent)
 
 			if (!locStr || !*locStr)
 			{
-				return va("%sSpotted by ^7%s", TXTCOLOR_OBJ, cgs.clientinfo[cent->currentState.effect3Time].name);
+				return va("Spotted by %s", cgs.clientinfo[cent->currentState.effect3Time].name);
 			}
-			return va(CG_TranslateString("%sSpotted by ^7%s%s at %s"), TXTCOLOR_OBJ, cgs.clientinfo[cent->currentState.effect3Time].name, TXTCOLOR_OBJ, locStr);
+			return va(CG_TranslateString("Spotted by %s^7 at %s"), cgs.clientinfo[cent->currentState.effect3Time].name, locStr);
 		}
 		else
 		{
-			return va(CG_TranslateString("%sSpotted by ^7%s"), TXTCOLOR_OBJ, cgs.clientinfo[cent->currentState.effect3Time].name);
+			return va(CG_TranslateString("Spotted by %s"), cgs.clientinfo[cent->currentState.effect3Time].name);
 		}
 		break;
 	case PM_OBJECTIVE:
