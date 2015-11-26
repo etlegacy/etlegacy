@@ -3571,7 +3571,7 @@ qboolean Do_Activate2_f(gentity_t *ent, gentity_t *traceEnt)
 	qboolean found = qfalse;
 
 	// Check the class and health state of the player trying to steal the uniform.
-	if (ent->client->sess.playerType == PC_COVERTOPS && !ent->client->ps.powerups[PW_OPS_DISGUISED] && ent->health > 0)
+	if (ent->client->sess.playerType == PC_COVERTOPS && ent->health > 0)
 	{
 		if (!ent->client->ps.powerups[PW_BLUEFLAG] && !ent->client->ps.powerups[PW_REDFLAG])
 		{
