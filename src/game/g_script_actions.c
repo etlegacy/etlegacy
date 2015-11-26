@@ -4594,7 +4594,7 @@ void G_ModifyTOI(gentity_t *ent)
 {
 	char *scorestring;
 	char *customimage;
-	int  cix, cia;
+	int  cix, cia, objflags;
 
 	if (G_SpawnString("customimage", "", &customimage))
 	{
@@ -4626,6 +4626,11 @@ void G_ModifyTOI(gentity_t *ent)
 	}
 
 	G_SetConfigStringValue(CS_OID_DATA + ent->s.teamNum, "e", va("%i", (int)(ent - g_entities)));
+
+	if (G_SpawnInt("objflags", "0", &objflags))
+	{
+		G_SetConfigStringValue(CS_OID_DATA + ent->s.teamNum, "o", va("%i", objflags));
+	}
 
 	if (cix)
 	{
