@@ -960,7 +960,7 @@ void G_SendMapEntityInfo(gentity_t *e)
 	mEnt = teamList->activeMapEntityData.next;
 	while (mEnt && mEnt != &teamList->activeMapEntityData)
 	{
-		if (level.time - mEnt->startTime > 5000)
+		if (level.time - mEnt->startTime > 1000)
 		{
 			mEnt->status = 1;
 			// we can free this player from the list now
@@ -1028,7 +1028,7 @@ void G_CheckSpottedLandMines(void)
 	int       i, j;
 	gentity_t *ent, *ent2;
 
-	if (level.time - level.lastMapSpottedMinesUpdate < 500)
+	if (level.time - level.lastMapSpottedMinesUpdate < 1000)
 	{
 		return;
 	}
