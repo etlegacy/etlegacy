@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-11-24 20:10+0000\n"
+"PO-Revision-Date: 2015-11-26 11:53+0000\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Portuguese (http://www.transifex.com/etlegacy/etlegacy/language/pt/)\n"
 "MIME-Version: 1.0\n"
@@ -5069,12 +5069,12 @@ msgstr ""
 
 #: src/cgame/cg_popupmessages.c:722
 #, c-format
-msgid "%sSpotted by ^7%s%s at %s"
+msgid "Spotted by %s^7 at %s"
 msgstr ""
 
 #: src/cgame/cg_popupmessages.c:726
 #, c-format
-msgid "%sSpotted by ^7%s"
+msgid "Spotted by %s"
 msgstr ""
 
 #: src/cgame/cg_popupmessages.c:733
