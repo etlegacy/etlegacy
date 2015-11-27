@@ -964,7 +964,7 @@ void G_SendMapEntityInfo(gentity_t *e)
 		{
 			mEnt->status = 1;
 			// we can free this player from the list now
-			if (mEnt->type == ME_PLAYER)
+			if (mEnt->type == ME_PLAYER || mEnt->type == ME_PLAYER_OBJECTIVE)
 			{
 				mEnt = G_FreeMapEntityData(teamList, mEnt);
 				continue;
