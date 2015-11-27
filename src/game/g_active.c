@@ -1281,7 +1281,7 @@ void ClientThink_real(gentity_t *ent)
 		return;
 	}
 
-	if (!(ent->r.svFlags & SVF_BOT) && level.time - client->pers.lastCCPulseTime > 2000)
+	if (!(ent->r.svFlags & SVF_BOT) && level.time - client->pers.lastCCPulseTime > 1000)
 	{
 		G_SendMapEntityInfo(ent);
 		client->pers.lastCCPulseTime = level.time;
