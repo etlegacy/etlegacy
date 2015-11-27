@@ -1958,12 +1958,12 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 
 	if (fFull)
 	{
-		txt_dump(CG_TranslateString("^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n"));
+		txt_dump(CG_TranslateString("^7Weapon     Acrcy Hits/Shts Kills Deaths Headshots\n"));
 		txt_dump("^7-------------------------------------------------\n");
 	}
 	else
 	{
-		txt_dump(CG_TranslateString("^7Weapon     Acrcy Hits/Atts Kll Dth HS\n"));
+		txt_dump(CG_TranslateString("^7Weapon     Acrcy Hits/Shts Kll Dth HS\n"));
 		//txt_dump(     "^7-------------------------------------\n");
 		txt_dump("\n");
 	}
@@ -2144,12 +2144,12 @@ void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (char *))
 	txt_dump(va("^2%s Match Accuracies:\n", (doTop) ? "BEST" : "WORST"));
 	if (fFull)
 	{
-		txt_dump("\n^3WP   Acrcy Hits/Atts Kills Deaths\n");
+		txt_dump("\n^3WP   Acrcy Hits/Shts Kills Deaths\n");
 		txt_dump("-------------------------------------------------------------\n");
 	}
 	else
 	{
-		txt_dump("^3WP   Acrcy Hits/Atts Kll Dth\n");
+		txt_dump("^3WP   Acrcy Hits/Shts Kll Dth\n");
 		//  txt_dump(    "-------------------------------------------\n");
 		txt_dump("\n");
 	}
@@ -2194,7 +2194,7 @@ void CG_parseTopShotsStats_cmd(qboolean doTop, void (txt_dump) (char *))
 	txt_dump(va("Weapon accuracies for: ^3%s\n",
 	            (iWeap >= WS_KNIFE && iWeap < WS_MAX) ? aWeaponInfo[iWeap].pszName : "UNKNOWN"));
 
-	txt_dump("\n^3  Acc Hits/Atts Kills Deaths\n");
+	txt_dump("\n^3  Acc Hits/Shts Kills Deaths\n");
 	txt_dump("----------------------------------------------------------\n");
 
 	if (!cClients)
