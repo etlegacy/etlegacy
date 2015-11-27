@@ -182,11 +182,12 @@ void CG_DemoControlButtonRender(panel_button_t *button)
 	{
 		float  demoStatus = ((float)(cg.time - cg.demoinfo->firstTime)) / (cg.demoinfo->lastTime - cg.demoinfo->firstTime);
 		vec4_t barColor;
+
 		Vector4Copy(colorGreen, barColor);
 		barColor[3] = button->font->colour[3];
 
 		//borderColor
-		CG_FilledBar(button->rect.x, button->rect.y, button->rect.w, button->rect.h, barColor, NULL, color_border1, demoStatus, BAR_BORDER);
+		CG_FilledBar(button->rect.x, button->rect.y, button->rect.w, button->rect.h, barColor, NULL, color_border1, demoStatus, BAR_BG);
 	}
 }
 
@@ -1511,7 +1512,7 @@ void CG_DemoHelpDraw(void)
 		    (cg.mvTotalClients > 1) ? 12 :
 #endif
 		    0);
-		x = Ccg_WideX(SCREEN_WIDTH) + DH_X - w;
+		x = Ccg_WideX(SCREEN_WIDTH) + 3 * DH_X - w;
 		h = tSpacing + 9 +
 		    tSpacing * (2 +
 #ifdef FEATURE_MULTIVIEW
@@ -1553,7 +1554,7 @@ void CG_DemoHelpDraw(void)
 
 		if (cg.legacyClient && cg.demoinfo)
 		{
-			CG_DrawDemoControls(x, y - 60, w, borderColor, bgColor, tSpacing, bgColorTitle, borderColorTitle, hScale, hScaleY, hdrColor2, hStyle, hFont);
+			CG_DrawDemoControls(x, y - 62, w, borderColor, bgColor, tSpacing, bgColorTitle, borderColorTitle, hScale, hScaleY, hdrColor2, hStyle, hFont);
 			y += 10;
 		}
 
