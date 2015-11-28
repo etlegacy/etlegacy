@@ -1993,10 +1993,13 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 				Q_strncpyz(strName, va("^3%-9s: ", aWeaponInfo[i].pszName), sizeof(strName));
 				if (atts > 0 || hits > 0)
 				{
+					float acc = (atts == 0) ? 0.0 : (float)(hits * 100.0 / (float)atts);
 					fHasStats = qtrue;
-					Q_strcat(strName, sizeof(strName), va("^7%5.1f ^5%4d/%-4d ",
-					                                      ((atts == 0) ? 0.0 : (float)(hits * 100.0 / (float)atts)),
-					                                      hits, atts));
+
+					// cap stats at 100%
+					acc = (acc > 100.0f) ? 100.0f : acc;
+
+					Q_strcat(strName, sizeof(strName), va("^7%5.1f ^5%4d/%-4d ", acc, hits, atts));
 				}
 				else
 				{
@@ -2030,7 +2033,7 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 			float htRatio = (totShots == 0) ? 0.0 : (float)(totHits * 100.0 / (float)totShots);
 			float hsRatio = (totHits == 0) ? 0.0 : (float)(totHeadshots * 100.0 / (float)totHits);
 
-			// cap stats at 100% (for flamethrower)
+			// cap stats at 100%
 			htRatio = (htRatio > 100.0f) ? 100.0f : htRatio;
 
 			if (!fFull)
