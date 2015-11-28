@@ -1157,8 +1157,6 @@ void SV_Init(void)
 
 #ifdef FEATURE_DBMS
 	DB_Init();
-
-	DB_Close(); // FIXME
 #endif
 }
 
@@ -1212,6 +1210,10 @@ void SV_Shutdown(char *finalmsg)
 {
 	// close attack log
 	SV_CloseAttackLog();
+
+#ifdef FEATURE_DBMS
+	DB_Close();
+#endif
 
 	if (!com_sv_running || !com_sv_running->integer)
 	{

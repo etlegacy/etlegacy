@@ -39,6 +39,10 @@
 
 #include <time.h>
 
+#ifdef FEATURE_DBMS
+#include "../db/db_sql.h"
+#endif
+
 static time_t uptimeSince;
 
 /*
@@ -756,6 +760,10 @@ void SV_AddOperatorCommands(void)
 	{
 		Cmd_AddCommand("say", SV_ConSay_f);
 	}
+
+#ifdef FEATURE_DBMS
+	Cmd_AddCommand("sql", DB_ExecSQLCommand_f);
+#endif
 
 	Cmd_AddCommand("uptime", SV_Uptime_f);
 

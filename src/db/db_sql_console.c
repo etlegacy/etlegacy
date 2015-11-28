@@ -29,27 +29,39 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  */
 /**
- * @file db_sql.h
- * @brief ET: Legacy SQL interface
+ * @file db_sql_console.c
+ * @brief ET: SQL command line interface
  */
 
-#ifndef INCLUDE_DB_SQL_H
-#define INCLUDE_DB_SQL_H
+#include "db_sql.h"
 
-#include <sqlite3.h>
+void DB_ExecSQLCommand_f(void)
+{
+	int  result;
+	char *cmd;
+	char *sql;
+	char *err_msg = 0;
 
-#define ETL_DBMS_VERSION 1
+	cmd = Cmd_Argv(0);
+	sql = Cmd_Args();
 
-//extern cvar_t *db_mode;
-//extern cvar_t *db_url;
+	if (!sql || !sql[0])
+	{
+		Com_Printf("Usage: %s <sql statement>\n", cmd);
+		return;
+	}
 
-extern sqlite3 *db;
+	// output
+	Com_Printf("sql: '%s'\n", sql);
 
-int DB_Init(void);
-int DB_Close(void);
+	result = sqlite3_exec(db, sql, callback, 0, &err_msg);
 
-int callback(void *, int, char **, char **);
+	if (result != SQLITE_OK)
+	{
+		Com_Printf("sql command failed: %s\n", err_msg);
+		sqlite3_free(err_msg);
+		return;
+	}
 
-void DB_ExecSQLCommand_f(void);
-
-#endif // INCLUDE_DB_SQL_H
+	return;
+}

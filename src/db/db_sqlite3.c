@@ -44,8 +44,6 @@
 #include "../qcommon/q_shared.h"
 #include "db_sql.h"
 
-#include <sqlite3.h>
-
 cvar_t *db_mode; // 0 - disabled, 1 - sqlite3 memory db, 2 - sqlite3 file db
 cvar_t *db_url;
 
@@ -128,6 +126,7 @@ int DB_Create_Scheme()
 	if (result != SQLITE_OK)
 	{
 		Com_Printf("SQLite3 failed to create table version: %s\n", err_msg);
+		sqlite3_free(err_msg);
 		return 1;
 	}
 
@@ -143,6 +142,7 @@ int DB_Create_Scheme()
 	if (result != SQLITE_OK)
 	{
 		Com_Printf("SQLite3 failed to create table ban: %s\n", err_msg);
+		sqlite3_free(err_msg);
 		return 1;
 	}
 
@@ -156,6 +156,7 @@ int DB_Create_Scheme()
 	if (result != SQLITE_OK)
 	{
 		Com_Printf("SQLite3 failed to create table player: %s\n", err_msg);
+		sqlite3_free(err_msg);
 		return 1;
 	}
 
@@ -169,6 +170,7 @@ int DB_Create_Scheme()
 	if (result != SQLITE_OK)
 	{
 		Com_Printf("SQLite3 failed to create table session: %s\n", err_msg);
+		sqlite3_free(err_msg);
 		return 1;
 	}
 
@@ -333,4 +335,19 @@ int DB_LoadOrSaveDb(sqlite3 *pInMemory, const char *zFilename, int isSave)
 	// Close the database connection opened on database file zFilename and return the result of this function.
 	(void) sqlite3_close(pFile);
 	return rc;
+}
+
+int callback(void *NotUsed, int argc, char **argv, char **azColName)
+{
+	int i;
+	NotUsed = 0;
+
+	for (i = 0; i < argc; i++)
+	{
+		Com_Printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+	}
+
+	Com_Printf("\n");
+
+	return 0;
 }

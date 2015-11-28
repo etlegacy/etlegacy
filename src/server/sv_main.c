@@ -364,8 +364,8 @@ void SV_MasterHeartbeat(const char *message)
 		}
 #endif
 
-		if (((netenabled & NET_ENABLEV4 && adr[i][0].type == NA_BAD) || !(netenabled & NET_ENABLEV4))
-		    && ((netenabled & NET_ENABLEV6 && adr[i][1].type == NA_BAD) || !(netenabled & NET_ENABLEV6)))
+		if ((((netenabled & NET_ENABLEV4) && adr[i][0].type == NA_BAD) || !(netenabled & NET_ENABLEV4))
+		    && (((netenabled & NET_ENABLEV6) && adr[i][1].type == NA_BAD) || !(netenabled & NET_ENABLEV6)))
 		{
 			// if the address failed to resolve, clear it
 			// so we don't take repeated dns hits
@@ -379,7 +379,7 @@ void SV_MasterHeartbeat(const char *message)
 		// this command should be changed if the server info / status format
 		// ever incompatably changes
 
-		if (netenabled & NET_ENABLEV4 && adr[i][0].type != NA_BAD)
+		if ((netenabled & NET_ENABLEV4) && adr[i][0].type != NA_BAD)
 		{
 			NET_OutOfBandPrint(NS_SERVER, adr[i][0], "heartbeat %s\n", message);
 		}
@@ -482,8 +482,8 @@ void SV_MasterGameCompleteStatus()
 		}
 #endif
 
-		if (((netenabled & NET_ENABLEV4 && adr[i][0].type == NA_BAD) || !(netenabled & NET_ENABLEV4))
-		    && ((netenabled & NET_ENABLEV6 && adr[i][1].type == NA_BAD) || !(netenabled & NET_ENABLEV6)))
+		if ((((netenabled & NET_ENABLEV4) && adr[i][0].type == NA_BAD) || !(netenabled & NET_ENABLEV4))
+		    && (((netenabled & NET_ENABLEV6) && adr[i][1].type == NA_BAD) || !(netenabled & NET_ENABLEV6)))
 		{
 			// if the address failed to resolve, clear it
 			// so we don't take repeated dns hits
@@ -497,7 +497,7 @@ void SV_MasterGameCompleteStatus()
 		// this command should be changed if the server info / status format
 		// ever incompatably changes
 
-		if (netenabled & NET_ENABLEV4 && adr[i][0].type != NA_BAD)
+		if ((netenabled & NET_ENABLEV4) && adr[i][0].type != NA_BAD)
 		{
 			SVC_Status(adr[i][0], qtrue);
 		}
