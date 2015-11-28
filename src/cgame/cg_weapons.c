@@ -4288,20 +4288,6 @@ void CG_NextWeap(qboolean switchBanks)
 		}
 	}
 
-	if (IS_RIFLENADE_WEAPON(curweap))
-	{
-		num = getAltWeapon(curweap);      // base any further changes on the parent
-		if (CG_WeaponSelectable(num) && CG_WeaponHasAmmo(num))        // the parent was selectable, drop back to that
-		{
-			CG_FinishWeaponChange(curweap, num);
-			return;
-		}
-	}
-	else if (IS_RIFLE_AND_NADE_WEAPON(curweap))
-	{
-		return;
-	}
-
 	CG_WeaponIndex(curweap, &bank, &cycle);       // get bank/cycle of current weapon
 
 	if (cg_cycleAllWeaps.integer || !switchBanks)
@@ -4533,21 +4519,6 @@ void CG_PrevWeap(qboolean switchBanks)
 	}
 
 	CG_WeaponIndex(curweap, &bank, &cycle);       // get bank/cycle of current weapon
-
-	// if you're using an alt mode weapon, try switching back to the parent first
-	if (IS_RIFLE_AND_NADE_WEAPON(curweap))
-	{
-		num = getAltWeapon(curweap);      // base any further changes on the parent
-		if (CG_WeaponSelectable(num))        // the parent was selectable, drop back to that
-		{
-			CG_FinishWeaponChange(curweap, num);
-			return;
-		}
-	}
-	else if (IS_RIFLENADE_WEAPON(curweap))
-	{
-		return;
-	}
 
 	// initially, just try to find a lower weapon in the current bank
 	if (cg_cycleAllWeaps.integer || !switchBanks)
