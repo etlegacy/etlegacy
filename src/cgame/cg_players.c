@@ -2061,15 +2061,15 @@ static void CG_PlayerSprites(centity_t *cent)
 			{
 				CG_PlayerFloatSprite(cent, cgs.media.friendShader, height + 8, numIcons++);
 			}
-
-			// FIXME: get the selected info somehow w/o increasing config string ...
-			//if (cgs.clientinfo[cg.clientNum].disguiseClientNum > -1 &&
-			//    !sameTeam &&
-			//    (ft = CG_IsOnFireteam(cgs.clientinfo[cg.clientNum].disguiseClientNum))
-			//    /*&& cgs.clientinfo[cent->currentState.number].selected*/)
-			//{
-			//	CG_PlayerFloatSprite(cent, cgs.media.fireteamicons[ft->ident], height + 8, numIcons++);
-			//}
+			else // !sameTeam
+			{
+				if (cgs.clientinfo[cg.clientNum].disguiseClientNum > -1
+					&& (ft = CG_IsOnFireteam(cgs.clientinfo[cg.clientNum].disguiseClientNum))
+					&& cgs.clientinfo[cgs.clientinfo[cent->currentState.number].disguiseClientNum].selected)
+				{
+					CG_PlayerFloatSprite(cent, cgs.media.fireteamicons[ft->ident], height + 8, numIcons++);
+				}
+			}
 		}
 
 		if ((ft = CG_IsOnFireteam(cent->currentState.number)))
