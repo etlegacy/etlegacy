@@ -2490,7 +2490,7 @@ static void CG_DrawWarmup(void)
 		return;
 	}
 
-	sec = sec - cg.time) / 1000;
+	sec = (sec - cg.time) / 1000;
 	if (sec < 0)
 	{
 		sec = 0;
