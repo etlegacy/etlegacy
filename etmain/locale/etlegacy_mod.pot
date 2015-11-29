@@ -7006,3 +7006,7 @@ msgstr ""
 
 msgid "Right away!"
 msgstr ""
+
+#: src/cgame/cg_draw.c:2505
+msgid "^3WARMUP:^7 Match begins now!"
+msgstr ""
