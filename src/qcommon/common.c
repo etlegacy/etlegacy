@@ -2811,7 +2811,7 @@ void Com_Init(char *commandLine)
 			if (!Com_CheckProfile())
 			{
 #if !defined(DEDICATED) && !defined(LEGACY_DEBUG)
-				if (Sys_Dialog(DT_YES_NO, "ET:L crashed last time it was running. Do you want to reset settings to default values?", "Reset settings") == DR_YES)
+				if (Sys_Dialog(DT_YES_NO, "ET:L crashed last time it was running. Do you want to reset settings to default values?\n\nNote & Warning:\nIf you are running several client instances ensure a different value\nof CVAR fs_homepath is set for each client.\nOtherwise the same profile path is used which may cause other side effects.", "Reset settings") == DR_YES)
 #else
 				if (qfalse)
 #endif
@@ -3237,15 +3237,15 @@ void Com_Frame(void)
 		{
 			if (com_minimized->integer)
 			{
-				minMsec = 1000 / 10;
+				minMsec = 100; // = 1000/10;
 			}
 			else if (com_unfocused->integer && com_maxfps->integer > 1)
 			{
-				minMsec = 1000 / (com_maxfps->integer / 2);
+				minMsec = 1000.0f / (com_maxfps->integer / 2);
 			}
 			else if (com_maxfps->integer > 0)
 			{
-				minMsec = 1000 / com_maxfps->integer;
+				minMsec = ROUND_INT(1000.0f / com_maxfps->integer);
 			}
 			else
 			{
