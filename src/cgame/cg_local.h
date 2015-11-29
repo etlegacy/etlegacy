@@ -1606,6 +1606,9 @@ typedef struct
 	qhandle_t pmImageAxisConstruct;
 	qhandle_t pmImageAlliesMine;
 	qhandle_t pmImageAxisMine;
+	qhandle_t pmImageAlliesFlag;
+	qhandle_t pmImageAxisFlag;
+	qhandle_t pmImageSpecFlag;
 	qhandle_t hintKey;
 
 	qhandle_t pmImageSlime;

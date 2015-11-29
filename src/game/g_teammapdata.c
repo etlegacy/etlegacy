@@ -1010,7 +1010,6 @@ void G_SendMapEntityInfo(gentity_t *e)
 	trap_SendServerCommand(e - g_entities, buffer);
 }
 
-
 void G_PopupMessageForMines(gentity_t *player) // int sound
 {
 	gentity_t *pm;
@@ -1114,7 +1113,7 @@ void G_CheckSpottedLandMines(void)
 
 										G_PopupMessageForMines(ent);
 
-										trap_SendServerCommand(ent - g_entities, "cp \"Landmine Revealed\n\"");
+										trap_SendServerCommand(ent - g_entities, "cp \"Landmine revealed\n\"");
 
 										AddScore(ent, 1);
 

@@ -847,7 +847,7 @@ static void HandleEntsThatBlockConstructible(gentity_t *constructor, gentity_t *
 		{
 			if ((level.time - check->client->lastConstructibleBlockingWarnTime) >= MIN_BLOCKINGWARNING_INTERVAL)
 			{
-				trap_SendServerCommand(check->s.number, "cp \"Warning, leave the construction area...\" 1");
+				trap_SendServerCommand(check->s.number, "cp \"Warning, leave the construction area\" 1");
 				check->client->lastConstructibleBlockingWarnTime = level.time;
 			}
 		}
@@ -1655,7 +1655,7 @@ void Weapon_Engineer(gentity_t *ent)
 			traceEnt->takedamage = qtrue;
 			traceEnt->s.eFlags  &= ~EF_SMOKING;
 
-			trap_SendServerCommand(ent - g_entities, "cp \"You have repaired the MG!\"");
+			trap_SendServerCommand(ent - g_entities, "cp \"You have repaired the MG\"");
 			G_AddEvent(ent, EV_MG42_FIXED, 0);
 		}
 		else
@@ -1697,7 +1697,7 @@ void Weapon_Engineer(gentity_t *ent)
 
 			if (!(tr2.surfaceFlags & SURF_LANDMINE) || (tr2.entityNum != ENTITYNUM_WORLD && (!g_entities[tr2.entityNum].inuse || g_entities[tr2.entityNum].s.eType != ET_CONSTRUCTIBLE)))
 			{
-				trap_SendServerCommand(ent - g_entities, "cp \"Landmine cannot be armed here...\" 1");
+				trap_SendServerCommand(ent - g_entities, "cp \"Landmine cannot be armed here\" 1");
 
 				G_FreeEntity(traceEnt);
 
@@ -1726,7 +1726,7 @@ void Weapon_Engineer(gentity_t *ent)
 					//if ( G_LandmineTeam( traceEnt ) != ent->client->sess.sessionTeam )
 					//return;
 
-					trap_SendServerCommand(ent - g_entities, "cp \"Your team has too many landmines placed...\" 1");
+					trap_SendServerCommand(ent - g_entities, "cp \"Your team has too many landmines placed\" 1");
 
 					G_FreeEntity(traceEnt);
 
@@ -1774,7 +1774,7 @@ void Weapon_Engineer(gentity_t *ent)
 					if (traceEnt->health >= 250)
 					{
 						//traceEnt->health = 255;
-						trap_SendServerCommand(ent - g_entities, "cp \"Landmine armed...\" 1");
+						trap_SendServerCommand(ent - g_entities, "cp \"Landmine armed\" 1");
 					}
 					else
 					{
@@ -1815,7 +1815,7 @@ evilbanigoto:
 						traceEnt->health += 3;
 					}
 
-					G_PrintClientSpammyCenterPrint(ent - g_entities, "Defusing landmine");
+					G_PrintClientSpammyCenterPrint(ent - g_entities, "Defusing landmine...");
 
 					if (traceEnt->health >= 250)
 					{
@@ -1825,7 +1825,7 @@ evilbanigoto:
 						//traceEnt->think = G_FreeEntity;
 						//traceEnt->nextthink = level.time + FRAMETIME;
 
-						trap_SendServerCommand(ent - g_entities, "cp \"Landmine defused...\" 1");
+						trap_SendServerCommand(ent - g_entities, "cp \"Landmine defused\" 1");
 
 						Add_Ammo(ent, WP_LANDMINE, 1, qfalse);
 
@@ -1874,7 +1874,7 @@ evilbanigoto:
 				traceEnt->nextthink = level.time + FRAMETIME;
 
 				// consistency with dynamite defusing
-				G_PrintClientSpammyCenterPrint(ent - g_entities, "Satchel charge disarmed...");
+				G_PrintClientSpammyCenterPrint(ent - g_entities, "Satchel charge disarmed");
 
 				G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f);
 				G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "disarming satchel charge");

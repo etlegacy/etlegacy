@@ -90,7 +90,7 @@ void CG_PMItemBigSound(pmListItemBig_t *item);
 
 void CG_InitPMGraphics(void)
 {
-	cgs.media.pmImages[PM_DYNAMITE]     = trap_R_RegisterShaderNoMip("gfx/limbo/dynamite");
+	cgs.media.pmImages[PM_DYNAMITE]     = trap_R_RegisterShaderNoMip("gfx/limbo/pm_dynamite");
 	cgs.media.pmImages[PM_CONSTRUCTION] = trap_R_RegisterShaderNoMip("sprites/voiceChat");
 	cgs.media.pmImages[PM_MINES]        = trap_R_RegisterShaderNoMip("sprites/voiceChat");
 	cgs.media.pmImages[PM_DEATH]        = trap_R_RegisterShaderNoMip("gfx/hud/pm_death");
@@ -105,6 +105,9 @@ void CG_InitPMGraphics(void)
 	cgs.media.pmImageAxisConstruct   = trap_R_RegisterShaderNoMip("gfx/hud/pm_constaxis");
 	cgs.media.pmImageAlliesMine      = trap_R_RegisterShaderNoMip("gfx/hud/pm_mineallied");
 	cgs.media.pmImageAxisMine        = trap_R_RegisterShaderNoMip("gfx/hud/pm_mineaxis");
+	cgs.media.pmImageAlliesFlag      = trap_R_RegisterShaderNoMip("gfx/limbo/pm_flagallied");
+	cgs.media.pmImageAxisFlag        = trap_R_RegisterShaderNoMip("gfx/limbo/pm_flagaxis");
+	cgs.media.pmImageSpecFlag        = trap_R_RegisterShaderNoMip("sprites/voiceChat");
 	cgs.media.hintKey                = trap_R_RegisterShaderNoMip("gfx/hud/keyboardkey_old");
 
 	// extra obituaries
@@ -866,12 +869,28 @@ qhandle_t CG_GetPMItemIcon(centity_t *cent)
 			return cgs.media.pmImageAxisConstruct;
 		}
 		return cgs.media.pmImageAlliesConstruct;
+	case PM_DESTRUCTION:
+		if (cent->currentState.density == TEAM_AXIS)
+		{
+			return cgs.media.pmImageAxisConstruct;
+		}
+		return cgs.media.pmImageAlliesConstruct;
 	case PM_MINES:
 		if (cent->currentState.effect2Time == TEAM_AXIS)
 		{
 			return cgs.media.pmImageAlliesMine;
 		}
 		return cgs.media.pmImageAxisMine;
+	case PM_TEAM:
+		if (cent->currentState.effect2Time == TEAM_AXIS)
+		{
+			return cgs.media.pmImageAxisFlag;
+		}
+		else if (cent->currentState.effect2Time == TEAM_ALLIES)
+		{
+			return cgs.media.pmImageAlliesFlag;
+		}
+		return cgs.media.pmImageSpecFlag;
 	default:
 		return cgs.media.pmImages[cent->currentState.effect1Time];
 	}

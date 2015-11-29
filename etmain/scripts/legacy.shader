@@ -259,6 +259,71 @@ icons/iconw_silencer_1_select
 	}
 }
 
+gfx/hud/pm_constallied
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/hud/pm_constallied.tga
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/hud/pm_constaxis
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/hud/pm_constaxis.tga
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/limbo/pm_dynamite
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/limbo/cm_dynamite.tga
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/limbo/pm_flagallied
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/limbo/cm_flagallied.tga
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
+gfx/limbo/pm_flagaxis
+{
+	nopicmip
+	nocompress
+	nomipmaps
+	{
+		map gfx/limbo/cm_flagaxis.tga
+		blendfunc blend
+		rgbGen vertex
+		alphaGen vertex
+	}
+}
+
 gfx/limbo/cm_alliedgren
 {
 	nopicmip
@@ -379,19 +444,6 @@ gfx/limbo/cm_dynamite
 	{
 		map gfx/limbo/cm_dynamite.tga
 		depthFunc equal
-		blendfunc blend
-		rgbGen vertex
-		alphaGen vertex
-	}
-}
-
-gfx/limbo/dynamite
-{
-	nopicmip
-	nocompress
-	nomipmaps
-	{
-		map gfx/limbo/cm_dynamite.tga
 		blendfunc blend
 		rgbGen vertex
 		alphaGen vertex
