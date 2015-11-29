@@ -35,6 +35,9 @@
 
 #include "db_sql.h"
 
+/**
+ * @brief command to enter sql querries on the console
+ */
 void DB_ExecSQLCommand_f(void)
 {
 	int  result;
@@ -47,12 +50,18 @@ void DB_ExecSQLCommand_f(void)
 
 	if (!sql || !sql[0])
 	{
-		Com_Printf("Usage: %s <sql statement>\n", cmd);
+		Com_Printf("Usage: %s sql <sql statement>\n", cmd);
 		return;
 	}
 
-	// output
-	Com_Printf("sql: '%s'\n", sql);
+	if (!db || db_mode->integer == 0)
+	{
+		Com_Printf("sql db not available or disabled\n\n", cmd);
+		return;
+	}
+
+	// debug
+	//Com_Printf("sql: '%s'\n", sql);
 
 	result = sqlite3_exec(db, sql, callback, 0, &err_msg);
 

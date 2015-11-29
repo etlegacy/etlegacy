@@ -32,8 +32,7 @@
  * @file db_sqlite3.c
  * @brief ET: Legacy SQL interface
  *
- *
- * TODO:  - create our db scheme
+ * TODO:  - extend our db scheme
  *        - implement loading from disk (if there is any file, if not prepare first start)
  *        - implement version system & auto updates
  *        - ...
@@ -41,17 +40,19 @@
  *        Tutorial: http://zetcode.com/db/sqlitec/
  */
 
-#include "../qcommon/q_shared.h"
 #include "db_sql.h"
 
-cvar_t *db_mode; // 0 - disabled, 1 - sqlite3 memory db, 2 - sqlite3 file db
+cvar_t *db_mode;
 cvar_t *db_url;
 
-sqlite3 *db;      // our sqlite3 database
+sqlite3  *db;
+qboolean isDBActive;
 
 int DB_Init()
 {
 	int result;
+
+	isDBActive = qfalse;
 
 	db_mode = Cvar_Get("db_mode", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	db_url  = Cvar_Get("db_url", "etl.db", CVAR_ARCHIVE | CVAR_LATCH);
@@ -103,22 +104,26 @@ int DB_Init()
 		}
 	}
 
+	isDBActive = qtrue;
 	return 0;
 }
 
-// FIXME: split this into client and server DB?!
-int DB_Create_Scheme()
+/**
+ * @brief creates tables and populates our scheme
+ */
+static int DB_Create_Scheme()
 {
 	int          result;
 	sqlite3_stmt *res;
 	char         *err_msg = 0;
 
-	// CREATE TABLES & POPULATE
-	// FIXME: set keys & such for all tables
+	// FIXME:
+	// - split this into client and server DB?!
+	// - set index for search fields // CREATE INDEX player_guid ON PLAYER(guid)
 
 	// version table
 	char *sql = "DROP TABLE IF EXISTS ETL_VERSION;"
-	            "CREATE TABLE ETL_VERSION (Id INT, name TEXT, sql TEXT, created TEXT);"
+	            "CREATE TABLE ETL_VERSION (Id INT PRIMARY KEY NOT NULL, name TEXT, sql TEXT, created TEXT);"
 	            "INSERT INTO ETL_VERSION VALUES (1, 'ET: L DBMS', '', CURRENT_TIMESTAMP);"; // FIXME: separate version inserts for updates ...
 
 	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
@@ -131,11 +136,10 @@ int DB_Create_Scheme()
 	}
 
 	// ban/mute table (ensure we can also do IP range ban entries)
-	//
 	// type = mute/ban
 	// af = AddressFamily
 	sql = "DROP TABLE IF EXISTS BAN;"
-	      "CREATE TABLE BAN (Id INT, address TEXT, guid TEXT, type INT, reason TEXT, af INT, lenght TEXT, created TEXT, updated TEXT);";
+	      "CREATE TABLE BAN (Id INT PRIMARY KEY NOT NULL, address TEXT, guid TEXT, type INT NOT NULL, reason TEXT, af INT, lenght TEXT, expires TEXT,created TEXT, updated TEXT);";
 
 	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
@@ -149,7 +153,7 @@ int DB_Create_Scheme()
 	// player/client table
 	// FIXME: do we want to track player names as PB did?
 	sql = "DROP TABLE IF EXISTS PLAYER;"
-	      "CREATE TABLE PLAYER (Id INT, name TEXT, guid TEXT, user TEXT, password TEXT, mail TEXT, created TEXT, updated TEXT);";
+	      "CREATE TABLE PLAYER (Id INT PRIMARY KEY NOT NULL, name TEXT, guid TEXT, user TEXT, password TEXT, mail TEXT, created TEXT, updated TEXT);";
 
 	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
@@ -163,7 +167,7 @@ int DB_Create_Scheme()
 	// session table - server side tracking of players, client side tracking of games
 	// note: we might drop lenght field (created = start, updated = end of session
 	sql = "DROP TABLE IF EXISTS SESSION;"
-	      "CREATE TABLE SESSION (Id INT, pId, INT, address TEXT, port INT, type INT, duration TEXT, map TEXT, lenght TEXT, created TEXT, updated TEXT);";
+	      "CREATE TABLE SESSION (Id INT PRIMARY KEY NOT NULL, pId, INT, address TEXT, port INT, type INT, duration TEXT, map TEXT, lenght TEXT, created TEXT, updated TEXT);";
 
 	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
@@ -202,7 +206,11 @@ int DB_Create()
 
 int DB_Close()
 {
-	int result = sqlite3_close(db);
+	int result;
+
+	result = sqlite3_close(db);
+
+	isDBActive = qfalse;
 
 	if (result != SQLITE_OK)
 	{
@@ -342,11 +350,17 @@ int callback(void *NotUsed, int argc, char **argv, char **azColName)
 	int i;
 	NotUsed = 0;
 
+	//for (i = 0; i < argc; i++)
+	//{
+	//	Com_Printf("%s ", azColName[i]);
+	//}
+	//Com_Printf("\n");
+
+	Com_Printf("|");
 	for (i = 0; i < argc; i++)
 	{
-		Com_Printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+		Com_Printf("%s|", argv[i] && argv[i][0] ? argv[i] : "NULL");
 	}
-
 	Com_Printf("\n");
 
 	return 0;
