@@ -2608,7 +2608,6 @@ void Com_SetRecommended()
  * @brief Checks if profile.pid is valid
  * @retval qtrue if valid
  * @retval qfalse if invalid(!)
- * @todo If pid is found, make sure it is not in use
  */
 qboolean Com_CheckProfile(void)
 {
@@ -2630,9 +2629,9 @@ qboolean Com_CheckProfile(void)
 
 	if (FS_Read(&f_data, sizeof(f_data) - 1, f) < 0)
 	{
-		//b0rk3d!
+		// b0rk3d!
 		FS_FCloseFile(f);
-		//try to delete corrupted pid file
+		// try to delete corrupted pid file
 		FS_Delete(com_pidfile->string);
 		return qfalse;
 	}
@@ -2640,12 +2639,12 @@ qboolean Com_CheckProfile(void)
 	f_pid = atoi(f_data);
 	if (f_pid != com_pid->integer)
 	{
-		//pid doesn't match
+		// pid doesn't match
 		FS_FCloseFile(f);
 		return qfalse;
 	}
 
-	//we're all ok
+	// we're all ok
 	FS_FCloseFile(f);
 	return qtrue;
 }
@@ -2668,19 +2667,19 @@ void Com_TrackProfile(char *profile_path)
 	{
 		if (strlen(last_fs_gamedir) && strlen(last_profile_path))
 		{
-			//save current fs_gamedir
+			// save current fs_gamedir
 			Q_strncpyz(temp_fs_gamedir, fs_gamedir, sizeof(temp_fs_gamedir));
-			//set fs_gamedir temporarily to make FS_* stuff work "right"
+			// set fs_gamedir temporarily to make FS_* stuff work "right"
 			Q_strncpyz(fs_gamedir, last_fs_gamedir, sizeof(fs_gamedir));
 			if (FS_FileExists(last_profile_path))
 			{
 				Com_Printf("Com_TrackProfile: Deleting old pid file [%s] [%s]\n", fs_gamedir, last_profile_path);
 				FS_Delete(last_profile_path);
 			}
-			//restore current fs_gamedir
+			// restore current fs_gamedir
 			Q_strncpyz(fs_gamedir, temp_fs_gamedir, sizeof(fs_gamedir));
 		}
-		//and save current vars for future reference
+		// and save current vars for future reference
 		Q_strncpyz(last_fs_gamedir, fs_gamedir, sizeof(last_fs_gamedir));
 		Q_strncpyz(last_profile_path, profile_path, sizeof(last_profile_path));
 	}
@@ -3241,11 +3240,11 @@ void Com_Frame(void)
 			}
 			else if (com_unfocused->integer && com_maxfps->integer > 1)
 			{
-				minMsec = 1000.0f / (com_maxfps->integer / 2);
+				minMsec = 1000 / (com_maxfps->integer / 2);
 			}
 			else if (com_maxfps->integer > 0)
 			{
-				minMsec = ROUND_INT(1000.0f / com_maxfps->integer);
+				minMsec = 1000 / com_maxfps->integer;
 			}
 			else
 			{
@@ -3864,8 +3863,8 @@ void Console_AutoComplete(field_t *field, int *completionOffset)
 		matchIndex       = 0;
 		shortestMatch[0] = 0;
 
-		//Multiple matches
-		//Use this to skip this function if there are more than one command (or the command is ready and waiting a new list
+		// Multiple matches
+		// Use this to skip this function if there are more than one command (or the command is ready and waiting a new list
 		completionArgument = Cmd_Argc();
 
 		// If there is trailing whitespace on the cmd
@@ -3881,7 +3880,7 @@ void Console_AutoComplete(field_t *field, int *completionOffset)
 			return;
 		}
 
-		//We will skip this hightlight method if theres more than one command given
+		// We will skip this hightlight method if theres more than one command given
 		if (completionArgument > 1)
 		{
 			return;
