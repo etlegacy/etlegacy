@@ -818,7 +818,6 @@ static void CG_DrawPlayerHealthBar(rectDef_t *rect)
 static void CG_DrawStaminaBar(rectDef_t *rect)
 {
 	vec4_t colour    = { 0.1f, 1.0f, 0.1f, 0.5f };
-	vec4_t colourlow = { 1.0f, 0.1f, 0.1f, 0.5f };
 	vec_t  *color    = colour;
 	int    flags     = 1 | 4 | 16 | 64;
 	float  frac      = cg.snap->ps.stats[STAT_SPRINTTIME] / (float)SPRINTTIME;
@@ -845,10 +844,8 @@ static void CG_DrawStaminaBar(rectDef_t *rect)
 	}
 	else
 	{
-		if (frac < 0.25)
-		{
-			color = colourlow;
-		}
+		color[0] = 1.0f - frac;
+		color[1] = frac;
 	}
 
 	CG_FilledBar(rect->x, rect->y + (rect->h * 0.1f), rect->w, rect->h * 0.84f, color, NULL, bgcolour, frac, flags);
@@ -862,15 +859,12 @@ static void CG_DrawStaminaBar(rectDef_t *rect)
 static void CG_DrawBreathBar(rectDef_t *rect)
 {
 	static vec4_t colour    = { 0.1f, 0.1f, 1.0f, 0.5f };
-	static vec4_t colourlow = { 1.0f, 0.1f, 0.1f, 0.5f };
 	vec_t         *color    = colour;
 	int           flags     = 1 | 4 | 16 | 64;
 	float         frac      = cg.snap->ps.stats[STAT_AIRLEFT] / (float)HOLDBREATHTIME;
 
-	if (frac < 0.25)
-	{
-		color = colourlow;
-	}
+	color[0] = 1.0f - frac;
+	color[2] = frac;
 
 	CG_FilledBar(rect->x, rect->y + (rect->h * 0.1f), rect->w, rect->h * 0.84f, color, NULL, bgcolour, frac, flags);
 
