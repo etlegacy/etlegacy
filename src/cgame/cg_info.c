@@ -35,16 +35,15 @@
 
 #include "cg_local.h"
 
-// Color/font info used for all overlays (below)
+// Color/font info used for all overlays
 #define COLOR_BG            { 0.0f, 0.0f, 0.0f, 0.6f }
-#define COLOR_BORDER        { 0.5f, 0.5f, 0.5f, 0.5f }
 #define COLOR_BG_TITLE      { 0.16, 0.2f, 0.17f, 0.8f }
 #define COLOR_BG_VIEW       { 0.16, 0.2f, 0.17f, 0.8f }
+#define COLOR_BORDER        { 0.5f, 0.5f, 0.5f, 0.5f }
 #define COLOR_BORDER_TITLE  { 0.1f, 0.1f, 0.1f, 0.2f }
 #define COLOR_BORDER_VIEW   { 0.2f, 0.2f, 0.2f, 0.4f }
-#define COLOR_HDR           { 0.6f, 0.6f, 0.6f, 1.0f }
-#define COLOR_HDR2          { 0.6f, 0.6f, 0.4f, 1.0f }
-#define COLOR_TEXT          { 0.625f, 0.625f, 0.6f, 1.0f }
+#define COLOR_TEXT          { 0.6f, 0.6f, 0.6f, 1.0f }
+#define COLOR_TEXT2         { 0.6f, 0.6f, 0.4f, 1.0f }
 
 #define FONT_HEADER         &cgs.media.limboFont1
 #define FONT_SUBHEADER      &cgs.media.limboFont1_lo
@@ -54,8 +53,6 @@ vec4_t color_bg_title = COLOR_BG_TITLE;
 vec4_t color_border1  = COLOR_BORDER;
 vec4_t color_bg       = COLOR_BG_VIEW;
 vec4_t color_border   = COLOR_BORDER_VIEW;
-vec4_t color_hdr      = COLOR_HDR2;
-vec4_t color_name     = COLOR_TEXT;
 
 #define VD_X    4
 #define VD_Y    78
@@ -599,7 +596,7 @@ qboolean CG_ViewingDraw()
 
 		CG_Text_Paint_Ext(VD_X, VD_Y + tSpacing,             // x, y
 		                  VD_SCALE_X_HDR, VD_SCALE_Y_HDR,   // scale_x, scale_y
-		                  color_hdr,
+		                  COLOR_TEXT2,
 		                  viewInfo,
 		                  0.0f, 0,
 		                  ITEM_TEXTSTYLE_SHADOWED,
@@ -607,7 +604,7 @@ qboolean CG_ViewingDraw()
 
 		CG_Text_Paint_Ext(VD_X + wTag + 5, VD_Y + tSpacing,  // x, y
 		                  VD_SCALE_X_NAME, VD_SCALE_Y_NAME,  // scale_x, scale_y
-		                  color_name,
+		                  COLOR_TEXT2,
 		                  cgs.clientinfo[pID].name,
 		                  0.0f, 0,
 		                  ITEM_TEXTSTYLE_SHADOWED,
@@ -652,8 +649,8 @@ void CG_GameStatsDraw(void)
 		float        hScaleY2 = 0.20f;
 		fontHelper_t *hFont2  = FONT_SUBHEADER;
 
-		vec4_t hdrColor = COLOR_HDR;        // text
-		//vec4_t hdrColor2    = COLOR_HDR2;   // text
+		vec4_t hdrColor = COLOR_TEXT;        // text
+		//vec4_t hdrColor2    = COLOR_TEXT2;   // text
 
 		// Text settings
 		int          tStyle   = ITEM_TEXTSTYLE_SHADOWED;
@@ -708,14 +705,15 @@ void CG_GameStatsDraw(void)
 			return;
 		}
 
-		CG_DrawRect(x, y, GS_W, h, 1, borderColor);
 		CG_FillRect(x, y, GS_W, h, bgColor);
-
-		// Header
-		CG_FillRect(x, y, GS_W, tSpacing + 4, bgColorTitle);
-		CG_DrawRect(x, y, GS_W, tSpacing + 4, 1, borderColorTitle);
+		CG_DrawRect(x, y, GS_W, h, 1, borderColor);
 
 		y += 1;
+
+		// Header
+		CG_FillRect(x + 1, y, GS_W - 2, tSpacing + 4, bgColorTitle);
+		CG_DrawRect(x + 1, y, GS_W - 2, tSpacing + 4, 1, borderColorTitle);
+
 		y += tSpacing;
 		CG_Text_Paint_Ext(x + 4, y, hScale, hScaleY, hdrColor, CG_TranslateString("PLAYER STATS"), 0.0f, 0, hStyle, hFont);
 		y += 3;
@@ -724,8 +722,8 @@ void CG_GameStatsDraw(void)
 
 		// Weapon stats
 		y += 2;
-		CG_FillRect(x, y, GS_W, tSpacing + 3, bgColorTitle);
-		CG_DrawRect(x, y, GS_W, tSpacing + 3, 1, borderColorTitle);
+		CG_FillRect(x + 1, y, GS_W - 2, tSpacing + 3, bgColorTitle);
+		CG_DrawRect(x + 1, y, GS_W - 2, tSpacing + 3, 1, borderColorTitle);
 
 		y += 1 + tSpacing;
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Weapon"), 0.0f, 0, hStyle2, hFont2);
@@ -778,8 +776,8 @@ void CG_GameStatsDraw(void)
 		// Rank/XP info
 		y += tSpacing;
 		y += 2;
-		CG_FillRect(x, y, GS_W, tSpacing + 3, bgColorTitle);
-		CG_DrawRect(x, y, GS_W, tSpacing + 3, 1, borderColorTitle);
+		CG_FillRect(x + 1, y, GS_W - 2, tSpacing + 3, bgColorTitle);
+		CG_DrawRect(x + 1, y, GS_W - 2, tSpacing + 3, 1, borderColorTitle);
 
 		y += 1 + tSpacing;
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Rank"), 0.0f, 0, hStyle2, hFont2);
@@ -794,8 +792,8 @@ void CG_GameStatsDraw(void)
 		// Skill info
 		y += tSpacing;
 		y += 2;
-		CG_FillRect(x, y, GS_W, tSpacing + 3, bgColorTitle);
-		CG_DrawRect(x, y, GS_W, tSpacing + 3, 1, borderColorTitle);
+		CG_FillRect(x + 1, y, GS_W - 2, tSpacing + 3, bgColorTitle);
+		CG_DrawRect(x + 1, y, GS_W - 2, tSpacing + 3, 1, borderColorTitle);
 
 		y += 1 + tSpacing;
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Skills"), 0.0f, 0, hStyle2, hFont2);
@@ -860,8 +858,8 @@ void CG_TopShotsDraw(void)
 		float        hScaleY2 = 0.20f;
 		fontHelper_t *hFont2  = FONT_SUBHEADER;
 
-		vec4_t hdrColor  = COLOR_HDR;       // text
-		vec4_t hdrColor2 = COLOR_HDR2;      // text
+		vec4_t hdrColor  = COLOR_TEXT;       // text
+		vec4_t hdrColor2 = COLOR_TEXT2;      // text
 
 		// Text settings
 		int          tStyle   = ITEM_TEXTSTYLE_SHADOWED;
@@ -911,22 +909,23 @@ void CG_TopShotsDraw(void)
 			y += TS_Y - h;
 		}
 
-		CG_DrawRect(x, y, TS_W, h, 1, borderColor);
 		CG_FillRect(x, y, TS_W, h, bgColor);
-
-		// Header
-		CG_FillRect(x, y, TS_W, tSpacing + 4, bgColorTitle);
-		CG_DrawRect(x, y, TS_W, tSpacing + 4, 1, borderColorTitle);
+		CG_DrawRect(x, y, TS_W, h, 1, borderColor);
 
 		y += 1;
+
+		// Header
+		CG_FillRect(x + 1, y, TS_W - 2, tSpacing + 4, bgColorTitle);
+		CG_DrawRect(x + 1, y, TS_W - 2, tSpacing + 4, 1, borderColorTitle);
+
 		y += tSpacing;
 		CG_Text_Paint_Ext(x + 4, y, hScale, hScaleY, hdrColor, CG_TranslateString("\"TOPSHOT\" ACCURACIES"), 0.0f, 0, hStyle, hFont);
 		y += 4;
 
 		// Weapon stats
 		y += 2;
-		CG_FillRect(x, y, TS_W, tSpacing + 3, bgColorTitle);
-		CG_DrawRect(x, y, TS_W, tSpacing + 3, 1, borderColorTitle);
+		CG_FillRect(x + 1, y, TS_W - 2, tSpacing + 3, bgColorTitle);
+		CG_DrawRect(x + 1, y, TS_W - 2, tSpacing + 3, 1, borderColorTitle);
 
 		x += 4;
 		y += 1 + tSpacing;
@@ -990,8 +989,8 @@ void CG_ObjectivesDraw()
 		float        hScaleY = 0.21f;
 		fontHelper_t *hFont  = FONT_HEADER;
 
-		vec4_t hdrColor  = COLOR_HDR;       // text
-		vec4_t hdrColor2 = COLOR_HDR2;      // text
+		vec4_t hdrColor  = COLOR_TEXT;       // text
+		vec4_t hdrColor2 = COLOR_TEXT2;      // text
 
 		// Text settings
 		int          tStyle   = ITEM_TEXTSTYLE_SHADOWED;
@@ -1183,14 +1182,15 @@ void CG_ObjectivesDraw()
 			y += TS_Y - h;
 		}
 
-		CG_DrawRect(x, y, OBJ_W, h, 1, borderColor);
 		CG_FillRect(x, y, OBJ_W, h, bgColor);
-
-		// Header
-		CG_FillRect(x, y, OBJ_W, tSpacing + 4, bgColorTitle);
-		CG_DrawRect(x, y, OBJ_W, tSpacing + 4, 1, borderColorTitle);
+		CG_DrawRect(x, y, OBJ_W, h, 1, borderColor);
 
 		y += 1;
+
+		// Header
+		CG_FillRect(x + 1, y, OBJ_W - 2, tSpacing + 4, bgColorTitle);
+		CG_DrawRect(x + 1, y, OBJ_W - 2, tSpacing + 4, 1, borderColorTitle);
+
 		y += tSpacing;
 		CG_Text_Paint_Ext(x + 4, y, hScale, hScaleY, hdrColor, CG_TranslateString("OBJECTIVES"), 0.0f, 0, hStyle, hFont);
 		y += 4;
@@ -1495,7 +1495,7 @@ void CG_DemoHelpDraw(void)
 		float        hScale    = 0.16f;
 		float        hScaleY   = 0.21f;
 		fontHelper_t *hFont    = FONT_HEADER;
-		vec4_t       hdrColor2 = COLOR_HDR2; // text
+		vec4_t       hdrColor2 = COLOR_TEXT2; // text
 
 		// Text settings
 		int          tStyle   = ITEM_TEXTSTYLE_SHADOWED;
@@ -1670,7 +1670,7 @@ void CG_SpecHelpDraw(void)
 		float        hScale    = 0.16f;
 		float        hScaleY   = 0.21f;
 		fontHelper_t *hFont    = FONT_HEADER;
-		vec4_t       hdrColor2 = COLOR_HDR2; // text
+		vec4_t       hdrColor2 = COLOR_TEXT2; // text
 
 		// Text settings
 		int          tStyle   = ITEM_TEXTSTYLE_SHADOWED;

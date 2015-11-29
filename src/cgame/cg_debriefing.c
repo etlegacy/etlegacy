@@ -2072,12 +2072,10 @@ void CG_Debriefing_MouseEvent(int x, int y)
 	}
 }
 
-
-vec4_t clr1 = { 41 / 255.f, 51 / 255.f, 43 / 255.f, 204 / 255.f };
-vec4_t clr2 = { 0.f, 0.f, 0.f, 153 / 255.f };
-
 void CG_Debriefing_Scrollbar_Draw(panel_button_t *button)
 {
+	vec4_t clr1 = { .16f, .2f, .17f, .8f };
+	vec4_t clr2 = { 0.f, 0.f, 0.f, .6f };
 	rectDef_t r;
 
 	CG_Debriefing_ScrollCheckOffset(button);

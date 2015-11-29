@@ -35,9 +35,14 @@
 
 #include "cg_local.h"
 
-vec4_t clrUiBack = { 0.f, 0.f, 0.f, .6f };
-vec4_t clrUiBar = { .16f, .2f, .17f, .8f };
-vec4_t tclr = { 0.6f, 0.6f, 0.6f, 1.0f };
+// colors and fonts for overlays
+vec4_t SB_bg     = { 0.0f, 0.0f, 0.0f, 0.6f };
+vec4_t SB_bg2    = { 0.16, 0.2f, 0.17f, 0.8f };
+vec4_t SB_border = { 1.0f, 1.0f, 1.0f, 0.3f };
+vec4_t SB_text   = { 0.6f, 0.6f, 0.6f, 1.0f };
+
+#define FONT_HEADER         &cgs.media.limboFont1
+#define FONT_TEXT           &cgs.media.limboFont2
 
 /*
 =================
@@ -94,14 +99,13 @@ static qboolean CG_DrawFlag(float x, float y, float fade, int clientNum)
 int WM_DrawObjectives(int x, int y, int width, float fade)
 {
 	const char *s;
-	int        rows;
 
 	if (cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
 		const char *buf, *flagshader = NULL, *nameshader = NULL;
+		int        rows = 8;
 
-		rows = 8;
-		y   += 16 * (rows - 1);
+		y += 16 * (rows - 1);
 
 		s   = CG_ConfigString(CS_MULTI_MAPWINNER);
 		buf = Info_ValueForKey(s, "w");
@@ -143,20 +147,19 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 	{
 		int msec, mins, seconds, tens, w;
 
-		rows = 1;
-
-		y += 13;
-
-		CG_FillRect(x - 5, y - 15, width + 5, 21, clrUiBar);
-		CG_DrawRect_FixedBorder(x - 5, y - 15, width + 5, 21, 1, colorBlack);
-
-		y += 3 * (rows - 1);
+		CG_FillRect(x - 5, y - 2, width + 5, 21, SB_bg2);
 
 		if (CG_ConfigString(CS_CONFIGNAME)[0])
 		{
-			CG_FillRect(x - 5, y + 5, width + 5, 18, clrUiBack);
-			CG_DrawRect_FixedBorder(x - 5, y + 5, width + 5, 18, 1, colorBlack);
+			CG_FillRect(x - 5, y + 19, width + 5, 18, SB_bg);
+			CG_DrawRect_FixedBorder(x - 5, y - 2, width + 5, 40, 1, SB_border);
 		}
+		else
+		{
+			CG_DrawRect_FixedBorder(x - 5, y - 2, width + 5, 21, 1, SB_border);
+		}
+
+		y += 14;
 
 		if (cgs.timelimit > 0.0f)
 		{
@@ -193,17 +196,17 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 			s = va("%s   ^7%2.0f:%i%i", CG_TranslateString("MISSION TIME:"), (float)mins, tens, seconds);     // float cast to line up with reinforce time
 		}
 
-		CG_Text_Paint_Ext(x, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+		CG_Text_Paint_Ext(x, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
 
 		if (cg.warmup)
 		{
 			s = va("%s %s%i", CG_TranslateString("MATCH BEGINS IN:"), ((cg.warmup - cg.time) / 1000) < 3 ? "^1" : "^2", (cg.warmup - cg.time) / 1000 + 1);
-			CG_Text_Paint_Ext(SCREEN_WIDTH - 20 - CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1) + cgs.wideXoffset, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+			CG_Text_Paint_Ext(SCREEN_WIDTH - 20 - CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER) + cgs.wideXoffset, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
 		}
 		else if ((cgs.gamestate == GS_WARMUP && !cg.warmup) || cgs.gamestate == GS_WAITING_FOR_PLAYERS)
 		{
 			s = va(CG_TranslateString("WAITING ON ^2%i ^9%s"), cgs.minclients, cgs.minclients == 1 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
-			CG_Text_Paint_Ext(SCREEN_WIDTH - 20 - CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1) + cgs.wideXoffset, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+			CG_Text_Paint_Ext(SCREEN_WIDTH - 20 - CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER) + cgs.wideXoffset, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
 		}
 		else if (cgs.gametype != GT_WOLF_LMS && !cg.warmup)
 		{
@@ -232,7 +235,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 				{
 					s = va("%s   %s%i", CG_TranslateString("REINFORCE TIME:"), (seconds <= 2 && cgs.clientinfo[cg.clientNum].health == 0) ? "^3" : "^F", seconds);
 				}
-				CG_Text_Paint_Ext(SCREEN_WIDTH - 20 - CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1) + cgs.wideXoffset, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+				CG_Text_Paint_Ext(SCREEN_WIDTH - 20 - CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER) + cgs.wideXoffset, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
 			}
 		}
 
@@ -240,27 +243,27 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		{
 		case GT_WOLF_STOPWATCH:
 			s = va("%s %i", CG_TranslateString("STOPWATCH ROUND"), cgs.currentRound + 1);
-			w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
+			w = CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER);
 
-			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
 			break;
 		case GT_WOLF_LMS:
 			s = va("%s %i  %s %i-%i", CG_TranslateString("ROUND"), cgs.currentRound + 1, CG_TranslateString("SCORE"), cg.teamWonRounds[1], cg.teamWonRounds[0]);
-			w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
+			w = CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER);
 
-			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
 			break;
 		case GT_WOLF_CAMPAIGN:
 			s = va(CG_TranslateString("MAP %i of %i"), cgs.currentCampaignMap + 1, cgs.campaignData.mapCount);
-			w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
+			w = CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER);
 
-			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
 			break;
 		case GT_WOLF_MAPVOTE:
 			s = (cgs.mapVoteMapY ? va(CG_TranslateString("MAP %i of %i"), cgs.mapVoteMapX + 1, cgs.mapVoteMapY) : "");
-			w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
+			w = CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER);
 
-			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+			CG_Text_Paint_Ext(x + 300 - w * 0.5f, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
 			break;
 		default:
 			break;
@@ -271,7 +274,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		if (CG_ConfigString(CS_CONFIGNAME)[0])
 		{
 			s = va(CG_TranslateString("Config: ^7%s^7"), CG_ConfigString(CS_CONFIGNAME));
-			CG_Text_Paint_Ext(x, y, 0.24f, 0.28f, tclr, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+			CG_Text_Paint_Ext(x, y, 0.24f, 0.28f, SB_text, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 
 			y += 18;
 		}
@@ -339,7 +342,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	if (score->client == cg.snap->ps.clientNum)
 	{
 		hcolor[3] = fade * 0.3;
-		VectorSet(hcolor, .5f, .5f, .2f);           // DARK-RED
+		VectorSet(hcolor, .5f, .5f, .2f);           // yellow
 
 		CG_FillRect(x - 5, y, (INFO_TOTAL_WIDTH + 5), 15, hcolor);
 	}
@@ -412,8 +415,8 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	}
 
 	// draw name
-	CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, ci->name, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
-	maxchars -= CG_Text_Width_Ext(ci->name, 0.24, 0, &cgs.media.limboFont2_lo);
+	CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, ci->name, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+	maxchars -= CG_Text_Width_Ext(ci->name, 0.24, 0, FONT_TEXT);
 
 	// draw medals
 	buf[0] = '\0';
@@ -429,7 +432,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	// CG_Text_Paint_Ext will draw everything if maxchars <= 0
 	if (maxchars > 0)
 	{
-		CG_Text_Paint_Ext(tempx + (CG_drawStrlen(ci->name) * 8 + 8), y, 0.24, 0.28, colorWhite, buf, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+		CG_Text_Paint_Ext(tempx + (CG_drawStrlen(ci->name) * 8 + 8), y, 0.24, 0.28, colorWhite, buf, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 
 	tempx += INFO_PLAYER_WIDTH - offset;
@@ -457,9 +460,9 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 			p = va("%4i", score->ping);
 		}
 
-		w = CG_Text_Width_Ext(s, 0.24, 0, &cgs.media.limboFont2_lo);
-		CG_Text_Paint_Ext(tempx + totalwidth - w - INFO_LATENCY_WIDTH, y, 0.24, 0.28, colorYellow, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
-		CG_Text_Paint_Ext(tempx + totalwidth - INFO_LATENCY_WIDTH, y, 0.24, 0.28, colorWhite, p, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+		w = CG_Text_Width_Ext(s, 0.24, 0, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + totalwidth - w - INFO_LATENCY_WIDTH, y, 0.24, 0.28, colorYellow, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + totalwidth - INFO_LATENCY_WIDTH, y, 0.24, 0.28, colorWhite, p, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 
 		return;
 	}
@@ -480,7 +483,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 
 	tempx += INFO_CLASS_WIDTH;
 
-	CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+	CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	if (cg_gameType.integer == GT_WOLF_LMS)
 	{
 		tempx += INFO_SCORE_WIDTH;
@@ -492,15 +495,15 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 
 	if (score->ping == -1)
 	{
-		CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorRed, "^1CONN^7", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+		CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorRed, "^1CONN^7", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	else if (score->scoreflags & 2)
 	{
-		CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, " BOT", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+		CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, " BOT", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	else
 	{
-		CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, va("%4i", score->ping), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+		CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, va("%4i", score->ping), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	tempx += INFO_LATENCY_WIDTH;
 
@@ -508,11 +511,11 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	{
 		if (score->respawnsLeft >= 0)
 		{
-			CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, va("%2i", score->respawnsLeft), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+			CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, va("%2i", score->respawnsLeft), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 		else
 		{
-			CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, " -", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+			CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, " -", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 	}
 }
@@ -549,7 +552,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	if (score->client == cg.snap->ps.clientNum)
 	{
 		hcolor[3] = fade * 0.3;
-		VectorSet(hcolor, .5f, .5f, .2f); // DARK-RED
+		VectorSet(hcolor, .5f, .5f, .2f); // yellow
 
 		CG_FillRect(x - 5, y, (INFO_TOTAL_WIDTH + 5), 11, hcolor);
 	}
@@ -609,8 +612,8 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	}
 
 	// draw name
-	CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, ci->name, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
-	maxchars -= CG_Text_Width_Ext(ci->name, 0.20, 0, &cgs.media.limboFont2_lo);
+	CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, ci->name, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+	maxchars -= CG_Text_Width_Ext(ci->name, 0.20, 0, FONT_TEXT);
 
 	// draw medals
 	buf[0] = '\0';
@@ -625,7 +628,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 	if (maxchars > 0)
 	{
-		CG_Text_Paint_Ext(tempx + (CG_drawStrlen(ci->name) * 8 + 8), y, 0.20, 0.25, colorWhite, buf, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+		CG_Text_Paint_Ext(tempx + (CG_drawStrlen(ci->name) * 8 + 8), y, 0.20, 0.25, colorWhite, buf, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 
 	tempx += INFO_PLAYER_WIDTH - offset;
@@ -652,9 +655,9 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 			s = CG_TranslateString("^3SPECTATOR");
 			p = va("%4i", score->ping);
 		}
-		w = CG_Text_Width_Ext(s, 0.20, 0, &cgs.media.limboFont2_lo);
-		CG_Text_Paint_Ext(tempx + totalwidth - w - INFO_LATENCY_WIDTH, y, 0.20, 0.25, colorYellow, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
-		CG_Text_Paint_Ext(tempx + totalwidth - INFO_LATENCY_WIDTH, y, 0.20, 0.25, colorWhite, p, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+		w = CG_Text_Width_Ext(s, 0.20, 0, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + totalwidth - w - INFO_LATENCY_WIDTH, y, 0.20, 0.25, colorYellow, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + totalwidth - INFO_LATENCY_WIDTH, y, 0.20, 0.25, colorWhite, p, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		return;
 	}
 	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cg.snap->ps.pm_type == PM_INTERMISSION)
@@ -669,7 +672,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 	tempx += INFO_CLASS_WIDTH + 6;
 
-	CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+	CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 
 	if (cg_gameType.integer == GT_WOLF_LMS)
 	{
@@ -682,15 +685,15 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 	if (score->ping == -1)
 	{
-		CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorRed, "^1CONN^7", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+		CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorRed, "^1CONN^7", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	else if (score->scoreflags & 2)
 	{
-		CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, " BOT", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+		CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, " BOT", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	else
 	{
-		CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, va("%4i", score->ping), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+		CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, va("%4i", score->ping), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 
 	tempx += INFO_LATENCY_WIDTH;
@@ -699,11 +702,11 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	{
 		if (score->respawnsLeft >= 0)
 		{
-			CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, va("%2i", score->respawnsLeft), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+			CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, va("%2i", score->respawnsLeft), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 		else
 		{
-			CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, " -", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+			CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, " -", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 		tempx += INFO_LIVES_WIDTH;
 	}
@@ -761,12 +764,12 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 		s = CG_TranslateString(s);
 	}
 
-	CG_FillRect(Ccg_WideX(320) - w / 2, y, w, 20, clrUiBar);
-	CG_DrawRect_FixedBorder(Ccg_WideX(320) - w / 2, y, w, 20, 1, colorBlack);
+	CG_FillRect(Ccg_WideX(320) - w / 2, y, w, 20, SB_bg);
+	CG_DrawRect_FixedBorder(Ccg_WideX(320) - w / 2, y, w, 20, 1, SB_border);
 
-	w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
+	w = CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER);
 
-	CG_Text_Paint_Ext(Ccg_WideX(320) - w * 0.5f, y + 15, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+	CG_Text_Paint_Ext(Ccg_WideX(320) - w * 0.5f, y + 15, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
 
 	return y + INFO_LINE_HEIGHT + 6;
 }
@@ -805,11 +808,10 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 		}
 	}
 
-	CG_FillRect(x - 5, y - 2, width + 5, 21, clrUiBack);
-	CG_FillRect(x - 5, y - 2, width + 5, 21, clrUiBar);
+	CG_FillRect(x - 5, y - 2, width + 5, 21, SB_bg2);
+	CG_DrawRect_FixedBorder(x - 5, y - 2, width + 5, 21, 1, SB_border);
 
 	Vector4Set(hcolor, 0, 0, 0, fade);
-	CG_DrawRect_FixedBorder(x - 5, y - 2, width + 5, 21, 1, colorBlack);
 
 	// draw header
 	if (cg_gameType.integer == GT_WOLF_LMS)
@@ -821,25 +823,25 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 			s = va("%s [%d] (%d %s)", CG_TranslateString("AXIS"), cg.teamScores[0], cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
 			s = va("%s ^3%s", s, cg.teamFirstBlood == TEAM_AXIS ? CG_TranslateString("FIRST BLOOD") : "");
 
-			CG_Text_Paint_Ext(x, y + 13, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+			CG_Text_Paint_Ext(x, y + 13, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
 		}
 		else if (team == TEAM_ALLIES)
 		{
 			s = va("%s [%d] (%d %s)", CG_TranslateString("ALLIES"), cg.teamScores[1], cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
 			s = va("%s ^3%s", s, cg.teamFirstBlood == TEAM_ALLIES ? CG_TranslateString("FIRST BLOOD") : "");
 
-			CG_Text_Paint_Ext(x, y + 13, 0.25f, 0.25f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+			CG_Text_Paint_Ext(x, y + 13, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
 		}
 	}
 	else
 	{
 		if (team == TEAM_AXIS)
 		{
-			CG_Text_Paint_Ext(x, y + 13, 0.25f, 0.25f, tclr, va("%s [%d] (%d %s)", CG_TranslateString("AXIS"), cg.teamScores[0], cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS")), 0, 0, 0, &cgs.media.limboFont1);
+			CG_Text_Paint_Ext(x, y + 13, 0.25f, 0.25f, SB_text, va("%s [%d] (%d %s)", CG_TranslateString("AXIS"), cg.teamScores[0], cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS")), 0, 0, 0, FONT_HEADER);
 		}
 		else if (team == TEAM_ALLIES)
 		{
-			CG_Text_Paint_Ext(x, y + 13, 0.25f, 0.25f, tclr, va("%s [%d] (%d %s)", CG_TranslateString("ALLIES"), cg.teamScores[1], cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS")), 0, 0, 0, &cgs.media.limboFont1);
+			CG_Text_Paint_Ext(x, y + 13, 0.25f, 0.25f, SB_text, va("%s [%d] (%d %s)", CG_TranslateString("ALLIES"), cg.teamScores[1], cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS")), 0, 0, 0, FONT_HEADER);
 		}
 	}
 
@@ -847,13 +849,13 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 
 	tempx = x;
 
-	CG_FillRect(x - 5, y, width + 5, 18, clrUiBack);
+	CG_FillRect(x - 5, y, width + 5, 18, SB_bg);
 	trap_R_SetColor(colorBlack);
 	CG_DrawBottom_NoScale(x - 5, y, width + 5, 18, 1);
 	trap_R_SetColor(NULL);
 
 	// draw player info headings
-	CG_Text_Paint_Ext(tempx, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("Name"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+	CG_Text_Paint_Ext(tempx, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("Name"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	tempx += INFO_PLAYER_WIDTH;
 
 	// add some extra space when not showing lives in non-LMS
@@ -862,21 +864,21 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 		tempx += INFO_LIVES_WIDTH;
 	}
 
-	CG_Text_Paint_Ext(tempx, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("C R"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+	CG_Text_Paint_Ext(tempx, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("C R"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	tempx += INFO_CLASS_WIDTH;
 
 	if (cgs.gametype == GT_WOLF_LMS)
 	{
-		CG_Text_Paint_Ext(tempx + 22, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("Score"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+		CG_Text_Paint_Ext(tempx + 22, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("Score"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		tempx += INFO_SCORE_WIDTH;
 	}
 	else
 	{
-		CG_Text_Paint_Ext(tempx + 30, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("XP"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+		CG_Text_Paint_Ext(tempx + 30, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("XP"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		tempx += INFO_XP_WIDTH;
 	}
 
-	CG_Text_Paint_Ext(tempx, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("Ping"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2_lo);
+	CG_Text_Paint_Ext(tempx, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("Ping"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	tempx += INFO_LATENCY_WIDTH;
 
 	if (cgs.gametype != GT_WOLF_LMS && livesleft)
@@ -912,11 +914,11 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	{
 		if (i % 2 == 0)
 		{
-			VectorSet(hcolor, (80.f / 255.f), (80.f / 255.f), (80.f / 255.f));  // LIGHT BLUE
+			VectorSet(hcolor, .3f, .3f, .3f);  // light
 		}
 		else
 		{
-			VectorSet(hcolor, (0.f / 255.f), (0.f / 255.f), (0.f / 255.f));     // DARK BLUE
+			VectorSet(hcolor, 0.f, 0.f, 0.f);  // dark
 		}
 		hcolor[3] = fade * 0.3;
 

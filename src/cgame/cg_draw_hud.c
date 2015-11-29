@@ -111,11 +111,6 @@ hudStucture_t hudlist[MAXHUDS];
 hudStucture_t *activehud;
 hudStucture_t hud0;
 
-// FIXME: use these in all HUD related draw functions to have unique colors
-vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.8f };
-vec4_t HUD_Border = { 0.5f, 0.5f, 0.5f, 0.5f };
-vec4_t HUD_Text = { 0.625f, 0.625f, 0.6f, 1.0f };
-
 /* unused
 rectDef_t CG_getRect(float x, float y, float w, float h)
 {
@@ -588,13 +583,16 @@ void CG_ReadHudScripts(void)
 
 // HUD DRAWING FUNCTIONS BELLOW
 
+vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.8f };
+vec4_t HUD_Border = { 0.5f, 0.5f, 0.5f, 0.5f };
+vec4_t HUD_Text = { 0.6f, 0.6f, 0.6f, 1.0f };
+
 static void CG_DrawPicShadowed(float x, float y, float w, float h, qhandle_t icon)
 {
 	trap_R_SetColor(colorBlack);
 	CG_DrawPic(x + 2, y + 2, w, h, icon);
 	trap_R_SetColor(NULL);
 	CG_DrawPic(x, y, w, h, icon);
-
 }
 
 static void CG_DrawPlayerStatusHead(hudComponent_t comp)
@@ -787,8 +785,7 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 	return weap;
 }
 
-// stamina-/breathbar
-vec4_t bgcolour = { 1.f, 1.f, 1.f, 0.3f };
+vec4_t bgcolor = { 1.f, 1.f, 1.f, .3f };    // bars backgound
 
 static void CG_DrawPlayerHealthBar(rectDef_t *rect)
 {
@@ -808,7 +805,7 @@ static void CG_DrawPlayerHealthBar(rectDef_t *rect)
 		frac = cg.snap->ps.stats[STAT_HEALTH] / (float) cg.snap->ps.stats[STAT_MAX_HEALTH];
 	}
 
-	CG_FilledBar(rect->x, rect->y + (rect->h * 0.1f), rect->w, rect->h * 0.84f, colour, NULL, bgcolour, frac, flags);
+	CG_FilledBar(rect->x, rect->y + (rect->h * 0.1f), rect->w, rect->h * 0.84f, colour, NULL, bgcolor, frac, flags);
 
 	trap_R_SetColor(NULL);
 	CG_DrawPic(rect->x, rect->y, rect->w, rect->h, cgs.media.hudSprintBar);
@@ -817,10 +814,10 @@ static void CG_DrawPlayerHealthBar(rectDef_t *rect)
 
 static void CG_DrawStaminaBar(rectDef_t *rect)
 {
-	vec4_t colour    = { 0.1f, 1.0f, 0.1f, 0.5f };
-	vec_t  *color    = colour;
-	int    flags     = 1 | 4 | 16 | 64;
-	float  frac      = cg.snap->ps.stats[STAT_SPRINTTIME] / (float)SPRINTTIME;
+	vec4_t colour = { 0.1f, 1.0f, 0.1f, 0.5f };
+	vec_t  *color = colour;
+	int    flags  = 1 | 4 | 16 | 64;
+	float  frac   = cg.snap->ps.stats[STAT_SPRINTTIME] / (float)SPRINTTIME;
 
 	if (cg.snap->ps.powerups[PW_ADRENALINE])
 	{
@@ -848,37 +845,37 @@ static void CG_DrawStaminaBar(rectDef_t *rect)
 		color[1] = frac;
 	}
 
-	CG_FilledBar(rect->x, rect->y + (rect->h * 0.1f), rect->w, rect->h * 0.84f, color, NULL, bgcolour, frac, flags);
+	CG_FilledBar(rect->x, rect->y + (rect->h * 0.1f), rect->w, rect->h * 0.84f, color, NULL, bgcolor, frac, flags);
 
 	trap_R_SetColor(NULL);
 	CG_DrawPic(rect->x, rect->y, rect->w, rect->h, cgs.media.hudSprintBar);
 	CG_DrawPic(rect->x, rect->y + rect->h + 4, rect->w, rect->w, cgs.media.hudSprintIcon);
 }
 
-// draw the breath bar! Thanks to bacon from the splashdamage forums for this
+// draw the breath bar
 static void CG_DrawBreathBar(rectDef_t *rect)
 {
-	static vec4_t colour    = { 0.1f, 0.1f, 1.0f, 0.5f };
-	vec_t         *color    = colour;
-	int           flags     = 1 | 4 | 16 | 64;
-	float         frac      = cg.snap->ps.stats[STAT_AIRLEFT] / (float)HOLDBREATHTIME;
+	static vec4_t colour = { 0.1f, 0.1f, 1.0f, 0.5f };
+	vec_t         *color = colour;
+	int           flags  = 1 | 4 | 16 | 64;
+	float         frac   = cg.snap->ps.stats[STAT_AIRLEFT] / (float)HOLDBREATHTIME;
 
 	color[0] = 1.0f - frac;
 	color[2] = frac;
 
-	CG_FilledBar(rect->x, rect->y + (rect->h * 0.1f), rect->w, rect->h * 0.84f, color, NULL, bgcolour, frac, flags);
+	CG_FilledBar(rect->x, rect->y + (rect->h * 0.1f), rect->w, rect->h * 0.84f, color, NULL, bgcolor, frac, flags);
 
 	trap_R_SetColor(NULL);
 	CG_DrawPic(rect->x, rect->y, rect->w, rect->h, cgs.media.hudSprintBar);
 	CG_DrawPic(rect->x, rect->y + rect->h + 4, rect->w, rect->w, cgs.media.waterHintShader);
 }
 
+// draw weapon recharge bar
 static void CG_DrawWeapRecharge(rectDef_t *rect)
 {
 	float    barFrac, chargeTime;
-	int      flags   = 1 | 4 | 16;
-	qboolean charge  = qtrue;
-	vec4_t   bgcolor = { 1.0f, 1.0f, 1.0f, 0.25f };
+	int      flags  = 1 | 4 | 16;
+	qboolean charge = qtrue;
 	vec4_t   color;
 
 	// Draw power bar
@@ -1043,8 +1040,8 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 	if (!charge)
 	{
 		color[0] = 1.0f;
-		color[1] = color[2] = 0.0f;
-		color[3] = 1.0f;
+		color[1] = color[2] = 0.1f;
+		color[3] = 0.5f;
 	}
 	else
 	{
@@ -1985,9 +1982,9 @@ CG_DrawTimerNormal
 */
 static float CG_DrawTimerNormal(float y)
 {
+	vec4_t color = { .6f, .6f, .6f, 1.f };
 	char   *s, *rt;
 	int    w, w2;
-	vec4_t color = { 0.625f, 0.625f, 0.6f, 1.0f };
 	int    tens;
 	int    x;
 	int    msec    = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);
@@ -2041,10 +2038,9 @@ static float CG_DrawTimerNormal(float y)
 	}
 	else if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate != GS_PLAYING)
 	{
-		//We are not playing and the timer is set so reset/disable it
+		// we are not playing and the timer is set so reset/disable it
 		trap_Cvar_Set("cg_spawnTimer_set", "-1");
 	}
-	// end spawntimer
 
 	w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
 	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
@@ -2059,7 +2055,6 @@ static float CG_DrawTimerNormal(float y)
 
 static float CG_DrawLocalTime(float y)
 {
-	vec4_t   color = { 0.625f, 0.625f, 0.6f, 1.0f };
 	qtime_t  time;
 	int      w, w2, x;
 	char     *s;
@@ -2105,7 +2100,7 @@ static float CG_DrawLocalTime(float y)
 	x = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
 	CG_FillRect(x, y, w2 + 5, 12 + 2, HUD_Background);
 	CG_DrawRect_FixedBorder(x, y, w2 + 5, 12 + 2, 1, HUD_Border);
-	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, color, s, 0, 0, 0, &cgs.media.limboFont1);
+	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, HUD_Text, s, 0, 0, 0, &cgs.media.limboFont1);
 
 	return y + 12 + 4;
 }
