@@ -2498,11 +2498,16 @@ static void CG_DrawWarmup(void)
 
 	if (sec > 0)
 	{
-		s = va("%s %s%i^7", CG_TranslateString("^3WARMUP:^7 Match begins in:"), sec  < 4 ? "^1" : "^2", sec);
-		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
-		x = Ccg_WideX(320) - w / 2;
-		CG_Text_Paint_Ext(x, 208, fontScale, fontScale, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		s = va("%s %s%i", CG_TranslateString("^3WARMUP:^7 Match begins in"), sec  < 4 ? "^1" : "^2", sec);
 	}
+	else
+	{
+		s = CG_TranslateString("^3WARMUP:^7 Match begins now!");
+	}
+
+	w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+	x = Ccg_WideX(320) - w / 2;
+	CG_Text_Paint_Ext(x, 208, fontScale, fontScale, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 	// pre start actions
 	if (sec == 3 && !announced)
