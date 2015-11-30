@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-11-26 11:53+0000\n"
+"PO-Revision-Date: 2015-11-29 20:43+0000\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Spanish (http://www.transifex.com/etlegacy/etlegacy/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -7027,4 +7027,8 @@ msgid "No can do!"
 msgstr ""
 
 msgid "Right away!"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2505
+msgid "^3WARMUP:^7 Match begins now!"
 msgstr ""
