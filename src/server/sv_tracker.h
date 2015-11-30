@@ -38,8 +38,6 @@
 #ifndef INCLUDE_TRACKER_H
 #define INCLUDE_TRACKER_H
 
-#define TRACKER_ADDR "et-tracker.trackbase.net:4444"
-
 #include "server.h"
 
 void Tracker_Init(void);

@@ -95,7 +95,7 @@ cvar_t *sv_dlRate;
 // do we communicate with others ?
 cvar_t *sv_advert;      // 0 - no big brothers
                         // 1 - communicate with master server
-                        // 2 - send trackbase infos
+                        // 2 - communicate with tracker
 
 // server attack protection
 cvar_t *sv_protect;     // 0 - unprotected
