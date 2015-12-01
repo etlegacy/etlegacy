@@ -179,12 +179,12 @@ parse_commandline() {
 		elif [ "$var" = "-db" ]; then
 			einfo "Will enable database"
 			FEATURE_DBMS=1
-		elif [ "$var" = "-r2" ]; then
-			einfo "Will enable renderer2"
-			FEATURE_RENDERER2=1
-		elif [ "$var" = "-dynamic" ]; then
-			einfo "Will enable dynamic renderer build"
-			RENDERER_DYNAMIC=1
+		elif [ "$var" = "-nor2" ]; then
+			einfo "Will disable renderer2"
+			FEATURE_RENDERER2=0
+		elif [ "$var" = "-nodynamic" ]; then
+			einfo "Will disable dynamic renderer build"
+			RENDERER_DYNAMIC=0
 		elif [ "$var" = "-jpeg-turbo" ]; then
 			einfo "Will enable system jpeg turbo"
 			BUNDLED_JPEG=0
@@ -519,7 +519,7 @@ print_help() {
 	ehead "help - print this help"
 	echo
 	einfo "Properties"
-	ehead "-64, -debug, -clang, -db -r2, -dynamic, -systemlib, -noob, --noupdate"
+	ehead "-64, -debug, -clang, -db -nor2, -nodynamic, -systemlib, -noob, --noupdate"
 	echo
 }
 
