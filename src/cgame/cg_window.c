@@ -270,13 +270,17 @@ void CG_demoTimescaleDraw(void)
 {
 	if (cg.demoPlayback && cgs.timescaleUpdate > cg.time && demo_drawTimeScale.integer != 0)
 	{
-		char *s = va("^3TimeScale: ^7%.1f", cg_timescale.value);
+		vec4_t bgColor = { 0.0f, 0.0f, 0.0f, 0.6f };
+		vec4_t bdColor = { 0.5f, 0.5f, 0.5f, 0.5f };
+
+		char *s = va("^7Time Scale: ^3%.1fx", cg_timescale.value);
 		int  h  = CG_Text_Height_Ext("A", cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
 		int  w  = CG_Text_Width_Ext(s, cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
+		int  x  = Ccg_WideX(SCREEN_WIDTH) - w - 108;
 
-		CG_FillRect(42 - 3, 400, w + 7, h * 2.5, colorDkGreen);
-		CG_DrawRect(42 - 3, 400, w + 7, h * 2.5, 1, colorMdYellow);
-		CG_Text_Paint_Ext(42, 411, cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, s, 0, 0, 0, &cgs.media.limboFont2);
+		CG_FillRect(x, SCREEN_HEIGHT - 21, w + 7, h * 2.5, bgColor);
+		CG_DrawRect(x, SCREEN_HEIGHT - 21, w + 7, h * 2.5, 1, bdColor);
+		CG_Text_Paint_Ext(x + 3, SCREEN_HEIGHT - 10, cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, s, 0, 0, 0, &cgs.media.limboFont2);
 	}
 }
 
