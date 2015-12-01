@@ -5,7 +5,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	608
-#define WINDOW_HEIGHT	456
+#define WINDOW_HEIGHT	448
 #define GROUP_NAME		"grpOptionsControls"
 
 // Controls Menu //

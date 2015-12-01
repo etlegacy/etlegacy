@@ -4,8 +4,8 @@
 // Defines //
 #define WINDOW_X		16
 #define WINDOW_Y		16
-#define WINDOW_WIDTH	376
-#define WINDOW_HEIGHT	152
+#define WINDOW_WIDTH	608
+#define WINDOW_HEIGHT	448
 #define GROUP_NAME		"grpProfile"
 
 // Profile Menu //
@@ -26,19 +26,19 @@ menuDef {
 	}
 
 // Window //
-	WINDOW( _("PROFILE"), 90 )
+	WINDOW( _("PROFILE"), 150 )
 
 // Profile List //
 	itemDef {
 		name			"profileList"
 		group			GROUP_NAME
-		rect			6 32 240 90
+		rect			6 32 472 386
 		type			ITEM_TYPE_LISTBOX
 		textfont		UI_FONT_COURBD_21
 		textscale		.2
 		textaligny		-3
 		forecolor		.6 .6 .6 1
-		outlinecolor	.5 .5 .5 .2
+		outlinecolor	.5 .5 .5 .4
 		border			WINDOW_BORDER_FULL
 		bordercolor		.1 .1 .1 .5
 		feeder			FEEDER_PROFILES
@@ -59,12 +59,12 @@ menuDef {
 	}
 
 // Buttons //
-	BUTTON( 252, 32, WINDOW_WIDTH-252-6, 14, _("CREATE"), .24, 11, clearFocus ; open profile_create )
-	BUTTON( 252, 50, WINDOW_WIDTH-252-6, 14, _("DELETE"), .24, 11, clearFocus ; conditionalscript UIProfileIsActiveProfile 2
+	BUTTON( 484, 32, WINDOW_WIDTH-484-6, 14, _("CREATE"), .24, 11, clearFocus ; open profile_create )
+	BUTTON( 484, 50, WINDOW_WIDTH-484-6, 14, _("DELETE"), .24, 11, clearFocus ; conditionalscript UIProfileIsActiveProfile 2
 																			( "open profile_delete_error" )
 																			( "open profile_delete" ) )
-	BUTTON( 252, 68, WINDOW_WIDTH-252-6, 14, _("RENAME"), .24, 11, clearFocus ; open profile_rename )
-	BUTTON( 252, 86, WINDOW_WIDTH-252-6, 14, _("SET AS DEFAULT"), .24, 11, conditionalscript ui_profile 1
+	BUTTON( 484, 68, WINDOW_WIDTH-484-6, 14, _("RENAME"), .24, 11, clearFocus ; open profile_rename )
+	BUTTON( 484, 86, WINDOW_WIDTH-484-6, 14, _("SET AS DEFAULT"), .24, 11, conditionalscript ui_profile 1
 																			( "uiscript setDefaultProfile" )
 																			( "open profile" ) )
 

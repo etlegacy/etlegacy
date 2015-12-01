@@ -5,7 +5,7 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	608
-#define WINDOW_HEIGHT	224 // 448
+#define WINDOW_HEIGHT	448
 #define GROUP_NAME		"grpOptionsClean"
 
 // Subwindows //
@@ -29,18 +29,20 @@ menuDef {
 // Window //
 	WINDOW( _("CLEAN"), 94 )
 
-// Player //
+// Homepath cleanup //
 #define HOMEPATH_Y 32
-	SUBWINDOW( 6, HOMEPATH_Y, WINDOW_WIDTH-12, 164, _("HOMEPATH CLEAN UP") )
+	SUBWINDOW( 6, HOMEPATH_Y, WINDOW_WIDTH-12, 180, _("HOMEPATH CLEAN UP") )
 	LABEL( 8, HOMEPATH_Y+28, SUBWINDOW_WIDTH-4, 10, _("This will delete all unnecessary files from you fs_homepath."), .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
-	LABEL( 8, HOMEPATH_Y+52, SUBWINDOW_WIDTH-4, 10, _("A simple clean will remove tmp- and custom pk3 files."), .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
-	LABEL( 8, HOMEPATH_Y+68, SUBWINDOW_WIDTH-4, 10, _("A full clean will remove all downloaded files like map-,\n campaign- and custom pk3 files."), .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	LABEL( 8, HOMEPATH_Y+52, SUBWINDOW_WIDTH-4, 10, _("A simple clean will remove tmp and custom pk3 files."), .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	LABEL( 8, HOMEPATH_Y+68, SUBWINDOW_WIDTH-4, 10, _("A full clean will remove all downloaded files like maps,\n campaigns and custom pk3 files."), .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 	LABEL( 8, HOMEPATH_Y+104, SUBWINDOW_WIDTH-4, 10, _("^1WARNING: Use at your own risk!"), .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 	LABEL( 8, HOMEPATH_Y+128, SUBWINDOW_WIDTH-4, 10, _("Consult our wiki for documentation."), .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 	LABEL( 8, HOMEPATH_Y+142, SUBWINDOW_WIDTH-4, 10, _("Press '^7ABORT^9' if you don't know what you are doing here."), .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 
+	BUTTONEXT( 10+2, 192, .33*(SUBWINDOW_WIDTH-18), 14, _("ABORT"), .24, 11, close options_clean ; open options, tooltip _("Abort operation") )
+	BUTTONEXT( 10+.33*(SUBWINDOW_WIDTH-18)+6, 192, .33*(SUBWINDOW_WIDTH-18), 14, _("SIMPLE CLEAN"), .24, 11, exec "exec clean_simple.cfg" ; close options_clean ; open options, tooltip _("Remove tmp and custom pk3 files") )
+	BUTTONEXT( 10+.33*(SUBWINDOW_WIDTH-18)+6+.33*(SUBWINDOW_WIDTH-18)+6, 192, .33*(SUBWINDOW_WIDTH-18), 14, _("FULL CLEAN"), .24, 11, exec "exec clean_full.cfg" ; close options_clean ; open options, tooltip _("Remove all maps and campaigns files") )
+
 // Buttons //
-	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-18), 18, _("ABORT"), .3, 14, close options_clean ; open options )
-	BUTTON( 6+.33*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-18), 18, _("SIMPLE CLEAN"), .3, 14, exec "exec clean_simple.cfg" ; close options_clean ; open options )
-	BUTTON( 6+.33*(WINDOW_WIDTH-18)+6+.33*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-18), 18, _("FULL CLEAN"), .3, 14, exec "exec clean_full.cfg" ; close options_clean ; open options )
+	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close options_clean ; open options )
 }

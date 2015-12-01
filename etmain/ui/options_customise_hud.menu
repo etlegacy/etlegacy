@@ -5,13 +5,14 @@
 #define WINDOW_X		16
 #define WINDOW_Y		16
 #define WINDOW_WIDTH	608
-#define WINDOW_HEIGHT	436 // 448
+#define WINDOW_HEIGHT	448
 #define GROUP_NAME		"grpOptionsCustomiseHud"
 
 // Subwindows //
 #define SUBWINDOW_WIDTH_L		.50*(WINDOW_WIDTH-18)
 #define SUBWINDOW_WIDTH_R		.50*(WINDOW_WIDTH-18)
 
+// Customise View Menu //
 menuDef {
 	name		"options_customise_hud"
 	visible		0

@@ -32,7 +32,7 @@ menuDef {
 	itemDef {
 		name			"modList"
 		group			GROUP_NAME
-		rect			6 32 596 366
+		rect			6 32 596 386
 		type			ITEM_TYPE_LISTBOX
 		textfont		UI_FONT_COURBD_21
 		textscale		.2
