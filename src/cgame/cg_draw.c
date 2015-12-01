@@ -3210,7 +3210,7 @@ void CG_DrawDemoRecording(void)
 
 	Com_sprintf(status, sizeof(status), "RECORDING%s%s", demostatus, wavestatus);
 
-	CG_Text_Paint_Ext(5, cg_recording_statusline.integer, 0.2f, 0.2f, colorWhite, status, 0, 0, 0, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(10, cg_recording_statusline.integer, 0.2f, 0.2f, colorRed, status, 0, 0, 0, &cgs.media.limboFont2);
 }
 
 void CG_DrawOnScreenNames(void)

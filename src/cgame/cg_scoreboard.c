@@ -36,10 +36,10 @@
 #include "cg_local.h"
 
 // colors and fonts for overlays
-vec4_t SB_bg     = { 0.0f, 0.0f, 0.0f, 0.6f };
-vec4_t SB_bg2    = { 0.16, 0.2f, 0.17f, 0.8f };
+vec4_t SB_bg = { 0.16, 0.2f, 0.17f, 0.8f };
+vec4_t SB_bg2 = { 0.0f, 0.0f, 0.0f, 0.6f };
 vec4_t SB_border = { 1.0f, 1.0f, 1.0f, 0.3f };
-vec4_t SB_text   = { 0.6f, 0.6f, 0.6f, 1.0f };
+vec4_t SB_text = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 #define FONT_HEADER         &cgs.media.limboFont1
 #define FONT_TEXT           &cgs.media.limboFont2
@@ -147,7 +147,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 	{
 		int msec, mins, seconds, tens, w;
 
-		CG_FillRect(x - 5, y - 2, width + 5, 21, SB_bg2);
+		CG_FillRect(x - 5, y - 2, width + 5, 21, SB_bg);
 
 		if (CG_ConfigString(CS_CONFIGNAME)[0])
 		{
@@ -274,7 +274,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		if (CG_ConfigString(CS_CONFIGNAME)[0])
 		{
 			s = va(CG_TranslateString("Config: ^7%s^7"), CG_ConfigString(CS_CONFIGNAME));
-			CG_Text_Paint_Ext(x, y, 0.24f, 0.28f, SB_text, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(x, y, 0.24f, 0.28f, SB_text, s, 0, 0, 0, FONT_TEXT);
 
 			y += 18;
 		}
@@ -764,7 +764,7 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 		s = CG_TranslateString(s);
 	}
 
-	CG_FillRect(Ccg_WideX(320) - w / 2, y, w, 20, SB_bg);
+	CG_FillRect(Ccg_WideX(320) - w / 2, y, w, 20, SB_bg2);
 	CG_DrawRect_FixedBorder(Ccg_WideX(320) - w / 2, y, w, 20, 1, SB_border);
 
 	w = CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER);
@@ -808,7 +808,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 		}
 	}
 
-	CG_FillRect(x - 5, y - 2, width + 5, 21, SB_bg2);
+	CG_FillRect(x - 5, y - 2, width + 5, 21, SB_bg);
 	CG_DrawRect_FixedBorder(x - 5, y - 2, width + 5, 21, 1, SB_border);
 
 	Vector4Set(hcolor, 0, 0, 0, fade);
@@ -849,7 +849,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 
 	tempx = x;
 
-	CG_FillRect(x - 5, y, width + 5, 18, SB_bg);
+	CG_FillRect(x - 5, y, width + 5, 18, SB_bg2);
 	trap_R_SetColor(colorBlack);
 	CG_DrawBottom_NoScale(x - 5, y, width + 5, 18, 1);
 	trap_R_SetColor(NULL);

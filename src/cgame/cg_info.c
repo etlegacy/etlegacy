@@ -43,7 +43,6 @@
 #define COLOR_BORDER_TITLE  { 0.1f, 0.1f, 0.1f, 0.2f }
 #define COLOR_BORDER_VIEW   { 0.2f, 0.2f, 0.2f, 0.4f }
 #define COLOR_TEXT          { 0.6f, 0.6f, 0.6f, 1.0f }
-#define COLOR_TEXT2         { 0.6f, 0.6f, 0.4f, 1.0f }
 
 #define FONT_HEADER         &cgs.media.limboFont1
 #define FONT_SUBHEADER      &cgs.media.limboFont1_lo
@@ -128,7 +127,6 @@ void CG_DrawInformation(qboolean forcerefresh)
 	    }
 	*/
 }
-
 
 void CG_ShowHelp_On(int *status)
 {
@@ -596,7 +594,7 @@ qboolean CG_ViewingDraw()
 
 		CG_Text_Paint_Ext(VD_X, VD_Y + tSpacing,             // x, y
 		                  VD_SCALE_X_HDR, VD_SCALE_Y_HDR,   // scale_x, scale_y
-		                  COLOR_TEXT2,
+		                  COLOR_TEXT,
 		                  viewInfo,
 		                  0.0f, 0,
 		                  ITEM_TEXTSTYLE_SHADOWED,
@@ -604,7 +602,7 @@ qboolean CG_ViewingDraw()
 
 		CG_Text_Paint_Ext(VD_X + wTag + 5, VD_Y + tSpacing,  // x, y
 		                  VD_SCALE_X_NAME, VD_SCALE_Y_NAME,  // scale_x, scale_y
-		                  COLOR_TEXT2,
+		                  COLOR_TEXT,
 		                  cgs.clientinfo[pID].name,
 		                  0.0f, 0,
 		                  ITEM_TEXTSTYLE_SHADOWED,
@@ -638,9 +636,9 @@ void CG_GameStatsDraw(void)
 		vec4_t borderColorTitle = COLOR_BORDER_TITLE;   // titlebar
 
 		// Main header
-		int          hStyle  = ITEM_TEXTSTYLE_SHADOWED;
-		float        hScale  = 0.16f;
-		float        hScaleY = 0.21f;
+		int          hStyle  = 0;
+		float        hScale  = 0.19f;
+		float        hScaleY = 0.19f;
 		fontHelper_t *hFont  = FONT_HEADER;
 
 		// Sub header
@@ -648,9 +646,7 @@ void CG_GameStatsDraw(void)
 		float        hScale2  = 0.16f;
 		float        hScaleY2 = 0.20f;
 		fontHelper_t *hFont2  = FONT_SUBHEADER;
-
-		vec4_t hdrColor = COLOR_TEXT;        // text
-		//vec4_t hdrColor2    = COLOR_TEXT2;   // text
+		vec4_t       hdrColor = COLOR_TEXT;    // text
 
 		// Text settings
 		int          tStyle   = ITEM_TEXTSTYLE_SHADOWED;
@@ -847,9 +843,9 @@ void CG_TopShotsDraw(void)
 		vec4_t         borderColorTitle = COLOR_BORDER_TITLE; // titlebar
 
 		// Main header
-		int          hStyle  = ITEM_TEXTSTYLE_SHADOWED;
-		float        hScale  = 0.16f;
-		float        hScaleY = 0.21f;
+		int          hStyle  = 0;
+		float        hScale  = 0.19f;
+		float        hScaleY = 0.19f;
 		fontHelper_t *hFont  = FONT_HEADER;
 
 		// Sub header
@@ -857,9 +853,7 @@ void CG_TopShotsDraw(void)
 		float        hScale2  = 0.16f;
 		float        hScaleY2 = 0.20f;
 		fontHelper_t *hFont2  = FONT_SUBHEADER;
-
-		vec4_t hdrColor  = COLOR_TEXT;       // text
-		vec4_t hdrColor2 = COLOR_TEXT2;      // text
+		vec4_t       hdrColor = COLOR_TEXT;       // text
 
 		// Text settings
 		int          tStyle   = ITEM_TEXTSTYLE_SHADOWED;
@@ -893,7 +887,6 @@ void CG_TopShotsDraw(void)
 			borderColor[3]      *= scale;
 			borderColorTitle[3] *= scale;
 			hdrColor[3]         *= scale;
-			hdrColor2[3]        *= scale;
 			tColor[3]           *= scale;
 
 			y += (TS_Y - h) * scale;
@@ -984,13 +977,11 @@ void CG_ObjectivesDraw()
 		vec4_t borderColorTitle = COLOR_BORDER_TITLE;   // titlebar
 
 		// Main header
-		int          hStyle  = ITEM_TEXTSTYLE_SHADOWED;
-		float        hScale  = 0.16f;
-		float        hScaleY = 0.21f;
-		fontHelper_t *hFont  = FONT_HEADER;
-
-		vec4_t hdrColor  = COLOR_TEXT;       // text
-		vec4_t hdrColor2 = COLOR_TEXT2;      // text
+		int          hStyle   = 0;
+		float        hScale   = 0.19f;
+		float        hScaleY  = 0.19f;
+		fontHelper_t *hFont   = FONT_HEADER;
+		vec4_t       hdrColor = COLOR_TEXT;       // text
 
 		// Text settings
 		int          tStyle   = ITEM_TEXTSTYLE_SHADOWED;
@@ -1166,7 +1157,6 @@ void CG_ObjectivesDraw()
 			borderColor[3]      *= scale;
 			borderColorTitle[3] *= scale;
 			hdrColor[3]         *= scale;
-			hdrColor2[3]        *= scale;
 			tColor[3]           *= scale;
 
 			y += (TS_Y - h) * scale;
@@ -1193,6 +1183,7 @@ void CG_ObjectivesDraw()
 
 		y += tSpacing;
 		CG_Text_Paint_Ext(x + 4, y, hScale, hScaleY, hdrColor, CG_TranslateString("OBJECTIVES"), 0.0f, 0, hStyle, hFont);
+
 		y += 4;
 
 		if (!count)
@@ -1396,30 +1387,31 @@ void CG_ObjectivesDraw()
 	}
 }
 
-#define DH_X    -20     // spacing from right
+#define DH_X    -22     // spacing from right
 #define DH_Y    -60     // spacing from bottom
 #define DH_W    148
 
-void CG_DrawDemoControls(int x, int y, int w, vec4_t borderColor, vec4_t bgColor, int tSpacing, vec4_t bgColorTitle, vec4_t borderColorTitle, float hScale, float hScaleY, vec4_t hdrColor2, int hStyle, fontHelper_t *hFont)
+void CG_DrawDemoControls(int x, int y, int w, vec4_t borderColor, vec4_t bgColor, int tSpacing, vec4_t bgColorTitle, vec4_t borderColorTitle, float hScale, float hScaleY, vec4_t hdrColor, int hStyle, fontHelper_t *hFont)
 {
 	static panel_button_text_t demoControlTxt;
 	int                        i;
 
 	demoControlTxt.scalex = hScale;
 	demoControlTxt.scaley = hScaleY;
-	Vector4Copy(hdrColor2, demoControlTxt.colour);
+	Vector4Copy(hdrColor, demoControlTxt.colour);
 	demoControlTxt.style = ITEM_ALIGN_CENTER;
 	demoControlTxt.align = 0;
 	demoControlTxt.font  = hFont;
 
-	CG_DrawRect(x, y, w, 50, 1, borderColor);
 	CG_FillRect(x, y, w, 50, bgColor);
+	CG_DrawRect(x, y, w, 50, 1, borderColor);
+
+	y += 1;
 
 	// Header
-	CG_FillRect(x, y, w, tSpacing + 4, bgColorTitle);
-	CG_DrawRect(x, y, w, tSpacing + 4, 1, borderColorTitle);
-	CG_Text_Paint_Ext(x + 4, y + 1 + tSpacing, hScale, hScaleY, hdrColor2, CG_TranslateString("DEMO STATUS"), 0.0f, 0, hStyle, hFont);
-
+	CG_FillRect(x + 1, y, w - 2, tSpacing + 4, bgColorTitle);
+	CG_DrawRect(x + 1, y, w - 2, tSpacing + 4, 1, borderColorTitle);
+	CG_Text_Paint_Ext(x + 4, y + tSpacing, hScale, hScaleY, hdrColor, CG_TranslateString("DEMO STATUS"), 0.0f, 0, hStyle, hFont);
 
 	for (i = 0; i < 4; i++)
 	{
@@ -1454,31 +1446,31 @@ void CG_DemoHelpDraw(void)
 	{
 		const char *help[] =
 		{
-			"^nTAB       ^mscores",
-			"^nF1-F5     ^mavidemo record",
-			"^nF11-F12   ^mscreenshot",
+			"^7TAB       ^3scores",
+			"^7F1-F5     ^3avidemo record",
+			"^7F11-F12   ^3screenshot",
 			NULL,
-			"^nKP_DOWN   ^mslow down (--)",
-			"^nKP_LEFT   ^mslow down (-)",
-			"^nKP_UP     ^mspeed up (++)",
-			"^nKP_RIGHT  ^mspeed up (+)",
-			"^nSPACE     ^mnormal speed",
+			"^7KP_DOWN   ^3slow down (--)",
+			"^7KP_LEFT   ^3slow down (-)",
+			"^7KP_UP     ^3speed up (++)",
+			"^7KP_RIGHT  ^3speed up (+)",
+			"^7SPACE     ^3normal speed",
 			NULL,
-			"^nENTER     ^mExternal view",
-			"^nLFT/RGHT  ^mChange angle",
-			"^nUP/DOWN   ^mMove in/out"
+			"^7ENTER     ^3External view",
+			"^7LFT/RGHT  ^3Change angle",
+			"^7UP/DOWN   ^3Move in/out"
 		};
 
 #ifdef FEATURE_MULTIVIEW
 		const char *mvhelp[] =
 		{
 			NULL,
-			"^nMOUSE1    ^mSelect/move view",
-			"^nMOUSE2    ^mSwap w/main view",
-			"^nMOUSE3    ^mToggle on/off",
-			"^nSHIFT     ^mHold to resize",
-			"^nKP_PGUP   ^mEnable a view",
-			"^nKP_PGDN   ^mClose a view"
+			"^7MOUSE1    ^3Select/move view",
+			"^7MOUSE2    ^3Swap w/main view",
+			"^7MOUSE3    ^3Toggle on/off",
+			"^7SHIFT     ^3Hold to resize",
+			"^7KP_PGUP   ^3Enable a view",
+			"^7KP_PGDN   ^3Close a view"
 		};
 #endif
 
@@ -1491,11 +1483,11 @@ void CG_DemoHelpDraw(void)
 		vec4_t borderColorTitle = COLOR_BORDER_TITLE;   // titlebar
 
 		// Main header
-		int          hStyle    = ITEM_TEXTSTYLE_SHADOWED;
-		float        hScale    = 0.16f;
-		float        hScaleY   = 0.21f;
-		fontHelper_t *hFont    = FONT_HEADER;
-		vec4_t       hdrColor2 = COLOR_TEXT2; // text
+		int          hStyle   = 0;
+		float        hScale   = 0.19f;
+		float        hScaleY  = 0.19f;
+		fontHelper_t *hFont   = FONT_HEADER;
+		vec4_t       hdrColor = COLOR_TEXT;  // text
 
 		// Text settings
 		int          tStyle   = ITEM_TEXTSTYLE_SHADOWED;
@@ -1536,7 +1528,7 @@ void CG_DemoHelpDraw(void)
 			bgColorTitle[3]     *= scale;
 			borderColor[3]      *= scale;
 			borderColorTitle[3] *= scale;
-			hdrColor2[3]        *= scale;
+			hdrColor[3]         *= scale;
 			tColor[3]           *= scale;
 
 			y += (DH_Y - h) * scale;
@@ -1554,21 +1546,24 @@ void CG_DemoHelpDraw(void)
 
 		if (cg.legacyClient && cg.demoinfo)
 		{
-			CG_DrawDemoControls(x, y - 62, w, borderColor, bgColor, tSpacing, bgColorTitle, borderColorTitle, hScale, hScaleY, hdrColor2, hStyle, hFont);
+			CG_DrawDemoControls(x, y - 62, w, borderColor, bgColor, tSpacing, bgColorTitle, borderColorTitle, hScale, hScaleY, hdrColor, hStyle, hFont);
 			y += 10;
 		}
 
-		CG_DrawRect(x, y, w, h, 1, borderColor);
 		CG_FillRect(x, y, w, h, bgColor);
+		CG_DrawRect(x, y, w, h, 1, borderColor);
+
+		y += 1;
 
 		// Header
-		CG_FillRect(x, y, w, tSpacing + 4, bgColorTitle);
-		CG_DrawRect(x, y, w, tSpacing + 4, 1, borderColorTitle);
+		CG_FillRect(x + 1, y, w - 2, tSpacing + 4, bgColorTitle);
+		CG_DrawRect(x + 1, y, w - 2, tSpacing + 4, 1, borderColorTitle);
 
 		x += 4;
-		y += 1;
 		y += tSpacing;
-		CG_Text_Paint_Ext(x, y, hScale, hScaleY, hdrColor2, CG_TranslateString("DEMO CONTROLS"), 0.0f, 0, hStyle, hFont);
+
+		CG_Text_Paint_Ext(x, y, hScale, hScaleY, hdrColor, CG_TranslateString("DEMO CONTROLS"), 0.0f, 0, hStyle, hFont);
+
 		y += 3;
 
 		// Control info
@@ -1596,7 +1591,7 @@ void CG_DemoHelpDraw(void)
 #endif
 
 		y += tSpacing * 2;
-		CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, CG_TranslateString("^nBACKSPACE ^mhelp on/off"), 0.0f, 0, tStyle, tFont);
+		CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, CG_TranslateString("^7BACKSPACE ^3help on/off"), 0.0f, 0, tStyle, tFont);
 	}
 }
 
@@ -1666,11 +1661,10 @@ void CG_SpecHelpDraw(void)
 		vec4_t borderColorTitle = COLOR_BORDER_TITLE;   // titlebar
 
 		// Main header
-		int          hStyle    = ITEM_TEXTSTYLE_SHADOWED;
-		float        hScale    = 0.16f;
-		float        hScaleY   = 0.21f;
-		fontHelper_t *hFont    = FONT_HEADER;
-		vec4_t       hdrColor2 = COLOR_TEXT2; // text
+		int          hStyle  = 0;
+		float        hScale  = 0.19f;
+		float        hScaleY = 0.19f;
+		fontHelper_t *hFont  = FONT_HEADER;
 
 		// Text settings
 		int          tStyle   = ITEM_TEXTSTYLE_SHADOWED;
@@ -1696,7 +1690,7 @@ void CG_SpecHelpDraw(void)
 			}
 		}
 
-		Q_strncpyz(format, va("^2%%%ds ^N%%s", maxlen), sizeof(format));
+		Q_strncpyz(format, va("^7%%%ds ^3%%s", maxlen), sizeof(format));
 		for (i = 0, maxlen = 0; i < sizeof(help) / sizeof(helpType_t); i++)
 		{
 			if (help[i].cmd != NULL)
@@ -1736,7 +1730,7 @@ void CG_SpecHelpDraw(void)
 			bgColorTitle[3]     *= scale;
 			borderColor[3]      *= scale;
 			borderColorTitle[3] *= scale;
-			hdrColor2[3]        *= scale;
+			hdrColor[3]         *= scale;
 			tColor[3]           *= scale;
 
 			x -= w * (1.0f - scale);
@@ -1751,14 +1745,15 @@ void CG_SpecHelpDraw(void)
 		CG_DrawRect(x, y, w, h, 1, borderColor);
 		CG_FillRect(x, y, w, h, bgColor);
 
+		y += 1;
+
 		// Header
-		CG_FillRect(x, y, w, tSpacing + 4, bgColorTitle);
-		CG_DrawRect(x, y, w, tSpacing + 4, 1, borderColorTitle);
+		CG_DrawRect(x + 1, y, w - 2, tSpacing + 4, 1, borderColorTitle);
+		CG_FillRect(x + 1, y, w - 2, tSpacing + 4, bgColorTitle);
 
 		x += 4;
-		y += 1;
 		y += tSpacing;
-		CG_Text_Paint_Ext(x, y, hScale, hScaleY, hdrColor2, "SPECTATOR CONTROLS", 0.0f, 0, hStyle, hFont);
+		CG_Text_Paint_Ext(x, y, hScale, hScaleY, hdrColor, "SPECTATOR CONTROLS", 0.0f, 0, hStyle, hFont);
 		y += 3;
 
 		// Control info
