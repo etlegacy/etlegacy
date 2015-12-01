@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-11-29 20:43+0000\n"
-"Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
+"PO-Revision-Date: 2015-12-01 20:25+0000\n"
+"Last-Translator: Aranud <aranud66@live.fr>\n"
 "Language-Team: French (http://www.transifex.com/etlegacy/etlegacy/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -582,7 +582,7 @@ msgstr "Permet de taire les spectateurs"
 #: etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Warmup Damage:"
-msgstr "Dégât D’échauffement:"
+msgstr "Dégât D'échauffement:"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Nobody"
@@ -611,7 +611,7 @@ msgstr "Indique le nombre maximum de joueurs par équipe"
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid "Disable Team Controls:"
-msgstr "Désactiver Les Contrôles D’équipe:"
+msgstr "Désact. Contrôles Équipe:"
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid ""
@@ -621,7 +621,7 @@ msgstr "Les joueurs peuvent envoyer des commandes d'équipes (verrouiller les é
 
 #: etmain/ui/hostgame_advanced.menu:50
 msgid "Warmup Duration:"
-msgstr "Temps De L’échauffement:"
+msgstr "Temps De L'échauffement:"
 
 #: etmain/ui/hostgame_advanced.menu:50
 msgid "The length of time the warmup lasts prior to a match starting"
@@ -639,7 +639,7 @@ msgstr "Le nombre maximum de plaintes qu'un joueur peut recevoir avant d'être e
 
 #: etmain/ui/hostgame_advanced.menu:52
 msgid "Maximum Complainees:"
-msgstr "Plaignants Maximum"
+msgstr "Plaignants Maximum:"
 
 #: etmain/ui/hostgame_advanced.menu:52
 #: etmain/ui/options_customise_game.menu:49
@@ -670,7 +670,7 @@ msgstr "Le nombre de plainte unique qu'un joueur peut recevoir avant d'être exp
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Map Time Limit:"
-msgstr "Limite de durée de la carte:"
+msgstr "Limite durée par carte:"
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Override the default time limit"
@@ -678,7 +678,7 @@ msgstr "Force la durée limite par défaut"
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Allied Spawn Time:"
-msgstr "Temps D’Apparition Des Alliés:"
+msgstr "Temps D'Apparition Alliés:"
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Override the default Allied spawn time"
@@ -686,7 +686,7 @@ msgstr "Force la durée d'apparition par défaut des Alliés"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Axis Spawn Time:"
-msgstr "Temps D’Apparition De l'Axes:"
+msgstr "Temps D'Apparition Axes:"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Override the default Axis spawn time"
@@ -728,7 +728,7 @@ msgstr "Manches par partie en LMS :"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "Override the default LMS rounds per match"
-msgstr "Forcer le nombre de manches de LMS par parti"
+msgstr "Force le nombre de manches de LMS par partie"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "LMS Matches Per Map:"
@@ -736,7 +736,7 @@ msgstr "Parties par carte en LMS :"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "Override the default LMS matches (comprising of rounds) per map"
-msgstr "Forcer le nombre de parties en LMS (elles-mêmes comprises de plusieurs manches) par carte"
+msgstr "Force le nombre de parties en LMS (elles-mêmes comprises de plusieurs manches) par carte"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "LMS Spectate Team Only:"
@@ -1136,7 +1136,7 @@ msgstr "Nombre de joueurs maximum qui peuvent se connecter au serveur"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Auto-Configure Server:"
-msgstr "Config. Auto du Serveur :"
+msgstr "Config. Auto du Serveur:"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Competition Settings"
@@ -1682,7 +1682,7 @@ msgstr "SE CONNECTER AU SERVEUR"
 #: etmain/ui/main_quickconnect.menu:69
 #: etmain/ui/playonline_connecttoip.menu:62
 msgid "Server IP:"
-msgstr "IP du serveur:"
+msgstr "IP serveur:"
 
 #: etmain/ui/main_quickconnect.menu:71
 #: etmain/ui/playonline_connecttoip.menu:64
@@ -1845,7 +1845,7 @@ msgstr "ENTRÉE"
 #: etmain/ui/options_controls.menu:48
 #: etmain/ui/profile_create_initial.menu:112 etmain/ui/profile_create.menu:106
 msgid "Invert Mouse:"
-msgstr "Inverser la souris:"
+msgstr "Inverse souris:"
 
 #: etmain/ui/options_controls.menu:48
 msgid "Inverts mouse pitch"
@@ -1922,7 +1922,7 @@ msgstr "Montrer le menu Limbo:"
 
 #: etmain/ui/options_controls.menu:68
 msgid "Show Command Map:"
-msgstr "Montrer la carte de commande:"
+msgstr "Montrer la carte:"
 
 #: etmain/ui/options_controls.menu:69
 msgid "Compass Map Zoom In:"
@@ -1962,7 +1962,7 @@ msgstr "Recharger l'arme:"
 
 #: etmain/ui/options_controls.menu:82
 msgid "Binoculars Zoom:"
-msgstr "Zoomer avec les jumelles:"
+msgstr "Zoom jumelles:"
 
 #: etmain/ui/options_controls.menu:83
 msgid "Use (Activate):"
@@ -1982,7 +1982,7 @@ msgstr "Arme précédente:"
 
 #: etmain/ui/options_controls.menu:90
 msgid "Slot 1 - Melee:"
-msgstr "Emplacement 1 - mêlée:"
+msgstr "Slot 1 - mêlée:"
 
 #: etmain/ui/options_controls.menu:91
 msgid "Slot 2 - One Handed:"
@@ -2154,7 +2154,7 @@ msgstr "3 couleurs"
 
 #: etmain/ui/options_customise_game.menu:49
 msgid "Flash weapon icon when firing, reloading, or switching"
-msgstr "L'icône \"flash\" des armes lorsqu’elles tire, recharge ou change"
+msgstr "L'icône \"flash\" des armes lorsqu'elles tire, recharge ou change"
 
 #: etmain/ui/options_customise_game.menu:50
 msgid "Muzzle Flash:"
@@ -2213,7 +2213,7 @@ msgstr "Changer d'arme en étant zoomé permet de zoomer ou dézoomer, plutôt q
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Default Zoom Level:"
-msgstr "Niveau de zoom par défaut:"
+msgstr "Niveau zoom par défaut:"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the way Out"
@@ -2458,7 +2458,7 @@ msgstr "Affiche la boussole (avec quelques icônes dessus)"
 
 #: etmain/ui/options_customise_hud.menu:36
 msgid "Auto Map Zoom:"
-msgstr "Zoom de la carte automatique:"
+msgstr "Zoom carte automatique:"
 
 #: etmain/ui/options_customise_hud.menu:36
 msgid "Sets Zoom Level Automatically When Map Loads"
@@ -2486,7 +2486,7 @@ msgstr "Astuces du curseur:"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Size Pulse"
-msgstr "Taille variabl"
+msgstr "Taille variable"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Strobe Pulse"
@@ -2538,7 +2538,7 @@ msgstr "Affiche les drapeaux des pays des joueurs dans le tableau des score"
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Fireteam Latched Class:"
-msgstr "Classe attachée dans la Fireteam:"
+msgstr "Icône Classe Fireteam:"
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Displays Fireteam latched class"
@@ -2562,7 +2562,7 @@ msgstr "Affiche graphique des nécrologies "
 
 #: etmain/ui/options_customise_hud.menu:44
 msgid "Show Descriptive Text:"
-msgstr "Afficher le Texte Descriptif:"
+msgstr "Texte Descriptif:"
 
 #: etmain/ui/options_customise_hud.menu:44
 msgid "Displays limbo help text"
@@ -2638,7 +2638,7 @@ msgstr "Bascule entre des ATH différents"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Modify Selected HUD:"
-msgstr "Modifier l'ATH sélectionné:"
+msgstr "Modif. l'ATH sélectionné:"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Move Round Timer"
@@ -2726,7 +2726,7 @@ msgstr "Bascule l'affichage des effets de particules - PAR EXEMPLE des explosion
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Wall Mark Lifetime:"
-msgstr "Durée de vie des marques murales:"
+msgstr "Durée marques murales:"
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Duration of bullet marks on walls etc"
@@ -2819,7 +2819,7 @@ msgstr "Définit la taille du viseur affiché"
 
 #: etmain/ui/options_customise_hud.menu:71
 msgid "Crosshair Pulsing:"
-msgstr "Taille variable du viseur:"
+msgstr "Pulsation du viseur:"
 
 #: etmain/ui/options_customise_hud.menu:71
 msgid "Toggles crosshair spread sizing while moving/firing"
@@ -2827,7 +2827,7 @@ msgstr "Active ou désactive la taille variable du viseur en fonction de la pré
 
 #: etmain/ui/options_customise_hud.menu:72
 msgid "Crosshair Health Info:"
-msgstr "Information de santé du viseur:"
+msgstr "Info. santé du viseur:"
 
 #: etmain/ui/options_customise_hud.menu:72
 msgid ""
@@ -3024,7 +3024,7 @@ msgstr "DÉPLACEMENT"
 
 #: etmain/ui/options_customise_hud.menu:107
 msgid "Bob up:"
-msgstr "\"Bob Up\""
+msgstr "\"Bob Up\":"
 
 #: etmain/ui/options_customise_hud.menu:107
 msgid "Enable/Disable the vertical bob effect when moving"
@@ -3032,7 +3032,7 @@ msgstr "Active/Désactive l'effet \"Bob Verticale\" lors du déplacement"
 
 #: etmain/ui/options_customise_hud.menu:108
 msgid "Bob pitch:"
-msgstr "\"Bob Pitch\""
+msgstr "\"Bob Pitch\":"
 
 #: etmain/ui/options_customise_hud.menu:108
 msgid "Enable/Disable the bob pitch (forwards/backwards) effect when moving"
@@ -3052,7 +3052,7 @@ msgstr "POLICES"
 
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Fonts Size:"
-msgstr "Taille des polices :"
+msgstr "Taille des polices:"
 
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Sets the size of the in-game fonts"
@@ -3064,7 +3064,7 @@ msgstr "Affichage Haut:"
 
 #: etmain/ui/options_customise_hud.menu:116
 msgid "Set font size for Warmup message and Spectator label"
-msgstr "Règle la taille de police pour le message d’échauffement et le label Spectateur"
+msgstr "Règle la taille de police pour le message d'échauffement et le label Spectateur"
 
 #: etmain/ui/options_customise_hud.menu:118
 msgid "Side Print:"
@@ -3081,7 +3081,7 @@ msgstr "Affichages Centrés:"
 
 #: etmain/ui/options_customise_hud.menu:120
 msgid "Set font size for CenterPrint/Objective Info/Skill reward messages"
-msgstr "Règle la taille de police pour Les Affichages Centrés/ Les Infos de l'Objectif / Les Message de récompenses des Compétences"
+msgstr "Règle la taille de police pour Les Affichages Centrés/ Les Infos de l'Objectif / Les Messages de récompenses des Compétences"
 
 #: etmain/ui/options_customise_hud.menu:122
 msgid "Set font size for Crosshair Name label"
@@ -3089,7 +3089,7 @@ msgstr "Règle la taille de police pour les labels du réticule de visée"
 
 #: etmain/ui/options_customise_hud.menu:128
 msgid "PopUpTimeStay:"
-msgstr "Durée D'Apparition PopUp:"
+msgstr "Durée Apparition PopUp:"
 
 #: etmain/ui/options_customise_hud.menu:128
 msgid "Set the time a pop-up stays visible"
@@ -3118,7 +3118,7 @@ msgstr "Calibration générale de la luminosité (toute profondeur de couleur)"
 msgid ""
 "1. Move the slider below and/or the brightness on your monitor until you can"
 " see 16"
-msgstr "1. Bougez le curseur ci-dessous et/ou la luminosité de votre écran jusqu’à que vous voyez 16"
+msgstr "1. Bougez le curseur ci-dessous et/ou la luminosité de votre écran jusqu'à que vous voyez 16"
 
 #: etmain/ui/options_graphics_gamma.menu:35
 #: etmain/ui/options_system_gamma.menu:38
@@ -3138,14 +3138,14 @@ msgstr "Réglage Fin De La Luminosité (32 bits Pour La Textures et la Profondeu
 #: etmain/ui/options_graphics_gamma.menu:51
 #: etmain/ui/options_system_gamma.menu:54
 msgid "1. Move the slider below until you can see 3 separate bars below."
-msgstr "1. Bougez le curseur ci-dessous jusqu’à que vous pouvez voir 3 barres séparé ci-dessous. "
+msgstr "1. Bougez le curseur ci-dessous jusqu'à que vous pouvez voir 3 barres séparé ci-dessous. "
 
 #: etmain/ui/options_graphics_gamma.menu:52
 #: etmain/ui/options_system_gamma.menu:55
 msgid ""
 "2. Adjust the slider until there is no difference between the left and "
 "middle boxes."
-msgstr "2. Ajustez le curseur jusqu’à qu'il n'y a plus de différence entre la boîte de gauche et du centre."
+msgstr "2. Ajustez le curseur jusqu'à qu'il n'y a plus de différence entre la boîte de gauche et du centre."
 
 #: etmain/ui/options_graphics_gamma.menu:53
 #: etmain/ui/options_system_gamma.menu:56
@@ -3249,7 +3249,7 @@ msgstr "Bascule entre la skybox détaillé établi ou tout simplement un ciel de
 
 #: etmain/ui/options_graphics.menu:55
 msgid "Shadow Detail:"
-msgstr "Détail d’ombre:"
+msgstr "Détail d'ombre:"
 
 #: etmain/ui/options_graphics.menu:55
 msgid "Blob"
@@ -3480,7 +3480,7 @@ msgstr "Couper le son à la perte de focus:"
 
 #: etmain/ui/options_system.menu:47
 msgid "Enables or disables sound when window is unfocused"
-msgstr "Activer ou désactiver le son quand la fenêtre n’a pas le focus"
+msgstr "Activer ou désactiver le son quand la fenêtre n'a pas le focus"
 
 #: etmain/ui/options_system.menu:51
 msgid "NETWORKING"
@@ -3538,7 +3538,7 @@ msgstr "Activer ou désactiver les téléchargements http/ftp"
 
 #: etmain/ui/playonline_connecttoip.menu:51 etmain/ui/playonline.menu:649
 msgid "CONNECT TO IP"
-msgstr "SE CONNECTER À L’IP"
+msgstr "SE CONNECTER À L'IP"
 
 #: etmain/ui/playonline_deletefavs.menu:50
 msgid "DELETE SERVER FAVOURITES"
@@ -3686,11 +3686,11 @@ msgstr "PING"
 
 #: etmain/ui/playonline.menu:651
 msgid "DELETE FAVS"
-msgstr "SUPPRIMER LES FAVORI"
+msgstr "SUPPR. LES FAVORIS."
 
 #: etmain/ui/playonline.menu:656 etmain/ui/playonline_serverinfo.menu:78
 msgid "JOIN SERVER"
-msgstr "REJOINDRE LE SERVEUR"
+msgstr "REJOINDRE"
 
 #: etmain/ui/popup_autoupdate.menu:51
 msgid "UPDATE AVAILABLE"
@@ -3766,7 +3766,7 @@ msgstr "Sélectionnez les réglages vidéo initiaux, ils peuvent être changés 
 #: etmain/ui/profile_create_initial.menu:104 etmain/ui/profile_create.menu:98
 msgid ""
 "Choose your preferred video resolution, if unsure leave it as the default"
-msgstr "Choisissez votre résolution vidéo préférée, en cas d’incertitude laissez par défaut"
+msgstr "Choisissez votre résolution vidéo préférée, en cas d'incertitude laissez par défaut"
 
 #: etmain/ui/profile_create_initial.menu:111 etmain/ui/profile_create.menu:105
 msgid "Use this slider to set your mouse sensitivity"
@@ -3776,7 +3776,7 @@ msgstr "Utilisez ce curseur pour configurer la sensibilité de votre souris"
 msgid ""
 "Choose invert mouse if you prefer flight-simulator style mouse pitch "
 "controls"
-msgstr "Choisissez d’inverser la souris si vous préférez contrôler le tangage à la souris à la manière d’un simulateur de vol"
+msgstr "Choisissez d'inverser la souris si vous préférez contrôler le tangage à la souris à la manière d'un simulateur de vol"
 
 #: etmain/ui/profile_create_initial.menu:116 etmain/ui/profile_create.menu:110
 msgid "DEFAULT SETTINGS"
@@ -3801,7 +3801,7 @@ msgstr "CRÉER"
 
 #: etmain/ui/profile_create.menu:106
 msgid "Choose invert mouse if you prefer flight-simulator mouse pitch"
-msgstr "Choisissez d’inverser la souris si vous préférez le contrôle de tangage à la manière d’un simulateur de vol"
+msgstr "Choisissez d'inverser la souris si vous préférez le contrôle de tangage à la manière d'un simulateur de vol"
 
 #: etmain/ui/profile_delete_error.menu:50
 msgid "DELETE WARNING"
@@ -3853,7 +3853,7 @@ msgstr "Nouveau nom du profi"
 
 #: etmain/ui/quit.menu:55
 msgid "Yeah, right, like YOU have"
-msgstr "Mouais, c’est ça, comme si TU n’avais"
+msgstr "Mouais, c'est ça, comme si TU n'avais"
 
 #: etmain/ui/quit.menu:56
 msgid "anything better to do!"
@@ -4603,7 +4603,7 @@ msgstr "Porter plainte contre ^7%s^3 pour vous avoir tué ?"
 #: src/cgame/cg_draw.c:1832
 #, c-format
 msgid "Press '%s' for YES, or '%s' for NO"
-msgstr "Appuie ‘%s’ pour OUI, ou ‘%s’ pour NON"
+msgstr "Appuyez '%s' pour OUI, ou '%s' pour NON"
 
 #: src/cgame/cg_draw.c:1758
 #, c-format
@@ -5028,7 +5028,7 @@ msgstr "Utilisateur"
 
 #: src/cgame/cg_main.c:935
 msgid "is not on the server"
-msgstr "n’est pas sur le serveur"
+msgstr "n'est pas sur le serveur"
 
 #: src/cgame/cg_players.c:309
 #, c-format
@@ -5191,12 +5191,12 @@ msgstr "Collecte Automatique"
 #: src/cgame/cg_servercmds.c:1875
 #, c-format
 msgid "Damage Given: %6d      Team Damage Given: %6d"
-msgstr "Dégât Infligé: %6d Dégât Infligé A L’équipe: %6d"
+msgstr "Dégât Infligé: %6d Dégât Infligé A L'équipe: %6d"
 
 #: src/cgame/cg_servercmds.c:1876
 #, c-format
 msgid "Damage Recvd: %6d      Team Damage Recvd: %6d"
-msgstr "Dégât Reçu: %6d Dégât Reçu De L’équipe: %6d"
+msgstr "Dégât Reçu: %6d Dégât Reçu De L'équipe: %6d"
 
 #: src/cgame/cg_servercmds.c:1878
 #, c-format
@@ -5551,10 +5551,10 @@ msgid "^1THE TEAM"
 msgstr "^1L'EQUIPE"
 
 msgid "Axis team"
-msgstr "L’équipe de l'Axes"
+msgstr "L'équipe de l'Axes"
 
 msgid "Allied team"
-msgstr "L’équipe des l'Alliés"
+msgstr "L'équipe des l'Alliés"
 
 msgid "Spectators"
 msgstr "Spectateurs"
@@ -5924,7 +5924,7 @@ msgid ""
 msgstr "^3Tout les joueurs sont prêt!^7\n\nLe match commence...\n"
 
 msgid "You are on the Allied team"
-msgstr "Vous êtes dans l’équipe des Allies"
+msgstr "Vous êtes dans l'équipe des Allies"
 
 msgid "^1*** Match Reset! ***\n"
 msgstr "^1*** Match Reset! ***\n"
@@ -6062,7 +6062,7 @@ msgid ""
 msgstr "L'autre joueur doit être dans la même Fireteam pour que vous lui donniez les droits d'administration "
 
 msgid "You must be a fireteam admin to give admin rights to someone else"
-msgstr "Vous devez être administrateur de Fireteam pour donner les droits d'administrateur à quelqu’un d'autre"
+msgstr "Vous devez être administrateur de Fireteam pour donner les droits d'administrateur à quelqu'un d'autre"
 
 msgid "Invalid referee password!\n"
 msgstr "Mot de passe d'arbitre invalide!\n"
@@ -6087,7 +6087,7 @@ msgid "Sorry, referee status disabled on this server.\n"
 msgstr "Désolé, le status d'arbitre est désactivé sur ce serveur.\n"
 
 msgid "Referee has ^3LOCKED^7 teams\n"
-msgstr "L’arbitre a ^3VERROUILLE^7 les équipes\n"
+msgstr "L'arbitre a ^3VERROUILLE^7 les équipes\n"
 
 msgid "You have LOCKED teams\n"
 msgstr "Vous avez VERROUILLE les équipes\n"
@@ -6099,10 +6099,10 @@ msgid "You have UNLOCKED teams\n"
 msgstr "Vous avez DÉVERROUILLE les équipes\n\n"
 
 msgid "The ^4Allies^7 team is LOCKED!\n"
-msgstr "L’équipes des ^4Alliés^7 est VERROUILLE!\n"
+msgstr "L'équipes des ^4Alliés^7 est VERROUILLE!\n"
 
 msgid "The ^1Axis^7 team is LOCKED!\n"
-msgstr "L’équipes de ^1Axes^7 est VERROUILLE!\n"
+msgstr "L'équipes de ^1Axes^7 est VERROUILLE!\n"
 
 msgid "^3Referee ^1PAUSED^3 the match^3!\n"
 msgstr "^3L'arbitre met en ^1PAUSE^3 le match^3!\n"
@@ -7034,4 +7034,4 @@ msgstr "Tout de suite!"
 
 #: src/cgame/cg_draw.c:2505
 msgid "^3WARMUP:^7 Match begins now!"
-msgstr ""
+msgstr "^3ÉCHAUFFEMENT:^7 La partie commence maintenant!"
