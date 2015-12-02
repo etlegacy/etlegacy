@@ -1063,28 +1063,6 @@ models/multiplayer/mortar/mortar_sd
 	}
 }
 
-models/multiplayer/syringe/adrenaline
-{
-        cull disable
-        {
-                map models/multiplayer/syringe/fluid3.tga
-                blendfunc blend
-                rgbgen lightingdiffuse
-                tcmod scale 4 6
-                tcmod scroll 0 -.8
-        }
-        {
-                map models/multiplayer/syringe/syringe.tga
-                blendfunc gl_src_alpha gl_one_minus_src_alpha
-                rgbgen lightingdiffuse
-        }
-        {
-                map models/multiplayer/syringe/syringe_reflections.tga
-                blendfunc gl_src_alpha gl_one_minus_src_alpha
-                rgbgen lightingdiffuse
-        }
-}
-
 // Helmet Ranks
 models/players/temperate/common/rank1
 {
