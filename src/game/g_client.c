@@ -3353,6 +3353,7 @@ void ClientDisconnect(int clientNum)
 	// remove complaint client
 	for (i = 0 ; i < level.numConnectedClients ; i++)
 	{
+		flag = g_entities + level.sortedClients[i];
 		if (flag->client->pers.complaintEndTime > level.time && flag->client->pers.complaintClient == clientNum)
 		{
 			flag->client->pers.complaintClient  = -1;
