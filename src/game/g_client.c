@@ -3333,6 +3333,22 @@ void ClientDisconnect(int clientNum)
 	G_RemoveFromAllIgnoreLists(clientNum);
 	G_LeaveTank(ent, qfalse);
 
+	// update uniform owners
+	for (i = 0 ; i < level.numConnectedClients ; i++)
+	{
+		flag = g_entities + level.sortedClients[i];
+		if (flag->client->disguiseClientNum == clientNum && flag->client->ps.powerups[PW_OPS_DISGUISED])
+		{
+			CPx(flag->s.number, va("cp \"Uniform of %s^7 has been identified!\" 1", ent->client->pers.netname));
+			flag->client->disguiseClientNum = flag->s.clientNum;
+			flag->client->disguiseRank      = flag->client->sess.rank;
+			// sound effect
+			//G_AddEvent(flag, EV_DISGUISE_SOUND, 0); // FIXME: find a sound + add event
+			ClientUserinfoChanged(flag->s.clientNum);
+			// no break - uniform might be stolen twice
+		}
+	}
+
 	// stop any following clients
 	for (i = 0 ; i < level.numConnectedClients ; i++)
 	{
@@ -3343,8 +3359,7 @@ void ClientDisconnect(int clientNum)
 		{
 			StopFollowing(flag);
 		}
-		if ((flag->client->ps.pm_flags & PMF_LIMBO)
-		    && flag->client->sess.spectatorClient == clientNum)
+		if ((flag->client->ps.pm_flags & PMF_LIMBO) && flag->client->sess.spectatorClient == clientNum)
 		{
 			Cmd_FollowCycle_f(flag, 1, qfalse);
 		}
