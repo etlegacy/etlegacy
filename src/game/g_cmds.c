@@ -3608,7 +3608,6 @@ qboolean Do_Activate2_f(gentity_t *ent, gentity_t *traceEnt)
 						G_DebugAddSkillPoints(ent, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 5.f, "stealing uniform");
 
 						ent->client->disguiseClientNum = traceEnt->s.clientNum;
-						ent->client->disguiseRank      = g_entities[traceEnt->s.clientNum].client ? g_entities[traceEnt->s.clientNum].client->sess.rank : 0;
 
 						CPx(ent->s.number, va("cp \"Uniform of %s^7 has been stolen\" 1", g_entities[traceEnt->s.clientNum].client->pers.netname));
 

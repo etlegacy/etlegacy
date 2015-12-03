@@ -268,10 +268,6 @@ void CG_NewClientInfo(int clientNum)
 	v                         = Info_ValueForKey(configstring, "dn");
 	newInfo.disguiseClientNum = atoi(v);
 
-	// disguiseRank
-	v                    = Info_ValueForKey(configstring, "dr");
-	newInfo.disguiseRank = atoi(v);
-
 	// weapon and latchedweapon ( FIXME: make these more secure )
 	v              = Info_ValueForKey(configstring, "w");
 	newInfo.weapon = atoi(v);
@@ -2911,7 +2907,7 @@ void CG_Player(centity_t *cent)
 
 	if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED))
 	{
-		rank = ci->disguiseRank;
+		rank = cgs.clientinfo[cgs.clientinfo[cent->currentState.number].disguiseClientNum].rank;
 		team = ci->team == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS;
 	}
 	else

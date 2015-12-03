@@ -2107,7 +2107,7 @@ void ClientUserinfoChanged(int clientNum)
 
 	// send over a subset of the userinfo keys so other clients can
 	// print scoreboards, display models, and play custom sounds
-	s = va("n\\%s\\t\\%i\\c\\%i\\lc\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%i\\dr\\%i\\w\\%i\\lw\\%i\\sw\\%i\\mu\\%i\\ref\\%i\\u\\%u",
+	s = va("n\\%s\\t\\%i\\c\\%i\\lc\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%i\\w\\%i\\lw\\%i\\sw\\%i\\mu\\%i\\ref\\%i\\u\\%u",
 	       client->pers.netname,
 	       client->sess.sessionTeam,
 	       client->sess.playerType,
@@ -2116,7 +2116,6 @@ void ClientUserinfoChanged(int clientNum)
 	       medalStr,
 	       skillStr,
 	       client->disguiseClientNum,
-	       client->disguiseRank,
 	       client->sess.playerWeapon,
 	       client->sess.latchPlayerWeapon,
 	       client->sess.latchPlayerWeapon2,
@@ -3341,7 +3340,6 @@ void ClientDisconnect(int clientNum)
 		{
 			CPx(flag->s.number,"cp \"Your cover has been blown, steal a new uniform soon!\" 1");
 			flag->client->disguiseClientNum = flag->s.clientNum;
-			flag->client->disguiseRank      = flag->client->sess.rank;
 			// sound effect
 			//G_AddEvent(flag, EV_DISGUISE_SOUND, 0); // FIXME: find a sound + add event
 			ClientUserinfoChanged(flag->s.clientNum);
