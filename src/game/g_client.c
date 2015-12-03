@@ -3339,13 +3339,13 @@ void ClientDisconnect(int clientNum)
 		flag = g_entities + level.sortedClients[i];
 		if (flag->client->disguiseClientNum == clientNum && flag->client->ps.powerups[PW_OPS_DISGUISED])
 		{
-			CPx(flag->s.number, va("cp \"Uniform of %s^7 has been identified!\" 1", ent->client->pers.netname));
+			CPx(flag->s.number,"cp \"Your cover has been blown, steal a new uniform soon!\" 1");
 			flag->client->disguiseClientNum = flag->s.clientNum;
 			flag->client->disguiseRank      = flag->client->sess.rank;
 			// sound effect
 			//G_AddEvent(flag, EV_DISGUISE_SOUND, 0); // FIXME: find a sound + add event
 			ClientUserinfoChanged(flag->s.clientNum);
-			// no break - uniform might be stolen twice
+			// no break - uniform might be stolen more than once
 		}
 	}
 
