@@ -572,18 +572,19 @@ typedef struct
 	int medals[SK_NUM_SKILLS];                  // medals
 
 	int coach_team;
-	int damage_given;
-	int damage_received;
-	int deaths;
-	int kills;
 	int referee;
 	int rounds;
 	int spec_invite;
 	int spec_team;
+	int deaths;
+	int kills;
+	int gibs;
 	int selfkills;
+	int team_kills;
+	int damage_given;
+	int damage_received;
 	int team_damage_given;
 	int team_damage_received;
-	int team_kills;
 	int time_axis;
 	int time_allies;
 	int time_played;

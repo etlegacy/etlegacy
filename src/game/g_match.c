@@ -272,7 +272,13 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
 				attacker->client->sess.aWeaponStats[ref].atts = 1;
 			}
 		}
-		//return;
+
+		if (targ->health <= FORCE_LIMBO_HEALTH &&
+			(targ->client->sess.sessionTeam != attacker->client->sess.sessionTeam))
+		{
+			attacker->client->sess.gibs++;
+		}
+		return;
 	}
 
 	//  G_Printf("mod: %d, Index: %d, dmg: %d\n", mod, G_weapStatIndex_MOD(mod), dmg_ref);
@@ -305,6 +311,7 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
 	{
 		attacker->client->sess.team_damage_given += dmg;
 		targ->client->sess.team_damage_received  += dmg;
+
 		if (targ->health <= 0)
 		{
 			attacker->client->sess.team_kills++;
@@ -319,6 +326,7 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
 	{
 		attacker->client->sess.damage_given += dmg;
 		targ->client->sess.damage_received  += dmg;
+
 		if (targ->health <= 0)
 		{
 			attacker->client->sess.kills++;
@@ -488,11 +496,12 @@ char *G_createStats(gentity_t *refEnt)
 	// Only send these when there are some weaponstats. This is what the client expects.
 	if (dwWeaponMask != 0)
 	{
-		Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d %d %d %d %d %d",
+		Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d %d %d %d %d %d %d",
 		                                              refEnt->client->sess.damage_given,
 		                                              refEnt->client->sess.damage_received,
 		                                              refEnt->client->sess.team_damage_given,
 		                                              refEnt->client->sess.team_damage_received,
+		                                              refEnt->client->sess.gibs,
 		                                              refEnt->client->sess.selfkills,
 		                                              refEnt->client->sess.team_kills));
 	}
@@ -526,10 +535,11 @@ void G_deleteStats(int nClient)
 	cl->sess.deaths               = 0;
 	cl->sess.rounds               = 0;
 	cl->sess.kills                = 0;
+	cl->sess.gibs                 = 0;
 	cl->sess.selfkills            = 0;
+	cl->sess.team_kills           = 0;
 	cl->sess.team_damage_given    = 0;
 	cl->sess.team_damage_received = 0;
-	cl->sess.team_kills           = 0;
 	cl->sess.time_axis            = 0;
 	cl->sess.time_allies          = 0;
 	cl->sess.time_played          = 0;
@@ -593,7 +603,7 @@ void G_parseStats(char *pszStatsInfo)
 void G_printMatchInfo(gentity_t *ent)
 {
 	int       i, j, cnt = 0, eff, time_eff;
-	int       tot_timex, tot_timel, tot_timep, tot_kills, tot_deaths, tot_sk, tot_tk, tot_dg, tot_dr, tot_tdg, tot_tdr, tot_xp;
+	int       tot_timex, tot_timel, tot_timep, tot_kills, tot_deaths, tot_gibs, tot_sk, tot_tk, tot_dg, tot_dr, tot_tdg, tot_tdr, tot_xp;
 	gclient_t *cl;
 	char      *ref;
 	char      n2[MAX_STRING_CHARS];
@@ -610,6 +620,7 @@ void G_printMatchInfo(gentity_t *ent)
 		tot_timep  = 0;
 		tot_kills  = 0;
 		tot_deaths = 0;
+		tot_gibs   = 0;
 		tot_sk     = 0;
 		tot_tk     = 0;
 		tot_dg     = 0;
@@ -619,8 +630,8 @@ void G_printMatchInfo(gentity_t *ent)
 		tot_xp     = 0;
 
 		CP("sc \"\n\"");
-		CP("sc \"^7TEAM       Player         ^1 TmX^4 TmL^7 TmP^7 Kll Dth  SK  TK^7 Eff^2    DG^1    DR^6  TDG^4  TDR^3  Score\n\"");
-		CP("sc \"^7---------------------------------------------------------------------------------------\n\"");
+		CP("sc \"^7TEAM       Player         ^1 TmX^4 TmL^7 TmP^7 Kll Dth Gib  SK  TK^7 Eff^2    DG^1    DR^6  TDG^4  TDR^3  Score\n\"");
+		CP("sc \"^7-------------------------------------------------------------------------------------------\n\"");
 
 		for (j = 0; j < level.numConnectedClients; j++)
 		{
@@ -640,6 +651,7 @@ void G_printMatchInfo(gentity_t *ent)
 			tot_timep  += cl->sess.time_played;
 			tot_kills  += cl->sess.kills;
 			tot_deaths += cl->sess.deaths;
+			tot_gibs   += cl->sess.gibs;
 			tot_sk     += cl->sess.selfkills;
 			tot_tk     += cl->sess.team_kills;
 			tot_dg     += cl->sess.damage_given;
@@ -665,7 +677,7 @@ void G_printMatchInfo(gentity_t *ent)
 			}
 
 			cnt++;
-			CP(va("sc \"%-14s %s%-15s^1%4d^4%4d^7%s%4d^3%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
+			CP(va("sc \"%-14s %s%-15s^1%4d^4%4d^7%s%4d^3%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
 			      aTeams[i],
 			      ref,
 			      n2,
@@ -675,6 +687,7 @@ void G_printMatchInfo(gentity_t *ent)
 			      time_eff,
 			      cl->sess.kills,
 			      cl->sess.deaths,
+			      cl->sess.gibs,
 			      cl->sess.selfkills,
 			      cl->sess.team_kills,
 			      ref,
@@ -694,8 +707,8 @@ void G_printMatchInfo(gentity_t *ent)
 
 		time_eff = (tot_timex + tot_timel == 0) ? 0 : 100 * tot_timep / (tot_timex + tot_timel);
 
-		CP("sc \"^7---------------------------------------------------------------------------------------\n\"");
-		CP(va("sc \"%-14s ^5%-15s^1%4d^4%4d^5%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
+		CP("sc \"^7-------------------------------------------------------------------------------------------\n\"");
+		CP(va("sc \"%-14s ^5%-15s^1%4d^4%4d^5%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
 		      aTeams[i],
 		      "Totals",
 		      tot_timex / 60000,
@@ -703,6 +716,7 @@ void G_printMatchInfo(gentity_t *ent)
 		      time_eff,
 		      tot_kills,
 		      tot_deaths,
+		      tot_gibs,
 		      tot_sk,
 		      tot_tk,
 		      eff,

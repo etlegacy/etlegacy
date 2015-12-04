@@ -804,6 +804,7 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(sess.damage_received,           FIELD_INT,         0),
 	_et_gclient_addfield(sess.deaths,                    FIELD_INT,         0),
 	_et_gclient_addfield(sess.kills,                     FIELD_INT,         0),
+	_et_gclient_addfield(sess.gibs,                      FIELD_INT,         0),
 	_et_gclient_addfield(sess.referee,                   FIELD_INT,         0),
 	_et_gclient_addfield(sess.rounds,                    FIELD_INT,         0),
 	_et_gclient_addfield(sess.spec_invite,               FIELD_INT,         0),
