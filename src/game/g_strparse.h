@@ -69,7 +69,7 @@ typedef enum
 	TOK_xp,                             // 24
 	TOK_dn,                             // 25 now disguised client num (change to 'd' to safe a char per client)
 	TOK_dc,                             // 26 obsolete/unused (disguised class)
-	TOK_dr,                             // 27
+	TOK_dr,                             // 27 unused
 	TOK_w,                              // 28
 	TOK_lw,                             // 29
 	TOK_lc,                             // 30

@@ -734,7 +734,7 @@ void TeamplayInfoMessage(team_t team)
 				}
 			}
 
-			Com_sprintf(entry, sizeof(entry), " %i %i %i %i %i", level.sortedClients[i], player->client->pers.teamState.location[0], player->client->pers.teamState.location[1], h, player->s.powerups);
+			Com_sprintf(entry, sizeof(entry), " %i %i %i %i %i %i", level.sortedClients[i], player->client->pers.teamState.location[0], player->client->pers.teamState.location[1], player->client->pers.teamState.location[2], h, player->s.powerups);
 
 			j = strlen(entry);
 			if (stringlength + j > sizeof(string))
@@ -755,6 +755,7 @@ void TeamplayInfoMessage(team_t team)
 		return;
 	}
 
+	// FIXME: this is a potential b*llsh*t - trap_SendServerCommand cuts tinfo at 1023
 	Q_strncpyz(bufferedData, tinfo, 1400);
 
 	for (i = 0; i < level.numConnectedClients; i++)
@@ -772,11 +773,10 @@ void TeamplayInfoMessage(team_t team)
 
 void CheckTeamStatus(void)
 {
-	gentity_t *ent;
-
 	if (level.time - level.lastTeamLocationTime > TEAM_LOCATION_UPDATE_TIME)
 	{
-		int i;
+		int       i;
+		gentity_t *ent;
 
 		level.lastTeamLocationTime = level.time;
 		for (i = 0; i < level.numConnectedClients; i++)
@@ -786,6 +786,7 @@ void CheckTeamStatus(void)
 			{
 				ent->client->pers.teamState.location[0] = (int)ent->r.currentOrigin[0];
 				ent->client->pers.teamState.location[1] = (int)ent->r.currentOrigin[1];
+				ent->client->pers.teamState.location[2] = (int)ent->r.currentOrigin[2];
 			}
 		}
 
