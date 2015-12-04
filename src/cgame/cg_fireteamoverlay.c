@@ -380,6 +380,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		{
 			origin[0] = ci->location[0];
 			origin[1] = ci->location[1];
+			origin[2] = ci->location[2];
 
 			locStr[i] = CG_BuildLocationString(ci->clientNum, origin, LOC_FTEAM);
 
