@@ -577,8 +577,9 @@ typedef struct clientInfo_s
 	int kills;
 	int deaths;
 	int gibs;
-	int selfkills;
-	int teamkills;
+	int selfKills;
+	int teamKills;
+	int teamGibs;
 	int timeAxis;
 	int timeAllies;
 	int timePlayed;

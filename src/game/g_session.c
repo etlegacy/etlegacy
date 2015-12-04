@@ -64,9 +64,9 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	//}
 
 #ifdef FEATURE_MULTIVIEW
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #else
-	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	s = va("%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #endif
 	       client->sess.sessionTeam,
 	       client->sess.spectatorTime,
@@ -80,14 +80,15 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	       client->sess.latchPlayerWeapon2,
 
 	       client->sess.coach_team,
-	       client->sess.deaths,
-	       client->sess.kills,
-	       client->sess.gibs,
 	       client->sess.referee,
 	       client->sess.spec_invite,
 	       client->sess.spec_team,
-	       client->sess.selfkills,
+	       client->sess.kills,
+	       client->sess.deaths,
+	       client->sess.gibs,
+	       client->sess.self_kills,
 	       client->sess.team_kills,
+	       client->sess.team_gibs,
 	       client->sess.time_axis,
 	       client->sess.time_allies,
 	       client->sess.time_played,
@@ -240,9 +241,9 @@ void G_ReadSessionData(gclient_t *client)
 	trap_Cvar_VariableStringBuffer(va("session%i", (int)(client - level.clients)), s, sizeof(s));
 
 #ifdef FEATURE_MULTIVIEW
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #else
-	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
+	sscanf(s, "%i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i",
 #endif
 	       (int *)&client->sess.sessionTeam,
 	       &client->sess.spectatorTime,
@@ -256,14 +257,15 @@ void G_ReadSessionData(gclient_t *client)
 	       &client->sess.latchPlayerWeapon2,
 
 	       &client->sess.coach_team,
-	       &client->sess.deaths,
-	       &client->sess.kills,
-	       &client->sess.gibs,
 	       &client->sess.referee,
 	       &client->sess.spec_invite,
 	       &client->sess.spec_team,
-	       &client->sess.selfkills,
+	       &client->sess.kills,
+	       &client->sess.deaths,
+	       &client->sess.gibs,
+	       &client->sess.self_kills,
 	       &client->sess.team_kills,
+	       &client->sess.team_gibs,
 	       &client->sess.time_axis,
 	       &client->sess.time_allies,
 	       &client->sess.time_played,
