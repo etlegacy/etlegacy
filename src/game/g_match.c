@@ -252,9 +252,7 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
 #ifndef DEBUG_STATS
 	    g_gamestate.integer != GS_PLAYING ||
 #endif
-	    mod == MOD_SWITCHTEAM ||
-	    (g_gametype.integer >= GT_WOLF && (targ->client->ps.pm_flags & PMF_LIMBO)) || // FIXME: inspect - this is a bit odd by gametype
-	    (g_gametype.integer < GT_WOLF && (targ->s.eFlags == EF_DEAD || targ->client->ps.pm_type == PM_DEAD)))
+	    mod == MOD_SWITCHTEAM || targ->client->ps.pm_flags & PMF_LIMBO)
 	{
 		return;
 	}
@@ -274,7 +272,7 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
 				attacker->client->sess.aWeaponStats[ref].atts = 1;
 			}
 		}
-		return;
+		//return;
 	}
 
 	//  G_Printf("mod: %d, Index: %d, dmg: %d\n", mod, G_weapStatIndex_MOD(mod), dmg_ref);
@@ -303,8 +301,7 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
 	}
 
 	// Player team stats
-	if (g_gametype.integer >= GT_WOLF &&
-	    targ->client->sess.sessionTeam == attacker->client->sess.sessionTeam)
+	if (targ->client->sess.sessionTeam == attacker->client->sess.sessionTeam)
 	{
 		attacker->client->sess.team_damage_given += dmg;
 		targ->client->sess.team_damage_received  += dmg;

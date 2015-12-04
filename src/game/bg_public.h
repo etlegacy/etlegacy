@@ -355,7 +355,7 @@ typedef enum
 	GT_WOLF_STOPWATCH,
 	GT_WOLF_CAMPAIGN,     // Exactly the same as GT_WOLF, but uses campaign roulation (multiple maps form one virtual map)
 	GT_WOLF_LMS,
-	GT_WOLF_MAPVOTE,      // ETPub gametype map voting - Credits go to their team. TU!
+	GT_WOLF_MAPVOTE,      // Credits go to ETPub team. TU!
 	GT_MAX_GAME_TYPE
 } gametype_t;
 
