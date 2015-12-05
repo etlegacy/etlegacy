@@ -2778,6 +2778,8 @@ void CG_Debreifing2_Awards_Parse(void)
 	const char *token;
 	char       *s;
 	int        size, len;
+	int        clientNum;
+	float      value;
 	char       buffer[sizeof(cgs.dbAwardNamesBuffer)];
 
 	Q_strncpyz(buffer, cs, sizeof(cgs.dbAwardNamesBuffer));
@@ -2793,16 +2795,38 @@ void CG_Debreifing2_Awards_Parse(void)
 
 	for (i = 0; i < NUM_ENDGAME_AWARDS; i++)
 	{
+		// clientNum
 		token = COM_Parse(&cs);
 
-		Q_strncpyz(s, token, size);
+		clientNum = atoi(token);
 
+		if (clientNum >= 0 && clientNum < MAX_CLIENTS)
+		{
+			Q_strncpyz(s, va("%s", cgs.clientinfo[clientNum].name), size);
+		}
+		else
+		{
+			Q_strncpyz(s, "", size);
+		}
+
+		// value
+		token = COM_Parse(&cs);
+
+		value = atof(token);
+
+		if (value > 0)
+		{
+			strcat(s, (value == (int)(value)) ? va("^7 (%i)", (int)(value)) : va("^7 (%.1f)", value));
+		}
+
+		// award
 		cgs.dbAwardNames[i] = s;
 
-		len   = strlen(token);
+		len   = strlen(s);
 		size -= len;
 		s    += len + 1;
 
+		// team
 		token = COM_Parse(&cs);
 
 		cgs.dbAwardTeams[i] = atoi(token);
