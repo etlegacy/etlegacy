@@ -742,94 +742,127 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 // - connectedClients have a team but keep the check for TEAM_FREE
 // ... we'll never know for sure, connectedClients are determined in CalculateRanks
 
-#define CHECKSTAT1(XX)                                                        \
-	best = NULL;                                                                \
-	for (i = 0; i < level.numConnectedClients; i++) {                          \
-		gclient_t *cl = &level.clients[level.sortedClients[i]];             \
-		if (cl->sess.sessionTeam == TEAM_FREE) {                          \
-			continue;                                                           \
-		}                                                                       \
-		if (cl->XX <= 0)                                                    \
-		{                                                                   \
-			continue;                                                       \
-		}                                                                   \
-		if (!best || cl->XX > best->XX) {                                  \
-			best = cl;                                                          \
-		}                                                                       \
-	}                                                                           \
-	if (best) { best->hasaward = qtrue; }                                      \
+#define CHECKSTAT1(XX)                                                  \
+	best = NULL;                                                        \
+	for (i = 0; i < level.numConnectedClients; i++)                     \
+	{                                                                   \
+		gclient_t *cl = &level.clients[level.sortedClients[i]];         \
+		if (cl->sess.sessionTeam == TEAM_FREE)                          \
+		{                                                               \
+			continue;                                                   \
+		}                                                               \
+		if (cl->XX <= 0)                                                \
+		{                                                               \
+			continue;                                                   \
+		}                                                               \
+		if (!best || cl->XX > best->XX)                                 \
+		{                                                               \
+			best = cl;                                                  \
+		}                                                               \
+	}                                                                   \
+	if (best)                                                           \
+	{                                                                   \
+		best->hasaward = qtrue;                                         \
+	}                                                                   \
 	Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : TEAM_FREE))
 
-#define CHECKSTATMIN(XX, YY)                                                  \
-	best = NULL;                                                                \
-	for (i = 0; i < level.numConnectedClients; i++) {                          \
-		gclient_t *cl = &level.clients[level.sortedClients[i]];             \
-		if (cl->sess.sessionTeam == TEAM_FREE) {                          \
-			continue;                                                           \
-		}                                                                       \
-		if (!best || cl->XX > best->XX) {                                  \
-			best = cl;                                                          \
-		}                                                                       \
-	}                                                                           \
-	if (best) { best->hasaward = qtrue; }                                      \
+#define CHECKSTATMIN(XX, YY)                                            \
+	best = NULL;                                                        \
+	for (i = 0; i < level.numConnectedClients; i++)                     \
+	{                                                                   \
+		gclient_t *cl = &level.clients[level.sortedClients[i]];         \
+		if (cl->sess.sessionTeam == TEAM_FREE)                          \
+		{                                                               \
+			continue;                                                   \
+		}                                                               \
+		if (!best || cl->XX > best->XX)                                 \
+		{                                                               \
+			best = cl;                                                  \
+		}                                                               \
+	}                                                                   \
+	if (best)                                                           \
+	{                                                                   \
+		best->hasaward = qtrue;                                         \
+	}                                                                   \
 	Q_strcat(buffer, 1024, va(";%s; %i ", best && best->XX >= YY ? best->pers.netname : "", best && best->XX >= YY ? best->sess.sessionTeam : TEAM_FREE))
 
-#define CHECKSTATSKILL(XX)                                                            \
-	best = NULL;                                                                \
-	for (i = 0; i < level.numConnectedClients; i++) {                          \
-		gclient_t *cl = &level.clients[level.sortedClients[i]];             \
-		if (cl->sess.sessionTeam == TEAM_FREE) {                          \
-			continue;                                                           \
-		}                                                                       \
-		if ((cl->sess.skillpoints[XX] - cl->sess.startskillpoints[XX]) <= 0)    \
-		{                                                                       \
-			continue;                                                           \
-		}                                                                       \
-		if (cl->sess.skill[XX] < 1)                                             \
-		{                                                                       \
-			continue;                                                           \
-		}                                                                       \
-		if (!best || (cl->sess.skillpoints[XX] - cl->sess.startskillpoints[XX]) > (best->sess.skillpoints[XX] - best->sess.startskillpoints[XX])) {                                    \
-			best = cl;                                                          \
-		}                                                                       \
-	}                                                                           \
-	if (best) { best->hasaward = qtrue; }                                      \
+#define CHECKSTATSKILL(XX)                                              \
+	best = NULL;                                                        \
+	for (i = 0; i < level.numConnectedClients; i++)                     \
+	{                                                                   \
+		gclient_t *cl = &level.clients[level.sortedClients[i]];         \
+		if (cl->sess.sessionTeam == TEAM_FREE)                          \
+		{                                                               \
+			continue;                                                   \
+		}                                                               \
+		if ((cl->sess.skillpoints[XX] - cl->sess.startskillpoints[XX]) <= 0) \
+		{                                                               \
+			continue;                                                   \
+		}                                                               \
+		if (cl->sess.skill[XX] < 1)                                     \
+		{                                                               \
+			continue;                                                   \
+		}                                                               \
+		if (!best || (cl->sess.skillpoints[XX] - cl->sess.startskillpoints[XX]) > (best->sess.skillpoints[XX] - best->sess.startskillpoints[XX])) \
+		{                                                               \
+			best = cl;                                                  \
+		}                                                               \
+	}                                                                   \
+	if (best)                                                           \
+	{                                                                   \
+		best->hasaward = qtrue;                                         \
+	}                                                                   \
 	Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : TEAM_FREE))
 
-#define CHECKSTAT3(XX, YY, ZZ)                                                \
-	best = NULL;                                                                \
-	for (i = 0; i < level.numConnectedClients; i++) {                          \
-		gclient_t *cl = &level.clients[level.sortedClients[i]];             \
-		if (cl->sess.sessionTeam == TEAM_FREE) {                          \
-			continue;                                                           \
-		}                                                                       \
-		if (!best || cl->XX > best->XX) {                                  \
-			best = cl;                                                          \
-		} else if (cl->XX == best->XX && cl->YY > best->YY) {           \
-			best = cl;                                                          \
-		} else if (cl->XX == best->XX && cl->YY == best->YY && cl->ZZ > best->ZZ) {         \
-			best = cl;                                                          \
-		}                                                                       \
-	}                                                                           \
-	if (best) { best->hasaward = qtrue; }                                      \
+#define CHECKSTAT3(XX, YY, ZZ) \
+	best = NULL;                                                        \
+	for (i = 0; i < level.numConnectedClients; i++)                     \
+	{                                                                   \
+		gclient_t *cl = &level.clients[level.sortedClients[i]];         \
+		if (cl->sess.sessionTeam == TEAM_FREE)                          \
+		{                                                               \
+			continue;                                                   \
+		}                                                               \
+		if (!best || cl->XX > best->XX)                                 \
+		{                                                               \
+			best = cl;                                                  \
+		}                                                               \
+		else if (cl->XX == best->XX && cl->YY > best->YY)               \
+		{                                                               \
+			best = cl;                                                  \
+		}                                                               \
+		else if (cl->XX == best->XX && cl->YY == best->YY && cl->ZZ > best->ZZ) \
+		{                                                               \
+			best = cl;                                                  \
+		}                                                               \
+	}                                                                   \
+	if (best)                                                           \
+	{                                                                   \
+		best->hasaward = qtrue;                                         \
+	}                                                                   \
 	Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : TEAM_FREE))
 
-#define CHECKSTATTIME(XX, YY)                                                 \
-	best = NULL;                                                                \
-	for (i = 0; i < level.numConnectedClients; i++) {                          \
-		gclient_t *cl = &level.clients[level.sortedClients[i]];             \
-		if (cl->sess.sessionTeam == TEAM_FREE) {                          \
-			continue;                                                           \
-		}                                                                       \
-		if (!best || (cl->XX / (float)(level.time - cl->YY)) > (best->XX / (float)(level.time - best->YY))) { \
-			best = cl;                                                          \
-		}                                                                       \
-	}                                                                           \
-	if (best) {                                                                \
-		if ((best->sess.startxptotal - best->ps.persistant[PERS_SCORE]) >= 100 || best->medals || best->hasaward) { \
-			best = NULL;                                                        \
-		}                                                                       \
-	}                                                                           \
+#define CHECKSTATTIME(XX, YY)                                           \
+	best = NULL;                                                        \
+	for (i = 0; i < level.numConnectedClients; i++)                     \
+	{                                                                   \
+		gclient_t *cl = &level.clients[level.sortedClients[i]];         \
+		if (cl->sess.sessionTeam == TEAM_FREE)                          \
+		{                                                               \
+			continue;                                                   \
+		}                                                               \
+		if (!best || (cl->XX / (float)(level.time - cl->YY)) > (best->XX / (float)(level.time - best->YY))) \
+		{                                                               \
+			best = cl;                                                  \
+		}                                                               \
+	}                                                                   \
+	if (best)                                                           \
+	{                                                                   \
+		if ((best->sess.startxptotal - best->ps.persistant[PERS_SCORE]) >= 100 || best->medals || best->hasaward) \
+		{                                                               \
+			best = NULL;                                                \
+		}                                                               \
+	}                                                                   \
 	Q_strcat(buffer, 1024, va(";%s; %i ", best ? best->pers.netname : "", best ? best->sess.sessionTeam : TEAM_FREE))
 
 void G_BuildEndgameStats(void)
