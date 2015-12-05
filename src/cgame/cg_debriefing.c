@@ -66,7 +66,7 @@ panel_button_t debriefPlayerWeaponStatsHeader =
 	"Weapon Stats",
 	{ 18,                      248,0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
-	&debriefPlayerHeadingSmallerFont, /* font     */
+	&debriefPlayerHeadingSmallerFont,/* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
@@ -79,7 +79,7 @@ panel_button_t debriefPlayerWeaponStatsNameHeader =
 	"Name",
 	{ 18,                      262,0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
-	&debriefPlayerHeadingSmallerFont, /* font     */
+	&debriefPlayerHeadingSmallerFont,/* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
@@ -92,7 +92,7 @@ panel_button_t debriefPlayerWeaponStatsShotsHeader =
 	"Shots",
 	{ 78,                      262,0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
-	&debriefPlayerHeadingSmallerFont, /* font     */
+	&debriefPlayerHeadingSmallerFont,/* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
@@ -105,7 +105,7 @@ panel_button_t debriefPlayerWeaponStatsHitsHeader =
 	"Hits",
 	{ 118,                     262, 0, 0 },
 	{ 0,                       0,   0, 0, 0, 0, 0, 0},
-	&debriefPlayerHeadingSmallerFont, /* font     */
+	&debriefPlayerHeadingSmallerFont,/* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
@@ -118,7 +118,7 @@ panel_button_t debriefPlayerWeaponStatsKillsHeader =
 	"Kills",
 	{ 148,                     262,0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
-	&debriefPlayerHeadingSmallerFont, /* font     */
+	&debriefPlayerHeadingSmallerFont,/* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
@@ -145,8 +145,8 @@ panel_button_t debriefPlayerWeaponStatsListScroll =
 	{ 18 + 164,                  262,        16, 80 },
 	{ 1,                         0,          0,  0, 0, 0, 0, 0},
 	NULL,                        /* font     */
-	CG_Debriefing_Scrollbar_KeyDown, /* keyDown  */
-	CG_Debriefing_Scrollbar_KeyUp, /* keyUp    */
+	CG_Debriefing_Scrollbar_KeyDown,/* keyDown  */
+	CG_Debriefing_Scrollbar_KeyUp,/* keyUp    */
 	CG_Debriefing_Scrollbar_Draw,
 	NULL,
 };
@@ -197,7 +197,7 @@ panel_button_t debriefMissionMaps =
 	{ 12,                    210,  189, 60 },
 	{ 0,                     0,    0,   0, 0, 0, 0, 0},
 	NULL,                    /* font     */
-	CG_Debriefing2_Maps_KeyDown, /* keyDown  */
+	CG_Debriefing2_Maps_KeyDown,/* keyDown  */
 	NULL,                    /* keyUp    */
 	CG_Debreifing2_Maps_Draw,
 	NULL,
@@ -306,8 +306,8 @@ panel_button_t debriefHeadingRank =
 {
 	NULL,
 	"Rank",
-	{ DB_RANK_X,               DH_HEADING_Y,           0, 0 },
-	{ 0,                       0,                      0, 0, 0, 0, 0, 0},
+	{ DB_RANK_X,               DH_HEADING_Y,       0, 0 },
+	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
 	&debriefPlayerListFont,    /* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
@@ -319,8 +319,8 @@ panel_button_t debriefHeadingName =
 {
 	NULL,
 	"Name",
-	{ DB_NAME_X,               DH_HEADING_Y,           0, 0 },
-	{ 0,                       0,                      0, 0, 0, 0, 0, 0},
+	{ DB_NAME_X,               DH_HEADING_Y,       0, 0 },
+	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
 	&debriefPlayerListFont,    /* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
@@ -332,8 +332,8 @@ panel_button_t debriefHeadingTime =
 {
 	NULL,
 	"Time",
-	{ DB_TIME_X,               DH_HEADING_Y,           0, 0 },
-	{ 0,                       0,                      0, 0, 0, 0, 0, 0},
+	{ DB_TIME_X,               DH_HEADING_Y,       0, 0 },
+	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
 	&debriefPlayerListFont,    /* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
@@ -345,8 +345,8 @@ panel_button_t debriefHeadingKills =
 {
 	NULL,
 	"Kll",
-	{ DB_KILLS_X,              DH_HEADING_Y,       0, 0 },
-	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
+	{ DB_KILLS_X,              DH_HEADING_Y,         0, 0 },
+	{ 0,                       0,                    0, 0, 0, 0, 0, 0},
 	&debriefPlayerListFont,    /* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
@@ -358,8 +358,8 @@ panel_button_t debriefHeadingDeaths =
 {
 	NULL,
 	"Dth",
-	{ DB_DEATHS_X,             DH_HEADING_Y,           0, 0 },
-	{ 0,                       0,                      0, 0, 0, 0, 0, 0},
+	{ DB_DEATHS_X,             DH_HEADING_Y,          0, 0 },
+	{ 0,                       0,                     0, 0, 0, 0, 0, 0},
 	&debriefPlayerListFont,    /* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
@@ -371,8 +371,8 @@ panel_button_t debriefHeadingGibs =
 {
 	NULL,
 	"Gib",
-	{ DB_GIBS_X,              DH_HEADING_Y,            0, 0 },
-	{ 0,                       0,                      0, 0, 0, 0, 0, 0},
+	{ DB_GIBS_X,               DH_HEADING_Y,        0, 0 },
+	{ 0,                       0,                   0, 0, 0, 0, 0, 0},
 	&debriefPlayerListFont,    /* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
@@ -384,8 +384,8 @@ panel_button_t debriefHeadingSelfKills =
 {
 	NULL,
 	"SK",
-	{ DB_SELFKILLS_X,          DH_HEADING_Y,       0, 0 },
-	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
+	{ DB_SELFKILLS_X,          DH_HEADING_Y,              0, 0 },
+	{ 0,                       0,                         0, 0, 0, 0, 0, 0},
 	&debriefPlayerListFont,    /* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
@@ -397,8 +397,8 @@ panel_button_t debriefHeadingTeamKills =
 {
 	NULL,
 	"TK",
-	{ DB_TEAMKILLS_X,          DH_HEADING_Y,           0, 0 },
-	{ 0,                       0,                      0, 0, 0, 0, 0, 0},
+	{ DB_TEAMKILLS_X,          DH_HEADING_Y,              0, 0 },
+	{ 0,                       0,                         0, 0, 0, 0, 0, 0},
 	&debriefPlayerListFont,    /* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
@@ -410,8 +410,8 @@ panel_button_t debriefHeadingTeamGibs =
 {
 	NULL,
 	"TG",
-	{ DB_TEAMGIBS_X,           DH_HEADING_Y,           0, 0 },
-	{ 0,                       0,                      0, 0, 0, 0, 0, 0},
+	{ DB_TEAMGIBS_X,           DH_HEADING_Y,             0, 0 },
+	{ 0,                       0,                        0, 0, 0, 0, 0, 0},
 	&debriefPlayerListFont,    /* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
@@ -436,10 +436,10 @@ panel_button_t debriefPlayerList =
 {
 	NULL,
 	NULL,
-	{ DB_RANK_X,                 DH_HEADING_Y,             SCREEN_WIDTH - 10 - 8 - 16 - DB_RANK_X - 16, 292 },
-	{ 0,                         0,                        0,                                           0, 0, 0, 0, 0},
+	{ DB_RANK_X,                 DH_HEADING_Y,         SCREEN_WIDTH - 10 - 8 - 16 - DB_RANK_X - 16, 292 },
+	{ 0,                         0,                    0,                                           0, 0, 0, 0, 0},
 	&debriefPlayerListFont,      /* font     */
-	CG_DebriefingPlayerList_KeyDown, /* keyDown  */
+	CG_DebriefingPlayerList_KeyDown,/* keyDown  */
 	NULL,                        /* keyUp    */
 	CG_DebriefingPlayerList_Draw,
 	NULL,
@@ -452,8 +452,8 @@ panel_button_t debriefPlayerListScroll =
 	{ SCREEN_WIDTH - 10 - 8 - 16,DH_HEADING_Y,                          16, 292 },
 	{ 0,                         0,                                     0,  0, 0, 0, 0, 0},
 	NULL,                        /* font     */
-	CG_Debriefing_Scrollbar_KeyDown, /* keyDown  */
-	CG_Debriefing_Scrollbar_KeyUp, /* keyUp    */
+	CG_Debriefing_Scrollbar_KeyDown,/* keyDown  */
+	CG_Debriefing_Scrollbar_KeyUp,/* keyUp    */
 	CG_Debriefing_Scrollbar_Draw,
 	NULL,
 };
@@ -596,8 +596,8 @@ panel_button_t *debriefPanelButtons[] =
 	&debriefTitleWindow,
 	&debriefPlayerListWindow,       &debriefPlayerList,                   &debriefPlayerListScroll,
 	&debriefHeadingRank,            &debriefHeadingName,
-	&debriefHeadingTime,            &debriefHeadingXP,                    &debriefHeadingKills,                &debriefHeadingDeaths,                &debriefHeadingGibs,                  &debriefHeadingSelfKills,           &debriefHeadingTeamKills,            &debriefHeadingTeamGibs,
-	&debriefPlayerInfoWindow,       &debriefPlayerInfoName,               &debriefPlayerInfoRank,              &debriefPlayerInfoMedals,             &debriefPlayerInfoTime,               &debriefPlayerInfoXP,               &debriefPlayerInfoACC,               &debriefPlayerInfoHS,
+	&debriefHeadingTime,            &debriefHeadingXP,                    &debriefHeadingKills,                &debriefHeadingDeaths,                &debriefHeadingGibs,                  &debriefHeadingSelfKills, &debriefHeadingTeamKills, &debriefHeadingTeamGibs,
+	&debriefPlayerInfoWindow,       &debriefPlayerInfoName,               &debriefPlayerInfoRank,              &debriefPlayerInfoMedals,             &debriefPlayerInfoTime,               &debriefPlayerInfoXP,     &debriefPlayerInfoACC,    &debriefPlayerInfoHS,
 	&debriefPlayerInfoSkills0,
 	&debriefPlayerInfoSkills1,
 	&debriefPlayerInfoSkills2,
@@ -741,7 +741,7 @@ panel_button_t chatPanelNextButton =
 	{ SCREEN_WIDTH - 10 - 60 - 4, SCREEN_HEIGHT - 30,                        60, 16 },
 	{ 0,                          0,                                         0,  0, 0, 0, 0, 0},
 	NULL,                         /* font     */
-	CG_Debriefing_NextButton_KeyDown, /* keyDown  */
+	CG_Debriefing_NextButton_KeyDown,/* keyDown  */
 	NULL,                         /* keyUp    */
 	CG_Debriefing_NextButton_Draw,
 	NULL,
@@ -754,7 +754,7 @@ panel_button_t chatPanelQCButton =
 	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4 - 80 - 4,SCREEN_HEIGHT - 30,                                    80, 16 },
 	{ 0,                         0,                                                     0,  0, 0, 0, 0, 0},
 	NULL,                        /* font     */
-	CG_Debriefing_QCButton_KeyDown, /* keyDown  */
+	CG_Debriefing_QCButton_KeyDown,/* keyDown  */
 	NULL,                        /* keyUp    */
 	CG_PanelButtonsRender_Button,
 	NULL,
@@ -767,7 +767,7 @@ panel_button_t chatPanelReadyButton =
 	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4 - 80 - 4 - 60 - 4,SCREEN_HEIGHT - 30,                                                  60, 16 },
 	{ 0,                           0,                                                                   0,  0, 0, 0, 0, 0},
 	NULL,                          /* font     */
-	CG_Debriefing_ReadyButton_KeyDown, /* keyDown  */
+	CG_Debriefing_ReadyButton_KeyDown,/* keyDown  */
 	NULL,                          /* keyUp    */
 	CG_Debriefing_ReadyButton_Draw,
 	NULL,
@@ -780,7 +780,7 @@ panel_button_t chatTypeButton =
 	{ 10 + 4,                     SCREEN_HEIGHT - 30,      80, 16 },
 	{ 0,                          0,                       0,  0, 0, 0, 0, 0},
 	NULL,                         /* font     */
-	CG_Debriefing_ChatButton_KeyDown, /* keyDown  */
+	CG_Debriefing_ChatButton_KeyDown,/* keyDown  */
 	NULL,                         /* keyUp    */
 	CG_Debriefing_ChatButton_Draw,
 	NULL,
@@ -1058,9 +1058,9 @@ panel_button_t mapVoteWindow =
 	"MAP VOTE",
 	{ 10,                        30, 620, 326 },
 	{ 0,                         0,  0,   0, 0, 0, 0, 0},
-	NULL,                        /* font		*/
-	NULL,                        /* keyDown	*/
-	NULL,                        /* keyUp	*/
+	NULL,                        /* font        */
+	NULL,                        /* keyDown */
+	NULL,                        /* keyUp   */
 	CG_PanelButtonsRender_Window,
 	NULL,
 };
@@ -1079,9 +1079,9 @@ panel_button_t mapVoteHeadingName =
 	"Name",
 	{ DB_MAPNAME_X + 10,       DB_MAPVOTE_Y,               0, 0 },
 	{ 0,                       0,                          0, 0, 0, 0, 0, 0},
-	&mapVoteFont,              /* font		*/
-	NULL,                      /* keyDown	*/
-	NULL,                      /* keyUp	*/
+	&mapVoteFont,              /* font      */
+	NULL,                      /* keyDown   */
+	NULL,                      /* keyUp */
 	BG_PanelButtonsRender_Text,
 	NULL,
 };
@@ -1092,9 +1092,9 @@ panel_button_t mapVoteHeadingVotes =
 	"Votes",
 	{ DB_MAPVOTE_X + 10,       DB_MAPVOTE_Y,              0, 0 },
 	{ 0,                       0,                         0, 0, 0, 0, 0, 0},
-	&mapVoteFont,              /* font		*/
-	NULL,                      /* keyDown	*/
-	NULL,                      /* keyUp	*/
+	&mapVoteFont,              /* font      */
+	NULL,                      /* keyDown   */
+	NULL,                      /* keyUp */
 	BG_PanelButtonsRender_Text,
 	NULL,
 };
@@ -1105,9 +1105,9 @@ panel_button_t mapVoteNamesList =
 	NULL,
 	{ DB_MAPNAME_X + 10,DB_MAPVOTE_Y,                 250, 17 * 12 },
 	{ 0,                0,                            0,   0, 0, 0, 0, 0},
-	&mapVoteFont,       /* font		*/
-	CG_MapVoteList_KeyDown, /* keyDown	*/
-	NULL,               /* keyUp	*/
+	&mapVoteFont,       /* font     */
+	CG_MapVoteList_KeyDown,/* keyDown   */
+	NULL,               /* keyUp    */
 	CG_MapVoteList_Draw,
 	NULL,
 };
@@ -1118,9 +1118,9 @@ panel_button_t mapVoteNamesListScroll =
 	NULL,
 	{ DB_MAPVOTE_X + 10 + 52,    DB_MAPVOTE_Y + 2,                      12, 17 * 12 },
 	{ 4,                         0,                                     0,  0, 0, 0, 0, 0},
-	NULL,                        /* font		*/
-	CG_Debriefing_Scrollbar_KeyDown, /* keyDown	*/
-	CG_Debriefing_Scrollbar_KeyUp, /* keyUp	*/
+	NULL,                        /* font        */
+	CG_Debriefing_Scrollbar_KeyDown,/* keyDown  */
+	CG_Debriefing_Scrollbar_KeyUp,/* keyUp  */
 	CG_Debriefing_Scrollbar_Draw,
 	NULL,
 };
@@ -1131,9 +1131,9 @@ panel_button_t mapVoteButton =
 	"^3VOTE",
 	{ DB_MAPNAME_X + 10,       296 - 10 + 2,             64, 16 },
 	{ 0,                       0,                        0,  0, 0, 0, 0, 0},
-	NULL,                      /* font		*/
-	CG_MapVote_VoteButton_KeyDown, /* keyDown	*/
-	NULL,                      /* keyUp	*/
+	NULL,                      /* font      */
+	CG_MapVote_VoteButton_KeyDown,/* keyDown    */
+	NULL,                      /* keyUp */
 	CG_MapVote_VoteButton_Draw,
 	NULL,
 };
@@ -1144,9 +1144,9 @@ panel_button_t mapVoteButton1 =
 	"^3VOTE #1",
 	{ DB_MAPNAME_X + 10,            296 - 10 + 2,          64, 16 },
 	{ 0,                            0,                     0,  0, 0, 0, 0, 3},
-	NULL,                           /* font		*/
-	CG_MapVote_MultiVoteButton_KeyDown, /* keyDown	*/
-	NULL,                           /* keyUp	*/
+	NULL,                           /* font     */
+	CG_MapVote_MultiVoteButton_KeyDown,/* keyDown   */
+	NULL,                           /* keyUp    */
 	CG_MapVote_MultiVoteButton_Draw,
 	NULL,
 };
@@ -1157,9 +1157,9 @@ panel_button_t mapVoteButton2 =
 	"^3VOTE #2",
 	{ DB_MAPNAME_X + 10,            296 + 10 + 2,          64, 16 },
 	{ 0,                            0,                     0,  0, 0, 0, 0, 2},
-	NULL,                           /* font		*/
-	CG_MapVote_MultiVoteButton_KeyDown, /* keyDown	*/
-	NULL,                           /* keyUp	*/
+	NULL,                           /* font     */
+	CG_MapVote_MultiVoteButton_KeyDown,/* keyDown   */
+	NULL,                           /* keyUp    */
 	CG_MapVote_MultiVoteButton_Draw,
 	NULL,
 };
@@ -1170,9 +1170,9 @@ panel_button_t mapVoteButton3 =
 	"^3VOTE #3",
 	{ DB_MAPNAME_X + 10,            296 + 30 + 2,          64, 16 },
 	{ 0,                            0,                     0,  0, 0, 0, 0, 1},
-	NULL,                           /* font		*/
-	CG_MapVote_MultiVoteButton_KeyDown, /* keyDown	*/
-	NULL,                           /* keyUp	*/
+	NULL,                           /* font     */
+	CG_MapVote_MultiVoteButton_KeyDown,/* keyDown   */
+	NULL,                           /* keyUp    */
 	CG_MapVote_MultiVoteButton_Draw,
 	NULL,
 };
@@ -1183,9 +1183,9 @@ panel_button_t mapVoteBorder1 =
 	NULL,
 	{ DB_MAPVOTE_X2 - 10,     DB_MAPVOTE_Y - 12,                  620 - DB_MAPVOTE_X2 + 10, DB_MAPVOTE_Y2 - DB_MAPVOTE_Y - 4 },
 	{ 1,                      255,                                255,                      255, 40, 1, 0, 0                 },
-	NULL,                     /* font		*/
-	NULL,                     /* keyDown	*/
-	NULL,                     /* keyUp	*/
+	NULL,                     /* font       */
+	NULL,                     /* keyDown    */
+	NULL,                     /* keyUp  */
 	BG_PanelButtonsRender_Img,
 	NULL,
 };
@@ -1196,9 +1196,9 @@ panel_button_t mapVoteBorder2 =
 	NULL,
 	{ DB_MAPVOTE_X2 - 10,     DB_MAPVOTE_Y2 - 10 + 2,                  620 - DB_MAPVOTE_X2 + 10, 370 - DB_MAPVOTE_Y2 - 2 - 10 },
 	{ 1,                      255,                                     255,                      255, 40, 1, 0, 0             },
-	NULL,                     /* font		*/
-	NULL,                     /* keyDown	*/
-	NULL,                     /* keyUp	*/
+	NULL,                     /* font       */
+	NULL,                     /* keyDown    */
+	NULL,                     /* keyUp  */
 	BG_PanelButtonsRender_Img,
 	NULL,
 };
@@ -1209,9 +1209,9 @@ panel_button_t mapVoteBorder3 =
 	NULL,
 	{ 20,                     DB_MAPVOTE_Y - 12,  DB_MAPVOTE_X2 - 40 + 2, 370 - DB_MAPVOTE_Y - 10 + 2 },
 	{ 1,                      255,                255,                    255, 40, 1, 0, 0            },
-	NULL,                     /* font		*/
-	NULL,                     /* keyDown	*/
-	NULL,                     /* keyUp	*/
+	NULL,                     /* font       */
+	NULL,                     /* keyDown    */
+	NULL,                     /* keyUp  */
 	BG_PanelButtonsRender_Img,
 	NULL,
 };
@@ -1992,8 +1992,8 @@ void CG_Debriefing_ScrollSetOffset(panel_button_t *button, int ofs)
 	case 2:
 		cgs.tdbMapListOffset = ofs;
 		return;
-	//case 3:	// awards
-	//	cgs.dbAwardsListOffset = ofs;
+	//case 3:   // awards
+	//  cgs.dbAwardsListOffset = ofs;
 	//return;
 	case 3:
 		cgs.dbMapVoteListOffset = ofs;
@@ -2108,8 +2108,8 @@ void CG_Debriefing_MouseEvent(int x, int y)
 
 void CG_Debriefing_Scrollbar_Draw(panel_button_t *button)
 {
-	vec4_t clr1 = { .16f, .2f, .17f, .8f };
-	vec4_t clr2 = { 0.f, 0.f, 0.f, .6f };
+	vec4_t    clr1 = { .16f, .2f, .17f, .8f };
+	vec4_t    clr2 = { 0.f, 0.f, 0.f, .6f };
 	rectDef_t r;
 
 	CG_Debriefing_ScrollCheckOffset(button);
