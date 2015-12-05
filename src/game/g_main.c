@@ -3541,8 +3541,6 @@ void G_LogExit(const char *string)
 	else if (g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
 		int winner;
-		int highestskillpoints, highestskillpointsclient, j, teamNum;
-		int highestskillpointsincrease;
 
 		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
 		winner = atoi(Info_ValueForKey(cs, "w"));
@@ -3564,8 +3562,73 @@ void G_LogExit(const char *string)
 		trap_SetConfigstring(CS_ROUNDSCORES2, va("%i", g_alliedwins.integer));
 
 		G_StoreMapXP();
+	}
+	else if (g_gametype.integer == GT_WOLF_LMS)
+	{
+		int winner;
+		int roundLimit       = g_lms_roundlimit.integer < 3 ? 3 : g_lms_roundlimit.integer;
+		int numWinningRounds = (roundLimit / 2) + 1;
 
-		// award medals
+		roundLimit -= 1;    // -1 as it starts at 0
+
+		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
+		winner = atoi(Info_ValueForKey(cs, "w"));
+
+		if (winner == -1)
+		{
+			// who drew first blood?
+			if (level.firstbloodTeam == TEAM_AXIS)
+			{
+				winner = 0;
+			}
+			else
+			{
+				winner = 1;
+			}
+		}
+
+		if (winner == 0)
+		{
+			trap_Cvar_Set("g_axiswins", va("%i", g_axiswins.integer + 1));
+			trap_Cvar_Update(&g_axiswins);
+		}
+		else
+		{
+			trap_Cvar_Set("g_alliedwins", va("%i", g_alliedwins.integer + 1));
+			trap_Cvar_Update(&g_alliedwins);
+		}
+
+		if (g_currentRound.integer >= roundLimit || g_axiswins.integer == numWinningRounds || g_alliedwins.integer == numWinningRounds)
+		{
+			trap_Cvar_Set("g_currentRound", "0");
+			if (g_lms_currentMatch.integer + 1 >= g_lms_matchlimit.integer)
+			{
+				trap_Cvar_Set("g_lms_currentMatch", "0");
+				level.lmsDoNextMap = qtrue;
+			}
+			else
+			{
+				trap_Cvar_Set("g_lms_currentMatch", va("%i", g_lms_currentMatch.integer + 1));
+				level.lmsDoNextMap = qfalse;
+			}
+		}
+		else
+		{
+			trap_Cvar_Set("g_currentRound", va("%i", g_currentRound.integer + 1));
+			trap_Cvar_Update(&g_currentRound);
+		}
+	}
+	else if (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_MAPVOTE)
+	{
+		G_StoreMapXP();
+	}
+
+	// award medals
+	if (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_MAPVOTE)
+	{
+		int highestskillpoints, highestskillpointsclient, j, teamNum;
+		int highestskillpointsincrease;
+
 		for (teamNum = TEAM_AXIS; teamNum <= TEAM_ALLIES; teamNum++)
 		{
 			for (i = 0; i < SK_NUM_SKILLS; i++)
@@ -3650,65 +3713,6 @@ void G_LogExit(const char *string)
 				}
 			}
 		}
-	}
-	else if (g_gametype.integer == GT_WOLF_LMS)
-	{
-		int winner;
-		int roundLimit       = g_lms_roundlimit.integer < 3 ? 3 : g_lms_roundlimit.integer;
-		int numWinningRounds = (roundLimit / 2) + 1;
-
-		roundLimit -= 1;    // -1 as it starts at 0
-
-		trap_GetConfigstring(CS_MULTI_MAPWINNER, cs, sizeof(cs));
-		winner = atoi(Info_ValueForKey(cs, "w"));
-
-		if (winner == -1)
-		{
-			// who drew first blood?
-			if (level.firstbloodTeam == TEAM_AXIS)
-			{
-				winner = 0;
-			}
-			else
-			{
-				winner = 1;
-			}
-		}
-
-		if (winner == 0)
-		{
-			trap_Cvar_Set("g_axiswins", va("%i", g_axiswins.integer + 1));
-			trap_Cvar_Update(&g_axiswins);
-		}
-		else
-		{
-			trap_Cvar_Set("g_alliedwins", va("%i", g_alliedwins.integer + 1));
-			trap_Cvar_Update(&g_alliedwins);
-		}
-
-		if (g_currentRound.integer >= roundLimit || g_axiswins.integer == numWinningRounds || g_alliedwins.integer == numWinningRounds)
-		{
-			trap_Cvar_Set("g_currentRound", "0");
-			if (g_lms_currentMatch.integer + 1 >= g_lms_matchlimit.integer)
-			{
-				trap_Cvar_Set("g_lms_currentMatch", "0");
-				level.lmsDoNextMap = qtrue;
-			}
-			else
-			{
-				trap_Cvar_Set("g_lms_currentMatch", va("%i", g_lms_currentMatch.integer + 1));
-				level.lmsDoNextMap = qfalse;
-			}
-		}
-		else
-		{
-			trap_Cvar_Set("g_currentRound", va("%i", g_currentRound.integer + 1));
-			trap_Cvar_Update(&g_currentRound);
-		}
-	}
-	else if (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_MAPVOTE)
-	{
-		G_StoreMapXP();
 	}
 
 #ifdef FEATURE_OMNIBOT
