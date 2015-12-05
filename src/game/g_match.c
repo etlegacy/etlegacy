@@ -252,7 +252,7 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
 #ifndef DEBUG_STATS
 	    g_gamestate.integer != GS_PLAYING ||
 #endif
-	    mod == MOD_SWITCHTEAM || targ->client->ps.pm_flags & PMF_LIMBO)
+	    mod == MOD_SWITCHTEAM || (targ->client->ps.pm_flags & PMF_LIMBO))
 	{
 		return;
 	}
@@ -271,13 +271,13 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
 			{
 				attacker->client->sess.aWeaponStats[ref].atts = 1;
 			}
+
+			if (targ->health <= FORCE_LIMBO_HEALTH && targ->client->sess.sessionTeam != attacker->client->sess.sessionTeam)
+			{
+				attacker->client->sess.gibs++;
+			}
 		}
 
-		if (targ->health <= FORCE_LIMBO_HEALTH &&
-			(targ->client->sess.sessionTeam != attacker->client->sess.sessionTeam))
-		{
-			attacker->client->sess.gibs++;
-		}
 		return;
 	}
 
