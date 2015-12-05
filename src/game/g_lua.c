@@ -858,7 +858,7 @@ static const gentity_field_t gentity_fields[] =
 	_et_gentity_addfield(duration,            FIELD_FLOAT,      0),
 	_et_gentity_addfield(end_size,            FIELD_INT,        0),
 	_et_gentity_addfield(enemy,               FIELD_ENTITY,     0),
-	_et_gentity_addfield(entstate,            FIELD_INT,        0),
+	_et_gentity_addfield(entstate,            FIELD_INT,        FIELD_FLAG_READONLY),
 	_et_gentity_addfield(flags,               FIELD_INT,        FIELD_FLAG_READONLY),
 	_et_gentity_addfield(harc,                FIELD_FLOAT,      0),
 	_et_gentity_addfield(health,              FIELD_INT,        0),
