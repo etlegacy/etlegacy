@@ -229,6 +229,19 @@ panel_button_t debriefMissionAwardsList =
 	NULL,
 };
 
+panel_button_t debriefMissionAwardsListScroll =
+{
+	NULL,
+	NULL,
+	{ SCREEN_WIDTH - 10 - 8 - 16,DH_HEADING_Y,                          16, 206 },
+	{ 0,                         0,                                     0,  0, 0, 0, 0, 0},
+	NULL,                        /* font		*/
+	CG_Debriefing_Scrollbar_KeyDown,/* keyDown	*/
+	CG_Debriefing_Scrollbar_KeyUp,/* keyUp	*/
+	CG_Debriefing_Scrollbar_Draw,
+	NULL,
+};
+
 panel_button_t debriefMissionStatsWindow =
 {
 	NULL,
@@ -695,7 +708,7 @@ TDB_SKILL_ALLIES_XP(7);
 
 panel_button_t *teamDebriefPanelButtons[] =
 {
-	&debriefTitleWindow,        &debriefMissionTitleWindow, &debriefMissionAwardsWindow, &debriefMissionImage,        &debriefMissionMaps, &debriefMissionAwardsList,
+	&debriefTitleWindow,        &debriefMissionTitleWindow, &debriefMissionAwardsWindow, &debriefMissionImage,        &debriefMissionMaps, &debriefMissionAwardsList, &debriefMissionAwardsListScroll,
 	&debriefMissionStatsWindow, &debriefMissionStatsWinner, &debriefMissionStatsLoser,   &debriefMissionStatsHeaders,
 	NULL
 };
@@ -1116,7 +1129,7 @@ panel_button_t mapVoteNamesListScroll =
 {
 	NULL,
 	NULL,
-	{ DB_MAPVOTE_X + 10 + 52,    DB_MAPVOTE_Y + 2,                      12, 17 * 12 },
+	{ DB_MAPVOTE_X + 10 + 48,    DB_MAPVOTE_Y + 2,                      16, 17 * 12 },
 	{ 4,                         0,                                     0,  0, 0, 0, 0, 0},
 	NULL,                        /* font        */
 	CG_Debriefing_Scrollbar_KeyDown,/* keyDown  */
@@ -1909,12 +1922,14 @@ int CG_Debriefing_ScrollGetMax(panel_button_t *button)
 	{
 	case 0:     // player list
 		return 24;
-	case 1:
+	case 1:     // weapon stats
 		return 7;
-	case 2:
+	case 2:     // campaign
 		return 7;
-	case 3: // MAPVOTES
+	case 3:     // mapvote
 		return 17;
+	case 4:     // awards
+		return NUMSHOW_ENDGAME_AWARDS;
 	}
 	return 0;
 }
@@ -1969,12 +1984,14 @@ int CG_Debriefing_ScrollGetOffset(panel_button_t *button)
 	{
 	case 0:     // player list
 		return cgs.dbPlayerListOffset;
-	case 1:
+	case 1:    // weapon stats
 		return cgs.dbWeaponListOffset;
-	case 2:
+	case 2:    // campaign
 		return cgs.tdbMapListOffset;
-	case 3: // MAPVOTES
+	case 3:    // mapvote
 		return cgs.dbMapVoteListOffset;
+	case 4:    // awards
+		return cgs.dbAwardsListOffset;
 	}
 	return 0;
 }
@@ -1992,11 +2009,11 @@ void CG_Debriefing_ScrollSetOffset(panel_button_t *button, int ofs)
 	case 2:
 		cgs.tdbMapListOffset = ofs;
 		return;
-	//case 3:   // awards
-	//  cgs.dbAwardsListOffset = ofs;
-	//return;
 	case 3:
 		cgs.dbMapVoteListOffset = ofs;
+		return;
+	case 4:
+		cgs.dbAwardsListOffset = ofs;
 		return;
 	}
 }
@@ -2837,7 +2854,7 @@ void CG_Debreifing2_Awards_Parse(void)
 
 void CG_Debreifing2_Awards_Draw(panel_button_t *button)
 {
-	int    i;
+	int    i, j;
 	float  y         = button->rect.y + 1;
 	vec4_t clrTxtBck = { 0.6f, 0.6f, 0.6f, 1.0f };
 
@@ -2846,14 +2863,19 @@ void CG_Debreifing2_Awards_Draw(panel_button_t *button)
 		CG_Debreifing2_Awards_Parse();
 	}
 
-	for (i = 0; i < NUM_ENDGAME_AWARDS; i++)
+	for (i = 0; i < NUM_ENDGAME_AWARDS && j < NUMSHOW_ENDGAME_AWARDS; i++)
 	{
-		if (cgs.dbAwardTeams[i] == TEAM_FREE)
+		if (i + cgs.dbAwardsListOffset >= NUM_ENDGAME_AWARDS)
+		{
+			break;
+		}
+
+		if (cgs.dbAwardTeams[i + cgs.dbAwardsListOffset] == TEAM_FREE)
 		{
 			continue;
 		}
 
-		switch (cgs.dbAwardTeams[i])
+		switch (cgs.dbAwardTeams[i + cgs.dbAwardsListOffset])
 		{
 		case TEAM_AXIS:
 			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.axisFlag);
@@ -2868,9 +2890,11 @@ void CG_Debreifing2_Awards_Draw(panel_button_t *button)
 			break;
 		}
 
-		CG_Text_Paint_Ext(button->rect.x + 28, y + 11, 0.19f, 0.19f, clrTxtBck, CG_TranslateString(awardNames[i]), 0, 0, 0, &cgs.media.limboFont2);
-		CG_Text_Paint_Ext(button->rect.x + 28 + 180, y + 11, 0.19f, 0.19f, clrTxtBck, va("^7%s", cgs.dbAwardNames[i]), 0, 0, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(button->rect.x + 28, y + 11, 0.19f, 0.19f, clrTxtBck, CG_TranslateString(awardNames[i + cgs.dbAwardsListOffset]), 0, 0, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(button->rect.x + 28 + 180, y + 11, 0.19f, 0.19f, clrTxtBck, va("^7%s", cgs.dbAwardNames[i + cgs.dbAwardsListOffset]), 0, 0, 0, &cgs.media.limboFont2);
 		y += 16;
+
+		++j;
 	}
 }
 

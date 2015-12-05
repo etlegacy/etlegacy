@@ -1781,7 +1781,8 @@ typedef struct
 	int lastZ;
 } clientLocation_t;
 
-#define NUM_ENDGAME_AWARDS 14
+#define NUM_ENDGAME_AWARDS     14   // total number of endgame awards
+#define NUMSHOW_ENDGAME_AWARDS 14   // number of awards to display that will fit on screen
 
 // The client game static (cgs) structure hold everything
 // loaded or calculated from the gamestate.  It will NOT
@@ -1960,6 +1961,7 @@ typedef struct cgs_s
 	char *dbAwardNames[NUM_ENDGAME_AWARDS];
 	team_t dbAwardTeams[NUM_ENDGAME_AWARDS];
 	char dbAwardNamesBuffer[1024];
+	int dbAwardsListOffset;
 	int dbLastRequestTime;
 	int dbLastScoreRequest;
 	int dbPlayerListOffset;
