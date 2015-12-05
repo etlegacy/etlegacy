@@ -703,14 +703,15 @@ Format:
 void TeamplayInfoMessage(team_t team)
 {
 	char      entry[1024];
-	char      string[1400];
+	char      string[1024];
 	int       stringlength = 0;
 	int       i, j;
 	gentity_t *player;
 	int       cnt;
 	int       h;
 	char      *bufferedData;
-	char      *tinfo;
+	char      *tinfo; // currently 32 players in team create about max 750 chars of tinfo
+                      // note: trap_SendServerCommand won't send tinfo > 1022 - also see string[1024]
 
 	// send the latest information on all clients
 	string[0] = 0;
@@ -737,8 +738,9 @@ void TeamplayInfoMessage(team_t team)
 			Com_sprintf(entry, sizeof(entry), " %i %i %i %i %i %i", level.sortedClients[i], player->client->pers.teamState.location[0], player->client->pers.teamState.location[1], player->client->pers.teamState.location[2], h, player->s.powerups);
 
 			j = strlen(entry);
-			if (stringlength + j > sizeof(string))
+			if (stringlength + j > sizeof(string) - 10) // reserve some chars for tinfo prefix
 			{
+				G_Printf("Warning: tinfo exceeds limit");
 				break;
 			}
 			strcpy(string + stringlength, entry);
@@ -755,18 +757,14 @@ void TeamplayInfoMessage(team_t team)
 		return;
 	}
 
-	// FIXME: this is a potential b*llsh*t - trap_SendServerCommand cuts tinfo at 1023
-	Q_strncpyz(bufferedData, tinfo, 1400);
+	Q_strncpyz(bufferedData, tinfo, 1024);
 
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		player = g_entities + level.sortedClients[i];
-		if (player->inuse && player->client->sess.sessionTeam == team)
+		if (player->inuse && player->client->sess.sessionTeam == team && !(player->r.svFlags & SVF_BOT) && player->client->pers.connected == CON_CONNECTED)
 		{
-			if (player->client->pers.connected == CON_CONNECTED)
-			{
-				trap_SendServerCommand(player - g_entities, tinfo);
-			}
+			trap_SendServerCommand(player - g_entities, tinfo);
 		}
 	}
 }

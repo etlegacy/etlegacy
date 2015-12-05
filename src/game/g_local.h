@@ -1099,8 +1099,8 @@ typedef struct level_locals_s
 	qboolean mapcoordsValid, tracemapLoaded;
 	vec2_t mapcoordsMins, mapcoordsMaxs;
 
-	char tinfoAxis[1400];
-	char tinfoAllies[1400];
+	char tinfoAxis[1024];   // sent as server command (limited to 1022 chars)
+	char tinfoAllies[1024]; // sent as server command (limited to 1022 chars)
 
 	// debris test
 	int numDebrisChunks;

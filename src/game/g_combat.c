@@ -1001,6 +1001,7 @@ gentity_t *G_BuildLeg(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
 #endif
 	{
 		vec3_t flatforward;
+		
 		AngleVectors(ent->client->ps.viewangles, flatforward, NULL, NULL);
 		flatforward[2] = 0;
 		VectorNormalizeFast(flatforward);
@@ -1948,12 +1949,7 @@ qboolean CanDamage(gentity_t *targ, vec3_t origin)
 	//G_RailTrail( origin, dest );
 
 	trap_Trace(&tr, origin, vec3_origin, vec3_origin, midpoint, ENTITYNUM_NONE, MASK_CAN_DAMAGE);
-	if (tr.fraction == 1.0)
-	{
-		return qtrue;
-	}
-
-	if (&g_entities[tr.entityNum] == targ)
+	if (tr.fraction == 1.0 || &g_entities[tr.entityNum] == targ)
 	{
 		return qtrue;
 	}
