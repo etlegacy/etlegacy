@@ -1754,11 +1754,10 @@ void CG_topshotsParse_cmd(qboolean doBest)
 
 		if (ts->cWeapons < WS_MAX * 2)
 		{
-			CG_cleanName(cgs.clientinfo[cnum].name, name, 17, qfalse);
 			Q_strncpyz(ts->strWS[ts->cWeapons++],
-			           va("%-12s %5.1f %4d/%-4d %5d  %s",
+			           va("%-12s %5.1f %4d/%-4d %5d  ^7%s",
 			              aWeaponInfo[iWeap - 1].pszName,
-			              acc, hits, atts, kills, name),
+			              acc, hits, atts, kills, cgs.clientinfo[cnum].name),
 			           sizeof(ts->strWS[0]));
 		}
 
