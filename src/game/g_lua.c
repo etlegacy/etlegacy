@@ -1577,11 +1577,25 @@ static int _et_G_ResetXP(lua_State *L)
 	int       entnum = luaL_optinteger(L, 1, -1);
 	gentity_t *ent   = NULL;
 
-	if (entnum > -1)
+	if (entnum > -1) // FIXME: Limit to player ents only
 	{
 		ent = g_entities + entnum;
 	}
 	G_ResetXP(ent);
+	return 1;
+}
+
+static int _et_G_SetEntState(lua_State *L)
+{
+	gentity_t  *ent     = NULL;
+	int        entnum   = (int)luaL_checkinteger(L, 1);
+	entState_t newstate = (int)luaL_checkinteger(L, 2);
+
+	if (entnum > -1) // FIXME: don't do this with world ent
+	{
+		ent = g_entities + entnum;
+	}
+	G_SetEntState(ent, newstate);
 	return 1;
 }
 
@@ -1667,7 +1681,7 @@ static const luaL_Reg etlib[] =
 	// XP functions
 	{ "G_XP_Set",                _et_G_XP_Set                },
 	{ "G_ResetXP",               _et_G_ResetXP               },
-
+	{ "G_SetEntState",           _et_G_SetEntState           },
 	{ NULL },
 };
 
