@@ -6,13 +6,13 @@ Enemy Territory: Legacy [![Build Status](https://travis-ci.org/etlegacy/etlegacy
 *A second breath of life for Wolfenstein: Enemy Territory*
 
 * Website: [http://www.etlegacy.com](http://www.etlegacy.com)
-* Release downloads: [http://dev.etlegacy.com/download](http://dev.etlegacy.com/download)
+* Downloads: [http://www.etlegacy.com/download](http://www.etlegacy.com/download)
 * Wiki/FAQ: [http://dev.etlegacy.com/projects/etlegacy/wiki](http://dev.etlegacy.com/projects/etlegacy/wiki)
 * Forums: [http://dev.etlegacy.com/projects/etlegacy/boards](http://dev.etlegacy.com/projects/etlegacy/boards)
 * Development (bug reports and feature requests): [http://dev.etlegacy.com](http://dev.etlegacy.com)
 * Repository: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
 * Translation: [https://www.transifex.com/projects/p/etlegacy/](https://www.transifex.com/projects/p/etlegacy/)
-* Contact: [\#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net and [https://gitter.im/etlegacy/etlegacy](https://gitter.im/etlegacy/etlegacy) on Gitter
+* Contact: [\#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net and [etlegacy/etlegacy](https://gitter.im/etlegacy/etlegacy) on Gitter.im
 
 
 INTRODUCTION
@@ -85,7 +85,7 @@ DEPENDENCIES
 * **Ogg Vorbis** (optional, enabled by default)
 * **Theora** (optional, enabled by default)
 * **Freetype** version 2 (optional, enabled by default)
-* **SQLite (optional)
+* **SQLite** version 3 (optional)
 * **OpenAL** (optional)
 * **Jansson** (optional)
 
