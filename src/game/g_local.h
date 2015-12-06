@@ -531,7 +531,7 @@ typedef enum
 typedef struct
 {
 	playerTeamStateState_t state;
-	int location[2];
+	int location[3];
 
 } playerTeamState_t;
 
