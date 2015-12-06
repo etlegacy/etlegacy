@@ -2863,7 +2863,7 @@ void CG_Debreifing2_Awards_Draw(panel_button_t *button)
 		CG_Debreifing2_Awards_Parse();
 	}
 
-	for (i = 0; i < NUM_ENDGAME_AWARDS && j < NUMSHOW_ENDGAME_AWARDS; i++)
+	for (i = 0, j =0; i < NUM_ENDGAME_AWARDS && j < NUMSHOW_ENDGAME_AWARDS; i++)
 	{
 		if (i + cgs.dbAwardsListOffset >= NUM_ENDGAME_AWARDS)
 		{
