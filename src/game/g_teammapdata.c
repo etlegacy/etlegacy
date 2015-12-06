@@ -366,20 +366,13 @@ qboolean G_VisibleFromBinoculars(gentity_t *viewer, gentity_t *ent, vec3_t origi
 
 	if (trace.fraction != 1.f)
 	{
-		if (ent)
+		if (trace.entityNum != ent->s.number)
 		{
-			if (trace.entityNum != ent->s.number)
-			{
-				return qfalse;
-			}
-			else
-			{
-				return qtrue;
-			}
+			return qfalse;
 		}
 		else
 		{
-			return qfalse;
+			return qtrue;
 		}
 	}
 
@@ -414,20 +407,13 @@ qboolean G_VisibleFromBinoculars_Box(gentity_t *viewer, gentity_t *ent, vec3_t o
 
 	if (trace.fraction != 1.f)
 	{
-		if (ent)
+		if (trace.entityNum != ent->s.number)
 		{
-			if (trace.entityNum != ent->s.number)
-			{
-				return qfalse;
-			}
-			else
-			{
-				return qtrue;
-			}
+			return qfalse;
 		}
 		else
 		{
-			return qfalse;
+			return qtrue;
 		}
 	}
 
