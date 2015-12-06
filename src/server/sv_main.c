@@ -754,7 +754,7 @@ static void SVC_Status(netadr_t from, qboolean force)
 	// A maximum challenge length of 128 should be more than plenty.
 	if (strlen(Cmd_Argv(1)) > 128)
 	{
-		SV_WriteAttackLog(va("SVC_Status: challenge lenght exceeded from %s, dropping request\n", NET_AdrToString(from)));
+		SV_WriteAttackLog(va("SVC_Status: challenge length exceeded from %s, dropping request\n", NET_AdrToString(from)));
 		return;
 	}
 
@@ -827,7 +827,7 @@ void SVC_Info(netadr_t from)
 	// A maximum challenge length of 128 should be more than plenty.
 	if (strlen(Cmd_Argv(1)) > 128)
 	{
-		SV_WriteAttackLog(va("SVC_Info: challenge lenght from %s exceeded, dropping request\n", NET_AdrToString(from)));
+		SV_WriteAttackLog(va("SVC_Info: challenge length from %s exceeded, dropping request\n", NET_AdrToString(from)));
 		return;
 	}
 

@@ -139,7 +139,7 @@ static int DB_Create_Scheme()
 	// type = mute/ban
 	// af = AddressFamily
 	sql = "DROP TABLE IF EXISTS BAN;"
-	      "CREATE TABLE BAN (Id INT PRIMARY KEY NOT NULL, address TEXT, guid TEXT, type INT NOT NULL, reason TEXT, af INT, lenght TEXT, expires TEXT,created TEXT, updated TEXT);";
+	      "CREATE TABLE BAN (Id INT PRIMARY KEY NOT NULL, address TEXT, guid TEXT, type INT NOT NULL, reason TEXT, af INT, length TEXT, expires TEXT, created TEXT, updated TEXT);";
 
 	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
@@ -165,9 +165,9 @@ static int DB_Create_Scheme()
 	}
 
 	// session table - server side tracking of players, client side tracking of games
-	// note: we might drop lenght field (created = start, updated = end of session
+	// note: we might drop length field (created = start, updated = end of session
 	sql = "DROP TABLE IF EXISTS SESSION;"
-	      "CREATE TABLE SESSION (Id INT PRIMARY KEY NOT NULL, pId, INT, address TEXT, port INT, type INT, duration TEXT, map TEXT, lenght TEXT, created TEXT, updated TEXT);";
+	      "CREATE TABLE SESSION (Id INT PRIMARY KEY NOT NULL, pId, INT, address TEXT, port INT, type INT, duration TEXT, map TEXT, length TEXT, created TEXT, updated TEXT);";
 
 	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
 

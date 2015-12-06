@@ -489,7 +489,7 @@ static void SV_Status_f(void)
 	           Sys_Milliseconds(),
 	           sv_mapname->string);
 
-	// FIXME: extend player name lenght (>16 chars) ? - they are printed!
+	// FIXME: extend player name length (>16 chars) ? - they are printed!
 	// FIXME: do a Com_Printf per line! ... create the row at first
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
 	{

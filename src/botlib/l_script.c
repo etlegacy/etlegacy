@@ -183,7 +183,7 @@ char *PunctuationFromNum(script_t *script, int num)
 			return script->punctuations[i].p;
 		}
 	}
-	return "unkown punctuation";
+	return "unknown punctuation";
 }
 
 void QDECL ScriptError(script_t *script, char *str, ...)
