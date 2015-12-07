@@ -50,13 +50,13 @@ void DB_ExecSQLCommand_f(void)
 
 	if (!sql || !sql[0])
 	{
-		Com_Printf("Usage: %s sql <sql statement>\n", cmd);
+		Com_Printf("Usage: %s sql <sql_statement>\n", cmd);
 		return;
 	}
 
 	if (!db || db_mode->integer == 0)
 	{
-		Com_Printf("sql db not available or disabled\n\n", cmd);
+		Com_Printf("SQL db not available or disabled!\n");
 		return;
 	}
 
@@ -67,7 +67,7 @@ void DB_ExecSQLCommand_f(void)
 
 	if (result != SQLITE_OK)
 	{
-		Com_Printf("sql command failed: %s\n", err_msg);
+		Com_Printf("SQL command failed: %s\n", err_msg);
 		sqlite3_free(err_msg);
 		return;
 	}
