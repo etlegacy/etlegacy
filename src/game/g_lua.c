@@ -1576,28 +1576,34 @@ static int _et_G_XP_Set(lua_State *L)
 static int _et_G_ResetXP(lua_State *L)
 {
 	int       entnum = luaL_optinteger(L, 1, -1);
-	gentity_t *ent   = NULL;
+	gentity_t *ent;
 
 	if (entnum > -1) // FIXME: Limit to player ents only
 	{
 		ent = g_entities + entnum;
+
+		if (!ent->client)
+		{
+			return 0;
+		}
+
+		G_ResetXP(ent);
 	}
-	G_ResetXP(ent);
-	return 1;
+	return 0;
 }
 
 static int _et_G_SetEntState(lua_State *L)
 {
-	gentity_t  *ent     = NULL;
+	gentity_t  *ent;
 	int        entnum   = (int)luaL_checkinteger(L, 1);
 	entState_t newstate = (int)luaL_checkinteger(L, 2);
 
-	if (entnum > -1) // FIXME: don't do this with world ent
+	if (entnum > -1 && entnum < 1024) // FIXME: don't do this with world ent
 	{
 		ent = g_entities + entnum;
+		G_SetEntState(ent, newstate);
 	}
-	G_SetEntState(ent, newstate);
-	return 1;
+	return 0;
 }
 
 /** @}*/ // doxygen addtogroup lua_etfncs
