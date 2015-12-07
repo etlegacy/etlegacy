@@ -200,7 +200,16 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 		if (cg.warmup)
 		{
-			s = va("%s %s%i", CG_TranslateString("MATCH BEGINS IN:"), ((cg.warmup - cg.time) / 1000) < 3 ? "^1" : "^2", (cg.warmup - cg.time) / 1000 + 1);
+			int sec = (cg.warmup - cg.time) / 1000;
+
+			if (sec > 0)
+			{
+				s = va("%s %s%i", CG_TranslateString("MATCH BEGINS IN:"), ((cg.warmup - cg.time) / 1000) < 4 ? "^1" : "^2", sec);
+			}
+			else
+			{
+				s = va("%s", CG_TranslateString("MATCH BEGINS NOW!"));
+			}
 			CG_Text_Paint_Ext(SCREEN_WIDTH - 20 - CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER) + cgs.wideXoffset, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
 		}
 		else if ((cgs.gamestate == GS_WARMUP && !cg.warmup) || cgs.gamestate == GS_WAITING_FOR_PLAYERS)
