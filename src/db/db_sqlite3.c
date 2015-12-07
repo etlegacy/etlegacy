@@ -348,7 +348,7 @@ int DB_LoadOrSaveDb(sqlite3 *pInMemory, const char *zFilename, int isSave)
 int callback(void *NotUsed, int argc, char **argv, char **azColName)
 {
 	int i;
-	NotUsed = 0;
+	// NotUsed = 0;
 
 	//for (i = 0; i < argc; i++)
 	//{
