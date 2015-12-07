@@ -4750,6 +4750,7 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 	unz_global_info zipInfo;
 	int             err, i;
 	void            *buf = NULL;
+	qboolean        isZipOK = qtrue;
 
 	Com_sprintf(zipPath, sizeof(zipPath), "%s", filename);
 	zipFile = unzOpen(zipPath);
@@ -4823,6 +4824,7 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 			if (!newFile)
 			{
 				Com_Printf(S_COLOR_YELLOW "FS_UnzipTo WARNING: Can't open file '%s'.\n", newFilePath);
+				isZipOK = qfalse;
 				break;
 			}
 
@@ -4837,6 +4839,7 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 			{
 				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't create buffer for output file.\n");
 				fclose(newFile);
+				isZipOK = qfalse;
 				break;
 			}
 
@@ -4845,6 +4848,7 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 			{
 				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't open current file. ERROR %i\n", err);
 				fclose(newFile);
+				isZipOK = qfalse;
 				break;
 			}
 
@@ -4854,6 +4858,7 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't read current file. ERROR %i\n", err);
 				(void) unzCloseCurrentFile(zipFile);
 				fclose(newFile);
+				isZipOK = qfalse;
 				break;
 			}
 
@@ -4863,6 +4868,7 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't write file.\n");
 				(void) unzCloseCurrentFile(zipFile);
 				fclose(newFile);
+				isZipOK = qfalse;
 				break;
 			}
 
@@ -4884,23 +4890,27 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 				break;
 			case UNZ_PARAMERROR:
 				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file in '%s' [file is NULL].\n", newFilePath);
+				isZipOK = qfalse;
 				break;
 			case UNZ_BADZIPFILE:
 				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file in '%s' [bad zip file].\n", newFilePath);
+				isZipOK = qfalse;
 				break;
 			case UNZ_INTERNALERROR:
 				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file in '%s' [internal error].\n", newFilePath);
+				isZipOK = qfalse;
 				break;
 			case UNZ_CRCERROR:
 				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file in '%s' [crc error].\n", newFilePath);
+				isZipOK = qfalse;
 				break;
-
 			default:
 				Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't go to next file in '%s' [unknown error %i].\n", newFilePath, err);
+				isZipOK = qfalse;
 				break;
 			}
 
-			break;
+			break; // unzip loop aborted!
 		}
 	}
 
@@ -4909,6 +4919,7 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 	if (err != UNZ_OK)
 	{
 		Com_Printf(S_COLOR_YELLOW "FS_Unzip WARNING: Can't close zip file '%s' [unknown error %i].\n", filename, err);
+		isZipOK = qfalse;
 	}
 
 	if (buf)
@@ -4916,7 +4927,14 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 		free(buf);
 	}
 
-	return qtrue;
+	if (isZipOK)
+	{
+		return qtrue;
+	}
+	else
+	{
+		return qfalse;
+	}
 }
 
 /**
