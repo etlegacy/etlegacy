@@ -790,7 +790,7 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 	{                                                                   \
 		best->hasaward = qtrue;                                         \
 	}                                                                   \
-	Q_strcat(buffer, 1024, va("%i %.1f %i ", best ? bestClientNum : -1, best ? best->XX : 0.f, best ? best->sess.sessionTeam : TEAM_FREE))
+	Q_strcat(buffer, 1024, va("%i %.1f %i ", best ? bestClientNum : -1, best ? (best->XX < 100.f ? best->XX : 100.f) : 0.f, best ? best->sess.sessionTeam : TEAM_FREE))
 
 #define CHECKSTATMIN(XX, YY)                                            \
 	best = NULL;                                                        \
