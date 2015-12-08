@@ -1879,6 +1879,70 @@ void CG_Debriefing_ParseWeaponStats(void)
 	cgs.dbWeaponStatsRecieved = qtrue;
 }
 
+void CG_Debreifing2_Awards_Parse(void)
+{
+	int        i   = 0;
+	char       *cs = (char *)CG_ConfigString(CS_ENDGAME_STATS);
+	const char *token;
+	char       *s;
+	int        size, len;
+	int        clientNum;
+	float      value;
+	char       buffer[sizeof(cgs.dbAwardNamesBuffer)];
+
+	Q_strncpyz(buffer, cs, sizeof(cgs.dbAwardNamesBuffer));
+	cs = buffer;
+
+	while ((s = strchr(cs, ';')))
+	{
+		*s = '"';
+	}
+
+	s    = cgs.dbAwardNamesBuffer;
+	size = sizeof(cgs.dbAwardNamesBuffer);
+
+	for (i = 0; i < NUM_ENDGAME_AWARDS; i++)
+	{
+		// clientNum
+		token = COM_Parse(&cs);
+
+		clientNum = atoi(token);
+
+		if (clientNum >= 0 && clientNum < MAX_CLIENTS)
+		{
+			Q_strncpyz(s, va("%s", cgs.clientinfo[clientNum].name), size);
+		}
+		else
+		{
+			Q_strncpyz(s, "", size);
+		}
+
+		// value
+		token = COM_Parse(&cs);
+
+		value = atof(token);
+
+		if (value > 0)
+		{
+			strcat(s, (value == (int)(value)) ? va("^7 (%i)", (int)(value)) : va("^7 (%.1f)", value));
+		}
+
+		// award
+		cgs.dbAwardNames[i] = s;
+
+		len   = strlen(s);
+		size -= len;
+		s    += len + 1;
+
+		// team
+		token = COM_Parse(&cs);
+
+		cgs.dbAwardTeams[i] = atoi(token);
+	}
+
+	cgs.dbAwardsParsed = qtrue;
+}
+
 qboolean CG_Debriefing_ServerCommand(const char *cmd)
 {
 	if (!Q_stricmp(cmd, "imwa"))
@@ -1936,11 +2000,11 @@ int CG_Debriefing_ScrollGetMax(panel_button_t *button)
 
 int CG_Debriefing_ScrollGetCount(panel_button_t *button)
 {
-	int i;
+	int i, cnt = 0;
 
 	switch (button->data[0])
 	{
-	case 0:     // player list
+	case 0:    // player list
 		for (i = 0; i < cgs.maxclients; i++)
 		{
 			if (!cgs.clientinfo[cgs.dbSortedClients[i]].infoValid)
@@ -1949,10 +2013,8 @@ int CG_Debriefing_ScrollGetCount(panel_button_t *button)
 			}
 		}
 		return cgs.maxclients;
-	case 1:
+	case 1:    // weapon stats
 	{
-		int cnt = 0;
-
 		if (!cgs.dbWeaponStatsRecieved)
 		{
 			return 0;
@@ -1966,14 +2028,24 @@ int CG_Debriefing_ScrollGetCount(panel_button_t *button)
 		}
 		return cnt;
 	}
-	case 2:
+	case 2:    // campaign
 		if (cgs.campaignInfoLoaded)
 		{
 			return cgs.campaignData.mapCount;
 		}
 		return 0;
-	case 3: // MAPVOTES
+	case 3:    // mapvote
 		return cgs.dbNumMaps;
+	case 4:    // awards
+		if (!cgs.dbAwardsParsed)
+		{
+			CG_Debreifing2_Awards_Parse();
+		}
+		for (i = 0; i < NUM_ENDGAME_AWARDS; i++)
+		{
+			cnt++;
+		}
+		return cnt;
 	}
 	return 0;
 }
@@ -2788,70 +2860,6 @@ const char *awardNames[NUM_ENDGAME_AWARDS] =
 	"Welcome Newbie! Award",    // dont get this if any other award given or > 100 xp (this map)
 };
 
-void CG_Debreifing2_Awards_Parse(void)
-{
-	int        i   = 0;
-	char       *cs = (char *)CG_ConfigString(CS_ENDGAME_STATS);
-	const char *token;
-	char       *s;
-	int        size, len;
-	int        clientNum;
-	float      value;
-	char       buffer[sizeof(cgs.dbAwardNamesBuffer)];
-
-	Q_strncpyz(buffer, cs, sizeof(cgs.dbAwardNamesBuffer));
-	cs = buffer;
-
-	while ((s = strchr(cs, ';')))
-	{
-		*s = '"';
-	}
-
-	s    = cgs.dbAwardNamesBuffer;
-	size = sizeof(cgs.dbAwardNamesBuffer);
-
-	for (i = 0; i < NUM_ENDGAME_AWARDS; i++)
-	{
-		// clientNum
-		token = COM_Parse(&cs);
-
-		clientNum = atoi(token);
-
-		if (clientNum >= 0 && clientNum < MAX_CLIENTS)
-		{
-			Q_strncpyz(s, va("%s", cgs.clientinfo[clientNum].name), size);
-		}
-		else
-		{
-			Q_strncpyz(s, "", size);
-		}
-
-		// value
-		token = COM_Parse(&cs);
-
-		value = atof(token);
-
-		if (value > 0)
-		{
-			strcat(s, (value == (int)(value)) ? va("^7 (%i)", (int)(value)) : va("^7 (%.1f)", value));
-		}
-
-		// award
-		cgs.dbAwardNames[i] = s;
-
-		len   = strlen(s);
-		size -= len;
-		s    += len + 1;
-
-		// team
-		token = COM_Parse(&cs);
-
-		cgs.dbAwardTeams[i] = atoi(token);
-	}
-
-	cgs.dbAwardsParsed = qtrue;
-}
-
 void CG_Debreifing2_Awards_Draw(panel_button_t *button)
 {
 	int    i, j;
@@ -2863,7 +2871,7 @@ void CG_Debreifing2_Awards_Draw(panel_button_t *button)
 		CG_Debreifing2_Awards_Parse();
 	}
 
-	for (i = 0, j =0; i < NUM_ENDGAME_AWARDS && j < NUMSHOW_ENDGAME_AWARDS; i++)
+	for (i = 0, j = 0; i < NUM_ENDGAME_AWARDS && j < NUMSHOW_ENDGAME_AWARDS; i++)
 	{
 		if (i + cgs.dbAwardsListOffset >= NUM_ENDGAME_AWARDS)
 		{
