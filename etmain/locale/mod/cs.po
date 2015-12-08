@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-11-29 20:43+0000\n"
+"PO-Revision-Date: 2015-12-08 21:36+0000\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Czech (http://www.transifex.com/etlegacy/etlegacy/language/cs/)\n"
 "MIME-Version: 1.0\n"
@@ -1074,9 +1074,12 @@ msgid "Enable Country Flags on the server"
 msgstr "Povoluje zobrazení vlajek států"
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
-#: etmain/ui/options_graphics.menu:52
 msgid "ADVANCED"
 msgstr "POKROČILÉ I"
+
+#: etmain/ui/options_system.menu:54
+msgid "ADVANCED GRAPHICS"
+msgstr ""
 
 #: etmain/ui/hostgame.menu:31 etmain/ui/main.menu:106
 msgid "HOST GAME"
@@ -1722,14 +1725,14 @@ msgid "This will delete all unnecessary files from you fs_homepath."
 msgstr "Tímto budou smazány všechny nepotřebné soubory uložené v fs_homepath."
 
 #: etmain/ui/options_clean.menu:36
-msgid "A simple clean will remove tmp- and custom pk3 files."
-msgstr "Jednoduché vyčistění odstraní dočasné soubory TMP a pomocné PK3 soubory."
+msgid "A simple clean will remove tmp and custom pk3 files."
+msgstr ""
 
 #: etmain/ui/options_clean.menu:37
 msgid ""
-"A full clean will remove all downloaded files like map-,\n"
-" campaign- and custom pk3 files."
-msgstr "Úplné vyčistění odstraní všechny neoriginální PK3 soubory včetně souborů s herními úrovněmi a kampaněmi."
+"A full clean will remove all downloaded files like maps,\n"
+" campaigns and custom pk3 files."
+msgstr ""
 
 #: etmain/ui/options_clean.menu:38
 msgid "^1WARNING: Use at your own risk!"
@@ -1743,17 +1746,29 @@ msgstr "Pro více informací nahlédněte do naší wikipedie."
 msgid "Press '^7ABORT^9' if you don't know what you are doing here."
 msgstr "Stiskněte '^7ZRUŠIT^9', jestliže nevíte, co dělat."
 
-#: etmain/ui/options_clean.menu:43
+#: etmain/ui/options_clean.menu:42
 msgid "ABORT"
 msgstr "ZRUŠIT"
 
-#: etmain/ui/options_clean.menu:44
+#: etmain/ui/options_clean.menu:42
+msgid "Abort operation"
+msgstr ""
+
+#: etmain/ui/options_clean.menu:43
 msgid "SIMPLE CLEAN"
 msgstr "JEDNODUCHÉ"
 
-#: etmain/ui/options_clean.menu:45
+#: etmain/ui/options_clean.menu:43
+msgid "Remove tmp and custom pk3 files"
+msgstr ""
+
+#: etmain/ui/options_clean.menu:44
 msgid "FULL CLEAN"
 msgstr "ÚPLNÉ"
+
+#: etmain/ui/options_clean.menu:44
+msgid "Remove all maps and campaigns files"
+msgstr ""
 
 #: etmain/ui/options_controls_default.menu:52
 msgid "DEFAULT CONTROLS"
@@ -3413,7 +3428,7 @@ msgstr "POUZIT DOPORUCENE"
 msgid "APPLY"
 msgstr "POUZIT"
 
-#: etmain/ui/options.menu:35 etmain/ui/options_system.menu:35
+#: etmain/ui/options.menu:35 etmain/ui/options_system.menu:36
 msgid "SYSTEM"
 msgstr "SYSTEM"
 
@@ -3457,7 +3472,7 @@ msgstr ""
 msgid "Set the sound quality"
 msgstr ""
 
-#: etmain/ui/options_system.menu:45
+#: etmain/ui/options_system.menu:85
 msgid "Doppler FX:"
 msgstr ""
 
@@ -3481,9 +3496,9 @@ msgstr "Ztlumit pri prepnuti na jine okno:"
 msgid "Enables or disables sound when window is unfocused"
 msgstr ""
 
-#: etmain/ui/options_system.menu:51
-msgid "NETWORKING"
-msgstr "SIT"
+#: etmain/ui/options_system.menu:92
+msgid "NETWORK"
+msgstr ""
 
 #: etmain/ui/options_system.menu:52
 msgid "Max Packets:"
@@ -3519,17 +3534,29 @@ msgstr "Zjistit aktualizace pri startu:"
 msgid "Automatically check for updates?"
 msgstr ""
 
-#: etmain/ui/options_system.menu:61
-msgid "Get Missing Files from Server:"
-msgstr "Stahnout chybejici soubory ze serveru:"
+#: etmain/ui/options_system.menu:99
+msgid "Get Missing Files:"
+msgstr ""
 
-#: etmain/ui/options_system.menu:61
-msgid "Download missing files when available?"
+#: etmain/ui/options_system.menu:99
+msgid "Download missing files when available"
 msgstr ""
 
 #: etmain/ui/options_system.menu:62
 msgid "Use HTTP/FTP Downloads:"
 msgstr "Pouzivat HTTP/FTP stahovani:"
+
+#: etmain/ui/options_system.menu:106
+msgid "UPDATES"
+msgstr ""
+
+#: etmain/ui/options_system.menu:107
+msgid "Start-Up Updates Check:"
+msgstr ""
+
+#: etmain/ui/options_system.menu:107
+msgid "Automatically check for updates"
+msgstr ""
 
 #: etmain/ui/options_system.menu:62
 msgid "Enables or disables http/ftp downloads"
@@ -4825,7 +4852,7 @@ msgid "Press ^3%s^7 to start"
 msgstr ""
 
 #: src/cgame/cg_draw.c:2470
-msgid "^3WARMUP:^7 Match begins in:"
+msgid "^3WARMUP:^7 Match begins in"
 msgstr ""
 
 #: src/cgame/cg_draw.c:2481

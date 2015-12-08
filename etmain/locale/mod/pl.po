@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-11-29 20:48+0000\n"
+"PO-Revision-Date: 2015-12-08 21:37+0000\n"
 "Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/etlegacy/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -1073,9 +1073,12 @@ msgid "Enable Country Flags on the server"
 msgstr "Włącz Flagi Państw na serwerze"
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
-#: etmain/ui/options_graphics.menu:52
 msgid "ADVANCED"
 msgstr "ZAAWANSOWANE"
+
+#: etmain/ui/options_system.menu:54
+msgid "ADVANCED GRAPHICS"
+msgstr "ZAAWANSOWANA GRAFIKA"
 
 #: etmain/ui/hostgame.menu:31 etmain/ui/main.menu:106
 msgid "HOST GAME"
@@ -1721,14 +1724,14 @@ msgid "This will delete all unnecessary files from you fs_homepath."
 msgstr "To usunie wszystkie niepotrzebne pliki z twojego fs_homepath."
 
 #: etmain/ui/options_clean.menu:36
-msgid "A simple clean will remove tmp- and custom pk3 files."
-msgstr "Proste czyszczenie usunie pliki -tmp i niestandardowe pk3."
+msgid "A simple clean will remove tmp and custom pk3 files."
+msgstr "Proste czyszczenie usunie pliki tmp i niestandardowe pk3."
 
 #: etmain/ui/options_clean.menu:37
 msgid ""
-"A full clean will remove all downloaded files like map-,\n"
-" campaign- and custom pk3 files."
-msgstr "Pełne czyszczenie usunie wszystkie ściągniete pliki takie jak mapy,\n kampanie i niestandardowe pk3."
+"A full clean will remove all downloaded files like maps,\n"
+" campaigns and custom pk3 files."
+msgstr "Pełne czyszczenie usunie wszystkie ściągnięte pliki takie jak mapy, kampanie i niestandardowe pk3."
 
 #: etmain/ui/options_clean.menu:38
 msgid "^1WARNING: Use at your own risk!"
@@ -1742,17 +1745,29 @@ msgstr "Skonsultuj sie z nami na wiki."
 msgid "Press '^7ABORT^9' if you don't know what you are doing here."
 msgstr "Naduś '^7PRZERWIJ^9' jest nie wiesz co tutaj robisz."
 
-#: etmain/ui/options_clean.menu:43
+#: etmain/ui/options_clean.menu:42
 msgid "ABORT"
 msgstr "PRZERWIJ"
 
-#: etmain/ui/options_clean.menu:44
+#: etmain/ui/options_clean.menu:42
+msgid "Abort operation"
+msgstr "Przerwij operacje"
+
+#: etmain/ui/options_clean.menu:43
 msgid "SIMPLE CLEAN"
 msgstr "PROSTE"
 
-#: etmain/ui/options_clean.menu:45
+#: etmain/ui/options_clean.menu:43
+msgid "Remove tmp and custom pk3 files"
+msgstr "Usuń pliki niestandardowe pk3 i tmp"
+
+#: etmain/ui/options_clean.menu:44
 msgid "FULL CLEAN"
 msgstr "PEŁNE"
+
+#: etmain/ui/options_clean.menu:44
+msgid "Remove all maps and campaigns files"
+msgstr "Usuń wszystkie mapy i pliki kampanii"
 
 #: etmain/ui/options_controls_default.menu:52
 msgid "DEFAULT CONTROLS"
@@ -3412,7 +3427,7 @@ msgstr "USTAW REKOMENDOWANE"
 msgid "APPLY"
 msgstr "POTWIERZ"
 
-#: etmain/ui/options.menu:35 etmain/ui/options_system.menu:35
+#: etmain/ui/options.menu:35 etmain/ui/options_system.menu:36
 msgid "SYSTEM"
 msgstr "SYSTEM"
 
@@ -3456,7 +3471,7 @@ msgstr "44 khz (bardzo wysokie)"
 msgid "Set the sound quality"
 msgstr "Ustaw jakość dżwięku"
 
-#: etmain/ui/options_system.menu:45
+#: etmain/ui/options_system.menu:85
 msgid "Doppler FX:"
 msgstr "Doppler FX:"
 
@@ -3480,8 +3495,8 @@ msgstr "Wycisz Kiedy Nie Korzystasz:"
 msgid "Enables or disables sound when window is unfocused"
 msgstr "Włącza lub wyłącza dźwięk kiedy okno jest nieaktywne"
 
-#: etmain/ui/options_system.menu:51
-msgid "NETWORKING"
+#: etmain/ui/options_system.menu:92
+msgid "NETWORK"
 msgstr "SIEĆ"
 
 #: etmain/ui/options_system.menu:52
@@ -3518,17 +3533,29 @@ msgstr "Aktualizacja przy Starcie:"
 msgid "Automatically check for updates?"
 msgstr "Automatycznie sprawdzaj aktualizacje?"
 
-#: etmain/ui/options_system.menu:61
-msgid "Get Missing Files from Server:"
-msgstr "Zdobądż Pliki z Serwera:"
+#: etmain/ui/options_system.menu:99
+msgid "Get Missing Files:"
+msgstr "Ściągnij brakujące pliki:"
 
-#: etmain/ui/options_system.menu:61
-msgid "Download missing files when available?"
-msgstr "Ściągnij brakujące pliki kiedy dostępne?"
+#: etmain/ui/options_system.menu:99
+msgid "Download missing files when available"
+msgstr "Ściągnij brakujące pliki kiedy dostępne"
 
 #: etmain/ui/options_system.menu:62
 msgid "Use HTTP/FTP Downloads:"
 msgstr "Użyj HTTP/FTP Ściągania:"
+
+#: etmain/ui/options_system.menu:106
+msgid "UPDATES"
+msgstr "AKTUALIZACJE"
+
+#: etmain/ui/options_system.menu:107
+msgid "Start-Up Updates Check:"
+msgstr "Sprawdź Aktualizacje podczas uruchamiania:"
+
+#: etmain/ui/options_system.menu:107
+msgid "Automatically check for updates"
+msgstr "Automatycznie sprawdzaj aktualizacje"
 
 #: etmain/ui/options_system.menu:62
 msgid "Enables or disables http/ftp downloads"
@@ -4824,8 +4851,8 @@ msgid "Press ^3%s^7 to start"
 msgstr "Wciśnij ^3%s^7 aby zacząć"
 
 #: src/cgame/cg_draw.c:2470
-msgid "^3WARMUP:^7 Match begins in:"
-msgstr "^3ROZGRZEWKA:^7 Mecz zacznie się za:"
+msgid "^3WARMUP:^7 Match begins in"
+msgstr "^3ROZGRZEWKA:^7 Mecz zacznie się za"
 
 #: src/cgame/cg_draw.c:2481
 msgid "^3PREPARE TO FIGHT!\n"
