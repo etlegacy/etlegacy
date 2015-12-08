@@ -1962,13 +1962,13 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 
 	if (fFull)
 	{
-		txt_dump(CG_TranslateString("^7Weapon     Acrcy Hits/Shts Kills Deaths Headshots\n"));
-		txt_dump("^7-------------------------------------------------\n");
+		txt_dump(CG_TranslateString("^7Weapon      Acrcy Hits/Shts Kills Deaths Headshots\n"));
+		txt_dump("^7--------------------------------------------------\n");
 	}
 	else
 	{
-		txt_dump(CG_TranslateString("^7Weapon     Acrcy Hits/Shts Kll Dth HS\n"));
-		//txt_dump(     "^7-------------------------------------\n");
+		txt_dump(CG_TranslateString("^7Weapon      Acrcy Hits/Shts Kll Dth HS\n"));
+		//txt_dump(     "^7--------------------------------------\n");
 		txt_dump("\n");
 	}
 
@@ -1994,7 +1994,7 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 				totDeaths    += deaths;
 				totHeadshots += headshots;
 
-				Q_strncpyz(strName, va("^3%-9s: ", aWeaponInfo[i].pszName), sizeof(strName));
+				Q_strncpyz(strName, va("^3%-10s: ", aWeaponInfo[i].pszName), sizeof(strName));
 				if (atts > 0 || hits > 0)
 				{
 					float acc = (atts == 0) ? 0.0 : (float)(hits * 100.0 / (float)atts);
@@ -2051,11 +2051,11 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 				txt_dump("\n");
 			}
 
-			txt_dump(va("^3Damage Given: ^7%6d    ^3Team Damage Given: ^7%6d\n", dmg_given, team_dmg_given));
-			txt_dump(va("^3Damage Recvd: ^7%6d    ^3Team Damage Recvd: ^7%6d\n", dmg_rcvd, team_dmg_rcvd));
+			txt_dump(va("^3Damage Given: ^7%6d     ^3Team Damage Given: ^7%6d\n", dmg_given, team_dmg_given));
+			txt_dump(va("^3Damage Recvd: ^7%6d     ^3Team Damage Recvd: ^7%6d\n", dmg_rcvd, team_dmg_rcvd));
 			txt_dump("\n");
-			txt_dump(va("^3Kills:  ^7%3d   ^3Team Kills: ^7%3d   ^3Accuracy:  ^7%5.1f%%\n", totKills, teamKills, htRatio));
-			txt_dump(va("^3Deaths: ^7%3d   ^3Self Kills: ^7%3d   ^3Headshots: ^7%5.1f%%\n", totDeaths, selfKills, hsRatio));
+			txt_dump(va("^3Kills:  ^7%3d   ^3Team Kills: ^7%3d   ^3Accuracy:  ^7 %5.1f%%\n", totKills, teamKills, htRatio));
+			txt_dump(va("^3Deaths: ^7%3d   ^3Self Kills: ^7%3d   ^3Headshots: ^7 %5.1f%%\n", totDeaths, selfKills, hsRatio));
 			txt_dump(va("^3Gibs:   ^7%3d   ^3Team Gibs:  ^7%3d\n", gibs, teamGibs));
 		}
 	}
