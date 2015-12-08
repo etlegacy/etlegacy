@@ -1071,8 +1071,11 @@ msgid "Enable Country Flags on the server"
 msgstr ""
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
-#: etmain/ui/options_graphics.menu:52
 msgid "ADVANCED"
+msgstr ""
+
+#: etmain/ui/options_system.menu:54
+msgid "ADVANCED GRAPHICS"
 msgstr ""
 
 #: etmain/ui/hostgame.menu:31 etmain/ui/main.menu:106
@@ -1719,13 +1722,13 @@ msgid "This will delete all unnecessary files from you fs_homepath."
 msgstr ""
 
 #: etmain/ui/options_clean.menu:36
-msgid "A simple clean will remove tmp- and custom pk3 files."
+msgid "A simple clean will remove tmp and custom pk3 files."
 msgstr ""
 
 #: etmain/ui/options_clean.menu:37
 msgid ""
-"A full clean will remove all downloaded files like map-,\n"
-" campaign- and custom pk3 files."
+"A full clean will remove all downloaded files like maps,\n"
+" campaigns and custom pk3 files."
 msgstr ""
 
 #: etmain/ui/options_clean.menu:38
@@ -1740,16 +1743,28 @@ msgstr ""
 msgid "Press '^7ABORT^9' if you don't know what you are doing here."
 msgstr ""
 
-#: etmain/ui/options_clean.menu:43
+#: etmain/ui/options_clean.menu:42
 msgid "ABORT"
 msgstr ""
 
-#: etmain/ui/options_clean.menu:44
+#: etmain/ui/options_clean.menu:42
+msgid "Abort operation"
+msgstr ""
+
+#: etmain/ui/options_clean.menu:43
 msgid "SIMPLE CLEAN"
 msgstr ""
 
-#: etmain/ui/options_clean.menu:45
+#: etmain/ui/options_clean.menu:43
+msgid "Remove tmp and custom pk3 files"
+msgstr ""
+
+#: etmain/ui/options_clean.menu:44
 msgid "FULL CLEAN"
+msgstr ""
+
+#: etmain/ui/options_clean.menu:44
+msgid "Remove all maps and campaigns files"
 msgstr ""
 
 #: etmain/ui/options_controls_default.menu:52
@@ -3409,7 +3424,7 @@ msgstr ""
 msgid "APPLY"
 msgstr ""
 
-#: etmain/ui/options.menu:35 etmain/ui/options_system.menu:35
+#: etmain/ui/options.menu:35 etmain/ui/options_system.menu:36
 msgid "SYSTEM"
 msgstr ""
 
@@ -3453,7 +3468,7 @@ msgstr ""
 msgid "Set the sound quality"
 msgstr ""
 
-#: etmain/ui/options_system.menu:45
+#: etmain/ui/options_system.menu:85
 msgid "Doppler FX:"
 msgstr ""
 
@@ -3477,8 +3492,8 @@ msgstr ""
 msgid "Enables or disables sound when window is unfocused"
 msgstr ""
 
-#: etmain/ui/options_system.menu:51
-msgid "NETWORKING"
+#: etmain/ui/options_system.menu:92
+msgid "NETWORK"
 msgstr ""
 
 #: etmain/ui/options_system.menu:52
@@ -3515,16 +3530,28 @@ msgstr ""
 msgid "Automatically check for updates?"
 msgstr ""
 
-#: etmain/ui/options_system.menu:61
-msgid "Get Missing Files from Server:"
+#: etmain/ui/options_system.menu:99
+msgid "Get Missing Files:"
 msgstr ""
 
-#: etmain/ui/options_system.menu:61
-msgid "Download missing files when available?"
+#: etmain/ui/options_system.menu:99
+msgid "Download missing files when available"
 msgstr ""
 
 #: etmain/ui/options_system.menu:62
 msgid "Use HTTP/FTP Downloads:"
+msgstr ""
+
+#: etmain/ui/options_system.menu:106
+msgid "UPDATES"
+msgstr ""
+
+#: etmain/ui/options_system.menu:107
+msgid "Start-Up Updates Check:"
+msgstr ""
+
+#: etmain/ui/options_system.menu:107
+msgid "Automatically check for updates"
 msgstr ""
 
 #: etmain/ui/options_system.menu:62
@@ -4818,7 +4845,7 @@ msgid "Press ^3%s^7 to start"
 msgstr ""
 
 #: src/cgame/cg_draw.c:2470
-msgid "^3WARMUP:^7 Match begins in:"
+msgid "^3WARMUP:^7 Match begins in"
 msgstr ""
 
 #: src/cgame/cg_draw.c:2481
