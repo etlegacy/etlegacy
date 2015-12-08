@@ -1781,7 +1781,7 @@ typedef struct
 	int lastZ;
 } clientLocation_t;
 
-#define NUM_ENDGAME_AWARDS     14   // total number of endgame awards
+#define NUM_ENDGAME_AWARDS     18   // total number of endgame awards
 #define NUMSHOW_ENDGAME_AWARDS 14   // number of awards to display that will fit on screen
 
 // The client game static (cgs) structure hold everything

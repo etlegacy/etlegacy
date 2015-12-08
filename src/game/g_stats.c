@@ -960,6 +960,141 @@ void G_BuildEndgameStats(void)
 
 	best = NULL;
 
+	// best survivor - check time played percentage (min 50% of map duration)
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		gclient_t *cl = &level.clients[level.sortedClients[i]];
+		if (cl->sess.sessionTeam == TEAM_FREE)
+		{
+			continue;
+		}
+		if ((level.time - cl->pers.enterTime) / (float)(level.time - level.intermissiontime) < 0.5f)
+		{
+			continue;
+		}
+		if (!best || (cl->sess.time_played / (float)(level.time - cl->pers.enterTime)) > (best->sess.time_played / (float)(level.time - best->pers.enterTime)))
+		{
+			best          = cl;
+			bestClientNum = level.sortedClients[i];
+		}
+	}
+	if (best)
+	{
+		best->hasaward = qtrue;
+		Q_strcat(buffer, 1024, va("%i %f %i ", bestClientNum, 100 * best->sess.time_played / (float)(level.time - best->pers.enterTime), best->sess.sessionTeam));
+	}
+	else
+	{
+		Q_strcat(buffer, 1024, "-1 0 0 ");
+	}
+
+	best = NULL;
+
+	// most gibs - check gibs, then damage given
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		gclient_t *cl = &level.clients[level.sortedClients[i]];
+		if (cl->sess.sessionTeam == TEAM_FREE)
+		{
+			continue;
+		}
+		if (cl->sess.gibs <= 0)
+		{
+			continue;
+		}
+		if (!best || cl->sess.gibs > best->sess.gibs)
+		{
+			best          = cl;
+			bestClientNum = level.sortedClients[i];
+		}
+		else if (cl->sess.gibs == best->sess.gibs && cl->sess.damage_given > best->sess.damage_given)
+		{
+			best          = cl;
+			bestClientNum = level.sortedClients[i];
+		}
+	}
+	if (best)
+	{
+		best->hasaward = qtrue;
+		Q_strcat(buffer, 1024, va("%i %i %i ", bestClientNum, best->sess.gibs, best->sess.sessionTeam));
+	}
+	else
+	{
+		Q_strcat(buffer, 1024, "-1 0 0 ");
+	}
+
+	best = NULL;
+
+	// most selfkill - check selfkills, then deaths
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		gclient_t *cl = &level.clients[level.sortedClients[i]];
+		if (cl->sess.sessionTeam == TEAM_FREE)
+		{
+			continue;
+		}
+		if (cl->sess.self_kills <= 0)
+		{
+			continue;
+		}
+		if (!best || cl->sess.self_kills > best->sess.self_kills)
+		{
+			best          = cl;
+			bestClientNum = level.sortedClients[i];
+		}
+		else if (cl->sess.self_kills == best->sess.self_kills && cl->sess.deaths > best->sess.deaths)
+		{
+			best          = cl;
+			bestClientNum = level.sortedClients[i];
+		}
+	}
+	if (best)
+	{
+		best->hasaward = qtrue;
+		Q_strcat(buffer, 1024, va("%i %i %i ", bestClientNum, best->sess.self_kills, best->sess.sessionTeam));
+	}
+	else
+	{
+		Q_strcat(buffer, 1024, "-1 0 0 ");
+	}
+
+	best = NULL;
+
+	// most deaths - check deaths, then damage received
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		gclient_t *cl = &level.clients[level.sortedClients[i]];
+		if (cl->sess.sessionTeam == TEAM_FREE)
+		{
+			continue;
+		}
+		if (cl->sess.deaths <= 0)
+		{
+			continue;
+		}
+		if (!best || cl->sess.deaths > best->sess.deaths)
+		{
+			best          = cl;
+			bestClientNum = level.sortedClients[i];
+		}
+		else if (cl->sess.deaths == best->sess.deaths && cl->sess.damage_received > best->sess.damage_received)
+		{
+			best          = cl;
+			bestClientNum = level.sortedClients[i];
+		}
+	}
+	if (best)
+	{
+		best->hasaward = qtrue;
+		Q_strcat(buffer, 1024, va("%i %i %i ", bestClientNum, best->sess.deaths, best->sess.sessionTeam));
+	}
+	else
+	{
+		Q_strcat(buffer, 1024, "-1 0 0 ");
+	}
+
+	best = NULL;
+
 	// I ain't got no friends award - check team kills, then team damage given (min 5 tks)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{

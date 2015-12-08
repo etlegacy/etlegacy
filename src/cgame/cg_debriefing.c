@@ -2856,6 +2856,10 @@ const char *awardNames[NUM_ENDGAME_AWARDS] =
 	"Best Soldier",
 	"Best Covert Ops",
 	"Highest Accuracy",
+	"Best Survivor",
+	"Most Gibs",
+	"Most Selfkills",
+	"Most Deaths",
 	"I Ain't Got No Friends Award", // min 5 tks
 	"Welcome Newbie! Award",    // dont get this if any other award given or > 100 xp (this map)
 };
