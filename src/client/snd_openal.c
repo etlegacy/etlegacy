@@ -3043,10 +3043,11 @@ qboolean S_AL_Init(soundInterface_t *si)
 		// !!! FIXME:  extension string. We need to check the version string,
 		// !!! FIXME:  then the extension string, but that's too much trouble,
 		// !!! FIXME:  so we'll just check the function pointer for now.
-		if (qalcCaptureOpenDevice == NULL)
+		qboolean test = qalcCaptureOpenDevice == NULL;
 #else
-		if (!qalcIsExtensionPresent(NULL, "ALC_EXT_capture"))
+		qboolean test = !qalcIsExtensionPresent(NULL, "ALC_EXT_capture");
 #endif
+		if (test)
 		{
 			Com_Printf("No ALC_EXT_capture support, can't record audio.\n");
 		}
