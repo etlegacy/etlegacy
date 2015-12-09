@@ -960,6 +960,36 @@ void G_BuildEndgameStats(void)
 
 	best = NULL;
 
+	// highest HS percentage
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		gclient_t *cl = &level.clients[level.sortedClients[i]];
+		if (cl->sess.sessionTeam == TEAM_FREE)
+		{
+			continue;
+		}
+		if (cl->hspct <= 0)
+		{
+			continue;
+		}
+		if (!best || cl->hspct > best->hspct)
+		{
+			best          = cl;
+			bestClientNum = level.sortedClients[i];
+		}
+	}
+	if (best)
+	{
+		best->hasaward = qtrue;
+		Q_strcat(buffer, 1024, va("%i %.1f %i ", bestClientNum, best->hspct < 100.f ? best->hspct : 100.f, best->sess.sessionTeam));
+	}
+	else
+	{
+		Q_strcat(buffer, 1024, "-1 0 0 ");
+	}
+
+	best = NULL;
+
 	// best survivor - check time played percentage (min 50% of map duration)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{

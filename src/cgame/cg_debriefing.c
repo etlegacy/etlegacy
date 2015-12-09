@@ -2849,6 +2849,7 @@ const char *awardNames[NUM_ENDGAME_AWARDS] =
 	"Best Soldier",
 	"Best Covert Ops",
 	"Highest Accuracy",
+	"Highest Headshots Percentage",
 	"Best Survivor",
 	"Most Gibs",
 	"Most Selfkills",
