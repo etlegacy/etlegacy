@@ -3221,13 +3221,13 @@ void CG_LoadPanel_LoadingBarText(panel_button_t *button);
 void CG_LoadPanel_KeyHandling(int key, qboolean down);
 void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh);
 
-qboolean CG_Debriefing2_Maps_KeyDown(panel_button_t *button, int key);
-void CG_Debriefing2TeamSkillHeaders_Draw(panel_button_t *button);
-void CG_Debriefing2TeamSkillXP_Draw(panel_button_t *button);
-void CG_Debreifing2_MissionTitle_Draw(panel_button_t *button);
-void CG_Debreifing2_Mission_Draw(panel_button_t *button);
-void CG_Debreifing2_Maps_Draw(panel_button_t *button);
-void CG_Debreifing2_Awards_Draw(panel_button_t *button);
+qboolean CG_Debriefing_Maps_KeyDown(panel_button_t *button, int key);
+void CG_Debriefing_TeamSkillHeaders_Draw(panel_button_t *button);
+void CG_Debriefing_TeamSkillXP_Draw(panel_button_t *button);
+void CG_Debriefing_MissionTitle_Draw(panel_button_t *button);
+void CG_Debriefing_Mission_Draw(panel_button_t *button);
+void CG_Debriefing_Maps_Draw(panel_button_t *button);
+void CG_Debriefing_Awards_Draw(panel_button_t *button);
 void CG_PanelButtonsRender_Window(panel_button_t *button);
 void CG_PanelButtonsRender_Button(panel_button_t *button);
 
