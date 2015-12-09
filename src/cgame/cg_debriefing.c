@@ -234,7 +234,7 @@ panel_button_t debriefMissionAwardsListScroll =
 	NULL,
 	NULL,
 	{ SCREEN_WIDTH - 10 - 8 - 16,DH_HEADING_Y,                          16, 206 },
-	{ 0,                         0,                                     0,  0, 0, 0, 0, 0},
+	{ 4,                         0,                                     0,  0, 0, 0, 0, 0},
 	NULL,                        /* font		*/
 	CG_Debriefing_Scrollbar_KeyDown,/* keyDown	*/
 	CG_Debriefing_Scrollbar_KeyUp,/* keyUp	*/
@@ -1130,7 +1130,7 @@ panel_button_t mapVoteNamesListScroll =
 	NULL,
 	NULL,
 	{ DB_MAPVOTE_X + 10 + 48,    DB_MAPVOTE_Y + 2,                      16, 17 * 12 },
-	{ 4,                         0,                                     0,  0, 0, 0, 0, 0},
+	{ 3,                         0,                                     0,  0, 0, 0, 0, 0},
 	NULL,                        /* font        */
 	CG_Debriefing_Scrollbar_KeyDown,/* keyDown  */
 	CG_Debriefing_Scrollbar_KeyUp,/* keyUp  */
@@ -1876,7 +1876,7 @@ void CG_Debriefing_ParseWeaponStats(void)
 	cgs.dbWeaponStatsRecieved = qtrue;
 }
 
-void CG_Debriefing_Awards_Parse(void)
+void CG_Debriefing_ParseAwards(void)
 {
 	int        i   = 0;
 	char       *cs = (char *)CG_ConfigString(CS_ENDGAME_STATS);
@@ -2028,7 +2028,7 @@ int CG_Debriefing_ScrollGetCount(panel_button_t *button)
 	case 4:    // awards
 		if (!cgs.dbAwardsParsed)
 		{
-			CG_Debriefing_Awards_Parse();
+			CG_Debriefing_ParseAwards();
 		}
 		for (i = 0; i < NUM_ENDGAME_AWARDS; i++)
 		{
@@ -2865,7 +2865,7 @@ void CG_Debriefing_Awards_Draw(panel_button_t *button)
 
 	if (!cgs.dbAwardsParsed)
 	{
-		CG_Debriefing_Awards_Parse();
+		CG_Debriefing_ParseAwards();
 	}
 
 	for (i = 0, j = 0; i < NUM_ENDGAME_AWARDS && j < NUMSHOW_ENDGAME_AWARDS; ++i)
