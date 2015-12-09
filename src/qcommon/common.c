@@ -2719,6 +2719,7 @@ void Com_Init(char *commandLine)
 	// gcc warning: variable `safeMode' might be clobbered by `longjmp' or `vfork'
 	volatile qboolean safeMode = qtrue;
 	int               qport;
+	qboolean test;
 
 	Com_Printf(ET_VERSION "\n");
 
@@ -2810,10 +2811,11 @@ void Com_Init(char *commandLine)
 			if (!Com_CheckProfile())
 			{
 #if !defined(DEDICATED) && !defined(LEGACY_DEBUG)
-				if (Sys_Dialog(DT_YES_NO, "ET:L crashed last time it was running. Do you want to reset settings to default values?\n\nNote & Warning:\nIf you are running several client instances ensure a different value\nof CVAR fs_homepath is set for each client.\nOtherwise the same profile path is used which may cause other side effects.", "Reset settings") == DR_YES)
+				test = Sys_Dialog(DT_YES_NO, "ET:L crashed last time it was running. Do you want to reset settings to default values?\n\nNote & Warning:\nIf you are running several client instances ensure a different value\nof CVAR fs_homepath is set for each client.\nOtherwise the same profile path is used which may cause other side effects.", "Reset settings") == DR_YES;
 #else
-				if (qfalse)
+				test = qfalse;
 #endif
+				if (test)
 				{
 					Com_Printf("WARNING: profile.pid found for profile '%s' - system settings will revert to defaults\n", cl_profileStr);
 					// set crashed state
