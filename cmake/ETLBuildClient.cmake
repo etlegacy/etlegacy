@@ -25,6 +25,15 @@ endif(WIN32)
 if(BUNDLED_SDL)
 	add_dependencies(etl bundled_sdl)
 endif(BUNDLED_SDL)
+
+if(BUNDLED_ZLIB)
+	add_dependencies(etl bundled_zlib)
+endif(BUNDLED_ZLIB)
+
+if(BUNDLED_MINIZIP)
+	add_dependencies(etl bundled_minizip)
+endif(BUNDLED_MINIZIP)
+
 if(BUNDLED_CURL)
 	add_dependencies(etl bundled_curl)
 endif(BUNDLED_CURL)

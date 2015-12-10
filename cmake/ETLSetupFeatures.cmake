@@ -203,7 +203,7 @@ if(BUILD_CLIENT OR BUILD_SERVER)
 		set(CLIENT_SRC ${CLIENT_SRC} "src/qcommon/dl_main_stubs.c")
 		set(SERVER_SRC ${SERVER_SRC} "src/qcommon/dl_main_stubs.c")
 	endif(FEATURE_CURL)
-	
+
 	if(FEATURE_DBMS)
 		if(NOT BUNDLED_SQLITE3)
 			find_package(SQLite3 REQUIRED)
@@ -224,7 +224,7 @@ if(BUILD_CLIENT OR BUILD_SERVER)
 		set(CLIENT_SRC ${CLIENT_SRC} ${DBMS_SRC})
 		set(SERVER_SRC ${SERVER_SRC} ${DBMS_SRC})
 	endif(FEATURE_DBMS)
-	
+
 endif()
 
 #-----------------------------------------------------------------
@@ -258,6 +258,28 @@ endif(BUILD_MOD)
 #-----------------------------------------------------------------
 # Server/Common features
 #-----------------------------------------------------------------
+if(NOT BUNDLED_ZLIB)
+	find_package(ZLIB 1.2.8 REQUIRED)
+	list(APPEND CLIENT_LIBRARIES ${ZLIB_LIBRARIES})
+	list(APPEND SERVER_LIBRARIES ${ZLIB_LIBRARIES})
+	include_directories(SYSTEM ${ZLIB_INCLUDE_DIRS})
+else()
+	list(APPEND CLIENT_LIBRARIES ${ZLIB_BUNDLED_LIBRARIES})
+	list(APPEND SERVER_LIBRARIES ${ZLIB_BUNDLED_LIBRARIES})
+	include_directories(SYSTEM ${ZLIB_BUNDLED_INCLUDE_DIR})
+endif()
+
+if(NOT BUNDLED_MINIZIP)
+	find_package(MiniZip)
+	list(APPEND CLIENT_LIBRARIES ${MINIZIP_LIBRARIES})
+	list(APPEND SERVER_LIBRARIES ${MINIZIP_LIBRARIES})
+	include_directories(SYSTEM ${MINIZIP_INCLUDE_DIRS})
+else()
+	list(APPEND CLIENT_LIBRARIES ${MINIZIP_BUNDLED_LIBRARIES})
+	list(APPEND SERVER_LIBRARIES ${MINIZIP_BUNDLED_LIBRARIES})
+	include_directories(SYSTEM ${MINIZIP_BUNDLED_INCLUDE_DIR})
+endif()
+
 if(FEATURE_TRACKER)
 	add_definitions(-DFEATURE_TRACKER)
 endif(FEATURE_TRACKER)

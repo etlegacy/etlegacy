@@ -11,6 +11,14 @@ set_target_properties(etlded
 	RUNTIME_OUTPUT_DIRECTORY_RELEASE ""
 )
 
+if(BUNDLED_ZLIB)
+	add_dependencies(etlded bundled_zlib)
+endif(BUNDLED_ZLIB)
+
+if(BUNDLED_MINIZIP)
+	add_dependencies(etlded bundled_minizip)
+endif(BUNDLED_MINIZIP)
+
 if(BUNDLED_CURL)
 	add_dependencies(etlded bundled_curl)
 endif(BUNDLED_CURL)

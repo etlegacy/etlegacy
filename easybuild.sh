@@ -192,10 +192,17 @@ parse_commandline() {
 			einfo "Will disable bundled libraries"
 			BUNDLED_LIBS=0
 			BUNDLED_SDL=0
+			BUNDLED_ZLIB=0
+			BUNDLED_MINIZIP=0
+			BUNDLED_CURL=0
 			BUNDLED_JPEG=0
 			BUNDLED_LUA=0
 			BUNDLED_OGG=0
-			BUNDLED_CURL=0
+			BUNDLED_THEORA=0
+			BUNDLED_GLEW=0
+			BUNDLED_FREETYPE=0
+			BUNDLED_JANSSON=0
+			BUNDLED_SQLITE3=0
 		elif [ "$var" = "-noob" ]; then
 			einfo "Will disable omni-bot installation"
 			INSTALL_OMNIBOT=0
@@ -232,6 +239,8 @@ generate_configuration() {
 	BUILD_PAK_PK3=${BUILD_PAK_PK3:-1}
 	BUNDLED_LIBS=${BUNDLED_LIBS:-1}
 	BUNDLED_SDL=${BUNDLED_SDL:-1}
+	BUNDLED_ZLIB=${BUNDLED_ZLIB:-1}
+	BUNDLED_MINIZIP=${BUNDLED_MINIZIP:-1}
 	BUNDLED_JPEG=${BUNDLED_JPEG:-1}
 	BUNDLED_LUA=${BUNDLED_LUA:-1}
 	BUNDLED_OGG=${BUNDLED_OGG:-1}
@@ -278,9 +287,11 @@ generate_configuration() {
 		-DBUILD_PAK3_PK3=${BUILD_PAK_PK3}
 		-DBUNDLED_LIBS=${BUNDLED_LIBS}
 		-DBUNDLED_SDL=${BUNDLED_SDL}
+		-DBUNDLED_ZLIB=${BUNDLED_ZLIB}
+		-DBUNDLED_MINIZIP=${BUNDLED_MINIZIP}
 		-DBUNDLED_JPEG=${BUNDLED_JPEG}
-		-DBUNDLED_LUA=${BUNDLED_LUA}
 		-DBUNDLED_CURL=${BUNDLED_CURL}
+		-DBUNDLED_LUA=${BUNDLED_LUA}
 		-DBUNDLED_OGG_VORBIS=${BUNDLED_OGG}
 		-DBUNDLED_THEORA=${BUNDLED_THEORA}
 		-DBUNDLED_GLEW=${BUNDLED_GLEW}
@@ -349,6 +360,14 @@ run_clean() {
 		if [ "${BUNDLED_SDL}" == 1 ]; then
 			einfo "Cleaning SDL..."
 			cd ${_SRC}/libs/sdl2;  make clean
+		fi
+		if [ "${BUNDLED_ZLIB}" == 1 ]; then
+			einfo "Cleaning ZLib..."
+			cd ${_SRC}/libs/zlib; make distclean
+		fi
+		if [ "${BUNDLED_MINIZIP}" == 1 ]; then
+			einfo "Cleaning MiniZip..."
+			cd ${_SRC}/libs/minizip; make clean
 		fi
 		if [ "${BUNDLED_JPEG}" == 1 ]; then
 			einfo "Cleaning libjpeg-turbo..."
