@@ -1,7 +1,7 @@
-Enemy Territory: Legacy [![Build Status](https://travis-ci.org/etlegacy/etlegacy.png?branch=master)](https://travis-ci.org/etlegacy/etlegacy) [![Analysis Status](https://scan.coverity.com/projects/1160/badge.svg)](https://scan.coverity.com/projects/1160)
+Enemy Territory: Legacy [![Build Status](https://travis-ci.org/etlegacy/etlegacy.png?branch=master)](https://travis-ci.org/etlegacy/etlegacy) [![Analysis Status](https://scan.coverity.com/projects/1160/badge.svg)](https://scan.coverity.com/projects/1160) [![Join the chat at https://gitter.im/etlegacy/etlegacy](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/etlegacy/
 ==========
 
-[![Join the chat at https://gitter.im/etlegacy/etlegacy](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/etlegacy/etlegacy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+etlegacy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 *A second breath of life for Wolfenstein: Enemy Territory*
 
@@ -32,6 +32,15 @@ For more information consult our [changelog](http://dev.etlegacy.com/projects/et
 
 ET: Legacy development is a collaborative effort done in an open, transparent and friendly manner.
 Anyone is welcome to join our efforts!
+
+
+### Donations
+
+By request, we have finally managed to create a PayPal account for donations. So if you like the
+ET: Legacy project or our game server, don't hesitate to send us some cash at **Paypal: etlegacy@liebt-dich.info**
+
+Your contribution will be used to pay for our server and domain. To clarify, the project is not dependant
+on donations. But we don't reject them if you want to honor our work. Thank you!
 
 
 GENERAL NOTES
