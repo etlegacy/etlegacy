@@ -3025,9 +3025,10 @@ qboolean S_AL_Init(soundInterface_t *si)
 	qalDopplerFactor(s_alDopplerFactor->value);
 	qalDopplerVelocity(s_alDopplerSpeed->value);
 
-	qalGenEffects(QAL_EFX_DEDICATED + 1, &effect[QAL_EFX_DEDICATED]);
+	qalGenEffects(QAL_EFX_MAX, effect);
+	qalGenAuxiliaryEffectSlots(QAL_EFX_MAX, auxslot);
+
 	qalEffecti(effect[QAL_EFX_DEDICATED], AL_EFFECT_TYPE, AL_EFFECT_DEDICATED_DIALOGUE);
-	qalGenAuxiliaryEffectSlots(QAL_EFX_DEDICATED + 1, &auxslot[QAL_EFX_DEDICATED]);
 	qalAuxiliaryEffectSloti(auxslot[QAL_EFX_DEDICATED], AL_EFFECTSLOT_EFFECT, effect[QAL_EFX_DEDICATED]);
 
 #ifdef USE_VOIP
