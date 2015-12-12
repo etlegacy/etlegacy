@@ -61,6 +61,12 @@ static int      s_volTime1, s_volTime2;
 static float    s_volFadeFrac;
 static qboolean s_stopSounds;
 
+#define QAL_EFX_DEDICATED 0
+#define QAL_EFX_MAX 1
+
+ALuint effect[QAL_EFX_MAX];
+ALuint auxslot[QAL_EFX_MAX];
+
 /*
 =================
 S_AL_Format
@@ -921,8 +927,7 @@ static void S_AL_SrcSetup(srcHandle_t src, sfxHandle_t sfx, alSrcPriority_t prio
 
 	if (local)
 	{
-		qalSourcei(curSource->alSource, AL_SOURCE_RELATIVE, AL_TRUE);
-		qalSourcef(curSource->alSource, AL_ROLLOFF_FACTOR, 0.0f);
+		qalSource3i(curSource->alSource, AL_AUXILIARY_SEND_FILTER, auxslot[QAL_EFX_DEDICATED], 0, AL_FILTER_NULL);
 	}
 	else
 	{
@@ -3019,6 +3024,11 @@ qboolean S_AL_Init(soundInterface_t *si)
 	qalDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
 	qalDopplerFactor(s_alDopplerFactor->value);
 	qalDopplerVelocity(s_alDopplerSpeed->value);
+
+	qalGenEffects(QAL_EFX_DEDICATED + 1, &effect[QAL_EFX_DEDICATED]);
+	qalEffecti(effect[QAL_EFX_DEDICATED], AL_EFFECT_TYPE, AL_EFFECT_DEDICATED_DIALOGUE);
+	qalGenAuxiliaryEffectSlots(1, &auxslot[QAL_EFX_DEDICATED]);
+	qalAuxiliaryEffectSloti(auxslot[QAL_EFX_DEDICATED], AL_EFFECTSLOT_EFFECT, effect[QAL_EFX_DEDICATED]);
 
 #ifdef USE_VOIP
 	// !!! FIXME: some of these alcCaptureOpenDevice() values should be cvars.

@@ -48,12 +48,18 @@
 // MSVC users must install the OpenAL SDK which doesn't use the AL/*.h scheme.
   #include <al.h>
   #include <alc.h>
+  #include <alext.h>
+  #include <efx.h>
 #elif __APPLE__
   #include <OpenAL/al.h>
   #include <OpenAL/alc.h>
+  #include <OpenAL/alext.h>
+  #include <OpenAL/efx.h>
 #else
   #include <AL/al.h>
   #include <AL/alc.h>
+  #include <AL/alext.h>
+  #include <AL/efx.h>
 #endif
 
 /* Hack to enable compiling both on OpenAL SDK and OpenAL-soft. */
@@ -158,6 +164,11 @@ extern LPALCCAPTURECLOSEDEVICE qalcCaptureCloseDevice;
 extern LPALCCAPTURESTART       qalcCaptureStart;
 extern LPALCCAPTURESTOP        qalcCaptureStop;
 extern LPALCCAPTURESAMPLES     qalcCaptureSamples;
+
+extern LPALGENEFFECTS              qalGenEffects;
+extern LPALEFFECTI                 qalEffecti;
+extern LPALGENAUXILIARYEFFECTSLOTS qalGenAuxiliaryEffectSlots;
+extern LPALAUXILIARYEFFECTSLOTI    qalAuxiliaryEffectSloti;
 #else
 #define qalEnable alEnable
 #define qalDisable alDisable
@@ -253,6 +264,11 @@ extern LPALCCAPTURESAMPLES     qalcCaptureSamples;
 #define qalcCaptureStart alcCaptureStart
 #define qalcCaptureStop alcCaptureStop
 #define qalcCaptureSamples alcCaptureSamples
+
+#define qalGenEffects alGenEffects
+#define qalEffecti alEffecti
+#define qalGenAuxiliaryEffectSlots alGenAuxiliaryEffectSlots
+#define qalAuxiliaryEffectSloti alAuxiliaryEffectSloti
 #endif
 
 qboolean QAL_Init(const char *libname);

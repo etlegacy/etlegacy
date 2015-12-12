@@ -72,6 +72,7 @@ LPALSOURCEF              qalSourcef;
 LPALSOURCE3F             qalSource3f;
 LPALSOURCEFV             qalSourcefv;
 LPALSOURCEI              qalSourcei;
+LPALSOURCE3I             qalSource3i;
 LPALGETSOURCEF           qalGetSourcef;
 LPALGETSOURCE3F          qalGetSource3f;
 LPALGETSOURCEFV          qalGetSourcefv;
@@ -116,6 +117,11 @@ LPALCCAPTURECLOSEDEVICE qalcCaptureCloseDevice;
 LPALCCAPTURESTART       qalcCaptureStart;
 LPALCCAPTURESTOP        qalcCaptureStop;
 LPALCCAPTURESAMPLES     qalcCaptureSamples;
+
+LPALGENEFFECTS              qalGenEffects;
+LPALEFFECTI                 qalEffecti;
+LPALGENAUXILIARYEFFECTSLOTS qalGenAuxiliaryEffectSlots;
+LPALAUXILIARYEFFECTSLOTI    qalAuxiliaryEffectSloti;
 
 static void *OpenALLib = NULL;
 
@@ -207,6 +213,7 @@ qboolean QAL_Init(const char *libname)
 	qalSource3f             = GPA("alSource3f");
 	qalSourcefv             = GPA("alSourcefv");
 	qalSourcei              = GPA("alSourcei");
+	qalSource3i             = GPA("alSource3i");
 	qalGetSourcef           = GPA("alGetSourcef");
 	qalGetSource3f          = GPA("alGetSource3f");
 	qalGetSourcefv          = GPA("alGetSourcefv");
@@ -251,6 +258,11 @@ qboolean QAL_Init(const char *libname)
 	qalcCaptureStart       = GPA("alcCaptureStart");
 	qalcCaptureStop        = GPA("alcCaptureStop");
 	qalcCaptureSamples     = GPA("alcCaptureSamples");
+
+	qalGenEffects              = GPA("alGenEffects");
+	qalEffecti                 = GPA("alEffecti");
+	qalGenAuxiliaryEffectSlots = GPA("alGenAuxiliaryEffectSlots");
+	qalAuxiliaryEffectSloti    = GPA("alAuxiliaryEffectSloti");
 
 	if (alinit_fail)
 	{
@@ -306,6 +318,7 @@ void QAL_Shutdown(void)
 	qalSource3f             = NULL;
 	qalSourcefv             = NULL;
 	qalSourcei              = NULL;
+	qalSource3i             = NULL;
 	qalGetSourcef           = NULL;
 	qalGetSource3f          = NULL;
 	qalGetSourcefv          = NULL;
@@ -350,6 +363,11 @@ void QAL_Shutdown(void)
 	qalcCaptureStart       = NULL;
 	qalcCaptureStop        = NULL;
 	qalcCaptureSamples     = NULL;
+
+	qalGenEffects               = NULL;
+	qalEffecti                  = NULL;
+	qalGenAuxiliaryEffectSlots  = NULL;
+	qalAuxiliaryEffectSloti     = NULL;
 }
 #else
 qboolean QAL_Init(const char *libname)
