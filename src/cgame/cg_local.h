@@ -743,7 +743,7 @@ typedef struct
 	int x, y, z;
 	int yaw;
 	int data;
-	char type;
+	int type;
 
 	vec2_t transformed;
 	vec2_t automapTransformed;

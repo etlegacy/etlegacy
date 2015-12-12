@@ -948,7 +948,6 @@ void G_SendMapEntityInfo(gentity_t *e)
 	{
 		if (level.time - mEnt->startTime > 1000)
 		{
-			mEnt->status = 1;
 			// we can free this player from the list now
 			if (mEnt->type == ME_PLAYER || mEnt->type == ME_PLAYER_REVIVE || mEnt->type == ME_PLAYER_OBJECTIVE)
 			{
@@ -963,10 +962,6 @@ void G_SendMapEntityInfo(gentity_t *e)
 					continue;
 				}
 			}
-		}
-		else
-		{
-			mEnt->status = 2;
 		}
 		cnt++;
 

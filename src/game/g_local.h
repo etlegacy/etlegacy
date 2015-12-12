@@ -1920,11 +1920,10 @@ typedef struct mapEntityData_s
 	vec3_t org;
 	int yaw;
 	int data;
-	char type;
+	int type;
 	int startTime;
 	int singleClient;
 
-	int status;
 	int entNum;
 	struct mapEntityData_s *next, *prev;
 } mapEntityData_t;
