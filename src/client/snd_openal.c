@@ -2919,6 +2919,7 @@ static void S_AL_StopAllSounds(void)
 	int i;
 
 	S_AL_SrcShutup();
+	S_AL_StopBackgroundTrack();
 	for (i = 0; i < MAX_STREAMING_SOUNDS; i++)
 	{
 		S_AL_StopStreamingSound(i);
@@ -2939,6 +2940,7 @@ static void S_AL_ClearSounds(qboolean clearStreaming, qboolean clearMusic)
 	int i;
 
 	S_AL_SrcShutup();
+	S_AL_StopBackgroundTrack();
 	if (clearStreaming)
 	{
 		for (i = 0; i < MAX_STREAMING_SOUNDS; i++)
