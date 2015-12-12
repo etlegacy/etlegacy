@@ -623,7 +623,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 		}
 		else
 		{
-			Com_Printf("failed. (Not a zip).\n");
+			Com_Printf("failed. (Not a valid zip).\n");
 		}
 	}
 
@@ -767,24 +767,9 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 	}
 #endif
 
-	// HACK: sometimes a library is loaded from the mod dir when it shouldn't. Why?
-	if (!libHandle && strcmp(gamedir, DEFAULT_MODGAME))
-	{
-		Com_Printf("Sys_LoadDll: failed to load the mod library. Trying to revert to the default one.\n");
-#ifndef DEDICATED
-		// Try to use the legacy mod
-		libHandle = Sys_TryLibraryLoad(homepath, DEFAULT_MODGAME, fname);
-
-		if (!libHandle)
-#endif
-		{
-			libHandle = Sys_TryLibraryLoad(basepath, DEFAULT_MODGAME, fname);
-		}
-	}
-
 	if (!libHandle)
 	{
-		Com_Printf("Sys_LoadDll(%s) failed to load library\n", name);
+		Com_Printf("Sys_LoadDll(%s/%s) failed to load library\n", gamedir, name);
 		return NULL;
 	}
 
@@ -793,13 +778,13 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 
 	if (!*entryPoint || !dllEntry)
 	{
-		Com_Printf("Sys_LoadDll(%s) failed to find vmMain function:\n\"%s\" !\n", name, Sys_LibraryError());
+		Com_Printf("Sys_LoadDll(%s/%s) failed to find vmMain function:\n\"%s\" !\n", gamedir, name, Sys_LibraryError());
 		Sys_UnloadLibrary(libHandle);
 
 		return NULL;
 	}
 
-	Com_Printf("Sys_LoadDll(%s) found vmMain function at %p\n", name, *entryPoint);
+	Com_Printf("Sys_LoadDll(%s/%s) found vmMain function at %p\n", gamedir, name, *entryPoint);
 	dllEntry(systemcalls);
 
 	return libHandle;
