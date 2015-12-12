@@ -62,7 +62,8 @@ static float    s_volFadeFrac;
 static qboolean s_stopSounds;
 
 #define QAL_EFX_DEDICATED 0
-#define QAL_EFX_MAX 1
+#define QAL_EFX_DEDICATED_LFE 1
+#define QAL_EFX_MAX 2
 
 ALuint effect[QAL_EFX_MAX];
 ALuint auxslot[QAL_EFX_MAX];
@@ -936,6 +937,9 @@ static void S_AL_SrcSetup(srcHandle_t src, sfxHandle_t sfx, alSrcPriority_t prio
 	}
 	else
 	{
+#ifdef AL_EFFECT_DEDICATED_LOW_FREQUENCY_EFFECT
+		qalSource3i(curSource->alSource, AL_AUXILIARY_SEND_FILTER, auxslot[QAL_EFX_DEDICATED_LFE], 0, AL_FILTER_NULL);
+#endif
 		qalSourcei(curSource->alSource, AL_SOURCE_RELATIVE, AL_FALSE);
 		qalSourcef(curSource->alSource, AL_ROLLOFF_FACTOR, s_alRolloff->value);
 	}
@@ -3036,6 +3040,12 @@ qboolean S_AL_Init(soundInterface_t *si)
 #ifdef AL_EFFECT_DEDICATED_DIALOGUE
 	qalEffecti(effect[QAL_EFX_DEDICATED], AL_EFFECT_TYPE, AL_EFFECT_DEDICATED_DIALOGUE);
 	qalAuxiliaryEffectSloti(auxslot[QAL_EFX_DEDICATED], AL_EFFECTSLOT_EFFECT, effect[QAL_EFX_DEDICATED]);
+#endif
+
+#ifdef AL_EFFECT_DEDICATED_LOW_FREQUENCY_EFFECT
+	qalEffecti(effect[QAL_EFX_DEDICATED_LFE], AL_EFFECT_TYPE, AL_EFFECT_DEDICATED_LOW_FREQUENCY_EFFECT);
+	qalEffectf(effect[QAL_EFX_DEDICATED_LFE], AL_DEDICATED_GAIN, 0.05f);
+	qalAuxiliaryEffectSloti(auxslot[QAL_EFX_DEDICATED_LFE], AL_EFFECTSLOT_EFFECT, effect[QAL_EFX_DEDICATED_LFE]);
 #endif
 
 #ifdef USE_VOIP

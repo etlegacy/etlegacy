@@ -167,6 +167,7 @@ extern LPALCCAPTURESAMPLES     qalcCaptureSamples;
 
 extern LPALGENEFFECTS              qalGenEffects;
 extern LPALEFFECTI                 qalEffecti;
+extern LPALEFFECTF                 qalEffectf;
 extern LPALGENAUXILIARYEFFECTSLOTS qalGenAuxiliaryEffectSlots;
 extern LPALAUXILIARYEFFECTSLOTI    qalAuxiliaryEffectSloti;
 #else
@@ -267,6 +268,7 @@ extern LPALAUXILIARYEFFECTSLOTI    qalAuxiliaryEffectSloti;
 
 #define qalGenEffects alGenEffects
 #define qalEffecti alEffecti
+#define qalEffectf alEffectf
 #define qalGenAuxiliaryEffectSlots alGenAuxiliaryEffectSlots
 #define qalAuxiliaryEffectSloti alAuxiliaryEffectSloti
 #endif
