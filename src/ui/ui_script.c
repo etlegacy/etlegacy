@@ -530,11 +530,12 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				int  ui_r_depthbits                      = DC->getCVarValue("ui_r_depthbits");
 				int  ui_r_ext_compressed_textures        = DC->getCVarValue("ui_r_ext_compressed_textures");
 				int  ui_r_allowextensions                = DC->getCVarValue("ui_r_allowextensions");
-				int  ui_s_khz                            = DC->getCVarValue("ui_s_khz");
 				int  ui_r_detailtextures                 = DC->getCVarValue("ui_r_detailtextures");
 				int  ui_r_subdivisions                   = DC->getCVarValue("ui_r_subdivisions");
 				int  ui_r_ext_texture_filter_anisotropic = DC->getCVarValue("ui_r_ext_texture_filter_anisotropic");
 				int  ui_cg_shadows                       = DC->getCVarValue("ui_cg_shadows");
+				int  ui_s_initsound                      = DC->getCVarValue("ui_s_initsound");
+				int  ui_s_khz                            = DC->getCVarValue("ui_s_khz");
 				char ui_r_texturemode[MAX_CVAR_VALUE_STRING];
 
 				int  r_mode                           = DC->getCVarValue("r_mode");
@@ -545,11 +546,12 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				int  r_depthbits                      = DC->getCVarValue("r_depthbits");
 				int  r_ext_compressed_textures        = DC->getCVarValue("r_ext_compressed_textures");
 				int  r_allowextensions                = DC->getCVarValue("r_allowextensions");
-				int  s_khz                            = DC->getCVarValue("s_khz");
 				int  r_detailtextures                 = DC->getCVarValue("r_detailtextures");
 				int  r_subdivisions                   = DC->getCVarValue("r_subdivisions");
 				int  r_ext_texture_filter_anisotropic = DC->getCVarValue("r_ext_texture_filter_anisotropic");
 				int  cg_shadows                       = DC->getCVarValue("cg_shadows");
+				int  s_initsound                      = DC->getCVarValue("s_initsound");
+				int  s_khz                            = DC->getCVarValue("s_khz");
 				char r_texturemode[MAX_CVAR_VALUE_STRING];
 
 				trap_Cvar_VariableStringBuffer("ui_r_texturemode", ui_r_texturemode, sizeof(ui_r_texturemode));
@@ -564,10 +566,11 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				    ui_r_depthbits != r_depthbits ||
 				    ui_r_ext_compressed_textures != r_ext_compressed_textures ||
 				    ui_r_allowextensions != r_allowextensions ||
-				    ui_s_khz != s_khz ||
 				    ui_r_detailtextures != r_detailtextures ||
 				    ui_r_ext_texture_filter_anisotropic != r_ext_texture_filter_anisotropic ||
 				    ui_cg_shadows != cg_shadows ||
+				    ui_s_khz != s_khz ||
+				    ui_s_initsound != s_initsound ||
 				    Q_stricmp(r_texturemode, ui_r_texturemode))
 				{
 					Item_RunScript(item, bAbort, script1);

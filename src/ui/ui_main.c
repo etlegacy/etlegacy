@@ -4988,7 +4988,7 @@ void UI_RunMenuScript(char **args)
 			int r_mode       = trap_Cvar_VariableValue("r_mode");
 			int r_fullscreen = trap_Cvar_VariableValue("r_fullscreen");
 
-			// save the last usable video settings
+			// save the last usable settings
 			trap_Cvar_SetValue("r_oldMode", r_mode);
 			trap_Cvar_SetValue("r_oldFullscreen", r_fullscreen);
 		}
@@ -5038,6 +5038,7 @@ void UI_RunMenuScript(char **args)
 			int   ui_r_dynamiclight                   = trap_Cvar_VariableValue("r_dynamiclight");
 			int   ui_r_allowextensions                = trap_Cvar_VariableValue("r_allowextensions");
 			int   ui_m_filter                         = trap_Cvar_VariableValue("m_filter");
+			int   ui_s_initsound                      = trap_Cvar_VariableValue("s_initsound");
 			int   ui_s_khz                            = trap_Cvar_VariableValue("s_khz");
 			int   ui_r_detailtextures                 = trap_Cvar_VariableValue("r_detailtextures");
 			int   ui_r_ext_texture_filter_anisotropic = trap_Cvar_VariableValue("r_ext_texture_filter_anisotropic");
@@ -5075,6 +5076,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_r_dynamiclight", va("%i", ui_r_dynamiclight));
 			trap_Cvar_Set("ui_r_allowextensions", va("%i", ui_r_allowextensions));
 			trap_Cvar_Set("ui_m_filter", va("%i", ui_m_filter));
+			trap_Cvar_Set("ui_s_initsound", va("%i", ui_s_initsound));
 			trap_Cvar_Set("ui_s_khz", va("%i", ui_s_khz));
 			trap_Cvar_Set("ui_r_detailtextures", va("%i", ui_r_detailtextures));
 			trap_Cvar_Set("ui_r_ext_texture_filter_anisotropic", va("%i", ui_r_ext_texture_filter_anisotropic));
@@ -5101,6 +5103,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_r_dynamiclight", "");
 			trap_Cvar_Set("ui_r_allowextensions", "");
 			trap_Cvar_Set("ui_m_filter", "");
+			trap_Cvar_Set("ui_s_initsound", "");
 			trap_Cvar_Set("ui_s_khz", "");
 			trap_Cvar_Set("ui_r_detailtextures", "");
 			trap_Cvar_Set("ui_r_ext_texture_filter_anisotropic", "");
@@ -5128,6 +5131,7 @@ void UI_RunMenuScript(char **args)
 			int   ui_r_dynamiclight                   = trap_Cvar_VariableValue("ui_r_dynamiclight");
 			int   ui_r_allowextensions                = trap_Cvar_VariableValue("ui_r_allowextensions");
 			int   ui_m_filter                         = trap_Cvar_VariableValue("ui_m_filter");
+			int   ui_s_initsound                      = trap_Cvar_VariableValue("ui_s_initsound");
 			int   ui_s_khz                            = trap_Cvar_VariableValue("ui_s_khz");
 			int   ui_r_detailtextures                 = trap_Cvar_VariableValue("ui_r_detailtextures");
 			int   ui_r_ext_texture_filter_anisotropic = trap_Cvar_VariableValue("ui_r_ext_texture_filter_anisotropic");
@@ -5171,6 +5175,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("r_dynamiclight", va("%i", ui_r_dynamiclight));
 			trap_Cvar_Set("r_allowextensions", va("%i", ui_r_allowextensions));
 			trap_Cvar_Set("m_filter", va("%i", ui_m_filter));
+			trap_Cvar_Set("s_initsound", va("%i", ui_s_initsound));
 			trap_Cvar_Set("s_khz", va("%i", ui_s_khz));
 			trap_Cvar_Set("r_detailtextures", va("%i", ui_r_detailtextures));
 			trap_Cvar_Set("r_ext_texture_filter_anisotropic", va("%i", ui_r_ext_texture_filter_anisotropic));
@@ -5196,6 +5201,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_r_dynamiclight", "");
 			trap_Cvar_Set("ui_r_allowextensions", "");
 			trap_Cvar_Set("ui_m_filter", "");
+			trap_Cvar_Set("ui_s_initsound", "");
 			trap_Cvar_Set("ui_s_khz", "");
 			trap_Cvar_Set("ui_r_detailtextures", "");
 			trap_Cvar_Set("ui_r_ext_texture_filter_anisotropic", "");

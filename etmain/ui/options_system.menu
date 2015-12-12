@@ -39,15 +39,15 @@ menuDef {
 #define GRAPHICS_Y 32
 	SUBWINDOW( 6, GRAPHICS_Y, (SUBWINDOW_WIDTH_L), 104, _("GRAPHICS") )
 #ifdef LEGACY
-	MULTIACTION( 8, GRAPHICS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Overall Quality:"), .2, 8, "ui_glCustom", cvarFloatList { _("fastest") 3 _("fast") 2 _("normal") 1 _("high") 0 }, uiScript update "ui_glcustom", _("Set overall video quality") )
+	MULTIACTION( 8, GRAPHICS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Overall Quality:"), .2, 8, "ui_glCustom", cvarFloatList { _("fastest") 3 _("fast") 2 _("normal") 1 _("high") 0 }, uiScript update "ui_glCustom", _("Set overall video quality") )
 	COMBO( 8, GRAPHICS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Resolution:"), .2, 8, "ui_r_mode", LEGACY_RESOLUTIONS, uiScript glCustom, _("Set video resolution of the game") )
 	COMBO( 8, GRAPHICS_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Window mode:"), .2, 8, "ui_r_windowmode", LEGACY_WINDOWMODES, uiScript glCustom, _("Toggle fullscreen") )
 #endif
 	CVARFLOATLABEL( 8, GRAPHICS_Y+52, (SUBWINDOW_WIDTH_L)-6, 10, "r_gamma", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
 	SLIDER( 8, GRAPHICS_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Brightness:"), .2, 8, "r_gamma" 1.3 1 3, _("Set the brightness of the game") )
-	MULTIACTION( 8, GRAPHICS_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Intensity:"), .2, 8, "r_intensity", cvarFloatList { "1.0" 1.0 "1.1" 1.1 "1.2" 1.2 "1.3" 1.3 "1.4" 1.4 "1.5" 1.5 }, uiScript update "ui_glcustom", _("The Intensity Of Textures (requires vid_restart)") )
-	MULTIACTION( 8, GRAPHICS_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Map overbright bits:"), .2, 8, "r_mapoverbrightbits", cvarFloatList { "0" 0 "1" 1 "2" 2 "3" 3 }, uiScript update "ui_glcustom", _("The World Gets Brighter, But Paler (requires vid_restart)") )
-	YESNOACTION( 8, GRAPHICS_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Overbright Bits:"), .2, 8, "r_overBrightBits", uiScript update "ui_glcustom", _("Map shines brighter (requires vid_restart)") )
+	MULTIACTION( 8, GRAPHICS_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Intensity:"), .2, 8, "r_intensity", cvarFloatList { "1.0" 1.0 "1.1" 1.1 "1.2" 1.2 "1.3" 1.3 "1.4" 1.4 "1.5" 1.5 }, uiScript update "ui_glCustom", _("The Intensity Of Textures (requires vid_restart)") )
+	MULTIACTION( 8, GRAPHICS_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Map overbright bits:"), .2, 8, "r_mapoverbrightbits", cvarFloatList { "0" 0 "1" 1 "2" 2 "3" 3 }, uiScript update "ui_glCustom", _("The World Gets Brighter, But Paler (requires vid_restart)") )
+	YESNOACTION( 8, GRAPHICS_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Overbright Bits:"), .2, 8, "r_overBrightBits", uiScript update "ui_glCustom", _("Map shines brighter (requires vid_restart)") )
 
 // Advanced graphics //
 #define GRAPHICSADVANCED_Y 142
@@ -85,7 +85,7 @@ menuDef {
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Doppler FX:"), .2, 8, "s_doppler", _("Enables or disables the doppler effect") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Mute When Minimized:"), .2, 8, "s_muteWhenMinimized", _("Enables or disables sound when window is minimized") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Mute When Unfocused:"), .2, 8, "s_muteWhenUnfocused", _("Enables or disables sound when window is unfocused") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("System Sound Control:"), .2, 8, "s_initsound", cvarFloatList { _("SDL2") 1 _("OpenAL") 2 }, _("Set the system sound control") )
+	MULTIACTION( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("System Sound Control:"), .2, 8, "ui_s_initsound", cvarFloatList { _("SDL2") 1 _("OpenAL") 2 }, uiScript update "ui_s_initsound", _("Set the system sound control") )
 
 // Networking //
 #define NETWORK_Y 140
