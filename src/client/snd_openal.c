@@ -927,7 +927,12 @@ static void S_AL_SrcSetup(srcHandle_t src, sfxHandle_t sfx, alSrcPriority_t prio
 
 	if (local)
 	{
+#ifdef AL_EFFECT_DEDICATED_DIALOGUE
 		qalSource3i(curSource->alSource, AL_AUXILIARY_SEND_FILTER, auxslot[QAL_EFX_DEDICATED], 0, AL_FILTER_NULL);
+#else
+		qalSourcei(curSource->alSource, AL_SOURCE_RELATIVE, AL_TRUE);
+		qalSourcef(curSource->alSource, AL_ROLLOFF_FACTOR, 0.0f);
+#endif
 	}
 	else
 	{
@@ -3028,8 +3033,10 @@ qboolean S_AL_Init(soundInterface_t *si)
 	qalGenEffects(QAL_EFX_MAX, effect);
 	qalGenAuxiliaryEffectSlots(QAL_EFX_MAX, auxslot);
 
+#ifdef AL_EFFECT_DEDICATED_DIALOGUE
 	qalEffecti(effect[QAL_EFX_DEDICATED], AL_EFFECT_TYPE, AL_EFFECT_DEDICATED_DIALOGUE);
 	qalAuxiliaryEffectSloti(auxslot[QAL_EFX_DEDICATED], AL_EFFECTSLOT_EFFECT, effect[QAL_EFX_DEDICATED]);
+#endif
 
 #ifdef USE_VOIP
 	// !!! FIXME: some of these alcCaptureOpenDevice() values should be cvars.
