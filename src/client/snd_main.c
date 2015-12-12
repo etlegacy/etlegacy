@@ -681,7 +681,11 @@ void S_Init(void)
 		{
 			if (cv->integer == 2)
 			{
+#ifdef FEATURE_OPENAL
 				Com_Printf("Can't initialize OpenAL - reverting to base interface.\n");
+#else
+				Com_Printf("Can't initialize OpenAL - disabled on build-time\n");
+#endif
 			}
 
 			started = S_Base_Init(&si);
