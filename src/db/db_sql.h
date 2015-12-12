@@ -38,6 +38,7 @@
 
 #include <sqlite3.h>
 #include "../qcommon/q_shared.h"
+#include "../qcommon/qcommon.h"
 
 #define ETL_DBMS_VERSION 1
 
