@@ -85,7 +85,7 @@ menuDef {
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Doppler FX:"), .2, 8, "s_doppler", _("Enables or disables the doppler effect") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Mute When Minimized:"), .2, 8, "s_muteWhenMinimized", _("Enables or disables sound when window is minimized") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Mute When Unfocused:"), .2, 8, "s_muteWhenUnfocused", _("Enables or disables sound when window is unfocused") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("System Sound Control:"), .2, 8, "s_initsound", cvarFloatList { _("Disabled") 0 _("Base") 1 _("OpenAL") 2 }, _("Set the system sound control") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, AUDIO_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("System Sound Control:"), .2, 8, "s_initsound", cvarFloatList { _("SDL2") 1 _("OpenAL") 2 }, _("Set the system sound control") )
 
 // Networking //
 #define NETWORK_Y 140

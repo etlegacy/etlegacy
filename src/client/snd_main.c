@@ -685,7 +685,7 @@ void S_Init(void)
 			}
 
 			started = S_Base_Init(&si);
-			Cvar_Set("s_backend", "base");
+			Cvar_Set("s_backend", "SDL2");
 		}
 
 		if (started)
