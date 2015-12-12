@@ -23,8 +23,8 @@ The main goals of the project are fixing bugs, cleaning up the codebase and addi
 while remaining compatible with the ET 2.60b version.
 
 The Legacy mod is the default mod shipped with ET: Legacy. It aims to add many useful features and
-improvements, while staying close to the original gameplay, as well as being lightweight and fully
-extensible through Lua scripts.
+improvements, while staying close to the original gameplay, as well as being lightweight and extensible
+through Lua scripts.
 
 For more information consult our [changelog](http://dev.etlegacy.com/projects/etlegacy/wiki/Changelog).
 
@@ -95,7 +95,7 @@ DEPENDENCIES
 * **Theora** (optional, enabled by default)
 * **Freetype** version 2 (optional, enabled by default)
 * **SQLite** version 3 (optional, enabled by default)
-* **OpenAL** (optional)
+* **OpenAL** (optional, enabled by default)
 * **Jansson** (optional)
 
 To get the latest source code install [git](http://git-scm.com/) and

@@ -46,7 +46,7 @@ cmake_dependent_option(CROSS_COMPILE32 "Compile 32-bit version of ET:L (64bit is
 option(FEATURE_CURL		"Enable auto-download support using cURL (client)"			ON)
 option(FEATURE_OGG_VORBIS	"Enable OGG Vorbis support (client)"					ON)
 option(FEATURE_THEORA		"Enable Theora video support (client)"					ON)
-option(FEATURE_OPENAL		"Enable OpenAL sound backend (client)"					OFF)
+option(FEATURE_OPENAL		"Enable OpenAL sound backend (client)"					ON)
 option(FEATURE_FREETYPE		"Enable Freetype font library support (client)"				ON)
 option(FEATURE_TRACKER		"Enable extended server statistics (server)"				OFF)
 option(FEATURE_LUA		"Enable Lua support in game code"					ON)
