@@ -881,7 +881,11 @@ void G_SendSpectatorMapEntityInfo(gentity_t *e)
 	}
 
 	// Data setup
-	Com_sprintf(buffer, sizeof(buffer), "entnfo %i %i", ax_cnt, al_cnt);
+	// FIXME: Find out why objective counts are reset to zero when a new player connects
+	if (ax_cnt > 0 || al_cnt > 0)
+	{
+		Com_sprintf(buffer, sizeof(buffer), "entnfo %i %i", ax_cnt, al_cnt);
+	}
 
 	// Axis data
 	teamList = &mapEntityData[0];
@@ -970,11 +974,17 @@ void G_SendMapEntityInfo(gentity_t *e)
 
 	if (e->client->sess.sessionTeam == TEAM_AXIS)
 	{
-		Com_sprintf(buffer, sizeof(buffer), "entnfo %i 0", cnt);
+		if (cnt > 0)
+		{
+			Com_sprintf(buffer, sizeof(buffer), "entnfo %i 0", cnt);
+		}
 	}
 	else
 	{
-		Com_sprintf(buffer, sizeof(buffer), "entnfo 0 %i", cnt);
+		if (cnt > 0)
+		{
+			Com_sprintf(buffer, sizeof(buffer), "entnfo 0 %i", cnt);
+		}
 	}
 
 	for (mEnt = teamList->activeMapEntityData.next; mEnt && mEnt != &teamList->activeMapEntityData; mEnt = mEnt->next)
