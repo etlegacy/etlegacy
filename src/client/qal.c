@@ -120,6 +120,7 @@ LPALCCAPTURESAMPLES     qalcCaptureSamples;
 
 LPALGENEFFECTS              qalGenEffects;
 LPALEFFECTI                 qalEffecti;
+LPALEFFECTF                 qalEffectf;
 LPALGENAUXILIARYEFFECTSLOTS qalGenAuxiliaryEffectSlots;
 LPALAUXILIARYEFFECTSLOTI    qalAuxiliaryEffectSloti;
 
@@ -261,6 +262,7 @@ qboolean QAL_Init(const char *libname)
 
 	qalGenEffects              = GPA("alGenEffects");
 	qalEffecti                 = GPA("alEffecti");
+	qalEffectf                 = GPA("alEffectf");
 	qalGenAuxiliaryEffectSlots = GPA("alGenAuxiliaryEffectSlots");
 	qalAuxiliaryEffectSloti    = GPA("alAuxiliaryEffectSloti");
 
