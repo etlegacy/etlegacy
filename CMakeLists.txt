@@ -34,6 +34,7 @@ cmake_dependent_option(BUNDLED_CURL		"Use bundled CURL library instead of the sy
 cmake_dependent_option(BUNDLED_LUA		"Use bundled LUA library instead of the system one."		ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_OGG_VORBIS	"Use bundled OGG library instead of the system one."		ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_THEORA		"Use bundled Theora library instead of the system one."		ON "BUNDLED_LIBS" OFF)
+cmake_dependent_option(BUNDLED_OPENAL		"Use bundled OpenAL library instead of the system one."		ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_GLEW		"Use bundled GLEW library instead of the system one."		ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_FREETYPE		"Use bundled Freetype2 library instead of the system one."	ON "BUNDLED_LIBS" OFF)
 cmake_dependent_option(BUNDLED_JANSSON		"Use bundled Jansson library instead of the system one."	OFF "BUNDLED_LIBS" OFF)

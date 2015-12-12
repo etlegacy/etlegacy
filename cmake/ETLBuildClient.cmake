@@ -51,6 +51,10 @@ if(BUNDLED_THEORA)
 	add_dependencies(etl bundled_theora)
 endif(BUNDLED_THEORA)
 
+if(BUNDLED_OPENAL)
+	add_dependencies(etl bundled_openal)
+endif(BUNDLED_OPENAL)
+
 target_link_libraries(etl
 	${CLIENT_LIBRARIES}
 	${SDL_LIBRARIES}
