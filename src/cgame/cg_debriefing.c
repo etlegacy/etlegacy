@@ -50,14 +50,14 @@ panel_button_text_t debriefPlayerHeadingSmallerFont =
 
 #define DB_RANK_X      213 + 4
 #define DB_NAME_X      DB_RANK_X + 28
-#define DB_TIME_X      DB_NAME_X + 156
-#define DB_KILLS_X     DB_TIME_X + 24
+#define DB_TIME_X      DB_NAME_X + 150
+#define DB_KILLS_X     DB_TIME_X + 30
 #define DB_DEATHS_X    DB_KILLS_X + 24
 #define DB_GIBS_X      DB_DEATHS_X + 24
 #define DB_SELFKILLS_X DB_GIBS_X + 24
 #define DB_TEAMKILLS_X DB_SELFKILLS_X + 24
 #define DB_TEAMGIBS_X  DB_TEAMKILLS_X + 24
-#define DB_XP_X        DB_TEAMGIBS_X + 32
+#define DB_XP_X        DB_TEAMGIBS_X + 24
 #define DH_HEADING_Y   60
 
 panel_button_t debriefPlayerWeaponStatsHeader =
