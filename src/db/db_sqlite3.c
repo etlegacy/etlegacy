@@ -50,58 +50,80 @@ qboolean isDBActive;
 
 int DB_Init()
 {
-	int result;
+	int  result;
+	char *to_ospath;
 
 	isDBActive = qfalse;
 
 	db_mode = Cvar_Get("db_mode", "1", CVAR_ARCHIVE | CVAR_LATCH);
-	db_url  = Cvar_Get("db_url", "etl.db", CVAR_ARCHIVE | CVAR_LATCH);
+	db_url  = Cvar_Get("db_url", "etl.db", CVAR_ARCHIVE | CVAR_LATCH); // filename in path
 
-	if (!db_url->string[0])
-	{
-		Com_Printf("SQLite3 can't init database - empty url\n");
-		return 1;
-	}
+	Com_Printf("SQLite3 libversion %s - database URL: '%s'\n", sqlite3_libversion(), db_url->string);
 
 	if (db_mode->integer < 1 || db_mode->integer > 2)
 	{
-		Com_Printf("SQLite3 DBMS disabled\n");
+		Com_Printf("... DBMS disabled.\n");
+		return 0; // return 0!
+	}
+
+	if (!db_url->string[0]) // FIXME: check extension db
+	{
+		Com_Printf("... can't init database - empty URL\n");
 		return 1;
 	}
 
-	Com_Printf("SQLite3 database %s init - libversion %s\n", db_url->string, sqlite3_libversion());
+	to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_url->string, "");
+	to_ospath[strlen(to_ospath)-1] = '\0';
 
-	if (FS_SV_FileExists(db_url->string)) // FIXME
+	if (FS_SV_FileExists(db_url->string))
 	{
-		result = DB_LoadOrSaveDb(db, db_url->string, 0);
+		int result;
+
+		Com_Printf("... reading existing database '%s'\n", to_ospath);
+
+		result = sqlite3_open(":memory:", &db);
+		// FIXME: set name of memory DB
 
 		if (result != SQLITE_OK)
 		{
-			Com_Printf("SQLite3 WARNING can't load database file %s\n", db_url->string); // how to deal with this?
+			Com_Printf("... failed to open memory database - error: %s\n", sqlite3_errstr(result));
+			(void) sqlite3_close(db);
+			return 1;
+		}
+
+		result = DB_LoadOrSaveDb(db, to_ospath, 0);
+
+		if (result != SQLITE_OK)
+		{
+			Com_Printf("... WARNING can't load database file %s\n", db_url->string); // how to deal with this?
 			return 1;
 		}
 
 		// FIXME: check for updates ...if version is behind current version update the db ...
+
+		Com_Printf("SQLite3 database file '%s' loaded\n", to_ospath);
 	}
 	else
 	{
-		Com_Printf("SQLite3 no database %s found ... creating now\n", db_url->string);
+		Com_Printf("... no database file '%s' found ... creating now\n", to_ospath);
 		result = DB_Create();
 
-		if (result != SQLITE_OK)
+		if (result != 0)
 		{
-			Com_Printf("SQLite3 WARNING can't create memory database\n"); // how to deal with this?
+			Com_Printf("... WARNING can't create memory database [%i]\n", result);
 			return 1;
 		}
 
 		// save db
-		result = DB_LoadOrSaveDb(db, db_url->string, 1);
+		result = DB_LoadOrSaveDb(db, to_ospath, 1);
+		//result = DB_BackupDB(to_ospath);
 
 		if (result != SQLITE_OK)
 		{
-			Com_Printf("SQLite3 WARNING can't save memory database file\n"); // how to deal with this?
+			Com_Printf("... WARNING can't save memory database file [%i]\n", result); // how to deal with this?
 			return 1;
 		}
+		Com_Printf("SQLite3 database file '%s' saved\n", to_ospath);
 	}
 
 	isDBActive = qtrue;
@@ -111,10 +133,9 @@ int DB_Init()
 /**
  * @brief creates tables and populates our scheme
  */
-static int DB_Create_Scheme()
+static int DB_Create_Schema()
 {
 	int          result;
-	sqlite3_stmt *res;
 	char         *err_msg = 0;
 
 	// FIXME:
@@ -159,7 +180,7 @@ static int DB_Create_Scheme()
 
 	if (result != SQLITE_OK)
 	{
-		Com_Printf("SQLite3 failed to create table player: %s\n", err_msg);
+		Com_Printf("... failed to create table player: %s\n", err_msg);
 		sqlite3_free(err_msg);
 		return 1;
 	}
@@ -173,7 +194,7 @@ static int DB_Create_Scheme()
 
 	if (result != SQLITE_OK)
 	{
-		Com_Printf("SQLite3 failed to create table session: %s\n", err_msg);
+		Com_Printf("... failed to create table session: %s\n", err_msg);
 		sqlite3_free(err_msg);
 		return 1;
 	}
@@ -189,18 +210,25 @@ int DB_Create()
 	int result;
 
 	result = sqlite3_open(":memory:", &db);
-	// FIXME: set name of DB
+	// FIXME: set name of memory DB
 
 	if (result != SQLITE_OK)
 	{
-		Com_Printf("SQLite3 failed to open memory database - error: %s\n", sqlite3_errstr(result));
+		Com_Printf("... failed to open memory database - error: %s\n", sqlite3_errstr(result));
 		(void) sqlite3_close(db);
 		return 1;
 	}
 
-	DB_Create_Scheme();
+	result = DB_Create_Schema();
 
-	Com_Printf("SQLite3 database %s created\n", db_url->string);
+	if (result != 0)
+	{
+		Com_Printf("... failed to create database schema\n");
+		(void) sqlite3_close(db);
+		return 1;
+	}
+
+	Com_Printf("... database %s created\n", db_url->string);
 	return 0;
 }
 

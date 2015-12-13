@@ -675,7 +675,7 @@ qboolean FS_FileInPathExists(const char *testpath)
 }
 
 /**
- * @brief Tests if the file exists in the current gamedir
+ * @brief Tests if the file exists in the current gamedir of fs_homepath
  *
  * DOES NOT search the paths. This is to determine if opening a file to
  * write (which always goes into the current gamedir) will cause any overwrites.
@@ -699,7 +699,7 @@ qboolean FS_FileExists(const char *file)
 }
 
 /**
- * @brief Tests if the file exists
+ * @brief Tests if the file in fs_homepath exists
  */
 qboolean FS_SV_FileExists(const char *file)
 {

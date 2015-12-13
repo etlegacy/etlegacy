@@ -1161,7 +1161,10 @@ void SV_Init(void)
 #endif
 
 #ifdef FEATURE_DBMS
-	DB_Init();
+	if (DB_Init() != 0)
+	{
+		Com_Printf("WARNING: ETL DBMS not init as intended!\n");
+	}
 #endif
 }
 
