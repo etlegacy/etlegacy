@@ -33,9 +33,9 @@
  * @brief ET: Legacy SQL interface
  *
  * TODO:  - extend our db scheme
- *        - implement loading from disk (if there is any file, if not prepare first start)
  *        - implement version system & auto updates
  *        - ...
+ *        - clean up
  *
  *        Tutorial: http://zetcode.com/db/sqlitec/
  */
@@ -58,13 +58,13 @@ int DB_Init()
 	db_mode = Cvar_Get("db_mode", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	db_url  = Cvar_Get("db_url", "etl.db", CVAR_ARCHIVE | CVAR_LATCH); // filename in path
 
-	Com_Printf("SQLite3 libversion %s - database URL: '%s'\n", sqlite3_libversion(), db_url->string);
-
 	if (db_mode->integer < 1 || db_mode->integer > 2)
 	{
-		Com_Printf("... DBMS disabled.\n");
+		Com_Printf("... DBMS is disabled\n");
 		return 0; // return 0!
 	}
+
+	Com_Printf("SQLite3 libversion %s - database URL '%s' - %s\n", sqlite3_libversion(), db_url->string, db_mode->integer == 1 ? "in-memory":"in file");
 
 	if (!db_url->string[0]) // FIXME: check extension db
 	{
@@ -81,50 +81,74 @@ int DB_Init()
 
 		Com_Printf("... reading existing database '%s'\n", to_ospath);
 
-		result = sqlite3_open(":memory:", &db);
-		// FIXME: set name of memory DB
-
-		if (result != SQLITE_OK)
+		if (db_mode->integer == 1)
 		{
-			Com_Printf("... failed to open memory database - error: %s\n", sqlite3_errstr(result));
-			(void) sqlite3_close(db);
+			// init memory table
+			result = sqlite3_open(":memory:", &db); // memory table, not shared see https://www.sqlite.org/inmemorydb.html
+
+			if (result != SQLITE_OK)
+			{
+				Com_Printf("... failed to open memory database - error: %s\n", sqlite3_errstr(result));
+				(void) sqlite3_close(db);
+				return 1;
+			}
+
+			// load from disk into memory
+			result = DB_LoadOrSaveDb(db, to_ospath, 0);
+
+			if (result != SQLITE_OK)
+			{
+				Com_Printf("... WARNING can't load database file %s\n", db_url->string);
+				return 1;
+			}
+		}
+		else if (db_mode->integer == 2)
+		{
+			result = sqlite3_open(to_ospath, &db);
+
+			if (result != SQLITE_OK)
+			{
+				Com_Printf("... failed to open file database - error: %s\n", sqlite3_errstr(result));
+				(void) sqlite3_close(db);
+				return 1;
+			}
+		}
+		else
+		{
+			Com_Printf("... failed to open database - unknown mode\n");
 			return 1;
 		}
 
-		result = DB_LoadOrSaveDb(db, to_ospath, 0);
-
-		if (result != SQLITE_OK)
-		{
-			Com_Printf("... WARNING can't load database file %s\n", db_url->string); // how to deal with this?
-			return 1;
-		}
-
-		// FIXME: check for updates ...if version is behind current version update the db ...
-
-		Com_Printf("SQLite3 database file '%s' loaded\n", to_ospath);
+		Com_Printf("... database file '%s' loaded\n", to_ospath);
 	}
-	else
+	else // create new
 	{
 		Com_Printf("... no database file '%s' found ... creating now\n", to_ospath);
 		result = DB_Create();
 
 		if (result != 0)
 		{
-			Com_Printf("... WARNING can't create memory database [%i]\n", result);
+			Com_Printf("... WARNING can't create database [%i]\n", result);
 			return 1;
 		}
 
-		// save db
-		result = DB_LoadOrSaveDb(db, to_ospath, 1);
-		//result = DB_BackupDB(to_ospath);
-
-		if (result != SQLITE_OK)
+		// save memory db to disk
+		if (db_mode->integer == 1)
 		{
-			Com_Printf("... WARNING can't save memory database file [%i]\n", result); // how to deal with this?
-			return 1;
+			result = DB_LoadOrSaveDb(db, to_ospath, 1);
+			//result = DB_BackupDB(to_ospath);
+
+			if (result != SQLITE_OK)
+			{
+				Com_Printf("... WARNING can't save memory database file [%i]\n", result);
+				return 1;
+			}
 		}
-		Com_Printf("SQLite3 database file '%s' saved\n", to_ospath);
+
+		Com_Printf("... database file '%s' saved\n", to_ospath);
 	}
+
+	Com_Printf("SQLite3 ET: L database '%s' init\n", to_ospath);
 
 	isDBActive = qtrue;
 	return 0;
@@ -209,13 +233,36 @@ int DB_Create()
 {
 	int result;
 
-	result = sqlite3_open(":memory:", &db);
-	// FIXME: set name of memory DB
-
-	if (result != SQLITE_OK)
+	if (db_mode->integer == 1)
 	{
-		Com_Printf("... failed to open memory database - error: %s\n", sqlite3_errstr(result));
-		(void) sqlite3_close(db);
+		result = sqlite3_open(":memory:", &db); // memory table, not shared see https://www.sqlite.org/inmemorydb.html
+
+		if (result != SQLITE_OK)
+		{
+			Com_Printf("... failed to create memory database - error: %s\n", sqlite3_errstr(result));
+			(void) sqlite3_close(db);
+			return 1;
+		}
+	}
+	else if (db_mode->integer == 2)
+	{
+		char *to_ospath;
+
+		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_url->string, "");
+		to_ospath[strlen(to_ospath) - 1] = '\0';
+
+		result = sqlite3_open(to_ospath, &db);
+
+		if (result != SQLITE_OK)
+		{
+			Com_Printf("... failed to create file database - error: %s\n", sqlite3_errstr(result));
+			(void) sqlite3_close(db);
+			return 1;
+		}
+	}
+	else
+	{
+		Com_Printf("... DB_Create failed - unknown mode\n");
 		return 1;
 	}
 
@@ -235,6 +282,26 @@ int DB_Create()
 int DB_Close()
 {
 	int result;
+
+	// save memory db to disk
+	if (db_mode->integer == 1)
+	{
+		char *to_ospath;
+
+		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_url->string, "");
+		to_ospath[strlen(to_ospath)-1] = '\0';
+
+		Com_Printf("SQLite3 in-memory tables saved to disk [%s]\n", to_ospath);
+
+		result = DB_LoadOrSaveDb(db, to_ospath, 1);
+		//result = DB_BackupDB(to_ospath);
+
+		if (result != SQLITE_OK)
+		{
+			Com_Printf("... WARNING can't save memory database file [%i]\n", result);
+			return 1;
+		}
+	}
 
 	result = sqlite3_close(db);
 
