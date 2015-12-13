@@ -101,6 +101,8 @@ static void CG_Obituary(entityState_t *ent)
 			message = "slagged";
 			break;
 		case MOD_TRIGGER_HURT:
+			message = "was mortally wounded";
+			break;
 		case MOD_TELEFRAG: // added TELEFRAG and TARGET_LASER, just in case
 		case MOD_TARGET_LASER:
 			message = "was killed";
