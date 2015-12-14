@@ -136,6 +136,8 @@ The following variables can be adjusted in CMake:
 
 ### Linux
 
+Install required dependencies.
+
 * option A: **easybuild**
 
 In terminal, run:
@@ -233,6 +235,19 @@ and open the resulting project in Visual Studio.
 
 ### Mac OS X
 
+Install:
+
+    1. [Xcode](https://developer.apple.com/xcode/downloads/)
+    2. [Homebrew](http://brew.sh/)
+    3. [Homebrew Cask](http://caskroom.io/)
+
+Then brew the following packages in the terminal app:
+
+    $ brew cask install xquartz
+    $ brew install --universal gnu-sed cmake glew sdl2 minizip jpeg-turbo curl lua libogg libvorbis libtheora freetype sqlite openal-soft
+
+The --universal flag ensures both 32bit and 64bit libraries are installed. Although your system curl library supports both architectures, you also need to install its headers.
+
 * option A: **easybuild**
 
 In Terminal, run:
@@ -242,17 +257,6 @@ In Terminal, run:
 This will put an 'etlegacy' folder into your user folder.
 
 * option B: **command line**
-
-    1. install [Xcode](https://developer.apple.com/xcode/downloads/)
-    2. install [Homebrew](http://brew.sh/)
-    3. install [Homebrew Cask](http://caskroom.io/)
-
-Then brew the following packages in the terminal app:
-
-    $ brew cask install xquartz
-    $ brew install --universal gnu-sed cmake glew sdl2 jpeg-turbo curl lua libogg libvorbis libtheora freetype
-
-The --universal flag ensures both 32bit and 64bit libraries are installed. Although your system curl library supports both architectures, you also need to install its headers.
 
 In terminal, run:
 
