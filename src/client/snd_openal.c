@@ -971,8 +971,6 @@ static void S_AL_SrcSetup(srcHandle_t src, sfxHandle_t sfx, alSrcPriority_t prio
 	qalSourcei(curSource->alSource, AL_BUFFER, buffer);
 	qalSourcef(curSource->alSource, AL_PITCH, 1.0f);
 	S_AL_Gain(curSource->alSource, curSource->curGain);
-	qalSourcefv(curSource->alSource, AL_POSITION, vec3_origin);
-	qalSourcefv(curSource->alSource, AL_VELOCITY, vec3_origin);
 	qalSourcei(curSource->alSource, AL_LOOPING, AL_FALSE);
 	qalSourcef(curSource->alSource, AL_REFERENCE_DISTANCE, s_alMinDistance->value);
 
