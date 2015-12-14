@@ -544,7 +544,7 @@ void S_Play_f(void)
 		}
 		else
 		{
-			Com_Printf("Warning: S_Play_f sound '%s' not played.\n", tempBuffer);
+			Com_Printf("Warning: S_Play_f sound '%s' not played\n", tempBuffer);
 		}
 	}
 }
@@ -638,7 +638,7 @@ void S_StopMusic_f(void)
  */
 void S_Init(void)
 {
-	cvar_t *cv = Cvar_Get("s_initsound", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);  // 0 = disabled, 1 = base, 2 = OpenAL
+	cvar_t *cv = Cvar_Get("s_initsound", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);  // 0 = disabled, 1 = SDL2, 2 = OpenAL
 
 	Com_Printf("------ Initializing Sound (%i)------\n", cv->integer);
 
@@ -652,7 +652,7 @@ void S_Init(void)
 
 	if (!cv->integer)
 	{
-		Com_Printf("Sound disabled.\n");
+		Com_Printf("Sound disabled\n");
 	}
 	else
 	{
@@ -671,7 +671,7 @@ void S_Init(void)
 #ifdef FEATURE_OPENAL
 		if (cv->integer == 2)
 		{
-			//OpenAL
+			// OpenAL
 			started = S_AL_Init(&si);
 			Cvar_Set("s_backend", "OpenAL");
 		}
@@ -682,7 +682,7 @@ void S_Init(void)
 			if (cv->integer == 2)
 			{
 #ifdef FEATURE_OPENAL
-				Com_Printf("Can't initialize OpenAL - reverting to base interface.\n");
+				Com_Printf("Can't initialize OpenAL - reverting to SDL2 interface\n");
 #else
 				Com_Printf("Can't initialize OpenAL - disabled on build-time\n");
 #endif
@@ -696,15 +696,15 @@ void S_Init(void)
 		{
 			if (!S_ValidSoundInterface(&si))
 			{
-				Com_Error(ERR_FATAL, "Invalid sound interface.");
+				Com_Error(ERR_FATAL, "Invalid sound interface");
 			}
 
 			S_SoundInfo();
-			Com_Printf("Sound initialization successfully done.\ns_backend set to %s\n", s_backend->string);
+			Com_Printf("Sound initialization successfully done\ns_backend set to %s\n", s_backend->string);
 		}
 		else
 		{
-			Com_Printf("Sound initialization failed.\n");
+			Com_Printf("Sound initialization failed\n");
 		}
 	}
 
