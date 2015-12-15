@@ -141,7 +141,7 @@ if(BUILD_CLIENT)
 
 	if(FEATURE_OPENAL)
 		if(NOT BUNDLED_OPENAL)
-			find_package(OpenAL REQUIRED)
+			find_package(OpenAL 1.14 REQUIRED)
 			list(APPEND CLIENT_LIBRARIES ${OPENAL_LIBRARY})
 			include_directories(SYSTEM ${OPENAL_INCLUDE_DIR})
 			add_definitions(-DFEATURE_OPENAL_DLOPEN)

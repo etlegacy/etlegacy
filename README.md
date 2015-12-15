@@ -95,7 +95,7 @@ DEPENDENCIES
 * **Theora** (optional, enabled by default)
 * **Freetype** version 2 (optional, enabled by default)
 * **SQLite** version 3 (optional, enabled by default)
-* **OpenAL** (optional, enabled by default)
+* **OpenAL** version 1.14 (optional, enabled by default)
 * **Jansson** (optional)
 
 To get the latest source code install [git](http://git-scm.com/) and
