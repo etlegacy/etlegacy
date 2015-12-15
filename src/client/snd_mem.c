@@ -299,7 +299,7 @@ qboolean S_LoadSound(sfx_t *sfx)
 	sfx->soundChannels = info.channels;
 
 	Hunk_FreeTempMemory(samples);
-	Z_Free(data);
+	Hunk_FreeTempMemory(data);
 
 	return qtrue;
 }
