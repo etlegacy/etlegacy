@@ -1229,14 +1229,15 @@ void CL_UI_Restart_f(void) // shutdown the UI
 
 /*
 =================
-CL_Snd_Reload_f
+CL_Snd_Restart
 
-Reloads sounddata from disk, retains soundhandles.
+Restart the sound subsystem
 =================
 */
-void CL_Snd_Reload_f(void)
+void CL_Snd_Shutdown(void)
 {
-	S_Reload();
+	S_Shutdown();
+	cls.soundStarted = qfalse;
 }
 
 /*
@@ -1250,8 +1251,8 @@ handles will be invalid
 */
 void CL_Snd_Restart_f(void)
 {
-	S_Shutdown();
-	S_Init();
+	CL_Snd_Shutdown();
+	// sound will be init in CL_StartHunkUsers of CL_Vid_Restart_f again
 
 	CL_Vid_Restart_f();
 }
@@ -2880,7 +2881,6 @@ void CL_Init(void)
 	Cmd_AddCommand("cmd", CL_ForwardToServer_f);
 	Cmd_AddCommand("configstrings", CL_Configstrings_f);
 	Cmd_AddCommand("clientinfo", CL_Clientinfo_f);
-	Cmd_AddCommand("snd_reload", CL_Snd_Reload_f);
 	Cmd_AddCommand("snd_restart", CL_Snd_Restart_f);
 	Cmd_AddCommand("vid_restart", CL_Vid_Restart_f);
 	Cmd_AddCommand("ui_restart", CL_UI_Restart_f);
@@ -2979,7 +2979,7 @@ void CL_Shutdown(void)
 
 	CIN_Shutdown();
 
-	S_Shutdown();
+	CL_Snd_Shutdown();
 	DL_Shutdown();
 	CL_ShutdownRef();
 
@@ -2992,7 +2992,6 @@ void CL_Shutdown(void)
 	Cmd_RemoveCommand("cmd");
 	Cmd_RemoveCommand("configstrings");
 	Cmd_RemoveCommand("userinfo");
-	Cmd_RemoveCommand("snd_reload");
 	Cmd_RemoveCommand("snd_restart");
 	Cmd_RemoveCommand("vid_restart");
 	Cmd_RemoveCommand("disconnect");

@@ -1110,6 +1110,9 @@ qboolean CL_ConnectedToServer(void);
 void CL_StartHunkUsers(void);
 // start all the client stuff using the hunk
 
+void CL_Snd_Shutdown(void);
+// Restart sound subsystem
+
 // udpate.c
 enum UPDATE_FLAGS
 {

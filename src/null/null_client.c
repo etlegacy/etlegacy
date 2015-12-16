@@ -125,3 +125,7 @@ void CL_ShutdownAll(void)
 void Key_ClearStates(void)
 {
 }
+
+void CL_Snd_Shutdown(void)
+{
+}
