@@ -2,15 +2,15 @@
 # Copyright (C) 2012-2015 ET: Legacy Team
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
-# redtide <redtid3@gmail.com>, 2015
+# redtide <transifex.redtide@gmail.com>, 2015
 # redtide <redtid3@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-12-13 20:44+0000\n"
-"Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
+"PO-Revision-Date: 2015-12-16 15:50+0000\n"
+"Last-Translator: redtide <redtid3@gmail.com>\n"
 "Language-Team: Italian (http://www.transifex.com/etlegacy/etlegacy/language/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -271,11 +271,11 @@ msgstr ""
 
 #: etmain/ui/credits_et260.menu:86
 msgid "ET PRO DEVELOPMENT TEAM"
-msgstr ""
+msgstr "TEAM DI SVILUPPO ET PRO"
 
 #: etmain/ui/credits_et260.menu:114
 msgid "MAC OS X PORT"
-msgstr ""
+msgstr "MAC OS X PORT"
 
 #: etmain/ui/credits_et260.menu:127 etmain/ui/credits_splashdamage.menu:128
 msgid "Lead Programmer"
@@ -285,7 +285,7 @@ msgstr "Programmatore Capo"
 msgid ""
 "Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and "
 "other countries."
-msgstr ""
+msgstr "Mac OS X è un marchio registrato da Apple Computer, Inc., registrato negli U.S.A. e altri paesi."
 
 #: etmain/ui/credits_halloffame.menu:66
 msgid "ET: LEGACY HALL OF FAME"
@@ -1692,7 +1692,7 @@ msgstr ""
 
 #: etmain/ui/main_quickconnect.menu:82
 msgid "Server PW:"
-msgstr ""
+msgstr "Server PW:"
 
 #: etmain/ui/main_quickconnect.menu:84
 msgid "Enter the server password if any"
@@ -1853,7 +1853,7 @@ msgstr ""
 
 #: etmain/ui/options_controls.menu:47
 msgid "INPUT"
-msgstr ""
+msgstr "INPUT"
 
 #: etmain/ui/options_controls.menu:48
 #: etmain/ui/profile_create_initial.menu:112 etmain/ui/profile_create.menu:106
@@ -2483,7 +2483,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Displays remaining mission time"
-msgstr ""
+msgstr "Visualizza il tempo rimasto per la missone"
 
 #: etmain/ui/options_customise_hud.menu:38
 msgid "Reinforcement Timer:"
@@ -2547,7 +2547,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:41
 msgid "Displays players country flags in score board"
-msgstr ""
+msgstr "Visualizza le bandiere dei paesi dei giocatori nella tabella punteggi"
 
 #: etmain/ui/options_customise_hud.menu:42
 msgid "Fireteam Latched Class:"
@@ -3527,11 +3527,11 @@ msgstr "SCARICAMENTI"
 
 #: etmain/ui/options_system.menu:59
 msgid "Check for Updates on Start-Up:"
-msgstr ""
+msgstr "Verifica Aggiornamenti All'Avvio:"
 
 #: etmain/ui/options_system.menu:59
 msgid "Automatically check for updates?"
-msgstr ""
+msgstr "Verificare automaticamente gli aggiornamenti?"
 
 #: etmain/ui/options_system.menu:99
 msgid "Get Missing Files:"
@@ -3601,7 +3601,7 @@ msgstr "Preferiti"
 msgid ""
 "Choose the type of game servers to display from Internet, local and the "
 "favorites list"
-msgstr ""
+msgstr "Scegli il tipo di server di gioco da visualizzare: internet, locale o dalla lista dei preferiti"
 
 #: etmain/ui/playonline.menu:83 src/cgame/cg_loadpanel.c:255
 msgid "Objective"
@@ -3613,7 +3613,7 @@ msgstr ""
 
 #: etmain/ui/playonline.menu:83
 msgid "Displays only game servers offering this Game Type"
-msgstr ""
+msgstr "Mostra solamente i server che offrono questo Tipo di Gioco"
 
 #: etmain/ui/playonline.menu:84
 msgid "Mod:"
@@ -3621,23 +3621,23 @@ msgstr "Mod:"
 
 #: etmain/ui/playonline.menu:84
 msgid "Displays only game servers offering this Mod"
-msgstr ""
+msgstr "Mostra solamente i server con questo Mod"
 
 #: etmain/ui/playonline.menu:85 etmain/ui/playonline.menu:97
 msgid ""
 "Includes or excludes servers with desired map name from the server list"
-msgstr ""
+msgstr "Include o esclude dalla lista i server con la mappa specificata"
 
 #: etmain/ui/playonline.menu:97
 msgid "Filter affecting servers with map name"
-msgstr ""
+msgstr "Filtra i server con la mappa specificata"
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
 #: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
 #: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
 msgid "Filter Disabled"
-msgstr "Filtra Disabilitati"
+msgstr "Filtro Disabilitato"
 
 #: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
 #: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
@@ -3715,7 +3715,7 @@ msgstr "ELIMINA PREF"
 
 #: etmain/ui/playonline.menu:656 etmain/ui/playonline_serverinfo.menu:78
 msgid "JOIN SERVER"
-msgstr ""
+msgstr "CONNETTITI"
 
 #: etmain/ui/popup_autoupdate.menu:51
 msgid "UPDATE AVAILABLE"
@@ -3763,12 +3763,12 @@ msgid ""
 "and access more advanced options by visiting the Options Menu. Should more "
 "than one person wish to play Enemy Territory: Legacy, you can create "
 "additional profiles by visiting the Profiles Menu."
-msgstr ""
+msgstr "Imposta le tue preferenze qui di seguito. Puoi cambiarle in ogni momento e accedere alle opzioni avanzate selezionando il menù Opzioni. Si possono creare più profili per uno o più giocatori selezionando il menù Profili."
 
 #: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
 msgid ""
 "Enter the alias here that you would like displayed to others on servers"
-msgstr ""
+msgstr "Inserisci qui lo pseudonimo col quale verrai visualizzato durante il gioco"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Video Quality:"
@@ -3786,16 +3786,16 @@ msgstr "Veloce"
 msgid ""
 "Select your initial video settings, these can be changed later via the "
 "options menu"
-msgstr ""
+msgstr "Seleziona le impostazioni video, le quali potranno essere modificate in seguito tramite il menu Opzioni"
 
 #: etmain/ui/profile_create_initial.menu:104 etmain/ui/profile_create.menu:98
 msgid ""
 "Choose your preferred video resolution, if unsure leave it as the default"
-msgstr ""
+msgstr "Scegli la risoluzione video che preferisci, altrimenti puoi usare quella predefinita"
 
 #: etmain/ui/profile_create_initial.menu:111 etmain/ui/profile_create.menu:105
 msgid "Use this slider to set your mouse sensitivity"
-msgstr ""
+msgstr "Usa questo slider per impostare la sensibilità del mouse"
 
 #: etmain/ui/profile_create_initial.menu:112
 msgid ""
@@ -3813,7 +3813,7 @@ msgstr ""
 
 #: etmain/ui/profile_create_initial.menu:126
 msgid "Thank you for installing ET: Legacy"
-msgstr ""
+msgstr "Grazie per aver installato ET: Legacy"
 
 #: etmain/ui/profile_create_initial.menu:130
 msgid "QUIT"
@@ -3915,7 +3915,7 @@ msgstr "Reimposto la configurazione"
 #: etmain/ui/vid_confirm.menu:71
 #, c-format
 msgid "setting in %s seconds..."
-msgstr ""
+msgstr "impostato a %s secondi..."
 
 #: etmain/ui/vid_restart.menu:48
 msgid "Apply new settings?"
@@ -3937,111 +3937,111 @@ msgstr "MESSAGGIO"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:83 etmain/ui/wm_quickmessageAlt.menu:83
 msgid "1. Statements"
-msgstr ""
+msgstr "1. Affermazioni"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:84 etmain/ui/wm_quickmessageAlt.menu:84
 msgid "2. Requests"
-msgstr ""
+msgstr "2. Richieste"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:85 etmain/ui/wm_quickmessageAlt.menu:85
 msgid "3. Commands"
-msgstr ""
+msgstr "4. Comandi"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:86 etmain/ui/wm_quickmessageAlt.menu:86
 msgid "4. Talk"
-msgstr ""
+msgstr "4. Parla"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:87 etmain/ui/wm_quickmessageAlt.menu:87
 msgid "5. Global"
-msgstr ""
+msgstr "5. Globali"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:88 etmain/ui/wm_quickmessageAlt.menu:88
 msgid "6. Function"
-msgstr ""
+msgstr "6. Funzione"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:89 etmain/ui/wm_quickmessageAlt.menu:89
 msgid "7. Objectives"
-msgstr ""
+msgstr "7. Obiettivi"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:95 etmain/ui/wm_quickmessageAlt.menu:95
 msgid "1. Path Cleared."
-msgstr ""
+msgstr "2. Via Libera."
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:96 etmain/ui/wm_quickmessageAlt.menu:96
 msgid "2. Enemy Weak!"
-msgstr ""
+msgstr "2. Nemico Debole!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:97 etmain/ui/wm_quickmessageAlt.menu:97
 msgid "3. All Clear"
-msgstr ""
+msgstr "3. Cessato Allarme"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:98 etmain/ui/wm_quickmessageAlt.menu:98
 msgid "4. Incoming"
-msgstr ""
+msgstr "4. Stanno arrivando"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:99 etmain/ui/wm_quickmessageAlt.menu:99
 msgid "5. Fire In The Hole!"
-msgstr ""
+msgstr "5. Sta per esplodere!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:100
 #: etmain/ui/wm_quickmessageAlt.menu:100
 msgid "6. I'm Defending."
-msgstr ""
+msgstr "6. Sono in difesa."
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:101
 #: etmain/ui/wm_quickmessageAlt.menu:101
 msgid "7. I'm Attacking."
-msgstr ""
+msgstr "7. Sono in attacco."
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:102
 #: etmain/ui/wm_quickmessageAlt.menu:102
 msgid "8. Taking Fire!"
-msgstr ""
+msgstr "8. Stanno attaccando!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:103
 #: etmain/ui/wm_quickmessageAlt.menu:103
 msgid "9. Mines Cleared"
-msgstr ""
+msgstr "9. Mine DIsinnescate"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:104
 #: etmain/ui/wm_quickmessageAlt.menu:104
 msgid "0. Enemy Disguised"
-msgstr ""
+msgstr "0. Nemico Camuffato"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:110
 #: etmain/ui/wm_quickmessageAlt.menu:110
 msgid "1. Need Medic!"
-msgstr ""
+msgstr "1. Serve un Medico!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:111
 #: etmain/ui/wm_quickmessageAlt.menu:111
 msgid "2. Need Ammo!"
-msgstr ""
+msgstr "2. Servono Munizioni!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:112
 #: etmain/ui/wm_quickmessageAlt.menu:112
 msgid "3. Need Backup!"
-msgstr ""
+msgstr "3. Serve Copertura!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:113
 #: etmain/ui/wm_quickmessageAlt.menu:113
 msgid "4. Need Engineer!"
-msgstr ""
+msgstr "4. Serve un Ingegnere!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:114
 #: etmain/ui/wm_quickmessageAlt.menu:114
 msgid "5. Cover Me!"
-msgstr ""
+msgstr "5. Copritemi!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:115
 #: etmain/ui/wm_quickmessageAlt.menu:115
 msgid "6. Hold Fire!"
-msgstr ""
+msgstr "6. Calmati!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:116
 #: etmain/ui/wm_quickmessageAlt.menu:116
 msgid "7. Where To?"
-msgstr ""
+msgstr "7. Dove?"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:117
 #: etmain/ui/wm_quickmessageAlt.menu:117
@@ -4051,138 +4051,138 @@ msgstr ""
 #: etmain/ui/wm_ftquickmessageAlt.menu:123
 #: etmain/ui/wm_quickmessageAlt.menu:123
 msgid "1. Follow Me!"
-msgstr ""
+msgstr "1. Seguitemi!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:124
 #: etmain/ui/wm_quickmessageAlt.menu:124
 msgid "2. Let's Go!"
-msgstr ""
+msgstr "2. Andiamo!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:125
 #: etmain/ui/wm_quickmessageAlt.menu:125
 msgid "3. Move!"
-msgstr ""
+msgstr "3. Muoversi!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:126
 #: etmain/ui/wm_quickmessageAlt.menu:126
 msgid "4. Clear The Path!"
-msgstr ""
+msgstr "4. Liberate il passaggio!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:127
 #: etmain/ui/wm_quickmessageAlt.menu:127
 msgid "5. Defend Objective!"
-msgstr ""
+msgstr "5. Difendete l'Obiettivo!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:128
 #: etmain/ui/wm_quickmessageAlt.menu:128
 msgid "6. Disarm Dynamite!"
-msgstr ""
+msgstr "6. Disinnescate la Dinamite!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:129
 #: etmain/ui/wm_quickmessageAlt.menu:129
 msgid "7. Clear Mines!"
-msgstr ""
+msgstr "7. Disinnescate le Mine!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:130
 #: etmain/ui/wm_quickmessageAlt.menu:130
 msgid "8. Reinforce Offense"
-msgstr ""
+msgstr "8. Rafforzare Offensiva"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:131
 #: etmain/ui/wm_quickmessageAlt.menu:131
 msgid "9. Reinforce Defense"
-msgstr ""
+msgstr "9. Rafforzare Difensiva"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:137
 #: etmain/ui/wm_ftquickmessageAlt.menu:148
 #: etmain/ui/wm_quickmessageAlt.menu:137 etmain/ui/wm_quickmessageAlt.menu:148
 msgid "1. Yes"
-msgstr ""
+msgstr "1. Sì"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:138
 #: etmain/ui/wm_quickmessageAlt.menu:138 etmain/ui/wm_quickmessageAlt.menu:149
 msgid "2. No"
-msgstr ""
+msgstr "2. No"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:139
 #: etmain/ui/wm_quickmessageAlt.menu:139
 msgid "3. Thanks"
-msgstr ""
+msgstr "3. Grazie"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:140
 #: etmain/ui/wm_quickmessageAlt.menu:140
 msgid "4. Welcome"
-msgstr ""
+msgstr "4. Benvenuto"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:141
 #: etmain/ui/wm_quickmessageAlt.menu:141
 msgid "5. Sorry"
-msgstr ""
+msgstr "5. Mi Dispiace"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:142
 #: etmain/ui/wm_quickmessageAlt.menu:142
 msgid "6. Oops"
-msgstr ""
+msgstr "6. Ops"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:150
 #: etmain/ui/wm_quickmessageAlt.menu:150
 msgid "3. Enemy Weak"
-msgstr ""
+msgstr "3. Nemico Debole"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:151
 #: etmain/ui/wm_quickmessageAlt.menu:151
 msgid "4. Hi"
-msgstr ""
+msgstr "4. Salve"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:152
 #: etmain/ui/wm_quickmessageAlt.menu:152
 msgid "5. Bye"
-msgstr ""
+msgstr "5. Arrivederci"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:153
 #: etmain/ui/wm_quickmessageAlt.menu:153
 msgid "6. Great Shot"
-msgstr ""
+msgstr "6. Gran Colpo"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:154
 #: etmain/ui/wm_quickmessageAlt.menu:154
 msgid "7. Cheer"
-msgstr ""
+msgstr "7. Evviva"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:155
 #: etmain/ui/wm_quickmessageAlt.menu:155
 msgid "8. More Globals"
-msgstr ""
+msgstr "8. Altri Globali"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:161
 #: etmain/ui/wm_quickmessageAlt.menu:161
 msgid "1. Thanks"
-msgstr ""
+msgstr "1. Grazie"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:162
 #: etmain/ui/wm_quickmessageAlt.menu:162
 msgid "2. Welcome"
-msgstr ""
+msgstr "2. Benvenuto"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:163
 #: etmain/ui/wm_quickmessageAlt.menu:163
 msgid "3. Oops"
-msgstr ""
+msgstr "3. Ops"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:164
 #: etmain/ui/wm_quickmessageAlt.menu:164
 msgid "4. Sorry"
-msgstr ""
+msgstr "4. Mi Dispiace"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:165
 #: etmain/ui/wm_quickmessageAlt.menu:165
 msgid "5. Hold Fire!"
-msgstr ""
+msgstr "5. Calmati!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:166
 #: etmain/ui/wm_quickmessageAlt.menu:166
 msgid "6. Good Game"
-msgstr ""
+msgstr "6. Bel Gioco"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:172
 #: etmain/ui/wm_quickmessageAlt.menu:172
@@ -5338,20 +5338,20 @@ msgstr ""
 #: src/ui/ui_main.c:5874
 #, c-format
 msgid "^3Filtered/Total: %04i/%04i"
-msgstr ""
+msgstr "^3Filtrati/Totale: %04i/%04i"
 
 #: src/ui/ui_main.c:5878
 #, c-format
 msgid ""
 "^3Check your filters - no servers found!              Filtered/Total: "
 "%04i/%04i"
-msgstr ""
+msgstr "^3Verifica i filtri - nessun server trovato!             Filtrati/Totale: %04i/%04i"
 
 #: src/ui/ui_main.c:5883
 msgid ""
 "^1No Connection or master down - no servers found!    Filtered/Total: "
 "0000/0000"
-msgstr ""
+msgstr "^1Errore Connessione/Master - nessun server trovato!  Filtrati/Totale: 0000/0000"
 
 #: src/ui/ui_main.c:7752
 #, c-format
@@ -5366,7 +5366,7 @@ msgstr ""
 #: src/ui/ui_main.c:8301
 #, c-format
 msgid "%d servers not listed (filtered out by game browser settings)\n"
-msgstr ""
+msgstr "%d server non elencati (filtrati dalle impostazioni del browser)\n"
 
 #: src/ui/ui_main.c:8429
 #, c-format
@@ -6313,43 +6313,43 @@ msgid "Vote cast.\n"
 msgstr "Voto espresso.\n"
 
 msgid "'s KA-BAR"
-msgstr " con il suo KA-BAR"
+msgstr " con un KA-BAR"
 
 msgid "'s .45ACP 1911"
-msgstr " con la sua .45ACP 1911"
+msgstr " con una .45ACP 1911"
 
 msgid "'s Thompson"
-msgstr " con il suo Thompson"
+msgstr " con un Thompson"
 
 msgid "'s MP 40"
-msgstr " con il suo MP 40"
+msgstr " con un MP 40"
 
 msgid "'s knife"
-msgstr " con il suo pugnale"
+msgstr " con un pugnale"
 
 msgid "'s Luger 9mm"
-msgstr " con la sua Luger 9mm"
+msgstr " con una Luger 9mm"
 
 msgid "'s Panzerfaust"
-msgstr " con il suo Panzerfaust"
+msgstr " con un Panzerfaust"
 
 msgid "'s Garand"
-msgstr " con il suo Garand"
+msgstr " con un Garand"
 
 msgid "'s Sten"
-msgstr " con il suo Sten"
+msgstr " con uno Sten"
 
 msgid "'s FG 42"
-msgstr " con il suo FG 42"
+msgstr " con un FG 42"
 
 msgid "'s K43"
-msgstr " con il suo K43"
+msgstr " con un K43"
 
 msgid "'s Bazooka"
-msgstr " con il suo Bazooka"
+msgstr " con un Bazooka"
 
 msgid "'s Akimbo .45ACP 1911s"
-msgstr " con la sua Akimbo .45ACP 1911s"
+msgstr " con una Akimbo .45ACP 1911s"
 
 msgid "Server disconnected"
 msgstr "Server disconnesso"
@@ -6649,38 +6649,38 @@ msgid "- Silenced Colt"
 msgstr ""
 
 msgid "Includes or excludes empty and full servers from the server list"
-msgstr ""
+msgstr "Include o esclude dalla lista i server pieni o vuoti"
 
 msgid "Includes or excludes password protected servers from the server list"
-msgstr ""
+msgstr "Include o esclude dalla lista i server protetti da password"
 
 msgid ""
 "Includes or excludes servers where team mates can damage each other from the"
 " server list"
-msgstr ""
+msgstr "Include o esclude dalla lista i server dove i giocatori si possono colpire con fuoco amico"
 
 msgid ""
 "Includes or excludes servers that limit the number of player lives per match"
 " from the server list"
-msgstr ""
+msgstr "Include o esclude dalla lista i server che limitano il numero di vite dei giocatori per ogni partita"
 
 msgid ""
 "Includes or excludes servers that limit the number of\n"
 " available heavy weapons from the server list"
-msgstr ""
+msgstr "Include o esclude dalla lista i server che limitano\n la quantità di armi pesanti disponibile"
 
 msgid ""
 "Includes or excludes servers with support for modem players from the server "
 "list"
-msgstr ""
+msgstr "Include o esclude dalla lista i server che supportano connessioni via modem"
 
 msgid ""
 "Includes or excludes servers that enforce balanced teams from the server "
 "list"
-msgstr ""
+msgstr "Include o esclude dalla lista i server che forzano il bilanciamento dei team"
 
 msgid "Includes or excludes servers with bots from the server list"
-msgstr ""
+msgstr "Include o esclude dalla lista i server con bot"
 
 msgid "Click here to sort by Ping"
 msgstr ""
