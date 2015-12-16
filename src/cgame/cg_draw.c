@@ -3174,6 +3174,8 @@ static void CG_ScreenFade(void)
 	}
 }
 
+static int lastDemoScoreTime = 0;
+
 void CG_DrawDemoRecording(void)
 {
 	char status[1024];
@@ -3183,6 +3185,13 @@ void CG_DrawDemoRecording(void)
 	if (!cl_demorecording.integer && !cl_waverecording.integer)
 	{
 		return;
+	}
+
+	// pull for score
+	if (!lastDemoScoreTime || cg.time > lastDemoScoreTime)
+	{
+		trap_SendClientCommand("score");
+		lastDemoScoreTime = cg.time + 5000; // 5 secs
 	}
 
 	if (!cg_recording_statusline.integer)
