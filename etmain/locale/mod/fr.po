@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-12-13 20:44+0000\n"
-"Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
+"PO-Revision-Date: 2015-12-16 12:24+0000\n"
+"Last-Translator: Aranud <aranud66@live.fr>\n"
 "Language-Team: French (http://www.transifex.com/etlegacy/etlegacy/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -281,7 +281,7 @@ msgstr "PORT MAC OS X"
 
 #: etmain/ui/credits_et260.menu:127 etmain/ui/credits_splashdamage.menu:128
 msgid "Lead Programmer"
-msgstr "Programmeur en che"
+msgstr "Programmeur en chef"
 
 #: etmain/ui/credits_et260.menu:128
 msgid ""
@@ -595,7 +595,7 @@ msgstr "Ennemis seulement"
 #: etmain/ui/hostgame_advanced.menu:47 etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Everyone"
-msgstr "Tout le mond"
+msgstr "Tout le monde"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Whether you can damage players during the match's warmup period"
@@ -1080,7 +1080,7 @@ msgstr "AVANCÉ"
 
 #: etmain/ui/options_system.menu:54
 msgid "ADVANCED GRAPHICS"
-msgstr ""
+msgstr "GRAPHIQUES AVANCES"
 
 #: etmain/ui/hostgame.menu:31 etmain/ui/main.menu:106
 msgid "HOST GAME"
@@ -1727,13 +1727,13 @@ msgstr "Ceci supprimera tous les fichiers non nécessaires dans votre fs_homepat
 
 #: etmain/ui/options_clean.menu:36
 msgid "A simple clean will remove tmp and custom pk3 files."
-msgstr ""
+msgstr "Un nettoyage simple supprimera les fichiers tmp et pk3 personnalisés."
 
 #: etmain/ui/options_clean.menu:37
 msgid ""
 "A full clean will remove all downloaded files like maps,\n"
 " campaigns and custom pk3 files."
-msgstr ""
+msgstr "Un nettoyage complet supprimera tous les fichiers téléchargés comme les cartes,\nles campagnes et les fichiers pk3 personnalisés."
 
 #: etmain/ui/options_clean.menu:38
 msgid "^1WARNING: Use at your own risk!"
@@ -1753,7 +1753,7 @@ msgstr "ANNULER"
 
 #: etmain/ui/options_clean.menu:42
 msgid "Abort operation"
-msgstr ""
+msgstr "Interrompre l'opération"
 
 #: etmain/ui/options_clean.menu:43
 msgid "SIMPLE CLEAN"
@@ -1761,7 +1761,7 @@ msgstr "NETTOYAGE SIMPLE"
 
 #: etmain/ui/options_clean.menu:43
 msgid "Remove tmp and custom pk3 files"
-msgstr ""
+msgstr "Retire les fichiers tmp et pk3 personnalisés."
 
 #: etmain/ui/options_clean.menu:44
 msgid "FULL CLEAN"
@@ -1769,7 +1769,7 @@ msgstr "NETTOYAGE COMPLET"
 
 #: etmain/ui/options_clean.menu:44
 msgid "Remove all maps and campaigns files"
-msgstr ""
+msgstr "Retire toutes les cartes et les fichiers campagnes"
 
 #: etmain/ui/options_controls_default.menu:52
 msgid "DEFAULT CONTROLS"
@@ -2001,31 +2001,31 @@ msgstr "Slot 1 - mêlée:"
 
 #: etmain/ui/options_controls.menu:91
 msgid "Slot 2 - One Handed:"
-msgstr "Emplacement 2 - arme à une main:"
+msgstr "Slot 2 - arme à une main:"
 
 #: etmain/ui/options_controls.menu:92
 msgid "Slot 3 - Two Handed:"
-msgstr "Emplacement 3 - arme à deux mains:"
+msgstr "Slot 3 - arme à deux mains:"
 
 #: etmain/ui/options_controls.menu:93
 msgid "Slot 4 - Grenade:"
-msgstr "Emplacement 4 - grenade:"
+msgstr "Slot 4 - grenade:"
 
 #: etmain/ui/options_controls.menu:94
 msgid "Slot 5 - Special 1:"
-msgstr "Emplacement 5 - spécial 1:"
+msgstr "Slot 5 - spécial 1:"
 
 #: etmain/ui/options_controls.menu:95
 msgid "Slot 6 - Special 2:"
-msgstr "Emplacement 6 - spécial 2:"
+msgstr "Slot 6 - spécial 2:"
 
 #: etmain/ui/options_controls.menu:96
 msgid "Slot 7 - Special 3:"
-msgstr "Emplacement 7 - spécial 3:"
+msgstr "Slot 7 - spécial 3:"
 
 #: etmain/ui/options_controls.menu:97
 msgid "Slot 8 - Binoculars:"
-msgstr "Emplacement 8 - jumelles:"
+msgstr "Slot 8 - jumelles:"
 
 #: etmain/ui/options_controls.menu:101
 #: etmain/ui/options_customise_game.menu:77
@@ -2034,15 +2034,15 @@ msgstr "DIVERS"
 
 #: etmain/ui/options_controls.menu:102
 msgid "Vote Yes:"
-msgstr "Voter oui:"
+msgstr "Voter Oui:"
 
 #: etmain/ui/options_controls.menu:103
 msgid "Take Screenshot:"
-msgstr "Capture d'écran:"
+msgstr "Capture d’Écran:"
 
 #: etmain/ui/options_controls.menu:104
 msgid "Vote No:"
-msgstr "Voter non:"
+msgstr "Voter Non:"
 
 #: etmain/ui/options_controls.menu:105
 msgid "Record Replay:"
@@ -2309,7 +2309,7 @@ msgstr "Long"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Really Long"
-msgstr "Très lon"
+msgstr "Très long"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Specify how long the chat icon appears above other players' heads"
@@ -2439,7 +2439,7 @@ msgstr "Afficher les infobulles:"
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Display Tool Tips in the UI"
-msgstr "Afficher les infobulles dans les menu"
+msgstr "Afficher les infobulles dans les menus"
 
 #: etmain/ui/options_customise_game.menu:1
 #: etmain/ui/wm_ftquickmessageAlt.menu:1
@@ -2509,7 +2509,7 @@ msgstr "Stroboscope"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Alpha Pulse"
-msgstr "Transparence variabl"
+msgstr "Transparence variable"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Solid"
@@ -2545,7 +2545,7 @@ msgstr "Affiche les positions dans la Fireteam"
 
 #: etmain/ui/options_customise_hud.menu:41
 msgid "Enable Flags:"
-msgstr "Activer les drapeaux:"
+msgstr "Activer les Drapeaux:"
 
 #: etmain/ui/options_customise_hud.menu:41
 msgid "Displays players country flags in score board"
@@ -2637,7 +2637,7 @@ msgstr "Changer d'ATH:"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Standard Hud"
-msgstr "ATH standar"
+msgstr "ATH standard"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Alternate Hud 1"
@@ -2649,7 +2649,7 @@ msgstr "ATH alternatif n°2"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Switches between different HUD"
-msgstr "Bascule entre des ATH différents"
+msgstr "Bascule entre les différents ATH"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Modify Selected HUD:"
@@ -2826,7 +2826,7 @@ msgstr "Grand"
 
 #: etmain/ui/options_customise_hud.menu:70
 msgid "Huge"
-msgstr "Très gran"
+msgstr "Très grand"
 
 #: etmain/ui/options_customise_hud.menu:70
 msgid "Sets the size of the displayed crosshair"
@@ -2889,7 +2889,7 @@ msgstr "Affiche des informations sur le joueur quand le viseur est à proximité
 
 #: etmain/ui/options_customise_hud.menu:86
 msgid "Set crosshair type"
-msgstr "Définir le type du viseu"
+msgstr "Définir le type du viseur"
 
 #: etmain/ui/options_customise_hud.menu:97
 msgid "Primary Color:"
@@ -3359,7 +3359,7 @@ msgstr "Anticrénelage:"
 
 #: etmain/ui/options_graphics.menu:65
 msgid "Set Anti-Aliasing"
-msgstr "Définit l'anticrénelag"
+msgstr "Définit l'anticrénelage"
 
 #: etmain/ui/options_graphics.menu:66
 msgid "Color Depth:"
@@ -3499,7 +3499,7 @@ msgstr "Activer ou désactiver le son quand la fenêtre n'a pas le focus"
 
 #: etmain/ui/options_system.menu:92
 msgid "NETWORK"
-msgstr ""
+msgstr "RÉSEAU"
 
 #: etmain/ui/options_system.menu:52
 msgid "Max Packets:"
@@ -3537,11 +3537,11 @@ msgstr "Vérifie automatiquement les mises à jou"
 
 #: etmain/ui/options_system.menu:99
 msgid "Get Missing Files:"
-msgstr ""
+msgstr "Obtenir les fichiers manquants:"
 
 #: etmain/ui/options_system.menu:99
 msgid "Download missing files when available"
-msgstr ""
+msgstr "Télécharger les fichiers manquants lorsque disponible"
 
 #: etmain/ui/options_system.menu:62
 msgid "Use HTTP/FTP Downloads:"
@@ -3549,15 +3549,15 @@ msgstr "Utiliser les téléchargements HTTP/FTP:"
 
 #: etmain/ui/options_system.menu:106
 msgid "UPDATES"
-msgstr ""
+msgstr "MISES A JOUR"
 
 #: etmain/ui/options_system.menu:107
 msgid "Start-Up Updates Check:"
-msgstr ""
+msgstr "Contrôle Mise à Jour au Démarrage:"
 
 #: etmain/ui/options_system.menu:107
 msgid "Automatically check for updates"
-msgstr ""
+msgstr "Vérifier automatiquement les mises à jour"
 
 #: etmain/ui/options_system.menu:62
 msgid "Enables or disables http/ftp downloads"
@@ -3577,7 +3577,7 @@ msgstr "Voulez-vous vraiment"
 
 #: etmain/ui/playonline_deletefavs.menu:52
 msgid "delete YOUR favourites?"
-msgstr "supprimer tous les serveurs favoris ?"
+msgstr "supprimer VOS favoris ?"
 
 #: etmain/ui/playonline.menu:80
 msgid "FILTERS"
@@ -3597,7 +3597,7 @@ msgstr "Internet"
 
 #: etmain/ui/playonline.menu:82
 msgid "Favorites"
-msgstr "Favori"
+msgstr "Favoris"
 
 #: etmain/ui/playonline.menu:82
 msgid ""
@@ -3607,7 +3607,7 @@ msgstr "Choisissez le type de serveurs de jeu à montrer depuis l'Internet, le r
 
 #: etmain/ui/playonline.menu:83 src/cgame/cg_loadpanel.c:255
 msgid "Objective"
-msgstr "Objecti"
+msgstr "Objectif"
 
 #: etmain/ui/playonline.menu:83
 msgid "LMS"
@@ -3681,7 +3681,7 @@ msgstr "NOM DE SERVEUR"
 
 #: etmain/ui/playonline.menu:343
 msgid "Click here to sort by Server Name"
-msgstr "Cliquez ici pour trier par nom du serveu"
+msgstr "Cliquez ici pour trier par nom de serveur"
 
 #: etmain/ui/playonline.menu:373
 msgid "MAP NAME"
@@ -3778,11 +3778,11 @@ msgstr "Qualité vidéo:"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Fastest"
-msgstr "Le plus rapid"
+msgstr "Le plus rapide"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid "Fast"
-msgstr "Rapid"
+msgstr "Rapide"
 
 #: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
 msgid ""
@@ -3811,7 +3811,7 @@ msgstr "PARAMÈTRES PAR DÉFAUT"
 
 #: etmain/ui/profile_create_initial.menu:125
 msgid "^1LET'S KEEP ET ALIVE!"
-msgstr "^1GARDONS-LE EN VIE !"
+msgstr "^1GARDONS ET EN VIE !"
 
 #: etmain/ui/profile_create_initial.menu:126
 msgid "Thank you for installing ET: Legacy"
@@ -3848,7 +3848,7 @@ msgstr "SUPPRIMER LE PROFIL"
 
 #: etmain/ui/profile_delete.menu:51 etmain/ui/viewreplay_delete.menu:51
 msgid "Are you sure?"
-msgstr "Êtes vous certain ?"
+msgstr "Êtes vous certain?"
 
 #: etmain/ui/profile.menu:63 etmain/ui/viewreplay.menu:59
 msgid "DELETE"
@@ -3856,7 +3856,7 @@ msgstr "SUPPRIMER"
 
 #: etmain/ui/profile.menu:66 etmain/ui/profile_rename.menu:69
 msgid "RENAME"
-msgstr "RENOMME"
+msgstr "RENOMMER"
 
 #: etmain/ui/profile.menu:67
 msgid "SET AS DEFAULT"
@@ -3876,7 +3876,7 @@ msgstr "Nouveau nom de profil:"
 
 #: etmain/ui/profile_rename.menu:65
 msgid "New name of profile"
-msgstr "Nouveau nom du profi"
+msgstr "Nouveau nom du profil"
 
 #: etmain/ui/quit.menu:55
 msgid "Yeah, right, like YOU have"
@@ -3908,7 +3908,7 @@ msgstr "CONFIRMER LE CHANGEMENT GRAPHIQUE"
 
 #: etmain/ui/vid_confirm.menu:63
 msgid "Use this video mode?"
-msgstr "Utilisé ce mode graphique ?"
+msgstr "Utiliser ce mode graphique ?"
 
 #: etmain/ui/vid_confirm.menu:64
 msgid "Reverting to previous"
@@ -3951,7 +3951,7 @@ msgstr "3. Ordres"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:86 etmain/ui/wm_quickmessageAlt.menu:86
 msgid "4. Talk"
-msgstr "4. Parle"
+msgstr "4. Parler"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:87 etmain/ui/wm_quickmessageAlt.menu:87
 msgid "5. Global"
@@ -4093,7 +4093,7 @@ msgstr "8. Renforcez l'attaque"
 #: etmain/ui/wm_ftquickmessageAlt.menu:131
 #: etmain/ui/wm_quickmessageAlt.menu:131
 msgid "9. Reinforce Defense"
-msgstr "9. Renforcez la défens"
+msgstr "9. Renforcez la défense"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:137
 #: etmain/ui/wm_ftquickmessageAlt.menu:148
@@ -4134,17 +4134,17 @@ msgstr "3. Ennemi affaibli"
 #: etmain/ui/wm_ftquickmessageAlt.menu:151
 #: etmain/ui/wm_quickmessageAlt.menu:151
 msgid "4. Hi"
-msgstr "4. Bonjou"
+msgstr "4. Bonjour"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:152
 #: etmain/ui/wm_quickmessageAlt.menu:152
 msgid "5. Bye"
-msgstr "5. Au revoi"
+msgstr "5. Au revoir"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:153
 #: etmain/ui/wm_quickmessageAlt.menu:153
 msgid "6. Great Shot"
-msgstr "6. Joli ti"
+msgstr "6. Joli tir"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:154
 #: etmain/ui/wm_quickmessageAlt.menu:154
@@ -4366,7 +4366,7 @@ msgstr "R. Renforcez l'attaque"
 
 #: etmain/ui/wm_ftquickmessage.menu:131 etmain/ui/wm_quickmessage.menu:131
 msgid "E. Reinforce Defense"
-msgstr "E. Renforcez la défens"
+msgstr "E. Renforcez la défense"
 
 #: etmain/ui/wm_ftquickmessage.menu:137 etmain/ui/wm_ftquickmessage.menu:148
 #: etmain/ui/wm_quickmessage.menu:137 etmain/ui/wm_quickmessage.menu:148
@@ -4404,11 +4404,11 @@ msgstr "W. Ennemi affaibli"
 
 #: etmain/ui/wm_ftquickmessage.menu:151 etmain/ui/wm_quickmessage.menu:151
 msgid "H. Hi"
-msgstr "H. Bonjou"
+msgstr "H. Bonjour"
 
 #: etmain/ui/wm_ftquickmessage.menu:152 etmain/ui/wm_quickmessage.menu:152
 msgid "B. Bye"
-msgstr "B. Au revoi"
+msgstr "B. Au revoir"
 
 #: etmain/ui/wm_ftquickmessage.menu:153 etmain/ui/wm_quickmessage.menu:153
 msgid "S. Great Shot"
@@ -4444,7 +4444,7 @@ msgstr "P. Détruisez l'objectif primaire"
 
 #: etmain/ui/wm_ftquickmessage.menu:176 etmain/ui/wm_quickmessage.menu:176
 msgid "S. Destroy Secondary Objective"
-msgstr "S. Détruisez l'objectif secondair"
+msgstr "S. Détruisez l'objectif secondaire"
 
 #: etmain/ui/wm_ftquickmessage.menu:177 etmain/ui/wm_quickmessage.menu:177
 msgid "X. Destroy Construction"
@@ -4854,7 +4854,7 @@ msgstr "Appuyez sur ^3%s^7 pour commencer"
 
 #: src/cgame/cg_draw.c:2470
 msgid "^3WARMUP:^7 Match begins in"
-msgstr ""
+msgstr "^3ECHAUFFEMENT:^7 la partie commence dans"
 
 #: src/cgame/cg_draw.c:2481
 msgid "^3PREPARE TO FIGHT!\n"
@@ -7065,4 +7065,4 @@ msgstr "^3ÉCHAUFFEMENT:^7 La partie commence maintenant!"
 
 #: src/cgame/cg_scoreboard.c:211
 msgid "MATCH BEGINS NOW!"
-msgstr ""
+msgstr "LA PARTIE COMMENCE MAINTENANT!"
