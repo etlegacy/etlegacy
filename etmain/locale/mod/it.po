@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-12-16 15:50+0000\n"
+"PO-Revision-Date: 2015-12-18 13:34+0000\n"
 "Last-Translator: redtide <redtid3@gmail.com>\n"
 "Language-Team: Italian (http://www.transifex.com/etlegacy/etlegacy/language/it/)\n"
 "MIME-Version: 1.0\n"
@@ -187,15 +187,15 @@ msgstr "Return to Castle Wolfenstein è stato sviluppato da Gray Matter Studios 
 
 #: etmain/ui/credits_additional.menu:227
 msgid "We would like to thank both developers for their help and support"
-msgstr ""
+msgstr "Vorremmo ringraziare gli sviluppatori per il loro aiuto e supporto"
 
 #: etmain/ui/credits_additional.menu:228
 msgid "during the development of Wolfenstein: Enemy Territory."
-msgstr ""
+msgstr "durante lo sviluppo di Wolfenstein: Enemy Territory."
 
 #: etmain/ui/credits_additional.menu:229
 msgid "Original Soundtrack by Bill Brown."
-msgstr ""
+msgstr "Colonna Sonora Originale di Bill Brown."
 
 #: etmain/ui/credits_etlegacy.menu:66 etmain/ui/credits_quit.menu:62
 msgid "DEVELOPED BY ET: LEGACY TEAM"
@@ -207,23 +207,23 @@ msgstr "^1PROGRAMMAZIONE"
 
 #: etmain/ui/credits_etlegacy.menu:98
 msgid "Project founder, coding & management"
-msgstr ""
+msgstr "Fondatore, programmatore e amministratore"
 
 #: etmain/ui/credits_etlegacy.menu:100
 msgid "Coding, mod development & bad boy"
-msgstr ""
+msgstr "Programmatore, sviluppatore mod e cattivo ragazzo"
 
 #: etmain/ui/credits_etlegacy.menu:102
 msgid "Main windows coder & renderer"
-msgstr ""
+msgstr "Programmatore finestre principali e renderer"
 
 #: etmain/ui/credits_etlegacy.menu:104
 msgid "Website, coding & scripts"
-msgstr ""
+msgstr "Sito web, programmatore e scripting"
 
 #: etmain/ui/credits_etlegacy.menu:106
 msgid "Coding, mod development"
-msgstr ""
+msgstr "Programmatore, sviluppatore mod"
 
 #: etmain/ui/credits_etlegacy.menu:113
 msgid "^1PORTS"
@@ -242,7 +242,7 @@ msgid ""
 "Many thanks to Splash Damage for their release of the source code, ioWolfET "
 "& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for"
 " their inspirations."
-msgstr ""
+msgstr "Si ringrazia la Splash Damage per il rilascio del codice sorgente, ioWolfET e raedwulf-et (specialmente Ralph Eastwood) per la base del nostro codice e ioQuake3 per l'ispirazione."
 
 #: etmain/ui/credits_etlegacy.menu:159 etmain/ui/credits_halloffame.menu:85
 msgid "^1CONTRIBUTORS"
@@ -267,7 +267,7 @@ msgstr "ALBO D'ORO"
 
 #: etmain/ui/credits_et260.menu:66
 msgid "ET 2.60 UPDATE"
-msgstr ""
+msgstr "AGGIORNAMENTO ET 2.60"
 
 #: etmain/ui/credits_et260.menu:86
 msgid "ET PRO DEVELOPMENT TEAM"
@@ -293,7 +293,7 @@ msgstr "ALBO D'ORO ET: LEGACY"
 
 #: etmain/ui/credits_halloffame.menu:98
 msgid "Advices, Bug reports, Patches"
-msgstr ""
+msgstr "Suggerimenti, Bug report e Patch"
 
 #: etmain/ui/credits_halloffame.menu:106
 msgid "^1TRANSLATIONS"
@@ -301,7 +301,7 @@ msgstr "^1TRADUZIONI"
 
 #: etmain/ui/credits_idsoftware.menu:66
 msgid "EXECUTIVE PRODUCED BY ID SOFTWARE"
-msgstr ""
+msgstr "PRODUTTORE ESECUTIVO: ID SOFTWARE"
 
 #: etmain/ui/credits_idsoftware.menu:82
 msgid "Executive Producer"
@@ -315,12 +315,12 @@ msgstr ""
 msgid ""
 "Wolfenstein: Enemy Territory is powered by id Software's Quake III Arena "
 "(TM) technology."
-msgstr ""
+msgstr "Wolfenstein: Enemy Territory è offerto da id Software's Quake III Arena (TM) technology."
 
 #: etmain/ui/credits_idsoftware.menu:88
 msgid ""
 "Production, development and technical assistance provided by id Software."
-msgstr ""
+msgstr "Produzione, sviluppo e assistenza tecnica fornite da id Software."
 
 #: etmain/ui/credits_quit.menu:84
 msgid "^1ORIGINAL DEVELOPERS"
@@ -334,7 +334,7 @@ msgid ""
 "trademarks of Id Software, Inc. in the United States and/or other countries."
 " All other trademarks and trade names are the properties of their respective"
 " owners."
-msgstr ""
+msgstr "© 2003 Id Software, Inc. Tutti i diritti sono riservati. Wolfenstein: Enemy Territory, Return to Castle Wolfenstein, il logo di Return to Castle Wolfenstein, il nome id Software, e il logo id sono marchi registrati o marchi della Id Software, Inc. negli Stati Uniti e/o altri paesi. Tutti gli altri marchi e nomi commerciali sono di proprietà dei corrispettivi proprietari."
 
 #: etmain/ui/credits_splashdamage.menu:66
 msgid "DEVELOPED BY SPLASH DAMAGE"
@@ -346,7 +346,7 @@ msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:84
 msgid "Business Director"
-msgstr ""
+msgstr "Direttore Commerciale"
 
 #: etmain/ui/credits_splashdamage.menu:91
 msgid "ART"
@@ -358,7 +358,7 @@ msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:106
 msgid "Artist / Animator"
-msgstr ""
+msgstr "Artista / Animatore"
 
 #: etmain/ui/credits_splashdamage.menu:108
 msgid "Additional Art"
@@ -416,7 +416,7 @@ msgstr ""
 
 #: etmain/ui/etlegacywebsite.menu:49
 msgid "ET Legacy Website"
-msgstr ""
+msgstr "Sito Web ET Legacy"
 
 #: etmain/ui/etlegacywebsite.menu:50
 msgid ""
@@ -456,7 +456,7 @@ msgstr "IMPOSTAZIONI PREDEFINITE SERVER"
 
 #: etmain/ui/hostgame_advanced_default.menu:124
 msgid "Reset server settings to default?"
-msgstr "Reimpostare la configurazione predefinita del server?"
+msgstr "Resettare la configurazione predefinita del server?"
 
 #: etmain/ui/hostgame_advanced.menu:25
 msgid "HOST GAME: ADVANCED"
@@ -513,19 +513,19 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Intermission Time:"
-msgstr ""
+msgstr "Durata Intervallo:"
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Time of intermission"
-msgstr ""
+msgstr "Durata dell'intervallo"
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Intermission Ready %:"
-msgstr ""
+msgstr "Intervallo - Pronti %:"
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Percentage of 'ready' players to start next map"
-msgstr ""
+msgstr "Percentuale di giocatori pronti per iniziare la prossima mappa"
 
 #: etmain/ui/hostgame_advanced.menu:41
 msgid "MATCH"
@@ -533,48 +533,48 @@ msgstr "PARTITA"
 
 #: etmain/ui/hostgame_advanced.menu:42
 msgid "Wait for Ready:"
-msgstr ""
+msgstr "Attendere:"
 
 #: etmain/ui/hostgame_advanced.menu:42
 msgid ""
 "Whether the server should require players to be ready before a match can "
 "start"
-msgstr ""
+msgstr "Imposta se attendere che tutti i giocatori siano pronti prima di iniziare una partita "
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid "Minimum Players:"
-msgstr ""
+msgstr "Minimo Giocatori:"
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid ""
 "Specifies the minimum number of players required before a match can start"
-msgstr ""
+msgstr "Specifica il numero minimo di giocatori richiesto per iniziare una partita"
 
 #: etmain/ui/hostgame_advanced.menu:44
 msgid "Ready percentage:"
-msgstr ""
+msgstr "Percentuale Pronti:"
 
 #: etmain/ui/hostgame_advanced.menu:44
 msgid ""
 "Specifies the minimum percentage of players that must hit their ready key "
 "before a match can start"
-msgstr ""
+msgstr "Specifica la percentuale minima di giocatori che abbiano premuto il tasto 'Pronto' prima di iniziare una partita"
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Allow Late Joins:"
-msgstr ""
+msgstr "Ultimi Arrivati:"
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Whether a player can join a team once a match has started"
-msgstr ""
+msgstr "Specifica se un giocatore può aggregarsi a un team dopo l'inizio di una partita"
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Mute Spectators:"
-msgstr ""
+msgstr "Spettatori Silenziosi:"
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Whether spectators are muted"
-msgstr ""
+msgstr "Specifica se gli spettatori possano comunicare"
 
 #: etmain/ui/hostgame_advanced.menu:47 etmain/ui/hostgame_advanced.menu:95
 #: etmain/ui/ingame_vote_misc.menu:61
@@ -601,21 +601,21 @@ msgstr "Se puoi ferire i giocatori durante il periodo di riscaldamento della par
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Max Players Per Team:"
-msgstr ""
+msgstr "Giocatori Per Team:"
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Specifies the maximum number of players per team"
-msgstr ""
+msgstr "Specifica il numero massimo di giocatori per team"
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid "Disable Team Controls:"
-msgstr ""
+msgstr "Controlli Team:"
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid ""
 "Whether players can issue team commands (lock team/spectators, readyteam, "
 "etc.)"
-msgstr ""
+msgstr "Specifica se i giocatori possano usare i comandi del team (blocca team/spettatori, team pronto ecc.)"
 
 #: etmain/ui/hostgame_advanced.menu:50
 msgid "Warmup Duration:"
@@ -627,17 +627,17 @@ msgstr "La durata del riscaldamento prima dell'inizio della partita"
 
 #: etmain/ui/hostgame_advanced.menu:51
 msgid "Maximum Complaints:"
-msgstr ""
+msgstr "Massimo Reclami:"
 
 #: etmain/ui/hostgame_advanced.menu:51
 msgid ""
 "The maximum number of complaints a player may receive before being kicked "
 "from a server"
-msgstr ""
+msgstr "Il numero massimo di reclami che un giocatore può ricevere prima di essere cacciato dal server"
 
 #: etmain/ui/hostgame_advanced.menu:52
 msgid "Maximum Complainees:"
-msgstr ""
+msgstr "Massimo Reclami Unici:"
 
 #: etmain/ui/hostgame_advanced.menu:52
 #: etmain/ui/options_customise_game.menu:49
@@ -664,7 +664,7 @@ msgstr "Disattivo"
 msgid ""
 "The number of unique complaints a player may receive before being kicked "
 "from a server"
-msgstr ""
+msgstr "Il numero di reclami unici che un giocatore possa ricevere prima di essere cacciato dal server"
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Map Time Limit:"
@@ -672,39 +672,39 @@ msgstr "Limite Durata Mappa:"
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Override the default time limit"
-msgstr ""
+msgstr "Scavalca il limite di tempo predefinito"
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Allied Spawn Time:"
-msgstr ""
+msgstr "Tempo Spawn Allied:"
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Override the default Allied spawn time"
-msgstr ""
+msgstr "Imposta il tempo per rientrare in gioco nella squadra Allied"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Axis Spawn Time:"
-msgstr ""
+msgstr "Tempo Spawn Axis:"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Override the default Axis spawn time"
-msgstr ""
+msgstr "Imposta il tempo per rientrare in gioco nella squadra Axis"
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Allied Max Lives:"
-msgstr ""
+msgstr "Vite Allied:"
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Specify the number of Allied lives in a max lives game"
-msgstr ""
+msgstr "Specifica il numero di vite per giocatore in un gioco con limite assegnato alla squadra Allied"
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Axis Max Lives:"
-msgstr ""
+msgstr "Vite Axis:"
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Specify the number of Axis lives in a max lives game"
-msgstr ""
+msgstr "Specifica il numero di vite per giocatore in un gioco con limite assegnato alla squadra Axis"
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid "Stopwatch Round-Type:"
@@ -718,53 +718,53 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:61
 msgid "LAST MAN STANDING"
-msgstr ""
+msgstr "LAST MAN STANDING"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "LMS Rounds Per Match:"
-msgstr ""
+msgstr "LMS Turni Per Partita:"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "Override the default LMS rounds per match"
-msgstr ""
+msgstr "Imposta il numero di turni per partita in un gioco LMS"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "LMS Matches Per Map:"
-msgstr ""
+msgstr "LMS Partite Per Mappa:"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "Override the default LMS matches (comprising of rounds) per map"
-msgstr ""
+msgstr "Imposta il numero di partite per ogni mappa in un gioco LMS"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "LMS Spectate Team Only:"
-msgstr ""
+msgstr "LMS Segui Solo Team:"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "Stops players spectating the enemy team"
-msgstr ""
+msgstr "Impedisce i giocatori di seguire da spettatori il team nemico"
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "LMS Locked Teams:"
-msgstr ""
+msgstr "LMS Blocco Team:"
 
 #: etmain/ui/hostgame_advanced.menu:66
 msgid "Stops players being able to switch teams"
-msgstr ""
+msgstr "Impedisce ai giocatori di cambiare team"
 
 #: etmain/ui/hostgame_advanced.menu:69
 msgid "ADMIN"
-msgstr "AMMINISTRATORE"
+msgstr "AMMINISTRAZIONE"
 
 #: etmain/ui/hostgame_advanced.menu:70
 msgid "Pure Server:"
-msgstr ""
+msgstr "Server Puro:"
 
 #: etmain/ui/hostgame_advanced.menu:70
 msgid ""
 "Limits game content to that contained in PK3 files on both the client and "
 "server with matching CRCs"
-msgstr ""
+msgstr "Impone che i pacchetti PK3 coincidano tra client e server"
 
 #: etmain/ui/hostgame_advanced.menu:71 etmain/ui/hostgame.menu:44
 #: etmain/ui/popup_password.menu:84
@@ -773,17 +773,17 @@ msgstr "Password:"
 
 #: etmain/ui/hostgame_advanced.menu:71
 msgid "Sets the password required for players to join the server"
-msgstr ""
+msgstr "Imposta la password richiesta ai giocatori per entrare nel server"
 
 #: etmain/ui/hostgame_advanced.menu:72
 msgid "Referee Password:"
-msgstr ""
+msgstr "Password Arbitro:"
 
 #: etmain/ui/hostgame_advanced.menu:72
 msgid ""
 "Password to utilize the \"ref\" command for match control and remote game "
 "administration"
-msgstr ""
+msgstr "Password richiesta per utilizzare il comando \"ref\" per il controllo e amministrazione remota del gioco"
 
 #: etmain/ui/hostgame_advanced.menu:73
 msgid "RCON Password:"
@@ -793,7 +793,7 @@ msgstr "RCON Password:"
 msgid ""
 "Password to utilize the remote game server console (very powerful, so keep "
 "this password safe)"
-msgstr ""
+msgstr "Password richiesta per utilizzare la console remota del server (importante, tenere la password al sicuro)"
 
 #: etmain/ui/hostgame_advanced.menu:76
 msgid "VOTING"
@@ -801,19 +801,19 @@ msgstr "VOTAZIONI"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Max Votes per Player:"
-msgstr ""
+msgstr "Voti per Giocatore:"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Specifies the maximum number of votes per player per match"
-msgstr ""
+msgstr "Specifica il numero massimo di voti per giocatore per partita"
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Successful voting:"
-msgstr ""
+msgstr "Successo votazione:"
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Specifies the minimum percentage required for a vote to pass"
-msgstr ""
+msgstr "Specifica la percentuale minima richiesta per far passare un voto"
 
 #: etmain/ui/hostgame_advanced.menu:80
 msgid "ALLOW VOTES"
@@ -821,11 +821,11 @@ msgstr "VOTAZIONI AMMESSE"
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Game config:"
-msgstr ""
+msgstr "Imposta Gioco:"
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Allow players to vote for game config"
-msgstr ""
+msgstr "Permette ai giocatori di votare per le impostazioni di gioco"
 
 #: etmain/ui/hostgame_advanced.menu:82 etmain/ui/hostgame.menu:39
 #: etmain/ui/ingame_vote_misc.menu:78
@@ -835,15 +835,15 @@ msgstr "Tipo Gioco:"
 
 #: etmain/ui/hostgame_advanced.menu:82
 msgid "Allow players to vote for a change in game type"
-msgstr ""
+msgstr "Permette ai giocatori di votare per cambiare il tipo di gioco"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Player Kick:"
-msgstr ""
+msgstr "Espulsione:"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Allow players to vote for other players to be kicked"
-msgstr ""
+msgstr "Permette ai giocatori di votare per cacciare altri giocatori"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Map:"
@@ -851,15 +851,15 @@ msgstr "Mappa:"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Allow players to vote for a different campaign or map"
-msgstr ""
+msgstr "Permette ai giocatori di votare per una compagnia o mappa diversa"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Match Reset:"
-msgstr ""
+msgstr "Resetta Partita:"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Allow players to vote for the match to be reset"
-msgstr ""
+msgstr "Permette ai giocatori di votare per resettare una partita"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Mute Spects:"
@@ -879,19 +879,19 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Balanced Teams:"
-msgstr ""
+msgstr "Bilanciamento:"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Allow players to vote for enforced team balance"
-msgstr ""
+msgstr "Permette i giocatori di votare per imporre il bilanciamento dei team"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Referee:"
-msgstr ""
+msgstr "Arbitro:"
 
 #: etmain/ui/hostgame_advanced.menu:90
 msgid "Allow players to vote for a referee"
-msgstr ""
+msgstr "Permette i giocatori di votare per un arbitro"
 
 #: etmain/ui/hostgame_advanced.menu:91
 msgid "XP Shuffle:"
@@ -903,11 +903,11 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Swap Teams:"
-msgstr ""
+msgstr "Scambio Team:"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Allow players to vote for teams to swap sides"
-msgstr ""
+msgstr "Permette ai giocatori di scambiarsi di squadra"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Friendly Fire:"
@@ -973,11 +973,11 @@ msgstr "SCARICAMENTO"
 
 #: etmain/ui/hostgame_advanced.menu:158
 msgid "Client Downloads:"
-msgstr ""
+msgstr "Scaricamenti:"
 
 #: etmain/ui/hostgame_advanced.menu:158
 msgid "Allows players to download missing files from the server"
-msgstr ""
+msgstr "Permette ai giocatori di scaricare i file mancanti dal server"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid "Maximum Download Rate:"
@@ -991,23 +991,23 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "FTP/HTTP Redirects:"
-msgstr "Reindirizzamento FTP/HTTP:"
+msgstr "Reindirizz. FTP/HTTP:"
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "Redirects players with missing files to another server"
-msgstr ""
+msgstr "Redirige i giocatori con file mancanti su un altro server"
 
 #: etmain/ui/hostgame_advanced.menu:161
 msgid "Base URL:"
-msgstr ""
+msgstr "URL Base:"
 
 #: etmain/ui/hostgame_advanced.menu:161
 msgid "Used to build the URL given to clients for download"
-msgstr ""
+msgstr "Serve per creare l'indirizzo URL per lo scaricamento da parte dei client"
 
 #: etmain/ui/hostgame_advanced.menu:165
 msgid "EXTENDED"
-msgstr ""
+msgstr "ALTRO"
 
 #: etmain/ui/hostgame_advanced.menu:166 etmain/ui/hostgame_extended.menu:37
 #: etmain/ui/options_controls.menu:122
@@ -1104,7 +1104,7 @@ msgstr "Compagnia"
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 src/cgame/cg_loadpanel.c:261
 msgid "Last Man Standing"
-msgstr ""
+msgstr "Last Man Standing"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
@@ -1115,33 +1115,33 @@ msgstr "Mappa Votata"
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77
 msgid "Single-Map Objective"
-msgstr ""
+msgstr "Obiettivo Mappa Singola"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
 #: src/cgame/cg_loadpanel.c:257
 msgid "Stopwatch"
-msgstr ""
+msgstr "Stopwatch"
 
 #: etmain/ui/hostgame.menu:39
 msgid "Click to specify the type of game to load"
-msgstr ""
+msgstr "Specifica il tipo di gioco da caricare"
 
 #: etmain/ui/hostgame.menu:40
 msgid "Maximum Players:"
-msgstr ""
+msgstr "Max Giocatori:"
 
 #: etmain/ui/hostgame.menu:40
 msgid "Maximum # of players that can connect to the server"
-msgstr ""
+msgstr "Numero massimo di giocatori che si possono collegare al server"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Auto-Configure Server:"
-msgstr ""
+msgstr "Server Auto-Configurato:"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Competition Settings"
-msgstr ""
+msgstr "Opzioni Competizione"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Public Settings"
@@ -1149,7 +1149,7 @@ msgstr "Impostazioni Pubbliche"
 
 #: etmain/ui/hostgame.menu:42
 msgid "Server automatically configures it self to specified default settings"
-msgstr ""
+msgstr "Il server si configura automaticamente alle impostazioni predefinite"
 
 #: etmain/ui/hostgame.menu:43
 msgid "Dedicated Server:"
@@ -1191,25 +1191,25 @@ msgstr "Anti-Lag"
 
 #: etmain/ui/hostgame.menu:71
 msgid "Enables modem-friendly server support"
-msgstr ""
+msgstr "Abilita supporto per connessioni lente (modem)"
 
 #: etmain/ui/hostgame.menu:85
 msgid "Max Lives"
-msgstr ""
+msgstr "Max Vite"
 
 #: etmain/ui/hostgame.menu:86
 msgid "Limits the number of player lives per round"
-msgstr ""
+msgstr "Limita il numero di vite del giocatore per turno"
 
 #: etmain/ui/hostgame.menu:97
 msgid "Weapon Restrictions"
-msgstr ""
+msgstr "Restrizione Armi"
 
 #: etmain/ui/hostgame.menu:98
 msgid ""
 "Restricts the number of weapons available to players to a percentage of the "
 "team size to reduce spam"
-msgstr ""
+msgstr "Limita il numero di armi disponibili ai giocatori a una percentuale della grandezza del team per limitarne l'abuso"
 
 #: etmain/ui/hostgame.menu:109
 msgid "Balanced Teams"
@@ -1264,7 +1264,7 @@ msgstr "VOTA"
 
 #: etmain/ui/ingame_main.menu:39 etmain/ui/ingame_vote.menu:53
 msgid "REFEREE"
-msgstr ""
+msgstr "ARBITRO"
 
 #: etmain/ui/ingame_main.menu:40 etmain/ui/ingame_vote.menu:71
 msgid "RCON"
@@ -1341,7 +1341,7 @@ msgstr "AGGIUNGI AI FAVORITI"
 
 #: etmain/ui/ingame_tapoutlms.menu:49 etmain/ui/ingame_tapout.menu:49
 msgid "RESPAWNING"
-msgstr ""
+msgstr "RESPAWNING"
 
 #: etmain/ui/ingame_tapoutlms.menu:50
 msgid ""
@@ -2447,7 +2447,7 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:28 etmain/ui/options.menu:33
 #: etmain/ui/viewreplay.menu:62
 msgid "VIEW"
-msgstr "RIPRODUCI"
+msgstr "VISUALIZZA"
 
 #: etmain/ui/options_customise_hud.menu:32
 msgid "HUD DISPLAY"
@@ -3609,7 +3609,7 @@ msgstr "Obiettivo"
 
 #: etmain/ui/playonline.menu:83
 msgid "LMS"
-msgstr ""
+msgstr "LMS"
 
 #: etmain/ui/playonline.menu:83
 msgid "Displays only game servers offering this Game Type"
@@ -6724,85 +6724,85 @@ msgid ""
 msgstr ""
 
 msgid "Private"
-msgstr ""
+msgstr "Private"
 
 msgid "Private 1st Class"
-msgstr ""
+msgstr "Private 1st Class"
 
 msgid "Corporal"
-msgstr ""
+msgstr "Corporal"
 
 msgid "Sergeant"
-msgstr ""
+msgstr "Sergeant"
 
 msgid "Lieutenant"
-msgstr ""
+msgstr "Lieutenant"
 
 msgid "Captain"
-msgstr ""
+msgstr "Captain"
 
 msgid "Major"
-msgstr ""
+msgstr "Major"
 
 msgid "Colonel"
-msgstr ""
+msgstr "Colonel"
 
 msgid "Brigadier General"
-msgstr ""
+msgstr "Brigadier General"
 
 msgid "Lieutenant General"
-msgstr ""
+msgstr "Lieutenant General"
 
 msgid "General"
-msgstr ""
+msgstr "General"
 
 msgid "Schutze"
-msgstr ""
+msgstr "Schutze"
 
 msgid "Oberschutze"
-msgstr ""
+msgstr "Oberschutze"
 
 msgid "Gefreiter"
-msgstr ""
+msgstr "Gefreiter"
 
 msgid "Feldwebel"
-msgstr ""
+msgstr "Feldwebel"
 
 msgid "Leutnant"
-msgstr ""
+msgstr "Leutnant"
 
 msgid "Hauptmann"
-msgstr ""
+msgstr "Hauptmann"
 
 msgid "Oberst"
-msgstr ""
+msgstr "Oberst"
 
 msgid "Generalmajor"
-msgstr ""
+msgstr "Generalmajor"
 
 msgid "Generalleutnant"
-msgstr ""
+msgstr "Generalleutnant"
 
 msgid "Battle Sense"
-msgstr ""
+msgstr "Tattica"
 
 msgid "Engineering"
-msgstr ""
+msgstr "Ingegneria"
 
 msgid "First Aid"
-msgstr ""
+msgstr "Primo Soccorso"
 
 msgid "Signals"
-msgstr ""
+msgstr "Segnali"
 
 msgid "Light Weapons"
-msgstr ""
+msgstr "Armi Leggere"
 
 msgid "Heavy Weapons"
-msgstr ""
+msgstr "Armi Pesanti"
 
 msgid "Covert Ops"
-msgstr ""
+msgstr "Op. Clandestine"
 
 msgid "Fire Mission: ^3Firing for effect!"
 msgstr ""
@@ -6814,10 +6814,10 @@ msgid "Fire Mission: ^3Aborting, can't see target."
 msgstr ""
 
 msgid "I need a Medic!"
-msgstr ""
+msgstr "Serve un Medico!"
 
 msgid "New version available. Do you want to update now?"
-msgstr ""
+msgstr "Nuova versione disponibile. Vuoi aggiornare ora?"
 
 msgid "20 Med Health"
 msgstr ""
@@ -6833,40 +6833,40 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:1830
 msgid "Join a Fireteam?"
-msgstr ""
+msgstr "Aggregarsi a un Fireteam?"
 
 msgid "Apply"
-msgstr ""
+msgstr "Applica"
 
 msgid "Create"
-msgstr ""
+msgstr "Crea"
 
 msgid "Attack"
-msgstr ""
+msgstr "Attacco"
 
 msgid "Fall Back"
-msgstr ""
+msgstr "Recedere"
 
 msgid "Disband"
-msgstr ""
+msgstr "Disperdere"
 
 msgid "Leave"
-msgstr ""
+msgstr "Lascia"
 
 msgid "Invite"
-msgstr ""
+msgstr "Invita"
 
 msgid "Change privacy"
-msgstr ""
+msgstr "Cambia privacy"
 
 msgid "Kick"
-msgstr ""
+msgstr "Caccia"
 
 msgid "Warn"
-msgstr ""
+msgstr "Avvisa"
 
 msgid "Change admin"
-msgstr ""
+msgstr "Cambia amministratore"
 
 msgid "Highest Fragger"
 msgstr ""
@@ -6881,13 +6881,13 @@ msgid "Most Highly Decorated"
 msgstr ""
 
 msgid "Highest Battle Sense"
-msgstr ""
+msgstr "Migliore Tattica"
 
 msgid "Best Engineer"
-msgstr ""
+msgstr "Migliore Ing."
 
 msgid "Best Medic"
-msgstr ""
+msgstr "Migliore Medico"
 
 msgid "Best Field Ops"
 msgstr ""
@@ -6896,13 +6896,13 @@ msgid "Highest Light Weapons"
 msgstr ""
 
 msgid "Best Soldier"
-msgstr ""
+msgstr "Migliore Soldato"
 
 msgid "Best Covert Ops"
 msgstr ""
 
 msgid "Highest Accuracy"
-msgstr ""
+msgstr "Massima Precisione"
 
 msgid "I Ain't Got No Friends Award"
 msgstr ""
@@ -7033,23 +7033,23 @@ msgid "Player must be on a team to be %s.\n"
 msgstr ""
 
 msgid "^7%s^7 was %s."
-msgstr ""
+msgstr "^7%s^7 era %s."
 
 #: etmain/ui/options_system.menu:48
 msgid "System Sound Control:"
-msgstr ""
+msgstr "Sistema Controllo Audio:"
 
 #: etmain/ui/options_system.menu:48
 msgid "Base"
-msgstr ""
+msgstr "Base"
 
 #: etmain/ui/options_system.menu:48
 msgid "OpenAL"
-msgstr ""
+msgstr "OpenAL"
 
 #: etmain/ui/options_system.menu:48
 msgid "Set the system sound control"
-msgstr ""
+msgstr "Imposta il tipo di controllo audio del sistema"
 
 msgid "No can do!"
 msgstr ""
