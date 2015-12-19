@@ -1992,4 +1992,8 @@ typedef struct demoPlayInfo_s
 #define NUMARGS(...)  (sizeof((int[]) { 0, ## __VA_ARGS__ }) / sizeof(int) - 1)
 #endif
 
+typedef int(*cmpFunc_t)(const void *a, const void *b);
+
+void *Q_LinearSearch(const void *key, const void *ptr, size_t count, size_t size, cmpFunc_t cmp);
+
 #endif  // #ifndef INCLUDE_Q_SHARED_H
