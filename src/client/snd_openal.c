@@ -2538,9 +2538,15 @@ static float S_AL_StartStreamingSoundEx(const char *intro, const char *loop, int
 
 	// Allocate a ssSource
 	ss = S_AL_SSSourceGet();
+
 	if (music)
 	{
 		ssMusic = ss;
+	}
+
+	if (ss == -1)
+	{
+		return 0.0f
 	}
 
 	if (ssSourceHandle[ss] == -1)
