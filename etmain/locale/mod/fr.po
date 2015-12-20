@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-12-16 12:24+0000\n"
-"Last-Translator: Aranud <aranud66@live.fr>\n"
+"PO-Revision-Date: 2015-12-22 11:10+0000\n"
+"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: French (http://www.transifex.com/etlegacy/etlegacy/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -66,7 +66,7 @@ msgstr "Chef de Section QA"
 
 #: etmain/ui/credits_activision.menu:104
 msgid "Testers:"
-msgstr "Testeurs :"
+msgstr "Testeurs:"
 
 #: etmain/ui/credits_activision.menu:110
 msgid "Network"
@@ -470,7 +470,7 @@ msgstr "GÉNÉRAL"
 
 #: etmain/ui/hostgame_advanced.menu:32
 msgid "Minimum Ping:"
-msgstr "Latence minimale :"
+msgstr "Latence minimale:"
 
 #: etmain/ui/hostgame_advanced.menu:32
 msgid "Setting the minimum ping can be used to exclude LPBs (0 = No Minimum)"
@@ -478,7 +478,7 @@ msgstr "Définir la latence minimale permet d'exclure les personnes ayant une la
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Maximum Ping:"
-msgstr "Latence maximal :"
+msgstr "Latence maximal:"
 
 #: etmain/ui/hostgame_advanced.menu:33
 msgid "Setting the maximum ping can be used to exclude HPBs (0 = No Maximum)"
@@ -724,7 +724,7 @@ msgstr "DERNIER HOMME EN VIE"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "LMS Rounds Per Match:"
-msgstr "Manches par partie en LMS :"
+msgstr "Manches par partie en LMS:"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "Override the default LMS rounds per match"
@@ -732,7 +732,7 @@ msgstr "Force le nombre de manches de LMS par partie"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "LMS Matches Per Map:"
-msgstr "Parties par carte en LMS :"
+msgstr "Parties par carte en LMS:"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "Override the default LMS matches (comprising of rounds) per map"
@@ -760,7 +760,7 @@ msgstr "ADMINISTRATION"
 
 #: etmain/ui/hostgame_advanced.menu:70
 msgid "Pure Server:"
-msgstr "Serveur « pur » :"
+msgstr "Serveur \"pur\":"
 
 #: etmain/ui/hostgame_advanced.menu:70
 msgid ""
@@ -779,7 +779,7 @@ msgstr "Définit le mot de passe requis pour se connecter au serveur"
 
 #: etmain/ui/hostgame_advanced.menu:72
 msgid "Referee Password:"
-msgstr "Mot de passe arbitre :"
+msgstr "Mot de passe arbitre:"
 
 #: etmain/ui/hostgame_advanced.menu:72
 msgid ""
@@ -789,7 +789,7 @@ msgstr "Mot de passe à utiliser afin de pouvoir se servir de la commande « ref
 
 #: etmain/ui/hostgame_advanced.menu:73
 msgid "RCON Password:"
-msgstr "Mot de passe RCON :"
+msgstr "Mot de passe RCON:"
 
 #: etmain/ui/hostgame_advanced.menu:73
 msgid ""
@@ -803,7 +803,7 @@ msgstr "VOTES"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Max Votes per Player:"
-msgstr "Votes maximum par joueur :"
+msgstr "Votes maximum par joueur:"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Specifies the maximum number of votes per player per match"
@@ -811,7 +811,7 @@ msgstr "Définit le nombre maximum de votes qu'un joueur peut effectuer lors d'u
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Successful voting:"
-msgstr "Majorité qualifiée :"
+msgstr "Majorité qualifiée:"
 
 #: etmain/ui/hostgame_advanced.menu:78
 msgid "Specifies the minimum percentage required for a vote to pass"
@@ -823,7 +823,7 @@ msgstr "PERMETTRE LES VOTES"
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Game config:"
-msgstr "Configuration du jeu :"
+msgstr "Configuration du jeu:"
 
 #: etmain/ui/hostgame_advanced.menu:81
 msgid "Allow players to vote for game config"
@@ -833,7 +833,7 @@ msgstr "Autoriser les joueurs à voter pour la configuration du jeu"
 #: etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
 msgid "Game Type:"
-msgstr "Type de jeu :"
+msgstr "Type de jeu:"
 
 #: etmain/ui/hostgame_advanced.menu:82
 msgid "Allow players to vote for a change in game type"
@@ -841,7 +841,7 @@ msgstr "Autoriser les joueurs à voter afin de changer le mode de jeu"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Player Kick:"
-msgstr "Expulser un joueur :"
+msgstr "Expulser un joueur:"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Allow players to vote for other players to be kicked"
@@ -849,7 +849,7 @@ msgstr "Autoriser les joueurs à voter pour expluser d'autres joueurs"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Map:"
-msgstr "Carte :"
+msgstr "Carte:"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Allow players to vote for a different campaign or map"
@@ -865,7 +865,7 @@ msgstr "Autoriser les joueurs à voter pour une réinitialisation de la manche"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Mute Spects:"
-msgstr "Rendre les spectateurs muets :"
+msgstr "Rendre les spectateurs muets:"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Allow players to vote for spectators to be muted"
@@ -873,7 +873,7 @@ msgstr "Autoriser les joueurs à voter afin de rendre les spectateurs muets"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Next Map:"
-msgstr "Carte suivante :"
+msgstr "Carte suivante:"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Allow players to vote for the next campaign or map"
@@ -881,7 +881,7 @@ msgstr "Autoriser les joueurs à voter pour la prochaine campagne ou cart"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Balanced Teams:"
-msgstr "Équipes équilibrées :"
+msgstr "Équipes équilibrées:"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Allow players to vote for enforced team balance"
@@ -905,7 +905,7 @@ msgstr "Autoriser les joueurs à voter pour mélanger les équipes"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Swap Teams:"
-msgstr "Échanger les équipes :"
+msgstr "Échanger les équipes:"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Allow players to vote for teams to swap sides"
@@ -945,7 +945,7 @@ msgstr "MESSAGE DU JOUR"
 
 #: etmain/ui/hostgame_advanced.menu:110
 msgid "Line 1:"
-msgstr "Ligne 1 :"
+msgstr "Ligne 1:"
 
 #: etmain/ui/hostgame_advanced.menu:110 etmain/ui/hostgame_advanced.menu:121
 #: etmain/ui/hostgame_advanced.menu:132 etmain/ui/hostgame_advanced.menu:143
@@ -955,19 +955,19 @@ msgstr "Définit le message que les joueurs verront en se connectant au serveur"
 
 #: etmain/ui/hostgame_advanced.menu:121
 msgid "Line 2:"
-msgstr "Ligne 2 :"
+msgstr "Ligne 2:"
 
 #: etmain/ui/hostgame_advanced.menu:132
 msgid "Line 3:"
-msgstr "Ligne 3 :"
+msgstr "Ligne 3:"
 
 #: etmain/ui/hostgame_advanced.menu:143
 msgid "Line 4:"
-msgstr "Ligne 4 :"
+msgstr "Ligne 4:"
 
 #: etmain/ui/hostgame_advanced.menu:154
 msgid "Line 5:"
-msgstr "Ligne 5 :"
+msgstr "Ligne 5:"
 
 #: etmain/ui/hostgame_advanced.menu:157
 msgid "DOWNLOAD"
@@ -983,7 +983,7 @@ msgstr "Autoriser les joueurs à télécharger les fichiers manquants depuis le 
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid "Maximum Download Rate:"
-msgstr "Vitesse de téléchargement maximale :"
+msgstr "Vitesse de téléchargement maximale:"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid ""
@@ -1001,7 +1001,7 @@ msgstr "Rediriger les joueurs avec des fichiers manquants vers un autre serveur"
 
 #: etmain/ui/hostgame_advanced.menu:161
 msgid "Base URL:"
-msgstr "URL de base :"
+msgstr "URL de base:"
 
 #: etmain/ui/hostgame_advanced.menu:161
 msgid "Used to build the URL given to clients for download"
@@ -1046,7 +1046,7 @@ msgstr "un serveur dédié ?"
 
 #: etmain/ui/hostgame_extended.menu:25
 msgid "HOST GAME: EXTENDED"
-msgstr "HÉBERGER UNE PARTIE : ÉTENDU"
+msgstr "HÉBERGER UNE PARTIE: ÉTENDU"
 
 #: etmain/ui/hostgame_extended.menu:31 etmain/ui/ingame_vote.menu:86
 #: etmain/ui/ingame_vote.menu:87 etmain/ui/ingame_vote_misc.menu:38
@@ -1057,7 +1057,7 @@ msgstr "DIVERS"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Country Flags:"
-msgstr "Drapeaux des pays :"
+msgstr "Drapeaux des pays:"
 
 #: etmain/ui/hostgame_extended.menu:32 etmain/ui/hostgame.menu:42
 #: etmain/ui/hostgame.menu:43 etmain/ui/options_customise_game.menu:42
@@ -1253,7 +1253,7 @@ msgstr "Voulez-vous vous déconnecter"
 
 #: etmain/ui/ingame_disconnect.menu:52
 msgid "from the server?"
-msgstr "de ce serveur ?"
+msgstr "de ce serveur?"
 
 #: etmain/ui/ingame_main.menu:31 etmain/ui/main.menu:101
 msgid "MENU"
@@ -4677,7 +4677,7 @@ msgstr "OUI(%s):%i, NON(%s):%i"
 #: src/cgame/cg_draw.c:1920
 #, c-format
 msgid "YOU VOTED ON: %s"
-msgstr "TU AS VOTÉ: %s"
+msgstr "VOUS AVEZ VOTÉ: %s"
 
 #: src/cgame/cg_draw.c:1925
 #, c-format
@@ -4858,7 +4858,7 @@ msgstr "^3ECHAUFFEMENT:^7 la partie commence dans"
 
 #: src/cgame/cg_draw.c:2481
 msgid "^3PREPARE TO FIGHT!\n"
-msgstr "^3PRÉPARE-TOI À COMBATTRE !\n"
+msgstr "^3PRÉPAREZ-VOUS À COMBATTRE !\n"
 
 #: src/cgame/cg_draw.c:2504 src/cgame/cg_scoreboard.c:242
 msgid "STOPWATCH ROUND"
@@ -4884,11 +4884,11 @@ msgstr "Vous avez été échangé(e) avec"
 
 #: src/cgame/cg_event.c:275
 msgid "You killed ^1TEAMMATE^7"
-msgstr "Tu as tué ton ^1COÉQUIPIER^7"
+msgstr "Vous avez tué votre ^1COÉQUIPIER^7"
 
 #: src/cgame/cg_event.c:280
 msgid "You killed"
-msgstr "Tu as tué"
+msgstr "Vous avez tué"
 
 #: src/cgame/cg_event.c:293
 msgid "^7swapped places with"
@@ -6724,66 +6724,6 @@ msgid ""
 "Couldn't load an official pak file; verify your installation and make sure "
 "it has been updated to the latest version."
 msgstr "Impossible de charger un fichier officiel .pak; vérifiez votre installation et assurez-vous qu'il a été mis à jour pour la dernière version."
-
-msgid "Private"
-msgstr "Soldat"
-
-msgid "Private 1st Class"
-msgstr "1er classe"
-
-msgid "Corporal"
-msgstr "Caporal"
-
-msgid "Sergeant"
-msgstr "Sergent"
-
-msgid "Lieutenant"
-msgstr "Lieutenant"
-
-msgid "Captain"
-msgstr "Capitaine"
-
-msgid "Major"
-msgstr "Major"
-
-msgid "Colonel"
-msgstr "Colonel"
-
-msgid "Brigadier General"
-msgstr "Général de Brigade"
-
-msgid "Lieutenant General"
-msgstr "Lieutenant-Général"
-
-msgid "General"
-msgstr "Général"
-
-msgid "Schutze"
-msgstr "Soldat"
-
-msgid "Oberschutze"
-msgstr "1er classe"
-
-msgid "Gefreiter"
-msgstr "Caporal"
-
-msgid "Feldwebel"
-msgstr "Sergent"
-
-msgid "Leutnant"
-msgstr "Lieutenant"
-
-msgid "Hauptmann"
-msgstr "Capitaine"
-
-msgid "Oberst"
-msgstr "Colonel"
-
-msgid "Generalmajor"
-msgstr "Major-général"
-
-msgid "Generalleutnant"
-msgstr "Lieutenant-général"
 
 msgid "Battle Sense"
 msgstr "Sens du Combat"

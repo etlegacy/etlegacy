@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-12-19 11:53+0000\n"
+"PO-Revision-Date: 2015-12-26 17:43+0000\n"
 "Last-Translator: redtide <redtid3@gmail.com>\n"
 "Language-Team: Italian (http://www.transifex.com/etlegacy/etlegacy/language/it/)\n"
 "MIME-Version: 1.0\n"
@@ -982,13 +982,13 @@ msgstr "Permette ai giocatori di scaricare i file mancanti dal server"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid "Maximum Download Rate:"
-msgstr ""
+msgstr "Velocità Max Scaricamenti:"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid ""
 "Specifies the maximum download rate from the server for players with missing"
 " files"
-msgstr ""
+msgstr "Specifica la velocità massima di scaricamento dal server per i giocatori con file mancanti"
 
 #: etmain/ui/hostgame_advanced.menu:160
 msgid "FTP/HTTP Redirects:"
@@ -1172,7 +1172,7 @@ msgstr "Specifica se il server dovrebbe essere \"dedicato\" per giocare in LAN o
 
 #: etmain/ui/hostgame.menu:44
 msgid "Password clients must set to join the server"
-msgstr ""
+msgstr "Il server richiede una password"
 
 #: etmain/ui/hostgame.menu:47
 msgid "FEATURES"
@@ -1210,7 +1210,7 @@ msgstr "Restrizione Armi"
 msgid ""
 "Restricts the number of weapons available to players to a percentage of the "
 "team size to reduce spam"
-msgstr "Limita il numero di armi disponibili ai giocatori a una percentuale della grandezza del team per limitarne l'abuso"
+msgstr "Limita il numero di armi disponibili per limitarne l'abuso"
 
 #: etmain/ui/hostgame.menu:109
 msgid "Balanced Teams"
@@ -1220,7 +1220,7 @@ msgstr "Team Bilanciati"
 msgid ""
 "Enforces balanced teams by forcing players to join the team with the lowest "
 "player count"
-msgstr ""
+msgstr "Team bilanciati forzatamente obbligando i giocatori ad unirsi al team con meno giocatori"
 
 #: etmain/ui/hostgame.menu:113
 msgid "NAME"
@@ -1362,7 +1362,7 @@ msgstr "Numero bot:"
 
 #: etmain/ui/ingame_vote_bot.menu:39
 msgid "Move skill:"
-msgstr ""
+msgstr "Abilità movimento:"
 
 #: etmain/ui/ingame_vote_bot.menu:45
 msgid "Difficulty:"
@@ -1457,12 +1457,12 @@ msgstr "PROSSIMA COMPAGNIA"
 #: etmain/ui/ingame_vote_misc.menu:46
 #: etmain/ui/ingame_vote_misc_refrcon.menu:45
 msgid "ANTI-LAG ON"
-msgstr "ANTI-LAG ATTIVO"
+msgstr "ANTI-LAG SÌ"
 
 #: etmain/ui/ingame_vote_misc.menu:47
 #: etmain/ui/ingame_vote_misc_refrcon.menu:46
 msgid "ANTI-LAG OFF"
-msgstr "ANTI-LAG INATTIVO"
+msgstr "ANTI-LAG NO"
 
 #: etmain/ui/ingame_vote_misc.menu:49
 #: etmain/ui/ingame_vote_misc_refrcon.menu:48
@@ -1487,22 +1487,22 @@ msgstr ""
 #: etmain/ui/ingame_vote_misc.menu:53
 #: etmain/ui/ingame_vote_misc_refrcon.menu:52
 msgid "FRIENDLY FIRE ON"
-msgstr "FUOCO AMICO ATTIVO"
+msgstr "FUOCO AMICO SÌ"
 
 #: etmain/ui/ingame_vote_misc.menu:54
 #: etmain/ui/ingame_vote_misc_refrcon.menu:53
 msgid "FRIENDLY FIRE OFF"
-msgstr "FUOCO AMICO INATTIVO"
+msgstr "FUOCO AMICO NO"
 
 #: etmain/ui/ingame_vote_misc.menu:55
 #: etmain/ui/ingame_vote_misc_refrcon.menu:54
 msgid "BALANCED TEAMS ON"
-msgstr "TEAM BILANCIATI ATTIVO"
+msgstr "TEAM BILANCIATI SÌ"
 
 #: etmain/ui/ingame_vote_misc.menu:56
 #: etmain/ui/ingame_vote_misc_refrcon.menu:55
 msgid "BALANCED TEAMS OFF"
-msgstr "TEAM BILANCIATI INATTIVO"
+msgstr "TEAM BILANCIATI NO"
 
 #: etmain/ui/ingame_vote_misc.menu:58
 #: etmain/ui/ingame_vote_misc_refrcon.menu:57
@@ -1555,7 +1555,7 @@ msgstr ""
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77
 msgid "Set the game type"
-msgstr ""
+msgstr "Imposta il tipo di gioco"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:80
 msgid "PAUSE"
@@ -1798,7 +1798,7 @@ msgstr "Sinistra"
 msgid ""
 "Left or Right Handed? This sets your default controls\n"
 "which you can modify later via the options menu"
-msgstr ""
+msgstr "Mano destra o sinistra? Imposta le tue opzioni predefinite\npotrai modificarle successivamente dal menu opzioni"
 
 #: etmain/ui/options_controls.menu:25 etmain/ui/options.menu:34
 msgid "CONTROLS"
@@ -1928,27 +1928,27 @@ msgstr "POP-UP"
 
 #: etmain/ui/options_controls.menu:66
 msgid "Show Scores:"
-msgstr "Mostra Punteggio:"
+msgstr "Punteggio:"
 
 #: etmain/ui/options_controls.menu:67
 msgid "Show Limbo Menu:"
-msgstr "Mostra Menu Limbo:"
+msgstr "Menu Limbo:"
 
 #: etmain/ui/options_controls.menu:68
 msgid "Show Command Map:"
-msgstr ""
+msgstr "Mappa Obiettivi:"
 
 #: etmain/ui/options_controls.menu:69
 msgid "Compass Map Zoom In:"
-msgstr ""
+msgstr "Mappa Bussola Zoom In:"
 
 #: etmain/ui/options_controls.menu:70
 msgid "Compass Map Zoom Out:"
-msgstr ""
+msgstr "Mappa Bussola Zoom Out:"
 
 #: etmain/ui/options_controls.menu:71
 msgid "Player Stats:"
-msgstr "Stat. Giocatore:"
+msgstr "Statistiche:"
 
 #: etmain/ui/options_controls.menu:72
 msgid "Top Shots:"
@@ -2008,7 +2008,7 @@ msgstr ""
 
 #: etmain/ui/options_controls.menu:93
 msgid "Slot 4 - Grenade:"
-msgstr "Slot 4 - Grenata:"
+msgstr "Slot 4 - Granata:"
 
 #: etmain/ui/options_controls.menu:94
 msgid "Slot 5 - Special 1:"
@@ -2172,15 +2172,15 @@ msgstr "Lampeggia l'icona dell'arma durante il fuoco, ricarica o cambio"
 
 #: etmain/ui/options_customise_game.menu:50
 msgid "Muzzle Flash:"
-msgstr ""
+msgstr "Esplosione Colpi:"
 
 #: etmain/ui/options_customise_game.menu:50
 msgid "Enables or disables weapon fire (muzzle flash)"
-msgstr ""
+msgstr "Se visualizzare le esplosioni del fuoco delle armi"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Bullet Tracers:"
-msgstr ""
+msgstr "Proiettili Traccianti:"
 
 #: etmain/ui/options_customise_game.menu:51
 #: etmain/ui/options_customise_game.menu:78
@@ -2194,15 +2194,15 @@ msgstr "Attivo"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Only own tracers"
-msgstr ""
+msgstr "Solo i propri"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Only others tracers"
-msgstr ""
+msgstr "Solo degli altri"
 
 #: etmain/ui/options_customise_game.menu:51
 msgid "Enable/Disable bullet tracers"
-msgstr ""
+msgstr "Abilita/Disabilita proiettili traccianti"
 
 #: etmain/ui/options_customise_game.menu:55
 msgid "SCOPE"
@@ -2210,20 +2210,20 @@ msgstr "MIRINO"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "Weapon Cycle for Zoom:"
-msgstr ""
+msgstr "Cambio Arma per Zoom:"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (normal)"
-msgstr ""
+msgstr "Attivo (normale)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid "On (reverse)"
-msgstr ""
+msgstr "Attivo (invertito)"
 
 #: etmain/ui/options_customise_game.menu:56
 msgid ""
 "Weapon switch will zoom in and out while scoped, rather than switch weapons"
-msgstr ""
+msgstr "Il cambio arma verrà invece utilizzato per lo zoom durante l'uso del mirino"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Default Zoom Level:"
@@ -2231,7 +2231,7 @@ msgstr "Livello Predefinito:"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the way Out"
-msgstr ""
+msgstr "Massimizzato"
 
 #: etmain/ui/options_customise_game.menu:57
 #: etmain/ui/options_customise_hud.menu:59
@@ -2245,11 +2245,11 @@ msgstr "Lontano"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "All the Way In"
-msgstr ""
+msgstr "Minimizzato"
 
 #: etmain/ui/options_customise_game.menu:57
 msgid "Set the default zoom level for scopes"
-msgstr ""
+msgstr "Imposta il livello di zoom predefinito"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Zoom Levels:"
@@ -2265,27 +2265,27 @@ msgstr "8 Livelli di Zoom"
 
 #: etmain/ui/options_customise_game.menu:58
 msgid "Specifies the increments you zoom by"
-msgstr ""
+msgstr "Specifica la grandezza di incremento per lo zoom"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Quick Chat Mode:"
-msgstr ""
+msgstr "Modalità Chat Rapida:"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Alpha"
-msgstr ""
+msgstr "Alfa"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Numeric"
-msgstr ""
+msgstr "Numerico"
 
 #: etmain/ui/options_customise_game.menu:63
 msgid "Use alpha or numeric keys to send radio messages"
-msgstr ""
+msgstr "Usa tasti alfa o numerici per inviare i messaggi radio"
 
 #: etmain/ui/options_customise_game.menu:64
 msgid "Chat Icon Time:"
-msgstr ""
+msgstr "Durata Icona Chat:"
 
 #: etmain/ui/options_customise_game.menu:64
 #: etmain/ui/options_customise_hud.menu:61
@@ -2316,19 +2316,19 @@ msgstr "Specifica per quanto tempo l'icona della chat rimanga sopra la testa deg
 
 #: etmain/ui/options_customise_game.menu:65
 msgid "Team chat only:"
-msgstr ""
+msgstr "Solo chat team:"
 
 #: etmain/ui/options_customise_game.menu:65
 msgid "Play only team chat in-game"
-msgstr ""
+msgstr "Utilizza la chat solo per il team"
 
 #: etmain/ui/options_customise_game.menu:66
 msgid "No voice text:"
-msgstr ""
+msgstr "No testo voce:"
 
 #: etmain/ui/options_customise_game.menu:66
 msgid "Don't show voice text in-game"
-msgstr ""
+msgstr "Non visualizzare il testo delle voci del gioco"
 
 #: etmain/ui/options_customise_game.menu:70
 msgid "SOUND"
@@ -2336,59 +2336,59 @@ msgstr "SUONO"
 
 #: etmain/ui/options_customise_game.menu:71
 msgid "Announcer:"
-msgstr ""
+msgstr "Annunciatore:"
 
 #: etmain/ui/options_customise_game.menu:71
 msgid "Enables or disables the in-game Commander"
-msgstr ""
+msgstr "Abilita o disabilita il cronista di gioco"
 
 #: etmain/ui/options_customise_game.menu:72
 msgid "No voice chat:"
-msgstr ""
+msgstr "No chat vocale:"
 
 #: etmain/ui/options_customise_game.menu:72
 msgid "Don't play voice chat in-game"
-msgstr ""
+msgstr "Non riproduce la chat vocale del gioco"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "Hitsounds:"
-msgstr ""
+msgstr "Suoni dei colpi:"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Team Hit Sound"
-msgstr ""
+msgstr "No Suono Colpo Team"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Head Hit Sound"
-msgstr ""
+msgstr "No Suono Colpo Testa"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Body Hit Sound"
-msgstr ""
+msgstr "No Suono Colpo Corpo"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "Set hit sounds"
-msgstr ""
+msgstr "Imposta suoni dei colpi"
 
 #: etmain/ui/options_customise_game.menu:78
 msgid "Complaint PopUp:"
-msgstr ""
+msgstr "Popup Reclami:"
 
 #: etmain/ui/options_customise_game.menu:78
 msgid "Display the option to file complaints about teammates who kill you"
-msgstr ""
+msgstr "Mostra l'opzione per poter inviare un reclamo ad un compagno che ti ha ucciso"
 
 #: etmain/ui/options_customise_game.menu:79
 msgid "Log Important Messages:"
-msgstr ""
+msgstr "Log Messaggi Importanti:"
 
 #: etmain/ui/options_customise_game.menu:79
 msgid "Prints important game messages to the console"
-msgstr ""
+msgstr "Stampa messaggi importanti di gioco nella console"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Auto-Action:"
-msgstr ""
+msgstr "Auto-Azione:"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo"
@@ -2404,33 +2404,33 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + SS"
-msgstr ""
+msgstr "Demo + SS"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + Stats"
-msgstr ""
+msgstr "Demo + Stats"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "SS + Stats"
-msgstr ""
+msgstr "SS + Stats"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo + SS + Stats"
-msgstr ""
+msgstr "Demo + SS + Stats"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Automatically performs actions at the start or end of a round"
-msgstr ""
+msgstr "Esegue automaticamente le azioni all'inizio o alla fine del turno"
 
 #: etmain/ui/options_customise_game.menu:81
 msgid "AutoScreenshots format:"
-msgstr ""
+msgstr "Formato AutoIstantanee:"
 
 #: etmain/ui/options_customise_game.menu:81
 msgid ""
 "Switches between .tga and .jpg picture types for the \"autoscreenshot\" "
 "command"
-msgstr ""
+msgstr "Sceglie tra i tipi di immagine .tga e .jpg per il comando \"autoistantanee\""
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Show Tool Tips:"
@@ -2438,12 +2438,12 @@ msgstr "Mostra Suggerimenti:"
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Display Tool Tips in the UI"
-msgstr ""
+msgstr "Mostra Suggerimenti nella UI"
 
 #: etmain/ui/options_customise_game.menu:1
 #: etmain/ui/wm_ftquickmessageAlt.menu:1
 msgid "ui/menudef.h"
-msgstr ""
+msgstr "ui/menudef.h"
 
 #: etmain/ui/options_customise_hud.menu:28 etmain/ui/options.menu:33
 #: etmain/ui/viewreplay.menu:62
@@ -2452,35 +2452,35 @@ msgstr "VISUALIZZA"
 
 #: etmain/ui/options_customise_hud.menu:32
 msgid "HUD DISPLAY"
-msgstr "HUD DISPLAY"
+msgstr "VISUALIZZAZIONE HUD"
 
 #: etmain/ui/options_customise_hud.menu:33
 msgid "Draw Gun:"
-msgstr ""
+msgstr "Disegna Arma:"
 
 #: etmain/ui/options_customise_hud.menu:33
 msgid "Shows gun model on-screen"
-msgstr ""
+msgstr "Mostra il modello dell'arma su schermo"
 
 #: etmain/ui/options_customise_hud.menu:34
 msgid "Show Compass:"
-msgstr ""
+msgstr "Mostra Bussola:"
 
 #: etmain/ui/options_customise_hud.menu:34
 msgid "Displays compass (with icons when near select events)"
-msgstr ""
+msgstr "Visualizza una bussola con la mappa della posizione"
 
 #: etmain/ui/options_customise_hud.menu:36
 msgid "Auto Map Zoom:"
-msgstr ""
+msgstr "Auto Zoom Mappa:"
 
 #: etmain/ui/options_customise_hud.menu:36
 msgid "Sets Zoom Level Automatically When Map Loads"
-msgstr ""
+msgstr "Imposta Automaticamente Livello Zoom All'Avvio Mappa"
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Mission Timer:"
-msgstr ""
+msgstr "Timer Missione:"
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Displays remaining mission time"
@@ -2488,27 +2488,27 @@ msgstr "Visualizza il tempo rimasto per la missone"
 
 #: etmain/ui/options_customise_hud.menu:38
 msgid "Reinforcement Timer:"
-msgstr ""
+msgstr "Timer Rientro:"
 
 #: etmain/ui/options_customise_hud.menu:38
 msgid "Displays your team's \"reinforcement\" time"
-msgstr ""
+msgstr "Visualizza il tempo per rientrare in gioco"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Cursor Hints:"
-msgstr ""
+msgstr "Anima Icona Azione:"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Size Pulse"
-msgstr ""
+msgstr "Pulsa Dimensione"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Strobe Pulse"
-msgstr ""
+msgstr "Effetto Stroboscopico"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Alpha Pulse"
-msgstr ""
+msgstr "Pulsa Trasparenza"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Solid"
@@ -2516,31 +2516,31 @@ msgstr "Solido"
 
 #: etmain/ui/options_customise_hud.menu:39
 msgid "Icon display format when near an action item"
-msgstr ""
+msgstr "Formato di visualizzazione dell'icona d'azione sugli oggetti"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Show Locations:"
-msgstr ""
+msgstr "Mostra Posizioni:"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Cordinates Only"
-msgstr ""
+msgstr "Solo Coordinate"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Names Fireteam Only"
-msgstr ""
+msgstr "Solo Nomi Fireteam"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Names Team Chat Only"
-msgstr ""
+msgstr "Solo Nomi Chat Team"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Team & Fireteam Chat"
-msgstr ""
+msgstr "Team & Fireteam Chat"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Displays locations in fireteam"
-msgstr ""
+msgstr "Mostra posizioni nel fireteam"
 
 #: etmain/ui/options_customise_hud.menu:41
 msgid "Enable Flags:"
@@ -2560,7 +2560,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Obituaries Icons:"
-msgstr ""
+msgstr "Icone Obitori:"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Victim Weapon Killer"
@@ -2572,15 +2572,15 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Displays graphical obituaries"
-msgstr ""
+msgstr "Mostra obitori grafici"
 
 #: etmain/ui/options_customise_hud.menu:44
 msgid "Show Descriptive Text:"
-msgstr ""
+msgstr "Mostra Testo Descrittivo"
 
 #: etmain/ui/options_customise_hud.menu:44
 msgid "Displays limbo help text"
-msgstr ""
+msgstr "Mostra il testo di aiuto nel limbo"
 
 #: etmain/ui/options_customise_hud.menu:45
 msgid "Show Clock:"
@@ -2632,7 +2632,7 @@ msgstr "Visualizza lagometer"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Switch HUD:"
-msgstr "Scambia HUD:"
+msgstr "Tipo di HUD:"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Standard Hud"
@@ -2648,11 +2648,11 @@ msgstr "HUD Alternativo 2"
 
 #: etmain/ui/options_customise_hud.menu:49
 msgid "Switches between different HUD"
-msgstr "Scambia HUD differenti"
+msgstr "Scegli il tipo di HUD"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Modify Selected HUD:"
-msgstr ""
+msgstr "Personalizza HUD:"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Move Round Timer"
@@ -2684,15 +2684,15 @@ msgstr "Timer + Gradi + Popup"
 
 #: etmain/ui/options_customise_hud.menu:50
 msgid "Customises Selected HUD"
-msgstr ""
+msgstr "Personalizza HUD Selezionato"
 
 #: etmain/ui/options_customise_hud.menu:55
 msgid "IN-GAME DISPLAY"
-msgstr ""
+msgstr "VISUALIZZAZIONE GIOCO"
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Ejecting Brass:"
-msgstr ""
+msgstr "Espulsione Bossoli:"
 
 #: etmain/ui/options_customise_hud.menu:56 etmain/ui/options_graphics.menu:56
 #: etmain/ui/options_graphics.menu:60 etmain/ui/options_graphics.menu:64
@@ -2707,11 +2707,11 @@ msgstr "Medio"
 
 #: etmain/ui/options_customise_hud.menu:56
 msgid "Sets the duration ejected bullet shells etc. last for"
-msgstr ""
+msgstr "Imposta la durata per la visualizzazione dei bossoli"
 
 #: etmain/ui/options_customise_hud.menu:58
 msgid "Field Of View:"
-msgstr ""
+msgstr "Campo Visivo:"
 
 #: etmain/ui/options_customise_hud.menu:58
 msgid "Best FOV (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27"
@@ -2719,7 +2719,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Corona Distance:"
-msgstr ""
+msgstr "Distanza Bagliore:"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Extreme"
@@ -2727,24 +2727,24 @@ msgstr "Estremo"
 
 #: etmain/ui/options_customise_hud.menu:59
 msgid "Sets the maximum distance light corona is displayed"
-msgstr ""
+msgstr "Imposta la distanza massima per visualizzare il bagliore delle luci"
 
 #: etmain/ui/options_customise_hud.menu:60
 msgid "Particles:"
-msgstr ""
+msgstr "Particelle:"
 
 #: etmain/ui/options_customise_hud.menu:60
 msgid ""
 "Toggles display of particle effects - e.g. explosions, some smoke effects"
-msgstr ""
+msgstr "Se visualizzare gli effetti di emissioni di particelle (esplosioni o alcuni effetti di fumo)"
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Wall Mark Lifetime:"
-msgstr ""
+msgstr "Durata Segni Muro:"
 
 #: etmain/ui/options_customise_hud.menu:61
 msgid "Duration of bullet marks on walls etc"
-msgstr ""
+msgstr "Durata dei fori di proiettili nei muri ecc."
 
 #: etmain/ui/options_customise_hud.menu:62
 msgid "Blood Flash:"
@@ -2833,21 +2833,21 @@ msgstr "Imposta la grandezza del mirino"
 
 #: etmain/ui/options_customise_hud.menu:71
 msgid "Crosshair Pulsing:"
-msgstr ""
+msgstr "Pulsazione Mirino:"
 
 #: etmain/ui/options_customise_hud.menu:71
 msgid "Toggles crosshair spread sizing while moving/firing"
-msgstr ""
+msgstr "Cambia la grandezza del mirino durante il movimento/fuoco"
 
 #: etmain/ui/options_customise_hud.menu:72
 msgid "Crosshair Health Info:"
-msgstr ""
+msgstr "Info Salute Mirino:"
 
 #: etmain/ui/options_customise_hud.menu:72
 msgid ""
 "Colors the crosshair based on current health (overrides crosshair color "
 "settings)"
-msgstr ""
+msgstr "Colora il mirino in base al livello di salute (sostituisce le impostazioni del colore del mirino)"
 
 #: etmain/ui/options_customise_hud.menu:73
 #: etmain/ui/options_customise_hud.menu:122
@@ -3066,15 +3066,15 @@ msgstr "CARATTERI"
 
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Fonts Size:"
-msgstr ""
+msgstr "Grandezza Caratteri:"
 
 #: etmain/ui/options_customise_hud.menu:114
 msgid "Sets the size of the in-game fonts"
-msgstr ""
+msgstr "Grandezza dei caratteri nel gioco"
 
 #: etmain/ui/options_customise_hud.menu:116
 msgid "Top Print:"
-msgstr ""
+msgstr "Scritte Sopra:"
 
 #: etmain/ui/options_customise_hud.menu:116
 msgid "Set font size for Warmup message and Spectator label"
@@ -3082,40 +3082,40 @@ msgstr "Imposta la grandezza del carattere per il messaggio di Riscaldamento e l
 
 #: etmain/ui/options_customise_hud.menu:118
 msgid "Side Print:"
-msgstr ""
+msgstr "Scritte Laterali:"
 
 #: etmain/ui/options_customise_hud.menu:118
 msgid ""
 "Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages"
-msgstr ""
+msgstr "Grandezza caratteri di Limbo/Fireteam/Voti/Obitori/Promozioni"
 
 #: etmain/ui/options_customise_hud.menu:120
 msgid "Center Print:"
-msgstr ""
+msgstr "Scritte Centro:"
 
 #: etmain/ui/options_customise_hud.menu:120
 msgid "Set font size for CenterPrint/Objective Info/Skill reward messages"
-msgstr ""
+msgstr "Grandezza caratteri di Centro/Info Obiettivi/Premiazioni"
 
 #: etmain/ui/options_customise_hud.menu:122
 msgid "Set font size for Crosshair Name label"
-msgstr ""
+msgstr "Grandezza caratteri dei nomi sopra il mirino"
 
 #: etmain/ui/options_customise_hud.menu:128
 msgid "PopUpTimeStay:"
-msgstr ""
+msgstr "Durata Popup:"
 
 #: etmain/ui/options_customise_hud.menu:128
 msgid "Set the time a pop-up stays visible"
-msgstr ""
+msgstr "Imposta la durata di visibilità del popup"
 
 #: etmain/ui/options_customise_hud.menu:130
 msgid "PopUpTimeFade:"
-msgstr ""
+msgstr "Dissolvenza Popup:"
 
 #: etmain/ui/options_customise_hud.menu:130
 msgid "Set the time a pop-up fades away"
-msgstr ""
+msgstr "Imposta la durata della dissolvenza del popup"
 
 #: etmain/ui/options_graphics_gamma.menu:28
 #: etmain/ui/options_system_gamma.menu:31
@@ -3125,7 +3125,7 @@ msgstr "REGOLA LUMINOSITA"
 #: etmain/ui/options_graphics_gamma.menu:33
 #: etmain/ui/options_system_gamma.menu:36
 msgid "General Brightness Calibration (All Color Depths)"
-msgstr ""
+msgstr "Calibrazione Luminosità Generale (Tutte Profondità Colore)"
 
 #: etmain/ui/options_graphics_gamma.menu:34
 #: etmain/ui/options_system_gamma.menu:37
@@ -3142,7 +3142,7 @@ msgstr ""
 #: etmain/ui/options_graphics_gamma.menu:36
 #: etmain/ui/options_system_gamma.menu:39
 msgid "2. Click the BACK button."
-msgstr ""
+msgstr "2. Clicca il pulsante INDIETRO."
 
 #: etmain/ui/options_graphics_gamma.menu:50
 #: etmain/ui/options_system_gamma.menu:53
@@ -3164,7 +3164,7 @@ msgstr ""
 #: etmain/ui/options_graphics_gamma.menu:53
 #: etmain/ui/options_system_gamma.menu:56
 msgid "3. Click the BACK button."
-msgstr ""
+msgstr "3. Clicca il pulsante INDIETRO."
 
 #: etmain/ui/options_graphics_gamma.menu:67 etmain/ui/options_graphics.menu:45
 #: etmain/ui/options_system_gamma.menu:70
@@ -3235,27 +3235,27 @@ msgstr "Intensità:"
 
 #: etmain/ui/options_graphics.menu:46
 msgid "The Intensity Of Textures (requires vid_restart)"
-msgstr ""
+msgstr "Intensità Delle Texture (richiede vid_restart)"
 
 #: etmain/ui/options_graphics.menu:47
 msgid "Map overbright bits:"
-msgstr ""
+msgstr "Overbright bits mappa:"
 
 #: etmain/ui/options_graphics.menu:47
 msgid "The World Gets Brighter, But Paler (requires vid_restart)"
-msgstr ""
+msgstr "Maggiore luminosità globale, ma opaca (richiede vid_restart)"
 
 #: etmain/ui/options_graphics.menu:48
 msgid "Overbright Bits:"
-msgstr ""
+msgstr "Overbright bits:"
 
 #: etmain/ui/options_graphics.menu:48
 msgid "Map shines brighter (requires vid_restart)"
-msgstr ""
+msgstr "Luminosità della mappa (richiede vid_restart)"
 
 #: etmain/ui/options_graphics.menu:53
 msgid "Low Quality Sky:"
-msgstr ""
+msgstr "Bassa Qualità Cielo:"
 
 #: etmain/ui/options_graphics.menu:53
 msgid "Toggles wether the detailed skybox is drawn or just a basic sky"
@@ -3263,19 +3263,19 @@ msgstr ""
 
 #: etmain/ui/options_graphics.menu:55
 msgid "Shadow Detail:"
-msgstr ""
+msgstr "Dettagli Ombra:"
 
 #: etmain/ui/options_graphics.menu:55
 msgid "Blob"
-msgstr ""
+msgstr "Macchia"
 
 #: etmain/ui/options_graphics.menu:55
 msgid "Set shadow details"
-msgstr ""
+msgstr "Imposta i dettagli delle ombre"
 
 #: etmain/ui/options_graphics.menu:56
 msgid "Texture Detail:"
-msgstr ""
+msgstr "Dettagli Texture:"
 
 #: etmain/ui/options_graphics.menu:56 etmain/ui/options_graphics.menu:60
 #: etmain/ui/options_system.menu:52
@@ -3284,7 +3284,7 @@ msgstr "Basso"
 
 #: etmain/ui/options_graphics.menu:56
 msgid "Set texture details"
-msgstr ""
+msgstr "Imposta i dettagli delle texture"
 
 #: etmain/ui/options_graphics.menu:58
 msgid "Dynamic Lights:"
@@ -3296,7 +3296,7 @@ msgstr ""
 
 #: etmain/ui/options_graphics.menu:60
 msgid "Geometric Detail:"
-msgstr ""
+msgstr "Dettaglio Geometrico:"
 
 #: etmain/ui/options_graphics.menu:60
 msgid "Set level of details bias"
@@ -3304,7 +3304,7 @@ msgstr ""
 
 #: etmain/ui/options_graphics.menu:61
 msgid "Texture Quality:"
-msgstr ""
+msgstr "Qualità Texture:"
 
 #: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:68
 msgid "Default"
@@ -3321,7 +3321,7 @@ msgstr "32-bit"
 
 #: etmain/ui/options_graphics.menu:61
 msgid "Set the number of bits for textures"
-msgstr ""
+msgstr "Imposta la quantità di bit per le texture"
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Texture Filter:"
@@ -3337,7 +3337,7 @@ msgstr "Trilineare"
 
 #: etmain/ui/options_graphics.menu:63
 msgid "Set the GL texture mode"
-msgstr ""
+msgstr "Imposta la modalità GL delle texture"
 
 #: etmain/ui/options_graphics.menu:64
 msgid "Anisotropic Filter:"
@@ -3366,7 +3366,7 @@ msgstr "Profondità Colore:"
 
 #: etmain/ui/options_graphics.menu:66
 msgid "Desktop Default"
-msgstr ""
+msgstr "Predefinito Scrivania"
 
 #: etmain/ui/options_graphics.menu:66
 msgid "Set color depth"
@@ -3374,15 +3374,15 @@ msgstr "Imposta profondità colore"
 
 #: etmain/ui/options_graphics.menu:67
 msgid "Detail Textures:"
-msgstr ""
+msgstr "Dettagli Texture:"
 
 #: etmain/ui/options_graphics.menu:67
 msgid "Toogles usage of high detail textures"
-msgstr ""
+msgstr "Se utilizzare un alto livello di dettagli"
 
 #: etmain/ui/options_graphics.menu:68
 msgid "Depth Buffer:"
-msgstr ""
+msgstr "Profondità Buffer:"
 
 #: etmain/ui/options_graphics.menu:68
 msgid "24-bit"
@@ -3390,15 +3390,15 @@ msgstr "24-bit"
 
 #: etmain/ui/options_graphics.menu:68
 msgid "Set the number of desired depth bits"
-msgstr ""
+msgstr "Imposta il numero di bit di profondità"
 
 #: etmain/ui/options_graphics.menu:69
 msgid "Compress Textures:"
-msgstr ""
+msgstr "Texture Compresse:"
 
 #: etmain/ui/options_graphics.menu:69
 msgid "Toggles the compression of textures"
-msgstr ""
+msgstr "Se utilizzare la compressione delle texture"
 
 #: etmain/ui/options_graphics.menu:70
 msgid "Sync Every Frame:"
@@ -3474,27 +3474,27 @@ msgstr "Imposta la qualità del suono"
 
 #: etmain/ui/options_system.menu:85
 msgid "Doppler FX:"
-msgstr ""
+msgstr "Effetto Doppler:"
 
 #: etmain/ui/options_system.menu:45
 msgid "Enables or disables the doppler effect"
-msgstr ""
+msgstr "Abilita o disabilita l'effetto doppler"
 
 #: etmain/ui/options_system.menu:46
 msgid "Mute When Minimized:"
-msgstr ""
+msgstr "Muto Se Minimizzata:"
 
 #: etmain/ui/options_system.menu:46
 msgid "Enables or disables sound when window is minimized"
-msgstr ""
+msgstr "Abilita o disabilita i suoni quando la finestra è minimizzata"
 
 #: etmain/ui/options_system.menu:47
 msgid "Mute When Unfocused:"
-msgstr ""
+msgstr "Muto Se Non Selezionata:"
 
 #: etmain/ui/options_system.menu:47
 msgid "Enables or disables sound when window is unfocused"
-msgstr ""
+msgstr "Abilita o disabilita i suoni quando la finestra non è selezionata"
 
 #: etmain/ui/options_system.menu:92
 msgid "NETWORK"
@@ -3502,7 +3502,7 @@ msgstr ""
 
 #: etmain/ui/options_system.menu:52
 msgid "Max Packets:"
-msgstr ""
+msgstr "Max Pacchetti:"
 
 #: etmain/ui/options_system.menu:52
 msgid "Very Low"
@@ -3510,17 +3510,17 @@ msgstr "Molto Basso"
 
 #: etmain/ui/options_system.menu:52
 msgid "Cap for upstream data packet transmissions"
-msgstr ""
+msgstr "Limitazione di invio dei pacchetti di dati"
 
 #: etmain/ui/options_system.menu:53
 msgid "Packet Duplication:"
-msgstr ""
+msgstr "Duplicato Pacchetti:"
 
 #: etmain/ui/options_system.menu:53
 msgid ""
 "Number of duplicates for every data packet sent upstream, minimized "
 "packetloss"
-msgstr ""
+msgstr "Quantità di duplicati per ogni pacchetto dati inviati, perdita pacchetti minimizzato"
 
 #: etmain/ui/options_system.menu:57
 msgid "DOWNLOADS"
@@ -3544,7 +3544,7 @@ msgstr ""
 
 #: etmain/ui/options_system.menu:62
 msgid "Use HTTP/FTP Downloads:"
-msgstr "Usa Scaricamenti HTTP/FTP:"
+msgstr "Usa Trasferimenti HTTP/FTP:"
 
 #: etmain/ui/options_system.menu:106
 msgid "UPDATES"
@@ -3560,7 +3560,7 @@ msgstr ""
 
 #: etmain/ui/options_system.menu:62
 msgid "Enables or disables http/ftp downloads"
-msgstr "Abilita o disabilita gli scaricamenti via http/ftp"
+msgstr "Abilita o disabilita i trasferimenti via http/ftp"
 
 #: etmain/ui/playonline_connecttoip.menu:51 etmain/ui/playonline.menu:649
 msgid "CONNECT TO IP"
@@ -3946,7 +3946,7 @@ msgstr "2. Richieste"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:85 etmain/ui/wm_quickmessageAlt.menu:85
 msgid "3. Commands"
-msgstr "4. Comandi"
+msgstr "3. Comandi"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:86 etmain/ui/wm_quickmessageAlt.menu:86
 msgid "4. Talk"
@@ -3966,7 +3966,7 @@ msgstr "7. Obiettivi"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:95 etmain/ui/wm_quickmessageAlt.menu:95
 msgid "1. Path Cleared."
-msgstr "2. Via Libera."
+msgstr "1. Via Libera."
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:96 etmain/ui/wm_quickmessageAlt.menu:96
 msgid "2. Enemy Weak!"
@@ -3974,7 +3974,7 @@ msgstr "2. Nemico Debole!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:97 etmain/ui/wm_quickmessageAlt.menu:97
 msgid "3. All Clear"
-msgstr "3. Cessato Allarme"
+msgstr "3. Libero"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:98 etmain/ui/wm_quickmessageAlt.menu:98
 msgid "4. Incoming"
@@ -4047,7 +4047,7 @@ msgstr "7. Dove?"
 #: etmain/ui/wm_ftquickmessageAlt.menu:117
 #: etmain/ui/wm_quickmessageAlt.menu:117
 msgid "8. Need Covert Ops!"
-msgstr ""
+msgstr "8. Servono Covert Ops!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:123
 #: etmain/ui/wm_quickmessageAlt.menu:123
@@ -4067,7 +4067,7 @@ msgstr "3. Muoversi!"
 #: etmain/ui/wm_ftquickmessageAlt.menu:126
 #: etmain/ui/wm_quickmessageAlt.menu:126
 msgid "4. Clear The Path!"
-msgstr "4. Liberate il passaggio!"
+msgstr "4. Liberate il Passaggio!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:127
 #: etmain/ui/wm_quickmessageAlt.menu:127
@@ -4143,7 +4143,7 @@ msgstr "5. Arrivederci"
 #: etmain/ui/wm_ftquickmessageAlt.menu:153
 #: etmain/ui/wm_quickmessageAlt.menu:153
 msgid "6. Great Shot"
-msgstr "6. Gran Colpo"
+msgstr "6. Bel Colpo"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:154
 #: etmain/ui/wm_quickmessageAlt.menu:154
@@ -4188,91 +4188,91 @@ msgstr "6. Bel Gioco"
 #: etmain/ui/wm_ftquickmessageAlt.menu:172
 #: etmain/ui/wm_quickmessageAlt.menu:172
 msgid "1. Command Acknowledged"
-msgstr ""
+msgstr "1. Comando Accettato"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:173
 #: etmain/ui/wm_quickmessageAlt.menu:174
 msgid "3. Command Completed"
-msgstr ""
+msgstr "3. Comando Completato"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:174
 #: etmain/ui/wm_quickmessageAlt.menu:175
 msgid "4. Destroy Primary Objective"
-msgstr ""
+msgstr "4. Distruggere Ob. Primario"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:175
 #: etmain/ui/wm_quickmessageAlt.menu:176
 msgid "5. Destroy Secondary Objective"
-msgstr ""
+msgstr "5. Distruggere Ob. Secondario"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:176
 #: etmain/ui/wm_quickmessageAlt.menu:177
 msgid "6. Destroy Construction"
-msgstr ""
+msgstr "6. Distruggere Costruzione"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:177
 #: etmain/ui/wm_quickmessageAlt.menu:178
 msgid "7. Commencing Construction"
-msgstr ""
+msgstr "7. Iniziare Costruzione"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:178
 #: etmain/ui/wm_quickmessageAlt.menu:179
 msgid "8. Repair Vehicle"
-msgstr ""
+msgstr "8. Riparare Veicolo"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:179
 #: etmain/ui/wm_quickmessageAlt.menu:180
 msgid "9. Disable Vehicle"
-msgstr ""
+msgstr "9. Bloccare Veicolo"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:180
 #: etmain/ui/wm_quickmessageAlt.menu:181
 msgid "0. Escort Vehicle"
-msgstr ""
+msgstr "0. Scortare Veicolo"
 
 #: etmain/ui/wm_ftquickmessage.menu:83 etmain/ui/wm_quickmessage.menu:84
 msgid "S. Statements"
-msgstr ""
+msgstr "S. Affermazioni"
 
 #: etmain/ui/wm_ftquickmessage.menu:84 etmain/ui/wm_quickmessage.menu:85
 msgid "R. Requests"
-msgstr ""
+msgstr "R. Richieste"
 
 #: etmain/ui/wm_ftquickmessage.menu:85 etmain/ui/wm_quickmessage.menu:86
 msgid "C. Commands"
-msgstr ""
+msgstr "C. Comandi"
 
 #: etmain/ui/wm_ftquickmessage.menu:86 etmain/ui/wm_quickmessage.menu:87
 msgid "T. Talk"
-msgstr ""
+msgstr "T. Parla"
 
 #: etmain/ui/wm_ftquickmessage.menu:87 etmain/ui/wm_quickmessage.menu:88
 msgid "G. Global"
-msgstr ""
+msgstr "G. Globale"
 
 #: etmain/ui/wm_ftquickmessage.menu:88 etmain/ui/wm_quickmessage.menu:89
 msgid "F. Function"
-msgstr ""
+msgstr "F. Funzione"
 
 #: etmain/ui/wm_ftquickmessage.menu:89 etmain/ui/wm_quickmessage.menu:90
 msgid "O. Objectives"
-msgstr ""
+msgstr "O. Obiettivi"
 
 #: etmain/ui/wm_ftquickmessage.menu:95 etmain/ui/wm_quickmessage.menu:96
 msgid "P. Path Cleared."
-msgstr ""
+msgstr "P. Via Libera"
 
 #: etmain/ui/wm_ftquickmessage.menu:96 etmain/ui/wm_quickmessage.menu:97
 msgid "W. Enemy Weak!"
-msgstr ""
+msgstr "W. Nemico Debole!"
 
 #: etmain/ui/wm_ftquickmessage.menu:97 etmain/ui/wm_quickmessage.menu:98
 msgid "C. All Clear"
-msgstr ""
+msgstr "C. Libero"
 
 #: etmain/ui/wm_ftquickmessage.menu:98 etmain/ui/wm_quickmessage.menu:99
 msgid "I. Incoming"
-msgstr ""
+msgstr "I. Arrivano"
 
 #: etmain/ui/wm_ftquickmessage.menu:99 etmain/ui/wm_quickmessage.menu:100
 msgid "F. Fire In The Hole!"
@@ -4280,11 +4280,11 @@ msgstr "F. Sta per saltare!"
 
 #: etmain/ui/wm_ftquickmessage.menu:100 etmain/ui/wm_quickmessage.menu:101
 msgid "D. I'm Defending."
-msgstr ""
+msgstr "D. Sto Difendendo."
 
 #: etmain/ui/wm_ftquickmessage.menu:101 etmain/ui/wm_quickmessage.menu:102
 msgid "A. I'm Attacking."
-msgstr ""
+msgstr "A. Sto Attaccando."
 
 #: etmain/ui/wm_ftquickmessage.menu:102
 msgid "T. Taking Fire!"
@@ -4296,183 +4296,183 @@ msgstr "M. Mine Disinnescate"
 
 #: etmain/ui/wm_ftquickmessage.menu:104 etmain/ui/wm_quickmessage.menu:104
 msgid "E. Enemy Disguised"
-msgstr ""
+msgstr "E. Nemico Camuffato"
 
 #: etmain/ui/wm_ftquickmessage.menu:110 etmain/ui/wm_quickmessage.menu:110
 msgid "M. Need Medic!"
-msgstr ""
+msgstr "M. Serve Medico!"
 
 #: etmain/ui/wm_ftquickmessage.menu:111 etmain/ui/wm_quickmessage.menu:111
 msgid "A. Need Ammo!"
-msgstr ""
+msgstr "A. Servono Munizioni!"
 
 #: etmain/ui/wm_ftquickmessage.menu:112 etmain/ui/wm_quickmessage.menu:112
 msgid "B. Need Backup!"
-msgstr ""
+msgstr "B. Serve Scorta!"
 
 #: etmain/ui/wm_ftquickmessage.menu:113 etmain/ui/wm_quickmessage.menu:113
 msgid "E. Need Engineer!"
-msgstr ""
+msgstr "E. Serve Ingegnere!"
 
 #: etmain/ui/wm_ftquickmessage.menu:114 etmain/ui/wm_quickmessage.menu:114
 msgid "C. Cover Me!"
-msgstr ""
+msgstr "C. Copritemi!"
 
 #: etmain/ui/wm_ftquickmessage.menu:115 etmain/ui/wm_ftquickmessage.menu:165
 #: etmain/ui/wm_quickmessage.menu:115 etmain/ui/wm_quickmessage.menu:165
 msgid "H. Hold Fire!"
-msgstr ""
+msgstr "H. Calmati!"
 
 #: etmain/ui/wm_ftquickmessage.menu:116 etmain/ui/wm_quickmessage.menu:116
 msgid "W. Where To?"
-msgstr ""
+msgstr "W. Dove?"
 
 #: etmain/ui/wm_ftquickmessage.menu:117 etmain/ui/wm_quickmessage.menu:117
 msgid "O. Need Covert Ops!"
-msgstr ""
+msgstr "O. Servono Covert Ops!"
 
 #: etmain/ui/wm_ftquickmessage.menu:123 etmain/ui/wm_quickmessage.menu:123
 msgid "F. Follow Me!"
-msgstr ""
+msgstr "F. Seguitemi!"
 
 #: etmain/ui/wm_ftquickmessage.menu:124 etmain/ui/wm_quickmessage.menu:124
 msgid "G. Let's Go!"
-msgstr ""
+msgstr "G. Andiamo!"
 
 #: etmain/ui/wm_ftquickmessage.menu:125 etmain/ui/wm_quickmessage.menu:125
 msgid "M. Move!"
-msgstr ""
+msgstr "M. Muoversi!"
 
 #: etmain/ui/wm_ftquickmessage.menu:126 etmain/ui/wm_quickmessage.menu:126
 msgid "C. Clear The Path!"
-msgstr ""
+msgstr "C. Liberate Il Passaggio!"
 
 #: etmain/ui/wm_ftquickmessage.menu:127 etmain/ui/wm_quickmessage.menu:127
 msgid "O. Defend Objective!"
-msgstr ""
+msgstr "O. Difendere Obiettivo!"
 
 #: etmain/ui/wm_ftquickmessage.menu:128 etmain/ui/wm_quickmessage.menu:128
 msgid "D. Disarm Dynamite!"
-msgstr ""
+msgstr "D. Disinnescare Dinamite!"
 
 #: etmain/ui/wm_ftquickmessage.menu:129 etmain/ui/wm_quickmessage.menu:129
 msgid "N. Clear Mines!"
-msgstr ""
+msgstr "N. Rimuovere Mine!"
 
 #: etmain/ui/wm_ftquickmessage.menu:130 etmain/ui/wm_quickmessage.menu:130
 msgid "R. Reinforce Offense"
-msgstr ""
+msgstr "R. Rafforzare Attacco"
 
 #: etmain/ui/wm_ftquickmessage.menu:131 etmain/ui/wm_quickmessage.menu:131
 msgid "E. Reinforce Defense"
-msgstr ""
+msgstr "E. Rafforzare Difesa"
 
 #: etmain/ui/wm_ftquickmessage.menu:137 etmain/ui/wm_ftquickmessage.menu:148
 #: etmain/ui/wm_quickmessage.menu:137 etmain/ui/wm_quickmessage.menu:148
 msgid "Y. Yes"
-msgstr ""
+msgstr "Y. Sì"
 
 #: etmain/ui/wm_ftquickmessage.menu:138 etmain/ui/wm_ftquickmessage.menu:149
 #: etmain/ui/wm_quickmessage.menu:138 etmain/ui/wm_quickmessage.menu:149
 msgid "N. No"
-msgstr ""
+msgstr "N. No"
 
 #: etmain/ui/wm_ftquickmessage.menu:139 etmain/ui/wm_ftquickmessage.menu:161
 #: etmain/ui/wm_quickmessage.menu:139 etmain/ui/wm_quickmessage.menu:161
 msgid "T. Thanks"
-msgstr ""
+msgstr "T. Grazie"
 
 #: etmain/ui/wm_ftquickmessage.menu:140 etmain/ui/wm_ftquickmessage.menu:162
 #: etmain/ui/wm_quickmessage.menu:140 etmain/ui/wm_quickmessage.menu:162
 msgid "W. Welcome"
-msgstr ""
+msgstr "W. Prego"
 
 #: etmain/ui/wm_ftquickmessage.menu:141 etmain/ui/wm_ftquickmessage.menu:164
 #: etmain/ui/wm_quickmessage.menu:141 etmain/ui/wm_quickmessage.menu:164
 msgid "S. Sorry"
-msgstr ""
+msgstr "S. Spiacente"
 
 #: etmain/ui/wm_ftquickmessage.menu:142 etmain/ui/wm_ftquickmessage.menu:163
 #: etmain/ui/wm_quickmessage.menu:142 etmain/ui/wm_quickmessage.menu:163
 msgid "O. Oops"
-msgstr ""
+msgstr "O. Oops"
 
 #: etmain/ui/wm_ftquickmessage.menu:150 etmain/ui/wm_quickmessage.menu:150
 msgid "W. Enemy Weak"
-msgstr ""
+msgstr "W. Nemico Debole"
 
 #: etmain/ui/wm_ftquickmessage.menu:151 etmain/ui/wm_quickmessage.menu:151
 msgid "H. Hi"
-msgstr ""
+msgstr "H. Salve"
 
 #: etmain/ui/wm_ftquickmessage.menu:152 etmain/ui/wm_quickmessage.menu:152
 msgid "B. Bye"
-msgstr ""
+msgstr "B. Arrivederci"
 
 #: etmain/ui/wm_ftquickmessage.menu:153 etmain/ui/wm_quickmessage.menu:153
 msgid "S. Great Shot"
-msgstr ""
+msgstr "S. Bel Colpo"
 
 #: etmain/ui/wm_ftquickmessage.menu:154 etmain/ui/wm_quickmessage.menu:154
 msgid "C. Cheer"
-msgstr ""
+msgstr "C. Esulto"
 
 #: etmain/ui/wm_ftquickmessage.menu:155 etmain/ui/wm_quickmessage.menu:155
 msgid "G. More Globals"
-msgstr ""
+msgstr "G. Altri Globali"
 
 #: etmain/ui/wm_ftquickmessage.menu:166 etmain/ui/wm_quickmessage.menu:166
 msgid "G. Good Game"
-msgstr ""
+msgstr "G. Bel Gioco"
 
 #: etmain/ui/wm_ftquickmessage.menu:172 etmain/ui/wm_quickmessage.menu:172
 msgid "A. Command Acknowledged"
-msgstr ""
+msgstr "A. Comando Accettato"
 
 #: etmain/ui/wm_ftquickmessage.menu:173 etmain/ui/wm_quickmessage.menu:173
 msgid "D. Command Declined"
-msgstr ""
+msgstr "D. Comando Rifiutato"
 
 #: etmain/ui/wm_ftquickmessage.menu:174 etmain/ui/wm_quickmessage.menu:174
 msgid "C. Command Completed"
-msgstr ""
+msgstr "C. Comando Completato"
 
 #: etmain/ui/wm_ftquickmessage.menu:175 etmain/ui/wm_quickmessage.menu:175
 msgid "P. Destroy Primary Objective"
-msgstr ""
+msgstr "P. Distruggere Obiettivo Primario"
 
 #: etmain/ui/wm_ftquickmessage.menu:176 etmain/ui/wm_quickmessage.menu:176
 msgid "S. Destroy Secondary Objective"
-msgstr ""
+msgstr "S. Distruggere Obiettivo Secondario"
 
 #: etmain/ui/wm_ftquickmessage.menu:177 etmain/ui/wm_quickmessage.menu:177
 msgid "X. Destroy Construction"
-msgstr ""
+msgstr "X. Distruggere Costruzione"
 
 #: etmain/ui/wm_ftquickmessage.menu:178 etmain/ui/wm_quickmessage.menu:178
 msgid "M. Commencing Construction"
-msgstr ""
+msgstr "M. Iniziare Costruzione"
 
 #: etmain/ui/wm_ftquickmessage.menu:179 etmain/ui/wm_quickmessage.menu:179
 msgid "R. Repair Vehicle"
-msgstr ""
+msgstr "R. Riparare Veicolo"
 
 #: etmain/ui/wm_ftquickmessage.menu:180 etmain/ui/wm_quickmessage.menu:180
 msgid "V. Disable Vehicle"
-msgstr ""
+msgstr "V. Bloccare Veicolo"
 
 #: etmain/ui/wm_ftquickmessage.menu:181 etmain/ui/wm_quickmessage.menu:181
 msgid "E. Escort Vehicle"
-msgstr ""
+msgstr "E. Scortare Veicolo"
 
 #: etmain/ui/wm_quickmessageAlt.menu:173
 msgid "2. Command Declined"
-msgstr ""
+msgstr "2. Comando Rifiutato"
 
 #: src/cgame/cg_consolecmds.c:362 src/cgame/cg_consolecmds.c:400
 #: src/cgame/cg_consolecmds.c:436
 msgid "Can't team voice chat as a spectator.\n"
-msgstr ""
+msgstr "Non puoi usare la chat team vocale da spettatore.\n"
 
 #: src/cgame/cg_consolecmds.c:461
 msgid "Can't buddy voice chat as a spectator.\n"
@@ -4491,17 +4491,17 @@ msgstr "Allies"
 #: src/cgame/cg_consolecmds.c:1221
 #, c-format
 msgid "You will spawn as a %s %s with a %s."
-msgstr ""
+msgstr "Entrerai in gioco come un %s %s con %s."
 
 #: src/cgame/cg_consolecmds.c:1225
 #, c-format
 msgid "You will spawn as a %s %s with a %s and a %s."
-msgstr ""
+msgstr "Entrerai in gioco come un %s %s con %s e %s."
 
 #: src/cgame/cg_debriefing.c:1340
 #, c-format
 msgid "Last Played             : %s"
-msgstr "Ultima Giocata       : %s"
+msgstr "Ultima Giocata         : %s"
 
 #: src/cgame/cg_debriefing.c:1341
 msgid "Never"
@@ -4515,7 +4515,7 @@ msgstr "%d mappe fa"
 #: src/cgame/cg_debriefing.c:1347
 #, c-format
 msgid "Total Accumulated Votes : %d"
-msgstr "Totale Voti Accumulati    : %d"
+msgstr "Totale Voti Accumulati : %d"
 
 #: src/cgame/cg_debriefing.c:2013 src/cgame/cg_debriefing.c:3202
 #: src/cgame/cg_scoreboard.c:723
@@ -4529,7 +4529,7 @@ msgstr "ACC:"
 
 #: src/cgame/cg_debriefing.c:2624
 msgid "HS:"
-msgstr "Punti:"
+msgstr "HS:"
 
 #: src/cgame/cg_debriefing.c:2659
 msgid "Time:"
@@ -4685,23 +4685,23 @@ msgstr "S:%i, N:%i"
 
 #: src/cgame/cg_draw.c:1928
 msgid "Your complaint has been filed"
-msgstr ""
+msgstr "Il tuo reclamo è stato registrato"
 
 #: src/cgame/cg_draw.c:1934
 msgid "Complaint dismissed"
-msgstr ""
+msgstr "Reclamo destituito"
 
 #: src/cgame/cg_draw.c:1940
 msgid "Server Host cannot be complained against"
-msgstr ""
+msgstr "Non puoi far reclamo contro il Server Host"
 
 #: src/cgame/cg_draw.c:1946
 msgid "You were team-killed by the Server Host"
-msgstr ""
+msgstr "Sei stato ucciso dal fuoco amico del Server Host"
 
 #: src/cgame/cg_draw.c:1952
 msgid "You were team-killed by a bot."
-msgstr ""
+msgstr "Sei stato ucciso dal fuoco amico di un bot."
 
 #: src/cgame/cg_draw.c:1962
 msgid "Your application has been submitted"
@@ -4721,39 +4721,39 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:1993
 msgid "Your proposition has been submitted"
-msgstr ""
+msgstr "La tua proposta è stata inviata"
 
 #: src/cgame/cg_draw.c:2000
 msgid "Your proposition was rejected"
-msgstr ""
+msgstr "La tua proposta è stata rifiutata"
 
 #: src/cgame/cg_draw.c:2007
 msgid "Your proposition was accepted"
-msgstr ""
+msgstr "La tua proposta è stata accettata"
 
 #: src/cgame/cg_draw.c:2014
 msgid "Your proposition reply has been sent"
-msgstr ""
+msgstr "La tua risposta alla proposta è stata inviata"
 
 #: src/cgame/cg_draw.c:2024
 msgid "Your invitation has been submitted"
-msgstr ""
+msgstr "Il tuo invito è stato inviato"
 
 #: src/cgame/cg_draw.c:2031
 msgid "Your invitation was rejected"
-msgstr ""
+msgstr "Il tuo invito è stato rifiutato"
 
 #: src/cgame/cg_draw.c:2038
 msgid "Your invitation was accepted"
-msgstr ""
+msgstr "Il tuo invito è stato accettato"
 
 #: src/cgame/cg_draw.c:2045
 msgid "Your invitation reply has been sent"
-msgstr ""
+msgstr "La tua risposta all'invito è stata inviata"
 
 #: src/cgame/cg_draw.c:2058
 msgid "Response Sent"
-msgstr ""
+msgstr "Risposta Inviata"
 
 #: src/cgame/cg_draw.c:2152
 #, c-format
@@ -4785,12 +4785,12 @@ msgstr "attiva"
 
 #: src/cgame/cg_draw.c:2231
 msgid "You are wounded and waiting for a medic."
-msgstr ""
+msgstr "Sei ferito in attesa di un medico."
 
 #: src/cgame/cg_draw.c:2240
 #, c-format
 msgid "Press %s to go into reinforcement queue."
-msgstr ""
+msgstr "Premi %s per metterti in coda e ripartire."
 
 #: src/cgame/cg_draw.c:2251
 msgid "No more reinforcements this round."
@@ -4849,7 +4849,7 @@ msgstr ""
 #: src/cgame/cg_draw.c:2452
 #, c-format
 msgid "Press ^3%s^7 to start"
-msgstr ""
+msgstr "Premi ^3%s^7 per iniziare"
 
 #: src/cgame/cg_draw.c:2470
 msgid "^3WARMUP:^7 Match begins in"
@@ -4879,11 +4879,11 @@ msgstr "Connessione Interrotta"
 
 #: src/cgame/cg_event.c:271
 msgid "You swapped places with"
-msgstr ""
+msgstr "Hai scambiato posto con"
 
 #: src/cgame/cg_event.c:275
 msgid "You killed ^1TEAMMATE^7"
-msgstr ""
+msgstr "Hai ucciso il ^1COMPAGNO^7"
 
 #: src/cgame/cg_event.c:280
 msgid "You killed"
@@ -4891,15 +4891,15 @@ msgstr "Hai ucciso"
 
 #: src/cgame/cg_event.c:293
 msgid "^7swapped places with"
-msgstr ""
+msgstr "^7ha scambiato posto con"
 
 #: src/cgame/cg_event.c:297
 msgid "^7killed ^1TEAMMATE^7"
-msgstr ""
+msgstr "^7ha ucciso il ^1COMPAGNO^7"
 
 #: src/cgame/cg_event.c:302
 msgid "^7killed"
-msgstr ""
+msgstr "^7ha ucciso"
 
 #: src/cgame/cg_event.c:566
 msgid "died"
@@ -4908,12 +4908,12 @@ msgstr "morto"
 #: src/cgame/cg_event.c:614
 #, c-format
 msgid "Picked up %s"
-msgstr ""
+msgstr "Hai raccolto %s"
 
 #: src/cgame/cg_fireteamoverlay.c:475
 #, c-format
 msgid "Private Fireteam: %s"
-msgstr ""
+msgstr "Fireteam Privato: %s"
 
 #: src/cgame/cg_fireteamoverlay.c:479
 #, c-format
@@ -4922,15 +4922,15 @@ msgstr "Fireteam: %s"
 
 #: src/cgame/cg_fireteams.c:344
 msgid "FIRETEAMS"
-msgstr ""
+msgstr "FIRETEAMS"
 
 #: src/cgame/cg_fireteams.c:347
 msgid "JOIN"
-msgstr ""
+msgstr "ADERISCI"
 
 #: src/cgame/cg_fireteams.c:350
 msgid "PROPOSE"
-msgstr ""
+msgstr "PROPONI"
 
 #: src/cgame/cg_fireteams.c:356
 msgid "INVITE"
@@ -4943,48 +4943,48 @@ msgstr ""
 #: src/cgame/cg_fireteams.c:701 src/cgame/cg_fireteams.c:705
 #: src/cgame/cg_fireteams.c:762 src/cgame/cg_fireteams.c:766
 msgid "Previous"
-msgstr ""
+msgstr "Precedente"
 
 #: src/cgame/cg_fireteams.c:717 src/cgame/cg_fireteams.c:721
 #: src/cgame/cg_fireteams.c:778 src/cgame/cg_fireteams.c:782
 msgid "Next"
-msgstr ""
+msgstr "Prossimo"
 
 #: src/cgame/cg_info.c:718
 msgid "PLAYER STATS"
-msgstr ""
+msgstr "STATISTICHE"
 
 #: src/cgame/cg_info.c:729 src/cgame/cg_info.c:931
 msgid "Weapon"
-msgstr ""
+msgstr "Arma"
 
 #: src/cgame/cg_info.c:731 src/cgame/cg_info.c:933
 msgid "Accuracy"
-msgstr ""
+msgstr "Precisione"
 
 #: src/cgame/cg_info.c:733 src/cgame/cg_info.c:935
 msgid "Hits / Shots"
-msgstr ""
+msgstr "Colpi / Spari"
 
 #: src/cgame/cg_info.c:735 src/cgame/cg_info.c:937
 msgid "Kills"
-msgstr ""
+msgstr "Uccisi"
 
 #: src/cgame/cg_info.c:737
 msgid "Deaths"
-msgstr ""
+msgstr "Morti"
 
 #: src/cgame/cg_info.c:739
 msgid "Headshots"
-msgstr ""
+msgstr "Colpi Testa"
 
 #: src/cgame/cg_info.c:748
 msgid "No weapon info available."
-msgstr ""
+msgstr "Nessuna info disponibile per l'arma."
 
 #: src/cgame/cg_info.c:799
 msgid "Skills"
-msgstr ""
+msgstr "Abilità"
 
 #: src/cgame/cg_info.c:801
 msgid "Level"
@@ -4992,15 +4992,15 @@ msgstr "Livello"
 
 #: src/cgame/cg_info.c:803
 msgid "XP / Next Level"
-msgstr ""
+msgstr "XP / Prossimo Livello"
 
 #: src/cgame/cg_info.c:807
 msgid "Medals"
-msgstr ""
+msgstr "Medaglie"
 
 #: src/cgame/cg_info.c:816
 msgid "No skills acquired!"
-msgstr ""
+msgstr "Nessuna abilità acquisita!"
 
 #: src/cgame/cg_info.c:921
 msgid "\"TOPSHOT\" ACCURACIES"
@@ -5016,15 +5016,15 @@ msgstr ""
 
 #: src/cgame/cg_info.c:1193
 msgid "OBJECTIVES"
-msgstr "OBBIETTIVI"
+msgstr "OBIETTIVI"
 
 #: src/cgame/cg_info.c:1421
 msgid "DEMO STATUS"
-msgstr ""
+msgstr "STATO DEMO"
 
 #: src/cgame/cg_info.c:1571
 msgid "DEMO CONTROLS"
-msgstr ""
+msgstr "CONTROLLI DEMO"
 
 #: src/cgame/cg_info.c:1599
 msgid "^nBACKSPACE ^mhelp on/off"
@@ -5033,12 +5033,12 @@ msgstr ""
 #: src/cgame/cg_limbopanel.c:1224
 #, c-format
 msgid "You will spawn as an %s %s with a %s."
-msgstr ""
+msgstr "Entrerai in gioco come un %s %s con %s."
 
 #: src/cgame/cg_limbopanel.c:1228
 #, c-format
 msgid "You will spawn as an %s %s with a %s and a %s."
-msgstr ""
+msgstr "Entrerai in gioco come un %s %s con %s e %s."
 
 #: src/cgame/cg_loadpanel.c:251
 msgid "Single Player"
@@ -5054,47 +5054,47 @@ msgstr "Utente"
 
 #: src/cgame/cg_main.c:935
 msgid "is not on the server"
-msgstr ""
+msgstr "Non è nel server"
 
 #: src/cgame/cg_players.c:309
 #, c-format
 msgid "Promoted to rank %s!"
-msgstr ""
+msgstr "Promosso al grado di %s!"
 
 #: src/cgame/cg_players.c:359
 #, c-format
 msgid "Increased %s skill to level %i!"
-msgstr ""
+msgstr "Abilità di %s aumentata al livello %i!"
 
 #: src/cgame/cg_players.c:361
 #, c-format
 msgid "You have been rewarded with %s"
-msgstr ""
+msgstr "Sei stato premiato con %s"
 
 #: src/cgame/cg_popupmessages.c:680
 #, c-format
 msgid "Planted at %s."
-msgstr ""
+msgstr "Piantata: %s."
 
 #: src/cgame/cg_popupmessages.c:682
 #, c-format
 msgid "Defused at %s."
-msgstr ""
+msgstr "Disinnescata: %s."
 
 #: src/cgame/cg_popupmessages.c:691
 #, c-format
 msgid "%s has been constructed."
-msgstr ""
+msgstr "%s è stato assemblato."
 
 #: src/cgame/cg_popupmessages.c:698
 #, c-format
 msgid "%s has been damaged."
-msgstr ""
+msgstr "%s è stato danneggiato."
 
 #: src/cgame/cg_popupmessages.c:700
 #, c-format
 msgid "%s has been destroyed."
-msgstr ""
+msgstr "%s è stato distrutto."
 
 #: src/cgame/cg_popupmessages.c:722
 #, c-format
@@ -5109,22 +5109,22 @@ msgstr ""
 #: src/cgame/cg_popupmessages.c:733
 #, c-format
 msgid "%s have stolen %s!"
-msgstr ""
+msgstr "%s ha rubato: %s!"
 
 #: src/cgame/cg_popupmessages.c:735
 #, c-format
 msgid "%s have returned %s!"
-msgstr ""
+msgstr "%s ha ripreso: %s!"
 
 #: src/cgame/cg_popupmessages.c:758
 #, c-format
 msgid "%s^7 has joined the %s^7!"
-msgstr ""
+msgstr "%s^7 si è unito %s^7!"
 
 #: src/cgame/cg_popupmessages.c:761
 #, c-format
 msgid "%s^7 disconnected"
-msgstr ""
+msgstr "%s^7 disconnesso"
 
 #: src/cgame/cg_scoreboard.c:178 src/cgame/cg_scoreboard.c:184
 #: src/cgame/cg_scoreboard.c:188 src/cgame/cg_scoreboard.c:193
@@ -5141,7 +5141,7 @@ msgstr ""
 
 #: src/cgame/cg_scoreboard.c:200
 msgid "MATCH BEGINS IN:"
-msgstr ""
+msgstr "LA SFIDA INIZIA TRA:"
 
 #: src/cgame/cg_scoreboard.c:205
 #, c-format
@@ -5150,7 +5150,7 @@ msgstr ""
 
 #: src/cgame/cg_scoreboard.c:229 src/cgame/cg_scoreboard.c:233
 msgid "REINFORCE TIME:"
-msgstr ""
+msgstr "TEMPO RINFORZO:"
 
 #: src/cgame/cg_scoreboard.c:248
 msgid "ROUND"
@@ -5168,11 +5168,11 @@ msgstr "MAPPA %i di %i"
 #: src/cgame/cg_scoreboard.c:273
 #, c-format
 msgid "Config: ^7%s^7"
-msgstr ""
+msgstr "Config: ^7%s^7"
 
 #: src/cgame/cg_scoreboard.c:451 src/cgame/cg_scoreboard.c:642
 msgid "^3CONNECTING"
-msgstr ""
+msgstr "^3CONNESSIONE"
 
 #: src/cgame/cg_scoreboard.c:455 src/cgame/cg_scoreboard.c:646
 msgid "^3SPECTATOR"
@@ -5192,7 +5192,7 @@ msgstr "ALLIES"
 
 #: src/cgame/cg_scoreboard.c:855
 msgid "C R"
-msgstr ""
+msgstr "C R"
 
 #: src/cgame/cg_scoreboard.c:860
 msgid "Score"
@@ -5212,7 +5212,7 @@ msgstr "^1COMBATTI!\n"
 
 #: src/cgame/cg_servercmds.c:421
 msgid "Auto Pick"
-msgstr ""
+msgstr "Raccolta Automatica"
 
 #: src/cgame/cg_servercmds.c:1875
 #, c-format
@@ -5232,7 +5232,7 @@ msgstr ""
 #: src/cgame/cg_servercmds.c:1879
 #, c-format
 msgid "Deaths: %3d    Self Kills: %3d    Headshots: %5.1f%%"
-msgstr ""
+msgstr "Morti: %3d    Suicidi: %3d    Colpi Testa: %5.1f%%"
 
 #: src/cgame/cg_servercmds.c:2035
 msgid "^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n"
@@ -5260,11 +5260,11 @@ msgstr "Mappa"
 
 #: src/cgame/cg_servercmds.c:2366
 msgid "Could not create logfile"
-msgstr ""
+msgstr "Non riesco a creare il file di log"
 
 #: src/cgame/cg_servercmds.c:2903
 msgid "^3Server Restarting"
-msgstr ""
+msgstr "^3Riavvio del Server"
 
 #: src/ui/ui_loadpanel.c:192
 msgid "DOWNLOADING..."
@@ -5281,25 +5281,25 @@ msgid ""
 " %s^*\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Connessione a:\n %s^*\n\n%s"
 
 #: src/ui/ui_loadpanel.c:338
 #, c-format
 msgid "Awaiting connection...%i"
-msgstr ""
+msgstr "In attesa di connessione...%i"
 
 #: src/ui/ui_loadpanel.c:341
 #, c-format
 msgid "Awaiting challenge...%i"
-msgstr ""
+msgstr "In attesa per la sfida...%i"
 
 #: src/ui/ui_loadpanel.c:351
 msgid "Awaiting gamestate..."
-msgstr ""
+msgstr "In attesa dello stato del gioco..."
 
 #: src/ui/ui_main.c:2401 src/ui/ui_main.c:2642
 msgid "Waiting for new key... Press ESCAPE to cancel"
-msgstr ""
+msgstr "In attesa della nuova chiave... Premi ESCAPE per annullare"
 
 #: src/ui/ui_main.c:2405 src/ui/ui_main.c:2646
 msgid "Press ENTER or CLICK to change, Press BACKSPACE to clear"
@@ -5308,11 +5308,11 @@ msgstr ""
 #: src/ui/ui_main.c:2543
 #, c-format
 msgid "Getting info for %d servers (ESC to cancel)"
-msgstr ""
+msgstr "Ricevo info per %d server (ESC per annullare)"
 
 #: src/ui/ui_main.c:2547
 msgid "Waiting for response from Master Server"
-msgstr ""
+msgstr "In attesa di risposta dal Server Master"
 
 #: src/ui/ui_main.c:2555
 #, c-format
@@ -5321,20 +5321,20 @@ msgstr ""
 
 #: src/ui/ui_main.c:4084
 msgid "Can't show Server Info (not found, or local server)\n"
-msgstr ""
+msgstr "Impossibile visualizzare info del server (non trovato o server locale)\n"
 
 #: src/ui/ui_main.c:4343 src/ui/ui_main.c:4397 src/ui/ui_main.c:4432
 msgid "Favorite already in list\n"
-msgstr ""
+msgstr "Preferito già in lista\n"
 
 #: src/ui/ui_main.c:4348 src/ui/ui_main.c:4402 src/ui/ui_main.c:4437
 msgid "Favorite list full\n"
-msgstr ""
+msgstr "La lista preferiti è piena!\n"
 
 #: src/ui/ui_main.c:4353 src/ui/ui_main.c:4407 src/ui/ui_main.c:4442
 #, c-format
 msgid "Added favorite server %s\n"
-msgstr ""
+msgstr "%s aggiunto ai preferiti\n"
 
 #: src/ui/ui_main.c:5874
 #, c-format
@@ -5357,12 +5357,12 @@ msgstr "^1Errore Connessione/Master - nessun server trovato!  Filtrati/Totale: 0
 #: src/ui/ui_main.c:7752
 #, c-format
 msgid "Server is full, redirect to: %s\n"
-msgstr ""
+msgstr "Server pieno, reindirizzato a: %s\n"
 
 #: src/ui/ui_main.c:8295
 #, c-format
 msgid "%d servers listed in browser with %d players.\n"
-msgstr ""
+msgstr "%d server elencati nel browser con %d giocatori.\n"
 
 #: src/ui/ui_main.c:8301
 #, c-format
@@ -5372,7 +5372,7 @@ msgstr "%d server non elencati (filtrati dalle impostazioni del browser)\n"
 #: src/ui/ui_main.c:8429
 #, c-format
 msgid "Can't find campaign '%s'\n"
-msgstr ""
+msgstr "Non trovo la campagna '%s'\n"
 
 #: src/ui/ui_main.c:8435
 #, c-format
@@ -5382,7 +5382,7 @@ msgstr ""
 #: src/ui/ui_main.c:8466
 #, c-format
 msgid "%i campaigns found:\n"
-msgstr ""
+msgstr "%i campagne trovate:\n"
 
 #: src/ui/ui_main.c:8470
 msgid "No campaigns found.\n"
@@ -5390,15 +5390,15 @@ msgstr "Nessuna compagnia trovata.\n"
 
 #: src/ui/ui_main.c:8518
 msgid "No favourite servers found."
-msgstr ""
+msgstr "Nessun server preferito trovato."
 
 #: src/ui/ui_main.c:8529
 msgid "All favourite servers removed."
-msgstr ""
+msgstr "Tutti i server preferiti sono stati rimossi."
 
 #: src/cgame/cg_predict.c:641
 msgid "You are near"
-msgstr "Sei vicino"
+msgstr "Sei vicino a:"
 
 msgid "joined the Axis team\n"
 msgstr "si è unito al team Axis\n"
@@ -5482,138 +5482,138 @@ msgid "danced on his airstrike marker"
 msgstr "ha ballato sul suo marcatore d'attacco aereo"
 
 msgid "committed suicide"
-msgstr "si è sucidato"
+msgstr "si è suicidato"
 
 msgid "killed himself"
 msgstr "si è ucciso"
 
 msgid "Improved use of Explosive Ammunition"
-msgstr "Migliorato l'uso delle Munizioni Esplosive"
+msgstr "l'uso avanzato di munizioni esplosive"
 
 msgid "Improved Dexterity"
-msgstr "Destrezza migliorata"
+msgstr "miglior destrezza"
 
 msgid "Binoculars for any Class"
-msgstr "Binocolo per tutte le Classi"
+msgstr "binocolo per tutte le classi"
 
 msgid "Medic Ammo"
-msgstr "Munizioni Mediche"
+msgstr "attrezzatura medica"
 
 msgid "Improved First Aid Resources"
-msgstr "Risorse di Primo Soccorso migliorate"
+msgstr "migliori risorse di primo soccorso"
 
 msgid "Improved use of Light Weapon Ammunition"
-msgstr "Migliorato l'uso delle Munizioni per Armi Leggere"
+msgstr "l'uso avanzato delle munizioni per armi leggere"
 
 msgid "Improved Projectile Resources"
-msgstr ""
+msgstr "più munizioni a disposizione"
 
 msgid "Improved use of Scoped Weapon Ammunition"
-msgstr ""
+msgstr "l'uso avanzato delle munizioni per armi con mirino"
 
 msgid "Improved Physical Fitness"
-msgstr ""
+msgstr "una migliore idoneità fisica"
 
 msgid "Improved Ammo Resources"
-msgstr ""
+msgstr "migliori risorse di munizioni"
 
 msgid "Improved Signals"
-msgstr ""
+msgstr "segnali migliorati"
 
 msgid "Faster Reload"
-msgstr "Ricarica Più Veloce"
+msgstr "una ricarica più veloce"
 
 msgid "Heavy Weapon Proficiency"
-msgstr ""
+msgstr "competenza sulle armi pesanti"
 
 msgid "Improved use of Sabotage and Misdirection"
-msgstr ""
+msgstr "maggiore abilità nelle azioni di sabotaggio"
 
 msgid "Improved Health"
-msgstr ""
+msgstr "salute migliorata"
 
 msgid "Improved Construction and Destruction"
-msgstr ""
+msgstr "costruzione e distruzione migliorati"
 
 msgid "Full Revive"
-msgstr ""
+msgstr "piena rianimazione"
 
 msgid "Improved Air and Ground Support"
-msgstr ""
+msgstr "miglior supporto aereo e di terra"
 
 msgid "Improved Light Weapon Handling"
-msgstr ""
+msgstr "l'uso avanzato di armi leggere"
 
 msgid "Breath Control"
-msgstr ""
+msgstr "controllo del respiro"
 
 msgid "Trap Awareness"
-msgstr ""
+msgstr "riconoscimento delle trappole"
 
 msgid "a Flak Jacket"
-msgstr ""
+msgstr "un giubbotto antiproiettile"
 
 msgid "Adrenalin Self"
-msgstr ""
+msgstr "disposizione di adrenalina"
 
 msgid "Enemy Recognition"
-msgstr ""
+msgstr "riconoscimento del nemico"
 
 msgid "Dual-Wield Pistols"
-msgstr ""
+msgstr "doppia pistola"
 
 msgid "Improved Weapon Handling"
-msgstr ""
+msgstr "l'uso avanzato delle armi"
 
 msgid "Assassin"
-msgstr "Assassino"
+msgstr "assassino"
 
 #: src/cgame/cg_consolecmds:1233
 msgid "You will spawn as an %s %s with a %s and %s."
-msgstr ""
+msgstr "Entrerai in gioco come un %s %s con %s e %s."
 
 #: etmain/ui/credits_etlegacy.menu:85
 msgid "^1THE TEAM"
 msgstr "^1IL TEAM"
 
 msgid "Axis team"
-msgstr ""
+msgstr "al team Axis"
 
 msgid "Allied team"
-msgstr ""
+msgstr "al team Allied"
 
 msgid "Spectators"
-msgstr "Spettatori"
+msgstr "agli spettatori"
 
 msgid "You must be a player or following a player to use +stats\n"
 msgstr ""
 
 msgid "^9You must be alive to use ^3/kill."
-msgstr ""
+msgstr "^9Devi essere vivo per usare ^3/kill."
 
 msgid "No vote in progress.\n"
-msgstr ""
+msgstr "Nessun voto in corso.\n"
 
 msgid "No or bad challenge for address.\n"
 msgstr ""
 
 msgid "Match is already in progress!\n"
-msgstr ""
+msgstr "Partita già in corso!\n"
 
 msgid "^1** Referee Server Setting Change **\n"
 msgstr ""
 
 msgid "Your fireteam is now public"
-msgstr ""
+msgstr "ora Il tuo fireteam è pubblico"
 
 msgid "Your fireteam is now private"
-msgstr ""
+msgstr "ora Il tuo fireteam è privato"
 
 msgid "The Allies have too many players.\n"
-msgstr ""
+msgstr "Gli Allies hanno troppi giocatori.\n"
 
 msgid "The Axis has too many players.\n"
-msgstr ""
+msgstr "Gli Axis hanno troppi giocatori.\n"
 
 msgid "Attack!"
 msgstr "Attacco!"
@@ -5624,7 +5624,7 @@ msgstr "Retrocedere!"
 msgid ""
 "^3All players ready!^7\n"
 "Match starting..."
-msgstr ""
+msgstr "^3Tutti pronti!^7\nInizia il gioco..."
 
 msgid "Path cleared."
 msgstr "Via libera."
@@ -5654,7 +5654,7 @@ msgid "Mines cleared."
 msgstr "Mine Disinnescate."
 
 msgid "Enemy in disguise."
-msgstr ""
+msgstr "Nemico camuffato."
 
 msgid "Need a Medic!"
 msgstr "Serve un Medico!"
@@ -5672,13 +5672,13 @@ msgid "Cover me!"
 msgstr "Copritemi!"
 
 msgid "Hold your fire!"
-msgstr "Calmati!"
+msgstr "Datti una calmata!"
 
 msgid "Where to?"
 msgstr "Dove?"
 
 msgid "We need Covert Ops!"
-msgstr "Ci servono operazioni clandestine!"
+msgstr "Ci servono Covert Ops!"
 
 msgid "Follow me!"
 msgstr "Seguitemi!"
@@ -5714,160 +5714,160 @@ msgid "No!"
 msgstr "No!"
 
 msgid "Thank you!"
-msgstr "Grazie!"
+msgstr "Thank you!"
 
 msgid "You're welcome."
-msgstr "Prego."
+msgstr "You're welcome."
 
 msgid "Bitte sehr."
-msgstr ""
+msgstr "Bitte sehr."
 
 msgid "Ja!"
-msgstr ""
+msgstr "Ja!"
 
 msgid "Nein!"
-msgstr ""
+msgstr "Nein!"
 
 msgid "Kein problem."
-msgstr ""
+msgstr "Kein problem."
 
 msgid "Sorry!"
-msgstr ""
+msgstr "Sorry!"
 
 msgid "Oops!"
-msgstr ""
+msgstr "Oops!"
 
 msgid "Yes!"
-msgstr ""
+msgstr "Yes!"
 
 msgid "Jawohl!"
-msgstr ""
+msgstr "Jawohl!"
 
 msgid "Negative!"
-msgstr ""
+msgstr "Negative!"
 
 msgid "Hi!"
-msgstr ""
+msgstr "Hi!"
 
 msgid "Hello!"
-msgstr ""
+msgstr "Hello!"
 
 msgid "Hallo!"
-msgstr ""
+msgstr "Hallo!"
 
 msgid "Good bye."
-msgstr ""
+msgstr "Good bye."
 
 msgid "Auf wiedersehen."
-msgstr ""
+msgstr "Auf wiedersehen."
 
 msgid "Bye."
-msgstr ""
+msgstr "Bye."
 
 msgid "Great shot!"
-msgstr ""
+msgstr "Great shot!"
 
 msgid "You got it, man!"
-msgstr ""
+msgstr "You got it, man!"
 
 msgid "Yeah!"
-msgstr ""
+msgstr "Yeah!"
 
 msgid "Yoohoo!"
-msgstr ""
+msgstr "Yoohoo!"
 
 msgid "Hahaa!"
-msgstr ""
+msgstr "Hahaa!"
 
 msgid "Alright!"
-msgstr ""
+msgstr "Alright!"
 
 msgid "Woo!"
-msgstr ""
+msgstr "Woo!"
 
 msgid "Yeehaa!"
-msgstr ""
+msgstr "Yeehaa!"
 
 msgid "'Atta way, baby!"
-msgstr ""
+msgstr "'Atta way, baby!"
 
 msgid "Jahaa!"
-msgstr ""
+msgstr "Jahaa!"
 
 msgid "Wunderbar!"
-msgstr ""
+msgstr "Wunderbar!"
 
 msgid "Excellent!"
-msgstr ""
+msgstr "Excellent!"
 
 msgid "Oh yes!"
-msgstr ""
+msgstr "Oh yes!"
 
 msgid "Sehr gut!"
-msgstr ""
+msgstr "Sehr gut!"
 
 msgid "Thanks!"
-msgstr ""
+msgstr "Thanks!"
 
 msgid "Danke!"
-msgstr ""
+msgstr "Danke!"
 
 msgid "Danke sehr!"
-msgstr ""
+msgstr "Danke sehr!"
 
 msgid "No problem."
-msgstr ""
+msgstr "No problem."
 
 msgid "Good game!"
-msgstr ""
+msgstr "Bel gioco!"
 
 msgid "Command acknowledged!"
-msgstr ""
+msgstr "Comando accettato!"
 
 msgid "Command declined!"
-msgstr ""
+msgstr "Comando rifiutato!"
 
 msgid "Command completed!"
-msgstr ""
+msgstr "Comando completato!"
 
 msgid "Destroy primary objective!"
-msgstr ""
+msgstr "Distruggere obiettivo primario!"
 
 msgid "Destroy secondary objective!"
-msgstr ""
+msgstr "Distruggere obiettivo secondario!"
 
 msgid "Destroy construction!"
-msgstr ""
+msgstr "Distruggere costruzione!"
 
 msgid "I'm constructing!"
-msgstr ""
+msgstr "Sto costruendo!"
 
 msgid "Repair the vehicle!"
-msgstr ""
+msgstr "Riparare il veicolo!"
 
 msgid "Disable the vehicle!"
-msgstr ""
+msgstr "Bloccare il veicolo!"
 
 msgid "Escort the vehicle!"
-msgstr ""
+msgstr "Scortare il veicolo!"
 
 msgid "Covering fire!"
-msgstr ""
+msgstr "Copritemi!"
 
 msgid "I'm a soldier."
-msgstr ""
+msgstr "Sono un soldato."
 
 msgid "I'm an engineer."
-msgstr ""
+msgstr "Sono un ingegnere."
 
 msgid "I'm a medic."
-msgstr ""
+msgstr "Sono un medico."
 
 msgid "I'm a field ops."
-msgstr ""
+msgstr "Sono un field ops."
 
 msgid "I'm a covert ops."
-msgstr ""
+msgstr "Sono un covert ops."
 
 msgid "unknown cmd"
 msgstr "comando sconosciuto"
@@ -5903,13 +5903,13 @@ msgid "Defusing dynamite..."
 msgstr "Disinnesco dinamite..."
 
 msgid "Affirmative!!"
-msgstr ""
+msgstr "Affirmative!!"
 
 msgid "^1Spam Protection^7: VoiceChat ignored"
 msgstr "^1Protezione Anti-Spam^7: VoiceChat ignorata"
 
 msgid "Mines have been reported in this area."
-msgstr "Delle mine sono state individuate in quest'area."
+msgstr "Sono state rilevate delle mine in quest'area."
 
 msgid "'s Landmine"
 msgstr "."
@@ -5918,7 +5918,7 @@ msgid "'s Mobile MG 42"
 msgstr " con un MG 42 Mobile"
 
 msgid "'s Mobile Browning"
-msgstr ""
+msgstr " con un Browning Mobile"
 
 msgid "'s rifle grenade"
 msgstr " con una granata da fucile"
@@ -5927,13 +5927,13 @@ msgid "'s support fire"
 msgstr " con del fuoco di supporto"
 
 msgid "'s crew-served MG"
-msgstr ""
+msgstr " con una mitragliatrice MG"
 
 msgid "was thrown to his doom by"
 msgstr "è stato lanciato verso il suo destino da"
 
 msgid "You have been revived by "
-msgstr "Sei stato rianimato da"
+msgstr "Sei stato rianimato da "
 
 msgid "Constructing..."
 msgstr "Costruzione..."
@@ -5959,7 +5959,7 @@ msgid "You are on the Axis team"
 msgstr "Sei nel team Axis"
 
 msgid "Warning, leave the construction area..."
-msgstr ""
+msgstr "Attenzione, allontanarsi dall'area di costruzione..."
 
 msgid "got caught in"
 msgstr "è stato inglobato da"
@@ -5981,7 +5981,7 @@ msgid "'s Satchel Charge"
 msgstr " con una carica esplosiva"
 
 msgid "You cannot arm dynamite near a friendly objective!"
-msgstr ""
+msgstr "Non puoi armare una dinamite vicino a un obiettivo amico!"
 
 msgid "'s tank-mounted MG42"
 msgstr " con un MG 42 montato su carro armato"
@@ -5996,16 +5996,16 @@ msgid "Landmine revealed"
 msgstr "Mina individuata"
 
 msgid "'s tank-mounted browning 30cal"
-msgstr ""
+msgstr " con un browning cal.30 da carro armato"
 
 msgid "'s grenade"
 msgstr " con una granata"
 
 msgid "Competition Settings Loaded!\n"
-msgstr ""
+msgstr "Impostazioni Competizione Caricate!\n"
 
 msgid "Public Settings Loaded!\n"
-msgstr ""
+msgstr "Impostazioni Pubbliche Caricate!\n"
 
 msgid "Landmine cannot be armed here..."
 msgstr "Non si possono armare mine qui..."
@@ -6020,19 +6020,19 @@ msgid "Countdown started.... ^3notready^7 ignored!\n"
 msgstr ""
 
 msgid "No complaint filed against you.\n"
-msgstr ""
+msgstr "Nessun reclamo registrato contro di te.\n"
 
 msgid "You are not the leader of a fireteam\n"
-msgstr ""
+msgstr "Non sei il leader di alcun fireteam\n"
 
 msgid "You have been warned by your Fireteam Commander\n"
-msgstr ""
+msgstr "Sei stato avvisato dal tuo Comandante del Fireteam\n"
 
 msgid "You have been kicked from the fireteam"
-msgstr ""
+msgstr "Sei stato cacciato dal fireteam"
 
 msgid "You are now the leader of your fireteam"
-msgstr ""
+msgstr "Ora sei il leader del tuo fireteam"
 
 msgid "The fireteam you are on has been disbanded"
 msgstr ""
@@ -6056,7 +6056,7 @@ msgid "You are not on the same Fireteam as the other player"
 msgstr ""
 
 msgid "Invalid client selected"
-msgstr ""
+msgstr "Client selezionato non valido"
 
 msgid "usage: fireteam admin <clientname|clientnumber>"
 msgstr ""
@@ -6094,12 +6094,12 @@ msgid "Invalid referee password!\n"
 msgstr ""
 
 msgid "Usage: ref [password]\n"
-msgstr ""
+msgstr "Uso: ref [password]\n"
 
 msgid ""
 "^3Referee commands:^7\n"
 "------------------------------------------\n"
-msgstr ""
+msgstr "^3Comandi Arbitro:^7\n------------------------------------------\n"
 
 msgid ""
 "Usage: ^3\\ref <cmd> [params]\n"
@@ -6125,10 +6125,10 @@ msgid "You have UNLOCKED teams\n"
 msgstr ""
 
 msgid "The ^4Allies^7 team is LOCKED!\n"
-msgstr ""
+msgstr "Il team ^4Allies^7 è BLOCCATO!\n"
 
 msgid "The ^1Axis^7 team is LOCKED!\n"
-msgstr ""
+msgstr "Il team ^4Axis^7 è BLOCCATO!\n"
 
 msgid "^3Referee ^1PAUSED^3 the match^3!\n"
 msgstr ""
@@ -6149,7 +6149,7 @@ msgid "Bad client slot: "
 msgstr ""
 
 msgid "Client"
-msgstr ""
+msgstr "Client"
 
 msgid "is not active\n"
 msgstr "non è attivo\n"
@@ -6161,13 +6161,13 @@ msgid "User "
 msgstr "Utente"
 
 msgid "is not on the server\n"
-msgstr ""
+msgstr "non è sul server\n"
 
 msgid "^5You've been removed from the ^4Allies^7 team\n"
-msgstr ""
+msgstr "^5Sei stato rimosso dal team ^4Allies^7\n"
 
 msgid "^5You've been removed from the ^1Axis^7 team\n"
-msgstr ""
+msgstr "^5Sei stato rimosso dal team ^1Axis^7\n"
 
 msgid "Referee has ^3SPECTATOR LOCKED^7 teams\n"
 msgstr ""
@@ -6179,7 +6179,7 @@ msgid "usage: ref warn <clientname> [reason].\n"
 msgstr ""
 
 msgid "Client not on server.\n"
-msgstr ""
+msgstr "Utente non sul server.\n"
 
 msgid "%s^7 was issued a ^1Warning^7 (No Reason Supplied)\n"
 msgstr ""
@@ -6198,26 +6198,26 @@ msgstr ""
 
 msgid ""
 "^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
-msgstr ""
+msgstr "^7 ID : Giocatore                 Nudge  Rate  MaxPkts  Snaps  Speciali\n"
 
 msgid ""
 "^7----------------------------------------------------------------------\n"
-msgstr ""
+msgstr "^7----------------------------------------------------------------------\n"
 
 msgid ""
 "^7Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  "
 "Specials\n"
-msgstr ""
+msgstr "^7Stato    : ID : Giocatore                 Nudge  Rate  MaxPkts  Snaps  Speciali\n"
 
 msgid ""
 "^7-------------------------------------------------------------------------------\n"
-msgstr ""
+msgstr "^7-------------------------------------------------------------------------------\n"
 
 msgid ""
 "^5\n"
 "Available Game Commands:\n"
 "------------------------\n"
-msgstr ""
+msgstr "^5\nComandi Disponibili:\n------------------------\n"
 
 msgid ""
 "\n"
@@ -6225,42 +6225,42 @@ msgid ""
 msgstr ""
 
 msgid "Spectators can't lock a team!\n"
-msgstr ""
+msgstr "Gli spettatori non possono bloccare un team!\n"
 
 msgid "The ^4Allies^7 team is now locked!\n"
-msgstr ""
+msgstr "Ora il team ^4Allies^7 è bloccato!\n"
 
 msgid "^3Your team is already locked!\n"
-msgstr ""
+msgstr "^3Il tuo team è già bloccato!\n"
 
 msgid "The ^4Allies^7 team is now unlocked!\n"
-msgstr ""
+msgstr "Ora il team ^4Allies^7 è sbloccato!\n"
 
 msgid "^3Your team is already unlocked!\n"
-msgstr ""
+msgstr "^3Il tuo team è già sbloccato!\n"
 
 msgid "Spectators can't unlock a team!\n"
-msgstr ""
+msgstr "Gli spettatori non possono sbloccare un team!\n"
 
 msgid "The ^1Axis^7 team is now locked!\n"
-msgstr ""
+msgstr "Il team ^1Axis^7 ora è bloccato!\n"
 
 msgid "The ^1Axis^7 team is now unlocked!\n"
-msgstr ""
+msgstr "Il team ^1Axis^7 ora è sbloccato!\n"
 
 msgid "Team commands not enabled on this server.\n"
-msgstr ""
+msgstr "Comandi team non abilitati su questo server.\n"
 
 msgid ""
 "\n"
 "^3>>> Unknown vote command: ^7 \n"
-msgstr ""
+msgstr "\n^3>>> Comando voto sconosciuto: ^7 \n"
 
 msgid ""
 "\n"
 "Valid ^3callvote^7 commands are:\n"
 "^3----------------------------\n"
-msgstr ""
+msgstr "\nComandi ^3callvote^7 validi:\n^3----------------------------\n"
 
 msgid ""
 "\n"
@@ -6275,31 +6275,31 @@ msgid "Spectators can't ready a team!\n"
 msgstr ""
 
 msgid "The ^4Allies^7 team is ready!\n"
-msgstr ""
+msgstr "Il team ^4Allies^7 è pronto!\n"
 
 msgid "The ^1Axis^7 team is ready!\n"
-msgstr ""
+msgstr "Il team ^1Axis^7 è pronto!\n"
 
 msgid "A vote is already in progress.\n"
-msgstr ""
+msgstr "È già in corso una votazione.\n"
 
 msgid "called a vote.\n"
 msgstr "ha richiesto una votazione.\n"
 
 msgid "^5Vote passed!\n"
-msgstr ""
+msgstr "^5Voto passato!\n"
 
 msgid "Spectator team\n"
-msgstr ""
+msgstr "Spettatore\n"
 
 msgid "Allies team\n"
-msgstr ""
+msgstr "Team Allies\n"
 
 msgid "Axis team\n"
-msgstr ""
+msgstr "Team Axis\n"
 
 msgid "Sorry, "
-msgstr ""
+msgstr "Spiacente, "
 
 msgid "voting has been disabled"
 msgstr "le votazioni sono state disabilitate"
@@ -6362,7 +6362,7 @@ msgid "Server disconnected for unknown reason"
 msgstr "Server disconnesso per motivi sconosciuti"
 
 msgid "'s Akimbo Luger 9mms"
-msgstr " con la sua Akimbo Luger 9mms"
+msgstr " con una Akimbo Luger 9mm"
 
 msgid "Cheats are not enabled on this server.\n"
 msgstr "Trucchi non abilitati in questo server.\n"
@@ -6371,22 +6371,22 @@ msgid "team: class is not available\n"
 msgstr "team: classe non disponibile\n"
 
 msgid "^1Soldier^7 is not available! Choose another class!\n"
-msgstr ""
+msgstr "^1Soldato^7 non disponibile! Scegli un'altra classe!\n"
 
 msgid "^1Medic^7 is not available! Choose another class!\n"
-msgstr ""
+msgstr "^1Medico^7 non disponibile! Scegli un'altra classe!\n"
 
 msgid "^1Engineer^7 is not available! Choose another class!\n"
-msgstr ""
+msgstr "^1Ingegnere^7 non disponibile! Scegli un'altra classe!\n"
 
 msgid "^1Field Ops^7 is not available! Choose another class!\n"
-msgstr ""
+msgstr "^1Field Ops^7 non disponibile! Scegli un'altra classe!\n"
 
 msgid "^1Covert Ops^7 is not available! Choose another class!\n"
-msgstr ""
+msgstr "^1Covert Ops^7 non disponibile! Scegli un'altra classe!\n"
 
 msgid "You must be alive to use this command.\n"
-msgstr ""
+msgstr "Devi essere vivo per usare questo comando.\n"
 
 msgid "The ^1Axis^7 team is empty!  Follow command ignored.\n"
 msgstr ""
@@ -6395,7 +6395,7 @@ msgid "The ^4Allies^7 team is empty!  Follow command ignored.\n"
 msgstr ""
 
 msgid "Can't follow a player on an enemy team!\n"
-msgstr ""
+msgstr "Non puoi seguire un giocatore del team avversario!\n"
 
 msgid "Can't follow while not in limbo if on a team!\n"
 msgstr ""
@@ -6443,7 +6443,7 @@ msgid "^1*** Level Restarted! ***\n"
 msgstr ""
 
 msgid "You have been switched to the Axis team"
-msgstr ""
+msgstr "Sei stato spostato nel team Axis"
 
 msgid "Keep the Allies from beating the clock!"
 msgstr ""
@@ -6452,7 +6452,7 @@ msgid "Keep the Axis from beating the clock!"
 msgstr ""
 
 msgid "You have been switched to the Allied team"
-msgstr ""
+msgstr "Sei stato spostato nel team Allied"
 
 msgid "Try to beat the clock!"
 msgstr ""
@@ -6461,13 +6461,13 @@ msgid "You have been been stripped of fireteam admin rights"
 msgstr ""
 
 msgid "%s ^7has left the fireteam\n"
-msgstr ""
+msgstr "%s ^7ha abbandonato il fireteam\n"
 
 msgid "You have been warned by your fireteam leader\n"
-msgstr ""
+msgstr "Sei stato avvisato dal tuo fireteam leader\n\n"
 
 msgid "^3moved to spectator for inactivity!\n"
-msgstr ""
+msgstr "^3spostato come spettatore per inattività!\n"
 
 msgid "was killed by"
 msgstr "è stato ucciso da"
@@ -6524,130 +6524,130 @@ msgid "'s airstrike marker"
 msgstr "."
 
 msgid "- Small Health"
-msgstr ""
+msgstr "- Salute Piccola"
 
 msgid "- Med Health"
-msgstr ""
+msgstr "- Salute Media"
 
 msgid "- Health Pack"
-msgstr ""
+msgstr "- Pacco Salute"
 
 msgid "- Hot Meal"
-msgstr ""
+msgstr "- Pasto Caldo"
 
 msgid "- Cold Meal"
-msgstr ""
+msgstr "- Pasto Freddo"
 
 msgid "- Health"
-msgstr ""
+msgstr "- Salute"
 
 msgid "- Knife"
-msgstr ""
+msgstr "- Pugnale"
 
 msgid "- Ka-Bar"
-msgstr ""
+msgstr "- Ka-Bar"
 
 msgid "- Luger"
-msgstr ""
+msgstr "- Luger"
 
 msgid "- Akimbo Luger"
-msgstr ""
+msgstr "- Akimbo Luger"
 
 msgid "- Silenced Akimbo Luger"
-msgstr ""
+msgstr "- Akimbo Luger Silenziata"
 
 msgid "- Thompson"
-msgstr ""
+msgstr "- Thompson"
 
 msgid "- Sten gun"
-msgstr ""
+msgstr "- Sten gun"
 
 msgid "- Colt"
-msgstr ""
+msgstr "- Colt"
 
 msgid "- Akimbo Colt"
-msgstr ""
+msgstr "- Akimbo Colt"
 
 msgid "- Silenced Akimbo Colt"
-msgstr ""
+msgstr "- Akimbo Colt Silenziata"
 
 msgid "- MP 40"
-msgstr ""
+msgstr "- MP 40"
 
 msgid "- Panzerfaust"
-msgstr ""
+msgstr "- Panzerfaust"
 
 msgid "- Bazooka"
-msgstr ""
+msgstr "- Bazooka"
 
 msgid "- Grenade"
-msgstr ""
+msgstr "- Granata"
 
 msgid "- Pineapple"
-msgstr ""
+msgstr "- Granata"
 
 msgid "- Flamethrower"
-msgstr ""
+msgstr "- Lanciafiamme"
 
 msgid "- Syringe"
-msgstr ""
+msgstr "- Siringa"
 
 msgid "- Adrenaline Syringe"
-msgstr ""
+msgstr "- Siringa Adrenalina"
 
 msgid "- Ammo Pack"
-msgstr ""
+msgstr "- Munizioni"
 
 msgid "- Mega Ammo Pack"
-msgstr ""
+msgstr "- Mega Munizioni"
 
 msgid "- Binoculars"
-msgstr ""
+msgstr "- Binocolo"
 
 msgid "- Scoped K43 Rifle"
-msgstr ""
+msgstr "- Fucile K43 Con Mirino"
 
 msgid "- K43 Rifle Scope"
-msgstr ""
+msgstr "- Mirino Per Fucile K43"
 
 msgid "- K43 Rifle"
-msgstr ""
+msgstr "- Fucile K43"
 
 msgid "- M1 Garand"
-msgstr ""
+msgstr "- Garand M1"
 
 msgid "- M7"
-msgstr ""
+msgstr "- M7"
 
 msgid "- Scoped M1 Garand"
-msgstr ""
+msgstr "- Garand M1 Con Mirino"
 
 msgid "- M1 Garand Scope"
-msgstr ""
+msgstr "- Mirino Per Garand M1"
 
 msgid "- FG 42 Paratroop Rifle"
-msgstr ""
+msgstr "- Fucile FG 42"
 
 msgid "- FG 42 Paratroop Rifle Scope"
-msgstr ""
+msgstr "- Mirino Per Fucile FG 42"
 
 msgid "- Mortar"
-msgstr ""
+msgstr "- Mortaio"
 
 msgid "- Granatwerfer"
-msgstr ""
+msgstr "- Granatwerfer"
 
 msgid "- Mobile MG 42"
-msgstr ""
+msgstr "- MG 42 Mobile"
 
 msgid "- Mobile Browning"
-msgstr ""
+msgstr "- Browning Mobile"
 
 msgid "- Silenced Luger"
-msgstr ""
+msgstr "- Luger Silenziata"
 
 msgid "- Silenced Colt"
-msgstr ""
+msgstr "- Colt Silenziata"
 
 msgid "Includes or excludes empty and full servers from the server list"
 msgstr "Include o esclude dalla lista i server pieni o vuoti"
@@ -6684,13 +6684,13 @@ msgid "Includes or excludes servers with bots from the server list"
 msgstr "Include o esclude dalla lista i server con bot"
 
 msgid "Click here to sort by Ping"
-msgstr ""
+msgstr "Clicca qui per ordinare per Ping"
 
 msgid "FAV"
 msgstr "FAV"
 
 msgid "Sets field of view"
-msgstr ""
+msgstr "Imposta il campo visivo"
 
 msgid "Selfkill:"
 msgstr "Suicidio:"
@@ -6724,66 +6724,6 @@ msgid ""
 "it has been updated to the latest version."
 msgstr ""
 
-msgid "Private"
-msgstr "Private"
-
-msgid "Private 1st Class"
-msgstr "Private 1st Class"
-
-msgid "Corporal"
-msgstr "Corporal"
-
-msgid "Sergeant"
-msgstr "Sergeant"
-
-msgid "Lieutenant"
-msgstr "Lieutenant"
-
-msgid "Captain"
-msgstr "Captain"
-
-msgid "Major"
-msgstr "Major"
-
-msgid "Colonel"
-msgstr "Colonel"
-
-msgid "Brigadier General"
-msgstr "Brigadier General"
-
-msgid "Lieutenant General"
-msgstr "Lieutenant General"
-
-msgid "General"
-msgstr "General"
-
-msgid "Schutze"
-msgstr "Schutze"
-
-msgid "Oberschutze"
-msgstr "Oberschutze"
-
-msgid "Gefreiter"
-msgstr "Gefreiter"
-
-msgid "Feldwebel"
-msgstr "Feldwebel"
-
-msgid "Leutnant"
-msgstr "Leutnant"
-
-msgid "Hauptmann"
-msgstr "Hauptmann"
-
-msgid "Oberst"
-msgstr "Oberst"
-
-msgid "Generalmajor"
-msgstr "Generalmajor"
-
-msgid "Generalleutnant"
-msgstr "Generalleutnant"
-
 msgid "Battle Sense"
 msgstr "Tattica"
 
@@ -6803,7 +6743,7 @@ msgid "Heavy Weapons"
 msgstr "Armi Pesanti"
 
 msgid "Covert Ops"
-msgstr "Op. Clandestine"
+msgstr "Covert Ops"
 
 msgid "Fire Mission: ^3Firing for effect!"
 msgstr ""
@@ -6821,7 +6761,7 @@ msgid "New version available. Do you want to update now?"
 msgstr "Nuova versione disponibile. Vuoi aggiornare ora?"
 
 msgid "20 Med Health"
-msgstr ""
+msgstr "20 Salute"
 
 msgid "Pilot: ^3Aborting, can't see target."
 msgstr ""
@@ -6870,16 +6810,16 @@ msgid "Change admin"
 msgstr "Cambia amministratore"
 
 msgid "Highest Fragger"
-msgstr ""
+msgstr "Miglior Giocatore"
 
 msgid "Highest Experience Points"
-msgstr ""
+msgstr "Maggior Punteggio"
 
 msgid "Highest Ranking Officer"
-msgstr ""
+msgstr "Ufficiale Maggior Grado"
 
 msgid "Most Highly Decorated"
-msgstr ""
+msgstr "Maggior Pluridecorato"
 
 msgid "Highest Battle Sense"
 msgstr "Migliore Tattica"
@@ -6891,30 +6831,30 @@ msgid "Best Medic"
 msgstr "Migliore Medico"
 
 msgid "Best Field Ops"
-msgstr ""
+msgstr "Migliore Field Ops"
 
 msgid "Highest Light Weapons"
-msgstr ""
+msgstr "Miglior Uso Armi Leggere"
 
 msgid "Best Soldier"
 msgstr "Migliore Soldato"
 
 msgid "Best Covert Ops"
-msgstr ""
+msgstr "Migliore Covert Ops"
 
 msgid "Highest Accuracy"
 msgstr "Massima Precisione"
 
 msgid "I Ain't Got No Friends Award"
-msgstr ""
+msgstr "Premio Non Ho Amici"
 
 msgid "Welcome Newbie! Award"
-msgstr ""
+msgstr "Premio Benvenuto Novello!"
 
 msgid ""
 "\n"
 "ET: Legacy with OpenGL 3.x renderer can not run on this machine since it is missing one or more required OpenGL extensions. Please update your video card drivers and try again.\n"
-msgstr ""
+msgstr "\nET: Legacy con renderer OpenGL 3.x non può funzionare su questa macchina per la mancanza delle estensioni OpenGL richieste. Si prega di aggiornare i driver della scheda video e riprovare.\n"
 
 msgid "Gib command not allowed during intermission.\n"
 msgstr ""
@@ -6950,7 +6890,7 @@ msgid "Player must be on a team to die.\n"
 msgstr ""
 
 msgid "^7%s^7 died."
-msgstr ""
+msgstr "^7%s^7 è morto."
 
 msgid "Freeze command not allowed during intermission.\n"
 msgstr ""
@@ -7022,16 +6962,16 @@ msgid "^7%s^7 is pipped."
 msgstr ""
 
 msgid "%s command not allowed during intermission.\n"
-msgstr ""
+msgstr "Comando %s non ammesso durante l'intervallo.\n"
 
 msgid "^9%d players %s."
-msgstr ""
+msgstr "^9%d giocatori %s."
 
 msgid "No players in team or they are already %s.\n"
-msgstr ""
+msgstr "Nessun giocatore in un team o sono già %s.\n"
 
 msgid "Player must be on a team to be %s.\n"
-msgstr ""
+msgstr "Un giocatore deve essere in un team per essere %s\n"
 
 msgid "^7%s^7 was %s."
 msgstr "^7%s^7 era %s."

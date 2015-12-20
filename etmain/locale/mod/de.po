@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-12-13 20:44+0000\n"
-"Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
+"PO-Revision-Date: 2015-12-23 14:41+0000\n"
+"Last-Translator: IR4 <gutzu@gmx.ch>\n"
 "Language-Team: German (http://www.transifex.com/etlegacy/etlegacy/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -571,7 +571,7 @@ msgstr "Sollen Spieler in ein Team eintreten können nachdem das Spiel gestartet
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Mute Spectators:"
-msgstr "Beobachter stummstellen:"
+msgstr "Beobachter stumm:"
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Whether spectators are muted"
@@ -602,7 +602,7 @@ msgstr "Ob man Spieler schaden zufügen kann während der Aufwärmphase des Spie
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Max Players Per Team:"
-msgstr "Max Spieler Pro Team:"
+msgstr "Max Spieler pro Team:"
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Specifies the maximum number of players per team"
@@ -677,7 +677,7 @@ msgstr "Standard Zeitlimit nicht beachten"
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Allied Spawn Time:"
-msgstr "Spielwiedereintrittszeit für die Alliierten"
+msgstr "Spielwiedereintrittszeit Alliierte"
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Override the default Allied spawn time"
@@ -685,7 +685,7 @@ msgstr "Standard Spielwiedereintrittszeit für die Alliierten nicht beachten"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Axis Spawn Time:"
-msgstr "Spielwiedereintrittszeit für die Axenmächte"
+msgstr "Spielwiedereintrittszeit Axen"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Override the default Axis spawn time"
@@ -723,7 +723,7 @@ msgstr "LAST MAN STANDING"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "LMS Rounds Per Match:"
-msgstr "LMS Runden Pro Spiel:"
+msgstr "LMS Runden pro Spiel:"
 
 #: etmain/ui/hostgame_advanced.menu:63
 msgid "Override the default LMS rounds per match"
@@ -731,7 +731,7 @@ msgstr "Standard für LMS runden pro Spiel nicht beachten"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "LMS Matches Per Map:"
-msgstr "LMS Spiele Pro Karte:"
+msgstr "LMS Spiele pro Karte:"
 
 #: etmain/ui/hostgame_advanced.menu:64
 msgid "Override the default LMS matches (comprising of rounds) per map"
@@ -739,7 +739,7 @@ msgstr "Standard für LMS Spiele (Bestehend aus Runden) pro Karte nicht beachten
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "LMS Spectate Team Only:"
-msgstr "LMS Nur Team Beobachter:"
+msgstr "LMS nur Team Beobachter:"
 
 #: etmain/ui/hostgame_advanced.menu:65
 msgid "Stops players spectating the enemy team"
@@ -802,7 +802,7 @@ msgstr "ABSTIMMUNG"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Max Votes per Player:"
-msgstr "Max Abstimm. pro Spieler:"
+msgstr "Max Abst. pro Spieler:"
 
 #: etmain/ui/hostgame_advanced.menu:77
 msgid "Specifies the maximum number of votes per player per match"
@@ -840,7 +840,7 @@ msgstr "Erlaubt Spielern für eine Änderung des Spieltyps abzustimmen"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Player Kick:"
-msgstr "Spieler hinauswerfen:"
+msgstr "Spieler kicken:"
 
 #: etmain/ui/hostgame_advanced.menu:83
 msgid "Allow players to vote for other players to be kicked"
@@ -2620,7 +2620,7 @@ msgstr "Zeige Ping:"
 
 #: etmain/ui/options_customise_hud.menu:47
 msgid "Displays ping"
-msgstr "Zeigt Ping:"
+msgstr "Zeige Ping:"
 
 #: etmain/ui/options_customise_hud.menu:48
 msgid "Show Lagometer:"
@@ -2888,7 +2888,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:86
 msgid "Set crosshair type"
-msgstr ""
+msgstr "Setze Fadenkreuztyp"
 
 #: etmain/ui/options_customise_hud.menu:97
 msgid "Primary Color:"
@@ -2947,7 +2947,7 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Red"
-msgstr ""
+msgstr "Hellrot"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
@@ -2962,7 +2962,7 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Green"
-msgstr ""
+msgstr "Medium Grün"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
@@ -2977,22 +2977,22 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Yellow"
-msgstr ""
+msgstr "Medium Gelb"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Orange"
-msgstr ""
+msgstr "Medium Orange"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Light Grey"
-msgstr ""
+msgstr "Hellgrau"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Medium Grey"
-msgstr ""
+msgstr "Medium Grau"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
@@ -3006,11 +3006,11 @@ msgstr "Schwarz"
 
 #: etmain/ui/options_customise_hud.menu:97
 msgid "Set the color for the primary crosshair"
-msgstr ""
+msgstr "Setze die Farbe für das primäre Fadenkreuz"
 
 #: etmain/ui/options_customise_hud.menu:99
 msgid "Primary Alpha:"
-msgstr ""
+msgstr "Primär Alpha"
 
 #: etmain/ui/options_customise_hud.menu:99
 msgid "Set the transparency level for the primary crosshair"
@@ -4529,7 +4529,7 @@ msgstr ""
 
 #: src/cgame/cg_debriefing.c:2624
 msgid "HS:"
-msgstr ""
+msgstr "HS:"
 
 #: src/cgame/cg_debriefing.c:2659
 msgid "Time:"
@@ -4648,7 +4648,7 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:1800
 msgid "Make Fireteam private?"
-msgstr ""
+msgstr "Mache Feuerteam privat?"
 
 #: src/cgame/cg_draw.c:1814
 msgid "Create a Fireteam?"
@@ -4662,11 +4662,11 @@ msgstr "ABSTIMMUNG(%i): %s"
 #: src/cgame/cg_draw.c:1905
 #, c-format
 msgid "YES:%i, NO:%i"
-msgstr ""
+msgstr "JA:%i, NEIN:%i"
 
 #: src/cgame/cg_draw.c:1909
 msgid "Can't vote as Spectator"
-msgstr ""
+msgstr "Keine Abstimmung als Zuschauer!"
 
 #: src/cgame/cg_draw.c:1913
 #, c-format
@@ -4685,7 +4685,7 @@ msgstr "J:%i, N:%i"
 
 #: src/cgame/cg_draw.c:1928
 msgid "Your complaint has been filed"
-msgstr ""
+msgstr "Deine Beschwerde wurde eingereicht"
 
 #: src/cgame/cg_draw.c:1934
 msgid "Complaint dismissed"
@@ -4827,12 +4827,12 @@ msgstr "Du folgst"
 #: src/cgame/cg_draw.c:2429
 #, c-format
 msgid "^3Config: ^7%s^7"
-msgstr ""
+msgstr "^3Konfiguration: ^7%s^7"
 
 #: src/cgame/cg_draw.c:2435
 #, c-format
 msgid "^3WARMUP:^7 Waiting on ^2%i^7 %s"
-msgstr ""
+msgstr "^3AUFWÄRMEN:^7 Warte auf ^2%i^7 %s"
 
 #: src/cgame/cg_draw.c:2435
 msgid "player"
@@ -5741,7 +5741,7 @@ msgid "Yes!"
 msgstr "Ja!"
 
 msgid "Jawohl!"
-msgstr ""
+msgstr "Jawohl!"
 
 msgid "Negative!"
 msgstr ""
@@ -6002,10 +6002,10 @@ msgid "'s grenade"
 msgstr ""
 
 msgid "Competition Settings Loaded!\n"
-msgstr ""
+msgstr "Wettkampfeinstellungen geladen!\n"
 
 msgid "Public Settings Loaded!\n"
-msgstr ""
+msgstr "Öffentliche Einstellungen geladen\n"
 
 msgid "Landmine cannot be armed here..."
 msgstr ""
@@ -6724,66 +6724,6 @@ msgid ""
 "it has been updated to the latest version."
 msgstr ""
 
-msgid "Private"
-msgstr ""
-
-msgid "Private 1st Class"
-msgstr ""
-
-msgid "Corporal"
-msgstr ""
-
-msgid "Sergeant"
-msgstr ""
-
-msgid "Lieutenant"
-msgstr ""
-
-msgid "Captain"
-msgstr ""
-
-msgid "Major"
-msgstr ""
-
-msgid "Colonel"
-msgstr ""
-
-msgid "Brigadier General"
-msgstr ""
-
-msgid "Lieutenant General"
-msgstr ""
-
-msgid "General"
-msgstr ""
-
-msgid "Schutze"
-msgstr "Schütze"
-
-msgid "Oberschutze"
-msgstr ""
-
-msgid "Gefreiter"
-msgstr ""
-
-msgid "Feldwebel"
-msgstr ""
-
-msgid "Leutnant"
-msgstr ""
-
-msgid "Hauptmann"
-msgstr ""
-
-msgid "Oberst"
-msgstr ""
-
-msgid "Generalmajor"
-msgstr ""
-
-msgid "Generalleutnant"
-msgstr ""
-
 msgid "Battle Sense"
 msgstr ""
 
@@ -6834,7 +6774,7 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:1830
 msgid "Join a Fireteam?"
-msgstr ""
+msgstr "Anschluss an ein Feuerteam?"
 
 msgid "Apply"
 msgstr ""
