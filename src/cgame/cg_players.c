@@ -304,7 +304,7 @@ void CG_NewClientInfo(int clientNum)
 		{
 			CG_SoundPlaySoundScript(cgs.clientinfo[cg.clientNum].team == TEAM_ALLIES ? rankSoundNames_Allies[newInfo.rank] : rankSoundNames_Axis[newInfo.rank], NULL, -1, qtrue);
 
-			CG_AddPMItemBig(PM_RANK, va(CG_TranslateString("Promoted to rank %s!"), cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? CG_TranslateString(rankNames_Axis[newInfo.rank]) : CG_TranslateString(rankNames_Allies[newInfo.rank])), rankicons[newInfo.rank][cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+			CG_AddPMItemBig(PM_RANK, va(CG_TranslateString("Promoted to rank %s!"), cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? rankNames_Axis[newInfo.rank] : rankNames_Allies[newInfo.rank]), rankicons[newInfo.rank][cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 		}
 
 		// Make sure primary class and primary weapons are correct for
