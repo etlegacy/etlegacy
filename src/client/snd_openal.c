@@ -2546,7 +2546,7 @@ static float S_AL_StartStreamingSoundEx(const char *intro, const char *loop, int
 
 	if (ss == -1)
 	{
-		return 0.0f
+		return 0.0f;
 	}
 
 	if (ssSourceHandle[ss] == -1)
