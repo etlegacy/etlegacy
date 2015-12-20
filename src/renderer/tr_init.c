@@ -1308,7 +1308,7 @@ void R_Init(void)
 	err = qglGetError();
 	if (err != GL_NO_ERROR)
 	{
-		Ren_Print("glGetError() = 0x%x\n", err);
+		Ren_Print("R_Init: glGetError() = 0x%x\n", err);
 	}
 
 	Ren_Print("----- finished R_Init -----\n");
