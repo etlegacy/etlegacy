@@ -409,6 +409,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 	int                flag;
 	int                i;
 	int                extLen;
+	qboolean           invalid;
 
 	if (filter)
 	{
@@ -475,6 +476,32 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 					continue; // didn't match
 				}
 			}
+
+			// check for bad file names and don't add these
+			invalid = qfalse;
+			// note: this isn't done in Sys_ListFilteredFiles()
+
+			for (i = 0; i < strlen(findinfo.name); i++)
+			{
+				if (findinfo.name[i] == 127)
+				{
+					Com_Printf("ERROR: invalid char in name of file '%s'.\n", findinfo.name);
+					invalid = qtrue;
+					break;
+				}
+			}
+
+			if (invalid)
+			{
+				remove(va("%s%c%s", directory, PATH_SEP, findinfo.name));
+#ifdef DEDICATED
+				Sys_Error("Invalid character in file name '%s'. The file has been removed. Start the server again", findinfo.name);
+#else
+				Sys_Dialog(DT_INFO, va("File name \"%s\" contains an invalid character for ET: L file structure.\nSome admins take advantage of this to ensure their menu loads last.\nThe file has been removed.\n", findinfo.name), "Invalid file name detected & removed");
+#endif
+				continue; // never add invalid files
+			}
+
 			if (nfiles == MAX_FOUND_FILES - 1)
 			{
 				break;

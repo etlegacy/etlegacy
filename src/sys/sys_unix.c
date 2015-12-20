@@ -331,6 +331,7 @@ void Sys_ListFilteredFiles(const char *basedir, char *subdirs, char *filter, cha
 			break;
 		}
 		Com_sprintf(filename, sizeof(filename), "%s/%s", subdirs, d->d_name);
+
 		if (!Com_FilterPath(filter, filename, qfalse))
 		{
 			continue;
@@ -364,7 +365,8 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 	int           i;
 	struct stat   st;
 	int           extLen;
-
+	qboolean      invalid;
+	
 	if (filter)
 	{
 		nfiles = 0;
@@ -418,22 +420,44 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 		{
 			continue;
 		}
-		if ((dironly && !(st.st_mode & S_IFDIR)) ||
-		    (!dironly && (st.st_mode & S_IFDIR)))
+		if ((dironly && !(st.st_mode & S_IFDIR)) || (!dironly && (st.st_mode & S_IFDIR)))
 		{
 			continue;
 		}
 
 		if (*extension)
 		{
-			if (strlen(d->d_name) < extLen ||
-			    Q_stricmp(
-			        d->d_name + strlen(d->d_name) - extLen,
-			        extension))
+			if (strlen(d->d_name) < extLen || Q_stricmp(d->d_name + strlen(d->d_name) - extLen, extension))
 			{
 				continue; // didn't match
 			}
 		}
+
+		// check for bad file names
+		invalid = qfalse;
+		// note: this isn't done in Sys_ListFilteredFiles()
+
+		for (i = 0; i < strlen(d->d_name); i++)
+		{
+			if (d->d_name[i] == 127)
+			{
+				Com_Printf("ERROR: invalid char in name of file '%s'.\n", d->d_name);
+				invalid = qtrue;
+				break;
+			}
+		}
+
+		if (invalid)
+		{
+			remove(va("%s%c%s", directory, PATH_SEP, d->d_name));
+#ifdef DEDICATED
+			Sys_Error("Invalid character in file name '%s'. The file has been removed. Start the server again", d->d_name);
+#else
+			Sys_Dialog(DT_INFO, va("File name \"%s\" contains an invalid character for ET: L file structure.\nSome admins take advantage of this to ensure their menu loads last.\nThe file has been removed.\n", d->d_name), "Invalid file name detected & removed");
+#endif
+			continue; // never add invalid files
+		}
+
 
 		if (nfiles == MAX_FOUND_FILES - 1)
 		{
