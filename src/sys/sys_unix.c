@@ -366,7 +366,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 	struct stat   st;
 	int           extLen;
 	qboolean      invalid;
-	
+
 	if (filter)
 	{
 		nfiles = 0;
@@ -439,7 +439,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 
 		for (i = 0; i < strlen(d->d_name); i++)
 		{
-			if (d->d_name[i] == 127)
+			if (d->d_name[i] <= 31 || d->d_name[i] == 127)
 			{
 				Com_Printf("ERROR: invalid char in name of file '%s'.\n", d->d_name);
 				invalid = qtrue;

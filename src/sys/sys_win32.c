@@ -483,7 +483,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 
 			for (i = 0; i < strlen(findinfo.name); i++)
 			{
-				if (findinfo.name[i] == 127)
+				if (findinfo.name[i] <= 31 || findinfo.name[i] == 127)
 				{
 					Com_Printf("ERROR: invalid char in name of file '%s'.\n", findinfo.name);
 					invalid = qtrue;
