@@ -3187,7 +3187,7 @@ void CG_DrawDemoRecording(void)
 		return;
 	}
 
-	// pull for score
+	// poll for score
 	if (!lastDemoScoreTime || cg.time > lastDemoScoreTime)
 	{
 		trap_SendClientCommand("score");
@@ -3298,12 +3298,6 @@ CG_Draw2D
 static void CG_Draw2D(void)
 {
 	CG_ScreenFade();
-	// no 2d when in esc menu
-	// FIXME: do allow for quickchat (bleh)
-	// - Removing for now
-	//if( trap_Key_GetCatcher() & KEYCATCH_UI ) {
-	//  return;
-	//}
 
 	if (cg.snap->ps.pm_type == PM_INTERMISSION)
 	{

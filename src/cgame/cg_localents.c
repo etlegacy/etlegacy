@@ -124,6 +124,7 @@ char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag)
 
 	loc[0] = origin[0];
 	loc[1] = origin[1];
+	//loc[2] = origin[2]; // no need for this - BG_GetLocationString is 2d
 
 	if (cg_locations.integer & flag)
 	{
