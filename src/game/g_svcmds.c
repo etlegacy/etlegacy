@@ -2359,9 +2359,17 @@ qboolean ConsoleCommand(void)
 
 	if (g_dedicated.integer)
 	{
+		// FIXME
+		// this 'say' condition is never reached?!
 		if (!Q_stricmp(cmd, "say"))
 		{
 			trap_SendServerCommand(-1, va("cpm \"server: %s\n\"", Q_AddCR(ConcatArgs(1))));
+			return qtrue;
+		}
+		// added for rcon/Lua chat
+		if (!Q_stricmp(cmd, "chat"))
+		{
+			trap_SendServerCommand(-1, va("chat \"console: %s\n\"", Q_AddCR(ConcatArgs(1))));
 			return qtrue;
 		}
 

@@ -967,7 +967,8 @@ static void CG_AddToTeamChat(const char *str, int clientnum)
 	int  lastcolor;
 	int  chatHeight;
 
-	if (clientnum < 0 || clientnum >= MAX_CLIENTS)
+	// -1 is sent when console is chatting
+	if (clientnum < -1 || clientnum >= MAX_CLIENTS) // FIXME: never return for console chat?
 	{
 		return;
 	}
@@ -981,7 +982,7 @@ static void CG_AddToTeamChat(const char *str, int clientnum)
 		chatHeight = TEAMCHAT_HEIGHT;
 	}
 
-	if (chatHeight <= 0 || cg_teamChatTime.integer <= 0)
+	if (chatHeight <= 0 || cg_teamChatTime.integer <= 0) // FIXME: never return for console chat?
 	{
 		// team chat disabled, dump into normal chat
 		cgs.teamChatPos = cgs.teamLastChatPos = 0;
@@ -1009,8 +1010,15 @@ static void CG_AddToTeamChat(const char *str, int clientnum)
 			*p = 0;
 
 			cgs.teamChatMsgTimes[cgs.teamChatPos % chatHeight] = cg.time;
-			cgs.teamChatMsgTeams[cgs.teamChatPos % chatHeight] = cgs.clientinfo[clientnum].team;
-
+			// console chat
+			if (clientnum == -1)
+			{
+				cgs.teamChatMsgTeams[cgs.teamChatPos % chatHeight] = TEAM_SPECTATOR;
+			}
+			else
+			{
+				cgs.teamChatMsgTeams[cgs.teamChatPos % chatHeight] = cgs.clientinfo[clientnum].team;
+			}
 			cgs.teamChatPos++;
 			p    = cgs.teamChatMsgs[cgs.teamChatPos % chatHeight];
 			*p   = 0;
@@ -1036,7 +1044,16 @@ static void CG_AddToTeamChat(const char *str, int clientnum)
 	}
 	*p = 0;
 
-	cgs.teamChatMsgTeams[cgs.teamChatPos % chatHeight] = cgs.clientinfo[clientnum].team;
+	// console chat
+	if (clientnum == -1)
+	{
+		cgs.teamChatMsgTeams[cgs.teamChatPos % chatHeight] = TEAM_SPECTATOR;
+	}
+	else
+	{
+		cgs.teamChatMsgTeams[cgs.teamChatPos % chatHeight] = cgs.clientinfo[clientnum].team;
+	}
+
 	cgs.teamChatMsgTimes[cgs.teamChatPos % chatHeight] = cg.time;
 	cgs.teamChatPos++;
 
@@ -2474,9 +2491,9 @@ static void CG_ServerCommand(void)
 	{
 		char       text[MAX_SAY_TEXT];
 		const char *s;
-		int        clientNum = -1;
+		int        clientNum = -1; // console
 
-		if (cg_teamChatsOnly.integer)
+		if (cg_teamChatsOnly.integer) // FIXME: skip for console?
 		{
 			return;
 		}
