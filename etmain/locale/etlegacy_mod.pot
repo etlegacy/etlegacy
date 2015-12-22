@@ -6702,66 +6702,6 @@ msgstr ""
 msgid "Couldn't load an official pak file; verify your installation and make sure it has been updated to the latest version."
 msgstr ""
 
-msgid "Private"
-msgstr ""
-
-msgid "Private 1st Class"
-msgstr ""
-
-msgid "Corporal"
-msgstr ""
-
-msgid "Sergeant"
-msgstr ""
-
-msgid "Lieutenant"
-msgstr ""
-
-msgid "Captain"
-msgstr ""
-
-msgid "Major"
-msgstr ""
-
-msgid "Colonel"
-msgstr ""
-
-msgid "Brigadier General"
-msgstr ""
-
-msgid "Lieutenant General"
-msgstr ""
-
-msgid "General"
-msgstr ""
-
-msgid "Schutze"
-msgstr ""
-
-msgid "Oberschutze"
-msgstr ""
-
-msgid "Gefreiter"
-msgstr ""
-
-msgid "Feldwebel"
-msgstr ""
-
-msgid "Leutnant"
-msgstr ""
-
-msgid "Hauptmann"
-msgstr ""
-
-msgid "Oberst"
-msgstr ""
-
-msgid "Generalmajor"
-msgstr ""
-
-msgid "Generalleutnant"
-msgstr ""
-
 msgid "Battle Sense"
 msgstr ""
 
