@@ -2369,7 +2369,7 @@ qboolean ConsoleCommand(void)
 		// added for rcon/Lua chat
 		if (!Q_stricmp(cmd, "chat"))
 		{
-			trap_SendServerCommand(-1, va("chat \"console: %s\n\"", Q_AddCR(ConcatArgs(1))));
+			trap_SendServerCommand(-1, va("chat \"console: %s\"", Q_AddCR(ConcatArgs(1))));
 			return qtrue;
 		}
 
