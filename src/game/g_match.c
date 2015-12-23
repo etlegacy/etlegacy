@@ -639,7 +639,7 @@ void G_printMatchInfo(gentity_t *ent)
 	int       i, j, cnt = 0, eff, time_eff;
 	int       tot_timex, tot_timel, tot_timep, tot_kills, tot_deaths, tot_gibs, tot_sk, tot_tk, tot_tg, tot_dg, tot_dr, tot_tdg, tot_tdr, tot_xp;
 #ifdef FEATURE_RATING
-	float     tot_rating, tot_mean, tot_var, tot_delta, tot_oldmean, tot_oldvar;
+	float     tot_rating, tot_delta;
 #endif
 	gclient_t *cl;
 	char      *ref;
@@ -669,16 +669,12 @@ void G_printMatchInfo(gentity_t *ent)
 #ifdef FEATURE_RATING
 		tot_rating = 0.f;
 		tot_delta  = 0.f;
-		tot_mean   = 0.f;
-		tot_var    = 0.f;
-		tot_oldmean = 0.f;
-		tot_oldvar  = 0.f;
 #endif
 
 		CP("sc \"\n\"");
 #ifdef FEATURE_RATING
-		CP("sc \"^7TEAM       Player         ^1 TmX^4 TmL^7 TmP^7 Kll Dth Gib  SK  TK  TG^7 Eff^2    DG^1    DR^6  TDG^4  TDR^3  Score^8  Rating^5  Delta^9   Mean^9   Dev^9  oMean^9  oDev^9   PpX^9   PpL\n\"");
-		CP("sc \"^7--------------------------------------------------------------------------------------------------------------^9--------------------------------------\n\"");
+		CP("sc \"^7TEAM       Player         ^1 TmX^4 TmL^7 TmP^7 Kll Dth Gib  SK  TK  TG^7 Eff^2    DG^1    DR^6  TDG^4  TDR^3  Score^8  Rating^5  Delta\n\"");
+		CP("sc \"^7--------------------------------------------------------------------------------------------------------------\n\"");
 #else
 		CP("sc \"^7TEAM       Player         ^1 TmX^4 TmL^7 TmP^7 Kll Dth Gib  SK  TK  TG^7 Eff^2    DG^1    DR^6  TDG^4  TDR^3  Score\n\"");
 		CP("sc \"^7-----------------------------------------------------------------------------------------------\n\"");
@@ -713,12 +709,8 @@ void G_printMatchInfo(gentity_t *ent)
 			tot_tdr    += cl->sess.team_damage_received;
 			tot_xp     += cl->ps.persistant[PERS_SCORE];
 #ifdef FEATURE_RATING
-			tot_rating += cl->sess.mu - 3 * cl->sess.sigma,
-			tot_delta  += (cl->sess.mu - 3 * cl->sess.sigma) - (cl->sess.oldmu - 3 * cl->sess.oldsigma),
-			tot_mean   += cl->sess.mu;
-			tot_var    += pow(cl->sess.sigma,2);
-			tot_oldmean += cl->sess.oldmu;
-			tot_oldvar  += pow(cl->sess.oldsigma,2);
+			tot_rating += cl->sess.mu - 3 * cl->sess.sigma;
+			tot_delta  += (cl->sess.mu - 3 * cl->sess.sigma) - (cl->sess.oldmu - 3 * cl->sess.oldsigma);
 #endif
 
 			eff = (cl->sess.deaths + cl->sess.kills == 0) ? 0 : 100 * cl->sess.kills / (cl->sess.deaths + cl->sess.kills);
@@ -739,7 +731,7 @@ void G_printMatchInfo(gentity_t *ent)
 
 			cnt++;
 #ifdef FEATURE_RATING
-			CP(va("sc \"%-14s %s%-15s^1%4d^4%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^4%5d^3%7d^8%8.2f^5%+7.2f^9%7.2f^9%6.2f^9%7.2f^9%6.2f^9%6.2f^9%6.2f\n\"",
+			CP(va("sc \"%-14s %s%-15s^1%4d^4%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^4%5d^3%7d^8%8.2f^5%+7.2f\n\"",
 #else
 			CP(va("sc \"%-14s %s%-15s^1%4d^4%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
 #endif
@@ -766,13 +758,7 @@ void G_printMatchInfo(gentity_t *ent)
 #ifdef FEATURE_RATING
 			      ,
 			      (cl->sess.mu - 3 * cl->sess.sigma < 0.f) ? 0.f : cl->sess.mu - 3 * cl->sess.sigma,
-			      (cl->sess.mu - 3 * cl->sess.sigma) - (cl->sess.oldmu - 3 * cl->sess.oldsigma),
-			      cl->sess.mu,
-			      cl->sess.sigma,
-			      cl->sess.oldmu,
-			      cl->sess.oldsigma,
-			      cl->sess.time_axis / (float)(level.intermissiontime - level.startTime - level.timeDelta),
-			      cl->sess.time_allies / (float)(level.intermissiontime - level.startTime - level.timeDelta)
+			      (cl->sess.mu - 3 * cl->sess.sigma) - (cl->sess.oldmu - 3 * cl->sess.oldsigma)
 #endif
 			      ));
 		}
@@ -786,8 +772,8 @@ void G_printMatchInfo(gentity_t *ent)
 		time_eff = (tot_timex + tot_timel == 0) ? 0 : 100 * tot_timep / (tot_timex + tot_timel);
 
 #ifdef FEATURE_RATING
-		CP("sc \"^7--------------------------------------------------------------------------------------------------------------^9--------------------------------------\n\"");
-		CP(va("sc \"%-14s ^5%-15s^1%4d^4%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^4%5d^3%7d^8%8.2f^5%+7.2f^9%7.2f^9%6.2f^9%7.2f^9%6.2f^9%6.2f^9%6.2f\n\"",
+		CP("sc \"^7--------------------------------------------------------------------------------------------------------------\n\"");
+		CP(va("sc \"%-14s ^5%-15s^1%4d^4%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^4%5d^3%7d^8%8.2f^5%+7.2f\n\"",
 #else
 		CP("sc \"^7-----------------------------------------------------------------------------------------------\n\"");
 		CP(va("sc \"%-14s ^5%-15s^1%4d^4%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
@@ -812,13 +798,7 @@ void G_printMatchInfo(gentity_t *ent)
 #ifdef FEATURE_RATING
 		      ,
 		      (tot_rating < 0.f) ? 0.f : tot_rating / TeamCount(-1, i),
-		      tot_delta / TeamCount(-1, i),
-		      tot_mean / TeamCount(-1, i),
-		      sqrt(tot_var/ TeamCount(-1, i)),
-		      tot_oldmean / TeamCount(-1, i),
-		      sqrt(tot_oldvar/ TeamCount(-1, i)),
-		      tot_timex / (float)(level.intermissiontime - level.startTime - level.timeDelta) / TeamCount(-1, i),
-		      tot_timel / (float)(level.intermissiontime - level.startTime - level.timeDelta) / TeamCount(-1, i)
+		      tot_delta / TeamCount(-1, i)
 #endif
 		      ));
 	}
