@@ -83,7 +83,10 @@ static void R_BuildGammaProgram(void)
 		glGetShaderiv(gammaProgram.vertexShader, GL_INFO_LOG_LENGTH, &blen);
 		if (blen > 1)
 		{
-			GLchar *compiler_log = (GLchar *) malloc(blen);
+			GLchar *compiler_log;
+
+			compiler_log = (GLchar *) malloc(blen);
+
 			glGetInfoLogARB(gammaProgram.vertexShader, blen, &slen, compiler_log);
 			Ren_Fatal("Failed to compile the gamma vertex shader reason: %s\n", compiler_log);
 		}
@@ -110,7 +113,7 @@ static void R_BuildGammaProgram(void)
 
 	glLinkProgramARB(gammaProgram.program);
 
-	glGetProgramivARB(gammaProgram.program, GL_LINK_STATUS, &compiled);
+	glGetProgramivARB(gammaProgram.program, GL_LINK_STATUS, &compiled); // this throws glGetError() = 0x500
 	if (!compiled)
 	{
 		Ren_Fatal("Failed to link gamma shaders\n");
@@ -166,23 +169,34 @@ void R_ScreenGamma(void)
 
 void R_InitGamma(void)
 {
+	byte *data;
+
 	if (!GLEW_ARB_fragment_program)
 	{
+		Ren_Print("WARNING: R_InitGamma() skipped - no ARB_fragment_program\n");
 		return;
 	}
 
 	if (ri.Cvar_VariableIntegerValue("r_ignorehwgamma"))
 	{
+		Ren_Print("INFO: R_InitGamma() skipped - r_ignorehwgamma is set\n");
 		return;
 	}
 
-	byte *data = (byte *)ri.Hunk_AllocateTempMemory(glConfig.vidWidth * glConfig.vidHeight * 4);
+	data = (byte *)ri.Hunk_AllocateTempMemory(glConfig.vidWidth * glConfig.vidHeight * 4);
 	if (!data)
 	{
+		Ren_Print("WARNING: R_InitGamma() can't allocate temp memory\n"); // fatal?
 		return;
 	}
 
 	screenImage = R_CreateImage("screenBufferImage_skies", data, glConfig.vidWidth, glConfig.vidHeight, qfalse, qfalse, GL_CLAMP_TO_EDGE);
+
+	if (!screenImage)
+	{
+		Ren_Print("WARNING: R_InitGamma() screen image is NULL\n");
+	}
+
 	ri.Hunk_FreeTempMemory(data);
 
 	Com_Memset(&gammaProgram, 0, sizeof(shaderProgram_t));
