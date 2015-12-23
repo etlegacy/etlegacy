@@ -47,6 +47,10 @@
 #   define Win_ShowConsole(x, y)
 #endif
 
+#ifdef FEATURE_DBMS
+#include "../db/db_sql.h"
+#endif
+
 // NOTE: if protocol gets bumped please add 84 to the list before 0
 // 2.55 82, 2.56 83, 2.6 84
 int demo_protocols[] =
@@ -2986,7 +2990,14 @@ void Com_Init(char *commandLine)
 			Cbuf_AddText("cinematic etintro.ogv\n");
 			Cvar_Set("com_introPlayed", "1");
 		}
+	}	
+
+#ifdef FEATURE_DBMS
+	if (DB_Init() != 0)
+	{
+		Com_Printf("WARNING: ETL DBMS not init as intended!\n");
 	}
+#endif
 
 	com_fullyInitialized = qtrue;
 	Com_Printf("--- Common Initialization Complete ---\n");
@@ -3450,6 +3461,10 @@ void Com_Shutdown(qboolean badProfile)
 			Com_Printf("PID file removed.\n");
 		}
 	}
+
+#ifdef FEATURE_DBMS
+	DB_Close();
+#endif
 
 	if (logfile)
 	{
