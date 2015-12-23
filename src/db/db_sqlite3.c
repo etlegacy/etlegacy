@@ -167,9 +167,9 @@ static int DB_Create_Schema()
 	// - set index for search fields // CREATE INDEX player_guid ON PLAYER(guid)
 
 	// version table
-	char *sql = "DROP TABLE IF EXISTS ETL_VERSION;"
-	            "CREATE TABLE ETL_VERSION (Id INT PRIMARY KEY NOT NULL, name TEXT, sql TEXT, created TEXT);"
-	            "INSERT INTO ETL_VERSION VALUES (1, 'ET: L DBMS', '', CURRENT_TIMESTAMP);"; // FIXME: separate version inserts for updates ...
+	char *sql = "DROP TABLE IF EXISTS etl_version;"
+	            "CREATE TABLE etl_version (Id INT PRIMARY KEY NOT NULL, name TEXT, sql TEXT, created TEXT);"
+	            "INSERT INTO etl_version VALUES (1, 'ET: L DBMS', '', CURRENT_TIMESTAMP);"; // FIXME: separate version inserts for updates ...
 
 	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
@@ -183,8 +183,11 @@ static int DB_Create_Schema()
 	// ban/mute table (ensure we can also do IP range ban entries)
 	// type = mute/ban
 	// af = AddressFamily
-	sql = "DROP TABLE IF EXISTS BAN;"
-	      "CREATE TABLE BAN (Id INT PRIMARY KEY NOT NULL, address TEXT, guid TEXT, type INT NOT NULL, reason TEXT, af INT, length TEXT, expires TEXT, created TEXT, updated TEXT);";
+	sql = "DROP TABLE IF EXISTS ban;"
+	      "CREATE TABLE ban (Id INT PRIMARY KEY NOT NULL, address TEXT, guid TEXT, type INT NOT NULL, reason TEXT, af INT, length TEXT, expires TEXT, created TEXT, updated TEXT);"
+	      "CREATE INDEX ban_address_idx ON ban(address);"
+	      "CREATE INDEX ban_guid_idx ON ban(guid);";
+	      // expires?
 
 	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
@@ -195,10 +198,15 @@ static int DB_Create_Schema()
 		return 1;
 	}
 
+
+
+
 	// player/client table
 	// FIXME: do we want to track player names as PB did?
-	sql = "DROP TABLE IF EXISTS PLAYER;"
-	      "CREATE TABLE PLAYER (Id INT PRIMARY KEY NOT NULL, name TEXT, guid TEXT, user TEXT, password TEXT, mail TEXT, created TEXT, updated TEXT);";
+	sql = "DROP TABLE IF EXISTS player;"
+	      "CREATE TABLE player (Id INT PRIMARY KEY NOT NULL, name TEXT, guid TEXT, user TEXT, password TEXT, mail TEXT, bans INT, mutes INT, created TEXT, updated TEXT);"
+	      "CREATE INDEX player_name_idx ON player(name);"
+	      "CREATE INDEX player_guid_idx ON player(guid);";
 
 	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
@@ -211,8 +219,9 @@ static int DB_Create_Schema()
 
 	// session table - server side tracking of players, client side tracking of games
 	// note: we might drop length field (created = start, updated = end of session
-	sql = "DROP TABLE IF EXISTS SESSION;"
-	      "CREATE TABLE SESSION (Id INT PRIMARY KEY NOT NULL, pId, INT, address TEXT, port INT, type INT, duration TEXT, map TEXT, length TEXT, created TEXT, updated TEXT);";
+	sql = "DROP TABLE IF EXISTS session;"
+	      "CREATE TABLE session (Id INT PRIMARY KEY NOT NULL, pId INT , address TEXT, port INT, type INT, duration TEXT, map TEXT, length TEXT, created TEXT, updated TEXT, FOREIGN KEY(pId) REFERENCES player(Id));"
+	      "";
 
 	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
@@ -283,6 +292,12 @@ int DB_Close()
 {
 	int result;
 
+	if (!isDBActive)
+	{
+		Com_Printf("SQLite3 can't close db - not active.\n");
+		return 1;
+	}
+
 	// save memory db to disk
 	if (db_mode->integer == 1)
 	{
@@ -299,12 +314,11 @@ int DB_Close()
 		if (result != SQLITE_OK)
 		{
 			Com_Printf("... WARNING can't save memory database file [%i]\n", result);
-			return 1;
+			// let's close the db ...
 		}
 	}
 
 	result = sqlite3_close(db);
-
 	isDBActive = qfalse;
 
 	if (result != SQLITE_OK)
