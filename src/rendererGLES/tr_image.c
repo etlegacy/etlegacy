@@ -541,7 +541,7 @@ byte mipBlendColors[16][4] =
 // helper function for GLES format conversions
 byte *gles_convertRGB(byte *data, int width, int height)
 {
-	byte *temp = (byte *) Z_Malloc(width * height * 3);
+	byte *temp = (byte *) ri.Z_Malloc(width * height * 3);
 	byte *src  = data;
 	byte *dst  = temp;
 	int  i, j;
@@ -557,7 +557,7 @@ byte *gles_convertRGB(byte *data, int width, int height)
 }
 byte *gles_convertRGBA4(byte *data, int width, int height)
 {
-	byte *temp = (byte *) Z_Malloc(width * height * 2);
+	byte *temp = (byte *) ri.Z_Malloc(width * height * 2);
 	int  i;
 
 	unsigned int   *input  = ( unsigned int *)(data);
@@ -578,7 +578,7 @@ byte *gles_convertRGBA4(byte *data, int width, int height)
 }
 byte *gles_convertRGB5(byte *data, int width, int height)
 {
-	byte *temp = (byte *) Z_Malloc(width * height * 2);
+	byte *temp = (byte *) ri.Z_Malloc(width * height * 2);
 	byte *src  = data;
 	byte *dst  = temp;
 	byte r, g, b;
@@ -601,7 +601,7 @@ byte *gles_convertRGB5(byte *data, int width, int height)
 }
 byte *gles_convertLuminance(byte *data, int width, int height)
 {
-	byte *temp = (byte *) Z_Malloc(width * height);
+	byte *temp = (byte *) ri.Z_Malloc(width * height);
 	byte *src  = data;
 	byte *dst  = temp;
 	byte r, g, b;
@@ -620,7 +620,7 @@ byte *gles_convertLuminance(byte *data, int width, int height)
 }
 byte *gles_convertLuminanceAlpha(byte *data, int width, int height)
 {
-	byte *temp = (byte *) Z_Malloc(width * height * 2);
+	byte *temp = (byte *) ri.Z_Malloc(width * height * 2);
 	byte *src  = data;
 	byte *dst  = temp;
 	byte r, g, b;
