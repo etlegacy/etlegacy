@@ -109,7 +109,7 @@ typedef struct
 
 static WinConData s_wcd;
 
-static void CON_ResizeWindowsCon(float cx, float cy)
+static void CON_ResizeWindowsCon(int cx, int cy)
 {
 	float sx, sy, x, y, w, h;
 
@@ -175,8 +175,6 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 {
 	char            *cmdString;
 	static qboolean s_timePolarity;
-	int             cx, cy;
-	float           sx, sy, x, y, w, h;
 
 	switch (uMsg)
 	{
@@ -226,25 +224,25 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		}
 		return 0;
 	case WM_CTLCOLORSTATIC:
-		if (( HWND ) lParam == s_wcd.hwndBuffer)
+		if ((HWND)lParam == s_wcd.hwndBuffer)
 		{
-			SetBkColor(( HDC ) wParam, COLOR_BCK_NORMAL);
-			SetTextColor(( HDC ) wParam, COLOR_TEXT_NORMAL);
-			return ( long ) s_wcd.hbrEditBackground;
+			SetBkColor((HDC)wParam, COLOR_BCK_NORMAL);
+			SetTextColor((HDC)wParam, COLOR_TEXT_NORMAL);
+			return (long)s_wcd.hbrEditBackground;
 		}
-		else if (( HWND ) lParam == s_wcd.hwndErrorBox)
+		else if ((HWND)lParam == s_wcd.hwndErrorBox)
 		{
-			SetBkColor(( HDC ) wParam, COLOR_BCK_ERROR);
+			SetBkColor((HDC)wParam, COLOR_BCK_ERROR);
 			if (s_timePolarity & 1)
 			{
-				SetTextColor(( HDC ) wParam, COLOR_TEXT_ERROR1);
+				SetTextColor((HDC)wParam, COLOR_TEXT_ERROR1);
 			}
 			else
 			{
-				SetTextColor(( HDC ) wParam, COLOR_TEXT_ERROR2);
+				SetTextColor((HDC)wParam, COLOR_TEXT_ERROR2);
 			}
 
-			return ( long ) s_wcd.hbrErrorBackground;
+			return (long)s_wcd.hbrErrorBackground;
 		}
 		break;
 	case WM_CTLCOLOREDIT:
@@ -362,7 +360,7 @@ static void Win_FindMatches(const char *s)
 	}
 
 	// cut currentMatch to the amount common with s
-	for (i = 0 ; s[i] ; i++)
+	for (i = 0; s[i]; i++)
 	{
 		if (tolower(win_currentMatch[i]) != tolower(s[i]))
 		{
@@ -383,7 +381,7 @@ static void Win_KeyConcatArgs(void)
 	int  i;
 	char *arg;
 
-	for (i = 1 ; i < Cmd_Argc() ; i++)
+	for (i = 1; i < Cmd_Argc(); i++)
 	{
 		Q_strcat(win_consoleField.buffer, sizeof(win_consoleField.buffer), " ");
 		arg = Cmd_Argv(i);
@@ -568,8 +566,7 @@ LONG WINAPI InputLineWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg)
 	{
 	case WM_KILLFOCUS:
-		if (( HWND ) wParam == s_wcd.hWnd ||
-		    ( HWND ) wParam == s_wcd.hwndErrorBox)
+		if ((HWND)wParam == s_wcd.hWnd || (HWND)wParam == s_wcd.hwndErrorBox)
 		{
 			SetFocus(hWnd);
 			return 0;
@@ -705,7 +702,7 @@ void Sys_CreateConsole(void)
 	memset(&wc, 0, sizeof(wc));
 
 	wc.style         = 0;
-	wc.lpfnWndProc   = (WNDPROC) ConWndProc;
+	wc.lpfnWndProc   = (WNDPROC)ConWndProc;
 	wc.cbClsExtra    = 0;
 	wc.cbWndExtra    = 0;
 	wc.hInstance     = g_wv.hInstance;
@@ -1019,7 +1016,7 @@ void Sys_SetErrorText(const char *buf)
 		s_wcd.hwndErrorBox = CreateWindow("static", NULL, WS_CHILD | WS_VISIBLE | SS_SUNKEN,
 		                                  0, 0, 0, 0,
 		                                  s_wcd.hWnd,
-		                                  ( HMENU ) ERRORBOX_ID,            // child window ID
+		                                  (HMENU)ERRORBOX_ID,            // child window ID
 		                                  g_wv.hInstance, NULL);
 		DestroyWindow(s_wcd.hwndInputLine);
 		s_wcd.hwndInputLine = NULL;
@@ -1028,7 +1025,7 @@ void Sys_SetErrorText(const char *buf)
 		s_wcd.hwndButtonClear = NULL;
 
 		CON_ResizeWindowsCon(s_wcd.windowWidth, s_wcd.windowHeight);
-		SendMessage(s_wcd.hwndErrorBox, WM_SETFONT, ( WPARAM ) s_wcd.hfBufferFont, 0);
+		SendMessage(s_wcd.hwndErrorBox, WM_SETFONT, (WPARAM)s_wcd.hfBufferFont, 0);
 		SetWindowText(s_wcd.hwndErrorBox, s_wcd.errorString);
 	}
 }
