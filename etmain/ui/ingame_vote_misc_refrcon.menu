@@ -61,9 +61,9 @@ menuDef {
 	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 122, .5*(WINDOW_WIDTH-18), 14, _("BALANCED TEAMS ON"), .24, 11, exec "cmd ref balancedteams 1"; uiScript closeingame, settingDisabled CV_SVS_BALANCEDTEAMS voteFlag CV_SVF_BALANCEDTEAMS )
 	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 122, .5*(WINDOW_WIDTH-18), 14, _("BALANCED TEAMS OFF"), .24, 11, exec "cmd ref balancedteams 0"; uiScript closeingame, settingEnabled CV_SVS_BALANCEDTEAMS voteFlag CV_SVF_BALANCEDTEAMS )
 
-	BUTTONEXT( 6, 122, WINDOW_WIDTH-12, 14, _("COMPETITION SETTINGS"), .24, 11, exec "cmd ref config defaultcomp"; uiScript closeingame, voteFlag CV_SVF_CONFIG )
-	BUTTONEXT( 6, 140, WINDOW_WIDTH-12, 14, _("PUBLIC SETTINGS"), .24, 11, exec "cmd ref config defaultpublic"; uiScript closeingame, voteFlag CV_SVF_CONFIG )
-	// BUTTON( 6, 158, WINDOW_WIDTH-12, 14, _("OMNI-BOT"), .24, 11, close ingame_vote_misc_refrcon ; open ingame_vote_bot )
+	BUTTONEXT( 6, 140, WINDOW_WIDTH-12, 14, _("COMPETITION SETTINGS"), .24, 11, exec "cmd ref config defaultcomp"; uiScript closeingame, voteFlag CV_SVF_CONFIG )
+	BUTTONEXT( 6, 158, WINDOW_WIDTH-12, 14, _("PUBLIC SETTINGS"), .24, 11, exec "cmd ref config defaultpublic"; uiScript closeingame, voteFlag CV_SVF_CONFIG )
+
 	MULTILEFT( 8, 176+2, .66*(WINDOW_WIDTH-18), 10, _("Warmup Damage:"), .2, 8, "ui_voteWarmupDamage", cvarFloatList { _("None") 0 _("Enemies") 1 _("Everyone") 2 } voteFlag CV_SVF_WARMUPDAMAGE, _("Enable or disable warmup damage") )
 	NAMEDBUTTONEXT( "bttnextWarmupDamage", 6+.80*(WINDOW_WIDTH-18)+6, 176, .20*(WINDOW_WIDTH-18), 14, _("OK"), .24, 11, uiScript refWarmupDamage; uiScript closeingame, voteFlag CV_SVF_WARMUPDAMAGE )
 
