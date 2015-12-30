@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-12-26 17:43+0000\n"
+"PO-Revision-Date: 2016-01-08 06:32+0000\n"
 "Last-Translator: redtide <redtid3@gmail.com>\n"
 "Language-Team: Italian (http://www.transifex.com/etlegacy/etlegacy/language/it/)\n"
 "MIME-Version: 1.0\n"
@@ -49,7 +49,7 @@ msgstr "Produttore Esecutivo Superiore"
 
 #: etmain/ui/credits_activision.menu:94
 msgid "VP North American Studios"
-msgstr ""
+msgstr "VP North American Studios"
 
 #: etmain/ui/credits_activision.menu:97 etmain/ui/credits_activision.menu:99
 msgid "QA Project Lead"
@@ -166,11 +166,11 @@ msgstr "ARTISTI VOCE"
 
 #: etmain/ui/credits_additional.menu:203
 msgid "Voice of Allied / Axis soldiers"
-msgstr "Voce dei soldati Allied / Axis"
+msgstr "Voce dei soldati Alleati / Asse"
 
 #: etmain/ui/credits_additional.menu:205
 msgid "Voice of Axis Commander"
-msgstr "Voce del Comandante Axis"
+msgstr "Voce del Comandante dell'Asse"
 
 #: etmain/ui/credits_additional.menu:207
 msgid "Voice of Allied Commander"
@@ -355,7 +355,7 @@ msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:104
 msgid "Lead Artist / Creative Director"
-msgstr ""
+msgstr "Artista Guida / Direttore Creativo"
 
 #: etmain/ui/credits_splashdamage.menu:106
 msgid "Artist / Animator"
@@ -500,7 +500,7 @@ msgstr "Inattività Giocatore:"
 msgid ""
 "Max time (in sec) a player can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr ""
+msgstr "Tempo limite (in sec) di inattività di un giocatore per essere cacciato dal server (0 = disabilitato)"
 
 #: etmain/ui/hostgame_advanced.menu:36
 msgid "Spectator Inactivity:"
@@ -510,7 +510,7 @@ msgstr "Inattività Spettatore:"
 msgid ""
 "Max time (in sec) a spectator can remain idle before being kicked from the "
 "server (0 = disabled)"
-msgstr ""
+msgstr "Tempo limite (in sec) di inattività di uno spettatore per essere cacciato dal server (0 = disabilitato)"
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Intermission Time:"
@@ -540,7 +540,7 @@ msgstr "Attendere:"
 msgid ""
 "Whether the server should require players to be ready before a match can "
 "start"
-msgstr "Imposta se attendere che tutti i giocatori siano pronti prima di iniziare una partita "
+msgstr "Imposta se attendere che tutti i giocatori siano pronti prima di iniziare una partita"
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid "Minimum Players:"
@@ -685,11 +685,11 @@ msgstr "Imposta il tempo per rientrare in gioco nella squadra Allied"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Axis Spawn Time:"
-msgstr "Tempo Spawn Axis:"
+msgstr "Tempo Spawn Asse:"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Override the default Axis spawn time"
-msgstr "Imposta il tempo per rientrare in gioco nella squadra Axis"
+msgstr "Imposta il tempo per rientrare in gioco nel team dell'Asse"
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Allied Max Lives:"
@@ -701,11 +701,11 @@ msgstr "Specifica il numero di vite per giocatore in un gioco con limite assegna
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Axis Max Lives:"
-msgstr "Vite Axis:"
+msgstr "Max Vite Asse:"
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Specify the number of Axis lives in a max lives game"
-msgstr "Specifica il numero di vite per giocatore in un gioco con limite assegnato alla squadra Axis"
+msgstr "Specifica il numero di vite per giocatore in un gioco con limite assegnato al team dell'Asse"
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid "Stopwatch Round-Type:"
@@ -852,7 +852,7 @@ msgstr "Mappa:"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Allow players to vote for a different campaign or map"
-msgstr "Permette ai giocatori di votare per una compagnia o mappa diversa"
+msgstr "Permette ai giocatori di votare per una campagna o mappa diversa"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Match Reset:"
@@ -868,7 +868,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Allow players to vote for spectators to be muted"
-msgstr ""
+msgstr "Permette ai giocatori di votare per zittire gli spettatori"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Next Map:"
@@ -876,7 +876,7 @@ msgstr "Prossima Mappa:"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Allow players to vote for the next campaign or map"
-msgstr ""
+msgstr "Permette ai giocatori di votare per la campagna o mappa successiva"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Balanced Teams:"
@@ -896,11 +896,11 @@ msgstr "Permette i giocatori di votare per un arbitro"
 
 #: etmain/ui/hostgame_advanced.menu:91
 msgid "XP Shuffle:"
-msgstr ""
+msgstr "Mescola XP:"
 
 #: etmain/ui/hostgame_advanced.menu:91
 msgid "Allow players to vote for teams to be shuffled"
-msgstr ""
+msgstr "Permette ai giocatori di votare per rimescolare il team"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Swap Teams:"
@@ -916,7 +916,7 @@ msgstr "Fuoco Amico:"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Allow players to vote for friendly fire to be enabled or disabled"
-msgstr ""
+msgstr "Permette ai giocatori di votare per l'abilitazione del fuoco amico"
 
 #: etmain/ui/hostgame_advanced.menu:94
 msgid "Timelimit:"
@@ -924,11 +924,11 @@ msgstr "Tempo limite:"
 
 #: etmain/ui/hostgame_advanced.menu:94
 msgid "Allow players to vote for a different time limit"
-msgstr ""
+msgstr "Permette ai giocatori di votare per un tempo limite diverso"
 
 #: etmain/ui/hostgame_advanced.menu:95
 msgid "Allow players to vote for warmup damage to be enabled or disabled"
-msgstr ""
+msgstr "Permette ai giocatori di votare per le lesioni durante il riscaldamento"
 
 #: etmain/ui/hostgame_advanced.menu:96
 msgid "Anti-Lag:"
@@ -936,7 +936,7 @@ msgstr "Anti-Lag:"
 
 #: etmain/ui/hostgame_advanced.menu:96
 msgid "Allow players to vote for antilag to be enabled or disabled"
-msgstr ""
+msgstr "Permette ai giocatori di votare per l'abilitazione dell'antilag"
 
 #: etmain/ui/hostgame_advanced.menu:99 etmain/ui/playonline.menu:64
 msgid "MESSAGE OF THE DAY"
@@ -982,7 +982,7 @@ msgstr "Permette ai giocatori di scaricare i file mancanti dal server"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid "Maximum Download Rate:"
-msgstr "Velocità Max Scaricamenti:"
+msgstr "Vel. Max Scaricamenti:"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid ""
@@ -1100,7 +1100,7 @@ msgstr "Specifica il nome del tuo server di gioco"
 #: etmain/ui/hostgame.menu:39 etmain/ui/playonline.menu:83
 #: src/cgame/cg_loadpanel.c:259
 msgid "Campaign"
-msgstr "Compagnia"
+msgstr "Campagna"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 src/cgame/cg_loadpanel.c:261
@@ -1228,7 +1228,7 @@ msgstr "NOME"
 
 #: etmain/ui/hostgame.menu:133
 msgid "Select the campaign or map that the server should load"
-msgstr "Seleziona la compagnia o mappa da avviare nel server"
+msgstr "Seleziona la campagna o mappa da avviare nel server"
 
 #: etmain/ui/hostgame.menu:142 etmain/ui/playonline.menu:219
 msgid "PREVIEW"
@@ -1374,11 +1374,11 @@ msgstr "CACCIA TUTTI I BOT"
 
 #: etmain/ui/ingame_vote_bot.menu:55
 msgid "AXIS BOTS"
-msgstr "BOT AXIS"
+msgstr "BOT ASSE"
 
 #: etmain/ui/ingame_vote_bot.menu:56
 msgid "ALLIED BOTS"
-msgstr "BOT ALLIED"
+msgstr "BOT ALLEATI"
 
 #: etmain/ui/ingame_vote_bot.menu:57
 msgid "BALANCED"
@@ -1407,7 +1407,7 @@ msgstr "MAPPE"
 
 #: etmain/ui/ingame_vote_map.menu:38
 msgid "CAMPAIGNS"
-msgstr "COMPAGNIE"
+msgstr "CAMPAGNE"
 
 #: etmain/ui/ingame_vote_map.menu:82 etmain/ui/ingame_vote_map.menu:83
 #: etmain/ui/ingame_vote_map.menu:84 etmain/ui/ingame_vote_misc.menu:62
@@ -1452,7 +1452,7 @@ msgstr "PROSSIMA MAPPA"
 #: etmain/ui/ingame_vote_misc.menu:45
 #: etmain/ui/ingame_vote_misc_refrcon.menu:44
 msgid "NEXT CAMPAIGN"
-msgstr "PROSSIMA COMPAGNIA"
+msgstr "PROSSIMA CAMPAGNA"
 
 #: etmain/ui/ingame_vote_misc.menu:46
 #: etmain/ui/ingame_vote_misc_refrcon.menu:45
@@ -1467,7 +1467,7 @@ msgstr "ANTI-LAG NO"
 #: etmain/ui/ingame_vote_misc.menu:49
 #: etmain/ui/ingame_vote_misc_refrcon.menu:48
 msgid "XP SHUFFLE"
-msgstr ""
+msgstr "MESCOLA XP"
 
 #: etmain/ui/ingame_vote_misc.menu:50
 #: etmain/ui/ingame_vote_misc_refrcon.menu:49
@@ -1539,11 +1539,11 @@ msgstr "Tempo Limite:"
 
 #: etmain/ui/ingame_vote_misc.menu:75
 msgid "Specify a time limit to vote on"
-msgstr ""
+msgstr "Specifica un tempo limite per il voto"
 
 #: etmain/ui/ingame_vote_misc.menu:78
 msgid "Select the game type to vote on"
-msgstr ""
+msgstr "Seleziona il tipo di gioco da votare"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Enable or disable warmup damage"
@@ -1551,7 +1551,7 @@ msgstr "Abilita o disabilita i ferimenti durante il riscaldamento"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:74
 msgid "Set the time limit for the server"
-msgstr ""
+msgstr "Imposta il tempo limite per il server"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77
 msgid "Set the game type"
@@ -1608,15 +1608,15 @@ msgstr ""
 
 #: etmain/ui/ingame_vote_players.menu:66
 msgid "MAKE AXIS"
-msgstr ""
+msgstr "NELL'ASSE"
 
 #: etmain/ui/ingame_vote_players.menu:67
 msgid "MAKE ALLIED"
-msgstr ""
+msgstr "NEGLI ALLEATI"
 
 #: etmain/ui/ingame_vote_players.menu:68
 msgid "MAKE SPEC"
-msgstr ""
+msgstr "NEGLI SPETT"
 
 #: etmain/ui/ingame_vote_players.menu:70
 #: etmain/ui/ingame_vote_players_warn.menu:64 src/cgame/cg_fireteams.c:362
@@ -1726,13 +1726,13 @@ msgstr "Questo cancellerà tutti i file non necessari in fs_homepath."
 
 #: etmain/ui/options_clean.menu:36
 msgid "A simple clean will remove tmp and custom pk3 files."
-msgstr ""
+msgstr "La pulizia semplice rimuoverà i file pk3 personalizzati e temporanei."
 
 #: etmain/ui/options_clean.menu:37
 msgid ""
 "A full clean will remove all downloaded files like maps,\n"
 " campaigns and custom pk3 files."
-msgstr ""
+msgstr "Una pulizia completa rimuoverà tutti i file scaricati come\nmappe, campagne e file pk3 personalizzati."
 
 #: etmain/ui/options_clean.menu:38
 msgid "^1WARNING: Use at your own risk!"
@@ -1752,7 +1752,7 @@ msgstr "ANNULLA"
 
 #: etmain/ui/options_clean.menu:42
 msgid "Abort operation"
-msgstr ""
+msgstr "Annulla operazione"
 
 #: etmain/ui/options_clean.menu:43
 msgid "SIMPLE CLEAN"
@@ -1760,7 +1760,7 @@ msgstr "PULIZIA SEMPLICE"
 
 #: etmain/ui/options_clean.menu:43
 msgid "Remove tmp and custom pk3 files"
-msgstr ""
+msgstr "Rimuovi i file pk3 personalizzati e temporanei"
 
 #: etmain/ui/options_clean.menu:44
 msgid "FULL CLEAN"
@@ -1768,7 +1768,7 @@ msgstr "PULIZIA COMPLETA"
 
 #: etmain/ui/options_clean.menu:44
 msgid "Remove all maps and campaigns files"
-msgstr ""
+msgstr "Rimuovi tutti i file delle mappe e campagne"
 
 #: etmain/ui/options_controls_default.menu:52
 msgid "DEFAULT CONTROLS"
@@ -1859,11 +1859,11 @@ msgstr "INPUT"
 #: etmain/ui/options_controls.menu:48
 #: etmain/ui/profile_create_initial.menu:112 etmain/ui/profile_create.menu:106
 msgid "Invert Mouse:"
-msgstr ""
+msgstr "Inverti Mouse:"
 
 #: etmain/ui/options_controls.menu:48
 msgid "Inverts mouse pitch"
-msgstr ""
+msgstr "Comandi del mouse invertiti"
 
 #: etmain/ui/options_controls.menu:49
 msgid "Smooth Mouse:"
@@ -2000,11 +2000,11 @@ msgstr ""
 
 #: etmain/ui/options_controls.menu:91
 msgid "Slot 2 - One Handed:"
-msgstr ""
+msgstr "Slot 2 - Una mano:"
 
 #: etmain/ui/options_controls.menu:92
 msgid "Slot 3 - Two Handed:"
-msgstr ""
+msgstr "Slot 2 - Due mani:"
 
 #: etmain/ui/options_controls.menu:93
 msgid "Slot 4 - Grenade:"
@@ -3132,12 +3132,12 @@ msgstr "Calibrazione Luminosità Generale (Tutte Profondità Colore)"
 msgid ""
 "1. Move the slider below and/or the brightness on your monitor until you can"
 " see 16"
-msgstr ""
+msgstr "1. Muovi il cursore qui sotto o regola la luminosità del tuo monitor finché vedrai 16"
 
 #: etmain/ui/options_graphics_gamma.menu:35
 #: etmain/ui/options_system_gamma.menu:38
 msgid "     separate bars below of equal differing brightness."
-msgstr ""
+msgstr "     differenti barre di diverso colore."
 
 #: etmain/ui/options_graphics_gamma.menu:36
 #: etmain/ui/options_system_gamma.menu:39
@@ -3147,19 +3147,19 @@ msgstr "2. Clicca il pulsante INDIETRO."
 #: etmain/ui/options_graphics_gamma.menu:50
 #: etmain/ui/options_system_gamma.menu:53
 msgid "Brightness Fine-Tuning (32 bit Textures and Color Depth)"
-msgstr ""
+msgstr "Regolazione Luminosità (Texture a 32 bit e Profondità Colore)"
 
 #: etmain/ui/options_graphics_gamma.menu:51
 #: etmain/ui/options_system_gamma.menu:54
 msgid "1. Move the slider below until you can see 3 separate bars below."
-msgstr ""
+msgstr "1. Muovi il cursore qui sotto finché vedrai 3 barre di diverso colore."
 
 #: etmain/ui/options_graphics_gamma.menu:52
 #: etmain/ui/options_system_gamma.menu:55
 msgid ""
 "2. Adjust the slider until there is no difference between the left and "
 "middle boxes."
-msgstr ""
+msgstr "2. Muovi il cursore finché non ci saranno differenze tra i riquadri di sinistra e di destra."
 
 #: etmain/ui/options_graphics_gamma.menu:53
 #: etmain/ui/options_system_gamma.menu:56
@@ -3227,7 +3227,7 @@ msgstr "Modalità Finestra:"
 #: etmain/ui/options_graphics.menu:42
 #: etmain/ui/profile_create_initial.menu:105 etmain/ui/profile_create.menu:99
 msgid "Toggle fullscreen"
-msgstr ""
+msgstr "Pieno schermo"
 
 #: etmain/ui/options_graphics.menu:46
 msgid "Intensity:"
@@ -3259,7 +3259,7 @@ msgstr "Bassa Qualità Cielo:"
 
 #: etmain/ui/options_graphics.menu:53
 msgid "Toggles wether the detailed skybox is drawn or just a basic sky"
-msgstr ""
+msgstr "Scegli tra un disegno dettagliato o semplificato del cielo"
 
 #: etmain/ui/options_graphics.menu:55
 msgid "Shadow Detail:"
@@ -3292,7 +3292,7 @@ msgstr "Luci Dinamiche:"
 
 #: etmain/ui/options_graphics.menu:58
 msgid "Toggles use of dynamic lighting effects"
-msgstr ""
+msgstr "Imposta l'uso degli effetti di luci dinamiche"
 
 #: etmain/ui/options_graphics.menu:60
 msgid "Geometric Detail:"
@@ -3498,7 +3498,7 @@ msgstr "Abilita o disabilita i suoni quando la finestra non è selezionata"
 
 #: etmain/ui/options_system.menu:92
 msgid "NETWORK"
-msgstr ""
+msgstr "RETE"
 
 #: etmain/ui/options_system.menu:52
 msgid "Max Packets:"
@@ -3536,11 +3536,11 @@ msgstr "Verificare automaticamente gli aggiornamenti?"
 
 #: etmain/ui/options_system.menu:99
 msgid "Get Missing Files:"
-msgstr ""
+msgstr "File Mancanti:"
 
 #: etmain/ui/options_system.menu:99
 msgid "Download missing files when available"
-msgstr ""
+msgstr "Scarica file mancanti quando disponibili"
 
 #: etmain/ui/options_system.menu:62
 msgid "Use HTTP/FTP Downloads:"
@@ -3548,15 +3548,15 @@ msgstr "Usa Trasferimenti HTTP/FTP:"
 
 #: etmain/ui/options_system.menu:106
 msgid "UPDATES"
-msgstr ""
+msgstr "AGGIORNAMENTI"
 
 #: etmain/ui/options_system.menu:107
 msgid "Start-Up Updates Check:"
-msgstr ""
+msgstr "Ricerca Aggiornamenti:"
 
 #: etmain/ui/options_system.menu:107
 msgid "Automatically check for updates"
-msgstr ""
+msgstr "Verifica automaticamente gli aggiornamenti"
 
 #: etmain/ui/options_system.menu:62
 msgid "Enables or disables http/ftp downloads"
@@ -3568,7 +3568,7 @@ msgstr "CONNETTI A IP"
 
 #: etmain/ui/playonline_deletefavs.menu:50
 msgid "DELETE SERVER FAVOURITES"
-msgstr "CANCELLA SERVER PREFERITI"
+msgstr "CANCELLA SERVER FAVORITI"
 
 #: etmain/ui/playonline_deletefavs.menu:51
 msgid "Do you really want to"
@@ -3688,7 +3688,7 @@ msgstr "NOME MAPPA"
 
 #: etmain/ui/playonline.menu:384
 msgid "Click here to sort by Campaign or Map name"
-msgstr "Clicca qui per ordinare per Compagnia o Nome mappa"
+msgstr "Clicca qui per ordinare per Campagna o Nome mappa"
 
 #: etmain/ui/playonline.menu:414
 msgid "#PLAYERS"
@@ -3712,7 +3712,7 @@ msgstr "PING"
 
 #: etmain/ui/playonline.menu:651
 msgid "DELETE FAVS"
-msgstr "ELIMINA PREF"
+msgstr "ELIMINA FAV"
 
 #: etmain/ui/playonline.menu:656 etmain/ui/playonline_serverinfo.menu:78
 msgid "JOIN SERVER"
@@ -3802,7 +3802,7 @@ msgstr "Usa questo slider per impostare la sensibilità del mouse"
 msgid ""
 "Choose invert mouse if you prefer flight-simulator style mouse pitch "
 "controls"
-msgstr ""
+msgstr "Scegli mouse invertito se preferisci un controllo stile simulatore di volo"
 
 #: etmain/ui/profile_create_initial.menu:116 etmain/ui/profile_create.menu:110
 msgid "DEFAULT SETTINGS"
@@ -3810,7 +3810,7 @@ msgstr "IMPOSTAZIONI PREDEFINITE"
 
 #: etmain/ui/profile_create_initial.menu:125
 msgid "^1LET'S KEEP ET ALIVE!"
-msgstr ""
+msgstr "^1MANTENIAMO VIVO ET!"
 
 #: etmain/ui/profile_create_initial.menu:126
 msgid "Thank you for installing ET: Legacy"
@@ -3827,7 +3827,7 @@ msgstr "CREA"
 
 #: etmain/ui/profile_create.menu:106
 msgid "Choose invert mouse if you prefer flight-simulator mouse pitch"
-msgstr ""
+msgstr "Scegli mouse invertito se preferisci un controllo stile simulatore di volo"
 
 #: etmain/ui/profile_delete_error.menu:50
 msgid "DELETE WARNING"
@@ -3992,7 +3992,7 @@ msgstr "6. Sono in difesa."
 #: etmain/ui/wm_ftquickmessageAlt.menu:101
 #: etmain/ui/wm_quickmessageAlt.menu:101
 msgid "7. I'm Attacking."
-msgstr "7. Sono in attacco."
+msgstr "7. Sto attaccando."
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:102
 #: etmain/ui/wm_quickmessageAlt.menu:102
@@ -4022,7 +4022,7 @@ msgstr "2. Servono Munizioni!"
 #: etmain/ui/wm_ftquickmessageAlt.menu:112
 #: etmain/ui/wm_quickmessageAlt.menu:112
 msgid "3. Need Backup!"
-msgstr "3. Serve Copertura!"
+msgstr "3. Serve Scorta!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:113
 #: etmain/ui/wm_quickmessageAlt.menu:113
@@ -4067,22 +4067,22 @@ msgstr "3. Muoversi!"
 #: etmain/ui/wm_ftquickmessageAlt.menu:126
 #: etmain/ui/wm_quickmessageAlt.menu:126
 msgid "4. Clear The Path!"
-msgstr "4. Liberate il Passaggio!"
+msgstr "4. Liberare Passaggio!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:127
 #: etmain/ui/wm_quickmessageAlt.menu:127
 msgid "5. Defend Objective!"
-msgstr "5. Difendete l'Obiettivo!"
+msgstr "5. Difendere Obiettivo!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:128
 #: etmain/ui/wm_quickmessageAlt.menu:128
 msgid "6. Disarm Dynamite!"
-msgstr "6. Disinnescate la Dinamite!"
+msgstr "6. Disinnescare Dinamite!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:129
 #: etmain/ui/wm_quickmessageAlt.menu:129
 msgid "7. Clear Mines!"
-msgstr "7. Disinnescate le Mine!"
+msgstr "7. Disinnescare Mine!"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:130
 #: etmain/ui/wm_quickmessageAlt.menu:130
@@ -4123,7 +4123,7 @@ msgstr "5. Mi Dispiace"
 #: etmain/ui/wm_ftquickmessageAlt.menu:142
 #: etmain/ui/wm_quickmessageAlt.menu:142
 msgid "6. Oops"
-msgstr "6. Ops"
+msgstr "6. Oops"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:150
 #: etmain/ui/wm_quickmessageAlt.menu:150
@@ -4213,7 +4213,7 @@ msgstr "6. Distruggere Costruzione"
 #: etmain/ui/wm_ftquickmessageAlt.menu:177
 #: etmain/ui/wm_quickmessageAlt.menu:178
 msgid "7. Commencing Construction"
-msgstr "7. Iniziare Costruzione"
+msgstr "7. Inizio Costruzione"
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:178
 #: etmain/ui/wm_quickmessageAlt.menu:179
@@ -4345,7 +4345,7 @@ msgstr "M. Muoversi!"
 
 #: etmain/ui/wm_ftquickmessage.menu:126 etmain/ui/wm_quickmessage.menu:126
 msgid "C. Clear The Path!"
-msgstr "C. Liberate Il Passaggio!"
+msgstr "C. Liberare Il Passaggio!"
 
 #: etmain/ui/wm_ftquickmessage.menu:127 etmain/ui/wm_quickmessage.menu:127
 msgid "O. Defend Objective!"
@@ -4451,7 +4451,7 @@ msgstr "X. Distruggere Costruzione"
 
 #: etmain/ui/wm_ftquickmessage.menu:178 etmain/ui/wm_quickmessage.menu:178
 msgid "M. Commencing Construction"
-msgstr "M. Iniziare Costruzione"
+msgstr "M. Inizio Costruzione"
 
 #: etmain/ui/wm_ftquickmessage.menu:179 etmain/ui/wm_quickmessage.menu:179
 msgid "R. Repair Vehicle"
@@ -4476,17 +4476,17 @@ msgstr "Non puoi usare la chat team vocale da spettatore.\n"
 
 #: src/cgame/cg_consolecmds.c:461
 msgid "Can't buddy voice chat as a spectator.\n"
-msgstr ""
+msgstr "Non permette la chat vocale come spettatore.\n"
 
 #: src/cgame/cg_consolecmds.c:1143 src/cgame/cg_popupmessages.c:733
 #: src/cgame/cg_popupmessages.c:735
 msgid "Axis"
-msgstr "Axis"
+msgstr "Asse"
 
 #: src/cgame/cg_consolecmds.c:1147 src/cgame/cg_popupmessages.c:733
 #: src/cgame/cg_popupmessages.c:735
 msgid "Allies"
-msgstr "Allies"
+msgstr "Alleati"
 
 #: src/cgame/cg_consolecmds.c:1221
 #, c-format
@@ -4557,11 +4557,11 @@ msgstr "^2A TUTTI"
 
 #: src/cgame/cg_debriefing.c:3175
 msgid "ALLIES WIN!"
-msgstr "ALLIES VINCONO!"
+msgstr "ALLEATI VINCONO!"
 
 #: src/cgame/cg_debriefing.c:3177
 msgid "AXIS WIN!"
-msgstr "AXIS VINCONO!"
+msgstr "ASSE VINCE!"
 
 #: src/cgame/cg_debriefing.c:3179
 msgid "IT'S A TIE!"
@@ -4586,16 +4586,16 @@ msgstr ""
 #: src/cgame/cg_debriefing.c:3236
 #, c-format
 msgid "CAMPAIGN STATUS: %s"
-msgstr ""
+msgstr "STATO CAMPAGNA: %s"
 
 #: src/cgame/cg_debriefing.c:3245
 msgid "SECS TO NEXT MAP"
-msgstr "SEC PER PROSSIMA"
+msgstr "SEC ALLA PROSSIMA"
 
 #: src/cgame/cg_debriefing.c:3371
 #, c-format
 msgid "Campaign: %s"
-msgstr "Compagnia: %s"
+msgstr "Campagna: %s"
 
 #: src/cgame/cg_draw.c:382 src/cgame/cg_draw.c:391 src/cgame/cg_draw.c:407
 #, c-format
@@ -4629,22 +4629,22 @@ msgstr "Registrare un reclamo contro ^7%s^3 per team-killing?"
 #: src/cgame/cg_draw.c:1832
 #, c-format
 msgid "Press '%s' for YES, or '%s' for NO"
-msgstr "Premi '%s' per SI, o '%s' per NO"
+msgstr "Premi '%s' per SI, '%s' per NO"
 
 #: src/cgame/cg_draw.c:1758
 #, c-format
 msgid "Accept %s^3's application to join your fireteam?"
-msgstr ""
+msgstr "Accetti la richiesta di %s^3 per unirsi al tuo fireteam?"
 
 #: src/cgame/cg_draw.c:1772
 #, c-format
 msgid "Accept %s^3's proposition to invite %s^3 to join your fireteam?"
-msgstr ""
+msgstr "Accetti la proposta di %s^3 di invitare %s^3 a unirsi al tuo fireteam?"
 
 #: src/cgame/cg_draw.c:1786
 #, c-format
 msgid "Accept %s^3's invitation to join their fireteam?"
-msgstr ""
+msgstr "Accetti l'invito di %s^3 a unirti al loro fireteam?"
 
 #: src/cgame/cg_draw.c:1800
 msgid "Make Fireteam private?"
@@ -4689,7 +4689,7 @@ msgstr "Il tuo reclamo è stato registrato"
 
 #: src/cgame/cg_draw.c:1934
 msgid "Complaint dismissed"
-msgstr "Reclamo destituito"
+msgstr "Reclamo rimosso"
 
 #: src/cgame/cg_draw.c:1940
 msgid "Server Host cannot be complained against"
@@ -4705,19 +4705,19 @@ msgstr "Sei stato ucciso dal fuoco amico di un bot."
 
 #: src/cgame/cg_draw.c:1962
 msgid "Your application has been submitted"
-msgstr ""
+msgstr "La tua richiesta è stata inviata"
 
 #: src/cgame/cg_draw.c:1969
 msgid "Your application failed"
-msgstr ""
+msgstr "La tua richiesta è fallita"
 
 #: src/cgame/cg_draw.c:1976
 msgid "Your application has been approved"
-msgstr ""
+msgstr "La tua richiesta è stata approvata"
 
 #: src/cgame/cg_draw.c:1983
 msgid "Your application reply has been sent"
-msgstr ""
+msgstr "La tua risposta alla richiesta è stata inviata"
 
 #: src/cgame/cg_draw.c:1993
 msgid "Your proposition has been submitted"
@@ -4794,7 +4794,7 @@ msgstr "Premi %s per metterti in coda e ripartire."
 
 #: src/cgame/cg_draw.c:2251
 msgid "No more reinforcements this round."
-msgstr ""
+msgstr "Nessun altro rinforzo per questo turno"
 
 #: src/cgame/cg_draw.c:2259 src/cgame/cg_draw.c:2347
 #, c-format
@@ -4818,7 +4818,7 @@ msgstr "Vita Bonus! Schieramento in ^3%d ^7secondo"
 
 #: src/cgame/cg_draw.c:2338
 msgid "No more deployments this round"
-msgstr ""
+msgstr "Nessun altro schieramento per questo turno"
 
 #: src/cgame/cg_draw.c:2362 src/cgame/cg_draw.c:2388
 msgid "Following"
@@ -4844,7 +4844,7 @@ msgstr "giocatori"
 
 #: src/cgame/cg_draw.c:2448
 msgid "Type ^3\\ready^7 in the console to start"
-msgstr ""
+msgstr "Digita ^3\\ready^7 nella console per iniziare"
 
 #: src/cgame/cg_draw.c:2452
 #, c-format
@@ -4853,7 +4853,7 @@ msgstr "Premi ^3%s^7 per iniziare"
 
 #: src/cgame/cg_draw.c:2470
 msgid "^3WARMUP:^7 Match begins in"
-msgstr ""
+msgstr "^3RISCALDAMENTO:^7 Inizio tra"
 
 #: src/cgame/cg_draw.c:2481
 msgid "^3PREPARE TO FIGHT!\n"
@@ -4903,7 +4903,7 @@ msgstr "^7ha ucciso"
 
 #: src/cgame/cg_event.c:566
 msgid "died"
-msgstr "morto"
+msgstr "è morto"
 
 #: src/cgame/cg_event.c:614
 #, c-format
@@ -5028,7 +5028,7 @@ msgstr "CONTROLLI DEMO"
 
 #: src/cgame/cg_info.c:1599
 msgid "^nBACKSPACE ^mhelp on/off"
-msgstr ""
+msgstr "^nBACKSPACE ^maiuto sì/no"
 
 #: src/cgame/cg_limbopanel.c:1224
 #, c-format
@@ -5074,12 +5074,12 @@ msgstr "Sei stato premiato con %s"
 #: src/cgame/cg_popupmessages.c:680
 #, c-format
 msgid "Planted at %s."
-msgstr "Piantata: %s."
+msgstr "Piantata %s."
 
 #: src/cgame/cg_popupmessages.c:682
 #, c-format
 msgid "Defused at %s."
-msgstr "Disinnescata: %s."
+msgstr "Disinnescata %s."
 
 #: src/cgame/cg_popupmessages.c:691
 #, c-format
@@ -5099,22 +5099,22 @@ msgstr "%s è stato distrutto."
 #: src/cgame/cg_popupmessages.c:722
 #, c-format
 msgid "Spotted by %s^7 at %s"
-msgstr ""
+msgstr "Individuata da %s^7 a %s"
 
 #: src/cgame/cg_popupmessages.c:726
 #, c-format
 msgid "Spotted by %s"
-msgstr ""
+msgstr "Individuata da %s"
 
 #: src/cgame/cg_popupmessages.c:733
 #, c-format
 msgid "%s have stolen %s!"
-msgstr "%s ha rubato: %s!"
+msgstr "%s hanno rubato %s!"
 
 #: src/cgame/cg_popupmessages.c:735
 #, c-format
 msgid "%s have returned %s!"
-msgstr "%s ha ripreso: %s!"
+msgstr "%s hanno ripreso %s!"
 
 #: src/cgame/cg_popupmessages.c:758
 #, c-format
@@ -5137,16 +5137,16 @@ msgstr "GIOCO FERMATO"
 
 #: src/cgame/cg_scoreboard.c:188
 msgid "SUDDEN DEATH"
-msgstr ""
+msgstr "MORTE ISTANTANEA"
 
 #: src/cgame/cg_scoreboard.c:200
 msgid "MATCH BEGINS IN:"
-msgstr "LA SFIDA INIZIA TRA:"
+msgstr "LA PARTITA INIZIA TRA:"
 
 #: src/cgame/cg_scoreboard.c:205
 #, c-format
 msgid "WAITING ON ^2%i ^9%s"
-msgstr ""
+msgstr "IN ATTESA DI ^2%i ^9%s"
 
 #: src/cgame/cg_scoreboard.c:229 src/cgame/cg_scoreboard.c:233
 msgid "REINFORCE TIME:"
@@ -5180,7 +5180,7 @@ msgstr "^3SPETTATORE"
 
 #: src/cgame/cg_scoreboard.c:811 src/cgame/cg_scoreboard.c:828
 msgid "AXIS"
-msgstr "AXIS"
+msgstr "ASSE"
 
 #: src/cgame/cg_scoreboard.c:812 src/cgame/cg_scoreboard.c:819
 msgid "FIRST BLOOD"
@@ -5188,7 +5188,7 @@ msgstr "PRIMA VITTIMA"
 
 #: src/cgame/cg_scoreboard.c:818 src/cgame/cg_scoreboard.c:832
 msgid "ALLIES"
-msgstr "ALLIES"
+msgstr "ALLEATI"
 
 #: src/cgame/cg_scoreboard.c:855
 msgid "C R"
@@ -5227,7 +5227,7 @@ msgstr ""
 #: src/cgame/cg_servercmds.c:1878
 #, c-format
 msgid "Kills:  %3d    Team Kills: %3d    Accuracy:  %5.1f%%"
-msgstr ""
+msgstr "Uccisi: %3d  Team Kills: %3d  Precisione:  %5.1f%%"
 
 #: src/cgame/cg_servercmds.c:1879
 #, c-format
@@ -5244,7 +5244,7 @@ msgstr ""
 
 #: src/cgame/cg_servercmds.c:2047
 msgid "^3No weapon info available.\n"
-msgstr ""
+msgstr "^3Nessuna info dell'arma disponibile.\n"
 
 #: src/cgame/cg_servercmds.c:2153
 msgid "  Medals"
@@ -5252,7 +5252,7 @@ msgstr "Medaglie"
 
 #: src/cgame/cg_servercmds.c:2165
 msgid "^3No skills acquired!\n"
-msgstr ""
+msgstr "^3Nessuna abilità acquisita!\n"
 
 #: src/cgame/cg_servercmds.c:2344
 msgid "Map"
@@ -5303,7 +5303,7 @@ msgstr "In attesa della nuova chiave... Premi ESCAPE per annullare"
 
 #: src/ui/ui_main.c:2405 src/ui/ui_main.c:2646
 msgid "Press ENTER or CLICK to change, Press BACKSPACE to clear"
-msgstr ""
+msgstr "Premi INVIO o CLICCA per cambiare, premi BACKSPACE per cancellare"
 
 #: src/ui/ui_main.c:2543
 #, c-format
@@ -5377,7 +5377,7 @@ msgstr "Non trovo la campagna '%s'\n"
 #: src/ui/ui_main.c:8435
 #, c-format
 msgid "Corrupted campaign '%s'\n"
-msgstr ""
+msgstr "Campagna '%s' danneggiata\n"
 
 #: src/ui/ui_main.c:8466
 #, c-format
@@ -5386,7 +5386,7 @@ msgstr "%i campagne trovate:\n"
 
 #: src/ui/ui_main.c:8470
 msgid "No campaigns found.\n"
-msgstr "Nessuna compagnia trovata.\n"
+msgstr "Nessuna campagna trovata.\n"
 
 #: src/ui/ui_main.c:8518
 msgid "No favourite servers found."
@@ -5398,13 +5398,13 @@ msgstr "Tutti i server preferiti sono stati rimossi."
 
 #: src/cgame/cg_predict.c:641
 msgid "You are near"
-msgstr "Sei vicino a:"
+msgstr "Sei vicino"
 
 msgid "joined the Axis team\n"
-msgstr "si è unito al team Axis\n"
+msgstr "si è unito all'Asse\n"
 
 msgid "joined the Allies team\n"
-msgstr "si è unito al team Allies\n"
+msgstr "si è unito agli Alleati\n"
 
 msgid "entered the game\n"
 msgstr "è entrato in gioco\n"
@@ -5488,79 +5488,79 @@ msgid "killed himself"
 msgstr "si è ucciso"
 
 msgid "Improved use of Explosive Ammunition"
-msgstr "l'uso avanzato di munizioni esplosive"
+msgstr "Uso Avanzato Munizioni Esplosive"
 
 msgid "Improved Dexterity"
-msgstr "miglior destrezza"
+msgstr "Miglior Destrezza"
 
 msgid "Binoculars for any Class"
-msgstr "binocolo per tutte le classi"
+msgstr "Binocolo per Tutte le Classi"
 
 msgid "Medic Ammo"
-msgstr "attrezzatura medica"
+msgstr "Attrezzatura Medica"
 
 msgid "Improved First Aid Resources"
-msgstr "migliori risorse di primo soccorso"
+msgstr "Migliori Risorse Primo Soccorso"
 
 msgid "Improved use of Light Weapon Ammunition"
-msgstr "l'uso avanzato delle munizioni per armi leggere"
+msgstr "Uso Avanzato Munizioni Armi Leggere"
 
 msgid "Improved Projectile Resources"
-msgstr "più munizioni a disposizione"
+msgstr "Maggior Disposizione Munizioni"
 
 msgid "Improved use of Scoped Weapon Ammunition"
-msgstr "l'uso avanzato delle munizioni per armi con mirino"
+msgstr "Uso Avanzato Munizioni Armi con Mirino"
 
 msgid "Improved Physical Fitness"
-msgstr "una migliore idoneità fisica"
+msgstr "Migliore Idoneità Fisica"
 
 msgid "Improved Ammo Resources"
-msgstr "migliori risorse di munizioni"
+msgstr "Migliori Risorse di Munizioni"
 
 msgid "Improved Signals"
-msgstr "segnali migliorati"
+msgstr "Segnali Migliorati"
 
 msgid "Faster Reload"
-msgstr "una ricarica più veloce"
+msgstr "Ricarica più Veloce"
 
 msgid "Heavy Weapon Proficiency"
-msgstr "competenza sulle armi pesanti"
+msgstr "Competenza Armi Pesanti"
 
 msgid "Improved use of Sabotage and Misdirection"
-msgstr "maggiore abilità nelle azioni di sabotaggio"
+msgstr "Maggiore Abilità Azioni Sabotaggio"
 
 msgid "Improved Health"
-msgstr "salute migliorata"
+msgstr "Salute Migliorata"
 
 msgid "Improved Construction and Destruction"
-msgstr "costruzione e distruzione migliorati"
+msgstr "Costruzione e Distruzione Migliorati"
 
 msgid "Full Revive"
-msgstr "piena rianimazione"
+msgstr "Piena Rianimazione"
 
 msgid "Improved Air and Ground Support"
-msgstr "miglior supporto aereo e di terra"
+msgstr "Miglior Supporto Aereo e di Terra"
 
 msgid "Improved Light Weapon Handling"
-msgstr "l'uso avanzato di armi leggere"
+msgstr "Miglior Uso Armi Leggere"
 
 msgid "Breath Control"
-msgstr "controllo del respiro"
+msgstr "Controllo Respiro"
 
 msgid "Trap Awareness"
-msgstr "riconoscimento delle trappole"
+msgstr "Riconoscimento Trappole"
 
 msgid "a Flak Jacket"
-msgstr "un giubbotto antiproiettile"
+msgstr "Giubbotto Antiproiettile"
 
 msgid "Adrenalin Self"
-msgstr "disposizione di adrenalina"
+msgstr "Disposizione Adrenalina"
 
 msgid "Enemy Recognition"
-msgstr "riconoscimento del nemico"
+msgstr "Riconoscimento Nemico"
 
 msgid "Dual-Wield Pistols"
-msgstr "doppia pistola"
+msgstr "Doppia Pistola"
 
 msgid "Improved Weapon Handling"
 msgstr "l'uso avanzato delle armi"
@@ -5577,16 +5577,16 @@ msgid "^1THE TEAM"
 msgstr "^1IL TEAM"
 
 msgid "Axis team"
-msgstr "al team Axis"
+msgstr "all'Asse"
 
 msgid "Allied team"
-msgstr "al team Allied"
+msgstr "agli Alleati"
 
 msgid "Spectators"
 msgstr "agli spettatori"
 
 msgid "You must be a player or following a player to use +stats\n"
-msgstr ""
+msgstr "Devi essere un giocatore o uno spettatore per usare +stats\n"
 
 msgid "^9You must be alive to use ^3/kill."
 msgstr "^9Devi essere vivo per usare ^3/kill."
@@ -5610,13 +5610,13 @@ msgid "Your fireteam is now private"
 msgstr "ora Il tuo fireteam è privato"
 
 msgid "The Allies have too many players.\n"
-msgstr "Gli Allies hanno troppi giocatori.\n"
+msgstr "Gli Alleati hanno troppi giocatori.\n"
 
 msgid "The Axis has too many players.\n"
-msgstr "Gli Axis hanno troppi giocatori.\n"
+msgstr "L'Asse ha troppi giocatori.\n"
 
 msgid "Attack!"
-msgstr "Attacco!"
+msgstr "All'attacco!"
 
 msgid "Fall back!"
 msgstr "Retrocedere!"
@@ -5624,7 +5624,7 @@ msgstr "Retrocedere!"
 msgid ""
 "^3All players ready!^7\n"
 "Match starting..."
-msgstr "^3Tutti pronti!^7\nInizia il gioco..."
+msgstr "^3Tutti pronti!^7\nInizia la partita..."
 
 msgid "Path cleared."
 msgstr "Via libera."
@@ -5690,13 +5690,13 @@ msgid "Move!"
 msgstr "Muoversi!"
 
 msgid "Clear the path!"
-msgstr "Liberate il passaggio!"
+msgstr "Liberare il passaggio!"
 
 msgid "Defend our objective!"
-msgstr "Difendete il nostro obiettivo!"
+msgstr "Difendere il nostro obiettivo!"
 
 msgid "Disarm the dynamite!"
-msgstr "Disinnescate la dinamite!"
+msgstr "Disinnescare la dinamite!"
 
 msgid "Clear the mines!"
 msgstr "Ripulire le mine!"
@@ -5714,10 +5714,10 @@ msgid "No!"
 msgstr "No!"
 
 msgid "Thank you!"
-msgstr "Thank you!"
+msgstr "Grazie!"
 
 msgid "You're welcome."
-msgstr "You're welcome."
+msgstr "Prego!"
 
 msgid "Bitte sehr."
 msgstr "Bitte sehr."
@@ -5744,7 +5744,7 @@ msgid "Jawohl!"
 msgstr "Jawohl!"
 
 msgid "Negative!"
-msgstr "Negative!"
+msgstr "Negativo!"
 
 msgid "Hi!"
 msgstr "Hi!"
@@ -5939,24 +5939,24 @@ msgid "Constructing..."
 msgstr "Costruzione..."
 
 msgid "Allied Command Post constructed. Charge speed increased!"
-msgstr "Posto di Comando Allied costruito. Velocità di ricarica aumentata!"
+msgstr "Posto di Comando Alleati costruito. Velocità di ricarica aumentata!"
 
 msgid "Axis Command Post constructed. Charge speed increased!"
-msgstr "Posto di Comando Axis costruito. Velocità di ricarica aumentata!"
+msgstr "Posto di Comando Asse costruito. Velocità di ricarica aumentata!"
 
 msgid ""
 "^3All players ready!^7\n"
 "Match starting...\n"
-msgstr "^3Giocatori pronti!^7\nInizia l'incontro...\n"
+msgstr "^3Giocatori pronti!^7\nInizia la partita...\n"
 
 msgid "You are on the Allied team"
-msgstr "Sei nel team Allied"
+msgstr "Fai parte degli Alleati"
 
 msgid "^1*** Match Reset! ***\n"
-msgstr "^1*** Reset incontro! ***\n"
+msgstr "^1*** Reset partita! ***\n"
 
 msgid "You are on the Axis team"
-msgstr "Sei nel team Axis"
+msgstr "Fai parte dell'Asse"
 
 msgid "Warning, leave the construction area..."
 msgstr "Attenzione, allontanarsi dall'area di costruzione..."
@@ -5972,7 +5972,7 @@ msgid "Need paks: %s\n"
 msgstr "Pacchetti richiesti: %s\n"
 
 msgid "Not enough players to start match!\n"
-msgstr "Giocatori insufficienti per iniziare il gioco!\n"
+msgstr "Giocatori insufficienti per iniziare la partita!\n"
 
 msgid "'s flamethrower"
 msgstr " con un lanciafiamme"
@@ -5984,13 +5984,13 @@ msgid "You cannot arm dynamite near a friendly objective!"
 msgstr "Non puoi armare una dinamite vicino a un obiettivo amico!"
 
 msgid "'s tank-mounted MG42"
-msgstr " con un MG 42 montato su carro armato"
+msgstr " con un MG 42 da carro armato"
 
 msgid "'s dynamite"
 msgstr " con della dinamite"
 
 msgid "Timelimit hit.\n"
-msgstr ""
+msgstr "Tempo limite raggiunto.\n"
 
 msgid "Landmine revealed"
 msgstr "Mina individuata"
@@ -6017,7 +6017,7 @@ msgid "You cannot arm dynamite near a friendly construction!"
 msgstr "Non puoi armare dinamite vicino a una costruzione amica!"
 
 msgid "Countdown started.... ^3notready^7 ignored!\n"
-msgstr ""
+msgstr "Inizio conto alla rovescia.... ^3notready^7 ignorato!\n"
 
 msgid "No complaint filed against you.\n"
 msgstr "Nessun reclamo registrato contro di te.\n"
@@ -6038,60 +6038,60 @@ msgid "The fireteam you are on has been disbanded"
 msgstr ""
 
 msgid "You have been given fireteam admin rights"
-msgstr ""
+msgstr "Hai ceduto i permessi di amministratore del fireteam"
 
 msgid "Too many players already on this Fireteam"
-msgstr ""
+msgstr "Ci sono già troppi giocatori in questo Fireteam"
 
 msgid "The leader has now left the Fireteam you applied to"
 msgstr ""
 
 msgid "The other player is already on a fireteam"
-msgstr ""
+msgstr "L'altro giocatore è fa già parte di un fireteam"
 
 msgid "You are not on the same team as the other player"
-msgstr ""
+msgstr "Non sei nello stesso team dell'altro giocatore"
 
 msgid "You are not on the same Fireteam as the other player"
-msgstr ""
+msgstr "Non sei nello stesso Fireteam dell'altro giocatore"
 
 msgid "Invalid client selected"
 msgstr "Client selezionato non valido"
 
 msgid "usage: fireteam admin <clientname|clientnumber>"
-msgstr ""
+msgstr "uso: fireteam admin <nomeclient|numeroclient>"
 
 msgid "usage: fireteam propose <clientname|clientnumber>"
-msgstr ""
+msgstr "uso: fireteam propose <nomeclient|numeroclient>"
 
 msgid "usage: fireteam kick <clientname|clientnumber>"
-msgstr ""
+msgstr "uso: fireteam kick <nomeclient|numeroclient>"
 
 msgid "usage: fireteam warn <clientname|clientnumber>"
-msgstr ""
+msgstr "uso: fireteam warn <nomeclient|numeroclient>"
 
 msgid "usage: fireteam invite <clientname|clientnumber>"
-msgstr ""
+msgstr "uso: fireteam invite <nomeclient|numeroclient>"
 
 msgid "usage: fireteam apply <fireteamname|fireteamnumber>"
-msgstr ""
+msgstr "uso: fireteam apply <nomefireteam|numerofireteam>"
 
 msgid "usage: fireteam <create|leave|apply|invite>"
-msgstr ""
+msgstr "uso: fireteam <create|leave|apply|invite>"
 
 msgid "You are already on a fireteam, leave it first"
-msgstr ""
+msgstr "Sei già nel fireteam, lascialo prima"
 
 msgid ""
 "The other player must be on the same fireteam for you to give admin rights "
 "to"
-msgstr ""
+msgstr "L'altro giocatore deve far parte dello stesso fireteam per potergli cedere i permessi"
 
 msgid "You must be a fireteam admin to give admin rights to someone else"
-msgstr ""
+msgstr "Devi essere l'admin del fireteam per poter dare i permessi a qualcun altro"
 
 msgid "Invalid referee password!\n"
-msgstr ""
+msgstr "Password arbitro non valida!\n"
 
 msgid "Usage: ref [password]\n"
 msgstr "Uso: ref [password]\n"
@@ -6104,7 +6104,7 @@ msgstr "^3Comandi Arbitro:^7\n------------------------------------------\n"
 msgid ""
 "Usage: ^3\\ref <cmd> [params]\n"
 "\n"
-msgstr ""
+msgstr "Uso: ^3\\ref <cmd> [parametri]\n\n"
 
 msgid "^5pause speclock warmup ^7[value]\n"
 msgstr ""
@@ -6113,37 +6113,37 @@ msgid "Sorry, referee status disabled on this server.\n"
 msgstr ""
 
 msgid "Referee has ^3LOCKED^7 teams\n"
-msgstr ""
+msgstr "L'arbitro ha ^3BLOCCATO^7 i team\n"
 
 msgid "You have LOCKED teams\n"
-msgstr ""
+msgstr "Hai BLOCCATO i team\n"
 
 msgid "Referee has ^3UNLOCKED^7 teams\n"
-msgstr ""
+msgstr "L'arbitro ha ^3SBLOCCATO^7 i team\n"
 
 msgid "You have UNLOCKED teams\n"
-msgstr ""
+msgstr "Hai SBLOCCATO i team\n"
 
 msgid "The ^4Allies^7 team is LOCKED!\n"
-msgstr "Il team ^4Allies^7 è BLOCCATO!\n"
+msgstr "Il team ^4Alleati^7 è BLOCCATO!\n"
 
 msgid "The ^1Axis^7 team is LOCKED!\n"
-msgstr "Il team ^4Axis^7 è BLOCCATO!\n"
+msgstr "Il team ^4Asse^7 è BLOCCATO!\n"
 
 msgid "^3Referee ^1PAUSED^3 the match^3!\n"
-msgstr ""
+msgstr "^3L'arbitro ha ^1SOSPESO^3 la partita^3!\n"
 
 msgid "^3Match is ^1PAUSED^3! (^7Referee^3)\n"
-msgstr ""
+msgstr "^3La partita é ^1SOSPESA^3! (^7Arbitro^3)\n"
 
 msgid "The match is already ^1PAUSED!\n"
-msgstr ""
+msgstr "La partita è già stata ^1SOSPESA!\n"
 
 msgid "^3Referee ^5UNPAUSES^3 the match ... resuming in 10 seconds!\n"
-msgstr ""
+msgstr "^3L'arbitro ha ^1RIPRESO^3 la partita ... ripresa in 10 secondi!\n"
 
 msgid "The match is already ^5UNPAUSED!\n"
-msgstr ""
+msgstr "La partita è già stata ^5RIPRESA!\n"
 
 msgid "Bad client slot: "
 msgstr ""
@@ -6155,7 +6155,7 @@ msgid "is not active\n"
 msgstr "non è attivo\n"
 
 msgid "You can only remove people in the game!\n"
-msgstr ""
+msgstr "Puoi solo rimuovere i giocatori!\n"
 
 msgid "User "
 msgstr "Utente"
@@ -6164,10 +6164,10 @@ msgid "is not on the server\n"
 msgstr "non è sul server\n"
 
 msgid "^5You've been removed from the ^4Allies^7 team\n"
-msgstr "^5Sei stato rimosso dal team ^4Allies^7\n"
+msgstr "^5Sei stato rimosso dagli ^4Alleati^7\n"
 
 msgid "^5You've been removed from the ^1Axis^7 team\n"
-msgstr "^5Sei stato rimosso dal team ^1Axis^7\n"
+msgstr "^5Sei stato rimosso dall'^1Asse^7\n"
 
 msgid "Referee has ^3SPECTATOR LOCKED^7 teams\n"
 msgstr ""
@@ -6176,13 +6176,13 @@ msgid "Referee has ^3SPECTATOR UNLOCKED^7 teams\n"
 msgstr ""
 
 msgid "usage: ref warn <clientname> [reason].\n"
-msgstr ""
+msgstr "uso: ref warn <nomeclient> [motivo].\n"
 
 msgid "Client not on server.\n"
 msgstr "Utente non sul server.\n"
 
 msgid "%s^7 was issued a ^1Warning^7 (No Reason Supplied)\n"
-msgstr ""
+msgstr "%s^7 ha emesso un ^1Avviso^7 (Nessun Motivo Fornito)\n"
 
 msgid "Cannot mute a referee.\n"
 msgstr ""
@@ -6222,19 +6222,19 @@ msgstr "^5\nComandi Disponibili:\n------------------------\n"
 msgid ""
 "\n"
 "Type: ^3\\command_name ?^7 for more information\n"
-msgstr ""
+msgstr "\nScrivi: ^3\\nome_comando ?^7 per ulteriori informazioni\n"
 
 msgid "Spectators can't lock a team!\n"
 msgstr "Gli spettatori non possono bloccare un team!\n"
 
 msgid "The ^4Allies^7 team is now locked!\n"
-msgstr "Ora il team ^4Allies^7 è bloccato!\n"
+msgstr "Ora il team ^4Alleati^7 è bloccato!\n"
 
 msgid "^3Your team is already locked!\n"
 msgstr "^3Il tuo team è già bloccato!\n"
 
 msgid "The ^4Allies^7 team is now unlocked!\n"
-msgstr "Ora il team ^4Allies^7 è sbloccato!\n"
+msgstr "Ora il team ^4Alleati^7 è sbloccato!\n"
 
 msgid "^3Your team is already unlocked!\n"
 msgstr "^3Il tuo team è già sbloccato!\n"
@@ -6243,10 +6243,10 @@ msgid "Spectators can't unlock a team!\n"
 msgstr "Gli spettatori non possono sbloccare un team!\n"
 
 msgid "The ^1Axis^7 team is now locked!\n"
-msgstr "Il team ^1Axis^7 ora è bloccato!\n"
+msgstr "Il team ^1Asse^7 ora è bloccato!\n"
 
 msgid "The ^1Axis^7 team is now unlocked!\n"
-msgstr "Il team ^1Axis^7 ora è sbloccato!\n"
+msgstr "Il team ^1Asse^7 ora è sbloccato!\n"
 
 msgid "Team commands not enabled on this server.\n"
 msgstr "Comandi team non abilitati su questo server.\n"
@@ -6266,19 +6266,19 @@ msgid ""
 "\n"
 "Usage: ^3\\callvote <command> <params>\n"
 "^7For current settings/help, use: ^3\\callvote <command> ?\n"
-msgstr ""
+msgstr "\nUso: ^3\\callvote <comando> <parametri>\n^7Per le impostazioni/aiuto correnti: ^3\\callvote <comando> ?\n"
 
 msgid "Type ^3\\stats <player_id>^7 to see stats on an active player.\n"
-msgstr ""
+msgstr "Scrivi ^3\\stats <id_giocatore>^7 per vedere le sue statistiche.\n"
 
 msgid "Spectators can't ready a team!\n"
 msgstr ""
 
 msgid "The ^4Allies^7 team is ready!\n"
-msgstr "Il team ^4Allies^7 è pronto!\n"
+msgstr "Il team ^4Alleati^7 è pronto!\n"
 
 msgid "The ^1Axis^7 team is ready!\n"
-msgstr "Il team ^1Axis^7 è pronto!\n"
+msgstr "Il team ^1Asse^7 è pronto!\n"
 
 msgid "A vote is already in progress.\n"
 msgstr "È già in corso una votazione.\n"
@@ -6293,10 +6293,10 @@ msgid "Spectator team\n"
 msgstr "Spettatore\n"
 
 msgid "Allies team\n"
-msgstr "Team Allies\n"
+msgstr "Team Alleati\n"
 
 msgid "Axis team\n"
-msgstr "Team Axis\n"
+msgstr "Team dell'Asse\n"
 
 msgid "Sorry, "
 msgstr "Spiacente, "
@@ -6304,8 +6304,8 @@ msgstr "Spiacente, "
 msgid "voting has been disabled"
 msgstr "le votazioni sono state disabilitate"
 
-msgid "Not allowed to call a vote as a spectator.\n"
-msgstr "Non sei autorizzato a richiedere una votazione da spettatore.\n"
+msgid "Not allowed to call a vote as a spectator."
+msgstr "Non sei autorizzato a votare da spettatore."
 
 msgid "called a vote."
 msgstr "ha richiesto una votazione."
@@ -6389,10 +6389,10 @@ msgid "You must be alive to use this command.\n"
 msgstr "Devi essere vivo per usare questo comando.\n"
 
 msgid "The ^1Axis^7 team is empty!  Follow command ignored.\n"
-msgstr ""
+msgstr "Team dell'^1Asse^7 vuoto! Comando ignorato.\n"
 
 msgid "The ^4Allies^7 team is empty!  Follow command ignored.\n"
-msgstr ""
+msgstr "Team degli^1Alleati^7 vuoto! Comando ignorato.\n"
 
 msgid "Can't follow a player on an enemy team!\n"
 msgstr "Non puoi seguire un giocatore del team avversario!\n"
@@ -6401,7 +6401,7 @@ msgid "Can't follow while not in limbo if on a team!\n"
 msgstr ""
 
 msgid "Partial Name Matches more than 1 Player.\n"
-msgstr ""
+msgstr "Ci sono più corrispondenze di nome parziale.\n"
 
 msgid "Spectator follow is now locked on the ^1Axis^7 team.\n"
 msgstr ""
@@ -6422,28 +6422,28 @@ msgid "Sorry, the ^1Axis^7 team is locked from spectators.\n"
 msgstr ""
 
 msgid "Server quit\n"
-msgstr ""
+msgstr "Server chiuso\n"
 
 msgid "You cannot switch during a match, please wait until the round ends."
-msgstr ""
+msgstr "Non puoi cambiare durante la partita, dovrai attendere la fine del turno."
 
 msgid "Use the ^3players^7 command to find a valid player ID.\n"
-msgstr ""
+msgstr "Usa il comando ^3players^7 per trovare un valido ID giocatore.\n"
 
 msgid "^3Match is already in progress!\n"
-msgstr ""
+msgstr "^3Partita già in corso!\n"
 
 msgid "^1Teams have been shuffled!\n"
-msgstr ""
+msgstr "^1Team rimescolati!\n"
 
 msgid "^3*** Loading nextmap! ***\n"
-msgstr ""
+msgstr "^3*** Carico prossima mappa! ***\n"
 
 msgid "^1*** Level Restarted! ***\n"
-msgstr ""
+msgstr "^1*** Riavvio Livello! ***\n"
 
 msgid "You have been switched to the Axis team"
-msgstr "Sei stato spostato nel team Axis"
+msgstr "Sei stato spostato nel team dell'Asse"
 
 msgid "Keep the Allies from beating the clock!"
 msgstr ""
@@ -6452,13 +6452,13 @@ msgid "Keep the Axis from beating the clock!"
 msgstr ""
 
 msgid "You have been switched to the Allied team"
-msgstr "Sei stato spostato nel team Allied"
+msgstr "Sei stato spostato nel team degli Alleati"
 
 msgid "Try to beat the clock!"
 msgstr ""
 
 msgid "You have been been stripped of fireteam admin rights"
-msgstr ""
+msgstr "Ti sono stati rimossi i diritti di amministratore del fireteam"
 
 msgid "%s ^7has left the fireteam\n"
 msgstr "%s ^7ha abbandonato il fireteam\n"
@@ -6494,7 +6494,7 @@ msgid "was perforated by"
 msgstr "è stato perforato da"
 
 msgid "'s tank-mounted MG 42"
-msgstr " con un MG 42 montato su carro armato"
+msgstr " con un MG 42 da carro armato"
 
 msgid "was shelled by"
 msgstr "è stato bombardato da"
@@ -6722,7 +6722,7 @@ msgstr "Seleziona Membro #8:"
 msgid ""
 "Couldn't load an official pak file; verify your installation and make sure "
 "it has been updated to the latest version."
-msgstr ""
+msgstr "Impossibile caricare un pak file ufficiale; verifica l'installazione e assicurati che sia aggiornata all'ultima versione."
 
 msgid "Battle Sense"
 msgstr "Tattica"
@@ -6746,13 +6746,13 @@ msgid "Covert Ops"
 msgstr "Covert Ops"
 
 msgid "Fire Mission: ^3Firing for effect!"
-msgstr ""
+msgstr "Missione Fuoco: ^3Tiro d'efficacia!"
 
 msgid "Fire Mission: ^3Insufficient fire support."
-msgstr ""
+msgstr "Missione Fuoco: ^3Fuoco di supporto insufficiente."
 
 msgid "Fire Mission: ^3Aborting, can't see target."
-msgstr ""
+msgstr "Missione Fuoco: ^3Annullo, non vedo il bersaglio."
 
 msgid "I need a Medic!"
 msgstr "Mi serve un Medico!"
@@ -6764,13 +6764,13 @@ msgid "20 Med Health"
 msgstr "20 Salute"
 
 msgid "Pilot: ^3Aborting, can't see target."
-msgstr ""
+msgstr "Pilota: ^3Annullo, non vedo il bersaglio."
 
 msgid "Pilot: ^3Affirmative, on my way!"
-msgstr ""
+msgstr "Pilota: ^3Affirmativo, procedo!"
 
 msgid "HQ: ^3All available planes are already en-route."
-msgstr ""
+msgstr "HQ: ^3Tutti gli aerei disponibili sono già in rotta."
 
 #: src/cgame/cg_draw.c:1830
 msgid "Join a Fireteam?"
@@ -7000,8 +7000,50 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:2505
 msgid "^3WARMUP:^7 Match begins now!"
-msgstr ""
+msgstr "^3RISCALDAMENTO:^7 Inizia la partita!"
 
 #: src/cgame/cg_scoreboard.c:211
 msgid "MATCH BEGINS NOW!"
-msgstr ""
+msgstr "COMINCIA LA PARTITA!"
+
+msgid "Mute Players:"
+msgstr "Zittire Giocatori:"
+
+msgid "Allow players to vote for muting players"
+msgstr "Permette ai giocatori di votare per zittire altri giocatori"
+
+msgid "Surrender:"
+msgstr "Arrendersi:"
+
+msgid "Allow players to vote for surrender"
+msgstr "Permette ai giocatori di votare per la resa"
+
+msgid "XP Shuffle No Rstrt:"
+msgstr "Mesc. XP No riavvio:"
+
+msgid "Allow players to vote for teams to be shuffled without a restart"
+msgstr "Permette ai giocatori di votare di mischiare i giocatori senza ricominciare"
+
+msgid "Restart Campaign:"
+msgstr "Riavvio Campagna:"
+
+msgid "Allow players to vote for restarting campaign"
+msgstr "Permette ai giocatori di votare per riavviare la campagna"
+
+msgid "Next Campaign:"
+msgstr "Prossima Campagna:"
+
+msgid "Allow players to vote for next campaign"
+msgstr "Permette ai giocatori di votare per la prossima campagna"
+
+msgid "CHANGE SYSTEM SETTINGS"
+msgstr "CAMBIA IMPOSTAZIONI SISTEMA"
+
+msgid "RESTART CAMPAIGN"
+msgstr "RIAVVIA CAMPAGNA"
+
+msgid "SURRENDER"
+msgstr "ARRENDERSI"
+
+msgid "NO XP SHUFFLE"
+msgstr "NO MESCOLA XP"

@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2015-12-22 10:57+0000\n"
-"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
+"PO-Revision-Date: 2016-01-04 10:37+0000\n"
+"Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
 "Language-Team: Spanish (http://www.transifex.com/etlegacy/etlegacy/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -512,11 +512,11 @@ msgstr "Máx. tiempo (en seg.) que un espectador puede estar inactivo antes de s
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Intermission Time:"
-msgstr "Tiempo entre misiones:"
+msgstr "Tiempo de descanso:"
 
 #: etmain/ui/hostgame_advanced.menu:37
 msgid "Time of intermission"
-msgstr "Tiempo que transcurre entre las misiones"
+msgstr "Tiempo que transcurre entre los mapas"
 
 #: etmain/ui/hostgame_advanced.menu:38
 msgid "Intermission Ready %:"
@@ -1077,7 +1077,7 @@ msgstr "AVANZADO"
 
 #: etmain/ui/options_system.menu:54
 msgid "ADVANCED GRAPHICS"
-msgstr ""
+msgstr "GRÁFICOS AVANZADOS"
 
 #: etmain/ui/hostgame.menu:31 etmain/ui/main.menu:106
 msgid "HOST GAME"
@@ -1724,13 +1724,13 @@ msgstr "Esto borrará todos los archivos innecesarios de tu fs_homepath."
 
 #: etmain/ui/options_clean.menu:36
 msgid "A simple clean will remove tmp and custom pk3 files."
-msgstr ""
+msgstr "Una limpieza simple eliminara los archivos pk3 tmp y personalizados."
 
 #: etmain/ui/options_clean.menu:37
 msgid ""
 "A full clean will remove all downloaded files like maps,\n"
 " campaigns and custom pk3 files."
-msgstr ""
+msgstr "Una limpieza completa eliminará todo los archivos descargados\ncomo mapas, campañas y archivos pk3 personalizados."
 
 #: etmain/ui/options_clean.menu:38
 msgid "^1WARNING: Use at your own risk!"
@@ -1750,7 +1750,7 @@ msgstr "ABORTAR"
 
 #: etmain/ui/options_clean.menu:42
 msgid "Abort operation"
-msgstr ""
+msgstr "Abortar operación"
 
 #: etmain/ui/options_clean.menu:43
 msgid "SIMPLE CLEAN"
@@ -1758,7 +1758,7 @@ msgstr "LIMPIEZA SIMPLE"
 
 #: etmain/ui/options_clean.menu:43
 msgid "Remove tmp and custom pk3 files"
-msgstr ""
+msgstr "Eliminar archivos pk3 tmp y personalizados"
 
 #: etmain/ui/options_clean.menu:44
 msgid "FULL CLEAN"
@@ -1766,7 +1766,7 @@ msgstr "LIMPIEZA COMPLETA"
 
 #: etmain/ui/options_clean.menu:44
 msgid "Remove all maps and campaigns files"
-msgstr ""
+msgstr "Eliminar todos los archivos de mapas y campañas"
 
 #: etmain/ui/options_controls_default.menu:52
 msgid "DEFAULT CONTROLS"
@@ -3496,7 +3496,7 @@ msgstr "Activa o desactiva el sonido cuando la ventana no está en primer plano"
 
 #: etmain/ui/options_system.menu:92
 msgid "NETWORK"
-msgstr ""
+msgstr "RED"
 
 #: etmain/ui/options_system.menu:52
 msgid "Max Packets:"
@@ -3534,11 +3534,11 @@ msgstr "¿Comprobar automáticamente las actualizaciones?"
 
 #: etmain/ui/options_system.menu:99
 msgid "Get Missing Files:"
-msgstr ""
+msgstr "Descargar Archivos:"
 
 #: etmain/ui/options_system.menu:99
 msgid "Download missing files when available"
-msgstr ""
+msgstr "Descarga los archivos que faltan cuando estén disponibles"
 
 #: etmain/ui/options_system.menu:62
 msgid "Use HTTP/FTP Downloads:"
@@ -3546,15 +3546,15 @@ msgstr "Usar Descargas HTTP/FTP:"
 
 #: etmain/ui/options_system.menu:106
 msgid "UPDATES"
-msgstr ""
+msgstr "ACTUALIZACIONES"
 
 #: etmain/ui/options_system.menu:107
 msgid "Start-Up Updates Check:"
-msgstr ""
+msgstr "Comprobación al abrir:"
 
 #: etmain/ui/options_system.menu:107
 msgid "Automatically check for updates"
-msgstr ""
+msgstr "Comprobar automaticamente las actualizaciones"
 
 #: etmain/ui/options_system.menu:62
 msgid "Enables or disables http/ftp downloads"
@@ -4851,7 +4851,7 @@ msgstr "Pulsa ^3%s^7 para empezar"
 
 #: src/cgame/cg_draw.c:2470
 msgid "^3WARMUP:^7 Match begins in"
-msgstr ""
+msgstr "^3CALENTAMIENTO:^7 La partida empieza en"
 
 #: src/cgame/cg_draw.c:2481
 msgid "^3PREPARE TO FIGHT!\n"
@@ -5097,12 +5097,12 @@ msgstr "Se ha destruido %s."
 #: src/cgame/cg_popupmessages.c:722
 #, c-format
 msgid "Spotted by %s^7 at %s"
-msgstr ""
+msgstr "Descubierta por %s^7 en %s"
 
 #: src/cgame/cg_popupmessages.c:726
 #, c-format
 msgid "Spotted by %s"
-msgstr ""
+msgstr "Descubierta por %s"
 
 #: src/cgame/cg_popupmessages.c:733
 #, c-format
@@ -5718,16 +5718,16 @@ msgid "You're welcome."
 msgstr "De nada."
 
 msgid "Bitte sehr."
-msgstr ""
+msgstr "Bitte sehr."
 
 msgid "Ja!"
-msgstr ""
+msgstr "Ja!"
 
 msgid "Nein!"
-msgstr ""
+msgstr "Nein!"
 
 msgid "Kein problem."
-msgstr ""
+msgstr "Kein problem."
 
 msgid "Sorry!"
 msgstr "¡Perdón!"
@@ -5778,7 +5778,7 @@ msgid "Hahaa!"
 msgstr "Hahaa!"
 
 msgid "Alright!"
-msgstr ""
+msgstr "Alright!"
 
 msgid "Woo!"
 msgstr "Woo!"
@@ -6226,13 +6226,13 @@ msgid "Spectators can't lock a team!\n"
 msgstr "¡Los espectadores no pueden bloquear un equipo!\n"
 
 msgid "The ^4Allies^7 team is now locked!\n"
-msgstr "¡El equipo ^4Aliado^7 ahora está bloqueado!\n\n"
+msgstr "¡El equipo ^4Aliado^7 está bloqueado ahora!\n\n"
 
 msgid "^3Your team is already locked!\n"
 msgstr "^3Tu equipo ya está bloqueado!\n"
 
 msgid "The ^4Allies^7 team is now unlocked!\n"
-msgstr "¡El equipo ^4Aliado^7 ahora está desbloqueado!\n"
+msgstr "¡El equipo ^4Aliado^7 está desbloqueado ahora!\n"
 
 msgid "^3Your team is already unlocked!\n"
 msgstr "^3Tu equipo ya está desbloqueado!\n"
@@ -6241,10 +6241,10 @@ msgid "Spectators can't unlock a team!\n"
 msgstr "¡Los espectadores no pueden desbloquear un equipo!\n"
 
 msgid "The ^1Axis^7 team is now locked!\n"
-msgstr "¡El equipo ^1Eje^7 ahora está bloqueado!\n\n"
+msgstr "¡El equipo ^1Eje^7 está bloqueado ahora!\n\n"
 
 msgid "The ^1Axis^7 team is now unlocked!\n"
-msgstr "¡El equipo ^1Eje^7 ahora está desbloqueado!\n"
+msgstr "¡El equipo ^1Eje^7 está desbloqueado ahora!\n"
 
 msgid "Team commands not enabled on this server.\n"
 msgstr "Las órdenes de equipo están desactivadas en este servidor.\n"
@@ -6273,10 +6273,10 @@ msgid "Spectators can't ready a team!\n"
 msgstr ""
 
 msgid "The ^4Allies^7 team is ready!\n"
-msgstr ""
+msgstr "¡El equipo ^4Aliado^7 está listo!\n"
 
 msgid "The ^1Axis^7 team is ready!\n"
-msgstr ""
+msgstr "¡El equipo ^1Eje^7 está listo!\n"
 
 msgid "A vote is already in progress.\n"
 msgstr "Ya hay una votación en curso.\n"
@@ -6302,8 +6302,8 @@ msgstr "Lo sentimos"
 msgid "voting has been disabled"
 msgstr "las votaciones han sido desactivadas"
 
-msgid "Not allowed to call a vote as a spectator.\n"
-msgstr "No está permitido abrir votaciones como espectador.\n"
+msgid "Not allowed to call a vote as a spectator."
+msgstr ""
 
 msgid "called a vote."
 msgstr "lanzó una votación."
@@ -6387,10 +6387,10 @@ msgid "You must be alive to use this command.\n"
 msgstr "Tienes que estar vivo para usar este comando.\n"
 
 msgid "The ^1Axis^7 team is empty!  Follow command ignored.\n"
-msgstr ""
+msgstr "¡El equipo ^1Eje^7 está vacío! El comando ha sido ignorado.\n\n\n"
 
 msgid "The ^4Allies^7 team is empty!  Follow command ignored.\n"
-msgstr ""
+msgstr "¡El equipo ^4Aliado^7 está vacío! El comando ha sido ignorado.\n"
 
 msgid "Can't follow a player on an enemy team!\n"
 msgstr "¡No puedes seguir un jugador en el equipo enemigo!\n"
@@ -6459,7 +6459,7 @@ msgid "You have been been stripped of fireteam admin rights"
 msgstr ""
 
 msgid "%s ^7has left the fireteam\n"
-msgstr ""
+msgstr "%s ^7ha abandonado la escuadra\n\n"
 
 msgid "You have been warned by your fireteam leader\n"
 msgstr "Has sido avisado por el líder de la escuadra\n"
@@ -6775,87 +6775,87 @@ msgid "Join a Fireteam?"
 msgstr "¿Unirse a una escuadra?"
 
 msgid "Apply"
-msgstr ""
+msgstr "Solicitar"
 
 msgid "Create"
-msgstr ""
+msgstr "Crear"
 
 msgid "Attack"
-msgstr ""
+msgstr "Atacar"
 
 msgid "Fall Back"
-msgstr ""
+msgstr "Retroceder"
 
 msgid "Disband"
-msgstr ""
+msgstr "Disolver"
 
 msgid "Leave"
-msgstr ""
+msgstr "Abandonar"
 
 msgid "Invite"
-msgstr ""
+msgstr "Invitar"
 
 msgid "Change privacy"
-msgstr ""
+msgstr "Cambiar privacidad"
 
 msgid "Kick"
-msgstr ""
+msgstr "Expulsar"
 
 msgid "Warn"
-msgstr ""
+msgstr "Avisar"
 
 msgid "Change admin"
-msgstr ""
+msgstr "Cambiar Admin"
 
 msgid "Highest Fragger"
-msgstr ""
+msgstr "Mayor Asesino"
 
 msgid "Highest Experience Points"
-msgstr ""
+msgstr "Puntos de Experiencia Mas Altos"
 
 msgid "Highest Ranking Officer"
-msgstr ""
+msgstr "Mayor Rango"
 
 msgid "Most Highly Decorated"
-msgstr ""
+msgstr "Más Condecorado"
 
 msgid "Highest Battle Sense"
-msgstr ""
+msgstr "Mejor Sentido de Batalla"
 
 msgid "Best Engineer"
-msgstr ""
+msgstr "Mejor Ingeniero"
 
 msgid "Best Medic"
-msgstr ""
+msgstr "Mejor Médico"
 
 msgid "Best Field Ops"
-msgstr ""
+msgstr "Mejor Field Ops"
 
 msgid "Highest Light Weapons"
-msgstr ""
+msgstr "Mejor Uso Armas Ligeras"
 
 msgid "Best Soldier"
-msgstr ""
+msgstr "Mejor SOldado"
 
 msgid "Best Covert Ops"
-msgstr ""
+msgstr "Mejor Covert Ops"
 
 msgid "Highest Accuracy"
-msgstr ""
+msgstr "Mejor Puntería"
 
 msgid "I Ain't Got No Friends Award"
-msgstr ""
+msgstr "Premio No Tengo Amigos"
 
 msgid "Welcome Newbie! Award"
-msgstr ""
+msgstr "Premio ¡Bienvenido Novato!"
 
 msgid ""
 "\n"
 "ET: Legacy with OpenGL 3.x renderer can not run on this machine since it is missing one or more required OpenGL extensions. Please update your video card drivers and try again.\n"
-msgstr ""
+msgstr "\nEn ésta máquina no puede ejecutarse ET:Legacy con su renderizador OpenGL 3.x porque no se encuentra alguna extensión OpenGL. Por favor, actualiza los controladores de tu tarjeta gráfica y prueba de nuevo.\n"
 
 msgid "Gib command not allowed during intermission.\n"
-msgstr ""
+msgstr "El comando \"gib\" no está permitido en el descanso.\n"
 
 msgid "^9%d players gibbed."
 msgstr ""
@@ -6873,58 +6873,58 @@ msgid "^7%s^7 was gibbed."
 msgstr ""
 
 msgid "Die command not allowed during intermission.\n"
-msgstr ""
+msgstr "El comando \"die\" no está permitido en el descanso.\n"
 
 msgid "^9%d players died."
-msgstr ""
+msgstr "^9%d jugadores murieron."
 
 msgid "There is no player to die.\n"
-msgstr ""
+msgstr "No hay jugadores para matar.\n"
 
 msgid "Error - can't execute die command - %s.\n"
-msgstr ""
+msgstr "Error - no se pudo ejecutar el comando \"die\" - %s.\n"
 
 msgid "Player must be on a team to die.\n"
-msgstr ""
+msgstr "El jugador debe de pertenecer a un equipo para morir.\n"
 
 msgid "^7%s^7 died."
-msgstr ""
+msgstr "^7%s^7 murió."
 
 msgid "Freeze command not allowed during intermission.\n"
-msgstr ""
+msgstr "El comando \"freeze\" no está permitido en el descanso.\n"
 
 msgid "^9%d players are frozen."
-msgstr ""
+msgstr "^9%d jugadores están congelados."
 
 msgid "No players in team or they are already frozen.\n"
-msgstr ""
+msgstr "No hay jugadores en el equipo o ya están congelados.\n"
 
 msgid "Error - can't freeze - %s.\n"
-msgstr ""
+msgstr "Error - no se pudo congelar - %s.\n"
 
 msgid "Player must be on a team to be frozen.\n"
-msgstr ""
+msgstr "El jugador debe de pertenecer a un equipo para ser congelado.\n"
 
 msgid "^7%s^7 is frozen."
-msgstr ""
+msgstr "^7%s^7 está congelado."
 
 msgid "^9%d players are unfrozen."
-msgstr ""
+msgstr "^9%d jugadores descongelados."
 
 msgid "No players in team or they are already unfrozen.\n"
-msgstr ""
+msgstr "No hay jugadores en el equipo o ya están descongelados.\n"
 
 msgid "Error - can't unfreeze - %s.\n"
-msgstr ""
+msgstr "Error - no se pudo descongelar - %s.\n"
 
 msgid "Player must be on a team to be unfrozen.\n"
-msgstr ""
+msgstr "El jugador debe de pertenecer a un equipo para ser descongelado.\n"
 
 msgid "^7%s^7 is unfrozen."
-msgstr ""
+msgstr "^7%s^7 está descongelado."
 
 msgid "Burn command not allowed during intermission.\n"
-msgstr ""
+msgstr "El comando \"burn no está permitido en el descanso.\n"
 
 msgid "^9%d players burned."
 msgstr ""
@@ -6942,7 +6942,7 @@ msgid "^7%s^7 is burned."
 msgstr ""
 
 msgid "Pip command not allowed during intermission.\n"
-msgstr ""
+msgstr "El comando \"pip\" no está permitido en el descanso.\n"
 
 msgid "^9%d players pipped."
 msgstr ""
@@ -6960,46 +6960,88 @@ msgid "^7%s^7 is pipped."
 msgstr ""
 
 msgid "%s command not allowed during intermission.\n"
-msgstr ""
+msgstr "El comando %s no está permitido en el descanso.\n"
 
 msgid "^9%d players %s."
-msgstr ""
+msgstr "^9%d jugadores %s."
 
 msgid "No players in team or they are already %s.\n"
-msgstr ""
+msgstr "No hay jugadores en el equipo o ya han sido %s.\n"
 
 msgid "Player must be on a team to be %s.\n"
-msgstr ""
+msgstr "El jugador debe de pertenecer a un equipo para ser %s.\n"
 
 msgid "^7%s^7 was %s."
-msgstr ""
+msgstr "^7%s^7 fue %s."
 
 #: etmain/ui/options_system.menu:48
 msgid "System Sound Control:"
-msgstr ""
+msgstr "Control de Sonido del Sistema:"
 
 #: etmain/ui/options_system.menu:48
 msgid "Base"
-msgstr ""
+msgstr "Base"
 
 #: etmain/ui/options_system.menu:48
 msgid "OpenAL"
-msgstr ""
+msgstr "OpenAL"
 
 #: etmain/ui/options_system.menu:48
 msgid "Set the system sound control"
-msgstr ""
+msgstr "Ajusta el controlador de sonido del sistema"
 
 msgid "No can do!"
-msgstr ""
+msgstr "No can do!"
 
 msgid "Right away!"
-msgstr ""
+msgstr "Right away!"
 
 #: src/cgame/cg_draw.c:2505
 msgid "^3WARMUP:^7 Match begins now!"
-msgstr ""
+msgstr "^3Calentamiento:^7 ¡La partida empieza ahora!"
 
 #: src/cgame/cg_scoreboard.c:211
 msgid "MATCH BEGINS NOW!"
+msgstr "¡LA PARTIDA EMPIEZA AHORA!"
+
+msgid "Mute Players:"
+msgstr ""
+
+msgid "Allow players to vote for muting players"
+msgstr ""
+
+msgid "Surrender:"
+msgstr ""
+
+msgid "Allow players to vote for surrender"
+msgstr ""
+
+msgid "XP Shuffle No Rstrt:"
+msgstr ""
+
+msgid "Allow players to vote for teams to be shuffled without a restart"
+msgstr ""
+
+msgid "Restart Campaign:"
+msgstr ""
+
+msgid "Allow players to vote for restarting campaign"
+msgstr ""
+
+msgid "Next Campaign:"
+msgstr ""
+
+msgid "Allow players to vote for next campaign"
+msgstr ""
+
+msgid "CHANGE SYSTEM SETTINGS"
+msgstr ""
+
+msgid "RESTART CAMPAIGN"
+msgstr ""
+
+msgid "SURRENDER"
+msgstr ""
+
+msgid "NO XP SHUFFLE"
 msgstr ""
