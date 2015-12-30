@@ -179,6 +179,7 @@ parse_commandline() {
 		elif [ "$var" = "-nodb" ]; then
 			einfo "Will disable database"
 			FEATURE_DBMS=0
+			BUNDLED_SQLITE3=0
 		elif [ "$var" = "-nor2" ]; then
 			einfo "Will disable renderer2"
 			FEATURE_RENDERER2=0
@@ -212,6 +213,32 @@ parse_commandline() {
 		elif [ "$var" = "-rating" ]; then
 			einfo "Will enable skill rating"
 			FEATURE_RATING=1
+		elif [ "$var" = "-RPI" ]; then
+			einfo "Will enable Raspberry PI build..."
+			RPI=1
+			CROSS_COMPILE32=0
+			FEATURE_RENDERER_GLES=1
+			FEATURE_RENDERER2=0
+			FEATURE_JANSSON=0
+			BUNDLED_JANSSON=0
+			# FIXME: ogg doesn't compile 
+			# why we are using this extra BUNDLED_OGG instead of BUNDLED_OGG_VORBIS ? 
+			#BUNDLED_OGG_VORBIS=0
+			#FEATURE_OGG_VORBIS=0
+			FEATURE_OGG=0
+			BUNDLED_OGG=0
+			# FIXME
+			FEATURE_THEORA=0
+			BUNDLED_THEORA=0
+			# not required
+			BUNDLED_GLEW=0 
+			# FIXME: needs -PIC
+			FEATURE_FREETYPE=0
+			BUNDLED_FREETYPE=0
+			#FEATURE_DBMS=0
+			#BUNDLED_SQLITE3=0
+			FEATURE_OMNIBOT=1
+			INSTALL_OMNIBOT=0
 		else
 			# drop the script commands from the result
 			for index in ${!easy_keys[*]}

@@ -10,7 +10,7 @@ set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 
 message(STATUS "System: ${CMAKE_SYSTEM} (${ETLEGACY_SYSTEM_PROCESSOR})")
 
-if(UNIX AND CROSS_COMPILE32) # 32-bit build
+if(UNIX AND CROSS_COMPILE32 AND NOT RPI) # 32-bit build
 	set(CMAKE_SYSTEM_PROCESSOR i386)
 	message(STATUS "Forcing ${CMAKE_SYSTEM_PROCESSOR} to cross compile 32bit")
 	set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
@@ -22,16 +22,19 @@ if(UNIX AND CROSS_COMPILE32) # 32-bit build
 elseif(WIN32 AND CROSS_COMPILE32)
 	set(CMAKE_SYSTEM_PROCESSOR x86) #the new cmake on windows will otherwise use arch name of x64 which will fuck up our naming
 	set(ENV{PLATFORM} win32) #this is redundant but just to  be safe
+elseif(RPI AND CROSS_COMPILE32)
+	message(STATUS "Cross compiling not supported for RPI !!!")
 endif()
 
+# FIXME: move this down to UNIX section?
 if(RPI)
-	message(STATUS "Cross compiling not supported!!")
+	message(STATUS "RPI build options set.")
 	if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "armv6l")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -pipe -mfloat-abi=hard -mfpu=vfp -march=armv6zk -O2")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -pipe -mfloat-abi=hard -mfpu=vfp -mtune=arm1176jzf-s -march=armv6zk -O2")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -pipe -mfloat-abi=hard -mfpu=vfp -march=armv6zk -O2")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -pipe -mfloat-abi=hard -mfpu=vfp -mtune=arm1176jzf-s -march=armv6zk -O2")
 	else()
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -pipe -mfloat-abi=hard -mfpu=neon -march=armv7-a -O2")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -pipe -mfloat-abi=hard -mfpu=neon -march=armv7-a -O2")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -pipe -mfloat-abi=hard -mfpu=neon -march=armv7-a -O2")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -pipe -mfloat-abi=hard -mfpu=neon -march=armv7-a -O2")
 	endif()
 endif(RPI)
 

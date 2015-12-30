@@ -29,15 +29,13 @@ if(BUILD_CLIENT)
 			add_definitions(-DBUNDLED_GLEW)
 			add_definitions(-DGLEW_STATIC)
 		endif()
-	endif()
-
-	if(FEATURE_RENDERER_GLES)
-    		list(APPEND RENDERER_LIBRARIES -lGLESv1_CM)
-    		include_directories(SYSTEM /mnt/utmp/codeblocks/usr/include/gles)
-	else()
+		
 		find_package(OpenGL REQUIRED)
 		list(APPEND RENDERER_LIBRARIES ${OPENGL_LIBRARIES})
 		include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
+	else() # FEATURE_RENDERER_GLES
+    		list(APPEND RENDERER_LIBRARIES -lGLESv1_CM)
+    		include_directories(SYSTEM /mnt/utmp/codeblocks/usr/include/gles)
 	endif()
 
 	if(NOT BUNDLED_SDL)
