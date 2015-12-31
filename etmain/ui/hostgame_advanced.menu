@@ -91,7 +91,7 @@ menuDef {
 
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 164, .5*((SUBWINDOW_WIDTH)-6), 10, _("Referee:"), .2, 24, 8, "vote_allow_referee", _("Allow players to vote for a referee") )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 176, .5*((SUBWINDOW_WIDTH)-6), 10, _("XP Shuffle:"), .2, 24, 8, "vote_allow_shuffleteamsxp", _("Allow players to vote for teams to be shuffled") )
-	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 188, .5*((SUBWINDOW_WIDTH)-6), 10, _("XP Shuffle No Restart:"), .2, 24, 8, "vote_allow_shuffleteamsxp_norestart", _("Allow players to vote for teams to be shuffled without a restart") )
+	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 188, .5*((SUBWINDOW_WIDTH)-6), 10, _("XP Shuffle No Rstrt:"), .2, 24, 8, "vote_allow_shuffleteamsxp_norestart", _("Allow players to vote for teams to be shuffled without a restart") )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 200, .5*((SUBWINDOW_WIDTH)-6), 10, _("Swap Teams:"), .2, 24, 8, "vote_allow_swapteams", _("Allow players to vote for teams to swap sides") )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 212, .5*((SUBWINDOW_WIDTH)-6), 10, _("Friendly Fire:"), .2, 24, 8, "vote_allow_friendlyfire", _("Allow players to vote for friendly fire to be enabled or disabled") )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, 224, .5*((SUBWINDOW_WIDTH)-6), 10, _("Timelimit:"), .2, 24, 8, "vote_allow_timelimit", _("Allow players to vote for a different time limit") )

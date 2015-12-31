@@ -44,7 +44,7 @@ menuDef {
 // Buttons //
 	BUTTON( 6, 32, .5*(WINDOW_WIDTH-18), 14, _("START MATCH"), .24, 11, exec "cmd callvote startmatch"; uiScript closeingame )
 	BUTTONEXT( 6, 50, .5*(WINDOW_WIDTH-18), 14, _("RESET MATCH"), .24, 11, exec "cmd callvote matchreset"; uiScript closeingame, voteFlag CV_SVF_MATCHRESET )
-	NAMEDBUTTONEXT( bttn_restmap, 6, 68, .5*(WINDOW_WIDTH-18), 14, _("RESTART MAP"), .24, 11, exec "cmd callvote maprestart"; uiScript closeingame )
+	NAMEDBUTTONEXT( bttn_restmap, 6, 68, .5*(WINDOW_WIDTH-18), 14, _("RESTART MAP"), .24, 11, exec "cmd callvote maprestart"; uiScript closeingame, settingEnabled CV_SVF_MAPRESTART voteFlag CV_SVF_MAPRESTART )
 	NAMEDBUTTONEXT( bttn_restcampaign, 6, 68, .5*(WINDOW_WIDTH-18), 14, _("RESTART CAMPAIGN"), .24, 11, exec "cmd callvote restartcampaign"; uiScript closeingame, settingEnabled CV_SVF_RESTARTCAMPAIGN voteFlag CV_SVF_RESTARTCAMPAIGN )
 	NAMEDBUTTONEXT( bttn_nextmap, 6, 86, .5*(WINDOW_WIDTH-18), 14, _("NEXT MAP"), .24, 11, exec "cmd callvote nextmap"; uiScript closeingame, settingEnabled CV_SVS_NEXTMAP voteFlag CV_SVF_NEXTMAP )
 	NAMEDBUTTONEXT( bttn_nextcampaign, 6, 86, .5*(WINDOW_WIDTH-18), 14, _("NEXT CAMPAIGN"), .24, 11, exec "cmd callvote nextmap"; uiScript closeingame, settingEnabled CV_SVS_NEXTMAP voteFlag CV_SVF_NEXTMAP )  //Replace CV_SVF_NEXTMAP with CV_SVF_NEXTCAMPAIGN //
