@@ -78,11 +78,11 @@ char *Sys_DefaultHomePath(void)
 
 	if (!*homePath /*&& !com_homepath*/)
 	{
-		// FIXME: forcing SHGFP_TYPE_DEFAULT because file creation fails
+		// FIXME: forcing SHGFP_TYPE_CURRENT because file creation fails
 		//        when real CSIDL_PERSONAL is on a mapped drive
 		// NOTE: SHGetFolderPath is marked as deprecated
 		found = SHGetFolderPath(NULL, CSIDL_PERSONAL,
-		                        NULL, SHGFP_TYPE_DEFAULT, szPath);
+		                        NULL, SHGFP_TYPE_CURRENT, szPath);
 
 		if (found != S_OK)
 		{
