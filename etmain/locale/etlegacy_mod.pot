@@ -6294,7 +6294,7 @@ msgstr ""
 msgid "voting has been disabled"
 msgstr ""
 
-msgid "Not allowed to call a vote as a spectator.\n"
+msgid "Not allowed to call a vote as a spectator."
 msgstr ""
 
 msgid "called a vote."
@@ -6980,4 +6980,46 @@ msgstr ""
 
 #: src/cgame/cg_scoreboard.c:211
 msgid "MATCH BEGINS NOW!"
+msgstr ""
+
+msgid "Mute Players:"
+msgstr ""
+
+msgid "Allow players to vote for muting players"
+msgstr ""
+
+msgid "Surrender:"
+msgstr ""
+
+msgid "Allow players to vote for surrender"
+msgstr ""
+
+msgid "XP Shuffle No Restart:"
+msgstr ""
+
+msgid "Allow players to vote for teams to be shuffled without a restart"
+msgstr ""
+
+msgid "Restart Campaign:"
+msgstr ""
+
+msgid "Allow players to vote for restarting campaign"
+msgstr ""
+
+msgid "Next Campaign:"
+msgstr ""
+
+msgid "Allow players to vote for next campaign"
+msgstr ""
+
+msgid "CHANGE SYSTEM SETTINGS"
+msgstr ""
+
+msgid "RESTART CAMPAIGN"
+msgstr ""
+
+msgid "SURRENDER"
+msgstr ""
+
+msgid "NO XP SHUFFLE"
 msgstr ""
