@@ -6994,7 +6994,7 @@ msgstr ""
 msgid "Allow players to vote for surrender"
 msgstr ""
 
-msgid "XP Shuffle No Restart:"
+msgid "XP Shuffle No Rstrt:"
 msgstr ""
 
 msgid "Allow players to vote for teams to be shuffled without a restart"
