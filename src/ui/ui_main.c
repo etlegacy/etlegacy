@@ -7958,7 +7958,6 @@ vmCvar_t ui_mapIndex;
 
 vmCvar_t ui_browserMaster;
 vmCvar_t ui_browserGameType;
-vmCvar_t ui_browserSortKey;
 vmCvar_t ui_browserShowEmptyOrFull;
 vmCvar_t ui_browserShowPasswordProtected;
 vmCvar_t ui_browserShowFriendlyFire;
@@ -8043,7 +8042,6 @@ cvarTable_t cvarTable[] =
 
 	{ &ui_browserMaster,                "ui_browserMaster",                    "0",                          CVAR_ARCHIVE                   },
 	{ &ui_browserGameType,              "ui_browserGameType",                  "0",                          CVAR_ARCHIVE                   },
-	{ &ui_browserSortKey,               "ui_browserSortKey",                   "4",                          CVAR_ARCHIVE                   },
 	{ &ui_browserShowEmptyOrFull,       "ui_browserShowEmptyOrFull",           "0",                          CVAR_ARCHIVE                   },
 	{ &ui_browserShowPasswordProtected, "ui_browserShowPasswordProtected",     "0",                          CVAR_ARCHIVE                   },
 	{ &ui_browserShowFriendlyFire,      "ui_browserShowFriendlyFire",          "0",                          CVAR_ARCHIVE                   },

@@ -70,7 +70,6 @@ extern vmCvar_t ui_currentMap;
 extern vmCvar_t ui_mapIndex;
 extern vmCvar_t ui_browserMaster;
 extern vmCvar_t ui_browserGameType;
-extern vmCvar_t ui_browserSortKey;
 extern vmCvar_t ui_browserShowEmptyOrFull;
 extern vmCvar_t ui_browserShowPasswordProtected;
 extern vmCvar_t ui_browserShowFriendlyFire;
