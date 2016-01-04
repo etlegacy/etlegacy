@@ -2461,9 +2461,17 @@ static void CG_DrawWarmup(void)
 				CG_Text_Paint_Ext(x, 290, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 			}
 
-			s1 = va(CG_TranslateString("^3WARMUP:^7 Waiting on ^2%i^7 %s"), cgs.minclients, cgs.minclients == 1 ? CG_TranslateString("player") : CG_TranslateString("players"));
-			w  = CG_Text_Width_Ext(s1, fontScale, 0, &cgs.media.limboFont2);
-			x  = Ccg_WideX(320) - w / 2;
+			if (cgs.minclients > 0)
+			{
+				s1 = va(CG_TranslateString("^3WARMUP:^7 Waiting on ^2%i^7 %s"), cgs.minclients, cgs.minclients == 1 ? CG_TranslateString("player") : CG_TranslateString("players"));
+			}
+			else
+			{
+				s1 = va(CG_TranslateString("^3WARMUP:^7 All players ready!"));
+			}
+
+			w = CG_Text_Width_Ext(s1, fontScale, 0, &cgs.media.limboFont2);
+			x = Ccg_WideX(320) - w / 2;
 			CG_Text_Paint_Ext(x, 208, fontScale, fontScale, colorWhite, s1, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 			if (!cg.demoPlayback && cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR &&
