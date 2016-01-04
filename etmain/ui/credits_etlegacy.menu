@@ -173,7 +173,7 @@ menuDef {
 	LABELWHITE( 6, CREDITS_Y+288, .7*(WINDOW_WIDTH-12), 10, "www.etlegacy.com", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
 // Copyright Notices //
-        LABEL( 6, CREDITS_Y+306, .7*(WINDOW_WIDTH-12), 10, _("© 2012-2015 ET Legacy Team - under the terms of GPL version 3."), .17, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
+        LABEL( 6, CREDITS_Y+306, .7*(WINDOW_WIDTH-12), 10, _("© 2012-2016 ET:Legacy Team - under the terms of GPL version 3."), .17, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
 // Buttons //
 #ifdef FUI

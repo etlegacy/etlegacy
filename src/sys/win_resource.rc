@@ -30,7 +30,7 @@
 *
 * @file win_resource.rc
 */
-            
+
 //Microsoft Developer Studio generated resource script.
 //
 #include "win_resource.h"
@@ -67,18 +67,18 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE DISCARDABLE 
+1 TEXTINCLUDE DISCARDABLE
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE DISCARDABLE 
+2 TEXTINCLUDE DISCARDABLE
 BEGIN
     "#include ""winres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE DISCARDABLE 
+3 TEXTINCLUDE DISCARDABLE
 BEGIN
     "\0"
 END
@@ -112,7 +112,7 @@ BEGIN
             VALUE "FileDescription", "etl"
 			VALUE "FileVersion", PRODUCT_VERSIONSTR
             VALUE "InternalName", "Enemy Territory Legacy"
-            VALUE "LegalCopyright", "© 2011-2015 Legacy Team"
+            VALUE "LegalCopyright", "Â© 2012-2016 ET:Legacy Team"
             VALUE "OriginalFilename", "etl.exe"
             VALUE "ProductName", "Enemy Territory Legacy"
 			VALUE "ProductVersion", PRODUCT_VERSIONSTR
@@ -160,7 +160,7 @@ END
 // String Table
 //
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE
 BEGIN
     IDS_STRING1             "Enemy Territory"
 END
