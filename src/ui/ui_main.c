@@ -7974,12 +7974,6 @@ vmCvar_t ui_browserOssFilter;
 
 vmCvar_t ui_serverStatusTimeOut;
 
-vmCvar_t ui_cmd;
-
-vmCvar_t ui_prevTeam;
-vmCvar_t ui_prevClass;
-vmCvar_t ui_prevWeapon;
-
 vmCvar_t ui_friendlyFire;
 
 vmCvar_t ui_userAlliedRespawnTime;
@@ -8054,12 +8048,6 @@ cvarTable_t cvarTable[] =
 	{ &ui_browserOssFilter,             "ui_browserOssFilter",                 "0",                          CVAR_ARCHIVE                   },
 
 	{ &ui_serverStatusTimeOut,          "ui_serverStatusTimeOut",              "7000",                       CVAR_ARCHIVE                   },
-
-	{ &ui_cmd,                          "ui_cmd",                              "",                           0                              },
-
-	{ &ui_prevTeam,                     "ui_prevTeam",                         "-1",                         0                              },
-	{ &ui_prevClass,                    "ui_prevClass",                        "-1",                         0                              },
-	{ &ui_prevWeapon,                   "ui_prevWeapon",                       "-1",                         0                              },
 
 	{ &g_gameType,                      "g_gameType",                          "4",                          CVAR_SERVERINFO | CVAR_LATCH   },
 	{ NULL,                             "cg_drawBuddies",                      "1",                          CVAR_ARCHIVE                   },
