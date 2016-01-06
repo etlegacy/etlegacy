@@ -734,12 +734,21 @@ struct
 	unsigned int oldhats;
 } stick_state;
 
+/**
+ * @brief Inits game controller input devices
+ */
 static void IN_InitJoystick(void)
 {
 	int  i          = 0;
 	int  total      = 0;
 	char buf[16384] = "";
 
+	if (!in_joystick->integer)
+	{
+		Com_Printf("...input device(s) disabled by cvar setting\n");
+		return;
+	}
+	
 	if (stick != NULL)
 	{
 		SDL_JoystickClose(stick);
@@ -750,17 +759,16 @@ static void IN_InitJoystick(void)
 
 	if (!SDL_WasInit(SDL_INIT_JOYSTICK))
 	{
-		Com_Printf("Initializing joystick devices\n");
+		Com_Printf("Initializing input devices\n");
 		if (SDL_Init(SDL_INIT_JOYSTICK) < 0)
 		{
 			Com_Printf("SDL_Init(SDL_INIT_JOYSTICK) failed: %s\n", SDL_GetError());
 			return;
 		}
-		Com_Printf("...joysticks initialized\n");
 	}
 
 	total = SDL_NumJoysticks();
-	Com_Printf("...available joysticks: %d\n", total);
+	Com_Printf("...available devices initialized: %d\n", total);
 
 	// Print list and build cvar to allow ui to select joystick.
 	for (i = 0; i < total; i++)
@@ -770,13 +778,6 @@ static void IN_InitJoystick(void)
 	}
 
 	Cvar_Get("in_availableJoysticks", buf, CVAR_ROM);
-
-	if (!in_joystick->integer)
-	{
-		Com_Printf("...no active joystick set\n");
-		SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
-		return;
-	}
 
 	in_joystickNo = Cvar_Get("in_joystickNo", "0", CVAR_ARCHIVE);
 	if (in_joystickNo->integer < 0 || in_joystickNo->integer >= total)
@@ -790,24 +791,25 @@ static void IN_InitJoystick(void)
 
 	if (stick == NULL)
 	{
-		Com_Printf("No joystick opened.\n");
+		Com_Printf("...no device opened.\n");
 		return;
 	}
 
-	Com_DPrintf("Joystick %d opened\n", in_joystickNo->integer);
-	Com_DPrintf("Name:       %s\n", SDL_JoystickNameForIndex(in_joystickNo->integer));
-	Com_DPrintf("Axes:       %d\n", SDL_JoystickNumAxes(stick));
-	Com_DPrintf("Hats:       %d\n", SDL_JoystickNumHats(stick));
-	Com_DPrintf("Buttons:    %d\n", SDL_JoystickNumButtons(stick));
-	Com_DPrintf("Balls:      %d\n", SDL_JoystickNumBalls(stick));
-	Com_DPrintf("Use Analog: %s\n", in_joystickUseAnalog->integer ? "Yes" : "No");
+	Com_Printf("Device %d opened\n", in_joystickNo->integer);
+	Com_Printf("Name:       %s\n", SDL_JoystickNameForIndex(in_joystickNo->integer));
+	Com_Printf("Axes:       %d\n", SDL_JoystickNumAxes(stick));
+	Com_Printf("Hats:       %d\n", SDL_JoystickNumHats(stick));
+	Com_Printf("Buttons:    %d\n", SDL_JoystickNumButtons(stick));
+	Com_Printf("Balls:      %d\n", SDL_JoystickNumBalls(stick));
+	Com_Printf("Use Analog: %s\n", in_joystickUseAnalog->integer ? "Yes" : "No");
 
 	SDL_JoystickEventState(SDL_QUERY);
 }
 
 static void IN_ShutdownJoystick(void)
 {
-	if (!SDL_WasInit(SDL_INIT_JOYSTICK))
+	// in_joystick cvar is latched
+	if (!in_joystick->integer || !SDL_WasInit(SDL_INIT_JOYSTICK))
 	{
 		return;
 	}
@@ -1383,7 +1385,7 @@ void IN_Init(void)
 
 	mainScreen = (SDL_Window *)GLimp_MainWindow();
 
-	Com_DPrintf("\n------- Input Initialization -------\n");
+	Com_Printf("\n------- Input Initialization -------\n");
 
 	in_keyboardDebug = Cvar_Get("in_keyboardDebug", "0", CVAR_TEMP);
 
@@ -1392,7 +1394,7 @@ void IN_Init(void)
 
 	if (in_mouse->integer == 2)
 	{
-		Com_Printf("Trying to emulate non raw input\n");
+		Com_Printf("...trying to emulate non raw mouse input\n");
 		if (!SDL_SetHintWithPriority(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1", SDL_HINT_OVERRIDE))
 		{
 			Com_Printf(S_COLOR_RED "Failed to set the hint");
@@ -1420,12 +1422,13 @@ void IN_Init(void)
 	IN_InitKeyLockStates();
 
 	// FIXME: Joystick initialization crashes some Windows and Mac OS X clients (see SDL #2833)
-	//IN_InitJoystick();
+	//        (only some clients ... activated again for system which are not affected and to get some more feedback) 
+	IN_InitJoystick();
 
 #ifdef DISABLE_DINGY
 	IN_EnableDingFilter();
 #endif
-	Com_DPrintf("------------------------------------\n");
+	Com_Printf("------------------------------------\n");
 }
 
 void IN_Shutdown(void)
@@ -1440,7 +1443,7 @@ void IN_Shutdown(void)
 	IN_DeactivateMouse();
 	mouseAvailable = qfalse;
 
-	//IN_ShutdownJoystick();
+	IN_ShutdownJoystick();
 
 	mainScreen = NULL;
 }
