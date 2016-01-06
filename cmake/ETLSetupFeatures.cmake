@@ -34,8 +34,9 @@ if(BUILD_CLIENT)
 		list(APPEND RENDERER_LIBRARIES ${OPENGL_LIBRARIES})
 		include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
 	else() # FEATURE_RENDERER_GLES
-    		list(APPEND RENDERER_LIBRARIES -lGLESv1_CM)
-    		include_directories(SYSTEM /mnt/utmp/codeblocks/usr/include/gles)
+			find_package(GLES REQUIRED)    		
+    		list(APPEND RENDERER_LIBRARIES ${GLES_LIBRARY})
+    		include_directories(SYSTEM ${GLES_INCLUDE_DIR})
 	endif()
 
 	if(NOT BUNDLED_SDL)
