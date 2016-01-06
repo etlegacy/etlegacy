@@ -772,20 +772,24 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
 
 	switch (err)
 	{
+	case RSERR_OK:
+		return qtrue;
 	case RSERR_INVALID_FULLSCREEN:
 		Com_Printf("...WARNING: fullscreen unavailable in this mode\n");
-		return qfalse;
+		break;
 	case RSERR_INVALID_MODE:
 		Com_Printf("...WARNING: could not set the given mode (%d)\n", mode);
-		return qfalse;
+		break;
 	case RSERR_OLD_GL:
 		Com_Error(ERR_VID_FATAL, "Could not create opengl 3 context");
-		return qfalse;
+		break;
+	case RSERR_UNKNOWN: // fall through
 	default:
+		Com_Error(ERR_VID_FATAL, "Can't set mode - an unknown error occured");
 		break;
 	}
 
-	return qtrue;
+	return qfalse;
 }
 
 #define R_MODE_FALLBACK 3 // 640 * 480
