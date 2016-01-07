@@ -745,7 +745,7 @@ static void IN_InitJoystick(void)
 
 	if (!in_joystick->integer)
 	{
-		Com_Printf("...input device(s) disabled by cvar setting\n");
+		Com_Printf("...game controller disabled by cvar setting\n");
 		return;
 	}
 
@@ -759,16 +759,16 @@ static void IN_InitJoystick(void)
 
 	if (!SDL_WasInit(SDL_INIT_JOYSTICK))
 	{
-		Com_Printf("Initializing input devices\n");
+		Com_Printf("Initializing game controller\n");
 		if (SDL_Init(SDL_INIT_JOYSTICK) < 0)
 		{
-			Com_Printf("SDL_Init(SDL_INIT_JOYSTICK) failed: %s\n", SDL_GetError());
+			Com_Printf(S_COLOR_RED "SDL_Init(SDL_INIT_JOYSTICK) failed: %s\n", SDL_GetError());
 			return;
 		}
 	}
 
 	total = SDL_NumJoysticks();
-	Com_Printf("...available devices initialized: %d\n", total);
+	Com_Printf("...%d available game controller initialized\n", total);
 
 	// Print list and build cvar to allow ui to select joystick.
 	for (i = 0; i < total; i++)
@@ -791,12 +791,11 @@ static void IN_InitJoystick(void)
 
 	if (stick == NULL)
 	{
-		Com_Printf("...no device opened.\n");
+		Com_Printf("...no game controller opened.\n");
 		return;
 	}
 
-	Com_Printf("Device %d opened\n", in_joystickNo->integer);
-	Com_Printf("Name:       %s\n", SDL_JoystickNameForIndex(in_joystickNo->integer));
+	Com_Printf("Game controller [%d] '%s' opened\n", in_joystickNo->integer, SDL_JoystickNameForIndex(in_joystickNo->integer));
 	Com_Printf("Axes:       %d\n", SDL_JoystickNumAxes(stick));
 	Com_Printf("Hats:       %d\n", SDL_JoystickNumHats(stick));
 	Com_Printf("Buttons:    %d\n", SDL_JoystickNumButtons(stick));
@@ -830,7 +829,8 @@ static void IN_JoyMove(void)
 	int          total = 0;
 	int          i     = 0;
 
-	if (!stick)
+	// in_joystick cvar is latched
+	if (!in_joystick->integer || !stick)
 	{
 		return;
 	}
@@ -1277,11 +1277,6 @@ void IN_Frame(void)
 	qboolean loading   = (cls.state != CA_DISCONNECTED && cls.state != CA_ACTIVE);
 	qboolean cinematic = (cls.state == CA_CINEMATIC);
 
-	if (in_joystick->integer)
-	{
-		IN_JoyMove();
-	}
-
 	if (!cls.glconfig.isFullscreen && (Key_GetCatcher() & KEYCATCH_CONSOLE))
 	{
 		// Console is down in windowed mode
@@ -1306,6 +1301,7 @@ void IN_Frame(void)
 		}
 
 		IN_ActivateMouse();
+		IN_JoyMove();
 	}
 
 	// in case we had to delay actual restart of video system...
@@ -1400,7 +1396,7 @@ void IN_Init(void)
 		Com_Printf("...trying to emulate non raw mouse input\n");
 		if (!SDL_SetHintWithPriority(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1", SDL_HINT_OVERRIDE))
 		{
-			Com_Printf(S_COLOR_RED "Failed to set the hint");
+			Com_Printf(S_COLOR_RED "...failed to set the hint\n");
 		}
 	}
 	else
@@ -1453,6 +1449,6 @@ void IN_Shutdown(void)
 
 void IN_Restart(void)
 {
-	//IN_ShutdownJoystick();
+	IN_ShutdownJoystick();
 	IN_Init();
 }
