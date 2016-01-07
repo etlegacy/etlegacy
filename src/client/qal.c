@@ -366,10 +366,10 @@ void QAL_Shutdown(void)
 	qalcCaptureStop        = NULL;
 	qalcCaptureSamples     = NULL;
 
-	qalGenEffects               = NULL;
-	qalEffecti                  = NULL;
-	qalGenAuxiliaryEffectSlots  = NULL;
-	qalAuxiliaryEffectSloti     = NULL;
+	qalGenEffects              = NULL;
+	qalEffecti                 = NULL;
+	qalGenAuxiliaryEffectSlots = NULL;
+	qalAuxiliaryEffectSloti    = NULL;
 }
 #else
 qboolean QAL_Init(const char *libname)

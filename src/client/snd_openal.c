@@ -64,14 +64,14 @@ static qboolean s_stopSounds;
 #define NUM_MUSIC_BUFFERS 4
 #define MUSIC_BUFFER_SIZE 4096
 
-static qboolean musicPlaying = qfalse;
+static qboolean    musicPlaying      = qfalse;
 static srcHandle_t musicSourceHandle = -1;
-static ALuint musicSource;
-static ALuint musicBuffers[NUM_MUSIC_BUFFERS];
+static ALuint      musicSource;
+static ALuint      musicBuffers[NUM_MUSIC_BUFFERS];
 
 static snd_stream_t *mus_stream;
 static snd_stream_t *intro_stream;
-static char s_backgroundLoop[MAX_QPATH];
+static char         s_backgroundLoop[MAX_QPATH];
 
 #define QAL_EFX_DEDICATED 0
 #define QAL_EFX_DEDICATED_LFE 1
@@ -185,7 +185,7 @@ static qboolean alBuffersInitialised = qfalse;
 
 // Sound effect storage, data structures
 #define MAX_SFX 4096
-static alSfx_t knownSfx[MAX_SFX];
+static alSfx_t     knownSfx[MAX_SFX];
 static sfxHandle_t numSfx = 0;
 
 static sfxHandle_t default_sfx;
@@ -403,35 +403,35 @@ S_AL_GenBuffers
 */
 static qboolean S_AL_GenBuffers(ALsizei numBuffers, ALuint *buffers, const char *name)
 {
-    ALenum error;
+	ALenum error;
 
-    S_AL_ClearError(qfalse);
-    qalGenBuffers(numBuffers, buffers);
-    error = qalGetError();
+	S_AL_ClearError(qfalse);
+	qalGenBuffers(numBuffers, buffers);
+	error = qalGetError();
 
-    // If we ran out of buffers, start evicting the least recently used sounds
-    while (error == AL_INVALID_VALUE)
-    {
-        if (!S_AL_BufferEvict())
-        {
-            Com_Printf( S_COLOR_RED "ERROR: Out of audio buffers\n");
-            return qfalse;
-        }
+	// If we ran out of buffers, start evicting the least recently used sounds
+	while (error == AL_INVALID_VALUE)
+	{
+		if (!S_AL_BufferEvict())
+		{
+			Com_Printf(S_COLOR_RED "ERROR: Out of audio buffers\n");
+			return qfalse;
+		}
 
-        // Try again
-        S_AL_ClearError(qfalse);
-        qalGenBuffers(numBuffers, buffers);
-        error = qalGetError();
-    }
+		// Try again
+		S_AL_ClearError(qfalse);
+		qalGenBuffers(numBuffers, buffers);
+		error = qalGetError();
+	}
 
-    if (error != AL_NO_ERROR)
-    {
-        Com_Printf( S_COLOR_RED "ERROR: Can't create a sound buffer for %s - %s\n",
-                    name, S_AL_ErrorMsg(error));
-        return qfalse;
-    }
+	if (error != AL_NO_ERROR)
+	{
+		Com_Printf(S_COLOR_RED "ERROR: Can't create a sound buffer for %s - %s\n",
+		           name, S_AL_ErrorMsg(error));
+		return qfalse;
+	}
 
-    return qtrue;
+	return qtrue;
 }
 
 /*
@@ -2175,8 +2175,8 @@ static void S_AL_MusicSourceGet(void)
 	srcList[musicSourceHandle].scaleGain = 0.0f;
 
 	// Set some musicSource parameters
-	qalSource3f(musicSource, AL_POSITION,  0.0, 0.0, 0.0);
-	qalSource3f(musicSource, AL_VELOCITY,  0.0, 0.0, 0.0);
+	qalSource3f(musicSource, AL_POSITION, 0.0, 0.0, 0.0);
+	qalSource3f(musicSource, AL_VELOCITY, 0.0, 0.0, 0.0);
 	qalSource3f(musicSource, AL_DIRECTION, 0.0, 0.0, 0.0);
 	qalSourcef(musicSource, AL_ROLLOFF_FACTOR, 0.0);
 	qalSourcei(musicSource, AL_SOURCE_RELATIVE, AL_TRUE);
@@ -2192,7 +2192,7 @@ static void S_AL_MusicSourceFree(void)
 	// Release the output musicSource
 	S_AL_SrcUnlock(musicSourceHandle);
 	S_AL_SrcKill(musicSourceHandle);
-	musicSource = 0;
+	musicSource       = 0;
 	musicSourceHandle = -1;
 }
 
@@ -2254,9 +2254,9 @@ S_AL_MusicProcess
 static
 void S_AL_MusicProcess(ALuint b)
 {
-	ALenum error;
-	int l;
-	ALuint format;
+	ALenum       error;
+	int          l;
+	ALuint       format;
 	snd_stream_t *curstream;
 
 	S_AL_ClearError(qfalse);
@@ -2306,7 +2306,7 @@ void S_AL_MusicProcess(ALuint b)
 
 	format = S_AL_Format(curstream->info.width, curstream->info.channels);
 
-	if( l == 0 )
+	if (l == 0)
 	{
 		// We have no data to buffer, so buffer silence
 		byte dummyData[2] = { 0 };
@@ -2322,7 +2322,7 @@ void S_AL_MusicProcess(ALuint b)
 	{
 		S_AL_StopBackgroundTrack();
 		Com_Printf(S_COLOR_RED "ERROR: while buffering data for music stream - %s\n",
-				S_AL_ErrorMsg(error));
+		           S_AL_ErrorMsg(error));
 		return;
 	}
 }
@@ -2516,9 +2516,8 @@ S_AL_StartStreamingSoundEx
 */
 static float S_AL_StartStreamingSoundEx(const char *intro, const char *loop, int entnum, int channel, qboolean music, int param)
 {
-	int      i;
-	int      ss = -1;
-	qboolean issame;
+	int i;
+	int ss = -1;
 
 	// Stop any existing stream that might be playing
 	if (music)
@@ -2592,22 +2591,9 @@ static float S_AL_StartStreamingSoundEx(const char *intro, const char *loop, int
 		}
 	}
 
-	if (!music)
+	if (!music && (!loop || !*loop))
 	{
-		issame = qfalse;
-	}
-	else if (!loop || !*loop)
-	{
-		loop   = intro;
-		issame = qtrue;
-	}
-	else if (intro && *intro && !strcmp(intro, loop))
-	{
-		issame = qtrue;
-	}
-	else
-	{
-		issame = qfalse;
+		loop = intro;
 	}
 
 	// Copy the loop over if we don't have the special case for music tracks "onetimeonly"
@@ -2695,7 +2681,7 @@ S_AL_StartBackgroundTrack
 */
 void S_AL_StartBackgroundTrack(const char *intro, const char *loop, int fadeupTime)
 {
-	int i;
+	int      i;
 	qboolean issame;
 
 	// Stop any existing music that might be playing
@@ -2709,17 +2695,23 @@ void S_AL_StartBackgroundTrack(const char *intro, const char *loop, int fadeupTi
 	// Allocate a musicSource
 	S_AL_MusicSourceGet();
 	if (musicSourceHandle == -1)
+	{
 		return;
+	}
 
 	if (!loop || !*loop)
 	{
-		loop = intro;
+		loop   = intro;
 		issame = qtrue;
 	}
-	else if(intro && *intro && !strcmp(intro, loop))
+	else if (intro && *intro && !strcmp(intro, loop))
+	{
 		issame = qtrue;
+	}
 	else
+	{
 		issame = qfalse;
+	}
 
 	// Copy the loop over
 	Q_strncpyz(s_backgroundLoop, loop, sizeof(s_backgroundLoop));
@@ -2740,6 +2732,7 @@ void S_AL_StartBackgroundTrack(const char *intro, const char *loop, int fadeupTi
 	{
 		S_AL_CloseMusicFiles();
 		S_AL_MusicSourceFree();
+
 		return;
 	}
 
@@ -3299,12 +3292,16 @@ qboolean S_AL_Init(soundInterface_t *si)
 	{
 		char       devicenames[1024] = "";
 		const char *devicelist;
+#ifdef _WIN32
 		const char *defaultdevice;
-		int        curlen;
+#endif
+		int curlen;
 
 		// get all available devices + the default device name.
-		devicelist    = qalcGetString(NULL, ALC_DEVICE_SPECIFIER);
+		devicelist = qalcGetString(NULL, ALC_DEVICE_SPECIFIER);
+#ifdef _WIN32
 		defaultdevice = qalcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);
+#endif
 
 #ifdef _WIN32
 		// check whether the default device is generic hardware. If it is, change to
