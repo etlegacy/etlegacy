@@ -748,7 +748,7 @@ static void IN_InitJoystick(void)
 		Com_Printf("...input device(s) disabled by cvar setting\n");
 		return;
 	}
-	
+
 	if (stick != NULL)
 	{
 		SDL_JoystickClose(stick);
@@ -1277,7 +1277,10 @@ void IN_Frame(void)
 	qboolean loading   = (cls.state != CA_DISCONNECTED && cls.state != CA_ACTIVE);
 	qboolean cinematic = (cls.state == CA_CINEMATIC);
 
-	//IN_JoyMove();
+	if (in_joystick->integer)
+	{
+		IN_JoyMove();
+	}
 
 	if (!cls.glconfig.isFullscreen && (Key_GetCatcher() & KEYCATCH_CONSOLE))
 	{
@@ -1422,7 +1425,7 @@ void IN_Init(void)
 	IN_InitKeyLockStates();
 
 	// FIXME: Joystick initialization crashes some Windows and Mac OS X clients (see SDL #2833)
-	//        (only some clients ... activated again for system which are not affected and to get some more feedback) 
+	//        (only some clients ... activated again for system which are not affected and to get some more feedback)
 	IN_InitJoystick();
 
 #ifdef DISABLE_DINGY
