@@ -50,11 +50,6 @@
   #include <alc.h>
   #include <alext.h>
   #include <efx.h>
-#elif __APPLE__
-  #include <OpenAL/al.h>
-  #include <OpenAL/alc.h>
-  #include <OpenAL/alext.h>
-  #include <OpenAL/efx.h>
 #else
   #include <AL/al.h>
   #include <AL/alc.h>
