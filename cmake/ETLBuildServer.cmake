@@ -1,4 +1,4 @@
-add_executable(etlded ${COMMON_SRC} ${MINIZIP_SRC} ${ZLIB_SRC} ${SERVER_SRC} ${PLATFORM_SRC} ${PLATFORM_SERVER_SRC})
+add_executable(etlded ${COMMON_SRC} ${SERVER_SRC} ${PLATFORM_SRC} ${PLATFORM_SERVER_SRC})
 target_link_libraries(etlded
 	${SERVER_LIBRARIES}
 	${OS_LIBRARIES}

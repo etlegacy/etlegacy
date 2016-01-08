@@ -7,16 +7,6 @@ FILE(GLOB COMMON_SRC
 	"src/qcommon/*.h"
 )
 
-FILE(GLOB MINIZIP_SRC
-	"src/minizip/*.c"
-	"src/minizip/*.h"
-)
-
-FILE(GLOB ZLIB_SRC
-	"src/zlib/*.c"
-	"src/zlib/*.h"
-)
-
 FILE(GLOB COMMON_SRC_REMOVE
 	"src/qcommon/dl_main_curl.c"
 	"src/qcommon/dl_main_stubs.c"
