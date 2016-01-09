@@ -55,10 +55,10 @@ UnixFileSystem::open_directory(const std::string& pathname)
 	}
 }
 
-std::unique_ptr<std::istream>
+std::auto_ptr<std::istream>
 UnixFileSystem::open_file(const std::string& filename)
 {
-	return std::unique_ptr<std::istream>(new std::ifstream(filename.c_str()));
+	return std::auto_ptr<std::istream>(new std::ifstream(filename.c_str()));
 }
 
 } // namespace tinygettext

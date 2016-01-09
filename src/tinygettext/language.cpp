@@ -20,7 +20,7 @@
 #include "tinygettext/language.hpp"
 
 #include <assert.h>
-#include <unordered_map>
+#include <map>
 #include <vector>
 #include <algorithm>
 
@@ -291,7 +291,7 @@ static const LanguageSpec languages[] =
 std::string
 resolve_language_alias(const std::string& name)
 {
-	typedef std::unordered_map<std::string, std::string> Aliases;
+	typedef std::map<std::string, std::string> Aliases;
 	static Aliases language_aliases;
 	if (language_aliases.empty())
 	{
@@ -369,7 +369,7 @@ resolve_language_alias(const std::string& name)
 Language
 Language::from_spec(const std::string& language, const std::string& country, const std::string& modifier)
 {
-	typedef std::unordered_map<std::string, std::vector<const LanguageSpec *> > LanguageSpecMap;
+	typedef std::map<std::string, std::vector<const LanguageSpec *> > LanguageSpecMap;
 	static LanguageSpecMap language_map;
 
 	if (language_map.empty())

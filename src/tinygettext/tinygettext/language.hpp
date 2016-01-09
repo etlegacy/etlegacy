@@ -21,7 +21,7 @@
 #define HEADER_TINYGETTEXT_LANGUAGE_HPP
 
 #include <string>
-#include <unordered_map>
+#include <map>
 
 namespace tinygettext {
 
@@ -58,7 +58,7 @@ public:
 	/** Create an undefined Language object */
 	Language();
 
-	explicit operator bool() const
+	operator bool() const
 	{
 		return language_spec != NULL;
 	}
@@ -84,21 +84,12 @@ public:
 	bool operator!=(const Language& rhs) const;
 
 	friend bool operator<(const Language& lhs, const Language& rhs);
-	friend struct Language_hash;
 };
 
 inline bool operator<(const Language& lhs, const Language& rhs)
 {
 	return lhs.language_spec < rhs.language_spec;
 }
-
-struct Language_hash
-{
-	size_t operator()(const Language& v) const
-	{
-		return reinterpret_cast<size_t>(v.language_spec);
-	}
-};
 
 } // namespace tinygettext
 
