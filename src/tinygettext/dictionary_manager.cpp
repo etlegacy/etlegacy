@@ -28,7 +28,11 @@
 
 #include "tinygettext/log_stream.hpp"
 #include "tinygettext/po_parser.hpp"
+#ifdef _MSC_VER
+#include "tinygettext/windows_file_system.hpp"
+#else
 #include "tinygettext/unix_file_system.hpp"
+#endif
 
 namespace tinygettext {
 
@@ -52,7 +56,11 @@ DictionaryManager::DictionaryManager(const std::string& charset_) :
 	current_language(),
 	current_dict(0),
 	empty_dict(),
+#ifdef _MSC_VER
+	filesystem(new WindowsFileSystem)
+#else
 	filesystem(new UnixFileSystem)
+#endif
 {
 }
 

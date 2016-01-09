@@ -107,7 +107,6 @@ if(BUILD_CLIENT)
 			"src/tinygettext/tinygettext/plural_forms.hpp"
 			"src/tinygettext/tinygettext/po_parser.hpp"
 			"src/tinygettext/tinygettext/tinygettext.hpp"
-			"src/tinygettext/tinygettext/unix_file_system.hpp"
 			"src/tinygettext/dictionary.cpp"
 			"src/tinygettext/dictionary_manager.cpp"
 			"src/tinygettext/iconv.cpp"
@@ -116,8 +115,14 @@ if(BUILD_CLIENT)
 			"src/tinygettext/plural_forms.cpp"
 			"src/tinygettext/po_parser.cpp"
 			"src/tinygettext/tinygettext.cpp"
-			"src/tinygettext/unix_file_system.cpp"
 		)
+		if(MSVC)
+			list(APPEND GETTEXT_SRC "src/tinygettext/windows_file_system.cpp")
+			list(APPEND GETTEXT_SRC "src/tinygettext/tinygettext/windows_file_system.hpp")
+		else()
+			list(APPEND GETTEXT_SRC "src/tinygettext/unix_file_system.cpp")
+			list(APPEND GETTEXT_SRC "src/tinygettext/tinygettext/unix_file_system.hpp")
+		endif()
 		set(CLIENT_SRC ${CLIENT_SRC} ${GETTEXT_SRC})
 	endif(FEATURE_GETTEXT)
 
