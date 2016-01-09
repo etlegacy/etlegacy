@@ -47,6 +47,7 @@ if(BUILD_CLIENT)
 		list(APPEND SDL_LIBRARIES ${SDL32_BUNDLED_LIBRARIES})
 		include_directories(SYSTEM ${SDL32_BUNDLED_INCLUDE_DIR})
 		add_definitions(-DBUNDLED_SDL)
+		add_definitions(-DHAVE_SDL) # for tinygettext
 	endif()
 	if(APPLE)
 		add_library(INTERNAL_SDLMain ${CMAKE_SOURCE_DIR}/src/sys/SDLMain.m )
