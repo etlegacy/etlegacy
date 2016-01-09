@@ -29,12 +29,12 @@ if(BUILD_CLIENT)
 			add_definitions(-DBUNDLED_GLEW)
 			add_definitions(-DGLEW_STATIC)
 		endif()
-		
+
 		find_package(OpenGL REQUIRED)
 		list(APPEND RENDERER_LIBRARIES ${OPENGL_LIBRARIES})
 		include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
 	else() # FEATURE_RENDERER_GLES
-			find_package(GLES REQUIRED)    		
+			find_package(GLES REQUIRED)
     		list(APPEND RENDERER_LIBRARIES ${GLES_LIBRARY})
     		include_directories(SYSTEM ${GLES_INCLUDE_DIR})
 	endif()
@@ -96,26 +96,26 @@ if(BUILD_CLIENT)
 			"src/qcommon/i18n_main.cpp"
 			"src/qcommon/i18n_findlocale.c"
 			"src/qcommon/i18n_findlocale.h"
+			"src/tinygettext/tinygettext/dictionary.hpp"
+			"src/tinygettext/tinygettext/dictionary_manager.hpp"
+			"src/tinygettext/tinygettext/file_system.hpp"
+			"src/tinygettext/tinygettext/iconv.hpp"
+			"src/tinygettext/tinygettext/language.hpp"
+			"src/tinygettext/tinygettext/log.hpp"
+			"src/tinygettext/tinygettext/log_stream.hpp"
+			"src/tinygettext/tinygettext/plural_forms.hpp"
+			"src/tinygettext/tinygettext/po_parser.hpp"
+			"src/tinygettext/tinygettext/tinygettext.hpp"
+			"src/tinygettext/tinygettext/unix_file_system.hpp"
 			"src/tinygettext/dictionary.cpp"
-			"src/tinygettext/dictionary.hpp"
 			"src/tinygettext/dictionary_manager.cpp"
-			"src/tinygettext/dictionary_manager.hpp"
-			"src/tinygettext/file_system.hpp"
 			"src/tinygettext/iconv.cpp"
-			"src/tinygettext/iconv.hpp"
 			"src/tinygettext/language.cpp"
-			"src/tinygettext/language.hpp"
 			"src/tinygettext/log.cpp"
-			"src/tinygettext/log.hpp"
-			"src/tinygettext/log_stream.hpp"
 			"src/tinygettext/plural_forms.cpp"
-			"src/tinygettext/plural_forms.hpp"
 			"src/tinygettext/po_parser.cpp"
-			"src/tinygettext/po_parser.hpp"
 			"src/tinygettext/tinygettext.cpp"
-			"src/tinygettext/tinygettext.hpp"
 			"src/tinygettext/unix_file_system.cpp"
-			"src/tinygettext/unix_file_system.hpp"
 		)
 		set(CLIENT_SRC ${CLIENT_SRC} ${GETTEXT_SRC})
 	endif(FEATURE_GETTEXT)
