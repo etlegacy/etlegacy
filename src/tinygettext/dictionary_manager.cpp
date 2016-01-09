@@ -1,21 +1,23 @@
-//  tinygettext - A gettext replacement that works directly on .po files
-//  Copyright (C) 2006 Ingo Ruhnke <grumbel@gmx.de>
+// tinygettext - A gettext replacement that works directly on .po files
+// Copyright (c) 2006 Ingo Ruhnke <grumbel@gmail.com>
 //
-//  This program is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU General Public License
-//  as published by the Free Software Foundation; either version 2
-//  of the License, or (at your option) any later version.
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
 //
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
 //
-//  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgement in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 
-#include "dictionary_manager.hpp"
+#include "tinygettext/dictionary_manager.hpp"
 
 #include <memory>
 #include <assert.h>
@@ -24,9 +26,9 @@
 #include <fstream>
 #include <algorithm>
 
-#include "log_stream.hpp"
-#include "po_parser.hpp"
-#include "unix_file_system.hpp"
+#include "tinygettext/log_stream.hpp"
+#include "tinygettext/po_parser.hpp"
+#include "tinygettext/unix_file_system.hpp"
 
 namespace tinygettext {
 
@@ -50,8 +52,7 @@ DictionaryManager::DictionaryManager(const std::string& charset_) :
 	current_language(),
 	current_dict(0),
 	empty_dict(),
-	filesystem(0)
-	//filesystem(new UnixFileSystem)
+	filesystem(new UnixFileSystem)
 {
 }
 
@@ -122,12 +123,13 @@ DictionaryManager::get_dictionary(const Language& language)
 			std::string best_filename;
 			int         best_score = 0;
 
-			for (std::vector<std::string>::iterator filename = files.begin(); filename != files.end(); filename++)
+			for (std::vector<std::string>::iterator filename = files.begin(); filename != files.end(); ++filename)
 			{
 				// check if filename matches requested language
 				if (has_suffix(*filename, ".po"))
 				{ // ignore anything that isn't a .po file
-					Language po_language = Language::from_env(filename->substr(0, filename->size() - 3));
+
+					Language po_language = Language::from_env(convertFilename2Language(*filename));
 
 					if (!po_language)
 					{
@@ -151,7 +153,7 @@ DictionaryManager::get_dictionary(const Language& language)
 				std::string pofile = *p + "/" + best_filename;
 				try
 				{
-					std::auto_ptr<std::istream> in = filesystem->open_file(pofile);
+					std::unique_ptr<std::istream> in = filesystem->open_file(pofile);
 					if (!in.get())
 					{
 						log_error << "error: failure opening: " << pofile << std::endl;
@@ -169,6 +171,11 @@ DictionaryManager::get_dictionary(const Language& language)
 			}
 		}
 
+		if (!language.get_country().empty())
+		{
+			// printf("Adding language fallback %s\n", language.get_language().c_str());
+			dict->addFallback(&get_dictionary(Language::from_spec(language.get_language())));
+		}
 		return *dict;
 	}
 }
@@ -237,11 +244,55 @@ DictionaryManager::add_directory(const std::string& pathname)
 }
 
 void
-DictionaryManager::set_filesystem(std::auto_ptr<FileSystem> filesystem_)
+DictionaryManager::set_filesystem(std::unique_ptr<FileSystem> filesystem_)
 {
-	filesystem = filesystem_;
+	filesystem = std::move(filesystem_);
 }
+// ----------------------------------------------------------------------------
+/** This function converts a .po filename (e.g. zh_TW.po) into a language
+ *  specification (zh_TW). On case insensitive file systems (think windows)
+ *  the filename and therefore the country specification is lower case
+ *  (zh_tw). It Converts the lower case characters of the country back to
+ *  upper case, otherwise tinygettext does not identify the country
+ *  correctly.
+ */
+std::string DictionaryManager::convertFilename2Language(const std::string &s_in) const
+{
+	std::string s;
+	if (s_in.substr(s_in.size() - 3, 3) == ".po")
+	{
+		s = s_in.substr(0, s_in.size() - 3);
+	}
+	else
+	{
+		s = s_in;
+	}
+
+	bool underscore_found = false;
+	for (unsigned int i = 0; i < s.size(); i++)
+	{
+		if (underscore_found)
+		{
+			// If we get a non-alphanumerical character/
+			// we are done (en_GB.UTF-8) - only convert
+			// the 'gb' part ... if we ever get this kind
+			// of filename.
+			if (!::isalpha(s[i]))
+			{
+				break;
+			}
+			s[i] = static_cast<char>(::toupper(s[i]));
+		}
+		else
+		{
+			underscore_found = s[i] == '_';
+		}
+	}
+	return s;
+}   // convertFilename2Language
+
 
 } // namespace tinygettext
+
 
 /* EOF */

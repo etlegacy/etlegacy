@@ -1,26 +1,28 @@
-//  tinygettext - A gettext replacement that works directly on .po files
-//  Copyright (C) 2006 Ingo Ruhnke <grumbel@gmx.de>
+// tinygettext - A gettext replacement that works directly on .po files
+// Copyright (c) 2006 Ingo Ruhnke <grumbel@gmail.com>
 //
-//  This program is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU General Public License
-//  as published by the Free Software Foundation; either version 2
-//  of the License, or (at your option) any later version.
+// This software is provided 'as-is', without any express or implied
+// warranty. In no event will the authors be held liable for any damages
+// arising from the use of this software.
 //
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
 //
-//  You should have received a copy of the GNU General Public License
-//  along with this program; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgement in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
 
 #ifndef HEADER_TINYGETTEXT_DICTIONARY_HPP
 #define HEADER_TINYGETTEXT_DICTIONARY_HPP
 
-#include <map>
-#include <vector>
 #include <string>
+#include <unordered_map>
+#include <vector>
 
 #include "plural_forms.hpp"
 
@@ -32,17 +34,20 @@ namespace tinygettext {
 class Dictionary
 {
 private:
-	typedef std::map<std::string, std::vector<std::string> > Entries;
+	typedef std::unordered_map<std::string, std::vector<std::string> > Entries;
 	Entries entries;
 
-	typedef std::map<std::string, Entries> CtxtEntries;
+	typedef std::unordered_map<std::string, Entries> CtxtEntries;
 	CtxtEntries ctxt_entries;
 
 	std::string charset;
 	PluralForms plural_forms;
 
-	std::string translate(const Entries& dict, const std::string& msgid);
-	std::string translate_plural(const Entries& dict, const std::string& msgid, const std::string& msgidplural, int num);
+	std::string translate(const Entries& dict, const std::string& msgid) const;
+	std::string translate_plural(const Entries& dict, const std::string& msgid, const std::string& msgidplural, int num) const;
+
+	bool       m_has_fallback;
+	Dictionary *m_fallback;
 
 public:
 	/** Constructs a dictionary converting to the specified \a charset (default UTF-8) */
@@ -57,21 +62,21 @@ public:
 
 
 	/** Translate the string \a msgid. */
-	std::string translate(const std::string& msgid);
+	std::string translate(const std::string& msgid) const;
 
 	/** Translate the string \a msgid to its correct plural form, based
 	    on the number of items given by \a num. \a msgid_plural is \a msgid in
 	    plural form. */
-	std::string translate_plural(const std::string& msgid, const std::string& msgidplural, int num);
+	std::string translate_plural(const std::string& msgid, const std::string& msgidplural, int num) const;
 
 	/** Translate the string \a msgid that is in context \a msgctx. A
 	    context is a way to disambiguate msgids that contain the same
 	    letters, but different meaning. For example "exit" might mean to
 	    quit doing something or it might refer to a door that leads
 	    outside (i.e. 'Ausgang' vs 'Beenden' in german) */
-	std::string translate_ctxt(const std::string& msgctxt, const std::string& msgid);
+	std::string translate_ctxt(const std::string& msgctxt, const std::string& msgid) const;
 
-	std::string translate_ctxt_plural(const std::string& msgctxt, const std::string& msgid, const std::string& msgidplural, int num);
+	std::string translate_ctxt_plural(const std::string& msgctxt, const std::string& msgid, const std::string& msgidplural, int num) const;
 
 	/** Add a translation from \a msgid to \a msgstr to the dictionary,
 	    where \a msgid is the singular form of the message, msgid_plural the
@@ -101,6 +106,12 @@ public:
 		return func;
 	}
 
+	void addFallback(Dictionary *fallback)
+	{
+		m_has_fallback = true;
+		m_fallback     = fallback;
+	}
+
 	/** Iterate over all messages with a context, Func is of type:
 	    void func(const std::string& ctxt, const std::string& msgid, const std::vector<std::string>& msgstrs) */
 	template<class Func>
@@ -115,6 +126,10 @@ public:
 		}
 		return func;
 	}
+
+private:
+	Dictionary(const Dictionary&)            = delete;
+	Dictionary& operator=(const Dictionary&) = delete;
 };
 
 } // namespace tinygettext
