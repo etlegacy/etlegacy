@@ -2711,6 +2711,6 @@ void CG_DrawUpperRight(void)
 	}
 	else
 	{
-		G_DrawDisconnect(y);
+		CG_DrawDisconnect(y);
 	}
 }

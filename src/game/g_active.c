@@ -2207,9 +2207,6 @@ void ClientEndFrame(gentity_t *ent)
 	// apply all the damage taken this frame
 	P_DamageFeedback(ent);
 
-	// mark as not missing updates initially
-	ent->client->ps.eFlags &= ~EF_CONNECTION;
-
 	ent->client->ps.stats[STAT_HEALTH] = ent->health;
 
 	G_SetClientSound(ent);
@@ -2252,6 +2249,7 @@ void ClientEndFrame(gentity_t *ent)
 
 	// mark as not missing updates initially
 	ent->client->ps.eFlags &= ~EF_CONNECTION;
+	ent->s.eFlags &= ~EF_CONNECTION;
 
 	// see how many frames the client has missed
 	frames = level.framenum - ent->client->lastUpdateFrame - 1;
