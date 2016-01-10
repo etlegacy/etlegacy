@@ -2365,8 +2365,8 @@ static float CG_DrawLagometer(float y)
 		CG_Text_Paint_Ext(ax, ay, cg_fontScaleTP.value, cg_fontScaleTP.value, colorWhite, "snc", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 
-	// don't draw if a demo and we're running at a different timescale, or if the server is respawning
-	if (!cg.demoPlayback && !cg.serverRespawning)
+	// don't draw if a demo and we're running at a different timescale
+	if (!cg.demoPlayback)
 	{
 		CG_DrawDisconnect(y);
 	}
@@ -2705,8 +2705,12 @@ void CG_DrawUpperRight(void)
 		y = CG_DrawPing(y);
 	}
 
-	if (cg_lagometer.integer && !cg.serverRespawning)
+	if (cg_lagometer.integer)
 	{
 		y = CG_DrawLagometer(y);
+	}
+	else
+	{
+		G_DrawDisconnect(y);
 	}
 }
