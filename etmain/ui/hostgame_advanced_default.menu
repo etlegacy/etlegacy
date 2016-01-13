@@ -64,12 +64,17 @@
 							setcvar vote_allow_balancedteams 1 ;	\
 							setcvar vote_allow_referee 0 ;			\
 							setcvar vote_allow_shuffleteamsxp 1 ;	\
+							setcvar vote_allow_shuffleteamsxp_norestart 1 ;	\
 							setcvar vote_allow_swapteams 1 ;		\
 							setcvar vote_allow_friendlyfire 1 ;		\
 							setcvar vote_allow_timelimit 0 ;		\
 							setcvar vote_allow_warmupdamage 1 ;		\
 							setcvar vote_allow_antilag 1 ;			\
 							setcvar vote_allow_muting 1 ;			\
+							setcvar vote_allow_surrender 1 ;		\
+							setcvar vote_allow_restartcampaign 1 ;	\
+							setcvar vote_allow_nextcampaign 1 ;		\
+							setcvar vote_allow_poll 1;              \
 							setcvar server_motd0 " ^NEnemy Territory ^7MOTD " ; \
 							clearcvar server_motd1 ;				\
 							clearcvar server_motd2 ;				\
