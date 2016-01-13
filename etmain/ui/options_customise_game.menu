@@ -80,7 +80,7 @@ menuDef {
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, _("Auto-Action:"), .2, 8, "cg_autoAction", cvarFloatList { _("None") 0 _("Demo") 1 _("Screenshot") 2 _("Stats Dump") 4 _("Demo + SS") 3 _("Demo + Stats") 5 _("SS + Stats") 6 _("Demo + SS + Stats") 7 }, _("Automatically performs actions at the start or end of a round") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, _("AutoScreenshots format:"), .2, 8, "cg_useScreenshotJPEG", cvarFloatList { "TGA" 0 "JPEG" 1 }, _("Switches between .tga and .jpg picture types for the \"autoscreenshot\" command") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+64, (SUBWINDOW_WIDTH_R)-4, 10, _("Show Tool Tips:"), .2, 8, "ui_showtooltips", _("Display Tool Tips in the UI") )
-	EDITFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+76, (SUBWINDOW_WIDTH_R)-4, 10, _("LogFile:"), .2, 8, "cg_logFile", 15, 13, _("Sets the name of the logfile") )
+	EDITFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, MISC_Y+76, (SUBWINDOW_WIDTH_R)-4, 10, _("Log File:"), .2, 8, "cg_logFile", 15, 13, _("Sets the name of the log file or if empty logging is disabled") )
 
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close options_customise_game ; open options )
