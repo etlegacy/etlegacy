@@ -44,18 +44,10 @@
 #define ALC_NO_PROTOTYPES
 #endif
 
-#ifdef _MSC_VER
-// MSVC users must install the OpenAL SDK which doesn't use the AL/*.h scheme.
-  #include <al.h>
-  #include <alc.h>
-  #include <alext.h>
-  #include <efx.h>
-#else
-  #include <AL/al.h>
-  #include <AL/alc.h>
-  #include <AL/alext.h>
-  #include <AL/efx.h>
-#endif
+#include <AL/al.h>
+#include <AL/alc.h>
+#include <AL/alext.h>
+#include <AL/efx.h>
 
 /* Hack to enable compiling both on OpenAL SDK and OpenAL-soft. */
 #ifndef ALC_ENUMERATE_ALL_EXT
