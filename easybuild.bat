@@ -14,8 +14,6 @@ set vsvarsbat=!VS%vsversion%0COMNTOOLS!\vsvars32.bat
 
 CALL:SETUPNMAKE
 
-GOTO:EOF
-
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :: Init the submdule
@@ -68,16 +66,14 @@ GOTO:EOF
 
 :SETUPNMAKE
 	where nmake >nul 2>&1
-	@setlocal EnableDelayedExpansion
-	if %errorlevel% neq 0 (
+	if !errorlevel neq 0 (
 		SET errorlevel=0
 		IF EXIST "%vsvarsbat%" (
 			ECHO HOLY SHIT YOU ARE AWESOME!
 			CALL "%vsvarsbat%" >nul
 		) ELSE (
-			ECHO %errorlevel%
 			CALL:FINDVSVARS
-			if %errorlevel% neq 0 (
+			if !errorlevel! neq 0 (
 				ECHO Cannot find build environment
 				exit /b %errorlevel%
 			)
