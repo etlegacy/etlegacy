@@ -581,10 +581,11 @@ qboolean CG_ViewingDraw()
 	}
 	else
 	{
-		int  w, wTag;
-		int  tSpacing  = 15;    // Should derive from CG_Text_Height_Ext
-		int  pID       = cg.mvCurrentMainview->mvInfo & MV_PID;
-		char *viewInfo = "Viewing:";
+		vec4_t hdrColor = COLOR_TEXT;
+		int    w, wTag;
+		int    tSpacing  = 15;    // Should derive from CG_Text_Height_Ext
+		int    pID       = cg.mvCurrentMainview->mvInfo & MV_PID;
+		char   *viewInfo = "Viewing:";
 
 		wTag = CG_Text_Width_Ext(viewInfo, VD_SCALE_X_HDR, 0, FONT_HEADER);
 		w    = wTag + 3 + CG_Text_Width_Ext(cgs.clientinfo[pID].name, VD_SCALE_X_NAME, 0, FONT_TEXT);
@@ -594,7 +595,7 @@ qboolean CG_ViewingDraw()
 
 		CG_Text_Paint_Ext(VD_X, VD_Y + tSpacing,             // x, y
 		                  VD_SCALE_X_HDR, VD_SCALE_Y_HDR,   // scale_x, scale_y
-		                  COLOR_TEXT,
+						  hdrColor,
 		                  viewInfo,
 		                  0.0f, 0,
 		                  ITEM_TEXTSTYLE_SHADOWED,
@@ -602,7 +603,7 @@ qboolean CG_ViewingDraw()
 
 		CG_Text_Paint_Ext(VD_X + wTag + 5, VD_Y + tSpacing,  // x, y
 		                  VD_SCALE_X_NAME, VD_SCALE_Y_NAME,  // scale_x, scale_y
-		                  COLOR_TEXT,
+						  hdrColor,
 		                  cgs.clientinfo[pID].name,
 		                  0.0f, 0,
 		                  ITEM_TEXTSTYLE_SHADOWED,
@@ -1737,7 +1738,7 @@ void CG_SpecHelpDraw(void)
 			bgColorTitle[3]     *= scale;
 			borderColor[3]      *= scale;
 			borderColorTitle[3] *= scale;
-			hdrColor[3]         *= scale;
+			//hdrColor[3]         *= scale;
 			tColor[3]           *= scale;
 
 			x -= w * (1.0f - scale);
@@ -1760,7 +1761,7 @@ void CG_SpecHelpDraw(void)
 
 		x += 4;
 		y += tSpacing;
-		CG_Text_Paint_Ext(x, y, hScale, hScaleY, hdrColor, "SPECTATOR CONTROLS", 0.0f, 0, hStyle, hFont);
+		CG_Text_Paint_Ext(x, y, hScale, hScaleY, tColor, "SPECTATOR CONTROLS", 0.0f, 0, hStyle, hFont);
 		y += 3;
 
 		// Control info
