@@ -2467,7 +2467,7 @@ static void CG_DrawWarmup(void)
 			}
 			else
 			{
-				s1 = va(CG_TranslateString("^3WARMUP:^7 All players ready!"));
+				s1 = va("%s", CG_TranslateString("^3WARMUP:^7 All players ready!"));
 			}
 
 			w = CG_Text_Width_Ext(s1, fontScale, 0, &cgs.media.limboFont2);
