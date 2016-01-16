@@ -39,6 +39,12 @@
 
 qboolean G_smvCommands(gentity_t *ent, char *cmd)
 {
+	if (g_multiview.integer == 0)
+	{
+		// send message to client mv is diasbled?
+		return qfalse;
+	}
+
 	if (!Q_stricmp(cmd, "mvadd"))
 	{
 		G_smvAdd_cmd(ent);

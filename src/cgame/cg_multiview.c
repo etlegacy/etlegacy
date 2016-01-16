@@ -177,13 +177,9 @@ void CG_mvToggleAll_f(void)
 	}
 }
 
-//
 // Multiview Primitives
-//
 
-///////////////////////////////
 // Create a new view window
-//
 void CG_mvCreate(int pID)
 {
 	cg_window_t *w;
@@ -224,7 +220,6 @@ void CG_mvCreate(int pID)
 }
 
 // Delete a view window
-//
 void CG_mvFree(int pID)
 {
 	cg_window_t *w = CG_mvClientLocate(pID);
@@ -268,7 +263,6 @@ void CG_mvMainviewSwap(cg_window_t *av)
 }
 
 // Track our list of merged clients
-//
 void CG_mvProcessClientList(void)
 {
 	int i, bit, newList = cg.snap->ps.powerups[PW_MVCLIENTLIST];
@@ -354,12 +348,11 @@ cg_window_t *CG_mvFindNonMainview(void)
 	return(cg.mvCurrentMainview);
 }
 
-//    Rendering/Display Management
+// Rendering/Display Management
 
 // Update all info for a merged client
 void CG_mvUpdateClientInfo(int pID)
 {
-
 	if (pID >= 0 && pID < MAX_MVCLIENTS && (cg.mvClientList & (1 << pID)))
 	{
 		int           weap = cg_entities[pID].currentState.weapon;
@@ -694,8 +687,8 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 	// Overlays for zoomed views
 	if (ci->health > 0)
 	{
-		/*if(cent->currentState.weapon == WP_SNIPERRIFLE) CG_mvZoomSniper(b_x, b_y, b_w, b_h);  // ARNOUT: this needs updating?
-		else */
+		//if(cent->currentState.weapon == WP_SNIPERRIFLE) CG_mvZoomSniper(b_x, b_y, b_w, b_h);  // ARNOUT: this needs updating?
+		//else
 		if (cent->currentState.eFlags & EF_ZOOMING)
 		{
 			CG_mvZoomBinoc(b_x, b_y, b_w, b_h);
@@ -812,7 +805,7 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 	}
 }
 
-//            MV Text Overlay Handling
+// MV Text Overlay Handling
 
 char *strClassHighlights[] =
 {
@@ -984,8 +977,8 @@ void CG_mvZoomSniper(float x, float y, float w, float h)
 
 	// hairs
 	CG_FillRect(x + 84.0f * ws, y + 239.0f * hs, 177.0f * ws, 2.0f, colorBlack);      // left
-	CG_FillRect(x + 320.0f * ws, y + 242.0f * hs, 1.0f, 58.0f * hs, colorBlack);          // center top
-	CG_FillRect(x + 319.0f * ws, y + 300.0f * hs, 2.0f, 178.0f * hs, colorBlack);             // center bot
+	CG_FillRect(x + 320.0f * ws, y + 242.0f * hs, 1.0f, 58.0f * hs, colorBlack);      // center top
+	CG_FillRect(x + 319.0f * ws, y + 300.0f * hs, 2.0f, 178.0f * hs, colorBlack);     // center bot
 	CG_FillRect(x + 380.0f * ws, y + 239.0f * hs, 177.0f * ws, 2.0f, colorBlack);     // right
 }
 

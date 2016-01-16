@@ -1820,6 +1820,10 @@ extern vmCvar_t g_extendedNames;
 extern vmCvar_t g_skillRating;
 #endif
 
+#ifdef FEATURE_MULTIVIEW
+extern vmCvar_t	g_multiview;
+#endif
+
 typedef struct GeoIPTag
 {
 	fileHandle_t GeoIPDatabase;

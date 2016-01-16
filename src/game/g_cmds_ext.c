@@ -97,6 +97,8 @@ static const cmd_reference_t aCommandInfo[] =
 	{ "unpause",        qfalse, qfalse, G_pause_cmd,           ":^7 Unpauses a match (if initiated by the issuing team)"                                    },
 	{ "unready",        qtrue,  qfalse, G_ready_cmd,           ":^7 Sets your status to ^5not ready^7 to start a match"                                     },
 	{ "weaponstats",    qtrue,  qfalse, G_weaponStats_cmd,     " [player_ID]:^7 Shows weapon accuracy stats for a player"                                   },
+#ifdef FEATURE_MULTIVIEW
+	// FIXME: add multiview commands? (following list is obsolete)
 //  { "viewcam",        qfalse, qtrue,  NULL, ":^7 Switches to cinematic camera mode" },
 //  { "vc_follow",      qfalse, qtrue,  NULL, " [player_ID]:^7 Puts viewcam in follow mode.  Can optionally to follow a specific player" },
 //  { "vc_free",        qfalse, qtrue,  NULL, ":^7 Toggle viewcam between manual/automatic change" },
@@ -110,6 +112,7 @@ static const cmd_reference_t aCommandInfo[] =
 //  { "viewnext",       qfalse, qtrue,  NULL, ":^7 Moves through active screen in a multi-screen display" },
 //  { "viewnone",       qfalse, qtrue,  NULL, ":^7 Disables multiview mode and goes back to spectator mode" },
 //  { "viewremove",     qfalse, qtrue,  NULL, " [player_ID]:^7 Removes current selected or specific player from multi-screen view" },
+#endif
 	{ 0,                qfalse, qtrue,  NULL,                  0                                                                                            }
 };
 

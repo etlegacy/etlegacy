@@ -272,20 +272,20 @@ vmCvar_t team_airstrikeTime;
 vmCvar_t team_artyTime;
 
 // team class/weapon limiting
-//classes
+// classes
 vmCvar_t team_maxSoldiers;
 vmCvar_t team_maxMedics;
 vmCvar_t team_maxEngineers;
 vmCvar_t team_maxFieldops;
 vmCvar_t team_maxCovertops;
-//weapons
+// weapons
 vmCvar_t team_maxMortars;
 vmCvar_t team_maxFlamers;
 vmCvar_t team_maxMg42s;
 vmCvar_t team_maxPanzers;
 vmCvar_t team_maxRiflegrenades;
 vmCvar_t team_maxLandmines;
-//skills
+// skills
 vmCvar_t skill_soldier;
 vmCvar_t skill_medic;
 vmCvar_t skill_engineer;
@@ -336,6 +336,10 @@ vmCvar_t g_extendedNames;
 
 #ifdef FEATURE_RATING
 vmCvar_t g_skillRating;
+#endif
+
+#ifdef FEATURE_MULTIVIEW
+vmCvar_t g_multiview; // 0 - off, other - enabled
 #endif
 
 cvarTable_t gameCvarTable[] =
@@ -611,6 +615,9 @@ cvarTable_t gameCvarTable[] =
 	{ &g_extendedNames,                     "g_extendedNames",                     "1",                          0 },
 #ifdef FEATURE_RATING
 	{ &g_skillRating,                       "g_skillRating",                       "1",                          0 },
+#endif
+#ifdef FEATURE_MULTIVIEW
+	{ &g_multiview,                         "g_multiview",                         "0",                          CVAR_LATCH | CVAR_ARCHIVE },
 #endif
 };
 
