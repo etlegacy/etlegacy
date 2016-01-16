@@ -2,14 +2,14 @@
 # Copyright (C) 2012-2015 ET: Legacy Team
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
-# Artem Vorotnikov <artem@vorotnikov.me>, 2014-2015
+# Artem Vorotnikov <artem@vorotnikov.me>, 2014-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2016-01-04 10:37+0000\n"
-"Last-Translator: Rafał Pawlak <rafal1137@yahoo.pl>\n"
+"PO-Revision-Date: 2016-01-11 22:18+0000\n"
+"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: Russian (http://www.transifex.com/etlegacy/etlegacy/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1077,7 +1077,7 @@ msgstr "ДОПОЛНИТЕЛЬНО"
 
 #: etmain/ui/options_system.menu:54
 msgid "ADVANCED GRAPHICS"
-msgstr ""
+msgstr "ГРАФИКА - ДОПОЛНИТЕЛЬНО"
 
 #: etmain/ui/hostgame.menu:31 etmain/ui/main.menu:106
 msgid "HOST GAME"
@@ -1724,13 +1724,13 @@ msgstr "Удалит все лишние файлы из Вашего fs_homepat
 
 #: etmain/ui/options_clean.menu:36
 msgid "A simple clean will remove tmp and custom pk3 files."
-msgstr ""
+msgstr "Простая чистка удалит временные и пользовательские pk3-файлы."
 
 #: etmain/ui/options_clean.menu:37
 msgid ""
 "A full clean will remove all downloaded files like maps,\n"
 " campaigns and custom pk3 files."
-msgstr ""
+msgstr "Полная чистка удалит все загруженные файлы типа\n карт, кампаний и пользовательских pk3."
 
 #: etmain/ui/options_clean.menu:38
 msgid "^1WARNING: Use at your own risk!"
@@ -1750,7 +1750,7 @@ msgstr "ОТМЕНА"
 
 #: etmain/ui/options_clean.menu:42
 msgid "Abort operation"
-msgstr ""
+msgstr "Отменить операцию"
 
 #: etmain/ui/options_clean.menu:43
 msgid "SIMPLE CLEAN"
@@ -1758,7 +1758,7 @@ msgstr "ПРОСТАЯ ЧИСТКА"
 
 #: etmain/ui/options_clean.menu:43
 msgid "Remove tmp and custom pk3 files"
-msgstr ""
+msgstr "Удалить временные и пользовательские pk3-файлы"
 
 #: etmain/ui/options_clean.menu:44
 msgid "FULL CLEAN"
@@ -1766,7 +1766,7 @@ msgstr "ПОЛНАЯ ЧИСТКА"
 
 #: etmain/ui/options_clean.menu:44
 msgid "Remove all maps and campaigns files"
-msgstr ""
+msgstr "Удалить все карты и кампании"
 
 #: etmain/ui/options_controls_default.menu:52
 msgid "DEFAULT CONTROLS"
@@ -3496,7 +3496,7 @@ msgstr "Включить или выключить звук когда окно 
 
 #: etmain/ui/options_system.menu:92
 msgid "NETWORK"
-msgstr ""
+msgstr "СЕТЬ"
 
 #: etmain/ui/options_system.menu:52
 msgid "Max Packets:"
@@ -3534,11 +3534,11 @@ msgstr "Автоматически проверять обновления?"
 
 #: etmain/ui/options_system.menu:99
 msgid "Get Missing Files:"
-msgstr ""
+msgstr "Загружать файлы:"
 
 #: etmain/ui/options_system.menu:99
 msgid "Download missing files when available"
-msgstr ""
+msgstr "Загружать файлы по необходимости"
 
 #: etmain/ui/options_system.menu:62
 msgid "Use HTTP/FTP Downloads:"
@@ -3546,15 +3546,15 @@ msgstr "Загружать через HTTP/FTP:"
 
 #: etmain/ui/options_system.menu:106
 msgid "UPDATES"
-msgstr ""
+msgstr "ОБНОВЛЕНИЯ"
 
 #: etmain/ui/options_system.menu:107
 msgid "Start-Up Updates Check:"
-msgstr ""
+msgstr "Проверка обновлений при запуске:"
 
 #: etmain/ui/options_system.menu:107
 msgid "Automatically check for updates"
-msgstr ""
+msgstr "Автоматически проверять наличие обновлений"
 
 #: etmain/ui/options_system.menu:62
 msgid "Enables or disables http/ftp downloads"
@@ -4660,11 +4660,11 @@ msgstr "ГОЛОСОВАТЬ(%i): %s"
 #: src/cgame/cg_draw.c:1905
 #, c-format
 msgid "YES:%i, NO:%i"
-msgstr ""
+msgstr "ДА:%i, НЕТ:%i"
 
 #: src/cgame/cg_draw.c:1909
 msgid "Can't vote as Spectator"
-msgstr ""
+msgstr "Зритель не может голосовать"
 
 #: src/cgame/cg_draw.c:1913
 #, c-format
@@ -4851,7 +4851,7 @@ msgstr "Нажмите ^3%s^7 чтобы начать"
 
 #: src/cgame/cg_draw.c:2470
 msgid "^3WARMUP:^7 Match begins in"
-msgstr ""
+msgstr "^3РАЗМИНКА:^7 Начало матча через"
 
 #: src/cgame/cg_draw.c:2481
 msgid "^3PREPARE TO FIGHT!\n"
@@ -5097,12 +5097,12 @@ msgstr "%s уничтожен."
 #: src/cgame/cg_popupmessages.c:722
 #, c-format
 msgid "Spotted by %s^7 at %s"
-msgstr ""
+msgstr "Замечен %s^7 у %s"
 
 #: src/cgame/cg_popupmessages.c:726
 #, c-format
 msgid "Spotted by %s"
-msgstr ""
+msgstr "Замечен %s"
 
 #: src/cgame/cg_popupmessages.c:733
 #, c-format
@@ -5787,37 +5787,37 @@ msgid "Yeehaa!"
 msgstr ""
 
 msgid "'Atta way, baby!"
-msgstr ""
+msgstr "Вот так, детка!"
 
 msgid "Jahaa!"
 msgstr ""
 
 msgid "Wunderbar!"
-msgstr ""
+msgstr "Вундербар!"
 
 msgid "Excellent!"
-msgstr ""
+msgstr "Отлично!"
 
 msgid "Oh yes!"
-msgstr ""
+msgstr "О да!"
 
 msgid "Sehr gut!"
-msgstr ""
+msgstr "Зер гут!"
 
 msgid "Thanks!"
-msgstr ""
+msgstr "Спасибо!"
 
 msgid "Danke!"
-msgstr ""
+msgstr "Данке!"
 
 msgid "Danke sehr!"
-msgstr ""
+msgstr "Данке зер!"
 
 msgid "No problem."
-msgstr ""
+msgstr "Пожалуйста."
 
 msgid "Good game!"
-msgstr ""
+msgstr "Отличная игра!"
 
 msgid "Command acknowledged!"
 msgstr ""
@@ -5853,61 +5853,61 @@ msgid "Covering fire!"
 msgstr ""
 
 msgid "I'm a soldier."
-msgstr ""
+msgstr "Я солдат."
 
 msgid "I'm an engineer."
-msgstr ""
+msgstr "Я инженер."
 
 msgid "I'm a medic."
-msgstr ""
+msgstr "Я врач."
 
 msgid "I'm a field ops."
-msgstr ""
+msgstr "Я полевой."
 
 msgid "I'm a covert ops."
-msgstr ""
+msgstr "Я разведчик."
 
 msgid "unknown cmd"
-msgstr ""
+msgstr "неизвестная команда"
 
 msgid "Server:"
-msgstr ""
+msgstr "Сервер:"
 
 msgid "changed to"
-msgstr ""
+msgstr "изменён на"
 
 msgid "Arming landmine..."
-msgstr ""
+msgstr "Закладка мины..."
 
 msgid "Landmine armed..."
-msgstr ""
+msgstr "Мина заложена..."
 
 msgid "Dynamite is set, but NOT armed!"
-msgstr ""
+msgstr "Динамит выброшен, но НЕ заряжен!"
 
 msgid "Arming dynamite..."
-msgstr ""
+msgstr "Динамит заряжается..."
 
 msgid "Dynamite is now armed with a 30 second timer!"
-msgstr ""
+msgstr "Динамит заряжен с 30-секундным таймером!"
 
 msgid "Defusing landmine"
-msgstr ""
+msgstr "Обезвреживание мины..."
 
 msgid "Landmine defused..."
-msgstr ""
+msgstr "Мина обезврежена..."
 
 msgid "Defusing dynamite..."
-msgstr ""
+msgstr "Обезврежевание динамита..."
 
 msgid "Affirmative!!"
-msgstr ""
+msgstr "Так точно!!"
 
 msgid "^1Spam Protection^7: VoiceChat ignored"
 msgstr ""
 
 msgid "Mines have been reported in this area."
-msgstr ""
+msgstr "Тут замечены мины."
 
 msgid "'s Landmine"
 msgstr ""
@@ -5931,16 +5931,16 @@ msgid "was thrown to his doom by"
 msgstr ""
 
 msgid "You have been revived by "
-msgstr ""
+msgstr "Вас оживил"
 
 msgid "Constructing..."
 msgstr ""
 
 msgid "Allied Command Post constructed. Charge speed increased!"
-msgstr ""
+msgstr "Союзники построили командный пост. Зарядка ускорена!"
 
 msgid "Axis Command Post constructed. Charge speed increased!"
-msgstr ""
+msgstr "Нацисты построили командный пост. Зарядка ускорена!"
 
 msgid ""
 "^3All players ready!^7\n"
@@ -5948,29 +5948,29 @@ msgid ""
 msgstr ""
 
 msgid "You are on the Allied team"
-msgstr ""
+msgstr "Вы в команде союзников"
 
 msgid "^1*** Match Reset! ***\n"
-msgstr ""
+msgstr "^1*** Перезапуск матча! ***\n"
 
 msgid "You are on the Axis team"
-msgstr ""
+msgstr "Вы в команде нацистов"
 
 msgid "Warning, leave the construction area..."
-msgstr ""
+msgstr "Покиньте зону строительства..."
 
 msgid "got caught in"
-msgstr ""
+msgstr "оказался на пути строительного сумасшествия"
 
 msgid "'s construction madness"
 msgstr ""
 
 #: src/qcommon/download.c:244
 msgid "Need paks: %s\n"
-msgstr ""
+msgstr "Требуемые паки: %s\n"
 
 msgid "Not enough players to start match!\n"
-msgstr ""
+msgstr "Недостаточно игроков для начала матча!\n"
 
 msgid "'s flamethrower"
 msgstr ""
@@ -5979,7 +5979,7 @@ msgid "'s Satchel Charge"
 msgstr ""
 
 msgid "You cannot arm dynamite near a friendly objective!"
-msgstr ""
+msgstr "Нельзя заложить динамит рядом с дружественной целью!"
 
 msgid "'s tank-mounted MG42"
 msgstr ""
@@ -5988,10 +5988,10 @@ msgid "'s dynamite"
 msgstr ""
 
 msgid "Timelimit hit.\n"
-msgstr ""
+msgstr "Время истекло.\n"
 
 msgid "Landmine revealed"
-msgstr ""
+msgstr "Обнаружена мина"
 
 msgid "'s tank-mounted browning 30cal"
 msgstr ""
@@ -6000,46 +6000,46 @@ msgid "'s grenade"
 msgstr ""
 
 msgid "Competition Settings Loaded!\n"
-msgstr ""
+msgstr "Настройки соревнования загружены!\n"
 
 msgid "Public Settings Loaded!\n"
-msgstr ""
+msgstr "Общие настройки загружены!\n"
 
 msgid "Landmine cannot be armed here..."
-msgstr ""
+msgstr "Нельзя заложить мину здесь..."
 
 msgid "Your team has too many landmines placed..."
-msgstr ""
+msgstr "У Вашей команды уже заложено слишком много мин..."
 
 msgid "You cannot arm dynamite near a friendly construction!"
-msgstr ""
+msgstr "Нельзя заложить динамит рядом с дружественной постройкой!"
 
 msgid "Countdown started.... ^3notready^7 ignored!\n"
-msgstr ""
+msgstr "Отсчёт пошёл.... игнорирование ^3не готовых^7!\n"
 
 msgid "No complaint filed against you.\n"
-msgstr ""
+msgstr "На Вас не подана жалоба.\n"
 
 msgid "You are not the leader of a fireteam\n"
-msgstr ""
+msgstr "Вы не руководитель звена\n"
 
 msgid "You have been warned by your Fireteam Commander\n"
-msgstr ""
+msgstr "Предупреждение от командира звена\n"
 
 msgid "You have been kicked from the fireteam"
-msgstr ""
+msgstr "Вас исключили из звена"
 
 msgid "You are now the leader of your fireteam"
-msgstr ""
+msgstr "Вы стали руководителем звена"
 
 msgid "The fireteam you are on has been disbanded"
-msgstr ""
+msgstr "Ваше звено расформировано"
 
 msgid "You have been given fireteam admin rights"
-msgstr ""
+msgstr "Вы теперь администратор звена"
 
 msgid "Too many players already on this Fireteam"
-msgstr ""
+msgstr "Звено переполнено"
 
 msgid "The leader has now left the Fireteam you applied to"
 msgstr ""
@@ -6057,28 +6057,28 @@ msgid "Invalid client selected"
 msgstr ""
 
 msgid "usage: fireteam admin <clientname|clientnumber>"
-msgstr ""
+msgstr "использование: fireteam admin <имяклиента|номерклиента>"
 
 msgid "usage: fireteam propose <clientname|clientnumber>"
-msgstr ""
+msgstr "использование: fireteam propose <имяклиента|номерклиента>"
 
 msgid "usage: fireteam kick <clientname|clientnumber>"
-msgstr ""
+msgstr "использование: fireteam kick <имяклиента|номерклиента>"
 
 msgid "usage: fireteam warn <clientname|clientnumber>"
-msgstr ""
+msgstr "использование: fireteam warn <имяклиента|номерклиента>"
 
 msgid "usage: fireteam invite <clientname|clientnumber>"
-msgstr ""
+msgstr "использование: fireteam invite <имяклиента|номерклиента>"
 
 msgid "usage: fireteam apply <fireteamname|fireteamnumber>"
-msgstr ""
+msgstr "использование: fireteam apply <имязвена|номерзвена>"
 
 msgid "usage: fireteam <create|leave|apply|invite>"
-msgstr ""
+msgstr "использование: fireteam <create|leave|apply|invite>"
 
 msgid "You are already on a fireteam, leave it first"
-msgstr ""
+msgstr "Сначала покиньте текущее звено"
 
 msgid ""
 "The other player must be on the same fireteam for you to give admin rights "
@@ -6097,18 +6097,18 @@ msgstr ""
 msgid ""
 "^3Referee commands:^7\n"
 "------------------------------------------\n"
-msgstr ""
+msgstr "^3Команды судьи:^7\n------------------------------------------\n"
 
 msgid ""
 "Usage: ^3\\ref <cmd> [params]\n"
 "\n"
-msgstr ""
+msgstr "использование: ^3\\ref <команда> [параметры].\n\n"
 
 msgid "^5pause speclock warmup ^7[value]\n"
 msgstr ""
 
 msgid "Sorry, referee status disabled on this server.\n"
-msgstr ""
+msgstr "Позиция судьи отключена на этом сервере.\n"
 
 msgid "Referee has ^3LOCKED^7 teams\n"
 msgstr ""
@@ -6147,19 +6147,19 @@ msgid "Bad client slot: "
 msgstr ""
 
 msgid "Client"
-msgstr ""
+msgstr "Клиент"
 
 msgid "is not active\n"
-msgstr ""
+msgstr "не активен\n"
 
 msgid "You can only remove people in the game!\n"
 msgstr ""
 
 msgid "User "
-msgstr ""
+msgstr "Пользователь"
 
 msgid "is not on the server\n"
-msgstr ""
+msgstr "не на сервере\n"
 
 msgid "^5You've been removed from the ^4Allies^7 team\n"
 msgstr ""
@@ -6279,10 +6279,10 @@ msgid "The ^1Axis^7 team is ready!\n"
 msgstr ""
 
 msgid "A vote is already in progress.\n"
-msgstr ""
+msgstr "Голосование в процессе.\n"
 
 msgid "called a vote.\n"
-msgstr ""
+msgstr "начал голосование.\n"
 
 msgid "^5Vote passed!\n"
 msgstr ""
@@ -6291,22 +6291,22 @@ msgid "Spectator team\n"
 msgstr ""
 
 msgid "Allies team\n"
-msgstr ""
+msgstr "Команда союзников\n"
 
 msgid "Axis team\n"
-msgstr ""
+msgstr "Команда нацистов\n"
 
 msgid "Sorry, "
-msgstr ""
+msgstr "Извините,"
 
 msgid "voting has been disabled"
-msgstr ""
+msgstr "голосования отключены"
 
 msgid "Not allowed to call a vote as a spectator."
-msgstr ""
+msgstr "Зритель не может начинать голосования."
 
 msgid "called a vote."
-msgstr ""
+msgstr "начал голосование."
 
 msgid "Vote cast.\n"
 msgstr ""
@@ -6351,22 +6351,22 @@ msgid "'s Akimbo .45ACP 1911s"
 msgstr ""
 
 msgid "Server disconnected"
-msgstr ""
+msgstr "Отключён от сервера"
 
 msgid "Server connection timed out."
-msgstr ""
+msgstr "Тайм-аут соединения с сервером."
 
 msgid "Server disconnected for unknown reason"
-msgstr ""
+msgstr "Отключён от сервера по неизвестной причине"
 
 msgid "'s Akimbo Luger 9mms"
 msgstr ""
 
 msgid "Cheats are not enabled on this server.\n"
-msgstr ""
+msgstr "Читы отключены на этом сервере.\n"
 
 msgid "team: class is not available\n"
-msgstr ""
+msgstr "команда: класс недоступен\n"
 
 msgid "^1Soldier^7 is not available! Choose another class!\n"
 msgstr ""
