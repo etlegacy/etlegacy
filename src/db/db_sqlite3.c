@@ -50,7 +50,6 @@ qboolean isDBActive;
 
 int DB_Init()
 {
-	int  result;
 	char *to_ospath;
 
 	isDBActive = qfalse;
@@ -123,6 +122,8 @@ int DB_Init()
 	}
 	else // create new
 	{
+		int  result;
+
 		Com_Printf("... no database file '%s' found ... creating now\n", to_ospath);
 		result = DB_Create();
 
