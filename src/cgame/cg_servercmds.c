@@ -259,6 +259,10 @@ void CG_ParseLegacyinfo(void)
 #ifdef FEATURE_RATING
 	cgs.skillRating = atoi(Info_ValueForKey(info, "R"));
 #endif
+
+#ifdef FEATURE_MULTIVIEW
+	cgs.mvAllowed = atoi(Info_ValueForKey(info, "MV"));
+#endif
 }
 
 /*

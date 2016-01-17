@@ -2006,7 +2006,7 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 
 #if FEATURE_MULTIVIEW
 	// MV handling
-	if (cg.mvCurrentMainview != NULL && cg.snap->ps.pm_type != PM_INTERMISSION)
+	if (cg.mvCurrentMainview != NULL && cg.snap->ps.pm_type != PM_INTERMISSION && cgs.mvAllowed)
 	{
 		CG_mvDraw(cg.mvCurrentMainview);
 		// FIXME: not valid for demo playback

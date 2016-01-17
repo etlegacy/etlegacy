@@ -1893,6 +1893,11 @@ void G_UpdateCvars(void)
 						Info_SetValueForKey(cs, "R", (va("%i", g_skillRating.integer)));
 					}
 #endif
+
+#ifdef FEATURE_MULTIVIEW
+					Info_SetValueForKey(cs, "MV", va("%i", g_multiview.integer));
+#endif
+
 					trap_SetConfigstring(CS_LEGACYINFO, cs);
 				}
 

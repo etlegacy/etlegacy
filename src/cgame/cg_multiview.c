@@ -47,6 +47,12 @@ qhandle_t allies_flag = 0;
 // Explicit server command to add a view to the client's snapshot
 void CG_mvNew_f(void)
 {
+	if (!cgs.mvAllowed)
+	{
+		CG_Printf("Info: Multiview is disabled by server.\n");
+		return;
+	}
+
 	if (cg.demoPlayback || trap_Argc() < 2)
 	{
 		return;
@@ -69,6 +75,12 @@ void CG_mvNew_f(void)
 // Explicit server command to remove a view from the client's snapshot
 void CG_mvDelete_f(void)
 {
+	if (!cgs.mvAllowed)
+	{
+		CG_Printf("Info: Multiview is disabled by server.\n");
+		return;
+	}
+
 	if (cg.demoPlayback)
 	{
 		return;
@@ -104,6 +116,12 @@ void CG_mvDelete_f(void)
 // Swap highlighted window with main view
 void CG_mvSwapViews_f(void)
 {
+	if (!cgs.mvAllowed)
+	{
+		CG_Printf("Info: Multiview is disabled by server.\n");
+		return;
+	}
+
 	if (cg.mv_cnt >= 2 && cg.mvCurrentActive != cg.mvCurrentMainview)
 	{
 		CG_mvMainviewSwap(cg.mvCurrentActive);
@@ -113,6 +131,12 @@ void CG_mvSwapViews_f(void)
 // Shut down a window view for a particular MV client
 void CG_mvHideView_f(void)
 {
+	if (!cgs.mvAllowed)
+	{
+		CG_Printf("Info: Multiview is disabled by server.\n");
+		return;
+	}
+
 	if (cg.mvCurrentActive == NULL || cg.mvCurrentMainview == cg.mvCurrentActive)
 	{
 		return;
@@ -125,6 +149,12 @@ void CG_mvHideView_f(void)
 void CG_mvShowView_f(void)
 {
 	int i;
+
+	if (!cgs.mvAllowed)
+	{
+		CG_Printf("Info: Multiview is disabled by server.\n");
+		return;
+	}
 
 	for (i = 0; i < cg.mvTotalClients; i++)
 	{
@@ -144,6 +174,12 @@ void CG_mvShowView_f(void)
 void CG_mvToggleView_f(void)
 {
 	int i;
+
+	if (!cgs.mvAllowed)
+	{
+		CG_Printf("Info: Multiview is disabled by server.\n");
+		return;
+	}
 
 	for (i = 0; i < cg.mvTotalClients; i++)
 	{
@@ -166,6 +202,12 @@ void CG_mvToggleView_f(void)
 // Toggle all views
 void CG_mvToggleAll_f(void)
 {
+	if (!cgs.mvAllowed)
+	{
+		CG_Printf("Info: Multiview is disabled by server.\n");
+		return;
+	}
+
 	if (!cg.demoPlayback)
 	{
 		trap_SendClientCommand((cg.mvTotalClients > 0) ? "mvnone\n" : "mvall\n");

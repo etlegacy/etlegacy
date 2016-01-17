@@ -2040,6 +2040,9 @@ typedef struct cgs_s
 #ifdef FEATURE_RATING
 	int skillRating;
 #endif
+#ifdef FEATURE_MULTIVIEW
+	int mvAllowed;
+#endif
 } cgs_t;
 
 //==============================================================================
