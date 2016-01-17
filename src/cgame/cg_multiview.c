@@ -264,7 +264,9 @@ void CG_mvCreate(int pID)
 // Delete a view window
 void CG_mvFree(int pID)
 {
-	cg_window_t *w = CG_mvClientLocate(pID);
+	cg_window_t *w;
+	
+	w = CG_mvClientLocate(pID);
 
 	if (w != NULL)
 	{

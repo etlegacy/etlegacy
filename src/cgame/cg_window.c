@@ -291,7 +291,7 @@ void CG_windowDraw(void)
 	cg_window_t *w;
 	qboolean    fCleanup = qfalse;
 #if FEATURE_MULTIVIEW
-	qboolean fAllowMV = (cg.snap != NULL && cg.snap->ps.pm_type != PM_INTERMISSION);
+	qboolean fAllowMV = (cg.snap != NULL && cg.snap->ps.pm_type != PM_INTERMISSION && cgs.mvAllowed);
 #endif
 	vec4_t *bg;
 	vec4_t textColor, borderColor, bgColor;

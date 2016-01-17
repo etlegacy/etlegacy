@@ -54,7 +54,7 @@ menuDef {
 
 // Pop-Ups //
 #define POPUPS_Y 280
-	SUBWINDOW( 6, POPUPS_Y, (SUBWINDOW_WIDTH), 112, _("POP-UPS") )
+	SUBWINDOW( 6, POPUPS_Y, (SUBWINDOW_WIDTH), 124, _("POP-UPS") )
 	BIND( 8, POPUPS_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Show Scores:"), .2, 8, "+scores", "" )
 	BIND( 8, POPUPS_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Show Limbo Menu:"), .2, 8, "OpenLimboMenu", "" )
 	BIND( 8, POPUPS_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Show Command Map:"), .2, 8, "+mapexpand", "" )
@@ -63,7 +63,7 @@ menuDef {
 	BIND( 8, POPUPS_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Player Stats:"), .2, 8, "+stats", "" )
 	BIND( 8, POPUPS_Y+88, (SUBWINDOW_WIDTH)-4, 10, _("Top Shots:"), .2, 8, "+topshots", "" )
 	BIND( 8, POPUPS_Y+100, (SUBWINDOW_WIDTH)-4, 10, _("Objectives:"), .2, 8, "+objectives", "" )
-//	BIND( 8, POPUPS_Y+112, (SUBWINDOW_WIDTH)-4, 10, _("Multiview:"), .2, 8, "mvactivate", "" )
+	BIND( 8, POPUPS_Y+112, (SUBWINDOW_WIDTH)-4, 10, _("Multiview:"), .2, 8, "mvactivate", "" )
 
 // Select Weapons //
 #define SELECTWEAPONS_Y 32

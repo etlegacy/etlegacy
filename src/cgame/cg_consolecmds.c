@@ -839,9 +839,9 @@ void CG_wStatsUp_f(void)
 }
 */
 
+#ifdef FEATURE_MULTIVIEW
 void CG_toggleSpecHelp_f(void)
 {
-#ifdef FEATURE_MULTIVIEW
 	if (cg.mvTotalClients > 0 && !cg.demoPlayback)
 	{
 		if (cg.spechelpWindow != SHOW_ON && cg_specHelp.integer > 0)
@@ -853,8 +853,8 @@ void CG_toggleSpecHelp_f(void)
 			CG_ShowHelp_Off(&cg.spechelpWindow);
 		}
 	}
-#endif
 }
+#endif
 
 static void CG_EditSpeakers_f(void)
 {
