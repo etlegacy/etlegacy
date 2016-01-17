@@ -731,9 +731,9 @@ void G_printMatchInfo(gentity_t *ent)
 
 			cnt++;
 #ifdef FEATURE_RATING
-			CP(va("sc \"%-14s %s%-15s^1%4d^4%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^4%5d^3%7d^8%8.2f^5%+7.2f\n\"",
+			trap_SendServerCommand(ent - g_entities, va("sc \"%-14s %s%-15s^1%4d^4%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^4%5d^3%7d^8%8.2f^5%+7.2f\n\"",
 #else
-			CP(va("sc \"%-14s %s%-15s^1%4d^4%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
+			trap_SendServerCommand(ent - g_entities, va("sc \"%-14s %s%-15s^1%4d^4%4d^7%s%4d^3%4d%4d%4d%4d%4d%4d%s%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
 #endif
 			      aTeams[i],
 			      ref,
@@ -773,10 +773,10 @@ void G_printMatchInfo(gentity_t *ent)
 
 #ifdef FEATURE_RATING
 		CP("sc \"^7--------------------------------------------------------------------------------------------------------------\n\"");
-		CP(va("sc \"%-14s ^5%-15s^1%4d^4%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^4%5d^3%7d^8%8.2f^5%+7.2f\n\"",
+		trap_SendServerCommand(ent - g_entities, va("sc \"%-14s ^5%-15s^1%4d^4%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^4%5d^3%7d^8%8.2f^5%+7.2f\n\"",
 #else
 		CP("sc \"^7-----------------------------------------------------------------------------------------------\n\"");
-		CP(va("sc \"%-14s ^5%-15s^1%4d^4%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
+		trap_SendServerCommand(ent - g_entities, va("sc \"%-14s ^5%-15s^1%4d^4%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
 #endif
 		      aTeams[i],
 		      "Totals",
