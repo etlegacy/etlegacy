@@ -1186,6 +1186,8 @@ skillType_t CG_ClassSkillForPosition(clientInfo_t *ci, int pos)
 			return SK_SOLDIER;
 		}
 		return SK_LIGHT_WEAPONS;
+	default:
+		break;
 	}
 
 	return SK_BATTLE_SENSE;

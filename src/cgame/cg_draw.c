@@ -3606,7 +3606,7 @@ void CG_DrawActive(stereoFrame_t stereoView)
 		VectorMA(cg.refdef_current->vieworg, -separation, cg.refdef_current->viewaxis[1], cg.refdef_current->vieworg);
 	}
 
-	cg.refdef_current->glfog.registered = 0;    // make sure it doesn't use fog from another scene
+	cg.refdef_current->glfog.registered = qfalse;    // make sure it doesn't use fog from another scene
 
 	CG_ShakeCamera();
 	CG_PB_RenderPolyBuffers();
