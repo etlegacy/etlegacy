@@ -212,6 +212,11 @@ static qboolean IN_IsConsoleKey(keyNum_t key, int character)
 	static int          numConsoleKeys = 0;
 	int                 i;
 
+	if (key == K_GRAVE)
+	{
+		return qtrue;
+	}
+
 	// Only parse the variable when it changes
 	if (cl_consoleKeys->modified)
 	{
