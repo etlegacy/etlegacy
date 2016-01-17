@@ -1,37 +1,10 @@
 /*
- * ET: Legacy
- * Copyright (C) 2012 ET:L dev team <mail@etlegacy.com>
+ * ET <-> Omni-Bot interface header file.
  *
- * This file is part of ET: Legacy - http://www.etlegacy.com
- *
- * ET: Legacy is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * ET: Legacy is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
- *
- * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
- * subject to certain additional terms. You should have received a copy
- * of these additional terms immediately following the terms and conditions
- * of the GNU General Public License which accompanied the source code.
- * If not, please request a copy in writing from id Software at the address below.
- *
- * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- */
-/**
- * @file g_etbot_interface.h
- * @brief ET <-> Omni-Bot interface header file.
  */
 
-#ifndef INCLUDE_G_ETBOT_INTERFACE_H
-#define INCLUDE_G_ETBOT_INTERFACE_H
+#ifndef __G_ETBOT_INTERFACE_H__
+#define __G_ETBOT_INTERFACE_H__
 
 //#include "q_shared.h"
 #include "g_local.h"
@@ -41,9 +14,8 @@
 // IMPORTANT: when changed this has to be copied manually to GAMEVERSION (g_local.h)
 #define OMNIBOT_NAME "Omni-Bot:etmain"
 
-// #define OMNIBOT_MODNAME GAMEVERSION
-#define OMNIBOT_MODNAME                 "etmain" // don't change to 'legacy' - omnibot gm scripts don't know us (for now)!
-#define OMNIBOT_MODVERSION              ETLEGACY_VERSION_SHORT
+#define OMNIBOT_MODNAME "etmain"
+#define OMNIBOT_MODVERSION "2.60"
 
 //////////////////////////////////////////////////////////////////////////
 // g_OmniBotFlags bits
@@ -121,8 +93,8 @@ void Bot_Event_FireTeam_Warn(int _client, int _warned);
 // goal helpers
 void Bot_AddDynamiteGoal(gentity_t *_ent, int _team, const char *_tag);
 void Bot_AddFallenTeammateGoals(gentity_t *_teammate, int _team);
-// void AddDeferredGoal(gentity_t *ent);
+void AddDeferredGoal(gentity_t *ent);
 void UpdateGoalEntity(gentity_t *oldent, gentity_t *newent);
 void GetEntityCenter(gentity_t *ent, vec3_t pos);
 
-#endif // #ifndef INCLUDE_G_ETBOT_INTERFACE_H
+#endif

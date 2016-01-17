@@ -1,35 +1,7 @@
 /*
- * ET: Legacy
- * Copyright (C) 2012 ET:L dev team <mail@etlegacy.com>
- *
- * This file is part of ET: Legacy - http://www.etlegacy.com
- *
- * ET: Legacy is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * ET: Legacy is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
- *
- * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
- * subject to certain additional terms. You should have received a copy
- * of these additional terms immediately following the terms and conditions
- * of the GNU General Public License which accompanied the source code.
- * If not, please request a copy in writing from id Software at the address below.
- *
- * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
- */
-/**
- * @file g_etbot_interface.cpp
- * @brief ET <-> Omni-Bot interface source file.
- */
-#ifdef FEATURE_OMNIBOT
+* ET <-> Omni-Bot interface source file.
+*
+*/
 
 #include <sstream>
 #include <iomanip>
@@ -40,9 +12,9 @@ extern "C"
 qboolean G_IsOnFireteam(int entityNum, fireteamData_t **teamNum);
 };
 
-#include "../Omnibot/Common/BotExports.h"
-#include "../Omnibot/ET/ET_Config.h"
-#include "../Omnibot/ET/ET_Messages.h"
+#include "BotExports.h"
+#include "ET_Config.h"
+#include "ET_Messages.h"
 
 #define OMNIBOT_MIN_ENG 2
 #define OMNIBOT_MIN_MED 2
@@ -78,7 +50,7 @@ BotEntity m_EntityHandles[MAX_GENTITIES];
 #define WC_WEAPON_TIME_LEFT level.time - ps->classWeaponTime
 #define WC_SOLDIER_TIME     level.soldierChargeTime[team - TEAM_AXIS]
 #define WC_ENGINEER_TIME    level.engineerChargeTime[team - TEAM_AXIS]
-#define WC_FIELDOPS_TIME    level.fieldopsChargeTime[team - TEAM_AXIS]
+#define WC_FIELDOPS_TIME    level.lieutenantChargeTime[team - TEAM_AXIS]
 #define WC_MEDIC_TIME       level.medicChargeTime[team - TEAM_AXIS]
 #define WC_COVERTOPS_TIME   level.covertopsChargeTime[team - TEAM_AXIS]
 
@@ -107,13 +79,20 @@ int ENTINDEX(gentity_t *_ent)
 gentity_t *EntityFromHandle(GameEntity _ent)
 {
 	obint16 index = _ent.GetIndex();
-	if (m_EntityHandles[index].m_HandleSerial == _ent.GetSerial() && g_entities[index].inuse)
+	if ((unsigned)(int)index < MAX_GENTITIES)
 	{
-		return &g_entities[index];
-	}
-	if (index == ENTITYNUM_WORLD)
-	{
-		return &g_entities[ENTITYNUM_WORLD];
+		if (m_EntityHandles[index].m_HandleSerial == _ent.GetSerial())
+		{
+			gentity_t *pEnt = &g_entities[index];
+			if (pEnt->inuse)
+			{
+				return pEnt;
+			}
+		}
+		if (index == ENTITYNUM_WORLD)
+		{
+			return &g_entities[ENTITYNUM_WORLD];
+		}
 	}
 	return NULL;
 }
@@ -302,7 +281,7 @@ static qboolean weaponCharged(playerState_t *ps, team_t team, int weapon, int *s
 {
 	switch (weapon)
 	{
-#if defined(NOQUARTER) || defined(LEGACY)
+#ifdef NOQUARTER
 	// IRATA added BAZOOKA
 	case WP_BAZOOKA:
 
@@ -326,7 +305,7 @@ static qboolean weaponCharged(playerState_t *ps, team_t team, int weapon, int *s
 		break;
 	case WP_MORTAR:
 	case WP_MORTAR_SET:
-#if defined(NOQUARTER) || defined(LEGACY)
+#ifdef NOQUARTER
 	case WP_MORTAR2:
 	case WP_MORTAR2_SET:
 #endif
@@ -711,8 +690,8 @@ static int _weaponBotToGame(int weapon)
 		return WP_MORTAR2_SET;
 	case 94:
 		return WP_KNIFE_KABAR;
-//	case 95:
-//		return WP_STEN_MKII;
+	case 95:
+		return WP_STEN_MKII;
 	case 96:
 		return WP_BAZOOKA;
 	case 98:
@@ -721,20 +700,6 @@ static int _weaponBotToGame(int weapon)
 		return WP_POISON_SYRINGE;
 	case 100:
 		return WP_FOOTKICK;
-#endif
-#ifdef LEGACY
-	case 88:
-		return WP_MOBILE_BROWNING;
-	case 89:
-		return WP_MOBILE_BROWNING_SET;
-	case 92:
-		return WP_MORTAR2;
-	case 93:
-		return WP_MORTAR2_SET;
-	case 94:
-		return WP_KNIFE_KABAR;
-	case 96:
-		return WP_BAZOOKA;
 #endif
 	default:
 		return WP_NONE;
@@ -864,8 +829,8 @@ int Bot_WeaponGameToBot(int weapon)
 		return ET_WP_MORTAR_SET; //cs: was 93
 	case WP_KNIFE_KABAR:
 		return ET_WP_KNIFE; //cs: was 94
-//	case WP_STEN_MKII:
-//		return 95;
+	case WP_STEN_MKII:
+		return 95;
 	case WP_BAZOOKA:
 		return 96;
 	case WP_VENOM:
@@ -874,21 +839,7 @@ int Bot_WeaponGameToBot(int weapon)
 		return 99;
 	case WP_FOOTKICK:
 		return 100;
-#endif // NOQUARTER
-#ifdef LEGACY
-	case WP_MOBILE_BROWNING:
-		return ET_WP_MOBILE_MG42;        //cs: was 88
-	case WP_MOBILE_BROWNING_SET:
-		return ET_WP_MOBILE_MG42_SET;        //cs: was 89
-	case WP_MORTAR2:
-		return ET_WP_MORTAR;        //cs: was 92
-	case WP_MORTAR2_SET:
-		return ET_WP_MORTAR_SET;        //cs: was 93
-	case WP_KNIFE_KABAR:
-		return ET_WP_KNIFE;
-	case WP_BAZOOKA:
-		return 96;
-#endif // LEGACY
+#endif
 	default:
 		return ET_WP_NONE;
 	}
@@ -1041,8 +992,8 @@ static int _choosePriWeap(gentity_t *bot, int playerClass, int team)
 			{
 				int wpns[] =
 				{
-					86,                // BAR
-					96,                // BAZOOKA
+					86,     // BAR
+					96,     // BAZOOKA
 					//88, // BROWNING
 					ET_WP_MOBILE_MG42,
 					ET_WP_FLAMETHROWER,
@@ -1058,7 +1009,7 @@ static int _choosePriWeap(gentity_t *bot, int playerClass, int team)
 			{
 				int wpns[] =
 				{
-					85,                // STG44
+					85,     // STG44
 					ET_WP_PANZERFAUST,
 					ET_WP_MOBILE_MG42,
 					ET_WP_FLAMETHROWER,
@@ -1071,46 +1022,11 @@ static int _choosePriWeap(gentity_t *bot, int playerClass, int team)
 				iSelected = wpns[rInt];
 				break;
 			}
-#else // !NOQUARTER
-
-#ifdef LEGACY
-			if (team == ET_TEAM_ALLIES)
-			{
-				int wpns[] =
-				{
-					ET_WP_MP40,
-					96,                // BAZOOKA
-					88,                // BROWNING
-					ET_WP_FLAMETHROWER,
-					ET_WP_MORTAR,
-					ET_WP_THOMPSON
-				};
-
-				int rInt = rand() % (sizeof(wpns) / sizeof(wpns[0]));
-				iSelected = wpns[rInt];
-				break;
-			}
-			else
-			{
-				int wpns[] =
-				{
-					ET_WP_THOMPSON,
-					ET_WP_PANZERFAUST,
-					ET_WP_MOBILE_MG42,
-					ET_WP_FLAMETHROWER,
-					//92 // MORTAR2
-					ET_WP_MORTAR,
-				};
-
-				int rInt = rand() % (sizeof(wpns) / sizeof(wpns[0]));
-				iSelected = wpns[rInt];
-				break;
-			}
 #else
 			int wpns[] =
 			{
 				// add shit as needed
-				ET_WP_THOMPSON / ET_WP_MP40, // pointless?
+				ET_WP_THOMPSON / ET_WP_MP40,   // pointless?
 				ET_WP_PANZERFAUST,
 				ET_WP_MOBILE_MG42,
 				ET_WP_FLAMETHROWER,
@@ -1122,8 +1038,7 @@ static int _choosePriWeap(gentity_t *bot, int playerClass, int team)
 			int rInt = rand() % (sizeof(wpns) / sizeof(wpns[0]));
 			iSelected = wpns[rInt];
 			break;
-#endif // LEGACY
-#endif // NOQUARTER
+#endif
 		}
 		case ET_CLASS_MEDIC:
 		{
@@ -1241,7 +1156,7 @@ static int _choosePriWeap(gentity_t *bot, int playerClass, int team)
 					// add shit as needed
 					ET_WP_STEN,
 #ifdef NOQUARTER
-					86,        //BAR
+					86,     //BAR
 #else
 					ET_WP_FG42,
 #endif
@@ -1257,7 +1172,7 @@ static int _choosePriWeap(gentity_t *bot, int playerClass, int team)
 				{
 					// add shit as needed
 #ifdef NOQUARTER
-					91,        //MP34
+					91,     //MP34
 #else
 					ET_WP_STEN,
 #endif
@@ -1312,7 +1227,7 @@ static int _chooseSecWeap(gentity_t *bot, int playerClass, int team)
 
 				int wpns[] =
 				{
-					ET_WP_COLT,       // simple noob bots ...
+					ET_WP_COLT,     // simple noob bots ...
 					ET_WP_AKIMBO_COLT,
 					ET_WP_AKIMBO_COLT
 				};
@@ -1330,7 +1245,7 @@ static int _chooseSecWeap(gentity_t *bot, int playerClass, int team)
 			{
 				int wpns[] =
 				{
-					ET_WP_LUGER,       // simple noob bots ...
+					ET_WP_LUGER,     // simple noob bots ...
 					ET_WP_AKIMBO_LUGER,
 					ET_WP_AKIMBO_LUGER
 				};
@@ -1352,7 +1267,7 @@ static int _chooseSecWeap(gentity_t *bot, int playerClass, int team)
 			{
 				int wpns[] =
 				{
-					ET_WP_SILENCED_COLT,       // simple noob bots ...
+					ET_WP_SILENCED_COLT,     // simple noob bots ...
 					ET_WP_AKIMBO_SILENCED_COLT,
 					ET_WP_AKIMBO_SILENCED_COLT
 				};
@@ -1370,7 +1285,7 @@ static int _chooseSecWeap(gentity_t *bot, int playerClass, int team)
 			{
 				int wpns[] =
 				{
-					ET_WP_SILENCED_LUGER,       // simple noob bots ...
+					ET_WP_SILENCED_LUGER,     // simple noob bots ...
 					ET_WP_AKIMBO_SILENCED_LUGER,
 					ET_WP_AKIMBO_SILENCED_LUGER
 				};
@@ -1555,7 +1470,7 @@ static void ReTransmitWeapons(const gentity_t *bot)
 
 #define MAX_SMOKE_RADIUS 320.0
 #define MAX_SMOKE_RADIUS_TIME 10000.0
-#define UNAFFECTED_BY_SMOKE_DIST Square(100)
+#define UNAFFECTED_BY_SMOKE_DIST SQR(100)
 
 gentity_t *Bot_EntInvisibleBySmokeBomb(vec3_t start, vec3_t end)
 {
@@ -1777,7 +1692,7 @@ static int _GetEntityClass(gentity_t *_ent)
 			return ET_CLASSEX_GRENADE;
 		case WP_PANZERFAUST:
 			return ET_CLASSEX_ROCKET;
-#if defined(NOQUARTER) || defined(LEGACY)
+#ifdef NOQUARTER
 		case WP_BAZOOKA:
 			return ET_CLASSEX_ROCKET;
 #endif
@@ -1799,7 +1714,7 @@ static int _GetEntityClass(gentity_t *_ent)
 			return ET_CLASSEX_GPG40_GRENADE;
 		case WP_MORTAR_SET:
 			return ET_CLASSEX_MORTAR;
-#if defined(NOQUARTER) || defined(LEGACY)
+#ifdef NOQUARTER
 		case WP_MORTAR2_SET:
 			return ET_CLASSEX_MORTAR;
 #endif
@@ -2028,7 +1943,7 @@ void Bot_Util_CheckForGoalEntity(GameEntity _ent)
 	{
 		gentity_t *pEnt = EntityFromHandle(_ent);
 
-		if (pEnt && pEnt->inuse)
+		if (pEnt->inuse)
 		{
 			switch (pEnt->s.eType)
 			{
@@ -2138,6 +2053,8 @@ public:
 		Info_SetValueForKey(userinfo, "snaps", "20");
 		Info_SetValueForKey(userinfo, "ip", "localhost");
 		Info_SetValueForKey(userinfo, "cl_guid", guid.str().c_str());
+		Info_SetValueForKey(userinfo, "cl_punkbuster", "0");
+		Info_SetValueForKey(userinfo, "cl_anonymous", "0");
 
 		trap_SetUserinfo(num, userinfo);
 
@@ -2230,11 +2147,11 @@ public:
 
 		if (_newteam == ET_TEAM_AXIS)
 		{
-			teamName = va("%s", "axis");
+			teamName = "axis";
 		}
 		else
 		{
-			teamName = va("%s", "allies");
+			teamName = "allies";
 		}
 
 		// always go to spectator first to solve problems on map restarts
@@ -3345,7 +3262,7 @@ public:
 			case WP_M7:
 			case WP_GPG40:
 			case WP_MORTAR_SET:
-#if defined(NOQUARTER) || defined(LEGACY)
+#ifdef NOQUARTER
 			case WP_MORTAR2_SET:
 			case WP_BAZOOKA:
 #endif
@@ -4225,7 +4142,7 @@ public:
 			case WP_MORTAR:
 			case WP_MORTAR_SET:
 			case WP_PANZERFAUST:
-#if defined(NOQUARTER) || defined(LEGACY)
+#ifdef NOQUARTER
 			case WP_MORTAR2:
 			case WP_MORTAR2_SET:
 			case WP_BAZOOKA:
@@ -4260,7 +4177,7 @@ public:
 
 			_weaponId = _weaponBotToGame(_weaponId);
 
-#if defined(NOQUARTER) || defined(LEGACY)
+#ifdef NOQUARTER
 			// need to translate for correct ammo ...
 			if (bot->client->sess.sessionTeam == TEAM_ALLIES)
 			{
@@ -4269,12 +4186,9 @@ public:
 				case WP_MOBILE_MG42:
 					_weaponId = WP_MOBILE_BROWNING;
 					break;
-#ifndef LEGACY
-				// This wasn't enabled for Legacy, but it should be?
 				case WP_MOBILE_MG42_SET:
 					_weaponId = WP_MOBILE_BROWNING_SET;
 					break;
-#endif
 				default:
 					break;
 				}
@@ -4286,12 +4200,9 @@ public:
 				case WP_MORTAR:
 					_weaponId = WP_MORTAR2;
 					break;
-#ifndef LEGACY
-				// This wasn't enabled for Legacy, but it should be?
 				case WP_MORTAR_SET:
 					_weaponId = WP_MORTAR2_SET;
 					break;
-#endif
 				default:
 					break;
 				}
@@ -4324,7 +4235,7 @@ public:
 			case WP_MORTAR:
 			case WP_MORTAR_SET:
 			case WP_PANZERFAUST:
-#if defined(NOQUARTER) || defined(LEGACY)
+#ifdef NOQUARTER
 			case WP_MORTAR2:
 			case WP_MORTAR2_SET:
 			case WP_BAZOOKA:
@@ -5241,7 +5152,7 @@ public:
 		case GEN_MSG_GOTOWAYPOINT:
 		{
 			OB_GETMSG(Msg_GotoWaypoint);
-			if (pMsg && pMsg->m_Origin[0] && g_cheats.integer)
+			if (pMsg && pMsg->m_Origin && g_cheats.integer)
 			{
 				char *cmd = va("setviewpos %f %f %f %f", pMsg->m_Origin[0], pMsg->m_Origin[1], pMsg->m_Origin[2], 0.f);
 				trap_SendConsoleCommand(EXEC_NOW, cmd);
@@ -5498,7 +5409,7 @@ public:
 							pEnt->client->sess.botSuicide = qtrue;
 						}
 
-#if defined(NOQUARTER) || defined(LEGACY)
+#ifdef NOQUARTER
 						// dupe weapons now have same id for NQ
 						if (pEnt->client->sess.sessionTeam == TEAM_ALLIES && pMsg->m_Selection == ET_WP_MOBILE_MG42)
 						{
@@ -5764,7 +5675,7 @@ public:
 				if (pEnt && pEnt->client)
 				{
 					pMsg->m_Current = G_CountTeamLandmines(pEnt->client->sess.sessionTeam);
-#if defined(NOQUARTER) || defined(LEGACY)
+#ifdef NOQUARTER
 					pMsg->m_Max = team_maxLandmines.integer;
 #elif defined ETPUB_VERSION
 					pMsg->m_Max = g_maxTeamLandmines.integer;
@@ -5853,7 +5764,7 @@ public:
 				gentity_t *targ = EntityFromHandle(pMsg->m_Target);
 				if (targ)
 				{
-					trap_EA_Command(pEnt - g_entities, va("fireteam invite %li", (long)(targ - g_entities) + 1));
+					trap_EA_Command(pEnt - g_entities, va("fireteam invite %i", (targ - g_entities) + 1));
 				}
 			}
 			break;
@@ -5866,7 +5777,7 @@ public:
 				gentity_t *targ = EntityFromHandle(pMsg->m_Target);
 				if (targ)
 				{
-					trap_EA_Command(pEnt - g_entities, va("fireteam warn %li", (long)(targ - g_entities) + 1));
+					trap_EA_Command(pEnt - g_entities, va("fireteam warn %i", (targ - g_entities) + 1));
 				}
 			}
 			break;
@@ -5879,7 +5790,7 @@ public:
 				gentity_t *targ = EntityFromHandle(pMsg->m_Target);
 				if (targ)
 				{
-					trap_EA_Command(pEnt - g_entities, va("fireteam kick %li", (long)(targ - g_entities) + 1));
+					trap_EA_Command(pEnt - g_entities, va("fireteam kick %i", (targ - g_entities) + 1));
 				}
 			}
 			break;
@@ -5892,7 +5803,7 @@ public:
 				gentity_t *targ = EntityFromHandle(pMsg->m_Target);
 				if (targ)
 				{
-					trap_EA_Command(pEnt - g_entities, va("fireteam propose %li", (long)(targ - g_entities) + 1));
+					trap_EA_Command(pEnt - g_entities, va("fireteam propose %i", (targ - g_entities) + 1));
 				}
 			}
 			break;
@@ -6249,7 +6160,7 @@ int Bot_Interface_Init()
 		return 1;
 	}
 
-#ifdef LEGACY_DEBUG
+#ifdef _DEBUG
 	trap_Cvar_Set("sv_cheats", "1");
 	trap_Cvar_Update(&g_cheats);
 #endif
@@ -6327,7 +6238,7 @@ void Bot_Interface_Update()
 	{
 		char buf[1024] = { 0 };
 
-//#ifdef LEGACY_DEBUG
+//#ifdef _DEBUG
 //		trap_Cvar_Set( "sv_cheats", "1" );
 //		trap_Cvar_Update(&g_cheats);
 //#endif
@@ -6456,12 +6367,10 @@ qboolean Bot_Util_AllowPush(int weaponId)
 	switch (weaponId)
 	{
 	case WP_MORTAR_SET:
-#if defined(NOQUARTER) || defined(LEGACY)
+#ifdef NOQUARTER
 	case WP_MORTAR2_SET:
 	case WP_MOBILE_BROWNING_SET:
-#ifndef LEGACY
 	case WP_BAR_SET:
-#endif
 #endif
 	case WP_MOBILE_MG42_SET:
 		return qfalse;
@@ -7132,5 +7041,3 @@ void Bot_AddFallenTeammateGoals(gentity_t *_teammate, int _team)
 	}
 }
 };
-
-#endif // FEATURE_OMNIBOT

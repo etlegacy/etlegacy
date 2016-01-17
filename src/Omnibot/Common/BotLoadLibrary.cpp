@@ -39,6 +39,9 @@ void Omnibot_strncpy(char *dest, const char *source, int count)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifdef GAMEDLL
+//this is compiled into qagame_mp_x86.dll or qagame.mp.i386.so
+
 #ifdef _WIN32
 #pragma warning(disable:4530) //C++ exception handler used, but unwind semantics are not enabled. Specify /EHsc
 #pragma warning(disable:4706) //assignment within conditional expression
@@ -184,7 +187,7 @@ HINSTANCE g_BotLibrary = 0;
 void OB_ShowLastError(const char *context)
 {
 #ifdef WIN32
-	char *pMessage;
+	char *pMessage = 0;
 	FormatMessage(
 	    FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
 	    0,
@@ -193,19 +196,22 @@ void OB_ShowLastError(const char *context)
 	    (LPTSTR)&pMessage,
 	    0, 0);
 
-	// Strip Newlines
-	int i = (int)strlen(pMessage) - 1;
-	while (pMessage[i] == '\n' || pMessage[i] == '\r')
-		pMessage[i--] = 0;
+	if (pMessage)
+	{
+		// Strip Newlines
+		int i = (int)strlen(pMessage) - 1;
+		while (pMessage[i] == '\n' || pMessage[i] == '\r')
+			pMessage[i--] = 0;
+	}
 
 #else
 	const char *pMessage = dlerror();
+#endif
+
 	if (!pMessage)
 	{
 		pMessage = "<unknown error>";
 	}
-#endif
-
 	Omnibot_Load_PrintErr(OB_VA("%s Failed with Error: %s", context, pMessage));
 
 #ifdef WIN32
@@ -332,6 +338,9 @@ void Omnibot_FreeLibrary()
 
 	g_IsOmnibotLoaded = false;
 }
+
+
+#endif // GAMEDLL
 
 //////////////////////////////////////////////////////////////////////////
 KeyVals::KeyVals()

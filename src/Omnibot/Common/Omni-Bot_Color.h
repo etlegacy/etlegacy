@@ -1,13 +1,13 @@
 ////////////////////////////////////////////////////////////////////////////////
-// 
+//
 // $LastChangedBy$
 // $LastChangedDate$
 // $LastChangedRevision$
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef INCLUDE_OMNICOLOR_H
-#define INCLUDE_OMNICOLOR_H
+#ifndef __OMNICOLOR_H__
+#define __OMNICOLOR_H__
 
 #include "Omni-Bot_BasicTypes.h"
 
@@ -47,25 +47,58 @@ public:
 		return cdata.m_RGBAi;
 	}
 
-	inline obuint8 r() const	{ return cdata.m_RGBA[0]; }
-	inline obuint8 g() const	{ return cdata.m_RGBA[1]; }
-	inline obuint8 b() const	{ return cdata.m_RGBA[2]; }
-	inline obuint8 a() const	{ return cdata.m_RGBA[3]; }
+	inline obuint8 r() const
+	{
+		return cdata.m_RGBA[0];
+	}
+	inline obuint8 g() const
+	{
+		return cdata.m_RGBA[1];
+	}
+	inline obuint8 b() const
+	{
+		return cdata.m_RGBA[2];
+	}
+	inline obuint8 a() const
+	{
+		return cdata.m_RGBA[3];
+	}
 
-	inline float rF() const	{ return (float)cdata.m_RGBA[0] / 255.0f; }
-	inline float gF() const	{ return (float)cdata.m_RGBA[1] / 255.0f; }
-	inline float bF() const	{ return (float)cdata.m_RGBA[2] / 255.0f; }
-	inline float aF() const	{ return (float)cdata.m_RGBA[3] / 255.0f; }
+	inline float rF() const
+	{
+		return (float)cdata.m_RGBA[0] / 255.0f;
+	}
+	inline float gF() const
+	{
+		return (float)cdata.m_RGBA[1] / 255.0f;
+	}
+	inline float bF() const
+	{
+		return (float)cdata.m_RGBA[2] / 255.0f;
+	}
+	inline float aF() const
+	{
+		return (float)cdata.m_RGBA[3] / 255.0f;
+	}
 
-	inline obColor fade(obuint8 _a) const { obColor c(cdata.m_RGBAi); c.cdata.m_RGBA[3]=_a; return c; }
+	inline obColor fade(obuint8 _a) const
+	{
+		obColor c(cdata.m_RGBAi); c.cdata.m_RGBA[3] = _a; return c;
+	}
 
-	inline obint32 rgba() const { return cdata.m_RGBAi; }
-	inline obint32 argb() const { return obColor( a(), r(), g(), b() ); }
+	inline obint32 rgba() const
+	{
+		return cdata.m_RGBAi;
+	}
+	inline obint32 argb() const
+	{
+		return obColor(a(), r(), g(), b());
+	}
 private:
 	union cdatatype
 	{
-		obuint8		m_RGBA[4];
-		obint32		m_RGBAi;
+		obuint8 m_RGBA[4];
+		obint32 m_RGBAi;
 	} cdata;
 };
 

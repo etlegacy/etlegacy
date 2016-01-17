@@ -1,13 +1,13 @@
 ////////////////////////////////////////////////////////////////////////////////
-// 
+//
 // $LastChangedBy$
 // $LastChangedDate$
 // $LastChangedRevision$
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef INCLUDE_USERFLAGS_H
-#define INCLUDE_USERFLAGS_H
+#ifndef __USERFLAGS_H__
+#define __USERFLAGS_H__
 
 #include "Omni-Bot_BasicTypes.h"
 
@@ -20,22 +20,26 @@ public:
 	}
 	bool CheckFlag(obint32 _flag) const
 	{
-		return (m_Flags & ((obint32)1<<_flag)) != 0;
+		return (m_Flags & ((obint32)1 << _flag)) != 0;
 	}
 	void SetFlag(obint32 _flag)
 	{
-		m_Flags |= ((obint32)1<<_flag);
+		m_Flags |= ((obint32)1 << _flag);
 	}
 	void SetFlag(obint32 _flag, bool _set)
 	{
-		if(_set)
+		if (_set)
+		{
 			SetFlag(_flag);
+		}
 		else
+		{
 			ClearFlag(_flag);
+		}
 	}
 	void ClearFlag(obint32 _flag)
 	{
-		m_Flags &= ~((obint32)1<<_flag);
+		m_Flags &= ~((obint32)1 << _flag);
 	}
 	void ClearAll()
 	{
@@ -75,16 +79,21 @@ public:
 	}
 	bool operator==(const BitFlag32& r) const
 	{
-		return m_Flags==r.m_Flags;
+		return m_Flags == r.m_Flags;
 	}
 	bool operator!=(const BitFlag32& r) const
 	{
-		return m_Flags!=r.m_Flags;
+		return m_Flags != r.m_Flags;
 	}
-	obint32 GetRawFlags() const { return m_Flags; }
-	explicit BitFlag32(obint32 flgs = 0) : m_Flags(flgs) {}
+	obint32 GetRawFlags() const
+	{
+		return m_Flags;
+	}
+	explicit BitFlag32(obint32 flgs = 0) : m_Flags(flgs)
+	{
+	}
 private:
-	obint32	m_Flags;
+	obint32 m_Flags;
 };
 
 class BitFlag64
@@ -96,23 +105,27 @@ public:
 	}
 	bool CheckFlag(obint32 _flag) const
 	{
-		obint64 flg = (obint64)1<<_flag;
+		obint64 flg = (obint64)1 << _flag;
 		return (m_Flags & flg) != 0;
 	}
 	void SetFlag(obint32 _flag)
 	{
-		m_Flags |= ((obint64)1<<_flag);
+		m_Flags |= ((obint64)1 << _flag);
 	}
 	void SetFlag(obint32 _flag, bool _set)
 	{
-		if(_set)
+		if (_set)
+		{
 			SetFlag(_flag);
+		}
 		else
+		{
 			ClearFlag(_flag);
+		}
 	}
 	void ClearFlag(obint32 _flag)
 	{
-		m_Flags &= ~((obint64)1<<_flag);
+		m_Flags &= ~((obint64)1 << _flag);
 	}
 	void ClearAll()
 	{
@@ -152,16 +165,21 @@ public:
 	}
 	bool operator==(const BitFlag64& r) const
 	{
-		return m_Flags==r.m_Flags;
+		return m_Flags == r.m_Flags;
 	}
 	bool operator!=(const BitFlag64& r) const
 	{
-		return m_Flags!=r.m_Flags;
+		return m_Flags != r.m_Flags;
 	}
-	obint64 GetRawFlags() const { return m_Flags; }
-	explicit BitFlag64(obint64 flgs = 0) : m_Flags(flgs) {}
+	obint64 GetRawFlags() const
+	{
+		return m_Flags;
+	}
+	explicit BitFlag64(obint64 flgs = 0) : m_Flags(flgs)
+	{
+	}
 private:
-	obint64	m_Flags;
+	obint64 m_Flags;
 };
 
 class BitFlag128
@@ -169,37 +187,50 @@ class BitFlag128
 public:
 	bool AnyFlagSet() const
 	{
-		return (m_Lo|m_Hi) != 0;
+		return (m_Lo | m_Hi) != 0;
 	}
 	bool CheckFlag(obint32 _flag) const
 	{
-		if(_flag < 64){
-			return (m_Lo & ((obint64)1<<_flag)) != 0;
-		}else{
-			return (m_Hi & ((obint64)1<<(_flag-64))) != 0;
+		if (_flag < 64)
+		{
+			return (m_Lo & ((obint64)1 << _flag)) != 0;
+		}
+		else
+		{
+			return (m_Hi & ((obint64)1 << (_flag - 64))) != 0;
 		}
 	}
 	void SetFlag(obint32 _flag)
 	{
-		if(_flag < 64){
-			m_Lo |= ((obint64)1<<_flag);
-		}else{
-			m_Hi |= ((obint64)1<<(_flag-64));
+		if (_flag < 64)
+		{
+			m_Lo |= ((obint64)1 << _flag);
+		}
+		else
+		{
+			m_Hi |= ((obint64)1 << (_flag - 64));
 		}
 	}
 	void SetFlag(obint32 _flag, bool _set)
 	{
-		if(_set)
+		if (_set)
+		{
 			SetFlag(_flag);
+		}
 		else
+		{
 			ClearFlag(_flag);
+		}
 	}
 	void ClearFlag(obint32 _flag)
 	{
-		if(_flag < 64){
-			m_Lo &= ~((obint64)1<<_flag);
-		}else{
-			m_Hi &= ~((obint64)1<<(_flag-64));
+		if (_flag < 64)
+		{
+			m_Lo &= ~((obint64)1 << _flag);
+		}
+		else
+		{
+			m_Hi &= ~((obint64)1 << (_flag - 64));
 		}
 	}
 	void ClearAll()
@@ -210,9 +241,11 @@ public:
 	{
 		return BitFlag128(m_Lo & rhs.m_Lo, m_Hi & rhs.m_Hi);
 	}
-	explicit BitFlag128(obint64 lo = 0, obint64 hi = 0) : m_Lo(lo),m_Hi(hi) {}
+	explicit BitFlag128(obint64 lo = 0, obint64 hi = 0) : m_Lo(lo), m_Hi(hi)
+	{
+	}
 private:
-	obint64	m_Lo, m_Hi;
+	obint64 m_Lo, m_Hi;
 };
 
 

@@ -1,17 +1,17 @@
 ////////////////////////////////////////////////////////////////////////////////
-// 
+//
 // $LastChangedBy$
 // $LastChangedDate$
 // $LastChangedRevision$
 //
 // about: Exported function definitions
 //		In order for the game to call functions from the bot, we must export
-//		the functions to the game itself and allow it to call them. 
+//		the functions to the game itself and allow it to call them.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef INCLUDE_OMNIBOT_H
-#define INCLUDE_OMNIBOT_H
+#ifndef __OMNIBOT_H__
+#define __OMNIBOT_H__
 
 #include "Functions_Bot.h"
 #include "Omni-Bot_Types.h"
@@ -20,7 +20,7 @@
 #include "IEngineInterface.h"
 
 // function: BotInitialise
-//		Initializes the bot library and sets the bot up with the callbacks to 
+//		Initializes the bot library and sets the bot up with the callbacks to
 //		the game in the form of function pointers to functions within the game.
 omnibot_error BotInitialise(IEngineInterface *_pEngineFuncs, int _version);
 omnibot_error BotInitialise71(IEngineInterface71 *_pEngineFuncs, int _version);
@@ -54,7 +54,7 @@ void BotSendGlobalEvent(const MessageHelper &_message);
 void BotSendGlobalEvent71(const MessageHelper &_message);
 // function: BotUpdateEntity
 //		Update map goal entity
-void BotUpdateEntity(GameEntity oldent,GameEntity newent);
+void BotUpdateEntity(GameEntity oldent, GameEntity newent);
 // function: BotDeleteMapGoal
 //		Delete map goal by name
 void BotDeleteMapGoal(const char *goalname);
@@ -66,4 +66,4 @@ void BotDeleteMapGoal(const char *goalname);
 //void Message_EndMessage(const MessageHelper &_helper);
 //void Message_EndMessageEx(const MessageHelper &_helper);
 
-#endif // INCLUDE_OMNIBOT_H
+#endif

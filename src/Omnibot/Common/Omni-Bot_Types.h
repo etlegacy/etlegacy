@@ -1,13 +1,13 @@
 ////////////////////////////////////////////////////////////////////////////////
-// 
+//
 // $LastChangedBy$
 // $LastChangedDate$
 // $LastChangedRevision$
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef INCLUDE_OMNIBOT_TYPES_H
-#define INCLUDE_OMNIBOT_TYPES_H
+#ifndef __OMNIBOT_TYPES_H__
+#define __OMNIBOT_TYPES_H__
 
 #include "Omni-Bot_BasicTypes.h"
 
@@ -47,11 +47,23 @@ typedef enum eMessageType
 class GameEntity
 {
 public:
-	obint16 GetIndex() const { return udata.m_Short[0]; }
-	obint16 GetSerial() const { return udata.m_Short[1]; }
+	obint16 GetIndex() const
+	{
+		return udata.m_Short[0];
+	}
+	obint16 GetSerial() const
+	{
+		return udata.m_Short[1];
+	}
 
-	obint32 AsInt() const { return udata.m_Int; }
-	void FromInt(obint32 _n) { udata.m_Int = _n; }
+	obint32 AsInt() const
+	{
+		return udata.m_Int;
+	}
+	void FromInt(obint32 _n)
+	{
+		udata.m_Int = _n;
+	}
 
 	void Reset()
 	{
@@ -85,8 +97,8 @@ public:
 private:
 	union udatatype
 	{
-		obint32			m_Int;
-		obint16			m_Short[2];
+		obint32 m_Int;
+		obint16 m_Short[2];
 	} udata;
 };
 
@@ -113,7 +125,7 @@ typedef enum eobBool
 typedef enum eobFunctionStatus
 {
 	Function_Finished,
-	Function_InProgress,	
+	Function_InProgress,
 } obFunctionStatus;
 
 // enumerations: obResult
@@ -139,11 +151,11 @@ inline bool SUCCESS(obResult _res)
 }
 inline int MAKE_KEY(char _v1, char _v2, char _v3, char _v4)
 {
-	return (((_v1)<<24) | ((_v2)<<16) | ((_v3)<<8) | (_v4));
+	return (((_v1) << 24) | ((_v2) << 16) | ((_v3) << 8) | (_v4));
 }
 #else
 #define SUCCESS(res) ((res) == Success ? 1 : 0)
-#define MAKE_KEY(_v1, _v2, _v3, _v4) (((_v1)<<24) | ((_v2)<<16) | ((_v3)<<8) | (_v4))
+#define MAKE_KEY(_v1, _v2, _v3, _v4) (((_v1) << 24) | ((_v2) << 16) | ((_v3) << 8) | (_v4))
 #endif
 
 typedef enum eFireMode
@@ -204,7 +216,7 @@ typedef enum eBotDebugFlag
 
 typedef enum eTeamBase
 {
-	OB_TEAM_ALL = -2,
+	OB_TEAM_ALL       = -2,
 	OB_TEAM_SPECTATOR = -1,
 	OB_TEAM_NONE,
 	OB_TEAM_1,
@@ -220,18 +232,18 @@ typedef enum eTeamBase
 //		RANDOM_TEAM_IF_NO_TEAM -  - Pick a random team if we don't already have a team.
 typedef enum eHelpers
 {
-	RANDOM_CLASS				= -1,
-	RANDOM_CLASS_IF_NO_CLASS	= -2,
-	RANDOM_TEAM					= -1,
-	RANDOM_TEAM_IF_NO_TEAM		= -2,
+	RANDOM_CLASS             = -1,
+	RANDOM_CLASS_IF_NO_CLASS = -2,
+	RANDOM_TEAM              = -1,
+	RANDOM_TEAM_IF_NO_TEAM   = -2,
 } Helpers;
 
 // typedef: AABB
 //		Represents the axis aligned bounding box of an object
 typedef struct AABB_t
 {
-	float	m_Mins[3];
-	float	m_Maxs[3];
+	float m_Mins[3];
+	float m_Maxs[3];
 #ifdef __cplusplus
 
 	enum Direction
@@ -248,18 +260,20 @@ typedef struct AABB_t
 
 	bool IsZero() const
 	{
-		for(int i = 0; i < 3; ++i)
+		for (int i = 0; i < 3; ++i)
 		{
-			if(m_Mins[i] != 0.f || 
-				m_Maxs[i] != 0.f)
+			if (m_Mins[i] != 0.f ||
+			    m_Maxs[i] != 0.f)
+			{
 				return false;
+			}
 		}
 		return true;
 	}
 
 	void Set(const float _pt[3])
 	{
-		for(int i = 0; i < 3; ++i)
+		for (int i = 0; i < 3; ++i)
 		{
 			m_Mins[i] = _pt[i];
 			m_Maxs[i] = _pt[i];
@@ -267,7 +281,7 @@ typedef struct AABB_t
 	}
 	void Set(const float _min[3], const float _max[3])
 	{
-		for(int i = 0; i < 3; ++i)
+		for (int i = 0; i < 3; ++i)
 		{
 			m_Mins[i] = _min[i] < _max[i] ? _min[i] : _max[i];
 			m_Maxs[i] = _min[i] > _max[i] ? _min[i] : _max[i];
@@ -293,7 +307,7 @@ typedef struct AABB_t
 	}
 	void SetCenter(const float _out[3])
 	{
-		for(int i = 0; i < 3; ++i)
+		for (int i = 0; i < 3; ++i)
 		{
 			m_Mins[i] += _out[i];
 			m_Maxs[i] += _out[i];
@@ -301,13 +315,17 @@ typedef struct AABB_t
 	}
 	void Expand(const float _pt[3])
 	{
-		for(int i = 0; i < 3; ++i)
+		for (int i = 0; i < 3; ++i)
 		{
-			if(_pt[i] < m_Mins[i])
+			if (_pt[i] < m_Mins[i])
+			{
 				m_Mins[i] = _pt[i];
+			}
 
-			if(_pt[i] > m_Maxs[i])
+			if (_pt[i] > m_Maxs[i])
+			{
 				m_Maxs[i] = _pt[i];
+			}
 		}
 	}
 	void Expand(const AABB_t &_bbox)
@@ -320,7 +338,9 @@ typedef struct AABB_t
 		for (int i = 0; i < 3; i++)
 		{
 			if (m_Maxs[i] < _bbox.m_Mins[i] || m_Mins[i] > _bbox.m_Maxs[i])
+			{
 				return false;
+			}
 		}
 		return true;
 	}
@@ -329,25 +349,35 @@ typedef struct AABB_t
 		for (int i = 0; i < 3; i++)
 		{
 			if (m_Maxs[i] < _pt[i] || m_Mins[i] > _pt[i])
+			{
 				return false;
+			}
 		}
 		return true;
 	}
 	bool FindIntersection(const AABB_t &_bbox, AABB_t& _overlap) const
 	{
-		if(Intersects(_bbox))
+		if (Intersects(_bbox))
 		{
-			for(int i = 0; i < 3; i++)
+			for (int i = 0; i < 3; i++)
 			{
-				if(m_Maxs[i] <= _bbox.m_Maxs[i])
+				if (m_Maxs[i] <= _bbox.m_Maxs[i])
+				{
 					_overlap.m_Maxs[i] = m_Maxs[i];
+				}
 				else
+				{
 					_overlap.m_Maxs[i] = _bbox.m_Maxs[i];
+				}
 
-				if(m_Mins[i] <= _bbox.m_Mins[i])
+				if (m_Mins[i] <= _bbox.m_Mins[i])
+				{
 					_overlap.m_Mins[i] = _bbox.m_Mins[i];
+				}
 				else
+				{
 					_overlap.m_Mins[i] = m_Mins[i];
+				}
 			}
 			return true;
 		}
@@ -371,7 +401,7 @@ typedef struct AABB_t
 	}
 	void Scale(float _scale)
 	{
-		for(int i = 0; i < 3; ++i)
+		for (int i = 0; i < 3; ++i)
 		{
 			m_Mins[i] *= _scale;
 			m_Maxs[i] *= _scale;
@@ -380,7 +410,7 @@ typedef struct AABB_t
 	AABB_t ScaleCopy(float _scale)
 	{
 		AABB_t out = *this; // cs: was AABB, but gcc said NO
-		for(int i = 0; i < 3; ++i)
+		for (int i = 0; i < 3; ++i)
 		{
 			out.m_Mins[i] *= _scale;
 			out.m_Maxs[i] *= _scale;
@@ -389,7 +419,7 @@ typedef struct AABB_t
 	}
 	void Expand(float _expand)
 	{
-		for(int i = 0; i < 3; ++i)
+		for (int i = 0; i < 3; ++i)
 		{
 			m_Mins[i] -= _expand;
 			m_Maxs[i] += _expand;
@@ -402,7 +432,7 @@ typedef struct AABB_t
 	}
 	void FlipHorizontalAxis()
 	{
-		for(int i = 0; i < 2; ++i)
+		for (int i = 0; i < 2; ++i)
 		{
 			float tmp = m_Mins[i];
 			m_Mins[i] = m_Maxs[i];
@@ -437,7 +467,7 @@ typedef struct AABB_t
 	}
 	void Translate(const float _pos[3])
 	{
-		for(int i = 0; i < 3; ++i)
+		for (int i = 0; i < 3; ++i)
 		{
 			m_Mins[i] += _pos[i];
 			m_Maxs[i] += _pos[i];
@@ -445,7 +475,7 @@ typedef struct AABB_t
 	}
 	void UnTranslate(const float _pos[3])
 	{
-		for(int i = 0; i < 3; ++i)
+		for (int i = 0; i < 3; ++i)
 		{
 			m_Mins[i] -= _pos[i];
 			m_Maxs[i] -= _pos[i];
@@ -454,7 +484,7 @@ typedef struct AABB_t
 	AABB_t TranslateCopy(const float _pos[3]) const
 	{
 		AABB_t aabb = *this;
-		for(int i = 0; i < 3; ++i)
+		for (int i = 0; i < 3; ++i)
 		{
 			aabb.m_Mins[i] += _pos[i];
 			aabb.m_Maxs[i] += _pos[i];
@@ -471,7 +501,7 @@ typedef struct AABB_t
 	}
 	AABB_t()
 	{
-		for(int i = 0; i < 3; ++i)
+		for (int i = 0; i < 3; ++i)
 		{
 			m_Mins[i] = 0.f;
 			m_Maxs[i] = 0.f;
@@ -502,7 +532,7 @@ typedef struct AABB_t
 //		BOT_BUTTON_AIM - If the bot wants to drop current item.
 //		BOT_BUTTON_RESPAWN - Bot wants to respawn.
 typedef enum eButtonFlags
-{	
+{
 	BOT_BUTTON_ATTACK1 = 0,
 	BOT_BUTTON_ATTACK2,
 	BOT_BUTTON_JUMP,
@@ -556,16 +586,16 @@ typedef enum eEntityFlag
 	ENT_FLAG_TEAM1,
 	ENT_FLAG_TEAM2,
 	ENT_FLAG_TEAM3,
-	ENT_FLAG_TEAM4,	
+	ENT_FLAG_TEAM4,
 	ENT_FLAG_VISTEST,
 	ENT_FLAG_DISABLED,
-	ENT_FLAG_PRONED,	
-	ENT_FLAG_CROUCHED,	
-    ENT_FLAG_CARRYABLE,	
-	ENT_FLAG_DEAD,	
-	ENT_FLAG_INWATER,	
-	ENT_FLAG_UNDERWATER,	
-	ENT_FLAG_ZOOMING,	
+	ENT_FLAG_PRONED,
+	ENT_FLAG_CROUCHED,
+	ENT_FLAG_CARRYABLE,
+	ENT_FLAG_DEAD,
+	ENT_FLAG_INWATER,
+	ENT_FLAG_UNDERWATER,
+	ENT_FLAG_ZOOMING,
 	ENT_FLAG_ONLADDER,
 	ENT_FLAG_ONGROUND,
 	ENT_FLAG_RELOADING,
@@ -578,7 +608,7 @@ typedef enum eEntityFlag
 	ENT_FLAG_AIMING,
 
 	// THIS MUST BE LAST
-	ENT_FLAG_FIRST_USER	= 32
+	ENT_FLAG_FIRST_USER = 32
 } EntityFlags;
 
 // enumerations: Powerups
@@ -588,8 +618,8 @@ typedef enum ePowerups
 	PWR_NONE = 0,
 	PWR_INVINCIBLE,
 
-	// THIS MUST BE LAST	
-	PWR_FIRST_USER		= 8,
+	// THIS MUST BE LAST
+	PWR_FIRST_USER = 8,
 } Powerups;
 
 // enumerations: EntityCategory
@@ -705,31 +735,31 @@ typedef enum eSoundType
 //		CONT_LAVA - In lava.
 typedef enum eContents
 {
-	CONT_SOLID		= (1<<0),
-	CONT_WATER		= (1<<1),
-	CONT_SLIME		= (1<<2),
-	CONT_FOG		= (1<<3),
-	CONT_MOVER		= (1<<4),
-	CONT_TRIGGER	= (1<<5),
-	CONT_LAVA		= (1<<6),
-	CONT_LADDER		= (1<<7),
-	CONT_TELEPORTER = (1<<8),
-	CONT_MOVABLE	= (1<<9),
-	CONT_PLYRCLIP	= (1<<10),
+	CONT_SOLID      = (1 << 0),
+	CONT_WATER      = (1 << 1),
+	CONT_SLIME      = (1 << 2),
+	CONT_FOG        = (1 << 3),
+	CONT_MOVER      = (1 << 4),
+	CONT_TRIGGER    = (1 << 5),
+	CONT_LAVA       = (1 << 6),
+	CONT_LADDER     = (1 << 7),
+	CONT_TELEPORTER = (1 << 8),
+	CONT_MOVABLE    = (1 << 9),
+	CONT_PLYRCLIP   = (1 << 10),
 
 	// THIS MUST BE LAST
-	CONT_START_USER = (1<<24)
+	CONT_START_USER = (1 << 24)
 } Contents;
 
 // enumerations: SurfaceFlags
 //		SURFACE_SLICK - Low friction surface.
 typedef enum eSurfaceFlags
 {
-	SURFACE_SLICK	= (1<<0),
-	SURFACE_LADDER	= (1<<1),
+	SURFACE_SLICK  = (1 << 0),
+	SURFACE_LADDER = (1 << 1),
 
 	// THIS MUST BE LAST
-	SURFACE_START_USER = (1<<24)
+	SURFACE_START_USER = (1 << 24)
 } SurfaceFlags;
 // enumerations: SkeletonBone
 //		BONE_TORSO - Torso bone
@@ -766,8 +796,8 @@ typedef enum eSkeletonBone
 //		NAVID_NAVMESH - Navigation mesh path planning implementation.
 typedef enum eNavigatorID
 {
-	NAVID_NONE,	
-	NAVID_WP,	
+	NAVID_NONE,
+	NAVID_WP,
 	NAVID_NAVMESH,
 	NAVID_FLOODFILL,
 	NAVID_RECAST,
@@ -779,24 +809,24 @@ typedef enum eNavigatorID
 // enumerations: TraceMasks
 typedef enum eTraceMasks
 {
-	TR_MASK_ALL			= (1<<0), // hit everything
-	TR_MASK_SOLID		= (1<<1), // blocked by solids/world
-	TR_MASK_PLAYER		= (1<<2), // blocked by players
-	TR_MASK_SHOT		= (1<<3), // blocked by same mask that game uses for projectile/shot traces
-	TR_MASK_OPAQUE		= (1<<4), // blocked by opaque surfaces(even if they can be shot through)
-	TR_MASK_WATER		= (1<<5), // blocked by see-through water
-	TR_MASK_SLIME		= (1<<6), // blocked by opaque water
-	TR_MASK_GRATE		= (1<<7), // blocked by grates, normally projectiles go through grates, solids dont
-	TR_MASK_PLAYERCLIP	= (1<<8), // blocked by player clips
-	TR_MASK_SMOKEBOMB	= (1<<9), // blocked by smoke bombs
-	TR_MASK_FLOODFILL	= (1<<10), // flood fill filter
-	TR_MASK_FLOODFILLENT= (1<<11), // flood fill filter with entities
+	TR_MASK_ALL          = (1 << 0), // hit everything
+	TR_MASK_SOLID        = (1 << 1), // blocked by solids/world
+	TR_MASK_PLAYER       = (1 << 2), // blocked by players
+	TR_MASK_SHOT         = (1 << 3), // blocked by same mask that game uses for projectile/shot traces
+	TR_MASK_OPAQUE       = (1 << 4), // blocked by opaque surfaces(even if they can be shot through)
+	TR_MASK_WATER        = (1 << 5), // blocked by see-through water
+	TR_MASK_SLIME        = (1 << 6), // blocked by opaque water
+	TR_MASK_GRATE        = (1 << 7), // blocked by grates, normally projectiles go through grates, solids dont
+	TR_MASK_PLAYERCLIP   = (1 << 8), // blocked by player clips
+	TR_MASK_SMOKEBOMB    = (1 << 9), // blocked by smoke bombs
+	TR_MASK_FLOODFILL    = (1 << 10), // flood fill filter
+	TR_MASK_FLOODFILLENT = (1 << 11), // flood fill filter with entities
 
 	// THIS MUST BE LAST
-	TR_MASK_START_USER	= (1<<24),
+	TR_MASK_START_USER = (1 << 24),
 
 	// combo masks can be defined separately
-	TR_MASK_VISIBLE		= TR_MASK_SOLID|TR_MASK_OPAQUE|TR_MASK_SLIME, // can see but not necessarily shoot
+	TR_MASK_VISIBLE = TR_MASK_SOLID | TR_MASK_OPAQUE | TR_MASK_SLIME, // can see but not necessarily shoot
 } TraceMasks;
 
 // struct: BotUserData
@@ -810,150 +840,235 @@ typedef struct obUserData_t
 	//		m_DataType parameter so signal which element of the union
 	//		is currently being used.
 	enum { dtNone = 0, dtVector, dtString, dtInt, /*dtInt64,*/ dtFloat, dtEntity,
-		dt3_4byteFlags, dt3_Strings, dt6_2byteFlags, dt12_1byteFlags } DataType;
+		   dt3_4byteFlags, dt3_Strings, dt6_2byteFlags, dt12_1byteFlags } DataType;
 	union udatatype
 	{
-		float			m_Vector[3];
-		void *			m_VoidPtrs[3];
-		char *			m_CharPtrs[3];
-		const char *	m_String;
-		int				m_Int;
+		float m_Vector[3];
+		void *m_VoidPtrs[3];
+		char *m_CharPtrs[3];
+		const char *m_String;
+		int m_Int;
 		//obint64			m_Int64;
-		float			m_Float;
-		int				m_Entity;
-		int				m_4ByteFlags[3];
-		short			m_2ByteFlags[6];
-		char			m_1ByteFlags[12];
+		float m_Float;
+		int m_Entity;
+		int m_4ByteFlags[3];
+		short m_2ByteFlags[6];
+		char m_1ByteFlags[12];
 	} udata;
 	// Easy Constructors for C++
 #ifdef __cplusplus
-	obUserData_t() : DataType(dtNone) {};
-	obUserData_t(const char * _str) : DataType(dtString) { udata.m_String = _str; };
-	obUserData_t(int _int) : DataType(dtInt) { udata.m_Int = _int; };
-	//obUserData_t(obint64 _int) : DataType(dtInt64) { udata.m_Int64 = _int; };
-	obUserData_t(float _float) : DataType(dtFloat) { udata.m_Float = _float; };
-	obUserData_t(const GameEntity &_ent) : DataType(dtEntity) { udata.m_Entity = _ent.AsInt(); };
-	obUserData_t(float _x, float _y, float _z) : 
-		DataType(dtVector) 
+	obUserData_t() : DataType(dtNone)
 	{
-		udata.m_Vector[0] = _x; 
-		udata.m_Vector[1] = _y; 
+	};
+	obUserData_t(const char *_str) : DataType(dtString)
+	{
+		udata.m_String = _str;
+	};
+	obUserData_t(int _int) : DataType(dtInt)
+	{
+		udata.m_Int = _int;
+	};
+	//obUserData_t(obint64 _int) : DataType(dtInt64) { udata.m_Int64 = _int; };
+	obUserData_t(float _float) : DataType(dtFloat)
+	{
+		udata.m_Float = _float;
+	};
+	obUserData_t(const GameEntity &_ent) : DataType(dtEntity)
+	{
+		udata.m_Entity = _ent.AsInt();
+	};
+	obUserData_t(float _x, float _y, float _z) :
+		DataType(dtVector)
+	{
+		udata.m_Vector[0] = _x;
+		udata.m_Vector[1] = _y;
 		udata.m_Vector[2] = _z;
 	};
-	obUserData_t(float *_v) : 
-		DataType(dtVector) 
+	obUserData_t(float *_v) :
+		DataType(dtVector)
 	{
-		udata.m_Vector[0] = _v[0]; 
-		udata.m_Vector[1] = _v[1]; 
-		udata.m_Vector[2] = _v[2]; 
+		udata.m_Vector[0] = _v[0];
+		udata.m_Vector[1] = _v[1];
+		udata.m_Vector[2] = _v[2];
 	};
 	obUserData_t(int _v0, int _v1, int _v2) : DataType(dt3_4byteFlags)
 	{
-		udata.m_4ByteFlags[0] = _v0; 
-		udata.m_4ByteFlags[1] = _v1; 
+		udata.m_4ByteFlags[0] = _v0;
+		udata.m_4ByteFlags[1] = _v1;
 		udata.m_4ByteFlags[2] = _v2;
 	};
 	obUserData_t(char *_v0, char *_v1, char *_v2) : DataType(dt3_Strings)
 	{
-		udata.m_CharPtrs[0] = _v0; 
-		udata.m_CharPtrs[1] = _v1; 
+		udata.m_CharPtrs[0] = _v0;
+		udata.m_CharPtrs[1] = _v1;
 		udata.m_CharPtrs[2] = _v2;
 	};
-	obUserData_t(short _v0, short _v1, short _v2, short _v3, short _v4, short _v5) : 
+	obUserData_t(short _v0, short _v1, short _v2, short _v3, short _v4, short _v5) :
 		DataType(dt6_2byteFlags)
 	{
-		udata.m_2ByteFlags[0] = _v0; 
-		udata.m_2ByteFlags[1] = _v1; 
+		udata.m_2ByteFlags[0] = _v0;
+		udata.m_2ByteFlags[1] = _v1;
 		udata.m_2ByteFlags[2] = _v2;
-		udata.m_2ByteFlags[3] = _v3; 
-		udata.m_2ByteFlags[4] = _v4; 
+		udata.m_2ByteFlags[3] = _v3;
+		udata.m_2ByteFlags[4] = _v4;
 		udata.m_2ByteFlags[5] = _v5;
 	};
-	obUserData_t(char _v0, char _v1, char _v2, char _v3, char _v4, char _v5, char _v6, char _v7, char _v8, char _v9, char _v10, char _v11) : 
+	obUserData_t(char _v0, char _v1, char _v2, char _v3, char _v4, char _v5, char _v6, char _v7, char _v8, char _v9, char _v10, char _v11) :
 		DataType(dt12_1byteFlags)
 	{
-		udata.m_1ByteFlags[0] = _v0; 
-		udata.m_1ByteFlags[1] = _v1; 
-		udata.m_1ByteFlags[2] = _v2;
-		udata.m_1ByteFlags[3] = _v3; 
-		udata.m_1ByteFlags[4] = _v4; 
-		udata.m_1ByteFlags[5] = _v5;
-		udata.m_1ByteFlags[6] = _v6; 
-		udata.m_1ByteFlags[7] = _v7; 
-		udata.m_1ByteFlags[8] = _v8;
-		udata.m_1ByteFlags[9] = _v9; 
-		udata.m_1ByteFlags[10] = _v10; 
+		udata.m_1ByteFlags[0]  = _v0;
+		udata.m_1ByteFlags[1]  = _v1;
+		udata.m_1ByteFlags[2]  = _v2;
+		udata.m_1ByteFlags[3]  = _v3;
+		udata.m_1ByteFlags[4]  = _v4;
+		udata.m_1ByteFlags[5]  = _v5;
+		udata.m_1ByteFlags[6]  = _v6;
+		udata.m_1ByteFlags[7]  = _v7;
+		udata.m_1ByteFlags[8]  = _v8;
+		udata.m_1ByteFlags[9]  = _v9;
+		udata.m_1ByteFlags[10] = _v10;
 		udata.m_1ByteFlags[11] = _v11;
 	};
 	// Function: IsNone
 	// This <BotUserData> has no type specified
-	inline bool IsNone() const { return (DataType == dtNone); };
+	inline bool IsNone() const
+	{
+		return (DataType == dtNone);
+	};
 	// Function: IsString
 	// This <BotUserData> is a char * type
-	inline bool IsString() const { return (DataType == dtString); };
+	inline bool IsString() const
+	{
+		return (DataType == dtString);
+	};
 	// Function: Is3String
 	// This <BotUserData> is a array of 3 strings
-	inline bool Is3String() const { return (DataType == dt3_Strings); };
+	inline bool Is3String() const
+	{
+		return (DataType == dt3_Strings);
+	};
 	// Function: IsInt
 	// This <BotUserData> is an int type
-	inline bool IsInt() const { return (DataType == dtInt); };
+	inline bool IsInt() const
+	{
+		return (DataType == dtInt);
+	};
 	// Function: IsInt64
 	// This <BotUserData> is an int type
 	//inline bool IsInt64() const { return (DataType == dtInt64); };
 	// Function: IsFloat
 	// This <BotUserData> is an float type
-	inline bool IsFloat() const { return (DataType == dtFloat); };
+	inline bool IsFloat() const
+	{
+		return (DataType == dtFloat);
+	};
 	// Function: IsFloatOrInt
 	// This <BotUserData> is an float type or an int type
-	inline bool IsFloatOrInt() const { return (DataType == dtFloat) || (DataType == dtInt); };
+	inline bool IsFloatOrInt() const
+	{
+		return (DataType == dtFloat) || (DataType == dtInt);
+	};
 	// Function: IsEntity
 	// This <BotUserData> is an <GameEntity> type
-	inline bool IsEntity() const { return (DataType == dtEntity); };
+	inline bool IsEntity() const
+	{
+		return (DataType == dtEntity);
+	};
 	// Function: IsVector
 	// This <BotUserData> is a 3d Vector type
-	inline bool IsVector() const { return (DataType == dtVector); };
+	inline bool IsVector() const
+	{
+		return (DataType == dtVector);
+	};
 	// Function: Is3_4ByteFlags
 	// This <BotUserData> is an array of 3 4-byte values
-	inline bool Is3_4ByteFlags() const { return (DataType == dt3_4byteFlags); };
+	inline bool Is3_4ByteFlags() const
+	{
+		return (DataType == dt3_4byteFlags);
+	};
 	// Function: Is6_otherByteFlags
 	// This <BotUserData> is an array of 6 2-byte values
-	inline bool Is6_otherByteFlags() const { return (DataType == dt6_2byteFlags); };
+	inline bool Is6_otherByteFlags() const
+	{
+		return (DataType == dt6_2byteFlags);
+	};
 	// Function: Is12_1ByteFlags
 	// This <BotUserData> is an array of 12 1-byte values
-	inline bool Is12_1ByteFlags() const { return (DataType == dt12_1byteFlags); };
+	inline bool Is12_1ByteFlags() const
+	{
+		return (DataType == dt12_1byteFlags);
+	};
 
-	inline const char *GetString() const { return udata.m_String; };
-	inline int GetInt() const { return udata.m_Int; };
+	inline const char *GetString() const
+	{
+		return udata.m_String;
+	};
+	inline int GetInt() const
+	{
+		return udata.m_Int;
+	};
 	//inline obint64 GetInt64() const { return udata.m_Int64; };
-	inline float GetFloat() const { return udata.m_Float; };
-	inline GameEntity GetEntity() const { GameEntity e; e.FromInt(udata.m_Entity); return e; };
-	inline void SetEntity(GameEntity e) { udata.m_Entity = e.AsInt(); };
-	inline const char *GetStrings(int _index) const { return udata.m_CharPtrs[_index]; };
-	inline const float *GetVector() const { return udata.m_Vector; };
-	inline const int *Get4ByteFlags() const { return udata.m_4ByteFlags; };
-	inline const short *Get2ByteFlags() const { return udata.m_2ByteFlags; };
-	inline const char *Get1ByteFlags() const { return udata.m_1ByteFlags; };
-	inline float GetNumAsFloat() const 
-	{ 
-		if(IsFloat()) 
-			return GetFloat(); 
-		if(IsInt()) 
+	inline float GetFloat() const
+	{
+		return udata.m_Float;
+	};
+	inline GameEntity GetEntity() const
+	{
+		GameEntity e; e.FromInt(udata.m_Entity); return e;
+	};
+	inline void SetEntity(GameEntity e)
+	{
+		udata.m_Entity = e.AsInt();
+	};
+	inline const char *GetStrings(int _index) const
+	{
+		return udata.m_CharPtrs[_index];
+	};
+	inline const float *GetVector() const
+	{
+		return udata.m_Vector;
+	};
+	inline const int *Get4ByteFlags() const
+	{
+		return udata.m_4ByteFlags;
+	};
+	inline const short *Get2ByteFlags() const
+	{
+		return udata.m_2ByteFlags;
+	};
+	inline const char *Get1ByteFlags() const
+	{
+		return udata.m_1ByteFlags;
+	};
+	inline float GetNumAsFloat() const
+	{
+		if (IsFloat())
+		{
+			return GetFloat();
+		}
+		if (IsInt())
+		{
 			return (float)GetInt();
+		}
 		return 0.0f;
 	};
-	inline int GetNumAsInt() const 
-	{ 
-		if(IsFloat()) 
-			return (int)GetFloat(); 
-		if(IsInt()) 
-			return GetInt(); 
+	inline int GetNumAsInt() const
+	{
+		if (IsFloat())
+		{
+			return (int)GetFloat();
+		}
+		if (IsInt())
+		{
+			return GetInt();
+		}
 		return 0;
 	};
 
 	//////////////////////////////////////////////////////////////////////////
 	bool Get(float &_val)
 	{
-		if(IsFloat())
+		if (IsFloat())
 		{
 			_val = GetFloat();
 			return true;
@@ -962,7 +1077,7 @@ typedef struct obUserData_t
 	}
 	bool Get(int &_val)
 	{
-		if(IsInt())
+		if (IsInt())
 		{
 			_val = GetInt();
 			return true;
@@ -971,7 +1086,7 @@ typedef struct obUserData_t
 	}
 	bool Get(float *_val)
 	{
-		if(IsVector())
+		if (IsVector())
 		{
 			_val[0] = GetVector()[0];
 			_val[1] = GetVector()[1];
@@ -982,9 +1097,9 @@ typedef struct obUserData_t
 	}
 	bool Get(bool &_val)
 	{
-		if(IsInt())
+		if (IsInt())
 		{
-			_val = GetInt()!=0;
+			_val = GetInt() != 0;
 			return true;
 		}
 		return false;
@@ -1001,7 +1116,7 @@ public:
 	bool SetInt(const char *_key, int _val);
 	bool SetFloat(const char *_key, float _val);
 	bool SetEntity(const char *_key, GameEntity _val);
-	bool SetVector(const char *_key, float _x,float _y,float _z);
+	bool SetVector(const char *_key, float _x, float _y, float _z);
 	bool SetVector(const char *_key, const float *_v);
 	bool SetString(const char *_key, const char *_value);
 	bool Set(const char *_key, const obUserData &_value);
@@ -1009,7 +1124,7 @@ public:
 	bool GetInt(const char *_key, int &_val) const;
 	bool GetFloat(const char *_key, float &_val) const;
 	bool GetEntity(const char *_key, GameEntity &_val) const;
-	bool GetVector(const char *_key, float &_x,float &_y,float &_z) const;
+	bool GetVector(const char *_key, float &_x, float &_y, float &_z) const;
 	bool GetVector(const char *_key, float *_v) const;
 	bool GetString(const char *_key, const char *&_value) const;
 
@@ -1019,9 +1134,9 @@ public:
 
 	KeyVals();
 private:
-	char		m_Key[MaxArgs][MaxArgLength];
-	char		m_String[MaxArgs][MaxStringLength];
-	obUserData	m_Value[MaxArgs];
+	char       m_Key[MaxArgs][MaxArgLength];
+	char       m_String[MaxArgs][MaxStringLength];
+	obUserData m_Value[MaxArgs];
 
 	bool SetKeyVal(const char *_key, const obUserData &_ud);
 	bool GetKeyVal(const char *_key, obUserData &_ud) const;
@@ -1030,10 +1145,15 @@ private:
 class Seconds
 {
 public:
-	int GetMs() const { return m_Ms; } 
-	Seconds(float _seconds = 0.f) : m_Ms((int)(_seconds*1000.f)) {}
+	int GetMs() const
+	{
+		return m_Ms;
+	}
+	Seconds(float _seconds = 0.f) : m_Ms((int)(_seconds * 1000.f))
+	{
+	}
 private:
-	int		m_Ms;
+	int m_Ms;
 };
 
 // struct: TriggerInfo
@@ -1055,21 +1175,21 @@ typedef struct TriggerInfo_t
 #ifdef __cplusplus
 	TriggerInfo_t()
 	{
-		for(int i = 0; i < TriggerBufferSize; ++i)
+		for (int i = 0; i < TriggerBufferSize; ++i)
 			m_TagName[i] = m_Action[i] = 0;
 	}
 	TriggerInfo_t(const TriggerInfo_t &_ti)
 	{
-		m_Entity = _ti.m_Entity;
+		m_Entity    = _ti.m_Entity;
 		m_Activator = _ti.m_Activator;
-		for(int i = 0; i < TriggerBufferSize; ++i)
+		for (int i = 0; i < TriggerBufferSize; ++i)
 		{
 			m_TagName[i] = _ti.m_TagName[i];
-			m_Action[i] = _ti.m_Action[i];
+			m_Action[i]  = _ti.m_Action[i];
 		}
 	}
-	TriggerInfo_t(GameEntity _ent, GameEntity _activator) : 
-		m_Entity(_ent), m_Activator(_activator) 
+	TriggerInfo_t(GameEntity _ent, GameEntity _activator) :
+		m_Entity(_ent), m_Activator(_activator)
 	{
 		m_TagName[0] = m_Action[0] = 0;
 	}
@@ -1079,14 +1199,17 @@ typedef struct TriggerInfo_t
 // struct: MapGoalDef
 typedef struct MapGoalDef_t
 {
-	KeyVals			Props;
+	KeyVals Props;
 #ifdef __cplusplus
-	
+
 	void Reset()
 	{
 		Props.Reset();
 	}
-	MapGoalDef_t() { Reset(); }
+	MapGoalDef_t()
+	{
+		Reset();
+	}
 #endif
 } MapGoalDef;
 
@@ -1095,39 +1218,42 @@ typedef struct MapGoalDef71_t
 {
 	enum { BufferSize = 64 };
 
-	GameEntity		m_Entity;
-	int				m_GoalType;
-	int				m_Team;
-	char			m_TagName[BufferSize];
-	obUserData		m_UserData;
+	GameEntity m_Entity;
+	int m_GoalType;
+	int m_Team;
+	char m_TagName[BufferSize];
+	obUserData m_UserData;
 
 #ifdef __cplusplus
 
 	void Reset()
 	{
 		m_Entity.Reset();
-		m_GoalType = 0;
-		m_Team = 0;
+		m_GoalType   = 0;
+		m_Team       = 0;
 		m_TagName[0] = 0;
-		m_UserData = obUserData();
+		m_UserData   = obUserData();
 	}
-	MapGoalDef71_t() { Reset(); }
+	MapGoalDef71_t()
+	{
+		Reset();
+	}
 #endif
 } MapGoalDef71;
 
 // struct: AutoNavFeature
 typedef struct AutoNavFeature_t
 {
-	int			m_Type;
-	int			m_Team;
-	float		m_Position[3];
-	float		m_Facing[3];
-	float		m_TargetPosition[3];
-	AABB		m_TargetBounds;
-	float		m_TravelTime;
-	AABB		m_Bounds;
-	bool		m_ObstacleEntity;
-	bool		m_BiDirectional;
+	int m_Type;
+	int m_Team;
+	float m_Position[3];
+	float m_Facing[3];
+	float m_TargetPosition[3];
+	AABB m_TargetBounds;
+	float m_TravelTime;
+	AABB m_Bounds;
+	bool m_ObstacleEntity;
+	bool m_BiDirectional;
 } AutoNavFeature;
 
 // Generic Enumerations
@@ -1141,12 +1267,12 @@ typedef struct AutoNavFeature_t
 //		S_PLAYER_PLAYING - Player is good to go, and fully joined.
 typedef enum ePlayerState
 {
-	S_PLAYER_INVALID = 0,			// Player doesn't exist
-	S_PLAYER_SPECTATOR,			// Player is in spectator mode.
-	S_PLAYED_WAITING_TEAM,		// Player waiting on team selection.
-	S_PLAYED_WAITING_CLASS,		// Player waiting on class selection.
-	S_PLAYED_WAITING_NEXTROUND,	// Player waiting on on the next round. Died or something.
-	S_PLAYER_PLAYING			// Player is good to go, and fully joined.
+	S_PLAYER_INVALID = 0,           // Player doesn't exist
+	S_PLAYER_SPECTATOR,         // Player is in spectator mode.
+	S_PLAYED_WAITING_TEAM,      // Player waiting on team selection.
+	S_PLAYED_WAITING_CLASS,     // Player waiting on class selection.
+	S_PLAYED_WAITING_NEXTROUND, // Player waiting on on the next round. Died or something.
+	S_PLAYER_PLAYING            // Player is good to go, and fully joined.
 } PlayerState;
 
 // enumerations: FlagState
@@ -1194,20 +1320,20 @@ class Arguments
 {
 public:
 	enum { MaxArgs = 64, MaxArgLength = 128, };
-	
-	Arguments() : m_NumArgs(0) 
+
+	Arguments() : m_NumArgs(0)
 	{
-		for(int i = 0; i < MaxArgs; ++i)
+		for (int i = 0; i < MaxArgs; ++i)
 			m_Args[i][0] = 0;
 	}
 
-	char	m_Args[MaxArgs][MaxArgLength];
-	int		m_NumArgs;
+	char m_Args[MaxArgs][MaxArgLength];
+	int  m_NumArgs;
 };
 
 //////////////////////////////////////////////////////////////////////////
 
-struct obVec3 { float x,y,z; };
+struct obVec3 { float x, y, z; };
 
 typedef enum
 {
@@ -1223,54 +1349,54 @@ typedef vector_t vector3_t[3];
 
 typedef struct
 {
-	obVec3			m_Start, m_End;	
-	int				m_Color;
+	obVec3 m_Start, m_End;
+	int m_Color;
 } IPC_DebugLineMessage;
 
 typedef struct
 {
-	obVec3			m_Pos;
-	float			m_Radius;
-	int				m_Color;
+	obVec3 m_Pos;
+	float m_Radius;
+	int m_Color;
 } IPC_DebugRadiusMessage;
 
 typedef struct
 {
-	obVec3			m_Mins, m_Maxs;	
-	int				m_Color;
-	int				m_Sides;
+	obVec3 m_Mins, m_Maxs;
+	int m_Color;
+	int m_Sides;
 } IPC_DebugAABBMessage;
 
 typedef struct
 {
 	enum { MaxPolyVerts=32 };
-	obVec3			m_Verts[MaxPolyVerts];	
-	int				m_NumVerts;
-	int				m_Color;
+	obVec3 m_Verts[MaxPolyVerts];
+	int m_NumVerts;
+	int m_Color;
 } IPC_DebugPolygonMessage;
 
-typedef struct  
+typedef struct
 {
 	enum { BufferSize=256 };
-	obVec3			m_Pos;
-	char			m_Buffer[BufferSize];
-	int				m_Color;
+	obVec3 m_Pos;
+	char m_Buffer[BufferSize];
+	int m_Color;
 } IPC_DebugTextMessage;
 
 typedef struct
 {
 	union
 	{
-		IPC_DebugLineMessage	m_Line;
-		IPC_DebugRadiusMessage	m_Radius;
-		IPC_DebugAABBMessage	m_AABB;
+		IPC_DebugLineMessage m_Line;
+		IPC_DebugRadiusMessage m_Radius;
+		IPC_DebugAABBMessage m_AABB;
 		IPC_DebugPolygonMessage m_Polygon;
-		IPC_DebugTextMessage	m_Text;
+		IPC_DebugTextMessage m_Text;
 	} data;
 
-	int				m_Duration;
-	DebugMsgType	m_Debugtype;
-	
+	int m_Duration;
+	DebugMsgType m_Debugtype;
+
 } IPC_DebugDrawMsg;
 //////////////////////////////////////////////////////////////////////////
 
