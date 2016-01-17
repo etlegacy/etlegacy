@@ -110,7 +110,10 @@ static void CG_ParseScore(team_t team)
 
 #ifdef FEATURE_RATING
 		// skill rating
-		cg.scores[i].rating = cg.rating[i];
+		if (cgs.skillRating)
+		{
+			cg.scores[i].rating = cg.rating[i];
+		}
 #endif
 
 		cg.numScores++;
@@ -2004,10 +2007,6 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 	unsigned int nRounds      = atoi(CG_Argv(iArg++));
 	unsigned int dwWeaponMask = atoi(CG_Argv(iArg++));
 	unsigned int dwSkillPointMask;
-#ifdef FEATURE_RATING
-	float        rating      = 0.f;
-	float        deltaRating = 0.f;
-#endif
 	int          xp           = 0; // XP can be negative
 	int          totHits      = 0;
 	int          totShots     = 0;
@@ -2147,11 +2146,17 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 	txt_dump(va("^2Rank: ^7%s (%d XP)\n", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp));
 
 #ifdef FEATURE_RATING
-	// skill rating
-	rating      = atof(CG_Argv(iArg++));
-	deltaRating = atof(CG_Argv(iArg++));
+	if (cgs.skillRating)
+	{
+		float rating;
+		float deltaRating;
 
-	txt_dump(va("^2Skill Rating: ^7%5.2f   (^5%+5.2f^7)\n", (rating < 0.f) ? 0.f : rating, deltaRating));
+		// skill rating
+		rating      = atof(CG_Argv(iArg++));
+		deltaRating = atof(CG_Argv(iArg++));
+
+		txt_dump(va("^2Skill Rating: ^7%5.2f   (^5%+5.2f^7)\n", (rating < 0.f) ? 0.f : rating, deltaRating));
+	}
 #endif
 
 	if (!fFull)
@@ -2433,7 +2438,10 @@ static void CG_ServerCommand(void)
 #ifdef FEATURE_RATING
 	else if (!strcmp(cmd, "sr"))
 	{
-		CG_ParseSkillRating();
+		if (cgs.skillRating)
+		{
+			CG_ParseSkillRating();
+		}
 		return;
 	}
 #endif

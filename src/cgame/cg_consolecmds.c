@@ -187,6 +187,7 @@ void CG_objectivesUp_f(void)
 void CG_ScoresDown_f(void)
 {
 #ifdef FEATURE_RATING
+	// FIXME: 	if (cgs.skillRating)
 	if (!cg.showScores && cg.scoresDownTime + 250 > cg.time && cg.scoreToggleTime < (cg.time - 500))
 	{
 		int sb        = cg_scoreboard.integer + 1;
