@@ -6,8 +6,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __FUNCTIONS_BOT_H__
-#define __FUNCTIONS_BOT_H__
+#ifndef INCLUDE_FUNCTIONS_BOT_H
+#define INCLUDE_FUNCTIONS_BOT_H
 
 #include "Omni-Bot.h"
 #include "Omni-Bot_Types.h"

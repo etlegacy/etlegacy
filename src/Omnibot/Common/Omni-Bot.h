@@ -10,8 +10,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __OMNIBOT_H__
-#define __OMNIBOT_H__
+#ifndef INCLUDE_OMNIBOT_H
+#define INCLUDE_OMNIBOT_H
 
 #include "Functions_Bot.h"
 #include "Omni-Bot_Types.h"

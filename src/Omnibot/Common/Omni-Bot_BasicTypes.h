@@ -6,8 +6,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __OMNIBOT_BASICTYPES_WIN32_H__
-#define __OMNIBOT_BASICTYPES_WIN32_H__
+#ifndef INCLUDE_OMNIBOT_BASICTYPES_WIN32_H
+#define INCLUDE_OMNIBOT_BASICTYPES_WIN32_H
 
 // Basic Variable Types.
 

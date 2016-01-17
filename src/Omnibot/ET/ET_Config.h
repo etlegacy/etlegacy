@@ -8,10 +8,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __ET_CONFIG_H__
-#define __ET_CONFIG_H__
+#ifndef INCLUDE_ET_CONFIG_H
+#define INCLUDE_ET_CONFIG_H
 
-#include "Omni-Bot_Events.h"
+#include "../Common/Omni-Bot_Events.h"
 
 typedef enum eET_Version
 {

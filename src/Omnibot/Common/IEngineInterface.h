@@ -6,8 +6,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __ENGINE_INTERFACE_H__
-#define __ENGINE_INTERFACE_H__
+#ifndef INCLUDE_ENGINE_INTERFACE_H
+#define INCLUDE_ENGINE_INTERFACE_H
 
 #include "Omni-Bot_Types.h"
 #include "Omni-Bot_BitFlags.h"
