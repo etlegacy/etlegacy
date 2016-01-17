@@ -212,7 +212,11 @@ static qboolean IN_IsConsoleKey(keyNum_t key, int character)
 	static int          numConsoleKeys = 0;
 	int                 i;
 
-	if (key == K_GRAVE)
+	if (key == K_GRAVE
+#ifdef __APPLE__
+		|| key == 60 // Same as console key
+#endif
+		)
 	{
 		return qtrue;
 	}

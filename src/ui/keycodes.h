@@ -202,11 +202,7 @@ typedef enum
 	MAX_KEYS
 } keyNum_t;
 
-#ifdef __APPLE__
-#define CONSOLE_KEY 60
-#else
 #define CONSOLE_KEY K_CONSOLE
-#endif
 
 /*
  * @def K_LAST_KEY
