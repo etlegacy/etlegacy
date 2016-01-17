@@ -2667,9 +2667,7 @@ void CG_parseMapVoteTally(void);
 // cg_servercmds.c
 void CG_ExecuteNewServerCommands(int latestSequence);
 void CG_ParseServerinfo(void);
-#ifdef FEATURE_RATING
 void CG_ParseLegacyinfo(void);
-#endif
 void CG_ParseWolfinfo(void);
 void CG_ParseSpawns(void);
 void CG_ParseServerVersionInfo(const char *pszVersionInfo);
