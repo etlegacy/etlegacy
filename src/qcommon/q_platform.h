@@ -121,8 +121,6 @@
 
 #define DLL_EXT ".dll"
 
-#define DISABLE_DINGY
-
 #elif defined(_WIN32) || defined(__WIN32__)
 
 #undef QDECL
@@ -149,8 +147,6 @@
 #define Q3_LITTLE_ENDIAN
 
 #define DLL_EXT ".dll"
-
-#define DISABLE_DINGY
 
 #endif
 

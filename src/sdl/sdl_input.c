@@ -41,10 +41,6 @@
 #include "../client/client.h"
 #include "../sys/sys_local.h"
 
-#ifdef DISABLE_DINGY
-void IN_EnableDingFilter();
-#endif
-
 static cvar_t *in_keyboardDebug = NULL;
 
 static cvar_t *in_mouse = NULL;
@@ -591,10 +587,7 @@ static void IN_GobbleMotionEvents(void)
 
 	// Gobble any mouse motion events
 	SDL_PumpEvents();
-	while (SDL_PeepEvents(dummy, 1, SDL_GETEVENT,
-	                      SDL_MOUSEMOTION, SDL_MOUSEMOTION) > 0)
-	{
-	}
+	while (SDL_PeepEvents(dummy, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEMOTION) > 0);
 }
 
 static void IN_GrabMouse(qboolean grab, qboolean relative)
@@ -1266,10 +1259,6 @@ static void IN_ProcessEvents(void)
 				{
 					SDL_RestoreWindow(mainScreen);
 				}
-
-#ifdef DISABLE_DINGY
-				IN_EnableDingFilter();
-#endif
 			}
 			break;
 			}
@@ -1322,55 +1311,6 @@ void IN_Frame(void)
 
 	IN_ProcessEvents();
 }
-
-#ifdef _WIN32
-static WNDPROC LegacyWndProc = NULL;
-
-/**
- * @brief Skips the show menu command for the frame, and thatway disables the "no menu found" error sound.
- */
-LRESULT CALLBACK WNDDingIgnore(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam)
-{
-	if (msg == WM_SYSCOMMAND && (wparam & 0xfff0) == SC_KEYMENU)
-	{
-		return 0;
-	}
-	return CallWindowProc(LegacyWndProc, wnd, msg, wparam, lparam);
-}
-
-/**
- * @brief Disables the filter if active
- */
-void IN_DisableDingFilter()
-{
-	Com_DPrintf("Disabling dingy filter\n");
-	if (LegacyWndProc)
-	{
-		SDL_SysWMinfo wmInfo;
-		SDL_GetVersion(&wmInfo.version);
-		SDL_GetWindowWMInfo(mainScreen, &wmInfo);
-		SetWindowLongPtr(wmInfo.info.win.window, GWLP_WNDPROC, (LONG_PTR)LegacyWndProc);
-		LegacyWndProc = NULL;
-	}
-}
-
-/**
- * @brief Enables the filter if not already active
- */
-void IN_EnableDingFilter()
-{
-	IN_DisableDingFilter();
-	Com_DPrintf("Enabling dingy filter\n");
-	if (!LegacyWndProc)
-	{
-		SDL_SysWMinfo wmInfo;
-		SDL_GetVersion(&wmInfo.version);
-		SDL_GetWindowWMInfo(mainScreen, &wmInfo);
-		LegacyWndProc = (WNDPROC)GetWindowLongPtr(wmInfo.info.win.window, GWLP_WNDPROC);
-		SetWindowLongPtr(wmInfo.info.win.window, GWLP_WNDPROC, (LONG_PTR)&WNDDingIgnore);
-	}
-}
-#endif
 
 static void IN_InitKeyLockStates(void)
 {
@@ -1433,9 +1373,6 @@ void IN_Init(void)
 	//        (only some clients ... activated again for system which are not affected and to get some more feedback)
 	IN_InitJoystick();
 
-#ifdef DISABLE_DINGY
-	IN_EnableDingFilter();
-#endif
 	Com_Printf("------------------------------------\n");
 }
 
@@ -1443,10 +1380,6 @@ void IN_Shutdown(void)
 {
 	SDL_StopTextInput();
 	Com_Printf("SDL input devices shut down.\n");
-
-#ifdef DISABLE_DINGY
-	IN_DisableDingFilter();
-#endif
 
 	IN_DeactivateMouse();
 	mouseAvailable = qfalse;
