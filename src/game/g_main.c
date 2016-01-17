@@ -1873,30 +1873,28 @@ void G_UpdateCvars(void)
 				}
 #endif
 
-				// MAPVOTE
-				// FIXME: mapvote & xp
-				if (g_gametype.integer == GT_WOLF_MAPVOTE)
 				{
+					// CS_LEGACYINFO
 					char cs[MAX_INFO_STRING];
 
 					cs[0] = '\0';
 
-					Info_SetValueForKey(cs, "X", va("%i", (level.mapsSinceLastXPReset >= g_resetXPMapCount.integer) ? 0 : level.mapsSinceLastXPReset));
-					Info_SetValueForKey(cs, "Y", (va("%i", g_resetXPMapCount.integer)));
-					trap_SetConfigstring(CS_LEGACYINFO, cs);
-				}
+					// MAPVOTE
+					// FIXME: mapvote & xp
+					if (g_gametype.integer == GT_WOLF_MAPVOTE)
+					{
+						Info_SetValueForKey(cs, "X", va("%i", (level.mapsSinceLastXPReset >= g_resetXPMapCount.integer) ? 0 : level.mapsSinceLastXPReset));
+						Info_SetValueForKey(cs, "Y", (va("%i", g_resetXPMapCount.integer)));
+					}
 
 #ifdef FEATURE_RATING
-				if (g_skillRating.integer)
-				{
-					char cs[MAX_INFO_STRING];
-
-					cs[0] = '\0';
-
-					Info_SetValueForKey(cs, "R", (va("%i", g_skillRating.integer)));
+					if (g_skillRating.integer)
+					{
+						Info_SetValueForKey(cs, "R", (va("%i", g_skillRating.integer)));
+					}
+#endif
 					trap_SetConfigstring(CS_LEGACYINFO, cs);
 				}
-#endif
 
 				// Update vote info for clients, if necessary
 				if (cv->vmCvar == &vote_allow_kick          || cv->vmCvar == &vote_allow_map            ||
