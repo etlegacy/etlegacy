@@ -2226,7 +2226,7 @@ static void registerConstants(lua_vm_t *vm)
  */
 qboolean G_LuaStartVM(lua_vm_t *vm)
 {
-	int        res = 0;
+	int        res;
 	char       basepath[MAX_QPATH];
 	char       homepath[MAX_QPATH];
 	char       gamepath[MAX_QPATH];
@@ -2296,16 +2296,26 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 	G_Printf("%s API: Loading %s\n", LUA_VERSION, vm->file_name);
 
 	res = luaL_loadbuffer(vm->L, vm->code, vm->code_size, vm->file_name);
-	if (res == LUA_ERRSYNTAX)
+
+	switch (res)
 	{
+	case LUA_OK:
+		break;
+	case LUA_ERRSYNTAX:
 		G_Printf("%s API: syntax error during pre-compilation: %s\n", LUA_VERSION, lua_tostring(vm->L, -1));
 		lua_pop(vm->L, 1);
 		vm->err++;
 		return qfalse;
-	}
-	else if (res == LUA_ERRMEM)
-	{
+	case LUA_ERRMEM:
 		G_Printf("%s API: memory allocation error #1 ( %s )\n", LUA_VERSION, vm->file_name);
+		vm->err++;
+		return qfalse;
+	case LUA_ERRGCMM:
+		G_Printf("%s API: error while running a __gc metamethod caused by garbage collector ( %s )\n", LUA_VERSION, vm->file_name);
+		vm->err++;
+		return qfalse;
+	default:
+		G_Printf("%s API: unknown error %i ( %s )\n", LUA_VERSION, res ,vm->file_name);
 		vm->err++;
 		return qfalse;
 	}
@@ -2313,6 +2323,7 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 	// Execute the code
 	if (!G_LuaCall(vm, "G_LuaStartVM", 0, 0))
 	{
+		G_Printf("%s API: Lua VM start failed ( %s ) \n", LUA_VERSION, vm->file_name);
 		return qfalse;
 	}
 
