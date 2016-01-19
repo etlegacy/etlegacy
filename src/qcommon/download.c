@@ -293,8 +293,7 @@ void Com_WWWDownload(void)
 	{
 		return;
 	}
-
-	if (ret == DL_DONE)
+	else if (ret == DL_DONE)
 	{
 		// taken from CL_ParseDownload
 		// we work with OS paths
