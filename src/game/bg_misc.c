@@ -4199,33 +4199,35 @@ int BG_simpleHintsCollapse(int hint, int val)
 	case HINT_DISARM:
 		if (val > 0)
 		{
-			return(0);
+			return 0;
 		}
 	case HINT_BUILD:
 		if (val > 0)
 		{
-			return(1);
+			return 1;
 		}
 	case HINT_BREAKABLE:
 		if (val == 0)
 		{
-			return(1);
+			return 1;
 		}
 	case HINT_DOOR_ROTATING:
 	case HINT_BUTTON:
 	case HINT_MG42:
 		if (val == 0)
 		{
-			return(2);
+			return 2;
 		}
 	case HINT_BREAKABLE_DYNAMITE:
 		if (val == 0)
 		{
-			return(3);
+			return 3;
 		}
+	default:
+		break;
 	}
 
-	return(0);
+	return 0;
 }
 
 // Multiview: Expand the hints.  Because we map a couple hints
@@ -4243,9 +4245,11 @@ int BG_simpleHintsExpand(int hint, int val)
 		return((val >= 0) ? HINT_BUILD : HINT_MG42);
 	case 3:
 		return((val >= 0) ? HINT_BUILD : HINT_BREAKABLE_DYNAMITE);
+	default:
+		break;
 	}
 
-	return(0);
+	return 0;
 }
 #endif
 
