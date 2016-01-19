@@ -446,7 +446,6 @@ void S_Base_BeginRegistration(void)
 	{
 		SND_setup();
 
-		numSfx = 0;
 		Com_Memset(knownSfx, 0, sizeof(knownSfx));
 		Com_Memset(sfxHash, 0, sizeof(sfx_t *) * LOOP_HASH);
 
