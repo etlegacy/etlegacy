@@ -93,10 +93,11 @@ typedef struct
 cvar_t *cl_maxRewindBackups;
 
 demoInfo_t      di;
-demoPlayInfo_t  dpi;
 rewindBackups_t *rewindBackups   = NULL;
 int             maxRewindBackups = 0;
 #endif
+
+demoPlayInfo_t  dpi = { 0,0 };
 
 /*
 ====================

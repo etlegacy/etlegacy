@@ -2110,10 +2110,10 @@ void CL_Video_f(void)
 		return;
 	}
 
-	cl_avidemotype->integer = 2;
-	if (cl_avidemo->integer == 0)
+	Cvar_Set("cl_avidemotype", 2);
+	if (cl_avidemo->integer <= 0)
 	{
-		cl_avidemo->integer = 30;
+		Cvar_Set("cl_avidemo", 30);
 	}
 
 	if (Cmd_Argc() > 1)
@@ -2139,17 +2139,45 @@ CL_StopVideo_f
 */
 void CL_StopVideo_f(void)
 {
+	Cvar_Set("cl_avidemo", "0");
+
+	// We need to call something like S_Base_StopAllSounds();
+	// here to stop the stuttering. Something it crashes the game.
+	Cmd_ExecuteString("s_stop");
+	S_StopAllSounds();
+
 	if (CL_VideoRecording())
 	{
-		//TODO: fix this, for some reason if we dont manually set avidemo to 0 it wont get set.
-		cl_avidemo->integer = 0;
-		Cvar_Set("cl_avidemo", "0");
-
-		// We need to call something like S_Base_StopAllSounds();
-		// here to stop the stuttering. Something it crashes the game.
-		Cmd_ExecuteString("s_stop");
-		S_StopAllSounds();
 		CL_CloseAVI();
+	}
+}
+
+void CL_CaptureFrameVideo(void)
+{
+	// save the current screen
+	if (cls.state == CA_ACTIVE || cl_forceavidemo->integer)
+	{
+		switch (cl_avidemotype->integer)
+		{
+		case 1:
+			Cbuf_ExecuteText(EXEC_NOW, "screenshotJPEG silent\n");
+			break;
+		case 2:
+			if (CL_VideoRecording())
+			{
+				CL_TakeVideoFrame();
+			}
+			else
+			{
+				CL_StartVideoRecording(NULL);
+				CL_TakeVideoFrame();
+				//Com_Printf("Error while recording avi, the file is not open.\n");
+			}
+			break;
+		default:
+			Cbuf_ExecuteText(EXEC_NOW, "screenshot silent\n");
+			break;
+		}
 	}
 }
 
@@ -2174,41 +2202,17 @@ void CL_Frame(int msec)
 	}
 
 	// if recording an avi, lock to a fixed fps
-	if (cl_avidemo->integer && msec)
+	if (clc.demoplaying && cl_avidemo->integer && msec && cls.state == CA_ACTIVE)
 	{
 		float fps           = MIN(cl_avidemo->integer * com_timescale->value, 1000.0f);
-		float frameDuration = MAX(1000.0f / fps, 1.0f) + clc.aviVideoFrameRemainder;
+		float frameDuration = MAX(1000.0f / fps, 1.0f);// + clc.aviVideoFrameRemainder;
 
-		// save the current screen
-		if (cls.state == CA_ACTIVE || cl_forceavidemo->integer)
-		{
-			switch (cl_avidemotype->integer)
-			{
-			case 1:
-				Cbuf_ExecuteText(EXEC_NOW, "screenshotJPEG silent\n");
-				break;
-			case 2:
-				if (CL_VideoRecording())
-				{
-					CL_TakeVideoFrame();
-				}
-				else
-				{
-					CL_StartVideoRecording(NULL);
-					CL_TakeVideoFrame();
-					//Com_Printf("Error while recording avi, the file is not open.\n");
-				}
-				break;
-			default:
-				Cbuf_ExecuteText(EXEC_NOW, "screenshot silent\n");
-				break;
-			}
-		}
+		CL_CaptureFrameVideo();
 
 		msec                       = (int)frameDuration;
-		clc.aviVideoFrameRemainder = frameDuration + msec;
+		//clc.aviVideoFrameRemainder = frameDuration + msec;
 	}
-	else if ((cl_avidemo->integer == 0 || cls.state != CA_ACTIVE) && CL_VideoRecording())
+	else if ((clc.demoplaying && !cl_avidemo->integer && CL_VideoRecording()) || (cl_avidemo->integer && cls.state != CA_ACTIVE))
 	{
 		CL_StopVideo_f();
 	}
