@@ -3,7 +3,7 @@
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
  * ET: Legacy
- * Copyright (C) 2012 Jan Simek <mail@etlegacy.com>
+ * Copyright (C) 2012-2016 ET:Legacy team <mail@etlegacy.com>
  *
  * This file is part of ET: Legacy - http://www.etlegacy.com
  *
@@ -2990,7 +2990,7 @@ void Com_Init(char *commandLine)
 			Cbuf_AddText("cinematic etintro.ogv\n");
 			Cvar_Set("com_introPlayed", "1");
 		}
-	}	
+	}
 
 #ifdef FEATURE_DBMS
 	if (DB_Init() != 0)
