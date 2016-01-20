@@ -2032,7 +2032,7 @@ void Bot_Util_CheckForGoalEntity(GameEntity _ent)
 	{
 		gentity_t *pEnt = EntityFromHandle(_ent);
 
-		if (pEnt->inuse)
+		if (pEnt && pEnt->inuse)
 		{
 			switch (pEnt->s.eType)
 			{
