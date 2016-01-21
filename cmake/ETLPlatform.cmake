@@ -37,7 +37,7 @@ if(ARM)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -pipe -mfloat-abi=hard -mfpu=neon -march=armv7-a -O2")
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -pipe -mfloat-abi=hard -mfpu=neon -march=armv7-a -O2")
 	else()
-		message(STATUS "Unknown ARM processor detectd !!!")
+		message(STATUS "Unknown ARM processor detected !!!")
 	endif()
 endif(ARM)
 
