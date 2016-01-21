@@ -328,7 +328,7 @@ void CON_Init(void)
 	signal(SIGCONT, CON_SigCont);
 
 	// Make stdin reads non-blocking
-	fcntl(STDIN_FILENO, F_SETFL, fcntl(STDIN_FILENO, F_GETFL, 0) | O_NONBLOCK);
+	(void) fcntl(STDIN_FILENO, F_SETFL, fcntl(STDIN_FILENO, F_GETFL, 0) | O_NONBLOCK);
 
 	if (!stdinIsATTY)
 	{
