@@ -896,7 +896,7 @@ int Bot_WeaponGameToBot(int weapon)
 	case WP_KNIFE_KABAR:
 		return ET_WP_KNIFE; //cs: was 94
 	case WP_BAZOOKA:
-		return 96;
+		return ET_WP_PANZERFAUST; //cs: was 96
 #endif
 	default:
 		return ET_WP_NONE;
@@ -1085,7 +1085,8 @@ static int _choosePriWeap(gentity_t *bot, int playerClass, int team)
 			{
 				int wpns[] =
 				{
-					96,     // BAZOOKA
+					//96, // BAZOOKA
+					ET_WP_PANZERFAUST,
 					//88, // BROWNING
 					ET_WP_MOBILE_MG42,
 					ET_WP_FLAMETHROWER,
@@ -2561,6 +2562,12 @@ public:
 			{
 				cmd.weapon = WP_KNIFE_KABAR;
 			}
+#ifdef LEGACY
+			else if (cmd.weapon == WP_PANZERFAUST)
+			{
+				cmd.weapon = WP_BAZOOKA;
+			}
+#endif
 		}
 		else if (bot->client->sess.sessionTeam == TEAM_AXIS)
 		{
@@ -4280,6 +4287,11 @@ public:
 				case WP_MOBILE_MG42_SET:
 					_weaponId = WP_MOBILE_BROWNING_SET;
 					break;
+#ifdef LEGACY
+				case WP_PANZERFAUST:
+					_weaponId = WP_BAZOOKA;
+					break;
+#endif
 				default:
 					break;
 				}
