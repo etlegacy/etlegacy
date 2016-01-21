@@ -56,7 +56,6 @@ endmacro()
 option(BUILD_SERVER		"Build the dedicated server executable"				ON)
 option(BUILD_CLIENT		"Build the client executable"					ON)
 option(BUILD_MOD		"Build the mod libraries"					ON)
-option(RPI			"Build RPI version"						OFF)
 
 option(BUILD_MOD_PK3		"Pack the mod libraries into etl_bin.pk3"			ON)
 option(BUILD_PAK3_PK3		"Pack updated game scripts into pak3.pk3"			ON)
@@ -109,6 +108,8 @@ option(FORCE_DEBUG		"Force enable legacy debug macros"					OFF)
 
 cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot in mod code (Windows, linux and OS X only)"	ON "WIN32 OR APPLE OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
 cmake_dependent_option(INSTALL_OMNIBOT	"Install Omni-bot"						ON "FEATURE_OMNIBOT" OFF)
+
+option(ARM			"Build ARM version)"						OFF)
 
 set(ET_FS_BASEPATH		""	CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
 cmake_dependent_option(ET_KEY	"Copy existing etkey file from ET_FS_BASEPATH)"				ON "ET_FS_BASEPATH" OFF)

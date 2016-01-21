@@ -215,8 +215,8 @@ parse_commandline() {
 			einfo "Will enable skill rating"
 			FEATURE_RATING=1
 		elif [ "$var" = "-RPI" ]; then
-			einfo "Will enable Raspberry PI build..."
-			RPI=1
+			einfo "Will enable Raspberry PI build ..."
+			ARM=1
 			CROSS_COMPILE32=0
 			FEATURE_RENDERER_GLES=1
 			FEATURE_RENDERER2=0
