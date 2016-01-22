@@ -2070,7 +2070,7 @@ void CL_StartVideoRecording(const char *aviname)
 			c     = last / 10;
 			last -= c * 10;
 			d     = last;
-			Com_Printf("videos/%s%d%d%d%d.avi", clc.demoName, a, b, c, d);
+			Com_Printf("videos/%s%d%d%d%d.avi\n", clc.demoName, a, b, c, d);
 			Com_sprintf(filename, MAX_OSPATH, "videos/%s%d%d%d%d.avi", clc.demoName, a, b, c, d);
 
 			if (!FS_FileExists(filename))
