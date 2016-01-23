@@ -659,6 +659,7 @@ static bind_t g_bindings[] =
 	{ "openlimbomenu",    'l',             -1,  'l',             -1,  -1, -1 },
 #ifdef FEATURE_MULTIVIEW
 	{ "mvactivate",       'm',             -1,  'm',             -1,  -1, -1 },
+	{ "spechelp",         K_BACKSPACE,     -1,  K_BACKSPACE,     -1,  -1, -1 },
 #endif
 	{ "mapzoomout",       ',',             -1,  '[',             -1,  -1, -1 },
 	{ "mapzoomin",        '.',             -1,  ']',             -1,  -1, -1 },
