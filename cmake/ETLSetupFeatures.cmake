@@ -261,7 +261,17 @@ if(BUILD_MOD)
 			list(APPEND MOD_LIBRARIES ${LUA_BUNDLED_LIBRARIES})
 			include_directories(SYSTEM ${LUA_BUNDLED_INCLUDE_DIR})
 			add_definitions(-DBUNDLED_LUA)
+		
+			if(FEATURE_LUASQL)
+				if(FEATURE_DBMS)
+					include(${CMAKE_CURRENT_SOURCE_DIR}/libs/luasql/CMakeLists.txt)
+				else()
+					message(STATUS "FEATURE_LUASQL needs FEATURE_DBMS set!")
+				endif(FEATURE_DBMS)
+			endif(FEATURE_LUASQL)
+			
 		endif()
+		
 		add_definitions(-DFEATURE_LUA)
 	endif(FEATURE_LUA)
 
