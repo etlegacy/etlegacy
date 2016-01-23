@@ -225,9 +225,22 @@ void SP_misc_gamemodel(gentity_t *ent)
 
 		// added start offset, fps, and direction
 		ent->s.legsAnim = start_frame + 1;
-		ent->s.weapon   = 1000.f / fps;
+		
+		// #1 avoid div/0 and negative values for fps
+		if (fps > 0)
+		{
+			ent->s.weapon   = 1000.f / fps;
+		}
+		
 		// continue loop animation as long as s.teamNum == 0
 		ent->s.teamNum = 0;
+	}
+
+	// #2 fix all invalid fps
+	if (ent->s.weapon <= 0)
+	{
+		G_Printf("SP_misc_gamemodel: fps rate of entity %s %s must have a value > 0 - <fps> is set to 20\n", ent->classname, ent->targetname);
+		ent->s.weapon = 50; // 20 fps
 	}
 
 	if (ent->model)
@@ -286,6 +299,7 @@ void SP_misc_gamemodel(gentity_t *ent)
 		ent->s.apos.trType = 1; // misc_gamemodels (since they have no movement) will use type = 0 for static models, type = 1 for auto-aligning models
 
 	}
+
 	trap_LinkEntity(ent);
 }
 

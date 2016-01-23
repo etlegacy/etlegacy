@@ -477,13 +477,18 @@ qboolean G_ScriptAction_StartAnimation(gentity_t *ent, char *params)
 
 	fps = atoi(token);
 
+	// this is fps to animate with
 	if (fps > 0)
 	{
 		ent->s.weapon = 1000.f / fps;
 	}
 	else
 	{
-		G_Error("G_ScriptAction_StartAnimation: startanimation fps rate of entity %s %s must have a value > 0\n", ent->classname, ent->targetname);
+		ent->s.weapon = 50; // default misc gamemodel 1000/20
+		if (g_scriptDebug.integer)
+		{
+			G_Printf("G_ScriptAction_StartAnimation: startanimation fps rate of entity %s %s must have a value > 0 - <fps> is set to 20\n", ent->classname, ent->targetname);
+		}
 	}
 
 	while (token[0])
@@ -1014,7 +1019,9 @@ qboolean G_ScriptAction_SpawnRubble(gentity_t *ent, char *params)
 	{
 		if (!Q_stricmp(level.debrisChunks[i].targetname, params))
 		{
-			gentity_t *temp = G_TempEntity(level.debrisChunks[i].origin, EV_DEBRIS);
+			gentity_t *temp;
+
+			temp = G_TempEntity(level.debrisChunks[i].origin, EV_DEBRIS);
 			VectorCopy(level.debrisChunks[i].velocity, temp->s.origin2);
 			temp->s.modelindex = level.debrisChunks[i].model;
 		}
