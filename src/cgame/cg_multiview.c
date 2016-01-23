@@ -241,8 +241,8 @@ void CG_mvCreate(int pID)
 	w->id     = WID_NONE;
 	w->x      = (cg.mv_cnt == 0) ? 0 : 30 + (12 * pID);
 	w->y      = (cg.mv_cnt == 0) ? 0 : 300 + (5 * pID);
-	w->w      = (cg.mv_cnt == 0) ? 640 : 128;
-	w->h      = (cg.mv_cnt == 0) ? 480 : 96;
+	w->w      = (cg.mv_cnt == 0) ? Ccg_WideX(SCREEN_WIDTH) : 128;
+	w->h      = (cg.mv_cnt == 0) ? SCREEN_HEIGHT : 96;
 	w->mvInfo = (pID & MV_PID) | MV_SELECTED;
 	w->state  = (cg.mv_cnt == 0) ? WSTATE_COMPLETE : WSTATE_START;
 
