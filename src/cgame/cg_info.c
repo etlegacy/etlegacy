@@ -572,6 +572,9 @@ void CG_DemoClick(int key, qboolean down)
 }
 
 #ifdef FEATURE_MULTIVIEW
+
+extern vec4_t HUD_Border;
+
 qboolean CG_ViewingDraw()
 {
 	if (cg.mvTotalClients < 1)
@@ -581,33 +584,41 @@ qboolean CG_ViewingDraw()
 	}
 	else
 	{
-		vec4_t hdrColor = COLOR_TEXT;
-		int    w, wTag;
-		int    tSpacing  = 15;    // Should derive from CG_Text_Height_Ext
-		int    pID       = cg.mvCurrentMainview->mvInfo & MV_PID;
-		char   *viewInfo = "Viewing:";
+		float fontScale = cg_fontScaleSP.value;
 
-		wTag = CG_Text_Width_Ext(viewInfo, VD_SCALE_X_HDR, 0, FONT_HEADER);
-		w    = wTag + 3 + CG_Text_Width_Ext(cgs.clientinfo[pID].name, VD_SCALE_X_NAME, 0, FONT_TEXT);
+		int  y          = 146;
+		int  pID        = cg.mvCurrentMainview->mvInfo & MV_PID;
+		char *viewInfo  = CG_TranslateString("Viewing");
+		char *w         = cgs.clientinfo[pID].name;
+		int  charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
+		int  charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
+		int  startClass = CG_Text_Width_Ext(viewInfo, fontScale, 0, &cgs.media.limboFont2) + charWidth;
 
-		CG_DrawRect(VD_X - 2, VD_Y, w + 7, tSpacing + 4, 1, color_border);
-		CG_FillRect(VD_X - 2, VD_Y, w + 7, tSpacing + 4, color_bg);
 
-		CG_Text_Paint_Ext(VD_X, VD_Y + tSpacing,             // x, y
-		                  VD_SCALE_X_HDR, VD_SCALE_Y_HDR,   // scale_x, scale_y
-						  hdrColor,
-		                  viewInfo,
-		                  0.0f, 0,
-		                  ITEM_TEXTSTYLE_SHADOWED,
-		                  FONT_HEADER);
+		// teamflags
+		if (cgs.clientinfo[pID].team == TEAM_ALLIES)
+		{
+			CG_DrawPic(9, y - charHeight * 2.0f - 12, 18, 12, cgs.media.alliedFlag);
+		}
+		else
+		{
+			CG_DrawPic(9, y - charHeight * 2.0f - 12, 18, 12, cgs.media.axisFlag);
+		}
 
-		CG_Text_Paint_Ext(VD_X + wTag + 5, VD_Y + tSpacing,  // x, y
-		                  VD_SCALE_X_NAME, VD_SCALE_Y_NAME,  // scale_x, scale_y
-						  hdrColor,
-		                  cgs.clientinfo[pID].name,
-		                  0.0f, 0,
-		                  ITEM_TEXTSTYLE_SHADOWED,
-		                  FONT_TEXT);
+		CG_DrawRect_FixedBorder(8, y - charHeight * 2.0f - 13, 20, 14, 1, HUD_Border);
+
+		CG_DrawPic(8 + startClass, y - 10, 14, 14, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[pID].cls)]);
+
+		if (cgs.clientinfo[pID].rank > 0)
+		{
+			int startRank;
+
+			startRank = CG_Text_Width_Ext(w, fontScale, 0, &cgs.media.limboFont2) + 14 + 2 * charWidth;
+			CG_DrawPic(8 + startClass + startRank, y - 10, 14, 14, rankicons[cgs.clientinfo[pID].rank][cgs.clientinfo[pID].team == TEAM_AXIS ? 1 : 0][0].shader);
+		}
+
+		CG_Text_Paint_Ext(8, y, fontScale, fontScale, colorWhite, viewInfo, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(8 + startClass + 14 + charWidth, y, fontScale, fontScale, colorWhite, w, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 		return qtrue;
 	}
@@ -1634,7 +1645,7 @@ typedef struct
 	char *info;
 } helpType_t;
 
-#define SH_X    2       // spacing from left
+#define SH_X    8       // spacing from left
 #define SH_Y    155     // spacing from top
 
 void CG_SpecHelpDraw(void)
@@ -1669,10 +1680,11 @@ void CG_SpecHelpDraw(void)
 		vec4_t borderColorTitle = COLOR_BORDER_TITLE;   // titlebar
 
 		// Main header
-		int          hStyle  = 0;
-		float        hScale  = 0.19f;
-		float        hScaleY = 0.19f;
-		fontHelper_t *hFont  = FONT_HEADER;
+		int          hStyle   = 0;
+		float        hScale   = 0.19f;
+		float        hScaleY  = 0.19f;
+		fontHelper_t *hFont   = FONT_HEADER;
+		vec4_t       hdrColor = COLOR_TEXT;  // text
 
 		// Text settings
 		int          tStyle   = ITEM_TEXTSTYLE_SHADOWED;
@@ -1738,7 +1750,7 @@ void CG_SpecHelpDraw(void)
 			bgColorTitle[3]     *= scale;
 			borderColor[3]      *= scale;
 			borderColorTitle[3] *= scale;
-			//hdrColor[3]         *= scale;
+			hdrColor[3]         *= scale;
 			tColor[3]           *= scale;
 
 			x -= w * (1.0f - scale);
@@ -1750,18 +1762,20 @@ void CG_SpecHelpDraw(void)
 			return;
 		}
 
-		CG_DrawRect(x, y, w, h, 1, borderColor);
 		CG_FillRect(x, y, w, h, bgColor);
+		CG_DrawRect(x, y, w, h, 1, borderColor);
 
 		y += 1;
 
 		// Header
-		CG_DrawRect(x + 1, y, w - 2, tSpacing + 4, 1, borderColorTitle);
 		CG_FillRect(x + 1, y, w - 2, tSpacing + 4, bgColorTitle);
+		CG_DrawRect(x + 1, y, w - 2, tSpacing + 4, 1, borderColorTitle);
 
 		x += 4;
 		y += tSpacing;
-		CG_Text_Paint_Ext(x, y, hScale, hScaleY, tColor, "SPECTATOR CONTROLS", 0.0f, 0, hStyle, hFont);
+
+		CG_Text_Paint_Ext(x, y, hScale, hScaleY, hdrColor, CG_TranslateString("SPECTATOR CONTROLS"), 0.0f, 0, hStyle, hFont);
+
 		y += 3;
 
 		// Control info
