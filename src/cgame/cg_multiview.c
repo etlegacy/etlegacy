@@ -44,6 +44,8 @@ void CG_CalcVrect(void);
 qhandle_t axis_flag   = 0;
 qhandle_t allies_flag = 0;
 
+extern vec4_t HUD_Border;
+
 // Explicit server command to add a view to the client's snapshot
 void CG_mvNew_f(void)
 {
@@ -853,10 +855,10 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 
 char *strClassHighlights[] =
 {
-	S_COLOR_RED,    S_COLOR_MDRED,      // Soldier
-	S_COLOR_WHITE,  S_COLOR_MDGREY,     // Medic
-	S_COLOR_BLUE,   S_COLOR_MDBLUE,     // Engineer
-	S_COLOR_GREEN,  S_COLOR_MDGREEN,    // Lt.
+	S_COLOR_RED, S_COLOR_MDRED,         // Soldier
+	S_COLOR_WHITE, S_COLOR_MDGREY,      // Medic
+	S_COLOR_BLUE, S_COLOR_MDBLUE,       // Engineer
+	S_COLOR_GREEN, S_COLOR_MDGREEN,     // Lt.
 	S_COLOR_YELLOW, S_COLOR_MDYELLOW    // CovertOps
 };
 
@@ -921,7 +923,9 @@ qboolean CG_mvMergedClientLocate(int pID)
 // Display available client info
 void CG_mvOverlayDisplay(void)
 {
+	float       fontScale = cg_fontScaleSP.value;
 	int         j, i, x, y, pID;
+	int         charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 	cg_mvinfo_t *o;
 
 	if (cg.mvTotalClients < 1)
@@ -929,7 +933,7 @@ void CG_mvOverlayDisplay(void)
 		return;
 	}
 
-	y = MVINFO_TOP - (2 * (MVINFO_TEXTSIZE + 1));
+	y = MVINFO_TOP + (charHeight * 2.0f);
 
 	for (j = TEAM_AXIS; j <= TEAM_ALLIES; j++)
 	{
@@ -948,13 +952,12 @@ void CG_mvOverlayDisplay(void)
 			{
 				qhandle_t flag_used = 0;
 
-				//change these, were "ui/assets/ger_flag.tga" : "ui/assets/usa_flag.tga" but they are missing
 				switch (j)
 				{
 				case TEAM_AXIS:
 					if (!axis_flag)
 					{
-						axis_flag = trap_R_RegisterShaderNoMip("gfx/limbo/filter_axis.tga");
+						axis_flag = cgs.media.axisFlag;
 					}
 					flag_used = axis_flag;
 					break;
@@ -962,14 +965,16 @@ void CG_mvOverlayDisplay(void)
 				default:
 					if (!allies_flag)
 					{
-						allies_flag = trap_R_RegisterShaderNoMip("gfx/limbo/filter_allied.tga");
+						allies_flag = cgs.media.alliedFlag;
 					}
 					flag_used = allies_flag;
 					break;
 				}
 
-				y += 2 * (MVINFO_TEXTSIZE + 1);
-				CG_DrawPic(MVINFO_RIGHT - (2 * MVINFO_TEXTSIZE), y, 2 * MVINFO_TEXTSIZE, MVINFO_TEXTSIZE, flag_used);
+				y += charHeight * 2.0f;
+
+				CG_DrawPic(MVINFO_RIGHT - 19, y - charHeight * 2.0f - 12, 18, 12, flag_used);
+				CG_DrawRect_FixedBorder(MVINFO_RIGHT - 20, y - charHeight * 2.0f - 13, 20, 14, 1, HUD_Border);
 			}
 
 			// Update team list info for mouse detection
@@ -982,23 +987,26 @@ void CG_mvOverlayDisplay(void)
 				CG_mvOverlayClientUpdate(o->pID, i);
 			}
 
-			x  = MVINFO_RIGHT - o->width;
-			y += MVINFO_TEXTSIZE + 1;
+			x = MVINFO_RIGHT - o->width;
 
 			if (o->fActive)
 			{
-				CG_FillRect(x - 1, y, o->width + 2, MVINFO_TEXTSIZE + 2, colorMdYellow);
+				CG_FillRect(x - 1, y - 9, o->width + 2, charHeight * 2.0f, colorMdYellow);
 
 				// Draw name info only if we're hovering over the text element
 				if (!(cg.mvCurrentActive->mvInfo & MV_SELECTED) || cg.mvCurrentActive == cg.mvCurrentMainview)
 				{
 					int w = CG_Text_Width_Ext(cgs.clientinfo[pID].name, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
-					CG_FillRect(x - 1 - w - 6, y + 1, w + 2, MVINFO_TEXTSIZE - 1 + 2, colorMdGrey);
-					CG_Text_Paint_Ext(x - w - 6, y + 1, cg_fontScaleCP.value, cg_fontScaleCP.value, colorYellow, cgs.clientinfo[pID].name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+					CG_FillRect(x - 1 - w - 6, y - 9, w + 2, charHeight * 2.0f, colorMdGrey);
+					CG_Text_Paint_Ext(x - w - 6, y, fontScale, fontScale, colorYellow, cgs.clientinfo[pID].name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 				}
 			}
-			CG_Text_Paint_Ext(x, y, cg_fontScaleCP.value, cg_fontScaleCP.value, colorWhite, o->info, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorWhite, o->info, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+
+			y += charHeight * 2.0f;
 		}
+
+		y += charHeight * 2.0f;
 	}
 }
 

@@ -2190,11 +2190,12 @@ static void CG_DrawSpectatorMessage(void)
 	str2 = Binding_FromName("weapalt");
 	str  = va(CG_TranslateString("Press %s to follow previous player"), str2);
 	CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-#ifdef FEATURE_MULTIVIEW
-	y += charHeight * 2.0f;
 
-	if (cgs.mvAllowed)
+#ifdef FEATURE_MULTIVIEW
+	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && cgs.mvAllowed)
 	{
+		y += charHeight * 2.0f;
+
 		str2 = Binding_FromName("mvactivate");
 		str  = va(CG_TranslateString("Press %s to %s multiview mode"), str2, ((cg.mvTotalClients > 0) ? CG_TranslateString("disable") : CG_TranslateString("activate")));
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);

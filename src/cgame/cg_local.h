@@ -103,9 +103,8 @@
 
 #ifdef FEATURE_MULTIVIEW
 // MV overlay
-#define MVINFO_TEXTSIZE     10
-#define MVINFO_RIGHT        SCREEN_WIDTH - 3
-#define MVINFO_TOP          100
+#define MVINFO_RIGHT        Ccg_WideX(SCREEN_WIDTH) - 68
+#define MVINFO_TOP          8
 #endif
 
 #define MAX_WINDOW_COUNT        10
@@ -2682,9 +2681,9 @@ void CG_PlayBufferedVoiceChats(void);
 const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
 
-void CG_parseWeaponStats_cmd(void (txt_dump) (char *));
-void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (char *));
-void CG_parseTopShotsStats_cmd(qboolean doTop, void (txt_dump) (char *));
+void CG_parseWeaponStats_cmd(void(txt_dump) (char *));
+void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (char *));
+void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (char *));
 void CG_scores_cmd(void);
 
 void CG_UpdateSvCvars(void);

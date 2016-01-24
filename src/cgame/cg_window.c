@@ -521,7 +521,7 @@ void CG_windowNormalizeOnText(cg_window_t *w)
 	// Set up bottom alignment
 	if (w->x < 0)
 	{
-		w->x += SCREEN_WIDTH - w->w;
+		w->x += Ccg_WideX(SCREEN_WIDTH) - w->w;
 	}
 	if (w->y < 0)
 	{
@@ -659,8 +659,10 @@ void CG_removeStrings(cg_window_t *w)
 void CG_cursorUpdate(void)
 {
 	int                i, x;
-	float              nx, ny;
 	int                nSelectedWindow = -1;
+	float              nx, ny;
+	float              fontScale  = cg_fontScaleSP.value;
+	int                charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 	cg_window_t        *w;
 	cg_windowHandler_t *wh    = &cg.winHandler;
 	qboolean           fFound = qfalse, fUpdateOverlay = qfalse;
@@ -715,9 +717,9 @@ void CG_cursorUpdate(void)
 						if (fResize)
 						{
 							w->w += nx - w->m_x;
-							if (w->x + w->w > SCREEN_WIDTH - 2)
+							if (w->x + w->w > Ccg_WideX(SCREEN_WIDTH) - 2)
 							{
-								w->w = SCREEN_WIDTH - 2 - w->x;
+								w->w = Ccg_WideX(SCREEN_WIDTH) - 2 - w->x;
 							}
 							if (w->w < 64)
 							{
@@ -737,9 +739,9 @@ void CG_cursorUpdate(void)
 						else
 						{
 							w->x += nx - w->m_x;
-							if (w->x + w->w > SCREEN_WIDTH - 2)
+							if (w->x + w->w > Ccg_WideX(SCREEN_WIDTH) - 2)
 							{
-								w->x = SCREEN_WIDTH - 2 - w->w;
+								w->x = Ccg_WideX(SCREEN_WIDTH) - 2 - w->w;
 							}
 							if (w->x < 2)
 							{
@@ -782,8 +784,8 @@ void CG_cursorUpdate(void)
 		}
 	}
 
-	nx = (float)(MVINFO_RIGHT - (MVINFO_TEXTSIZE * 3));
-	ny = (float)(MVINFO_TOP + (MVINFO_TEXTSIZE + 1));
+	nx = (float)(MVINFO_RIGHT - charHeight * 6.0f);
+	ny = (float)(MVINFO_TOP + charHeight * 2.0f);
 
 	// Highlight corresponding active window's overlay element
 	if (fFound)
@@ -811,19 +813,19 @@ void CG_cursorUpdate(void)
 				continue;
 			}
 			if (cgs.cursorX >= nx && cgs.cursorY >= ny && cgs.cursorX < MVINFO_RIGHT &&
-			    cgs.cursorY < ny + (cg.mvTotalTeam[i] * (MVINFO_TEXTSIZE + 1)))
+			    cgs.cursorY < ny + (cg.mvTotalTeam[i] * charHeight * 2.0f))
 			{
-				int pos = (int)(cgs.cursorY - ny) / (MVINFO_TEXTSIZE + 1);
+				int pos = (int)(cgs.cursorY - ny) / (charHeight * 2.0f);
 
 				if (pos < cg.mvTotalTeam[i])
 				{
 					int x = MVINFO_RIGHT - cg.mvOverlay[(cg.mvTeamList[i][pos])].width;
-					int y = MVINFO_TOP + vOffset + ((pos + 1) * (MVINFO_TEXTSIZE + 1));
+					int y = MVINFO_TOP + vOffset + ((pos + 1) * charHeight * 2.0f);
 
 					// See if we're really over something
 					if (cgs.cursorX >= x && cgs.cursorY >= y &&
 					    cgs.cursorX <= MVINFO_RIGHT &&
-					    cgs.cursorY <= y + MVINFO_TEXTSIZE)
+					    cgs.cursorY <= y + charHeight * 2.0f)
 					{
 						// Perform any other window handling here for MV
 						// views based on element selection
@@ -856,7 +858,7 @@ void CG_cursorUpdate(void)
 					}
 				}
 			}
-			vOffset += (cg.mvTotalTeam[i] + 2) * (MVINFO_TEXTSIZE + 1);
+			vOffset += (cg.mvTotalTeam[i] + 2) * charHeight * 2.0f;
 			ny      += vOffset;
 		}
 	}
