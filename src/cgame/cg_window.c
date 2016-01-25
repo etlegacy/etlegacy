@@ -663,6 +663,7 @@ void CG_cursorUpdate(void)
 	float              nx, ny;
 	float              fontScale  = cg_fontScaleSP.value;
 	int                charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
+	int                charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 	cg_window_t        *w;
 	cg_windowHandler_t *wh    = &cg.winHandler;
 	qboolean           fFound = qfalse, fUpdateOverlay = qfalse;
@@ -784,7 +785,7 @@ void CG_cursorUpdate(void)
 		}
 	}
 
-	nx = (float)(MVINFO_RIGHT - charHeight * 6.0f);
+	nx = (float)(MVINFO_RIGHT - charWidth * 12.0f);
 	ny = (float)(MVINFO_TOP + charHeight * 2.0f);
 
 	// Highlight corresponding active window's overlay element
@@ -803,28 +804,31 @@ void CG_cursorUpdate(void)
 	// General boundary check
 	else
 	{
-		// Ugh, have to loop through BOTH team lists
-		int vOffset = 0;
+		// display on two columns
+		int hOffset = 32;
+		int xOffset = MVINFO_RIGHT - hOffset;
 
+		// Ugh, have to loop through BOTH team lists
 		for (i = TEAM_AXIS; i <= TEAM_ALLIES; i++)
 		{
 			if (cg.mvTotalTeam[i] == 0)
 			{
 				continue;
 			}
-			if (cgs.cursorX >= nx && cgs.cursorY >= ny && cgs.cursorX < MVINFO_RIGHT &&
+
+			if (cgs.cursorX >= nx && cgs.cursorY >= ny && cgs.cursorX < xOffset &&
 			    cgs.cursorY < ny + (cg.mvTotalTeam[i] * charHeight * 2.0f))
 			{
 				int pos = (int)(cgs.cursorY - ny) / (charHeight * 2.0f);
 
 				if (pos < cg.mvTotalTeam[i])
 				{
-					int x = MVINFO_RIGHT - cg.mvOverlay[(cg.mvTeamList[i][pos])].width;
-					int y = MVINFO_TOP + vOffset + ((pos + 1) * charHeight * 2.0f);
+					int x = xOffset - cg.mvOverlay[(cg.mvTeamList[i][pos])].width;
+					int y = MVINFO_TOP + ((pos + 1) * charHeight * 2.0f);
 
 					// See if we're really over something
 					if (cgs.cursorX >= x && cgs.cursorY >= y &&
-					    cgs.cursorX <= MVINFO_RIGHT &&
+					    cgs.cursorX <= xOffset &&
 					    cgs.cursorY <= y + charHeight * 2.0f)
 					{
 						// Perform any other window handling here for MV
@@ -858,8 +862,8 @@ void CG_cursorUpdate(void)
 					}
 				}
 			}
-			vOffset += (cg.mvTotalTeam[i] + 2) * charHeight * 2.0f;
-			ny      += vOffset;
+			xOffset += hOffset;
+			nx      += hOffset;
 		}
 	}
 

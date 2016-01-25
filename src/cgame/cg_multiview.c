@@ -924,7 +924,7 @@ qboolean CG_mvMergedClientLocate(int pID)
 void CG_mvOverlayDisplay(void)
 {
 	float       fontScale = cg_fontScaleSP.value;
-	int         j, i, x, y, pID;
+	int         j, i, x, y, pID, xOffset;
 	int         charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 	cg_mvinfo_t *o;
 
@@ -933,7 +933,9 @@ void CG_mvOverlayDisplay(void)
 		return;
 	}
 
-	y = MVINFO_TOP + (charHeight * 2.0f);
+	xOffset = 32;
+	x       = MVINFO_RIGHT - xOffset;
+	y       = MVINFO_TOP + (charHeight * 2.0f);
 
 	for (j = TEAM_AXIS; j <= TEAM_ALLIES; j++)
 	{
@@ -973,8 +975,8 @@ void CG_mvOverlayDisplay(void)
 
 				y += charHeight * 2.0f;
 
-				CG_DrawPic(MVINFO_RIGHT - 19, y - charHeight * 2.0f - 12, 18, 12, flag_used);
-				CG_DrawRect_FixedBorder(MVINFO_RIGHT - 20, y - charHeight * 2.0f - 13, 20, 14, 1, HUD_Border);
+				CG_DrawPic(x - 18, y - charHeight * 2.0f - 12, 18, 12, flag_used);
+				CG_DrawRect_FixedBorder(x - 19, y - charHeight * 2.0f - 13, 20, 14, 1, HUD_Border);
 			}
 
 			// Update team list info for mouse detection
@@ -987,26 +989,24 @@ void CG_mvOverlayDisplay(void)
 				CG_mvOverlayClientUpdate(o->pID, i);
 			}
 
-			x = MVINFO_RIGHT - o->width;
-
 			if (o->fActive)
 			{
-				CG_FillRect(x - 1, y - 9, o->width + 2, charHeight * 2.0f, colorMdYellow);
+				CG_FillRect(x - o->width - 1, y - 9, o->width + 2, charHeight * 2.0f, colorMdYellow);
 
 				// Draw name info only if we're hovering over the text element
 				if (!(cg.mvCurrentActive->mvInfo & MV_SELECTED) || cg.mvCurrentActive == cg.mvCurrentMainview)
 				{
 					int w = CG_Text_Width_Ext(cgs.clientinfo[pID].name, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
-					CG_FillRect(x - 1 - w - 6, y - 9, w + 2, charHeight * 2.0f, colorMdGrey);
-					CG_Text_Paint_Ext(x - w - 6, y, fontScale, fontScale, colorYellow, cgs.clientinfo[pID].name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+					CG_FillRect(x - o->width - 1 - w - 6, y - 9, w + 2, charHeight * 2.0f, colorMdGrey);
+					CG_Text_Paint_Ext(x - o->width - w - 6, y, fontScale, fontScale, colorYellow, cgs.clientinfo[pID].name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 				}
 			}
-			CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorWhite, o->info, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(x - o->width, y, fontScale, fontScale, colorWhite, o->info, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 			y += charHeight * 2.0f;
 		}
-
-		y += charHeight * 2.0f;
+		x += xOffset;
+		y  = MVINFO_TOP + (charHeight * 2.0f);
 	}
 }
 

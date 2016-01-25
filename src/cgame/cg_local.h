@@ -103,7 +103,7 @@
 
 #ifdef FEATURE_MULTIVIEW
 // MV overlay
-#define MVINFO_RIGHT        Ccg_WideX(SCREEN_WIDTH) - 68
+#define MVINFO_RIGHT        Ccg_WideX(SCREEN_WIDTH) - 6
 #define MVINFO_TOP          8
 #endif
 
