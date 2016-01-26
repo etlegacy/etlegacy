@@ -425,7 +425,7 @@ run_clean() {
 			# cd ${_SRC}/libs/theora; make clean
 		fi
 		cd ${_SRC}/libs
-		#git clean -d -f
+		git clean -d -f
 	fi
 }
 
