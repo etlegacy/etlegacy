@@ -260,9 +260,8 @@ if(BUILD_MOD)
 		else() # BUNDLED_LUA
 			list(APPEND MOD_LIBRARIES ${LUA_BUNDLED_LIBRARIES})
 			include_directories(SYSTEM ${LUA_BUNDLED_INCLUDE_DIR})
-			add_definitions(-DBUNDLED_LUA)			
+			add_definitions(-DBUNDLED_LUA)
 		endif()
-		
 		add_definitions(-DFEATURE_LUA)
 	endif(FEATURE_LUA)
 

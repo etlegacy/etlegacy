@@ -60,7 +60,7 @@ option(BUILD_MOD		"Build the mod libraries"					ON)
 option(BUILD_MOD_PK3		"Pack the mod libraries into etl_bin.pk3"			ON)
 option(BUILD_PAK3_PK3		"Pack updated game scripts into pak3.pk3"			ON)
 
-option(BUNDLED_LIBS				"Use all available bundled libraries instead of system libs."	ON)
+option(BUNDLED_LIBS		"Use all available bundled libraries instead of system libs."	ON)
 
 LEG_BUNDLE(SDL SDL)
 LEG_BUNDLE(ZLIB Zlib)
@@ -104,13 +104,14 @@ option(FEATURE_SERVERMDX	"Enable MDX support on server side"					ON)
 option(FEATURE_LIVEAUTH		"Enable ET:Live authentification support"				ON)
 option(FEATURE_DBMS		"Enable dbms support (sqlite3)"						ON)
 option(FEATURE_RATING		"Enable skill rating"							OFF)
-option(FEATURE_LUASQL		"Builds and installs LuaSQL (requires FEATURE_LUA and FEATURE_DBMS to be set)"					OFF)
 option(FORCE_DEBUG		"Force enable legacy debug macros"					OFF)
 
 cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot in mod code (Windows, linux and OS X only)"	ON "WIN32 OR APPLE OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
 cmake_dependent_option(INSTALL_OMNIBOT	"Install Omni-bot"						ON "FEATURE_OMNIBOT" OFF)
 
-option(ARM			"Build ARM version)"						OFF)
+cmake_dependent_option(INSTALL_LUASQL	"Builds and installs LuaSQL (sqlite3 backend)"			ON "FEATURE_LUA AND FEATURE_DBMS" OFF)
+
+option(ARM			"Build ARM version"							OFF)
 
 set(ET_FS_BASEPATH		""	CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
 cmake_dependent_option(ET_KEY	"Copy existing etkey file from ET_FS_BASEPATH)"				ON "ET_FS_BASEPATH" OFF)
@@ -173,6 +174,10 @@ endif(BUILD_PAK3_PK3)
 if(INSTALL_OMNIBOT AND BUILD_MOD)
 	include(cmake/ETLInstallOmniBot.cmake)
 endif(INSTALL_OMNIBOT AND BUILD_MOD)
+
+if(INSTALL_LUASQL)
+	include(cmake/ETLInstallLuaSQL.cmake)
+endif(INSTALL_LUASQL)
 
 # Generate install and uninstall packs
 include(cmake/ETLInstall.cmake)

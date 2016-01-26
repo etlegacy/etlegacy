@@ -237,6 +237,7 @@ parse_commandline() {
 			#BUNDLED_SQLITE3=0
 			FEATURE_OMNIBOT=1
 			INSTALL_OMNIBOT=0
+			INSTALL_LUASQL=1
 		else
 			# drop the script commands from the result
 			for index in ${!easy_keys[*]}
@@ -307,6 +308,7 @@ generate_configuration() {
 	FEATURE_AUTOUPDATE=${FEATURE_AUTOUPDATE:-0}
 	FEATURE_OMNIBOT=${FEATURE_OMNIBOT:-1}
 	INSTALL_OMNIBOT=${INSTALL_OMNIBOT:-1}
+	INSTALL_LUASQL=${INSTALL_LUASQL:-1}
 
 	einfo "Configuring ET Legacy..."
 	_CFGSTRING="
@@ -351,6 +353,7 @@ generate_configuration() {
 		-DRENDERER_DYNAMIC=${RENDERER_DYNAMIC}
 		-DFEATURE_OMNIBOT=${FEATURE_OMNIBOT}
 		-DINSTALL_OMNIBOT=${INSTALL_OMNIBOT}
+		-DINSTALL_LUASQL=${INSTALL_LUASQL}
 	"
 
 	if [ "${DEV}" != 1 ]; then
