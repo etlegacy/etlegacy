@@ -100,7 +100,9 @@ void G_printFull(char *str, gentity_t *ent)
 // Plays specified sound globally.
 void G_globalSound(char *sound)
 {
-	gentity_t *te = G_TempEntityNotLinked(EV_GLOBAL_SOUND);
+	gentity_t *te;
+
+	te = G_TempEntityNotLinked(EV_GLOBAL_SOUND);
 
 	te->s.eventParm = G_SoundIndex(sound);
 	te->r.svFlags  |= SVF_BROADCAST;
@@ -108,7 +110,9 @@ void G_globalSound(char *sound)
 
 void G_globalSoundEnum(int sound)
 {
-	gentity_t *te = G_TempEntityNotLinked(EV_GLOBAL_SOUND);
+	gentity_t *te;
+
+	te = G_TempEntityNotLinked(EV_GLOBAL_SOUND);
 
 	te->s.eventParm = sound;
 	te->r.svFlags  |= SVF_BROADCAST;
@@ -122,7 +126,6 @@ void G_delayPrint(gentity_t *dpent)
 	switch (dpent->spawnflags)
 	{
 	case DP_PAUSEINFO:
-	{
 		if (level.match_pause > PAUSE_UNPAUSING)
 		{
 			int cSeconds = match_timeoutlength.integer * 1000 - (level.time - dpent->timestamp);
@@ -142,10 +145,7 @@ void G_delayPrint(gentity_t *dpent)
 			}
 		}
 		break;
-	}
-
 	case DP_UNPAUSING:
-	{
 		if (level.match_pause == PAUSE_UNPAUSING)
 		{
 			int cSeconds = 11 * 1000 - (level.time - dpent->timestamp);
@@ -167,33 +167,29 @@ void G_delayPrint(gentity_t *dpent)
 			}
 		}
 		break;
-	}
-
 #ifdef FEATURE_MULTIVIEW
 	case DP_MVSPAWN:
-	{
-		int       i;
-		gentity_t *ent;
-
-		for (i = 0; i < level.numConnectedClients; i++)
 		{
-			ent = g_entities + level.sortedClients[i];
+			int       i;
+			gentity_t *ent;
 
-			if (ent->client->pers.mvReferenceList == 0)
+			for (i = 0; i < level.numConnectedClients; i++)
 			{
-				continue;
+				ent = g_entities + level.sortedClients[i];
+
+				if (ent->client->pers.mvReferenceList == 0)
+				{
+					continue;
+				}
+				if (ent->client->sess.sessionTeam != TEAM_SPECTATOR)
+				{
+					continue;
+				}
+				G_smvRegenerateClients(ent, ent->client->pers.mvReferenceList);
 			}
-			if (ent->client->sess.sessionTeam != TEAM_SPECTATOR)
-			{
-				continue;
-			}
-			G_smvRegenerateClients(ent, ent->client->pers.mvReferenceList);
 		}
-
 		break;
-	}
 #endif
-
 	default:
 		break;
 	}
@@ -221,7 +217,9 @@ static char *pszDPInfo[] =
 
 void G_spawnPrintf(int print_type, int print_time, gentity_t *owner)
 {
-	gentity_t *ent = G_Spawn();
+	gentity_t *ent;
+
+	ent = G_Spawn();
 
 	ent->classname  = pszDPInfo[print_type];
 	ent->clipmask   = 0;
@@ -847,7 +845,6 @@ void G_matchInfoDump(unsigned int dwDumpType)
 					{
 						CP(va("ws %s\n", G_createStats(ent)));
 					}
-
 				}
 				else if (cl->sess.spectatorState != SPECTATOR_FREE)
 				{

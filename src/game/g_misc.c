@@ -239,8 +239,9 @@ void SP_misc_gamemodel(gentity_t *ent)
 	// #2 fix all invalid fps
 	if (ent->s.weapon <= 0)
 	{
-		G_Printf("SP_misc_gamemodel: fps rate of entity %s %s must have a value > 0 - <fps> is set to 20\n", ent->classname, ent->targetname);
-		ent->s.weapon = 50; // 20 fps
+		// FIXME: make this print available to mappers
+		//G_Printf("SP_misc_gamemodel: fps rate of entity %s %s must have a value > 0 - <fps> is set to 20\n", ent->classname, ent->targetname);
+		ent->s.weapon = 50; // 1000.f / 20 fps
 	}
 
 	if (ent->model)

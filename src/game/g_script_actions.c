@@ -1170,7 +1170,7 @@ qboolean G_ScriptAction_DisableMessage(gentity_t *ent, char *params)
 	// find the entity with the given "targetname"
 	while ((target = G_FindByTargetname(target, token)))
 	{
-		target->s.aiState = 1;
+		target->s.aiState = AISTATE_QUERY;
 	}
 
 	return qtrue;

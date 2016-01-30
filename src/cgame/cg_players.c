@@ -453,7 +453,9 @@ may include ANIM_TOGGLEBIT
 static void CG_SetLerpFrameAnimation(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int newAnimation)
 {
 	animation_t    *anim;
-	bg_character_t *character = CG_CharacterForClientinfo(ci, cent);
+	bg_character_t *character;
+
+	character = CG_CharacterForClientinfo(ci, cent);
 
 	if (!character)
 	{
@@ -606,7 +608,9 @@ void CG_SetLerpFrameAnimationRate(centity_t *cent, clientInfo_t *ci, lerpFrame_t
 	animation_t    *anim, *oldanim;
 	int            oldAnimNum; // oldAnimTime
 	qboolean       firstAnim  = qfalse;
-	bg_character_t *character = CG_CharacterForClientinfo(ci, cent);
+	bg_character_t *character;
+
+	character = CG_CharacterForClientinfo(ci, cent);
 
 	if (!character)
 	{
@@ -1208,7 +1212,9 @@ static void CG_PlayerAnimation(centity_t *cent, refEntity_t *body)
 	if (!(cent->currentState.eFlags & EF_DEAD) && cent->pe.legs.yawing)
 	{
 		//CG_Printf("turn: %i\n", cg.time );
-		int tempIndex = BG_GetAnimScriptAnimation(clientNum, character->animModelInfo, cent->currentState.aiState, (cent->pe.legs.yawing == SWING_RIGHT ? ANIM_MT_TURNRIGHT : ANIM_MT_TURNLEFT));
+		int tempIndex;
+
+		tempIndex = BG_GetAnimScriptAnimation(clientNum, character->animModelInfo, cent->currentState.aiState, (cent->pe.legs.yawing == SWING_RIGHT ? ANIM_MT_TURNRIGHT : ANIM_MT_TURNLEFT));
 
 		if (tempIndex > -1)
 		{

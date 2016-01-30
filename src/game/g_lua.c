@@ -2293,7 +2293,7 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 	lua_setglobal(vm->L, "et");
 
 	// Load the code
-	G_Printf("%s API: Loading %s\n", LUA_VERSION, vm->file_name);
+	G_Printf("%s API: %sLoading %s\n", LUA_VERSION, S_COLOR_BLUE ,vm->file_name);
 
 	res = luaL_loadbuffer(vm->L, vm->code, vm->code_size, vm->file_name);
 
