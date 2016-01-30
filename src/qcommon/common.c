@@ -3687,9 +3687,9 @@ Field_CompleteFilename
 */
 void Field_CompleteFilename(const char *dir, const char *ext, qboolean stripExt, qboolean allowNonPureFilesOnDisk)
 {
+	const char *tmp[] = { ext };
 	matchCount       = 0;
 	shortestMatch[0] = 0;
-	const char *tmp[] = { ext };
 
 	FS_FilenameCompletion(dir, 1, tmp, stripExt, FindMatches, allowNonPureFilesOnDisk);
 
