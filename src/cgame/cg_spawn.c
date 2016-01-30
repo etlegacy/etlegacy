@@ -275,8 +275,14 @@ void SP_misc_gamemodel(void)
 		}
 	}
 
-	gamemodel        = &cgs.miscGameModels[cg.numMiscGameModels++];
-	gamemodel->model = trap_R_RegisterModel(model);
+	gamemodel = &cgs.miscGameModels[cg.numMiscGameModels++];
+
+	// don't register models more than once (f.e. after warmup or map_restart)
+	if (gamemodel->model == 0)
+	{
+		gamemodel->model = trap_R_RegisterModel(model);
+	}
+
 	AnglesToAxis(angles, gamemodel->axes);
 	for (i = 0; i < 3; i++)
 	{
