@@ -45,6 +45,8 @@ qhandle_t axis_flag   = 0;
 qhandle_t allies_flag = 0;
 
 extern vec4_t HUD_Border;
+extern vec4_t HUD_Background;
+extern vec4_t HUD_Text;
 
 // Explicit server command to add a view to the client's snapshot
 void CG_mvNew_f(void)
@@ -991,13 +993,13 @@ void CG_mvOverlayDisplay(void)
 
 			if (o->fActive)
 			{
-				CG_FillRect(x - o->width - 1, y - 9, o->width + 2, charHeight * 2.0f, colorMdYellow);
+				CG_FillRect(x - o->width - 1, y - 9, o->width + 2, charHeight * 2.0f, HUD_Text);
 
 				// Draw name info only if we're hovering over the text element
 				if (!(cg.mvCurrentActive->mvInfo & MV_SELECTED) || cg.mvCurrentActive == cg.mvCurrentMainview)
 				{
 					int w = CG_Text_Width_Ext(cgs.clientinfo[pID].name, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
-					CG_FillRect(x - o->width - 1 - w - 6, y - 9, w + 2, charHeight * 2.0f, colorMdGrey);
+					CG_FillRect(x - o->width - 1 - w - 6, y - 9, w + 2, charHeight * 2.0f, HUD_Background);
 					CG_Text_Paint_Ext(x - o->width - w - 6, y, fontScale, fontScale, colorYellow, cgs.clientinfo[pID].name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 				}
 			}
