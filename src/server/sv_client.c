@@ -786,15 +786,14 @@ void SV_WWWDownload_f(client_t *cl)
 
 	if (!Q_stricmp(subcmd, "done"))
 	{
-		cl->download      = 0;
-		*cl->downloadName = 0;
+		SV_CloseDownload(cl);
+
 		cl->bWWWing       = qfalse;
 		return;
 	}
 	else if (!Q_stricmp(subcmd, "fail"))
 	{
-		cl->download      = 0;
-		*cl->downloadName = 0;
+		SV_CloseDownload(cl);
 		cl->bWWWing       = qfalse;
 		cl->bFallback     = qtrue;
 		// send a reconnect
@@ -805,8 +804,7 @@ void SV_WWWDownload_f(client_t *cl)
 	{
 		Com_Printf("WARNING: client '%s' reports that the redirect download for '%s' had wrong checksum.\n", rc(cl->name), cl->downloadName);
 		Com_Printf("         you should check your download redirect configuration.\n");
-		cl->download      = 0;
-		*cl->downloadName = 0;
+		SV_CloseDownload(cl);
 		cl->bWWWing       = qfalse;
 		cl->bFallback     = qtrue;
 		// send a reconnect
