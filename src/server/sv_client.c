@@ -463,8 +463,6 @@ void SV_DropClient(client_t *drop, const char *reason)
 			}
 		}
 
-		// Kill any download
-		SV_CloseDownload(drop);
 		SV_Netchan_ClearQueue(drop);
 	}
 
@@ -478,11 +476,8 @@ void SV_DropClient(client_t *drop, const char *reason)
 	Com_DPrintf("Going to CS_ZOMBIE for %s\n", drop->name);
 	drop->state = CS_ZOMBIE;        // become free in a few seconds
 
-	if (drop->download)
-	{
-		FS_FCloseFile(drop->download);
-		drop->download = 0;
-	}
+	// Kill any download
+	SV_CloseDownload(drop);
 
 	// call the prog function for removing a client
 	// this will remove the body, among other things
