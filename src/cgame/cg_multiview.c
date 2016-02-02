@@ -725,11 +725,12 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 {
 	int          w, x;
 	rectDef_t    rect;
-	float        fw              = 8.0f, fh = 8.0f;
 	centity_t    *cent           = &cg_entities[pID];
 	clientInfo_t *ci             = &cgs.clientinfo[pID];
 	const char   *p_class        = "?";
 	vec4_t       *noSelectBorder = &colorDkGrey;
+	int          fw              = CG_Text_Width_Ext("A", cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
+	int          fh              = CG_Text_Height_Ext("A", cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
 
 
 	// Overlays for zoomed views
@@ -773,30 +774,38 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 		noSelectBorder = &colorMdYellow;
 	}
 
-	CG_Text_Paint_Ext(b_x + 1, b_h - (fh * 2 + 1 + 2), cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-	CG_Text_Paint_Ext(b_x + 1, b_h - (fh * 2), cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, va("%s^7%d", CG_TranslateString(p_class), ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(b_x + 1, b_y + b_h - fh * 3, cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, ci->name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(b_x + 1, b_y + b_h - fh, cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, va("%s", CG_TranslateString(p_class)), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+
+	if (ci->health > 0)
+	{
+		CG_Text_Paint_Ext(b_x + 7, b_y + b_h - fh, cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, va("^7%d", ci->health), 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	}
+	else
+	{
+		CG_Text_Paint_Ext(b_x + 7, b_y + b_h - fh, cg_fontScaleSP.value, cg_fontScaleSP.value, ((cg.time % 500) > 250)  ? colorWhite : colorRed, "*", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(b_x + 13, b_y + b_h - fh, cg_fontScaleSP.value, cg_fontScaleSP.value, ((cg.time % 500) > 250)  ? colorRed : colorWhite, "0", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	}
 
 	p_class = va("%d^1/^7%d", ci->ammoclip, ci->ammo);
 	w       = CG_Text_Width_Ext(p_class, cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
-	CG_Text_Paint_Ext(b_x + b_w - w - 1, b_y + b_h - (fh + 2), cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, p_class, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+	CG_Text_Paint_Ext(b_x + b_w - w - 1, b_y + b_h - fh, cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, p_class, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 
 	// Weapon icon
 	rect.x                                  = b_x + b_w - (50 + 1);
-	rect.y                                  = b_y + b_h - (25 + fh + 1 + 2);
+	rect.y                                  = b_y + b_h - (25 + fh * 2);
 	rect.w                                  = 50;
 	rect.h                                  = 25;
 	cg.predictedPlayerState.grenadeTimeLeft = 0;
 	cg.predictedPlayerState.weapon          = cent->currentState.weapon;
 	CG_DrawPlayerWeaponIcon(&rect, (ci->weaponState > WSTATE_IDLE), ITEM_ALIGN_RIGHT,
-	                        ((ci->weaponState == WSTATE_SWITCH) ? &colorWhite :
-	                         (ci->weaponState == WSTATE_FIRE) ? &colorRed :
-	                         &colorYellow));
+	                        ((ci->weaponState == WSTATE_SWITCH || ci->weaponState == WSTATE_RELOAD) ? &colorYellow : (ci->weaponState == WSTATE_FIRE) ? &colorRed : &colorWhite));
 
 	// Sprint charge info
 	if (ci->sprintTime >= 0)
 	{
 		p_class = va("^2S^7%d%%", ci->sprintTime);
-		rect.y -= (fh + 1);
+		rect.y -= fh * 2;
 		w       = CG_Text_Width_Ext(p_class, cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
 		CG_Text_Paint_Ext(b_x + b_w - w - 1, rect.y, cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, p_class, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
@@ -805,7 +814,7 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 	if (ci->chargeTime >= 0)
 	{
 		p_class = va("^1C^7%d%%", ci->chargeTime);
-		rect.y -= (fh + 1);
+		rect.y -= fh * 2;
 		w       = CG_Text_Width_Ext(p_class, cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
 		CG_Text_Paint_Ext(b_x + b_w - w - 1, rect.y, cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, p_class, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
@@ -814,9 +823,9 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 	if (ci->hintTime >= 0)
 	{
 		p_class = va("^3W:^7%d%%", ci->hintTime);
-		rect.y -= (fh + 1);
+		rect.y -= fh * 2;
 		w       = CG_Text_Width_Ext(p_class, cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
-		CG_Text_Paint_Ext(b_x + (b_w - (w - w / fw)) / 2, b_y + b_h - (fh + 2), cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, p_class, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(b_x + (b_w - (w - w / fw)) / 2, b_y + b_h - fh * 2, cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, p_class, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
 
 	// Finally, the window border
