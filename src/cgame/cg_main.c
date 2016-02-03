@@ -305,10 +305,10 @@ vmCvar_t cg_popupFadeTime;
 vmCvar_t cg_popupStayTime;
 vmCvar_t cg_graphicObituaries;
 
-vmCvar_t cg_fontScaleTP;
-vmCvar_t cg_fontScaleSP;
-vmCvar_t cg_fontScaleCP;
-vmCvar_t cg_fontScaleCN;
+vmCvar_t cg_fontScaleTP; // top print
+vmCvar_t cg_fontScaleSP; // side print
+vmCvar_t cg_fontScaleCP; // center print
+vmCvar_t cg_fontScaleCN; // crosshair name
 
 // unlagged optimized prediction
 vmCvar_t cg_optimizePrediction;

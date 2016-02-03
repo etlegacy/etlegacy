@@ -898,7 +898,7 @@ void CG_mvOverlayClientUpdate(int pID, int index)
 		       );
 	}
 
-	cg.mvOverlay[index].width = CG_Text_Width_Ext(cg.mvOverlay[index].info, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
+	cg.mvOverlay[index].width = CG_Text_Width_Ext(cg.mvOverlay[index].info, cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
 }
 
 // Update info on all clients received for display/cursor interaction
@@ -1007,7 +1007,7 @@ void CG_mvOverlayDisplay(void)
 				// Draw name info only if we're hovering over the text element
 				if (!(cg.mvCurrentActive->mvInfo & MV_SELECTED) || cg.mvCurrentActive == cg.mvCurrentMainview)
 				{
-					int w = CG_Text_Width_Ext(cgs.clientinfo[pID].name, cg_fontScaleCP.value, 0, &cgs.media.limboFont2);
+					int w = CG_Text_Width_Ext(cgs.clientinfo[pID].name, cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
 					CG_FillRect(x - o->width - 1 - w - 6, y - 9, w + 2, charHeight * 2.0f, HUD_Background);
 					CG_Text_Paint_Ext(x - o->width - w - 6, y, fontScale, fontScale, colorYellow, cgs.clientinfo[pID].name, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 				}
