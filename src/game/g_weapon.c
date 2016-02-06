@@ -934,8 +934,6 @@ static void HandleEntsThatBlockConstructible(gentity_t *constructor, gentity_t *
 
 // !! NOTE !!: if the conditions here of a buildable constructible change, then BotIsConstructible() must reflect those changes
 
-static int lastBuildSoundTime = 0;
-
 // returns qfalse when it couldn't build
 static qboolean TryConstructing(gentity_t *ent)
 {
@@ -1082,11 +1080,11 @@ static qboolean TryConstructing(gentity_t *ent)
 			G_PrintClientSpammyCenterPrint(ent - g_entities, "Constructing...");
 		}
 
-		if ((g_misc.integer & G_MISC_CONSTRUCT_SOUND_FIX) && (!lastBuildSoundTime || level.time > lastBuildSoundTime))
+		if ((g_misc.integer & G_MISC_CONSTRUCT_SOUND_FIX) && (!ent->client->constructSoundTime || level.time > ent->client->constructSoundTime))
 		{
 			// construction sound sent as event (was temp entity)
 			G_AddEvent(ent, EV_GENERAL_SOUND, GAMESOUND_WORLD_BUILD);
-			lastBuildSoundTime = level.time + 4000; // duration of sound
+			ent->client->constructSoundTime = level.time + 4000; // duration of sound
 		}
 
 		// constructible xp sharing

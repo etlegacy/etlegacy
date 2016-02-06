@@ -911,6 +911,8 @@ struct gclient_s
 	qboolean maxlivescalced;
 
 	qboolean freezed; // client is frozen see PM_FREEZE
+
+	int constructSoundTime; // construction sound time
 };
 
 typedef struct
