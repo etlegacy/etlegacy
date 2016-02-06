@@ -93,7 +93,6 @@ cvar_t *cl_autorecord;
 cvar_t *cl_allowDownload;
 cvar_t *cl_wwwDownload;
 cvar_t *cl_conXOffset;
-cvar_t *cl_inGameVideo;
 
 cvar_t *cl_serverStatusResendTime;
 cvar_t *cl_missionStats;
@@ -2812,7 +2811,6 @@ void CL_Init(void)
 	Cvar_Get("cg_wolfparticles", "1", CVAR_ARCHIVE);
 
 	cl_conXOffset  = Cvar_Get("cl_conXOffset", "0", 0);
-	cl_inGameVideo = Cvar_Get("r_inGameVideo", "1", CVAR_ARCHIVE);
 
 	cl_serverStatusResendTime = Cvar_Get("cl_serverStatusResendTime", "750", 0);
 
