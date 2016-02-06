@@ -467,6 +467,9 @@ void SP_misc_portal_camera(gentity_t *ent)
 ======================================================================
 */
 
+/**
+ * @brief SHOOTERS weapons WP_MAPMORTAR, WP_GRENADE_LAUNCHER and WP_PANZERFAUST
+ */
 void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	vec3_t dir;
@@ -505,12 +508,13 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	switch (ent->s.weapon)
 	{
 	case WP_GRENADE_LAUNCHER:
+	//case WP_GRENADE_PINEAPPLE:
 		VectorScale(dir, 700, dir);                   // had to add this as fire_grenade now expects a non-normalized direction vector
 		                                              // FIXME: why we do normalize the vector before this switch?
 		fire_grenade(ent, ent->s.origin, dir, WP_GRENADE_LAUNCHER);
 		break;
 	case WP_PANZERFAUST:
-	case WP_BAZOOKA:
+	//case WP_BAZOOKA:
 		fire_rocket(ent, ent->s.origin, dir, ent->s.weapon);
 		VectorScale(ent->s.pos.trDelta, 2, ent->s.pos.trDelta);
 		SnapVector(ent->s.pos.trDelta);             // save net bandwidth
