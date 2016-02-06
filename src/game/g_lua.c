@@ -706,9 +706,7 @@ static int _et_G_LoseSkillPoints(lua_State *L)
 // client entity fields
 static const gentity_field_t gclient_fields[] =
 {
-
 	_et_gclient_addfield(acc,                            FIELD_FLOAT,       FIELD_FLAG_READONLY),
-
 	_et_gclient_addfield(lasthurt_mod,                   FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.playerStats.selfkills,     FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(lastKillTime,                   FIELD_INT,         FIELD_FLAG_READONLY),
@@ -716,9 +714,6 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(lasthurt_client,                FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(freezed,                        FIELD_INT,         0),
 	_et_gclient_addfield(noclip,                         FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.eFlags,                      FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.pm_flags,                    FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.pm_time,                     FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(deathAnimTime,                  FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.lastBattleSenseBonusTime,  FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.lastHQMineReportTime,      FIELD_INT,         FIELD_FLAG_READONLY),
@@ -726,9 +721,7 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(respawnTime,                    FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(saved_persistant,               FIELD_INT_ARRAY,   FIELD_FLAG_READONLY),
 	_et_gclient_addfield(PCSpecialPickedUpCount,         FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.weaponstate,                 FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(combatState,                    FIELD_INT,         FIELD_FLAG_READONLY),
-
 	_et_gclient_addfield(inactivityTime,                 FIELD_INT,         0),
 	_et_gclient_addfield(inactivityWarning,              FIELD_INT,         0),
 
@@ -769,6 +762,11 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(pers.lastteambleed_dmg,         FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.playerStats.hitRegions,    FIELD_INT_ARRAY,   FIELD_FLAG_READONLY),
 
+	_et_gclient_addfield(ps.pm_flags,                    FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.pm_time,                     FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.eFlags,                      FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.weapon,                      FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.weaponstate,                 FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(ps.stats,                       FIELD_INT_ARRAY,   0),
 	_et_gclient_addfield(ps.persistant,                  FIELD_INT_ARRAY,   0),
 	_et_gclient_addfield(ps.ping,                        FIELD_INT,         FIELD_FLAG_READONLY), // no ping change for lua scripts
@@ -776,7 +774,7 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(ps.origin,                      FIELD_VEC3,        0),
 	_et_gclient_addfield(ps.ammo,                        FIELD_INT_ARRAY,   0),
 	_et_gclient_addfield(ps.ammoclip,                    FIELD_INT_ARRAY,   0),
-	_et_gclient_addfield(ps.classWeaponTime,             FIELD_INT_ARRAY,   0),
+	_et_gclient_addfield(ps.classWeaponTime,             FIELD_INT,         0),
 
 	// same order as in g_local.h
 	_et_gclient_addfield(sess.sessionTeam,               FIELD_INT,         0),
