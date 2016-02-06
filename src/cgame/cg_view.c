@@ -541,7 +541,6 @@ static void CG_OffsetFirstPersonView(void)
 	float    delta;
 	float    speed;
 	float    f;
-	vec3_t   predictedVelocity;
 	int      timeDelta;
 	qboolean useLastValidBob = qfalse;
 
@@ -651,15 +650,6 @@ static void CG_OffsetFirstPersonView(void)
 	}
 	angles[PITCH] += ratio * cg.fall_value;
 #endif
-
-	// add angles based on velocity
-	VectorCopy(cg.predictedPlayerState.velocity, predictedVelocity);
-
-	delta          = DotProduct(predictedVelocity, cg.refdef_current->viewaxis[0]);
-	angles[PITCH] += delta * cg_runpitch.value;
-
-	delta         = DotProduct(predictedVelocity, cg.refdef_current->viewaxis[1]);
-	angles[ROLL] -= delta * cg_runroll.value;
 
 	// add angles based on bob
 
