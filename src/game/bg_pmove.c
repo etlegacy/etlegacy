@@ -2676,8 +2676,8 @@ static void PM_FinishWeaponChange(void)
 	case WP_K43_SCOPE:
 	case WP_GARAND_SCOPE:
 	case WP_FG42SCOPE:
-		pm->ps->aimSpreadScale      = 255;          // initially at lowest accuracy
-		pm->ps->aimSpreadScaleFloat = 255.0f;       // initially at lowest accuracy
+		pm->ps->aimSpreadScale      = AIMSPREAD_MAXSPREAD;          // initially at lowest accuracy
+		pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;       // initially at lowest accuracy
 		break;
 	case WP_SILENCER:
 		pm->pmext->silencedSideArm |= 1;
@@ -3211,8 +3211,8 @@ void PM_AdjustAimSpreadScale(void)
 	// all weapons are very inaccurate in zoomed mode
 	if (pm->ps->eFlags & EF_ZOOMING)
 	{
-		pm->ps->aimSpreadScale      = 255;
-		pm->ps->aimSpreadScaleFloat = 255;
+		pm->ps->aimSpreadScale      = AIMSPREAD_MAXSPREAD;
+		pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;
 		return;
 	}
 
@@ -4776,11 +4776,16 @@ static void PM_Weapon(void)
 
 	// add the recoil amount to the aimSpreadScale
 	pm->ps->aimSpreadScaleFloat += 3.0 * aimSpreadScaleAdd;
-	if (pm->ps->aimSpreadScaleFloat > 255)
-	{
-		pm->ps->aimSpreadScaleFloat = 255;
-	}
 
+	if (pm->ps->aimSpreadScaleFloat > AIMSPREAD_MAXSPREAD)
+	{
+		pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;
+	}
+	//if (pm->ps->aimSpreadScaleFloat < 0)
+	//{
+	//	pm->ps->aimSpreadScaleFloat = 0;
+	//}
+	
 	if (pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3 && pm->ps->stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
 	{
 		pm->ps->aimSpreadScaleFloat *= .5f;
