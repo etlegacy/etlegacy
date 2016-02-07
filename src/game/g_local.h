@@ -2376,7 +2376,6 @@ void G_mapvoteinfo_read(void);
 #define G_MISC_SHOVE_NOZ           BIT(0)
 #define G_MISC_MEDIC_SYRINGE_HEAL  BIT(1)
 #define G_MISC_ARTY_STRIKE_COMBINE BIT(2)
-#define G_MISC_CONSTRUCT_SOUND_FIX BIT(3)
 
 // g_voting flags
 #define VOTEF_USE_TOTAL_VOTERS      1   // use total voters instead of total players to decide if a vote passes

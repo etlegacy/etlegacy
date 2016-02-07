@@ -1045,11 +1045,6 @@ static qboolean TryConstructing(gentity_t *ent)
 				}
 			}
 
-			if (!(g_misc.integer & G_MISC_CONSTRUCT_SOUND_FIX))
-			{
-				G_AddEvent(ent, EV_GENERAL_SOUND, GAMESOUND_WORLD_BUILD);
-			}
-
 			if (ent->client->touchingTOI->chain && ent->client->touchingTOI->count2)
 			{
 				// find the constructible indicator and change team
@@ -1080,7 +1075,7 @@ static qboolean TryConstructing(gentity_t *ent)
 			G_PrintClientSpammyCenterPrint(ent - g_entities, "Constructing...");
 		}
 
-		if ((g_misc.integer & G_MISC_CONSTRUCT_SOUND_FIX) && (!ent->client->constructSoundTime || level.time > ent->client->constructSoundTime))
+		if (!ent->client->constructSoundTime || level.time > ent->client->constructSoundTime)
 		{
 			// construction sound sent as event (was temp entity)
 			G_AddEvent(ent, EV_GENERAL_SOUND, GAMESOUND_WORLD_BUILD);
