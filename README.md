@@ -3,11 +3,11 @@ Enemy Territory: Legacy [![Build Status](https://travis-ci.org/etlegacy/etlegacy
 
 *A second breath of life for Wolfenstein: Enemy Territory*
 
-* Website: [http://www.etlegacy.com](http://www.etlegacy.com)
-* Downloads: [http://www.etlegacy.com/download](http://www.etlegacy.com/download)
-* Wiki/FAQ: [http://dev.etlegacy.com/projects/etlegacy/wiki](http://dev.etlegacy.com/projects/etlegacy/wiki)
-* Forums: [http://dev.etlegacy.com/projects/etlegacy/boards](http://dev.etlegacy.com/projects/etlegacy/boards)
-* Development (bug reports and feature requests): [http://dev.etlegacy.com](http://dev.etlegacy.com)
+* Website: [https://www.etlegacy.com](https://www.etlegacy.com)
+* Downloads: [https://www.etlegacy.com/download](https://www.etlegacy.com/download)
+* Wiki/FAQ: [https://dev.etlegacy.com/projects/etlegacy/wiki](https://dev.etlegacy.com/projects/etlegacy/wiki)
+* Forums: [https://dev.etlegacy.com/projects/etlegacy/boards](https://dev.etlegacy.com/projects/etlegacy/boards)
+* Development (bug reports and feature requests): [https://dev.etlegacy.com](https://dev.etlegacy.com)
 * Repository: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
 * Translation: [https://www.transifex.com/projects/p/etlegacy/](https://www.transifex.com/projects/p/etlegacy/)
 * Contact: [\#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net and [etlegacy/etlegacy](https://gitter.im/etlegacy/etlegacy) on Gitter.im
@@ -26,7 +26,7 @@ The Legacy mod is the default mod shipped with ET: Legacy. It aims to add many u
 improvements, while staying close to the original gameplay, as well as being lightweight and extensible
 through Lua scripts.
 
-For more information consult our [changelog](http://dev.etlegacy.com/projects/etlegacy/wiki/Changelog).
+For more information consult our [changelog](https://dev.etlegacy.com/projects/etlegacy/wiki/Changelog).
 
 ET: Legacy development is a collaborative effort done in an open, transparent and friendly manner.
 Anyone is welcome to join our efforts!
