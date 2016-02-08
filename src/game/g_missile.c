@@ -329,6 +329,17 @@ void G_ExplodeMissile(gentity_t *ent)
 	vec3_t origin;
 	int    etype;
 
+	/*
+	When smoke bomb is fired, the entity's "think" function pointer is set to G_ExplodeMissile.
+	"Think" pointer is updated to weapon_smokeBombExplode on event EV_FIRE_WEAPON but if player
+	dies before event is triggered, "think" pointer remains to be set to G_ExplodeMissile.
+	*/
+	if(ent->s.weapon == WP_SMOKE_BOMB)
+	{
+		weapon_smokeBombExplode(ent);
+		return;
+	}
+
 	if (ent->s.weapon == WP_SMOKE_MARKER && ent->active)
 	{
 		level.numActiveAirstrikes[ent->s.teamNum - 1]--;
