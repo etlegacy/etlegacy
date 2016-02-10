@@ -2274,6 +2274,7 @@ void weapon_checkAirStrikeThink2(gentity_t *ent);
 void weapon_checkAirStrikeThink1(gentity_t *ent);
 void weapon_callSecondPlane(gentity_t *ent);
 qboolean weapon_checkAirStrike(gentity_t *ent);
+void weapon_smokeBombExplode(gentity_t *ent);
 
 void G_MakeReady(gentity_t *ent);
 void G_MakeUnready(gentity_t *ent);

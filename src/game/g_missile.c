@@ -329,17 +329,6 @@ void G_ExplodeMissile(gentity_t *ent)
 	vec3_t origin;
 	int    etype;
 
-	/*
-	When smoke bomb is fired, the entity's "think" function pointer is set to G_ExplodeMissile.
-	"Think" pointer is updated to weapon_smokeBombExplode on event EV_FIRE_WEAPON but if player
-	dies before event is triggered, "think" pointer remains to be set to G_ExplodeMissile.
-	*/
-	if(ent->s.weapon == WP_SMOKE_BOMB)
-	{
-		weapon_smokeBombExplode(ent);
-		return;
-	}
-
 	if (ent->s.weapon == WP_SMOKE_MARKER && ent->active)
 	{
 		level.numActiveAirstrikes[ent->s.teamNum - 1]--;
@@ -1734,8 +1723,9 @@ fire_grenade
 */
 gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWPID)
 {
-	gentity_t *bolt     = G_Spawn();
-	qboolean  noExplode = qfalse;
+	gentity_t *bolt;
+
+	bolt = G_Spawn();
 
 	// no self->client for shooter_grenade's
 	if (self->client && self->client->ps.grenadeTimeLeft)
@@ -1747,33 +1737,31 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->nextthink = level.time + 2500;
 	}
 
+	// FIXME: move down to other switch 
 	switch (grenadeWPID)
 	{
 	case WP_DYNAMITE:
-		noExplode       = qtrue;
 		bolt->nextthink = level.time + 15000;
 		bolt->think     = DynaSink;
 		bolt->timestamp = level.time + 16500;
 		bolt->free      = DynaFree;
 		break;
 	case WP_LANDMINE:
-		noExplode       = qtrue;
 		bolt->nextthink = level.time + 15000;
 		bolt->think     = DynaSink;
 		bolt->timestamp = level.time + 16500;
 		break;
 	case WP_SATCHEL:
-		noExplode         = qtrue;
 		bolt->nextthink   = 0;
 		bolt->s.clientNum = self->s.clientNum;
 		bolt->free        = G_FreeSatchel;
 		break;
 	case WP_MORTAR_SET: // only on impact
 	case WP_MORTAR2_SET:
-		noExplode       = qtrue;
 		bolt->nextthink = 0;
 		break;
 	default:
+		bolt->think = G_ExplodeMissile;
 		break;
 	}
 
@@ -1782,10 +1770,6 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 	{
 		self->client->ps.grenadeTimeLeft = 0;       // reset grenade timer
 
-	}
-	if (!noExplode)
-	{
-		bolt->think = G_ExplodeMissile;
 	}
 
 	bolt->s.eType    = ET_MISSILE;
@@ -1804,6 +1788,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 	{
 	case WP_GPG40:
 		bolt->classname           = "gpg40_grenade";
+		bolt->damage              = 0;  // nades don't explode on contact
 		bolt->splashRadius        = 300;
 		bolt->methodOfDeath       = MOD_GPG40;
 		bolt->splashMethodOfDeath = MOD_GPG40;
@@ -1812,6 +1797,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		break;
 	case WP_M7:
 		bolt->classname           = "m7_grenade";
+		bolt->damage              = 0;  // nades don't explode on contact
 		bolt->splashRadius        = 300;
 		bolt->methodOfDeath       = MOD_M7;
 		bolt->splashMethodOfDeath = MOD_M7;
@@ -1820,11 +1806,16 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		break;
 	case WP_SMOKE_BOMB:
 		bolt->classname     = "smoke_bomb";
+		bolt->damage        = 0;  // grenade's don't explode on contact
 		bolt->s.eFlags      = EF_BOUNCE_HALF | EF_BOUNCE;
 		bolt->methodOfDeath = MOD_SMOKEBOMB;
+
+		bolt->s.effect1Time = 16;
+		bolt->think         = weapon_smokeBombExplode; // overwrite G_ExplodeMissile
 		break;
 	case WP_GRENADE_LAUNCHER:
 		bolt->classname           = "grenade";
+		bolt->damage              = 0;  // grenades don't explode on contact
 		bolt->splashRadius        = 300;
 		bolt->methodOfDeath       = MOD_GRENADE_LAUNCHER;
 		bolt->splashMethodOfDeath = MOD_GRENADE_LAUNCHER;
@@ -1832,6 +1823,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		break;
 	case WP_GRENADE_PINEAPPLE:
 		bolt->classname           = "grenade";
+		bolt->damage              = 0;  // grenades don't explode on contact
 		bolt->splashRadius        = 300;
 		bolt->methodOfDeath       = MOD_GRENADE_PINEAPPLE;
 		bolt->splashMethodOfDeath = MOD_GRENADE_PINEAPPLE;
@@ -1839,10 +1831,25 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		break;
 	case WP_SMOKE_MARKER:
 		bolt->classname = "grenade";
+		bolt->damage    = 0;  // grenades don't explode on contact
 		bolt->s.eFlags  = EF_BOUNCE_HALF | EF_BOUNCE;
 		// properly set MOD
 		bolt->methodOfDeath       = MOD_SMOKEGRENADE;
 		bolt->splashMethodOfDeath = MOD_SMOKEGRENADE;
+
+		bolt->s.teamNum = self->client->sess.sessionTeam;   // store team so we can generate red or blue smoke
+		if (self->client && self->client->sess.skill[SK_SIGNALS] >= 3)
+		{
+			bolt->count     = 2;
+			bolt->nextthink = level.time + 3500;
+			bolt->think     = weapon_checkAirStrikeThink2; // overwrite G_ExplodeMissile
+		}
+		else
+		{
+			bolt->count     = 1;
+			bolt->nextthink = level.time + 2500;
+			bolt->think     = weapon_checkAirStrikeThink1; // overwrite G_ExplodeMissile
+		}
 		break;
 	case WP_MORTAR_SET:
 		bolt->classname           = "mortar_grenade";
@@ -1877,11 +1884,21 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		VectorCopy(bolt->r.mins, bolt->r.absmin);
 		VectorSet(bolt->r.maxs, 16, 16, 16);
 		VectorCopy(bolt->r.maxs, bolt->r.absmax);
+
+		if (self->client && self->client->sess.sessionTeam == TEAM_AXIS)     // store team so we can generate red or blue smoke
+		{
+			bolt->s.otherEntityNum2 = 1;
+		}
+		else
+		{
+			bolt->s.otherEntityNum2 = 0;
+		}
+
 		break;
 	case WP_SATCHEL:
 		bolt->accuracy            = 0;
 		bolt->classname           = "satchel_charge";
-		bolt->damage              = 0;
+		bolt->damage              = 0; // satchel doesn't explode on contact
 		bolt->splashRadius        = 300;
 		bolt->methodOfDeath       = MOD_SATCHEL;
 		bolt->splashMethodOfDeath = MOD_SATCHEL;
@@ -1901,13 +1918,13 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		// differentiate non-armed dynamite with non-pulsing dlight
 		bolt->s.teamNum           = self->client->sess.sessionTeam + 4;
 		bolt->classname           = "dynamite";
-		bolt->damage              = 0;
+		bolt->damage              = 0; // dynamite doesn't explode on contact
 		bolt->splashRadius        = 400;
 		bolt->methodOfDeath       = MOD_DYNAMITE;
 		bolt->splashMethodOfDeath = MOD_DYNAMITE;
 		bolt->s.eFlags            = (EF_BOUNCE | EF_BOUNCE_HALF);
 
-		// dynamite is shootable
+		// dynamite is shootable - is it?
 		bolt->health     = 5;
 		bolt->takedamage = qfalse;
 
@@ -1926,8 +1943,8 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 	}
 
 	// blast radius proportional to damage
-	bolt->splashRadius = GetWeaponTableData(grenadeWPID)->damage;
-
+	bolt->splashRadius = GetWeaponTableData(grenadeWPID)->damage; // FIXME: some of the above splashRadius values don't fit
+                                                                  //        - see satchel, landmine ... check vanilla
 	bolt->clipmask = MASK_MISSILESHOT;
 
 	bolt->s.pos.trType = TR_GRAVITY;
@@ -1960,7 +1977,9 @@ fire_rocket
 */
 gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType)
 {
-	gentity_t *bolt = G_Spawn();
+	gentity_t *bolt;
+	
+	bolt = G_Spawn();
 
 	VectorNormalize(dir);
 
@@ -2007,7 +2026,9 @@ fire_flamebarrel
 */
 gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir)
 {
-	gentity_t *bolt = G_Spawn();
+	gentity_t *bolt;
+	
+	bolt = G_Spawn();
 
 	VectorNormalize(dir);
 
@@ -2050,7 +2071,9 @@ fire_mortar
 */
 gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir)
 {
-	gentity_t *bolt = G_Spawn();
+	gentity_t *bolt;
+	
+	bolt = G_Spawn();
 
 	//  VectorNormalize (dir);
 

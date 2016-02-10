@@ -3455,7 +3455,6 @@ GRENADE LAUNCHER
 
 gentity_t *weapon_gpg40_fire(gentity_t *ent, int grenType)
 {
-	gentity_t *m;
 	trace_t   tr;
 	vec3_t    viewpos;
 	vec3_t    tosspos;
@@ -3490,12 +3489,8 @@ gentity_t *weapon_gpg40_fire(gentity_t *ent, int grenType)
 
 	VectorScale(forward, 2000, forward);
 
-	m = fire_grenade(ent, tosspos, forward, grenType);
-
-	m->damage = 0;
-
 	// return the grenade so we can do some prediction before deciding if we really want to throw it or not
-	return m;
+	return fire_grenade(ent, tosspos, forward, grenType);
 }
 
 gentity_t *weapon_mortar_fire(gentity_t *ent, int grenType)
@@ -3532,7 +3527,6 @@ gentity_t *weapon_mortar_fire(gentity_t *ent, int grenType)
 
 gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 {
-	gentity_t *m;
 	trace_t   tr;
 	vec3_t    viewpos;
 	float     upangle = 0, pitch = ent->s.apos.trBase[0];  // start with level throwing and adjust based on angle
@@ -3643,49 +3637,8 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 		SnapVectorTowards(tosspos, viewpos);
 	}
 
-	m         = fire_grenade(ent, tosspos, forward, grenType);
-	m->damage = 0;  // grenade's don't explode on contact
-
-	switch (grenType)
-	{
-	case WP_LANDMINE:
-		if (ent->client->sess.sessionTeam == TEAM_AXIS)     // store team so we can generate red or blue smoke
-		{
-			m->s.otherEntityNum2 = 1;
-		}
-		else
-		{
-			m->s.otherEntityNum2 = 0;
-		}
-		break;
-	case WP_SMOKE_BOMB: // override for smoke gren
-		m->s.effect1Time = 16;
-		m->think         = weapon_smokeBombExplode;
-		break;
-	case WP_SMOKE_MARKER:
-		m->s.teamNum = ent->client->sess.sessionTeam;   // store team so we can generate red or blue smoke
-		if (ent->client->sess.skill[SK_SIGNALS] >= 3)
-		{
-			m->count     = 2;
-			m->nextthink = level.time + 3500;
-			m->think     = weapon_checkAirStrikeThink2;
-		}
-		else
-		{
-			m->count     = 1;
-			m->nextthink = level.time + 2500;
-			m->think     = weapon_checkAirStrikeThink1;
-		}
-		break;
-	default:
-		break;
-	}
-
-	// adjust for movement of character.  TODO: Probably comment in later, but only for forward/back not strafing
-	//VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );    // "real" physics
-
 	// return the grenade so we can do some prediction before deciding if we really want to throw it or not
-	return m;
+	return fire_grenade(ent, tosspos, forward, grenType);
 }
 
 /*

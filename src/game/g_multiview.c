@@ -268,7 +268,7 @@ unsigned int G_smvGenerateClientList(gentity_t *ent)
 		}
 	}
 
-	return(mClients);
+	return mClients;
 }
 
 // Calculates a given client's MV player list
@@ -435,7 +435,7 @@ qboolean G_smvRunCamera(gentity_t *ent)
 		ps->ammo[id - 1] |= ((tps->persistant[PERS_HWEAPON_USE]) ? 1 : 0) << 13;        // 1 bit for mg42 use
 		ps->ammo[id - 1] |= (BG_simpleHintsCollapse(tps->serverCursorHint, hintTime) & 0x03) << 14;     // 2 bits for cursor hints
 
-//  G_Printf("tps->hint: %d, dr: %d, collapse: %d\n", tps->serverCursorHint, HINT_DOOR_ROTATING, G_simpleHintsCollapse(tps->serverCursorHint, hintTime));
+		//G_Printf("tps->hint: %d, dr: %d, collapse: %d\n", tps->serverCursorHint, HINT_DOOR_ROTATING, G_simpleHintsCollapse(tps->serverCursorHint, hintTime));
 
 		ps->ammoclip[id - 1]  = tps->ammoclip[BG_FindClipForWeapon(tps->weapon)] & 0x1FF;     // 9 bits to cover 500 Venom ammo clip
 		ps->ammoclip[id - 1] |= (chargeTime & 0x0F) << 9;     // 4 bits for weapon charge time
