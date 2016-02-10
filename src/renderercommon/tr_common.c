@@ -269,7 +269,7 @@ static void GLimp_InitExtensionsR2(void)
 	// GL_EXT_texture_compression_s3tc
 	if (GLimp_CheckForVersionExtension("GL_EXT_texture_compression_s3tc", -1, qfalse, r_ext_compressed_textures))
 	{
-		glConfig.textureCompression = TC_S3TC;
+		glConfig.textureCompression = TC_S3TC_ARB;
 	}
 
 	glConfig2.texture3DAvailable = qfalse;
