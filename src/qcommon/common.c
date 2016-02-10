@@ -3876,6 +3876,7 @@ void Console_AutoComplete(field_t *field, int *completionOffset)
 	if (!*completionOffset)
 	{
 		int completionArgument = 0;
+
 		matchCount       = 0;
 		matchIndex       = 0;
 		shortestMatch[0] = 0;
