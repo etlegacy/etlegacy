@@ -5044,7 +5044,6 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 
 	if (ps->pm_type != PM_SPECTATOR && ps->stats[STAT_HEALTH] <= 0)
 	{
-
 		// Allow players to look around while 'wounded' or lock to a medic if nearby
 		temp = cmd->angles[1] + ps->delta_angles[1];
 		// always allow this.  viewlocking will take precedence
