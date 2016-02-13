@@ -946,6 +946,8 @@ static void CG_DrawMineMarkerFlag(centity_t *cent, refEntity_t *ent, const weapo
 }
 
 extern void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi);
+extern void CG_ScanForCrosshairMine(centity_t *cent);
+extern void CG_ScanForCrosshairDyna(centity_t *cent);
 
 static void CG_Missile(centity_t *cent)
 {
@@ -1040,6 +1042,11 @@ static void CG_Missile(centity_t *cent)
 
 			BG_EvaluateTrajectoryDelta(&cent->currentState.pos, cg.time, velocity, qfalse, -1);
 			trap_S_AddLoopingSound(cent->lerpOrigin, velocity, weapon->spindownSound, 255, 0);
+
+			if(cgs.clientinfo[cg.snap->ps.clientNum].team == cent->currentState.teamNum)
+			{
+				CG_ScanForCrosshairDyna(cent);
+			}
 		}
 	}
 
@@ -1093,7 +1100,7 @@ static void CG_Missile(centity_t *cent)
 
 	if (cent->currentState.weapon == WP_LANDMINE)
 	{
-		if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
+		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_SPECTATOR)
 		{
 			return;
 		}
@@ -1141,12 +1148,8 @@ static void CG_Missile(centity_t *cent)
 			else
 			{
 				CG_DrawMineMarkerFlag(cent, &ent, weapon);
-				/*if ( !cent->highlighted ) {
-				    cent->highlighted = qtrue;
-				    cent->highlightTime = cg.time;
-				}
 
-				ent.hilightIntensity = 0.5f * sin((cg.time-cent->highlightTime)/1000.f) + 1.f;*/
+				CG_ScanForCrosshairMine(cent);
 			}
 		}
 

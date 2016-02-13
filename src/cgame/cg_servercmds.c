@@ -1127,6 +1127,10 @@ static void CG_MapRestart(void)
 	cgs.complaintClient  = -1;
 	cgs.complaintEndTime = 0;
 
+	// init crosshairMine + Dyna
+	cg.crosshairMine = -1;
+	cg.crosshairDyna = -1;
+
 	CG_LimboPanel_RequestObjective();
 
 	// clear zoom (so no warpies)

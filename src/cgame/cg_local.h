@@ -906,9 +906,13 @@ typedef struct
 	// kill timers for carnage reward
 	int lastKillTime;
 
-	// crosshair client ID
+	// crosshair client-, mine-, dyna-ID
 	int crosshairClientNum;
 	int crosshairClientTime;
+	int crosshairMine;
+	int crosshairMineTime;
+	int	crosshairDyna;
+	int	crosshairDynaTime;
 
 	qboolean crosshairNotLookingAtClient;
 	int crosshairSPClientTime;

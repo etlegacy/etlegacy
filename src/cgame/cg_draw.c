@@ -1184,6 +1184,30 @@ static void CG_DrawCrosshair(void)
 	}
 }
 
+/*
+=================
+CG_ScanForCrosshairMine
+=================
+*/
+void CG_ScanForCrosshairMine(centity_t *cent)
+{
+	trace_t trace;
+	vec3_t  start, end;
+
+	VectorCopy(cg.refdef.vieworg, start);
+	VectorMA(start, 512.0f, cg.refdef.viewaxis[0], end);
+
+	CG_Trace( &trace, start, NULL, NULL, end, -1, MASK_SOLID );
+
+	if(Square(trace.endpos[0] - cent->currentState.pos.trBase[0]) < 256 &&
+			Square(trace.endpos[1] - cent->currentState.pos.trBase[1]) < 256 &&
+			Square(trace.endpos[2] - cent->currentState.pos.trBase[2]) < 256)
+	{
+	   cg.crosshairMine = cent->currentState.otherEntityNum;
+	   cg.crosshairMineTime = cg.time;
+	}
+}
+
 static void CG_DrawNoShootIcon(void)
 {
 	float x, y, w, h;
@@ -1222,6 +1246,41 @@ static void CG_DrawNoShootIcon(void)
 
 	trap_R_DrawStretchPic(x + 0.5 * (cg.refdef_current->width - w), y + 0.5 * (cg.refdef_current->height - h), w, h, 0, 0, 1, 1, cgs.media.friendShader);
 	trap_R_SetColor(NULL);
+}
+
+/*
+=================
+CG_ScanForCrosshairDyna
+=================
+mainly just a copy paste of CG_ScanForCrosshairMine
+*/
+void CG_ScanForCrosshairDyna(centity_t *cent)
+{
+	trace_t trace;
+	vec3_t  start, end;
+
+	VectorCopy(cg.refdef.vieworg, start);
+	VectorMA(start, 512, cg.refdef.viewaxis[0], end);
+
+	CG_Trace(&trace, start, NULL, NULL, end, -1, MASK_SOLID);
+
+	// pos.trBase is not the middle of the dyna, but due to different
+	// orientations relative to the map axis, this cannot be corrected in a
+	// simple way unfortunately
+	if(Square(trace.endpos[0] - cent->currentState.pos.trBase[0]) < 256 &&
+			Square(trace.endpos[1] - cent->currentState.pos.trBase[1]) < 256 &&
+			Square(trace.endpos[2] - cent->currentState.pos.trBase[2]) < 256)
+	{
+			if(cent->currentState.otherEntityNum >= MAX_CLIENTS)
+			{
+				cg.crosshairDyna = -1;
+			}
+			else
+			{
+				cg.crosshairDyna = cent->currentState.otherEntityNum;
+				cg.crosshairDynaTime = cg.time;
+			}
+		}
 }
 
 /*
@@ -1431,8 +1490,38 @@ static void CG_DrawCrosshairNames(void)
 		return;
 	}
 
+	// dyna > mine
+	if (cg.crosshairDyna > -1)
+	{
+		color = CG_FadeColor(cg.crosshairDynaTime, 1000);
+		s = va("%s^7\'s dynamite", cgs.clientinfo[cg.crosshairDyna].name);
+		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
+
+		cg.crosshairDyna = -1;
+		return;
+	}
+
+	// mine id's
+	if (cg.crosshairMine > -1)
+	{
+		color = CG_FadeColor(cg.crosshairMineTime, 1000);
+		s = va("%s^7\'s mine", cgs.clientinfo[cg.crosshairMine].name);
+		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
+
+		cg.crosshairMine = -1;
+		return;
+	}
+
 	// scan the known entities to see if the crosshair is sighted on one
 	dist = CG_ScanForCrosshairEntity(&zChange, &hitClient);
+
+	// world-entity or no-entity..
+	if (cg.crosshairClientNum < 0)
+	{
+		return;
+	}
 
 	if (cg.renderingThirdPerson)
 	{
@@ -1485,7 +1574,6 @@ static void CG_DrawCrosshairNames(void)
 					{
 						w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
 						CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
-
 					}
 				}
 				return;

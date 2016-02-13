@@ -2691,6 +2691,9 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	CG_ParseLegacyinfo();
 
+	cg.crosshairMine = -1;
+	cg.crosshairDyna = -1;
+
 	//CG_Printf("Time taken: %i\n", trap_Milliseconds() - startat);
 }
 
