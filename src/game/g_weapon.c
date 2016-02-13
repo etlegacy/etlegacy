@@ -2736,6 +2736,7 @@ void weapon_callAirStrike(gentity_t *ent)
 			bomb->s.teamNum    = ent->s.teamNum;
 			bomb->damage       = 400;  // maybe should un-hard-code these?
 			bomb->splashDamage = 400;
+			bomb->s.eFlags     = EF_SMOKINGBLACK; // add some client side smoke
 
 			// for explosion type
 			bomb->accuracy            = 2;
@@ -2771,10 +2772,8 @@ void weapon_callAirStrike(gentity_t *ent)
 				if (tr.fraction < 1.f)
 				{
 					G_FreeEntity(bomb);
-
 					// move pos for next bomb
 					VectorAdd(pos, bombaxis, pos);
-
 					continue;
 				}
 			}
