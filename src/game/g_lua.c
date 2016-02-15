@@ -1618,10 +1618,15 @@ static int _et_G_ShaderRemap(lua_State *L)
 	return 0;
 }
 
-
 static int _et_G_ResetRemappedShaders(lua_State *L)
 {
 	G_ResetRemappedShaders();
+	return 0;
+}
+
+static int _et_G_ShaderRemapFlush(lua_State *L)
+{
+	trap_SetConfigstring(CS_SHADERSTATE, BuildShaderStateConfig());
 	return 0;
 }
 
@@ -1711,7 +1716,7 @@ static const luaL_Reg etlib[] =
 
 	{ "G_ShaderRemap",           _et_G_ShaderRemap           },
 	{ "G_ResetRemappedShaders",  _et_G_ResetRemappedShaders  },
-
+	{ "G_ShaderRemapFlush",      _et_G_ShaderRemapFlush      },
 	{ NULL },
 };
 
