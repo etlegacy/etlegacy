@@ -1608,6 +1608,23 @@ static int _et_G_SetEntState(lua_State *L)
 	return 0;
 }
 
+static int _et_G_ShaderRemap(lua_State *L)
+{
+	float f               = level.time * 0.001;
+	const char *oldShader = luaL_checkstring(L, 1);
+	const char *newShader = luaL_checkstring(L, 2);
+
+	AddRemap(oldShader, newShader, f);
+	return 0;
+}
+
+
+static int _et_G_ResetRemappedShaders(lua_State *L)
+{
+	G_ResetRemappedShaders();
+	return 0;
+}
+
 /** @}*/ // doxygen addtogroup lua_etfncs
 
 // et library initialisation array
@@ -1691,6 +1708,10 @@ static const luaL_Reg etlib[] =
 	{ "G_XP_Set",                _et_G_XP_Set                },
 	{ "G_ResetXP",               _et_G_ResetXP               },
 	{ "G_SetEntState",           _et_G_SetEntState           },
+
+	{ "G_ShaderRemap",           _et_G_ShaderRemap           },
+	{ "G_ResetRemappedShaders",  _et_G_ResetRemappedShaders  },
+
 	{ NULL },
 };
 
