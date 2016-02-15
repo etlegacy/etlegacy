@@ -1087,14 +1087,71 @@ static void _et_gentity_getweaponstat(lua_State *L, weapon_stat_t *ws)
 	lua_settable(L, -3);
 }
 
-// entnum = et.G_Spawn()
-static int _et_G_Spawn(lua_State *L)
+gentity_t* G_Lua_CreateEntity(char *params)
 {
-	gentity_t *entnum = G_Spawn();
+	gentity_t *create;
+	char      *token;
+	char      *p = params;
+	char      key[MAX_TOKEN_CHARS], value[MAX_TOKEN_CHARS];
 
-	entnum->classname = "lua_spawn";
+	level.numSpawnVars     = 0;
+	level.numSpawnVarChars = 0;
+
+	while (1)
+	{
+		token = COM_ParseExt(&p, qfalse);
+		if (!token[0])
+		{
+			break;
+		}
+		strcpy(key, token);
+
+		token = COM_ParseExt(&p, qfalse);
+		if (!token[0])
+		{
+			G_Error("Lua API: spawn key \"%s\" has no value", key);
+			break;
+		}
+
+		strcpy(value, token);
+
+		if (g_scriptDebug.integer)
+		{
+			G_Printf("Lua API: %d : %s: set [%s] [%s] [%s]\n", level.time, GAMEVERSION, LUA_VERSION, key, value);
+		}
+
+		if (level.numSpawnVars == MAX_SPAWN_VARS)
+		{
+			G_Error("Lua API: can't spawn and entity - MAX_SPAWN_VARS reached");
+		}
+
+		level.spawnVars[level.numSpawnVars][0] = G_AddSpawnVarToken(key);
+		level.spawnVars[level.numSpawnVars][1] = G_AddSpawnVarToken(value);
+
+		level.numSpawnVars++;
+	}
+	create = G_SpawnGEntityFromSpawnVars();
+
+	create->classname = "lua_spawn"; // make additional param?
+
+	trap_LinkEntity(create);
+	return create;
+}
+
+// entnum = _et_G_Lua_EntityCreate()
+// This function expects same as G_ScriptAction_Create -  keys & values
+// see http://wolfwiki.anime.net/index.php/Map_scripting
+// was et.G_Spawn() before 2.75
+// FIXME: add delete mapscript function
+static int _et_G_Lua_CreateEntity(lua_State *L)
+{
+	gentity_t *entnum;
+	char      *params = luaL_checkstring(L, 1); // make 2 params for classname?
+
+	entnum = G_Lua_CreateEntity(params);
 
 	lua_pushinteger(L, entnum - g_entities);
+
 	return 1;
 }
 
@@ -1695,7 +1752,7 @@ static const luaL_Reg etlib[] =
 	{ "G_AddSkillPoints",        _et_G_AddSkillPoints        },
 	{ "G_LoseSkillPoints",       _et_G_LoseSkillPoints       },
 	// Entities
-	{ "G_Spawn",                 _et_G_Spawn                 },
+	{ "G_CreateEntity",          _et_G_Lua_CreateEntity      },
 	{ "G_TempEntity",            _et_G_TempEntity            },
 	{ "G_FreeEntity",            _et_G_FreeEntity            },
 
