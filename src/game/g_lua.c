@@ -1155,6 +1155,14 @@ static int _et_G_Lua_CreateEntity(lua_State *L)
 	return 1;
 }
 
+static int _et_G_Lua_DeleteEntity(lua_State *L)
+{
+	char *params = luaL_checkstring(L, 1);
+
+	lua_pushinteger(L, G_ScriptAction_Delete(NULL, params)); // FIXME: make own function for proper outputs?
+	return 1;
+}
+
 // entnum = et.G_TempEntity( origin, event )
 static int _et_G_TempEntity(lua_State *L)
 {
@@ -1355,9 +1363,6 @@ static int _et_G_SetSpawnVar(lua_State *L)
 
 	return 0;
 }
-
-// TODO:
-// integer entnum = et.G_SpawnGEntityFromSpawnVars( string spawnvar, string spawnvalue, ... )
 
 // et.trap_LinkEntity( entnum )
 static int _et_trap_LinkEntity(lua_State *L)
@@ -1753,6 +1758,7 @@ static const luaL_Reg etlib[] =
 	{ "G_LoseSkillPoints",       _et_G_LoseSkillPoints       },
 	// Entities
 	{ "G_CreateEntity",          _et_G_Lua_CreateEntity      },
+	{ "G_DeleteEntity",          _et_G_Lua_DeleteEntity      },
 	{ "G_TempEntity",            _et_G_TempEntity            },
 	{ "G_FreeEntity",            _et_G_FreeEntity            },
 
