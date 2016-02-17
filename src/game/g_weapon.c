@@ -3022,6 +3022,8 @@ void Weapon_Artillery(gentity_t *ent)
 
 			bomboffset[0] = crandom() * 250;
 			bomboffset[1] = crandom() * 250;
+
+			bomb->s.eFlags = EF_SMOKINGBLACK; // add some client side smoke, don't do this for bomb 0 (no all time smoke for spotter)
 		}
 		bomboffset[2] = 0;
 
