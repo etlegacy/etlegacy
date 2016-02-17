@@ -1181,7 +1181,7 @@ skillType_t CG_ClassSkillForPosition(clientInfo_t *ci, int pos)
 		return SK_BATTLE_SENSE;
 	case 2:
 		// draw soldier level if using a heavy weapon instead of light weapons icon
-		if ((pm && (pm->ps->persistant[PERS_HWEAPON_USE] || pm->ps->eFlags & EF_MOUNTEDTANK || IS_HEAVY_WEAPON(pm->ps->weapon))) && ci->cls != PC_SOLDIER)
+		if ((pm && (pm->ps->persistant[PERS_HWEAPON_USE] || (pm->ps->eFlags & EF_MOUNTEDTANK) || IS_HEAVY_WEAPON(pm->ps->weapon))) && ci->cls != PC_SOLDIER)
 		{
 			return SK_SOLDIER;
 		}

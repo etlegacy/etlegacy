@@ -911,8 +911,8 @@ typedef struct
 	int crosshairClientTime;
 	int crosshairMine;
 	int crosshairMineTime;
-	int	crosshairDyna;
-	int	crosshairDynaTime;
+	int crosshairDyna;
+	int crosshairDynaTime;
 
 	qboolean crosshairNotLookingAtClient;
 	int crosshairSPClientTime;

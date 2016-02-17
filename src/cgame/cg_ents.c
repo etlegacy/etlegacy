@@ -1756,7 +1756,6 @@ static void CG_Prop(centity_t *cent)
 {
 	refEntity_t   ent;
 	entityState_t *s1 = &cent->currentState;
-	vec3_t        angles;
 
 	// create the render entity
 	memset(&ent, 0, sizeof(ent));
@@ -1772,7 +1771,8 @@ static void CG_Prop(centity_t *cent)
 	}
 	else
 	{
-		float scale;
+		float  scale;
+		vec3_t angles;
 
 		VectorCopy(cg.refdef_current->vieworg, ent.origin);
 		VectorCopy(cg.refdefViewAngles, angles);
