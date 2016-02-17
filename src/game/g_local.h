@@ -1484,6 +1484,7 @@ void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
 void G_PlaySound_Cmd(void);
 int ClientNumbersFromString(char *s, int *plist);
 char *ConcatArgs(int start);
+void G_DropItems(gentity_t *self);
 
 // g_main.c
 void FindIntermissionPoint(void);

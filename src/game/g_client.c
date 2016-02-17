@@ -3429,48 +3429,7 @@ void ClientDisconnect(int clientNum)
 		// Especially important for stuff like CTF flags
 		TossWeapons(ent);
 
-		// New code for tossing flags
-		if (ent->client->ps.powerups[PW_REDFLAG])
-		{
-			item = BG_GetItem(ITEM_RED_FLAG);
-			if (!item)
-			{
-				item = BG_FindItem("Objective"); // FIXME: there is no item with such pickup_name
-			}
-
-			ent->client->ps.powerups[PW_REDFLAG] = 0;
-		}
-		if (ent->client->ps.powerups[PW_BLUEFLAG])
-		{
-			item = BG_GetItem(ITEM_BLUE_FLAG);
-			if (!item)
-			{
-				item = BG_FindItem("Objective"); // FIXME: there is no item with such pickup_name
-			}
-
-			ent->client->ps.powerups[PW_BLUEFLAG] = 0;
-		}
-
-		if (item)
-		{
-			// fix for suicide drop exploit through walls/gates
-			launchvel[0] = 0;    //crandom()*20;
-			launchvel[1] = 0;    //crandom()*20;
-			launchvel[2] = 0;    //10+random()*10;
-
-			flag                = LaunchItem(item, ent->r.currentOrigin, launchvel, ent - g_entities);
-			flag->s.modelindex2 = ent->s.otherEntityNum2;    // FIXME set player->otherentitynum2 with old modelindex2 from flag and restore here
-			flag->message       = ent->message; // also restore item name
-
-#ifdef FEATURE_OMNIBOT
-			// FIXME: see ETPub G_DropItems()
-			Bot_Util_SendTrigger(flag, NULL, va("%s dropped.", flag->message), "dropped");
-#endif
-
-			// Clear out player's temp copies
-			ent->s.otherEntityNum2 = 0;
-			ent->message           = NULL;
-		}
+		G_DropItems(ent);
 
 		// Log stats too
 		G_LogPrintf("WeaponStats: %s\n", G_createStats(ent));

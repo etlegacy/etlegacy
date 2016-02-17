@@ -1112,6 +1112,63 @@ void G_TeamDataForString(const char *teamstr, int clientNum, team_t *team, spect
 	}
 }
 
+/**
+ * @brief Drops items. Currently only red-/blueflag.
+ */
+void G_DropItems(gentity_t *self)
+{
+	gitem_t *item = NULL;
+
+	// drop flag regardless
+	if (self->client->ps.powerups[PW_REDFLAG])
+	{
+		item = BG_GetItem(ITEM_RED_FLAG);
+		self->client->ps.powerups[PW_REDFLAG] = 0;
+	}
+	if (self->client->ps.powerups[PW_BLUEFLAG])
+	{
+		item = BG_GetItem(ITEM_BLUE_FLAG);
+		self->client->ps.powerups[PW_BLUEFLAG] = 0;
+	}
+
+	if (item)
+	{
+		vec3_t    launchvel = { 0, 0, 0 };
+		vec3_t    forward;
+		vec3_t    origin;
+		vec3_t    angles;
+		gentity_t *flag;
+
+		VectorCopy(self->client->ps.origin, origin);
+		// if the player hasn't died, then assume he's
+		//      throwing objective per g_dropObj
+		if(self->health > 0)
+		{
+			VectorCopy(self->client->ps.viewangles, angles);
+			if(angles[PITCH] > 0)
+			{
+				angles[PITCH] = 0;
+			}
+			AngleVectors(angles, forward, NULL, NULL);
+			VectorMA(self->client->ps.velocity, 96, forward, launchvel);
+			VectorMA(origin, 36.0f, forward, origin);
+			origin[2] += self->client->ps.viewheight;
+		}
+
+		flag = LaunchItem(item, origin, launchvel, self->s.number);
+
+		flag->s.modelindex2 = self->s.otherEntityNum2;// FIXME set player->otherentitynum2 with old modelindex2 from flag and restore here
+		flag->message       = self->message;	// also restore item name
+
+#ifdef OMNIBOTS
+		Bot_Util_SendTrigger(flag, NULL, va("%s dropped.", flag->message), "dropped");
+#endif
+		// Clear out player's temp copies
+		self->s.otherEntityNum2 = 0;
+		self->message           = NULL;
+	}
+}
+
 /*
 =================
 SetTeam

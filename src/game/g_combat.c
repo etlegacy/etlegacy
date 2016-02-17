@@ -680,39 +680,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	// Add team bonuses
 	Team_FragBonuses(self, inflictor, attacker);
 
-	// drop flag regardless
-	if (self->client->ps.powerups[PW_REDFLAG])
-	{
-		item = BG_GetItem(ITEM_RED_FLAG);
-		if (!item)
-		{
-			item = BG_FindItem("Objective"); // FIXME: there is no item with such pickup_name
-		}
-
-		self->client->ps.powerups[PW_REDFLAG] = 0;
-	}
-	if (self->client->ps.powerups[PW_BLUEFLAG])
-	{
-		item = BG_GetItem(ITEM_BLUE_FLAG);
-		if (!item)
-		{
-			item = BG_FindItem("Objective"); // FIXME: there is no item with such pickup_name
-		}
-
-		self->client->ps.powerups[PW_BLUEFLAG] = 0;
-	}
-
-	if (item)
-	{
-		vec3_t    launchvel = { 0, 0, 0 };
-		gentity_t *flag     = LaunchItem(item, self->r.currentOrigin, launchvel, self->s.number);
-
-		flag->s.modelindex2 = self->s.otherEntityNum2; // FIXME set player->otherentitynum2 with old modelindex2 from flag and restore here
-		flag->message       = self->message; // also restore item name
-		// Clear out player's temp copies
-		self->s.otherEntityNum2 = 0;
-		self->message           = NULL;
-	}
+	G_DropItems(self);
 
 	// send a fancy "MEDIC!" scream.  Sissies, ain' they?
 	if (self->health > GIB_HEALTH &&
