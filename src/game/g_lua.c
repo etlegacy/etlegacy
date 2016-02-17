@@ -3139,6 +3139,39 @@ qboolean G_LuaHook_Damage(int target, int attacker, int damage, int dflags, int 
 	return qfalse;
 }
 
+/*
+ * G_LuaHook_SpawnEntitiesFromString
+ * et_LuaSpawnEntitiesFromString()
+ */
+void G_LuaHook_SpawnEntitiesFromString()
+{
+	int      i;
+	lua_vm_t *vm;
+
+	for (i = 0; i < LUA_NUM_VM; i++)
+	{
+		vm = lVM[i];
+		if (vm)
+		{
+			if (vm->id < 0 /*|| vm->err*/)
+			{
+				continue;
+			}
+			if (!G_LuaGetNamedFunction(vm, "et_LuaSpawnEntitiesFromString"))
+			{
+				continue;
+			}
+
+			// Call
+			if (!G_LuaCall(vm, "et_LuaSpawnEntitiesFromString", 0, 0))
+			{
+				//G_LuaStopVM(vm);
+				continue;
+			}
+		}
+	}
+}
+
 /** @} */ // doxygen addtogroup lua_etevents
 
 

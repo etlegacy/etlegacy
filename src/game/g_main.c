@@ -2446,6 +2446,9 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 	// MAPVOTE
 	level.mapsSinceLastXPReset = 0;
 
+#ifdef FEATURE_LUA
+	G_LuaInit();
+#endif
 	// parse the key/value pairs and spawn gentities
 	G_SpawnEntitiesFromString();
 
@@ -2498,7 +2501,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 	GeoIP_open(); // GeoIP open/update
 
 #ifdef FEATURE_LUA
-	G_LuaInit();
 	G_LuaHook_InitGame(levelTime, randomSeed, restart);
 #endif
 

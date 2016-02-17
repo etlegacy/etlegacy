@@ -140,6 +140,7 @@ qboolean G_LuaHook_SetPlayerSkill(int cno, skillType_t skill);
 void G_LuaHook_Print(printMessageType_t category, char *text);
 qboolean G_LuaHook_Obituary(int victim, int killer, int meansOfDeath);
 qboolean G_LuaHook_Damage(int target, int attacker, int damage, int dflags, int mod);
+void G_LuaHook_SpawnEntitiesFromString();
 
 #endif // #ifndef INCLUDE_G_LUA_H
 

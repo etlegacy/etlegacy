@@ -1020,6 +1020,10 @@ void G_SpawnEntitiesFromString(void)
 		G_SpawnGEntityFromSpawnVars();
 	}
 
+#ifdef FEATURE_LUA
+	G_LuaHook_SpawnEntitiesFromString();
+#endif
+
 	G_Printf("Disable spawning!\n");
 	level.spawning = qfalse;            // any future calls to G_Spawn*() will be errors
 }
