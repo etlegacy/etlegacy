@@ -136,7 +136,7 @@ static void CG_ParseTeamInfo(void)
 
 	if (numSortedTeamPlayers < 0 || numSortedTeamPlayers >= MAX_CLIENTS)
 	{
-		CG_Printf("CG_ParseTeamInfo: numSortedTeamPlayers out of range (%i)", numSortedTeamPlayers);
+		CG_Printf("CG_ParseTeamInfo: numSortedTeamPlayers out of range (%i)\n", numSortedTeamPlayers);
 		return;
 	}
 
@@ -146,7 +146,7 @@ static void CG_ParseTeamInfo(void)
 
 		if (client < 0 || client >= MAX_CLIENTS)
 		{
-			CG_Printf("CG_ParseTeamInfo: bad client number: %i", client);
+			CG_Printf("CG_ParseTeamInfo: bad client number: %i\n", client);
 			return;
 		}
 
