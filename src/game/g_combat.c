@@ -378,7 +378,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 {
 	weapon_t  weap;
 	gclient_t *client;
-	gitem_t   *item        = NULL;
 	int       contents     = 0, i, killer = ENTITYNUM_WORLD;
 	char      *killerName  = "<world>";
 	qboolean  nogib        = qtrue;

@@ -3320,8 +3320,6 @@ void ClientDisconnect(int clientNum)
 {
 	gentity_t *ent  = g_entities + clientNum;
 	gentity_t *flag = NULL;
-	gitem_t   *item = NULL;
-	vec3_t    launchvel;
 	int       i;
 
 	if (!ent->client)
