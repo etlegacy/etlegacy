@@ -3151,7 +3151,9 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 		if (G_IsWeaponDisabled(ent, client->sess.playerWeapon))
 		{
-			bg_playerclass_t *classInfo = BG_PlayerClassForPlayerState(&ent->client->ps);
+			bg_playerclass_t *classInfo;
+
+			classInfo = BG_PlayerClassForPlayerState(&ent->client->ps);
 
 			client->sess.playerWeapon = classInfo->classWeapons[0];
 			update                    = qtrue;

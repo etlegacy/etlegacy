@@ -2191,6 +2191,9 @@ void landmine_setup(gentity_t *ent)
 
 	ent->damage = 0;
 
+	// map mines crosshair id
+	ent->s.otherEntityNum = MAX_CLIENTS + 1;
+
 	if (ent->s.teamNum == TEAM_AXIS)     // store team so we can generate red or blue smoke
 	{
 		ent->s.otherEntityNum2 = 1;
