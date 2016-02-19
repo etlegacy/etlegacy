@@ -1760,7 +1760,11 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 	bolt->s.weapon   = grenadeWPID;
 	bolt->r.ownerNum = self->s.number;
 	bolt->parent     = self;
-	bolt->s.teamNum  = self->client->sess.sessionTeam;
+	if (self->client)
+	{
+		// store team so we can generate red or blue smoke
+		bolt->s.teamNum  = self->client->sess.sessionTeam;
+	}
 
 	// commented out bolt->damage and bolt->splashdamage, override with GetWeaponTableData(WP_X)->damage()
 	// so it works with different netgame balance.  didn't uncomment bolt->damage on dynamite 'cause its so *special*
@@ -1823,7 +1827,6 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->methodOfDeath       = MOD_SMOKEGRENADE;
 		bolt->splashMethodOfDeath = MOD_SMOKEGRENADE;
 
-		bolt->s.teamNum = self->client->sess.sessionTeam;   // store team so we can generate red or blue smoke
 		if (self->client && self->client->sess.skill[SK_SIGNALS] >= 3)
 		{
 			bolt->count     = 2;
@@ -1918,7 +1921,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->accuracy = 0;     // sets to score below if dynamite is in trigger_objective_info & it's an objective
 		trap_SendServerCommand(self - g_entities, "cp \"Dynamite is set, but NOT armed!\"");
 		// differentiate non-armed dynamite with non-pulsing dlight
-		bolt->s.teamNum           = self->client->sess.sessionTeam + 4;
+		bolt->s.teamNum           = self->client->sess.sessionTeam + 4; // overwrite
 		bolt->classname           = "dynamite";
 		bolt->damage              = 0; // dynamite doesn't explode on contact
 		bolt->methodOfDeath       = MOD_DYNAMITE;
