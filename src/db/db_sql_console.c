@@ -48,15 +48,15 @@ void DB_ExecSQLCommand_f(void)
 	cmd = Cmd_Argv(0);
 	sql = Cmd_Args();
 
-	if (!sql || !sql[0])
-	{
-		Com_Printf("Usage: %s sql <sql_statement>\n", cmd);
-		return;
-	}
-
 	if (!db || db_mode->integer == 0)
 	{
 		Com_Printf("SQL db not available or disabled!\n");
+		return;
+	}
+
+	if (!sql || !sql[0])
+	{
+		Com_Printf("Usage: %s sql <sql_statement>\n", cmd);
 		return;
 	}
 
