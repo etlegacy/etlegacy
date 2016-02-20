@@ -1545,11 +1545,10 @@ static void CG_RegisterGraphics(void)
 	cgs.media.doorRotateHintShader   = trap_R_RegisterShader("gfx/2d/doorRotateHint");
 
 	// these were never used in default wolf
+	//cgs.media.doorRotateLockHintShader = trap_R_RegisterShader("gfx/2d/lockedhint");
 	cgs.media.doorLockHintShader       = trap_R_RegisterShader("gfx/2d/lockedhint");
-	cgs.media.doorRotateLockHintShader = trap_R_RegisterShader("gfx/2d/lockedhint");
 	cgs.media.mg42HintShader           = trap_R_RegisterShader("gfx/2d/mg42Hint");
 	cgs.media.breakableHintShader      = trap_R_RegisterShader("gfx/2d/breakableHint");
-	cgs.media.chairHintShader          = trap_R_RegisterShader("gfx/2d/chairHint");
 	cgs.media.alarmHintShader          = trap_R_RegisterShader("gfx/2d/alarmHint");
 	cgs.media.healthHintShader         = trap_R_RegisterShader("gfx/2d/healthHint");
 	cgs.media.treasureHintShader       = trap_R_RegisterShader("gfx/2d/treasureHint");

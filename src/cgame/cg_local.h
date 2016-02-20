@@ -1277,10 +1277,8 @@ typedef struct
 	qhandle_t doorHintShader;
 	qhandle_t doorRotateHintShader;
 	qhandle_t doorLockHintShader;
-	qhandle_t doorRotateLockHintShader;
 	qhandle_t mg42HintShader;
 	qhandle_t breakableHintShader;
-	qhandle_t chairHintShader;
 	qhandle_t alarmHintShader;
 	qhandle_t healthHintShader;
 	qhandle_t treasureHintShader;
