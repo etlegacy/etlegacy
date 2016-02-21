@@ -459,6 +459,7 @@ static void CG_SetLerpFrameAnimation(centity_t *cent, clientInfo_t *ci, lerpFram
 
 	if (!character)
 	{
+		CG_Printf("Warning: CG_SetLerpFrameAnimation w/o character.\n");
 		return;
 	}
 
@@ -519,6 +520,7 @@ void CG_RunLerpFrame(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int new
 		anim = lf->animation;
 		if (!anim || !anim->frameLerp)
 		{
+			CG_Printf("Warning: CG_RunLerpFrame w/o animation.\n");
 			return;     // shouldn't happen
 		}
 		if (cg.time < lf->animationTime)
@@ -614,6 +616,7 @@ void CG_SetLerpFrameAnimationRate(centity_t *cent, clientInfo_t *ci, lerpFrame_t
 
 	if (!character)
 	{
+		CG_Printf("Warning: CG_SetLerpFrameAnimationRate w/o character.\n");
 		return;
 	}
 
@@ -1045,6 +1048,7 @@ void CG_SetLerpFrameAnimationRateCorpse(centity_t *cent, lerpFrame_t *lf, int ne
 
 	if (!character)
 	{
+		CG_Printf("Warning: CG_SetLerpFrameAnimationRateCorpse w/o character.\n");
 		return;
 	}
 
@@ -1120,6 +1124,7 @@ void CG_RunLerpFrameRateCorpse(clientInfo_t *ci, lerpFrame_t *lf, int newAnimati
 		anim = lf->animation;
 		if (!anim || !anim->frameLerp)
 		{
+			CG_Printf("Warning: CG_RunLerpFrameRateCorpse w/o animation.\n");
 			return;     // shouldn't happen
 		}
 		if (cg.time < lf->animationTime)
@@ -1191,10 +1196,13 @@ static void CG_PlayerAnimation(centity_t *cent, refEntity_t *body)
 	int            clientNum = cent->currentState.clientNum;
 	clientInfo_t   *ci       = &cgs.clientinfo[clientNum];
 	int            animIndex;
-	bg_character_t *character = CG_CharacterForClientinfo(ci, cent);
+	bg_character_t *character;
+
+	character = CG_CharacterForClientinfo(ci, cent);
 
 	if (!character)
 	{
+		CG_Printf("Warning: CG_PlayerAnimation w/o character.\n");
 		return;
 	}
 
@@ -3073,6 +3081,7 @@ void CG_GetBleedOrigin(vec3_t head_origin, vec3_t body_origin, int fleshEntityNu
 	head.hModel = character->hudhead;
 	if (!head.hModel)
 	{
+		CG_Printf("Warning: CG_GetBleedOrigin w/o model.\n");
 		return;
 	}
 
@@ -3246,6 +3255,7 @@ void CG_RunHudHeadLerpFrame(bg_character_t *ch, lerpFrame_t *lf, int newAnimatio
 		anim = lf->animation;
 		if (!anim || !anim->frameLerp)
 		{
+			CG_Printf("Warning: CG_RunHudHeadLerpFrame w/o animation.\n");
 			return;     // shouldn't happen
 		}
 		if (cg.time < lf->animationTime)
