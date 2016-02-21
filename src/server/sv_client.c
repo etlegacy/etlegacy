@@ -1629,6 +1629,14 @@ static qboolean SV_ClientCommand(client_t *cl, msg_t *msg, qboolean premaprestar
 
 	Com_DPrintf("clientCommand: %s : %i : %s\n", rc(cl->name), seq, s);
 
+	// drop the connection if there are issues with reading messages
+	if (seq < 0 || s[0] == 0) // invalid MSG_Read
+	{
+		Com_Printf("Client %s dropped for invalid client command message\n", rc(cl->name));
+		SV_DropClient(cl, "Invalid client command message");
+		return qfalse;
+	}
+
 	// drop the connection if we have somehow lost commands
 	if (seq > cl->lastClientCommand + 1)
 	{
@@ -1861,12 +1869,12 @@ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg)
 	serverId               = MSG_ReadLong(msg);
 	cl->messageAcknowledge = MSG_ReadLong(msg);
 
-	if (cl->messageAcknowledge < 0)
+	if (cl->messageAcknowledge < 0 || serverId < 0)
 	{
 		// usually only hackers create messages like this
 		// it is more annoying for them to let them hanging
 #ifdef LEGACY_DEBUG
-		SV_DropClient(cl, "DEBUG: illegible client message");
+		SV_DropClient(cl, "DEBUG: illegible client message or invalid server id");
 #endif
 		return;
 	}
@@ -1916,6 +1924,10 @@ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg)
 		do
 		{
 			c = MSG_ReadByte(msg);
+			if (c < 0) // invalid MSG_Read
+			{
+				return;
+			}
 			if (c == clc_EOF)
 			{
 				break;
@@ -1942,6 +1954,10 @@ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg)
 	do
 	{
 		c = MSG_ReadByte(msg);
+		if (c < 0) // invalid MSG_Read
+		{
+			return;
+		}
 		if (c == clc_EOF)
 		{
 			break;
@@ -1972,7 +1988,11 @@ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg)
 		SV_UserMove(cl, msg, qfalse);
 		c = MSG_ReadByte(msg);
 	}
-
+	else if (c < 0)
+	{
+		return; // invalid MSG_Read
+	}
+	
 	if (c != clc_EOF)
 	{
 		Com_Printf("WARNING: bad command byte for client %i\n", (int) (cl - svs.clients));
