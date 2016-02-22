@@ -12,6 +12,7 @@ Options: [defaults in brackets after descriptions]
   --exclude-subdir  exclude the @CPACK_PACKAGE_FILE_NAME@ subdirectory
   --skip-license    skip license confirmation
   --skip-assets     skipp assets installation
+  --version         print version info
 EOF
   exit 1
 }
@@ -29,7 +30,7 @@ cpack_version()
 }
 
 # Helper function to fix windows paths.
-cpack_fix_slashes ()
+cpack_fix_slashes()
 {
   echo "$1" | sed 's/\\/\//g'
 }
