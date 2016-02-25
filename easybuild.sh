@@ -538,7 +538,10 @@ run_uncrustify() {
 
 run_project() {
 	einfo "Project..."
-	mkdir -p ${BUILDDIR}
+	if [ -d ${PROJECTDIR} ]; then
+		rm -rf ${PROJECTDIR}
+	fi
+	mkdir -p ${PROJECTDIR}
 	cd ${PROJECTDIR}
 	if [ "${PLATFORMSYS}" == "Mac OS X" ]; then
 		cmake -G 'Xcode' ${_CFGSTRING} ..
