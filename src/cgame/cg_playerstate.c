@@ -400,8 +400,8 @@ void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops)
 	{
 		int msec = cg.time - cgs.levelStartTime;
 
-		if (cgs.timelimit > 5 && !(cg.timelimitWarnings & 1) && (msec > (cgs.timelimit - 5) * 60 * 1000) &&
-		    (msec < (cgs.timelimit - 5) * 60 * 1000 + 1000))
+		if (cgs.timelimit > 5 && !(cg.timelimitWarnings & 1) && (msec > (cgs.timelimit - 5) * 60000) &&
+		    (msec < (cgs.timelimit - 5) * 60000 + 1000)) // 60 * 1000
 		{
 			cg.timelimitWarnings |= 1;
 			if (ps->persistant[PERS_TEAM] == TEAM_AXIS)
@@ -427,8 +427,8 @@ void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops)
 				}
 			}
 		}
-		if (cgs.timelimit > 2 && !(cg.timelimitWarnings & 2) && (msec > (cgs.timelimit - 2) * 60 * 1000) &&
-		    (msec < (cgs.timelimit - 2) * 60 * 1000 + 1000))
+		if (cgs.timelimit > 2 && !(cg.timelimitWarnings & 2) && (msec > (cgs.timelimit - 2) * 60000) &&
+		    (msec < (cgs.timelimit - 2) * 60000 + 1000)) // 60 * 1000
 		{
 			cg.timelimitWarnings |= 2;
 			if (ps->persistant[PERS_TEAM] == TEAM_AXIS)
@@ -454,8 +454,8 @@ void CG_CheckLocalSounds(playerState_t *ps, playerState_t *ops)
 				}
 			}
 		}
-		if (!(cg.timelimitWarnings & 4) && (msec > (cgs.timelimit) * 60 * 1000 - 30000) &&
-		    (msec < (cgs.timelimit) * 60 * 1000 - 29000))
+		if (!(cg.timelimitWarnings & 4) && (msec > (cgs.timelimit) * 60000 - 30000) &&
+		    (msec < cgs.timelimit * 60000 - 29000)) // 60 * 1000
 		{
 			cg.timelimitWarnings |= 4;
 			if (ps->persistant[PERS_TEAM] == TEAM_AXIS)

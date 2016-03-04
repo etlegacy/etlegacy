@@ -1046,7 +1046,7 @@ void CG_TimerSet_f(void)
 		}
 		else
 		{
-			int msec = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);
+			int msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);  // 60.f * 1000.f
 
 			trap_Cvar_Set("cg_spawnTimer_period", buff);
 			trap_Cvar_Set("cg_spawnTimer_set", va("%d", msec / 1000));
@@ -1071,7 +1071,7 @@ void CG_TimerReset_f(void)
 		return;
 	}
 
-	msec = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);
+	msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime); // 60.f * 1000.f
 	trap_Cvar_Set("cg_spawnTimer_set", va("%d", msec / 1000));
 }
 

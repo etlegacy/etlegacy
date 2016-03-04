@@ -1881,7 +1881,7 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 	qtime_t time;
 	vec4_t  color = { 0.625f, 0.625f, 0.6f, 1.0f };
 	int     tens;
-	int     msec    = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);
+	int     msec    = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime); // 60.f * 1000.f
 	int     seconds = msec / 1000;
 	int     mins    = seconds / 60;
 
@@ -1989,7 +1989,7 @@ static float CG_DrawTimerNormal(float y)
 	int    w, w2;
 	int    tens;
 	int    x;
-	int    msec    = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);
+	int    msec    = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime); // 60.f * 1000.f
 	int    seconds = msec / 1000;
 	int    mins    = seconds / 60;
 
