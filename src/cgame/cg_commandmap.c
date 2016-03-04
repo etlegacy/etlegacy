@@ -1441,6 +1441,13 @@ void CG_DrawAutoMap(float x, float y, float w, float h)
 		}
 	}
 
+#if FEATURE_EDV
+	if (cgs.cam.renderingFreeCam == qtrue || cgs.cam.renderingWeaponCam == qtrue || !cg_drawCompass.integer)
+	{
+		return;
+	}
+#endif
+
 	mapScissor.circular = qtrue;
 
 	mapScissor.zoomFactor = cg_automapZoom.value;

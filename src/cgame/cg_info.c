@@ -291,6 +291,11 @@ void CG_DemoClick(int key, qboolean down)
 {
 	int milli = trap_Milliseconds();
 
+#if FEATURE_EDV
+	int menuLevel = cgs.currentMenuLevel;
+	cgs.cam.factor = 5;
+#endif
+
 	// Avoid active console keypress issues
 	if (!down && !cgs.fKeyPressed[key])
 	{
@@ -303,6 +308,242 @@ void CG_DemoClick(int key, qboolean down)
 	{
 		return;
 	}
+
+#if FEATURE_EDV 
+	if (cg.demohelpWindow == SHOW_ON)
+	{
+		//pull up extended helpmenu
+		if (menuLevel == ML_MAIN && key == K_ALT)
+		{
+			cgs.currentMenuLevel = ML_EDV;
+			return;
+		}
+		//return to main helpmenu
+		if (menuLevel == ML_EDV && key == K_BACKSPACE)
+		{
+			// back to main menu
+			if (!down)
+			{
+				cgs.currentMenuLevel = ML_MAIN;
+			}
+			return;
+		}
+	}
+
+
+	switch (key)
+	{
+#ifdef FEATURE_MULTIVIEW
+	case K_MOUSE2:
+		if (!down)
+		{
+			CG_mvSwapViews_f();             // Swap the window with the main view
+		}
+		return;
+	//case K_INS:
+	case K_KP_PGUP:
+		if (!down)
+		{
+			CG_mvShowView_f();              // Make a window for the client
+		}
+		return;
+	//case K_DEL:
+	case K_KP_PGDN:
+		if (!down)
+		{
+			CG_mvHideView_f();              // Delete the window for the client
+		}
+		return;
+	case K_MOUSE3:
+		if (!down)
+		{
+			CG_mvToggleView_f();            // Toggle a window for the client
+		}
+		return;
+#endif
+
+	// Third-person controls
+	case K_ENTER:
+		if (!down)
+		{
+			if (cgs.cam.renderingFreeCam)
+			{
+				cgs.cam.renderingFreeCam = qfalse;
+			}
+
+			trap_Cvar_Set("cg_thirdperson", ((cg_thirdPerson.integer == 0) ? "1" : "0"));
+		}
+		return;
+	case K_UPARROW:
+	case K_DOWNARROW:
+		// when not in thirdperson, arrowkeys should be bindable to +freecam_turnleft, ...
+		if (cg.renderingThirdPerson && !cgs.cam.renderingFreeCam)
+		{
+			if (milli > cgs.thirdpersonUpdate)
+			{
+				float range = cg_thirdPersonRange.value;
+
+				cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
+				if (key == K_UPARROW)
+				{
+					range -= ((range >= 4 * DEMO_RANGEDELTA) ? DEMO_RANGEDELTA : (range - DEMO_RANGEDELTA));
+				}
+				else
+				{
+					range += ((range >= 120 * DEMO_RANGEDELTA) ? 0 : DEMO_RANGEDELTA);
+				}
+				trap_Cvar_Set("cg_thirdPersonRange", va("%f", range));
+			}
+		}
+		else
+		{
+			CG_RunBinding(key, down);
+		}
+		return;
+
+	case K_RIGHTARROW:
+	case K_LEFTARROW:
+		if (cg.renderingThirdPerson && !cgs.cam.renderingFreeCam)
+		{
+			if (milli > cgs.thirdpersonUpdate)
+			{
+				float angle = cg_thirdPersonAngle.value - DEMO_ANGLEDELTA;
+
+				cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
+				if (key == K_RIGHTARROW)
+				{
+					if (angle < 0)
+					{
+						angle += 360.0f;
+					}
+				}
+				else
+				{
+					if (angle >= 360.0f)
+					{
+						angle -= 360.0f;
+					}
+				}
+				trap_Cvar_Set("cg_thirdPersonAngle", va("%f", angle));
+			}
+		}
+		else
+		{
+			CG_RunBinding(key, down);
+		}
+		return;
+    /*
+            case K_LEFTARROW:
+                    if (cg.renderingThirdPerson && !etpro_cgs.cam.renderingFreeCam) {
+                            if(milli > cgs.thirdpersonUpdate) {
+                                    float angle = cg_thirdPersonAngle.value + DEMO_ANGLEDELTA;
+
+                                    cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
+                                    if(angle >= 360.0f) angle -= 360.0f;
+                                    trap_Cvar_Set("cg_thirdPersonAngle", va("%f", angle));
+                            }
+                    } else {
+                            etpro_RunBinding(key, down);
+                    }
+                    return;
+    */
+	// Timescale controls
+	case K_KP_5:
+	//case K_KP_INS: // needed for "more options"
+	//case K_SPACE: // most everyone's favorite jump key, :x
+	case K_ESCAPE:  // escape also
+		if (!down)
+		{
+			trap_Cvar_Set("timescale", "1");
+			cgs.timescaleUpdate = cg.time + 1000;
+		}
+		return;
+	// Help info
+	case K_BACKSPACE:
+		if (!down)
+		{
+			if (cg.demohelpWindow != SHOW_ON)
+			{
+				CG_ShowHelp_On(&cg.demohelpWindow);
+			}
+			else
+			{
+				CG_ShowHelp_Off(&cg.demohelpWindow);
+			}
+		}
+		return;
+	case K_KP_ENTER:
+		if (!down)
+		{
+			if (cg.snap->ps.leanf && !cgs.cam.renderingFreeCam)
+			{
+				cgs.cam.startLean = qtrue;
+			}
+
+			cgs.cam.renderingFreeCam ^= 1;
+
+			if (cgs.cam.renderingFreeCam)
+			{
+				int viewheight;
+
+				if (cg.snap->ps.eFlags & EF_CROUCHING)
+				{
+					viewheight = CROUCH_VIEWHEIGHT;
+				}
+				else if (cg.snap->ps.eFlags & EF_PRONE || cg.snap->ps.eFlags & EF_PRONE_MOVING)
+				{
+					viewheight = PRONE_VIEWHEIGHT;
+				}
+				else
+				{
+					viewheight = DEFAULT_VIEWHEIGHT;
+				}
+				cgs.cam.camOrigin[2] += viewheight;
+			}
+
+		}
+		return;
+	case K_INS: // mortarcam
+		if (!down)
+		{
+			trap_Cvar_Set("demo_mortarcam", ((demo_mortarcam.integer == 0) ? "1" : "0"));
+		}
+		return;
+	case K_HOME: // panzercam
+		if (!down)
+		{
+			trap_Cvar_Set("demo_panzercam", ((demo_panzercam.integer == 0) ? "1" : "0"));
+		}
+		return;
+	case K_DEL:     // grenadecam
+		if (!down)
+		{
+			trap_Cvar_Set("demo_grenadecam", ((demo_grenadecam.integer == 0) ? "1" : "0"));
+		}
+		return;
+	case K_END: // dynamitecam
+		if (!down)
+		{
+			trap_Cvar_Set("demo_dynamitecam", ((demo_dynamitecam.integer == 0) ? "1" : "0"));
+		}
+		return;
+	case K_PGDN:
+		if (!down)
+		{ // teamonlycam
+			trap_Cvar_Set("demo_teamonlymissilecam", ((demo_teamonlymissilecam.integer == 0) ? "1" : "0"));
+		}
+		return;
+	case K_CTRL:
+		if (!down)
+		{
+			trap_Cvar_Set("demo_pvshint", ((demo_pvshint.integer == 0) ? "1" : "0"));
+		}
+		return;
+	default:
+		break;
+	}
+#endif
+
 
 	switch (key)
 	{
@@ -451,12 +692,14 @@ void CG_DemoClick(int key, qboolean down)
 			cgs.timescaleUpdate = cg.time + 1000;
 		}
 		return;
+#ifndef FEATURE_EDV
 	case K_SPACE:
 		if (!down)
 		{
 			trap_SendConsoleCommand("pausedemo");
 		}
 		return;
+#endif
 	case K_KP_DOWNARROW:
 		if (!down)
 		{
@@ -568,6 +811,11 @@ void CG_DemoClick(int key, qboolean down)
 			trap_Cvar_Set("cl_avidemo", demo_avifpsF5.string);
 		}
 		return;
+#if FEATURE_EDV
+	default:
+		CG_RunBinding(key, down);
+		break;
+#endif
 	}
 }
 
@@ -1457,6 +1705,17 @@ void CG_DrawDemoControls(int x, int y, int w, vec4_t borderColor, vec4_t bgColor
 
 void CG_DemoHelpDraw(void)
 {
+#if FEATURE_EDV
+#define ONOFF(x) ((x) ? ("ON") : ("OFF"))
+	char *freecam     = ONOFF(cgs.cam.renderingFreeCam);
+	char *panzercam   = ONOFF(demo_panzercam.integer);
+	char *mortarcam   = ONOFF(demo_mortarcam.integer);
+	char *grenadecam  = ONOFF(demo_grenadecam.integer);
+	char *dynamitecam = ONOFF(demo_dynamitecam.integer);
+	char *teamonly    = ONOFF(demo_teamonlymissilecam.integer);
+	char *pvshint     = ONOFF(demo_pvshint.integer);
+#endif
+
 	if (cg.demohelpWindow == SHOW_OFF)
 	{
 		return;
@@ -1477,8 +1736,32 @@ void CG_DemoHelpDraw(void)
 			NULL,
 			"^7ENTER     ^3External view",
 			"^7LFT/RGHT  ^3Change angle",
-			"^7UP/DOWN   ^3Move in/out"
+#if FEATURE_EDV
+			"^nUP/DOWN   ^mMove in/out",
+			NULL,
+			//"^nKP_ENTER  ^mToggle freecam"
+			"^nALT       ^mmore options"
+#else
+			"^nUP/DOWN   ^mMove in/out"
+#endif
+
 		};
+
+#if FEATURE_EDV
+		const char *edvhelp[] =
+		{
+			va("^nKP_ENTER  ^mFreecam    ^m%s", freecam),
+			va("^nCTRL      ^mPvshint    ^m%s", pvshint),
+			NULL,
+			va("^nDEL       ^mGrenadecam ^m%s", grenadecam),
+			va("^nHOME      ^mPanzercam  ^m%s", panzercam),
+			va("^nEND       ^mDynacam    ^m%s", dynamitecam),
+			va("^nINS       ^mMortarcam  ^m%s", mortarcam),
+			va("^nPGDOWN    ^mTeamonly   ^m%s", teamonly),
+			NULL,
+		};
+#endif
+
 
 #ifdef FEATURE_MULTIVIEW
 		const char *mvhelp[] =
@@ -1517,6 +1800,45 @@ void CG_DemoHelpDraw(void)
 
 		float diff = cg.fadeTime - trap_Milliseconds();
 
+#if FEATURE_EDV
+		int menuLevel = cgs.currentMenuLevel;
+#endif
+
+// the ifdef's are very painfull here
+#if FEATURE_EDV
+		// FIXME: Should compute this beforehand
+		w = DH_W + (
+#ifdef FEATURE_MULTIVIEW
+		    (cg.mvTotalClients > 1) ? 12 :
+#endif
+		    0);
+		x = Ccg_WideX(SCREEN_WIDTH) + 3 * DH_X - w;
+
+
+		if (menuLevel == ML_MAIN)
+		{
+			h = tSpacing + 9 +
+			    tSpacing * (2 +
+#ifdef FEATURE_MULTIVIEW
+			                ((cg.mvTotalClients > 1) ? ARRAY_LEN(mvhelp) : ARRAY_LEN(help))
+#else
+			                ARRAY_LEN(help)
+#endif
+			                );
+		}
+		else if (menuLevel == ML_EDV)
+		{
+			h = tSpacing + 9 +
+			    tSpacing * (2 +
+#ifdef FEATURE_MULTIVIEW
+			                ((cg.mvTotalClients > 1) ? ARRAY_LEN(mvhelp) : ARRAY_LEN(edvhelp))
+#else
+			                ARRAY_LEN(edvhelp)
+#endif
+			                );
+		}
+
+#else
 		// FIXME: Should compute this beforehand
 		w = DH_W + (
 #ifdef FEATURE_MULTIVIEW
@@ -1532,6 +1854,8 @@ void CG_DemoHelpDraw(void)
 		                ARRAY_LEN(help)
 #endif
 		                );
+
+#endif
 
 		// Fade-in effects
 		if (diff > 0.0f)
@@ -1585,6 +1909,11 @@ void CG_DemoHelpDraw(void)
 
 		y += 3;
 
+#if FEATURE_EDV
+		if (menuLevel == ML_MAIN)
+		{
+#endif
+
 		// Control info
 		for (i = 0; i < ARRAY_LEN(help); i++)
 		{
@@ -1594,6 +1923,22 @@ void CG_DemoHelpDraw(void)
 				CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, (char *)help[i], 0.0f, 0, tStyle, tFont);
 			}
 		}
+#if FEATURE_EDV
+	}
+	else if (menuLevel == ML_EDV)
+	{
+		// Control info
+		for (i = 0; i < ARRAY_LEN(edvhelp); i++)
+		{
+			y += tSpacing;
+			if (help[i] != NULL)
+			{
+				CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, (char *)edvhelp[i], 0.0f, 0, tStyle, tFont);
+			}
+		}
+
+	}
+#endif
 
 #if FEATURE_MULTIVIEW
 		if (cg.mvTotalClients > 1)
@@ -1610,7 +1955,19 @@ void CG_DemoHelpDraw(void)
 #endif
 
 		y += tSpacing * 2;
+#if FEATURE_EDV
+		if (menuLevel == ML_MAIN)
+		{
+#endif
 		CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, CG_TranslateString("^7BACKSPACE ^3help on/off"), 0.0f, 0, tStyle, tFont);
+#if FEATURE_EDV
+	}
+	else if (menuLevel == ML_EDV)
+	{
+		CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, CG_TranslateString("^7BACKSPACE ^mgo  back"), 0.0f, 0, tStyle, tFont);
+	}
+#endif
+
 	}
 }
 
@@ -1668,8 +2025,8 @@ void CG_SpecHelpDraw(void)
 			{ "spechelp", "help on/off"        }
 		};
 
-		int  i, x, y = SCREEN_HEIGHT, w, h;
-		int  len, maxlen = 0;
+		int i, x, y = SCREEN_HEIGHT, w, h;
+		int len, maxlen = 0;
 		char format[MAX_STRING_TOKENS], buf[MAX_STRING_TOKENS];
 		char *lines[16];
 
@@ -1680,18 +2037,18 @@ void CG_SpecHelpDraw(void)
 		vec4_t borderColorTitle = COLOR_BORDER_TITLE;   // titlebar
 
 		// Main header
-		int          hStyle   = 0;
-		float        hScale   = 0.19f;
-		float        hScaleY  = 0.19f;
-		fontHelper_t *hFont   = FONT_HEADER;
-		vec4_t       hdrColor = COLOR_TEXT;  // text
+		int hStyle          = 0;
+		float hScale        = 0.19f;
+		float hScaleY       = 0.19f;
+		fontHelper_t *hFont = FONT_HEADER;
+		vec4_t hdrColor     = COLOR_TEXT;    // text
 
 		// Text settings
-		int          tStyle   = ITEM_TEXTSTYLE_SHADOWED;
-		int          tSpacing = 9;      // Should derive from CG_Text_Height_Ext
-		float        tScale   = 0.19f;
-		fontHelper_t *tFont   = FONT_TEXT;
-		vec4_t       tColor   = COLOR_TEXT; // text
+		int tStyle          = ITEM_TEXTSTYLE_SHADOWED;
+		int tSpacing        = 9;        // Should derive from CG_Text_Height_Ext
+		float tScale        = 0.19f;
+		fontHelper_t *tFont = FONT_TEXT;
+		vec4_t tColor       = COLOR_TEXT;   // text
 
 		float diff = cg.fadeTime - trap_Milliseconds();
 
@@ -1799,7 +2156,11 @@ void CG_DrawOverlays(void)
 #ifdef FEATURE_MULTIVIEW
 	CG_SpecHelpDraw();
 #endif
+#if FEATURE_EDV
+	if (cg.demoPlayback && cg_predefineddemokeys.integer)
+#else
 	if (cg.demoPlayback)
+#endif
 	{
 		CG_DemoHelpDraw();
 	}

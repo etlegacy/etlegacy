@@ -157,7 +157,7 @@ typedef struct specName_s
 	int lastInvisibleTime;
 	qboolean visible;
 	float alpha;
-}specName_t;
+} specName_t;
 
 typedef struct
 {
@@ -177,8 +177,8 @@ typedef struct
 	int id;                     // Window ID for special handling (i.e. stats, motd, etc.)
 	qboolean inuse;             // Activity flag
 	int lineCount;              // Number of lines to display
-	int lineHeight[MAX_WINDOW_LINES];   // Height property for each line
-	char *lineText[MAX_WINDOW_LINES];   // Text info
+	int lineHeight[MAX_WINDOW_LINES];      // Height property for each line
+	char *lineText[MAX_WINDOW_LINES];     // Text info
 #ifdef FEATURE_MULTIVIEW
 	float m_x;                  // Mouse X position
 	float m_y;                  // Mouse Y position
@@ -393,7 +393,7 @@ typedef struct markPoly_s
 	struct markPoly_s *prevMark, *nextMark;
 	int time;
 	qhandle_t markShader;
-	qboolean alphaFade;         // fade alpha instead of rgb
+	qboolean alphaFade;          // fade alpha instead of rgb
 	float color[4];
 	poly_t poly;
 	polyVert_t verts[MAX_VERTS_ON_POLY];
@@ -556,7 +556,7 @@ typedef struct clientInfo_s
 	int fireteam;
 	int medals[SK_NUM_SKILLS];
 	int skill[SK_NUM_SKILLS];
-	int skillpoints[SK_NUM_SKILLS]; // filled OOB by +wstats
+	int skillpoints[SK_NUM_SKILLS];      // filled OOB by +wstats
 
 	int disguiseClientNum;
 
@@ -740,7 +740,7 @@ typedef struct soundScript_s
 	int attenuation;
 	qboolean streaming;
 	qboolean looping;
-	qboolean random;    // TODO
+	qboolean random;           // TODO
 	int numSounds;
 	soundScriptSound_t *soundList;          // pointer into the global list of soundScriptSounds (defined below)
 
@@ -786,7 +786,7 @@ typedef struct
 	demoPlayInfo_t *demoinfo;
 	int legacyClient;               // is either 0 (vanilla client) 1 (old legacy client) or a version integer from git_version.h
 	qboolean loading;               // don't defer players at initial startup
-	qboolean intermissionStarted;   // don't play voice rewards, because game will end shortly
+	qboolean intermissionStarted;       // don't play voice rewards, because game will end shortly
 
 	// there are only one or two snapshot_t that are relevent at a time
 	int latestSnapshotNum;          // the number of snapshots the client system has received
@@ -872,7 +872,7 @@ typedef struct
 	qboolean showScores;
 	qboolean scoreBoardShowing;
 	int scoreFadeTime;
-	char spectatorList[MAX_STRING_CHARS];    // list of names
+	char spectatorList[MAX_STRING_CHARS];     // list of names
 	int spectatorLen;                        // length of list
 	float spectatorWidth;                    // width in device units
 	int spectatorTime;                       // next time to offset
@@ -1804,6 +1804,46 @@ typedef struct
 #define NUM_ENDGAME_AWARDS     19   // total number of endgame awards
 #define NUMSHOW_ENDGAME_AWARDS 14   // number of awards to display that will fit on screen
 
+#if FEATURE_EDV
+// used by demo_autotimescaleweapons;
+#define ATSW_PANZER             0x01
+#define ATSW_GRENADE            0x02
+#define ATSW_DYNAMITE           0x04
+#define ATSW_MORTAR             0x08
+#define ATSW_SMOKE              0x10
+
+typedef struct cam_s
+{
+	qboolean renderingFreeCam;
+	qboolean renderingWeaponCam;
+	qboolean wasRenderingWeaponCam;
+	qboolean setCamAngles;   //are we overriding angles via freecamSetPos
+
+	vec3_t camAngle; // stores the angle of our cam
+	vec3_t camOrigin; // stores the origin of our cam
+	vec3_t velocity;
+
+	qboolean startLean;
+
+	int factor;
+	qboolean noclip;
+
+	int commandTime;
+
+	int move;
+	int turn;
+} cam_t;
+
+// ML_ = menu level
+// used in the demo helpmenu
+enum
+{
+	ML_MAIN,
+	ML_EDV
+};
+// -fretn
+#endif
+
 // The client game static (cgs) structure hold everything
 // loaded or calculated from the gamestate.  It will NOT
 // be cleared when a tournement restart is done, allowing
@@ -1847,7 +1887,7 @@ typedef struct cgs_s
 	qhandle_t gameModelSkins[MAX_CS_SKINS];
 	bg_character_t *gameCharacters[MAX_CHARACTERS];
 	sfxHandle_t gameSounds[MAX_SOUNDS];
-	sfxHandle_t cachedSounds[GAMESOUND_MAX]; // static game sounds
+	sfxHandle_t cachedSounds[GAMESOUND_MAX];    // static game sounds
 
 	int numInlineModels;
 	qhandle_t inlineDrawModel[MAX_MODELS];
@@ -2044,6 +2084,10 @@ typedef struct cgs_s
 #ifdef FEATURE_MULTIVIEW
 	int mvAllowed;
 #endif
+#if FEATURE_EDV
+	cam_t cam;
+	int currentMenuLevel;
+#endif
 } cgs_t;
 
 //==============================================================================
@@ -2191,6 +2235,30 @@ extern vmCvar_t demo_infoWindow;
 #ifdef FEATURE_MULTIVIEW
 extern vmCvar_t mv_sensitivity;
 #endif
+#if FEATURE_EDV
+extern vmCvar_t demo_panzercam;
+extern vmCvar_t demo_mortarcam;
+extern vmCvar_t demo_grenadecam;
+extern vmCvar_t demo_dynamitecam;
+extern vmCvar_t demo_followxDistance;
+extern vmCvar_t demo_followyDistance;
+extern vmCvar_t demo_followzDistance;
+extern vmCvar_t demo_yawturnspeed;
+extern vmCvar_t demo_pitchturnspeed;
+extern vmCvar_t demo_rollspeed;
+extern vmCvar_t demo_lookat;
+extern vmCvar_t demo_teamonlymissilecam;
+extern vmCvar_t demo_autotimescale;
+extern vmCvar_t demo_autotimescaleweapons;
+extern vmCvar_t demo_freecamspeed;
+extern vmCvar_t demo_nopitch;
+extern vmCvar_t demo_pvshint;
+extern vmCvar_t demo_lookat;
+extern vmCvar_t demo_autotimescale;
+extern vmCvar_t demo_autotimescaleweapons;
+extern vmCvar_t demo_teamonlymissilecam;
+extern vmCvar_t cg_predefineddemokeys;
+#endif
 // engine mappings
 extern vmCvar_t int_cl_maxpackets;
 extern vmCvar_t int_cl_timenudge;
@@ -2293,9 +2361,9 @@ void CG_printConsoleString(char *str);
 
 void CG_LoadObjectiveData(void);
 
-void QDECL CG_Printf(const char *msg, ...) __attribute__ ((format(printf, 1, 2)));
-void QDECL CG_DPrintf(const char *msg, ...) __attribute__ ((format(printf, 1, 2)));
-void QDECL CG_Error(const char *msg, ...) __attribute__ ((noreturn, format(printf, 1, 2)));
+void QDECL CG_Printf(const char *msg, ...) __attribute__((format(printf, 1, 2)));
+void QDECL CG_DPrintf(const char *msg, ...) __attribute__((format(printf, 1, 2)));
+void QDECL CG_Error(const char *msg, ...) __attribute__((noreturn, format(printf, 1, 2)));
 
 void CG_StartMusic(void);
 void CG_QueueMusic(void);
@@ -2433,6 +2501,12 @@ void CG_BuildSolidList(void);
 int CG_PointContents(const vec3_t point, int passEntityNum);
 void CG_Trace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask);
 void CG_PredictPlayerState(void);
+
+// cg_edv.c
+void CG_RunBindingBuf(int key, qboolean down, char *buf);
+void CG_RunBinding(int key, qboolean down);
+void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent);
+void CG_EDV_RunInput(void);
 
 // cg_events.c
 void CG_CheckEvents(centity_t *cent);
@@ -2662,6 +2736,24 @@ void CG_dumpStats_f(void);
 // MAPVOTE
 void CG_parseMapVoteListInfo(void);
 void CG_parseMapVoteTally(void);
+#if FEATURE_EDV
+void CG_FreecamTurnLeftDown_f(void);
+void CG_FreecamTurnLeftUp_f(void);
+void CG_FreecamTurnRightDown_f(void);
+void CG_FreecamTurnRightUp_f(void);
+void CG_FreecamTurnUpDown_f(void);
+void CG_FreecamTurnUpUp_f(void);
+void CG_FreecamTurnDownDown_f(void);
+void CG_FreecamTurnDownUp_f(void);
+void CG_FreecamRollLeftDown_f(void);
+void CG_FreecamRollLeftUp_f(void);
+void CG_FreecamRollRightDown_f(void);
+void CG_FreecamRollRightUp_f(void);
+void CG_Freecam_f(void);
+void CG_FreecamSetPos_f(void);
+void CG_FreecamGetPos_f(void);
+#endif
+
 
 // cg_servercmds.c
 void CG_ExecuteNewServerCommands(int latestSequence);

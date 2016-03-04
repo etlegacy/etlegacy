@@ -34,9 +34,9 @@
 
 #include "cg_local.h"
 
-static intptr_t (QDECL *syscall)(intptr_t arg, ...) = (intptr_t (QDECL *)(intptr_t, ...)) - 1;
+static intptr_t(QDECL * syscall)(intptr_t arg, ...) = (intptr_t(QDECL *)(intptr_t, ...)) - 1;
 
-Q_EXPORT void dllEntry(intptr_t (QDECL *syscallptr)(intptr_t arg, ...))
+Q_EXPORT void dllEntry(intptr_t(QDECL * syscallptr)(intptr_t arg, ...))
 {
 	syscall = syscallptr;
 }
@@ -265,17 +265,53 @@ void trap_R_ClearDecals(void)
  */
 void trap_S_StartSound(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx)
 {
+#if FEATURE_EDV
+	//explicitly respatialize all local sounds in freecam
+	if ((cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam) && entityNum == cg.snap->ps.clientNum)
+	{
+		syscall(CG_S_STARTSOUND, cg.snap->ps.origin, -1, entchannel, sfx, 127 /* Gordon: default volume always for the moment*/);
+	}
+	else
+	{
+#endif
 	syscall(CG_S_STARTSOUND, origin, entityNum, entchannel, sfx, 127 /* default volume always for the moment*/);
+#if FEATURE_EDV
+}
+#endif
 }
 
 void trap_S_StartSoundVControl(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int volume)
 {
+#if FEATURE_EDV
+	//explicitly respatialize all local sounds in freecam
+	if ((cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam) && entityNum == cg.snap->ps.clientNum)
+	{
+		syscall(CG_S_STARTSOUND, cg.snap->ps.origin, -1, entchannel, sfx, 127 /* Gordon: default volume always for the moment*/);
+	}
+	else
+	{
+#endif
 	syscall(CG_S_STARTSOUND, origin, entityNum, entchannel, sfx, volume);
+#if FEATURE_EDV
+}
+#endif
 }
 
 void trap_S_StartSoundEx(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int flags)
 {
+#if FEATURE_EDV
+	//explicitly respatialize all local sounds in freecam
+	if ((cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam) && entityNum == cg.snap->ps.clientNum)
+	{
+		syscall(CG_S_STARTSOUND, cg.snap->ps.origin, -1, entchannel, sfx, 127 /* Gordon: default volume always for the moment*/);
+	}
+	else
+	{
+#endif
 	syscall(CG_S_STARTSOUNDEX, origin, entityNum, entchannel, sfx, flags, 127 /* default volume always for the moment*/);
+#if FEATURE_EDV
+}
+#endif
 }
 
 void trap_S_StartSoundExVControl(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int flags, int volume)

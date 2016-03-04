@@ -6425,7 +6425,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 
 		le = CG_MakeExplosion(origin, dir, mod, shader, duration, isSprite);
 
-		le->light         = light;
+		le->light = light;
 		VectorCopy(lightColor, le->lightColor);
 	}
 
