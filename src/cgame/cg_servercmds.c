@@ -44,7 +44,7 @@ static void CG_ParseSkillRating(void)
 	int        i = 0;
 	const char *s;
 
-	cg.axisProb = atof(CG_Argv(1));
+	cg.axisProb   = atof(CG_Argv(1));
 	cg.alliesProb = atof(CG_Argv(2));
 
 	s = CG_Argv(i);
@@ -1999,7 +1999,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 }
 
 // Client-side stat presentation
-void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
+void CG_parseWeaponStats_cmd(void(txt_dump) (char *))
 {
 	clientInfo_t *ci;
 	qboolean     fFull     = (txt_dump != CG_printWindow);
@@ -2220,7 +2220,7 @@ void CG_parseWeaponStats_cmd(void (txt_dump) (char *))
 	}
 }
 
-void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (char *))
+void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (char *))
 {
 	int      iArg  = 1;
 	qboolean fFull = (txt_dump != CG_printWindow);
@@ -2275,7 +2275,7 @@ void CG_parseBestShotsStats_cmd(qboolean doTop, void (txt_dump) (char *))
 	}
 }
 
-void CG_parseTopShotsStats_cmd(qboolean doTop, void (txt_dump) (char *))
+void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (char *))
 {
 	int i, iArg = 1;
 	int cClients = atoi(CG_Argv(iArg++));
@@ -2626,6 +2626,12 @@ static void CG_ServerCommand(void)
 		// process locations and name
 		Com_sprintf(text, sizeof(text), "(%s^7)^3(%s^3): %s", cgs.clientinfo[clientNum].name, loc, s);
 
+#if FEATURE_EDV
+		if ((strstr(text, "Fire Mission: ") || strstr(text, "Pilot: ")) && (cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam))
+		{
+			return;
+		}
+#endif
 		CG_RemoveChatEscapeChar(text);
 		CG_AddToTeamChat(text, clientNum); // disguise ?
 		CG_Printf("%s\n", text);

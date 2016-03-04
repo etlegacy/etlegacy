@@ -1043,7 +1043,7 @@ static void CG_Missile(centity_t *cent)
 			BG_EvaluateTrajectoryDelta(&cent->currentState.pos, cg.time, velocity, qfalse, -1);
 			trap_S_AddLoopingSound(cent->lerpOrigin, velocity, weapon->spindownSound, 255, 0);
 
-			if(cgs.clientinfo[cg.snap->ps.clientNum].team == cent->currentState.teamNum)
+			if (cgs.clientinfo[cg.snap->ps.clientNum].team == cent->currentState.teamNum)
 			{
 				CG_ScanForCrosshairDyna(cent);
 			}
@@ -1160,6 +1160,60 @@ static void CG_Missile(centity_t *cent)
 		}
 	}
 
+#if FEATURE_EDV
+	//  edv renderingWeaponCam fix
+	if (cent->currentState.weapon == WP_PANZERFAUST
+	    || cent->currentState.weapon == WP_GRENADE_LAUNCHER
+	    || cent->currentState.weapon == WP_GRENADE_PINEAPPLE
+	    || cent->currentState.weapon == WP_GPG40
+	    || cent->currentState.weapon == WP_M7
+	    || cent->currentState.weapon == WP_DYNAMITE
+	    || cent->currentState.weapon == WP_SMOKE_MARKER
+	    || cent->currentState.weapon == WP_SMOKE_BOMB)
+	{
+
+		vec3_t delta;
+
+		if (VectorCompare(cent->rawOrigin, vec3_origin))
+		{
+			VectorSubtract(cent->lerpOrigin, s1->pos.trBase, delta);
+			VectorCopy(cent->lerpOrigin, cent->rawOrigin);
+		}
+		else
+		{
+			VectorSubtract(cent->lerpOrigin, cent->rawOrigin, delta);
+			if (!VectorCompare(cent->lerpOrigin, cent->rawOrigin))
+			{
+				VectorCopy(cent->lerpOrigin, cent->rawOrigin);
+			}
+		}
+
+		//save this so we can use it later (eg in edv)
+		{
+			vec3_t d2;
+			vec3_t temp;
+
+			VectorCopy(delta, d2);
+			VectorNormalize(d2);
+			vectoangles(d2, temp);
+			if (demo_nopitch.integer)
+			{
+				cent->rawAngles[1] = temp[1];
+			}
+			else
+			{
+				VectorCopy(temp, cent->rawAngles);
+			}
+		}
+
+		if (VectorNormalize2(delta, ent.axis[0]) == 0)
+		{
+			ent.axis[0][2] = 1;
+		}
+	} //
+#endif
+
+
 	// convert direction of travel into axis
 	switch (cent->currentState.weapon)
 	{
@@ -1186,6 +1240,17 @@ static void CG_Missile(centity_t *cent)
 				VectorCopy(cent->lerpOrigin, cent->rawOrigin);
 			}
 		}
+#if FEATURE_EDV
+		// save this so we can use it later (eg in edv)
+		{
+			vec3_t d2;
+
+			VectorCopy(delta, d2);
+			VectorNormalize(d2);
+			vectoangles(d2, cent->rawAngles);
+		}
+#endif
+
 		if (VectorNormalize2(delta, ent.axis[0]) == 0)
 		{
 			ent.axis[0][2] = 1;
@@ -1218,6 +1283,10 @@ static void CG_Missile(centity_t *cent)
 		// add to refresh list, possibly with quad glow
 		CG_AddRefEntityWithPowerups(&ent, s1->powerups, TEAM_FREE, s1, vec3_origin);
 	}
+
+#if FEATURE_EDV
+	CG_EDV_WeaponCam(cent, &ent);
+#endif
 }
 
 // capture and hold flag

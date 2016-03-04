@@ -292,7 +292,11 @@ static void CG_Obituary(entityState_t *ent)
 	}
 
 	// check for kill messages from the current clientNum
+#if FEATURE_EDV
+	if (attacker == cg.clientNum && !cgs.cam.renderingFreeCam && !cgs.cam.renderingWeaponCam)
+#else
 	if (attacker == cg.clientNum)
+#endif
 	{
 		char *s;
 
@@ -680,7 +684,14 @@ static void CG_ItemPickup(int itemNum)
 		break;
 	}
 
+#if FEATURE_EDV
+	if (!cgs.cam.renderingFreeCam && !cgs.cam.renderingWeaponCam)
+	{
+		CG_AddPMItem(giType, va(CG_TranslateString("Picked up %s"), CG_TranslateString(CG_PickupItemText(itemNum))), " ", cgs.media.pmImages[giType], 0, 0, NULL);
+	}
+#else
 	CG_AddPMItem(giType, va(CG_TranslateString("Picked up %s"), CG_TranslateString(CG_PickupItemText(itemNum))), " ", cgs.media.pmImages[giType], 0, 0, NULL);
+#endif
 
 	// see if it should be the grabbed weapon
 	if (bg_itemlist[itemNum].giType == IT_WEAPON)
@@ -2906,7 +2917,21 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			if (sound)
 			{
 				// no origin!
+#if FEATURE_EDV
+				if (cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+				{
+					trap_S_StartLocalSound(sound, CHAN_AUTO);
+				}
+				else
+				{
+					// no origin!
+					trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
+
+				}
+#else
+				// no origin!
 				trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
+#endif
 			}
 			else
 			{
@@ -2928,8 +2953,21 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 					sound = CG_CustomSound(es->number, s);
 					if (sound)
 					{
+#if FEATURE_EDV
+						if (cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+						{
+							trap_S_StartLocalSound(sound, CHAN_AUTO);
+						}
+						else
+						{
+							// origin is NULL!
+							trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
+						}
+#else
 						// origin is NULL!
 						trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, sound);
+#endif
+
 					}
 					else
 					{
@@ -3211,6 +3249,15 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		float  len;
 
 		DEBUGNAME("EV_SHAKE");
+
+#if FEATURE_EDV
+		if (cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+		{
+			break;
+		}
+#endif
+
+
 		VectorSubtract(cg.snap->ps.origin, cent->lerpOrigin, v);
 		len = VectorLength(v);
 
@@ -3261,6 +3308,12 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		const char *wav = NULL;
 
 		DEBUGNAME("EV_AIRSTRIKEMESSAGE");
+#if FEATURE_EDV
+		if (cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+		{
+			break;
+		}
+#endif
 		switch (cent->currentState.density)
 		{
 		case 0:         // too many called
@@ -3308,6 +3361,12 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		const char *wav = NULL;
 
 		DEBUGNAME("EV_ARTYMESSAGE");
+#if FEATURE_EDV
+		if (cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+		{
+			break;
+		}
+#endif
 		switch (cent->currentState.density)
 		{
 		case 0:         // too many called

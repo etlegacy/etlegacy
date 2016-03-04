@@ -645,9 +645,16 @@ void CG_mvDraw(cg_window_t *sw)
 	refdef.rdflags = cg.refdef.rdflags;
 	refdef.time    = cg.time;
 
+
 	AnglesToAxis(cent->lerpAngles, refdef.viewaxis);
 	VectorCopy(cent->lerpOrigin, refdef.vieworg);
 	VectorCopy(cent->lerpAngles, cg.refdefViewAngles);
+
+#if FEATURE_EDV
+	// only copy mainview origin/angles freecam
+	VectorCopy(refdef.vieworg, cgs.cam.camOrigin);
+	VectorCopy(cg.refdefViewAngles, cgs.cam.camAngle);
+#endif
 
 	cg.refdef_current = &refdef;
 

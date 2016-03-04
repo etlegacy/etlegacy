@@ -138,7 +138,7 @@ panel_button_t missiondescriptionPanelHeaderText =
 	"***TOP SECRET***",
 	{ 440,                     72, 200, 32 },
 	{ 0,                       0,  0,   0, 0, 0, 0, 0},
-	&missiondescriptionHeaderTxt, /* font     */
+	&missiondescriptionHeaderTxt,/* font     */
 	NULL,                      /* keyDown  */
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,

@@ -1197,14 +1197,14 @@ void CG_ScanForCrosshairMine(centity_t *cent)
 	VectorCopy(cg.refdef.vieworg, start);
 	VectorMA(start, 512.0f, cg.refdef.viewaxis[0], end);
 
-	CG_Trace( &trace, start, NULL, NULL, end, -1, MASK_SOLID );
+	CG_Trace(&trace, start, NULL, NULL, end, -1, MASK_SOLID);
 
-	if(Square(trace.endpos[0] - cent->currentState.pos.trBase[0]) < 256 &&
-			Square(trace.endpos[1] - cent->currentState.pos.trBase[1]) < 256 &&
-			Square(trace.endpos[2] - cent->currentState.pos.trBase[2]) < 256)
+	if (Square(trace.endpos[0] - cent->currentState.pos.trBase[0]) < 256 &&
+	    Square(trace.endpos[1] - cent->currentState.pos.trBase[1]) < 256 &&
+	    Square(trace.endpos[2] - cent->currentState.pos.trBase[2]) < 256)
 	{
-	   cg.crosshairMine = cent->currentState.otherEntityNum;
-	   cg.crosshairMineTime = cg.time;
+		cg.crosshairMine     = cent->currentState.otherEntityNum;
+		cg.crosshairMineTime = cg.time;
 	}
 }
 
@@ -1267,20 +1267,20 @@ void CG_ScanForCrosshairDyna(centity_t *cent)
 	// pos.trBase is not the middle of the dyna, but due to different
 	// orientations relative to the map axis, this cannot be corrected in a
 	// simple way unfortunately
-	if(Square(trace.endpos[0] - cent->currentState.pos.trBase[0]) < 256 &&
-			Square(trace.endpos[1] - cent->currentState.pos.trBase[1]) < 256 &&
-			Square(trace.endpos[2] - cent->currentState.pos.trBase[2]) < 256)
+	if (Square(trace.endpos[0] - cent->currentState.pos.trBase[0]) < 256 &&
+	    Square(trace.endpos[1] - cent->currentState.pos.trBase[1]) < 256 &&
+	    Square(trace.endpos[2] - cent->currentState.pos.trBase[2]) < 256)
 	{
-			if(cent->currentState.otherEntityNum >= MAX_CLIENTS)
-			{
-				cg.crosshairDyna = -1;
-			}
-			else
-			{
-				cg.crosshairDyna = cent->currentState.otherEntityNum;
-				cg.crosshairDynaTime = cg.time;
-			}
+		if (cent->currentState.otherEntityNum >= MAX_CLIENTS)
+		{
+			cg.crosshairDyna = -1;
 		}
+		else
+		{
+			cg.crosshairDyna     = cent->currentState.otherEntityNum;
+			cg.crosshairDynaTime = cg.time;
+		}
+	}
 }
 
 /*
@@ -1494,8 +1494,8 @@ static void CG_DrawCrosshairNames(void)
 	if (cg.crosshairDyna > -1)
 	{
 		color = CG_FadeColor(cg.crosshairDynaTime, 1000);
-		s = va("%s^7\'s dynamite", cgs.clientinfo[cg.crosshairDyna].name);
-		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+		s     = va("%s^7\'s dynamite", cgs.clientinfo[cg.crosshairDyna].name);
+		w     = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
 		CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
 
 		cg.crosshairDyna = -1;
@@ -1506,8 +1506,8 @@ static void CG_DrawCrosshairNames(void)
 	if (cg.crosshairMine > -1)
 	{
 		color = CG_FadeColor(cg.crosshairMineTime, 1000);
-		s = va("%s^7\'s mine", cgs.clientinfo[cg.crosshairMine].name);
-		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
+		s     = va("%s^7\'s mine", cgs.clientinfo[cg.crosshairMine].name);
+		w     = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
 		CG_Text_Paint_Ext(middle - w / 2, 182, fontScale, fontScale, color, s, 0, 0, 0, &cgs.media.limboFont2);
 
 		cg.crosshairMine = -1;
@@ -1826,8 +1826,24 @@ CG_DrawSpectator
 */
 static void CG_DrawSpectator(void)
 {
-	char *s = CG_TranslateString("SPECTATOR");
-	int  w  = CG_Text_Width_Ext(va("%s", s), cg_fontScaleTP.value, 0, &cgs.media.limboFont2);
+	char *s;
+#if FEATURE_EDV
+	if (cgs.cam.renderingWeaponCam)
+	{
+		s = CG_TranslateString("WEAPONCAM");
+	}
+	else if (cgs.cam.renderingFreeCam)
+	{
+		s = CG_TranslateString("FREECAM");
+	}
+	else
+	{
+#endif
+	s = CG_TranslateString("SPECTATOR");
+#if FEATURE_EDV
+}
+#endif
+	int w = CG_Text_Width_Ext(va("%s", s), cg_fontScaleTP.value, 0, &cgs.media.limboFont2);
 
 	CG_Text_Paint_Ext(Ccg_WideX(320) - w / 2, 440, cg_fontScaleTP.value, cg_fontScaleTP.value, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 }
@@ -2244,6 +2260,13 @@ static void CG_DrawSpectatorMessage(void)
 	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 	y          = INFOTEXT_STARTY + (charHeight * 2.0f) * 2;
 
+#if FEATURE_EDV
+	if (cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+	{
+		return;
+	}
+#endif
+
 	if (!cg_descriptiveText.integer)
 	{
 		return;
@@ -2334,6 +2357,14 @@ static void CG_DrawLimboMessage(void)
 	int           y   = INFOTEXT_STARTY;
 	int           charHeight;
 	float         fontScale = cg_fontScaleSP.value;
+
+#if FEATURE_EDV
+	if (cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+	{
+		return;
+	}
+#endif
+
 
 	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 
@@ -3434,10 +3465,20 @@ static void CG_Draw2D(void)
 		CG_DrawFlashFade();
 		return;
 	}
-
+#if FEATURE_EDV
+	if (!cgs.cam.renderingFreeCam && !cgs.cam.renderingWeaponCam)
+	{
+		CG_DrawFlashBlendBehindHUD();
+	}
+#else
 	CG_DrawFlashBlendBehindHUD();
+#endif
 
+#if FEATURE_EDV
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+#else
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+#endif
 	{
 		if (!CG_DrawScoreboard())
 		{
@@ -3473,7 +3514,11 @@ static void CG_Draw2D(void)
 	{
 		CG_SetHud();
 
+#if FEATURE_EDV
+		if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR && !cgs.cam.renderingFreeCam && !cgs.cam.renderingWeaponCam)
+#else
 		if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
+#endif
 		{
 			CG_DrawActiveHud();
 		}
@@ -3484,7 +3529,15 @@ static void CG_Draw2D(void)
 		}
 
 		CG_DrawCenterString();
+#if FEATURE_EDV
+		if (!cgs.cam.renderingFreeCam && !cgs.cam.renderingWeaponCam)
+		{
+			CG_DrawFollow();
+		}
+#else
 		CG_DrawFollow();
+#endif
+
 		CG_DrawWarmup();
 		CG_DrawGlobalHud();
 		CG_DrawObjectiveInfo();
@@ -3510,11 +3563,23 @@ static void CG_Draw2D(void)
 	// Info overlays
 	CG_DrawOverlays();
 
+#if FEATURE_EDV
+	if (!cgs.cam.renderingFreeCam && !cgs.cam.renderingWeaponCam)
+	{
+		// window updates
+		CG_windowDraw();
+
+		// draw flash blends now
+		CG_DrawFlashBlend();
+	}
+#else
 	// window updates
 	CG_windowDraw();
 
 	// draw flash blends now
 	CG_DrawFlashBlend();
+#endif
+
 
 	CG_DrawDemoRecording();
 }

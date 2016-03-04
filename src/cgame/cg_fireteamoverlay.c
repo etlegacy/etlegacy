@@ -37,12 +37,12 @@
 static int sortedFireTeamClients[MAX_CLIENTS];
 
 // colors and fonts for overlays
-static vec4_t FT_bg       = { 0.16f, 0.2f, 0.17f, 0.8f };         // header
-static vec4_t FT_bg2      = { 0.0f, 0.0f, 0.0f, 0.3f };           // box itself
-static vec4_t FT_border   = { 0.5f, 0.5f, 0.5f, 0.5f };
+static vec4_t FT_bg = { 0.16f, 0.2f, 0.17f, 0.8f };               // header
+static vec4_t FT_bg2 = { 0.0f, 0.0f, 0.0f, 0.3f };                // box itself
+static vec4_t FT_border = { 0.5f, 0.5f, 0.5f, 0.5f };
 static vec4_t FT_noselect = { 0.0f, 0.0f, 0.0f, 0.1f };           // not selected
-static vec4_t FT_select   = { 0.5f, 0.5f, 0.2f, 0.3f };           // selected member
-static vec4_t FT_text     = { 0.6f, 0.6f, 0.6f, 1.0f };
+static vec4_t FT_select = { 0.5f, 0.5f, 0.2f, 0.3f };             // selected member
+static vec4_t FT_text = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 #define FONT_HEADER         &cgs.media.limboFont1
 #define FONT_TEXT           &cgs.media.limboFont2

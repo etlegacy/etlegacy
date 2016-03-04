@@ -266,6 +266,40 @@ static void CG_CalcVrect(void)
 
 //==============================================================================
 
+#if FEATURE_EDV
+
+extern void CG_DrawPVShint(void);
+
+static void CG_OffsetFreeCamView(void)
+{
+
+	if (cgs.cam.renderingWeaponCam || cgs.cam.setCamAngles)
+	{
+		VectorCopy(cgs.cam.camAngle, cg.refdefViewAngles);
+	}
+
+	VectorCopy(cgs.cam.camOrigin, cg.refdef_current->vieworg);
+
+	if (demo_lookat.integer != -1)
+	{
+		centity_t *temp;
+		vec3_t    dir;
+
+		temp = &cg_entities[demo_lookat.integer];
+		VectorSubtract(temp->lerpOrigin, cgs.cam.camOrigin, dir);
+
+		vectoangles(dir, cg.refdefViewAngles);
+	}
+
+	if (demo_pvshint.integer != 0)
+	{
+		CG_DrawPVShint();
+	}
+}
+#endif
+
+
+
 /*
 ===============
 CG_OffsetThirdPersonView
@@ -963,6 +997,16 @@ static int CG_CalcFov(void)
 		cg.zoomval     = 0;
 	}
 
+#if FEATURE_EDV
+	//fix for edv
+	if (cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+	{
+		cg.zoomedBinoc = qfalse;
+		cg.zoomTime    = 0;
+		cg.zoomval     = 0;
+	}
+#endif
+
 	if (cg.predictedPlayerState.pm_type != PM_INTERMISSION)
 	{
 		fov_x = cg_fov.value;
@@ -1038,6 +1082,13 @@ static int CG_CalcFov(void)
 
 	cg.refdef_current->rdflags &= ~RDF_SNOOPERVIEW;
 
+#if FEATURE_EDV
+	if (cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+	{
+		//do nothing
+	}
+	else
+#endif
 	// mg42 zoom
 	if (cg.snap->ps.persistant[PERS_HWEAPON_USE])
 	{
@@ -1257,6 +1308,13 @@ int CG_CalcViewValues(void)
 			VectorCopy(cgs.ccPortalAngles, cg.refdefViewAngles);
 		}
 	}
+#if FEATURE_EDV
+	else if (cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+	{
+		//do nothing
+	}
+#endif
+
 	else if (cg.renderingThirdPerson && ((ps->eFlags & EF_MG42_ACTIVE) || (ps->eFlags & EF_AAGUN_ACTIVE))) // see if we're attached to a gun
 	{
 		centity_t *mg42 = &cg_entities[ps->viewlocked_entNum];
@@ -1284,8 +1342,15 @@ int CG_CalcViewValues(void)
 	}
 	else
 	{
+#if FEATURE_EDV
+		if (!cgs.cam.renderingFreeCam && !cgs.cam.renderingWeaponCam)
+		{
+#endif
 		VectorCopy(ps->origin, cg.refdef_current->vieworg);
 		VectorCopy(ps->viewangles, cg.refdefViewAngles);
+#if FEATURE_EDV
+	}
+#endif
 	}
 
 	if (!cg.showGameView)
@@ -1314,7 +1379,11 @@ int CG_CalcViewValues(void)
 		}
 
 		// lock the viewangles if the game has told us to
+#if FEATURE_EDV
+		if (ps->viewlocked && !cgs.cam.renderingFreeCam && !cgs.cam.renderingWeaponCam)
+#else
 		if (ps->viewlocked)
+#endif
 		{
 			// don't bother evaluating if set to 7 (look at medic)
 			if (ps->viewlocked != VIEWLOCK_MEDIC && ps->viewlocked != VIEWLOCK_MG42 && ps->viewlocked != VIEWLOCK_JITTER)
@@ -1329,13 +1398,30 @@ int CG_CalcViewValues(void)
 			}
 		}
 
+#if FEATURE_EDV
+		if (cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+		{
+			CG_OffsetFreeCamView();
+		}
+		else if (cg.renderingThirdPerson)
+		{
+			VectorCopy(cg.refdef.vieworg, cgs.cam.camOrigin);
+			VectorCopy(cg.refdefViewAngles, cgs.cam.camAngle);
+
+#else
 		if (cg.renderingThirdPerson)
 		{
+#endif
 			// back away from character
 			CG_OffsetThirdPersonView();
 		}
 		else
 		{
+#if FEATURE_EDV
+			VectorCopy(cg.refdef.vieworg, cgs.cam.camOrigin);
+			VectorCopy(cg.refdefViewAngles, cgs.cam.camAngle);
+#endif
+
 			// offset for local bobbing and kicks
 			CG_OffsetFirstPersonView();
 
@@ -1346,6 +1432,14 @@ int CG_CalcViewValues(void)
 		}
 
 		// lock the viewangles if the game has told us to
+#if FEATURE_EDV
+		//freecam must not get viewlocked
+		if (ps->viewlocked && (cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam))
+		{
+			//do nothing
+		}
+		else
+#endif
 		if (ps->viewlocked == VIEWLOCK_MEDIC)
 		{
 			centity_t *tent = &cg_entities[ps->viewlocked_entNum];
@@ -1373,7 +1467,16 @@ int CG_CalcViewValues(void)
 		}
 	}
 
-	// position eye reletive to origin
+#if FEATURE_EDV
+	if (cgs.cam.startLean)
+	{
+		cg.refdefViewAngles[2] = 0.0;
+	}
+
+	cgs.cam.startLean = qfalse;
+#endif
+
+	// position eye relative to origin
 	AnglesToAxis(cg.refdefViewAngles, cg.refdef_current->viewaxis);
 
 	if (cg.hyperspace)
@@ -1432,7 +1535,7 @@ void CG_ParseSkyBox(void)
 	if (atoi(token))         // this camera has fog
 	{
 		vec4_t fogColor;
-		int    fogStart, fogEnd;
+		int fogStart, fogEnd;
 
 		token       = CG_MustParse(&cstr, "CG_DrawSkyBoxPortal: error parsing skybox configstring. No fog[0]\n");
 		fogColor[0] = atof(token);
@@ -1478,7 +1581,7 @@ void CG_ParseTagConnects(void)
 void CG_ParseTagConnect(int tagNum)
 {
 	char *token, *pString = (char *)CG_ConfigString(tagNum);  //  bleh, i hate that cast away of the const
-	int  entNum;
+	int entNum;
 
 	if (!*pString)
 	{
@@ -1512,7 +1615,7 @@ CG_DrawSkyBoxPortal
 */
 void CG_DrawSkyBoxPortal(qboolean fLocalView)
 {
-	refdef_t     rd;
+	refdef_t rd;
 	static float lastfov = 90;      // for transitions back from zoomed in modes
 
 	if (!cg_skybox.integer || !cg.skyboxEnabled)
@@ -1635,7 +1738,7 @@ void CG_SetupFrustum(void)
 	float ang = cg.refdef_current->fov_x / 180 * M_PI * 0.5f;
 	float xs  = sin(ang);
 	float xc  = cos(ang);
-	int   i;
+	int i;
 
 	VectorScale(cg.refdef_current->viewaxis[0], xs, frustum[0].normal);
 	VectorMA(frustum[0].normal, xc, cg.refdef_current->viewaxis[1], frustum[0].normal);
@@ -1662,7 +1765,7 @@ void CG_SetupFrustum(void)
 //  CG_CullPoint - returns true if culled
 qboolean CG_CullPoint(vec3_t pt)
 {
-	int     i;
+	int i;
 	plane_t *frust;
 
 	// check against frustum planes
@@ -1681,7 +1784,7 @@ qboolean CG_CullPoint(vec3_t pt)
 
 qboolean CG_CullPointAndRadius(const vec3_t pt, vec_t radius)
 {
-	int     i;
+	int i;
 	plane_t *frust;
 
 	// check against frustum planes
@@ -1703,8 +1806,8 @@ qboolean CG_CullPointAndRadius(const vec3_t pt, vec_t radius)
 static void CG_RenderLocations(void)
 {
 	refEntity_t re;
-	location_t  *location;
-	int         i;
+	location_t *location;
+	int i;
 
 	if (cgs.numLocations < 1)
 	{
@@ -1735,9 +1838,9 @@ static void CG_RenderLocations(void)
 
 void CG_ProcessCvars()
 {
-	char     currentVal[256];
-	float    cvalF, val1F, val2F;
-	int      i, val1I, val2I; // cvalI,
+	char currentVal[256];
+	float cvalF, val1F, val2F;
+	int i, val1I, val2I;      // cvalI,
 	qboolean cvalIsF, val1IsF, val2IsF;
 
 	for (i = 0; i < cg.svCvarCount; ++i)
@@ -1986,6 +2089,13 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 
 	DEBUGTIME
 
+#if FEATURE_EDV
+	if (cg.demoPlayback)
+	{
+		CG_EDV_RunInput();
+	}
+#endif
+
 	// this counter will be bumped for every valid scene we generate
 	cg.clientFrame++;
 
@@ -1996,7 +2106,11 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 
 #if FEATURE_MULTIVIEW
 	// MV handling
+#if FEATURE_EDV
+	if (cg.mvCurrentMainview != NULL && cg.snap->ps.pm_type != PM_INTERMISSION && cgs.mvAllowed && !cgs.cam.renderingFreeCam)
+#else
 	if (cg.mvCurrentMainview != NULL && cg.snap->ps.pm_type != PM_INTERMISSION && cgs.mvAllowed)
+#endif
 	{
 		CG_mvDraw(cg.mvCurrentMainview);
 		// FIXME: not valid for demo playback
@@ -2013,13 +2127,40 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 		DEBUGTIME
 
 		// decide on third person view
+#if FEATURE_EDV
+		cg.renderingThirdPerson = cg_thirdPerson.integer || (cg.snap->ps.stats[STAT_HEALTH] <= 0) || cg.showGameView || cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam;
+#else
 		cg.renderingThirdPerson = cg_thirdPerson.integer || (cg.snap->ps.stats[STAT_HEALTH] <= 0) || cg.showGameView;
+#endif
+
 
 		// build cg.refdef
 		inwater = CG_CalcViewValues();
 		CG_SetupFrustum();
 
 		DEBUGTIME
+
+#if FEATURE_EDV
+		if (demo_autotimescaleweapons.integer != 0 && cg.demoPlayback)
+		{
+			if (cgs.cam.renderingWeaponCam)
+			{
+				cgs.cam.wasRenderingWeaponCam = qtrue;
+			}
+			else
+			{
+				cgs.cam.wasRenderingWeaponCam = qfalse;
+			}
+
+			if (!cgs.cam.wasRenderingWeaponCam)
+			{
+				trap_Cvar_Set("timescale", va("%0.2f", cg_timescale.value));
+			}
+		}
+
+		cgs.cam.renderingWeaponCam = qfalse;
+#endif
+
 
 		// draw the skyboxportal
 		CG_DrawSkyBoxPortal(qtrue);
