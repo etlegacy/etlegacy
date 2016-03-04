@@ -2439,7 +2439,7 @@ int CG_LimboPanel_RenderCounter_ValueForButton(panel_button_t *button)
 		{
 			return 0;
 		}
-		count = ((cgs.timelimit * 60 * 1000) - (cg.time - cgs.levelStartTime)) / 1000;
+		count = ((cgs.timelimit * 60000) - (cg.time - cgs.levelStartTime)) / 1000; // 60 * 1000
 		switch (button->data[1])
 		{
 		case 0:         // secs

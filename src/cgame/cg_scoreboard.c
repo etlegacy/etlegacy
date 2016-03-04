@@ -163,7 +163,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 		if (cgs.timelimit > 0.0f)
 		{
-			msec = (cgs.timelimit * 60.f * 1000.f) - (cg.time - cgs.levelStartTime);
+			msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime); // 60.f * 1000.f
 
 			seconds  = msec / 1000;
 			mins     = seconds / 60;
@@ -767,7 +767,7 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 	if (cgs.currentRound)
 	{
 		// first round
-		s = va(CG_TranslateString("CLOCK IS NOW SET TO %s!"), WM_TimeToString(cgs.nextTimeLimit * 60.f * 1000.f));
+		s = va(CG_TranslateString("CLOCK IS NOW SET TO %s!"), WM_TimeToString(cgs.nextTimeLimit * 60000.f)); // 60.f * 1000.f
 	}
 	else
 	{
