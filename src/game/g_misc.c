@@ -1207,24 +1207,27 @@ void aagun_fire(gentity_t *other)
 
 void aagun_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 {
-	/*  if (!self->active) {
-	        return;
-	    }
+	if (!self->active)
+	{
+		return;
+	}
 
-	    if (other->active) {
-	        vec3_t  dang;
-	        int     i;
+	if (other->active)
+	{
+		vec3_t dang;
+		int    i;
 
-	        for (i = 0; i < 3; i++) {
-	            dang[i] = SHORT2ANGLE(other->client->pers.cmd.angles[i]);
-	        }
+		for (i = 0; i < 3; i++)
+		{
+			dang[i] = SHORT2ANGLE(other->client->pers.cmd.angles[i]);
+		}
+		// now tell the client to lock the view in the direction of the gun
+		other->client->ps.viewlocked        = VIEWLOCK_MG42;
+		other->client->ps.viewlocked_entNum = self->s.number;
 
-	        // now tell the client to lock the view in the direction of the gun
-	        other->client->ps.viewlocked = VIEWLOCK_MG42;
-	        other->client->ps.viewlocked_entNum = self->s.number;
-
-	        clamp_playerbehindgun (self, other, dang);
-	    }*/
+		// clamp player behind the gun
+		clamp_playerbehindgun(self, other, dang);
+	}
 }
 
 void aagun_spawn(gentity_t *gun)
