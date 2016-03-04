@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2016-02-22 14:17+0000\n"
+"PO-Revision-Date: 2016-02-27 20:23+0000\n"
 "Last-Translator: yfcz <yfcz@wolfenstein.cz>\n"
 "Language-Team: Czech (http://www.transifex.com/etlegacy/etlegacy/language/cs/)\n"
 "MIME-Version: 1.0\n"
@@ -19,26 +19,26 @@ msgstr ""
 
 #: src/client/cl_console.c:674
 msgid "say_team:"
-msgstr ""
+msgstr "říci_týmu:"
 
 #: src/client/cl_console.c:682
 msgid "say_fireteam:"
-msgstr ""
+msgstr "říci_četě:"
 
 #: src/client/cl_console.c:690
 msgid "say:"
-msgstr ""
+msgstr "říci:"
 
 #: src/client/cl_console.c:803
 #, c-format
 msgid "%s (UPDATE AVAILABLE)"
-msgstr ""
+msgstr "%s (DOSTUPNÁ AKTUALIZACE)"
 
 msgid "MOUSE1"
-msgstr ""
+msgstr "MYŠ1"
 
 msgid "MOUSE2"
-msgstr ""
+msgstr "MYŠ2"
 
 msgid "SPACE"
-msgstr ""
+msgstr "MEZERNÍK"
