@@ -1163,6 +1163,7 @@ static void CG_Missile(centity_t *cent)
 #if FEATURE_EDV
 	//  edv renderingWeaponCam fix
 	if (cent->currentState.weapon == WP_PANZERFAUST
+		|| cent->currentState.weapon == WP_BAZOOKA
 	    || cent->currentState.weapon == WP_GRENADE_LAUNCHER
 	    || cent->currentState.weapon == WP_GRENADE_PINEAPPLE
 	    || cent->currentState.weapon == WP_GPG40

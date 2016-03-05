@@ -2236,7 +2236,7 @@ extern vmCvar_t demo_infoWindow;
 extern vmCvar_t mv_sensitivity;
 #endif
 #if FEATURE_EDV
-extern vmCvar_t demo_panzercam;
+extern vmCvar_t demo_panzercam; // FIXME: do a bitflag cvar for all demo_WEAPON cvars to safe cvars?!
 extern vmCvar_t demo_mortarcam;
 extern vmCvar_t demo_grenadecam;
 extern vmCvar_t demo_dynamitecam;
@@ -2253,10 +2253,6 @@ extern vmCvar_t demo_autotimescaleweapons;
 extern vmCvar_t demo_freecamspeed;
 extern vmCvar_t demo_nopitch;
 extern vmCvar_t demo_pvshint;
-extern vmCvar_t demo_lookat;
-extern vmCvar_t demo_autotimescale;
-extern vmCvar_t demo_autotimescaleweapons;
-extern vmCvar_t demo_teamonlymissilecam;
 extern vmCvar_t cg_predefineddemokeys;
 #endif
 // engine mappings

@@ -201,7 +201,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 		return;
 	}
 
-	if (cent->currentState.weapon == WP_PANZERFAUST && demo_panzercam.integer)
+	if ((cent->currentState.weapon == WP_PANZERFAUST || cent->currentState.weapon == WP_BAZOOKA) && demo_panzercam.integer)
 	{
 		vec3_t delta;
 
@@ -217,7 +217,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 			trap_Cvar_Set("timescale", demo_autotimescale.string);
 		}
 	}
-	else if (cent->currentState.weapon == WP_MORTAR_SET && demo_mortarcam.integer)
+	else if ((cent->currentState.weapon == WP_MORTAR_SET || cent->currentState.weapon == WP_MORTAR_SET2) && demo_mortarcam.integer)
 	{
 
 		cgs.cam.renderingWeaponCam = qtrue;
