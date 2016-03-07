@@ -810,7 +810,7 @@ static void IN_InitJoystick(void)
 static void IN_ShutdownJoystick(void)
 {
 	// in_joystick cvar is latched
-	if (!in_joystick->integer || !SDL_WasInit(SDL_INIT_JOYSTICK))
+	if (!SDL_WasInit(SDL_INIT_JOYSTICK) || !in_joystick->integer)
 	{
 		return;
 	}
