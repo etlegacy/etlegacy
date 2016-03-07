@@ -1988,10 +1988,6 @@ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg)
 		SV_UserMove(cl, msg, qfalse);
 		c = MSG_ReadByte(msg);
 	}
-	else if (c < 0)
-	{
-		return; // invalid MSG_Read
-	}
 	
 	if (c != clc_EOF)
 	{
