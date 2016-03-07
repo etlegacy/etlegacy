@@ -491,7 +491,7 @@ void CL_ParseSnapshot(msg_t *msg)
 	// read areamask
 	len = MSG_ReadByte(msg);
 
-	if (len > sizeof(newSnap.areamask))
+	if (len < 0 || len > sizeof(newSnap.areamask))
 	{
 		Com_Error(ERR_DROP, "CL_ParseSnapshot: Invalid size %d for areamask.", len);
 		return;
@@ -721,7 +721,7 @@ void CL_ParseGamestate(msg_t *msg)
 			i = MSG_ReadShort(msg);
 			if (i < 0 || i >= MAX_CONFIGSTRINGS)
 			{
-				Com_Error(ERR_DROP, "configstring > MAX_CONFIGSTRINGS");
+				Com_Error(ERR_DROP, "configstring < 0 or configstring >= MAX_CONFIGSTRINGS");
 			}
 			s   = MSG_ReadBigString(msg);
 			len = strlen(s);
@@ -798,6 +798,11 @@ void CL_ParseDownload(msg_t *msg)
 
 	// read the data
 	block = MSG_ReadShort(msg);
+
+	if (block < 0)
+	{
+		Com_Error(ERR_DROP, "CL_ParseDownload: Server sending invalid download data");
+	}
 
 	// www dl, if we haven't acknowledged the download redirect yet
 	if (block == DLTYPE_WWW)
