@@ -745,31 +745,6 @@ void Sys_GLimpInit(void)
 
 /*
 ==============
-Sys_PlatformInit
-
-Windows specific initialisation
-==============
-*/
-void Sys_PlatformInit(void)
-{
-#ifndef DEDICATED
-	const char *SDL_VIDEODRIVER = getenv("SDL_VIDEODRIVER");
-
-	if (SDL_VIDEODRIVER)
-	{
-		Com_Printf("SDL_VIDEODRIVER is externally set to \"%s\", "
-		           "in_mouse -1 will have no effect\n", SDL_VIDEODRIVER);
-		SDL_VIDEODRIVER_externallySet = qtrue;
-	}
-	else
-	{
-		SDL_VIDEODRIVER_externallySet = qfalse;
-	}
-#endif
-}
-
-/*
-==============
 Sys_SetEnv
 
 set/unset environment variables (empty value removes it)
@@ -1033,35 +1008,21 @@ void Sys_SetProcessProperties(void)
 #endif
 }
 
-/*
-==================
-WinMain
-==================
-*/
 WinVars_t g_wv;
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+/*
+==============
+Sys_PlatformInit
+
+Windows specific initialization
+==============
+*/
+void Sys_PlatformInit(void)
 {
-	char commandLine[MAX_STRING_CHARS] = { 0 };
-	char cwd[MAX_OSPATH];
-	// should never get a previous instance in Win32
-	if (hPrevInstance)
-	{
-		return EXIT_FAILURE;
-	}
+	g_wv.hInstance = GetModuleHandle(NULL);
 
 #ifdef EXCEPTION_HANDLER
 	WinSetExceptionVersion(Q3_VERSION);
-#endif
-
-	g_wv.hInstance = hInstance;
-
-#if 1
-	commandLine[0] = '\0';
-	Sys_ParseArgs(__argc, __argv);
-	Sys_BuildCommandLine(__argc, __argv, commandLine, sizeof(commandLine));
-#else
-	Q_strncpyz(commandLine, lpCmdLine, sizeof(commandLine));
 #endif
 
 #ifndef DEDICATED
@@ -1083,28 +1044,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// no abort/retry/fail errors
 	SetErrorMode(SEM_FAILCRITICALERRORS);
 
-	// get the initial time base
-	Sys_Milliseconds();
-	Com_Init(commandLine);
-	NET_Init();
+#ifndef DEDICATED
+	const char *SDL_VIDEODRIVER = getenv("SDL_VIDEODRIVER");
 
-	Sys_Splash(qfalse);
-
-	_getcwd(cwd, sizeof(cwd));
-	Com_Printf("Working directory: %s\n", cwd);
-
-	// hide the early console since we've reached the point where we
-	// have a working graphics subsystems
-#ifndef LEGACY_DEBUG
-	if (!com_dedicated->integer && !com_viewlog->integer)
+	if (SDL_VIDEODRIVER)
 	{
-		Sys_ShowConsoleWindow(0, qfalse);
+		Com_Printf("SDL_VIDEODRIVER is externally set to \"%s\", "
+			"in_mouse -1 will have no effect\n", SDL_VIDEODRIVER);
+		SDL_VIDEODRIVER_externallySet = qtrue;
+	}
+	else
+	{
+		SDL_VIDEODRIVER_externallySet = qfalse;
 	}
 #endif
-
-	// main game loop
-	Sys_GameLoop();
-
-	// never gets here
-	return EXIT_SUCCESS;
 }

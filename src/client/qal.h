@@ -42,6 +42,8 @@
 #ifdef FEATURE_OPENAL_DLOPEN
 #define AL_NO_PROTOTYPES
 #define ALC_NO_PROTOTYPES
+#else
+#define AL_ALEXT_PROTOTYPES
 #endif
 
 #include <AL/al.h>
