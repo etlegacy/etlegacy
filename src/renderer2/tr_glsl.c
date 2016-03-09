@@ -1884,15 +1884,50 @@ void GLSL_GenerateCheckSum(programInfo_t *info, const char *vertex, const char *
 	ri.Hunk_FreeTempMemory(fullSource);
 }
 
+static qboolean GLSL_CompilePermutation(programInfo_t * info, int offset)
+{
+	char *tempString = NULL;
+	qboolean compiled = qfalse;
+
+	if (GLSL_GenerateMacroString(info->list, info->extraMacros, offset, &tempString))
+	{
+		if (GLSL_GetProgramPermutation(info, offset, info->vertexShaderText, info->fragmentShaderText, tempString))
+		{
+			GLSL_BindProgram(&info->list->programs[offset]);
+			//Set uniform values
+			GLSL_SetTextureUnitBindings(info, offset);
+			GLSL_SetInitialUniformValues(info, offset);
+			GLSL_BindNullProgram();
+
+			GLSL_FinishGPUShader(&info->list->programs[offset]);
+			info->list->programs[offset].compiled = qtrue;
+		}
+		else
+		{
+			Ren_Fatal("Failed to compile shader: %s permutation %d\n", info->name, offset);
+		}
+
+		compiled = qtrue;
+	}
+	else
+	{
+		info->list->programs[offset].program = 0;
+		info->list->programs[offset].compiled = qfalse;
+	}
+
+	Com_Dealloc(tempString); // see GLSL_GenerateMacroString
+	return compiled;
+}
+
 qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 {
-	char   *vertexShader   = GLSL_BuildGPUShaderText(info, GL_VERTEX_SHADER);
-	char   *fragmentShader = GLSL_BuildGPUShaderText(info, GL_FRAGMENT_SHADER);
+	info->vertexShaderText   = GLSL_BuildGPUShaderText(info, GL_VERTEX_SHADER);
+	info->fragmentShaderText = GLSL_BuildGPUShaderText(info, GL_FRAGMENT_SHADER);
 	int    startTime, endTime;
 	size_t numPermutations = 0, numCompiled = 0, tics = 0, nextTicCount = 0;
 	int    i               = 0, x = 0;
 
-	GLSL_GenerateCheckSum(info, vertexShader, fragmentShader);
+	GLSL_GenerateCheckSum(info, info->vertexShaderText, info->fragmentShaderText);
 
 	info->list = (shaderProgramList_t *)Com_Allocate(sizeof(shaderProgramList_t));
 	Com_Memset(info->list, 0, sizeof(shaderProgramList_t));
@@ -1925,19 +1960,18 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 
 	info->list->permutations = numPermutations;
 
+	info->list->programs = (shaderProgram_t *)Com_Allocate(sizeof(shaderProgram_t) * numPermutations);
+	Com_Memset(info->list->programs, 0, sizeof(shaderProgram_t) * numPermutations);
+
+#if GLSL_PRECOMPILE
 	Ren_Print("...compiling %s shaders\n", info->name);
 	Ren_Print("0%%  10   20   30   40   50   60   70   80   90   100%%\n");
 	Ren_Print("|----|----|----|----|----|----|----|----|----|----|\n");
 
 	startTime = ri.Milliseconds();
 
-	info->list->programs = (shaderProgram_t *)Com_Allocate(sizeof(shaderProgram_t) * numPermutations);
-	Com_Memset(info->list->programs, 0, sizeof(shaderProgram_t) * numPermutations);
-
 	for (i = 0; i < numPermutations; i++)
 	{
-		char *tempString = NULL;
-
 		if ((i + 1) >= nextTicCount)
 		{
 			size_t ticsNeeded = (size_t)(((double)(i + 1) / numPermutations) * 50.0);
@@ -1961,42 +1995,18 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 			}
 		}
 
-		if (GLSL_GenerateMacroString(info->list, info->extraMacros, i, &tempString))
+		if (GLSL_CompilePermutation(info, i))
 		{
-			if (GLSL_GetProgramPermutation(info, i, vertexShader, fragmentShader, tempString))
-			{
-				GLSL_BindProgram(&info->list->programs[i]);
-				//Set uniform values
-				GLSL_SetTextureUnitBindings(info, i);
-				GLSL_SetInitialUniformValues(info, i);
-				GLSL_BindNullProgram();
-
-				GLSL_FinishGPUShader(&info->list->programs[i]);
-				info->list->programs[i].compiled = qtrue;
-			}
-			else
-			{
-				Ren_Fatal("Failed to compile shader: %s permutation %d\n", info->name, i);
-			}
-
 			numCompiled++;
 		}
-		else
-		{
-			info->list->programs[i].program  = 0;
-			info->list->programs[i].compiled = qfalse;
-		}
-
-		Com_Dealloc(tempString); // see GLSL_GenerateMacroString
 	}
 
 	endTime = ri.Milliseconds();
 	Ren_Print("...compiled %i %s shader permutations in %5.2f seconds\n", ( int ) numCompiled, info->name, (endTime - startTime) / 1000.0);
+#endif
+
 	info->compiled                 = qtrue;
 	info->list->currentPermutation = 0;
-
-	Com_Dealloc(vertexShader);
-	Com_Dealloc(fragmentShader);
 
 	return qtrue;
 }
@@ -2148,7 +2158,20 @@ void GLSL_SelectPermutation(programInfo_t *programlist)
 
 	if (!prog || !prog->compiled)
 	{
+#ifndef GLSL_PRECOMPILE
+		if (!GLSL_CompilePermutation(programlist, programlist->list->currentPermutation))
+		{
+			Ren_Fatal("Trying to select uncompileable shader permutation: %d of shader \"%s\"\n", programlist->list->currentPermutation, programlist->name);
+		}
+		else
+		{
+			trProg.selectedProgram = programlist->list->current = prog;
+			GLSL_BindProgram(prog);
+		}
+#else
+
 		Ren_Fatal("Trying to select uncompiled shader permutation: %d of shader \"%s\"\n", programlist->list->currentPermutation, programlist->name);
+#endif
 	}
 	else
 	{
@@ -2269,6 +2292,18 @@ void GLSL_DeleteShaderProramInfo(programInfo_t *program)
 	if (program->vertexLibraries)
 	{
 		Com_Dealloc(program->vertexLibraries);
+	}
+
+	if (program->vertexShaderText)
+	{
+		Com_Dealloc(program->vertexShaderText);
+		program->vertexShaderText = NULL;
+	}
+
+	if (program->fragmentShaderText)
+	{
+		Com_Dealloc(program->fragmentShaderText);
+		program->fragmentShaderText = NULL;
 	}
 }
 

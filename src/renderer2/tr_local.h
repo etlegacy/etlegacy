@@ -1473,6 +1473,8 @@ typedef struct programInfo_s
 	unsigned int attributes;
 	char *vertexLibraries;
 	char *fragmentLibraries;
+	char *vertexShaderText;
+	char *fragmentShaderText;
 	uniformValue_t uniformValues[64];
 	int numUniformValues;
 	qboolean compiled;
