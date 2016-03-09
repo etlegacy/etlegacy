@@ -487,7 +487,7 @@ void S_SpatializeOrigin(vec3_t origin, int master_vol, int *left_vol, int *right
 		// calculate stereo seperation and distance attenuation
 		VectorSubtract(origin, listener_origin, source_vec);
 
-		dist  = VectorNormalize(source_vec);
+		dist  = vec3_norm(source_vec);
 		dist -= dist_fullvol;
 		if (dist < 0.0f || no_attenuation)
 		{
@@ -498,7 +498,7 @@ void S_SpatializeOrigin(vec3_t origin, int master_vol, int *left_vol, int *right
 			dist /= range;
 		}
 
-		VectorRotate(source_vec, listener_axis, vec);
+		vec3_rotate(source_vec, listener_axis, vec);
 
 		rscale = sqrt(1.0 - vec[1]);
 		lscale = sqrt(1.0 + vec[1]);
@@ -872,7 +872,7 @@ void S_Base_AddLoopingSound(const vec3_t origin, const vec3_t velocity, int rang
 	}
 	loopSounds[numLoopSounds].volume = (int)((float)volume * s_volCurrent);
 
-	if (s_doppler->integer && VectorLengthSquared(velocity) > 0)
+	if (s_doppler->integer && vec3_length_squared(velocity) > 0)
 	{
 		vec3_t out;
 		float  lena, lenb;
@@ -887,11 +887,11 @@ void S_Base_AddLoopingSound(const vec3_t origin, const vec3_t velocity, int rang
 			loopSounds[numLoopSounds].doppler = qfalse;
 		}
 
-		lena = DistanceSquared(entityPositions[listener_number], entityPositions[numLoopSounds]);
+		lena = vec3_distance_squared(entityPositions[listener_number], entityPositions[numLoopSounds]);
 
 		VectorAdd(entityPositions[numLoopSounds], loopSounds[numLoopSounds].velocity, out);
 
-		lenb = DistanceSquared(entityPositions[listener_number], out);
+		lenb = vec3_distance_squared(entityPositions[listener_number], out);
 
 		if ((loopSounds[numLoopSounds].framenum + 1) != cls.framecount)
 		{

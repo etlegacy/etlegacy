@@ -134,7 +134,7 @@ typedef enum
 	TCR_BPTC = 0x0002,
 } textureCompressionRef_t;
 
-extern matrix_t matrixIdentity;
+extern mat4_t matrixIdentity;
 extern quat_t   quatIdentity;
 
 // plane sides
@@ -147,77 +147,53 @@ typedef enum
 } planeSide_t;
 
 int NearestPowerOfTwo(int val);
-qboolean MatrixCompare(const matrix_t a, const matrix_t b);
-void MatrixCopy(const matrix_t in, matrix_t out);
-void MatrixOrthogonalProjection(matrix_t m, vec_t left, vec_t right, vec_t bottom, vec_t top, vec_t nearvec, vec_t farvec);
-void MatrixTransform4(const matrix_t m, const vec4_t in, vec4_t out);
-void MatrixSetupTranslation(matrix_t m, vec_t x, vec_t y, vec_t z);
-void MatrixSetupTranslationByVec(matrix_t m, vec3_t position);
-void MatrixSetupScale(matrix_t m, vec_t x, vec_t y, vec_t z);
-void MatrixMultiplyMOD(const matrix_t a, const matrix_t b, matrix_t out);
-void MatrixMultiply2(matrix_t m, const matrix_t m2);
+
+
+
+
+
 qboolean PlanesGetIntersectionPoint(const vec4_t plane1, const vec4_t plane2, const vec4_t plane3, vec3_t out);
-void MatrixMultiplyScale(matrix_t m, vec_t x, vec_t y, vec_t z);
-void MatrixFromAngles(matrix_t m, vec_t pitch, vec_t yaw, vec_t roll);
-void MatrixSetupTransformFromRotation(matrix_t m, const matrix_t rot, const vec3_t origin);
-void MatrixAffineInverse(const matrix_t in, matrix_t out);
-void MatrixPerspectiveProjectionFovXYRH(matrix_t m, vec_t fovX, vec_t fovY, vec_t nearvec, vec_t farvec);
-void MatrixLookAtRH(matrix_t m, const vec3_t eye, const vec3_t dir, const vec3_t up);
+void MatrixMultiplyScale(mat4_t m, vec_t x, vec_t y, vec_t z);
+void MatrixSetupTransformFromRotation(mat4_t m, const mat4_t rot, const vec3_t origin);
+void MatrixAffineInverse(const mat4_t in, mat4_t out);
+void MatrixPerspectiveProjectionFovXYRH(mat4_t m, vec_t fovX, vec_t fovY, vec_t nearvec, vec_t farvec);
+void MatrixLookAtRH(mat4_t m, const vec3_t eye, const vec3_t dir, const vec3_t up);
 void PlaneIntersectRay(const vec3_t rayPos, const vec3_t rayDir, const vec4_t plane, vec3_t res);
-void MatrixOrthogonalProjectionRH(matrix_t m, vec_t left, vec_t right, vec_t bottom, vec_t top, vec_t nearvec, vec_t farvec);
-void MatrixCrop(matrix_t m, const vec3_t mins, const vec3_t maxs);
-void MatrixIdentity(matrix_t m);
-void MatrixMultiplyTranslation(matrix_t m, vec_t x, vec_t y, vec_t z);
-void MatrixMultiplyZRotation(matrix_t m, vec_t degrees);
-void MatrixSetupZRotation(matrix_t m, vec_t degrees);
-void MatrixFromVectorsFLU(matrix_t m, const vec3_t forward, const vec3_t left, const vec3_t up);
-void MatrixTransformPoint(const matrix_t m, const vec3_t in, vec3_t out);
-void MatrixTransformPoint2(const matrix_t m, vec3_t inout);
-void MatrixSetupTransformFromVectorsFLU(matrix_t m, const vec3_t forward, const vec3_t left, const vec3_t up, const vec3_t origin);
-void MatrixToVectorsFLU(const matrix_t m, vec3_t forward, vec3_t left, vec3_t up);
-void ClampColor(vec4_t color);
+void MatrixOrthogonalProjectionRH(mat4_t m, vec_t left, vec_t right, vec_t bottom, vec_t top, vec_t nearvec, vec_t farvec);
+void MatrixCrop(mat4_t m, const vec3_t mins, const vec3_t maxs);
+void MatrixMultiplyTranslation(mat4_t m, vec_t x, vec_t y, vec_t z);
+void MatrixMultiplyZRotation(mat4_t m, vec_t degrees);
+void MatrixSetupZRotation(mat4_t m, vec_t degrees);
 qboolean BoundsIntersect(const vec3_t mins, const vec3_t maxs, const vec3_t mins2, const vec3_t maxs2);
 qboolean BoundsIntersectSphere(const vec3_t mins, const vec3_t maxs, const vec3_t origin, vec_t radius);
 qboolean BoundsIntersectPoint(const vec3_t mins, const vec3_t maxs, const vec3_t origin);
-void MatrixTranspose(const matrix_t in, matrix_t out);
-void QuatFromMatrix(quat_t q, const matrix_t m);
+
 void ZeroBounds(vec3_t mins, vec3_t maxs);
-void MatrixSetupTransformFromQuat(matrix_t m, const quat_t quat, const vec3_t origin);
-void MatrixFromQuat(matrix_t m, const quat_t q);
+void MatrixSetupTransformFromQuat(mat4_t m, const quat_t quat, const vec3_t origin);
+
 
 vec_t PlaneNormalize(vec4_t plane); // returns normal length
 
-void MatrixTransformNormal(const matrix_t m, const vec3_t in, vec3_t out);
-void MatrixTransformNormal2(const matrix_t m, vec3_t inout);
-void MatrixTransformPoint(const matrix_t m, const vec3_t in, vec3_t out);
-void MatrixTransformPoint2(const matrix_t m, vec3_t inout);
+void MatrixTransformNormal(const mat4_t m, const vec3_t in, vec3_t out);
+void MatrixTransformNormal2(const mat4_t m, vec3_t inout);
 
-void MatrixTransformPlane(const matrix_t m, const vec4_t in, vec4_t out);
-void MatrixTransformPlane2(const matrix_t m, vec4_t inout);
+void MatrixTransformPlane(const mat4_t m, const vec4_t in, vec4_t out);
+void MatrixTransformPlane2(const mat4_t m, vec4_t inout);
 
-void MatrixPerspectiveProjectionFovXYInfiniteRH(matrix_t m, vec_t fovX, vec_t fovY, vec_t nearvec);
+void MatrixPerspectiveProjectionFovXYInfiniteRH(mat4_t m, vec_t fovX, vec_t fovY, vec_t nearvec);
 void QuatTransformVector(const quat_t q, const vec3_t in, vec3_t out);
-qboolean MatrixInverse(matrix_t matrix);
-void MatrixSetupShear(matrix_t m, vec_t x, vec_t y);
-void MatrixMultiplyShear(matrix_t m, vec_t x, vec_t y);
-void QuatToAxis(const quat_t q, vec3_t axis[3]);
-void MatrixFromPlanes(matrix_t m, const vec4_t left, const vec4_t right, const vec4_t bottom, const vec4_t top, const vec4_t nearvec, const vec4_t farvec);
-void QuatSlerp(const quat_t from, const quat_t to, float frac, quat_t out);
+void MatrixSetupShear(mat4_t m, vec_t x, vec_t y);
+void MatrixMultiplyShear(mat4_t m, vec_t x, vec_t y);
+
+void MatrixFromPlanes(mat4_t m, const vec4_t left, const vec4_t right, const vec4_t bottom, const vec4_t top, const vec4_t nearvec, const vec4_t farvec);
+
 void QuatMultiply0(quat_t qa, const quat_t qb);
 void QuatMultiply1(const quat_t qa, const quat_t qb, quat_t qc);
 void QuatMultiply2(const quat_t qa, const quat_t qb, quat_t qc);
 void QuatMultiply3(const quat_t qa, const quat_t qb, quat_t qc);
 void QuatMultiply4(const quat_t qa, const quat_t qb, quat_t qc);
-void QuatFromAngles(quat_t q, vec_t pitch, vec_t yaw, vec_t roll);
-vec_t QuatNormalize(quat_t q);
-void QuatToVectorsFRU(const quat_t q, vec3_t forward, vec3_t right, vec3_t up);
-void QuatToVectorsFLU(const quat_t q, vec3_t forward, vec3_t left, vec3_t up);
-void MatrixSetupTransformFromVectorsFRU(matrix_t m, const vec3_t forward, const vec3_t right, const vec3_t up, const vec3_t origin);
-void MatrixToVectorsFRU(const matrix_t m, vec3_t forward, vec3_t right, vec3_t up);
 
 #define Vector5Copy(a, b) ((b)[0] = (a)[0], (b)[1] = (a)[1], (b)[2] = (a)[2], (b)[3] = (a)[3], (b)[4] = (a)[4])
-
-byte ClampByte(int i);
 
 qboolean Q_strreplace(char *dest, int destsize, const char *find, const char *replace);
 
@@ -266,11 +242,6 @@ static ID_INLINE void VectorToAngles(const vec3_t value1, vec3_t angles)
 }
 
 // RB: XreaL quaternion math functions required by the renderer
-
-#define QuatSet(q, x, y, z, w)  ((q)[0] = (x), (q)[1] = (y), (q)[2] = (z), (q)[3] = (w))
-#define QuatCopy(a, b)       ((b)[0] = (a)[0], (b)[1] = (a)[1], (b)[2] = (a)[2], (b)[3] = (a)[3])
-
-#define QuatCompare(a, b)    ((a)[0] == (b)[0] && (a)[1] == (b)[1] && (a)[2] == (b)[2] && (a)[3] == (b)[3])
 
 static ID_INLINE void VectorLerp(const vec3_t from, const vec3_t to, float frac, vec3_t out)
 {

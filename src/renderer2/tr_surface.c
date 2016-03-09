@@ -1816,7 +1816,7 @@ static void Tess_SurfaceMD5(md5Surface_t *srf)
 	md5Vertex_t *v;
 	//md5Bone_t       *bone;
 	srfTriangle_t   *tri;
-	static matrix_t boneMatrices[MAX_BONES];
+	static mat4_t boneMatrices[MAX_BONES];
 
 	Ren_LogComment("--- Tess_SurfaceMD5 ---\n");
 
@@ -1841,18 +1841,18 @@ static void Tess_SurfaceMD5(md5Surface_t *srf)
 		// convert bones back to matrices
 		for (i = 0; i < model->numBones; i++)
 		{
-			matrix_t m, m2;
+			mat4_t m, m2;
 
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
 			if (backEnd.currentEntity->e.skeleton.type == SK_ABSOLUTE)
 			{
-				MatrixSetupScale(m,
+				mat4_reset_scale(m,
 				                 backEnd.currentEntity->e.skeleton.scale[0],
 				                 backEnd.currentEntity->e.skeleton.scale[1], backEnd.currentEntity->e.skeleton.scale[2]);
 
 				MatrixSetupTransformFromQuat(m2, backEnd.currentEntity->e.skeleton.bones[i].rotation,
 				                             backEnd.currentEntity->e.skeleton.bones[i].origin);
-				MatrixMultiplyMOD(m2, m, boneMatrices[i]);
+				mat4_mult(m2, m, boneMatrices[i]);
 			}
 			else
 #endif
@@ -1871,7 +1871,7 @@ static void Tess_SurfaceMD5(md5Surface_t *srf)
 			{
 				//bone = &model->bones[w->boneIndex];
 
-				MatrixTransformPoint(boneMatrices[w->boneIndex], w->offset, tmpVert);
+				mat4_transform_vec3(boneMatrices[w->boneIndex], w->offset, tmpVert);
 				VectorMA(tmpPosition, w->boneWeight, tmpVert, tmpPosition);
 			}
 
@@ -1898,25 +1898,25 @@ static void Tess_SurfaceMD5(md5Surface_t *srf)
 		// convert bones back to matrices
 		for (i = 0; i < model->numBones; i++)
 		{
-			matrix_t m, m2;         //, m3;
+			mat4_t m, m2;         //, m3;
 
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
 			if (backEnd.currentEntity->e.skeleton.type == SK_ABSOLUTE)
 			{
-				MatrixSetupScale(m,
+				mat4_reset_scale(m,
 				                 backEnd.currentEntity->e.skeleton.scale[0],
 				                 backEnd.currentEntity->e.skeleton.scale[1], backEnd.currentEntity->e.skeleton.scale[2]);
 
 				MatrixSetupTransformFromQuat(m2, backEnd.currentEntity->e.skeleton.bones[i].rotation,
 				                             backEnd.currentEntity->e.skeleton.bones[i].origin);
-				MatrixMultiplyMOD(m2, m, boneMatrices[i]);
+				mat4_mult(m2, m, boneMatrices[i]);
 
-				MatrixMultiply2(boneMatrices[i], model->bones[i].inverseTransform);
+				mat4_mult_self(boneMatrices[i], model->bones[i].inverseTransform);
 			}
 			else
 #endif
 			{
-				MatrixIdentity(boneMatrices[i]);
+				mat4_ident(boneMatrices[i]);
 			}
 		}
 
@@ -1932,7 +1932,7 @@ static void Tess_SurfaceMD5(md5Surface_t *srf)
 			for (k = 0, w = v->weights[0]; k < v->numWeights; k++, w++)
 			{
 				//MatrixTransformPoint(boneMatrices[w->boneIndex], w->offset, tmpVert);
-				MatrixTransformPoint(boneMatrices[w->boneIndex], v->position, tmpVert);
+				mat4_transform_vec3(boneMatrices[w->boneIndex], v->position, tmpVert);
 				VectorMA(tmpPosition, w->boneWeight, tmpVert, tmpPosition);
 
 				MatrixTransformNormal(boneMatrices[w->boneIndex], v->tangent, tmpVert);
@@ -2215,7 +2215,7 @@ static void Tess_SurfaceVBOMD5Mesh(srfVBOMD5Mesh_t *srf)
 {
 	int        i;
 	md5Model_t *model;
-	matrix_t   m, m2;       //, m3;
+	mat4_t   m, m2;       //, m3;
 
 	Ren_LogComment("--- Tess_SurfaceVBOMD5Mesh ---\n");
 
@@ -2239,7 +2239,7 @@ static void Tess_SurfaceVBOMD5Mesh(srfVBOMD5Mesh_t *srf)
 	{
 		tess.vboVertexSkinning = qtrue;
 
-		MatrixSetupScale(m,
+		mat4_reset_scale(m,
 		                 backEnd.currentEntity->e.skeleton.scale[0],
 		                 backEnd.currentEntity->e.skeleton.scale[1], backEnd.currentEntity->e.skeleton.scale[2]);
 
@@ -2265,8 +2265,8 @@ static void Tess_SurfaceVBOMD5Mesh(srfVBOMD5Mesh_t *srf)
 			MatrixSetupTransformFromQuat(m2, backEnd.currentEntity->e.skeleton.bones[srf->boneRemapInverse[i]].rotation,
 			                             backEnd.currentEntity->e.skeleton.bones[srf->boneRemapInverse[i]].origin);
 
-			MatrixMultiplyMOD(m2, m, tess.boneMatrices[i]);
-			MatrixMultiply2(tess.boneMatrices[i], model->bones[srf->boneRemapInverse[i]].inverseTransform);
+			mat4_mult(m2, m, tess.boneMatrices[i]);
+			mat4_mult_self(tess.boneMatrices[i], model->bones[srf->boneRemapInverse[i]].inverseTransform);
 		}
 #endif
 	}

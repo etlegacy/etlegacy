@@ -40,7 +40,7 @@ trGlobals_t tr;
 
 // convert from our coordinate system (looking down X)
 // to OpenGL's coordinate system (looking down -Z)
-const matrix_t quakeToOpenGLMatrix =
+const mat4_t quakeToOpenGLMatrix =
 {
 	0,  0, -1, 0,
 	-1, 0, 0,  0,
@@ -49,7 +49,7 @@ const matrix_t quakeToOpenGLMatrix =
 };
 
 // inverse of quakeToOpenGL matrix
-const matrix_t openGLToQuakeMatrix =
+const mat4_t openGLToQuakeMatrix =
 {
 	0,  -1, 0, 0,
 	0,  0,  1, 0,
@@ -59,7 +59,7 @@ const matrix_t openGLToQuakeMatrix =
 
 // convert from our right handed coordinate system (looking down X)
 // to D3D's left handed coordinate system (looking down Z)
-const matrix_t quakeToD3DMatrix =
+const mat4_t quakeToD3DMatrix =
 {
 	0,  0, 1, 0,
 	-1, 0, 0, 0,
@@ -67,7 +67,7 @@ const matrix_t quakeToD3DMatrix =
 	0,  0, 0, 1
 };
 
-const matrix_t flipZMatrix =
+const mat4_t flipZMatrix =
 {
 	1, 0, 0,  0,
 	0, 1, 0,  0,
@@ -840,7 +840,7 @@ R_LocalPointToWorld
 */
 void R_LocalPointToWorld(const vec3_t local, vec3_t world)
 {
-	MatrixTransformPoint(tr.orientation.transformMatrix, local, world);
+	mat4_transform_vec3(tr.orientation.transformMatrix, local, world);
 }
 
 /*
@@ -856,8 +856,8 @@ void R_TransformWorldToClip(const vec3_t src, const float *cameraViewMatrix, con
 	VectorCopy(src, src2);
 	src2[3] = 1;
 
-	MatrixTransform4(cameraViewMatrix, src2, eye);
-	MatrixTransform4(projectionMatrix, eye, dst);
+	mat4_transform_vec4(cameraViewMatrix, src2, eye);
+	mat4_transform_vec4(projectionMatrix, eye, dst);
 }
 
 /*
@@ -872,8 +872,8 @@ void R_TransformModelToClip(const vec3_t src, const float *modelViewMatrix, cons
 	VectorCopy(src, src2);
 	src2[3] = 1;
 
-	MatrixTransform4(modelViewMatrix, src2, eye);
-	MatrixTransform4(projectionMatrix, eye, dst);
+	mat4_transform_vec4(modelViewMatrix, src2, eye);
+	mat4_transform_vec4(projectionMatrix, eye, dst);
 }
 
 /*
@@ -997,7 +997,7 @@ void R_RotateEntityForViewParms(const trRefEntity_t *ent, const viewParms_t *vie
 
 	MatrixSetupTransformFromVectorsFLU(_or->transformMatrix, _or->axis[0], _or->axis[1], _or->axis[2], _or->origin);
 	MatrixAffineInverse(_or->transformMatrix, _or->viewMatrix);
-	MatrixMultiplyMOD(viewParms->world.viewMatrix, _or->transformMatrix, _or->modelViewMatrix);
+	mat4_mult(viewParms->world.viewMatrix, _or->transformMatrix, _or->modelViewMatrix);
 
 	// calculate the viewer origin in the model's space
 	// needed for fog, specular, and environment mapping
@@ -1050,10 +1050,10 @@ void R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light,
 
 		VectorCopy(light->l.origin, _or->viewOrigin);
 
-		MatrixIdentity(_or->transformMatrix);
+		mat4_ident(_or->transformMatrix);
 		//MatrixAffineInverse(_or->transformMatrix, _or->viewMatrix);
-		MatrixMultiplyMOD(light->viewMatrix, _or->transformMatrix, _or->viewMatrix);
-		MatrixCopy(_or->viewMatrix, _or->modelViewMatrix);
+		mat4_mult(light->viewMatrix, _or->transformMatrix, _or->viewMatrix);
+		mat4_copy(_or->viewMatrix, _or->modelViewMatrix);
 		return;
 	}
 
@@ -1066,7 +1066,7 @@ void R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light,
 	MatrixSetupTransformFromVectorsFLU(_or->transformMatrix, _or->axis[0], _or->axis[1], _or->axis[2], _or->origin);
 	MatrixAffineInverse(_or->transformMatrix, _or->viewMatrix);
 
-	MatrixMultiplyMOD(light->viewMatrix, _or->transformMatrix, _or->modelViewMatrix);
+	mat4_mult(light->viewMatrix, _or->transformMatrix, _or->modelViewMatrix);
 
 	// calculate the viewer origin in the model's space
 	// needed for fog, specular, and environment mapping
@@ -1106,11 +1106,11 @@ void R_RotateLightForViewParms(const trRefLight_t *light, const viewParms_t *vie
 
 	VectorCopy(light->l.origin, _or->origin);
 
-	QuatToAxis(light->l.rotation, _or->axis);
+	quat_to_axis(light->l.rotation, _or->axis);
 
 	MatrixSetupTransformFromVectorsFLU(_or->transformMatrix, _or->axis[0], _or->axis[1], _or->axis[2], _or->origin);
 	MatrixAffineInverse(_or->transformMatrix, _or->viewMatrix);
-	MatrixMultiplyMOD(viewParms->world.viewMatrix, _or->transformMatrix, _or->modelViewMatrix);
+	mat4_mult(viewParms->world.viewMatrix, _or->transformMatrix, _or->modelViewMatrix);
 
 	// calculate the viewer origin in the light's space
 	// needed for fog, specular, and environment mapping
@@ -1130,10 +1130,10 @@ Sets up the modelview matrix for a given viewParm
 */
 void R_RotateForViewer(void)
 {
-	matrix_t transformMatrix;
+	mat4_t transformMatrix;
 	//axis_t			viewAxis;
 	//vec3_t			forward, right, up;
-	matrix_t viewMatrix;
+	mat4_t viewMatrix;
 
 	Com_Memset(&tr.orientation, 0, sizeof(tr.orientation));
 	tr.orientation.axis[0][0] = 1;
@@ -1141,7 +1141,7 @@ void R_RotateForViewer(void)
 	tr.orientation.axis[2][2] = 1;
 	VectorCopy(tr.viewParms.orientation.origin, tr.orientation.viewOrigin);
 
-	MatrixIdentity(tr.orientation.transformMatrix);
+	mat4_ident(tr.orientation.transformMatrix);
 
 #if 0
 	Ren_Print("transform forward = (%5.3f, %5.3f, %5.3f), left = (%5.3f, %5.3f, %5.3f), up = (%5.3f, %5.3f, %5.3f)\n",
@@ -1165,7 +1165,7 @@ void R_RotateForViewer(void)
 #elif 1
 	// convert from our right handed coordinate system (looking down X)
 	// to OpenGL's right handed coordinate system (looking down -Z)
-	MatrixMultiplyMOD(quakeToOpenGLMatrix, tr.orientation.viewMatrix2, viewMatrix);
+	mat4_mult(quakeToOpenGLMatrix, tr.orientation.viewMatrix2, viewMatrix);
 #else
 
 	// !!! THIS BREAKS MIRRORS !!!
@@ -1206,7 +1206,7 @@ void R_RotateForViewer(void)
 	{
 		vec4_t   plane;
 		vec4_t   plane2;
-		matrix_t mirrorMatrix, mirrorMatrix2;
+		mat4_t mirrorMatrix, mirrorMatrix2;
 
 		// clipping plane in world space
 		plane[0] = tr.viewParms.portalPlane.normal[0];
@@ -1242,10 +1242,10 @@ void R_RotateForViewer(void)
 	else
 #endif
 	{
-		MatrixCopy(viewMatrix, tr.orientation.viewMatrix);
+		mat4_copy(viewMatrix, tr.orientation.viewMatrix);
 	}
 
-	MatrixCopy(tr.orientation.viewMatrix, tr.orientation.modelViewMatrix);
+	mat4_copy(tr.orientation.viewMatrix, tr.orientation.modelViewMatrix);
 
 	tr.viewParms.world = tr.orientation;
 }
@@ -1537,7 +1537,7 @@ static void R_SetupProjection(qboolean infiniteFarClip)
 
 #if 0
 	int      i;
-	matrix_t mvp;
+	mat4_t mvp;
 	vec4_t   axis[3];
 	vec4_t   trans;
 
@@ -1572,10 +1572,10 @@ static void R_SetupUnprojection(void)
 {
 	float *unprojectMatrix = tr.viewParms.unprojectionMatrix;
 
-	MatrixCopy(tr.viewParms.projectionMatrix, unprojectMatrix);
-	MatrixMultiply2(unprojectMatrix, quakeToOpenGLMatrix);
-	MatrixMultiply2(unprojectMatrix, tr.viewParms.world.viewMatrix2);
-	MatrixInverse(unprojectMatrix);
+	mat4_copy(tr.viewParms.projectionMatrix, unprojectMatrix);
+	mat4_mult_self(unprojectMatrix, quakeToOpenGLMatrix);
+	mat4_mult_self(unprojectMatrix, tr.viewParms.world.viewMatrix2);
+	mat4_inverse_self(unprojectMatrix);
 
 	// FIXME ?
 	// MatrixMultiplyTranslation(unprojectMatrix, -(float)glConfig.vidWidth / (float)tr.viewParms.viewportWidth,
@@ -1642,7 +1642,7 @@ Setup that culling frustum planes for the current view
 =================
 */
 // *INDENT-OFF*
-void R_SetupFrustum2(frustum_t frustum, const matrix_t mvp)
+void R_SetupFrustum2(frustum_t frustum, const mat4_t mvp)
 {
 	// http://www2.ravensoft.com/users/ggribb/plane%20extraction.pdf
 	int i;
@@ -3097,7 +3097,7 @@ void R_AddLightBoundsToVisBounds()
 	}
 }
 
-void R_DebugAxis(const vec3_t origin, const matrix_t transformMatrix)
+void R_DebugAxis(const vec3_t origin, const mat4_t transformMatrix)
 {
 #if 0
 	vec3_t forward, left, up;
@@ -3277,7 +3277,7 @@ void R_RenderView(viewParms_t *parms)
 {
 	int      firstDrawSurf;
 	int      firstInteraction;
-	matrix_t mvp;
+	mat4_t mvp;
 
 	if (parms->viewportWidth <= 0 || parms->viewportHeight <= 0)
 	{
@@ -3336,7 +3336,7 @@ void R_RenderView(viewParms_t *parms)
 
 	// set camera frustum planes in world space again, but this time including the far plane
 	tr.orientation = tr.viewParms.world;
-	MatrixMultiplyMOD(tr.viewParms.projectionMatrix, tr.orientation.modelViewMatrix, mvp);
+	mat4_mult(tr.viewParms.projectionMatrix, tr.orientation.modelViewMatrix, mvp);
 	R_SetupFrustum2(tr.viewParms.frustums[0], mvp);
 
 	// for parallel split shadow mapping

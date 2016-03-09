@@ -80,7 +80,7 @@ qboolean isEntVisible(entityState_t *ent)
 		vec3_t lright, v3ViewAngles;
 		VectorCopy(cl.snap.ps.viewangles, v3ViewAngles);
 		v3ViewAngles[2] += cl.snap.ps.leanf / 2.0f;
-		AngleVectors(v3ViewAngles, NULL, lright, NULL);
+		angles_vectors(v3ViewAngles, NULL, lright, NULL);
 		VectorMA(start, cl.snap.ps.leanf, lright, start);
 	}
 
@@ -88,10 +88,10 @@ qboolean isEntVisible(entityState_t *ent)
 
 	// Compute vector perpindicular to view to ent
 	VectorSubtract(end, start, forward);
-	VectorNormalizeFast(forward);
+	vec3_norm_fast(forward);
 	VectorSet(up, 0, 0, 1);
-	CrossProduct(forward, up, right);
-	VectorNormalizeFast(right);
+	vec3_cross(forward, up, right);
+	vec3_norm_fast(right);
 	VectorScale(right, 10, right2);
 	VectorScale(right, 18, right);
 

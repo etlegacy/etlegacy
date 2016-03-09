@@ -94,21 +94,6 @@ static short cin_soundSamples[ROQ_CHUNK_MAX_DATA_SIZE >> 2];
 
 static byte cin_chunkData[ROQ_CHUNK_HEADER_SIZE + ROQ_CHUNK_MAX_DATA_SIZE];
 
-static byte ClampByte(int value)
-{
-	if (value < 0)
-	{
-		value = 0;
-	}
-
-	if (value > 255)
-	{
-		value = 255;
-	}
-
-	return (byte) value;
-}
-
 /*
  ==================
  CIN_BlitBlock2x2

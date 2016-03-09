@@ -4916,12 +4916,12 @@ void R_LoadLights(char *lightDefs)
 			// check for rotation
 			else if (!Q_stricmp(keyname, "rotation") || !Q_stricmp(keyname, "light_rotation"))
 			{
-				matrix_t rotation;
+				mat4_t rotation;
 
 				sscanf(value, "%f %f %f %f %f %f %f %f %f", &rotation[0], &rotation[1], &rotation[2],
 				       &rotation[4], &rotation[5], &rotation[6], &rotation[8], &rotation[9], &rotation[10]);
 
-				QuatFromMatrix(light->l.rotation, rotation);
+				quat_from_mat4(light->l.rotation, rotation);
 			}
 			// check if this light does not cast any shadows
 			else if (!Q_stricmp(keyname, "noshadows") && !Q_stricmp(value, "1"))

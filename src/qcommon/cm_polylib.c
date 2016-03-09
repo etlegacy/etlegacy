@@ -109,8 +109,8 @@ void RemoveColinearPoints(winding_t *w)
 		k = (i + w->numpoints - 1) % w->numpoints;
 		VectorSubtract(w->p[j], w->p[i], v1);
 		VectorSubtract(w->p[i], w->p[k], v2);
-		VectorNormalize2(v1, v1);
-		VectorNormalize2(v2, v2);
+		vec3_norm2(v1, v1);
+		vec3_norm2(v2, v2);
 		if (DotProduct(v1, v2) < 0.999)
 		{
 			VectorCopy(w->p[i], p[nump]);
@@ -139,8 +139,8 @@ void WindingPlane(winding_t *w, vec3_t normal, vec_t *dist)
 
 	VectorSubtract(w->p[1], w->p[0], v1);
 	VectorSubtract(w->p[2], w->p[0], v2);
-	CrossProduct(v2, v1, normal);
-	VectorNormalize2(normal, normal);
+	vec3_cross(v2, v1, normal);
+	vec3_norm2(normal, normal);
 	*dist = DotProduct(w->p[0], normal);
 }
 
@@ -159,8 +159,8 @@ vec_t WindingArea(winding_t *w)
 	{
 		VectorSubtract(w->p[i - 1], w->p[0], d1);
 		VectorSubtract(w->p[i], w->p[0], d2);
-		CrossProduct(d1, d2, cross);
-		total += 0.5 * VectorLength(cross);
+		vec3_cross(d1, d2, cross);
+		total += 0.5 * vec3_length(cross);
 	}
 
 	return total;
@@ -253,11 +253,11 @@ winding_t *BaseWindingForPlane(vec3_t normal, vec_t dist)
 
 	v = DotProduct(vup, normal);
 	VectorMA(vup, -v, normal, vup);
-	VectorNormalize2(vup, vup);
+	vec3_norm2(vup, vup);
 
 	VectorScale(normal, dist, org);
 
-	CrossProduct(vup, normal, vright);
+	vec3_cross(vup, normal, vright);
 
 	VectorScale(vup, MAX_MAP_BOUNDS, vup);
 	VectorScale(vright, MAX_MAP_BOUNDS, vright);
@@ -633,13 +633,13 @@ void CheckWinding(winding_t *w)
 		p2 = w->p[j];
 		VectorSubtract(p2, p1, dir);
 
-		if (VectorLength(dir) < ON_EPSILON)
+		if (vec3_length(dir) < ON_EPSILON)
 		{
 			Com_Error(ERR_DROP, "CheckWinding: degenerate edge");
 		}
 
-		CrossProduct(facenormal, dir, edgenormal);
-		VectorNormalize2(edgenormal, edgenormal);
+		vec3_cross(facenormal, dir, edgenormal);
+		vec3_norm2(edgenormal, edgenormal);
 		edgedist  = DotProduct(p1, edgenormal);
 		edgedist += ON_EPSILON;
 
@@ -748,8 +748,8 @@ void AddWindingToConvexHull(winding_t *w, winding_t **hull, vec3_t normal)
 			k = (j + 1) % numHullPoints;
 
 			VectorSubtract(hullPoints[k], hullPoints[j], dir);
-			VectorNormalize2(dir, dir);
-			CrossProduct(normal, dir, hullDirs[j]);
+			vec3_norm2(dir, dir);
+			vec3_cross(normal, dir, hullDirs[j]);
 		}
 
 		outside = qfalse;

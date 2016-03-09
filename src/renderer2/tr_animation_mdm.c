@@ -2202,7 +2202,7 @@ void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surface)
 	int                i;
 	mdmModel_t         *mdmModel;
 	mdmSurfaceIntern_t *mdmSurface;
-	matrix_t           m, m2; //, m3
+	mat4_t           m, m2; //, m3
 	refEntity_t        *refent;
 	int                lodIndex;
 	IBO_t              *lodIBO;
@@ -2238,7 +2238,7 @@ void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surface)
 		                     bones[surface->boneRemapInverse[i]].matrix[1],
 		                     bones[surface->boneRemapInverse[i]].matrix[2]);
 
-		MatrixTranspose(m, m2);
+		mat4_transpose(m, m2);
 
 		MatrixSetupTransformFromRotation(tess.boneMatrices[i], m2, bones[surface->boneRemapInverse[i]].translation);
 #else

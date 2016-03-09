@@ -698,7 +698,7 @@ static void SV_BuildClientSnapshot(client_t *client)
 		vec3_t right, v3ViewAngles;
 		VectorCopy(ps->viewangles, v3ViewAngles);
 		v3ViewAngles[2] += frame->ps.leanf / 2.0f;
-		AngleVectors(v3ViewAngles, NULL, right, NULL);
+		angles_vectors(v3ViewAngles, NULL, right, NULL);
 		VectorMA(org, frame->ps.leanf, right, org);
 	}
 

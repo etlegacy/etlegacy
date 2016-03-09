@@ -1613,7 +1613,7 @@ void GLSL_SetUniformFloat5(shaderProgram_t *program, int uniformNum, const vec5_
 	glUniform1fv(uniforms[uniformNum], 5, v);
 }
 
-void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const matrix_t matrix)
+void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const mat4_t matrix)
 {
 	GLint *uniforms = program->uniforms;
 	vec_t *compare  = (float *)(program->uniformBuffer + program->uniformBufferOffsets[uniformNum]);
@@ -1629,12 +1629,12 @@ void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const mat
 		return;
 	}
 
-	if (MatrixCompare(matrix, compare))
+	if (mat4_compare(matrix, compare))
 	{
 		return;
 	}
 
-	MatrixCopy(matrix, compare);
+	mat4_copy(matrix, compare);
 
 	glUniformMatrix4fv(uniforms[uniformNum], 1, GL_FALSE, matrix);
 }
@@ -1675,7 +1675,7 @@ void GLSL_SetUniformVec4ARR(shaderProgram_t *program, int uniformNum, vec4_t *ve
 	glUniform4fv(uniforms[uniformNum], arraysize, &vectorarray[0][0]);
 }
 
-void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, matrix_t *matrixarray, int arraysize)
+void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, mat4_t *matrixarray, int arraysize)
 {
 	GLint *uniforms = program->uniforms;
 
@@ -1923,7 +1923,9 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 {
 	info->vertexShaderText   = GLSL_BuildGPUShaderText(info, GL_VERTEX_SHADER);
 	info->fragmentShaderText = GLSL_BuildGPUShaderText(info, GL_FRAGMENT_SHADER);
+#if GLSL_PRECOMPILE
 	int    startTime, endTime;
+#endif
 	size_t numPermutations = 0, numCompiled = 0, tics = 0, nextTicCount = 0;
 	int    i               = 0, x = 0;
 

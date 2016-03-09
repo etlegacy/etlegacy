@@ -765,8 +765,8 @@ void RB_DrawSun(void)
 	float    size;
 	float    dist;
 	vec3_t   origin, vec1, vec2;
-	matrix_t transformMatrix;
-	matrix_t modelViewMatrix;
+	mat4_t transformMatrix;
+	mat4_t modelViewMatrix;
 
 	if (!backEnd.skyRenderedThisView)
 	{
@@ -779,8 +779,8 @@ void RB_DrawSun(void)
 
 	GL_PushMatrix();
 
-	MatrixSetupTranslationByVec(transformMatrix, backEnd.viewParms.orientation.origin);
-	MatrixMultiplyMOD(backEnd.viewParms.world.viewMatrix, transformMatrix, modelViewMatrix);
+	mat4_reset_translate_vec3(transformMatrix, backEnd.viewParms.orientation.origin);
+	mat4_mult(backEnd.viewParms.world.viewMatrix, transformMatrix, modelViewMatrix);
 
 	GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
 	GL_LoadModelViewMatrix(modelViewMatrix);
