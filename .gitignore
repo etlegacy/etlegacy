@@ -27,6 +27,7 @@ etmain/ui/git_version.h
 
 # Windows
 Thumbs.db
+win_resource.aps
 
 #
 # Editor specific
