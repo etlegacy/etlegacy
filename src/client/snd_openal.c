@@ -783,7 +783,7 @@ static void S_AL_ScaleGain(src_t *chksrc, vec3_t origin)
 
 	if (!chksrc->local)
 	{
-		distance = Distance(origin, lastListenerOrigin);
+		distance = vec3_distance(origin, lastListenerOrigin);
 	}
 
 	// If we exceed a certain distance, scale the gain linearly until the sound
@@ -833,7 +833,7 @@ static qboolean S_AL_HearingThroughEntity(int entityNum)
 		// can't ask cgame since that would involve changing the API and hence mod
 		// compatibility. I don't think there is any way around this, but I'll leave
 		// the FIXME just in case anyone has a bright idea.
-		distanceSq = DistanceSquared(
+		distanceSq = vec3_distance_squared(
 		    entityPositions[entityNum],
 		    lastListenerOrigin);
 
@@ -1443,7 +1443,7 @@ static void S_AL_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHand
 	S_AL_SanitiseVector(sorigin);
 
 	if ((srcActiveCnt > 5 * srcCount / 3) &&
-	    (DistanceSquared(sorigin, lastListenerOrigin) >=
+	    (vec3_distance_squared(sorigin, lastListenerOrigin) >=
 	     (s_alMaxDistance->value + s_alGraceDistance->value) * (s_alMaxDistance->value + s_alGraceDistance->value)))
 	{
 		// We're getting tight on sources and source is not within hearing distance so don't add it

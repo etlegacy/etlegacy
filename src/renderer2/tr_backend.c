@@ -86,7 +86,7 @@ static void RB_SafeState(void)
 
 static void RB_SetGL2D(void)
 {
-	matrix_t proj;
+	mat4_t proj;
 
 	Ren_LogComment("--- RB_SetGL2D ---\n");
 
@@ -127,7 +127,7 @@ static vec4_t *RB_GetScreenQuad(void)
 // Set the model view projection matrix to match the ingame view
 void RB_SetViewMVPM(void)
 {
-	matrix_t ortho;
+	mat4_t ortho;
 
 	MatrixOrthogonalProjection(ortho,
 	                           backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
@@ -466,20 +466,20 @@ static void Render_lightVolume(interaction_t *ia)
 	{
 	case RL_PROJ:
 	{
-		MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.0);        // bias
+		mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.0);        // bias
 		MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 1.0 / Q_min(light->falloffLength, 1.0));        // scale
 		break;
 	}
 	case RL_OMNI:
 	default:
 	{
-		MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5);    // bias
+		mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.5);    // bias
 		MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);       // scale
 		break;
 	}
 	}
-	MatrixMultiply2(light->attenuationMatrix, light->projectionMatrix); // light projection (frustum)
-	MatrixMultiply2(light->attenuationMatrix, light->viewMatrix);
+	mat4_mult_self(light->attenuationMatrix, light->projectionMatrix); // light projection (frustum)
+	mat4_mult_self(light->attenuationMatrix, light->viewMatrix);
 
 	lightShader       = light->shader;
 	attenuationZStage = lightShader->stages[0];
@@ -586,7 +586,7 @@ static void Render_lightVolume(interaction_t *ia)
 /**
  * @brief helper function for parallel split shadow mapping
  */
-static int MergeInteractionBounds(const matrix_t lightViewProjectionMatrix, interaction_t *ia, int iaCount, vec3_t bounds[2], qboolean shadowCasters)
+static int MergeInteractionBounds(const mat4_t lightViewProjectionMatrix, interaction_t *ia, int iaCount, vec3_t bounds[2], qboolean shadowCasters)
 {
 	int           i;
 	int           j;
@@ -676,7 +676,7 @@ static int MergeInteractionBounds(const matrix_t lightViewProjectionMatrix, inte
 			point[2] = worldBounds[(j >> 2) & 1][2];
 			point[3] = 1;
 
-			MatrixTransform4(lightViewProjectionMatrix, point, transf);
+			mat4_transform_vec4(lightViewProjectionMatrix, point, transf);
 			transf[0] /= transf[3];
 			transf[1] /= transf[3];
 			transf[2] /= transf[3];
@@ -692,7 +692,7 @@ static int MergeInteractionBounds(const matrix_t lightViewProjectionMatrix, inte
 			point[2] = worldBounds[(j >> 2) & 1][2];
 			point[3] = 1;
 
-			MatrixTransform4(lightViewProjectionMatrix, point, transf);
+			mat4_transform_vec4(lightViewProjectionMatrix, point, transf);
 			transf[0] /= transf[3];
 			transf[1] /= transf[3];
 			transf[2] /= transf[3];
@@ -728,7 +728,7 @@ static int MergeInteractionBounds(const matrix_t lightViewProjectionMatrix, inte
 			point[2] = worldBounds[(j >> 2) & 1][2];
 			point[3] = 1;
 
-			MatrixTransform4(lightViewProjectionMatrix, point, transf);
+			mat4_transform_vec4(lightViewProjectionMatrix, point, transf);
 			//transf[0] /= transf[3];
 			//transf[1] /= transf[3];
 			//transf[2] /= transf[3];
@@ -780,7 +780,7 @@ static void RB_RenderInteractions()
 	int           iaCount;
 	surfaceType_t *surface;
 	vec3_t        tmp;
-	matrix_t      modelToLight;
+	mat4_t      modelToLight;
 	int           startTime = 0;
 
 	Ren_LogComment("--- RB_RenderInteractions ---\n");
@@ -909,26 +909,26 @@ static void RB_RenderInteractions()
 			}
 
 			// build the attenuation matrix using the entity transform
-			MatrixMultiplyMOD(light->viewMatrix, backEnd.orientation.transformMatrix, modelToLight);
+			mat4_mult(light->viewMatrix, backEnd.orientation.transformMatrix, modelToLight);
 
 			switch (light->l.rlType)
 			{
 			case RL_PROJ:
 			{
-				MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.0);            // bias
+				mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.0);            // bias
 				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 1.0 / Q_min(light->falloffLength, 1.0));            // scale
 				break;
 			}
 			case RL_OMNI:
 			default:
 			{
-				MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5);        // bias
+				mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.5);        // bias
 				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);           // scale
 				break;
 			}
 			}
-			MatrixMultiply2(light->attenuationMatrix, light->projectionMatrix); // light projection (frustum)
-			MatrixMultiply2(light->attenuationMatrix, modelToLight);
+			mat4_mult_self(light->attenuationMatrix, light->projectionMatrix); // light projection (frustum)
+			mat4_mult_self(light->attenuationMatrix, modelToLight);
 		}
 
 		// add the triangles for this surface
@@ -1010,12 +1010,12 @@ static void RB_RenderInteractionsShadowMapped()
 	qboolean       alphaTest, oldAlphaTest;
 	deformType_t   deformType, oldDeformType;
 	vec3_t         tmp;
-	matrix_t       modelToLight;
+	mat4_t       modelToLight;
 	qboolean       drawShadows;
 	int            cubeSide;
 	int            splitFrustumIndex;
 	int            startTime = 0;
-	const matrix_t bias      = { 0.5, 0.0, 0.0, 0.0,
+	const mat4_t bias      = { 0.5, 0.0, 0.0, 0.0,
 		                         0.0,      0.5, 0.0, 0.0,
 		                         0.0,      0.0, 0.5, 0.0,
 		                         0.5,      0.5, 0.5, 1.0 };
@@ -1103,7 +1103,7 @@ static void RB_RenderInteractionsShadowMapped()
 						qboolean flipX, flipY;
 						//float          *proj;
 						vec3_t   angles;
-						matrix_t rotationMatrix, transformMatrix, viewMatrix;
+						mat4_t rotationMatrix, transformMatrix, viewMatrix;
 
 						Ren_LogComment("----- Rendering shadowCube side: %i -----\n", cubeSide);
 
@@ -1179,13 +1179,13 @@ static void RB_RenderInteractionsShadowMapped()
 						}
 
 						// Quake -> OpenGL view matrix from light perspective
-						MatrixFromAngles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
+						mat4_from_angles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
 						MatrixSetupTransformFromRotation(transformMatrix, rotationMatrix, light->origin);
 						MatrixAffineInverse(transformMatrix, viewMatrix);
 
 						// convert from our coordinate system (looking down X)
 						// to OpenGL's coordinate system (looking down -Z)
-						MatrixMultiplyMOD(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
+						mat4_mult(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
 
 						// OpenGL projection matrix
 						fovX = 90;
@@ -1236,8 +1236,8 @@ static void RB_RenderInteractionsShadowMapped()
 						vec4_t   forward, side, up;
 						vec3_t   lightDirection;
 						vec3_t   viewOrigin, viewDirection;
-						matrix_t rotationMatrix, transformMatrix, viewMatrix, projectionMatrix, viewProjectionMatrix;
-						matrix_t cropMatrix;
+						mat4_t rotationMatrix, transformMatrix, viewMatrix, projectionMatrix, viewProjectionMatrix;
+						mat4_t cropMatrix;
 						vec4_t   splitFrustum[6];
 						vec3_t   splitFrustumCorners[8];
 						vec3_t   splitFrustumBounds[2];
@@ -1299,7 +1299,7 @@ static void RB_RenderInteractionsShadowMapped()
 							VectorNormalize(up);
 
 							VectorToAngles(lightDirection, angles);
-							MatrixFromAngles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
+							mat4_from_angles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
 							AngleVectors(angles, forward, side, up);
 
 							MatrixLookAtRH(light->viewMatrix, viewOrigin, lightDirection, up);
@@ -1390,7 +1390,7 @@ static void RB_RenderInteractionsShadowMapped()
 							                             -splitFrustumViewBounds[1][2],
 							                             -splitFrustumViewBounds[0][2]);
 								#endif
-							MatrixMultiplyMOD(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
+							mat4_mult(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
 
 							// find the bounding box of the current split in the light's clip space
 							ClearBounds(splitFrustumClipBounds[0], splitFrustumClipBounds[1]);
@@ -1399,7 +1399,7 @@ static void RB_RenderInteractionsShadowMapped()
 								VectorCopy(splitFrustumCorners[j], point);
 								point[3] = 1;
 
-								MatrixTransform4(viewProjectionMatrix, point, transf);
+								mat4_transform_vec4(viewProjectionMatrix, point, transf);
 								transf[0] /= transf[3];
 								transf[1] /= transf[3];
 								transf[2] /= transf[3];
@@ -1430,12 +1430,12 @@ static void RB_RenderInteractionsShadowMapped()
 								VectorCopy(splitFrustumCorners[j], point);
 								point[3] = 1;
 #if 1
-								MatrixTransform4(light->viewMatrix, point, transf);
+								mat4_transform_vec4(light->viewMatrix, point, transf);
 								transf[0] /= transf[3];
 								transf[1] /= transf[3];
 								transf[2] /= transf[3];
 #else
-								MatrixTransformPoint(light->viewMatrix, point, transf);
+								mat4_transform_vec3(light->viewMatrix, point, transf);
 #endif
 
 								AddPointToBounds(transf, cropBounds[0], cropBounds[1]);
@@ -1443,7 +1443,7 @@ static void RB_RenderInteractionsShadowMapped()
 
 							MatrixOrthogonalProjectionRH(projectionMatrix, cropBounds[0][0], cropBounds[1][0], cropBounds[0][1], cropBounds[1][1], -cropBounds[1][2], -cropBounds[0][2]);
 
-							MatrixMultiplyMOD(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
+							mat4_mult(projectionMatrix, light->viewMatrix, viewProjectionMatrix);
 
 							numCasters = MergeInteractionBounds(viewProjectionMatrix, ia, iaCount, casterBounds, qtrue);
 							MergeInteractionBounds(viewProjectionMatrix, ia, iaCount, receiverBounds, qfalse);
@@ -1455,7 +1455,7 @@ static void RB_RenderInteractionsShadowMapped()
 								VectorCopy(splitFrustumCorners[j], point);
 								point[3] = 1;
 
-								MatrixTransform4(viewProjectionMatrix, point, transf);
+								mat4_transform_vec4(viewProjectionMatrix, point, transf);
 								transf[0] /= transf[3];
 								transf[1] /= transf[3];
 								transf[2] /= transf[3];
@@ -1496,7 +1496,7 @@ static void RB_RenderInteractionsShadowMapped()
 							MatrixCrop(cropMatrix, cropBounds[0], cropBounds[1]);
 #endif
 
-							MatrixMultiplyMOD(cropMatrix, projectionMatrix, light->projectionMatrix);
+							mat4_mult(cropMatrix, projectionMatrix, light->projectionMatrix);
 
 							GL_LoadProjectionMatrix(light->projectionMatrix);
 						}
@@ -1508,10 +1508,10 @@ static void RB_RenderInteractionsShadowMapped()
 							// Quake -> OpenGL view matrix from light perspective
 #if 1
 							VectorToAngles(lightDirection, angles);
-							MatrixFromAngles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
+							mat4_from_angles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
 							MatrixSetupTransformFromRotation(transformMatrix, rotationMatrix, backEnd.viewParms.orientation.origin);
 							MatrixAffineInverse(transformMatrix, viewMatrix);
-							MatrixMultiplyMOD(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
+							mat4_mult(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
 #else
 							MatrixLookAtRH(light->viewMatrix, backEnd.viewParms.orientation.origin, lightDirection, backEnd.viewParms.orientation.axis[0]);
 #endif
@@ -1528,7 +1528,7 @@ static void RB_RenderInteractionsShadowMapped()
 								point[2] = splitFrustumBounds[(j >> 2) & 1][2];
 								point[3] = 1;
 
-								MatrixTransform4(light->viewMatrix, point, transf);
+								mat4_transform_vec4(light->viewMatrix, point, transf);
 								transf[0] /= transf[3];
 								transf[1] /= transf[3];
 								transf[2] /= transf[3];
@@ -1586,7 +1586,7 @@ static void RB_RenderInteractionsShadowMapped()
 				case RL_OMNI:
 				{
 					MatrixAffineInverse(light->transformMatrix, light->viewMatrix);
-					MatrixSetupScale(light->projectionMatrix, 1.0 / light->l.radius[0], 1.0 / light->l.radius[1],
+					mat4_reset_scale(light->projectionMatrix, 1.0 / light->l.radius[0], 1.0 / light->l.radius[1],
 					                 1.0 / light->l.radius[2]);
 					break;
 				}
@@ -1890,10 +1890,10 @@ static void RB_RenderInteractionsShadowMapped()
 					backEnd.orientation.axis[2][2] = 1;
 					VectorCopy(light->l.origin, backEnd.orientation.viewOrigin);
 
-					MatrixIdentity(backEnd.orientation.transformMatrix);
+					mat4_ident(backEnd.orientation.transformMatrix);
 					//MatrixAffineInverse(backEnd.orientation.transformMatrix, backEnd.orientation.viewMatrix);
-					MatrixMultiplyMOD(light->viewMatrix, backEnd.orientation.transformMatrix, backEnd.orientation.viewMatrix);
-					MatrixCopy(backEnd.orientation.viewMatrix, backEnd.orientation.modelViewMatrix);
+					mat4_mult(light->viewMatrix, backEnd.orientation.transformMatrix, backEnd.orientation.viewMatrix);
+					mat4_copy(backEnd.orientation.viewMatrix, backEnd.orientation.modelViewMatrix);
 				}
 				else
 				{
@@ -1935,37 +1935,37 @@ static void RB_RenderInteractionsShadowMapped()
 				VectorCopy(light->origin, light->transformed);
 			}
 
-			MatrixMultiplyMOD(light->viewMatrix, backEnd.orientation.transformMatrix, modelToLight);
+			mat4_mult(light->viewMatrix, backEnd.orientation.transformMatrix, modelToLight);
 
 			// build the attenuation matrix using the entity transform
 			switch (light->l.rlType)
 			{
 			case RL_OMNI:
 			{
-				MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5);    // bias
+				mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.5);    // bias
 				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);       // scale
-				MatrixMultiply2(light->attenuationMatrix, light->projectionMatrix);
-				MatrixMultiply2(light->attenuationMatrix, modelToLight);
+				mat4_mult_self(light->attenuationMatrix, light->projectionMatrix);
+				mat4_mult_self(light->attenuationMatrix, modelToLight);
 
-				MatrixCopy(light->attenuationMatrix, light->shadowMatrices[0]);
+				mat4_copy(light->attenuationMatrix, light->shadowMatrices[0]);
 				break;
 			}
 			case RL_PROJ:
 			{
-				MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.0);        // bias
+				mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.0);        // bias
 				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 1.0 / Q_min(light->falloffLength, 1.0));        // scale
-				MatrixMultiply2(light->attenuationMatrix, light->projectionMatrix);
-				MatrixMultiply2(light->attenuationMatrix, modelToLight);
+				mat4_mult_self(light->attenuationMatrix, light->projectionMatrix);
+				mat4_mult_self(light->attenuationMatrix, modelToLight);
 
-				MatrixCopy(light->attenuationMatrix, light->shadowMatrices[0]);
+				mat4_copy(light->attenuationMatrix, light->shadowMatrices[0]);
 				break;
 			}
 			case RL_DIRECTIONAL:
 			{
-				MatrixSetupTranslation(light->attenuationMatrix, 0.5, 0.5, 0.5);    // bias
+				mat4_reset_translate(light->attenuationMatrix, 0.5, 0.5, 0.5);    // bias
 				MatrixMultiplyScale(light->attenuationMatrix, 0.5, 0.5, 0.5);       // scale
-				MatrixMultiply2(light->attenuationMatrix, light->projectionMatrix);
-				MatrixMultiply2(light->attenuationMatrix, modelToLight);
+				mat4_mult_self(light->attenuationMatrix, light->projectionMatrix);
+				mat4_mult_self(light->attenuationMatrix, modelToLight);
 				break;
 			}
 			default:
@@ -2047,11 +2047,11 @@ skipInteraction:
 				case RL_DIRECTIONAL:
 				{
 					// set shadow matrix including scale + offset
-					MatrixCopy(bias, light->shadowMatricesBiased[splitFrustumIndex]);
-					MatrixMultiply2(light->shadowMatricesBiased[splitFrustumIndex], light->projectionMatrix);
-					MatrixMultiply2(light->shadowMatricesBiased[splitFrustumIndex], light->viewMatrix);
+					mat4_copy(bias, light->shadowMatricesBiased[splitFrustumIndex]);
+					mat4_mult_self(light->shadowMatricesBiased[splitFrustumIndex], light->projectionMatrix);
+					mat4_mult_self(light->shadowMatricesBiased[splitFrustumIndex], light->viewMatrix);
 
-					MatrixMultiplyMOD(light->projectionMatrix, light->viewMatrix, light->shadowMatrices[splitFrustumIndex]);
+					mat4_mult(light->projectionMatrix, light->viewMatrix, light->shadowMatrices[splitFrustumIndex]);
 
 					if (r_parallelShadowSplits->integer)
 					{
@@ -2336,7 +2336,7 @@ void RB_RenderGlobalFog()
 void RB_RenderBloom()
 {
 	int      i, j;
-	matrix_t ortho;
+	mat4_t ortho;
 
 	Ren_LogComment("--- RB_RenderBloom ---\n");
 
@@ -2520,7 +2520,7 @@ void RB_RenderRotoscope(void)
 
 void RB_CameraPostFX(void)
 {
-	matrix_t grain;
+	mat4_t grain;
 
 	Ren_LogComment("--- RB_CameraPostFX ---\n");
 
@@ -2542,7 +2542,7 @@ void RB_CameraPostFX(void)
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	//glUniform1f(tr.cameraEffectsShader.u_BlurMagnitude, r_bloomBlur->value);
 
-	MatrixIdentity(grain);
+	mat4_ident(grain);
 
 	MatrixMultiplyScale(grain, r_cameraFilmGrainScale->value, r_cameraFilmGrainScale->value, 0);
 	MatrixMultiplyTranslation(grain, backEnd.refdef.floatTime * 10, backEnd.refdef.floatTime * 10, 0);
@@ -3333,7 +3333,7 @@ static void RenderEntityOcclusionVolume(trRefEntity_t *entity)
 {
 	vec3_t   boundsCenter;
 	vec3_t   boundsSize;
-	matrix_t rot; // transform, scale,
+	mat4_t rot; // transform, scale,
 	axis_t   axis;
 
 	GL_CheckErrors();
@@ -3381,7 +3381,7 @@ static void RenderEntityOcclusionVolume(trRefEntity_t *entity)
 	MatrixSetupTransformFromVectorsFLU(backEnd.orientation.transformMatrix, axis[0], axis[1], axis[2], boundsCenter);
 
 	MatrixAffineInverse(backEnd.orientation.transformMatrix, backEnd.orientation.viewMatrix);
-	MatrixMultiplyMOD(backEnd.viewParms.world.viewMatrix, backEnd.orientation.transformMatrix, backEnd.orientation.modelViewMatrix);
+	mat4_mult(backEnd.viewParms.world.viewMatrix, backEnd.orientation.transformMatrix, backEnd.orientation.modelViewMatrix);
 
 	GL_LoadModelViewMatrix(backEnd.orientation.modelViewMatrix);
 
@@ -4206,10 +4206,10 @@ static void RB_RenderDebugUtils()
 						Tess_UpdateVBOs(ATTR_POSITION | ATTR_COLOR);
 						Tess_DrawElements();
 #else
-						matrix_t transform, scale, rot;
+						mat4_t transform, scale, rot;
 
-						MatrixSetupScale(scale, light->l.radius[0], light->l.radius[1], light->l.radius[2]);
-						MatrixMultiplyMOD(light->transformMatrix, scale, transform);
+						mat4_reset_scale(scale, light->l.radius[0], light->l.radius[1], light->l.radius[2]);
+						mat4_mult(light->transformMatrix, scale, transform);
 
 						GL_LoadModelViewMatrix(transform);
 						//GL_LoadProjectionMatrix(backEnd.viewParms.projectionMatrix);
@@ -4775,7 +4775,7 @@ static void RB_RenderDebugUtils()
 						VectorCopy(skel->bones[parentIndex].origin, origin);
 					}
 					VectorCopy(skel->bones[j].origin, offset);
-					QuatToVectorsFRU(skel->bones[j].rotation, forward, right, up);
+					quat_to_vec3_FRU(skel->bones[j].rotation, forward, right, up);
 
 					VectorSubtract(offset, origin, diff);
 					if ((length = VectorNormalize(diff)))
@@ -4803,7 +4803,7 @@ static void RB_RenderDebugUtils()
 						Tess_AddTetrahedron(tetraVerts, g_color_table[ColorIndex(j)]);
 					}
 
-					MatrixTransformPoint(backEnd.orientation.transformMatrix, skel->bones[j].origin, worldOrigins[j]);
+					mat4_transform_vec3(backEnd.orientation.transformMatrix, skel->bones[j].origin, worldOrigins[j]);
 				}
 
 				Tess_UpdateVBOs(ATTR_POSITION | ATTR_TEXCOORD | ATTR_COLOR);
@@ -5233,7 +5233,7 @@ static void RB_RenderDebugUtils()
 					{
 						vec3_t   forward = { 0, 0, -1 };
 						vec3_t   up      = { 1, 0, 0 };
-						matrix_t viewMatrix, projectionMatrix; // rotationMatrix, transformMatrix,
+						mat4_t viewMatrix, projectionMatrix; // rotationMatrix, transformMatrix,
 
 						// Quake -> OpenGL view matrix from light perspective
 #if 0
@@ -5258,7 +5258,7 @@ static void RB_RenderDebugUtils()
 							point[2] = tr.world->models[0].bounds[(j >> 2) & 1][2];
 							point[3] = 1;
 
-							MatrixTransform4(viewMatrix, point, transf);
+							mat4_transform_vec4(viewMatrix, point, transf);
 							transf[0] /= transf[3];
 							transf[1] /= transf[3];
 							transf[2] /= transf[3];

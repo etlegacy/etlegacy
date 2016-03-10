@@ -619,7 +619,7 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		return 0;
 
 	case TRAP_ANGLEVECTORS:
-		AngleVectors(VMA(1), VMA(2), VMA(3), VMA(4));
+		angles_vectors(VMA(1), VMA(2), VMA(3), VMA(4));
 		return 0;
 
 	case TRAP_PERPENDICULARVECTOR:

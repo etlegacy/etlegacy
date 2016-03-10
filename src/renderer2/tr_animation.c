@@ -1362,8 +1362,8 @@ int RE_BuildSkeleton(refSkeleton_t *skel, qhandle_t hAnim, int startFrame, int e
 			VectorCopy(channel->baseOrigin, newOrigin);
 			VectorCopy(channel->baseOrigin, oldOrigin);
 
-			QuatCopy(channel->baseQuat, newQuat);
-			QuatCopy(channel->baseQuat, oldQuat);
+			quat_copy(channel->baseQuat, newQuat);
+			quat_copy(channel->baseQuat, oldQuat);
 
 			componentsApplied = 0;
 
@@ -1411,17 +1411,17 @@ int RE_BuildSkeleton(refSkeleton_t *skel, qhandle_t hAnim, int startFrame, int e
 			}
 
 			QuatCalcW(oldQuat);
-			QuatNormalize(oldQuat);
+			quat_norm(oldQuat);
 
 			QuatCalcW(newQuat);
-			QuatNormalize(newQuat);
+			quat_norm(newQuat);
 
 #if 1
 			VectorLerp(oldOrigin, newOrigin, frac, lerpedOrigin);
-			QuatSlerp(oldQuat, newQuat, frac, lerpedQuat);
+			quat_slerp(oldQuat, newQuat, frac, lerpedQuat);
 #else
 			VectorCopy(newOrigin, lerpedOrigin);
-			QuatCopy(newQuat, lerpedQuat);
+			quat_copy(newQuat, lerpedQuat);
 #endif
 
 			// copy lerped information to the bone + extra data
@@ -1441,7 +1441,7 @@ int RE_BuildSkeleton(refSkeleton_t *skel, qhandle_t hAnim, int startFrame, int e
 				VectorCopy(lerpedOrigin, skel->bones[i].origin);
 			}
 
-			QuatCopy(lerpedQuat, skel->bones[i].rotation);
+			quat_copy(lerpedQuat, skel->bones[i].rotation);
 
 #if defined(REFBONE_NAMES)
 			Q_strncpyz(skel->bones[i].name, channel->name, sizeof(skel->bones[i].name));
@@ -1476,8 +1476,8 @@ int RE_BuildSkeleton(refSkeleton_t *skel, qhandle_t hAnim, int startFrame, int e
 			VectorCopy(newKey->position, newOrigin);
 			VectorCopy(oldKey->position, oldOrigin);
 
-			QuatCopy(newKey->quat, newQuat);
-			QuatCopy(oldKey->quat, oldQuat);
+			quat_copy(newKey->quat, newQuat);
+			quat_copy(oldKey->quat, oldQuat);
 
 			//QuatCalcW(oldQuat);
 			//QuatNormalize(oldQuat);
@@ -1486,7 +1486,7 @@ int RE_BuildSkeleton(refSkeleton_t *skel, qhandle_t hAnim, int startFrame, int e
 			//QuatNormalize(newQuat);
 
 			VectorLerp(oldOrigin, newOrigin, frac, lerpedOrigin);
-			QuatSlerp(oldQuat, newQuat, frac, lerpedQuat);
+			quat_slerp(oldQuat, newQuat, frac, lerpedQuat);
 
 			// copy lerped information to the bone + extra data
 			skel->bones[i].parentIndex = refBone->parentIndex;
@@ -1505,7 +1505,7 @@ int RE_BuildSkeleton(refSkeleton_t *skel, qhandle_t hAnim, int startFrame, int e
 				VectorCopy(lerpedOrigin, skel->bones[i].origin);
 			}
 
-			QuatCopy(lerpedQuat, skel->bones[i].rotation);
+			quat_copy(lerpedQuat, skel->bones[i].rotation);
 
 #if defined(REFBONE_NAMES)
 			Q_strncpyz(skel->bones[i].name, refBone->name, sizeof(skel->bones[i].name));
@@ -1513,7 +1513,7 @@ int RE_BuildSkeleton(refSkeleton_t *skel, qhandle_t hAnim, int startFrame, int e
 
 			// calculate absolute values for the bounding box approximation
 			VectorCopy(skel->bones[i].origin, skeleton.bones[i].origin);
-			QuatCopy(skel->bones[i].rotation, skeleton.bones[i].rotation);
+			quat_copy(skel->bones[i].rotation, skeleton.bones[i].rotation);
 
 			if (refBone->parentIndex >= 0)
 			{
@@ -1527,7 +1527,7 @@ int RE_BuildSkeleton(refSkeleton_t *skel, qhandle_t hAnim, int startFrame, int e
 				VectorAdd(parent->origin, rotated, bone->origin);
 
 				QuatMultiply1(parent->rotation, bone->rotation, quat);
-				QuatCopy(quat, bone->rotation);
+				quat_copy(quat, bone->rotation);
 
 				AddPointToBounds(bone->origin, skel->bounds[0], skel->bounds[1]);
 			}
@@ -1566,10 +1566,10 @@ int RE_BlendSkeleton(refSkeleton_t *skel, const refSkeleton_t *blend, float frac
 	for (i = 0; i < skel->numBones; i++)
 	{
 		VectorLerp(skel->bones[i].origin, blend->bones[i].origin, frac, lerpedOrigin);
-		QuatSlerp(skel->bones[i].rotation, blend->bones[i].rotation, frac, lerpedQuat);
+		quat_slerp(skel->bones[i].rotation, blend->bones[i].rotation, frac, lerpedQuat);
 
 		VectorCopy(lerpedOrigin, skel->bones[i].origin);
-		QuatCopy(lerpedQuat, skel->bones[i].rotation);
+		quat_copy(lerpedQuat, skel->bones[i].rotation);
 	}
 
 	// calculate a bounding box in the current coordinate system

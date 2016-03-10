@@ -954,9 +954,9 @@ void GL_SetDefaultState(void)
 	glState.stackIndex = 0;
 	for (i = 0; i < MAX_GLSTACK; i++)
 	{
-		MatrixIdentity(glState.modelViewMatrix[i]);
-		MatrixIdentity(glState.projectionMatrix[i]);
-		MatrixIdentity(glState.modelViewProjectionMatrix[i]);
+		mat4_ident(glState.modelViewMatrix[i]);
+		mat4_ident(glState.projectionMatrix[i]);
+		mat4_ident(glState.modelViewProjectionMatrix[i]);
 	}
 }
 

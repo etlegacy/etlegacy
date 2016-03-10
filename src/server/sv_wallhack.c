@@ -212,13 +212,13 @@ static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t
 				}
 
 				// slide the original velocity along the crease
-				CrossProduct(planes[i], planes[j], dir);
-				VectorNormalize(dir);
+				vec3_cross(planes[i], planes[j], dir);
+				vec3_norm(dir);
 				d = DotProduct(dir, velocity);
 				VectorScale(dir, d, clipVelocity);
 
-				CrossProduct(planes[i], planes[j], dir);
-				VectorNormalize(dir);
+				vec3_cross(planes[i], planes[j], dir);
+				vec3_norm(dir);
 				d = DotProduct(dir, endVelocity);
 				VectorScale(dir, d, endClipVelocity);
 
@@ -334,7 +334,7 @@ static void calc_viewpoint(playerState_t *ps, vec3_t org, vec3_t vp)
 
 		VectorCopy(ps->viewangles, v3ViewAngles);
 		v3ViewAngles[2] += ps->leanf / 2.0f;
-		AngleVectors(v3ViewAngles, NULL, right, NULL);
+		angles_vectors(v3ViewAngles, NULL, right, NULL);
 		VectorMA(org, ps->leanf, right, org);
 	}
 
@@ -363,7 +363,7 @@ static int player_in_fov(vec3_t viewangle, vec3_t ppos, vec3_t opos)
 	// would reveal the position of opponents behind the player on
 	// the same X/Y plane (e.g. on the same floor in a room).
 	vofs = (int) (opos[2] - ppos[2]);
-	if (VectorLength(los) < 5 * abs(vofs))
+	if (vec3_length(los) < 5 * abs(vofs))
 	{
 		return 1;
 	}
@@ -376,7 +376,7 @@ static int player_in_fov(vec3_t viewangle, vec3_t ppos, vec3_t opos)
 	dir[2] = cos(yaw) * sin(pitch);
 
 	// calculate unit vector corresponding to line of sight to opponent
-	VectorNormalize(los);
+	vec3_norm(los);
 
 	// calculate and test the angle between the two vectors
 	cos_angle = DotProduct(dir, los);
@@ -580,7 +580,7 @@ void SV_RandomizePos(int player, int other)
 
 	// get distance (we need it for correct sound scaling)
 	VectorSubtract(oent->s.pos.trBase, pent->s.pos.trBase, los);
-	dist = VectorLength(los);
+	dist = vec3_length(los);
 
 	// set the opponent's position directly below the player
 	VectorCopy(pent->s.pos.trBase, oent->s.pos.trBase);

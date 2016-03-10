@@ -167,8 +167,8 @@ static qboolean CM_PlaneFromPoints(vec4_t plane, vec3_t a, vec3_t b, vec3_t c)
 
 	VectorSubtract(b, a, d1);
 	VectorSubtract(c, a, d2);
-	CrossProduct(d2, d1, plane);
-	if (VectorNormalize(plane) == 0)
+	vec3_cross(d2, d1, plane);
+	if (vec3_norm(plane) == 0)
 	{
 		return qfalse;
 	}
@@ -213,7 +213,7 @@ static qboolean CM_NeedsSubdivision(vec3_t a, vec3_t b, vec3_t c)
 
 	// see if the curve is far enough away from the linear mid
 	VectorSubtract(cmid, lmid, delta);
-	dist = VectorLength(delta);
+	dist = vec3_length(delta);
 
 	return dist >= SUBDIVIDE_DISTANCE;
 }
@@ -1044,7 +1044,7 @@ void CM_AddFacetBevels(facet_t *facet)
 		k = (j + 1) % w->numpoints;
 		VectorSubtract(w->p[j], w->p[k], vec);
 		// if it's a degenerate edge
-		if (VectorNormalize(vec) < 0.5f)
+		if (vec3_norm(vec) < 0.5f)
 		{
 			continue;
 		}
@@ -1069,8 +1069,8 @@ void CM_AddFacetBevels(facet_t *facet)
 				// construct a plane
 				VectorClear(vec2);
 				vec2[axis] = dir;
-				CrossProduct(vec, vec2, plane);
-				if (VectorNormalize(plane) < 0.5f)
+				vec3_cross(vec, vec2, plane);
+				if (vec3_norm(plane) < 0.5f)
 				{
 					continue;
 				}

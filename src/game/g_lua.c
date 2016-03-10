@@ -1146,7 +1146,7 @@ gentity_t* G_Lua_CreateEntity(char *params)
 static int _et_G_Lua_CreateEntity(lua_State *L)
 {
 	gentity_t *entnum;
-	char      *params = luaL_checkstring(L, 1); // make 2 params for classname?
+	char      *params = (char *)luaL_checkstring(L, 1); // make 2 params for classname?
 
 	entnum = G_Lua_CreateEntity(params);
 
@@ -1157,7 +1157,7 @@ static int _et_G_Lua_CreateEntity(lua_State *L)
 
 static int _et_G_Lua_DeleteEntity(lua_State *L)
 {
-	char *params = luaL_checkstring(L, 1);
+	char *params = (char *)luaL_checkstring(L, 1);
 
 	lua_pushinteger(L, G_ScriptAction_Delete(NULL, params)); // FIXME: make own function for proper outputs?
 	return 1;

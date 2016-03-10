@@ -51,10 +51,26 @@ typedef int socklen_t;
 typedef unsigned short sa_family_t;
 #   endif
 
-#   define EAGAIN                   WSAEWOULDBLOCK
-#   define EADDRNOTAVAIL    WSAEADDRNOTAVAIL
-#   define EAFNOSUPPORT     WSAEAFNOSUPPORT
-#   define ECONNRESET           WSAECONNRESET
+#ifdef EAGAIN
+#	undef EAGAIN
+#	define EAGAIN WSAEWOULDBLOCK
+#endif
+
+#ifdef EADDRNOTAVAIL
+#	undef EADDRNOTAVAIL
+#   define EADDRNOTAVAIL WSAEADDRNOTAVAIL
+#endif
+
+#ifdef EAFNOSUPPORT
+#	undef EAFNOSUPPORT
+#   define EAFNOSUPPORT WSAEAFNOSUPPORT
+#endif
+
+#ifdef ECONNRESET
+#	undef ECONNRESET
+#   define ECONNRESET WSAECONNRESET
+#endif
+
 #   define socketError      WSAGetLastError()
 
 static WSADATA  winsockdata;

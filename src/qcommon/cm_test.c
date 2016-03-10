@@ -331,7 +331,7 @@ int CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t
 	{
 		vec3_t temp, forward, right, up;
 
-		AngleVectors(angles, forward, right, up);
+		angles_vectors(angles, forward, right, up);
 
 		VectorCopy(p_l, temp);
 		p_l[0] = DotProduct(temp, forward);

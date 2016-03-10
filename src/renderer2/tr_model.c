@@ -808,7 +808,7 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
 			return -1;
 		}
 		VectorCopy(refent->skeleton.bones[retval].origin, tag->origin);
-		QuatToAxis(refent->skeleton.bones[retval].rotation, tag->axis);
+		quat_to_axis(refent->skeleton.bones[retval].rotation, tag->axis);
 		VectorCopy(tag->axis[2], tmp);
 		VectorCopy(tag->axis[1], tag->axis[2]);
 		VectorCopy(tag->axis[0], tag->axis[1]);

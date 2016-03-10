@@ -514,7 +514,7 @@ void R_SetupLightOrigin(trRefLight_t *light)
 #if 1
 		if (!VectorCompare(light->l.center, vec3_origin))
 		{
-			MatrixTransformPoint(light->transformMatrix, light->l.center, transformed);
+			mat4_transform_vec3(light->transformMatrix, light->l.center, transformed);
 			VectorSubtract(transformed, light->l.origin, light->direction);
 			VectorNormalize(light->direction);
 
@@ -525,7 +525,7 @@ void R_SetupLightOrigin(trRefLight_t *light)
 		{
 			vec3_t down = { 0, 0, 1 };
 
-			MatrixTransformPoint(light->transformMatrix, down, transformed);
+			mat4_transform_vec3(light->transformMatrix, down, transformed);
 			VectorSubtract(transformed, light->l.origin, light->direction);
 			VectorNormalize(light->direction);
 
@@ -536,7 +536,7 @@ void R_SetupLightOrigin(trRefLight_t *light)
 	}
 	else
 	{
-		MatrixTransformPoint(light->transformMatrix, light->l.center, light->origin);
+		mat4_transform_vec3(light->transformMatrix, light->l.center, light->origin);
 	}
 }
 
@@ -643,7 +643,7 @@ void R_SetupLightWorldBounds(trRefLight_t *light)
 		v[2] = light->localBounds[(j >> 2) & 1][2];
 
 		// transform local bounds vertices into world space
-		MatrixTransformPoint(light->transformMatrix, v, transformed);
+		mat4_transform_vec3(light->transformMatrix, v, transformed);
 
 		AddPointToBounds(transformed, light->worldBounds[0], light->worldBounds[1]);
 	}
@@ -668,7 +668,7 @@ void R_SetupLightView(trRefLight_t *light)
 	/*
 	case RL_PROJ:
 	{
-	    matrix_t        viewMatrix;
+	    mat4_t        viewMatrix;
 
 	    MatrixAffineInverse(light->transformMatrix, viewMatrix);
 
@@ -701,7 +701,7 @@ void R_SetupLightFrustum(trRefLight_t *light)
 		vec3_t planeOrigin;
 		axis_t axis;
 
-		QuatToAxis(light->l.rotation, axis);
+		quat_to_axis(light->l.rotation, axis);
 
 		for (i = 0; i < 3; i++)
 		{
@@ -791,8 +791,8 @@ void R_SetupLightFrustum(trRefLight_t *light)
 		{
 			vec3_t worldBounds[2];
 
-			MatrixTransformPoint(light->transformMatrix, light->localBounds[0], worldBounds[0]);
-			MatrixTransformPoint(light->transformMatrix, light->localBounds[1], worldBounds[1]);
+			mat4_transform_vec3(light->transformMatrix, light->localBounds[0], worldBounds[0]);
+			mat4_transform_vec3(light->transformMatrix, light->localBounds[1], worldBounds[1]);
 
 			Tess_AddCube(vec3_origin, worldBounds[0], worldBounds[1], colorWhite);
 
@@ -952,7 +952,7 @@ void R_SetupLightProjection(trRefLight_t *light)
 	case RL_OMNI:
 	case RL_DIRECTIONAL:
 	{
-		MatrixSetupScale(light->projectionMatrix, 1.0 / light->l.radius[0], 1.0 / light->l.radius[1], 1.0 / light->l.radius[2]);
+		mat4_reset_scale(light->projectionMatrix, 1.0 / light->l.radius[0], 1.0 / light->l.radius[1], 1.0 / light->l.radius[2]);
 		break;
 	}
 	case RL_PROJ:
@@ -1658,7 +1658,7 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 	float     fovX, fovY;
 	float     *proj;
 	vec3_t    angles;
-	matrix_t  tmpMatrix, rotationMatrix, transformMatrix, viewMatrix, projectionMatrix, viewProjectionMatrix;
+	mat4_t  tmpMatrix, rotationMatrix, transformMatrix, viewMatrix, projectionMatrix, viewProjectionMatrix;
 	frustum_t frustum;
 	cplane_t  *clipPlane;
 	int       r;
@@ -1728,13 +1728,13 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 		}
 
 		// Quake -> OpenGL view matrix from light perspective
-		MatrixFromAngles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
+		mat4_from_angles(rotationMatrix, angles[PITCH], angles[YAW], angles[ROLL]);
 		MatrixSetupTransformFromRotation(transformMatrix, rotationMatrix, light->origin);
 		MatrixAffineInverse(transformMatrix, tmpMatrix);
 
 		// convert from our coordinate system (looking down X)
 		// to OpenGL's coordinate system (looking down -Z)
-		MatrixMultiplyMOD(quakeToOpenGLMatrix, tmpMatrix, viewMatrix);
+		mat4_mult(quakeToOpenGLMatrix, tmpMatrix, viewMatrix);
 
 		// OpenGL projection matrix
 		fovX = 90;
@@ -1760,7 +1760,7 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 		proj[3] = 0;                    proj[7] = 0;                    proj[11] = -1;                      proj[15] = 0;
 
 		// calculate frustum planes using the modelview projection matrix
-		MatrixMultiplyMOD(projectionMatrix, viewMatrix, viewProjectionMatrix);
+		mat4_mult(projectionMatrix, viewMatrix, viewProjectionMatrix);
 		R_SetupFrustum2(frustum, viewProjectionMatrix);
 
 		// use the frustum planes to cut off shadowmaps beyond the light volume
@@ -1937,13 +1937,13 @@ R_ComputeFinalAttenuation
 */
 void R_ComputeFinalAttenuation(shaderStage_t *pStage, trRefLight_t *light)
 {
-	matrix_t matrix;
+	mat4_t matrix;
 
 	Ren_LogComment("--- R_ComputeFinalAttenuation ---\n");
 
 	RB_CalcTexMatrix(&pStage->bundle[TB_COLORMAP], matrix);
 
-	MatrixMultiplyMOD(matrix, light->attenuationMatrix, light->attenuationMatrix2);
+	mat4_mult(matrix, light->attenuationMatrix, light->attenuationMatrix2);
 }
 
 /*

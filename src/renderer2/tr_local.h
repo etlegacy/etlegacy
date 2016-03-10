@@ -325,16 +325,16 @@ typedef struct trRefLight_s
 	vec3_t transformed;         // origin in local coordinate system
 	vec3_t direction;           // for directional lights (sun)
 
-	matrix_t transformMatrix;           // light to world
-	matrix_t viewMatrix;                // object to light
-	matrix_t projectionMatrix;          // light frustum
+	mat4_t transformMatrix;           // light to world
+	mat4_t viewMatrix;                // object to light
+	mat4_t projectionMatrix;          // light frustum
 
 	float falloffLength;
 
-	matrix_t shadowMatrices[MAX_SHADOWMAPS];
-	matrix_t shadowMatricesBiased[MAX_SHADOWMAPS];
-	matrix_t attenuationMatrix;         // attenuation * (light view * entity transform)
-	matrix_t attenuationMatrix2;        // attenuation * tcMod matrices
+	mat4_t shadowMatrices[MAX_SHADOWMAPS];
+	mat4_t shadowMatricesBiased[MAX_SHADOWMAPS];
+	mat4_t attenuationMatrix;         // attenuation * (light view * entity transform)
+	mat4_t attenuationMatrix2;        // attenuation * tcMod matrices
 
 	cullResult_t cull;
 	vec3_t localBounds[2];
@@ -418,10 +418,10 @@ typedef struct
 	vec3_t origin;              // in world coordinates
 	vec3_t axis[3];             // orientation in world
 	vec3_t viewOrigin;          // viewParms->or.origin in local coordinates
-	matrix_t transformMatrix;   // transforms object to world: either used by camera, model or light
-	matrix_t viewMatrix;        // affine inverse of transform matrix to transform other objects into this space
-	matrix_t viewMatrix2;       // without quake2opengl conversion
-	matrix_t modelViewMatrix;   // only used by models, camera viewMatrix * transformMatrix
+	mat4_t transformMatrix;   // transforms object to world: either used by camera, model or light
+	mat4_t viewMatrix;        // affine inverse of transform matrix to transform other objects into this space
+	mat4_t viewMatrix2;       // without quake2opengl conversion
+	mat4_t modelViewMatrix;   // only used by models, camera viewMatrix * transformMatrix
 } orientationr_t;
 
 // useful helper struct
@@ -878,7 +878,7 @@ typedef struct
 	waveForm_t wave;
 
 	// used for TMOD_TRANSFORM
-	matrix_t matrix;            // s' = s * m[0][0] + t * m[1][0] + trans[0]
+	mat4_t matrix;            // s' = s * m[0][0] + t * m[1][0] + trans[0]
 	// t' = s * m[0][1] + t * m[0][1] + trans[1]
 
 	// used for TMOD_SCALE
@@ -1633,8 +1633,8 @@ typedef struct
 	vec4_t viewportVerts[4];            // for immediate 2D quad rendering
 
 	float fovX, fovY;
-	matrix_t projectionMatrix;
-	matrix_t unprojectionMatrix;        // transform pixel window space -> world space
+	mat4_t projectionMatrix;
+	mat4_t unprojectionMatrix;        // transform pixel window space -> world space
 
 	float parallelSplitDistances[MAX_SHADOWMAPS + 1];           // distances in camera space
 
@@ -2432,7 +2432,7 @@ typedef struct
 	int8_t parentIndex;             // parent index (-1 if root)
 	vec3_t origin;
 	quat_t rotation;
-	matrix_t inverseTransform;          // full inverse for tangent space transformation
+	mat4_t inverseTransform;          // full inverse for tangent space transformation
 } md5Bone_t;
 
 typedef struct md5Model_s
@@ -2718,14 +2718,14 @@ typedef struct
 
 	int currenttextures[32];
 	int currenttmu;
-	//matrix_t        textureMatrix[32];
+	//mat4_t        textureMatrix[32];
 
 	int stackIndex;
-	//matrix_t        modelMatrix[MAX_GLSTACK];
-	//matrix_t        viewMatrix[MAX_GLSTACK];
-	matrix_t modelViewMatrix[MAX_GLSTACK];
-	matrix_t projectionMatrix[MAX_GLSTACK];
-	matrix_t modelViewProjectionMatrix[MAX_GLSTACK];
+	//mat4_t        modelMatrix[MAX_GLSTACK];
+	//mat4_t        viewMatrix[MAX_GLSTACK];
+	mat4_t modelViewMatrix[MAX_GLSTACK];
+	mat4_t projectionMatrix[MAX_GLSTACK];
+	mat4_t modelViewProjectionMatrix[MAX_GLSTACK];
 
 	qboolean finishCalled;
 	int faceCulling;                // FIXME redundant cullFace
@@ -3064,10 +3064,10 @@ typedef struct trPrograms_s
 
 extern trPrograms_t trProg;
 
-extern const matrix_t quakeToOpenGLMatrix;
-extern const matrix_t openGLToQuakeMatrix;
-extern const matrix_t quakeToD3DMatrix;
-extern const matrix_t flipZMatrix;
+extern const mat4_t quakeToOpenGLMatrix;
+extern const mat4_t openGLToQuakeMatrix;
+extern const mat4_t quakeToD3DMatrix;
+extern const mat4_t flipZMatrix;
 extern const GLenum   geometricRenderTargets[];
 extern int            shadowMapResolutions[5];
 extern int            sunShadowMapResolutions[5];
@@ -3356,7 +3356,7 @@ void R_RotateEntityForViewParms(const trRefEntity_t *ent, const viewParms_t *vie
 void R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light, orientationr_t *orien);
 void R_RotateLightForViewParms(const trRefLight_t *ent, const viewParms_t *viewParms, orientationr_t *orien);
 
-void R_SetupFrustum2(frustum_t frustum, const matrix_t modelViewProjectionMatrix);
+void R_SetupFrustum2(frustum_t frustum, const mat4_t modelViewProjectionMatrix);
 
 qboolean R_CompareVert(srfVert_t *v1, srfVert_t *v2, qboolean checkst);
 void R_CalcNormalForTriangle(vec3_t normal, const vec3_t v0, const vec3_t v1, const vec3_t v2);
@@ -3388,7 +3388,7 @@ void R_CalcSurfaceTrianglePlanes(int numTriangles, srfTriangle_t *triangles, srf
 float R_CalcFov(float fovX, float width, float height);
 
 // visualisation tools to help debugging the renderer frontend
-void R_DebugAxis(const vec3_t origin, const matrix_t transformMatrix);
+void R_DebugAxis(const vec3_t origin, const mat4_t transformMatrix);
 void R_DebugBoundingBox(const vec3_t origin, const vec3_t mins, const vec3_t maxs, vec4_t color);
 void R_DebugPolygon(int color, int numPoints, float *points);
 void R_DebugText(const vec3_t org, float r, float g, float b, const char *text, qboolean neverOcclude);
@@ -3425,8 +3425,8 @@ void GL_DepthFunc(GLenum func);
 void GL_DepthMask(GLboolean flag);
 void GL_DrawBuffer(GLenum mode);
 void GL_FrontFace(GLenum mode);
-void GL_LoadModelViewMatrix(const matrix_t m);
-void GL_LoadProjectionMatrix(const matrix_t m);
+void GL_LoadModelViewMatrix(const mat4_t m);
+void GL_LoadProjectionMatrix(const mat4_t m);
 void GL_PushMatrix();
 void GL_PopMatrix();
 void GL_PolygonMode(GLenum face, GLenum mode);
@@ -3559,7 +3559,7 @@ typedef struct stageVars
 {
 	vec4_t color;
 	qboolean texMatricesChanged[MAX_TEXTURE_BUNDLES];
-	matrix_t texMatrices[MAX_TEXTURE_BUNDLES];
+	mat4_t texMatrices[MAX_TEXTURE_BUNDLES];
 } stageVars_t;
 
 #define MAX_MULTIDRAW_PRIMITIVES    1000
@@ -3600,7 +3600,7 @@ typedef struct shaderCommands_s
 	int multiDrawCounts[MAX_MULTIDRAW_PRIMITIVES];
 
 	qboolean vboVertexSkinning;
-	matrix_t boneMatrices[MAX_BONES];
+	mat4_t boneMatrices[MAX_BONES];
 
 	// info extracted from current shader or backend mode
 	void (*stageIteratorFunc)();
@@ -3947,7 +3947,7 @@ float RB_EvalWaveForm(const waveForm_t *wf);
 float RB_EvalWaveFormClamped(const waveForm_t *wf);
 float RB_EvalExpression(const expression_t *exp, float defaultValue);
 
-void RB_CalcTexMatrix(const textureBundle_t *bundle, matrix_t matrix);
+void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix);
 
 /*
 =============================================================
@@ -4204,10 +4204,10 @@ void GLSL_SetUniformFloat5(shaderProgram_t *program, int uniformNum, const vec5_
 void GLSL_SetUniformVec2(shaderProgram_t *program, int uniformNum, const vec2_t v);
 void GLSL_SetUniformVec3(shaderProgram_t *program, int uniformNum, const vec3_t v);
 void GLSL_SetUniformVec4(shaderProgram_t *program, int uniformNum, const vec4_t v);
-void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const matrix_t matrix);
+void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const mat4_t matrix);
 void GLSL_SetUniformFloatARR(shaderProgram_t *program, int uniformNum, float *floatarray, int arraysize);
 void GLSL_SetUniformVec4ARR(shaderProgram_t *program, int uniformNum, vec4_t *vectorarray, int arraysize);
-void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, matrix_t *matrixarray, int arraysize);
+void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, mat4_t *matrixarray, int arraysize);
 void GLSL_SetMacroState(programInfo_t *programlist, int macro, int enabled);
 void GLSL_SetMacroStates(programInfo_t *programlist, int numMacros, ...);
 void GLSL_SelectPermutation(programInfo_t *programlist);

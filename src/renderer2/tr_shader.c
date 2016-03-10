@@ -1331,7 +1331,7 @@ static qboolean ParseTexMod(char **text, shaderStage_t *stage)
 	// transform
 	else if (!Q_stricmp(token, "transform"))
 	{
-		MatrixIdentity(tmi->matrix);
+		mat4_ident(tmi->matrix);
 
 		token = COM_ParseExt2(text, qfalse);
 		if (token[0] == 0)
