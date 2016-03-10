@@ -799,10 +799,11 @@ void CL_ParseDownload(msg_t *msg)
 	// read the data
 	block = MSG_ReadShort(msg);
 
-	if (block < 0)
-	{
-		Com_Error(ERR_DROP, "CL_ParseDownload: Server sending invalid download data");
-	}
+	// unfortunately DLTYPE_WWW is -1 FIXME: change this someday!
+	//if (block < 0)
+	//{
+	//Com_Error(ERR_DROP, "CL_ParseDownload: Server sending invalid download data");
+	//}
 
 	// www dl, if we haven't acknowledged the download redirect yet
 	if (block == DLTYPE_WWW)
