@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2016-02-29 11:37+0000\n"
+"PO-Revision-Date: 2016-03-07 15:25+0000\n"
 "Last-Translator: yfcz <yfcz@wolfenstein.cz>\n"
 "Language-Team: Czech (http://www.transifex.com/etlegacy/etlegacy/language/cs/)\n"
 "MIME-Version: 1.0\n"
@@ -1180,7 +1180,7 @@ msgstr "VLASTNOSTI"
 
 #: etmain/ui/hostgame.menu:58
 msgid "Friendly Fire"
-msgstr "Povoluje palbu do svých spoluhráčů"
+msgstr "Palba do svých"
 
 #: etmain/ui/hostgame.menu:59
 msgid "Specifies if teammates can hurt each other"
@@ -2448,7 +2448,7 @@ msgstr "ui/menudef.h"
 #: etmain/ui/options_customise_hud.menu:28 etmain/ui/options.menu:33
 #: etmain/ui/viewreplay.menu:62
 msgid "VIEW"
-msgstr "PROHLÉDNOUT"
+msgstr "ZOBRAZENÍ"
 
 #: etmain/ui/options_customise_hud.menu:32
 msgid "HUD DISPLAY"
@@ -3482,7 +3482,7 @@ msgstr "Povoluje Dopplerův jev"
 
 #: etmain/ui/options_system.menu:46
 msgid "Mute When Minimized:"
-msgstr "Utlum při minimalizaci:"
+msgstr "Ůtlum při minimalizaci:"
 
 #: etmain/ui/options_system.menu:46
 msgid "Enables or disables sound when window is minimized"
@@ -3490,7 +3490,7 @@ msgstr "Povoluje utlumení zvuku při minimalizaci okna hry"
 
 #: etmain/ui/options_system.menu:47
 msgid "Mute When Unfocused:"
-msgstr "Utlum při přepnutí:"
+msgstr "Ůtlum při přepnutí:"
 
 #: etmain/ui/options_system.menu:47
 msgid "Enables or disables sound when window is unfocused"
