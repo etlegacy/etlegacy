@@ -29,4 +29,8 @@ if(FEATURE_DBMS)
 	endif(BUNDLED_SQLITE3)
 endif()
 
+if(MSVC AND NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/etlded.vcxproj.user)
+	configure_file(${PROJECT_SOURCE_DIR}/cmake/vs2013.vcxproj.user.in ${CMAKE_CURRENT_BINARY_DIR}/etlded.vcxproj.user @ONLY)
+endif()
+
 install(TARGETS etlded RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}")

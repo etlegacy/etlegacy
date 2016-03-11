@@ -75,6 +75,10 @@ set_target_properties(etl PROPERTIES
 	MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/misc/Info.plist
 )
 
+if(MSVC AND NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/etl.vcxproj.user)
+	configure_file(${PROJECT_SOURCE_DIR}/cmake/vs2013.vcxproj.user.in ${CMAKE_CURRENT_BINARY_DIR}/etl.vcxproj.user @ONLY)
+endif()
+
 install(TARGETS etl
 	BUNDLE  DESTINATION "${INSTALL_DEFAULT_BINDIR}"
 	RUNTIME DESTINATION "${INSTALL_DEFAULT_BINDIR}"
