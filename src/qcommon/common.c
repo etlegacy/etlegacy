@@ -3097,7 +3097,7 @@ int Com_ModifyMsec(int msec)
 	}
 
 	// don't let it scale below 1 msec
-	if (msec < 1 && com_timescale->value)
+	if (msec < 1) // && com_timescale->value
 	{
 		msec = 1;
 	}
