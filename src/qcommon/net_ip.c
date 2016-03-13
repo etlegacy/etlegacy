@@ -53,25 +53,25 @@ typedef unsigned short sa_family_t;
 
 #ifdef EAGAIN
 #	undef EAGAIN
-#	define EAGAIN WSAEWOULDBLOCK
 #endif
+#define EAGAIN WSAEWOULDBLOCK
 
 #ifdef EADDRNOTAVAIL
 #	undef EADDRNOTAVAIL
-#   define EADDRNOTAVAIL WSAEADDRNOTAVAIL
 #endif
+#define EADDRNOTAVAIL WSAEADDRNOTAVAIL
 
 #ifdef EAFNOSUPPORT
 #	undef EAFNOSUPPORT
-#   define EAFNOSUPPORT WSAEAFNOSUPPORT
 #endif
+#define EAFNOSUPPORT WSAEAFNOSUPPORT
 
 #ifdef ECONNRESET
 #	undef ECONNRESET
-#   define ECONNRESET WSAECONNRESET
 #endif
+#define ECONNRESET WSAECONNRESET
 
-#   define socketError      WSAGetLastError()
+#define socketError      WSAGetLastError()
 
 static WSADATA  winsockdata;
 static qboolean winsockInitialized = qfalse;
