@@ -633,7 +633,7 @@ void CG_MouseEvent(int x, int y)
 	case CGAME_EVENT_FIRETEAMMSG:
 
 #if FEATURE_EDV
-		if (!cgs.cam.renderingFreeCam)
+		if (!cgs.demoCamera.renderingFreeCam)
 		{
 #endif
 

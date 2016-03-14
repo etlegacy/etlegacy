@@ -293,7 +293,7 @@ static void CG_Obituary(entityState_t *ent)
 
 	// check for kill messages from the current clientNum
 #if FEATURE_EDV
-	if (attacker == cg.clientNum && !cgs.cam.renderingFreeCam && !cgs.cam.renderingWeaponCam)
+	if (attacker == cg.clientNum && !cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 #else
 	if (attacker == cg.clientNum)
 #endif
@@ -685,7 +685,7 @@ static void CG_ItemPickup(int itemNum)
 	}
 
 #if FEATURE_EDV
-	if (!cgs.cam.renderingFreeCam && !cgs.cam.renderingWeaponCam)
+	if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 	{
 		CG_AddPMItem(giType, va(CG_TranslateString("Picked up %s"), CG_TranslateString(CG_PickupItemText(itemNum))), " ", cgs.media.pmImages[giType], 0, 0, NULL);
 	}
@@ -2918,7 +2918,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			{
 				// no origin!
 #if FEATURE_EDV
-				if (cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+				if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 				{
 					trap_S_StartLocalSound(sound, CHAN_AUTO);
 				}
@@ -2954,7 +2954,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 					if (sound)
 					{
 #if FEATURE_EDV
-						if (cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+						if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 						{
 							trap_S_StartLocalSound(sound, CHAN_AUTO);
 						}
@@ -3251,7 +3251,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		DEBUGNAME("EV_SHAKE");
 
 #if FEATURE_EDV
-		if (cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+		if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 		{
 			break;
 		}
@@ -3309,7 +3309,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 		DEBUGNAME("EV_AIRSTRIKEMESSAGE");
 #if FEATURE_EDV
-		if (cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+		if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 		{
 			break;
 		}
@@ -3362,7 +3362,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 		DEBUGNAME("EV_ARTYMESSAGE");
 #if FEATURE_EDV
-		if (cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+		if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 		{
 			break;
 		}

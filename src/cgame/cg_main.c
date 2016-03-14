@@ -2738,9 +2738,9 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	//CG_Printf("Time taken: %i\n", trap_Milliseconds() - startat);
 
 #if FEATURE_EDV
-	VectorSet(cgs.cam.velocity, 0.0, 0.0, 0.0);
-	cgs.cam.startLean    = qfalse;
-	cgs.cam.noclip       = qfalse;
+	VectorSet(cgs.demoCamera.velocity, 0.0, 0.0, 0.0);
+	cgs.demoCamera.startLean    = qfalse;
+	cgs.demoCamera.noclip       = qfalse;
 	cgs.currentMenuLevel = ML_MAIN;
 #endif
 

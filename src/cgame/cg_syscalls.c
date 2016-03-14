@@ -267,7 +267,7 @@ void trap_S_StartSound(vec3_t origin, int entityNum, int entchannel, sfxHandle_t
 {
 #if FEATURE_EDV
 	//explicitly respatialize all local sounds in freecam
-	if ((cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam) && entityNum == cg.snap->ps.clientNum)
+	if ((cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam) && entityNum == cg.snap->ps.clientNum)
 	{
 		syscall(CG_S_STARTSOUND, cg.snap->ps.origin, -1, entchannel, sfx, 127 /* Gordon: default volume always for the moment*/);
 	}
@@ -284,7 +284,7 @@ void trap_S_StartSoundVControl(vec3_t origin, int entityNum, int entchannel, sfx
 {
 #if FEATURE_EDV
 	//explicitly respatialize all local sounds in freecam
-	if ((cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam) && entityNum == cg.snap->ps.clientNum)
+	if ((cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam) && entityNum == cg.snap->ps.clientNum)
 	{
 		syscall(CG_S_STARTSOUND, cg.snap->ps.origin, -1, entchannel, sfx, 127 /* Gordon: default volume always for the moment*/);
 	}
@@ -301,7 +301,7 @@ void trap_S_StartSoundEx(vec3_t origin, int entityNum, int entchannel, sfxHandle
 {
 #if FEATURE_EDV
 	//explicitly respatialize all local sounds in freecam
-	if ((cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam) && entityNum == cg.snap->ps.clientNum)
+	if ((cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam) && entityNum == cg.snap->ps.clientNum)
 	{
 		syscall(CG_S_STARTSOUND, cg.snap->ps.origin, -1, entchannel, sfx, 127 /* Gordon: default volume always for the moment*/);
 	}

@@ -2085,7 +2085,7 @@ typedef struct cgs_s
 	int mvAllowed;
 #endif
 #if FEATURE_EDV
-	cam_t cam;
+	cam_t demoCamera;
 	int currentMenuLevel;
 #endif
 } cgs_t;

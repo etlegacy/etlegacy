@@ -652,8 +652,8 @@ void CG_mvDraw(cg_window_t *sw)
 
 #if FEATURE_EDV
 	// only copy mainview origin/angles freecam
-	VectorCopy(refdef.vieworg, cgs.cam.camOrigin);
-	VectorCopy(cg.refdefViewAngles, cgs.cam.camAngle);
+	VectorCopy(refdef.vieworg, cgs.demoCamera.camOrigin);
+	VectorCopy(cg.refdefViewAngles, cgs.demoCamera.camAngle);
 #endif
 
 	cg.refdef_current = &refdef;

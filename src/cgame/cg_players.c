@@ -310,7 +310,7 @@ void CG_NewClientInfo(int clientNum)
 		}
 
 #if FEATURE_EDV
-		if (newInfo.rank > cgs.clientinfo[cg.clientNum].rank && !cgs.cam.renderingFreeCam && !cgs.cam.renderingWeaponCam)
+		if (newInfo.rank > cgs.clientinfo[cg.clientNum].rank && !cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 #else
 		if (newInfo.rank > cgs.clientinfo[cg.clientNum].rank)
 #endif
@@ -367,7 +367,7 @@ void CG_NewClientInfo(int clientNum)
 					}
 				}
 #if FEATURE_EDV
-				if (!cgs.cam.renderingFreeCam && !cgs.cam.renderingWeaponCam)
+				if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 				{
 #endif
 				CG_AddPMItemBig(PM_SKILL, va(CG_TranslateString("Increased %s skill to level %i!"), CG_TranslateString(skillNames[i]), newInfo.skill[i]), cgs.media.skillPics[i]);

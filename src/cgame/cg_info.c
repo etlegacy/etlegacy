@@ -293,7 +293,7 @@ void CG_DemoClick(int key, qboolean down)
 
 #if FEATURE_EDV
 	int menuLevel = cgs.currentMenuLevel;
-	cgs.cam.factor = 5;
+	cgs.demoCamera.factor = 5;
 #endif
 
 	// Avoid active console keypress issues
@@ -366,9 +366,9 @@ void CG_DemoClick(int key, qboolean down)
 	case K_ENTER:
 		if (!down)
 		{
-			if (cgs.cam.renderingFreeCam)
+			if (cgs.demoCamera.renderingFreeCam)
 			{
-				cgs.cam.renderingFreeCam = qfalse;
+				cgs.demoCamera.renderingFreeCam = qfalse;
 			}
 
 			trap_Cvar_Set("cg_thirdperson", ((cg_thirdPerson.integer == 0) ? "1" : "0"));
@@ -377,7 +377,7 @@ void CG_DemoClick(int key, qboolean down)
 	case K_UPARROW:
 	case K_DOWNARROW:
 		// when not in thirdperson, arrowkeys should be bindable to +freecam_turnleft, ...
-		if (cg.renderingThirdPerson && !cgs.cam.renderingFreeCam)
+		if (cg.renderingThirdPerson && !cgs.demoCamera.renderingFreeCam)
 		{
 			if (milli > cgs.thirdpersonUpdate)
 			{
@@ -403,7 +403,7 @@ void CG_DemoClick(int key, qboolean down)
 
 	case K_RIGHTARROW:
 	case K_LEFTARROW:
-		if (cg.renderingThirdPerson && !cgs.cam.renderingFreeCam)
+		if (cg.renderingThirdPerson && !cgs.demoCamera.renderingFreeCam)
 		{
 			if (milli > cgs.thirdpersonUpdate)
 			{
@@ -434,7 +434,7 @@ void CG_DemoClick(int key, qboolean down)
 		return;
     /*
             case K_LEFTARROW:
-                    if (cg.renderingThirdPerson && !etpro_cgs.cam.renderingFreeCam) {
+                    if (cg.renderingThirdPerson && !etpro_cgs.demoCamera.renderingFreeCam) {
                             if(milli > cgs.thirdpersonUpdate) {
                                     float angle = cg_thirdPersonAngle.value + DEMO_ANGLEDELTA;
 
@@ -475,14 +475,14 @@ void CG_DemoClick(int key, qboolean down)
 	case K_KP_ENTER:
 		if (!down)
 		{
-			if (cg.snap->ps.leanf && !cgs.cam.renderingFreeCam)
+			if (cg.snap->ps.leanf && !cgs.demoCamera.renderingFreeCam)
 			{
-				cgs.cam.startLean = qtrue;
+				cgs.demoCamera.startLean = qtrue;
 			}
 
-			cgs.cam.renderingFreeCam ^= 1;
+			cgs.demoCamera.renderingFreeCam ^= 1;
 
-			if (cgs.cam.renderingFreeCam)
+			if (cgs.demoCamera.renderingFreeCam)
 			{
 				int viewheight;
 
@@ -498,7 +498,7 @@ void CG_DemoClick(int key, qboolean down)
 				{
 					viewheight = DEFAULT_VIEWHEIGHT;
 				}
-				cgs.cam.camOrigin[2] += viewheight;
+				cgs.demoCamera.camOrigin[2] += viewheight;
 			}
 
 		}
@@ -1707,7 +1707,7 @@ void CG_DemoHelpDraw(void)
 {
 #if FEATURE_EDV
 #define ONOFF(x) ((x) ? ("ON") : ("OFF"))
-	char *freecam     = ONOFF(cgs.cam.renderingFreeCam);
+	char *freecam     = ONOFF(cgs.demoCamera.renderingFreeCam);
 	char *panzercam   = ONOFF(demo_panzercam.integer);
 	char *mortarcam   = ONOFF(demo_mortarcam.integer);
 	char *grenadecam  = ONOFF(demo_grenadecam.integer);

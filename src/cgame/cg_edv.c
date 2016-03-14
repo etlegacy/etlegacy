@@ -49,60 +49,60 @@ void CG_RunBindingBuf(int key, qboolean down, char *buf)
 
 		//for cg_runinput so we can override client engine
 		//hopefully this is ugly enough to make someone want to make it teh bettar
-		if (cgs.cam.renderingFreeCam)
+		if (cgs.demoCamera.renderingFreeCam)
 		{
 			if (!Q_stricmp(buf, "+moveright"))
 			{
-				cgs.cam.move |= 0x04;
+				cgs.demoCamera.move |= 0x04;
 			}
 			else if (!Q_stricmp(buf, "-moveright"))
 			{
-				cgs.cam.move &= ~0x04;
+				cgs.demoCamera.move &= ~0x04;
 			}
 			else if (!Q_stricmp(buf, "+moveleft"))
 			{
-				cgs.cam.move |= 0x08;
+				cgs.demoCamera.move |= 0x08;
 			}
 			else if (!Q_stricmp(buf, "-moveleft"))
 			{
-				cgs.cam.move &= ~0x08;
+				cgs.demoCamera.move &= ~0x08;
 			}
 			else if (!Q_stricmp(buf, "+forward"))
 			{
-				cgs.cam.move |= 0x01;
+				cgs.demoCamera.move |= 0x01;
 			}
 			else if (!Q_stricmp(buf, "-forward"))
 			{
-				cgs.cam.move &= ~0x01;
+				cgs.demoCamera.move &= ~0x01;
 			}
 			else if (!Q_stricmp(buf, "+back"))
 			{
-				cgs.cam.move |= 0x02;
+				cgs.demoCamera.move |= 0x02;
 			}
 			else if (!Q_stricmp(buf, "-back"))
 			{
-				cgs.cam.move &= ~0x02;
+				cgs.demoCamera.move &= ~0x02;
 			}
 			else if (!Q_stricmp(buf, "+moveup"))
 			{
-				cgs.cam.move |= 0x10;
+				cgs.demoCamera.move |= 0x10;
 			}
 			else if (!Q_stricmp(buf, "-moveup"))
 			{
-				cgs.cam.move &= ~0x10;
+				cgs.demoCamera.move &= ~0x10;
 			}
 			else if (!Q_stricmp(buf, "+movedown"))
 			{
-				cgs.cam.move |= 0x20;
+				cgs.demoCamera.move |= 0x20;
 			}
 			else if (!Q_stricmp(buf, "-movedown"))
 			{
-				cgs.cam.move &= ~0x20;
+				cgs.demoCamera.move &= ~0x20;
 			}
 		}
 		else
 		{
-			cgs.cam.move = 0;
+			cgs.demoCamera.move = 0;
 		}
 
 		return;
@@ -183,7 +183,7 @@ void CG_DrawLine(vec3_t start, vec3_t end, vec4_t color, qhandle_t shader)
 void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 {
 
-	if (!cg.demoPlayback || cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+	if (!cg.demoPlayback || cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 	{
 		return;
 	}
@@ -205,12 +205,12 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 	{
 		vec3_t delta;
 
-		cgs.cam.renderingWeaponCam = qtrue;
+		cgs.demoCamera.renderingWeaponCam = qtrue;
 
 		//point camera in direction of travel
 		VectorCopy(cent->currentState.pos.trDelta, delta);
 		VectorNormalize(delta);
-		vectoangles(delta, cgs.cam.camAngle);
+		vectoangles(delta, cgs.demoCamera.camAngle);
 
 		if (demo_autotimescaleweapons.integer & ATSW_PANZER)
 		{
@@ -220,10 +220,10 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 	else if ((cent->currentState.weapon == WP_MORTAR_SET || cent->currentState.weapon == WP_MORTAR_SET2) && demo_mortarcam.integer)
 	{
 
-		cgs.cam.renderingWeaponCam = qtrue;
+		cgs.demoCamera.renderingWeaponCam = qtrue;
 
 		//point camera in direction of travel (saved from cg_ents)
-		VectorCopy(cent->rawAngles, cgs.cam.camAngle);
+		VectorCopy(cent->rawAngles, cgs.demoCamera.camAngle);
 
 		if (demo_autotimescaleweapons.integer & ATSW_MORTAR)
 		{
@@ -233,9 +233,9 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 	}
 	else if ((demo_grenadecam.integer & 1) && (cent->currentState.weapon == WP_GRENADE_LAUNCHER || cent->currentState.weapon == WP_GRENADE_PINEAPPLE || cent->currentState.weapon == WP_M7 || cent->currentState.weapon == WP_GPG40))
 	{
-		cgs.cam.renderingWeaponCam = qtrue;
+		cgs.demoCamera.renderingWeaponCam = qtrue;
 		//point camera in direction of travel (saved from cg_ents)
-		VectorCopy(cent->rawAngles, cgs.cam.camAngle);
+		VectorCopy(cent->rawAngles, cgs.demoCamera.camAngle);
 		if (demo_autotimescaleweapons.integer & ATSW_GRENADE)
 		{
 			trap_Cvar_Set("timescale", demo_autotimescale.string);
@@ -243,9 +243,9 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 	}
 	else if ((demo_grenadecam.integer & 2) && (cent->currentState.weapon == WP_SMOKE_MARKER || cent->currentState.weapon == WP_SMOKE_BOMB))
 	{
-		cgs.cam.renderingWeaponCam = qtrue;
+		cgs.demoCamera.renderingWeaponCam = qtrue;
 		//point camera in direction of travel (saved from cg_ents)
-		VectorCopy(cent->rawAngles, cgs.cam.camAngle);
+		VectorCopy(cent->rawAngles, cgs.demoCamera.camAngle);
 		if (demo_autotimescaleweapons.integer & ATSW_SMOKE)
 		{
 			trap_Cvar_Set("timescale", demo_autotimescale.string);
@@ -253,29 +253,29 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 	}
 	else if (demo_dynamitecam.integer && cent->currentState.weapon == WP_DYNAMITE)
 	{
-		cgs.cam.renderingWeaponCam = qtrue;
+		cgs.demoCamera.renderingWeaponCam = qtrue;
 		//point camera in direction of travel (saved from cg_ents)
-		VectorCopy(cent->rawAngles, cgs.cam.camAngle);
+		VectorCopy(cent->rawAngles, cgs.demoCamera.camAngle);
 		if (demo_autotimescaleweapons.integer & ATSW_DYNAMITE)
 		{
 			trap_Cvar_Set("timescale", demo_autotimescale.string);
 		}
 	}
 
-	if (cgs.cam.renderingWeaponCam)
+	if (cgs.demoCamera.renderingWeaponCam)
 	{
 		VectorCopy(ent->origin, cg.refdef.vieworg);
 		VectorCopy(ent->oldorigin, cg.refdef.vieworg);
 		VectorCopy(cent->lerpAngles, cg.refdefViewAngles);
 
 		// store camera position for locked view
-		VectorCopy(cg.refdef.vieworg, cgs.cam.camOrigin);
+		VectorCopy(cg.refdef.vieworg, cgs.demoCamera.camOrigin);
 
 		VectorMA(cg.refdef.vieworg, -demo_followxDistance.integer, cg.refdef.viewaxis[0], cg.refdef.vieworg);
 		VectorMA(cg.refdef.vieworg, demo_followyDistance.integer, cg.refdef.viewaxis[1], cg.refdef.vieworg);
 		VectorMA(cg.refdef.vieworg, demo_followzDistance.integer, cg.refdef.viewaxis[2], cg.refdef.vieworg);
 
-		VectorCopy(cent->rawAngles, cgs.cam.camAngle);
+		VectorCopy(cent->rawAngles, cgs.demoCamera.camAngle);
 	}
 }
 
@@ -316,25 +316,25 @@ void CG_EDV_RunInput(void)
 
 	//client engine insists on "helping" cgame if PERS_HWEAPON_USE is set.
 	//so we substitute saved cmd from etpro_RunBindingBuf() and tell client to FOAD
-	if (cg.snap->ps.persistant[PERS_HWEAPON_USE] && cgs.cam.renderingFreeCam)
+	if (cg.snap->ps.persistant[PERS_HWEAPON_USE] && cgs.demoCamera.renderingFreeCam)
 	{
 //		CG_Printf( "%d %d %d\n", edv_rightmove, edv_forwardmove, edv_upmove );
 		// I still don't like this
-		cg_pmove.cmd.forwardmove  = (cgs.cam.move & 0x01) ? 127 : 0;
-		cg_pmove.cmd.forwardmove += (cgs.cam.move & 0x02) ? -127 : 0;
-		cg_pmove.cmd.rightmove    = (cgs.cam.move & 0x04) ? 127 : 0;
-		cg_pmove.cmd.rightmove   += (cgs.cam.move & 0x08) ? -127 : 0;
-		cg_pmove.cmd.upmove       = (cgs.cam.move & 0x10) ? 127 : 0;
-		cg_pmove.cmd.upmove      += (cgs.cam.move & 0x20) ? -127 : 0;
+		cg_pmove.cmd.forwardmove  = (cgs.demoCamera.move & 0x01) ? 127 : 0;
+		cg_pmove.cmd.forwardmove += (cgs.demoCamera.move & 0x02) ? -127 : 0;
+		cg_pmove.cmd.rightmove    = (cgs.demoCamera.move & 0x04) ? 127 : 0;
+		cg_pmove.cmd.rightmove   += (cgs.demoCamera.move & 0x08) ? -127 : 0;
+		cg_pmove.cmd.upmove       = (cgs.demoCamera.move & 0x10) ? 127 : 0;
+		cg_pmove.cmd.upmove      += (cgs.demoCamera.move & 0x20) ? -127 : 0;
 	}
 
 	// run turns, I still don't like this
-	cg.refdefViewAngles[YAW]   += (cgs.cam.turn & 0x01) ? demo_yawturnspeed.value * frametime : 0;
-	cg.refdefViewAngles[YAW]   += (cgs.cam.turn & 0x02) ? -demo_yawturnspeed.value * frametime : 0;
-	cg.refdefViewAngles[PITCH] += (cgs.cam.turn & 0x04) ? demo_pitchturnspeed.value * frametime : 0;
-	cg.refdefViewAngles[PITCH] += (cgs.cam.turn & 0x08) ? -demo_pitchturnspeed.value * frametime : 0;
-	cg.refdefViewAngles[ROLL]  += (cgs.cam.turn & 0x10) ? demo_rollspeed.value * frametime : 0;
-	cg.refdefViewAngles[ROLL]  += (cgs.cam.turn & 0x20) ? -demo_rollspeed.value * frametime : 0;
+	cg.refdefViewAngles[YAW]   += (cgs.demoCamera.turn & 0x01) ? demo_yawturnspeed.value * frametime : 0;
+	cg.refdefViewAngles[YAW]   += (cgs.demoCamera.turn & 0x02) ? -demo_yawturnspeed.value * frametime : 0;
+	cg.refdefViewAngles[PITCH] += (cgs.demoCamera.turn & 0x04) ? demo_pitchturnspeed.value * frametime : 0;
+	cg.refdefViewAngles[PITCH] += (cgs.demoCamera.turn & 0x08) ? -demo_pitchturnspeed.value * frametime : 0;
+	cg.refdefViewAngles[ROLL]  += (cgs.demoCamera.turn & 0x10) ? demo_rollspeed.value * frametime : 0;
+	cg.refdefViewAngles[ROLL]  += (cgs.demoCamera.turn & 0x20) ? -demo_rollspeed.value * frametime : 0;
 
 	/* zinx - Use current viewangles instead of the command angles;
 	   looking is handled elsewhere (where, i do not know) */
@@ -347,8 +347,8 @@ void CG_EDV_RunInput(void)
 
 	/* Create a playerState for cam movement */
 	memset(&edv_ps, 0, sizeof(edv_ps));
-	edv_ps.commandTime = cgs.cam.commandTime;
-	if (cgs.cam.noclip)
+	edv_ps.commandTime = cgs.demoCamera.commandTime;
+	if (cgs.demoCamera.noclip)
 	{
 		edv_ps.pm_type = PM_NOCLIP;
 	}
@@ -373,8 +373,8 @@ void CG_EDV_RunInput(void)
 
 	VectorSet(edv_ps.delta_angles, 0, 0, 0);
 	VectorCopy(cg.refdefViewAngles, edv_ps.viewangles);
-	VectorCopy(cgs.cam.camOrigin, edv_ps.origin);
-	VectorCopy(cgs.cam.velocity, edv_ps.velocity);
+	VectorCopy(cgs.demoCamera.camOrigin, edv_ps.origin);
+	VectorCopy(cgs.demoCamera.velocity, edv_ps.velocity);
 
 	edv_ps.crouchMaxZ = edv_ps.maxs[2] - (edv_ps.standViewHeight - edv_ps.crouchViewHeight);
 
@@ -398,9 +398,9 @@ void CG_EDV_RunInput(void)
 	Pmove(&cg_pmove);
 
 	/* Update cam */
-	cgs.cam.commandTime = edv_ps.commandTime;
-	VectorCopy(edv_ps.origin, cgs.cam.camOrigin);
-	VectorCopy(edv_ps.velocity, cgs.cam.velocity);
+	cgs.demoCamera.commandTime = edv_ps.commandTime;
+	VectorCopy(edv_ps.origin, cgs.demoCamera.camOrigin);
+	VectorCopy(edv_ps.velocity, cgs.demoCamera.velocity);
 	// angles, too
 	VectorCopy(edv_ps.viewangles, cg.refdefViewAngles);
 }
@@ -419,7 +419,7 @@ void CG_DrawPVShint(void)
 
 	//BG_setCrosshair(b_tjl_color.string, color, 1.0, "b_tjl_color");
 
-	VectorCopy(cgs.cam.camOrigin, origin);
+	VectorCopy(cgs.demoCamera.camOrigin, origin);
 
 	// move the origin to the bottom of the screen
 	origin[2] -= 6;

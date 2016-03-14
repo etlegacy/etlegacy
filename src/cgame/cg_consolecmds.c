@@ -1286,62 +1286,62 @@ void CG_ReadHuds_f(void)
 
 void CG_FreecamTurnLeftDown_f(void)
 {
-	cgs.cam.turn |= 0x01;
+	cgs.demoCamera.turn |= 0x01;
 }
 
 void CG_FreecamTurnLeftUp_f(void)
 {
-	cgs.cam.turn &= ~0x01;
+	cgs.demoCamera.turn &= ~0x01;
 }
 
 void CG_FreecamTurnRightDown_f(void)
 {
-	cgs.cam.turn |= 0x02;
+	cgs.demoCamera.turn |= 0x02;
 }
 
 void CG_FreecamTurnRightUp_f(void)
 {
-	cgs.cam.turn &= ~0x02;
+	cgs.demoCamera.turn &= ~0x02;
 }
 
 void CG_FreecamTurnDownDown_f(void)
 {
-	cgs.cam.turn |= 0x04;
+	cgs.demoCamera.turn |= 0x04;
 }
 
 void CG_FreecamTurnDownUp_f(void)
 {
-	cgs.cam.turn &= ~0x04;
+	cgs.demoCamera.turn &= ~0x04;
 }
 
 void CG_FreecamTurnUpDown_f(void)
 {
-	cgs.cam.turn |= 0x08;
+	cgs.demoCamera.turn |= 0x08;
 }
 
 void CG_FreecamTurnUpUp_f(void)
 {
-	cgs.cam.turn &= ~0x08;
+	cgs.demoCamera.turn &= ~0x08;
 }
 
 void CG_FreecamRollLeftDown_f(void)
 {
-	cgs.cam.turn |= 0x20;
+	cgs.demoCamera.turn |= 0x20;
 }
 
 void CG_FreecamRollLeftUp_f(void)
 {
-	cgs.cam.turn &= ~0x20;
+	cgs.demoCamera.turn &= ~0x20;
 }
 
 void CG_FreecamRollRightDown_f(void)
 {
-	cgs.cam.turn |= 0x10;
+	cgs.demoCamera.turn |= 0x10;
 }
 
 void CG_FreecamRollRightUp_f(void)
 {
-	cgs.cam.turn &= ~0x10;
+	cgs.demoCamera.turn &= ~0x10;
 }
 
 void CG_Freecam_f(void)
@@ -1358,20 +1358,20 @@ void CG_Freecam_f(void)
 
 	if (!Q_stricmp(state, "on"))
 	{
-		cgs.cam.renderingFreeCam = 1;
+		cgs.demoCamera.renderingFreeCam = 1;
 	}
 	else if (!Q_stricmp(state, "off"))
 	{
-		cgs.cam.renderingFreeCam = 0;
+		cgs.demoCamera.renderingFreeCam = 0;
 	}
 	else
 	{
-		cgs.cam.renderingFreeCam ^= 1;
+		cgs.demoCamera.renderingFreeCam ^= 1;
 	}
 
-	CG_Printf("freecam %s\n", cgs.cam.renderingFreeCam ? "ON" : "OFF");
+	CG_Printf("freecam %s\n", cgs.demoCamera.renderingFreeCam ? "ON" : "OFF");
 
-	if (cgs.cam.renderingFreeCam)
+	if (cgs.demoCamera.renderingFreeCam)
 	{
 		int viewheight;
 
@@ -1387,7 +1387,7 @@ void CG_Freecam_f(void)
 		{
 			viewheight = DEFAULT_VIEWHEIGHT;
 		}
-		cgs.cam.camOrigin[2] += viewheight;
+		cgs.demoCamera.camOrigin[2] += viewheight;
 	}
 }
 
@@ -1395,7 +1395,7 @@ void CG_FreecamGetPos_f(void)
 {
 	if (cg.demoPlayback)
 	{
-		CG_Printf("freecam origin: %.0f %.0f %.0f\n", cgs.cam.camOrigin[0], cgs.cam.camOrigin[1], cgs.cam.camOrigin[2]);
+		CG_Printf("freecam origin: %.0f %.0f %.0f\n", cgs.demoCamera.camOrigin[0], cgs.demoCamera.camOrigin[1], cgs.demoCamera.camOrigin[2]);
 	}
 	else
 	{
@@ -1433,20 +1433,20 @@ void CG_FreecamSetPos_f(void)
 		return;
 	}
 
-	cgs.cam.camOrigin[0] = etpro_float_Argv(1);
-	cgs.cam.camOrigin[1] = etpro_float_Argv(2);
-	cgs.cam.camOrigin[2] = etpro_float_Argv(3);
+	cgs.demoCamera.camOrigin[0] = etpro_float_Argv(1);
+	cgs.demoCamera.camOrigin[1] = etpro_float_Argv(2);
+	cgs.demoCamera.camOrigin[2] = etpro_float_Argv(3);
 
 	if (n >= 7)
 	{
-		cgs.cam.camAngle[0]  = etpro_float_Argv(4);
-		cgs.cam.camAngle[1]  = etpro_float_Argv(5);
-		cgs.cam.camAngle[2]  = etpro_float_Argv(6);
-		cgs.cam.setCamAngles = qtrue;
+		cgs.demoCamera.camAngle[0]  = etpro_float_Argv(4);
+		cgs.demoCamera.camAngle[1]  = etpro_float_Argv(5);
+		cgs.demoCamera.camAngle[2]  = etpro_float_Argv(6);
+		cgs.demoCamera.setCamAngles = qtrue;
 	}
 	else
 	{
-		cgs.cam.setCamAngles = qfalse;
+		cgs.demoCamera.setCamAngles = qfalse;
 	}
 
 }
@@ -1474,17 +1474,17 @@ void CG_NoClip_f(void)
 	{
 		if (!Q_stricmp(state, "on"))
 		{
-			cgs.cam.noclip = 1;
+			cgs.demoCamera.noclip = 1;
 		}
 		else if (!Q_stricmp(state, "off"))
 		{
-			cgs.cam.noclip = 0;
+			cgs.demoCamera.noclip = 0;
 		}
 		else
 		{
-			cgs.cam.noclip ^= 1;
+			cgs.demoCamera.noclip ^= 1;
 		}
-		CG_Printf("noclip %s\n", cgs.cam.noclip ? "ON" : "OFF");
+		CG_Printf("noclip %s\n", cgs.demoCamera.noclip ? "ON" : "OFF");
 	}
 }
 #endif

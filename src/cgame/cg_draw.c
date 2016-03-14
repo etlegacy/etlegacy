@@ -1828,11 +1828,11 @@ static void CG_DrawSpectator(void)
 {
 	char *s;
 #if FEATURE_EDV
-	if (cgs.cam.renderingWeaponCam)
+	if (cgs.demoCamera.renderingWeaponCam)
 	{
 		s = CG_TranslateString("WEAPONCAM");
 	}
-	else if (cgs.cam.renderingFreeCam)
+	else if (cgs.demoCamera.renderingFreeCam)
 	{
 		s = CG_TranslateString("FREECAM");
 	}
@@ -2261,7 +2261,7 @@ static void CG_DrawSpectatorMessage(void)
 	y          = INFOTEXT_STARTY + (charHeight * 2.0f) * 2;
 
 #if FEATURE_EDV
-	if (cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+	if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 	{
 		return;
 	}
@@ -2359,7 +2359,7 @@ static void CG_DrawLimboMessage(void)
 	float         fontScale = cg_fontScaleSP.value;
 
 #if FEATURE_EDV
-	if (cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+	if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 	{
 		return;
 	}
@@ -3466,7 +3466,7 @@ static void CG_Draw2D(void)
 		return;
 	}
 #if FEATURE_EDV
-	if (!cgs.cam.renderingFreeCam && !cgs.cam.renderingWeaponCam)
+	if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 	{
 		CG_DrawFlashBlendBehindHUD();
 	}
@@ -3475,7 +3475,7 @@ static void CG_Draw2D(void)
 #endif
 
 #if FEATURE_EDV
-	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.cam.renderingFreeCam || cgs.cam.renderingWeaponCam)
+	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 #else
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 #endif
@@ -3515,7 +3515,7 @@ static void CG_Draw2D(void)
 		CG_SetHud();
 
 #if FEATURE_EDV
-		if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR && !cgs.cam.renderingFreeCam && !cgs.cam.renderingWeaponCam)
+		if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR && !cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 #else
 		if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
 #endif
@@ -3530,7 +3530,7 @@ static void CG_Draw2D(void)
 
 		CG_DrawCenterString();
 #if FEATURE_EDV
-		if (!cgs.cam.renderingFreeCam && !cgs.cam.renderingWeaponCam)
+		if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 		{
 			CG_DrawFollow();
 		}
@@ -3564,7 +3564,7 @@ static void CG_Draw2D(void)
 	CG_DrawOverlays();
 
 #if FEATURE_EDV
-	if (!cgs.cam.renderingFreeCam && !cgs.cam.renderingWeaponCam)
+	if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 	{
 		// window updates
 		CG_windowDraw();
