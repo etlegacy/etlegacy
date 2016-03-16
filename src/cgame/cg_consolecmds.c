@@ -552,7 +552,6 @@ static void CG_MessageSend_f(void)
 	// reset values
 	trap_Cvar_Set("cg_messageText", "");
 	trap_Cvar_Set("cg_messageType", "");
-	trap_Cvar_Set("cg_messagePlayer", "");
 
 	// don't send empty messages
 	if (messageText[0] == '\0')
