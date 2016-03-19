@@ -3257,7 +3257,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 #endif
 
-
 		VectorSubtract(cg.snap->ps.origin, cent->lerpOrigin, v);
 		len = VectorLength(v);
 

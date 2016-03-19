@@ -1161,7 +1161,7 @@ static void CG_Missile(centity_t *cent)
 	}
 
 #if FEATURE_EDV
-	//  edv renderingWeaponCam fix
+	// edv renderingWeaponCam fix
 	if (cent->currentState.weapon == WP_PANZERFAUST
 		|| cent->currentState.weapon == WP_BAZOOKA
 	    || cent->currentState.weapon == WP_GRENADE_LAUNCHER
@@ -1189,7 +1189,7 @@ static void CG_Missile(centity_t *cent)
 			}
 		}
 
-		//save this so we can use it later (eg in edv)
+		// save this so we can use it later (eg in edv)
 		{
 			vec3_t d2;
 			vec3_t temp;
@@ -1211,9 +1211,8 @@ static void CG_Missile(centity_t *cent)
 		{
 			ent.axis[0][2] = 1;
 		}
-	} //
+	}
 #endif
-
 
 	// convert direction of travel into axis
 	switch (cent->currentState.weapon)

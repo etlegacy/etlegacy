@@ -270,6 +270,10 @@ if(BUILD_MOD)
 		LIST(APPEND QAGAME_SRC "src/Omnibot/Common/BotLoadLibrary.cpp")
 		add_definitions(-DFEATURE_OMNIBOT)
 	endif(FEATURE_OMNIBOT)
+	
+	if(FEATURE_EDV)
+		add_definitions(-DFEATURE_EDV)
+	endif(FEATURE_EDV)
 endif(BUILD_MOD)
 
 #-----------------------------------------------------------------

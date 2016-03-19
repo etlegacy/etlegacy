@@ -312,13 +312,13 @@ void CG_DemoClick(int key, qboolean down)
 #if FEATURE_EDV 
 	if (cg.demohelpWindow == SHOW_ON)
 	{
-		//pull up extended helpmenu
+		// pull up extended helpmenu
 		if (menuLevel == ML_MAIN && key == K_ALT)
 		{
 			cgs.currentMenuLevel = ML_EDV;
 			return;
 		}
-		//return to main helpmenu
+		// return to main helpmenu
 		if (menuLevel == ML_EDV && key == K_BACKSPACE)
 		{
 			// back to main menu
@@ -329,7 +329,6 @@ void CG_DemoClick(int key, qboolean down)
 			return;
 		}
 	}
-
 
 	switch (key)
 	{
@@ -543,7 +542,6 @@ void CG_DemoClick(int key, qboolean down)
 		break;
 	}
 #endif
-
 
 	switch (key)
 	{
@@ -1762,7 +1760,6 @@ void CG_DemoHelpDraw(void)
 		};
 #endif
 
-
 #ifdef FEATURE_MULTIVIEW
 		const char *mvhelp[] =
 		{
@@ -1936,7 +1933,6 @@ void CG_DemoHelpDraw(void)
 				CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, (char *)edvhelp[i], 0.0f, 0, tStyle, tFont);
 			}
 		}
-
 	}
 #endif
 

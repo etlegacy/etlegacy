@@ -47,8 +47,8 @@ void CG_RunBindingBuf(int key, qboolean down, char *buf)
 		// key timing can be achieved
 		trap_SendConsoleCommand(va("%s %d %d\n", buf, key, trap_Milliseconds()));
 
-		//for cg_runinput so we can override client engine
-		//hopefully this is ugly enough to make someone want to make it teh bettar
+		// for cg_runinput so we can override client engine
+		// hopefully this is ugly enough to make someone want to make it teh bettar
 		if (cgs.demoCamera.renderingFreeCam)
 		{
 			if (!Q_stricmp(buf, "+moveright"))
@@ -207,7 +207,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 
 		cgs.demoCamera.renderingWeaponCam = qtrue;
 
-		//point camera in direction of travel
+		// point camera in direction of travel
 		VectorCopy(cent->currentState.pos.trDelta, delta);
 		VectorNormalize(delta);
 		vectoangles(delta, cgs.demoCamera.camAngle);
@@ -217,7 +217,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 			trap_Cvar_Set("timescale", demo_autotimescale.string);
 		}
 	}
-	else if ((cent->currentState.weapon == WP_MORTAR_SET || cent->currentState.weapon == WP_MORTAR_SET2) && demo_mortarcam.integer)
+	else if ((cent->currentState.weapon == WP_MORTAR_SET || cent->currentState.weapon == WP_MORTAR2_SET) && demo_mortarcam.integer)
 	{
 
 		cgs.demoCamera.renderingWeaponCam = qtrue;
@@ -234,7 +234,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 	else if ((demo_grenadecam.integer & 1) && (cent->currentState.weapon == WP_GRENADE_LAUNCHER || cent->currentState.weapon == WP_GRENADE_PINEAPPLE || cent->currentState.weapon == WP_M7 || cent->currentState.weapon == WP_GPG40))
 	{
 		cgs.demoCamera.renderingWeaponCam = qtrue;
-		//point camera in direction of travel (saved from cg_ents)
+		// point camera in direction of travel (saved from cg_ents)
 		VectorCopy(cent->rawAngles, cgs.demoCamera.camAngle);
 		if (demo_autotimescaleweapons.integer & ATSW_GRENADE)
 		{
@@ -244,7 +244,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 	else if ((demo_grenadecam.integer & 2) && (cent->currentState.weapon == WP_SMOKE_MARKER || cent->currentState.weapon == WP_SMOKE_BOMB))
 	{
 		cgs.demoCamera.renderingWeaponCam = qtrue;
-		//point camera in direction of travel (saved from cg_ents)
+		// point camera in direction of travel (saved from cg_ents)
 		VectorCopy(cent->rawAngles, cgs.demoCamera.camAngle);
 		if (demo_autotimescaleweapons.integer & ATSW_SMOKE)
 		{
@@ -254,7 +254,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 	else if (demo_dynamitecam.integer && cent->currentState.weapon == WP_DYNAMITE)
 	{
 		cgs.demoCamera.renderingWeaponCam = qtrue;
-		//point camera in direction of travel (saved from cg_ents)
+		// point camera in direction of travel (saved from cg_ents)
 		VectorCopy(cent->rawAngles, cgs.demoCamera.camAngle);
 		if (demo_autotimescaleweapons.integer & ATSW_DYNAMITE)
 		{
@@ -314,11 +314,11 @@ void CG_EDV_RunInput(void)
 
 	frametime = delta / 1000.0f;
 
-	//client engine insists on "helping" cgame if PERS_HWEAPON_USE is set.
-	//so we substitute saved cmd from etpro_RunBindingBuf() and tell client to FOAD
+	// client engine insists on "helping" cgame if PERS_HWEAPON_USE is set.
+	// so we substitute saved cmd from etpro_RunBindingBuf() and tell client to FOAD
 	if (cg.snap->ps.persistant[PERS_HWEAPON_USE] && cgs.demoCamera.renderingFreeCam)
 	{
-//		CG_Printf( "%d %d %d\n", edv_rightmove, edv_forwardmove, edv_upmove );
+		//CG_Printf( "%d %d %d\n", edv_rightmove, edv_forwardmove, edv_upmove );
 		// I still don't like this
 		cg_pmove.cmd.forwardmove  = (cgs.demoCamera.move & 0x01) ? 127 : 0;
 		cg_pmove.cmd.forwardmove += (cgs.demoCamera.move & 0x02) ? -127 : 0;
@@ -336,16 +336,16 @@ void CG_EDV_RunInput(void)
 	cg.refdefViewAngles[ROLL]  += (cgs.demoCamera.turn & 0x10) ? demo_rollspeed.value * frametime : 0;
 	cg.refdefViewAngles[ROLL]  += (cgs.demoCamera.turn & 0x20) ? -demo_rollspeed.value * frametime : 0;
 
-	/* zinx - Use current viewangles instead of the command angles;
-	   looking is handled elsewhere (where, i do not know) */
+	// Use current viewangles instead of the command angles;
+	// looking is handled elsewhere (where, i do not know)
 	for (i = 0; i < 3; i++)
 	{
 		cg_pmove.cmd.angles[i] = ANGLE2SHORT(cg.refdefViewAngles[i]);
 	}
 
-	cg_pmove.cmd.buttons &= ~BUTTON_TALK; // zinx - FIXME: Why is the engine talking?
+	cg_pmove.cmd.buttons &= ~BUTTON_TALK; // FIXME: Why is the engine talking?
 
-	/* Create a playerState for cam movement */
+	// Create a playerState for cam movement
 	memset(&edv_ps, 0, sizeof(edv_ps));
 	edv_ps.commandTime = cgs.demoCamera.commandTime;
 	if (cgs.demoCamera.noclip)
@@ -378,11 +378,11 @@ void CG_EDV_RunInput(void)
 
 	edv_ps.crouchMaxZ = edv_ps.maxs[2] - (edv_ps.standViewHeight - edv_ps.crouchViewHeight);
 
-	/* Create pmext for cam movement */
+	// Create pmext for cam movement
 	memset(&edv_pmext, 0, sizeof(edv_pmext));
 	edv_pmext.sprintTime = SPRINTTIME;
 
-	/* Fill in pmove stuff */
+	// Fill in pmove stuff
 	cg_pmove.ps        = &edv_ps;
 	cg_pmove.pmext     = &edv_pmext;
 	cg_pmove.character = CG_CharacterForClientinfo(&cgs.clientinfo[cg.snap->ps.clientNum], &cg_entities[cg.snap->ps.clientNum]);
@@ -394,10 +394,10 @@ void CG_EDV_RunInput(void)
 	cg_pmove.noFootsteps   = qtrue;
 	cg_pmove.noWeapClips   = qtrue;
 
-	/* Do the move */
+	// Do the move
 	Pmove(&cg_pmove);
 
-	/* Update cam */
+	// Update cam
 	cgs.demoCamera.commandTime = edv_ps.commandTime;
 	VectorCopy(edv_ps.origin, cgs.demoCamera.camOrigin);
 	VectorCopy(edv_ps.velocity, cgs.demoCamera.velocity);
