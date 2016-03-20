@@ -1812,6 +1812,13 @@ typedef struct
 #define ATSW_MORTAR             0x08
 #define ATSW_SMOKE              0x10
 
+// demo weapon cams
+#define DWC_PANZER              0x01
+#define DWC_MORTAR              0x02
+#define DWC_GRENADE             0x04
+#define DWC_DYNAMITE            0x08
+#define DWC_SMOKE               0x10 // FIXME: add to demo control?
+
 typedef struct cam_s
 {
 	qboolean renderingFreeCam;
@@ -2236,10 +2243,7 @@ extern vmCvar_t demo_infoWindow;
 extern vmCvar_t mv_sensitivity;
 #endif
 #if FEATURE_EDV
-extern vmCvar_t demo_panzercam; // FIXME: do a bitflag cvar for all demo_WEAPON cvars to safe cvars?!
-extern vmCvar_t demo_mortarcam;
-extern vmCvar_t demo_grenadecam;
-extern vmCvar_t demo_dynamitecam;
+extern vmCvar_t demo_weaponcam;
 extern vmCvar_t demo_followxDistance;
 extern vmCvar_t demo_followyDistance;
 extern vmCvar_t demo_followzDistance;

@@ -248,10 +248,7 @@ vmCvar_t mv_sensitivity;
 #endif
 
 #if FEATURE_EDV
-vmCvar_t demo_panzercam;
-vmCvar_t demo_mortarcam;
-vmCvar_t demo_grenadecam;
-vmCvar_t demo_dynamitecam;
+vmCvar_t demo_weaponcam;
 vmCvar_t demo_followxDistance;
 vmCvar_t demo_followyDistance;
 vmCvar_t demo_followzDistance;
@@ -488,10 +485,7 @@ cvarTable_t cvarTable[] =
 	{ &demo_infoWindow,           "demo_infoWindow",           "1",     CVAR_ARCHIVE                 },
 
 #if FEATURE_EDV
-	{ &demo_panzercam,            "demo_panzercam",            "0",     CVAR_ARCHIVE                 },
-	{ &demo_mortarcam,            "demo_mortarcam",            "0",     CVAR_ARCHIVE                 },
-	{ &demo_grenadecam,           "demo_grenadecam",           "0",     CVAR_ARCHIVE                 },
-	{ &demo_dynamitecam,          "demo_dynamitecam",          "0",     CVAR_ARCHIVE                 },
+	{ &demo_weaponcam,            "demo_weaponcam",            "0",     CVAR_ARCHIVE                 },
 	{ &demo_followxDistance,      "demo_followxDistance",      "50",    CVAR_ARCHIVE                 },
 	{ &demo_followyDistance,      "demo_followyDistance",      "0",     CVAR_ARCHIVE                 },
 	{ &demo_followzDistance,      "demo_followzDistance",      "20",    CVAR_ARCHIVE                 },

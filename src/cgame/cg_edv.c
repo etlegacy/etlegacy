@@ -188,10 +188,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 		return;
 	}
 
-	if (!demo_panzercam.integer &&
-	    !demo_mortarcam.integer &&
-	    !demo_grenadecam.integer &&
-	    !demo_dynamitecam.integer)
+	if (!demo_weaponcam.integer)
 	{
 		return;
 	}
@@ -201,7 +198,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 		return;
 	}
 
-	if ((cent->currentState.weapon == WP_PANZERFAUST || cent->currentState.weapon == WP_BAZOOKA) && demo_panzercam.integer)
+	if ((demo_weaponcam.integer & DWC_PANZER) && (cent->currentState.weapon == WP_PANZERFAUST || cent->currentState.weapon == WP_BAZOOKA))
 	{
 		vec3_t delta;
 
@@ -217,7 +214,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 			trap_Cvar_Set("timescale", demo_autotimescale.string);
 		}
 	}
-	else if ((cent->currentState.weapon == WP_MORTAR_SET || cent->currentState.weapon == WP_MORTAR2_SET) && demo_mortarcam.integer)
+	else if ((demo_weaponcam.integer & DWC_MORTAR) && (cent->currentState.weapon == WP_MORTAR_SET || cent->currentState.weapon == WP_MORTAR2_SET))
 	{
 
 		cgs.demoCamera.renderingWeaponCam = qtrue;
@@ -231,7 +228,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 		}
 
 	}
-	else if ((demo_grenadecam.integer & 1) && (cent->currentState.weapon == WP_GRENADE_LAUNCHER || cent->currentState.weapon == WP_GRENADE_PINEAPPLE || cent->currentState.weapon == WP_M7 || cent->currentState.weapon == WP_GPG40))
+	else if ((demo_weaponcam.integer & DWC_GRENADE) && (cent->currentState.weapon == WP_GRENADE_LAUNCHER || cent->currentState.weapon == WP_GRENADE_PINEAPPLE || cent->currentState.weapon == WP_M7 || cent->currentState.weapon == WP_GPG40))
 	{
 		cgs.demoCamera.renderingWeaponCam = qtrue;
 		// point camera in direction of travel (saved from cg_ents)
@@ -241,7 +238,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 			trap_Cvar_Set("timescale", demo_autotimescale.string);
 		}
 	}
-	else if ((demo_grenadecam.integer & 2) && (cent->currentState.weapon == WP_SMOKE_MARKER || cent->currentState.weapon == WP_SMOKE_BOMB))
+	else if ((demo_weaponcam.integer & DWC_SMOKE) && (cent->currentState.weapon == WP_SMOKE_MARKER || cent->currentState.weapon == WP_SMOKE_BOMB))
 	{
 		cgs.demoCamera.renderingWeaponCam = qtrue;
 		// point camera in direction of travel (saved from cg_ents)
@@ -251,7 +248,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 			trap_Cvar_Set("timescale", demo_autotimescale.string);
 		}
 	}
-	else if (demo_dynamitecam.integer && cent->currentState.weapon == WP_DYNAMITE)
+	else if ((demo_weaponcam.integer & DWC_DYNAMITE) && cent->currentState.weapon == WP_DYNAMITE)
 	{
 		cgs.demoCamera.renderingWeaponCam = qtrue;
 		// point camera in direction of travel (saved from cg_ents)

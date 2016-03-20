@@ -505,25 +505,53 @@ void CG_DemoClick(int key, qboolean down)
 	case K_INS: // mortarcam
 		if (!down)
 		{
-			trap_Cvar_Set("demo_mortarcam", ((demo_mortarcam.integer == 0) ? "1" : "0"));
+			if (demo_weaponcam.integer & DWC_MORTAR)
+			{
+				trap_Cvar_Set("demo_weaponcam", va("%i", demo_weaponcam.integer &= ~DWC_MORTAR));	
+			}
+			else
+			{
+				trap_Cvar_Set("demo_weaponcam", va("%i", demo_weaponcam.integer |= DWC_MORTAR));
+			}
 		}
 		return;
 	case K_HOME: // panzercam
 		if (!down)
 		{
-			trap_Cvar_Set("demo_panzercam", ((demo_panzercam.integer == 0) ? "1" : "0"));
+			if (demo_weaponcam.integer & DWC_PANZER)
+			{
+				trap_Cvar_Set("demo_weaponcam", va("%i", demo_weaponcam.integer &= ~DWC_PANZER));
+			}
+			else
+			{
+				trap_Cvar_Set("demo_weaponcam", va("%i", demo_weaponcam.integer |= DWC_PANZER));	
+			}
 		}
 		return;
 	case K_DEL:     // grenadecam
 		if (!down)
 		{
-			trap_Cvar_Set("demo_grenadecam", ((demo_grenadecam.integer == 0) ? "1" : "0"));
+			if (demo_weaponcam.integer & DWC_GRENADE)
+			{
+				trap_Cvar_Set("demo_weaponcam", va("%i", demo_weaponcam.integer &= ~DWC_GRENADE));	
+			}
+			else
+			{
+				trap_Cvar_Set("demo_weaponcam", va("%i", demo_weaponcam.integer |= DWC_GRENADE));
+			}
 		}
 		return;
 	case K_END: // dynamitecam
 		if (!down)
 		{
-			trap_Cvar_Set("demo_dynamitecam", ((demo_dynamitecam.integer == 0) ? "1" : "0"));
+			if (demo_weaponcam.integer & DWC_DYNAMITE)
+			{
+				trap_Cvar_Set("demo_weaponcam", va("%i", demo_weaponcam.integer &= ~DWC_DYNAMITE));
+			}
+			else
+			{
+				trap_Cvar_Set("demo_weaponcam", va("%i", demo_weaponcam.integer |= DWC_DYNAMITE));
+			}
 		}
 		return;
 	case K_PGDN:
@@ -1706,10 +1734,10 @@ void CG_DemoHelpDraw(void)
 #if FEATURE_EDV
 #define ONOFF(x) ((x) ? ("ON") : ("OFF"))
 	char *freecam     = ONOFF(cgs.demoCamera.renderingFreeCam);
-	char *panzercam   = ONOFF(demo_panzercam.integer);
-	char *mortarcam   = ONOFF(demo_mortarcam.integer);
-	char *grenadecam  = ONOFF(demo_grenadecam.integer);
-	char *dynamitecam = ONOFF(demo_dynamitecam.integer);
+	char *panzercam   = ONOFF(demo_weaponcam.integer & DWC_PANZER);
+	char *mortarcam   = ONOFF(demo_weaponcam.integer & DWC_MORTAR);
+	char *grenadecam  = ONOFF(demo_weaponcam.integer & DWC_GRENADE);
+	char *dynamitecam = ONOFF(demo_weaponcam.integer & DWC_DYNAMITE);
 	char *teamonly    = ONOFF(demo_teamonlymissilecam.integer);
 	char *pvshint     = ONOFF(demo_pvshint.integer);
 #endif
