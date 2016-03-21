@@ -261,6 +261,11 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 
 	if (cgs.demoCamera.renderingWeaponCam)
 	{
+		char distance[MAX_CVAR_VALUE_STRING];
+		char *disValue;
+		int  dis[3] = {-99999, -99999, -99999};
+		int  count;
+
 		VectorCopy(ent->origin, cg.refdef.vieworg);
 		VectorCopy(ent->oldorigin, cg.refdef.vieworg);
 		VectorCopy(cent->lerpAngles, cg.refdefViewAngles);
@@ -268,9 +273,39 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 		// store camera position for locked view
 		VectorCopy(cg.refdef.vieworg, cgs.demoCamera.camOrigin);
 
-		VectorMA(cg.refdef.vieworg, -demo_followxDistance.integer, cg.refdef.viewaxis[0], cg.refdef.vieworg);
-		VectorMA(cg.refdef.vieworg, demo_followyDistance.integer, cg.refdef.viewaxis[1], cg.refdef.vieworg);
-		VectorMA(cg.refdef.vieworg, demo_followzDistance.integer, cg.refdef.viewaxis[2], cg.refdef.vieworg);
+		// extract x,y and z view distance of demo_followDistance cvar
+		Q_strncpyz(distance, demo_followDistance.string, sizeof(demo_followDistance.string));
+
+		disValue = strtok(distance," ");
+		for (count = 0; count < 3 && disValue; ++count)
+		{
+			dis[count] = atoi(disValue);
+			disValue   = strtok(NULL, " ,");
+		}
+
+		if (dis[0] == -99999)
+		{
+			CG_Printf("Warning: demo_followDistance cvar is missing the x value ('%s') - set to default 50\n", demo_followDistance.string);
+			dis[0] = 50;
+		}
+
+		if (dis[1] == -99999)
+		{
+			CG_Printf("Warning: demo_followDistance cvar is missing the y value ('%s') - set to default 0\n", demo_followDistance.string);
+			dis[1] = 0;
+		}
+
+		if (dis[2] == -99999)
+		{
+			CG_Printf("Warning: demo_followDistance cvar is missing the z value ('%s') - set to default 20\n", demo_followDistance.string);
+			dis[2] = 20;
+		}
+
+		//CG_Printf("'%s'-> -%i %i %i\n", demo_followDistance.string, dis[0], dis[1], dis[2]);
+
+		VectorMA(cg.refdef.vieworg, -dis[0], cg.refdef.viewaxis[0], cg.refdef.vieworg);
+		VectorMA(cg.refdef.vieworg, dis[1], cg.refdef.viewaxis[1], cg.refdef.vieworg);
+		VectorMA(cg.refdef.vieworg, dis[2], cg.refdef.viewaxis[2], cg.refdef.vieworg);
 
 		VectorCopy(cent->rawAngles, cgs.demoCamera.camAngle);
 	}
@@ -410,8 +445,7 @@ void CG_EDV_RunInput(void)
 // so the dumb users don't have to mess with the railtrailtime
 void CG_DrawPVShint(void)
 {
-
-	vec4_t color;
+	//vec4_t color; // static green
 	vec3_t origin;
 
 	//BG_setCrosshair(b_tjl_color.string, color, 1.0, "b_tjl_color");
@@ -421,6 +455,6 @@ void CG_DrawPVShint(void)
 	// move the origin to the bottom of the screen
 	origin[2] -= 6;
 
-	CG_DrawLine(origin, cg.snap->ps.origin, color, cgs.media.railCoreShader);
+	CG_DrawLine(origin, cg.snap->ps.origin, colorGreen, cgs.media.railCoreShader);
 }
 #endif
