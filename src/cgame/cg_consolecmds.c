@@ -1282,7 +1282,6 @@ void CG_ReadHuds_f(void)
 }
 
 #if FEATURE_EDV
-
 void CG_FreecamTurnLeftDown_f(void)
 {
 	cgs.demoCamera.turn |= 0x01;
@@ -1449,6 +1448,7 @@ void CG_FreecamSetPos_f(void)
 	}
 
 }
+
 // noclip in demos
 void CG_NoClip_f(void)
 {
@@ -1487,7 +1487,6 @@ void CG_NoClip_f(void)
 	}
 }
 #endif
-
 
 static consoleCommand_t commands[] =
 {
@@ -1637,7 +1636,6 @@ qboolean CG_ConsoleCommand(void)
 
 	return qfalse;
 }
-
 
 /**
  * @brief Let the client system know about all of our commands so it can perform tab

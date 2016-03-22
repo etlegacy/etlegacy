@@ -1848,7 +1848,6 @@ enum
 	ML_MAIN,
 	ML_EDV
 };
-// -fretn
 #endif
 
 // The client game static (cgs) structure hold everything

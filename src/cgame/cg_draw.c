@@ -2365,7 +2365,6 @@ static void CG_DrawLimboMessage(void)
 	}
 #endif
 
-
 	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 
 	if (ps->stats[STAT_HEALTH] > 0)
@@ -3579,7 +3578,6 @@ static void CG_Draw2D(void)
 	// draw flash blends now
 	CG_DrawFlashBlend();
 #endif
-
 
 	CG_DrawDemoRecording();
 }

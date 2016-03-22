@@ -858,16 +858,14 @@ qboolean CG_ViewingDraw()
 	}
 	else
 	{
-		float fontScale = cg_fontScaleSP.value;
-
-		int  y          = 146;
-		int  pID        = cg.mvCurrentMainview->mvInfo & MV_PID;
-		char *viewInfo  = CG_TranslateString("Viewing");
-		char *w         = cgs.clientinfo[pID].name;
-		int  charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-		int  charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-		int  startClass = CG_Text_Width_Ext(viewInfo, fontScale, 0, &cgs.media.limboFont2) + charWidth;
-
+		float fontScale  = cg_fontScaleSP.value;
+		int   y          = 146;
+		int   pID        = cg.mvCurrentMainview->mvInfo & MV_PID;
+		char  *viewInfo  = CG_TranslateString("Viewing");
+		char  *w         = cgs.clientinfo[pID].name;
+		int   charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
+		int   charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
+		int   startClass = CG_Text_Width_Ext(viewInfo, fontScale, 0, &cgs.media.limboFont2) + charWidth;
 
 		// teamflags
 		if (cgs.clientinfo[pID].team == TEAM_ALLIES)
@@ -908,7 +906,6 @@ void CG_GameStatsDraw(void)
 	if (cgs.gamestats.show == SHOW_OFF)
 	{
 		return;
-
 	}
 	else
 	{
@@ -1047,7 +1044,6 @@ void CG_GameStatsDraw(void)
 				}
 			}
 		}
-
 
 		// No rank/xp/skill info for LMS
 		if (cgs.gametype == GT_WOLF_LMS)
@@ -1839,7 +1835,6 @@ void CG_DemoHelpDraw(void)
 		    0);
 		x = Ccg_WideX(SCREEN_WIDTH) + 3 * DH_X - w;
 
-
 		if (menuLevel == ML_MAIN)
 		{
 			h = tSpacing + 9 +
@@ -2135,7 +2130,6 @@ void CG_SpecHelpDraw(void)
 			tColor[3]           *= scale;
 
 			x -= w * (1.0f - scale);
-
 		}
 		else if (cg.spechelpWindow == SHOW_SHUTDOWN)
 		{

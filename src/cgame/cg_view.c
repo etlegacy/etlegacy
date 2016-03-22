@@ -272,7 +272,6 @@ extern void CG_DrawPVShint(void);
 
 static void CG_OffsetFreeCamView(void)
 {
-
 	if (cgs.demoCamera.renderingWeaponCam || cgs.demoCamera.setCamAngles)
 	{
 		VectorCopy(cgs.demoCamera.camAngle, cg.refdefViewAngles);
@@ -297,8 +296,6 @@ static void CG_OffsetFreeCamView(void)
 	}
 }
 #endif
-
-
 
 /*
 ===============
@@ -1407,7 +1404,6 @@ int CG_CalcViewValues(void)
 		{
 			VectorCopy(cg.refdef.vieworg, cgs.demoCamera.camOrigin);
 			VectorCopy(cg.refdefViewAngles, cgs.demoCamera.camAngle);
-
 #else
 		if (cg.renderingThirdPerson)
 		{
@@ -2133,7 +2129,6 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 		cg.renderingThirdPerson = cg_thirdPerson.integer || (cg.snap->ps.stats[STAT_HEALTH] <= 0) || cg.showGameView;
 #endif
 
-
 		// build cg.refdef
 		inwater = CG_CalcViewValues();
 		CG_SetupFrustum();
@@ -2160,7 +2155,6 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 
 		cgs.demoCamera.renderingWeaponCam = qfalse;
 #endif
-
 
 		// draw the skyboxportal
 		CG_DrawSkyBoxPortal(qtrue);

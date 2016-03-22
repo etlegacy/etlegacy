@@ -2733,7 +2733,6 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	cgs.demoCamera.noclip       = qfalse;
 	cgs.currentMenuLevel = ML_MAIN;
 #endif
-
 }
 
 /*

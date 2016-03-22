@@ -1,3 +1,38 @@
+/*
+ * Wolfenstein: Enemy Territory GPL Source Code
+ * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
+ *
+ * ET: Legacy
+ * Copyright (C) 2012-2016 ET:Legacy team <mail@etlegacy.com>
+ *
+ * This file is part of ET: Legacy - http://www.etlegacy.com
+ *
+ * ET: Legacy is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ET: Legacy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * In addition, Wolfenstein: Enemy Territory GPL Source Code is also
+ * subject to certain additional terms. You should have received a copy
+ * of these additional terms immediately following the terms and conditions
+ * of the GNU General Public License which accompanied the source code.
+ * If not, please request a copy in writing from id Software at the address below.
+ *
+ * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+ */
+/**
+ * @file cg_edv.c
+ * @brief Extended demo viewer
+ */
+
 #include "cg_local.h"
 
 #if FEATURE_EDV
@@ -23,7 +58,6 @@ void CG_RunBinding(int key, qboolean down)
 
 	CG_RunBindingBuf(key, down, buf);
 }
-
 
 void CG_RunBindingBuf(int key, qboolean down, char *buf)
 {
@@ -216,7 +250,6 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 	}
 	else if ((demo_weaponcam.integer & DWC_MORTAR) && (cent->currentState.weapon == WP_MORTAR_SET || cent->currentState.weapon == WP_MORTAR2_SET))
 	{
-
 		cgs.demoCamera.renderingWeaponCam = qtrue;
 
 		//point camera in direction of travel (saved from cg_ents)
@@ -436,7 +469,6 @@ void CG_EDV_RunInput(void)
 	// angles, too
 	VectorCopy(edv_ps.viewangles, cg.refdefViewAngles);
 }
-
 
 // draws a tracer from the demo-player to the camera
 // so you always know in which direction you have to
