@@ -330,6 +330,11 @@ void CG_DemoClick(int key, qboolean down)
 		}
 	}
 
+	// FIXME: fix the macros/keys - the following switches need some sorting ...
+	//        merge switches into one!
+	//        sync help/key window (see K_SPACE f.e.)
+	//        atm when FEATURE_EDV is enabled there is no key bound to call console cmd pausedemo
+
 	switch (key)
 	{
 #ifdef FEATURE_MULTIVIEW
@@ -339,14 +344,14 @@ void CG_DemoClick(int key, qboolean down)
 			CG_mvSwapViews_f();             // Swap the window with the main view
 		}
 		return;
-	//case K_INS:
+	//case K_INS: // used by FEATURE_EDV
 	case K_KP_PGUP:
 		if (!down)
 		{
 			CG_mvShowView_f();              // Make a window for the client
 		}
 		return;
-	//case K_DEL:
+	//case K_DEL: // used by FEATURE_EDV
 	case K_KP_PGDN:
 		if (!down)
 		{
@@ -399,7 +404,6 @@ void CG_DemoClick(int key, qboolean down)
 			CG_RunBinding(key, down);
 		}
 		return;
-
 	case K_RIGHTARROW:
 	case K_LEFTARROW:
 		if (cg.renderingThirdPerson && !cgs.demoCamera.renderingFreeCam)
@@ -499,7 +503,6 @@ void CG_DemoClick(int key, qboolean down)
 				}
 				cgs.demoCamera.camOrigin[2] += viewheight;
 			}
-
 		}
 		return;
 	case K_INS: // mortarcam
@@ -577,7 +580,6 @@ void CG_DemoClick(int key, qboolean down)
 		CG_ShowHelp_Off(&cg.demohelpWindow);
 		CG_keyOff_f();
 		return;
-
 	case K_TAB:
 		if (down)
 		{
@@ -588,7 +590,6 @@ void CG_DemoClick(int key, qboolean down)
 			CG_ScoresUp_f();
 		}
 		return;
-
 	// Help info
 	case K_BACKSPACE:
 		if (!down)
@@ -603,7 +604,6 @@ void CG_DemoClick(int key, qboolean down)
 			}
 		}
 		return;
-
 	// Screenshot keys
 	case K_F11:
 		if (!down)
@@ -617,7 +617,6 @@ void CG_DemoClick(int key, qboolean down)
 			CG_autoScreenShot_f();
 		}
 		return;
-
 	// Window controls
 	case K_SHIFT:
 	case K_CTRL:
@@ -627,6 +626,9 @@ void CG_DemoClick(int key, qboolean down)
 	case K_MOUSE1:
 		cgs.fSelect = down;
 		return;
+
+#ifndef FEATURE_EDV
+
 #ifdef FEATURE_MULTIVIEW
 	case K_MOUSE2:
 		if (!down)
@@ -655,6 +657,7 @@ void CG_DemoClick(int key, qboolean down)
 		}
 		return;
 #endif
+
 	// Third-person controls
 	case K_ENTER:
 		if (!down)
@@ -708,7 +711,6 @@ void CG_DemoClick(int key, qboolean down)
 			trap_Cvar_Set("cg_thirdPersonAngle", va("%f", angle));
 		}
 		return;
-
 	// Timescale controls
 	case K_KP_5:
 	case K_KP_INS:
@@ -718,14 +720,15 @@ void CG_DemoClick(int key, qboolean down)
 			cgs.timescaleUpdate = cg.time + 1000;
 		}
 		return;
-#ifndef FEATURE_EDV
 	case K_SPACE:
 		if (!down)
 		{
 			trap_SendConsoleCommand("pausedemo");
 		}
 		return;
-#endif
+
+#endif // ifndef FEATURE_EDV
+
 	case K_KP_DOWNARROW:
 		if (!down)
 		{
@@ -785,7 +788,6 @@ void CG_DemoClick(int key, qboolean down)
 			cgs.timescaleUpdate = cg.time + (int)(1000.0f * cg_timescale.value + 0.1f);
 		}
 		return;
-
 	// AVI recording controls
 	case K_F1:
 		if (down)
