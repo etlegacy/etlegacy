@@ -132,15 +132,6 @@ void mdx_cleanup(void)
 
 /**************************************************************/
 // Utility functions
-
-// VectorRotate uses the transpose; I have no idea what use it is.
-static void PointRotate(const vec3_t in, vec3_t axis[3], vec3_t out)
-{
-	out[0] = in[0] * axis[0][0] + in[1] * axis[1][0] + in[2] * axis[2][0];
-	out[1] = in[0] * axis[0][1] + in[1] * axis[1][1] + in[2] * axis[2][1];
-	out[2] = in[0] * axis[0][2] + in[1] * axis[1][2] + in[2] * axis[2][2];
-}
-
 static void MatrixWeight(/*const*/ vec3_t m[3], float weight, vec3_t mout[3])
 {
 	float one = 1.0 - weight;
@@ -197,18 +188,6 @@ static void AnglesToAxisBroken(const short angles[2], vec3_t matrix[3])
 }
 
 #ifdef BONE_HITTESTS
-static void mdx_matrix_to_quaternion(vec3_t m[3], vec4_t q)
-{
-	vec_t w4;
-
-	q[3] = sqrt(1.0 + m[0][0] + m[1][1] + m[2][2]) / 2.0;
-	w4   = q[3] * 4.0;
-
-	q[0] = (m[1][2] - m[2][1]) / w4;
-	q[1] = (m[2][0] - m[0][2]) / w4;
-	q[2] = (m[0][1] - m[1][0]) / w4;
-}
-
 static void mdx_quaternion_to_matrix(vec4_t q, vec3_t m[3])
 {
 	m[0][0] = 1 - 2 * (q[1] * q[1] + q[2] * q[2]);
@@ -255,8 +234,8 @@ static void mdx_lerp_matrix(vec3_t m1[3], vec3_t m2[3], vec3_t mout[3], float ba
 {
 	vec4_t q1, q2, q;
 
-	mdx_matrix_to_quaternion(m1, q1);
-	mdx_matrix_to_quaternion(m2, q2);
+	quat_from_axis(m1, q1);
+	quat_from_axis(m2, q2);
 	mdx_quaternion_nlerp(q1, q2, q, backlerp);
 	mdx_quaternion_to_matrix(q, mout);
 }
@@ -1227,7 +1206,7 @@ static void mdx_calculate_bone(
 
 	// frame bone rotation
 	AnglesToAxisBroken(frameBone->offset_angles, axis);
-	PointRotate(tmp, axis, dest);
+	vec3_rotate(tmp, axis, dest);
 }
 
 static void mdx_calculate_bone_lerp(
@@ -1421,7 +1400,7 @@ static void mdx_bone_orientation(/*const*/ grefEntity_t *refent, int idx, vec3_t
 
 		// Rotate around torso_parent
 		VectorSubtract(origin, mdx_bones[boneFrameModel->torso_parent], tmp);
-		PointRotate(tmp, refent->torsoAxis, torso_origin);
+		vec3_rotate(tmp, refent->torsoAxis, torso_origin);
 		VectorAdd(torso_origin, mdx_bones[boneFrameModel->torso_parent], torso_origin);
 
 		// Lerp torso-rotated point with non-rotated
@@ -1503,7 +1482,7 @@ static void mdx_tag_orientation(/*const*/ grefEntity_t *refent, int idx, vec3_t 
 	}
 
 	// Tag offset
-	PointRotate(tag->offset, tmpaxis, offset);
+	vec3_rotate(tag->offset, tmpaxis, offset);
 	VectorAdd(origin, offset, origin);
 
 	// Tag axis
@@ -1565,7 +1544,7 @@ int trap_R_LerpTagNumber(orientation_t *tag, /*const*/ grefEntity_t *refent, int
 	mdx_calculate_bones_single(refent, bone);
 	mdx_bone_orientation(refent, bone, tag->origin, axis);
 
-	PointRotate(model->tags[tagNum].offset, axis, offset);
+	vec3_rotate(model->tags[tagNum].offset, axis, offset);
 	VectorAdd(tag->origin, offset, tag->origin);
 
 	MatrixMultiply(model->tags[tagNum].axis, axis, tag->axis);
@@ -2269,10 +2248,10 @@ static qboolean mdx_hit_warp(
 	// Un-rotate
 	TransposeMatrix(axis, unaxis);
 
-	PointRotate(unstart, unaxis, tmp);
+	vec3_rotate(unstart, unaxis, tmp);
 	VectorCopy(tmp, unstart);
 
-	PointRotate(unend, unaxis, tmp);
+	vec3_rotate(unend, unaxis, tmp);
 	VectorCopy(tmp, unend);
 
 	// Un-scale

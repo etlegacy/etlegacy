@@ -324,7 +324,6 @@ vec_t vec3_length(const vec3_t v);
 vec_t vec3_length_squared(const vec3_t v);
 vec_t vec3_distance(const vec3_t p1, const vec3_t p2);
 vec_t vec3_distance_squared(const vec3_t p1, const vec3_t p2);
-void vec3_cross(const vec3_t v1, const vec3_t v2, vec3_t cross);
 // Normalize
 vec_t vec3_norm(vec3_t v);         // returns vector length
 void vec3_norm_fast(vec3_t v);      // does NOT return vector length, uses rsqrt approximation
@@ -359,6 +358,7 @@ void vec3_per(const vec3_t src, vec3_t dst);
 /* Quaternion                                                           */
 /************************************************************************/
 void quat_from_mat4(quat_t q, const mat4_t m);
+void quat_from_axis(const axis_t m, quat_t q);
 void quat_from_angles(quat_t q, vec_t pitch, vec_t yaw, vec_t roll);
 void quat_to_vec3_FLU(const quat_t q, vec3_t forward, vec3_t left, vec3_t up);
 void quat_to_vec3_FRU(const quat_t q, vec3_t forward, vec3_t right, vec3_t up);
@@ -374,7 +374,7 @@ void quat_slerp(const quat_t from, const quat_t to, float frac, quat_t out);
 /************************************************************************/
 void axis_clear(axis_t axis);
 void axis_copy(axis_t in, axis_t out);
-void axis_to_angles(vec3_t axis[3], vec3_t angles);
+void axis_to_angles(axis_t axis, vec3_t angles);
 
 /************************************************************************/
 /* Angle                                                                */

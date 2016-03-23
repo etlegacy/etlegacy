@@ -1791,7 +1791,7 @@ AxisToAngles
   using this during gameplay
 =================
 */
-void axis_to_angles(vec3_t axis[3], vec3_t angles)
+void axis_to_angles(axis_t axis, vec3_t angles)
 {
 	vec3_t right, roll_angles, tvec;
 
@@ -1993,6 +1993,18 @@ void quat_from_mat4(quat_t q, const mat4_t m)
 
 	quat_norm(q);
 #endif
+}
+
+void quat_from_axis(const axis_t m, quat_t q)
+{
+	vec_t w4;
+
+	q[3] = sqrt(1.0 + m[0][0] + m[1][1] + m[2][2]) / 2.0;
+	w4   = q[3] * 4.0;
+
+	q[0] = (m[1][2] - m[2][1]) / w4;
+	q[1] = (m[2][0] - m[0][2]) / w4;
+	q[2] = (m[0][1] - m[1][0]) / w4;
 }
 
 void quat_from_angles(quat_t q, vec_t pitch, vec_t yaw, vec_t roll)
