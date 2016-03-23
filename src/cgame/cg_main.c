@@ -250,9 +250,7 @@ vmCvar_t mv_sensitivity;
 #if FEATURE_EDV
 vmCvar_t demo_weaponcam;
 vmCvar_t demo_followDistance;
-vmCvar_t demo_yawturnspeed;
-vmCvar_t demo_pitchturnspeed;
-vmCvar_t demo_rollspeed;
+vmCvar_t demo_yawPitchRollSpeed;
 vmCvar_t demo_freecamspeed;
 vmCvar_t demo_nopitch;
 vmCvar_t demo_pvshint;
@@ -487,9 +485,8 @@ cvarTable_t cvarTable[] =
 
 	{ &demo_followDistance,       "demo_followDistance",       "50 0 20", CVAR_ARCHIVE               },
 
-	{ &demo_yawturnspeed,         "demo_yawturnspeed",         "140",   CVAR_ARCHIVE                 },
-	{ &demo_pitchturnspeed,       "demo_pitchturnspeed",       "140",   CVAR_ARCHIVE                 },
-	{ &demo_rollspeed,            "demo_rollspeed",            "140",   CVAR_ARCHIVE                 },
+	{ &demo_yawPitchRollSpeed,    "demo_yawPitchRollSpeed",    "140 140 140", CVAR_ARCHIVE           },
+
 	{ &demo_freecamspeed,         "demo_freecamspeed",         "800",   CVAR_ARCHIVE                 },
 	{ &demo_nopitch,              "demo_nopitch",              "1",     CVAR_ARCHIVE                 },
 	{ &demo_pvshint,              "demo_pvshint",              "0",     CVAR_ARCHIVE                 },

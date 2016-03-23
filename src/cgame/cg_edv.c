@@ -309,7 +309,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 		// extract x,y and z view distance of demo_followDistance cvar
 		Q_strncpyz(distance, demo_followDistance.string, sizeof(demo_followDistance.string));
 
-		disValue = strtok(distance," ");
+		disValue = strtok(distance, " ");
 		for (count = 0; count < 3 && disValue; ++count)
 		{
 			dis[count] = atoi(disValue);
@@ -352,8 +352,11 @@ void CG_EDV_RunInput(void)
 	playerState_t edv_ps;
 	pmoveExt_t    edv_pmext;
 	static int    lasttime = 0;
-	int           i, delta;
+	int           i, delta, count;
 	vec_t         frametime;
+	char          speedValues[MAX_CVAR_VALUE_STRING];
+	char          *speedValue;
+	float         speed[3] = {-99999, -99999, -99999};
 
 	static vec3_t mins = { -6, -6, -6 };
 	static vec3_t maxs = { 6, 6, 6 };
@@ -393,13 +396,41 @@ void CG_EDV_RunInput(void)
 		cg_pmove.cmd.upmove      += (cgs.demoCamera.move & 0x20) ? -127 : 0;
 	}
 
+	// extract yawturn-, pitchturn-. and rollspeed values of demo_yawPitchRollSpeed
+	Q_strncpyz(speedValues, demo_yawPitchRollSpeed.string, sizeof(demo_yawPitchRollSpeed.string));
+
+	speedValue = strtok(speedValues, " ");
+	for (count = 0; count < 3 && speedValue; ++count)
+	{
+		speed[count] = atof(speedValue);
+		speedValue   = strtok(NULL, " ,"); // note: speed values are float - fear the ','
+	}
+
+	if (speed[0] == -99999) // yawturnspeed
+	{
+		CG_Printf("Warning: demo_yawPitchRollSpeed cvar is missing the yawturnspeed value ('%s') - set to default 140\n", demo_yawPitchRollSpeed.string);
+		speed[0] = 140;
+	}
+
+	if (speed[1] == -99999) // pitchturnspeed
+	{
+		CG_Printf("Warning: demo_yawPitchRollSpeed cvar is missing the pitchturnspeed value ('%s') - set to default 140\n", demo_yawPitchRollSpeed.string);
+		speed[1] = 140;
+	}
+
+	if (speed[2] == -99999) // rollspeed
+	{
+		CG_Printf("Warning: demo_yawPitchRollSpeed cvar is missing the rollspeed value ('%s') - set to default 140\n", demo_yawPitchRollSpeed.string);
+		speed[2] = 140;
+	}
+
 	// run turns, I still don't like this
-	cg.refdefViewAngles[YAW]   += (cgs.demoCamera.turn & 0x01) ? demo_yawturnspeed.value * frametime : 0;
-	cg.refdefViewAngles[YAW]   += (cgs.demoCamera.turn & 0x02) ? -demo_yawturnspeed.value * frametime : 0;
-	cg.refdefViewAngles[PITCH] += (cgs.demoCamera.turn & 0x04) ? demo_pitchturnspeed.value * frametime : 0;
-	cg.refdefViewAngles[PITCH] += (cgs.demoCamera.turn & 0x08) ? -demo_pitchturnspeed.value * frametime : 0;
-	cg.refdefViewAngles[ROLL]  += (cgs.demoCamera.turn & 0x10) ? demo_rollspeed.value * frametime : 0;
-	cg.refdefViewAngles[ROLL]  += (cgs.demoCamera.turn & 0x20) ? -demo_rollspeed.value * frametime : 0;
+	cg.refdefViewAngles[YAW]   += (cgs.demoCamera.turn & 0x01) ? speed[0] * frametime : 0; // yawturnspeed
+	cg.refdefViewAngles[YAW]   += (cgs.demoCamera.turn & 0x02) ? -speed[0] * frametime : 0;
+	cg.refdefViewAngles[PITCH] += (cgs.demoCamera.turn & 0x04) ? speed[1] * frametime : 0; // pitchturnspeed
+	cg.refdefViewAngles[PITCH] += (cgs.demoCamera.turn & 0x08) ? -speed[1] * frametime : 0;
+	cg.refdefViewAngles[ROLL]  += (cgs.demoCamera.turn & 0x10) ? speed[2] * frametime : 0; // rollspeed
+	cg.refdefViewAngles[ROLL]  += (cgs.demoCamera.turn & 0x20) ? -speed[2] * frametime : 0;
 
 	// Use current viewangles instead of the command angles;
 	// looking is handled elsewhere (where, i do not know)
