@@ -2244,9 +2244,7 @@ extern vmCvar_t mv_sensitivity;
 #if FEATURE_EDV
 extern vmCvar_t demo_weaponcam;
 extern vmCvar_t demo_followDistance;
-extern vmCvar_t demo_yawturnspeed;
-extern vmCvar_t demo_pitchturnspeed;
-extern vmCvar_t demo_rollspeed;
+extern vmCvar_t demo_yawPitchRollSpeed;
 extern vmCvar_t demo_lookat;
 extern vmCvar_t demo_teamonlymissilecam;
 extern vmCvar_t demo_autotimescale;
