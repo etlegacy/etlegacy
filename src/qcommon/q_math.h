@@ -320,6 +320,7 @@ void ByteToDir(int b, vec3_t dir);
 #define vec3_ma(v, s, b, o)    ((o)[0] = (v)[0] + (b)[0] * (s), (o)[1] = (v)[1] + (b)[1] * (s), (o)[2] = (v)[2] + (b)[2] * (s))
 #define vec3_snap(v) { v[0] = ((int)(v[0])); v[1] = ((int)(v[1])); v[2] = ((int)(v[2])); }
 void vec3_to_angles(const vec3_t value1, vec3_t angles);
+void vec3_cross(const vec3_t v1, const vec3_t v2, vec3_t cross);
 vec_t vec3_length(const vec3_t v);
 vec_t vec3_length_squared(const vec3_t v);
 vec_t vec3_distance(const vec3_t p1, const vec3_t p2);
