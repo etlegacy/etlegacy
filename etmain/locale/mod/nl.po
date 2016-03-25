@@ -3,7 +3,7 @@
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
 # Frank Houweling <houweling.frank@gmail.com>, 2015
-# Jasper Korten <jja2000@gmail.com>, 2015
+# Jasper K <jja2000@gmail.com>, 2015
 # Lammert <lammerts@gmail.com>, 2015
 # Nick Spijker <arnhemnick@gmail.com>, 2015
 msgid ""
