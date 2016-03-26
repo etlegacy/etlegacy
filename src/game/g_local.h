@@ -1807,6 +1807,7 @@ extern vmCvar_t g_customConfig;
 extern vmCvar_t g_moverScale;
 
 extern vmCvar_t g_debugHitboxes;
+extern vmCvar_t g_debugPlayerHitboxes;
 
 extern vmCvar_t g_voting; // see VOTEF_* defines
 
@@ -2392,5 +2393,8 @@ void G_mapvoteinfo_read(void);
 // Calculated deltas
 #define SERVER_FRAMETIME_DELTA      (2 * SERVER_FRAMETIME)     // msec
 #define SERVER_FRAMETIME_DELTA_F    (2.f * SERVER_FRAMETIME_F)   // msec
+
+void G_RailTrail(vec_t* start, vec_t* end, vec_t* color);
+void G_RailBox(vec_t* origin, vec_t* mins, vec_t* maxs, vec_t* color, int index);
 
 #endif // #ifndef INCLUDE_G_LOCAL_H
