@@ -1250,7 +1250,6 @@ void Prop_Break_Sound(gentity_t *ent);
 void Spawn_Shard(gentity_t *ent, gentity_t *inflictor, int quantity, int type);
 
 // g_utils.c
-qboolean G_EntitiesFree(void);
 int G_FindConfigstringIndex(const char *name, int start, int max, qboolean create);
 void G_RemoveConfigstringIndex(const char *name, int start, int max);
 
@@ -1283,7 +1282,7 @@ gentity_t *G_PopupMessage(popupMessageType_t type);
 void G_Sound(gentity_t *ent, int soundIndex);
 void G_AnimScriptSound(int soundIndex, vec3_t org, int client);
 void G_FreeEntity(gentity_t *e);
-//qboolean  G_EntitiesFree( void );
+int G_EntitiesFree(void);
 void G_ClientSound(gentity_t *ent, int soundIndex);
 
 void G_TouchTriggers(gentity_t *ent);
@@ -2394,7 +2393,7 @@ void G_mapvoteinfo_read(void);
 #define SERVER_FRAMETIME_DELTA      (2 * SERVER_FRAMETIME)     // msec
 #define SERVER_FRAMETIME_DELTA_F    (2.f * SERVER_FRAMETIME_F)   // msec
 
-void G_RailTrail(vec_t* start, vec_t* end, vec_t* color);
-void G_RailBox(vec_t* origin, vec_t* mins, vec_t* maxs, vec_t* color, int index);
+void G_RailTrail(vec_t *start, vec_t *end, vec_t *color);
+void G_RailBox(vec_t *origin, vec_t *mins, vec_t *maxs, vec_t *color, int index);
 
 #endif // #ifndef INCLUDE_G_LOCAL_H

@@ -1035,26 +1035,15 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod, grefEnti
 	{
 		if (g_debugBullets.integer >= 3)     // show hit player head bb
 		{
-			gentity_t *tent;
-			vec3_t    b1, b2;
-
-			VectorCopy(head->r.currentOrigin, b1);
-			VectorCopy(head->r.currentOrigin, b2);
-			VectorAdd(b1, head->r.mins, b1);
-			VectorAdd(b2, head->r.maxs, b2);
-			tent = G_TempEntity(b1, EV_RAILTRAIL);
-			VectorCopy(b2, tent->s.origin2);
-			tent->s.dmgFlags = 1;
+			G_RailBox(head->r.currentOrigin, head->r.mins, head->r.maxs, tv(1.f,0.f,0.f), head->s.number|HITBOXBIT_HEAD);
 
 			// show headshot trace
 			// end the headshot trace at the head box if it hits
-			if (tr.fraction != 1)
+			if(tr.fraction != 1)
 			{
-				VectorMA(start, (tr.fraction * 64), dir, end);
+				VectorMA(start, (tr.fraction * 64.f), dir, end);
 			}
-			tent = G_TempEntity(start, EV_RAILTRAIL);
-			VectorCopy(end, tent->s.origin2);
-			tent->s.dmgFlags = 0;
+			G_RailTrail(start, end, tv(1.f,0.f,0.f));
 		}
 
 		if (g_antilag.integer)
@@ -1113,29 +1102,16 @@ qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod, grefEntit
 		{
 			if (g_debugBullets.integer >= 3)     // show hit player leg bb
 			{
-				gentity_t *tent;
-				vec3_t    b1, b2;
-				vec3_t    maxs;
-
-				VectorCopy(leg->r.currentOrigin, b1);
-				VectorCopy(leg->r.currentOrigin, b2);
-				VectorAdd(b1, leg->r.mins, b1);
-				VectorCopy(leg->r.maxs, maxs);
-				maxs[2] = ClientHitboxMaxZ(traceEnt);
-				VectorAdd(b2, maxs, b2);
-				tent = G_TempEntity(b1, EV_RAILTRAIL);
-				VectorCopy(b2, tent->s.origin2);
-				tent->s.dmgFlags = 1;
+				G_RailBox(leg->r.currentOrigin, leg->r.mins, leg->r.maxs, tv(1.f,0.f,0.f), leg->s.number|HITBOXBIT_LEGS);
 
 				// show headshot trace
 				// end the headshot trace at the head box if it hits
-				if (tr.fraction != 1)
+				if(tr.fraction != 1)
 				{
-					VectorMA(start, (tr.fraction * 64), dir, end);
+					VectorMA(start, (tr.fraction * 64.f), dir, end);
 				}
-				tent = G_TempEntity(start, EV_RAILTRAIL);
-				VectorCopy(end, tent->s.origin2);
-				tent->s.dmgFlags = 0;
+
+				G_RailTrail(start, end, tv(1.f,0.f,0.f));
 			}
 
 			if (g_antilag.integer)
@@ -1867,7 +1843,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	}
 }
 
-void G_RailTrail(vec_t* start, vec_t* end, vec_t* color)
+void G_RailTrail(vec_t *start, vec_t *end, vec_t *color)
 {
 	gentity_t* temp;
 
@@ -1886,7 +1862,7 @@ void G_RailTrail(vec_t* start, vec_t* end, vec_t* color)
 G_RailBox
 ==================
 */
-void G_RailBox(vec_t* origin, vec_t* mins, vec_t* maxs, vec_t* color, int index)
+void G_RailBox(vec_t *origin, vec_t *mins, vec_t *maxs, vec_t *color, int index)
 {
 	vec3_t	   b1;
 	vec3_t	   b2;
