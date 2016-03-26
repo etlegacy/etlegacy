@@ -1606,38 +1606,18 @@ void ClientThink_real(gentity_t *ent)
 	}
 
 	// debug hitboxes
-	if (g_debugHitboxes.integer == 2)
+	if(g_debugPlayerHitboxes.integer & 2)
 	{
-		gentity_t    *bboxEnt, *head;
-		vec3_t       b1, b2;
+		gentity_t    *head;
 		vec3_t       maxs;
 		grefEntity_t refent;
 
-		VectorCopy(ent->r.currentOrigin, b1);
-		VectorCopy(ent->r.currentOrigin, b2);
-		VectorAdd(b1, ent->r.mins, b1);
 		VectorCopy(ent->r.maxs, maxs);
 		maxs[2] = ClientHitboxMaxZ(ent);
-		VectorAdd(b2, maxs, b2);
-		bboxEnt = G_TempEntity(b1, EV_RAILTRAIL);
-		VectorCopy(b2, bboxEnt->s.origin2);
-		bboxEnt->s.dmgFlags  = 1;
-		bboxEnt->s.angles[0] = 0;
-		bboxEnt->s.angles[1] = 255;
-		bboxEnt->s.angles[2] = 0;
+		G_RailBox(ent->r.currentOrigin, ent->r.mins, maxs, tv(0.f,0.f,1.f), ent->s.number);
 
 		head = G_BuildHead(ent, &refent, qtrue);
-		VectorCopy(head->r.currentOrigin, b1);
-		VectorCopy(head->r.currentOrigin, b2);
-		VectorAdd(b1, head->r.mins, b1);
-		VectorAdd(b2, head->r.maxs, b2);
-		bboxEnt = G_TempEntity(b1, EV_RAILTRAIL);
-		VectorCopy(b2, bboxEnt->s.origin2);
-		bboxEnt->s.dmgFlags  = 1;
-		bboxEnt->s.angles[0] = 0;
-		bboxEnt->s.angles[1] = 0;
-		bboxEnt->s.angles[2] = 255;
-
+		G_RailBox(head->r.currentOrigin, head->r.mins, head->r.maxs, tv(0.f,0.f,1.f), head->s.number|HITBOXBIT_HEAD);
 		G_FreeEntity(head);
 	}
 
@@ -2280,38 +2260,18 @@ void ClientEndFrame(gentity_t *ent)
 #endif
 
 	// debug hitboxes
-	if (g_debugHitboxes.integer == 1)
+	if(g_debugPlayerHitboxes.integer & 1)
 	{
-		gentity_t    *bboxEnt, *head;
-		vec3_t       b1, b2;
+		gentity_t    *head;
 		vec3_t       maxs;
 		grefEntity_t refent;
 
-		VectorCopy(ent->r.currentOrigin, b1);
-		VectorCopy(ent->r.currentOrigin, b2);
-		VectorAdd(b1, ent->r.mins, b1);
 		VectorCopy(ent->r.maxs, maxs);
 		maxs[2] = ClientHitboxMaxZ(ent);
-		VectorAdd(b2, maxs, b2);
-		bboxEnt = G_TempEntity(b1, EV_RAILTRAIL);
-		VectorCopy(b2, bboxEnt->s.origin2);
-		bboxEnt->s.dmgFlags  = 1;
-		bboxEnt->s.angles[0] = 0;
-		bboxEnt->s.angles[1] = 0;
-		bboxEnt->s.angles[2] = 255;
+		G_RailBox(ent->r.currentOrigin, ent->r.mins, maxs, tv(0.f,1.f,0.f), ent->s.number);
 
 		head = G_BuildHead(ent, &refent, qtrue);
-		VectorCopy(head->r.currentOrigin, b1);
-		VectorCopy(head->r.currentOrigin, b2);
-		VectorAdd(b1, head->r.mins, b1);
-		VectorAdd(b2, head->r.maxs, b2);
-		bboxEnt = G_TempEntity(b1, EV_RAILTRAIL);
-		VectorCopy(b2, bboxEnt->s.origin2);
-		bboxEnt->s.dmgFlags  = 1;
-		bboxEnt->s.angles[0] = 0;
-		bboxEnt->s.angles[1] = 255;
-		bboxEnt->s.angles[2] = 0;
-
+		G_RailBox(head->r.currentOrigin, head->r.mins, head->r.maxs, tv(0.f,1.f,0.f), ent->s.number|HITBOXBIT_HEAD);
 		G_FreeEntity(head);
 	}
 

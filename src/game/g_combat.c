@@ -1867,12 +1867,47 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	}
 }
 
-void G_RailTrail(vec_t *start, vec_t *end)
+void G_RailTrail(vec_t* start, vec_t* end, vec_t* color)
 {
-	gentity_t *temp = G_TempEntity(start, EV_RAILTRAIL);
+	gentity_t* temp;
 
+	temp = G_TempEntity(start, EV_RAILTRAIL);
 	VectorCopy(end, temp->s.origin2);
-	temp->s.dmgFlags = 0;
+
+	temp->s.dmgFlags  = 0;
+	temp->s.angles[0] = (int)(color[0]*255);
+	temp->s.angles[1] = (int)(color[1]*255);
+	temp->s.angles[2] = (int)(color[2]*255);
+	temp->s.density   = -1;
+}
+
+/*
+==================
+G_RailBox
+==================
+*/
+void G_RailBox(vec_t* origin, vec_t* mins, vec_t* maxs, vec_t* color, int index)
+{
+	vec3_t	   b1;
+	vec3_t	   b2;
+	gentity_t* temp;
+
+	VectorCopy(origin, b1);
+	VectorCopy(origin, b2);
+	VectorAdd(b1, mins, b1);
+	VectorAdd(b2, maxs, b2);
+
+	temp = G_TempEntity(b1, EV_RAILTRAIL);
+
+	VectorCopy(b2,	temp->s.origin2);
+	VectorCopy(color, temp->s.angles);
+	temp->s.dmgFlags = 1;
+
+	temp->s.angles[0] = (int)(color[0]*255);
+	temp->s.angles[1] = (int)(color[1]*255);
+	temp->s.angles[2] = (int)(color[2]*255);
+
+	temp->s.effect1Time = index + 1;
 }
 
 #define MASK_CAN_DAMAGE     (CONTENTS_SOLID | CONTENTS_BODY)

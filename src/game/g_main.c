@@ -311,6 +311,7 @@ vmCvar_t g_fixedphysicsfps;
 vmCvar_t g_pronedelay;
 
 vmCvar_t g_debugHitboxes;
+vmCvar_t g_debugPlayerHitboxes;
 
 vmCvar_t g_voting;        // see VOTEF_ defines
 
@@ -607,6 +608,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_pronedelay,                        "g_pronedelay",                        "0",                          CVAR_ARCHIVE | CVAR_SERVERINFO },
 	// Debug
 	{ &g_debugHitboxes,                     "g_debugHitboxes",                     "0",                          CVAR_CHEAT },
+	{ &g_debugPlayerHitboxes,               "g_debugPlayerHitboxes",               "0",                          0 }, // no need to make this CVAR_CHEAT
 
 	{ &g_corpses,                           "g_dynBQ",                             "0",                          CVAR_LATCH | CVAR_ARCHIVE },
 	{ &g_realHead,                          "g_realHead",                          "1",                          0 },
@@ -4510,6 +4512,149 @@ void G_TagLinkEntity(gentity_t *ent, int msec)
 	ent->linkTagTime = level.time;
 }
 
+// make this client side one day -> a loooooot of saved entities, and less brandwith
+void G_DrawEntBBox(gentity_t* ent)
+{
+	vec3_t maxs,mins;
+
+	if (G_EntitiesFree() < 64) 
+	{
+		return;
+	}
+
+	if (g_debugHitboxes.string[0] && Q_isalpha(g_debugHitboxes.string[0]))
+	{
+		if (ent->classname && !Q_stricmp(ent->classname, g_debugHitboxes.string))
+		{
+			G_RailBox(ent->r.currentOrigin, ent->r.mins, ent->r.maxs, tv(0.5f,0.f,0.5f), ent->s.number);
+		}
+		return;
+	}
+
+	switch (ent->s.eType)
+	{
+		case ET_CORPSE:
+		case ET_PLAYER:
+			if (g_debugHitboxes.integer != 3)
+			{
+				return;
+			}
+			VectorCopy(ent->r.maxs, maxs);
+			VectorCopy(ent->r.mins, mins);
+			maxs[2] = ClientHitboxMaxZ(ent);
+			break;
+		case ET_MISSILE:
+			if (g_debugHitboxes.integer != 4)
+			{
+				return;
+			}
+			VectorCopy(ent->r.maxs, maxs);
+			VectorCopy(ent->r.mins, mins);
+			break;
+		case ET_EXPLOSIVE:
+			if (g_debugHitboxes.integer != 5)
+			{
+				return;
+			}
+			VectorCopy(ent->r.maxs, maxs);
+			VectorCopy(ent->r.mins, mins);
+			break;
+		case ET_ITEM:
+			if (g_debugHitboxes.integer != 6)
+			{
+				return;
+			}
+			VectorCopy(ent->r.maxs, maxs);
+			VectorCopy(ent->r.mins, mins);
+			break;
+		case ET_MOVERSCALED:
+		case ET_MOVER:
+			if (g_debugHitboxes.integer != 7)
+			{
+				return;
+			}
+			VectorCopy(ent->r.maxs, maxs);
+			VectorCopy(ent->r.mins, mins);
+			break;
+		case ET_MG42_BARREL:
+			if (g_debugHitboxes.integer != 8)
+			{
+				return;
+			}
+			VectorCopy(ent->r.maxs, maxs);
+			VectorCopy(ent->r.mins, mins);
+			break;
+		case ET_CONSTRUCTIBLE_INDICATOR:
+		case ET_CONSTRUCTIBLE:
+		case ET_CONSTRUCTIBLE_MARKER:
+			if (g_debugHitboxes.integer != 9)
+			{
+				return;
+			}
+			VectorCopy(ent->r.maxs, maxs);
+			VectorCopy(ent->r.mins, mins);
+			break;
+		case ET_PUSH_TRIGGER:
+		case ET_TELEPORT_TRIGGER:
+		case ET_CONCUSSIVE_TRIGGER:
+		case ET_OID_TRIGGER:
+		case ET_TRIGGER_MULTIPLE:
+		case ET_TRIGGER_FLAGONLY:
+		case ET_TRIGGER_FLAGONLY_MULTIPLE:
+			if (g_debugHitboxes.integer != 10)
+			{
+				return;
+			}
+			VectorCopy(ent->r.maxs, maxs);
+			VectorCopy(ent->r.mins, mins);
+			break;
+		case ET_CABINET_H:
+		case ET_CABINET_A:
+		case ET_HEALER:
+		case ET_SUPPLIER:
+			if (g_debugHitboxes.integer != 11)
+			{
+				return;
+			}
+			VectorCopy(ent->r.maxs, maxs);
+			VectorCopy(ent->r.mins, mins);
+			break;
+		case ET_ALARMBOX:
+		case ET_FOOTLOCKER:
+		case ET_PROP:
+		case ET_TRAP:
+			if (g_debugHitboxes.integer != 12)
+			{
+				return;
+			}
+			VectorCopy(ent->r.maxs, maxs);
+			VectorCopy(ent->r.mins, mins);
+			break;
+		case ET_GAMEMODEL:
+			if (g_debugHitboxes.integer != 13)
+			{
+				return;
+			}
+			VectorCopy(ent->r.maxs, maxs);
+			VectorCopy(ent->r.mins, mins);
+			break;
+		case ET_GENERAL:
+			if (g_debugHitboxes.integer != 14)
+			{
+				return;
+			}
+			// this is a bit hacky, but well..
+			VectorCopy(ent->r.maxs, maxs);
+			VectorCopy(ent->r.mins, mins);
+			break;
+		default:
+			return;
+	}
+
+	G_RailBox(ent->r.currentOrigin, mins, maxs, tv(0.f,1.f,0.f), ent->s.number);
+}
+
+
 void G_RunEntity(gentity_t *ent, int msec)
 {
 	if (ent->runthisframe)
@@ -4522,6 +4667,11 @@ void G_RunEntity(gentity_t *ent, int msec)
 	if (!ent->inuse)
 	{
 		return;
+	}
+
+	if (g_debugHitboxes.integer || g_debugHitboxes.string[0])
+	{
+		G_DrawEntBBox(ent);
 	}
 
 	if (ent->tagParent)
