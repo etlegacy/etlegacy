@@ -279,7 +279,7 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 	while (1)
 	{
 		token = COM_ParseExt(text, qtrue);
-		if (!*token)
+		if (!token[0])
 		{
 			if (inSound)
 			{
@@ -428,6 +428,11 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 			}
 
 			token = COM_ParseExt(text, qtrue);
+
+			if (!token[0])
+			{
+				CG_Error(S_COLOR_RED "CG_SoundParseSounds: empty token of sound file name\n");
+			}
 
 			Q_strncpyz(scriptSound->sounds[scriptSound->numsounds].filename, token, sizeof(scriptSound->sounds[0].filename));
 			scriptSound->numsounds++;

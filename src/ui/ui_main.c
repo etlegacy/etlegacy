@@ -7247,7 +7247,7 @@ static qboolean GameType_Parse(char **p, qboolean join)
 			return qtrue;
 		}
 
-		if (!token || token[0] == 0)
+		if (!token[0])
 		{
 			return qfalse;
 		}
@@ -7334,7 +7334,7 @@ static void UI_ParseGameInfo(const char *teamFile)
 	while (1)
 	{
 		token = COM_ParseExt(&p, qtrue);
-		if (!token || token[0] == 0 || token[0] == '}')
+		if (!token[0] || token[0] == '}')
 		{
 			break;
 		}

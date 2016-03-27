@@ -53,10 +53,12 @@ void script_linkentity(gentity_t *ent);
 qboolean G_ScriptAction_SetModelFromBrushmodel(gentity_t *ent, char *params)
 {
 	char     *pString = params;
-	char     *token   = COM_ParseExt(&pString, qfalse);
+	char     *token;
 	char     modelname[MAX_QPATH];
 	int      i;
 	qboolean solid = qtrue;
+
+	token   = COM_ParseExt(&pString, qfalse);
 
 	if (!token[0])
 	{
@@ -1986,7 +1988,7 @@ qboolean G_ScriptAction_PlayAnim(gentity_t *ent, char *params)
 	for (i = 0; i < 2; i++)
 	{
 		token = COM_ParseExt(&pString, qfalse);
-		if (!token || !token[0])
+		if (!token[0])
 		{
 			G_Printf("G_ScriptAction_PlayAnim: syntax error\n\nplayanim <startframe> <endframe> [LOOPING <duration>]\n");
 			return qtrue;
@@ -2015,7 +2017,7 @@ qboolean G_ScriptAction_PlayAnim(gentity_t *ent, char *params)
 			looping = qtrue;
 
 			token = COM_ParseExt(&pString, qfalse);
-			if (!token || !token[0])
+			if (!token[0])
 			{
 				G_Printf("G_ScriptAction_PlayAnim: syntax error\n\nplayanim <startframe> <endframe> [LOOPING <duration>]\n");
 				return qtrue;
@@ -2876,7 +2878,7 @@ qboolean G_ScriptAction_FaceAngles(gentity_t *ent, char *params)
 		for (i = 0; i < 3; i++)
 		{
 			token = COM_Parse(&pString);
-			if (!token || !token[0])
+			if (!token[0])
 			{
 				G_Error("G_ScriptAction_FaceAngles: syntax: faceangles <pitch> <yaw> <roll> <duration/GOTOTIME>\n");
 			}
@@ -2884,7 +2886,7 @@ qboolean G_ScriptAction_FaceAngles(gentity_t *ent, char *params)
 		}
 
 		token = COM_Parse(&pString);
-		if (!token || !token[0])
+		if (!token[0])
 		{
 			G_Error("G_ScriptAction_FaceAngles: faceangles requires a <pitch> <yaw> <roll> <duration/GOTOTIME>\n");
 		}
@@ -3243,7 +3245,8 @@ qboolean G_ScriptAction_SetMainObjective(gentity_t *ent, char *params)
 
 	    pString = params;
 	    token = COM_Parse(&pString);
-	    if (!token[0]) {
+	    if (!token[0])
+	    {
 	        G_Error( "G_ScriptAction_ObjectiveImage: number parameter required\n" );
 	    }
 
@@ -3254,7 +3257,8 @@ qboolean G_ScriptAction_SetMainObjective(gentity_t *ent, char *params)
 	    parm = va("%i", num);
 
 	    token = COM_Parse(&pString);
-	    if (!token[0]) {
+	    if (!token[0])
+	    {
 	        G_Error( "G_ScriptAction_ObjectiveImage: team parameter required\n" );
 	    }
 
@@ -4835,7 +4839,7 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 		token = COM_ParseExt(&p, qfalse);
 
 		// are there tokes in the params?..
-		if (!token || token[0] == 0)
+		if (!token[0])
 		{
 			break;
 		}
@@ -4843,7 +4847,7 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 		strcpy(key, token);
 
 		token = COM_ParseExt(&p, qfalse);
-		if (!token || token[0] == 0)
+		if (!token[0])
 		{
 			G_Error("G_ScriptAction_Delete(): key \"%s\" has no value", key);
 			break;

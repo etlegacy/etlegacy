@@ -145,7 +145,7 @@ void CG_ParseTeamXPs(int n)
 		{
 			token = COM_ParseExt(&cs, qfalse);
 
-			if (!token || !*token)
+			if (!token[0])
 			{
 				return;
 			}

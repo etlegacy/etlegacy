@@ -1302,7 +1302,7 @@ int CG_ParseVoiceChats(const char *filename, voiceChatList_t *voiceChatList, int
 		voiceChats[i].id[0] = 0;
 	}
 	token = COM_ParseExt(p, qtrue);
-	if (!token || token[0] == 0)
+	if (!token[0])
 	{
 		return qtrue;
 	}
@@ -1332,7 +1332,7 @@ int CG_ParseVoiceChats(const char *filename, voiceChatList_t *voiceChatList, int
 	while (1)
 	{
 		token = COM_ParseExt(p, qtrue);
-		if (!token || token[0] == 0)
+		if (!token[0])
 		{
 			return qtrue;
 		}
@@ -1350,7 +1350,7 @@ int CG_ParseVoiceChats(const char *filename, voiceChatList_t *voiceChatList, int
 		while (1)
 		{
 			token = COM_ParseExt(p, qtrue);
-			if (!token || token[0] == 0)
+			if (!token[0])
 			{
 				return qtrue;
 			}
@@ -1360,7 +1360,7 @@ int CG_ParseVoiceChats(const char *filename, voiceChatList_t *voiceChatList, int
 			}
 			voiceChats[voiceChatList->numVoiceChats].sounds[current] = trap_S_RegisterSound(token, compress);
 			token                                                    = COM_ParseExt(p, qtrue);
-			if (!token || token[0] == 0)
+			if (!token[0])
 			{
 				return qtrue;
 			}
@@ -1368,7 +1368,7 @@ int CG_ParseVoiceChats(const char *filename, voiceChatList_t *voiceChatList, int
 
 			// Specify sprite shader to show above player's head
 			token = COM_ParseExt(p, qfalse);
-			if (!Q_stricmp(token, "}") || !token || token[0] == 0)
+			if (!Q_stricmp(token, "}") || !token[0])
 			{
 				voiceChats[voiceChatList->numVoiceChats].sprite[current] = trap_R_RegisterShader("sprites/voiceChat");
 				COM_RestoreParseSession(p);
