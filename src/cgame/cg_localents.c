@@ -407,6 +407,28 @@ CG_AllocLocalEntity
 Will allways succeed, even if it requires freeing an old active entity
 ===================
 */
+localEntity_t *CG_FindLocalEntity(int index, int sideNum)
+{
+	int i;
+
+	for (i = 0 ; i < localEntCount ; i++)
+	{
+		if (cg_localEntities[i].data1 == index)
+		{
+			if (cg_localEntities[i].data2 == sideNum)
+				return &cg_localEntities[i];
+		}
+	}
+	return NULL;
+}
+
+/*
+===================
+CG_AllocLocalEntity
+
+Will allways succeed, even if it requires freeing an old active entity
+===================
+*/
 localEntity_t *CG_AllocLocalEntity(void)
 {
 	localEntity_t *le;

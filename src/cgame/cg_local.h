@@ -507,6 +507,9 @@ typedef struct localEntity_s
 	int breakCount;                     // break-up this many times before we can break no more
 	float sizeScale;
 
+	int	data1;
+	int	data2;
+
 } localEntity_t;
 
 //======================================================================
@@ -2314,6 +2317,7 @@ extern vmCvar_t cg_fontScaleCN;
 
 // unlagged optimized prediction
 extern vmCvar_t cg_optimizePrediction;
+extern vmCvar_t cg_debugPlayerHitboxes;
 
 #ifdef FEATURE_RATING
 // ratings scoreboard
@@ -2550,8 +2554,8 @@ void CG_MissileHitPlayer(centity_t *cent, int weapon, vec3_t origin, vec3_t dir,
 qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle);
 void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityNum, int otherEntNum2, float waterfraction, int seed);
 
-void CG_RailTrail(vec3_t color, clientInfo_t *ci, vec3_t start, vec3_t end, int type);     // added 'type'
-void CG_RailTrail2(vec3_t color, clientInfo_t *ci, vec3_t start, vec3_t end);
+void CG_RailTrail(vec3_t color, vec3_t start, vec3_t end, int type, int index);
+void CG_RailTrail2(vec3_t color, vec3_t start, vec3_t end, int index, int sideNum);
 
 void CG_AddViewWeapon(playerState_t *ps);
 void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent);
@@ -2630,6 +2634,7 @@ void CG_UpdateFlamethrowerSounds(void);
 // cg_localents.c
 void CG_InitLocalEntities(void);
 localEntity_t *CG_AllocLocalEntity(void);
+localEntity_t *CG_FindLocalEntity(int index, int sideNum);
 void CG_AddLocalEntities(void);
 
 char *CG_GetLocationMsg(int clientNum, vec3_t origin);

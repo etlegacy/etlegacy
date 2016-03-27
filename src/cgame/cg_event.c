@@ -2718,7 +2718,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 				color[2] = 0;
 			}
 
-			CG_RailTrail(color, &cgs.clientinfo[es->otherEntityNum2], es->origin2, es->pos.trBase, es->dmgFlags);     // added 'type' field
+			CG_RailTrail(color, es->origin2, es->pos.trBase, es->dmgFlags, es->effect1Time);     // added 'type' field
 		}
 		break;
 

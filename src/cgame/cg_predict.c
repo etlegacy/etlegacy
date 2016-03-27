@@ -617,7 +617,7 @@ static void CG_TouchTriggerPrediction(void)
 			VectorAdd(cg.predictedPlayerState.origin, cg_pmove.maxs, pmaxs);
 
 #ifdef VISIBLE_TRIGGERS
-			CG_RailTrail(NULL, mins, maxs, 1);
+			CG_RailTrail(tv(0.25f, 0.5f, 1.f), mins, maxs, 1, -1);
 #endif // VISIBLE_TRIGGERS
 
 			if (!BG_BBoxCollision(pmins, pmaxs, mins, maxs))
@@ -763,6 +763,14 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 
 	for (i = 0; i < MAX_STATS; i++)
 	{
+		//if (i == STAT_HEALTH || i == STAT_DEAD_YAW) // FIXME: predict health?! STAT_DEAD_YAW?
+		//{                                           //        we got tons of prediction issues here 
+		//	if (cg_showmiss.integer & 8)
+		//	{
+		//		CG_Printf("CG_PredictionOk info: skipping health/stat_dead_yaw\n");
+		//	}
+		//	continue;
+		//}
 		if (ps2->stats[i] != ps1->stats[i])
 		{
 			if (cg_showmiss.integer & 8)

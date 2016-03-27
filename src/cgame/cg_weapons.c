@@ -829,12 +829,28 @@ CG_RailTrail
     re-inserted this as a debug mechanism for bullets
 ==========================
 */
-void CG_RailTrail2(vec3_t color, clientInfo_t *ci, vec3_t start, vec3_t end)
+void CG_RailTrail2(vec3_t color, vec3_t start, vec3_t end, int index, int sideNum)
 {
 	localEntity_t *le;
 	refEntity_t   *re;
 
-	le = CG_AllocLocalEntity();
+	if (index)
+	{
+		le = CG_FindLocalEntity(index, sideNum);
+
+		if (!le)
+		{
+			le = CG_AllocLocalEntity();
+		}
+
+		le->data1 = index;
+		le->data2 = sideNum;
+	}
+	else
+	{
+		le = CG_AllocLocalEntity();
+	}
+
 	re = &le->refEntity;
 
 	le->leType    = LE_CONST_RGB;
@@ -860,13 +876,13 @@ void CG_RailTrail2(vec3_t color, clientInfo_t *ci, vec3_t start, vec3_t end)
 /**
  * @brief draw boxes for debugging
  */
-void CG_RailTrail(vec3_t color, clientInfo_t *ci, vec3_t start, vec3_t end, int type)      // added 'type'
+void CG_RailTrail(vec3_t color, vec3_t start, vec3_t end, int type, int index)
 {
 	vec3_t diff, v1, v2, v3, v4, v5, v6;
 
 	if (!type)     // just a line
 	{
-		CG_RailTrail2(color, ci, start, end);
+		CG_RailTrail2(color, start, end, index, -1);
 		return;
 	}
 
@@ -880,9 +896,9 @@ void CG_RailTrail(vec3_t color, clientInfo_t *ci, vec3_t start, vec3_t end, int 
 	v1[0] -= diff[0];
 	v2[1] -= diff[1];
 	v3[2] -= diff[2];
-	CG_RailTrail2(color, ci, start, v1);
-	CG_RailTrail2(color, ci, start, v2);
-	CG_RailTrail2(color, ci, start, v3);
+	CG_RailTrail2(color, start, v1, index, 1);
+	CG_RailTrail2(color, start, v2, index, 2);
+	CG_RailTrail2(color, start, v3, index, 3);
 
 	VectorCopy(end, v4);
 	VectorCopy(end, v5);
@@ -890,17 +906,17 @@ void CG_RailTrail(vec3_t color, clientInfo_t *ci, vec3_t start, vec3_t end, int 
 	v4[0] += diff[0];
 	v5[1] += diff[1];
 	v6[2] += diff[2];
-	CG_RailTrail2(color, ci, end, v4);
-	CG_RailTrail2(color, ci, end, v5);
-	CG_RailTrail2(color, ci, end, v6);
+	CG_RailTrail2(color, end, v4, index, 4);
+	CG_RailTrail2(color, end, v5, index, 5);
+	CG_RailTrail2(color, end, v6, index, 6);
 
-	CG_RailTrail2(color, ci, v2, v6);
-	CG_RailTrail2(color, ci, v6, v1);
-	CG_RailTrail2(color, ci, v1, v5);
+	CG_RailTrail2(color, v2, v6, index, 7);
+	CG_RailTrail2(color, v6, v1, index, 8);
+	CG_RailTrail2(color, v1, v5, index, 9);
 
-	CG_RailTrail2(color, ci, v2, v4);
-	CG_RailTrail2(color, ci, v4, v3);
-	CG_RailTrail2(color, ci, v3, v5);
+	CG_RailTrail2(color, v2, v4, index, 10);
+	CG_RailTrail2(color, v4, v3, index, 11);
+	CG_RailTrail2(color, v3, v5, index, 12);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
