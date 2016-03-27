@@ -135,7 +135,7 @@ static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
 	{
 		token = COM_Parse(&text_p);     // first frame
 
-		if (!token)
+		if (!token[0])
 		{
 			break;
 		}
@@ -144,7 +144,7 @@ static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
 
 		token = COM_Parse(&text_p);     // length
 
-		if (!token)
+		if (!token[0])
 		{
 			break;
 		}
@@ -153,7 +153,7 @@ static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
 
 		token = COM_Parse(&text_p);     // fps
 
-		if (!token)
+		if (!token[0])
 		{
 			break;
 		}
@@ -170,7 +170,7 @@ static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
 
 		token = COM_Parse(&text_p);     // looping frames
 
-		if (!token)
+		if (!token[0])
 		{
 			break;
 		}
