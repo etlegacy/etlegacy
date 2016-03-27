@@ -1490,7 +1490,7 @@ char *CG_MustParse(char **pString, const char *pErrorMsg)
 {
 	char *token = COM_Parse(pString);
 
-	if (!*token)
+	if (!token[0])
 	{
 		CG_Error("%s", pErrorMsg);
 	}

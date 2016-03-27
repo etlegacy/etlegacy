@@ -965,17 +965,20 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 	{
 		prev  = text_p; // so we can unget
 		token = COM_Parse(&text_p);
-		if (!token)                         // get the variable
+		if (!token[0])                         // get the variable
 		{
 			break;
 		}
-		/*      if ( !Q_stricmp( token, "whatever_variable" ) ) {
-		            token = COM_Parse( &text_p );   // get the value
-		            if ( !token ) {
-		                break;
-		            }
-		            continue;
-		        }*/
+
+		//if ( !Q_stricmp( token, "whatever_variable" ) )
+		//{
+		//  token = COM_Parse( &text_p );   // get the value
+		//  if (!token[0])
+		//  {
+		//    break;
+		//  }
+		//  continue;
+		//}
 
 		if (!Q_stricmp(token, "newfmt"))
 		{
@@ -995,21 +998,21 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 	for (i = 0 ; i < MAX_WP_ANIMATIONS  ; i++)
 	{
 		token = COM_Parse(&text_p);     // first frame
-		if (!token)
+		if (!token[0])
 		{
 			break;
 		}
 		wi->weapAnimations[i].firstFrame = atoi(token);
 
 		token = COM_Parse(&text_p);     // length
-		if (!token)
+		if (!token[0])
 		{
 			break;
 		}
 		wi->weapAnimations[i].numFrames = atoi(token);
 
 		token = COM_Parse(&text_p);     // fps
-		if (!token)
+		if (!token[0])
 		{
 			break;
 		}
@@ -1023,7 +1026,7 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 		wi->weapAnimations[i].initialLerp = 1000 / fps;
 
 		token = COM_Parse(&text_p);     // looping frames
-		if (!token)
+		if (!token[0])
 		{
 			break;
 		}
@@ -1044,14 +1047,14 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 		if (newfmt)
 		{
 			token = COM_Parse(&text_p);     // barrel anim bits
-			if (!token)
+			if (!token[0])
 			{
 				break;
 			}
 			wi->weapAnimations[i].moveSpeed = atoi(token);
 
 			token = COM_Parse(&text_p);     // animated weapon
-			if (!token)
+			if (!token[0])
 			{
 				break;
 			}
@@ -1061,7 +1064,7 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 
 			}
 			token = COM_Parse(&text_p);     // barrel hide bits (so objects can be flagged to not be drawn during all sequences (a reloading hand that comes in from off screen for that one animation for example)
-			if (!token)
+			if (!token[0])
 			{
 				break;
 			}
@@ -1072,7 +1075,7 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 
 	if (i != MAX_WP_ANIMATIONS)
 	{
-		CG_Printf("CG_ParseWeaponConfig: Error parsing weapon animation file: %s", filename);
+		CG_Printf("CG_ParseWeaponConfig: Error parsing weapon animation file: %s\n", filename);
 		return qfalse;
 	}
 
