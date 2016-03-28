@@ -960,6 +960,8 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 	// parse the text
 	text_p = text;
 
+	COM_BeginParseSession("CG_ParseWeaponConfig");
+
 	// read optional parameters
 	while (1)
 	{

@@ -76,6 +76,8 @@ static qboolean CG_ParseGibModels(char *modelPath, bg_character_t *character)
 	// parse the text
 	text_p = bigTextBuffer;
 
+	COM_BeginParseSession("CG_ParseGibModels");
+
 	for (i = 0; i < MAX_GIB_MODELS; i++)
 	{
 		token = COM_Parse(&text_p);
@@ -130,6 +132,8 @@ static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
 
 	// parse the text
 	text_p = bigTextBuffer;
+
+	COM_BeginParseSession("CG_ParseHudHeadConfig");
 
 	for (i = 0 ; i < MAX_HD_ANIMATIONS ; i++)
 	{
