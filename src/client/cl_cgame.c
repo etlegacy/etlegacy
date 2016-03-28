@@ -468,7 +468,7 @@ void CL_SetExpectedHunkUsage(const char *mapname)
 			{
 				// found a match
 				token = COM_Parse(&buftrav);    // read the size
-				if (token && *token)
+				if (token && token[0])
 				{
 					// this is the usage
 					com_expectedhunkusage = atoi(token);

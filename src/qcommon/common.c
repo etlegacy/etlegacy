@@ -2791,7 +2791,7 @@ void Com_Init(char *commandLine)
 				char *text_p = defaultProfile;
 				char *token  = COM_Parse(&text_p);
 
-				if (token && *token)
+				if (token && token[0])
 				{
 					Cvar_Set("cl_defaultProfile", token);
 					Cvar_Set("cl_profile", token);
