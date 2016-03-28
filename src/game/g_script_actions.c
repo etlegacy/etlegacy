@@ -377,9 +377,8 @@ qboolean G_ScriptAction_FollowPath(gentity_t *ent, char *params)
 			// round the duration to the next 50ms
 			if (ent->s.pos.trDuration % 50)
 			{
-				float frac;
+				float frac = (float)(((ent->s.pos.trDuration / 50) * 50 + 50) - ent->s.pos.trDuration) / (float)(ent->s.pos.trDuration);
 
-				frac = (float)(((ent->s.pos.trDuration / 50) * 50 + 50) - ent->s.pos.trDuration) / (float)(ent->s.pos.trDuration);
 				if (frac < 1)
 				{
 					ent->s.apos.trDuration = ent->s.pos.trDuration = (ent->s.pos.trDuration / 50) * 50 + 50;
@@ -556,7 +555,7 @@ qboolean G_ScriptAction_SetSpeed(gentity_t *ent, char *params)
 	for (i = 0; i < 3; i++)
 	{
 		token = COM_Parse(&pString);
-		if (!token || !*token)
+		if (!token[0])
 		{
 			G_Error("G_ScriptAction_SetSpeed: syntax: setspeed <x> <y> <z> [gravity|lowgravity]\n");
 		}
@@ -612,7 +611,7 @@ qboolean G_ScriptAction_SetRotation(gentity_t *ent, char *params)
 	for (i = 0; i < 3; i++)
 	{
 		token = COM_Parse(&pString);
-		if (!token || !token[0])
+		if (!token[0])
 		{
 			G_Error("G_ScriptAction_SetRotation: syntax: setrotation <pitchspeed> <yawspeed> <rollspeed>\n");
 		}
@@ -658,7 +657,7 @@ qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 		return qfalse;
 	}
 
-	if (!params || ent->scriptStatus.scriptStackChangeTime < level.time)              // we are waiting for it to reach destination
+	if (!params || ent->scriptStatus.scriptStackChangeTime < level.time)  // we are waiting for it to reach destination
 	{
 		if (ent->s.pos.trTime + ent->s.pos.trDuration <= level.time)      // we made it
 		{
@@ -987,6 +986,7 @@ qboolean G_ScriptAction_SetChargeTimeFactor(gentity_t *ent, char *params)
 
 	{
 		char cs[MAX_INFO_STRING];
+
 		cs[0] = '\0';
 		Info_SetValueForKey(cs, "x0", va("%i", level.soldierChargeTime[0]));
 		Info_SetValueForKey(cs, "a0", va("%i", level.soldierChargeTime[1]));
@@ -1044,7 +1044,7 @@ qboolean G_ScriptAction_AllowTankExit(gentity_t *ent, char *params)
 	char *pString = params, *token;
 
 	token = COM_ParseExt(&pString, qfalse);
-	if (!*token)
+	if (!token[0])
 	{
 		G_Error("G_ScriptAction_AllowTankExit: allowtankexit must have a enable value\n");
 	}
@@ -1066,7 +1066,7 @@ qboolean G_ScriptAction_AllowTankEnter(gentity_t *ent, char *params)
 	char *pString = params, *token;
 
 	token = COM_ParseExt(&pString, qfalse);
-	if (!*token)
+	if (!token[0])
 	{
 		G_Error("G_ScriptAction_AllowTankEnter: allowtankenter must have a enable value\n");
 	}
@@ -1089,7 +1089,7 @@ qboolean G_ScriptAction_SetTankAmmo(gentity_t *ent, char *params)
 	gentity_t *tank;
 
 	token = COM_ParseExt(&pString, qfalse);
-	if (!*token)
+	if (!token[0])
 	{
 		G_Error("G_ScriptAction_SetTankAmmo: settankammo must have a target\n");
 	}
@@ -1106,7 +1106,7 @@ qboolean G_ScriptAction_SetTankAmmo(gentity_t *ent, char *params)
 	}
 
 	token = COM_ParseExt(&pString, qfalse);
-	if (!*token)
+	if (!token[0])
 	{
 		G_Error("G_ScriptAction_SetTankAmmo: settankammo must have an amount\n");
 	}
@@ -1122,7 +1122,7 @@ qboolean G_ScriptAction_AddTankAmmo(gentity_t *ent, char *params)
 	gentity_t *tank;
 
 	token = COM_ParseExt(&pString, qfalse);
-	if (!*token)
+	if (!token[0])
 	{
 		G_Error("G_ScriptAction_AddTankAmmo: addtankammo must have a target\n");
 	}
@@ -1139,7 +1139,7 @@ qboolean G_ScriptAction_AddTankAmmo(gentity_t *ent, char *params)
 	}
 
 	token = COM_ParseExt(&pString, qfalse);
-	if (!*token)
+	if (!token[0])
 	{
 		G_Error("G_ScriptAction_AddTankAmmo: addtankammo must have an amount\n");
 	}
@@ -1183,7 +1183,7 @@ qboolean G_ScriptAction_Kill(gentity_t *ent, char *params)
 	char *pString = params, *token;
 
 	token = COM_ParseExt(&pString, qfalse);
-	if (!*token)
+	if (!token[0])
 	{
 		G_Error("G_ScriptAction_Kill: kill must have a target\n");
 	}
@@ -1539,7 +1539,7 @@ qboolean G_ScriptAction_Wait(gentity_t *ent, char *params)
 
 	// get the duration
 	token = COM_ParseExt(&pString, qfalse);
-	if (!*token)
+	if (!token[0])
 	{
 		G_Error("G_ScriptAction_Wait: wait must have a duration\n");
 	}
@@ -1550,14 +1550,14 @@ qboolean G_ScriptAction_Wait(gentity_t *ent, char *params)
 		int min, max;
 
 		token = COM_ParseExt(&pString, qfalse);
-		if (!*token)
+		if (!token[0])
 		{
 			G_Error("G_ScriptAction_Wait: wait random must have a min duration\n");
 		}
 		min = atoi(token);
 
 		token = COM_ParseExt(&pString, qfalse);
-		if (!*token)
+		if (!token[0])
 		{
 			G_Error("G_ScriptAction_Wait: wait random must have a max duration\n");
 		}
@@ -3513,7 +3513,7 @@ qboolean G_ScriptAction_AddTeamVoiceAnnounce(gentity_t *ent, char *params)
 	}
 
 	token = COM_Parse(&pString);
-	if (!*token)
+	if (!token[0])
 	{
 		G_Error("G_ScriptAction_AddTeamVoiceAnnounce: team parameter required\n");
 	}
@@ -3528,7 +3528,7 @@ qboolean G_ScriptAction_AddTeamVoiceAnnounce(gentity_t *ent, char *params)
 	}
 
 	token = COM_Parse(&pString);
-	if (!*token)
+	if (!token[0])
 	{
 		G_Error("G_ScriptAction_AddTeamVoiceAnnounce: sound parameter required\n");
 	}
@@ -3562,7 +3562,7 @@ qboolean G_ScriptAction_RemoveTeamVoiceAnnounce(gentity_t *ent, char *params)
 	int  index, i;
 
 	token = COM_Parse(&pString);
-	if (!*token)
+	if (!token[0])
 	{
 		G_Error("G_ScriptAction_RemoveTeamVoiceAnnounce: team parameter required\n");
 	}
@@ -3577,7 +3577,7 @@ qboolean G_ScriptAction_RemoveTeamVoiceAnnounce(gentity_t *ent, char *params)
 	}
 
 	token = COM_Parse(&pString);
-	if (!*token)
+	if (!token[0])
 	{
 		G_Error("G_ScriptAction_RemoveTeamVoiceAnnounce: sound parameter required\n");
 	}
@@ -3614,7 +3614,7 @@ qboolean G_ScriptAction_TeamVoiceAnnounce(gentity_t *ent, char *params)
 	}
 
 	token = COM_Parse(&pString);
-	if (!*token)
+	if (!token[0])
 	{
 		G_Error("G_ScriptAction_TeamVoiceAnnounce: team parameter required\n");
 	}
@@ -3629,7 +3629,7 @@ qboolean G_ScriptAction_TeamVoiceAnnounce(gentity_t *ent, char *params)
 	}
 
 	token = COM_Parse(&pString);
-	if (!*token)
+	if (!token[0])
 	{
 		G_Error("G_ScriptAction_TeamVoiceAnnounce: sound parameter required\n");
 	}
@@ -3664,7 +3664,7 @@ qboolean G_ScriptAction_Announce_Icon(gentity_t *ent, char *params)
 	}
 
 	token = COM_Parse(&pString);
-	if (!*token)
+	if (!token[0])
 	{
 		G_Error("G_ScriptAction_Announce_Icon: icon index parameter required\n");
 	}
@@ -3675,7 +3675,7 @@ qboolean G_ScriptAction_Announce_Icon(gentity_t *ent, char *params)
 	}
 
 	token = COM_Parse(&pString);
-	if (!*token)
+	if (!token[0])
 	{
 		G_Error("G_ScriptAction_Announce_Icon: statement parameter required\n");
 	}
@@ -3868,7 +3868,7 @@ qboolean G_ScriptAction_SetState(gentity_t *ent, char *params)
 
 	token = COM_ParseExt(&pString, qfalse);
 	Q_strncpyz(name, token, sizeof(name));
-	if (!*name)
+	if (!name[0])
 	{
 		G_Error("G_ScriptAction_SetState: setstate must have a name and an state\n");
 	}
@@ -3877,8 +3877,7 @@ qboolean G_ScriptAction_SetState(gentity_t *ent, char *params)
 	Q_strncpyz(state, token, sizeof(state));
 	if (!state[0])
 	{
-		G_Error("G_ScriptAction_SetState: setstate (%s) must have a name and an state\n",
-		        name);
+		G_Error("G_ScriptAction_SetState: setstate (%s) must have a name and an state\n", name);
 	}
 
 	if (!Q_stricmp(state, "default"))
@@ -3895,8 +3894,7 @@ qboolean G_ScriptAction_SetState(gentity_t *ent, char *params)
 	}
 	else
 	{
-		G_Error("G_ScriptAction_SetState: setstate (%s) with invalid state '%s'\n",
-		        name, state);
+		G_Error("G_ScriptAction_SetState: setstate (%s) with invalid state '%s'\n", name, state);
 	}
 
 	// look for an entities
