@@ -3449,7 +3449,7 @@ CL_LocalServers_f
 void CL_LocalServers_f(void)
 {
 	char     *message;
-	int      i, j;
+	int      i, j, messageLen;
 	netadr_t to;
 
 	Com_Printf("Scanning for servers on the local network...\n");
@@ -3461,6 +3461,7 @@ void CL_LocalServers_f(void)
 	for (i = 0; i < MAX_OTHER_SERVERS; i++)
 	{
 		qboolean b = cls.localServers[i].visible;
+
 		Com_Memset(&cls.localServers[i], 0, sizeof(cls.localServers[i]));
 		cls.localServers[i].visible = b;
 	}
@@ -3469,7 +3470,8 @@ void CL_LocalServers_f(void)
 	// The 'xxx' in the message is a challenge that will be echoed back
 	// by the server.  We don't care about that here, but master servers
 	// can use that to prevent spoofed server responses from invalid ip
-	message = "\377\377\377\377getinfo xxx";
+	message    = "\377\377\377\377getinfo xxx";
+	messageLen = strlen(message);
 
 	// send each message twice in case one is dropped
 	for (i = 0 ; i < 2 ; i++)
@@ -3482,13 +3484,13 @@ void CL_LocalServers_f(void)
 			to.port = BigShort(( short ) (PORT_SERVER + j));
 
 			to.type = NA_BROADCAST;
-			NET_SendPacket(NS_CLIENT, strlen(message), message, to);
+			NET_SendPacket(NS_CLIENT, messageLen, message, to);
 
 #ifdef FEATURE_IPV6
 			if (Cvar_VariableIntegerValue("net_enabled") & NET_ENABLEV6)
 			{
 				to.type = NA_MULTICAST6;
-				NET_SendPacket(NS_CLIENT, strlen(message), message, to);
+				NET_SendPacket(NS_CLIENT, messageLen, message, to);
 			}
 #endif
 		}
