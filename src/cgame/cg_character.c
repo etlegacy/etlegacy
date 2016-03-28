@@ -80,7 +80,7 @@ static qboolean CG_ParseGibModels(char *modelPath, bg_character_t *character)
 	{
 		token = COM_Parse(&text_p);
 
-		if (!token || !token[0])
+		if (!token[0])
 		{
 			break;
 		}
@@ -473,7 +473,7 @@ qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *charact
 			{
 				if (!CG_RegisterAcc(accessoryname, &character->accModels[cg_headAccessories[i].index], characterDef.skin, &character->accSkins[cg_headAccessories[i].index]))
 				{
-					CG_Printf(S_COLOR_YELLOW "WARNING: failed to register accessory '%s' referenced from '%s'->'%s'\n", accessoryname, characterFile, filename);
+					CG_Printf(S_COLOR_YELLOW "WARNING: failed to register hud accessory '%s' referenced from '%s'->'%s'\n", accessoryname, characterFile, filename);
 				}
 			}
 		}
