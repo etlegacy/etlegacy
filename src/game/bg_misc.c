@@ -3552,8 +3552,8 @@ const char *miniRankNames_Axis[NUM_EXPERIENCE_LEVELS] =
 	"Hpt",
 	"Mjr",
 	"Obs",
-	"BGn",
-	"LtG",
+	"GMj",
+	"GLt",
 	"Gen",
 };
 
@@ -3567,8 +3567,8 @@ const char *miniRankNames_Allies[NUM_EXPERIENCE_LEVELS] =
 	"Cpt",
 	"Maj",
 	"Cnl",
-	"GMj",
-	"GLt",
+	"BGn",
+	"LtG",
 	"Gen",
 };
 
