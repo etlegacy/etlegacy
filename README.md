@@ -85,7 +85,7 @@ DEPENDENCIES
 * **CMake** (compile-time only)
 * **OpenGL**
 * **GLEW** version 1.10
-* **SDL** version 2.0.3
+* **SDL** version 2.0.4
 * **ZLib** version 1.2.8
 * **MiniZip**
 * **libjpeg-turbo** version 1.3, or **libjpeg** version 8
@@ -95,7 +95,7 @@ DEPENDENCIES
 * **Theora** (optional, enabled by default)
 * **Freetype** version 2 (optional, enabled by default)
 * **SQLite** version 3 (optional, enabled by default)
-* **OpenAL** version 1.14 (optional, enabled by default)
+* **OpenAL** version 1.17 (optional, enabled by default)
 * **Jansson** (optional)
 
 To get the latest source code install [git](http://git-scm.com/) and
