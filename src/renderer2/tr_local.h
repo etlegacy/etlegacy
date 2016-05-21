@@ -2633,7 +2633,7 @@ void R_Modellist_f(void);
 //====================================================
 extern refimport_t ri;
 
-#define MAX_MOD_KNOWN           1024
+#define MAX_MOD_KNOWN           2048
 #define MAX_ANIMATIONFILES      4096
 
 #define MAX_LIGHTMAPS           256
