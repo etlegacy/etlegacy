@@ -1612,16 +1612,16 @@ static int _et_G_XP_Set(lua_State *L)
 	{
 		float oldxp = ent->client->sess.skillpoints[skill];
 
-		ent->client->sess.skillpoints[skill] = (float)xp;
-		// ent->client->sess.mapstartSkillpoints[skill] = (float)xp;
+		ent->client->sess.skillpoints[skill] = xp;
+		//ent->client->sess.mapstartSkillpoints[skill] = xp;
 		ent->client->sess.startxptotal -= oldxp;
-		ent->client->sess.startxptotal += (float)xp;
+		ent->client->sess.startxptotal += xp;
 	}
 	else
 	{
-		ent->client->sess.skillpoints[skill] += (float)xp;
-		// ent->client->sess.mapstartSkillpoints[skill] += (float)xp;
-		ent->client->sess.startxptotal += (float)xp;
+		ent->client->sess.skillpoints[skill] += xp;
+		//ent->client->sess.mapstartSkillpoints[skill] += xp;
+		ent->client->sess.startxptotal += xp;
 	}
 
 	ent->client->ps.stats[STAT_XP] = (int)ent->client->sess.startxptotal;
