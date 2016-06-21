@@ -227,6 +227,7 @@ set( ANDROID_SUPPORTED_ABIS_arm "armeabi-v7a;armeabi;armeabi-v7a with NEON;armea
 set( ANDROID_SUPPORTED_ABIS_arm64 "arm64-v8a;arm64-v8a with NEON;arm64-v8a with VFPV4" )
 set( ANDROID_SUPPORTED_ABIS_x86 "x86" )
 set( ANDROID_SUPPORTED_ABIS_mipsel "mips" )
+arm64
 set( ANDROID_DEFAULT_NDK_API_LEVEL 8 )
 set( ANDROID_DEFAULT_NDK_API_LEVEL_arm64 21 )
 set( ANDROID_DEFAULT_NDK_API_LEVEL_x86 9 )
@@ -843,7 +844,7 @@ else()
 endif()
 
 # release and debug flags
-if( ARMEABI OR ARMEABI_V7A)
+if( ARMEABI OR ARMEABI_V7A OR ARMEABI_V8A )
  if( NOT ANDROID_FORCE_ARM_BUILD AND NOT ARMEABI_V6 )
   # It is recommended to use the -mthumb compiler flag to force the generation
   # of 16-bit Thumb-1 instructions (the default being 32-bit ARM ones).
