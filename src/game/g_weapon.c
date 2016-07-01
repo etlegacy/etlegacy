@@ -2542,7 +2542,6 @@ void G_AddAirstrikeToCounters(gentity_t *ent)
 	if (g_misc.integer & G_MISC_ARTY_STRIKE_COMBINE)
 	{
 		G_AddArtilleryToCounters(ent);
-		return;
 	}
 
 	if (ent->client->sess.sessionTeam == TEAM_AXIS)
