@@ -2494,9 +2494,9 @@ void G_AirStrikeExplode(gentity_t *self)
 
 qboolean G_AvailableAirstrikes(gentity_t *ent)
 {
-	if (g_misc.integer & G_MISC_ARTY_STRIKE_COMBINE)
+	if ((g_misc.integer & G_MISC_ARTY_STRIKE_COMBINE) && !G_AvailableArtillery(ent))
 	{
-		return G_AvailableArtillery(ent);
+		return qfalse;
 	}
 
 	if (ent->client->sess.sessionTeam == TEAM_AXIS)
@@ -2835,7 +2835,7 @@ void artilleryThink_real(gentity_t *ent)
 void artilleryThink(gentity_t *ent)
 {
 	ent->think     = artilleryThink_real;
-	ent->nextthink = level.time + 100;
+	ent->nextthink = level.time + FRAMETIME;
 
 	ent->r.svFlags = SVF_BROADCAST;
 }

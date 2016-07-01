@@ -900,8 +900,7 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 	animScript_t          *currentScript = NULL;
 	animScriptItem_t      tempScriptItem;
 	animScriptItem_t      *currentScriptItem = NULL;
-	int                   indexes[MAX_INDENT_LEVELS], indentLevel = 0, /*oldState,*/ newParseMode;
-	int                   i, defineType;
+	int                   indexes[MAX_INDENT_LEVELS], indentLevel = 0, newParseMode, i, defineType;
 
 	// the scriptData passed into here must be the one this binary is using
 	globalScriptData = scriptData;

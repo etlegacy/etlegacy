@@ -2026,7 +2026,7 @@ qboolean G_ScriptAction_PlayAnim(gentity_t *ent, char *params)
 			{
 				if (level.time < ent->s.pos.trTime + ent->s.pos.trDuration)
 				{
-					endtime = level.time + 100;
+					endtime = level.time + FRAMETIME;
 				}
 				else
 				{
@@ -2037,7 +2037,7 @@ qboolean G_ScriptAction_PlayAnim(gentity_t *ent, char *params)
 			{
 				ent->scriptStatus.animatingParams = params;
 				ent->scriptStatus.scriptFlags    |= SCFL_ANIMATING;
-				endtime                           = level.time + 100; // we don't care when it ends, since we are going forever!
+				endtime                           = level.time + FRAMETIME; // we don't care when it ends, since we are going forever!
 				forever                           = qtrue;
 			}
 			else

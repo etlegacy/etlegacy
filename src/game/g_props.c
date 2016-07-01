@@ -1304,7 +1304,7 @@ qboolean Prop_Touch(gentity_t *self, gentity_t *other, vec3_t v)
 	VectorCopy(dest, self->s.pos.trDelta);
 	VectorCopy(self->r.currentOrigin, self->s.pos.trBase);
 
-	self->s.pos.trDuration = level.time + 100;
+	self->s.pos.trDuration = level.time + FRAMETIME;
 	self->s.pos.trTime     = level.time;
 	self->s.pos.trType     = TR_LINEAR;
 

@@ -1079,7 +1079,7 @@ void script_mover_think(gentity_t *ent)
 		}
 	}
 
-	ent->nextthink = level.time + 100;
+	ent->nextthink = level.time + FRAMETIME;
 }
 
 void script_mover_spawn(gentity_t *ent)

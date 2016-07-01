@@ -440,7 +440,7 @@ void SP_misc_portal_surface(gentity_t *ent)
 	else
 	{
 		ent->think     = locateCamera;
-		ent->nextthink = level.time + 100;
+		ent->nextthink = level.time + FRAMETIME;
 	}
 }
 
@@ -838,7 +838,7 @@ void SP_dlight(gentity_t *ent)
 	ent->think = dlight_finish_spawning;
 	if (!dlightstarttime)                          // sync up all the dlights
 	{
-		dlightstarttime = level.time + 100;
+		dlightstarttime = level.time + FRAMETIME;
 	}
 	ent->nextthink = dlightstarttime;
 
@@ -2063,7 +2063,7 @@ void misc_firetrails_think(gentity_t *ent)
 void SP_misc_firetrails(gentity_t *ent)
 {
 	ent->think     = misc_firetrails_think;
-	ent->nextthink = level.time + 100;
+	ent->nextthink = level.time + FRAMETIME;
 }
 
 /*QUAKED misc_constructiblemarker (1 0.85 0) ?

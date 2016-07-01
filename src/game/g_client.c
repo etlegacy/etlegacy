@@ -374,7 +374,7 @@ void BodySink(gentity_t *ent)
 		// see if parent is still disguised
 		if (ent->activator->client->ps.powerups[PW_OPS_DISGUISED])
 		{
-			ent->nextthink = level.time + 100;
+			ent->nextthink = level.time + FRAMETIME;
 			return;
 		}
 		else
