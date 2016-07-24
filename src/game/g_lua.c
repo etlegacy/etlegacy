@@ -706,24 +706,27 @@ static int _et_G_LoseSkillPoints(lua_State *L)
 // client entity fields
 static const gentity_field_t gclient_fields[] =
 {
-	_et_gclient_addfield(acc,                            FIELD_FLOAT,       FIELD_FLAG_READONLY),
-	_et_gclient_addfield(lasthurt_mod,                   FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.playerStats.selfkills,     FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(lastKillTime,                   FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(lasthurt_time,                  FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(lasthurt_client,                FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(freezed,                        FIELD_INT,         0),
-	_et_gclient_addfield(noclip,                         FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(deathAnimTime,                  FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.lastBattleSenseBonusTime,  FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.lastHQMineReportTime,      FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.maxHealth,                 FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(respawnTime,                    FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(saved_persistant,               FIELD_INT_ARRAY,   FIELD_FLAG_READONLY),
-	_et_gclient_addfield(PCSpecialPickedUpCount,         FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(combatState,                    FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(inactivityTime,                 FIELD_INT,         0),
-	_et_gclient_addfield(inactivityWarning,              FIELD_INT,         0),
+	_et_gclient_addfield(noclip,                            FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(lastKillTime,                      FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(saved_persistant,                  FIELD_INT_ARRAY,   FIELD_FLAG_READONLY),
+	_et_gclient_addfield(lastConstructibleBlockingWarnTime, FIELD_INT,      FIELD_FLAG_READONLY),
+	_et_gclient_addfield(landmineSpottedTime,               FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(lasthurt_client,                   FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(lasthurt_mod,                      FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(lasthurt_time,                     FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(respawnTime,                       FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(inactivityTime,                    FIELD_INT,         0),
+	_et_gclient_addfield(inactivityWarning,                 FIELD_INT,         0),
+	_et_gclient_addfield(PCSpecialPickedUpCount,            FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(combatState,                       FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(deathAnimTime,                     FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(deathTime,                         FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(disguiseClientNum,                 FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(medals,                            FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(acc,                               FIELD_FLOAT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(hspct,                             FIELD_FLOAT,       FIELD_FLAG_READONLY),
+	_et_gclient_addfield(freezed,                           FIELD_INT,         0),
+	_et_gclient_addfield(constructSoundTime,                FIELD_INT,         FIELD_FLAG_READONLY),
 
 	// to be compatible with ETPro:
 	_et_gclient_addfieldalias(client.inactivityTime,     inactivityTime,    FIELD_INT,           0),
@@ -761,6 +764,13 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(pers.lastteambleed_client,      FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.lastteambleed_dmg,         FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.playerStats.hitRegions,    FIELD_INT_ARRAY,   FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.lastBattleSenseBonusTime,  FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.lastHQMineReportTime,      FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.maxHealth,                 FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.playerStats.selfkills,     FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.lastBattleSenseBonusTime,  FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.lastHQMineReportTime,      FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.maxHealth,                 FIELD_INT,         FIELD_FLAG_READONLY),
 
 	_et_gclient_addfield(ps.pm_flags,                    FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(ps.pm_time,                     FIELD_INT,         FIELD_FLAG_READONLY),
@@ -826,11 +836,9 @@ static const gentity_field_t gclient_fields[] =
 	// TODO
 	//_et_gclient_addfieldalias(aWeaponStats, sess.aWeaponStats, FIELD_WEAPONSTAT_EXT, FIELD_FLAG_READONLY),
 
-
 	// origin: use ps.origin instead of r.currentOrigin
 	// for client entities
 	_et_gclient_addfieldalias(origin,                    ps.origin,         FIELD_VEC3,          0),
-
 
 	// missing sess.semiadmin
 	// missing sess.gibs
