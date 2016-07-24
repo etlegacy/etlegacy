@@ -2628,10 +2628,8 @@ SortRanks
 */
 int QDECL SortRanks(const void *a, const void *b)
 {
-	gclient_t *ca, *cb;
-
-	ca = &level.clients[*(int *)a];
-	cb = &level.clients[*(int *)b];
+	gclient_t *ca = &level.clients[*(int *)a];
+	gclient_t *cb = &level.clients[*(int *)b];
 
 	// sort special clients last
 	if (ca->sess.spectatorClient < 0)
@@ -3303,7 +3301,6 @@ or moved to a new level based on the "nextmap" cvar
 void ExitLevel(void)
 {
 	int       i;
-	gclient_t *cl;
 
 	// FIXME: do a switch
 	if (g_gametype.integer == GT_WOLF_CAMPAIGN)
@@ -3351,8 +3348,7 @@ void ExitLevel(void)
 	// MAPVOTE
 	else if (g_gametype.integer == GT_WOLF_MAPVOTE)
 	{
-		int nextMap    = 0, highMapVote = 0, curMapVotes = 0, maxMaps;
-		int highMapAge = 0, curMapAge = 0;
+		int nextMap = 0, highMapVote = 0, curMapVotes = 0, maxMaps, highMapAge = 0, curMapAge = 0;
 
 		if (g_resetXPMapCount.integer)
 		{
@@ -3407,6 +3403,8 @@ void ExitLevel(void)
 	level.teamScores[TEAM_ALLIES] = 0;
 	if (g_gametype.integer != GT_WOLF_CAMPAIGN)
 	{
+		gclient_t *cl;
+
 		for (i = 0 ; i < g_maxclients.integer ; i++)
 		{
 			cl = level.clients + i;
@@ -3510,8 +3508,6 @@ void G_LogExit(const char *string)
 
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
-		int ping;
-
 		cl = &level.clients[level.sortedClients[i]];
 
 		G_MakeUnready(&g_entities[level.sortedClients[i]]);
@@ -3528,9 +3524,7 @@ void G_LogExit(const char *string)
 		// Make sure all the stats are recalculated and accurate
 		G_CalcRank(cl);
 
-		ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
-
-		G_LogPrintf("score: %i  ping: %i  client: %i %s\n", cl->ps.persistant[PERS_SCORE], ping, level.sortedClients[i], cl->pers.netname);
+		G_LogPrintf("score: %i  ping: %i  client: %i %s\n", cl->ps.persistant[PERS_SCORE], (cl->ps.ping < 999 ? cl->ps.ping : 999), level.sortedClients[i], cl->pers.netname);
 	}
 
 #ifdef FEATURE_RATING
@@ -4262,8 +4256,6 @@ void CheckCvars(void)
  */
 void G_RunThink(gentity_t *ent)
 {
-	int thinktime;
-
 	// If paused, push nextthink
 	if (level.match_pause != PAUSE_NONE && (ent - g_entities) >= g_maxclients.integer &&
 	    ent->nextthink > level.time && strstr(ent->classname, "DPRINTF_") == NULL)
@@ -4277,12 +4269,11 @@ void G_RunThink(gentity_t *ent)
 		G_Script_ScriptRun(ent);
 	}
 
-	thinktime = ent->nextthink;
-	if (thinktime <= 0)
+	if (ent->nextthink <= 0)
 	{
 		return;
 	}
-	if (thinktime > level.time)
+	if (ent->nextthink > level.time)
 	{
 		return;
 	}
@@ -4354,8 +4345,6 @@ qboolean G_PositionEntityOnTag(gentity_t *entity, gentity_t *parent, char *tagNa
 void G_TagLinkEntity(gentity_t *ent, int msec)
 {
 	gentity_t *parent = &g_entities[ent->s.torsoAnim];
-	vec3_t    move;
-	gentity_t *obstacle;
 	vec3_t    origin, angles = { 0, 0, 0 };
 	vec3_t    v;
 
@@ -4487,7 +4476,8 @@ void G_TagLinkEntity(gentity_t *ent, int msec)
 
 	if (ent->moving)
 	{
-		vec3_t amove;
+		vec3_t    amove, move;
+		gentity_t *obstacle;
 
 		VectorSubtract(origin, ent->r.currentOrigin, move);
 		VectorSubtract(angles, ent->r.currentAngles, amove);
@@ -5028,7 +5018,6 @@ void G_readconfigfile_string(char **cnf, char *s, int size)
 {
 	char *t;
 
-	//COM_MatchToken(cnf, "=");
 	t = COM_ParseExt(cnf, qfalse);
 	if (!strcmp(t, "="))
 	{
@@ -5064,7 +5053,6 @@ void G_readconfigfile_int(char **cnf, int *v)
 {
 	char *t;
 
-	//COM_MatchToken(cnf, "=");
 	t = COM_ParseExt(cnf, qfalse);
 	if (!strcmp(t, "="))
 	{
@@ -5116,11 +5104,10 @@ void G_mapvoteinfo_read()
 	COM_BeginParseSession("MapvoteinfoRead");
 
 	t = COM_Parse(&cnf);
-	while (*t)
+	while (t[0])
 	{
 		if (!Q_stricmp(t, "name"))
 		{
-			//G_shrubbot_readconfig_string(&cnf, bspName, sizeof(bspName));
 			G_readconfigfile_string(&cnf, bspName, sizeof(bspName));
 			curMap = -1;
 			for (i = 0; i < level.mapVoteNumMaps; i++)
