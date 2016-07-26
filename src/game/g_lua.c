@@ -264,6 +264,7 @@ static int _et_MutePlayer(lua_State *L)
 
 	if (!ent->client)
 	{
+		luaL_error(L, "clientNum \"%d\" is not a client entity", clientnum);
 		return 0;
 	}
 
@@ -309,6 +310,7 @@ static int _et_UnmutePlayer(lua_State *L)
 
 	if (!ent->client)
 	{
+		luaL_error(L, "clientNum \"%d\" is not a client entity", clientnum);
 		return 0;
 	}
 
@@ -359,10 +361,9 @@ static int _et_trap_DropClient(lua_State *L)
 {
 	int        clientnum = (int)luaL_checkinteger(L, 1);
 	const char *reason   = luaL_checkstring(L, 2);
-	int        ban       = trap_Cvar_VariableIntegerValue("g_defaultBanTime"); // FIXME: 3d add param int for ban time
+	int        ban_time  = (int)luaL_checkinteger(L, 3);
 
-	ban = luaL_optinteger(L, 3, ban);
-	trap_DropClient(clientnum, reason, ban);
+	trap_DropClient(clientnum, reason, ban_time);
 	return 0;
 }
 
@@ -768,9 +769,6 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(pers.lastHQMineReportTime,      FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.maxHealth,                 FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.playerStats.selfkills,     FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.lastBattleSenseBonusTime,  FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.lastHQMineReportTime,      FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.maxHealth,                 FIELD_INT,         FIELD_FLAG_READONLY),
 
 	_et_gclient_addfield(ps.pm_flags,                    FIELD_INT,         FIELD_FLAG_READONLY),
 	_et_gclient_addfield(ps.pm_time,                     FIELD_INT,         FIELD_FLAG_READONLY),
@@ -799,9 +797,7 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(sess.latchPlayerWeapon,         FIELD_INT,         0),
 	_et_gclient_addfield(sess.latchPlayerWeapon2,        FIELD_INT,         0),
 	_et_gclient_addfield(sess.ignoreClients,             FIELD_INT_ARRAY,   0),
-
 	_et_gclient_addfield(sess.muted,                     FIELD_INT,         0),
-
 	_et_gclient_addfield(sess.skillpoints,               FIELD_FLOAT_ARRAY, FIELD_FLAG_READONLY),
 	_et_gclient_addfield(sess.startskillpoints,          FIELD_FLOAT_ARRAY, FIELD_FLAG_READONLY),
 	_et_gclient_addfield(sess.startxptotal,              FIELD_FLOAT,       FIELD_FLAG_READONLY),
@@ -829,6 +825,8 @@ static const gentity_field_t gclient_fields[] =
 #ifdef FEATURE_RATING
 	_et_gclient_addfield(sess.mu,                        FIELD_FLOAT,       0),
 	_et_gclient_addfield(sess.sigma,                     FIELD_FLOAT,       0),
+	_et_gclient_addfield(sess.oldmu,                     FIELD_FLOAT,       0),
+	_et_gclient_addfield(sess.oldsigma,                  FIELD_FLOAT,       0),
 #endif
 	_et_gclient_addfield(sess.uci,                       FIELD_INT,         0),
 
@@ -895,7 +893,7 @@ static const gentity_field_t gentity_fields[] =
 	_et_gentity_addfield(r.currentAngles,     FIELD_VEC3,       0),
 	_et_gentity_addfield(r.currentOrigin,     FIELD_VEC3,       0),
 	_et_gentity_addfield(r.eventTime,         FIELD_INT,        0),
-	// _et_gentity_addfield(r.linkcount, FIELD_INT, FIELD_FLAG_READONLY), // IRATA: not used, kept for ET compatibility, so we don't provide it
+	// _et_gentity_addfield(r.linkcount, FIELD_INT, FIELD_FLAG_READONLY), // not used, kept for ET compatibility, so we don't provide it
 	_et_gentity_addfield(r.linked,            FIELD_INT,        FIELD_FLAG_READONLY),
 	_et_gentity_addfield(r.maxs,              FIELD_VEC3,       0),
 	_et_gentity_addfield(r.mins,              FIELD_VEC3,       0),
@@ -1146,11 +1144,10 @@ gentity_t* G_Lua_CreateEntity(char *params)
 	return create;
 }
 
-// entnum = _et_G_Lua_EntityCreate()
+// entnum = _et_G_Lua_CreateEntity(params)
 // This function expects same as G_ScriptAction_Create -  keys & values
 // see http://wolfwiki.anime.net/index.php/Map_scripting
-// was et.G_Spawn() before 2.75
-// FIXME: add delete mapscript function
+// was et.G_Spawn() before 2.75 (... and  did not work)
 static int _et_G_Lua_CreateEntity(lua_State *L)
 {
 	gentity_t *entnum;
@@ -1650,16 +1647,21 @@ static int _et_G_ResetXP(lua_State *L)
 	int       entnum = luaL_optinteger(L, 1, -1);
 	gentity_t *ent;
 
-	if (entnum > -1) // FIXME: Limit to player ents only
+	if (entnum > -1 && entnum < MAX_CLIENTS)
 	{
 		ent = g_entities + entnum;
 
 		if (!ent->client)
 		{
+			luaL_error(L, "clientNum \"%d\" is not a client entity", entnum);
 			return 0;
 		}
 
 		G_ResetXP(ent);
+	}
+	else
+	{
+		luaL_error(L, "clientNum \"%d\" is not a client entity number", entnum);
 	}
 	return 0;
 }
@@ -1670,10 +1672,14 @@ static int _et_G_SetEntState(lua_State *L)
 	int        entnum   = (int)luaL_checkinteger(L, 1);
 	entState_t newstate = (int)luaL_checkinteger(L, 2);
 
-	if (entnum > -1 && entnum < 1024) // FIXME: don't do this with world ent
+	if (entnum > -1 && entnum < ENTITYNUM_MAX_NORMAL) // don't do this with world ent
 	{
 		ent = g_entities + entnum;
 		G_SetEntState(ent, newstate);
+	}
+	else
+	{
+		luaL_error(L, "entity number \"%d\" is out of range", entnum);
 	}
 	return 0;
 }
