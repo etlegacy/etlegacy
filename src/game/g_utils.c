@@ -789,7 +789,7 @@ int G_EntitiesFree(void)
 		}
 	}
 
-	return 1024 - entities;
+	return MAX_GENTITIES - entities;
 }
 
 /**
