@@ -446,9 +446,21 @@ run_build() {
 
 create_osx_dmg() {
 	# Generate DMG
-	app_exists APP_FOUND "dmgcanvas"
+	app_exists APP_FOUND "gm"
 	if [ $APP_FOUND == 0 ]; then
-		echo "Missing dmgcanvas skipping OSX installer creation"
+		echo "Missing GraphicsMagick skipping OSX installer creation"
+		return
+	fi
+
+	app_exists APP_FOUND "node"
+	if [ $APP_FOUND == 0 ]; then
+		echo "Missing nodejs skipping OSX installer creation"
+		return
+	fi
+
+	app_exists APP_FOUND "appdmg"
+	if [ $APP_FOUND == 0 ]; then
+		echo "Missing appdmg skipping OSX installer creation"
 		return
 	fi
 
@@ -459,15 +471,17 @@ create_osx_dmg() {
 	fi
 
 	echo "Generating OSX installer"
-	CANVAS_FILE="ETLegacy.dmgCanvas"
+	SHORT_VERSION=`git describe --abbrev=0 --tags 2>/dev/null`
 
 	# Generate the icon for the folder
 	# using rsvg-convert
 	# brew install librsvg
 	rsvg-convert -h 256 ../misc/etl.svg > icon.png
 
-	# Copy the canvas
-	cp -rf ../misc/${CANVAS_FILE} ${CANVAS_FILE}
+	# Generate the DMG background
+	# using the Graphics Magick
+	# brew install graphicsmagick
+	gm convert ../misc/osx-dmg-background.jpg -resize 640x360 -font ../misc/din1451alt.ttf -pointsize 20 -fill 'rgb(85,85,85)'  -draw "text 75,352 '${SHORT_VERSION}'" osx-dmg-background.jpg
 
 	# Needs to be the osx:s default python install!
 	python << END
@@ -488,8 +502,30 @@ if len(files) == 1 :
 	Cocoa.NSWorkspace.sharedWorkspace().setIcon_forFile_options_(Cocoa.NSImage.alloc().initWithContentsOfFile_(iconfile), foldername, 0) or sys.exit("Unable to set file icon")
 	print 'The icon succesfully set'
 END
-	# We will be generating the dmg with the DMG Canvas app
-	dmgcanvas ${CANVAS_FILE} "ETLegacy-${LEGACY_VERSION}.dmg" -v "ET Legacy ${LEGACY_VERSION}" -volume "ET Legacy ${LEGACY_VERSION}"
+
+	# Create the DMG json
+	cat << END > legacy-dmg.json
+{
+	"title": "ET Legacy $SHORT_VERSION",
+	"icon": "../misc/etl.icns",
+  "background": "osx-dmg-background.jpg",
+  "window": {
+  	"size": {
+  		"width": 640,
+  		"height": 390
+  	}
+  },
+  "contents": [
+    { "x": 456, "y": 250, "type": "link", "path": "/Applications" },
+    { "x": 192, "y": 250, "type": "file", "path": "ET Legacy" }
+  ]
+}
+END
+
+	# using appdmg nodejs application to generate the actual DMG installer
+	# https://github.com/LinusU/node-appdmg
+	# npm install -g appdmg
+	appdmg legacy-dmg.json "ETLegacy-${LEGACY_VERSION}.dmg"
 }
 
 run_package() {
