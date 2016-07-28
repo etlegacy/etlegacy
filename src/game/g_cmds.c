@@ -4084,6 +4084,12 @@ qboolean G_PushPlayer(gentity_t *ent, gentity_t *victim)
 	{
 		return qfalse;
 	}
+	
+	// Don't allow pushing when player is using mg 
+	if (victim->client->ps.persistant[PERS_HWEAPON_USE])
+	{
+		return qfalse;
+	}
 
 	ent->client->pmext.shoveTime = level.time;
 
