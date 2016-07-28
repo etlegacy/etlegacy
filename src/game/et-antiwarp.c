@@ -250,7 +250,7 @@ void DoClientThinks(gentity_t *ent)
 		}
 		else
 		{
-			savedTime = 0;  // zinx - shut up compiler
+			savedTime = 0;  // shut up compiler
 		}
 
 		// erh.  hack, really. make it run for the proper amount of time.
@@ -312,7 +312,9 @@ drop_packet:
 		//legacy_AddDebugLine( org, parms, ((ent - g_entities) % 32), LINEMODE_SPOKES, LINESHADER_RAILCORE, 0, qfalse );
 	}
 
-	//ent->client->ps.stats[STAT_ANTIWARP_DELAY] = latestTime - ent->client->ps.commandTime;
-	//if (ent->client->ps.stats[STAT_ANTIWARP_DELAY] < 0)
-	//	ent->client->ps.stats[STAT_ANTIWARP_DELAY] = 0;
+	ent->client->ps.stats[STAT_ANTIWARP_DELAY] = latestTime - ent->client->ps.commandTime;
+	if (ent->client->ps.stats[STAT_ANTIWARP_DELAY] < 0)
+	{
+		ent->client->ps.stats[STAT_ANTIWARP_DELAY] = 0;
+	}
 }

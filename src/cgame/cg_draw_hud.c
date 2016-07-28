@@ -2123,6 +2123,7 @@ typedef struct
 	int frameCount;
 	int snapshotFlags[LAG_SAMPLES];
 	int snapshotSamples[LAG_SAMPLES];
+    int snapshotAntiwarp[LAG_SAMPLES];
 	int snapshotCount;
 } lagometer_t;
 
@@ -2142,17 +2143,14 @@ void CG_AddLagometerFrameInfo(void)
  */
 void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 {
+	int index = lagometer.snapshotCount & (LAG_SAMPLES - 1);
+
 	// dropped packet
 	if (!snap)
 	{
-		lagometer.snapshotSamples[lagometer.snapshotCount & (LAG_SAMPLES - 1)] = -1;
+		lagometer.snapshotSamples[index] = -1;
 		lagometer.snapshotCount++;
 		return;
-	}
-
-	if (cg.demoPlayback)
-	{
-		snap->ping = (snap->serverTime - snap->ps.commandTime) - 50;
 	}
 
 	// add this snapshot's info
@@ -2160,15 +2158,18 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 	{
 		static int lasttime = 0;
 
+		snap->ping = (snap->serverTime - snap->ps.commandTime) - 50;
+
 		// display snapshot time delta instead of ping
-		lagometer.snapshotSamples[lagometer.snapshotCount & (LAG_SAMPLES - 1)] = snap->serverTime - lasttime;
-		lasttime                                                               = snap->serverTime;
+		lagometer.snapshotSamples[index] = snap->serverTime - lasttime;
+		lasttime                         = snap->serverTime;
 	}
 	else
 	{
-		lagometer.snapshotSamples[lagometer.snapshotCount & (LAG_SAMPLES - 1)] = snap->ping;
+		lagometer.snapshotSamples[index] = MAX(snap->ping - snap->ps.stats[STAT_ANTIWARP_DELAY], 0);
 	}
-	lagometer.snapshotFlags[lagometer.snapshotCount & (LAG_SAMPLES - 1)] = snap->snapFlags;
+	lagometer.snapshotAntiwarp[index]  = snap->ping; // TODO: check this for demoPlayback
+	lagometer.snapshotFlags[index]     = snap->snapFlags;
 	lagometer.snapshotCount++;
 }
 
@@ -2243,6 +2244,8 @@ static float CG_DrawPing(float y)
 
 	return y + 12 + 4;
 }
+
+vec4_t colorAW = { 0, 0.5, 0, 0.5f };
 
 /**
  * @brief Draw the lagometer
@@ -2322,6 +2325,24 @@ static float CG_DrawLagometer(float y)
 		v = lagometer.snapshotSamples[i];
 		if (v > 0)
 		{
+            // antiwarp indicator
+            if (lagometer.snapshotAntiwarp[i] > 0)
+            {
+            	float w = lagometer.snapshotAntiwarp[i] * vscale;
+
+                if (color != 6)
+                {
+                    color = 6;
+                    trap_R_SetColor(colorAW);
+                }
+
+                if (w > range)
+                {
+                    w = range;
+                }
+                trap_R_DrawStretchPic( ax + aw - a, ay + ah - w - 2, 1, w, 0, 0, 0, 0, cgs.media.whiteShader );
+            }
+
 			if (lagometer.snapshotFlags[i] & SNAPFLAG_RATE_DELAYED)
 			{
 				if (color != 5)
