@@ -1131,362 +1131,342 @@ void SetWolfSpawnWeapons(gclient_t *client)
 		AddWeaponToPlayer(client, WP_DYNAMITE, 0, 1, qfalse);
 		AddWeaponToPlayer(client, WP_PLIERS, 0, 1, qfalse);
 
-		if (g_knifeonly.integer != 1)
+		if (client->sess.skill[SK_BATTLE_SENSE] >= 1)
 		{
-			if (client->sess.skill[SK_BATTLE_SENSE] >= 1)
-			{
-				if (AddWeaponToPlayer(client, WP_BINOCULARS, 1, 0, qfalse))
-				{
-					client->ps.stats[STAT_KEYS] |= (1 << INV_BINOCS);
-				}
-			}
-
-			if (client->sess.sessionTeam == TEAM_AXIS)
-			{
-				switch (client->sess.playerWeapon)
-				{
-				case WP_KAR98:
-					if (AddWeaponToPlayer(client, WP_KAR98, GetAmmoTableData(WP_KAR98)->defaultStartingAmmo, GetAmmoTableData(WP_KAR98)->defaultStartingClip, qtrue))
-					{
-						AddWeaponToPlayer(client, WP_GPG40, GetAmmoTableData(WP_GPG40)->defaultStartingAmmo, GetAmmoTableData(WP_GPG40)->defaultStartingClip, qfalse);
-					}
-					break;
-				default:
-					AddWeaponToPlayer(client, WP_MP40, GetAmmoTableData(WP_MP40)->defaultStartingAmmo, GetAmmoTableData(WP_MP40)->defaultStartingClip, qtrue);
-					break;
-				}
-				AddWeaponToPlayer(client, WP_LANDMINE, GetAmmoTableData(WP_LANDMINE)->defaultStartingAmmo, GetAmmoTableData(WP_LANDMINE)->defaultStartingClip, qfalse);
-				AddWeaponToPlayer(client, WP_GRENADE_LAUNCHER, 0, 4, qfalse);
-			}
-			else
-			{
-				switch (client->sess.playerWeapon)
-				{
-				case WP_CARBINE:
-					if (AddWeaponToPlayer(client, WP_CARBINE, GetAmmoTableData(WP_CARBINE)->defaultStartingAmmo, GetAmmoTableData(WP_CARBINE)->defaultStartingClip, qtrue))
-					{
-						AddWeaponToPlayer(client, WP_M7, GetAmmoTableData(WP_M7)->defaultStartingAmmo, GetAmmoTableData(WP_M7)->defaultStartingClip, qfalse);
-					}
-					break;
-				default:
-					AddWeaponToPlayer(client, WP_THOMPSON, GetAmmoTableData(WP_THOMPSON)->defaultStartingAmmo, GetAmmoTableData(WP_THOMPSON)->defaultStartingClip, qtrue);
-					break;
-				}
-				AddWeaponToPlayer(client, WP_LANDMINE, GetAmmoTableData(WP_LANDMINE)->defaultStartingAmmo, GetAmmoTableData(WP_LANDMINE)->defaultStartingClip, qfalse);
-				AddWeaponToPlayer(client, WP_GRENADE_PINEAPPLE, 0, 4, qfalse);
-			}
-		}
-	}
-
-	if (g_knifeonly.integer != 1)
-	{
-		// Field ops gets binoculars, ammo pack, artillery, and a grenade
-		if (pc == PC_FIELDOPS)
-		{
-			AddWeaponToPlayer(client, WP_AMMO, 0, 1, qfalse);
-
 			if (AddWeaponToPlayer(client, WP_BINOCULARS, 1, 0, qfalse))
 			{
 				client->ps.stats[STAT_KEYS] |= (1 << INV_BINOCS);
 			}
-
-			AddWeaponToPlayer(client, WP_SMOKE_MARKER, GetAmmoTableData(WP_SMOKE_MARKER)->defaultStartingAmmo, GetAmmoTableData(WP_SMOKE_MARKER)->defaultStartingClip, qfalse);
-
-			if (client->sess.sessionTeam == TEAM_AXIS)
-			{
-				AddWeaponToPlayer(client, WP_MP40, GetAmmoTableData(WP_MP40)->defaultStartingAmmo, GetAmmoTableData(WP_MP40)->defaultStartingClip, qtrue);
-				AddWeaponToPlayer(client, WP_GRENADE_LAUNCHER, 0, 1, qfalse);
-			}
-			else
-			{
-				AddWeaponToPlayer(client, WP_THOMPSON, GetAmmoTableData(WP_THOMPSON)->defaultStartingAmmo, GetAmmoTableData(WP_THOMPSON)->defaultStartingClip, qtrue);
-				AddWeaponToPlayer(client, WP_GRENADE_PINEAPPLE, 0, 1, qfalse);
-			}
 		}
-		else if (pc == PC_MEDIC)
-		{
-			if (client->sess.skill[SK_BATTLE_SENSE] >= 1)
-			{
-				if (AddWeaponToPlayer(client, WP_BINOCULARS, 1, 0, qfalse))
-				{
-					client->ps.stats[STAT_KEYS] |= (1 << INV_BINOCS);
-				}
-			}
 
-			AddWeaponToPlayer(client, WP_MEDIC_SYRINGE, GetAmmoTableData(WP_MEDIC_SYRINGE)->defaultStartingAmmo, GetAmmoTableData(WP_MEDIC_SYRINGE)->defaultStartingClip, qfalse);
-			if (client->sess.skill[SK_FIRST_AID] >= 4)
-			{
-				AddWeaponToPlayer(client, WP_MEDIC_ADRENALINE, GetAmmoTableData(WP_MEDIC_ADRENALINE)->defaultStartingAmmo, GetAmmoTableData(WP_MEDIC_ADRENALINE)->defaultStartingClip, qfalse);
-			}
-
-			AddWeaponToPlayer(client, WP_MEDKIT, GetAmmoTableData(WP_MEDKIT)->defaultStartingAmmo, GetAmmoTableData(WP_MEDKIT)->defaultStartingClip, qfalse);
-
-			if (client->sess.sessionTeam == TEAM_AXIS)
-			{
-				AddWeaponToPlayer(client, WP_MP40, 0, GetAmmoTableData(WP_MP40)->defaultStartingClip, qtrue);
-				AddWeaponToPlayer(client, WP_GRENADE_LAUNCHER, 0, 1, qfalse);
-			}
-			else
-			{
-				AddWeaponToPlayer(client, WP_THOMPSON, 0, GetAmmoTableData(WP_THOMPSON)->defaultStartingClip, qtrue);
-				AddWeaponToPlayer(client, WP_GRENADE_PINEAPPLE, 0, 1, qfalse);
-			}
-		}
-		else if (pc == PC_SOLDIER)
-		{
-			if (client->sess.skill[SK_BATTLE_SENSE] >= 1)
-			{
-				if (AddWeaponToPlayer(client, WP_BINOCULARS, 1, 0, qfalse))
-				{
-					client->ps.stats[STAT_KEYS] |= (1 << INV_BINOCS);
-				}
-			}
-
-			switch (client->sess.sessionTeam)
-			{
-			case TEAM_AXIS:
-				switch (client->sess.playerWeapon)
-				{
-				default:
-				case WP_MP40:
-					AddWeaponToPlayer(client, WP_MP40, 2 * (GetAmmoTableData(WP_MP40)->defaultStartingAmmo), GetAmmoTableData(WP_MP40)->defaultStartingClip, qtrue);
-					break;
-				case WP_PANZERFAUST:
-					AddWeaponToPlayer(client, WP_PANZERFAUST, GetAmmoTableData(WP_PANZERFAUST)->defaultStartingAmmo, GetAmmoTableData(WP_PANZERFAUST)->defaultStartingClip, qtrue);
-					break;
-				case WP_FLAMETHROWER:
-					AddWeaponToPlayer(client, WP_FLAMETHROWER, GetAmmoTableData(WP_FLAMETHROWER)->defaultStartingAmmo, GetAmmoTableData(WP_FLAMETHROWER)->defaultStartingClip, qtrue);
-					break;
-				case WP_MOBILE_MG42:
-					if (AddWeaponToPlayer(client, WP_MOBILE_MG42, GetAmmoTableData(WP_MOBILE_MG42)->defaultStartingAmmo, GetAmmoTableData(WP_MOBILE_MG42)->defaultStartingClip, qtrue))
-					{
-						AddWeaponToPlayer(client, WP_MOBILE_MG42_SET, GetAmmoTableData(WP_MOBILE_MG42_SET)->defaultStartingAmmo, GetAmmoTableData(WP_MOBILE_MG42_SET)->defaultStartingClip, qfalse);
-					}
-					break;
-				case WP_MORTAR2:
-					if (AddWeaponToPlayer(client, WP_MORTAR2, GetAmmoTableData(WP_MORTAR2)->defaultStartingAmmo, GetAmmoTableData(WP_MORTAR2)->defaultStartingClip, qtrue))
-					{
-						AddWeaponToPlayer(client, WP_MORTAR2_SET, GetAmmoTableData(WP_MORTAR2_SET)->defaultStartingAmmo, GetAmmoTableData(WP_MORTAR2_SET)->defaultStartingClip, qfalse);
-					}
-					break;
-				}
-				break;
-			case TEAM_ALLIES:
-				switch (client->sess.playerWeapon)
-				{
-				default:
-				case WP_THOMPSON:
-					AddWeaponToPlayer(client, WP_THOMPSON, 2 * (GetAmmoTableData(WP_THOMPSON)->defaultStartingAmmo), GetAmmoTableData(WP_THOMPSON)->defaultStartingClip, qtrue);
-					break;
-				case WP_BAZOOKA:
-					AddWeaponToPlayer(client, WP_BAZOOKA, GetAmmoTableData(WP_BAZOOKA)->defaultStartingAmmo, GetAmmoTableData(WP_BAZOOKA)->defaultStartingClip, qtrue);
-					break;
-				case WP_FLAMETHROWER:
-					AddWeaponToPlayer(client, WP_FLAMETHROWER, GetAmmoTableData(WP_FLAMETHROWER)->defaultStartingAmmo, GetAmmoTableData(WP_FLAMETHROWER)->defaultStartingClip, qtrue);
-					break;
-				case WP_MOBILE_BROWNING:
-					if (AddWeaponToPlayer(client, WP_MOBILE_BROWNING, GetAmmoTableData(WP_MOBILE_BROWNING)->defaultStartingAmmo, GetAmmoTableData(WP_MOBILE_BROWNING)->defaultStartingClip, qtrue))
-					{
-						AddWeaponToPlayer(client, WP_MOBILE_BROWNING_SET, GetAmmoTableData(WP_MOBILE_BROWNING_SET)->defaultStartingAmmo, GetAmmoTableData(WP_MOBILE_BROWNING_SET)->defaultStartingClip, qfalse);
-					}
-					break;
-				case WP_MORTAR:
-					if (AddWeaponToPlayer(client, WP_MORTAR, GetAmmoTableData(WP_MORTAR)->defaultStartingAmmo, GetAmmoTableData(WP_MORTAR)->defaultStartingClip, qtrue))
-					{
-						AddWeaponToPlayer(client, WP_MORTAR_SET, GetAmmoTableData(WP_MORTAR_SET)->defaultStartingAmmo, GetAmmoTableData(WP_MORTAR_SET)->defaultStartingClip, qfalse);
-					}
-					break;
-				}
-				break;
-			default:
-				break;
-			}
-		}
-		else if (pc == PC_COVERTOPS)
+		if (client->sess.sessionTeam == TEAM_AXIS)
 		{
 			switch (client->sess.playerWeapon)
 			{
-			case WP_K43:
-			case WP_GARAND:
-				if (client->sess.sessionTeam == TEAM_AXIS)
+			case WP_KAR98:
+				if (AddWeaponToPlayer(client, WP_KAR98, GetAmmoTableData(WP_KAR98)->defaultStartingAmmo, GetAmmoTableData(WP_KAR98)->defaultStartingClip, qtrue))
 				{
-					if (AddWeaponToPlayer(client, WP_K43, GetAmmoTableData(WP_K43)->defaultStartingAmmo, GetAmmoTableData(WP_K43)->defaultStartingClip, qtrue))
-					{
-						AddWeaponToPlayer(client, WP_K43_SCOPE, GetAmmoTableData(WP_K43_SCOPE)->defaultStartingAmmo, GetAmmoTableData(WP_K43_SCOPE)->defaultStartingClip, qfalse);
-					}
-					break;
-				}
-				else
-				{
-					if (AddWeaponToPlayer(client, WP_GARAND, GetAmmoTableData(WP_GARAND)->defaultStartingAmmo, GetAmmoTableData(WP_GARAND)->defaultStartingClip, qtrue))
-					{
-						AddWeaponToPlayer(client, WP_GARAND_SCOPE, GetAmmoTableData(WP_GARAND_SCOPE)->defaultStartingAmmo, GetAmmoTableData(WP_GARAND_SCOPE)->defaultStartingClip, qfalse);
-					}
-					break;
-				}
-			case WP_FG42:
-				if (AddWeaponToPlayer(client, WP_FG42, GetAmmoTableData(WP_FG42)->defaultStartingAmmo, GetAmmoTableData(WP_FG42)->defaultStartingClip, qtrue))
-				{
-					AddWeaponToPlayer(client, WP_FG42SCOPE, GetAmmoTableData(WP_FG42SCOPE)->defaultStartingAmmo, GetAmmoTableData(WP_FG42SCOPE)->defaultStartingClip, qfalse);
+					AddWeaponToPlayer(client, WP_GPG40, GetAmmoTableData(WP_GPG40)->defaultStartingAmmo, GetAmmoTableData(WP_GPG40)->defaultStartingClip, qfalse);
 				}
 				break;
 			default:
-				AddWeaponToPlayer(client, WP_STEN, 2 * (GetAmmoTableData(WP_STEN)->defaultStartingAmmo), GetAmmoTableData(WP_STEN)->defaultStartingClip, qtrue);
+				AddWeaponToPlayer(client, WP_MP40, GetAmmoTableData(WP_MP40)->defaultStartingAmmo, GetAmmoTableData(WP_MP40)->defaultStartingClip, qtrue);
 				break;
 			}
+			AddWeaponToPlayer(client, WP_LANDMINE, GetAmmoTableData(WP_LANDMINE)->defaultStartingAmmo, GetAmmoTableData(WP_LANDMINE)->defaultStartingClip, qfalse);
+			AddWeaponToPlayer(client, WP_GRENADE_LAUNCHER, 0, 4, qfalse);
+		}
+		else
+		{
+			switch (client->sess.playerWeapon)
+			{
+			case WP_CARBINE:
+				if (AddWeaponToPlayer(client, WP_CARBINE, GetAmmoTableData(WP_CARBINE)->defaultStartingAmmo, GetAmmoTableData(WP_CARBINE)->defaultStartingClip, qtrue))
+				{
+					AddWeaponToPlayer(client, WP_M7, GetAmmoTableData(WP_M7)->defaultStartingAmmo, GetAmmoTableData(WP_M7)->defaultStartingClip, qfalse);
+				}
+				break;
+			default:
+				AddWeaponToPlayer(client, WP_THOMPSON, GetAmmoTableData(WP_THOMPSON)->defaultStartingAmmo, GetAmmoTableData(WP_THOMPSON)->defaultStartingClip, qtrue);
+				break;
+			}
+			AddWeaponToPlayer(client, WP_LANDMINE, GetAmmoTableData(WP_LANDMINE)->defaultStartingAmmo, GetAmmoTableData(WP_LANDMINE)->defaultStartingClip, qfalse);
+			AddWeaponToPlayer(client, WP_GRENADE_PINEAPPLE, 0, 4, qfalse);
+		}
+	}
 
+	// Field ops gets binoculars, ammo pack, artillery, and a grenade
+	if (pc == PC_FIELDOPS)
+	{
+		AddWeaponToPlayer(client, WP_AMMO, 0, 1, qfalse);
+
+		if (AddWeaponToPlayer(client, WP_BINOCULARS, 1, 0, qfalse))
+		{
+			client->ps.stats[STAT_KEYS] |= (1 << INV_BINOCS);
+		}
+
+		AddWeaponToPlayer(client, WP_SMOKE_MARKER, GetAmmoTableData(WP_SMOKE_MARKER)->defaultStartingAmmo, GetAmmoTableData(WP_SMOKE_MARKER)->defaultStartingClip, qfalse);
+
+		if (client->sess.sessionTeam == TEAM_AXIS)
+		{
+			AddWeaponToPlayer(client, WP_MP40, GetAmmoTableData(WP_MP40)->defaultStartingAmmo, GetAmmoTableData(WP_MP40)->defaultStartingClip, qtrue);
+			AddWeaponToPlayer(client, WP_GRENADE_LAUNCHER, 0, 1, qfalse);
+		}
+		else
+		{
+			AddWeaponToPlayer(client, WP_THOMPSON, GetAmmoTableData(WP_THOMPSON)->defaultStartingAmmo, GetAmmoTableData(WP_THOMPSON)->defaultStartingClip, qtrue);
+			AddWeaponToPlayer(client, WP_GRENADE_PINEAPPLE, 0, 1, qfalse);
+		}
+	}
+	else if (pc == PC_MEDIC)
+	{
+		if (client->sess.skill[SK_BATTLE_SENSE] >= 1)
+		{
 			if (AddWeaponToPlayer(client, WP_BINOCULARS, 1, 0, qfalse))
 			{
 				client->ps.stats[STAT_KEYS] |= (1 << INV_BINOCS);
 			}
+		}
 
-			AddWeaponToPlayer(client, WP_SMOKE_BOMB, GetAmmoTableData(WP_SMOKE_BOMB)->defaultStartingAmmo, GetAmmoTableData(WP_SMOKE_BOMB)->defaultStartingClip, qfalse);
+		AddWeaponToPlayer(client, WP_MEDIC_SYRINGE, GetAmmoTableData(WP_MEDIC_SYRINGE)->defaultStartingAmmo, GetAmmoTableData(WP_MEDIC_SYRINGE)->defaultStartingClip, qfalse);
+		if (client->sess.skill[SK_FIRST_AID] >= 4)
+		{
+			AddWeaponToPlayer(client, WP_MEDIC_ADRENALINE, GetAmmoTableData(WP_MEDIC_ADRENALINE)->defaultStartingAmmo, GetAmmoTableData(WP_MEDIC_ADRENALINE)->defaultStartingClip, qfalse);
+		}
 
-			// See if we already have a satchel charge placed - NOTE: maybe we want to change this so the thing voids on death
-			if (G_FindSatchel(&g_entities[client->ps.clientNum]))
+		AddWeaponToPlayer(client, WP_MEDKIT, GetAmmoTableData(WP_MEDKIT)->defaultStartingAmmo, GetAmmoTableData(WP_MEDKIT)->defaultStartingClip, qfalse);
+
+		if (client->sess.sessionTeam == TEAM_AXIS)
+		{
+			AddWeaponToPlayer(client, WP_MP40, 0, GetAmmoTableData(WP_MP40)->defaultStartingClip, qtrue);
+			AddWeaponToPlayer(client, WP_GRENADE_LAUNCHER, 0, 1, qfalse);
+		}
+		else
+		{
+			AddWeaponToPlayer(client, WP_THOMPSON, 0, GetAmmoTableData(WP_THOMPSON)->defaultStartingClip, qtrue);
+			AddWeaponToPlayer(client, WP_GRENADE_PINEAPPLE, 0, 1, qfalse);
+		}
+	}
+	else if (pc == PC_SOLDIER)
+	{
+		if (client->sess.skill[SK_BATTLE_SENSE] >= 1)
+		{
+			if (AddWeaponToPlayer(client, WP_BINOCULARS, 1, 0, qfalse))
 			{
-				AddWeaponToPlayer(client, WP_SATCHEL, 0, 0, qfalse);        // Big Bang \o/
-				AddWeaponToPlayer(client, WP_SATCHEL_DET, 0, 1, qfalse);    // Big Red Button for tha Big Bang
-			}
-			else
-			{
-				AddWeaponToPlayer(client, WP_SATCHEL, 0, 1, qfalse);        // Big Bang \o/
-				AddWeaponToPlayer(client, WP_SATCHEL_DET, 0, 0, qfalse);    // Big Red Button for tha Big Bang
+				client->ps.stats[STAT_KEYS] |= (1 << INV_BINOCS);
 			}
 		}
 
 		switch (client->sess.sessionTeam)
 		{
 		case TEAM_AXIS:
-			switch (pc)
+			switch (client->sess.playerWeapon)
 			{
-			case PC_SOLDIER:
-				if (client->sess.skill[SK_HEAVY_WEAPONS] >= 4 && client->sess.playerWeapon2 == WP_MP40)
-				{
-					AddWeaponToPlayer(client, WP_MP40, 2 * (GetAmmoTableData(WP_MP40)->defaultStartingAmmo), GetAmmoTableData(WP_MP40)->defaultStartingClip, qtrue);
-				}
-				else if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && client->sess.playerWeapon2 == WP_AKIMBO_LUGER)
-				{
-					client->ps.ammoclip[BG_FindClipForWeapon(weaponTable[WP_AKIMBO_LUGER].akimboSideram)] = GetAmmoTableData(WP_AKIMBO_LUGER)->defaultStartingClip;
-					AddWeaponToPlayer(client, WP_AKIMBO_LUGER, GetAmmoTableData(WP_AKIMBO_LUGER)->defaultStartingAmmo, GetAmmoTableData(WP_AKIMBO_LUGER)->defaultStartingClip, qfalse);
-				}
-				else
-				{
-					AddWeaponToPlayer(client, WP_LUGER, GetAmmoTableData(WP_LUGER)->defaultStartingAmmo, GetAmmoTableData(WP_LUGER)->defaultStartingClip, qfalse);
-				}
-				break;
-
-			case PC_COVERTOPS:
-				if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && (client->sess.playerWeapon2 == WP_AKIMBO_SILENCEDLUGER || client->sess.playerWeapon2 == WP_AKIMBO_LUGER))
-				{
-					client->ps.ammoclip[BG_FindClipForWeapon(weaponTable[WP_AKIMBO_SILENCEDLUGER].akimboSideram)] = GetAmmoTableData(WP_AKIMBO_SILENCEDLUGER)->defaultStartingClip;
-					AddWeaponToPlayer(client, WP_AKIMBO_SILENCEDLUGER, GetAmmoTableData(WP_AKIMBO_SILENCEDLUGER)->defaultStartingAmmo, GetAmmoTableData(WP_AKIMBO_SILENCEDLUGER)->defaultStartingClip, qfalse);
-				}
-				else
-				{
-					AddWeaponToPlayer(client, WP_LUGER, GetAmmoTableData(WP_LUGER)->defaultStartingAmmo, GetAmmoTableData(WP_LUGER)->defaultStartingClip, qfalse);
-					AddWeaponToPlayer(client, WP_SILENCER, GetAmmoTableData(WP_SILENCER)->defaultStartingAmmo, GetAmmoTableData(WP_SILENCER)->defaultStartingClip, qfalse);
-					client->pmext.silencedSideArm = 1;
-				}
-				break;
-
 			default:
-				if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && client->sess.playerWeapon2 == WP_AKIMBO_LUGER)
+			case WP_MP40:
+				AddWeaponToPlayer(client, WP_MP40, 2 * (GetAmmoTableData(WP_MP40)->defaultStartingAmmo), GetAmmoTableData(WP_MP40)->defaultStartingClip, qtrue);
+				break;
+			case WP_PANZERFAUST:
+				AddWeaponToPlayer(client, WP_PANZERFAUST, GetAmmoTableData(WP_PANZERFAUST)->defaultStartingAmmo, GetAmmoTableData(WP_PANZERFAUST)->defaultStartingClip, qtrue);
+				break;
+			case WP_FLAMETHROWER:
+				AddWeaponToPlayer(client, WP_FLAMETHROWER, GetAmmoTableData(WP_FLAMETHROWER)->defaultStartingAmmo, GetAmmoTableData(WP_FLAMETHROWER)->defaultStartingClip, qtrue);
+				break;
+			case WP_MOBILE_MG42:
+				if (AddWeaponToPlayer(client, WP_MOBILE_MG42, GetAmmoTableData(WP_MOBILE_MG42)->defaultStartingAmmo, GetAmmoTableData(WP_MOBILE_MG42)->defaultStartingClip, qtrue))
 				{
-					client->ps.ammoclip[BG_FindClipForWeapon(weaponTable[WP_AKIMBO_LUGER].akimboSideram)] = GetAmmoTableData(WP_AKIMBO_LUGER)->defaultStartingClip;
-					AddWeaponToPlayer(client, WP_AKIMBO_LUGER, GetAmmoTableData(WP_AKIMBO_LUGER)->defaultStartingAmmo, GetAmmoTableData(WP_AKIMBO_LUGER)->defaultStartingClip, qfalse);
+					AddWeaponToPlayer(client, WP_MOBILE_MG42_SET, GetAmmoTableData(WP_MOBILE_MG42_SET)->defaultStartingAmmo, GetAmmoTableData(WP_MOBILE_MG42_SET)->defaultStartingClip, qfalse);
 				}
-				else
+				break;
+			case WP_MORTAR2:
+				if (AddWeaponToPlayer(client, WP_MORTAR2, GetAmmoTableData(WP_MORTAR2)->defaultStartingAmmo, GetAmmoTableData(WP_MORTAR2)->defaultStartingClip, qtrue))
 				{
-					AddWeaponToPlayer(client, WP_LUGER, GetAmmoTableData(WP_LUGER)->defaultStartingAmmo, GetAmmoTableData(WP_LUGER)->defaultStartingClip, qfalse);
+					AddWeaponToPlayer(client, WP_MORTAR2_SET, GetAmmoTableData(WP_MORTAR2_SET)->defaultStartingAmmo, GetAmmoTableData(WP_MORTAR2_SET)->defaultStartingClip, qfalse);
+				}
+				break;
+			}
+			break;
+		case TEAM_ALLIES:
+			switch (client->sess.playerWeapon)
+			{
+			default:
+			case WP_THOMPSON:
+				AddWeaponToPlayer(client, WP_THOMPSON, 2 * (GetAmmoTableData(WP_THOMPSON)->defaultStartingAmmo), GetAmmoTableData(WP_THOMPSON)->defaultStartingClip, qtrue);
+				break;
+			case WP_BAZOOKA:
+				AddWeaponToPlayer(client, WP_BAZOOKA, GetAmmoTableData(WP_BAZOOKA)->defaultStartingAmmo, GetAmmoTableData(WP_BAZOOKA)->defaultStartingClip, qtrue);
+				break;
+			case WP_FLAMETHROWER:
+				AddWeaponToPlayer(client, WP_FLAMETHROWER, GetAmmoTableData(WP_FLAMETHROWER)->defaultStartingAmmo, GetAmmoTableData(WP_FLAMETHROWER)->defaultStartingClip, qtrue);
+				break;
+			case WP_MOBILE_BROWNING:
+				if (AddWeaponToPlayer(client, WP_MOBILE_BROWNING, GetAmmoTableData(WP_MOBILE_BROWNING)->defaultStartingAmmo, GetAmmoTableData(WP_MOBILE_BROWNING)->defaultStartingClip, qtrue))
+				{
+					AddWeaponToPlayer(client, WP_MOBILE_BROWNING_SET, GetAmmoTableData(WP_MOBILE_BROWNING_SET)->defaultStartingAmmo, GetAmmoTableData(WP_MOBILE_BROWNING_SET)->defaultStartingClip, qfalse);
+				}
+				break;
+			case WP_MORTAR:
+				if (AddWeaponToPlayer(client, WP_MORTAR, GetAmmoTableData(WP_MORTAR)->defaultStartingAmmo, GetAmmoTableData(WP_MORTAR)->defaultStartingClip, qtrue))
+				{
+					AddWeaponToPlayer(client, WP_MORTAR_SET, GetAmmoTableData(WP_MORTAR_SET)->defaultStartingAmmo, GetAmmoTableData(WP_MORTAR_SET)->defaultStartingClip, qfalse);
 				}
 				break;
 			}
 			break;
 		default:
-			switch (pc)
+			break;
+		}
+	}
+	else if (pc == PC_COVERTOPS)
+	{
+		switch (client->sess.playerWeapon)
+		{
+		case WP_K43:
+		case WP_GARAND:
+			if (client->sess.sessionTeam == TEAM_AXIS)
 			{
-			case PC_SOLDIER:
-				if (client->sess.skill[SK_HEAVY_WEAPONS] >= 4 && client->sess.playerWeapon2 == WP_THOMPSON)
+				if (AddWeaponToPlayer(client, WP_K43, GetAmmoTableData(WP_K43)->defaultStartingAmmo, GetAmmoTableData(WP_K43)->defaultStartingClip, qtrue))
 				{
-					AddWeaponToPlayer(client, WP_THOMPSON, 2 * (GetAmmoTableData(WP_THOMPSON)->defaultStartingAmmo), GetAmmoTableData(WP_THOMPSON)->defaultStartingClip, qtrue);
-				}
-				else if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && client->sess.playerWeapon2 == WP_AKIMBO_COLT)
-				{
-					client->ps.ammoclip[BG_FindClipForWeapon(weaponTable[WP_AKIMBO_COLT].akimboSideram)] = GetAmmoTableData(WP_AKIMBO_COLT)->defaultStartingClip;
-					AddWeaponToPlayer(client, WP_AKIMBO_COLT, GetAmmoTableData(WP_AKIMBO_COLT)->defaultStartingAmmo, GetAmmoTableData(WP_AKIMBO_COLT)->defaultStartingClip, qfalse);
-				}
-				else
-				{
-					AddWeaponToPlayer(client, WP_COLT, GetAmmoTableData(WP_COLT)->defaultStartingAmmo, GetAmmoTableData(WP_COLT)->defaultStartingClip, qfalse);
-				}
-				break;
-
-			case PC_COVERTOPS:
-				if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && (client->sess.playerWeapon2 == WP_AKIMBO_SILENCEDCOLT || client->sess.playerWeapon2 == WP_AKIMBO_COLT))
-				{
-					client->ps.ammoclip[BG_FindClipForWeapon(weaponTable[WP_AKIMBO_SILENCEDCOLT].akimboSideram)] = GetAmmoTableData(WP_AKIMBO_SILENCEDCOLT)->defaultStartingClip;
-					AddWeaponToPlayer(client, WP_AKIMBO_SILENCEDCOLT, GetAmmoTableData(WP_AKIMBO_SILENCEDCOLT)->defaultStartingAmmo, GetAmmoTableData(WP_AKIMBO_SILENCEDCOLT)->defaultStartingClip, qfalse);
-				}
-				else
-				{
-					AddWeaponToPlayer(client, WP_COLT, GetAmmoTableData(WP_COLT)->defaultStartingAmmo, GetAmmoTableData(WP_COLT)->defaultStartingClip, qfalse);
-					AddWeaponToPlayer(client, WP_SILENCED_COLT, GetAmmoTableData(WP_SILENCED_COLT)->defaultStartingAmmo, GetAmmoTableData(WP_SILENCED_COLT)->defaultStartingClip, qfalse);
-					client->pmext.silencedSideArm = 1;
-				}
-				break;
-
-			default:
-				if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && client->sess.playerWeapon2 == WP_AKIMBO_COLT)
-				{
-					client->ps.ammoclip[BG_FindClipForWeapon(weaponTable[WP_AKIMBO_COLT].akimboSideram)] = GetAmmoTableData(WP_AKIMBO_COLT)->defaultStartingClip;
-					AddWeaponToPlayer(client, WP_AKIMBO_COLT, GetAmmoTableData(WP_AKIMBO_COLT)->defaultStartingAmmo, GetAmmoTableData(WP_AKIMBO_COLT)->defaultStartingClip, qfalse);
-				}
-				else
-				{
-					AddWeaponToPlayer(client, WP_COLT, GetAmmoTableData(WP_COLT)->defaultStartingAmmo, GetAmmoTableData(WP_COLT)->defaultStartingClip, qfalse);
+					AddWeaponToPlayer(client, WP_K43_SCOPE, GetAmmoTableData(WP_K43_SCOPE)->defaultStartingAmmo, GetAmmoTableData(WP_K43_SCOPE)->defaultStartingClip, qfalse);
 				}
 				break;
 			}
+			else
+			{
+				if (AddWeaponToPlayer(client, WP_GARAND, GetAmmoTableData(WP_GARAND)->defaultStartingAmmo, GetAmmoTableData(WP_GARAND)->defaultStartingClip, qtrue))
+				{
+					AddWeaponToPlayer(client, WP_GARAND_SCOPE, GetAmmoTableData(WP_GARAND_SCOPE)->defaultStartingAmmo, GetAmmoTableData(WP_GARAND_SCOPE)->defaultStartingClip, qfalse);
+				}
+				break;
+			}
+		case WP_FG42:
+			if (AddWeaponToPlayer(client, WP_FG42, GetAmmoTableData(WP_FG42)->defaultStartingAmmo, GetAmmoTableData(WP_FG42)->defaultStartingClip, qtrue))
+			{
+				AddWeaponToPlayer(client, WP_FG42SCOPE, GetAmmoTableData(WP_FG42SCOPE)->defaultStartingAmmo, GetAmmoTableData(WP_FG42SCOPE)->defaultStartingClip, qfalse);
+			}
+			break;
+		default:
+			AddWeaponToPlayer(client, WP_STEN, 2 * (GetAmmoTableData(WP_STEN)->defaultStartingAmmo), GetAmmoTableData(WP_STEN)->defaultStartingClip, qtrue);
 			break;
 		}
 
-		if (pc == PC_SOLDIER)
+		if (AddWeaponToPlayer(client, WP_BINOCULARS, 1, 0, qfalse))
 		{
-			if (client->sess.sessionTeam == TEAM_AXIS)
-			{
-				AddWeaponToPlayer(client, WP_GRENADE_LAUNCHER, 0, 4, qfalse);
-			}
-			else
-			{
-				AddWeaponToPlayer(client, WP_GRENADE_PINEAPPLE, 0, 4, qfalse);
-			}
+			client->ps.stats[STAT_KEYS] |= (1 << INV_BINOCS);
 		}
-		if (pc == PC_COVERTOPS)
+
+		AddWeaponToPlayer(client, WP_SMOKE_BOMB, GetAmmoTableData(WP_SMOKE_BOMB)->defaultStartingAmmo, GetAmmoTableData(WP_SMOKE_BOMB)->defaultStartingClip, qfalse);
+
+		// See if we already have a satchel charge placed - NOTE: maybe we want to change this so the thing voids on death
+		if (G_FindSatchel(&g_entities[client->ps.clientNum]))
 		{
-			if (client->sess.sessionTeam == TEAM_AXIS)
-			{
-				AddWeaponToPlayer(client, WP_GRENADE_LAUNCHER, 0, 2, qfalse);
-			}
-			else
-			{
-				AddWeaponToPlayer(client, WP_GRENADE_PINEAPPLE, 0, 2, qfalse);
-			}
+			AddWeaponToPlayer(client, WP_SATCHEL, 0, 0, qfalse);        // Big Bang \o/
+			AddWeaponToPlayer(client, WP_SATCHEL_DET, 0, 1, qfalse);    // Big Red Button for tha Big Bang
+		}
+		else
+		{
+			AddWeaponToPlayer(client, WP_SATCHEL, 0, 1, qfalse);        // Big Bang \o/
+			AddWeaponToPlayer(client, WP_SATCHEL_DET, 0, 0, qfalse);    // Big Red Button for tha Big Bang
 		}
 	}
-	else
-	{
-		// Knifeonly block
-		if (pc == PC_MEDIC)
-		{
-			AddWeaponToPlayer(client, WP_MEDIC_SYRINGE, 0, 20, qfalse);
-			if (client->sess.skill[SK_FIRST_AID] >= 4)
-			{
-				AddWeaponToPlayer(client, WP_MEDIC_ADRENALINE, 0, 10, qfalse);
-			}
 
+	switch (client->sess.sessionTeam)
+	{
+	case TEAM_AXIS:
+		switch (pc)
+		{
+		case PC_SOLDIER:
+			if (client->sess.skill[SK_HEAVY_WEAPONS] >= 4 && client->sess.playerWeapon2 == WP_MP40)
+			{
+				AddWeaponToPlayer(client, WP_MP40, 2 * (GetAmmoTableData(WP_MP40)->defaultStartingAmmo), GetAmmoTableData(WP_MP40)->defaultStartingClip, qtrue);
+			}
+			else if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && client->sess.playerWeapon2 == WP_AKIMBO_LUGER)
+			{
+				client->ps.ammoclip[BG_FindClipForWeapon(weaponTable[WP_AKIMBO_LUGER].akimboSideram)] = GetAmmoTableData(WP_AKIMBO_LUGER)->defaultStartingClip;
+				AddWeaponToPlayer(client, WP_AKIMBO_LUGER, GetAmmoTableData(WP_AKIMBO_LUGER)->defaultStartingAmmo, GetAmmoTableData(WP_AKIMBO_LUGER)->defaultStartingClip, qfalse);
+			}
+			else
+			{
+				AddWeaponToPlayer(client, WP_LUGER, GetAmmoTableData(WP_LUGER)->defaultStartingAmmo, GetAmmoTableData(WP_LUGER)->defaultStartingClip, qfalse);
+			}
+			break;
+
+		case PC_COVERTOPS:
+			if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && (client->sess.playerWeapon2 == WP_AKIMBO_SILENCEDLUGER || client->sess.playerWeapon2 == WP_AKIMBO_LUGER))
+			{
+				client->ps.ammoclip[BG_FindClipForWeapon(weaponTable[WP_AKIMBO_SILENCEDLUGER].akimboSideram)] = GetAmmoTableData(WP_AKIMBO_SILENCEDLUGER)->defaultStartingClip;
+				AddWeaponToPlayer(client, WP_AKIMBO_SILENCEDLUGER, GetAmmoTableData(WP_AKIMBO_SILENCEDLUGER)->defaultStartingAmmo, GetAmmoTableData(WP_AKIMBO_SILENCEDLUGER)->defaultStartingClip, qfalse);
+			}
+			else
+			{
+				AddWeaponToPlayer(client, WP_LUGER, GetAmmoTableData(WP_LUGER)->defaultStartingAmmo, GetAmmoTableData(WP_LUGER)->defaultStartingClip, qfalse);
+				AddWeaponToPlayer(client, WP_SILENCER, GetAmmoTableData(WP_SILENCER)->defaultStartingAmmo, GetAmmoTableData(WP_SILENCER)->defaultStartingClip, qfalse);
+				client->pmext.silencedSideArm = 1;
+			}
+			break;
+
+		default:
+			if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && client->sess.playerWeapon2 == WP_AKIMBO_LUGER)
+			{
+				client->ps.ammoclip[BG_FindClipForWeapon(weaponTable[WP_AKIMBO_LUGER].akimboSideram)] = GetAmmoTableData(WP_AKIMBO_LUGER)->defaultStartingClip;
+				AddWeaponToPlayer(client, WP_AKIMBO_LUGER, GetAmmoTableData(WP_AKIMBO_LUGER)->defaultStartingAmmo, GetAmmoTableData(WP_AKIMBO_LUGER)->defaultStartingClip, qfalse);
+			}
+			else
+			{
+				AddWeaponToPlayer(client, WP_LUGER, GetAmmoTableData(WP_LUGER)->defaultStartingAmmo, GetAmmoTableData(WP_LUGER)->defaultStartingClip, qfalse);
+			}
+			break;
 		}
-		// End Knifeonly stuff -- Ensure that medics get their basic stuff
+		break;
+	default:
+		switch (pc)
+		{
+		case PC_SOLDIER:
+			if (client->sess.skill[SK_HEAVY_WEAPONS] >= 4 && client->sess.playerWeapon2 == WP_THOMPSON)
+			{
+				AddWeaponToPlayer(client, WP_THOMPSON, 2 * (GetAmmoTableData(WP_THOMPSON)->defaultStartingAmmo), GetAmmoTableData(WP_THOMPSON)->defaultStartingClip, qtrue);
+			}
+			else if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && client->sess.playerWeapon2 == WP_AKIMBO_COLT)
+			{
+				client->ps.ammoclip[BG_FindClipForWeapon(weaponTable[WP_AKIMBO_COLT].akimboSideram)] = GetAmmoTableData(WP_AKIMBO_COLT)->defaultStartingClip;
+				AddWeaponToPlayer(client, WP_AKIMBO_COLT, GetAmmoTableData(WP_AKIMBO_COLT)->defaultStartingAmmo, GetAmmoTableData(WP_AKIMBO_COLT)->defaultStartingClip, qfalse);
+			}
+			else
+			{
+				AddWeaponToPlayer(client, WP_COLT, GetAmmoTableData(WP_COLT)->defaultStartingAmmo, GetAmmoTableData(WP_COLT)->defaultStartingClip, qfalse);
+			}
+			break;
+
+		case PC_COVERTOPS:
+			if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && (client->sess.playerWeapon2 == WP_AKIMBO_SILENCEDCOLT || client->sess.playerWeapon2 == WP_AKIMBO_COLT))
+			{
+				client->ps.ammoclip[BG_FindClipForWeapon(weaponTable[WP_AKIMBO_SILENCEDCOLT].akimboSideram)] = GetAmmoTableData(WP_AKIMBO_SILENCEDCOLT)->defaultStartingClip;
+				AddWeaponToPlayer(client, WP_AKIMBO_SILENCEDCOLT, GetAmmoTableData(WP_AKIMBO_SILENCEDCOLT)->defaultStartingAmmo, GetAmmoTableData(WP_AKIMBO_SILENCEDCOLT)->defaultStartingClip, qfalse);
+			}
+			else
+			{
+				AddWeaponToPlayer(client, WP_COLT, GetAmmoTableData(WP_COLT)->defaultStartingAmmo, GetAmmoTableData(WP_COLT)->defaultStartingClip, qfalse);
+				AddWeaponToPlayer(client, WP_SILENCED_COLT, GetAmmoTableData(WP_SILENCED_COLT)->defaultStartingAmmo, GetAmmoTableData(WP_SILENCED_COLT)->defaultStartingClip, qfalse);
+				client->pmext.silencedSideArm = 1;
+			}
+			break;
+
+		default:
+			if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && client->sess.playerWeapon2 == WP_AKIMBO_COLT)
+			{
+				client->ps.ammoclip[BG_FindClipForWeapon(weaponTable[WP_AKIMBO_COLT].akimboSideram)] = GetAmmoTableData(WP_AKIMBO_COLT)->defaultStartingClip;
+				AddWeaponToPlayer(client, WP_AKIMBO_COLT, GetAmmoTableData(WP_AKIMBO_COLT)->defaultStartingAmmo, GetAmmoTableData(WP_AKIMBO_COLT)->defaultStartingClip, qfalse);
+			}
+			else
+			{
+				AddWeaponToPlayer(client, WP_COLT, GetAmmoTableData(WP_COLT)->defaultStartingAmmo, GetAmmoTableData(WP_COLT)->defaultStartingClip, qfalse);
+			}
+			break;
+		}
+		break;
+	}
+
+	if (pc == PC_SOLDIER)
+	{
+		if (client->sess.sessionTeam == TEAM_AXIS)
+		{
+			AddWeaponToPlayer(client, WP_GRENADE_LAUNCHER, 0, 4, qfalse);
+		}
+		else
+		{
+			AddWeaponToPlayer(client, WP_GRENADE_PINEAPPLE, 0, 4, qfalse);
+		}
+	}
+	if (pc == PC_COVERTOPS)
+	{
+		if (client->sess.sessionTeam == TEAM_AXIS)
+		{
+			AddWeaponToPlayer(client, WP_GRENADE_LAUNCHER, 0, 2, qfalse);
+		}
+		else
+		{
+			AddWeaponToPlayer(client, WP_GRENADE_PINEAPPLE, 0, 2, qfalse);
+		}
 	}
 }
 

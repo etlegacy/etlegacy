@@ -127,7 +127,6 @@ vmCvar_t g_voiceChatsAllowed;
 vmCvar_t g_alliedmaxlives;
 vmCvar_t g_axismaxlives;
 vmCvar_t g_fastres;
-vmCvar_t g_knifeonly;
 vmCvar_t g_enforcemaxlives;
 
 vmCvar_t g_needpass;
@@ -437,7 +436,6 @@ cvarTable_t gameCvarTable[] =
 	{ &g_alliedmaxlives,                    "g_alliedmaxlives",                    "0",                          CVAR_LATCH | CVAR_SERVERINFO,                    0, qtrue},
 	{ &g_axismaxlives,                      "g_axismaxlives",                      "0",                          CVAR_LATCH | CVAR_SERVERINFO,                    0, qtrue},
 	{ &g_fastres,                           "g_fastres",                           "0",                          CVAR_ARCHIVE,                                    0, qtrue, qtrue}, // Fast Medic Resing
-	{ &g_knifeonly,                         "g_knifeonly",                         "0",                          0,                                               0, qtrue}, // Fast Medic Resing
 	{ &g_enforcemaxlives,                   "g_enforcemaxlives",                   "1",                          CVAR_ARCHIVE,                                    0, qtrue}, // Gestapo enforce maxlives stuff by temp banning
 
 	{ &g_developer,                         "developer",                           "0",                          CVAR_TEMP,                                       0, qfalse},

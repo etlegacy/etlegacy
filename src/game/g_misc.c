@@ -1609,132 +1609,128 @@ void UpdateGoalEntity(gentity_t *oldent, gentity_t *newent);
 
 void mg42_spawn(gentity_t *ent)
 {
-	// If in knifeonly mode, prevent MG42's from spawning
-	if (g_knifeonly.integer != 1)
+	gentity_t *base, *gun;
+	vec3_t    offset;
+
+	// Need to spawn the base even when no tripod cause the gun itself isn't solid
+	base            = G_Spawn();
+	base->classname = "misc_mg42base";   // ease tracking
+
+	if (!(ent->spawnflags & 2))       // no tripod
 	{
-		gentity_t *base, *gun;
-		vec3_t    offset;
-
-		// Need to spawn the base even when no tripod cause the gun itself isn't solid
-		base            = G_Spawn();
-		base->classname = "misc_mg42base";   // ease tracking
-
-		if (!(ent->spawnflags & 2))       // no tripod
-		{
-			base->clipmask   = CONTENTS_SOLID;
-			base->r.contents = CONTENTS_SOLID;
-			base->r.svFlags  = 0;
-			base->s.eType    = ET_GENERAL;
-			base->takedamage = qtrue;
-			base->die        = mg42_die;
-
-			// move track and targetname over to these entities for construction system
-			base->track = ent->track;
-			G_SetTargetName(base, ent->targetname);
-
-			base->s.modelindex = G_ModelIndex("models/mapobjects/weapons/mg42b.md3");
-		}
-		else
-		{
-			base->takedamage = qfalse;
-		}
-
-		VectorSet(base->r.mins, -8, -8, -8);
-		VectorSet(base->r.maxs, 8, 8, 48);
-		VectorCopy(ent->s.origin, offset);
-		offset[2] -= 24;
-		G_SetOrigin(base, offset);
-		base->s.apos.trType     = TR_STATIONARY;
-		base->s.apos.trTime     = 0;
-		base->s.apos.trDuration = 0;
-		base->s.dmgFlags        = HINT_MG42; // identify this for cursorhints
-		VectorCopy(ent->s.angles, base->s.angles);
-		VectorCopy(base->s.angles, base->s.apos.trBase);
-		VectorCopy(base->s.angles, base->s.apos.trDelta);
-		base->health    = ent->health;
-		base->target    = ent->target; // added so mounting mg42 can trigger targets
-		base->sound3to2 = -1;
-		trap_LinkEntity(base);
-
-		// copy state over from original entity
-		G_SetEntState(base, ent->entstate);
-
-		// Spawn the barrel
-		gun               = G_Spawn();
-		gun->classname    = "misc_mg42";
-		gun->clipmask     = CONTENTS_SOLID;
-		gun->r.contents   = CONTENTS_TRIGGER;
-		gun->r.svFlags    = 0;
-		gun->s.eType      = ET_MG42_BARREL;
-		gun->health       = base->health;
-		gun->s.modelindex = G_ModelIndex("models/multiplayer/mg42/mg42.md3");
-		gun->sound3to2    = -1;
-
-		VectorSet(offset, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] + 24);
-		G_SetOrigin(gun, offset);
-
-		VectorSet(gun->r.mins, -24, -24, -8);
-		VectorSet(gun->r.maxs, 24, 24, 48);
-
-		gun->s.apos.trTime     = 0;
-		gun->s.apos.trDuration = 0;
-		gun->s.apos.trType     = TR_LINEAR_STOP;
-
-		VectorCopy(ent->s.angles, gun->s.angles);
-		VectorCopy(gun->s.angles, gun->s.apos.trBase);
-		VectorCopy(gun->s.angles, gun->s.apos.trDelta);
-
-		VectorCopy(ent->s.angles, gun->s.angles2);
-
-		gun->touch = mg42_touch;
-		gun->think = mg42_think;
-		gun->use   = mg42_use;
-		gun->die   = mg42_die;
-
-		gun->nextthink    = level.time + FRAMETIME;
-		gun->timestamp    = level.time + 1000;
-		gun->s.number     = gun - g_entities;
-		gun->harc         = ent->harc;
-		gun->varc         = ent->varc;
-		gun->s.origin2[0] = ent->harc;
-		gun->s.origin2[1] = ent->varc;
-		gun->takedamage   = qtrue;
-		G_SetTargetName(gun, ent->targetname);
-		gun->damage     = ent->damage;
-		gun->accuracy   = ent->accuracy;
-		gun->target     = ent->target;
-		gun->spawnflags = ent->spawnflags;
-
-		// storing heat now
-		gun->mg42weapHeat = 0;
+		base->clipmask   = CONTENTS_SOLID;
+		base->r.contents = CONTENTS_SOLID;
+		base->r.svFlags  = 0;
+		base->s.eType    = ET_GENERAL;
+		base->takedamage = qtrue;
+		base->die        = mg42_die;
 
 		// move track and targetname over to these entities for construction system
-		gun->track = ent->track;
+		base->track = ent->track;
+		G_SetTargetName(base, ent->targetname);
 
-		// copy state over from original entity
-		G_SetEntState(gun, ent->entstate);
+		base->s.modelindex = G_ModelIndex("models/mapobjects/weapons/mg42b.md3");
+	}
+	else
+	{
+		base->takedamage = qfalse;
+	}
 
-		if (!(ent->spawnflags & 2))       // no tripod
-		{
-			gun->mg42BaseEnt = base->s.number;
-			base->chain      = gun;
-		}
-		else
-		{
-			gun->mg42BaseEnt = -1;
-		}
+	VectorSet(base->r.mins, -8, -8, -8);
+	VectorSet(base->r.maxs, 8, 8, 48);
+	VectorCopy(ent->s.origin, offset);
+	offset[2] -= 24;
+	G_SetOrigin(base, offset);
+	base->s.apos.trType     = TR_STATIONARY;
+	base->s.apos.trTime     = 0;
+	base->s.apos.trDuration = 0;
+	base->s.dmgFlags        = HINT_MG42; // identify this for cursorhints
+	VectorCopy(ent->s.angles, base->s.angles);
+	VectorCopy(base->s.angles, base->s.apos.trBase);
+	VectorCopy(base->s.angles, base->s.apos.trDelta);
+	base->health    = ent->health;
+	base->target    = ent->target; // added so mounting mg42 can trigger targets
+	base->sound3to2 = -1;
+	trap_LinkEntity(base);
 
-		if (gun->spawnflags & 1)
-		{
-			gun->s.onFireStart = 1;
-		}
+	// copy state over from original entity
+	G_SetEntState(base, ent->entstate);
 
-		trap_LinkEntity(gun);
+	// Spawn the barrel
+	gun               = G_Spawn();
+	gun->classname    = "misc_mg42";
+	gun->clipmask     = CONTENTS_SOLID;
+	gun->r.contents   = CONTENTS_TRIGGER;
+	gun->r.svFlags    = 0;
+	gun->s.eType      = ET_MG42_BARREL;
+	gun->health       = base->health;
+	gun->s.modelindex = G_ModelIndex("models/multiplayer/mg42/mg42.md3");
+	gun->sound3to2    = -1;
+
+	VectorSet(offset, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] + 24);
+	G_SetOrigin(gun, offset);
+
+	VectorSet(gun->r.mins, -24, -24, -8);
+	VectorSet(gun->r.maxs, 24, 24, 48);
+
+	gun->s.apos.trTime     = 0;
+	gun->s.apos.trDuration = 0;
+	gun->s.apos.trType     = TR_LINEAR_STOP;
+
+	VectorCopy(ent->s.angles, gun->s.angles);
+	VectorCopy(gun->s.angles, gun->s.apos.trBase);
+	VectorCopy(gun->s.angles, gun->s.apos.trDelta);
+
+	VectorCopy(ent->s.angles, gun->s.angles2);
+
+	gun->touch = mg42_touch;
+	gun->think = mg42_think;
+	gun->use   = mg42_use;
+	gun->die   = mg42_die;
+
+	gun->nextthink    = level.time + FRAMETIME;
+	gun->timestamp    = level.time + 1000;
+	gun->s.number     = gun - g_entities;
+	gun->harc         = ent->harc;
+	gun->varc         = ent->varc;
+	gun->s.origin2[0] = ent->harc;
+	gun->s.origin2[1] = ent->varc;
+	gun->takedamage   = qtrue;
+	G_SetTargetName(gun, ent->targetname);
+	gun->damage     = ent->damage;
+	gun->accuracy   = ent->accuracy;
+	gun->target     = ent->target;
+	gun->spawnflags = ent->spawnflags;
+
+	// storing heat now
+	gun->mg42weapHeat = 0;
+
+	// move track and targetname over to these entities for construction system
+	gun->track = ent->track;
+
+	// copy state over from original entity
+	G_SetEntState(gun, ent->entstate);
+
+	if (!(ent->spawnflags & 2))       // no tripod
+	{
+		gun->mg42BaseEnt = base->s.number;
+		base->chain      = gun;
+	}
+	else
+	{
+		gun->mg42BaseEnt = -1;
+	}
+
+	if (gun->spawnflags & 1)
+	{
+		gun->s.onFireStart = 1;
+	}
+
+	trap_LinkEntity(gun);
 
 #ifdef FEATURE_OMNIBOT
-		UpdateGoalEntity(ent, gun);
+	UpdateGoalEntity(ent, gun);
 #endif
-	}
 
 	G_FreeEntity(ent);
 }
