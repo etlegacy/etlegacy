@@ -1706,6 +1706,106 @@ static int _et_G_ShaderRemapFlush(lua_State *L)
 	return 0;
 }
 
+static int _et_AddWeaponToPlayer(lua_State *L)
+{
+ 	int        clientnum    = (int)luaL_checkinteger(L, 1);
+	gentity_t *ent          = g_entities + clientnum;
+	weapon_t   weapon       = (int)luaL_checkinteger(L, 2);
+	int        ammo         = (int)luaL_checkinteger(L, 3);
+	int        ammoclip     = (int)luaL_checkinteger(L, 4);
+	int        setcurrent   = (int)luaL_checkinteger(L, 5, NULL);
+	
+	if (!ent->client)
+	{
+		luaL_error(L, "clientNum \"%d\" is not a client entity", clientnum);
+		return 0;
+	}
+	
+	if(!IS_VALID_WEAPON(weapon))
+	{
+		luaL_error(L, "weapon \"%d\" is not a valid weapon", weapon);
+		return 0;	
+	}
+	
+	COM_BitSet(ent->client->ps.weapons, weapon);
+	ent->client->ps.ammoclip[BG_FindClipForWeapon(weapon)] = ammoclip;
+	ent->client->ps.ammo[BG_FindAmmoForWeapon(weapon)]     = ammo;
+	
+	if (setcurrent == 1)
+	{
+		ent->client->ps.weapon = weapon;
+	}
+	
+#ifdef FEATURE_OMNIBOT
+	Bot_Event_AddWeapon(ent->client->ps.clientNum, Bot_WeaponGameToBot(weapon));
+#endif
+	
+	return 1;
+}
+
+static int _et_RemoveWeaponFromPlayer(lua_State *L)
+{
+ 	int        clientnum    = (int)luaL_checkinteger(L, 1);
+	gentity_t  *ent         = g_entities + clientnum;
+	gclient_t  *client      = ent->client;
+	weapon_t   weapon       = (int)luaL_checkinteger(L, 2);
+	
+	if (!ent->client)
+	{
+		luaL_error(L, "clientNum \"%d\" is not a client entity", clientnum);
+		return 0;
+	}
+	
+	COM_BitClear(ent->client->ps.weapons, weapon);
+
+	switch (weapon)
+	{
+	case WP_KAR98:
+		COM_BitClear(client->ps.weapons, WP_GPG40);
+		break;
+	case WP_CARBINE:
+		COM_BitClear(client->ps.weapons, WP_M7);
+		break;
+	case WP_FG42:
+		COM_BitClear(client->ps.weapons, WP_FG42SCOPE);
+		break;
+	case WP_K43:
+		COM_BitClear(client->ps.weapons, WP_K43_SCOPE);
+		break;
+	case WP_GARAND:
+		COM_BitClear(client->ps.weapons, WP_GARAND_SCOPE);
+		break;
+	case WP_MORTAR:
+		COM_BitClear(client->ps.weapons, WP_MORTAR_SET);
+		break;
+	case WP_MORTAR2:
+		COM_BitClear(client->ps.weapons, WP_MORTAR2_SET);
+		break;
+	case WP_MOBILE_MG42:
+		COM_BitClear(client->ps.weapons, WP_MOBILE_MG42_SET);
+		break;
+	case WP_MOBILE_BROWNING:
+		COM_BitClear(client->ps.weapons, WP_MOBILE_BROWNING_SET);
+		break;
+	default:
+		break;
+	}
+
+	// Clear out empty weapon, change to next best weapon
+	G_AddEvent(ent, EV_WEAPONSWITCHED, 0);
+
+	if (weapon == client->ps.weapon)
+	{
+		client->ps.weapon = 0;
+	}
+	
+#ifdef FEATURE_OMNIBOT
+	Bot_Event_RemoveWeapon(client->ps.clientNum, Bot_WeaponGameToBot(weapon));
+#endif	
+	
+	return 1;
+}
+
 /** @}*/ // doxygen addtogroup lua_etfncs
 
 // et library initialisation array
@@ -1794,6 +1894,8 @@ static const luaL_Reg etlib[] =
 	{ "G_ShaderRemap",           _et_G_ShaderRemap           },
 	{ "G_ResetRemappedShaders",  _et_G_ResetRemappedShaders  },
 	{ "G_ShaderRemapFlush",      _et_G_ShaderRemapFlush      },
+	{ "AddWeaponToPlayer",       _et_AddWeaponToPlayer       },
+	{ "RemoveWeaponFromPlayer",  _et_RemoveWeaponFromPlayer  },	
 	{ NULL },
 };
 
