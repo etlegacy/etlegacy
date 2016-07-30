@@ -1713,7 +1713,7 @@ static int _et_AddWeaponToPlayer(lua_State *L)
 	weapon_t   weapon       = (int)luaL_checkinteger(L, 2);
 	int        ammo         = (int)luaL_checkinteger(L, 3);
 	int        ammoclip     = (int)luaL_checkinteger(L, 4);
-	int        setcurrent   = (int)luaL_checkinteger(L, 5, NULL);
+	int        setcurrent   = (int)luaL_checkinteger(L, 5);
 	
 	if (!ent->client)
 	{
