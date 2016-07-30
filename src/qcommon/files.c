@@ -2583,7 +2583,7 @@ static int FS_AddFileToList(char *name, char *list[MAX_FOUND_FILES], int nfiles)
 	{
 		if (!Q_stricmp(name, list[i]))
 		{
-			return nfiles;      // allready in list
+			return nfiles;      // already in list
 		}
 	}
 	list[nfiles] = CopyString(name);
@@ -3621,6 +3621,15 @@ qboolean FS_VerifyOfficialPaks(void)
 				Com_Printf("ERROR: Missing/corrupt official pak file %s\n", officialpaks[i].pakname);
 			}
 		}
+		
+		// assumed we have a valid client installation and the server has installed
+		// genunine packs twice (f.e. in fs_homepath AND fs_basepath)
+		// in this case numOfficialPaksLocal is greater than numOfficialPaksOnServer ...
+		if (numOfficialPaksOnServer < numOfficialPaksLocal)
+		{
+			Com_Error(ERR_DROP, "ERROR: Connection aborted - corrupt/duplicate official pak file server installation.");
+		}
+		
 		return qfalse;
 	}
 	else
@@ -4327,7 +4336,7 @@ void FS_PureServerSetLoadedPaks(const char *pakSums, const char *pakNames)
 
 	if (fs_numServerPaks)
 	{
-		Com_DPrintf("Connected to a pure server.\n");
+		Com_Printf("Connected to a pure server.\n");
 	}
 	else
 	{
