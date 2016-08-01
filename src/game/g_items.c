@@ -963,10 +963,11 @@ gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNu
 	{
 		gentity_t *flag = &g_entities[g_entities[ownerNum].client->flagParent];
 
-		dropped->s.otherEntityNum = g_entities[ownerNum].client->flagParent;    // store the entitynum of our original flag spawner
-		dropped->s.density        = 1;
-		dropped->think            = Team_DroppedFlagThink;
-		dropped->nextthink        = level.time + 30000;
+		dropped->s.otherEntityNum               = g_entities[ownerNum].client->flagParent;    // store the entitynum of our original flag spawner
+		g_entities[ownerNum].client->flagParent = 0;
+		dropped->s.density                      = 1;
+		dropped->think                          = Team_DroppedFlagThink;
+		dropped->nextthink                      = level.time + 30000;
 
 		if (level.gameManager)
 		{
