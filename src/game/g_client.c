@@ -2596,8 +2596,8 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 // Scaling for late-joiners of maxlives based on current game time
 int G_ComputeMaxLives(gclient_t *cl, int maxRespawns)
 {
-	float scaled = (float)(maxRespawns - 1) * (1.0f - ((float)(level.time - level.startTime) / (g_timelimit.value * 60000.0f)));
-	int   val    = (int)scaled;
+	float scaled;
+	int   val;
 
 	// don't scale of the timelimit is 0
 	if (g_timelimit.value == 0.0)
@@ -2605,8 +2605,12 @@ int G_ComputeMaxLives(gclient_t *cl, int maxRespawns)
 		return maxRespawns - 1;
 	}
 
+	scaled = (float)(maxRespawns - 1) * (1.0f - ((float)(level.time - level.startTime) / (g_timelimit.value * 60000.0f)));
+	val    = (int)scaled;
+
 	val += ((scaled - (float)val) < 0.5f) ? 0 : 1;
-	return(val);
+
+	return val;
 }
 
 /*
