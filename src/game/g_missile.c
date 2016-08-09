@@ -40,7 +40,6 @@
 
 #define MISSILE_PRESTEP_TIME    50
 
-void M_think(gentity_t *ent);
 void G_ExplodeMissile(gentity_t *ent);
 
 /*
@@ -126,7 +125,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 
 		// check for stop
 		//if ( trace->plane.normal[2] > 0.2 && VectorLengthSquared( ent->s.pos.trDelta ) < Square(40) )
-		if (trace->plane.normal[2] > 0.2 && VectorLengthSquared(relativeDelta) < Square(40))
+		if (trace->plane.normal[2] > 0.2 && VectorLengthSquared(relativeDelta) < 1600) // Square(40)
 		{
 			// make the world the owner of the dynamite, so the player can shoot it after it stops moving
 			if (ent->s.weapon == WP_DYNAMITE || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL || ent->s.weapon == WP_SMOKE_BOMB)
@@ -269,51 +268,6 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 	//trap_LinkEntity( ent );
 
 	G_FreeEntity(ent);
-}
-
-/*
-==============
-Concussive_think
-==============
-*/
-
-void M_think(gentity_t *ent)
-{
-	gentity_t *tent;
-
-	ent->count++;
-
-	if (ent->count == ent->health)
-	{
-		ent->think = G_FreeEntity;
-	}
-
-	tent = G_TempEntity(ent->s.origin, EV_SMOKE);
-	VectorCopy(ent->s.origin, tent->s.origin);
-	if (ent->s.density == 1)
-	{
-		tent->s.origin[2] += 16;
-
-		tent->s.angles2[0] = 16;
-	}
-	else
-	{
-		//tent->s.origin[2]+=32;
-		// Note to self Maxx said to lower the spawn loc for the smoke 16 units
-		tent->s.origin[2] += 16;
-
-		// Note to self Maxx changed this to 24
-		tent->s.angles2[0] = 24;
-	}
-
-	tent->s.time    = 3000;
-	tent->s.time2   = 100;
-	tent->s.density = 0;
-
-	tent->s.angles2[1] = 96;
-	tent->s.angles2[2] = 50;
-
-	ent->nextthink = level.time + FRAMETIME;
 }
 
 /*
@@ -1991,16 +1945,13 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType
 
 	VectorNormalize(dir);
 
-	bolt->classname = "rocket";
-	bolt->nextthink = level.time + 20000;   // push it out a little
-	bolt->think     = G_ExplodeMissile;
-	bolt->accuracy  = 4;
-	bolt->s.eType   = ET_MISSILE;
-	bolt->r.svFlags = SVF_BROADCAST;
-
-	// Use the correct weapon in multiplayer
-	bolt->s.weapon = self->s.weapon;
-
+	bolt->classname           = "rocket";
+	bolt->nextthink           = level.time + 20000;   // push it out a little
+	bolt->think               = G_ExplodeMissile;
+	bolt->accuracy            = 4;
+	bolt->s.eType             = ET_MISSILE;
+	bolt->r.svFlags           = SVF_BROADCAST;
+	bolt->s.weapon            = self->s.weapon; // Use the correct weapon in multiplayer
 	bolt->r.ownerNum          = self->s.number;
 	bolt->parent              = self;
 	bolt->damage              = GetWeaponTableData((rocketType == WP_BAZOOKA) ? WP_BAZOOKA : WP_PANZERFAUST)->damage;
@@ -2009,9 +1960,8 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType
 	bolt->methodOfDeath       = ((rocketType == WP_BAZOOKA) ? MOD_BAZOOKA : MOD_PANZERFAUST);
 	bolt->splashMethodOfDeath = bolt->methodOfDeath; // (rocketType == WP_BAZOOKA) ? MOD_BAZOOKA: MOD_PANZERFAUST;
 	bolt->clipmask            = MASK_MISSILESHOT;
-
-	bolt->s.pos.trType = TR_LINEAR;
-	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME;     // move a bit on the very first frame
+	bolt->s.pos.trType        = TR_LINEAR;
+	bolt->s.pos.trTime        = level.time - MISSILE_PRESTEP_TIME;     // move a bit on the very first frame
 	VectorCopy(start, bolt->s.pos.trBase);
 
 	VectorScale(dir, 2500, bolt->s.pos.trDelta);
