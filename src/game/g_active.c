@@ -1760,7 +1760,7 @@ void SpectatorClientEndFrame(gentity_t *ent)
 			ent->client->pers.lastReinforceTime = testtime;
 		}
 
-		if (g_gametype.integer != GT_WOLF_LMS)
+		if (g_gametype.integer != GT_WOLF_LMS && g_gamestate.integer == GS_PLAYING)
 		{
 			if ((g_maxlives.integer > 0 || g_alliedmaxlives.integer > 0 || g_axismaxlives.integer > 0)
 			    && ent->client->ps.persistant[PERS_RESPAWNS_LEFT] == 0)
