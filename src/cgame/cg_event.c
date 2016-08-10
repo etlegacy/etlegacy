@@ -349,18 +349,16 @@ static void CG_Obituary(entityState_t *ent)
 		case MOD_KNIFE:
 			message  = "was stabbed by";
 			message2 = "'s knife";
-			// goat luvin
-			if (attacker == cg.snap->ps.clientNum || target == cg.snap->ps.clientNum)
-			{
-				if (ci->team != ca->team)
-				{
-					trap_S_StartSound(cg.snap->ps.origin, cg.snap->ps.clientNum, CHAN_AUTO, cgs.media.goatAxis);
-				}
-			}
+			// we might add a sound here again
 			break;
 		case MOD_KNIFE_KABAR:
 			message  = "was stabbed by";
 			message2 = "'s KA-BAR";
+			// we might add a sound here again
+			break;
+		case MOD_BACKSTAB:
+			message  = "was backstabbed by";
+			message2 = "'s knife arts";
 			// goat luvin
 			if (attacker == cg.snap->ps.clientNum || target == cg.snap->ps.clientNum)
 			{

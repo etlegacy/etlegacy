@@ -457,6 +457,7 @@ static const mod_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
 	{ MOD_MOBILE_BROWNING,                    WS_BROWNING        },
 	{ MOD_MORTAR2,                            WS_MORTAR2         },
 	{ MOD_BAZOOKA,                            WS_BAZOOKA         },
+	{ MOD_BACKSTAB,                           WS_KNIFE           },
 };
 
 // Get right stats index based on weapon mod

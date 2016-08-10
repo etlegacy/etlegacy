@@ -365,8 +365,9 @@ char *modNames[] =
 	"MOD_MOBILE_BROWNING",
 	"MOD_MORTAR2",
 	"MOD_BAZOOKA",
+	"MOD_BACKSTAB",
 
-	// MOD_NUM_MODS
+	"MOD_NUM_MODS",
 };
 
 /*
@@ -682,9 +683,17 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	G_DropItems(self);
 
 	// send a fancy "MEDIC!" scream.  Sissies, ain' they?
+	// FIXME: mod table
 	if (self->health > GIB_HEALTH &&
 	    meansOfDeath != MOD_SUICIDE &&
 	    meansOfDeath != MOD_SWITCHTEAM &&
+	    meansOfDeath != MOD_FLAMETHROWER && // these mods gib -> no fancy scream
+	    meansOfDeath != MOD_CRUSH &&
+		meansOfDeath != MOD_CRUSH_CONSTRUCTION &&
+		meansOfDeath != MOD_CRUSH_CONSTRUCTIONDEATH &&
+		meansOfDeath != MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER &&
+		meansOfDeath != MOD_TELEFRAG &&
+	    //meansOfDeath != MOD_BACKSTAB && // :)
 	    !killedintank &&
 	    self->waterlevel < 3)
 	{
@@ -1221,7 +1230,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	// DEBUG
 	//trap_SendServerCommand( -1, va("print \"%i\n\"\n", targ->health) );
 
-	// The intermission has allready been qualified for, so don't allow any extra scoring.
+	// The intermission has already been qualified for, so don't allow any extra scoring.
 	// Don't do damage if at warmup and warmupdamage is set to 'None' and the target is a client.
 	if (level.intermissionQueued || (g_gamestate.integer != GS_PLAYING && match_warmupDamage.integer == 0 && targ->client))
 	{

@@ -376,6 +376,7 @@ modTable_t modTable[MOD_NUM_MODS] =
 	{ MOD_MOBILE_BROWNING,                    qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO        },
 	{ MOD_MORTAR2,                            qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_EXPLOSIVE },
 	{ MOD_BAZOOKA,                            qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_EXPLOSIVE },
+	{ MOD_BACKSTAB,                           qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO        },
 };
 
 const char *animStrings[] =

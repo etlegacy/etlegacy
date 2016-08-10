@@ -2371,6 +2371,7 @@ static void registerModConstants(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, MOD_MOBILE_BROWNING);
 	lua_regconstinteger(vm->L, MOD_MORTAR2);
 	lua_regconstinteger(vm->L, MOD_BAZOOKA);
+	lua_regconstinteger(vm->L, MOD_BACKSTAB);
 
 	lua_regconstinteger(vm->L, MOD_NUM_MODS);
 }

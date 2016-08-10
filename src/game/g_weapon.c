@@ -139,7 +139,7 @@ void Weapon_Knife(gentity_t *ent, int modnum)
 		if (DotProduct(eforward, pforward) > 0.6f)           // from behind(-ish)
 		{
 			damage = 100;   // enough to drop a 'normal' (100 health) human with one jab
-			mod    = modnum; // FIXME: MOD_BACKSTAB
+			mod    = MOD_BACKSTAB;
 
 			if (ent->client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 4)
 			{
@@ -2437,7 +2437,9 @@ evilbanigoto:
 								G_Script_ScriptEvent(hit, "defused", "");
 
 								{
-									gentity_t *pm = G_PopupMessage(PM_DYNAMITE);
+									gentity_t *pm;
+
+									pm = G_PopupMessage(PM_DYNAMITE);
 
 									pm->s.effect2Time = 1;     // 1 = defused
 									pm->s.effect3Time = hit->parent->s.teamNum;
@@ -2461,7 +2463,9 @@ evilbanigoto:
 								G_Script_ScriptEvent(hit, "defused", "");
 
 								{
-									gentity_t *pm = G_PopupMessage(PM_DYNAMITE);
+									gentity_t *pm;
+
+									pm = G_PopupMessage(PM_DYNAMITE);
 
 									pm->s.effect2Time = 1;     // 1 = defused
 									pm->s.effect3Time = hit->parent->s.teamNum;

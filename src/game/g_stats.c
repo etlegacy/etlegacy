@@ -413,7 +413,11 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 		G_LoseSkillPoints(tker, SK_LIGHT_WEAPONS, 3.f);
 		//G_DebugAddSkillPoints( attacker, SK_LIGHT_WEAPONS, 2.f, "kill" );
 		break;
-
+		
+	case MOD_BACKSTAB:
+		G_LoseSkillPoints(tker, SK_LIGHT_WEAPONS, 5.f);
+		break;
+		
 	// scoped weapons
 	case MOD_GARAND_SCOPE:
 	case MOD_K43_SCOPE:
@@ -500,6 +504,11 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
 		case HR_LEGS:   G_AddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f); G_DebugAddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f, "legshot kill");  break;
 		default:        G_AddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f); G_DebugAddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f, "kill"); break;               // for weapons that don't have localized damage
 		}
+		break;
+
+	case MOD_BACKSTAB:
+		G_AddSkillPoints(attacker, SK_LIGHT_WEAPONS, 5.f);
+		G_DebugAddSkillPoints(attacker, SK_LIGHT_WEAPONS, 5.f, "backstab kill");
 		break;
 
 	// heavy weapons
