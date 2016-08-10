@@ -387,8 +387,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 	//G_Printf( "player_die\n" );
 
-	weap = BG_WeaponForMOD(meansOfDeath);
-
 	if (!self->client)
 	{
 		return;
@@ -404,6 +402,11 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 			meansOfDeath = MOD_SHOVE;
 		}
 		break;
+	case MOD_BACKSTAB: // set below
+		break;
+	default:
+		weap = BG_WeaponForMOD(meansOfDeath);
+		break;
 	}
 
 	attackerClient  = (attacker && attacker->client) ? qtrue : qfalse;
@@ -413,6 +416,11 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	{
 		self->client->pers.lastkiller_client     = attacker->s.clientNum;
 		attacker->client->pers.lastkilled_client = self->s.clientNum;
+
+		if (meansOfDeath == MOD_BACKSTAB)
+		{
+			weap = attacker->s.weapon;
+		}
 	}
 
 	// this is used for G_DropLimboHealth()/G_DropLimboAmmo()
