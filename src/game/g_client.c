@@ -341,7 +341,7 @@ After sitting around for five seconds, fall into the ground and dissapear
 void BodySink2(gentity_t *ent)
 {
 	ent->physicsObject = qfalse;
-	ent->nextthink     = level.time + 1800; // BODY_TIME(BODY_TEAM(ent)) + 1500; // FIXME: remove
+	ent->nextthink     = level.time + 1800;
 	ent->think         = BodyUnlink;
 
 	if (g_corpses.integer == 0)
@@ -2012,6 +2012,7 @@ void ClientUserinfoChanged(int clientNum)
 		client->pmext.bAutoReload      = qtrue;
 		client->pers.predictItemPickup = qfalse;
 		client->pers.pmoveFixed        = qfalse;
+		client->pers.pmoveMsec         = 8;
 	}
 	else
 	{
@@ -2369,7 +2370,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	{
 		if (g_enforcemaxlives.integer && (g_maxlives.integer > 0 || g_axismaxlives.integer > 0 || g_alliedmaxlives.integer > 0))
 		{
-			if (trap_Cvar_VariableIntegerValue("sv_punkbuster")) // <- FIXME: -> g_protect cvar
+			if (g_protect.integer & G_PROTECT_MAX_LIVES_BAN_GUID)
 			{
 				if (G_FilterMaxLivesPacket(cs_guid))
 				{
@@ -2605,11 +2606,6 @@ int G_ComputeMaxLives(gclient_t *cl, int maxRespawns)
 		return maxRespawns - 1;
 	}
 
-	if (g_gamestate.integer != GS_PLAYING) // warmup
-	{
-		maxRespawns - 1;
-	}
-
 	scaled = (float)(maxRespawns - 1) * (1.0f - ((float)(level.time - level.startTime) / (g_timelimit.value * 60000.0f)));
 	val    = (int)scaled;
 
@@ -2734,7 +2730,7 @@ void ClientBegin(int clientNum)
 	{
 		if ((client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES))
 		{
-			if (!client->maxlivescalced)
+			if (!client->maxlivescalced && g_gamestate.integer == GS_PLAYING)
 			{
 				if (g_maxlives.integer > 0)
 				{
@@ -3341,7 +3337,7 @@ void ClientDisconnect(int clientNum)
 			CPx(flag->s.number,"cp \"Your cover has been blown, steal a new uniform soon!\" 1");
 			flag->client->disguiseClientNum = flag->s.clientNum;
 			// sound effect
-			//G_AddEvent(flag, EV_DISGUISE_SOUND, 0); // FIXME: find a sound + add event
+			G_AddEvent(flag, EV_DISGUISE_SOUND, 0); // FIXME: find a new sound?
 			ClientUserinfoChanged(flag->s.clientNum);
 			// no break - uniform might be stolen more than once
 		}
