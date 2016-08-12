@@ -2366,7 +2366,8 @@ fieldtype_t GetFieldType(char *fieldname);
 #endif
 
 // g_protect flags
-#define G_PROTECT_LOCALHOST_REF 1
+#define G_PROTECT_LOCALHOST_REF        1
+#define G_PROTECT_MAX_LIVES_BAN_GUID   2
 
 // MAPVOTE
 void G_mapvoteinfo_write(void);
