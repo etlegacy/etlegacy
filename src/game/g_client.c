@@ -2600,9 +2600,14 @@ int G_ComputeMaxLives(gclient_t *cl, int maxRespawns)
 	int   val;
 
 	// don't scale of the timelimit is 0
-	if (g_timelimit.value == 0.0)
+	if (g_timelimit.value == 0.0) // map end
 	{
 		return maxRespawns - 1;
+	}
+
+	if (g_gamestate.integer != GS_PLAYING) // warmup
+	{
+		maxRespawns - 1;
 	}
 
 	scaled = (float)(maxRespawns - 1) * (1.0f - ((float)(level.time - level.startTime) / (g_timelimit.value * 60000.0f)));
@@ -2833,9 +2838,12 @@ void ClientBegin(int clientNum)
 			G_LogPrintf("EnforceMaxLives-GUID: %s\n", value);
 			AddMaxLivesGUID(value);
 
-			value = Info_ValueForKey(userinfo, "ip");
-			G_LogPrintf("EnforceMaxLives-IP: %s\n", value);
-			AddMaxLivesBan(value);
+			if (!(g_entities[client->ps.clientNum].r.svFlags & SVF_BOT))
+			{
+				value = Info_ValueForKey(userinfo, "ip");
+				G_LogPrintf("EnforceMaxLives-IP: %s\n", value);
+				AddMaxLivesBan(value);
+			}
 		}
 	}
 
