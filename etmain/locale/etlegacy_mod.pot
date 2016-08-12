@@ -6306,6 +6306,9 @@ msgstr ""
 msgid "'s KA-BAR"
 msgstr ""
 
+msgid "'s knife arts"
+msgstr ""
+
 msgid "'s .45ACP 1911"
 msgstr ""
 
@@ -6463,6 +6466,9 @@ msgid "was killed by"
 msgstr ""
 
 msgid "was stabbed by"
+msgstr ""
+
+msgid "was backstabbed by"
 msgstr ""
 
 msgid "was blasted by"
