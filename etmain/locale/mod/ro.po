@@ -1,0 +1,7067 @@
+# Translation pot file for the ET: Legacy mod
+# Copyright (C) 2012-2015 ET: Legacy Team
+# This file is distributed under the same license as the ET:Legacy package.
+# Translators:
+msgid ""
+msgstr ""
+"Project-Id-Version: ET:Legacy\n"
+"Report-Msgid-Bugs-To: mail@etlegacy.com\n"
+"POT-Creation-Date: 2015-01-10 20:22+0100\n"
+"PO-Revision-Date: 2015-01-10 11:47+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Romanian (http://www.transifex.com/etlegacy/etlegacy/language/ro/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ro\n"
+"Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));\n"
+
+#: etmain/ui/credits_activision.menu:66
+msgid "PRODUCED BY ACTIVISION"
+msgstr ""
+
+#: etmain/ui/credits_activision.menu:82
+msgid "Producer"
+msgstr ""
+
+#: etmain/ui/credits_activision.menu:84
+msgid "Associate Producer"
+msgstr ""
+
+#: etmain/ui/credits_activision.menu:86
+msgid "Installer"
+msgstr ""
+
+#: etmain/ui/credits_activision.menu:88
+msgid "Production Coordinator"
+msgstr ""
+
+#: etmain/ui/credits_activision.menu:90
+msgid "Production Tester"
+msgstr ""
+
+#: etmain/ui/credits_activision.menu:92
+msgid "Sr. Executive Producer"
+msgstr ""
+
+#: etmain/ui/credits_activision.menu:94
+msgid "VP North American Studios"
+msgstr ""
+
+#: etmain/ui/credits_activision.menu:97 etmain/ui/credits_activision.menu:99
+msgid "QA Project Lead"
+msgstr ""
+
+#: etmain/ui/credits_activision.menu:101
+msgid "QA Senior Project Lead"
+msgstr ""
+
+#: etmain/ui/credits_activision.menu:103
+msgid "QA Floor Lead"
+msgstr ""
+
+#: etmain/ui/credits_activision.menu:104
+msgid "Testers:"
+msgstr ""
+
+#: etmain/ui/credits_activision.menu:110
+msgid "Network"
+msgstr ""
+
+#: etmain/ui/credits_activision.menu:112
+msgid "Compatibility"
+msgstr ""
+
+#: etmain/ui/credits_activision.menu:114
+msgid "QA Manager"
+msgstr ""
+
+#: etmain/ui/credits_activision.menu:116
+msgid "Manager, Code Release Group"
+msgstr ""
+
+#: etmain/ui/credits_activision.menu:118
+msgid "Sr. Lead, Code Release Group"
+msgstr ""
+
+#: etmain/ui/credits_activision.menu:120
+msgid "Lead, Code Release Group"
+msgstr ""
+
+#: etmain/ui/credits_activision.menu:122
+msgid "Manager, Customer Support"
+msgstr ""
+
+#: etmain/ui/credits_activision.menu:126 etmain/ui/credits_activision.menu:128
+#: etmain/ui/credits_additional.menu:233 etmain/ui/credits_additional.menu:235
+#: etmain/ui/credits_etlegacy.menu:197 etmain/ui/credits_etlegacy.menu:199
+#: etmain/ui/credits_et260.menu:132 etmain/ui/credits_et260.menu:134
+#: etmain/ui/credits_halloffame.menu:134 etmain/ui/credits_halloffame.menu:136
+#: etmain/ui/credits_idsoftware.menu:92 etmain/ui/credits_idsoftware.menu:94
+#: etmain/ui/credits_splashdamage.menu:190
+#: etmain/ui/credits_splashdamage.menu:192
+#: etmain/ui/hostgame_advanced.menu:164 etmain/ui/hostgame_extended.menu:35
+#: etmain/ui/hostgame.menu:194 etmain/ui/ingame_serverinfo.menu:76
+#: etmain/ui/ingame_vote_bot.menu:61 etmain/ui/ingame_vote_disabled.menu:54
+#: etmain/ui/ingame_vote_map.menu:81 etmain/ui/ingame_vote.menu:93
+#: etmain/ui/ingame_vote_misc.menu:81
+#: etmain/ui/ingame_vote_misc_refrcon.menu:89
+#: etmain/ui/ingame_vote_players.menu:73
+#: etmain/ui/ingame_vote_players_warn.menu:63
+#: etmain/ui/main_quickconnect.menu:86 etmain/ui/mods.menu:58
+#: etmain/ui/options_controls.menu:121
+#: etmain/ui/options_customise_game.menu:85
+#: etmain/ui/options_customise_hud.menu:133
+#: etmain/ui/options_graphics_gamma.menu:72
+#: etmain/ui/options_graphics_gamma.menu:77 etmain/ui/options_graphics.menu:77
+#: etmain/ui/options.menu:39 etmain/ui/options.menu:41
+#: etmain/ui/options_system_gamma.menu:76
+#: etmain/ui/options_system_gamma.menu:81 etmain/ui/options_system.menu:65
+#: etmain/ui/playonline_connecttoip.menu:66 etmain/ui/playonline.menu:655
+#: etmain/ui/playonline_serverinfo.menu:76
+#: etmain/ui/popup_errormessage.menu:58
+#: etmain/ui/popup_errormessage_pb.menu:56
+#: etmain/ui/popup_hostgameerrormessage.menu:56
+#: etmain/ui/popup_password.menu:86 etmain/ui/profile_create_error.menu:54
+#: etmain/ui/profile_create.menu:119 etmain/ui/profile_delete_error.menu:54
+#: etmain/ui/profile.menu:71 etmain/ui/profile_rename.menu:67
+#: etmain/ui/viewreplay.menu:58
+msgid "BACK"
+msgstr ""
+
+#: etmain/ui/credits_activision.menu:131 etmain/ui/credits_et260.menu:136
+msgid "ADDITIONAL"
+msgstr ""
+
+#: etmain/ui/credits_additional.menu:128
+msgid "ADDITIONAL DEVELOPMENT"
+msgstr ""
+
+#: etmain/ui/credits_additional.menu:148
+msgid "OSP BY ORANGE SMOOTHIE PRODUCTIONS"
+msgstr ""
+
+#: etmain/ui/credits_additional.menu:161
+msgid "Programming"
+msgstr ""
+
+#: etmain/ui/credits_additional.menu:168
+msgid "PUNKBUSTER BY EVEN BALANCE, INC."
+msgstr ""
+
+#: etmain/ui/credits_additional.menu:181
+msgid "President"
+msgstr ""
+
+#: etmain/ui/credits_additional.menu:183
+msgid "Senior Project Leader"
+msgstr ""
+
+#: etmain/ui/credits_additional.menu:190
+msgid "VOICE ARTISTS"
+msgstr ""
+
+#: etmain/ui/credits_additional.menu:203
+msgid "Voice of Allied / Axis soldiers"
+msgstr ""
+
+#: etmain/ui/credits_additional.menu:205
+msgid "Voice of Axis Commander"
+msgstr ""
+
+#: etmain/ui/credits_additional.menu:207
+msgid "Voice of Allied Commander"
+msgstr ""
+
+#: etmain/ui/credits_additional.menu:214
+msgid "SPECIAL THANKS TO"
+msgstr ""
+
+#: etmain/ui/credits_additional.menu:226
+msgid ""
+"Return to Castle Wolfenstein was developed by Gray Matter Studios & Nerve "
+"Software."
+msgstr ""
+
+#: etmain/ui/credits_additional.menu:227
+msgid "We would like to thank both developers for their help and support"
+msgstr ""
+
+#: etmain/ui/credits_additional.menu:228
+msgid "during the development of Wolfenstein: Enemy Territory."
+msgstr ""
+
+#: etmain/ui/credits_additional.menu:229
+msgid "Original Soundtrack by Bill Brown."
+msgstr ""
+
+#: etmain/ui/credits_etlegacy.menu:66 etmain/ui/credits_quit.menu:62
+msgid "DEVELOPED BY ET: LEGACY TEAM"
+msgstr ""
+
+#: etmain/ui/credits_etlegacy.menu:85
+msgid "^1PROGRAMMING"
+msgstr ""
+
+#: etmain/ui/credits_etlegacy.menu:98
+msgid "Project founder, coding & management"
+msgstr ""
+
+#: etmain/ui/credits_etlegacy.menu:100
+msgid "Coding, mod development & bad boy"
+msgstr ""
+
+#: etmain/ui/credits_etlegacy.menu:102
+msgid "Main windows coder & renderer"
+msgstr ""
+
+#: etmain/ui/credits_etlegacy.menu:104
+msgid "Website, coding & scripts"
+msgstr ""
+
+#: etmain/ui/credits_etlegacy.menu:106
+msgid "Coding, mod development"
+msgstr ""
+
+#: etmain/ui/credits_etlegacy.menu:113
+msgid "^1PORTS"
+msgstr ""
+
+#: etmain/ui/credits_etlegacy.menu:126
+msgid "AROS and MorphOS"
+msgstr ""
+
+#: etmain/ui/credits_etlegacy.menu:135
+msgid "^1GREETINGS"
+msgstr ""
+
+#: etmain/ui/credits_etlegacy.menu:150
+msgid ""
+"Many thanks to Splash Damage for their release of the source code, ioWolfET "
+"& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for"
+" their inspirations."
+msgstr ""
+
+#: etmain/ui/credits_etlegacy.menu:159 etmain/ui/credits_halloffame.menu:85
+msgid "^1CONTRIBUTORS"
+msgstr ""
+
+#: etmain/ui/credits_etlegacy.menu:171
+msgid "See HALL OF FAME below"
+msgstr ""
+
+#: etmain/ui/credits_etlegacy.menu:178 etmain/ui/credits_quit.menu:245
+#: etmain/ui/profile_create_initial.menu:127
+msgid "^1WEBSITE"
+msgstr ""
+
+#: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
+msgid "© 2012-2015 ET Legacy Team - under the terms of GPL version 3."
+msgstr ""
+
+#: etmain/ui/credits_etlegacy.menu:201
+msgid "HALL OF FAME"
+msgstr ""
+
+#: etmain/ui/credits_et260.menu:66
+msgid "ET 2.60 UPDATE"
+msgstr ""
+
+#: etmain/ui/credits_et260.menu:86
+msgid "ET PRO DEVELOPMENT TEAM"
+msgstr ""
+
+#: etmain/ui/credits_et260.menu:114
+msgid "MAC OS X PORT"
+msgstr ""
+
+#: etmain/ui/credits_et260.menu:127 etmain/ui/credits_splashdamage.menu:128
+msgid "Lead Programmer"
+msgstr ""
+
+#: etmain/ui/credits_et260.menu:128
+msgid ""
+"Mac OS X is a trademark of Apple Computer, Inc., registered in the U.S. and "
+"other countries."
+msgstr ""
+
+#: etmain/ui/credits_halloffame.menu:66
+msgid "ET: LEGACY HALL OF FAME"
+msgstr ""
+
+#: etmain/ui/credits_halloffame.menu:98
+msgid "Advices, Bug reports, Patches"
+msgstr ""
+
+#: etmain/ui/credits_halloffame.menu:106
+msgid "^1TRANSLATIONS"
+msgstr ""
+
+#: etmain/ui/credits_idsoftware.menu:66
+msgid "EXECUTIVE PRODUCED BY ID SOFTWARE"
+msgstr ""
+
+#: etmain/ui/credits_idsoftware.menu:82
+msgid "Executive Producer"
+msgstr ""
+
+#: etmain/ui/credits_idsoftware.menu:84
+msgid "Additional Programming"
+msgstr ""
+
+#: etmain/ui/credits_idsoftware.menu:87
+msgid ""
+"Wolfenstein: Enemy Territory is powered by id Software's Quake III Arena "
+"(TM) technology."
+msgstr ""
+
+#: etmain/ui/credits_idsoftware.menu:88
+msgid ""
+"Production, development and technical assistance provided by id Software."
+msgstr ""
+
+#: etmain/ui/credits_quit.menu:84
+msgid "^1ORIGINAL DEVELOPERS"
+msgstr ""
+
+#: etmain/ui/credits_quit.menu:261
+msgid ""
+"© 2003 Id Software, Inc. All rights reserved. Wolfenstein: Enemy Territory, "
+"Return to Castle Wolfenstein, the Return to Castle Wolfenstein logo, the id "
+"Software name, and the id logo are either registered trademarks or "
+"trademarks of Id Software, Inc. in the United States and/or other countries."
+" All other trademarks and trade names are the properties of their respective"
+" owners."
+msgstr ""
+
+#: etmain/ui/credits_splashdamage.menu:66
+msgid "DEVELOPED BY SPLASH DAMAGE"
+msgstr ""
+
+#: etmain/ui/credits_splashdamage.menu:82
+msgid "Game Designer / Managing Director"
+msgstr ""
+
+#: etmain/ui/credits_splashdamage.menu:84
+msgid "Business Director"
+msgstr ""
+
+#: etmain/ui/credits_splashdamage.menu:91
+msgid "ART"
+msgstr ""
+
+#: etmain/ui/credits_splashdamage.menu:104
+msgid "Lead Artist / Creative Director"
+msgstr ""
+
+#: etmain/ui/credits_splashdamage.menu:106
+msgid "Artist / Animator"
+msgstr ""
+
+#: etmain/ui/credits_splashdamage.menu:108
+msgid "Additional Art"
+msgstr ""
+
+#: etmain/ui/credits_splashdamage.menu:115
+msgid "PROGRAMMING"
+msgstr ""
+
+#: etmain/ui/credits_splashdamage.menu:130
+msgid "Programmer"
+msgstr ""
+
+#: etmain/ui/credits_splashdamage.menu:132
+msgid "Programmer / Artist"
+msgstr ""
+
+#: etmain/ui/credits_splashdamage.menu:139
+msgid "DESIGN"
+msgstr ""
+
+#: etmain/ui/credits_splashdamage.menu:152
+msgid "Designer / Audio Engineer"
+msgstr ""
+
+#: etmain/ui/credits_splashdamage.menu:154
+msgid "Designer / Writer"
+msgstr ""
+
+#: etmain/ui/credits_splashdamage.menu:161
+msgid "LEVEL DESIGN"
+msgstr ""
+
+#: etmain/ui/credits_splashdamage.menu:174
+msgid "Lead Level Designer"
+msgstr ""
+
+#: etmain/ui/credits_splashdamage.menu:176
+msgid "Senior Level Designer"
+msgstr ""
+
+#: etmain/ui/credits_splashdamage.menu:178
+#: etmain/ui/credits_splashdamage.menu:180
+#: etmain/ui/credits_splashdamage.menu:184
+msgid "Level Designer"
+msgstr ""
+
+#: etmain/ui/credits_splashdamage.menu:182
+msgid "Level Designer / Artist"
+msgstr ""
+
+#: etmain/ui/credits_splashdamage.menu:186
+msgid "Additional Level Design"
+msgstr ""
+
+#: etmain/ui/etlegacywebsite.menu:49
+msgid "ET Legacy Website"
+msgstr ""
+
+#: etmain/ui/etlegacywebsite.menu:50
+msgid ""
+"Do you want to open\n"
+" www.etlegacy.com ?"
+msgstr ""
+
+#: etmain/ui/etlegacywebsite.menu:51
+#: etmain/ui/hostgame_advanced_default.menu:126
+#: etmain/ui/hostgame_dedicated_warning.menu:60
+#: etmain/ui/ingame_disconnect.menu:54 etmain/ui/ingame_tapoutlms.menu:52
+#: etmain/ui/ingame_tapout.menu:52 etmain/ui/options_controls_default.menu:56
+#: etmain/ui/playonline_deletefavs.menu:54 etmain/ui/popup_autoupdate.menu:55
+#: etmain/ui/popup_serverredirect.menu:77 etmain/ui/profile_delete.menu:53
+#: etmain/ui/quit.menu:59 etmain/ui/quit.menu:62 etmain/ui/rec_restart.menu:60
+#: etmain/ui/vid_confirm.menu:84 etmain/ui/vid_confirm.menu:86
+#: etmain/ui/vid_restart.menu:50 etmain/ui/viewreplay_delete.menu:53
+msgid "YES"
+msgstr ""
+
+#: etmain/ui/etlegacywebsite.menu:53 etmain/ui/etlegacywebsite.menu:55
+#: etmain/ui/hostgame_advanced_default.menu:127
+#: etmain/ui/hostgame_dedicated_warning.menu:61
+#: etmain/ui/ingame_disconnect.menu:55 etmain/ui/ingame_tapoutlms.menu:53
+#: etmain/ui/ingame_tapout.menu:53 etmain/ui/options_controls_default.menu:57
+#: etmain/ui/playonline_deletefavs.menu:55 etmain/ui/popup_autoupdate.menu:58
+#: etmain/ui/popup_serverredirect.menu:78 etmain/ui/profile_delete.menu:56
+#: etmain/ui/quit.menu:60 etmain/ui/quit.menu:63 etmain/ui/rec_restart.menu:61
+#: etmain/ui/vid_confirm.menu:89 etmain/ui/vid_restart.menu:51
+#: etmain/ui/viewreplay_delete.menu:54
+msgid "NO"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced_default.menu:123
+msgid "DEFAULT SERVER SETTINGS"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced_default.menu:124
+msgid "Reset server settings to default?"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:25
+msgid "HOST GAME: ADVANCED"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:31
+msgid "GENERAL"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:32
+msgid "Minimum Ping:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:32
+msgid "Setting the minimum ping can be used to exclude LPBs (0 = No Minimum)"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:33
+msgid "Maximum Ping:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:33
+msgid "Setting the maximum ping can be used to exclude HPBs (0 = No Maximum)"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:34
+msgid "Maximum Game Rate:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:34
+msgid ""
+"Maximum rate to send game data to clients (0 = match client rate settings)"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:35
+msgid "Player Inactivity:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:35
+msgid ""
+"Max time (in sec) a player can remain idle before being kicked from the "
+"server (0 = disabled)"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:36
+msgid "Spectator Inactivity:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:36
+msgid ""
+"Max time (in sec) a spectator can remain idle before being kicked from the "
+"server (0 = disabled)"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:37
+msgid "Intermission Time:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:37
+msgid "Time of intermission"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:38
+msgid "Intermission Ready %:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:38
+msgid "Percentage of 'ready' players to start next map"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:41
+msgid "MATCH"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:42
+msgid "Wait for Ready:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:42
+msgid ""
+"Whether the server should require players to be ready before a match can "
+"start"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:43
+msgid "Minimum Players:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:43
+msgid ""
+"Specifies the minimum number of players required before a match can start"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:44
+msgid "Ready percentage:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:44
+msgid ""
+"Specifies the minimum percentage of players that must hit their ready key "
+"before a match can start"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:45
+msgid "Allow Late Joins:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:45
+msgid "Whether a player can join a team once a match has started"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:46
+msgid "Mute Spectators:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:46
+msgid "Whether spectators are muted"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:47 etmain/ui/hostgame_advanced.menu:95
+#: etmain/ui/ingame_vote_misc.menu:61
+#: etmain/ui/ingame_vote_misc_refrcon.menu:60
+msgid "Warmup Damage:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:47
+msgid "Nobody"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:47
+msgid "Enemies Only"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:47 etmain/ui/ingame_vote_misc.menu:61
+#: etmain/ui/ingame_vote_misc_refrcon.menu:60
+msgid "Everyone"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:47
+msgid "Whether you can damage players during the match's warmup period"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:48
+msgid "Max Players Per Team:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:48
+msgid "Specifies the maximum number of players per team"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:49
+msgid "Disable Team Controls:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:49
+msgid ""
+"Whether players can issue team commands (lock team/spectators, readyteam, "
+"etc.)"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:50
+msgid "Warmup Duration:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:50
+msgid "The length of time the warmup lasts prior to a match starting"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:51
+msgid "Maximum Complaints:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:51
+msgid ""
+"The maximum number of complaints a player may receive before being kicked "
+"from a server"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:52
+msgid "Maximum Complainees:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:52
+#: etmain/ui/options_customise_game.menu:49
+#: etmain/ui/options_customise_game.menu:51
+#: etmain/ui/options_customise_game.menu:56
+#: etmain/ui/options_customise_game.menu:78
+#: etmain/ui/options_customise_hud.menu:37
+#: etmain/ui/options_customise_hud.menu:38
+#: etmain/ui/options_customise_hud.menu:39
+#: etmain/ui/options_customise_hud.menu:43
+#: etmain/ui/options_customise_hud.menu:45
+#: etmain/ui/options_customise_hud.menu:56
+#: etmain/ui/options_customise_hud.menu:59
+#: etmain/ui/options_customise_hud.menu:61
+#: etmain/ui/options_customise_hud.menu:73
+#: etmain/ui/options_customise_hud.menu:74
+#: etmain/ui/options_customise_hud.menu:107
+#: etmain/ui/options_customise_hud.menu:108
+#: etmain/ui/options_customise_hud.menu:109 etmain/ui/options_graphics.menu:65
+msgid "Off"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:52
+msgid ""
+"The number of unique complaints a player may receive before being kicked "
+"from a server"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:53
+msgid "Map Time Limit:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:53
+msgid "Override the default time limit"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:54
+msgid "Allied Spawn Time:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:54
+msgid "Override the default Allied spawn time"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:55
+msgid "Axis Spawn Time:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:55
+msgid "Override the default Axis spawn time"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:56
+msgid "Allied Max Lives:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:56
+msgid "Specify the number of Allied lives in a max lives game"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:57
+msgid "Axis Max Lives:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:57
+msgid "Specify the number of Axis lives in a max lives game"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:58
+msgid "Stopwatch Round-Type:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:58
+msgid ""
+"Determines the type of Stopwatch round (ABBA = swap sides, ABAB = retain "
+"sides)"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:61
+msgid "LAST MAN STANDING"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:63
+msgid "LMS Rounds Per Match:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:63
+msgid "Override the default LMS rounds per match"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:64
+msgid "LMS Matches Per Map:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:64
+msgid "Override the default LMS matches (comprising of rounds) per map"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:65
+msgid "LMS Spectate Team Only:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:65
+msgid "Stops players spectating the enemy team"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:66
+msgid "LMS Locked Teams:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:66
+msgid "Stops players being able to switch teams"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:69
+msgid "ADMIN"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:70
+msgid "Pure Server:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:70
+msgid ""
+"Limits game content to that contained in PK3 files on both the client and "
+"server with matching CRCs"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:71 etmain/ui/hostgame.menu:44
+#: etmain/ui/popup_password.menu:84
+msgid "Password:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:71
+msgid "Sets the password required for players to join the server"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:72
+msgid "Referee Password:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:72
+msgid ""
+"Password to utilize the \"ref\" command for match control and remote game "
+"administration"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:73
+msgid "RCON Password:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:73
+msgid ""
+"Password to utilize the remote game server console (very powerful, so keep "
+"this password safe)"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:76
+msgid "VOTING"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:77
+msgid "Max Votes per Player:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:77
+msgid "Specifies the maximum number of votes per player per match"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:78
+msgid "Successful voting:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:78
+msgid "Specifies the minimum percentage required for a vote to pass"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:80
+msgid "ALLOW VOTES"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:81
+msgid "Game config:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:81
+msgid "Allow players to vote for game config"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:82 etmain/ui/hostgame.menu:39
+#: etmain/ui/ingame_vote_misc.menu:78
+#: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
+msgid "Game Type:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:82
+msgid "Allow players to vote for a change in game type"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:83
+msgid "Player Kick:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:83
+msgid "Allow players to vote for other players to be kicked"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:84
+msgid "Map:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:84
+msgid "Allow players to vote for a different campaign or map"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:85
+msgid "Match Reset:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:85
+msgid "Allow players to vote for the match to be reset"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:86
+msgid "Mute Spects:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:86
+msgid "Allow players to vote for spectators to be muted"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:87
+msgid "Next Map:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:87
+msgid "Allow players to vote for the next campaign or map"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:88
+msgid "Balanced Teams:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:88
+msgid "Allow players to vote for enforced team balance"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:90
+msgid "Referee:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:90
+msgid "Allow players to vote for a referee"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:91
+msgid "XP Shuffle:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:91
+msgid "Allow players to vote for teams to be shuffled"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:92
+msgid "Swap Teams:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:92
+msgid "Allow players to vote for teams to swap sides"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:93
+msgid "Friendly Fire:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:93
+msgid "Allow players to vote for friendly fire to be enabled or disabled"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:94
+msgid "Timelimit:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:94
+msgid "Allow players to vote for a different time limit"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:95
+msgid "Allow players to vote for warmup damage to be enabled or disabled"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:96
+msgid "Anti-Lag:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:96
+msgid "Allow players to vote for antilag to be enabled or disabled"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:99 etmain/ui/playonline.menu:64
+msgid "MESSAGE OF THE DAY"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:110
+msgid "Line 1:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:110 etmain/ui/hostgame_advanced.menu:121
+#: etmain/ui/hostgame_advanced.menu:132 etmain/ui/hostgame_advanced.menu:143
+#: etmain/ui/hostgame_advanced.menu:154
+msgid "Specifies the message clients will see when connecting to the server"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:121
+msgid "Line 2:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:132
+msgid "Line 3:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:143
+msgid "Line 4:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:154
+msgid "Line 5:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:157
+msgid "DOWNLOAD"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:158
+msgid "Client Downloads:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:158
+msgid "Allows players to download missing files from the server"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:159
+msgid "Maximum Download Rate:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:159
+msgid ""
+"Specifies the maximum download rate from the server for players with missing"
+" files"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:160
+msgid "FTP/HTTP Redirects:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:160
+msgid "Redirects players with missing files to another server"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:161
+msgid "Base URL:"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:161
+msgid "Used to build the URL given to clients for download"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:165
+msgid "EXTENDED"
+msgstr ""
+
+#: etmain/ui/hostgame_advanced.menu:166 etmain/ui/hostgame_extended.menu:37
+#: etmain/ui/options_controls.menu:122
+msgid "DEFAULT"
+msgstr ""
+
+#: etmain/ui/hostgame_dedicated_warning.menu:52
+msgid "START DEDICATED SERVER"
+msgstr ""
+
+#: etmain/ui/hostgame_dedicated_warning.menu:53
+msgid "Starting a Dedicated Server will"
+msgstr ""
+
+#: etmain/ui/hostgame_dedicated_warning.menu:54
+msgid "close the game window and open the"
+msgstr ""
+
+#: etmain/ui/hostgame_dedicated_warning.menu:55
+msgid "server console. It will not be possible"
+msgstr ""
+
+#: etmain/ui/hostgame_dedicated_warning.menu:56
+msgid "to play the game on the host machine."
+msgstr ""
+
+#: etmain/ui/hostgame_dedicated_warning.menu:57
+msgid "Are you sure you want to start"
+msgstr ""
+
+#: etmain/ui/hostgame_dedicated_warning.menu:58
+msgid "a Dedicated Server?"
+msgstr ""
+
+#: etmain/ui/hostgame_extended.menu:25
+msgid "HOST GAME: EXTENDED"
+msgstr ""
+
+#: etmain/ui/hostgame_extended.menu:31 etmain/ui/ingame_vote.menu:86
+#: etmain/ui/ingame_vote.menu:87 etmain/ui/ingame_vote_misc.menu:38
+#: etmain/ui/ingame_vote_misc_refrcon.menu:37
+#: etmain/ui/options_customise_hud.menu:126
+msgid "MISC"
+msgstr ""
+
+#: etmain/ui/hostgame_extended.menu:32
+msgid "Country Flags:"
+msgstr ""
+
+#: etmain/ui/hostgame_extended.menu:32 etmain/ui/hostgame.menu:42
+#: etmain/ui/hostgame.menu:43 etmain/ui/options_customise_game.menu:42
+#: etmain/ui/options_system.menu:53
+msgid "No"
+msgstr ""
+
+#: etmain/ui/hostgame_extended.menu:32
+#: etmain/ui/options_customise_game.menu:42
+msgid "Yes"
+msgstr ""
+
+#: etmain/ui/hostgame_extended.menu:32
+msgid "Enable Country Flags on the server"
+msgstr ""
+
+#: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
+msgid "ADVANCED"
+msgstr ""
+
+#: etmain/ui/options_system.menu:54
+msgid "ADVANCED GRAPHICS"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:31 etmain/ui/main.menu:106
+msgid "HOST GAME"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:37
+msgid "SETTINGS"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:38
+msgid "Server Name:"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:38
+msgid "Specifies the name of your game server"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:39 etmain/ui/playonline.menu:83
+#: src/cgame/cg_loadpanel.c:259
+msgid "Campaign"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
+#: etmain/ui/ingame_vote_misc_refrcon.menu:77 src/cgame/cg_loadpanel.c:261
+msgid "Last Man Standing"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
+#: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
+#: src/cgame/cg_loadpanel.c:263
+msgid "Map Voting"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
+#: etmain/ui/ingame_vote_misc_refrcon.menu:77
+msgid "Single-Map Objective"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
+#: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
+#: src/cgame/cg_loadpanel.c:257
+msgid "Stopwatch"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:39
+msgid "Click to specify the type of game to load"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:40
+msgid "Maximum Players:"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:40
+msgid "Maximum # of players that can connect to the server"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:42
+msgid "Auto-Configure Server:"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:42
+msgid "Competition Settings"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:42
+msgid "Public Settings"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:42
+msgid "Server automatically configures it self to specified default settings"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:43
+msgid "Dedicated Server:"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:43
+msgid "Yes - LAN"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:43
+msgid "Yes - Internet"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:43
+msgid ""
+"Specifies if the server should be \"dedicated\" for LAN or Internet play (no"
+" client)"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:44
+msgid "Password clients must set to join the server"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:47
+msgid "FEATURES"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:58
+msgid "Friendly Fire"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:59
+msgid "Specifies if teammates can hurt each other"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:70
+msgid "Anti-Lag"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:71
+msgid "Enables modem-friendly server support"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:85
+msgid "Max Lives"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:86
+msgid "Limits the number of player lives per round"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:97
+msgid "Weapon Restrictions"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:98
+msgid ""
+"Restricts the number of weapons available to players to a percentage of the "
+"team size to reduce spam"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:109
+msgid "Balanced Teams"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:110
+msgid ""
+"Enforces balanced teams by forcing players to join the team with the lowest "
+"player count"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:113
+msgid "NAME"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:133
+msgid "Select the campaign or map that the server should load"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:142 etmain/ui/playonline.menu:219
+msgid "PREVIEW"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:159
+msgid "DETAILS"
+msgstr ""
+
+#: etmain/ui/hostgame.menu:196
+msgid "START SERVER"
+msgstr ""
+
+#: etmain/ui/ingame_disconnect.menu:50 etmain/ui/ingame_main.menu:45
+msgid "DISCONNECT"
+msgstr ""
+
+#: etmain/ui/ingame_disconnect.menu:51
+msgid "Do you want to disconnect"
+msgstr ""
+
+#: etmain/ui/ingame_disconnect.menu:52
+msgid "from the server?"
+msgstr ""
+
+#: etmain/ui/ingame_main.menu:31 etmain/ui/main.menu:101
+msgid "MENU"
+msgstr ""
+
+#: etmain/ui/ingame_main.menu:34 etmain/ui/ingame_vote_disabled.menu:50
+#: etmain/ui/ingame_vote.menu:35
+msgid "VOTE"
+msgstr ""
+
+#: etmain/ui/ingame_main.menu:39 etmain/ui/ingame_vote.menu:53
+msgid "REFEREE"
+msgstr ""
+
+#: etmain/ui/ingame_main.menu:40 etmain/ui/ingame_vote.menu:71
+msgid "RCON"
+msgstr ""
+
+#: etmain/ui/ingame_main.menu:41 etmain/ui/ingame_serverinfo.menu:52
+#: etmain/ui/playonline.menu:650 etmain/ui/playonline_serverinfo.menu:52
+msgid "SERVER INFO"
+msgstr ""
+
+#: etmain/ui/ingame_main.menu:42 etmain/ui/main.menu:108
+#: etmain/ui/options.menu:29
+msgid "OPTIONS"
+msgstr ""
+
+#: etmain/ui/ingame_main.menu:43 etmain/ui/main.menu:111
+msgid "CREDITS"
+msgstr ""
+
+#: etmain/ui/ingame_main.menu:46 etmain/ui/main.menu:113
+#: etmain/ui/quit.menu:54
+msgid "EXIT GAME"
+msgstr ""
+
+#: etmain/ui/ingame_messagemode.menu:42
+msgid "SEND MESSAGE"
+msgstr ""
+
+#: etmain/ui/ingame_messagemode.menu:55 etmain/ui/ingame_messagemode.menu:57
+msgid "Say:"
+msgstr ""
+
+#: etmain/ui/ingame_messagemode.menu:55 etmain/ui/ingame_messagemode.menu:57
+msgid "Enter text here - press ESCAPE twice to cancel"
+msgstr ""
+
+#: etmain/ui/ingame_messagemode.menu:59
+msgid "To:"
+msgstr ""
+
+#: etmain/ui/ingame_messagemode.menu:59
+#: etmain/ui/options_customise_game.menu:73 etmain/ui/playonline.menu:83
+#: etmain/ui/playonline.menu:84
+msgid "All"
+msgstr ""
+
+#: etmain/ui/ingame_messagemode.menu:59
+msgid "Team"
+msgstr ""
+
+#: etmain/ui/ingame_messagemode.menu:59
+msgid "Fireteam"
+msgstr ""
+
+#: etmain/ui/ingame_messagemode.menu:59
+msgid "Select the destination of your message"
+msgstr ""
+
+#: etmain/ui/ingame_messagemode.menu:60
+msgid "CANCEL"
+msgstr ""
+
+#: etmain/ui/ingame_messagemode.menu:61
+msgid "SEND"
+msgstr ""
+
+#: etmain/ui/ingame_serverinfo.menu:77 etmain/ui/playonline_serverinfo.menu:77
+msgid "REFRESH"
+msgstr ""
+
+#: etmain/ui/ingame_serverinfo.menu:78
+msgid "ADD TO FAVORITES"
+msgstr ""
+
+#: etmain/ui/ingame_tapoutlms.menu:49 etmain/ui/ingame_tapout.menu:49
+msgid "RESPAWNING"
+msgstr ""
+
+#: etmain/ui/ingame_tapoutlms.menu:50
+msgid ""
+"In Last Man Standing mode you will not respawn if you tap out now. Are you "
+"sure?"
+msgstr ""
+
+#: etmain/ui/ingame_tapout.menu:50
+msgid ""
+"This server has Max Lives enabled. Tapping out now will lose a life. Are you"
+" sure?"
+msgstr ""
+
+#: etmain/ui/ingame_vote_bot.menu:31
+msgid "Bot count:"
+msgstr ""
+
+#: etmain/ui/ingame_vote_bot.menu:39
+msgid "Move skill:"
+msgstr ""
+
+#: etmain/ui/ingame_vote_bot.menu:45
+msgid "Difficulty:"
+msgstr ""
+
+#: etmain/ui/ingame_vote_bot.menu:53
+msgid "KICK ALL BOTS"
+msgstr ""
+
+#: etmain/ui/ingame_vote_bot.menu:55
+msgid "AXIS BOTS"
+msgstr ""
+
+#: etmain/ui/ingame_vote_bot.menu:56
+msgid "ALLIED BOTS"
+msgstr ""
+
+#: etmain/ui/ingame_vote_bot.menu:57
+msgid "BALANCED"
+msgstr ""
+
+#: etmain/ui/ingame_vote_bot.menu:59
+msgid "BOTS ON"
+msgstr ""
+
+#: etmain/ui/ingame_vote_bot.menu:60
+msgid "BOTS OFF"
+msgstr ""
+
+#: etmain/ui/ingame_vote_disabled.menu:51
+msgid "Voting is disabled"
+msgstr ""
+
+#: etmain/ui/ingame_vote_disabled.menu:52
+msgid "on this server."
+msgstr ""
+
+#: etmain/ui/ingame_vote_map.menu:34 etmain/ui/ingame_vote_map.menu:37
+#: etmain/ui/ingame_vote.menu:88 etmain/ui/ingame_vote.menu:89
+msgid "MAPS"
+msgstr ""
+
+#: etmain/ui/ingame_vote_map.menu:38
+msgid "CAMPAIGNS"
+msgstr ""
+
+#: etmain/ui/ingame_vote_map.menu:82 etmain/ui/ingame_vote_map.menu:83
+#: etmain/ui/ingame_vote_map.menu:84 etmain/ui/ingame_vote_misc.menu:62
+#: etmain/ui/ingame_vote_misc.menu:76 etmain/ui/ingame_vote_misc.menu:79
+#: etmain/ui/ingame_vote_misc_refrcon.menu:61
+#: etmain/ui/ingame_vote_misc_refrcon.menu:75
+#: etmain/ui/ingame_vote_misc_refrcon.menu:78
+msgid "OK"
+msgstr ""
+
+#: etmain/ui/ingame_vote.menu:90 etmain/ui/ingame_vote.menu:91
+#: etmain/ui/ingame_vote_players.menu:25 src/cgame/cg_scoreboard.c:205
+#: src/cgame/cg_scoreboard.c:811 src/cgame/cg_scoreboard.c:818
+#: src/cgame/cg_scoreboard.c:828 src/cgame/cg_scoreboard.c:832
+msgid "PLAYERS"
+msgstr ""
+
+#: etmain/ui/ingame_vote.menu:92
+msgid "BOTS"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:41
+#: etmain/ui/ingame_vote_misc_refrcon.menu:40
+msgid "START MATCH"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:42
+#: etmain/ui/ingame_vote_misc_refrcon.menu:41
+msgid "RESET MATCH"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:43
+#: etmain/ui/ingame_vote_misc_refrcon.menu:42
+msgid "RESTART MAP"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:44
+#: etmain/ui/ingame_vote_misc_refrcon.menu:43
+msgid "NEXT MAP"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:45
+#: etmain/ui/ingame_vote_misc_refrcon.menu:44
+msgid "NEXT CAMPAIGN"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:46
+#: etmain/ui/ingame_vote_misc_refrcon.menu:45
+msgid "ANTI-LAG ON"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:47
+#: etmain/ui/ingame_vote_misc_refrcon.menu:46
+msgid "ANTI-LAG OFF"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:49
+#: etmain/ui/ingame_vote_misc_refrcon.menu:48
+msgid "XP SHUFFLE"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:50
+#: etmain/ui/ingame_vote_misc_refrcon.menu:49
+msgid "SWAP TEAMS"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:51
+#: etmain/ui/ingame_vote_misc_refrcon.menu:50
+msgid "MUTE SPECS"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:52
+#: etmain/ui/ingame_vote_misc_refrcon.menu:51
+msgid "UNMUTE SPECS"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:53
+#: etmain/ui/ingame_vote_misc_refrcon.menu:52
+msgid "FRIENDLY FIRE ON"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:54
+#: etmain/ui/ingame_vote_misc_refrcon.menu:53
+msgid "FRIENDLY FIRE OFF"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:55
+#: etmain/ui/ingame_vote_misc_refrcon.menu:54
+msgid "BALANCED TEAMS ON"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:56
+#: etmain/ui/ingame_vote_misc_refrcon.menu:55
+msgid "BALANCED TEAMS OFF"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:58
+#: etmain/ui/ingame_vote_misc_refrcon.menu:57
+msgid "COMPETITION SETTINGS"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:59
+#: etmain/ui/ingame_vote_misc_refrcon.menu:58
+msgid "PUBLIC SETTINGS"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:61
+#: etmain/ui/ingame_vote_misc_refrcon.menu:60
+#: etmain/ui/options_customise_game.menu:73
+#: etmain/ui/options_customise_game.menu:80
+#: etmain/ui/options_customise_hud.menu:62
+#: etmain/ui/options_customise_hud.menu:63 etmain/ui/options_graphics.menu:55
+msgid "None"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:61
+#: etmain/ui/ingame_vote_misc_refrcon.menu:60
+msgid "Enemies"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:61
+msgid "Select the warm-up damage mode to vote on"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:75
+#: etmain/ui/ingame_vote_misc_refrcon.menu:74
+msgid "Time Limit:"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:75
+msgid "Specify a time limit to vote on"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc.menu:78
+msgid "Select the game type to vote on"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc_refrcon.menu:60
+msgid "Enable or disable warmup damage"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc_refrcon.menu:74
+msgid "Set the time limit for the server"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc_refrcon.menu:77
+msgid "Set the game type"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc_refrcon.menu:80
+msgid "PAUSE"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc_refrcon.menu:81
+msgid "UNPAUSE"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc_refrcon.menu:83
+msgid "LOCK TEAMS"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc_refrcon.menu:84
+msgid "UNLOCK TEAMS"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc_refrcon.menu:86
+msgid "LOCK SPECS"
+msgstr ""
+
+#: etmain/ui/ingame_vote_misc_refrcon.menu:87
+msgid "UNLOCK SPECS"
+msgstr ""
+
+#: etmain/ui/ingame_vote_players.menu:49 etmain/ui/ingame_vote_players.menu:50
+#: etmain/ui/ingame_vote_players.menu:51 src/cgame/cg_fireteams.c:359
+msgid "KICK"
+msgstr ""
+
+#: etmain/ui/ingame_vote_players.menu:52 etmain/ui/ingame_vote_players.menu:53
+#: etmain/ui/ingame_vote_players.menu:54
+msgid "MUTE"
+msgstr ""
+
+#: etmain/ui/ingame_vote_players.menu:55 etmain/ui/ingame_vote_players.menu:56
+#: etmain/ui/ingame_vote_players.menu:57
+msgid "UN-MUTE"
+msgstr ""
+
+#: etmain/ui/ingame_vote_players.menu:59 etmain/ui/ingame_vote_players.menu:60
+#: etmain/ui/ingame_vote_players.menu:61
+msgid "MAKE REFEREE"
+msgstr ""
+
+#: etmain/ui/ingame_vote_players.menu:62 etmain/ui/ingame_vote_players.menu:63
+#: etmain/ui/ingame_vote_players.menu:64
+msgid "UN-REFEREE"
+msgstr ""
+
+#: etmain/ui/ingame_vote_players.menu:66
+msgid "MAKE AXIS"
+msgstr ""
+
+#: etmain/ui/ingame_vote_players.menu:67
+msgid "MAKE ALLIED"
+msgstr ""
+
+#: etmain/ui/ingame_vote_players.menu:68
+msgid "MAKE SPEC"
+msgstr ""
+
+#: etmain/ui/ingame_vote_players.menu:70
+#: etmain/ui/ingame_vote_players_warn.menu:64 src/cgame/cg_fireteams.c:362
+msgid "WARN"
+msgstr ""
+
+#: etmain/ui/ingame_vote_players.menu:71
+msgid "BAN"
+msgstr ""
+
+#: etmain/ui/ingame_vote_players_warn.menu:51
+msgid "WARN PLAYER"
+msgstr ""
+
+#: etmain/ui/ingame_vote_players_warn.menu:61
+msgid "Warning:"
+msgstr ""
+
+#: etmain/ui/ingame_vote_players_warn.menu:61
+msgid "Warning message to send to a player"
+msgstr ""
+
+#: etmain/ui/main.menu:105 etmain/ui/playonline.menu:56
+msgid "PLAY ONLINE"
+msgstr ""
+
+#: etmain/ui/main.menu:107 etmain/ui/viewreplay.menu:29
+msgid "REPLAYS"
+msgstr ""
+
+#: etmain/ui/main.menu:109 etmain/ui/profile.menu:29
+msgid "PROFILE"
+msgstr ""
+
+#: etmain/ui/main.menu:110 etmain/ui/mods.menu:29
+msgid "MODS"
+msgstr ""
+
+#: etmain/ui/main.menu:112
+msgid "ETLEGACY.COM"
+msgstr ""
+
+#: etmain/ui/main.menu:118
+msgid "^1SECURITY INFORMATION"
+msgstr ""
+
+#: etmain/ui/main.menu:119
+msgid "You are running old software"
+msgstr ""
+
+#: etmain/ui/main.menu:120
+msgid ""
+"We do recommend to\n"
+"upgrade your ET client"
+msgstr ""
+
+#: etmain/ui/main.menu:121
+msgid "UPGRADE NOW"
+msgstr ""
+
+#: etmain/ui/main_quickconnect.menu:58
+msgid "CONNECT TO SERVER"
+msgstr ""
+
+#: etmain/ui/main_quickconnect.menu:69
+#: etmain/ui/playonline_connecttoip.menu:62
+msgid "Server IP:"
+msgstr ""
+
+#: etmain/ui/main_quickconnect.menu:71
+#: etmain/ui/playonline_connecttoip.menu:64
+msgid "Enter the IP address seperated by dots: xxx.xxx.xxx.xxx"
+msgstr ""
+
+#: etmain/ui/main_quickconnect.menu:82
+msgid "Server PW:"
+msgstr ""
+
+#: etmain/ui/main_quickconnect.menu:84
+msgid "Enter the server password if any"
+msgstr ""
+
+#: etmain/ui/main_quickconnect.menu:87
+#: etmain/ui/playonline_connecttoip.menu:67 etmain/ui/popup_password.menu:87
+msgid "CONNECT"
+msgstr ""
+
+#: etmain/ui/mods.menu:50
+msgid "Select the modification to play"
+msgstr ""
+
+#: etmain/ui/mods.menu:59
+msgid "LOAD MOD"
+msgstr ""
+
+#: etmain/ui/options_clean.menu:30 etmain/ui/options.menu:37
+msgid "CLEAN"
+msgstr ""
+
+#: etmain/ui/options_clean.menu:34
+msgid "HOMEPATH CLEAN UP"
+msgstr ""
+
+#: etmain/ui/options_clean.menu:35
+msgid "This will delete all unnecessary files from you fs_homepath."
+msgstr ""
+
+#: etmain/ui/options_clean.menu:36
+msgid "A simple clean will remove tmp and custom pk3 files."
+msgstr ""
+
+#: etmain/ui/options_clean.menu:37
+msgid ""
+"A full clean will remove all downloaded files like maps,\n"
+" campaigns and custom pk3 files."
+msgstr ""
+
+#: etmain/ui/options_clean.menu:38
+msgid "^1WARNING: Use at your own risk!"
+msgstr ""
+
+#: etmain/ui/options_clean.menu:39
+msgid "Consult our wiki for documentation."
+msgstr ""
+
+#: etmain/ui/options_clean.menu:40
+msgid "Press '^7ABORT^9' if you don't know what you are doing here."
+msgstr ""
+
+#: etmain/ui/options_clean.menu:42
+msgid "ABORT"
+msgstr ""
+
+#: etmain/ui/options_clean.menu:42
+msgid "Abort operation"
+msgstr ""
+
+#: etmain/ui/options_clean.menu:43
+msgid "SIMPLE CLEAN"
+msgstr ""
+
+#: etmain/ui/options_clean.menu:43
+msgid "Remove tmp and custom pk3 files"
+msgstr ""
+
+#: etmain/ui/options_clean.menu:44
+msgid "FULL CLEAN"
+msgstr ""
+
+#: etmain/ui/options_clean.menu:44
+msgid "Remove all maps and campaigns files"
+msgstr ""
+
+#: etmain/ui/options_controls_default.menu:52
+msgid "DEFAULT CONTROLS"
+msgstr ""
+
+#: etmain/ui/options_controls_default.menu:53
+msgid "Reset controls to default?"
+msgstr ""
+
+#: etmain/ui/options_controls_default.menu:54
+#: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
+msgid "Handedness:"
+msgstr ""
+
+#: etmain/ui/options_controls_default.menu:54
+#: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
+msgid "Right"
+msgstr ""
+
+#: etmain/ui/options_controls_default.menu:54
+#: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
+msgid "Left"
+msgstr ""
+
+#: etmain/ui/options_controls_default.menu:54
+#: etmain/ui/profile_create_initial.menu:114 etmain/ui/profile_create.menu:108
+msgid ""
+"Left or Right Handed? This sets your default controls\n"
+"which you can modify later via the options menu"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:25 etmain/ui/options.menu:34
+msgid "CONTROLS"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:32
+msgid "MOVE"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:33
+msgid "Forward:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:34
+msgid "Back:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:35
+msgid "Move Left:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:36
+msgid "Move Right:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:37
+msgid "Lean Left:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:38
+msgid "Lean Right:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:39
+msgid "Jump:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:40
+msgid "Crouch:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:41
+msgid "Prone:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:42
+msgid "Walk:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:43
+msgid "Sprint:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:47
+msgid "INPUT"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:48
+#: etmain/ui/profile_create_initial.menu:112 etmain/ui/profile_create.menu:106
+msgid "Invert Mouse:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:48
+msgid "Inverts mouse pitch"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:49
+msgid "Smooth Mouse:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:49
+msgid "Smooths out the mouse using interpolation"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:51
+#: etmain/ui/profile_create_initial.menu:111 etmain/ui/profile_create.menu:105
+msgid "Mouse Sensitivity:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:51
+msgid "Use the slider to increase or decrease mouse sensitivity"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:52
+msgid "Mouse Pitch:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:52
+msgid "0.015 (lowest allowed)"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:52
+msgid "0.022 (default)"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:52
+msgid "Up-Down Motion Of The Crosshair While Moving."
+msgstr ""
+
+#: etmain/ui/options_controls.menu:56 etmain/ui/options_customise_game.menu:62
+msgid "CHAT"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:57
+msgid "Chat:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:58
+msgid "Team Chat:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:59
+msgid "Fire-Team Chat:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:60
+msgid "Quick Chat:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:61
+msgid "Fire-Team Quick Chat:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:65
+msgid "POP-UPS"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:66
+msgid "Show Scores:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:67
+msgid "Show Limbo Menu:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:68
+msgid "Show Command Map:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:69
+msgid "Compass Map Zoom In:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:70
+msgid "Compass Map Zoom Out:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:71
+msgid "Player Stats:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:72
+msgid "Top Shots:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:73
+msgid "Objectives:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:78
+msgid "USE WEAPONS"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:79
+msgid "Attack:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:80
+msgid "Switch to Alternate:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:81
+msgid "Reload Weapon:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:82
+msgid "Binoculars Zoom:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:83
+msgid "Use (Activate):"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:87
+msgid "SELECT WEAPONS"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:88
+msgid "Next Weapon:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:89
+msgid "Previous Weapon:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:90
+msgid "Slot 1 - Melee:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:91
+msgid "Slot 2 - One Handed:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:92
+msgid "Slot 3 - Two Handed:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:93
+msgid "Slot 4 - Grenade:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:94
+msgid "Slot 5 - Special 1:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:95
+msgid "Slot 6 - Special 2:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:96
+msgid "Slot 7 - Special 3:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:97
+msgid "Slot 8 - Binoculars:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:101
+#: etmain/ui/options_customise_game.menu:77
+msgid "MISCELLANEOUS"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:102
+msgid "Vote Yes:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:103
+msgid "Take Screenshot:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:104
+msgid "Vote No:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:105
+msgid "Record Replay:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:109
+msgid "FIRE-TEAMS"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:110
+msgid "Select All Members:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:111
+msgid "Select Member #1:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:112
+msgid "Select Member #2:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:113
+msgid "Select Member #3:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:114
+msgid "Select Member #4:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:115
+msgid "Select Member #5:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:116
+msgid "Select Member #6:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:117
+msgid "Deselect All:"
+msgstr ""
+
+#: etmain/ui/options_controls.menu:118
+msgid "Fire-Team Admin:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:29 etmain/ui/options.menu:32
+msgid "GAME"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:33 src/cgame/cg_scoreboard.c:205
+msgid "PLAYER"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:34
+#: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
+msgid "Player Alias:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:34
+msgid "Enter the name that you wish to be known by to others on servers"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:36
+#: etmain/ui/profile_create_initial.menu:101 etmain/ui/profile_create.menu:94
+msgid "Language:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:36
+#: etmain/ui/profile_create_initial.menu:101 etmain/ui/profile_create.menu:94
+msgid "Set your desired language"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:40
+msgid "PHYSICS"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:41
+msgid "Always Run:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:41
+msgid "Toogle walk/run"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:42
+msgid "Double-Tap Prone:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:42
+msgid "Set the delay time between keypresses required to be a double-tap"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:46
+msgid "WEAPONS"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:47
+msgid "Automatic Reload:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:47
+msgid "Automatically reload when ammunition clip runs out"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:48
+msgid "Autoswitch:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:48
+msgid "Automatically switch to a new weapon when out of ammunition"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:49
+msgid "Weapon Icon Flash:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:49
+msgid "2 colors"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:49
+msgid "3 colors"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:49
+msgid "Flash weapon icon when firing, reloading, or switching"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:50
+msgid "Muzzle Flash:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:50
+msgid "Enables or disables weapon fire (muzzle flash)"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:51
+msgid "Bullet Tracers:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:51
+#: etmain/ui/options_customise_game.menu:78
+#: etmain/ui/options_customise_hud.menu:37
+#: etmain/ui/options_customise_hud.menu:38
+#: etmain/ui/options_customise_hud.menu:107
+#: etmain/ui/options_customise_hud.menu:108
+#: etmain/ui/options_customise_hud.menu:109
+msgid "On"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:51
+msgid "Only own tracers"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:51
+msgid "Only others tracers"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:51
+msgid "Enable/Disable bullet tracers"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:55
+msgid "SCOPE"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:56
+msgid "Weapon Cycle for Zoom:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:56
+msgid "On (normal)"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:56
+msgid "On (reverse)"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:56
+msgid ""
+"Weapon switch will zoom in and out while scoped, rather than switch weapons"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:57
+msgid "Default Zoom Level:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:57
+msgid "All the way Out"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:57
+#: etmain/ui/options_customise_hud.menu:59
+msgid "Near"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:57
+#: etmain/ui/options_customise_hud.menu:59
+msgid "Far"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:57
+msgid "All the Way In"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:57
+msgid "Set the default zoom level for scopes"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:58
+msgid "Zoom Levels:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:58
+msgid "4 Levels of Zoom"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:58
+msgid "8 Levels of Zoom"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:58
+msgid "Specifies the increments you zoom by"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:63
+msgid "Quick Chat Mode:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:63
+msgid "Alpha"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:63
+msgid "Numeric"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:63
+msgid "Use alpha or numeric keys to send radio messages"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:64
+msgid "Chat Icon Time:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:64
+#: etmain/ui/options_customise_hud.menu:61
+msgid "Short"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:64
+#: etmain/ui/options_customise_hud.menu:50
+#: etmain/ui/options_customise_hud.menu:61
+#: etmain/ui/options_customise_hud.menu:114
+#: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
+#: etmain/ui/options_customise_hud.menu:59
+msgid "Normal"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:64
+#: etmain/ui/options_customise_hud.menu:61
+msgid "Long"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:64
+msgid "Really Long"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:64
+msgid "Specify how long the chat icon appears above other players' heads"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:65
+msgid "Team chat only:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:65
+msgid "Play only team chat in-game"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:66
+msgid "No voice text:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:66
+msgid "Don't show voice text in-game"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:70
+msgid "SOUND"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:71
+msgid "Announcer:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:71
+msgid "Enables or disables the in-game Commander"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:72
+msgid "No voice chat:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:72
+msgid "Don't play voice chat in-game"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:73
+msgid "Hitsounds:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:73
+msgid "No Team Hit Sound"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:73
+msgid "No Head Hit Sound"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:73
+msgid "No Body Hit Sound"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:73
+msgid "Set hit sounds"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:78
+msgid "Complaint PopUp:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:78
+msgid "Display the option to file complaints about teammates who kill you"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:79
+msgid "Log Important Messages:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:79
+msgid "Prints important game messages to the console"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:80
+msgid "Auto-Action:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:80
+msgid "Demo"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:80
+msgid "Screenshot"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:80
+msgid "Stats Dump"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:80
+msgid "Demo + SS"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:80
+msgid "Demo + Stats"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:80
+msgid "SS + Stats"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:80
+msgid "Demo + SS + Stats"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:80
+msgid "Automatically performs actions at the start or end of a round"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:81
+msgid "AutoScreenshots format:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:81
+msgid ""
+"Switches between .tga and .jpg picture types for the \"autoscreenshot\" "
+"command"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:82
+msgid "Show Tool Tips:"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:82
+msgid "Display Tool Tips in the UI"
+msgstr ""
+
+#: etmain/ui/options_customise_game.menu:1
+#: etmain/ui/wm_ftquickmessageAlt.menu:1
+msgid "ui/menudef.h"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:28 etmain/ui/options.menu:33
+#: etmain/ui/viewreplay.menu:62
+msgid "VIEW"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:32
+msgid "HUD DISPLAY"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:33
+msgid "Draw Gun:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:33
+msgid "Shows gun model on-screen"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:34
+msgid "Show Compass:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:34
+msgid "Displays compass (with icons when near select events)"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:36
+msgid "Auto Map Zoom:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:36
+msgid "Sets Zoom Level Automatically When Map Loads"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:37
+msgid "Mission Timer:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:37
+msgid "Displays remaining mission time"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:38
+msgid "Reinforcement Timer:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:38
+msgid "Displays your team's \"reinforcement\" time"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:39
+msgid "Cursor Hints:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:39
+msgid "Size Pulse"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:39
+msgid "Strobe Pulse"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:39
+msgid "Alpha Pulse"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:39
+msgid "Solid"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:39
+msgid "Icon display format when near an action item"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:40
+msgid "Show Locations:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:40
+msgid "Cordinates Only"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:40
+msgid "Names Fireteam Only"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:40
+msgid "Names Team Chat Only"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:40
+msgid "Team & Fireteam Chat"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:40
+msgid "Displays locations in fireteam"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:41
+msgid "Enable Flags:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:41
+msgid "Displays players country flags in score board"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:42
+msgid "Fireteam Latched Class:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:42
+msgid "Displays Fireteam latched class"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:43
+msgid "Obituaries Icons:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:43
+msgid "Victim Weapon Killer"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:43
+msgid "Killer Weapon Victim"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:43
+msgid "Displays graphical obituaries"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:44
+msgid "Show Descriptive Text:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:44
+msgid "Displays limbo help text"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:45
+msgid "Show Clock:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:45
+msgid "24 hours"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:45
+msgid "24 hours + seconds"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:45
+msgid "12 hours"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:45
+msgid "12 hours + seconds"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:45
+msgid "Displays local time"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:46
+msgid "Show FPS:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:46
+msgid "Displays Frames Per Second"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:47
+msgid "Show Ping:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:47
+msgid "Displays ping"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:48
+msgid "Show Lagometer:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:48
+msgid "Displays lagometer"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:49
+msgid "Switch HUD:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:49
+msgid "Standard Hud"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:49
+msgid "Alternate Hud 1"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:49
+msgid "Alternate Hud 2"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:49
+msgid "Switches between different HUD"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:50
+msgid "Modify Selected HUD:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:50
+msgid "Move Round Timer"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:50
+msgid "Remove Ranks"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:50
+msgid "Move Popups"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:50
+msgid "Ranks + Timer"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:50
+msgid "Timer + Popups"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:50
+msgid "Ranks + Popups"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:50
+msgid "Timer + Ranks + Popups"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:50
+msgid "Customises Selected HUD"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:55
+msgid "IN-GAME DISPLAY"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:56
+msgid "Ejecting Brass:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:56 etmain/ui/options_graphics.menu:56
+#: etmain/ui/options_graphics.menu:60 etmain/ui/options_graphics.menu:64
+#: etmain/ui/options_system.menu:52 etmain/ui/profile_create_initial.menu:102
+#: etmain/ui/profile_create.menu:97
+msgid "High"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:56
+msgid "Med"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:56
+msgid "Sets the duration ejected bullet shells etc. last for"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:58
+msgid "Field Of View:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:58
+msgid "Best FOV (4:3) = 90 | (16:10) = 100.39 | (16:9) = 106.27"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:59
+msgid "Corona Distance:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:59
+msgid "Extreme"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:59
+msgid "Sets the maximum distance light corona is displayed"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:60
+msgid "Particles:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:60
+msgid ""
+"Toggles display of particle effects - e.g. explosions, some smoke effects"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:61
+msgid "Wall Mark Lifetime:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:61
+msgid "Duration of bullet marks on walls etc"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:62
+msgid "Blood Flash:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:62
+#: etmain/ui/options_customise_hud.menu:63
+msgid "Light"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:62
+#: etmain/ui/options_customise_hud.menu:63
+#: etmain/ui/options_customise_hud.menu:70 etmain/ui/options_graphics.menu:56
+#: etmain/ui/options_graphics.menu:60 etmain/ui/options_graphics.menu:64
+#: etmain/ui/options_system.menu:52
+msgid "Medium"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:62
+#: etmain/ui/options_customise_hud.menu:63
+msgid "Heavy"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:62
+#: etmain/ui/options_customise_hud.menu:63
+msgid "Full"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:62
+msgid "Red blood \"flash\" scale when receiving damage"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:63
+msgid "Blood Splatter:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:63
+msgid "Blood \"splatter\" transparency when taking damage from other players"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:64
+msgid "Show Blood:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:64
+msgid "Toggles showing blood spurt effect when player's are shot"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:65
+msgid "Atmospheric Effects:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:65
+msgid "Draws atmospheric effects (snow/rain) on-screen"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:69
+msgid "CROSSHAIR"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:70
+msgid "Crosshair Size:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:70
+#: etmain/ui/options_customise_hud.menu:114
+msgid "Tiny"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:70
+#: etmain/ui/options_customise_hud.menu:114
+msgid "Small"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:70
+msgid "Large"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:70
+msgid "Huge"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:70
+msgid "Sets the size of the displayed crosshair"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:71
+msgid "Crosshair Pulsing:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:71
+msgid "Toggles crosshair spread sizing while moving/firing"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:72
+msgid "Crosshair Health Info:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:72
+msgid ""
+"Colors the crosshair based on current health (overrides crosshair color "
+"settings)"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:73
+#: etmain/ui/options_customise_hud.menu:122
+msgid "Crosshair Name:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:73 src/cgame/cg_scoreboard.c:846
+msgid "Name"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:73
+msgid "Coloured Name"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:73
+msgid "Displays player name when the crosshair is over a teammate"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:74
+msgid "Crosshair Info:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:74
+msgid "Class"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:74 src/cgame/cg_info.c:783
+msgid "Rank"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:74
+msgid "Class + Rank"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:74
+msgid "Displays player info when the crosshair is over a teammate"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:86
+msgid "Set crosshair type"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+msgid "Primary Color:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "White"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Yellow"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Red"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Green"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Blue"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Magenta"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Cyan"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Orange"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Light Blue"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Medium Blue"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Light Red"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Medium Red"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Light Green"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Medium Green"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Dark Green"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Medium Cyan"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Medium Yellow"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Medium Orange"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Light Grey"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Medium Grey"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Dark Grey"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Black"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:97
+msgid "Set the color for the primary crosshair"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:99
+msgid "Primary Alpha:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:99
+msgid "Set the transparency level for the primary crosshair"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Secondary Color:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:100
+msgid "Set the color for the secondary crosshair"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:102
+msgid "Secondary Alpha:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:102
+msgid "Set the transparency level for the secondary crosshair"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:106
+msgid "MOVEMENT"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:107
+msgid "Bob up:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:107
+msgid "Enable/Disable the vertical bob effect when moving"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:108
+msgid "Bob pitch:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:108
+msgid "Enable/Disable the bob pitch (forwards/backwards) effect when moving"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:109
+msgid "Bob roll:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:109
+msgid "Enable/Disable the bob roll (left/right) effect when moving"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:113
+msgid "FONTS"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:114
+msgid "Fonts Size:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:114
+msgid "Sets the size of the in-game fonts"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:116
+msgid "Top Print:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:116
+msgid "Set font size for Warmup message and Spectator label"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:118
+msgid "Side Print:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:118
+msgid ""
+"Set font size for Limbo/Fireteam/Vote/Obituaries/Skill upgrade messages"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:120
+msgid "Center Print:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:120
+msgid "Set font size for CenterPrint/Objective Info/Skill reward messages"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:122
+msgid "Set font size for Crosshair Name label"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:128
+msgid "PopUpTimeStay:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:128
+msgid "Set the time a pop-up stays visible"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:130
+msgid "PopUpTimeFade:"
+msgstr ""
+
+#: etmain/ui/options_customise_hud.menu:130
+msgid "Set the time a pop-up fades away"
+msgstr ""
+
+#: etmain/ui/options_graphics_gamma.menu:28
+#: etmain/ui/options_system_gamma.menu:31
+msgid "CALIBRATE BRIGHTNESS"
+msgstr ""
+
+#: etmain/ui/options_graphics_gamma.menu:33
+#: etmain/ui/options_system_gamma.menu:36
+msgid "General Brightness Calibration (All Color Depths)"
+msgstr ""
+
+#: etmain/ui/options_graphics_gamma.menu:34
+#: etmain/ui/options_system_gamma.menu:37
+msgid ""
+"1. Move the slider below and/or the brightness on your monitor until you can"
+" see 16"
+msgstr ""
+
+#: etmain/ui/options_graphics_gamma.menu:35
+#: etmain/ui/options_system_gamma.menu:38
+msgid "     separate bars below of equal differing brightness."
+msgstr ""
+
+#: etmain/ui/options_graphics_gamma.menu:36
+#: etmain/ui/options_system_gamma.menu:39
+msgid "2. Click the BACK button."
+msgstr ""
+
+#: etmain/ui/options_graphics_gamma.menu:50
+#: etmain/ui/options_system_gamma.menu:53
+msgid "Brightness Fine-Tuning (32 bit Textures and Color Depth)"
+msgstr ""
+
+#: etmain/ui/options_graphics_gamma.menu:51
+#: etmain/ui/options_system_gamma.menu:54
+msgid "1. Move the slider below until you can see 3 separate bars below."
+msgstr ""
+
+#: etmain/ui/options_graphics_gamma.menu:52
+#: etmain/ui/options_system_gamma.menu:55
+msgid ""
+"2. Adjust the slider until there is no difference between the left and "
+"middle boxes."
+msgstr ""
+
+#: etmain/ui/options_graphics_gamma.menu:53
+#: etmain/ui/options_system_gamma.menu:56
+msgid "3. Click the BACK button."
+msgstr ""
+
+#: etmain/ui/options_graphics_gamma.menu:67 etmain/ui/options_graphics.menu:45
+#: etmain/ui/options_system_gamma.menu:70
+#: etmain/ui/profile_create_initial.menu:108 etmain/ui/profile_create.menu:102
+msgid "Brightness:"
+msgstr ""
+
+#: etmain/ui/options_graphics_gamma.menu:67 etmain/ui/options_graphics.menu:45
+#: etmain/ui/options_system_gamma.menu:70
+#: etmain/ui/profile_create_initial.menu:108 etmain/ui/profile_create.menu:102
+msgid "Set the brightness of the game"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:34 etmain/ui/options.menu:36
+msgid "GRAPHICS"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:37
+msgid "SIMPLE"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:39
+msgid "Overall Quality:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:39
+msgid "fastest"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:39
+msgid "fast"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:39
+msgid "normal"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:39
+msgid "high"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:39
+msgid "Set overall video quality"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:40
+#: etmain/ui/profile_create_initial.menu:104 etmain/ui/profile_create.menu:98
+msgid "Resolution:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:40
+msgid "Set video resolution of the game"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:42
+#: etmain/ui/profile_create_initial.menu:105 etmain/ui/profile_create.menu:99
+msgid "Window mode:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:42
+#: etmain/ui/profile_create_initial.menu:105 etmain/ui/profile_create.menu:99
+msgid "Toggle fullscreen"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:46
+msgid "Intensity:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:46
+msgid "The Intensity Of Textures (requires vid_restart)"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:47
+msgid "Map overbright bits:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:47
+msgid "The World Gets Brighter, But Paler (requires vid_restart)"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:48
+msgid "Overbright Bits:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:48
+msgid "Map shines brighter (requires vid_restart)"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:53
+msgid "Low Quality Sky:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:53
+msgid "Toggles wether the detailed skybox is drawn or just a basic sky"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:55
+msgid "Shadow Detail:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:55
+msgid "Blob"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:55
+msgid "Set shadow details"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:56
+msgid "Texture Detail:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:56 etmain/ui/options_graphics.menu:60
+#: etmain/ui/options_system.menu:52
+msgid "Low"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:56
+msgid "Set texture details"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:58
+msgid "Dynamic Lights:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:58
+msgid "Toggles use of dynamic lighting effects"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:60
+msgid "Geometric Detail:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:60
+msgid "Set level of details bias"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:61
+msgid "Texture Quality:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:68
+msgid "Default"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:66
+#: etmain/ui/options_graphics.menu:68
+msgid "16-bit"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:61 etmain/ui/options_graphics.menu:66
+msgid "32-bit"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:61
+msgid "Set the number of bits for textures"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:63
+msgid "Texture Filter:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:63
+msgid "Bilinear"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:63
+msgid "Trilinear"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:63
+msgid "Set the GL texture mode"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:64
+msgid "Anisotropic Filter:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:64 etmain/ui/options_graphics.menu:71
+#: etmain/ui/options_system.menu:48
+msgid "Disabled"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:64
+msgid "Set anisotropic filtering"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:65
+msgid "Anti-Aliasing:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:65
+msgid "Set Anti-Aliasing"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:66
+msgid "Color Depth:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:66
+msgid "Desktop Default"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:66
+msgid "Set color depth"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:67
+msgid "Detail Textures:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:67
+msgid "Toogles usage of high detail textures"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:68
+msgid "Depth Buffer:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:68
+msgid "24-bit"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:68
+msgid "Set the number of desired depth bits"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:69
+msgid "Compress Textures:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:69
+msgid "Toggles the compression of textures"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:70
+msgid "Sync Every Frame:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:70
+msgid "Prevent screen tearing"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:71
+msgid "GL Extensions:"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:71
+msgid "Enabled"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:71
+msgid "Enables or disables usage of OpenGL extensions"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:73
+msgid "SET RECOMMENDED"
+msgstr ""
+
+#: etmain/ui/options_graphics.menu:78 etmain/ui/options_system.menu:66
+msgid "APPLY"
+msgstr ""
+
+#: etmain/ui/options.menu:35 etmain/ui/options_system.menu:36
+msgid "SYSTEM"
+msgstr ""
+
+#: etmain/ui/options_system.menu:39
+msgid "AUDIO"
+msgstr ""
+
+#: etmain/ui/options_system.menu:41
+msgid "Effects Volume:"
+msgstr ""
+
+#: etmain/ui/options_system.menu:41
+msgid "Set the effects volume"
+msgstr ""
+
+#: etmain/ui/options_system.menu:43
+msgid "Music Volume:"
+msgstr ""
+
+#: etmain/ui/options_system.menu:43
+msgid "Set the music volume"
+msgstr ""
+
+#: etmain/ui/options_system.menu:44
+msgid "Sound Quality:"
+msgstr ""
+
+#: etmain/ui/options_system.menu:44
+msgid "11 khz (low)"
+msgstr ""
+
+#: etmain/ui/options_system.menu:44
+msgid "22 khz (high)"
+msgstr ""
+
+#: etmain/ui/options_system.menu:44
+msgid "44 khz (ultra high)"
+msgstr ""
+
+#: etmain/ui/options_system.menu:44
+msgid "Set the sound quality"
+msgstr ""
+
+#: etmain/ui/options_system.menu:85
+msgid "Doppler FX:"
+msgstr ""
+
+#: etmain/ui/options_system.menu:45
+msgid "Enables or disables the doppler effect"
+msgstr ""
+
+#: etmain/ui/options_system.menu:46
+msgid "Mute When Minimized:"
+msgstr ""
+
+#: etmain/ui/options_system.menu:46
+msgid "Enables or disables sound when window is minimized"
+msgstr ""
+
+#: etmain/ui/options_system.menu:47
+msgid "Mute When Unfocused:"
+msgstr ""
+
+#: etmain/ui/options_system.menu:47
+msgid "Enables or disables sound when window is unfocused"
+msgstr ""
+
+#: etmain/ui/options_system.menu:92
+msgid "NETWORK"
+msgstr ""
+
+#: etmain/ui/options_system.menu:52
+msgid "Max Packets:"
+msgstr ""
+
+#: etmain/ui/options_system.menu:52
+msgid "Very Low"
+msgstr ""
+
+#: etmain/ui/options_system.menu:52
+msgid "Cap for upstream data packet transmissions"
+msgstr ""
+
+#: etmain/ui/options_system.menu:53
+msgid "Packet Duplication:"
+msgstr ""
+
+#: etmain/ui/options_system.menu:53
+msgid ""
+"Number of duplicates for every data packet sent upstream, minimized "
+"packetloss"
+msgstr ""
+
+#: etmain/ui/options_system.menu:57
+msgid "DOWNLOADS"
+msgstr ""
+
+#: etmain/ui/options_system.menu:59
+msgid "Check for Updates on Start-Up:"
+msgstr ""
+
+#: etmain/ui/options_system.menu:59
+msgid "Automatically check for updates?"
+msgstr ""
+
+#: etmain/ui/options_system.menu:99
+msgid "Get Missing Files:"
+msgstr ""
+
+#: etmain/ui/options_system.menu:99
+msgid "Download missing files when available"
+msgstr ""
+
+#: etmain/ui/options_system.menu:62
+msgid "Use HTTP/FTP Downloads:"
+msgstr ""
+
+#: etmain/ui/options_system.menu:106
+msgid "UPDATES"
+msgstr ""
+
+#: etmain/ui/options_system.menu:107
+msgid "Start-Up Updates Check:"
+msgstr ""
+
+#: etmain/ui/options_system.menu:107
+msgid "Automatically check for updates"
+msgstr ""
+
+#: etmain/ui/options_system.menu:62
+msgid "Enables or disables http/ftp downloads"
+msgstr ""
+
+#: etmain/ui/playonline_connecttoip.menu:51 etmain/ui/playonline.menu:649
+msgid "CONNECT TO IP"
+msgstr ""
+
+#: etmain/ui/playonline_deletefavs.menu:50
+msgid "DELETE SERVER FAVOURITES"
+msgstr ""
+
+#: etmain/ui/playonline_deletefavs.menu:51
+msgid "Do you really want to"
+msgstr ""
+
+#: etmain/ui/playonline_deletefavs.menu:52
+msgid "delete YOUR favourites?"
+msgstr ""
+
+#: etmain/ui/playonline.menu:80
+msgid "FILTERS"
+msgstr ""
+
+#: etmain/ui/playonline.menu:82
+msgid "Source:"
+msgstr ""
+
+#: etmain/ui/playonline.menu:82
+msgid "Local"
+msgstr ""
+
+#: etmain/ui/playonline.menu:82
+msgid "Internet"
+msgstr ""
+
+#: etmain/ui/playonline.menu:82
+msgid "Favorites"
+msgstr ""
+
+#: etmain/ui/playonline.menu:82
+msgid ""
+"Choose the type of game servers to display from Internet, local and the "
+"favorites list"
+msgstr ""
+
+#: etmain/ui/playonline.menu:83 src/cgame/cg_loadpanel.c:255
+msgid "Objective"
+msgstr ""
+
+#: etmain/ui/playonline.menu:83
+msgid "LMS"
+msgstr ""
+
+#: etmain/ui/playonline.menu:83
+msgid "Displays only game servers offering this Game Type"
+msgstr ""
+
+#: etmain/ui/playonline.menu:84
+msgid "Mod:"
+msgstr ""
+
+#: etmain/ui/playonline.menu:84
+msgid "Displays only game servers offering this Mod"
+msgstr ""
+
+#: etmain/ui/playonline.menu:85 etmain/ui/playonline.menu:97
+msgid ""
+"Includes or excludes servers with desired map name from the server list"
+msgstr ""
+
+#: etmain/ui/playonline.menu:97
+msgid "Filter affecting servers with map name"
+msgstr ""
+
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
+msgid "Filter Disabled"
+msgstr ""
+
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
+msgid "Only show..."
+msgstr ""
+
+#: etmain/ui/playonline.menu:114 etmain/ui/playonline.menu:125
+#: etmain/ui/playonline.menu:136 etmain/ui/playonline.menu:147
+#: etmain/ui/playonline.menu:158 etmain/ui/playonline.menu:169
+#: etmain/ui/playonline.menu:180 etmain/ui/playonline.menu:191
+msgid "Don't show..."
+msgstr ""
+
+#: etmain/ui/playonline.menu:194 etmain/ui/playonline.menu:648
+msgid "REFRESH LIST"
+msgstr ""
+
+#: etmain/ui/playonline.menu:194
+msgid "Refresh servers list"
+msgstr ""
+
+#: etmain/ui/playonline.menu:195 etmain/ui/playonline.menu:652
+msgid "RESET FILTERS"
+msgstr ""
+
+#: etmain/ui/playonline.menu:195
+msgid "Reset all filters to their defaults"
+msgstr ""
+
+#: etmain/ui/playonline.menu:234
+msgid "SERVER BROWSER"
+msgstr ""
+
+#: etmain/ui/playonline.menu:332
+msgid "SERVER NAME"
+msgstr ""
+
+#: etmain/ui/playonline.menu:343
+msgid "Click here to sort by Server Name"
+msgstr ""
+
+#: etmain/ui/playonline.menu:373
+msgid "MAP NAME"
+msgstr ""
+
+#: etmain/ui/playonline.menu:384
+msgid "Click here to sort by Campaign or Map name"
+msgstr ""
+
+#: etmain/ui/playonline.menu:414
+msgid "#PLAYERS"
+msgstr ""
+
+#: etmain/ui/playonline.menu:425
+msgid "Click here to sort by Player Count"
+msgstr ""
+
+#: etmain/ui/playonline.menu:455
+msgid "TYPE"
+msgstr ""
+
+#: etmain/ui/playonline.menu:466
+msgid "Click here to sort by Game Type"
+msgstr ""
+
+#: etmain/ui/playonline.menu:496
+msgid "PING"
+msgstr ""
+
+#: etmain/ui/playonline.menu:651
+msgid "DELETE FAVS"
+msgstr ""
+
+#: etmain/ui/playonline.menu:656 etmain/ui/playonline_serverinfo.menu:78
+msgid "JOIN SERVER"
+msgstr ""
+
+#: etmain/ui/popup_autoupdate.menu:51
+msgid "UPDATE AVAILABLE"
+msgstr ""
+
+#: etmain/ui/popup_errormessage.menu:52
+#: etmain/ui/popup_errormessage_pb.menu:52
+#: etmain/ui/popup_hostgameerrormessage.menu:52
+msgid "ERROR"
+msgstr ""
+
+#: etmain/ui/popup_errormessage.menu:59
+#: etmain/ui/popup_errormessage_pb.menu:57
+#: etmain/ui/popup_serverredirect.menu:79
+msgid "RECONNECT"
+msgstr ""
+
+#: etmain/ui/popup_password.menu:73
+msgid "PASSWORD REQUIRED"
+msgstr ""
+
+#: etmain/ui/popup_password.menu:84
+msgid "Enter the server password"
+msgstr ""
+
+#: etmain/ui/popup_serverredirect.menu:71
+msgid "REDIRECTION ADVISED"
+msgstr ""
+
+#: etmain/ui/popup_serverredirect.menu:74
+msgid "Do you want to redirect to:"
+msgstr ""
+
+#: etmain/ui/profile_create_error.menu:51
+msgid "CREATION ERROR"
+msgstr ""
+
+#: etmain/ui/profile_create_initial.menu:85 etmain/ui/profile_create.menu:78
+msgid "CREATE PROFILE"
+msgstr ""
+
+#: etmain/ui/profile_create_initial.menu:87 etmain/ui/profile_create.menu:80
+msgid ""
+"Please choose your initial settings below. You can change these at any time "
+"and access more advanced options by visiting the Options Menu. Should more "
+"than one person wish to play Enemy Territory: Legacy, you can create "
+"additional profiles by visiting the Profiles Menu."
+msgstr ""
+
+#: etmain/ui/profile_create_initial.menu:98 etmain/ui/profile_create.menu:91
+msgid ""
+"Enter the alias here that you would like displayed to others on servers"
+msgstr ""
+
+#: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
+msgid "Video Quality:"
+msgstr ""
+
+#: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
+msgid "Fastest"
+msgstr ""
+
+#: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
+msgid "Fast"
+msgstr ""
+
+#: etmain/ui/profile_create_initial.menu:102 etmain/ui/profile_create.menu:97
+msgid ""
+"Select your initial video settings, these can be changed later via the "
+"options menu"
+msgstr ""
+
+#: etmain/ui/profile_create_initial.menu:104 etmain/ui/profile_create.menu:98
+msgid ""
+"Choose your preferred video resolution, if unsure leave it as the default"
+msgstr ""
+
+#: etmain/ui/profile_create_initial.menu:111 etmain/ui/profile_create.menu:105
+msgid "Use this slider to set your mouse sensitivity"
+msgstr ""
+
+#: etmain/ui/profile_create_initial.menu:112
+msgid ""
+"Choose invert mouse if you prefer flight-simulator style mouse pitch "
+"controls"
+msgstr ""
+
+#: etmain/ui/profile_create_initial.menu:116 etmain/ui/profile_create.menu:110
+msgid "DEFAULT SETTINGS"
+msgstr ""
+
+#: etmain/ui/profile_create_initial.menu:125
+msgid "^1LET'S KEEP ET ALIVE!"
+msgstr ""
+
+#: etmain/ui/profile_create_initial.menu:126
+msgid "Thank you for installing ET: Legacy"
+msgstr ""
+
+#: etmain/ui/profile_create_initial.menu:130
+msgid "QUIT"
+msgstr ""
+
+#: etmain/ui/profile_create_initial.menu:131 etmain/ui/profile_create.menu:120
+#: etmain/ui/profile.menu:62
+msgid "CREATE"
+msgstr ""
+
+#: etmain/ui/profile_create.menu:106
+msgid "Choose invert mouse if you prefer flight-simulator mouse pitch"
+msgstr ""
+
+#: etmain/ui/profile_delete_error.menu:50
+msgid "DELETE WARNING"
+msgstr ""
+
+#: etmain/ui/profile_delete_error.menu:51
+msgid "Can't delete"
+msgstr ""
+
+#: etmain/ui/profile_delete_error.menu:52
+msgid "active profile."
+msgstr ""
+
+#: etmain/ui/profile_delete.menu:50
+msgid "DELETE PROFILE"
+msgstr ""
+
+#: etmain/ui/profile_delete.menu:51 etmain/ui/viewreplay_delete.menu:51
+msgid "Are you sure?"
+msgstr ""
+
+#: etmain/ui/profile.menu:63 etmain/ui/viewreplay.menu:59
+msgid "DELETE"
+msgstr ""
+
+#: etmain/ui/profile.menu:66 etmain/ui/profile_rename.menu:69
+msgid "RENAME"
+msgstr ""
+
+#: etmain/ui/profile.menu:67
+msgid "SET AS DEFAULT"
+msgstr ""
+
+#: etmain/ui/profile.menu:72
+msgid "SELECT PROFILE"
+msgstr ""
+
+#: etmain/ui/profile_rename.menu:55
+msgid "RENAME PROFILE"
+msgstr ""
+
+#: etmain/ui/profile_rename.menu:65
+msgid "New Profile Name:"
+msgstr ""
+
+#: etmain/ui/profile_rename.menu:65
+msgid "New name of profile"
+msgstr ""
+
+#: etmain/ui/quit.menu:55
+msgid "Yeah, right, like YOU have"
+msgstr ""
+
+#: etmain/ui/quit.menu:56
+msgid "anything better to do!"
+msgstr ""
+
+#: etmain/ui/rec_restart.menu:53 etmain/ui/vid_restart.menu:47
+msgid "CHANGE VIDEO SETTINGS"
+msgstr ""
+
+#: etmain/ui/rec_restart.menu:55
+msgid ""
+"Set recommended video settings\n"
+"and return to the main menu?"
+msgstr ""
+
+#: etmain/ui/rec_restart.menu:57
+msgid ""
+"Set recommended video settings\n"
+"and return to the ingame menu?"
+msgstr ""
+
+#: etmain/ui/vid_confirm.menu:61
+msgid "CONFIRM VIDEO CHANGE"
+msgstr ""
+
+#: etmain/ui/vid_confirm.menu:63
+msgid "Use this video mode?"
+msgstr ""
+
+#: etmain/ui/vid_confirm.menu:64
+msgid "Reverting to previous"
+msgstr ""
+
+#: etmain/ui/vid_confirm.menu:71
+#, c-format
+msgid "setting in %s seconds..."
+msgstr ""
+
+#: etmain/ui/vid_restart.menu:48
+msgid "Apply new settings?"
+msgstr ""
+
+#: etmain/ui/viewreplay_delete.menu:50
+msgid "DELETE REPLAY"
+msgstr ""
+
+#: etmain/ui/viewreplay.menu:50
+msgid "Select the replay to view or delete"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:33 etmain/ui/wm_ftquickmessage.menu:33
+#: etmain/ui/wm_quickmessageAlt.menu:33 etmain/ui/wm_quickmessage.menu:34
+#: src/cgame/cg_fireteams.c:341
+msgid "MESSAGE"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:83 etmain/ui/wm_quickmessageAlt.menu:83
+msgid "1. Statements"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:84 etmain/ui/wm_quickmessageAlt.menu:84
+msgid "2. Requests"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:85 etmain/ui/wm_quickmessageAlt.menu:85
+msgid "3. Commands"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:86 etmain/ui/wm_quickmessageAlt.menu:86
+msgid "4. Talk"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:87 etmain/ui/wm_quickmessageAlt.menu:87
+msgid "5. Global"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:88 etmain/ui/wm_quickmessageAlt.menu:88
+msgid "6. Function"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:89 etmain/ui/wm_quickmessageAlt.menu:89
+msgid "7. Objectives"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:95 etmain/ui/wm_quickmessageAlt.menu:95
+msgid "1. Path Cleared."
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:96 etmain/ui/wm_quickmessageAlt.menu:96
+msgid "2. Enemy Weak!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:97 etmain/ui/wm_quickmessageAlt.menu:97
+msgid "3. All Clear"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:98 etmain/ui/wm_quickmessageAlt.menu:98
+msgid "4. Incoming"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:99 etmain/ui/wm_quickmessageAlt.menu:99
+msgid "5. Fire In The Hole!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:100
+#: etmain/ui/wm_quickmessageAlt.menu:100
+msgid "6. I'm Defending."
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:101
+#: etmain/ui/wm_quickmessageAlt.menu:101
+msgid "7. I'm Attacking."
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:102
+#: etmain/ui/wm_quickmessageAlt.menu:102
+msgid "8. Taking Fire!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:103
+#: etmain/ui/wm_quickmessageAlt.menu:103
+msgid "9. Mines Cleared"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:104
+#: etmain/ui/wm_quickmessageAlt.menu:104
+msgid "0. Enemy Disguised"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:110
+#: etmain/ui/wm_quickmessageAlt.menu:110
+msgid "1. Need Medic!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:111
+#: etmain/ui/wm_quickmessageAlt.menu:111
+msgid "2. Need Ammo!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:112
+#: etmain/ui/wm_quickmessageAlt.menu:112
+msgid "3. Need Backup!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:113
+#: etmain/ui/wm_quickmessageAlt.menu:113
+msgid "4. Need Engineer!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:114
+#: etmain/ui/wm_quickmessageAlt.menu:114
+msgid "5. Cover Me!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:115
+#: etmain/ui/wm_quickmessageAlt.menu:115
+msgid "6. Hold Fire!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:116
+#: etmain/ui/wm_quickmessageAlt.menu:116
+msgid "7. Where To?"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:117
+#: etmain/ui/wm_quickmessageAlt.menu:117
+msgid "8. Need Covert Ops!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:123
+#: etmain/ui/wm_quickmessageAlt.menu:123
+msgid "1. Follow Me!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:124
+#: etmain/ui/wm_quickmessageAlt.menu:124
+msgid "2. Let's Go!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:125
+#: etmain/ui/wm_quickmessageAlt.menu:125
+msgid "3. Move!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:126
+#: etmain/ui/wm_quickmessageAlt.menu:126
+msgid "4. Clear The Path!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:127
+#: etmain/ui/wm_quickmessageAlt.menu:127
+msgid "5. Defend Objective!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:128
+#: etmain/ui/wm_quickmessageAlt.menu:128
+msgid "6. Disarm Dynamite!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:129
+#: etmain/ui/wm_quickmessageAlt.menu:129
+msgid "7. Clear Mines!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:130
+#: etmain/ui/wm_quickmessageAlt.menu:130
+msgid "8. Reinforce Offense"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:131
+#: etmain/ui/wm_quickmessageAlt.menu:131
+msgid "9. Reinforce Defense"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:137
+#: etmain/ui/wm_ftquickmessageAlt.menu:148
+#: etmain/ui/wm_quickmessageAlt.menu:137 etmain/ui/wm_quickmessageAlt.menu:148
+msgid "1. Yes"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:138
+#: etmain/ui/wm_quickmessageAlt.menu:138 etmain/ui/wm_quickmessageAlt.menu:149
+msgid "2. No"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:139
+#: etmain/ui/wm_quickmessageAlt.menu:139
+msgid "3. Thanks"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:140
+#: etmain/ui/wm_quickmessageAlt.menu:140
+msgid "4. Welcome"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:141
+#: etmain/ui/wm_quickmessageAlt.menu:141
+msgid "5. Sorry"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:142
+#: etmain/ui/wm_quickmessageAlt.menu:142
+msgid "6. Oops"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:150
+#: etmain/ui/wm_quickmessageAlt.menu:150
+msgid "3. Enemy Weak"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:151
+#: etmain/ui/wm_quickmessageAlt.menu:151
+msgid "4. Hi"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:152
+#: etmain/ui/wm_quickmessageAlt.menu:152
+msgid "5. Bye"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:153
+#: etmain/ui/wm_quickmessageAlt.menu:153
+msgid "6. Great Shot"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:154
+#: etmain/ui/wm_quickmessageAlt.menu:154
+msgid "7. Cheer"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:155
+#: etmain/ui/wm_quickmessageAlt.menu:155
+msgid "8. More Globals"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:161
+#: etmain/ui/wm_quickmessageAlt.menu:161
+msgid "1. Thanks"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:162
+#: etmain/ui/wm_quickmessageAlt.menu:162
+msgid "2. Welcome"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:163
+#: etmain/ui/wm_quickmessageAlt.menu:163
+msgid "3. Oops"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:164
+#: etmain/ui/wm_quickmessageAlt.menu:164
+msgid "4. Sorry"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:165
+#: etmain/ui/wm_quickmessageAlt.menu:165
+msgid "5. Hold Fire!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:166
+#: etmain/ui/wm_quickmessageAlt.menu:166
+msgid "6. Good Game"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:172
+#: etmain/ui/wm_quickmessageAlt.menu:172
+msgid "1. Command Acknowledged"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:173
+#: etmain/ui/wm_quickmessageAlt.menu:174
+msgid "3. Command Completed"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:174
+#: etmain/ui/wm_quickmessageAlt.menu:175
+msgid "4. Destroy Primary Objective"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:175
+#: etmain/ui/wm_quickmessageAlt.menu:176
+msgid "5. Destroy Secondary Objective"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:176
+#: etmain/ui/wm_quickmessageAlt.menu:177
+msgid "6. Destroy Construction"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:177
+#: etmain/ui/wm_quickmessageAlt.menu:178
+msgid "7. Commencing Construction"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:178
+#: etmain/ui/wm_quickmessageAlt.menu:179
+msgid "8. Repair Vehicle"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:179
+#: etmain/ui/wm_quickmessageAlt.menu:180
+msgid "9. Disable Vehicle"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessageAlt.menu:180
+#: etmain/ui/wm_quickmessageAlt.menu:181
+msgid "0. Escort Vehicle"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:83 etmain/ui/wm_quickmessage.menu:84
+msgid "S. Statements"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:84 etmain/ui/wm_quickmessage.menu:85
+msgid "R. Requests"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:85 etmain/ui/wm_quickmessage.menu:86
+msgid "C. Commands"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:86 etmain/ui/wm_quickmessage.menu:87
+msgid "T. Talk"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:87 etmain/ui/wm_quickmessage.menu:88
+msgid "G. Global"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:88 etmain/ui/wm_quickmessage.menu:89
+msgid "F. Function"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:89 etmain/ui/wm_quickmessage.menu:90
+msgid "O. Objectives"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:95 etmain/ui/wm_quickmessage.menu:96
+msgid "P. Path Cleared."
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:96 etmain/ui/wm_quickmessage.menu:97
+msgid "W. Enemy Weak!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:97 etmain/ui/wm_quickmessage.menu:98
+msgid "C. All Clear"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:98 etmain/ui/wm_quickmessage.menu:99
+msgid "I. Incoming"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:99 etmain/ui/wm_quickmessage.menu:100
+msgid "F. Fire In The Hole!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:100 etmain/ui/wm_quickmessage.menu:101
+msgid "D. I'm Defending."
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:101 etmain/ui/wm_quickmessage.menu:102
+msgid "A. I'm Attacking."
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:102
+msgid "T. Taking Fire!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:103 etmain/ui/wm_quickmessage.menu:103
+msgid "M. Mines Cleared"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:104 etmain/ui/wm_quickmessage.menu:104
+msgid "E. Enemy Disguised"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:110 etmain/ui/wm_quickmessage.menu:110
+msgid "M. Need Medic!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:111 etmain/ui/wm_quickmessage.menu:111
+msgid "A. Need Ammo!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:112 etmain/ui/wm_quickmessage.menu:112
+msgid "B. Need Backup!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:113 etmain/ui/wm_quickmessage.menu:113
+msgid "E. Need Engineer!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:114 etmain/ui/wm_quickmessage.menu:114
+msgid "C. Cover Me!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:115 etmain/ui/wm_ftquickmessage.menu:165
+#: etmain/ui/wm_quickmessage.menu:115 etmain/ui/wm_quickmessage.menu:165
+msgid "H. Hold Fire!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:116 etmain/ui/wm_quickmessage.menu:116
+msgid "W. Where To?"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:117 etmain/ui/wm_quickmessage.menu:117
+msgid "O. Need Covert Ops!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:123 etmain/ui/wm_quickmessage.menu:123
+msgid "F. Follow Me!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:124 etmain/ui/wm_quickmessage.menu:124
+msgid "G. Let's Go!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:125 etmain/ui/wm_quickmessage.menu:125
+msgid "M. Move!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:126 etmain/ui/wm_quickmessage.menu:126
+msgid "C. Clear The Path!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:127 etmain/ui/wm_quickmessage.menu:127
+msgid "O. Defend Objective!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:128 etmain/ui/wm_quickmessage.menu:128
+msgid "D. Disarm Dynamite!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:129 etmain/ui/wm_quickmessage.menu:129
+msgid "N. Clear Mines!"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:130 etmain/ui/wm_quickmessage.menu:130
+msgid "R. Reinforce Offense"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:131 etmain/ui/wm_quickmessage.menu:131
+msgid "E. Reinforce Defense"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:137 etmain/ui/wm_ftquickmessage.menu:148
+#: etmain/ui/wm_quickmessage.menu:137 etmain/ui/wm_quickmessage.menu:148
+msgid "Y. Yes"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:138 etmain/ui/wm_ftquickmessage.menu:149
+#: etmain/ui/wm_quickmessage.menu:138 etmain/ui/wm_quickmessage.menu:149
+msgid "N. No"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:139 etmain/ui/wm_ftquickmessage.menu:161
+#: etmain/ui/wm_quickmessage.menu:139 etmain/ui/wm_quickmessage.menu:161
+msgid "T. Thanks"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:140 etmain/ui/wm_ftquickmessage.menu:162
+#: etmain/ui/wm_quickmessage.menu:140 etmain/ui/wm_quickmessage.menu:162
+msgid "W. Welcome"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:141 etmain/ui/wm_ftquickmessage.menu:164
+#: etmain/ui/wm_quickmessage.menu:141 etmain/ui/wm_quickmessage.menu:164
+msgid "S. Sorry"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:142 etmain/ui/wm_ftquickmessage.menu:163
+#: etmain/ui/wm_quickmessage.menu:142 etmain/ui/wm_quickmessage.menu:163
+msgid "O. Oops"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:150 etmain/ui/wm_quickmessage.menu:150
+msgid "W. Enemy Weak"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:151 etmain/ui/wm_quickmessage.menu:151
+msgid "H. Hi"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:152 etmain/ui/wm_quickmessage.menu:152
+msgid "B. Bye"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:153 etmain/ui/wm_quickmessage.menu:153
+msgid "S. Great Shot"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:154 etmain/ui/wm_quickmessage.menu:154
+msgid "C. Cheer"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:155 etmain/ui/wm_quickmessage.menu:155
+msgid "G. More Globals"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:166 etmain/ui/wm_quickmessage.menu:166
+msgid "G. Good Game"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:172 etmain/ui/wm_quickmessage.menu:172
+msgid "A. Command Acknowledged"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:173 etmain/ui/wm_quickmessage.menu:173
+msgid "D. Command Declined"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:174 etmain/ui/wm_quickmessage.menu:174
+msgid "C. Command Completed"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:175 etmain/ui/wm_quickmessage.menu:175
+msgid "P. Destroy Primary Objective"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:176 etmain/ui/wm_quickmessage.menu:176
+msgid "S. Destroy Secondary Objective"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:177 etmain/ui/wm_quickmessage.menu:177
+msgid "X. Destroy Construction"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:178 etmain/ui/wm_quickmessage.menu:178
+msgid "M. Commencing Construction"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:179 etmain/ui/wm_quickmessage.menu:179
+msgid "R. Repair Vehicle"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:180 etmain/ui/wm_quickmessage.menu:180
+msgid "V. Disable Vehicle"
+msgstr ""
+
+#: etmain/ui/wm_ftquickmessage.menu:181 etmain/ui/wm_quickmessage.menu:181
+msgid "E. Escort Vehicle"
+msgstr ""
+
+#: etmain/ui/wm_quickmessageAlt.menu:173
+msgid "2. Command Declined"
+msgstr ""
+
+#: src/cgame/cg_consolecmds.c:362 src/cgame/cg_consolecmds.c:400
+#: src/cgame/cg_consolecmds.c:436
+msgid "Can't team voice chat as a spectator.\n"
+msgstr ""
+
+#: src/cgame/cg_consolecmds.c:461
+msgid "Can't buddy voice chat as a spectator.\n"
+msgstr ""
+
+#: src/cgame/cg_consolecmds.c:1143 src/cgame/cg_popupmessages.c:733
+#: src/cgame/cg_popupmessages.c:735
+msgid "Axis"
+msgstr ""
+
+#: src/cgame/cg_consolecmds.c:1147 src/cgame/cg_popupmessages.c:733
+#: src/cgame/cg_popupmessages.c:735
+msgid "Allies"
+msgstr ""
+
+#: src/cgame/cg_consolecmds.c:1221
+#, c-format
+msgid "You will spawn as a %s %s with a %s."
+msgstr ""
+
+#: src/cgame/cg_consolecmds.c:1225
+#, c-format
+msgid "You will spawn as a %s %s with a %s and a %s."
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:1340
+#, c-format
+msgid "Last Played             : %s"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:1341
+msgid "Never"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:1341
+#, c-format
+msgid "%d maps ago"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:1347
+#, c-format
+msgid "Total Accumulated Votes : %d"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2013 src/cgame/cg_debriefing.c:3202
+#: src/cgame/cg_scoreboard.c:723
+#, c-format
+msgid "CLOCK IS NOW SET TO %s!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2615
+msgid "ACC:"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2624
+msgid "HS:"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2659
+msgid "Time:"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2671
+msgid "Medals:"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2690
+msgid "Rank:"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2810
+msgid "^5TO TEAM"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2813
+msgid "^3TO FIRETEAM"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:2816
+msgid "^2TO GLOBAL"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3175
+msgid "ALLIES WIN!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3177
+msgid "AXIS WIN!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3179
+msgid "IT'S A TIE!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3211
+msgid "ALLIES SUCCESSFULLY BEAT THE CLOCK!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3215
+msgid "ALLIES COULDN'T BEAT THE CLOCK!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3222
+msgid "AXIS SUCCESSFULLY BEAT THE CLOCK!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3226
+msgid "AXIS COULDN'T BEAT THE CLOCK!"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3236
+#, c-format
+msgid "CAMPAIGN STATUS: %s"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3245
+msgid "SECS TO NEXT MAP"
+msgstr ""
+
+#: src/cgame/cg_debriefing.c:3371
+#, c-format
+msgid "Campaign: %s"
+msgstr ""
+
+#: src/cgame/cg_draw.c:382 src/cgame/cg_draw.c:391 src/cgame/cg_draw.c:407
+#, c-format
+msgid "a %s"
+msgstr ""
+
+#: src/cgame/cg_draw.c:396
+msgid "an Objective"
+msgstr ""
+
+#: src/cgame/cg_draw.c:403
+#, c-format
+msgid "an %s"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1507
+msgid "Disguised Enemy!"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1717
+msgid "SPECTATOR"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1744
+#, c-format
+msgid "File complaint against ^7%s^3 for team-killing?"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1748 src/cgame/cg_draw.c:1762 src/cgame/cg_draw.c:1776
+#: src/cgame/cg_draw.c:1790 src/cgame/cg_draw.c:1804 src/cgame/cg_draw.c:1818
+#: src/cgame/cg_draw.c:1832
+#, c-format
+msgid "Press '%s' for YES, or '%s' for NO"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1758
+#, c-format
+msgid "Accept %s^3's application to join your fireteam?"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1772
+#, c-format
+msgid "Accept %s^3's proposition to invite %s^3 to join your fireteam?"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1786
+#, c-format
+msgid "Accept %s^3's invitation to join their fireteam?"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1800
+msgid "Make Fireteam private?"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1814
+msgid "Create a Fireteam?"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1898
+#, c-format
+msgid "VOTE(%i): %s"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1905
+#, c-format
+msgid "YES:%i, NO:%i"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1909
+msgid "Can't vote as Spectator"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1913
+#, c-format
+msgid "YES(%s):%i, NO(%s):%i"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1920
+#, c-format
+msgid "YOU VOTED ON: %s"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1925
+#, c-format
+msgid "Y:%i, N:%i"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1928
+msgid "Your complaint has been filed"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1934
+msgid "Complaint dismissed"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1940
+msgid "Server Host cannot be complained against"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1946
+msgid "You were team-killed by the Server Host"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1952
+msgid "You were team-killed by a bot."
+msgstr ""
+
+#: src/cgame/cg_draw.c:1962
+msgid "Your application has been submitted"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1969
+msgid "Your application failed"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1976
+msgid "Your application has been approved"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1983
+msgid "Your application reply has been sent"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1993
+msgid "Your proposition has been submitted"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2000
+msgid "Your proposition was rejected"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2007
+msgid "Your proposition was accepted"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2014
+msgid "Your proposition reply has been sent"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2024
+msgid "Your invitation has been submitted"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2031
+msgid "Your invitation was rejected"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2038
+msgid "Your invitation was accepted"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2045
+msgid "Your invitation reply has been sent"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2058
+msgid "Response Sent"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2152
+#, c-format
+msgid "Press %s to open Limbo Menu"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2157
+#, c-format
+msgid "Press %s to follow next player"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2162
+#, c-format
+msgid "Press %s to follow previous player"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2168
+#, c-format
+msgid "Press %s to %s multiview mode"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2168
+msgid "disable"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2168
+msgid "activate"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2231
+msgid "You are wounded and waiting for a medic."
+msgstr ""
+
+#: src/cgame/cg_draw.c:2240
+#, c-format
+msgid "Press %s to go into reinforcement queue."
+msgstr ""
+
+#: src/cgame/cg_draw.c:2251
+msgid "No more reinforcements this round."
+msgstr ""
+
+#: src/cgame/cg_draw.c:2259 src/cgame/cg_draw.c:2347
+#, c-format
+msgid "Deploying in ^3%d ^7seconds"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2263 src/cgame/cg_draw.c:2351
+#, c-format
+msgid "Deploying in ^3%d ^7second"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2329
+#, c-format
+msgid "Bonus Life! Deploying in ^3%d ^7seconds"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2333
+#, c-format
+msgid "Bonus Life! Deploying in ^3%d ^7second"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2338
+msgid "No more deployments this round"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2362 src/cgame/cg_draw.c:2388
+msgid "Following"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2429
+#, c-format
+msgid "^3Config: ^7%s^7"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2435
+#, c-format
+msgid "^3WARMUP:^7 Waiting on ^2%i^7 %s"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2435
+msgid "player"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2435
+msgid "players"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2448
+msgid "Type ^3\\ready^7 in the console to start"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2452
+#, c-format
+msgid "Press ^3%s^7 to start"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2470
+msgid "^3WARMUP:^7 Match begins in"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2481
+msgid "^3PREPARE TO FIGHT!\n"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2504 src/cgame/cg_scoreboard.c:242
+msgid "STOPWATCH ROUND"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2678
+#, c-format
+msgid "The %s team is speclocked!"
+msgstr ""
+
+#: src/cgame/cg_draw_hud.c:1754 src/cgame/cg_draw_hud.c:1852
+#: src/cgame/cg_scoreboard.c:178
+msgid "WARMUP"
+msgstr ""
+
+#: src/cgame/cg_draw_hud.c:2052
+msgid "Connection Interrupted"
+msgstr ""
+
+#: src/cgame/cg_event.c:271
+msgid "You swapped places with"
+msgstr ""
+
+#: src/cgame/cg_event.c:275
+msgid "You killed ^1TEAMMATE^7"
+msgstr ""
+
+#: src/cgame/cg_event.c:280
+msgid "You killed"
+msgstr ""
+
+#: src/cgame/cg_event.c:293
+msgid "^7swapped places with"
+msgstr ""
+
+#: src/cgame/cg_event.c:297
+msgid "^7killed ^1TEAMMATE^7"
+msgstr ""
+
+#: src/cgame/cg_event.c:302
+msgid "^7killed"
+msgstr ""
+
+#: src/cgame/cg_event.c:566
+msgid "died"
+msgstr ""
+
+#: src/cgame/cg_event.c:614
+#, c-format
+msgid "Picked up %s"
+msgstr ""
+
+#: src/cgame/cg_fireteamoverlay.c:475
+#, c-format
+msgid "Private Fireteam: %s"
+msgstr ""
+
+#: src/cgame/cg_fireteamoverlay.c:479
+#, c-format
+msgid "Fireteam: %s"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:344
+msgid "FIRETEAMS"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:347
+msgid "JOIN"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:350
+msgid "PROPOSE"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:356
+msgid "INVITE"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:365
+msgid "SET ADMIN"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:701 src/cgame/cg_fireteams.c:705
+#: src/cgame/cg_fireteams.c:762 src/cgame/cg_fireteams.c:766
+msgid "Previous"
+msgstr ""
+
+#: src/cgame/cg_fireteams.c:717 src/cgame/cg_fireteams.c:721
+#: src/cgame/cg_fireteams.c:778 src/cgame/cg_fireteams.c:782
+msgid "Next"
+msgstr ""
+
+#: src/cgame/cg_info.c:718
+msgid "PLAYER STATS"
+msgstr ""
+
+#: src/cgame/cg_info.c:729 src/cgame/cg_info.c:931
+msgid "Weapon"
+msgstr ""
+
+#: src/cgame/cg_info.c:731 src/cgame/cg_info.c:933
+msgid "Accuracy"
+msgstr ""
+
+#: src/cgame/cg_info.c:733 src/cgame/cg_info.c:935
+msgid "Hits / Shots"
+msgstr ""
+
+#: src/cgame/cg_info.c:735 src/cgame/cg_info.c:937
+msgid "Kills"
+msgstr ""
+
+#: src/cgame/cg_info.c:737
+msgid "Deaths"
+msgstr ""
+
+#: src/cgame/cg_info.c:739
+msgid "Headshots"
+msgstr ""
+
+#: src/cgame/cg_info.c:748
+msgid "No weapon info available."
+msgstr ""
+
+#: src/cgame/cg_info.c:799
+msgid "Skills"
+msgstr ""
+
+#: src/cgame/cg_info.c:801
+msgid "Level"
+msgstr ""
+
+#: src/cgame/cg_info.c:803
+msgid "XP / Next Level"
+msgstr ""
+
+#: src/cgame/cg_info.c:807
+msgid "Medals"
+msgstr ""
+
+#: src/cgame/cg_info.c:816
+msgid "No skills acquired!"
+msgstr ""
+
+#: src/cgame/cg_info.c:921
+msgid "\"TOPSHOT\" ACCURACIES"
+msgstr ""
+
+#: src/cgame/cg_info.c:939
+msgid "Player"
+msgstr ""
+
+#: src/cgame/cg_info.c:947
+msgid "No qualifying weapon info available."
+msgstr ""
+
+#: src/cgame/cg_info.c:1193
+msgid "OBJECTIVES"
+msgstr ""
+
+#: src/cgame/cg_info.c:1421
+msgid "DEMO STATUS"
+msgstr ""
+
+#: src/cgame/cg_info.c:1571
+msgid "DEMO CONTROLS"
+msgstr ""
+
+#: src/cgame/cg_info.c:1599
+msgid "^nBACKSPACE ^mhelp on/off"
+msgstr ""
+
+#: src/cgame/cg_limbopanel.c:1224
+#, c-format
+msgid "You will spawn as an %s %s with a %s."
+msgstr ""
+
+#: src/cgame/cg_limbopanel.c:1228
+#, c-format
+msgid "You will spawn as an %s %s with a %s and a %s."
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:251
+msgid "Single Player"
+msgstr ""
+
+#: src/cgame/cg_loadpanel.c:253
+msgid "Co-op"
+msgstr ""
+
+#: src/cgame/cg_main.c:935
+msgid "User"
+msgstr ""
+
+#: src/cgame/cg_main.c:935
+msgid "is not on the server"
+msgstr ""
+
+#: src/cgame/cg_players.c:309
+#, c-format
+msgid "Promoted to rank %s!"
+msgstr ""
+
+#: src/cgame/cg_players.c:359
+#, c-format
+msgid "Increased %s skill to level %i!"
+msgstr ""
+
+#: src/cgame/cg_players.c:361
+#, c-format
+msgid "You have been rewarded with %s"
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:680
+#, c-format
+msgid "Planted at %s."
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:682
+#, c-format
+msgid "Defused at %s."
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:691
+#, c-format
+msgid "%s has been constructed."
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:698
+#, c-format
+msgid "%s has been damaged."
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:700
+#, c-format
+msgid "%s has been destroyed."
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:722
+#, c-format
+msgid "Spotted by %s^7 at %s"
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:726
+#, c-format
+msgid "Spotted by %s"
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:733
+#, c-format
+msgid "%s have stolen %s!"
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:735
+#, c-format
+msgid "%s have returned %s!"
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:758
+#, c-format
+msgid "%s^7 has joined the %s^7!"
+msgstr ""
+
+#: src/cgame/cg_popupmessages.c:761
+#, c-format
+msgid "%s^7 disconnected"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:178 src/cgame/cg_scoreboard.c:184
+#: src/cgame/cg_scoreboard.c:188 src/cgame/cg_scoreboard.c:193
+msgid "MISSION TIME:"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:184
+msgid "GAME STOPPED"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:188
+msgid "SUDDEN DEATH"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:200
+msgid "MATCH BEGINS IN:"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:205
+#, c-format
+msgid "WAITING ON ^2%i ^9%s"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:229 src/cgame/cg_scoreboard.c:233
+msgid "REINFORCE TIME:"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:248
+msgid "ROUND"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:248
+msgid "SCORE"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:254 src/cgame/cg_scoreboard.c:260
+#, c-format
+msgid "MAP %i of %i"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:273
+#, c-format
+msgid "Config: ^7%s^7"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:451 src/cgame/cg_scoreboard.c:642
+msgid "^3CONNECTING"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:455 src/cgame/cg_scoreboard.c:646
+msgid "^3SPECTATOR"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:811 src/cgame/cg_scoreboard.c:828
+msgid "AXIS"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:812 src/cgame/cg_scoreboard.c:819
+msgid "FIRST BLOOD"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:818 src/cgame/cg_scoreboard.c:832
+msgid "ALLIES"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:855
+msgid "C R"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:860
+msgid "Score"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:865
+msgid "XP"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:869
+msgid "Ping"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:387
+msgid "^1FIGHT!\n"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:421
+msgid "Auto Pick"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:1875
+#, c-format
+msgid "Damage Given: %6d      Team Damage Given: %6d"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:1876
+#, c-format
+msgid "Damage Recvd: %6d      Team Damage Recvd: %6d"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:1878
+#, c-format
+msgid "Kills:  %3d    Team Kills: %3d    Accuracy:  %5.1f%%"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:1879
+#, c-format
+msgid "Deaths: %3d    Self Kills: %3d    Headshots: %5.1f%%"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2035
+msgid "^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2040
+msgid "^7Weapon     Acrcy Hits/Atts Kll Dth HS\n"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2047
+msgid "^3No weapon info available.\n"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2153
+msgid "  Medals"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2165
+msgid "^3No skills acquired!\n"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2344
+msgid "Map"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2366
+msgid "Could not create logfile"
+msgstr ""
+
+#: src/cgame/cg_servercmds.c:2903
+msgid "^3Server Restarting"
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:192
+msgid "DOWNLOADING..."
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:196
+msgid "CONNECTING..."
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:322
+#, c-format
+msgid ""
+"Connecting to:\n"
+" %s^*\n"
+"\n"
+"%s"
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:338
+#, c-format
+msgid "Awaiting connection...%i"
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:341
+#, c-format
+msgid "Awaiting challenge...%i"
+msgstr ""
+
+#: src/ui/ui_loadpanel.c:351
+msgid "Awaiting gamestate..."
+msgstr ""
+
+#: src/ui/ui_main.c:2401 src/ui/ui_main.c:2642
+msgid "Waiting for new key... Press ESCAPE to cancel"
+msgstr ""
+
+#: src/ui/ui_main.c:2405 src/ui/ui_main.c:2646
+msgid "Press ENTER or CLICK to change, Press BACKSPACE to clear"
+msgstr ""
+
+#: src/ui/ui_main.c:2543
+#, c-format
+msgid "Getting info for %d servers (ESC to cancel)"
+msgstr ""
+
+#: src/ui/ui_main.c:2547
+msgid "Waiting for response from Master Server"
+msgstr ""
+
+#: src/ui/ui_main.c:2555
+#, c-format
+msgid "Refresh Time: %s"
+msgstr ""
+
+#: src/ui/ui_main.c:4084
+msgid "Can't show Server Info (not found, or local server)\n"
+msgstr ""
+
+#: src/ui/ui_main.c:4343 src/ui/ui_main.c:4397 src/ui/ui_main.c:4432
+msgid "Favorite already in list\n"
+msgstr ""
+
+#: src/ui/ui_main.c:4348 src/ui/ui_main.c:4402 src/ui/ui_main.c:4437
+msgid "Favorite list full\n"
+msgstr ""
+
+#: src/ui/ui_main.c:4353 src/ui/ui_main.c:4407 src/ui/ui_main.c:4442
+#, c-format
+msgid "Added favorite server %s\n"
+msgstr ""
+
+#: src/ui/ui_main.c:5874
+#, c-format
+msgid "^3Filtered/Total: %04i/%04i"
+msgstr ""
+
+#: src/ui/ui_main.c:5878
+#, c-format
+msgid ""
+"^3Check your filters - no servers found!              Filtered/Total: "
+"%04i/%04i"
+msgstr ""
+
+#: src/ui/ui_main.c:5883
+msgid ""
+"^1No Connection or master down - no servers found!    Filtered/Total: "
+"0000/0000"
+msgstr ""
+
+#: src/ui/ui_main.c:7752
+#, c-format
+msgid "Server is full, redirect to: %s\n"
+msgstr ""
+
+#: src/ui/ui_main.c:8295
+#, c-format
+msgid "%d servers listed in browser with %d players.\n"
+msgstr ""
+
+#: src/ui/ui_main.c:8301
+#, c-format
+msgid "%d servers not listed (filtered out by game browser settings)\n"
+msgstr ""
+
+#: src/ui/ui_main.c:8429
+#, c-format
+msgid "Can't find campaign '%s'\n"
+msgstr ""
+
+#: src/ui/ui_main.c:8435
+#, c-format
+msgid "Corrupted campaign '%s'\n"
+msgstr ""
+
+#: src/ui/ui_main.c:8466
+#, c-format
+msgid "%i campaigns found:\n"
+msgstr ""
+
+#: src/ui/ui_main.c:8470
+msgid "No campaigns found.\n"
+msgstr ""
+
+#: src/ui/ui_main.c:8518
+msgid "No favourite servers found."
+msgstr ""
+
+#: src/ui/ui_main.c:8529
+msgid "All favourite servers removed."
+msgstr ""
+
+#: src/cgame/cg_predict.c:641
+msgid "You are near"
+msgstr ""
+
+msgid "joined the Axis team\n"
+msgstr ""
+
+msgid "joined the Allies team\n"
+msgstr ""
+
+msgid "entered the game\n"
+msgstr ""
+
+msgid "rediscovered gravity"
+msgstr ""
+
+msgid "was crushed"
+msgstr ""
+
+msgid "drowned"
+msgstr ""
+
+msgid "slagged"
+msgstr ""
+
+msgid "was killed"
+msgstr ""
+
+msgid "got buried under a pile of rubble"
+msgstr ""
+
+msgid "was incinerated"
+msgstr ""
+
+msgid "had an appointment with the map mortar"
+msgstr ""
+
+msgid "took a map mortar shell shower"
+msgstr ""
+
+msgid "was pulverized by an explosion"
+msgstr ""
+
+msgid "dynamited himself to pieces"
+msgstr ""
+
+msgid "dove on his own grenade"
+msgstr ""
+
+msgid "vaporized himself"
+msgstr ""
+
+msgid "played with fire"
+msgstr ""
+
+msgid "obliterated himself"
+msgstr ""
+
+msgid "fired-for-effect on himself"
+msgstr ""
+
+msgid "died in his own explosion"
+msgstr ""
+
+msgid "ate his own rifle grenade"
+msgstr ""
+
+msgid "failed to spot his own landmine"
+msgstr ""
+
+msgid "embraced his own satchel explosion"
+msgstr ""
+
+msgid "engineered himself into oblivion"
+msgstr ""
+
+msgid "buried himself alive"
+msgstr ""
+
+msgid "never saw his own mortar round coming"
+msgstr ""
+
+msgid "danced on his airstrike marker"
+msgstr ""
+
+msgid "committed suicide"
+msgstr ""
+
+msgid "killed himself"
+msgstr ""
+
+msgid "Improved use of Explosive Ammunition"
+msgstr ""
+
+msgid "Improved Dexterity"
+msgstr ""
+
+msgid "Binoculars for any Class"
+msgstr ""
+
+msgid "Medic Ammo"
+msgstr ""
+
+msgid "Improved First Aid Resources"
+msgstr ""
+
+msgid "Improved use of Light Weapon Ammunition"
+msgstr ""
+
+msgid "Improved Projectile Resources"
+msgstr ""
+
+msgid "Improved use of Scoped Weapon Ammunition"
+msgstr ""
+
+msgid "Improved Physical Fitness"
+msgstr ""
+
+msgid "Improved Ammo Resources"
+msgstr ""
+
+msgid "Improved Signals"
+msgstr ""
+
+msgid "Faster Reload"
+msgstr ""
+
+msgid "Heavy Weapon Proficiency"
+msgstr ""
+
+msgid "Improved use of Sabotage and Misdirection"
+msgstr ""
+
+msgid "Improved Health"
+msgstr ""
+
+msgid "Improved Construction and Destruction"
+msgstr ""
+
+msgid "Full Revive"
+msgstr ""
+
+msgid "Improved Air and Ground Support"
+msgstr ""
+
+msgid "Improved Light Weapon Handling"
+msgstr ""
+
+msgid "Breath Control"
+msgstr ""
+
+msgid "Trap Awareness"
+msgstr ""
+
+msgid "a Flak Jacket"
+msgstr ""
+
+msgid "Adrenalin Self"
+msgstr ""
+
+msgid "Enemy Recognition"
+msgstr ""
+
+msgid "Dual-Wield Pistols"
+msgstr ""
+
+msgid "Improved Weapon Handling"
+msgstr ""
+
+msgid "Assassin"
+msgstr ""
+
+#: src/cgame/cg_consolecmds:1233
+msgid "You will spawn as an %s %s with a %s and %s."
+msgstr ""
+
+#: etmain/ui/credits_etlegacy.menu:85
+msgid "^1THE TEAM"
+msgstr ""
+
+msgid "Axis team"
+msgstr ""
+
+msgid "Allied team"
+msgstr ""
+
+msgid "Spectators"
+msgstr ""
+
+msgid "You must be a player or following a player to use +stats\n"
+msgstr ""
+
+msgid "^9You must be alive to use ^3/kill."
+msgstr ""
+
+msgid "No vote in progress.\n"
+msgstr ""
+
+msgid "No or bad challenge for address.\n"
+msgstr ""
+
+msgid "Match is already in progress!\n"
+msgstr ""
+
+msgid "^1** Referee Server Setting Change **\n"
+msgstr ""
+
+msgid "Your fireteam is now public"
+msgstr ""
+
+msgid "Your fireteam is now private"
+msgstr ""
+
+msgid "The Allies have too many players.\n"
+msgstr ""
+
+msgid "The Axis has too many players.\n"
+msgstr ""
+
+msgid "Attack!"
+msgstr ""
+
+msgid "Fall back!"
+msgstr ""
+
+msgid ""
+"^3All players ready!^7\n"
+"Match starting..."
+msgstr ""
+
+msgid "Path cleared."
+msgstr ""
+
+msgid "The enemy is weakened."
+msgstr ""
+
+msgid "All clear."
+msgstr ""
+
+msgid "Incoming!"
+msgstr ""
+
+msgid "Fire in the hole!"
+msgstr ""
+
+msgid "I'm on defense."
+msgstr ""
+
+msgid "I'm on offense."
+msgstr ""
+
+msgid "Taking fire!"
+msgstr ""
+
+msgid "Mines cleared."
+msgstr ""
+
+msgid "Enemy in disguise."
+msgstr ""
+
+msgid "Need a Medic!"
+msgstr ""
+
+msgid "I need ammo!"
+msgstr ""
+
+msgid "I need backup!"
+msgstr ""
+
+msgid "We need an engineer!"
+msgstr ""
+
+msgid "Cover me!"
+msgstr ""
+
+msgid "Hold your fire!"
+msgstr ""
+
+msgid "Where to?"
+msgstr ""
+
+msgid "We need Covert Ops!"
+msgstr ""
+
+msgid "Follow me!"
+msgstr ""
+
+msgid "Let's go!"
+msgstr ""
+
+msgid "Move!"
+msgstr ""
+
+msgid "Clear the path!"
+msgstr ""
+
+msgid "Defend our objective!"
+msgstr ""
+
+msgid "Disarm the dynamite!"
+msgstr ""
+
+msgid "Clear the mines!"
+msgstr ""
+
+msgid "Reinforce the offense!"
+msgstr ""
+
+msgid "Reinforce the defense!"
+msgstr ""
+
+msgid "Affirmative!"
+msgstr ""
+
+msgid "No!"
+msgstr ""
+
+msgid "Thank you!"
+msgstr ""
+
+msgid "You're welcome."
+msgstr ""
+
+msgid "Bitte sehr."
+msgstr ""
+
+msgid "Ja!"
+msgstr ""
+
+msgid "Nein!"
+msgstr ""
+
+msgid "Kein problem."
+msgstr ""
+
+msgid "Sorry!"
+msgstr ""
+
+msgid "Oops!"
+msgstr ""
+
+msgid "Yes!"
+msgstr ""
+
+msgid "Jawohl!"
+msgstr ""
+
+msgid "Negative!"
+msgstr ""
+
+msgid "Hi!"
+msgstr ""
+
+msgid "Hello!"
+msgstr ""
+
+msgid "Hallo!"
+msgstr ""
+
+msgid "Good bye."
+msgstr ""
+
+msgid "Auf wiedersehen."
+msgstr ""
+
+msgid "Bye."
+msgstr ""
+
+msgid "Great shot!"
+msgstr ""
+
+msgid "You got it, man!"
+msgstr ""
+
+msgid "Yeah!"
+msgstr ""
+
+msgid "Yoohoo!"
+msgstr ""
+
+msgid "Hahaa!"
+msgstr ""
+
+msgid "Alright!"
+msgstr ""
+
+msgid "Woo!"
+msgstr ""
+
+msgid "Yeehaa!"
+msgstr ""
+
+msgid "'Atta way, baby!"
+msgstr ""
+
+msgid "Jahaa!"
+msgstr ""
+
+msgid "Wunderbar!"
+msgstr ""
+
+msgid "Excellent!"
+msgstr ""
+
+msgid "Oh yes!"
+msgstr ""
+
+msgid "Sehr gut!"
+msgstr ""
+
+msgid "Thanks!"
+msgstr ""
+
+msgid "Danke!"
+msgstr ""
+
+msgid "Danke sehr!"
+msgstr ""
+
+msgid "No problem."
+msgstr ""
+
+msgid "Good game!"
+msgstr ""
+
+msgid "Command acknowledged!"
+msgstr ""
+
+msgid "Command declined!"
+msgstr ""
+
+msgid "Command completed!"
+msgstr ""
+
+msgid "Destroy primary objective!"
+msgstr ""
+
+msgid "Destroy secondary objective!"
+msgstr ""
+
+msgid "Destroy construction!"
+msgstr ""
+
+msgid "I'm constructing!"
+msgstr ""
+
+msgid "Repair the vehicle!"
+msgstr ""
+
+msgid "Disable the vehicle!"
+msgstr ""
+
+msgid "Escort the vehicle!"
+msgstr ""
+
+msgid "Covering fire!"
+msgstr ""
+
+msgid "I'm a soldier."
+msgstr ""
+
+msgid "I'm an engineer."
+msgstr ""
+
+msgid "I'm a medic."
+msgstr ""
+
+msgid "I'm a field ops."
+msgstr ""
+
+msgid "I'm a covert ops."
+msgstr ""
+
+msgid "unknown cmd"
+msgstr ""
+
+msgid "Server:"
+msgstr ""
+
+msgid "changed to"
+msgstr ""
+
+msgid "Arming landmine..."
+msgstr ""
+
+msgid "Landmine armed..."
+msgstr ""
+
+msgid "Dynamite is set, but NOT armed!"
+msgstr ""
+
+msgid "Arming dynamite..."
+msgstr ""
+
+msgid "Dynamite is now armed with a 30 second timer!"
+msgstr ""
+
+msgid "Defusing landmine"
+msgstr ""
+
+msgid "Landmine defused..."
+msgstr ""
+
+msgid "Defusing dynamite..."
+msgstr ""
+
+msgid "Affirmative!!"
+msgstr ""
+
+msgid "^1Spam Protection^7: VoiceChat ignored"
+msgstr ""
+
+msgid "Mines have been reported in this area."
+msgstr ""
+
+msgid "'s Landmine"
+msgstr ""
+
+msgid "'s Mobile MG 42"
+msgstr ""
+
+msgid "'s Mobile Browning"
+msgstr ""
+
+msgid "'s rifle grenade"
+msgstr ""
+
+msgid "'s support fire"
+msgstr ""
+
+msgid "'s crew-served MG"
+msgstr ""
+
+msgid "was thrown to his doom by"
+msgstr ""
+
+msgid "You have been revived by "
+msgstr ""
+
+msgid "Constructing..."
+msgstr ""
+
+msgid "Allied Command Post constructed. Charge speed increased!"
+msgstr ""
+
+msgid "Axis Command Post constructed. Charge speed increased!"
+msgstr ""
+
+msgid ""
+"^3All players ready!^7\n"
+"Match starting...\n"
+msgstr ""
+
+msgid "You are on the Allied team"
+msgstr ""
+
+msgid "^1*** Match Reset! ***\n"
+msgstr ""
+
+msgid "You are on the Axis team"
+msgstr ""
+
+msgid "Warning, leave the construction area..."
+msgstr ""
+
+msgid "got caught in"
+msgstr ""
+
+msgid "'s construction madness"
+msgstr ""
+
+#: src/qcommon/download.c:244
+msgid "Need paks: %s\n"
+msgstr ""
+
+msgid "Not enough players to start match!\n"
+msgstr ""
+
+msgid "'s flamethrower"
+msgstr ""
+
+msgid "'s Satchel Charge"
+msgstr ""
+
+msgid "You cannot arm dynamite near a friendly objective!"
+msgstr ""
+
+msgid "'s tank-mounted MG42"
+msgstr ""
+
+msgid "'s dynamite"
+msgstr ""
+
+msgid "Timelimit hit.\n"
+msgstr ""
+
+msgid "Landmine revealed"
+msgstr ""
+
+msgid "'s tank-mounted browning 30cal"
+msgstr ""
+
+msgid "'s grenade"
+msgstr ""
+
+msgid "Competition Settings Loaded!\n"
+msgstr ""
+
+msgid "Public Settings Loaded!\n"
+msgstr ""
+
+msgid "Landmine cannot be armed here..."
+msgstr ""
+
+msgid "Your team has too many landmines placed..."
+msgstr ""
+
+msgid "You cannot arm dynamite near a friendly construction!"
+msgstr ""
+
+msgid "Countdown started.... ^3notready^7 ignored!\n"
+msgstr ""
+
+msgid "No complaint filed against you.\n"
+msgstr ""
+
+msgid "You are not the leader of a fireteam\n"
+msgstr ""
+
+msgid "You have been warned by your Fireteam Commander\n"
+msgstr ""
+
+msgid "You have been kicked from the fireteam"
+msgstr ""
+
+msgid "You are now the leader of your fireteam"
+msgstr ""
+
+msgid "The fireteam you are on has been disbanded"
+msgstr ""
+
+msgid "You have been given fireteam admin rights"
+msgstr ""
+
+msgid "Too many players already on this Fireteam"
+msgstr ""
+
+msgid "The leader has now left the Fireteam you applied to"
+msgstr ""
+
+msgid "The other player is already on a fireteam"
+msgstr ""
+
+msgid "You are not on the same team as the other player"
+msgstr ""
+
+msgid "You are not on the same Fireteam as the other player"
+msgstr ""
+
+msgid "Invalid client selected"
+msgstr ""
+
+msgid "usage: fireteam admin <clientname|clientnumber>"
+msgstr ""
+
+msgid "usage: fireteam propose <clientname|clientnumber>"
+msgstr ""
+
+msgid "usage: fireteam kick <clientname|clientnumber>"
+msgstr ""
+
+msgid "usage: fireteam warn <clientname|clientnumber>"
+msgstr ""
+
+msgid "usage: fireteam invite <clientname|clientnumber>"
+msgstr ""
+
+msgid "usage: fireteam apply <fireteamname|fireteamnumber>"
+msgstr ""
+
+msgid "usage: fireteam <create|leave|apply|invite>"
+msgstr ""
+
+msgid "You are already on a fireteam, leave it first"
+msgstr ""
+
+msgid ""
+"The other player must be on the same fireteam for you to give admin rights "
+"to"
+msgstr ""
+
+msgid "You must be a fireteam admin to give admin rights to someone else"
+msgstr ""
+
+msgid "Invalid referee password!\n"
+msgstr ""
+
+msgid "Usage: ref [password]\n"
+msgstr ""
+
+msgid ""
+"^3Referee commands:^7\n"
+"------------------------------------------\n"
+msgstr ""
+
+msgid ""
+"Usage: ^3\\ref <cmd> [params]\n"
+"\n"
+msgstr ""
+
+msgid "^5pause speclock warmup ^7[value]\n"
+msgstr ""
+
+msgid "Sorry, referee status disabled on this server.\n"
+msgstr ""
+
+msgid "Referee has ^3LOCKED^7 teams\n"
+msgstr ""
+
+msgid "You have LOCKED teams\n"
+msgstr ""
+
+msgid "Referee has ^3UNLOCKED^7 teams\n"
+msgstr ""
+
+msgid "You have UNLOCKED teams\n"
+msgstr ""
+
+msgid "The ^4Allies^7 team is LOCKED!\n"
+msgstr ""
+
+msgid "The ^1Axis^7 team is LOCKED!\n"
+msgstr ""
+
+msgid "^3Referee ^1PAUSED^3 the match^3!\n"
+msgstr ""
+
+msgid "^3Match is ^1PAUSED^3! (^7Referee^3)\n"
+msgstr ""
+
+msgid "The match is already ^1PAUSED!\n"
+msgstr ""
+
+msgid "^3Referee ^5UNPAUSES^3 the match ... resuming in 10 seconds!\n"
+msgstr ""
+
+msgid "The match is already ^5UNPAUSED!\n"
+msgstr ""
+
+msgid "Bad client slot: "
+msgstr ""
+
+msgid "Client"
+msgstr ""
+
+msgid "is not active\n"
+msgstr ""
+
+msgid "You can only remove people in the game!\n"
+msgstr ""
+
+msgid "User "
+msgstr ""
+
+msgid "is not on the server\n"
+msgstr ""
+
+msgid "^5You've been removed from the ^4Allies^7 team\n"
+msgstr ""
+
+msgid "^5You've been removed from the ^1Axis^7 team\n"
+msgstr ""
+
+msgid "Referee has ^3SPECTATOR LOCKED^7 teams\n"
+msgstr ""
+
+msgid "Referee has ^3SPECTATOR UNLOCKED^7 teams\n"
+msgstr ""
+
+msgid "usage: ref warn <clientname> [reason].\n"
+msgstr ""
+
+msgid "Client not on server.\n"
+msgstr ""
+
+msgid "%s^7 was issued a ^1Warning^7 (No Reason Supplied)\n"
+msgstr ""
+
+msgid "Cannot mute a referee.\n"
+msgstr ""
+
+msgid "^5You've been muted\n"
+msgstr ""
+
+msgid "Can't chat - you are muted\n"
+msgstr ""
+
+msgid "^5You've been unmuted\n"
+msgstr ""
+
+msgid ""
+"^7 ID : Player                    Nudge  Rate  MaxPkts  Snaps  Specials\n"
+msgstr ""
+
+msgid ""
+"^7----------------------------------------------------------------------\n"
+msgstr ""
+
+msgid ""
+"^7Status   : ID : Player                    Nudge  Rate  MaxPkts  Snaps  "
+"Specials\n"
+msgstr ""
+
+msgid ""
+"^7-------------------------------------------------------------------------------\n"
+msgstr ""
+
+msgid ""
+"^5\n"
+"Available Game Commands:\n"
+"------------------------\n"
+msgstr ""
+
+msgid ""
+"\n"
+"Type: ^3\\command_name ?^7 for more information\n"
+msgstr ""
+
+msgid "Spectators can't lock a team!\n"
+msgstr ""
+
+msgid "The ^4Allies^7 team is now locked!\n"
+msgstr ""
+
+msgid "^3Your team is already locked!\n"
+msgstr ""
+
+msgid "The ^4Allies^7 team is now unlocked!\n"
+msgstr ""
+
+msgid "^3Your team is already unlocked!\n"
+msgstr ""
+
+msgid "Spectators can't unlock a team!\n"
+msgstr ""
+
+msgid "The ^1Axis^7 team is now locked!\n"
+msgstr ""
+
+msgid "The ^1Axis^7 team is now unlocked!\n"
+msgstr ""
+
+msgid "Team commands not enabled on this server.\n"
+msgstr ""
+
+msgid ""
+"\n"
+"^3>>> Unknown vote command: ^7 \n"
+msgstr ""
+
+msgid ""
+"\n"
+"Valid ^3callvote^7 commands are:\n"
+"^3----------------------------\n"
+msgstr ""
+
+msgid ""
+"\n"
+"Usage: ^3\\callvote <command> <params>\n"
+"^7For current settings/help, use: ^3\\callvote <command> ?\n"
+msgstr ""
+
+msgid "Type ^3\\stats <player_id>^7 to see stats on an active player.\n"
+msgstr ""
+
+msgid "Spectators can't ready a team!\n"
+msgstr ""
+
+msgid "The ^4Allies^7 team is ready!\n"
+msgstr ""
+
+msgid "The ^1Axis^7 team is ready!\n"
+msgstr ""
+
+msgid "A vote is already in progress.\n"
+msgstr ""
+
+msgid "called a vote.\n"
+msgstr ""
+
+msgid "^5Vote passed!\n"
+msgstr ""
+
+msgid "Spectator team\n"
+msgstr ""
+
+msgid "Allies team\n"
+msgstr ""
+
+msgid "Axis team\n"
+msgstr ""
+
+msgid "Sorry, "
+msgstr ""
+
+msgid "voting has been disabled"
+msgstr ""
+
+msgid "Not allowed to call a vote as a spectator."
+msgstr ""
+
+msgid "called a vote."
+msgstr ""
+
+msgid "Vote cast.\n"
+msgstr ""
+
+msgid "'s KA-BAR"
+msgstr ""
+
+msgid "'s .45ACP 1911"
+msgstr ""
+
+msgid "'s Thompson"
+msgstr ""
+
+msgid "'s MP 40"
+msgstr ""
+
+msgid "'s knife"
+msgstr ""
+
+msgid "'s Luger 9mm"
+msgstr ""
+
+msgid "'s Panzerfaust"
+msgstr ""
+
+msgid "'s Garand"
+msgstr ""
+
+msgid "'s Sten"
+msgstr ""
+
+msgid "'s FG 42"
+msgstr ""
+
+msgid "'s K43"
+msgstr ""
+
+msgid "'s Bazooka"
+msgstr ""
+
+msgid "'s Akimbo .45ACP 1911s"
+msgstr ""
+
+msgid "Server disconnected"
+msgstr ""
+
+msgid "Server connection timed out."
+msgstr ""
+
+msgid "Server disconnected for unknown reason"
+msgstr ""
+
+msgid "'s Akimbo Luger 9mms"
+msgstr ""
+
+msgid "Cheats are not enabled on this server.\n"
+msgstr ""
+
+msgid "team: class is not available\n"
+msgstr ""
+
+msgid "^1Soldier^7 is not available! Choose another class!\n"
+msgstr ""
+
+msgid "^1Medic^7 is not available! Choose another class!\n"
+msgstr ""
+
+msgid "^1Engineer^7 is not available! Choose another class!\n"
+msgstr ""
+
+msgid "^1Field Ops^7 is not available! Choose another class!\n"
+msgstr ""
+
+msgid "^1Covert Ops^7 is not available! Choose another class!\n"
+msgstr ""
+
+msgid "You must be alive to use this command.\n"
+msgstr ""
+
+msgid "The ^1Axis^7 team is empty!  Follow command ignored.\n"
+msgstr ""
+
+msgid "The ^4Allies^7 team is empty!  Follow command ignored.\n"
+msgstr ""
+
+msgid "Can't follow a player on an enemy team!\n"
+msgstr ""
+
+msgid "Can't follow while not in limbo if on a team!\n"
+msgstr ""
+
+msgid "Partial Name Matches more than 1 Player.\n"
+msgstr ""
+
+msgid "Spectator follow is now locked on the ^1Axis^7 team.\n"
+msgstr ""
+
+msgid "^1Axis^7 team spectating is now disabled.\n"
+msgstr ""
+
+msgid "Spectator follow is now locked on the ^4Allies^7 team.\n"
+msgstr ""
+
+msgid "^4Allies^7 team spectating is now disabled.\n"
+msgstr ""
+
+msgid "Sorry, the ^4Allies^7 team is locked from spectators.\n"
+msgstr ""
+
+msgid "Sorry, the ^1Axis^7 team is locked from spectators.\n"
+msgstr ""
+
+msgid "Server quit\n"
+msgstr ""
+
+msgid "You cannot switch during a match, please wait until the round ends."
+msgstr ""
+
+msgid "Use the ^3players^7 command to find a valid player ID.\n"
+msgstr ""
+
+msgid "^3Match is already in progress!\n"
+msgstr ""
+
+msgid "^1Teams have been shuffled!\n"
+msgstr ""
+
+msgid "^3*** Loading nextmap! ***\n"
+msgstr ""
+
+msgid "^1*** Level Restarted! ***\n"
+msgstr ""
+
+msgid "You have been switched to the Axis team"
+msgstr ""
+
+msgid "Keep the Allies from beating the clock!"
+msgstr ""
+
+msgid "Keep the Axis from beating the clock!"
+msgstr ""
+
+msgid "You have been switched to the Allied team"
+msgstr ""
+
+msgid "Try to beat the clock!"
+msgstr ""
+
+msgid "You have been been stripped of fireteam admin rights"
+msgstr ""
+
+msgid "%s ^7has left the fireteam\n"
+msgstr ""
+
+msgid "You have been warned by your fireteam leader\n"
+msgstr ""
+
+msgid "^3moved to spectator for inactivity!\n"
+msgstr ""
+
+msgid "was killed by"
+msgstr ""
+
+msgid "was stabbed by"
+msgstr ""
+
+msgid "was blasted by"
+msgstr ""
+
+msgid "was exploded by"
+msgstr ""
+
+msgid "was cooked by"
+msgstr ""
+
+msgid "never saw"
+msgstr ""
+
+msgid "'s mortar round coming"
+msgstr ""
+
+msgid "was perforated by"
+msgstr ""
+
+msgid "'s tank-mounted MG 42"
+msgstr ""
+
+msgid "was shelled by"
+msgstr ""
+
+msgid "'s artillery support"
+msgstr ""
+
+msgid "^2swapped places with^7"
+msgstr ""
+
+msgid "failed to spot"
+msgstr ""
+
+msgid "was mown down by"
+msgstr ""
+
+msgid "was silenced by"
+msgstr ""
+
+msgid "was sniped by"
+msgstr ""
+
+msgid "stood on"
+msgstr ""
+
+msgid "'s airstrike marker"
+msgstr ""
+
+msgid "- Small Health"
+msgstr ""
+
+msgid "- Med Health"
+msgstr ""
+
+msgid "- Health Pack"
+msgstr ""
+
+msgid "- Hot Meal"
+msgstr ""
+
+msgid "- Cold Meal"
+msgstr ""
+
+msgid "- Health"
+msgstr ""
+
+msgid "- Knife"
+msgstr ""
+
+msgid "- Ka-Bar"
+msgstr ""
+
+msgid "- Luger"
+msgstr ""
+
+msgid "- Akimbo Luger"
+msgstr ""
+
+msgid "- Silenced Akimbo Luger"
+msgstr ""
+
+msgid "- Thompson"
+msgstr ""
+
+msgid "- Sten gun"
+msgstr ""
+
+msgid "- Colt"
+msgstr ""
+
+msgid "- Akimbo Colt"
+msgstr ""
+
+msgid "- Silenced Akimbo Colt"
+msgstr ""
+
+msgid "- MP 40"
+msgstr ""
+
+msgid "- Panzerfaust"
+msgstr ""
+
+msgid "- Bazooka"
+msgstr ""
+
+msgid "- Grenade"
+msgstr ""
+
+msgid "- Pineapple"
+msgstr ""
+
+msgid "- Flamethrower"
+msgstr ""
+
+msgid "- Syringe"
+msgstr ""
+
+msgid "- Adrenaline Syringe"
+msgstr ""
+
+msgid "- Ammo Pack"
+msgstr ""
+
+msgid "- Mega Ammo Pack"
+msgstr ""
+
+msgid "- Binoculars"
+msgstr ""
+
+msgid "- Scoped K43 Rifle"
+msgstr ""
+
+msgid "- K43 Rifle Scope"
+msgstr ""
+
+msgid "- K43 Rifle"
+msgstr ""
+
+msgid "- M1 Garand"
+msgstr ""
+
+msgid "- M7"
+msgstr ""
+
+msgid "- Scoped M1 Garand"
+msgstr ""
+
+msgid "- M1 Garand Scope"
+msgstr ""
+
+msgid "- FG 42 Paratroop Rifle"
+msgstr ""
+
+msgid "- FG 42 Paratroop Rifle Scope"
+msgstr ""
+
+msgid "- Mortar"
+msgstr ""
+
+msgid "- Granatwerfer"
+msgstr ""
+
+msgid "- Mobile MG 42"
+msgstr ""
+
+msgid "- Mobile Browning"
+msgstr ""
+
+msgid "- Silenced Luger"
+msgstr ""
+
+msgid "- Silenced Colt"
+msgstr ""
+
+msgid "Includes or excludes empty and full servers from the server list"
+msgstr ""
+
+msgid "Includes or excludes password protected servers from the server list"
+msgstr ""
+
+msgid ""
+"Includes or excludes servers where team mates can damage each other from the"
+" server list"
+msgstr ""
+
+msgid ""
+"Includes or excludes servers that limit the number of player lives per match"
+" from the server list"
+msgstr ""
+
+msgid ""
+"Includes or excludes servers that limit the number of\n"
+" available heavy weapons from the server list"
+msgstr ""
+
+msgid ""
+"Includes or excludes servers with support for modem players from the server "
+"list"
+msgstr ""
+
+msgid ""
+"Includes or excludes servers that enforce balanced teams from the server "
+"list"
+msgstr ""
+
+msgid "Includes or excludes servers with bots from the server list"
+msgstr ""
+
+msgid "Click here to sort by Ping"
+msgstr ""
+
+msgid "FAV"
+msgstr ""
+
+msgid "Sets field of view"
+msgstr ""
+
+msgid "Selfkill:"
+msgstr ""
+
+msgid "Fireteam Chat:"
+msgstr ""
+
+msgid "Fireteam Quick Chat:"
+msgstr ""
+
+msgid "Ready:"
+msgstr ""
+
+msgid "Not Ready:"
+msgstr ""
+
+msgid "CONTROLS: ADVANCED"
+msgstr ""
+
+msgid "Deselect All Members:"
+msgstr ""
+
+msgid "Select Member #7:"
+msgstr ""
+
+msgid "Select Member #8:"
+msgstr ""
+
+msgid ""
+"Couldn't load an official pak file; verify your installation and make sure "
+"it has been updated to the latest version."
+msgstr ""
+
+msgid "Battle Sense"
+msgstr ""
+
+msgid "Engineering"
+msgstr ""
+
+msgid "First Aid"
+msgstr ""
+
+msgid "Signals"
+msgstr ""
+
+msgid "Light Weapons"
+msgstr ""
+
+msgid "Heavy Weapons"
+msgstr ""
+
+msgid "Covert Ops"
+msgstr ""
+
+msgid "Fire Mission: ^3Firing for effect!"
+msgstr ""
+
+msgid "Fire Mission: ^3Insufficient fire support."
+msgstr ""
+
+msgid "Fire Mission: ^3Aborting, can't see target."
+msgstr ""
+
+msgid "I need a Medic!"
+msgstr ""
+
+msgid "New version available. Do you want to update now?"
+msgstr ""
+
+msgid "20 Med Health"
+msgstr ""
+
+msgid "Pilot: ^3Aborting, can't see target."
+msgstr ""
+
+msgid "Pilot: ^3Affirmative, on my way!"
+msgstr ""
+
+msgid "HQ: ^3All available planes are already en-route."
+msgstr ""
+
+#: src/cgame/cg_draw.c:1830
+msgid "Join a Fireteam?"
+msgstr ""
+
+msgid "Apply"
+msgstr ""
+
+msgid "Create"
+msgstr ""
+
+msgid "Attack"
+msgstr ""
+
+msgid "Fall Back"
+msgstr ""
+
+msgid "Disband"
+msgstr ""
+
+msgid "Leave"
+msgstr ""
+
+msgid "Invite"
+msgstr ""
+
+msgid "Change privacy"
+msgstr ""
+
+msgid "Kick"
+msgstr ""
+
+msgid "Warn"
+msgstr ""
+
+msgid "Change admin"
+msgstr ""
+
+msgid "Highest Fragger"
+msgstr ""
+
+msgid "Highest Experience Points"
+msgstr ""
+
+msgid "Highest Ranking Officer"
+msgstr ""
+
+msgid "Most Highly Decorated"
+msgstr ""
+
+msgid "Highest Battle Sense"
+msgstr ""
+
+msgid "Best Engineer"
+msgstr ""
+
+msgid "Best Medic"
+msgstr ""
+
+msgid "Best Field Ops"
+msgstr ""
+
+msgid "Highest Light Weapons"
+msgstr ""
+
+msgid "Best Soldier"
+msgstr ""
+
+msgid "Best Covert Ops"
+msgstr ""
+
+msgid "Highest Accuracy"
+msgstr ""
+
+msgid "I Ain't Got No Friends Award"
+msgstr ""
+
+msgid "Welcome Newbie! Award"
+msgstr ""
+
+msgid ""
+"\n"
+"ET: Legacy with OpenGL 3.x renderer can not run on this machine since it is missing one or more required OpenGL extensions. Please update your video card drivers and try again.\n"
+msgstr ""
+
+msgid "Gib command not allowed during intermission.\n"
+msgstr ""
+
+msgid "^9%d players gibbed."
+msgstr ""
+
+msgid "There is no player to gib."
+msgstr ""
+
+msgid "Error - can't gib - %s."
+msgstr ""
+
+msgid "Player must be on a team to be gibbed.\n"
+msgstr ""
+
+msgid "^7%s^7 was gibbed."
+msgstr ""
+
+msgid "Die command not allowed during intermission.\n"
+msgstr ""
+
+msgid "^9%d players died."
+msgstr ""
+
+msgid "There is no player to die.\n"
+msgstr ""
+
+msgid "Error - can't execute die command - %s.\n"
+msgstr ""
+
+msgid "Player must be on a team to die.\n"
+msgstr ""
+
+msgid "^7%s^7 died."
+msgstr ""
+
+msgid "Freeze command not allowed during intermission.\n"
+msgstr ""
+
+msgid "^9%d players are frozen."
+msgstr ""
+
+msgid "No players in team or they are already frozen.\n"
+msgstr ""
+
+msgid "Error - can't freeze - %s.\n"
+msgstr ""
+
+msgid "Player must be on a team to be frozen.\n"
+msgstr ""
+
+msgid "^7%s^7 is frozen."
+msgstr ""
+
+msgid "^9%d players are unfrozen."
+msgstr ""
+
+msgid "No players in team or they are already unfrozen.\n"
+msgstr ""
+
+msgid "Error - can't unfreeze - %s.\n"
+msgstr ""
+
+msgid "Player must be on a team to be unfrozen.\n"
+msgstr ""
+
+msgid "^7%s^7 is unfrozen."
+msgstr ""
+
+msgid "Burn command not allowed during intermission.\n"
+msgstr ""
+
+msgid "^9%d players burned."
+msgstr ""
+
+msgid "No players in team or they are already burned.\n"
+msgstr ""
+
+msgid "Error - can't burn - %s.\n"
+msgstr ""
+
+msgid "Player must be on a team to be burned.\n"
+msgstr ""
+
+msgid "^7%s^7 is burned."
+msgstr ""
+
+msgid "Pip command not allowed during intermission.\n"
+msgstr ""
+
+msgid "^9%d players pipped."
+msgstr ""
+
+msgid "No players in team or they are already pipped.\n"
+msgstr ""
+
+msgid "Error - can't pip - %s.\n"
+msgstr ""
+
+msgid "Player must be on a team to be pipped.\n"
+msgstr ""
+
+msgid "^7%s^7 is pipped."
+msgstr ""
+
+msgid "%s command not allowed during intermission.\n"
+msgstr ""
+
+msgid "^9%d players %s."
+msgstr ""
+
+msgid "No players in team or they are already %s.\n"
+msgstr ""
+
+msgid "Player must be on a team to be %s.\n"
+msgstr ""
+
+msgid "^7%s^7 was %s."
+msgstr ""
+
+#: etmain/ui/options_system.menu:48
+msgid "System Sound Control:"
+msgstr ""
+
+#: etmain/ui/options_system.menu:48
+msgid "Base"
+msgstr ""
+
+#: etmain/ui/options_system.menu:48
+msgid "OpenAL"
+msgstr ""
+
+#: etmain/ui/options_system.menu:48
+msgid "Set the system sound control"
+msgstr ""
+
+msgid "No can do!"
+msgstr ""
+
+msgid "Right away!"
+msgstr ""
+
+#: src/cgame/cg_draw.c:2505
+msgid "^3WARMUP:^7 Match begins now!"
+msgstr ""
+
+#: src/cgame/cg_scoreboard.c:211
+msgid "MATCH BEGINS NOW!"
+msgstr ""
+
+msgid "Mute Players:"
+msgstr ""
+
+msgid "Allow players to vote for muting players"
+msgstr ""
+
+msgid "Surrender:"
+msgstr ""
+
+msgid "Allow players to vote for surrender"
+msgstr ""
+
+msgid "XP Shuffle No Rstrt:"
+msgstr ""
+
+msgid "Allow players to vote for teams to be shuffled without a restart"
+msgstr ""
+
+msgid "Restart Campaign:"
+msgstr ""
+
+msgid "Allow players to vote for restarting campaign"
+msgstr ""
+
+msgid "Next Campaign:"
+msgstr ""
+
+msgid "Allow players to vote for next campaign"
+msgstr ""
+
+msgid "CHANGE SYSTEM SETTINGS"
+msgstr ""
+
+msgid "RESTART CAMPAIGN"
+msgstr ""
+
+msgid "SURRENDER"
+msgstr ""
+
+msgid "NO XP SHUFFLE"
+msgstr ""
+
+msgid "Multiview:"
+msgstr ""
+
+msgid "Poll:"
+msgstr ""
+
+msgid "Allow players to vote for custom votes"
+msgstr ""
+
+msgid "Log File:"
+msgstr ""
+
+msgid "Sets the name of the log file or if empty logging is disabled"
+msgstr ""
+
+msgid "^7BACKSPACE ^3help on/off"
+msgstr ""
+
+msgid "^7BACKSPACE ^mgo  back"
+msgstr ""
