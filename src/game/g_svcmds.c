@@ -1671,7 +1671,6 @@ static void Svcmd_KickNum_f(void)
 	// use engine banning system, mods may choose to use their own banlist
 	if (USE_ENGINE_BANLIST)
 	{
-
 		// kick but dont ban bots, they arent that lame
 		if ((g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT))
 		{

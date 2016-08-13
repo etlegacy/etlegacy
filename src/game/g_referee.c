@@ -557,6 +557,8 @@ void G_PlayerBan()
 		trap_GetUserinfo(bannum, userinfo, sizeof(userinfo));
 		value = Info_ValueForKey(userinfo, "ip");
 
+
+		// FIXME: don't call this for bots! get bot flag from client (don't use this ip value
 		AddIPBan(value);
 //      } else {
 //          G_Printf( "^3*** Can't ban a superuser!\n" );

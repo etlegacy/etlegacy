@@ -244,7 +244,7 @@ static void G_SendSkillRating(gentity_t *ent)
 	{
 		buff[strlen(buff) - 1] = '\0';
 	}
-	trap_SendServerCommand(ent - g_entities, va("%s\n", buff));
+	trap_SendServerCommand(ent - g_entities, va("%s", buff));
 }
 #endif
 
@@ -4393,7 +4393,7 @@ void Cmd_IntermissionReady_f(gentity_t *ent)
 
 	if (g_gametype.integer == GT_WOLF_MAPVOTE && g_gamestate.integer == GS_INTERMISSION)
 	{
-		trap_SendServerCommand(ent - g_entities, "print \"'imready' not allowed during intermission and gametype map voting!\n\"\n");
+		trap_SendServerCommand(ent - g_entities, "print \"'imready' not allowed during intermission and gametype map voting!\n\"");
 		return;
 	}
 
@@ -4603,7 +4603,7 @@ void Cmd_Ignore_f(gentity_t *ent)
 
 	if (!*cmd)
 	{
-		trap_SendServerCommand(ent - g_entities, "print \"usage: Ignore <clientname>.\n\"\n");
+		trap_SendServerCommand(ent - g_entities, "print \"usage: Ignore <clientname>.\n\"");
 		return;
 	}
 
@@ -4612,7 +4612,7 @@ void Cmd_Ignore_f(gentity_t *ent)
 	if (cnum != MAX_CLIENTS)
 	{
 		COM_BitSet(ent->client->sess.ignoreClients, cnum);
-		trap_SendServerCommand(ent - g_entities, va("print \"You are ignoring [lof]%s[lon]^7.\n\"\n", level.clients[cnum].pers.netname));
+		trap_SendServerCommand(ent - g_entities, va("print \"You are ignoring [lof]%s[lon]^7.\n\"", level.clients[cnum].pers.netname));
 	}
 }
 
@@ -4625,7 +4625,7 @@ void Cmd_UnIgnore_f(gentity_t *ent)
 
 	if (!*cmd)
 	{
-		trap_SendServerCommand(ent - g_entities, "print \"usage: Unignore <clientname>.\n\"\n");
+		trap_SendServerCommand(ent - g_entities, "print \"usage: Unignore <clientname>.\n\"");
 		return;
 	}
 
@@ -4634,7 +4634,7 @@ void Cmd_UnIgnore_f(gentity_t *ent)
 	if (cnum != MAX_CLIENTS)
 	{
 		COM_BitClear(ent->client->sess.ignoreClients, cnum);
-		trap_SendServerCommand(ent - g_entities, va("print \"[lof]%s[lon]^7 is no longer ignored.\n\"\n", level.clients[cnum].pers.netname));
+		trap_SendServerCommand(ent - g_entities, va("print \"[lof]%s[lon]^7 is no longer ignored.\n\"", level.clients[cnum].pers.netname));
 	}
 }
 
@@ -4750,7 +4750,7 @@ void ClientCommand(int clientNum)
 		}
 		else
 		{
-			trap_SendServerCommand(ent - g_entities, "print \"Can't chat - you are muted\n\"\n");
+			trap_SendServerCommand(ent - g_entities, "print \"Can't chat - you are muted\n\"");
 		}
 		return;
 	}
@@ -4758,7 +4758,7 @@ void ClientCommand(int clientNum)
 	{
 		if (ent->client->sess.sessionTeam == TEAM_SPECTATOR || ent->client->sess.sessionTeam == TEAM_FREE)
 		{
-			trap_SendServerCommand(ent - g_entities, "print \"Can't team chat as spectator\n\"\n");
+			trap_SendServerCommand(ent - g_entities, "print \"Can't team chat as spectator\n\"");
 			return;
 		}
 
@@ -4768,7 +4768,7 @@ void ClientCommand(int clientNum)
 		}
 		else
 		{
-			trap_SendServerCommand(ent - g_entities, "print \"Can't team chat - you are muted\n\"\n");
+			trap_SendServerCommand(ent - g_entities, "print \"Can't team chat - you are muted\n\"");
 		}
 		return;
 	}
@@ -4780,7 +4780,7 @@ void ClientCommand(int clientNum)
 		}
 		else
 		{
-			trap_SendServerCommand(ent - g_entities, "print \"Can't chat - you are muted\n\"\n");
+			trap_SendServerCommand(ent - g_entities, "print \"Can't chat - you are muted\n\"");
 		}
 		return;
 	}
@@ -4788,7 +4788,7 @@ void ClientCommand(int clientNum)
 	{
 		if (ent->client->sess.sessionTeam == TEAM_SPECTATOR || ent->client->sess.sessionTeam == TEAM_FREE)
 		{
-			trap_SendServerCommand(ent - g_entities, "print \"Can't team chat as spectator\n\"\n");
+			trap_SendServerCommand(ent - g_entities, "print \"Can't team chat as spectator\n\"");
 			return;
 		}
 
@@ -4798,7 +4798,7 @@ void ClientCommand(int clientNum)
 		}
 		else
 		{
-			trap_SendServerCommand(ent - g_entities, "print \"Can't team chat - you are muted\n\"\n");
+			trap_SendServerCommand(ent - g_entities, "print \"Can't team chat - you are muted\n\"");
 		}
 		return;
 	}
@@ -4810,7 +4810,7 @@ void ClientCommand(int clientNum)
 		}
 		else
 		{
-			trap_SendServerCommand(ent - g_entities, "print \"Can't buddy chat - you are muted\n\"\n");
+			trap_SendServerCommand(ent - g_entities, "print \"Can't buddy chat - you are muted\n\"");
 		}
 		return;
 	}
@@ -4822,7 +4822,7 @@ void ClientCommand(int clientNum)
 		}
 		else
 		{
-			trap_SendServerCommand(ent - g_entities, "print \"Can't buddy chat - you are muted\n\"\n");
+			trap_SendServerCommand(ent - g_entities, "print \"Can't buddy chat - you are muted\n\"");
 		}
 		return;
 	}

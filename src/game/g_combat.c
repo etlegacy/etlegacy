@@ -1236,7 +1236,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	}
 
 	// DEBUG
-	//trap_SendServerCommand( -1, va("print \"%i\n\"\n", targ->health) );
+	//trap_SendServerCommand( -1, va("print \"%i\n\"", targ->health) );
 
 	// The intermission has already been qualified for, so don't allow any extra scoring.
 	// Don't do damage if at warmup and warmupdamage is set to 'None' and the target is a client.
@@ -1633,7 +1633,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 
 		if (g_debugBullets.integer)
 		{
-			trap_SendServerCommand(attacker - g_entities, "print \"Head Shot\n\"\n");
+			trap_SendServerCommand(attacker - g_entities, "print \"Head Shot\n\"");
 		}
 		G_LogRegionHit(attacker, HR_HEAD);
 		hr = HR_HEAD;
@@ -1644,7 +1644,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		hr = HR_LEGS;
 		if (g_debugBullets.integer)
 		{
-			trap_SendServerCommand(attacker - g_entities, "print \"Leg Shot\n\"\n");
+			trap_SendServerCommand(attacker - g_entities, "print \"Leg Shot\n\"");
 		}
 	}
 	else if (IsArmShot(targ, attacker, point, mod))
@@ -1653,7 +1653,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		hr = HR_ARMS;
 		if (g_debugBullets.integer)
 		{
-			trap_SendServerCommand(attacker - g_entities, "print \"Arm Shot\n\"\n");
+			trap_SendServerCommand(attacker - g_entities, "print \"Arm Shot\n\"");
 		}
 	}
 	else if (targ->client && targ->health > 0 && modTable[mod].isHeadshot)
@@ -1662,7 +1662,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		hr = HR_BODY;
 		if (g_debugBullets.integer)
 		{
-			trap_SendServerCommand(attacker - g_entities, "print \"Body Shot\n\"\n");
+			trap_SendServerCommand(attacker - g_entities, "print \"Body Shot\n\"");
 		}
 	}
 
