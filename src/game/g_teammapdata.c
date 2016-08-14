@@ -847,6 +847,8 @@ void G_SendSpectatorMapEntityInfo(gentity_t *e)
 	char                 buffer[2048];
 	int                  al_cnt = 0, ax_cnt = 0;
 
+	buffer[0] = '\0';
+
 	for (mEnt = teamList->activeMapEntityData.next; mEnt && mEnt != &teamList->activeMapEntityData; mEnt = mEnt->next)
 	{
 		if (mEnt->type != ME_CONSTRUCT && mEnt->type != ME_DESTRUCT && mEnt->type != ME_DESTRUCT_2 && mEnt->type != ME_TANK && mEnt->type != ME_TANK_DEAD && mEnt->type != ME_COMMANDMAP_MARKER)
@@ -923,7 +925,10 @@ void G_SendSpectatorMapEntityInfo(gentity_t *e)
 		G_PushMapEntityToBuffer(buffer, sizeof(buffer), mEnt);
 	}
 
-	trap_SendServerCommand(e - g_entities, buffer);
+	if (buffer[0] != '\0') // don't send an emtpy buffer
+	{
+		trap_SendServerCommand(e - g_entities, buffer);
+	}
 }
 
 void G_SendMapEntityInfo(gentity_t *e)
@@ -932,6 +937,8 @@ void G_SendMapEntityInfo(gentity_t *e)
 	mapEntityData_Team_t *teamList;
 	char                 buffer[2048];
 	int                  cnt = 0;
+
+	buffer[0] = '\0';
 
 	if (e->client->sess.sessionTeam == TEAM_SPECTATOR)
 	{
@@ -998,7 +1005,10 @@ void G_SendMapEntityInfo(gentity_t *e)
 		G_PushMapEntityToBuffer(buffer, sizeof(buffer), mEnt);
 	}
 
-	trap_SendServerCommand(e - g_entities, buffer);
+	if (buffer[0] != '\0') // don't send an emtpy buffer
+	{
+		trap_SendServerCommand(e - g_entities, buffer);
+	}
 }
 
 void G_PopupMessageForMines(gentity_t *player) // int sound
@@ -1104,7 +1114,7 @@ void G_CheckSpottedLandMines(void)
 
 										G_PopupMessageForMines(ent);
 
-										trap_SendServerCommand(ent - g_entities, "cp \"Landmine revealed\n\"");
+										trap_SendServerCommand(ent - g_entities, "cp \"Landmine revealed\"");
 
 										AddScore(ent, 1);
 
