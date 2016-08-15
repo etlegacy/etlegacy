@@ -3283,13 +3283,6 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		// call entity scripting event
 		G_Script_ScriptEvent(ent, "playerstart", "");
 	}
-
-	// when switching teams, reset the commandmap/radar icons,
-	// so your own meanwhile invalid landmine-markers don't show up..
-	if (teamChange && g_landminetimeout.integer)
-	{
-		G_ResetTeamMapData();
-	}
 }
 
 /*
