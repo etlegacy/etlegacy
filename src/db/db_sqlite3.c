@@ -149,7 +149,7 @@ int DB_Init()
 		Com_Printf("... database file '%s' saved\n", to_ospath);
 	}
 
-	Com_Printf("SQLite3 ET: L database '%s' init\n", to_ospath);
+	Com_Printf("SQLite3 ET: L [%i] database '%s' init - autocommit %i\n", ETL_DBMS_VERSION ,to_ospath, sqlite3_get_autocommit(db));
 
 	isDBActive = qtrue;
 	return 0;
@@ -474,4 +474,9 @@ int callback(void *NotUsed, int argc, char **argv, char **azColName)
 	Com_Printf("\n");
 
 	return 0;
+}
+
+int lastID()
+{
+	return sqlite3_last_insert_rowid(db);
 }
