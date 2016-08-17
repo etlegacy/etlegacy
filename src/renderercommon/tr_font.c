@@ -478,7 +478,7 @@ static qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo
 
 	if (!formatFound)
 	{
-		Ren_Warning("R_LoadScalableFont: Unable to find any supported font files by the name of %s\n", fontName);
+		Ren_Developer("R_LoadScalableFont: Unable to find any supported font files by the name of %s\n", fontName);
 		return qfalse;
 	}
 
@@ -723,7 +723,7 @@ static qboolean R_GetFont(const char *fontName, int pointSize, fontInfo_t *font,
 		return qtrue;
 	}
 
-	Ren_Warning("R_GetFont: can't load font '%s'.\n", fontName);
+	Ren_Warning("R_GetFont: can't load font '%s' '%s' point size %i.\n", fontName, datName , pointSize);
 
 	return qfalse;
 }
@@ -748,7 +748,7 @@ void RE_RegisterFont(const char *fontName, int pointSize, void *output, qboolean
 
 	if (!R_GetFont(fontName, pointSize, font, extended))
 	{
-		Ren_Print("RE_RegisterFont: failed to register font with name '%s'\n", fontName);
+		Ren_Print("RE_RegisterFont: failed to register font with name '%s' point size %i\n", fontName, pointSize);
 	}
 }
 
