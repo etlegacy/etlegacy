@@ -2,10 +2,10 @@
 
 assetGlobalDef {
 	// font
-	font		UI_FONT_ARIBLK_16 "LiberationSans-Bold" 16
-	font		UI_FONT_ARIBLK_27 "LiberationSans-Bold" 27
-	font		UI_FONT_COURBD_21 "cour10p_b" 21
-	font		UI_FONT_COURBD_30 "cour10p_b" 30
+	font		UI_FONT_ARIBLK_16 "ariblk" 16
+	font		UI_FONT_ARIBLK_27 "ariblk" 27
+	font		UI_FONT_COURBD_21 "courbd" 21
+	font		UI_FONT_COURBD_30 "courbd" 30
 
 	cursor		"ui/assets/3_cursor3"			// cursor
 	gradientBar "ui/assets/gradientbar1.tga"	// gradient bar

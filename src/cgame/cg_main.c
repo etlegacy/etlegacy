@@ -1998,10 +1998,10 @@ static void CG_RegisterGraphics(void)
 	// medic icon for commandmap
 	cgs.media.medicIcon = trap_R_RegisterShaderNoMip("sprites/voiceMedic");
 
-	RegisterFont("LiberationSans-Bold", 27, &cgs.media.limboFont1);
-	RegisterFont("LiberationSans-Bold", 16, &cgs.media.limboFont1_lo);
-	RegisterFont("cour10p_b", 30, &cgs.media.limboFont2);
-	RegisterFont("cour10p_b", 21, &cgs.media.limboFont2_lo);
+	RegisterFont("ariblk", 27, &cgs.media.limboFont1);
+	RegisterFont("ariblk", 16, &cgs.media.limboFont1_lo);
+	RegisterFont("courbd", 30, &cgs.media.limboFont2);
+	RegisterFont("courbd", 21, &cgs.media.limboFont2_lo);
 
 	cgs.media.medal_back = trap_R_RegisterShaderNoMip("gfx/limbo/medal_back");
 
