@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2016-03-30 20:59+0000\n"
+"PO-Revision-Date: 2016-08-15 09:14+0000\n"
 "Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/etlegacy/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -6316,6 +6316,9 @@ msgstr "Oddanie głosów.\n"
 msgid "'s KA-BAR"
 msgstr " Nożem Bojowym"
 
+msgid "'s knife arts"
+msgstr ""
+
 msgid "'s .45ACP 1911"
 msgstr " Coltem .45"
 
@@ -6473,7 +6476,10 @@ msgid "was killed by"
 msgstr "został zabity przez"
 
 msgid "was stabbed by"
-msgstr "został pchnięty przez"
+msgstr ""
+
+msgid "was backstabbed by"
+msgstr ""
 
 msgid "was blasted by"
 msgstr "został wysadzony przez"
