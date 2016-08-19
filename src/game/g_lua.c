@@ -1806,6 +1806,18 @@ static int _et_RemoveWeaponFromPlayer(lua_State *L)
 	return 1;
 }
 
+// setglobalfog 0 <duration> <float:r> <float:g> <float:b> <float:depthForOpaque>
+// Changes the global fog in a map to a specific color and density.
+// setglobalfog 1 <duration>
+// Changes the global fog in a map.
+static int _et_G_SetGlobalFog(lua_State *L)
+{
+	char *params = (char *)luaL_checkstring(L, 1);
+
+	lua_pushinteger(L, G_ScriptAction_SetGlobalFog(NULL, params)); // FIXME: make own function for proper outputs?
+	return 1;
+}
+
 /** @}*/ // doxygen addtogroup lua_etfncs
 
 // et library initialisation array
@@ -1895,7 +1907,9 @@ static const luaL_Reg etlib[] =
 	{ "G_ResetRemappedShaders",  _et_G_ResetRemappedShaders  },
 	{ "G_ShaderRemapFlush",      _et_G_ShaderRemapFlush      },
 	{ "AddWeaponToPlayer",       _et_AddWeaponToPlayer       },
-	{ "RemoveWeaponFromPlayer",  _et_RemoveWeaponFromPlayer  },	
+	{ "RemoveWeaponFromPlayer",  _et_RemoveWeaponFromPlayer  },
+
+	{ "G_SetGlobalFog",          _et_G_SetGlobalFog          },
 	{ NULL },
 };
 
