@@ -245,10 +245,28 @@ DictionaryManager::get_use_fuzzy() const
 }
 
 void
-DictionaryManager::add_directory(const std::string& pathname)
+DictionaryManager::add_directory(const std::string& pathname, bool precedence /* = false */)
 {
 	clear_cache(); // adding directories invalidates cache
-	search_path.push_back(pathname);
+	if (precedence)
+	{
+		search_path.push_front(pathname);
+	}
+	else
+	{
+		search_path.push_back(pathname);
+	}
+}
+
+void
+DictionaryManager::remove_directory(const std::string& pathname)
+{
+	SearchPath::iterator it = std::find(search_path.begin(), search_path.end(), pathname);
+	if (it != search_path.end())
+	{
+		clear_cache(); // removing directories invalidates cache
+		search_path.erase(it);
+	}
 }
 
 void
