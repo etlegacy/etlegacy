@@ -15,6 +15,10 @@
 
 #include "g_lua.h"
 
+#ifdef FEATURE_OMNIBOT
+#include "g_etbot_interface.h"
+#endif
+
 extern field_t fields[];
 
 lua_vm_t *lVM[LUA_NUM_VM];
@@ -1714,32 +1718,32 @@ static int _et_AddWeaponToPlayer(lua_State *L)
 	int        ammo         = (int)luaL_checkinteger(L, 3);
 	int        ammoclip     = (int)luaL_checkinteger(L, 4);
 	int        setcurrent   = (int)luaL_checkinteger(L, 5);
-	
+
 	if (!ent->client)
 	{
 		luaL_error(L, "clientNum \"%d\" is not a client entity", clientnum);
 		return 0;
 	}
-	
+
 	if(!IS_VALID_WEAPON(weapon))
 	{
 		luaL_error(L, "weapon \"%d\" is not a valid weapon", weapon);
-		return 0;	
+		return 0;
 	}
-	
+
 	COM_BitSet(ent->client->ps.weapons, weapon);
 	ent->client->ps.ammoclip[BG_FindClipForWeapon(weapon)] = ammoclip;
 	ent->client->ps.ammo[BG_FindAmmoForWeapon(weapon)]     = ammo;
-	
+
 	if (setcurrent == 1)
 	{
 		ent->client->ps.weapon = weapon;
 	}
-	
+
 #ifdef FEATURE_OMNIBOT
 	Bot_Event_AddWeapon(ent->client->ps.clientNum, Bot_WeaponGameToBot(weapon));
 #endif
-	
+
 	return 1;
 }
 
@@ -1749,13 +1753,13 @@ static int _et_RemoveWeaponFromPlayer(lua_State *L)
 	gentity_t  *ent         = g_entities + clientnum;
 	gclient_t  *client      = ent->client;
 	weapon_t   weapon       = (int)luaL_checkinteger(L, 2);
-	
+
 	if (!ent->client)
 	{
 		luaL_error(L, "clientNum \"%d\" is not a client entity", clientnum);
 		return 0;
 	}
-	
+
 	COM_BitClear(ent->client->ps.weapons, weapon);
 
 	switch (weapon)
@@ -1798,11 +1802,11 @@ static int _et_RemoveWeaponFromPlayer(lua_State *L)
 	{
 		client->ps.weapon = 0;
 	}
-	
+
 #ifdef FEATURE_OMNIBOT
 	Bot_Event_RemoveWeapon(client->ps.clientNum, Bot_WeaponGameToBot(weapon));
-#endif	
-	
+#endif
+
 	return 1;
 }
 
