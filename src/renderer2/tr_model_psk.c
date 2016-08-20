@@ -1038,11 +1038,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 	Com_DestroyGrowList(&vboSurfaces);
 
-	FreeMemStream(stream);
-	Com_Dealloc(points);
-	Com_Dealloc(vertexes);
-	Com_Dealloc(triangles);
-	Com_Dealloc(materials);
+	DeallocAll();
 
 	Ren_Developer("%i VBO surfaces created for PSK model '%s'\n", md5->numVBOSurfaces, modName);
 
