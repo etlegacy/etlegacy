@@ -291,164 +291,164 @@ static const LanguageSpec languages[] =
 std::string
 resolve_language_alias(const std::string& name)
 {
-	typedef std::map<std::string, std::string> Aliases;
-	static Aliases language_aliases;
-	if (language_aliases.empty())
-	{
-		// FIXME: Many of those are not useful for us, since we leave
-		// encoding to the app, not to the language, we could/should
-		// also match against all language names, not just aliases from
-		// locale.alias
+    typedef std::map<std::string, std::string> Aliases;
+    static Aliases language_aliases;
+    if (language_aliases.empty())
+    {
+        // FIXME: Many of those are not useful for us, since we leave
+        // encoding to the app, not to the language, we could/should
+        // also match against all language names, not just aliases from
+        // locale.alias
 
-		// Aliases taken from /etc/locale.alias
-		language_aliases["bokmal"]           = "nb_NO.ISO-8859-1";
-		language_aliases["bokmål"]           = "nb_NO.ISO-8859-1";
-		language_aliases["catalan"]          = "ca_ES.ISO-8859-1";
-		language_aliases["croatian"]         = "hr_HR.ISO-8859-2";
-		language_aliases["czech"]            = "cs_CZ.ISO-8859-2";
-		language_aliases["danish"]           = "da_DK.ISO-8859-1";
-		language_aliases["dansk"]            = "da_DK.ISO-8859-1";
-		language_aliases["deutsch"]          = "de_DE.ISO-8859-1";
-		language_aliases["dutch"]            = "nl_NL.ISO-8859-1";
-		language_aliases["eesti"]            = "et_EE.ISO-8859-1";
-		language_aliases["estonian"]         = "et_EE.ISO-8859-1";
-		language_aliases["finnish"]          = "fi_FI.ISO-8859-1";
-		language_aliases["français"]         = "fr_FR.ISO-8859-1";
-		language_aliases["french"]           = "fr_FR.ISO-8859-1";
-		language_aliases["galego"]           = "gl_ES.ISO-8859-1";
-		language_aliases["galician"]         = "gl_ES.ISO-8859-1";
-		language_aliases["german"]           = "de_DE.ISO-8859-1";
-		language_aliases["greek"]            = "el_GR.ISO-8859-7";
-		language_aliases["hebrew"]           = "he_IL.ISO-8859-8";
-		language_aliases["hrvatski"]         = "hr_HR.ISO-8859-2";
-		language_aliases["hungarian"]        = "hu_HU.ISO-8859-2";
-		language_aliases["icelandic"]        = "is_IS.ISO-8859-1";
-		language_aliases["italian"]          = "it_IT.ISO-8859-1";
-		language_aliases["japanese"]         = "ja_JP.eucJP";
-		language_aliases["japanese.euc"]     = "ja_JP.eucJP";
-		language_aliases["ja_JP"]            = "ja_JP.eucJP";
-		language_aliases["ja_JP.ujis"]       = "ja_JP.eucJP";
-		language_aliases["japanese.sjis"]    = "ja_JP.SJIS";
-		language_aliases["korean"]           = "ko_KR.eucKR";
-		language_aliases["korean.euc"]       = "ko_KR.eucKR";
-		language_aliases["ko_KR"]            = "ko_KR.eucKR";
-		language_aliases["lithuanian"]       = "lt_LT.ISO-8859-13";
-		language_aliases["no_NO"]            = "nb_NO.ISO-8859-1";
-		language_aliases["no_NO.ISO-8859-1"] = "nb_NO.ISO-8859-1";
-		language_aliases["norwegian"]        = "nb_NO.ISO-8859-1";
-		language_aliases["nynorsk"]          = "nn_NO.ISO-8859-1";
-		language_aliases["polish"]           = "pl_PL.ISO-8859-2";
-		language_aliases["portuguese"]       = "pt_PT.ISO-8859-1";
-		language_aliases["romanian"]         = "ro_RO.ISO-8859-2";
-		language_aliases["russian"]          = "ru_RU.ISO-8859-5";
-		language_aliases["slovak"]           = "sk_SK.ISO-8859-2";
-		language_aliases["slovene"]          = "sl_SI.ISO-8859-2";
-		language_aliases["slovenian"]        = "sl_SI.ISO-8859-2";
-		language_aliases["spanish"]          = "es_ES.ISO-8859-1";
-		language_aliases["swedish"]          = "sv_SE.ISO-8859-1";
-		language_aliases["thai"]             = "th_TH.TIS-620";
-		language_aliases["turkish"]          = "tr_TR.ISO-8859-9";
+        // Aliases taken from /etc/locale.alias
+        language_aliases["bokmal"]           = "nb_NO.ISO-8859-1";
+        language_aliases["bokmål"]           = "nb_NO.ISO-8859-1";
+        language_aliases["catalan"]          = "ca_ES.ISO-8859-1";
+        language_aliases["croatian"]         = "hr_HR.ISO-8859-2";
+        language_aliases["czech"]            = "cs_CZ.ISO-8859-2";
+        language_aliases["danish"]           = "da_DK.ISO-8859-1";
+        language_aliases["dansk"]            = "da_DK.ISO-8859-1";
+        language_aliases["deutsch"]          = "de_DE.ISO-8859-1";
+        language_aliases["dutch"]            = "nl_NL.ISO-8859-1";
+        language_aliases["eesti"]            = "et_EE.ISO-8859-1";
+        language_aliases["estonian"]         = "et_EE.ISO-8859-1";
+        language_aliases["finnish"]          = "fi_FI.ISO-8859-1";
+        language_aliases["français"]         = "fr_FR.ISO-8859-1";
+        language_aliases["french"]           = "fr_FR.ISO-8859-1";
+        language_aliases["galego"]           = "gl_ES.ISO-8859-1";
+        language_aliases["galician"]         = "gl_ES.ISO-8859-1";
+        language_aliases["german"]           = "de_DE.ISO-8859-1";
+        language_aliases["greek"]            = "el_GR.ISO-8859-7";
+        language_aliases["hebrew"]           = "he_IL.ISO-8859-8";
+        language_aliases["hrvatski"]         = "hr_HR.ISO-8859-2";
+        language_aliases["hungarian"]        = "hu_HU.ISO-8859-2";
+        language_aliases["icelandic"]        = "is_IS.ISO-8859-1";
+        language_aliases["italian"]          = "it_IT.ISO-8859-1";
+        language_aliases["japanese"]         = "ja_JP.eucJP";
+        language_aliases["japanese.euc"]     = "ja_JP.eucJP";
+        language_aliases["ja_JP"]            = "ja_JP.eucJP";
+        language_aliases["ja_JP.ujis"]       = "ja_JP.eucJP";
+        language_aliases["japanese.sjis"]    = "ja_JP.SJIS";
+        language_aliases["korean"]           = "ko_KR.eucKR";
+        language_aliases["korean.euc"]       = "ko_KR.eucKR";
+        language_aliases["ko_KR"]            = "ko_KR.eucKR";
+        language_aliases["lithuanian"]       = "lt_LT.ISO-8859-13";
+        language_aliases["no_NO"]            = "nb_NO.ISO-8859-1";
+        language_aliases["no_NO.ISO-8859-1"] = "nb_NO.ISO-8859-1";
+        language_aliases["norwegian"]        = "nb_NO.ISO-8859-1";
+        language_aliases["nynorsk"]          = "nn_NO.ISO-8859-1";
+        language_aliases["polish"]           = "pl_PL.ISO-8859-2";
+        language_aliases["portuguese"]       = "pt_PT.ISO-8859-1";
+        language_aliases["romanian"]         = "ro_RO.ISO-8859-2";
+        language_aliases["russian"]          = "ru_RU.ISO-8859-5";
+        language_aliases["slovak"]           = "sk_SK.ISO-8859-2";
+        language_aliases["slovene"]          = "sl_SI.ISO-8859-2";
+        language_aliases["slovenian"]        = "sl_SI.ISO-8859-2";
+        language_aliases["spanish"]          = "es_ES.ISO-8859-1";
+        language_aliases["swedish"]          = "sv_SE.ISO-8859-1";
+        language_aliases["thai"]             = "th_TH.TIS-620";
+        language_aliases["turkish"]          = "tr_TR.ISO-8859-9";
 	}
 
-	std::string name_lowercase;
-	name_lowercase.resize(name.size());
-	for (std::string::size_type i = 0; i < name.size(); ++i)
+    std::string name_lowercase;
+    name_lowercase.resize(name.size());
+    for (std::string::size_type i = 0; i < name.size(); ++i)
 		name_lowercase[i] = static_cast<char>(tolower(name[i]));
 
-	Aliases::iterator i = language_aliases.find(name_lowercase);
-	if (i != language_aliases.end())
-	{
-		return i->second;
+    Aliases::iterator i = language_aliases.find(name_lowercase);
+    if (i != language_aliases.end())
+    {
+        return i->second;
 	}
-	else
-	{
-		return name;
+    else
+    {
+        return name;
 	}
 }
 
 Language
 Language::from_spec(const std::string& language, const std::string& country, const std::string& modifier)
 {
-	typedef std::map<std::string, std::vector<const LanguageSpec *> > LanguageSpecMap;
-	static LanguageSpecMap language_map;
+    typedef std::map<std::string, std::vector<const LanguageSpec *> > LanguageSpecMap;
+    static LanguageSpecMap language_map;
 
-	if (language_map.empty())
-	{ // Init language_map
-		for (int i = 0; languages[i].language != NULL; ++i)
+    if (language_map.empty())
+    { // Init language_map
+        for (int i = 0; languages[i].language != NULL; ++i)
 			language_map[languages[i].language].push_back(&languages[i]);
 	}
 
-	LanguageSpecMap::iterator i = language_map.find(language);
-	if (i != language_map.end())
-	{
-		std::vector<const LanguageSpec *>& lst = i->second;
+    LanguageSpecMap::iterator i = language_map.find(language);
+    if (i != language_map.end())
+    {
+        std::vector<const LanguageSpec *>& lst = i->second;
 
-		LanguageSpec tmpspec;
-		tmpspec.language = language.c_str();
-		tmpspec.country  = country.c_str();
-		tmpspec.modifier = modifier.c_str();
-		Language tmplang(&tmpspec);
+        LanguageSpec tmpspec;
+        tmpspec.language = language.c_str();
+        tmpspec.country  = country.c_str();
+        tmpspec.modifier = modifier.c_str();
+        Language tmplang(&tmpspec);
 
-		const LanguageSpec *best_match      = 0;
-		int                best_match_score = 0;
-		for (std::vector<const LanguageSpec *>::iterator j = lst.begin(); j != lst.end(); ++j)
-		{ // Search for the language that best matches the given spec, value country more then modifier
-			int score = Language::match(Language(*j), tmplang);
+        const LanguageSpec *best_match      = 0;
+        int                best_match_score = 0;
+        for (std::vector<const LanguageSpec *>::iterator j = lst.begin(); j != lst.end(); ++j)
+        { // Search for the language that best matches the given spec, value country more then modifier
+            int score = Language::match(Language(*j), tmplang);
 
-			if (score > best_match_score)
-			{
-				best_match       = *j;
-				best_match_score = score;
+            if (score > best_match_score)
+            {
+                best_match       = *j;
+                best_match_score = score;
 			}
 		}
-		assert(best_match);
-		return Language(best_match);
+        assert(best_match);
+        return Language(best_match);
 	}
-	else
-	{
-		return Language();
+    else
+    {
+        return Language();
 	}
 }
 
 Language
 Language::from_name(const std::string& spec_str)
 {
-	return from_env(resolve_language_alias(spec_str));
+    return from_env(resolve_language_alias(spec_str));
 }
 
 Language
 Language::from_env(const std::string& env)
 {
-	// Split LANGUAGE_COUNTRY.CODESET@MODIFIER into parts
-	std::string::size_type ln = env.find('_');
-	std::string::size_type dt = env.find('.');
-	std::string::size_type at = env.find('@');
+    // Split LANGUAGE_COUNTRY.CODESET@MODIFIER into parts
+    std::string::size_type ln = env.find('_');
+    std::string::size_type dt = env.find('.');
+    std::string::size_type at = env.find('@');
 
-	std::string language;
-	std::string country;
-	std::string codeset;
-	std::string modifier;
+    std::string language;
+    std::string country;
+    std::string codeset;
+    std::string modifier;
 
-	//std::cout << ln << " " << dt << " " << at << std::endl;
+    //std::cout << ln << " " << dt << " " << at << std::endl;
 
-	language = env.substr(0, std::min(std::min(ln, dt), at));
+    language = env.substr(0, std::min(std::min(ln, dt), at));
 
-	if (ln != std::string::npos && ln + 1 < env.size()) // _
-	{
-		country = env.substr(ln + 1, (std::min(dt, at) == std::string::npos) ? std::string::npos : std::min(dt, at) - (ln + 1));
+    if (ln != std::string::npos && ln + 1 < env.size()) // _
+    {
+        country = env.substr(ln + 1, (std::min(dt, at) == std::string::npos) ? std::string::npos : std::min(dt, at) - (ln + 1));
 	}
 
-	if (dt != std::string::npos && dt + 1 < env.size()) // .
-	{
-		codeset = env.substr(dt + 1, (at == std::string::npos) ? std::string::npos : (at - (dt + 1)));
+    if (dt != std::string::npos && dt + 1 < env.size()) // .
+    {
+        codeset = env.substr(dt + 1, (at == std::string::npos) ? std::string::npos : (at - (dt + 1)));
 	}
 
-	if (at != std::string::npos && at + 1 < env.size()) // @
-	{
-		modifier = env.substr(at + 1);
+    if (at != std::string::npos && at + 1 < env.size()) // @
+    {
+        modifier = env.substr(at + 1);
 	}
 
-	return from_spec(language, country, modifier);
+    return from_spec(language, country, modifier);
 }
 
 Language::Language(const LanguageSpec *language_spec_)
@@ -464,140 +464,140 @@ Language::Language()
 int
 Language::match(const Language& lhs, const Language& rhs)
 {
-	if (lhs.get_language() != rhs.get_language())
-	{
-		return 0;
+    if (lhs.get_language() != rhs.get_language())
+    {
+        return 0;
 	}
-	else
-	{
-		static int match_tbl[3][3] =
-		{
-			// modifier match, wildchard, miss
-			{ 9, 8, 5 }, // country match
-			{ 7, 6, 3 }, // country wildcard
-			{ 4, 2, 1 }, // country miss
+    else
+    {
+        static int match_tbl[3][3] =
+        {
+            // modifier match, wildchard, miss
+            { 9, 8, 5 }, // country match
+            { 7, 6, 3 }, // country wildcard
+            { 4, 2, 1 }, // country miss
 		};
 
-		int c;
-		if (lhs.get_country() == rhs.get_country())
-		{
-			c = 0;
+        int c;
+        if (lhs.get_country() == rhs.get_country())
+        {
+            c = 0;
 		}
-		else if (lhs.get_country().empty() || rhs.get_country().empty())
-		{
-			c = 1;
+        else if (lhs.get_country().empty() || rhs.get_country().empty())
+        {
+            c = 1;
 		}
-		else
-		{
-			c = 2;
-		}
-
-		int m;
-		if (lhs.get_modifier() == rhs.get_modifier())
-		{
-			m = 0;
-		}
-		else if (lhs.get_modifier().empty() || rhs.get_modifier().empty())
-		{
-			m = 1;
-		}
-		else
-		{
-			m = 2;
+        else
+        {
+            c = 2;
 		}
 
-		return match_tbl[c][m];
+        int m;
+        if (lhs.get_modifier() == rhs.get_modifier())
+        {
+            m = 0;
+		}
+        else if (lhs.get_modifier().empty() || rhs.get_modifier().empty())
+        {
+            m = 1;
+		}
+        else
+        {
+            m = 2;
+		}
+
+        return match_tbl[c][m];
 	}
 }
 
 std::string
 Language::get_language() const
 {
-	if (language_spec)
-	{
-		return language_spec->language;
+    if (language_spec)
+    {
+        return language_spec->language;
 	}
-	else
-	{
-		return "";
+    else
+    {
+        return "";
 	}
 }
 
 std::string
 Language::get_country()  const
 {
-	if (language_spec && language_spec->country)
-	{
-		return language_spec->country;
+    if (language_spec && language_spec->country)
+    {
+        return language_spec->country;
 	}
-	else
-	{
-		return "";
+    else
+    {
+        return "";
 	}
 }
 
 std::string
 Language::get_modifier() const
 {
-	if (language_spec && language_spec->modifier)
-	{
-		return language_spec->modifier;
+    if (language_spec && language_spec->modifier)
+    {
+        return language_spec->modifier;
 	}
-	else
-	{
-		return "";
+    else
+    {
+        return "";
 	}
 }
 
 std::string
 Language::get_name()  const
 {
-	if (language_spec)
-	{
-		return language_spec->name;
+    if (language_spec)
+    {
+        return language_spec->name;
 	}
-	else
-	{
-		return "";
+    else
+    {
+        return "";
 	}
 }
 
 std::string
 Language::str() const
 {
-	if (language_spec)
-	{
-		std::string var;
-		var += language_spec->language;
-		if (language_spec->country)
-		{
-			var += "_";
-			var += language_spec->country;
+    if (language_spec)
+    {
+        std::string var;
+        var += language_spec->language;
+        if (language_spec->country)
+        {
+            var += "_";
+            var += language_spec->country;
 		}
 
-		if (language_spec->modifier)
-		{
-			var += "@";
-			var += language_spec->modifier;
+        if (language_spec->modifier)
+        {
+            var += "@";
+            var += language_spec->modifier;
 		}
-		return var;
+        return var;
 	}
-	else
-	{
-		return "";
+    else
+    {
+        return "";
 	}
 }
 
 bool
 Language::operator==(const Language& rhs) const
 {
-	return language_spec == rhs.language_spec;
+    return language_spec == rhs.language_spec;
 }
 
 bool
 Language::operator!=(const Language& rhs) const
 {
-	return language_spec != rhs.language_spec;
+    return language_spec != rhs.language_spec;
 }
 
 } // namespace tinygettext
