@@ -101,6 +101,10 @@ qboolean G_refCommandCheck(gentity_t *ent, char *cmd)
 	{
 		G_refMute_cmd(ent, qfalse);
 	}
+	else if (!Q_stricmp(cmd, "logout"))
+	{
+		G_refLogout_cmd(ent);
+	}
 	else
 	{
 		return qfalse;
@@ -119,10 +123,10 @@ void G_refHelp_cmd(gentity_t *ent)
 
 		G_voteHelp(ent, qfalse);
 
-		CP("print \"\n^5allready putallies^7 <pid> ^5specunlock warn ^7<pid>\n\"");
+		CP("print \"^5allready putallies^7 <pid> ^5specunlock warn ^7<pid>\n\"");
 		CP("print \"^5help putaxis^7 <pid> ^5unlock mute ^7<pid>\n\"");
 		CP("print \"^5lock remove^7 <pid> ^5unpause unmute ^7<pid>\n\"");
-		CP("print \"^5pause speclock warmup ^7[value]\n\"");
+		CP("print \"^5pause speclock logout warmup ^7[value]\n\"");
 
 		CP("print \"Usage: ^3\\ref <cmd> [params]\n\n\"");
 
@@ -514,9 +518,20 @@ void G_refMute_cmd(gentity_t *ent, qboolean mute)
 	ClientUserinfoChanged(pid);
 }
 
+void G_refLogout_cmd(gentity_t *ent)
+{
+    if(ent && ent->client && ent->client->sess.referee == RL_REFEREE)
+    {
+        ent->client->sess.referee = RL_NONE;
+        ClientUserinfoChanged( ent->s.clientNum);
+        CP("print \"You have been logged out\n\"");
+    }
+}
+
 //////////////////////////////
 //  Client authentication
 //
+
 void Cmd_AuthRcon_f(gentity_t *ent)
 {
 	char buf[MAX_TOKEN_CHARS], cmd[MAX_TOKEN_CHARS];
@@ -533,6 +548,7 @@ void Cmd_AuthRcon_f(gentity_t *ent)
 //////////////////////////////
 //  Console admin commands
 //
+
 void G_PlayerBan()
 {
 	char cmd[MAX_TOKEN_CHARS];
@@ -550,19 +566,21 @@ void G_PlayerBan()
 
 	if (bannum != MAX_CLIENTS)
 	{
-//      if( level.clients[bannum].sess.referee != RL_RCON ) {
+		//if( level.clients[bannum].sess.referee != RL_RCON ) {
 		const char *value;
 		char       userinfo[MAX_INFO_STRING];
 
 		trap_GetUserinfo(bannum, userinfo, sizeof(userinfo));
 		value = Info_ValueForKey(userinfo, "ip");
 
-
-		// FIXME: don't call this for bots! get bot flag from client (don't use this ip value
-		AddIPBan(value);
-//      } else {
-//          G_Printf( "^3*** Can't ban a superuser!\n" );
-//      }
+		if (!(g_entities[bannum].r.svFlags & SVF_BOT))
+		{
+			AddIPBan(value);
+		}
+		else
+		{
+			G_Printf( "^3*** Can't ban a bot!\n" );
+		}
 	}
 }
 
@@ -697,6 +715,7 @@ void G_UnMuteClient()
 /////////////////
 //   Utility
 //
+
 int G_refClientnumForName(gentity_t *ent, const char *name)
 {
 	char cleanName[MAX_TOKEN_CHARS];
@@ -704,7 +723,7 @@ int G_refClientnumForName(gentity_t *ent, const char *name)
 
 	if (!*name)
 	{
-		return(MAX_CLIENTS);
+		return MAX_CLIENTS;
 	}
 
 	for (i = 0; i < level.numConnectedClients; i++)
@@ -719,7 +738,7 @@ int G_refClientnumForName(gentity_t *ent, const char *name)
 
 	G_refPrintf(ent, "Client not on server.");
 
-	return(MAX_CLIENTS);
+	return MAX_CLIENTS;
 }
 
 void G_refPrintf(gentity_t *ent, const char *fmt, ...)
