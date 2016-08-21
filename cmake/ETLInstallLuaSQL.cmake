@@ -7,7 +7,7 @@ message(STATUS "Installing LuaSQL with SQLite3 backend")
 if(NOT BUNDLED_LUA)
 	set(LUA_INCLUDE_DIR ${LUA_INCLUDE_DIR})
 	set(LUA_LIBRARIES ${LUA_LIBRARIES})
-else() # BUNDELD_LUA
+else() # BUNDLED_LUA
 	set(LUA_INCLUDE_DIR ${LUA_BUNDLED_INCLUDE_DIR})
 	set(LUA_LIBRARIES ${LUA_BUNDLED_LIBRARIES})
 endif(NOT BUNDLED_LUA)
@@ -15,13 +15,12 @@ endif(NOT BUNDLED_LUA)
 if(NOT BUNDLED_SQLITE3)
 	set(SQLITE3_INCLUDE_DIR ${SQLITE3_INCLUDE_DIR})
 	set(SQLITE3_LIBRARIES ${SQLITE3_LIBRARIES})
-else() # BUNDELD_SQLITE3
+else() # BUNDLED_SQLITE3
 	set(SQLITE3_INCLUDE_DIR ${SQLITE3_BUNDLED_INCLUDE_DIR})
 	set(SQLITE3_LIBRARIES ${SQLITE3_BUNDLED_LIBRARIES})
 endif(NOT BUNDLED_SQLITE3)
 
-# FIXME: move src to lua scripts subdirectory?
-set(LUASQL_DIR "${CMAKE_CURRENT_LIST_DIR}/../libs/luasql")
+set(LUASQL_DIR "src/luasql")
 
 FILE(GLOB LUASQL_FILES
 	"${LUASQL_DIR}/src/luasql.c"
@@ -52,10 +51,6 @@ target_link_libraries(luasql_library_module ${SQLITE3_LIBRARIES})
 if(BUNDLED_LUA)
 	add_dependencies(luasql_library_module bundled_lua bundled_sqlite3)
 endif(BUNDLED_LUA)
-
-# FIXME: move to cmake/ETLInstall.cmake
-# this file should go into fs_homepath/legacy ...
-install(TARGETS luasql_library_module DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy/lualibs/luasql")
 
 if(NOT BUNDLED_LUA)
 	# get lua library exact name
