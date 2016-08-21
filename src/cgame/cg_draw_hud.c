@@ -309,7 +309,7 @@ static qboolean CG_ParseHUD(int handle)
 		{
 			if (!PC_Int_Parse(handle, &temphud.hudnumber))
 			{
-				return CG_HUD_ParseError(handle, "expected hud number");
+				return CG_HUD_ParseError(handle, "expected hudnumber");
 			}
 			continue;
 		}
@@ -471,7 +471,7 @@ static qboolean CG_ParseHUD(int handle)
 		{
 			if (!CG_ParseHudComponent(handle, &temphud.roundtimer))
 			{
-				return CG_HUD_ParseError(handle, "expected livesleft");
+				return CG_HUD_ParseError(handle, "expected roundtimer");
 			}
 			continue;
 		}
@@ -480,7 +480,7 @@ static qboolean CG_ParseHUD(int handle)
 		{
 			if (!CG_ParseHudComponent(handle, &temphud.reinforcment))
 			{
-				return CG_HUD_ParseError(handle, "expected livesleft");
+				return CG_HUD_ParseError(handle, "expected reinforcment");
 			}
 			continue;
 		}
@@ -489,7 +489,7 @@ static qboolean CG_ParseHUD(int handle)
 		{
 			if (!CG_ParseHudComponent(handle, &temphud.spawntimer))
 			{
-				return CG_HUD_ParseError(handle, "expected livesleft");
+				return CG_HUD_ParseError(handle, "expected spawntimer");
 			}
 			continue;
 		}
@@ -498,7 +498,7 @@ static qboolean CG_ParseHUD(int handle)
 		{
 			if (!CG_ParseHudComponent(handle, &temphud.localtime))
 			{
-				return CG_HUD_ParseError(handle, "expected livesleft");
+				return CG_HUD_ParseError(handle, "expected localtime");
 			}
 			continue;
 		}
@@ -899,7 +899,6 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 	}
 
 	// display colored charbar if charge bar isn't full enough
-	// FIXME: put chargeTime factor in weapon table?
 	switch (cg.predictedPlayerState.weapon)
 	{
 	case WP_PANZERFAUST:
