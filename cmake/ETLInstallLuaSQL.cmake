@@ -45,12 +45,15 @@ set_target_properties(luasql_library_module PROPERTIES
 	OUTPUT_NAME "sqlite3"
 )
 
-target_link_libraries(luasql_library_module ${LUA_LIBRARIES})
-target_link_libraries(luasql_library_module ${SQLITE3_LIBRARIES})
+target_link_libraries(luasql_library_module
+	${SQLITE3_LIBRARIES}
+	${LUA_LIBRARIES}
+)
 
 if(BUNDLED_LUA)
 	add_dependencies(luasql_library_module bundled_lua bundled_sqlite3)
 endif(BUNDLED_LUA)
+add_dependencies(luasql_library_module qagame${LIB_SUFFIX}${ARCH})
 
 if(NOT BUNDLED_LUA)
 	# get lua library exact name
