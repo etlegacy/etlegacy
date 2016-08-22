@@ -23,19 +23,19 @@ endif(NOT BUNDLED_SQLITE3)
 set(LUASQL_DIR "src/luasql")
 
 FILE(GLOB LUASQL_FILES
-	"${LUASQL_DIR}/src/luasql.c"
-	"${LUASQL_DIR}/src/luasql.h"
+	"${LUASQL_DIR}/luasql.c"
+	"${LUASQL_DIR}/luasql.h"
 )
 
 FILE(GLOB LUASQL_BACKEND_FILES
-	"${LUASQL_DIR}/src/ls_sqlite3.c"
+	"${LUASQL_DIR}/ls_sqlite3.c"
 )
 
-set(LUASQL_PUBLIC_HEADERS ${LUASQL_DIR}/src/luasql.h)
+set(LUASQL_PUBLIC_HEADERS ${LUASQL_DIR}/luasql.h)
 
 include_directories(${LUA_INCLUDE_DIR})
 include_directories(${SQLITE3_INCLUDE_DIR})
-include_directories("${LUASQL_DIR}/src")
+include_directories("${LUASQL_DIR}")
 
 add_library(luasql_library_module MODULE ${LUASQL_PUBLIC_HEADERS} ${LUASQL_FILES} ${LUASQL_BACKEND_FILES})
 set_target_properties(luasql_library_module PROPERTIES
