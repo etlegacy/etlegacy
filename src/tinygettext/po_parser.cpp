@@ -24,7 +24,7 @@
 #include <string>
 #include <istream>
 #include <string.h>
-#include <map>
+#include <unordered_map>
 #include <stdlib.h>
 
 #include "tinygettext/language.hpp"

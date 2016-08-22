@@ -21,7 +21,7 @@
 #define HEADER_TINYGETTEXT_DICTIONARY_HPP
 
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <vector>
 
 #include "plural_forms.hpp"
@@ -34,10 +34,10 @@ namespace tinygettext {
 class Dictionary
 {
 private:
-	typedef std::map<std::string, std::vector<std::string> > Entries;
+	typedef std::unordered_map<std::string, std::vector<std::string> > Entries;
 	Entries entries;
 
-	typedef std::map<std::string, Entries> CtxtEntries;
+	typedef std::unordered_map<std::string, Entries> CtxtEntries;
 	CtxtEntries ctxt_entries;
 
 	std::string charset;
@@ -127,6 +127,9 @@ public:
 		return func;
 	}
 
+private:
+	Dictionary(const Dictionary&)            = delete;
+	Dictionary& operator=(const Dictionary&) = delete;
 };
 
 } // namespace tinygettext

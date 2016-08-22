@@ -24,7 +24,8 @@
 #include <memory>
 #include <set>
 #include <string>
-#include <map>
+#include <unordered_map>
+#include <vector>
 
 #include "dictionary.hpp"
 #include "language.hpp"
@@ -39,7 +40,7 @@ class FileSystem;
 class DictionaryManager
 {
 private:
-	typedef std::map<Language, Dictionary *> Dictionaries;
+	typedef std::unordered_map<Language, Dictionary *, Language_hash> Dictionaries;
 	Dictionaries dictionaries;
 
 	typedef std::deque<std::string> SearchPath;
@@ -53,7 +54,7 @@ private:
 
 	Dictionary empty_dict;
 
-	std::auto_ptr<FileSystem> filesystem;
+	std::unique_ptr<FileSystem> filesystem;
 
 	void clear_cache();
 
@@ -91,7 +92,7 @@ public:
 	/** Return a set of the available languages in their country code */
 	std::set<Language> get_languages();
 
-	void set_filesystem(std::auto_ptr<FileSystem> filesystem);
+	void set_filesystem(std::unique_ptr<FileSystem> filesystem);
 	std::string convertFilename2Language(const std::string &s_in) const;
 
 private:

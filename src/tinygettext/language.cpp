@@ -20,7 +20,7 @@
 #include "tinygettext/language.hpp"
 
 #include <assert.h>
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <algorithm>
 
@@ -291,63 +291,63 @@ static const LanguageSpec languages[] =
 std::string
 resolve_language_alias(const std::string& name)
 {
-    typedef std::map<std::string, std::string> Aliases;
-    static Aliases language_aliases;
-    if (language_aliases.empty())
-    {
-        // FIXME: Many of those are not useful for us, since we leave
-        // encoding to the app, not to the language, we could/should
-        // also match against all language names, not just aliases from
-        // locale.alias
+	typedef std::unordered_map<std::string, std::string> Aliases;
+	static Aliases language_aliases;
+	if (language_aliases.empty())
+	{
+		// FIXME: Many of those are not useful for us, since we leave
+		// encoding to the app, not to the language, we could/should
+		// also match against all language names, not just aliases from
+		// locale.alias
 
-        // Aliases taken from /etc/locale.alias
-        language_aliases["bokmal"]           = "nb_NO.ISO-8859-1";
-        language_aliases["bokmål"]           = "nb_NO.ISO-8859-1";
-        language_aliases["catalan"]          = "ca_ES.ISO-8859-1";
-        language_aliases["croatian"]         = "hr_HR.ISO-8859-2";
-        language_aliases["czech"]            = "cs_CZ.ISO-8859-2";
-        language_aliases["danish"]           = "da_DK.ISO-8859-1";
-        language_aliases["dansk"]            = "da_DK.ISO-8859-1";
-        language_aliases["deutsch"]          = "de_DE.ISO-8859-1";
-        language_aliases["dutch"]            = "nl_NL.ISO-8859-1";
-        language_aliases["eesti"]            = "et_EE.ISO-8859-1";
-        language_aliases["estonian"]         = "et_EE.ISO-8859-1";
-        language_aliases["finnish"]          = "fi_FI.ISO-8859-1";
-        language_aliases["français"]         = "fr_FR.ISO-8859-1";
-        language_aliases["french"]           = "fr_FR.ISO-8859-1";
-        language_aliases["galego"]           = "gl_ES.ISO-8859-1";
-        language_aliases["galician"]         = "gl_ES.ISO-8859-1";
-        language_aliases["german"]           = "de_DE.ISO-8859-1";
-        language_aliases["greek"]            = "el_GR.ISO-8859-7";
-        language_aliases["hebrew"]           = "he_IL.ISO-8859-8";
-        language_aliases["hrvatski"]         = "hr_HR.ISO-8859-2";
-        language_aliases["hungarian"]        = "hu_HU.ISO-8859-2";
-        language_aliases["icelandic"]        = "is_IS.ISO-8859-1";
-        language_aliases["italian"]          = "it_IT.ISO-8859-1";
-        language_aliases["japanese"]         = "ja_JP.eucJP";
-        language_aliases["japanese.euc"]     = "ja_JP.eucJP";
-        language_aliases["ja_JP"]            = "ja_JP.eucJP";
-        language_aliases["ja_JP.ujis"]       = "ja_JP.eucJP";
-        language_aliases["japanese.sjis"]    = "ja_JP.SJIS";
-        language_aliases["korean"]           = "ko_KR.eucKR";
-        language_aliases["korean.euc"]       = "ko_KR.eucKR";
-        language_aliases["ko_KR"]            = "ko_KR.eucKR";
-        language_aliases["lithuanian"]       = "lt_LT.ISO-8859-13";
-        language_aliases["no_NO"]            = "nb_NO.ISO-8859-1";
-        language_aliases["no_NO.ISO-8859-1"] = "nb_NO.ISO-8859-1";
-        language_aliases["norwegian"]        = "nb_NO.ISO-8859-1";
-        language_aliases["nynorsk"]          = "nn_NO.ISO-8859-1";
-        language_aliases["polish"]           = "pl_PL.ISO-8859-2";
-        language_aliases["portuguese"]       = "pt_PT.ISO-8859-1";
-        language_aliases["romanian"]         = "ro_RO.ISO-8859-2";
-        language_aliases["russian"]          = "ru_RU.ISO-8859-5";
-        language_aliases["slovak"]           = "sk_SK.ISO-8859-2";
-        language_aliases["slovene"]          = "sl_SI.ISO-8859-2";
-        language_aliases["slovenian"]        = "sl_SI.ISO-8859-2";
-        language_aliases["spanish"]          = "es_ES.ISO-8859-1";
-        language_aliases["swedish"]          = "sv_SE.ISO-8859-1";
-        language_aliases["thai"]             = "th_TH.TIS-620";
-        language_aliases["turkish"]          = "tr_TR.ISO-8859-9";
+		// Aliases taken from /etc/locale.alias
+		language_aliases["bokmal"]           = "nb_NO.ISO-8859-1";
+		language_aliases["bokmål"]           = "nb_NO.ISO-8859-1";
+		language_aliases["catalan"]          = "ca_ES.ISO-8859-1";
+		language_aliases["croatian"]         = "hr_HR.ISO-8859-2";
+		language_aliases["czech"]            = "cs_CZ.ISO-8859-2";
+		language_aliases["danish"]           = "da_DK.ISO-8859-1";
+		language_aliases["dansk"]            = "da_DK.ISO-8859-1";
+		language_aliases["deutsch"]          = "de_DE.ISO-8859-1";
+		language_aliases["dutch"]            = "nl_NL.ISO-8859-1";
+		language_aliases["eesti"]            = "et_EE.ISO-8859-1";
+		language_aliases["estonian"]         = "et_EE.ISO-8859-1";
+		language_aliases["finnish"]          = "fi_FI.ISO-8859-1";
+		language_aliases["français"]         = "fr_FR.ISO-8859-1";
+		language_aliases["french"]           = "fr_FR.ISO-8859-1";
+		language_aliases["galego"]           = "gl_ES.ISO-8859-1";
+		language_aliases["galician"]         = "gl_ES.ISO-8859-1";
+		language_aliases["german"]           = "de_DE.ISO-8859-1";
+		language_aliases["greek"]            = "el_GR.ISO-8859-7";
+		language_aliases["hebrew"]           = "he_IL.ISO-8859-8";
+		language_aliases["hrvatski"]         = "hr_HR.ISO-8859-2";
+		language_aliases["hungarian"]        = "hu_HU.ISO-8859-2";
+		language_aliases["icelandic"]        = "is_IS.ISO-8859-1";
+		language_aliases["italian"]          = "it_IT.ISO-8859-1";
+		language_aliases["japanese"]         = "ja_JP.eucJP";
+		language_aliases["japanese.euc"]     = "ja_JP.eucJP";
+		language_aliases["ja_JP"]            = "ja_JP.eucJP";
+		language_aliases["ja_JP.ujis"]       = "ja_JP.eucJP";
+		language_aliases["japanese.sjis"]    = "ja_JP.SJIS";
+		language_aliases["korean"]           = "ko_KR.eucKR";
+		language_aliases["korean.euc"]       = "ko_KR.eucKR";
+		language_aliases["ko_KR"]            = "ko_KR.eucKR";
+		language_aliases["lithuanian"]       = "lt_LT.ISO-8859-13";
+		language_aliases["no_NO"]            = "nb_NO.ISO-8859-1";
+		language_aliases["no_NO.ISO-8859-1"] = "nb_NO.ISO-8859-1";
+		language_aliases["norwegian"]        = "nb_NO.ISO-8859-1";
+		language_aliases["nynorsk"]          = "nn_NO.ISO-8859-1";
+		language_aliases["polish"]           = "pl_PL.ISO-8859-2";
+		language_aliases["portuguese"]       = "pt_PT.ISO-8859-1";
+		language_aliases["romanian"]         = "ro_RO.ISO-8859-2";
+		language_aliases["russian"]          = "ru_RU.ISO-8859-5";
+		language_aliases["slovak"]           = "sk_SK.ISO-8859-2";
+		language_aliases["slovene"]          = "sl_SI.ISO-8859-2";
+		language_aliases["slovenian"]        = "sl_SI.ISO-8859-2";
+		language_aliases["spanish"]          = "es_ES.ISO-8859-1";
+		language_aliases["swedish"]          = "sv_SE.ISO-8859-1";
+		language_aliases["thai"]             = "th_TH.TIS-620";
+		language_aliases["turkish"]          = "tr_TR.ISO-8859-9";
 	}
 
     std::string name_lowercase;
@@ -369,8 +369,8 @@ resolve_language_alias(const std::string& name)
 Language
 Language::from_spec(const std::string& language, const std::string& country, const std::string& modifier)
 {
-    typedef std::map<std::string, std::vector<const LanguageSpec *> > LanguageSpecMap;
-    static LanguageSpecMap language_map;
+	typedef std::unordered_map<std::string, std::vector<const LanguageSpec *> > LanguageSpecMap;
+	static LanguageSpecMap language_map;
 
     if (language_map.empty())
     { // Init language_map

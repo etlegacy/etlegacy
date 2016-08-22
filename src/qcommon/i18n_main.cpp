@@ -50,7 +50,7 @@ extern "C"
 #include <iostream>
 #include <string.h>
 #include <stdlib.h>
-#include <map>
+#include <unordered_map>
 
 #include "../tinygettext/tinygettext/po_parser.hpp"
 #include "../tinygettext/tinygettext/tinygettext.hpp"
@@ -67,7 +67,7 @@ static char cl_lang_last[3];
 qboolean doTranslate    = qfalse; // we don't translate english in general
 qboolean doTranslateMod = qtrue; // translate legacy mod only
 
-std::map <std::string, std::string> strings; // original text / translated text
+std::unordered_map <std::string, std::string> strings; // original text / translated text
 
 static void TranslationMissing(const char *msgid);
 static void Tinygettext_Error(const std::string& str);
@@ -181,9 +181,9 @@ public:
 		return ret;
 	}
 
-	std::auto_ptr<std::istream> open_file(const std::string& filename)
+	std::unique_ptr<std::istream> open_file(const std::string& filename)
 	{
-		return std::auto_ptr<std::istream>(new QIstream(filename));
+		return std::unique_ptr<std::istream>(new QIstream(filename));
 	}
 };
 
@@ -221,8 +221,8 @@ void I18N_Init(void)
 		}
 	}
 
-	dictionary.set_filesystem(std::auto_ptr<tinygettext::FileSystem>(new QFileSystem));
-	dictionary_mod.set_filesystem(std::auto_ptr<tinygettext::FileSystem>(new QFileSystem));
+	dictionary.set_filesystem(std::unique_ptr<tinygettext::FileSystem>(new QFileSystem));
+	dictionary_mod.set_filesystem(std::unique_ptr<tinygettext::FileSystem>(new QFileSystem));
 
 	dictionary.add_directory("locale/client");
 	dictionary_mod.add_directory("locale/mod");
