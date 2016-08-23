@@ -411,7 +411,12 @@ long FS_fplength(FILE *h)
 	long end;
 
 	pos = ftell(h);
-	fseek(h, 0, SEEK_END);
+	
+	if (fseek(h, 0, SEEK_END) != 0)
+	{
+		Com_Error(ERR_DROP, "FS_fplength: can't seek end of file");
+	}
+	
 	end = ftell(h);
 
 	if (pos < 0)
@@ -419,7 +424,10 @@ long FS_fplength(FILE *h)
 		Com_Error(ERR_DROP, "FS_fplength: pos < 0");
 	}
 
-	fseek(h, pos, SEEK_SET);
+	if (fseek(h, pos, SEEK_SET) != 0)
+	{
+		Com_Error(ERR_DROP, "FS_fplength: can't seek beginning of file");
+	}
 	return end;
 }
 
