@@ -1823,7 +1823,7 @@ read_next_demo_frame: // used to read another whole demo frame
 	// Update timescale
 	currentframe++; // update the current frame number
 
-	if (com_timescale->value < 1.0)
+	if (com_timescale->value < 1.0 && com_timescale->value > 0.0)
 	{
 		// Check timescale: if slowed timescale (below 1.0), then we check that we pass one frame on 1.0/com_timescale (eg: timescale = 0.5, 1.0/0.5=2, so we pass one frame on two)
 		if (currentframe % (int)(1.0 / com_timescale->value) != 0)

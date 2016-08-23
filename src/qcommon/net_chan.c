@@ -500,10 +500,18 @@ static void NET_QueuePacket(int length, const void *data, netadr_t to,
 	new       = S_Malloc(sizeof(packetQueue_t));
 	new->data = S_Malloc(length);
 	Com_Memcpy(new->data, data, length);
-	new->length  = length;
-	new->to      = to;
-	new->release = Sys_Milliseconds() + (int)((float)offset / com_timescale->value);
-	new->next    = NULL;
+	new->length = length;
+	new->to     = to;
+	new->next   = NULL;
+
+	if (com_timescale->value > 0.0)
+	{
+		new->release = Sys_Milliseconds() + (int)((float)offset / com_timescale->value);
+	}
+	else
+	{
+		new->release = Sys_Milliseconds() + offset;
+	}
 
 	if (!packetQueue)
 	{

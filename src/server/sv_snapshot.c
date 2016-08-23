@@ -65,7 +65,7 @@ Writes a delta update of an entityState_t list to the message.
 */
 static void SV_EmitPacketEntities(clientSnapshot_t *from, clientSnapshot_t *to, msg_t *msg)
 {
-	entityState_t *oldent  = NULL, *newent = NULL;
+	entityState_t *oldent = NULL, *newent = NULL;
 	int           oldindex = 0, newindex = 0;
 	int           oldnum, newnum;
 	int           from_num_entities;
@@ -807,8 +807,15 @@ int SV_RateMsec(client_t *client)
 		messageSize += UDPIP_HEADER_SIZE;
 	}
 
-	rateMsec = messageSize * 1000 / ((int)(rate * com_timescale->value));
-	rate     = Sys_Milliseconds() - client->netchan.lastSentTime;
+	if (com_timescale->value > 0.0)
+	{
+		rateMsec = messageSize * 1000 / ((int)(rate * com_timescale->value));
+	}
+	else
+	{
+		rateMsec = messageSize * 1000 / rate;
+	}
+	rate = Sys_Milliseconds() - client->netchan.lastSentTime;
 
 	if (rate > rateMsec)
 	{
