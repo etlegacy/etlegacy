@@ -354,7 +354,6 @@ static int player_in_fov(vec3_t viewangle, vec3_t ppos, vec3_t opos)
 {
 	float  yaw, pitch, cos_angle;
 	vec3_t dir, los;
-	int    vofs;
 
 	VectorSubtract(opos, ppos, los);
 
@@ -362,8 +361,7 @@ static int player_in_fov(vec3_t viewangle, vec3_t ppos, vec3_t opos)
 	// and skip the test if not. We only want to eliminate info that
 	// would reveal the position of opponents behind the player on
 	// the same X/Y plane (e.g. on the same floor in a room).
-	vofs = (int) (opos[2] - ppos[2]);
-	if (vec3_length(los) < 5 * abs(vofs))
+	if (vec3_length(los) < 5 * fabs(opos[2] - ppos[2]))
 	{
 		return 1;
 	}
