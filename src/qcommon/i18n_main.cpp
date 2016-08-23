@@ -197,7 +197,7 @@ void I18N_Init(void)
 	std::set<tinygettext::Language> languages;
 	std::set<tinygettext::Language> languages_mod;
 
-	cl_lang      = Cvar_Get("cl_lang", "en", CVAR_ARCHIVE);
+	cl_lang      = Cvar_Get("cl_lang", "en", CVAR_ARCHIVE | CVAR_LATCH);
 	cl_langDebug = Cvar_Get("cl_langDebug", "0", CVAR_ARCHIVE);
 
 	tinygettext::Log::set_log_error_callback(&Tinygettext_Error);
