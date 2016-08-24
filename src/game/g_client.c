@@ -2606,6 +2606,11 @@ int G_ComputeMaxLives(gclient_t *cl, int maxRespawns)
 		return maxRespawns - 1;
 	}
 
+	if (g_gamestate.integer != GS_PLAYING) // warmup
+	{
+		return maxRespawns - 1;
+	}
+
 	scaled = (float)(maxRespawns - 1) * (1.0f - ((float)(level.time - level.startTime) / (g_timelimit.value * 60000.0f)));
 	val    = (int)scaled;
 
@@ -2730,7 +2735,7 @@ void ClientBegin(int clientNum)
 	{
 		if ((client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES))
 		{
-			if (!client->maxlivescalced && g_gamestate.integer == GS_PLAYING)
+			if (!client->maxlivescalced)
 			{
 				if (g_maxlives.integer > 0)
 				{
@@ -2763,16 +2768,30 @@ void ClientBegin(int clientNum)
 			{
 				if (g_axismaxlives.integer > 0 || g_alliedmaxlives.integer > 0)
 				{
-					if (client->sess.sessionTeam == TEAM_AXIS)
+					if (g_gamestate.integer == GS_PLAYING)
 					{
-						if (client->ps.persistant[PERS_RESPAWNS_LEFT] > g_axismaxlives.integer)
+						if (client->sess.sessionTeam == TEAM_AXIS)
+						{
+							if (client->ps.persistant[PERS_RESPAWNS_LEFT] > g_axismaxlives.integer)
+							{
+								client->ps.persistant[PERS_RESPAWNS_LEFT] = g_axismaxlives.integer;
+							}
+						}
+						else if (client->sess.sessionTeam == TEAM_ALLIES)
+						{
+							if (client->ps.persistant[PERS_RESPAWNS_LEFT] > g_alliedmaxlives.integer)
+							{
+								client->ps.persistant[PERS_RESPAWNS_LEFT] = g_alliedmaxlives.integer;
+							}
+						}
+					}
+					else // warmup
+					{
+						if (client->sess.sessionTeam == TEAM_AXIS)
 						{
 							client->ps.persistant[PERS_RESPAWNS_LEFT] = g_axismaxlives.integer;
 						}
-					}
-					else if (client->sess.sessionTeam == TEAM_ALLIES)
-					{
-						if (client->ps.persistant[PERS_RESPAWNS_LEFT] > g_alliedmaxlives.integer)
+						else if (client->sess.sessionTeam == TEAM_ALLIES)
 						{
 							client->ps.persistant[PERS_RESPAWNS_LEFT] = g_alliedmaxlives.integer;
 						}
