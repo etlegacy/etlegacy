@@ -110,7 +110,7 @@ option(FORCE_DEBUG		"Force enable legacy debug macros"					OFF)
 cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot in mod code (Windows, linux and OS X only)"	ON "WIN32 OR APPLE OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
 cmake_dependent_option(INSTALL_OMNIBOT	"Install Omni-bot"						ON "FEATURE_OMNIBOT" OFF)
 
-cmake_dependent_option(INSTALL_LUASQL	"Builds and installs LuaSQL (sqlite3 backend)"			ON "FEATURE_LUA AND FEATURE_DBMS" OFF)
+cmake_dependent_option(INSTALL_LUASQL	"Builds and installs LuaSQL (sqlite3 backend)"			ON "FEATURE_LUA" OFF)
 
 option(ARM			"Build ARM version"							OFF)
 
