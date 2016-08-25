@@ -51,8 +51,11 @@ target_link_libraries(luasql_library_module
 )
 
 if(BUNDLED_LUA)
-	add_dependencies(luasql_library_module bundled_lua bundled_sqlite3)
+	add_dependencies(luasql_library_module bundled_lua)
 endif(BUNDLED_LUA)
+if(BUNDLED_SQLITE3)
+	add_dependencies(luasql_library_module bundled_sqlite3)
+endif(BUNDLED_SQLITE3)
 add_dependencies(luasql_library_module qagame${LIB_SUFFIX}${ARCH})
 
 if(NOT BUNDLED_LUA)
