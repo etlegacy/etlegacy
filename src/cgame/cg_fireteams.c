@@ -1076,7 +1076,7 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 			}
 			else
 			{
-				if (key >= 'a' || key <= 'z')
+                if (key >= 'a' && key <= 'z')
 				{
 					int i;
 
@@ -1149,7 +1149,7 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 			{
 				const char **strings = ftMenuStrings[cgs.ftMenuPos];
 
-				if (key >= 'a' || key <= 'z')
+                if (key >= 'a' && key <= 'z')
 				{
 					int i;
 
@@ -1202,7 +1202,7 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 				}
 			}
 
-			if (key >= 'a' || key <= 'z')
+            if (key >= 'a' && key <= 'z')
 			{
 				int x;
 
@@ -1362,7 +1362,7 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 			}
 			else
 			{
-				if (key >= 'a' || key <= 'z')
+                if (key >= 'a' && key <= 'z')
 				{
 					if (key - 'a' == cg.fireTeams[i].ident)
 					{
@@ -1391,7 +1391,7 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 		}
 		else
 		{
-			if (key >= 'a' || key <= 'g')
+            if (key >= 'a' && key <= 'g')
 			{
 				i = key - 'a';
 			}
@@ -1453,7 +1453,7 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 		}
 		else
 		{
-			if (key >= 'a' || key <= 'g')
+            if (key >= 'a' && key <= 'g')
 			{
 				i = key - 'a';
 			}
