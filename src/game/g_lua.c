@@ -166,7 +166,7 @@ static int _et_G_Print(lua_State *L)
 	char text[1024];
 
 	Q_strncpyz(text, luaL_checkstring(L, 1), sizeof(text));
-	trap_Printf(va("%s", text));
+	trap_Printf(text);
 	return 0;
 }
 
