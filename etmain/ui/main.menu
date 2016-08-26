@@ -125,9 +125,25 @@ menuDef {
 // Version //
 LABEL( 6, 450, WINDOW_WIDTH, 18, "^1"ETLEGACY_VERSION, .2, ITEM_ALIGN_LEFT, 0, 8 )
 
-LABELWHITE( 640-(2*WINDOW_X)-110, 0, 200, 100, _("Profile:"), .2, ITEM_ALIGN_CENTER, .5*200, 8 )
-CVARLABEL( 640-(2*WINDOW_X)-80, 0, 200, 100, "cl_profile", .2, ITEM_ALIGN_LEFT, .5*200, 8 )
-LABELWHITE( 640-(2*WINDOW_X)-20, 0, 200, 100, _("Name:"), .2, ITEM_ALIGN_CENTER, .5*200, 8 )
-CVARLABEL( 640-(2*WINDOW_X), 0, 200, 100, "name", .2, ITEM_ALIGN_LEFT, .5*200, 8 )
+// profile info //
+SUBWINDOW( 0, 260, WINDOW_WIDTH, 42, _("Current profile info") )
+CVARLABEL( 6, 278, WINDOW_WIDTH, WINDOW_WIDTH, "cl_profile", .2, ITEM_ALIGN_LEFT, 0, 8 )
+CVARLABEL( 6, 288, WINDOW_WIDTH, WINDOW_WIDTH, "name", .2, ITEM_ALIGN_LEFT, 0, 8 )
 
+// message of the day?
+//	SUBWINDOW( WINDOW_WIDTH+6, 0, 640-WINDOW_WIDTH -6, 28, _("MESSAGE OF THE DAY") )
+//	itemDef {
+//		name			"messageOfTheDay"
+//		group			GROUP_NAME
+//		rect			0 340 640 10
+//		ownerDraw		UI_SERVERMOTD
+//		textfont		UI_FONT_COURBD_21
+//		textstyle		ITEM_TEXTSTYLE_SHADOWED
+//		textscale		.2
+//		textalignx		4
+//		textaligny		8
+//		forecolor		.6 .6 .6 1
+//		visible			1
+//		decoration
+//	}
 }

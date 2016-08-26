@@ -976,7 +976,7 @@ void SP_team_WOLF_objective(gentity_t *ent)
 
 	G_SpawnString("description", "WARNING: No objective description set", &desc);
 
-	// wtf is this g_alloced? just use a static buffer fgs...
+	// FIXME: wtf is this g_alloced? just use a static buffer fgs...
 	ent->message = G_Alloc(strlen(desc) + 1);
 	Q_strncpyz(ent->message, desc, strlen(desc) + 1);
 
