@@ -1949,6 +1949,7 @@ void misc_spawner_think(gentity_t *ent)
 	if (!item)
 	{
 		G_Printf("misc_spawner used and no item found!\n");
+		return;
 	}
 
 	drop = Drop_Item(ent, item, 0, qfalse);
