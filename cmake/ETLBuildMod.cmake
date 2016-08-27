@@ -1,7 +1,7 @@
 #
 # cgame
 #
-add_library(cgame${LIB_SUFFIX}${ARCH} SHARED ${CGAME_SRC})
+add_library(cgame${LIB_SUFFIX}${ARCH} MODULE ${CGAME_SRC})
 set_target_properties(cgame${LIB_SUFFIX}${ARCH}
 	PROPERTIES COMPILE_DEFINITIONS "CGAMEDLL"
 	PREFIX ""
@@ -39,7 +39,7 @@ set_target_properties(qagame${LIB_SUFFIX}${ARCH}
 #
 # ui
 #
-add_library(ui${LIB_SUFFIX}${ARCH} SHARED ${UI_SRC})
+add_library(ui${LIB_SUFFIX}${ARCH} MODULE ${UI_SRC})
 set_target_properties(ui${LIB_SUFFIX}${ARCH}
 	PROPERTIES
 	PREFIX ""
