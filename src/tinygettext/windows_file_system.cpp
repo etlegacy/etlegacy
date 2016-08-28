@@ -54,10 +54,10 @@ WindowsFileSystem::open_directory(const std::string& pathname)
 	return files;
 }
 
-std::auto_ptr<std::istream>
+std::unique_ptr<std::istream>
 WindowsFileSystem::open_file(const std::string& filename)
 {
-	return std::auto_ptr<std::istream>(new std::ifstream(filename.c_str()));
+	return std::unique_ptr<std::istream>(new std::ifstream(filename.c_str()));
 }
 
 } // namespace tinygettext

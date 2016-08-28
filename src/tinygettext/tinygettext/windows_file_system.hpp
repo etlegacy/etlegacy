@@ -30,7 +30,7 @@ public:
 	WindowsFileSystem();
 
 	std::vector<std::string>    open_directory(const std::string& pathname);
-	std::auto_ptr<std::istream> open_file(const std::string& filename);
+	std::unique_ptr<std::istream> open_file(const std::string& filename);
 };
 
 } // namespace tinygettext
