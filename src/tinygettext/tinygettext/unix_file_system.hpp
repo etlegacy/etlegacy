@@ -30,7 +30,7 @@ public:
 	UnixFileSystem();
 
 	std::vector<std::string>    open_directory(const std::string& pathname);
-	std::unique_ptr<std::istream> open_file(const std::string& filename);
+	std::auto_ptr<std::istream> open_file(const std::string& filename);
 };
 
 } // namespace tinygettext

@@ -161,7 +161,7 @@ DictionaryManager::get_dictionary(const Language& language)
 				std::string pofile = *p + "/" + best_filename;
 				try
 				{
-					std::unique_ptr<std::istream> in = filesystem->open_file(pofile);
+					std::auto_ptr<std::istream> in = filesystem->open_file(pofile);
 					if (!in.get())
 					{
 						log_error << "error: failure opening: " << pofile << std::endl;
@@ -270,9 +270,9 @@ DictionaryManager::remove_directory(const std::string& pathname)
 }
 
 void
-DictionaryManager::set_filesystem(std::unique_ptr<FileSystem> filesystem_)
+DictionaryManager::set_filesystem(std::auto_ptr<FileSystem> filesystem_)
 {
-	filesystem = std::move(filesystem_);
+	filesystem = filesystem_;
 }
 // ----------------------------------------------------------------------------
 /** This function converts a .po filename (e.g. zh_TW.po) into a language
