@@ -168,6 +168,10 @@ if(BUILD_PAK3_PK3)
 	include(cmake/ETLBuildPack.cmake)
 endif(BUILD_PAK3_PK3)
 
+if(INSTALL_LUASQL)
+	include(cmake/ETLBuildLuaSQL.cmake)
+endif(INSTALL_LUASQL)
+
 #-----------------------------------------------------------------
 # Post build
 #-----------------------------------------------------------------
@@ -175,10 +179,6 @@ endif(BUILD_PAK3_PK3)
 if(INSTALL_OMNIBOT AND BUILD_MOD)
 	include(cmake/ETLInstallOmniBot.cmake)
 endif(INSTALL_OMNIBOT AND BUILD_MOD)
-
-if(INSTALL_LUASQL)
-	include(cmake/ETLInstallLuaSQL.cmake)
-endif(INSTALL_LUASQL)
 
 # Generate install and uninstall packs
 include(cmake/ETLInstall.cmake)

@@ -7,11 +7,6 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/misc/etmain/"
 	DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
 )
 
-# LuaSQL adds
-if(INSTALL_LUASQL)
-	install(TARGETS luasql_library_module DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy/lualibs/luasql")
-endif(INSTALL_LUASQL)
-
 # misc adds
 if(INSTALL_OMNIBOT AND UNIX)
 	install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/etl_bot.sh"

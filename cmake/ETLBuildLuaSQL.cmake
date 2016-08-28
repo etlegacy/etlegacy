@@ -73,3 +73,9 @@ if(NOT BUNDLED_LUA)
 	)
 	install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${LUA_LIBRARY_NAME}.${LUA_VERSION_STRING}" DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy/lualibs/luasql")
 endif(NOT BUNDLED_LUA)
+
+# install
+install(TARGETS luasql_library_module
+	LIBRARY DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy/lualibs/luasql"
+	ARCHIVE DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy/lualibs/luasql"
+	)
