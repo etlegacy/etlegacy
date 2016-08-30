@@ -1603,7 +1603,6 @@ void G_ParseCampaigns(void)
 
 	if (g_gametype.integer != GT_WOLF_CAMPAIGN)
 	{
-		trap_Cvar_Set("g_oldCampaign", "");
 		trap_Cvar_Set("g_currentCampaign", "");
 		trap_Cvar_Set("g_currentCampaignMap", "0");
 		return;
