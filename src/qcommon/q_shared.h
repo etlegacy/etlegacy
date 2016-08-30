@@ -613,7 +613,7 @@ typedef struct pc_token_s
 
 // data is an in/out parm, returns a parsed out token
 
-void COM_MatchToken(char **buf_p, char *match);
+//void COM_MatchToken(char **buf_p, char *match);
 
 void SkipBracedSection(char **program);
 void SkipBracedSection_Depth(char **program, int depth);    // start at given depth if already
@@ -1545,7 +1545,7 @@ float rint(float v);
 #endif
 
 // this should be used to convert a floating-point value to an integer
-// FIXME optimize this and use asm
+// FIXME remove this and use round() function (Math.h)
 #define ROUND_INT(x) (x >= 0 ? (int)(x + 0.5) : (int)(x - 0.5))
 
 typedef struct demoPlayInfo_s
