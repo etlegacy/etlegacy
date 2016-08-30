@@ -39,10 +39,11 @@ include_directories("${LUASQL_DIR}")
 
 add_library(luasql_library_module MODULE ${LUASQL_PUBLIC_HEADERS} ${LUASQL_FILES} ${LUASQL_BACKEND_FILES})
 set_target_properties(luasql_library_module PROPERTIES
-	C_VISIBILITY_PRESET default
-	VISIBILITY_INLINES_HIDDEN 0
 	PREFIX ""
 	OUTPUT_NAME "sqlite3"
+	LIBRARY_OUTPUT_DIRECTORY "legacy/lualibs/luasql"
+	LIBRARY_OUTPUT_DIRECTORY_DEBUG "legacy/lualibs/luasql"
+	LIBRARY_OUTPUT_DIRECTORY_RELEASE "legacy/lualibs/luasql"
 )
 
 if(BUNDLED_LUA)
