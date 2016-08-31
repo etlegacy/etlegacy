@@ -1320,10 +1320,10 @@ void IN_Frame(void)
 		Cbuf_AddText("vid_restart\n");
 	}
 
+	IN_ProcessEvents();
+
 	// Store the timestamp for the next frame's input events
 	lasttime = start;
-
-	IN_ProcessEvents();
 }
 
 static void IN_InitKeyLockStates(void)
