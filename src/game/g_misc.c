@@ -2292,7 +2292,7 @@ void G_TempTraceIgnorePlayersAndBodies(void)
 	else
 	{
 		// slower way - improve by time
-		for (i = 0; i < MAX_GENTITIES; i++)
+		for (i = MAX_CLIENTS; i < MAX_GENTITIES; i++)
 		{
 			if (g_entities[i].s.eType == ET_CORPSE)
 			{
