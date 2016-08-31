@@ -15,6 +15,12 @@
 
 #include "g_lua.h"
 
+#ifdef FEATURE_LUASQL
+#include "../luasql/luasql.h"
+#include "../luasql/luasql.c"
+#include "../luasql/ls_sqlite3.c"
+#endif
+
 #ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
 #endif
@@ -2464,6 +2470,14 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 
 	// Initialise the lua state
 	luaL_openlibs(vm->L);
+
+#ifdef FEATURE_LUASQL
+	// register LuaSQL backend
+	luaL_getsubtable(vm->L, LUA_REGISTRYINDEX, "_PRELOAD");
+	lua_pushcfunction(vm->L, luaopen_luasql_sqlite3);
+	lua_setfield(vm->L, -2, "luasql.sqlite3");
+	lua_pop(vm->L, 1);
+#endif
 
 	// set LUA_PATH and LUA_CPATH
 	trap_Cvar_VariableStringBuffer("fs_basepath", basepath, sizeof(basepath));
