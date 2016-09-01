@@ -629,6 +629,12 @@ void G_RunFrame(int levelTime);
 void G_ShutdownGame(int restart);
 void CheckExitRules(void);
 
+/**
+ * @brief G_SnapshotCallback
+ * @param entityNum
+ * @param clientNum
+ * @return
+ */
 qboolean G_SnapshotCallback(int entityNum, int clientNum)
 {
 	gentity_t *ent = &g_entities[entityNum];
@@ -644,14 +650,20 @@ qboolean G_SnapshotCallback(int entityNum, int clientNum)
 	return qtrue;
 }
 
-/*
-================
-vmMain
-
-This is the only way control passes into the module.
-This must be the very first function compiled into the .q3vm file
-================
-*/
+/**
+ * @brief This is the only way control passes into the module.
+ * This must be the very first function compiled into the .q3vm file
+ *
+ * @param command
+ * @param arg0
+ * @param arg1
+ * @param arg2
+ * @param arg3
+ * @param arg4
+ * @param arg5
+ * @param arg6
+ * @return
+ */
 Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_t arg2, intptr_t arg3, intptr_t arg4, intptr_t arg5, intptr_t arg6)
 {
 	switch (command)
@@ -787,32 +799,33 @@ void QDECL G_Error(const char *fmt, ...)
 
 void QDECL G_Error(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 
-/*
-==============
-G_CursorHintIgnoreEnt: returns whether the ent should be ignored
-for cursor hint purpose (because the ent may have the designed content type
-but nevertheless should not display any cursor hint)
-==============
-*/
+/**
+ * @brief returns whether the ent should be ignored
+ * for cursor hint purpose (because the ent may have the designed content type
+ * but nevertheless should not display any cursor hint)
+ *
+ * @param traceEnt
+ * @param clientEnt
+ * @return
+ */
 static qboolean G_CursorHintIgnoreEnt(gentity_t *traceEnt, gentity_t *clientEnt)
 {
 	return (traceEnt->s.eType == ET_OID_TRIGGER || traceEnt->s.eType == ET_TRIGGER_MULTIPLE) ? qtrue : qfalse;
 }
 
-/*
-==============
-G_CheckForCursorHints
-    non-AI's check for cursor hint contacts
-
-    server-side because there's info we want to show that the client
-    just doesn't know about.  (health or other info of an explosive,invisible_users,items,etc.)
-
-    traceEnt is the ent hit by the trace, checkEnt is the ent that is being
-    checked against (in case the traceent was an invisible_user or something)
-
-==============
-*/
-
+/**
+ * @brief Non-AI's check for cursor hint contacts
+ *
+ * @details server-side because there's info we want to show that the client
+ * just doesn't know about.  (health or other info of an explosive,invisible_users,items,etc.)
+ *
+ * traceEnt is the ent hit by the trace, checkEnt is the ent that is being
+ * checked against (in case the traceent was an invisible_user or something)
+ *
+ * @param ent
+ * @param other
+ * @return
+ */
 qboolean G_EmplacedGunIsMountable(gentity_t *ent, gentity_t *other)
 {
 	if (Q_stricmp(ent->classname, "misc_mg42") && Q_stricmp(ent->classname, "misc_aagun"))
@@ -873,6 +886,12 @@ qboolean G_EmplacedGunIsMountable(gentity_t *ent, gentity_t *other)
 	return qtrue;
 }
 
+/**
+ * @brief G_EmplacedGunIsRepairable
+ * @param ent
+ * @param other
+ * @return
+ */
 qboolean G_EmplacedGunIsRepairable(gentity_t *ent, gentity_t *other)
 {
 	if (Q_stricmp(ent->classname, "misc_mg42") && Q_stricmp(ent->classname, "misc_aagun"))
@@ -903,6 +922,10 @@ qboolean G_EmplacedGunIsRepairable(gentity_t *ent, gentity_t *other)
 	return qtrue;
 }
 
+/**
+ * @brief G_CheckForCursorHints
+ * @param ent
+ */
 void G_CheckForCursorHints(gentity_t *ent)
 {
 	vec3_t        forward, right, up, offset, end;
@@ -1444,6 +1467,11 @@ void G_CheckForCursorHints(gentity_t *ent)
 	}
 }
 
+/**
+ * @brief G_SetTargetName
+ * @param ent
+ * @param targetname
+ */
 void G_SetTargetName(gentity_t *ent, char *targetname)
 {
 	if (targetname && *targetname)
@@ -1457,6 +1485,11 @@ void G_SetTargetName(gentity_t *ent, char *targetname)
 	}
 }
 
+/**
+ * @brief G_SetSkillLevels
+ * @param skill
+ * @param string
+ */
 void G_SetSkillLevels(int skill, const char *string)
 {
 	char **temp = (char **) &string;
@@ -1487,6 +1520,10 @@ void G_SetSkillLevels(int skill, const char *string)
 	}
 }
 
+/**
+ * @brief G_SetSkillLevelsByCvar
+ * @param cvar
+ */
 void G_SetSkillLevelsByCvar(vmCvar_t *cvar)
 {
 	char *skillstring;
@@ -1536,6 +1573,9 @@ void G_SetSkillLevelsByCvar(vmCvar_t *cvar)
 
 #define SKILLSTRING(skill) va("%i,%i,%i,%i", skillLevels[skill][1], skillLevels[skill][2], skillLevels[skill][3], skillLevels[skill][4])
 
+/**
+ * @brief G_UpdateSkillsToClients
+ */
 void G_UpdateSkillsToClients()
 {
 	char cs[MAX_INFO_STRING];
@@ -1552,6 +1592,9 @@ void G_UpdateSkillsToClients()
 	trap_SetConfigstring(CS_UPGRADERANGE, cs);
 }
 
+/**
+ * @brief G_InitSkillLevels
+ */
 void G_InitSkillLevels()
 {
 	G_SetSkillLevelsByCvar(&skill_battlesense);
@@ -1563,17 +1606,13 @@ void G_InitSkillLevels()
 	G_SetSkillLevelsByCvar(&skill_covertops);
 }
 
-/*
-================
-G_FindTeams
-
-Chain together all entities with a matching team field.
-Entity teams are used for item groups and multi-entity mover groups.
-
-All but the first will have the FL_TEAMSLAVE flag set and teammaster field set
-All but the last will have the teamchain field set to the next one
-================
-*/
+/**
+ * @brief Chain together all entities with a matching team field.
+ * Entity teams are used for item groups and multi-entity mover groups.
+ *
+ * @details All but the first will have the FL_TEAMSLAVE flag set and teammaster field set
+ * All but the last will have the teamchain field set to the next one
+ */
 void G_FindTeams(void)
 {
 	gentity_t *e, *e2;
@@ -1658,11 +1697,9 @@ void G_FindTeams(void)
 	G_Printf("%i teams with %i entities\n", c, c2);
 }
 
-/*
-=================
-G_RegisterCvars
-=================
-*/
+/**
+ * @brief G_RegisterCvars
+ */
 void G_RegisterCvars(void)
 {
 	int         i;
@@ -1709,11 +1746,9 @@ void G_RegisterCvars(void)
 	}
 }
 
-/*
-=================
-G_UpdateCvars
-=================
-*/
+/**
+ * @brief G_UpdateCvars
+ */
 void G_UpdateCvars(void)
 {
 	int         i;
@@ -1994,7 +2029,9 @@ void G_UpdateCvars(void)
 	}
 }
 
-// Reset particular server variables back to defaults if a config is voted in.
+/**
+ * @brief Reset particular server variables back to defaults if a config is voted in.
+ */
 void G_wipeCvars(void)
 {
 	int         i;
@@ -2014,7 +2051,13 @@ void G_wipeCvars(void)
 
 #define SNIPSIZE 250
 
-// copies max num chars from beginning of dest into src and returns pointer to new src
+/**
+ * @brief Copies max num chars from beginning of dest into src and returns pointer to new src
+ * @param dest
+ * @param src
+ * @param num
+ * @return
+ */
 char *strcut(char *dest, char *src, int num)
 {
 	int i;
@@ -2042,7 +2085,10 @@ char *strcut(char *dest, char *src, int num)
 	return src;
 }
 
-// g_{axies,allies}mapxp overflows and crashes the server
+/**
+ * @brief G_ClearMapXP
+ * @warning g_{axies,allies}mapxp overflows and crashes the server
+ */
 void G_ClearMapXP(void)
 {
 	trap_SetConfigstring(CS_AXIS_MAPS_XP, "");
@@ -2052,6 +2098,9 @@ void G_ClearMapXP(void)
 	trap_Cvar_Set(va("%s_alliedmapxp0", GAMEVERSION), "");
 }
 
+/**
+ * @brief G_StoreMapXP
+ */
 void G_StoreMapXP(void)
 {
 	char cs[MAX_STRING_CHARS];
@@ -2104,6 +2153,9 @@ void G_StoreMapXP(void)
 	}
 }
 
+/**
+ * @brief G_GetMapXP
+ */
 void G_GetMapXP(void)
 {
 	int  j = 0;
@@ -2134,11 +2186,14 @@ void G_GetMapXP(void)
 	trap_SetConfigstring(CS_ALLIED_MAPS_XP, s);
 }
 
-/*
-============
-G_InitGame
-============
-*/
+/**
+ * @brief G_InitGame
+ * @param levelTime
+ * @param randomSeed
+ * @param restart
+ * @param legacyServer
+ * @param serverVersion
+ */
 void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, int serverVersion)
 {
 	int  i;
@@ -2511,11 +2566,10 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 #endif
 }
 
-/*
-=================
-G_ShutdownGame
-=================
-*/
+/**
+ * @brief G_ShutdownGame
+ * @param restart
+ */
 void G_ShutdownGame(int restart)
 {
 #ifdef FEATURE_LUA
@@ -2581,8 +2635,7 @@ void G_ShutdownGame(int restart)
 //===================================================================
 
 #ifndef GAME_HARD_LINKED
-// this is only here so the functions in q_shared.c and bg_*.c can link
-
+// NOTE: This is only here so the functions in q_shared.c and bg_*.c can link
 void QDECL Com_Error(int level, const char *error, ...)
 {
 	va_list argptr;
@@ -2619,11 +2672,12 @@ PLAYER COUNTING / SCORE SORTING
 ========================================================================
 */
 
-/*
-=============
-SortRanks
-=============
-*/
+/**
+ * @brief SortRanks
+ * @param a
+ * @param b
+ * @return
+ */
 int QDECL SortRanks(const void *a, const void *b)
 {
 	gclient_t *ca = &level.clients[*(int *)a];
@@ -2708,6 +2762,9 @@ int QDECL SortRanks(const void *a, const void *b)
 	return 0;
 }
 
+/**
+ * @brief etpro_PlayerInfo
+ */
 void etpro_PlayerInfo(void)
 {
 	//128 bits
@@ -2753,15 +2810,11 @@ void etpro_PlayerInfo(void)
 	trap_Cvar_Set("P", playerinfo);
 }
 
-/*
-============
-CalculateRanks
-
-Recalculates the score ranks of all players
-This will be called on every client connect, begin, disconnect, death,
-and team change.
-============
-*/
+/**
+ * @brief Recalculates the score ranks of all players
+ * This will be called on every client connect, begin, disconnect, death,
+ * and team change.
+ */
 void CalculateRanks(void)
 {
 	int       i;
@@ -2908,14 +2961,10 @@ MAP CHANGING
 ========================================================================
 */
 
-/*
-========================
-SendScoreboardMessageToAllClients
-
-Do this at BeginIntermission time and whenever ranks are recalculated
-due to enters/exits/forced team changes
-========================
-*/
+/**
+ * @brief Do this at BeginIntermission time and whenever ranks are recalculated
+ * due to enters/exits/forced team changes
+ */
 void SendScoreboardMessageToAllClients(void)
 {
 	int i;
@@ -2930,14 +2979,11 @@ void SendScoreboardMessageToAllClients(void)
 	}
 }
 
-/*
-========================
-MoveClientToIntermission
-
-When the intermission starts, this will be called for all players.
-If a new client connects, this will be called after the spawn function.
-========================
-*/
+/**
+ * @brief When the intermission starts, this will be called for all players.
+ * If a new client connects, this will be called after the spawn function.
+ * @param ent
+ */
 void MoveClientToIntermission(gentity_t *ent)
 {
 	// if we are in intermission ensure we don't move the client twice
@@ -2983,13 +3029,9 @@ void MoveClientToIntermission(gentity_t *ent)
 	ent->r.contents        = 0;
 }
 
-/*
-==================
-FindIntermissionPoint
-
-This is also used for spectator spawns
-==================
-*/
+/**
+ * @brief This is also used for spectator spawns
+ */
 void FindIntermissionPoint(void)
 {
 	gentity_t *ent = NULL, *target;
@@ -3062,7 +3104,12 @@ void FindIntermissionPoint(void)
 	}
 }
 
-// MAPVOTE
+/**
+ * @brief MAPVOTE
+ * @param a
+ * @param b
+ * @return
+ */
 int QDECL G_SortMapsByzOrder(const void *a, const void *b)
 {
 	int z1 = *(int *)a;
@@ -3102,11 +3149,9 @@ int QDECL G_SortMapsByzOrder(const void *a, const void *b)
 	}
 }
 
-/*
-==================
-BeginIntermission
-==================
-*/
+/**
+ * @brief BeginIntermission
+ */
 void BeginIntermission(void)
 {
 	int       i;
@@ -3288,111 +3333,110 @@ void BeginIntermission(void)
 	SendScoreboardMessageToAllClients();
 }
 
-/*
-=============
-ExitLevel
-
-When the intermission has been exited, the server is either killed
-or moved to a new level based on the "nextmap" cvar
-=============
-*/
+/**
+ * @brief When the intermission has been exited, the server is either killed
+ * or moved to a new level based on the "nextmap" cvar
+ */
 void ExitLevel(void)
 {
 	int       i;
 
-	// FIXME: do a switch
-	if (g_gametype.integer == GT_WOLF_CAMPAIGN)
-	{
-		g_campaignInfo_t *campaign = &g_campaigns[level.currentCampaign];
+    switch(g_gametype.integer)
+    {
+    case GT_WOLF_CAMPAIGN:
+    {
+        g_campaignInfo_t *campaign = &g_campaigns[level.currentCampaign];
 
-		if (campaign->current + 1 < campaign->mapCount)
-		{
-			trap_Cvar_Set("g_currentCampaignMap", va("%i", campaign->current + 1));
+        if (campaign->current + 1 < campaign->mapCount)
+        {
+            trap_Cvar_Set("g_currentCampaignMap", va("%i", campaign->current + 1));
 
-			trap_SendConsoleCommand(EXEC_APPEND, va("map %s\n", campaign->mapnames[campaign->current + 1]));
-		}
-		else
-		{
-			char s[MAX_STRING_CHARS];
-			trap_Cvar_VariableStringBuffer("nextcampaign", s, sizeof(s));
+            trap_SendConsoleCommand(EXEC_APPEND, va("map %s\n", campaign->mapnames[campaign->current + 1]));
+        }
+        else
+        {
+            char s[MAX_STRING_CHARS];
+            trap_Cvar_VariableStringBuffer("nextcampaign", s, sizeof(s));
 
-			if (*s)
-			{
-				trap_SendConsoleCommand(EXEC_APPEND, "vstr nextcampaign\n");
-			}
-			else
-			{
-				// restart the campaign
-				trap_Cvar_Set("g_currentCampaignMap", "0");
+            if (*s)
+            {
+                trap_SendConsoleCommand(EXEC_APPEND, "vstr nextcampaign\n");
+            }
+            else
+            {
+                // restart the campaign
+                trap_Cvar_Set("g_currentCampaignMap", "0");
 
-				trap_SendConsoleCommand(EXEC_APPEND, va("map %s\n", campaign->mapnames[0]));
-			}
+                trap_SendConsoleCommand(EXEC_APPEND, va("map %s\n", campaign->mapnames[0]));
+            }
 
-			// FIXME: do we want to do something else here?
-			//trap_SendConsoleCommand( EXEC_APPEND, "vstr nextmap\n" );
-		}
-	}
-	else if (g_gametype.integer == GT_WOLF_LMS)
-	{
-		if (level.lmsDoNextMap)
-		{
-			trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
-		}
-		else
-		{
-			trap_SendConsoleCommand(EXEC_APPEND, "map_restart 0\n");
-		}
-	}
-	// MAPVOTE
-	else if (g_gametype.integer == GT_WOLF_MAPVOTE)
-	{
-		int nextMap = 0, highMapVote = 0, curMapVotes = 0, maxMaps, highMapAge = 0, curMapAge = 0;
+            // FIXME: do we want to do something here?
+            //trap_SendConsoleCommand( EXEC_APPEND, "vstr nextmap\n" );
+        }
+        break;
+    }
+    case GT_WOLF_LMS:
+        if (level.lmsDoNextMap)
+        {
+            trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
+        }
+        else
+        {
+            trap_SendConsoleCommand(EXEC_APPEND, "map_restart 0\n");
+        }
+        break;
 
-		if (g_resetXPMapCount.integer)
-		{
-			level.mapsSinceLastXPReset++;
-		}
-		maxMaps = g_maxMapsVotedFor.integer;
-		if (maxMaps > level.mapVoteNumMaps)
-		{
-			maxMaps = level.mapVoteNumMaps;
-		}
-		for (i = 0; i < maxMaps; i++)
-		{
-			if (level.mapvoteinfo[level.sortedMaps[i]].lastPlayed != -1)
-			{
-				level.mapvoteinfo[level.sortedMaps[i]].lastPlayed++;
-			}
-			curMapVotes = level.mapvoteinfo[level.sortedMaps[i]].numVotes;
-			curMapAge   = level.mapvoteinfo[level.sortedMaps[i]].lastPlayed;
-			if (curMapAge == -1)
-			{
-				curMapAge = 9999;   // -1 means never, so set suitably high
-			}
+    // MAPVOTE
+    case GT_WOLF_MAPVOTE:
+    {
+        int nextMap = 0, highMapVote = 0, curMapVotes = 0, maxMaps, highMapAge = 0, curMapAge = 0;
 
-			if (curMapVotes > highMapVote ||
-			    (curMapVotes == highMapVote && curMapVotes > 0 &&
-			     ((!(g_mapVoteFlags.integer & MAPVOTE_TIE_LEASTPLAYED) && curMapAge < highMapAge) ||
-			      ((g_mapVoteFlags.integer & MAPVOTE_TIE_LEASTPLAYED) && curMapAge > highMapAge))))
-			{
-				nextMap     = level.sortedMaps[i];
-				highMapVote = curMapVotes;
-				highMapAge  = curMapAge;
-			}
-		}
-		if (highMapVote > 0 && level.mapvoteinfo[nextMap].bspName[0])
-		{
-			trap_SendConsoleCommand(EXEC_APPEND, va("map %s;set nextmap %s\n", level.mapvoteinfo[nextMap].bspName, g_nextmap.string));
-		}
-		else
-		{
-			trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
-		}
-	}
-	else
-	{
-		trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
-	}
+        if (g_resetXPMapCount.integer)
+        {
+            level.mapsSinceLastXPReset++;
+        }
+        maxMaps = g_maxMapsVotedFor.integer;
+        if (maxMaps > level.mapVoteNumMaps)
+        {
+            maxMaps = level.mapVoteNumMaps;
+        }
+        for (i = 0; i < maxMaps; i++)
+        {
+            if (level.mapvoteinfo[level.sortedMaps[i]].lastPlayed != -1)
+            {
+                level.mapvoteinfo[level.sortedMaps[i]].lastPlayed++;
+            }
+            curMapVotes = level.mapvoteinfo[level.sortedMaps[i]].numVotes;
+            curMapAge   = level.mapvoteinfo[level.sortedMaps[i]].lastPlayed;
+            if (curMapAge == -1)
+            {
+                curMapAge = 9999;   // -1 means never, so set suitably high
+            }
+
+            if (curMapVotes > highMapVote ||
+                (curMapVotes == highMapVote && curMapVotes > 0 &&
+                 ((!(g_mapVoteFlags.integer & MAPVOTE_TIE_LEASTPLAYED) && curMapAge < highMapAge) ||
+                  ((g_mapVoteFlags.integer & MAPVOTE_TIE_LEASTPLAYED) && curMapAge > highMapAge))))
+            {
+                nextMap     = level.sortedMaps[i];
+                highMapVote = curMapVotes;
+                highMapAge  = curMapAge;
+            }
+        }
+        if (highMapVote > 0 && level.mapvoteinfo[nextMap].bspName[0])
+        {
+            trap_SendConsoleCommand(EXEC_APPEND, va("map %s;set nextmap %s\n", level.mapvoteinfo[nextMap].bspName, g_nextmap.string));
+        }
+        else
+        {
+            trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
+        }
+        break;
+    }
+    default:
+        trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
+        break;
+    }
 
 	level.intermissiontime = 0;
 
@@ -3438,13 +3482,10 @@ void ExitLevel(void)
 	G_LogPrintf("ExitLevel: executed\n");
 }
 
-/*
-=================
-G_LogPrintf
-
-Print to the logfile with a time stamp if it is open
-=================
-*/
+/**
+ * @brief Print to the logfile with a time stamp if it is open
+ * @param fmt
+ */
 void QDECL G_LogPrintf(const char *fmt, ...)
 {
 	va_list argptr;
@@ -3835,11 +3876,10 @@ void CheckIntermissionExit(void)
 	ExitLevel();
 }
 
-/*
-=============
-ScoreIsTied
-=============
-*/
+/**
+ * @brief ScoreIsTied
+ * @return
+ */
 qboolean ScoreIsTied(void)
 {
 	int  a;
@@ -3855,15 +3895,11 @@ qboolean ScoreIsTied(void)
 	return a == -1;
 }
 
-/*
-=================
-CheckExitRules
-
-There will be a delay between the time the exit is qualified for
-and the time everyone is moved to the intermission spot, so you
-can see the last frag.
-=================
-*/
+/**
+ * @brief There will be a delay between the time the exit is qualified for
+ * and the time everyone is moved to the intermission spot, so you
+ * can see the last frag.
+ */
 void CheckExitRules(void)
 {
 	char cs[MAX_STRING_CHARS];
@@ -4083,11 +4119,9 @@ void CheckWolfMP(void)
 	}
 }
 
-/*
-==================
-CheckVote
-==================
-*/
+/**
+ * @brief CheckVote
+ */
 void CheckVote(void)
 {
 	if (!level.voteInfo.voteTime ||
@@ -4193,11 +4227,9 @@ void CheckVote(void)
 	}
 }
 
-/*
-==================
-CheckCvars
-==================
-*/
+/**
+ * @brief CheckCvars
+ */
 void CheckCvars(void)
 {
 	static int g_password_lastMod             = -1;
@@ -4286,11 +4318,13 @@ void G_RunThink(gentity_t *ent)
 
 void G_RunEntity(gentity_t *ent, int msec);
 
-/*
-======================
-G_PositionEntityOnTag
-======================
-*/
+/**
+ * @brief G_PositionEntityOnTag
+ * @param entity
+ * @param parent
+ * @param tagName
+ * @return
+ */
 qboolean G_PositionEntityOnTag(gentity_t *entity, gentity_t *parent, char *tagName)
 {
 	int           i;
@@ -4340,6 +4374,11 @@ qboolean G_PositionEntityOnTag(gentity_t *entity, gentity_t *parent, char *tagNa
 	return qtrue;
 }
 
+/**
+ * @brief G_TagLinkEntity
+ * @param ent
+ * @param msec
+ */
 void G_TagLinkEntity(gentity_t *ent, int msec)
 {
 	gentity_t *parent = &g_entities[ent->s.torsoAnim];
@@ -4500,7 +4539,11 @@ void G_TagLinkEntity(gentity_t *ent, int msec)
 	ent->linkTagTime = level.time;
 }
 
-// make this client side one day -> a loooooot of saved entities, and less brandwith
+/**
+ * @brief G_DrawEntBBox
+ * @param ent
+ * @todo make this client side one day -> a loooooot of saved entities, and less brandwith
+ */
 void G_DrawEntBBox(gentity_t* ent)
 {
 	vec3_t maxs,mins;
@@ -4642,7 +4685,11 @@ void G_DrawEntBBox(gentity_t* ent)
 	G_RailBox(ent->r.currentOrigin, mins, maxs, tv(0.f,1.f,0.f), ent->s.number);
 }
 
-
+/**
+ * @brief G_RunEntity
+ * @param ent
+ * @param msec
+ */
 void G_RunEntity(gentity_t *ent, int msec)
 {
 	if (ent->runthisframe)
@@ -4840,13 +4887,10 @@ void G_RunEntity(gentity_t *ent, int msec)
 	VectorScale(ent->instantVelocity, 1000.0f / msec, ent->instantVelocity);
 }
 
-/*
-================
-G_RunFrame
-
-Advances the non-player objects in the world
-================
-*/
+/**
+ * @brief Advances the non-player objects in the world
+ * @param levelTime
+ */
 void G_RunFrame(int levelTime)
 {
 	int i, msec;
@@ -4961,7 +5005,11 @@ void G_RunFrame(int levelTime)
 }
 
 // MAPVOTE
-// G_shrubbot_writeconfig_string
+/**
+ * @brief G_writeconfigfile_string
+ * @param s
+ * @param f
+ */
 void G_writeconfigfile_string(char *s, fileHandle_t f)
 {
 	if (s[0])
@@ -4977,6 +5025,9 @@ void G_writeconfigfile_string(char *s, fileHandle_t f)
 	trap_FS_Write("\n", 1, f);
 }
 
+/**
+ * @brief G_mapvoteinfo_write
+ */
 void G_mapvoteinfo_write()
 {
 	fileHandle_t f;
@@ -5011,7 +5062,12 @@ void G_mapvoteinfo_write()
 	return;
 }
 
-// G_shrubbot_readconfig_string
+/**
+ * @brief G_readconfigfile_string
+ * @param cnf
+ * @param s
+ * @param size
+ */
 void G_readconfigfile_string(char **cnf, char *s, int size)
 {
 	char *t;
@@ -5047,6 +5103,11 @@ void G_readconfigfile_string(char **cnf, char *s, int size)
 	}
 }
 
+/**
+ * @brief G_readconfigfile_int
+ * @param cnf
+ * @param v
+ */
 void G_readconfigfile_int(char **cnf, int *v)
 {
 	char *t;
@@ -5066,6 +5127,9 @@ void G_readconfigfile_int(char **cnf, int *v)
 	*v = atoi(t);
 }
 
+/**
+ * @brief G_mapvoteinfo_read
+ */
 void G_mapvoteinfo_read()
 {
 	fileHandle_t f;
@@ -5085,7 +5149,7 @@ void G_mapvoteinfo_read()
 		return;
 	}
 
-	cnf = malloc(len + 1);
+    cnf = malloc(len + 1);
 
 	if (cnf == NULL)
 	{
