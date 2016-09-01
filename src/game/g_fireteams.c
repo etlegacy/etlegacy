@@ -287,7 +287,7 @@ int G_FindFreeFireteamIdent(team_t team)
 }
 
 // Should be the only function that ever creates a fireteam
-void G_RegisterFireteam(/*const char* name,*/ int entityNum)
+void G_RegisterFireteam(int entityNum)
 {
 	fireteamData_t *ft;
 	gentity_t      *leader;
@@ -525,7 +525,7 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 							// inform client of promotion to leader
 							if (firstHuman != -1)
 							{
-								trap_SendServerCommand(ft->joinOrder[firstHuman], "cpm \"You are now the leader of your fireteam\"\n");
+								trap_SendServerCommand(ft->joinOrder[firstHuman], "cpm \"You are now the leader of your fireteam\"");
 							}
 						}
 					}
@@ -558,7 +558,7 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 				break;
 			}
 
-			trap_SendServerCommand(ft->joinOrder[i], va("cpm \"%s ^7has left the fireteam\n\"", level.clients[entityNum].pers.netname));
+			trap_SendServerCommand(ft->joinOrder[i], va("cpm \"%s ^7has left the fireteam\"", level.clients[entityNum].pers.netname));
 		}
 	}
 
@@ -647,7 +647,7 @@ void G_DestroyFireteam(int entityNum)
 #ifdef FEATURE_OMNIBOT
 			Bot_Event_FireTeamDestroyed(ft->joinOrder[0]);
 #endif
-			trap_SendServerCommand(ft->joinOrder[0], "cpm \"The fireteam you are on has been disbanded\"\n");
+			trap_SendServerCommand(ft->joinOrder[0], "cpm \"The fireteam you are on has been disbanded\"");
 		}
 
 		G_RemoveClientFromFireteams(ft->joinOrder[0], qfalse, qfalse);
@@ -687,7 +687,7 @@ void G_WarnFireTeamPlayer(int entityNum, int otherEntityNum)
 		return;
 	}
 
-	trap_SendServerCommand(otherEntityNum, "cpm \"You have been warned by your fireteam leader\n\"");
+	trap_SendServerCommand(otherEntityNum, "cpm \"You have been warned by your fireteam leader\"");
 
 #ifdef FEATURE_OMNIBOT
 	Bot_Event_FireTeam_Warn(entityNum, otherEntityNum);
@@ -949,6 +949,12 @@ void G_GiveAdminOfFireTeam(int entityNum, int otherEntityNum)
 	if ((!G_IsOnFireteam(otherEntityNum, &ft2)) || ft != ft2)
 	{
 		G_ClientPrint(entityNum, "The other player must be on the same fireteam for you to give admin rights to");
+		return;
+	}
+
+	if (g_entities[otherEntityNum].r.svFlags & SVF_BOT)
+	{
+		G_ClientPrint(entityNum, "The other player must be a human and not a bot");
 		return;
 	}
 
