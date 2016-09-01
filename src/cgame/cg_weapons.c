@@ -52,11 +52,10 @@ int weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP] =
 	{ 0,                   0,                    0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0     },
 };
 
-/*
-==============
-CG_StartWeaponAnim
-==============
-*/
+/**
+ * @brief CG_StartWeaponAnim
+ * @param anim
+ */
 static void CG_StartWeaponAnim(int anim)
 {
 	if (cg.predictedPlayerState.pm_type >= PM_DEAD)
@@ -77,6 +76,10 @@ static void CG_StartWeaponAnim(int anim)
 	cg.predictedPlayerState.weapAnim = ((cg.predictedPlayerState.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | anim;
 }
 
+/**
+ * @brief CG_ContinueWeaponAnim
+ * @param anim
+ */
 static void CG_ContinueWeaponAnim(int anim)
 {
 	if (cg.predictedPlayerState.weapon == WP_NONE)
@@ -95,12 +98,12 @@ static void CG_ContinueWeaponAnim(int anim)
 	CG_StartWeaponAnim(anim);
 }
 
-/*
-==============
-AddLean
-    add leaning offset
-==============
-*/
+/**
+ * @brief Add leaning offset
+ * @param viewAngle
+ * @param point
+ * @param ammount
+ */
 void AddLean(vec3_t viewAngle, vec3_t point, float ammount)
 {
 	if (ammount)
@@ -114,11 +117,10 @@ void AddLean(vec3_t viewAngle, vec3_t point, float ammount)
 	}
 }
 
-/*
-==============
-CG_MachineGunEjectBrassNew
-==============
-*/
+/**
+ * @brief CG_MachineGunEjectBrassNew
+ * @param cent
+ */
 void CG_MachineGunEjectBrassNew(centity_t *cent)
 {
 	localEntity_t *le;
@@ -193,11 +195,10 @@ void CG_MachineGunEjectBrassNew(centity_t *cent)
 	le->leMarkType = LEMT_NONE;
 }
 
-/*
-==========================
-CG_MachineGunEjectBrass
-==========================
-*/
+/**
+ * @brief CG_MachineGunEjectBrass
+ * @param cent
+ */
 void CG_MachineGunEjectBrass(centity_t *cent)
 {
 	localEntity_t *le;
@@ -345,12 +346,10 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	le->leMarkType = LEMT_NONE;
 }
 
-/*
-==============
-CG_PanzerFaustEjectBrass
-    toss the 'used' panzerfaust casing (unit is one-shot, disposable)
-==============
-*/
+/**
+ * @brief Toss the 'used' panzerfaust casing (unit is one-shot, disposable)
+ * @param cent
+ */
 static void CG_PanzerFaustEjectBrass(centity_t *cent)
 {
 	localEntity_t *le      = CG_AllocLocalEntity();
@@ -415,12 +414,12 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 	le->leMarkType = LEMT_NONE;
 }
 
-/*
-==============
-CG_SpearTrail
-    simple bubble trail behind a missile
-==============
-*/
+/**
+ * @brief Simple bubble trail behind a missile
+ * @param ent
+ * @param wi
+ * @todo TODO: Unused
+ */
 /*void CG_SpearTrail(centity_t *ent, const weaponInfo_t *wi )
 {
     int     contents, lastContents;
@@ -441,16 +440,13 @@ CG_SpearTrail
             CG_BubbleTrail( lastPos, origin, 1, 8 );
         }
     }
-}*/
-
-
-/*
-==========================
-CG_GetWindVector
-
-  compute random wind vector for smoke puff
-==========================
+}
 */
+
+/**
+ * @brief Compute random wind vector for smoke puff
+ * @param dir
+ */
 void CG_GetWindVector(vec3_t dir)
 {
 	dir[0] = random() * 0.25f;
@@ -459,12 +455,11 @@ void CG_GetWindVector(vec3_t dir)
 	VectorNormalize(dir);
 }
 
-// LT/FOPS pyro for marking air strikes
-/*
-==========================
-CG_PyroSmokeTrail
-==========================
-*/
+/**
+ * @brief LT/FOPS pyro for marking air strikes
+ * @param ent
+ * @param wi
+ */
 void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 {
 	int    step;
@@ -590,13 +585,11 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 	}
 }
 
-// new trail effects
-
-/*
-==========================
-CG_RocketTrail
-==========================
-*/
+/**
+ * @brief New trail effects
+ * @param ent
+ * @param wi
+ */
 void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 {
 	int           step;
@@ -747,11 +740,11 @@ void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 	*/
 }
 
-/*
-==========================
-CG_DynamiteTrail
-==========================
-*/
+/**
+ * @brief CG_DynamiteTrail
+ * @param ent
+ * @param wi
+ */
 static void CG_DynamiteTrail(centity_t *ent, const weaponInfo_t *wi)
 {
 	vec3_t origin;
@@ -771,11 +764,11 @@ static void CG_DynamiteTrail(centity_t *ent, const weaponInfo_t *wi)
 	}
 }
 
-/*
-==========================
-CG_GrenadeTrail
-==========================
-*/
+/**
+ * @brief CG_GrenadeTrail
+ * @param ent
+ * @param wi
+ */
 static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi)
 {
 	int           step = 15;  // nice and smooth curves
@@ -823,12 +816,14 @@ static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi)
 	}
 }
 
-/*
-==========================
-CG_RailTrail
-    re-inserted this as a debug mechanism for bullets
-==========================
-*/
+/**
+ * @brief Re-inserted this as a debug mechanism for bullets
+ * @param color
+ * @param start
+ * @param end
+ * @param index
+ * @param sideNum
+ */
 void CG_RailTrail2(vec3_t color, vec3_t start, vec3_t end, int index, int sideNum)
 {
 	localEntity_t *le;
@@ -874,7 +869,7 @@ void CG_RailTrail2(vec3_t color, vec3_t start, vec3_t end, int index, int sideNu
 }
 
 /**
- * @brief draw boxes for debugging
+ * @brief Draw boxes for debugging
  */
 void CG_RailTrail(vec3_t color, vec3_t start, vec3_t end, int type, int index)
 {
@@ -921,12 +916,12 @@ void CG_RailTrail(vec3_t color, vec3_t start, vec3_t end, int type, int index)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-/*
-======================
-CG_ParseWeaponConfig
-    read information for weapon animations (first/length/fps)
-======================
-*/
+/**
+ * @brief Read information for weapon animations (first/length/fps)
+ * @param filename
+ * @param wi
+ * @return
+ */
 static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 {
 	char         *text_p, *prev;
@@ -1084,6 +1079,12 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 	return qtrue;
 }
 
+/**
+ * @brief CG_RW_ParseError
+ * @param handle
+ * @param format
+ * @return
+ */
 static qboolean CG_RW_ParseError(int handle, char *format, ...)
 {
 	int         line;
@@ -1106,6 +1107,13 @@ static qboolean CG_RW_ParseError(int handle, char *format, ...)
 	return qfalse;
 }
 
+/**
+ * @brief CG_RW_ParseWeaponLinkPart
+ * @param handle
+ * @param weaponInfo
+ * @param viewType
+ * @return
+ */
 static qboolean CG_RW_ParseWeaponLinkPart(int handle, weaponInfo_t *weaponInfo, modelViewType_t viewType)
 {
 	pc_token_t  token;
@@ -1204,6 +1212,13 @@ static qboolean CG_RW_ParseWeaponLinkPart(int handle, weaponInfo_t *weaponInfo, 
 	return qtrue;
 }
 
+/**
+ * @brief CG_RW_ParseWeaponLink
+ * @param handle
+ * @param weaponInfo
+ * @param viewType
+ * @return
+ */
 static qboolean CG_RW_ParseWeaponLink(int handle, weaponInfo_t *weaponInfo, modelViewType_t viewType)
 {
 	pc_token_t token;
@@ -1241,6 +1256,13 @@ static qboolean CG_RW_ParseWeaponLink(int handle, weaponInfo_t *weaponInfo, mode
 	return qtrue;
 }
 
+/**
+ * @brief CG_RW_ParseViewType
+ * @param handle
+ * @param weaponInfo
+ * @param viewType
+ * @return
+ */
 static qboolean CG_RW_ParseViewType(int handle, weaponInfo_t *weaponInfo, modelViewType_t viewType)
 {
 	pc_token_t token;
@@ -1334,6 +1356,12 @@ static qboolean CG_RW_ParseViewType(int handle, weaponInfo_t *weaponInfo, modelV
 	return qtrue;
 }
 
+/**
+ * @brief CG_RW_ParseModModel
+ * @param handle
+ * @param weaponInfo
+ * @return
+ */
 static qboolean CG_RW_ParseModModel(int handle, weaponInfo_t *weaponInfo)
 {
 	char filename[MAX_QPATH];
@@ -1377,6 +1405,12 @@ static qboolean CG_RW_ParseModModel(int handle, weaponInfo_t *weaponInfo)
 	return qtrue;
 }
 
+/**
+ * @brief CG_RW_ParseClient
+ * @param handle
+ * @param weaponInfo
+ * @return
+ */
 static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 {
 	pc_token_t token;
@@ -1784,6 +1818,12 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 	return qtrue;
 }
 
+/**
+ * @brief CG_RegisterWeaponFromWeaponFile
+ * @param filename
+ * @param weaponInfo
+ * @return
+ */
 static qboolean CG_RegisterWeaponFromWeaponFile(const char *filename, weaponInfo_t *weaponInfo)
 {
 	pc_token_t token;
@@ -1836,15 +1876,15 @@ static qboolean CG_RegisterWeaponFromWeaponFile(const char *filename, weaponInfo
 	return qtrue;
 }
 
-/*
-=================
-CG_RegisterWeapon
-=================
-*/
+/**
+ * @brief CG_RegisterWeapon
+ * @param weaponNum
+ * @param force
+ */
 void CG_RegisterWeapon(int weaponNum, qboolean force)
 {
 	weaponInfo_t *weaponInfo;
-	char         *filename;
+    const char   *filename;
 
 	if (weaponNum <= 0 || weaponNum >= WP_NUM_WEAPONS)
 	{
@@ -1966,7 +2006,7 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
 	case WP_SMOKE_BOMB:
 		filename = "smokegrenade.weap";
 		break;
-	case WP_MOBILE_MG42_SET:     // do we need a seperate file for this?
+    case WP_MOBILE_MG42_SET:     // TODO: do we need a seperate file for this?
 	case WP_MOBILE_MG42:
 		filename = "mg42.weap";
 		break;
@@ -2010,7 +2050,7 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
 		break;
 	case WP_MAPMORTAR:
 		filename = "mapmortar.weap";
-		break;     // do we really need this?
+        break;     // TODO: do we really need this?
 	case WP_KNIFE_KABAR:
 		filename = "knife_kbar.weap";
 		break;
@@ -2093,12 +2133,15 @@ VIEW WEAPON
 
 // weapon animations
 
-/*
-==============
-CG_GetPartFramesFromWeap
-    get animation info from the parent if necessary
-==============
-*/
+/**
+ * @brief Get animation info from the parent if necessary
+ * @param cent
+ * @param part
+ * @param parent
+ * @param partid
+ * @param wi
+ * @return
+ */
 qboolean CG_GetPartFramesFromWeap(centity_t *cent, refEntity_t *part, refEntity_t *parent, int partid, weaponInfo_t *wi)
 {
 	int         i;
@@ -2137,13 +2180,12 @@ qboolean CG_GetPartFramesFromWeap(centity_t *cent, refEntity_t *part, refEntity_
 	return qtrue;
 }
 
-/*
-===============
-CG_SetWeapLerpFrameAnimation
-
-may include ANIM_TOGGLEBIT
-===============
-*/
+/**
+ * @brief May include ANIM_TOGGLEBIT
+ * @param wi
+ * @param lf
+ * @param newAnimation
+ */
 static void CG_SetWeapLerpFrameAnimation(weaponInfo_t *wi, lerpFrame_t *lf, int newAnimation)
 {
 	animation_t *anim;
@@ -2167,11 +2209,12 @@ static void CG_SetWeapLerpFrameAnimation(weaponInfo_t *wi, lerpFrame_t *lf, int 
 	}
 }
 
-/*
-===============
-CG_ClearWeapLerpFrame
-===============
-*/
+/**
+ * @brief CG_ClearWeapLerpFrame
+ * @param wi
+ * @param lf
+ * @param animationNumber
+ */
 void CG_ClearWeapLerpFrame(weaponInfo_t *wi, lerpFrame_t *lf, int animationNumber)
 {
 	lf->frameTime = lf->oldFrameTime = cg.time;
@@ -2180,14 +2223,15 @@ void CG_ClearWeapLerpFrame(weaponInfo_t *wi, lerpFrame_t *lf, int animationNumbe
 	lf->oldFrameModel = lf->frameModel = lf->animation->mdxFile;
 }
 
-/*
-===============
-CG_RunWeapLerpFrame
-
-Sets cg.snap, cg.oldFrame, and cg.backlerp
-cg.time should be between oldFrameTime and frameTime after exit
-===============
-*/
+/**
+ * @brief Sets cg.snap, cg.oldFrame, and cg.backlerp
+ * cg.time should be between oldFrameTime and frameTime after exit
+ * @param ci
+ * @param wi
+ * @param lf
+ * @param newAnimation
+ * @param speedScale
+ */
 static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t *lf, int newAnimation, float speedScale)
 {
 	// debugging tool to get no animations
@@ -2289,12 +2333,14 @@ static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t 
 	}
 }
 
-/*
-==============
-CG_WeaponAnimation
-==============
-*/
-// modified.  this is now client-side only (server does not dictate weapon animation info)
+/**
+ * @brief Modified.  this is now client-side only (server does not dictate weapon animation info)
+ * @param ps
+ * @param weapon
+ * @param weapOld
+ * @param weap
+ * @param weapBackLerp
+ */
 static void CG_WeaponAnimation(playerState_t *ps, weaponInfo_t *weapon, int *weapOld, int *weap, float *weapBackLerp)
 {
 	centity_t    *cent = &cg.predictedPlayerEntity;
@@ -2320,11 +2366,11 @@ static void CG_WeaponAnimation(playerState_t *ps, weaponInfo_t *weapon, int *wea
 
 ////////////////////////////////////////////////////////////////////////
 
-/*
-==============
-CG_CalculateWeaponPosition
-==============
-*/
+/**
+ * @brief CG_CalculateWeaponPosition
+ * @param origin
+ * @param angles
+ */
 static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 {
 	float scale;
@@ -2454,11 +2500,11 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	VectorMA(angles, -1.0, cg.kickAngles, angles);
 }
 
-/*
-===============
-CG_FlamethrowerFlame
-===============
-*/
+/**
+ * @brief CG_FlamethrowerFlame
+ * @param cent
+ * @param origin
+ */
 static void CG_FlamethrowerFlame(centity_t *cent, vec3_t origin)
 {
 	if (cent->currentState.weapon != WP_FLAMETHROWER)
@@ -2470,11 +2516,13 @@ static void CG_FlamethrowerFlame(centity_t *cent, vec3_t origin)
 	return;
 }
 
-/*
-========================
-CG_AddWeaponWithPowerups
-========================
-*/
+/**
+ * @brief CG_AddWeaponWithPowerups
+ * @param gun
+ * @param powerups
+ * @param ps
+ * @param cent
+ */
 static void CG_AddWeaponWithPowerups(refEntity_t *gun, int powerups, playerState_t *ps, centity_t *cent)
 {
 	// add powerup effects
@@ -2482,19 +2530,20 @@ static void CG_AddWeaponWithPowerups(refEntity_t *gun, int powerups, playerState
 	trap_R_AddRefEntityToScene(gun);
 }
 
-/*
-=============
-CG_AddPlayerWeapon
-
-Used for both the view weapon (ps is valid) and the world modelother character models (ps is NULL)
-The main player will have this called for BOTH cases, so effects like light and
-sound should only be done on the world model case.
-=============
-*/
+// TODO: unused ?
 //#define DEBUG_WEAPON
 
+// TODO: move to top ?
 #define BARREL_SMOKE_TIME 1000
 
+/**
+ * @brief Used for both the view weapon (ps is valid) and the world modelother character models (ps is NULL)
+ * The main player will have this called for BOTH cases, so effects like light and
+ * sound should only be done on the world model case.
+ * @param parent
+ * @param ps
+ * @param cent
+ */
 void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 {
 	refEntity_t  gun;
@@ -2969,96 +3018,105 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// add the scope model to the rifle if you've got it
 	if (isPlayer && !cg.renderingThirdPerson)  // for now just do it on the first person weapons
 	{
-		// FIXME: do a switch
-		if (weaponNum == WP_CARBINE || weaponNum == WP_KAR98 || weaponNum == WP_GPG40 || weaponNum == WP_M7)
-		{
-			if ((cg.snap->ps.ammo[BG_FindAmmoForWeapon(WP_GPG40)] || cg.snap->ps.ammo[BG_FindAmmoForWeapon(WP_M7)] || cg.snap->ps.ammoclip[BG_FindAmmoForWeapon(WP_GPG40)] || cg.snap->ps.ammoclip[BG_FindAmmoForWeapon(WP_M7)]))
-			{
-				int anim = cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT;
+        switch (weaponNum)
+        {
+        case WP_CARBINE:
+        case WP_KAR98:
+        case WP_GPG40:
+        case WP_M7:
+            if ((cg.snap->ps.ammo[BG_FindAmmoForWeapon(WP_GPG40)] || cg.snap->ps.ammo[BG_FindAmmoForWeapon(WP_M7)] || cg.snap->ps.ammoclip[BG_FindAmmoForWeapon(WP_GPG40)] || cg.snap->ps.ammoclip[BG_FindAmmoForWeapon(WP_M7)]))
+            {
+                int anim = cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT;
 
-				if (anim == PM_AltSwitchFromForWeapon(weaponNum) || anim == PM_AltSwitchToForWeapon(weaponNum) || anim == PM_IdleAnimForWeapon(weaponNum))
-				{
-					barrel.hModel = weapon->modModels[0];
-					if (barrel.hModel)
-					{
-						CG_PositionEntityOnTag(&barrel, parent, "tag_scope", 0, NULL);
-						CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-					}
-				}
-			}
-		}
-		else if (weaponNum == WP_GARAND)
-		{
-			barrel.hModel = weapon->modModels[0];
-			if (barrel.hModel)
-			{
-				CG_PositionEntityOnTag(&barrel, &gun, "tag_scope2", 0, NULL);
-				CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-			}
+                if (anim == PM_AltSwitchFromForWeapon(weaponNum) || anim == PM_AltSwitchToForWeapon(weaponNum) || anim == PM_IdleAnimForWeapon(weaponNum))
+                {
+                    barrel.hModel = weapon->modModels[0];
+                    if (barrel.hModel)
+                    {
+                        CG_PositionEntityOnTag(&barrel, parent, "tag_scope", 0, NULL);
+                        CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+                    }
+                }
+            }
+            break;
+        case WP_GARAND:
+            barrel.hModel = weapon->modModels[0];
+            if (barrel.hModel)
+            {
+                CG_PositionEntityOnTag(&barrel, &gun, "tag_scope2", 0, NULL);
+                CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+            }
 
-			barrel.hModel = weapon->modModels[1];
-			//if(barrel.hModel) {
-			CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
-			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-			//}
-		}
-		else if (weaponNum == WP_K43)
-		{
-			barrel.hModel = weapon->modModels[0];
-			if (barrel.hModel)
-			{
-				CG_PositionEntityOnTag(&barrel, &gun, "tag_scope", 0, NULL);
-				CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-			}
+            barrel.hModel = weapon->modModels[1];
+            //if(barrel.hModel) {
+            CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
+            CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+            //}
+            break;
+        case WP_K43:
+            barrel.hModel = weapon->modModels[0];
+            if (barrel.hModel)
+            {
+                CG_PositionEntityOnTag(&barrel, &gun, "tag_scope", 0, NULL);
+                CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+            }
 
-			barrel.hModel = weapon->modModels[1];
-			//if(barrel.hModel) {
-			CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
-			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-			//}
-		}
+            barrel.hModel = weapon->modModels[1];
+            //if(barrel.hModel) {
+            CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
+            CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+        //}
+        default:
+            break;
+        }
 	}
 	// 3rd person attachements
 	else
 	{
-		// FIXME: do a switch
-		if (weaponNum == WP_M7 || weaponNum == WP_GPG40)
-		{
-			// the holder
-			barrel.hModel = weapon->modModels[1];
-			CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
-			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+        switch (weaponNum)
+        {
+        case WP_M7:
+        case WP_GPG40:
+            // the holder
+            barrel.hModel = weapon->modModels[1];
+            CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
+            CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
 
-			// the grenade - have to always enabled it, no means of telling if another person has a grenade loaded or not atm :/
-			//if( cg.snap->ps.weaponstate != WEAPON_FIRING && cg.snap->ps.weaponstate != WEAPON_RELOADING ) {
-			if (weaponNum == WP_M7 /*|| weaponNum == WP_CARBINE*/)
-			{
-				barrel.hModel = weapon->missileModel;
-				CG_PositionEntityOnTag(&barrel, &barrel, "tag_prj", 0, NULL);
-				CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-			}
-		}
-		else if (weaponNum == WP_GARAND || weaponNum == WP_GARAND_SCOPE || weaponNum == WP_K43 || weaponNum == WP_K43_SCOPE)
-		{
-			// the holder
-			barrel.hModel = weapon->modModels[2];
-			CG_PositionEntityOnTag(&barrel, &gun, "tag_scope", 0, NULL);
-			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-		}
-		else if (IS_MG_WEAPON(weaponNum))
-		{
-			barrel.hModel = weapon->modModels[0];
-			barrel.frame  = 1;
-			CG_PositionEntityOnTag(&barrel, &gun, "tag_bipod", 0, NULL);
-			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-		}
-		else if (IS_MG_WEAPON_SET(weaponNum))
-		{
-			barrel.hModel = weapon->modModels[0];
-			barrel.frame  = 0;
-			CG_PositionEntityOnTag(&barrel, &gun, "tag_bipod", 0, NULL);
-			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-		}
+            // the grenade - have to always enabled it, no means of telling if another person has a grenade loaded or not atm :/
+            //if( cg.snap->ps.weaponstate != WEAPON_FIRING && cg.snap->ps.weaponstate != WEAPON_RELOADING ) {
+            if (weaponNum == WP_M7 /*|| weaponNum == WP_CARBINE*/)
+            {
+                barrel.hModel = weapon->missileModel;
+                CG_PositionEntityOnTag(&barrel, &barrel, "tag_prj", 0, NULL);
+                CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+            }
+            break;
+        case WP_GARAND:
+        case WP_GARAND_SCOPE:
+        case WP_K43:
+        case WP_K43_SCOPE:
+            // the holder
+            barrel.hModel = weapon->modModels[2];
+            CG_PositionEntityOnTag(&barrel, &gun, "tag_scope", 0, NULL);
+            CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+            break;
+        case WP_MOBILE_MG42:
+        case WP_MOBILE_BROWNING:
+            barrel.hModel = weapon->modModels[0];
+            barrel.frame  = 1;
+            CG_PositionEntityOnTag(&barrel, &gun, "tag_bipod", 0, NULL);
+            CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+            break;
+        case WP_MOBILE_MG42_SET:
+        case WP_MOBILE_BROWNING_SET:
+            barrel.hModel = weapon->modModels[0];
+            barrel.frame  = 0;
+            CG_PositionEntityOnTag(&barrel, &gun, "tag_bipod", 0, NULL);
+            CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+            break;
+        default:
+            break;
+        }
 	}
 
 	// make sure we aren't looking at cg.predictedPlayerEntity for LG
@@ -3269,13 +3327,10 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	}
 }
 
-/*
-==============
-CG_AddViewWeapon
-
-Add the weapon, and flash for the player's view
-==============
-*/
+/**
+ * @brief Add the weapon, and flash for the player's view
+ * @param ps
+ */
 void CG_AddViewWeapon(playerState_t *ps)
 {
 	refEntity_t  hand;
@@ -3545,12 +3600,11 @@ WEAPON SELECTION
 ==============================================================================
 */
 
-/*
-==============
-CG_WeaponHasAmmo
-    check for ammo
-==============
-*/
+/**
+ * @brief Check for ammo
+ * @param i
+ * @return
+ */
 static qboolean CG_WeaponHasAmmo(int i)
 {
 	// certain weapons don't have ammo
@@ -3573,11 +3627,11 @@ static qboolean CG_WeaponHasAmmo(int i)
 	return qtrue;
 }
 
-/*
-===============
-CG_WeaponSelectable
-===============
-*/
+/**
+ * @brief CG_WeaponSelectable
+ * @param i
+ * @return
+ */
 qboolean CG_WeaponSelectable(int i)
 {
 
@@ -3604,11 +3658,13 @@ qboolean CG_WeaponSelectable(int i)
 	return qtrue;
 }
 
-/*
-==============
-CG_WeaponIndex
-==============
-*/
+/**
+ * @brief CG_WeaponIndex
+ * @param weapnum
+ * @param bank
+ * @param cycle
+ * @return
+ */
 int CG_WeaponIndex(int weapnum, int *bank, int *cycle)
 {
 	static int bnk, cyc;
@@ -3657,13 +3713,13 @@ int CG_WeaponIndex(int weapnum, int *bank, int *cycle)
 	return 0;
 }
 
-/*
-==============
-getNextWeapInBank
-    Pass in a bank and cycle and this will return the next valid weapon higher in the cycle.
-    if the weap passed in is above highest in a cycle (MAX_WEAPS_IN_BANK), this will safely loop around
-==============
-*/
+/**
+ * @brief Pass in a bank and cycle and this will return the next valid weapon higher in the cycle.
+ * if the weap passed in is above highest in a cycle (MAX_WEAPS_IN_BANK), this will safely loop around
+ * @param bank
+ * @param cycle
+ * @return
+ */
 static int getNextWeapInBank(int bank, int cycle)
 {
 	cycle++;
@@ -3692,14 +3748,14 @@ static int getNextWeapInBankBynum(int weapnum)
 	return getNextWeapInBank(bank, cycle);
 }
 
-/*
-==============
-getPrevWeapInBank
-    Pass in a bank and cycle and this will return the next valid weapon lower in the cycle.
-    if the weap passed in is the lowest in a cycle (0), this will loop around to the
-    top (MAX_WEAPS_IN_BANK-1) and start down from there looking for a valid weapon position
-==============
-*/
+/**
+ * @brief Pass in a bank and cycle and this will return the next valid weapon lower in the cycle.
+ * if the weap passed in is the lowest in a cycle (0), this will loop around to the
+ * top (MAX_WEAPS_IN_BANK-1) and start down from there looking for a valid weapon position
+ * @param bank
+ * @param cycle
+ * @return
+ */
 static int getPrevWeapInBank(int bank, int cycle)
 {
 	cycle--;
@@ -3732,14 +3788,15 @@ static int getPrevWeapInBankBynum(int weapnum)
 	return getPrevWeapInBank(bank, cycle);
 }
 
-/*
-==============
-getNextBankWeap
-    Pass in a bank and cycle and this will return the next valid weapon in a higher bank.
-    sameBankPosition: if there's a weapon in the next bank at the same cycle,
-    return that (colt returns thompson for example) rather than the lowest weapon
-==============
-*/
+/**
+ * @brief Pass in a bank and cycle and this will return the next valid weapon in a higher bank.
+ * sameBankPosition: if there's a weapon in the next bank at the same cycle,
+ * return that (colt returns thompson for example) rather than the lowest weapon
+ * @param bank
+ * @param cycle
+ * @param sameBankPosition
+ * @return
+ */
 static int getNextBankWeap(int bank, int cycle, qboolean sameBankPosition)
 {
 	bank++;
@@ -3756,14 +3813,15 @@ static int getNextBankWeap(int bank, int cycle, qboolean sameBankPosition)
 	}
 }
 
-/*
-==============
-getPrevBankWeap
-    Pass in a bank and cycle and this will return the next valid weapon in a lower bank.
-    sameBankPosition: if there's a weapon in the prev bank at the same cycle,
-    return that (thompson returns colt for example) rather than the highest weapon
-==============
-*/
+/**
+ * @brief Pass in a bank and cycle and this will return the next valid weapon in a lower bank.
+ * sameBankPosition: if there's a weapon in the prev bank at the same cycle,
+ * return that (thompson returns colt for example) rather than the highest weapon
+ * @param bank
+ * @param cycle
+ * @param sameBankPosition
+ * @return
+ */
 static int getPrevBankWeap(int bank, int cycle, qboolean sameBankPosition)
 {
 	bank--;
@@ -3796,11 +3854,11 @@ static int getPrevBankWeap(int bank, int cycle, qboolean sameBankPosition)
 	}
 }
 
-/*
-==============
-getAltWeapon
-==============
-*/
+/**
+ * @brief getAltWeapon
+ * @param weapnum
+ * @return
+ */
 static int getAltWeapon(int weapnum)
 {
 	if (weaponTable[weapnum].weapAlts)
@@ -3860,11 +3918,11 @@ int getEquivWeapon(int weapnum)
 	return num;
 }
 
-/*
-==============
-CG_SetSniperZoom
-==============
-*/
+/**
+ * @brief CG_SetSniperZoom
+ * @param lastweap
+ * @param newweap
+ */
 void CG_SetSniperZoom(int lastweap, int newweap)
 {
 	int zoomindex;
@@ -3912,12 +3970,11 @@ void CG_SetSniperZoom(int lastweap, int newweap)
 	cg.zoomTime = cg.time;
 }
 
-/*
-==============
-CG_PlaySwitchSound
-    Get special switching sounds if they're there
-==============
-*/
+/**
+ * @brief Get special switching sounds if they're there
+ * @param lastweap
+ * @param newweap
+ */
 void CG_PlaySwitchSound(int lastweap, int newweap)
 {
 	sfxHandle_t switchsound = cgs.media.selectSound;
@@ -3961,11 +4018,11 @@ void CG_PlaySwitchSound(int lastweap, int newweap)
 	trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_WEAPON, switchsound);
 }
 
-/*
-==============
-CG_FinishWeaponChange
-==============
-*/
+/**
+ * @brief CG_FinishWeaponChange
+ * @param lastweap
+ * @param newweap
+ */
 void CG_FinishWeaponChange(int lastweap, int newweap)
 {
 	int newbank;
@@ -4104,12 +4161,9 @@ void CG_FinishWeaponChange(int lastweap, int newweap)
 
 extern pmove_t cg_pmove;
 
-/*
-==============
-CG_AltfireWeapon_f
-    for example, switching between WP_MAUSER and WP_SNIPERRIFLE
-==============
-*/
+/**
+ * @brief For example, switching between WP_MAUSER and WP_SNIPERRIFLE
+ */
 void CG_AltWeapon_f(void)
 {
 	int      original, num;
@@ -4223,18 +4277,42 @@ void CG_AltWeapon_f(void)
 	}
 
 	// don't allow another weapon switch when we're still swapping the gpg40, to prevent animation breaking
-	if ((cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING) &&
-	    // FIXME: do a switch
-	    ((original == WP_GPG40 || num == WP_GPG40 || original == WP_M7 || num == WP_M7) ||
-	     (original == WP_SILENCER || num == WP_SILENCER || original == WP_SILENCED_COLT || num == WP_SILENCED_COLT) ||
-	     (original == WP_AKIMBO_SILENCEDCOLT || num == WP_AKIMBO_SILENCEDCOLT || original == WP_AKIMBO_SILENCEDLUGER || num == WP_AKIMBO_SILENCEDLUGER) ||
-	     (original == WP_MORTAR_SET || num == WP_MORTAR_SET) ||
-	     (original == WP_MORTAR2_SET || num == WP_MORTAR2_SET) ||
-	     (original == WP_MOBILE_MG42_SET || num == WP_MOBILE_MG42_SET) ||
-	     (original == WP_MOBILE_BROWNING_SET || num == WP_MOBILE_BROWNING_SET)))
-	{
-		return;
-	}
+    if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
+    {
+        switch (original)
+        {
+        case WP_GPG40:
+        case WP_M7:
+        case WP_SILENCER:
+        case WP_SILENCED_COLT:
+        case WP_AKIMBO_SILENCEDCOLT:
+        case WP_AKIMBO_SILENCEDLUGER:
+        case WP_MORTAR_SET:
+        case WP_MORTAR2_SET:
+        case WP_MOBILE_MG42_SET:
+        case WP_MOBILE_BROWNING_SET:
+            return;
+        default:
+            break;
+        }
+
+        switch (num)
+        {
+        case WP_GPG40:
+        case WP_M7:
+        case WP_SILENCER:
+        case WP_SILENCED_COLT:
+        case WP_AKIMBO_SILENCEDCOLT:
+        case WP_AKIMBO_SILENCEDLUGER:
+        case WP_MORTAR_SET:
+        case WP_MORTAR2_SET:
+        case WP_MOBILE_MG42_SET:
+        case WP_MOBILE_BROWNING_SET:
+            return;
+        default:
+            break;
+        }
+    }
 
 	if (CG_WeaponSelectable(num))        // new weapon is valid
 	{
@@ -4257,13 +4335,10 @@ void CG_AltWeapon_f(void)
 	}
 }
 
-/*
-==============
-CG_NextWeap
-
-  switchBanks - curweap is the last in a bank, 'qtrue' means go to the next available bank, 'qfalse' means loop to the head of the bank
-==============
-*/
+/**
+ * @brief CG_NextWeap
+ * @param switchBanks - curweap is the last in a bank, 'qtrue' means go to the next available bank, 'qfalse' means loop to the head of the bank
+ */
 void CG_NextWeap(qboolean switchBanks)
 {
 	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
@@ -4485,15 +4560,12 @@ void CG_NextWeap(qboolean switchBanks)
 	CG_FinishWeaponChange(curweap, num);
 }
 
-/*
-==============
-CG_PrevWeap
-
-  switchBanks - curweap is the last in a bank
-        'qtrue'  - go to the next available bank
-        'qfalse' - loop to the head of the bank
-==============
-*/
+/**
+ * @brief CG_PrevWeap
+ * @param switchBanks - curweap is the last in a bank
+             'qtrue'  - go to the next available bank
+             'qfalse' - loop to the head of the bank
+ */
 void CG_PrevWeap(qboolean switchBanks)
 {
 	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
@@ -4708,11 +4780,9 @@ void CG_PrevWeap(qboolean switchBanks)
 	CG_FinishWeaponChange(curweap, num);
 }
 
-/*
-==============
-CG_LastWeaponUsed_f
-==============
-*/
+/**
+ * @brief CG_LastWeaponUsed_f
+ */
 void CG_LastWeaponUsed_f(void)
 {
 	// pause bug
@@ -4756,11 +4826,9 @@ void CG_LastWeaponUsed_f(void)
 	}
 }
 
-/*
-==============
-CG_NextWeaponInBank_f
-==============
-*/
+/**
+ * @brief CG_NextWeaponInBank_f
+ */
 void CG_NextWeaponInBank_f(void)
 {
 	// pause bug
@@ -4795,11 +4863,9 @@ void CG_NextWeaponInBank_f(void)
 	CG_NextWeap(qfalse);
 }
 
-/*
-==============
-CG_PrevWeaponInBank_f
-==============
-*/
+/**
+ * @brief CG_PrevWeaponInBank_f
+ */
 void CG_PrevWeaponInBank_f(void)
 {
 	// pause bug
@@ -4834,11 +4900,9 @@ void CG_PrevWeaponInBank_f(void)
 	CG_PrevWeap(qfalse);
 }
 
-/*
-==============
-CG_NextWeapon_f
-==============
-*/
+/**
+ * @brief CG_NextWeapon_f
+ */
 void CG_NextWeapon_f(void)
 {
 	if (!cg.snap)
@@ -4905,11 +4969,9 @@ void CG_NextWeapon_f(void)
 	CG_NextWeap(qtrue);
 }
 
-/*
-==============
-CG_PrevWeapon_f
-==============
-*/
+/**
+ * @brief CG_PrevWeapon_f
+ */
 void CG_PrevWeapon_f(void)
 {
 	if (!cg.snap)
@@ -4969,13 +5031,10 @@ void CG_PrevWeapon_f(void)
 	CG_PrevWeap(qtrue);
 }
 
-/*
-==============
-CG_WeaponBank_f
-    weapon keys are not generally bound directly('bind 1 weapon 1'),
-    rather the key is bound to a given bank ('bind 1 weaponbank 1')
-==============
-*/
+/**
+ * @brief Weapon keys are not generally bound directly('bind 1 weapon 1'),
+ * rather the key is bound to a given bank ('bind 1 weaponbank 1')
+ */
 void CG_WeaponBank_f(void)
 {
 	int num, i, curweap;
@@ -5080,24 +5139,50 @@ void CG_WeaponBank_f(void)
 		return;
 	}
 
-	// don't allow another weapon switch when we're still swapping the gpg40, to prevent animation breaking
-	// FIXME: do a switch
-	if ((cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING) &&
-	    ((curweap == WP_GPG40 || num == WP_GPG40 || curweap == WP_M7 || num == WP_M7) ||
-	     (curweap == WP_SILENCER || num == WP_SILENCER || curweap == WP_SILENCED_COLT || num == WP_SILENCED_COLT) ||
-	     (curweap == WP_MORTAR_SET || num == WP_MORTAR_SET || curweap == WP_MORTAR2_SET || num == WP_MORTAR2_SET)))
-	{
-		return;
-	}
+    // don't allow another weapon switch when we're still swapping the gpg40, to prevent animation breaking
+    if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
+    {
+        switch (curweap)
+        {
+        case WP_GPG40:
+        case WP_M7:
+        case WP_SILENCER:
+        case WP_SILENCED_COLT:
+        case WP_AKIMBO_SILENCEDCOLT:
+        case WP_AKIMBO_SILENCEDLUGER:
+        case WP_MORTAR_SET:
+        case WP_MORTAR2_SET:
+        case WP_MOBILE_MG42_SET:
+        case WP_MOBILE_BROWNING_SET:
+            return;
+        default:
+            break;
+        }
+
+        switch (num)
+        {
+        case WP_GPG40:
+        case WP_M7:
+        case WP_SILENCER:
+        case WP_SILENCED_COLT:
+        case WP_AKIMBO_SILENCEDCOLT:
+        case WP_AKIMBO_SILENCEDLUGER:
+        case WP_MORTAR_SET:
+        case WP_MORTAR2_SET:
+        case WP_MOBILE_MG42_SET:
+        case WP_MOBILE_BROWNING_SET:
+            return;
+        default:
+            break;
+        }
+    }
 
 	CG_FinishWeaponChange(curweap, num);
 }
 
-/*
-===============
-CG_Weapon_f
-===============
-*/
+/**
+ * @brief CG_Weapon_f
+ */
 void CG_Weapon_f(void)
 {
 	int num;
@@ -5133,13 +5218,10 @@ void CG_Weapon_f(void)
 	return;
 }
 
-/*
-===================
-CG_OutOfAmmoChange
-
-The current weapon has just run out of ammo
-===================
-*/
+/**
+ * @brief The current weapon has just run out of ammo
+ * @param allowforceswitch
+ */
 void CG_OutOfAmmoChange(qboolean allowforceswitch)
 {
 	int i;
@@ -5320,6 +5402,10 @@ WEAPON EVENTS
 ===================================================================================================
 */
 
+/**
+ * @brief CG_MG42EFX
+ * @param cent
+ */
 void CG_MG42EFX(centity_t *cent)
 {
 	// complete overhaul of this one
@@ -5359,12 +5445,10 @@ void CG_MG42EFX(centity_t *cent)
 	}
 }
 
-/*
-==============
-CG_MortarEFX
-    Right now mostly copied directly from Raf's MG42 FX, but with the optional addtion of smoke
-==============
-*/
+/**
+ * @brief Right now mostly copied directly from Raf's MG42 FX, but with the optional addtion of smoke
+ * @param cent
+ */
 void CG_MortarEFX(centity_t *cent)
 {
 	if (cent->currentState.density & 1)
@@ -5390,11 +5474,10 @@ void CG_MortarEFX(centity_t *cent)
 	}
 }
 
-/*
-==============
-CG_WeaponFireRecoil
-==============
-*/
+/**
+ * @brief CG_WeaponFireRecoil
+ * @param weapon
+ */
 void CG_WeaponFireRecoil(int weapon)
 {
 	float  pitchAdd  = 0;
@@ -5456,13 +5539,10 @@ void CG_WeaponFireRecoil(int weapon)
 	VectorCopy(recoil, cg.kickAVel);
 }
 
-/*
-================
-CG_FireWeapon
-
-Caused by an EV_FIRE_WEAPON event
-================
-*/
+/**
+ * @brief Caused by an EV_FIRE_WEAPON event
+ * @param cent
+ */
 void CG_FireWeapon(centity_t *cent)
 {
 	entityState_t *ent = &cent->currentState;
@@ -5567,44 +5647,44 @@ void CG_FireWeapon(centity_t *cent)
 		}
 	}
 
-	// lightning gun only does this this on initial press
-	// FIXME: do a switch
-	if (ent->weapon == WP_FLAMETHROWER)
-	{
-		if (cent->pe.lightningFiring)
-		{
-			return;
-		}
-	}
-	else if (ent->weapon == WP_GRENADE_LAUNCHER ||
-	         ent->weapon == WP_GRENADE_PINEAPPLE ||
-	         ent->weapon == WP_DYNAMITE ||
-	         ent->weapon == WP_SMOKE_MARKER
-	         || ent->weapon == WP_LANDMINE
-	         || ent->weapon == WP_SATCHEL
-	         || ent->weapon == WP_SMOKE_BOMB
-	         )
-	{
-		if (ent->apos.trBase[0] > 0)     // underhand
-		{
-			return;
-		}
-	}
+    // lightning gun only does this on initial press
+    switch (ent->weapon)
+    {
+    case WP_FLAMETHROWER:
+        if (cent->pe.lightningFiring)
+        {
+            return;
+        }
+        break;
+    case WP_GRENADE_LAUNCHER:
+    case WP_GRENADE_PINEAPPLE:
+    case WP_DYNAMITE:
+    case WP_SMOKE_MARKER:
+    case WP_LANDMINE:
+    case WP_SATCHEL:
+    case WP_SMOKE_BOMB:
+        if (ent->apos.trBase[0] > 0)     // underhand
+        {
+            return;
+        }
+        break;
+    case WP_GPG40:
 
-	if (ent->weapon == WP_GPG40)
-	{
-		if (ent->clientNum == cg.snap->ps.clientNum)
-		{
-			cg.weaponSelect = WP_KAR98;
-		}
-	}
-	else if (ent->weapon == WP_M7)
-	{
-		if (ent->clientNum == cg.snap->ps.clientNum)
-		{
-			cg.weaponSelect = WP_CARBINE;
-		}
-	}
+        if (ent->clientNum == cg.snap->ps.clientNum)
+        {
+            cg.weaponSelect = WP_KAR98;
+        }
+        break;
+    case WP_M7:
+
+        if (ent->clientNum == cg.snap->ps.clientNum)
+        {
+            cg.weaponSelect = WP_CARBINE;
+        }
+        break;
+    default:
+        break;
+    }
 
 	if ((cent->currentState.event & ~EV_EVENT_BITS) == EV_FIRE_WEAPON_LASTSHOT)
 	{
@@ -5676,11 +5756,15 @@ void CG_FireWeapon(centity_t *cent)
 	}
 }
 
-/*
-=================
-CG_AddSparks
-=================
-*/
+/**
+ * @brief CG_AddSparks
+ * @param origin
+ * @param dir
+ * @param speed
+ * @param duration
+ * @param count
+ * @param randScale
+ */
 void CG_AddSparks(vec3_t origin, vec3_t dir, int speed, int duration, int count, float randScale)
 {
 	localEntity_t *le;
@@ -5719,11 +5803,15 @@ void CG_AddSparks(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 	}
 }
 
-/*
-=================
-CG_AddBulletParticles
-=================
-*/
+/**
+ * @brief CG_AddBulletParticles
+ * @param origin
+ * @param dir
+ * @param speed
+ * @param duration
+ * @param count
+ * @param randScale
+ */
 void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int duration, int count, float randScale)
 {
 	vec3_t velocity, pos;
@@ -5742,11 +5830,19 @@ void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int duration, i
 	}
 }
 
-/*
-=================
-CG_AddDirtBulletParticles
-=================
-*/
+/**
+ * @brief CG_AddDirtBulletParticles
+ * @param origin
+ * @param dir
+ * @param speed
+ * @param duration
+ * @param count
+ * @param randScale
+ * @param width
+ * @param height
+ * @param alpha
+ * @param shader
+ */
 void CG_AddDirtBulletParticles(vec3_t origin, vec3_t dir, int speed, int duration, int count, float randScale, float width, float height, float alpha, qhandle_t shader)
 {
 	vec3_t velocity, pos;
@@ -5800,11 +5896,15 @@ void CG_RandomDebris(localEntity_t *le)
 	}
 }
 
-/*
-=================
-CG_AddDebris
-=================
-*/
+/**
+ * @brief CG_AddDebris
+ * @param origin
+ * @param dir
+ * @param speed
+ * @param duration
+ * @param count
+ * @param trace
+ */
 void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count, trace_t *trace)
 {
 	localEntity_t *le;
@@ -5962,11 +6062,14 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 	}
 }
 
-/*
-==============
-CG_WaterRipple
-==============
-*/
+/**
+ * @brief CG_WaterRipple
+ * @param shader
+ * @param loc
+ * @param dir
+ * @param size
+ * @param lifetime
+ */
 void CG_WaterRipple(qhandle_t shader, vec3_t loc, vec3_t dir, int size, int lifetime)
 {
 	localEntity_t *le = CG_AllocLocalEntity();
@@ -5992,15 +6095,14 @@ void CG_WaterRipple(qhandle_t shader, vec3_t loc, vec3_t dir, int size, int life
 	le->color[3]      = 1.0f;
 }
 
-/*
-=================
-CG_MissileHitWall
-
-Caused by an EV_MISSILE_MISS event, or directly by local bullet tracing
-
-ClientNum is a dummy field used to define what sort of effect to spawn
-=================
-*/
+/**
+ * @brief Caused by an EV_MISSILE_MISS event, or directly by local bullet tracing
+ * @param weapon
+ * @param clientNum is a dummy field used to define what sort of effect to spawn
+ * @param origin
+ * @param dir
+ * @param surfFlags
+ */
 void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int surfFlags)     // modified to send missilehitwall surface parameters
 {
 	qhandle_t   mod      = 0, mark = 0, shader = 0;
@@ -6476,11 +6578,13 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 	}
 }
 
-/*
-==============
-CG_MissileHitWallSmall
-==============
-*/
+/**
+ * @brief CG_MissileHitWallSmall
+ * @param weapon
+ * @param clientNum
+ * @param origin
+ * @param dir
+ */
 void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir)
 {
 	vec3_t        sprOrg, sprVel;
@@ -6507,11 +6611,14 @@ void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir
 	}
 }
 
-/*
-=================
-CG_MissileHitPlayer
-=================
-*/
+/**
+ * @brief CG_MissileHitPlayer
+ * @param cent
+ * @param weapon
+ * @param origin
+ * @param dir
+ * @param entityNum
+ */
 void CG_MissileHitPlayer(centity_t *cent, int weapon, vec3_t origin, vec3_t dir, int entityNum)
 {
 	CG_Bleed(origin, entityNum);
@@ -6541,11 +6648,12 @@ BULLETS
 ============================================================================
 */
 
-/*
-===============
-CG_SpawnTracer
-===============
-*/
+/**
+ * @brief CG_SpawnTracer
+ * @param sourceEnt
+ * @param pstart
+ * @param pend
+ */
 void CG_SpawnTracer(int sourceEnt, vec3_t pstart, vec3_t pend)
 {
 	localEntity_t *le;
@@ -6606,11 +6714,11 @@ void CG_SpawnTracer(int sourceEnt, vec3_t pstart, vec3_t pend)
 	VectorScale(dir, cg_tracerSpeed.value, le->pos.trDelta);
 }
 
-/*
-===============
-CG_DrawTracer
-===============
-*/
+/**
+ * @brief CG_DrawTracer
+ * @param start
+ * @param finish
+ */
 void CG_DrawTracer(vec3_t start, vec3_t finish)
 {
 	vec3_t     forward, right;
@@ -6661,11 +6769,12 @@ void CG_DrawTracer(vec3_t start, vec3_t finish)
 	trap_R_AddPolyToScene(cgs.media.tracerShader, 4, verts);
 }
 
-/*
-===============
-CG_Tracer
-===============
-*/
+/**
+ * @brief CG_Tracer
+ * @param source
+ * @param dest
+ * @param sparks
+ */
 void CG_Tracer(vec3_t source, vec3_t dest, int sparks)
 {
 	float  len, begin, end;
@@ -6693,11 +6802,12 @@ void CG_Tracer(vec3_t source, vec3_t dest, int sparks)
 	CG_DrawTracer(start, finish);
 }
 
-/*
-======================
-CG_CalcMuzzlePoint
-======================
-*/
+/**
+ * @brief CG_CalcMuzzlePoint
+ * @param entityNum
+ * @param muzzle
+ * @return
+ */
 qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 {
 	vec3_t    forward, right, up;
@@ -6856,13 +6966,13 @@ void SnapVectorTowards(vec3_t v, vec3_t to)
 	}
 }
 
-/*
-======================
-CG_DrawBulletTracer
-
-Renders bullet tracers if  tracer option is valid.
-======================
-*/
+/**
+ * @brief Renders bullet tracers if  tracer option is valid.
+ * @param pstart
+ * @param pend
+ * @param sourceEntityNum
+ * @param otherEntityNum
+ */
 void CG_DrawBulletTracer(vec3_t pstart, vec3_t pend, int sourceEntityNum, int otherEntityNum)
 {
 	if (cg_tracers.integer == 2 && sourceEntityNum != cg.clientNum)
@@ -6891,13 +7001,16 @@ void CG_DrawBulletTracer(vec3_t pstart, vec3_t pend, int sourceEntityNum, int ot
 	}
 }
 
-/*
-======================
-CG_Bullet
-
-Renders bullet effects.
-======================
-*/
+/**
+ * @brief Renders bullet effects.
+ * @param end
+ * @param sourceEntityNum
+ * @param flesh
+ * @param fleshEntityNum
+ * @param otherEntNum2
+ * @param waterfraction
+ * @param seed
+ */
 void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityNum, int otherEntNum2, float waterfraction, int seed)
 {
 	trace_t    trace, trace2;
@@ -7072,10 +7185,9 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 		// if we haven't dropped a blood spat in a while, check if this is a good scenario
 		if (cg_blood.integer && cg_bloodTime.integer && (lastBloodSpat > cg.time || lastBloodSpat < cg.time - 500))
 		{
-			vec3_t trend;
-
 			if (CG_CalcMuzzlePoint(sourceEntityNum, start))
 			{
+                vec3_t trend;
 				vec4_t projection;
 
 				VectorSubtract(end, start, dir);
