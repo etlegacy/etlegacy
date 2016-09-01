@@ -749,7 +749,7 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 		}
 		else
 		{
-			for (i = 0; i < level.num_entities; i++)  // // slower way, improve by time
+			for (i = MAX_CLIENTS; i < level.num_entities; i++)  // slower way, improve by time
 			{
 				if (g_entities[i].s.eType == ET_CORPSE)
 				{

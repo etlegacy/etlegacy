@@ -107,10 +107,9 @@ option(FEATURE_DBMS		"Enable dbms support (sqlite3)"						ON)
 option(FEATURE_RATING		"Enable skill rating"							OFF)
 option(FORCE_DEBUG		"Force enable legacy debug macros"					OFF)
 
+cmake_dependent_option(FEATURE_LUASQL	"Enable LuaSQL in mod code (sqlite3 backend)"			ON "FEATURE_LUA" OFF)
 cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot in mod code (Windows, linux and OS X only)"	ON "WIN32 OR APPLE OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
 cmake_dependent_option(INSTALL_OMNIBOT	"Install Omni-bot"						ON "FEATURE_OMNIBOT" OFF)
-
-cmake_dependent_option(INSTALL_LUASQL	"Builds and installs LuaSQL (sqlite3 backend)"			ON "FEATURE_LUA" OFF)
 
 option(ARM			"Build ARM version"							OFF)
 
@@ -175,10 +174,6 @@ endif(BUILD_PAK3_PK3)
 if(INSTALL_OMNIBOT AND BUILD_MOD)
 	include(cmake/ETLInstallOmniBot.cmake)
 endif(INSTALL_OMNIBOT AND BUILD_MOD)
-
-if(INSTALL_LUASQL)
-	include(cmake/ETLInstallLuaSQL.cmake)
-endif(INSTALL_LUASQL)
 
 # Generate install and uninstall packs
 include(cmake/ETLInstall.cmake)

@@ -1,7 +1,7 @@
 
                               ET: Legacy font notes
 
-1.) The font files 'cour10p_b.ttf' and 'LiberationSans-Bold.tff' are renamed to fit 
+1.) The font files 'LiberationSans-Bold.tff' and 'Courier Prime Bold.ttf' are renamed to fit
 vanilla ET font names 'ariblk.tft' and 'courbd.tft'. 
 
 

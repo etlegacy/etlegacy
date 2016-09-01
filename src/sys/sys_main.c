@@ -946,7 +946,8 @@ void Sys_GameLoop(void)
 		startTime = Sys_Milliseconds();
 #endif
 
-		IN_Frame();
+		// Improve input responsiveness by moving sampling to other side of framerate limiter - moved to Com_Frame()
+		//IN_Frame();
 		Com_Frame();
 
 #ifdef LEGACY_DEBUG

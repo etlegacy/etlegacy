@@ -36,6 +36,11 @@
 #include "q_shared.h"
 #include "qcommon.h"
 #include <setjmp.h>
+
+#ifndef DEDICATED
+#include "../sys/sys_local.h"
+#endif
+
 #if defined (_WIN32)
 #   include "../sys/sys_win32.h"
 #   include <winsock.h>
@@ -3308,6 +3313,10 @@ void Com_Frame(void)
 		}
 	}
 	while (Com_TimeVal(minMsec));
+
+#ifndef DEDICATED
+	IN_Frame();
+#endif
 
 	lastTime      = com_frameTime;
 	com_frameTime = Com_EventLoop();
