@@ -614,7 +614,7 @@ cvarTable_t gameCvarTable[] =
 	{ &g_skipCorrection,                    "g_skipCorrection",                    "1",                          0 },
 	{ &g_extendedNames,                     "g_extendedNames",                     "1",                          0 },
 #ifdef FEATURE_RATING
-	{ &g_skillRating,                       "g_skillRating",                       "1",                          CVAR_LATCH | CVAR_ARCHIVE },
+	{ &g_skillRating,                       "g_skillRating",                       "0",                          CVAR_LATCH | CVAR_ARCHIVE },
 #endif
 #ifdef FEATURE_MULTIVIEW
 	{ &g_multiview,                         "g_multiview",                         "0",                          CVAR_LATCH | CVAR_ARCHIVE },
@@ -4548,7 +4548,7 @@ void G_DrawEntBBox(gentity_t* ent)
 {
 	vec3_t maxs,mins;
 
-	if (G_EntitiesFree() < 64) 
+	if (G_EntitiesFree() < 64)
 	{
 		return;
 	}
