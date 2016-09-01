@@ -35,6 +35,9 @@
 
 #include "tr_local.h"
 
+/**
+ * @brief R_PerformanceCounters
+ */
 void R_PerformanceCounters(void)
 {
 	if (!r_speeds->integer)
@@ -45,9 +48,9 @@ void R_PerformanceCounters(void)
 		return;
 	}
 
-	// FIXME: do a switch
-	if (r_speeds->integer == RSPEEDS_GENERAL)
-	{
+    switch (r_speeds->integer)
+    {
+    case RSPEEDS_GENERAL:
 		Ren_Print("%i views %i portals %i batches %i surfs %i leafs %i verts %i tris\n",
 		          backEnd.pc.c_views, backEnd.pc.c_portals, backEnd.pc.c_batches, backEnd.pc.c_surfaces, tr.pc.c_leafs,
 		          backEnd.pc.c_vertexes, backEnd.pc.c_indexes / 3);
@@ -70,9 +73,8 @@ void R_PerformanceCounters(void)
 		          backEnd.pc.c_multiDrawElements,
 		          backEnd.pc.c_multiDrawPrimitives,
 		          backEnd.pc.c_multiVboIndexes / 3);
-	}
-	else if (r_speeds->integer == RSPEEDS_CULLING)
-	{
+        break;
+    case RSPEEDS_CULLING:
 		Ren_Print("(gen) %i sin %i sout %i pin %i pout\n",
 		          tr.pc.c_sphere_cull_in, tr.pc.c_sphere_cull_out, tr.pc.c_plane_cull_in, tr.pc.c_plane_cull_out);
 
@@ -87,35 +89,29 @@ void R_PerformanceCounters(void)
 
 		Ren_Print("(md5) %i bin %i bclip %i bout\n",
 		          tr.pc.c_box_cull_md5_in, tr.pc.c_box_cull_md5_clip, tr.pc.c_box_cull_md5_out);
-	}
-	else if (r_speeds->integer == RSPEEDS_VIEWCLUSTER)
-	{
+        break;
+    case RSPEEDS_VIEWCLUSTER:
 		Ren_Print("viewcluster: %i\n", tr.visClusters[tr.visIndex]);
-	}
-	else if (r_speeds->integer == RSPEEDS_LIGHTS)
-	{
+        break;
+    case RSPEEDS_LIGHTS:
 		Ren_Print("dlight srf:%i culled:%i\n", tr.pc.c_dlightSurfaces, tr.pc.c_dlightSurfacesCulled);
 
 		Ren_Print("dlights:%i interactions:%i\n", tr.pc.c_dlights, tr.pc.c_dlightInteractions);
 
 		Ren_Print("slights:%i interactions:%i\n", tr.pc.c_slights, tr.pc.c_slightInteractions);
-	}
-	else if (r_speeds->integer == RSPEEDS_SHADOWCUBE_CULLING)
-	{
+        break;
+    case RSPEEDS_SHADOWCUBE_CULLING:
 		Ren_Print("omni pyramid tests:%i bin:%i bclip:%i bout:%i\n",
 		          tr.pc.c_pyramidTests, tr.pc.c_pyramid_cull_ent_in, tr.pc.c_pyramid_cull_ent_clip, tr.pc.c_pyramid_cull_ent_out);
-	}
-	else if (r_speeds->integer == RSPEEDS_FOG)
-	{
+        break;
+    case RSPEEDS_FOG:
 		Ren_Print("fog srf:%i batches:%i\n", backEnd.pc.c_fogSurfaces, backEnd.pc.c_fogBatches);
-	}
-	else if (r_speeds->integer == RSPEEDS_FLARES)
-	{
+        break;
+    case RSPEEDS_FLARES:
 		Ren_Print("flare adds:%i tests:%i renders:%i\n",
 		          backEnd.pc.c_flareAdds, backEnd.pc.c_flareTests, backEnd.pc.c_flareRenders);
-	}
-	else if (r_speeds->integer == RSPEEDS_OCCLUSION_QUERIES)
-	{
+        break;
+    case RSPEEDS_OCCLUSION_QUERIES:
 		Ren_Print("occlusion queries:%i multi:%i saved:%i culled lights:%i culled entities:%i culled leafs:%i response time:%i fetch time:%i\n",
 		          backEnd.pc.c_occlusionQueries,
 		          backEnd.pc.c_occlusionQueriesMulti,
@@ -125,36 +121,32 @@ void R_PerformanceCounters(void)
 		          backEnd.pc.c_occlusionQueriesLeafsCulled,
 		          backEnd.pc.c_occlusionQueriesResponseTime,
 		          backEnd.pc.c_occlusionQueriesFetchTime);
-	}
+        break;
 #if 0
-	else if (r_speeds->integer == RSPEEDS_DEPTH_BOUNDS_TESTS)
-	{
+    case RSPEEDS_DEPTH_BOUNDS_TESTS:
 		Ren_Print("depth bounds tests:%i rejected:%i\n", tr.pc.c_depthBoundsTests, tr.pc.c_depthBoundsTestsRejected);
-	}
+        break;
 #endif
-	else if (r_speeds->integer == RSPEEDS_SHADING_TIMES)
-	{
+    case RSPEEDS_SHADING_TIMES:
 		Ren_Print("forward shading times: ambient:%i lighting:%i\n", backEnd.pc.c_forwardAmbientTime,
 		          backEnd.pc.c_forwardLightingTime);
-	}
-	else if (r_speeds->integer == RSPEEDS_CHC)
-	{
+        break;
+    case RSPEEDS_CHC:
 		Ren_Print("%i CHC++ ms %i queries %i multi queries %i saved\n",
 		          tr.pc.c_CHCTime,
 		          tr.pc.c_occlusionQueries,
 		          tr.pc.c_occlusionQueriesMulti,
 		          tr.pc.c_occlusionQueriesSaved);
-	}
-	else if (r_speeds->integer == RSPEEDS_NEAR_FAR)
-	{
+        break;
+    case RSPEEDS_NEAR_FAR:
 		Ren_Print("zNear: %.0f zFar: %.0f\n", tr.viewParms.zNear, tr.viewParms.zFar);
-	}
-	else if (r_speeds->integer == RSPEEDS_DECALS)
-	{
+        break;
+    case RSPEEDS_DECALS:
 		Ren_Print("decal projectors: %d test surfs: %d clip surfs: %d decal surfs: %d created: %d\n",
 		          tr.pc.c_decalProjectors, tr.pc.c_decalTestSurfaces, tr.pc.c_decalClipSurfaces, tr.pc.c_decalSurfaces,
 		          tr.pc.c_decalSurfacesCreated);
-	}
+        break;
+    }
 
 	Com_Memset(&tr.pc, 0, sizeof(tr.pc));
 	Com_Memset(&backEnd.pc, 0, sizeof(backEnd.pc));
@@ -163,6 +155,10 @@ void R_PerformanceCounters(void)
 int c_blockedOnRender;
 int c_blockedOnMain;
 
+/**
+ * @brief R_IssueRenderCommands
+ * @param runPerformanceCounters
+ */
 void R_IssueRenderCommands(qboolean runPerformanceCounters)
 {
 	renderCommandList_t *cmdList = &backEndData->commands;
@@ -201,14 +197,12 @@ void R_IssuePendingRenderCommands(void)
 	R_IssueRenderCommands(qfalse);
 }
 
-/*
-============
-R_GetCommandBuffer
-
-make sure there is enough command space, waiting on the
-render thread if needed.
-============
-*/
+/**
+ * @brief Make sure there is enough command space, waiting on the
+ * render thread if needed.
+ * @param bytes
+ * @return
+ */
 void *R_GetCommandBuffer(int bytes)
 {
 	renderCommandList_t *cmdList = &backEndData->commands;
@@ -230,6 +224,9 @@ void *R_GetCommandBuffer(int bytes)
 	return cmdList->cmds + cmdList->used - bytes;
 }
 
+/**
+ * @brief R_AddDrawViewCmd
+ */
 void R_AddDrawViewCmd()
 {
 	drawViewCommand_t *cmd;
@@ -245,14 +242,10 @@ void R_AddDrawViewCmd()
 	cmd->viewParms = tr.viewParms;
 }
 
-
-/*
-=============
-RE_SetColor
-
-Passing NULL will set the color to white
-=============
-*/
+/**
+ * @brief Passing NULL will set the color to white
+ * @param rgba
+ */
 void RE_SetColor(const float *rgba)
 {
 	setColorCommand_t *cmd;
@@ -280,6 +273,18 @@ void RE_SetColor(const float *rgba)
 	cmd->color[3] = rgba[3];
 }
 
+/**
+ * @brief R_ClipRegion
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ * @param s1
+ * @param t1
+ * @param s2
+ * @param t2
+ * @return
+ */
 static qboolean R_ClipRegion(float *x, float *y, float *w, float *h, float *s1, float *t1, float *s2, float *t2)
 {
 	float left, top, right, bottom;
@@ -351,6 +356,10 @@ static qboolean R_ClipRegion(float *x, float *y, float *w, float *h, float *s1, 
 	return qfalse;
 }
 
+/**
+ * @brief RE_SetClipRegion
+ * @param region
+ */
 void RE_SetClipRegion(const float *region)
 {
 	if (region == NULL)
@@ -363,6 +372,18 @@ void RE_SetClipRegion(const float *region)
 	}
 }
 
+/**
+ * @brief RE_StretchPic
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ * @param s1
+ * @param t1
+ * @param s2
+ * @param t2
+ * @param hShader
+ */
 void RE_StretchPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader)
 {
 	stretchPicCommand_t *cmd;
@@ -397,6 +418,12 @@ void RE_StretchPic(float x, float y, float w, float h, float s1, float t1, float
 
 extern int r_numPolyVerts;
 
+/**
+ * @brief RE_2DPolyies
+ * @param verts
+ * @param numverts
+ * @param hShader
+ */
 void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 {
 	poly2dCommand_t *cmd;
@@ -421,6 +448,19 @@ void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 	r_numPolyVerts += numverts;
 }
 
+/**
+ * @brief RE_RotatedPic
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ * @param s1
+ * @param t1
+ * @param s2
+ * @param t2
+ * @param hShader
+ * @param angle
+ */
 void RE_RotatedPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, float angle)
 {
 	stretchPicCommand_t *cmd;
@@ -445,6 +485,20 @@ void RE_RotatedPic(float x, float y, float w, float h, float s1, float t1, float
 	cmd->t2    = t2;
 }
 
+/**
+ * @brief RE_StretchPicGradient
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ * @param s1
+ * @param t1
+ * @param s2
+ * @param t2
+ * @param hShader
+ * @param gradientColor
+ * @param gradientType
+ */
 void RE_StretchPicGradient(float x, float y, float w, float h,
                            float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor,
                            int gradientType)
@@ -481,14 +535,11 @@ void RE_StretchPicGradient(float x, float y, float w, float h,
 	cmd->gradientType     = gradientType;
 }
 
-/*
-====================
-RE_BeginFrame
-
-If running in stereo, RE_BeginFrame will be called twice
-for each RE_EndFrame
-====================
-*/
+/**
+ * @brief If running in stereo, RE_BeginFrame will be called twice
+ * for each RE_EndFrame
+ * @param stereoFrame
+ */
 void RE_BeginFrame(stereoFrame_t stereoFrame)
 {
 	drawBufferCommand_t *cmd;
@@ -640,13 +691,11 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	}
 }
 
-/*
-=============
-RE_EndFrame
-
-Returns the number of msec spent in the back end
-=============
-*/
+/**
+ * @brief Returns the number of msec spent in the back end
+ * @param frontEndMsec
+ * @param backEndMsec
+ */
 void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 {
 	swapBuffersCommand_t *cmd;
@@ -685,6 +734,14 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 	backEnd.pc.msec = 0;
 }
 
+/**
+ * @brief RE_TakeVideoFrame
+ * @param width
+ * @param height
+ * @param captureBuffer
+ * @param encodeBuffer
+ * @param motionJpeg
+ */
 void RE_TakeVideoFrame(int width, int height, byte *captureBuffer, byte *encodeBuffer, qboolean motionJpeg)
 {
 	videoFrameCommand_t *cmd;
@@ -709,6 +766,14 @@ void RE_TakeVideoFrame(int width, int height, byte *captureBuffer, byte *encodeB
 	cmd->motionJpeg    = motionJpeg;
 }
 
+/**
+ * @brief RE_RenderToTexture
+ * @param textureid
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ */
 void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 {
 	renderToTextureCommand_t *cmd;
@@ -734,6 +799,9 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 	cmd->h         = h;
 }
 
+/**
+ * @brief RE_Finish
+ */
 void RE_Finish(void)
 {
 	renderFinishCommand_t *cmd;
