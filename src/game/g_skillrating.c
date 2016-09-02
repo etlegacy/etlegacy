@@ -75,6 +75,7 @@ void G_CalculateSkillRatings(void)
 	// log
 	G_Printf("SKILL_RATING: Map: %s, Winner: %d, Time: %d, Timelimit: %d\n",
 	         level.rawmapname, winner, level.timeCurrent - level.startTime, g_timelimit.integer * 60000);
+
 	G_UpdateSkillRating(winner);
 }
 
@@ -84,7 +85,7 @@ void G_CalculateSkillRatings(void)
  */
 float pdf(float x)
 {
-	return exp(-0.5 * pow(x, 2)) / sqrt(2 * M_PI);
+	return exp(-0.5f * pow(x, 2)) / sqrt(2 * M_PI);
 }
 
 /**
@@ -94,7 +95,7 @@ float pdf(float x)
  */
 float cdf(float x)
 {
-	return 0.5 * (1 + erff(x / sqrt(2)));
+	return 0.5f * (1 + erff(x / sqrt(2)));
 }
 
 /**
@@ -121,8 +122,24 @@ float W(float t, float epsilon)
  */
 float G_MapWinProb(int team)
 {
-	// FIXME
-	return 0.5f;
+	char cs[MAX_STRING_CHARS];
+
+	trap_GetConfigstring(CS_LEGACYINFO, cs, sizeof(cs));
+	level.mapProb = atof(Info_ValueForKey(cs, "M"));
+
+	if (!level.mapProb)
+	{
+		level.mapProb = 0.5f;
+	}
+
+	if (team == TEAM_AXIS)
+	{
+		return level.mapProb;
+	}
+	else
+	{
+		return 1.0f - level.mapProb;
+	}
 }
 
 /**

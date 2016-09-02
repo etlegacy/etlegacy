@@ -1894,6 +1894,11 @@ void G_UpdateCvars(void)
 					if (g_skillRating.integer)
 					{
 						Info_SetValueForKey(cs, "R", (va("%i", g_skillRating.integer)));
+
+						if (g_skillRating.integer > 1)
+						{
+							Info_SetValueForKey(cs, "M", (va("%f", level.mapProb)));
+						}
 					}
 #endif
 
@@ -2448,6 +2453,13 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 
 	// MAPVOTE
 	level.mapsSinceLastXPReset = 0;
+
+#ifdef FEATURE_RATING
+	if (g_skillRating.integer > 1)
+	{
+		level.mapProb = 0.f;
+	}
+#endif
 
 #ifdef FEATURE_LUA
 	G_LuaInit();
