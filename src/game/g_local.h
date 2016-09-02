@@ -2360,7 +2360,7 @@ int G_TeamCount(gentity_t *ent, int weap);
 
 qboolean G_IsFireteamLeader(int entityNum, fireteamData_t **teamNum);
 fireteamData_t *G_FindFreePublicFireteam(team_t team);
-void G_RegisterFireteam(/*const char* name,*/ int entityNum);
+void G_RegisterFireteam(int entityNum);
 
 void weapon_callAirStrike(gentity_t *ent);
 void weapon_checkAirStrikeThink2(gentity_t *ent);
