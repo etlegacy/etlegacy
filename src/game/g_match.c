@@ -796,8 +796,8 @@ void G_printMatchInfo(gentity_t *ent)
 		      tot_xp
 #ifdef FEATURE_RATING
 		      ,
-		      (tot_rating < 0.f) ? 0.f : tot_rating / TeamCount(-1, i),
-		      tot_delta / TeamCount(-1, i)
+		      (TeamCount(-1, i) == 0) ? 0 : ((tot_rating < 0.f) ? 0.f : tot_rating / TeamCount(-1, i)),
+		      (TeamCount(-1, i) == 0) ? 0 : tot_delta / TeamCount(-1, i)
 #endif
 		      ));
 	}
