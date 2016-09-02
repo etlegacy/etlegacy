@@ -646,7 +646,7 @@ void G_printMatchInfo(gentity_t *ent)
 
 	for (i = TEAM_AXIS; i <= TEAM_SPECTATOR; i++)
 	{
-		if (!TeamCount(-1, i))
+		if (TeamCount(-1, i) == 0)
 		{
 			continue;
 		}

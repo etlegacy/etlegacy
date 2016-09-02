@@ -226,12 +226,18 @@ void G_UpdateSkillRating(int winner)
 			continue;
 		}
 
+		// player has played exact same time in each team
+		if (cl->sess.time_axis == cl->sess.time_allies)
+		{
+			continue;
+		}
+
 		// find which is team even when player has played on both side or has moved to spectator
 		if (cl->sess.time_axis - cl->sess.time_allies > 0)
 		{
 			playerTeam = TEAM_AXIS;
 		}
-		if (cl->sess.time_allies - cl->sess.time_axis > 0)
+		else
 		{
 			playerTeam = TEAM_ALLIES;
 		}
