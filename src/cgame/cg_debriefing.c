@@ -2835,6 +2835,7 @@ void CG_Debriefing_MissionTitle_Draw(panel_button_t *button)
 {
 	const char *s;
 	float      x, w;
+	int        secs;
 	vec4_t     clrTxtBck = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 	if (cg_gameType.integer == GT_WOLF_STOPWATCH)
@@ -2893,7 +2894,16 @@ void CG_Debriefing_MissionTitle_Draw(panel_button_t *button)
 		CG_PanelButtonsRender_Window_Ext(&button->rect, CG_Debriefing_WinStringForTeam(CG_Debriefing_FindOveralWinningTeam()), 0, 18, 0.25f, 16);
 	}
 
-	s = va("^2%i ^9%s", MAX(60 - (cg.time - cgs.intermissionStartTime) / 1000, 0), CG_TranslateString("SECS TO NEXT MAP"));
+	secs = MAX(60 - (cg.time - cgs.intermissionStartTime) / 1000, 0);
+
+	if (secs > 1)
+	{
+		s = va("^2%i ^9%s", secs, CG_TranslateString("SECS TO NEXT MAP"));
+	}
+	else
+	{
+		s = va("^2%i ^9%s", secs, CG_TranslateString("SEC TO NEXT MAP"));
+	}
 
 	w = CG_Text_Width_Ext(s, 0.25f, 0, &cgs.media.limboFont1);
 	x = button->rect.x + button->rect.w - w - 4;
