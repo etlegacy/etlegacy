@@ -309,7 +309,7 @@ void CG_DemoClick(int key, qboolean down)
 		return;
 	}
 
-#if FEATURE_EDV 
+#if FEATURE_EDV
 	if (cg.demohelpWindow == SHOW_ON)
 	{
 		// pull up extended helpmenu
@@ -510,7 +510,7 @@ void CG_DemoClick(int key, qboolean down)
 		{
 			if (demo_weaponcam.integer & DWC_MORTAR)
 			{
-				trap_Cvar_Set("demo_weaponcam", va("%i", demo_weaponcam.integer &= ~DWC_MORTAR));	
+				trap_Cvar_Set("demo_weaponcam", va("%i", demo_weaponcam.integer &= ~DWC_MORTAR));
 			}
 			else
 			{
@@ -527,7 +527,7 @@ void CG_DemoClick(int key, qboolean down)
 			}
 			else
 			{
-				trap_Cvar_Set("demo_weaponcam", va("%i", demo_weaponcam.integer |= DWC_PANZER));	
+				trap_Cvar_Set("demo_weaponcam", va("%i", demo_weaponcam.integer |= DWC_PANZER));
 			}
 		}
 		return;
@@ -536,7 +536,7 @@ void CG_DemoClick(int key, qboolean down)
 		{
 			if (demo_weaponcam.integer & DWC_GRENADE)
 			{
-				trap_Cvar_Set("demo_weaponcam", va("%i", demo_weaponcam.integer &= ~DWC_GRENADE));	
+				trap_Cvar_Set("demo_weaponcam", va("%i", demo_weaponcam.integer &= ~DWC_GRENADE));
 			}
 			else
 			{
@@ -1061,12 +1061,12 @@ void CG_GameStatsDraw(void)
 
 		y += 1 + tSpacing;
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Rank"), 0.0f, 0, hStyle2, hFont2);
-		x += 122;
+		x += 120;
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, "XP", 0.0f, 0, hStyle2, hFont2);
 #ifdef FEATURE_RATING
 		if (cgs.skillRating)
 		{
-			x += 100;
+			x += 96;
 			CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, "Skill Rating", 0.0f, 0, hStyle2, hFont2);
 		}
 #endif
