@@ -74,7 +74,7 @@ void G_CalculateSkillRatings(void)
 
 	// log
 	G_Printf("SKILL_RATING: Map: %s, Winner: %d, Time: %d, Timelimit: %d\n",
-			level.rawmapname, winner, level.timeCurrent - level.startTime, g_timelimit.integer * 60000);
+	         level.rawmapname, winner, level.timeCurrent - level.startTime, g_timelimit.integer * 60000);
 	G_UpdateSkillRating(winner);
 }
 
@@ -226,20 +226,19 @@ void G_UpdateSkillRating(int winner)
 			continue;
 		}
 
-		// player has played exact same time in each team
-		if (cl->sess.time_axis == cl->sess.time_allies)
-		{
-			continue;
-		}
-
 		// find which is team even when player has played on both side or has moved to spectator
 		if (cl->sess.time_axis - cl->sess.time_allies > 0)
 		{
 			playerTeam = TEAM_AXIS;
 		}
-		else
+		else if (cl->sess.time_allies - cl->sess.time_axis > 0)
 		{
 			playerTeam = TEAM_ALLIES;
+		}
+		else
+		{
+			// player has played exact same time in each team
+			continue;
 		}
 
 		// factors
