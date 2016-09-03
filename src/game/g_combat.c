@@ -556,7 +556,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		Bot_Event_KilledSomeone(attacker - g_entities, &g_entities[self - g_entities], obit);
 #endif
 
-		G_LogPrintf("Kill: %i %i %i: %s killed %s by %s\n", killer, self->s.number, meansOfDeath, killerName, self->client->pers.netname, obit);
+		G_LogPrintf("Kill: %i %i %i: %s^7 killed %s^7 by %s\n", killer, self->s.number, meansOfDeath, killerName, self->client->pers.netname, obit);
 	}
 
 #ifdef FEATURE_LUA
