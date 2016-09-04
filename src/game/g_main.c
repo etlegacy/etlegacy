@@ -624,6 +624,9 @@ cvarTable_t gameCvarTable[] =
 // made static to avoid aliasing
 static int gameCvarTableSize = sizeof(gameCvarTable) / sizeof(gameCvarTable[0]);
 
+// flag to store executed final auto-actions
+static int fActions = 0;
+
 void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, int serverVersion);
 void G_RunFrame(int levelTime);
 void G_ShutdownGame(int restart);
@@ -3286,6 +3289,8 @@ void BeginIntermission(void)
 
 	// send the current scoring to all clients
 	SendScoreboardMessageToAllClients();
+
+	fActions = 0; // reset actions
 }
 
 /*
@@ -3763,8 +3768,6 @@ void G_LogExit(const char *string)
  */
 void CheckIntermissionExit(void)
 {
-	static int fActions = 0;
-
 	// end-of-level auto-actions
 	if (!(fActions & EOM_WEAPONSTATS) && level.time - level.intermissiontime > 300)
 	{
