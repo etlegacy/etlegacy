@@ -2826,14 +2826,14 @@ void ClientBegin(int clientNum)
 		switch (client->sess.sessionTeam)
 		{
 		case TEAM_AXIS:
-			trap_SendServerCommand(-1, va("print \"[lof]%s" S_COLOR_WHITE " [lon]joined the Axis team\n\"", client->pers.netname));
+			trap_SendServerCommand(-1, va("print \"[lof]" S_COLOR_WHITE "%s" S_COLOR_WHITE " [lon]joined the Axis team\n\"", client->pers.netname));
 			break;
 		case TEAM_ALLIES:
-			trap_SendServerCommand(-1, va("print \"[lof]%s" S_COLOR_WHITE " [lon]joined the Allies team\n\"", client->pers.netname));
+			trap_SendServerCommand(-1, va("print \"[lof]" S_COLOR_WHITE "%s" S_COLOR_WHITE " [lon]joined the Allies team\n\"", client->pers.netname));
 			break;
 		default:
 			// Just in case
-			trap_SendServerCommand(-1, va("print \"[lof]%s" S_COLOR_WHITE " [lon]entered the game\n\"", client->pers.netname));
+			trap_SendServerCommand(-1, va("print \"[lof]" S_COLOR_WHITE "%s" S_COLOR_WHITE " [lon]entered the game\n\"", client->pers.netname));
 			break;
 		}
 	}
