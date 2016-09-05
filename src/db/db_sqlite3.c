@@ -55,12 +55,12 @@ int DB_Init()
 	isDBActive = qfalse;
 
 	db_mode = Cvar_Get("db_mode", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	db_url  = Cvar_Get("db_url", "etl.db", CVAR_ARCHIVE | CVAR_LATCH); // filename in path
+	db_url  = Cvar_Get("db_url", "etl.db", CVAR_ARCHIVE | CVAR_LATCH); // filename in path (not real DB URL for now)
 
 	if (db_mode->integer < 1 || db_mode->integer > 2)
 	{
 		Com_Printf("... DBMS is disabled\n");
-		return 0; // return 0!
+		return 0; // return 0! - see isDBActive
 	}
 
 	Com_Printf("SQLite3 libversion %s - database URL '%s' - %s\n", sqlite3_libversion(), db_url->string, db_mode->integer == 1 ? "in-memory":"in file");
@@ -78,7 +78,7 @@ int DB_Init()
 	{
 		int result;
 
-		Com_Printf("... reading existing database '%s'\n", to_ospath);
+		Com_Printf("... loading existing database '%s'\n", to_ospath);
 
 		if (db_mode->integer == 1)
 		{
@@ -137,8 +137,7 @@ int DB_Init()
 		// save memory db to disk
 		if (db_mode->integer == 1)
 		{
-			result = DB_LoadOrSaveDb(db, to_ospath, 1);
-			//result = DB_BackupDB(to_ospath);
+			result = DB_SaveMemDB();
 
 			if (result != SQLITE_OK)
 			{
@@ -146,8 +145,6 @@ int DB_Init()
 				return 1;
 			}
 		}
-
-		Com_Printf("... database file '%s' saved\n", to_ospath);
 	}
 
 	Com_Printf("SQLite3 ET: L [%i] database '%s' init - autocommit %i\n", ETL_DBMS_VERSION ,to_ospath, sqlite3_get_autocommit(db));
@@ -200,9 +197,6 @@ static int DB_Create_Schema()
 		return 1;
 	}
 
-
-
-
 	// player/client table
 	// FIXME: do we want to track player names as PB did?
 	sql = "DROP TABLE IF EXISTS player;"
@@ -246,7 +240,8 @@ int DB_Create()
 
 	if (db_mode->integer == 1)
 	{
-		result = sqlite3_open(":memory:", &db); // memory table, not shared see https://www.sqlite.org/inmemorydb.html
+		//result = sqlite3_open(":memory:", &db); // memory table, not shared see https://www.sqlite.org/inmemorydb.html
+		result = sqlite3_open("file::memory:?cache=shared", &db); // In-memory databases with shared cache
 
 		if (result != SQLITE_OK)
 		{
@@ -290,6 +285,35 @@ int DB_Create()
 	return 0;
 }
 
+/**
+ * @brief saves memory db to disk
+ */
+int DB_SaveMemDB()
+{
+	if (db_mode->integer == 1)
+	{
+		int  result;
+		char *to_ospath;
+
+		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_url->string, "");
+		to_ospath[strlen(to_ospath)-1] = '\0';
+
+		result = DB_LoadOrSaveDb(db, to_ospath, 1);
+
+		if (result != SQLITE_OK)
+		{
+			Com_Printf("... WARNING can't save memory database file [%i]\n", result);
+			return 1;
+		}
+		Com_Printf("SQLite3 in-memory tables saved to disk [%s]\n", to_ospath);
+	}
+	else
+	{
+		Com_Printf("saveMemDB called for unknown db mode\n");
+	}
+	return 0;
+}
+
 int DB_Close()
 {
 	int result;
@@ -303,15 +327,7 @@ int DB_Close()
 	// save memory db to disk
 	if (db_mode->integer == 1)
 	{
-		char *to_ospath;
-
-		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_url->string, "");
-		to_ospath[strlen(to_ospath)-1] = '\0';
-
-		Com_Printf("SQLite3 in-memory tables saved to disk [%s]\n", to_ospath);
-
-		result = DB_LoadOrSaveDb(db, to_ospath, 1);
-		//result = DB_BackupDB(to_ospath);
+		result = DB_SaveMemDB();
 
 		if (result != SQLITE_OK)
 		{
