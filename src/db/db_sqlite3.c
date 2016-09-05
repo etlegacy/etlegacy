@@ -83,7 +83,8 @@ int DB_Init()
 		if (db_mode->integer == 1)
 		{
 			// init memory table
-			result = sqlite3_open(":memory:", &db); // memory table, not shared see https://www.sqlite.org/inmemorydb.html
+			//result = sqlite3_open(":memory:", &db); // memory table, not shared see https://www.sqlite.org/inmemorydb.html
+			result = sqlite3_open("file::memory:?cache=shared", &db); // In-memory databases with shared cache
 
 			if (result != SQLITE_OK)
 			{
