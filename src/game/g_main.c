@@ -3226,7 +3226,7 @@ void BeginIntermission(void)
 			level.sortedMaps[i] = -1;
 		}
 
-		G_mapvoteinfo_read();
+		G_MapVoteInfoRead();
 
 		len = level.mapVoteNumMaps;
 		// zero out maps not available for voting this round
@@ -3437,7 +3437,7 @@ void ExitLevel(void)
 	// MAPVOTE
 	if (g_gametype.integer == GT_WOLF_MAPVOTE)
 	{
-		G_mapvoteinfo_write();
+		G_MapVoteInfoWrite();
 	}
 
 	G_LogPrintf("ExitLevel: executed\n");
@@ -4965,7 +4965,7 @@ void G_RunFrame(int levelTime)
 
 // MAPVOTE
 // G_shrubbot_writeconfig_string
-void G_writeconfigfile_string(char *s, fileHandle_t f)
+void G_WriteConfigFileString(char *s, fileHandle_t f)
 {
 	if (s[0])
 	{
@@ -4980,7 +4980,7 @@ void G_writeconfigfile_string(char *s, fileHandle_t f)
 	trap_FS_Write("\n", 1, f);
 }
 
-void G_mapvoteinfo_write()
+void G_MapVoteInfoWrite()
 {
 	fileHandle_t f;
 	int          i, count = 0;
@@ -4994,15 +4994,15 @@ void G_mapvoteinfo_write()
 			trap_FS_Write("[mapvoteinfo]\n", 14, f);
 
 			trap_FS_Write("name             = ", 19, f);
-			G_writeconfigfile_string(level.mapvoteinfo[i].bspName, f);
+			G_WriteConfigFileString(level.mapvoteinfo[i].bspName, f);
 			trap_FS_Write("times_played     = ", 19, f);
-			G_writeconfigfile_string(va("%d", level.mapvoteinfo[i].timesPlayed), f);
+			G_WriteConfigFileString(va("%d", level.mapvoteinfo[i].timesPlayed), f);
 			trap_FS_Write("last_played      = ", 19, f);
-			G_writeconfigfile_string(va("%d", level.mapvoteinfo[i].lastPlayed), f);
+			G_WriteConfigFileString(va("%d", level.mapvoteinfo[i].lastPlayed), f);
 			trap_FS_Write("total_votes      = ", 19, f);
-			G_writeconfigfile_string(va("%d", level.mapvoteinfo[i].totalVotes), f);
+			G_WriteConfigFileString(va("%d", level.mapvoteinfo[i].totalVotes), f);
 			trap_FS_Write("vote_eligible    = ", 19, f);
-			G_writeconfigfile_string(va("%d", level.mapvoteinfo[i].voteEligible), f);
+			G_WriteConfigFileString(va("%d", level.mapvoteinfo[i].voteEligible), f);
 
 			trap_FS_Write("\n", 1, f);
 			count++;
@@ -5015,7 +5015,7 @@ void G_mapvoteinfo_write()
 }
 
 // G_shrubbot_readconfig_string
-void G_readconfigfile_string(char **cnf, char *s, int size)
+void G_ReadConfigFileString(char **cnf, char *s, int size)
 {
 	char *t;
 
@@ -5026,7 +5026,7 @@ void G_readconfigfile_string(char **cnf, char *s, int size)
 	}
 	else
 	{
-		G_Printf("G_readconfigfile_string: warning missing = before "
+		G_Printf("G_ReadConfigFileString: warning missing = before "
 		         "\"%s\" on line %d\n",
 		         t,
 		         COM_GetCurrentParseLine());
@@ -5050,7 +5050,7 @@ void G_readconfigfile_string(char **cnf, char *s, int size)
 	}
 }
 
-void G_readconfigfile_int(char **cnf, int *v)
+void G_ReadConfigFileInt(char **cnf, int *v)
 {
 	char *t;
 
@@ -5061,7 +5061,7 @@ void G_readconfigfile_int(char **cnf, int *v)
 	}
 	else
 	{
-		G_Printf("G_readconfigfile_int: warning missing = before "
+		G_Printf("G_ReadConfigFileInt: warning missing = before "
 		         "\"%s\" on line %d\n",
 		         t,
 		         COM_GetCurrentParseLine());
@@ -5069,7 +5069,7 @@ void G_readconfigfile_int(char **cnf, int *v)
 	*v = atoi(t);
 }
 
-void G_mapvoteinfo_read()
+void G_MapVoteInfoRead()
 {
 	fileHandle_t f;
 	int          i;
@@ -5084,7 +5084,7 @@ void G_mapvoteinfo_read()
 	if (len < 0)
 	{
 		trap_FS_FCloseFile(f);
-		G_Printf("G_mapvoteinfo_read: could not open mapvoteinfo.txt file\n");
+		G_Printf("G_MapVoteInfoRead: could not open mapvoteinfo.txt file\n");
 		return;
 	}
 
@@ -5093,7 +5093,7 @@ void G_mapvoteinfo_read()
 	if (cnf == NULL)
 	{
 		trap_FS_FCloseFile(f);
-		G_Printf("G_mapvoteinfo_read: memory allocation error for mapvoteinfo.txt data\n");
+		G_Printf("G_MapVoteInfoRead: memory allocation error for mapvoteinfo.txt data\n");
 		return;
 	}
 
@@ -5109,7 +5109,7 @@ void G_mapvoteinfo_read()
 	{
 		if (!Q_stricmp(t, "name"))
 		{
-			G_readconfigfile_string(&cnf, bspName, sizeof(bspName));
+			G_ReadConfigFileString(&cnf, bspName, sizeof(bspName));
 			curMap = -1;
 			for (i = 0; i < level.mapVoteNumMaps; i++)
 			{
@@ -5124,19 +5124,19 @@ void G_mapvoteinfo_read()
 		{
 			if (!Q_stricmp(t, "times_played"))
 			{
-				G_readconfigfile_int(&cnf, &level.mapvoteinfo[curMap].timesPlayed);
+				G_ReadConfigFileInt(&cnf, &level.mapvoteinfo[curMap].timesPlayed);
 			}
 			else if (!Q_stricmp(t, "last_played"))
 			{
-				G_readconfigfile_int(&cnf, &level.mapvoteinfo[curMap].lastPlayed);
+				G_ReadConfigFileInt(&cnf, &level.mapvoteinfo[curMap].lastPlayed);
 			}
 			else if (!Q_stricmp(t, "total_votes"))
 			{
-				G_readconfigfile_int(&cnf, &level.mapvoteinfo[curMap].totalVotes);
+				G_ReadConfigFileInt(&cnf, &level.mapvoteinfo[curMap].totalVotes);
 			}
 			else if (!Q_stricmp(t, "vote_eligible"))
 			{
-				G_readconfigfile_int(&cnf, &level.mapvoteinfo[curMap].voteEligible);
+				G_ReadConfigFileInt(&cnf, &level.mapvoteinfo[curMap].voteEligible);
 			}
 			else if (!Q_stricmp(t, "[mapvoteinfo]"))
 			{
@@ -5148,7 +5148,7 @@ void G_mapvoteinfo_read()
 			}
 			else
 			{
-				G_Printf("G_mapvoteinfo_read: [mapvoteinfo] parse error near '%s' on line %i\n", t, COM_GetCurrentParseLine());
+				G_Printf("G_MapVoteInfoRead: [mapvoteinfo] parse error near '%s' on line %i\n", t, COM_GetCurrentParseLine());
 			}
 		}
 		t = COM_Parse(&cnf);

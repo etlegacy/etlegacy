@@ -2463,8 +2463,8 @@ fieldtype_t GetFieldType(char *fieldname);
 #define G_PROTECT_MAX_LIVES_BAN_GUID   2
 
 // MAPVOTE
-void G_mapvoteinfo_write(void);
-void G_mapvoteinfo_read(void);
+void G_MapVoteInfoWrite(void);
+void G_MapVoteInfoRead(void);
 
 // g_misc flags
 #define G_MISC_SHOVE_NOZ           BIT(0)
