@@ -413,11 +413,11 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 		G_LoseSkillPoints(tker, SK_LIGHT_WEAPONS, 3.f);
 		//G_DebugAddSkillPoints( attacker, SK_LIGHT_WEAPONS, 2.f, "kill" );
 		break;
-		
+
 	case MOD_BACKSTAB:
 		G_LoseSkillPoints(tker, SK_LIGHT_WEAPONS, 5.f);
 		break;
-		
+
 	// scoped weapons
 	case MOD_GARAND_SCOPE:
 	case MOD_K43_SCOPE:
@@ -1020,7 +1020,7 @@ void G_BuildEndgameStats(void)
 	if (best)
 	{
 		best->hasaward = qtrue;
-		Q_strcat(buffer, 1024, va("%i %f %i ", bestClientNum, 100 * best->sess.time_played / (float)(level.time - best->pers.enterTime), best->sess.sessionTeam));
+		Q_strcat(buffer, 1024, va("%i %f %i ", bestClientNum, MIN(100 * best->sess.time_played / (float)(level.time - best->pers.enterTime), 100.f), best->sess.sessionTeam));
 	}
 	else
 	{
