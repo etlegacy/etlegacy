@@ -5693,89 +5693,116 @@ static void UI_BuildServerDisplayList(int force)
 				// future - check omnibot cvars, parse players with ping 0 and match them as bots to bot filter
 				const char *gamename = Info_ValueForKey(info, "game");
 
-				// FIXME: do a switch -> ui_browserModFilter.integer
-				if (Q_stristr(gamename, "legacy") == 0 && ui_browserModFilter.integer == 1)
-				{
-					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-					continue;
-				}
-				if (Q_stristr(gamename, "etpub") == 0 && ui_browserModFilter.integer == 2)
-				{
-					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-					continue;
-				}
-				if (Q_stristr(gamename, "jaymod") == 0 && ui_browserModFilter.integer == 3)
-				{
-					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-					continue;
-				}
-				if (Q_stristr(gamename, "nq") == 0 && Q_stristr(gamename, "noquarter") == 0 && ui_browserModFilter.integer == 4)
-				{
-					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-					continue;
-				}
-				if (Q_stristr(gamename, "nitmod") == 0 && ui_browserModFilter.integer == 5)
-				{
-					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-					continue;
-				}
-				if (Q_stristr(gamename, "silent") == 0 && ui_browserModFilter.integer == 6)
-				{
-					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-					continue;
-				}
-				if (Q_stristr(gamename, "tce") == 0 && Q_stristr(gamename, "cqbtest") == 0 && ui_browserModFilter.integer == 7)
-				{
-					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-					continue;
-				}
-				if (Q_stristr(gamename, "etnam") == 0 && ui_browserModFilter.integer == 8)
-				{
-					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-					continue;
-				}
-				if (Q_stristr(gamename, "etrun") == 0 && ui_browserModFilter.integer == 9)
-				{
-					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-					continue;
-				}
-				if (Q_stristr(gamename, "etjump") == 0 && ui_browserModFilter.integer == 10)
-				{
-					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-					continue;
-				}
-				if (Q_stristr(gamename, "tjmod") == 0 && ui_browserModFilter.integer == 11)
-				{
-					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-					continue;
-				}
-				if ((Q_stristr(gamename, "etmain") == 0 || gamename[0] == 0) && ui_browserModFilter.integer == 12)
-				{
-					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-					continue;
-				}
-
-				if (ui_browserModFilter.integer == -1 &&
-				    (Q_stristr(gamename, "legacy") != 0 ||
-				     Q_stristr(gamename, "etpub") != 0 ||
-				     Q_stristr(gamename, "jaymod") != 0 ||
-				     Q_stristr(gamename, "nq") != 0 ||
-				     Q_stristr(gamename, "noquarter") != 0 ||
-				     Q_stristr(gamename, "nitmod") != 0 ||
-				     Q_stristr(gamename, "silent") != 0 ||
-				     Q_stristr(gamename, "tce") != 0 ||
-				     Q_stristr(gamename, "cqbtest") != 0 ||
-				     Q_stristr(gamename, "etnam") != 0 ||
-				     Q_stristr(gamename, "etrun") != 0 ||
-				     Q_stristr(gamename, "etjump") != 0 ||
-				     Q_stristr(gamename, "tjmod") != 0 ||
-				     Q_stristr(gamename, "etmain") != 0 ||
-				     gamename[0] == 0))
-				{
-
-					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-					continue;
-				}
+                switch(ui_browserModFilter.integer)
+                {
+                case 1:
+                    if(Q_stristr(gamename, "legacy") == 0)
+                    {
+                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+                        continue;
+                    }
+                    break;
+                case 2:
+                    if (Q_stristr(gamename, "etpub") == 0)
+                    {
+                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+                        continue;
+                    }
+                    break;
+                case 3:
+                    if (Q_stristr(gamename, "jaymod") == 0)
+                    {
+                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+                        continue;
+                    }
+                    break;
+                case 4:
+                    if (Q_stristr(gamename, "nq") == 0 || Q_stristr(gamename, "noquarter") == 0)
+                    {
+                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+                        continue;
+                    }
+                    break;
+                case 5:
+                    if (Q_stristr(gamename, "nitmod") == 0)
+                    {
+                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+                        continue;
+                    }
+                    break;
+                case 6:
+                    if (Q_stristr(gamename, "silent") == 0)
+                    {
+                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+                        continue;
+                    }
+                    break;
+                case 7:
+                    if (Q_stristr(gamename, "tce") == 0 || Q_stristr(gamename, "cqbtest") == 0)
+                    {
+                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+                        continue;
+                    }
+                    break;
+                case 8:
+                    if (Q_stristr(gamename, "etnam") == 0)
+                    {
+                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+                        continue;
+                    }
+                    break;
+                case 9:
+                    if (Q_stristr(gamename, "etrun") == 0)
+                    {
+                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+                        continue;
+                    }
+                    break;
+                case 10:
+                    if (Q_stristr(gamename, "etjump") == 0)
+                    {
+                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+                        continue;
+                    }
+                    break;
+                case 11:
+                    if (Q_stristr(gamename, "tjmod") == 0)
+                    {
+                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+                        continue;
+                    }
+                    break;
+                case 12:
+                    if (Q_stristr(gamename, "etmain") == 0 || gamename[0] == 0)
+                    {
+                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+                        continue;
+                    }
+                    break;
+                case -1:
+                    if(Q_stristr(gamename, "legacy") != 0 ||
+                            Q_stristr(gamename, "etpub") != 0 ||
+                            Q_stristr(gamename, "jaymod") != 0 ||
+                            Q_stristr(gamename, "nq") != 0 ||
+                            Q_stristr(gamename, "noquarter") != 0 ||
+                            Q_stristr(gamename, "nitmod") != 0 ||
+                            Q_stristr(gamename, "silent") != 0 ||
+                            Q_stristr(gamename, "tce") != 0 ||
+                            Q_stristr(gamename, "cqbtest") != 0 ||
+                            Q_stristr(gamename, "etnam") != 0 ||
+                            Q_stristr(gamename, "etrun") != 0 ||
+                            Q_stristr(gamename, "etjump") != 0 ||
+                            Q_stristr(gamename, "tjmod") != 0 ||
+                            Q_stristr(gamename, "etmain") != 0 ||
+                            gamename[0] == 0)
+                    {
+                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+                        continue;
+                    }
+                    break;
+                default:
+                    break;
+                }
 			}
 
 			trap_Cvar_Update(&ui_browserMapFilterCheckBox);
