@@ -876,7 +876,14 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 #ifdef FEATURE_RATING
 			if (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR)
 			{
-				s = va("%s [%.1f%%] (%d %s)", CG_TranslateString("AXIS"), cg.axisProb, cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+				if (cgs.mapProb)
+				{
+					s = va("%s [%.1f%%] [%.1f%%] (%d %s)", CG_TranslateString("AXIS"), cg.axisProb, 100.f * cgs.mapProb, cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+				}
+				else
+				{
+					s = va("%s [%.1f%%] (%d %s)", CG_TranslateString("AXIS"), cg.axisProb, cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+				}
 			}
 			else
 			{
@@ -893,7 +900,14 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 #ifdef FEATURE_RATING
 			if (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR)
 			{
-				s = va("%s [%.1f%%] (%d %s)", CG_TranslateString("ALLIES"), cg.alliesProb, cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+				if (cgs.mapProb)
+				{
+					s = va("%s [%.1f%%] [%.1f%%] (%d %s)", CG_TranslateString("ALLIES"), cg.alliesProb, 100.f * (1.0f - cgs.mapProb), cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+				}
+				else
+				{
+					s = va("%s [%.1f%%] (%d %s)", CG_TranslateString("ALLIES"), cg.alliesProb, cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+				}
 			}
 			else
 			{

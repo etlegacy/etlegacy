@@ -261,6 +261,10 @@ void CG_ParseLegacyinfo(void)
 	cgs.mapVoteMapY = atoi(Info_ValueForKey(info, "Y"));
 #ifdef FEATURE_RATING
 	cgs.skillRating = atoi(Info_ValueForKey(info, "R"));
+	if (cgs.skillRating > 1)
+	{
+		cgs.mapProb = atof(Info_ValueForKey(info, "M"));
+	}
 #endif
 
 #ifdef FEATURE_MULTIVIEW

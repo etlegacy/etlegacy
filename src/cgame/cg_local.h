@@ -2089,6 +2089,7 @@ typedef struct cgs_s
 	int pronedelay;
 #ifdef FEATURE_RATING
 	int skillRating;
+	float mapProb;
 #endif
 #ifdef FEATURE_MULTIVIEW
 	int mvAllowed;
