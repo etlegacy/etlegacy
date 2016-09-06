@@ -104,7 +104,7 @@ option(FEATURE_JANSSON		"Enable JSON support (client)"						OFF)
 option(FEATURE_SERVERMDX	"Enable MDX support on server side"					ON)
 option(FEATURE_LIVEAUTH		"Enable ET:Live authentification support"				ON)
 option(FEATURE_DBMS		"Enable dbms support (sqlite3)"						ON)
-option(FEATURE_RATING		"Enable skill rating"							OFF)
+option(FEATURE_RATING		"Enable skill rating"							ON)
 option(FORCE_DEBUG		"Force enable legacy debug macros"					OFF)
 
 cmake_dependent_option(FEATURE_LUASQL	"Enable LuaSQL in mod code (sqlite3 backend)"			ON "FEATURE_LUA" OFF)

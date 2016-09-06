@@ -2926,7 +2926,7 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, qboole
 	// echo the text to the console
 	if (g_dedicated.integer)
 	{
-		G_Printf("voice: %s %s\n", ent->client->pers.netname, id);
+		G_Printf("voice: ^7%s^7 %s\n", ent->client->pers.netname, id);
 	}
 
 	if (mode == SAY_BUDDY)
@@ -4084,8 +4084,8 @@ qboolean G_PushPlayer(gentity_t *ent, gentity_t *victim)
 	{
 		return qfalse;
 	}
-	
-	// Don't allow pushing when player is using mg 
+
+	// Don't allow pushing when player is using mg
 	if (victim->client->ps.persistant[PERS_HWEAPON_USE])
 	{
 		return qfalse;

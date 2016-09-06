@@ -275,7 +275,7 @@ static void CG_Obituary(entityState_t *ent)
 		{
 			CG_AddPMItem(PM_DEATH, va("%s %s.", targetName, message), " ", shader, 0, 0, OB_YELLOW);
 		}
-		trap_Print(va("%s %s\n", targetName, message));
+		trap_Print(va("^7%s^7 %s\n", targetName, message));
 
 		return;
 	}
@@ -621,21 +621,21 @@ static void CG_Obituary(entityState_t *ent)
 			{
 				if (ci->team == ca->team)
 				{
-					CG_AddPMItem(PM_DEATH, va("%s ^1%s^7 ", targetName, message), va("%s^1%s", attackerName, message2), shader, 0, 0, OB_RED);
+					CG_AddPMItem(PM_DEATH, va("%s^1 %s^7 ", targetName, message), va("%s^1%s", attackerName, message2), shader, 0, 0, OB_RED);
 				}
 				else
 				{
 					CG_AddPMItem(PM_DEATH, va("%s %s ", targetName, message), va("%s%s", attackerName, message2), shader, 0, 0, NULL);
 				}
 			}
-			trap_Print(va((ci->team == ca->team ? "%s ^1%s^7 %s^1%s\n" : "%s %s %s%s\n"), targetName, message, attackerName, message2));
+			trap_Print(va((ci->team == ca->team ? "^7%s^1 %s ^7%s^1%s\n" : "^7%s^7 %s ^7%s^7%s\n"), targetName, message, attackerName, message2));
 			return;
 		}
 	}
 
 	// we don't know what it was
 	CG_AddPMItem(PM_DEATH, va("%s %s.", targetName, CG_TranslateString("died")), " ", shader, 0, 0, NULL);
-	trap_Print(va("%s died\n", targetName));
+	trap_Print(va("^7%s^7 died\n", targetName));
 }
 
 //==========================================================================

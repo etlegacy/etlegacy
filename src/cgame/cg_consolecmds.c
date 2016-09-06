@@ -208,12 +208,11 @@ void CG_ScoresDown_f(void)
 					sbAllowed = SCOREBOARD_XP;
 					break;
 				}
-				if (sb == SCOREBOARD_SR)
+				else if (sb == SCOREBOARD_SR)
 				{
 					sbAllowed = SCOREBOARD_SR;
 					break;
 				}
-				sb++;
 			}
 			trap_Cvar_Set("cg_scoreboard", va("%i", sbAllowed));
 

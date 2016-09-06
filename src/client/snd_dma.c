@@ -1282,6 +1282,7 @@ void S_Base_Respatialize(int entnum, const vec3_t head, vec3_t axis[3], int inwa
 	VectorCopy(axis[0], listener_axis[0]);
 	VectorCopy(axis[1], listener_axis[1]);
 	VectorCopy(axis[2], listener_axis[2]);
+	mat3_transpose(listener_axis, listener_axis);
 
 	// update spatialization for dynamic sounds
 	ch = s_channels;
