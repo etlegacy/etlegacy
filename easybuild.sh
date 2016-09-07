@@ -211,9 +211,9 @@ parse_commandline() {
 		elif [ "$var" = "-noupdate" ]; then
 			einfo "Will disable autoupdate"
 			FEATURE_AUTOUPDATE=0
-		elif [ "$var" = "-rating" ]; then
-			einfo "Will enable skill rating"
-			FEATURE_RATING=1
+		elif [ "$var" = "-norating" ]; then
+			einfo "Will disable skill rating"
+			FEATURE_RATING=0
 		elif [ "$var" = "-RPI" ]; then
 			einfo "Will enable Raspberry PI build ..."
 			ARM=1
@@ -305,7 +305,7 @@ generate_configuration() {
 	FEATURE_EDV=${FEATURE_EDV:-1}
 	FEATURE_ANTICHEAT=${FEATURE_ANTICHEAT:-1}
 	FEATURE_LIVEAUTH=${FEATURE_LIVEAUTH:-1}
-	FEATURE_RATING=${FEATURE_RATING:-0}
+	FEATURE_RATING=${FEATURE_RATING:-1}
 	FEATURE_AUTOUPDATE=${FEATURE_AUTOUPDATE:-0}
 	FEATURE_LUASQL=${FEATURE_LUASQL:-1}
 	FEATURE_OMNIBOT=${FEATURE_OMNIBOT:-1}
@@ -617,7 +617,7 @@ print_help() {
 	ehead "help - print this help"
 	echo
 	einfo "Properties"
-	ehead "-64, -debug, -clang, -nodb -nor2, -nodynamic, -systemlib, -noob, --noupdate, -rating"
+	ehead "-64, -debug, -clang, -nodb -nor2, -nodynamic, -systemlib, -noob, --noupdate, -norating"
 	echo
 }
 

@@ -97,7 +97,7 @@ menuDef {
 
 	LABELWHITE( 6, CREDITS_Y+12, .7*(WINDOW_WIDTH-12), 10, _("Advices, Bug reports, Patches"), .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
-	LABELWHITE( 6, CREDITS_Y+36, .8*(WINDOW_WIDTH-12), 10, "100zherBG - 3togo - acqu - Anna - antman - Bill - blaubarschbube - boutetnico - BSzili - Calinou - chriswww - cubs - Das_Fleisch - deep - deki - Dragonji - Ensiform - Harlekin - hifi - ilm - invictus - Jonathan Gray - Kissaki - kkthx - lakersforce - Lammert - lottin - Lul3k - MAN-AT-ARMS - Mateos - Mathieu Olivier - Maverick - mavit - merethan - merlin - muessli - Niek - Odal - Ododo - otty - pbhj - ponce - PtitSeb - Ragnar - rurza - S3ti - skybon - sneak310 - StM - swillits - Dusan 'TheDushan' Jocic - TunPal - Unode - winrid -  Zer0 - Zack 'zturtleman' Middleton", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
+	LABELWHITE( 6, CREDITS_Y+36, .8*(WINDOW_WIDTH-12), 10, "100zherBG - 3togo - acqu - Anna - antman - Aranud - Bill - blaubarschbube - boutetnico - BSzili - Calinou - chriswww - cubs - Das_Fleisch - deep - deki - Dominator56 - Dragonji - Ensiform - Harlekin - hifi - ilm - invictus - Jonathan Gray - Kissaki - kkthx - lakersforce - Lammert - lottin - Lul3k - MAN-AT-ARMS - Mateos - Mathieu Olivier - Maverick - mavit - merethan - merlin - muessli - Niek - Odal - Ododo - otty - perey - pbhj - ponce - PtitSeb - Ragnar - rurza - S3ti - skybon - sneak310 - StM - swillits - Dusan 'TheDushan' Jocic - Timothy - TunPal - Unode - winrid - yfcz - Zer0 - Zack 'zturtleman' Middleton", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
 	itemDef {
 		name		"headerTranslations"

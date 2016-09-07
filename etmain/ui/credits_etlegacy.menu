@@ -149,7 +149,7 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+180, (WINDOW_WIDTH-12), 10, "ETPro Team - ETPub Team - Lazlo Menczel - Neil 'haste' Toronto \n NoQuarter Team - Omni-Bot Team - Q3MME Team - QtZ Team \n RTCW COOP Team - Ryan C. Gordon - Splash Damage ET community \n Timothee 'TTimo' Besset - Unvanquished Team - Xreal Team - Zynx", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
+	LABELWHITE( 6, CREDITS_Y+180, (WINDOW_WIDTH-12), 10, "ETPro Team - ETPub Team - Jaymod Team - Lazlo Menczel \n Neil 'haste' Toronto - NoQuarter Team - Omni-Bot Team - Q3MME Team - QtZ Team \n RTCW COOP Team - Ryan C. Gordon - Splash Damage ET community \n Timothee 'TTimo' Besset - Unvanquished Team - Xreal Team - Zynx", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
 	LABELWHITE( 6, CREDITS_Y+238, (WINDOW_WIDTH-12), 10, _("Many thanks to Splash Damage for their release of the source code, ioWolfET & raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for their inspirations."), .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
