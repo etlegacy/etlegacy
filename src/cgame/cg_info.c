@@ -901,7 +901,7 @@ qboolean CG_ViewingDraw()
 
 //#define GS_X    166
 #define GS_Y    10
-#define GS_W    308
+#define GS_W    298
 
 void CG_GameStatsDraw(void)
 {
@@ -935,7 +935,7 @@ void CG_GameStatsDraw(void)
 
 		// Text settings
 		int          tStyle   = ITEM_TEXTSTYLE_SHADOWED;
-		int          tSpacing = 9;      // Should derive from CG_Text_Height_Ext
+		int          tSpacing = 9;      // TODO: Should derive from CG_Text_Height_Ext
 		float        tScale   = 0.19f;
 		fontHelper_t *tFont   = FONT_TEXT;
 		vec4_t       tColor   = COLOR_TEXT; // text
@@ -958,7 +958,7 @@ void CG_GameStatsDraw(void)
 		         tSpacing * ((gs->cSkills > 0) ? gs->cSkills : 1)
 		     )
 		    ) +
-		    2;
+		    5;
 
 		// Fade-in effects
 		if (diff > 0.0f)
@@ -995,34 +995,30 @@ void CG_GameStatsDraw(void)
 		CG_FillRect(x + 1, y, GS_W - 2, tSpacing + 4, bgColorTitle);
 		CG_DrawRect(x + 1, y, GS_W - 2, tSpacing + 4, 1, borderColorTitle);
 
-		y += tSpacing;
+		y += 1 + tSpacing;
 		CG_Text_Paint_Ext(x + 4, y, hScale, hScaleY, hdrColor, CG_TranslateString("PLAYER STATS"), 0.0f, 0, hStyle, hFont);
-		y += 3;
-
-		y += 2;
+		y += 5;
 
 		// Weapon stats
-		y += 2;
 		CG_FillRect(x + 1, y, GS_W - 2, tSpacing + 3, bgColorTitle);
 		CG_DrawRect(x + 1, y, GS_W - 2, tSpacing + 3, 1, borderColorTitle);
 
 		y += 1 + tSpacing;
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Weapon"), 0.0f, 0, hStyle2, hFont2);
-		x += 66;
+		x += 72;
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Accuracy"), 0.0f, 0, hStyle2, hFont2);
-		x += 53;
+		x += 49;
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Hits / Shots"), 0.0f, 0, hStyle2, hFont2);
-		x += 62;
+		x += 59;
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Kills"), 0.0f, 0, hStyle2, hFont2);
-		x += 29;
+		x += 31;
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Deaths"), 0.0f, 0, hStyle2, hFont2);
-		x += 40;
+		x += 37;
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Headshots"), 0.0f, 0, hStyle2, hFont2);
 
 		x  = (Ccg_WideX(SCREEN_WIDTH) / 2) - (GS_W / 2);
 		y += 2;
 
-		y += 1;
 		if (gs->cWeapons == 0)
 		{
 			y += tSpacing;
@@ -1054,8 +1050,7 @@ void CG_GameStatsDraw(void)
 		}
 
 		// Rank/XP info
-		y += tSpacing;
-		y += 2;
+		y += 2 + tSpacing;
 		CG_FillRect(x + 1, y, GS_W - 2, tSpacing + 3, bgColorTitle);
 		CG_DrawRect(x + 1, y, GS_W - 2, tSpacing + 3, 1, borderColorTitle);
 
@@ -1072,25 +1067,23 @@ void CG_GameStatsDraw(void)
 #endif
 
 		x  = (Ccg_WideX(SCREEN_WIDTH) / 2) - (GS_W / 2);
-		y += 1;
-		y += tSpacing;
+		y += 1 + tSpacing;
 		CG_Text_Paint_Ext(x + 4, y, tScale, tScale, tColor, gs->strRank, 0.0f, 0, tStyle, tFont);
 
 		// Skill info
-		y += tSpacing;
-		y += 2;
+		y += 2 + tSpacing;
 		CG_FillRect(x + 1, y, GS_W - 2, tSpacing + 3, bgColorTitle);
 		CG_DrawRect(x + 1, y, GS_W - 2, tSpacing + 3, 1, borderColorTitle);
 
 		y += 1 + tSpacing;
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Skills"), 0.0f, 0, hStyle2, hFont2);
-		x += 84;
+		x += 86;
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Level"), 0.0f, 0, hStyle2, hFont2);
-		x += 76;
+		x += 74;
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("XP / Next Level"), 0.0f, 0, hStyle2, hFont2);
 		if (cgs.gametype == GT_WOLF_CAMPAIGN)
 		{
-			x += 108;
+			x += 102;
 			CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Medals"), 0.0f, 0, hStyle2, hFont2);
 		}
 
@@ -1109,7 +1102,6 @@ void CG_GameStatsDraw(void)
 				y += tSpacing;
 				CG_Text_Paint_Ext(x + 4, y, tScale, tScale, tColor, gs->strSkillz[i], 0.0f, 0, tStyle, tFont);
 			}
-
 		}
 	}
 }
@@ -1161,7 +1153,8 @@ void CG_TopShotsDraw(void)
 		    2 + 2 + tSpacing + 2 +                          // Stats columns
 		    1 +                                             // Stats + extra
 		    tSpacing * ((ts->cWeapons > 0) ? ts->cWeapons : 1) +
-		    1;
+		    5;
+
 
 		// Fade-in effects
 		if (diff > 0.0f)
@@ -1202,29 +1195,28 @@ void CG_TopShotsDraw(void)
 		CG_FillRect(x + 1, y, TS_W - 2, tSpacing + 4, bgColorTitle);
 		CG_DrawRect(x + 1, y, TS_W - 2, tSpacing + 4, 1, borderColorTitle);
 
-		y += tSpacing;
+		y += 1 + tSpacing;
 		CG_Text_Paint_Ext(x + 4, y, hScale, hScaleY, hdrColor, CG_TranslateString("\"TOPSHOT\" ACCURACIES"), 0.0f, 0, hStyle, hFont);
-		y += 4;
 
 		// Weapon stats
-		y += 2;
+		y += 5;
 		CG_FillRect(x + 1, y, TS_W - 2, tSpacing + 3, bgColorTitle);
 		CG_DrawRect(x + 1, y, TS_W - 2, tSpacing + 3, 1, borderColorTitle);
 
 		x += 4;
 		y += 1 + tSpacing;
 		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Weapon"), 0.0f, 0, hStyle2, hFont2);
-		x += 60;
+		x += 66;
 		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Accuracy"), 0.0f, 0, hStyle2, hFont2);
-		x += 53;
+		x += 47;
 		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Hits / Shots"), 0.0f, 0, hStyle2, hFont2);
 		x += 62;
 		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Kills"), 0.0f, 0, hStyle2, hFont2);
-		x += 32;
+		x += 29;
 		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Player"), 0.0f, 0, hStyle2, hFont2);
 
 		x  = Ccg_WideX(SCREEN_WIDTH) + TS_X - TS_W + 4;
-		y += 1;
+		y += 2;
 
 		if (ts->cWeapons == 0)
 		{
@@ -1431,7 +1423,7 @@ void CG_ObjectivesDraw()
 		h = 2 + tSpacing + 2 +                                  // Header
 		    1 +
 		    tSpacing * (((lines + count - 1) > 0) ? (lines + count - 1) : 1) +
-		    1 + 2;
+		    2 + tSpacing;
 
 		// Fade-in effects
 		if (diff > 0.0f)
@@ -1472,10 +1464,10 @@ void CG_ObjectivesDraw()
 		CG_FillRect(x + 1, y, OBJ_W - 2, tSpacing + 4, bgColorTitle);
 		CG_DrawRect(x + 1, y, OBJ_W - 2, tSpacing + 4, 1, borderColorTitle);
 
-		y += tSpacing;
+		y += 1 + tSpacing;
 		CG_Text_Paint_Ext(x + 4, y, hScale, hScaleY, hdrColor, CG_TranslateString("OBJECTIVES"), 0.0f, 0, hStyle, hFont);
 
-		y += 4;
+		y += 5;
 
 		if (!count)
 		{
