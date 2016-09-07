@@ -1184,30 +1184,6 @@ static void CG_DrawCrosshair(void)
 	}
 }
 
-/*
-=================
-CG_ScanForCrosshairMine
-=================
-*/
-void CG_ScanForCrosshairMine(centity_t *cent)
-{
-	trace_t trace;
-	vec3_t  start, end;
-
-	VectorCopy(cg.refdef.vieworg, start);
-	VectorMA(start, 512.0f, cg.refdef.viewaxis[0], end);
-
-	CG_Trace(&trace, start, NULL, NULL, end, -1, MASK_SOLID);
-
-	if (Square(trace.endpos[0] - cent->currentState.pos.trBase[0]) < 256 &&
-	    Square(trace.endpos[1] - cent->currentState.pos.trBase[1]) < 256 &&
-	    Square(trace.endpos[2] - cent->currentState.pos.trBase[2]) < 256)
-	{
-		cg.crosshairMine     = cent->currentState.otherEntityNum;
-		cg.crosshairMineTime = cg.time;
-	}
-}
-
 static void CG_DrawNoShootIcon(void)
 {
 	float x, y, w, h;
@@ -1246,6 +1222,37 @@ static void CG_DrawNoShootIcon(void)
 
 	trap_R_DrawStretchPic(x + 0.5 * (cg.refdef_current->width - w), y + 0.5 * (cg.refdef_current->height - h), w, h, 0, 0, 1, 1, cgs.media.friendShader);
 	trap_R_SetColor(NULL);
+}
+
+/*
+=================
+CG_ScanForCrosshairMine
+=================
+*/
+void CG_ScanForCrosshairMine(centity_t *cent)
+{
+	trace_t trace;
+	vec3_t  start, end;
+
+	VectorCopy(cg.refdef.vieworg, start);
+	VectorMA(start, 512, cg.refdef.viewaxis[0], end);
+
+	CG_Trace(&trace, start, NULL, NULL, end, -1, MASK_SOLID);
+
+	if (Square(trace.endpos[0] - cent->currentState.pos.trBase[0]) < 256 &&
+	    Square(trace.endpos[1] - cent->currentState.pos.trBase[1]) < 256 &&
+	    Square(trace.endpos[2] - cent->currentState.pos.trBase[2]) < 256)
+	{
+		if (cent->currentState.otherEntityNum >= MAX_CLIENTS)
+		{
+			cg.crosshairMine = -1;
+		}
+		else
+		{
+			cg.crosshairMine     = cent->currentState.otherEntityNum;
+			cg.crosshairMineTime = cg.time;
+		}
+	}
 }
 
 /*
