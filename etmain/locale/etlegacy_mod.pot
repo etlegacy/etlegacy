@@ -7077,3 +7077,11 @@ msgstr ""
 
 msgid "CURRENT PROFILE"
 msgstr ""
+
+#: src/cgame/cg_draw.c:1504
+msgid "%s^7's dynamite"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1516
+msgid "%s^7's mine"
+msgstr ""
