@@ -7074,3 +7074,6 @@ msgstr ""
 
 msgid "^7BACKSPACE ^mgo  back"
 msgstr ""
+
+msgid "CURRENT PROFILE"
+msgstr ""
