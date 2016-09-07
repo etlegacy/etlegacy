@@ -493,7 +493,25 @@ int callback(void *NotUsed, int argc, char **argv, char **azColName)
 	return 0;
 }
 
-int lastID()
+int lastID() // FIXME: Lue needs this
 {
 	return sqlite3_last_insert_rowid(db);
+}
+
+////////////////////
+// game db commands
+////////////////////
+
+/**
+ * @brief saves memory db to disk
+ */
+void DB_SaveMemDB_f(void)
+{
+	int result;
+
+	result = DB_SaveMemDB();
+	if (result != SQLITE_OK)
+	{
+		Com_Printf("saveDB: can't save database.\n");
+	}
 }

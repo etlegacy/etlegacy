@@ -51,9 +51,11 @@ extern qboolean isDBActive; // general flag for active dbms (db_mode is latched)
 int DB_Init(void);
 int DB_Create(void);
 int DB_Close(void);
-int DB_SaveMemDB(void);
 int DB_LoadOrSaveDb(sqlite3 *, const char *, int);
 // int DB_BackupDB(const char *, void *));
+int DB_SaveMemDB(void); // use in code
+
+void DB_SaveMemDB_f(void); // console command to store memory db at any time to disk
 
 int callback(void *, int, char **, char **);
 
