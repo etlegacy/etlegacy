@@ -30,7 +30,7 @@
  */
 /**
  * @file db_sql_console.c
- * @brief ET: SQL command line interface
+ * @brief SQL console commands for ETL
  */
 
 #include "db_sql.h"
@@ -73,4 +73,24 @@ void DB_ExecSQLCommand_f(void)
 	}
 
 	return;
+}
+
+/**
+ * @brief saves memory db to disk
+ */
+void DB_SaveMemDB_f(void)
+{
+	int result;
+
+	if (!db || db_mode->integer == 0)
+	{
+		Com_Printf("saveDB: db not available or disabled!\n");
+		return;
+	}
+
+	result = DB_SaveMemDB();
+	if (result != SQLITE_OK)
+	{
+		Com_Printf("saveDB: can't save database.\n");
+	}
 }

@@ -292,11 +292,13 @@ int DB_SaveMemDB()
 {
 	if (db_mode->integer == 1)
 	{
-		int  result;
+		int  result, msec;
 		char *to_ospath;
 
 		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_url->string, "");
 		to_ospath[strlen(to_ospath)-1] = '\0';
+
+		msec = Sys_Milliseconds();
 
 		result = DB_LoadOrSaveDb(db, to_ospath, 1);
 
@@ -305,7 +307,7 @@ int DB_SaveMemDB()
 			Com_Printf("... WARNING can't save memory database file [%i]\n", result);
 			return 1;
 		}
-		Com_Printf("SQLite3 in-memory tables saved to disk [%s]\n", to_ospath);
+		Com_Printf("SQLite3 in-memory tables saved to disk @[%s] in [%i] msec\n", to_ospath, (Sys_Milliseconds() - msec));
 	}
 	else
 	{
@@ -496,22 +498,4 @@ int callback(void *NotUsed, int argc, char **argv, char **azColName)
 int lastID() // FIXME: Lue needs this
 {
 	return sqlite3_last_insert_rowid(db);
-}
-
-////////////////////
-// game db commands
-////////////////////
-
-/**
- * @brief saves memory db to disk
- */
-void DB_SaveMemDB_f(void)
-{
-	int result;
-
-	result = DB_SaveMemDB();
-	if (result != SQLITE_OK)
-	{
-		Com_Printf("saveDB: can't save database.\n");
-	}
 }
