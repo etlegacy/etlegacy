@@ -5717,7 +5717,7 @@ static void UI_BuildServerDisplayList(int force)
                     }
                     break;
                 case 4:
-                    if (Q_stristr(gamename, "nq") == 0 || Q_stristr(gamename, "noquarter") == 0)
+                    if (Q_stristr(gamename, "nq") == 0 && Q_stristr(gamename, "noquarter") == 0)
                     {
                         trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
                         continue;
@@ -5738,7 +5738,7 @@ static void UI_BuildServerDisplayList(int force)
                     }
                     break;
                 case 7:
-                    if (Q_stristr(gamename, "tce") == 0 || Q_stristr(gamename, "cqbtest") == 0)
+                    if (Q_stristr(gamename, "tce") == 0 && Q_stristr(gamename, "cqbtest") == 0)
                     {
                         trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
                         continue;
