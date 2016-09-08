@@ -254,7 +254,7 @@ int DB_Create()
 	{
 		char *to_ospath;
 
-		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_url->string, "");
+		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_url->string, ""); // FIXME: check for empty db_url
 		to_ospath[strlen(to_ospath) - 1] = '\0';
 
 		result = sqlite3_open(to_ospath, &db);
@@ -294,6 +294,8 @@ int DB_SaveMemDB()
 	{
 		int  result, msec;
 		char *to_ospath;
+
+		// FIXME: check for empty db_url
 
 		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_url->string, "");
 		to_ospath[strlen(to_ospath)-1] = '\0';
@@ -474,7 +476,7 @@ int DB_LoadOrSaveDb(sqlite3 *pInMemory, const char *zFilename, int isSave)
 	return rc;
 }
 
-int callback(void *NotUsed, int argc, char **argv, char **azColName)
+int DB_callback(void *NotUsed, int argc, char **argv, char **azColName)
 {
 	int i;
 	// NotUsed = 0;
@@ -495,7 +497,17 @@ int callback(void *NotUsed, int argc, char **argv, char **azColName)
 	return 0;
 }
 
-int lastID() // FIXME: Lue needs this
+
+/**
+ * @brief Get the last inserted ROWID
+ * see also "SELECT last_insert_rowid()"
+ */
+int DB_last_insert_rowid()
 {
-	return sqlite3_last_insert_rowid(db);
+	if (db)
+	{
+		return sqlite3_last_insert_rowid(db);
+	}
+
+	return -1;
 }
