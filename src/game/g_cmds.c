@@ -1044,13 +1044,13 @@ void Cmd_Kill_f(gentity_t *ent)
 			return;
 		}
 #endif
-		trap_SendServerCommand(ent - g_entities, "cp \"^9You must be alive to use ^3/kill.\"");
+		trap_SendServerCommand(ent - g_entities, "cp \"You must be alive to use ^3/kill^7.\"");
 		return;
 	}
 
 	if (ent->client->freezed)
 	{
-		trap_SendServerCommand(ent - g_entities, "cp \"^9You are frozen - ^3/kill^9 is disabled.\"");
+		trap_SendServerCommand(ent - g_entities, "cp \"You are frozen - ^3/kill^7 is disabled.\"");
 		return;
 	}
 
@@ -2725,23 +2725,23 @@ void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText)
 	{
 	default:
 	case SAY_ALL:
-		G_LogPrintf("say: %s: %s\n", ent->client->pers.netname, chatText);
-		Com_sprintf(name, sizeof(name), "%s%c%c: ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE);
+		G_LogPrintf("say: ^7%s^7: ^2%s\n", ent->client->pers.netname, chatText);
+		Com_sprintf(name, sizeof(name), "%c%c%s%c%c: %c%c", Q_COLOR_ESCAPE, COLOR_WHITE, ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, Q_COLOR_ESCAPE, COLOR_GREEN);
 		color = COLOR_GREEN;
 		break;
 	case SAY_BUDDY:
-		G_LogPrintf("saybuddy: %s: %s\n", ent->client->pers.netname, chatText);
-		Com_sprintf(name, sizeof(name), "[lof](%s%c%c): ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE);
+		G_LogPrintf("saybuddy: ^7%s^7: ^3%s\n", ent->client->pers.netname, chatText);
+		Com_sprintf(name, sizeof(name), "[lof]%c%c(%s%c%c): %c%c", Q_COLOR_ESCAPE, COLOR_WHITE, ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, Q_COLOR_ESCAPE, COLOR_YELLOW);
 		color = COLOR_YELLOW;
 		break;
 	case SAY_TEAM:
-		G_LogPrintf("sayteam: %s: %s\n", ent->client->pers.netname, chatText);
-		Com_sprintf(name, sizeof(name), "[lof](%s%c%c): ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE);
+		G_LogPrintf("sayteam: ^7%s^7: ^5%s\n", ent->client->pers.netname, chatText);
+		Com_sprintf(name, sizeof(name), "[lof]%c%c(%s%c%c): %c%c", Q_COLOR_ESCAPE, COLOR_WHITE, ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, Q_COLOR_ESCAPE, COLOR_CYAN);
 		color = COLOR_CYAN;
 		break;
 	case SAY_TEAMNL:
-		G_LogPrintf("sayteamnl: %s: %s\n", ent->client->pers.netname, chatText);
-		Com_sprintf(name, sizeof(name), "(%s^7): ", ent->client->pers.netname);
+		G_LogPrintf("sayteamnl: ^7%s^7: ^2%s\n", ent->client->pers.netname, chatText);
+		Com_sprintf(name, sizeof(name), "%c%c(%s%c%c): %c%c", Q_COLOR_ESCAPE, COLOR_WHITE, ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, Q_COLOR_ESCAPE, COLOR_CYAN);
 		color = COLOR_CYAN;
 		break;
 	}

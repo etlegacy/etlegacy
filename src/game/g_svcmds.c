@@ -938,7 +938,7 @@ static void Svcmd_Gib(void)
 
 		if (count > 0)
 		{
-			CPx(-1, va("cp \"^9%d players gibbed.\"", count));
+			CPx(-1, va("cp \"^3%d^7 players gibbed.\"", count));
 		}
 		else
 		{
@@ -1014,7 +1014,7 @@ static void Svcmd_Die(void)
 
 		if (count > 0)
 		{
-			CPx(-1, va("cp \"^9%d players died.\"", count));
+			CPx(-1, va("cp \"^3%d^7 players died.\"", count));
 		}
 		else
 		{
@@ -1100,7 +1100,7 @@ static void Svcmd_Freeze(void)
 
 		if (count > 0)
 		{
-			CPx(-1, va("cp \"^9%d players are frozen.\"", count));
+			CPx(-1, va("cp \"^3%d^7 players are frozen.\"", count));
 		}
 		else
 		{
@@ -1179,7 +1179,7 @@ static void Svcmd_Unfreeze(void)
 
 		if (count > 0)
 		{
-			CPx(-1, va("cp \"^9%d players are unfrozen.\"", count));
+			CPx(-1, va("cp \"^3%d^7 players are unfrozen.\"", count));
 		}
 		else
 		{
@@ -1261,7 +1261,7 @@ static void Svcmd_Burn(void)
 
 		if (count > 0)
 		{
-			CPx(-1, va("cp \"^9%d players burned.\"", count));
+			CPx(-1, va("cp \"^3%d^7 players burned.\"", count));
 		}
 		else
 		{
@@ -1357,7 +1357,7 @@ static void Svcmd_Pip(void)
 
 		if (count > 0)
 		{
-			CPx(-1, va("cp \"^9%d players pipped.\"", count));
+			CPx(-1, va("cp \"^3%d^7 players pipped.\"", count));
 		}
 		else
 		{
@@ -1446,7 +1446,7 @@ static void Svcmd_Fling(int flingType) // 0 = fling, 1 = throw, 2 = launch
 
 		if (count > 0)
 		{
-			CPx(-1, va("cp \"^9%d players %s.\"", count, pastTense));
+			CPx(-1, va("cp \"^3%d^7 players %s.\"", count, pastTense));
 		}
 		else
 		{

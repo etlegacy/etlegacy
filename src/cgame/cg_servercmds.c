@@ -1609,29 +1609,29 @@ void CG_VoiceChatLocal(int mode, qboolean voiceOnly, int clientNum, int color, c
 				{
 					if (!strcmp(cmd, "IamMedic") || !strcmp(cmd, "IamEngineer") || !strcmp(cmd, "IamFieldOps") || !strcmp(cmd, "IamCovertOps") || !strcmp(cmd, "IamSoldier"))
 					{
-						Com_sprintf(vchat.message, sizeof(vchat.message), "(%s^7)^3(%s^3): ^%c%s Next class: %s",
+						Com_sprintf(vchat.message, sizeof(vchat.message), "^7(%s^7)^3(%s^3): ^%c%s Next class: %s",
 						            ci->name, loc, color, CG_TranslateString(chat), BG_ClassnameForNumber(cgs.clientinfo[clientNum].latchedcls)); // FIXME: CG_TranslateString doesn't make sense here
 					}
 					else // isn't sayplayerclass cmd
 					{
-						Com_sprintf(vchat.message, sizeof(vchat.message), "(%s^7)^3(%s^3): ^%c%s",
+						Com_sprintf(vchat.message, sizeof(vchat.message), "^7(%s^7)^3(%s^3): ^%c%s",
 						            ci->name, loc, color, CG_TranslateString(chat));
 					}
 				}
 				else
 				{
-					Com_sprintf(vchat.message, sizeof(vchat.message), "(%s^7)^3(%s^3): ^%c%s",
+					Com_sprintf(vchat.message, sizeof(vchat.message), "^7(%s^7)^3(%s^3): ^%c%s",
 					            ci->name, loc, color, CG_TranslateString(chat));
 				}
 			}
 			else if (mode == SAY_BUDDY)
 			{
-				Com_sprintf(vchat.message, sizeof(vchat.message), "(%s^7)^3(%s^3): ^%c%s",
+				Com_sprintf(vchat.message, sizeof(vchat.message), "^7(%s^7)^3(%s^3): ^%c%s",
 				            ci->name, loc, color, CG_TranslateString(chat));  // FIXME: CG_TranslateString doesn't make sense here
 			}
 			else
 			{
-				Com_sprintf(vchat.message, sizeof(vchat.message), "%s^3: ^%c%s",
+				Com_sprintf(vchat.message, sizeof(vchat.message), "^7%s^3: ^%c%s",
 				            ci->name, color, CG_TranslateString(chat));  // FIXME: CG_TranslateString doesn't make sense here
 			}
 			CG_AddBufferedVoiceChat(&vchat);

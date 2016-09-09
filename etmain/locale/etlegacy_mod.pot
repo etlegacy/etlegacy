@@ -5590,7 +5590,7 @@ msgstr ""
 msgid "You must be a player or following a player to use +stats\n"
 msgstr ""
 
-msgid "^9You must be alive to use ^3/kill."
+msgid "You must be alive to use ^3/kill^7."
 msgstr ""
 
 msgid "No vote in progress.\n"
@@ -6865,7 +6865,7 @@ msgstr ""
 msgid "Gib command not allowed during intermission.\n"
 msgstr ""
 
-msgid "^9%d players gibbed."
+msgid "^3%d^7 players gibbed."
 msgstr ""
 
 msgid "There is no player to gib."
@@ -6883,7 +6883,7 @@ msgstr ""
 msgid "Die command not allowed during intermission.\n"
 msgstr ""
 
-msgid "^9%d players died."
+msgid "^3%d^7 players died."
 msgstr ""
 
 msgid "There is no player to die.\n"
@@ -6901,7 +6901,7 @@ msgstr ""
 msgid "Freeze command not allowed during intermission.\n"
 msgstr ""
 
-msgid "^9%d players are frozen."
+msgid "^3%d^7 players are frozen."
 msgstr ""
 
 msgid "No players in team or they are already frozen.\n"
@@ -6916,7 +6916,7 @@ msgstr ""
 msgid "^7%s^7 is frozen."
 msgstr ""
 
-msgid "^9%d players are unfrozen."
+msgid "^3%d^7 players are unfrozen."
 msgstr ""
 
 msgid "No players in team or they are already unfrozen.\n"
@@ -6934,7 +6934,7 @@ msgstr ""
 msgid "Burn command not allowed during intermission.\n"
 msgstr ""
 
-msgid "^9%d players burned."
+msgid "^3%d^7 players burned."
 msgstr ""
 
 msgid "No players in team or they are already burned.\n"
@@ -6952,7 +6952,7 @@ msgstr ""
 msgid "Pip command not allowed during intermission.\n"
 msgstr ""
 
-msgid "^9%d players pipped."
+msgid "^3%d^7 players pipped."
 msgstr ""
 
 msgid "No players in team or they are already pipped.\n"
@@ -6970,7 +6970,7 @@ msgstr ""
 msgid "%s command not allowed during intermission.\n"
 msgstr ""
 
-msgid "^9%d players %s."
+msgid "^3%d^7 players %s."
 msgstr ""
 
 msgid "No players in team or they are already %s.\n"
@@ -7084,4 +7084,7 @@ msgstr ""
 
 #: src/cgame/cg_draw.c:1516
 msgid "%s^7's mine"
+msgstr ""
+
+msgid "You are frozen - ^3/kill^7 is disabled."
 msgstr ""
