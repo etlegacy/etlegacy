@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2016-08-15 09:14+0000\n"
+"PO-Revision-Date: 2016-09-09 07:04+0000\n"
 "Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
 "Language-Team: Polish (http://www.transifex.com/etlegacy/etlegacy/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -2560,7 +2560,7 @@ msgstr "Wyświetl zmianę klasy w Oddziale"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Obituaries Icons:"
-msgstr "Ikony Zabić:"
+msgstr "Ikony Zabójstw:"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Victim Weapon Killer"
@@ -2572,7 +2572,7 @@ msgstr "Zabójca Broń Ofiara"
 
 #: etmain/ui/options_customise_hud.menu:43
 msgid "Displays graphical obituaries"
-msgstr "Wyświetla ikony zabić"
+msgstr "Wyświetla ikony zabójstw"
 
 #: etmain/ui/options_customise_hud.menu:44
 msgid "Show Descriptive Text:"
@@ -4592,6 +4592,10 @@ msgstr "STATUS KAMPANI: %s"
 msgid "SECS TO NEXT MAP"
 msgstr "SEK DO NAST MAPY"
 
+#: src/cgame/cg_debriefing.c:2905
+msgid "SEC TO NEXT MAP"
+msgstr "SEK DO NAST MAPY"
+
 #: src/cgame/cg_debriefing.c:3371
 #, c-format
 msgid "Campaign: %s"
@@ -4853,7 +4857,7 @@ msgstr "Wciśnij ^3%s^7 aby zacząć"
 
 #: src/cgame/cg_draw.c:2470
 msgid "^3WARMUP:^7 Match begins in"
-msgstr "^3ROZGRZEWKA:^7 Mecz zacznie się za"
+msgstr "^3ROZGRZEWKA:^7 Mecz rozpocznie się za"
 
 #: src/cgame/cg_draw.c:2481
 msgid "^3PREPARE TO FIGHT!\n"
@@ -4968,11 +4972,11 @@ msgstr "Traf. / Strzał."
 
 #: src/cgame/cg_info.c:735 src/cgame/cg_info.c:937
 msgid "Kills"
-msgstr "Zabić"
+msgstr "Zabójstw"
 
 #: src/cgame/cg_info.c:737
 msgid "Deaths"
-msgstr "Zgonów"
+msgstr "     Śmierci"
 
 #: src/cgame/cg_info.c:739
 msgid "Headshots"
@@ -5008,7 +5012,7 @@ msgstr "\"NAJLEPSZE STRZAŁY\" CELNOŚĆ"
 
 #: src/cgame/cg_info.c:939
 msgid "Player"
-msgstr "Gracz"
+msgstr "   Gracz"
 
 #: src/cgame/cg_info.c:947
 msgid "No qualifying weapon info available."
@@ -5141,7 +5145,7 @@ msgstr "NAGŁA ŚMIERC"
 
 #: src/cgame/cg_scoreboard.c:200
 msgid "MATCH BEGINS IN:"
-msgstr "MECZ ZACZNIE SIĘ ZA:"
+msgstr "MECZ ROZPOCZNIE SIĘ ZA:"
 
 #: src/cgame/cg_scoreboard.c:205
 #, c-format
@@ -5227,7 +5231,12 @@ msgstr "Otrzym. Obrażeń: %6d Otrzym. Obrażeń Przez Zespół: %6d"
 #: src/cgame/cg_servercmds.c:1878
 #, c-format
 msgid "Kills:  %3d    Team Kills: %3d    Accuracy:  %5.1f%%"
-msgstr "Zabójstw: %3d Team Kills: %3d Dokładność: %5.1f%%"
+msgstr "Zabójstw: %3d Zabójstw Zespołu: %3d Celność: %5.1f%%"
+
+#: src/cgame/cg_servercmds.c:1941
+#, c-format
+msgid "Gibs:   %3d    Team Gibs:  %3d"
+msgstr "Gibnięć: %3d Gibnięć Zespołu: %3d"
 
 #: src/cgame/cg_servercmds.c:1879
 #, c-format
@@ -5236,7 +5245,7 @@ msgstr "Śmierci: %3d Samobójstw: %3d Strzałów W Głowę: %5.1f%%"
 
 #: src/cgame/cg_servercmds.c:2035
 msgid "^7Weapon     Acrcy Hits/Atts Kills Deaths Headshots\n"
-msgstr "^7Broń        Celn Traf/Strza Zabić Zgonów  W Głowę\n"
+msgstr "^7Broń        Celn Traf/Strza Zabójstw Śmierci  W Głowę\n"
 
 #: src/cgame/cg_servercmds.c:2040
 msgid "^7Weapon     Acrcy Hits/Atts Kll Dth HS\n"
@@ -5588,8 +5597,8 @@ msgstr "Obserwatorów"
 msgid "You must be a player or following a player to use +stats\n"
 msgstr "Musisz być graczem lub obserwować gracza aby użyć +stats\n"
 
-msgid "^9You must be alive to use ^3/kill."
-msgstr "^9Musisz być żywy aby użyć ^3/kill."
+msgid "You must be alive to use ^3/kill^7."
+msgstr "Musisz być żywy aby użyć ^3/kill^7."
 
 msgid "No vote in progress.\n"
 msgstr "Brak głosowań.\n"
@@ -5624,7 +5633,7 @@ msgstr "Odwrót!"
 msgid ""
 "^3All players ready!^7\n"
 "Match starting..."
-msgstr "^3Wszyscy gracze gotowi!^7\nMecz zaczyna..."
+msgstr "^3Wszyscy gracze gotowi!^7\nRozpoczęcie meczu..."
 
 msgid "Path cleared."
 msgstr "Droga Wolna."
@@ -5881,8 +5890,8 @@ msgstr "zmienił na"
 msgid "Arming landmine..."
 msgstr "Podkładanie miny..."
 
-msgid "Landmine armed..."
-msgstr "Mina uzbrojona..."
+msgid "Landmine armed"
+msgstr "Mina uzbrojona"
 
 msgid "Dynamite is set, but NOT armed!"
 msgstr "Dynamit jest ustawiony, ale NIE uzbrojony!"
@@ -5893,11 +5902,11 @@ msgstr "Podkładanie dynamitu..."
 msgid "Dynamite is now armed with a 30 second timer!"
 msgstr "Dynamit jest uzbrojony z czasem 30 sekund!"
 
-msgid "Defusing landmine"
-msgstr "Rozbrajanie miny"
+msgid "Defusing landmine..."
+msgstr "Rozbrajanie miny..."
 
-msgid "Landmine defused..."
-msgstr "Mina rozbrojona..."
+msgid "Landmine defused"
+msgstr "Mina rozbrojona"
 
 msgid "Defusing dynamite..."
 msgstr "Rozbrajanie dynamitu..."
@@ -5947,7 +5956,7 @@ msgstr "Centrum Dowodzenia Ośi wybudowane. Szybkość ładowania zwiększona!"
 msgid ""
 "^3All players ready!^7\n"
 "Match starting...\n"
-msgstr "^3Wszyscy gracze gotowi!^7\nMecz zaczyna...\n"
+msgstr "^3Wszyscy gracze gotowi!^7\nRozpoczęcie meczu...\n"
 
 msgid "You are on the Allied team"
 msgstr "Jesteś w Zespole Alliantów"
@@ -6007,8 +6016,8 @@ msgstr "Ustawienia Rozgrywki Wczytane!\n"
 msgid "Public Settings Loaded!\n"
 msgstr "Ustawienia Publiczne Wczytane!\n"
 
-msgid "Landmine cannot be armed here..."
-msgstr "Miny nie mogą być tutaj uzbrojone.."
+msgid "Landmine cannot be armed here"
+msgstr "Miny nie mogą być tutaj uzbrojone"
 
 msgid "Your team has too many landmines placed..."
 msgstr "Twój zespół ma zbyt dużo podłożonych min..."
@@ -6476,10 +6485,10 @@ msgid "was killed by"
 msgstr "został zabity przez"
 
 msgid "was stabbed by"
-msgstr ""
+msgstr "został dźgnięty przez"
 
 msgid "was backstabbed by"
-msgstr ""
+msgstr "został dźgnięty w plecy przez"
 
 msgid "was blasted by"
 msgstr "został wysadzony przez"
@@ -6822,7 +6831,7 @@ msgid "Highest Experience Points"
 msgstr "Najwięcej Punktów Doświadczenia"
 
 msgid "Highest Ranking Officer"
-msgstr "Najwyższy Officer"
+msgstr "Najwyższy Rangą Officer"
 
 msgid "Most Highly Decorated"
 msgstr "Najbardziej Udekorowany"
@@ -6855,7 +6864,22 @@ msgid "I Ain't Got No Friends Award"
 msgstr "Nagroda za brak przyjaciół"
 
 msgid "Welcome Newbie! Award"
-msgstr "Nagroda Witamy Początkującego"
+msgstr "Nagroda Witamy Początkującego!"
+
+msgid "Highest Headshots Percentage"
+msgstr "Najwyższy % Strzałów w Głowę"
+
+msgid "Best Survivor"
+msgstr "Najlepszy Ryzykant"
+
+msgid "Most Gibs"
+msgstr "Najwięcej Gibnięć"
+
+msgid "Most Selfkills"
+msgstr "Najwięcej Samobójstw"
+
+msgid "Most Deaths"
+msgstr "Najwięcej Śmierci"
 
 msgid ""
 "\n"
@@ -6865,8 +6889,8 @@ msgstr "\nET: Legacy z silnikiem OpenGL 3.x nie może ruszyć na tej maszynie po
 msgid "Gib command not allowed during intermission.\n"
 msgstr "Komenda gib nie dostępna podczas przerw.\n"
 
-msgid "^9%d players gibbed."
-msgstr "^9%d graczy zgibowanych."
+msgid "^3%d^7 players gibbed."
+msgstr "^3%d^7 graczy zgibowanych."
 
 msgid "There is no player to gib."
 msgstr "Nie ma graczy do zgibowania."
@@ -6883,8 +6907,8 @@ msgstr "^7%s^7 został zgibowany."
 msgid "Die command not allowed during intermission.\n"
 msgstr "Komenda Die nie dostępna podczas przerw.\n"
 
-msgid "^9%d players died."
-msgstr "^9%d graczy umarło."
+msgid "^3%d^7 players died."
+msgstr "^3%d^7 graczy umarło."
 
 msgid "There is no player to die.\n"
 msgstr "Nie ma graczy do zabicia.\n"
@@ -6901,8 +6925,8 @@ msgstr "^7%s^7 umarło."
 msgid "Freeze command not allowed during intermission.\n"
 msgstr "Komenda Freeze nie dostępna podczas przerw.\n"
 
-msgid "^9%d players are frozen."
-msgstr "^9%d graczy jest zamrożonych."
+msgid "^3%d^7 players are frozen."
+msgstr "^3%d^7 graczy jest zamrożonych."
 
 msgid "No players in team or they are already frozen.\n"
 msgstr "Brak graczy w zespole lub są już zamrożeni.\n"
@@ -6916,8 +6940,8 @@ msgstr "Gracz musi być w zespole aby zostać zamrożony.\n"
 msgid "^7%s^7 is frozen."
 msgstr "^7%s^7 jest zamrożony."
 
-msgid "^9%d players are unfrozen."
-msgstr "^9%d graczy jest odmrożonych."
+msgid "^3%d^7 players are unfrozen."
+msgstr "^3%d^7 graczy jest odmrożonych."
 
 msgid "No players in team or they are already unfrozen.\n"
 msgstr "Brak graczy w zespole lub są już odmrożeni.\n"
@@ -6934,8 +6958,8 @@ msgstr "^7%s^7 jest zamrożony."
 msgid "Burn command not allowed during intermission.\n"
 msgstr "Komenda Burn nie jest dostępna podczas przerw.\n"
 
-msgid "^9%d players burned."
-msgstr "^9%d graczy podpalonych."
+msgid "^3%d^7 players burned."
+msgstr "^3%d^7 graczy podpalonych."
 
 msgid "No players in team or they are already burned.\n"
 msgstr "Brak graczy w zespole lub są już podpaleni.\n"
@@ -6952,8 +6976,8 @@ msgstr "^7%s^7 jest podpalony."
 msgid "Pip command not allowed during intermission.\n"
 msgstr "Komenda Pip nie jest dostępna podczas przerw.\n"
 
-msgid "^9%d players pipped."
-msgstr "^9%d graczy podświetlonych."
+msgid "^3%d^7 players pipped."
+msgstr "^3%d^7 graczy podświetlonych."
 
 msgid "No players in team or they are already pipped.\n"
 msgstr "Brak graczy w zespole lub są już podświetleni.\n"
@@ -6970,8 +6994,8 @@ msgstr "^7%s^7 jest podświetlony."
 msgid "%s command not allowed during intermission.\n"
 msgstr "Komenda %s nie jest dostępna podczas przerw.\n"
 
-msgid "^9%d players %s."
-msgstr "^9%d graczy %s."
+msgid "^3%d^7 players %s."
+msgstr "^3%d^7 graczy %s."
 
 msgid "No players in team or they are already %s.\n"
 msgstr "Brak graczy w zespole lub są już %s.\n"
@@ -7006,11 +7030,11 @@ msgstr "Natychmiast!"
 
 #: src/cgame/cg_draw.c:2505
 msgid "^3WARMUP:^7 Match begins now!"
-msgstr "^3ROZGRZEWKA:^7 Mecz rozpoczyna się teraz!"
+msgstr "^3ROZGRZEWKA:^7 Mecz rozpocznie się teraz!"
 
 #: src/cgame/cg_scoreboard.c:211
 msgid "MATCH BEGINS NOW!"
-msgstr "MECZ ROZPOCZYNA SIĘ TERAZ!"
+msgstr "MECZ ROZPOCZNIE SIĘ TERAZ!"
 
 msgid "Mute Players:"
 msgstr "Ucisz Graczy:"
@@ -7074,3 +7098,17 @@ msgstr "^7BACKSPACE ^3pomoc wł/wył"
 
 msgid "^7BACKSPACE ^mgo  back"
 msgstr "^7BACKSPACE ^mcofnij"
+
+msgid "CURRENT PROFILE"
+msgstr "AKTUALNY PROFIL"
+
+#: src/cgame/cg_draw.c:1504
+msgid "%s^7's dynamite"
+msgstr "^7Dynamit %s"
+
+#: src/cgame/cg_draw.c:1516
+msgid "%s^7's mine"
+msgstr "^7Mina %s"
+
+msgid "You are frozen - ^3/kill^7 is disabled."
+msgstr "Jesteś zamrożony - ^3/kill^7 jest wyłączone."

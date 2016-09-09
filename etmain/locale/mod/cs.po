@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2016-08-12 21:48+0000\n"
+"PO-Revision-Date: 2016-09-09 06:56+0000\n"
 "Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
 "Language-Team: Czech (http://www.transifex.com/etlegacy/etlegacy/language/cs/)\n"
 "MIME-Version: 1.0\n"
@@ -4592,6 +4592,10 @@ msgstr "STAV KAMPANĚ: %s"
 msgid "SECS TO NEXT MAP"
 msgstr "SEKUND DO DALŠÍ ÚROVNĚ"
 
+#: src/cgame/cg_debriefing.c:2905
+msgid "SEC TO NEXT MAP"
+msgstr ""
+
 #: src/cgame/cg_debriefing.c:3371
 #, c-format
 msgid "Campaign: %s"
@@ -5229,6 +5233,11 @@ msgstr "Obdržené poškození: %6d Obdržené poškození od týmu: %6d"
 msgid "Kills:  %3d    Team Kills: %3d    Accuracy:  %5.1f%%"
 msgstr "Zabití: %3d Zabití spoluhráčů: %3d Přesnost: %5.1f%%"
 
+#: src/cgame/cg_servercmds.c:1941
+#, c-format
+msgid "Gibs:   %3d    Team Gibs:  %3d"
+msgstr ""
+
 #: src/cgame/cg_servercmds.c:1879
 #, c-format
 msgid "Deaths: %3d    Self Kills: %3d    Headshots: %5.1f%%"
@@ -5588,8 +5597,8 @@ msgstr "Diváci"
 msgid "You must be a player or following a player to use +stats\n"
 msgstr "Je třeba být hráčem nebo jej sledovat k využití +stats\n"
 
-msgid "^9You must be alive to use ^3/kill."
-msgstr "^9Musíš být naživu pro použití ^3/kill^9."
+msgid "You must be alive to use ^3/kill^7."
+msgstr ""
 
 msgid "No vote in progress.\n"
 msgstr "Neprobíhá hlasování.\n"
@@ -5881,8 +5890,8 @@ msgstr "změněn na"
 msgid "Arming landmine..."
 msgstr "Nastražování miny..."
 
-msgid "Landmine armed..."
-msgstr "Mina nastražena..."
+msgid "Landmine armed"
+msgstr ""
 
 msgid "Dynamite is set, but NOT armed!"
 msgstr "Dynamit je nastaven, ale NEAKTIVOVÁN!"
@@ -5893,11 +5902,11 @@ msgstr "Aktivace dynamitu..."
 msgid "Dynamite is now armed with a 30 second timer!"
 msgstr "Dynamit je aktivován se zpožděním 30 sekund!"
 
-msgid "Defusing landmine"
-msgstr "Zneškodňování miny..."
+msgid "Defusing landmine..."
+msgstr ""
 
-msgid "Landmine defused..."
-msgstr "Mina zneškodněna..."
+msgid "Landmine defused"
+msgstr ""
 
 msgid "Defusing dynamite..."
 msgstr "Dynamit zneškodněn..."
@@ -6007,8 +6016,8 @@ msgstr "Soutěžní nastavení nahrána!\n"
 msgid "Public Settings Loaded!\n"
 msgstr "Běžná nastavení nahrána!\n"
 
-msgid "Landmine cannot be armed here..."
-msgstr "Zde nelze nastražit minu..."
+msgid "Landmine cannot be armed here"
+msgstr ""
 
 msgid "Your team has too many landmines placed..."
 msgstr "Tvůj tým nastražil příliš mnoho min..."
@@ -6857,6 +6866,21 @@ msgstr "Ocenění: Nezná bratra"
 msgid "Welcome Newbie! Award"
 msgstr "Ocenění: Vítej zelenáči!"
 
+msgid "Highest Headshots Percentage"
+msgstr ""
+
+msgid "Best Survivor"
+msgstr ""
+
+msgid "Most Gibs"
+msgstr ""
+
+msgid "Most Selfkills"
+msgstr ""
+
+msgid "Most Deaths"
+msgstr ""
+
 msgid ""
 "\n"
 "ET: Legacy with OpenGL 3.x renderer can not run on this machine since it is missing one or more required OpenGL extensions. Please update your video card drivers and try again.\n"
@@ -6865,8 +6889,8 @@ msgstr "\nET: Legacy s OpenGL 3.x rendererem nebude fungovat na tomto počítač
 msgid "Gib command not allowed during intermission.\n"
 msgstr "Příkaz 'gib' není povolen během přestávky.\n"
 
-msgid "^9%d players gibbed."
-msgstr "^9%d hráčů bylo vykucháno."
+msgid "^3%d^7 players gibbed."
+msgstr ""
 
 msgid "There is no player to gib."
 msgstr "Není zde hráč vhodný k vykuchání."
@@ -6883,8 +6907,8 @@ msgstr "^7%s^7 byl vykuchán."
 msgid "Die command not allowed during intermission.\n"
 msgstr "Příkaz 'die' není povolen během přestávky.\n"
 
-msgid "^9%d players died."
-msgstr "^9%d hráčů zemřelo."
+msgid "^3%d^7 players died."
+msgstr ""
 
 msgid "There is no player to die.\n"
 msgstr "Není zde hráč vhodný k usmrcení.\n"
@@ -6901,8 +6925,8 @@ msgstr "^7%s^7 zemřel."
 msgid "Freeze command not allowed during intermission.\n"
 msgstr "Příkaz 'freeze' není povolen během přestávky.\n"
 
-msgid "^9%d players are frozen."
-msgstr "^9%d hráčů zmrazeno."
+msgid "^3%d^7 players are frozen."
+msgstr ""
 
 msgid "No players in team or they are already frozen.\n"
 msgstr "Není zde vhodný hráč ke zmrazení.\n"
@@ -6916,8 +6940,8 @@ msgstr "Aby hráče bylo možné zmrazit, musí být v týmu.\n"
 msgid "^7%s^7 is frozen."
 msgstr "^7%s^7 zmražen."
 
-msgid "^9%d players are unfrozen."
-msgstr "^9%d hráčů rozmrazeno."
+msgid "^3%d^7 players are unfrozen."
+msgstr ""
 
 msgid "No players in team or they are already unfrozen.\n"
 msgstr "Není zde vhodný hráč ke rozmrazení.\n"
@@ -6934,8 +6958,8 @@ msgstr "^7%s^7 rozmražen."
 msgid "Burn command not allowed during intermission.\n"
 msgstr "Příkaz 'burn' není povolen během přestávky.\n"
 
-msgid "^9%d players burned."
-msgstr "^9%d hráčů bylo popáleno."
+msgid "^3%d^7 players burned."
+msgstr ""
 
 msgid "No players in team or they are already burned.\n"
 msgstr "Není zde vhodný hráč k popálení.\n"
@@ -6952,8 +6976,8 @@ msgstr "^7%s^7 popálen."
 msgid "Pip command not allowed during intermission.\n"
 msgstr "Příkaz 'pip' není povolen během přestávky.\n"
 
-msgid "^9%d players pipped."
-msgstr "^9%d hráčů dostalo pohlavek."
+msgid "^3%d^7 players pipped."
+msgstr ""
 
 msgid "No players in team or they are already pipped.\n"
 msgstr "Není zde vhodný hráč pro pohlavek.\n"
@@ -6970,8 +6994,8 @@ msgstr "^7%s^7 dostal pohlavek."
 msgid "%s command not allowed during intermission.\n"
 msgstr "Příkaz %s není povolen během přestávky.\n"
 
-msgid "^9%d players %s."
-msgstr "^9Na %d hráčů aplikováno: %s."
+msgid "^3%d^7 players %s."
+msgstr ""
 
 msgid "No players in team or they are already %s.\n"
 msgstr "Nejsou zde vhodní hráči k: %s.\n"
@@ -7073,4 +7097,18 @@ msgid "^7BACKSPACE ^3help on/off"
 msgstr ""
 
 msgid "^7BACKSPACE ^mgo  back"
+msgstr ""
+
+msgid "CURRENT PROFILE"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1504
+msgid "%s^7's dynamite"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1516
+msgid "%s^7's mine"
+msgstr ""
+
+msgid "You are frozen - ^3/kill^7 is disabled."
 msgstr ""

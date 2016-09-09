@@ -3,7 +3,7 @@
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
 # Artem Vorotnikov <artem@vorotnikov.me>, 2015
-# IR4 <gutzu@gmx.ch>, 2015
+# IR4T4 <gutzu@gmx.ch>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
