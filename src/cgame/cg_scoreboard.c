@@ -588,7 +588,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	// draw GeoIP flag
 	if (score->ping != -1 && score->ping != 999 && cg_countryflags.integer)
 	{
-		if (CG_DrawFlag(tempx - 3, y - 9, fade, ci->clientNum))
+		if (CG_DrawFlag(tempx - 3, y - 11, fade, ci->clientNum))
 		{
 			offset   += 15;
 			tempx    += 15;
@@ -687,7 +687,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 		if (cgs.clientinfo[ci->clientNum].rank > 0)
 		{
-			CG_DrawPic(tempx + 13, y - 9, 12, 12, rankicons[cgs.clientinfo[ci->clientNum].rank][cgs.clientinfo[ci->clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+			CG_DrawPic(tempx + 13, y - 10, 12, 12, rankicons[cgs.clientinfo[ci->clientNum].rank][cgs.clientinfo[ci->clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 		}
 	}
 
