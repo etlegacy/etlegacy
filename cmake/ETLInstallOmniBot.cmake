@@ -1,12 +1,14 @@
 message(STATUS "Installing Omni-Bot")
-# Note: used archive (16MB) doesn't contain incomplete nav- and other unwanted files
+# Note: used archive (20MB) doesn't contain incomplete nav- and other unwanted files
 if(UNIX)
 	set(ETLEGACY_OMNIBOT_ARCHIVE "omnibot-linux-latest.tar.gz")
+	set(ETLEGACY_OMNIBOT_ARCHIVE_URL "http://mirror.etlegacy.com/omnibot/omnibot-linux-latest.tar.gz")
 elseif(WIN32 AND UNZIP_EXECUTABLE)
 	set(ETLEGACY_OMNIBOT_ARCHIVE "omnibot-windows-latest.zip")
+	set(ETLEGACY_OMNIBOT_ARCHIVE_URL "http://mirror.etlegacy.com/omnibot/omnibot-windows-latest.zip")
 endif()
 
-set(ETLEGACY_OMNIBOT_DL_URL "http://mirror.etlegacy.com/omnibot/${ETLEGACY_OMNIBOT_ARCHIVE}")
+set(ETLEGACY_OMNIBOT_DL_URL "${ETLEGACY_OMNIBOT_ARCHIVE_URL}")
 
 #file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/legacy")
 
