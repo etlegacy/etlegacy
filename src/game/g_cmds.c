@@ -236,7 +236,7 @@ static void G_SendSkillRating(gentity_t *ent)
 	{
 		cl = &level.clients[level.sortedClients[i]];
 		Q_strcat(buff, sizeof(buff), va("%.3f %.3f ",
-			cl->sess.mu - 3 * cl->sess.sigma,
+			MAX(cl->sess.mu - 3 * cl->sess.sigma, 0.f),
 			cl->sess.mu - 3 * cl->sess.sigma - (cl->sess.oldmu - 3 * cl->sess.oldsigma)));
 	}
 
@@ -4469,7 +4469,7 @@ void Cmd_IntermissionSkillRating_f(gentity_t *ent)
 		if (g_entities[i].inuse)
 		{
 			Q_strcat(buffer, sizeof(buffer), va("%.3f %.3f ",
-			    level.clients[i].sess.mu - 3 * level.clients[i].sess.sigma,
+			    MAX(level.clients[i].sess.mu - 3 * level.clients[i].sess.sigma, 0.f),
 			    level.clients[i].sess.mu - 3 * level.clients[i].sess.sigma - (level.clients[i].sess.oldmu - 3 * level.clients[i].sess.oldsigma)));
 		}
 		else

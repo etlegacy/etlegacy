@@ -2163,7 +2163,7 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (char *))
 		rating      = atof(CG_Argv(iArg++));
 		deltaRating = atof(CG_Argv(iArg++));
 
-		txt_dump(va("^2Skill Rating: ^7%5.2f   (^5%+5.2f^7)\n", (rating < 0.f) ? 0.f : rating, deltaRating));
+		txt_dump(va("^2Skill Rating: ^7%5.2f   (^5%+5.2f^7)\n", rating, deltaRating));
 	}
 #endif
 

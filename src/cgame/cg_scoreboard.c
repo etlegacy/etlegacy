@@ -495,7 +495,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 #ifdef FEATURE_RATING
 	if (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR)
 	{
-		CG_Text_Paint_Ext(tempx + 8, y, 0.24, 0.28, colorWhite, va("^7%5.2f", score->rating < 0 ? 0.f : score->rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + 8, y, 0.24, 0.28, colorWhite, va("^7%5.2f", score->rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	else
 	{
@@ -696,7 +696,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 #ifdef FEATURE_RATING
 	if (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR)
 	{
-		CG_Text_Paint_Ext(tempx + 8, y, 0.20, 0.25, colorWhite, va("^7%5.2f", score->rating < 0 ? 0.f : score->rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + 8, y, 0.20, 0.25, colorWhite, va("^7%5.2f", score->rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	else
 	{
