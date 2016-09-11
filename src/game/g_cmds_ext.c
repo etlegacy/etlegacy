@@ -235,8 +235,6 @@ void G_commands_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 // Locks/unlocks a player's team.
 void G_lock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 {
-	int tteam;
-
 	if (team_nocontrols.integer)
 	{
 		G_noTeamControls(ent);
@@ -247,17 +245,20 @@ void G_lock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 		return;
 	}
 
-	tteam = G_teamID(ent);
-	if (tteam == TEAM_AXIS || tteam == TEAM_ALLIES)
+	if (ent->client->sess.sessionTeam == TEAM_AXIS || ent->client->sess.sessionTeam == TEAM_ALLIES)
 	{
-		if (teamInfo[tteam].team_lock == fLock)
+		if (teamInfo[ent->client->sess.sessionTeam].team_lock == fLock)
 		{
 			CP(va("print \"^3Your team is already %sed!\n\"", lock_status[fLock]));
 		}
 		else
 		{
-			char *info = va("\"The %s team is now %sed!\n\"", aTeams[tteam], lock_status[fLock]);
-			teamInfo[tteam].team_lock = fLock;
+			char *info;
+			
+			info = va("\"The %s team is now %sed!\n\"", aTeams[ent->client->sess.sessionTeam], lock_status[fLock]);
+			
+			
+			teamInfo[ent->client->sess.sessionTeam].team_lock = fLock;
 			AP(va("print %s", info));
 			AP(va("cp %s", info));
 		}
@@ -299,7 +300,7 @@ void G_pause_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fPause)
 	}
 	else
 	{
-		int tteam = G_teamID(ent);
+		int tteam = ent->client->sess.sessionTeam;
 
 		if (!G_cmdDebounce(ent, aCommandInfo[dwCommand].pszCommandName))
 		{
@@ -344,12 +345,12 @@ void G_pause_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fPause)
 // Show client info
 void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 {
-	int       i, idnum, max_rate, cnt = 0, tteam;
+	int       i, idnum, max_rate, cnt = 0;
 	int       user_rate, user_snaps;
 	gclient_t *cl;
 	gentity_t *cl_ent;
 	char      n2[MAX_NETNAME], ready[16], ref[8], rate[256];
-	char      *s, *tc, *coach, *ign, *muted, userinfo[MAX_INFO_STRING];
+	char      *s, *tc, *ign, *muted, userinfo[MAX_INFO_STRING];
 
 	if (g_gamestate.integer == GS_PLAYING)
 	{
@@ -450,41 +451,34 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 			muted = "";
 		}
 
-		if (cl->sess.coach_team)
-		{
-			tteam = cl->sess.coach_team;
-			coach = (ent) ? "^3C^7" : "C";
-		}
-		else
-		{
-			tteam = cl->sess.sessionTeam;
-			coach = " ";
-		}
-
 		tc = (ent) ? "^7 " : " ";
 		if (g_gametype.integer >= GT_WOLF)
 		{
-			if (tteam == TEAM_AXIS)
+			if (cl->sess.sessionTeam == TEAM_AXIS)
 			{
 				tc = (ent) ? "^1X^7" : "X";
 			}
-			if (tteam == TEAM_ALLIES)
+			else if (cl->sess.sessionTeam == TEAM_ALLIES)
 			{
 				tc = (ent) ? "^4L^7" : "L";
 			}
-			if (tteam == TEAM_SPECTATOR)
+			else if (cl->sess.sessionTeam == TEAM_SPECTATOR)
 			{
 				tc = (ent) ? "^2S^7" : "S";
+			}
+			else // unknown
+			{
+				tc = (ent) ? "^2U^7" : "U";
 			}
 		}
 
 		if (ent)
 		{
-			CP(va("print \"%s%s%2d%s:%s %-26s^7%s  ^3%s%s%s^7\n\"", ready, tc, idnum, coach, ((ref[0]) ? "^3" : "^7"), n2, rate, ref, ign, muted));
+			CP(va("print \"%s%s%2d:%s %-26s^7%s  ^3%s%s%s^7\n\"", ready, tc, idnum, ((ref[0]) ? "^3" : "^7"), n2, rate, ref, ign, muted));
 		}
 		else
 		{
-			G_Printf("%s%s%2d%s: %-26s%s  %s%s\n", ready, tc, idnum, coach, n2, rate, ref, muted);
+			G_Printf("%s%s%2d: %-26s%s  %s%s\n", ready, tc, idnum, n2, rate, ref, muted);
 		}
 
 		cnt++;
@@ -596,7 +590,6 @@ void G_scores_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 // Sends an invitation to a player to spectate a team.
 void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 {
-	int       tteam;
 	gentity_t *player;
 	char      arg[MAX_TOKEN_CHARS];
 
@@ -610,12 +603,11 @@ void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 		return;
 	}
 
-	tteam = G_teamID(ent);
-	if (tteam == TEAM_AXIS || tteam == TEAM_ALLIES)
+	if (ent->client->sess.sessionTeam == TEAM_AXIS || ent->client->sess.sessionTeam == TEAM_ALLIES)
 	{
 		int pid;
 
-		if (!teamInfo[tteam].spec_lock)
+		if (!teamInfo[ent->client->sess.sessionTeam].spec_lock)
 		{
 			CP("cpm \"Your team isn't locked from spectators!\n\"");
 			return;
@@ -644,11 +636,11 @@ void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 			return;
 		}
 
-		player->client->sess.spec_invite |= tteam;
+		player->client->sess.spec_invite |= ent->client->sess.sessionTeam;
 
 		// Notify sender/recipient
 		CP(va("print \"%s^7 has been sent a spectator invitation.\n\"", player->client->pers.netname));
-		G_printFull(va("*** You've been invited to spectate the %s team!", aTeams[tteam]), player);
+		G_printFull(va("*** You've been invited to spectate the %s team!", aTeams[ent->client->sess.sessionTeam]), player);
 
 	}
 	else
@@ -660,8 +652,6 @@ void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 // Locks/unlocks a player's team from spectators.
 void G_speclock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 {
-	int tteam;
-
 	if (team_nocontrols.integer)
 	{
 		G_noTeamControls(ent);
@@ -673,17 +663,16 @@ void G_speclock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 		return;
 	}
 
-	tteam = G_teamID(ent);
-	if (tteam == TEAM_AXIS || tteam == TEAM_ALLIES)
+	if (ent->client->sess.sessionTeam == TEAM_AXIS || ent->client->sess.sessionTeam == TEAM_ALLIES)
 	{
-		if (teamInfo[tteam].spec_lock == fLock)
+		if (teamInfo[ent->client->sess.sessionTeam].spec_lock == fLock)
 		{
 			CP(va("print \"\n^3Your team is already %sed from spectators!\n\n\"", lock_status[fLock]));
 		}
 		else
 		{
-			G_printFull(va("The %s team is now %sed from spectators", aTeams[tteam], lock_status[fLock]), NULL);
-			G_updateSpecLock(tteam, fLock);
+			G_printFull(va("The %s team is now %sed from spectators", aTeams[ent->client->sess.sessionTeam], lock_status[fLock]), NULL);
+			G_updateSpecLock(ent->client->sess.sessionTeam, fLock);
 			if (fLock)
 			{
 				CP("cpm \"Use ^3specinvite^7 to invite people to spectate.\n\"");
@@ -722,7 +711,7 @@ void G_statsall_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 // Sets a player's team "ready" status.
 void G_teamready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
 {
-	int       i, tteam = G_teamID(ent);
+	int       i;
 	gclient_t *cl;
 
 	if (g_gamestate.integer == GS_PLAYING || g_gamestate.integer == GS_INTERMISSION)
@@ -753,7 +742,7 @@ void G_teamready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
 	for (i = 0; i < level.numPlayingClients; i++)
 	{
 		cl = level.clients + level.sortedClients[i];
-		if (cl->sess.sessionTeam == tteam)
+		if (cl->sess.sessionTeam == ent->client->sess.sessionTeam)
 		{
 			cl->pers.ready = qtrue;
 
@@ -761,7 +750,7 @@ void G_teamready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
 		}
 	}
 
-	G_printFull(va("The %s team is ready!", aTeams[tteam]), NULL);
+	G_printFull(va("The %s team is ready!", aTeams[ent->client->sess.sessionTeam]), NULL);
 	G_readyMatchState();
 }
 

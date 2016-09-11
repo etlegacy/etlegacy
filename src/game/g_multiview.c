@@ -103,9 +103,9 @@ void G_smvAdd_cmd(gentity_t *ent)
 		return;
 	}
 
-	if (!G_allowFollow(ent, G_teamID(&g_entities[pID])))
+	if (!G_allowFollow(ent, g_entities[pID].client->sess.sessionTeam))
 	{
-		CP(va("print \"[lof]** [lon]The %s team is locked from spectators[lof]!\n\"", aTeams[G_teamID(&g_entities[pID])]));
+		CP(va("print \"[lof]** [lon]The %s team is locked from spectators[lof]!\n\"", aTeams[g_entities[pID].client->sess.sessionTeam]));
 		return;
 	}
 

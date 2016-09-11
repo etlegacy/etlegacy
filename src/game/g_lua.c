@@ -814,7 +814,6 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(sess.skill,                     FIELD_INT_ARRAY,   0),
 	_et_gclient_addfield(sess.rank,                      FIELD_INT,         0),
 	_et_gclient_addfield(sess.medals,                    FIELD_INT_ARRAY,   0),
-	_et_gclient_addfield(sess.coach_team,                FIELD_INT,         0),
 	_et_gclient_addfield(sess.referee,                   FIELD_INT,         0),
 	_et_gclient_addfield(sess.rounds,                    FIELD_INT,         0),
 	_et_gclient_addfield(sess.spec_invite,               FIELD_INT,         0),

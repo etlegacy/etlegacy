@@ -571,7 +571,6 @@ typedef struct
 	int rank;                                   // rank
 	int medals[SK_NUM_SKILLS];                  // medals
 
-	int coach_team;
 	int referee;
 	int rounds;
 	int spec_invite;
@@ -2287,7 +2286,6 @@ void G_shuffleTeams(void);
 void G_swapTeamLocks(void);
 void G_swapTeams(void);
 qboolean G_teamJoinCheck(int team_num, gentity_t *ent);
-int G_teamID(gentity_t *ent);
 void G_teamReset(int team_num, qboolean fClearSpecLock);
 void G_verifyMatchState(int team_id);
 void G_updateSpecLock(int nTeam, qboolean fLock);
