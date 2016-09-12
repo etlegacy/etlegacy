@@ -1582,6 +1582,13 @@ void Weapon_Engineer(gentity_t *ent)
 		}
 	}
 
+	// immediately loose spawn protection when pliers are used
+	// note: fire_grenade calls this too, shield is lost when dyna or landmine is set
+	if (g_misc.integer & G_MISC_LOOSE_SPAWN_PROTECTION)
+	{
+		ent->client->ps.powerups[PW_INVULNERABLE] = 0;
+	}
+	
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
 	VectorCopy(ent->client->ps.origin, muzzleTrace);
 	muzzleTrace[2] += ent->client->ps.viewheight;
@@ -3252,6 +3259,11 @@ Bullet_Fire
 void Bullet_Fire(gentity_t *ent, float spread, int damage, qboolean distance_falloff)
 {
 	vec3_t end;
+
+	if (g_misc.integer & G_MISC_LOOSE_SPAWN_PROTECTION)
+	{
+		ent->client->ps.powerups[PW_INVULNERABLE] = 0;
+	}
 
 	switch (ent->s.weapon)
 	{

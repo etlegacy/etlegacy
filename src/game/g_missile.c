@@ -1707,6 +1707,11 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 	if (self->client)
 	{
 		self->client->ps.grenadeTimeLeft = 0;       // reset grenade timer
+
+		if (g_misc.integer & G_MISC_LOOSE_SPAWN_PROTECTION)
+		{
+			self->client->ps.powerups[PW_INVULNERABLE] = 0;
+		}
 	}
 
 	bolt->s.eType    = ET_MISSILE;
@@ -1972,6 +1977,11 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType
 	if (self->client)
 	{
 		bolt->s.teamNum = self->client->sess.sessionTeam;
+
+		if (g_misc.integer & G_MISC_LOOSE_SPAWN_PROTECTION)
+		{
+			self->client->ps.powerups[PW_INVULNERABLE] = 0;
+		}
 	}
 
 	return bolt;
