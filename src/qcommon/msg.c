@@ -212,7 +212,7 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 
 			*ip           = LittleLong(value);
 			msg->cursize += 4;
-			msg->bit     += 8;
+			msg->bit     += 32;
 		}
 		break;
 		default:
