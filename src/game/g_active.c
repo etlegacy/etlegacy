@@ -1025,6 +1025,12 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			// reset player disguise on firing mounted mg
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 			ent->client->disguiseClientNum             = -1;
+
+			if (g_misc.integer & G_MISC_LOOSE_SPAWN_PROTECTION)
+			{
+				ent->client->ps.powerups[PW_INVULNERABLE] = 0;
+			}
+
 			mg42_fire(ent);
 
 			// Only 1 stats bin for mg42
@@ -1043,7 +1049,13 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 			ent->client->disguiseClientNum             = -1;
 
+			if (g_misc.integer & G_MISC_LOOSE_SPAWN_PROTECTION)
+			{
+				ent->client->ps.powerups[PW_INVULNERABLE] = 0;
+			}
+
 			mountedmg42_fire(ent);
+
 			// Only 1 stats bin for mg42
 #ifndef DEBUG_STATS
 			if (g_gamestate.integer == GS_PLAYING)
@@ -1064,11 +1076,21 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 			ent->client->disguiseClientNum             = -1;
 
+			if (g_misc.integer & G_MISC_LOOSE_SPAWN_PROTECTION)
+			{
+				ent->client->ps.powerups[PW_INVULNERABLE] = 0;
+			}
+
 			aagun_fire(ent);
 			break;
 		case EV_FIRE_WEAPON:
 		case EV_FIRE_WEAPONB:
 		case EV_FIRE_WEAPON_LASTSHOT:
+			if (g_misc.integer & G_MISC_LOOSE_SPAWN_PROTECTION)
+			{
+				ent->client->ps.powerups[PW_INVULNERABLE] = 0;
+			}
+
 			FireWeapon(ent);
 			break;
 		default:
