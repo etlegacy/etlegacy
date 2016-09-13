@@ -2129,9 +2129,9 @@ void G_LuaStackDump()
 		{
 			int i, types[] = { LUA_TSTRING, LUA_TTABLE, LUA_TBOOLEAN, LUA_TNUMBER, LUA_TFUNCTION };
 
-			G_Printf("---------------------------------------------------------------\n");
+			G_Printf("----------------------------------------------------------------\n");
 			G_Printf("%-42s%-17s%-10s\n", "Name", "Type", "Value");
-			G_Printf("---------------------------------------------------------------\n");
+			G_Printf("----------------------------------------------------------------\n");
 
 			// et namespace
 			for (i = 0; i < ARRAY_LEN(types); i++)
