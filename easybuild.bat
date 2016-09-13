@@ -21,7 +21,7 @@ SET build_r2=1
 
 CALL:SETUPMSBUILD
 
-if %errorlevel% neq 0 exit /b %errorlevel%
+if !errorlevel!==1 exit /b %errorlevel%
 
 :: Init the submdule
 CALL:INITSUBMODULE
@@ -54,7 +54,7 @@ GOTO:EOF
 :: process command line commands if any
 :PROCESSCOMMANDS
 	FOR %%A IN (%*) DO (
-		if %errorlevel% neq 0 exit /b %errorlevel%
+		if !errorlevel!==1 exit /b %errorlevel%
 		CALL:FUNCTIONS %%A
 	)
 GOTO:EOF
@@ -109,7 +109,6 @@ GOTO:EOF
 		IF EXIST "!VS%%G0COMNTOOLS!\vsvars32.bat" (
 			@SET vsvarsbat=!VS%%G0COMNTOOLS!vsvars32.bat
 			@SET vsversion=%%G
-			ECHO !VS%%G0COMNTOOLS!vsvars32.bat
 			GOTO:EOF
 		)
 	)
