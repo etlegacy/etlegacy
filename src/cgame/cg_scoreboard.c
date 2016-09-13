@@ -159,7 +159,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 			CG_DrawRect_FixedBorder(x - 5, y - 2, width + 5, 21, 1, SB_border);
 		}
 
-		y += 14;
+		y += 13;
 
 		if (cgs.timelimit > 0.0f)
 		{

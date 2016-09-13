@@ -53,8 +53,11 @@ int DB_Create(void);
 int DB_Close(void);
 int DB_LoadOrSaveDb(sqlite3 *, const char *, int);
 // int DB_BackupDB(const char *, void *));
+int DB_SaveMemDB(void); // use in code
 
-int callback(void *, int, char **, char **);
+void DB_SaveMemDB_f(void); // console command to store memory db at any time to disk
+
+int DB_callback(void *, int, char **, char **);
 
 void DB_ExecSQLCommand_f(void);
 

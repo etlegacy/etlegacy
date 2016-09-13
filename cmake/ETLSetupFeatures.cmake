@@ -232,7 +232,7 @@ if(BUILD_CLIENT OR BUILD_SERVER)
 		FILE(GLOB DBMS_SRC
 			"src/db/db_sql.h"
 			"src/db/db_sqlite3.c"
-			"src/db/db_sql_console.c"
+			"src/db/db_sql_cmds.c"
 		)
 		set(CLIENT_SRC ${CLIENT_SRC} ${DBMS_SRC})
 		set(SERVER_SRC ${SERVER_SRC} ${DBMS_SRC})
