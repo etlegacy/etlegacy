@@ -1,14 +1,11 @@
 ; ------------------------
 ; ET:L NSIS installer
 ; ------------------------
-; Before running NSIS, ensure to add in the current folder:
+; Before running NSIS, ensure to add in the misc\wininstaller folder:
 ; - the NSIS zip plug-in             (http://nsis.sourceforge.net/ZipDLL_plug-in)
 ; - the NSIS md5 plug-in (ANSI)      (http://nsis.sourceforge.net/MD5_plugin)
 ; - the NSIS simple firewall plug-in (http://nsis.sourceforge.net/NSIS_Simple_Firewall_Plugin)
-; - the ET: Legacy binary files in a "etlegacy-windows-${VERSION}" subfolder without Omni-bot files.
-; Change the version number below. You don't need to change anything else.
 
-;!define VERSION "2.71rc4"
 !define VERSION "@CPACK_PACKAGE_VERSION@"
 !define RESOURCE_PATH "@SOURCE_DIR@\misc\"
 
@@ -22,7 +19,6 @@ RequestExecutionLevel admin
 
 ; Variables
 Name "ET: Legacy ${VERSION}"
-;OutFile "etlegacy-windows-${VERSION}-full-installer.exe"
 OutFile "@CPACK_PACKAGE_FILE_NAME@.exe"
 BrandingText "ET: Legacy ${VERSION} | http://www.etlegacy.com"
 !define PRODUCT_DIR_REGKEY "SOFTWARE\Enemy Territory - Legacy"
@@ -298,14 +294,14 @@ Section "Omni-bot" OMNIBOT
     GOTO GET_BOT
 
     GET_BOT:
-        IfFileExists "$TEMP\omnibot-windows-latest.zip" UNPACK_BOT
-        NSISdl::download "http://mirror.etlegacy.com/omnibot/omnibot-windows-latest.zip" omnibot-windows-latest.zip
-        IfFileExists "$TEMP\omnibot-windows-latest.zip" UNPACK_BOT
+        IfFileExists "$TEMP\@OMNIBOT_ARCHIVE@" UNPACK_BOT
+        NSISdl::download "@OMNIBOT_ARCHIVE_URL@" @OMNIBOT_ARCHIVE@
+        IfFileExists "$TEMP\@OMNIBOT_ARCHIVE@" UNPACK_BOT
         MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section13) \
         IDCANCEL END IDRETRY GET_BOT
 
     UNPACK_BOT:
-        ZipDLL::extractall "$TEMP\omnibot-windows-latest.zip" "$INSTDIR\legacy"
+        ZipDLL::extractall "$TEMP\@OMNIBOT_ARCHIVE@" "$INSTDIR\legacy"
         IfFileExists "$INSTDIR\legacy\omni-bot\*.*" END
         MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section14)
 

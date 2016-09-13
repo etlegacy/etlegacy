@@ -2066,7 +2066,7 @@ void ClientUserinfoChanged(int clientNum)
 	{
 		if (strcmp(oldname, client->pers.netname))
 		{
-			trap_SendServerCommand(-1, va("print \"[lof]%s" S_COLOR_WHITE " [lon]renamed to[lof] %s\n\"", oldname,
+			trap_SendServerCommand(-1, va("print \"[lof]" S_COLOR_WHITE "%s" S_COLOR_WHITE " [lon]renamed to[lof] %s\n\"", oldname,
 			                              client->pers.netname));
 		}
 	}
@@ -2107,7 +2107,7 @@ void ClientUserinfoChanged(int clientNum)
 	       client->sess.muted ? 1 : 0,
 	       client->sess.referee,
 #ifdef FEATURE_RATING
-	       client->sess.mu - 3 * client->sess.sigma,
+	       MAX(client->sess.mu - 3 * client->sess.sigma, 0.f),
 	       client->sess.mu - 3 * client->sess.sigma - (client->sess.oldmu - 3 * client->sess.oldsigma),
 #endif
 	       client->sess.uci
@@ -2580,11 +2580,11 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	{
 		if ((g_countryflags.integer & CF_CONNECT) && client->sess.uci > 0 && client->sess.uci < MAX_COUNTRY_NUM)
 		{
-			trap_SendServerCommand(-1, va("cpm \"%s" S_COLOR_WHITE " connected from %s\n\"", client->pers.netname, country_name[client->sess.uci]));
+			trap_SendServerCommand(-1, va("cpm \"" S_COLOR_WHITE "%s" S_COLOR_WHITE " connected from %s\n\"", client->pers.netname, country_name[client->sess.uci]));
 		}
 		else
 		{
-			trap_SendServerCommand(-1, va("cpm \"%s" S_COLOR_WHITE " connected\n\"", client->pers.netname));
+			trap_SendServerCommand(-1, va("cpm \"" S_COLOR_WHITE "%s" S_COLOR_WHITE " connected\n\"", client->pers.netname));
 		}
 	}
 

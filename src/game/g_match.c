@@ -529,7 +529,7 @@ char *G_createStats(gentity_t *refEnt)
 #ifdef FEATURE_RATING
 	// Add skill rating info
 	Q_strcat(strSkillRatingInfo, sizeof(strSkillRatingInfo), va(" %.2f %.2f",
-	                                                            refEnt->client->sess.mu - 3 * refEnt->client->sess.sigma,
+	                                                            MAX(refEnt->client->sess.mu - 3 * refEnt->client->sess.sigma, 0.f),
 	                                                            refEnt->client->sess.mu - 3 * refEnt->client->sess.sigma - (refEnt->client->sess.oldmu - 3 * refEnt->client->sess.oldsigma)));
 #endif
 

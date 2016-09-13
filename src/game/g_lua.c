@@ -286,26 +286,26 @@ static int _et_MutePlayer(lua_State *L)
 	{
 		if (reason == NULL)
 		{
-			CPx(clientnum, va("print \"^9You've been muted by Lua.\n\""));
-			AP(va("chat \"%s^9 has been muted by Lua.\"", ent->client->pers.netname));
+			CPx(clientnum, va("print \"You've been muted by Lua.\n\""));
+			AP(va("chat \"%s^7 has been muted by Lua.\"", ent->client->pers.netname));
 		}
 		else
 		{
-			CPx(clientnum, va("print \"^9You've been muted by Lua. %s\n\"", reason));
-			AP(va("chat \"%s^9 has been muted by Lua. %s\"", ent->client->pers.netname, reason));
+			CPx(clientnum, va("print \"You've been muted by Lua. %s\n\"", reason));
+			AP(va("chat \"%s^7 has been muted by Lua. %s\"", ent->client->pers.netname, reason));
 		}
 	}
 	else
 	{
 		if (reason == NULL)
 		{
-			CPx(clientnum, va("print \"^9You've been muted for %d seconds by Lua.\n\"", duration));
-			AP(va("chat \"%s^9 has been muted for %d seconds by Lua.\"", ent->client->pers.netname, duration));
+			CPx(clientnum, va("print \"You've been muted for ^3%d^7 seconds by Lua.\n\"", duration));
+			AP(va("chat \"%s^7 has been muted for ^3%d^7 seconds by Lua.\"", ent->client->pers.netname, duration));
 		}
 		else
 		{
-			CPx(clientnum, va("print \"^9You've been muted for %d seconds by Lua. %s\n\"", duration, reason));
-			AP(va("chat \"%s^9 has been muted for %d seconds by Lua. %s\"", ent->client->pers.netname, duration, reason));
+			CPx(clientnum, va("print \"You've been muted for ^3%d^7 seconds by Lua. %s\n\"", duration, reason));
+			AP(va("chat \"%s^7 has been muted for ^3%d^7 seconds by Lua. %s\"", ent->client->pers.netname, duration, reason));
 		}
 	}
 	return 0;
@@ -814,7 +814,6 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(sess.skill,                     FIELD_INT_ARRAY,   0),
 	_et_gclient_addfield(sess.rank,                      FIELD_INT,         0),
 	_et_gclient_addfield(sess.medals,                    FIELD_INT_ARRAY,   0),
-	_et_gclient_addfield(sess.coach_team,                FIELD_INT,         0),
 	_et_gclient_addfield(sess.referee,                   FIELD_INT,         0),
 	_et_gclient_addfield(sess.rounds,                    FIELD_INT,         0),
 	_et_gclient_addfield(sess.spec_invite,               FIELD_INT,         0),

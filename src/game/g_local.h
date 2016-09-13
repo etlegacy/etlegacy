@@ -571,7 +571,6 @@ typedef struct
 	int rank;                                   // rank
 	int medals[SK_NUM_SKILLS];                  // medals
 
-	int coach_team;
 	int referee;
 	int rounds;
 	int spec_invite;
@@ -2287,7 +2286,6 @@ void G_shuffleTeams(void);
 void G_swapTeamLocks(void);
 void G_swapTeams(void);
 qboolean G_teamJoinCheck(int team_num, gentity_t *ent);
-int G_teamID(gentity_t *ent);
 void G_teamReset(int team_num, qboolean fClearSpecLock);
 void G_verifyMatchState(int team_id);
 void G_updateSpecLock(int nTeam, qboolean fLock);
@@ -2468,11 +2466,12 @@ void G_MapVoteInfoWrite(void);
 void G_MapVoteInfoRead(void);
 
 // g_misc flags
-#define G_MISC_SHOVE_NOZ           BIT(0)
-#define G_MISC_MEDIC_SYRINGE_HEAL  BIT(1)
-#define G_MISC_ARTY_STRIKE_COMBINE BIT(2)
-#define G_MISC_CROSSHAIR_DYNAMITE  BIT(3)
-#define G_MISC_CROSSHAIR_LANDMINE  BIT(4)
+#define G_MISC_SHOVE_NOZ               BIT(0)
+#define G_MISC_MEDIC_SYRINGE_HEAL      BIT(1)
+#define G_MISC_ARTY_STRIKE_COMBINE     BIT(2)
+#define G_MISC_CROSSHAIR_DYNAMITE      BIT(3)
+#define G_MISC_CROSSHAIR_LANDMINE      BIT(4)
+#define G_MISC_LOOSE_SPAWN_PROTECTION  BIT(5)
 
 // g_voting flags
 #define VOTEF_USE_TOTAL_VOTERS      1   // use total voters instead of total players to decide if a vote passes

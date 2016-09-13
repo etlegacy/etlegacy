@@ -1629,16 +1629,6 @@ void G_shuffleTeams(void)
 	AP("cp \"^1Teams have been shuffled!\n\"");
 }
 
-// Returns player's "real" team.
-int G_teamID(gentity_t *ent)
-{
-	if (ent->client->sess.coach_team)
-	{
-		return(ent->client->sess.coach_team);
-	}
-	return(ent->client->sess.sessionTeam);
-}
-
 // Determine if the "ready" player threshold has been reached.
 qboolean G_checkReady(void)
 {
@@ -1819,10 +1809,6 @@ void G_updateSpecLock(int nTeam, qboolean fLock)
 		{
 			continue;
 		}
-		if (ent->client->sess.coach_team)
-		{
-			continue;
-		}
 
 		ent->client->sess.spec_invite &= ~nTeam;
 
@@ -1882,7 +1868,7 @@ void G_removeSpecInvite(int team)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		cl = g_entities + level.sortedClients[i];
-		if (!cl->inuse || cl->client->sess.referee || cl->client->sess.coach_team == team)
+		if (!cl->inuse || cl->client->sess.referee)
 		{
 			continue;
 		}

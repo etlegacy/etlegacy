@@ -1734,7 +1734,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->splashMethodOfDeath = MOD_GPG40;
 		bolt->s.eFlags            = EF_BOUNCE_HALF | EF_BOUNCE;
 		bolt->nextthink           = level.time + 4000;
-		
+
 		bolt->think = G_ExplodeMissile;
 		break;
 	case WP_M7:
@@ -1744,7 +1744,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->splashMethodOfDeath = MOD_M7;
 		bolt->s.eFlags            = EF_BOUNCE_HALF | EF_BOUNCE;
 		bolt->nextthink           = level.time + 4000;
-		
+
 		bolt->think = G_ExplodeMissile;
 		break;
 	case WP_SMOKE_BOMB:
@@ -1762,7 +1762,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->methodOfDeath       = MOD_GRENADE_LAUNCHER;
 		bolt->splashMethodOfDeath = MOD_GRENADE_LAUNCHER;
 		bolt->s.eFlags            = EF_BOUNCE_HALF | EF_BOUNCE;
-		
+
 		bolt->think = G_ExplodeMissile;
 		break;
 	case WP_GRENADE_PINEAPPLE:
@@ -1771,7 +1771,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->methodOfDeath       = MOD_GRENADE_PINEAPPLE;
 		bolt->splashMethodOfDeath = MOD_GRENADE_PINEAPPLE;
 		bolt->s.eFlags            = EF_BOUNCE_HALF | EF_BOUNCE;
-		
+
 		bolt->think = G_ExplodeMissile;
 		break;
 	case WP_SMOKE_MARKER:
@@ -1796,7 +1796,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		break;
 	case WP_MORTAR_SET:
 		bolt->nextthink = 0;
-		
+
 		bolt->classname           = "mortar_grenade";
 		bolt->methodOfDeath       = MOD_MORTAR;
 		bolt->splashMethodOfDeath = MOD_MORTAR;
@@ -1805,7 +1805,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		break;
 	case WP_MORTAR2_SET:
 		bolt->nextthink = 0;
-		
+
 		bolt->classname           = "mortar_grenade";
 		bolt->methodOfDeath       = MOD_MORTAR2;
 		bolt->splashMethodOfDeath = MOD_MORTAR2;
@@ -1816,7 +1816,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->nextthink = level.time + 15000;
 		bolt->think     = DynaSink;
 		bolt->timestamp = level.time + 16500;
-		
+
 		bolt->accuracy            = 0;
 		bolt->s.teamNum           = self->client->sess.sessionTeam + 4;
 		bolt->classname           = "landmine";
@@ -1849,7 +1849,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->nextthink   = 0;
 		bolt->s.clientNum = self->s.clientNum;
 		bolt->free        = G_FreeSatchel;
-		
+
 		bolt->accuracy            = 0;
 		bolt->classname           = "satchel_charge";
 		bolt->damage              = 0; // satchel doesn't explode on contact
@@ -1871,7 +1871,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->think     = DynaSink;
 		bolt->timestamp = level.time + 16500;
 		bolt->free      = DynaFree;
-		
+
 		bolt->accuracy = 0;     // sets to score below if dynamite is in trigger_objective_info & it's an objective
 		trap_SendServerCommand(self - g_entities, "cp \"Dynamite is set, but NOT armed!\"");
 		// differentiate non-armed dynamite with non-pulsing dlight
@@ -1940,7 +1940,7 @@ fire_rocket
 gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType)
 {
 	gentity_t *bolt;
-	
+
 	bolt = G_Spawn();
 
 	VectorNormalize(dir);
@@ -1985,7 +1985,7 @@ fire_flamebarrel
 gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir)
 {
 	gentity_t *bolt;
-	
+
 	bolt = G_Spawn();
 
 	VectorNormalize(dir);
@@ -2030,7 +2030,7 @@ fire_mortar
 gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir)
 {
 	gentity_t *bolt;
-	
+
 	bolt = G_Spawn();
 
 	//  VectorNormalize (dir);

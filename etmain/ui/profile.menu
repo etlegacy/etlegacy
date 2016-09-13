@@ -21,7 +21,7 @@ menuDef {
 	}
 
 	onESC {
-		close profile ;
+		close profile;
 		open main
 	}
 
@@ -53,17 +53,17 @@ menuDef {
 			conditionalscript ui_profile 1
 				// Load the cached servers before the vid_restart (which saves the cached servers),
 				// ui_profile is set so servers will be loaded from profile directory
-				( "close profile ; uiscript clearPID ; uiscript applyProfile ; execwolfconfig 1 ; uiscript loadCachedServers ; exec vid_restart" )
+				( "close profile; uiscript clearPID; uiscript applyProfile; execwolfconfig 1 ;uiscript loadCachedServers; exec vid_restart" )
 				( "open profile" )
 		}
 	}
 
 // Buttons //
-	BUTTON( 484, 32, WINDOW_WIDTH-484-6, 14, _("CREATE"), .24, 11, clearFocus ; open profile_create )
-	BUTTON( 484, 50, WINDOW_WIDTH-484-6, 14, _("DELETE"), .24, 11, clearFocus ; conditionalscript UIProfileIsActiveProfile 2
+	BUTTON( 484, 32, WINDOW_WIDTH-484-6, 14, _("CREATE"), .24, 11, clearFocus; open profile_create )
+	BUTTON( 484, 50, WINDOW_WIDTH-484-6, 14, _("DELETE"), .24, 11, clearFocus; conditionalscript UIProfileIsActiveProfile 2
 																			( "open profile_delete_error" )
 																			( "open profile_delete" ) )
-	BUTTON( 484, 68, WINDOW_WIDTH-484-6, 14, _("RENAME"), .24, 11, clearFocus ; open profile_rename )
+	BUTTON( 484, 68, WINDOW_WIDTH-484-6, 14, _("RENAME"), .24, 11, clearFocus; open profile_rename )
 	BUTTON( 484, 86, WINDOW_WIDTH-484-6, 14, _("SET AS DEFAULT"), .24, 11, conditionalscript ui_profile 1
 																			( "uiscript setDefaultProfile" )
 																			( "open profile" ) )
@@ -72,6 +72,6 @@ menuDef {
 	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("SELECT PROFILE"), .3, 14, conditionalscript ui_profile 1
 																			// Load the cached servers before the vid_restart (which saves the cached servers),
 																			// ui_profile is set so servers will be loaded from profile directory
-																			( "close profile ; uiscript clearPID ; uiscript applyProfile ; execwolfconfig 1 ; uiscript loadCachedServers ; exec vid_restart" )
+																			( "close profile; uiscript clearPID; uiscript applyProfile; execwolfconfig 1; uiscript loadCachedServers; exec vid_restart" )
 																			( "open profile" ) )
 }

@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2016-08-12 21:48+0000\n"
+"PO-Revision-Date: 2016-09-09 06:56+0000\n"
 "Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
 "Language-Team: Spanish (http://www.transifex.com/etlegacy/etlegacy/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -4590,6 +4590,10 @@ msgstr "ESTADO DE LA CAMPAÑA: %s"
 msgid "SECS TO NEXT MAP"
 msgstr "SEG. PARA EL SIGUIENTE MAPA"
 
+#: src/cgame/cg_debriefing.c:2905
+msgid "SEC TO NEXT MAP"
+msgstr ""
+
 #: src/cgame/cg_debriefing.c:3371
 #, c-format
 msgid "Campaign: %s"
@@ -5227,6 +5231,11 @@ msgstr "Daño recibido: %6d Daño rec. por Equipo: %6d"
 msgid "Kills:  %3d    Team Kills: %3d    Accuracy:  %5.1f%%"
 msgstr "Matados: %3d Mat. Equipo: %3d Puntería: %5.1f%%"
 
+#: src/cgame/cg_servercmds.c:1941
+#, c-format
+msgid "Gibs:   %3d    Team Gibs:  %3d"
+msgstr ""
+
 #: src/cgame/cg_servercmds.c:1879
 #, c-format
 msgid "Deaths: %3d    Self Kills: %3d    Headshots: %5.1f%%"
@@ -5586,8 +5595,8 @@ msgstr "Espectadores"
 msgid "You must be a player or following a player to use +stats\n"
 msgstr "Tienes que ser un jugador o seguir a un jugador para usar +stats\n"
 
-msgid "^9You must be alive to use ^3/kill."
-msgstr "^9Tienes que estar vivo para usar ^3/kill."
+msgid "You must be alive to use ^3/kill^7."
+msgstr ""
 
 msgid "No vote in progress.\n"
 msgstr "Ninguna votación en curso.\n"
@@ -5879,8 +5888,8 @@ msgstr "cambiado a"
 msgid "Arming landmine..."
 msgstr "Activando mina..."
 
-msgid "Landmine armed..."
-msgstr "Mina activada..."
+msgid "Landmine armed"
+msgstr ""
 
 msgid "Dynamite is set, but NOT armed!"
 msgstr "La dinamita está colocada, pero NO activada!"
@@ -5891,11 +5900,11 @@ msgstr "Activando dinamita..."
 msgid "Dynamite is now armed with a 30 second timer!"
 msgstr "La dinamita está ahora activada con un temporizador a 30 seg.!"
 
-msgid "Defusing landmine"
-msgstr "Desactivando mina"
+msgid "Defusing landmine..."
+msgstr ""
 
-msgid "Landmine defused..."
-msgstr "Mina desactivada..."
+msgid "Landmine defused"
+msgstr ""
 
 msgid "Defusing dynamite..."
 msgstr "Desactivando dinamita..."
@@ -6005,8 +6014,8 @@ msgstr "¡Ajustes de competición cargados!\n"
 msgid "Public Settings Loaded!\n"
 msgstr "¡Ajustes públicos cargados!\n"
 
-msgid "Landmine cannot be armed here..."
-msgstr "No se puede colocar una mina aquí..."
+msgid "Landmine cannot be armed here"
+msgstr ""
 
 msgid "Your team has too many landmines placed..."
 msgstr "Tu equipo ha puesto demasiadas minas..."
@@ -6855,6 +6864,21 @@ msgstr "Premio No Tengo Amigos"
 msgid "Welcome Newbie! Award"
 msgstr "Premio ¡Bienvenido Novato!"
 
+msgid "Highest Headshots Percentage"
+msgstr ""
+
+msgid "Best Survivor"
+msgstr ""
+
+msgid "Most Gibs"
+msgstr ""
+
+msgid "Most Selfkills"
+msgstr ""
+
+msgid "Most Deaths"
+msgstr ""
+
 msgid ""
 "\n"
 "ET: Legacy with OpenGL 3.x renderer can not run on this machine since it is missing one or more required OpenGL extensions. Please update your video card drivers and try again.\n"
@@ -6863,7 +6887,7 @@ msgstr "\nEn ésta máquina no puede ejecutarse ET:Legacy con su renderizador Op
 msgid "Gib command not allowed during intermission.\n"
 msgstr "El comando \"gib\" no está permitido en el descanso.\n"
 
-msgid "^9%d players gibbed."
+msgid "^3%d^7 players gibbed."
 msgstr ""
 
 msgid "There is no player to gib."
@@ -6881,8 +6905,8 @@ msgstr ""
 msgid "Die command not allowed during intermission.\n"
 msgstr "El comando \"die\" no está permitido en el descanso.\n"
 
-msgid "^9%d players died."
-msgstr "^9%d jugadores murieron."
+msgid "^3%d^7 players died."
+msgstr ""
 
 msgid "There is no player to die.\n"
 msgstr "No hay jugadores para matar.\n"
@@ -6899,8 +6923,8 @@ msgstr "^7%s^7 murió."
 msgid "Freeze command not allowed during intermission.\n"
 msgstr "El comando \"freeze\" no está permitido en el descanso.\n"
 
-msgid "^9%d players are frozen."
-msgstr "^9%d jugadores están congelados."
+msgid "^3%d^7 players are frozen."
+msgstr ""
 
 msgid "No players in team or they are already frozen.\n"
 msgstr "No hay jugadores en el equipo o ya están congelados.\n"
@@ -6914,8 +6938,8 @@ msgstr "El jugador debe de pertenecer a un equipo para ser congelado.\n"
 msgid "^7%s^7 is frozen."
 msgstr "^7%s^7 está congelado."
 
-msgid "^9%d players are unfrozen."
-msgstr "^9%d jugadores descongelados."
+msgid "^3%d^7 players are unfrozen."
+msgstr ""
 
 msgid "No players in team or they are already unfrozen.\n"
 msgstr "No hay jugadores en el equipo o ya están descongelados.\n"
@@ -6932,7 +6956,7 @@ msgstr "^7%s^7 está descongelado."
 msgid "Burn command not allowed during intermission.\n"
 msgstr "El comando \"burn no está permitido en el descanso.\n"
 
-msgid "^9%d players burned."
+msgid "^3%d^7 players burned."
 msgstr ""
 
 msgid "No players in team or they are already burned.\n"
@@ -6950,7 +6974,7 @@ msgstr ""
 msgid "Pip command not allowed during intermission.\n"
 msgstr "El comando \"pip\" no está permitido en el descanso.\n"
 
-msgid "^9%d players pipped."
+msgid "^3%d^7 players pipped."
 msgstr ""
 
 msgid "No players in team or they are already pipped.\n"
@@ -6968,8 +6992,8 @@ msgstr ""
 msgid "%s command not allowed during intermission.\n"
 msgstr "El comando %s no está permitido en el descanso.\n"
 
-msgid "^9%d players %s."
-msgstr "^9%d jugadores %s."
+msgid "^3%d^7 players %s."
+msgstr ""
 
 msgid "No players in team or they are already %s.\n"
 msgstr "No hay jugadores en el equipo o ya han sido %s.\n"
@@ -7071,4 +7095,18 @@ msgid "^7BACKSPACE ^3help on/off"
 msgstr ""
 
 msgid "^7BACKSPACE ^mgo  back"
+msgstr ""
+
+msgid "CURRENT PROFILE"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1504
+msgid "%s^7's dynamite"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1516
+msgid "%s^7's mine"
+msgstr ""
+
+msgid "You are frozen - ^3/kill^7 is disabled."
 msgstr ""

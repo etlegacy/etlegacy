@@ -21,15 +21,15 @@ menuDef {
 
 	onOpen
 	{
-		uiScript systemCvarsGet ;
-		uiScript vidSave ;
+		uiScript systemCvarsGet;
+		uiScript vidSave;
 		uiScript glCustom
 	}
 
 	onESC {
-		uiScript systemCvarsReset ;
-		uiScript vidReset ;
-		close options_system ;
+		uiScript systemCvarsReset;
+		uiScript vidReset;
+		close options_system;
 		open options
 	}
 
@@ -37,20 +37,21 @@ menuDef {
 
 // Simple graphics //
 #define GRAPHICS_Y 32
-	SUBWINDOW( 6, GRAPHICS_Y, (SUBWINDOW_WIDTH_L), 104, _("GRAPHICS") )
+	SUBWINDOW( 6, GRAPHICS_Y, (SUBWINDOW_WIDTH_L), 116, _("GRAPHICS") )
 #ifdef LEGACY
-	MULTIACTION( 8, GRAPHICS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Overall Quality:"), .2, 8, "ui_glCustom", cvarFloatList { _("fastest") 3 _("fast") 2 _("normal") 1 _("high") 0 }, uiScript update "ui_glCustom", _("Set overall video quality") )
-	COMBO( 8, GRAPHICS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Resolution:"), .2, 8, "ui_r_mode", LEGACY_RESOLUTIONS, uiScript glCustom, _("Set video resolution of the game") )
-	COMBO( 8, GRAPHICS_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Window mode:"), .2, 8, "ui_r_windowmode", LEGACY_WINDOWMODES, uiScript glCustom, _("Toggle fullscreen") )
+	COMBO( 8, GRAPHICS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Renderer:"), 0.2, 8, "cl_renderer", LEGACY_RENDERERS, exec vid_restart, _("Set your desired renderer (does a video restart)") )
+	MULTIACTION( 8, GRAPHICS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Overall Quality:"), .2, 8, "ui_glCustom", cvarFloatList { _("fastest") 3 _("fast") 2 _("normal") 1 _("high") 0 }, uiScript update "ui_glCustom", _("Set overall video quality") )
+	COMBO( 8, GRAPHICS_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Resolution:"), .2, 8, "ui_r_mode", LEGACY_RESOLUTIONS, uiScript glCustom, _("Set video resolution of the game") )
+	COMBO( 8, GRAPHICS_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Window mode:"), .2, 8, "ui_r_windowmode", LEGACY_WINDOWMODES, uiScript glCustom, _("Toggle fullscreen") )
 #endif
-	CVARFLOATLABEL( 8, GRAPHICS_Y+52, (SUBWINDOW_WIDTH_L)-6, 10, "r_gamma", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
-	SLIDER( 8, GRAPHICS_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Brightness:"), .2, 8, "r_gamma" 1.3 1 3, _("Set the brightness of the game") )
-	MULTIACTION( 8, GRAPHICS_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Intensity:"), .2, 8, "r_intensity", cvarFloatList { "1.0" 1.0 "1.1" 1.1 "1.2" 1.2 "1.3" 1.3 "1.4" 1.4 "1.5" 1.5 }, uiScript update "ui_glCustom", _("The Intensity Of Textures (requires vid_restart)") )
-	MULTIACTION( 8, GRAPHICS_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Map overbright bits:"), .2, 8, "r_mapoverbrightbits", cvarFloatList { "0" 0 "1" 1 "2" 2 "3" 3 }, uiScript update "ui_glCustom", _("The World Gets Brighter, But Paler (requires vid_restart)") )
-	YESNOACTION( 8, GRAPHICS_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Overbright Bits:"), .2, 8, "r_overBrightBits", uiScript update "ui_glCustom", _("Map shines brighter (requires vid_restart)") )
+	CVARFLOATLABEL( 8, GRAPHICS_Y+64, (SUBWINDOW_WIDTH_L)-6, 10, "r_gamma", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
+	SLIDER( 8, GRAPHICS_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Brightness:"), .2, 8, "r_gamma" 1.3 1 3, _("Set the brightness of the game") )
+	MULTIACTION( 8, GRAPHICS_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Intensity:"), .2, 8, "r_intensity", cvarFloatList { "1.0" 1.0 "1.1" 1.1 "1.2" 1.2 "1.3" 1.3 "1.4" 1.4 "1.5" 1.5 }, uiScript update "ui_glCustom", _("The Intensity Of Textures (requires vid_restart)") )
+	MULTIACTION( 8, GRAPHICS_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Map overbright bits:"), .2, 8, "r_mapoverbrightbits", cvarFloatList { "0" 0 "1" 1 "2" 2 "3" 3 }, uiScript update "ui_glCustom", _("The World Gets Brighter, But Paler (requires vid_restart)") )
+	YESNOACTION( 8, GRAPHICS_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, _("Overbright Bits:"), .2, 8, "r_overBrightBits", uiScript update "ui_glCustom", _("Map shines brighter (requires vid_restart)") )
 
 // Advanced graphics //
-#define GRAPHICSADVANCED_Y 142
+#define GRAPHICSADVANCED_Y 154
 	SUBWINDOW( 6, GRAPHICSADVANCED_Y, (SUBWINDOW_WIDTH_L), 220, _("ADVANCED GRAPHICS") )
 	YESNO( 8, GRAPHICSADVANCED_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Low Quality Sky:"), .2, 8, "r_fastsky", _("Toggles wether the detailed skybox is drawn or just a basic sky") )
 	// FIXME: fix cg_shadows >= 2
@@ -72,7 +73,7 @@ menuDef {
 	YESNOACTION( 8, GRAPHICSADVANCED_Y+172, (SUBWINDOW_WIDTH_L)-4, 10, _("Sync Every Frame:"), .2, 8, "ui_r_finish", uiScript glCustom, _("Prevent screen tearing") )
 	MULTIACTION( 8, GRAPHICSADVANCED_Y+184, (SUBWINDOW_WIDTH_L)-4, 10, _("GL Extensions:"), .2, 8, "ui_r_allowExtensions", cvarFloatList { _("Enabled") 1 _("Disabled") 0 }, uiScript glCustom , _("Enables or disables usage of OpenGL extensions"))
 
-	BUTTON( 8+.5*((SUBWINDOW_WIDTH_L)-196), GRAPHICSADVANCED_Y+198, 196, 14, _("SET RECOMMENDED"), .24, 11, uiScript vidReset ; uiScript systemCvarsReset ; open rec_restart )
+	BUTTON( 8+.5*((SUBWINDOW_WIDTH_L)-196), GRAPHICSADVANCED_Y+198, 196, 14, _("SET RECOMMENDED"), .24, 11, uiScript vidReset; uiScript systemCvarsReset; open rec_restart )
 
 // Audio //
 #define AUDIO_Y 32
@@ -98,7 +99,6 @@ menuDef {
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, DOWNLOADS_Y, (SUBWINDOW_WIDTH_R), 40, _("DOWNLOADS") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, DOWNLOADS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Get Missing Files:"), .2, 8, "cl_allowDownload", _("Download missing files when available") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, DOWNLOADS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Use HTTP/FTP Downloads:"), .2, 8, "cl_wwwDownload", _("Enables or disables http/ftp downloads") )
-
 
 // Updates //
 #ifdef LEGACY
