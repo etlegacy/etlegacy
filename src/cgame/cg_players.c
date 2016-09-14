@@ -2014,7 +2014,10 @@ static void CG_PlayerSprites(centity_t *cent)
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
-		CG_PlayerFloatText(cent, ci->name, height + 16);
+		if (cg_drawCrosshairNames.integer > 0)
+		{
+			CG_PlayerFloatText(cent, ci->name, height + 16);
+		}
 
 		// show some useful icons to spectators ...
 		if (cent->currentState.powerups & (1 << PW_INVULNERABLE))
