@@ -7,9 +7,8 @@
  * http://etpub.org
  * http://shitstorm.org
  *
- * Goal: aiming for compatibility with [ETPro lua mods]
- *
- * [ETPro lua mods]: http://wolfwiki.anime.net/index.php/Lua_Mod_API "ETPro Lua API"
+ * [ETPro Lua mods]: http://wolfwiki.anime.net/index.php/Lua_Mod_API "ETPro Lua API"
+ * [Legacy Lua API]: http://legacy-lua-api.readthedocs.io/
  */
 #ifdef FEATURE_LUA
 
@@ -261,8 +260,96 @@ static int _et_trap_Cvar_Set(lua_State *L)
 	return 0;
 }
 
-// Added the "reason" field to give more freedom about the output
-// The old way to call the function still works, because "reason" is an optional arg
+// Config Strings
+// configstringvalue = et.trap_GetConfigstring( index )
+static int _et_trap_GetConfigstring(lua_State *L)
+{
+	char buff[MAX_STRING_CHARS];
+	int  index = (int)luaL_checkinteger(L, 1);
+
+	trap_GetConfigstring(index, buff, sizeof(buff));
+	lua_pushstring(L, buff);
+	return 1;
+}
+
+// et.trap_SetConfigstring( index, configstringvalue )
+static int _et_trap_SetConfigstring(lua_State *L)
+{
+	int        index = (int)luaL_checkinteger(L, 1);
+	const char *csv  = luaL_checkstring(L, 2);
+
+	trap_SetConfigstring(index, csv);
+	return 0;
+}
+
+// Server
+// et.trap_SendConsoleCommand( when, command )
+static int _et_trap_SendConsoleCommand(lua_State *L)
+{
+	int        when = (int)luaL_checkinteger(L, 1);
+	const char *cmd = luaL_checkstring(L, 2);
+
+	trap_SendConsoleCommand(when, cmd);
+	return 0;
+}
+
+// Clients
+// et.trap_SendServerCommand( clientnum, command )
+static int _et_trap_SendServerCommand(lua_State *L)
+{
+	int        clientnum = (int)luaL_checkinteger(L, 1);
+	const char *cmd      = luaL_checkstring(L, 2);
+
+	trap_SendServerCommand(clientnum, cmd);
+	return 0;
+}
+
+// et.trap_DropClient( clientnum, reason, ban_time )
+static int _et_trap_DropClient(lua_State *L)
+{
+	int        clientnum = (int)luaL_checkinteger(L, 1);
+	const char *reason   = luaL_checkstring(L, 2);
+	int        ban_time  = (int)luaL_checkinteger(L, 3);
+
+	trap_DropClient(clientnum, reason, ban_time);
+	return 0;
+}
+
+/**
+ * @brief Searches for one partial match with @p string, if one is found the clientnum
+ *        is returned, if there is none or more than one match nil is returned.
+ * @lua clientnum = et.ClientNumberFromString( string ) @endlua
+ * @see ClientNumbersFromString()
+ */
+// clientnum = et.ClientNumberFromString( string )
+static int _et_ClientNumberFromString(lua_State *L)
+{
+	const char *search = luaL_checkstring(L, 1);
+	int        pids[MAX_CLIENTS];
+
+	// only send exact matches, otherwise -1
+	if (ClientNumbersFromString((char *) search, pids) == 1)
+	{
+		lua_pushinteger(L, pids[0]);
+	}
+	else
+	{
+		lua_pushnil(L);
+	}
+	return 1;
+}
+
+// et.G_Say( clientNum, mode, text )
+static int _et_G_Say(lua_State *L)
+{
+	int        clientnum = (int)luaL_checkinteger(L, 1);
+	int        mode      = (int)luaL_checkinteger(L, 2);
+	const char *text     = luaL_checkstring(L, 3);
+
+	G_Say(g_entities + clientnum, NULL, mode, text);
+	return 0;
+}
+
 // et.MutePlayer( clientnum, duration, reason )
 // duration is in seconds.
 static int _et_MutePlayer(lua_State *L)
@@ -332,123 +419,6 @@ static int _et_UnmutePlayer(lua_State *L)
 	return 0;
 }
 
-// Config Strings
-// configstringvalue = et.trap_GetConfigstring( index )
-static int _et_trap_GetConfigstring(lua_State *L)
-{
-	char buff[MAX_STRING_CHARS];
-	int  index = (int)luaL_checkinteger(L, 1);
-
-	trap_GetConfigstring(index, buff, sizeof(buff));
-	lua_pushstring(L, buff);
-	return 1;
-}
-
-// et.trap_SetConfigstring( index, configstringvalue )
-static int _et_trap_SetConfigstring(lua_State *L)
-{
-	int        index = (int)luaL_checkinteger(L, 1);
-	const char *csv  = luaL_checkstring(L, 2);
-
-	trap_SetConfigstring(index, csv);
-	return 0;
-}
-
-// Server
-// et.trap_SendConsoleCommand( when, command )
-static int _et_trap_SendConsoleCommand(lua_State *L)
-{
-	int        when = (int)luaL_checkinteger(L, 1);
-	const char *cmd = luaL_checkstring(L, 2);
-
-	trap_SendConsoleCommand(when, cmd);
-	return 0;
-}
-
-// Clients
-// et.trap_DropClient( clientnum, reason, ban_time )
-static int _et_trap_DropClient(lua_State *L)
-{
-	int        clientnum = (int)luaL_checkinteger(L, 1);
-	const char *reason   = luaL_checkstring(L, 2);
-	int        ban_time  = (int)luaL_checkinteger(L, 3);
-
-	trap_DropClient(clientnum, reason, ban_time);
-	return 0;
-}
-
-// et.trap_SendServerCommand( clientnum, command )
-static int _et_trap_SendServerCommand(lua_State *L)
-{
-	int        clientnum = (int)luaL_checkinteger(L, 1);
-	const char *cmd      = luaL_checkstring(L, 2);
-
-	trap_SendServerCommand(clientnum, cmd);
-	return 0;
-}
-
-// et.G_Say( clientNum, mode, text )
-static int _et_G_Say(lua_State *L)
-{
-	int        clientnum = (int)luaL_checkinteger(L, 1);
-	int        mode      = (int)luaL_checkinteger(L, 2);
-	const char *text     = luaL_checkstring(L, 3);
-
-	G_Say(g_entities + clientnum, NULL, mode, text);
-	return 0;
-}
-
-// et.ClientUserinfoChanged( clientNum )
-static int _et_ClientUserinfoChanged(lua_State *L)
-{
-	int clientnum = (int)luaL_checkinteger(L, 1);
-
-	ClientUserinfoChanged(clientnum);
-	return 0;
-}
-
-/**
- * @brief Searches for one partial match with @p string, if one is found the clientnum
- *        is returned, if there is none or more than one match nil is returned.
- * @lua clientnum = et.ClientNumberFromString( string ) @endlua
- * @see ClientNumbersFromString()
- */
-static int _et_ClientNumberFromString(lua_State *L)
-{
-	const char *search = luaL_checkstring(L, 1);
-	int        pids[MAX_CLIENTS];
-
-	// only send exact matches, otherwise -1
-	if (ClientNumbersFromString((char *) search, pids) == 1)
-	{
-		lua_pushinteger(L, pids[0]);
-	}
-	else
-	{
-		lua_pushnil(L);
-	}
-	return 1;
-}
-
-// et.isBitSet(bit,value)
-// little helper for accessing bitmask values
-// if bit 'bit' is set in 'value', true is returned, else false
-static int _et_isBitSet(lua_State *L)
-{
-	int b = (int)luaL_checkinteger(L, 1);
-	int v = (int)luaL_checkinteger(L, 2);
-
-	if (v & b)
-	{
-		lua_pushboolean(L, 1);
-	}
-	else
-	{
-		lua_pushboolean(L, 0);
-	}
-	return 1;
-}
-
 // Userinfo
 // userinfo = et.trap_GetUserinfo( clientnum )
 static int _et_trap_GetUserinfo(lua_State *L)
@@ -468,6 +438,15 @@ static int _et_trap_SetUserinfo(lua_State *L)
 	const char *userinfo = luaL_checkstring(L, 2);
 
 	trap_SetUserinfo(clientnum, userinfo);
+	return 0;
+}
+
+// et.ClientUserinfoChanged( clientNum )
+static int _et_ClientUserinfoChanged(lua_State *L)
+{
+	int clientnum = (int)luaL_checkinteger(L, 1);
+
+	ClientUserinfoChanged(clientnum);
 	return 0;
 }
 
@@ -519,34 +498,6 @@ static int _et_Q_CleanStr(lua_State *L)
 }
 
 // ET Filesystem
-
-extern char bigTextBuffer[100000];
-
-static int _et_trap_FS_GetFileList(lua_State *L)
-{
-	const char *dirname            = luaL_checkstring(L, 1);
-	const char *filename_extension = luaL_checkstring(L, 2);
-	int        newTable, index = 1, i, filelen, numfiles;
-	char       filename[MAX_QPATH]; // was 128
-	char       *filenameptr = bigTextBuffer;
-
-	numfiles = trap_FS_GetFileList(dirname, filename_extension, bigTextBuffer, sizeof(bigTextBuffer));
-
-	lua_createtable(L, numfiles, 0);
-	newTable = lua_gettop(L);
-
-	for (i = 0; i < numfiles; i++, filenameptr += filelen + 1)
-	{
-		filelen = strlen(filenameptr);
-		strcpy(filename, filenameptr);
-
-		lua_pushstring(L, filename);
-		lua_rawseti(L, newTable, index++);
-	}
-
-	return 1;
-}
-
 // fd, len = et.trap_FS_FOpenFile( filename, mode )
 static int _et_trap_FS_FOpenFile(lua_State *L)
 {
@@ -594,6 +545,14 @@ static int _et_trap_FS_Write(lua_State *L)
 	return 1;
 }
 
+// et.trap_FS_FCloseFile( fd )
+static int _et_trap_FS_FCloseFile(lua_State *L)
+{
+	fileHandle_t fd = (int)luaL_checkinteger(L, 1);
+	trap_FS_FCloseFile(fd);
+	return 0;
+}
+
 // et.trap_FS_Rename( oldname, newname )
 static int _et_trap_FS_Rename(lua_State *L)
 {
@@ -604,12 +563,31 @@ static int _et_trap_FS_Rename(lua_State *L)
 	return 0;
 }
 
-// et.trap_FS_FCloseFile( fd )
-static int _et_trap_FS_FCloseFile(lua_State *L)
+// filelist = et.trap_FS_GetFileList( dirname, fileextension )
+extern char bigTextBuffer[100000];
+static int _et_trap_FS_GetFileList(lua_State *L)
 {
-	fileHandle_t fd = (int)luaL_checkinteger(L, 1);
-	trap_FS_FCloseFile(fd);
-	return 0;
+	const char *dirname            = luaL_checkstring(L, 1);
+	const char *filename_extension = luaL_checkstring(L, 2);
+	int        newTable, index = 1, i, filelen, numfiles;
+	char       filename[MAX_QPATH]; // was 128
+	char       *filenameptr = bigTextBuffer;
+
+	numfiles = trap_FS_GetFileList(dirname, filename_extension, bigTextBuffer, sizeof(bigTextBuffer));
+
+	lua_createtable(L, numfiles, 0);
+	newTable = lua_gettop(L);
+
+	for (i = 0; i < numfiles; i++, filenameptr += filelen + 1)
+	{
+		filelen = strlen(filenameptr);
+		strcpy(filename, filenameptr);
+
+		lua_pushstring(L, filename);
+		lua_rawseti(L, newTable, index++);
+	}
+
+	return 1;
 }
 
 // Indexes
@@ -669,6 +647,25 @@ static int _et_trap_Milliseconds(lua_State *L)
 	return 1;
 }
 
+// success = et.isBitSet(bit,value)
+// little helper for accessing bitmask values
+// if bit 'bit' is set in 'value', true is returned, else false
+static int _et_isBitSet(lua_State *L)
+{
+	int b = (int)luaL_checkinteger(L, 1);
+	int v = (int)luaL_checkinteger(L, 2);
+
+	if (v & b)
+	{
+		lua_pushboolean(L, 1);
+	}
+	else
+	{
+		lua_pushboolean(L, 0);
+	}
+	return 1;
+}
+
 // et.G_Damage( target, inflictor, attacker, damage, dflags, mod )
 static int _et_G_Damage(lua_State *L)
 {
@@ -711,6 +708,207 @@ static int _et_G_LoseSkillPoints(lua_State *L)
 
 	G_LoseSkillPoints(ent, skill, points);
 	return 0;
+}
+
+/*
+ * et.G_XP_Set ( clientNum , xp, skill, add )
+ */
+static int _et_G_XP_Set(lua_State *L)
+{
+	gentity_t *ent      = NULL;
+	int       clientNum = (int)luaL_checkinteger(L, 1);
+	float     xp        = (float)luaL_checknumber(L, 2);
+	int       skill     = (int)luaL_checkinteger(L, 3);
+	int       add       = (int)luaL_checkinteger(L, 4); // 'add' just checks to be 0 or not to be 0
+
+	ent = &g_entities[clientNum];
+
+	// Did comment the following lines to set XP via Lua on client connect()
+	// - If used on connect() a moment later the rest of the entity data is set, and the entity data is valid
+	// - If a client is not 'inuse' and this function is called the client is not in game for real
+	//   and the data should be overwritten again, when the next player uses this client num/slot
+
+	// Check if the entity is valid
+	//if ( !ent->inuse ) {
+	//	luaL_error(L, "clientNum \"%d\" is not an used entity", clientNum);
+	//	return 0;
+	//}
+
+	// Check if the entity is a client
+	if (!ent->client)
+	{
+		luaL_error(L, "clientNum \"%d\" is not a client entity", clientNum);
+		return 0;
+	}
+
+	// Check if the skill is in the range
+	if (skill < 0 || skill > SK_NUM_SKILLS - 1)
+	{
+		luaL_error(L, "\"skill\" must be a number from 0 to 6 both included");
+		return 0;
+	}
+
+	// Check if the xp value is negative
+	if (xp < 0)
+	{
+		luaL_error(L, "negative xp values are not allowed");
+		return 0;
+	}
+
+	// special case for 0 adds
+	if (add == 0)
+	{
+		float oldxp = ent->client->sess.skillpoints[skill];
+
+		ent->client->sess.skillpoints[skill] = xp;
+		//ent->client->sess.mapstartSkillpoints[skill] = xp;
+		ent->client->sess.startxptotal -= oldxp;
+		ent->client->sess.startxptotal += xp;
+	}
+	else
+	{
+		ent->client->sess.skillpoints[skill] += xp;
+		//ent->client->sess.mapstartSkillpoints[skill] += xp;
+		ent->client->sess.startxptotal += xp;
+	}
+
+	ent->client->ps.stats[STAT_XP] = (int)ent->client->sess.startxptotal;
+
+	G_CalcRank(ent->client);
+	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qtrue);
+
+	return 1;
+}
+
+/**
+ * @brief Reset XP of the player in slot number @p clientNum
+ *
+ * @lua et.G_ResetXP ( clientNum )
+ */
+static int _et_G_ResetXP(lua_State *L)
+{
+	int       entnum = luaL_optinteger(L, 1, -1);
+	gentity_t *ent;
+
+	if (entnum > -1 && entnum < MAX_CLIENTS)
+	{
+		ent = g_entities + entnum;
+
+		if (!ent->client)
+		{
+			luaL_error(L, "clientNum \"%d\" is not a client entity", entnum);
+			return 0;
+		}
+
+		G_ResetXP(ent);
+	}
+	else
+	{
+		luaL_error(L, "clientNum \"%d\" is not a client entity number", entnum);
+	}
+	return 0;
+}
+
+// et.AddWeaponToPlayer( clientNum, weapon, ammo, ammoclip, setcurrent )
+static int _et_AddWeaponToPlayer(lua_State *L)
+{
+	int        clientnum    = (int)luaL_checkinteger(L, 1);
+	gentity_t *ent          = g_entities + clientnum;
+	weapon_t   weapon       = (int)luaL_checkinteger(L, 2);
+	int        ammo         = (int)luaL_checkinteger(L, 3);
+	int        ammoclip     = (int)luaL_checkinteger(L, 4);
+	int        setcurrent   = (int)luaL_checkinteger(L, 5);
+
+	if (!ent->client)
+	{
+		luaL_error(L, "clientNum \"%d\" is not a client entity", clientnum);
+		return 0;
+	}
+
+	if(!IS_VALID_WEAPON(weapon))
+	{
+		luaL_error(L, "weapon \"%d\" is not a valid weapon", weapon);
+		return 0;
+	}
+
+	COM_BitSet(ent->client->ps.weapons, weapon);
+	ent->client->ps.ammoclip[BG_FindClipForWeapon(weapon)] = ammoclip;
+	ent->client->ps.ammo[BG_FindAmmoForWeapon(weapon)]     = ammo;
+
+	if (setcurrent == 1)
+	{
+		ent->client->ps.weapon = weapon;
+	}
+
+#ifdef FEATURE_OMNIBOT
+	Bot_Event_AddWeapon(ent->client->ps.clientNum, Bot_WeaponGameToBot(weapon));
+#endif
+
+	return 1;
+}
+
+// et.RemoveWeaponFromPlayer( clientNum, weapon )
+static int _et_RemoveWeaponFromPlayer(lua_State *L)
+{
+	int        clientnum    = (int)luaL_checkinteger(L, 1);
+	gentity_t  *ent         = g_entities + clientnum;
+	gclient_t  *client      = ent->client;
+	weapon_t   weapon       = (int)luaL_checkinteger(L, 2);
+
+	if (!ent->client)
+	{
+		luaL_error(L, "clientNum \"%d\" is not a client entity", clientnum);
+		return 0;
+	}
+
+	COM_BitClear(ent->client->ps.weapons, weapon);
+
+	switch (weapon)
+	{
+	case WP_KAR98:
+		COM_BitClear(client->ps.weapons, WP_GPG40);
+		break;
+	case WP_CARBINE:
+		COM_BitClear(client->ps.weapons, WP_M7);
+		break;
+	case WP_FG42:
+		COM_BitClear(client->ps.weapons, WP_FG42SCOPE);
+		break;
+	case WP_K43:
+		COM_BitClear(client->ps.weapons, WP_K43_SCOPE);
+		break;
+	case WP_GARAND:
+		COM_BitClear(client->ps.weapons, WP_GARAND_SCOPE);
+		break;
+	case WP_MORTAR:
+		COM_BitClear(client->ps.weapons, WP_MORTAR_SET);
+		break;
+	case WP_MORTAR2:
+		COM_BitClear(client->ps.weapons, WP_MORTAR2_SET);
+		break;
+	case WP_MOBILE_MG42:
+		COM_BitClear(client->ps.weapons, WP_MOBILE_MG42_SET);
+		break;
+	case WP_MOBILE_BROWNING:
+		COM_BitClear(client->ps.weapons, WP_MOBILE_BROWNING_SET);
+		break;
+	default:
+		break;
+	}
+
+	// Clear out empty weapon, change to next best weapon
+	G_AddEvent(ent, EV_WEAPONSWITCHED, 0);
+
+	if (weapon == client->ps.weapon)
+	{
+		client->ps.weapon = 0;
+	}
+
+#ifdef FEATURE_OMNIBOT
+	Bot_Event_RemoveWeapon(client->ps.clientNum, Bot_WeaponGameToBot(weapon));
+#endif
+
+	return 1;
 }
 
 // Entities
@@ -1153,7 +1351,7 @@ gentity_t* G_Lua_CreateEntity(char *params)
 	return create;
 }
 
-// entnum = _et_G_Lua_CreateEntity(params)
+// entnum = _et_G_Lua_CreateEntity( params )
 // This function expects same as G_ScriptAction_Create -  keys & values
 // see http://wolfwiki.anime.net/index.php/Map_scripting
 // was et.G_Spawn() before 2.75 (... and  did not work)
@@ -1169,6 +1367,7 @@ static int _et_G_Lua_CreateEntity(lua_State *L)
 	return 1;
 }
 
+// _et_G_Lua_DeleteEntity( params )
 static int _et_G_Lua_DeleteEntity(lua_State *L)
 {
 	char *params = (char *)luaL_checkstring(L, 1);
@@ -1206,7 +1405,43 @@ static int _et_G_EntitiesFree(lua_State *L)
 	return 1;
 }
 
-// add G_GetSpawnVar
+// et.G_SetEntState( entnum, newstate )
+static int _et_G_SetEntState(lua_State *L)
+{
+	gentity_t  *ent;
+	int        entnum   = (int)luaL_checkinteger(L, 1);
+	entState_t newstate = (int)luaL_checkinteger(L, 2);
+
+	if (entnum > -1 && entnum < ENTITYNUM_MAX_NORMAL) // don't do this with world ent
+	{
+		ent = g_entities + entnum;
+		G_SetEntState(ent, newstate);
+	}
+	else
+	{
+		luaL_error(L, "entity number \"%d\" is out of range", entnum);
+	}
+	return 0;
+}
+
+// et.trap_LinkEntity( entnum )
+static int _et_trap_LinkEntity(lua_State *L)
+{
+	int entnum = (int)luaL_checkinteger(L, 1);
+
+	trap_LinkEntity(g_entities + entnum);
+	return 0;
+}
+
+// et.trap_UnlinkEntity( entnum )
+static int _et_trap_UnlinkEntity(lua_State *L)
+{
+	int entnum = (int)luaL_checkinteger(L, 1);
+
+	trap_UnlinkEntity(g_entities + entnum);
+	return 0;
+}
+
 // spawnval = et.G_GetSpawnVar( entnum, key )
 // This function works with fields ( g_spawn.c @ 72 )
 //
@@ -1300,7 +1535,6 @@ static int _et_G_GetSpawnVar(lua_State *L)
 	return 0;
 }
 
-// add G_SetSpawnVar
 // et.G_SetSpawnVar( entnum, key, value )
 // This function works with fields ( g_spawn.c @ 72 )
 static int _et_G_SetSpawnVar(lua_State *L)
@@ -1378,25 +1612,7 @@ static int _et_G_SetSpawnVar(lua_State *L)
 	return 0;
 }
 
-// et.trap_LinkEntity( entnum )
-static int _et_trap_LinkEntity(lua_State *L)
-{
-	int entnum = (int)luaL_checkinteger(L, 1);
-
-	trap_LinkEntity(g_entities + entnum);
-	return 0;
-}
-
-// et.trap_UnlinkEntity( entnum )
-static int _et_trap_UnlinkEntity(lua_State *L)
-{
-	int entnum = (int)luaL_checkinteger(L, 1);
-
-	trap_UnlinkEntity(g_entities + entnum);
-	return 0;
-}
-
-// (variable) = et.gentity_get( entnum, fieldname, arrayindex )
+// variable = et.gentity_get( entnum, fieldname, arrayindex )
 static int _et_gentity_get(lua_State *L)
 {
 	gentity_t       *ent       = g_entities + (int)luaL_checkinteger(L, 1);
@@ -1482,7 +1698,7 @@ static int _et_gentity_get(lua_State *L)
 	return 0;
 }
 
-// et.gentity_set( entnum, fieldname, arrayindex, (value) )
+// et.gentity_set( entnum, fieldname, arrayindex, value )
 static int _et_gentity_set(lua_State *L)
 {
 	gentity_t       *ent       = g_entities + (int)luaL_checkinteger(L, 1);
@@ -1576,123 +1792,8 @@ static int _et_G_AddEvent(lua_State *L)
 	return 0;
 }
 
-/*
- * et.G_XP_Set ( clientNum , xp, skill, add )
- */
-static int _et_G_XP_Set(lua_State *L)
-{
-	gentity_t *ent      = NULL;
-	int       clientNum = (int)luaL_checkinteger(L, 1);
-	float     xp        = (float)luaL_checknumber(L, 2);
-	int       skill     = (int)luaL_checkinteger(L, 3);
-	int       add       = (int)luaL_checkinteger(L, 4); // 'add' just checks to be 0 or not to be 0
-
-	ent = &g_entities[clientNum];
-
-	// Did comment the following lines to set XP via Lua on client connect()
-	// - If used on connect() a moment later the rest of the entity data is set, and the entity data is valid
-	// - If a client is not 'inuse' and this function is called the client is not in game for real
-	//   and the data should be overwritten again, when the next player uses this client num/slot
-
-	// Check if the entity is valid
-	//if ( !ent->inuse ) {
-	//	luaL_error(L, "clientNum \"%d\" is not an used entity", clientNum);
-	//	return 0;
-	//}
-
-	// Check if the entity is a client
-	if (!ent->client)
-	{
-		luaL_error(L, "clientNum \"%d\" is not a client entity", clientNum);
-		return 0;
-	}
-
-	// Check if the skill is in the range
-	if (skill < 0 || skill > SK_NUM_SKILLS - 1)
-	{
-		luaL_error(L, "\"skill\" must be a number from 0 to 6 both included");
-		return 0;
-	}
-
-	// Check if the xp value is negative
-	if (xp < 0)
-	{
-		luaL_error(L, "negative xp values are not allowed");
-		return 0;
-	}
-
-	// special case for 0 adds
-	if (add == 0)
-	{
-		float oldxp = ent->client->sess.skillpoints[skill];
-
-		ent->client->sess.skillpoints[skill] = xp;
-		//ent->client->sess.mapstartSkillpoints[skill] = xp;
-		ent->client->sess.startxptotal -= oldxp;
-		ent->client->sess.startxptotal += xp;
-	}
-	else
-	{
-		ent->client->sess.skillpoints[skill] += xp;
-		//ent->client->sess.mapstartSkillpoints[skill] += xp;
-		ent->client->sess.startxptotal += xp;
-	}
-
-	ent->client->ps.stats[STAT_XP] = (int)ent->client->sess.startxptotal;
-
-	G_CalcRank(ent->client);
-	BG_PlayerStateToEntityState(&ent->client->ps, &ent->s, level.time, qtrue);
-
-	return 1;
-}
-
-/**
- * @brief Reset XP of the player in slot number @p clientNum
- *
- * @lua et.ResetXP ( clientNum )
- */
-static int _et_G_ResetXP(lua_State *L)
-{
-	int       entnum = luaL_optinteger(L, 1, -1);
-	gentity_t *ent;
-
-	if (entnum > -1 && entnum < MAX_CLIENTS)
-	{
-		ent = g_entities + entnum;
-
-		if (!ent->client)
-		{
-			luaL_error(L, "clientNum \"%d\" is not a client entity", entnum);
-			return 0;
-		}
-
-		G_ResetXP(ent);
-	}
-	else
-	{
-		luaL_error(L, "clientNum \"%d\" is not a client entity number", entnum);
-	}
-	return 0;
-}
-
-static int _et_G_SetEntState(lua_State *L)
-{
-	gentity_t  *ent;
-	int        entnum   = (int)luaL_checkinteger(L, 1);
-	entState_t newstate = (int)luaL_checkinteger(L, 2);
-
-	if (entnum > -1 && entnum < ENTITYNUM_MAX_NORMAL) // don't do this with world ent
-	{
-		ent = g_entities + entnum;
-		G_SetEntState(ent, newstate);
-	}
-	else
-	{
-		luaL_error(L, "entity number \"%d\" is out of range", entnum);
-	}
-	return 0;
-}
-
+// Shaders
+// et.G_ShaderRemap( oldShader, newShader )
 static int _et_G_ShaderRemap(lua_State *L)
 {
 	float f               = level.time * 0.001;
@@ -1703,122 +1804,25 @@ static int _et_G_ShaderRemap(lua_State *L)
 	return 0;
 }
 
+// et.G_ResetRemappedShaders()
 static int _et_G_ResetRemappedShaders(lua_State *L)
 {
 	G_ResetRemappedShaders();
 	return 0;
 }
 
+// et.G_ShaderRemapFlush()
 static int _et_G_ShaderRemapFlush(lua_State *L)
 {
 	trap_SetConfigstring(CS_SHADERSTATE, BuildShaderStateConfig());
 	return 0;
 }
 
-static int _et_AddWeaponToPlayer(lua_State *L)
-{
- 	int        clientnum    = (int)luaL_checkinteger(L, 1);
-	gentity_t *ent          = g_entities + clientnum;
-	weapon_t   weapon       = (int)luaL_checkinteger(L, 2);
-	int        ammo         = (int)luaL_checkinteger(L, 3);
-	int        ammoclip     = (int)luaL_checkinteger(L, 4);
-	int        setcurrent   = (int)luaL_checkinteger(L, 5);
-
-	if (!ent->client)
-	{
-		luaL_error(L, "clientNum \"%d\" is not a client entity", clientnum);
-		return 0;
-	}
-
-	if(!IS_VALID_WEAPON(weapon))
-	{
-		luaL_error(L, "weapon \"%d\" is not a valid weapon", weapon);
-		return 0;
-	}
-
-	COM_BitSet(ent->client->ps.weapons, weapon);
-	ent->client->ps.ammoclip[BG_FindClipForWeapon(weapon)] = ammoclip;
-	ent->client->ps.ammo[BG_FindAmmoForWeapon(weapon)]     = ammo;
-
-	if (setcurrent == 1)
-	{
-		ent->client->ps.weapon = weapon;
-	}
-
-#ifdef FEATURE_OMNIBOT
-	Bot_Event_AddWeapon(ent->client->ps.clientNum, Bot_WeaponGameToBot(weapon));
-#endif
-
-	return 1;
-}
-
-static int _et_RemoveWeaponFromPlayer(lua_State *L)
-{
- 	int        clientnum    = (int)luaL_checkinteger(L, 1);
-	gentity_t  *ent         = g_entities + clientnum;
-	gclient_t  *client      = ent->client;
-	weapon_t   weapon       = (int)luaL_checkinteger(L, 2);
-
-	if (!ent->client)
-	{
-		luaL_error(L, "clientNum \"%d\" is not a client entity", clientnum);
-		return 0;
-	}
-
-	COM_BitClear(ent->client->ps.weapons, weapon);
-
-	switch (weapon)
-	{
-	case WP_KAR98:
-		COM_BitClear(client->ps.weapons, WP_GPG40);
-		break;
-	case WP_CARBINE:
-		COM_BitClear(client->ps.weapons, WP_M7);
-		break;
-	case WP_FG42:
-		COM_BitClear(client->ps.weapons, WP_FG42SCOPE);
-		break;
-	case WP_K43:
-		COM_BitClear(client->ps.weapons, WP_K43_SCOPE);
-		break;
-	case WP_GARAND:
-		COM_BitClear(client->ps.weapons, WP_GARAND_SCOPE);
-		break;
-	case WP_MORTAR:
-		COM_BitClear(client->ps.weapons, WP_MORTAR_SET);
-		break;
-	case WP_MORTAR2:
-		COM_BitClear(client->ps.weapons, WP_MORTAR2_SET);
-		break;
-	case WP_MOBILE_MG42:
-		COM_BitClear(client->ps.weapons, WP_MOBILE_MG42_SET);
-		break;
-	case WP_MOBILE_BROWNING:
-		COM_BitClear(client->ps.weapons, WP_MOBILE_BROWNING_SET);
-		break;
-	default:
-		break;
-	}
-
-	// Clear out empty weapon, change to next best weapon
-	G_AddEvent(ent, EV_WEAPONSWITCHED, 0);
-
-	if (weapon == client->ps.weapon)
-	{
-		client->ps.weapon = 0;
-	}
-
-#ifdef FEATURE_OMNIBOT
-	Bot_Event_RemoveWeapon(client->ps.clientNum, Bot_WeaponGameToBot(weapon));
-#endif
-
-	return 1;
-}
-
 // setglobalfog 0 <duration> <float:r> <float:g> <float:b> <float:depthForOpaque>
 // Changes the global fog in a map to a specific color and density.
 // setglobalfog 1 <duration>
 // Changes the global fog in a map.
+// et.G_SetGlobalFog( params )
 static int _et_G_SetGlobalFog(lua_State *L)
 {
 	char *params = (char *)luaL_checkstring(L, 1);
@@ -1847,38 +1851,36 @@ static const luaL_Reg etlib[] =
 	// Cvars
 	{ "trap_Cvar_Get",           _et_trap_Cvar_Get           },
 	{ "trap_Cvar_Set",           _et_trap_Cvar_Set           },
-	// Muting
-	{ "MutePlayer",              _et_MutePlayer              },
-	{ "UnmutePlayer",            _et_UnmutePlayer            },
 	// Config Strings
 	{ "trap_GetConfigstring",    _et_trap_GetConfigstring    },
 	{ "trap_SetConfigstring",    _et_trap_SetConfigstring    },
 	// Server
 	{ "trap_SendConsoleCommand", _et_trap_SendConsoleCommand },
 	// Clients
-	{ "trap_DropClient",         _et_trap_DropClient         },
 	{ "trap_SendServerCommand",  _et_trap_SendServerCommand  },
+	{ "trap_DropClient",         _et_trap_DropClient         },
+	{ "ClientNumberFromString",  _et_ClientNumberFromString  },
 	//	{"trap_SendMessage",			_et_trap_SendMessage},
 	//	{"trap_MessageStatus",			_et_trap_MessageStatus},
 	{ "G_Say",                   _et_G_Say                   },
-	{ "ClientUserinfoChanged",   _et_ClientUserinfoChanged   },
-	{ "ClientNumberFromString",  _et_ClientNumberFromString  },
-	{ "isBitSet",                _et_isBitSet                },
+	{ "MutePlayer",              _et_MutePlayer              },
+	{ "UnmutePlayer",            _et_UnmutePlayer            },
 	// Userinfo
 	{ "trap_GetUserinfo",        _et_trap_GetUserinfo        },
 	{ "trap_SetUserinfo",        _et_trap_SetUserinfo        },
-	// String Utility Functions
+	{ "ClientUserinfoChanged",   _et_ClientUserinfoChanged   },
+	// String Utility
 	{ "Info_RemoveKey",          _et_Info_RemoveKey          },
 	{ "Info_SetValueForKey",     _et_Info_SetValueForKey     },
 	{ "Info_ValueForKey",        _et_Info_ValueForKey        },
 	{ "Q_CleanStr",              _et_Q_CleanStr              },
 	// ET Filesystem
-	{ "trap_FS_GetFileList",     _et_trap_FS_GetFileList     },
 	{ "trap_FS_FOpenFile",       _et_trap_FS_FOpenFile       },
 	{ "trap_FS_Read",            _et_trap_FS_Read            },
 	{ "trap_FS_Write",           _et_trap_FS_Write           },
 	{ "trap_FS_Rename",          _et_trap_FS_Rename          },
 	{ "trap_FS_FCloseFile",      _et_trap_FS_FCloseFile      },
+	{ "trap_FS_GetFileList",     _et_trap_FS_GetFileList     },
 	// Indexes
 	{ "G_SoundIndex",            _et_G_SoundIndex            },
 	{ "G_ModelIndex",            _et_G_ModelIndex            },
@@ -1888,36 +1890,32 @@ static const luaL_Reg etlib[] =
 	{ "G_ClientSound",           _et_G_ClientSound           },
 	// Miscellaneous
 	{ "trap_Milliseconds",       _et_trap_Milliseconds       },
+	{ "isBitSet",                _et_isBitSet                },
 	{ "G_Damage",                _et_G_Damage                },
 	{ "G_AddSkillPoints",        _et_G_AddSkillPoints        },
 	{ "G_LoseSkillPoints",       _et_G_LoseSkillPoints       },
+	{ "G_XP_Set",                _et_G_XP_Set                },
+	{ "G_ResetXP",               _et_G_ResetXP               },
+	{ "AddWeaponToPlayer",       _et_AddWeaponToPlayer       },
+	{ "RemoveWeaponFromPlayer",  _et_RemoveWeaponFromPlayer  },
 	// Entities
 	{ "G_CreateEntity",          _et_G_Lua_CreateEntity      },
 	{ "G_DeleteEntity",          _et_G_Lua_DeleteEntity      },
 	{ "G_TempEntity",            _et_G_TempEntity            },
 	{ "G_FreeEntity",            _et_G_FreeEntity            },
-
-	{ "G_GetSpawnVar",           _et_G_GetSpawnVar           },
-
-	{ "G_SetSpawnVar",           _et_G_SetSpawnVar           },
 	{ "G_EntitiesFree",          _et_G_EntitiesFree          },
+	{ "G_SetEntState",           _et_G_SetEntState           },
 	{ "trap_LinkEntity",         _et_trap_LinkEntity         },
 	{ "trap_UnlinkEntity",       _et_trap_UnlinkEntity       },
+	{ "G_GetSpawnVar",           _et_G_GetSpawnVar           },
+	{ "G_SetSpawnVar",           _et_G_SetSpawnVar           },
 	{ "gentity_get",             _et_gentity_get             },
 	{ "gentity_set",             _et_gentity_set             },
 	{ "G_AddEvent",              _et_G_AddEvent              },
-
-	// XP functions
-	{ "G_XP_Set",                _et_G_XP_Set                },
-	{ "G_ResetXP",               _et_G_ResetXP               },
-	{ "G_SetEntState",           _et_G_SetEntState           },
-
+	// Shaders
 	{ "G_ShaderRemap",           _et_G_ShaderRemap           },
 	{ "G_ResetRemappedShaders",  _et_G_ResetRemappedShaders  },
 	{ "G_ShaderRemapFlush",      _et_G_ShaderRemapFlush      },
-	{ "AddWeaponToPlayer",       _et_AddWeaponToPlayer       },
-	{ "RemoveWeaponFromPlayer",  _et_RemoveWeaponFromPlayer  },
-
 	{ "G_SetGlobalFog",          _et_G_SetGlobalFog          },
 	{ NULL },
 };
