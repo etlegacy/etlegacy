@@ -2166,7 +2166,7 @@ void BG_LinearPathOrigin2(float radius, splinePath_t **pSpline, float *deltaTime
 int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill);
 
 void BG_InitLocations(vec2_t world_mins, vec2_t world_maxs);
-char *BG_GetLocationString(vec_t *pos);
+char *BG_GetLocationString(float xpos, float ypos);
 
 extern const char *bg_fireteamNames[MAX_FIRETEAMS / 2];
 

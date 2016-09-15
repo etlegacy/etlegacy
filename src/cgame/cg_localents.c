@@ -119,12 +119,7 @@ char *CG_GetLocationMsg(int clientNum, vec3_t origin)
 
 char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag)
 {
-	char   *locStr = NULL;
-	vec2_t loc;
-
-	loc[0] = origin[0];
-	loc[1] = origin[1];
-	//loc[2] = origin[2]; // no need for this - BG_GetLocationString is 2d
+	char *locStr = NULL;
 
 	if (cg_locations.integer & flag)
 	{
@@ -135,7 +130,7 @@ char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag)
 			if (clientNum == cg.clientNum)
 			{
 				locStr = va("^3     ");
-				// CG_Printf("same client\n");
+				//CG_Printf("same client\n");
 			}
 			else
 			{
@@ -158,7 +153,7 @@ char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag)
 			{
 				if (!Q_stricmp(locStr, "Unknown"))
 				{
-					locStr   = va("^3(%s)", BG_GetLocationString(loc));
+					locStr   = va("^3(%s)", BG_GetLocationString(origin[0], origin[1]));
 					locValid = qfalse; // don't draw it twice..
 				}
 			}
@@ -166,12 +161,12 @@ char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag)
 
 		if ((cg_locations.integer & LOC_SHOWCOORDS) && locValid)
 		{
-			Q_strcat(locStr, 64, va(" ^3(%s)", BG_GetLocationString(loc)));   // append a location
+			Q_strcat(locStr, 64, va(" ^3(%s)", BG_GetLocationString(origin[0], origin[1])));   // append a location
 		}
 	}
 	else
 	{
-		locStr = va("^3(%s)", BG_GetLocationString(loc));
+		locStr = va("^3(%s)", BG_GetLocationString(origin[0], origin[1]));
 	}
 
 	return locStr;
