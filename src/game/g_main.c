@@ -1891,6 +1891,7 @@ void G_UpdateCvars(void)
 					}
 
 #ifdef FEATURE_RATING
+
 					if (g_skillRating.integer)
 					{
 						Info_SetValueForKey(cs, "R", (va("%i", g_skillRating.integer)));
@@ -1899,6 +1900,10 @@ void G_UpdateCvars(void)
 						{
 							Info_SetValueForKey(cs, "M", (va("%f", level.mapProb)));
 						}
+					}
+					else
+					{
+						Info_SetValueForKey(cs, "R", "0");
 					}
 #endif
 
