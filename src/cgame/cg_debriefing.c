@@ -2392,12 +2392,15 @@ void CG_Debriefing_PlayerXP_Draw(panel_button_t *button)
 #ifdef FEATURE_RATING
 void CG_Debriefing_PlayerSR_Draw(panel_button_t *button)
 {
-	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
-	float        w   = CG_Text_Width_Ext("SR: ", button->font->scalex, 0, button->font->font);
+	if (cgs.skillRating)
+	{
+		clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
+		float        w   = CG_Text_Width_Ext("SR: ", button->font->scalex, 0, button->font->font);
 
-	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("SR:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+		CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("SR:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.1f (^5%+.1f^7)", ci->rating, ci->deltaRating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+		CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.1f (^5%+.1f^9)", ci->rating, ci->deltaRating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	}
 }
 #endif
 
