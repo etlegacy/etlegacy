@@ -2001,10 +2001,7 @@ qboolean CG_Debriefing_ServerCommand(const char *cmd)
 #ifdef FEATURE_RATING
 	else if (!Q_stricmp(cmd, "imsr"))
 	{
-		if (cgs.skillRating)
-		{
-			CG_Debriefing_ParseSkillRating();
-		}
+		CG_Debriefing_ParseSkillRating();
 		return qtrue;
 	}
 #endif
