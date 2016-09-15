@@ -2015,6 +2015,8 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
 		filename = "knife_kbar.weap";
 		break;
 	case WP_ARTY:
+		filename = "arty.weap";
+		break;
 	case VERYBIGEXPLOSION:
 	case WP_DUMMY_MG42:
 		//CG_Printf(S_COLOR_YELLOW "WARNING: skipping weapon %i to register.\n", weaponNum);
