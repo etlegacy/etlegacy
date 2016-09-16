@@ -1567,6 +1567,7 @@ qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const c
 	// if its not in the pak, we bail
 	if (srcLength == -1)
 	{
+		Com_Printf("FS_CL_ExtractFromPakFile: failed to read '%s' from pak file\n", filename);
 		return qfalse;
 	}
 
@@ -1623,7 +1624,7 @@ qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const c
 		f = FS_FOpenDLLWrite(filename);
 		if (!f)
 		{
-			Com_Printf("Failed to open %s\n", filename);
+			Com_Printf("FS_CL_ExtractFromPakFile: failed to open %s\n", filename);
 			return qfalse;
 		}
 
