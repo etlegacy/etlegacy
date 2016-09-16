@@ -80,7 +80,7 @@ GOTO:EOF
 GOTO:EOF
 
 :SETUPMSBUILD
-	where msbuild >nul 2>&1
+	where /q msbuild >nul 2>&1
 	if !errorlevel!==1 (
 		SET errorlevel=0
 		IF EXIST "!vsvarsbat!" (
@@ -98,6 +98,7 @@ GOTO:EOF
 			)
 		)
 	) ELSE (
+		SET vsversion=%VisualStudioVersion:~0,-2%
 		ECHO BUILD SYSTEM OK!
 	)
 	SET errorlevel=0
