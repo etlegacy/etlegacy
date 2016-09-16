@@ -3067,7 +3067,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
             //if(barrel.hModel) {
             CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
             CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-        //}
+        	//}
+			break;
         default:
             break;
         }
