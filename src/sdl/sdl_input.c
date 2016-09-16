@@ -113,7 +113,6 @@ qboolean IN_IsNumLockDown(void)
 		return qtrue;
 	}
 #else
-	//if(keys[K_KP_NUMLOCK].down)
 	if (SDL_GetModState() & KMOD_NUM)
 	{
 		return qtrue;
@@ -315,86 +314,38 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 	}
 	else
 	{
-/*
-        // FIXME/SDL2 BUG/FEATUTE NUM keyboard state
-        // https://forums.libsdl.org/viewtopic.php?p=43816&sid=b2ff6e037c85e6a80c6c506035668246
-        // currently SDL2 only sets NUM keyboard status when key is pressed and expects NUM disabled at start
-        // see SDL_SendKeyboardKey in SDL_Keyboard.c
-        // notes:
-        // - SDL_SCANCODE_NUMLOCKCLEAR does the job
-        // - clarify APPLE clear key
-        if (SDL_GetModState() & KMOD_NUM)
-        {
-            Com_Printf("NUM LED on\n");
-        }
-        else
-        {
-            Com_Printf("NUM LED off\n");
-        }
-*/
-
 		switch (keysym->sym)
 		{
 		// keypad
 		case SDLK_KP_0:
-			if (!(keysym->mod & KMOD_NUM))
-			{
-				key = K_KP_INS;
-			}
+			key = K_KP_INS;
 			break;
 		case SDLK_KP_1:
-			if (!(keysym->mod & KMOD_NUM))
-			{
-				key = K_KP_END;
-			}
+			key = K_KP_END;
 			break;
 		case SDLK_KP_2:
-			if (!(keysym->mod & KMOD_NUM))
-			{
-				key = K_KP_DOWNARROW;
-			}
+			key = K_KP_DOWNARROW;
 			break;
 		case SDLK_KP_3:
-			if (!(keysym->mod & KMOD_NUM))
-			{
-				key = K_KP_PGDN;
-			}
+			key = K_KP_PGDN;
 			break;
 		case SDLK_KP_4:
-			if (!(keysym->mod & KMOD_NUM))
-			{
-				key = K_KP_LEFTARROW;
-			}
+			key = K_KP_LEFTARROW;
 			break;
 		case SDLK_KP_5:
-			if (!(keysym->mod & KMOD_NUM))
-			{
-				key = K_KP_5;
-			}
+			key = K_KP_5;
 			break;
 		case SDLK_KP_6:
-			if (!(keysym->mod & KMOD_NUM))
-			{
-				key = K_KP_RIGHTARROW;
-			}
+			key = K_KP_RIGHTARROW;
 			break;
 		case SDLK_KP_7:
-			if (!(keysym->mod & KMOD_NUM))
-			{
-				key = K_KP_HOME;
-			}
+			key = K_KP_HOME;
 			break;
 		case SDLK_KP_8:
-			if (!(keysym->mod & KMOD_NUM))
-			{
-				key = K_KP_UPARROW;
-			}
+			key = K_KP_UPARROW;
 			break;
 		case SDLK_KP_9:
-			if (!(keysym->mod & KMOD_NUM))
-			{
-				key = K_KP_PGUP;
-			}
+			key = K_KP_PGUP;
 			break;
 		case SDLK_KP_ENTER:     key = K_KP_ENTER;
 			break;
