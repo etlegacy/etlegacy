@@ -36,6 +36,10 @@
 #include "ui_shared.h"
 #include "ui_local.h"
 
+/**
+ * @brief Item_Tooltip_Initialize
+ * @param item
+ */
 void Item_Tooltip_Initialize(itemDef_t *item)
 {
 	item->text              = NULL;
@@ -52,6 +56,12 @@ void Item_Tooltip_Initialize(itemDef_t *item)
 	Vector4Set(item->window.foreColor, 0.f, 0.f, 0.f, 1.f);
 }
 
+/**
+ * @brief Item_SetScreenCoords
+ * @param item
+ * @param x
+ * @param y
+ */
 void Item_SetScreenCoords(itemDef_t *item, float x, float y)
 {
 	if (item == NULL)
@@ -92,7 +102,11 @@ void Item_SetScreenCoords(itemDef_t *item, float x, float y)
 	item->textRect.h = 0;
 }
 
-// FIXME: consolidate this with nearby stuff
+/**
+ * @brief Item_UpdatePosition
+ * @param item
+ * @todo FIXME: consolidate this with nearby stuff
+ */
 void Item_UpdatePosition(itemDef_t *item)
 {
 	float     x, y;
@@ -116,6 +130,12 @@ void Item_UpdatePosition(itemDef_t *item)
 	Item_SetScreenCoords(item, x, y);
 }
 
+/**
+ * @brief Item_EnableShowViaCvar
+ * @param item
+ * @param flag
+ * @return
+ */
 qboolean Item_EnableShowViaCvar(itemDef_t *item, int flag)
 {
 	char script[1024], *p;
@@ -168,10 +188,14 @@ qboolean Item_EnableShowViaCvar(itemDef_t *item, int flag)
 	return qtrue;
 }
 
-// display if we poll on a server toggle setting
-// We want *current* settings, so this is a bit of a perf hit,
-// but this is only during UI display
-
+/**
+ * @brief Sisplay if we poll on a server toggle setting
+ * We want *current* settings, so this is a bit of a perf hit,
+ * but this is only during UI display
+ * @param item
+ * @param fVoteTest
+ * @return
+ */
 qboolean Item_SettingShow(itemDef_t *item, qboolean fVoteTest)
 {
 	char info[MAX_INFO_STRING];
@@ -197,7 +221,13 @@ qboolean Item_SettingShow(itemDef_t *item, qboolean fVoteTest)
 	return qtrue;
 }
 
-// will optionaly set focus to this item
+/**
+ * @brief Will optionaly set focus to this item
+ * @param item
+ * @param x
+ * @param y
+ * @return
+ */
 qboolean Item_SetFocus(itemDef_t *item, float x, float y)
 {
 	int         i;
@@ -298,6 +328,11 @@ qboolean Item_SetFocus(itemDef_t *item, float x, float y)
 	return qtrue;
 }
 
+/**
+ * @brief Item_ListBox_MaxScroll
+ * @param item
+ * @return
+ */
 int Item_ListBox_MaxScroll(itemDef_t *item)
 {
 	listBoxDef_t *listPtr = (listBoxDef_t *)item->typeData;
@@ -321,6 +356,11 @@ int Item_ListBox_MaxScroll(itemDef_t *item)
 	return max;
 }
 
+/**
+ * @brief Item_ListBox_ThumbPosition
+ * @param item
+ * @return
+ */
 int Item_ListBox_ThumbPosition(itemDef_t *item)
 {
 	float        max, pos, size;
@@ -360,6 +400,11 @@ int Item_ListBox_ThumbPosition(itemDef_t *item)
 	}
 }
 
+/**
+ * @brief Item_ListBox_ThumbDrawPosition
+ * @param item
+ * @return
+ */
 int Item_ListBox_ThumbDrawPosition(itemDef_t *item)
 {
 	if (itemCapture == item)
@@ -399,6 +444,11 @@ int Item_ListBox_ThumbDrawPosition(itemDef_t *item)
 	}
 }
 
+/**
+ * @brief Item_Slider_ThumbPosition
+ * @param item
+ * @return
+ */
 float Item_Slider_ThumbPosition(itemDef_t *item)
 {
 	float          value, range, x;
@@ -440,6 +490,13 @@ float Item_Slider_ThumbPosition(itemDef_t *item)
 	return x;
 }
 
+/**
+ * @brief Item_Slider_OverSlider
+ * @param item
+ * @param x
+ * @param y
+ * @return
+ */
 int Item_Slider_OverSlider(itemDef_t *item, float x, float y)
 {
 	rectDef_t r;
@@ -457,6 +514,13 @@ int Item_Slider_OverSlider(itemDef_t *item, float x, float y)
 	return 0;
 }
 
+/**
+ * @brief Item_ListBox_OverLB
+ * @param item
+ * @param x
+ * @param y
+ * @return
+ */
 int Item_ListBox_OverLB(itemDef_t *item, float x, float y)
 {
 	rectDef_t r;
@@ -561,6 +625,13 @@ int Item_ListBox_OverLB(itemDef_t *item, float x, float y)
 	return 0;
 }
 
+/**
+ * @brief Item_ListBox_MouseEnter
+ * @param item
+ * @param x
+ * @param y
+ * @param click
+ */
 void Item_ListBox_MouseEnter(itemDef_t *item, float x, float y, qboolean click)
 {
 	rectDef_t    r;
@@ -617,6 +688,12 @@ void Item_ListBox_MouseEnter(itemDef_t *item, float x, float y, qboolean click)
 	}
 }
 
+/**
+ * @brief Item_MouseEnter
+ * @param item
+ * @param x
+ * @param y
+ */
 void Item_MouseEnter(itemDef_t *item, float x, float y)
 {
 	if (item)
@@ -686,6 +763,10 @@ void Item_MouseEnter(itemDef_t *item, float x, float y)
 	}
 }
 
+/**
+ * @brief Item_MouseLeave
+ * @param item
+ */
 void Item_MouseLeave(itemDef_t *item)
 {
 	if (item)
@@ -701,6 +782,11 @@ void Item_MouseLeave(itemDef_t *item)
 	}
 }
 
+/**
+ * @brief Item_SetMouseOver
+ * @param item
+ * @param focus
+ */
 void Item_SetMouseOver(itemDef_t *item, qboolean focus)
 {
 	if (item)
@@ -716,6 +802,12 @@ void Item_SetMouseOver(itemDef_t *item, qboolean focus)
 	}
 }
 
+/**
+ * @brief Item_OwnerDraw_HandleKey
+ * @param item
+ * @param key
+ * @return
+ */
 qboolean Item_OwnerDraw_HandleKey(itemDef_t *item, int key)
 {
 	if (item && DC->ownerDrawHandleKey)
@@ -726,6 +818,14 @@ qboolean Item_OwnerDraw_HandleKey(itemDef_t *item, int key)
 	return qfalse;
 }
 
+/**
+ * @brief Item_ListBox_HandleKey
+ * @param item
+ * @param key
+ * @param down
+ * @param force
+ * @return
+ */
 qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolean force)
 {
 	listBoxDef_t *listPtr = (listBoxDef_t *)item->typeData;
@@ -1064,6 +1164,12 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 	return qfalse;
 }
 
+/**
+ * @brief Item_CheckBox_HandleKey
+ * @param item
+ * @param key
+ * @return
+ */
 qboolean Item_CheckBox_HandleKey(itemDef_t *item, int key)
 {
 	if (Rect_ContainsPoint(&item->window.rect, DC->cursorx, DC->cursory) && (item->window.flags & WINDOW_HASFOCUS) && item->cvar)
@@ -1110,6 +1216,12 @@ qboolean Item_CheckBox_HandleKey(itemDef_t *item, int key)
 	return qfalse;
 }
 
+/**
+ * @brief Item_YesNo_HandleKey
+ * @param item
+ * @param key
+ * @return
+ */
 qboolean Item_YesNo_HandleKey(itemDef_t *item, int key)
 {
 	if (Rect_ContainsPoint(&item->window.rect, DC->cursorx, DC->cursory) && (item->window.flags & WINDOW_HASFOCUS) && item->cvar)
@@ -1129,6 +1241,11 @@ qboolean Item_YesNo_HandleKey(itemDef_t *item, int key)
 	return qfalse;
 }
 
+/**
+ * @brief Item_Multi_CountSettings
+ * @param item
+ * @return
+ */
 int Item_Multi_CountSettings(itemDef_t *item)
 {
 	multiDef_t *multiPtr = (multiDef_t *)item->typeData;
@@ -1141,6 +1258,11 @@ int Item_Multi_CountSettings(itemDef_t *item)
 	return multiPtr->count;
 }
 
+/**
+ * @brief Item_Multi_FindCvarByValue
+ * @param item
+ * @return
+ */
 int Item_Multi_FindCvarByValue(itemDef_t *item)
 {
 	char       buff[1024];
@@ -1182,6 +1304,11 @@ int Item_Multi_FindCvarByValue(itemDef_t *item)
 	return 0;
 }
 
+/**
+ * @brief Item_Multi_Setting
+ * @param item
+ * @return
+ */
 const char *Item_Multi_Setting(itemDef_t *item)
 {
 	multiDef_t *multiPtr = (multiDef_t *)item->typeData;
@@ -1231,6 +1358,12 @@ const char *Item_Multi_Setting(itemDef_t *item)
 	return "";
 }
 
+/**
+ * @brief Item_Multi_HandleKey
+ * @param item
+ * @param key
+ * @return
+ */
 qboolean Item_Multi_HandleKey(itemDef_t *item, int key)
 {
 	multiDef_t *multiPtr = (multiDef_t *)item->typeData;
@@ -1288,6 +1421,10 @@ qboolean Item_Multi_HandleKey(itemDef_t *item, int key)
 	return qfalse;
 }
 
+/**
+ * @brief Item_ComboSelect
+ * @param item
+ */
 void Item_ComboSelect(itemDef_t *item)
 {
 	if (item)
@@ -1296,11 +1433,19 @@ void Item_ComboSelect(itemDef_t *item)
 	}
 }
 
+/**
+ * @brief Item_ComboDeSelect
+ * @param item
+ */
 void Item_ComboDeSelect(itemDef_t *item)
 {
 	CLEAR_EDITITEM();
 }
 
+/**
+ * @brief Item_CalcTextFieldCursor
+ * @param item
+ */
 void Item_CalcTextFieldCursor(itemDef_t *item)
 {
 	if (item->cvar)
@@ -1321,6 +1466,10 @@ void Item_CalcTextFieldCursor(itemDef_t *item)
 	}
 }
 
+/**
+ * @brief Item_HandleTextFieldSelect
+ * @param item
+ */
 void Item_HandleTextFieldSelect(itemDef_t *item)
 {
 	if (item)
@@ -1330,6 +1479,10 @@ void Item_HandleTextFieldSelect(itemDef_t *item)
 	}
 }
 
+/**
+ * @brief Item_HandleTextFieldDeSelect
+ * @param item
+ */
 void Item_HandleTextFieldDeSelect(itemDef_t *item)
 {
 	if (item && item->cvar)
@@ -1343,6 +1496,9 @@ void Item_HandleTextFieldDeSelect(itemDef_t *item)
 	CLEAR_EDITITEM();
 }
 
+/**
+ * @brief Item_HandleSaveValue
+ */
 void Item_HandleSaveValue(void)
 {
 	if (g_editItem && TEXTFIELD(g_editItem->type))
@@ -1353,6 +1509,15 @@ void Item_HandleSaveValue(void)
 	}
 }
 
+/**
+ * @brief Item_TextField_InsertToCursor
+ * @param len
+ * @param buff
+ * @param key
+ * @param item
+ * @param editPtr
+ * @return
+ */
 static qboolean Item_TextField_InsertToCursor(int *len, char *buff, int key, itemDef_t *item, editFieldDef_t *editPtr)
 {
 	qboolean overStrike = qfalse;
@@ -1388,6 +1553,12 @@ static qboolean Item_TextField_InsertToCursor(int *len, char *buff, int key, ite
 	return qfalse;
 }
 
+/**
+ * @brief Item_Combo_HandleKey
+ * @param item
+ * @param key
+ * @return
+ */
 qboolean Item_Combo_HandleKey(itemDef_t *item, int key)
 {
 	multiDef_t *multi = NULL;
@@ -1413,6 +1584,12 @@ qboolean Item_Combo_HandleKey(itemDef_t *item, int key)
 	return qfalse;
 }
 
+/**
+ * @brief Item_TextField_HandleKey
+ * @param item
+ * @param key
+ * @return
+ */
 qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 {
 	char           buff[1024];
@@ -1636,6 +1813,10 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 	return qtrue;
 }
 
+/**
+ * @brief Item_Scroll_ListBox_AutoFunc
+ * @param p
+ */
 static void Item_Scroll_ListBox_AutoFunc(void *p)
 {
 	scrollInfo_t *si = (scrollInfo_t *)p;
@@ -1659,6 +1840,10 @@ static void Item_Scroll_ListBox_AutoFunc(void *p)
 	}
 }
 
+/**
+ * @brief Item_Scroll_ListBox_ThumbFunc
+ * @param p
+ */
 static void Item_Scroll_ListBox_ThumbFunc(void *p)
 {
 	scrollInfo_t *si = (scrollInfo_t *)p;
@@ -1735,6 +1920,10 @@ static void Item_Scroll_ListBox_ThumbFunc(void *p)
 	}
 }
 
+/**
+ * @brief Item_Scroll_Slider_ThumbFunc
+ * @param p
+ */
 static void Item_Scroll_Slider_ThumbFunc(void *p)
 {
 	float          x, value, cursorx;
@@ -1768,6 +1957,11 @@ static void Item_Scroll_Slider_ThumbFunc(void *p)
 	DC->setCVar(si->item->cvar, va("%f", value));
 }
 
+/**
+ * @brief Item_StartCapture
+ * @param item
+ * @param key
+ */
 void Item_StartCapture(itemDef_t *item, int key)
 {
 	int flags;
@@ -1822,6 +2016,13 @@ void Item_StartCapture(itemDef_t *item, int key)
 	}
 }
 
+/**
+ * @brief Item_Slider_HandleKey
+ * @param item
+ * @param key
+ * @param down
+ * @return
+ */
 qboolean Item_Slider_HandleKey(itemDef_t *item, int key, qboolean down)
 {
 	//DC->Print("slider handle key\n");
@@ -1871,6 +2072,10 @@ qboolean Item_Slider_HandleKey(itemDef_t *item, int key, qboolean down)
 	return qfalse;
 }
 
+/**
+ * @brief Item_Action
+ * @param item
+ */
 void Item_Action(itemDef_t *item)
 {
 	if (item)
@@ -1879,6 +2084,11 @@ void Item_Action(itemDef_t *item)
 	}
 }
 
+/**
+ * @brief Item_CorrectedTextRect
+ * @param item
+ * @return
+ */
 rectDef_t *Item_CorrectedTextRect(itemDef_t *item)
 {
 	static rectDef_t rect;
@@ -1896,6 +2106,13 @@ rectDef_t *Item_CorrectedTextRect(itemDef_t *item)
 	return &rect;
 }
 
+/**
+ * @brief Item_SetTextExtents
+ * @param item
+ * @param width
+ * @param height
+ * @param text
+ */
 void Item_SetTextExtents(itemDef_t *item, int *width, int *height, const char *text)
 {
 	const char *textPtr = (text) ? text : item->text;
@@ -1953,6 +2170,11 @@ void Item_SetTextExtents(itemDef_t *item, int *width, int *height, const char *t
 	}
 }
 
+/**
+ * @brief Item_TextColor
+ * @param item
+ * @param newColor
+ */
 void Item_TextColor(itemDef_t *item, vec4_t *newColor)
 {
 	menuDef_t *parent = (menuDef_t *)item->parent;
@@ -1994,6 +2216,10 @@ void Item_TextColor(itemDef_t *item, vec4_t *newColor)
 	}
 }
 
+/**
+ * @brief Item_Text_AutoWrapped_Paint
+ * @param item
+ */
 void Item_Text_AutoWrapped_Paint(itemDef_t *item)
 {
 	char       text[1024];
@@ -2113,6 +2339,10 @@ void Item_Text_AutoWrapped_Paint(itemDef_t *item)
 	}
 }
 
+/**
+ * @brief Item_Text_Wrapped_Paint
+ * @param item
+ */
 void Item_Text_Wrapped_Paint(itemDef_t *item)
 {
 	char       text[1024];
@@ -2167,6 +2397,13 @@ void Item_Text_Wrapped_Paint(itemDef_t *item)
 	DC->drawText(x, y, item->textscale, color, start, 0, 0, item->textStyle);
 }
 
+/**
+ * @brief Item_HandleKey
+ * @param item
+ * @param key
+ * @param down
+ * @return
+ */
 qboolean Item_HandleKey(itemDef_t *item, int key, qboolean down)
 {
 	int realKey = key;
@@ -2263,6 +2500,10 @@ qboolean Item_HandleKey(itemDef_t *item, int key, qboolean down)
 	return qfalse;
 }
 
+/**
+ * @brief Item_Text_Paint
+ * @param item
+ */
 void Item_Text_Paint(itemDef_t *item)
 {
 	char       text[1024];
@@ -2375,6 +2616,10 @@ void Item_Text_Paint(itemDef_t *item)
 	DC->drawText(item->textRect.x, item->textRect.y, item->textscale, color, textPtr, 0, 0, item->textStyle);
 }
 
+/**
+ * @brief Item_TextField_Paint
+ * @param item
+ */
 void Item_TextField_Paint(itemDef_t *item)
 {
 	char           buff[1024];
@@ -2457,6 +2702,10 @@ void Item_TextField_Paint(itemDef_t *item)
 	}
 }
 
+/**
+ * @brief Item_CheckBox_Paint
+ * @param item
+ */
 void Item_CheckBox_Paint(itemDef_t *item)
 {
 	vec4_t     newColor;
@@ -2536,6 +2785,10 @@ void Item_CheckBox_Paint(itemDef_t *item)
 	}
 }
 
+/**
+ * @brief Item_YesNo_Paint
+ * @param item
+ */
 void Item_YesNo_Paint(itemDef_t *item)
 {
 	vec4_t    newColor;
@@ -2569,6 +2822,10 @@ void Item_YesNo_Paint(itemDef_t *item)
 	}
 }
 
+/**
+ * @brief Item_Multi_Paint
+ * @param item
+ */
 void Item_Multi_Paint(itemDef_t *item)
 {
 	vec4_t     newColor;
@@ -2603,10 +2860,14 @@ void Item_Multi_Paint(itemDef_t *item)
 	}
 }
 
+/**
+ * @brief Item_Combo_Paint
+ * @param item
+ */
 void Item_Combo_Paint(itemDef_t *item)
 {
 	vec4_t     itemColor, backColor;
-	const char *text              = "";
+    const char *text              = Item_Multi_Setting(item);
 	int        selectedTextOffset = 0, selectorOffset = 0, temp = 0, widestText = 0, selectorSize = 0;
 	//menuDef_t    *parent            = (menuDef_t *)item->parent;
 	rectDef_t    rect, selectorRect;
@@ -2614,9 +2875,7 @@ void Item_Combo_Paint(itemDef_t *item)
 	char         valueString[MAX_QPATH];
 	float        valueFloat = 0;
 	int          i;
-	static float borderOffset = 4.f;
-
-	text = Item_Multi_Setting(item);
+    static float borderOffset = 4.f;
 
 	memcpy(&backColor, &item->window.backColor, sizeof(vec4_t));
 	memcpy(&itemColor, &item->window.foreColor, sizeof(vec4_t));
@@ -2729,6 +2988,10 @@ void Item_Combo_Paint(itemDef_t *item)
 	}
 }
 
+/**
+ * @brief Item_Slider_Paint
+ * @param item
+ */
 void Item_Slider_Paint(itemDef_t *item)
 {
 	vec4_t    newColor;
@@ -2768,6 +3031,10 @@ void Item_Slider_Paint(itemDef_t *item)
 	DC->drawHandlePic(x - (SLIDER_THUMB_WIDTH / 2), y, SLIDER_THUMB_WIDTH, SLIDER_THUMB_HEIGHT, DC->Assets.sliderThumb);
 }
 
+/**
+ * @brief Item_Bind_Paint
+ * @param item
+ */
 void Item_Bind_Paint(itemDef_t *item)
 {
 	vec4_t         newColor, lowLight;
@@ -2826,6 +3093,13 @@ void Item_Bind_Paint(itemDef_t *item)
 	}
 }
 
+/**
+ * @brief Item_Bind_HandleKey
+ * @param item
+ * @param key
+ * @param down
+ * @return
+ */
 qboolean Item_Bind_HandleKey(itemDef_t *item, int key, qboolean down)
 {
 	int id;
@@ -2936,6 +3210,10 @@ qboolean Item_Bind_HandleKey(itemDef_t *item, int key, qboolean down)
 	return qtrue;
 }
 
+/**
+ * @brief Item_Model_Paint
+ * @param item
+ */
 void Item_Model_Paint(itemDef_t *item)
 {
 	float       x, y, w, h; //,xx;
@@ -3068,6 +3346,10 @@ void Item_Model_Paint(itemDef_t *item)
 	DC->renderScene(&refdef);
 }
 
+/**
+ * @brief Item_ListBox_Paint
+ * @param item
+ */
 void Item_ListBox_Paint(itemDef_t *item)
 {
 	float        x, y, size, count, i, thumb;
@@ -3276,6 +3558,10 @@ void Item_ListBox_Paint(itemDef_t *item)
 	}
 }
 
+/**
+ * @brief Item_OwnerDraw_Paint
+ * @param item
+ */
 void Item_OwnerDraw_Paint(itemDef_t *item)
 {
 	if (item == NULL)
@@ -3349,6 +3635,10 @@ void Item_OwnerDraw_Paint(itemDef_t *item)
 	}
 }
 
+/**
+ * @brief Item_DoTransition
+ * @param item
+ */
 void Item_DoTransition(itemDef_t *item)
 {
 	if (DC->realTime > item->window.nextTime)
@@ -3470,6 +3760,10 @@ void Item_DoTransition(itemDef_t *item)
 	}
 }
 
+/**
+ * @brief Item_Paint
+ * @param item
+ */
 void Item_Paint(itemDef_t *item)
 {
 	menuDef_t *parent = NULL;
@@ -3614,7 +3908,10 @@ void Item_Paint(itemDef_t *item)
 	}
 }
 
-//This gets called on keyboard Enter and KP_Enter
+/**
+ * @brief This gets called on keyboard Enter and KP_Enter
+ * @param item
+ */
 void Item_KeyboardActivate(itemDef_t *item)
 {
 	if (!item)
@@ -3632,7 +3929,10 @@ void Item_KeyboardActivate(itemDef_t *item)
 	}
 }
 
-// This gets called on mouse1-3
+/**
+ * @brief This gets called on mouse1-3
+ * @param item
+ */
 void Item_MouseActivate(itemDef_t *item)
 {
 	if (!item)
@@ -3684,6 +3984,10 @@ void Item_MouseActivate(itemDef_t *item)
 	}
 }
 
+/**
+ * @brief Item_Init
+ * @param item
+ */
 void Item_Init(itemDef_t *item)
 {
 	memset(item, 0, sizeof(itemDef_t));

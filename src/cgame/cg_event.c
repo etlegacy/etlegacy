@@ -2543,47 +2543,61 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	case EV_NOAMMO:
 	case EV_WEAPONSWITCHED:
 		DEBUGNAME("EV_NOAMMO");
-		// FIXME: do a switch
-		if ((es->weapon != WP_GRENADE_LAUNCHER) &&
-		    (es->weapon != WP_GRENADE_PINEAPPLE) &&
-		    (es->weapon != WP_DYNAMITE) &&
-		    (es->weapon != WP_LANDMINE) &&
-		    (es->weapon != WP_SATCHEL) &&
-		    (es->weapon != WP_SATCHEL_DET) &&
-		    (es->weapon != WP_SMOKE_BOMB) &&
-		    (es->weapon != WP_AMMO) &&
-		    (es->weapon != WP_MEDKIT) &&
-		    (es->weapon != WP_MEDIC_SYRINGE) &&
-		    (es->weapon != WP_MEDIC_ADRENALINE))
-		{
-			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound);     // FIXME: CHAN_LOCAL_SOUND ?
-		}
+        switch(es->weapon)
+        {
+        case WP_GRENADE_LAUNCHER:
+        case WP_GRENADE_PINEAPPLE:
+        case WP_DYNAMITE:
+        case WP_LANDMINE:
+        case WP_SATCHEL:
+        case WP_SATCHEL_DET:
+        case WP_SMOKE_BOMB:
+        case WP_AMMO:
+        case WP_MEDKIT:
+        case WP_MEDIC_SYRINGE:
+        case WP_MEDIC_ADRENALINE:
+            break;
+        default:
+            trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound);     // FIXME: CHAN_LOCAL_SOUND ?
+            break;
+        }
 
-		// FIXME: do a switch
-		if (es->number == cg.snap->ps.clientNum && (
-		        (cg_noAmmoAutoSwitch.integer > 0 && !CG_WeaponSelectable(cg.weaponSelect)) ||
-		        es->weapon == WP_MORTAR_SET ||
-		        es->weapon == WP_MORTAR2_SET ||
-		        es->weapon == WP_MOBILE_MG42_SET ||
-		        es->weapon == WP_MOBILE_BROWNING_SET ||
-		        es->weapon == WP_GRENADE_LAUNCHER ||
-		        es->weapon == WP_GRENADE_PINEAPPLE ||
-		        es->weapon == WP_DYNAMITE ||
-		        es->weapon == WP_SMOKE_MARKER ||
-		        es->weapon == WP_PANZERFAUST ||
-		        es->weapon == WP_BAZOOKA ||
-		        es->weapon == WP_ARTY ||
-		        es->weapon == WP_LANDMINE ||
-		        es->weapon == WP_SATCHEL ||
-		        es->weapon == WP_SATCHEL_DET ||
-		        es->weapon == WP_SMOKE_BOMB ||
-		        es->weapon == WP_AMMO ||
-		        es->weapon == WP_MEDKIT ||
-		        es->weapon == WP_MEDIC_SYRINGE ||
-		        es->weapon == WP_MEDIC_ADRENALINE))
-		{
-			CG_OutOfAmmoChange(event == EV_WEAPONSWITCHED ? qfalse : qtrue);
-		}
+        if (es->number == cg.snap->ps.clientNum)
+        {
+            if(cg_noAmmoAutoSwitch.integer > 0 && !CG_WeaponSelectable(cg.weaponSelect))
+            {
+                CG_OutOfAmmoChange(event == EV_WEAPONSWITCHED ? qfalse : qtrue);
+            }
+            else
+            {
+                switch(es->weapon)
+                {
+                case WP_MORTAR_SET:
+                case WP_MORTAR2_SET:
+                case WP_MOBILE_MG42_SET:
+                case WP_MOBILE_BROWNING_SET:
+                case WP_GRENADE_LAUNCHER:
+                case WP_GRENADE_PINEAPPLE:
+                case WP_DYNAMITE:
+                case WP_SMOKE_MARKER:
+                case WP_PANZERFAUST:
+                case WP_BAZOOKA:
+                case WP_ARTY:
+                case WP_LANDMINE:
+                case WP_SATCHEL:
+                case WP_SATCHEL_DET:
+                case WP_SMOKE_BOMB:
+                case WP_AMMO:
+                case WP_MEDKIT:
+                case WP_MEDIC_SYRINGE:
+                case WP_MEDIC_ADRENALINE:
+                    CG_OutOfAmmoChange(event == EV_WEAPONSWITCHED ? qfalse : qtrue);
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
 		break;
 	case EV_CHANGE_WEAPON:
 		DEBUGNAME("EV_CHANGE_WEAPON");

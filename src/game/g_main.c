@@ -3314,99 +3314,102 @@ void ExitLevel(void)
 {
 	int       i;
 
-	// FIXME: do a switch
-	if (g_gametype.integer == GT_WOLF_CAMPAIGN)
-	{
-		g_campaignInfo_t *campaign = &g_campaigns[level.currentCampaign];
+    switch(g_gametype.integer)
+    {
+    case GT_WOLF_CAMPAIGN:
+    {
+        g_campaignInfo_t *campaign = &g_campaigns[level.currentCampaign];
 
-		if (campaign->current + 1 < campaign->mapCount)
-		{
-			trap_Cvar_Set("g_currentCampaignMap", va("%i", campaign->current + 1));
+        if (campaign->current + 1 < campaign->mapCount)
+        {
+            trap_Cvar_Set("g_currentCampaignMap", va("%i", campaign->current + 1));
 
-			trap_SendConsoleCommand(EXEC_APPEND, va("map %s\n", campaign->mapnames[campaign->current + 1]));
-		}
-		else
-		{
-			char s[MAX_STRING_CHARS];
-			trap_Cvar_VariableStringBuffer("nextcampaign", s, sizeof(s));
+            trap_SendConsoleCommand(EXEC_APPEND, va("map %s\n", campaign->mapnames[campaign->current + 1]));
+        }
+        else
+        {
+            char s[MAX_STRING_CHARS];
+            trap_Cvar_VariableStringBuffer("nextcampaign", s, sizeof(s));
 
-			if (*s)
-			{
-				trap_SendConsoleCommand(EXEC_APPEND, "vstr nextcampaign\n");
-			}
-			else
-			{
-				// restart the campaign
-				trap_Cvar_Set("g_currentCampaignMap", "0");
+            if (*s)
+            {
+                trap_SendConsoleCommand(EXEC_APPEND, "vstr nextcampaign\n");
+            }
+            else
+            {
+                // restart the campaign
+                trap_Cvar_Set("g_currentCampaignMap", "0");
 
-				trap_SendConsoleCommand(EXEC_APPEND, va("map %s\n", campaign->mapnames[0]));
-			}
+                trap_SendConsoleCommand(EXEC_APPEND, va("map %s\n", campaign->mapnames[0]));
+            }
 
-			// FIXME: do we want to do something else here?
-			//trap_SendConsoleCommand( EXEC_APPEND, "vstr nextmap\n" );
-		}
-	}
-	else if (g_gametype.integer == GT_WOLF_LMS)
-	{
-		if (level.lmsDoNextMap)
-		{
-			trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
-		}
-		else
-		{
-			trap_SendConsoleCommand(EXEC_APPEND, "map_restart 0\n");
-		}
-	}
-	// MAPVOTE
-	else if (g_gametype.integer == GT_WOLF_MAPVOTE)
-	{
-		int nextMap = 0, highMapVote = 0, curMapVotes = 0, maxMaps, highMapAge = 0, curMapAge = 0;
+            // FIXME: do we want to do something here?
+            //trap_SendConsoleCommand( EXEC_APPEND, "vstr nextmap\n" );
+        }
+        break;
+    }
+    case GT_WOLF_LMS:
+        if (level.lmsDoNextMap)
+        {
+            trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
+        }
+        else
+        {
+            trap_SendConsoleCommand(EXEC_APPEND, "map_restart 0\n");
+        }
+        break;
 
-		if (g_resetXPMapCount.integer)
-		{
-			level.mapsSinceLastXPReset++;
-		}
-		maxMaps = g_maxMapsVotedFor.integer;
-		if (maxMaps > level.mapVoteNumMaps)
-		{
-			maxMaps = level.mapVoteNumMaps;
-		}
-		for (i = 0; i < maxMaps; i++)
-		{
-			if (level.mapvoteinfo[level.sortedMaps[i]].lastPlayed != -1)
-			{
-				level.mapvoteinfo[level.sortedMaps[i]].lastPlayed++;
-			}
-			curMapVotes = level.mapvoteinfo[level.sortedMaps[i]].numVotes;
-			curMapAge   = level.mapvoteinfo[level.sortedMaps[i]].lastPlayed;
-			if (curMapAge == -1)
-			{
-				curMapAge = 9999;   // -1 means never, so set suitably high
-			}
+    // MAPVOTE
+    case GT_WOLF_MAPVOTE:
+    {
+        int nextMap = 0, highMapVote = 0, curMapVotes = 0, maxMaps, highMapAge = 0, curMapAge = 0;
 
-			if (curMapVotes > highMapVote ||
-			    (curMapVotes == highMapVote && curMapVotes > 0 &&
-			     ((!(g_mapVoteFlags.integer & MAPVOTE_TIE_LEASTPLAYED) && curMapAge < highMapAge) ||
-			      ((g_mapVoteFlags.integer & MAPVOTE_TIE_LEASTPLAYED) && curMapAge > highMapAge))))
-			{
-				nextMap     = level.sortedMaps[i];
-				highMapVote = curMapVotes;
-				highMapAge  = curMapAge;
-			}
-		}
-		if (highMapVote > 0 && level.mapvoteinfo[nextMap].bspName[0])
-		{
-			trap_SendConsoleCommand(EXEC_APPEND, va("map %s;set nextmap %s\n", level.mapvoteinfo[nextMap].bspName, g_nextmap.string));
-		}
-		else
-		{
-			trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
-		}
-	}
-	else
-	{
-		trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
-	}
+        if (g_resetXPMapCount.integer)
+        {
+            level.mapsSinceLastXPReset++;
+        }
+        maxMaps = g_maxMapsVotedFor.integer;
+        if (maxMaps > level.mapVoteNumMaps)
+        {
+            maxMaps = level.mapVoteNumMaps;
+        }
+        for (i = 0; i < maxMaps; i++)
+        {
+            if (level.mapvoteinfo[level.sortedMaps[i]].lastPlayed != -1)
+            {
+                level.mapvoteinfo[level.sortedMaps[i]].lastPlayed++;
+            }
+            curMapVotes = level.mapvoteinfo[level.sortedMaps[i]].numVotes;
+            curMapAge   = level.mapvoteinfo[level.sortedMaps[i]].lastPlayed;
+            if (curMapAge == -1)
+            {
+                curMapAge = 9999;   // -1 means never, so set suitably high
+            }
+
+            if (curMapVotes > highMapVote ||
+                (curMapVotes == highMapVote && curMapVotes > 0 &&
+                 ((!(g_mapVoteFlags.integer & MAPVOTE_TIE_LEASTPLAYED) && curMapAge < highMapAge) ||
+                  ((g_mapVoteFlags.integer & MAPVOTE_TIE_LEASTPLAYED) && curMapAge > highMapAge))))
+            {
+                nextMap     = level.sortedMaps[i];
+                highMapVote = curMapVotes;
+                highMapAge  = curMapAge;
+            }
+        }
+        if (highMapVote > 0 && level.mapvoteinfo[nextMap].bspName[0])
+        {
+            trap_SendConsoleCommand(EXEC_APPEND, va("map %s;set nextmap %s\n", level.mapvoteinfo[nextMap].bspName, g_nextmap.string));
+        }
+        else
+        {
+            trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
+        }
+        break;
+    }
+    default:
+        trap_SendConsoleCommand(EXEC_APPEND, "vstr nextmap\n");
+        break;
+    }
 
 	level.intermissiontime = 0;
 
