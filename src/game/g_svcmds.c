@@ -1046,6 +1046,86 @@ static void Svcmd_Die(void)
 	return;
 }
 
+#ifdef LEGACY_DEBUG
+extern animStringItem_t animEventTypesStr[];
+/**
+ * @brief Test anim events
+ * 
+ * @note script anim events are not first person view set cg_thirdperson 1
+ */
+static void Svcmd_PlayerAnimEvent(void)
+{
+	int       pids[MAX_CLIENTS];
+	char      name[MAX_NAME_LENGTH], err[MAX_STRING_CHARS], anim[3];
+	gentity_t *vic;
+	qboolean  doAll = qfalse;
+
+	// ignore in intermission
+	if (level.intermissiontime)
+	{
+		G_Printf("test_ae command not allowed during intermission.\n");
+		return;
+	}
+
+	if (trap_Argc() < 2)
+	{
+		doAll = qtrue;
+	}
+
+	trap_Argv(1, name, sizeof(name));
+	trap_Argv(2, anim, sizeof(anim));
+
+	if (!Q_stricmp(name, "-1") || doAll)
+	{
+		int it, count = 0;
+
+		for (it = 0; it < level.numConnectedClients; it++)
+		{
+			vic = g_entities + level.sortedClients[it];
+			if (!(vic->client->sess.sessionTeam == TEAM_AXIS ||
+			      vic->client->sess.sessionTeam == TEAM_ALLIES))
+			{
+				continue;
+			}
+			BG_AnimScriptEvent(&vic->client->ps, vic->client->pers.character->animModelInfo, atoi(anim), qfalse, qtrue);
+			count++;
+		}
+
+		if (count > 0)
+		{
+			CPx(-1, va("cp \"^3%d^7 anim event %s died.\"", count, animEventTypesStr[atoi(anim)]));
+		}
+		else
+		{
+			G_Printf("There is no player for test_ae command.\n");
+		}
+
+		return;
+	}
+
+	if (ClientNumbersFromString(name, pids) != 1)
+	{
+		G_MatchOnePlayer(pids, err, sizeof(err));
+		G_Printf("Error - can't execute test_ae command - %s.\n", err);
+		return;
+	}
+	vic = &g_entities[pids[0]];
+
+	if (!(vic->client->sess.sessionTeam == TEAM_AXIS ||
+	      vic->client->sess.sessionTeam == TEAM_ALLIES))
+	{
+		G_Printf("Player must be on a team for test_ae command.\n");
+		return;
+	}
+
+	BG_AnimScriptEvent(&vic->client->ps, vic->client->pers.character->animModelInfo, atoi(anim), qfalse, qtrue);
+
+	CPx(-1, va("cp \"^7%s^7 anim event %s.\"", vic->client->pers.netname, animEventTypesStr[atoi(anim)]));
+
+	return;
+}
+#endif
+
 /**
  * @brief freeze command - freezes players
  */
@@ -2354,6 +2434,14 @@ qboolean ConsoleCommand(void)
 		Svcmd_Fling(1);
 		return qtrue;
 	}
+#ifdef LEGACY_DEBUG
+	if (!Q_stricmp(cmd, "ae"))
+	{
+	 	//ae <playername> <animEvent>
+		Svcmd_PlayerAnimEvent();
+		return qtrue;
+	}
+#endif
 	//}
 
 	if (g_dedicated.integer)
