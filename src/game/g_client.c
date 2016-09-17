@@ -2089,7 +2089,7 @@ void ClientUserinfoChanged(int clientNum)
 	// send over a subset of the userinfo keys so other clients can
 	// print scoreboards, display models, and play custom sounds
 #ifdef FEATURE_RATING
-	s = va("n\\%s\\t\\%i\\c\\%i\\lc\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%i\\w\\%i\\lw\\%i\\sw\\%i\\mu\\%i\\ref\\%i\\sr\\%f\\dr\\%f\\u\\%u",
+	s = va("n\\%s\\t\\%i\\c\\%i\\lc\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%i\\w\\%i\\lw\\%i\\sw\\%i\\mu\\%i\\ref\\%i\\sr\\%f\\u\\%u",
 #else
 	s = va("n\\%s\\t\\%i\\c\\%i\\lc\\%i\\r\\%i\\m\\%s\\s\\%s\\dn\\%i\\w\\%i\\lw\\%i\\sw\\%i\\mu\\%i\\ref\\%i\\u\\%u",
 #endif
@@ -2108,7 +2108,6 @@ void ClientUserinfoChanged(int clientNum)
 	       client->sess.referee,
 #ifdef FEATURE_RATING
 	       MAX(client->sess.mu - 3 * client->sess.sigma, 0.f),
-	       client->sess.mu - 3 * client->sess.sigma - (client->sess.oldmu - 3 * client->sess.oldsigma),
 #endif
 	       client->sess.uci
 	       );
