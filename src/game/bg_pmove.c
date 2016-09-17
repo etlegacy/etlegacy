@@ -6044,20 +6044,20 @@ void PmoveSingle(pmove_t *pmove)
 		// swimming
 		PM_WaterMove();
 	}
-	else if (pml.walking && !(pm->ps->eFlags & EF_MOUNTEDTANK))
-	{
-		// walking on ground
-		PM_WalkMove();
-	}
 	else if (!(pm->ps->eFlags & EF_MOUNTEDTANK))
 	{
-		// airborne
-		PM_AirMove();
+		if (pml.walking)
+		{
+			// walking on ground
+			PM_WalkMove();
+		}
+		else
+		{
+			// airborne
+			PM_AirMove();
+		}
 	}
-
-
-
-	if (pm->ps->eFlags & EF_MOUNTEDTANK)
+	else //if (pm->ps->eFlags & EF_MOUNTEDTANK)
 	{
 		VectorClear(pm->ps->velocity);
 
