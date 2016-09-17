@@ -106,6 +106,10 @@ static animStringItem_t animMoveTypesStr[] =
 	{ "IDLEPRONE",    -1 }, // 20
 	{ "FLAILING",     -1 },
 
+	{ "RADIO",        -1 },
+	{ "RADIOCR",      -1 },
+	{ "RADIOPRONE",   -1 },
+
 	{ "DEAD",         -1 },
 
 	{ NULL,           -1 },

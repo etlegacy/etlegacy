@@ -1616,6 +1616,28 @@ STATE COMBAT
 			both wounded_idle_1
 		}
 	}
+
+	radio
+	{
+		default
+		{
+			both stand_radio
+		}
+	}
+	radiocr
+	{
+		default
+		{
+			torso stand_radio legs alert_crchidle_1h 
+		}
+	}
+	radioprone
+	{
+		default
+		{
+			legs prone_legs torso prone_poke_idle
+		}
+	}
 }
 
 //==========================================================================
