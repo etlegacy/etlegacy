@@ -2942,9 +2942,18 @@ void CG_Player(centity_t *cent)
 	CG_BreathPuffs(cent, &head);
 
 	// add the gun / barrel / flash
-	if (!(cent->currentState.eFlags & EF_DEAD) /*&& !usingBinocs*/)
+	if(!(cent->currentState.eFlags & EF_DEAD) /*&& !usingBinocs*/)
 	{
-		CG_AddPlayerWeapon(&body, NULL, cent);
+		if (cent->currentState.eFlags & EF_TALK)
+		{
+			acc.hModel = cg_weapons[WP_SATCHEL_DET].weaponModel[W_TP_MODEL].model;
+			CG_PositionEntityOnTag(&acc, &body, "tag_weapon", 0, NULL);
+			CG_AddRefEntityWithPowerups(&acc, cent->currentState.powerups, ci->team, &cent->currentState, cent->fireRiseDir);
+		}
+		else
+		{
+			CG_AddPlayerWeapon(&body, NULL, cent);
+		}
 	}
 
 	// add binoculars (if it's not the player)
