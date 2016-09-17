@@ -1441,8 +1441,6 @@ void reinforce(gentity_t *ent);
 // *LUA* & map configs g_sha1.c
 char *G_SHA1(char *string);
 
-#define MAX_COUNTRY_NUM 255
-
 #define CF_ENABLE    1 // enables common countryflags functionallity
 #define CF_BOTS      2 // uses server country for bots
 #define CF_CONNECT   4 // draws country name in connect announcer

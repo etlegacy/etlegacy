@@ -267,6 +267,9 @@ extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
 
 #define MAX_CHARACTERS  16
 
+// GeoIP
+#define MAX_COUNTRY_NUM 256
+
 // config strings are a general means of communicating variable length strings
 // from the server to all connected clients.
 
