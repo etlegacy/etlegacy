@@ -1752,6 +1752,10 @@ typedef enum
 	//ANIM_MT_SNEAK,
 	//ANIM_MT_AFTERBATTLE,            // just finished battle
 
+	ANIM_MT_RADIO,
+	ANIM_MT_RADIOCR,
+	ANIM_MT_RADIOPRONE,
+
 	ANIM_MT_DEAD,
 
 	NUM_ANIM_MOVETYPES

@@ -2133,16 +2133,37 @@ static void PM_Footsteps(void)
 
 		if (pm->ps->eFlags & EF_PRONE)
 		{
-			animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_IDLEPRONE, qtrue);
+			if (pm->ps->eFlags & EF_TALK)
+			{
+				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_RADIOPRONE, qtrue);
+			}
+			else
+			{
+				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_IDLEPRONE, qtrue);
+			}
 		}
 		else if (pm->ps->pm_flags & PMF_DUCKED)
 		{
-			animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_IDLECR, qtrue);
+			if (pm->ps->eFlags & EF_TALK)
+			{
+				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_RADIOCR, qtrue);
+			}
+			else
+			{
+				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_IDLECR, qtrue);
+			}
 		}
 
 		if (animResult < 0)
 		{
-			animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_IDLE, qtrue);
+			if (pm->ps->eFlags & EF_TALK)
+			{
+				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_RADIO, qtrue);
+			}
+			else
+			{
+				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_IDLE, qtrue);
+			}
 		}
 
 		return;
