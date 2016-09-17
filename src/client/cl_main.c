@@ -942,12 +942,20 @@ void CL_Connect_f(void)
 
 		if (password)
 		{
+			if (strlen(password) + 1 > MAX_CVAR_VALUE_STRING)
+			{
+				Com_Error(ERR_DROP, "CL_Connect_f: MAX_CVAR_VALUE_STRING exceeded");
+			}
 			Cvar_Set("password", password);
 		}
 
 #ifdef FEATURE_LIVEAUTH
 		if (session)
 		{
+			if (strlen(session) + 1 > MAX_CVAR_VALUE_STRING)
+			{
+				Com_Error(ERR_DROP, "CL_Connect_f: MAX_CVAR_VALUE_STRING exceeded");
+			}
 			Cvar_Set("session", session);
 		}
 #endif
