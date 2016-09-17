@@ -115,7 +115,7 @@ static animStringItem_t animMoveTypesStr[] =
 	{ NULL,           -1 },
 };
 
-static animStringItem_t animEventTypesStr[] =
+animStringItem_t animEventTypesStr[] =
 {
 	{ "PAIN",                       -1 },
 	{ "DEATH",                      -1 },
@@ -123,26 +123,13 @@ static animStringItem_t animEventTypesStr[] =
 	{ "FIREWEAPON2",                -1 },
 	{ "JUMP",                       -1 },
 	{ "JUMPBK",                     -1 },
-	{ "LAND",                       -1 },
-	{ "DROPWEAPON",                 -1 },
+	{ "LAND",                       -1 }, // used, but not defined in script
+	{ "DROPWEAPON",                 -1 }, // used, but not defined in script
 	{ "RAISEWEAPON",                -1 },
 	{ "CLIMBMOUNT",                 -1 },
 	{ "CLIMBDISMOUNT",              -1 },
 	{ "RELOAD",                     -1 },
-	{ "PICKUPGRENADE",              -1 },
-	{ "KICKGRENADE",                -1 },
-	{ "QUERY",                      -1 },
-	{ "INFORM_FRIENDLY_OF_ENEMY",   -1 },
-	{ "KICK",                       -1 },
 	{ "REVIVE",                     -1 },
-	{ "FIRSTSIGHT",                 -1 },
-	{ "ROLL",                       -1 },
-	{ "FLIP",                       -1 },
-	{ "DIVE",                       -1 },
-	{ "PRONE_TO_CROUCH",            -1 },
-	{ "BULLETIMPACT",               -1 },
-	{ "INSPECTSOUND",               -1 },
-	{ "SECONDLIFE",                 -1 },
 	{ "DO_ALT_WEAPON_MODE",         -1 },
 	{ "UNDO_ALT_WEAPON_MODE",       -1 },
 	{ "DO_ALT_WEAPON_MODE_PRONE",   -1 },
@@ -151,7 +138,6 @@ static animStringItem_t animEventTypesStr[] =
 	{ "FIREWEAPON2PRONE",           -1 },
 	{ "RAISEWEAPONPRONE",           -1 },
 	{ "RELOADPRONE",                -1 },
-	{ "TALK",                       -1 },
 	{ "NOPOWER",                    -1 },
 
 	{ NULL,                         -1 },
@@ -1553,6 +1539,12 @@ int BG_AnimScriptEvent(playerState_t *ps, animModelInfo_t *animModelInfo, script
 
 	if (event != ANIM_ET_DEATH && (ps->eFlags & EF_DEAD))
 	{
+		return -1;
+	}
+
+	if (event < ANIM_ET_PAIN || event >= NUM_ANIM_EVENTTYPES)
+	{
+		Com_Printf("BG_AnimScriptEvent: unknown script event -1\n");
 		return -1;
 	}
 
