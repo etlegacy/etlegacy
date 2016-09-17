@@ -756,6 +756,7 @@ void G_BuildEndgameStats(void)
 	int       i, j;
 	gclient_t *best = NULL;
 	int       bestClientNum;
+	float     mapXP, bestMapXP = 0.f;
 
 	G_CalcClientAccuracies();
 
@@ -801,7 +802,7 @@ void G_BuildEndgameStats(void)
 
 	best = NULL;
 
-	// highest experience points - check XP
+	// highest experience points - check XP (total in campaign, otherwise this map only then total XP)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
@@ -813,16 +814,49 @@ void G_BuildEndgameStats(void)
 		{
 			continue;
 		}
-		if (!best || cl->ps.persistant[PERS_SCORE] > best->ps.persistant[PERS_SCORE])
+
+		if (g_gametype.integer == GT_WOLF_CAMPAIGN)
 		{
-			best          = cl;
-			bestClientNum = level.sortedClients[i];
+			if (!best || cl->ps.persistant[PERS_SCORE] > best->ps.persistant[PERS_SCORE])
+			{
+				best          = cl;
+				bestClientNum = level.sortedClients[i];
+			}
+		}
+		else
+		{
+			mapXP = 0.f;
+
+			for (j = 0; j < SK_NUM_SKILLS; j++)
+			{
+				mapXP += (cl->sess.skillpoints[j] - cl->sess.startskillpoints[j]);
+			}
+
+			if (!best || mapXP > bestMapXP)
+			{
+				best          = cl;
+				bestMapXP     = mapXP;
+				bestClientNum = level.sortedClients[i];
+			}
+			else if (mapXP == bestMapXP && cl->ps.persistant[PERS_SCORE] > best->ps.persistant[PERS_SCORE])
+			{
+				best          = cl;
+				bestMapXP     = mapXP;
+				bestClientNum = level.sortedClients[i];
+			}
 		}
 	}
 	if (best)
 	{
 		best->hasaward = qtrue;
-		Q_strcat(buffer, 1024, va("%i %i %i ", bestClientNum, best->ps.persistant[PERS_SCORE], best->sess.sessionTeam));
+		if (g_gametype.integer == GT_WOLF_CAMPAIGN)
+		{
+			Q_strcat(buffer, 1024, va("%i %i %i ", bestClientNum, best->ps.persistant[PERS_SCORE], best->sess.sessionTeam));
+		}
+		else
+		{
+			Q_strcat(buffer, 1024, va("%i %i %i ", bestClientNum, (int)bestMapXP, best->sess.sessionTeam));
+		}
 	}
 	else
 	{
