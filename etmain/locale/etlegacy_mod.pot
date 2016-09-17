@@ -7089,6 +7089,9 @@ msgstr ""
 msgid "You are frozen - ^3/kill^7 is disabled."
 msgstr ""
 
+msgid "Renderer:"
+msgstr ""
+
 msgid "Set your desired renderer (does a video restart)"
 msgstr ""
 
