@@ -417,11 +417,11 @@ typedef enum
 //#define PMF_PRONE_BIPOD		1024	// prone with a bipod set
 #define PMF_FLAILING        2048
 #define PMF_FOLLOW          4096    // spectate following another player
-#define PMF_TIME_LOAD       8192    // hold for this time after a load game, and prevent large thinks
+//#define PMF_TIME_LOAD       8192    // unused (hold for this time after a load game, and prevent large thinks)
 #define PMF_LIMBO           16384   // limbo state, pm_time is time until reinforce
 #define PMF_TIME_LOCKPLAYER 32768   // Lock all movement and view changes
 
-#define PMF_ALL_TIMES   (PMF_TIME_WATERJUMP | PMF_TIME_LAND | PMF_TIME_KNOCKBACK | PMF_TIME_LOCKPLAYER /*|PMF_TIME_LOAD*/)
+#define PMF_ALL_TIMES   (PMF_TIME_WATERJUMP | PMF_TIME_LAND | PMF_TIME_KNOCKBACK | PMF_TIME_LOCKPLAYER)
 
 typedef struct pmoveExt_s
 {
