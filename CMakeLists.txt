@@ -53,12 +53,12 @@ endmacro()
 # Options
 #-----------------------------------------------------------------
 
-option(BUILD_SERVER		"Build the dedicated server executable"				ON)
-option(BUILD_CLIENT		"Build the client executable"					ON)
-option(BUILD_MOD		"Build the mod libraries"					ON)
+option(BUILD_SERVER		"Build the dedicated server executable"							ON)
+option(BUILD_CLIENT		"Build the client executable"									ON)
+option(BUILD_MOD		"Build the mod libraries"										ON)
 
-option(BUILD_MOD_PK3		"Pack the mod libraries into etl_bin.pk3"			ON)
-option(BUILD_PAK3_PK3		"Pack updated game scripts into pak3.pk3"			ON)
+option(BUILD_MOD_PK3	"Pack the mod libraries into etl_bin.pk3"						ON)
+option(BUILD_PAK3_PK3	"Pack updated game scripts into pak3.pk3"						ON)
 
 option(BUNDLED_LIBS		"Use all available bundled libraries instead of system libs."	ON)
 
@@ -103,7 +103,6 @@ option(FEATURE_WINDOWS_CONSOLE	"Build win32 executables with Windows console"			
 option(FEATURE_GETTEXT			"Enable localization using tinygettext"					ON)
 option(FEATURE_JANSSON			"Enable JSON support (client)"							OFF)
 option(FEATURE_SERVERMDX		"Enable MDX support on server side (mod)"				ON)
-option(FEATURE_LIVEAUTH			"Enable ET:Live authentification support (client)"		ON)
 option(FEATURE_DBMS				"Enable dbms support (sqlite3)"							ON)
 option(FEATURE_RATING			"Enable skill rating support (mod)"						ON)
 option(FORCE_DEBUG				"Force enable legacy debug macros"						OFF)

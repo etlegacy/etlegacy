@@ -869,9 +869,6 @@ void CL_Connect_f(void)
 	{
 		char *address  = strlen(server) > 5 ? &server[5] : NULL;
 		char *password = address ? strstr(address, "/") : NULL;
-#ifdef FEATURE_LIVEAUTH
-		char *session = address ? strstr(address, "?") : NULL;
-#endif
 
 		if (password > address)
 		{
@@ -881,17 +878,6 @@ void CL_Connect_f(void)
 		{
 			password = NULL;
 		}
-
-#ifdef FEATURE_LIVEAUTH
-		if (session > address)
-		{
-			*session++ = '\0';
-		}
-		else
-		{
-			session = NULL;
-		}
-#endif
 
 		if (address)
 		{
@@ -906,17 +892,6 @@ void CL_Connect_f(void)
 			}
 			Cvar_Set("password", password);
 		}
-
-#ifdef FEATURE_LIVEAUTH
-		if (session)
-		{
-			if (strlen(session) + 1 > MAX_CVAR_VALUE_STRING)
-			{
-				Com_Error(ERR_DROP, "CL_Connect_f: MAX_CVAR_VALUE_STRING exceeded");
-			}
-			Cvar_Set("session", session);
-		}
-#endif
 	}
 
 	S_StopAllSounds();
@@ -2812,9 +2787,6 @@ void CL_Init(void)
 	Cvar_Get("snaps", "20", CVAR_USERINFO | CVAR_ARCHIVE);
 
 	Cvar_Get("password", "", CVAR_USERINFO);
-#ifdef FEATURE_LIVEAUTH
-	Cvar_Get("session", "", CVAR_USERINFO);
-#endif
 	Cvar_Get("cg_predictItems", "1", CVAR_ARCHIVE);
 
 	Cvar_Get("cg_autoactivate", "1", CVAR_ARCHIVE);
