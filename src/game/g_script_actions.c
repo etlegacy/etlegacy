@@ -3680,7 +3680,7 @@ qboolean G_ScriptAction_Announce_Icon(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_Announce_Icon: statement parameter required\n");
 	}
 
-	trap_SendServerCommand(-1, va("cpmi %i \"%s\"", iconnumber, token));
+	trap_SendServerCommand(-1, va("cpm %i \"%s\"", iconnumber, token));
 
 #ifdef FEATURE_OMNIBOT
 	Bot_Util_SendTrigger(ent, NULL, token, "announce_icon");
