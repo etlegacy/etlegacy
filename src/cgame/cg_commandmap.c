@@ -869,7 +869,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
             trap_R_SetColor(colorRed);
             break;
         case ME_COMMANDMAP_MARKER:
-                pic = 0;
+        	pic = 0;
             break;
         case ME_DESTRUCT_2:
             pic = 0;

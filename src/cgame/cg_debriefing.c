@@ -2420,10 +2420,12 @@ void CG_Debriefing_PlayerSR_Draw(panel_button_t *button)
 
 void CG_Debriefing_PlayerTime_Draw(panel_button_t *button)
 {
-	clientInfo_t *ci    = CG_Debriefing_GetSelectedClientInfo();
+	clientInfo_t *ci;
 	score_t      *score = NULL;
 	int          i;
 	float        w;
+
+	ci    = CG_Debriefing_GetSelectedClientInfo();
 
 	for (i = 0; i < cgs.maxclients; i++)
 	{
