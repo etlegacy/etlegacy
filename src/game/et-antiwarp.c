@@ -23,12 +23,6 @@ qboolean G_DoAntiwarp(gentity_t *ent)
 			return qfalse;
 		}
 
-		// don't antiwarp during map load
-		if (ent->client->ps.pm_flags & PMF_TIME_LOAD)
-		{
-			return qfalse;
-		}
-
 		// don't antiwarp if they haven't been connected for 5 seconds
 		// note: this check is generally only triggered during mid-map
 		// connects, because clients connect before loading the map.

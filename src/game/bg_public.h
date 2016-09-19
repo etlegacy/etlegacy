@@ -267,6 +267,9 @@ extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
 
 #define MAX_CHARACTERS  16
 
+// GeoIP
+#define MAX_COUNTRY_NUM 256
+
 // config strings are a general means of communicating variable length strings
 // from the server to all connected clients.
 
@@ -417,11 +420,11 @@ typedef enum
 //#define PMF_PRONE_BIPOD		1024	// prone with a bipod set
 #define PMF_FLAILING        2048
 #define PMF_FOLLOW          4096    // spectate following another player
-#define PMF_TIME_LOAD       8192    // hold for this time after a load game, and prevent large thinks
+//#define PMF_TIME_LOAD       8192    // unused (hold for this time after a load game, and prevent large thinks)
 #define PMF_LIMBO           16384   // limbo state, pm_time is time until reinforce
 #define PMF_TIME_LOCKPLAYER 32768   // Lock all movement and view changes
 
-#define PMF_ALL_TIMES   (PMF_TIME_WATERJUMP | PMF_TIME_LAND | PMF_TIME_KNOCKBACK | PMF_TIME_LOCKPLAYER /*|PMF_TIME_LOAD*/)
+#define PMF_ALL_TIMES   (PMF_TIME_WATERJUMP | PMF_TIME_LAND | PMF_TIME_KNOCKBACK | PMF_TIME_LOCKPLAYER)
 
 typedef struct pmoveExt_s
 {
@@ -1752,6 +1755,10 @@ typedef enum
 	//ANIM_MT_SNEAK,
 	//ANIM_MT_AFTERBATTLE,            // just finished battle
 
+	ANIM_MT_RADIO,
+	ANIM_MT_RADIOCR,
+	ANIM_MT_RADIOPRONE,
+
 	ANIM_MT_DEAD,
 
 	NUM_ANIM_MOVETYPES
@@ -1765,26 +1772,13 @@ typedef enum
 	ANIM_ET_FIREWEAPON2,
 	ANIM_ET_JUMP,
 	ANIM_ET_JUMPBK,
-	ANIM_ET_LAND,
-	ANIM_ET_DROPWEAPON,
+	ANIM_ET_LAND,       // used, but not defined in script
+	ANIM_ET_DROPWEAPON, // used, but not defined in script
 	ANIM_ET_RAISEWEAPON,
 	ANIM_ET_CLIMB_MOUNT,
 	ANIM_ET_CLIMB_DISMOUNT,
 	ANIM_ET_RELOAD,
-	ANIM_ET_PICKUPGRENADE,
-	ANIM_ET_KICKGRENADE,
-	ANIM_ET_QUERY,
-	ANIM_ET_INFORM_FRIENDLY_OF_ENEMY,
-	ANIM_ET_KICK,
 	ANIM_ET_REVIVE,
-	ANIM_ET_FIRSTSIGHT,
-	ANIM_ET_ROLL,
-	ANIM_ET_FLIP,
-	ANIM_ET_DIVE,
-	ANIM_ET_PRONE_TO_CROUCH,
-	ANIM_ET_BULLETIMPACT,
-	ANIM_ET_INSPECTSOUND,
-	ANIM_ET_SECONDLIFE,
 	ANIM_ET_DO_ALT_WEAPON_MODE,
 	ANIM_ET_UNDO_ALT_WEAPON_MODE,
 	ANIM_ET_DO_ALT_WEAPON_MODE_PRONE,
@@ -1793,7 +1787,6 @@ typedef enum
 	ANIM_ET_FIREWEAPON2PRONE,
 	ANIM_ET_RAISEWEAPONPRONE,
 	ANIM_ET_RELOADPRONE,
-	ANIM_ET_TALK,
 	ANIM_ET_NOPOWER,
 
 	NUM_ANIM_EVENTTYPES
@@ -2166,7 +2159,7 @@ void BG_LinearPathOrigin2(float radius, splinePath_t **pSpline, float *deltaTime
 int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill);
 
 void BG_InitLocations(vec2_t world_mins, vec2_t world_maxs);
-char *BG_GetLocationString(vec_t *pos);
+char *BG_GetLocationString(float xpos, float ypos);
 
 extern const char *bg_fireteamNames[MAX_FIRETEAMS / 2];
 

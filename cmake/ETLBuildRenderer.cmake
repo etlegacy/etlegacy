@@ -137,8 +137,6 @@ if(FEATURE_RENDERER2)
 		MESSAGE(FATAL_ERROR "The fallbackshader source file was not created due to \"sed\" missing. The build would fail. :(")
 	endif(SED_EXECUTABLE)
 
-	# increased default hunkmegs value
-	add_definitions(-DFEATURE_INC_HUNKMEGS)
 	add_library(${R2_NAME} ${REND_LIBTYPE} ${RENDERER2_FILES} ${RENDERER_COMMON} ${RENDERER2_SHADERS})
 	if(BUNDLED_GLEW)
 			add_dependencies(${R2_NAME} bundled_glew)

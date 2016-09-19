@@ -2133,16 +2133,37 @@ static void PM_Footsteps(void)
 
 		if (pm->ps->eFlags & EF_PRONE)
 		{
-			animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_IDLEPRONE, qtrue);
+			if (pm->ps->eFlags & EF_TALK)
+			{
+				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_RADIOPRONE, qtrue);
+			}
+			else
+			{
+				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_IDLEPRONE, qtrue);
+			}
 		}
 		else if (pm->ps->pm_flags & PMF_DUCKED)
 		{
-			animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_IDLECR, qtrue);
+			if (pm->ps->eFlags & EF_TALK)
+			{
+				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_RADIOCR, qtrue);
+			}
+			else
+			{
+				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_IDLECR, qtrue);
+			}
 		}
 
 		if (animResult < 0)
 		{
-			animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_IDLE, qtrue);
+			if (pm->ps->eFlags & EF_TALK)
+			{
+				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_RADIO, qtrue);
+			}
+			else
+			{
+				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_IDLE, qtrue);
+			}
 		}
 
 		return;
@@ -6044,20 +6065,20 @@ void PmoveSingle(pmove_t *pmove)
 		// swimming
 		PM_WaterMove();
 	}
-	else if (pml.walking && !(pm->ps->eFlags & EF_MOUNTEDTANK))
-	{
-		// walking on ground
-		PM_WalkMove();
-	}
 	else if (!(pm->ps->eFlags & EF_MOUNTEDTANK))
 	{
-		// airborne
-		PM_AirMove();
+		if (pml.walking)
+		{
+			// walking on ground
+			PM_WalkMove();
+		}
+		else
+		{
+			// airborne
+			PM_AirMove();
+		}
 	}
-
-
-
-	if (pm->ps->eFlags & EF_MOUNTEDTANK)
+	else //if (pm->ps->eFlags & EF_MOUNTEDTANK)
 	{
 		VectorClear(pm->ps->velocity);
 
@@ -6160,15 +6181,6 @@ int Pmove(pmove_t *pmove)
 	if (finalTime > pmove->ps->commandTime + 1000)
 	{
 		pmove->ps->commandTime = finalTime - 1000;
-	}
-
-	// after a loadgame, prevent huge pmove's
-	if (pmove->ps->pm_flags & PMF_TIME_LOAD)
-	{
-		if (finalTime - pmove->ps->commandTime > 50)
-		{
-			pmove->ps->commandTime = finalTime - 50;
-		}
 	}
 
 	pmove->ps->pmove_framecount = (pmove->ps->pmove_framecount + 1) & ((1 << PS_PMOVEFRAMECOUNTBITS) - 1);

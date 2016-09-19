@@ -9,12 +9,19 @@
 
 :: The default VS version (minimal supported vs version is 12)
 set vsversion=9001
-set vsvarsbat=!VS%vsversion%0COMNTOOLS!\vsvars32.bat
+::set vsvarsbat=!VS%vsversion%0COMNTOOLS!\vsvars32.bat
+set vsvarsbat=
 :: Setup the NMake env or find the correct .bat this also finds msbuild
 
-CALL:SETUPNMAKE
+SET build_64=0
+SET mod_only=0
+SET use_autoupdate=1
+SET use_omnibot=1
+SET build_r2=1
 
-if %errorlevel% neq 0 exit /b %errorlevel%
+CALL:SETUPMSBUILD
+
+if !errorlevel!==1 exit /b %errorlevel%
 
 :: Init the submdule
 CALL:INITSUBMODULE
@@ -27,18 +34,27 @@ SET batloc=%~dp0
 SET build_dir=%batloc%build
 SET project_dir=%batloc%project
 
+:: pickup some parameters before proceeding
+FOR %%A IN (%*) DO (
+	IF /I "%%A"=="-64" @SET build_64=1
+	IF /I "%%A"=="-mod" @SET mod_only=1
+	IF /I "%%A"=="-noupdate" @SET use_autoupdate=0
+	IF /I "%%A"=="-noob" @SET use_omnibot=0
+	IF /I "%%A"=="-debug" @SET build_type=Debug
+	IF /I "%%A"=="-nor2" @SET build_r2=0
+)
+
 IF "%~1"=="" (
 	GOTO:DEFAULTPROCESS
 ) ELSE (
-	GOTO:PROCESSARGS
+	GOTO:PROCESSCOMMANDS
 )
 GOTO:EOF
 
-:: process command line arguments if any
-:PROCESSARGS
+:: process command line commands if any
+:PROCESSCOMMANDS
 	FOR %%A IN (%*) DO (
-		if %errorlevel% neq 0 exit /b %errorlevel%
-
+		if !errorlevel!==1 exit /b %errorlevel%
 		CALL:FUNCTIONS %%A
 	)
 GOTO:EOF
@@ -47,11 +63,10 @@ GOTO:EOF
 	set curvar=%~1
 	IF /I "%curvar%"=="clean" CALL:DOCLEAN
 	IF /I "%curvar%"=="build" CALL:DOBUILD
-	IF /I "%curvar%"=="build64" CALL:DOBUILD " Win64"
 	IF /I "%curvar%"=="install" CALL:DOINSTALL
 	IF /I "%curvar%"=="package" CALL:DOPACKAGE
 	IF /I "%curvar%"=="crust" GOTO:UNCRUSTCODE
-	IF /I "%curvar%"=="project" CALL:GENERATEPROJECT %project_dir% "%batloc%" "" "" "YES"
+	IF /I "%curvar%"=="project" CALL:OPENPROJECT
 	:: download pak0 - 2 to the homepath if they do not exist
 	IF /I "%curvar%"=="download" CALL:DOWNLOADPAKS "http://mirror.etlegacy.com/etmain/"
 	IF /I "%curvar%"=="open" explorer %game_basepath%
@@ -64,20 +79,27 @@ GOTO:EOF
 	CALL:DOPACKAGE
 GOTO:EOF
 
-:SETUPNMAKE
-	where nmake >nul 2>&1
-	if !errorlevel neq 0 (
+:SETUPMSBUILD
+	where /q msbuild >nul 2>&1
+	if !errorlevel!==1 (
 		SET errorlevel=0
-		IF EXIST "%vsvarsbat%" (
-			ECHO HOLY SHIT YOU ARE AWESOME!
-			CALL "%vsvarsbat%" >nul
+		IF EXIST "!vsvarsbat!" (
+			ECHO HOLY SHIT YOU ARE AWESOME, REALLY %vsversion%?!?!
+			CALL "!vsvarsbat!" >nul
 		) ELSE (
 			CALL:FINDVSVARS
-			if !errorlevel! neq 0 (
+			if !errorlevel!==1 (
 				ECHO Cannot find build environment
-				exit /b %errorlevel%
+				exit /b !errorlevel!
+				GOTO:EOF
+			) ELSE (
+				ECHO Setting up build environment
+				CALL "!vsvarsbat!" >nul
 			)
 		)
+	) ELSE (
+		SET vsversion=%VisualStudioVersion:~0,-2%
+		ECHO BUILD SYSTEM OK!
 	)
 	SET errorlevel=0
 GOTO:EOF
@@ -86,24 +108,12 @@ GOTO:EOF
 	ECHO Finding VSVARS
 	FOR /L %%G IN (20,-1,12) DO (
 		IF EXIST "!VS%%G0COMNTOOLS!\vsvars32.bat" (
-			SET vsvarsbat=!VS%%G0COMNTOOLS!\vsvars32.bat
-			SET vsversion=%%G
+			@SET vsvarsbat=!VS%%G0COMNTOOLS!vsvars32.bat
+			@SET vsversion=%%G
 			GOTO:EOF
 		)
 	)
-	exit /b 1
-GOTO:EOF
-
-:: @deprecated
-:FINDNMAKE
-	ECHO Finding nmake
-	FOR /F "delims==" %%G IN ('SET') DO (
-		echo(%%G|findstr /r /c:"COMNTOOLS" >nul && (
-			CALL:Substring vsversion %%G 2 2
-			CALL "!%%G!\vsvars32.bat" >nul
-			GOTO:EOF
-		)
-	)
+	SET errorlevel=1
 	exit /b 1
 GOTO:EOF
 
@@ -186,14 +196,22 @@ GOTO:EOF
 	CD "%~1"
 
 	set build_string=
-	CALL:GENERATECMAKE build_string "%~4" "%~5"
-	cmake -G "Visual Studio %vsversion%%~3" -T v%vsversion%0_xp %build_string% "%~2"
+	CALL:GENERATECMAKE build_string
+	IF %build_64%==1 (
+		cmake -G "Visual Studio %vsversion% Win64" -T v%vsversion%0_xp %build_string% "%~2"
+	) ELSE (
+		cmake -G "Visual Studio %vsversion%" -T v%vsversion%0_xp %build_string% "%~2"
+	)
+GOTO:EOF
+
+:OPENPROJECT
+	CALL:GENERATEPROJECT %project_dir% "%batloc%"
 	ETLEGACY.sln
 GOTO:EOF
 
 :DOBUILD
 	:: build
-	CALL:GENERATEPROJECT %build_dir% "%batloc%" "%~1" "%~1" ""
+	CALL:GENERATEPROJECT %build_dir% "%batloc%"
 	ECHO Building...
 	msbuild ETLEGACY.sln /target:ALL_BUILD /p:Configuration=%build_type%
 GOTO:EOF
@@ -277,24 +295,25 @@ GOTO :EOF
 :: GenerateCmake(outputVar, crosscompile, buildR2)
 :GENERATECMAKE
 	SETLOCAL
-	IF "%~2" == "" (
-		SET CROSSCOMP=YES
-	) ELSE (
+	IF %build_64%==1 (
 		SET CROSSCOMP=NO
-	)
-
-	IF "%~3" == "" (
-		SET build_r2=NO
 	) ELSE (
-		SET build_r2=YES
+		SET CROSSCOMP=YES
 	)
 
 	SET loca_build_string=-DBUNDLED_LIBS=YES ^
 	-DCMAKE_BUILD_TYPE=%build_type% ^
-	-DINSTALL_OMNIBOT=YES ^
+	-DFEATURE_AUTOUPDATE=%use_autoupdate% ^
+	-DINSTALL_OMNIBOT=%use_omnibot% ^
 	-DCROSS_COMPILE32=%CROSSCOMP% ^
 	-DRENDERER_DYNAMIC=%build_r2% ^
 	-DFEATURE_RENDERER2=%build_r2%
+
+	IF %mod_only%==1 (
+		SET loca_build_string=%loca_build_string% ^
+		-DBUILD_CLIENT=0 ^
+		-DBUILD_SERVER=0
+	)
 
 	ENDLOCAL&SET "%~1=%loca_build_string%"
 GOTO:EOF

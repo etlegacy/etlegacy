@@ -2055,6 +2055,8 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
 		filename = "knife_kbar.weap";
 		break;
 	case WP_ARTY:
+		filename = "arty.weap";
+		break;
 	case VERYBIGEXPLOSION:
 	case WP_DUMMY_MG42:
 		//CG_Printf(S_COLOR_YELLOW "WARNING: skipping weapon %i to register.\n", weaponNum);
@@ -3065,7 +3067,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
             //if(barrel.hModel) {
             CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
             CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-        //}
+        	//}
+			break;
         default:
             break;
         }

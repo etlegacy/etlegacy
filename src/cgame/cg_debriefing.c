@@ -1475,7 +1475,7 @@ void CG_Debriefing_InfoRequests(void)
 	}
 
 #ifdef FEATURE_RATING
-	if (!cgs.dbSkillRatingRecieved)
+	if (!cgs.dbSkillRatingRecieved && cgs.skillRating)
 	{
 		trap_SendClientCommand("imsr");
 		return;
@@ -1607,8 +1607,8 @@ int CG_Debriefing_GetNextWeaponStat(int pos)
 void CG_DebriefingPlayerWeaponStats_Draw(panel_button_t *button)
 {
 	int   i;
-	float y   = button->rect.y + 12;
-	int   pos = 0;
+	float y = button->rect.y + 12;
+	int   pos;
 
 	if (!cgs.dbWeaponStatsRecieved)
 	{
@@ -2329,9 +2329,11 @@ void CG_Debriefing_KeyEvent(int key, qboolean down)
 
 void CG_Debriefing_PlayerSkills_Draw(panel_button_t *button)
 {
-	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
+	clientInfo_t *ci;
 	int          i;
 	float        x;
+
+	ci = CG_Debriefing_GetSelectedClientInfo();
 
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y - 2, button->font->scalex, button->font->scaley, button->font->colour, skillNames[button->data[0]], 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
@@ -2363,8 +2365,11 @@ void CG_Debriefing_PlayerSkills_Draw(panel_button_t *button)
 
 void CG_Debriefing_PlayerACC_Draw(panel_button_t *button)
 {
-	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
-	float        w   = CG_Text_Width_Ext("ACC: ", button->font->scalex, 0, button->font->font);
+	clientInfo_t *ci;
+	float        w;
+
+	ci  = CG_Debriefing_GetSelectedClientInfo();
+	w   = CG_Text_Width_Ext("ACC: ", button->font->scalex, 0, button->font->font);
 
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("ACC:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.1f%%", ci->totalWeapAcc), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
@@ -2372,8 +2377,11 @@ void CG_Debriefing_PlayerACC_Draw(panel_button_t *button)
 
 void CG_Debriefing_PlayerHS_Draw(panel_button_t *button)
 {
-	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
-	float        w   = CG_Text_Width_Ext("HS: ", button->font->scalex, 0, button->font->font);
+	clientInfo_t *ci;
+	float        w;
+
+	ci = CG_Debriefing_GetSelectedClientInfo();
+	w   = CG_Text_Width_Ext("HS: ", button->font->scalex, 0, button->font->font);
 
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("HS:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.1f%%", ci->totalWeapHSpct), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
@@ -2381,8 +2389,11 @@ void CG_Debriefing_PlayerHS_Draw(panel_button_t *button)
 
 void CG_Debriefing_PlayerXP_Draw(panel_button_t *button)
 {
-	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
-	float        w   = CG_Text_Width_Ext("XP: ", button->font->scalex, 0, button->font->font);
+	clientInfo_t *ci;
+	float        w;
+
+	ci = CG_Debriefing_GetSelectedClientInfo();
+	w   = CG_Text_Width_Ext("XP: ", button->font->scalex, 0, button->font->font);
 
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "XP:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
@@ -2392,21 +2403,29 @@ void CG_Debriefing_PlayerXP_Draw(panel_button_t *button)
 #ifdef FEATURE_RATING
 void CG_Debriefing_PlayerSR_Draw(panel_button_t *button)
 {
-	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
-	float        w   = CG_Text_Width_Ext("SR: ", button->font->scalex, 0, button->font->font);
+	if (cgs.skillRating)
+	{
+		clientInfo_t *ci;
+		float        w;
 
-	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("SR:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+		ci = CG_Debriefing_GetSelectedClientInfo();
+		w   = CG_Text_Width_Ext("SR: ", button->font->scalex, 0, button->font->font);
 
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.1f (^5%+.1f^7)", ci->rating, ci->deltaRating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+		CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("SR:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+
+		CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.1f (^5%+.1f^9)", ci->rating, ci->deltaRating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	}
 }
 #endif
 
 void CG_Debriefing_PlayerTime_Draw(panel_button_t *button)
 {
-	clientInfo_t *ci    = CG_Debriefing_GetSelectedClientInfo();
+	clientInfo_t *ci;
 	score_t      *score = NULL;
 	int          i;
 	float        w;
+
+	ci    = CG_Debriefing_GetSelectedClientInfo();
 
 	for (i = 0; i < cgs.maxclients; i++)
 	{
@@ -2429,11 +2448,13 @@ void CG_Debriefing_PlayerTime_Draw(panel_button_t *button)
 
 void CG_Debriefing_PlayerMedals_Draw(panel_button_t *button)
 {
-	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
+	clientInfo_t *ci;
 	float        w, x;
 	int          i;
 
-	w = CG_Text_Width_Ext("Medals: ", button->font->scalex, 0, button->font->font);
+	ci = CG_Debriefing_GetSelectedClientInfo();
+	w  = CG_Text_Width_Ext("Medals: ", button->font->scalex, 0, button->font->font);
+
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("Medals:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
 	x = button->rect.x;
@@ -2450,8 +2471,11 @@ void CG_Debriefing_PlayerMedals_Draw(panel_button_t *button)
 
 void CG_Debriefing_PlayerRank_Draw(panel_button_t *button)
 {
-	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
-	float        w   = CG_Text_Width_Ext("Rank: ", button->font->scalex, 0, button->font->font);
+	clientInfo_t *ci;
+	float        w;
+
+	ci = CG_Debriefing_GetSelectedClientInfo();
+	w   = CG_Text_Width_Ext("Rank: ", button->font->scalex, 0, button->font->font);
 
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("Rank:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
@@ -2468,7 +2492,9 @@ void CG_Debriefing_PlayerRank_Draw(panel_button_t *button)
 
 void CG_Debriefing_PlayerName_Draw(panel_button_t *button)
 {
-	clientInfo_t *ci = CG_Debriefing_GetSelectedClientInfo();
+	clientInfo_t *ci;
+
+	ci = CG_Debriefing_GetSelectedClientInfo();
 
 	switch (ci->team)
 	{

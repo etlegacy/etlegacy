@@ -347,6 +347,11 @@ void CG_QuickFireteamAdmin_f(void)
 
 static void CG_QuickFireteams_f(void)
 {
+	if (!CG_IsOnFireteam(cg.clientNum))
+	{
+		return;
+	}
+
 	if (cg.showFireteamMenu)
 	{
 		if (cgs.ftMenuMode == 0)
@@ -356,13 +361,12 @@ static void CG_QuickFireteams_f(void)
 		else
 		{
 			cgs.ftMenuMode = 0;
+			CG_Printf("2\n");
 		}
 	}
-	else if (CG_IsOnFireteam(cg.clientNum))
-	{
-		CG_EventHandling(CGAME_EVENT_FIRETEAMMSG, qfalse);
-		cgs.ftMenuMode = 0;
-	}
+
+	CG_EventHandling(CGAME_EVENT_FIRETEAMMSG, qfalse);
+	cgs.ftMenuMode = 0;
 }
 
 static void CG_FTSayPlayerClass_f(void)
@@ -523,7 +527,7 @@ static void CG_MessageMode_f(void)
 		trap_Cvar_Set("cg_messageType", "2");
 	}
 	// fireteam say
-	else if (!Q_stricmp(cmd, "messagemode3"))
+	else if (!Q_stricmp(cmd, "messagemode3") && CG_IsOnFireteam(cg.clientNum))
 	{
 		trap_Cvar_Set("cg_messageType", "3");
 	}

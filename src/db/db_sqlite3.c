@@ -313,7 +313,7 @@ int DB_SaveMemDB()
 	}
 	else
 	{
-		Com_Printf("saveMemDB called for unknown db mode\n");
+		Com_Printf("saveMemDB called for unknown database mode\n");
 	}
 	return 0;
 }
@@ -324,7 +324,7 @@ int DB_Close()
 
 	if (!isDBActive)
 	{
-		Com_Printf("SQLite3 can't close db - not active.\n");
+		Com_Printf("SQLite3 can't close database - not active.\n");
 		return 1;
 	}
 

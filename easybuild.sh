@@ -238,6 +238,33 @@ parse_commandline() {
 			FEATURE_LUASQL=1
 			FEATURE_OMNIBOT=1
 			INSTALL_OMNIBOT=0
+		elif [ "$var" = "-mod" ]; then
+			einfo "Will only build the mod"
+			BUILD_CLIENT=0
+			BUILD_SERVER=0
+			FEATURE_RENDERER2=0
+			FEATURE_RENDERER_GLES=0
+			RENDERER_DYNAMIC=0
+
+			FEATURE_CURL=0
+			FEATURE_OGG_VORBIS=0
+			FEATURE_THEORA=0
+			FEATURE_OPENAL=0
+			FEATURE_FREETYPE=0
+			FEATURE_JANSSON=0
+
+			BUNDLED_SDL=0
+			# FIXME: this needs to be fixed in cmake, we do not want zlib or minizip if we are not building the client or server
+			BUNDLED_ZLIB=1
+			BUNDLED_MINIZIP=1
+			BUNDLED_JPEG=0
+			BUNDLED_OGG_VORBIS=0
+			BUNDLED_THEORA=0
+			BUNDLED_GLEW=0
+			BUNDLED_FREETYPE=0
+			BUNDLED_JANSSON=0
+			BUNDLED_CURL=0
+			BUNDLED_OPENAL=0
 		else
 			# drop the script commands from the result
 			for index in ${!easy_keys[*]}
@@ -617,7 +644,7 @@ print_help() {
 	ehead "help - print this help"
 	echo
 	einfo "Properties"
-	ehead "-64, -debug, -clang, -nodb -nor2, -nodynamic, -systemlib, -noob, --noupdate, -norating"
+	ehead "-64, -debug, -clang, -nodb -nor2, -nodynamic, -systemlib, -noob, --noupdate, -norating -mod"
 	echo
 }
 

@@ -4358,11 +4358,12 @@ void BG_InitLocations(vec2_t world_mins, vec2_t world_maxs)
 	locInfo.gridStartCoord[1] = world_mins[1] - .5f * ((((world_mins[1] - world_maxs[1]) / locInfo.gridStep[1]) - ((int)((world_mins[1] - world_maxs[1]) / locInfo.gridStep[1]))) * locInfo.gridStep[1]);
 }
 
-char *BG_GetLocationString(vec_t *pos)
+static char coord[6];
+
+char *BG_GetLocationString(float xpos, float ypos)
 {
-	static char coord[6];
-	int         x = (pos[0] - locInfo.gridStartCoord[0]) / locInfo.gridStep[0];
-	int         y = (locInfo.gridStartCoord[1] - pos[1]) / locInfo.gridStep[1];
+	int         x = (xpos - locInfo.gridStartCoord[0]) / locInfo.gridStep[0];
+	int         y = (locInfo.gridStartCoord[1] - ypos) / locInfo.gridStep[1];
 
 	coord[0] = '\0';
 
