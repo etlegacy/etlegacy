@@ -2127,10 +2127,16 @@ void ClientEndFrame(gentity_t *ent)
 		return;
 	}
 
-	// turn off any expired powerups
+	// turn off any expired powerups (we do this for PW_INVULNERABLE and PW_ADRENALINE only !!!))
 	// range changed for MV
-	for (i = 0 ; i < PW_NUM_POWERUPS ; i++)
+	for (i =  1 ; i < PW_NUM_POWERUPS ; i++) // start st PW_NONE + 1, PW_NONE is unused
 	{
+        // this isn't dependant on level.time
+        if(ent->client->ps.powerups[i] == 0)
+        {
+            continue;
+        }
+
         // these aren't dependant on level.time
         switch(i)
         {
@@ -2139,23 +2145,19 @@ void ClientEndFrame(gentity_t *ent)
         case PW_OPS_CLASS_2:
         case PW_OPS_CLASS_3:
         case PW_OPS_DISGUISED:
-        //case PW_REDFLAG: // FIXME - not dependant to level time?
-        //case PW_BLUEFLAG:
+        case PW_REDFLAG:
+        case PW_BLUEFLAG:
+#ifdef FEATURE_MULTIVIEW
+	    case PW_MVCLIENTLIST: // client list never expires
+#endif        
             continue;
         default:
             break;
         }
 
-        // this isn't dependant on level.time
-        if(ent->client->ps.powerups[i] == 0)
-        {
-            continue;
-        }
-
 		// If we're paused, update powerup timers accordingly.
 		// Make sure we dont let stuff like CTF flags expire.
-		if (level.match_pause != PAUSE_NONE &&
-		    ent->client->ps.powerups[i] != INT_MAX)
+		if (level.match_pause != PAUSE_NONE && ent->client->ps.powerups[i] != INT_MAX)
 		{
 			ent->client->ps.powerups[i] += level.time - level.previousTime;
 		}
