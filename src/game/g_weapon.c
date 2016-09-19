@@ -571,8 +571,8 @@ void Weapon_Syringe(gentity_t *ent)
 		if (!traceEnt->isProp)      // flag for if they were teamkilled or not
 		{
 			AddScore(ent, WOLF_HEALTH_UP);
-			G_AddSkillPoints(ent, SK_MEDIC, 2.f);
-			G_DebugAddSkillPoints(ent, SK_MEDIC, 2.f, "syringe heal a player");
+			G_AddSkillPoints(ent, SK_FIRST_AID, 2.f);
+			G_DebugAddSkillPoints(ent, SK_FIRST_AID, 2.f, "syringe heal a player");
 		}
 	}
 }

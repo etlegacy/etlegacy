@@ -781,13 +781,6 @@ typedef enum
 	SK_NUM_SKILLS
 } skillType_t;
 
-// skill name 'shortcuts'
-#define SK_SOLDIER      SK_HEAVY_WEAPONS
-#define SK_MEDIC        SK_FIRST_AID
-#define SK_ENGINEER     SK_EXPLOSIVES_AND_CONSTRUCTION
-#define SK_FIELDOPS     SK_SIGNALS
-#define SK_COVERTOPS    SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS
-
 extern const char *skillNames[SK_NUM_SKILLS];
 extern const char *skillNamesLine1[SK_NUM_SKILLS];
 extern const char *skillNamesLine2[SK_NUM_SKILLS];
