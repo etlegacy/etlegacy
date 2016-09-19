@@ -1630,7 +1630,7 @@ void ClientThink_real(gentity_t *ent)
 	}
 
 	// debug hitboxes
-	if(g_debugPlayerHitboxes.integer & 2)
+	if (g_debugPlayerHitboxes.integer & 2)
 	{
 		gentity_t    *head;
 		vec3_t       maxs;
@@ -1638,10 +1638,10 @@ void ClientThink_real(gentity_t *ent)
 
 		VectorCopy(ent->r.maxs, maxs);
 		maxs[2] = ClientHitboxMaxZ(ent);
-		G_RailBox(ent->r.currentOrigin, ent->r.mins, maxs, tv(0.f,0.f,1.f), ent->s.number);
+		G_RailBox(ent->r.currentOrigin, ent->r.mins, maxs, tv(0.f, 0.f, 1.f), ent->s.number);
 
 		head = G_BuildHead(ent, &refent, qtrue);
-		G_RailBox(head->r.currentOrigin, head->r.mins, head->r.maxs, tv(0.f,0.f,1.f), head->s.number|HITBOXBIT_HEAD);
+		G_RailBox(head->r.currentOrigin, head->r.mins, head->r.maxs, tv(0.f, 0.f, 1.f), head->s.number | HITBOXBIT_HEAD);
 		G_FreeEntity(head);
 	}
 
@@ -2129,31 +2129,31 @@ void ClientEndFrame(gentity_t *ent)
 
 	// turn off any expired powerups (we do this for PW_INVULNERABLE and PW_ADRENALINE only !!!))
 	// range changed for MV
-	for (i =  1 ; i < PW_NUM_POWERUPS ; i++) // start st PW_NONE + 1, PW_NONE is unused
+	for (i = 1 ; i < PW_NUM_POWERUPS ; i++)  // start st PW_NONE + 1, PW_NONE is unused
 	{
-        // this isn't dependant on level.time
-        if(ent->client->ps.powerups[i] == 0)
-        {
-            continue;
-        }
+		// this isn't dependant on level.time
+		if (ent->client->ps.powerups[i] == 0)
+		{
+			continue;
+		}
 
-        // these aren't dependant on level.time
-        switch(i)
-        {
-        case PW_NOFATIGUE:
-        case PW_OPS_CLASS_1:
-        case PW_OPS_CLASS_2:
-        case PW_OPS_CLASS_3:
-        case PW_OPS_DISGUISED:
-        case PW_REDFLAG:
-        case PW_BLUEFLAG:
+		// these aren't dependant on level.time
+		switch (i)
+		{
+		case PW_NOFATIGUE:
+		case PW_OPS_CLASS_1:
+		case PW_OPS_CLASS_2:
+		case PW_OPS_CLASS_3:
+		case PW_OPS_DISGUISED:
+		case PW_REDFLAG:
+		case PW_BLUEFLAG:
 #ifdef FEATURE_MULTIVIEW
-	    case PW_MVCLIENTLIST: // client list never expires
-#endif        
-            continue;
-        default:
-            break;
-        }
+		case PW_MVCLIENTLIST: // client list never expires
+#endif
+			continue;
+		default:
+			break;
+		}
 
 		// If we're paused, update powerup timers accordingly.
 		// Make sure we dont let stuff like CTF flags expire.
@@ -2261,7 +2261,7 @@ void ClientEndFrame(gentity_t *ent)
 
 	// mark as not missing updates initially
 	ent->client->ps.eFlags &= ~EF_CONNECTION;
-	ent->s.eFlags &= ~EF_CONNECTION;
+	ent->s.eFlags          &= ~EF_CONNECTION;
 
 	// see how many frames the client has missed
 	frames = level.framenum - ent->client->lastUpdateFrame - 1;
@@ -2293,7 +2293,7 @@ void ClientEndFrame(gentity_t *ent)
 #endif
 
 	// debug hitboxes
-	if(g_debugPlayerHitboxes.integer & 1)
+	if (g_debugPlayerHitboxes.integer & 1)
 	{
 		gentity_t    *head;
 		vec3_t       maxs;
@@ -2301,10 +2301,10 @@ void ClientEndFrame(gentity_t *ent)
 
 		VectorCopy(ent->r.maxs, maxs);
 		maxs[2] = ClientHitboxMaxZ(ent);
-		G_RailBox(ent->r.currentOrigin, ent->r.mins, maxs, tv(0.f,1.f,0.f), ent->s.number);
+		G_RailBox(ent->r.currentOrigin, ent->r.mins, maxs, tv(0.f, 1.f, 0.f), ent->s.number);
 
 		head = G_BuildHead(ent, &refent, qtrue);
-		G_RailBox(head->r.currentOrigin, head->r.mins, head->r.maxs, tv(0.f,1.f,0.f), ent->s.number|HITBOXBIT_HEAD);
+		G_RailBox(head->r.currentOrigin, head->r.mins, head->r.maxs, tv(0.f, 1.f, 0.f), ent->s.number | HITBOXBIT_HEAD);
 		G_FreeEntity(head);
 	}
 
