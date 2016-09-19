@@ -324,7 +324,7 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
 /**
  * @brief finds worst trace of body/legs, for collision.
  */
-void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void (tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
 {
 	vec3_t ofs, org, point;
 	vec3_t flatforward;
@@ -395,13 +395,13 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
 }
 
 void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles,
-                  void (tracefunc) (trace_t *results,
-                                    const vec3_t start,
-                                    const vec3_t mins,
-                                    const vec3_t maxs,
-                                    const vec3_t end,
-                                    int passEntityNum,
-                                    int contentMask),
+                  void(tracefunc) (trace_t * results,
+                                   const vec3_t start,
+                                   const vec3_t mins,
+                                   const vec3_t maxs,
+                                   const vec3_t end,
+                                   int passEntityNum,
+                                   int contentMask),
                   int ignoreent,
                   int tracemask)
 {
@@ -1514,9 +1514,10 @@ static void PM_NoclipMove(void)
 	}
 	else
 	{
-		float drop     = 0, newspeed;
+		float drop     = 0;
 		float friction = pm_friction * 1.5; // extra friction
 		float control  = speed < pm_stopspeed ? pm_stopspeed : speed;
+		float newspeed;
 
 		drop += control * friction * pml.frametime;
 
@@ -3593,13 +3594,13 @@ static void PM_HandleRecoil(void)
 		{
 			if (pm->pmext->weapRecoilPitch > 0.f)
 			{
-				muzzlebounce[PITCH] -= 2 *pm->pmext->weapRecoilPitch *cos(2.5 * (i) / pm->pmext->weapRecoilDuration);
+				muzzlebounce[PITCH] -= 2 * pm->pmext->weapRecoilPitch * cos(2.5 * (i) / pm->pmext->weapRecoilDuration);
 				muzzlebounce[PITCH] -= 0.25 * random() * (1.0f - (i) / pm->pmext->weapRecoilDuration);
 			}
 
 			if (pm->pmext->weapRecoilYaw > 0.f)
 			{
-				muzzlebounce[YAW] += 0.5 *pm->pmext->weapRecoilYaw *cos(1.0 - (i) * 3 / pm->pmext->weapRecoilDuration);
+				muzzlebounce[YAW] += 0.5 * pm->pmext->weapRecoilYaw * cos(1.0 - (i) * 3 / pm->pmext->weapRecoilDuration);
 				muzzlebounce[YAW] += 0.5 * crandom() * (1.0f - (i) / pm->pmext->weapRecoilDuration);
 			}
 		}
@@ -4806,7 +4807,7 @@ static void PM_Weapon(void)
 	//{
 	//	pm->ps->aimSpreadScaleFloat = 0;
 	//}
-	
+
 	if (pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3 && pm->ps->stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
 	{
 		pm->ps->aimSpreadScaleFloat *= .5f;
@@ -5047,7 +5048,7 @@ are being updated isntead of a full move
 ================
 */
 // take a tracemask as well - we can't use anything out of pm
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void (trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)        //   modified
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)        //   modified
 {
 	short  temp;
 	int    i;
