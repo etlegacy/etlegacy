@@ -1,3 +1,7 @@
+#-----------------------------------------------------------------
+# Build Client
+#-----------------------------------------------------------------
+
 if(WIN32)
 	add_executable(etl WIN32 ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
 elseif(APPLE)

@@ -1,4 +1,6 @@
-# Version generation
+#-----------------------------------------------------------------
+# Version
+#-----------------------------------------------------------------
 
 # default values if they cannot be generated from git
 set(ETLEGACY_VERSION_MAJOR "2")
@@ -9,31 +11,31 @@ set(ETLEGACY_VERSION "${ETLEGACY_VERSION_MAJOR}.${ETLEGACY_VERSION_MINOR}-dirty"
 set(ETLEGACY_VERSIONPLAIN "${ETLEGACY_VERSION_MAJOR},${ETLEGACY_VERSION_MINOR},${ETLEGACY_VERSION_PATCH},${ETLEGACY_VERSION_COMMIT}")
 
 macro(HEXCHAR2DEC VAR VAL)
-	if (${VAL} MATCHES "[0-9]")
-	  SET(${VAR} ${VAL})
+	if(${VAL} MATCHES "[0-9]")
+		SET(${VAR} ${VAL})
 	elseif(${VAL} MATCHES "[aA]")
-	  SET(${VAR} 10)
+		SET(${VAR} 10)
 	elseif(${VAL} MATCHES "[bB]")
-	  SET(${VAR} 11)
+		SET(${VAR} 11)
 	elseif(${VAL} MATCHES "[cC]")
-	  SET(${VAR} 12)
+		SET(${VAR} 12)
 	elseif(${VAL} MATCHES "[dD]")
-	  SET(${VAR} 13)
+		SET(${VAR} 13)
 	elseif(${VAL} MATCHES "[eE]")
-	  SET(${VAR} 14)
+		SET(${VAR} 14)
 	elseif(${VAL} MATCHES "[fF]")
-	  SET(${VAR} 15)
+		SET(${VAR} 15)
 	else()
-	  MESSAGE(FATAL_ERROR "Invalid format for hexidecimal character")
+		MESSAGE(FATAL_ERROR "Invalid format for hexidecimal character")
 	endif()
 endmacro(HEXCHAR2DEC)
 
 macro(GENERATENUMBER VAR VAL)
-	IF (${VAL} EQUAL 0)
+	IF(${VAL} EQUAL 0)
 		SET(${VAR} 0)
 	ELSEIF(${VAL} MATCHES "^[0-9]+$") # if its just numbers we escape out and just use that
 		SET(${VAR} ${VAL})
-  ELSE()
+	ELSE()
 		SET(CURINDEX 0)
 		STRING(LENGTH "${VAL}" CURLENGTH)
 		SET(${VAR} 0)

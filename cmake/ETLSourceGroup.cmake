@@ -1,6 +1,7 @@
 #-----------------------------------------------------------------
-# Groups for Visual Studio (Windows) and win32 definitions
+# Source Group (for Visual Studio and win32 definitions)
 #-----------------------------------------------------------------
+
 if(MSVC OR XCODE)
 	# Group the files based on their source path
 	SET(SRC_PATH "src")

@@ -1,3 +1,7 @@
+#-----------------------------------------------------------------
+# Bundled Libs
+#-----------------------------------------------------------------
+
 # Check if the libs submodule exists and add the directory
 # or error out the build
 if(EXISTS "${CMAKE_SOURCE_DIR}/libs/CMakeLists.txt")

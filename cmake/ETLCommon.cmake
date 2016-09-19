@@ -1,11 +1,15 @@
+#-----------------------------------------------------------------
+# Common
+#-----------------------------------------------------------------
+
 function(force_rescan_library LIBRARY_NAME)
-        set(${LIBRARY_NAME}_LIBRARY "${LIBRARY_NAME}_LIBRARY-NOTFOUND" CACHE FILEPATH "Cleared." FORCE)
+	set(${LIBRARY_NAME}_LIBRARY "${LIBRARY_NAME}_LIBRARY-NOTFOUND" CACHE FILEPATH "Cleared." FORCE)
 endfunction()
 
 IF(NOT CMAKE_BUILD_TYPE)
-    #SET(CMAKE_BUILD_TYPE "Debug")
-    SET(CMAKE_BUILD_TYPE "Release")
-    MESSAGE("No CMAKE_BUILD_TYPE specified, defaulting to ${CMAKE_BUILD_TYPE}")
+	#SET(CMAKE_BUILD_TYPE "Debug")
+	SET(CMAKE_BUILD_TYPE "Release")
+	MESSAGE("No CMAKE_BUILD_TYPE specified, defaulting to ${CMAKE_BUILD_TYPE}")
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
 # set LEGACY_DEBUG definition for debug build type
@@ -66,9 +70,9 @@ if(WIN32)
 	set(INSTALL_DEFAULT_MODDIR ".")
 	set(INSTALL_DEFAULT_BASEDIR ".")
 else()
-	set(INSTALL_DEFAULT_BASEDIR	""			CACHE STRING "Should be CMAKE_INSTALL_PREFIX + INSTALL_DEFAULT_MODDIR")
-    set(INSTALL_DEFAULT_BINDIR	"bin"			CACHE STRING "Appended to CMAKE_INSTALL_PREFIX")
-    set(INSTALL_DEFAULT_MODDIR	"lib/etlegacy"		CACHE STRING "Appended to CMAKE_INSTALL_PREFIX")
+	set(INSTALL_DEFAULT_BASEDIR	""				CACHE STRING "Should be CMAKE_INSTALL_PREFIX + INSTALL_DEFAULT_MODDIR")
+	set(INSTALL_DEFAULT_BINDIR	"bin"			CACHE STRING "Appended to CMAKE_INSTALL_PREFIX")
+	set(INSTALL_DEFAULT_MODDIR	"lib/etlegacy"	CACHE STRING "Appended to CMAKE_INSTALL_PREFIX")
 endif()
 
 if(INSTALL_DEFAULT_BASEDIR)

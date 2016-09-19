@@ -1,3 +1,5 @@
+# - Find GLEW
+
 if(WIN32)
 	FIND_PATH( GLEW_INCLUDE_PATH GL/glew.h
 		$ENV{PROGRAMFILES}/GLEW/include

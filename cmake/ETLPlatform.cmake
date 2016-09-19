@@ -1,12 +1,12 @@
+#-----------------------------------------------------------------
+# Platform
+#-----------------------------------------------------------------
+
 # Used to store real system processor when we overwrite CMAKE_SYSTEM_PROCESSOR for cross-compile builds
 set(ETLEGACY_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR})
 
 # has to be set to "", otherwise CMake will pass -rdynamic resulting in a client crash
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
-
-#-----------------------------------------------------------------
-# Platform-specific settings
-#-----------------------------------------------------------------
 
 message(STATUS "System: ${CMAKE_SYSTEM} (${ETLEGACY_SYSTEM_PROCESSOR})")
 

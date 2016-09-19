@@ -16,30 +16,30 @@ find_path(JPEG_INCLUDE_DIR turbojpeg.h
 )
 
 find_library(JPEG_LIBRARY
-		NAMES ${JPEG_NAMES} jpeg
-		PATHS
-		/usr/lib64
-		/usr/lib
-		/usr/local/lib64
-		/usr/local/lib
-		/sw/lib
-		/opt/local/lib
-		DOC "The JPEG library"
+	NAMES ${JPEG_NAMES} jpeg
+	PATHS
+	/usr/lib64
+	/usr/lib
+	/usr/local/lib64
+	/usr/local/lib
+	/sw/lib
+	/opt/local/lib
+	DOC "The JPEG library"
 )
 
 # Determine libjpeg-turbo version
 if(JPEG_INCLUDE_DIR AND EXISTS "${JPEG_INCLUDE_DIR}/jconfig.h")
-  file(STRINGS "${JPEG_INCLUDE_DIR}/jconfig.h" jpegturbo_version_str REGEX "^#define LIBJPEG_TURBO_VERSION[ ]+[0-9].[0-9].[0-9]")
-  string(REGEX REPLACE "^#define LIBJPEG_TURBO_VERSION[ ]+([^\"]*).*" "\\1" JPEGTURBO_VERSION_STRING "${jpegturbo_version_str}")
-  unset(jpegturbo_version_str)
+	file(STRINGS "${JPEG_INCLUDE_DIR}/jconfig.h" jpegturbo_version_str REGEX "^#define LIBJPEG_TURBO_VERSION[ ]+[0-9].[0-9].[0-9]")
+	string(REGEX REPLACE "^#define LIBJPEG_TURBO_VERSION[ ]+([^\"]*).*" "\\1" JPEGTURBO_VERSION_STRING "${jpegturbo_version_str}")
+	unset(jpegturbo_version_str)
 endif()
 
 # handle the QUIETLY and REQUIRED arguments and set JPEGTURBO_FOUND to TRUE if
 # all listed variables are TRUE
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(JPEGTURBO
-								  REQUIRED_VARS JPEG_LIBRARY JPEG_INCLUDE_DIR
-								  VERSION_VAR JPEGTURBO_VERSION_STRING)
+	REQUIRED_VARS JPEG_LIBRARY JPEG_INCLUDE_DIR
+	VERSION_VAR JPEGTURBO_VERSION_STRING)
 
 if(JPEGTURBO_FOUND)
 	set(JPEG_LIBRARIES ${JPEG_LIBRARY})

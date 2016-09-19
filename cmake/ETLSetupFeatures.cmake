@@ -1,3 +1,7 @@
+#-----------------------------------------------------------------
+# Setup Features
+#-----------------------------------------------------------------
+
 # If we change architecture we need to force rescan of libraries
 if(NOT OLD_CROSS_COMPILE32 STREQUAL CROSS_COMPILE32)
 	force_rescan_library(SDL32)
@@ -35,8 +39,8 @@ if(BUILD_CLIENT)
 		include_directories(SYSTEM ${OPENGL_INCLUDE_DIR})
 	else() # FEATURE_RENDERER_GLES
 			find_package(GLES REQUIRED)
-    		list(APPEND RENDERER_LIBRARIES ${GLES_LIBRARY})
-    		include_directories(SYSTEM ${GLES_INCLUDE_DIR})
+			list(APPEND RENDERER_LIBRARIES ${GLES_LIBRARY})
+			include_directories(SYSTEM ${GLES_INCLUDE_DIR})
 	endif()
 
 	if(NOT BUNDLED_SDL)
@@ -270,7 +274,7 @@ if(BUILD_MOD)
 		LIST(APPEND QAGAME_SRC "src/Omnibot/Common/BotLoadLibrary.cpp")
 		add_definitions(-DFEATURE_OMNIBOT)
 	endif(FEATURE_OMNIBOT)
-	
+
 	if(FEATURE_EDV)
 		add_definitions(-DFEATURE_EDV)
 	endif(FEATURE_EDV)

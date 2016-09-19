@@ -1,3 +1,7 @@
+#-----------------------------------------------------------------
+# Install OmniBot
+#-----------------------------------------------------------------
+
 message(STATUS "Installing Omni-Bot")
 # Note: used archive (20MB) doesn't contain incomplete nav- and other unwanted files
 if(UNIX)

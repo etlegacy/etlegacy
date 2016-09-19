@@ -1,4 +1,6 @@
-#RENDERER BUILDS
+#-----------------------------------------------------------------
+# Build Renderer
+#-----------------------------------------------------------------
 
 if(NOT APPLE)
 	set(R1_NAME renderer_opengl1_${ARCH})
@@ -50,7 +52,7 @@ if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 		)
 
 		if(WIN32)
-            set_target_properties(${R1_NAME} PROPERTIES PREFIX "")
+			set_target_properties(${R1_NAME} PROPERTIES PREFIX "")
 		endif(WIN32)
 
 		if(WIN32)
@@ -157,8 +159,8 @@ if(FEATURE_RENDERER2)
 	)
 
 	if(WIN32)
-    	set_target_properties(${R2_NAME} PROPERTIES PREFIX "")
-    endif(WIN32)
+		set_target_properties(${R2_NAME} PROPERTIES PREFIX "")
+	endif(WIN32)
 
 	if(WIN32)
 		install(TARGETS ${R2_NAME}
