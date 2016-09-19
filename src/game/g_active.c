@@ -2131,20 +2131,27 @@ void ClientEndFrame(gentity_t *ent)
 	// range changed for MV
 	for (i = 0 ; i < PW_NUM_POWERUPS ; i++)
 	{
-		// FIXME: do a switch
-		// these aren't dependant on level.time
-		if (i == PW_NOFATIGUE ||
-		    ent->client->ps.powerups[i] == 0
-		    || i == PW_OPS_CLASS_1
-		    || i == PW_OPS_CLASS_2
-		    || i == PW_OPS_CLASS_3
-		    || i == PW_OPS_DISGUISED
-		    //|| i == PW_REDFLAG // FIXME - not dependant to level time?
-		    //|| i == PW_BLUEFLAG
-		    )
-		{
-			continue;
-		}
+        // these aren't dependant on level.time
+        switch(i)
+        {
+        case PW_NOFATIGUE:
+        case PW_OPS_CLASS_1:
+        case PW_OPS_CLASS_2:
+        case PW_OPS_CLASS_3:
+        case PW_OPS_DISGUISED:
+        //case PW_REDFLAG: // FIXME - not dependant to level time?
+        //case PW_BLUEFLAG:
+            continue;
+        default:
+            break;
+        }
+
+        // this isn't dependant on level.time
+        if(ent->client->ps.powerups[i] == 0)
+        {
+            continue;
+        }
+
 		// If we're paused, update powerup timers accordingly.
 		// Make sure we dont let stuff like CTF flags expire.
 		if (level.match_pause != PAUSE_NONE &&
