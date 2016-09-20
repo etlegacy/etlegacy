@@ -1822,6 +1822,12 @@ static void PM_GroundTrace(void)
 	vec3_t  point;
 	trace_t trace;
 
+	// check if underwater
+	if (pm->waterlevel > 2)
+    {
+		return;
+	}
+
 	point[0] = pm->ps->origin[0];
 	point[1] = pm->ps->origin[1];
 
