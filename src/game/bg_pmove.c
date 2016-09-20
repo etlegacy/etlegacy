@@ -1822,12 +1822,6 @@ static void PM_GroundTrace(void)
 	vec3_t  point;
 	trace_t trace;
 
-	// check if underwater
-	if (pm->waterlevel > 2)
-    {
-		return;
-	}
-
 	point[0] = pm->ps->origin[0];
 	point[1] = pm->ps->origin[1];
 
@@ -1862,7 +1856,7 @@ static void PM_GroundTrace(void)
 	}
 
 	// check if getting thrown off the ground
-	if (pm->ps->velocity[2] > 0 && DotProduct(pm->ps->velocity, trace.plane.normal) > 10 && !(pm->ps->eFlags & EF_PRONE))
+	if (pm->ps->velocity[2] > 0 && DotProduct(pm->ps->velocity, trace.plane.normal) > 10 && !(pm->ps->eFlags & EF_PRONE) && pm->waterlevel < 3)
 	{
 		if (pm->debugLevel)
 		{
