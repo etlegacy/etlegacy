@@ -2891,7 +2891,6 @@ void CG_Player(centity_t *cent)
 	}
 	else
 	{
-		if (cent->pe.weaponFireTime > 500 && cent->pe.weaponFireTime)
 		{
 			cent->pe.lastFiredWeaponTime = cg.time;
 		}
