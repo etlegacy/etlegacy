@@ -620,33 +620,33 @@ typedef enum
 #define EF_BOUNCE           0x04000000      // for missiles
 #define EF_BOUNCE_HALF      0x08000000      // for missiles
 #define EF_MOVER_STOP       0x10000000      // will push otherwise	// moved down to make space for one more client flag
-#define EF_MOVER_BLOCKED    0x20000000      // mover was blocked dont lerp on the client // xkan, moved down to make space for client flag
+#define EF_MOVER_BLOCKED    0x20000000      // mover was blocked dont lerp on the client // moved down to make space for client flag
 
 #define BG_PlayerMounted(eFlags) ((eFlags & EF_MG42_ACTIVE) || (eFlags & EF_MOUNTEDTANK) || (eFlags & EF_AAGUN_ACTIVE))
 
 // !! NOTE: only place flags that don't need to go to the client beyond 0x00800000
 typedef enum
 {
-	PW_NONE = 0,
+	PW_NONE = 0, // unused
 
 	PW_INVULNERABLE,
 
-	PW_NOFATIGUE = 4,
+	PW_NOFATIGUE = 4, // not dependant on level.time
 
-	PW_REDFLAG,
-	PW_BLUEFLAG,
+	PW_REDFLAG,       // not dependant on level.time - flags never expire WASTE: boolean
+	PW_BLUEFLAG,      // not dependant on level.time - flags never expire WASTE: boolean
 
-	PW_OPS_DISGUISED,
-	PW_OPS_CLASS_1,
-	PW_OPS_CLASS_2,
-	PW_OPS_CLASS_3,
+	PW_OPS_DISGUISED, // not dependant on level.time
+	PW_OPS_CLASS_1,   // not dependant on level.time
+	PW_OPS_CLASS_2,   // not dependant on level.time
+	PW_OPS_CLASS_3,   // not dependant on level.time
 
 	PW_ADRENALINE,
 
-	PW_BLACKOUT = 14,       // spec blackouts. FIXME: we don't need 32bits here...relocate
+	PW_BLACKOUT = 14,       // spec blackouts. WASTE: we don't need 32bits here (boolean only)...relocate
 
 #ifdef FEATURE_MULTIVIEW
-	PW_MVCLIENTLIST = 15,   // MV client info.. need a full 32 bits
+	PW_MVCLIENTLIST = 15,   // static MV client info.. need a full 32 bits
 #endif
 
 	PW_NUM_POWERUPS
@@ -780,13 +780,6 @@ typedef enum
 	SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS,
 	SK_NUM_SKILLS
 } skillType_t;
-
-// skill name 'shortcuts'
-#define SK_SOLDIER      SK_HEAVY_WEAPONS
-#define SK_MEDIC        SK_FIRST_AID
-#define SK_ENGINEER     SK_EXPLOSIVES_AND_CONSTRUCTION
-#define SK_FIELDOPS     SK_SIGNALS
-#define SK_COVERTOPS    SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS
 
 extern const char *skillNames[SK_NUM_SKILLS];
 extern const char *skillNamesLine1[SK_NUM_SKILLS];

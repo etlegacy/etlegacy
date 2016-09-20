@@ -296,15 +296,15 @@ int SkillNumForClass(int classNum)
 	switch (classNum)
 	{
 	case PC_SOLDIER:
-		return SK_SOLDIER;
+		return SK_HEAVY_WEAPONS;
 	case PC_MEDIC:
-		return SK_MEDIC;
+		return SK_FIRST_AID;
 	case PC_ENGINEER:
-		return SK_ENGINEER;
+		return SK_EXPLOSIVES_AND_CONSTRUCTION;
 	case PC_FIELDOPS:
 		return SK_SIGNALS;
 	case PC_COVERTOPS:
-		return SK_COVERTOPS;
+		return SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS;
 	default:
 		return SK_BATTLE_SENSE;
 	}

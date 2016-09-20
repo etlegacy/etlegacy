@@ -1182,7 +1182,7 @@ skillType_t CG_ClassSkillForPosition(clientInfo_t *ci, int pos)
 		// draw soldier level if using a heavy weapon instead of light weapons icon
 		if ((pm && (pm->ps->persistant[PERS_HWEAPON_USE] || (pm->ps->eFlags & EF_MOUNTEDTANK) || IS_HEAVY_WEAPON(pm->ps->weapon))) && ci->cls != PC_SOLDIER)
 		{
-			return SK_SOLDIER;
+			return SK_HEAVY_WEAPONS;
 		}
 		return SK_LIGHT_WEAPONS;
 	default:

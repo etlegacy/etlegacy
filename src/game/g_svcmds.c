@@ -1063,7 +1063,7 @@ static void Svcmd_PlayerAnimEvent(void)
 	// ignore in intermission
 	if (level.intermissiontime)
 	{
-		G_Printf("test_ae command not allowed during intermission.\n");
+		G_Printf("ae command not allowed during intermission.\n");
 		return;
 	}
 
@@ -1093,11 +1093,11 @@ static void Svcmd_PlayerAnimEvent(void)
 
 		if (count > 0)
 		{
-			CPx(-1, va("cp \"^3%d^7 anim event %s died.\"", count, animEventTypesStr[atoi(anim)]));
+			CPx(-1, (va("cp \"^3%d^7 anim event %s.\"", count, animEventTypesStr[atoi(anim)])));
 		}
 		else
 		{
-			G_Printf("There is no player for test_ae command.\n");
+			G_Printf("There is no player for ae command.\n");
 		}
 
 		return;
@@ -1106,7 +1106,7 @@ static void Svcmd_PlayerAnimEvent(void)
 	if (ClientNumbersFromString(name, pids) != 1)
 	{
 		G_MatchOnePlayer(pids, err, sizeof(err));
-		G_Printf("Error - can't execute test_ae command - %s.\n", err);
+		G_Printf("Error - can't execute ae command - %s.\n", err);
 		return;
 	}
 	vic = &g_entities[pids[0]];
@@ -1114,13 +1114,13 @@ static void Svcmd_PlayerAnimEvent(void)
 	if (!(vic->client->sess.sessionTeam == TEAM_AXIS ||
 	      vic->client->sess.sessionTeam == TEAM_ALLIES))
 	{
-		G_Printf("Player must be on a team for test_ae command.\n");
+		G_Printf("Player must be on a team for ae command.\n");
 		return;
 	}
 
 	BG_AnimScriptEvent(&vic->client->ps, vic->client->pers.character->animModelInfo, atoi(anim), qfalse, qtrue);
 
-	CPx(-1, va("cp \"^7%s^7 anim event %s.\"", vic->client->pers.netname, animEventTypesStr[atoi(anim)]));
+	CPx(-1, (va("cp \"^7%s^7 anim event %s.\"", vic->client->pers.netname, animEventTypesStr[atoi(anim)])));
 
 	return;
 }
