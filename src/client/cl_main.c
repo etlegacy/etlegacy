@@ -3871,6 +3871,7 @@ qboolean CL_UpdateVisiblePings_f(int source)
 						}
 					}
 
+                    // FIXME: Dead code, this part is NEVER REACHED !
                     // j is never >= MAX_PINGREQUESTS due to previous "for" condition j = 0 and j < MAX_PINGREQUESTS
 					if (j >= MAX_PINGREQUESTS)
 					{
