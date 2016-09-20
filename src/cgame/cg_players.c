@@ -1320,7 +1320,7 @@ static void CG_SwingAngles(float destination, float swingTolerance, float clampT
 		}
 		*angle = AngleMod(*angle + move);
 	}
-	else if (swing < 0)
+    else /*if (swing < 0)*/
 	{
 		move = cg.frametime * scale * -speed;
 		if (move <= swing)
