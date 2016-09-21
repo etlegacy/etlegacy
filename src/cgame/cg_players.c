@@ -1320,7 +1320,7 @@ static void CG_SwingAngles(float destination, float swingTolerance, float clampT
 		}
 		*angle = AngleMod(*angle + move);
 	}
-    else /*if (swing < 0)*/
+	else /*if (swing < 0)*/
 	{
 		move = cg.frametime * scale * -speed;
 		if (move <= swing)
@@ -2769,12 +2769,12 @@ void CG_Player(centity_t *cent)
 		// position marker?
 		if (cg_debugPlayerHitboxes.integer & 4)
 		{
-			int	   x, zd, zu;
+			int x, zd, zu;
 			vec3_t bmins, bmaxs;
 
 			x  = (cent->currentState.solid & 255);
-			zd = ((cent->currentState.solid>>8) & 255);
-			zu = ((cent->currentState.solid>>16) & 255) - 32;
+			zd = ((cent->currentState.solid >> 8) & 255);
+			zu = ((cent->currentState.solid >> 16) & 255) - 32;
 
 			bmins[0] = bmins[1] = -x;
 			bmaxs[0] = bmaxs[1] = x;
@@ -2784,30 +2784,30 @@ void CG_Player(centity_t *cent)
 			VectorAdd(bmins, cent->lerpOrigin, bmins);
 			VectorAdd(bmaxs, cent->lerpOrigin, bmaxs);
 
-			CG_RailTrail(tv( 0.25f, 0.5f, 1.f), bmins, bmaxs, 1, cent->currentState.number|HITBOXBIT_CLIENT);
+			CG_RailTrail(tv(0.25f, 0.5f, 1.f), bmins, bmaxs, 1, cent->currentState.number | HITBOXBIT_CLIENT);
 		}
 
 		// head axis
 		if (cg_debugPlayerHitboxes.integer & 2)
 		{
 			orientation_t tag;
-			int           idx;
-			vec3_t        start;
-			vec3_t        ends[3];
-			vec3_t        axis[3];
+			int idx;
+			vec3_t start;
+			vec3_t ends[3];
+			vec3_t axis[3];
 
 			trap_R_LerpTag(&tag, &body, "tag_head", 0);
 
 			VectorCopy(body.origin, start);
 
-			for(idx = 0; idx < 3; idx++)
+			for (idx = 0; idx < 3; idx++)
 			{
 				VectorMA(start, tag.origin[idx], body.axis[idx], start);
 			}
 
 			MatrixMultiply(tag.axis, body.axis, axis);
 
-			for(idx = 0; idx < 3; idx++)
+			for (idx = 0; idx < 3; idx++)
 			{
 				VectorMA(start, 32.0f, axis[idx], ends[idx]);
 				CG_RailTrail2(tv(0.25f, 0.5f, 1.f), start, ends[idx], -1, -1);
@@ -2822,20 +2822,20 @@ void CG_Player(centity_t *cent)
 			VectorCopy(cg.predictedPlayerState.mins, mins);
 			VectorCopy(cg.predictedPlayerState.maxs, maxs);
 
-			if(cg.predictedPlayerState.eFlags & EF_PRONE)
+			if (cg.predictedPlayerState.eFlags & EF_PRONE)
 			{
 				maxs[2] = maxs[2] - (cg.predictedPlayerState.standViewHeight - PRONE_VIEWHEIGHT + 8);
 			}
-			else if(cg.predictedPlayerState.pm_flags & PMF_DUCKED)
+			else if (cg.predictedPlayerState.pm_flags & PMF_DUCKED)
 			{
 				maxs[2] = cg.predictedPlayerState.crouchMaxZ;
 			}
 
 			VectorAdd(cent->lerpOrigin, mins, mins);
 			VectorAdd(cent->lerpOrigin, maxs, maxs);
-			CG_RailTrail(tv(0.25f, 0.5f, 1.f), mins, maxs, 1, cent->currentState.number|HITBOXBIT_CLIENT);
+			CG_RailTrail(tv(0.25f, 0.5f, 1.f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT);
 
-			if(cg.predictedPlayerState.eFlags & EF_PRONE)
+			if (cg.predictedPlayerState.eFlags & EF_PRONE)
 			{
 				vec3_t org, forward;
 
@@ -2853,7 +2853,7 @@ void CG_Player(centity_t *cent)
 
 				VectorAdd(org, mins, mins);
 				VectorAdd(org, maxs, maxs);
-				CG_RailTrail(tv(0.25f, 0.5f, 1.f), mins, maxs, 1, cent->currentState.number|HITBOXBIT_CLIENT|HITBOXBIT_LEGS);
+				CG_RailTrail(tv(0.25f, 0.5f, 1.f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT | HITBOXBIT_LEGS);
 
 				// And the head
 				VectorSet(mins, -6, -6, -22);
@@ -2865,7 +2865,7 @@ void CG_Player(centity_t *cent)
 
 				VectorAdd(org, mins, mins);
 				VectorAdd(org, maxs, maxs);
-				CG_RailTrail(tv(0.25f, 0.5f, 1.f), mins, maxs, 1, cent->currentState.number|HITBOXBIT_CLIENT|HITBOXBIT_HEAD);
+				CG_RailTrail(tv(0.25f, 0.5f, 1.f), mins, maxs, 1, cent->currentState.number | HITBOXBIT_CLIENT | HITBOXBIT_HEAD);
 			}
 		}
 	} // END DEBUG
@@ -2891,7 +2891,7 @@ void CG_Player(centity_t *cent)
 	}
 	else
 	{
-        if (cent->pe.weaponFireTime > 500 /*&& cent->pe.weaponFireTime*/)
+		if (cent->pe.weaponFireTime > 500 /*&& cent->pe.weaponFireTime*/)
 		{
 			cent->pe.lastFiredWeaponTime = cg.time;
 		}
@@ -2936,7 +2936,7 @@ void CG_Player(centity_t *cent)
 	CG_BreathPuffs(cent, &head);
 
 	// add the gun / barrel / flash
-	if(!(cent->currentState.eFlags & EF_DEAD) /*&& !usingBinocs*/)
+	if (!(cent->currentState.eFlags & EF_DEAD) /*&& !usingBinocs*/)
 	{
 		if (cent->currentState.eFlags & EF_TALK)
 		{
