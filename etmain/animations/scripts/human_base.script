@@ -37,6 +37,7 @@ set weapons all_two_handed_weapons = MP 40 AND Thompson AND Sten gun AND flameth
 set movetype moving = walk AND walkcr AND walkcrbk AND walkbk AND run AND runbk AND straferight AND strafeleft
 set movetype crouching = idlecr AND walkcr AND walkcrbk
 set movetype backstep = walkbk AND runbk AND walkcrbk
+set movetype proning = idleprone AND prone AND pronebk
 
 //==========================================================================
 // ANIMATIONS
@@ -3089,69 +3090,83 @@ nopower
 
 pain
 {
+	movetype fallen
+	{
+		legs wounded_idle_1
+	}
+	movetype proning
+	{
+		legs prone_legs
+	}
+	movetype swimbk AND swim
+	{
+		legs e_swim_1h
+	}
 	movetype crouching, impact_point head
 	{
-		both pain_cr_head
+		torso pain_cr_head
 	}
 	movetype crouching, impact_point shoulder_right
 	{
-		both pain_cr_shoulderR
+		torso pain_cr_shoulderR
 	}
 	movetype crouching, impact_point shoulder_left
 	{
-		both pain_cr_shoulderL
+		torso pain_cr_shoulderL
 	}
 	movetype crouching	// pick one at random if they failed
 	{
-		both pain_cr_head
-		both pain_cr_shoulderR
-		both pain_cr_shoulderL
+		torso pain_cr_head
+		torso pain_cr_shoulderR
+		torso pain_cr_shoulderL
 	}
 	enemy_weapon flamethrower
 	{
-		both pain_fire
+		torso pain_fire
 	}
 	stunned
 	{
-		both pain_daze
+		torso pain_daze
 	}
 	impact_point head
 	{
-		both pain_head
+		torso pain_head
 	}
 	impact_point chest
 	{
-		both pain_chest
+		torso pain_chest
 	}
 	impact_point gut
 	{
-		both pain_gut
+		torso pain_gut
 	}
 	impact_point groin
 	{
-		both pain_groin
+		torso pain_groin
 	}
 	impact_point shoulder_right
 	{
-		both pain_shoulderR
+		torso pain_shoulderR
 	}
 	impact_point shoulder_left
 	{
-		both pain_shoulderL
+		torso pain_shoulderL
 	}
 	impact_point knee_right
 	{
-		both pain_kneeR
+	// legs ?
+		torso pain_kneeR
 	}
 	impact_point knee_left
 	{
-		both pain_kneeL
+	// legs ?
+		torso pain_kneeL
 	}
 	default
 	{
-		both pain_chest
-		both pain_gut
-		both pain_groin
+		torso pain_chest
+		torso pain_gut
+		torso pain_groin
 	}
 }
 
