@@ -2223,11 +2223,11 @@ void CL_Frame(int msec)
 
 		CL_CaptureFrameVideo();
 
-        msec = (int)frameDuration;
+		msec = (int)frameDuration;
 		//clc.aviVideoFrameRemainder = frameDuration + msec;
 	}
 	else if ((!cl_avidemo->integer && CL_VideoRecording())
-             || (cl_avidemo->integer && (cls.state != CA_ACTIVE || !cl_forceavidemo->integer)))
+	         || (cl_avidemo->integer && (cls.state != CA_ACTIVE || !cl_forceavidemo->integer)))
 	{
 		CL_StopVideo_f();
 	}
@@ -2828,7 +2828,7 @@ void CL_Init(void)
 	// particle switch
 	Cvar_Get("cg_wolfparticles", "1", CVAR_ARCHIVE);
 
-    cl_conXOffset = Cvar_Get("cl_conXOffset", "0", 0);
+	cl_conXOffset = Cvar_Get("cl_conXOffset", "0", 0);
 
 	cl_serverStatusResendTime = Cvar_Get("cl_serverStatusResendTime", "750", 0);
 
@@ -3871,8 +3871,8 @@ qboolean CL_UpdateVisiblePings_f(int source)
 						}
 					}
 
-                    // FIXME: Dead code, this part is NEVER REACHED !
-                    // j is never >= MAX_PINGREQUESTS due to previous "for" condition j = 0 and j < MAX_PINGREQUESTS
+					// FIXME: Dead code, this part is NEVER REACHED !
+					// j is never >= MAX_PINGREQUESTS due to previous "for" condition j = 0 and j < MAX_PINGREQUESTS
 					if (j >= MAX_PINGREQUESTS)
 					{
 						status = qtrue;
