@@ -242,6 +242,56 @@ weapon_t G_GetPrimaryWeaponForClient(gclient_t *client)
 	return WP_NONE;
 }
 
+
+weapon_t G_GetSecondaryWeaponForClient(gclient_t *client, weapon_t primary)
+{
+	weapon_t secondary = WP_NONE;
+
+	// early out if not on a team
+	if(client->sess.sessionTeam != TEAM_ALLIES && client->sess.sessionTeam != TEAM_AXIS)
+	{
+		return WP_NONE;
+	}
+
+	// Record our secondary weapon (usually a pistol sidearm)
+	// Colts
+	if(COM_BitCheck(client->ps.weapons, WP_AKIMBO_SILENCEDCOLT))
+	{
+		secondary = WP_AKIMBO_SILENCEDCOLT;
+	}
+	else if(COM_BitCheck(client->ps.weapons, WP_AKIMBO_COLT))
+	{
+		secondary = WP_AKIMBO_COLT;
+	}
+	else if(COM_BitCheck(client->ps.weapons, WP_SILENCED_COLT))
+	{
+		secondary = WP_SILENCED_COLT;
+	}
+	else if(COM_BitCheck( client->ps.weapons, WP_COLT))
+	{
+		secondary = WP_COLT;
+	}
+	// Lugers
+	else if(COM_BitCheck(client->ps.weapons, WP_AKIMBO_SILENCEDLUGER))
+	{
+		secondary = WP_AKIMBO_SILENCEDLUGER;
+	}
+	else if(COM_BitCheck( client->ps.weapons, WP_AKIMBO_LUGER))
+	{
+		secondary = WP_AKIMBO_LUGER;
+	}
+	else if( COM_BitCheck( client->ps.weapons, WP_SILENCER))
+	{
+		secondary = WP_SILENCER;
+	}
+	else if(COM_BitCheck( client->ps.weapons, WP_LUGER))
+	{
+		secondary = WP_LUGER;
+	}
+
+	return secondary;
+}
+
 /**
 * @brief Get the primary weapon of the client.
 * @return the primary weapon of the soldier client
