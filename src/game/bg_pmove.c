@@ -1856,22 +1856,25 @@ static void PM_GroundTrace(void)
 	}
 
 	// check if getting thrown off the ground
-	if (pm->ps->velocity[2] > 0 && DotProduct(pm->ps->velocity, trace.plane.normal) > 10 && !(pm->ps->eFlags & EF_PRONE) && pm->waterlevel < 3)
+	if (pm->ps->velocity[2] > 0 && DotProduct(pm->ps->velocity, trace.plane.normal) > 10 && !(pm->ps->eFlags & EF_PRONE))
 	{
 		if (pm->debugLevel)
 		{
 			Com_Printf("%i:kickoff\n", c_pmove);
 		}
-		// go into jump animation
-		if (pm->cmd.forwardmove >= 0)
+		// go into jump animation (but not under water)
+		if (pm->waterlevel < 3)
 		{
-			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMP, qfalse, qfalse);
-			pm->ps->pm_flags &= ~PMF_BACKWARDS_JUMP;
-		}
-		else
-		{
-			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMPBK, qfalse, qfalse);
-			pm->ps->pm_flags |= PMF_BACKWARDS_JUMP;
+			if (pm->cmd.forwardmove >= 0)
+			{
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMP, qfalse, qfalse);
+				pm->ps->pm_flags &= ~PMF_BACKWARDS_JUMP;
+			}
+			else
+			{
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_JUMPBK, qfalse, qfalse);
+				pm->ps->pm_flags |= PMF_BACKWARDS_JUMP;
+			}
 		}
 
 		pm->ps->groundEntityNum = ENTITYNUM_NONE;
@@ -3080,7 +3083,9 @@ void PM_WeaponUseAmmo(int wp, int amount)
 	}
 	else
 	{
-		int takeweapon = BG_FindClipForWeapon(wp);
+		int takeweapon;
+
+		takeweapon = BG_FindClipForWeapon(wp);
 
 		if (IS_AKIMBO_WEAPON(wp))
 		{
@@ -3108,7 +3113,9 @@ int PM_WeaponAmmoAvailable(int wp)
 	}
 	else
 	{
-		int takeweapon = BG_FindClipForWeapon(wp);
+		int takeweapon;
+
+		takeweapon = BG_FindClipForWeapon(wp);
 
 		if (IS_AKIMBO_WEAPON(wp))
 		{
@@ -4949,7 +4956,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 	if (!leaning)      // go back to center position
 	{
 		if (leanofs > 0)            // right
-		{   // FIXME: play lean anim backwards?
+		{
 			leanofs -= (((float)pml.msec / (float)LEAN_TIME_FR) * LEAN_MAX);
 			if (leanofs < 0)
 			{
@@ -4957,7 +4964,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 			}
 		}
 		else if (leanofs < 0)         // left
-		{   // FIXME: play lean anim backwards?
+		{
 			leanofs += (((float)pml.msec / (float)LEAN_TIME_FR) * LEAN_MAX);
 			if (leanofs > 0)
 			{
@@ -6254,7 +6261,7 @@ int Pmove(pmove_t *pmove)
  *
  *  PM_GroundTrace() and friends modify
  *      ps->groundEntityNum
- *  ps->pm_flags
+ *      ps->pm_flags
  *      ps->pm_time
  *      ps->eFlags
  *
