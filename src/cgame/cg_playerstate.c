@@ -536,7 +536,7 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 	}
 	else
 	{
-		if (cg.weaponFireTime > 500 && cg.weaponFireTime)
+		if (cg.weaponFireTime > 500 /*&& cg.weaponFireTime*/)
 		{
 			cg.lastFiredWeaponTime = cg.time;
 		}
