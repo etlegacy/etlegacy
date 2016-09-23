@@ -686,7 +686,7 @@ typedef enum
 // NOTE: should be 31 now (I added 1 bit in msg.c)
 typedef enum
 {
-	WP_NONE = 0,            // 0
+	WP_NONE = 0,            // 0    // propExplosion() uses this for init
 	WP_KNIFE,               // 1
 	WP_LUGER,               // 2
 	WP_MP40,                // 3
@@ -2502,4 +2502,27 @@ typedef struct client_vote_s
 	int clients[MAX_CLIENTS];
 } client_vote_t;
 
+// hash values for several 
+
+// script events
+#define SPAWN_HASH							66910
+#define TRIGGER_HASH						92198
+#define PAIN_HASH							51093
+#define DEATH_HASH							62701
+#define ACTIVATE_HASH						104037
+#define STOPCAM_HASH						92530
+#define PLAYERSTART_HASH					150212
+#define BUILT_HASH							65851
+#define BUILDSTART_HASH						134191
+#define DECAYED_HASH						87740
+#define DESTROYED_HASH						120424
+#define REBIRTH_HASH						91760
+#define FAILED_HASH							74482
+#define DYNAMITED_HASH						117917
+#define DEFUSED_HASH						89805
+#define MG42_HASH							37723
+#define MESSAGE_HASH						90364
+#define EXPLODED_HASH						104425
+
 #endif // #ifndef INCLUDE_BG_PUBLIC_H
+

@@ -159,26 +159,26 @@ qboolean G_Script_EventMatch_IntInRange(g_script_event_t *event, char *eventParm
 // the list of events that can start an action sequence
 g_script_event_define_t gScriptEvents[] =
 {
-	{ "spawn",       NULL                            }, // called as each character is spawned into the game
-	{ "trigger",     G_Script_EventMatch_StringEqual }, // something has triggered us (always followed by an identifier)
-	{ "pain",        G_Script_EventMatch_IntInRange  }, // we've been hurt
-	{ "death",       NULL                            }, // RIP
-	{ "activate",    G_Script_EventMatch_StringEqual }, // something has triggered us [activator team]
-	{ "stopcam",     NULL                            },
-	{ "playerstart", NULL                            },
-	{ "built",       G_Script_EventMatch_StringEqual },
-	{ "buildstart",  G_Script_EventMatch_StringEqual },
-	{ "decayed",     G_Script_EventMatch_StringEqual },
-	{ "destroyed",   G_Script_EventMatch_StringEqual },
-	{ "rebirth",     NULL                            },
-	{ "failed",      NULL                            },
-	{ "dynamited",   NULL                            },
-	{ "defused",     NULL                            },
-	{ "mg42",        G_Script_EventMatch_StringEqual },
-	{ "message",     G_Script_EventMatch_StringEqual }, // contains a sequence of VO in a message
-	{ "exploded",    NULL                            }, // added for omni-bot 0.7
+	{ "spawn",       NULL,                            SPAWN_HASH       }, // called as each character is spawned into the game
+	{ "trigger",     G_Script_EventMatch_StringEqual, TRIGGER_HASH     }, // something has triggered us (always followed by an identifier)
+	{ "pain",        G_Script_EventMatch_IntInRange,  PAIN_HASH        }, // we've been hurt
+	{ "death",       NULL,                            DEATH_HASH       }, // RIP
+	{ "activate",    G_Script_EventMatch_StringEqual, ACTIVATE_HASH    }, // something has triggered us [activator team]
+	{ "stopcam",     NULL,                            STOPCAM_HASH     },
+	{ "playerstart", NULL,                            PLAYERSTART_HASH },
+	{ "built",       G_Script_EventMatch_StringEqual, BUILT_HASH       },
+	{ "buildstart",  G_Script_EventMatch_StringEqual, BUILDSTART_HASH  },
+	{ "decayed",     G_Script_EventMatch_StringEqual, DECAYED_HASH     },
+	{ "destroyed",   G_Script_EventMatch_StringEqual, DESTROYED_HASH   },
+	{ "rebirth",     NULL,                            REBIRTH_HASH     },
+	{ "failed",      NULL,                            FAILED_HASH      },
+	{ "dynamited",   NULL,                            DYNAMITED_HASH   },
+	{ "defused",     NULL,                            DEFUSED_HASH     },
+	{ "mg42",        G_Script_EventMatch_StringEqual, MG42_HASH        },
+	{ "message",     G_Script_EventMatch_StringEqual, MESSAGE_HASH     }, // contains a sequence of VO in a message
+	{ "exploded",    NULL,                            EXPLODED_HASH    }, // added for omni-bot 0.7
 
-	{ NULL,          NULL                            }
+	{ NULL,          NULL,                            00}
 };
 
 /*
@@ -240,7 +240,7 @@ int G_Script_EventForString(const char *string)
 
 	for (i = 0; gScriptEvents[i].eventStr; i++)
 	{
-		if (gScriptEvents[i].hash == hash && !Q_stricmp(string, gScriptEvents[i].eventStr))
+		if (gScriptEvents[i].hash == hash)
 		{
 			return i;
 		}
@@ -676,11 +676,6 @@ void G_Script_EventStringInit(void)
 {
 	int i;
 
-	for (i = 0; gScriptEvents[i].eventStr; i++)
-	{
-		gScriptEvents[i].hash = BG_StringHashValue_Lwr(gScriptEvents[i].eventStr);
-	}
-
 	for (i = 0; gScriptActions[i].actionString; i++)
 	{
 		gScriptActions[i].hash = BG_StringHashValue_Lwr(gScriptActions[i].actionString);
@@ -703,7 +698,7 @@ int G_Script_GetEventIndex(gentity_t *ent, char *eventStr, char *params)
 	// find out which event this is
 	for (i = 0; gScriptEvents[i].eventStr; i++)
 	{
-		if (gScriptEvents[i].hash == hash && !Q_stricmp(eventStr, gScriptEvents[i].eventStr))       // match found
+		if (gScriptEvents[i].hash == hash)       // match found
 		{
 			eventNum = i;
 			break;
@@ -714,7 +709,7 @@ int G_Script_GetEventIndex(gentity_t *ent, char *eventStr, char *params)
 	{
 		if (g_cheats.integer)        // dev mode
 		{
-			G_Printf("devmode-> G_Script_GetEventIndex(), unknown event: %s\n", eventStr);
+			G_Printf("devmode-> G_Script_GetEventIndex(), unknown event: '%s'\n", eventStr);
 		}
 		return -1;
 	}
