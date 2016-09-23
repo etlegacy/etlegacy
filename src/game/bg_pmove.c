@@ -2091,7 +2091,7 @@ static void PM_Footsteps(void)
 	}
 
 	// swimming
-	if (pm->waterlevel > 2)
+	if (pm->waterlevel > 2 || (pm->waterlevel > 1 && pm->ps->groundEntityNum == ENTITYNUM_NONE))
 	{
 		if (pm->ps->pm_flags & PMF_BACKWARDS_RUN)
 		{
