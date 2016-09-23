@@ -2413,6 +2413,17 @@ int CG_LimboPanel_RenderCounter_ValueForButton(panel_button_t *button)
 	case 2:     // xp
 		return cg.xp;
 	case 3:     // respawn time
+		if (cgs.gamestate != GS_PLAYING)
+		{
+			if (cg.warmup)
+			{
+				return (cg.warmup - cg.time) / 1000;
+			}
+			else
+			{
+				return 0;
+			}
+		}
 		if (CG_LimboPanel_GetTeam() == TEAM_SPECTATOR)
 		{
 			return 0;
@@ -2435,6 +2446,20 @@ int CG_LimboPanel_RenderCounter_ValueForButton(panel_button_t *button)
 		}
 		return (1 << count) - 1;
 	case 5:     // clock
+		if (cgs.gamestate != GS_PLAYING)
+		{
+			count = cgs.timelimit * 60;
+			switch (button->data[1])
+			{
+			case 0:         // secs
+				return count % 60;
+			case 1:         // mins
+				return count / 60;
+			default:
+				break;
+			}
+			return 0;
+		}
 		if (!cgs.timelimit)
 		{
 			return 0;
