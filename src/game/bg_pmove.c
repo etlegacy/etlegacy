@@ -1196,7 +1196,7 @@ static void PM_FlyMove(void)
 	// spectator boost
 	if (pm->cmd.buttons & BUTTON_SPRINT)
 	{
-		scale *= 3;
+		scale *= 2;
 	}
 
 	// user intentions
