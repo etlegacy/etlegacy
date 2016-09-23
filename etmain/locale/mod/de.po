@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2016-09-11 07:55+0000\n"
+"PO-Revision-Date: 2016-09-18 09:34+0000\n"
 "Last-Translator: IR4T4 <gutzu@gmx.ch>\n"
 "Language-Team: German (http://www.transifex.com/etlegacy/etlegacy/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -680,7 +680,7 @@ msgstr "Standard Zeitlimit nicht beachten"
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Allied Spawn Time:"
-msgstr "Spielwiedereintrittszeit Alliierte"
+msgstr "Spielwiedereintrittszeit Alliierte:"
 
 #: etmain/ui/hostgame_advanced.menu:54
 msgid "Override the default Allied spawn time"
@@ -688,7 +688,7 @@ msgstr "Standard Spielwiedereintrittszeit für die Alliierten nicht beachten"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Axis Spawn Time:"
-msgstr "Spielwiedereintrittszeit Axen"
+msgstr "Spielwiedereintrittszeit Axen:"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Override the default Axis spawn time"
@@ -947,7 +947,7 @@ msgstr "NACHRICHT DES TAGES"
 
 #: etmain/ui/hostgame_advanced.menu:110
 msgid "Line 1:"
-msgstr "Zeile 1"
+msgstr "Zeile 1:"
 
 #: etmain/ui/hostgame_advanced.menu:110 etmain/ui/hostgame_advanced.menu:121
 #: etmain/ui/hostgame_advanced.menu:132 etmain/ui/hostgame_advanced.menu:143
@@ -957,19 +957,19 @@ msgstr "Spezifiziert die Willkommensnachricht wenn mit dem Server verbunden wird
 
 #: etmain/ui/hostgame_advanced.menu:121
 msgid "Line 2:"
-msgstr "Zeile 2"
+msgstr "Zeile 2:"
 
 #: etmain/ui/hostgame_advanced.menu:132
 msgid "Line 3:"
-msgstr "Zeile 3"
+msgstr "Zeile 3:"
 
 #: etmain/ui/hostgame_advanced.menu:143
 msgid "Line 4:"
-msgstr "Zeile 4"
+msgstr "Zeile 4:"
 
 #: etmain/ui/hostgame_advanced.menu:154
 msgid "Line 5:"
-msgstr "Zeile 5"
+msgstr "Zeile 5:"
 
 #: etmain/ui/hostgame_advanced.menu:157
 msgid "DOWNLOAD"
@@ -985,7 +985,7 @@ msgstr "Erlaubt Spielern fehlende Dateien von dem Server herunterzuladen"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid "Maximum Download Rate:"
-msgstr "Maximale Downloadrate"
+msgstr "Maximale Downloadrate:"
 
 #: etmain/ui/hostgame_advanced.menu:159
 msgid ""
@@ -2467,7 +2467,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:34
 msgid "Show Compass:"
-msgstr "Zeige Kompass"
+msgstr "Zeige Kompass:"
 
 #: etmain/ui/options_customise_hud.menu:34
 msgid "Displays compass (with icons when near select events)"
@@ -2483,7 +2483,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Mission Timer:"
-msgstr "Missionszeit:"
+msgstr "Missions Timer::"
 
 #: etmain/ui/options_customise_hud.menu:37
 msgid "Displays remaining mission time"
@@ -2523,7 +2523,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Show Locations:"
-msgstr "Zeige Orte"
+msgstr "Zeige Orte:"
 
 #: etmain/ui/options_customise_hud.menu:40
 msgid "Cordinates Only"
@@ -4765,7 +4765,7 @@ msgstr "Antwort Gesendet"
 #: src/cgame/cg_draw.c:2152
 #, c-format
 msgid "Press %s to open Limbo Menu"
-msgstr "Drücke %s um das Limbo Menu zu öffnen"
+msgstr "Drücke %s, um das Limbo Menu zu öffnen"
 
 #: src/cgame/cg_draw.c:2157
 #, c-format
@@ -4775,7 +4775,7 @@ msgstr "Drücke %s, um den nächsten Spieler zu folgen"
 #: src/cgame/cg_draw.c:2162
 #, c-format
 msgid "Press %s to follow previous player"
-msgstr "Drücke %s um den vorherigen Spieler zu folgen"
+msgstr "Drücke %s, um den vorherigen Spieler zu folgen"
 
 #: src/cgame/cg_draw.c:2168
 #, c-format
@@ -7120,4 +7120,20 @@ msgid "Renderer:"
 msgstr ""
 
 msgid "Set your desired renderer (does a video restart)"
+msgstr ""
+
+msgid "Custom Width:"
+msgstr ""
+
+msgid ""
+"Specifies custom resolution width - requires custom resolution set. *Use on "
+"your own risk!"
+msgstr ""
+
+msgid "Custom Height:"
+msgstr ""
+
+msgid ""
+"Specifies custom resolution height - requires custom resolution set .*Use on"
+" your own risk!"
 msgstr ""
