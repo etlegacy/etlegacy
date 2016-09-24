@@ -1912,7 +1912,7 @@ static void PM_GroundTrace(void)
 		// just hit the ground
 		if (pm->debugLevel)
 		{
-			Com_Printf("%i:Land\n", c_pmove);
+			Com_Printf("%i:land\n", c_pmove);
 		}
 
 		PM_CrashLand();
