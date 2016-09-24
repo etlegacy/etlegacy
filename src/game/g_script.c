@@ -268,6 +268,11 @@ g_script_stack_action_t *G_Script_ActionForString(char *string)
 		}
 	}
 
+	if (g_cheats.integer)        // dev mode
+	{
+		G_Printf("devmode-> G_Script_ActionForString(), unknown action: '%s'\n", string);
+	}
+
 	return NULL;
 }
 
@@ -705,6 +710,12 @@ int G_Script_GetEventIndex(gentity_t *ent, char *eventStr, char *params)
 		}
 	}
 
+	// show debugging info
+	if (g_scriptDebug.integer)
+	{
+		G_Printf("%i : (%s) GScript event: %s %s\n", level.time, ent->scriptName ? ent->scriptName : "n/a", eventStr, params ? params : "");
+	}
+
 	if (eventNum < 0)
 	{
 		if (g_cheats.integer)        // dev mode
@@ -712,12 +723,6 @@ int G_Script_GetEventIndex(gentity_t *ent, char *eventStr, char *params)
 			G_Printf("devmode-> G_Script_GetEventIndex(), unknown event: '%s'\n", eventStr);
 		}
 		return -1;
-	}
-
-	// show debugging info
-	if (g_scriptDebug.integer)
-	{
-		G_Printf("%i : (%s) GScript event: %s %s\n", level.time, ent->scriptName ? ent->scriptName : "n/a", eventStr, params ? params : "");
 	}
 
 	// see if this entity has this event
@@ -765,9 +770,9 @@ void G_Script_ScriptEvent(gentity_t *ent, char *eventStr, char *params)
 			            Q_stricmp(ent->classname, "team_CTF_redflag") ? "allies" : "axis", ent->message);
 		}
 	}
-
+/*
 	// skip these
-	if (!Q_stricmp(eventStr, "trigger") ||
+	if ( //!Q_stricmp(eventStr, "trigger") ||
 	    !Q_stricmp(eventStr, "activate") ||
 	    !Q_stricmp(eventStr, "spawn") ||
 	    !Q_stricmp(eventStr, "death") ||
@@ -776,8 +781,8 @@ void G_Script_ScriptEvent(gentity_t *ent, char *eventStr, char *params)
 	{
 		return;
 	}
-
-	if (!Q_stricmp(eventStr, "defused"))
+*/
+	else if (!Q_stricmp(eventStr, "defused"))
 	{
 #ifdef FEATURE_OMNIBOT
 		Bot_Util_SendTrigger(ent, NULL, va("Defused at %s.", ent->parent ? ent->parent->track : ent->track), eventStr);
@@ -1241,7 +1246,7 @@ void SP_script_mover(gentity_t *ent)
 		}
 
 		G_SpawnString("tagent", "", &tagent);
-		Q_strncpyz(ent->tagBuffer, tagent, 16);
+		Q_strncpyz(ent->tagBuffer, tagent, 32);
 		ent->s.powerups = -1;
 	}
 

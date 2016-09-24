@@ -473,7 +473,7 @@ struct gentity_s
 	// What sort of surface are we standing on?
 	int surfaceFlags;
 
-	char tagBuffer[16];
+	char tagBuffer[32];
 
 	// bleh - ugly
 	int backupWeaponTime;
