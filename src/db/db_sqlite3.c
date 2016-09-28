@@ -63,7 +63,7 @@ int DB_Init()
 		return 0; // return 0! - see isDBActive
 	}
 
-	Com_Printf("SQLite3 libversion %s - database URL '%s' - %s\n", sqlite3_libversion(), db_url->string, db_mode->integer == 1 ? "in-memory":"in file");
+	Com_Printf("SQLite3 libversion %s - database URL '%s' - %s\n", sqlite3_libversion(), db_url->string, db_mode->integer == 1 ? "in-memory" : "in file");
 
 	if (!db_url->string[0]) // FIXME: check extension db
 	{
@@ -71,8 +71,8 @@ int DB_Init()
 		return 1;
 	}
 
-	to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_url->string, "");
-	to_ospath[strlen(to_ospath)-1] = '\0';
+	to_ospath                        = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_url->string, "");
+	to_ospath[strlen(to_ospath) - 1] = '\0';
 
 	if (FS_SV_FileExists(db_url->string))
 	{
@@ -123,7 +123,7 @@ int DB_Init()
 	}
 	else // create new
 	{
-		int  result;
+		int result;
 
 		Com_Printf("... no database file '%s' found ... creating now\n", to_ospath);
 		result = DB_Create();
@@ -147,7 +147,7 @@ int DB_Init()
 		}
 	}
 
-	Com_Printf("SQLite3 ET: L [%i] database '%s' init - autocommit %i\n", ETL_DBMS_VERSION ,to_ospath, sqlite3_get_autocommit(db));
+	Com_Printf("SQLite3 ET: L [%i] database '%s' init - autocommit %i\n", ETL_DBMS_VERSION, to_ospath, sqlite3_get_autocommit(db));
 
 	isDBActive = qtrue;
 	return 0;
@@ -158,8 +158,8 @@ int DB_Init()
  */
 static int DB_Create_Schema()
 {
-	int          result;
-	char         *err_msg = 0;
+	int  result;
+	char *err_msg = 0;
 
 	// FIXME:
 	// - split this into client and server DB?!
@@ -186,7 +186,7 @@ static int DB_Create_Schema()
 	      "CREATE TABLE ban (Id INT PRIMARY KEY NOT NULL, address TEXT, guid TEXT, type INT NOT NULL, reason TEXT, af INT, length TEXT, expires TEXT, created TEXT, updated TEXT);"
 	      "CREATE INDEX ban_address_idx ON ban(address);"
 	      "CREATE INDEX ban_guid_idx ON ban(guid);";
-	      // expires?
+	// expires?
 
 	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
@@ -254,7 +254,7 @@ int DB_Create()
 	{
 		char *to_ospath;
 
-		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_url->string, ""); // FIXME: check for empty db_url
+		to_ospath                        = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_url->string, ""); // FIXME: check for empty db_url
 		to_ospath[strlen(to_ospath) - 1] = '\0';
 
 		result = sqlite3_open(to_ospath, &db);
@@ -297,8 +297,8 @@ int DB_SaveMemDB()
 
 		// FIXME: check for empty db_url
 
-		to_ospath = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_url->string, "");
-		to_ospath[strlen(to_ospath)-1] = '\0';
+		to_ospath                        = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_url->string, "");
+		to_ospath[strlen(to_ospath) - 1] = '\0';
 
 		msec = Sys_Milliseconds();
 
@@ -340,7 +340,7 @@ int DB_Close()
 		}
 	}
 
-	result = sqlite3_close(db);
+	result     = sqlite3_close(db);
 	isDBActive = qfalse;
 
 	if (result != SQLITE_OK)
