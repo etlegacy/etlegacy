@@ -225,13 +225,13 @@ void SP_misc_gamemodel(gentity_t *ent)
 
 		// added start offset, fps, and direction
 		ent->s.legsAnim = start_frame + 1;
-		
+
 		// #1 avoid div/0 and negative values for fps
 		if (fps > 0)
 		{
-			ent->s.weapon   = 1000.f / fps;
+			ent->s.weapon = 1000.f / fps;
 		}
-		
+
 		// continue loop animation as long as s.teamNum == 0
 		ent->s.teamNum = 0;
 	}
@@ -239,8 +239,10 @@ void SP_misc_gamemodel(gentity_t *ent)
 	// #2 fix all invalid fps
 	if (ent->s.weapon <= 0)
 	{
-		// FIXME: make this print available to mappers
-		//G_Printf("SP_misc_gamemodel: fps rate of entity %s %s must have a value > 0 - <fps> is set to 20\n", ent->classname, ent->targetname);
+		if (g_cheats.integer)
+		{
+			G_Printf("SP_misc_gamemodel: fps rate of entity %s %s must have a value > 0 - <fps> is set to 20\n", ent->classname, ent->targetname);
+		}
 		ent->s.weapon = 50; // 1000.f / 20 fps
 	}
 
@@ -507,14 +509,14 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 	switch (ent->s.weapon)
 	{
-	case WP_GRENADE_LAUNCHER:
 	//case WP_GRENADE_PINEAPPLE:
+	case WP_GRENADE_LAUNCHER:
 		VectorScale(dir, 700, dir);                   // had to add this as fire_grenade now expects a non-normalized direction vector
 		                                              // FIXME: why we do normalize the vector before this switch?
 		fire_grenade(ent, ent->s.origin, dir, WP_GRENADE_LAUNCHER);
 		break;
-	case WP_PANZERFAUST:
 	//case WP_BAZOOKA:
+	case WP_PANZERFAUST:
 		fire_rocket(ent, ent->s.origin, dir, ent->s.weapon);
 		VectorScale(ent->s.pos.trDelta, 2, ent->s.pos.trDelta);
 		SnapVector(ent->s.pos.trDelta);             // save net bandwidth
