@@ -2219,7 +2219,7 @@ void CL_Frame(int msec)
 		{
 			fps = MIN(cl_avidemo->integer, 1000.0f);
 		}
-		frameDuration = MAX(1000.0f / fps, 1.0f);// + clc.aviVideoFrameRemainder;
+		frameDuration = MAX(1000.0f / fps, 1.0f); // + clc.aviVideoFrameRemainder;
 
 		CL_CaptureFrameVideo();
 

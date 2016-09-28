@@ -97,7 +97,7 @@ rewindBackups_t *rewindBackups   = NULL;
 int             maxRewindBackups = 0;
 #endif
 
-demoPlayInfo_t  dpi = { 0,0 };
+demoPlayInfo_t dpi = { 0, 0 };
 
 /*
 ====================
