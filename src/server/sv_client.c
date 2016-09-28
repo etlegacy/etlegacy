@@ -783,14 +783,14 @@ void SV_WWWDownload_f(client_t *cl)
 	{
 		SV_CloseDownload(cl);
 
-		cl->bWWWing       = qfalse;
+		cl->bWWWing = qfalse;
 		return;
 	}
 	else if (!Q_stricmp(subcmd, "fail"))
 	{
 		SV_CloseDownload(cl);
-		cl->bWWWing       = qfalse;
-		cl->bFallback     = qtrue;
+		cl->bWWWing   = qfalse;
+		cl->bFallback = qtrue;
 		// send a reconnect
 		SV_SendClientGameState(cl);
 		return;
@@ -800,8 +800,8 @@ void SV_WWWDownload_f(client_t *cl)
 		Com_Printf("WARNING: client '%s' reports that the redirect download for '%s' had wrong checksum.\n", rc(cl->name), cl->downloadName);
 		Com_Printf("         you should check your download redirect configuration.\n");
 		SV_CloseDownload(cl);
-		cl->bWWWing       = qfalse;
-		cl->bFallback     = qtrue;
+		cl->bWWWing   = qfalse;
+		cl->bFallback = qtrue;
 		// send a reconnect
 		SV_SendClientGameState(cl);
 		return;
@@ -1466,7 +1466,7 @@ void SV_UserinfoChanged(client_t *cl)
 	}
 	else
 	{
-		i = 50;
+		i = 50; // 1000 / sv_fps->integer
 	}
 
 	if (i != cl->snapshotMsec)
@@ -1988,7 +1988,7 @@ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg)
 		SV_UserMove(cl, msg, qfalse);
 		c = MSG_ReadByte(msg);
 	}
-	
+
 	if (c != clc_EOF)
 	{
 		Com_Printf("WARNING: bad command byte for client %i\n", (int) (cl - svs.clients));

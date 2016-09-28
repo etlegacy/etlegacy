@@ -719,7 +719,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 			Com_Printf("SDL_GL_MakeCurrent failed: %s\n", SDL_GetError());
 		}
 
-		if(SDL_GL_SetSwapInterval(r_swapInterval->integer) == -1)
+		if (SDL_GL_SetSwapInterval(r_swapInterval->integer) == -1)
 		{
 			Com_Printf("SDL_GL_SetSwapInterval failed: %s\n", SDL_GetError());
 		}

@@ -1050,7 +1050,7 @@ void Sys_PlatformInit(void)
 	if (SDL_VIDEODRIVER)
 	{
 		Com_Printf("SDL_VIDEODRIVER is externally set to \"%s\", "
-			"in_mouse -1 will have no effect\n", SDL_VIDEODRIVER);
+		           "in_mouse -1 will have no effect\n", SDL_VIDEODRIVER);
 		SDL_VIDEODRIVER_externallySet = qtrue;
 	}
 	else

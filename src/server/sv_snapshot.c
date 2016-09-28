@@ -65,7 +65,7 @@ Writes a delta update of an entityState_t list to the message.
 */
 static void SV_EmitPacketEntities(clientSnapshot_t *from, clientSnapshot_t *to, msg_t *msg)
 {
-	entityState_t *oldent = NULL, *newent = NULL;
+	entityState_t *oldent  = NULL, *newent = NULL;
 	int           oldindex = 0, newindex = 0;
 	int           oldnum, newnum;
 	int           from_num_entities;
