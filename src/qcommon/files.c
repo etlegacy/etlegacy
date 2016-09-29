@@ -38,7 +38,13 @@
 
 #include "q_shared.h"
 #include "qcommon.h"
-#include "unzip.h"
+
+#ifdef BUNDLED_MINIZIP
+#    include "unzip.h"
+#else
+#    include <unzip.h>
+#endif
+
 #ifdef _WIN32
 #define realpath(N, R) _fullpath((R), (N), _MAX_PATH)
 #endif // _WIN32
