@@ -213,7 +213,7 @@ GOTO:EOF
 	:: build
 	CALL:GENERATEPROJECT %build_dir% "%batloc%"
 	ECHO Building...
-	msbuild ETLEGACY.sln /target:ALL_BUILD /p:Configuration=%build_type%
+	msbuild ETLEGACY.sln /target:CMake\ALL_BUILD /p:Configuration=%build_type%
 GOTO:EOF
 
 :DOINSTALL
