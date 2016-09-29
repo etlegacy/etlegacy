@@ -411,7 +411,9 @@ localEntity_t *CG_FindLocalEntity(int index, int sideNum)
 		if (cg_localEntities[i].data1 == index)
 		{
 			if (cg_localEntities[i].data2 == sideNum)
+			{
 				return &cg_localEntities[i];
+			}
 		}
 	}
 	return NULL;
@@ -1276,21 +1278,7 @@ void CG_AddDebrisElements(localEntity_t *le)
 		// add a trail
 		lifeFrac = (float)(t - le->startTime) / (float)(le->endTime - le->startTime);
 
-#if 0
-		// fire
-#if 1   // flame
-		if (le->effectWidth > 0)
-		{
-			le->headJuncIndex = CG_AddSparkJunc(le->headJuncIndex,
-			                                    le,  // rain - zinx's trail fix
-			                                    cgs.media.fireTrailShader,
-			                                    le->refEntity.origin,
-			                                    (int)(500.0 * (0.5 + 0.5 * (1.0 - lifeFrac))),        // trail life
-			                                    1.0,  // alpha
-			                                    0.5,  // end alpha
-			                                    3,  // start width
-			                                    le->effectWidth);   // end width
-#else   // spark line
+#if 0   // spark line
 		if (le->effectWidth > 0)
 		{
 			le->headJuncIndex = CG_AddSparkJunc(le->headJuncIndex,
@@ -1302,7 +1290,6 @@ void CG_AddDebrisElements(localEntity_t *le)
 			                                    0.5 * (1.0 - lifeFrac),    // end alpha
 			                                    5.0 * (1.0 - lifeFrac),    // start width
 			                                    5.0 * (1.0 - lifeFrac));     // end width
-#endif
 		}
 #endif
 
@@ -1322,10 +1309,10 @@ void CG_AddDebrisElements(localEntity_t *le)
 		// if it is in a nodrop zone, remove it
 		// this keeps gibs from waiting at the bottom of pits of death
 		// and floating levels
-//      if ( CG_PointContents( trace.endpos, 0 ) & CONTENTS_NODROP ) {
-//          CG_FreeLocalEntity( le );
-//          return;
-//      }
+		//if ( CG_PointContents( trace.endpos, 0 ) & CONTENTS_NODROP ) {
+		//CG_FreeLocalEntity( le );
+		//return;
+		//}
 
 		if (trace.fraction < 1.0)
 		{

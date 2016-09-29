@@ -1399,7 +1399,6 @@ typedef struct
 	qhandle_t bloodCloudShader;
 	qhandle_t sparkParticleShader;
 	qhandle_t smokeTrailShader;
-	qhandle_t fireTrailShader;
 
 	qhandle_t flamethrowerFireStream;
 
