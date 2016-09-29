@@ -1833,12 +1833,9 @@ shard =
 
 void Use_Props_Shard_Generator(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
-	int       quantity;
-	int       type;
+	int       quantity = ent->wait;
+	int       type     = ent->count;
 	gentity_t *inflictor;
-
-	type     = ent->count;
-	quantity = ent->wait;
 
 	inflictor = G_Find(NULL, FOFS(targetname), ent->target);
 
@@ -2550,8 +2547,6 @@ slave so that the table will flip over correctly.
 
 void flippy_table_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
-	qboolean is_infront;
-
 	// it would be odd to flip a table if your standing on it
 	if (other && other->s.groundEntityNum == ent->s.number)
 	{
@@ -2561,9 +2556,7 @@ void flippy_table_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 	ent->use = NULL;
 
-	is_infront = infront(ent, other);
-
-	if (is_infront)
+	if (infront(ent, other))
 	{
 		gentity_t *slave;
 
@@ -3153,9 +3146,6 @@ void SP_props_decoration(gentity_t *ent)
 	vec3_t   color;
 	qboolean lightSet, colorSet;
 	char     *sound;
-	char     *type;
-	char     *high;
-	char     *wide;
 	char     *frames;
 	float    num_frames;
 
@@ -3216,6 +3206,9 @@ void SP_props_decoration(gentity_t *ent)
 	{
 		float height;
 		float width;
+		char  *type;
+		char  *high;
+		char  *wide;
 
 		ent->isProp     = qtrue;
 		ent->takedamage = qtrue;
@@ -4151,6 +4144,7 @@ void props_flamethrower_use(gentity_t *ent, gentity_t *other, gentity_t *activat
 	if (ent->random)
 	{
 		int rval = ent->random * 1000;
+		
 		rnd = rand() % rval;
 	}
 	else

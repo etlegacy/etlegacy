@@ -757,8 +757,10 @@ level.spawnVars[], then call the class specfic spawn function
 gentity_t *G_SpawnGEntityFromSpawnVars(void)
 {
 	int       i;
-	gentity_t *ent = G_Spawn(); // get the next free entity
+	gentity_t *ent;
 	char      *str;
+
+	ent = G_Spawn(); // get the next free entity
 
 	for (i = 0 ; i < level.numSpawnVars ; i++)
 	{

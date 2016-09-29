@@ -58,7 +58,7 @@ qboolean G_ScriptAction_SetModelFromBrushmodel(gentity_t *ent, char *params)
 	int      i;
 	qboolean solid = qtrue;
 
-	token   = COM_ParseExt(&pString, qfalse);
+	token = COM_ParseExt(&pString, qfalse);
 
 	if (!token[0])
 	{

@@ -1717,7 +1717,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 	if (self->client)
 	{
 		// store team so we can generate red or blue smoke
-		bolt->s.teamNum  = self->client->sess.sessionTeam;
+		bolt->s.teamNum = self->client->sess.sessionTeam;
 	}
 
 	// commented out bolt->damage and bolt->splashdamage, override with GetWeaponTableData(WP_X)->damage()
@@ -1775,9 +1775,9 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->think = G_ExplodeMissile;
 		break;
 	case WP_SMOKE_MARKER:
-		bolt->classname = "grenade";
-		bolt->damage    = 0;  // grenades don't explode on contact
-		bolt->s.eFlags  = EF_BOUNCE_HALF | EF_BOUNCE;
+		bolt->classname           = "grenade";
+		bolt->damage              = 0; // grenades don't explode on contact
+		bolt->s.eFlags            = EF_BOUNCE_HALF | EF_BOUNCE;
 		bolt->methodOfDeath       = MOD_SMOKEGRENADE;
 		bolt->splashMethodOfDeath = MOD_SMOKEGRENADE;
 

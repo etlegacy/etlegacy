@@ -520,12 +520,12 @@ void G_refMute_cmd(gentity_t *ent, qboolean mute)
 
 void G_refLogout_cmd(gentity_t *ent)
 {
-    if(ent && ent->client && ent->client->sess.referee == RL_REFEREE)
-    {
-        ent->client->sess.referee = RL_NONE;
-        ClientUserinfoChanged( ent->s.clientNum);
-        CP("print \"You have been logged out\n\"");
-    }
+	if (ent && ent->client && ent->client->sess.referee == RL_REFEREE)
+	{
+		ent->client->sess.referee = RL_NONE;
+		ClientUserinfoChanged(ent->s.clientNum);
+		CP("print \"You have been logged out\n\"");
+	}
 }
 
 //////////////////////////////
@@ -579,7 +579,7 @@ void G_PlayerBan()
 		}
 		else
 		{
-			G_Printf( "^3*** Can't ban a bot!\n" );
+			G_Printf("^3*** Can't ban a bot!\n");
 		}
 	}
 }
