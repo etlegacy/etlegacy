@@ -1826,7 +1826,7 @@ typedef enum
 
 typedef struct
 {
-	char *string;
+	const char *string;
 	int hash;
 } animStringItem_t;
 
