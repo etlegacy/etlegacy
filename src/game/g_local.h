@@ -1913,7 +1913,7 @@ extern vmCvar_t g_skillRating;
 #endif
 
 #ifdef FEATURE_MULTIVIEW
-extern vmCvar_t	g_multiview;
+extern vmCvar_t g_multiview;
 #endif
 
 typedef struct GeoIPTag
@@ -2419,14 +2419,16 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 #define MULTI_TRIGGER_DISGUISEDSONLY    512  // legacy only
 #define MULTI_TRIGGER_OBJECTIVEONLY     1024 // legacy only
 
+#define TARGET_PUSH_BOUNCEPAD           1
+
 // Spawnflags end
 
 // MAPVOTE - used when mapvoting is enabled
-#define MAPVOTE_TIE_LEASTPLAYED 1
+#define MAPVOTE_TIE_LEASTPLAYED  1
 #define MAPVOTE_ALT_INTERMISSION 2 // unused
-#define MAPVOTE_MULTI_VOTE 4
-#define MAPVOTE_NO_RANDOMIZE 8     // unused
-#define MAPVOTE_NEXTMAP_VOTEMAP 16
+#define MAPVOTE_MULTI_VOTE       4
+#define MAPVOTE_NO_RANDOMIZE     8 // unused
+#define MAPVOTE_NEXTMAP_VOTEMAP  16
 
 typedef enum
 {

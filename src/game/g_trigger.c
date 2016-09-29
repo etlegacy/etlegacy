@@ -378,7 +378,7 @@ void SP_target_push(gentity_t *self)
 	G_SetMovedir(self->s.angles, self->s.origin2);
 	VectorScale(self->s.origin2, self->speed, self->s.origin2);
 
-	if (self->spawnflags & 1)
+	if (self->spawnflags & TARGET_PUSH_BOUNCEPAD)
 	{
 		self->noise_index = G_SoundIndex("sound/world/jumppad.wav");
 	}
