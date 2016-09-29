@@ -697,10 +697,10 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	    meansOfDeath != MOD_SWITCHTEAM &&
 	    meansOfDeath != MOD_FLAMETHROWER && // these mods gib -> no fancy scream
 	    meansOfDeath != MOD_CRUSH &&
-		meansOfDeath != MOD_CRUSH_CONSTRUCTION &&
-		meansOfDeath != MOD_CRUSH_CONSTRUCTIONDEATH &&
-		meansOfDeath != MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER &&
-		meansOfDeath != MOD_TELEFRAG &&
+	    meansOfDeath != MOD_CRUSH_CONSTRUCTION &&
+	    meansOfDeath != MOD_CRUSH_CONSTRUCTIONDEATH &&
+	    meansOfDeath != MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER &&
+	    meansOfDeath != MOD_TELEFRAG &&
 	    //meansOfDeath != MOD_BACKSTAB && // :)
 	    !killedintank &&
 	    self->waterlevel < 3)
@@ -812,10 +812,10 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	// automatically go to limbo from tank
 	if (killedintank)
 	{
-		limbo(self, qfalse);   // but no corpse
 #ifdef FEATURE_SERVERMDX
 		self->client->deathAnim = qfalse;    // add no animation time
 #endif
+		limbo(self, qfalse);   // but no corpse
 	}
 	else if ((meansOfDeath == MOD_SUICIDE && g_gamestate.integer == GS_PLAYING))
 	{
@@ -1052,15 +1052,15 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod, grefEnti
 	{
 		if (g_debugBullets.integer >= 3)     // show hit player head bb
 		{
-			G_RailBox(head->r.currentOrigin, head->r.mins, head->r.maxs, tv(1.f,0.f,0.f), head->s.number|HITBOXBIT_HEAD);
+			G_RailBox(head->r.currentOrigin, head->r.mins, head->r.maxs, tv(1.f, 0.f, 0.f), head->s.number | HITBOXBIT_HEAD);
 
 			// show headshot trace
 			// end the headshot trace at the head box if it hits
-			if(tr.fraction != 1)
+			if (tr.fraction != 1)
 			{
 				VectorMA(start, (tr.fraction * 64.f), dir, end);
 			}
-			G_RailTrail(start, end, tv(1.f,0.f,0.f));
+			G_RailTrail(start, end, tv(1.f, 0.f, 0.f));
 		}
 
 		if (g_antilag.integer)
@@ -1119,16 +1119,16 @@ qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod, grefEntit
 		{
 			if (g_debugBullets.integer >= 3)     // show hit player leg bb
 			{
-				G_RailBox(leg->r.currentOrigin, leg->r.mins, leg->r.maxs, tv(1.f,0.f,0.f), leg->s.number|HITBOXBIT_LEGS);
+				G_RailBox(leg->r.currentOrigin, leg->r.mins, leg->r.maxs, tv(1.f, 0.f, 0.f), leg->s.number | HITBOXBIT_LEGS);
 
 				// show headshot trace
 				// end the headshot trace at the head box if it hits
-				if(tr.fraction != 1)
+				if (tr.fraction != 1)
 				{
 					VectorMA(start, (tr.fraction * 64.f), dir, end);
 				}
 
-				G_RailTrail(start, end, tv(1.f,0.f,0.f));
+				G_RailTrail(start, end, tv(1.f, 0.f, 0.f));
 			}
 
 			if (g_antilag.integer)
@@ -1862,15 +1862,15 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 
 void G_RailTrail(vec_t *start, vec_t *end, vec_t *color)
 {
-	gentity_t* temp;
+	gentity_t *temp;
 
 	temp = G_TempEntity(start, EV_RAILTRAIL);
 	VectorCopy(end, temp->s.origin2);
 
 	temp->s.dmgFlags  = 0;
-	temp->s.angles[0] = (int)(color[0]*255);
-	temp->s.angles[1] = (int)(color[1]*255);
-	temp->s.angles[2] = (int)(color[2]*255);
+	temp->s.angles[0] = (int)(color[0] * 255);
+	temp->s.angles[1] = (int)(color[1] * 255);
+	temp->s.angles[2] = (int)(color[2] * 255);
 	temp->s.density   = -1;
 }
 
@@ -1881,9 +1881,9 @@ G_RailBox
 */
 void G_RailBox(vec_t *origin, vec_t *mins, vec_t *maxs, vec_t *color, int index)
 {
-	vec3_t	   b1;
-	vec3_t	   b2;
-	gentity_t* temp;
+	vec3_t    b1;
+	vec3_t    b2;
+	gentity_t *temp;
 
 	VectorCopy(origin, b1);
 	VectorCopy(origin, b2);
@@ -1892,13 +1892,13 @@ void G_RailBox(vec_t *origin, vec_t *mins, vec_t *maxs, vec_t *color, int index)
 
 	temp = G_TempEntity(b1, EV_RAILTRAIL);
 
-	VectorCopy(b2,	temp->s.origin2);
+	VectorCopy(b2, temp->s.origin2);
 	VectorCopy(color, temp->s.angles);
 	temp->s.dmgFlags = 1;
 
-	temp->s.angles[0] = (int)(color[0]*255);
-	temp->s.angles[1] = (int)(color[1]*255);
-	temp->s.angles[2] = (int)(color[2]*255);
+	temp->s.angles[0] = (int)(color[0] * 255);
+	temp->s.angles[1] = (int)(color[1] * 255);
+	temp->s.angles[2] = (int)(color[2] * 255);
 
 	temp->s.effect1Time = index + 1;
 }
