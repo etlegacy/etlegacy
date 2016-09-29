@@ -502,8 +502,8 @@ char *enttypenames[] =
 
 /**
  * @brief prints a list of used - or when any param is added for all entities with following info
- *        - entnum
- *        - entity type OR event
+ *        - entnum (color red -> neverFree)
+ *        - entity type OR event OR freed
  *        - classname
  *        - neverFree
  */
@@ -513,13 +513,15 @@ void Svcmd_EntityList_f(void)
 	gentity_t *check = g_entities;
 	char      line[128];
 
+	G_Printf("^7 No.: ^3Type^7/^2Event^7/(freed)          ^7Classname                 ^1Targetname\n");
+
 	for (e = 0; e < MAX_GENTITIES ; e++, check++)
 	{
 		if (!check->inuse)
 		{
 			if (trap_Argc() > 1)
 			{
-				G_Printf("^2%4i: %s %s\n", e, check->classname, check->targetname);
+				G_Printf("^2%4i:^7 %s %s\n", e, check->classname, check->targetname);
 			}
 			entsFree++;
 			continue;
@@ -530,8 +532,16 @@ void Svcmd_EntityList_f(void)
 		// print the ents which are in use
 		//Q_strcat(line, sizeof(line), va("^7%4i: ", e));
 
-		Com_sprintf(line, 128, "^7%4i: ", e);
-
+		
+		if (check->neverFree)
+		{
+			Com_sprintf(line, 128, "^1%4i: ", e);
+		}
+		else
+		{
+			Com_sprintf(line, 128, "^7%4i: ", e);
+		}
+		
 		if (check->s.eType <= ET_EVENTS) // print events
 		{
 			Q_strcat(line, sizeof(line), va("^3%-27s^7", enttypenames[check->s.eType]));
