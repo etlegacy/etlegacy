@@ -124,7 +124,7 @@ elseif(WIN32)
 		set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT.lib /NODEFAULTLIB:MSVCRTD.lib")
 		add_definitions(-D_CRT_SECURE_NO_WARNINGS) # Do not show CRT warnings
 	endif(MSVC)
-	if(MINGW)
+	if(MINGW AND NOT DEBUG_BUILD)
 		set(CMAKE_C_LINK_EXECUTABLE "${CMAKE_C_LINK_EXECUTABLE} -static-libgcc")
 		set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -static-libgcc -static-libstdc++")
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static-libgcc")
@@ -133,7 +133,7 @@ elseif(WIN32)
 		set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_C_FLAGS} -static-libgcc -liconv -s")
 		set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS} -static-libgcc -static-libstdc++ -liconv -s")
 		add_definitions(-D_WIN32_IE=0x0501)
-	endif(MINGW)
+	endif(MINGW AND NOT DEBUG_BUILD)
 endif()
 
 # Get the system architecture

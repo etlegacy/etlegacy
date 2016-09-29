@@ -120,6 +120,12 @@ cmake_dependent_option(ET_KEY	"Copy existing etkey file from ET_FS_BASEPATH)"			
 # Setup
 #-----------------------------------------------------------------
 
+# Group the VisualStudio projects
+set(CMAKE_TARGETS_FOLDER CMake)
+set(BUNDLED_TARGETS_FOLDER Bundled)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER ${CMAKE_TARGETS_FOLDER})
+
 # Find and setup programs the build needs
 include(cmake/ETLPrograms.cmake)
 
@@ -153,6 +159,11 @@ include(cmake/ETLSourceGroup.cmake)
 if(BUILD_CLIENT)
 	include(cmake/ETLBuildRenderer.cmake)
 	include(cmake/ETLBuildClient.cmake)
+
+	#Since CMake 3.6 you are able to set the Visual Studio startup project
+	if(NOT ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} LESS 3.6)
+		set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT etl)
+	endif()
 endif(BUILD_CLIENT)
 
 if(BUILD_SERVER)
@@ -180,3 +191,5 @@ include(cmake/ETLInstall.cmake)
 
 # Packaging support
 include(cmake/ETLCPack.cmake)
+
+set_target_properties(uninstall PROPERTIES FOLDER ${CMAKE_TARGETS_FOLDER})
