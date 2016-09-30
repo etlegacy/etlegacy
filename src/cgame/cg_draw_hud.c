@@ -2122,7 +2122,7 @@ typedef struct
 	int frameCount;
 	int snapshotFlags[LAG_SAMPLES];
 	int snapshotSamples[LAG_SAMPLES];
-    int snapshotAntiwarp[LAG_SAMPLES];
+	int snapshotAntiwarp[LAG_SAMPLES];
 	int snapshotCount;
 } lagometer_t;
 
@@ -2167,8 +2167,8 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 	{
 		lagometer.snapshotSamples[index] = MAX(snap->ping - snap->ps.stats[STAT_ANTIWARP_DELAY], 0);
 	}
-	lagometer.snapshotAntiwarp[index]  = snap->ping; // TODO: check this for demoPlayback
-	lagometer.snapshotFlags[index]     = snap->snapFlags;
+	lagometer.snapshotAntiwarp[index] = snap->ping;  // TODO: check this for demoPlayback
+	lagometer.snapshotFlags[index]    = snap->snapFlags;
 	lagometer.snapshotCount++;
 }
 
@@ -2324,23 +2324,23 @@ static float CG_DrawLagometer(float y)
 		v = lagometer.snapshotSamples[i];
 		if (v > 0)
 		{
-            // antiwarp indicator
-            if (lagometer.snapshotAntiwarp[i] > 0)
-            {
-            	float w = lagometer.snapshotAntiwarp[i] * vscale;
+			// antiwarp indicator
+			if (lagometer.snapshotAntiwarp[i] > 0)
+			{
+				float w = lagometer.snapshotAntiwarp[i] * vscale;
 
-                if (color != 6)
-                {
-                    color = 6;
-                    trap_R_SetColor(colorAW);
-                }
+				if (color != 6)
+				{
+					color = 6;
+					trap_R_SetColor(colorAW);
+				}
 
-                if (w > range)
-                {
-                    w = range;
-                }
-                trap_R_DrawStretchPic( ax + aw - a, ay + ah - w - 2, 1, w, 0, 0, 0, 0, cgs.media.whiteShader );
-            }
+				if (w > range)
+				{
+					w = range;
+				}
+				trap_R_DrawStretchPic(ax + aw - a, ay + ah - w - 2, 1, w, 0, 0, 0, 0, cgs.media.whiteShader);
+			}
 
 			if (lagometer.snapshotFlags[i] & SNAPFLAG_RATE_DELAYED)
 			{
@@ -2551,6 +2551,8 @@ void CG_Hud_Setup(void)
 	CG_ReadHudScripts();
 }
 
+#ifdef LEGACY_DEBUG
+
 static void CG_PrintHudComponent(const char *name, hudComponent_t comp)
 {
 	Com_Printf("%s location: X %.f Y %.f W %.f H %.f visible: %i\n", name, comp.location.x, comp.location.y, comp.location.w, comp.location.h, comp.visible);
@@ -2576,6 +2578,7 @@ static void CG_PrintHud(hudStucture_t *hud)
 	CG_PrintHudComponent("weaponstability", hud->weaponstability);
 	CG_PrintHudComponent("livesleft", hud->livesleft);
 }
+#endif
 
 /*
 =====================
@@ -2689,7 +2692,7 @@ void CG_DrawUpperRight(void)
 			}
 		}
 
-        if (!(cg.snap->ps.pm_flags & PMF_LIMBO) && (cgs.autoMapExpanded || (cg.time - cgs.autoMapExpandTime < 250.f)))
+		if (!(cg.snap->ps.pm_flags & PMF_LIMBO) && (cgs.autoMapExpanded || (cg.time - cgs.autoMapExpandTime < 250.f)))
 		{
 			return;
 		}
