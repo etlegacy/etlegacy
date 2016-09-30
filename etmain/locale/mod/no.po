@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2016-09-17 17:57+0000\n"
+"PO-Revision-Date: 2016-09-30 17:58+0000\n"
 "Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
 "Language-Team: Norwegian (http://www.transifex.com/etlegacy/etlegacy/language/no/)\n"
 "MIME-Version: 1.0\n"
@@ -2435,11 +2435,6 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Display Tool Tips in the UI"
-msgstr ""
-
-#: etmain/ui/options_customise_game.menu:1
-#: etmain/ui/wm_ftquickmessageAlt.menu:1
-msgid "ui/menudef.h"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:28 etmain/ui/options.menu:33

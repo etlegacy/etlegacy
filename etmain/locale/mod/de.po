@@ -13,8 +13,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2016-09-18 09:34+0000\n"
-"Last-Translator: IR4T4 <gutzu@gmx.ch>\n"
+"PO-Revision-Date: 2016-09-30 17:58+0000\n"
+"Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
 "Language-Team: German (http://www.transifex.com/etlegacy/etlegacy/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -246,7 +246,7 @@ msgid ""
 "Many thanks to Splash Damage for their release of the source code, ioWolfET "
 "& raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for"
 " their inspirations."
-msgstr "Vielen Dank an Splash Damage für die Veröffentlichen des Source Codes, ioWolfET & raedwulf-et (besonders Ralph Eastwood) für unsere Codebasis und ioQuake3 für ihre Inspiration."
+msgstr "Vielen Dank an Splash Damage für die Veröffentlichung des Quellcodes, ioWolfET & raedwulf-et (besonders Ralph Eastwood) für unsere Codebasis und ioQuake3 für ihre Inspirationen."
 
 #: etmain/ui/credits_etlegacy.menu:159 etmain/ui/credits_halloffame.menu:85
 msgid "^1CONTRIBUTORS"
@@ -641,7 +641,7 @@ msgstr "Maximale Anzahl der Beschwerden die ein Spieler erhalten darf bevor Serv
 
 #: etmain/ui/hostgame_advanced.menu:52
 msgid "Maximum Complainees:"
-msgstr "Maximale Beschwerende"
+msgstr "Maximale Beschwerende:"
 
 #: etmain/ui/hostgame_advanced.menu:52
 #: etmain/ui/options_customise_game.menu:49
@@ -859,15 +859,15 @@ msgstr "Erlaubt Spielern über einen Karten- oder Kampangnenwechsel abzustimmen"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Match Reset:"
-msgstr "Spiel zurücksetzen:"
+msgstr "Spiel Neustart:"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Allow players to vote for the match to be reset"
-msgstr "Erlaubt Spielern abzustimmen ob ein Spiel zurückgesetzt wird"
+msgstr "Erlaubt Spielern abzustimmen, ob ein Spiel neu gestartet wird"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Mute Spects:"
-msgstr "Beobachter stummstellen:"
+msgstr "Beobachter stumm:"
 
 #: etmain/ui/hostgame_advanced.menu:86
 msgid "Allow players to vote for spectators to be muted"
@@ -2443,11 +2443,6 @@ msgstr "Zeige Werkzeug Hinweise:"
 msgid "Display Tool Tips in the UI"
 msgstr "Zeige Werkzeughinweise im UI"
 
-#: etmain/ui/options_customise_game.menu:1
-#: etmain/ui/wm_ftquickmessageAlt.menu:1
-msgid "ui/menudef.h"
-msgstr ""
-
 #: etmain/ui/options_customise_hud.menu:28 etmain/ui/options.menu:33
 #: etmain/ui/viewreplay.menu:62
 msgid "VIEW"
@@ -3013,7 +3008,7 @@ msgstr "Setze die Farbe für das primäre Fadenkreuz"
 
 #: etmain/ui/options_customise_hud.menu:99
 msgid "Primary Alpha:"
-msgstr "Primär Alpha"
+msgstr "Primär Alpha:"
 
 #: etmain/ui/options_customise_hud.menu:99
 msgid "Set the transparency level for the primary crosshair"
@@ -3445,15 +3440,15 @@ msgstr "Effekt Lautstärke:"
 
 #: etmain/ui/options_system.menu:41
 msgid "Set the effects volume"
-msgstr "Setze die Effektlautstärke"
+msgstr "Setzt die Effektlautstärke"
 
 #: etmain/ui/options_system.menu:43
 msgid "Music Volume:"
-msgstr "Musik Lautstärke"
+msgstr "Musik Lautstärke:"
 
 #: etmain/ui/options_system.menu:43
 msgid "Set the music volume"
-msgstr "Setze die Musiklautstärke"
+msgstr "Setzt die Musiklautstärke"
 
 #: etmain/ui/options_system.menu:44
 msgid "Sound Quality:"
@@ -3485,7 +3480,7 @@ msgstr "Schaltet den Dopplereffekt ein/aus"
 
 #: etmain/ui/options_system.menu:46
 msgid "Mute When Minimized:"
-msgstr "Stumm Wenn Minimiert: "
+msgstr "Stumm Wenn Minimiert:"
 
 #: etmain/ui/options_system.menu:46
 msgid "Enables or disables sound when window is minimized"
@@ -4780,15 +4775,15 @@ msgstr "Drücke %s, um den vorherigen Spieler zu folgen"
 #: src/cgame/cg_draw.c:2168
 #, c-format
 msgid "Press %s to %s multiview mode"
-msgstr "Drücke %s bis %s für die Mehrspieleransicht"
+msgstr "Drücke %s, um die Mehrspieleransicht %s"
 
 #: src/cgame/cg_draw.c:2168
 msgid "disable"
-msgstr "abschalten"
+msgstr "abzuschalten"
 
 #: src/cgame/cg_draw.c:2168
 msgid "activate"
-msgstr "aktivieren"
+msgstr "einzuschalten"
 
 #: src/cgame/cg_draw.c:2231
 msgid "You are wounded and waiting for a medic."
