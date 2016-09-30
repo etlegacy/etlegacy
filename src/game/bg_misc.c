@@ -4202,16 +4202,19 @@ int BG_simpleHintsCollapse(int hint, int val)
 		{
 			return 0;
 		}
+		break;
 	case HINT_BUILD:
 		if (val > 0)
 		{
 			return 1;
 		}
+		break;
 	case HINT_BREAKABLE:
 		if (val == 0)
 		{
 			return 1;
 		}
+		break;
 	case HINT_DOOR_ROTATING:
 	case HINT_BUTTON:
 	case HINT_MG42:
@@ -4219,11 +4222,13 @@ int BG_simpleHintsCollapse(int hint, int val)
 		{
 			return 2;
 		}
+		break;
 	case HINT_BREAKABLE_DYNAMITE:
 		if (val == 0)
 		{
 			return 3;
 		}
+		break;
 	default:
 		break;
 	}
@@ -4362,8 +4367,8 @@ static char coord[6];
 
 char *BG_GetLocationString(float xpos, float ypos)
 {
-	int         x = (xpos - locInfo.gridStartCoord[0]) / locInfo.gridStep[0];
-	int         y = (locInfo.gridStartCoord[1] - ypos) / locInfo.gridStep[1];
+	int x = (xpos - locInfo.gridStartCoord[0]) / locInfo.gridStep[0];
+	int y = (locInfo.gridStartCoord[1] - ypos) / locInfo.gridStep[1];
 
 	coord[0] = '\0';
 
