@@ -2114,7 +2114,7 @@ static void PM_Footsteps(void)
 			{
 				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_CLIMBUP, qtrue);
 			}
-			else if (pm->ps->velocity[2] < 0)
+			else
 			{
 				animResult = BG_AnimScriptAnimation(pm->ps, pm->character->animModelInfo, ANIM_MT_CLIMBDOWN, qtrue);
 			}
