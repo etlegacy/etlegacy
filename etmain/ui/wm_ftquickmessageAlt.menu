@@ -1,4 +1,4 @@
-_(#include "ui/menudef.h"
+#include "ui/menudef.h"
 #include "ui/menumacros.h"
 #define DEFAULT_TEXT_SCALE 0.25
 #define ORIGIN_QUICKMESSAGE		10 10
