@@ -2437,11 +2437,6 @@ msgstr ""
 msgid "Display Tool Tips in the UI"
 msgstr ""
 
-#: etmain/ui/options_customise_game.menu:1
-#: etmain/ui/wm_ftquickmessageAlt.menu:1
-msgid "ui/menudef.h"
-msgstr ""
-
 #: etmain/ui/options_customise_hud.menu:28 etmain/ui/options.menu:33
 #: etmain/ui/viewreplay.menu:62
 msgid "VIEW"
