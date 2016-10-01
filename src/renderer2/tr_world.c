@@ -2096,7 +2096,7 @@ static void R_CoherentHierachicalCulling()
 			Ren_LogComment("distance-queue --> node %li\n", (long)(node - tr.world->nodes));
 
 			if (node->visCounts[tr.visIndex] == tr.visCounts[tr.visIndex] && // node was marked as potentially visible
-			    (node->contents == -1 || (node->contents != -1 && node->numMarkSurfaces)) &&
+			    (node->contents == -1 || node->numMarkSurfaces) &&
 			    InsideViewFrustum(node, FRUSTUM_CLIPALL)
 			    )
 			{
