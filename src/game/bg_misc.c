@@ -4204,7 +4204,7 @@ int BG_simpleHintsCollapse(int hint, int val)
 		}
 		break;
 	case HINT_BUILD:
-		if (val > 0)
+		if (val >= 0)
 		{
 			return 1;
 		}
