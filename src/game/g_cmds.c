@@ -236,8 +236,8 @@ static void G_SendSkillRating(gentity_t *ent)
 	{
 		cl = &level.clients[level.sortedClients[i]];
 		Q_strcat(buff, sizeof(buff), va("%.3f %.3f ",
-			MAX(cl->sess.mu - 3 * cl->sess.sigma, 0.f),
-			cl->sess.mu - 3 * cl->sess.sigma - (cl->sess.oldmu - 3 * cl->sess.oldsigma)));
+		                                MAX(cl->sess.mu - 3 * cl->sess.sigma, 0.f),
+		                                cl->sess.mu - 3 * cl->sess.sigma - (cl->sess.oldmu - 3 * cl->sess.oldsigma)));
 	}
 
 	if (strlen(buff) > 3)
@@ -1122,12 +1122,12 @@ void G_DropItems(gentity_t *self)
 	// drop flag regardless
 	if (self->client->ps.powerups[PW_REDFLAG])
 	{
-		item = BG_GetItem(ITEM_RED_FLAG);
+		item                                  = BG_GetItem(ITEM_RED_FLAG);
 		self->client->ps.powerups[PW_REDFLAG] = 0;
 	}
 	if (self->client->ps.powerups[PW_BLUEFLAG])
 	{
-		item = BG_GetItem(ITEM_BLUE_FLAG);
+		item                                   = BG_GetItem(ITEM_BLUE_FLAG);
 		self->client->ps.powerups[PW_BLUEFLAG] = 0;
 	}
 
@@ -1142,10 +1142,10 @@ void G_DropItems(gentity_t *self)
 		VectorCopy(self->client->ps.origin, origin);
 		// if the player hasn't died, then assume he's
 		//      throwing objective per g_dropObj
-		if(self->health > 0)
+		if (self->health > 0)
 		{
 			VectorCopy(self->client->ps.viewangles, angles);
-			if(angles[PITCH] > 0)
+			if (angles[PITCH] > 0)
 			{
 				angles[PITCH] = 0;
 			}
@@ -1157,8 +1157,8 @@ void G_DropItems(gentity_t *self)
 
 		flag = LaunchItem(item, origin, launchvel, self->s.number);
 
-		flag->s.modelindex2 = self->s.otherEntityNum2;// FIXME set player->otherentitynum2 with old modelindex2 from flag and restore here
-		flag->message       = self->message;	// also restore item name
+		flag->s.modelindex2 = self->s.otherEntityNum2; // FIXME set player->otherentitynum2 with old modelindex2 from flag and restore here
+		flag->message       = self->message; // also restore item name
 
 #ifdef OMNIBOTS
 		Bot_Util_SendTrigger(flag, NULL, va("%s dropped.", flag->message), "dropped");
@@ -4469,8 +4469,8 @@ void Cmd_IntermissionSkillRating_f(gentity_t *ent)
 		if (g_entities[i].inuse)
 		{
 			Q_strcat(buffer, sizeof(buffer), va("%.3f %.3f ",
-			    MAX(level.clients[i].sess.mu - 3 * level.clients[i].sess.sigma, 0.f),
-			    level.clients[i].sess.mu - 3 * level.clients[i].sess.sigma - (level.clients[i].sess.oldmu - 3 * level.clients[i].sess.oldsigma)));
+			                                    MAX(level.clients[i].sess.mu - 3 * level.clients[i].sess.sigma, 0.f),
+			                                    level.clients[i].sess.mu - 3 * level.clients[i].sess.sigma - (level.clients[i].sess.oldmu - 3 * level.clients[i].sess.oldsigma)));
 		}
 		else
 		{

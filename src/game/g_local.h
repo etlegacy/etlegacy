@@ -1551,7 +1551,6 @@ void G_Script_ScriptParse(gentity_t *ent);
 qboolean G_Script_ScriptRun(gentity_t *ent);
 void G_Script_ScriptEvent(gentity_t *ent, char *eventStr, char *params);
 void G_Script_ScriptLoad(void);
-void G_Script_EventStringInit(void);
 
 void mountedmg42_fire(gentity_t *other);
 void script_mover_use(gentity_t *ent, gentity_t *other, gentity_t *activator);
@@ -1575,7 +1574,6 @@ qboolean G_ScriptAction_TagConnect(gentity_t *ent, char *params);
 qboolean G_ScriptAction_Halt(gentity_t *ent, char *params);
 qboolean G_ScriptAction_StopSound(gentity_t *ent, char *params);
 qboolean G_ScriptAction_EntityScriptName(gentity_t *ent, char *params);
-qboolean G_ScriptAction_AIScriptName(gentity_t *ent, char *params);
 qboolean G_ScriptAction_AxisRespawntime(gentity_t *ent, char *params);
 qboolean G_ScriptAction_AlliedRespawntime(gentity_t *ent, char *params);
 qboolean G_ScriptAction_NumberofObjectives(gentity_t *ent, char *params);

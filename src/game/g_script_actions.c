@@ -3124,17 +3124,6 @@ qboolean G_ScriptAction_EntityScriptName(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-
-/*
-=================
-G_ScriptAction_AIScriptName
-=================
-*/
-qboolean G_ScriptAction_AIScriptName(gentity_t *ent, char *params)
-{
-	return qtrue;
-}
-
 // -----------------------------------------------------------------------
 
 /*

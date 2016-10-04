@@ -2043,7 +2043,7 @@ evilbanigoto:
 				traceEnt->s.effect1Time = level.time;
 
 				// dynamite crosshair ID
-				if(g_misc.integer & G_MISC_CROSSHAIR_DYNAMITE)
+				if (g_misc.integer & G_MISC_CROSSHAIR_DYNAMITE)
 				{
 					traceEnt->s.otherEntityNum = ent->s.number;
 				}
@@ -3469,10 +3469,10 @@ GRENADE LAUNCHER
 
 gentity_t *weapon_gpg40_fire(gentity_t *ent, int grenType)
 {
-	trace_t   tr;
-	vec3_t    viewpos;
-	vec3_t    tosspos;
-	vec3_t    orig_viewpos; // to prevent nade-through-teamdoor sploit
+	trace_t tr;
+	vec3_t  viewpos;
+	vec3_t  tosspos;
+	vec3_t  orig_viewpos; // to prevent nade-through-teamdoor sploit
 
 	AngleVectors(ent->client->ps.viewangles, forward, NULL, NULL);
 
@@ -3541,11 +3541,11 @@ gentity_t *weapon_mortar_fire(gentity_t *ent, int grenType)
 
 gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 {
-	trace_t   tr;
-	vec3_t    viewpos;
-	float     upangle = 0, pitch = ent->s.apos.trBase[0];  // start with level throwing and adjust based on angle
-	vec3_t    tosspos;
-	qboolean  underhand = qtrue;
+	trace_t  tr;
+	vec3_t   viewpos;
+	float    upangle = 0, pitch = ent->s.apos.trBase[0];   // start with level throwing and adjust based on angle
+	vec3_t   tosspos;
+	qboolean underhand = qtrue;
 
 	// smoke grenades always overhand
 	if (pitch >= 0)
