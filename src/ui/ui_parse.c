@@ -723,8 +723,8 @@ qboolean ItemParse_elementheight(itemDef_t *item, int handle)
 // feeder <float>
 qboolean ItemParse_feeder(itemDef_t *item, int handle)
 {
-	if (!PC_Float_Parse(handle, &item->special))
-	{
+	if (!PC_Int_Parse(handle, &item->special))
+	{   
 		return qfalse;
 	}
 
@@ -1168,7 +1168,7 @@ qboolean ItemParse_accept(itemDef_t *item, int handle)
 
 qboolean ItemParse_special(itemDef_t *item, int handle)
 {
-	if (!PC_Float_Parse(handle, &item->special))
+	if (!PC_Int_Parse(handle, &item->special))
 	{
 		return qfalse;
 	}

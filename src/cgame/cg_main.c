@@ -2184,12 +2184,12 @@ void CG_QueueMusic(void)
 	trap_S_StartBackgroundTrack(parm, "", -2);    // '-2' for 'queue looping track' (QUEUED_PLAY_LOOPED)
 }
 
-static qboolean CG_OwnerDrawHandleKey(int ownerDraw, int flags, float *special, int key)
+static qboolean CG_OwnerDrawHandleKey(int ownerDraw, int flags, int *special, int key)
 {
 	return qfalse;
 }
 
-static int CG_FeederCount(float feederID)
+static int CG_FeederCount(int feederID)
 {
 	int i, count = 0;
 
@@ -2246,7 +2246,7 @@ static clientInfo_t *CG_InfoFromScoreIndex(int index, int team, int *scoreIndex)
 	return &cgs.clientinfo[cg.scores[index].client];
 }
 
-static const char *CG_FeederItemText(float feederID, int index, int column, qhandle_t *handle, int *numhandles)
+static const char *CG_FeederItemText(int feederID, int index, int column, qhandle_t *handle, int *numhandles)
 {
 	int          scoreIndex = 0;
 	clientInfo_t *info      = NULL;
@@ -2291,12 +2291,12 @@ static const char *CG_FeederItemText(float feederID, int index, int column, qhan
 	return "";
 }
 
-static qhandle_t CG_FeederItemImage(float feederID, int index)
+static qhandle_t CG_FeederItemImage(int feederID, int index)
 {
 	return 0;
 }
 
-static void CG_FeederSelection(float feederID, int index)
+static void CG_FeederSelection(int feederID, int index)
 {
 	int i, count = 0;
 	int team = (feederID == FEEDER_REDTEAM_LIST) ? TEAM_AXIS : TEAM_ALLIES;
