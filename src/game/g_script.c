@@ -503,7 +503,7 @@ void G_Script_ScriptParse(gentity_t *ent)
 				memset(params, 0, sizeof(params));
 
 				// Parse for {}'s if this is a set command
-				if (!Q_stricmp(action->actionString, "set") || !Q_stricmp(action->actionString, "create") || !Q_stricmp(action->actionString, "delete"))
+				if (action->hash == SET_HASH || action->hash == DELETE_HASH || action->hash == CREATE_HASH)
 				{
 					token = COM_Parse(&pScript);
 					if (token[0] != '{')
@@ -544,20 +544,15 @@ void G_Script_ScriptParse(gentity_t *ent)
 						if (i == 0)
 						{
 							// Special case: playsound's need to be cached on startup to prevent in-game pauses
-							if (!Q_stricmp(action->actionString, "playsound"))
+							if (action->hash == PLAYSOUND_HASH)
 							{
 								G_SoundIndex(token);
 							}
-							else if (!Q_stricmp(action->actionString, "changemodel"))
+							else if (action->hash == CHANGEMODEL_HASH)
 							{
 								G_ModelIndex(token);
 							}
-							else if (buildScript && (
-							             !Q_stricmp(action->actionString, "mu_start") ||
-							             !Q_stricmp(action->actionString, "mu_play") ||
-							             !Q_stricmp(action->actionString, "mu_queue") ||
-							             !Q_stricmp(action->actionString, "startcam"))
-							         )
+							else if (buildScript && (action->hash == MU_START_HASH || action->hash == MU_PLAY_HASH || action->hash == MU_QUEUE_HASH))
 							{
 								if (strlen(token))           // we know there's a [0], but don't know if it's '0'
 								{
@@ -568,7 +563,7 @@ void G_Script_ScriptParse(gentity_t *ent)
 
 						if (i == 0 || i == 1)
 						{
-							if (!Q_stricmp(action->actionString, "remapshader"))
+							if (action->hash == REMAPSHADER_HASH)
 							{
 								G_ShaderIndex(token);
 							}
@@ -679,7 +674,9 @@ G_Script_GetEventIndex
 int G_Script_GetEventIndex(gentity_t *ent, char *eventStr, char *params)
 {
 	int i, eventNum = -1;
-	int hash = BG_StringHashValue_Lwr(eventStr);
+	int hash;
+
+	hash = BG_StringHashValue_Lwr(eventStr);
 
 	// find out which event this is
 	for (i = 0; gScriptEvents[i].eventStr; i++)
@@ -730,7 +727,9 @@ G_Script_ScriptEvent
 */
 void G_Script_ScriptEvent(gentity_t *ent, char *eventStr, char *params)
 {
-	int i = G_Script_GetEventIndex(ent, eventStr, params);
+	int i;
+	
+	i = G_Script_GetEventIndex(ent, eventStr, params);
 
 	if (i >= 0)
 	{
