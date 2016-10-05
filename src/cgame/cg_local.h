@@ -1806,7 +1806,7 @@ typedef struct
 #define NUM_ENDGAME_AWARDS     19   // total number of endgame awards
 #define NUMSHOW_ENDGAME_AWARDS 14   // number of awards to display that will fit on screen
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 // used by demo_autotimescaleweapons;
 #define ATSW_PANZER             0x01
 #define ATSW_GRENADE            0x02
@@ -2093,7 +2093,7 @@ typedef struct cgs_s
 #ifdef FEATURE_MULTIVIEW
 	int mvAllowed;
 #endif
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	cam_t demoCamera;
 	int currentMenuLevel;
 #endif
@@ -2244,7 +2244,7 @@ extern vmCvar_t demo_infoWindow;
 #ifdef FEATURE_MULTIVIEW
 extern vmCvar_t mv_sensitivity;
 #endif
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 extern vmCvar_t demo_weaponcam;
 extern vmCvar_t demo_followDistance;
 extern vmCvar_t demo_yawPitchRollSpeed;
@@ -2736,7 +2736,7 @@ void CG_dumpStats_f(void);
 // MAPVOTE
 void CG_parseMapVoteListInfo(void);
 void CG_parseMapVoteTally(void);
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 void CG_FreecamTurnLeftDown_f(void);
 void CG_FreecamTurnLeftUp_f(void);
 void CG_FreecamTurnRightDown_f(void);

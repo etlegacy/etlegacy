@@ -35,7 +35,7 @@
 
 #include "cg_local.h"
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 
 #define ADDLINE_WIDTH   1.5f
 

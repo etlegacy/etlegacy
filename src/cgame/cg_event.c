@@ -292,7 +292,7 @@ static void CG_Obituary(entityState_t *ent)
 	}
 
 	// check for kill messages from the current clientNum
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	if (attacker == cg.clientNum && !cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 #else
 	if (attacker == cg.clientNum)
@@ -682,7 +682,7 @@ static void CG_ItemPickup(int itemNum)
 		break;
 	}
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 	{
 		CG_AddPMItem(giType, va(CG_TranslateString("Picked up %s"), CG_TranslateString(CG_PickupItemText(itemNum))), " ", cgs.media.pmImages[giType], 0, 0, NULL);
@@ -2929,7 +2929,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			if (sound)
 			{
 				// no origin!
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 				if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 				{
 					trap_S_StartLocalSound(sound, CHAN_AUTO);
@@ -2965,7 +2965,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 					sound = CG_CustomSound(es->number, s);
 					if (sound)
 					{
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 						if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 						{
 							trap_S_StartLocalSound(sound, CHAN_AUTO);
@@ -3262,7 +3262,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 		DEBUGNAME("EV_SHAKE");
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 		if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 		{
 			break;
@@ -3319,7 +3319,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		const char *wav = NULL;
 
 		DEBUGNAME("EV_AIRSTRIKEMESSAGE");
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 		if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 		{
 			break;
@@ -3372,7 +3372,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		const char *wav = NULL;
 
 		DEBUGNAME("EV_ARTYMESSAGE");
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 		if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 		{
 			break;

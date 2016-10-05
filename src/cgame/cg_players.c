@@ -300,7 +300,7 @@ void CG_NewClientInfo(int clientNum)
 			}
 		}
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 		if (newInfo.rank > cgs.clientinfo[cg.clientNum].rank && !cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 #else
 		if (newInfo.rank > cgs.clientinfo[cg.clientNum].rank)
@@ -357,14 +357,14 @@ void CG_NewClientInfo(int clientNum)
 						CG_LimboPanel_SendSetupMsg(qfalse);
 					}
 				}
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 				if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 				{
 #endif
 				CG_AddPMItemBig(PM_SKILL, va(CG_TranslateString("Increased %s skill to level %i!"), CG_TranslateString(skillNames[i]), newInfo.skill[i]), cgs.media.skillPics[i]);
 
 				CG_PriorityCenterPrint(va(CG_TranslateString("You have been rewarded with %s"), CG_TranslateString(cg_skillRewards[i][newInfo.skill[i] - 1])), 400, cg_fontScaleCP.value, 99999);
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 			}
 #endif
 			}

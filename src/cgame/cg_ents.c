@@ -1160,7 +1160,7 @@ static void CG_Missile(centity_t *cent)
 		}
 	}
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	// edv renderingWeaponCam fix
 	if (cent->currentState.weapon == WP_PANZERFAUST
 		|| cent->currentState.weapon == WP_BAZOOKA
@@ -1240,7 +1240,7 @@ static void CG_Missile(centity_t *cent)
 				VectorCopy(cent->lerpOrigin, cent->rawOrigin);
 			}
 		}
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 		// save this so we can use it later (eg in edv)
 		{
 			vec3_t d2;
@@ -1284,7 +1284,7 @@ static void CG_Missile(centity_t *cent)
 		CG_AddRefEntityWithPowerups(&ent, s1->powerups, TEAM_FREE, s1, vec3_origin);
 	}
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	CG_EDV_WeaponCam(cent, &ent);
 #endif
 }
