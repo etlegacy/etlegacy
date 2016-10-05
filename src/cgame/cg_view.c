@@ -266,7 +266,7 @@ static void CG_CalcVrect(void)
 
 //==============================================================================
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 
 extern void CG_DrawPVShint(void);
 
@@ -994,7 +994,7 @@ static int CG_CalcFov(void)
 		cg.zoomval     = 0;
 	}
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	//fix for edv
 	if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 	{
@@ -1079,7 +1079,7 @@ static int CG_CalcFov(void)
 
 	cg.refdef_current->rdflags &= ~RDF_SNOOPERVIEW;
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 	{
 		//do nothing
@@ -1305,7 +1305,7 @@ int CG_CalcViewValues(void)
 			VectorCopy(cgs.ccPortalAngles, cg.refdefViewAngles);
 		}
 	}
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	else if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 	{
 		//do nothing
@@ -1339,13 +1339,13 @@ int CG_CalcViewValues(void)
 	}
 	else
 	{
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 		if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 		{
 #endif
 		VectorCopy(ps->origin, cg.refdef_current->vieworg);
 		VectorCopy(ps->viewangles, cg.refdefViewAngles);
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	}
 #endif
 	}
@@ -1376,7 +1376,7 @@ int CG_CalcViewValues(void)
 		}
 
 		// lock the viewangles if the game has told us to
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 		if (ps->viewlocked && !cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 #else
 		if (ps->viewlocked)
@@ -1395,7 +1395,7 @@ int CG_CalcViewValues(void)
 			}
 		}
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 		if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
 		{
 			CG_OffsetFreeCamView();
@@ -1413,7 +1413,7 @@ int CG_CalcViewValues(void)
 		}
 		else
 		{
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 			VectorCopy(cg.refdef.vieworg, cgs.demoCamera.camOrigin);
 			VectorCopy(cg.refdefViewAngles, cgs.demoCamera.camAngle);
 #endif
@@ -1428,7 +1428,7 @@ int CG_CalcViewValues(void)
 		}
 
 		// lock the viewangles if the game has told us to
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 		//freecam must not get viewlocked
 		if (ps->viewlocked && (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam))
 		{
@@ -1463,7 +1463,7 @@ int CG_CalcViewValues(void)
 		}
 	}
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	if (cgs.demoCamera.startLean)
 	{
 		cg.refdefViewAngles[2] = 0.0;
@@ -2085,7 +2085,7 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 
 	DEBUGTIME
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	if (cg.demoPlayback)
 	{
 		CG_EDV_RunInput();
@@ -2102,7 +2102,7 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 
 #if FEATURE_MULTIVIEW
 	// MV handling
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	if (cg.mvCurrentMainview != NULL && cg.snap->ps.pm_type != PM_INTERMISSION && cgs.mvAllowed && !cgs.demoCamera.renderingFreeCam)
 #else
 	if (cg.mvCurrentMainview != NULL && cg.snap->ps.pm_type != PM_INTERMISSION && cgs.mvAllowed)
@@ -2123,7 +2123,7 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 		DEBUGTIME
 
 		// decide on third person view
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 		cg.renderingThirdPerson = cg_thirdPerson.integer || (cg.snap->ps.stats[STAT_HEALTH] <= 0) || cg.showGameView || cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam;
 #else
 		cg.renderingThirdPerson = cg_thirdPerson.integer || (cg.snap->ps.stats[STAT_HEALTH] <= 0) || cg.showGameView;
@@ -2135,7 +2135,7 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 
 		DEBUGTIME
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 		if (demo_autotimescaleweapons.integer != 0 && cg.demoPlayback)
 		{
 			if (cgs.demoCamera.renderingWeaponCam)

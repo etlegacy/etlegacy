@@ -1286,7 +1286,7 @@ void CG_ReadHuds_f(void)
 	CG_ReadHudScripts();
 }
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 void CG_FreecamTurnLeftDown_f(void)
 {
 	cgs.demoCamera.turn |= 0x01;
@@ -1586,7 +1586,7 @@ static consoleCommand_t commands[] =
 	{ "resetTimer",          CG_TimerReset_f           }, // keep ETPro compatibility
 	{ "class",               CG_Class_f                },
 	{ "readhuds",            CG_ReadHuds_f             },
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	{ "+freecam_turnleft",   CG_FreecamTurnLeftDown_f  },
 	{ "-freecam_turnleft",   CG_FreecamTurnLeftUp_f    },
 	{ "+freecam_turnright",  CG_FreecamTurnRightDown_f },

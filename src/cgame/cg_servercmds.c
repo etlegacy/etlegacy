@@ -2633,7 +2633,7 @@ static void CG_ServerCommand(void)
 		// process locations and name
 		Com_sprintf(text, sizeof(text), "(%s^7)^3(%s^3): %s", cgs.clientinfo[clientNum].name, loc, s);
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 		if ((strstr(text, "Fire Mission: ") || strstr(text, "Pilot: ")) && (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam))
 		{
 			return;

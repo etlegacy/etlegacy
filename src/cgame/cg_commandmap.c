@@ -1515,7 +1515,7 @@ void CG_DrawAutoMap(float x, float y, float w, float h)
 		}
 	}
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	if (cgs.demoCamera.renderingFreeCam == qtrue || cgs.demoCamera.renderingWeaponCam == qtrue || !cg_drawCompass.integer)
 	{
 		return;

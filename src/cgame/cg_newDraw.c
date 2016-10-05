@@ -613,7 +613,7 @@ void CG_DrawWeapHeat(rectDef_t *rect, int align)
 	CG_FilledBar(rect->x, rect->y, rect->w, rect->h, color, color2, NULL, (float)cg.snap->ps.curWeapHeat / 255.0f, flags);
 }
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 int old_mouse_x_pos = 0, old_mouse_y_pos = 0;
 #endif
 
@@ -632,7 +632,7 @@ void CG_MouseEvent(int x, int y)
 	case CGAME_EVENT_CAMPAIGNBREIFING:
 	case CGAME_EVENT_FIRETEAMMSG:
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 		if (!cgs.demoCamera.renderingFreeCam)
 		{
 #endif
@@ -661,7 +661,7 @@ void CG_MouseEvent(int x, int y)
             {
                 CG_SpeakerEditorMouseMove_Handling(x, y);
             }
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
         }
         else
         {
@@ -880,7 +880,7 @@ void CG_KeyEvent(int key, qboolean down)
 	{
 	// Demos get their own keys
 	case CGAME_EVENT_DEMO:
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 		if (cg_predefineddemokeys.integer)
 		{
 			CG_DemoClick(key, down);
@@ -908,7 +908,7 @@ void CG_KeyEvent(int key, qboolean down)
 		break;
 #ifdef FEATURE_MULTIVIEW
 	case  CGAME_EVENT_MULTIVIEW:
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 		if (cg_predefineddemokeys.integer)
 		{
 			CG_mv_KeyHandling(key, down);

@@ -650,7 +650,7 @@ void CG_mvDraw(cg_window_t *sw)
 	VectorCopy(cent->lerpOrigin, refdef.vieworg);
 	VectorCopy(cent->lerpAngles, cg.refdefViewAngles);
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	// only copy mainview origin/angles freecam
 	VectorCopy(refdef.vieworg, cgs.demoCamera.camOrigin);
 	VectorCopy(cg.refdefViewAngles, cgs.demoCamera.camAngle);

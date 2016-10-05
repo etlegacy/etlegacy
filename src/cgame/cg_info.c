@@ -291,7 +291,7 @@ void CG_DemoClick(int key, qboolean down)
 {
 	int milli = trap_Milliseconds();
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	int menuLevel = cgs.currentMenuLevel;
 	cgs.demoCamera.factor = 5;
 #endif
@@ -309,7 +309,7 @@ void CG_DemoClick(int key, qboolean down)
 		return;
 	}
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	if (cg.demohelpWindow == SHOW_ON)
 	{
 		// pull up extended helpmenu
@@ -839,7 +839,7 @@ void CG_DemoClick(int key, qboolean down)
 			trap_Cvar_Set("cl_avidemo", demo_avifpsF5.string);
 		}
 		return;
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	default:
 		CG_RunBinding(key, down);
 		break;
@@ -1721,7 +1721,7 @@ void CG_DrawDemoControls(int x, int y, int w, vec4_t borderColor, vec4_t bgColor
 
 void CG_DemoHelpDraw(void)
 {
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 #define ONOFF(x) ((x) ? ("ON") : ("OFF"))
 	char *freecam     = ONOFF(cgs.demoCamera.renderingFreeCam);
 	char *panzercam   = ONOFF(demo_weaponcam.integer & DWC_PANZER);
@@ -1752,7 +1752,7 @@ void CG_DemoHelpDraw(void)
 			NULL,
 			"^7ENTER     ^3External view",
 			"^7LFT/RGHT  ^3Change angle",
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 			"^nUP/DOWN   ^mMove in/out",
 			NULL,
 			//"^nKP_ENTER  ^mToggle freecam"
@@ -1763,7 +1763,7 @@ void CG_DemoHelpDraw(void)
 
 		};
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 		const char *edvhelp[] =
 		{
 			va("^nKP_ENTER  ^mFreecam    ^m%s", freecam),
@@ -1815,12 +1815,12 @@ void CG_DemoHelpDraw(void)
 
 		float diff = cg.fadeTime - trap_Milliseconds();
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 		int menuLevel = cgs.currentMenuLevel;
 #endif
 
 // the ifdef's are very painfull here
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 		// FIXME: Should compute this beforehand
 		w = DH_W + (
 #ifdef FEATURE_MULTIVIEW
@@ -1923,7 +1923,7 @@ void CG_DemoHelpDraw(void)
 
 		y += 3;
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 		if (menuLevel == ML_MAIN)
 		{
 #endif
@@ -1937,7 +1937,7 @@ void CG_DemoHelpDraw(void)
 				CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, (char *)help[i], 0.0f, 0, tStyle, tFont);
 			}
 		}
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	}
 	else if (menuLevel == ML_EDV)
 	{
@@ -1968,12 +1968,12 @@ void CG_DemoHelpDraw(void)
 #endif
 
 		y += tSpacing * 2;
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 		if (menuLevel == ML_MAIN)
 		{
 #endif
 		CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, CG_TranslateString("^7BACKSPACE ^3help on/off"), 0.0f, 0, tStyle, tFont);
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	}
 	else if (menuLevel == ML_EDV)
 	{
@@ -2168,7 +2168,7 @@ void CG_DrawOverlays(void)
 #ifdef FEATURE_MULTIVIEW
 	CG_SpecHelpDraw();
 #endif
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	if (cg.demoPlayback && cg_predefineddemokeys.integer)
 #else
 	if (cg.demoPlayback)

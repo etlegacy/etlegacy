@@ -247,7 +247,7 @@ vmCvar_t demo_infoWindow;
 vmCvar_t mv_sensitivity;
 #endif
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 vmCvar_t demo_weaponcam;
 vmCvar_t demo_followDistance;
 vmCvar_t demo_yawPitchRollSpeed;
@@ -482,7 +482,7 @@ cvarTable_t cvarTable[] =
 	{ &demo_drawTimeScale,        "demo_drawTimeScale",        "1",     CVAR_ARCHIVE                 },
 	{ &demo_infoWindow,           "demo_infoWindow",           "1",     CVAR_ARCHIVE                 },
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	{ &demo_weaponcam,            "demo_weaponcam",            "0",     CVAR_ARCHIVE                 },
 
 	{ &demo_followDistance,       "demo_followDistance",       "50 0 20", CVAR_ARCHIVE               },
@@ -2726,7 +2726,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	//CG_Printf("Time taken: %i\n", trap_Milliseconds() - startat);
 
-#if FEATURE_EDV
+#ifdef FEATURE_EDV
 	VectorSet(cgs.demoCamera.velocity, 0.0, 0.0, 0.0);
 	cgs.demoCamera.startLean    = qfalse;
 	cgs.demoCamera.noclip       = qfalse;
