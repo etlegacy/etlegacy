@@ -5693,116 +5693,116 @@ static void UI_BuildServerDisplayList(int force)
 				// future - check omnibot cvars, parse players with ping 0 and match them as bots to bot filter
 				const char *gamename = Info_ValueForKey(info, "game");
 
-                switch(ui_browserModFilter.integer)
-                {
-                case 1:
-                    if(Q_stristr(gamename, "legacy") == 0)
-                    {
-                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-                        continue;
-                    }
-                    break;
-                case 2:
-                    if (Q_stristr(gamename, "etpub") == 0)
-                    {
-                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-                        continue;
-                    }
-                    break;
-                case 3:
-                    if (Q_stristr(gamename, "jaymod") == 0)
-                    {
-                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-                        continue;
-                    }
-                    break;
-                case 4:
-                    if (Q_stristr(gamename, "nq") == 0 && Q_stristr(gamename, "noquarter") == 0)
-                    {
-                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-                        continue;
-                    }
-                    break;
-                case 5:
-                    if (Q_stristr(gamename, "nitmod") == 0)
-                    {
-                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-                        continue;
-                    }
-                    break;
-                case 6:
-                    if (Q_stristr(gamename, "silent") == 0)
-                    {
-                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-                        continue;
-                    }
-                    break;
-                case 7:
-                    if (Q_stristr(gamename, "tce") == 0 && Q_stristr(gamename, "cqbtest") == 0)
-                    {
-                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-                        continue;
-                    }
-                    break;
-                case 8:
-                    if (Q_stristr(gamename, "etnam") == 0)
-                    {
-                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-                        continue;
-                    }
-                    break;
-                case 9:
-                    if (Q_stristr(gamename, "etrun") == 0)
-                    {
-                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-                        continue;
-                    }
-                    break;
-                case 10:
-                    if (Q_stristr(gamename, "etjump") == 0)
-                    {
-                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-                        continue;
-                    }
-                    break;
-                case 11:
-                    if (Q_stristr(gamename, "tjmod") == 0)
-                    {
-                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-                        continue;
-                    }
-                    break;
-                case 12:
-                    if (Q_stristr(gamename, "etmain") == 0 || gamename[0] == 0)
-                    {
-                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-                        continue;
-                    }
-                    break;
-                case -1:
-                    if(Q_stristr(gamename, "legacy") != 0 ||
-                            Q_stristr(gamename, "etpub") != 0 ||
-                            Q_stristr(gamename, "jaymod") != 0 ||
-                            Q_stristr(gamename, "nq") != 0 ||
-                            Q_stristr(gamename, "noquarter") != 0 ||
-                            Q_stristr(gamename, "nitmod") != 0 ||
-                            Q_stristr(gamename, "silent") != 0 ||
-                            Q_stristr(gamename, "tce") != 0 ||
-                            Q_stristr(gamename, "cqbtest") != 0 ||
-                            Q_stristr(gamename, "etnam") != 0 ||
-                            Q_stristr(gamename, "etrun") != 0 ||
-                            Q_stristr(gamename, "etjump") != 0 ||
-                            Q_stristr(gamename, "tjmod") != 0 ||
-                            Q_stristr(gamename, "etmain") != 0 ||
-                            gamename[0] == 0)
-                    {
-                        trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
-                        continue;
-                    }
-                    break;
-                default:
-                    break;
-                }
+				switch (ui_browserModFilter.integer)
+				{
+				case 1:
+					if (Q_stristr(gamename, "legacy") == 0)
+					{
+						trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+						continue;
+					}
+					break;
+				case 2:
+					if (Q_stristr(gamename, "etpub") == 0)
+					{
+						trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+						continue;
+					}
+					break;
+				case 3:
+					if (Q_stristr(gamename, "jaymod") == 0)
+					{
+						trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+						continue;
+					}
+					break;
+				case 4:
+					if (Q_stristr(gamename, "nq") == 0 && Q_stristr(gamename, "noquarter") == 0)
+					{
+						trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+						continue;
+					}
+					break;
+				case 5:
+					if (Q_stristr(gamename, "nitmod") == 0)
+					{
+						trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+						continue;
+					}
+					break;
+				case 6:
+					if (Q_stristr(gamename, "silent") == 0)
+					{
+						trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+						continue;
+					}
+					break;
+				case 7:
+					if (Q_stristr(gamename, "tce") == 0 && Q_stristr(gamename, "cqbtest") == 0)
+					{
+						trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+						continue;
+					}
+					break;
+				case 8:
+					if (Q_stristr(gamename, "etnam") == 0)
+					{
+						trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+						continue;
+					}
+					break;
+				case 9:
+					if (Q_stristr(gamename, "etrun") == 0)
+					{
+						trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+						continue;
+					}
+					break;
+				case 10:
+					if (Q_stristr(gamename, "etjump") == 0)
+					{
+						trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+						continue;
+					}
+					break;
+				case 11:
+					if (Q_stristr(gamename, "tjmod") == 0)
+					{
+						trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+						continue;
+					}
+					break;
+				case 12:
+					if (Q_stristr(gamename, "etmain") == 0 || gamename[0] == 0)
+					{
+						trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+						continue;
+					}
+					break;
+				case -1:
+					if (Q_stristr(gamename, "legacy") != 0 ||
+					    Q_stristr(gamename, "etpub") != 0 ||
+					    Q_stristr(gamename, "jaymod") != 0 ||
+					    Q_stristr(gamename, "nq") != 0 ||
+					    Q_stristr(gamename, "noquarter") != 0 ||
+					    Q_stristr(gamename, "nitmod") != 0 ||
+					    Q_stristr(gamename, "silent") != 0 ||
+					    Q_stristr(gamename, "tce") != 0 ||
+					    Q_stristr(gamename, "cqbtest") != 0 ||
+					    Q_stristr(gamename, "etnam") != 0 ||
+					    Q_stristr(gamename, "etrun") != 0 ||
+					    Q_stristr(gamename, "etjump") != 0 ||
+					    Q_stristr(gamename, "tjmod") != 0 ||
+					    Q_stristr(gamename, "etmain") != 0 ||
+					    gamename[0] == 0)
+					{
+						trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
+						continue;
+					}
+					break;
+				default:
+					break;
+				}
 			}
 
 			trap_Cvar_Update(&ui_browserMapFilterCheckBox);
@@ -6362,74 +6362,51 @@ UI_FeederCount
 */
 static int UI_FeederCount(int feederID)
 {
-	// FIXME: do a switch!
-	if (feederID == FEEDER_HEADS)
+	switch (feederID)
 	{
+	case FEEDER_HEADS:
 		return uiInfo.characterCount;
-	}
-	else if (feederID == FEEDER_Q3HEADS)
-	{
+	case FEEDER_Q3HEADS:
 		return uiInfo.q3HeadCount;
-	}
-	else if (feederID == FEEDER_CINEMATICS)
-	{
+	case FEEDER_CINEMATICS:
 		return uiInfo.movieCount;
-	}
-	else if (feederID == FEEDER_MAPS || feederID == FEEDER_ALLMAPS)
-	{
+	case FEEDER_MAPS:
+	case FEEDER_ALLMAPS:
 		return UI_MapCountByGameType(feederID == FEEDER_MAPS ? qtrue : qfalse);
-	}
-	else if (feederID == FEEDER_CAMPAIGNS || feederID == FEEDER_ALLCAMPAIGNS)
-	{
+	case FEEDER_CAMPAIGNS:
+	case FEEDER_ALLCAMPAIGNS:
 		return UI_CampaignCount(feederID == FEEDER_CAMPAIGNS ? qtrue : qfalse);
-	}
-	else if (feederID == FEEDER_GLINFO)
-	{
+	case FEEDER_GLINFO:
 		return uiInfo.numGlInfoLines;
-	}
-	else if (feederID == FEEDER_PROFILES)
-	{
+	case FEEDER_PROFILES:
 		return uiInfo.profileCount;
-	}
-	else if (feederID == FEEDER_SERVERS)
-	{
+	case FEEDER_SERVERS:
 		return uiInfo.serverStatus.numDisplayServers;
-	}
-	else if (feederID == FEEDER_SERVERSTATUS)
-	{
+	case FEEDER_SERVERSTATUS:
 		return uiInfo.serverStatusInfo.numLines;
-	}
-	else if (feederID == FEEDER_FINDPLAYER)
-	{
+	case FEEDER_FINDPLAYER:
 		return uiInfo.numFoundPlayerServers;
-	}
-	else if (feederID == FEEDER_PLAYER_LIST)
-	{
+	case FEEDER_PLAYER_LIST:
 		if (uiInfo.uiDC.realTime > uiInfo.playerRefresh)
 		{
 			uiInfo.playerRefresh = uiInfo.uiDC.realTime + 3000;
 			UI_BuildPlayerList();
 		}
 		return uiInfo.playerCount;
-	}
-	else if (feederID == FEEDER_TEAM_LIST)
-	{
+	case FEEDER_TEAM_LIST:
 		if (uiInfo.uiDC.realTime > uiInfo.playerRefresh)
 		{
 			uiInfo.playerRefresh = uiInfo.uiDC.realTime + 3000;
 			UI_BuildPlayerList();
 		}
 		return uiInfo.myTeamCount;
-	}
-	else if (feederID == FEEDER_MODS)
-	{
+	case FEEDER_MODS:
 		return uiInfo.modCount;
-	}
-	else if (feederID == FEEDER_DEMOS)
-	{
+	case FEEDER_DEMOS:
 		return uiInfo.demoCount;
+	default:
+		return 0;
 	}
-	return 0;
 }
 
 static const char *UI_SelectedMap(qboolean singlePlayer, int index, int *actual)
@@ -6537,35 +6514,35 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 
 	*numhandles = 0;
 
-	// FIXME: do a switch!
-	if (feederID == FEEDER_HEADS)
+	switch (feederID)
 	{
+	case FEEDER_HEADS:
 		if (index >= 0 && index < uiInfo.characterCount)
 		{
 			return uiInfo.characterList[index].name;
 		}
-	}
-	else if (feederID == FEEDER_Q3HEADS)
-	{
+		break;
+	case FEEDER_Q3HEADS:
 		if (index >= 0 && index < uiInfo.q3HeadCount)
 		{
 			return uiInfo.q3HeadNames[index];
 		}
-	}
-	else if (feederID == FEEDER_MAPS || feederID == FEEDER_ALLMAPS)
+		break;
+	case FEEDER_MAPS:
+	case FEEDER_ALLMAPS:
 	{
 		int actual;
 
 		return UI_SelectedMap(feederID == FEEDER_MAPS ? qtrue : qfalse, index, &actual);
 	}
-	else if (feederID == FEEDER_CAMPAIGNS || feederID == FEEDER_ALLCAMPAIGNS)
+	case FEEDER_CAMPAIGNS:
+	case FEEDER_ALLCAMPAIGNS:
 	{
 		int actual;
 
 		return UI_SelectedCampaign(index, &actual);
 	}
-	else if (feederID == FEEDER_GLINFO)
-	{
+	case FEEDER_GLINFO:
 		if (index == 0)
 		{
 			return(va("Vendor: %s", uiInfo.uiDC.glconfig.vendor_string));
@@ -6582,12 +6559,8 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 		{
 			return uiInfo.glInfoLines[index - 4];
 		}
-		else
-		{
-			return "";
-		}
-	}
-	else if (feederID == FEEDER_SERVERS)
+		break;
+	case FEEDER_SERVERS:
 	{
 		if (index >= 0 && index < uiInfo.serverStatus.numDisplayServers)
 		{
@@ -6644,6 +6617,7 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 			case SORT_GAME:
 				game = atoi(Info_ValueForKey(info, "gametype"));
 
+				// TODO: need some cleanup
 				if (ping > /*=*/ 0 && game >= 0 && game < uiInfo.numGameTypes)
 				{
 					int i;
@@ -6837,9 +6811,9 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 				return "";
 			}
 		}
+		break;
 	}
-	else if (feederID == FEEDER_SERVERSTATUS)
-	{
+	case FEEDER_SERVERSTATUS:
 		if (index >= 0 && index < uiInfo.serverStatusInfo.numLines)
 		{
 			if (column >= 0 && column < 4)
@@ -6847,31 +6821,27 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 				return uiInfo.serverStatusInfo.lines[index][column];
 			}
 		}
-	}
-	else if (feederID == FEEDER_FINDPLAYER)
-	{
+		break;
+	case FEEDER_FINDPLAYER:
 		if (index >= 0 && index < uiInfo.numFoundPlayerServers)
 		{
-			//return uiInfo.foundPlayerServerAddresses[index];
+			//return uiInfo.foundPlayerServerAddresses[index];  // TODO: cleanup ?
 			return uiInfo.foundPlayerServerNames[index];
 		}
-	}
-	else if (feederID == FEEDER_PLAYER_LIST)
-	{
+		break;
+	case FEEDER_PLAYER_LIST:
 		if (index >= 0 && index < uiInfo.playerCount)
 		{
 			return uiInfo.playerNames[index];
 		}
-	}
-	else if (feederID == FEEDER_TEAM_LIST)
-	{
+		break;
+	case FEEDER_TEAM_LIST:
 		if (index >= 0 && index < uiInfo.myTeamCount)
 		{
 			return uiInfo.teamNames[index];
 		}
-	}
-	else if (feederID == FEEDER_MODS)
-	{
+		break;
+	case FEEDER_MODS:
 		if (index >= 0 && index < uiInfo.modCount)
 		{
 			if (uiInfo.modList[index].modDescr && *uiInfo.modList[index].modDescr)
@@ -6883,22 +6853,20 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 				return uiInfo.modList[index].modName;
 			}
 		}
-	}
-	else if (feederID == FEEDER_CINEMATICS)
-	{
+		break;
+	case FEEDER_CINEMATICS:
 		if (index >= 0 && index < uiInfo.movieCount)
 		{
 			return uiInfo.movieList[index];
 		}
-	}
-	else if (feederID == FEEDER_DEMOS)
-	{
+		break;
+	case FEEDER_DEMOS:
 		if (index >= 0 && index < uiInfo.demoCount)
 		{
 			return uiInfo.demoList[index];
 		}
-	}
-	else if (feederID == FEEDER_PROFILES)
+		break;
+	case FEEDER_PROFILES:
 	{
 		if (index >= 0 && index < uiInfo.profileCount)
 		{
@@ -6929,15 +6897,18 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 			}
 		}
 	}
+	default:
+		break;
+	}
 
 	return "";
 }
 
 static qhandle_t UI_FeederItemImage(int feederID, int index)
 {
-	// FIXME: do a switch!
-	if (feederID == FEEDER_HEADS)
+	switch (feederID)
 	{
+	case FEEDER_HEADS:
 		if (index >= 0 && index < uiInfo.characterCount)
 		{
 			if (uiInfo.characterList[index].headImage == -1)
@@ -6946,15 +6917,15 @@ static qhandle_t UI_FeederItemImage(int feederID, int index)
 			}
 			return uiInfo.characterList[index].headImage;
 		}
-	}
-	else if (feederID == FEEDER_Q3HEADS)
-	{
+		break;
+	case FEEDER_Q3HEADS:
 		if (index >= 0 && index < uiInfo.q3HeadCount)
 		{
 			return uiInfo.q3HeadIcons[index];
 		}
-	}
-	else if (feederID == FEEDER_ALLMAPS || feederID == FEEDER_MAPS)
+		break;
+	case FEEDER_ALLMAPS:
+	case FEEDER_MAPS:
 	{
 		int actual;
 		int game;
@@ -6983,7 +6954,8 @@ static qhandle_t UI_FeederItemImage(int feederID, int index)
 			return uiInfo.mapList[index].levelShot;
 		}
 	}
-	else if (feederID == FEEDER_ALLCAMPAIGNS || feederID == FEEDER_CAMPAIGNS)
+	case FEEDER_ALLCAMPAIGNS:
+	case FEEDER_CAMPAIGNS:
 	{
 		int actual;
 
@@ -6998,7 +6970,9 @@ static qhandle_t UI_FeederItemImage(int feederID, int index)
 			return uiInfo.campaignList[index].campaignShot;
 		}
 	}
-
+	default:
+		break;
+	}
 	return 0;
 }
 
@@ -7006,26 +6980,26 @@ static void UI_FeederSelection(int feederID, int index)
 {
 	static char info[MAX_STRING_CHARS];
 
-	// FIXME: do a switch!
-	if (feederID == FEEDER_HEADS)
+	switch (feederID)
 	{
+	case FEEDER_HEADS:
 		if (index >= 0 && index < uiInfo.characterCount)
 		{
 			trap_Cvar_Set("team_model", uiInfo.characterList[index].female ? "janet" : "james");
 			trap_Cvar_Set("team_headmodel", va("*%s", uiInfo.characterList[index].name));
 			updateModel = qtrue;
 		}
-	}
-	else if (feederID == FEEDER_Q3HEADS)
-	{
+		break;
+	case FEEDER_Q3HEADS:
 		if (index >= 0 && index < uiInfo.q3HeadCount)
 		{
 			trap_Cvar_Set("model", uiInfo.q3HeadNames[index]);
 			trap_Cvar_Set("headmodel", uiInfo.q3HeadNames[index]);
 			updateModel = qtrue;
 		}
-	}
-	else if (feederID == FEEDER_MAPS || feederID == FEEDER_ALLMAPS)
+		break;
+	case FEEDER_MAPS:
+	case FEEDER_ALLMAPS:
 	{
 		int actual;
 		int game;
@@ -7054,8 +7028,10 @@ static void UI_FeederSelection(int feederID, int index)
 			trap_Cvar_Set("ui_currentNetMap", va("%d", actual));
 			//uiInfo.mapList[ui_currentNetMap.integer].cinematic = trap_CIN_PlayCinematic(va("%s.roq", uiInfo.mapList[ui_currentNetMap.integer].mapLoadName), 0, 0, 0, 0, (CIN_loop | CIN_silent) );
 		}
+		break;
 	}
-	else if (feederID == FEEDER_CAMPAIGNS || feederID == FEEDER_ALLCAMPAIGNS)
+	case FEEDER_CAMPAIGNS:
+	case FEEDER_ALLCAMPAIGNS:
 	{
 		int actual;
 		int campaign      = (feederID == FEEDER_ALLCAMPAIGNS) ? ui_currentNetCampaign.integer : ui_currentCampaign.integer;
@@ -7098,12 +7074,11 @@ static void UI_FeederSelection(int feederID, int index)
 			trap_Cvar_Set("ui_currentNetCampaign", va("%d", actual));
 			uiInfo.campaignList[ui_currentNetCampaign.integer].campaignCinematic = trap_CIN_PlayCinematic(va("%s.roq", uiInfo.campaignList[ui_currentNetCampaign.integer].campaignShortName), 0, 0, 0, 0, (CIN_loop | CIN_silent));
 		}
+		break;
 	}
-	else if (feederID == FEEDER_GLINFO)
-	{
-
-	}
-	else if (feederID == FEEDER_SERVERS)
+	case FEEDER_GLINFO:
+		break;
+	case FEEDER_SERVERS:
 	{
 		const char *mapName = NULL;
 
@@ -7131,15 +7106,12 @@ static void UI_FeederSelection(int feederID, int index)
 		{
 			uiInfo.serverStatus.currentServerPreview = trap_R_RegisterShaderNoMip("levelshots/unknownmap");
 		}
+		break;
 	}
-	else if (feederID == FEEDER_SERVERSTATUS)
-	{
-
-	}
-	else if (feederID == FEEDER_FINDPLAYER)
-	{
+	case FEEDER_SERVERSTATUS:
+		break;
+	case FEEDER_FINDPLAYER:
 		uiInfo.currentFoundPlayerServer = index;
-
 		if (index < uiInfo.numFoundPlayerServers - 1)
 		{
 			// build a new server status for this server
@@ -7147,36 +7119,33 @@ static void UI_FeederSelection(int feederID, int index)
 			Menu_SetFeederSelection(NULL, FEEDER_SERVERSTATUS, 0, NULL);
 			UI_BuildServerStatus(qtrue);
 		}
-	}
-	else if (feederID == FEEDER_PLAYER_LIST)
-	{
+		break;
+	case FEEDER_PLAYER_LIST:
 		uiInfo.playerIndex = index;
-	}
-	else if (feederID == FEEDER_TEAM_LIST)
-	{
+		break;
+	case FEEDER_TEAM_LIST:
 		uiInfo.teamIndex = index;
-	}
-	else if (feederID == FEEDER_MODS)
-	{
+		break;
+	case FEEDER_MODS:
 		uiInfo.modIndex = index;
-	}
-	else if (feederID == FEEDER_CINEMATICS)
-	{
+		break;
+	case FEEDER_CINEMATICS:
 		uiInfo.movieIndex = index;
 		if (uiInfo.previewMovie >= 0)
 		{
 			trap_CIN_StopCinematic(uiInfo.previewMovie);
 		}
 		uiInfo.previewMovie = -1;
-	}
-	else if (feederID == FEEDER_DEMOS)
-	{
+		break;
+	case FEEDER_DEMOS:
 		uiInfo.demoIndex = index;
-	}
-	else if (feederID == FEEDER_PROFILES)
-	{
+		break;
+	case FEEDER_PROFILES:
 		uiInfo.profileIndex = index;
 		trap_Cvar_Set("ui_profile", uiInfo.profileList[index].name);
+		break;
+	default:
+		break;
 	}
 }
 
