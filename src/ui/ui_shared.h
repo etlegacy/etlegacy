@@ -421,7 +421,7 @@ typedef struct
 	void (*addRefEntityToScene)(const refEntity_t *re);
 	void (*renderScene)(const refdef_t *fd);
 	void (*registerFont)(const char *pFontname, int pointSize, void *font);
-	void (*ownerDrawItem)(float x, float y, float w, float h, float text_x, float text_y, int ownerDraw, int ownerDrawFlags, int align, float special, float scale, vec4_t color, qhandle_t shader, int textStyle);
+	void (*ownerDrawItem)(float x, float y, float w, float h, float text_x, float text_y, int ownerDraw, int ownerDrawFlags, int align, int special, float scale, vec4_t color, qhandle_t shader, int textStyle);
 	float (*getValue)(int ownerDraw, int type);
 	qboolean (*ownerDrawVisible)(int flags);
 	void (*runScript)(char **p);
@@ -440,7 +440,7 @@ typedef struct
 	qhandle_t (*feederItemImage)(int feederID, int index);
 	void (*feederSelection)(int feederID, int index);
 	qboolean (*feederSelectionClick)(itemDef_t *item);
-	void (*feederAddItem)(float feederID, const char *name, int index);
+	void (*feederAddItem)(int feederID, const char *name, int index);
 	char * (*translateString)(const char *string);
 	void (*checkAutoUpdate)(void);
 	void (*getAutoUpdate)(void);

@@ -6479,7 +6479,7 @@ static void UI_UpdatePendingPings(void)
 	uiInfo.serverStatus.refreshtime   = uiInfo.uiDC.realTime + 1000;
 }
 
-static void UI_FeederAddItem(float feederID, const char *name, int index)
+static void UI_FeederAddItem(int feederID, const char *name, int index)
 {
 }
 
