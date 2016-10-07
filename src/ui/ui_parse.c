@@ -298,12 +298,12 @@ Keyword Hash
 
 typedef struct keywordHash_s
 {
-	char *keyword;
+	const char *keyword;
 	qboolean (*func)(itemDef_t *item, int handle);
 	struct keywordHash_s *next;
 } keywordHash_t;
 
-int KeywordHash_Key(char *keyword)
+int KeywordHash_Key(const char *keyword)
 {
 	int register hash = 0, i;
 
@@ -335,7 +335,7 @@ void KeywordHash_Add(keywordHash_t *table[], keywordHash_t *key)
 	table[hash] = key;
 }
 
-keywordHash_t *KeywordHash_Find(keywordHash_t *table[], char *keyword)
+keywordHash_t *KeywordHash_Find(keywordHash_t *table[], const char *keyword)
 {
 	keywordHash_t *key;
 	int           hash = KeywordHash_Key(keyword);
@@ -723,8 +723,8 @@ qboolean ItemParse_elementheight(itemDef_t *item, int handle)
 // feeder <float>
 qboolean ItemParse_feeder(itemDef_t *item, int handle)
 {
-	if (!PC_Float_Parse(handle, &item->special))
-	{
+	if (!PC_Int_Parse(handle, &item->special))
+	{   
 		return qfalse;
 	}
 
@@ -1168,7 +1168,7 @@ qboolean ItemParse_accept(itemDef_t *item, int handle)
 
 qboolean ItemParse_special(itemDef_t *item, int handle)
 {
-	if (!PC_Float_Parse(handle, &item->special))
+	if (!PC_Int_Parse(handle, &item->special))
 	{
 		return qfalse;
 	}

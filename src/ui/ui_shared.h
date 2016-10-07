@@ -283,7 +283,7 @@ typedef struct itemDef_s
 	int numColors;                  // number of color ranges
 	colorRangeDef_t colorRanges[MAX_COLOR_RANGES];
 	int colorRangeType;             // either
-	float special;                  // used for feeder id's etc.. diff per type
+	int special;                    // used for feeder id's etc.. diff per type
 	int cursorPos;                  // cursor position in characters
 	void *typeData;                 // type specific data ptr's
 
@@ -433,12 +433,12 @@ typedef struct
 	void (*setOverstrikeMode)(qboolean b);
 	qboolean (*getOverstrikeMode)(void);
 	void (*startLocalSound)(sfxHandle_t sfx, int channelNum);
-	qboolean (*ownerDrawHandleKey)(int ownerDraw, int flags, float *special, int key);
-	int (*feederCount)(float feederID);
-	const char *(*feederItemText)(float feederID, int index, int column, qhandle_t * handles, int *numhandles);
+	qboolean (*ownerDrawHandleKey)(int ownerDraw, int flags, int *special, int key);
+	int (*feederCount)(int feederID);
+	const char *(*feederItemText)(int feederID, int index, int column, qhandle_t * handles, int *numhandles);
 	const char *(*fileText)(char *flieName);
-	qhandle_t (*feederItemImage)(float feederID, int index);
-	void (*feederSelection)(float feederID, int index);
+	qhandle_t (*feederItemImage)(int feederID, int index);
+	void (*feederSelection)(int feederID, int index);
 	qboolean (*feederSelectionClick)(itemDef_t *item);
 	void (*feederAddItem)(float feederID, const char *name, int index);
 	char * (*translateString)(const char *string);
