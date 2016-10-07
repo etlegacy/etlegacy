@@ -2,14 +2,14 @@
 # Copyright (C) 2012-2015 ET: Legacy Team
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
-# Julio Gonzalez Mejías <juliolokooo@gmail.com>, 2015
+# Julio Gonzalez Mejías <juliolokooo@gmail.com>, 2015-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2016-09-30 17:58+0000\n"
-"Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
+"PO-Revision-Date: 2016-10-02 10:30+0000\n"
+"Last-Translator: Julio Gonzalez Mejías <juliolokooo@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/etlegacy/etlegacy/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
