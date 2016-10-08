@@ -1383,7 +1383,9 @@ void UI_DrawMapPreview(rectDef_t *rect, float scale, vec4_t color, qboolean net)
 		// draw levelshot instead of campaign location for non campaign
 		if (uiInfo.mapList[map].mapLoadName)
 		{
-			qhandle_t preview = trap_R_RegisterShaderNoMip(va("levelshots/%s", uiInfo.mapList[map].mapLoadName)); // FIXME: check if in path
+			qhandle_t preview;
+
+			preview = trap_R_RegisterShaderNoMip(va("levelshots/%s", uiInfo.mapList[map].mapLoadName)); // FIXME: check if in path
 
 			if (preview)
 			{
@@ -2684,7 +2686,7 @@ static void UI_ParseGLConfig(void)
 }
 
 // FIXME: table drive
-static void UI_OwnerDraw(float x, float y, float w, float h, float text_x, float text_y, int ownerDraw, int ownerDrawFlags, int align, float special, float scale, vec4_t color, qhandle_t shader, int textStyle)
+static void UI_OwnerDraw(float x, float y, float w, float h, float text_x, float text_y, int ownerDraw, int ownerDrawFlags, int align, int special, float scale, vec4_t color, qhandle_t shader, int textStyle)
 {
 	rectDef_t rect;
 
@@ -4969,6 +4971,7 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "redirect") == 0)
 		{
 			char buf[MAX_STRING_CHARS];
+
 			trap_Cvar_VariableStringBuffer("com_errorMessage", buf, sizeof(buf));
 			trap_Cmd_ExecuteText(EXEC_APPEND, va("connect %s\n", buf));
 			trap_Cvar_Set("com_errorMessage", "");
@@ -6635,10 +6638,7 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 						return "???";
 					}
 				}
-				//else
-				//{
-				//	return "???";
-				//}
+
 				return "???";
 			case SORT_PING:
 				if (ping <= 0)
@@ -6896,6 +6896,7 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 				return uiInfo.profileList[index].name;
 			}
 		}
+		break;
 	}
 	default:
 		break;
@@ -6944,8 +6945,7 @@ static qhandle_t UI_FeederItemImage(int feederID, int index)
 				return uiInfo.campaignList[index].campaignShot;
 			}
 		}
-		else
-		if (index >= 0 && index < uiInfo.mapCount)
+		else if (index >= 0 && index < uiInfo.mapCount)
 		{
 			if (uiInfo.mapList[index].levelShot == -1)
 			{
@@ -6953,6 +6953,7 @@ static qhandle_t UI_FeederItemImage(int feederID, int index)
 			}
 			return uiInfo.mapList[index].levelShot;
 		}
+		break;
 	}
 	case FEEDER_ALLCAMPAIGNS:
 	case FEEDER_CAMPAIGNS:
@@ -6969,6 +6970,7 @@ static qhandle_t UI_FeederItemImage(int feederID, int index)
 			}
 			return uiInfo.campaignList[index].campaignShot;
 		}
+		break;
 	}
 	default:
 		break;
