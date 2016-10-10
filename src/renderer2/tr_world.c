@@ -1892,7 +1892,7 @@ static void R_CoherentHierachicalCulling()
 
 	Ren_LogComment("tr.viewCount = %i, tr.viewCountNoReset = %i\n", tr.viewCount, tr.viewCountNoReset);
 
-	R2_TIMING_SIMPLE();
+	R2_TIMING_SIMPLE()
 	{
 		startTime = ri.Milliseconds();
 	}
@@ -2260,7 +2260,7 @@ static void R_CoherentHierachicalCulling()
 
 	//Ren_Print("--- R_CHC++ end ---\n");
 
-	R2_TIMING_SIMPLE();
+	R2_TIMING_SIMPLE()
 	{
 		tr.pc.c_CHCTime = ri.Milliseconds() - startTime;
 	}
