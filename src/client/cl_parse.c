@@ -35,7 +35,7 @@
 
 #include "client.h"
 
-char *svc_strings[32] =
+const char *svc_strings[32] =
 {
 	"svc_bad",
 
@@ -49,7 +49,7 @@ char *svc_strings[32] =
 	"svc_EOF"
 };
 
-void SHOWNET(msg_t *msg, char *s)
+void SHOWNET(msg_t *msg, const char *s)
 {
 	if (cl_shownet->integer >= 2)
 	{
