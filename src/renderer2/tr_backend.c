@@ -3972,7 +3972,7 @@ void RB_CollectBspOcclusionQueries()
 			{
 				node = (bspNode_t *) l->data;
 
-				if (node->issueOcclusionQuery)
+				if (node->issueOcclusionQuery)  // FIXME: Always true, what is intend ? Checking node->issueOcclusionQuery[j] bool value ?
 				{
 					available = 0;
 					if (glIsQuery(node->occlusionQueryObjects[backEnd.viewParms.viewCount]))
