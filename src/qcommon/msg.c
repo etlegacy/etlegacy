@@ -35,7 +35,11 @@
 #include "q_shared.h"
 #include "qcommon.h"
 
-// FIXME: necessary for entityShared_t management to work (since we need the definitions...), which is a very necessary function for server-side demos recording. It would be better if this functionality would be separated in an _ext.c file, but I could not find a way to make it work (because it also needs the definitions in msg.c, and since it's not a header, these are being redefined when included, producing a lot of recursive declarations errors...)
+// FIXME: necessary for entityShared_t management to work (since we need the definitions...),
+// which is a very necessary function for server-side demos recording. It would be better if this
+// functionality would be separated in an _ext.c file, but I could not find a way to make it work
+// (because it also needs the definitions in msg.c, and since it's not a header, these are being
+// redefined when included, producing a lot of recursive declarations errors...)
 #include "../game/g_public.h"
 
 static huffman_t msgHuff;
@@ -45,7 +49,6 @@ int pcount[256];
 int wastedbits = 0;
 
 static int oldsize = 0;
-//static int overflows = 0;
 
 /*
 ==============================================================================
@@ -160,29 +163,6 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 		Com_Error(ERR_DROP, "MSG_WriteBits: bad bits %i", bits);
 	}
 
-	// the overflow count is not used anywhere atm
-#if 0
-	// check for overflows
-	if (bits != 32)
-	{
-		if (bits > 0)
-		{
-			if (value > ((1 << bits) - 1) || value < 0)
-			{
-				overflows++;
-			}
-		}
-		else
-		{
-			int r = 1 << (bits - 1);
-
-			if (value >  r - 1 || value < -r)
-			{
-				overflows++;
-			}
-		}
-	}
-#endif
 	if (bits < 0)
 	{
 		bits = -bits;
@@ -412,7 +392,7 @@ void MSG_WriteString(msg_t *sb, const char *s)
 		l = strlen(s);
 		if (l >= MAX_STRING_CHARS)
 		{
-			Com_Printf("MSG_WriteString: MAX_STRING_CHARS");
+			Com_Printf("MSG_WriteString: MAX_STRING_CHARS size reached\n");
 			MSG_WriteData(sb, "", 1);
 			return;
 		}
@@ -450,7 +430,7 @@ void MSG_WriteBigString(msg_t *sb, const char *s)
 		l = strlen(s);
 		if (l >= BIG_INFO_STRING)
 		{
-			Com_Printf("MSG_WriteString: BIG_INFO_STRING");
+			Com_Printf("MSG_WriteString: BIG_INFO_STRING size reached\n");
 			MSG_WriteData(sb, "", 1);
 			return;
 		}
