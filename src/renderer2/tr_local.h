@@ -3068,9 +3068,9 @@ extern const mat4_t quakeToOpenGLMatrix;
 extern const mat4_t openGLToQuakeMatrix;
 extern const mat4_t quakeToD3DMatrix;
 extern const mat4_t flipZMatrix;
-extern const GLenum   geometricRenderTargets[];
-extern int            shadowMapResolutions[5];
-extern int            sunShadowMapResolutions[5];
+extern const GLenum geometricRenderTargets[];
+extern int          shadowMapResolutions[5];
+extern int          sunShadowMapResolutions[5];
 
 extern backEndState_t backEnd;
 extern trGlobals_t    tr;

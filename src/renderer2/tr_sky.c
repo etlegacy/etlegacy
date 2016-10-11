@@ -762,9 +762,9 @@ void R_InitSkyTexCoords(float heightCloud)
 
 void RB_DrawSun(void)
 {
-	float    size;
-	float    dist;
-	vec3_t   origin, vec1, vec2;
+	float  size;
+	float  dist;
+	vec3_t origin, vec1, vec2;
 	mat4_t transformMatrix;
 	mat4_t modelViewMatrix;
 

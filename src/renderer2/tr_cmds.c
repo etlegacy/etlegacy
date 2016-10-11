@@ -48,9 +48,9 @@ void R_PerformanceCounters(void)
 		return;
 	}
 
-    switch (r_speeds->integer)
-    {
-    case RSPEEDS_GENERAL:
+	switch (r_speeds->integer)
+	{
+	case RSPEEDS_GENERAL:
 		Ren_Print("%i views %i portals %i batches %i surfs %i leafs %i verts %i tris\n",
 		          backEnd.pc.c_views, backEnd.pc.c_portals, backEnd.pc.c_batches, backEnd.pc.c_surfaces, tr.pc.c_leafs,
 		          backEnd.pc.c_vertexes, backEnd.pc.c_indexes / 3);
@@ -73,8 +73,8 @@ void R_PerformanceCounters(void)
 		          backEnd.pc.c_multiDrawElements,
 		          backEnd.pc.c_multiDrawPrimitives,
 		          backEnd.pc.c_multiVboIndexes / 3);
-        break;
-    case RSPEEDS_CULLING:
+		break;
+	case RSPEEDS_CULLING:
 		Ren_Print("(gen) %i sin %i sout %i pin %i pout\n",
 		          tr.pc.c_sphere_cull_in, tr.pc.c_sphere_cull_out, tr.pc.c_plane_cull_in, tr.pc.c_plane_cull_out);
 
@@ -89,29 +89,29 @@ void R_PerformanceCounters(void)
 
 		Ren_Print("(md5) %i bin %i bclip %i bout\n",
 		          tr.pc.c_box_cull_md5_in, tr.pc.c_box_cull_md5_clip, tr.pc.c_box_cull_md5_out);
-        break;
-    case RSPEEDS_VIEWCLUSTER:
+		break;
+	case RSPEEDS_VIEWCLUSTER:
 		Ren_Print("viewcluster: %i\n", tr.visClusters[tr.visIndex]);
-        break;
-    case RSPEEDS_LIGHTS:
+		break;
+	case RSPEEDS_LIGHTS:
 		Ren_Print("dlight srf:%i culled:%i\n", tr.pc.c_dlightSurfaces, tr.pc.c_dlightSurfacesCulled);
 
 		Ren_Print("dlights:%i interactions:%i\n", tr.pc.c_dlights, tr.pc.c_dlightInteractions);
 
 		Ren_Print("slights:%i interactions:%i\n", tr.pc.c_slights, tr.pc.c_slightInteractions);
-        break;
-    case RSPEEDS_SHADOWCUBE_CULLING:
+		break;
+	case RSPEEDS_SHADOWCUBE_CULLING:
 		Ren_Print("omni pyramid tests:%i bin:%i bclip:%i bout:%i\n",
 		          tr.pc.c_pyramidTests, tr.pc.c_pyramid_cull_ent_in, tr.pc.c_pyramid_cull_ent_clip, tr.pc.c_pyramid_cull_ent_out);
-        break;
-    case RSPEEDS_FOG:
+		break;
+	case RSPEEDS_FOG:
 		Ren_Print("fog srf:%i batches:%i\n", backEnd.pc.c_fogSurfaces, backEnd.pc.c_fogBatches);
-        break;
-    case RSPEEDS_FLARES:
+		break;
+	case RSPEEDS_FLARES:
 		Ren_Print("flare adds:%i tests:%i renders:%i\n",
 		          backEnd.pc.c_flareAdds, backEnd.pc.c_flareTests, backEnd.pc.c_flareRenders);
-        break;
-    case RSPEEDS_OCCLUSION_QUERIES:
+		break;
+	case RSPEEDS_OCCLUSION_QUERIES:
 		Ren_Print("occlusion queries:%i multi:%i saved:%i culled lights:%i culled entities:%i culled leafs:%i response time:%i fetch time:%i\n",
 		          backEnd.pc.c_occlusionQueries,
 		          backEnd.pc.c_occlusionQueriesMulti,
@@ -121,32 +121,32 @@ void R_PerformanceCounters(void)
 		          backEnd.pc.c_occlusionQueriesLeafsCulled,
 		          backEnd.pc.c_occlusionQueriesResponseTime,
 		          backEnd.pc.c_occlusionQueriesFetchTime);
-        break;
+		break;
 #if 0
-    case RSPEEDS_DEPTH_BOUNDS_TESTS:
+	case RSPEEDS_DEPTH_BOUNDS_TESTS:
 		Ren_Print("depth bounds tests:%i rejected:%i\n", tr.pc.c_depthBoundsTests, tr.pc.c_depthBoundsTestsRejected);
-        break;
+		break;
 #endif
-    case RSPEEDS_SHADING_TIMES:
+	case RSPEEDS_SHADING_TIMES:
 		Ren_Print("forward shading times: ambient:%i lighting:%i\n", backEnd.pc.c_forwardAmbientTime,
 		          backEnd.pc.c_forwardLightingTime);
-        break;
-    case RSPEEDS_CHC:
+		break;
+	case RSPEEDS_CHC:
 		Ren_Print("%i CHC++ ms %i queries %i multi queries %i saved\n",
 		          tr.pc.c_CHCTime,
 		          tr.pc.c_occlusionQueries,
 		          tr.pc.c_occlusionQueriesMulti,
 		          tr.pc.c_occlusionQueriesSaved);
-        break;
-    case RSPEEDS_NEAR_FAR:
+		break;
+	case RSPEEDS_NEAR_FAR:
 		Ren_Print("zNear: %.0f zFar: %.0f\n", tr.viewParms.zNear, tr.viewParms.zFar);
-        break;
-    case RSPEEDS_DECALS:
+		break;
+	case RSPEEDS_DECALS:
 		Ren_Print("decal projectors: %d test surfs: %d clip surfs: %d decal surfs: %d created: %d\n",
 		          tr.pc.c_decalProjectors, tr.pc.c_decalTestSurfaces, tr.pc.c_decalClipSurfaces, tr.pc.c_decalSurfaces,
 		          tr.pc.c_decalSurfacesCreated);
-        break;
-    }
+		break;
+	}
 
 	Com_Memset(&tr.pc, 0, sizeof(tr.pc));
 	Com_Memset(&backEnd.pc, 0, sizeof(backEnd.pc));

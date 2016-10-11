@@ -780,7 +780,7 @@ static void RB_RenderInteractions()
 	int           iaCount;
 	surfaceType_t *surface;
 	vec3_t        tmp;
-	mat4_t      modelToLight;
+	mat4_t        modelToLight;
 	int           startTime = 0;
 
 	Ren_LogComment("--- RB_RenderInteractions ---\n");
@@ -999,26 +999,26 @@ skipInteraction:
 
 static void RB_RenderInteractionsShadowMapped()
 {
-	shader_t       *shader, *oldShader;
-	trRefEntity_t  *entity, *oldEntity;
-	trRefLight_t   *light, *oldLight;
-	interaction_t  *ia;
-	int            iaCount;
-	int            iaFirst;
-	surfaceType_t  *surface;
-	qboolean       depthRange, oldDepthRange;
-	qboolean       alphaTest, oldAlphaTest;
-	deformType_t   deformType, oldDeformType;
-	vec3_t         tmp;
-	mat4_t       modelToLight;
-	qboolean       drawShadows;
-	int            cubeSide;
-	int            splitFrustumIndex;
-	int            startTime = 0;
-	const mat4_t bias      = { 0.5, 0.0, 0.0, 0.0,
-		                         0.0,      0.5, 0.0, 0.0,
-		                         0.0,      0.0, 0.5, 0.0,
-		                         0.5,      0.5, 0.5, 1.0 };
+	shader_t      *shader, *oldShader;
+	trRefEntity_t *entity, *oldEntity;
+	trRefLight_t  *light, *oldLight;
+	interaction_t *ia;
+	int           iaCount;
+	int           iaFirst;
+	surfaceType_t *surface;
+	qboolean      depthRange, oldDepthRange;
+	qboolean      alphaTest, oldAlphaTest;
+	deformType_t  deformType, oldDeformType;
+	vec3_t        tmp;
+	mat4_t        modelToLight;
+	qboolean      drawShadows;
+	int           cubeSide;
+	int           splitFrustumIndex;
+	int           startTime = 0;
+	const mat4_t  bias      = { 0.5, 0.0, 0.0, 0.0,
+		                        0.0,       0.5, 0.0, 0.0,
+		                        0.0,       0.0, 0.5, 0.0,
+		                        0.5,       0.5, 0.5, 1.0 };
 
 	if (!glConfig2.framebufferObjectAvailable || !glConfig2.textureFloatAvailable)
 	{
@@ -1102,7 +1102,7 @@ static void RB_RenderInteractionsShadowMapped()
 						float    fovX, fovY;
 						qboolean flipX, flipY;
 						//float          *proj;
-						vec3_t   angles;
+						vec3_t angles;
 						mat4_t rotationMatrix, transformMatrix, viewMatrix;
 
 						Ren_LogComment("----- Rendering shadowCube side: %i -----\n", cubeSide);
@@ -1231,16 +1231,16 @@ static void RB_RenderInteractionsShadowMapped()
 					}
 					case RL_DIRECTIONAL:
 					{
-						int      j;
-						vec3_t   angles;
-						vec4_t   forward, side, up;
-						vec3_t   lightDirection;
-						vec3_t   viewOrigin, viewDirection;
+						int    j;
+						vec3_t angles;
+						vec4_t forward, side, up;
+						vec3_t lightDirection;
+						vec3_t viewOrigin, viewDirection;
 						mat4_t rotationMatrix, transformMatrix, viewMatrix, projectionMatrix, viewProjectionMatrix;
 						mat4_t cropMatrix;
-						vec4_t   splitFrustum[6];
-						vec3_t   splitFrustumCorners[8];
-						vec3_t   splitFrustumBounds[2];
+						vec4_t splitFrustum[6];
+						vec3_t splitFrustumCorners[8];
+						vec3_t splitFrustumBounds[2];
 						//vec3_t   splitFrustumViewBounds[2];
 						vec3_t splitFrustumClipBounds[2];
 						//float    splitFrustumRadius;
@@ -2335,7 +2335,7 @@ void RB_RenderGlobalFog()
 
 void RB_RenderBloom()
 {
-	int      i, j;
+	int    i, j;
 	mat4_t ortho;
 
 	Ren_LogComment("--- RB_RenderBloom ---\n");
@@ -3331,10 +3331,10 @@ void RB_RenderLightOcclusionQueries()
 
 static void RenderEntityOcclusionVolume(trRefEntity_t *entity)
 {
-	vec3_t   boundsCenter;
-	vec3_t   boundsSize;
+	vec3_t boundsCenter;
+	vec3_t boundsSize;
 	mat4_t rot; // transform, scale,
-	axis_t   axis;
+	axis_t axis;
 
 	GL_CheckErrors();
 
@@ -5231,8 +5231,8 @@ static void RB_RenderDebugUtils()
 
 					// calculate top down view projection matrix
 					{
-						vec3_t   forward = { 0, 0, -1 };
-						vec3_t   up      = { 1, 0, 0 };
+						vec3_t forward = { 0, 0, -1 };
+						vec3_t up      = { 1, 0, 0 };
 						mat4_t viewMatrix, projectionMatrix; // rotationMatrix, transformMatrix,
 
 						// Quake -> OpenGL view matrix from light perspective

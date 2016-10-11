@@ -2202,7 +2202,7 @@ void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surface)
 	int                i;
 	mdmModel_t         *mdmModel;
 	mdmSurfaceIntern_t *mdmSurface;
-	mat4_t           m, m2; //, m3
+	mat4_t             m, m2; //, m3
 	refEntity_t        *refent;
 	int                lodIndex;
 	IBO_t              *lodIBO;

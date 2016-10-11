@@ -1884,10 +1884,10 @@ void GLSL_GenerateCheckSum(programInfo_t *info, const char *vertex, const char *
 	ri.Hunk_FreeTempMemory(fullSource);
 }
 
-static qboolean GLSL_CompilePermutation(programInfo_t * info, int offset)
+static qboolean GLSL_CompilePermutation(programInfo_t *info, int offset)
 {
-	char *tempString = NULL;
-	qboolean compiled = qfalse;
+	char     *tempString = NULL;
+	qboolean compiled    = qfalse;
 
 	if (GLSL_GenerateMacroString(info->list, info->extraMacros, offset, &tempString))
 	{
@@ -1911,7 +1911,7 @@ static qboolean GLSL_CompilePermutation(programInfo_t * info, int offset)
 	}
 	else
 	{
-		info->list->programs[offset].program = 0;
+		info->list->programs[offset].program  = 0;
 		info->list->programs[offset].compiled = qfalse;
 	}
 
@@ -1924,7 +1924,7 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 	info->vertexShaderText   = GLSL_BuildGPUShaderText(info, GL_VERTEX_SHADER);
 	info->fragmentShaderText = GLSL_BuildGPUShaderText(info, GL_FRAGMENT_SHADER);
 #if GLSL_PRECOMPILE
-	int    startTime, endTime;
+	int startTime, endTime;
 #endif
 	size_t numPermutations = 0, numCompiled = 0, tics = 0, nextTicCount = 0;
 	int    i               = 0, x = 0;

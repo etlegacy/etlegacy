@@ -1815,7 +1815,7 @@ static void Tess_SurfaceMD5(md5Surface_t *srf)
 	md5Model_t  *model;
 	md5Vertex_t *v;
 	//md5Bone_t       *bone;
-	srfTriangle_t   *tri;
+	srfTriangle_t *tri;
 	static mat4_t boneMatrices[MAX_BONES];
 
 	Ren_LogComment("--- Tess_SurfaceMD5 ---\n");
@@ -2215,7 +2215,7 @@ static void Tess_SurfaceVBOMD5Mesh(srfVBOMD5Mesh_t *srf)
 {
 	int        i;
 	md5Model_t *model;
-	mat4_t   m, m2;       //, m3;
+	mat4_t     m, m2;     //, m3;
 
 	Ren_LogComment("--- Tess_SurfaceVBOMD5Mesh ---\n");
 

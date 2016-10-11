@@ -1658,7 +1658,7 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 	float     fovX, fovY;
 	float     *proj;
 	vec3_t    angles;
-	mat4_t  tmpMatrix, rotationMatrix, transformMatrix, viewMatrix, projectionMatrix, viewProjectionMatrix;
+	mat4_t    tmpMatrix, rotationMatrix, transformMatrix, viewMatrix, projectionMatrix, viewProjectionMatrix;
 	frustum_t frustum;
 	cplane_t  *clipPlane;
 	int       r;

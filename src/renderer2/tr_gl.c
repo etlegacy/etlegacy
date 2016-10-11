@@ -55,7 +55,7 @@ void GL_Bind(image_t *image)
 	{
 		// performance evaluation option
 		texnum = tr.blackImage->texnum;
-		image = tr.blackImage;
+		image  = tr.blackImage;
 	}
 
 	if (glState.currenttextures[glState.currenttmu] != texnum)

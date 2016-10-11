@@ -135,7 +135,7 @@ typedef enum
 } textureCompressionRef_t;
 
 extern mat4_t matrixIdentity;
-extern quat_t   quatIdentity;
+extern quat_t quatIdentity;
 
 // plane sides
 typedef enum

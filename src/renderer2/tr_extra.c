@@ -36,10 +36,10 @@
 #include "tr_local.h"
 
 mat4_t matrixIdentity = { 1, 0, 0, 0,
-	                        0, 1, 0, 0,
-	                        0, 0, 1, 0,
-	                        0, 0, 0, 1 };
-quat_t   quatIdentity = { 0, 0, 0, 1 };
+	                      0, 1, 0, 0,
+	                      0, 0, 1, 0,
+	                      0, 0, 0, 1 };
+quat_t quatIdentity = { 0, 0, 0, 1 };
 
 int NearestPowerOfTwo(int val)
 {

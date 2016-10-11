@@ -1204,8 +1204,8 @@ void R_RotateForViewer(void)
 	// support mirrors
 	if (tr.viewParms.isMirror)
 	{
-		vec4_t   plane;
-		vec4_t   plane2;
+		vec4_t plane;
+		vec4_t plane2;
 		mat4_t mirrorMatrix, mirrorMatrix2;
 
 		// clipping plane in world space
@@ -1536,10 +1536,10 @@ static void R_SetupProjection(qboolean infiniteFarClip)
 #endif
 
 #if 0
-	int      i;
+	int    i;
 	mat4_t mvp;
-	vec4_t   axis[3];
-	vec4_t   trans;
+	vec4_t axis[3];
+	vec4_t trans;
 
 	MatrixMultiplyMOD(tr.viewParms.projectionMatrix, tr.orientation.modelViewMatrix, mvp);
 	MatrixCopy(tr.orientation.modelViewMatrix, mvp);
@@ -3275,8 +3275,8 @@ or a mirror / remote location
 */
 void R_RenderView(viewParms_t *parms)
 {
-	int      firstDrawSurf;
-	int      firstInteraction;
+	int    firstDrawSurf;
+	int    firstInteraction;
 	mat4_t mvp;
 
 	if (parms->viewportWidth <= 0 || parms->viewportHeight <= 0)
