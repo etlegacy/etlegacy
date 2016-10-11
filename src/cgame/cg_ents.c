@@ -1160,19 +1160,22 @@ static void CG_Missile(centity_t *cent)
 		}
 	}
 
-#ifdef FEATURE_EDV
-	// edv renderingWeaponCam fix
-	if (cent->currentState.weapon == WP_PANZERFAUST
-		|| cent->currentState.weapon == WP_BAZOOKA
-	    || cent->currentState.weapon == WP_GRENADE_LAUNCHER
-	    || cent->currentState.weapon == WP_GRENADE_PINEAPPLE
-	    || cent->currentState.weapon == WP_GPG40
-	    || cent->currentState.weapon == WP_M7
-	    || cent->currentState.weapon == WP_DYNAMITE
-	    || cent->currentState.weapon == WP_SMOKE_MARKER
-	    || cent->currentState.weapon == WP_SMOKE_BOMB)
+	// convert direction of travel into axis
+	switch (cent->currentState.weapon)
 	{
-
+	case WP_MORTAR_SET:
+	case WP_MORTAR2_SET:
+	case WP_PANZERFAUST:
+	case WP_BAZOOKA:
+	case WP_MAPMORTAR: // why we do this for map mortar?
+	case WP_GPG40:
+	case WP_M7:
+	case WP_SMOKE_MARKER: // edv renderingWeaponCam fix
+	case WP_SMOKE_BOMB:
+	case WP_DYNAMITE:
+	case WP_GRENADE_LAUNCHER:
+	case WP_GRENADE_PINEAPPLE:
+	{
 		vec3_t delta;
 
 		if (VectorCompare(cent->rawOrigin, vec3_origin))
@@ -1189,6 +1192,7 @@ static void CG_Missile(centity_t *cent)
 			}
 		}
 
+#ifdef FEATURE_EDV
 		// save this so we can use it later (eg in edv)
 		{
 			vec3_t d2;
@@ -1205,49 +1209,6 @@ static void CG_Missile(centity_t *cent)
 			{
 				VectorCopy(temp, cent->rawAngles);
 			}
-		}
-
-		if (VectorNormalize2(delta, ent.axis[0]) == 0)
-		{
-			ent.axis[0][2] = 1;
-		}
-	}
-#endif
-
-	// convert direction of travel into axis
-	switch (cent->currentState.weapon)
-	{
-	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET:
-	case WP_PANZERFAUST:
-	case WP_BAZOOKA:
-	case WP_MAPMORTAR:
-	case WP_GPG40:
-	case WP_M7:
-	{
-		vec3_t delta;
-
-		if (VectorCompare(cent->rawOrigin, vec3_origin))
-		{
-			VectorSubtract(cent->lerpOrigin, s1->pos.trBase, delta);
-			VectorCopy(cent->lerpOrigin, cent->rawOrigin);
-		}
-		else
-		{
-			VectorSubtract(cent->lerpOrigin, cent->rawOrigin, delta);
-			if (!VectorCompare(cent->lerpOrigin, cent->rawOrigin))
-			{
-				VectorCopy(cent->lerpOrigin, cent->rawOrigin);
-			}
-		}
-#ifdef FEATURE_EDV
-		// save this so we can use it later (eg in edv)
-		{
-			vec3_t d2;
-
-			VectorCopy(delta, d2);
-			VectorNormalize(d2);
-			vectoangles(d2, cent->rawAngles);
 		}
 #endif
 
