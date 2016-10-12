@@ -234,7 +234,7 @@ qboolean SNDDMA_Init(void)
 
 	if (!desired.freq)
 	{
-		desired.freq = 22050;
+		desired.freq = 22050; // default vanilla
 	}
 
 	// dirty correction for profile values
@@ -250,9 +250,13 @@ qboolean SNDDMA_Init(void)
 	{
 		desired.freq = 44100;
 	}
+	else if (desired.freq == 48000)
+	{
+		desired.freq = 48000;
+	}
 	else
 	{
-		desired.freq = 22050;
+		desired.freq = 22050; // default vanilla
 	}
 
 	desired.format = ((tmp == 16) ? AUDIO_S16SYS : AUDIO_U8);

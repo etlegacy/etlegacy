@@ -217,9 +217,9 @@ static qboolean IN_IsConsoleKey(keyNum_t key, int character)
 
 	if (key == K_GRAVE
 #ifdef __APPLE__
-		|| key == 60 // Same as console key
+	    || key == 60 // Same as console key
 #endif
-		)
+	    )
 	{
 		return qtrue;
 	}
@@ -546,7 +546,8 @@ static void IN_GobbleMotionEvents(void)
 
 	// Gobble any mouse motion events
 	SDL_PumpEvents();
-	while (SDL_PeepEvents(dummy, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEMOTION) > 0);
+	while (SDL_PeepEvents(dummy, 1, SDL_GETEVENT, SDL_MOUSEMOTION, SDL_MOUSEMOTION) > 0)
+		;
 }
 
 static void IN_GrabMouse(qboolean grab, qboolean relative)
