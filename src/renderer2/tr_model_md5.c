@@ -52,7 +52,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	char          *token;
 	vec3_t        boneOrigin;
 	quat_t        boneQuat;
-	mat4_t      boneMat;
+	mat4_t        boneMat;
 	int           numRemaining;
 	growList_t    sortedTriangles;
 	growList_t    vboTriangles;

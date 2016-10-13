@@ -6054,7 +6054,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 
 	RE_UploadCinematic(w, h, cols, rows, data, client, dirty);
 
-	R2_TIMING_SIMPLE();
+	R2_TIMING_SIMPLE()
 	{
 		end = ri.Milliseconds();
 		Ren_Print("glTexSubImage2D %i, %i: %i msec\n", cols, rows, end - start);
