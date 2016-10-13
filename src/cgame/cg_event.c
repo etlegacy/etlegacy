@@ -1005,7 +1005,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 	int                 howmany, total, totalsounds = 0;
 	int                 pieces[6];     // how many of each piece
 	qhandle_t           modelshader = 0;
-	float               materialmul = 1;     // multiplier for different types
+	float               materialmul = 1.0f;     // multiplier for different types
 	leBounceSoundType_t snd;
 	int                 hmodel;
 	float               scale;
@@ -1278,9 +1278,9 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 				}
 			}
 
-			le->lifeRate   = 1.0 / (le->endTime - le->startTime);
+			le->lifeRate   = 1.0f / (le->endTime - le->startTime);
 			le->leFlags    = LEF_TUMBLE;
-			le->leMarkType = 0;
+			le->leMarkType = LEMT_NONE;
 
 			VectorCopy(origin, re->origin);
 			AxisCopy(axisDefault, re->axis);
@@ -1300,8 +1300,8 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 			if (type == FXTYPE_FABRIC)     // fabric
 			{
 				le->pos.trType   = TR_GRAVITY_FLOAT;   // the fabric stuff will change to use something that looks better
-				le->bounceFactor = 0.0;
-				materialmul      = 0.3;     // rotation speed
+				le->bounceFactor = 0.0f;
+				materialmul      = 0.3f;     // rotation speed
 			}
 			else
 			{
@@ -1314,7 +1314,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 					le->pos.trType = TR_GRAVITY_LOW;
 				}
 
-				le->bounceFactor = 0.4;
+				le->bounceFactor = 0.4f;
 			}
 
 			// rotation
@@ -1333,7 +1333,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 
 			// hoping that was just intended to represent randomness
 			// if (cent->currentState.angles2[0] || cent->currentState.angles2[1] || cent->currentState.angles2[2])
-			if (le->angles.trBase[0] == 1 || le->angles.trBase[1] == 1 || le->angles.trBase[2] == 1)
+			if (le->angles.trBase[0] == 1.0f || le->angles.trBase[1] == 1.0f || le->angles.trBase[2] == 1.0f)
 			{
 				le->pos.trType = TR_GRAVITY;
 				VectorScale(dir, 10 * 8, le->pos.trDelta);
@@ -1650,9 +1650,9 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				}
 			}
 
-			le->lifeRate   = 1.0 / (le->endTime - le->startTime);
+			le->lifeRate   = 1.0f / (le->endTime - le->startTime);
 			le->leFlags    = LEF_TUMBLE;
-			le->leMarkType = 0;
+			le->leMarkType = LEMT_NONE;
 
 			VectorCopy(origin, re->origin);
 			AxisCopy(axisDefault, re->axis);
@@ -1672,8 +1672,8 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 			if (type == FXTYPE_FABRIC)     // "fabric"
 			{
 				le->pos.trType   = TR_GRAVITY_FLOAT;   // the fabric stuff will change to use something that looks better
-				le->bounceFactor = 0.0;
-				materialmul      = 0.3;     // rotation speed
+				le->bounceFactor = 0.0f;
+				materialmul      = 0.3f;     // rotation speed
 			}
 			else
 			{
@@ -1686,7 +1686,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 					le->pos.trType = TR_GRAVITY_LOW;
 				}
 
-				le->bounceFactor = 0.4;
+				le->bounceFactor = 0.4f;
 			}
 
 			// rotation
@@ -1706,7 +1706,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 
 			// hoping that was just intended to represent randomness
 			// if (cent->currentState.angles2[0] || cent->currentState.angles2[1] || cent->currentState.angles2[2])
-			if (le->angles.trBase[0] == 1 || le->angles.trBase[1] == 1 || le->angles.trBase[2] == 1)
+			if (le->angles.trBase[0] == 1.0f || le->angles.trBase[1] == 1.0f || le->angles.trBase[2] == 1.0f)
 			{
 				le->pos.trType = TR_GRAVITY;
 				VectorScale(dir, 10 * 8, le->pos.trDelta);
@@ -1809,7 +1809,7 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 		qhandle_t  sh     = 0;     // shader handle
 		vec3_t     newdir = { 0, 0, 0 };
 
-		if (cent->currentState.angles2[0] || cent->currentState.angles2[1] || cent->currentState.angles2[2])
+		if (cent->currentState.angles2[0] != 0.0f || cent->currentState.angles2[1] != 0.0f || cent->currentState.angles2[2] != 0.0f)
 		{
 			VectorCopy(cent->currentState.angles2, newdir);
 		}
@@ -1850,7 +1850,7 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 
 		le->pos.trTime = cg.time;
 
-		le->bounceFactor = 0.3;
+		le->bounceFactor = 0.3f;
 
 		le->leBounceSoundType = LEBS_BLOOD;
 		le->leMarkType        = LEMT_BLOOD;
@@ -1906,11 +1906,11 @@ void CG_Shard(centity_t *cent, vec3_t origin, vec3_t dir)
 			isflyingdebris = qtrue;
 		}
 
-		le->lifeRate     = 1.0 / (le->endTime - le->startTime);
+		le->lifeRate     = 1.0f / (le->endTime - le->startTime);
 		le->leFlags      = LEF_TUMBLE;
-		le->bounceFactor = 0.4;
+		le->bounceFactor = 0.4f;
 		// le->leBounceSoundType    = LEBS_WOOD;
-		le->leMarkType = 0;
+		le->leMarkType = LEMT_NONE;
 
 		VectorCopy(origin, re->origin);
 		AxisCopy(axisDefault, re->axis);
@@ -2034,10 +2034,10 @@ void CG_ShardJunk(vec3_t origin, vec3_t dir)
 	re->fadeStartTime = le->endTime - 1000;
 	re->fadeEndTime   = le->endTime;
 
-	le->lifeRate     = 1.0 / (le->endTime - le->startTime);
+	le->lifeRate     = 1.0f / (le->endTime - le->startTime);
 	le->leFlags      = LEF_TUMBLE;
-	le->bounceFactor = 0.4;
-	le->leMarkType   = 0;
+	le->bounceFactor = 0.4f;
+	le->leMarkType   = LEMT_NONE;
 
 	VectorCopy(origin, re->origin);
 	AxisCopy(axisDefault, re->axis);
@@ -2080,12 +2080,12 @@ void CG_Debris(centity_t *cent, vec3_t origin, vec3_t dir)
 	re->fadeStartTime = le->endTime - 1000;
 	re->fadeEndTime   = le->endTime;
 
-	le->lifeRate     = 1.0 / (le->endTime - le->startTime);
+	le->lifeRate     = 1.0f / (le->endTime - le->startTime);
 	le->leFlags      = LEF_TUMBLE | LEF_TUMBLE_SLOW;
-	le->bounceFactor = 0.4;
-	le->leMarkType   = 0;
+	le->bounceFactor = 0.4f;
+	le->leMarkType   = LEMT_NONE;
 	le->breakCount   = 1;
-	le->sizeScale    = 0.5;
+	le->sizeScale    = 0.5f;
 
 	VectorCopy(origin, re->origin);
 	AxisCopy(axisDefault, re->axis);
@@ -2543,61 +2543,61 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	case EV_NOAMMO:
 	case EV_WEAPONSWITCHED:
 		DEBUGNAME("EV_NOAMMO");
-        switch(es->weapon)
-        {
-        case WP_GRENADE_LAUNCHER:
-        case WP_GRENADE_PINEAPPLE:
-        case WP_DYNAMITE:
-        case WP_LANDMINE:
-        case WP_SATCHEL:
-        case WP_SATCHEL_DET:
-        case WP_SMOKE_BOMB:
-        case WP_AMMO:
-        case WP_MEDKIT:
-        case WP_MEDIC_SYRINGE:
-        case WP_MEDIC_ADRENALINE:
-            break;
-        default:
-            trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound);     // FIXME: CHAN_LOCAL_SOUND ?
-            break;
-        }
+		switch (es->weapon)
+		{
+		case WP_GRENADE_LAUNCHER:
+		case WP_GRENADE_PINEAPPLE:
+		case WP_DYNAMITE:
+		case WP_LANDMINE:
+		case WP_SATCHEL:
+		case WP_SATCHEL_DET:
+		case WP_SMOKE_BOMB:
+		case WP_AMMO:
+		case WP_MEDKIT:
+		case WP_MEDIC_SYRINGE:
+		case WP_MEDIC_ADRENALINE:
+			break;
+		default:
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound);     // FIXME: CHAN_LOCAL_SOUND ?
+			break;
+		}
 
-        if (es->number == cg.snap->ps.clientNum)
-        {
-            if(cg_noAmmoAutoSwitch.integer > 0 && !CG_WeaponSelectable(cg.weaponSelect))
-            {
-                CG_OutOfAmmoChange(event == EV_WEAPONSWITCHED ? qfalse : qtrue);
-            }
-            else
-            {
-                switch(es->weapon)
-                {
-                case WP_MORTAR_SET:
-                case WP_MORTAR2_SET:
-                case WP_MOBILE_MG42_SET:
-                case WP_MOBILE_BROWNING_SET:
-                case WP_GRENADE_LAUNCHER:
-                case WP_GRENADE_PINEAPPLE:
-                case WP_DYNAMITE:
-                case WP_SMOKE_MARKER:
-                case WP_PANZERFAUST:
-                case WP_BAZOOKA:
-                case WP_ARTY:
-                case WP_LANDMINE:
-                case WP_SATCHEL:
-                case WP_SATCHEL_DET:
-                case WP_SMOKE_BOMB:
-                case WP_AMMO:
-                case WP_MEDKIT:
-                case WP_MEDIC_SYRINGE:
-                case WP_MEDIC_ADRENALINE:
-                    CG_OutOfAmmoChange(event == EV_WEAPONSWITCHED ? qfalse : qtrue);
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
+		if (es->number == cg.snap->ps.clientNum)
+		{
+			if (cg_noAmmoAutoSwitch.integer > 0 && !CG_WeaponSelectable(cg.weaponSelect))
+			{
+				CG_OutOfAmmoChange(event == EV_WEAPONSWITCHED ? qfalse : qtrue);
+			}
+			else
+			{
+				switch (es->weapon)
+				{
+				case WP_MORTAR_SET:
+				case WP_MORTAR2_SET:
+				case WP_MOBILE_MG42_SET:
+				case WP_MOBILE_BROWNING_SET:
+				case WP_GRENADE_LAUNCHER:
+				case WP_GRENADE_PINEAPPLE:
+				case WP_DYNAMITE:
+				case WP_SMOKE_MARKER:
+				case WP_PANZERFAUST:
+				case WP_BAZOOKA:
+				case WP_ARTY:
+				case WP_LANDMINE:
+				case WP_SATCHEL:
+				case WP_SATCHEL_DET:
+				case WP_SMOKE_BOMB:
+				case WP_AMMO:
+				case WP_MEDKIT:
+				case WP_MEDIC_SYRINGE:
+				case WP_MEDIC_ADRENALINE:
+					CG_OutOfAmmoChange(event == EV_WEAPONSWITCHED ? qfalse : qtrue);
+					break;
+				default:
+					break;
+				}
+			}
+		}
 		break;
 	case EV_CHANGE_WEAPON:
 		DEBUGNAME("EV_CHANGE_WEAPON");
@@ -2723,7 +2723,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			vec3_t color = { es->angles[0] / 255.f, es->angles[1] / 255.f, es->angles[2] / 255.f };
 
 			// red is default if there is no color set
-			if (color[0] == 0 && color[1] == 0 && color[2] == 0)
+			if (color[0] == 0.0f && color[1] == 0.0f && color[2] == 0.0f)
 			{
 				color[0] = 1;
 				color[1] = 0;
@@ -3309,7 +3309,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		DEBUGNAME("EV_POPUPMESSAGE");
 		if (str)
 		{
-			CG_AddPMItem(cent->currentState.effect1Time, str, " ", shader, 0, 0, NULL);
+			CG_AddPMItem((popupMessageType_t)cent->currentState.effect1Time, str, " ", shader, 0, 0, NULL);
 		}
 		CG_PlayPMItemSound(cent);
 	}
