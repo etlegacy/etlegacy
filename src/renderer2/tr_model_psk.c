@@ -403,7 +403,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 	for (i = 0, vertex = vertexes; i < numVertexes; i++, vertex++)
 	{
-		if (vertex->materialIndex < 0 || vertex->materialIndex >= numMaterials)
+		if (vertex->materialIndex >= numMaterials)
 		{
 			Ren_Warning("R_LoadPSK: '%s' has vertex with material index out of range (%i while max %i)\n", modName, vertex->materialIndex, numMaterials);
 			DeallocAll();
@@ -413,7 +413,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 	for (i = 0, triangle = triangles; i < numTriangles; i++, triangle++)
 	{
-		if (triangle->materialIndex < 0 || triangle->materialIndex >= numMaterials)
+		if (triangle->materialIndex >= numMaterials)
 		{
 			Ren_Warning("R_LoadPSK: '%s' has triangle with material index out of range (%i while max %i)\n", modName, triangle->materialIndex, numMaterials);
 			DeallocAll();
