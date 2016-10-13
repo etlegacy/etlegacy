@@ -1162,7 +1162,7 @@ void SCR_DebugGraph(float value);     // FIXME: move logging to common?
 // server interface
 
 void SV_Init(void);
-void SV_Shutdown(char *finalmsg);
+void SV_Shutdown(const char *finalmsg);
 void SV_Frame(int msec);
 void SV_PacketEvent(netadr_t from, msg_t *msg);
 qboolean SV_GameCommand(void);
