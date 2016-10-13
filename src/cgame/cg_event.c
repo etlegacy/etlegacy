@@ -57,7 +57,7 @@ static void CG_Obituary(entityState_t *ent)
 	int          mod          = ent->eventParm;
 	int          target       = ent->otherEntityNum;
 	int          attacker     = ent->otherEntityNum2;
-	weapon_t     weapon       = ent->weapon;
+	weapon_t     weapon       = (weapon_t)ent->weapon;
 	char         *message     = NULL;
 	char         *message2    = NULL;
 	char         targetName[MAX_NAME_LENGTH];
@@ -3094,7 +3094,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		break;
 	case EV_FLAMETHROWER_EFFECT:
 		DEBUGNAME("EV_FLAMETHROWER_EFFECT");
-		CG_FireFlameChunks(cent, cent->currentState.origin, cent->currentState.apos.trBase, 0.6, 2);
+		CG_FireFlameChunks(cent, cent->currentState.origin, cent->currentState.apos.trBase, 0.6f, qtrue);
 		break;
 	case EV_DUST:
 		DEBUGNAME("EV_DUST");
