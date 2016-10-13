@@ -436,7 +436,7 @@ void SV_GentitySetHealthField(sharedEntity_t *gent, int value);
 void SV_GentityUpdateHealthField(sharedEntity_t *gent, playerState_t *player);
 
 // sv_main.c
-void SV_FinalCommand(char *cmd, qboolean disconnect);   // added disconnect flag so map changes can use this function as well
+void SV_FinalCommand(const char *cmd, qboolean disconnect);   // added disconnect flag so map changes can use this function as well
 void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) __attribute__ ((format(printf, 2, 3)));
 void SV_AddOperatorCommands(void);
 void SV_RemoveOperatorCommands(void);
@@ -480,7 +480,7 @@ void SV_GetConfigstring(int index, char *buffer, int bufferSize);
 void SV_SetUserinfo(int index, const char *val);
 void SV_GetUserinfo(int index, char *buffer, int bufferSize);
 void SV_ChangeMaxClients(void);
-void SV_SpawnServer(char *server);
+void SV_SpawnServer(const char *server);
 void SV_WriteAttackLog(const char *log);
 
 #ifdef LEGACY_DEBUG
