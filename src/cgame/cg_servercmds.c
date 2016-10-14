@@ -2490,7 +2490,28 @@ static void CG_ServerCommand(void)
 	}
 	else if (!Q_stricmp(cmd, "cpm"))
 	{
-		CG_AddPMItem(PM_MESSAGE, CG_LocalizeServerCommand(CG_Argv(1)), " ", cgs.media.voiceChatShader, 0, 0, NULL);
+		int        iconnumber;
+		const char *iconstring;
+
+		iconstring = CG_Argv(2);
+		
+		// catch no cpm icon param
+		if (!iconstring[0])
+		{
+			iconnumber = PM_MESSAGE; // default
+		}
+		else
+		{
+			iconnumber = atoi(iconstring);
+		}
+
+		// only valid icon types
+		if (iconnumber < 0 || iconnumber >= PM_NUM_TYPES)
+		{
+			iconnumber = PM_MESSAGE;
+		}
+
+		CG_AddPMItem(PM_MESSAGE, CG_LocalizeServerCommand(CG_Argv(1)), " ", cgs.media.pmImages[iconnumber], 0, 0, NULL);
 		return;
 	}
 	else if (!Q_stricmp(cmd, "cp"))
