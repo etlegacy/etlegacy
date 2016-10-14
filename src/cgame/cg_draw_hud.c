@@ -1088,7 +1088,7 @@ static void CG_DrawGunIcon(rectDef_t location)
 	}
 
 	if (
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 	    cg.mvTotalClients < 1 &&
 #endif
 	    cg_drawWeaponIconFlash.integer == 0)
@@ -1098,7 +1098,7 @@ static void CG_DrawGunIcon(rectDef_t location)
 	else
 	{
 		int ws =
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 		    (cg.mvTotalClients > 0) ? cgs.clientinfo[cg.snap->ps.clientNum].weaponState :
 #endif
 		    BG_simpleWeaponState(cg.snap->ps.weaponstate);
@@ -1553,7 +1553,7 @@ static void CG_DrawNewCompass(rectDef_t location)
 	}
 
 	if (snap->ps.pm_flags & PMF_LIMBO /*|| snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR*/
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 	    || cg.mvTotalClients > 0
 #endif
 	    )

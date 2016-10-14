@@ -229,7 +229,7 @@ vmCvar_t cg_drawReinforcementTime;
 vmCvar_t cg_drawWeaponIconFlash;
 vmCvar_t cg_noAmmoAutoSwitch;
 vmCvar_t cg_printObjectiveInfo;
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 vmCvar_t cg_specHelp;
 #endif
 vmCvar_t cg_uinfo;
@@ -243,7 +243,7 @@ vmCvar_t demo_avifpsF5;
 vmCvar_t demo_drawTimeScale;
 vmCvar_t demo_infoWindow;
 
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 vmCvar_t mv_sensitivity;
 #endif
 
@@ -468,7 +468,7 @@ cvarTable_t cvarTable[] =
 	{ &cg_drawWeaponIconFlash,    "cg_drawWeaponIconFlash",    "1",     CVAR_ARCHIVE                 },
 	{ &cg_noAmmoAutoSwitch,       "cg_noAmmoAutoSwitch",       "1",     CVAR_ARCHIVE                 },
 	{ &cg_printObjectiveInfo,     "cg_printObjectiveInfo",     "1",     CVAR_ARCHIVE                 },
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 	{ &cg_specHelp,               "cg_specHelp",               "1",     CVAR_ARCHIVE                 },
 #endif
 	{ &cg_uinfo,                  "cg_uinfo",                  "0",     CVAR_ROM | CVAR_USERINFO     },
@@ -772,7 +772,7 @@ int CG_CrosshairPlayer(void)
 
 int CG_LastAttacker(void)
 {
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 	// used for messaging clients in the currect active window
 	if (cg.mvTotalClients > 0)
 	{

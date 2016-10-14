@@ -491,7 +491,7 @@ CG_TransitionPlayerState
 */
 void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 {
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 	// MV client handling
 	if (cg.mvTotalClients > 0)
 	{
