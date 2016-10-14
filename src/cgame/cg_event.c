@@ -1354,7 +1354,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 				le->pos.trDelta[0] += ((random() * 200) - 100);
 				le->pos.trDelta[1] += ((random() * 200) - 100);
 
-				if (dir[2])
+				if (dir[2] != 0.f)
 				{
 					le->pos.trDelta[2] = random() * 200 * materialmul;     // randomize sort of a lot so they don't all land together
 				}
@@ -1731,7 +1731,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				le->pos.trDelta[0] += ((random() * 100) - 50);
 				le->pos.trDelta[1] += ((random() * 100) - 50);
 
-				if (dir[2])
+				if (dir[2] != 0.f)
 				{
 					le->pos.trDelta[2] = random() * 200 * materialmul;     // randomize sort of a lot so they don't all land together
 				}
