@@ -39,17 +39,15 @@ extern void CG_StartShakeCamera(float param);
 extern void CG_Tracer(vec3_t source, vec3_t dest, int sparks);
 //==========================================================================
 
-vec3_t OB_YELLOW = { 1.f, 1.f, 0.f };
-vec3_t OB_RED = { 1.f, 0.f, 0.f };
+static vec3_t OB_YELLOW = { 1.f, 1.f, 0.f };
+static vec3_t OB_RED = { 1.f, 0.f, 0.f };
 
-/*
-=============
-CG_Obituary
-
-FIXME: ... some MODs are not catched - check all!
-       - MOD_CRUSH_X is selfkill only
-=============
-*/
+/**
+ * @brief CG_Obituary
+ * @param[in] ent
+ * @todo FIXME: ... some MODs are not catched - check all!
+ *      - MOD_CRUSH_X is selfkill only
+ */
 static void CG_Obituary(entityState_t *ent)
 {
 	qhandle_t    shader       = cgs.media.pmImages[PM_DEATH];
@@ -643,13 +641,10 @@ static void CG_Obituary(entityState_t *ent)
 // from cg_weapons.c
 extern int CG_WeaponIndex(int weapnum, int *bank, int *cycle);
 
-/*
-================
-CG_ItemPickup
-
-A new item was picked up this frame
-================
-*/
+/**
+ * @brief A new item was picked up this frame
+ * @param[in] itemNum
+ */
 static void CG_ItemPickup(int itemNum)
 {
 	int                itemid = bg_itemlist[itemNum].giTag;
@@ -658,6 +653,13 @@ static void CG_ItemPickup(int itemNum)
 
 	switch (bg_itemlist[itemNum].giType)
 	{
+	// TODO: handle these
+//  case IT_BAD:
+//	case IT_WEAPON:
+//	case IT_ARMOR:
+//	case IT_HOLDABLE:
+//	case IT_KEY:
+//	case IT_TREASURE:
 	case IT_AMMO:
 		giType = PM_AMMOPICKUP;
 		break;
@@ -757,13 +759,12 @@ static void CG_ItemPickup(int itemNum)
 	}
 }
 
-/*
-================
-CG_PainEvent
-
-Also called by playerstate transition
-================
-*/
+/**
+ * @brief Also called by playerstate transition
+ * @param[in] cent
+ * @param[in] health - unused
+ * @param[in] crouching - unused
+ */
 void CG_PainEvent(centity_t *cent, int health, qboolean crouching)
 {
 	// don't do more than two pain sounds a second
@@ -778,14 +779,6 @@ void CG_PainEvent(centity_t *cent, int health, qboolean crouching)
 	cent->pe.painTime       = cg.time;
 	cent->pe.painDirection ^= 1;
 }
-
-/*
-==============
-CG_Explode
-
-    if (cent->currentState.angles2[0] || cent->currentState.angles2[1] || cent->currentState.angles2[2])
-==============
-*/
 
 typedef struct fxSound_s
 {
@@ -812,6 +805,9 @@ static fxSound_t fxSounds[FXTYPE_MAX] =
 	{ 1, { -1, -1, -1 }, { "sound/world/fabricbreak.wav", NULL,                          NULL                          } }
 };
 
+/**
+ * @brief CG_PrecacheFXSounds
+ */
 void CG_PrecacheFXSounds(void)
 {
 	int i, j;
@@ -828,12 +824,14 @@ void CG_PrecacheFXSounds(void)
 void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound, int forceLowGrav, qhandle_t shader);
 void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound, int forceLowGrav, qhandle_t shader, float speedscale, float sizescale);
 
-/*
-==============
-CG_Explode
-    the old cent-based explode calls will still work with this pass-through
-==============
-*/
+/**
+ * @brief The old cent-based explode calls will still work with this pass-through
+ *      if (cent->currentState.angles2[0] || cent->currentState.angles2[1] || cent->currentState.angles2[2])
+ * @param[in] cent
+ * @param[in] origin
+ * @param[in] dir
+ * @param[in] shader
+ */
 void CG_Explode(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 {
 	// inherit shader
@@ -907,12 +905,13 @@ void CG_Explode(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 	}
 }
 
-/*
-==============
-CG_Explode
-    the old cent-based explode calls will still work with this pass-through
-==============
-*/
+/**
+ * @brief CG_Rubble
+ * @param[in] cent
+ * @param[in] origin
+ * @param[in] dir
+ * @param[in] shader
+ */
 void CG_Rubble(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 {
 	// inherit shader
@@ -992,11 +991,18 @@ void CG_Rubble(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 	}
 }
 
-/*
-==============
-CG_RubbleFx
-==============
-*/
+/**
+ * @brief CG_RubbleFx
+ * @param[in] origin
+ * @param[in] dir
+ * @param[in] mass
+ * @param[in] type
+ * @param[in] sound
+ * @param[in] forceLowGrav
+ * @param[in] shader
+ * @param[in] speedscale
+ * @param[in] sizescale
+ */
 void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t sound, int forceLowGrav, qhandle_t shader, float speedscale, float sizescale)
 {
 	int                 i;
@@ -1363,12 +1369,16 @@ pass:
 	}
 }
 
-/*
-==============
-CG_Explodef
-    made this more generic for spawning hits and breaks without needing a *cent
-==============
-*/
+/**
+ * @brief Made this more generic for spawning hits and breaks without needing a *cent
+ * @param[in] origin
+ * @param[in] dir
+ * @param[in] mass
+ * @param[in] type
+ * @param[in] sound
+ * @param[in] forceLowGrav
+ * @param[in] shader
+ */
 void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound, int forceLowGrav, qhandle_t shader)
 {
 	int                 i;
@@ -1736,12 +1746,12 @@ pass:
 	}
 }
 
-/*
-==============
-CG_Effect
-    Quake ed -> target_effect (0 .5 .8) (-6 -6 -6) (6 6 6) fire explode smoke debris gore lowgrav
-==============
-*/
+/**
+ * @brief Quake ed -> target_effect (0 .5 .8) (-6 -6 -6) (6 6 6) fire explode smoke debris gore lowgrav
+ * @param[in] cent
+ * @param[in] origin
+ * @param[in] dir
+ */
 void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 {
 	localEntity_t *le;
@@ -1862,16 +1872,18 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 	}
 }
 
-/*
-CG_Shard
-
-    We should keep this separate since there will be considerable differences
-    in the physical properties of shard vrs debris. not to mention the fact
-    there is no way we can quantify what type of effects the designers will
-    potentially desire. If it is still possible to merge the functionality of
-    cg_shard into cg_explode at a latter time I would have no problem with that
-    but for now I want to keep it separate
-*/
+/**
+ * @brief CG_Shard
+ * @param[in] cent
+ * @param[in] origin
+ * @param[in] dir
+ * @note  We should keep this separate since there will be considerable differences
+ *   in the physical properties of shard vrs debris. not to mention the fact
+ *   there is no way we can quantify what type of effects the designers will
+ *   potentially desire. If it is still possible to merge the functionality of
+ *   cg_shard into cg_explode at a latter time I would have no problem with that
+ *   but for now I want to keep it separate
+ */
 void CG_Shard(centity_t *cent, vec3_t origin, vec3_t dir)
 {
 	localEntity_t *le;
@@ -2022,6 +2034,11 @@ void CG_Shard(centity_t *cent, vec3_t origin, vec3_t dir)
 	}
 }
 
+/**
+ * @brief CG_ShardJunk
+ * @param[in] origin
+ * @param[in] dir
+ */
 void CG_ShardJunk(vec3_t origin, vec3_t dir)
 {
 	localEntity_t *le = CG_AllocLocalEntity();
@@ -2067,7 +2084,12 @@ void CG_ShardJunk(vec3_t origin, vec3_t dir)
 	le->angles.trDelta[2] = (100 + (rand() & 500)) - 300;
 }
 
-// debris test
+/**
+ * @brief Debris test
+ * @param[in] cent
+ * @param[in] origin
+ * @param[in] dir
+ */
 void CG_Debris(centity_t *cent, vec3_t origin, vec3_t dir)
 {
 	localEntity_t *le = CG_AllocLocalEntity();
@@ -2108,6 +2130,13 @@ void CG_Debris(centity_t *cent, vec3_t origin, vec3_t dir)
 	le->angles.trDelta[2] = (50 + (rand() & 400)) - 100;
 }
 
+/**
+ * @brief CG_MortarImpact
+ * @param[in] cent
+ * @param[in] origin
+ * @param[in] sfx
+ * @param[in] dist
+ */
 void CG_MortarImpact(centity_t *cent, vec3_t origin, int sfx, qboolean dist)
 {
 	if (sfx >= 0)
@@ -2138,6 +2167,11 @@ void CG_MortarImpact(centity_t *cent, vec3_t origin, int sfx, qboolean dist)
 	}
 }
 
+/**
+ * @brief CG_MortarMiss
+ * @param[in] cent
+ * @param[in] origin
+ */
 void CG_MortarMiss(centity_t *cent, vec3_t origin)
 {
 	if (cent->currentState.clientNum == cg.snap->ps.clientNum && cg.mortarImpactTime != -2)
@@ -2155,18 +2189,15 @@ void CG_MortarMiss(centity_t *cent, vec3_t origin)
 	}
 }
 
-/*
-==============
-CG_EntityEvent
-
-An entity has an event value
-also called by CG_CheckPlayerstateEvents
-==============
-*/
 extern void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int duration, int count, float randScale);
 
 #define DEBUGNAME(x) if (cg_debugEvents.integer) { CG_Printf(x "\n"); }
 
+/**
+ * @brief An entity has an event value also called by CG_CheckPlayerstateEvents
+ * @param[in] cent
+ * @param[in] position
+ */
 void CG_EntityEvent(centity_t *cent, vec3_t position)
 {
 	entityState_t *es   = &cent->currentState;
@@ -3424,6 +3455,10 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		DEBUGNAME("EV_MEDIC_CALL");
 		switch (cgs.clientinfo[cent->currentState.number].team)
 		{
+		// TODO: handle theses
+//        case TEAM_FREE:
+//        case TEAM_SPECTATOR:
+//        case TEAM_NUM_TEAMS:
 		case TEAM_AXIS:
 			trap_S_StartSound(NULL, cent->currentState.number, CHAN_AUTO, cgs.media.sndMedicCall[0]);
 			break;
@@ -3483,11 +3518,10 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	}
 }
 
-/*
-==============
-CG_CheckEvents
-==============
-*/
+/**
+ * @brief CG_CheckEvents
+ * @param[in] cent
+ */
 void CG_CheckEvents(centity_t *cent)
 {
 	int i, event;
