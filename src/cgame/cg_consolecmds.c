@@ -1014,7 +1014,29 @@ void CG_ForceTapOut_f(void)
  */
 static void CG_CPM_f(void)
 {
-	CG_AddPMItem(PM_MESSAGE, CG_Argv(1), " ", cgs.media.voiceChatShader, 0, 0, NULL);
+	int        iconnumber;
+	const char *iconstring;
+
+	iconstring = CG_Argv(2);
+
+	// catch no cpm icon param
+	if (!iconstring[0])
+	{
+		iconnumber = PM_MESSAGE; // default
+	}
+	else
+	{
+		iconnumber = atoi(iconstring);
+	}
+
+	// only valid icon types
+	if (iconnumber < 0 || iconnumber >= PM_NUM_TYPES)
+	{
+		iconnumber = PM_MESSAGE;
+	}
+
+	// this is custom, don't localize!
+	CG_AddPMItem(PM_MESSAGE, CG_Argv(1), " ", cgs.media.pmImages[iconnumber], 0, 0, NULL);
 }
 
 /**
