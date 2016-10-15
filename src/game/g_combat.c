@@ -383,7 +383,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	char      *killerName  = "<world>";
 	qboolean  nogib        = qtrue;
 	qboolean  killedintank = qfalse;
-	qboolean  attackerClient, dieFromSameTeam;
+	qboolean  attackerClient, dieFromSameTeam = qfalse;
 
 	//G_Printf( "player_die\n" );
 
@@ -410,10 +410,12 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	}
 
 	attackerClient  = (attacker && attacker->client) ? qtrue : qfalse;
-	dieFromSameTeam = OnSameTeam(self, attacker) || (attacker->client && self->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor));
 
 	if (attackerClient)
 	{
+	 	// dieFromSameTeam is valid client attacker only
+		dieFromSameTeam = OnSameTeam(self, attacker) || self->client->sess.sessionTeam == G_GetTeamFromEntity(inflictor);
+
 		self->client->pers.lastkiller_client     = attacker->s.clientNum;
 		attacker->client->pers.lastkilled_client = self->s.clientNum;
 
@@ -883,7 +885,7 @@ gentity_t *G_BuildHead(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
 		{
 			height = ent->client->ps.viewheight - 60;
 		}
-		else if ((ent->client->ps.eFlags & EF_DEAD))
+		else if (ent->client->ps.eFlags & EF_DEAD)
 		{
 			height = ent->client->ps.viewheight - 64;
 		}
@@ -921,7 +923,7 @@ gentity_t *G_BuildHead(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
 		{
 			VectorScale(forward, 24, v);
 		}
-		else if ((ent->client->ps.eFlags & EF_DEAD))
+		else if (ent->client->ps.eFlags & EF_DEAD)
 		{
 			VectorScale(forward, -26, v);
 			VectorMA(v, 5.0f, right, v);
