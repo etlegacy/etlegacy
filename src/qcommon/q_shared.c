@@ -586,7 +586,7 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 			if (c == '\\' && *(data) == '\"')
 			{
 				// string-in-string
-				if (len < MAX_TOKEN_CHARS)
+				if (len < MAX_TOKEN_CHARS - 1)
 				{
 					com_token[len] = '\"';
 					len++;
@@ -605,7 +605,7 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 					}
 					if ((c == '\\' && *(data) == '\"'))
 					{
-						if (len < MAX_TOKEN_CHARS)
+						if (len < MAX_TOKEN_CHARS - 1)
 						{
 							com_token[len] = '\"';
 							len++;
