@@ -1480,7 +1480,9 @@ void Think_SetupObjectiveInfo(gentity_t *ent)
 		if (constructibles[0]->s.angles2[1] == 0)
 		{
 			// spawn a constructible icon - this is for compass usage
-			gentity_t *e = G_Spawn();
+			gentity_t *e;
+
+			e = G_Spawn();
 
 			e->r.svFlags = SVF_BROADCAST;
 			e->classname = "constructible_indicator";

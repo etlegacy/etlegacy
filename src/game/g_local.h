@@ -2419,6 +2419,20 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 
 #define TARGET_PUSH_BOUNCEPAD           1
 
+// func_door_rotating spawnflags
+#define DOOR_ROTATING_TOGGLE			2
+#define DOOR_ROTATING_X_AXIS			4
+#define DOOR_ROTATING_Y_AXIS			8
+#define DOOR_ROTATING_REVERSE			16
+#define DOOR_ROTATING_FORCE				32
+#define DOOR_ROTATING_STAYOPEN			64
+
+// func_door spawnflags
+#define DOOR_START_OPEN					1
+#define DOOR_TOGGLE						2
+#define DOOR_CRUSHER					4
+#define DOOR_TOUCH						8
+
 // Spawnflags end
 
 // MAPVOTE - used when mapvoting is enabled

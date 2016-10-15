@@ -1297,7 +1297,7 @@ qboolean IsBinaryMoverBlocked(gentity_t *ent, gentity_t *other, gentity_t *activ
 		qboolean is_relay = qfalse;
 		float    dot;
 
-		if (ent->spawnflags & 32)
+		if (ent->spawnflags & DOOR_ROTATING_FORCE)
 		{
 			return qfalse;
 		}
@@ -1932,7 +1932,7 @@ void InitMoverRotate(gentity_t *ent)
 
 	ent->use = Use_BinaryMover;
 
-	if (!(ent->spawnflags & 64))       // STAYOPEN
+	if (!(ent->spawnflags & DOOR_ROTATING_STAYOPEN))       // STAYOPEN
 	{
 		ent->reached = Reached_BinaryMover;
 	}
@@ -2006,7 +2006,7 @@ void Blocked_Door(gentity_t *ent, gentity_t *other)
 		}
 	}
 
-	if (ent->spawnflags & 4)
+	if (ent->spawnflags & DOOR_CRUSHER)
 	{
 		return;     // crushers don't reverse
 	}
@@ -2500,7 +2500,7 @@ void SP_func_door(gentity_t *ent)
 	distance = DotProduct(abs_movedir, size) - lip;
 	VectorMA(ent->pos1, distance, ent->movedir, ent->pos2);
 
-	if (ent->spawnflags & 1)        // START_OPEN - reverse position 1 and 2
+	if (ent->spawnflags & DOOR_START_OPEN)        // START_OPEN - reverse position 1 and 2
 	{
 		vec3_t temp;
 
@@ -2522,7 +2522,7 @@ void SP_func_door(gentity_t *ent)
 	}
 
 	// TOGGLE
-	if (ent->spawnflags & 2)
+	if (ent->spawnflags & DOOR_TOGGLE)
 	{
 		ent->flags |= FL_TOGGLE;
 	}
@@ -2906,7 +2906,7 @@ void SP_func_button(gentity_t *ent)
 		// shootable button
 		ent->takedamage = qtrue;
 	}
-	else if (ent->spawnflags & 8)
+	else if (ent->spawnflags & DOOR_TOUCH)
 	{
 		// touchable button
 		ent->touch = Touch_Button;
@@ -4018,13 +4018,13 @@ void SP_func_door_rotating(gentity_t *ent)
 	}
 
 	// reverse direction
-	if (ent->spawnflags & 16)
+	if (ent->spawnflags & DOOR_ROTATING_REVERSE)
 	{
 		ent->angle *= -1;
 	}
 
 	// TOGGLE
-	if (ent->spawnflags & 2)
+	if (ent->spawnflags & DOOR_ROTATING_TOGGLE)
 	{
 		ent->flags |= FL_TOGGLE;
 	}
@@ -4047,11 +4047,11 @@ void SP_func_door_rotating(gentity_t *ent)
 
 	// set the rotation axis
 	VectorClear(ent->rotate);
-	if      (ent->spawnflags & 4)
+	if      (ent->spawnflags & DOOR_ROTATING_X_AXIS)
 	{
 		ent->rotate[2] = 1;
 	}
-	else if (ent->spawnflags & 8)
+	else if (ent->spawnflags & DOOR_ROTATING_Y_AXIS)
 	{
 		ent->rotate[0] = 1;
 	}
