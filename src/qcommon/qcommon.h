@@ -189,7 +189,8 @@ typedef enum
  * @def NET_ADDRSTRMAXLEN
  * @brief maximum length of an IPv6 address string including trailing '\0'
  */
-#define NET_ADDRSTRMAXLEN 48
+#define NET_ADDRSTRMAXLEN     48 // why 48? IPv4-mapped IPv6 maximum is 45 .. + trailing 0 is 46
+#define NET_ADDRSTRMAXLEN_EXT 56 // NET_ADDRSTRMAXLEN + 8 (2xbrackets, colon, 5xport)
 typedef struct
 {
 	uint16_t type;
@@ -215,7 +216,7 @@ qboolean NET_CompareBaseAdr(netadr_t a, netadr_t b);
 qboolean NET_IsLocalAddress(netadr_t adr);
 qboolean NET_IsIPXAddress(const char *buf);
 const char *NET_AdrToString(netadr_t a);
-const char *NET_AdrToStringwPort(netadr_t a);
+const char *NET_AdrToStringNoPort(netadr_t a);
 int NET_StringToAdr(const char *s, netadr_t *a, netadrtype_t family);
 qboolean NET_GetLoopPacket(netsrc_t sock, netadr_t *net_from, msg_t *net_message);
 void NET_Sleep(int msec);

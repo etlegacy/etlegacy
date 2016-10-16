@@ -52,22 +52,22 @@ typedef unsigned short sa_family_t;
 #   endif
 
 #ifdef EAGAIN
-#	undef EAGAIN
+#   undef EAGAIN
 #endif
 #define EAGAIN WSAEWOULDBLOCK
 
 #ifdef EADDRNOTAVAIL
-#	undef EADDRNOTAVAIL
+#   undef EADDRNOTAVAIL
 #endif
 #define EADDRNOTAVAIL WSAEADDRNOTAVAIL
 
 #ifdef EAFNOSUPPORT
-#	undef EAFNOSUPPORT
+#   undef EAFNOSUPPORT
 #endif
 #define EAFNOSUPPORT WSAEAFNOSUPPORT
 
 #ifdef ECONNRESET
-#	undef ECONNRESET
+#   undef ECONNRESET
 #endif
 #define ECONNRESET WSAECONNRESET
 
@@ -571,7 +571,7 @@ qboolean NET_CompareBaseAdr(netadr_t a, netadr_t b)
 	return NET_CompareBaseAdrMask(a, b, -1);
 }
 
-const char *NET_AdrToString(netadr_t a)
+const char *NET_AdrToStringNoPort(netadr_t a)
 {
 	static char s[NET_ADDRSTRMAXLEN];
 
@@ -584,16 +584,11 @@ const char *NET_AdrToString(netadr_t a)
 		Com_sprintf(s, sizeof(s), "bot");
 		break;
 	case NA_IP:
-		// Port has to be returned along with ip address because of compatibility
-		Com_sprintf(s, sizeof(s), "%i.%i.%i.%i:%hu",
-		            a.ip[0], a.ip[1], a.ip[2], a.ip[3], BigShort(a.port));
+		Com_sprintf(s, sizeof(s), "%i.%i.%i.%i", a.ip[0], a.ip[1], a.ip[2], a.ip[3]);
 		break;
 #ifdef FEATURE_IPV6
 	case NA_IP6:
 	{
-		// FIXME: add port for compatibility
-		// (joining a server through the server browser)
-		// Needs to be [ip]:port since : is a valid entry in ipv6
 		struct sockaddr_storage sadr;
 
 		memset(&sadr, 0, sizeof(sadr));
@@ -603,17 +598,25 @@ const char *NET_AdrToString(netadr_t a)
 	}
 	break;
 #endif
+	case NA_BAD: // Invalid, unknown or non-applicable address type
+		//Com_Printf("NET_AdrToString: Address type: 0.0.0.0 or ::\n");
+		Com_sprintf(s, sizeof(s), "invalid");
+		break;
 	default:
-		Com_Printf("NET_AdrToString: Unknown address type: %i\n", a.type);
+		Com_Printf("NET_AdrToStringNoPort: Unknown address type: %i\n", a.type);
+		Com_sprintf(s, sizeof(s), "unknown");
 		break;
 	}
 
 	return s;
 }
 
-const char *NET_AdrToStringwPort(netadr_t a)
+/**
+ * @brief Returns address & port
+ */
+const char *NET_AdrToString(netadr_t a)
 {
-	static char s[NET_ADDRSTRMAXLEN];
+	static char s[NET_ADDRSTRMAXLEN_EXT];
 
 	switch (a.type)
 	{
@@ -624,15 +627,20 @@ const char *NET_AdrToStringwPort(netadr_t a)
 		Com_sprintf(s, sizeof(s), "bot");
 		break;
 	case NA_IP:
-		Com_sprintf(s, sizeof(s), "%s:%hu", NET_AdrToString(a), ntohs(a.port));
+		Com_sprintf(s, sizeof(s), "%i.%i.%i.%i:%hu", a.ip[0], a.ip[1], a.ip[2], a.ip[3], BigShort(a.port));
 		break;
 #ifdef FEATURE_IPV6
 	case NA_IP6:
-		Com_sprintf(s, sizeof(s), "[%s]:%hu", NET_AdrToString(a), ntohs(a.port));
+		Com_sprintf(s, sizeof(s), "[%s]:%hu", NET_AdrToStringNoPort(a), ntohs(a.port));
 		break;
 #endif
+	case NA_BAD: // Invalid, unknown or non-applicable address type
+		//Com_Printf("NET_AdrToString: Address type: 0.0.0.0 or ::\n");
+		Com_sprintf(s, sizeof(s), "invalid");
+		break;
 	default:
-		Com_Printf("NET_AdrToStringwPort: Unknown address type: %i\n", a.type);
+		Com_Printf("NET_AdrToString: Unknown address type: %i\n", a.type);
+		Com_sprintf(s, sizeof(s), "unknown");
 		break;
 	}
 

@@ -1375,8 +1375,8 @@ typedef struct entityState_s
 	// for players
 	int powerups;           // bit flags. Used to store entState_t for non-player entities (so we know to draw them translucent clientsided)
 	int weapon;             // determines weapon and flash model, etc
-							// OR fps to animate with (misc_gamemodel ents)
-							// which is the time in ms the model is updated (20 fps = default)
+	                        // OR fps to animate with (misc_gamemodel ents)
+	                        // which is the time in ms the model is updated (20 fps = default)
 	int legsAnim;           // mask off ANIM_TOGGLEBIT
 	int torsoAnim;          // mask off ANIM_TOGGLEBIT
 
@@ -1584,7 +1584,7 @@ typedef struct demoPlayInfo_s
 #define NUMARGS(...)  (sizeof((int[]) { 0, ## __VA_ARGS__ }) / sizeof(int) - 1)
 #endif
 
-typedef int(*cmpFunc_t)(const void *a, const void *b);
+typedef int (*cmpFunc_t)(const void *a, const void *b);
 
 void *Q_LinearSearch(const void *key, const void *ptr, size_t count, size_t size, cmpFunc_t cmp);
 

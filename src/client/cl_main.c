@@ -3552,7 +3552,6 @@ void CL_GlobalServers_f(void)
 		to.port = BigShort(PORT_MASTER);
 	}
 
-	// FIXME: NET_AdrToString doesn't deal with port for IPv6
 	Com_Printf("Requesting servers from the master %s (%s)...\n", masteraddress, NET_AdrToString(to));
 
 	// reset the list, waiting for response
