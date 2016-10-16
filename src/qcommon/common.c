@@ -2723,7 +2723,7 @@ void Com_Init(char *commandLine)
 	// gcc warning: variable `safeMode' might be clobbered by `longjmp' or `vfork'
 	volatile qboolean safeMode = qtrue;
 	int               qport;
-	qboolean test;
+	qboolean          test;
 
 	Com_Printf(ET_VERSION "\n");
 

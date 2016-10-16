@@ -417,12 +417,12 @@ long FS_fplength(FILE *h)
 	long end;
 
 	pos = ftell(h);
-	
+
 	if (fseek(h, 0, SEEK_END) != 0)
 	{
 		Com_Error(ERR_DROP, "FS_fplength: can't seek end of file");
 	}
-	
+
 	end = ftell(h);
 
 	if (pos < 0)
@@ -3636,7 +3636,7 @@ qboolean FS_VerifyOfficialPaks(void)
 				Com_Printf("ERROR: Missing/corrupt official pak file %s\n", officialpaks[i].pakname);
 			}
 		}
-		
+
 		// assumed we have a valid client installation and the server has installed
 		// genunine packs twice (f.e. in fs_homepath AND fs_basepath)
 		// in this case numOfficialPaksLocal is greater than numOfficialPaksOnServer ...
@@ -3644,7 +3644,7 @@ qboolean FS_VerifyOfficialPaks(void)
 		{
 			Com_Error(ERR_DROP, "ERROR: Connection aborted - corrupt/duplicate official pak file server installation.");
 		}
-		
+
 		return qfalse;
 	}
 	else
@@ -4773,7 +4773,7 @@ qboolean FS_UnzipTo(char *filename, char *outpath, qboolean quiet)
 	unzFile         zipFile;
 	unz_global_info zipInfo;
 	int             err, i;
-	void            *buf = NULL;
+	void            *buf      = NULL;
 	qboolean        isUnZipOK = qtrue;
 
 	Com_sprintf(zipPath, sizeof(zipPath), "%s", filename);
