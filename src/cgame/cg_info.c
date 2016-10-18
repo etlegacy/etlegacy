@@ -1953,7 +1953,7 @@ void CG_DemoHelpDraw(void)
 	}
 #endif
 
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 		if (cg.mvTotalClients > 1)
 		{
 			for (i = 0; i < ARRAY_LEN(mvhelp); i++)

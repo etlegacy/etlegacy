@@ -4179,7 +4179,7 @@ void CG_AltWeapon_f(void)
 
 	// Overload for spec mode when following
 	if (((cg.snap->ps.pm_flags & PMF_FOLLOW) || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 	    || cg.mvTotalClients > 0
 #endif
 	    )
@@ -4982,7 +4982,7 @@ void CG_PrevWeapon_f(void)
 		return;
 	}
 
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 	// Overload for MV clients
 	if (cg.mvTotalClients > 0)
 	{

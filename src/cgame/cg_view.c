@@ -2100,7 +2100,7 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 
 	DEBUGTIME
 
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 	// MV handling
 #ifdef FEATURE_EDV
 	if (cg.mvCurrentMainview != NULL && cg.snap->ps.pm_type != PM_INTERMISSION && cgs.mvAllowed && !cgs.demoCamera.renderingFreeCam)

@@ -39,17 +39,15 @@ extern void CG_StartShakeCamera(float param);
 extern void CG_Tracer(vec3_t source, vec3_t dest, int sparks);
 //==========================================================================
 
-vec3_t OB_YELLOW = { 1.f, 1.f, 0.f };
-vec3_t OB_RED = { 1.f, 0.f, 0.f };
+static vec3_t OB_YELLOW = { 1.f, 1.f, 0.f };
+static vec3_t OB_RED = { 1.f, 0.f, 0.f };
 
-/*
-=============
-CG_Obituary
-
-FIXME: ... some MODs are not catched - check all!
-       - MOD_CRUSH_X is selfkill only
-=============
-*/
+/**
+ * @brief CG_Obituary
+ * @param[in] ent
+ * @todo FIXME: ... some MODs are not catched - check all!
+ *      - MOD_CRUSH_X is selfkill only
+ */
 static void CG_Obituary(entityState_t *ent)
 {
 	qhandle_t    shader       = cgs.media.pmImages[PM_DEATH];
@@ -57,7 +55,7 @@ static void CG_Obituary(entityState_t *ent)
 	int          mod          = ent->eventParm;
 	int          target       = ent->otherEntityNum;
 	int          attacker     = ent->otherEntityNum2;
-	weapon_t     weapon       = ent->weapon;
+	weapon_t     weapon       = (weapon_t)ent->weapon;
 	char         *message     = NULL;
 	char         *message2    = NULL;
 	char         targetName[MAX_NAME_LENGTH];
@@ -643,13 +641,10 @@ static void CG_Obituary(entityState_t *ent)
 // from cg_weapons.c
 extern int CG_WeaponIndex(int weapnum, int *bank, int *cycle);
 
-/*
-================
-CG_ItemPickup
-
-A new item was picked up this frame
-================
-*/
+/**
+ * @brief A new item was picked up this frame
+ * @param[in] itemNum
+ */
 static void CG_ItemPickup(int itemNum)
 {
 	int                itemid = bg_itemlist[itemNum].giTag;
@@ -658,6 +653,13 @@ static void CG_ItemPickup(int itemNum)
 
 	switch (bg_itemlist[itemNum].giType)
 	{
+	// TODO: handle these
+//  case IT_BAD:
+//	case IT_WEAPON:
+//	case IT_ARMOR:
+//	case IT_HOLDABLE:
+//	case IT_KEY:
+//	case IT_TREASURE:
 	case IT_AMMO:
 		giType = PM_AMMOPICKUP;
 		break;
@@ -757,13 +759,12 @@ static void CG_ItemPickup(int itemNum)
 	}
 }
 
-/*
-================
-CG_PainEvent
-
-Also called by playerstate transition
-================
-*/
+/**
+ * @brief Also called by playerstate transition
+ * @param[in] cent
+ * @param[in] health - unused
+ * @param[in] crouching - unused
+ */
 void CG_PainEvent(centity_t *cent, int health, qboolean crouching)
 {
 	// don't do more than two pain sounds a second
@@ -778,14 +779,6 @@ void CG_PainEvent(centity_t *cent, int health, qboolean crouching)
 	cent->pe.painTime       = cg.time;
 	cent->pe.painDirection ^= 1;
 }
-
-/*
-==============
-CG_Explode
-
-    if (cent->currentState.angles2[0] || cent->currentState.angles2[1] || cent->currentState.angles2[2])
-==============
-*/
 
 typedef struct fxSound_s
 {
@@ -812,6 +805,9 @@ static fxSound_t fxSounds[FXTYPE_MAX] =
 	{ 1, { -1, -1, -1 }, { "sound/world/fabricbreak.wav", NULL,                          NULL                          } }
 };
 
+/**
+ * @brief CG_PrecacheFXSounds
+ */
 void CG_PrecacheFXSounds(void)
 {
 	int i, j;
@@ -828,12 +824,14 @@ void CG_PrecacheFXSounds(void)
 void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound, int forceLowGrav, qhandle_t shader);
 void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound, int forceLowGrav, qhandle_t shader, float speedscale, float sizescale);
 
-/*
-==============
-CG_Explode
-    the old cent-based explode calls will still work with this pass-through
-==============
-*/
+/**
+ * @brief The old cent-based explode calls will still work with this pass-through
+ *      if (cent->currentState.angles2[0] || cent->currentState.angles2[1] || cent->currentState.angles2[2])
+ * @param[in] cent
+ * @param[in] origin
+ * @param[in] dir
+ * @param[in] shader
+ */
 void CG_Explode(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 {
 	// inherit shader
@@ -907,12 +905,13 @@ void CG_Explode(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 	}
 }
 
-/*
-==============
-CG_Explode
-    the old cent-based explode calls will still work with this pass-through
-==============
-*/
+/**
+ * @brief CG_Rubble
+ * @param[in] cent
+ * @param[in] origin
+ * @param[in] dir
+ * @param[in] shader
+ */
 void CG_Rubble(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 {
 	// inherit shader
@@ -992,11 +991,18 @@ void CG_Rubble(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 	}
 }
 
-/*
-==============
-CG_RubbleFx
-==============
-*/
+/**
+ * @brief CG_RubbleFx
+ * @param[in] origin
+ * @param[in] dir
+ * @param[in] mass
+ * @param[in] type
+ * @param[in] sound
+ * @param[in] forceLowGrav
+ * @param[in] shader
+ * @param[in] speedscale
+ * @param[in] sizescale
+ */
 void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t sound, int forceLowGrav, qhandle_t shader, float speedscale, float sizescale)
 {
 	int                 i;
@@ -1005,7 +1011,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 	int                 howmany, total, totalsounds = 0;
 	int                 pieces[6];     // how many of each piece
 	qhandle_t           modelshader = 0;
-	float               materialmul = 1;     // multiplier for different types
+	float               materialmul = 1.0f;     // multiplier for different types
 	leBounceSoundType_t snd;
 	int                 hmodel;
 	float               scale;
@@ -1278,9 +1284,9 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 				}
 			}
 
-			le->lifeRate   = 1.0 / (le->endTime - le->startTime);
+			le->lifeRate   = 1.0f / (le->endTime - le->startTime);
 			le->leFlags    = LEF_TUMBLE;
-			le->leMarkType = 0;
+			le->leMarkType = LEMT_NONE;
 
 			VectorCopy(origin, re->origin);
 			AxisCopy(axisDefault, re->axis);
@@ -1300,8 +1306,8 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 			if (type == FXTYPE_FABRIC)     // fabric
 			{
 				le->pos.trType   = TR_GRAVITY_FLOAT;   // the fabric stuff will change to use something that looks better
-				le->bounceFactor = 0.0;
-				materialmul      = 0.3;     // rotation speed
+				le->bounceFactor = 0.0f;
+				materialmul      = 0.3f;     // rotation speed
 			}
 			else
 			{
@@ -1314,7 +1320,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 					le->pos.trType = TR_GRAVITY_LOW;
 				}
 
-				le->bounceFactor = 0.4;
+				le->bounceFactor = 0.4f;
 			}
 
 			// rotation
@@ -1333,7 +1339,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 
 			// hoping that was just intended to represent randomness
 			// if (cent->currentState.angles2[0] || cent->currentState.angles2[1] || cent->currentState.angles2[2])
-			if (le->angles.trBase[0] == 1 || le->angles.trBase[1] == 1 || le->angles.trBase[2] == 1)
+			if (le->angles.trBase[0] == 1.0f || le->angles.trBase[1] == 1.0f || le->angles.trBase[2] == 1.0f)
 			{
 				le->pos.trType = TR_GRAVITY;
 				VectorScale(dir, 10 * 8, le->pos.trDelta);
@@ -1348,7 +1354,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 				le->pos.trDelta[0] += ((random() * 200) - 100);
 				le->pos.trDelta[1] += ((random() * 200) - 100);
 
-				if (dir[2])
+				if (dir[2] != 0.f)
 				{
 					le->pos.trDelta[2] = random() * 200 * materialmul;     // randomize sort of a lot so they don't all land together
 				}
@@ -1363,12 +1369,16 @@ pass:
 	}
 }
 
-/*
-==============
-CG_Explodef
-    made this more generic for spawning hits and breaks without needing a *cent
-==============
-*/
+/**
+ * @brief Made this more generic for spawning hits and breaks without needing a *cent
+ * @param[in] origin
+ * @param[in] dir
+ * @param[in] mass
+ * @param[in] type
+ * @param[in] sound
+ * @param[in] forceLowGrav
+ * @param[in] shader
+ */
 void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound, int forceLowGrav, qhandle_t shader)
 {
 	int                 i;
@@ -1650,9 +1660,9 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				}
 			}
 
-			le->lifeRate   = 1.0 / (le->endTime - le->startTime);
+			le->lifeRate   = 1.0f / (le->endTime - le->startTime);
 			le->leFlags    = LEF_TUMBLE;
-			le->leMarkType = 0;
+			le->leMarkType = LEMT_NONE;
 
 			VectorCopy(origin, re->origin);
 			AxisCopy(axisDefault, re->axis);
@@ -1672,8 +1682,8 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 			if (type == FXTYPE_FABRIC)     // "fabric"
 			{
 				le->pos.trType   = TR_GRAVITY_FLOAT;   // the fabric stuff will change to use something that looks better
-				le->bounceFactor = 0.0;
-				materialmul      = 0.3;     // rotation speed
+				le->bounceFactor = 0.0f;
+				materialmul      = 0.3f;     // rotation speed
 			}
 			else
 			{
@@ -1686,7 +1696,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 					le->pos.trType = TR_GRAVITY_LOW;
 				}
 
-				le->bounceFactor = 0.4;
+				le->bounceFactor = 0.4f;
 			}
 
 			// rotation
@@ -1706,7 +1716,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 
 			// hoping that was just intended to represent randomness
 			// if (cent->currentState.angles2[0] || cent->currentState.angles2[1] || cent->currentState.angles2[2])
-			if (le->angles.trBase[0] == 1 || le->angles.trBase[1] == 1 || le->angles.trBase[2] == 1)
+			if (le->angles.trBase[0] == 1.0f || le->angles.trBase[1] == 1.0f || le->angles.trBase[2] == 1.0f)
 			{
 				le->pos.trType = TR_GRAVITY;
 				VectorScale(dir, 10 * 8, le->pos.trDelta);
@@ -1721,7 +1731,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 				le->pos.trDelta[0] += ((random() * 100) - 50);
 				le->pos.trDelta[1] += ((random() * 100) - 50);
 
-				if (dir[2])
+				if (dir[2] != 0.f)
 				{
 					le->pos.trDelta[2] = random() * 200 * materialmul;     // randomize sort of a lot so they don't all land together
 				}
@@ -1736,12 +1746,12 @@ pass:
 	}
 }
 
-/*
-==============
-CG_Effect
-    Quake ed -> target_effect (0 .5 .8) (-6 -6 -6) (6 6 6) fire explode smoke debris gore lowgrav
-==============
-*/
+/**
+ * @brief Quake ed -> target_effect (0 .5 .8) (-6 -6 -6) (6 6 6) fire explode smoke debris gore lowgrav
+ * @param[in] cent
+ * @param[in] origin
+ * @param[in] dir
+ */
 void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 {
 	localEntity_t *le;
@@ -1809,7 +1819,7 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 		qhandle_t  sh     = 0;     // shader handle
 		vec3_t     newdir = { 0, 0, 0 };
 
-		if (cent->currentState.angles2[0] || cent->currentState.angles2[1] || cent->currentState.angles2[2])
+		if (cent->currentState.angles2[0] != 0.0f || cent->currentState.angles2[1] != 0.0f || cent->currentState.angles2[2] != 0.0f)
 		{
 			VectorCopy(cent->currentState.angles2, newdir);
 		}
@@ -1850,7 +1860,7 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 
 		le->pos.trTime = cg.time;
 
-		le->bounceFactor = 0.3;
+		le->bounceFactor = 0.3f;
 
 		le->leBounceSoundType = LEBS_BLOOD;
 		le->leMarkType        = LEMT_BLOOD;
@@ -1862,16 +1872,18 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 	}
 }
 
-/*
-CG_Shard
-
-    We should keep this separate since there will be considerable differences
-    in the physical properties of shard vrs debris. not to mention the fact
-    there is no way we can quantify what type of effects the designers will
-    potentially desire. If it is still possible to merge the functionality of
-    cg_shard into cg_explode at a latter time I would have no problem with that
-    but for now I want to keep it separate
-*/
+/**
+ * @brief CG_Shard
+ * @param[in] cent
+ * @param[in] origin
+ * @param[in] dir
+ * @note  We should keep this separate since there will be considerable differences
+ *   in the physical properties of shard vrs debris. not to mention the fact
+ *   there is no way we can quantify what type of effects the designers will
+ *   potentially desire. If it is still possible to merge the functionality of
+ *   cg_shard into cg_explode at a latter time I would have no problem with that
+ *   but for now I want to keep it separate
+ */
 void CG_Shard(centity_t *cent, vec3_t origin, vec3_t dir)
 {
 	localEntity_t *le;
@@ -1906,11 +1918,11 @@ void CG_Shard(centity_t *cent, vec3_t origin, vec3_t dir)
 			isflyingdebris = qtrue;
 		}
 
-		le->lifeRate     = 1.0 / (le->endTime - le->startTime);
+		le->lifeRate     = 1.0f / (le->endTime - le->startTime);
 		le->leFlags      = LEF_TUMBLE;
-		le->bounceFactor = 0.4;
+		le->bounceFactor = 0.4f;
 		// le->leBounceSoundType    = LEBS_WOOD;
-		le->leMarkType = 0;
+		le->leMarkType = LEMT_NONE;
 
 		VectorCopy(origin, re->origin);
 		AxisCopy(axisDefault, re->axis);
@@ -2022,6 +2034,11 @@ void CG_Shard(centity_t *cent, vec3_t origin, vec3_t dir)
 	}
 }
 
+/**
+ * @brief CG_ShardJunk
+ * @param[in] origin
+ * @param[in] dir
+ */
 void CG_ShardJunk(vec3_t origin, vec3_t dir)
 {
 	localEntity_t *le = CG_AllocLocalEntity();
@@ -2034,10 +2051,10 @@ void CG_ShardJunk(vec3_t origin, vec3_t dir)
 	re->fadeStartTime = le->endTime - 1000;
 	re->fadeEndTime   = le->endTime;
 
-	le->lifeRate     = 1.0 / (le->endTime - le->startTime);
+	le->lifeRate     = 1.0f / (le->endTime - le->startTime);
 	le->leFlags      = LEF_TUMBLE;
-	le->bounceFactor = 0.4;
-	le->leMarkType   = 0;
+	le->bounceFactor = 0.4f;
+	le->leMarkType   = LEMT_NONE;
 
 	VectorCopy(origin, re->origin);
 	AxisCopy(axisDefault, re->axis);
@@ -2067,7 +2084,12 @@ void CG_ShardJunk(vec3_t origin, vec3_t dir)
 	le->angles.trDelta[2] = (100 + (rand() & 500)) - 300;
 }
 
-// debris test
+/**
+ * @brief Debris test
+ * @param[in] cent
+ * @param[in] origin
+ * @param[in] dir
+ */
 void CG_Debris(centity_t *cent, vec3_t origin, vec3_t dir)
 {
 	localEntity_t *le = CG_AllocLocalEntity();
@@ -2080,12 +2102,12 @@ void CG_Debris(centity_t *cent, vec3_t origin, vec3_t dir)
 	re->fadeStartTime = le->endTime - 1000;
 	re->fadeEndTime   = le->endTime;
 
-	le->lifeRate     = 1.0 / (le->endTime - le->startTime);
+	le->lifeRate     = 1.0f / (le->endTime - le->startTime);
 	le->leFlags      = LEF_TUMBLE | LEF_TUMBLE_SLOW;
-	le->bounceFactor = 0.4;
-	le->leMarkType   = 0;
+	le->bounceFactor = 0.4f;
+	le->leMarkType   = LEMT_NONE;
 	le->breakCount   = 1;
-	le->sizeScale    = 0.5;
+	le->sizeScale    = 0.5f;
 
 	VectorCopy(origin, re->origin);
 	AxisCopy(axisDefault, re->axis);
@@ -2108,6 +2130,13 @@ void CG_Debris(centity_t *cent, vec3_t origin, vec3_t dir)
 	le->angles.trDelta[2] = (50 + (rand() & 400)) - 100;
 }
 
+/**
+ * @brief CG_MortarImpact
+ * @param[in] cent
+ * @param[in] origin
+ * @param[in] sfx
+ * @param[in] dist
+ */
 void CG_MortarImpact(centity_t *cent, vec3_t origin, int sfx, qboolean dist)
 {
 	if (sfx >= 0)
@@ -2138,6 +2167,11 @@ void CG_MortarImpact(centity_t *cent, vec3_t origin, int sfx, qboolean dist)
 	}
 }
 
+/**
+ * @brief CG_MortarMiss
+ * @param[in] cent
+ * @param[in] origin
+ */
 void CG_MortarMiss(centity_t *cent, vec3_t origin)
 {
 	if (cent->currentState.clientNum == cg.snap->ps.clientNum && cg.mortarImpactTime != -2)
@@ -2155,18 +2189,15 @@ void CG_MortarMiss(centity_t *cent, vec3_t origin)
 	}
 }
 
-/*
-==============
-CG_EntityEvent
-
-An entity has an event value
-also called by CG_CheckPlayerstateEvents
-==============
-*/
 extern void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int duration, int count, float randScale);
 
 #define DEBUGNAME(x) if (cg_debugEvents.integer) { CG_Printf(x "\n"); }
 
+/**
+ * @brief An entity has an event value also called by CG_CheckPlayerstateEvents
+ * @param[in] cent
+ * @param[in] position
+ */
 void CG_EntityEvent(centity_t *cent, vec3_t position)
 {
 	entityState_t *es   = &cent->currentState;
@@ -2543,61 +2574,61 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	case EV_NOAMMO:
 	case EV_WEAPONSWITCHED:
 		DEBUGNAME("EV_NOAMMO");
-        switch(es->weapon)
-        {
-        case WP_GRENADE_LAUNCHER:
-        case WP_GRENADE_PINEAPPLE:
-        case WP_DYNAMITE:
-        case WP_LANDMINE:
-        case WP_SATCHEL:
-        case WP_SATCHEL_DET:
-        case WP_SMOKE_BOMB:
-        case WP_AMMO:
-        case WP_MEDKIT:
-        case WP_MEDIC_SYRINGE:
-        case WP_MEDIC_ADRENALINE:
-            break;
-        default:
-            trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound);     // FIXME: CHAN_LOCAL_SOUND ?
-            break;
-        }
+		switch (es->weapon)
+		{
+		case WP_GRENADE_LAUNCHER:
+		case WP_GRENADE_PINEAPPLE:
+		case WP_DYNAMITE:
+		case WP_LANDMINE:
+		case WP_SATCHEL:
+		case WP_SATCHEL_DET:
+		case WP_SMOKE_BOMB:
+		case WP_AMMO:
+		case WP_MEDKIT:
+		case WP_MEDIC_SYRINGE:
+		case WP_MEDIC_ADRENALINE:
+			break;
+		default:
+			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound);     // FIXME: CHAN_LOCAL_SOUND ?
+			break;
+		}
 
-        if (es->number == cg.snap->ps.clientNum)
-        {
-            if(cg_noAmmoAutoSwitch.integer > 0 && !CG_WeaponSelectable(cg.weaponSelect))
-            {
-                CG_OutOfAmmoChange(event == EV_WEAPONSWITCHED ? qfalse : qtrue);
-            }
-            else
-            {
-                switch(es->weapon)
-                {
-                case WP_MORTAR_SET:
-                case WP_MORTAR2_SET:
-                case WP_MOBILE_MG42_SET:
-                case WP_MOBILE_BROWNING_SET:
-                case WP_GRENADE_LAUNCHER:
-                case WP_GRENADE_PINEAPPLE:
-                case WP_DYNAMITE:
-                case WP_SMOKE_MARKER:
-                case WP_PANZERFAUST:
-                case WP_BAZOOKA:
-                case WP_ARTY:
-                case WP_LANDMINE:
-                case WP_SATCHEL:
-                case WP_SATCHEL_DET:
-                case WP_SMOKE_BOMB:
-                case WP_AMMO:
-                case WP_MEDKIT:
-                case WP_MEDIC_SYRINGE:
-                case WP_MEDIC_ADRENALINE:
-                    CG_OutOfAmmoChange(event == EV_WEAPONSWITCHED ? qfalse : qtrue);
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
+		if (es->number == cg.snap->ps.clientNum)
+		{
+			if (cg_noAmmoAutoSwitch.integer > 0 && !CG_WeaponSelectable(cg.weaponSelect))
+			{
+				CG_OutOfAmmoChange(event == EV_WEAPONSWITCHED ? qfalse : qtrue);
+			}
+			else
+			{
+				switch (es->weapon)
+				{
+				case WP_MORTAR_SET:
+				case WP_MORTAR2_SET:
+				case WP_MOBILE_MG42_SET:
+				case WP_MOBILE_BROWNING_SET:
+				case WP_GRENADE_LAUNCHER:
+				case WP_GRENADE_PINEAPPLE:
+				case WP_DYNAMITE:
+				case WP_SMOKE_MARKER:
+				case WP_PANZERFAUST:
+				case WP_BAZOOKA:
+				case WP_ARTY:
+				case WP_LANDMINE:
+				case WP_SATCHEL:
+				case WP_SATCHEL_DET:
+				case WP_SMOKE_BOMB:
+				case WP_AMMO:
+				case WP_MEDKIT:
+				case WP_MEDIC_SYRINGE:
+				case WP_MEDIC_ADRENALINE:
+					CG_OutOfAmmoChange(event == EV_WEAPONSWITCHED ? qfalse : qtrue);
+					break;
+				default:
+					break;
+				}
+			}
+		}
 		break;
 	case EV_CHANGE_WEAPON:
 		DEBUGNAME("EV_CHANGE_WEAPON");
@@ -2723,7 +2754,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			vec3_t color = { es->angles[0] / 255.f, es->angles[1] / 255.f, es->angles[2] / 255.f };
 
 			// red is default if there is no color set
-			if (color[0] == 0 && color[1] == 0 && color[2] == 0)
+			if (color[0] == 0.0f && color[1] == 0.0f && color[2] == 0.0f)
 			{
 				color[0] = 1;
 				color[1] = 0;
@@ -3094,7 +3125,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		break;
 	case EV_FLAMETHROWER_EFFECT:
 		DEBUGNAME("EV_FLAMETHROWER_EFFECT");
-		CG_FireFlameChunks(cent, cent->currentState.origin, cent->currentState.apos.trBase, 0.6, 2);
+		CG_FireFlameChunks(cent, cent->currentState.origin, cent->currentState.apos.trBase, 0.6f, qtrue);
 		break;
 	case EV_DUST:
 		DEBUGNAME("EV_DUST");
@@ -3309,7 +3340,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		DEBUGNAME("EV_POPUPMESSAGE");
 		if (str)
 		{
-			CG_AddPMItem(cent->currentState.effect1Time, str, " ", shader, 0, 0, NULL);
+			CG_AddPMItem((popupMessageType_t)cent->currentState.effect1Time, str, " ", shader, 0, 0, NULL);
 		}
 		CG_PlayPMItemSound(cent);
 	}
@@ -3424,6 +3455,10 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		DEBUGNAME("EV_MEDIC_CALL");
 		switch (cgs.clientinfo[cent->currentState.number].team)
 		{
+		// TODO: handle theses
+//        case TEAM_FREE:
+//        case TEAM_SPECTATOR:
+//        case TEAM_NUM_TEAMS:
 		case TEAM_AXIS:
 			trap_S_StartSound(NULL, cent->currentState.number, CHAN_AUTO, cgs.media.sndMedicCall[0]);
 			break;
@@ -3483,11 +3518,10 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	}
 }
 
-/*
-==============
-CG_CheckEvents
-==============
-*/
+/**
+ * @brief CG_CheckEvents
+ * @param[in] cent
+ */
 void CG_CheckEvents(centity_t *cent)
 {
 	int i, event;

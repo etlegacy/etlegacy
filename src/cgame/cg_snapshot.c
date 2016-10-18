@@ -322,7 +322,7 @@ static void CG_TransitionSnapshot(void)
 			CG_ResetEntity(&cg_entities[id]);
 		}
 
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 		if (cg.mvTotalClients > 0 && CG_mvMergedClientLocate(id))
 		{
 			CG_mvUpdateClientInfo(id);
@@ -330,7 +330,7 @@ static void CG_TransitionSnapshot(void)
 #endif
 	}
 
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 	if (cg.mvTotalClients > 0)
 	{
 		CG_mvTransitionPlayerState(&cg.snap->ps);

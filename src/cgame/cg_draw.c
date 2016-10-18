@@ -1095,7 +1095,7 @@ static void CG_DrawCrosshair(void)
 			}
 
 			if (
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 			    cg.mvTotalClients < 1 ||
 #endif
 			    cg.snap->ps.stats[STAT_HEALTH] > 0)
@@ -2805,7 +2805,7 @@ static void CG_DrawFlashFade(void)
 	if (int_ui_blackout.integer == 0)
 	{
 		if (
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 		    cg.mvTotalClients < 1 &&
 #endif
 		    cg.snap->ps.powerups[PW_BLACKOUT] > 0)
@@ -2814,7 +2814,7 @@ static void CG_DrawFlashFade(void)
 		}
 	}
 	else if (cg.snap->ps.powerups[PW_BLACKOUT] == 0
-#if FEATURE_MULTIVIEW
+#ifdef FEATURE_MULTIVIEW
 	         || cg.mvTotalClients > 0
 #endif
 	         )
