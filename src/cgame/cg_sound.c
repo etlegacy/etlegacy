@@ -1714,7 +1714,7 @@ panel_button_t speakerEditorNoiseEdit =
 	{ 430,                           344,200, 12 },
 	{ MAX_QPATH,                     0,  0,   0, 0, 0, 0, 0},
 	&speakerEditorTxt,               /* font     */
-	CG_SpeakerEditor_NoiseEdit_KeyDown,/* keyDown  */
+	CG_SpeakerEditor_NoiseEdit_KeyDown, /* keyDown  */
 	NULL,                            /* keyUp    */
 	CG_SpeakerEditor_RenderEdit,
 	CG_SpeakerEditor_NoiseEditFinish,
@@ -1768,7 +1768,7 @@ panel_button_t speakerEditorLoopedDropdown =
 	{ 430,                          372,60, 12 },
 	{ 3,                            0,  0,  0, 0, 0, 0, 0},
 	&speakerEditorTxt,              /* font     */
-	CG_SpeakerEditor_Dropdown_KeyDown,/* keyDown  */
+	CG_SpeakerEditor_Dropdown_KeyDown, /* keyDown  */
 	CG_SpeakerEditor_Looped_KeyUp,  /* keyUp    */
 	CG_SpeakerEditor_RenderDropdown,
 	NULL,
@@ -1794,8 +1794,8 @@ panel_button_t speakerEditorBroadcastDropdown =
 	{ 430,                          386,60, 12 },
 	{ 3,                            0,  0,  0, 0, 0, 0, 0},
 	&speakerEditorTxt,              /* font     */
-	CG_SpeakerEditor_Dropdown_KeyDown,/* keyDown  */
-	CG_SpeakerEditor_Broadcast_KeyUp,/* keyUp    */
+	CG_SpeakerEditor_Dropdown_KeyDown, /* keyDown  */
+	CG_SpeakerEditor_Broadcast_KeyUp, /* keyUp    */
 	CG_SpeakerEditor_RenderDropdown,
 	NULL,
 };
@@ -1932,8 +1932,8 @@ panel_button_t speakerEditorCancelButton =
 	{ 461,                        458,70, 12 },
 	{ 0,                          0,  0,  0, 0, 0, 0, 0},
 	&speakerEditorTxt,            /* font     */
-	CG_SpeakerEditor_Cancel_KeyDown,/* keyDown  */
-	CG_SpeakerEditor_Cancel_KeyUp,/* keyUp    */
+	CG_SpeakerEditor_Cancel_KeyDown, /* keyDown  */
+	CG_SpeakerEditor_Cancel_KeyUp, /* keyUp    */
 	CG_SpeakerEditor_RenderButton,
 	NULL,
 };
@@ -1945,8 +1945,8 @@ panel_button_t speakerEditorDeleteButton =
 	{ 546,                        458,70, 12 },
 	{ 0,                          0,  0,  0, 0, 0, 0, 0},
 	&speakerEditorTxt,            /* font     */
-	CG_SpeakerEditor_Delete_KeyDown,/* keyDown  */
-	CG_SpeakerEditor_Delete_KeyUp,/* keyUp    */
+	CG_SpeakerEditor_Delete_KeyDown, /* keyDown  */
+	CG_SpeakerEditor_Delete_KeyUp, /* keyUp    */
 	CG_SpeakerEditor_RenderButton,
 	NULL,
 };
