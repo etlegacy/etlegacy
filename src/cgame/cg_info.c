@@ -37,8 +37,8 @@
 
 // Color/font info used for all overlays
 #define COLOR_BG            { 0.0f, 0.0f, 0.0f, 0.6f }
-#define COLOR_BG_TITLE      { 0.16, 0.2f, 0.17f, 0.8f }
-#define COLOR_BG_VIEW       { 0.16, 0.2f, 0.17f, 0.8f }
+#define COLOR_BG_TITLE      { 0.16f, 0.2f, 0.17f, 0.8f }
+#define COLOR_BG_VIEW       { 0.16f, 0.2f, 0.17f, 0.8f }
 #define COLOR_BORDER        { 0.5f, 0.5f, 0.5f, 0.5f }
 #define COLOR_BORDER_TITLE  { 0.1f, 0.1f, 0.1f, 0.2f }
 #define COLOR_BORDER_VIEW   { 0.2f, 0.2f, 0.2f, 0.4f }
@@ -48,17 +48,18 @@
 #define FONT_SUBHEADER      &cgs.media.limboFont1_lo
 #define FONT_TEXT           &cgs.media.limboFont2
 
-vec4_t color_bg_title = COLOR_BG_TITLE;
-vec4_t color_border1  = COLOR_BORDER;
-vec4_t color_bg       = COLOR_BG_VIEW;
-vec4_t color_border   = COLOR_BORDER_VIEW;
+const vec4_t color_bg_title = COLOR_BG_TITLE;
+const vec4_t color_border1  = COLOR_BORDER;
+const vec4_t color_bg       = COLOR_BG_VIEW;
+const vec4_t color_border   = COLOR_BORDER_VIEW;
 
-#define VD_X    4
-#define VD_Y    78
-#define VD_SCALE_X_HDR  0.25f
-#define VD_SCALE_Y_HDR  0.30f
-#define VD_SCALE_X_NAME 0.30f
-#define VD_SCALE_Y_NAME 0.30f
+// NOTE: Unused
+//#define VD_X    4
+//#define VD_Y    78
+//#define VD_SCALE_X_HDR  0.25f
+//#define VD_SCALE_Y_HDR  0.30f
+//#define VD_SCALE_X_NAME 0.30f
+//#define VD_SCALE_Y_NAME 0.30f
 
 /*
 ======================
@@ -236,6 +237,7 @@ panel_button_t demoSliderButton =
 	CG_DemoControlButtonUp,    /* keyUp    */
 	CG_DemoControlButtonRender,
 	NULL,
+	0
 };
 
 panel_button_t demoRewindButton =
@@ -249,6 +251,7 @@ panel_button_t demoRewindButton =
 	CG_DemoControlButtonUp,    /* keyUp    */
 	CG_DemoControlButtonRender,
 	NULL,
+	0
 };
 
 panel_button_t demoPauseButton =
@@ -262,6 +265,7 @@ panel_button_t demoPauseButton =
 	CG_DemoControlButtonUp,    /* keyUp    */
 	CG_DemoControlButtonRender,
 	NULL,
+	0
 };
 
 panel_button_t demoFFButton =
@@ -275,6 +279,7 @@ panel_button_t demoFFButton =
 	CG_DemoControlButtonUp,    /* keyUp    */
 	CG_DemoControlButtonRender,
 	NULL,
+	0
 };
 
 static panel_button_t *demoControlButtons[] =
@@ -292,7 +297,7 @@ void CG_DemoClick(int key, qboolean down)
 	int milli = trap_Milliseconds();
 
 #ifdef FEATURE_EDV
-	int menuLevel = cgs.currentMenuLevel;
+	mlType_t menuLevel = cgs.currentMenuLevel;
 	cgs.demoCamera.factor = 5;
 #endif
 
@@ -435,21 +440,21 @@ void CG_DemoClick(int key, qboolean down)
 			CG_RunBinding(key, down);
 		}
 		return;
-    /*
-            case K_LEFTARROW:
-                    if (cg.renderingThirdPerson && !etpro_cgs.demoCamera.renderingFreeCam) {
-                            if(milli > cgs.thirdpersonUpdate) {
-                                    float angle = cg_thirdPersonAngle.value + DEMO_ANGLEDELTA;
+	/*
+	        case K_LEFTARROW:
+	                if (cg.renderingThirdPerson && !etpro_cgs.demoCamera.renderingFreeCam) {
+	                        if(milli > cgs.thirdpersonUpdate) {
+	                                float angle = cg_thirdPersonAngle.value + DEMO_ANGLEDELTA;
 
-                                    cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
-                                    if(angle >= 360.0f) angle -= 360.0f;
-                                    trap_Cvar_Set("cg_thirdPersonAngle", va("%f", angle));
-                            }
-                    } else {
-                            etpro_RunBinding(key, down);
-                    }
-                    return;
-    */
+	                                cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
+	                                if(angle >= 360.0f) angle -= 360.0f;
+	                                trap_Cvar_Set("cg_thirdPersonAngle", va("%f", angle));
+	                        }
+	                } else {
+	                        etpro_RunBinding(key, down);
+	                }
+	                return;
+	*/
 	// Timescale controls
 	case K_KP_5:
 	//case K_KP_INS: // needed for "more options"
@@ -478,7 +483,7 @@ void CG_DemoClick(int key, qboolean down)
 	case K_KP_ENTER:
 		if (!down)
 		{
-			if (cg.snap->ps.leanf && !cgs.demoCamera.renderingFreeCam)
+			if (cg.snap->ps.leanf != 0.f && !cgs.demoCamera.renderingFreeCam)
 			{
 				cgs.demoCamera.startLean = qtrue;
 			}
@@ -743,7 +748,7 @@ void CG_DemoClick(int key, qboolean down)
 			}
 			else
 			{
-				tscale -= 1.0;
+				tscale -= 1.0f;
 			}
 			trap_Cvar_Set("timescale", va("%f", tscale));
 			cgs.timescaleUpdate = cg.time + (int)(1000.0f * tscale);
@@ -1723,13 +1728,13 @@ void CG_DemoHelpDraw(void)
 {
 #ifdef FEATURE_EDV
 #define ONOFF(x) ((x) ? ("ON") : ("OFF"))
-	char *freecam     = ONOFF(cgs.demoCamera.renderingFreeCam);
-	char *panzercam   = ONOFF(demo_weaponcam.integer & DWC_PANZER);
-	char *mortarcam   = ONOFF(demo_weaponcam.integer & DWC_MORTAR);
-	char *grenadecam  = ONOFF(demo_weaponcam.integer & DWC_GRENADE);
-	char *dynamitecam = ONOFF(demo_weaponcam.integer & DWC_DYNAMITE);
-	char *teamonly    = ONOFF(demo_teamonlymissilecam.integer);
-	char *pvshint     = ONOFF(demo_pvshint.integer);
+	const char *freecam     = ONOFF(cgs.demoCamera.renderingFreeCam);
+	const char *panzercam   = ONOFF(demo_weaponcam.integer & DWC_PANZER);
+	const char *mortarcam   = ONOFF(demo_weaponcam.integer & DWC_MORTAR);
+	const char *grenadecam  = ONOFF(demo_weaponcam.integer & DWC_GRENADE);
+	const char *dynamitecam = ONOFF(demo_weaponcam.integer & DWC_DYNAMITE);
+	const char *teamonly    = ONOFF(demo_teamonlymissilecam.integer);
+	const char *pvshint     = ONOFF(demo_pvshint.integer);
 #endif
 
 	if (cg.demohelpWindow == SHOW_OFF)
@@ -1790,8 +1795,8 @@ void CG_DemoHelpDraw(void)
 			"^7KP_PGDN   ^3Close a view"
 		};
 #endif
-
-		int i, x, y = SCREEN_HEIGHT, w, h;
+		unsigned int i;
+		int          x, y = SCREEN_HEIGHT, w, h;
 
 		vec4_t bgColor     = COLOR_BG;              // window
 		vec4_t borderColor = COLOR_BORDER;          // window
@@ -1816,7 +1821,7 @@ void CG_DemoHelpDraw(void)
 		float diff = cg.fadeTime - trap_Milliseconds();
 
 #ifdef FEATURE_EDV
-		int menuLevel = cgs.currentMenuLevel;
+		mlType_t menuLevel = cgs.currentMenuLevel;
 #endif
 
 // the ifdef's are very painfull here
@@ -1829,8 +1834,9 @@ void CG_DemoHelpDraw(void)
 		    0);
 		x = Ccg_WideX(SCREEN_WIDTH) + 3 * DH_X - w;
 
-		if (menuLevel == ML_MAIN)
+		switch (menuLevel)
 		{
+		case ML_MAIN:
 			h = tSpacing + 9 +
 			    tSpacing * (2 +
 #ifdef FEATURE_MULTIVIEW
@@ -1839,9 +1845,8 @@ void CG_DemoHelpDraw(void)
 			                ARRAY_LEN(help)
 #endif
 			                );
-		}
-		else if (menuLevel == ML_EDV)
-		{
+			break;
+		case ML_EDV:
 			h = tSpacing + 9 +
 			    tSpacing * (2 +
 #ifdef FEATURE_MULTIVIEW
@@ -1850,6 +1855,9 @@ void CG_DemoHelpDraw(void)
 			                ARRAY_LEN(edvhelp)
 #endif
 			                );
+			break;
+		default:     // this should never happen
+			break;
 		}
 
 #else
@@ -1934,7 +1942,7 @@ void CG_DemoHelpDraw(void)
 			y += tSpacing;
 			if (help[i] != NULL)
 			{
-				CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, (char *)help[i], 0.0f, 0, tStyle, tFont);
+				CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, help[i], 0.0f, 0, tStyle, tFont);
 			}
 		}
 #ifdef FEATURE_EDV
@@ -1947,7 +1955,7 @@ void CG_DemoHelpDraw(void)
 			y += tSpacing;
 			if (help[i] != NULL)
 			{
-				CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, (char *)edvhelp[i], 0.0f, 0, tStyle, tFont);
+				CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, edvhelp[i], 0.0f, 0, tStyle, tFont);
 			}
 		}
 	}
@@ -1961,7 +1969,7 @@ void CG_DemoHelpDraw(void)
 				y += tSpacing;
 				if (mvhelp[i] != NULL)
 				{
-					CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, (char *)mvhelp[i], 0.0f, 0, tStyle, tFont);
+					CG_Text_Paint_Ext(x, y, tScale, tScale, tColor, mvhelp[i], 0.0f, 0, tStyle, tFont);
 				}
 			}
 		}
@@ -2011,8 +2019,8 @@ char *CG_getBindKeyName(const char *cmd, char *buf, int len)
 #ifdef FEATURE_MULTIVIEW
 typedef struct
 {
-	char *cmd;
-	char *info;
+	const char *cmd;
+	const char *info;
 } helpType_t;
 
 #define SH_X    8       // spacing from left
@@ -2038,7 +2046,8 @@ void CG_SpecHelpDraw(void)
 			{ "spechelp", "help on/off"        }
 		};
 
-		int i, x, y = SCREEN_HEIGHT, w, h;
+		unsigned int i;
+		int x, y = SCREEN_HEIGHT, w, h;
 		int len, maxlen = 0;
 		char format[MAX_STRING_TOKENS], buf[MAX_STRING_TOKENS];
 		char *lines[16];
@@ -2064,7 +2073,6 @@ void CG_SpecHelpDraw(void)
 		vec4_t tColor       = COLOR_TEXT;   // text
 
 		float diff = cg.fadeTime - trap_Milliseconds();
-
 
 		// FIXME: Should compute all this stuff beforehand
 		// Compute required width

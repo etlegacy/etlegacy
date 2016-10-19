@@ -1845,11 +1845,11 @@ typedef struct cam_s
 
 // ML_ = menu level
 // used in the demo helpmenu
-enum
+typedef enum
 {
 	ML_MAIN,
 	ML_EDV
-};
+} mlType_t;
 #endif
 
 // The client game static (cgs) structure hold everything
@@ -2095,7 +2095,7 @@ typedef struct cgs_s
 #endif
 #ifdef FEATURE_EDV
 	cam_t demoCamera;
-	int currentMenuLevel;
+	mlType_t currentMenuLevel;
 #endif
 } cgs_t;
 
