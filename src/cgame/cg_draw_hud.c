@@ -213,9 +213,9 @@ static qboolean CG_isHudNumberAvailable(int number)
 	}
 }
 
-static void CG_addHudToList(hudStucture_t hud)
+static void CG_addHudToList(hudStucture_t *hud)
 {
-	hudlist[hudCount] = hud;
+	hudlist[hudCount] = *hud;
 	hudCount++;
 }
 
@@ -509,7 +509,7 @@ static qboolean CG_ParseHUD(int handle)
 	if (CG_isHudNumberAvailable(temphud.hudnumber))
 	{
 		Com_Printf("...properties for hud %i have been read.\n", temphud.hudnumber);
-		CG_addHudToList(temphud);
+		CG_addHudToList(&temphud);
 	}
 	else
 	{
@@ -2495,7 +2495,7 @@ void CG_Hud_Setup(void)
 	// Hud0 aka the Default hud
 	CG_setDefaultHudValues(&hud0);
 	activehud = &hud0;
-	CG_addHudToList(hud0);
+	CG_addHudToList(&hud0);
 
 	// Hud1
 	hud1.hudnumber       = 1;
@@ -2520,7 +2520,7 @@ void CG_Hud_Setup(void)
 	hud1.roundtimer      = CG_getComponent(75, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL);
 	hud1.spawntimer      = CG_getComponent(55, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL);
 	hud1.localtime       = CG_getComponent(75, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL);
-	CG_addHudToList(hud1);
+	CG_addHudToList(&hud1);
 
 	// Hud2
 	hud2.hudnumber       = 2;
@@ -2545,7 +2545,7 @@ void CG_Hud_Setup(void)
 	hud2.roundtimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 70, 0, 0, qtrue, STYLE_NORMAL);
 	hud2.spawntimer      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 70, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
 	hud2.localtime       = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
-	CG_addHudToList(hud2);
+	CG_addHudToList(&hud2);
 
 	// Read the hud files
 	CG_ReadHudScripts();
