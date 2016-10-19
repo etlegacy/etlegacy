@@ -1248,8 +1248,6 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 					cgs.ftMenuPos    = i;
 				}
 			}
-
-			return qtrue;
 		}
 		else
 		{
@@ -1279,8 +1277,6 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 						cgs.ftMenuPos    = i;
 					}
 				}
-
-				return qtrue;
 			}
 			else
 			{
@@ -1323,12 +1319,10 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 						cgs.ftMenuPos    = i;
 					}
 				}
-
-				return qtrue;
 			}
 		}
+		return qtrue;
 	}
-	break;
 	case 2:
 	{
 		int i;
@@ -1439,7 +1433,6 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 		}
 		break;
 	}
-	break;
 	case 4:
 	{
 		int i = -1, x;
