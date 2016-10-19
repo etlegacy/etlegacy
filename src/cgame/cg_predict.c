@@ -764,7 +764,7 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	for (i = 0; i < MAX_STATS; i++)
 	{
 		//if (i == STAT_HEALTH || i == STAT_DEAD_YAW) // FIXME: predict health?! STAT_DEAD_YAW?
-		//{                                           //        we got tons of prediction issues here 
+		//{                                           //        we got tons of prediction issues here
 		//	if (cg_showmiss.integer & 8)
 		//	{
 		//		CG_Printf("CG_PredictionOk info: skipping health/stat_dead_yaw\n");
