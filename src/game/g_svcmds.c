@@ -1097,13 +1097,13 @@ static void Svcmd_PlayerAnimEvent(void)
 			{
 				continue;
 			}
-			BG_AnimScriptEvent(&vic->client->ps, vic->client->pers.character->animModelInfo, atoi(anim), qfalse, qtrue);
+			BG_AnimScriptEvent(&vic->client->ps, vic->client->pers.character->animModelInfo, (scriptAnimEventTypes_t)atoi(anim), qfalse, qtrue);
 			count++;
 		}
 
 		if (count > 0)
 		{
-			CPx(-1, (va("cp \"^3%d^7 anim event %s.\"", count, animEventTypesStr[atoi(anim)])));
+			CPx(-1, (va("cp \"^3%d^7 anim event %s.\"", count, animEventTypesStr[atoi(anim)].string)));
 		}
 		else
 		{
@@ -1128,9 +1128,9 @@ static void Svcmd_PlayerAnimEvent(void)
 		return;
 	}
 
-	BG_AnimScriptEvent(&vic->client->ps, vic->client->pers.character->animModelInfo, atoi(anim), qfalse, qtrue);
+	BG_AnimScriptEvent(&vic->client->ps, vic->client->pers.character->animModelInfo, (scriptAnimEventTypes_t)atoi(anim), qfalse, qtrue);
 
-	CPx(-1, (va("cp \"^7%s^7 anim event %s.\"", vic->client->pers.netname, animEventTypesStr[atoi(anim)])));
+	CPx(-1, (va("cp \"^7%s^7 anim event %s.\"", vic->client->pers.netname, animEventTypesStr[atoi(anim)].string)));
 
 	return;
 }
