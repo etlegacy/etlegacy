@@ -402,7 +402,8 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 			meansOfDeath = MOD_SHOVE;
 		}
 		break;
-	case MOD_BACKSTAB: // set below
+	case MOD_BACKSTAB: // overwritten for client attackers below
+		weap = WP_KNIFE;
 		break;
 	default:
 		weap = BG_WeaponForMOD(meansOfDeath);
