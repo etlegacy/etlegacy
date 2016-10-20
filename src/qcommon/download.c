@@ -92,6 +92,7 @@ static void Com_DownloadsComplete(void)
 #ifdef DEDICATED
 		FS_Restart(sv.checksumFeed);
 #else
+		Com_Printf("Client download complete - restarting ...\n");
 		FS_Restart(clc.checksumFeed);    // We possibly downloaded a pak, restart the file system to load it
 
 		if (!dld.bWWWDlDisconnected)
@@ -108,6 +109,12 @@ static void Com_DownloadsComplete(void)
 		// so we don't want to load stuff yet
 		return;
 	}
+#ifndef DEDICATED
+	else
+	{
+		Com_Printf("Client download complete\n");
+	}
+#endif
 
 	// I wonder if that happens - it should not but I suspect it could happen if a download fails in the middle or is aborted
 	assert(!dld.bWWWDlDisconnected);
@@ -127,11 +134,12 @@ game directory.
 */
 void Com_BeginDownload(const char *localName, const char *remoteName)
 {
+	//Com_DPrintf("***** Com_BeginDownload *****\n"
+	//          "Localname: %s\n"
+	//          "Remotename: %s\n"
+	//          "****************************\n", localName, remoteName);
 
-	Com_DPrintf("***** Com_BeginDownload *****\n"
-	            "Localname: %s\n"
-	            "Remotename: %s\n"
-	            "****************************\n", localName, remoteName);
+	Com_Printf("Client downloading: %s\n",remoteName); // localName and remoteName are the same name
 
 	Q_strncpyz(dld.downloadName, localName, sizeof(dld.downloadName));
 	Com_sprintf(dld.downloadTempName, sizeof(dld.downloadTempName), "%s.tmp", localName);
