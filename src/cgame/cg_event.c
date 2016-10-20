@@ -653,13 +653,6 @@ static void CG_ItemPickup(int itemNum)
 
 	switch (bg_itemlist[itemNum].giType)
 	{
-	// TODO: handle these
-//  case IT_BAD:
-//	case IT_WEAPON:
-//	case IT_ARMOR:
-//	case IT_HOLDABLE:
-//	case IT_KEY:
-//	case IT_TREASURE:
 	case IT_AMMO:
 		giType = PM_AMMOPICKUP;
 		break;
@@ -679,6 +672,11 @@ static void CG_ItemPickup(int itemNum)
 	case IT_TEAM:
 		giType = PM_OBJECTIVE;
 		break;
+	//  case IT_BAD:
+	//	case IT_WEAPON:
+	//	case IT_HOLDABLE:
+	//	case IT_KEY:
+	//	case IT_TREASURE:
 	default:
 		giType = PM_MESSAGE;
 		break;
