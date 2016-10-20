@@ -982,7 +982,7 @@ void ROQ_UpdateCinematic(cinematic_t *cin, int time)
 		}
 
 		// Reset the cinematic
-		FS_Seek(cin->file, ROQ_CHUNK_HEADER_SIZE, FS_SEEK_SET);
+		(void) FS_Seek(cin->file, ROQ_CHUNK_HEADER_SIZE, FS_SEEK_SET);
 
 		cin->offset     = ROQ_CHUNK_HEADER_SIZE;
 		cin->startTime  = time;
@@ -1003,7 +1003,7 @@ void ROQ_UpdateCinematic(cinematic_t *cin, int time)
 
 void ROQ_Reset(cinematic_t *cin)
 {
-	FS_Seek(cin->file, ROQ_CHUNK_HEADER_SIZE, FS_SEEK_SET);
+	(void) FS_Seek(cin->file, ROQ_CHUNK_HEADER_SIZE, FS_SEEK_SET);
 	cin->offset = ROQ_CHUNK_HEADER_SIZE;
 }
 

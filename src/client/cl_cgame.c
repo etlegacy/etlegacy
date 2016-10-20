@@ -1126,7 +1126,7 @@ void CL_UpdateLevelHunkUsage(void)
 		Com_Error(ERR_DROP, "cannot write to hunkusage.dat, check disk full");
 	}
 	Com_sprintf(outstr, sizeof(outstr), "%s %i\n", cl.mapname, memusage);
-	FS_Write(outstr, strlen(outstr), handle);
+	(void) FS_Write(outstr, strlen(outstr), handle);
 	FS_FCloseFile(handle);
 
 	// now just open it and close it, so it gets copied to the pak dir

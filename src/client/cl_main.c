@@ -278,7 +278,7 @@ static void CL_WriteWaveHeader(void)
 	hdr.Subchunk2Size = 0;          // NumSamples * NumChannels * BitsPerSample/8
 
 	// ...
-	FS_Write(&hdr.ChunkID, 44, clc.wavefile);
+	(void) FS_Write(&hdr.ChunkID, 44, clc.wavefile);
 }
 
 static char wavName[MAX_OSPATH];     // compiler bug workaround
@@ -353,10 +353,10 @@ void CL_WriteWaveClose()
 	hdr.Subchunk2Size = hdr.NumSamples * hdr.NumChannels * (hdr.BitsPerSample / 8);
 	hdr.ChunkSize     = 36 + hdr.Subchunk2Size;
 
-	FS_Seek(clc.wavefile, 4, FS_SEEK_SET);
-	FS_Write(&hdr.ChunkSize, 4, clc.wavefile);
-	FS_Seek(clc.wavefile, 40, FS_SEEK_SET);
-	FS_Write(&hdr.Subchunk2Size, 4, clc.wavefile);
+	(void) FS_Seek(clc.wavefile, 4, FS_SEEK_SET);
+	(void) FS_Write(&hdr.ChunkSize, 4, clc.wavefile);
+	(void) FS_Seek(clc.wavefile, 40, FS_SEEK_SET);
+	(void) FS_Write(&hdr.Subchunk2Size, 4, clc.wavefile);
 
 	// and we're outta here
 	FS_FCloseFile(clc.wavefile);
@@ -554,9 +554,9 @@ static void CL_GenerateETKey(void)
 			Com_Printf(S_COLOR_RED "ERROR: Could not open %s for write\n", ETKEY_FILE);
 			return;
 		}
-		FS_Write(buff, sizeof(buff), f);
+		(void) FS_Write(buff, sizeof(buff), f);
 		FS_FCloseFile(f);
-		Com_Printf(S_COLOR_CYAN "ETKEY file generated.\n");
+		(void) Com_Printf(S_COLOR_CYAN "ETKEY file generated.\n");
 	}
 }
 
@@ -2426,8 +2426,8 @@ static void CL_Cache_EndGather_f(void)
 			// if it's a valid filename, and it's been hit enough times, cache it
 			if (cacheItems[i][j].hits >= cachePass && strstr(cacheItems[i][j].name, "/"))
 			{
-				FS_Write(cacheItems[i][j].name, strlen(cacheItems[i][j].name), handle);
-				FS_Write("\n", 1, handle);
+				(void) FS_Write(cacheItems[i][j].name, strlen(cacheItems[i][j].name), handle);
+				(void) FS_Write("\n", 1, handle);
 			}
 		}
 

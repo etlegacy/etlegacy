@@ -186,7 +186,7 @@ void Con_Dump_f(void)
 #else
 		Q_strcat(buffer, bufferlen, "\n");
 #endif
-		FS_Write(buffer, strlen(buffer), f);
+		(void) FS_Write(buffer, strlen(buffer), f);
 	}
 
 	Hunk_FreeTempMemory(buffer);

@@ -913,7 +913,7 @@ void CL_ParseDownload(msg_t *msg)
 
 	if (size)
 	{
-		FS_Write(data, size, cls.download.download);
+		(void) FS_Write(data, size, cls.download.download);
 	}
 
 	CL_AddReliableCommand(va("nextdl %d", cls.download.downloadBlock));

@@ -113,7 +113,7 @@ static int S_FindRIFFChunk(fileHandle_t f, char *chunk)
 		len = PAD(len, 2);
 
 		// Not the right chunk - skip it
-		FS_Seek(f, len, FS_SEEK_CUR);
+		(void) FS_Seek(f, len, FS_SEEK_CUR);
 	}
 
 	return -1;
@@ -191,7 +191,7 @@ static qboolean S_ReadRIFFHeader(fileHandle_t file, snd_info_t *info)
 	if (fmtlen > 16)
 	{
 		fmtlen -= 16;
-		FS_Seek(file, fmtlen, FS_SEEK_CUR);
+		(void) FS_Seek(file, fmtlen, FS_SEEK_CUR);
 	}
 
 	// Scan for the data chunk

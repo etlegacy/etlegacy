@@ -642,7 +642,7 @@ qboolean CL_CloseAVI(void)
 
 	afd.fileOpen = qfalse;
 
-	FS_Seek(afd.idxF, 4, FS_SEEK_SET);
+	(void) FS_Seek(afd.idxF, 4, FS_SEEK_SET);
 	bufIndex = 0;
 	WRITE_4BYTES(indexSize);
 	SafeFS_Write(buffer, bufIndex, afd.idxF);
@@ -676,7 +676,7 @@ qboolean CL_CloseAVI(void)
 	FS_HomeRemove(idxFileName);
 
 	// Write the real header
-	FS_Seek(afd.f, 0, FS_SEEK_SET);
+	(void) FS_Seek(afd.f, 0, FS_SEEK_SET);
 	CL_WriteAVIHeader();
 
 	bufIndex = 4;

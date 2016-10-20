@@ -119,12 +119,12 @@ void LAN_SaveServersToFile(void)
 
 	// moved to mod/profiles dir
 	fileOut = FS_FOpenFileWrite(filename); // FIXME: catch error
-	FS_Write(&cls.numfavoriteservers, sizeof(int32_t), fileOut);
+	(void) FS_Write(&cls.numfavoriteservers, sizeof(int32_t), fileOut);
 
 	size = sizeof(cls.favoriteServers);
 
-	FS_Write(&size, sizeof(int32_t), fileOut);
-	FS_Write(&cls.favoriteServers, sizeof(cls.favoriteServers), fileOut);
+	(void) FS_Write(&size, sizeof(int32_t), fileOut);
+	(void) FS_Write(&cls.favoriteServers, sizeof(cls.favoriteServers), fileOut);
 	FS_FCloseFile(fileOut);
 
 	Com_Printf("Total favourite servers saved: %i\n", cls.numfavoriteservers);

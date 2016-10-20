@@ -211,7 +211,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 		if (r != 4)
 		{
 			Com_FuncPrinf("couldn't read sequence number\n");
-			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
+			(void) FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
 			clc.lastPacketTime  = lastPacketTimeOrig;
 			cl.parseEntitiesNum = parseEntitiesNumOrig;
 			return qfalse;
@@ -227,7 +227,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 		if (r != 4)
 		{
 			Com_FuncPrinf("couldn't get length\n");
-			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
+			(void) FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
 			clc.lastPacketTime  = lastPacketTimeOrig;
 			cl.parseEntitiesNum = parseEntitiesNumOrig;
 			return qfalse;
@@ -237,7 +237,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 		if (buf.cursize == -1)
 		{
 			Com_FuncPrinf("buf.cursize == -1\n");
-			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
+			(void) FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
 			clc.lastPacketTime  = lastPacketTimeOrig;
 			cl.parseEntitiesNum = parseEntitiesNumOrig;
 			return qfalse;
@@ -253,7 +253,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 		if (r != buf.cursize)
 		{
 			Com_FuncPrinf("Demo file was truncated.\n");
-			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
+			(void) FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
 			clc.lastPacketTime  = lastPacketTimeOrig;
 			cl.parseEntitiesNum = parseEntitiesNumOrig;
 			return qfalse;
@@ -319,7 +319,7 @@ alldone:
 		if (!success)
 		{
 			Com_FuncPrinf("failed\n");
-			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
+			(void) FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
 			clc.lastPacketTime  = lastPacketTimeOrig;
 			cl.parseEntitiesNum = parseEntitiesNumOrig;
 			return success;
@@ -332,7 +332,7 @@ alldone:
 		if (cl.parseEntitiesNum - clSnap->parseEntitiesNum >= MAX_PARSE_ENTITIES)
 		{
 			Com_FuncPrinf("cl.parseEntitiesNum - clSnap->parseEntitiesNum >= MAX_PARSE_ENTITIES");
-			FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
+			(void) FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
 			clc.lastPacketTime  = lastPacketTimeOrig;
 			cl.parseEntitiesNum = parseEntitiesNumOrig;
 			return qtrue;  // FIXME if you fix other ents
@@ -360,7 +360,7 @@ alldone:
 		}
 	}
 
-	FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
+	(void) FS_Seek(clc.demofile, origPosition, FS_SEEK_SET);
 	clc.lastPacketTime  = lastPacketTimeOrig;
 	cl.parseEntitiesNum = parseEntitiesNumOrig;
 	// TODO: configstring changes and server commands!!!
@@ -489,7 +489,7 @@ static void CL_RewindDemo(double wantedTime)
 	}
 
 	DEMODEBUG("seeking to index %d %d   cl.serverTime:%d  cl.snap.serverTime:%d, new clc.lastExecutedServercommand %d  clc.serverCommandSequence %d\n", i, rb->seekPoint, cl.serverTime, cl.snap.serverTime, rb->clc.lastExecutedServerCommand, rb->clc.serverCommandSequence);
-	FS_Seek(clc.demofile, rb->seekPoint, FS_SEEK_SET);
+	(void) FS_Seek(clc.demofile, rb->seekPoint, FS_SEEK_SET);
 
 	// TODO: take a look at these hacks
 	di.numSnaps  = rb->numSnaps;
@@ -663,7 +663,7 @@ static void CL_ParseDemo(void)
 	// Parse start
 	di.gameStartTime = -1;
 	di.gameEndTime   = -1;
-	FS_Seek(clc.demofile, 0, FS_SEEK_SET);
+	(void) FS_Seek(clc.demofile, 0, FS_SEEK_SET);
 	tstart = Sys_Milliseconds();
 
 	while (qtrue)
@@ -843,7 +843,7 @@ static void CL_ParseDemo(void)
 	Com_FuncPrinf("Snaps in demo: %i\n", di.snapsInDemo);
 	Com_FuncPrinf("last serverTime %d   total %f minutes\n", cl.snap.serverTime, (cl.snap.serverTime - di.firstServerTime) / 1000.0 / 60.0);
 	Com_FuncPrinf("parse time %f seconds\n", (float)(Sys_Milliseconds() - tstart) / 1000.0);
-	FS_Seek(clc.demofile, 0, FS_SEEK_SET);
+	(void) FS_Seek(clc.demofile, 0, FS_SEEK_SET);
 	clc.demoplaying = qfalse;
 	demofile        = clc.demofile;
 	CL_ClearState();
@@ -908,13 +908,13 @@ void CL_WriteDemoMessage(msg_t *msg, int headerBytes)
 	// write the packet sequence
 	len   = clc.serverMessageSequence;
 	swlen = LittleLong(len);
-	FS_Write(&swlen, 4, clc.demofile);
+	(void) FS_Write(&swlen, 4, clc.demofile);
 
 	// skip the packet sequencing information
 	len   = msg->cursize - headerBytes;
 	swlen = LittleLong(len);
-	FS_Write(&swlen, 4, clc.demofile);
-	FS_Write(msg->data + headerBytes, len, clc.demofile);
+	(void) FS_Write(&swlen, 4, clc.demofile);
+	(void) FS_Write(msg->data + headerBytes, len, clc.demofile);
 }
 
 /*
@@ -936,8 +936,8 @@ void CL_StopRecord_f(void)
 
 	// finish up
 	len = -1;
-	FS_Write(&len, 4, clc.demofile);
-	FS_Write(&len, 4, clc.demofile);
+	(void) FS_Write(&len, 4, clc.demofile);
+	(void) FS_Write(&len, 4, clc.demofile);
 	FS_FCloseFile(clc.demofile);
 	clc.demofile = 0;
 
@@ -1103,11 +1103,11 @@ void CL_Record(const char *name)
 
 	// write it to the demo file
 	len = LittleLong(clc.serverMessageSequence - 1);
-	FS_Write(&len, 4, clc.demofile);
+	(void) FS_Write(&len, 4, clc.demofile);
 
 	len = LittleLong(buf.cursize);
-	FS_Write(&len, 4, clc.demofile);
-	FS_Write(buf.data, buf.cursize, clc.demofile);
+	(void) FS_Write(&len, 4, clc.demofile);
+	(void) FS_Write(buf.data, buf.cursize, clc.demofile);
 
 	// the rest of the demo file will be copied from net messages
 }
