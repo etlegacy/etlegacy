@@ -379,8 +379,8 @@ static void SV_DemoWriteMessage(msg_t *msg)
 	// Write the entire message to the file, prefixed by the length
 	MSG_WriteByte(msg, demo_EOF); // append EOF (end-of-file or rather end-of-flux) to the message so that it will tell the demo parser when the demo will be read that the message ends here, and that it can proceed to the next message
 	len = LittleLong(msg->cursize);
-	FS_Write(&len, 4, sv.demoFile);
-	FS_Write(msg->data, msg->cursize, sv.demoFile);
+	(void) FS_Write(&len, 4, sv.demoFile);
+	(void) FS_Write(msg->data, msg->cursize, sv.demoFile);
 	MSG_Clear(msg);
 }
 
