@@ -723,7 +723,7 @@ static qboolean R_GetFont(const char *fontName, int pointSize, fontInfo_t *font,
 		return qtrue;
 	}
 
-	Ren_Warning("R_GetFont: can't load font '%s' '%s' point size %i.\n", fontName, datName , pointSize);
+	Ren_Warning("R_GetFont: can't load font '%s' '%s' point size %i.\n", fontName, datName, pointSize);
 
 	return qfalse;
 }

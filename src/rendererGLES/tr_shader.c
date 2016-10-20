@@ -3516,10 +3516,11 @@ qhandle_t RE_RegisterShaderLightMap(const char *name, int lightmapIndex)
 	// we want to return 0 if the shader failed to
 	// load for some reason, but R_FindShader should
 	// still keep a name allocated for it, so if
-	// something calls RE_RegisterShader again with
+	// something calls RE_RegisterShaderLightMap again with
 	// the same name, we don't try looking for it again
 	if (sh->defaultShader)
 	{
+		ri.Printf(PRINT_ALL, "RE_RegisterShaderLightMap WARNING: shader '%i' not found - using default shader\n", name);
 		return 0;
 	}
 
@@ -3556,6 +3557,7 @@ qhandle_t RE_RegisterShader(const char *name)
 	// the same name, we don't try looking for it again
 	if (sh->defaultShader)
 	{
+		ri.Printf(PRINT_ALL, "RE_RegisterShader WARNING: shader '%i' not found - using default shader\n", name);
 		return 0;
 	}
 
@@ -3584,10 +3586,11 @@ qhandle_t RE_RegisterShaderNoMip(const char *name)
 	// we want to return 0 if the shader failed to
 	// load for some reason, but R_FindShader should
 	// still keep a name allocated for it, so if
-	// something calls RE_RegisterShader again with
+	// something calls RE_RegisterShaderNoMip again with
 	// the same name, we don't try looking for it again
 	if (sh->defaultShader)
 	{
+		ri.Printf(PRINT_ALL, "RE_RegisterShaderNoMip WARNING: shader '%i' not found - using default shader\n", name);
 		return 0;
 	}
 
