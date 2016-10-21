@@ -1834,9 +1834,8 @@ void CG_DemoHelpDraw(void)
 		    0);
 		x = Ccg_WideX(SCREEN_WIDTH) + 3 * DH_X - w;
 
-		switch (menuLevel)
+		if (menuLevel == ML_MAIN)
 		{
-		case ML_MAIN:
 			h = tSpacing + 9 +
 			    tSpacing * (2 +
 #ifdef FEATURE_MULTIVIEW
@@ -1845,8 +1844,9 @@ void CG_DemoHelpDraw(void)
 			                ARRAY_LEN(help)
 #endif
 			                );
-			break;
-		case ML_EDV:
+		}
+		else //if(menuLevel == ML_EDV)
+		{
 			h = tSpacing + 9 +
 			    tSpacing * (2 +
 #ifdef FEATURE_MULTIVIEW
@@ -1855,9 +1855,6 @@ void CG_DemoHelpDraw(void)
 			                ARRAY_LEN(edvhelp)
 #endif
 			                );
-			break;
-		default:     // this should never happen
-			break;
 		}
 
 #else
