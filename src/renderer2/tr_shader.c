@@ -5832,7 +5832,7 @@ qhandle_t RE_RegisterShader(const char *name)
 	// the same name, we don't try looking for it again
 	if (sh->defaultShader)
 	{
-		Ren_Print("RE_RegisterShader WARNING: shader '%i' not found - using default shader\n", name);
+		Ren_Print("RE_RegisterShader WARNING: shader '%s' not found - using default shader\n", name);
 		return 0;
 	}
 
@@ -5866,7 +5866,7 @@ qhandle_t RE_RegisterShaderNoMip(const char *name)
 
 	if (sh->defaultShader)
 	{
-		Ren_Print("RE_RegisterShaderNoMip WARNING: shader '%i' not found - using default shader\n", name);
+		Ren_Print("RE_RegisterShaderNoMip WARNING: shader '%s' not found - using default shader\n", name);
 		return 0;
 	}
 
@@ -5899,7 +5899,7 @@ qhandle_t RE_RegisterShaderLightAttenuation(const char *name)
 	// the same name, we don't try looking for it again
 	if (sh->defaultShader)
 	{
-		Ren_Print("RE_RegisterShaderLightAttenuation WARNING: shader '%i' not found - using default shader\n", name);
+		Ren_Print("RE_RegisterShaderLightAttenuation WARNING: shader '%s' not found - using default shader\n", name);
 		return 0;
 	}
 
