@@ -1088,13 +1088,12 @@ void SP_script_mover(gentity_t *ent)
 
 	if (!ent->model)
 	{
-		G_Error("script_mover must have a \"model\"\n");
+		G_Error("script_mover entity #%i must have a \"model\"\n", ent->s.number);
 	}
 	if (!ent->scriptName)
 	{
-		G_Error("script_mover must have a \"scriptname\"\n");
+		G_Error("script_mover entity #%i must have a \"scriptname\"\n", ent->s.number);
 	}
-
 	ent->blocked = script_mover_blocked;
 
 	// first position at start
@@ -1270,11 +1269,11 @@ void SP_script_model_med(gentity_t *ent)
 {
 	if (!ent->model)
 	{
-		G_Error("script_model_med %s must have a \"model\"\n", ent->scriptName);
+		G_Error("script_model_med entity #%i must have a \"model\"\n", ent->s.number);
 	}
 	if (!ent->scriptName)
 	{
-		G_Error("script_model_med must have a \"scriptname\"\n");
+		G_Error("script_model_med entity #%i must have a \"scriptname\"\n", ent->s.number);
 	}
 
 	ent->s.eType           = ET_GENERAL;
