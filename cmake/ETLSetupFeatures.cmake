@@ -295,7 +295,7 @@ else()
 endif()
 
 if(NOT BUNDLED_MINIZIP)
-	find_package(MiniZip)
+	find_package(MiniZip REQUIRED)
 	list(APPEND CLIENT_LIBRARIES ${MINIZIP_LIBRARIES})
 	list(APPEND SERVER_LIBRARIES ${MINIZIP_LIBRARIES})
 	include_directories(SYSTEM ${MINIZIP_INCLUDE_DIRS})
