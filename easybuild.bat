@@ -39,13 +39,6 @@ where /q cmake >nul 2>&1 && (
 	GOTO:EOF
 )
 
-where /q zip >nul 2>&1 && (
-	REM ECHO Zip ok.
-) || (
-	ECHO Missing Zip cannot proceed.
-	GOTO:EOF
-)
-
 IF !build_r2!==1 (
 	where /q sed >nul 2>&1 && (
 		REM ECHO SEd ok.
