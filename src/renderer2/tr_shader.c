@@ -4581,7 +4581,7 @@ static void CollapseStages()
 		{
 			if ((j + i) >= MAX_SHADER_STAGES)
 			{
-				continue;
+				continue; // break
 			}
 
 			if (!stages[j + i].active)
@@ -4649,7 +4649,7 @@ static void CollapseStages()
 		{
 			if ((j + i) >= MAX_SHADER_STAGES)
 			{
-				continue;
+				break;
 			}
 
 			if (!stages[j + i].active)
