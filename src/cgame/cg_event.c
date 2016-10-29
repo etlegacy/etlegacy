@@ -298,7 +298,7 @@ static void CG_Obituary(entityState_t *ent)
 	{
 		char *s;
 
-		if (ci->team == ca->team)
+		if (ca && ci->team == ca->team)
 		{
 			if (mod == MOD_SWAP_PLACES)
 			{
