@@ -115,7 +115,7 @@ static animStringItem_t animMoveTypesStr[] =
 	{ NULL,           -1 },
 };
 
-static animStringItem_t animEventTypesStr[] =
+animStringItem_t animEventTypesStr[] =
 {
 	{ "PAIN",                       -1 },
 	{ "DEATH",                      -1 },
