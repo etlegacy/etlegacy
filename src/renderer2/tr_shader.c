@@ -1569,9 +1569,9 @@ ParseStage
 static qboolean ParseStage(shaderStage_t *stage, char **text)
 {
 	char *token;
-	int  colorMaskBits             = 0;
-	int  depthMaskBits             = GLS_DEPTHMASK_TRUE, blendSrcBits = 0, blendDstBits = 0, atestBits = 0, depthFuncBits =
-	    0, polyModeBits            = 0;
+	int  colorMaskBits = 0;
+	int  depthMaskBits = GLS_DEPTHMASK_TRUE, blendSrcBits = 0, blendDstBits = 0, atestBits = 0, depthFuncBits =
+		0, polyModeBits            = 0;
 	qboolean     depthMaskExplicit = qfalse;
 	int          imageBits         = 0;
 	filterType_t filterType;
@@ -6647,6 +6647,7 @@ static void ScanAndLoadShaderFiles(void)
 			shaderTable_t *tb;
 			qboolean      alreadyCreated;
 
+			Com_Memset(&values, 0, sizeof(values));
 			Com_Memset(&table, 0, sizeof(table));
 
 			token = COM_ParseExt2(&p, qtrue);
