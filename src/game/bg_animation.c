@@ -420,6 +420,8 @@ static int BG_AnimationIndexForString(char *string, animModelInfo_t *animModelIn
 
 /**
  * @brief BG_AnimationForString
+ * @param[in] string
+ * @param[in] animModelInfo
  * @return
  */
 animation_t *BG_AnimationForString(char *string, animModelInfo_t *animModelInfo)
@@ -443,6 +445,9 @@ animation_t *BG_AnimationForString(char *string, animModelInfo_t *animModelInfo)
 
 /**
  * @brief errors out if no match found
+ * @param[in] token
+ * @param[in] strings
+ * @param[in] allowFail
  * @return
  */
 int BG_IndexForString(char *token, animStringItem_t *strings, qboolean allowFail)
@@ -473,6 +478,10 @@ int BG_IndexForString(char *token, animStringItem_t *strings, qboolean allowFail
 
 /**
  * @brief BG_CopyStringIntoBuffer
+ * @param[in] string
+ * @param[in] buffer
+ * @param[in] bufSize
+ * @param[in,out] offset
  * @return
  */
 char *BG_CopyStringIntoBuffer(char *string, char *buffer, unsigned int bufSize, unsigned int *offset)
@@ -532,6 +541,10 @@ void BG_InitWeaponStrings(void)
 #define RESULT_SIZE 2
 /**
  * @brief Convert the string into a single int containing bit flags, stopping at a ',' or end of line
+ * @param[in,out] text_pp
+ * @param[in] stringTable
+ * @param[in] condIndex
+ * @param[out] result
  */
 void BG_ParseConditionBits(char **text_pp, animStringItem_t *stringTable, int condIndex, int result[RESULT_SIZE])
 {
