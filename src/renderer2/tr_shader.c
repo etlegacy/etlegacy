@@ -717,7 +717,7 @@ static void ParseExpression(char **text, expression_t *exp)
 		// if current operator in infix is operator
 		else if (IsOperator(op.type))
 		{
-			while (qtrue)
+			while (1)
 			{
 				if (!numTmpOps)
 				{
@@ -753,7 +753,7 @@ static void ParseExpression(char **text, expression_t *exp)
 		// if current operator in infix is right parenthesis
 		else if (op.type == OP_RPAREN)
 		{
-			while (qtrue)
+			while (1)
 			{
 				if (!numTmpOps)
 				{
@@ -2747,20 +2747,17 @@ static void ParseDeform(char **text)
 		ds->deformation = DEFORM_PROJECTION_SHADOW;
 		return;
 	}
-
-	if (!Q_stricmp(token, "autosprite"))
+	else if (!Q_stricmp(token, "autosprite"))
 	{
 		ds->deformation = DEFORM_AUTOSPRITE;
 		return;
 	}
-
-	if (!Q_stricmp(token, "autosprite2"))
+	else if (!Q_stricmp(token, "autosprite2"))
 	{
 		ds->deformation = DEFORM_AUTOSPRITE2;
 		return;
 	}
-
-	if (!Q_stricmpn(token, "text", 4))
+	else if (!Q_stricmpn(token, "text", 4))
 	{
 		int n;
 
@@ -2772,8 +2769,7 @@ static void ParseDeform(char **text)
 		ds->deformation = (deform_t)(DEFORM_TEXT0 + n);
 		return;
 	}
-
-	if (!Q_stricmp(token, "bulge"))
+	else if (!Q_stricmp(token, "bulge"))
 	{
 		token = COM_ParseExt2(text, qfalse);
 		if (token[0] == 0)
@@ -2802,8 +2798,7 @@ static void ParseDeform(char **text)
 		ds->deformation = DEFORM_BULGE;
 		return;
 	}
-
-	if (!Q_stricmp(token, "wave"))
+	else if (!Q_stricmp(token, "wave"))
 	{
 		token = COM_ParseExt2(text, qfalse);
 		if (token[0] == 0)
@@ -2826,8 +2821,7 @@ static void ParseDeform(char **text)
 		ds->deformation = DEFORM_WAVE;
 		return;
 	}
-
-	if (!Q_stricmp(token, "normal"))
+	else if (!Q_stricmp(token, "normal"))
 	{
 		token = COM_ParseExt2(text, qfalse);
 		if (token[0] == 0)
@@ -2848,8 +2842,7 @@ static void ParseDeform(char **text)
 		ds->deformation = DEFORM_NORMALS;
 		return;
 	}
-
-	if (!Q_stricmp(token, "move"))
+	else if (!Q_stricmp(token, "move"))
 	{
 		int i;
 
@@ -2868,14 +2861,12 @@ static void ParseDeform(char **text)
 		ds->deformation = DEFORM_MOVE;
 		return;
 	}
-
-	if (!Q_stricmp(token, "sprite"))
+	else if (!Q_stricmp(token, "sprite"))
 	{
 		ds->deformation = DEFORM_SPRITE;
 		return;
 	}
-
-	if (!Q_stricmp(token, "flare"))
+	else if (!Q_stricmp(token, "flare"))
 	{
 		token = COM_ParseExt2(text, qfalse);
 		if (token[0] == 0)
@@ -3761,8 +3752,7 @@ static qboolean ParseShader(char *_text)
 			continue;
 		}
 		// sun parms
-		else if (!Q_stricmp(token, "xmap_sun") ||
-		         !Q_stricmp(token, "q3map_sun"))
+		else if (!Q_stricmp(token, "xmap_sun") || !Q_stricmp(token, "q3map_sun"))
 		{
 			float a, b;
 
@@ -4503,7 +4493,7 @@ CollapseMultitexture
 static void CollapseStages()
 {
 //	int             abits, bbits;
-	int i, j;
+	int j, i, ji;
 
 	qboolean hasDiffuseStage;
 	qboolean hasNormalStage;
@@ -4647,45 +4637,44 @@ static void CollapseStages()
 
 		for (i = 0; i < 3; i++)
 		{
-			if ((j + i) >= MAX_SHADER_STAGES)
+			ji = j + i;
+
+			if (ji >= MAX_SHADER_STAGES)
 			{
 				break;
 			}
 
-			if (!stages[j + i].active)
+			if (!stages[ji].active)
 			{
 				continue;
 			}
 
-			if (stages[j + i].type == ST_DIFFUSEMAP && !hasDiffuseStage)
+			if (stages[ji].type == ST_DIFFUSEMAP && !hasDiffuseStage)
 			{
 				hasDiffuseStage = qtrue;
-				tmpDiffuseStage = stages[j + i];
+				tmpDiffuseStage = stages[ji];
 			}
-			else if (stages[j + i].type == ST_NORMALMAP && !hasNormalStage)
+			else if (stages[ji].type == ST_NORMALMAP && !hasNormalStage)
 			{
 				hasNormalStage = qtrue;
-				tmpNormalStage = stages[j + i];
+				tmpNormalStage = stages[ji];
 			}
-			else if (stages[j + i].type == ST_SPECULARMAP && !hasSpecularStage)
+			else if (stages[ji].type == ST_SPECULARMAP && !hasSpecularStage)
 			{
 				hasSpecularStage = qtrue;
-				tmpSpecularStage = stages[j + i];
+				tmpSpecularStage = stages[ji];
 			}
-			else if (stages[j + i].type == ST_REFLECTIONMAP && !hasReflectionStage)
+			else if (stages[ji].type == ST_REFLECTIONMAP && !hasReflectionStage)
 			{
 				hasReflectionStage = qtrue;
-				tmpReflectionStage = stages[j + i];
+				tmpReflectionStage = stages[ji];
 			}
 		}
 
 		// NOTE: merge as many stages as possible
 
 		// try to merge diffuse/normal/specular
-		if (hasDiffuseStage     &&
-		    hasNormalStage      &&
-		    hasSpecularStage
-		    )
+		if (hasDiffuseStage && hasNormalStage && hasSpecularStage)
 		{
 			//Ren_Print("lighting_DBS\n");
 
@@ -4702,9 +4691,7 @@ static void CollapseStages()
 			continue;
 		}
 		// try to merge diffuse/normal
-		else if (hasDiffuseStage     &&
-		         hasNormalStage
-		         )
+		else if (hasDiffuseStage && hasNormalStage)
 		{
 			//Ren_Print("lighting_DB\n");
 
@@ -4720,9 +4707,7 @@ static void CollapseStages()
 			continue;
 		}
 		// try to merge env/normal
-		else if (hasReflectionStage &&
-		         hasNormalStage
-		         )
+		else if (hasReflectionStage && hasNormalStage)
 		{
 			//Ren_Print("reflection_CB\n");
 
@@ -6499,7 +6484,7 @@ static void ScanAndLoadShaderFiles(void)
 			token = COM_ParseExt2(&p, qtrue);
 			if (token[0] != '{' && token[1] != '\0')
 			{
-				Ren_Warning("WARNING: Bad shader file %s has incorrect syntax.\n", filename);
+				Ren_Warning("WARNING: Bad shader file %s has incorrect syntax near token '%s'\n", filename, token);
 				ri.FS_FreeFile(buffers[i]);
 				buffers[i] = NULL;
 				break;
