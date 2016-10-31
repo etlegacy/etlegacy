@@ -498,7 +498,7 @@ static int conn_setautocommit(lua_State *L)
     {
       conn->auto_commit = 1;
       /* undo active transaction - ignore errors */
-      sqlite3_exec(conn->sql_conn, "ROLLBACK", NULL, NULL, NULL);
+      (void) sqlite3_exec(conn->sql_conn, "ROLLBACK", NULL, NULL, NULL);
     }
   else
     {
