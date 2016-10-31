@@ -673,7 +673,7 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 
 	if (!data_p)
 	{
-		Com_Error(ERR_FATAL, "COM_ParseExt: NULL data_p");
+		Com_Error(ERR_FATAL, "COM_ParseExt2: NULL data_p");
 	}
 
 	data         = *data_p;
