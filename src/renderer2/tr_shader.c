@@ -128,7 +128,7 @@ static qboolean ParseVector(char **text, int count, float *v)
 	char *token;
 	int  i;
 
-	token = COM_ParseExt2(text, qfalse);
+	token = COM_ParseExt(text, qfalse);
 	if (strcmp(token, "("))
 	{
 		Ren_Warning("WARNING: missing parenthesis '(' in shader '%s' of token '%s'\n", shader.name, token);
@@ -137,7 +137,7 @@ static qboolean ParseVector(char **text, int count, float *v)
 
 	for (i = 0; i < count; i++)
 	{
-		token = COM_ParseExt2(text, qfalse);
+		token = COM_ParseExt(text, qfalse);
 		if (!token[0])
 		{
 			Ren_Warning("WARNING: missing vector element in shader '%s' - no token\n", shader.name);
@@ -146,7 +146,7 @@ static qboolean ParseVector(char **text, int count, float *v)
 		v[i] = atof(token);
 	}
 
-	token = COM_ParseExt2(text, qfalse);
+	token = COM_ParseExt(text, qfalse);
 	if (strcmp(token, ")"))
 	{
 		Ren_Warning("WARNING: missing parenthesis ')' in shader '%s' of token '%s'\n", shader.name, token);
@@ -6182,14 +6182,14 @@ static void ScanAndLoadGuideFiles(void)
 	char filename[MAX_QPATH];
 	long sum = 0;
 
-	Ren_Print("----- ScanAndLoadGuideFiles -----\n");
-
 	s_guideText = NULL;
 	Com_Memset(guideTextHashTableSizes, 0, sizeof(guideTextHashTableSizes));
 	Com_Memset(guideTextHashTable, 0, sizeof(guideTextHashTable));
 
 	// scan for guide files
 	guideFiles = ri.FS_ListFiles("guides", ".guide", &numGuides);
+
+	Ren_Print("----- ScanAndLoadGuideFiles (%i files)-----\n", numGuides);
 
 	if (!guideFiles || !numGuides)
 	{
@@ -6421,10 +6421,10 @@ static void ScanAndLoadShaderFiles(void)
 	char filename[MAX_QPATH];
 	long sum = 0, summand;
 
-	Ren_Print("----- ScanAndLoadShaderFiles -----\n");
-
 	// scan for shader files
 	shaderFiles = ri.FS_ListFiles("scripts", ".shader", &numShaderFiles);
+
+	Ren_Print("----- ScanAndLoadShaderFiles (%i files)-----\n", numShaderFiles);
 
 	if (!shaderFiles || !numShaderFiles)
 	{
@@ -6443,12 +6443,14 @@ static void ScanAndLoadShaderFiles(void)
 	if (numShaderFiles > MAX_SHADER_FILES)
 	{
 		numShaderFiles = MAX_SHADER_FILES;
+		Ren_Warning("WARNING: ScanAndLoadShaderFiles: MAX_SHADER_FILES reached\n");
 	}
 
 	// load and parse shader files
 	for (i = 0; i < numShaderFiles; i++)
 	{
 		Com_sprintf(filename, sizeof(filename), "scripts/%s", shaderFiles[i]);
+		COM_BeginParseSession(filename);
 
 		Ren_Developer("...loading '%s'\n", filename);
 		summand = ri.FS_ReadFile(filename, (void **)&buffers[i]);
@@ -6461,7 +6463,7 @@ static void ScanAndLoadShaderFiles(void)
 		p = buffers[i];
 		while (1)
 		{
-			token = COM_ParseExt2(&p, qtrue);
+			token = COM_ParseExt(&p, qtrue);
 
 			if (!*token)
 			{
@@ -6484,7 +6486,7 @@ static void ScanAndLoadShaderFiles(void)
 			token = COM_ParseExt2(&p, qtrue);
 			if (token[0] != '{' && token[1] != '\0')
 			{
-				Ren_Warning("WARNING: Bad shader file %s has incorrect syntax near token '%s'\n", filename, token);
+				Ren_Warning("WARNING: Bad shader file %s has incorrect syntax near token '%s' line %i\n", filename, token, COM_GetCurrentParseLine());
 				ri.FS_FreeFile(buffers[i]);
 				buffers[i] = NULL;
 				break;
@@ -6531,7 +6533,7 @@ static void ScanAndLoadShaderFiles(void)
 	// look for shader names
 	while (1)
 	{
-		token = COM_ParseExt2(&p, qtrue);
+		token = COM_ParseExt(&p, qtrue);
 		if (token[0] == 0)
 		{
 			break;
