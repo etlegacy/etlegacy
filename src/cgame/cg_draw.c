@@ -366,6 +366,7 @@ static void CG_DrawTeamInfo(void)
 			}
 			CG_Text_Paint_Ext(chatPosX + 16, CHATLOC_Y - (cgs.teamChatPos - i - 1) * lineHeight - 1, scale, scale, hcolor, cgs.teamChatMsgs[i % chatHeight], 0, 0, 0, &cgs.media.limboFont2);
 		}
+		trap_R_SetColor(NULL);
 	}
 }
 
@@ -1180,8 +1181,8 @@ static void CG_DrawCrosshair(void)
 		}
 
 		trap_R_DrawStretchPic(x + 0.5 * (cg.refdef_current->width - w), y + 0.5 * (cg.refdef_current->height - h), w, h, 0, 0, 1, 1, cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS]);
-		trap_R_SetColor(NULL);
 	}
+	trap_R_SetColor(NULL);
 }
 
 static void CG_DrawNoShootIcon(void)

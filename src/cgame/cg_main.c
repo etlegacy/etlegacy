@@ -1773,7 +1773,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.ccDestructIcon[1][1] = trap_R_RegisterShaderNoMip("gfx/limbo/cm_satchel");
 	cgs.media.ccDestructIcon[2][0] = trap_R_RegisterShaderNoMip("gfx/limbo/cm_dynamite");
 	cgs.media.ccDestructIcon[2][1] = trap_R_RegisterShaderNoMip("gfx/limbo/cm_dynamite");
-	cgs.media.ccTankIcon           = trap_R_RegisterShaderNoMip("gfx/limbo/cm_churchill");
+	cgs.media.ccTankIcon           = trap_R_RegisterShaderNoMip("gfx/limbo/cm_churchill"); // FIXME: add gfx/limbo/cm_jagdpanther?
 
 	cgs.media.ccCmdPost[0] = trap_R_RegisterShaderNoMip("gfx/limbo/cm_bo_axis");
 	cgs.media.ccCmdPost[1] = trap_R_RegisterShaderNoMip("gfx/limbo/cm_bo_allied");
@@ -1994,6 +1994,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.hMountedBrowning = trap_R_RegisterModel("models/multiplayer/browning/thirdperson.md3");
 
 	// FIXME: temp models
+	// these 1st p models are registered twice ... MG and browning use it ...
 	cgs.media.hMountedFPMG42     = trap_R_RegisterModel("models/multiplayer/mg42/v_mg42.md3");
 	cgs.media.hMountedFPBrowning = trap_R_RegisterModel("models/multiplayer/browning/tankmounted.md3");
 

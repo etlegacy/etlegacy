@@ -858,14 +858,14 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
             {
                 return;
             }
-            pic = cgs.media.ccTankIcon;
+            pic = cgs.media.ccTankIcon; // FIXME: this is churchill - add jagdpanther?
             break;
         case ME_TANK_DEAD:
             if (mEntFilter & CC_FILTER_OBJECTIVES)
             {
                 return;
             }
-            pic = cgs.media.ccTankIcon;
+            pic = cgs.media.ccTankIcon; // FIXME: this is churchill - add jagdpanther?
             trap_R_SetColor(colorRed);
             break;
         case ME_COMMANDMAP_MARKER:
