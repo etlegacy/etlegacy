@@ -6199,6 +6199,7 @@ static void ScanAndLoadGuideFiles(void)
 
 	if (numGuides > MAX_GUIDE_FILES)
 	{
+		Ren_Warning("WARNING: ScanAndLoadGuideFiles: MAX_GUIDE_FILES reached\n");
 		numGuides = MAX_GUIDE_FILES;
 	}
 
@@ -6252,7 +6253,7 @@ static void ScanAndLoadGuideFiles(void)
 
 			if (Q_stricmp(token, "guide") && Q_stricmp(token, "inlineGuide"))
 			{
-				COM_ParseWarning("expected guide or inlineGuide found '%s'\n", token);
+				Ren_Warning("expected guide or inlineGuide found '%s'\n", token);
 				break;
 			}
 
@@ -6269,7 +6270,7 @@ static void ScanAndLoadGuideFiles(void)
 			token = COM_ParseExt2(&p, qtrue);
 			if (Q_stricmp(token, "("))
 			{
-				COM_ParseWarning("expected ( found '%s'\n", token);
+				Ren_Warning("expected ( found '%s'\n", token);
 				break;
 			}
 
@@ -6290,7 +6291,7 @@ static void ScanAndLoadGuideFiles(void)
 
 			if (Q_stricmp(token, ")"))
 			{
-				COM_ParseWarning("expected ) found '%s'\n", token);
+				Ren_Warning("expected ) found '%s'\n", token);
 				break;
 			}
 
@@ -6340,7 +6341,7 @@ static void ScanAndLoadGuideFiles(void)
 
 			if (Q_stricmp(token, "guide") && Q_stricmp(token, "inlineGuide"))
 			{
-				COM_ParseWarning("expected guide or inlineGuide found '%s'\n", token);
+				Ren_Warning("expected guide or inlineGuide found '%s'\n", token);
 				break;
 			}
 
@@ -6357,7 +6358,7 @@ static void ScanAndLoadGuideFiles(void)
 			token = COM_ParseExt2(&p, qtrue);
 			if (Q_stricmp(token, "("))
 			{
-				COM_ParseWarning("expected ( found '%s'\n", token);
+				Ren_Warning("expected ( found '%s'\n", token);
 				break;
 			}
 
@@ -6378,7 +6379,7 @@ static void ScanAndLoadGuideFiles(void)
 
 			if (Q_stricmp(token, ")"))
 			{
-				COM_ParseWarning("expected ) found '%s'\n", token);
+				Ren_Warning("expected ) found '%s'\n", token);
 				break;
 			}
 
@@ -6432,6 +6433,12 @@ static void ScanAndLoadShaderFiles(void)
 		return;
 	}
 
+	if (numShaderFiles > MAX_SHADER_FILES)
+	{
+		numShaderFiles = MAX_SHADER_FILES;
+		Ren_Warning("WARNING: ScanAndLoadShaderFiles: MAX_SHADER_FILES reached\n");
+	}
+
 	// build single large buffer
 	for (i = 0; i < numShaderFiles; i++)
 	{
@@ -6439,12 +6446,6 @@ static void ScanAndLoadShaderFiles(void)
 		sum += ri.FS_ReadFile(filename, NULL);
 	}
 	s_shaderText = (char *)ri.Hunk_Alloc(sum + numShaderFiles * 2, h_low);
-
-	if (numShaderFiles > MAX_SHADER_FILES)
-	{
-		numShaderFiles = MAX_SHADER_FILES;
-		Ren_Warning("WARNING: ScanAndLoadShaderFiles: MAX_SHADER_FILES reached\n");
-	}
 
 	// load and parse shader files
 	for (i = 0; i < numShaderFiles; i++)
@@ -6566,7 +6567,6 @@ static void ScanAndLoadShaderFiles(void)
 			if (Q_stricmp(token, "("))
 			{
 				Ren_Warning("expected ( found '%s'\n", token);
-				//COM_ParseWarning("expected ( found '%s'\n", token);
 				break;
 			}
 
@@ -6588,7 +6588,6 @@ static void ScanAndLoadShaderFiles(void)
 			if (Q_stricmp(token, ")"))
 			{
 				Ren_Warning("expected ( found '%s'\n", token);
-				//COM_ParseWarning("expected ) found '%s'\n", token);
 				break;
 			}
 		}
@@ -6718,7 +6717,6 @@ static void ScanAndLoadShaderFiles(void)
 			if (Q_stricmp(token, "("))
 			{
 				Ren_Warning("expected ( found '%s'\n", token);
-				//COM_ParseWarning("expected ( found '%s'\n", token);
 				break;
 			}
 
@@ -6740,7 +6738,6 @@ static void ScanAndLoadShaderFiles(void)
 			if (Q_stricmp(token, ")"))
 			{
 				Ren_Warning("expected ( found '%s'\n", token);
-				//COM_ParseWarning("expected ) found '%s'\n", token);
 				break;
 			}
 		}
