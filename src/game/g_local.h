@@ -261,7 +261,7 @@ struct gentity_s
 
 	vec3_t instantVelocity;         // per entity instantaneous velocity, set per frame
 
-	char *classname;                // set in QuakeEd
+	const char *classname;          // set in QuakeEd
 	int spawnflags;                 // set in QuakeEd
 
 	qboolean neverFree;             // if true, FreeEntity will only unlink

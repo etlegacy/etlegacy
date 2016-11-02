@@ -823,8 +823,8 @@ typedef struct weapontable_s
 	int weapAlts;             // bg
 	int akimboSideram;        // bg
 
-	int ammoIndex;            // bg type of weapon ammo this uses.  (ex. WP_MP40 and WP_LUGER share 9mm ammo, so they both have WP_LUGER for giAmmoIndex)
-	int clipIndex;            // bg which clip this weapon uses.  this allows the sniper rifle to use the same clip as the garand, etc.
+	weapon_t ammoIndex;       // bg type of weapon ammo this uses.  (ex. WP_MP40 and WP_LUGER share 9mm ammo, so they both have WP_LUGER for giAmmoIndex)
+	weapon_t clipIndex;       // bg which clip this weapon uses.  this allows the sniper rifle to use the same clip as the garand, etc.
 
 	qboolean isScoped;        // bg
 
@@ -857,7 +857,7 @@ typedef struct weapontable_s
 
 	// client
 	// icons
-	char *desc; // c - description for spawn weapons
+	const char *desc; // c - description for spawn weapons
 
 } weaponTable_t;
 
@@ -1534,13 +1534,13 @@ typedef struct
 
 typedef struct gitem_s
 {
-	char *classname;        // spawning name
-	char *pickup_sound;
-	char *world_model[MAX_ITEM_MODELS];
+	const char *classname;        // spawning name
+	const char *pickup_sound;
+	const char *world_model[MAX_ITEM_MODELS];
 
-	char *icon;
-	char *ammoicon;
-	char *pickup_name;          // for printing on pickup
+	const char *icon;
+	const char *ammoicon;
+	const char *pickup_name;          // for printing on pickup
 
 	int quantity;               // for ammo how much, or duration of powerup (value not necessary for ammo/health.  that value set in gameskillnumber[] below)
 	itemType_t giType;          // IT_* flags
@@ -2175,8 +2175,8 @@ int trap_PC_ReadToken(int handle, pc_token_t *pc_token);
 int trap_PC_SourceFileAndLine(int handle, char *filename, int *line);
 int trap_PC_UnReadToken(int handle);
 
-void PC_SourceError(int handle, char *format, ...);
-void PC_SourceWarning(int handle, char *format, ...);
+void PC_SourceError(int handle, const char *format, ...);
+void PC_SourceWarning(int handle, const char *format, ...);
 
 #ifdef GAMEDLL
 const char *PC_String_Parse(int handle);

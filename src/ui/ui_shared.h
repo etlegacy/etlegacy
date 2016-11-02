@@ -493,8 +493,8 @@ typedef struct
 	float FPS;
 } displayContextDef_t;
 
-void PC_SourceError(int handle, char *format, ...);
-void PC_SourceWarning(int handle, char *format, ...);
+void PC_SourceError(int handle, const char *format, ...);
+void PC_SourceWarning(int handle, const char *format, ...);
 qboolean PC_Float_Parse(int handle, float *f);
 qboolean PC_Color_Parse(int handle, vec4_t *c);
 qboolean PC_Int_Parse(int handle, int *i);
