@@ -1719,7 +1719,7 @@ const char *CG_LocalizeServerCommand(const char *buf)
 			{
 				memset(temp, 0, sizeof(temp));
 				strncpy(temp, buf + prev, i - prev);
-				strcat(token, CG_TranslateString(temp));
+				Q_strcat(token, MAX_TOKEN_CHARS, CG_TranslateString(temp));
 			}
 			else
 			{
@@ -1745,7 +1745,7 @@ const char *CG_LocalizeServerCommand(const char *buf)
 	{
 		memset(temp, 0, sizeof(temp));
 		strncpy(temp, buf + prev, i - prev);
-		strcat(token, CG_TranslateString(temp));
+		Q_strcat(token, MAX_TOKEN_CHARS, CG_TranslateString(temp));
 	}
 	else
 	{
