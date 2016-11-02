@@ -206,7 +206,7 @@ static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
  */
 static void CG_CalcMoveSpeeds(bg_character_t *character)
 {
-	char          *tags[2] = { "tag_footleft", "tag_footright" };
+	const char    *tags[2] = { "tag_footleft", "tag_footright" };
 	vec3_t        oldPos[2];
 	refEntity_t   refent;
 	animation_t   *anim;
@@ -284,7 +284,7 @@ static void CG_CalcMoveSpeeds(bg_character_t *character)
 		}
 
 		// record the speed
-		anim->moveSpeed = (int)((totalSpeed / numSpeed) * 1000.0 / anim->frameLerp);
+		anim->moveSpeed = (int)((totalSpeed / numSpeed) * 1000.0f / anim->frameLerp);
 	}
 }
 
@@ -398,7 +398,7 @@ static qboolean CG_RegisterAcc(const char *modelName, int *model, const char *sk
 
 typedef struct
 {
-	char *type;
+	const char *type;
 	accType_t index;
 } acc_t;
 

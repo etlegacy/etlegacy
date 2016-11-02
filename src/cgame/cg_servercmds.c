@@ -2005,10 +2005,10 @@ void CG_parseWeaponStatsGS_cmd(void)
 }
 
 // Client-side stat presentation
-void CG_parseWeaponStats_cmd(void(txt_dump) (char *))
+void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 {
 	clientInfo_t *ci;
-	qboolean     fFull     = (txt_dump != CG_printWindow);
+	qboolean     fFull     = (qboolean)(txt_dump != CG_printWindow);
 	qboolean     fHasStats = qfalse;
 	char         strName[MAX_STRING_CHARS];
 	int          atts, deaths, hits, kills, headshots;

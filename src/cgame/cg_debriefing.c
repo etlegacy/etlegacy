@@ -71,6 +71,7 @@ panel_button_t debriefPlayerWeaponStatsHeader =
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0
 };
 
 panel_button_t debriefPlayerWeaponStatsNameHeader =
@@ -84,6 +85,7 @@ panel_button_t debriefPlayerWeaponStatsNameHeader =
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0
 };
 
 panel_button_t debriefPlayerWeaponStatsShotsHeader =
@@ -97,6 +99,7 @@ panel_button_t debriefPlayerWeaponStatsShotsHeader =
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0
 };
 
 panel_button_t debriefPlayerWeaponStatsHitsHeader =
@@ -110,6 +113,7 @@ panel_button_t debriefPlayerWeaponStatsHitsHeader =
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0
 };
 
 panel_button_t debriefPlayerWeaponStatsKillsHeader =
@@ -123,6 +127,7 @@ panel_button_t debriefPlayerWeaponStatsKillsHeader =
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0
 };
 
 panel_button_t debriefPlayerWeaponStatsList =
@@ -136,6 +141,7 @@ panel_button_t debriefPlayerWeaponStatsList =
 	NULL,                               /* keyUp    */
 	CG_DebriefingPlayerWeaponStats_Draw,
 	NULL,
+	0
 };
 
 panel_button_t debriefPlayerWeaponStatsListScroll =
@@ -149,6 +155,7 @@ panel_button_t debriefPlayerWeaponStatsListScroll =
 	CG_Debriefing_Scrollbar_KeyUp,/* keyUp    */
 	CG_Debriefing_Scrollbar_Draw,
 	NULL,
+	0
 };
 
 panel_button_t debriefTitleWindow =
@@ -162,6 +169,7 @@ panel_button_t debriefTitleWindow =
 	NULL,                           /* keyUp    */
 	CG_Debriefing_MissionTitle_Draw,
 	NULL,
+	0
 };
 
 panel_button_t debriefMissionTitleWindow =
@@ -175,6 +183,7 @@ panel_button_t debriefMissionTitleWindow =
 	NULL,                        /* keyUp    */
 	CG_PanelButtonsRender_Window,
 	NULL,
+	0
 };
 
 panel_button_t debriefMissionImage =
@@ -188,6 +197,7 @@ panel_button_t debriefMissionImage =
 	NULL,                      /* keyUp    */
 	CG_Debriefing_Mission_Draw,
 	NULL,
+	0
 };
 
 panel_button_t debriefMissionMaps =
@@ -201,6 +211,7 @@ panel_button_t debriefMissionMaps =
 	NULL,                   /* keyUp    */
 	CG_Debriefing_Maps_Draw,
 	NULL,
+	0
 };
 
 panel_button_t debriefMissionAwardsWindow =
@@ -214,6 +225,7 @@ panel_button_t debriefMissionAwardsWindow =
 	NULL,                        /* keyUp    */
 	CG_PanelButtonsRender_Window,
 	NULL,
+	0
 };
 
 panel_button_t debriefMissionAwardsList =
@@ -227,6 +239,7 @@ panel_button_t debriefMissionAwardsList =
 	NULL,                     /* keyUp    */
 	CG_Debriefing_Awards_Draw,
 	NULL,
+	0
 };
 
 panel_button_t debriefMissionAwardsListScroll =
@@ -240,6 +253,7 @@ panel_button_t debriefMissionAwardsListScroll =
 	CG_Debriefing_Scrollbar_KeyUp,/* keyUp	*/
 	CG_Debriefing_Scrollbar_Draw,
 	NULL,
+	0
 };
 
 panel_button_t debriefMissionStatsWindow =
@@ -253,6 +267,7 @@ panel_button_t debriefMissionStatsWindow =
 	NULL,                        /* keyUp    */
 	CG_PanelButtonsRender_Window,
 	NULL,
+	0
 };
 
 panel_button_t debriefMissionStatsHeaders =
@@ -266,6 +281,7 @@ panel_button_t debriefMissionStatsHeaders =
 	NULL,                               /* keyUp    */
 	CG_Debriefing_TeamSkillHeaders_Draw,
 	NULL,
+	0
 };
 
 panel_button_t debriefMissionStatsWinner =
@@ -279,6 +295,7 @@ panel_button_t debriefMissionStatsWinner =
 	NULL,                          /* keyUp    */
 	CG_Debriefing_TeamSkillXP_Draw,
 	NULL,
+	0
 };
 
 panel_button_t debriefMissionStatsLoser =
@@ -292,6 +309,7 @@ panel_button_t debriefMissionStatsLoser =
 	NULL,                          /* keyUp    */
 	CG_Debriefing_TeamSkillXP_Draw,
 	NULL,
+	0
 };
 
 panel_button_t debriefPlayerListWindow =
@@ -305,6 +323,7 @@ panel_button_t debriefPlayerListWindow =
 	NULL,                        /* keyUp    */
 	CG_PanelButtonsRender_Window,
 	NULL,
+	0
 };
 
 panel_button_text_t debriefPlayerListFont =
@@ -326,6 +345,7 @@ panel_button_t debriefHeadingRank =
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0
 };
 
 panel_button_t debriefHeadingName =
@@ -339,6 +359,7 @@ panel_button_t debriefHeadingName =
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0
 };
 
 panel_button_t debriefHeadingTime =
@@ -352,6 +373,7 @@ panel_button_t debriefHeadingTime =
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0
 };
 
 panel_button_t debriefHeadingKills =
@@ -365,6 +387,7 @@ panel_button_t debriefHeadingKills =
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0
 };
 
 panel_button_t debriefHeadingDeaths =
@@ -378,6 +401,7 @@ panel_button_t debriefHeadingDeaths =
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0
 };
 
 panel_button_t debriefHeadingGibs =
@@ -391,6 +415,7 @@ panel_button_t debriefHeadingGibs =
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0
 };
 
 panel_button_t debriefHeadingSelfKills =
@@ -404,6 +429,7 @@ panel_button_t debriefHeadingSelfKills =
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0
 };
 
 panel_button_t debriefHeadingTeamKills =
@@ -417,6 +443,7 @@ panel_button_t debriefHeadingTeamKills =
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0
 };
 
 panel_button_t debriefHeadingTeamGibs =
@@ -430,6 +457,7 @@ panel_button_t debriefHeadingTeamGibs =
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0
 };
 
 panel_button_t debriefHeadingXP =
@@ -443,6 +471,7 @@ panel_button_t debriefHeadingXP =
 	NULL,                      /* keyUp    */
 	CG_DebriefingXPHeader_Draw,
 	NULL,
+	0
 };
 
 panel_button_t debriefPlayerList =
@@ -456,6 +485,7 @@ panel_button_t debriefPlayerList =
 	NULL,                        /* keyUp    */
 	CG_DebriefingPlayerList_Draw,
 	NULL,
+	0
 };
 
 panel_button_t debriefPlayerListScroll =
@@ -469,6 +499,7 @@ panel_button_t debriefPlayerListScroll =
 	CG_Debriefing_Scrollbar_KeyUp,/* keyUp    */
 	CG_Debriefing_Scrollbar_Draw,
 	NULL,
+	0
 };
 
 panel_button_text_t debriefPlayerInfoFont =
@@ -490,6 +521,7 @@ panel_button_t debriefPlayerInfoWindow =
 	NULL,                        /* keyUp    */
 	CG_PanelButtonsRender_Window,
 	NULL,
+	0
 };
 
 panel_button_t debriefPlayerInfoName =
@@ -503,6 +535,7 @@ panel_button_t debriefPlayerInfoName =
 	NULL,                         /* keyUp    */
 	CG_Debriefing_PlayerName_Draw,
 	NULL,
+	0
 };
 
 panel_button_t debriefPlayerInfoRank =
@@ -516,6 +549,7 @@ panel_button_t debriefPlayerInfoRank =
 	NULL,                         /* keyUp    */
 	CG_Debriefing_PlayerRank_Draw,
 	NULL,
+	0
 };
 
 panel_button_t debriefPlayerInfoMedals =
@@ -529,6 +563,7 @@ panel_button_t debriefPlayerInfoMedals =
 	NULL,                           /* keyUp    */
 	CG_Debriefing_PlayerMedals_Draw,
 	NULL,
+	0
 };
 
 panel_button_t debriefPlayerInfoTime =
@@ -542,6 +577,7 @@ panel_button_t debriefPlayerInfoTime =
 	NULL,                         /* keyUp    */
 	CG_Debriefing_PlayerTime_Draw,
 	NULL,
+	0
 };
 
 panel_button_t debriefPlayerInfoXP =
@@ -555,6 +591,7 @@ panel_button_t debriefPlayerInfoXP =
 	NULL,                       /* keyUp    */
 	CG_Debriefing_PlayerXP_Draw,
 	NULL,
+	0
 };
 
 #ifdef FEATURE_RATING
@@ -569,6 +606,7 @@ panel_button_t debriefPlayerInfoSR =
 	NULL,                       /* keyUp    */
 	CG_Debriefing_PlayerSR_Draw,
 	NULL,
+	0
 };
 #endif
 
@@ -583,6 +621,7 @@ panel_button_t debriefPlayerInfoACC =
 	NULL,                        /* keyUp    */
 	CG_Debriefing_PlayerACC_Draw,
 	NULL,
+	0
 };
 
 panel_button_t debriefPlayerInfoHS =
@@ -596,6 +635,7 @@ panel_button_t debriefPlayerInfoHS =
 	NULL,                       /* keyUp    */
 	CG_Debriefing_PlayerHS_Draw,
 	NULL,
+	0
 };
 
 #define PLAYERHEADER_SKILLS(number)           \
@@ -609,6 +649,7 @@ panel_button_t debriefPlayerInfoHS =
 		NULL,                            /* keyUp  */                      \
 		CG_Debriefing_PlayerSkills_Draw,            \
 		NULL,                                       \
+		0,                                       \
 	}
 
 PLAYERHEADER_SKILLS(0);
@@ -670,6 +711,7 @@ panel_button_text_t teamDebriefTitle =
 		NULL,                       /* keyUp    */                  \
 		BG_PanelButtonsRender_Text,                             \
 		NULL,                                                   \
+        0,                                                   \
 	}
 
 TDB_SKILL_TITLES_XP(0, "Battle Sense", 0);
@@ -692,6 +734,7 @@ TDB_SKILL_TITLES_XP(7, "Total", 1);
 		NULL,                              /* keyUp    */                  \
 		CG_TeamDebriefingTeamSkillXP_Draw,                      \
 		NULL,                                                   \
+        0,                                                   \
 	}
 
 #define TDB_SKILL_ALLIES_XP(number)                       \
@@ -705,6 +748,7 @@ TDB_SKILL_TITLES_XP(7, "Total", 1);
 		NULL,                              /* keyUp    */                  \
 		CG_TeamDebriefingTeamSkillXP_Draw,                      \
 		NULL,                                                   \
+        0,                                                   \
 	}
 
 TDB_SKILL_AXIS_XP(0);
@@ -751,6 +795,7 @@ panel_button_t chatPanelWindow =
 	NULL,                        /* keyUp    */
 	CG_PanelButtonsRender_Window,
 	NULL,
+    0
 };
 
 panel_button_t chatPanelText =
@@ -764,6 +809,7 @@ panel_button_t chatPanelText =
 	NULL,                      /* keyUp    */
 	CG_Debriefing_ChatBox_Draw,
 	NULL,
+    0
 };
 
 panel_button_t chatPanelNextButton =
@@ -777,6 +823,7 @@ panel_button_t chatPanelNextButton =
 	NULL,                         /* keyUp    */
 	CG_Debriefing_NextButton_Draw,
 	NULL,
+    0
 };
 
 panel_button_t chatPanelQCButton =
@@ -790,6 +837,7 @@ panel_button_t chatPanelQCButton =
 	NULL,                        /* keyUp    */
 	CG_PanelButtonsRender_Button,
 	NULL,
+    0
 };
 
 panel_button_t chatPanelReadyButton =
@@ -803,6 +851,7 @@ panel_button_t chatPanelReadyButton =
 	NULL,                          /* keyUp    */
 	CG_Debriefing_ReadyButton_Draw,
 	NULL,
+    0
 };
 
 panel_button_t chatTypeButton =
@@ -816,6 +865,7 @@ panel_button_t chatTypeButton =
 	NULL,                         /* keyUp    */
 	CG_Debriefing_ChatButton_Draw,
 	NULL,
+    0
 };
 
 panel_button_t charPanelEditSurround =
@@ -829,6 +879,7 @@ panel_button_t charPanelEditSurround =
 	NULL,                        /* keyUp    */
 	CG_PanelButtonsRender_Button,
 	NULL,
+    0
 };
 
 panel_button_t charPanelEdit =
@@ -842,6 +893,7 @@ panel_button_t charPanelEdit =
 	NULL,                        /* keyUp    */
 	CG_Debriefing_ChatEdit_Draw,
 	CG_Debriefing_ChatEditFinish,
+    0
 };
 
 // MAPVOTE
@@ -1095,6 +1147,7 @@ panel_button_t mapVoteWindow =
 	NULL,                        /* keyUp   */
 	CG_PanelButtonsRender_Window,
 	NULL,
+    0
 };
 
 panel_button_text_t mapVoteFont =
@@ -1116,6 +1169,7 @@ panel_button_t mapVoteHeadingName =
 	NULL,                      /* keyUp */
 	BG_PanelButtonsRender_Text,
 	NULL,
+    0
 };
 
 panel_button_t mapVoteHeadingVotes =
@@ -1129,6 +1183,7 @@ panel_button_t mapVoteHeadingVotes =
 	NULL,                      /* keyUp */
 	BG_PanelButtonsRender_Text,
 	NULL,
+    0
 };
 
 panel_button_t mapVoteNamesList =
@@ -1142,6 +1197,7 @@ panel_button_t mapVoteNamesList =
 	NULL,               /* keyUp    */
 	CG_MapVoteList_Draw,
 	NULL,
+    0
 };
 
 panel_button_t mapVoteNamesListScroll =
@@ -1155,6 +1211,7 @@ panel_button_t mapVoteNamesListScroll =
 	CG_Debriefing_Scrollbar_KeyUp,/* keyUp  */
 	CG_Debriefing_Scrollbar_Draw,
 	NULL,
+    0
 };
 
 panel_button_t mapVoteButton =
@@ -1168,6 +1225,7 @@ panel_button_t mapVoteButton =
 	NULL,                      /* keyUp */
 	CG_MapVote_VoteButton_Draw,
 	NULL,
+    0
 };
 
 panel_button_t mapVoteButton1 =
@@ -1181,6 +1239,7 @@ panel_button_t mapVoteButton1 =
 	NULL,                           /* keyUp    */
 	CG_MapVote_MultiVoteButton_Draw,
 	NULL,
+    0
 };
 
 panel_button_t mapVoteButton2 =
@@ -1194,6 +1253,7 @@ panel_button_t mapVoteButton2 =
 	NULL,                           /* keyUp    */
 	CG_MapVote_MultiVoteButton_Draw,
 	NULL,
+    0
 };
 
 panel_button_t mapVoteButton3 =
@@ -1207,6 +1267,7 @@ panel_button_t mapVoteButton3 =
 	NULL,                           /* keyUp    */
 	CG_MapVote_MultiVoteButton_Draw,
 	NULL,
+    0
 };
 
 panel_button_t mapVoteBorder1 =
@@ -1220,6 +1281,7 @@ panel_button_t mapVoteBorder1 =
 	NULL,                     /* keyUp  */
 	BG_PanelButtonsRender_Img,
 	NULL,
+    0
 };
 
 panel_button_t mapVoteBorder2 =
@@ -1233,6 +1295,7 @@ panel_button_t mapVoteBorder2 =
 	NULL,                     /* keyUp  */
 	BG_PanelButtonsRender_Img,
 	NULL,
+	0
 };
 
 panel_button_t mapVoteBorder3 =
@@ -1246,6 +1309,7 @@ panel_button_t mapVoteBorder3 =
 	NULL,                     /* keyUp  */
 	BG_PanelButtonsRender_Img,
 	NULL,
+    0
 };
 // MAPVOTE END
 
@@ -1276,7 +1340,7 @@ void CG_Debriefing_ChatEdit_Draw(panel_button_t *button)
 	do
 	{
 		offset++;
-		if (buffer + offset  == '\0')
+		if (buffer + offset == '\0')
 		{
 			break;
 		}
@@ -1970,7 +2034,7 @@ void CG_Debriefing_ParseAwards(void)
 
 		// team
 		token               = COM_Parse(&cs);
-		cgs.dbAwardTeams[i] = atoi(token);
+		cgs.dbAwardTeams[i] = (team_t)atoi(token);
 	}
 
 	cgs.dbAwardsParsed = qtrue;
@@ -2368,8 +2432,8 @@ void CG_Debriefing_PlayerACC_Draw(panel_button_t *button)
 	clientInfo_t *ci;
 	float        w;
 
-	ci  = CG_Debriefing_GetSelectedClientInfo();
-	w   = CG_Text_Width_Ext("ACC: ", button->font->scalex, 0, button->font->font);
+	ci = CG_Debriefing_GetSelectedClientInfo();
+	w  = CG_Text_Width_Ext("ACC: ", button->font->scalex, 0, button->font->font);
 
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("ACC:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.1f%%", ci->totalWeapAcc), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
@@ -2381,7 +2445,7 @@ void CG_Debriefing_PlayerHS_Draw(panel_button_t *button)
 	float        w;
 
 	ci = CG_Debriefing_GetSelectedClientInfo();
-	w   = CG_Text_Width_Ext("HS: ", button->font->scalex, 0, button->font->font);
+	w  = CG_Text_Width_Ext("HS: ", button->font->scalex, 0, button->font->font);
 
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("HS:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.1f%%", ci->totalWeapHSpct), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
@@ -2393,7 +2457,7 @@ void CG_Debriefing_PlayerXP_Draw(panel_button_t *button)
 	float        w;
 
 	ci = CG_Debriefing_GetSelectedClientInfo();
-	w   = CG_Text_Width_Ext("XP: ", button->font->scalex, 0, button->font->font);
+	w  = CG_Text_Width_Ext("XP: ", button->font->scalex, 0, button->font->font);
 
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, "XP:", 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
@@ -2409,7 +2473,7 @@ void CG_Debriefing_PlayerSR_Draw(panel_button_t *button)
 		float        w;
 
 		ci = CG_Debriefing_GetSelectedClientInfo();
-		w   = CG_Text_Width_Ext("SR: ", button->font->scalex, 0, button->font->font);
+		w  = CG_Text_Width_Ext("SR: ", button->font->scalex, 0, button->font->font);
 
 		CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("SR:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
@@ -2425,7 +2489,7 @@ void CG_Debriefing_PlayerTime_Draw(panel_button_t *button)
 	int          i;
 	float        w;
 
-	ci    = CG_Debriefing_GetSelectedClientInfo();
+	ci = CG_Debriefing_GetSelectedClientInfo();
 
 	for (i = 0; i < cgs.maxclients; i++)
 	{
@@ -2475,7 +2539,7 @@ void CG_Debriefing_PlayerRank_Draw(panel_button_t *button)
 	float        w;
 
 	ci = CG_Debriefing_GetSelectedClientInfo();
-	w   = CG_Text_Width_Ext("Rank: ", button->font->scalex, 0, button->font->font);
+	w  = CG_Text_Width_Ext("Rank: ", button->font->scalex, 0, button->font->font);
 
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("Rank:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
@@ -2781,7 +2845,6 @@ void CG_PanelButtonsRender_Button_Ext(rectDef_t *r, const char *text)
 {
 	vec4_t clrBdr = { 0.1f, 0.1f, 0.1f, 0.5f };
 	vec4_t clrBck = { 0.3f, 0.3f, 0.3f, 0.4f };
-	vec4_t clrTxt = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 	vec4_t clrBck_hi = { 0.5f, 0.5f, 0.5f, 0.4f };
 	vec4_t clrTxt_hi = { 0.9f, 0.9f, 0.9f, 1.f };
@@ -2795,7 +2858,7 @@ void CG_PanelButtonsRender_Button_Ext(rectDef_t *r, const char *text)
 	{
 		float w = CG_Text_Width_Ext(text, 0.2f, 0, &cgs.media.limboFont2);
 
-		CG_Text_Paint_Ext(r->x + ((r->w + 2) - w) * 0.5f, r->y + 11, 0.19f, 0.19f, hilight ? clrTxt_hi : clrTxt, text, 0, 0, 0, &cgs.media.limboFont2);
+		CG_Text_Paint_Ext(r->x + ((r->w + 2) - w) * 0.5f, r->y + 11, 0.19f, 0.19f, hilight ? clrTxt_hi : clrTxtBck, text, 0, 0, 0, &cgs.media.limboFont2);
 	}
 }
 
@@ -2809,7 +2872,6 @@ void CG_PanelButtonsRender_Window_Ext(rectDef_t *r, const char *text, int align,
 	vec4_t clrBdr      = { 0.5f, 0.5f, 0.5f, 0.5f };
 	vec4_t clrTitleBck = { 0.16f, 0.2f, 0.17f, 0.8f };
 	vec4_t clrBck      = { 0.0f, 0.0f, 0.0f, 0.8f };
-	vec4_t clrTxtBck   = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 	CG_FillRect(r->x, r->y, r->w, r->h, clrBck);
 	CG_DrawRect_FixedBorder(r->x, r->y, r->w, r->h, 1, clrBdr);
@@ -2862,7 +2924,6 @@ void CG_Debriefing_MissionTitle_Draw(panel_button_t *button)
 	const char *s;
 	float      x, w;
 	int        secs;
-	vec4_t     clrTxtBck = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 	if (cg_gameType.integer == GT_WOLF_STOPWATCH)
 	{
@@ -2964,7 +3025,6 @@ void CG_Debriefing_Awards_Draw(panel_button_t *button)
 {
 	int    i, j;
 	float  y         = button->rect.y + 1;
-	vec4_t clrTxtBck = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 	if (!cgs.dbAwardsParsed)
 	{
@@ -3008,7 +3068,6 @@ void CG_Debriefing_Awards_Draw(panel_button_t *button)
 
 void CG_Debriefing_Maps_Draw(panel_button_t *button)
 {
-	vec4_t clrTxtBck = { 0.6f, 0.6f, 0.6f, 1.0f };
 	vec4_t clrBck    = { 0.3f, 0.3f, 0.3f, 0.4f };
 
 	if (cg_gameType.integer == GT_WOLF_CAMPAIGN)
@@ -3146,13 +3205,13 @@ void CG_Debriefing_Mission_Draw(panel_button_t *button)
 		return;
 	}
 
-	if (cgs.arenaData.mappos[0] && cgs.arenaData.mappos[1])
+	if (cgs.arenaData.mappos[0] != 0.f && cgs.arenaData.mappos[1] != 0.f)
 	{
 		float  x, y, w;
 		vec2_t tl, br;
 		vec4_t colourFadedBlack = { 0.f, 0.f, 0.f, 0.4f };
 
-		tl[0] = cgs.arenaData.mappos[0] - .5 * 650.f;
+		tl[0] = cgs.arenaData.mappos[0] - .5f * 650.f;
 		if (tl[0] < 0)
 		{
 			tl[0] = 0;
@@ -3164,7 +3223,7 @@ void CG_Debriefing_Mission_Draw(panel_button_t *button)
 			tl[0] = br[0] - 650.f;
 		}
 
-		tl[1] = cgs.arenaData.mappos[1] - .5 * 650.f;
+		tl[1] = cgs.arenaData.mappos[1] - .5f * 650.f;
 		if (tl[1] < 0)
 		{
 			tl[1] = 0;
@@ -3398,7 +3457,7 @@ qboolean CG_Debriefing_Maps_KeyDown(panel_button_t *button, int key)
 	return qfalse;
 }
 
-int skillPositions[SK_NUM_SKILLS + 1] =
+const int skillPositions[SK_NUM_SKILLS + 1] =
 {
 	0,
 	55,
@@ -3412,8 +3471,6 @@ int skillPositions[SK_NUM_SKILLS + 1] =
 
 void CG_Debriefing_TeamSkillHeaders_Draw(panel_button_t *button)
 {
-	vec4_t clrTxtBck = { 0.6f, 0.6f, 0.6f, 1.0f };
-
 	if (cg_gameType.integer == GT_WOLF_LMS)
 	{
 		return;
@@ -3445,7 +3502,6 @@ void CG_Debriefing_TeamSkillXP_Draw(panel_button_t *button)
 	team_t team;
 	float  scale;
 	int    xp, i;
-	vec4_t clrTxtBck = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 	if (cg_gameType.integer == GT_WOLF_LMS)
 	{

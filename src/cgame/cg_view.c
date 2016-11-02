@@ -207,7 +207,7 @@ void CG_Letterbox(float xsize, float ysize, qboolean center)
 	// letterbox is yy:yy  (85% of 'normal' height)
 	if (cg_letterbox.integer)
 	{
-		float lbheight = ysize * 0.85;
+		float lbheight = ysize * 0.85f;
 		float lbdiff   = ysize - lbheight;
 
 		if (!center)
@@ -364,10 +364,10 @@ void CG_OffsetThirdPersonView(void)
 
 	CG_Trace(&trace, cg.refdef_current->vieworg, mins, maxs, view, cg.predictedPlayerState.clientNum, MASK_SOLID);
 
-	if (trace.fraction != 1.0)
+	if (trace.fraction != 1.0f)
 	{
 		VectorCopy(trace.endpos, view);
-		view[2] += (1.0 - trace.fraction) * 32;
+		view[2] += (1.0f - trace.fraction) * 32.f;
 		// try another trace to this position, because a tunnel may have the ceiling
 		// close enogh that this is poking out
 
@@ -441,28 +441,28 @@ void CG_KickAngles(void)
 		// kickAngles is spring-centered
 		for (i = 0; i < 3; i++)
 		{
-			if (cg.kickAVel[i] || cg.kickAngles[i])
+			if (cg.kickAVel[i] != 0.f || cg.kickAngles[i] != 0.f)
 			{
 				// apply centering forces to kickAvel
 				if (cg.kickAngles[i] && frametime)
 				{
 					idealCenterSpeed = -(2.0 * (cg.kickAngles[i] > 0) - 1.0) * centerSpeed[i];
-					if (idealCenterSpeed)
+					if (idealCenterSpeed != 0.f)
 					{
 						cg.kickAVel[i] += idealCenterSpeed * ft;
 					}
 				}
 				// add the kickAVel to the kickAngles
 				kickChange = cg.kickAVel[i] * ft;
-				if (cg.kickAngles[i] && (cg.kickAngles[i] < 0) != (kickChange < 0))         // slower when returning to center
+				if (cg.kickAngles[i] != 0.f && (cg.kickAngles[i] < 0) != (kickChange < 0))         // slower when returning to center
 				{
 					kickChange *= 0.06;
 				}
 				// check for crossing back over the center point
-				if (!cg.kickAngles[i] || ((cg.kickAngles[i] + kickChange) < 0) == (cg.kickAngles[i] < 0))
+				if (cg.kickAngles[i] == 0.f || ((cg.kickAngles[i] + kickChange) < 0) == (cg.kickAngles[i] < 0))
 				{
 					cg.kickAngles[i] += kickChange;
-					if (!cg.kickAngles[i] && frametime)
+					if (cg.kickAngles[i] == 0.f && frametime)
 					{
 						cg.kickAVel[i] = 0;
 					}

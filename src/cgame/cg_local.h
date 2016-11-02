@@ -2773,7 +2773,7 @@ void CG_PlayBufferedVoiceChats(void);
 const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
 
-void CG_parseWeaponStats_cmd(void(txt_dump) (char *));
+void CG_parseWeaponStats_cmd(void(txt_dump) (const char *));
 void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (char *));
 void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (char *));
 void CG_scores_cmd(void);
@@ -3140,7 +3140,7 @@ void CG_mv_KeyHandling(int _key, qboolean down);
 #endif
 
 // cg_window.c
-qboolean CG_addString(cg_window_t *w, char *buf);
+qboolean CG_addString(cg_window_t *w, const char *buf);
 void CG_createStatsWindow(void);
 void CG_createTopShotsWindow(void);
 void CG_createWstatsMsgWindow(void);
@@ -3150,7 +3150,7 @@ void CG_createMOTDWindow(void);
 void CG_cursorUpdate(void);
 #endif
 void CG_initStrings(void);
-void CG_printWindow(char *str);
+void CG_printWindow(const char *str);
 void CG_removeStrings(cg_window_t *w);
 cg_window_t *CG_windowAlloc(int fx, int startupLength);
 void CG_windowDraw(void);

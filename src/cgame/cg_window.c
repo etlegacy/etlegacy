@@ -110,7 +110,7 @@ void CG_createMOTDWindow(void)
 			str = CG_ConfigString(CS_CUSTMOTD + i);
 			if (str != NULL && *str != 0)
 			{
-				CG_printWindow((char *)str);
+				CG_printWindow(str);
 			}
 			else
 			{
@@ -258,7 +258,7 @@ void CG_windowCleanup(void)
 
 void CG_demoAviFPSDraw(void)
 {
-	qboolean fKeyDown = cgs.fKeyPressed[K_F1] | cgs.fKeyPressed[K_F2] | cgs.fKeyPressed[K_F3] | cgs.fKeyPressed[K_F4] | cgs.fKeyPressed[K_F5];
+	qboolean fKeyDown = (qboolean)(cgs.fKeyPressed[K_F1] | cgs.fKeyPressed[K_F2] | cgs.fKeyPressed[K_F3] | cgs.fKeyPressed[K_F4] | cgs.fKeyPressed[K_F5]);
 
 	if (cg.demoPlayback && fKeyDown && cgs.aviDemoRate >= 0)
 	{
@@ -278,8 +278,8 @@ void CG_demoTimescaleDraw(void)
 		int  w  = CG_Text_Width_Ext(s, cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
 		int  x  = Ccg_WideX(SCREEN_WIDTH) - w - 108;
 
-		CG_FillRect(x, SCREEN_HEIGHT - 21, w + 7, h * 2.5, bgColor);
-		CG_DrawRect(x, SCREEN_HEIGHT - 21, w + 7, h * 2.5, 1, bdColor);
+		CG_FillRect(x, SCREEN_HEIGHT - 21, w + 7, h * 2.5f, bgColor);
+		CG_DrawRect(x, SCREEN_HEIGHT - 21, w + 7, h * 2.5f, 1, bdColor);
 		CG_Text_Paint_Ext(x + 3, SCREEN_HEIGHT - 10, cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, s, 0, 0, 0, &cgs.media.limboFont2);
 	}
 }
@@ -291,7 +291,7 @@ void CG_windowDraw(void)
 	cg_window_t *w;
 	qboolean    fCleanup = qfalse;
 #ifdef FEATURE_MULTIVIEW
-	qboolean fAllowMV = (cg.snap != NULL && cg.snap->ps.pm_type != PM_INTERMISSION && cgs.mvAllowed);
+	qboolean fAllowMV = (qboolean)(cg.snap != NULL && cg.snap->ps.pm_type != PM_INTERMISSION && cgs.mvAllowed);
 #endif
 	vec4_t *bg;
 	vec4_t textColor, borderColor, bgColor;
@@ -529,7 +529,7 @@ void CG_windowNormalizeOnText(cg_window_t *w)
 	}
 }
 
-void CG_printWindow(char *str)
+void CG_printWindow(const char *str)
 {
 	int         pos = 0, pos2 = 0;
 	char        buf[MAX_STRING_CHARS];
@@ -585,7 +585,7 @@ void CG_initStrings(void)
 	}
 }
 
-qboolean CG_addString(cg_window_t *w, char *buf)
+qboolean CG_addString(cg_window_t *w, const char *buf)
 {
 	int i;
 
