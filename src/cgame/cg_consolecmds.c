@@ -191,30 +191,31 @@ void CG_ScoresDown_f(void)
 	{
 		if (!cg.showScores && cg.scoresDownTime + 250 > cg.time && cg.scoreToggleTime < (cg.time - 500))
 		{
-			int sb        = cg_scoreboard.integer + 1;
-			int sbAllowed = SCOREBOARD_XP;
-			int i;
+			int sb = cg_scoreboard.integer + 1;
+			//int sbAllowed = SCOREBOARD_XP;
+			//int i;
 
 			// cycle scoreboard type with a quick tap of +scores
 			if (sb < SCOREBOARD_XP || sb > SCOREBOARD_SR)
 			{
 				sb = SCOREBOARD_XP;
 			}
-
-			for (i = SCOREBOARD_XP; i <= SCOREBOARD_SR; i++)
-			{
-				if (sb == SCOREBOARD_XP)
-				{
-					sbAllowed = SCOREBOARD_XP;
-					break;
-				}
-				else if (sb == SCOREBOARD_SR)
-				{
-					sbAllowed = SCOREBOARD_SR;
-					break;
-				}
-			}
-			trap_Cvar_Set("cg_scoreboard", va("%i", sbAllowed));
+			/*
+			    for (i = SCOREBOARD_XP; i <= SCOREBOARD_SR; i++)
+			    {
+			        if (sb == SCOREBOARD_XP)
+			        {
+			            sbAllowed = SCOREBOARD_XP;
+			            break;
+			        }
+			        else if (sb == SCOREBOARD_SR)
+			        {
+			            sbAllowed = SCOREBOARD_SR;
+			            break;
+			        }
+			    }
+			*/
+			trap_Cvar_Set("cg_scoreboard", va("%i", sb /*sbAllowed*/));
 
 			cg.scoreToggleTime = cg.time;
 		}
@@ -680,9 +681,9 @@ static void CG_AutomapExpandDown_f(void)
 	if (!cgs.autoMapExpanded)
 	{
 		cgs.autoMapExpanded = qtrue;
-		if (cg.time - cgs.autoMapExpandTime < 250.f)
+		if (cg.time - cgs.autoMapExpandTime < 250)
 		{
-			cgs.autoMapExpandTime = cg.time - (250.f - (cg.time - cgs.autoMapExpandTime));
+			cgs.autoMapExpandTime = cg.time - (250 - (cg.time - cgs.autoMapExpandTime));
 		}
 		else
 		{
@@ -696,9 +697,9 @@ static void CG_AutomapExpandUp_f(void)
 	if (cgs.autoMapExpanded)
 	{
 		cgs.autoMapExpanded = qfalse;
-		if (cg.time - cgs.autoMapExpandTime < 250.f)
+		if (cg.time - cgs.autoMapExpandTime < 250)
 		{
-			cgs.autoMapExpandTime = cg.time - (250.f - (cg.time - cgs.autoMapExpandTime));
+			cgs.autoMapExpandTime = cg.time - (250 - (cg.time - cgs.autoMapExpandTime));
 		}
 		else
 		{
@@ -1134,11 +1135,9 @@ static int CG_GetSecondaryWeapon(int weapon, team_t team, int playerclass)
 		{
 		case 1:
 			goto single_pistol;
-			break;
 		case 2:
 		default:
 			goto akimbo_pistols;
-			break;
 		}
 	}
 	else
@@ -1641,8 +1640,8 @@ Cmd_Argc() / Cmd_Argv()
 */
 qboolean CG_ConsoleCommand(void)
 {
-	const char *cmd;
-	int        i;
+	const char   *cmd;
+	unsigned int i;
 
 	// don't allow console commands until a snapshot is present
 	if (!cg.snap)
@@ -1670,8 +1669,8 @@ qboolean CG_ConsoleCommand(void)
  */
 void CG_InitConsoleCommands(void)
 {
-	int        i;
-	const char *s;
+	unsigned int i;
+	const char   *s;
 
 	for (i = 0 ; i < sizeof(commands) / sizeof(commands[0]) ; i++)
 	{
