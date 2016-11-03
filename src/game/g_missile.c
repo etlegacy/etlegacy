@@ -73,7 +73,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);
 
 	// record this for mover pushing
-	if (trace->plane.normal[2] > 0.2 /*&& VectorLengthSquared( ent->s.pos.trDelta ) < Square(40)*/)
+	if (trace->plane.normal[2] > 0.2f /*&& VectorLengthSquared( ent->s.pos.trDelta ) < Square(40)*/)
 	{
 		ent->s.groundEntityNum = trace->entityNum;
 	}
@@ -100,17 +100,17 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 
 		if (ent->s.eFlags & EF_BOUNCE)         // both flags marked, do a third type of bounce
 		{
-			VectorScale(ent->s.pos.trDelta, 0.35, ent->s.pos.trDelta);
+			VectorScale(ent->s.pos.trDelta, 0.35f, ent->s.pos.trDelta);
 		}
 		else
 		{
-			VectorScale(ent->s.pos.trDelta, 0.65, ent->s.pos.trDelta);
+			VectorScale(ent->s.pos.trDelta, 0.65f, ent->s.pos.trDelta);
 		}
 
 		// grenades on movers get scaled back much earlier
 		if (ent->s.groundEntityNum != ENTITYNUM_WORLD)
 		{
-			VectorScale(ent->s.pos.trDelta, 0.5, ent->s.pos.trDelta);
+			VectorScale(ent->s.pos.trDelta, 0.5f, ent->s.pos.trDelta);
 		}
 
 		// calculate relative delta for stop calcs
@@ -125,7 +125,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 
 		// check for stop
 		//if ( trace->plane.normal[2] > 0.2 && VectorLengthSquared( ent->s.pos.trDelta ) < Square(40) )
-		if (trace->plane.normal[2] > 0.2 && VectorLengthSquared(relativeDelta) < 1600) // Square(40)
+		if (trace->plane.normal[2] > 0.2f && VectorLengthSquared(relativeDelta) < 1600) // Square(40)
 		{
 			// make the world the owner of the dynamite, so the player can shoot it after it stops moving
 			if (ent->s.weapon == WP_DYNAMITE || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL || ent->s.weapon == WP_SMOKE_BOMB)
@@ -212,7 +212,7 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 		if (ent->damage)
 		{
 			BG_EvaluateTrajectoryDelta(&ent->s.pos, level.time, velocity, qfalse, ent->s.effect2Time);
-			if (!VectorLengthSquared(velocity))
+			if (VectorLengthSquared(velocity) == 0.f)
 			{
 				velocity[2] = 1;    // stepped on a grenade
 			}
@@ -324,15 +324,15 @@ void G_ExplodeMissile(gentity_t *ent)
 	dir[0] = dir[1] = 0;
 	dir[2] = 1;
 
-	if (ent->accuracy == 1)
+	if (ent->accuracy == 1.f)
 	{
 		G_AddEvent(ent, EV_MISSILE_MISS_SMALL, DirToByte(dir));
 	}
-	else if (ent->accuracy == 2)
+	else if (ent->accuracy == 2.f)
 	{
 		G_AddEvent(ent, EV_MISSILE_MISS_LARGE, DirToByte(dir));
 	}
-	else if (ent->accuracy == 3)
+	else if (ent->accuracy == 3.f)
 	{
 		ent->freeAfterEvent = qtrue;
 		trap_LinkEntity(ent);
@@ -476,7 +476,7 @@ void Landmine_Check_Ground(gentity_t *self)
 
 	trap_Trace(&tr, start, mins, maxs, end, self->s.number, MASK_MISSILESHOT);
 
-	if (tr.fraction == 1)
+	if (tr.fraction == 1.f)
 	{
 		self->s.groundEntityNum = -1;
 	}
@@ -514,7 +514,7 @@ void G_RunMissile(gentity_t *ent)
 	                                        || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL || ent->s.weapon == WP_SMOKE_BOMB
 	                                        ))
 	{
-		if (!ent->s.pos.trDelta[0] && !ent->s.pos.trDelta[1] && !ent->s.pos.trDelta[2])
+		if (ent->s.pos.trDelta[0] == 0.f && ent->s.pos.trDelta[1] == 0.f && ent->s.pos.trDelta[2] == 0.f)
 		{
 			ent->clipmask &= ~CONTENTS_BODY;
 		}
@@ -612,7 +612,7 @@ void G_RunMissile(gentity_t *ent)
 
 			trap_Trace(&mortar_tr, origin, ent->r.mins, ent->r.maxs, impactpos, ent->r.ownerNum, ent->clipmask);
 
-			if (mortar_tr.fraction != 1)
+			if (mortar_tr.fraction != 1.f)
 			{
 				gentity_t *tent;
 
@@ -649,7 +649,7 @@ void G_RunMissile(gentity_t *ent)
 
 	trap_LinkEntity(ent);
 
-	if (tr.fraction != 1)
+	if (tr.fraction != 1.f)
 	{
 		int impactDamage;
 
@@ -708,7 +708,7 @@ void G_RunMissile(gentity_t *ent)
 			return;     // exploded
 		}
 	}
-	else if (VectorLengthSquared(ent->s.pos.trDelta))           // free fall/no intersection
+	else if (VectorLengthSquared(ent->s.pos.trDelta) != 0.f)           // free fall/no intersection
 	{
 		ent->s.groundEntityNum = ENTITYNUM_NONE;
 	}
@@ -740,15 +740,15 @@ void G_PredictBounceMissile(gentity_t *ent, trajectory_t *pos, trace_t *trace, i
 	{
 		if (ent->s.eFlags & EF_BOUNCE)         // both flags marked, do a third type of bounce
 		{
-			VectorScale(pos->trDelta, 0.35, pos->trDelta);
+			VectorScale(pos->trDelta, 0.35f, pos->trDelta);
 		}
 		else
 		{
-			VectorScale(pos->trDelta, 0.65, pos->trDelta);
+			VectorScale(pos->trDelta, 0.65f, pos->trDelta);
 		}
 
 		// check for stop
-		if (trace->plane.normal[2] > 0.2 && VectorLengthSquared(pos->trDelta) < Square(40))
+		if (trace->plane.normal[2] > 0.2f && VectorLengthSquared(pos->trDelta) < Square(40))
 		{
 			VectorCopy(trace->endpos, pos->trBase);
 			return;
@@ -798,7 +798,7 @@ int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allow
 			return qfalse;
 		}
 
-		if (tr.fraction != 1)
+		if (tr.fraction != 1.f)
 		{
 			// never explode or bounce on sky
 			if  (tr.surfaceFlags & SURF_NOIMPACT)
@@ -920,7 +920,7 @@ void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 	dist = VectorLength(v);
 
 	// The person who shot the flame only burns when within 1/2 the radius
-	if (body->s.number == self->r.ownerNum && dist >= (radius * 0.5))
+	if (body->s.number == self->r.ownerNum && dist >= (radius * 0.5f))
 	{
 		return;
 	}
@@ -941,7 +941,7 @@ void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 
 	// do a trace to see if there's a wall btwn. body & flame centroid -- prevents damage through walls
 	trap_Trace(&tr, self->r.currentOrigin, NULL, NULL, point, body->s.number, MASK_SHOT);
-	if (tr.fraction < 1.0)
+	if (tr.fraction < 1.0f)
 	{
 		return;
 	}
@@ -1044,9 +1044,9 @@ void G_RunFlamechunk(gentity_t *ent)
 		VectorCopy(tr.endpos, ent->r.currentOrigin);
 
 		dot = DotProduct(vel, tr.plane.normal);
-		VectorMA(vel, -2 * dot, tr.plane.normal, vel);
+		VectorMA(vel, -2.f * dot, tr.plane.normal, vel);
 		VectorNormalize(vel);
-		speed *= 0.5 * (0.25 + 0.75 * ((dot + 1.0) * 0.5));
+		speed *= 0.5f * (0.25f + 0.75f * ((dot + 1.0f) * 0.5f));
 		VectorScale(vel, speed, ent->s.pos.trDelta);
 
 		if (tr.entityNum != ENTITYNUM_WORLD && tr.entityNum != ENTITYNUM_NONE)
@@ -1507,7 +1507,7 @@ qboolean sEntWillTriggerMine(gentity_t *ent, gentity_t *mine)
 		VectorSubtract(mine->r.currentOrigin, ent->r.currentOrigin, dist);
 		// have to be within the trigger distance AND on the ground -- if we jump over a mine, we don't set it off
 		//      (or if we fly by after setting one off)
-		if ((VectorLengthSquared(dist) <= Square(LANDMINE_TRIGGER_DIST)) && (fabs(dist[2]) < 45.f))
+		if ((VectorLengthSquared(dist) <= Square(LANDMINE_TRIGGER_DIST)) && (fabs(dist[2]) < 45))
 		{
 			return qtrue;
 		}
@@ -1524,7 +1524,7 @@ void G_LandmineThink(gentity_t *self)
 	vec3_t    range = { LANDMINE_TRIGGER_DIST, LANDMINE_TRIGGER_DIST, LANDMINE_TRIGGER_DIST };
 	vec3_t    mins, maxs;
 	qboolean  trigger = qfalse;
-	gentity_t *ent;
+	gentity_t *ent    = NULL;
 
 	self->nextthink = level.time + FRAMETIME;
 
@@ -1589,7 +1589,7 @@ void LandminePostThink(gentity_t *self)
 	vec3_t    range = { LANDMINE_TRIGGER_DIST, LANDMINE_TRIGGER_DIST, LANDMINE_TRIGGER_DIST };
 	vec3_t    mins, maxs;
 	qboolean  trigger = qfalse;
-	gentity_t *ent;
+	gentity_t *ent    = NULL;
 
 	self->nextthink = level.time + FRAMETIME;
 
