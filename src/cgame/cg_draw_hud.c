@@ -1031,9 +1031,9 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 
 	barFrac = (cg.time - cg.snap->ps.classWeaponTime) / chargeTime; // FIXME: potential DIV 0 when charge times are set to 0!
 
-	if (barFrac > 1.0)
+	if (barFrac > 1.0f)
 	{
-		barFrac = 1.0;
+		barFrac = 1.0f;
 	}
 
 	if (!charge)
@@ -1046,7 +1046,7 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 	{
 		color[0] = 1.0f;
 		color[1] = color[2] = barFrac;
-		color[3] = 0.25 + barFrac * 0.5;
+		color[3] = 0.25f + barFrac * 0.5f;
 	}
 
 	CG_FilledBar(rect->x, rect->y + (rect->h * 0.1f), rect->w, rect->h * 0.84f, color, NULL, bgcolor, barFrac, flags);
@@ -1407,7 +1407,7 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 	VectorNormalize(v1);
 	vectoangles(v1, angles);
 
-	if (v1[0] == 0 && v1[1] == 0 && v1[2] == 0)
+	if (v1[0] == 0.f && v1[1] == 0.f && v1[2] == 0.f)
 	{
 		return;
 	}
@@ -2676,7 +2676,7 @@ CG_DrawUpperRight
 */
 void CG_DrawUpperRight(void)
 {
-	int y = 152; // 20 + 100 + 32;
+	float y = 152; // 20 + 100 + 32;
 
 	if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
 	{

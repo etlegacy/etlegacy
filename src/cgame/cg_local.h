@@ -968,7 +968,7 @@ typedef struct
 	int weaponFireTime;
 	int nextIdleTime;
 	int lastIdleTimeEnd;
-	int idleAnim;
+	hudHeadAnimNumber_t idleAnim;
 	int lastWeapSelInBank[MAX_WEAP_BANKS_MP]; // remember which weapon was last selected in a bank for 'weaponbank' commands
 
 	// view movement

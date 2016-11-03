@@ -731,7 +731,7 @@ static void CG_DrawMortarReticle(void)
 
 	offset      = (5.f / 65536) * ((int)(angle * (65536 / 5.f)) & 65535);
 	min         = (int)(AngleNormalize360(angle - .5f * 180) / 15.f) * 15;
-	majorOffset = (int)(floor((int)floor(AngleNormalize360(angle - .5f * 180)) % 15) / 5.f);
+	majorOffset = (int)(floor((int)floor(AngleNormalize360(angle - .5f * 180)) % 15) / 5);
 
 	for (val = i = 0; i < 36; i++)
 	{
@@ -821,13 +821,13 @@ static void CG_DrawMortarReticle(void)
 			VectorSubtract(cg.artilleryRequestPos[i], cg.predictedPlayerEntity.lerpOrigin, dir);
 
 			// ripped this out of vectoangles
-			if (dir[1] == 0 && dir[0] == 0)
+			if (dir[1] == 0.f && dir[0] == 0.f)
 			{
 				yaw = 0;
 			}
 			else
 			{
-				if (dir[0])
+				if (dir[0] != 0.f)
 				{
 					yaw = (atan2(dir[1], dir[0]) * 180 / M_PI);
 				}
@@ -901,7 +901,7 @@ static void CG_DrawMortarReticle(void)
 
 	offset      = (2.5f / 65536) * ((int)(angle * (65536 / 2.5f)) & 65535);
 	min         = floor((angle + .5f * 50) / 10.f) * 10;
-	majorOffset = (int)(floor((int)((angle + .5f * 50) * 10.f) % 100) / 25.f);
+	majorOffset = (int)(floor((int)((angle + .5f * 50) * 10.f) % 100) / 25);
 
 	for (val = i = 0; i < 20; i++)
 	{
@@ -1129,7 +1129,7 @@ static void CG_DrawCrosshair(void)
 	}
 
 	// no crosshair while leaning
-	if (cg.snap->ps.leanf)
+	if (cg.snap->ps.leanf != 0.f)
 	{
 		return;
 	}
@@ -1157,8 +1157,8 @@ static void CG_DrawCrosshair(void)
 
 	// crosshair size represents aim spread
 	f  = (float)((cg_crosshairPulse.integer == 0) ? 0 : cg.snap->ps.aimSpreadScale / 255.0);
-	w *= (1 + f * 2.0);
-	h *= (1 + f * 2.0);
+	w *= (1 + f * 2.0f);
+	h *= (1 + f * 2.0f);
 
 	x = cg_crosshairX.integer;
 	y = cg_crosshairY.integer;
@@ -1166,7 +1166,7 @@ static void CG_DrawCrosshair(void)
 
 	hShader = cgs.media.crosshairShader[cg_drawCrosshair.integer % NUM_CROSSHAIRS];
 
-	trap_R_DrawStretchPic(x + 0.5 * (cg.refdef_current->width - w), y + 0.5 * (cg.refdef_current->height - h), w, h, 0, 0, 1, 1, hShader);
+	trap_R_DrawStretchPic(x + 0.5f * (cg.refdef_current->width - w), y + 0.5f * (cg.refdef_current->height - h), w, h, 0, 0, 1, 1, hShader);
 
 	if (cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS])
 	{
@@ -1180,7 +1180,7 @@ static void CG_DrawCrosshair(void)
 			trap_R_SetColor(cg.xhairColorAlt);
 		}
 
-		trap_R_DrawStretchPic(x + 0.5 * (cg.refdef_current->width - w), y + 0.5 * (cg.refdef_current->height - h), w, h, 0, 0, 1, 1, cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS]);
+		trap_R_DrawStretchPic(x + 0.5f * (cg.refdef_current->width - w), y + 0.5f * (cg.refdef_current->height - h), w, h, 0, 0, 1, 1, cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS]);
 	}
 	trap_R_SetColor(NULL);
 }
@@ -1221,7 +1221,7 @@ static void CG_DrawNoShootIcon(void)
 	y = cg_crosshairY.integer + 1;
 	CG_AdjustFrom640(&x, &y, &w, &h);
 
-	trap_R_DrawStretchPic(x + 0.5 * (cg.refdef_current->width - w), y + 0.5 * (cg.refdef_current->height - h), w, h, 0, 0, 1, 1, cgs.media.friendShader);
+	trap_R_DrawStretchPic(x + 0.5f * (cg.refdef_current->width - w), y + 0.5f * (cg.refdef_current->height - h), w, h, 0, 0, 1, 1, cgs.media.friendShader);
 	trap_R_SetColor(NULL);
 }
 
@@ -1412,7 +1412,7 @@ void CG_CheckForCursorHints(void)
 
 	CG_Trace(&trace, start, vec3_origin, vec3_origin, end, cg.snap->ps.clientNum, MASK_PLAYERSOLID);
 
-	if (trace.fraction == 1)
+	if (trace.fraction == 1.f)
 	{
 		// might be water
 		if ((CG_PointContents(trace.endpos, -1) & CONTENTS_WATER) && !(CG_PointContents(cg.refdef.vieworg, -1) & CONTENTS_WATER))
@@ -1792,7 +1792,7 @@ static void CG_DrawCrosshairNames(void)
 		vec4_t bgcolor, c;
 		float  barFrac = (float)playerHealth / maxHealth;
 
-		if (barFrac > 1.0)
+		if (barFrac > 1.0f)
 		{
 			barFrac = 1.0;
 		}
@@ -1803,7 +1803,7 @@ static void CG_DrawCrosshairNames(void)
 
 		c[0] = 1.0f;
 		c[1] = c[2] = barFrac;
-		c[3] = (0.25 + barFrac * 0.5) * color[3];
+		c[3] = (0.25f + barFrac * 0.5f) * color[3];
 
 		Vector4Set(bgcolor, 1.f, 1.f, 1.f, .25f * color[3]);
 
@@ -1870,7 +1870,7 @@ static void CG_DrawVote(void)
 	float fontScale = cg_fontScaleSP.value;
 
 	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-	y          = INFOTEXT_STARTY + (charHeight * 2.0f) * 5;
+	y          = INFOTEXT_STARTY + (charHeight * 2) * 5;
 
 	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && cg_complaintPopUp.integer > 0 && cgs.complaintClient >= 0)
 	{
@@ -1879,7 +1879,7 @@ static void CG_DrawVote(void)
 
 		str = va(CG_TranslateString("File complaint against ^7%s^3 for team-killing?"), cgs.clientinfo[cgs.complaintClient].name);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		y += charHeight * 2.0f;
+		y += charHeight * 2;
 
 		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -1893,7 +1893,7 @@ static void CG_DrawVote(void)
 
 		str = va(CG_TranslateString("Accept %s^3's application to join your fireteam?"), cgs.clientinfo[cgs.applicationClient].name);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		y += charHeight * 2.0f;
+		y += charHeight * 2;
 
 		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -1907,7 +1907,7 @@ static void CG_DrawVote(void)
 
 		str = va(CG_TranslateString("Accept %s^3's proposition to invite %s^3 to join your fireteam?"), cgs.clientinfo[cgs.propositionClient2].name, cgs.clientinfo[cgs.propositionClient].name);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		y += charHeight * 2.0f;
+		y += charHeight * 2;
 
 		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -1921,7 +1921,7 @@ static void CG_DrawVote(void)
 
 		str = va(CG_TranslateString("Accept %s^3's invitation to join their fireteam?"), cgs.clientinfo[cgs.invitationClient].name);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		y += charHeight * 2.0f;
+		y += charHeight * 2;
 
 		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -1935,7 +1935,7 @@ static void CG_DrawVote(void)
 
 		str = CG_TranslateString("Make Fireteam private?");
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		y += charHeight * 2.0f;
+		y += charHeight * 2;
 
 		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -1949,7 +1949,7 @@ static void CG_DrawVote(void)
 
 		str = CG_TranslateString("Create a Fireteam?");
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		y += charHeight * 2.0f;
+		y += charHeight * 2;
 
 		str = va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2);
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
@@ -2031,14 +2031,14 @@ static void CG_DrawVote(void)
 		{
 			str = va(CG_TranslateString("VOTE(%i): %s"), sec, cgs.voteString);
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			y += charHeight * 2.0f;
+			y += charHeight * 2;
 
 			if (cgs.clientinfo[cg.clientNum].team != TEAM_AXIS && cgs.clientinfo[cg.clientNum].team != TEAM_ALLIES)
 			{
 
 				str = va(CG_TranslateString("YES:%i, NO:%i"), cgs.voteYes, cgs.voteNo);
 				CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-				y += charHeight * 2.0f;
+				y += charHeight * 2;
 
 				str = CG_TranslateString("Can't vote as Spectator");
 			}
@@ -2053,7 +2053,7 @@ static void CG_DrawVote(void)
 		{
 			str = va(CG_TranslateString("YOU VOTED ON: %s"), cgs.voteString);
 			CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorYellow, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-			y += charHeight * 2.0f;
+			y += charHeight * 2;
 
 
 			str = va(CG_TranslateString("Y:%i, N:%i"), cgs.voteYes, cgs.voteNo);
@@ -2266,7 +2266,7 @@ static void CG_DrawSpectatorMessage(void)
 	int        y, charHeight;
 
 	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-	y          = INFOTEXT_STARTY + (charHeight * 2.0f) * 2;
+	y          = INFOTEXT_STARTY + (charHeight * 2) * 2;
 
 #ifdef FEATURE_EDV
 	if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
@@ -2299,12 +2299,12 @@ static void CG_DrawSpectatorMessage(void)
 	}
 	str = va(CG_TranslateString("Press %s to open Limbo Menu"), str2);
 	CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-	y += charHeight * 2.0f;
+	y += charHeight * 2;
 
 	str2 = Binding_FromName("+attack");
 	str  = va(CG_TranslateString("Press %s to follow next player"), str2);
 	CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-	y += charHeight * 2.0f;
+	y += charHeight * 2;
 
 	str2 = Binding_FromName("weapalt");
 	str  = va(CG_TranslateString("Press %s to follow previous player"), str2);
@@ -2313,12 +2313,12 @@ static void CG_DrawSpectatorMessage(void)
 #ifdef FEATURE_MULTIVIEW
 	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && cgs.mvAllowed)
 	{
-		y += charHeight * 2.0f;
+		y += charHeight * 2;
 
 		str2 = Binding_FromName("mvactivate");
 		str  = va(CG_TranslateString("Press %s to %s multiview mode"), str2, ((cg.mvTotalClients > 0) ? CG_TranslateString("disable") : CG_TranslateString("activate")));
 		CG_Text_Paint_Ext(INFOTEXT_STARTX, y, fontScale, fontScale, colorWhite, str, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-		//y += charHeight * 2.0f;
+		//y += charHeight * 2;
 	}
 #endif
 }
@@ -2824,7 +2824,7 @@ static void CG_DrawFlashFade(void)
 	}
 
 	// now draw the fade
-	if (cgs.fadeAlphaCurrent > 0.0 || fBlackout)
+	if (cgs.fadeAlphaCurrent > 0.0f || fBlackout)
 	{
 		vec4_t col;
 
@@ -2914,7 +2914,7 @@ static void CG_DrawFlashDamage(void)
 
 	if (cg.v_dmg_time > cg.time)
 	{
-		vec4_t col      = { 0.2, 0, 0, 0 };
+		vec4_t col      = { 0.2f, 0.f, 0.f, 0.f };
 		float  redFlash = fabs(cg.v_dmg_pitch * ((cg.v_dmg_time - cg.time) / DAMAGE_TIME));
 
 		// blend the entire screen red
@@ -2923,8 +2923,8 @@ static void CG_DrawFlashDamage(void)
 			redFlash = 5;
 		}
 
-		col[3] = 0.7 * (redFlash / 5.0) * ((cg_bloodFlash.value > 1.0) ? 1.0 :
-		                                   (cg_bloodFlash.value < 0.0) ? 0.0 :
+		col[3] = 0.7f * (redFlash / 5.0f) * ((cg_bloodFlash.value > 1.0f) ? 1.0f :
+		                                   (cg_bloodFlash.value < 0.0f) ? 0.0f :
 		                                   cg_bloodFlash.value);
 
 		CG_FillRect(0, 0, Ccg_WideX(SCREEN_WIDTH), SCREEN_HEIGHT, col);
@@ -2962,14 +2962,14 @@ static void CG_DrawFlashFire(void)
 		vec4_t col = { 1, 1, 1, 1 };
 		float  max, f;
 
-		if (alpha >= 1.0)
+		if (alpha >= 1.0f)
 		{
-			alpha = 1.0;
+			alpha = 1.0f;
 		}
 
 		// fade in?
 		f = (float)(cg.time - cg.v_noFireTime) / FIRE_FLASH_FADEIN_TIME;
-		if (f >= 0.0 && f < 1.0)
+		if (f >= 0.0f && f < 1.0f)
 		{
 			alpha = f;
 		}
@@ -2987,7 +2987,7 @@ static void CG_DrawFlashFire(void)
 		CG_DrawPic(0, 0, Ccg_WideX(SCREEN_WIDTH), SCREEN_HEIGHT, cgs.media.viewFlashFire[(cg.time / 50) % 16]);
 		trap_R_SetColor(NULL);
 
-		trap_S_AddLoopingSound(cg.snap->ps.origin, vec3_origin, cgs.media.flameSound, (int)(255.0 * alpha), 0);
+		trap_S_AddLoopingSound(cg.snap->ps.origin, vec3_origin, cgs.media.flameSound, (int)(255.0f * alpha), 0);
 	}
 	else
 	{
@@ -3154,7 +3154,7 @@ static void CG_DrawObjectiveInfo(void)
 	y2 = y - cg.oidPrintCharHeight * 1.5 - 2;
 
 	VectorCopy(color, backColor);
-	backColor[3] = 0.5 * color[3];
+	backColor[3] = 0.5f * color[3];
 	trap_R_SetColor(backColor);
 
 	CG_DrawPic(x1 + cgs.wideXoffset, y1, x2 - x1, y2 - y1, cgs.media.teamStatusBar);
@@ -3271,7 +3271,7 @@ static void CG_ScreenFade(void)
 {
 	int msec;
 
-	if (!cg.fadeRate)
+	if (cg.fadeRate == 0.f)
 	{
 		return;
 	}
@@ -3284,7 +3284,7 @@ static void CG_ScreenFade(void)
 		cg.fadeColor1[2] = cg.fadeColor2[2];
 		cg.fadeColor1[3] = cg.fadeColor2[3];
 
-		if (!cg.fadeColor1[3])
+		if (cg.fadeColor1[3] == 0.f)
 		{
 			cg.fadeRate = 0;
 			return;
@@ -3305,7 +3305,7 @@ static void CG_ScreenFade(void)
 			color[i] = cg.fadeColor1[i] * t + cg.fadeColor2[i] * invt;
 		}
 
-		if (color[3])
+		if (color[3] != 0.f)
 		{
 			CG_FillRect(0, 0, Ccg_WideX(SCREEN_WIDTH), SCREEN_HEIGHT, color);
 		}
@@ -3405,19 +3405,19 @@ void CG_DrawOnScreenNames(void)
 		}
 		if (FadeOut)
 		{
-			white[3] = (FadeOut > 500) ? 0.0 : 1.0 - FadeOut / 500.0f;
+			white[3] = (FadeOut > 500) ? 0.0 : 1.0f - FadeOut / 500.0f;
 			if (white[3] > spcNm->alpha)
 			{
 				white[3] = spcNm->alpha;
 			}
 		}
-		if (white[3] > 1.0)
+		if (white[3] > 1.0f)
 		{
-			white[3] = 1.0;
+			white[3] = 1.0f;
 		}
 
 		spcNm->alpha = white[3];
-		if (spcNm->alpha <= 0.0)
+		if (spcNm->alpha <= 0.0f)
 		{
 			continue;                           // no alpha = nothing to draw..
 
@@ -3611,9 +3611,9 @@ void CG_ShakeCamera(void)
 		float         x    = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength;
 		static vec3_t mins = { -16.0f, -16.0f, -16.0f };
 		static vec3_t maxs = { 16.0f, 16.0f, 16.0f };
-		float         valx = sin(M_PI * 8 * 13 + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
-		float         valy = sin(M_PI * 17 * x + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
-		float         valz = cos(M_PI * 7 * x + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+		float         valx = sin(M_PI * 8 * 13 + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
+		float         valy = sin(M_PI * 17 * x + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
+		float         valz = cos(M_PI * 7 * x + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
 		vec3_t        vec;
 		trace_t       tr;
 
@@ -3642,7 +3642,7 @@ void CG_DrawMiscGamemodels(void)
 
 	for (i = 0; i < cg.numMiscGameModels; i++)
 	{
-		if (cgs.miscGameModels[i].radius)
+		if (cgs.miscGameModels[i].radius != 0.f)
 		{
 			if (CG_CullPointAndRadius(cgs.miscGameModels[i].org, cgs.miscGameModels[i].radius))
 			{
@@ -3701,7 +3701,7 @@ void CG_Coronas(void)
 				toofar = qtrue;
 			}
 			// dot = DotProduct(dir, cg.refdef_current->viewaxis[0]);
-			if (DotProduct(dir, cg.refdef_current->viewaxis[0]) >= -0.6)
+			if (DotProduct(dir, cg.refdef_current->viewaxis[0]) >= -0.6f)
 			{
 				behind = qtrue;
 			}
@@ -3717,7 +3717,7 @@ void CG_Coronas(void)
 				CG_Trace(&tr, cg.refdef_current->vieworg, NULL, NULL, cgs.corona[i].org, -1, MASK_SOLID | CONTENTS_BODY);
 
 				visible = qfalse; // 'init'
-				if (tr.fraction == 1)
+				if (tr.fraction == 1.f)
 				{
 					visible = qtrue;
 				}
@@ -3764,7 +3764,7 @@ void CG_DrawActive(stereoFrame_t stereoView)
 
 	// offset vieworg appropriately if we're doing stereo separation
 	VectorCopy(cg.refdef_current->vieworg, baseOrg);
-	if (separation != 0)
+	if (separation != 0.f)
 	{
 		VectorMA(cg.refdef_current->vieworg, -separation, cg.refdef_current->viewaxis[1], cg.refdef_current->vieworg);
 	}
@@ -3782,7 +3782,7 @@ void CG_DrawActive(stereoFrame_t stereoView)
 	}
 
 	// restore original viewpoint if running stereo
-	if (separation != 0)
+	if (separation != 0.f)
 	{
 		VectorCopy(baseOrg, cg.refdef_current->vieworg);
 	}
