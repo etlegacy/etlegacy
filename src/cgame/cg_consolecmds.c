@@ -64,9 +64,9 @@ static void CG_StatsDown_f(void)
 	{
 		if (
 #ifdef FEATURE_MULTIVIEW
-		    cg.mvTotalClients < 1 &&
+			cg.mvTotalClients < 1 &&
 #endif
-		    cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+			cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 		{
 			Pri("You must be a player or following a player to use +stats\n");
 			return;
@@ -87,9 +87,9 @@ static void CG_StatsDown_f(void)
 		{
 			int i =
 #ifdef FEATURE_MULTIVIEW
-			    (cg.mvTotalClients > 0) ? (cg.mvCurrentActive->mvInfo & MV_PID) :
+				(cg.mvTotalClients > 0) ? (cg.mvCurrentActive->mvInfo & MV_PID) :
 #endif
-			    cg.snap->ps.clientNum;
+				cg.snap->ps.clientNum;
 
 			cgs.gamestats.requestTime = cg.time + 2000;
 			trap_SendClientCommand(va("sgstats %d", i));
@@ -192,30 +192,14 @@ void CG_ScoresDown_f(void)
 		if (!cg.showScores && cg.scoresDownTime + 250 > cg.time && cg.scoreToggleTime < (cg.time - 500))
 		{
 			int sb = cg_scoreboard.integer + 1;
-			//int sbAllowed = SCOREBOARD_XP;
-			//int i;
 
 			// cycle scoreboard type with a quick tap of +scores
 			if (sb < SCOREBOARD_XP || sb > SCOREBOARD_SR)
 			{
 				sb = SCOREBOARD_XP;
 			}
-			/*
-			    for (i = SCOREBOARD_XP; i <= SCOREBOARD_SR; i++)
-			    {
-			        if (sb == SCOREBOARD_XP)
-			        {
-			            sbAllowed = SCOREBOARD_XP;
-			            break;
-			        }
-			        else if (sb == SCOREBOARD_SR)
-			        {
-			            sbAllowed = SCOREBOARD_SR;
-			            break;
-			        }
-			    }
-			*/
-			trap_Cvar_Set("cg_scoreboard", va("%i", sb /*sbAllowed*/));
+
+			trap_Cvar_Set("cg_scoreboard", va("%i", sb));
 
 			cg.scoreToggleTime = cg.time;
 		}
@@ -797,13 +781,13 @@ void CG_dumpStats_f(void)
 		cgs.dumpStatsTime = cg.time + 2000;
 		trap_SendClientCommand(
 #ifdef FEATURE_MULTIVIEW
-		    (cg.mvTotalClients < 1) ?
+			(cg.mvTotalClients < 1) ?
 #endif
-		    "weaponstats"
+			"weaponstats"
 #ifdef FEATURE_MULTIVIEW
 			: "statsall"
 #endif
-		    );
+			);
 	}
 }
 
