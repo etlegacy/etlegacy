@@ -36,8 +36,11 @@
 #include "cg_local.h"
 
 /**
- * @brief CG_AdjustFrom640
- * Adjusted for resolution and screen aspect ratio
+ * @brief Adjusted for resolution and screen aspect ratio
+ * @param[out] x
+ * @param[out] y
+ * @param[out] w
+ * @param[out] h
  */
 void CG_AdjustFrom640(float *x, float *y, float *w, float *h)
 {
@@ -56,6 +59,7 @@ void CG_AdjustFrom640(float *x, float *y, float *w, float *h)
 
 /**
  * @brief Ccg_Is43Screen
+ * @return
  */
 qboolean Ccg_Is43Screen(void)
 {
@@ -68,6 +72,8 @@ qboolean Ccg_Is43Screen(void)
 
 /**
  * @brief Ccg_WideX
+ * @param[in] x
+ * @return
  */
 float Ccg_WideX(float x)
 {
@@ -76,6 +82,7 @@ float Ccg_WideX(float x)
 
 /**
  * @brief Ccg_WideXoffset
+ * @return
  */
 float Ccg_WideXoffset(void)
 {
@@ -84,7 +91,12 @@ float Ccg_WideXoffset(void)
 
 /**
  * @brief CG_FillRect
- * Coordinates are 640*480 virtual values
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ * @param[in,out] color
+ * @note Coordinates are 640*480 virtual values
  */
 void CG_FillRect(float x, float y, float width, float height, const float *color)
 {
@@ -98,8 +110,14 @@ void CG_FillRect(float x, float y, float width, float height, const float *color
 
 /**
  * @brief CG_FillRectGradient
+ * @param x
+ * @param y
+ * @param width
+ * @param height
+ * @param color
+ * @param gradcolor
+ * @param gradientType
  * @note unused
- *
 void CG_FillRectGradient(float x, float y, float width, float height, const float *color, const float *gradcolor, int gradientType)
 {
     trap_R_SetColor(color);
@@ -115,6 +133,15 @@ void CG_FillRectGradient(float x, float y, float width, float height, const floa
 
 /**
  * @brief CG_FilledBar
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in,out] startColor
+ * @param[in,out] endColor
+ * @param[in,out] bgColor
+ * @param[in] frac
+ * @param[in] flags
  */
 void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *endColor, const float *bgColor, float frac, int flags)
 {
@@ -224,9 +251,13 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 }
 
 /**
- * @brief CG_HorizontalPercentBar
- * Generic routine for pretty much all status indicators that show a fractional
+ * @brief Generic routine for pretty much all status indicators that show a fractional
  * value to the palyer by virtue of how full a drawn box is.
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ * @param[in] percent
  */
 void CG_HorizontalPercentBar(float x, float y, float width, float height, float percent)
 {
@@ -237,7 +268,12 @@ void CG_HorizontalPercentBar(float x, float y, float width, float height, float 
 
 /**
  * @brief CG_DrawSides
- * Coordinates are 640*480 virtual values
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] size
+ * @note Coordinates are 640*480 virtual values
  */
 void CG_DrawSides(float x, float y, float w, float h, float size)
 {
@@ -249,7 +285,12 @@ void CG_DrawSides(float x, float y, float w, float h, float size)
 
 /**
  * @brief CG_DrawTopBottom
- * Coordinates are 640*480 virtual values
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] size
+ * @note Coordinates are 640*480 virtual values
  */
 void CG_DrawTopBottom(float x, float y, float w, float h, float size)
 {
@@ -261,7 +302,12 @@ void CG_DrawTopBottom(float x, float y, float w, float h, float size)
 
 /**
  * @brief CG_DrawSides_NoScale
- * Coordinates are 640*480 virtual values
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] size
+ * @note Coordinates are 640*480 virtual values
  */
 void CG_DrawSides_NoScale(float x, float y, float w, float h, float size)
 {
@@ -272,7 +318,12 @@ void CG_DrawSides_NoScale(float x, float y, float w, float h, float size)
 
 /**
  * @brief CG_DrawTopBottom_NoScale
- * Coordinates are 640*480 virtual values
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] size
+ * @note Coordinates are 640*480 virtual values
  */
 void CG_DrawTopBottom_NoScale(float x, float y, float w, float h, float size)
 {
@@ -283,7 +334,12 @@ void CG_DrawTopBottom_NoScale(float x, float y, float w, float h, float size)
 
 /**
  * @brief CG_DrawBottom_NoScale
- * Coordinates are 640*480 virtual values
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] size
+ * @note Coordinates are 640*480 virtual values
  */
 void CG_DrawBottom_NoScale(float x, float y, float w, float h, float size)
 {
@@ -293,7 +349,13 @@ void CG_DrawBottom_NoScale(float x, float y, float w, float h, float size)
 
 /**
  * @brief CG_DrawRect
- * Coordinates are 640*480 virtual values
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ * @param[in] size
+ * @param[in,out] color
+ * @note Coordinates are 640*480 virtual values
  */
 void CG_DrawRect(float x, float y, float width, float height, float size, const float *color)
 {
@@ -307,6 +369,12 @@ void CG_DrawRect(float x, float y, float width, float height, float size, const 
 
 /**
  * @brief CG_DrawRect_FixedBorder
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ * @param[in] border
+ * @param[in,out] color
  */
 void CG_DrawRect_FixedBorder(float x, float y, float width, float height, int border, const float *color)
 {
@@ -319,9 +387,17 @@ void CG_DrawRect_FixedBorder(float x, float y, float width, float height, int bo
 }
 
 /**
- * @brief CG_DrawPicST
- * Allows passing of st co-ords
- * Coordinates are 640*480 virtual values
+ * @brief Allows passing of st co-ords
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ * @param[in] s0
+ * @param[in] t0
+ * @param[in] s1
+ * @param[in] t1
+ * @param[in] hShader
+ * @note Coordinates are 640*480 virtual values
  */
 void CG_DrawPicST(float x, float y, float width, float height, float s0, float t0, float s1, float t1, qhandle_t hShader)
 {
@@ -331,7 +407,12 @@ void CG_DrawPicST(float x, float y, float width, float height, float s0, float t
 
 /**
  * @brief CG_DrawPic
- * Coordinates are 640*480 virtual values
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ * @param[in] hShader
+ * @note Coordinates are 640*480 virtual values
  */
 void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader)
 {
@@ -370,7 +451,13 @@ void CG_DrawPic(float x, float y, float width, float height, qhandle_t hShader)
 
 /**
  * @brief CG_DrawRotatedPic
- * Clear around a sized down screen
+ * @details Clear around a sized down screen
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ * @param[in] hShader
+ * @param[in] angle
  */
 void CG_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hShader, float angle)
 {
@@ -379,23 +466,27 @@ void CG_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hS
 }
 
 /**
- * @brief CG_TileClearBox
- * This repeats a 64*64 tile graphic to fill the screen around a sized down
+ * @brief This repeats a 64*64 tile graphic to fill the screen around a sized down
  * refresh window.
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] hShader
  */
 static void CG_TileClearBox(int x, int y, int w, int h, qhandle_t hShader)
 {
-	float s1 = x / 64.0;
-	float t1 = y / 64.0;
-	float s2 = (x + w) / 64.0;
-	float t2 = (y + h) / 64.0;
+	float s1 = x / 64.0f;
+	float t1 = y / 64.0f;
+	float s2 = (x + w) / 64.0f;
+	float t2 = (y + h) / 64.0f;
 
 	trap_R_DrawStretchPic(x, y, w, h, s1, t1, s2, t2, hShader);
 }
 
 /**
  * @brief CG_TileClear
- * Clear around a sized down screen
+ * @details Clear around a sized down screen
  */
 void CG_TileClear(void)
 {
@@ -429,6 +520,9 @@ void CG_TileClear(void)
 
 /**
  * @brief CG_FadeColor
+ * @param[in] startMsec
+ * @param[in] totalMsec
+ * @return
  */
 float *CG_FadeColor(int startMsec, int totalMsec)
 {
@@ -450,7 +544,7 @@ float *CG_FadeColor(int startMsec, int totalMsec)
 	// fade out
 	if (totalMsec - t < FADE_TIME)
 	{
-		color[3] = (totalMsec - t) * 1.0 / FADE_TIME;
+		color[3] = (totalMsec - t) * 1.0f / FADE_TIME;
 	}
 	else
 	{
@@ -461,13 +555,15 @@ float *CG_FadeColor(int startMsec, int totalMsec)
 	return color;
 }
 
-static vec4_t red = { 1, 0.2, 0.2, 1 };
-static vec4_t blue = { 0.2, 0.2, 1, 1 };
-static vec4_t other = { 1, 1, 1, 1 };
-static vec4_t spectator = { 0.7, 0.7, 0.7, 1 };
+static vec4_t red = { 1.0f, 0.2f, 0.2f, 1.0f };
+static vec4_t blue = { 0.2f, 0.2f, 1.0f, 1.0f };
+static vec4_t other = { 1.0f, 1.0f, 1.0f, 1.0f };
+static vec4_t spectator = { 0.7f, 0.7f, 0.7f, 1.0f };
 
 /**
- * @brief G_TeamColor
+ * @brief CG_TeamColor
+ * @param[in] team
+ * @return
  */
 float *CG_TeamColor(int team)
 {
@@ -486,6 +582,8 @@ float *CG_TeamColor(int team)
 
 /**
  * @brief CG_GetColorForHealth
+ * @param[in] health
+ * @param[in] hcolor
  */
 void CG_GetColorForHealth(int health, vec4_t hcolor)
 {
@@ -511,7 +609,7 @@ void CG_GetColorForHealth(int health, vec4_t hcolor)
 	}
 	else
 	{
-		hcolor[2] = (health - 66) / 33.0;
+		hcolor[2] = (health - 66.f) / 33.0f;
 	}
 
 	if (health > 60)
@@ -524,12 +622,13 @@ void CG_GetColorForHealth(int health, vec4_t hcolor)
 	}
 	else
 	{
-		hcolor[1] = (health - 30) / 30.0;
+		hcolor[1] = (health - 30.f) / 30.0f;
 	}
 }
 
 /**
  * @brief CG_ColorForHealth
+ * @param[in] hcolor
  */
 void CG_ColorForHealth(vec4_t hcolor)
 {
@@ -558,7 +657,7 @@ void CG_ColorForHealth(vec4_t hcolor)
 	}
 	else
 	{
-		hcolor[2] = (health - 66) / 33.0;
+		hcolor[2] = (health - 66.f) / 33.0f;
 	}
 
 	if (health > 60)
@@ -571,12 +670,14 @@ void CG_ColorForHealth(vec4_t hcolor)
 	}
 	else
 	{
-		hcolor[1] = (health - 30) / 30.0;
+		hcolor[1] = (health - 30.f) / 30.0f;
 	}
 }
 
 /**
  * @brief CG_TranslateString
+ * @param[in] string
+ * @return
  */
 char *CG_TranslateString(const char *string)
 {
