@@ -1382,15 +1382,15 @@ void CG_Freecam_f(void)
 
 	if (!Q_stricmp(state, "on"))
 	{
-		cgs.demoCamera.renderingFreeCam = 1;
+		cgs.demoCamera.renderingFreeCam = qtrue;
 	}
 	else if (!Q_stricmp(state, "off"))
 	{
-		cgs.demoCamera.renderingFreeCam = 0;
+		cgs.demoCamera.renderingFreeCam = qfalse;
 	}
 	else
 	{
-		cgs.demoCamera.renderingFreeCam ^= 1;
+		cgs.demoCamera.renderingFreeCam ^= qtrue;
 	}
 
 	CG_Printf("freecam %s\n", cgs.demoCamera.renderingFreeCam ? "ON" : "OFF");
@@ -1499,15 +1499,15 @@ void CG_NoClip_f(void)
 	{
 		if (!Q_stricmp(state, "on"))
 		{
-			cgs.demoCamera.noclip = 1;
+			cgs.demoCamera.noclip = qtrue;
 		}
 		else if (!Q_stricmp(state, "off"))
 		{
-			cgs.demoCamera.noclip = 0;
+			cgs.demoCamera.noclip = qfalse;
 		}
 		else
 		{
-			cgs.demoCamera.noclip ^= 1;
+			cgs.demoCamera.noclip ^= qtrue;
 		}
 		CG_Printf("noclip %s\n", cgs.demoCamera.noclip ? "ON" : "OFF");
 	}
