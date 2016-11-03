@@ -711,7 +711,7 @@ panel_button_text_t teamDebriefTitle =
 		NULL,                       /* keyUp    */                  \
 		BG_PanelButtonsRender_Text,                             \
 		NULL,                                                   \
-        0,                                                   \
+		0,                                                   \
 	}
 
 TDB_SKILL_TITLES_XP(0, "Battle Sense", 0);
@@ -734,7 +734,7 @@ TDB_SKILL_TITLES_XP(7, "Total", 1);
 		NULL,                              /* keyUp    */                  \
 		CG_TeamDebriefingTeamSkillXP_Draw,                      \
 		NULL,                                                   \
-        0,                                                   \
+		0,                                                   \
 	}
 
 #define TDB_SKILL_ALLIES_XP(number)                       \
@@ -748,7 +748,7 @@ TDB_SKILL_TITLES_XP(7, "Total", 1);
 		NULL,                              /* keyUp    */                  \
 		CG_TeamDebriefingTeamSkillXP_Draw,                      \
 		NULL,                                                   \
-        0,                                                   \
+		0,                                                   \
 	}
 
 TDB_SKILL_AXIS_XP(0);
@@ -795,7 +795,7 @@ panel_button_t chatPanelWindow =
 	NULL,                        /* keyUp    */
 	CG_PanelButtonsRender_Window,
 	NULL,
-    0
+	0
 };
 
 panel_button_t chatPanelText =
@@ -809,7 +809,7 @@ panel_button_t chatPanelText =
 	NULL,                      /* keyUp    */
 	CG_Debriefing_ChatBox_Draw,
 	NULL,
-    0
+	0
 };
 
 panel_button_t chatPanelNextButton =
@@ -823,7 +823,7 @@ panel_button_t chatPanelNextButton =
 	NULL,                         /* keyUp    */
 	CG_Debriefing_NextButton_Draw,
 	NULL,
-    0
+	0
 };
 
 panel_button_t chatPanelQCButton =
@@ -837,7 +837,7 @@ panel_button_t chatPanelQCButton =
 	NULL,                        /* keyUp    */
 	CG_PanelButtonsRender_Button,
 	NULL,
-    0
+	0
 };
 
 panel_button_t chatPanelReadyButton =
@@ -851,7 +851,7 @@ panel_button_t chatPanelReadyButton =
 	NULL,                          /* keyUp    */
 	CG_Debriefing_ReadyButton_Draw,
 	NULL,
-    0
+	0
 };
 
 panel_button_t chatTypeButton =
@@ -865,7 +865,7 @@ panel_button_t chatTypeButton =
 	NULL,                         /* keyUp    */
 	CG_Debriefing_ChatButton_Draw,
 	NULL,
-    0
+	0
 };
 
 panel_button_t charPanelEditSurround =
@@ -879,7 +879,7 @@ panel_button_t charPanelEditSurround =
 	NULL,                        /* keyUp    */
 	CG_PanelButtonsRender_Button,
 	NULL,
-    0
+	0
 };
 
 panel_button_t charPanelEdit =
@@ -893,7 +893,7 @@ panel_button_t charPanelEdit =
 	NULL,                        /* keyUp    */
 	CG_Debriefing_ChatEdit_Draw,
 	CG_Debriefing_ChatEditFinish,
-    0
+	0
 };
 
 // MAPVOTE
@@ -1147,7 +1147,7 @@ panel_button_t mapVoteWindow =
 	NULL,                        /* keyUp   */
 	CG_PanelButtonsRender_Window,
 	NULL,
-    0
+	0
 };
 
 panel_button_text_t mapVoteFont =
@@ -1169,7 +1169,7 @@ panel_button_t mapVoteHeadingName =
 	NULL,                      /* keyUp */
 	BG_PanelButtonsRender_Text,
 	NULL,
-    0
+	0
 };
 
 panel_button_t mapVoteHeadingVotes =
@@ -1183,7 +1183,7 @@ panel_button_t mapVoteHeadingVotes =
 	NULL,                      /* keyUp */
 	BG_PanelButtonsRender_Text,
 	NULL,
-    0
+	0
 };
 
 panel_button_t mapVoteNamesList =
@@ -1197,7 +1197,7 @@ panel_button_t mapVoteNamesList =
 	NULL,               /* keyUp    */
 	CG_MapVoteList_Draw,
 	NULL,
-    0
+	0
 };
 
 panel_button_t mapVoteNamesListScroll =
@@ -1211,7 +1211,7 @@ panel_button_t mapVoteNamesListScroll =
 	CG_Debriefing_Scrollbar_KeyUp,/* keyUp  */
 	CG_Debriefing_Scrollbar_Draw,
 	NULL,
-    0
+	0
 };
 
 panel_button_t mapVoteButton =
@@ -1225,7 +1225,7 @@ panel_button_t mapVoteButton =
 	NULL,                      /* keyUp */
 	CG_MapVote_VoteButton_Draw,
 	NULL,
-    0
+	0
 };
 
 panel_button_t mapVoteButton1 =
@@ -1239,7 +1239,7 @@ panel_button_t mapVoteButton1 =
 	NULL,                           /* keyUp    */
 	CG_MapVote_MultiVoteButton_Draw,
 	NULL,
-    0
+	0
 };
 
 panel_button_t mapVoteButton2 =
@@ -1253,7 +1253,7 @@ panel_button_t mapVoteButton2 =
 	NULL,                           /* keyUp    */
 	CG_MapVote_MultiVoteButton_Draw,
 	NULL,
-    0
+	0
 };
 
 panel_button_t mapVoteButton3 =
@@ -1267,7 +1267,7 @@ panel_button_t mapVoteButton3 =
 	NULL,                           /* keyUp    */
 	CG_MapVote_MultiVoteButton_Draw,
 	NULL,
-    0
+	0
 };
 
 panel_button_t mapVoteBorder1 =
@@ -1281,7 +1281,7 @@ panel_button_t mapVoteBorder1 =
 	NULL,                     /* keyUp  */
 	BG_PanelButtonsRender_Img,
 	NULL,
-    0
+	0
 };
 
 panel_button_t mapVoteBorder2 =
@@ -1309,7 +1309,7 @@ panel_button_t mapVoteBorder3 =
 	NULL,                     /* keyUp  */
 	BG_PanelButtonsRender_Img,
 	NULL,
-    0
+	0
 };
 // MAPVOTE END
 
@@ -1501,15 +1501,8 @@ void CG_Debriefing_Startup(void)
 		trap_S_StartLocalSound(trap_S_RegisterSound("sound/music/axis_win.wav", qfalse), CHAN_LOCAL_SOUND);
 	}
 
-	switch (cgs.gametype)
-	{
-	case GT_WOLF_MAPVOTE:
-		cgs.dbMode = 3;     // display first
-		break;
-	default:
-		cgs.dbMode = 0;
-		break;
-	}
+	// 3 : display first
+	cgs.dbMode = cgs.gametype == GT_WOLF_MAPVOTE ? 3 : 0;
 }
 
 void CG_Debriefing_Shutdown(void)
@@ -3023,8 +3016,8 @@ const char *awardNames[NUM_ENDGAME_AWARDS] =
 
 void CG_Debriefing_Awards_Draw(panel_button_t *button)
 {
-	int    i, j;
-	float  y         = button->rect.y + 1;
+	int   i, j;
+	float y = button->rect.y + 1;
 
 	if (!cgs.dbAwardsParsed)
 	{
@@ -3068,7 +3061,7 @@ void CG_Debriefing_Awards_Draw(panel_button_t *button)
 
 void CG_Debriefing_Maps_Draw(panel_button_t *button)
 {
-	vec4_t clrBck    = { 0.3f, 0.3f, 0.3f, 0.4f };
+	vec4_t clrBck = { 0.3f, 0.3f, 0.3f, 0.4f };
 
 	if (cg_gameType.integer == GT_WOLF_CAMPAIGN)
 	{
@@ -3119,7 +3112,7 @@ void CG_Debriefing_Mission_Draw(panel_button_t *button)
 			return;
 		}
 
-		if (cgs.campaignData.mapTC[0][0] && cgs.campaignData.mapTC[1][0])
+		if (cgs.campaignData.mapTC[0][0] != 0.f && cgs.campaignData.mapTC[1][0] != 0.f)
 		{
 			float  x, y, w;
 			vec4_t colourFadedBlack = { 0.f, 0.f, 0.f, 0.4f };
