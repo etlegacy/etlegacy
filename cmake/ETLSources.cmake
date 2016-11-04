@@ -169,6 +169,7 @@ FILE(GLOB RENDERER2_SHADERDEFS
 )
 
 FILE(GLOB IRC_CLIENT_FILES
-	"src/qcommon/htable.c"
-	"src/qcommon/htable.h"
+	"src/irc/htable.c"
+	"src/irc/htable.h"
+	"src/irc/irc_client.c"
 )

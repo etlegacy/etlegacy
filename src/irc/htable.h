@@ -38,8 +38,8 @@
 #ifndef INCLUDE_HTABLE_H
 #define INCLUDE_HTABLE_H
 
-#include "q_shared.h"
-#include "qcommon.h"
+#include "../qcommon/q_shared.h"
+#include "../qcommon/qcommon.h"
 
 /*=============================================*
  * Hash table types                            *

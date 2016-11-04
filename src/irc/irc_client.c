@@ -37,8 +37,8 @@
 
 #ifdef FEATURE_IRC_CLIENT
 
-#include "client.h"
-#include "../qcommon/htable.h"
+#include "../client/client.h"
+#include "htable.h"
 
 #ifdef WIN32
 # include <winsock.h>
