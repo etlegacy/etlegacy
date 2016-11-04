@@ -994,7 +994,7 @@ int CG_findClientNum(char *s)
 	return(-1);
 }
 
-void CG_printConsoleString(char *str)
+void CG_printConsoleString(const char *str)
 {
 	CG_Printf("[skipnotify]%s", str);
 }

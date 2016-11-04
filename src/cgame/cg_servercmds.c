@@ -414,7 +414,7 @@ void CG_ParseWolfinfo(void)
 
 	cgs.currentRound       = atoi(Info_ValueForKey(info, "g_currentRound"));
 	cgs.nextTimeLimit      = atof(Info_ValueForKey(info, "g_nextTimeLimit"));
-	cgs.gamestate          = atoi(Info_ValueForKey(info, "gamestate"));
+	cgs.gamestate          = (gamestate_t)atoi(Info_ValueForKey(info, "gamestate"));
 	cgs.currentCampaign    = Info_ValueForKey(info, "g_currentCampaign");
 	cgs.currentCampaignMap = atoi(Info_ValueForKey(info, "g_currentCampaignMap"));
 
@@ -508,7 +508,7 @@ void CG_ParseSpawns(void)
 		{
 			cg.spawnTeams_old[i]        = cg.spawnTeams[i];
 			cg.spawnTeams_changeTime[i] = cg.time;
-			cg.spawnTeams[i]            = newteam;
+			cg.spawnTeams[i]            = (team_t)newteam;
 		}
 
 		s                       = Info_ValueForKey(info, "c");
@@ -876,7 +876,7 @@ static void CG_ConfigStringModified(void)
 		Q_strncpyz(cgs.voteString, CG_ConfigString(num), sizeof(cgs.voteString));
 		break;
 	case CS_INTERMISSION:
-		cg.intermissionStarted = atoi(CG_ConfigString(num));
+		cg.intermissionStarted = (qboolean)atoi(CG_ConfigString(num));
 		break;
 	case CS_SCREENFADE:
 		CG_ParseScreenFade();
@@ -1156,7 +1156,7 @@ static void CG_MapRestart(void)
 	// clear pmext
 	memset(&cg.pmext, 0, sizeof(cg.pmext));
 
-	cg.pmext.bAutoReload = (cg_autoReload.integer > 0);
+	cg.pmext.bAutoReload = (qboolean)(cg_autoReload.integer > 0);
 
 	numSplinePaths     = 0;
 	numPathCorners     = 0;
@@ -1651,7 +1651,7 @@ void CG_VoiceChat(int mode)
 	qboolean   voiceOnly;
 	vec3_t     origin;
 
-	voiceOnly = atoi(CG_Argv(1));
+	voiceOnly = (qboolean)atoi(CG_Argv(1));
 	clientNum = atoi(CG_Argv(2));
 	color     = atoi(CG_Argv(3));
 
@@ -2227,10 +2227,10 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 	}
 }
 
-void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (char *))
+void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *))
 {
 	int      iArg  = 1;
-	qboolean fFull = (txt_dump != CG_printWindow);
+	qboolean fFull = (qboolean)(txt_dump != CG_printWindow);
 	int      iWeap = atoi(CG_Argv(iArg++));
 
 	if (!iWeap)
@@ -2282,7 +2282,7 @@ void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (char *))
 	}
 }
 
-void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (char *))
+void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *))
 {
 	int i, iArg = 1;
 	int cClients = atoi(CG_Argv(iArg++));
@@ -2354,7 +2354,7 @@ void CG_scores_cmd(void)
 	}
 }
 
-void CG_printFile(char *str)
+void CG_printFile(const char *str)
 {
 	CG_Printf("%s", str);
 	if (cgs.dumpStatsFile > 0)

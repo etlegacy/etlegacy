@@ -2356,7 +2356,7 @@ float CG_Cvar_Get(const char *cvar);
 
 char *CG_generateFilename(void);
 int CG_findClientNum(char *s);
-void CG_printConsoleString(char *str);
+void CG_printConsoleString(const char *str);
 
 void CG_LoadObjectiveData(void);
 
@@ -2774,8 +2774,8 @@ const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
 
 void CG_parseWeaponStats_cmd(void(txt_dump) (const char *));
-void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (char *));
-void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (char *));
+void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
+void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
 void CG_scores_cmd(void);
 
 void CG_UpdateSvCvars(void);
