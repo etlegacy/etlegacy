@@ -65,14 +65,14 @@ typedef int irc_socket_t;
 #endif
 
 /* IRC control cvars */
-cvar_t *cl_IRC_connect_at_startup;
-cvar_t *cl_IRC_server;
-cvar_t *cl_IRC_channel;
-cvar_t *cl_IRC_port;
-cvar_t *cl_IRC_override_nickname;
-cvar_t *cl_IRC_nickname;
-cvar_t *cl_IRC_kick_rejoin;
-cvar_t *cl_IRC_reconnect_delay;
+cvar_t *irc_connect_at_startup;
+cvar_t *irc_server;
+cvar_t *irc_channel;
+cvar_t *irc_port;
+cvar_t *irc_override_nickname;
+cvar_t *irc_nickname;
+cvar_t *irc_kick_rejoin;
+cvar_t *irc_reconnect_delay;
 
 /*
  * Timing controls
@@ -1439,7 +1439,7 @@ Join the channel
 */
 static int IRC_JoinChannel()
 {
-	return IRC_Send("JOIN #%s", cl_IRC_channel->string);
+	return IRC_Send("JOIN #%s", irc_channel->string);
 }
 
 /*
@@ -1627,10 +1627,10 @@ static int IRCH_Kick()
 	if (!strcmp(IRC_String(arg_values[1]), IRC_User.nick))
 	{
 		IRC_Display(IRC_MakeEvent(KICK, 1), IRC_String(pfx_nickOrServer), IRC_String(arg_values[2]));
-		if (cl_IRC_kick_rejoin->integer > 0)
+		if (irc_kick_rejoin->integer > 0)
 		{
 			IRC_ThreadStatus = IRC_THREAD_CONNECTED;
-			IRC_SetTimeout(&IRC_JoinChannel, cl_IRC_kick_rejoin->integer);
+			IRC_SetTimeout(&IRC_JoinChannel, irc_kick_rejoin->integer);
 		}
 		else
 		{
@@ -1756,7 +1756,7 @@ static int IRCH_PrivMsg()
 
 	// Check message to channel (bail out if it isn't our channel)
 	is_channel = IRC_String(arg_values[0])[0] == '#';
-	if (is_channel && strcmp(&(IRC_String(arg_values[0])[1]), cl_IRC_channel->string))
+	if (is_channel && strcmp(&(IRC_String(arg_values[0])[1]), irc_channel->string))
 	{
 		return IRC_CMD_SUCCESS;
 	}
@@ -1920,12 +1920,12 @@ static qboolean IRC_AddSendItem(qboolean is_action, const char *string)
 
 /*
 ==================
-CL_OW_IRCSay
+IRC_Say
 
 Sends an IRC message (console command).
 ==================
 */
-void CL_OW_IRCSay()
+void IRC_Say()
 {
 	char     m_sendstring[480];
 	qboolean send_result;
@@ -1992,7 +1992,7 @@ static qboolean IRC_ProcessSendQueue()
 		event      = IRC_MakeEvent(SAY, 1);
 	}
 
-	rv = IRC_Send(fmt_string, cl_IRC_channel->string, IRC_SendQueue[IRC_SendQueue_Process].string);
+	rv = IRC_Send(fmt_string, irc_channel->string, IRC_SendQueue[IRC_SendQueue_Process].string);
 	if (rv == IRC_CMD_SUCCESS)
 	{
 		IRC_Display(event, IRC_User.nick, IRC_SendQueue[IRC_SendQueue_Process].string);
@@ -2106,9 +2106,9 @@ static qboolean IRC_InitialiseUser(const char *name)
 
 	// Strip color chars for the player's name, and remove special
 	// characters
-	if (cl_IRC_override_nickname->integer)
+	if (irc_override_nickname->integer)
 	{
-		source = IRC_GetName(cl_IRC_nickname->string);
+		source = IRC_GetName(irc_nickname->string);
 	}
 	else
 	{
@@ -2151,7 +2151,7 @@ static int IRC_AttemptConnection()
 	int                port;
 
 	CHECK_SHUTDOWN;
-	Com_Printf("...IRC: connecting to server %s\n", cl_IRC_server->string);
+	Com_Printf("...IRC: connecting to server %s\n", irc_server->string);
 
 	// Force players to use a non-default name
 	strcpy(name, Cvar_VariableString("name"));
@@ -2169,7 +2169,7 @@ static int IRC_AttemptConnection()
 	}
 
 	// Find server address
-	Q_strncpyz(host_name, cl_IRC_server->string, sizeof(host_name));
+	Q_strncpyz(host_name, irc_server->string, sizeof(host_name));
 	if ((host = gethostbyname(host_name)) == NULL)
 	{
 		Com_Printf("...IRC: unknown server\n");
@@ -2185,7 +2185,7 @@ static int IRC_AttemptConnection()
 	}
 
 	// Initialise socket address
-	port = cl_IRC_port->integer;
+	port = irc_port->integer;
 	if (port <= 0 || port >= 65536)
 	{
 		Com_Printf("IRC: invalid port number, defaulting to 6667\n");
@@ -2238,7 +2238,7 @@ static qboolean IRC_InitialConnect()
 {
 	int err_code = IRC_CMD_SUCCESS;
 	int retries  = 3;
-	int rc_delay = cl_IRC_reconnect_delay->integer;
+	int rc_delay = irc_reconnect_delay->integer;
 
 	IRC_ThreadStatus = IRC_THREAD_CONNECTING;
 
@@ -2278,7 +2278,7 @@ or if the thread's status is set to QUITTING.
 static int IRC_Reconnect()
 {
 	int err_code = IRC_CMD_SUCCESS;
-	int rc_delay = cl_IRC_reconnect_delay->integer;
+	int rc_delay = irc_reconnect_delay->integer;
 
 	IRC_ThreadStatus = IRC_THREAD_CONNECTING;
 
@@ -2550,32 +2550,32 @@ static void IRC_WaitThread()
 
 /*
 ==================
-CL_IRCSetup
+IRC_Setup
 ==================
 */
-void CL_OW_IRCSetup(void)
+void IRC_Setup(void)
 {
-	cl_IRC_connect_at_startup = Cvar_Get("cl_IRC_connect_at_startup", "0", CVAR_ARCHIVE);
-	cl_IRC_server             = Cvar_Get("cl_IRC_server", "irc.freenode.net", CVAR_ARCHIVE);
-	cl_IRC_channel            = Cvar_Get("cl_IRC_channel", "etlegacy", CVAR_ARCHIVE);
-	cl_IRC_port               = Cvar_Get("cl_IRC_port", "6667", CVAR_ARCHIVE);
-	cl_IRC_override_nickname  = Cvar_Get("cl_IRC_override_nickname", "0", CVAR_ARCHIVE);
-	cl_IRC_nickname           = Cvar_Get("cl_IRC_nickname", "", CVAR_ARCHIVE);
-	cl_IRC_kick_rejoin        = Cvar_Get("cl_IRC_kick_rejoin", "0", CVAR_ARCHIVE);
-	cl_IRC_reconnect_delay    = Cvar_Get("cl_IRC_reconnect_delay", "100", CVAR_ARCHIVE);
+	irc_connect_at_startup = Cvar_Get("irc_connect_at_startup", "0", CVAR_ARCHIVE);
+	irc_server             = Cvar_Get("irc_server", "irc.freenode.net", CVAR_ARCHIVE);
+	irc_channel            = Cvar_Get("irc_channel", "etlegacy", CVAR_ARCHIVE);
+	irc_port               = Cvar_Get("irc_port", "6667", CVAR_ARCHIVE);
+	irc_override_nickname  = Cvar_Get("irc_override_nickname", "0", CVAR_ARCHIVE);
+	irc_nickname           = Cvar_Get("irc_nickname", "", CVAR_ARCHIVE);
+	irc_kick_rejoin        = Cvar_Get("irc_kick_rejoin", "0", CVAR_ARCHIVE);
+	irc_reconnect_delay    = Cvar_Get("irc_reconnect_delay", "100", CVAR_ARCHIVE);
 
-	if (cl_IRC_connect_at_startup->value)
+	if (irc_connect_at_startup->value)
 	{
-		CL_OW_InitIRC();
+		IRC_Init();
 	}
 }
 
 /*
 ==================
-CL_InitIRC
+IRC_Init
 ==================
 */
-void CL_OW_InitIRC(void)
+void IRC_Init(void)
 {
 	if (IRC_ThreadStatus != IRC_THREAD_DEAD)
 	{
@@ -2589,30 +2589,30 @@ void CL_OW_InitIRC(void)
 
 /*
 ==================
-CL_IRCInitiateShutdown
+IRC_InitiateShutdown
 ==================
 */
-void CL_OW_IRCInitiateShutdown(void)
+void IRC_InitiateShutdown(void)
 {
 	IRC_QuitRequested = qtrue;
 }
 
 /*
 ==================
-CL_IRCWaitShutdown
+IRC_WaitShutdown
 ==================
 */
-void CL_OW_IRCWaitShutdown(void)
+void IRC_WaitShutdown(void)
 {
 	IRC_WaitThread();
 }
 
 /*
 ==================
-CL_IRCIsConnected
+IRC_IsConnected
 ==================
 */
-qboolean CL_OW_IRCIsConnected(void)
+qboolean IRC_IsConnected(void)
 {
 	// get IRC status
 	return (IRC_ThreadStatus == IRC_THREAD_JOINED);
@@ -2620,10 +2620,10 @@ qboolean CL_OW_IRCIsConnected(void)
 
 /*
 ==================
-CL_IRCIsRunning
+IRC_IsRunning
 ==================
 */
-qboolean CL_OW_IRCIsRunning(void)
+qboolean IRC_IsRunning(void)
 {
 	// return IRC status
 	return (IRC_ThreadStatus != IRC_THREAD_DEAD);

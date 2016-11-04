@@ -37,14 +37,15 @@
 // Hash table interface
 #ifndef IRC_CLIENT_H
 #define IRC_CLIENT_H
-#endif
 
-void CL_OW_IRCSetup(void);
-void CL_OW_InitIRC(void);
-void CL_OW_IRCInitiateShutdown(void);
-void CL_OW_IRCWaitShutdown(void);
-void CL_OW_IRCSay(void);
-qboolean CL_OW_IRCIsConnected(void);
-qboolean CL_OW_IRCIsRunning(void);
+void IRC_Setup(void);
+void IRC_Init(void);
+void IRC_InitiateShutdown(void);
+void IRC_WaitShutdown(void);
+void IRC_Say(void);
+qboolean IRC_IsConnected(void);
+qboolean IRC_IsRunning(void);
 
-#endif
+#endif // IRC_CLIENT_H
+
+#endif // FEATURE_IRC_CLIENT
