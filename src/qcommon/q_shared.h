@@ -666,12 +666,6 @@ char *Q_strlwr(char *s1);
 char *Q_strupr(char *s1);
 const char *Q_stristr(const char *s, const char *find);
 
-#ifdef _WIN32
-#define Q_putenv _putenv
-#else
-#define Q_putenv putenv
-#endif
-
 #define Q_strcpy(dest, src) strcpy(dest, src)
 
 // buffer size safe library replacements

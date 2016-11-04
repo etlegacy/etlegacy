@@ -796,48 +796,6 @@ void CL_ForwardToServer_f(void)
 
 /*
 ==================
-CL_Setenv_f
-
-Mostly for controlling voodoo environment variables
-==================
-*/
-void CL_Setenv_f(void)
-{
-	int argc = Cmd_Argc();
-
-	if (argc > 2)
-	{
-		char buffer[1024];
-		int  i;
-
-		strcpy(buffer, Cmd_Argv(1));
-		strcat(buffer, "=");
-
-		for (i = 2; i < argc; i++)
-		{
-			strcat(buffer, Cmd_Argv(i));
-			strcat(buffer, " ");
-		}
-
-		Q_putenv(buffer);
-	}
-	else if (argc == 2)
-	{
-		char *env = getenv(Cmd_Argv(1));
-
-		if (env)
-		{
-			Com_Printf("%s=%s\n", Cmd_Argv(1), env);
-		}
-		else
-		{
-			Com_Printf("%s undefined\n", Cmd_Argv(1));
-		}
-	}
-}
-
-/*
-==================
 CL_Disconnect_f
 ==================
 */
@@ -2729,7 +2687,6 @@ void CL_InitRef(void)
 
 	//ri.ftol = Q_ftol;
 
-	//ri.Sys_SetEnv = Sys_SetEnv;
 	//ri.Sys_LowPhysicalMemory = Sys_LowPhysicalMemory;
 
 	ret = GetRefAPI(REF_API_VERSION, &ri);
@@ -2909,7 +2866,6 @@ void CL_Init(void)
 	Cmd_AddCommand("globalservers", CL_GlobalServers_f);
 	Cmd_AddCommand("rcon", CL_Rcon_f);
 	Cmd_SetCommandCompletionFunc("rcon", CL_CompleteRcon);
-	Cmd_AddCommand("setenv", CL_Setenv_f);
 	Cmd_AddCommand("ping", CL_Ping_f);
 	Cmd_AddCommand("serverstatus", CL_ServerStatus_f);
 	Cmd_AddCommand("showip", CL_ShowIP_f);
@@ -3022,7 +2978,6 @@ void CL_Shutdown(void)
 	Cmd_RemoveCommand("localservers");
 	Cmd_RemoveCommand("globalservers");
 	Cmd_RemoveCommand("rcon");
-	Cmd_RemoveCommand("setenv");
 	Cmd_RemoveCommand("ping");
 	Cmd_RemoveCommand("serverstatus");
 	Cmd_RemoveCommand("showip");
