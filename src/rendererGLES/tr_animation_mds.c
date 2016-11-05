@@ -1365,11 +1365,7 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 
 //DBG_SHOWTIME
 
-	//
 	// setup triangle list
-	//
-	// no need to do this twice
-	//% RB_CheckOverflow(surface->numVerts, surface->numTriangles * 3);
 
 //DBG_SHOWTIME
 
