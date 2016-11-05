@@ -1155,6 +1155,10 @@ void SV_Init(void)
 	SV_BotInitBotLib();
 
 	svs.serverLoad = -1;
+	
+#if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
+	IRC_Init();
+#endif
 
 #ifdef FEATURE_TRACKER
 	Tracker_Init();
@@ -1208,6 +1212,10 @@ void SV_FinalCommand(const char *cmd, qboolean disconnect)
  */
 void SV_Shutdown(const char *finalmsg)
 {
+#if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
+	IRC_InitiateShutdown();
+#endif
+
 	// close attack log
 	SV_CloseAttackLog();
 
@@ -1215,6 +1223,14 @@ void SV_Shutdown(const char *finalmsg)
 	{
 		return;
 	}
+
+#if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
+	Cmd_RemoveCommand("irc_connect");
+	Cmd_RemoveCommand("irc_disconnect");
+	Cmd_RemoveCommand("irc_say");
+
+	IRC_WaitShutdown();
+#endif
 
 	Com_Printf("----- Server Shutdown -----\n");
 

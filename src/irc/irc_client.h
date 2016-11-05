@@ -32,14 +32,14 @@
  * @file irc_client.h
  */
 
-#ifdef FEATURE_IRC_CLIENT
+// this is FEATURE_IRC_CLIENT and FEATURE_IRC_SERVER only
 
 // Hash table interface
 #ifndef IRC_CLIENT_H
 #define IRC_CLIENT_H
 
-void IRC_Setup(void);
 void IRC_Init(void);
+void IRC_Connect(void);
 void IRC_InitiateShutdown(void);
 void IRC_WaitShutdown(void);
 void IRC_Say(void);
@@ -47,5 +47,3 @@ qboolean IRC_IsConnected(void);
 qboolean IRC_IsRunning(void);
 
 #endif // IRC_CLIENT_H
-
-#endif // FEATURE_IRC_CLIENT

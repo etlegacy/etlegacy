@@ -2726,7 +2726,7 @@ void CL_Init(void)
 	CL_InitInput();
 
 #ifdef FEATURE_IRC_CLIENT
-	IRC_Setup();
+	IRC_Init();
 #endif
 
 	// register our variables
@@ -2873,8 +2873,8 @@ void CL_Init(void)
 	Cmd_AddCommand("fs_referencedList", CL_ReferencedPK3List_f);
 
 #ifdef FEATURE_IRC_CLIENT
-	Cmd_AddCommand("irc_connect", IRC_Init);
-	Cmd_AddCommand("irc_quit", IRC_InitiateShutdown);
+	Cmd_AddCommand("irc_connect", IRC_Connect);
+	Cmd_AddCommand("irc_disconnect", IRC_InitiateShutdown);
 	Cmd_AddCommand("irc_say", IRC_Say);
 #endif
 
@@ -3002,7 +3002,7 @@ void CL_Shutdown(void)
 
 #ifdef FEATURE_IRC_CLIENT
 	Cmd_RemoveCommand("irc_connect");
-	Cmd_RemoveCommand("irc_quit");
+	Cmd_RemoveCommand("irc_disconnect");
 	Cmd_RemoveCommand("irc_say");
 	
 	IRC_WaitShutdown();

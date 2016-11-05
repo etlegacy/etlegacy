@@ -35,9 +35,9 @@
  * @brief irc ingame client
  */
 
-#ifdef FEATURE_IRC_CLIENT
+// this is FEATURE_IRC_CLIENT and FEATURE_IRC_SERVER only
 
-#include "../client/client.h"
+//#include "../client/client.h"
 #include "htable.h"
 
 #ifdef WIN32
@@ -65,14 +65,17 @@ typedef int irc_socket_t;
 #endif
 
 /* IRC control cvars */
-cvar_t *irc_connect_at_startup;
+cvar_t *irc_mode;
 cvar_t *irc_server;
 cvar_t *irc_channel;
 cvar_t *irc_port;
-cvar_t *irc_override_nickname;
 cvar_t *irc_nickname;
 cvar_t *irc_kick_rejoin;
 cvar_t *irc_reconnect_delay;
+
+#define IRCM_AUTO_CONNECT           1
+#define IRCM_AUTO_OVERRIDE_NICKNAME 2
+#define IRCM_MUTE_CHANNEL           4
 
 /*
  * Timing controls
@@ -1275,6 +1278,11 @@ static void IRC_Display(int event, const char *nick, const char *message)
 		return;
 	}
 
+	if (irc_mode->integer & IRCM_MUTE_CHANNEL)
+	{
+		return;
+	}
+	
 	// Determine message format
 	switch (IRC_EventType(event))
 	{
@@ -2106,7 +2114,7 @@ static qboolean IRC_InitialiseUser(const char *name)
 
 	// Strip color chars for the player's name, and remove special
 	// characters
-	if (irc_override_nickname->integer)
+	if (irc_mode->integer & IRCM_AUTO_OVERRIDE_NICKNAME)
 	{
 		source = IRC_GetName(irc_nickname->string);
 	}
@@ -2121,7 +2129,7 @@ static qboolean IRC_InitialiseUser(const char *name)
 
 	Q_strncpyz(IRC_User.username, source, sizeof(IRC_User.username));
 
-	// Set static address
+	// Set static address FIXME: add user authentication and cvar for this?
 	strcpy(IRC_User.email, "mymail@mail.com");
 
 	Com_DPrintf("IRC nick: %s username %s\n", IRC_User.nick, IRC_User.username);
@@ -2143,28 +2151,33 @@ Establishes the IRC connection, sets the nick, etc...
 
 static int IRC_AttemptConnection()
 {
-	struct sockaddr_in address;     // socket address
-	struct hostent     *host;       // host lookup
-	char               host_name[100]; // host name
-	char               name[32];    // player's name
+	struct sockaddr_in address;        // socket address
+	struct hostent     *host;          // host lookup
+	char               host_name[128]; // host name
+	char               name[32];       // player's name
 	int                err_code;
 	int                port;
 
 	CHECK_SHUTDOWN;
-	Com_Printf("...IRC: connecting to server %s\n", irc_server->string);
+	Com_Printf("...IRC: connecting to server %s:%i\n", irc_server->string,  irc_port->integer);
 
+#ifdef DEDICATED
+	strcpy(name, Cvar_VariableString("sv_hostname"));
+#else
 	// Force players to use a non-default name
 	strcpy(name, Cvar_VariableString("name"));
-	if (!Q_stricmpn(name, "player", 7))
+#endif
+	// FIXME: add default player and server name
+	if (!Q_stricmpn(name, "player", 7) || name[0] == '\0')
 	{
-		Com_Printf("...IRC: rejected due to unset player name\n");
+		Com_Printf("...IRC: rejected due to unusable player name '%s'\n", name);
 		return IRC_CMD_FATAL;
 	}
 
 	// Prepare USER record
 	if (!IRC_InitialiseUser(name))
 	{
-		Com_Printf("...IRC: rejected due to mostly unusable player name\n");
+		Com_Printf("...IRC: rejected due to mostly unusable player name '%s'\n", name);
 		return IRC_CMD_FATAL;
 	}
 
@@ -2550,32 +2563,10 @@ static void IRC_WaitThread()
 
 /*
 ==================
-IRC_Setup
+IRC_Connect
 ==================
 */
-void IRC_Setup(void)
-{
-	irc_connect_at_startup = Cvar_Get("irc_connect_at_startup", "0", CVAR_ARCHIVE);
-	irc_server             = Cvar_Get("irc_server", "irc.freenode.net", CVAR_ARCHIVE);
-	irc_channel            = Cvar_Get("irc_channel", "etlegacy", CVAR_ARCHIVE);
-	irc_port               = Cvar_Get("irc_port", "6667", CVAR_ARCHIVE);
-	irc_override_nickname  = Cvar_Get("irc_override_nickname", "0", CVAR_ARCHIVE);
-	irc_nickname           = Cvar_Get("irc_nickname", "", CVAR_ARCHIVE);
-	irc_kick_rejoin        = Cvar_Get("irc_kick_rejoin", "0", CVAR_ARCHIVE);
-	irc_reconnect_delay    = Cvar_Get("irc_reconnect_delay", "100", CVAR_ARCHIVE);
-
-	if (irc_connect_at_startup->value)
-	{
-		IRC_Init();
-	}
-}
-
-/*
-==================
-IRC_Init
-==================
-*/
-void IRC_Init(void)
+void IRC_Connect(void)
 {
 	if (IRC_ThreadStatus != IRC_THREAD_DEAD)
 	{
@@ -2586,6 +2577,29 @@ void IRC_Init(void)
 	IRC_ThreadStatus  = IRC_THREAD_INITIALISING;
 	IRC_StartThread();
 }
+
+/*
+==================
+IRC_Init
+==================
+*/
+void IRC_Init(void)
+{
+	irc_mode               = Cvar_Get("irc_mode", "0", CVAR_ARCHIVE);
+	irc_server             = Cvar_Get("irc_server", "irc.freenode.net", CVAR_ARCHIVE);
+	irc_channel            = Cvar_Get("irc_channel", "etlegacy", CVAR_ARCHIVE);
+	irc_port               = Cvar_Get("irc_port", "6667", CVAR_ARCHIVE);
+	irc_nickname           = Cvar_Get("irc_nickname", "ETLClient", CVAR_ARCHIVE);
+	irc_kick_rejoin        = Cvar_Get("irc_kick_rejoin", "0", CVAR_ARCHIVE);
+	irc_reconnect_delay    = Cvar_Get("irc_reconnect_delay", "100", CVAR_ARCHIVE);
+
+	if (irc_mode->integer & IRCM_AUTO_CONNECT)
+	{
+		IRC_Connect();
+	}
+}
+
+
 
 /*
 ==================
@@ -2628,5 +2642,3 @@ qboolean IRC_IsRunning(void)
 	// return IRC status
 	return (IRC_ThreadStatus != IRC_THREAD_DEAD);
 }
-
-#endif // FEATURE_IRC_CLIENT

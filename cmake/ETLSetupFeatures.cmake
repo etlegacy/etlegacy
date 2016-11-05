@@ -244,6 +244,14 @@ if(BUILD_CLIENT OR BUILD_SERVER)
 
 endif()
 
+if(BUILD_SERVER)
+	# FIXME: this is actually DEDICATED only
+	if(FEATURE_IRC_SERVER)
+		add_definitions(-DFEATURE_IRC_SERVER)
+		list(APPEND SERVER_SRC ${IRC_CLIENT_FILES})
+	endif(FEATURE_IRC_SERVER)
+endif(BUILD_BUILD_SERVER)
+
 #-----------------------------------------------------------------
 # Mod features
 #-----------------------------------------------------------------

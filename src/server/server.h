@@ -41,6 +41,10 @@
 #include "../game/g_public.h"
 #include "../game/bg_public.h"
 
+#if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
+	#include "../irc/irc_client.h"
+#endif
+
 #define PERS_SCORE              0   // !!! MUST NOT CHANGE, SERVER AND GAME BOTH REFERENCE !!!
 
 // advert control

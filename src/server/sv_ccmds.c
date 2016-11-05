@@ -767,6 +767,12 @@ void SV_AddOperatorCommands(void)
 
 	Cmd_AddCommand("uptime", SV_Uptime_f);
 
+#if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
+	Cmd_AddCommand("irc_connect", IRC_Connect);
+	Cmd_AddCommand("irc_disconnect", IRC_InitiateShutdown);
+	Cmd_AddCommand("irc_say", IRC_Say);
+#endif
+
 	SV_DemoInit();
 }
 

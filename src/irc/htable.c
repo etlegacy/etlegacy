@@ -32,7 +32,7 @@
  * @file htable.c
  */
 
-#ifdef FEATURE_IRC_CLIENT
+// this is FEATURE_IRC_CLIENT and FEATURE_IRC_SERVER only
 
 #include "htable.h"
 
@@ -708,4 +708,3 @@ static void _HT_InsertInGlobalList(hashtable_t table, struct tentry_t *t_entry, 
 		list_entry->previous        = t_entry->full_list.previous->next = &(t_entry->full_list);
 	}
 }
-#endif
