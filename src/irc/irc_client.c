@@ -76,6 +76,7 @@ cvar_t *irc_reconnect_delay;
 #define IRCM_AUTO_CONNECT           1
 #define IRCM_AUTO_OVERRIDE_NICKNAME 2
 #define IRCM_MUTE_CHANNEL           4
+#define IRCM_CHANNEL_TO_CHAT        8 // dedicated only
 
 /*
  * Timing controls
@@ -1290,30 +1291,30 @@ static void IRC_Display(int event, const char *nick, const char *message)
 		has_nick = has_message = qtrue;
 		if (IRC_EventIsSelf(event))
 		{
-			fmt_string = "^2<^7%s^2> %s\n";
+			fmt_string = "^2<^7%s^2> %s";
 		}
 		else if (strstr(message, IRC_User.nick))
 		{
-			fmt_string = "^3<^7%s^3> %s\n";
+			fmt_string = "^3<^7%s^3> %s";
 		}
 		else
 		{
-			fmt_string = "^1<^7%s^1> %s\n";
+			fmt_string = "^1<^7%s^1> %s";
 		}
 		break;
 	case IRC_EVT_ACT:
 		has_nick = has_message = qtrue;
 		if (IRC_EventIsSelf(event))
 		{
-			fmt_string = "^2* ^7%s^2 %s\n";
+			fmt_string = "^2* ^7%s^2 %s";
 		}
 		else if (strstr(message, IRC_User.nick))
 		{
-			fmt_string = "^3* ^7%s^3 %s\n";
+			fmt_string = "^3* ^7%s^3 %s";
 		}
 		else
 		{
-			fmt_string = "^1* ^7%s^1 %s\n";
+			fmt_string = "^1* ^7%s^1 %s";
 		}
 		break;
 	case IRC_EVT_JOIN:
@@ -1321,11 +1322,11 @@ static void IRC_Display(int event, const char *nick, const char *message)
 		has_nick    = !IRC_EventIsSelf(event);
 		if (has_nick)
 		{
-			fmt_string = "^5-> ^7%s^5 has entered the channel.\n";
+			fmt_string = "^5-> ^7%s^5 has entered the channel.";
 		}
 		else
 		{
-			fmt_string = "^2Joined IRC chat.\n";
+			fmt_string = "^2Joined IRC chat.";
 		}
 		break;
 	case IRC_EVT_PART:
@@ -1335,11 +1336,11 @@ static void IRC_Display(int event, const char *nick, const char *message)
 		has_message = (message[0] != 0);
 		if (has_message)
 		{
-			fmt_string = "^5<- ^7%s^5 has left the channel: %s.\n";
+			fmt_string = "^5<- ^7%s^5 has left the channel: %s.";
 		}
 		else
 		{
-			fmt_string = "^5<- ^7%s^5 has left the channel.\n";
+			fmt_string = "^5<- ^7%s^5 has left the channel.";
 		}
 		break;
 	case IRC_EVT_QUIT:
@@ -1349,39 +1350,39 @@ static void IRC_Display(int event, const char *nick, const char *message)
 			has_message = (message[0] != 0);
 			if (has_message)
 			{
-				fmt_string = "^5<- ^7%s^5 has quit: %s.\n";
+				fmt_string = "^5<- ^7%s^5 has quit: %s.";
 			}
 			else
 			{
-				fmt_string = "^5<- ^7%s^5 has quit.\n";
+				fmt_string = "^5<- ^7%s^5 has quit.";
 			}
 		}
 		else
 		{
 			has_message = qtrue;
-			fmt_string  = "^2Quit IRC chat: %s.\n";
+			fmt_string  = "^2Quit IRC chat: %s.";
 		}
 		break;
 	case IRC_EVT_KICK:
 		has_nick = has_message = qtrue;
 		if (IRC_EventIsSelf(event))
 		{
-			fmt_string = "^2Kicked by ^7%s^2: %s.\n";
+			fmt_string = "^2Kicked by ^7%s^2: %s.";
 		}
 		else
 		{
-			fmt_string = "^5<- ^7%s^5 has been kicked: %s.\n";
+			fmt_string = "^5<- ^7%s^5 has been kicked: %s.";
 		}
 		break;
 	case IRC_EVT_NICK_CHANGE:
 		has_nick = has_message = qtrue;
 		if (IRC_EventIsSelf(event))
 		{
-			fmt_string = "^2** ^7%s^2 is now known as ^7%s^2.\n";
+			fmt_string = "^2** ^7%s^2 is now known as ^7%s^2.";
 		}
 		else
 		{
-			fmt_string = "^5** ^7%s^5 is now known as ^7%s^5.\n";
+			fmt_string = "^5** ^7%s^5 is now known as ^7%s^5.";
 		}
 		break;
 	default:
@@ -1419,7 +1420,15 @@ static void IRC_Display(int event, const char *nick, const char *message)
 	}
 	buffer[IRC_RECV_BUF_SIZE * 2 - 1] = 0;
 
-	Com_Printf("^1IRC: %s", buffer);
+#ifdef DEDICATED
+	// FIXME: add filters for IRC_EventType?
+	if (irc_mode->integer & IRCM_CHANNEL_TO_CHAT)
+	{
+		SV_SendServerCommand(NULL, "chat \"%s\"", buffer);
+	}
+#endif
+
+	Com_Printf("^1IRC: %s\n", buffer);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -2159,7 +2168,7 @@ static int IRC_AttemptConnection()
 	int                port;
 
 	CHECK_SHUTDOWN;
-	Com_Printf("...IRC: connecting to server %s:%i\n", irc_server->string,  irc_port->integer);
+	Com_Printf("IRC: connecting to server %s:%i\n", irc_server->string,  irc_port->integer);
 
 #ifdef DEDICATED
 	strcpy(name, Cvar_VariableString("sv_hostname"));
@@ -2201,7 +2210,7 @@ static int IRC_AttemptConnection()
 	port = irc_port->integer;
 	if (port <= 0 || port >= 65536)
 	{
-		Com_Printf("IRC: invalid port number, defaulting to 6667\n");
+		Com_Printf("...IRC: invalid port number, defaulting to 6667\n");
 		port = 6667;
 	}
 	address.sin_family      = AF_INET;
@@ -2234,7 +2243,7 @@ static int IRC_AttemptConnection()
 	IRC_ThreadStatus = IRC_THREAD_SETNICK;
 
 	CHECK_SHUTDOWN_CLOSE;
-	Com_Printf("...Connected to IRC server\n");
+	Com_Printf("IRC: connected to server\n");
 	return IRC_CMD_SUCCESS;
 }
 
@@ -2431,7 +2440,7 @@ static void IRC_Thread()
 	IRC_MainLoop();
 
 	// Clean up
-	Com_Printf("...IRC: disconnected from server\n");
+	Com_Printf("IRC: disconnected from server\n");
 	IRC_FlushDEQueue();
 	IRC_FreeHandlers();
 	IRC_SetThreadDead();
