@@ -225,22 +225,22 @@ qboolean G_ScriptAction_ShaderRemap(gentity_t *ent, char *params)
 {
 	char  *pString = params, *token;
 	float f        = level.time * 0.001;
-	char  oldShader[256];
-	char  newShader[256];
+	char  oldShader[MAX_QPATH];
+	char  newShader[MAX_QPATH];
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
 		G_Error("G_ScriptAction_ShaderRemap: remapshader must have a target shader name\n");
 	}
-	Q_strncpyz(oldShader, token, 256);
+	Q_strncpyz(oldShader, token, MAX_QPATH);
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
 	{
 		G_Error("G_ScriptAction_ShaderRemap: remapshader must have a new shader name\n");
 	}
-	Q_strncpyz(newShader, token, 256);
+	Q_strncpyz(newShader, token, MAX_QPATH);
 
 	AddRemap(oldShader, newShader, f);
 
