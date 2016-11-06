@@ -470,7 +470,7 @@ float Q_random(int *seed);
 float Q_crandom(int *seed);
 
 #define random()    ((rand() & 0x7fff) / ((float)0x7fff))
-#define crandom()   (2.0 * (random() - 0.5))
+#define crandom()   (2.0f * (random() - 0.5f))
 
 void SetPlaneSignbits(struct cplane_s *out);
 int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *plane);
