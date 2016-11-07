@@ -9,7 +9,7 @@ Enemy Territory: Legacy [![Travis Status](https://travis-ci.org/etlegacy/etlegac
 * Forums: [https://dev.etlegacy.com/projects/etlegacy/boards](https://dev.etlegacy.com/projects/etlegacy/boards)
 * Development (bug reports and feature requests): [https://dev.etlegacy.com](https://dev.etlegacy.com)
 * Repository: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
-* Assets Repository: [https://gitlab.com/etlegacy/etlegacy_assets](https://gitlab.com/etlegacy/etlegacy_assets)
+* Assets Repository: [https://gitlab.com/etlegacy](https://gitlab.com/etlegacy)
 * Translation: [https://www.transifex.com/projects/p/etlegacy/](https://www.transifex.com/projects/p/etlegacy/)
 * Contact: [\#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net and [etlegacy/etlegacy](https://gitter.im/etlegacy/etlegacy) on Gitter.im
 
