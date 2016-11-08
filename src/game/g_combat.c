@@ -439,36 +439,29 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 	if (attacker == self)
 	{
-		if (self->client)
-		{
-			self->client->pers.playerStats.selfkills++;
-		}
+		self->client->pers.playerStats.selfkills++;
+		self->isProp = qtrue; // selfkill is teamkill ...
 	}
 	else if (dieFromSameTeam)
 	{
 		G_LogTeamKill(attacker, weap);
+		self->isProp = qtrue; // teamkilled
 	}
 	else
 	{
 		G_LogDeath(self, weap);
-		G_LogKill(attacker, weap);
 
-		if (g_gamestate.integer == GS_PLAYING)
+		if (attackerClient)
 		{
-			if (attacker->client)
+			G_LogKill(attacker, weap);
+
+			if (g_gamestate.integer == GS_PLAYING)
 			{
 				attacker->client->combatState |= (1 << COMBATSTATE_KILLEDPLAYER);
 			}
 		}
-	}
 
-	if (!dieFromSameTeam)
-	{
-		self->isProp = qfalse;  // were we teamkilled or not?
-	}
-	else
-	{
-		self->isProp = qtrue;
+		self->isProp = qfalse; // no teamkill
 	}
 
 	// if we got killed by a landmine, update our map
@@ -704,7 +697,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	    meansOfDeath != MOD_CRUSH_CONSTRUCTIONDEATH &&
 	    meansOfDeath != MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER &&
 	    meansOfDeath != MOD_TELEFRAG &&
-	    //meansOfDeath != MOD_BACKSTAB && // :)
+	    meansOfDeath != MOD_BACKSTAB &&
 	    !killedintank &&
 	    self->waterlevel < 3)
 	{
