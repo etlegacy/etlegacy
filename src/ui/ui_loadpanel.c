@@ -321,7 +321,8 @@ void UI_LoadPanel_RenderLoadingText(panel_button_t *button)
 	uiClientState_t cstate;
 	char            downloadName[MAX_INFO_VALUE];
 	char            buff[2560];
-	char            *p, *s = "";
+	char            *p1, *p2 = "";
+	const char      *s = NULL;
 	float           y;
 
 	trap_GetClientState(&cstate);
@@ -351,7 +352,7 @@ void UI_LoadPanel_RenderLoadingText(panel_button_t *button)
 			case CA_CONNECTED:
 				if (*downloadName || cstate.connState == CA_DISCONNECTED)
 				{
-					s = (char *)UI_DownloadInfo(downloadName);
+					s = UI_DownloadInfo(downloadName);
 				}
 				else
 				{
@@ -367,7 +368,7 @@ void UI_LoadPanel_RenderLoadingText(panel_button_t *button)
 		else if (trap_Cvar_VariableValue("ui_dl_running"))
 		{
 			// only toggle during a disconnected download
-			s = (char *)UI_DownloadInfo(downloadName);
+			s = UI_DownloadInfo(downloadName);
 		}
 
 		Q_strcat(buff, sizeof(buff), va("\n\n%s^*", s));
@@ -384,20 +385,20 @@ void UI_LoadPanel_RenderLoadingText(panel_button_t *button)
 
 	y = button->rect.y + 12;
 
-	s = p = buff;
+	p1 = p2 = buff;
 
-	while (*p)
+	while (*p1)
 	{
-		if (*p == '\n')
+		if (*p1 == '\n')
 		{
-			*p++ = '\0';
-			Text_Paint_Ext(button->rect.x + 4, y, button->font->scalex, button->font->scaley, button->font->colour, s, 0, 0, 0, button->font->font);
+			*p1++ = '\0';
+			Text_Paint_Ext(button->rect.x + 4, y, button->font->scalex, button->font->scaley, button->font->colour, p2, 0, 0, 0, button->font->font);
 			y += 8;
-			s  = p;
+			p2 = p1;
 		}
 		else
 		{
-			p++;
+			p1++;
 		}
 	}
 }

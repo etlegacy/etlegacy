@@ -570,7 +570,7 @@ qboolean trap_GetLimboString(int index, char *buf)
 	return syscall(UI_CL_GETLIMBOSTRING, index, buf);
 }
 
-char *trap_TranslateString(const char *string)
+const char *trap_TranslateString(const char *string)
 {
 	// Allows the fnc to be used twice in same context
 	static char staticbuf[2][MAX_VA_STRING];

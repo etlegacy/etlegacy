@@ -739,7 +739,7 @@ void trap_GetAutoUpdate(void);
 void trap_openURL(const char *url);
 void trap_GetHunkData(int *hunkused, int *hunkexpected);
 
-char *trap_TranslateString(const char *string); // localization
+const char *trap_TranslateString(const char *string); // localization
 
 const char *UI_DescriptionForCampaign(void);
 const char *UI_NameForCampaign(void);

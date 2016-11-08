@@ -441,7 +441,7 @@ typedef struct
 	void (*feederSelection)(int feederID, int index);
 	qboolean (*feederSelectionClick)(itemDef_t *item);
 	void (*feederAddItem)(int feederID, const char *name, int index);
-	char * (*translateString)(const char *string);
+	const char * (*translateString)(const char *string);
 	void (*checkAutoUpdate)(void);
 	void (*getAutoUpdate)(void);
 
