@@ -841,7 +841,7 @@ void trap_TranslateString(const char *string, char *buf)
 
 // Media register functions
 
-// FIXME: unique debug marcos
+// FIXME: unique debug macros
 //#define LEGACY_DEBUG
 
 #ifdef LEGACY_DEBUG
