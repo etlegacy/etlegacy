@@ -1834,7 +1834,7 @@ CG_DrawSpectator
 */
 static void CG_DrawSpectator(void)
 {
-	char *s;
+	const char *s;
 #ifdef FEATURE_EDV
 	if (cgs.demoCamera.renderingWeaponCam)
 	{
@@ -1864,10 +1864,10 @@ CG_DrawVote
 
 static void CG_DrawVote(void)
 {
-	char  *str;
-	char  str1[32], str2[32];
-	int   y, charHeight;
-	float fontScale = cg_fontScaleSP.value;
+	const char *str;
+	char       str1[32], str2[32];
+	int        y, charHeight;
+	float      fontScale = cg_fontScaleSP.value;
 
 	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 	y          = INFOTEXT_STARTY + (charHeight * 2) * 5;
@@ -2360,7 +2360,7 @@ CG_DrawLimboMessage
 */
 static void CG_DrawLimboMessage(void)
 {
-	char          *str;
+	const char    *str;
 	playerState_t *ps = &cg.snap->ps;
 	int           y   = INFOTEXT_STARTY;
 	int           charHeight;
@@ -2518,12 +2518,12 @@ static qboolean CG_DrawFollow(void)
 		// Don't display if you're following yourself
 		if (cg.snap->ps.clientNum != cg.clientNum)
 		{
-			char *follow    = CG_TranslateString("Following");
-			char *w         = cgs.clientinfo[cg.snap->ps.clientNum].name;
-			int  charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-			int  startClass = CG_Text_Width_Ext(va("(%s", follow), fontScale, 0, &cgs.media.limboFont2) + charWidth;
-			int  startRank  = CG_Text_Width_Ext(w, fontScale, 0, &cgs.media.limboFont2) + 14 + 2 * charWidth;
-			int  endRank;
+			const char *follow    = CG_TranslateString("Following");
+			char       *w         = cgs.clientinfo[cg.snap->ps.clientNum].name;
+			int        charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
+			int        startClass = CG_Text_Width_Ext(va("(%s", follow), fontScale, 0, &cgs.media.limboFont2) + charWidth;
+			int        startRank  = CG_Text_Width_Ext(w, fontScale, 0, &cgs.media.limboFont2) + 14 + 2 * charWidth;
+			int        endRank;
 
 			CG_DrawPic(INFOTEXT_STARTX + startClass, y - 10, 14, 14, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
 
@@ -2544,10 +2544,10 @@ static qboolean CG_DrawFollow(void)
 	}
 	else
 	{
-		char *follow    = CG_TranslateString("Following");
-		char *w         = cgs.clientinfo[cg.snap->ps.clientNum].name;
-		int  charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-		int  startClass = CG_Text_Width_Ext(follow, fontScale, 0, &cgs.media.limboFont2) + charWidth;
+		const char *follow    = CG_TranslateString("Following");
+		char       *w         = cgs.clientinfo[cg.snap->ps.clientNum].name;
+		int        charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
+		int        startClass = CG_Text_Width_Ext(follow, fontScale, 0, &cgs.media.limboFont2) + charWidth;
 
 		CG_DrawPic(INFOTEXT_STARTX + startClass, y - 10, 14, 14, cgs.media.skillPics[SkillNumForClass(cgs.clientinfo[cg.snap->ps.clientNum].cls)]);
 
@@ -2924,8 +2924,8 @@ static void CG_DrawFlashDamage(void)
 		}
 
 		col[3] = 0.7f * (redFlash / 5.0f) * ((cg_bloodFlash.value > 1.0f) ? 1.0f :
-		                                   (cg_bloodFlash.value < 0.0f) ? 0.0f :
-		                                   cg_bloodFlash.value);
+		                                     (cg_bloodFlash.value < 0.0f) ? 0.0f :
+		                                     cg_bloodFlash.value);
 
 		CG_FillRect(0, 0, Ccg_WideX(SCREEN_WIDTH), SCREEN_HEIGHT, col);
 	}
@@ -3035,9 +3035,9 @@ CG_DrawObjectiveInfo
 
 void CG_ObjectivePrint(const char *str, float fontScale)
 {
-	char     *s;
-	int      i, len;
-	qboolean neednewline = qfalse;
+	const char *s;
+	int        i, len;
+	qboolean   neednewline = qfalse;
 
 	if (cg.centerPrintTime)
 	{

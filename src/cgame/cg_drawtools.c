@@ -679,7 +679,7 @@ void CG_ColorForHealth(vec4_t hcolor)
  * @param[in] string
  * @return
  */
-char *CG_TranslateString(const char *string)
+const char *CG_TranslateString(const char *string)
 {
 	static char staticbuf[2][MAX_VA_STRING];
 	static int  bufcount = 0;

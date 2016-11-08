@@ -47,7 +47,12 @@ static vec4_t FT_text = { 0.6f, 0.6f, 0.6f, 1.0f };
 #define FONT_HEADER         &cgs.media.limboFont1
 #define FONT_TEXT           &cgs.media.limboFont2
 
-
+/**
+ * @brief CG_SortFireTeam
+ * @param[in] a
+ * @param[in] b
+ * @return
+ */
 int QDECL CG_SortFireTeam(const void *a, const void *b)
 {
 	clientInfo_t *ca, *cb;
@@ -100,7 +105,9 @@ int QDECL CG_SortFireTeam(const void *a, const void *b)
 	return 0;
 }
 
-// sorts client's fireteam by leader then rank
+/**
+ * @brief Sorts client's fireteam by leader then rank
+ */
 void CG_SortClientFireteam()
 {
 	int i;
@@ -119,7 +126,9 @@ void CG_SortClientFireteam()
 	//C/G_Printf( "\n" );
 }
 
-// parses fireteam servercommand
+/**
+ * @brief Parses fireteam servercommand
+ */
 void CG_ParseFireteams()
 {
 	int        i, j;
@@ -191,7 +200,11 @@ void CG_ParseFireteams()
 	CG_SortClientFireteam();
 }
 
-// Fireteam that the specified client is a part of
+/**
+ * @brief Fireteam that the specified client is a part of
+ * @param[in] clientNum
+ * @return
+ */
 fireteamData_t *CG_IsOnFireteam(int clientNum)
 {
 	if (cgs.clientinfo[clientNum].team == TEAM_SPECTATOR)
@@ -201,7 +214,12 @@ fireteamData_t *CG_IsOnFireteam(int clientNum)
 	return cgs.clientinfo[clientNum].fireteamData;
 }
 
-// Fireteam that both specified clients are on, if they both are on the same team
+/**
+ * @brief Fireteam that both specified clients are on, if they both are on the same team
+ * @param[in] clientNum
+ * @param[in] clientNum2
+ * @return
+ */
 fireteamData_t *CG_IsOnSameFireteam(int clientNum, int clientNum2)
 {
 	if (CG_IsOnFireteam(clientNum) == CG_IsOnFireteam(clientNum2))
@@ -212,7 +230,11 @@ fireteamData_t *CG_IsOnSameFireteam(int clientNum, int clientNum2)
 	return NULL;
 }
 
-// Fireteam that specified client is leader of, or NULL if none
+/**
+ * @brief Fireteam that specified client is leader of, or NULL if none
+ * @param[in] clientNum
+ * @return
+ */
 fireteamData_t *CG_IsFireTeamLeader(int clientNum)
 {
 	fireteamData_t *f;
@@ -230,7 +252,12 @@ fireteamData_t *CG_IsFireTeamLeader(int clientNum)
 	return f ;
 }
 
-// Client, not on a fireteam, not sorted, but on your team
+/**
+ * @brief Client, not on a fireteam, not sorted, but on your team
+ * @param[in] pos
+ * @param[in] max
+ * @return Client information
+ */
 clientInfo_t *CG_ClientInfoForPosition(int pos, int max)
 {
 	int i, cnt = 0;
@@ -250,7 +277,12 @@ clientInfo_t *CG_ClientInfoForPosition(int pos, int max)
 	return NULL;
 }
 
-// Fireteam, that's on your same team
+/**
+ * @brief Fireteam, that's on your same team
+ * @param[in] pos
+ * @param[in] max
+ * @return
+ */
 fireteamData_t *CG_FireTeamForPosition(int pos, int max)
 {
 	int i, cnt = 0;
@@ -270,7 +302,12 @@ fireteamData_t *CG_FireTeamForPosition(int pos, int max)
 	return NULL;
 }
 
-// Client, not sorted by rank, on CLIENT'S fireteam
+/**
+ * @brief Client, not sorted by rank, on CLIENT'S fireteam
+ * @param[in] pos
+ * @param[in] max
+ * @return
+ */
 clientInfo_t *CG_FireTeamPlayerForPosition(int pos, int max)
 {
 	int            i, cnt = 0;
@@ -301,7 +338,11 @@ clientInfo_t *CG_FireTeamPlayerForPosition(int pos, int max)
 	return NULL;
 }
 
-// Client, sorted by rank, on CLIENT'S fireteam
+/**
+ * @brief Client, sorted by rank, on CLIENT'S fireteam
+ * @param[in] pos
+ * @return
+ */
 clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos)
 {
 	int            i;
@@ -339,11 +380,12 @@ clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos)
 
 /**
  * @brief Draw FireTeam overlay
+ * @param[in] rect
  */
 void CG_DrawFireTeamOverlay(rectDef_t *rect)
 {
-	int            x = rect->x;
-	int            y = rect->y + 1;             // +1, jitter it into place
+	float          x = rect->x;
+	float          y = rect->y + 1;             // +1, jitter it into place
 	int            i, locwidth, namewidth, puwidth, lineX;
 	int            boxWidth      = 90;
 	int            bestNameWidth = -1;
@@ -452,7 +494,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 	Q_strupr(buffer);
 	CG_Text_Paint_Ext(x + 4, y + FT_BAR_HEIGHT, .19f, .19f, FT_text, buffer, 0, 0, 0, FONT_HEADER);
 
-	lineX = x;
+	lineX = (int)x;
 	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
 	{
 		x  = lineX;
@@ -599,7 +641,11 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 	}
 }
 
-/* unused
+/**
+ * @brief CG_FireteamGetBoxNeedsButtons
+ * @return
+ * @note Unused
+ *
 qboolean CG_FireteamGetBoxNeedsButtons(void)
 {
     if (cgs.applicationEndTime > cg.time)
@@ -633,7 +679,11 @@ qboolean CG_FireteamGetBoxNeedsButtons(void)
 }
 */
 
-/* unused
+/**
+ * @brief CG_FireteamGetBoxText
+ * @return
+ * @note Unused
+ *
 const char *CG_FireteamGetBoxText(void)
 {
     if (cgs.applicationEndTime > cg.time)
@@ -730,6 +780,12 @@ const char *CG_FireteamGetBoxText(void)
 }
 */
 
+/**
+ * @brief CG_FireteamHasClass
+ * @param[in] classnum
+ * @param[in] selectedonly
+ * @return
+ */
 qboolean CG_FireteamHasClass(int classnum, qboolean selectedonly)
 {
 	fireteamData_t *ft;
@@ -772,6 +828,10 @@ qboolean CG_FireteamHasClass(int classnum, qboolean selectedonly)
 	return qfalse;
 }
 
+/**
+ * @brief CG_BuildSelectedFirteamString
+ * @return
+ */
 const char *CG_BuildSelectedFirteamString(void)
 {
 	char         buffer[256];

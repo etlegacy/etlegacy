@@ -2437,7 +2437,7 @@ void CG_DrawTopBottom_NoScale(float x, float y, float w, float h, float size);
 void CG_DrawBottom_NoScale(float x, float y, float w, float h, float size);
 
 // localization functions
-char *CG_TranslateString(const char *string);
+const char *CG_TranslateString(const char *string);
 
 void CG_InitStatsDebug(void);
 void CG_StatsDebugAddText(const char *text);

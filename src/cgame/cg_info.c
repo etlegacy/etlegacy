@@ -865,14 +865,14 @@ qboolean CG_ViewingDraw()
 	}
 	else
 	{
-		float fontScale  = cg_fontScaleSP.value;
-		int   y          = 146;
-		int   pID        = cg.mvCurrentMainview->mvInfo & MV_PID;
-		char  *viewInfo  = CG_TranslateString("Viewing");
-		char  *w         = cgs.clientinfo[pID].name;
-		int   charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-		int   charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-		int   startClass = CG_Text_Width_Ext(viewInfo, fontScale, 0, &cgs.media.limboFont2) + charWidth;
+		float      fontScale  = cg_fontScaleSP.value;
+		int        y          = 146;
+		int        pID        = cg.mvCurrentMainview->mvInfo & MV_PID;
+		const char *viewInfo  = CG_TranslateString("Viewing");
+		char       *w         = cgs.clientinfo[pID].name;
+		int        charWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
+		int        charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
+		int        startClass = CG_Text_Width_Ext(viewInfo, fontScale, 0, &cgs.media.limboFont2) + charWidth;
 
 		// teamflags
 		if (cgs.clientinfo[pID].team == TEAM_ALLIES)
