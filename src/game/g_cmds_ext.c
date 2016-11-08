@@ -348,7 +348,7 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	int       user_rate, user_snaps;
 	gclient_t *cl;
 	gentity_t *cl_ent;
-	char      n2[MAX_NETNAME], ready[16], ref[8], rate[256];
+	char      n2[MAX_NETNAME], ready[16], ref[8], rate[32];
 	char      *s, *tc, *ign, *muted, userinfo[MAX_INFO_STRING];
 
 	if (g_gamestate.integer == GS_PLAYING)
@@ -394,11 +394,11 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 		// Rate info
 		if (cl_ent->r.svFlags & SVF_BOT)
 		{
-			strcpy(rate, va("%s%s%s%s", "[BOT]", " -----", "       --", "     --"));
+			Q_strncpyz(rate, va("%s%s%s%s", "[BOT]", " -----", "       --", "     --"), sizeof(rate));
 		}
 		else if (cl->pers.connected == CON_CONNECTING)
 		{
-			strcpy(rate, va("%s", "^3>>> CONNECTING <<<^7"));
+			Q_strncpyz(rate, va("%s", "^3>>> CONNECTING <<<^7"), sizeof(rate));
 		}
 		else
 		{
@@ -408,7 +408,7 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 			s          = Info_ValueForKey(userinfo, "snaps");
 			user_snaps = atoi(s);
 
-			strcpy(rate, va("%5d%6d%9d%7d", cl->pers.clientTimeNudge, user_rate, cl->pers.clientMaxPackets, user_snaps));
+			Q_strncpyz(rate, va("%5d%6d%9d%7d", cl->pers.clientTimeNudge, user_rate, cl->pers.clientMaxPackets, user_snaps), sizeof(rate));
 		}
 
 		if (g_gamestate.integer != GS_PLAYING)
@@ -862,7 +862,7 @@ void G_weaponStatsLeaders_cmd(gentity_t *ent, qboolean doTop, qboolean doWindow)
 			shots = cl->sess.aWeaponStats[iWeap].atts;
 			if (shots >= cQualifyingShots[iWeap])
 			{
-				acc                  = (float)((cl->sess.aWeaponStats[iWeap].hits) * 100.0) / (float)shots;
+				acc                  = (float)((cl->sess.aWeaponStats[iWeap].hits) * 100.0f) / (float)shots;
 				aClients[cClients++] = level.sortedClients[i];
 				if (((doTop) ? acc : (float)wBestAcc) > ((doTop) ? wBestAcc : acc))
 				{
@@ -880,9 +880,9 @@ void G_weaponStatsLeaders_cmd(gentity_t *ent, qboolean doTop, qboolean doWindow)
 		for (i = 0; i < cClients; i++)
 		{
 			cl  = &level.clients[aClients[i]];
-			acc = (float)(cl->sess.aWeaponStats[iWeap].hits * 100.0) / (float)(cl->sess.aWeaponStats[iWeap].atts);
+			acc = (float)(cl->sess.aWeaponStats[iWeap].hits * 100.0f) / (float)(cl->sess.aWeaponStats[iWeap].atts);
 
-			if (((doTop) ? acc : (float)wBestAcc + 0.999) >= ((doTop) ? wBestAcc : acc))
+			if (((doTop) ? acc : (float)wBestAcc + 0.999f) >= ((doTop) ? wBestAcc : acc))
 			{
 				Q_strcat(z, sizeof(z), va(" %d %d %d %d %d %d", iWeap + 1, aClients[i],
 				                          cl->sess.aWeaponStats[iWeap].hits,
@@ -954,7 +954,7 @@ void G_weaponRankings_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state
 		shots = cl->sess.aWeaponStats[iWeap].atts;
 		if (shots >= cQualifyingShots[iWeap])
 		{
-			float acc = (float)(cl->sess.aWeaponStats[iWeap].hits * 100.0) / (float)shots;
+			float acc = (float)(cl->sess.aWeaponStats[iWeap].hits * 100.0f) / (float)shots;
 
 			c++;
 			wBestAcc = (((state) ? acc : wBestAcc) > ((state) ? wBestAcc : acc)) ? (int)acc : wBestAcc;
