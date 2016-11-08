@@ -56,8 +56,8 @@ static void CG_Obituary(entityState_t *ent)
 	int          target       = ent->otherEntityNum;
 	int          attacker     = ent->otherEntityNum2;
 	weapon_t     weapon       = (weapon_t)ent->weapon;
-	char         *message     = NULL;
-	char         *message2    = NULL;
+	const char   *message     = NULL;
+	const char   *message2    = NULL;
 	char         targetName[MAX_NAME_LENGTH];
 	char         attackerName[MAX_NAME_LENGTH];
 	clientInfo_t *ci, *ca;    // ca = attacker
@@ -193,8 +193,6 @@ static void CG_Obituary(entityState_t *ent)
 
 	if (message)
 	{
-		message = CG_TranslateString(message);
-
 		if (cg_graphicObituaries.integer)
 		{
 			int scaleShader = 1;
@@ -271,9 +269,9 @@ static void CG_Obituary(entityState_t *ent)
 		}
 		else
 		{
-			CG_AddPMItem(PM_DEATH, va("%s %s.", targetName, message), " ", shader, 0, 0, OB_YELLOW);
+			CG_AddPMItem(PM_DEATH, va("%s %s.", targetName, CG_TranslateString(message)), " ", shader, 0, 0, OB_YELLOW);
 		}
-		trap_Print(va("^7%s^7 %s\n", targetName, message));
+		trap_Print(va("^7%s^7 %s\n", targetName, CG_TranslateString(message)));
 
 		return;
 	}
@@ -526,9 +524,6 @@ static void CG_Obituary(entityState_t *ent)
 
 		if (message)
 		{
-			message  = CG_TranslateString(message);
-			message2 = CG_TranslateString(message2);
-
 			if (cg_graphicObituaries.integer)
 			{
 				int scaleShader = 1;
@@ -619,14 +614,14 @@ static void CG_Obituary(entityState_t *ent)
 			{
 				if (ci->team == ca->team)
 				{
-					CG_AddPMItem(PM_DEATH, va("%s^1 %s^7 ", targetName, message), va("%s^1%s", attackerName, message2), shader, 0, 0, OB_RED);
+					CG_AddPMItem(PM_DEATH, va("%s^1 %s^7 ", targetName, CG_TranslateString(message)), va("%s^1%s", attackerName, CG_TranslateString(message2)), shader, 0, 0, OB_RED);
 				}
 				else
 				{
-					CG_AddPMItem(PM_DEATH, va("%s %s ", targetName, message), va("%s%s", attackerName, message2), shader, 0, 0, NULL);
+					CG_AddPMItem(PM_DEATH, va("%s %s ", targetName, CG_TranslateString(message)), va("%s%s", attackerName, CG_TranslateString(message2)), shader, 0, 0, NULL);
 				}
 			}
-			trap_Print(va((ci->team == ca->team ? "^7%s^1 %s ^7%s^1%s\n" : "^7%s^7 %s ^7%s^7%s\n"), targetName, message, attackerName, message2));
+			trap_Print(va((ci->team == ca->team ? "^7%s^1 %s ^7%s^1%s\n" : "^7%s^7 %s ^7%s^7%s\n"), targetName, CG_TranslateString(message), attackerName, CG_TranslateString(message2)));
 			return;
 		}
 	}
