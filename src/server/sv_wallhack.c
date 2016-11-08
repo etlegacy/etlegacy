@@ -213,12 +213,12 @@ static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t
 
 				// slide the original velocity along the crease
 				vec3_cross(planes[i], planes[j], dir);
-				vec3_norm(dir);
+				VectorNormalize(dir);
 				d = DotProduct(dir, velocity);
 				VectorScale(dir, d, clipVelocity);
 
 				vec3_cross(planes[i], planes[j], dir);
-				vec3_norm(dir);
+				VectorNormalize(dir);
 				d = DotProduct(dir, endVelocity);
 				VectorScale(dir, d, endClipVelocity);
 
@@ -374,7 +374,7 @@ static int player_in_fov(vec3_t viewangle, vec3_t ppos, vec3_t opos)
 	dir[2] = cos(yaw) * sin(pitch);
 
 	// calculate unit vector corresponding to line of sight to opponent
-	vec3_norm(los);
+	VectorNormalize(los);
 
 	// calculate and test the angle between the two vectors
 	cos_angle = DotProduct(dir, los);
