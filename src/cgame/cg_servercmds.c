@@ -1922,15 +1922,15 @@ void CG_parseWeaponStatsGS_cmd(void)
 
 		if (gs->fHasStats)
 		{
-			int dmg_given      = atoi(CG_Argv(iArg++));
-			int dmg_rcvd       = atoi(CG_Argv(iArg++));
-			int team_dmg_given = atoi(CG_Argv(iArg++));
-			int team_dmg_rcvd  = atoi(CG_Argv(iArg++));
-			int gibs           = atoi(CG_Argv(iArg++));
-			int selfKills      = atoi(CG_Argv(iArg++));
-			int teamKills      = atoi(CG_Argv(iArg++));
-			int teamGibs       = atoi(CG_Argv(iArg++));
-			float ptRatio      = atof(CG_Argv(iArg++));
+			int   dmg_given      = atoi(CG_Argv(iArg++));
+			int   dmg_rcvd       = atoi(CG_Argv(iArg++));
+			int   team_dmg_given = atoi(CG_Argv(iArg++));
+			int   team_dmg_rcvd  = atoi(CG_Argv(iArg++));
+			int   gibs           = atoi(CG_Argv(iArg++));
+			int   selfKills      = atoi(CG_Argv(iArg++));
+			int   teamKills      = atoi(CG_Argv(iArg++));
+			int   teamGibs       = atoi(CG_Argv(iArg++));
+			float ptRatio        = atof(CG_Argv(iArg++));
 
 			float htRatio = (totShots == 0) ? 0.0 : (float)(totHits * 100.0 / (float)totShots);
 			float hsRatio = (totHits == 0) ? 0.0 : (float)(totHeadshots * 100.0 / (float)totHits);
@@ -2100,15 +2100,15 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 
 		if (fHasStats)
 		{
-			int dmg_given      = atoi(CG_Argv(iArg++));
-			int dmg_rcvd       = atoi(CG_Argv(iArg++));
-			int team_dmg_given = atoi(CG_Argv(iArg++));
-			int team_dmg_rcvd  = atoi(CG_Argv(iArg++));
-			int gibs           = atoi(CG_Argv(iArg++));
-			int selfKills      = atoi(CG_Argv(iArg++));
-			int teamKills      = atoi(CG_Argv(iArg++));
-			int teamGibs       = atoi(CG_Argv(iArg++));
-			float ptRatio      = atof(CG_Argv(iArg++));
+			int   dmg_given      = atoi(CG_Argv(iArg++));
+			int   dmg_rcvd       = atoi(CG_Argv(iArg++));
+			int   team_dmg_given = atoi(CG_Argv(iArg++));
+			int   team_dmg_rcvd  = atoi(CG_Argv(iArg++));
+			int   gibs           = atoi(CG_Argv(iArg++));
+			int   selfKills      = atoi(CG_Argv(iArg++));
+			int   teamKills      = atoi(CG_Argv(iArg++));
+			int   teamGibs       = atoi(CG_Argv(iArg++));
+			float ptRatio        = atof(CG_Argv(iArg++));
 
 			float htRatio = (totShots == 0) ? 0.0 : (float)(totHits * 100.0 / (float)totShots);
 			float hsRatio = (totHits == 0) ? 0.0 : (float)(totHeadshots * 100.0 / (float)totHits);
@@ -2494,7 +2494,7 @@ static void CG_ServerCommand(void)
 		const char *iconstring;
 
 		iconstring = CG_Argv(2);
-		
+
 		// catch no cpm icon param
 		if (!iconstring[0])
 		{
@@ -2516,16 +2516,18 @@ static void CG_ServerCommand(void)
 	}
 	else if (!Q_stricmp(cmd, "cp"))
 	{
-		int  args = trap_Argc();
-		char *s;
+		int        args = trap_Argc();
+		const char *s;
 
 		if (args >= 3)
 		{
-			s = CG_TranslateString(CG_Argv(1));
-
 			if (args == 4)
 			{
-				s = va("%s%s", CG_Argv(3), s);
+				s = va("%s%s", CG_Argv(3), CG_TranslateString(CG_Argv(1)));
+			}
+			else
+			{
+				s = CG_TranslateString(CG_Argv(1));
 			}
 
 			// for client logging
