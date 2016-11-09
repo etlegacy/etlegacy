@@ -445,8 +445,8 @@ void RB_SurfaceFoliage(srfFoliage_t *srf)
 	distanceVector[3] = DotProduct(local, backEnd.viewParms.orientation.axis[0]);
 
 	// attempt distance cull
-	VectorCopy(tess.shader->distanceCull, distanceCull);
-	distanceCull[3] = tess.shader->distanceCull[3];
+	Vector4Copy(tess.shader->distanceCull, distanceCull);
+
 	if (distanceCull[1] > 0)
 	{
 		z     = fovScale * (DotProduct(srf->origin, distanceVector) + distanceVector[3] - srf->radius);
@@ -479,7 +479,7 @@ void RB_SurfaceFoliage(srfFoliage_t *srf)
 			for (i = 0; i < 5; i++)
 			{
 				dist = DotProduct(instance->origin, backEnd.viewParms.frustum[i].normal) - backEnd.viewParms.frustum[i].dist;
-				if (dist < -64.0)
+				if (dist < -64)
 				{
 					break;
 				}
@@ -525,7 +525,9 @@ void RB_SurfaceFoliage(srfFoliage_t *srf)
 		// copy indexes
 		memcpy(&tess.indexes[tess.numIndexes], srf->indexes, numIndexes * sizeof(srf->indexes[0]));
 		for (i = 0; i < numIndexes; i++)
+		{
 			tess.indexes[tess.numIndexes + i] += tess.numVertexes;
+		}
 
 		// copy xyz, normal and st
 		xyz = tess.xyz[tess.numVertexes].v;
@@ -539,12 +541,16 @@ void RB_SurfaceFoliage(srfFoliage_t *srf)
 
 		// offset xyz
 		for (i = 0; i < numVerts; i++, xyz += 4)
+		{
 			VectorAdd(xyz, instance->origin, xyz);
+		}
 
 		// copy color
 		color = (int *) tess.vertexColors[tess.numVertexes].v;
 		for (i = 0; i < numVerts; i++)
+		{
 			color[i] = srcColor;
+		}
 
 		// increment
 		tess.numIndexes  += numIndexes;
