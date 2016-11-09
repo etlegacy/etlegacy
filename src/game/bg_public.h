@@ -2438,30 +2438,30 @@ typedef enum
 #define CH_MAX_DIST_ZOOM    8192    // max dist for zooming hints
 
 // FLAME & FLAMER constants
-#define FLAMETHROWER_RANGE  2500    // multiplayer range, was 850 in SP
+#define FLAMETHROWER_RANGE  2500.f    // multiplayer range, was 850 in SP
 
 // these define how the flame looks and flamer acts
-#define FLAME_START_SIZE        1.0     // bg
-#define FLAME_START_MAX_SIZE    140.0   // bg
-#define FLAME_MAX_SIZE          200.0   // cg flame sprites cannot be larger than this
-#define FLAME_START_SPEED       1200.0  // cg speed of flame as it leaves the nozzle
-#define FLAME_MIN_SPEED         60.0    // bg 200.0
-#define FLAME_CHUNK_DIST        8.0     // cg space in between chunks when fired
+#define FLAME_START_SIZE        1.0f     // bg
+#define FLAME_START_MAX_SIZE    140.0f   // bg
+#define FLAME_MAX_SIZE          200.0f   // cg flame sprites cannot be larger than this
+#define FLAME_START_SPEED       1200.0f  // cg speed of flame as it leaves the nozzle
+#define FLAME_MIN_SPEED         60.0f    // bg 200.0
+#define FLAME_CHUNK_DIST        8.0f     // cg space in between chunks when fired
 
-#define FLAME_BLUE_LENGTH       130.0   // cg
-#define FLAME_BLUE_MAX_ALPHA    1.0     // cg
+#define FLAME_BLUE_LENGTH       130.0f   // cg
+#define FLAME_BLUE_MAX_ALPHA    1.0f     // cg
 
 // these are calculated (don't change)
-#define FLAME_LENGTH            (FLAMETHROWER_RANGE + 50.0)   // NOTE: only modify the range, since this should always reflect that range
+#define FLAME_LENGTH            (FLAMETHROWER_RANGE + 50.0f)   // NOTE: only modify the range, since this should always reflect that range
 
-#define FLAME_LIFETIME          (int)((FLAME_LENGTH / FLAME_START_SPEED) * 1000)        // life duration in milliseconds
-#define FLAME_FRICTION_PER_SEC  (2.0 * FLAME_START_SPEED) // bg
-#define FLAME_BLUE_LIFE         (int)((FLAME_BLUE_LENGTH / FLAME_START_SPEED) * 1000) // cg
+#define FLAME_LIFETIME          (int)((FLAME_LENGTH / FLAME_START_SPEED) * 1000.0f)        // life duration in milliseconds
+#define FLAME_FRICTION_PER_SEC  (2.0f * FLAME_START_SPEED) // bg
+#define FLAME_BLUE_LIFE         (int)((FLAME_BLUE_LENGTH / FLAME_START_SPEED) * 1000.0f) // cg
 
-#define FLAME_BLUE_FADEIN_TIME(x)       (0.2 * x)  // cg
-#define FLAME_BLUE_FADEOUT_TIME(x)      (0.05 * x) // cg
-#define GET_FLAME_BLUE_SIZE_SPEED(x)    (((float)x / FLAME_LIFETIME) / 1.0)       // cg x is the current sizeMax
-#define GET_FLAME_SIZE_SPEED(x)         (((float)x / FLAME_LIFETIME) / 0.3)       // cg x is the current sizeMax
+#define FLAME_BLUE_FADEIN_TIME(x)       (0.2f * x)  // cg
+#define FLAME_BLUE_FADEOUT_TIME(x)      (0.05f * x) // cg
+#define GET_FLAME_BLUE_SIZE_SPEED(x)    (((float)x / FLAME_LIFETIME) / 1.0f)       // cg x is the current sizeMax
+#define GET_FLAME_SIZE_SPEED(x)         (((float)x / FLAME_LIFETIME) / 0.3f)       // cg x is the current sizeMax
 
 enum VOTE_CLIENT_RESPONSE
 {
