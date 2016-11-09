@@ -22,15 +22,15 @@ menuDef
 
 	onOpen
 	{
-		setitemcolor background backcolor 0 0 0 0 ;
+		setitemcolor background backcolor 0 0 0 0;
 		fadein background
 	}
 
 	onESC
 	{
-		close rec_restart ;
-		open background_1 ;
-		open options_graphics
+		close rec_restart;
+		open background_1;
+		open options_system
 	}
 
 // Background //
@@ -58,5 +58,5 @@ menuDef
 #endif // FUI
 
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("YES"), .3, 14, execnow "setRecommended" ; close rec_restart ; exec "vid_restart" )
-	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("NO"), .3, 14, close rec_restart ; open options_graphics )
+	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("NO"), .3, 14, close rec_restart ; open options_system )
 }
