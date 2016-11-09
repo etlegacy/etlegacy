@@ -37,7 +37,7 @@ menuDef {
 
 // Simple graphics //
 #define GRAPHICS_Y 32
-	SUBWINDOW( 6, GRAPHICS_Y, (SUBWINDOW_WIDTH_L), 140, _("GRAPHICS") )
+	SUBWINDOW( 6, GRAPHICS_Y, (SUBWINDOW_WIDTH_L), 150, _("GRAPHICS") )
 #ifdef LEGACY
 	COMBO( 8, GRAPHICS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Renderer:"), 0.2, 8, "cl_renderer", LEGACY_RENDERERS, exec vid_restart, _("Set your desired renderer (does a video restart)") )
 	MULTIACTION( 8, GRAPHICS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Overall Quality:"), .2, 8, "ui_glCustom", cvarFloatList { _("fastest") 3 _("fast") 2 _("normal") 1 _("high") 0 }, uiScript update "ui_glCustom", _("Set overall video quality") )
@@ -51,9 +51,10 @@ menuDef {
 	MULTIACTION( 8, GRAPHICS_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, _("Intensity:"), .2, 8, "r_intensity", cvarFloatList { "1.0" 1.0 "1.1" 1.1 "1.2" 1.2 "1.3" 1.3 "1.4" 1.4 "1.5" 1.5 }, uiScript update "ui_glCustom", _("The Intensity Of Textures (requires vid_restart)") )
 	MULTIACTION( 8, GRAPHICS_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Map overbright bits:"), .2, 8, "r_mapoverbrightbits", cvarFloatList { "0" 0 "1" 1 "2" 2 "3" 3 }, uiScript update "ui_glCustom", _("The World Gets Brighter, But Paler (requires vid_restart)") )
 	YESNOACTION( 8, GRAPHICS_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, _("Overbright Bits:"), .2, 8, "r_overBrightBits", uiScript update "ui_glCustom", _("Map shines brighter (requires vid_restart)") )
+	MULTIACTION( 8, GRAPHICS_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, _("Frames Limit:"), .2, 8, "com_maxfps", cvarFloatList { "60" 60 "90" 90 "125" 125 "333" 333 }, uiScript update "ui_glCustom", _("Set limit for frames") )
 
 // Advanced graphics //
-#define GRAPHICSADVANCED_Y 178
+#define GRAPHICSADVANCED_Y 190
 	SUBWINDOW( 6, GRAPHICSADVANCED_Y, (SUBWINDOW_WIDTH_L), 220, _("ADVANCED GRAPHICS") )
 	YESNO( 8, GRAPHICSADVANCED_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Low Quality Sky:"), .2, 8, "r_fastsky", _("Toggles wether the detailed skybox is drawn or just a basic sky") )
 	// FIXME: fix cg_shadows >= 2

@@ -7101,3 +7101,9 @@ msgstr ""
 
 msgid "Specifies custom resolution height - requires custom resolution set .*Use on your own risk!"
 msgstr ""
+
+msgid "Frames Limit:"
+msgstr ""
+
+msgid "Set limit for frames"
+msgstr ""
