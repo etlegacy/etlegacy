@@ -1151,7 +1151,7 @@ void UI_Load(void)
 
 	if (menu && menu->window.name)
 	{
-		strcpy(lastName, menu->window.name);
+		Q_strncpyz(lastName, menu->window.name, sizeof(lastName));
 	}
 	if (menuSet == NULL || menuSet[0] == '\0')
 	{
@@ -4514,8 +4514,8 @@ void UI_RunMenuScript(char **args)
 
 				if (selectedPlayer < uiInfo.myTeamCount)
 				{
-					strcpy(buff, orders);
-					trap_Cmd_ExecuteText(EXEC_APPEND, va(buff, uiInfo.teamClientNums[selectedPlayer]));
+					Com_sprintf(buff, sizeof( buff ), orders, uiInfo.teamClientNums[selectedPlayer]);
+					trap_Cmd_ExecuteText(EXEC_APPEND, buff);
 					trap_Cmd_ExecuteText(EXEC_APPEND, "\n");
 				}
 				trap_Key_SetCatcher(trap_Key_GetCatcher() & ~KEYCATCH_UI);
