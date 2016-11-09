@@ -284,7 +284,7 @@ qhandle_t RE_RegisterModel(const char *name)
 			strcat(filename, namebuf);
 		}
 
-		filename[strlen(filename) - 1] = 'c';    // try MDC first
+		filename[strlen(filename) - 1] = '3';    // try MD3 first (changed order for 2.76)
 
 		if (ri.FS_FOpenFileRead(filename, NULL, qfalse))
 		{
@@ -293,7 +293,7 @@ qhandle_t RE_RegisterModel(const char *name)
 
 		if (!buf)
 		{
-			filename[strlen(filename) - 1] = '3';    // try MD3 second
+			filename[strlen(filename) - 1] = 'c';    // try MDC second
 
 			if (ri.FS_FOpenFileRead(filename, NULL, qfalse))
 			{
