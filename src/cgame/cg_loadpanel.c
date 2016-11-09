@@ -104,6 +104,7 @@ panel_button_t loadScreenMap =
 	NULL,                     /* keyUp    */
 	BG_PanelButtonsRender_Img,
 	NULL,
+	0
 };
 
 panel_button_t loadScreenBack =
@@ -117,6 +118,7 @@ panel_button_t loadScreenBack =
 	NULL,                     /* keyUp    */
 	BG_PanelButtonsRender_Img,
 	NULL,
+	0
 };
 
 panel_button_t loadScreenPins =
@@ -130,6 +132,7 @@ panel_button_t loadScreenPins =
 	NULL,                           /* keyUp    */
 	CG_LoadPanel_RenderCampaignPins,
 	NULL,
+	0
 };
 
 panel_button_t missiondescriptionPanelHeaderText =
@@ -143,6 +146,7 @@ panel_button_t missiondescriptionPanelHeaderText =
 	NULL,                      /* keyUp    */
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0
 };
 
 panel_button_t missiondescriptionPanelText =
@@ -156,6 +160,7 @@ panel_button_t missiondescriptionPanelText =
 	NULL,                                     /* keyUp    */
 	CG_LoadPanel_RenderMissionDescriptionText,
 	NULL,
+	0
 };
 
 panel_button_t campaignheaderPanelText =
@@ -169,6 +174,7 @@ panel_button_t campaignheaderPanelText =
 	NULL,                               /* keyUp    */
 	CG_LoadPanel_RenderCampaignTypeText,
 	NULL,
+	0
 };
 
 panel_button_t campaignPanelText =
@@ -182,6 +188,7 @@ panel_button_t campaignPanelText =
 	NULL,                               /* keyUp    */
 	CG_LoadPanel_RenderCampaignNameText,
 	NULL,
+	0
 };
 
 panel_button_t loadScreenMeterBack =
@@ -195,6 +202,7 @@ panel_button_t loadScreenMeterBack =
 	NULL,                          /* keyUp    */
 	BG_PanelButtonsRender_Img,
 	NULL,
+	0
 };
 
 panel_button_t loadScreenMeterBack2 =
@@ -208,6 +216,7 @@ panel_button_t loadScreenMeterBack2 =
 	NULL,                         /* keyUp    */
 	CG_LoadPanel_RenderLoadingBar,
 	NULL,
+	0
 };
 
 panel_button_t loadScreenMeterBackText =
@@ -221,6 +230,7 @@ panel_button_t loadScreenMeterBackText =
 	NULL,                       /* keyUp    */
 	CG_LoadPanel_LoadingBarText,
 	NULL,
+	0
 };
 
 panel_button_t *loadpanelButtons[] =
@@ -233,12 +243,11 @@ panel_button_t *loadpanelButtons[] =
 	NULL,
 };
 
-/*
-================
-CG_DrawConnectScreen
-================
-*/
-
+/**
+ * @brief CG_LoadPanel_GameTypeName
+ * @param[in] gt
+ * @return
+ */
 const char *CG_LoadPanel_GameTypeName(gametype_t gt)
 {
 	switch (gt)
@@ -266,6 +275,11 @@ const char *CG_LoadPanel_GameTypeName(gametype_t gt)
 
 static vec4_t clr3 = { 1.f, 1.f, 1.f, .6f };
 
+/**
+ * @brief CG_DrawConnectScreen
+ * @param[in] interactive
+ * @param[in] forcerefresh
+ */
 void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 {
 	static qboolean inside = qfalse;
@@ -451,6 +465,10 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 	inside = qfalse;
 }
 
+/**
+ * @brief CG_LoadPanel_RenderLoadingBar
+ * @param[in] button
+ */
 void CG_LoadPanel_RenderLoadingBar(panel_button_t *button)
 {
 	int   hunkused, hunkexpected;
@@ -476,11 +494,20 @@ void CG_LoadPanel_RenderLoadingBar(panel_button_t *button)
 	CG_DrawPicST(button->rect.x, button->rect.y, button->rect.w * frac, button->rect.h, 0, 0, frac, 1, button->hShaderNormal);
 }
 
+/**
+ * @brief CG_LoadPanel_RenderCampaignTypeText
+ * @param[in] button
+ */
 void CG_LoadPanel_RenderCampaignTypeText(panel_button_t *button)
 {
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%s:", CG_LoadPanel_GameTypeName(cgs.gametype)), 0, 0, button->font->style, button->font->font);
 }
 
+/**
+ * @brief campaignNameTextScaleFactor
+ * @param[in] len
+ * @return
+ */
 float campaignNameTextScaleFactor(int len)
 {
 	float scaleF = 1.f;
@@ -512,6 +539,10 @@ float campaignNameTextScaleFactor(int len)
 	return scaleF;
 }
 
+/**
+ * @brief CG_LoadPanel_RenderCampaignNameText
+ * @param[in] button
+ */
 void CG_LoadPanel_RenderCampaignNameText(panel_button_t *button)
 {
 	const char *cs;
@@ -548,6 +579,10 @@ void CG_LoadPanel_RenderCampaignNameText(panel_button_t *button)
 	}
 }
 
+/**
+ * @brief CG_LoadPanel_RenderMissionDescriptionText
+ * @param[in] button
+ */
 void CG_LoadPanel_RenderMissionDescriptionText(panel_button_t *button)
 {
 	const char *cs;
@@ -610,6 +645,11 @@ void CG_LoadPanel_RenderMissionDescriptionText(panel_button_t *button)
 	}
 }
 
+/**
+ * @brief CG_LoadPanel_KeyHandling
+ * @param[in] key
+ * @param[in] down
+ */
 void CG_LoadPanel_KeyHandling(int key, qboolean down)
 {
 	if (BG_PanelButtonsKeyEvent(key, down, loadpanelButtons))
@@ -618,6 +658,17 @@ void CG_LoadPanel_KeyHandling(int key, qboolean down)
 	}
 }
 
+/**
+ * @brief CG_LoadPanel_DrawPin
+ * @param[in] text
+ * @param[in] px
+ * @param[in] py
+ * @param[in] sx
+ * @param[in] sy
+ * @param[in] shader
+ * @param[in] pinsize
+ * @param[in] backheight
+ */
 void CG_LoadPanel_DrawPin(const char *text, float px, float py, float sx, float sy, qhandle_t shader, float pinsize, float backheight)
 {
 	static vec4_t colourFadedBlack = { 0.f, 0.f, 0.f, 0.4f };
@@ -657,6 +708,10 @@ void CG_LoadPanel_DrawPin(const char *text, float px, float py, float sx, float 
 	}
 }
 
+/**
+ * @brief CG_LoadPanel_RenderCampaignPins
+ * @param button - unused
+ */
 void CG_LoadPanel_RenderCampaignPins(panel_button_t *button)
 {
 	if (cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS || cgs.gametype == GT_WOLF || cgs.gametype == GT_WOLF_MAPVOTE)
@@ -711,7 +766,8 @@ void CG_LoadPanel_RenderCampaignPins(panel_button_t *button)
 }
 
 /**
- * @brief draws infoScreenText in loading bar
+ * @brief Draws infoScreenText in loading bar
+ * @param[in] button
  */
 void CG_LoadPanel_LoadingBarText(panel_button_t *button)
 {

@@ -1798,9 +1798,9 @@ typedef struct location_s
 typedef struct
 {
 	int lastLocation;
-	int lastX;
-	int lastY;
-	int lastZ;
+	float lastX;
+	float lastY;
+	float lastZ;
 } clientLocation_t;
 
 #define NUM_ENDGAME_AWARDS     19   // total number of endgame awards

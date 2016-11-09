@@ -1304,7 +1304,6 @@ qboolean CG_LimboPanel_MinusButton_KeyDown(panel_button_t *button, int key)
 /**
  * @brief CG_LimboPanel_SendSetupMsg
  * @param[in] forceteam
- * @todo switch weapon doesn't handle all case
  */
 void CG_LimboPanel_SendSetupMsg(qboolean forceteam)
 {
@@ -1337,7 +1336,8 @@ void CG_LimboPanel_SendSetupMsg(qboolean forceteam)
 	weap1 = CG_LimboPanel_GetSelectedWeaponForSlot(1);
 	weap2 = CG_LimboPanel_GetSelectedWeaponForSlot(0);
 
-	switch (team)
+    // TODO: handle all case ?
+    switch (team)
 	{
 	case TEAM_AXIS:
 		str = "r";
@@ -3335,7 +3335,6 @@ void CG_LimboPanel_KeyHandling(int key, qboolean down)
  * @param[out] t0
  * @param[out] s1
  * @param[out] t1
- * @todo switch weapon doesn't handle all case
  */
 void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float *w, float *h, float *s0, float *t0, float *s1, float *t1)
 {
@@ -3964,7 +3963,6 @@ int CG_LimboPanel_MaxCount(int playerCount, char *variableString)
  *       see G_IsWeaponDisabled
  *       check: CG_LimboPanel_RealWeaponIsDisabled probably doesn't have to check for alt weapons
  *       they can't be selected
- * @todo switch weapon doesn't handle all case
  */
 qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 {
