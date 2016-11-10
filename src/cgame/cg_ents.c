@@ -35,14 +35,15 @@
 
 #include "cg_local.h"
 
-/*
-======================
-CG_PositionEntityOnTag
-
-Modifies the entities position and axis by the given
-tag location
-======================
-*/
+/**
+ * @brief Modifies the entities position and axis by the given
+ * tag location
+ * @param entity
+ * @param parent
+ * @param tagName
+ * @param startIndex
+ * @param offset
+ */
 void CG_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, const char *tagName, int startIndex, vec3_t *offset)
 {
 	int           i;
@@ -64,12 +65,14 @@ void CG_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, cons
 		VectorMA(entity->origin, lerped.origin[i], parent->axis[i], entity->origin);
 	}
 
-	// had to cast away the const to avoid compiler problems...
-	MatrixMultiply(lerped.axis, ((refEntity_t *)parent)->axis, entity->axis);
+	MatrixMultiply(lerped.axis, parent->axis, entity->axis);
 }
 
 /**
  * @brief Modifies the entities position and axis by the given tag location
+ * @param entity
+ * @param parent
+ * @param tagName
  */
 void CG_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *parent, const char *tagName)
 {
@@ -87,9 +90,8 @@ void CG_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *paren
 		VectorMA(entity->origin, lerped.origin[i], parent->axis[i], entity->origin);
 	}
 
-	// had to cast away the const to avoid compiler problems...
 	MatrixMultiply(entity->axis, lerped.axis, tempAxis);
-	MatrixMultiply(tempAxis, ((refEntity_t *)parent)->axis, entity->axis);
+	MatrixMultiply(tempAxis, parent->axis, entity->axis);
 }
 
 /*
@@ -100,6 +102,7 @@ FUNCTIONS CALLED EACH FRAME
 
 /**
  * @brief Also called by event processing code
+ * @param cent
  */
 void CG_SetEntitySoundPosition(centity_t *cent)
 {
@@ -119,6 +122,10 @@ void CG_SetEntitySoundPosition(centity_t *cent)
 
 #define LS_FRAMETIME 100 // (ms)  cycle through lightstyle characters at 10fps
 
+/**
+ * @brief CG_AddLightstyle
+ * @param cent
+ */
 void CG_AddLightstyle(centity_t *cent)
 {
 	float lightval;
@@ -172,7 +179,7 @@ void CG_AddLightstyle(centity_t *cent)
 	lastch = cent->dl_stylestring[cent->dl_oldframe] - 'a';
 	nextch = cent->dl_stylestring[cent->dl_frame] - 'a';
 
-	lightval = (lastch * (1.0 - cent->dl_backlerp)) + (nextch * cent->dl_backlerp);
+	lightval = (lastch * (1.0f - cent->dl_backlerp)) + (nextch * cent->dl_backlerp);
 
 	// dlight values go from 0-1.5ish
 #if 0
@@ -189,7 +196,7 @@ void CG_AddLightstyle(centity_t *cent)
 	r  = (cl & 0xFF) / 255.0f;
 
 	// if the dlight has angles, then it is a directional global dlight
-	if (cent->currentState.angles[0] || cent->currentState.angles[1] || cent->currentState.angles[2])
+	if (cent->currentState.angles[0] != 0.f || cent->currentState.angles[1] != 0.f || cent->currentState.angles[2] != 0.f)
 	{
 		vec3_t normal;
 
@@ -199,8 +206,8 @@ void CG_AddLightstyle(centity_t *cent)
 	// normal global dlight
 	else
 	{
-		int g = ((cl >> 8) & 0xFF) / 255.0f;
-		int b = ((cl >> 16) & 0xFF) / 255.0f;
+		int g = ((cl >> 8) & 0xFF) / 255;
+		int b = ((cl >> 16) & 0xFF) / 255;
 
 		trap_R_AddLightToScene(cent->lerpOrigin, 256, lightval, r, g, b, 0, 0);
 	}
@@ -210,6 +217,7 @@ void CG_GetWindVector(vec3_t dir);
 
 /**
  * @brief Add continuous entity effects, like local entity emission and lighting
+ * @param cent
  */
 static void CG_EntityEffects(centity_t *cent)
 {
@@ -333,7 +341,7 @@ static void CG_EntityEffects(centity_t *cent)
 			//          dir[1] = crandom() * 10;
 			//          dir[2] = 10 + rnd * 30;
 			CG_SmokePuff(cent->lerpOrigin, dir, 15 + (random() * 10),
-			             0.3 + rnd, 0.3 + rnd, 0.3 + rnd, 0.4, 1500 + (rand() % 500),
+			             0.3f + rnd, 0.3f + rnd, 0.3f + rnd, 0.4f, 1500 + (rand() % 500),
 			             cg.time, cg.time + 500, 0, cgs.media.smokePuffShader);
 		}
 	}
@@ -354,12 +362,16 @@ static void CG_EntityEffects(centity_t *cent)
 			}
 
 			CG_SmokePuff(cent->lerpOrigin, dir, 40 + random() * 70,  //40+(rnd*40),
-			             rnd * 0.1, rnd * 0.1, rnd * 0.1, 1, 2800 + (rand() % 4000),    //2500+(random()*1500),
+			             rnd * 0.1f, rnd * 0.1f, rnd * 0.1f, 1.f, 2800 + (rand() % 4000),    //2500+(random()*1500),
 			             cg.time, 0, 0, cgs.media.smokePuffShader);
 		}
 	}
 }
 
+/**
+ * @brief CG_General
+ * @param cent
+ */
 static void CG_General(centity_t *cent)
 {
 	refEntity_t   ent;
@@ -485,7 +497,7 @@ static void CG_General(centity_t *cent)
 			}
 			else
 			{
-				cent->lerpFrame.backlerp = 1.0 - (float)(cg.time - cent->lerpFrame.oldFrameTime) / (cent->lerpFrame.frameTime - cent->lerpFrame.oldFrameTime);
+				cent->lerpFrame.backlerp = 1.0f - (float)(cg.time - cent->lerpFrame.oldFrameTime) / (cent->lerpFrame.frameTime - cent->lerpFrame.oldFrameTime);
 			}
 
 			ent.frame = cent->lerpFrame.frame + s1->frame;  // offset
@@ -549,6 +561,7 @@ static void CG_General(centity_t *cent)
 
 /**
  * @brief Speaker entities can automatically play sounds
+ * @param cent
  */
 static void CG_Speaker(centity_t *cent)
 {
@@ -567,6 +580,14 @@ static void CG_Speaker(centity_t *cent)
 	cent->miscTime = cg.time + cent->currentState.frame * 100 + cent->currentState.clientNum * 100 * crandom();
 }
 
+/**
+ * @brief CG_PlayerSeesItem
+ * @param ps
+ * @param item
+ * @param atTime
+ * @param itemType - unused
+ * @return
+ */
 qboolean CG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime, int itemType)
 {
 	vec3_t vorigin, eorigin, viewa, dir;
@@ -610,6 +631,10 @@ qboolean CG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime, i
 	return qtrue;
 }
 
+/**
+ * @brief CG_Item
+ * @param cent
+ */
 static void CG_Item(centity_t *cent)
 {
 	refEntity_t   ent;
@@ -692,9 +717,9 @@ static void CG_Item(centity_t *cent)
 			VectorCopy(cent->lerpOrigin, stand.origin);
 
 			// scale the stand to match the weapon scale ( the weapon will also be scaled inside CG_PositionEntityOnTag() )
-			VectorScale(stand.axis[0], 1.5, stand.axis[0]);
-			VectorScale(stand.axis[1], 1.5, stand.axis[1]);
-			VectorScale(stand.axis[2], 1.5, stand.axis[2]);
+			VectorScale(stand.axis[0], 1.5f, stand.axis[0]);
+			VectorScale(stand.axis[1], 1.5f, stand.axis[1]);
+			VectorScale(stand.axis[2], 1.5f, stand.axis[2]);
 
 			if (cent->currentState.frame)
 			{
@@ -718,9 +743,9 @@ static void CG_Item(centity_t *cent)
 			AnglesToAxis(cent->lerpAngles, ent.axis);
 
 			// increase the size of the weapons when they are presented as items
-			VectorScale(ent.axis[0], 1.5, ent.axis[0]);
-			VectorScale(ent.axis[1], 1.5, ent.axis[1]);
-			VectorScale(ent.axis[2], 1.5, ent.axis[2]);
+			VectorScale(ent.axis[0], 1.5f, ent.axis[0]);
+			VectorScale(ent.axis[1], 1.5f, ent.axis[1]);
+			VectorScale(ent.axis[2], 1.5f, ent.axis[2]);
 			ent.nonNormalizedAxes = qtrue;
 
 			VectorCopy(cent->lerpOrigin, ent.origin);
@@ -788,7 +813,7 @@ static void CG_Item(centity_t *cent)
 
 		for (i = 0 ; i < 3 ; i++)
 		{
-			offset[i] = mins[i] + 0.5 * (maxs[i] - mins[i]);    // find object-space center
+			offset[i] = mins[i] + 0.5f * (maxs[i] - mins[i]);    // find object-space center
 		}
 
 		VectorCopy(cent->lerpOrigin, cent->highlightOrigin);    // set 'midpoint' to origin
@@ -858,6 +883,10 @@ static void CG_Item(centity_t *cent)
 
 //============================================================================
 
+/**
+ * @brief CG_Smoker
+ * @param cent
+ */
 static void CG_Smoker(centity_t *cent)
 {
 	// this ent has some special setting up
@@ -892,6 +921,12 @@ static void CG_Smoker(centity_t *cent)
 	cent->lastTrailTime = cg.time;  // time we were last received at the client
 }
 
+/**
+ * @brief CG_DrawMineMarkerFlag
+ * @param cent
+ * @param ent
+ * @param weapon
+ */
 static void CG_DrawMineMarkerFlag(centity_t *cent, refEntity_t *ent, const weaponInfo_t *weapon)
 {
 	entityState_t *s1 = &cent->currentState;
@@ -925,7 +960,7 @@ static void CG_DrawMineMarkerFlag(centity_t *cent, refEntity_t *ent, const weapo
 	}
 	else
 	{
-		cent->lerpFrame.backlerp = 1.0 - (float)(cg.time - cent->lerpFrame.oldFrameTime) / (cent->lerpFrame.frameTime - cent->lerpFrame.oldFrameTime);
+		cent->lerpFrame.backlerp = 1.0f - (float)(cg.time - cent->lerpFrame.oldFrameTime) / (cent->lerpFrame.frameTime - cent->lerpFrame.oldFrameTime);
 	}
 
 	ent->frame = cent->lerpFrame.frame + s1->frame; // offset
@@ -947,6 +982,10 @@ extern void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi);
 extern void CG_ScanForCrosshairMine(centity_t *cent);
 extern void CG_ScanForCrosshairDyna(centity_t *cent);
 
+/**
+ * @brief CG_Missile
+ * @param cent
+ */
 static void CG_Missile(centity_t *cent)
 {
 	refEntity_t        ent;
@@ -992,7 +1031,7 @@ static void CG_Missile(centity_t *cent)
 	}
 
 	// add dynamic light
-	if (weapon->missileDlight)
+	if (weapon->missileDlight != 0.f)
 	{
 		//trap_R_AddLightToScene(cent->lerpOrigin, weapon->missileDlight,
 		//weapon->missileDlightColor[0], weapon->missileDlightColor[1], weapon->missileDlightColor[2], 0 );
@@ -1015,7 +1054,7 @@ static void CG_Missile(centity_t *cent)
 				{
 					// have a quick fade in so we don't have a pop
 					vec3_t velocity;
-					int    volume = flytime > 375 ? 255 : (75.f / ((float)flytime - 300.f)) * 255;
+					int    volume = flytime > 375 ? 255 : (int)((75.f / ((float)flytime - 300.f)) * 255);
 
 					BG_EvaluateTrajectoryDelta(&cent->currentState.pos, cg.time, velocity, qfalse, -1);
 					trap_S_AddLoopingSound(cent->lerpOrigin, velocity, weapon->missileSound, volume, 0);
@@ -1080,7 +1119,7 @@ static void CG_Missile(centity_t *cent)
 	}
 	else
 	{
-		team_t missileTeam = cent->currentState.weapon == WP_LANDMINE ? cent->currentState.teamNum % 4 : cent->currentState.teamNum;
+		team_t missileTeam = cent->currentState.weapon == WP_LANDMINE ? (team_t)(cent->currentState.teamNum % 4) : (team_t)cent->currentState.teamNum;
 
 		ent.hModel = weapon->missileModel;
 
@@ -1210,14 +1249,14 @@ static void CG_Missile(centity_t *cent)
 		}
 #endif
 
-		if (VectorNormalize2(delta, ent.axis[0]) == 0)
+		if (VectorNormalize2(delta, ent.axis[0]) == 0.f)
 		{
 			ent.axis[0][2] = 1;
 		}
 	}
 	break;
 	default:
-		if (VectorNormalize2(s1->pos.trDelta, ent.axis[0]) == 0)
+		if (VectorNormalize2(s1->pos.trDelta, ent.axis[0]) == 0.f)
 		{
 			ent.axis[0][2] = 1;
 		}
@@ -1251,19 +1290,25 @@ static void CG_Missile(centity_t *cent)
 // capture and hold flag
 static animation_t multi_flagpoleAnims[] =
 {
-	{ 0, "", 0,   1,   0,   1000 / 15, 1000 / 15 },                  // (no flags, idle)
-	{ 0, "", 0,   15,  0,   1000 / 15, 1000 / 15 },                  // (axis flag rising)
-	{ 0, "", 490, 15,  0,   1000 / 15, 1000 / 15 },                  // (american flag rising)
-	{ 0, "", 20,  211, 211, 1000 / 15, 1000 / 15 },                  // (axis flag raised)
-	{ 0, "", 255, 211, 211, 1000 / 15, 1000 / 15 },                  // (american flag raised)
-	{ 0, "", 235, 15,  0,   1000 / 15, 1000 / 15 },                  // (axis switching to american)
-	{ 0, "", 470, 15,  0,   1000 / 15, 1000 / 15 },                  // (american switching to axis)
-	{ 0, "", 510, 15,  0,   1000 / 15, 1000 / 15 },                  // (axis flag falling)
-	{ 0, "", 530, 15,  0,   1000 / 15, 1000 / 15 }                   // (american flag falling)
+	{ 0, "", 0,   1,   0,   1000 / 15, 1000 / 15, 0, 0, 0, 0, 0, 0 },                  // (no flags, idle)
+	{ 0, "", 0,   15,  0,   1000 / 15, 1000 / 15, 0, 0, 0, 0, 0, 0 },                  // (axis flag rising)
+	{ 0, "", 490, 15,  0,   1000 / 15, 1000 / 15, 0, 0, 0, 0, 0, 0 },                  // (american flag rising)
+	{ 0, "", 20,  211, 211, 1000 / 15, 1000 / 15, 0, 0, 0, 0, 0, 0 },                  // (axis flag raised)
+	{ 0, "", 255, 211, 211, 1000 / 15, 1000 / 15, 0, 0, 0, 0, 0, 0 },                  // (american flag raised)
+	{ 0, "", 235, 15,  0,   1000 / 15, 1000 / 15, 0, 0, 0, 0, 0, 0 },                  // (axis switching to american)
+	{ 0, "", 470, 15,  0,   1000 / 15, 1000 / 15, 0, 0, 0, 0, 0, 0 },                  // (american switching to axis)
+	{ 0, "", 510, 15,  0,   1000 / 15, 1000 / 15, 0, 0, 0, 0, 0, 0 },                  // (axis flag falling)
+	{ 0, "", 530, 15,  0,   1000 / 15, 1000 / 15, 0, 0, 0, 0, 0, 0 }                   // (american flag falling)
 };
 
 extern void CG_RunLerpFrame(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, float speedScale);
 
+/**
+ * @brief CG_TrapSetAnim
+ * @param cent
+ * @param lf
+ * @param newAnim - unused
+ */
 static void CG_TrapSetAnim(centity_t *cent, lerpFrame_t *lf, int newAnim)
 {
 	// transition animation
@@ -1282,12 +1327,11 @@ static void CG_TrapSetAnim(centity_t *cent, lerpFrame_t *lf, int newAnim)
 	lf->animationTime = lf->frameTime + lf->animation->initialLerp;
 }
 
-/*
-==============
-CG_Trap
-    // TODO: change from 'trap' to something else.  'trap' is a misnomer.  it's actually used for other stuff too
-==============
-*/
+/**
+ * @brief CG_Trap
+ * @param cent
+ * @todo change from 'trap' to something else.  'trap' is a misnomer.  it's actually used for other stuff too
+ */
 static void CG_Trap(centity_t *cent)
 {
 	refEntity_t   ent;
@@ -1361,7 +1405,7 @@ static void CG_Corona(centity_t *cent)
 	}
 
 	dot = DotProduct(dir, cg.refdef_current->viewaxis[0]);
-	if (dot >= -0.6)         // assumes ~90 deg fov - changed value to 0.6 (screen corner at 90 fov)
+	if (dot >= -0.6f)         // assumes ~90 deg fov - changed value to 0.6 (screen corner at 90 fov)
 	{
 		behind = qtrue;     // use the dot to at least do trivial removal of those behind you.
 	}
@@ -1382,7 +1426,7 @@ static void CG_Corona(centity_t *cent)
 
 		CG_Trace(&tr, cg.refdef_current->vieworg, NULL, NULL, cent->lerpOrigin, -1, MASK_SOLID | CONTENTS_BODY);      // added blockage by players.  not sure how this is going to be since this is their bb, not their model (too much blockage)
 
-		if (tr.fraction == 1)
+		if (tr.fraction == 1.f)
 		{
 			visible = qtrue;
 		}
@@ -1393,14 +1437,12 @@ static void CG_Corona(centity_t *cent)
 
 // func_explosive
 
-/*
-===============
-CG_Explosive
-    This is currently almost exactly the same as CG_Mover
-    It's split out so that any changes or experiments are
-    unattached to anything else.
-===============
-*/
+/**
+ * @brief This is currently almost exactly the same as CG_Mover
+ * It's split out so that any changes or experiments are
+ * unattached to anything else.
+ * @param cent
+ */
 static void CG_Explosive(centity_t *cent)
 {
 	refEntity_t   ent;
@@ -1440,6 +1482,7 @@ static void CG_Explosive(centity_t *cent)
 /**
  * @brief This is currently almost exactly the same as CG_Mover
  * It's split out so that any changes or experiments are unattached to anything else.
+ * @param cent
  */
 static void CG_Constructible(centity_t *cent)
 {
@@ -1478,6 +1521,10 @@ static void CG_Constructible(centity_t *cent)
 	}
 }
 
+/**
+ * @brief CG_Mover
+ * @param cent
+ */
 static void CG_Mover(centity_t *cent)
 {
 	refEntity_t   ent;
@@ -1555,7 +1602,7 @@ static void CG_Mover(centity_t *cent)
 			}
 			else
 			{
-				cent->lerpFrame.backlerp = 1.0 - (float)(cg.time - cent->lerpFrame.oldFrameTime) / (cent->lerpFrame.frameTime - cent->lerpFrame.oldFrameTime);
+				cent->lerpFrame.backlerp = 1.0f - (float)(cg.time - cent->lerpFrame.oldFrameTime) / (cent->lerpFrame.frameTime - cent->lerpFrame.oldFrameTime);
 			}
 
 			ent.frame = cent->lerpFrame.frame + s1->frame;  // offset
@@ -1604,6 +1651,10 @@ static void CG_Mover(centity_t *cent)
 	}
 }
 
+/**
+ * @brief CG_Mover_PostProcess
+ * @param cent
+ */
 void CG_Mover_PostProcess(centity_t *cent)
 {
 	refEntity_t mg42base;
@@ -1687,7 +1738,8 @@ void CG_Mover_PostProcess(centity_t *cent)
 }
 
 /**
- * @brief new beam entity, for rope like stuff...
+ * @brief New beam entity, for rope like stuff...
+ * @param cent
  */
 void CG_Beam_2(centity_t *cent)
 {
@@ -1720,6 +1772,7 @@ void CG_Beam_2(centity_t *cent)
 
 /**
  * @brief Also called as an event
+ * @param cent
  */
 void CG_Beam(centity_t *cent)
 {
@@ -1744,9 +1797,9 @@ void CG_Beam(centity_t *cent)
 		break;
 	}
 
-	ent.shaderRGBA[0] = s1->angles2[0] * 255;
-	ent.shaderRGBA[1] = s1->angles2[1] * 255;
-	ent.shaderRGBA[2] = s1->angles2[2] * 255;
+	ent.shaderRGBA[0] = (byte)(s1->angles2[0] * 255);
+	ent.shaderRGBA[1] = (byte)(s1->angles2[1] * 255);
+	ent.shaderRGBA[2] = (byte)(s1->angles2[2] * 255);
 	ent.shaderRGBA[3] = 255;
 
 	ent.renderfx = RF_NOSHADOW;
@@ -1755,6 +1808,10 @@ void CG_Beam(centity_t *cent)
 	trap_R_AddRefEntityToScene(&ent);
 }
 
+/**
+ * @brief CG_Portal
+ * @param cent
+ */
 static void CG_Portal(centity_t *cent)
 {
 	refEntity_t   ent;
@@ -1774,12 +1831,16 @@ static void CG_Portal(centity_t *cent)
 	CrossProduct(ent.axis[0], ent.axis[1], ent.axis[2]);
 	ent.reType  = RT_PORTALSURFACE;
 	ent.frame   = s1->frame;    // rotation speed
-	ent.skinNum = s1->clientNum / 256.0 * 360;    // roll offset
+	ent.skinNum = s1->clientNum / 256 * 360;    // roll offset
 
 	// add to refresh list
 	trap_R_AddRefEntityToScene(&ent);
 }
 
+/**
+ * @brief CG_Prop
+ * @param cent
+ */
 static void CG_Prop(centity_t *cent)
 {
 	refEntity_t   ent;
@@ -1815,9 +1876,9 @@ static void CG_Prop(centity_t *cent)
 		}
 
 		// modify angles from bobbing
-		angles[ROLL]  += scale * cg.bobfracsin * 0.005;
-		angles[YAW]   += scale * cg.bobfracsin * 0.01;
-		angles[PITCH] += cg.xyspeed * cg.bobfracsin * 0.005;
+		angles[ROLL]  += scale * cg.bobfracsin * 0.005f;
+		angles[YAW]   += scale * cg.bobfracsin * 0.01f;
+		angles[PITCH] += cg.xyspeed * cg.bobfracsin * 0.005f;
 
 		VectorCopy(angles, cent->lerpAngles);
 
@@ -1952,6 +2013,11 @@ cabinetTag_t cabinetInfo[CT_MAX] =
 	},
 };
 
+/**
+ * @brief CG_Cabinet
+ * @param cent
+ * @param type
+ */
 void CG_Cabinet(centity_t *cent, cabinetType_t type)
 {
 	refEntity_t cabinet;
@@ -1984,7 +2050,7 @@ void CG_Cabinet(centity_t *cent, cabinetType_t type)
 	}
 	else
 	{
-		cnt = MAX_CABINET_TAGS * (cent->currentState.onFireStart / (float)cent->currentState.onFireEnd);
+		cnt = MAX_CABINET_TAGS * (cent->currentState.onFireStart / cent->currentState.onFireEnd);
 		if (cnt == 0 && cent->currentState.onFireStart)
 		{
 			cnt = 1;
@@ -2012,6 +2078,9 @@ void CG_Cabinet(centity_t *cent, cabinetType_t type)
 	trap_R_AddRefEntityToScene(&cabinet);
 }
 
+/**
+ * @brief CG_SetupCabinets
+ */
 void CG_SetupCabinets(void)
 {
 	int i, j;
@@ -2028,6 +2097,12 @@ void CG_SetupCabinets(void)
 
 /**
  * @brief Also called by client movement prediction code
+ * @param in
+ * @param moverNum
+ * @param fromTime
+ * @param toTime
+ * @param out
+ * @param outDeltaAngles
  */
 void CG_AdjustPositionForMover(const vec3_t in, int moverNum, int fromTime, int toTime, vec3_t out, vec3_t outDeltaAngles)
 {
@@ -2101,9 +2176,13 @@ void CG_AdjustPositionForMover(const vec3_t in, int moverNum, int fromTime, int 
 		VectorCopy(deltaAngles, outDeltaAngles);
 	}
 
-	// note: origin changes when on a rotating object
+	// NOTE: origin changes when on a rotating object
 }
 
+/**
+ * @brief CG_InterpolateEntityPosition
+ * @param cent
+ */
 static void CG_InterpolateEntityPosition(centity_t *cent)
 {
 	vec3_t current, next;
@@ -2136,6 +2215,10 @@ static void CG_InterpolateEntityPosition(centity_t *cent)
 	cent->lerpAngles[2] = LerpAngle(current[2], next[2], cg.frameInterpolation);
 }
 
+/**
+ * @brief CG_CalcEntityLerpPositions
+ * @param cent
+ */
 void CG_CalcEntityLerpPositions(centity_t *cent)
 {
 	if (cent->interpolate && cent->currentState.pos.trType == TR_INTERPOLATE)
@@ -2169,6 +2252,11 @@ void CG_CalcEntityLerpPositions(centity_t *cent)
 	}
 }
 
+/**
+ * @brief CG_ProcessEntity
+ * @param cent
+ * @note All case aren't handle
+ */
 static void CG_ProcessEntity(centity_t *cent)
 {
 	switch (cent->currentState.eType)
@@ -2272,6 +2360,10 @@ static void CG_ProcessEntity(centity_t *cent)
 	}
 }
 
+/**
+ * @brief CG_AddCEntity
+ * @param cent
+ */
 void CG_AddCEntity(centity_t *cent)
 {
 	// event-only entities will have been dealt with already
@@ -2292,6 +2384,13 @@ void CG_AddCEntity(centity_t *cent)
 	CG_ProcessEntity(cent);
 }
 
+/**
+ * @brief CG_AddLinkedEntity
+ * @param cent
+ * @param ignoreframe
+ * @param atTime
+ * @return
+ */
 qboolean CG_AddLinkedEntity(centity_t *cent, qboolean ignoreframe, int atTime)
 {
 	entityState_t *s1;
@@ -2358,7 +2457,7 @@ qboolean CG_AddLinkedEntity(centity_t *cent, qboolean ignoreframe, int atTime)
 				return qfalse;
 			}
 
-			cent->backdelta = sParent->pos.trDuration ? (atTime - sParent->pos.trTime) / ((float)sParent->pos.trDuration) : 0;
+			cent->backdelta = sParent->pos.trDuration ? (atTime - sParent->pos.trTime) / sParent->pos.trDuration : 0;
 
 			if (cent->backdelta < 0.f)
 			{
@@ -2386,14 +2485,14 @@ qboolean CG_AddLinkedEntity(centity_t *cent, qboolean ignoreframe, int atTime)
 			}
 
 			VectorMA(cent->backspline->segments[pos].start, frac, cent->backspline->segments[pos].v_norm, v);
-			if (sParent->apos.trBase[0])
+			if (sParent->apos.trBase[0] != 0.f)
 			{
 				BG_LinearPathOrigin2(sParent->apos.trBase[0], &cent->backspline, &cent->backdelta, v, cent->back);
 			}
 
 			VectorCopy(v, cent->lerpOrigin);
 
-			if (s1->angles2[0])
+			if (s1->angles2[0] != 0.f)
 			{
 				BG_LinearPathOrigin2(s1->angles2[0], &cent->backspline, &cent->backdelta, v, cent->back);
 			}
@@ -2436,7 +2535,7 @@ qboolean CG_AddLinkedEntity(centity_t *cent, qboolean ignoreframe, int atTime)
 
 			VectorCopy(v, cent->lerpOrigin);
 
-			if (s1->angles2[0] && cent->backspline)
+			if (s1->angles2[0] != 0.f && cent->backspline)
 			{
 				BG_LinearPathOrigin2(s1->angles2[0], &cent->backspline, &cent->backdelta, v, cent->back);
 			}
@@ -2479,11 +2578,11 @@ qboolean CG_AddLinkedEntity(centity_t *cent, qboolean ignoreframe, int atTime)
 	return qtrue;
 }
 
-/*
-==================
-CG_AddEntityToTag
-==================
-*/
+/**
+ * @brief CG_AddEntityToTag
+ * @param cent
+ * @return
+ */
 qboolean CG_AddEntityToTag(centity_t *cent)
 {
 	centity_t   *centParent;
@@ -2566,12 +2665,11 @@ qboolean CG_AddEntityToTag(centity_t *cent)
 	return qtrue;
 }
 
-/*
-===============
-CG_AddPacketEntities
-===============
-*/
-
+/**
+ * @brief CG_AddCEntity_Filter
+ * @param cent
+ * @return
+ */
 qboolean CG_AddCEntity_Filter(centity_t *cent)
 {
 	if (cent->processedFrame == cg.clientFrame
@@ -2597,6 +2695,9 @@ qboolean CG_AddCEntity_Filter(centity_t *cent)
 	return qtrue;
 }
 
+/**
+ * @brief CG_AddPacketEntities
+ */
 void CG_AddPacketEntities(void)
 {
 	int num;
@@ -2623,11 +2724,11 @@ void CG_AddPacketEntities(void)
 
 	// the auto-rotating items will all have the same axis
 	cg.autoAnglesSlow[0] = 0;
-	cg.autoAnglesSlow[1] = (cg.time & 4095) * 360 / 4095.0;
+	cg.autoAnglesSlow[1] = (cg.time & 4095) * 360 / 4095.0f;
 	cg.autoAnglesSlow[2] = 0;
 
 	cg.autoAngles[0] = 0;
-	cg.autoAngles[1] = (cg.time & 2047) * 360 / 2048.0;
+	cg.autoAngles[1] = (cg.time & 2047) * 360 / 2048.0f;
 	cg.autoAngles[2] = 0;
 
 	cg.autoAnglesFast[0] = 0;
@@ -2666,6 +2767,11 @@ void CG_AddPacketEntities(void)
 	CG_UpdateFlamethrowerSounds();
 }
 
+/**
+ * @brief CGRefEntityToTag
+ * @param ent
+ * @param tag
+ */
 void CGRefEntityToTag(refEntity_t *ent, tag_t *tag)
 {
 	int i;
@@ -2677,6 +2783,11 @@ void CGRefEntityToTag(refEntity_t *ent, tag_t *tag)
 	}
 }
 
+/**
+ * @brief CGTagToRefEntity
+ * @param ent
+ * @param tag
+ */
 void CGTagToRefEntity(refEntity_t *ent, tag_t *tag)
 {
 	int i;
@@ -2688,6 +2799,18 @@ void CGTagToRefEntity(refEntity_t *ent, tag_t *tag)
 	}
 }
 
+/**
+ * @brief CG_AttachBitsToTank
+ * @param tank
+ * @param mg42base
+ * @param mg42upper
+ * @param mg42gun
+ * @param player
+ * @param flash
+ * @param playerangles
+ * @param tagName
+ * @param browning
+ */
 void CG_AttachBitsToTank(centity_t *tank, refEntity_t *mg42base, refEntity_t *mg42upper, refEntity_t *mg42gun, refEntity_t *player, refEntity_t *flash, vec_t *playerangles, const char *tagName, qboolean browning)
 {
 	memset(mg42base, 0, sizeof(refEntity_t));
