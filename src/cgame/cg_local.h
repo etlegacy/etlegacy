@@ -2355,7 +2355,7 @@ const char *CG_Argv(int arg);
 float CG_Cvar_Get(const char *cvar);
 
 char *CG_generateFilename(void);
-int CG_findClientNum(char *s);
+int CG_findClientNum(const char *s);
 void CG_printConsoleString(const char *str);
 
 void CG_LoadObjectiveData(void);
@@ -2369,7 +2369,7 @@ void CG_QueueMusic(void);
 
 void CG_UpdateCvars(void);
 
-qboolean CG_execFile(char *filename);
+qboolean CG_execFile(const char *filename);
 int CG_CrosshairPlayer(void);
 int CG_LastAttacker(void);
 void CG_KeyEvent(int key, qboolean down);

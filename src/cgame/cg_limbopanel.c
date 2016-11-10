@@ -153,9 +153,9 @@ panel_button_t rightLimboPannel =
 	NULL,
 	{ 440,                    0,  200, SCREEN_HEIGHT },
 	{ 0,                      0,  0,   0, 0, 0, 0, 0 },
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
+	NULL,                     // font
+	NULL,                     // keyDown
+	NULL,                     // keyUp
 	BG_PanelButtonsRender_Img,
 	NULL,
 	0
