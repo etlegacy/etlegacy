@@ -169,7 +169,7 @@ void GL_TextureMode(const char *string)
 
 /*
 ===============
-R_SumOfUsedImages
+R_SumOfUsedImages // FIXME: add this to R_ImageList_f output?
 ===============
 */
 int R_SumOfUsedImages(void)
@@ -1445,8 +1445,25 @@ void R_DeleteTextures(void)
 	{
 		qglDeleteTextures(1, &tr.images[i]->texnum);
 	}
-	Com_Memset(tr.images, 0, sizeof(tr.images));
 
+	// free all images for real
+	for (i = 0; i < tr.numImages; i++)
+	{
+		// note r_cache and r_cachedShaders use malloc, not ri.Hunk_Alloc
+		if (tr.images[i])
+		{
+			if (r_cache->integer && r_cacheShaders->integer)
+			{
+				free(tr.images[i]);
+			}
+			else
+			{   // untested
+				//ri.Free(tr.images[i])
+			}
+		}
+	}
+
+	Com_Memset(tr.images, 0, sizeof(tr.images));
 	tr.numImages = 0;
 
 	Com_Memset(glState.currenttextures, 0, sizeof(glState.currenttextures));
