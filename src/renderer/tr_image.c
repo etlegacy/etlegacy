@@ -48,7 +48,7 @@ static image_t *hashTable[FILE_HASH_SIZE];
 // be read into this buffer. In order to keep things as fast as possible,
 // we'll give it a starting value, which will account for the majority of
 // images, but allow it to grow if the buffer isn't big enough
-#define R_IMAGE_BUFFER_SIZE     (512 * 512 * 4)       // 512 x 512 x 32bit
+#define R_IMAGE_BUFFER_SIZE     (512 * 512 * 8)       // old value :  512 x 512 x 4 (32bit)
 
 int  imageBufferSize[BUFFER_MAX_TYPES] = { 0, 0, 0 };
 void *imageBufferPtr[BUFFER_MAX_TYPES] = { NULL, NULL, NULL };
@@ -113,7 +113,7 @@ void R_GammaCorrect(byte *buffer, int bufSize)
 
 typedef struct
 {
-	char *name;
+	const char *name;
 	int minimize, maximize;
 } textureMode_t;
 
@@ -425,25 +425,25 @@ static void R_MipMap2(unsigned *in, int inWidth, int inHeight)
 			for (k = 0 ; k < 4 ; k++)
 			{
 				total =
-				    1 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
-				    2 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
-				    2 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
-				    1 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
+					1 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
+					1 * ((byte *)&in[((i * 2 - 1) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
 
-				    2 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
-				    4 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
-				    4 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
-				    2 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
+					4 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
+					4 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
 
-				    2 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
-				    4 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
-				    4 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
-				    2 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
+					4 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
+					4 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2 + 1) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k] +
 
-				    1 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
-				    2 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
-				    2 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
-				    1 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k];
+					1 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 - 1) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2) & inWidthMask)])[k] +
+					2 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 + 1) & inWidthMask)])[k] +
+					1 * ((byte *)&in[((i * 2 + 2) & inHeightMask) * inWidth + ((j * 2 + 2) & inWidthMask)])[k];
 				outpix[k] = total / 36;
 			}
 		}
@@ -563,7 +563,7 @@ static void Upload32(unsigned *data,
                      qboolean noCompress)
 {
 	int      samples;
-	unsigned *scaledBuffer    = NULL;
+	unsigned *scaledBuffer = NULL;
 	unsigned *resampledBuffer = NULL;
 	int      scaled_width, scaled_height;
 	int      c;
@@ -586,7 +586,7 @@ static void Upload32(unsigned *data,
 
 	if (scaled_width != width || scaled_height != height)
 	{
-		resampledBuffer = R_GetImageBuffer(scaled_width * scaled_height * 4, BUFFER_RESAMPLED, "resample");
+		resampledBuffer = ri.Hunk_AllocateTempMemory(sizeof(unsigned) * scaled_width * scaled_height * 4);
 		ResampleTexture(data, width, height, resampledBuffer, scaled_width, scaled_height);
 		data   = resampledBuffer;
 		width  = scaled_width;
@@ -620,8 +620,7 @@ static void Upload32(unsigned *data,
 		scaled_height >>= 1;
 	}
 
-	//scaledBuffer = ri.Hunk_AllocateTempMemory( sizeof( unsigned ) * scaled_width * scaled_height );
-	scaledBuffer = R_GetImageBuffer(sizeof(unsigned) * scaled_width * scaled_height, BUFFER_SCALED, "resample");
+	scaledBuffer = ri.Hunk_AllocateTempMemory(sizeof(unsigned) * scaled_width * scaled_height);
 
 	// scan the texture for each channel's max values
 	// and verify if the alpha channel is being used or not
@@ -841,6 +840,16 @@ done:
 	}
 
 	GL_CheckErrors();
+
+	if (scaledBuffer != 0)
+	{
+		ri.Hunk_FreeTempMemory(scaledBuffer);
+	}
+	if (resampledBuffer != 0)
+	{
+		//free(resampledBuffer);
+		ri.Hunk_FreeTempMemory(resampledBuffer);
+	}
 }
 
 /*
@@ -1153,8 +1162,8 @@ static void R_CreateDlightImage(void)
 				b = 0;
 			}
 			data[y][x][0]         =
-			    data[y][x][1]     =
-			        data[y][x][2] = b;
+				data[y][x][1]     =
+					data[y][x][2] = b;
 			data[y][x][3]         = 255;
 		}
 	}
@@ -1206,8 +1215,8 @@ static void R_CreateFogImage(void)
 			}
 
 			data[(y * FOG_S + x) * 4 + 0]         =
-			    data[(y * FOG_S + x) * 4 + 1]     =
-			        data[(y * FOG_S + x) * 4 + 2] = 255;
+				data[(y * FOG_S + x) * 4 + 1]     =
+					data[(y * FOG_S + x) * 4 + 2] = 255;
 			data[(y * FOG_S + x) * 4 + 3]         = alpha; //%	255*d;
 		}
 	}
@@ -1291,8 +1300,8 @@ void R_CreateBuiltinImages(void)
 		for (y = 0 ; y < DEFAULT_SIZE ; y++)
 		{
 			data[y][x][0]         =
-			    data[y][x][1]     =
-			        data[y][x][2] = tr.identityLightByte;
+				data[y][x][1]     =
+					data[y][x][2] = tr.identityLightByte;
 			data[y][x][3]         = 255;
 		}
 	}
@@ -1496,7 +1505,7 @@ compatable with our normal parsing rules.
 */
 static char *CommaParse(char **data_p)
 {
-	int         c     = 0, len = 0;
+	int         c = 0, len = 0;
 	char        *data = *data_p;
 	static char com_token[MAX_TOKEN_CHARS];
 
