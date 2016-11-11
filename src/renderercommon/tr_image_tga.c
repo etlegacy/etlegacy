@@ -89,6 +89,7 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height, byte alpha
 
 	if (length < 18)
 	{
+		ri.FS_FreeFile(buffer.v);
 		Ren_Drop("LoadTGA: header too short (%s)\n", name);
 	}
 
@@ -154,6 +155,8 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height, byte alpha
 	{
 		if (buf_p + targa_header.id_length > end)
 		{
+			ri.Free(targa_rgba);
+			ri.FS_FreeFile(buffer.v);
 			Ren_Drop("LoadTGA: header too short (%s)\n", name);
 		}
 
@@ -164,6 +167,8 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height, byte alpha
 	{
 		if (buf_p + columns * rows * targa_header.pixel_size / 8 > end)
 		{
+			ri.Free(targa_rgba);
+			ri.FS_FreeFile(buffer.v);
 			Ren_Drop("LoadTGA: file truncated (%s)\n", name);
 		}
 
@@ -176,7 +181,6 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height, byte alpha
 				unsigned char red, green, blue, alpha;
 				switch (targa_header.pixel_size)
 				{
-
 				case 8:
 					blue      = *buf_p++;
 					green     = blue;
@@ -186,7 +190,6 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height, byte alpha
 					*pixbuf++ = blue;
 					*pixbuf++ = alphaByte;
 					break;
-
 				case 24:
 					blue      = *buf_p++;
 					green     = *buf_p++;
