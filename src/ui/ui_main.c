@@ -51,7 +51,7 @@ static const serverFilter_t serverFilters[] =
 
 static const int numServerFilters = sizeof(serverFilters) / sizeof(serverFilter_t);
 
-static char *netnames[] =
+static const char *netnames[] =
 {
 	"???",
 	"UDP",
@@ -7925,8 +7925,8 @@ cvars
 typedef struct
 {
 	vmCvar_t *vmCvar;
-	char *cvarName;
-	char *defaultString;
+	const char *cvarName;
+	const char *defaultString;
 	int cvarFlags;
 	int modificationCount;          // for tracking changes
 } cvarTable_t;
@@ -8167,7 +8167,7 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "cg_locations",                        "3",                          CVAR_ARCHIVE                   },
 };
 
-int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
+const int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
 
 void UI_RegisterCvars(void)
 {

@@ -488,7 +488,7 @@ void CG_DemoClick(int key, qboolean down)
 				cgs.demoCamera.startLean = qtrue;
 			}
 
-			cgs.demoCamera.renderingFreeCam ^= 1;
+			cgs.demoCamera.renderingFreeCam ^= qtrue;
 
 			if (cgs.demoCamera.renderingFreeCam)
 			{

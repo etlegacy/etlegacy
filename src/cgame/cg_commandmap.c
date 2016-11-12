@@ -42,8 +42,8 @@ qboolean ccInitial = qtrue;
 
 /**
  * @brief CG_TransformToCommandMapCoord
- * @param coord_x
- * @param coord_y
+ * @param[in] coord_x
+ * @param[in] coord_y
  */
 void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y)
 {
@@ -55,7 +55,7 @@ void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y)
 
 /**
  * @brief CG_CurLayerForZ
- * @param z
+ * @param[in] z
  * @return
  */
 int CG_CurLayerForZ(int z)
@@ -78,8 +78,8 @@ int CG_CurLayerForZ(int z)
 
 /**
  * @brief CG_ScissorEntIsCulled
- * @param mEnt
- * @param scissor
+ * @param[in] mEnt
+ * @param[in] scissor
  * @return
  */
 static qboolean CG_ScissorEntIsCulled(mapEntityData_t *mEnt, mapScissor_t *scissor)
@@ -114,8 +114,8 @@ static qboolean CG_ScissorEntIsCulled(mapEntityData_t *mEnt, mapScissor_t *sciss
 
 /**
  * @brief CG_ScissorPointIsCulled
- * @param vec
- * @param scissor
+ * @param[in] vec
+ * @param[in] scissor
  * @return
  */
 static qboolean CG_ScissorPointIsCulled(vec2_t vec, mapScissor_t *scissor)
@@ -149,7 +149,7 @@ static qboolean CG_ScissorPointIsCulled(vec2_t vec, mapScissor_t *scissor)
 }
 
 /**
- * @brief calculate the scaled (zoomed) yet unshifted coordinate for
+ * @brief Calculate the scaled (zoomed) yet unshifted coordinate for
  * each map entity within the automap
  */
 void CG_TransformAutomapEntity(void)
@@ -169,7 +169,7 @@ void CG_TransformAutomapEntity(void)
 
 /**
  * @brief CG_AdjustAutomapZoom
- * @param zoomIn
+ * @param[in] zoomIn
  */
 void CG_AdjustAutomapZoom(int zoomIn)
 {
@@ -202,9 +202,9 @@ void CG_AdjustAutomapZoom(int zoomIn)
 
 /**
  * @brief CG_ParseMapEntity
- * @param mapEntityCount
- * @param offset
- * @param team
+ * @param[in] mapEntityCount
+ * @param[in,out] offset
+ * @param[in] team
  */
 void CG_ParseMapEntity(int *mapEntityCount, int *offset, team_t team)
 {
@@ -266,8 +266,8 @@ void CG_ParseMapEntity(int *mapEntityCount, int *offset, team_t team)
 
 /**
  * @brief CG_ParseMapEntityInfo
- * @param axis_number
- * @param allied_number
+ * @param[in] axis_number
+ * @param[in] allied_number
  */
 void CG_ParseMapEntityInfo(int axis_number, int allied_number)
 {
@@ -293,11 +293,11 @@ static vec2_t   gridStartCoord, gridStep;
 
 /**
  * @brief CG_DrawGrid
- * @param x
- * @param y
- * @param w
- * @param h
- * @param scissor
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] scissor
  */
 static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scissor)
 {
@@ -513,16 +513,16 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 
 /**
  * @brief CG_DrawMapEntity
- * @param mEnt
- * @param x
- * @param y
- * @param w
- * @param h
- * @param mEntFilter
- * @param scissor
- * @param interactive
- * @param snap
- * @param icon_size
+ * @param[in] mEnt
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] mEntFilter
+ * @param[in] scissor
+ * @param[in] interactive
+ * @param[in] snap
+ * @param[in] icon_size
  */
 void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h, int mEntFilter, mapScissor_t *scissor, qboolean interactive, snapshot_t *snap, int icon_size)
 {
@@ -596,7 +596,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 				mEnt->automapTransformed[1] = ((cg.predictedPlayerEntity.lerpOrigin[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * h * scissor->zoomFactor;
 			}
 
-			mEnt->yaw = cg.predictedPlayerState.viewangles[YAW];
+			mEnt->yaw = (int)cg.predictedPlayerState.viewangles[YAW];
 		}
 		else if (ci->team == snap->ps.persistant[PERS_TEAM] && cent->currentValid)
 		{
@@ -611,7 +611,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 				mEnt->automapTransformed[1] = ((cent->lerpOrigin[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * h * scissor->zoomFactor;
 			}
 
-			mEnt->yaw = cent->lerpAngles[YAW];
+			mEnt->yaw = (int)cent->lerpAngles[YAW];
 		}
 		else
 		{
@@ -675,7 +675,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 				msec = 0;
 			}
 
-			reviveClr[3] = .5f + .5f * ((sin(sqrt(msec) * 25 * 2 * M_PI) + 1) * .5f);
+			reviveClr[3] = .5f + .5f * (float)((sin(sqrt((double)msec) * 25 * 2 * M_PI) + 1) * 0.5);
 
 			trap_R_SetColor(reviveClr);
 			CG_DrawPic(icon_pos[0] + 3, icon_pos[1] + 3, icon_extends[0] - 3, icon_extends[1] - 3, cgs.media.medicIcon);
@@ -844,95 +844,95 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			customimage = mEnt->team == TEAM_AXIS ? oidInfo->customimageaxis : oidInfo->customimageallies;
 		}
 
-        switch(mEnt->type)
-        {
-        case ME_CONSTRUCT:
-            if (mEntFilter & CC_FILTER_CONSTRUCTIONS)
-            {
-                return;
-            }
-            pic = mEnt->team == TEAM_AXIS ? cgs.media.ccConstructIcon[0] : cgs.media.ccConstructIcon[1];
-            break;
-        case ME_TANK:
-            if (mEntFilter & CC_FILTER_OBJECTIVES)
-            {
-                return;
-            }
-            pic = cgs.media.ccTankIcon; // FIXME: this is churchill - add jagdpanther?
-            break;
-        case ME_TANK_DEAD:
-            if (mEntFilter & CC_FILTER_OBJECTIVES)
-            {
-                return;
-            }
-            pic = cgs.media.ccTankIcon; // FIXME: this is churchill - add jagdpanther?
-            trap_R_SetColor(colorRed);
-            break;
-        case ME_COMMANDMAP_MARKER:
-        	pic = 0;
-            break;
-        case ME_DESTRUCT_2:
-            pic = 0;
-            break;
-        default:
-            if (mEntFilter & CC_FILTER_DESTRUCTIONS)
-            {
-                return;
-            }
-            pic = mEnt->team == TEAM_AXIS ? cgs.media.ccDestructIcon[cent->currentState.effect1Time][0] : cgs.media.ccDestructIcon[cent->currentState.effect1Time][1];
-            break;
-        }
+		switch (mEnt->type)
+		{
+		case ME_CONSTRUCT:
+			if (mEntFilter & CC_FILTER_CONSTRUCTIONS)
+			{
+				return;
+			}
+			pic = mEnt->team == TEAM_AXIS ? cgs.media.ccConstructIcon[0] : cgs.media.ccConstructIcon[1];
+			break;
+		case ME_TANK:
+			if (mEntFilter & CC_FILTER_OBJECTIVES)
+			{
+				return;
+			}
+			pic = cgs.media.ccTankIcon; // FIXME: this is churchill - add jagdpanther?
+			break;
+		case ME_TANK_DEAD:
+			if (mEntFilter & CC_FILTER_OBJECTIVES)
+			{
+				return;
+			}
+			pic = cgs.media.ccTankIcon; // FIXME: this is churchill - add jagdpanther?
+			trap_R_SetColor(colorRed);
+			break;
+		case ME_COMMANDMAP_MARKER:
+			pic = 0;
+			break;
+		case ME_DESTRUCT_2:
+			pic = 0;
+			break;
+		default:
+			if (mEntFilter & CC_FILTER_DESTRUCTIONS)
+			{
+				return;
+			}
+			pic = mEnt->team == TEAM_AXIS ? cgs.media.ccDestructIcon[cent->currentState.effect1Time][0] : cgs.media.ccDestructIcon[cent->currentState.effect1Time][1];
+			break;
+		}
 
-        {
-            int info = 0;
+		{
+			int info = 0;
 
-            if (oidInfo)
-            {
-                info = oidInfo->spawnflags;
-            }
+			if (oidInfo)
+			{
+				info = oidInfo->spawnflags;
+			}
 
-            if (info & (1 << 4))
-            {
-                if (mEntFilter & CC_FILTER_OBJECTIVES)
-                {
-                    return;
-                }
-            }
-            if (info & (1 << 5))
-            {
-                if (mEntFilter & CC_FILTER_HACABINETS)
-                {
-                    return;
-                }
-            }
-            if (info & (1 << 6))
-            {
-                if (mEnt->type == ME_DESTRUCT_2)
-                {
-                    pic = mEnt->team == TEAM_AXIS ? cgs.media.ccCmdPost[0] : cgs.media.ccCmdPost[1];
-                }
-                if (mEntFilter & CC_FILTER_CMDPOST)
-                {
-                    return;
-                }
-            }
-        }
+			if (info & (1 << 4))
+			{
+				if (mEntFilter & CC_FILTER_OBJECTIVES)
+				{
+					return;
+				}
+			}
+			if (info & (1 << 5))
+			{
+				if (mEntFilter & CC_FILTER_HACABINETS)
+				{
+					return;
+				}
+			}
+			if (info & (1 << 6))
+			{
+				if (mEnt->type == ME_DESTRUCT_2)
+				{
+					pic = mEnt->team == TEAM_AXIS ? cgs.media.ccCmdPost[0] : cgs.media.ccCmdPost[1];
+				}
+				if (mEntFilter & CC_FILTER_CMDPOST)
+				{
+					return;
+				}
+			}
+		}
 
-        if (customimage)
-        {
-            pic = customimage;
-        }
+		if (customimage)
+		{
+			pic = customimage;
+		}
 
-        if (scissor)
-        {
-            icon_pos[0] = mEnt->automapTransformed[0] - scissor->tl[0] + x;
-            icon_pos[1] = mEnt->automapTransformed[1] - scissor->tl[1] + y;
-        }
-        else
-        {
-            icon_pos[0] = x + mEnt->transformed[0];
-            icon_pos[1] = y + mEnt->transformed[1];
-        }
+		if (scissor)
+		{
+			icon_pos[0] = mEnt->automapTransformed[0] - scissor->tl[0] + x;
+			icon_pos[1] = mEnt->automapTransformed[1] - scissor->tl[1] + y;
+		}
+		else
+		{
+			icon_pos[0] = x + mEnt->transformed[0];
+			icon_pos[1] = y + mEnt->transformed[1];
+		}
 
 #define CONST_ICON_NORMAL_SIZE 32.f
 #define CONST_ICON_EXPANDED_SIZE 48.f
@@ -1088,7 +1088,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 /**
  * @brief CG_DisguiseMapCheck
- * @param mEnt
+ * @param[in] mEnt
  * @return
  */
 qboolean CG_DisguiseMapCheck(mapEntityData_t *mEnt)
@@ -1120,15 +1120,15 @@ static vec4_t clrBorderblend = { 0.f, 0.f, 0.f, 0.75f };
 
 /**
  * @brief CG_DrawMap
- * @param x
- * @param y
- * @param w
- * @param h
- * @param mEntFilter
- * @param scissor
- * @param interactive
- * @param alpha
- * @param borderblend
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] mEntFilter
+ * @param[in] scissor
+ * @param[in] interactive
+ * @param[in] alpha
+ * @param[in] borderblend
  */
 void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t *scissor, qboolean interactive, float alpha, qboolean borderblend)
 {
@@ -1303,7 +1303,7 @@ CG_DrawMap_draw:
 		{
 			// draw a arrow when free-spectating.
 			// FIXME: don't reuse the ccMortarTargetArrow
-			CG_DrawRotatedPic(pos[0] - (size[0] * 0.5f), pos[1] - (size[1] * 0.5f), size[0], size[1], cgs.media.ccMortarTargetArrow, (0.625 - (cg.predictedPlayerState.viewangles[YAW] - 180.f) / 360.f));
+			CG_DrawRotatedPic(pos[0] - (size[0] * 0.5f), pos[1] - (size[1] * 0.5f), size[0], size[1], cgs.media.ccMortarTargetArrow, (0.625f - (cg.predictedPlayerState.viewangles[YAW] - 180.f) / 360.f));
 		}
 		else
 		{
@@ -1324,7 +1324,7 @@ CG_DrawMap_draw:
 				CG_DrawPic(pos[0] - (size[0] * 0.5f), pos[1] - (size[1] * 0.5f), size[0], size[1], classInfo->icon);
 			}
 
-			CG_DrawRotatedPic(pos[0] - (size[0] * 0.5f) - 1, pos[1] - (size[1] * 0.5f) - 1, size[0] + 2, size[1] + 2, classInfo->arrow, (0.5 - (cg.predictedPlayerState.viewangles[YAW] - 180.f) / 360.f));
+			CG_DrawRotatedPic(pos[0] - (size[0] * 0.5f) - 1, pos[1] - (size[1] * 0.5f) - 1, size[0] + 2, size[1] + 2, classInfo->arrow, (0.5f - (cg.predictedPlayerState.viewangles[YAW] - 180.f) / 360.f));
 		}
 	}
 }
@@ -1461,10 +1461,10 @@ void CG_DrawExpandedAutoMap(void)
 
 /**
  * @brief CG_DrawAutoMap
- * @param x
- * @param y
- * @param w
- * @param h
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
  */
 void CG_DrawAutoMap(float x, float y, float w, float h)
 {
@@ -1572,16 +1572,16 @@ void CG_DrawAutoMap(float x, float y, float w, float h)
 
 /**
  * @brief CG_DrawSpawnPointInfo
- * @param px
- * @param py
- * @param pw
- * @param ph
- * @param draw
- * @param scissor
- * @param expand
+ * @param[in] px
+ * @param[in] py
+ * @param[in] pw
+ * @param[in] ph
+ * @param[in] draw
+ * @param[in] scissor
+ * @param[in] expand
  * @return
  */
-int CG_DrawSpawnPointInfo(int px, int py, int pw, int ph, qboolean draw, mapScissor_t *scissor, int expand)
+int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand)
 {
 	team_t team = CG_LimboPanel_GetRealTeam();
 	char   buffer[64];
@@ -1610,7 +1610,7 @@ int CG_DrawSpawnPointInfo(int px, int py, int pw, int ph, qboolean draw, mapScis
 
 		if (((cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR) &&
 		     (cg.spawnTeams[i] != team)) ||
-		    ((cg.spawnTeams[i] & 256) && !changetime))
+		    ((cg.spawnTeams[i] & 256) && changetime == 0.f))
 		{
 			continue;
 		}
@@ -1661,7 +1661,7 @@ int CG_DrawSpawnPointInfo(int px, int py, int pw, int ph, qboolean draw, mapScis
 		point[0] -= (icon_extends[0] * (39 / 128.f));
 		point[1] += (icon_extends[1] * (31 / 128.f));
 
-		if (changetime)
+		if (changetime != 0.f)
 		{
 			if (draw)
 			{
@@ -1750,15 +1750,15 @@ int CG_DrawSpawnPointInfo(int px, int py, int pw, int ph, qboolean draw, mapScis
 
 /**
  * @brief CG_DrawMortarMarker
- * @param px
- * @param py
- * @param pw
- * @param ph
- * @param draw
- * @param scissor
- * @param expand
+ * @param[in] px
+ * @param[in] py
+ * @param[in] pw
+ * @param[in] ph
+ * @param[in] draw - unused
+ * @param[in] scissor - unused
+ * @param[in] expand
  */
-void CG_DrawMortarMarker(int px, int py, int pw, int ph, qboolean draw, mapScissor_t *scissor, int expand)
+void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand)
 {
 	if (IS_MORTAR_WEAPON_SET(cg.lastFiredWeapon) && cg.mortarImpactTime >= 0)
 	{
@@ -1926,9 +1926,9 @@ rectDef_t cg_highlightTextRect;
 
 /**
  * @brief CG_CommandMap_SetHighlightText
- * @param text
- * @param x
- * @param y
+ * @param[in] text
+ * @param[in] x
+ * @param[in] y
  */
 void CG_CommandMap_SetHighlightText(const char *text, float x, float y)
 {

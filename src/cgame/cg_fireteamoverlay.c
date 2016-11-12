@@ -174,7 +174,7 @@ void CG_ParseFireteams()
 		cg.fireTeams[i].leader = atoi(s);
 
 		s                    = Info_ValueForKey(p, "p");
-		cg.fireTeams[i].priv = atoi(s);
+		cg.fireTeams[i].priv = (qboolean)atoi(s);
 
 		s = Info_ValueForKey(p, "c");
 		Q_strncpyz(hexbuffer + 2, s, 9);
@@ -428,7 +428,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 
 			if (!locStr[i][1] || !*locStr[i])
 			{
-				locStr[i] = "";
+				locStr[i] = 0;
 			}
 
 			locwidth = CG_Text_Width_Ext(locStr[i], 0.2f, 0, FONT_TEXT);

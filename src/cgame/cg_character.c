@@ -40,6 +40,9 @@ char bigTextBuffer[100000];
 /**
  * @brief Parse gib models
  * @details Read a configuration file containing gib models for use with this character.
+ * @param modelPath
+ * @param character
+ * @return
  */
 static qboolean CG_ParseGibModels(char *modelPath, bg_character_t *character)
 {
@@ -60,7 +63,7 @@ static qboolean CG_ParseGibModels(char *modelPath, bg_character_t *character)
 		return qfalse;
 	}
 
-	if (len >= sizeof(bigTextBuffer) - 1)
+	if (len >= (int)sizeof(bigTextBuffer) - 1)
 	{
 		CG_Printf("File %s.gibs too long\n", modelPath);
 		trap_FS_FCloseFile(f);
@@ -100,8 +103,14 @@ static qboolean CG_ParseGibModels(char *modelPath, bg_character_t *character)
 }
 
 /**
+
+ */
+/**
  * @brief Parse HUD head config
  * @details Parse HUD head config
+ * @param[in] filename
+ * @param[out] hha
+ * @return
  */
 static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
 {
@@ -119,7 +128,7 @@ static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
 		return qfalse;
 	}
 
-	if (len >= sizeof(bigTextBuffer) - 1)
+	if (len >= (int)sizeof(bigTextBuffer) - 1)
 	{
 		CG_Printf("File %s too long\n", filename);
 		trap_FS_FCloseFile(f);
@@ -162,15 +171,15 @@ static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
 			break;
 		}
 
-		fps = atof(token);
+		fps = (float)atof(token);
 
-		if (fps == 0)
+		if (fps == 0.f)
 		{
 			fps = 1;
 		}
 
-		hha[i].frameLerp   = 1000 / fps;
-		hha[i].initialLerp = 1000 / fps;
+		hha[i].frameLerp   = (int)(1000 / fps);
+		hha[i].initialLerp = (int)(1000 / fps);
 
 		token = COM_Parse(&text_p);     // looping frames
 
@@ -203,6 +212,7 @@ static qboolean CG_ParseHudHeadConfig(const char *filename, animation_t *hha)
 /**
  * @brief Calculate move speeds
  * @details Calculate movement speeds.
+ * @param[in] character
  */
 static void CG_CalcMoveSpeeds(bg_character_t *character)
 {
@@ -291,6 +301,10 @@ static void CG_CalcMoveSpeeds(bg_character_t *character)
 /**
  * @brief Parse animation files
  * @details Read in all the configuration and script files for this model.
+ * @param[in] character
+ * @param[in] animationGroup
+ * @param[in] animationScript
+ * @return
  */
 static qboolean CG_ParseAnimationFiles(bg_character_t *character, const char *animationGroup, const char *animationScript)
 {
@@ -314,7 +328,7 @@ static qboolean CG_ParseAnimationFiles(bg_character_t *character, const char *an
 		return qfalse;
 	}
 
-	if (len >= sizeof(bigTextBuffer) - 1)
+	if (len >= (int)sizeof(bigTextBuffer) - 1)
 	{
 		CG_Printf("File %s is too long\n", animationScript);
 		trap_FS_FCloseFile(f);
@@ -336,6 +350,10 @@ static qboolean CG_ParseAnimationFiles(bg_character_t *character, const char *an
  * @brief Check for existing animation model information
  * @details If this player model has already been parsed, then use the existing information.
  *          Otherwise, set the modelInfo pointer to the first free slot.
+ * @param[in] animationGroup
+ * @param[in] animationScript
+ * @param[in] animModelInfo
+ * @return
  */
 static qboolean CG_CheckForExistingAnimModelInfo(const char *animationGroup, const char *animationScript, animModelInfo_t **animModelInfo)
 {
@@ -376,7 +394,12 @@ static qboolean CG_CheckForExistingAnimModelInfo(const char *animationGroup, con
 
 /**
  * @brief Register accessories
- * @details  Register model accessories.
+ * @details Register model accessories.
+ * @param[in] modelName
+ * @param[in,out] model
+ * @param[in] skinname
+ * @param[out] skin
+ * @return
  */
 static qboolean CG_RegisterAcc(const char *modelName, int *model, const char *skinname, qhandle_t *skin)
 {
@@ -427,6 +450,9 @@ static int cg_numHeadAccessories = sizeof(cg_headAccessories) / sizeof(cg_headAc
 /**
  * @brief Register character
  * @details Register character.
+ * @param[in] characterFile
+ * @param[in] character
+ * @return
  */
 qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *character)
 {
@@ -550,6 +576,9 @@ qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *charact
 /**
  * @brief Character for clientinfo
  * @details Define character for clientinfo.
+ * @param[in] ci
+ * @param[in] cent
+ * @return
  */
 bg_character_t *CG_CharacterForClientinfo(clientInfo_t *ci, centity_t *cent)
 {
@@ -591,6 +620,8 @@ bg_character_t *CG_CharacterForClientinfo(clientInfo_t *ci, centity_t *cent)
 /**
  * @brief Character for playerstate
  * @details Define character for playerstate.
+ * @param[in] ps
+ * @return
  */
 bg_character_t *CG_CharacterForPlayerstate(playerState_t *ps)
 {

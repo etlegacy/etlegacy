@@ -45,13 +45,9 @@ markPoly_t cg_activeMarkPolys;          // double linked list
 markPoly_t *cg_freeMarkPolys;           // single linked list
 markPoly_t cg_markPolys[MAX_MARK_POLYS];
 
-/*
-===================
-CG_InitMarkPolys
-
-This is called at startup and for tournement restarts
-===================
-*/
+/**
+ * @brief This is called at startup and for tournement restarts
+ */
 void CG_InitMarkPolys(void)
 {
 	int        i;
@@ -69,11 +65,10 @@ void CG_InitMarkPolys(void)
 	}
 }
 
-/*
-==================
-CG_FreeMarkPoly
-==================
-*/
+/**
+ * @brief CG_FreeMarkPoly
+ * @param[in,out] le
+ */
 void CG_FreeMarkPoly(markPoly_t *le)
 {
 	if (!le->prevMark || !le->nextMark)
@@ -90,14 +85,22 @@ void CG_FreeMarkPoly(markPoly_t *le)
 	cg_freeMarkPolys = le;
 }
 
-/*
-CG_ImpactMark()
-
-projection is a normal and distance (not a plane, but rather how far to project)
-it MUST be normalized!
-if lifeTime < 0, then generate a temporary mark
-*/
-
+/**
+ * @brief CG_ImpactMark
+ * @param[in] markShader
+ * @param[in] origin
+ * @param[in] projection
+ * @param[in] radius
+ * @param[in] orientation
+ * @param[in] r
+ * @param[in] g
+ * @param[in] b
+ * @param[in] a
+ * @param[in] lifeTime
+ * @note TODO: projection is a normal and distance (not a plane, but rather how far to project)
+ * it MUST be normalized!
+ * if lifeTime < 0, then generate a temporary mark
+ */
 void CG_ImpactMark(qhandle_t markShader, vec3_t origin, vec4_t projection, float radius, float orientation, float r, float g, float b, float a, int lifeTime)
 {
 	int    i;
@@ -158,11 +161,9 @@ void CG_ImpactMark(qhandle_t markShader, vec3_t origin, vec4_t projection, float
 	trap_R_ProjectDecal(markShader, 4, points, projection, color, lifeTime, fadeTime);
 }
 
-/*
-===============
-CG_AddMarks
-===============
-*/
+/**
+ * @brief CG_AddMarks
+ */
 void CG_AddMarks(void)
 {
 	int        j;
@@ -191,23 +192,23 @@ void CG_AddMarks(void)
 
 		// fade all marks out with time
 		t = mp->time + mp->duration - cg.time;
-		if (t < (float)mp->duration / 2.0)
+		if (t < (float)mp->duration / 2.0f)
 		{
-			fade = (int)(255.0 * (float)t / ((float)mp->duration / 2.0));
+			fade = (int)(255.0f * (float)t / ((float)mp->duration / 2.0f));
 			if (mp->alphaFade)
 			{
 				for (j = 0 ; j < mp->poly.numVerts ; j++)
 				{
-					mp->verts[j].modulate[3] = fade;
+					mp->verts[j].modulate[3] = (byte)fade;
 				}
 			}
 			else
 			{
 				for (j = 0 ; j < mp->poly.numVerts ; j++)
 				{
-					mp->verts[j].modulate[0] = mp->color[0] * fade;
-					mp->verts[j].modulate[1] = mp->color[1] * fade;
-					mp->verts[j].modulate[2] = mp->color[2] * fade;
+					mp->verts[j].modulate[0] = (byte)(mp->color[0] * fade);
+					mp->verts[j].modulate[1] = (byte)(mp->color[1] * fade);
+					mp->verts[j].modulate[2] = (byte)(mp->color[2] * fade);
 				}
 			}
 		}

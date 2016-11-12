@@ -39,6 +39,13 @@
 polyBuffer_t cg_polyBuffers[MAX_PB_BUFFERS];
 qboolean     cg_polyBuffersInuse[MAX_PB_BUFFERS];
 
+/**
+ * @brief CG_PB_FindFreePolyBuffer
+ * @param[in] shader
+ * @param[in] numVerts
+ * @param[in] numIndicies
+ * @return 
+ */
 polyBuffer_t *CG_PB_FindFreePolyBuffer(qhandle_t shader, int numVerts, int numIndicies)
 {
 	int i;
@@ -91,12 +98,18 @@ polyBuffer_t *CG_PB_FindFreePolyBuffer(qhandle_t shader, int numVerts, int numIn
 	return NULL;
 }
 
+/**
+ * @brief CG_PB_ClearPolyBuffers
+ */
 void CG_PB_ClearPolyBuffers(void)
 {
 	// changed numIndicies and numVerts to be reset in CG_PB_FindFreePolyBuffer, not here (should save the cache misses we were prolly getting)
 	memset(cg_polyBuffersInuse, 0, sizeof(cg_polyBuffersInuse));
 }
 
+/**
+ * @brief CG_PB_RenderPolyBuffers
+ */
 void CG_PB_RenderPolyBuffers(void)
 {
 	int i;

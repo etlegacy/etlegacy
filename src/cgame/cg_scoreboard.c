@@ -36,7 +36,7 @@
 #include "cg_local.h"
 
 // colors and fonts for overlays
-vec4_t SB_bg = { 0.16, 0.2f, 0.17f, 0.8f };
+vec4_t SB_bg = { 0.16f, 0.2f, 0.17f, 0.8f };
 vec4_t SB_bg2 = { 0.0f, 0.0f, 0.0f, 0.6f };
 vec4_t SB_border = { 1.0f, 1.0f, 1.0f, 0.3f };
 vec4_t SB_text = { 0.6f, 0.6f, 0.6f, 1.0f };
@@ -64,12 +64,17 @@ WM_DrawObjectives
 /**
  * @brief Draw a client country flag
  *
- * All flags are stored in one single image where they are aligned
+ * @details All flags are stored in one single image where they are aligned
  * into a grid of 16x16 fields. Each flag has an id number starting
  * with 0 at the top left corner and ending with 255 in the bottom right
  * corner. Client's flag id is stored in the "uci" field of configstrings.
  *
  * @ingroup GeoIP
+ * @param[in] x
+ * @param[in] y
+ * @param[in] fade
+ * @param[in] clientNum
+ * @return
  */
 static qboolean CG_DrawFlag(float x, float y, float fade, int clientNum)
 {
@@ -96,6 +101,14 @@ static qboolean CG_DrawFlag(float x, float y, float fade, int clientNum)
 	return qfalse;
 }
 
+/**
+ * @brief WM_DrawObjectives
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] fade - unused
+ * @return
+ */
 int WM_DrawObjectives(int x, int y, int width, float fade)
 {
 	const char *s;
@@ -163,7 +176,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 
 		if (cgs.timelimit > 0.0f)
 		{
-			msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime); // 60.f * 1000.f
+			msec = (int)(cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime); // 60.f * 1000.f
 
 			seconds  = msec / 1000;
 			mins     = seconds / 60;
@@ -193,7 +206,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		}
 		else
 		{
-			s = va("%s   ^7%2.0f:%i%i", CG_TranslateString("MISSION TIME:"), (float)mins, tens, seconds);     // float cast to line up with reinforce time
+			s = va("%s   ^7%2.0f:%i%i", CG_TranslateString("MISSION TIME:"), (double)mins, tens, seconds);     // double cast to line up with reinforce time
 		}
 
 		CG_Text_Paint_Ext(x, y, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
@@ -248,6 +261,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 			}
 		}
 
+		// TODO: handle missing case ?
 		switch (cgs.gametype)
 		{
 		case GT_WOLF_STOPWATCH:
@@ -291,6 +305,11 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 	return y;
 }
 
+/**
+ * @brief SkillNumForClass
+ * @param[in] classNum
+ * @return
+ */
 int SkillNumForClass(int classNum)
 {
 	switch (classNum)
@@ -312,6 +331,8 @@ int SkillNumForClass(int classNum)
 
 /**
  * @brief Real printable charater count
+ * @param[in] str
+ * @return
  */
 int CG_drawStrlen(const char *str)
 {
@@ -332,6 +353,15 @@ int CG_drawStrlen(const char *str)
 	return(cnt);
 }
 
+/**
+ * @brief WM_DrawClientScore
+ * @param[in] x
+ * @param[in] y
+ * @param[in] score
+ * @param color - nused
+ * @param[in] fade
+ * @param[in] livesleft
+ */
 static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float fade, qboolean livesleft)
 {
 	int          maxchars = 16, offset = 0;
@@ -350,7 +380,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 
 	if (score->client == cg.snap->ps.clientNum)
 	{
-		hcolor[3] = fade * 0.3;
+		hcolor[3] = fade * 0.3f;
 		VectorSet(hcolor, .5f, .5f, .2f);           // yellow
 
 		CG_FillRect(x - 5, y, (INFO_TOTAL_WIDTH + 5), 15, hcolor);
@@ -424,8 +454,8 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	}
 
 	// draw name
-	CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, ci->name, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
-	maxchars -= CG_Text_Width_Ext(ci->name, 0.24, 0, FONT_TEXT);
+	CG_Text_Paint_Ext(tempx, y, 0.24f, 0.28f, colorWhite, ci->name, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+	maxchars -= CG_Text_Width_Ext(ci->name, 0.24f, 0, FONT_TEXT);
 
 	// draw medals
 	buf[0] = '\0';
@@ -441,7 +471,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	// CG_Text_Paint_Ext will draw everything if maxchars <= 0
 	if (maxchars > 0)
 	{
-		CG_Text_Paint_Ext(tempx + (CG_drawStrlen(ci->name) * 8 + 8), y, 0.24, 0.28, colorWhite, buf, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + (CG_drawStrlen(ci->name) * 8 + 8), y, 0.24f, 0.28f, colorWhite, buf, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 
 	tempx += INFO_PLAYER_WIDTH - offset;
@@ -469,9 +499,9 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 			p = va("%4i", score->ping);
 		}
 
-		w = CG_Text_Width_Ext(s, 0.24, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(tempx + totalwidth - w - INFO_LATENCY_WIDTH, y, 0.24, 0.28, colorYellow, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
-		CG_Text_Paint_Ext(tempx + totalwidth - INFO_LATENCY_WIDTH, y, 0.24, 0.28, colorWhite, p, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		w = CG_Text_Width_Ext(s, 0.24f, 0, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + totalwidth - w - INFO_LATENCY_WIDTH, y, 0.24f, 0.28f, colorYellow, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + totalwidth - INFO_LATENCY_WIDTH, y, 0.24f, 0.28f, colorWhite, p, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 
 		return;
 	}
@@ -495,11 +525,11 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 #ifdef FEATURE_RATING
 	if (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR)
 	{
-		CG_Text_Paint_Ext(tempx + 8, y, 0.24, 0.28, colorWhite, va("^7%5.2f", score->rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + 8, y, 0.24f, 0.28f, colorWhite, va("^7%5.2f", (double)score->rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	else
 	{
-		CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx, y, 0.24f, 0.28f, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 #else
 	CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
@@ -516,15 +546,15 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 
 	if (score->ping == -1)
 	{
-		CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorRed, "^1CONN^7", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx, y, 0.24f, 0.28f, colorRed, "^1CONN^7", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	else if (score->scoreflags & 2)
 	{
-		CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, " BOT", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx, y, 0.24f, 0.28f, colorWhite, " BOT", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	else
 	{
-		CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, va("%4i", score->ping), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx, y, 0.24f, 0.28f, colorWhite, va("%4i", score->ping), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	tempx += INFO_LATENCY_WIDTH;
 
@@ -541,11 +571,16 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	}
 }
 
+/**
+ * @brief WM_TimeToString
+ * @param[in] msec
+ * @return
+ */
 const char *WM_TimeToString(float msec)
 {
 	int mins, seconds, tens;
 
-	seconds  = msec / 1000;
+	seconds  = (int)(msec / 1000);
 	mins     = seconds / 60;
 	seconds -= mins * 60;
 	tens     = seconds / 10;
@@ -554,6 +589,15 @@ const char *WM_TimeToString(float msec)
 	return va("%i:%i%i", mins, tens, seconds);
 }
 
+/**
+ * @brief WM_DrawClientScore_Small
+ * @param[in] x
+ * @param[in] y
+ * @param[in] score
+ * @param color - unused
+ * @param[in] fade
+ * @param[in] livesleft
+ */
 static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color, float fade, qboolean livesleft)
 {
 	int          maxchars = 23, offset = 0;
@@ -572,7 +616,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 	if (score->client == cg.snap->ps.clientNum)
 	{
-		hcolor[3] = fade * 0.3;
+		hcolor[3] = fade * 0.3f;
 		VectorSet(hcolor, .5f, .5f, .2f); // yellow
 
 		CG_FillRect(x - 5, y, (INFO_TOTAL_WIDTH + 5), 11, hcolor);
@@ -633,8 +677,8 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	}
 
 	// draw name
-	CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, ci->name, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
-	maxchars -= CG_Text_Width_Ext(ci->name, 0.20, 0, FONT_TEXT);
+	CG_Text_Paint_Ext(tempx, y, 0.20f, 0.25f, colorWhite, ci->name, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+	maxchars -= CG_Text_Width_Ext(ci->name, 0.20f, 0, FONT_TEXT);
 
 	// draw medals
 	buf[0] = '\0';
@@ -649,7 +693,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 	if (maxchars > 0)
 	{
-		CG_Text_Paint_Ext(tempx + (CG_drawStrlen(ci->name) * 8 + 8), y, 0.20, 0.25, colorWhite, buf, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + (CG_drawStrlen(ci->name) * 8 + 8), y, 0.20f, 0.25f, colorWhite, buf, 0, maxchars, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 
 	tempx += INFO_PLAYER_WIDTH - offset;
@@ -676,9 +720,9 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 			s = CG_TranslateString("^3SPECTATOR");
 			p = va("%4i", score->ping);
 		}
-		w = CG_Text_Width_Ext(s, 0.20, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(tempx + totalwidth - w - INFO_LATENCY_WIDTH, y, 0.20, 0.25, colorYellow, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
-		CG_Text_Paint_Ext(tempx + totalwidth - INFO_LATENCY_WIDTH, y, 0.20, 0.25, colorWhite, p, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		w = CG_Text_Width_Ext(s, 0.20f, 0, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + totalwidth - w - INFO_LATENCY_WIDTH, y, 0.20f, 0.25f, colorYellow, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + totalwidth - INFO_LATENCY_WIDTH, y, 0.20f, 0.25f, colorWhite, p, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		return;
 	}
 	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cg.snap->ps.pm_type == PM_INTERMISSION)
@@ -696,11 +740,11 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 #ifdef FEATURE_RATING
 	if (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR)
 	{
-		CG_Text_Paint_Ext(tempx + 8, y, 0.20, 0.25, colorWhite, va("^7%5.2f", score->rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + 8, y, 0.20f, 0.25f, colorWhite, va("^7%5.2f", score->rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	else
 	{
-		CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx, y, 0.20f, 0.25f, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 #else
 	CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, va("^7%6i", score->score), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
@@ -717,15 +761,15 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 	if (score->ping == -1)
 	{
-		CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorRed, "^1CONN^7", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx, y, 0.20f, 0.25f, colorRed, "^1CONN^7", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	else if (score->scoreflags & 2)
 	{
-		CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, " BOT", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx, y, 0.20f, 0.25f, colorWhite, " BOT", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	else
 	{
-		CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, va("%4i", score->ping), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx, y, 0.20f, 0.25f, colorWhite, va("%4i", score->ping), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 
 	tempx += INFO_LATENCY_WIDTH;
@@ -744,6 +788,13 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	}
 }
 
+/**
+ * @brief WM_DrawInfoLine
+ * @param x - unused
+ * @param[in] y
+ * @param fade - unused
+ * @return
+ */
 static int WM_DrawInfoLine(int x, int y, float fade)
 {
 	int        w, defender, winner;
@@ -806,16 +857,26 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 	return y + INFO_LINE_HEIGHT + 6;
 }
 
+/**
+ * @brief WM_TeamScoreboard
+ * @param[in] x
+ * @param[in] y
+ * @param[in] team
+ * @param[in] fade
+ * @param[in] maxrows
+ * @param[in] absmaxrows
+ * @return
+ */
 static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows, int absmaxrows)
 {
 	vec4_t     hcolor;
 	float      tempx, tempy;
 	int        i;
-	int        count          = 0;
-	int        width          = INFO_TOTAL_WIDTH;
+	int        count = 0;
+	int        width = INFO_TOTAL_WIDTH;
 	qboolean   use_mini_chars = qfalse, livesleft = qfalse;
-	const char *buffer        = CG_ConfigString(CS_SERVERINFO);
-	const char *str           = Info_ValueForKey(buffer, "g_maxlives");
+	const char *buffer = CG_ConfigString(CS_SERVERINFO);
+	const char *str    = Info_ValueForKey(buffer, "g_maxlives");
 
 	if (str && *str && atoi(str))
 	{
@@ -876,13 +937,13 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 #ifdef FEATURE_RATING
 			if (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR)
 			{
-				if (cgs.mapProb)
+				if (cgs.mapProb != 0.f)
 				{
-					s = va("%s [%.1f%%] [%.1f%%] (%d %s)", CG_TranslateString("AXIS"), cg.axisProb, 100.f * cgs.mapProb, cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+					s = va("%s [%.1f%%] [%.1f%%] (%d %s)", CG_TranslateString("AXIS"), (double)cg.axisProb, (double)(100.f * cgs.mapProb), cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
 				}
 				else
 				{
-					s = va("%s [%.1f%%] (%d %s)", CG_TranslateString("AXIS"), cg.axisProb, cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+					s = va("%s [%.1f%%] (%d %s)", CG_TranslateString("AXIS"), (double)cg.axisProb, cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
 				}
 			}
 			else
@@ -900,13 +961,13 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 #ifdef FEATURE_RATING
 			if (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR)
 			{
-				if (cgs.mapProb)
+				if (cgs.mapProb != 0.f)
 				{
-					s = va("%s [%.1f%%] [%.1f%%] (%d %s)", CG_TranslateString("ALLIES"), cg.alliesProb, 100.f * (1.0f - cgs.mapProb), cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+					s = va("%s [%.1f%%] [%.1f%%] (%d %s)", CG_TranslateString("ALLIES"), (double)cg.alliesProb, (double)(100.f * (1.0f - cgs.mapProb)), cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
 				}
 				else
 				{
-					s = va("%s [%.1f%%] (%d %s)", CG_TranslateString("ALLIES"), cg.alliesProb, cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
+					s = va("%s [%.1f%%] (%d %s)", CG_TranslateString("ALLIES"), (double)cg.alliesProb, cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
 				}
 			}
 			else
@@ -931,7 +992,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	trap_R_SetColor(NULL);
 
 	// draw player info headings
-	CG_Text_Paint_Ext(tempx, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("Name"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+	CG_Text_Paint_Ext(tempx, y + 13, 0.24f, 0.28f, colorWhite, CG_TranslateString("Name"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	tempx += INFO_PLAYER_WIDTH;
 
 	// add some extra space when not showing lives in non-LMS
@@ -940,12 +1001,12 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 		tempx += INFO_LIVES_WIDTH;
 	}
 
-	CG_Text_Paint_Ext(tempx, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("C R"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+	CG_Text_Paint_Ext(tempx, y + 13, 0.24f, 0.28f, colorWhite, CG_TranslateString("C R"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	tempx += INFO_CLASS_WIDTH;
 
 	if (cgs.gametype == GT_WOLF_LMS)
 	{
-		CG_Text_Paint_Ext(tempx + 22, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("Score"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + 22, y + 13, 0.24f, 0.28f, colorWhite, CG_TranslateString("Score"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		tempx += INFO_SCORE_WIDTH;
 	}
 	else
@@ -953,11 +1014,11 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 #ifdef FEATURE_RATING
 		if (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR)
 		{
-			CG_Text_Paint_Ext(tempx + 30, y + 13, 0.24, 0.28, colorWhite, "SR", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(tempx + 30, y + 13, 0.24f, 0.28f, colorWhite, "SR", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 		else
 		{
-			CG_Text_Paint_Ext(tempx + 30, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("XP"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(tempx + 30, y + 13, 0.24f, 0.28f, colorWhite, CG_TranslateString("XP"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 #else
 		CG_Text_Paint_Ext(tempx + 30, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("XP"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
@@ -965,7 +1026,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 		tempx += INFO_XP_WIDTH;
 	}
 
-	CG_Text_Paint_Ext(tempx, y + 13, 0.24, 0.28, colorWhite, CG_TranslateString("Ping"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+	CG_Text_Paint_Ext(tempx, y + 13, 0.24f, 0.28f, colorWhite, CG_TranslateString("Ping"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	tempx += INFO_LATENCY_WIDTH;
 
 	if (cgs.gametype != GT_WOLF_LMS && livesleft)
@@ -1007,7 +1068,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 		{
 			VectorSet(hcolor, 0.f, 0.f, 0.f);  // dark
 		}
-		hcolor[3] = fade * 0.3;
+		hcolor[3] = fade * 0.3f;
 
 		if (use_mini_chars)
 		{
@@ -1030,7 +1091,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 
 	hcolor[3] = 1;
 
-	y = tempy;
+	y = (int)tempy;
 
 	// draw player info
 	VectorSet(hcolor, 1, 1, 1);
@@ -1097,11 +1158,10 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	return y;
 }
 
-/*
-=================
-Draw the normal in-game scoreboard
-=================
-*/
+/**
+ * @brief Draw the normal in-game scoreboard
+ * @return
+ */
 qboolean CG_DrawScoreboard(void)
 {
 	int   x = 20, y = 6, x_right = SCREEN_WIDTH - x - (INFO_TOTAL_WIDTH - 5);

@@ -2234,7 +2234,7 @@ int BG_simpleHintsExpand(int hint, int val);
 int BG_simpleWeaponState(int ws);
 
 // Crosshair support
-void BG_setCrosshair(char *colString, float *col, float alpha, char *cvarName);
+void BG_setCrosshair(char *colString, float *col, float alpha, const char *cvarName);
 
 // Voting
 #define VOTING_DISABLED     ((1 << numVotesAvailable) - 1)

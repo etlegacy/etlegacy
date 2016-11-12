@@ -148,6 +148,9 @@ rankicon_t rankicons[NUM_EXPERIENCE_LEVELS][2][2] =
 	},
 };
 
+/**
+ * @brief CG_LoadRankIcons
+ */
 void CG_LoadRankIcons(void)
 {
 	int i;

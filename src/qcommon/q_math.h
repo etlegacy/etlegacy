@@ -175,8 +175,8 @@ extern vec4_t g_color_table[32];
 #define Q_IsHexColorString(p) (ishex(*(p)) && ishex(*((p) + 1)) && ishex(*((p) + 2)) && ishex(*((p) + 3)) && ishex(*((p) + 4)) && ishex(*((p) + 5)))
 #define Q_HexColorStringHasAlpha(p) (ishex(*((p) + 6)) && ishex(*((p) + 7)))
 
-#define DEG2RAD(a) (((a) * M_PI) / 180.0F)
-#define RAD2DEG(a) (((a) * 180.0f) / M_PI)
+#define DEG2RAD(a) (((a) * M_PI) / 180.0)
+#define RAD2DEG(a) (((a) * 180.0) / M_PI)
 
 struct cplane_s;
 

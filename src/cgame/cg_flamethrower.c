@@ -266,7 +266,7 @@ void CG_FireFlameChunks(centity_t *cent, vec3_t origin, vec3_t angles, float spe
 			f->velSpeed     = FLAME_START_SPEED * (0.5f + 0.5f * speedScale) * (firing ? 1.0f : 4.5f);
 			f->ownerCent    = cent->currentState.number;
 			f->rollAngle    = crandom() * 179;
-			f->ignitionOnly = !firing;
+			f->ignitionOnly = (qboolean)!firing;
 
 			if (!firing)
 			{
@@ -339,7 +339,7 @@ void CG_FireFlameChunks(centity_t *cent, vec3_t origin, vec3_t angles, float spe
 		f->velSpeed     = FLAME_START_SPEED * (0.5f + 0.5f * speedScale);
 		f->ownerCent    = cent->currentState.number;
 		f->rollAngle    = crandom() * 179;
-		f->ignitionOnly = !firing;
+		f->ignitionOnly = (qboolean)!firing;
 		f->speedScale   = speedScale;
 		if (!firing)
 		{
@@ -643,7 +643,7 @@ void CG_MoveFlameChunk(flameChunk_t *f)
 		if (trace.startsolid)
 		{
 			f->velSpeed = 0;
-			f->dead     = 1; // water fixes
+			f->dead     = qtrue; // water fixes
 			break;
 		}
 
@@ -815,13 +815,13 @@ void CG_AddFlameSpriteToScene(flameChunk_t *f, float lifeFrac, float alpha)
 	pPolyBuffer->st[pPolyBuffer->numVerts + 3][0] = 1;
 	pPolyBuffer->st[pPolyBuffer->numVerts + 3][1] = 0;
 
-	pPolyBuffer->indicies[pPolyBuffer->numIndicies + 0] = pPolyBuffer->numVerts + 0;
-	pPolyBuffer->indicies[pPolyBuffer->numIndicies + 1] = pPolyBuffer->numVerts + 1;
-	pPolyBuffer->indicies[pPolyBuffer->numIndicies + 2] = pPolyBuffer->numVerts + 2;
+	pPolyBuffer->indicies[pPolyBuffer->numIndicies + 0] = (unsigned int)pPolyBuffer->numVerts + 0;
+	pPolyBuffer->indicies[pPolyBuffer->numIndicies + 1] = (unsigned int)pPolyBuffer->numVerts + 1;
+	pPolyBuffer->indicies[pPolyBuffer->numIndicies + 2] = (unsigned int)pPolyBuffer->numVerts + 2;
 
-	pPolyBuffer->indicies[pPolyBuffer->numIndicies + 3] = pPolyBuffer->numVerts + 2;
-	pPolyBuffer->indicies[pPolyBuffer->numIndicies + 4] = pPolyBuffer->numVerts + 3;
-	pPolyBuffer->indicies[pPolyBuffer->numIndicies + 5] = pPolyBuffer->numVerts + 0;
+	pPolyBuffer->indicies[pPolyBuffer->numIndicies + 3] = (unsigned int)pPolyBuffer->numVerts + 2;
+	pPolyBuffer->indicies[pPolyBuffer->numIndicies + 4] = (unsigned int)pPolyBuffer->numVerts + 3;
+	pPolyBuffer->indicies[pPolyBuffer->numIndicies + 5] = (unsigned int)pPolyBuffer->numVerts + 0;
 
 	pPolyBuffer->numIndicies += 6;
 	pPolyBuffer->numVerts    += 4;
@@ -862,7 +862,7 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 	float         lightFlameCount;
 	float         lastFuelAlpha;
 
-	isClientFlame = (fHead == centFlameInfo[fHead->ownerCent].lastFlameChunk);
+	isClientFlame = (qboolean)(fHead == centFlameInfo[fHead->ownerCent].lastFlameChunk);
 
 	if ((cg_entities[fHead->ownerCent].currentState.eFlags & EF_FIRING) && (centFlameInfo[fHead->ownerCent].lastFlameChunk == fHead))
 	{

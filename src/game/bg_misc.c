@@ -4543,7 +4543,7 @@ extern void trap_Cvar_Set(const char *var_name, const char *value);
  * @param[in] alpha
  * @param[in] cvarName
  */
-void BG_setCrosshair(char *colString, float *col, float alpha, char *cvarName)
+void BG_setCrosshair(char *colString, float *col, float alpha, const char *cvarName)
 {
 	char *s = colString;
 

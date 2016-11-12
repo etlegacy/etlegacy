@@ -163,9 +163,9 @@ localEntity_t *CG_SmokePuff(const vec3_t p, const vec3_t vel,
 	VectorCopy(p, re->origin);
 	re->customShader = hShader;
 
-	re->shaderRGBA[0] = le->color[0] * 0xff;
-	re->shaderRGBA[1] = le->color[1] * 0xff;
-	re->shaderRGBA[2] = le->color[2] * 0xff;
+	re->shaderRGBA[0] = (byte)(le->color[0] * 0xff);
+	re->shaderRGBA[1] = (byte)(le->color[1] * 0xff);
+	re->shaderRGBA[2] = (byte)(le->color[2] * 0xff);
 	re->shaderRGBA[3] = 0xff;
 
 	re->reType = RT_SPRITE;
@@ -1279,19 +1279,19 @@ void CG_AddSmokeSprites(void)
 		VectorMA(smokesprite->pos, halfSmokeSpriteHeight, up, top);
 		VectorMA(smokesprite->pos, -halfSmokeSpriteHeight, up, bottom);
 
-		color[0] = smokesprite->colour[0] * 0xff;
-		color[1] = smokesprite->colour[1] * 0xff;
-		color[2] = smokesprite->colour[2] * 0xff;
-		color[3] = smokesprite->colour[3] * 0xff;
+		color[0] = (byte)(smokesprite->colour[0] * 0xff);
+		color[1] = (byte)(smokesprite->colour[1] * 0xff);
+		color[2] = (byte)(smokesprite->colour[2] * 0xff);
+		color[3] = (byte)(smokesprite->colour[3] * 0xff);
 
 		// fadeout
 		if (smokesprite->dist > (radius * .5f * .8f))
 		{
-			color[3] = (smokesprite->colour[3] -  smokesprite->colour[3] * ((smokesprite->dist - (radius * .5f * .8f)) / ((radius * .5f) - (radius * .5f * .8f)))) * 0xff;
+			color[3] = (byte)(smokesprite->colour[3] - smokesprite->colour[3] * ((smokesprite->dist - (radius * .5f * .8f)) / ((radius * .5f) - (radius * .5f * .8f)))) * 0xff;
 		}
 		else
 		{
-			color[3] = smokesprite->colour[3] * 0xff;
+			color[3] = (byte)(smokesprite->colour[3] * 0xff);
 		}
 
 		VectorMA(top, halfSmokeSpriteWidth, right, verts[0].xyz);

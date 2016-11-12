@@ -37,8 +37,13 @@
 
 #ifdef FEATURE_EDV
 
-#define ADDLINE_WIDTH   1.5f
+#define ADDLINE_WIDTH 1.5f
 
+/**
+ * @brief CG_RunBinding
+ * @param[in] key
+ * @param[in] down
+ */
 void CG_RunBinding(int key, qboolean down)
 {
 	char buf[MAX_STRING_TOKENS];
@@ -59,6 +64,12 @@ void CG_RunBinding(int key, qboolean down)
 	CG_RunBindingBuf(key, down, buf);
 }
 
+/**
+ * @brief CG_RunBindingBuf
+ * @param[in] key
+ * @param[in] down
+ * @param[in,out] buf
+ */
 void CG_RunBindingBuf(int key, qboolean down, char *buf)
 {
 	if (!buf[0])
@@ -149,6 +160,13 @@ void CG_RunBindingBuf(int key, qboolean down, char *buf)
 	trap_SendConsoleCommand(va("%s\n", buf));
 }
 
+/**
+ * @brief CG_DrawLine
+ * @param[in] start
+ * @param[in] end
+ * @param[in] color
+ * @param[in] shader
+ */
 void CG_DrawLine(vec3_t start, vec3_t end, vec4_t color, qhandle_t shader)
 {
 	polyBuffer_t *pb;
@@ -163,10 +181,10 @@ void CG_DrawLine(vec3_t start, vec3_t end, vec4_t color, qhandle_t shader)
 		return;
 	}
 
-	bcolor[0] = color[0] * 255.f;
-	bcolor[1] = color[1] * 255.f;
-	bcolor[2] = color[2] * 255.f;
-	bcolor[3] = color[3] * 255.f;
+	bcolor[0] = (byte)(color[0] * 255.f);
+	bcolor[1] = (byte)(color[1] * 255.f);
+	bcolor[2] = (byte)(color[2] * 255.f);
+	bcolor[3] = (byte)(color[3] * 255.f);
 
 	vert = pb->numVerts;
 
@@ -203,17 +221,22 @@ void CG_DrawLine(vec3_t start, vec3_t end, vec4_t color, qhandle_t shader)
 
 	pb->numVerts = vert + 4;
 
-	pb->indicies[pb->numIndicies++] = vert + 2;
-	pb->indicies[pb->numIndicies++] = vert + 0;
-	pb->indicies[pb->numIndicies++] = vert + 1;
+	pb->indicies[pb->numIndicies++] = (unsigned int)(vert + 2);
+	pb->indicies[pb->numIndicies++] = (unsigned int)(vert + 0);
+	pb->indicies[pb->numIndicies++] = (unsigned int)(vert + 1);
 
-	pb->indicies[pb->numIndicies++] = vert + 1;
-	pb->indicies[pb->numIndicies++] = vert + 3;
-	pb->indicies[pb->numIndicies++] = vert + 2;
+	pb->indicies[pb->numIndicies++] = (unsigned int)(vert + 1);
+	pb->indicies[pb->numIndicies++] = (unsigned int)(vert + 3);
+	pb->indicies[pb->numIndicies++] = (unsigned int)(vert + 2);
 }
 
 #define ERROR_PREFIX "^1ERROR: "
 
+/**
+ * @brief CG_EDV_WeaponCam
+ * @param[in] cent
+ * @param[in] ent
+ */
 void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 {
 
@@ -347,6 +370,9 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 extern pmove_t cg_pmove; // cg_predict.c
 extern void CG_TraceCapsule_World(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask);   // cg_predict.c
 
+/**
+ * @brief CG_EDV_RunInput
+ */
 void CG_EDV_RunInput(void)
 {
 	playerState_t edv_ps;
@@ -463,8 +489,8 @@ void CG_EDV_RunInput(void)
 
 	// added speed cvar
 	edv_ps.speed            = demo_freecamspeed.integer;
-	edv_ps.runSpeedScale    = 0.8;
-	edv_ps.sprintSpeedScale = 1.1;
+	edv_ps.runSpeedScale    = 0.8f;
+	edv_ps.sprintSpeedScale = 1.1f;
 	edv_ps.crouchSpeedScale = 0.25;
 
 	VectorSet(edv_ps.delta_angles, 0, 0, 0);
@@ -501,11 +527,14 @@ void CG_EDV_RunInput(void)
 	VectorCopy(edv_ps.viewangles, cg.refdefViewAngles);
 }
 
-// draws a tracer from the demo-player to the camera
-// so you always know in which direction you have to
-// travel to be back in the pvs
-// set cg_railtrailtime to 10 or smth -> no uses a hardcoded "10" value
-// so the dumb users don't have to mess with the railtrailtime
+/**
+ * @brief CG_DrawPVShint
+ * @details Draws a tracer from the demo-player to the camera
+ * so you always know in which direction you have to
+ * travel to be back in the pvs
+ * set cg_railtrailtime to 10 or smth -> no uses a hardcoded "10" value
+ * so the dumb users don't have to mess with the railtrailtime
+ */
 void CG_DrawPVShint(void)
 {
 	//vec4_t color; // static green

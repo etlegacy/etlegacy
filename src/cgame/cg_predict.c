@@ -47,15 +47,11 @@ static centity_t *cg_solidFTEntities[MAX_ENTITIES_IN_SNAPSHOT];
 static int       cg_numTriggerEntities;
 static centity_t *cg_triggerEntities[MAX_ENTITIES_IN_SNAPSHOT];
 
-/*
-====================
-CG_BuildSolidList
-
-When a new cg.snap has been set, this function builds a sublist
-of the entities that are actually solid, to make for more
-efficient collision detection
-====================
-*/
+/**
+ * @brief When a new cg.snap has been set, this function builds a sublist
+ * of the entities that are actually solid, to make for more
+ * efficient collision detection
+ */
 void CG_BuildSolidList(void)
 {
 	int           i;
@@ -89,7 +85,7 @@ void CG_BuildSolidList(void)
 			continue;
 		}
 
-
+		// TODO: Handle missing case ?
 		switch (ent->eType)
 		{
 		case ET_ITEM:
@@ -125,7 +121,12 @@ void CG_BuildSolidList(void)
 	}
 }
 
-// client-side hitbox prediction code modified for cgame
+/**
+ * @brief Client-side hitbox prediction code modified for cgame
+ * @param[in] hitEnt
+ * @param def - unused
+ * @return
+ */
 float CG_ClientHitboxMaxZ(entityState_t *hitEnt, float def)
 {
 	if (!hitEnt)
@@ -152,11 +153,17 @@ float CG_ClientHitboxMaxZ(entityState_t *hitEnt, float def)
 }
 
 
-/*
-====================
-CG_ClipMoveToEntities
-====================
-*/
+/**
+ * @brief CG_ClipMoveToEntities
+ * @param[in] start
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] end
+ * @param[in] skipNumber
+ * @param[in] mask
+ * @param[in] capsule
+ * @param[in,out] tr
+ */
 static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
                                   int skipNumber, int mask, int capsule, trace_t *tr)
 {
@@ -242,7 +249,19 @@ static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const v
 	}
 }
 
-/* unused
+/**
+ * @brief CG_ClipMoveToEntities_FT
+ * @param[in] start
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] end
+ * @param[in] skipNumber
+ * @param[in] mask
+ * @param[in] capsule
+ * @param[in,out] tr
+ * @note Unused
+ */
+/*
 static void CG_ClipMoveToEntities_FT(const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask, int capsule, trace_t *tr)
 {
     int           i, x, zd, zu;
@@ -327,25 +346,41 @@ static void CG_ClipMoveToEntities_FT(const vec3_t start, const vec3_t mins, cons
 }
 */
 
-/*
-================
-CG_Trace
-================
-*/
+/**
+ * @brief CG_Trace
+ * @param[in] result
+ * @param[in] start
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] end
+ * @param[in] skipNumber
+ * @param[in] mask
+ */
 void CG_Trace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
               int skipNumber, int mask)
 {
 	trace_t t;
 
 	trap_CM_BoxTrace(&t, start, end, mins, maxs, 0, mask);
-	t.entityNum = t.fraction != 1.0 ? ENTITYNUM_WORLD : ENTITYNUM_NONE;
+	t.entityNum = t.fraction != 1.0f ? ENTITYNUM_WORLD : ENTITYNUM_NONE;
 	// check all other solid models
 	CG_ClipMoveToEntities(start, mins, maxs, end, skipNumber, mask, qfalse, &t);
 
 	*result = t;
 }
 
-/* unused
+/**
+ * @brief CG_Trace_World
+ * @param[out] result
+ * @param[in] start
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] end
+ * @param[in] skipNumber
+ * @param[in] mask
+ * @note Unused
+ */
+/*
 void CG_Trace_World(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
                     int skipNumber, int mask)
 {
@@ -358,7 +393,17 @@ void CG_Trace_World(trace_t *result, const vec3_t start, const vec3_t mins, cons
 }
 */
 
-/* unused
+/**
+ * @brief CG_FTTrace
+ * @param[out] result
+ * @param[in] start
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] end
+ * @param[in] skipNumber
+ * @param[in] mask
+ */
+/*
 void CG_FTTrace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask)
 {
     trace_t t;
@@ -373,36 +418,53 @@ void CG_FTTrace(trace_t *result, const vec3_t start, const vec3_t mins, const ve
 }
 */
 
-/*
-================
-CG_TraceCapsule
-================
-*/
+/**
+ * @brief CG_TraceCapsule
+ * @param[out] result
+ * @param[in] start
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] end
+ * @param[in] skipNumber
+ * @param[in] mask
+ */
 void CG_TraceCapsule(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask)
 {
 	trace_t t;
 
 	trap_CM_CapsuleTrace(&t, start, end, mins, maxs, 0, mask);
-	t.entityNum = t.fraction != 1.0 ? ENTITYNUM_WORLD : ENTITYNUM_NONE;
+	t.entityNum = t.fraction != 1.0f ? ENTITYNUM_WORLD : ENTITYNUM_NONE;
 	// check all other solid models
 	CG_ClipMoveToEntities(start, mins, maxs, end, skipNumber, mask, qtrue, &t);
 
 	*result = t;
 }
 
+/**
+ * @brief CG_TraceCapsule_World
+ * @param[out] result
+ * @param[in] start
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] end
+ * @param skipNumber - unused
+ * @param[in] mask
+ */
 void CG_TraceCapsule_World(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask)
 {
 	trace_t t;
 	trap_CM_CapsuleTrace(&t, start, end, mins, maxs, 0, mask);
 
-	t.entityNum = t.fraction != 1.0 ? ENTITYNUM_WORLD : ENTITYNUM_NONE;
+	t.entityNum = t.fraction != 1.0f ? ENTITYNUM_WORLD : ENTITYNUM_NONE;
 	*result     = t;
 }
-/*
-================
-CG_PointContents
-================
-*/
+
+/**
+ * @brief CG_PointContents
+ * @param[in] point
+ * @param[in] passEntityNum
+ * @return
+ */
 int CG_PointContents(const vec3_t point, int passEntityNum)
 {
 	int           i;
@@ -443,14 +505,11 @@ int CG_PointContents(const vec3_t point, int passEntityNum)
 	return contents;
 }
 
-/*
-========================
-CG_InterpolatePlayerState
-
-Generates cg.predictedPlayerState by interpolating between
-cg.snap->player_state and cg.nextFrame->player_state
-========================
-*/
+/**
+ * @brief Generates cg.predictedPlayerState by interpolating between
+ * cg.snap->player_state and cg.nextFrame->player_state
+ * @param grabAngles
+ */
 static void CG_InterpolatePlayerState(qboolean grabAngles)
 {
 	float         f;
@@ -497,7 +556,7 @@ static void CG_InterpolatePlayerState(qboolean grabAngles)
 	{
 		i += 256;       // handle wraparound
 	}
-	out->bobCycle = prev->ps.bobCycle + f * (i - prev->ps.bobCycle);
+	out->bobCycle = prev->ps.bobCycle + (int)(f * (i - prev->ps.bobCycle));
 
 	for (i = 0 ; i < 3 ; i++)
 	{
@@ -505,20 +564,16 @@ static void CG_InterpolatePlayerState(qboolean grabAngles)
 		if (!grabAngles)
 		{
 			out->viewangles[i] = LerpAngle(
-			    prev->ps.viewangles[i], next->ps.viewangles[i], f);
+				prev->ps.viewangles[i], next->ps.viewangles[i], f);
 		}
 		out->velocity[i] = prev->ps.velocity[i] +
 		                   f * (next->ps.velocity[i] - prev->ps.velocity[i]);
 	}
 }
 
-/*
-=========================
-CG_TouchTriggerPrediction
-
-Predict push triggers and items
-=========================
-*/
+/**
+ * @brief Predict push triggers and items
+ */
 static void CG_TouchTriggerPrediction(void)
 {
 	int           i;
@@ -534,7 +589,7 @@ static void CG_TouchTriggerPrediction(void)
 		return;
 	}
 
-	spectator = ((cg.predictedPlayerState.pm_type == PM_SPECTATOR) || (cg.predictedPlayerState.pm_flags & PMF_LIMBO));
+	spectator = (qboolean)((cg.predictedPlayerState.pm_type == PM_SPECTATOR) || (cg.predictedPlayerState.pm_flags & PMF_LIMBO));
 
 	if (cg.predictedPlayerState.pm_type != PM_NORMAL && !spectator)
 	{
@@ -651,6 +706,12 @@ static void CG_TouchTriggerPrediction(void)
 #define MAX_PREDICT_VELOCITY_DELTA_2    0.01f   // Square(MAX_PREDICT_VELOCITY_DELTA)
 #define MAX_PREDICT_VIEWANGLES_DELTA    1.0f
 
+/**
+ * @brief CG_PredictionOk
+ * @param[in] ps1
+ * @param[in] ps2
+ * @return
+ */
 int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 {
 	vec3_t vec;
@@ -840,34 +901,6 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	return 0;
 }
 
-/*
-=================
-CG_PredictPlayerState
-
-Generates cg.predictedPlayerState for the current cg.time
-cg.predictedPlayerState is guaranteed to be valid after exiting.
-
-For demo playback, this will be an interpolation between two valid
-playerState_t.
-
-For normal gameplay, it will be the result of predicted usercmd_t on
-top of the most recent playerState_t received from the server.
-
-Each new snapshot will usually have one or more new usercmd over the last,
-but we simulate all unacknowledged commands each time, not just the new ones.
-This means that on an internet connection, quite a few pmoves may be issued
-each frame.
-
-OPTIMIZE: don't re-simulate unless the newly arrived snapshot playerState_t
-differs from the predicted one.  Would require saving all intermediate
-playerState_t during prediction. (this is "dead reckoning" and would definately
-be nice to have in there
-
-We detect prediction errors and allow them to be decayed off over several frames
-to ease the jerk.
-=================
-*/
-
 //  we need to keep pmext around for old frames, because Pmove()
 // fills in some values when it does prediction.  This in itself is fine,
 // but the prediction loop starts in the past and predicts from the
@@ -909,6 +942,28 @@ const char *predictionStrings[] =
 	"grenadeTimeLeft",      // 27
 };
 
+/**
+ * @brief Generates cg.predictedPlayerState for the current cg.time
+ * cg.predictedPlayerState is guaranteed to be valid after exiting.
+ * @details For demo playback, this will be an interpolation between two valid
+ * playerState_t.
+ *
+ * For normal gameplay, it will be the result of predicted usercmd_t on
+ * top of the most recent playerState_t received from the server.
+ *
+ * Each new snapshot will usually have one or more new usercmd over the last,
+ * but we simulate all unacknowledged commands each time, not just the new ones.
+ * This means that on an internet connection, quite a few pmoves may be issued
+ * each frame.
+ *
+ * OPTIMIZE: don't re-simulate unless the newly arrived snapshot playerState_t
+ * differs from the predicted one.  Would require saving all intermediate
+ * playerState_t during prediction. (this is "dead reckoning" and would definately
+ * be nice to have in there
+ *
+ * We detect prediction errors and allow them to be decayed off over several frames
+ * to ease the jerk.
+ */
 void CG_PredictPlayerState(void)
 {
 	int           cmdNum, current;
@@ -919,7 +974,7 @@ void CG_PredictPlayerState(void)
 	vec3_t        deltaAngles;
 	pmoveExt_t    pmext;
 	// unlagged - optimized prediction
-	int stateIndex   = 0, predictCmd = 0;
+	int stateIndex = 0, predictCmd = 0;
 	int numPredicted = 0, numPlayedBack = 0; // debug code
 
 	cg.hyperspace = qfalse; // will be set if touching a trigger_teleport
@@ -1258,7 +1313,7 @@ void CG_PredictPlayerState(void)
 				}
 				VectorSubtract(oldPlayerState.origin, adjusted, delta);
 				len = VectorLength(delta);
-				if (len > 0.1)
+				if (len > 0.1f)
 				{
 					if (cg_showmiss.integer)
 					{
@@ -1427,12 +1482,12 @@ void CG_PredictPlayerState(void)
 
 		// move
 		cg.predictedPlayerState.origin[2] +=
-		    sin(M_PI * 8 * 13 + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+			(float)sin(M_PI * 8 * 13 + (double)cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
 
 		cg.predictedPlayerState.origin[1] +=
-		    sin(M_PI * 17 * x + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+			(float)sin(M_PI * 17 * (double)x + (double)cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
 
 		cg.predictedPlayerState.origin[0] +=
-		    cos(M_PI * 7 * x + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+			(float)cos(M_PI * 7 * (double)x + (double)cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
 	}
 }

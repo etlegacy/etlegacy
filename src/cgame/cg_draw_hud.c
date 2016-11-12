@@ -111,7 +111,16 @@ hudStucture_t hudlist[MAXHUDS];
 hudStucture_t *activehud;
 hudStucture_t hud0;
 
-/* unused
+/**
+ * @brief CG_getRect
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ * @return 
+ * @note Unused
+ */
+/*
 rectDef_t CG_getRect(float x, float y, float w, float h)
 {
     rectDef_t rect = { x, y, w, h };
@@ -120,6 +129,16 @@ rectDef_t CG_getRect(float x, float y, float w, float h)
 }
 */
 
+/**
+ * @brief CG_getComponent
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] visible
+ * @param[in] style
+ * @return 
+ */
 hudComponent_t CG_getComponent(float x, float y, float w, float h, qboolean visible, componentStyle style)
 {
 	hudComponent_t comp = { { x, y, w, h }, visible, style };
@@ -127,6 +146,10 @@ hudComponent_t CG_getComponent(float x, float y, float w, float h, qboolean visi
 	return comp;
 }
 
+/**
+ * @brief CG_setDefaultHudValues
+ * @param[out] hud
+ */
 void CG_setDefaultHudValues(hudStucture_t *hud)
 {
 	// the Default hud
@@ -155,7 +178,12 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->localtime    = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
 }
 
-/* unused
+/**
+ * @brief CG_getNextFreeHud
+ * @return 
+ * @note unused
+ */
+/*
 static hudStucture_t *CG_getNextFreeHud()
 {
     hudStucture_t *temp;
@@ -175,6 +203,11 @@ static hudStucture_t *CG_getNextFreeHud()
 }
 */
 
+/**
+ * @brief CG_getHudByNumber
+ * @param[in] number
+ * @return 
+ */
 static hudStucture_t *CG_getHudByNumber(int number)
 {
 	int           i;
@@ -199,6 +232,11 @@ static hudStucture_t *CG_getHudByNumber(int number)
 	return NULL;
 }
 
+/**
+ * @brief CG_isHudNumberAvailable
+ * @param[in] number
+ * @return 
+ */
 static qboolean CG_isHudNumberAvailable(int number)
 {
 	hudStucture_t *hud = CG_getHudByNumber(number);
@@ -213,6 +251,10 @@ static qboolean CG_isHudNumberAvailable(int number)
 	}
 }
 
+/**
+ * @brief CG_addHudToList
+ * @param[in] hud
+ */
 static void CG_addHudToList(hudStucture_t *hud)
 {
 	hudlist[hudCount] = *hud;
@@ -221,7 +263,13 @@ static void CG_addHudToList(hudStucture_t *hud)
 
 //  HUD SCRIPT FUNCTIONS BELLOW
 
-static qboolean CG_HUD_ParseError(int handle, char *format, ...)
+/**
+ * @brief CG_HUD_ParseError
+ * @param[in] handle
+ * @param[in] format
+ * @return 
+ */
+static qboolean CG_HUD_ParseError(int handle, const char *format, ...)
 {
 	int         line;
 	char        filename[MAX_QPATH];
@@ -243,6 +291,12 @@ static qboolean CG_HUD_ParseError(int handle, char *format, ...)
 	return qfalse;
 }
 
+/**
+ * @brief CG_RectParse
+ * @param[in] handle
+ * @param[in,out] r
+ * @return 
+ */
 static qboolean CG_RectParse(int handle, rectDef_t *r)
 {
 	float x = 0;
@@ -264,6 +318,12 @@ static qboolean CG_RectParse(int handle, rectDef_t *r)
 	return qfalse;
 }
 
+/**
+ * @brief CG_ParseHudComponent
+ * @param[in] handle
+ * @param[in] comp
+ * @return 
+ */
 static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
 {
 	CG_RectParse(handle, &comp->location); //PC_Rect_Parse
@@ -281,6 +341,11 @@ static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
 	return qtrue;
 }
 
+/**
+ * @brief CG_ParseHUD
+ * @param[in] handle
+ * @return 
+ */
 static qboolean CG_ParseHUD(int handle)
 {
 	pc_token_t    token;
@@ -571,6 +636,9 @@ static qboolean CG_ReadHudFile(const char *filename)
 	return qtrue;
 }
 
+/**
+ * @brief CG_ReadHudScripts
+ */
 void CG_ReadHudScripts(void)
 {
 	if (!CG_ReadHudFile("ui/huds.hud"))
@@ -587,6 +655,14 @@ vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.8f };
 vec4_t HUD_Border = { 0.5f, 0.5f, 0.5f, 0.5f };
 vec4_t HUD_Text = { 0.6f, 0.6f, 0.6f, 1.0f };
 
+/**
+ * @brief CG_DrawPicShadowed
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] icon
+ */
 static void CG_DrawPicShadowed(float x, float y, float w, float h, qhandle_t icon)
 {
 	trap_R_SetColor(colorBlack);
@@ -595,6 +671,10 @@ static void CG_DrawPicShadowed(float x, float y, float w, float h, qhandle_t ico
 	CG_DrawPic(x, y, w, h, icon);
 }
 
+/**
+ * @brief CG_DrawPlayerStatusHead
+ * @param[in] comp
+ */
 static void CG_DrawPlayerStatusHead(hudComponent_t comp)
 {
 	hudHeadAnimNumber_t anim           = cg.idleAnim;
@@ -625,11 +705,11 @@ static void CG_DrawPlayerStatusHead(hudComponent_t comp)
 		cg.nextIdleTime = cg.time + 7000 + rand() % 1000;
 		if (cg.snap->ps.stats[STAT_HEALTH] < 40)
 		{
-			cg.idleAnim = (rand() % (HD_DAMAGED_IDLE3 - HD_DAMAGED_IDLE2 + 1)) + HD_DAMAGED_IDLE2;
+			cg.idleAnim = (hudHeadAnimNumber_t)((rand() % (HD_DAMAGED_IDLE3 - HD_DAMAGED_IDLE2 + 1)) + HD_DAMAGED_IDLE2);
 		}
 		else
 		{
-			cg.idleAnim = (rand() % (HD_IDLE8 - HD_IDLE2 + 1)) + HD_IDLE2;
+			cg.idleAnim = (hudHeadAnimNumber_t)((rand() % (HD_IDLE8 - HD_IDLE2 + 1)) + HD_IDLE2);
 		}
 
 		cg.lastIdleTimeEnd = cg.time + character->hudheadanimations[cg.idleAnim].numFrames * character->hudheadanimations[cg.idleAnim].frameLerp;
@@ -667,11 +747,18 @@ static void CG_DrawPlayerStatusHead(hudComponent_t comp)
 	CG_DrawPlayerHead(headRect, character, headcharacter, 180, 0, cg.snap->ps.eFlags & EF_HEADSHOT ? qfalse : qtrue, anim, painshader, cgs.clientinfo[cg.snap->ps.clientNum].rank, qfalse, cgs.clientinfo[cg.snap->ps.clientNum].team);
 }
 
+/**
+ * @brief CG_PlayerAmmoValue
+ * @param[out] ammo
+ * @param[out] clips
+ * @param[out] akimboammo
+ * @return 
+ */
 static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 {
 	centity_t     *cent;
 	playerState_t *ps;
-	int           weap;
+	weapon_t      weap;
 	qboolean      skipammo = qfalse;
 
 	*ammo = *clips = *akimboammo = -1;
@@ -686,7 +773,7 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 	}
 	ps = &cg.snap->ps;
 
-	weap = cent->currentState.weapon;
+	weap = (weapon_t)cent->currentState.weapon;
 
 	if (!weap)
 	{
@@ -787,6 +874,10 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 
 vec4_t bgcolor = { 1.f, 1.f, 1.f, .3f };    // bars backgound
 
+/**
+ * @brief CG_DrawPlayerHealthBar
+ * @param[in] rect
+ */
 static void CG_DrawPlayerHealthBar(rectDef_t *rect)
 {
 	vec4_t colour;
@@ -812,6 +903,10 @@ static void CG_DrawPlayerHealthBar(rectDef_t *rect)
 	CG_DrawPic(rect->x, rect->y + rect->h + 4, rect->w, rect->w, cgs.media.hudHealthIcon);
 }
 
+/**
+ * @brief CG_DrawStaminaBar
+ * @param[in] rect
+ */
 static void CG_DrawStaminaBar(rectDef_t *rect)
 {
 	vec4_t colour = { 0.1f, 1.0f, 0.1f, 0.5f };
@@ -823,7 +918,7 @@ static void CG_DrawStaminaBar(rectDef_t *rect)
 	{
 		if (cg.snap->ps.pm_flags & PMF_FOLLOW)
 		{
-			Vector4Average(colour, colorWhite, sin(cg.time * .005f), colour);
+			Vector4Average(colour, colorWhite, (float)sin(cg.time * .005), colour);
 		}
 		else
 		{
@@ -835,7 +930,7 @@ static void CG_DrawStaminaBar(rectDef_t *rect)
 			}
 			else
 			{
-				Vector4Average(colour, colorMdRed, .5f + sin(.2f * sqrt(msec) * 2 * M_PI) * .5f, colour);
+				Vector4Average(colour, colorMdRed, (float)(.5 + sin(.2 * sqrt((double)msec) * 2 * M_PI) * .5), colour);
 			}
 		}
 	}
@@ -852,7 +947,10 @@ static void CG_DrawStaminaBar(rectDef_t *rect)
 	CG_DrawPic(rect->x, rect->y + rect->h + 4, rect->w, rect->w, cgs.media.hudSprintIcon);
 }
 
-// draw the breath bar
+/**
+ * @brief Draw the breath bar
+ * @param[in] rect
+ */
 static void CG_DrawBreathBar(rectDef_t *rect)
 {
 	static vec4_t colour = { 0.1f, 0.1f, 1.0f, 0.5f };
@@ -870,7 +968,10 @@ static void CG_DrawBreathBar(rectDef_t *rect)
 	CG_DrawPic(rect->x, rect->y + rect->h + 4, rect->w, rect->w, cgs.media.waterHintShader);
 }
 
-// draw weapon recharge bar
+/**
+ * @brief Draw weapon recharge bar
+ * @param rect
+ */
 static void CG_DrawWeapRecharge(rectDef_t *rect)
 {
 	float    barFrac, chargeTime;
@@ -1073,6 +1174,10 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 	}
 }
 
+/**
+ * @brief CG_DrawGunIcon
+ * @param[in] location
+ */
 static void CG_DrawGunIcon(rectDef_t location)
 {
 	rectDef_t rect = location;
@@ -1103,10 +1208,15 @@ static void CG_DrawGunIcon(rectDef_t location)
 #endif
 		    BG_simpleWeaponState(cg.snap->ps.weaponstate);
 
-		CG_DrawPlayerWeaponIcon(&rect, (ws != WSTATE_IDLE), ITEM_ALIGN_RIGHT, ((ws == WSTATE_SWITCH || ws == WSTATE_RELOAD) ? &colorYellow : (ws == WSTATE_FIRE) ? &colorRed : &colorWhite));
+		CG_DrawPlayerWeaponIcon(&rect, (qboolean)(ws != WSTATE_IDLE), ITEM_ALIGN_RIGHT, ((ws == WSTATE_SWITCH || ws == WSTATE_RELOAD) ? &colorYellow : (ws == WSTATE_FIRE) ? &colorRed : &colorWhite));
 	}
 }
 
+/**
+ * @brief CG_DrawAmmoCount
+ * @param[in] x
+ * @param[in] y
+ */ 
 static void CG_DrawAmmoCount(float x, float y)
 {
 	int  value, value2, value3;
@@ -1131,6 +1241,14 @@ static void CG_DrawAmmoCount(float x, float y)
 	}
 }
 
+/**
+ * @brief CG_DrawSkillBar
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] skill
+ */
 static void CG_DrawSkillBar(float x, float y, float w, float h, int skill)
 {
 	int    i;
@@ -1170,6 +1288,12 @@ static void CG_DrawSkillBar(float x, float y, float w, float h, int skill)
 
 extern pmove_t *pm;
 
+/**
+ * @brief CG_ClassSkillForPosition
+ * @param[in] ci
+ * @param[in] pos
+ * @return 
+ */
 skillType_t CG_ClassSkillForPosition(clientInfo_t *ci, int pos)
 {
 	switch (pos)
@@ -1192,6 +1316,11 @@ skillType_t CG_ClassSkillForPosition(clientInfo_t *ci, int pos)
 	return SK_BATTLE_SENSE;
 }
 
+/**
+ * @brief CG_DrawPlayerHealth
+ * @param[in] x
+ * @param[in] y
+ */
 static void CG_DrawPlayerHealth(float x, float y)
 {
 	const char *str = va("%i", cg.snap->ps.stats[STAT_HEALTH]);
@@ -1201,6 +1330,10 @@ static void CG_DrawPlayerHealth(float x, float y)
 	CG_Text_Paint_Ext(x + 2, y, 0.2f, 0.2f, colorWhite, "HP", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 }
 
+/**
+ * @brief CG_DrawSkills
+ * @param[in] comp
+ */
 static void CG_DrawSkills(hudComponent_t comp)
 {
 	playerState_t *ps = &cg.snap->ps;
@@ -1227,6 +1360,11 @@ static void CG_DrawSkills(hudComponent_t comp)
 	}
 }
 
+/**
+ * @brief CG_DrawXP
+ * @param[in] x
+ * @param[in] y
+ */
 static void CG_DrawXP(float x, float y)
 {
 	const char *str;
@@ -1248,6 +1386,10 @@ static void CG_DrawXP(float x, float y)
 	CG_Text_Paint_Ext(x + 2, y, 0.2f, 0.2f, clr, "XP", 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
 }
 
+/**
+ * @brief CG_DrawPowerUps
+ * @param[in] rect
+ */
 static void CG_DrawPowerUps(rectDef_t rect)
 {
 	playerState_t *ps = &cg.snap->ps;
@@ -1266,6 +1408,18 @@ static void CG_DrawPowerUps(rectDef_t rect)
 	}
 }
 
+/**
+ * @brief CG_DrawField
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] value
+ * @param[in] charWidth
+ * @param[in] charHeight
+ * @param[in] dodrawpic
+ * @param[in] leftAlign
+ * @return 
+ */
 int CG_DrawField(int x, int y, int width, int value, int charWidth, int charHeight, qboolean dodrawpic, qboolean leftAlign)
 {
 	char num[16], *ptr;
@@ -1305,7 +1459,7 @@ int CG_DrawField(int x, int y, int width, int value, int charWidth, int charHeig
 	}
 
 	Com_sprintf(num, sizeof(num), "%i", value);
-	l = strlen(num);
+	l = (int)strlen(num);
 	if (l > width)
 	{
 		l = width;
@@ -1342,6 +1496,10 @@ int CG_DrawField(int x, int y, int width, int value, int charWidth, int charHeig
 	return startx;
 }
 
+/**
+ * @brief CG_DrawLivesLeft
+ * @param[in]comp - unused
+ */
 void CG_DrawLivesLeft(hudComponent_t comp)
 {
 	if (cg_gameType.integer == GT_WOLF_LMS)
@@ -1364,6 +1522,9 @@ static int  statsDebugTime[6];
 static int  statsDebugTextWidth[6];
 static int  statsDebugPos;
 
+/**
+ * @brief CG_InitStatsDebug
+ */
 void CG_InitStatsDebug(void)
 {
 	memset(&statsDebugStrings, 0, sizeof(statsDebugStrings));
@@ -1371,6 +1532,10 @@ void CG_InitStatsDebug(void)
 	statsDebugPos = -1;
 }
 
+/**
+ * @brief CG_StatsDebugAddText
+ * @param[in] text
+ */
 void CG_StatsDebugAddText(const char *text)
 {
 	if (cg_debugSkills.integer)
@@ -1390,14 +1555,19 @@ void CG_StatsDebugAddText(const char *text)
 	}
 }
 
-/*
-=================
-CG_DrawCompassIcon
-=================
-*/
+/**
+ * @brief CG_DrawCompassIcon
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] origin
+ * @param[in] dest
+ * @param[in] shader
+ */
 void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader)
 {
-	float  angle, pi2 = M_PI * 2;
+	float  angle, pi2 = (float)(M_PI * 2);
 	vec3_t v1, angles;
 	float  len;
 
@@ -1414,7 +1584,7 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 
 	angles[YAW] = AngleSubtract(cg.predictedPlayerState.viewangles[YAW], angles[YAW]);
 
-	angle = ((angles[YAW] + 180.f) / 360.f - (0.50 / 2.f)) * pi2;
+	angle = ((angles[YAW] + 180.f) / 360.f - (0.50f / 2.f)) * pi2;
 
 	w /= 2;
 	h /= 2;
@@ -1423,17 +1593,23 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 	y += h;
 
 	{
-		w = sqrt((w * w) + (h * h)) / 3.f * 2.f * 0.9f;
+		w = (float)sqrt((w * w) + (h * h)) / 3.f * 2.f * 0.9f;
 	}
 
-	x = x + (cos(angle) * w);
-	y = y + (sin(angle) * w);
+	x = x + ((float)cos(angle) * w);
+	y = y + ((float)sin(angle) * w);
 
 	len = 1 - MIN(1.f, len / 2000.f);
 
 	CG_DrawPic(x - (14 * len + 4) / 2, y - (14 * len + 4) / 2, 14 * len + 8, 14 * len + 8, shader);
 }
 
+/**
+ * @brief CG_CompasMoveLocationCalc
+ * @param[out] locationvalue
+ * @param[in] directionplus
+ * @param[in] animationout
+ */
 static void CG_CompasMoveLocationCalc(float *locationvalue, qboolean directionplus, qboolean animationout)
 {
 	if (animationout)
@@ -1460,6 +1636,12 @@ static void CG_CompasMoveLocationCalc(float *locationvalue, qboolean directionpl
 	}
 }
 
+/**
+ * @brief CG_CompasMoveLocation
+ * @param[in] basex
+ * @param[in] basey
+ * @param[in] animationout
+ */
 static void CG_CompasMoveLocation(float *basex, float *basey, qboolean animationout)
 {
 	float x    = *basex;
@@ -1528,11 +1710,10 @@ static void CG_CompasMoveLocation(float *basex, float *basey, qboolean animation
 	}
 }
 
-/*
-=================
-CG_DrawNewCompass
-=================
-*/
+/**
+ * @brief CG_DrawNewCompass
+ * @param location
+ */
 static void CG_DrawNewCompass(rectDef_t location)
 {
 	float        basex = location.x, basey = location.y - 16, basew = location.w, baseh = location.h;
@@ -1702,6 +1883,9 @@ static void CG_DrawNewCompass(rectDef_t location)
 	}
 }
 
+/**
+ * @brief CG_DrawStatsDebug
+ */
 static void CG_DrawStatsDebug(void)
 {
 	int textWidth = 0;
@@ -1780,11 +1964,12 @@ static void CG_DrawStatsDebug(void)
 
 #define UPPERRIGHT_X 634
 #define UPPERRIGHT_W 50
-/*
-==================
-CG_DrawSnapshot
-==================
-*/
+
+/**
+ * @brief CG_DrawSnapshot
+ * @param y
+ * @return 
+ */
 static float CG_DrawSnapshot(float y)
 {
 	char *s = va("t:%i sn:%i cmd:%i", cg.snap->serverTime, cg.latestSnapshotNum, cgs.serverCommandSequence);
@@ -1798,20 +1983,20 @@ static float CG_DrawSnapshot(float y)
 	return y + 12 + 4;
 }
 
-/*
-==================
-CG_DrawFPS
-==================
-*/
 #define MAX_FPS_FRAMES  500
 
+/**
+ * @brief CG_DrawFPS
+ * @param[in] y
+ * @return 
+ */
 static float CG_DrawFPS(float y)
 {
 	static int previousTimes[MAX_FPS_FRAMES];
 	static int previous;
 	static int index;
 	static int oldSamples;
-	char       *s;
+	const char *s;
 	int        t         = trap_Milliseconds(); // don't use serverTime, because that will be drifting to correct for internet lag changes, timescales, timedemos, etc
 	int        frameTime = t - previous;
 	int        x, w, w2;
@@ -1869,11 +2054,13 @@ static float CG_DrawFPS(float y)
 	return y + 12 + 4;
 }
 
-/*
-=================
-CG_DrawTimersAlt
-=================
-*/
+/**
+ * @brief CG_DrawTimersAlt
+ * @param[in] respawn
+ * @param[in] spawntimer
+ * @param[in] localtime
+ * @param[in] roundtimer
+ */
 static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_t *localtime, rectDef_t *roundtimer)
 {
 	char    *s, *rt;
@@ -1976,11 +2163,11 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 	}
 }
 
-/*
-=================
-CG_DrawTimerNormal
-=================
-*/
+/**
+ * @brief CG_DrawTimerNormal
+ * @param[in] y
+ * @return 
+ */
 static float CG_DrawTimerNormal(float y)
 {
 	vec4_t color = { .6f, .6f, .6f, 1.f };
@@ -2054,6 +2241,11 @@ static float CG_DrawTimerNormal(float y)
 	return y + 12 + 4;
 }
 
+/**
+ * @brief CG_DrawLocalTime
+ * @param[in] y
+ * @return 
+ */
 static float CG_DrawLocalTime(float y)
 {
 	qtime_t  time;
@@ -2139,6 +2331,7 @@ void CG_AddLagometerFrameInfo(void)
 
 /**
  * @brief Log the ping time and number of dropped snapshots before it each time a snapshot is received
+ * @param snap
  */
 void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 {
@@ -2174,6 +2367,8 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 
 /**
  * @brief Draw disconnect icon for long lag
+ * @param[in] y
+ * @return 
  */
 static float CG_DrawDisconnect(float y)
 {
@@ -2223,7 +2418,9 @@ static float CG_DrawDisconnect(float y)
 }
 
 /**
- * @brief Draw ping
+ * @brief CG_DrawPing
+ * @param[in] y
+ * @return 
  */
 static float CG_DrawPing(float y)
 {
@@ -2247,7 +2444,9 @@ static float CG_DrawPing(float y)
 vec4_t colorAW = { 0, 0.5, 0, 0.5f };
 
 /**
- * @brief Draw the lagometer
+ * @brief CG_DrawLagometer
+ * @param[in] y
+ * @return 
  */
 static float CG_DrawLagometer(float y)
 {
@@ -2433,7 +2632,7 @@ static void CG_DrawPlayerStatus(void)
 
 			VectorCopy(cg.snap->ps.origin, origin);
 			origin[2] += 36;
-			underwater = (CG_PointContents(origin, cg.snap->ps.clientNum) & CONTENTS_WATER);
+			underwater = (qboolean)(CG_PointContents(origin, cg.snap->ps.clientNum) & CONTENTS_WATER);
 		}
 		else
 		{
@@ -2487,6 +2686,9 @@ static void CG_DrawPlayerStats(void)
 	}
 }
 
+/**
+ * @brief CG_Hud_Setup
+ */
 void CG_Hud_Setup(void)
 {
 	hudStucture_t hud1;
@@ -2553,11 +2755,20 @@ void CG_Hud_Setup(void)
 
 #ifdef LEGACY_DEBUG
 
+/**
+ * @brief CG_PrintHudComponent
+ * @param[in] name
+ * @param[in] comp
+ */
 static void CG_PrintHudComponent(const char *name, hudComponent_t comp)
 {
 	Com_Printf("%s location: X %.f Y %.f W %.f H %.f visible: %i\n", name, comp.location.x, comp.location.y, comp.location.w, comp.location.h, comp.visible);
 }
 
+/**
+ * @brief CG_PrintHud
+ * @param[in] hud
+ */
 static void CG_PrintHud(hudStucture_t *hud)
 {
 	CG_PrintHudComponent("compas", hud->compas);
@@ -2580,11 +2791,9 @@ static void CG_PrintHud(hudStucture_t *hud)
 }
 #endif
 
-/*
-=====================
-CG_SetHud
-=====================
-*/
+/**
+ * @brief CG_SetHud
+ */
 void CG_SetHud(void)
 {
 	if (cg_altHud.integer && activehud->hudnumber != cg_altHud.integer)
@@ -2610,11 +2819,9 @@ void CG_SetHud(void)
 	}
 }
 
-/*
-=====================
-CG_DrawActiveHud
-=====================
-*/
+/**
+ * @brief CG_DrawActiveHud
+ */
 void CG_DrawActiveHud(void)
 {
 	if (cg.snap->ps.stats[STAT_HEALTH] > 0)
@@ -2645,11 +2852,9 @@ void CG_DrawActiveHud(void)
 	CG_DrawStatsDebug();
 }
 
-/*
-=====================
-CG_DrawGlobalHud
-=====================
-*/
+/**
+ * @brief CG_DrawGlobalHud
+ */
 void CG_DrawGlobalHud(void)
 {
 	if (cg_altHudFlags.integer & FLAGS_MOVE_POPUPS)
@@ -2669,11 +2874,9 @@ void CG_DrawGlobalHud(void)
 	CG_DrawNewCompass(activehud->compas.location);
 }
 
-/*
-=====================
-CG_DrawUpperRight
-=====================
-*/
+/**
+ * @brief CG_DrawUpperRight
+ */
 void CG_DrawUpperRight(void)
 {
 	float y = 152; // 20 + 100 + 32;

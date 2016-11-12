@@ -1,9 +1,21 @@
 //
 // Created by jere on 21.9.2015.
 //
+/**
+ * @file cgcamera.c
+ */
 
 #include "cg_local.h"
 
+/**
+ * @brief CG_CalcBezierPoint
+ * @param[in] start
+ * @param[in] ctrl1
+ * @param[in] ctrl2
+ * @param[in] end
+ * @param[in] offset
+ * @param[out] out
+ */
 void CG_CalcBezierPoint(vec3_t start, vec3_t ctrl1, vec3_t ctrl2, vec3_t end, float offset, vec3_t out)
 {
 	float var1, var2, var3;

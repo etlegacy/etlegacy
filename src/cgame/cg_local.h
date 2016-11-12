@@ -167,7 +167,7 @@ typedef struct
 	int curX;                   // Scrolling X position
 	int curY;                   // Scrolling Y position
 	int effects;                // Window effects
-	int flashMidpoint;          // Flashing transition point (in ms)
+	float flashMidpoint;        // Flashing transition point (in ms)
 	int flashPeriod;            // Background flashing period (in ms)
 	int fontHeight;             // For non-truetype font drawing
 	float fontScaleX;           // Font scale factor
@@ -1037,7 +1037,7 @@ typedef struct
 	qboolean spawning;                          // the CG_Spawn*() functions are valid
 	int numSpawnVars;
 	char *spawnVars[MAX_SPAWN_VARS][2];         // key / value pairs
-	int numSpawnVarChars;
+	unsigned int numSpawnVarChars;
 	char spawnVarChars[MAX_SPAWN_VARS_CHARS];
 
 	vec2_t mapcoordsMins;
@@ -2583,7 +2583,7 @@ void CG_ParticleDirtBulletDebris_Core(vec3_t org, vec3_t vel, int duration, floa
 void CG_ParticleSparks(vec3_t org, vec3_t vel, int duration, float x, float y, float speed);
 void CG_ParticleDust(centity_t *cent, vec3_t origin, vec3_t dir);
 
-void CG_ParticleExplosion(char *animStr, vec3_t origin, vec3_t vel, int duration, int sizeStart, int sizeEnd, qboolean dlight);
+void CG_ParticleExplosion(const char *animStr, vec3_t origin, vec3_t vel, int duration, int sizeStart, int sizeEnd, qboolean dlight);
 
 void CG_ParticleImpactSmokePuff(qhandle_t pshader, vec3_t origin);
 void CG_ParticleImpactSmokePuffExtended(qhandle_t pshader, vec3_t origin, int lifetime, int vel, int acc, int maxroll, float alpha, float size);        // so I can add more parameters without screwing up the one that's there
@@ -2706,7 +2706,7 @@ qboolean CG_DrawMissionBriefing(void);
 void CG_MissionBriefingClick(int key);
 
 // MAPVOTE
-qboolean CG_FindArenaInfo(char *filename, char *mapname, arenaInfo_t *info);
+qboolean CG_FindArenaInfo(const char *filename, const char *mapname, arenaInfo_t *info);
 
 void CG_LoadRankIcons(void);
 qboolean CG_DrawStatsRanksMedals(void);
@@ -3255,8 +3255,8 @@ typedef struct mapScissor_s
 
 int CG_CurLayerForZ(int z);
 void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t *scissor, qboolean interactive, float alpha, qboolean borderblend);
-int CG_DrawSpawnPointInfo(int px, int py, int pw, int ph, qboolean draw, mapScissor_t *scissor, int expand);
-void CG_DrawMortarMarker(int px, int py, int pw, int ph, qboolean draw, mapScissor_t *scissor, int expand);
+int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand);
+void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand);
 void CG_CommandMap_SetHighlightText(const char *text, float x, float y);
 void CG_CommandMap_DrawHighlightText(void);
 qboolean CG_CommandCentreSpawnPointClick(void);

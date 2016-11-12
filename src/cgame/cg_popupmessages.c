@@ -88,6 +88,9 @@ const char *cg_skillRewards[SK_NUM_SKILLS][NUM_SKILL_LEVELS - 1] =
 
 void CG_PMItemBigSound(pmListItemBig_t *item);
 
+/**
+ * @brief CG_InitPMGraphics
+ */
 void CG_InitPMGraphics(void)
 {
 	cgs.media.pmImages[PM_DYNAMITE]     = trap_R_RegisterShaderNoMip("gfx/limbo/pm_dynamite");
@@ -117,6 +120,9 @@ void CG_InitPMGraphics(void)
 	cgs.media.pmImageShove = trap_R_RegisterShader("gfx/hud/pm_shove");
 }
 
+/**
+ * @brief CG_InitPM
+ */
 void CG_InitPM(void)
 {
 	memset(&cg_pmStack, 0, sizeof(cg_pmStack));
@@ -139,12 +145,20 @@ void CG_InitPM(void)
 #define PM_WAITTIME_BIG 3500
 #define PM_BIGPOPUP_TIME 2500
 
+/**
+ * @brief CG_AddToListFront
+ * @param[in,out] list
+ * @param[in,out] item
+ */
 void CG_AddToListFront(pmListItem_t **list, pmListItem_t *item)
 {
 	item->next = *list;
 	*list      = item;
 }
 
+/**
+ * @brief CG_UpdatePMLists
+ */
 void CG_UpdatePMLists(void)
 {
 	pmListItem_t    *listItem;
@@ -254,6 +268,10 @@ void CG_UpdatePMLists(void)
 	}
 }
 
+/**
+ * @brief CG_FindFreePMItem2
+ * @return
+ */
 pmListItemBig_t *CG_FindFreePMItem2(void)
 {
 	int i = 0;
@@ -269,6 +287,10 @@ pmListItemBig_t *CG_FindFreePMItem2(void)
 	return NULL;
 }
 
+/**
+ * @brief CG_FindFreePMItem
+ * @return
+ */
 pmListItem_t *CG_FindFreePMItem(void)
 {
 	pmListItem_t *listItem;
@@ -312,6 +334,16 @@ pmListItem_t *CG_FindFreePMItem(void)
 	}
 }
 
+/**
+ * @brief CG_AddPMItem
+ * @param[in] type
+ * @param[in] message
+ * @param[in] message2
+ * @param[in] shader
+ * @param[in] weaponShader
+ * @param[in] scaleShader
+ * @param[in] color
+ */
 void CG_AddPMItem(popupMessageType_t type, const char *message, const char *message2, qhandle_t shader, qhandle_t weaponShader, int scaleShader, vec3_t color)
 {
 	pmListItem_t *listItem;
@@ -419,6 +451,10 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, const char *mess
 	}
 }
 
+/**
+ * @brief CG_PMItemBigSound
+ * @param item
+ */
 void CG_PMItemBigSound(pmListItemBig_t *item)
 {
 	if (!cg.snap)
@@ -426,6 +462,7 @@ void CG_PMItemBigSound(pmListItemBig_t *item)
 		return;
 	}
 
+	// TODO: handle case missing ?
 	switch (item->type)
 	{
 	case PM_RANK:
@@ -439,6 +476,12 @@ void CG_PMItemBigSound(pmListItemBig_t *item)
 	}
 }
 
+/**
+ * @brief CG_AddPMItemBig
+ * @param[in] type
+ * @param[in] message
+ * @param[in] shader
+ */
 void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t shader)
 {
 	pmListItemBig_t *listItem = CG_FindFreePMItem2();
@@ -486,6 +529,11 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
 #define PM_ICON_SIZE_SMALL 12
 #define ICON_Y_OFFSET(y)  y + 3
 
+/**
+ * @brief CG_DrawPMItems
+ * @param[in] rect
+ * @param[in] style
+ */
 void CG_DrawPMItems(rectDef_t rect, int style)
 {
 	vec4_t       colour     = { 0.f, 0.f, 0.f, 1.f };
@@ -649,9 +697,12 @@ void CG_DrawPMItems(rectDef_t rect, int style)
 	}
 }
 
+/**
+ * @brief CG_DrawPMItemsBig
+ */
 void CG_DrawPMItemsBig(void)
 {
-	vec4_t colour     = { 0.f, 0.f, 0.f, 1.f };
+	vec4_t colour = { 0.f, 0.f, 0.f, 1.f };
 	vec4_t colourText = { 1.f, 1.f, 1.f, 1.f };
 	float  t, w;
 	float  y         = 270;
@@ -676,6 +727,11 @@ void CG_DrawPMItemsBig(void)
 	CG_Text_Paint_Ext(Ccg_WideX(SCREEN_WIDTH) - 4 - w, y + 56, fontScale, fontScale, colourText, cg_pmWaitingListBig->message, 0, 0, 0, &cgs.media.limboFont2);
 }
 
+/**
+ * @brief CG_GetPMItemText
+ * @param[in] cent
+ * @return
+ */
 const char *CG_GetPMItemText(centity_t *cent)
 {
 	switch (cent->currentState.effect1Time)
@@ -732,7 +788,6 @@ const char *CG_GetPMItemText(centity_t *cent)
 		{
 			return va(CG_TranslateString("Spotted by %s"), cgs.clientinfo[cent->currentState.effect3Time].name);
 		}
-		break;
 	case PM_OBJECTIVE:
 		switch (cent->currentState.density)
 		{
@@ -775,6 +830,10 @@ const char *CG_GetPMItemText(centity_t *cent)
 
 static int lastSoundTime = 0;
 
+/**
+ * @brief CG_PlayPMItemSound
+ * @param[in] cent
+ */
 void CG_PlayPMItemSound(centity_t *cent)
 {
 	switch (cent->currentState.effect1Time)
@@ -859,6 +918,11 @@ void CG_PlayPMItemSound(centity_t *cent)
 	}
 }
 
+/**
+ * @brief CG_GetPMItemIcon
+ * @param[in] cent
+ * @return
+ */
 qhandle_t CG_GetPMItemIcon(centity_t *cent)
 {
 	switch (cent->currentState.effect1Time)

@@ -47,18 +47,18 @@ extern qboolean  g_waitingForKey;
  * @brief This is the only way control passes into the module.
  * @details This must be the very first function compiled into the .q3vm file
  * @param command
- * @param arg0
- * @param arg1
- * @param arg2
- * @param arg3
- * @param arg4
- * @param arg5
- * @param arg6
- * @param arg7 - unused
- * @param arg8 - unused
- * @param arg9 - unused
- * @param arg10 - unused
- * @param arg11 - unused
+ * @param[in] arg0
+ * @param[in] arg1
+ * @param[in] arg2
+ * @param[in] arg3
+ * @param[in] arg4
+ * @param[in] arg5
+ * @param[in] arg6
+ * @param[in] arg7 - unused
+ * @param[in] arg8 - unused
+ * @param[in] arg9 - unused
+ * @param[in] arg10 - unused
+ * @param[in] arg11 - unused
  * @return
  */
 Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_t arg2, intptr_t arg3, intptr_t arg4, intptr_t arg5, intptr_t arg6, intptr_t arg7, intptr_t arg8, intptr_t arg9, intptr_t arg10, intptr_t arg11)
@@ -347,8 +347,8 @@ vmCvar_t cg_scoreboard;
 typedef struct
 {
 	vmCvar_t *vmCvar;
-	char *cvarName;
-	char *defaultString;
+	const char *cvarName;
+	const char *defaultString;
 	int cvarFlags;
 	int modificationCount;
 } cvarTable_t;
@@ -585,7 +585,7 @@ cvarTable_t cvarTable[] =
 #endif
 };
 
-int      cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
+const int      cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
 qboolean cvarsLoaded   = qfalse;
 void CG_setClientFlags(void);
 
@@ -621,7 +621,7 @@ void CG_RegisterCvars(void)
 
 	// see if we are also running the server on this machine
 	trap_Cvar_VariableStringBuffer("sv_running", var, sizeof(var));
-	cgs.localServer = atoi(var);
+	cgs.localServer = (qboolean)atoi(var);
 
 	// um, here, why?
 	CG_setClientFlags();
@@ -763,7 +763,7 @@ void CG_setClientFlags(void)
 		return;
 	}
 
-	cg.pmext.bAutoReload = (cg_autoReload.integer > 0);
+	cg.pmext.bAutoReload = (qboolean)(cg_autoReload.integer > 0);
 	trap_Cvar_Set("cg_uinfo", va("%d %d %d",
 	                             // Client Flags
 	                             (
@@ -898,7 +898,7 @@ void QDECL CG_Error(const char *msg, ...)
 
 /**
  * @brief Com_Error
- * @param[in] level
+ * @param[in] level - unused
  * @param[in] error
  * @note FIXME: this is only here so the functions in q_shared.c and bg_*.c can link
  */
@@ -1531,7 +1531,7 @@ static void CG_RegisterGraphics(void)
 {
 	char        name[1024];
 	int         i;
-	static char *sb_nums[11] =
+	static const char *sb_nums[11] =
 	{
 		"gfx/2d/numbers/zero_32b",
 		"gfx/2d/numbers/one_32b",

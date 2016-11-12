@@ -34,17 +34,32 @@
 
 #include "cg_local.h"
 
+/**
+ * @brief CG_DescriptionForCampaign
+ * @return
+ */
 const char *CG_DescriptionForCampaign(void)
 {
 	return cgs.campaignInfoLoaded ? cgs.campaignData.campaignDescription : NULL;
 }
 
+/**
+ * @brief CG_NameForCampaign
+ * @return
+ */
 const char *CG_NameForCampaign(void)
 {
 	return cgs.campaignInfoLoaded ? cgs.campaignData.campaignName : NULL;
 }
 
-qboolean CG_FindCampaignInFile(char *filename, char *campaignShortName, cg_campaignInfo_t *info)
+/**
+ * @brief CG_FindCampaignInFile
+ * @param[in] filename
+ * @param[in] campaignShortName
+ * @param[in] info
+ * @return
+ */
+qboolean CG_FindCampaignInFile(const char *filename, const char *campaignShortName, cg_campaignInfo_t *info)
 {
 	int        handle;
 	pc_token_t token;
@@ -208,7 +223,14 @@ qboolean CG_FindCampaignInFile(char *filename, char *campaignShortName, cg_campa
 	return qfalse;
 }
 
-qboolean CG_FindArenaInfo(char *filename, char *mapname, arenaInfo_t *info)
+/**
+ * @brief CG_FindArenaInfo
+ * @param[in] filename
+ * @param[in] mapname
+ * @param[in] info
+ * @return
+ */
+qboolean CG_FindArenaInfo(const char *filename, const char *mapname, arenaInfo_t *info)
 {
 	int        handle;
 	pc_token_t token;
@@ -395,14 +417,18 @@ qboolean CG_FindArenaInfo(char *filename, char *mapname, arenaInfo_t *info)
 	return qfalse;
 }
 
+/**
+ * @brief CG_LocateCampaign
+ */
 void CG_LocateCampaign(void)
 {
-	int      numdirs;
-	char     filename[MAX_QPATH];
-	char     dirlist[1024];
-	char     *dirptr;
-	int      i, dirlen;
-	qboolean found = qfalse;
+	int          numdirs;
+	char         filename[MAX_QPATH];
+	char         dirlist[1024];
+	char         *dirptr;
+	int          i;
+	unsigned int dirlen;
+	qboolean     found = qfalse;
 
 	// get all campaigns from .campaign files
 	numdirs = trap_FS_GetFileList("scripts", ".campaign", dirlist, 1024);
@@ -437,6 +463,9 @@ void CG_LocateCampaign(void)
 	cgs.campaignInfoLoaded = qtrue;
 }
 
+/**
+ * @brief CG_LocateArena
+ */
 void CG_LocateArena(void)
 {
 	char filename[MAX_QPATH];

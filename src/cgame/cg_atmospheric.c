@@ -64,6 +64,8 @@ typedef enum
 /**
  * @brief Add polygon to pool
  * @details Helper function to add polygon to pool
+ * @param[in] shader
+ * @param[in] verts
  */
 static void CG_AddPolyToPool(qhandle_t shader, const polyVert_t *verts)
 {
@@ -128,8 +130,8 @@ qboolean CG_AtmosphericKludge(void)
         CG_EffectParse("T=RAIN,B=5 10,C=0.5 2,G=0.5 2,BV=30 100,GV=20 80,W=1 2,D=1000 1000");
         return (kludgeResult = qtrue);
     case 12:
-    	CG_EffectParse("T=RAIN,B=5 10,C=0.5 2,G=0.5 2,BV=30 100,GV=20 80,W=1 2,D=1000 1000");
-    	return (kludgeResult = qtrue);
+        CG_EffectParse("T=RAIN,B=5 10,C=0.5 2,G=0.5 2,BV=30 100,GV=20 80,W=1 2,D=1000 1000");
+        return (kludgeResult = qtrue);
     case 20: // snow
 
         //CG_EffectParse( "T=SNOW,B=5 10,C=0.5,G=0.3 2,BV=50 50,GV=30 80,W=1 2,D=5000" );
@@ -155,14 +157,14 @@ qboolean CG_AtmosphericKludge(void)
         CG_EffectParse("T=SNOW,B=5 10,C=0.5,G=0.3 2,BV=20 30,GV=25 40,W=3 5,H=512,D=2000 4000");
         return (kludgeResult = qtrue);
     case 28:
-    	CG_EffectParse("T=SNOW,B=5 7,C=0.2,G=0.1 5,BV=15 25,GV=25 40,W=3 5,H=512,D=2000");
-    	return (kludgeResult = qtrue);
+        CG_EffectParse("T=SNOW,B=5 7,C=0.2,G=0.1 5,BV=15 25,GV=25 40,W=3 5,H=512,D=2000");
+        return (kludgeResult = qtrue);
     case 29:
         CG_EffectParse("T=SNOW,B=5 10,C=0.5,G=0.3 2,BV=20 30,GV=25 40,W=3 5,H=608,D=2000");
-    	return (kludgeResult = qtrue);
+        return (kludgeResult = qtrue);
     case 50:
         CG_EffectParse("T=SNOW,B=20 30,C=0.5,G=0.3 2,BV=20 100,GV=25 40,W=3 5,H=608,D=5000");
-    	return (kludgeResult = qtrue);
+        return (kludgeResult = qtrue);
     default:
         break;
     }
@@ -203,7 +205,7 @@ typedef struct cg_atmosphericEffect_s
 	vec3_t viewDir;
 
 	qboolean (*ParticleCheckVisible)(cg_atmosphericParticle_t *particle);
-	qboolean (*ParticleGenerate)(cg_atmosphericParticle_t *particle, vec3_t currvec, float currweight, int atmFX);
+	qboolean (*ParticleGenerate)(cg_atmosphericParticle_t *particle, vec3_t currvec, float currweight, atmFXType_t atmFX);
 	void (*ParticleRender)(cg_atmosphericParticle_t *particle);
 
 	int dropsActive, oldDropsActive;
@@ -218,6 +220,9 @@ static cg_atmosphericEffect_t cg_atmFx;
 /**
  * @brief Activate particule
  * @details Activate atmospheric particle
+ * @param[out] particle
+ * @param[in] active
+ * @return
  */
 static qboolean CG_SetParticleActive(cg_atmosphericParticle_t *particle, active_t active)
 {
@@ -228,10 +233,15 @@ static qboolean CG_SetParticleActive(cg_atmosphericParticle_t *particle, active_
 /**
  * @brief Generate a particle
  * @details Attempt to 'spot' a drop somewhere below a sky texture.
+ * @param[out] particle
+ * @param[in] currvec
+ * @param[in] currweight
+ * @param[in] atmFX
+ * @return
  */
-static qboolean CG_ParticleGenerate(cg_atmosphericParticle_t *particle, vec3_t currvec, float currweight, int atmFX)
+static qboolean CG_ParticleGenerate(cg_atmosphericParticle_t *particle, vec3_t currvec, float currweight, atmFXType_t atmFX)
 {
-	float angle    = random() * 2 * M_PI;
+	float angle = random() * 2 * M_PI;
 	float distance = 20 + MAX_ATMOSPHERIC_DISTANCE * random();
 	float groundHeight, skyHeight;
 
@@ -288,19 +298,18 @@ static qboolean CG_ParticleGenerate(cg_atmosphericParticle_t *particle, vec3_t c
 
 	if (atmFX == ATM_RAIN)
 	{
-		particle->height       = ATMOSPHERIC_RAIN_HEIGHT + crandom() * 100;
-		particle->weight       = currweight;
+		particle->height = ATMOSPHERIC_RAIN_HEIGHT + crandom() * 100;
+		particle->weight = currweight;
 
 		// special color
 		particle->colour[0] = 0.6f + 0.2f * random() * 0xFF;
 		particle->colour[1] = 0.6f + 0.2f * random() * 0xFF;
 		particle->colour[2] = 0.6f + 0.2f * random() * 0xFF;
 	}
-
 	else
 	{
-		particle->height       = ATMOSPHERIC_SNOW_HEIGHT + random() * 2;
-		particle->weight       = particle->height * 0.5f;
+		particle->height = ATMOSPHERIC_SNOW_HEIGHT + random() * 2;
+		particle->weight = particle->height * 0.5f;
 
 		particle->colour[0] = 255;
 		particle->colour[1] = 255;
@@ -318,6 +327,8 @@ static qboolean CG_ParticleGenerate(cg_atmosphericParticle_t *particle, vec3_t c
 /**
  * @brief Check visibility of particle
  * @details Check the drop is visible and still going, wrapping if necessary.
+ * @param[in] particle
+ * @return
  */
 static qboolean CG_ParticleCheckVisible(cg_atmosphericParticle_t *particle)
 {
@@ -333,7 +344,7 @@ static qboolean CG_ParticleCheckVisible(cg_atmosphericParticle_t *particle)
 	moved = (cg.time - cg_atmFx.lastEffectTime) * 0.001f;
 	VectorMA(particle->pos, moved, particle->delta, particle->pos);
 
-	if ((particle->partFX == ATM_RAIN? (particle->pos[2] + particle->height) : particle->pos[2]) < BG_GetSkyGroundHeightAtPoint(particle->pos))
+	if ((particle->partFX == ATM_RAIN ? (particle->pos[2] + particle->height) : particle->pos[2]) < BG_GetSkyGroundHeightAtPoint(particle->pos))
 	{
 		return CG_SetParticleActive(particle, ACT_NOT);
 	}
@@ -357,13 +368,14 @@ static qboolean CG_ParticleCheckVisible(cg_atmosphericParticle_t *particle)
 /**
  * @brief Draw a particle
  * @details Renders a particle.
+ * @param[in] particle
  */
 static void CG_ParticleRender(cg_atmosphericParticle_t *particle)
 {
 	vec3_t     forward, right;
 	polyVert_t verts[3];
 	vec2_t     line;
-	float      len, sinTumbling, cosTumbling, particleWidth, dist;
+	float      len, sinTumbling, cosTumbling, particleWidth, dist = 0.0;
 	vec3_t     start, finish;
 	float      groundHeight;
 
@@ -524,7 +536,7 @@ static void CG_ParticleRender(cg_atmosphericParticle_t *particle)
 
 /**
  * @brief Gust effect
- * @details  Generate random values for the next gust.
+ * @details Generate random values for the next gust.
  */
 static void CG_EffectGust(void)
 {
@@ -542,6 +554,10 @@ static void CG_EffectGust(void)
 /**
  * @brief Gust current effect
  * @details Calculate direction for new drops.
+ * @param[out] curr
+ * @param[out] weight
+ * @param[out] num
+ * @return
  */
 static qboolean CG_EffectGustCurrent(vec3_t curr, float *weight, int *num)
 {
@@ -574,7 +590,7 @@ static qboolean CG_EffectGustCurrent(vec3_t curr, float *weight, int *num)
 		}
 		else
 		{
-			frac = 1.0 - ((float)(cg.time - cg_atmFx.gustEndTime)) / ((float)(cg_atmFx.baseStartTime - cg_atmFx.gustEndTime));
+			frac = 1.0f - ((float)(cg.time - cg_atmFx.gustEndTime)) / ((float)(cg_atmFx.baseStartTime - cg_atmFx.gustEndTime));
 			VectorMA(cg_atmFx.baseVec, frac, temp, curr);
 			*weight = cg_atmFx.baseWeight + (cg_atmFx.gustWeight - cg_atmFx.baseWeight) * frac;
 			*num    = cg_atmFx.baseDrops + ((float)(cg_atmFx.gustDrops - cg_atmFx.baseDrops)) * frac;
@@ -591,6 +607,9 @@ static qboolean CG_EffectGustCurrent(vec3_t curr, float *weight, int *num)
 /**
  * @brief Parse floats
  * @details Parse the float or floats.
+ * @param[in] floatstr
+ * @param[out] f1
+ * @param[out] f2
  */
 static void CG_EP_ParseFloats(char *floatstr, float *f1, float *f2)
 {
@@ -616,6 +635,9 @@ static void CG_EP_ParseFloats(char *floatstr, float *f1, float *f2)
 /**
  * @brief Parse ints
  * @details Parse the int or ints.
+ * @param[in] intstr
+ * @param[out] i1
+ * @param[out] i2
  */
 static void CG_EP_ParseInts(char *intstr, int *i1, int *i2)
 {
@@ -640,6 +662,7 @@ static void CG_EP_ParseInts(char *intstr, int *i1, int *i2)
 /**
  * @brief Parse effect
  * @details Split the string into it's component parts.
+ * @param[in] effectstr
  */
 void CG_EffectParse(const char *effectstr)
 {
@@ -808,7 +831,7 @@ void CG_EffectParse(const char *effectstr)
 	cg_atmFx.effectshaders[ATM_NONE] = 0;
 	cg_atmFx.effectshaders[ATM_RAIN] = trap_R_RegisterShader("gfx/misc/raindrop");
 	cg_atmFx.effectshaders[ATM_SNOW] = trap_R_RegisterShader("gfx/misc/snow");
-	
+
 	CG_EffectGust();
 }
 

@@ -38,11 +38,10 @@
 // minor optimization - we only want to reset ents that were valid in the last frame
 static qboolean oldValid[MAX_GENTITIES];
 
-/*
-==================
-CG_ResetEntity
-==================
-*/
+/**
+ * @brief CG_ResetEntity
+ * @param[out] cent
+ */
 static void CG_ResetEntity(centity_t *cent)
 {
 	// if an event is set, assume it is new enough to use
@@ -80,13 +79,10 @@ static void CG_ResetEntity(centity_t *cent)
 	cent->akimboFire = qfalse;
 }
 
-/*
-===============
-CG_TransitionEntity
-
-cent->nextState is moved to cent->currentState and events are fired
-===============
-*/
+/**
+ * @brief cent->nextState is moved to cent->currentState and events are fired
+ * @param[in,out] cent
+ */
 static void CG_TransitionEntity(centity_t *cent)
 {
 	// update the fireDir if it's on fire
@@ -107,9 +103,9 @@ static void CG_TransitionEntity(centity_t *cent)
 			newDir[2] = 1;
 		}
 		// now move towards the newDir
-		adjust = 0.3;
+		adjust = 0.3f;
 		VectorMA(cent->fireRiseDir, adjust, newDir, cent->fireRiseDir);
-		if (VectorNormalize(cent->fireRiseDir) <= 0.1)
+		if (VectorNormalize(cent->fireRiseDir) <= 0.1f)
 		{
 			VectorCopy(newDir, cent->fireRiseDir);
 		}
@@ -131,17 +127,13 @@ static void CG_TransitionEntity(centity_t *cent)
 	CG_CheckEvents(cent);
 }
 
-/*
-==================
-CG_SetInitialSnapshot
-
-This will only happen on the very first snapshot, or
-on tourney restarts.  All other times will use
-CG_TransitionSnapshot instead.
-
-FIXME: Also called by map_restart?
-==================
-*/
+/**
+ * @brief This will only happen on the very first snapshot, or
+ * on tourney restarts.  All other times will use
+ * CG_TransitionSnapshot instead.
+ * @param snap
+ * @todo FIXME: Also called by map_restart?
+ */
 void CG_SetInitialSnapshot(snapshot_t *snap)
 {
 	int           i;
@@ -240,13 +232,9 @@ void CG_SetInitialSnapshot(snapshot_t *snap)
 	}
 }
 
-/*
-===================
-CG_TransitionSnapshot
-
-The transition point from snap to nextSnap has passed
-===================
-*/
+/**
+ * @brief The transition point from snap to nextSnap has passed
+ */
 static void CG_TransitionSnapshot(void)
 {
 	centity_t  *cent;
@@ -365,13 +353,10 @@ static void CG_TransitionSnapshot(void)
 	}
 }
 
-/*
-===================
-CG_SetNextSnap
-
-A new snapshot has just been read in from the client system.
-===================
-*/
+/**
+ * @brief A new snapshot has just been read in from the client system.
+ * @param[in] snap
+ */
 static void CG_SetNextSnap(snapshot_t *snap)
 {
 	int           num;
@@ -431,16 +416,15 @@ static void CG_SetNextSnap(snapshot_t *snap)
 	CG_BuildSolidList();
 }
 
-/*
-========================
-CG_ReadNextSnapshot
-
-This is the only place new snapshots are requested
-This may increment cgs.processedSnapshotNum multiple
-times if the client system fails to return a
-valid snapshot.
-========================
-*/
+/**
+ * @brief This is the only place new snapshots are requested
+ *
+ * @details This may increment cgs.processedSnapshotNum multiple
+ * times if the client system fails to return a
+ * valid snapshot.
+ *
+ * @return
+ */
 static snapshot_t *CG_ReadNextSnapshot(void)
 {
 	qboolean   r;
@@ -517,21 +501,26 @@ static snapshot_t *CG_ReadNextSnapshot(void)
 ============
 CG_ProcessSnapshots
 
-We are trying to set up a renderable view, so determine
-what the simulated time is, and try to get snapshots
-both before and after that time if available.
 
-If we don't have a valid cg.snap after exiting this function,
-then a 3D game view cannot be rendered.  This should only happen
-right after the initial connection.  After cg.snap has been valid
-once, it will never turn invalid.
-
-Even if cg.snap is valid, cg.nextSnap may not be, if the snapshot
-hasn't arrived yet (it becomes an extrapolating situation instead
-of an interpolating one)
 
 ============
 */
+/**
+ * @brief CG_ProcessSnapshots
+ * @details
+ * We are trying to set up a renderable view, so determine
+ * what the simulated time is, and try to get snapshots
+ * both before and after that time if available.
+ *
+ * If we don't have a valid cg.snap after exiting this function,
+ * then a 3D game view cannot be rendered.  This should only happen
+ * right after the initial connection.  After cg.snap has been valid
+ * once, it will never turn invalid.
+ *
+ * Even if cg.snap is valid, cg.nextSnap may not be, if the snapshot
+ * hasn't arrived yet (it becomes an extrapolating situation instead
+ * of an interpolating one)
+ */
 void CG_ProcessSnapshots(void)
 {
 	snapshot_t *snap;

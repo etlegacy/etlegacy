@@ -34,6 +34,14 @@
 
 #include "cg_local.h"
 
+/**
+ * @brief CG_TrimLeftPixels
+ * @param[in,out] instr
+ * @param[in] scale
+ * @param[in] w
+ * @param[in] size
+ * @return
+ */
 int CG_TrimLeftPixels(char *instr, float scale, float w, int size)
 {
 	char buffer[1024];
@@ -62,6 +70,14 @@ int CG_TrimLeftPixels(char *instr, float scale, float w, int size)
 	return -1;
 }
 
+/**
+ * @brief CG_FitTextToWidth_Ext
+ * @param[in,out] instr
+ * @param[in] scale
+ * @param[in] w
+ * @param[in] size
+ * @param[in] font
+ */
 void CG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontHelper_t *font)
 {
 	char buffer[1024];
@@ -118,6 +134,13 @@ void CG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontHelp
 	*c = '\0';
 }
 
+/**
+ * @brief CG_FitTextToWidth2
+ * @param[in,out] instr
+ * @param[in] scale
+ * @param[in] w
+ * @param[in] size
+ */
 void CG_FitTextToWidth2(char *instr, float scale, float w, int size)
 {
 	char buffer[1024];
@@ -174,6 +197,13 @@ void CG_FitTextToWidth2(char *instr, float scale, float w, int size)
 	*c = '\0';
 }
 
+/**
+ * @brief CG_FitTextToWidth_SingleLine
+ * @param[in,out] instr
+ * @param[in] scale
+ * @param[in] w
+ * @param[in] size
+ */
 void CG_FitTextToWidth_SingleLine(char *instr, float scale, float w, int size)
 {
 	char *s, *p;
@@ -194,11 +224,13 @@ void CG_FitTextToWidth_SingleLine(char *instr, float scale, float w, int size)
 	}
 }
 
-/*
-==============
-CG_DrawPlayerWeaponIcon
-==============
-*/
+/**
+ * @brief CG_DrawPlayerWeaponIcon
+ * @param[in] rect
+ * @param drawHighlighted - unused
+ * @param[in] align
+ * @param[in] refcolor
+ */
 void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int align, vec4_t *refcolor)
 {
 	int       realweap;
@@ -321,19 +353,17 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 
 #define CURSORHINT_SCALE    10
 
-/*
-==============
-CG_DrawCursorHints
-
-  cg_cursorHints.integer ==
-    0:  no hints
-    1:  sin size pulse
-    2:  one way size pulse
-    3:  alpha pulse
-    4+: static image
-
-==============
-*/
+/**
+ * @brief CG_DrawCursorhint
+ * @param[in] rect
+ * @note
+ * cg_cursorHints.integer ==
+ *   0:  no hints
+ *   1:  sin size pulse
+ *   2:  one way size pulse
+ *   3:  alpha pulse
+ *   4+: static image
+ */
 void CG_DrawCursorhint(rectDef_t *rect)
 {
 	float     *color;
@@ -491,7 +521,7 @@ void CG_DrawCursorhint(rectDef_t *rect)
 
 	if (cg_cursorHints.integer == 3)
 	{
-		color[3] *= 0.5 + 0.5 * sin((float)cg.time / 150.0);
+		color[3] *= 0.5 + 0.5 * sin((double)cg.time / 150.0);
 	}
 
 	// size
@@ -507,7 +537,7 @@ void CG_DrawCursorhint(rectDef_t *rect)
 		}
 		else
 		{
-			scale = CURSORHINT_SCALE * (0.5 + 0.5 * sin((float)cg.time / 150.0));     // sin pulse
+			scale = (float)(CURSORHINT_SCALE * (0.5 + 0.5 * sin((double)cg.time / 150.0)));     // sin pulse
 
 		}
 		halfscale = scale * 0.5f;
@@ -532,25 +562,34 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	}
 }
 
-float CG_GetValue(int ownerDraw, int type) // FIXME: what's this ??
+/**
+ * @brief CG_GetValue
+ * @param ownerDraw - unused
+ * @param type - unused
+ * @todo FIXME: what's this ??
+ * @return
+ */
+float CG_GetValue(int ownerDraw, int type)
 {
 	return -1;
 }
 
-// THINKABOUTME: should these be exclusive or inclusive..
+/**
+ * @brief CG_OwnerDrawVisible
+ * @param flags - unused
+ * @return
+ * @note THINKABOUTME: should these be exclusive or inclusive..
+ */
 qboolean CG_OwnerDrawVisible(int flags)
 {
 	return qfalse;
 }
 
-/*
-==============
-CG_DrawWeapStability
-    draw a bar showing current stability level (0-255), max at current weapon/ability, and 'perfect' reference mark
-
-    probably only drawn for scoped weapons
-==============
-*/
+/**
+ * @brief Draw a bar showing current stability level (0-255), max at current weapon/ability, and 'perfect' reference mark
+ * probably only drawn for scoped weapons
+ * @param[in] rect
+ */
 void CG_DrawWeapStability(rectDef_t *rect)
 {
 	static vec4_t goodColor = { 0, 1, 0, 0.5f }, badColor = { 1, 0, 0, 0.5f };
@@ -584,11 +623,11 @@ void CG_DrawWeapStability(rectDef_t *rect)
 	CG_FilledBar(rect->x, rect->y, rect->w, rect->h, goodColor, badColor, NULL, (float)cg.snap->ps.aimSpreadScale / 255.0f, BAR_CENTER | BAR_VERT | BAR_LERP_COLOR);
 }
 
-/*
-==============
-CG_DrawWeapHeat
-==============
-*/
+/**
+ * @brief CG_DrawWeapHeat
+ * @param[in] rect
+ * @param[in] align
+ */
 void CG_DrawWeapHeat(rectDef_t *rect, int align)
 {
 	static vec4_t color = { 1, 0, 0, 0.2f }, color2 = { 1, 0, 0, 0.5f };
@@ -617,6 +656,11 @@ void CG_DrawWeapHeat(rectDef_t *rect, int align)
 int old_mouse_x_pos = 0, old_mouse_y_pos = 0;
 #endif
 
+/**
+ * @brief CG_MouseEvent
+ * @param[in] x
+ * @param[in] y
+ */
 void CG_MouseEvent(int x, int y)
 {
 	switch (cgs.eventHandling)
@@ -637,92 +681,92 @@ void CG_MouseEvent(int x, int y)
 		{
 #endif
 
-            cgs.cursorX += x;
-            if (cgs.cursorX < 0)
-            {
-                cgs.cursorX = 0;
-            }
-            else if (cgs.cursorX > SCREEN_WIDTH_SAFE)
-            {
-                cgs.cursorX = SCREEN_WIDTH_SAFE;
-            }
+		cgs.cursorX += x;
+		if (cgs.cursorX < 0)
+		{
+			cgs.cursorX = 0;
+		}
+		else if (cgs.cursorX > SCREEN_WIDTH_SAFE)
+		{
+			cgs.cursorX = SCREEN_WIDTH_SAFE;
+		}
 
-            cgs.cursorY += y;
-            if (cgs.cursorY < 0)
-            {
-                cgs.cursorY = 0;
-            }
-            else if (cgs.cursorY > SCREEN_HEIGHT_SAFE)
-            {
-                cgs.cursorY = SCREEN_HEIGHT_SAFE;
-            }
+		cgs.cursorY += y;
+		if (cgs.cursorY < 0)
+		{
+			cgs.cursorY = 0;
+		}
+		else if (cgs.cursorY > SCREEN_HEIGHT_SAFE)
+		{
+			cgs.cursorY = SCREEN_HEIGHT_SAFE;
+		}
 
-            if (cgs.eventHandling == CGAME_EVENT_SPEAKEREDITOR)
-            {
-                CG_SpeakerEditorMouseMove_Handling(x, y);
-            }
+		if (cgs.eventHandling == CGAME_EVENT_SPEAKEREDITOR)
+		{
+			CG_SpeakerEditorMouseMove_Handling(x, y);
+		}
 #ifdef FEATURE_EDV
-        }
-        else
-        {
-            // mousemovement *should* feel the same as ingame
-            char buffer[64];
-            int  mx          = 0, my = 0;
-            int  mouse_x_pos = 0, mouse_y_pos = 0;
+	}
+	else
+	{
+		// mousemovement *should* feel the same as ingame
+		char buffer[64];
+		int  mx = 0, my = 0;
+		int  mouse_x_pos = 0, mouse_y_pos = 0;
 
-            float sensitivity, m_pitch, m_yaw;
-            int   m_filter = 0;
+		float sensitivity, m_pitch, m_yaw;
+		int   m_filter = 0;
 
-            if (demo_lookat.integer != -1)
-            {
-                return;
-            }
+		if (demo_lookat.integer != -1)
+		{
+			return;
+		}
 
-            mx += x;
-            my += y;
+		mx += x;
+		my += y;
 
-            trap_Cvar_VariableStringBuffer("m_filter", buffer, sizeof(buffer));
-            m_filter = atoi(buffer);
+		trap_Cvar_VariableStringBuffer("m_filter", buffer, sizeof(buffer));
+		m_filter = atoi(buffer);
 
-            trap_Cvar_VariableStringBuffer("sensitivity", buffer, sizeof(buffer));
-            sensitivity = atof(buffer);
+		trap_Cvar_VariableStringBuffer("sensitivity", buffer, sizeof(buffer));
+		sensitivity = atof(buffer);
 
-            trap_Cvar_VariableStringBuffer("m_pitch", buffer, sizeof(buffer));
-            m_pitch = atof(buffer);
+		trap_Cvar_VariableStringBuffer("m_pitch", buffer, sizeof(buffer));
+		m_pitch = atof(buffer);
 
-            trap_Cvar_VariableStringBuffer("m_yaw", buffer, sizeof(buffer));
-            m_yaw = atof(buffer);
+		trap_Cvar_VariableStringBuffer("m_yaw", buffer, sizeof(buffer));
+		m_yaw = atof(buffer);
 
-            if (m_filter)
-            {
-                mouse_x_pos = (mx + old_mouse_x_pos) * 0.5;
-                mouse_y_pos = (my + old_mouse_y_pos) * 0.5;
-            }
-            else
-            {
-                mouse_x_pos = mx;
-                mouse_y_pos = my;
-            }
+		if (m_filter)
+		{
+			mouse_x_pos = (mx + old_mouse_x_pos) / 2;
+			mouse_y_pos = (my + old_mouse_y_pos) / 2;
+		}
+		else
+		{
+			mouse_x_pos = mx;
+			mouse_y_pos = my;
+		}
 
-            old_mouse_x_pos = mx;
-            old_mouse_y_pos = my;
+		old_mouse_x_pos = mx;
+		old_mouse_y_pos = my;
 
-            mouse_x_pos *= sensitivity;
-            mouse_y_pos *= sensitivity;
+		mouse_x_pos *= sensitivity;
+		mouse_y_pos *= sensitivity;
 
-            cg.refdefViewAngles[YAW]   -= m_yaw * mouse_x_pos;
-            cg.refdefViewAngles[PITCH] += m_pitch * mouse_y_pos;
+		cg.refdefViewAngles[YAW]   -= m_yaw * mouse_x_pos;
+		cg.refdefViewAngles[PITCH] += m_pitch * mouse_y_pos;
 
-            if (cg.refdefViewAngles[PITCH] < -90)
-            {
-                cg.refdefViewAngles[PITCH] = -90;
-            }
+		if (cg.refdefViewAngles[PITCH] < -90)
+		{
+			cg.refdefViewAngles[PITCH] = -90;
+		}
 
-            if (cg.refdefViewAngles[PITCH] > 90)
-            {
-                cg.refdefViewAngles[PITCH] = 90;
-            }
-        }
+		if (cg.refdefViewAngles[PITCH] > 90)
+		{
+			cg.refdefViewAngles[PITCH] = 90;
+		}
+	}
 #endif
 		break;
 	default:
@@ -744,11 +788,11 @@ void CG_MouseEvent(int x, int y)
 	}
 }
 
-/*
-==================
-CG_EventHandling
-==================
-*/
+/**
+ * @brief CG_EventHandling
+ * @param[in] type
+ * @param[in] fForced
+ */
 void CG_EventHandling(int type, qboolean fForced)
 {
 	if (cg.demoPlayback && type == CGAME_EVENT_NONE && !fForced)
@@ -947,6 +991,10 @@ void CG_KeyEvent(int key, qboolean down)
 	}
 }
 
+/**
+ * @brief CG_GetTeamColor
+ * @param[out] color
+ */
 void CG_GetTeamColor(vec4_t *color)
 {
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_AXIS)
@@ -969,6 +1017,11 @@ void CG_GetTeamColor(vec4_t *color)
 	}
 }
 
+/**
+ * @brief CG_RunMenuScript
+ * @param args - unused
+ * @note Unused function ?
+ */
 void CG_RunMenuScript(char **args)
 {
 }
