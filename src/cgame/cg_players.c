@@ -35,16 +35,16 @@
 
 #include "cg_local.h"
 
-#define SWING_RIGHT 1
-#define SWING_LEFT  2
+#define SWING_RIGHT 1.f
+#define SWING_LEFT  2.f
 
 extern const char *cg_skillRewards[SK_NUM_SKILLS][NUM_SKILL_LEVELS - 1];
 
-/*
-================
-CG_EntOnFire
-================
-*/
+/**
+ * @brief CG_EntOnFire
+ * @param[in] cent
+ * @return
+ */
 qboolean CG_EntOnFire(centity_t *cent)
 {
 	// don't display on respawn
@@ -68,11 +68,12 @@ qboolean CG_EntOnFire(centity_t *cent)
 	}
 }
 
-/*
-================
-CG_IsCrouchingAnim
-================
-*/
+/**
+ * @brief CG_IsCrouchingAnim
+ * @param[in] animModelInfo
+ * @param[in] animNum
+ * @return
+ */
 qboolean CG_IsCrouchingAnim(animModelInfo_t *animModelInfo, int animNum)
 {
 	animation_t *anim;
@@ -89,11 +90,12 @@ qboolean CG_IsCrouchingAnim(animModelInfo_t *animModelInfo, int animNum)
 	return qfalse;
 }
 
-/*
-================
-CG_CustomSound
-================
-*/
+/**
+ * @brief CG_CustomSound
+ * @param clientNum - unused
+ * @param[in] soundName
+ * @return
+ */
 sfxHandle_t CG_CustomSound(int clientNum, const char *soundName)
 {
 	if (soundName[0] != '*')
@@ -110,14 +112,11 @@ CLIENT INFO
 =============================================================================
 */
 
-/*
-===================
-CG_LoadClientInfo
-
-Load it now, taking the disk hits.
-This will usually be deferred to a safe time
-===================
-*/
+/**
+ * @brief Load it now, taking the disk hits.
+ * This will usually be deferred to a safe time
+ * @param clientNum
+ */
 static void CG_LoadClientInfo(int clientNum)
 {
 	int i;
@@ -133,6 +132,10 @@ static void CG_LoadClientInfo(int clientNum)
 	}
 }
 
+/**
+ * @brief CG_ParseTeamXPs
+ * @param[in] n
+ */
 void CG_ParseTeamXPs(int n)
 {
 	int        i, j;
@@ -164,11 +167,10 @@ void CG_ParseTeamXPs(int n)
 
 void CG_LimboPanel_SendSetupMsg(qboolean forceteam);
 
-/*
-======================
-CG_NewClientInfo
-======================
-*/
+/**
+ * @brief CG_NewClientInfo
+ * @param[in] clientNum
+ */
 void CG_NewClientInfo(int clientNum)
 {
 	clientInfo_t *ci = &cgs.clientinfo[clientNum];
@@ -209,7 +211,7 @@ void CG_NewClientInfo(int clientNum)
 
 	// team
 	v            = Info_ValueForKey(configstring, "t");
-	newInfo.team = atoi(v);
+	newInfo.team = (team_t)(atoi(v));
 
 	// class
 	v           = Info_ValueForKey(configstring, "c");
@@ -422,6 +424,12 @@ PLAYER ANIMATION
 =============================================================================
 */
 
+/**
+ * @brief CG_PlayerClassForClientinfo
+ * @param[in] ci
+ * @param[in] cent
+ * @return
+ */
 bg_playerclass_t *CG_PlayerClassForClientinfo(clientInfo_t *ci, centity_t *cent)
 {
 	int team, cls;
@@ -444,13 +452,14 @@ bg_playerclass_t *CG_PlayerClassForClientinfo(clientInfo_t *ci, centity_t *cent)
 	return BG_GetPlayerClassInfo(ci->team, ci->cls);
 }
 
-/*
-===============
-CG_SetLerpFrameAnimation
-
-may include ANIM_TOGGLEBIT
-===============
-*/
+/**
+ * @brief CG_SetLerpFrameAnimation
+ * @param cent
+ * @param ci
+ * @param lf
+ * @param newAnimation
+ * @note May include ANIM_TOGGLEBIT
+ */
 static void CG_SetLerpFrameAnimation(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int newAnimation)
 {
 	animation_t *anim;
@@ -483,20 +492,22 @@ static void CG_SetLerpFrameAnimation(centity_t *cent, clientInfo_t *ci, lerpFram
 	}
 }
 
-/*
-===============
-CG_RunLerpFrame
-
-Sets cg.snap, cg.oldFrame, and cg.backlerp
-cg.time should be between oldFrameTime and frameTime after exit
-===============
-*/
+/**
+ * @brief Sets cg.snap, cg.oldFrame, and cg.backlerp
+ * cg.time should be between oldFrameTime and frameTime after exit
+ * @param[in] cent
+ * @param[in] ci
+ * @param[in,out] lf
+ * @param[in] newAnimation
+ * @param[in] speedScale
+ */
 void CG_RunLerpFrame(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, float speedScale)
 {
 	// debugging tool to get no animations
 	if (cg_animSpeed.integer == 0)
 	{
-		lf->oldFrame = lf->frame = lf->backlerp = 0;
+		lf->oldFrame = lf->frame = 0;
+		lf->backlerp = 0;
 		return;
 	}
 
@@ -579,15 +590,17 @@ void CG_RunLerpFrame(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int new
 	}
 	else
 	{
-		lf->backlerp = 1.0 - (float)(cg.time - lf->oldFrameTime) / (lf->frameTime - lf->oldFrameTime);
+		lf->backlerp = 1.0f - (float)(cg.time - lf->oldFrameTime) / (lf->frameTime - lf->oldFrameTime);
 	}
 }
 
-/*
-===============
-CG_ClearLerpFrame
-===============
-*/
+/**
+ * @brief CG_ClearLerpFrame
+ * @param[in] cent
+ * @param[in] ci
+ * @param[in,out] lf
+ * @param animationNumber
+ */
 static void CG_ClearLerpFrame(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int animationNumber)
 {
 	lf->frameTime = lf->oldFrameTime = cg.time;
@@ -599,13 +612,14 @@ static void CG_ClearLerpFrame(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf
 	}
 }
 
-/*
-===============
-CG_SetLerpFrameAnimationRate
-
-may include ANIM_TOGGLEBIT
-===============
-*/
+/**
+ * @brief CG_SetLerpFrameAnimationRate
+ * @param[in] cent
+ * @param[in] ci
+ * @param[in,out] lf
+ * @param[in] newAnimation
+ * @note May include ANIM_TOGGLEBIT
+ */
 void CG_SetLerpFrameAnimationRate(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int newAnimation)
 {
 	animation_t *anim, *oldanim;
@@ -675,7 +689,7 @@ void CG_SetLerpFrameAnimationRate(centity_t *cent, clientInfo_t *ci, lerpFrame_t
 		else
 		{
 			// slow down transitions according to speed
-			if (anim->moveSpeed && lf->animSpeedScale < 1.0)
+			if (anim->moveSpeed && lf->animSpeedScale < 1.0f)
 			{
 				lf->animationTime += anim->initialLerp;
 			}
@@ -702,20 +716,21 @@ void CG_SetLerpFrameAnimationRate(centity_t *cent, clientInfo_t *ci, lerpFrame_t
 	}
 }
 
-#define ANIM_SCALEMAX_LOW   1.1
-#define ANIM_SCALEMAX_HIGH  1.6
+#define ANIM_SCALEMAX_LOW   1.1f
+#define ANIM_SCALEMAX_HIGH  1.6f
 
 #define ANIM_SPEEDMAX_LOW   100
 #define ANIM_SPEEDMAX_HIGH  20
 
-/*
-===============
-CG_RunLerpFrameRate
-
-Sets cg.snap, cg.oldFrame, and cg.backlerp
-cg.time should be between oldFrameTime and frameTime after exit
-===============
-*/
+/**
+ * @brief Sets cg.snap, cg.oldFrame, and cg.backlerp
+ * cg.time should be between oldFrameTime and frameTime after exit
+ * @param[in] ci
+ * @param[in,out] lf
+ * @param[in] newAnimation
+ * @param[in] cent
+ * @param[in] recursion
+ */
 void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, centity_t *cent, int recursion)
 {
 	animation_t *anim, *oldAnim;
@@ -725,7 +740,8 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 	// debugging tool to get no animations
 	if (cg_animSpeed.integer == 0)
 	{
-		lf->oldFrame = lf->frame = lf->backlerp = 0;
+		lf->oldFrame = lf->frame = 0;
+		lf->backlerp = 0.f;
 		return;
 	}
 
@@ -768,7 +784,7 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 				{
 					lf->oldFramePos[2] = cent->lerpOrigin[2];
 				}
-				moveSpeed = Distance(cent->lerpOrigin, lf->oldFramePos) / ((float)(cg.time - lf->oldFrameTime) / 1000.0);
+				moveSpeed = Distance(cent->lerpOrigin, lf->oldFramePos) / ((float)(cg.time - lf->oldFrameTime) / 1000.0f);
 			}
 			else
 			{
@@ -777,7 +793,7 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 					lf->oldFramePos[0] = cent->currentState.pos.trBase[0];
 					lf->oldFramePos[1] = cent->currentState.pos.trBase[1];
 				}
-				moveSpeed = Distance(cent->lerpOrigin, lf->oldFramePos) / ((float)(cg.time - lf->oldFrameTime) / 1000.0);
+				moveSpeed = Distance(cent->lerpOrigin, lf->oldFramePos) / ((float)(cg.time - lf->oldFrameTime) / 1000.0f);
 			}
 
 			// convert it to a factor of this animation's movespeed
@@ -806,9 +822,9 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 		VectorCopy(cent->lerpOrigin, lf->oldFramePos);
 
 		// restrict the speed range
-		if (lf->animSpeedScale < 0.25)       // if it's too slow, then a really slow spped, combined with a sudden take-off, can leave them playing a really slow frame while they a moving really fast
+		if (lf->animSpeedScale < 0.25f)       // if it's too slow, then a really slow spped, combined with a sudden take-off, can leave them playing a really slow frame while they a moving really fast
 		{
-			if (lf->animSpeedScale < 0.01 && isLadderAnim)
+			if (lf->animSpeedScale < 0.01f && isLadderAnim)
 			{
 				lf->animSpeedScale = 0.0f;
 			}
@@ -855,7 +871,7 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 		}
 
 		// get the next frame based on the animation
-		if (!lf->animSpeedScale)
+		if (lf->animSpeedScale == 0.f)
 		{
 			// stopped on the ladder, so stay on the same frame
 			f              = lf->frame - anim->firstFrame;
@@ -900,7 +916,7 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 		}
 		else
 		{
-			lf->frameTime = lf->oldFrameTime + (int)((float)anim->frameLerp * (1.0 / lf->animSpeedScale));
+			lf->frameTime = lf->oldFrameTime + (int)((float)anim->frameLerp * (1.0f / lf->animSpeedScale));
 			if (lf->frameTime < cg.time)
 			{
 				lf->frameTime = cg.time;
@@ -1001,15 +1017,17 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 	}
 	else
 	{
-		lf->backlerp = 1.0 - (float)(cg.time - lf->oldFrameTime) / (lf->frameTime - lf->oldFrameTime);
+		lf->backlerp = 1.0f - (float)(cg.time - lf->oldFrameTime) / (lf->frameTime - lf->oldFrameTime);
 	}
 }
 
-/*
-===============
-CG_ClearLerpFrameRate
-===============
-*/
+/**
+ * @brief CG_ClearLerpFrameRate
+ * @param[in] cent
+ * @param[in] ci
+ * @param[in,out] lf
+ * @param[in] animationNumber
+ */
 void CG_ClearLerpFrameRate(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, int animationNumber)
 {
 	lf->frameTime = lf->oldFrameTime = cg.time;
@@ -1022,7 +1040,10 @@ void CG_ClearLerpFrameRate(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, i
 }
 
 /**
- * @brief similar to CG_RunLerpFrameRate, simplifed, and sets remaining animation, so animation won't be replayed
+ * @brief Similar to CG_RunLerpFrameRate, simplifed, and sets remaining animation, so animation won't be replayed
+ * @param[in] cent
+ * @param[in,out] lf
+ * @param[in] newAnimation
  */
 void CG_SetLerpFrameAnimationRateCorpse(centity_t *cent, lerpFrame_t *lf, int newAnimation)
 {
@@ -1088,6 +1109,11 @@ void CG_SetLerpFrameAnimationRateCorpse(centity_t *cent, lerpFrame_t *lf, int ne
 
 /**
  * @brief Simplifed code for corpses
+ * @param[in] ci - unused
+ * @param[in,out] lf
+ * @param[in] newAnimation
+ * @param[in] cent
+ * @param[in] recursion - unused
  */
 void CG_RunLerpFrameRateCorpse(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, centity_t *cent, int recursion)
 {
@@ -1182,16 +1208,15 @@ void CG_RunLerpFrameRateCorpse(clientInfo_t *ci, lerpFrame_t *lf, int newAnimati
 	}
 	else
 	{
-		lf->backlerp = 1.0 - (float)(cg.time - lf->oldFrameTime) / (lf->frameTime - lf->oldFrameTime);
+		lf->backlerp = 1.0f - (float)(cg.time - lf->oldFrameTime) / (lf->frameTime - lf->oldFrameTime);
 	}
 }
 
-
-/*
-===============
-CG_PlayerAnimation
-===============
-*/
+/**
+ * @brief CG_PlayerAnimation
+ * @param[in] cent
+ * @param[out] body
+ */
 static void CG_PlayerAnimation(centity_t *cent, refEntity_t *body)
 {
 	int clientNum    = cent->currentState.clientNum;
@@ -1268,11 +1293,15 @@ PLAYER ANGLES
 =============================================================================
 */
 
-/*
-==================
-CG_SwingAngles
-==================
-*/
+/**
+ * @brief CG_SwingAngles
+ * @param[in] destination
+ * @param[in] swingTolerance
+ * @param[in] clampTolerance
+ * @param[in] speed
+ * @param[in,out] angle
+ * @param[in,out] swinging
+ */
 static void CG_SwingAngles(float destination, float swingTolerance, float clampTolerance,
                            float speed, float *angle, qboolean *swinging)
 {
@@ -1298,9 +1327,9 @@ static void CG_SwingAngles(float destination, float swingTolerance, float clampT
 	// modify the speed depending on the delta
 	// so it doesn't seem so linear
 	swing  = AngleSubtract(destination, *angle);
-	scale  = fabs(swing);
+	scale  = (float)fabs((double)swing);
 	scale *= 0.05;
-	if (scale < 0.5)
+	if (scale < 0.5f)
 	{
 		scale = 0.5f;
 	}
@@ -1349,8 +1378,8 @@ static void CG_SwingAngles(float destination, float swingTolerance, float clampT
 
 /**
  * @brief CG_AddPainTwitch
- * @param cent
- * @param torsoAngles
+ * @param[in,out] cent
+ * @param[in] torsoAngles
  * @note direction unused ?
  */
 static void CG_AddPainTwitch(centity_t *cent, vec3_t torsoAngles)
@@ -1360,7 +1389,7 @@ static void CG_AddPainTwitch(centity_t *cent, vec3_t torsoAngles)
 	int duration;
 	//float direction;
 
-	if (!cent->pe.animSpeed)
+	if (cent->pe.animSpeed != 0.f)
 	{
 		// we need to inititialize this stuff
 		cent->pe.painAnimLegs  = -1;
@@ -1419,6 +1448,13 @@ static void CG_AddPainTwitch(centity_t *cent, vec3_t torsoAngles)
 #define LEAN_TIME_TO    200.0f  // time to get to/from full lean
 #define LEAN_TIME_FR    300.0f  // time to get to/from full lean
 
+/**
+ * @brief CG_PredictLean
+ * @param[in,out] cent
+ * @param[in] torsoAngles
+ * @param[in] headAngles
+ * @param[in] viewHeight
+ */
 void CG_PredictLean(centity_t *cent, vec3_t torsoAngles, vec3_t headAngles, int viewHeight)
 {
 	int leaning   = 0;          // -1 left, 1 right
@@ -1547,7 +1583,7 @@ void CG_PredictLean(centity_t *cent, vec3_t torsoAngles, vec3_t headAngles, int 
 
 	if (torsoAngles)
 	{
-		torsoAngles[ROLL] += cent->pe.leanDirection * 1.25;
+		torsoAngles[ROLL] += cent->pe.leanDirection * 1.25f;
 	}
 	if (headAngles)
 	{
@@ -1564,6 +1600,10 @@ void CG_PredictLean(centity_t *cent, vec3_t torsoAngles, vec3_t headAngles, int 
  *
  * if motion < 20 degrees, show in head only
  * if < 45 degrees, also show in torso
+ * @param[in,out] cent
+ * @param[in] legs
+ * @param[in] torso
+ * @param[in] head
  */
 static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], vec3_t head[3])
 {
@@ -1631,7 +1671,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 
 		if (!(cent->currentState.eFlags & EF_FIRING))
 		{
-			torsoAngles[YAW] = headAngles[YAW] + 0.35 * cent->currentState.angles2[YAW];
+			torsoAngles[YAW] = headAngles[YAW] + 0.35f * cent->currentState.angles2[YAW];
 			clampTolerance   = 90;
 		}
 		else        // must be firing
@@ -1653,7 +1693,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 		if (BG_GetConditionBitFlag(ci->clientNum, ANIM_COND_MOVETYPE, ANIM_MT_IDLE))
 		{
 			cent->pe.legs.yawing = qfalse; // set it if they really need to swing
-			CG_SwingAngles(legsAngles[YAW], 20, clampTolerance, 0.5 * cg_swingSpeed.value, &cent->pe.legs.yawAngle, &cent->pe.legs.yawing);
+			CG_SwingAngles(legsAngles[YAW], 20, clampTolerance, 0.5f * cg_swingSpeed.value, &cent->pe.legs.yawAngle, &cent->pe.legs.yawing);
 		}
 		else if (strstr(BG_GetAnimString(character->animModelInfo, legsSet), "strafe"))
 		{
@@ -1681,11 +1721,11 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 	// only show a fraction of the pitch angle in the torso
 	if (headAngles[PITCH] > 180)
 	{
-		dest = (-360 + headAngles[PITCH]) * 0.75;
+		dest = (-360 + headAngles[PITCH]) * 0.75f;
 	}
 	else
 	{
-		dest = headAngles[PITCH] * 0.75;
+		dest = headAngles[PITCH] * 0.75f;
 	}
 	//CG_SwingAngles( dest, 15, 30, 0.1, &cent->pe.torso.pitchAngle, &cent->pe.torso.pitching );
 	//torsoAngles[PITCH] = cent->pe.torso.pitchAngle;
@@ -1696,7 +1736,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 	}
 	else
 	{
-		CG_SwingAngles(dest, 15, 30, 0.1, &cent->pe.torso.pitchAngle, &cent->pe.torso.pitching);
+		CG_SwingAngles(dest, 15, 30, 0.1f, &cent->pe.torso.pitchAngle, &cent->pe.torso.pitching);
 		torsoAngles[PITCH] = cent->pe.torso.pitchAngle;
 	}
 
@@ -1705,7 +1745,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 	// lean towards the direction of travel
 	VectorCopy(cent->currentState.pos.trDelta, velocity);
 	speed = VectorNormalize(velocity);
-	if (speed)
+	if (speed != 0.f)
 	{
 		vec3_t axis[3];
 		float side;
@@ -1720,7 +1760,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 		legsAngles[PITCH] += side;
 	}
 
-	CG_PredictLean(cent, torsoAngles, headAngles, cg.snap->ps.clientNum == cent->currentState.clientNum ? cg.snap->ps.viewheight :  cent->pe.headRefEnt.origin[2]);
+	CG_PredictLean(cent, torsoAngles, headAngles, cg.snap->ps.clientNum == cent->currentState.clientNum ? cg.snap->ps.viewheight :  (int)cent->pe.headRefEnt.origin[2]);
 
 	// pain twitch
 	CG_AddPainTwitch(cent, torsoAngles);
@@ -1738,11 +1778,11 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 	}
 }
 
-/*
-==============
-CG_BreathPuffs
-==============
-*/
+/**
+ * @brief CG_BreathPuffs
+ * @param[in] cent
+ * @param[in] head
+ */
 static void CG_BreathPuffs(centity_t *cent, refEntity_t *head)
 {
 	clientInfo_t *ci = &cgs.clientinfo[cent->currentState.number];
@@ -1789,16 +1829,16 @@ static void CG_BreathPuffs(centity_t *cent, refEntity_t *head)
 
 	CG_SmokePuff(morg, forward, 4, 1, 1, 1, 0.5f, 2000, cg.time, cg.time + 400, 0, cgs.media.shotgunSmokePuffShader);
 
-	ci->breathPuffTime = cg.time + 3000 + random() * 1000;
+	ci->breathPuffTime = (int)(cg.time + 3000 + random() * 1000);
 }
 
-/*
-===============
-CG_PlayerFloatSprite
-
-Float a sprite over the player's head added height parameter
-===============
-*/
+/**
+ * @brief Float a sprite over the player's head added height parameter
+ * @param[in] cent
+ * @param[in] shader
+ * @param[in] height
+ * @param[in] off
+ */
 static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height, int off)
 {
 	int rf;
@@ -1858,7 +1898,7 @@ static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height, 
 
 	ent.reType        = RT_SPRITE;
 	ent.customShader  = shader;
-	ent.radius        = 6.66;
+	ent.radius        = 6.66f;
 	ent.renderfx      = rf;
 	ent.shaderRGBA[0] = 255;
 	ent.shaderRGBA[1] = 255;
@@ -1867,15 +1907,14 @@ static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height, 
 	trap_R_AddRefEntityToScene(&ent);
 }
 
-/*
-===============
-CG_PlayerFloatSprite
-
-Float a sprite over the player's head
-added height parameter
-===============
-*/
-
+/**
+ * @brief Float a sprite over the player's head
+ * added height parameter
+ * @param point
+ * @param[out] x
+ * @param[out] y
+ * @return
+ */
 qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y)
 {
 	vec3_t trans;
@@ -1883,8 +1922,8 @@ qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y)
 	float px, py;
 	float z;
 
-	px = tan(DEG2RAD(cg.refdef.fov_x) / 2);
-	py = tan(DEG2RAD(cg.refdef.fov_y) / 2);
+	px = (float)tan(DEG2RAD((double)cg.refdef.fov_x) / 2);
+	py = (float)tan(DEG2RAD((double)cg.refdef.fov_y) / 2);
 
 	VectorSubtract(point, cg.refdef.vieworg, trans);
 
@@ -1898,7 +1937,7 @@ qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y)
 	}
 	px *= z;
 	py *= z;
-	if (px == 0 || py == 0)
+	if (px == 0.f || py == 0.f)
 	{
 		return qfalse;
 	}
@@ -1910,6 +1949,12 @@ qboolean CG_WorldCoordToScreenCoordFloat(vec3_t point, float *x, float *y)
 	return qtrue;
 }
 
+/**
+ * @brief CG_AddOnScreenText
+ * @param[in] text
+ * @param[in] origin
+ * @param[in] clientNum
+ */
 void CG_AddOnScreenText(const char *text, vec3_t origin, int clientNum)
 {
 	float x, y;
@@ -1956,6 +2001,12 @@ void CG_AddOnScreenText(const char *text, vec3_t origin, int clientNum)
 	}
 }
 
+/**
+ * @brief CG_PlayerFloatText
+ * @param[in] cent
+ * @param[in] text
+ * @param[in] height
+ */
 static void CG_PlayerFloatText(centity_t *cent, const char *text, int height)
 {
 	vec3_t origin;
@@ -1981,13 +2032,10 @@ static void CG_PlayerFloatText(centity_t *cent, const char *text, int height)
 	CG_AddOnScreenText(text, origin, cent->currentState.clientNum);
 }
 
-/*
-===============
-CG_PlayerSprites
-
-Float sprites over the player's head
-===============
-*/
+/**
+ * @brief Float sprites over the player's head
+ * @param[in] cent
+ */
 static void CG_PlayerSprites(centity_t *cent)
 {
 	int team;
@@ -2113,15 +2161,13 @@ static void CG_PlayerSprites(centity_t *cent)
 ===============
 CG_PlayerShadow
 
-Returns the Z component of the surface being shadowed
 
-  should it return a full plane instead of a Z?
 ===============
 */
 #define SHADOW_DISTANCE     64
-#define ZOFS    6.0
-#define SHADOW_MIN_DIST 250.0
-#define SHADOW_MAX_DIST 512.0
+#define ZOFS    6.0f
+#define SHADOW_MIN_DIST 250.0f
+#define SHADOW_MAX_DIST 512.0f
 
 typedef struct
 {
@@ -2132,6 +2178,13 @@ typedef struct
 	qhandle_t shader;
 } shadowPart_t;
 
+/**
+ * @brief Returns the Z component of the surface being shadowed
+ * @param[in] cent
+ * @param[in,out] shadowPlane
+ * @return
+ * @note TODO: Should it return a full plane instead of a Z?
+ */
 static qboolean CG_PlayerShadow(centity_t *cent, float *shadowPlane)
 {
 	vec3_t end;
@@ -2147,7 +2200,7 @@ static qboolean CG_PlayerShadow(centity_t *cent, float *shadowPlane)
 		{ "tag_footleft",  10, 0 },
 		{ "tag_footright", 10, 0 },
 		{ "tag_torso",     18, 0 },
-		{ NULL,            0 }
+		{ NULL,            0,  0 }
 	};
 
 	shadowParts[0].shader = cgs.media.shadowFootShader;     // pulled out of initliization
@@ -2289,13 +2342,10 @@ static qboolean CG_PlayerShadow(centity_t *cent, float *shadowPlane)
 	return qtrue;
 }
 
-/*
-===============
-CG_PlayerSplash
-
-Draw a mark at the water surface
-===============
-*/
+/**
+ * @brief Draw a mark at the water surface
+ * @param[in] cent
+ */
 static void CG_PlayerSplash(centity_t *cent)
 {
 	vec3_t start, end;
@@ -2332,7 +2382,7 @@ static void CG_PlayerSplash(centity_t *cent)
 	// trace down to find the surface
 	trap_CM_BoxTrace(&trace, start, end, NULL, NULL, 0, (CONTENTS_WATER | CONTENTS_SLIME | CONTENTS_LAVA));
 
-	if (trace.fraction == 1.0)
+	if (trace.fraction == 1.0f)
 	{
 		return;
 	}
@@ -2383,14 +2433,15 @@ static void CG_PlayerSplash(centity_t *cent)
 
 //==========================================================================
 
-/*
-===============
-CG_AddRefEntityWithPowerups
-
-Adds a piece with modifications or duplications for powerups
-Also called by CG_Missile for quad rockets, but nobody can tell...
-===============
-*/
+/**
+ * @brief Adds a piece with modifications or duplications for powerups
+ * Also called by CG_Missile for quad rockets, but nobody can tell...
+ * @param[in,out] ent
+ * @param[in] powerups - unused
+ * @param[in] team - unused
+ * @param[in] es
+ * @param[in] fireRiseDir
+ */
 void CG_AddRefEntityWithPowerups(refEntity_t *ent, int powerups, int team, entityState_t *es, const vec3_t fireRiseDir)
 {
 	refEntity_t backupRefEnt; //, parentEnt;
@@ -2429,24 +2480,24 @@ void CG_AddRefEntityWithPowerups(refEntity_t *ent, int powerups, int team, entit
 			fireEnd   = es->onFireEnd;
 		}
 
-		alpha = (cg.time - fireStart) / 1500.0;
-		if (alpha > 1.0)
+		alpha = (cg.time - fireStart) / 1500.0f;
+		if (alpha > 1.0f)
 		{
-			alpha = (fireEnd - cg.time) / 1500.0;
-			if (alpha > 1.0)
+			alpha = (fireEnd - cg.time) / 1500.0f;
+			if (alpha > 1.0f)
 			{
-				alpha = 1.0;
+				alpha = 1.0f;
 			}
 		}
 	}
 
 	if (onFire)
 	{
-		if (alpha < 0.0)
+		if (alpha < 0.0f)
 		{
-			alpha = 0.0;
+			alpha = 0.0f;
 		}
-		ent->shaderRGBA[3] = ( unsigned char )(255.0 * alpha);
+		ent->shaderRGBA[3] = ( unsigned char )(255.0f * alpha);
 		VectorCopy(fireRiseDir, ent->fireRiseDir);
 		if (VectorCompare(ent->fireRiseDir, vec3_origin))
 		{
@@ -2462,13 +2513,11 @@ void CG_AddRefEntityWithPowerups(refEntity_t *ent, int powerups, int team, entit
 	*ent = backupRefEnt;
 }
 
-/*
-===============
-CG_AnimPlayerConditions
-
-    predict, or calculate condition for this entity, if it is not the local client
-===============
-*/
+/**
+ * @brief Predict, or calculate condition for this entity, if it is not the local client
+ * @param[in] character
+ * @param[in] cent
+ */
 void CG_AnimPlayerConditions(bg_character_t *character, centity_t *cent)
 {
 	entityState_t *es;
@@ -2538,11 +2587,10 @@ void CG_AnimPlayerConditions(bg_character_t *character, centity_t *cent)
 	}
 }
 
-/*
-===============
-CG_Player
-===============
-*/
+/**
+ * @brief CG_Player
+ * @param[in,out] cent
+ */
 void CG_Player(centity_t *cent)
 {
 	clientInfo_t *ci;
@@ -3039,13 +3087,10 @@ void CG_Player(centity_t *cent)
 
 //=====================================================================
 
-/*
-===============
-CG_ResetPlayerEntity
-
-A player just came into view or teleported, so reset all animation info
-===============
-*/
+/**
+ * @brief A player just came into view or teleported, so reset all animation info
+ * @param[in,out] cent
+ */
 void CG_ResetPlayerEntity(centity_t *cent)
 {
 	if (!(cent->currentState.eFlags & EF_DEAD))
@@ -3074,7 +3119,7 @@ void CG_ResetPlayerEntity(centity_t *cent)
 
 	if (cg_debugPosition.integer)
 	{
-		CG_Printf("%i ResetPlayerEntity yaw=%f\n", cent->currentState.number, cent->pe.torso.yawAngle);
+		CG_Printf("%i ResetPlayerEntity yaw=%f\n", cent->currentState.number, (double)cent->pe.torso.yawAngle);
 	}
 
 	cent->pe.painAnimLegs  = -1;
@@ -3082,6 +3127,12 @@ void CG_ResetPlayerEntity(centity_t *cent)
 	cent->pe.animSpeed     = 1.0;
 }
 
+/**
+ * @brief CG_GetBleedOrigin
+ * @param[in] head_origin
+ * @param[in] body_origin
+ * @param[in] fleshEntityNum
+ */
 void CG_GetBleedOrigin(vec3_t head_origin, vec3_t body_origin, int fleshEntityNum)
 {
 	clientInfo_t *ci = &cgs.clientinfo[fleshEntityNum];
@@ -3131,12 +3182,14 @@ void CG_GetBleedOrigin(vec3_t head_origin, vec3_t body_origin, int fleshEntityNu
 	VectorCopy(body.origin, body_origin);
 }
 
-/*
-===============
-CG_GetTag
-===============
-*/
-qboolean CG_GetTag(int clientNum, char *tagname, orientation_t *or)
+/**
+ * @brief CG_GetTag
+ * @param[in] clientNum
+ * @param[in] tagname
+ * @param[in,out] or
+ * @return
+ */
+qboolean CG_GetTag(int clientNum, const char *tagname, orientation_t *or)
 {
 	clientInfo_t *ci = &cgs.clientinfo[clientNum];
 	centity_t *cent;
@@ -3181,12 +3234,14 @@ qboolean CG_GetTag(int clientNum, char *tagname, orientation_t *or)
 	return qtrue;
 }
 
-/*
-===============
-CG_GetWeaponTag
-===============
-*/
-qboolean CG_GetWeaponTag(int clientNum, char *tagname, orientation_t *or)
+/**
+ * @brief CG_GetWeaponTag
+ * @param[in] clientNum
+ * @param[in] tagname
+ * @param[in,out] or
+ * @return
+ */
+qboolean CG_GetWeaponTag(int clientNum, const char *tagname, orientation_t *or)
 {
 	clientInfo_t *ci = &cgs.clientinfo[clientNum];
 	centity_t *cent;
@@ -3236,6 +3291,12 @@ qboolean CG_GetWeaponTag(int clientNum, char *tagname, orientation_t *or)
 	return qtrue;
 }
 
+/**
+ * @brief CG_SetHudHeadLerpFrameAnimation
+ * @param[in] ch
+ * @param[in,out] lf
+ * @param[in] newAnimation
+ */
 void CG_SetHudHeadLerpFrameAnimation(bg_character_t *ch, lerpFrame_t *lf, int newAnimation)
 {
 	animation_t *anim;
@@ -3254,6 +3315,12 @@ void CG_SetHudHeadLerpFrameAnimation(bg_character_t *ch, lerpFrame_t *lf, int ne
 	lf->animationTime = lf->frameTime + anim->initialLerp;
 }
 
+/**
+ * @brief CG_ClearHudHeadLerpFrame
+ * @param[in] ch
+ * @param[in,out] lf
+ * @param animationNumber
+ */
 void CG_ClearHudHeadLerpFrame(bg_character_t *ch, lerpFrame_t *lf, int animationNumber)
 {
 	lf->frameTime = lf->oldFrameTime = cg.time;
@@ -3262,6 +3329,13 @@ void CG_ClearHudHeadLerpFrame(bg_character_t *ch, lerpFrame_t *lf, int animation
 	lf->oldFrameModel = lf->frameModel = lf->animation->mdxFile;
 }
 
+/**
+ * @brief CG_RunHudHeadLerpFrame
+ * @param[in] ch
+ * @param[in,out] lf
+ * @param[in] newAnimation
+ * @param[in] speedScale
+ */
 void CG_RunHudHeadLerpFrame(bg_character_t *ch, lerpFrame_t *lf, int newAnimation, float speedScale)
 {
 	// see if the animation sequence is switching
@@ -3342,10 +3416,19 @@ void CG_RunHudHeadLerpFrame(bg_character_t *ch, lerpFrame_t *lf, int newAnimatio
 	}
 	else
 	{
-		lf->backlerp = 1.0 - (float)(cg.time - lf->oldFrameTime) / (lf->frameTime - lf->oldFrameTime);
+		lf->backlerp = 1.0f - (float)(cg.time - lf->oldFrameTime) / (lf->frameTime - lf->oldFrameTime);
 	}
 }
 
+/**
+ * @brief CG_HudHeadAnimation
+ * @param[in] ch
+ * @param[in] lf
+ * @param[out] oldframe
+ * @param[out] frame
+ * @param[out] backlerp
+ * @param[in] animation
+ */
 void CG_HudHeadAnimation(bg_character_t *ch, lerpFrame_t *lf, int *oldframe, int *frame, float *backlerp, hudHeadAnimNumber_t animation)
 {
 	CG_RunHudHeadLerpFrame(ch, lf, (int)animation, 1.f);

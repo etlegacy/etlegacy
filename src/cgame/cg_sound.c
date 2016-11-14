@@ -49,18 +49,16 @@ int                  numSoundScripts = 0;
 static soundScriptSound_t soundScriptSounds[MAX_SOUND_SCRIPT_SOUNDS];
 int                       numSoundScriptSounds = 0;
 
-/*
-==============
-CG_SoundScriptPrecache
-
-  returns the index+1 of the script in the global list, for fast calling
-==============
-*/
+/**
+ * @brief CG_SoundScriptPrecache
+ * @param name
+ * @return The index+1 of the script in the global list, for fast calling
+ */
 int CG_SoundScriptPrecache(const char *name)
 {
 	soundScriptSound_t *scriptSound;
 	long               hash;
-	char               *s;
+	const char         *s;
 	soundScript_t      *sound;
 	int                i;
 
@@ -72,7 +70,7 @@ int CG_SoundScriptPrecache(const char *name)
 
 	hash = generateHashValue(name);
 
-	s = (char *)name;
+	s = name;
 	for (sound = hashTable[hash]; sound; sound = sound->nextHash)
 	{
 		if (!Q_stricmp(s, sound->name))
@@ -99,11 +97,13 @@ int CG_SoundScriptPrecache(const char *name)
 	return 0;
 }
 
-/*
-==============
-CG_SoundPickOldestRandomSound
-==============
-*/
+/**
+ * @brief CG_SoundPickOldestRandomSound
+ * @param[in] sound
+ * @param[in] org
+ * @param[in] entnum
+ * @return
+ */
 int CG_SoundPickOldestRandomSound(soundScript_t *sound, vec3_t org, int entnum)
 {
 	int                oldestTime   = 0;
@@ -150,6 +150,10 @@ int CG_SoundPickOldestRandomSound(soundScript_t *sound, vec3_t org, int entnum)
 	return oldestTime;
 }
 
+/**
+ * @brief CG_AddBufferedSoundScript
+ * @param[in] sound
+ */
 void CG_AddBufferedSoundScript(soundScript_t *sound)
 {
 	if (cg.numbufferedSoundScripts >= MAX_BUFFERED_SOUNDSCRIPTS)
@@ -165,6 +169,9 @@ void CG_AddBufferedSoundScript(soundScript_t *sound)
 	}
 }
 
+/**
+ * @brief CG_UpdateBufferedSoundScripts
+ */
 void CG_UpdateBufferedSoundScripts(void)
 {
 	if (!cg.numbufferedSoundScripts)
@@ -192,17 +199,18 @@ void CG_UpdateBufferedSoundScripts(void)
 	}
 }
 
-/*
-==============
-CG_SoundPlaySoundScript
-
-  returns qtrue if a script is found
-==============
-*/
+/**
+ * @brief CG_SoundPlaySoundScript
+ * @param name
+ * @param org
+ * @param entnum
+ * @param buffer
+ * @return qtrue if a script is found
+ */
 int CG_SoundPlaySoundScript(const char *name, vec3_t org, int entnum, qboolean buffer)
 {
 	long          hash;
-	char          *s;
+	const char    *s;
 	soundScript_t *sound;
 
 	if (!name || !name[0])
@@ -212,7 +220,7 @@ int CG_SoundPlaySoundScript(const char *name, vec3_t org, int entnum, qboolean b
 
 	hash = generateHashValue(name);
 
-	s     = (char *)name;
+	s     = name;
 	sound = hashTable[hash];
 	while (sound)
 	{
@@ -237,13 +245,12 @@ int CG_SoundPlaySoundScript(const char *name, vec3_t org, int entnum, qboolean b
 	return 0;
 }
 
-/*
-==============
-CG_SoundPlayIndexedScript
-
-  returns qtrue is a script is found
-==============
-*/
+/**
+ * @brief CG_SoundPlayIndexedScript
+ * @param[in] index
+ * @param[in] org
+ * @param[in] entnum
+ */
 void CG_SoundPlayIndexedScript(int index, vec3_t org, int entnum)
 {
 	soundScript_t *sound;
@@ -263,18 +270,18 @@ void CG_SoundPlayIndexedScript(int index, vec3_t org, int entnum)
 	CG_SoundPickOldestRandomSound(sound, org, entnum);
 }
 
-/*
-===============
-CG_SoundParseSounds
-===============
-*/
-static void CG_SoundParseSounds(char *filename, char *buffer)
+/**
+ * @brief CG_SoundParseSounds
+ * @param[in] filename
+ * @param[in,out] buffer
+ */
+static void CG_SoundParseSounds(const char *filename, char *buffer)
 {
 	char               *token, **text = &buffer;
 	long               hash;
 	soundScript_t      sound;           // the current sound being read
 	soundScriptSound_t *scriptSound = NULL;
-	qboolean           inSound      = qfalse, wantSoundName = qtrue;
+	qboolean           inSound = qfalse, wantSoundName = qtrue;
 
 	while (1)
 	{
@@ -442,14 +449,14 @@ static void CG_SoundParseSounds(char *filename, char *buffer)
 	}
 }
 
-/*
-===============
-CG_SoundLoadSoundFiles
-===============
-*/
 extern char bigTextBuffer[100000];  // we got it anyway, might as well use it
 
-#define MAX_SOUND_FILES     16 // decreased from 128 - ET uses 3! (2 x team voice & map)
+/** Decreased from 128 - ET uses 3! (2 x team voice & map) */
+#define MAX_SOUND_FILES     16
+
+/**
+ * @brief CG_SoundLoadSoundFiles
+ */
 static void CG_SoundLoadSoundFiles(void)
 {
 	char         filename[MAX_QPATH];
@@ -525,11 +532,9 @@ static void CG_SoundLoadSoundFiles(void)
 	}
 }
 
-/*
-==============
-CG_SoundInit
-==============
-*/
+/**
+ * @brief CG_SoundInit
+ */
 void CG_SoundInit(void)
 {
 	if (numSoundScripts)
@@ -588,6 +593,10 @@ static const char *s_bt_string[] =
 	"nopvs"
 };
 
+/**
+ * @brief CG_SaveSpeakersToScript
+ * @return
+ */
 qboolean CG_SaveSpeakersToScript(void)
 {
 	int          i;
@@ -623,7 +632,7 @@ qboolean CG_SaveSpeakersToScript(void)
 			Com_sprintf(filenameStr, sizeof(filenameStr), "\t\tnoise \"%s\"\n", speaker->filename);
 		}
 
-		Com_sprintf(originStr, sizeof(originStr), "\t\torigin %.2f %.2f %.2f\n", speaker->origin[0], speaker->origin[1], speaker->origin[2]);
+		Com_sprintf(originStr, sizeof(originStr), "\t\torigin %.2f %.2f %.2f\n", (double)speaker->origin[0], (double)speaker->origin[1], (double)speaker->origin[2]);
 
 		if (*speaker->targetname)
 		{
@@ -678,6 +687,12 @@ qboolean CG_SaveSpeakersToScript(void)
 	return qtrue;
 }
 
+/**
+ * @brief CG_AddLineToScene
+ * @param[in] start
+ * @param[in] end
+ * @param[in] colour
+ */
 void CG_AddLineToScene(vec3_t start, vec3_t end, vec4_t colour)
 {
 	refEntity_t re;
@@ -687,14 +702,17 @@ void CG_AddLineToScene(vec3_t start, vec3_t end, vec4_t colour)
 	re.customShader = cgs.media.railCoreShader;
 	VectorCopy(start, re.origin);
 	VectorCopy(end, re.oldorigin);
-	re.shaderRGBA[0] = colour[0] * 0xff;
-	re.shaderRGBA[1] = colour[1] * 0xff;
-	re.shaderRGBA[2] = colour[2] * 0xff;
-	re.shaderRGBA[3] = colour[3] * 0xff;
+	re.shaderRGBA[0] = (byte)(colour[0] * 0xff);
+	re.shaderRGBA[1] = (byte)(colour[1] * 0xff);
+	re.shaderRGBA[2] = (byte)(colour[2] * 0xff);
+	re.shaderRGBA[3] = (byte)(colour[3] * 0xff);
 
 	trap_R_AddRefEntityToScene(&re);
 }
 
+/**
+ * @brief CG_SetViewanglesForSpeakerEditor
+ */
 void CG_SetViewanglesForSpeakerEditor(void)
 {
 	vec3_t vec;
@@ -708,6 +726,9 @@ void CG_SetViewanglesForSpeakerEditor(void)
 	vectoangles(vec, cg.refdefViewAngles);
 }
 
+/**
+ * @brief CG_RenderScriptSpeakers
+ */
 static void CG_RenderScriptSpeakers(void)
 {
 	int          i, j, closest;
@@ -784,10 +805,10 @@ static void CG_RenderScriptSpeakers(void)
 				VectorCopy(vec, re.oldorigin);
 				re.radius        = 3;
 				re.customShader  = cgs.media.waterBubbleShader;
-				re.shaderRGBA[0] = colour[0] * 0xff;
-				re.shaderRGBA[1] = colour[1] * 0xff;
-				re.shaderRGBA[2] = colour[2] * 0xff;
-				re.shaderRGBA[3] = colour[3] * 0xff;
+				re.shaderRGBA[0] = (byte)(colour[0] * 0xff);
+				re.shaderRGBA[1] = (byte)(colour[1] * 0xff);
+				re.shaderRGBA[2] = (byte)(colour[2] * 0xff);
+				re.shaderRGBA[3] = (byte)(colour[3] * 0xff);
 				trap_R_AddRefEntityToScene(&re);
 			}
 
@@ -871,6 +892,10 @@ static void CG_RenderScriptSpeakers(void)
 	}
 }
 
+/**
+ * @brief CG_SpeakerInfo_Text
+ * @param[in] button
+ */
 void CG_SpeakerInfo_Text(panel_button_t *button)
 {
 	char   *s, *ptr, *strptr;
@@ -891,7 +916,7 @@ void CG_SpeakerInfo_Text(panel_button_t *button)
 		return;
 	}
 
-	Com_sprintf(originStr, sizeof(originStr), "Speaker at %.2f %.2f %.2f\n", editSpeaker->origin[0], editSpeaker->origin[1], editSpeaker->origin[2]);
+	Com_sprintf(originStr, sizeof(originStr), "Speaker at %.2f %.2f %.2f\n", (double)editSpeaker->origin[0], (double)editSpeaker->origin[1], (double)editSpeaker->origin[2]);
 	wMax = CG_Text_Width_Ext(originStr, button->font->scalex, 0, button->font->font);
 	h    = 8.5f;
 
@@ -1022,11 +1047,12 @@ panel_button_t speakerInfo =
 	NULL,
 	{ 344,              184,   272, 72 },
 	{ 0,                0,     0,   0, 0, 0, 0, 0},
-	&speakerEditorTxt,  /* font     */
-	NULL,               /* keyDown  */
-	NULL,               /* keyUp    */
+	&speakerEditorTxt,  // font
+	NULL,               // keyDown
+	NULL,               // keyUp
 	CG_SpeakerInfo_Text,
 	NULL,
+	0,
 };
 
 static panel_button_t *speakerInfoButtons[] =
@@ -1035,6 +1061,10 @@ static panel_button_t *speakerInfoButtons[] =
 	NULL
 };
 
+/**
+ * @brief CG_SpeakerEditor_RenderEdit
+ * @param[in] button
+ */
 void CG_SpeakerEditor_RenderEdit(panel_button_t *button)
 {
 	vec4_t colour;
@@ -1058,6 +1088,10 @@ void CG_SpeakerEditor_RenderEdit(panel_button_t *button)
 	button->rect.h += 3.f;
 }
 
+/**
+ * @brief CG_SpeakerEditor_RenderButton
+ * @param[in] button
+ */
 void CG_SpeakerEditor_RenderButton(panel_button_t *button)
 {
 	vec4_t colour;
@@ -1091,6 +1125,12 @@ void CG_SpeakerEditor_RenderButton(panel_button_t *button)
 	button->rect.y -= 9.f;
 }
 
+/**
+ * @brief CG_GetStrFromStrArray
+ * @param[in] in
+ * @param[in] index
+ * @return
+ */
 char *CG_GetStrFromStrArray(const char *in, const int index)
 {
 	char *ptr, *s;
@@ -1118,6 +1158,10 @@ char *CG_GetStrFromStrArray(const char *in, const int index)
 	return ""; // should never happen
 }
 
+/**
+ * @brief CG_SpeakerEditor_RenderDropdown
+ * @param[in] button
+ */
 void CG_SpeakerEditor_RenderDropdown(panel_button_t *button)
 {
 	vec4_t    colour;
@@ -1238,6 +1282,10 @@ void CG_SpeakerEditor_RenderDropdown(panel_button_t *button)
 	}
 }
 
+/**
+ * @brief CG_SpeakerEditor_Back
+ * @param[in] button
+ */
 void CG_SpeakerEditor_Back(panel_button_t *button)
 {
 	vec4_t colour;
@@ -1249,6 +1297,10 @@ void CG_SpeakerEditor_Back(panel_button_t *button)
 	CG_DrawRect(button->rect.x - 2, button->rect.y - 2, button->rect.w + 4, button->rect.h + 4, 1.f, colour);
 }
 
+/**
+ * @brief CG_SpeakerEditor_LocInfo
+ * @param[in] button
+ */
 void CG_SpeakerEditor_LocInfo(panel_button_t *button)
 {
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour,
@@ -1260,6 +1312,12 @@ static char noiseMatchString[MAX_QPATH];
 static int  noiseMatchCount;
 static int  noiseMatchIndex;
 
+/**
+ * @brief CG_SpeakerEditor_NoiseEdit_KeyDown
+ * @param[in] button
+ * @param[in] key
+ * @return
+ */
 qboolean CG_SpeakerEditor_NoiseEdit_KeyDown(panel_button_t *button, int key)
 {
 	if (button == BG_PanelButtons_GetFocusButton())
@@ -1272,7 +1330,7 @@ qboolean CG_SpeakerEditor_NoiseEdit_KeyDown(panel_button_t *button, int key)
 			int  i, numfiles, filelen;
 			char *fileptr;
 
-			COM_StripFilename((char *)button->text, dirname);
+			COM_StripFilename(button->text, dirname);
 			Q_strncpyz(filename, COM_SkipPath((char *)button->text), sizeof(filename));
 
 			if (!Q_stricmp(button->text, dirname))
@@ -1376,6 +1434,10 @@ qboolean CG_SpeakerEditor_NoiseEdit_KeyDown(panel_button_t *button, int key)
 	return BG_PanelButton_EditClick(button, key);
 }
 
+/**
+ * @brief CG_SpeakerEditor_NoiseEditFinish
+ * @param[in] button
+ */
 void CG_SpeakerEditor_NoiseEditFinish(panel_button_t *button)
 {
 	Q_strncpyz(editSpeaker->filename, button->text, sizeof(editSpeaker->filename));
@@ -1390,11 +1452,21 @@ void CG_SpeakerEditor_NoiseEditFinish(panel_button_t *button)
 	}
 }
 
+/**
+ * @brief CG_SpeakerEditor_TargetnameEditFinish
+ * @param[in] button
+ */
 void CG_SpeakerEditor_TargetnameEditFinish(panel_button_t *button)
 {
 	Q_strncpyz(editSpeaker->targetname, button->text, sizeof(editSpeaker->targetname));
 }
 
+/**
+ * @brief CG_SpeakerEditor_Dropdown_KeyDown
+ * @param[in] button
+ * @param[in] key
+ * @return
+ */
 qboolean CG_SpeakerEditor_Dropdown_KeyDown(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
@@ -1406,6 +1478,12 @@ qboolean CG_SpeakerEditor_Dropdown_KeyDown(panel_button_t *button, int key)
 	return qfalse;
 }
 
+/**
+ * @brief CG_SpeakerEditor_Looped_KeyUp
+ * @param[in] button
+ * @param[in] key
+ * @return
+ */
 qboolean CG_SpeakerEditor_Looped_KeyUp(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
@@ -1428,7 +1506,7 @@ qboolean CG_SpeakerEditor_Looped_KeyUp(panel_button_t *button, int key)
 
 				if (BG_CursorInRect(&rect))
 				{
-					button->data[1] = editSpeaker->loop = i;
+					button->data[1] = editSpeaker->loop = (speakerLoopType_t)i;
 					break;
 				}
 			}
@@ -1451,6 +1529,12 @@ qboolean CG_SpeakerEditor_Looped_KeyUp(panel_button_t *button, int key)
 	return qfalse;
 }
 
+/**
+ * @brief CG_SpeakerEditor_Broadcast_KeyUp
+ * @param[in] button
+ * @param[in] key
+ * @return
+ */
 qboolean CG_SpeakerEditor_Broadcast_KeyUp(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
@@ -1473,7 +1557,7 @@ qboolean CG_SpeakerEditor_Broadcast_KeyUp(panel_button_t *button, int key)
 
 				if (BG_CursorInRect(&rect))
 				{
-					button->data[1] = editSpeaker->broadcast = i;
+					button->data[1] = editSpeaker->broadcast = (speakerBroadcastType_t)i;
 					break;
 				}
 			}
@@ -1487,6 +1571,10 @@ qboolean CG_SpeakerEditor_Broadcast_KeyUp(panel_button_t *button, int key)
 	return qfalse;
 }
 
+/**
+ * @brief CG_SpeakerEditor_WaitEditFinish
+ * @param[in] button
+ */
 void CG_SpeakerEditor_WaitEditFinish(panel_button_t *button)
 {
 	if (*button->text)
@@ -1505,6 +1593,10 @@ void CG_SpeakerEditor_WaitEditFinish(panel_button_t *button)
 	}
 }
 
+/**
+ * @brief CG_SpeakerEditor_RandomEditFinish
+ * @param[in] button
+ */
 void CG_SpeakerEditor_RandomEditFinish(panel_button_t *button)
 {
 	if (*button->text)
@@ -1523,6 +1615,10 @@ void CG_SpeakerEditor_RandomEditFinish(panel_button_t *button)
 	}
 }
 
+/**
+ * @brief CG_SpeakerEditor_VolumeEditFinish
+ * @param[in] button
+ */
 void CG_SpeakerEditor_VolumeEditFinish(panel_button_t *button)
 {
 	if (*button->text)
@@ -1546,6 +1642,10 @@ void CG_SpeakerEditor_VolumeEditFinish(panel_button_t *button)
 	}
 }
 
+/**
+ * @brief CG_SpeakerEditor_RangeEditFinish
+ * @param[in] button
+ */
 void CG_SpeakerEditor_RangeEditFinish(panel_button_t *button)
 {
 	if (*button->text)
@@ -1564,6 +1664,12 @@ void CG_SpeakerEditor_RangeEditFinish(panel_button_t *button)
 	}
 }
 
+/**
+ * @brief CG_SpeakerEditor_Ok_KeyDown
+ * @param[in] button
+ * @param[in] key
+ * @return
+ */
 qboolean CG_SpeakerEditor_Ok_KeyDown(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
@@ -1575,6 +1681,12 @@ qboolean CG_SpeakerEditor_Ok_KeyDown(panel_button_t *button, int key)
 	return qfalse;
 }
 
+/**
+ * @brief CG_SpeakerEditor_Ok_KeyUp
+ * @param[in] button
+ * @param[in] key
+ * @return
+ */
 qboolean CG_SpeakerEditor_Ok_KeyUp(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
@@ -1597,6 +1709,12 @@ qboolean CG_SpeakerEditor_Ok_KeyUp(panel_button_t *button, int key)
 	return qfalse;
 }
 
+/**
+ * @brief CG_SpeakerEditor_Cancel_KeyDown
+ * @param[in] button
+ * @param[in] key
+ * @return
+ */
 qboolean CG_SpeakerEditor_Cancel_KeyDown(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
@@ -1608,6 +1726,12 @@ qboolean CG_SpeakerEditor_Cancel_KeyDown(panel_button_t *button, int key)
 	return qfalse;
 }
 
+/**
+ * @brief CG_SpeakerEditor_Cancel_KeyUp
+ * @param[in] button
+ * @param[in] key
+ * @return
+ */
 qboolean CG_SpeakerEditor_Cancel_KeyUp(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
@@ -1631,6 +1755,12 @@ qboolean CG_SpeakerEditor_Cancel_KeyUp(panel_button_t *button, int key)
 	return qfalse;
 }
 
+/**
+ * @brief CG_SpeakerEditor_Delete_KeyDown
+ * @param[in] button
+ * @param[in] key
+ * @return
+ */
 qboolean CG_SpeakerEditor_Delete_KeyDown(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
@@ -1642,6 +1772,12 @@ qboolean CG_SpeakerEditor_Delete_KeyDown(panel_button_t *button, int key)
 	return qfalse;
 }
 
+/**
+ * @brief CG_SpeakerEditor_Delete_KeyUp
+ * @param[in] button
+ * @param[in] key
+ * @return
+ */
 qboolean CG_SpeakerEditor_Delete_KeyUp(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
@@ -1672,11 +1808,12 @@ panel_button_t speakerEditorBack =
 	NULL,
 	{ 360,                330,   272, 142 },
 	{ 0,                  0,     0,   0, 0, 0, 0, 0},
-	NULL,                 /* font     */
-	NULL,                 /* keyDown  */
-	NULL,                 /* keyUp    */
+	NULL,                 // font
+	NULL,                 // keyDown
+	NULL,                 // keyUp
 	CG_SpeakerEditor_Back,
 	NULL,
+	0,
 };
 
 panel_button_t speakerEditorLocInfo =
@@ -1685,11 +1822,12 @@ panel_button_t speakerEditorLocInfo =
 	NULL,
 	{ 361,                   330 + 9,   272, 10 },
 	{ 0,                     0,         0,   0, 0, 0, 0, 0},
-	&speakerEditorTxt,       /* font     */
-	NULL,                    /* keyDown  */
-	NULL,                    /* keyUp    */
+	&speakerEditorTxt,       // font
+	NULL,                    // keyDown
+	NULL,                    // keyUp
 	CG_SpeakerEditor_LocInfo,
 	NULL,
+	0,
 };
 
 panel_button_t speakerEditorNoiseLabel =
@@ -1698,11 +1836,12 @@ panel_button_t speakerEditorNoiseLabel =
 	"Noise:",
 	{ 361,                     344 + 9,0, 0 },
 	{ 0,                       0,     0, 0, 0, 0, 0, 0},
-	&speakerEditorTxt,         /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&speakerEditorTxt,         // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0,
 };
 
 char noiseEditBuffer[MAX_QPATH];
@@ -1713,11 +1852,12 @@ panel_button_t speakerEditorNoiseEdit =
 	noiseEditBuffer,
 	{ 430,                           344,200, 12 },
 	{ MAX_QPATH,                     0,  0,   0, 0, 0, 0, 0},
-	&speakerEditorTxt,               /* font     */
-	CG_SpeakerEditor_NoiseEdit_KeyDown, /* keyDown  */
-	NULL,                            /* keyUp    */
+	&speakerEditorTxt,               // font
+	CG_SpeakerEditor_NoiseEdit_KeyDown,// keyDown
+	NULL,                            // keyUp
 	CG_SpeakerEditor_RenderEdit,
 	CG_SpeakerEditor_NoiseEditFinish,
+	0,
 };
 
 panel_button_t speakerEditorTargetnameLabel =
@@ -1726,11 +1866,12 @@ panel_button_t speakerEditorTargetnameLabel =
 	"Targetname:",
 	{ 361,                     358 + 9,0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
-	&speakerEditorTxt,         /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&speakerEditorTxt,         // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0,
 };
 
 char targetnameEditBuffer[32];
@@ -1741,11 +1882,12 @@ panel_button_t speakerEditorTargetnameEdit =
 	targetnameEditBuffer,
 	{ 430,                                358,200, 12 },
 	{ 32,                                 0,  0,   0, 0, 0, 0, 0},
-	&speakerEditorTxt,                    /* font     */
-	BG_PanelButton_EditClick,             /* keyDown  */
-	NULL,                                 /* keyUp    */
+	&speakerEditorTxt,                    // font
+	BG_PanelButton_EditClick,             // keyDown
+	NULL,                                 // keyUp
 	CG_SpeakerEditor_RenderEdit,
 	CG_SpeakerEditor_TargetnameEditFinish,
+	0,
 };
 
 panel_button_t speakerEditorLoopedLabel =
@@ -1754,11 +1896,12 @@ panel_button_t speakerEditorLoopedLabel =
 	"Looped:",
 	{ 361,                     372 + 9,0, 0 },
 	{ 0,                       0,    0, 0, 0, 0, 0, 0},
-	&speakerEditorTxt,         /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&speakerEditorTxt,         // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0,
 };
 
 panel_button_t speakerEditorLoopedDropdown =
@@ -1767,11 +1910,12 @@ panel_button_t speakerEditorLoopedDropdown =
 	"no\0on\0off",
 	{ 430,                          372,60, 12 },
 	{ 3,                            0,  0,  0, 0, 0, 0, 0},
-	&speakerEditorTxt,              /* font     */
-	CG_SpeakerEditor_Dropdown_KeyDown, /* keyDown  */
-	CG_SpeakerEditor_Looped_KeyUp,  /* keyUp    */
+	&speakerEditorTxt,              // font
+	CG_SpeakerEditor_Dropdown_KeyDown,// keyDown
+	CG_SpeakerEditor_Looped_KeyUp,  // keyUp
 	CG_SpeakerEditor_RenderDropdown,
 	NULL,
+	0,
 };
 
 panel_button_t speakerEditorBroadcastLabel =
@@ -1780,11 +1924,12 @@ panel_button_t speakerEditorBroadcastLabel =
 	"Broadcast:",
 	{ 361,                     386 + 9,0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
-	&speakerEditorTxt,         /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&speakerEditorTxt,         // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0,
 };
 
 panel_button_t speakerEditorBroadcastDropdown =
@@ -1793,11 +1938,12 @@ panel_button_t speakerEditorBroadcastDropdown =
 	"no\0global\0nopvs",
 	{ 430,                          386,60, 12 },
 	{ 3,                            0,  0,  0, 0, 0, 0, 0},
-	&speakerEditorTxt,              /* font     */
-	CG_SpeakerEditor_Dropdown_KeyDown, /* keyDown  */
-	CG_SpeakerEditor_Broadcast_KeyUp, /* keyUp    */
+	&speakerEditorTxt,              // font
+	CG_SpeakerEditor_Dropdown_KeyDown,// keyDown
+	CG_SpeakerEditor_Broadcast_KeyUp,// keyUp
 	CG_SpeakerEditor_RenderDropdown,
 	NULL,
+	0,
 };
 
 panel_button_t speakerEditorWaitLabel =
@@ -1806,11 +1952,12 @@ panel_button_t speakerEditorWaitLabel =
 	"Wait:",
 	{ 361,                     400 + 9,0, 0 },
 	{ 0,                       0,      0, 0, 0, 0, 0, 0},
-	&speakerEditorTxt,         /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&speakerEditorTxt,         // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0,
 };
 
 char waitEditBuffer[12];
@@ -1821,11 +1968,12 @@ panel_button_t speakerEditorWaitEdit =
 	waitEditBuffer,
 	{ 430,                          400,200, 12 },
 	{ 12,                           2,  0,   0, 0, 0, 0, 0},
-	&speakerEditorTxt,              /* font     */
-	BG_PanelButton_EditClick,       /* keyDown  */
-	NULL,                           /* keyUp    */
+	&speakerEditorTxt,              // font
+	BG_PanelButton_EditClick,       // keyDown
+	NULL,                           // keyUp
 	CG_SpeakerEditor_RenderEdit,
 	CG_SpeakerEditor_WaitEditFinish,
+	0,
 };
 
 panel_button_t speakerEditorRandomLabel =
@@ -1834,11 +1982,12 @@ panel_button_t speakerEditorRandomLabel =
 	"Random:",
 	{ 361,                     414 + 9,0, 0 },
 	{ 0,                       0,    0, 0, 0, 0, 0, 0},
-	&speakerEditorTxt,         /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&speakerEditorTxt,         // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0,
 };
 
 char randomEditBuffer[12];
@@ -1849,9 +1998,9 @@ panel_button_t speakerEditorRandomEdit =
 	randomEditBuffer,
 	{ 430,                            414,200, 12 },
 	{ 12,                             2,  0,   0, 0, 0, 0, 0},
-	&speakerEditorTxt,                /* font     */
-	BG_PanelButton_EditClick,         /* keyDown  */
-	NULL,                             /* keyUp    */
+	&speakerEditorTxt,                // font
+	BG_PanelButton_EditClick,         // keyDown
+	NULL,                             // keyUp
 	CG_SpeakerEditor_RenderEdit,
 	CG_SpeakerEditor_RandomEditFinish,
 };
@@ -1862,11 +2011,12 @@ panel_button_t speakerEditorVolumeLabel =
 	"Volume:",
 	{ 361,                     428 + 9,0, 0 },
 	{ 0,                       0,    0, 0, 0, 0, 0, 0},
-	&speakerEditorTxt,         /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&speakerEditorTxt,         // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0,
 };
 
 char volumeEditBuffer[12];
@@ -1877,11 +2027,12 @@ panel_button_t speakerEditorVolumeEdit =
 	volumeEditBuffer,
 	{ 430,                            428,200, 12 },
 	{ 12,                             2,  0,   0, 0, 0, 0, 0},
-	&speakerEditorTxt,                /* font     */
-	BG_PanelButton_EditClick,         /* keyDown  */
-	NULL,                             /* keyUp    */
+	&speakerEditorTxt,                // font
+	BG_PanelButton_EditClick,         // keyDown
+	NULL,                             // keyUp
 	CG_SpeakerEditor_RenderEdit,
 	CG_SpeakerEditor_VolumeEditFinish,
+	0,
 };
 
 panel_button_t speakerEditorRangeLabel =
@@ -1890,11 +2041,12 @@ panel_button_t speakerEditorRangeLabel =
 	"Range:",
 	{ 361,                     442 + 9,0, 0 },
 	{ 0,                       0,     0, 0, 0, 0, 0, 0},
-	&speakerEditorTxt,         /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&speakerEditorTxt,         // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
+	0,
 };
 
 char rangeEditBuffer[12];
@@ -1905,11 +2057,12 @@ panel_button_t speakerEditorRangeEdit =
 	rangeEditBuffer,
 	{ 430,                           442,200, 12 },
 	{ 12,                            2,  0,   0, 0, 0, 0, 0},
-	&speakerEditorTxt,               /* font     */
-	BG_PanelButton_EditClick,        /* keyDown  */
-	NULL,                            /* keyUp    */
+	&speakerEditorTxt,               // font
+	BG_PanelButton_EditClick,        // keyDown
+	NULL,                            // keyUp
 	CG_SpeakerEditor_RenderEdit,
 	CG_SpeakerEditor_RangeEditFinish,
+	0,
 };
 
 panel_button_t speakerEditorOkButton =
@@ -1918,11 +2071,12 @@ panel_button_t speakerEditorOkButton =
 	"Ok",
 	{ 376,                        458,   70, 12 },
 	{ 0,                          0,     0,  0, 0, 0, 0, 0},
-	&speakerEditorTxt,            /* font     */
-	CG_SpeakerEditor_Ok_KeyDown,  /* keyDown  */
-	CG_SpeakerEditor_Ok_KeyUp,    /* keyUp    */
+	&speakerEditorTxt,            // font
+	CG_SpeakerEditor_Ok_KeyDown,  // keyDown
+	CG_SpeakerEditor_Ok_KeyUp,    // keyUp
 	CG_SpeakerEditor_RenderButton,
 	NULL,
+	0,
 };
 
 panel_button_t speakerEditorCancelButton =
@@ -1931,9 +2085,9 @@ panel_button_t speakerEditorCancelButton =
 	"Cancel",
 	{ 461,                        458,70, 12 },
 	{ 0,                          0,  0,  0, 0, 0, 0, 0},
-	&speakerEditorTxt,            /* font     */
-	CG_SpeakerEditor_Cancel_KeyDown, /* keyDown  */
-	CG_SpeakerEditor_Cancel_KeyUp, /* keyUp    */
+	&speakerEditorTxt,            // font
+	CG_SpeakerEditor_Cancel_KeyDown,// keyDown
+	CG_SpeakerEditor_Cancel_KeyUp,// keyUp
 	CG_SpeakerEditor_RenderButton,
 	NULL,
 };
@@ -1944,11 +2098,12 @@ panel_button_t speakerEditorDeleteButton =
 	"Delete",
 	{ 546,                        458,70, 12 },
 	{ 0,                          0,  0,  0, 0, 0, 0, 0},
-	&speakerEditorTxt,            /* font     */
-	CG_SpeakerEditor_Delete_KeyDown, /* keyDown  */
-	CG_SpeakerEditor_Delete_KeyUp, /* keyUp    */
+	&speakerEditorTxt,            // font
+	CG_SpeakerEditor_Delete_KeyDown,// keyDown
+	CG_SpeakerEditor_Delete_KeyUp,// keyUp
 	CG_SpeakerEditor_RenderButton,
 	NULL,
+	0,
 };
 
 static panel_button_t *speakerEditorButtons[] =
@@ -1979,6 +2134,9 @@ static panel_button_t *speakerEditorButtons[] =
 	NULL
 };
 
+/**
+ * @brief CG_SpeakerEditorDraw
+ */
 void CG_SpeakerEditorDraw(void)
 {
 	if (!cg.editingSpeakers)
@@ -2054,14 +2212,14 @@ void CG_SpeakerEditorDraw(void)
 
 		CG_AdjustFrom640(&x, &y, &w, &h);
 
-		trap_R_DrawStretchPic(x + 0.5 * (cg.refdef_current->width - w),
-		                      y + 0.5 * (cg.refdef_current->height - h),
+		trap_R_DrawStretchPic(x + 0.5f * (cg.refdef_current->width - w),
+		                      y + 0.5f * (cg.refdef_current->height - h),
 		                      w, h, 0, 0, 1, 1, cgs.media.crosshairShader[cg_drawCrosshair.integer % NUM_CROSSHAIRS]);
 
 		if (cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS])
 		{
-			trap_R_DrawStretchPic(x + 0.5 * (cg.refdef_current->width - w),
-			                      y + 0.5 * (cg.refdef_current->height - h),
+			trap_R_DrawStretchPic(x + 0.5f * (cg.refdef_current->width - w),
+			                      y + 0.5f * (cg.refdef_current->height - h),
 			                      w, h, 0, 0, 1, 1, cg.crosshairShaderAlt[cg_drawCrosshair.integer % NUM_CROSSHAIRS]);
 		}
 
@@ -2082,6 +2240,11 @@ void CG_SpeakerEditorDraw(void)
 	}
 }
 
+/**
+ * @brief CG_SpeakerEditor_KeyHandling
+ * @param[in] key
+ * @param[in] down
+ */
 void CG_SpeakerEditor_KeyHandling(int key, qboolean down)
 {
 	if (!BG_PanelButtonsKeyEvent(key, down, speakerEditorButtons))
@@ -2155,6 +2318,11 @@ void CG_SpeakerEditor_KeyHandling(int key, qboolean down)
 	}
 }
 
+/**
+ * @brief CG_SpeakerEditorMouseMove_Handling
+ * @param[in] x
+ * @param[in] y
+ */
 void CG_SpeakerEditorMouseMove_Handling(int x, int y)
 {
 	if (!cg.editingSpeakers)
@@ -2204,6 +2372,9 @@ void CG_SpeakerEditorMouseMove_Handling(int x, int y)
 	}
 }
 
+/**
+ * @brief CG_ActivateEditSoundMode
+ */
 void CG_ActivateEditSoundMode(void)
 {
 	CG_Printf("Activating Speaker Edit mode.\n");
@@ -2224,6 +2395,9 @@ void CG_ActivateEditSoundMode(void)
 	}
 }
 
+/**
+ * @brief CG_DeActivateEditSoundMode
+ */
 void CG_DeActivateEditSoundMode(void)
 {
 	CG_Printf("De-activating Speaker Edit mode.\n");
@@ -2240,6 +2414,9 @@ void CG_DeActivateEditSoundMode(void)
 	undoSpeakerIndex             = -2;
 }
 
+/**
+ * @brief CG_ModifyEditSpeaker
+ */
 void CG_ModifyEditSpeaker(void)
 {
 	if (!editSpeaker || editSpeakerActive)
@@ -2266,6 +2443,9 @@ void CG_ModifyEditSpeaker(void)
 	Com_sprintf(rangeEditBuffer, sizeof(rangeEditBuffer), "%i", editSpeaker->range);
 }
 
+/**
+ * @brief CG_UndoEditSpeaker
+ */
 void CG_UndoEditSpeaker(void)
 {
 	if (undoSpeakerIndex == -2)
@@ -2281,7 +2461,7 @@ void CG_UndoEditSpeaker(void)
 		}
 		else
 		{
-			CG_Printf("UNDO: restored deleted speaker at %.2f %.2f %.2f.\n", undoSpeaker.origin[0], undoSpeaker.origin[1], undoSpeaker.origin[2]);
+			CG_Printf("UNDO: restored deleted speaker at %.2f %.2f %.2f.\n", (double)undoSpeaker.origin[0], (double)undoSpeaker.origin[1], (double)undoSpeaker.origin[2]);
 		}
 	}
 	else
@@ -2289,7 +2469,7 @@ void CG_UndoEditSpeaker(void)
 		bg_speaker_t *speaker = BG_GetScriptSpeaker(undoSpeakerIndex);
 
 		memcpy(speaker, &undoSpeaker, sizeof(*speaker));
-		CG_Printf("UNDO: restoring modified settings of speaker at %.2f %.2f %.2f.\n", undoSpeaker.origin[0], undoSpeaker.origin[1], undoSpeaker.origin[2]);
+		CG_Printf("UNDO: restoring modified settings of speaker at %.2f %.2f %.2f.\n", (double)undoSpeaker.origin[0], (double)undoSpeaker.origin[1], (double)undoSpeaker.origin[2]);
 	}
 
 	CG_SaveSpeakersToScript();
@@ -2298,6 +2478,10 @@ void CG_UndoEditSpeaker(void)
 
 // Normal Use
 
+/**
+ * @brief CG_ToggleActiveOnScriptSpeaker
+ * @param[in] index
+ */
 void CG_ToggleActiveOnScriptSpeaker(int index)
 {
 	bg_speaker_t *speaker = BG_GetScriptSpeaker(index);
@@ -2308,6 +2492,10 @@ void CG_ToggleActiveOnScriptSpeaker(int index)
 	}
 }
 
+/**
+ * @brief CG_UnsetActiveOnScriptSpeaker
+ * @param[in] index
+ */
 void CG_UnsetActiveOnScriptSpeaker(int index)
 {
 	bg_speaker_t *speaker = BG_GetScriptSpeaker(index);
@@ -2318,6 +2506,10 @@ void CG_UnsetActiveOnScriptSpeaker(int index)
 	}
 }
 
+/**
+ * @brief CG_SetActiveOnScriptSpeaker
+ * @param[in] index
+ */
 void CG_SetActiveOnScriptSpeaker(int index)
 {
 	bg_speaker_t *speaker = BG_GetScriptSpeaker(index);
@@ -2328,6 +2520,11 @@ void CG_SetActiveOnScriptSpeaker(int index)
 	}
 }
 
+/**
+ * @brief CG_PlayScriptSpeaker
+ * @param[in,out] speaker
+ * @param[in] global
+ */
 static void CG_PlayScriptSpeaker(bg_speaker_t *speaker, qboolean global)
 {
 	switch (speaker->loop)
@@ -2353,6 +2550,9 @@ static void CG_PlayScriptSpeaker(bg_speaker_t *speaker, qboolean global)
 	}
 }
 
+/**
+ * @brief CG_AddScriptSpeakers
+ */
 void CG_AddScriptSpeakers(void)
 {
 	int          i;
@@ -2379,7 +2579,7 @@ void CG_AddScriptSpeakers(void)
 			if (cg.time >= speaker->nextActivateTime && (speaker->wait || speaker->random))
 			{
 				speaker->activated        = qtrue;
-				speaker->nextActivateTime = cg.time + speaker->wait + speaker->random * crandom();
+				speaker->nextActivateTime = (int)(cg.time + speaker->wait + speaker->random * crandom());
 			}
 		}
 

@@ -358,7 +358,7 @@ int CG_drawStrlen(const char *str)
  * @param[in] x
  * @param[in] y
  * @param[in] score
- * @param color - nused
+ * @param color - unused
  * @param[in] fade
  * @param[in] livesleft
  */
@@ -562,11 +562,11 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	{
 		if (score->respawnsLeft >= 0)
 		{
-			CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, va("%2i", score->respawnsLeft), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(tempx, y, 0.24f, 0.28f, colorWhite, va("%2i", score->respawnsLeft), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 		else
 		{
-			CG_Text_Paint_Ext(tempx, y, 0.24, 0.28, colorWhite, " -", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(tempx, y, 0.24f, 0.28f, colorWhite, " -", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 	}
 }
@@ -740,7 +740,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 #ifdef FEATURE_RATING
 	if (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR)
 	{
-		CG_Text_Paint_Ext(tempx + 8, y, 0.20f, 0.25f, colorWhite, va("^7%5.2f", score->rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + 8, y, 0.20f, 0.25f, colorWhite, va("^7%5.2f", (double)score->rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	else
 	{
