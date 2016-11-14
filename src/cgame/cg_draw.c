@@ -47,11 +47,23 @@ extern vec4_t HUD_Border;
 ////// new hud stuff
 ///////////////////////
 
+/**
+ * @brief CG_Text_SetActiveFont
+ * @param[in] font
+ */
 void CG_Text_SetActiveFont(int font)
 {
 	activeFont = font;
 }
 
+/**
+ * @brief CG_Text_Width_Ext
+ * @param[in] text
+ * @param[in] scale
+ * @param[in] limit
+ * @param[in] font
+ * @return
+ */
 int CG_Text_Width_Ext(const char *text, float scale, int limit, fontHelper_t *font)
 {
 	float out = 0;
@@ -88,6 +100,13 @@ int CG_Text_Width_Ext(const char *text, float scale, int limit, fontHelper_t *fo
 	return out * scale * Q_UTF8_GlyphScale(font);
 }
 
+/**
+ * @brief CG_Text_Width
+ * @param[in] text
+ * @param[in] scale
+ * @param[in] limit
+ * @return
+ */
 int CG_Text_Width(const char *text, float scale, int limit)
 {
 	fontHelper_t *font = &cgDC.Assets.fonts[activeFont];
@@ -95,6 +114,14 @@ int CG_Text_Width(const char *text, float scale, int limit)
 	return CG_Text_Width_Ext(text, scale, limit, font);
 }
 
+/**
+ * @brief CG_Text_Height_Ext
+ * @param[in] text
+ * @param[in] scale
+ * @param[in] limit
+ * @param[in] font
+ * @return
+ */
 int CG_Text_Height_Ext(const char *text, float scale, int limit, fontHelper_t *font)
 {
 	float max = 0;
@@ -133,6 +160,13 @@ int CG_Text_Height_Ext(const char *text, float scale, int limit, fontHelper_t *f
 	return max * scale * Q_UTF8_GlyphScale(font);
 }
 
+/**
+ * @brief CG_Text_Height
+ * @param[in] text
+ * @param[in] scale
+ * @param[in] limit
+ * @return
+ */
 int CG_Text_Height(const char *text, float scale, int limit)
 {
 	fontHelper_t *font = &cgDC.Assets.fonts[activeFont];
@@ -140,6 +174,20 @@ int CG_Text_Height(const char *text, float scale, int limit)
 	return CG_Text_Height_Ext(text, scale, limit, font);
 }
 
+/**
+ * @brief CG_Text_PaintChar_Ext
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] scalex
+ * @param[in] scaley
+ * @param[in] s
+ * @param[in] t
+ * @param[in] s2
+ * @param[in] t2
+ * @param[in] hShader
+ */
 void CG_Text_PaintChar_Ext(float x, float y, float w, float h, float scalex, float scaley, float s, float t, float s2, float t2, qhandle_t hShader)
 {
 	w *= scalex;
@@ -148,6 +196,19 @@ void CG_Text_PaintChar_Ext(float x, float y, float w, float h, float scalex, flo
 	trap_R_DrawStretchPic(x, y, w, h, s, t, s2, t2, hShader);
 }
 
+/**
+ * @brief CG_Text_PaintChar
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ * @param[in] scale
+ * @param[in] s
+ * @param[in] t
+ * @param[in] s2
+ * @param[in] t2
+ * @param[in] hShader
+ */
 void CG_Text_PaintChar(float x, float y, float width, float height, float scale, float s, float t, float s2, float t2, qhandle_t hShader)
 {
 	float w = width * scale;
@@ -157,6 +218,19 @@ void CG_Text_PaintChar(float x, float y, float width, float height, float scale,
 	trap_R_DrawStretchPic(x, y, w, h, s, t, s2, t2, hShader);
 }
 
+/**
+ * @brief CG_Text_Paint_Centred_Ext
+ * @param[in] x
+ * @param[in] y
+ * @param[in] scalex
+ * @param[in] scaley
+ * @param[in] color
+ * @param[in] text
+ * @param[in] adjust
+ * @param[in] limit
+ * @param[in] style
+ * @param[in] font
+ */
 void CG_Text_Paint_Centred_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontHelper_t *font)
 {
 	x -= CG_Text_Width_Ext(text, scalex, limit, font) * 0.5f;
@@ -164,6 +238,19 @@ void CG_Text_Paint_Centred_Ext(float x, float y, float scalex, float scaley, vec
 	CG_Text_Paint_Ext(x, y, scalex, scaley, color, text, adjust, limit, style, font);
 }
 
+/**
+ * @brief CG_Text_Paint_Ext
+ * @param[in] x
+ * @param[in] y
+ * @param[in] scalex
+ * @param[in] scaley
+ * @param[in] color
+ * @param[in] text
+ * @param[in] adjust
+ * @param[in] limit
+ * @param[in] style
+ * @param[in] font
+ */
 void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontHelper_t *font)
 {
 	if (text)
@@ -227,6 +314,17 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 	}
 }
 
+/**
+ * @brief CG_Text_Paint
+ * @param[in] x
+ * @param[in] y
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] text
+ * @param[in] adjust
+ * @param[in] limit
+ * @param[in] style
+ */
 void CG_Text_Paint(float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, int style)
 {
 	fontHelper_t *font = &cgDC.Assets.fonts[activeFont];
@@ -234,11 +332,15 @@ void CG_Text_Paint(float x, float y, float scale, vec4_t color, const char *text
 	CG_Text_Paint_Ext(x, y, scale, scale, color, text, adjust, limit, style, font);
 }
 
-/*
-================
-CG_DrawTeamBackground
-================
-*/
+/**
+ * @brief CG_DrawTeamBackground
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] alpha
+ * @param[in] team
+ */
 void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team)
 {
 	vec4_t hcolor;
@@ -274,13 +376,11 @@ void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team)
 
 #define CHATLOC_X 160
 #define CHATLOC_Y 478
-#define CHATLOC_TEXT_X (CHATLOC_X + 0.25f * SMALLCHAR_WIDTH)
+#define CHATLOC_TEXT_X (CHATLOC_X + SMALLCHAR_WIDTH / 4)
 
-/*
-=================
-CG_DrawTeamInfo
-=================
-*/
+/**
+ * @brief CG_DrawTeamInfo
+ */
 static void CG_DrawTeamInfo(void)
 {
 	int chatHeight = TEAMCHAT_HEIGHT;
@@ -370,6 +470,11 @@ static void CG_DrawTeamInfo(void)
 	}
 }
 
+/**
+ * @brief CG_PickupItemText
+ * @param[in] item
+ * @return
+ */
 const char *CG_PickupItemText(int item)
 {
 	if (bg_itemlist[item].giType == IT_HEALTH)
@@ -416,16 +521,15 @@ CENTER PRINTING
 ===============================================================================
 */
 
-/*
-==============
-CG_CenterPrint
-
-Called for important messages that should stay in the center of the screen
-for a few moments
-==============
-*/
 #define CP_LINEWIDTH (int)(Ccg_WideX(56))
 
+/**
+ * @brief Called for important messages that should stay in the center of the screen
+ * for a few moments
+ * @param str
+ * @param y
+ * @param fontScale
+ */
 void CG_CenterPrint(const char *str, int y, float fontScale)
 {
 	char     *s;
@@ -477,14 +581,14 @@ void CG_CenterPrint(const char *str, int y, float fontScale)
 	}
 }
 
-/*
-==============
-CG_PriorityCenterPrint
-
-Called for important messages that should stay in the center of the screen
-for a few moments
-==============
-*/
+/**
+ * @brief Called for important messages that should stay in the center of the screen
+ * for a few moments
+ * @param str
+ * @param y
+ * @param fontScale
+ * @param priority
+ */
 void CG_PriorityCenterPrint(const char *str, int y, float fontScale, int priority)
 {
 	char     *s;
@@ -536,11 +640,9 @@ void CG_PriorityCenterPrint(const char *str, int y, float fontScale, int priorit
 	}
 }
 
-/*
-===================
-CG_DrawCenterString
-===================
-*/
+/**
+ * @brief CG_DrawCenterString
+ */
 static void CG_DrawCenterString(void)
 {
 	char  *start;
@@ -553,7 +655,7 @@ static void CG_DrawCenterString(void)
 		return;
 	}
 
-	color = CG_FadeColor(cg.centerPrintTime, 1000 * cg_centertime.value);
+	color = CG_FadeColor(cg.centerPrintTime, (int)(1000 * cg_centertime.value));
 	if (!color)
 	{
 		cg.centerPrintTime     = 0;
@@ -608,11 +710,9 @@ CROSSHAIRS
 ================================================================================
 */
 
-/*
-==============
-CG_DrawWeapReticle
-==============
-*/
+/**
+ * @brief CG_DrawWeapReticle
+ */
 static void CG_DrawWeapReticle(void)
 {
 	qboolean fg, garand, k43;
@@ -693,11 +793,9 @@ static void CG_DrawWeapReticle(void)
 	}
 }
 
-/*
-==============
-CG_DrawMortarReticle
-==============
-*/
+/**
+ * @brief CG_DrawMortarReticle
+ */
 static void CG_DrawMortarReticle(void)
 {
 	vec4_t   color             = { 1.f, 1.f, 1.f, .5f };
@@ -1005,11 +1103,9 @@ static void CG_DrawMortarReticle(void)
 	}
 }
 
-/*
-==============
-CG_DrawBinocReticle
-==============
-*/
+/**
+ * @brief CG_DrawBinocReticle
+ */
 static void CG_DrawBinocReticle(void)
 {
 	if (cgs.media.binocShaderSimple)
@@ -1028,11 +1124,9 @@ static void CG_DrawBinocReticle(void)
 	CG_FillRect(452 + cgs.wideXoffset, 234, 1, 13, colorBlack);     // rr
 }
 
-/*
-=================
-CG_DrawCrosshair
-=================
-*/
+/**
+ * @brief CG_DrawCrosshair
+ */
 static void CG_DrawCrosshair(void)
 {
 	float     w, h;
@@ -1185,6 +1279,9 @@ static void CG_DrawCrosshair(void)
 	trap_R_SetColor(NULL);
 }
 
+/**
+ * @brief CG_DrawNoShootIcon
+ */
 static void CG_DrawNoShootIcon(void)
 {
 	float x, y, w, h;
@@ -1225,11 +1322,10 @@ static void CG_DrawNoShootIcon(void)
 	trap_R_SetColor(NULL);
 }
 
-/*
-=================
-CG_ScanForCrosshairMine
-=================
-*/
+/**
+ * @brief CG_ScanForCrosshairMine
+ * @param[in] cent
+ */
 void CG_ScanForCrosshairMine(centity_t *cent)
 {
 	trace_t trace;
@@ -1256,12 +1352,11 @@ void CG_ScanForCrosshairMine(centity_t *cent)
 	}
 }
 
-/*
-=================
-CG_ScanForCrosshairDyna
-=================
-mainly just a copy paste of CG_ScanForCrosshairMine
-*/
+/**
+ * @brief CG_ScanForCrosshairDyna
+ * @details Mainly just a copy paste of CG_ScanForCrosshairMine
+ * @param cent
+ */
 void CG_ScanForCrosshairDyna(centity_t *cent)
 {
 	trace_t trace;
@@ -1291,13 +1386,12 @@ void CG_ScanForCrosshairDyna(centity_t *cent)
 	}
 }
 
-/*
-=================
-CG_ScanForCrosshairEntity
-
-  Returns the distance to the entity
-=================
-*/
+/**
+ * @brief Returns the distance to the entity
+ * @param[out] zChange
+ * @param[out] hitClient
+ * @return Distance to the entity
+ */
 static float CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 {
 	trace_t   trace;
@@ -1375,12 +1469,10 @@ static float CG_ScanForCrosshairEntity(float *zChange, qboolean *hitClient)
 	return dist;
 }
 
-/*
-==============
-CG_CheckForCursorHints
-    concept in progress...
-==============
-*/
+/**
+ * @brief CG_CheckForCursorHints
+ * @note Concept in progress...
+ */
 void CG_CheckForCursorHints(void)
 {
 	trace_t   trace;
@@ -1473,11 +1565,9 @@ void CG_CheckForCursorHints(void)
 	}
 }
 
-/*
-=====================
-CG_DrawCrosshairNames
-=====================
-*/
+/**
+ * @brief CG_DrawCrosshairNames
+ */
 static void CG_DrawCrosshairNames(void)
 {
 	float      *color;
@@ -1827,11 +1917,9 @@ static void CG_DrawCrosshairNames(void)
 #define INFOTEXT_STARTX 8
 #define INFOTEXT_STARTY 146
 
-/*
-=================
-CG_DrawSpectator
-=================
-*/
+/**
+ * @brief CG_DrawSpectator
+ */
 static void CG_DrawSpectator(void)
 {
 	const char *s;
@@ -1856,12 +1944,9 @@ static void CG_DrawSpectator(void)
 	CG_Text_Paint_Ext(Ccg_WideX(320) - w / 2, 440, cg_fontScaleTP.value, cg_fontScaleTP.value, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 }
 
-/*
-=================
-CG_DrawVote
-=================
-*/
-
+/**
+ * @brief CG_DrawVote
+ */
 static void CG_DrawVote(void)
 {
 	const char *str;
@@ -2202,11 +2287,9 @@ static void CG_DrawVote(void)
 	}
 }
 
-/*
-=================
-CG_DrawIntermission
-=================
-*/
+/**
+ * @brief CG_DrawIntermission
+ */
 static void CG_DrawIntermission(void)
 {
 	// End-of-level autoactions
@@ -2253,11 +2336,9 @@ static void CG_DrawIntermission(void)
 	CG_Debriefing_Draw();
 }
 
-/*
-=================
-CG_DrawSpectatorMessage
-=================
-*/
+/**
+ * @brief CG_DrawSpectatorMessage
+ */
 static void CG_DrawSpectatorMessage(void)
 {
 	const char *str, *str2;
@@ -2323,6 +2404,11 @@ static void CG_DrawSpectatorMessage(void)
 #endif
 }
 
+/**
+ * @brief CG_CalculateReinfTime_Float
+ * @param[in] menu
+ * @return
+ */
 float CG_CalculateReinfTime_Float(qboolean menu)
 {
 	team_t team;
@@ -2348,16 +2434,19 @@ float CG_CalculateReinfTime_Float(qboolean menu)
 	return (1 + (dwDeployTime - ((cgs.aReinfOffset[team] + cg.time - cgs.levelStartTime) % dwDeployTime)) * 0.001f);
 }
 
+/**
+ * @brief CG_CalculateReinfTime
+ * @param menu
+ * @return
+ */
 int CG_CalculateReinfTime(qboolean menu)
 {
-	return((int)CG_CalculateReinfTime_Float(menu));
+	return (int)(CG_CalculateReinfTime_Float(menu));
 }
 
-/*
-=================
-CG_DrawLimboMessage
-=================
-*/
+/**
+ * @brief CG_DrawLimboMessage
+ */
 static void CG_DrawLimboMessage(void)
 {
 	const char    *str;
@@ -2428,11 +2517,10 @@ static void CG_DrawLimboMessage(void)
 	trap_R_SetColor(NULL);
 }
 
-/*
-=================
-CG_DrawFollow
-=================
-*/
+/**
+ * @brief CG_DrawFollow
+ * @return
+ */
 static qboolean CG_DrawFollow(void)
 {
 	float fontScale = cg_fontScaleSP.value;
@@ -2480,7 +2568,7 @@ static qboolean CG_DrawFollow(void)
 			{
 				if (cg.snap->ps.persistant[PERS_RESPAWNS_PENALTY] >= 0)
 				{
-					int deployTime   = ((cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer) * 0.001f;
+					int deployTime   = ((cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer) / 1000;
 					int reinfDepTime = CG_CalculateReinfTime(qfalse) + cg.snap->ps.persistant[PERS_RESPAWNS_PENALTY] * deployTime;
 
 					if (reinfDepTime > 1)
@@ -2566,11 +2654,9 @@ static qboolean CG_DrawFollow(void)
 	return qtrue;
 }
 
-/*
-=================
-CG_DrawWarmup
-=================
-*/
+/**
+ * @brief CG_DrawWarmup
+ */
 static void CG_DrawWarmup(void)
 {
 	int             w, x;
@@ -2761,11 +2847,9 @@ static void CG_DrawWarmup(void)
 
 //==================================================================================
 
-/*
-=================
-CG_DrawFlashFade
-=================
-*/
+/**
+ * @brief CG_DrawFlashFade
+ */
 static void CG_DrawFlashFade(void)
 {
 	static int lastTime;
@@ -2857,14 +2941,10 @@ static void CG_DrawFlashFade(void)
 	}
 }
 
-/*
-==============
-CG_DrawFlashZoomTransition
-    hide the snap transition from regular view to/from zoomed
-
-  FIXME: TODO: use cg_fade?
-==============
-*/
+/**
+ * @brief Hide the snap transition from regular view to/from zoomed
+ * @todo FIXME: TODO: use cg_fade?
+ */
 static void CG_DrawFlashZoomTransition(void)
 {
 	float frac;
@@ -2900,11 +2980,9 @@ static void CG_DrawFlashZoomTransition(void)
 	}
 }
 
-/*
-=================
-CG_DrawFlashDamage
-=================
-*/
+/**
+ * @brief CG_DrawFlashDamage
+ */
 static void CG_DrawFlashDamage(void)
 {
 	if (!cg.snap)
@@ -2931,11 +3009,9 @@ static void CG_DrawFlashDamage(void)
 	}
 }
 
-/*
-=================
-CG_DrawFlashFire
-=================
-*/
+/**
+ * @brief CG_DrawFlashFire
+ */
 static void CG_DrawFlashFire(void)
 {
 	float alpha;
@@ -2974,7 +3050,7 @@ static void CG_DrawFlashFire(void)
 			alpha = f;
 		}
 
-		max = 0.5 + 0.5 * sin((float)((cg.time / 10) % 1000) / 1000.0);
+		max = (float)(0.5 + 0.5 * sin((double)((cg.time / 10) % 1000) / 1000.0));
 		if (alpha > max)
 		{
 			alpha = max;
@@ -2995,24 +3071,18 @@ static void CG_DrawFlashFire(void)
 	}
 }
 
-/*
-==============
-CG_DrawFlashBlendBehindHUD
-    screen flash stuff drawn first (on top of world, behind HUD)
-==============
-*/
+/**
+ * @brief Screen flash stuff drawn first (on top of world, behind HUD)
+ */
 static void CG_DrawFlashBlendBehindHUD(void)
 {
 	CG_DrawFlashZoomTransition();
 	CG_DrawFlashFade();
 }
 
-/*
-=================
-CG_DrawFlashBlend
-    screen flash stuff drawn last (on top of everything)
-=================
-*/
+/**
+ * @brief Screen flash stuff drawn last (on top of everything)
+ */
 static void CG_DrawFlashBlend(void)
 {
 	// no flash blends if in limbo or spectator, and in the limbo menu
@@ -3025,14 +3095,14 @@ static void CG_DrawFlashBlend(void)
 	CG_DrawFlashDamage();
 }
 
-/*
-=================
-CG_DrawObjectiveInfo
-=================
-*/
 //#define OID_LEFT    10
 #define OID_TOP     360
 
+/**
+ * @brief CG_ObjectivePrint
+ * @param[in] str
+ * @param[in] fontScale
+ */
 void CG_ObjectivePrint(const char *str, float fontScale)
 {
 	const char *s;
@@ -3083,6 +3153,9 @@ void CG_ObjectivePrint(const char *str, float fontScale)
 	}
 }
 
+/**
+ * @brief CG_DrawObjectiveInfo
+ */
 static void CG_DrawObjectiveInfo(void)
 {
 	char   *start;
@@ -3211,6 +3284,9 @@ static void CG_DrawObjectiveInfo(void)
 
 //==================================================================================
 
+/**
+ * @brief CG_DrawTimedMenus
+ */
 void CG_DrawTimedMenus(void)
 {
 	if (cg.voiceTime)
@@ -3224,11 +3300,16 @@ void CG_DrawTimedMenus(void)
 	}
 }
 
-/*
-=================
-CG_Fade
-=================
-*/
+/**
+ * @brief CG_Fade
+ * @param r - unused
+ * @param g - unused
+ * @param b - unused
+ * @param[in] a
+ * @param[in] time
+ * @param[in] duration
+ * @todo cleanup ?
+ */
 void CG_Fade(int r, int g, int b, int a, int time, int duration)
 {
 	// incorporate this into the current fade scheme
@@ -3262,11 +3343,9 @@ void CG_Fade(int r, int g, int b, int a, int time, int duration)
 	*/
 }
 
-/*
-=================
-CG_ScreenFade
-=================
-*/
+/**
+ * @brief CG_ScreenFade
+ */
 static void CG_ScreenFade(void)
 {
 	int msec;
@@ -3314,6 +3393,9 @@ static void CG_ScreenFade(void)
 
 static int lastDemoScoreTime = 0;
 
+/**
+ * @brief CG_DrawDemoRecording
+ */
 void CG_DrawDemoRecording(void)
 {
 	char status[1024];
@@ -3360,6 +3442,9 @@ void CG_DrawDemoRecording(void)
 	CG_Text_Paint_Ext(10, cg_recording_statusline.integer, 0.2f, 0.2f, colorRed, status, 0, 0, 0, &cgs.media.limboFont2);
 }
 
+/**
+ * @brief CG_DrawOnScreenNames
+ */
 void CG_DrawOnScreenNames(void)
 {
 	static vec3_t mins  = { -1, -1, -1 };
@@ -3428,11 +3513,9 @@ void CG_DrawOnScreenNames(void)
 	}
 }
 
-/*
-=================
-CG_Draw2D
-=================
-*/
+/**
+ * @brief CG_Draw2D
+ */
 static void CG_Draw2D(void)
 {
 	CG_ScreenFade();
@@ -3590,6 +3673,10 @@ static void CG_Draw2D(void)
 	CG_DrawDemoRecording();
 }
 
+/**
+ * @brief CG_StartShakeCamera
+ * @param[in] p
+ */
 void CG_StartShakeCamera(float p)
 {
 	cg.cameraShakeScale = p;
@@ -3599,6 +3686,9 @@ void CG_StartShakeCamera(float p)
 	cg.cameraShakePhase  = crandom() * M_PI; // start chain in random dir
 }
 
+/**
+ * @brief CG_ShakeCamera
+ */
 void CG_ShakeCamera(void)
 {
 	if (cg.time > cg.cameraShakeTime)
@@ -3627,6 +3717,9 @@ void CG_ShakeCamera(void)
 	}
 }
 
+/**
+ * @brief CG_DrawMiscGamemodels
+ */
 void CG_DrawMiscGamemodels(void)
 {
 	int         i, j;
@@ -3669,6 +3762,9 @@ void CG_DrawMiscGamemodels(void)
 	}
 }
 
+/**
+ * @brief CG_Coronas
+ */
 void CG_Coronas(void)
 {
 	if (cg_coronas.integer == 0)
@@ -3729,6 +3825,7 @@ void CG_Coronas(void)
 
 /**
  * @brief Perform all drawing needed to completely fill the screen
+ * @param[in] stereoView
  */
 void CG_DrawActive(stereoFrame_t stereoView)
 {
@@ -3754,9 +3851,7 @@ void CG_DrawActive(stereoFrame_t stereoView)
 		separation = cg_stereoSeparation.value / 2;
 		break;
 	default:
-		//separation = 0;
 		CG_Error("CG_DrawActive: Undefined stereoView\n");
-		break;
 	}
 
 	// clear around the rendered view if sized down

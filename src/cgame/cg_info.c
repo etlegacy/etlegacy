@@ -61,11 +61,10 @@ const vec4_t color_border   = COLOR_BORDER_VIEW;
 //#define VD_SCALE_X_NAME 0.30f
 //#define VD_SCALE_Y_NAME 0.30f
 
-/*
-======================
-CG_LoadingString
-======================
-*/
+/**
+ * @brief CG_LoadingString
+ * @param[in] s
+ */
 void CG_LoadingString(const char *s)
 {
 	Q_strncpyz(cg.infoScreenText, s, sizeof(cg.infoScreenText));
@@ -77,13 +76,10 @@ void CG_LoadingString(const char *s)
 	}
 }
 
-/*
-====================
-CG_DrawInformation
-
-Draw all the status / pacifier stuff during level loading
-====================
-*/
+/**
+ * @brief Draw all the status / pacifier stuff during level loading
+ * @param[in] forcerefresh
+ */
 void CG_DrawInformation(qboolean forcerefresh)
 {
 	static int lastcalled = 0;
@@ -129,6 +125,10 @@ void CG_DrawInformation(qboolean forcerefresh)
 	*/
 }
 
+/**
+ * @brief CG_ShowHelp_On
+ * @param[in,out] status
+ */
 void CG_ShowHelp_On(int *status)
 {
 	int milli = trap_Milliseconds();
@@ -145,6 +145,10 @@ void CG_ShowHelp_On(int *status)
 	*status = SHOW_ON;
 }
 
+/**
+ * @brief CG_ShowHelp_Off
+ * @param[in,out] status
+ */
 void CG_ShowHelp_Off(int *status)
 {
 	if (*status != SHOW_OFF)
@@ -164,6 +168,10 @@ void CG_ShowHelp_Off(int *status)
 	}
 }
 
+/**
+ * @brief CG_DemoControlButtonRender
+ * @param[in] button
+ */
 void CG_DemoControlButtonRender(panel_button_t *button)
 {
 	if (button->data[0])
@@ -187,6 +195,12 @@ void CG_DemoControlButtonRender(panel_button_t *button)
 	}
 }
 
+/**
+ * @brief CG_DemoControlButtonDown
+ * @param[in] button
+ * @param[in] key
+ * @return
+ */
 qboolean CG_DemoControlButtonDown(panel_button_t *button, int key)
 {
 	if (key != K_MOUSE1 && key != K_MOUSE2)
@@ -221,6 +235,13 @@ qboolean CG_DemoControlButtonDown(panel_button_t *button, int key)
 	return qtrue;
 }
 
+/**
+ * @brief CG_DemoControlButtonUp
+ * @param button - unused
+ * @param key - unused
+ * @note This function is empty and return always qfalse
+ * @return Always qfalse
+ */
 qboolean CG_DemoControlButtonUp(panel_button_t *button, int key)
 {
 	return qfalse;
@@ -291,7 +312,11 @@ static panel_button_t *demoControlButtons[] =
 	NULL
 };
 
-// Demo playback key catcher support
+/**
+ * @brief Demo playback key catcher support
+ * @param key
+ * @param down
+ */
 void CG_DemoClick(int key, qboolean down)
 {
 	int milli = trap_Milliseconds();
@@ -856,6 +881,10 @@ void CG_DemoClick(int key, qboolean down)
 
 extern vec4_t HUD_Border;
 
+/**
+ * @brief CG_ViewingDraw
+ * @return
+ */
 qboolean CG_ViewingDraw()
 {
 	if (cg.mvTotalClients < 1)
@@ -908,6 +937,9 @@ qboolean CG_ViewingDraw()
 #define GS_Y    10
 #define GS_W    298
 
+/**
+ * @brief CG_GameStatsDraw
+ */
 void CG_GameStatsDraw(void)
 {
 	if (cgs.gamestats.show == SHOW_OFF)
@@ -1115,6 +1147,9 @@ void CG_GameStatsDraw(void)
 #define TS_Y    -60     // spacing from bottom
 #define TS_W    308
 
+/**
+ * @brief CG_TopShotsDraw
+ */
 void CG_TopShotsDraw(void)
 {
 	if (cgs.topshots.show == SHOW_OFF)
@@ -1245,6 +1280,9 @@ void CG_TopShotsDraw(void)
 //#define OBJ_Y   -60     // spacing from bottom
 #define OBJ_W   308
 
+/**
+ * @brief CG_ObjectivesDraw
+ */
 void CG_ObjectivesDraw()
 {
 	const char *cs;
@@ -1679,6 +1717,22 @@ void CG_ObjectivesDraw()
 #define DH_Y    -60     // spacing from bottom
 #define DH_W    148
 
+/**
+ * @brief CG_DrawDemoControls
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] borderColor
+ * @param[in] bgColor
+ * @param[in] tSpacing
+ * @param[in] bgColorTitle
+ * @param[in] borderColorTitle
+ * @param[in] hScale
+ * @param[in] hScaleY
+ * @param[in] hdrColor
+ * @param[in] hStyle
+ * @param[in] hFont
+ */
 void CG_DrawDemoControls(int x, int y, int w, vec4_t borderColor, vec4_t bgColor, int tSpacing, vec4_t bgColorTitle, vec4_t borderColorTitle, float hScale, float hScaleY, vec4_t hdrColor, int hStyle, fontHelper_t *hFont)
 {
 	static panel_button_text_t demoControlTxt;
@@ -1724,6 +1778,9 @@ void CG_DrawDemoControls(int x, int y, int w, vec4_t borderColor, vec4_t bgColor
 	}
 }
 
+/**
+ * @brief CG_DemoHelpDraw
+ */
 void CG_DemoHelpDraw(void)
 {
 #ifdef FEATURE_EDV
@@ -1989,6 +2046,13 @@ void CG_DemoHelpDraw(void)
 	}
 }
 
+/**
+ * @brief CG_getBindKeyName
+ * @param[in] cmd
+ * @param[out] buf
+ * @param[in] len
+ * @return
+ */
 char *CG_getBindKeyName(const char *cmd, char *buf, int len)
 {
 	int j;
@@ -2023,6 +2087,9 @@ typedef struct
 #define SH_X    8       // spacing from left
 #define SH_Y    155     // spacing from top
 
+/**
+ * @brief CG_SpecHelpDraw
+ */
 void CG_SpecHelpDraw(void)
 {
 	if (cg.spechelpWindow == SHOW_OFF)
@@ -2077,7 +2144,7 @@ void CG_SpecHelpDraw(void)
 		{
 			if (help[i].cmd != NULL)
 			{
-				len = strlen(CG_getBindKeyName(help[i].cmd, buf, sizeof(buf)));
+				len = (int)strlen(CG_getBindKeyName(help[i].cmd, buf, sizeof(buf)));
 				if (len > maxlen)
 				{
 					maxlen = len;
@@ -2165,6 +2232,9 @@ void CG_SpecHelpDraw(void)
 }
 #endif
 
+/**
+ * @brief CG_DrawOverlays
+ */
 void CG_DrawOverlays(void)
 {
 	CG_GameStatsDraw();

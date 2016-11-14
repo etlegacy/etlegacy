@@ -102,11 +102,11 @@ static void CG_AddPolyToPool(qhandle_t shader, const polyVert_t *verts)
 	pPolyBuffer->numVerts    += 3;
 }
 
+static qboolean kludgeChecked, kludgeResult;
 /**
 * @brief Activate atmospheric effects for kludge maps
 * @details Activate rain for specified kludge maps that don't have it specified for them
 */
-static qboolean kludgeChecked, kludgeResult;
 qboolean CG_AtmosphericKludge(void)
 {
 	// Activate rain for specified kludge maps that don't

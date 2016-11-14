@@ -961,7 +961,6 @@ void CG_KeyEvent(int key, qboolean down)
 		{
 			CG_RunBinding(key, down);
 		}
-		break;
 #else
 		CG_mv_KeyHandling(key, down);
 #endif
