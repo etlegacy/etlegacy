@@ -356,7 +356,7 @@ breakOut:;
 
 		//Ren_Warning( "WARNING: '%s' TGA file header declares top-down image, flipping\n", name);
 
-		flip = (unsigned char *)malloc(columns * 4);
+		flip = (unsigned char *)ri.Hunk_AllocateTempMemory(columns * 4);
 		for (row = 0; row < rows / 2; row++)
 		{
 			src = targa_rgba + row * 4 * columns;
@@ -366,7 +366,7 @@ breakOut:;
 			memcpy(src, dst, columns * 4);
 			memcpy(dst, flip, columns * 4);
 		}
-		free(flip);
+		ri.Hunk_FreeTempMemory(flip);
 	}
 #else
 	// instead we just print a warning
