@@ -49,8 +49,8 @@ void G_initMatch(void)
 // Setting initialization
 void G_loadMatchGame(void)
 {
-	unsigned int i, dwBlueOffset, dwRedOffset;
-	unsigned int aRandomValues[MAX_REINFSEEDS];
+	int i, dwBlueOffset, dwRedOffset;
+	int aRandomValues[MAX_REINFSEEDS];
 	char         strReinfSeeds[MAX_STRING_CHARS];
 
 	G_Printf("Setting MOTD...\n");

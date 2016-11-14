@@ -153,7 +153,7 @@ qboolean COM_CompareExtension(const char *in, const char *ext)
 	return qfalse;
 }
 
-void COM_StripFilename(char *in, char *out)
+void COM_StripFilename(const char *in, char *out)
 {
 	char *end;
 

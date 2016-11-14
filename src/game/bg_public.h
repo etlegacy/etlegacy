@@ -249,7 +249,7 @@ typedef struct
 #define REINF_RANGE     16      // (0 to n-1 second offset)
 #define REINF_BLUEDELT  3       // Allies shift offset
 #define REINF_REDDELT   2       // Axis shift offset
-extern const unsigned int aReinfSeeds[MAX_REINFSEEDS];
+extern const int aReinfSeeds[MAX_REINFSEEDS];
 
 // Client flags for server processing
 #define CGF_AUTORELOAD      0x01
