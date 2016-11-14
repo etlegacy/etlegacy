@@ -1849,7 +1849,7 @@ void CG_DebriefingTitle_Draw(panel_button_t *button)
 		}
 	}
 
-	w = CG_Text_Width_Ext(s, button->font->scalex, 0, button->font->font);
+	//w = CG_Text_Width_Ext(s, button->font->scalex, 0, button->font->font);
 	x = button->rect.x + 4; // + ((button->rect.w - w) * 0.5f);
 
 	CG_Text_Paint_Ext(x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, s, 0, 0, 0, button->font->font);

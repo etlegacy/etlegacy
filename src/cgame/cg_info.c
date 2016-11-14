@@ -1607,7 +1607,7 @@ void CG_ObjectivesDraw()
 			if (temp[0] && count > 0)
 			{
 				count--;
-				y += tSpacing;
+				//y += tSpacing;
 			}
 		}
 		else if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES)

@@ -1347,17 +1347,18 @@ static void CG_SwingAngles(float destination, float swingTolerance, float clampT
 	}
 }
 
-/*
-=================
-CG_AddPainTwitch
-=================
-*/
+/**
+ * @brief CG_AddPainTwitch
+ * @param cent
+ * @param torsoAngles
+ * @note direction unused ?
+ */
 static void CG_AddPainTwitch(centity_t *cent, vec3_t torsoAngles)
 {
 	int t;
 	float f;
 	int duration;
-	float direction;
+	//float direction;
 
 	if (!cent->pe.animSpeed)
 	{
@@ -1383,16 +1384,19 @@ static void CG_AddPainTwitch(centity_t *cent, vec3_t torsoAngles)
 	{
 		duration = PAIN_TWITCH_TIME;
 	}
-	direction = (float)duration * 0.085;
+
+	/*
+	direction = (float)duration * 0.085f;
 	if (direction > 30)
 	{
-		direction = 30;
+	    direction = 30;
 	}
 	if (direction < 10)
 	{
-		direction = 10;
+	    direction = 10;
 	}
 	direction *= (float)(cent->pe.painDirection * 2) - 1;
+	*/
 
 	t = cg.time - cent->pe.painTime;
 	if (t >= duration)
@@ -1400,7 +1404,7 @@ static void CG_AddPainTwitch(centity_t *cent, vec3_t torsoAngles)
 		return;
 	}
 
-	f = 1.0 - (float)t / duration;
+	f = 1.0f - (float)t / duration;
 	if (cent->pe.painDirection)
 	{
 		torsoAngles[ROLL] += 20 * f;

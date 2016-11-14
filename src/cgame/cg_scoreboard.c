@@ -778,13 +778,13 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	{
 		if (score->respawnsLeft >= 0)
 		{
-			CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, va("%2i", score->respawnsLeft), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(tempx, y, 0.20f, 0.25f, colorWhite, va("%2i", score->respawnsLeft), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
 		else
 		{
-			CG_Text_Paint_Ext(tempx, y, 0.20, 0.25, colorWhite, " -", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+			CG_Text_Paint_Ext(tempx, y, 0.20f, 0.25f, colorWhite, " -", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		}
-		tempx += INFO_LIVES_WIDTH;
+		//tempx += INFO_LIVES_WIDTH;
 	}
 }
 
@@ -1032,7 +1032,7 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	if (cgs.gametype != GT_WOLF_LMS && livesleft)
 	{
 		CG_DrawPicST(tempx + 2, y, INFO_LIVES_WIDTH - 4, 16, 0.f, 0.f, 0.5f, 1.f, team == TEAM_ALLIES ? cgs.media.hudAlliedHelmet : cgs.media.hudAxisHelmet);
-		tempx += INFO_LIVES_WIDTH;
+		//tempx += INFO_LIVES_WIDTH;
 	}
 
 	y += 18;

@@ -117,7 +117,7 @@ hudStucture_t hud0;
  * @param y
  * @param w
  * @param h
- * @return 
+ * @return
  * @note Unused
  */
 /*
@@ -137,7 +137,7 @@ rectDef_t CG_getRect(float x, float y, float w, float h)
  * @param[in] h
  * @param[in] visible
  * @param[in] style
- * @return 
+ * @return
  */
 hudComponent_t CG_getComponent(float x, float y, float w, float h, qboolean visible, componentStyle style)
 {
@@ -180,7 +180,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 
 /**
  * @brief CG_getNextFreeHud
- * @return 
+ * @return
  * @note unused
  */
 /*
@@ -206,7 +206,7 @@ static hudStucture_t *CG_getNextFreeHud()
 /**
  * @brief CG_getHudByNumber
  * @param[in] number
- * @return 
+ * @return
  */
 static hudStucture_t *CG_getHudByNumber(int number)
 {
@@ -235,7 +235,7 @@ static hudStucture_t *CG_getHudByNumber(int number)
 /**
  * @brief CG_isHudNumberAvailable
  * @param[in] number
- * @return 
+ * @return
  */
 static qboolean CG_isHudNumberAvailable(int number)
 {
@@ -267,7 +267,7 @@ static void CG_addHudToList(hudStucture_t *hud)
  * @brief CG_HUD_ParseError
  * @param[in] handle
  * @param[in] format
- * @return 
+ * @return
  */
 static qboolean CG_HUD_ParseError(int handle, const char *format, ...)
 {
@@ -295,7 +295,7 @@ static qboolean CG_HUD_ParseError(int handle, const char *format, ...)
  * @brief CG_RectParse
  * @param[in] handle
  * @param[in,out] r
- * @return 
+ * @return
  */
 static qboolean CG_RectParse(int handle, rectDef_t *r)
 {
@@ -322,7 +322,7 @@ static qboolean CG_RectParse(int handle, rectDef_t *r)
  * @brief CG_ParseHudComponent
  * @param[in] handle
  * @param[in] comp
- * @return 
+ * @return
  */
 static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
 {
@@ -344,7 +344,7 @@ static qboolean CG_ParseHudComponent(int handle, hudComponent_t *comp)
 /**
  * @brief CG_ParseHUD
  * @param[in] handle
- * @return 
+ * @return
  */
 static qboolean CG_ParseHUD(int handle)
 {
@@ -752,7 +752,7 @@ static void CG_DrawPlayerStatusHead(hudComponent_t comp)
  * @param[out] ammo
  * @param[out] clips
  * @param[out] akimboammo
- * @return 
+ * @return
  */
 static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 {
@@ -924,11 +924,7 @@ static void CG_DrawStaminaBar(rectDef_t *rect)
 		{
 			float msec = cg.snap->ps.powerups[PW_ADRENALINE] - cg.time;
 
-			if (msec < 0)
-			{
-				msec = 0;
-			}
-			else
+			if (msec >= 0)
 			{
 				Vector4Average(colour, colorMdRed, (float)(.5 + sin(.2 * sqrt((double)msec) * 2 * M_PI) * .5), colour);
 			}
@@ -1216,7 +1212,7 @@ static void CG_DrawGunIcon(rectDef_t location)
  * @brief CG_DrawAmmoCount
  * @param[in] x
  * @param[in] y
- */ 
+ */
 static void CG_DrawAmmoCount(float x, float y)
 {
 	int  value, value2, value3;
@@ -1292,7 +1288,7 @@ extern pmove_t *pm;
  * @brief CG_ClassSkillForPosition
  * @param[in] ci
  * @param[in] pos
- * @return 
+ * @return
  */
 skillType_t CG_ClassSkillForPosition(clientInfo_t *ci, int pos)
 {
@@ -1418,7 +1414,7 @@ static void CG_DrawPowerUps(rectDef_t rect)
  * @param[in] charHeight
  * @param[in] dodrawpic
  * @param[in] leftAlign
- * @return 
+ * @return
  */
 int CG_DrawField(int x, int y, int width, int value, int charWidth, int charHeight, qboolean dodrawpic, qboolean leftAlign)
 {
@@ -1968,7 +1964,7 @@ static void CG_DrawStatsDebug(void)
 /**
  * @brief CG_DrawSnapshot
  * @param y
- * @return 
+ * @return
  */
 static float CG_DrawSnapshot(float y)
 {
@@ -1988,7 +1984,7 @@ static float CG_DrawSnapshot(float y)
 /**
  * @brief CG_DrawFPS
  * @param[in] y
- * @return 
+ * @return
  */
 static float CG_DrawFPS(float y)
 {
@@ -2166,7 +2162,7 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 /**
  * @brief CG_DrawTimerNormal
  * @param[in] y
- * @return 
+ * @return
  */
 static float CG_DrawTimerNormal(float y)
 {
@@ -2244,7 +2240,7 @@ static float CG_DrawTimerNormal(float y)
 /**
  * @brief CG_DrawLocalTime
  * @param[in] y
- * @return 
+ * @return
  */
 static float CG_DrawLocalTime(float y)
 {
@@ -2368,7 +2364,7 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 /**
  * @brief Draw disconnect icon for long lag
  * @param[in] y
- * @return 
+ * @return
  */
 static float CG_DrawDisconnect(float y)
 {
@@ -2420,7 +2416,7 @@ static float CG_DrawDisconnect(float y)
 /**
  * @brief CG_DrawPing
  * @param[in] y
- * @return 
+ * @return
  */
 static float CG_DrawPing(float y)
 {
@@ -2446,7 +2442,7 @@ vec4_t colorAW = { 0, 0.5, 0, 0.5f };
 /**
  * @brief CG_DrawLagometer
  * @param[in] y
- * @return 
+ * @return
  */
 static float CG_DrawLagometer(float y)
 {
@@ -2939,6 +2935,6 @@ void CG_DrawUpperRight(void)
 	}
 	else
 	{
-		CG_DrawDisconnect(y);
+		y = CG_DrawDisconnect(y);
 	}
 }
