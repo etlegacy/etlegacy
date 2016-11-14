@@ -48,7 +48,7 @@
 #include "../ui/ui_shared.h"
 
 
-#define STATS_FADE_TIME     200.0f
+#define STATS_FADE_TIME     200
 #define FADE_TIME           200
 #define DAMAGE_DEFLECT_TIME 100
 #define DAMAGE_RETURN_TIME  400

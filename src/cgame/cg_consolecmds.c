@@ -46,6 +46,9 @@ static void CG_Viewpos_f(void)
 	          (int)cg.refdefViewAngles[YAW]);
 }
 
+/**
+ * @brief CG_LimboMenu_f
+ */
 void CG_LimboMenu_f(void)
 {
 	if (cg.showGameView)
@@ -58,6 +61,9 @@ void CG_LimboMenu_f(void)
 	}
 }
 
+/**
+ * @brief CG_StatsDown_f
+ */
 static void CG_StatsDown_f(void)
 {
 	if (!cg.demoPlayback)
@@ -97,6 +103,9 @@ static void CG_StatsDown_f(void)
 	}
 }
 
+/**
+ * @brief CG_StatsUp_f
+ */
 static void CG_StatsUp_f(void)
 {
 	if (cgs.gamestats.show == SHOW_ON)
@@ -113,6 +122,9 @@ static void CG_StatsUp_f(void)
 	}
 }
 
+/**
+ * @brief CG_topshotsDown_f
+ */
 void CG_topshotsDown_f(void)
 {
 	if (!cg.demoPlayback)
@@ -136,6 +148,9 @@ void CG_topshotsDown_f(void)
 	}
 }
 
+/**
+ * @brief CG_topshotsUp_f
+ */
 void CG_topshotsUp_f(void)
 {
 	if (cgs.topshots.show == SHOW_ON)
@@ -152,6 +167,9 @@ void CG_topshotsUp_f(void)
 	}
 }
 
+/**
+ * @brief CG_objectivesDown_f
+ */
 void CG_objectivesDown_f(void)
 {
 	if (!cg.demoPlayback)
@@ -168,6 +186,9 @@ void CG_objectivesDown_f(void)
 	}
 }
 
+/**
+ * @brief CG_objectivesUp_f
+ */
 void CG_objectivesUp_f(void)
 {
 	if (cgs.objectives.show == SHOW_ON)
@@ -184,6 +205,9 @@ void CG_objectivesUp_f(void)
 	}
 }
 
+/**
+ * @brief CG_ScoresDown_f
+ */
 void CG_ScoresDown_f(void)
 {
 #ifdef FEATURE_RATING
@@ -246,6 +270,9 @@ void CG_ScoresDown_f(void)
 	}
 }
 
+/**
+ * @brief CG_ScoresUp_f
+ */
 void CG_ScoresUp_f(void)
 {
 	if (cg.showScores)
@@ -255,26 +282,31 @@ void CG_ScoresUp_f(void)
 	}
 }
 
+/**
+ * @brief CG_Fade_f
+ */
 static void CG_Fade_f(void)
 {
-	int   r, g, b, a;
-	float duration;
+	int r, g, b, a, duration;
 
 	if (trap_Argc() < 6)
 	{
 		return;
 	}
 
-	r = atof(CG_Argv(1));
-	g = atof(CG_Argv(2));
-	b = atof(CG_Argv(3));
-	a = atof(CG_Argv(4));
+	r = (int)atof(CG_Argv(1));
+	g = (int)atof(CG_Argv(2));
+	b = (int)atof(CG_Argv(3));
+	a = (int)atof(CG_Argv(4));
 
-	duration = atof(CG_Argv(5)) * 1000;
+	duration = (int)(atof(CG_Argv(5)) * 1000);
 
 	CG_Fade(r, g, b, a, cg.time, duration);
 }
 
+/**
+ * @brief CG_QuickMessage_f
+ */
 void CG_QuickMessage_f(void)
 {
 	CG_EventHandling(CGAME_EVENT_NONE, qfalse);
@@ -289,6 +321,9 @@ void CG_QuickMessage_f(void)
 	}
 }
 
+/**
+ * @brief CG_QuickFireteamMessage_f
+ */
 void CG_QuickFireteamMessage_f(void)
 {
 	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
@@ -308,6 +343,9 @@ void CG_QuickFireteamMessage_f(void)
 	}
 }
 
+/**
+ * @brief CG_QuickFireteamAdmin_f
+ */
 void CG_QuickFireteamAdmin_f(void)
 {
 	trap_UI_Popup(UIMENU_NONE);
@@ -330,6 +368,9 @@ void CG_QuickFireteamAdmin_f(void)
 	}
 }
 
+/**
+ * @brief CG_QuickFireteams_f
+ */
 static void CG_QuickFireteams_f(void)
 {
 	if (!CG_IsOnFireteam(cg.clientNum))
@@ -354,6 +395,9 @@ static void CG_QuickFireteams_f(void)
 	cgs.ftMenuMode = 0;
 }
 
+/**
+ * @brief CG_FTSayPlayerClass_f
+ */
 static void CG_FTSayPlayerClass_f(void)
 {
 	int        playerType = cgs.clientinfo[cg.clientNum].cls;
@@ -392,6 +436,9 @@ static void CG_FTSayPlayerClass_f(void)
 	trap_SendConsoleCommand(va("cmd vsay_buddy -1 %s %s\n", CG_BuildSelectedFirteamString(), s));
 }
 
+/**
+ * @brief CG_SayPlayerClass_f
+ */
 static void CG_SayPlayerClass_f(void)
 {
 	int        playerType = cgs.clientinfo[cg.clientNum].cls;
@@ -430,6 +477,9 @@ static void CG_SayPlayerClass_f(void)
 	trap_SendConsoleCommand(va("cmd vsay_team %s\n", s));
 }
 
+/**
+ * @brief CG_VoiceChat_f
+ */
 static void CG_VoiceChat_f(void)
 {
 	char chatCmd[64];
@@ -443,6 +493,9 @@ static void CG_VoiceChat_f(void)
 	trap_SendConsoleCommand(va("cmd vsay %s\n", chatCmd));
 }
 
+/**
+ * @brief CG_TeamVoiceChat_f
+ */
 static void CG_TeamVoiceChat_f(void)
 {
 	char chatCmd[64];
@@ -468,6 +521,9 @@ static void CG_TeamVoiceChat_f(void)
 	trap_SendConsoleCommand(va("cmd vsay_team %s\n", chatCmd));
 }
 
+/**
+ * @brief CG_BuddyVoiceChat_f
+ */
 static void CG_BuddyVoiceChat_f(void)
 {
 	char chatCmd[64];
@@ -493,7 +549,10 @@ static void CG_BuddyVoiceChat_f(void)
 	trap_SendConsoleCommand(va("cmd vsay_buddy -1 %s %s\n", CG_BuildSelectedFirteamString(), chatCmd));
 }
 
-// say, team say, etc
+/**
+ * @brief CG_MessageMode_f
+ * @details say, team say, etc
+ */
 static void CG_MessageMode_f(void)
 {
 	char cmd[64];
@@ -529,6 +588,9 @@ static void CG_MessageMode_f(void)
 	trap_UI_Popup(UIMENU_INGAME_MESSAGEMODE);
 }
 
+/**
+ * @brief CG_MessageSend_f
+ */
 static void CG_MessageSend_f(void)
 {
 	char messageText[256];
@@ -563,6 +625,9 @@ static void CG_MessageSend_f(void)
 	}
 }
 
+/**
+ * @brief CG_SetWeaponCrosshair_f
+ */
 static void CG_SetWeaponCrosshair_f(void)
 {
 	char crosshair[64];
@@ -571,6 +636,9 @@ static void CG_SetWeaponCrosshair_f(void)
 	cg.newCrosshairIndex = atoi(crosshair) + 1;
 }
 
+/**
+ * @brief CG_SelectBuddy_f
+ */
 static void CG_SelectBuddy_f(void)
 {
 	int          pos = atoi(CG_Argv(1));
@@ -644,6 +712,9 @@ static void CG_SelectBuddy_f(void)
 
 extern void CG_AdjustAutomapZoom(int zoomIn);
 
+/**
+ * @brief CG_AutomapZoomIn_f
+ */
 static void CG_AutomapZoomIn_f(void)
 {
 	if (!cgs.autoMapOff)
@@ -652,6 +723,9 @@ static void CG_AutomapZoomIn_f(void)
 	}
 }
 
+/**
+ * @brief CG_AutomapZoomOut_f
+ */
 static void CG_AutomapZoomOut_f(void)
 {
 	if (!cgs.autoMapOff)
@@ -660,6 +734,9 @@ static void CG_AutomapZoomOut_f(void)
 	}
 }
 
+/**
+ * @brief CG_AutomapExpandDown_f
+ */
 static void CG_AutomapExpandDown_f(void)
 {
 	if (!cgs.autoMapExpanded)
@@ -676,6 +753,9 @@ static void CG_AutomapExpandDown_f(void)
 	}
 }
 
+/**
+ * @brief CG_AutomapExpandUp_f
+ */
 static void CG_AutomapExpandUp_f(void)
 {
 	if (cgs.autoMapExpanded)
@@ -692,9 +772,12 @@ static void CG_AutomapExpandUp_f(void)
 	}
 }
 
+/**
+ * @brief CG_ToggleAutomap_f
+ */
 static void CG_ToggleAutomap_f(void)
 {
-	cgs.autoMapOff = !cgs.autoMapOff;
+	cgs.autoMapOff = (qboolean) !cgs.autoMapOff;
 }
 
 const char *aMonths[12] =
@@ -703,6 +786,9 @@ const char *aMonths[12] =
 	"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 };
 
+/**
+ * @brief CG_currentTime_f
+ */
 void CG_currentTime_f(void)
 {
 	qtime_t ct;
@@ -711,18 +797,25 @@ void CG_currentTime_f(void)
 	CG_Printf("[cgnotify]Current time: ^3%02d:%02d:%02d (%02d %s %d)\n", ct.tm_hour, ct.tm_min, ct.tm_sec, ct.tm_mday, aMonths[ct.tm_mon], 1900 + ct.tm_year);
 }
 
-// Dynamically names a demo and sets up the recording
+/**
+ * @brief Dynamically names a demo and sets up the recording
+ */
 void CG_autoRecord_f(void)
 {
 	trap_SendConsoleCommand(va("record %s\n", CG_generateFilename()));
 }
 
-// Dynamically names a screenshot[JPEG]
+/**
+ * @brief Dynamically names a screenshot[JPEG]
+ */
 void CG_autoScreenShot_f(void)
 {
 	trap_SendConsoleCommand(va("screenshot%s %s\n", ((cg_useScreenshotJPEG.integer) ? "JPEG" : ""), CG_generateFilename()));
 }
 
+/**
+ * @brief CG_vstrDown_f
+ */
 void CG_vstrDown_f(void)
 {
 	// The engine also passes back the key code and time of the key press
@@ -736,6 +829,9 @@ void CG_vstrDown_f(void)
 	}
 }
 
+/**
+ * @brief CG_vstrUp_f
+ */
 void CG_vstrUp_f(void)
 {
 	// The engine also passes back the key code and time of the key press
@@ -749,6 +845,9 @@ void CG_vstrUp_f(void)
 	}
 }
 
+/**
+ * @brief CG_keyOn_f
+ */
 void CG_keyOn_f(void)
 {
 	if (!cg.demoPlayback)
@@ -765,6 +864,9 @@ void CG_keyOn_f(void)
 	CG_EventHandling(CGAME_EVENT_DEMO, qtrue);
 }
 
+/**
+ * @brief CG_keyOff_f
+ */
 void CG_keyOff_f(void)
 {
 	if (!cg.demoPlayback)
@@ -774,6 +876,9 @@ void CG_keyOff_f(void)
 	CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 }
 
+/**
+ * @brief CG_dumpStats_f
+ */
 void CG_dumpStats_f(void)
 {
 	if (cgs.dumpStatsTime < cg.time)
@@ -791,7 +896,11 @@ void CG_dumpStats_f(void)
 	}
 }
 
-/* unused
+/**
+ * @brief CG_wStatsDown_f
+ * @note unused
+ */
+/*
 void CG_wStatsDown_f(void)
 {
     if (
@@ -820,7 +929,11 @@ void CG_wStatsDown_f(void)
 }
 */
 
-/* unused
+/**
+ * @brief CG_wStatsUp_f
+ * @note unused
+ */
+/*
 void CG_wStatsUp_f(void)
 {
     cg.showStats = qfalse;
@@ -830,6 +943,9 @@ void CG_wStatsUp_f(void)
 */
 
 #ifdef FEATURE_MULTIVIEW
+/**
+ * @brief CG_toggleSpecHelp_f
+ */
 void CG_toggleSpecHelp_f(void)
 {
 	if (cg.mvTotalClients > 0 && !cg.demoPlayback)
@@ -846,6 +962,9 @@ void CG_toggleSpecHelp_f(void)
 }
 #endif
 
+/**
+ * @brief CG_EditSpeakers_f
+ */
 static void CG_EditSpeakers_f(void)
 {
 	if (cg.editingSpeakers)
@@ -865,6 +984,9 @@ static void CG_EditSpeakers_f(void)
 	}
 }
 
+/**
+ * @brief CG_DumpSpeaker_f
+ */
 static void CG_DumpSpeaker_f(void)
 {
 	/*  char sscrfilename[MAX_QPATH];
@@ -973,6 +1095,9 @@ static void CG_DumpSpeaker_f(void)
 	}
 }
 
+/**
+ * @brief CG_ModifySpeaker_f
+ */
 static void CG_ModifySpeaker_f(void)
 {
 	if (cg.editingSpeakers)
@@ -981,6 +1106,9 @@ static void CG_ModifySpeaker_f(void)
 	}
 }
 
+/**
+ * @brief CG_UndoSpeaker_f
+ */
 static void CG_UndoSpeaker_f(void)
 {
 	if (cg.editingSpeakers)
@@ -989,6 +1117,9 @@ static void CG_UndoSpeaker_f(void)
 	}
 }
 
+/**
+ * @brief CG_ForceTapOut_f
+ */
 void CG_ForceTapOut_f(void)
 {
 	trap_SendClientCommand("forcetapout");
@@ -1057,7 +1188,7 @@ void CG_TimerSet_f(void)
 		}
 		else
 		{
-			int msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);  // 60.f * 1000.f
+			int msec = (int)(cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime);  // 60.f * 1000.f
 
 			trap_Cvar_Set("cg_spawnTimer_period", buff);
 			trap_Cvar_Set("cg_spawnTimer_set", va("%d", msec / 1000));
@@ -1082,10 +1213,17 @@ void CG_TimerReset_f(void)
 		return;
 	}
 
-	msec = (cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime); // 60.f * 1000.f
+	msec = (int)(cgs.timelimit * 60000.f) - (cg.time - cgs.levelStartTime); // 60.f * 1000.f
 	trap_Cvar_Set("cg_spawnTimer_set", va("%d", msec / 1000));
 }
 
+/**
+ * @brief CG_GetSecondaryWeapon
+ * @param[in] weapon
+ * @param[in] team
+ * @param[in] playerclass
+ * @return
+ */
 static int CG_GetSecondaryWeapon(int weapon, team_t team, int playerclass)
 {
 	int outputWeapon;
@@ -1183,6 +1321,7 @@ void CG_Class_f(void)
 		return;
 	}
 
+	// TODO: handle missing case ?
 	switch (team)
 	{
 	case TEAM_AXIS:
@@ -1286,72 +1425,114 @@ void CG_Class_f(void)
 	trap_SendClientCommand(va("team %s %i %i %i\n", classtype, playerclass, weapon1, weapon2));
 }
 
+/**
+ * @brief CG_ReadHuds_f
+ */
 void CG_ReadHuds_f(void)
 {
 	CG_ReadHudScripts();
 }
 
 #ifdef FEATURE_EDV
+/**
+ * @brief CG_FreecamTurnLeftDown_f
+ */
 void CG_FreecamTurnLeftDown_f(void)
 {
 	cgs.demoCamera.turn |= 0x01;
 }
 
+/**
+ * @brief CG_FreecamTurnLeftUp_f
+ */
 void CG_FreecamTurnLeftUp_f(void)
 {
 	cgs.demoCamera.turn &= ~0x01;
 }
 
+/**
+ * @brief CG_FreecamTurnRightDown_f
+ */
 void CG_FreecamTurnRightDown_f(void)
 {
 	cgs.demoCamera.turn |= 0x02;
 }
 
+/**
+ * @brief CG_FreecamTurnRightUp_f
+ */
 void CG_FreecamTurnRightUp_f(void)
 {
 	cgs.demoCamera.turn &= ~0x02;
 }
 
+/**
+ * @brief CG_FreecamTurnDownDown_f
+ */
 void CG_FreecamTurnDownDown_f(void)
 {
 	cgs.demoCamera.turn |= 0x04;
 }
 
+/**
+ * @brief CG_FreecamTurnDownUp_f
+ */
 void CG_FreecamTurnDownUp_f(void)
 {
 	cgs.demoCamera.turn &= ~0x04;
 }
 
+/**
+ * @brief CG_FreecamTurnUpDown_f
+ */
 void CG_FreecamTurnUpDown_f(void)
 {
 	cgs.demoCamera.turn |= 0x08;
 }
 
+/**
+ * @brief CG_FreecamTurnUpUp_f
+ */
 void CG_FreecamTurnUpUp_f(void)
 {
 	cgs.demoCamera.turn &= ~0x08;
 }
 
+/**
+ * @brief CG_FreecamRollLeftDown_f
+ */
 void CG_FreecamRollLeftDown_f(void)
 {
 	cgs.demoCamera.turn |= 0x20;
 }
 
+/**
+ * @brief CG_FreecamRollLeftUp_f
+ */
 void CG_FreecamRollLeftUp_f(void)
 {
 	cgs.demoCamera.turn &= ~0x20;
 }
 
+/**
+ * @brief CG_FreecamRollRightDown_f
+ */
 void CG_FreecamRollRightDown_f(void)
 {
 	cgs.demoCamera.turn |= 0x10;
 }
 
+/**
+ * @brief CG_FreecamRollRightUp_f
+ */
 void CG_FreecamRollRightUp_f(void)
 {
 	cgs.demoCamera.turn &= ~0x10;
 }
 
+/**
+ * @brief CG_Freecam_f
+ */
 void CG_Freecam_f(void)
 {
 	char state[MAX_TOKEN_CHARS];
@@ -1399,26 +1580,37 @@ void CG_Freecam_f(void)
 	}
 }
 
+/**
+ * @brief CG_FreecamGetPos_f
+ */
 void CG_FreecamGetPos_f(void)
 {
 	if (cg.demoPlayback)
 	{
-		CG_Printf("freecam origin: %.0f %.0f %.0f\n", cgs.demoCamera.camOrigin[0], cgs.demoCamera.camOrigin[1], cgs.demoCamera.camOrigin[2]);
+		CG_Printf("freecam origin: %.0f %.0f %.0f\n", (double)cgs.demoCamera.camOrigin[0], (double)cgs.demoCamera.camOrigin[1], (double)cgs.demoCamera.camOrigin[2]);
 	}
 	else
 	{
-		CG_Printf("freecam origin: %.0f %.0f %.0f\n", cg.refdef_current->vieworg[0], cg.refdef_current->vieworg[1], cg.refdef_current->vieworg[2]);
+		CG_Printf("freecam origin: %.0f %.0f %.0f\n", (double)cg.refdef_current->vieworg[0], (double)cg.refdef_current->vieworg[1], (double)cg.refdef_current->vieworg[2]);
 	}
 }
 
+/**
+ * @brief etpro_float_Argv
+ * @param[in] argnum
+ * @return
+ */
 float etpro_float_Argv(int argnum)
 {
 	char buffer[MAX_TOKEN_CHARS];
 
 	trap_Argv(argnum, buffer, sizeof(buffer));
-	return atof(buffer);
+	return (float)atof(buffer);
 }
 
+/**
+ * @brief CG_FreecamSetPos_f
+ */
 void CG_FreecamSetPos_f(void)
 {
 	int n;
@@ -1459,7 +1651,9 @@ void CG_FreecamSetPos_f(void)
 
 }
 
-// noclip in demos
+/**
+ * @brief noclip in demos
+ */
 void CG_NoClip_f(void)
 {
 	char buffer[MAX_TOKEN_CHARS];
@@ -1614,14 +1808,11 @@ static consoleCommand_t commands[] =
 #endif
 };
 
-/*
-=================
-CG_ConsoleCommand
-
-The string has been tokenized and can be retrieved with
-Cmd_Argc() / Cmd_Argv()
-=================
-*/
+/**
+ * @brief The string has been tokenized and can be retrieved with
+ * Cmd_Argc() / Cmd_Argv()
+ * @return
+ */
 qboolean CG_ConsoleCommand(void)
 {
 	const char   *cmd;
@@ -1752,6 +1943,9 @@ void CG_InitConsoleCommands(void)
 	}
 }
 
+/**
+ * @brief CG_parseMapVoteListInfo
+ */
 void CG_parseMapVoteListInfo()
 {
 	int i;
