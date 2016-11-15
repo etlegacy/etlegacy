@@ -38,7 +38,7 @@
 vec3_t ejectBrassCasingOrigin;
 
 // the new loadout for WolfXP
-int weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP] =
+weapon_t weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP] =
 {
 	{ 0,                   0,                    0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0     }, // empty bank '0'
 	{ WP_KNIFE,            WP_KNIFE_KABAR,       0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0     },
@@ -54,7 +54,7 @@ int weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP] =
 
 /**
  * @brief CG_StartWeaponAnim
- * @param anim
+ * @param[in] anim
  */
 static void CG_StartWeaponAnim(int anim)
 {
@@ -78,7 +78,7 @@ static void CG_StartWeaponAnim(int anim)
 
 /**
  * @brief CG_ContinueWeaponAnim
- * @param anim
+ * @param[in] anim
  */
 static void CG_ContinueWeaponAnim(int anim)
 {
@@ -100,26 +100,26 @@ static void CG_ContinueWeaponAnim(int anim)
 
 /**
  * @brief Add leaning offset
- * @param viewAngle
- * @param point
- * @param ammount
+ * @param[in] viewAngle
+ * @param[out] point
+ * @param[in] ammount
  */
 void AddLean(vec3_t viewAngle, vec3_t point, float ammount)
 {
-	if (ammount)
+	if (ammount != 0.f)
 	{
 		vec3_t up, right;
 
 		AngleVectors(viewAngle, up, right, NULL);
 		VectorMA(point, ammount, right, point);
 		// to match client's view
-		point[2] -= fabs(ammount / 3.5);
+		point[2] -= (float)fabs((double)ammount / 3.5);
 	}
 }
 
 /**
  * @brief CG_MachineGunEjectBrassNew
- * @param cent
+ * @param[in] cent
  */
 void CG_MachineGunEjectBrassNew(centity_t *cent)
 {
@@ -143,7 +143,7 @@ void CG_MachineGunEjectBrassNew(centity_t *cent)
 
 	le->leType    = LE_FRAGMENT;
 	le->startTime = cg.time;
-	le->endTime   = le->startTime + cg_brassTime.integer + (cg_brassTime.integer / 4) * random();
+	le->endTime   = (int)(le->startTime + cg_brassTime.integer + (cg_brassTime.integer / 4) * random());
 
 	le->pos.trType = TR_GRAVITY;
 	le->pos.trTime = cg.time - (rand() & 15);
@@ -197,7 +197,7 @@ void CG_MachineGunEjectBrassNew(centity_t *cent)
 
 /**
  * @brief CG_MachineGunEjectBrass
- * @param cent
+ * @param[in] cent
  */
 void CG_MachineGunEjectBrass(centity_t *cent)
 {
@@ -224,7 +224,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 
 	le->leType    = LE_FRAGMENT;
 	le->startTime = cg.time;
-	le->endTime   = le->startTime + cg_brassTime.integer + (cg_brassTime.integer / 4) * random();
+	le->endTime   = (int)(le->startTime + cg_brassTime.integer + (cg_brassTime.integer / 4) * random());
 
 	le->pos.trType = TR_GRAVITY;
 	le->pos.trTime = cg.time - (rand() & 15);
@@ -310,7 +310,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 
 	if (CG_PointContents(re->origin, -1) & (CONTENTS_WATER | CONTENTS_SLIME)) // modified since slime is no longer deadly
 	{
-		waterScale = 0.10;
+		waterScale = 0.10f;
 	}
 
 	xvelocity[0] = velocity[0] * v[0][0] + velocity[1] * v[1][0] + velocity[2] * v[2][0];
@@ -320,7 +320,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 
 	AxisCopy(axisDefault, re->axis);
 
-	le->bounceFactor = 0.4 * waterScale;
+	le->bounceFactor = 0.4f * waterScale;
 
 	le->angles.trType = TR_LINEAR;
 	le->angles.trTime = cg.time;
@@ -348,7 +348,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 
 /**
  * @brief Toss the 'used' panzerfaust casing (unit is one-shot, disposable)
- * @param cent
+ * @param[in] cent
  */
 static void CG_PanzerFaustEjectBrass(centity_t *cent)
 {
@@ -362,7 +362,7 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 
 	le->leType    = LE_FRAGMENT;
 	le->startTime = cg.time;
-	le->endTime   = le->startTime + (cg_brassTime.integer * 8) + (cg_brassTime.integer * random());
+	le->endTime   = (int)(le->startTime + (cg_brassTime.integer * 8) + (cg_brassTime.integer * random()));
 
 	le->pos.trType = TR_GRAVITY;
 	le->pos.trTime = cg.time - (rand() & 15);
@@ -394,7 +394,7 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 
 	re->hModel = cgs.media.panzerfaustBrassModel;
 
-	le->bounceFactor = 0.4 * waterScale;
+	le->bounceFactor = 0.4f * waterScale;
 
 	le->angles.trType = TR_LINEAR;
 	le->angles.trTime = cg.time;
@@ -416,8 +416,8 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 
 /**
  * @brief Simple bubble trail behind a missile
- * @param ent
- * @param wi
+ * @param[in] ent
+ * @param[in] wi
  * @todo TODO: Unused
  */
 /*void CG_SpearTrail(centity_t *ent, const weaponInfo_t *wi )
@@ -450,15 +450,15 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 void CG_GetWindVector(vec3_t dir)
 {
 	dir[0] = random() * 0.25f;
-	dir[1] = sin(0.00001f * cg.time); // simulate a little wind so it looks natural
+	dir[1] = (float)sin(0.00001 * cg.time); // simulate a little wind so it looks natural
 	dir[2] = random(); // one direction (so smoke goes side-like)
 	VectorNormalize(dir);
 }
 
 /**
  * @brief LT/FOPS pyro for marking air strikes
- * @param ent
- * @param wi
+ * @param[in,out] ent
+ * @param wi - unused
  */
 void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 {
@@ -506,7 +506,7 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 	}
 	else
 	{
-		team = ent->currentState.teamNum;
+		team = (team_t)ent->currentState.teamNum;
 	}
 
 	step      = 50;
@@ -564,7 +564,7 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 		{
 			CG_SmokePuff(origin, dir,
 			             25 + rnd * 110,       // width
-			             rnd * 0.5 + 0.5, rnd * 0.5 + 0.5, 1, 0.5,
+			             rnd * 0.5f + 0.5f, rnd * 0.5f + 0.5f, 1, 0.5f,
 			             4800 + (rand() % 2800),         // duration was 2800+
 			             t,
 			             0,
@@ -575,7 +575,7 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 		{
 			CG_SmokePuff(origin, dir,
 			             25 + rnd * 110,       // width
-			             1.0, rnd * 0.5 + 0.5, rnd * 0.5 + 0.5, 0.5,
+			             1.0f, rnd * 0.5f + 0.5f, rnd * 0.5f + 0.5f, 0.5f,
 			             4800 + (rand() % 2800),         // duration was 2800+
 			             t,
 			             0,
@@ -587,8 +587,8 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 
 /**
  * @brief New trail effects
- * @param ent
- * @param wi
+ * @param[in,out] ent
+ * @param wi - unused
  */
 void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 {
@@ -694,9 +694,9 @@ void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 				VectorMA(lastPos, ent->currentState.density, right, lastPos);
 			}
 
-			duration  = ent->currentState.angles[0];
-			sizeStart = ent->currentState.angles[1];
-			sizeEnd   = ent->currentState.angles[2];
+			duration  = (int)ent->currentState.angles[0];
+			sizeStart = (int)ent->currentState.angles[1];
+			sizeEnd   = (int)ent->currentState.angles[2];
 
 			if (!duration)
 			{
@@ -742,8 +742,8 @@ void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 
 /**
  * @brief CG_DynamiteTrail
- * @param ent
- * @param wi
+ * @param[in] ent
+ * @param wi - unused
  */
 static void CG_DynamiteTrail(centity_t *ent, const weaponInfo_t *wi)
 {
@@ -755,7 +755,7 @@ static void CG_DynamiteTrail(centity_t *ent, const weaponInfo_t *wi)
 	if (ent->currentState.teamNum < 4)
 	{
 		mult = 0.004f * (cg.time - ent->currentState.effect1Time) / 30000.0f;
-		trap_R_AddLightToScene(origin, 320, fabs(sin((cg.time - ent->currentState.effect1Time) * mult)), 1.0f, 0, 0, 0, REF_FORCE_DLIGHT);
+		trap_R_AddLightToScene(origin, 320, (float)fabs(sin((cg.time - ent->currentState.effect1Time) * mult)), 1.0f, 0, 0, 0, REF_FORCE_DLIGHT);
 	}
 	else
 	{
@@ -766,8 +766,8 @@ static void CG_DynamiteTrail(centity_t *ent, const weaponInfo_t *wi)
 
 /**
  * @brief CG_GrenadeTrail
- * @param ent
- * @param wi
+ * @param[in,out] ent
+ * @param wi - unused
  */
 static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi)
 {
@@ -818,11 +818,11 @@ static void CG_GrenadeTrail(centity_t *ent, const weaponInfo_t *wi)
 
 /**
  * @brief Re-inserted this as a debug mechanism for bullets
- * @param color
- * @param start
- * @param end
- * @param index
- * @param sideNum
+ * @param[in] color
+ * @param[in] start
+ * @param[in] end
+ * @param[in] index
+ * @param[in] sideNum
  */
 void CG_RailTrail2(vec3_t color, vec3_t start, vec3_t end, int index, int sideNum)
 {
@@ -851,7 +851,7 @@ void CG_RailTrail2(vec3_t color, vec3_t start, vec3_t end, int index, int sideNu
 	le->leType    = LE_CONST_RGB;
 	le->startTime = cg.time;
 	le->endTime   = cg.time + 50; // FIXME: make it sv_fps dependent?
-	le->lifeRate  = 1.0 / (le->endTime - le->startTime);
+	le->lifeRate  = 1.0f / (le->endTime - le->startTime);
 
 	re->shaderTime   = cg.time / 1000.0f;
 	re->reType       = RT_RAIL_CORE;
@@ -869,7 +869,12 @@ void CG_RailTrail2(vec3_t color, vec3_t start, vec3_t end, int index, int sideNu
 }
 
 /**
- * @brief Draw boxes for debugging
+ * @brief CG_RailTrail
+ * @param[in] color
+ * @param[in] start
+ * @param[in] end
+ * @param[in] type
+ * @param[in] index
  */
 void CG_RailTrail(vec3_t color, vec3_t start, vec3_t end, int type, int index)
 {
@@ -918,8 +923,8 @@ void CG_RailTrail(vec3_t color, vec3_t start, vec3_t end, int type, int index)
 
 /**
  * @brief Read information for weapon animations (first/length/fps)
- * @param filename
- * @param wi
+ * @param[in] filename
+ * @param[out] wi
  * @return
  */
 static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
@@ -1013,14 +1018,14 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 		{
 			break;
 		}
-		fps = atof(token);
-		if (fps == 0)
+		fps = (float)atof(token);
+		if (fps == 0.f)
 		{
 			fps = 1;
 		}
 
-		wi->weapAnimations[i].frameLerp   = 1000 / fps;
-		wi->weapAnimations[i].initialLerp = 1000 / fps;
+		wi->weapAnimations[i].frameLerp   = (int)(1000 / fps);
+		wi->weapAnimations[i].initialLerp = (int)(1000 / fps);
 
 		token = COM_Parse(&text_p);     // looping frames
 		if (!token[0])
@@ -1081,11 +1086,11 @@ static qboolean CG_ParseWeaponConfig(const char *filename, weaponInfo_t *wi)
 
 /**
  * @brief CG_RW_ParseError
- * @param handle
- * @param format
+ * @param[in] handle
+ * @param[in] format
  * @return
  */
-static qboolean CG_RW_ParseError(int handle, char *format, ...)
+static qboolean CG_RW_ParseError(int handle, const char *format, ...)
 {
 	int         line;
 	char        filename[MAX_QPATH];
@@ -1109,9 +1114,9 @@ static qboolean CG_RW_ParseError(int handle, char *format, ...)
 
 /**
  * @brief CG_RW_ParseWeaponLinkPart
- * @param handle
- * @param weaponInfo
- * @param viewType
+ * @param[in] handle
+ * @param[in,out] weaponInfo
+ * @param[in] viewType
  * @return
  */
 static qboolean CG_RW_ParseWeaponLinkPart(int handle, weaponInfo_t *weaponInfo, modelViewType_t viewType)
@@ -1214,9 +1219,9 @@ static qboolean CG_RW_ParseWeaponLinkPart(int handle, weaponInfo_t *weaponInfo, 
 
 /**
  * @brief CG_RW_ParseWeaponLink
- * @param handle
- * @param weaponInfo
- * @param viewType
+ * @param[in] handle
+ * @param[in] weaponInfo
+ * @param[in] viewType
  * @return
  */
 static qboolean CG_RW_ParseWeaponLink(int handle, weaponInfo_t *weaponInfo, modelViewType_t viewType)
@@ -1258,9 +1263,9 @@ static qboolean CG_RW_ParseWeaponLink(int handle, weaponInfo_t *weaponInfo, mode
 
 /**
  * @brief CG_RW_ParseViewType
- * @param handle
- * @param weaponInfo
- * @param viewType
+ * @param[in] handle
+ * @param[in,out] weaponInfo
+ * @param[in] viewType
  * @return
  */
 static qboolean CG_RW_ParseViewType(int handle, weaponInfo_t *weaponInfo, modelViewType_t viewType)
@@ -1358,8 +1363,8 @@ static qboolean CG_RW_ParseViewType(int handle, weaponInfo_t *weaponInfo, modelV
 
 /**
  * @brief CG_RW_ParseModModel
- * @param handle
- * @param weaponInfo
+ * @param[in] handle
+ * @param[in,out] weaponInfo
  * @return
  */
 static qboolean CG_RW_ParseModModel(int handle, weaponInfo_t *weaponInfo)
@@ -1407,8 +1412,8 @@ static qboolean CG_RW_ParseModModel(int handle, weaponInfo_t *weaponInfo)
 
 /**
  * @brief CG_RW_ParseClient
- * @param handle
- * @param weaponInfo
+ * @param[in] handle
+ * @param[in,out] weaponInfo
  * @return
  */
 static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
@@ -1820,8 +1825,8 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 
 /**
  * @brief CG_RegisterWeaponFromWeaponFile
- * @param filename
- * @param weaponInfo
+ * @param[in] filename
+ * @param[in] weaponInfo
  * @return
  */
 static qboolean CG_RegisterWeaponFromWeaponFile(const char *filename, weaponInfo_t *weaponInfo)
@@ -1878,13 +1883,13 @@ static qboolean CG_RegisterWeaponFromWeaponFile(const char *filename, weaponInfo
 
 /**
  * @brief CG_RegisterWeapon
- * @param weaponNum
- * @param force
+ * @param[in] weaponNum
+ * @param[in] force
  */
 void CG_RegisterWeapon(int weaponNum, qboolean force)
 {
 	weaponInfo_t *weaponInfo;
-    const char   *filename;
+	const char   *filename;
 
 	if (weaponNum <= 0 || weaponNum >= WP_NUM_WEAPONS)
 	{
@@ -2006,7 +2011,7 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
 	case WP_SMOKE_BOMB:
 		filename = "smokegrenade.weap";
 		break;
-    case WP_MOBILE_MG42_SET:     // TODO: do we need a seperate file for this?
+	case WP_MOBILE_MG42_SET:     // TODO: do we need a seperate file for this?
 	case WP_MOBILE_MG42:
 		filename = "mg42.weap";
 		break;
@@ -2050,7 +2055,7 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
 		break;
 	case WP_MAPMORTAR:
 		filename = "mapmortar.weap";
-        break;     // TODO: do we really need this?
+		break;     // TODO: do we really need this?
 	case WP_KNIFE_KABAR:
 		filename = "knife_kbar.weap";
 		break;
@@ -2075,6 +2080,8 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
 
 /**
  * @brief Registers models and icons for items of bg_itemlist (except weapons which are registered from *.weap file data)
+ *
+ * @param[in] itemNum
  *
  * @note Actually IT_AMMO & IT_TEAM have no visuals
  */
@@ -2137,11 +2144,11 @@ VIEW WEAPON
 
 /**
  * @brief Get animation info from the parent if necessary
- * @param cent
- * @param part
- * @param parent
- * @param partid
- * @param wi
+ * @param[in] cent
+ * @param[out] part
+ * @param[in] parent
+ * @param[in] partid
+ * @param[in] wi
  * @return
  */
 qboolean CG_GetPartFramesFromWeap(centity_t *cent, refEntity_t *part, refEntity_t *parent, int partid, weaponInfo_t *wi)
@@ -2184,9 +2191,9 @@ qboolean CG_GetPartFramesFromWeap(centity_t *cent, refEntity_t *part, refEntity_
 
 /**
  * @brief May include ANIM_TOGGLEBIT
- * @param wi
- * @param lf
- * @param newAnimation
+ * @param[in] wi
+ * @param[out] lf
+ * @param[in] newAnimation
  */
 static void CG_SetWeapLerpFrameAnimation(weaponInfo_t *wi, lerpFrame_t *lf, int newAnimation)
 {
@@ -2213,9 +2220,9 @@ static void CG_SetWeapLerpFrameAnimation(weaponInfo_t *wi, lerpFrame_t *lf, int 
 
 /**
  * @brief CG_ClearWeapLerpFrame
- * @param wi
- * @param lf
- * @param animationNumber
+ * @param[in] wi
+ * @param[in,out] lf
+ * @param[in] animationNumber
  */
 void CG_ClearWeapLerpFrame(weaponInfo_t *wi, lerpFrame_t *lf, int animationNumber)
 {
@@ -2228,18 +2235,19 @@ void CG_ClearWeapLerpFrame(weaponInfo_t *wi, lerpFrame_t *lf, int animationNumbe
 /**
  * @brief Sets cg.snap, cg.oldFrame, and cg.backlerp
  * cg.time should be between oldFrameTime and frameTime after exit
- * @param ci
- * @param wi
- * @param lf
- * @param newAnimation
- * @param speedScale
+ * @param ci - unused
+ * @param[in] wi
+ * @param[in,out] lf
+ * @param[in] newAnimation
+ * @param[in] speedScale
  */
 static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t *lf, int newAnimation, float speedScale)
 {
 	// debugging tool to get no animations
 	if (cg_animSpeed.integer == 0)
 	{
-		lf->oldFrame = lf->frame = lf->backlerp = 0;
+		lf->oldFrame = lf->frame = 0;
+		lf->backlerp = 0.f;
 		return;
 	}
 
@@ -2331,17 +2339,17 @@ static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t 
 	}
 	else
 	{
-		lf->backlerp = 1.0 - (float)(cg.time - lf->oldFrameTime) / (lf->frameTime - lf->oldFrameTime);
+		lf->backlerp = 1.0f - (float)(cg.time - lf->oldFrameTime) / (lf->frameTime - lf->oldFrameTime);
 	}
 }
 
 /**
  * @brief Modified.  this is now client-side only (server does not dictate weapon animation info)
- * @param ps
- * @param weapon
- * @param weapOld
- * @param weap
- * @param weapBackLerp
+ * @param[in] ps
+ * @param[in] weapon
+ * @param[out] weapOld
+ * @param[out] weap
+ * @param[out] weapBackLerp
  */
 static void CG_WeaponAnimation(playerState_t *ps, weaponInfo_t *weapon, int *weapOld, int *weap, float *weapBackLerp)
 {
@@ -2362,7 +2370,7 @@ static void CG_WeaponAnimation(playerState_t *ps, weaponInfo_t *weapon, int *wea
 
 	if (cg_debugAnim.integer == 3)
 	{
-		CG_Printf("oldframe: %d   frame: %d   backlerp: %f\n", cent->pe.weap.oldFrame, cent->pe.weap.frame, cent->pe.weap.backlerp);
+		CG_Printf("oldframe: %d   frame: %d   backlerp: %f\n", cent->pe.weap.oldFrame, cent->pe.weap.frame, (double)cent->pe.weap.backlerp);
 	}
 }
 
@@ -2370,8 +2378,8 @@ static void CG_WeaponAnimation(playerState_t *ps, weaponInfo_t *weapon, int *wea
 
 /**
  * @brief CG_CalculateWeaponPosition
- * @param origin
- * @param angles
+ * @param[in] origin
+ * @param[in] angles
  */
 static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 {
@@ -2383,7 +2391,7 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 
 	if (cg.predictedPlayerState.eFlags & EF_MOUNTEDTANK)
 	{
-		angles[PITCH] = cg.refdefViewAngles[PITCH] / 1.2;
+		angles[PITCH] = cg.refdefViewAngles[PITCH] / 1.2f;
 	}
 
 	if (!cg.renderingThirdPerson && (IS_MORTAR_WEAPON_SET(cg.predictedPlayerState.weapon) || IS_MG_WEAPON_SET(cg.predictedPlayerState.weapon)) &&
@@ -2418,7 +2426,7 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	}
 
 	// adjust 'lean' into weapon
-	if (cg.predictedPlayerState.leanf != 0)
+	if (cg.predictedPlayerState.leanf != 0.f)
 	{
 		vec3_t right, up;
 		float  myfrac = 1.0f;
@@ -2466,19 +2474,19 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 
 	// gun angles from bobbing
 
-	angles[ROLL]  += scale        * cg.bobfracsin * 0.005;
-	angles[YAW]   += scale        * cg.bobfracsin * 0.01;
-	angles[PITCH] += cg.xyspeed   * cg.bobfracsin * 0.005;
+	angles[ROLL]  += scale        * cg.bobfracsin * 0.005f;
+	angles[YAW]   += scale        * cg.bobfracsin * 0.01f;
+	angles[PITCH] += cg.xyspeed   * cg.bobfracsin * 0.005f;
 
 	// drop the weapon when landing
 	delta = cg.time - cg.landTime;
 	if (delta < LAND_DEFLECT_TIME)
 	{
-		origin[2] += cg.landChange * 0.25 * delta / LAND_DEFLECT_TIME;
+		origin[2] += cg.landChange * 0.25f * delta / LAND_DEFLECT_TIME;
 	}
 	else if (delta < LAND_DEFLECT_TIME + LAND_RETURN_TIME)
 	{
-		origin[2] += cg.landChange * 0.25 *
+		origin[2] += cg.landChange * 0.25f *
 		             (LAND_DEFLECT_TIME + LAND_RETURN_TIME - delta) / LAND_RETURN_TIME;
 	}
 
@@ -2487,25 +2495,25 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	    && (cg.predictedPlayerState.weapon != WP_MORTAR_SET && cg.predictedPlayerState.weapon != WP_MORTAR2_SET)
 	    && (cg.predictedPlayerState.weapon != WP_MOBILE_MG42_SET && cg.predictedPlayerState.weapon != WP_MOBILE_BROWNING_SET))
 	{
-		float fracsin = sin(cg.time * 0.001);
+		float fracsin = (float)sin(cg.time * 0.001);
 
 		// adjustment for MAX KAUFMAN
 		//scale = cg.xyspeed + 40;
 		scale = 80;
 
-		angles[ROLL]  += scale * fracsin * 0.01;
-		angles[YAW]   += scale * fracsin * 0.01;
-		angles[PITCH] += scale * fracsin * 0.01;
+		angles[ROLL]  += scale * fracsin * 0.01f;
+		angles[YAW]   += scale * fracsin * 0.01f;
+		angles[PITCH] += scale * fracsin * 0.01f;
 	}
 
 	// subtract the kickAngles
-	VectorMA(angles, -1.0, cg.kickAngles, angles);
+	VectorMA(angles, -1.0f, cg.kickAngles, angles);
 }
 
 /**
  * @brief CG_FlamethrowerFlame
- * @param cent
- * @param origin
+ * @param[in] cent
+ * @param[in] origin
  */
 static void CG_FlamethrowerFlame(centity_t *cent, vec3_t origin)
 {
@@ -2520,10 +2528,12 @@ static void CG_FlamethrowerFlame(centity_t *cent, vec3_t origin)
 
 /**
  * @brief CG_AddWeaponWithPowerups
- * @param gun
- * @param powerups
- * @param ps
- * @param cent
+ * @param[in] gun
+ * @param powerups - unused
+ * @param ps - unused
+ * @param cent - unused
+ *
+ * @todo cleanup ?
  */
 static void CG_AddWeaponWithPowerups(refEntity_t *gun, int powerups, playerState_t *ps, centity_t *cent)
 {
@@ -2552,7 +2562,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	refEntity_t  barrel;
 	refEntity_t  flash;
 	vec3_t       angles;
-	weapon_t     weaponNum = cent->currentState.weapon;
+	weapon_t     weaponNum = (weapon_t)cent->currentState.weapon;
 	weaponInfo_t *weapon;
 	centity_t    *nonPredictedCent;
 	qboolean     firing;
@@ -2608,7 +2618,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			trap_R_AddRefEntityToScene(&flash);
 
 			// add dynamic light
-			trap_R_AddLightToScene(flash.origin, 320, 1.25 + (rand() & 31) / 128.0f, 1.0f, 0.6f, 0.23f, 0, 0);
+			trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31) / 128.0f, 1.0f, 0.6f, 0.23f, 0, 0);
 		}
 		return;
 	}
@@ -2651,7 +2661,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 	if (ps)
 	{
-		team_t team = ps->persistant[PERS_TEAM];
+		team_t team = (team_t)ps->persistant[PERS_TEAM];
 
 		if ((weaponNum != WP_SATCHEL) && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))
 		{
@@ -3020,106 +3030,106 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// add the scope model to the rifle if you've got it
 	if (isPlayer && !cg.renderingThirdPerson)  // for now just do it on the first person weapons
 	{
-        switch (weaponNum)
-        {
-        case WP_CARBINE:
-        case WP_KAR98:
-        case WP_GPG40:
-        case WP_M7:
-            if ((cg.snap->ps.ammo[BG_FindAmmoForWeapon(WP_GPG40)] || cg.snap->ps.ammo[BG_FindAmmoForWeapon(WP_M7)] || cg.snap->ps.ammoclip[BG_FindAmmoForWeapon(WP_GPG40)] || cg.snap->ps.ammoclip[BG_FindAmmoForWeapon(WP_M7)]))
-            {
-                int anim = cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT;
+		switch (weaponNum)
+		{
+		case WP_CARBINE:
+		case WP_KAR98:
+		case WP_GPG40:
+		case WP_M7:
+			if ((cg.snap->ps.ammo[BG_FindAmmoForWeapon(WP_GPG40)] || cg.snap->ps.ammo[BG_FindAmmoForWeapon(WP_M7)] || cg.snap->ps.ammoclip[BG_FindAmmoForWeapon(WP_GPG40)] || cg.snap->ps.ammoclip[BG_FindAmmoForWeapon(WP_M7)]))
+			{
+				int anim = cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT;
 
-                if (anim == PM_AltSwitchFromForWeapon(weaponNum) || anim == PM_AltSwitchToForWeapon(weaponNum) || anim == PM_IdleAnimForWeapon(weaponNum))
-                {
-                    barrel.hModel = weapon->modModels[0];
-                    if (barrel.hModel)
-                    {
-                        CG_PositionEntityOnTag(&barrel, parent, "tag_scope", 0, NULL);
-                        CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-                    }
-                }
-            }
-            break;
-        case WP_GARAND:
-            barrel.hModel = weapon->modModels[0];
-            if (barrel.hModel)
-            {
-                CG_PositionEntityOnTag(&barrel, &gun, "tag_scope2", 0, NULL);
-                CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-            }
-
-            barrel.hModel = weapon->modModels[1];
-            //if(barrel.hModel) {
-            CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
-            CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-            //}
-            break;
-        case WP_K43:
-            barrel.hModel = weapon->modModels[0];
-            if (barrel.hModel)
-            {
-                CG_PositionEntityOnTag(&barrel, &gun, "tag_scope", 0, NULL);
-                CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-            }
-
-            barrel.hModel = weapon->modModels[1];
-            //if(barrel.hModel) {
-            CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
-            CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-        	//}
+				if (anim == PM_AltSwitchFromForWeapon(weaponNum) || anim == PM_AltSwitchToForWeapon(weaponNum) || anim == PM_IdleAnimForWeapon(weaponNum))
+				{
+					barrel.hModel = weapon->modModels[0];
+					if (barrel.hModel)
+					{
+						CG_PositionEntityOnTag(&barrel, parent, "tag_scope", 0, NULL);
+						CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+					}
+				}
+			}
 			break;
-        default:
-            break;
-        }
+		case WP_GARAND:
+			barrel.hModel = weapon->modModels[0];
+			if (barrel.hModel)
+			{
+				CG_PositionEntityOnTag(&barrel, &gun, "tag_scope2", 0, NULL);
+				CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+			}
+
+			barrel.hModel = weapon->modModels[1];
+			//if(barrel.hModel) {
+			CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
+			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+			//}
+			break;
+		case WP_K43:
+			barrel.hModel = weapon->modModels[0];
+			if (barrel.hModel)
+			{
+				CG_PositionEntityOnTag(&barrel, &gun, "tag_scope", 0, NULL);
+				CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+			}
+
+			barrel.hModel = weapon->modModels[1];
+			//if(barrel.hModel) {
+			CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
+			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+			//}
+			break;
+		default:
+			break;
+		}
 	}
 	// 3rd person attachements
 	else
 	{
-        switch (weaponNum)
-        {
-        case WP_M7:
-        case WP_GPG40:
-            // the holder
-            barrel.hModel = weapon->modModels[1];
-            CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
-            CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+		switch (weaponNum)
+		{
+		case WP_M7:
+		case WP_GPG40:
+			// the holder
+			barrel.hModel = weapon->modModels[1];
+			CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
+			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
 
-            // the grenade - have to always enabled it, no means of telling if another person has a grenade loaded or not atm :/
-            //if( cg.snap->ps.weaponstate != WEAPON_FIRING && cg.snap->ps.weaponstate != WEAPON_RELOADING ) {
-            if (weaponNum == WP_M7 /*|| weaponNum == WP_CARBINE*/)
-            {
-                barrel.hModel = weapon->missileModel;
-                CG_PositionEntityOnTag(&barrel, &barrel, "tag_prj", 0, NULL);
-                CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-            }
-            break;
-        case WP_GARAND:
-        case WP_GARAND_SCOPE:
-        case WP_K43:
-        case WP_K43_SCOPE:
-            // the holder
-            barrel.hModel = weapon->modModels[2];
-            CG_PositionEntityOnTag(&barrel, &gun, "tag_scope", 0, NULL);
-            CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-            break;
-        case WP_MOBILE_MG42:
-        case WP_MOBILE_BROWNING:
-            barrel.hModel = weapon->modModels[0];
-            barrel.frame  = 1;
-            CG_PositionEntityOnTag(&barrel, &gun, "tag_bipod", 0, NULL);
-            CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-            break;
-        case WP_MOBILE_MG42_SET:
-        case WP_MOBILE_BROWNING_SET:
-            barrel.hModel = weapon->modModels[0];
-            barrel.frame  = 0;
-            CG_PositionEntityOnTag(&barrel, &gun, "tag_bipod", 0, NULL);
-            CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-            break;
-        default:
-            break;
-        }
+			// the grenade - have to always enabled it, no means of telling if another person has a grenade loaded or not atm :/
+			//if( cg.snap->ps.weaponstate != WEAPON_FIRING && cg.snap->ps.weaponstate != WEAPON_RELOADING ) {
+			if (weaponNum == WP_M7 /*|| weaponNum == WP_CARBINE*/)
+			{
+				barrel.hModel = weapon->missileModel;
+				CG_PositionEntityOnTag(&barrel, &barrel, "tag_prj", 0, NULL);
+				CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+			}
+			break;
+		case WP_GARAND:
+		case WP_GARAND_SCOPE:
+		case WP_K43:
+		case WP_K43_SCOPE:
+			// the holder
+			barrel.hModel = weapon->modModels[2];
+			CG_PositionEntityOnTag(&barrel, &gun, "tag_scope", 0, NULL);
+			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+			break;
+		case WP_MOBILE_MG42:
+		case WP_MOBILE_BROWNING:
+			barrel.hModel = weapon->modModels[0];
+			barrel.frame  = 1;
+			CG_PositionEntityOnTag(&barrel, &gun, "tag_bipod", 0, NULL);
+			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+			break;
+		case WP_MOBILE_MG42_SET:
+		case WP_MOBILE_BROWNING_SET:
+			barrel.hModel = weapon->modModels[0];
+			barrel.frame  = 0;
+			CG_PositionEntityOnTag(&barrel, &gun, "tag_bipod", 0, NULL);
+			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+			break;
+		default:
+			break;
+		}
 	}
 
 	// make sure we aren't looking at cg.predictedPlayerEntity for LG
@@ -3301,9 +3311,9 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			CG_FlamethrowerFlame(cent, flash.origin);
 
 			// make a dlight for the flash
-			if (weapon->flashDlightColor[0] || weapon->flashDlightColor[1] || weapon->flashDlightColor[2])
+			if (weapon->flashDlightColor[0] != 0.f || weapon->flashDlightColor[1] != 0.f || weapon->flashDlightColor[2] != 0.f)
 			{
-				trap_R_AddLightToScene(flash.origin, 320, 1.25 + (rand() & 31) / 128.0f, weapon->flashDlightColor[0],
+				trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31) / 128.0f, weapon->flashDlightColor[0],
 				                       weapon->flashDlightColor[1], weapon->flashDlightColor[2], 0, 0);
 			}
 		}
@@ -3332,7 +3342,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 /**
  * @brief Add the weapon, and flash for the player's view
- * @param ps
+ * @param[in] ps
  */
 void CG_AddViewWeapon(playerState_t *ps)
 {
@@ -3420,7 +3430,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 	// drop gun lower at higher fov
 	if (!cg_gun_fovscale.integer && cg_fov.value > 90)
 	{
-		fovOffset = -0.2 * (cg_fov.value - 90);
+		fovOffset = -0.2f * (cg_fov.value - 90);
 	}
 	else
 	{
@@ -3574,7 +3584,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 			hand.nonNormalizedAxes = qtrue;
 		}
 
-		if (cg_gun_fovscale.integer && cg_fov.value != 0)
+		if (cg_gun_fovscale.integer && cg_fov.value != 0.f)
 		{
 			if (cg_gun_fovscale.integer > 0 && cg_fov.value <= 90)
 			{
@@ -3582,7 +3592,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 			}
 			else
 			{
-				lengthscale = 1.0f / tan(DEG2RAD(cg_fov.value / 2.0f));
+				lengthscale = (float)(1.0 / tan(DEG2RAD((double)cg_fov.value / 2.0)));
 			}
 		}
 		else
@@ -3608,7 +3618,7 @@ WEAPON SELECTION
  * @param i
  * @return
  */
-static qboolean CG_WeaponHasAmmo(int i)
+static qboolean CG_WeaponHasAmmo(weapon_t i)
 {
 	// certain weapons don't have ammo
 	switch (i)
@@ -3653,7 +3663,7 @@ qboolean CG_WeaponSelectable(int i)
 		return qfalse;
 	}
 
-	if (!CG_WeaponHasAmmo(i))
+	if (!CG_WeaponHasAmmo((weapon_t)i))
 	{
 		return qfalse;
 	}
@@ -3663,9 +3673,9 @@ qboolean CG_WeaponSelectable(int i)
 
 /**
  * @brief CG_WeaponIndex
- * @param weapnum
- * @param bank
- * @param cycle
+ * @param[in] weapnum
+ * @param[in,out] bank
+ * @param[in,out] cycle
  * @return
  */
 int CG_WeaponIndex(int weapnum, int *bank, int *cycle)
@@ -3719,8 +3729,8 @@ int CG_WeaponIndex(int weapnum, int *bank, int *cycle)
 /**
  * @brief Pass in a bank and cycle and this will return the next valid weapon higher in the cycle.
  * if the weap passed in is above highest in a cycle (MAX_WEAPS_IN_BANK), this will safely loop around
- * @param bank
- * @param cycle
+ * @param[in] bank
+ * @param[in] cycle
  * @return
  */
 static int getNextWeapInBank(int bank, int cycle)
@@ -3739,6 +3749,11 @@ static int getNextWeapInBank(int bank, int cycle)
 	}
 }
 
+/**
+ * @brief getNextWeapInBankBynum
+ * @param[in] weapnum
+ * @return
+ */
 static int getNextWeapInBankBynum(int weapnum)
 {
 	int bank, cycle;
@@ -3755,8 +3770,8 @@ static int getNextWeapInBankBynum(int weapnum)
  * @brief Pass in a bank and cycle and this will return the next valid weapon lower in the cycle.
  * if the weap passed in is the lowest in a cycle (0), this will loop around to the
  * top (MAX_WEAPS_IN_BANK-1) and start down from there looking for a valid weapon position
- * @param bank
- * @param cycle
+ * @param[in] bank
+ * @param[in] cycle
  * @return
  */
 static int getPrevWeapInBank(int bank, int cycle)
@@ -3779,6 +3794,11 @@ static int getPrevWeapInBank(int bank, int cycle)
 	return weapBanksMultiPlayer[bank][cycle];
 }
 
+/**
+ * @brief getPrevWeapInBankBynum
+ * @param[in] weapnum
+ * @return
+ */
 static int getPrevWeapInBankBynum(int weapnum)
 {
 	int bank, cycle;
@@ -3795,9 +3815,9 @@ static int getPrevWeapInBankBynum(int weapnum)
  * @brief Pass in a bank and cycle and this will return the next valid weapon in a higher bank.
  * sameBankPosition: if there's a weapon in the next bank at the same cycle,
  * return that (colt returns thompson for example) rather than the lowest weapon
- * @param bank
- * @param cycle
- * @param sameBankPosition
+ * @param[in] bank
+ * @param[in] cycle
+ * @param[in] sameBankPosition
  * @return
  */
 static int getNextBankWeap(int bank, int cycle, qboolean sameBankPosition)
@@ -3820,9 +3840,9 @@ static int getNextBankWeap(int bank, int cycle, qboolean sameBankPosition)
  * @brief Pass in a bank and cycle and this will return the next valid weapon in a lower bank.
  * sameBankPosition: if there's a weapon in the prev bank at the same cycle,
  * return that (thompson returns colt for example) rather than the highest weapon
- * @param bank
- * @param cycle
- * @param sameBankPosition
+ * @param[in] bank
+ * @param[in] cycle
+ * @param[in] sameBankPosition
  * @return
  */
 static int getPrevBankWeap(int bank, int cycle, qboolean sameBankPosition)
@@ -3859,7 +3879,7 @@ static int getPrevBankWeap(int bank, int cycle, qboolean sameBankPosition)
 
 /**
  * @brief getAltWeapon
- * @param weapnum
+ * @param[in] weapnum
  * @return
  */
 static int getAltWeapon(int weapnum)
@@ -3873,11 +3893,13 @@ static int getAltWeapon(int weapnum)
 }
 
 /**
- *   @brief Passing the weapnum of the mp40 returns the id of the thompson, and likewise
- *   passing the weapnum of the thompson returns the id of the mp40.
- *   No equivalent available will return the weapnum passed in.
+ * @brief Passing the weapnum of the mp40 returns the id of the thompson, and likewise
+ * passing the weapnum of the thompson returns the id of the mp40.
+ * No equivalent available will return the weapnum passed in.
  *
- *   @return the id of the opposite team's weapon (but not for WP_GPG40 <-> WP_M7 - see CG_OutOfAmmoChange).
+ * @param[in] weapnum
+ *
+ * @return the id of the opposite team's weapon (but not for WP_GPG40 <-> WP_M7 - see CG_OutOfAmmoChange).
  */
 int getEquivWeapon(int weapnum)
 {
@@ -3923,8 +3945,8 @@ int getEquivWeapon(int weapnum)
 
 /**
  * @brief CG_SetSniperZoom
- * @param lastweap
- * @param newweap
+ * @param[in] lastweap
+ * @param[in] newweap
  */
 void CG_SetSniperZoom(int lastweap, int newweap)
 {
@@ -3975,8 +3997,8 @@ void CG_SetSniperZoom(int lastweap, int newweap)
 
 /**
  * @brief Get special switching sounds if they're there
- * @param lastweap
- * @param newweap
+ * @param[in] lastweap
+ * @param[in] newweap
  */
 void CG_PlaySwitchSound(int lastweap, int newweap)
 {
@@ -4023,8 +4045,8 @@ void CG_PlaySwitchSound(int lastweap, int newweap)
 
 /**
  * @brief CG_FinishWeaponChange
- * @param lastweap
- * @param newweap
+ * @param[in] lastweap
+ * @param[in] newweap
  */
 void CG_FinishWeaponChange(int lastweap, int newweap)
 {
@@ -4220,7 +4242,7 @@ void CG_AltWeapon_f(void)
 		}
 
 		// don't allow set if moving
-		if (VectorLengthSquared(cg.snap->ps.velocity))
+		if (VectorLengthSquared(cg.snap->ps.velocity) != 0.f)
 		{
 			return;
 		}
@@ -4280,42 +4302,42 @@ void CG_AltWeapon_f(void)
 	}
 
 	// don't allow another weapon switch when we're still swapping the gpg40, to prevent animation breaking
-    if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
-    {
-        switch (original)
-        {
-        case WP_GPG40:
-        case WP_M7:
-        case WP_SILENCER:
-        case WP_SILENCED_COLT:
-        case WP_AKIMBO_SILENCEDCOLT:
-        case WP_AKIMBO_SILENCEDLUGER:
-        case WP_MORTAR_SET:
-        case WP_MORTAR2_SET:
-        case WP_MOBILE_MG42_SET:
-        case WP_MOBILE_BROWNING_SET:
-            return;
-        default:
-            break;
-        }
+	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
+	{
+		switch (original)
+		{
+		case WP_GPG40:
+		case WP_M7:
+		case WP_SILENCER:
+		case WP_SILENCED_COLT:
+		case WP_AKIMBO_SILENCEDCOLT:
+		case WP_AKIMBO_SILENCEDLUGER:
+		case WP_MORTAR_SET:
+		case WP_MORTAR2_SET:
+		case WP_MOBILE_MG42_SET:
+		case WP_MOBILE_BROWNING_SET:
+			return;
+		default:
+			break;
+		}
 
-        switch (num)
-        {
-        case WP_GPG40:
-        case WP_M7:
-        case WP_SILENCER:
-        case WP_SILENCED_COLT:
-        case WP_AKIMBO_SILENCEDCOLT:
-        case WP_AKIMBO_SILENCEDLUGER:
-        case WP_MORTAR_SET:
-        case WP_MORTAR2_SET:
-        case WP_MOBILE_MG42_SET:
-        case WP_MOBILE_BROWNING_SET:
-            return;
-        default:
-            break;
-        }
-    }
+		switch (num)
+		{
+		case WP_GPG40:
+		case WP_M7:
+		case WP_SILENCER:
+		case WP_SILENCED_COLT:
+		case WP_AKIMBO_SILENCEDCOLT:
+		case WP_AKIMBO_SILENCEDLUGER:
+		case WP_MORTAR_SET:
+		case WP_MORTAR2_SET:
+		case WP_MOBILE_MG42_SET:
+		case WP_MOBILE_BROWNING_SET:
+			return;
+		default:
+			break;
+		}
+	}
 
 	if (CG_WeaponSelectable(num))        // new weapon is valid
 	{
@@ -4340,7 +4362,7 @@ void CG_AltWeapon_f(void)
 
 /**
  * @brief CG_NextWeap
- * @param switchBanks - curweap is the last in a bank, 'qtrue' means go to the next available bank, 'qfalse' means loop to the head of the bank
+ * @param[in] switchBanks - curweap is the last in a bank, 'qtrue' means go to the next available bank, 'qfalse' means loop to the head of the bank
  */
 void CG_NextWeap(qboolean switchBanks)
 {
@@ -4565,7 +4587,7 @@ void CG_NextWeap(qboolean switchBanks)
 
 /**
  * @brief CG_PrevWeap
- * @param switchBanks - curweap is the last in a bank
+ * @param[in] switchBanks - curweap is the last in a bank
              'qtrue'  - go to the next available bank
              'qfalse' - loop to the head of the bank
  */
@@ -4847,7 +4869,7 @@ void CG_NextWeaponInBank_f(void)
 	}
 	// this cvar is an option that lets the player use his weapon switching keys (probably the mousewheel)
 	// for zooming (binocs/snooper/sniper/etc.)
-	if (cg.zoomval)
+	if (cg.zoomval != 0.f)
 	{
 		if (cg_useWeapsForZoom.integer == 1)
 		{
@@ -4884,7 +4906,7 @@ void CG_PrevWeaponInBank_f(void)
 	}
 	// this cvar is an option that lets the player use his weapon switching keys (probably the mousewheel)
 	// for zooming (binocs/snooper/sniper/etc.)
-	if (cg.zoomval)
+	if (cg.zoomval != 0.f)
 	{
 		if (cg_useWeapsForZoom.integer == 2)
 		{
@@ -4935,7 +4957,7 @@ void CG_NextWeapon_f(void)
 
 	// this cvar is an option that lets the player use his weapon switching keys (probably the mousewheel)
 	// for zooming (binocs/snooper/sniper/etc.)
-	if (cg.zoomval)
+	if (cg.zoomval != 0.f)
 	{
 		if (cg_useWeapsForZoom.integer == 1)
 		{
@@ -5004,7 +5026,7 @@ void CG_PrevWeapon_f(void)
 
 	// this cvar is an option that lets the player use his weapon switching keys (probably the mousewheel)
 	// for zooming (binocs/snooper/sniper/etc.)
-	if (cg.zoomval)
+	if (cg.zoomval != 0.f)
 	{
 		if (cg_useWeapsForZoom.integer == 1)
 		{
@@ -5142,43 +5164,43 @@ void CG_WeaponBank_f(void)
 		return;
 	}
 
-    // don't allow another weapon switch when we're still swapping the gpg40, to prevent animation breaking
-    if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
-    {
-        switch (curweap)
-        {
-        case WP_GPG40:
-        case WP_M7:
-        case WP_SILENCER:
-        case WP_SILENCED_COLT:
-        case WP_AKIMBO_SILENCEDCOLT:
-        case WP_AKIMBO_SILENCEDLUGER:
-        case WP_MORTAR_SET:
-        case WP_MORTAR2_SET:
-        case WP_MOBILE_MG42_SET:
-        case WP_MOBILE_BROWNING_SET:
-            return;
-        default:
-            break;
-        }
+	// don't allow another weapon switch when we're still swapping the gpg40, to prevent animation breaking
+	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
+	{
+		switch (curweap)
+		{
+		case WP_GPG40:
+		case WP_M7:
+		case WP_SILENCER:
+		case WP_SILENCED_COLT:
+		case WP_AKIMBO_SILENCEDCOLT:
+		case WP_AKIMBO_SILENCEDLUGER:
+		case WP_MORTAR_SET:
+		case WP_MORTAR2_SET:
+		case WP_MOBILE_MG42_SET:
+		case WP_MOBILE_BROWNING_SET:
+			return;
+		default:
+			break;
+		}
 
-        switch (num)
-        {
-        case WP_GPG40:
-        case WP_M7:
-        case WP_SILENCER:
-        case WP_SILENCED_COLT:
-        case WP_AKIMBO_SILENCEDCOLT:
-        case WP_AKIMBO_SILENCEDLUGER:
-        case WP_MORTAR_SET:
-        case WP_MORTAR2_SET:
-        case WP_MOBILE_MG42_SET:
-        case WP_MOBILE_BROWNING_SET:
-            return;
-        default:
-            break;
-        }
-    }
+		switch (num)
+		{
+		case WP_GPG40:
+		case WP_M7:
+		case WP_SILENCER:
+		case WP_SILENCED_COLT:
+		case WP_AKIMBO_SILENCEDCOLT:
+		case WP_AKIMBO_SILENCEDLUGER:
+		case WP_MORTAR_SET:
+		case WP_MORTAR2_SET:
+		case WP_MOBILE_MG42_SET:
+		case WP_MOBILE_BROWNING_SET:
+			return;
+		default:
+			break;
+		}
+	}
 
 	CG_FinishWeaponChange(curweap, num);
 }
@@ -5223,7 +5245,7 @@ void CG_Weapon_f(void)
 
 /**
  * @brief The current weapon has just run out of ammo
- * @param allowforceswitch
+ * @param[in] allowforceswitch
  */
 void CG_OutOfAmmoChange(qboolean allowforceswitch)
 {
@@ -5407,7 +5429,7 @@ WEAPON EVENTS
 
 /**
  * @brief CG_MG42EFX
- * @param cent
+ * @param[in] cent
  */
 void CG_MG42EFX(centity_t *cent)
 {
@@ -5441,7 +5463,7 @@ void CG_MG42EFX(centity_t *cent)
 			trap_R_AddRefEntityToScene(&flash);
 
 			// add dynamic light
-			trap_R_AddLightToScene(flash.origin, 320, 1.25 + (rand() & 31) / 128.0f,
+			trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31) / 128.0f,
 			                       1.0f, 0.6f, 0.23f, 0, 0);
 			return;
 		}
@@ -5450,7 +5472,7 @@ void CG_MG42EFX(centity_t *cent)
 
 /**
  * @brief Right now mostly copied directly from Raf's MG42 FX, but with the optional addtion of smoke
- * @param cent
+ * @param[in] cent
  */
 void CG_MortarEFX(centity_t *cent)
 {
@@ -5479,7 +5501,7 @@ void CG_MortarEFX(centity_t *cent)
 
 /**
  * @brief CG_WeaponFireRecoil
- * @param weapon
+ * @param[in] weapon
  */
 void CG_WeaponFireRecoil(int weapon)
 {
@@ -5524,7 +5546,7 @@ void CG_WeaponFireRecoil(int weapon)
 	case WP_MP40:
 	case WP_THOMPSON:
 	case WP_STEN:
-		pitchAdd  = (1 + rand() % 3) * 0.3;
+		pitchAdd  = (1 + rand() % 3) * 0.3f;
 		yawRandom = 0.6f;
 		break;
 	default:
@@ -5544,15 +5566,17 @@ void CG_WeaponFireRecoil(int weapon)
 
 /**
  * @brief Caused by an EV_FIRE_WEAPON event
- * @param cent
+ * @param[in,out] cent
  */
 void CG_FireWeapon(centity_t *cent)
 {
-	entityState_t *ent = &cent->currentState;
+	entityState_t *ent = NULL;
 	int           c;
 	weaponInfo_t  *weap;
 	sfxHandle_t   *firesound;
 	sfxHandle_t   *fireEchosound;
+
+	ent = &cent->currentState;
 
 	// quick hack for EF_MOUNTEDTANK, need to change this - likely it needs to use viewlocked as well
 	if (cent->currentState.eFlags & EF_MOUNTEDTANK)
@@ -5650,44 +5674,44 @@ void CG_FireWeapon(centity_t *cent)
 		}
 	}
 
-    // lightning gun only does this on initial press
-    switch (ent->weapon)
-    {
-    case WP_FLAMETHROWER:
-        if (cent->pe.lightningFiring)
-        {
-            return;
-        }
-        break;
-    case WP_GRENADE_LAUNCHER:
-    case WP_GRENADE_PINEAPPLE:
-    case WP_DYNAMITE:
-    case WP_SMOKE_MARKER:
-    case WP_LANDMINE:
-    case WP_SATCHEL:
-    case WP_SMOKE_BOMB:
-        if (ent->apos.trBase[0] > 0)     // underhand
-        {
-            return;
-        }
-        break;
-    case WP_GPG40:
+	// lightning gun only does this on initial press
+	switch (ent->weapon)
+	{
+	case WP_FLAMETHROWER:
+		if (cent->pe.lightningFiring)
+		{
+			return;
+		}
+		break;
+	case WP_GRENADE_LAUNCHER:
+	case WP_GRENADE_PINEAPPLE:
+	case WP_DYNAMITE:
+	case WP_SMOKE_MARKER:
+	case WP_LANDMINE:
+	case WP_SATCHEL:
+	case WP_SMOKE_BOMB:
+		if (ent->apos.trBase[0] > 0)     // underhand
+		{
+			return;
+		}
+		break;
+	case WP_GPG40:
 
-        if (ent->clientNum == cg.snap->ps.clientNum)
-        {
-            cg.weaponSelect = WP_KAR98;
-        }
-        break;
-    case WP_M7:
+		if (ent->clientNum == cg.snap->ps.clientNum)
+		{
+			cg.weaponSelect = WP_KAR98;
+		}
+		break;
+	case WP_M7:
 
-        if (ent->clientNum == cg.snap->ps.clientNum)
-        {
-            cg.weaponSelect = WP_CARBINE;
-        }
-        break;
-    default:
-        break;
-    }
+		if (ent->clientNum == cg.snap->ps.clientNum)
+		{
+			cg.weaponSelect = WP_CARBINE;
+		}
+		break;
+	default:
+		break;
+	}
 
 	if ((cent->currentState.event & ~EV_EVENT_BITS) == EV_FIRE_WEAPON_LASTSHOT)
 	{
@@ -5761,12 +5785,12 @@ void CG_FireWeapon(centity_t *cent)
 
 /**
  * @brief CG_AddSparks
- * @param origin
- * @param dir
- * @param speed
- * @param duration
- * @param count
- * @param randScale
+ * @param[in] origin
+ * @param[in] dir
+ * @param[in] speed
+ * @param[in] duration
+ * @param[in] count
+ * @param[in] randScale
  */
 void CG_AddSparks(vec3_t origin, vec3_t dir, int speed, int duration, int count, float randScale)
 {
@@ -5785,7 +5809,7 @@ void CG_AddSparks(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 
 		le->leType        = LE_SPARK;
 		le->startTime     = cg.time;
-		le->endTime       = le->startTime + duration - (int)(0.5 * random() * duration);
+		le->endTime       = le->startTime + duration - (int)(0.5f * random() * duration);
 		le->lastTrailTime = cg.time;
 
 		VectorCopy(origin, re->origin);
@@ -5799,7 +5823,7 @@ void CG_AddSparks(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 
 		le->refEntity.customShader = cgs.media.sparkParticleShader;
 
-		le->bounceFactor = 0.9;
+		le->bounceFactor = 0.9f;
 
 		//le->leBounceSoundType = LEBS_BLOOD;
 		//le->leMarkType = LEMT_BLOOD;
@@ -5808,12 +5832,12 @@ void CG_AddSparks(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 
 /**
  * @brief CG_AddBulletParticles
- * @param origin
- * @param dir
- * @param speed
- * @param duration
- * @param count
- * @param randScale
+ * @param[in] origin
+ * @param[in] dir
+ * @param[in] speed
+ * @param duration - unused
+ * @param[in] count
+ * @param[in] randScale
  */
 void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int duration, int count, float randScale)
 {
@@ -5835,16 +5859,16 @@ void CG_AddBulletParticles(vec3_t origin, vec3_t dir, int speed, int duration, i
 
 /**
  * @brief CG_AddDirtBulletParticles
- * @param origin
- * @param dir
- * @param speed
- * @param duration
- * @param count
- * @param randScale
- * @param width
- * @param height
- * @param alpha
- * @param shader
+ * @param[in] origin
+ * @param[in] dir
+ * @param[in] speed
+ * @param[in] duration
+ * @param[in] count
+ * @param[in] randScale
+ * @param[in] width
+ * @param[in] height
+ * @param[in] alpha
+ * @param[in] shader
  */
 void CG_AddDirtBulletParticles(vec3_t origin, vec3_t dir, int speed, int duration, int count, float randScale, float width, float height, float alpha, qhandle_t shader)
 {
@@ -5863,6 +5887,10 @@ void CG_AddDirtBulletParticles(vec3_t origin, vec3_t dir, int speed, int duratio
 	}
 }
 
+/**
+ * @brief CG_RandomDebris
+ * @param[out] le
+ */
 void CG_RandomDebris(localEntity_t *le)
 {
 	int i = rand() % 5;
@@ -5901,12 +5929,12 @@ void CG_RandomDebris(localEntity_t *le)
 
 /**
  * @brief CG_AddDebris
- * @param origin
- * @param dir
- * @param speed
- * @param duration
- * @param count
- * @param trace
+ * @param[in] origin
+ * @param[in] dir
+ * @param[in] speed
+ * @param[in] duration
+ * @param[in] count
+ * @param[in] trace
  */
 void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count, trace_t *trace)
 {
@@ -5926,15 +5954,15 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 		le = CG_AllocLocalEntity();
 		re = &le->refEntity;
 
-		VectorSet(unitvel, dir[0] + crandom() * 0.9, dir[1] + crandom() * 0.9, fabs(dir[2]) > 0.5 ? dir[2] * (0.2 + 0.8 * random()) : random() * 0.6);
-		VectorScale(unitvel, (float)speed + (float)speed * 0.5 * crandom(), velocity);
+		VectorSet(unitvel, dir[0] + crandom() * 0.9f, dir[1] + crandom() * 0.9f, fabs((double)dir[2]) > 0.5 ? dir[2] * (0.2f + 0.8f * random()) : random() * 0.6f);
+		VectorScale(unitvel, (float)speed + (float)speed * 0.5f * crandom(), velocity);
 
 		le->leType    = LE_DEBRIS;
 		le->startTime = cg.time;
 		// FIXME: this is such a waste - change to (or even drop the multiplicator *2)
 		// le->endTime       = le->startTime + 2 * duration;
 		// functions calling CG_AddDebris already creating randomnesses - adjust these and do a clean duration param
-		le->endTime       = le->startTime + duration + (int)((float)duration * 0.8 * crandom());
+		le->endTime       = le->startTime + duration + (int)((float)duration * 0.8f * crandom());
 		le->lastTrailTime = cg.time;
 
 		VectorCopy(origin, re->origin);
@@ -5945,7 +5973,7 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 		VectorCopy(velocity, le->pos.trDelta);
 		le->pos.trTime = cg.time;
 
-		timeAdd = 10.0 + random() * 40.0;
+		timeAdd = 10.0f + random() * 40.0f;
 		BG_EvaluateTrajectory(&le->pos, cg.time + (int)timeAdd, le->pos.trBase, qfalse, -1);
 
 		le->bounceFactor = 0.5;
@@ -5962,7 +5990,7 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 		if (trace) // && user enabled
 		{
 			// airborn or solid with no surface set - just throw projectile fragments
-			if (trace->fraction == 1.0 || ((trace->contents & CONTENTS_SOLID) && !trace->surfaceFlags))
+			if (trace->fraction == 1.0f || ((trace->contents & CONTENTS_SOLID) && !trace->surfaceFlags))
 			{
 				int j;
 
@@ -6067,11 +6095,11 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 
 /**
  * @brief CG_WaterRipple
- * @param shader
- * @param loc
- * @param dir
- * @param size
- * @param lifetime
+ * @param[in] shader
+ * @param[in] loc
+ * @param[in] dir - unused
+ * @param[in] size
+ * @param[in] lifetime
  */
 void CG_WaterRipple(qhandle_t shader, vec3_t loc, vec3_t dir, int size, int lifetime)
 {
@@ -6083,7 +6111,7 @@ void CG_WaterRipple(qhandle_t shader, vec3_t loc, vec3_t dir, int size, int life
 
 	le->startTime = cg.time;
 	le->endTime   = cg.time + lifetime;
-	le->lifeRate  = 1.0 / (le->endTime - le->startTime);
+	le->lifeRate  = 1.0f / (le->endTime - le->startTime);
 
 	re = &le->refEntity;
 	VectorCopy(loc, re->origin);
@@ -6100,11 +6128,11 @@ void CG_WaterRipple(qhandle_t shader, vec3_t loc, vec3_t dir, int size, int life
 
 /**
  * @brief Caused by an EV_MISSILE_MISS event, or directly by local bullet tracing
- * @param weapon
- * @param clientNum is a dummy field used to define what sort of effect to spawn
- * @param origin
- * @param dir
- * @param surfFlags
+ * @param[in] weapon
+ * @param[in] clientNum is a dummy field used to define what sort of effect to spawn
+ * @param[in] origin
+ * @param[in] dir
+ * @param[in] surfFlags
  */
 void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int surfFlags)     // modified to send missilehitwall surface parameters
 {
@@ -6133,7 +6161,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			mark   = cgs.media.bulletMarkShader;
 			radius = 1 + rand() % 2;
 
-			CG_AddBulletParticles(origin, dir, 20, 800, 3 + rand() % 6, 1.0);
+			CG_AddBulletParticles(origin, dir, 20, 800, 3 + rand() % 6, 1.0f);
 		}
 		else
 		{
@@ -6172,7 +6200,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 		if (!clientNum)
 		{
 			// RF, why is this here? we need sparks if clientNum = 0, used for warzombie
-			CG_AddSparks(origin, dir, 350, 200, 15 + rand() % 7, 0.2);
+			CG_AddSparks(origin, dir, 350, 200, 15 + rand() % 7, 0.2f);
 		}
 		else if (clientNum == 1)       // just do a little smoke puff
 		{
@@ -6187,11 +6215,11 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 				// added surf_snow
 				if (surfFlags & SURF_SNOW)
 				{
-					CG_AddDirtBulletParticles(origin, dir, 190, 900, 5, 0.25, 80, 32, 0.5, cgs.media.dirtParticle2Shader);
+					CG_AddDirtBulletParticles(origin, dir, 190, 900, 5, 0.25f, 80, 32, 0.5f, cgs.media.dirtParticle2Shader);
 				}
 				else
 				{
-					CG_AddDirtBulletParticles(origin, dir, 190, 900, 5, 0.5, 80, 16, 0.5, cgs.media.dirtParticle1Shader);
+					CG_AddDirtBulletParticles(origin, dir, 190, 900, 5, 0.5f, 80, 16, 0.5f, cgs.media.dirtParticle1Shader);
 				}
 			}
 			else
@@ -6199,7 +6227,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 				CG_ParticleImpactSmokePuff(cgs.media.smokeParticleShader, o);
 
 				// some debris particles
-				CG_AddBulletParticles(origin, dir, 20, 800, 3 + rand() % 6, 1.0);      // rand scale
+				CG_AddBulletParticles(origin, dir, 20, 800, 3 + rand() % 6, 1.0f);      // rand scale
 
 				// just do a little one
 				//if (rand() % 3 == 0)
@@ -6215,7 +6243,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 
 			// needed to do the CG_WaterRipple using a localent since I needed the timer reset on the shader for each shot
 			CG_WaterRipple(cgs.media.wakeMarkShaderAnim, origin, tv(0, 0, 1), 32, 1000);
-			CG_AddDirtBulletParticles(origin, dir, 190, 900, 5, 0.5, 80, 16, 0.125, cgs.media.dirtParticle2Shader);
+			CG_AddDirtBulletParticles(origin, dir, 190, 900, 5, 0.5f, 80, 16, 0.125f, cgs.media.dirtParticle2Shader);
 
 			// play a water splash
 			mod      = cgs.media.waterSplashModel;
@@ -6273,9 +6301,9 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 		light         = 300;
 		isSprite      = qtrue;
 		duration      = 1000;
-		lightColor[0] = 0.75;
-		lightColor[1] = 0.5;
-		lightColor[2] = 0.1;
+		lightColor[0] = 0.75f;
+		lightColor[1] = 0.5f;
+		lightColor[2] = 0.1f;
 
 		VectorScale(dir, 16, sprVel);
 		if (CG_PointContents(origin, 0) & CONTENTS_WATER)
@@ -6285,7 +6313,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 
 			trap_CM_BoxTrace(&trace, tmpv, origin, NULL, NULL, 0, MASK_WATER);
 			CG_WaterRipple(cgs.media.wakeMarkShaderAnim, trace.endpos, dir, 150, 1000);
-			CG_AddDirtBulletParticles(trace.endpos, dir, 900, 1800, 15, 0.5, 350, 128, 0.125, cgs.media.dirtParticle2Shader);
+			CG_AddDirtBulletParticles(trace.endpos, dir, 900, 1800, 15, 0.5f, 350, 128, 0.125f, cgs.media.dirtParticle2Shader);
 		}
 		else
 		{
@@ -6296,7 +6324,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			trap_CM_BoxTrace(&trace, tmpv, tmpv2, NULL, NULL, 0, MASK_SHOT);
 			if ((trace.surfaceFlags & SURF_GRASS) || (trace.surfaceFlags & SURF_GRAVEL))
 			{
-				CG_AddDirtBulletParticles(origin, dir, 600, 2000, 10, 0.5, 275, 125, 0.25, cgs.media.dirtParticle1Shader);
+				CG_AddDirtBulletParticles(origin, dir, 600, 2000, 10, 0.5f, 275, 125, 0.25f, cgs.media.dirtParticle1Shader);
 			}
 
 			for (i = 0; i < 5; i++)
@@ -6324,9 +6352,9 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 		light         = 300;
 		isSprite      = qtrue;
 		duration      = 1000;
-		lightColor[0] = 0.75;
-		lightColor[1] = 0.5;
-		lightColor[2] = 0.1;
+		lightColor[0] = 0.75f;
+		lightColor[1] = 0.5f;
+		lightColor[2] = 0.1f;
 
 		// biggie dynamite explosions that mean it -- dynamite is biggest explode, so it gets extra crap thrown on
 		// check for water/dirt spurt
@@ -6338,8 +6366,8 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			trap_CM_BoxTrace(&trace, tmpv, origin, NULL, NULL, 0, MASK_WATER);
 			CG_WaterRipple(cgs.media.wakeMarkShaderAnim, trace.endpos, dir, 300, 2000);
 
-			CG_AddDirtBulletParticles(trace.endpos, dir, 400 + random() * 200, 900, 15, 0.5, 512, 128, 0.125, cgs.media.dirtParticle2Shader);
-			CG_AddDirtBulletParticles(trace.endpos, dir, 400 + random() * 600, 1400, 15, 0.5, 128, 512, 0.125, cgs.media.dirtParticle2Shader);
+			CG_AddDirtBulletParticles(trace.endpos, dir, (int)(400 + random() * 200), 900, 15, 0.5f, 512, 128, 0.125f, cgs.media.dirtParticle2Shader);
+			CG_AddDirtBulletParticles(trace.endpos, dir, (int)(400 + random() * 600), 1400, 15, 0.5f, 128, 512, 0.125f, cgs.media.dirtParticle2Shader);
 		}
 		else
 		{
@@ -6348,31 +6376,31 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			trap_CM_BoxTrace(&trace, tmpv, tmpv2, NULL, NULL, 0, MASK_SHOT);
 			if ((trace.surfaceFlags & SURF_GRASS) || (trace.surfaceFlags & SURF_GRAVEL))
 			{
-				CG_AddDirtBulletParticles(origin, dir, 400 + random() * 200, 3000, 10, 0.5, 400, 256, 0.25, cgs.media.dirtParticle1Shader);
+				CG_AddDirtBulletParticles(origin, dir, (int)(400 + random() * 200), 3000, 10, 0.5f, 400, 256, 0.25f, cgs.media.dirtParticle1Shader);
 			}
 			for (i = 0; i < 3; i++)
 			{
 				for (j = 0; j < 3; j++)
 				{
 					sprOrg[j] = origin[j] + 150 * crandom();
-					sprVel[j] = 0.35 * crandom();
+					sprVel[j] = 0.35f * crandom();
 				}
 				VectorAdd(sprVel, trace.plane.normal, sprVel);
 				VectorScale(sprVel, 130, sprVel);
-				CG_ParticleExplosion("blacksmokeanim", sprOrg, sprVel, 6000 + random() * 2000, 40, 400 + random() * 200, qfalse);   // JPW NERVE was blacksmokeanimb
+				CG_ParticleExplosion("blacksmokeanim", sprOrg, sprVel, (int)(6000 + random() * 2000), 40, (int)(400 + random() * 200), qfalse);   // JPW NERVE was blacksmokeanimb
 			}
 			for (i = 0; i < 4; i++)     // random vector based on plane normal so explosions move away from walls/dirt/etc
 			{
 				for (j = 0; j < 3; j++)
 				{
 					sprOrg[j] = origin[j] + 100 * crandom();
-					sprVel[j] = 0.65 * crandom(); // wider fireball spread
+					sprVel[j] = 0.65f * crandom(); // wider fireball spread
 				}
 				VectorAdd(sprVel, trace.plane.normal, sprVel);
 				VectorScale(sprVel, random() * 100 + 300, sprVel);
-				CG_ParticleExplosion("explode1", sprOrg, sprVel, 1000 + rand() % 1450, 40, 400 + random() * 200, (i == 0 ? qtrue : qfalse));
+				CG_ParticleExplosion("explode1", sprOrg, sprVel, 1000 + rand() % 1450, 40, (int)(400 + random() * 200), (i == 0 ? qtrue : qfalse));
 			}
-			CG_AddDebris(origin, dir, 400 + random() * 200, rand() % 2000 + 1400, 12 + rand() % 12, &trace);
+			CG_AddDebris(origin, dir, (int)(400 + random() * 200), rand() % 2000 + 1400, 12 + rand() % 12, &trace);
 		}
 		break;
 	case WP_GRENADE_LAUNCHER:
@@ -6410,9 +6438,9 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 		light         = 300;
 		isSprite      = qtrue;
 		duration      = 1000;
-		lightColor[0] = 0.75;
-		lightColor[1] = 0.5;
-		lightColor[2] = 0.1;
+		lightColor[0] = 0.75f;
+		lightColor[1] = 0.5f;
+		lightColor[2] = 0.1f;
 
 		// explosion sprite animation
 		VectorMA(origin, 16, dir, sprOrg);
@@ -6428,7 +6456,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			trap_CM_BoxTrace(&trace, tmpv, origin, NULL, NULL, 0, MASK_WATER);
 			CG_WaterRipple(cgs.media.wakeMarkShaderAnim, trace.endpos, dir, 150, 1000);
 
-			CG_AddDirtBulletParticles(trace.endpos, dir, 400, 900, 15, 0.5, 256, 128, 0.125, cgs.media.dirtParticle2Shader);
+			CG_AddDirtBulletParticles(trace.endpos, dir, 400, 900, 15, 0.5f, 256, 128, 0.125f, cgs.media.dirtParticle2Shader);
 		}
 		else
 		{
@@ -6439,7 +6467,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			trap_CM_BoxTrace(&trace, tmpv, tmpv2, NULL, NULL, 0, MASK_SHOT);
 			if ((trace.surfaceFlags & SURF_GRASS) || (trace.surfaceFlags & SURF_GRAVEL))
 			{
-				CG_AddDirtBulletParticles(origin, dir, 400, 2000, 10, 0.5, 200, 75, 0.25, cgs.media.dirtParticle1Shader);
+				CG_AddDirtBulletParticles(origin, dir, 400, 2000, 10, 0.5f, 200, 75, 0.25f, cgs.media.dirtParticle1Shader);
 			}
 			CG_ParticleExplosion("explode1", sprOrg, sprVel, 700, 60, 240, qtrue);
 			CG_AddDebris(origin, dir, 280, 1400, 7 + rand() % 2, &trace);
@@ -6470,9 +6498,9 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 		isSprite     = qtrue;
 		duration     = 1000;
 		// changed to flamethrower colors
-		lightColor[0] = 0.75;
-		lightColor[1] = 0.5;
-		lightColor[2] = 0.1;
+		lightColor[0] = 0.75f;
+		lightColor[1] = 0.5f;
+		lightColor[2] = 0.1f;
 
 		// explosion sprite animation
 		VectorMA(origin, 24, dir, sprOrg);
@@ -6486,8 +6514,8 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 			trap_CM_BoxTrace(&trace, tmpv, origin, NULL, NULL, 0, MASK_WATER);
 			CG_WaterRipple(cgs.media.wakeMarkShaderAnim, trace.endpos, dir, 300, 2000);
 
-			CG_AddDirtBulletParticles(trace.endpos, dir, 400 + random() * 200, 900, 15, 0.5, 512, 128, 0.125, cgs.media.dirtParticle2Shader);
-			CG_AddDirtBulletParticles(trace.endpos, dir, 400 + random() * 600, 1400, 15, 0.5, 128, 512, 0.125, cgs.media.dirtParticle2Shader);
+			CG_AddDirtBulletParticles(trace.endpos, dir, (int)(400 + random() * 200), 900, 15, 0.5f, 512, 128, 0.125f, cgs.media.dirtParticle2Shader);
+			CG_AddDirtBulletParticles(trace.endpos, dir, (int)(400 + random() * 600), 1400, 15, 0.5f, 128, 512, 0.125f, cgs.media.dirtParticle2Shader);
 		}
 		else
 		{
@@ -6499,28 +6527,27 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 
 			if ((trace.surfaceFlags & SURF_GRASS) || (trace.surfaceFlags & SURF_GRAVEL))
 			{
-				CG_AddDirtBulletParticles(origin, dir, 400 + random() * 200, 3000, 10, 0.5, 400, 256, 0.25, cgs.media.dirtParticle1Shader);
+				CG_AddDirtBulletParticles(origin, dir, (int)(400 + random() * 200), 3000, 10, 0.5f, 400, 256, 0.25f, cgs.media.dirtParticle1Shader);
 			}
-			CG_ParticleExplosion("explode1", sprOrg, sprVel, 1600, 20, 200 + random() * 400, qtrue);
+			CG_ParticleExplosion("explode1", sprOrg, sprVel, 1600, 20, (int)(200 + random() * 400), qtrue);
 
 			for (i = 0; i < 4; i++)     // random vector based on plane normal so explosions move away from walls/dirt/etc
 			{
 				for (j = 0; j < 3; j++)
 				{
 					sprOrg[j] = origin[j] + 50 * crandom();
-					sprVel[j] = 0.35 * crandom();
+					sprVel[j] = 0.35f * crandom();
 				}
 				VectorAdd(sprVel, trace.plane.normal, sprVel);
 				VectorScale(sprVel, 300, sprVel);
 				CG_ParticleExplosion("explode1", sprOrg, sprVel, 1600, 40, 260 + rand() % 120, qfalse);
 			}
-			CG_AddDebris(origin, dir, 400 + random() * 200, rand() % 2000 + 1000, 5 + rand() % 5, &trace);
+			CG_AddDebris(origin, dir, (int)(400 + random() * 200), rand() % 2000 + 1000, 5 + rand() % 5, &trace);
 		}
 		break;
 	default:
 	case WP_FLAMETHROWER:
 		return;
-		break;
 	}
 
 	if (sfx)
@@ -6583,10 +6610,10 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 
 /**
  * @brief CG_MissileHitWallSmall
- * @param weapon
- * @param clientNum
- * @param origin
- * @param dir
+ * @param weapon - unused
+ * @param clientNum - unused
+ * @param[in] origin
+ * @param[in] dir
  */
 void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir)
 {
@@ -6616,11 +6643,11 @@ void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir
 
 /**
  * @brief CG_MissileHitPlayer
- * @param cent
- * @param weapon
- * @param origin
- * @param dir
- * @param entityNum
+ * @param cent - unused
+ * @param[in] weapon
+ * @param[in] origin
+ * @param[in] dir
+ * @param[in] entityNum
  */
 void CG_MissileHitPlayer(centity_t *cent, int weapon, vec3_t origin, vec3_t dir, int entityNum)
 {
@@ -6653,9 +6680,9 @@ BULLETS
 
 /**
  * @brief CG_SpawnTracer
- * @param sourceEnt
- * @param pstart
- * @param pend
+ * @param[in] sourceEnt
+ * @param[in] pstart
+ * @param[in] pend
  */
 void CG_SpawnTracer(int sourceEnt, vec3_t pstart, vec3_t pend)
 {
@@ -6676,7 +6703,7 @@ void CG_SpawnTracer(int sourceEnt, vec3_t pstart, vec3_t pend)
 	VectorSubtract(end, start, dir);
 	dist = VectorNormalize(dir);
 
-	if (dist < 2.0 * cg_tracerLength.value)
+	if (dist < 2.0f * cg_tracerLength.value)
 	{
 		return; // segment isnt long enough, dont bother
 
@@ -6709,7 +6736,7 @@ void CG_SpawnTracer(int sourceEnt, vec3_t pstart, vec3_t pend)
 	le            = CG_AllocLocalEntity();
 	le->leType    = LE_MOVING_TRACER;
 	le->startTime = cg.time - (cg.frametime ? (rand() % cg.frametime) / 2 : 0);
-	le->endTime   = le->startTime + 1000.0 * dist / cg_tracerSpeed.value;
+	le->endTime   = (int)(le->startTime + 1000.0f * dist / cg_tracerSpeed.value);
 
 	le->pos.trType = TR_LINEAR;
 	le->pos.trTime = le->startTime;
@@ -6719,8 +6746,8 @@ void CG_SpawnTracer(int sourceEnt, vec3_t pstart, vec3_t pend)
 
 /**
  * @brief CG_DrawTracer
- * @param start
- * @param finish
+ * @param[in] start
+ * @param[in] finish
  */
 void CG_DrawTracer(vec3_t start, vec3_t finish)
 {
@@ -6774,9 +6801,9 @@ void CG_DrawTracer(vec3_t start, vec3_t finish)
 
 /**
  * @brief CG_Tracer
- * @param source
- * @param dest
- * @param sparks
+ * @param[in] source
+ * @param[in] dest
+ * @param[in] sparks
  */
 void CG_Tracer(vec3_t source, vec3_t dest, int sparks)
 {
@@ -6807,8 +6834,8 @@ void CG_Tracer(vec3_t source, vec3_t dest, int sparks)
 
 /**
  * @brief CG_CalcMuzzlePoint
- * @param entityNum
- * @param muzzle
+ * @param[in] entityNum
+ * @param[in] muzzle
  * @return
  */
 qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
@@ -6906,7 +6933,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 	}
 	else if (cent->currentState.eFlags & EF_AAGUN_ACTIVE)
 	{
-		centity_t *aagun;
+		centity_t *aagun = NULL;
 		int       num;
 
 		// find the mg42 we're attached to
@@ -6952,6 +6979,11 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 	return qtrue;
 }
 
+/**
+ * @brief SnapVectorTowards
+ * @param v
+ * @param to
+ */
 void SnapVectorTowards(vec3_t v, vec3_t to)
 {
 	int i;
@@ -6960,21 +6992,21 @@ void SnapVectorTowards(vec3_t v, vec3_t to)
 	{
 		if (to[i] <= v[i])
 		{
-			v[i] = floor(v[i]);
+			v[i] = (float)floor((double)v[i]);
 		}
 		else
 		{
-			v[i] = ceil(v[i]);
+			v[i] = (float)ceil((double)v[i]);
 		}
 	}
 }
 
 /**
  * @brief Renders bullet tracers if  tracer option is valid.
- * @param pstart
- * @param pend
- * @param sourceEntityNum
- * @param otherEntityNum
+ * @param[in] pstart
+ * @param[in] pend
+ * @param[in] sourceEntityNum
+ * @param[in] otherEntityNum
  */
 void CG_DrawBulletTracer(vec3_t pstart, vec3_t pend, int sourceEntityNum, int otherEntityNum)
 {
@@ -7006,13 +7038,13 @@ void CG_DrawBulletTracer(vec3_t pstart, vec3_t pend, int sourceEntityNum, int ot
 
 /**
  * @brief Renders bullet effects.
- * @param end
- * @param sourceEntityNum
- * @param flesh
- * @param fleshEntityNum
- * @param otherEntNum2
- * @param waterfraction
- * @param seed
+ * @param[in] end
+ * @param[in] sourceEntityNum
+ * @param[in] flesh
+ * @param[in] fleshEntityNum
+ * @param[in] otherEntNum2
+ * @param[in] waterfraction
+ * @param[in] seed
  */
 void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityNum, int otherEntNum2, float waterfraction, int seed)
 {
@@ -7145,7 +7177,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 			for (i = 0; i < 5; i++)
 			{
 				rnd = random();
-				VectorScale(smokedir, 25.0 + random() * 25, tmpv);
+				VectorScale(smokedir, 25.0f + random() * 25, tmpv);
 				tmpv[0] += crandom() * 25.0f;
 				tmpv[1] += crandom() * 25.0f;
 				tmpv[2] += crandom() * 25.0f;
@@ -7153,7 +7185,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 				VectorScale(tmpv2, 35, tmpv2); // was 75, before that 55
 				tmpv2[2] = 0;
 				VectorAdd(tmpv, tmpv2, tmpv);
-				CG_SmokePuff(origin, tmpv, 5 + rnd * 10, 1, rnd * 0.8, rnd * 0.8, 0.5, 500 + (rand() % 800), cg.time, 0, 0, cgs.media.fleshSmokePuffShader);
+				CG_SmokePuff(origin, tmpv, 5 + rnd * 10, 1, rnd * 0.8f, rnd * 0.8f, 0.5, 500 + (rand() % 800), cg.time, 0, 0, cgs.media.fleshSmokePuffShader);
 			}
 		}
 		else
@@ -7162,7 +7194,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 			for (i = 0; i < 10; i++)
 			{
 				rnd = random();
-				VectorScale(smokedir, -35.0 + random() * 25, tmpv);
+				VectorScale(smokedir, -35.0f + random() * 25, tmpv);
 				tmpv[0] += crandom() * 25.0f;
 				tmpv[1] += crandom() * 25.0f;
 				tmpv[2] += crandom() * 25.0f;
@@ -7190,7 +7222,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 		{
 			if (CG_CalcMuzzlePoint(sourceEntityNum, start))
 			{
-                vec3_t trend;
+				vec3_t trend;
 				vec4_t projection;
 
 				VectorSubtract(end, start, dir);
@@ -7260,7 +7292,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 
 		if (CG_CalcMuzzlePoint(sourceEntityNum, start) || cg.snap->ps.persistant[PERS_HWEAPON_USE])
 		{
-			if (waterfraction)
+			if (waterfraction != 0.f)
 			{
 				vec3_t dist;
 				vec3_t end2;

@@ -891,7 +891,7 @@ typedef enum
 #define ANIM_BITS       10
 
 #define ANGLE2SHORT(x)  ((int)((x) * 65536 / 360) & 65535)
-#define SHORT2ANGLE(x)  ((x) * (360.0 / 65536))
+#define SHORT2ANGLE(x)  ((x) * (360.0f / 65536))
 
 #define SNAPFLAG_RATE_DELAYED   1
 #define SNAPFLAG_NOT_ACTIVE     2   // snapshot used during connection and for zombies

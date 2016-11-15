@@ -38,11 +38,11 @@
 /**
  * @brief Modifies the entities position and axis by the given
  * tag location
- * @param entity
- * @param parent
- * @param tagName
- * @param startIndex
- * @param offset
+ * @param[in] entity
+ * @param[in] parent
+ * @param[in] tagName
+ * @param[in] startIndex
+ * @param[in] offset
  */
 void CG_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, const char *tagName, int startIndex, vec3_t *offset)
 {
@@ -70,9 +70,9 @@ void CG_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, cons
 
 /**
  * @brief Modifies the entities position and axis by the given tag location
- * @param entity
- * @param parent
- * @param tagName
+ * @param[in] entity
+ * @param[in] parent
+ * @param[in] tagName
  */
 void CG_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *parent, const char *tagName)
 {
@@ -102,7 +102,7 @@ FUNCTIONS CALLED EACH FRAME
 
 /**
  * @brief Also called by event processing code
- * @param cent
+ * @param[in] cent
  */
 void CG_SetEntitySoundPosition(centity_t *cent)
 {
@@ -217,7 +217,7 @@ void CG_GetWindVector(vec3_t dir);
 
 /**
  * @brief Add continuous entity effects, like local entity emission and lighting
- * @param cent
+ * @param[in,out] cent
  */
 static void CG_EntityEffects(centity_t *cent)
 {
@@ -291,9 +291,9 @@ static void CG_EntityEffects(centity_t *cent)
 	if (CG_EntOnFire(cent))
 	{
 		// play a flame blow sound when moving
-		trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, cgs.media.flameBlowSound, (int)(255.0 * (1.0 - fabs(cent->fireRiseDir[2]))), 0);
+		trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, cgs.media.flameBlowSound, (int)(255.0 * (1.0 - fabs((double)cent->fireRiseDir[2]))), 0);
 		// play a burning sound when not moving
-		trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, cgs.media.flameSound, (int)(0.3 * 255.0 * (pow(cent->fireRiseDir[2], 2))), 0);
+		trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, cgs.media.flameSound, (int)(0.3 * 255.0 * (pow((double)cent->fireRiseDir[2], 2))), 0);
 	}
 
 	// overheating is a special effect
@@ -370,7 +370,7 @@ static void CG_EntityEffects(centity_t *cent)
 
 /**
  * @brief CG_General
- * @param cent
+ * @param[in,out] cent
  */
 static void CG_General(centity_t *cent)
 {
@@ -561,7 +561,7 @@ static void CG_General(centity_t *cent)
 
 /**
  * @brief Speaker entities can automatically play sounds
- * @param cent
+ * @param[in,out] cent
  */
 static void CG_Speaker(centity_t *cent)
 {
@@ -577,14 +577,14 @@ static void CG_Speaker(centity_t *cent)
 
 	trap_S_StartSound(NULL, cent->currentState.number, CHAN_ITEM, CG_GetGameSound(cent->currentState.eventParm));
 
-	cent->miscTime = cg.time + cent->currentState.frame * 100 + cent->currentState.clientNum * 100 * crandom();
+	cent->miscTime = (int)(cg.time + cent->currentState.frame * 100 + cent->currentState.clientNum * 100 * crandom());
 }
 
 /**
  * @brief CG_PlayerSeesItem
- * @param ps
- * @param item
- * @param atTime
+ * @param[in] ps
+ * @param[in] item
+ * @param[in] atTime
  * @param itemType - unused
  * @return
  */
@@ -633,7 +633,7 @@ qboolean CG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime, i
 
 /**
  * @brief CG_Item
- * @param cent
+ * @param[in] cent
  */
 static void CG_Item(centity_t *cent)
 {
@@ -885,7 +885,7 @@ static void CG_Item(centity_t *cent)
 
 /**
  * @brief CG_Smoker
- * @param cent
+ * @param[in,out] cent
  */
 static void CG_Smoker(centity_t *cent)
 {
@@ -923,9 +923,9 @@ static void CG_Smoker(centity_t *cent)
 
 /**
  * @brief CG_DrawMineMarkerFlag
- * @param cent
- * @param ent
- * @param weapon
+ * @param[in] cent
+ * @param[out] ent
+ * @param[in] weapon
  */
 static void CG_DrawMineMarkerFlag(centity_t *cent, refEntity_t *ent, const weaponInfo_t *weapon)
 {
@@ -984,7 +984,7 @@ extern void CG_ScanForCrosshairDyna(centity_t *cent);
 
 /**
  * @brief CG_Missile
- * @param cent
+ * @param[in] cent
  */
 static void CG_Missile(centity_t *cent)
 {
@@ -1305,8 +1305,8 @@ extern void CG_RunLerpFrame(centity_t *cent, clientInfo_t *ci, lerpFrame_t *lf, 
 
 /**
  * @brief CG_TrapSetAnim
- * @param cent
- * @param lf
+ * @param[in] cent
+ * @param[in,out] lf
  * @param newAnim - unused
  */
 static void CG_TrapSetAnim(centity_t *cent, lerpFrame_t *lf, int newAnim)
@@ -1329,8 +1329,8 @@ static void CG_TrapSetAnim(centity_t *cent, lerpFrame_t *lf, int newAnim)
 
 /**
  * @brief CG_Trap
- * @param cent
- * @todo change from 'trap' to something else.  'trap' is a misnomer.  it's actually used for other stuff too
+ * @param[in] cent
+ * @todo Change from 'trap' to something else.  'trap' is a misnomer.  it's actually used for other stuff too
  */
 static void CG_Trap(centity_t *cent)
 {
@@ -1376,6 +1376,10 @@ static void CG_Trap(centity_t *cent)
 	memcpy(&cent->refEnt, &ent, sizeof(refEntity_t));
 }
 
+/**
+ * @brief CG_Corona
+ * @param[in] cent
+ */
 static void CG_Corona(centity_t *cent)
 {
 	float    r, g, b;
@@ -1441,7 +1445,7 @@ static void CG_Corona(centity_t *cent)
  * @brief This is currently almost exactly the same as CG_Mover
  * It's split out so that any changes or experiments are
  * unattached to anything else.
- * @param cent
+ * @param[in] cent
  */
 static void CG_Explosive(centity_t *cent)
 {
@@ -1482,7 +1486,7 @@ static void CG_Explosive(centity_t *cent)
 /**
  * @brief This is currently almost exactly the same as CG_Mover
  * It's split out so that any changes or experiments are unattached to anything else.
- * @param cent
+ * @param[in] cent
  */
 static void CG_Constructible(centity_t *cent)
 {
@@ -1523,7 +1527,7 @@ static void CG_Constructible(centity_t *cent)
 
 /**
  * @brief CG_Mover
- * @param cent
+ * @param[in,out] cent
  */
 static void CG_Mover(centity_t *cent)
 {
@@ -1653,7 +1657,7 @@ static void CG_Mover(centity_t *cent)
 
 /**
  * @brief CG_Mover_PostProcess
- * @param cent
+ * @param[in] cent
  */
 void CG_Mover_PostProcess(centity_t *cent)
 {
@@ -1739,7 +1743,7 @@ void CG_Mover_PostProcess(centity_t *cent)
 
 /**
  * @brief New beam entity, for rope like stuff...
- * @param cent
+ * @param[in] cent
  */
 void CG_Beam_2(centity_t *cent)
 {
@@ -1772,7 +1776,7 @@ void CG_Beam_2(centity_t *cent)
 
 /**
  * @brief Also called as an event
- * @param cent
+ * @param[in] cent
  */
 void CG_Beam(centity_t *cent)
 {
@@ -1810,7 +1814,7 @@ void CG_Beam(centity_t *cent)
 
 /**
  * @brief CG_Portal
- * @param cent
+ * @param[in] cent
  */
 static void CG_Portal(centity_t *cent)
 {
@@ -1839,7 +1843,7 @@ static void CG_Portal(centity_t *cent)
 
 /**
  * @brief CG_Prop
- * @param cent
+ * @param[in] cent
  */
 static void CG_Prop(centity_t *cent)
 {
@@ -2015,8 +2019,8 @@ cabinetTag_t cabinetInfo[CT_MAX] =
 
 /**
  * @brief CG_Cabinet
- * @param cent
- * @param type
+ * @param[in] cent
+ * @param[in] type
  */
 void CG_Cabinet(centity_t *cent, cabinetType_t type)
 {
@@ -2097,12 +2101,12 @@ void CG_SetupCabinets(void)
 
 /**
  * @brief Also called by client movement prediction code
- * @param in
- * @param moverNum
- * @param fromTime
- * @param toTime
- * @param out
- * @param outDeltaAngles
+ * @param[in] in
+ * @param[in] moverNum
+ * @param[in] fromTime
+ * @param[in] toTime
+ * @param[in] out
+ * @param[in] outDeltaAngles
  */
 void CG_AdjustPositionForMover(const vec3_t in, int moverNum, int fromTime, int toTime, vec3_t out, vec3_t outDeltaAngles)
 {
@@ -2181,7 +2185,7 @@ void CG_AdjustPositionForMover(const vec3_t in, int moverNum, int fromTime, int 
 
 /**
  * @brief CG_InterpolateEntityPosition
- * @param cent
+ * @param[in,out] cent
  */
 static void CG_InterpolateEntityPosition(centity_t *cent)
 {
@@ -2217,7 +2221,7 @@ static void CG_InterpolateEntityPosition(centity_t *cent)
 
 /**
  * @brief CG_CalcEntityLerpPositions
- * @param cent
+ * @param[in] cent
  */
 void CG_CalcEntityLerpPositions(centity_t *cent)
 {
@@ -2254,7 +2258,7 @@ void CG_CalcEntityLerpPositions(centity_t *cent)
 
 /**
  * @brief CG_ProcessEntity
- * @param cent
+ * @param[in] cent
  * @note All case aren't handle
  */
 static void CG_ProcessEntity(centity_t *cent)
@@ -2362,7 +2366,7 @@ static void CG_ProcessEntity(centity_t *cent)
 
 /**
  * @brief CG_AddCEntity
- * @param cent
+ * @param[in,out] cent
  */
 void CG_AddCEntity(centity_t *cent)
 {
@@ -2386,9 +2390,9 @@ void CG_AddCEntity(centity_t *cent)
 
 /**
  * @brief CG_AddLinkedEntity
- * @param cent
- * @param ignoreframe
- * @param atTime
+ * @param[in,out] cent
+ * @param[in] ignoreframe
+ * @param[in] atTime
  * @return
  */
 qboolean CG_AddLinkedEntity(centity_t *cent, qboolean ignoreframe, int atTime)
@@ -2473,7 +2477,7 @@ qboolean CG_AddLinkedEntity(centity_t *cent, qboolean ignoreframe, int atTime)
 				cent->backdelta = 1 - cent->backdelta;
 			}
 
-			pos = floor(cent->backdelta * (MAX_SPLINE_SEGMENTS));
+			pos = (int)(floor((double)cent->backdelta * (MAX_SPLINE_SEGMENTS)));
 			if (pos >= MAX_SPLINE_SEGMENTS)
 			{
 				pos  = MAX_SPLINE_SEGMENTS - 1;
@@ -2580,7 +2584,7 @@ qboolean CG_AddLinkedEntity(centity_t *cent, qboolean ignoreframe, int atTime)
 
 /**
  * @brief CG_AddEntityToTag
- * @param cent
+ * @param[in,out] cent
  * @return
  */
 qboolean CG_AddEntityToTag(centity_t *cent)
@@ -2667,7 +2671,7 @@ qboolean CG_AddEntityToTag(centity_t *cent)
 
 /**
  * @brief CG_AddCEntity_Filter
- * @param cent
+ * @param[in] cent
  * @return
  */
 qboolean CG_AddCEntity_Filter(centity_t *cent)
@@ -2769,8 +2773,8 @@ void CG_AddPacketEntities(void)
 
 /**
  * @brief CGRefEntityToTag
- * @param ent
- * @param tag
+ * @param[in] ent
+ * @param[out] tag
  */
 void CGRefEntityToTag(refEntity_t *ent, tag_t *tag)
 {
@@ -2785,8 +2789,8 @@ void CGRefEntityToTag(refEntity_t *ent, tag_t *tag)
 
 /**
  * @brief CGTagToRefEntity
- * @param ent
- * @param tag
+ * @param[in] ent
+ * @param[out] tag
  */
 void CGTagToRefEntity(refEntity_t *ent, tag_t *tag)
 {
@@ -2801,15 +2805,15 @@ void CGTagToRefEntity(refEntity_t *ent, tag_t *tag)
 
 /**
  * @brief CG_AttachBitsToTank
- * @param tank
- * @param mg42base
- * @param mg42upper
- * @param mg42gun
- * @param player
- * @param flash
- * @param playerangles
- * @param tagName
- * @param browning
+ * @param[in,out] tank
+ * @param[out] mg42base
+ * @param[out] mg42upper
+ * @param[out] mg42gun
+ * @param[out] player
+ * @param[out] flash
+ * @param[in] playerangles
+ * @param[in] tagName
+ * @param[in] browning
  */
 void CG_AttachBitsToTank(centity_t *tank, refEntity_t *mg42base, refEntity_t *mg42upper, refEntity_t *mg42gun, refEntity_t *player, refEntity_t *flash, vec_t *playerangles, const char *tagName, qboolean browning)
 {

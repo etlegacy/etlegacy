@@ -190,7 +190,7 @@ void CG_windowReset(cg_window_t *w, int fx, int startupLength)
  * @brief Reserve a window
  * @param[in] fx
  * @param[in] startupLength
- * @return 
+ * @return
  */
 cg_window_t *CG_windowAlloc(int fx, int startupLength)
 {
@@ -310,14 +310,14 @@ void CG_demoTimescaleDraw(void)
 		char *s = va("^7Time Scale: ^3%.1fx", (double)cg_timescale.value);
 		int  h  = CG_Text_Height_Ext("A", cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
 		int  w  = CG_Text_Width_Ext(s, cg_fontScaleSP.value, 0, &cgs.media.limboFont2);
-		int  x  = (int)Ccg_WideX(SCREEN_WIDTH) - w - 108;
+		int  x  = (int)(Ccg_WideX(SCREEN_WIDTH) - w - 108);
 
 		CG_FillRect(x, SCREEN_HEIGHT - 21, w + 7, h * 2.5f, bgColor);
 		CG_DrawRect(x, SCREEN_HEIGHT - 21, w + 7, h * 2.5f, 1, bdColor);
 		CG_Text_Paint_Ext(x + 3, SCREEN_HEIGHT - 10, cg_fontScaleSP.value, cg_fontScaleSP.value, colorWhite, s, 0, 0, 0, &cgs.media.limboFont2);
 	}
 }
- 
+
 /**
  * @brief Main window-drawing handler
  */
@@ -615,7 +615,7 @@ void CG_printWindow(const char *str)
 		CG_addString(w, buf + pos2);
 	}
 }
- 
+
 /**
  * @brief String buffer handling
  */
@@ -634,7 +634,7 @@ void CG_initStrings(void)
  * @brief CG_addString
  * @param[in,out] w
  * @param[in] buf
- * @return 
+ * @return
  */
 qboolean CG_addString(cg_window_t *w, const char *buf)
 {
@@ -863,7 +863,7 @@ void CG_cursorUpdate(void)
 	{
 		// display on two columns
 		int hOffset = 32;
-		int xOffset = (int)MVINFO_RIGHT - hOffset;
+		int xOffset = (int)(MVINFO_RIGHT - hOffset);
 
 		// Ugh, have to loop through BOTH team lists
 		for (i = TEAM_AXIS; i <= TEAM_ALLIES; i++)

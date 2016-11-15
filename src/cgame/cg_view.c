@@ -70,14 +70,10 @@ console doesn't pause the game.
 =============================================================================
 */
 
-/*
-=================
-CG_TestModel_f
-
-Creates an entity in front of the current position, which
-can then be moved around
-=================
-*/
+/**
+ * @brief Creates an entity in front of the current position, which
+ * can then be moved around
+ */
 void CG_TestModel_f(void)
 {
 	vec3_t angles;
@@ -93,7 +89,7 @@ void CG_TestModel_f(void)
 
 	if (trap_Argc() == 3)
 	{
-		cg.testModelEntity.backlerp = atof(CG_Argv(2));
+		cg.testModelEntity.backlerp = (float)atof(CG_Argv(2));
 		cg.testModelEntity.frame    = 1;
 		cg.testModelEntity.oldframe = 0;
 	}
@@ -113,13 +109,9 @@ void CG_TestModel_f(void)
 	cg.testGun = qfalse;
 }
 
-/*
-=================
-CG_TestGun_f
-
-Replaces the current view weapon with the given model
-=================
-*/
+/**
+ * @brief Replaces the current view weapon with the given model
+ */
 void CG_TestGun_f(void)
 {
 	CG_TestModel_f();
@@ -127,12 +119,18 @@ void CG_TestGun_f(void)
 	cg.testModelEntity.renderfx = RF_MINLIGHT | RF_DEPTHHACK | RF_FIRST_PERSON;
 }
 
+/**
+ * @brief CG_TestModelNextFrame_f
+ */
 void CG_TestModelNextFrame_f(void)
 {
 	cg.testModelEntity.frame++;
 	CG_Printf("frame %i\n", cg.testModelEntity.frame);
 }
 
+/**
+ * @brief CG_TestModelPrevFrame_f
+ */
 void CG_TestModelPrevFrame_f(void)
 {
 	cg.testModelEntity.frame--;
@@ -143,12 +141,18 @@ void CG_TestModelPrevFrame_f(void)
 	CG_Printf("frame %i\n", cg.testModelEntity.frame);
 }
 
+/**
+ * @brief CG_TestModelNextSkin_f
+ */
 void CG_TestModelNextSkin_f(void)
 {
 	cg.testModelEntity.skinNum++;
 	CG_Printf("skin %i\n", cg.testModelEntity.skinNum);
 }
 
+/**
+ * @brief CG_TestModelPrevSkin_f
+ */
 void CG_TestModelPrevSkin_f(void)
 {
 	cg.testModelEntity.skinNum--;
@@ -159,6 +163,9 @@ void CG_TestModelPrevSkin_f(void)
 	CG_Printf("skin %i\n", cg.testModelEntity.skinNum);
 }
 
+/**
+ * @brief CG_AddTestModel
+ */
 static void CG_AddTestModel(void)
 {
 	// re-register the model, because the level may have changed
@@ -193,14 +200,12 @@ static void CG_AddTestModel(void)
 
 //============================================================================
 
-/*
-=================
-CG_CalcVrect
-
-Sets the coordinates of the rendered window
-=================
-*/
-
+/**
+ * @brief Sets the coordinates of the rendered window
+ * @param[in] xsize
+ * @param[in] ysize
+ * @param[in] center
+ */
 void CG_Letterbox(float xsize, float ysize, qboolean center)
 {
 	// normal aspect is xx:xx
@@ -234,6 +239,9 @@ void CG_Letterbox(float xsize, float ysize, qboolean center)
 	}
 }
 
+/**
+ * @brief CG_CalcVrect
+ */
 static void CG_CalcVrect(void)
 {
 	if (cg.showGameView)
@@ -245,10 +253,10 @@ static void CG_CalcVrect(void)
 
 		CG_AdjustFrom640(&x, &y, &w, &h);
 
-		cg.refdef.x      = x;
-		cg.refdef.y      = y;
-		cg.refdef.width  = w;
-		cg.refdef.height = h;
+		cg.refdef.x      = (int)x;
+		cg.refdef.y      = (int)y;
+		cg.refdef.width  = (int)w;
+		cg.refdef.height = (int)h;
 
 		CG_Letterbox((LIMBO_3D_W / 640.f) * 100, (LIMBO_3D_H / 480.f) * 100, qfalse);
 
@@ -270,6 +278,9 @@ static void CG_CalcVrect(void)
 
 extern void CG_DrawPVShint(void);
 
+/**
+ * @brief CG_OffsetFreeCamView
+ */
 static void CG_OffsetFreeCamView(void)
 {
 	if (cgs.demoCamera.renderingWeaponCam || cgs.demoCamera.setCamAngles)
@@ -297,12 +308,11 @@ static void CG_OffsetFreeCamView(void)
 }
 #endif
 
-/*
-===============
-CG_OffsetThirdPersonView
-===============
-*/
 #define FOCUS_DISTANCE  400 //800   //512
+
+/**
+ * @brief CG_OffsetThirdPersonView
+ */
 void CG_OffsetThirdPersonView(void)
 {
 	vec3_t        forward, right, up;
@@ -388,7 +398,11 @@ void CG_OffsetThirdPersonView(void)
 	cg.refdefViewAngles[YAW]  -= cg_thirdPersonAngle.value;
 }
 
-// this causes a compiler bug on mac MrC compiler
+/**
+ * @brief CG_StepOffset
+ *
+ * @warning This causes a compiler bug on mac MrC compiler
+ */
 static void CG_StepOffset(void)
 {
 	// smooth out stair climbing
@@ -404,11 +418,9 @@ static void CG_StepOffset(void)
 	}
 }
 
-/*
-================
-CG_KickAngles
-================
-*/
+/**
+ * @brief CG_KickAngles
+ */
 void CG_KickAngles(void)
 {
 	const vec3_t centerSpeed        = { 2400, 2400, 2400 };
@@ -444,9 +456,9 @@ void CG_KickAngles(void)
 			if (cg.kickAVel[i] != 0.f || cg.kickAngles[i] != 0.f)
 			{
 				// apply centering forces to kickAvel
-				if (cg.kickAngles[i] && frametime)
+				if (cg.kickAngles[i] != 0.f && frametime)
 				{
-					idealCenterSpeed = -(2.0 * (cg.kickAngles[i] > 0) - 1.0) * centerSpeed[i];
+					idealCenterSpeed = -(2.0f * (cg.kickAngles[i] > 0) - 1.0f) * centerSpeed[i];
 					if (idealCenterSpeed != 0.f)
 					{
 						cg.kickAVel[i] += idealCenterSpeed * ft;
@@ -481,7 +493,7 @@ void CG_KickAngles(void)
 		}
 
 		// recoil is added to input viewangles per frame
-		if (cg.recoilPitch)
+		if (cg.recoilPitch != 0.f)
 		{
 			// apply max recoil
 			if (fabs(cg.recoilPitch) > recoilMaxSpeed)
@@ -498,8 +510,8 @@ void CG_KickAngles(void)
 			// apply centering forces to kickAvel
 			if (frametime)
 			{
-				idealCenterSpeed = -(2.0 * (cg.recoilPitch > 0) - 1.0) * recoilCenterSpeed * ft;
-				if (idealCenterSpeed)
+				idealCenterSpeed = -(2.0f * (cg.recoilPitch > 0) - 1.0f) * recoilCenterSpeed * ft;
+				if (idealCenterSpeed != 0.f)
 				{
 					if (fabs(idealCenterSpeed) < fabs(cg.recoilPitch))
 					{
@@ -528,19 +540,16 @@ void CG_KickAngles(void)
 	}
 }
 
-/*
-==============
-CG_ZoomSway
-    sway for scoped weapons.
-    this takes aimspread into account so the view settles after a bit
-==============
-*/
+/**
+ * @brief Sway for scoped weapons.
+ * this takes aimspread into account so the view settles after a bit
+ */
 static void CG_ZoomSway(void)
 {
 	float spreadfrac;
 	float phase;
 
-	if (!cg.zoomval)     // not zoomed
+	if (cg.zoomval == 0.f)     // not zoomed
 	{
 		return;
 	}
@@ -550,7 +559,7 @@ static void CG_ZoomSway(void)
 		return;
 	}
 
-	spreadfrac = (float)cg.snap->ps.aimSpreadScale / 255.0;
+	spreadfrac = (float)cg.snap->ps.aimSpreadScale / 255.0f;
 
 	phase                       = cg.time / 1000.0 * ZOOM_PITCH_FREQUENCY * M_PI * 2;
 	cg.refdefViewAngles[PITCH] += ZOOM_PITCH_AMPLITUDE * sin(phase) * (spreadfrac + ZOOM_PITCH_MIN_AMPLITUDE);
@@ -559,11 +568,9 @@ static void CG_ZoomSway(void)
 	cg.refdefViewAngles[YAW] += ZOOM_YAW_AMPLITUDE * sin(phase) * (spreadfrac + ZOOM_YAW_MIN_AMPLITUDE);
 }
 
-/*
-===============
-CG_OffsetFirstPersonView
-===============
-*/
+/**
+ * @brief CG_OffsetFirstPersonView
+ */
 static void CG_OffsetFirstPersonView(void)
 {
 	float    *origin;
@@ -651,7 +658,7 @@ static void CG_OffsetFirstPersonView(void)
 	//angles[0] -= cg.kickAngles[PITCH];
 
 	// add angles based on damage kick
-	if (cg.damageTime)
+	if (cg.damageTime != 0.f)
 	{
 		float ratio = cg.time - cg.damageTime;
 
@@ -663,7 +670,7 @@ static void CG_OffsetFirstPersonView(void)
 		}
 		else
 		{
-			ratio = 1.0 - (ratio - DAMAGE_DEFLECT_TIME) / DAMAGE_RETURN_TIME;
+			ratio = 1.0f - (ratio - DAMAGE_DEFLECT_TIME) / DAMAGE_RETURN_TIME;
 			if (ratio > 0)
 			{
 				angles[PITCH] += ratio * cg.v_dmg_pitch;
@@ -687,7 +694,7 @@ static void CG_OffsetFirstPersonView(void)
 	// make sure the bob is visible even at low speeds
 	speed = cg.xyspeed > 200 ? cg.xyspeed : 200;
 
-	if (!cg.bobfracsin && cg.lastvalidBobfracsin > 0)
+	if (cg.bobfracsin == 0.f && cg.lastvalidBobfracsin > 0)
 	{
 		// 200 msec to get back to center from 1
 		// that's 1/200 per msec = 0.005 per msec
@@ -779,7 +786,7 @@ static void CG_OffsetFirstPersonView(void)
 	else if (delta < LAND_DEFLECT_TIME + LAND_RETURN_TIME)
 	{
 		delta                         -= LAND_DEFLECT_TIME;
-		f                              = 1.0 - (delta / LAND_RETURN_TIME);
+		f                              = 1.0f - (delta / LAND_RETURN_TIME);
 		cg.refdef_current->vieworg[2] += cg.landChange * f;
 	}
 
@@ -789,7 +796,7 @@ static void CG_OffsetFirstPersonView(void)
 	CG_ZoomSway();
 
 	// adjust for 'lean'
-	if (cg.predictedPlayerState.leanf != 0)
+	if (cg.predictedPlayerState.leanf != 0.f)
 	{
 		// add leaning offset
 		vec3_t right;
@@ -820,7 +827,7 @@ static void CG_OffsetFirstPersonView(void)
 
 // Zoom controls
 
-// probably move to server variables
+// NOTE: probably move to server variables
 float zoomTable[ZOOM_MAX_ZOOMS][2] =
 {
 	// max {out,in}
@@ -833,6 +840,11 @@ float zoomTable[ZOOM_MAX_ZOOMS][2] =
 	{ 55, 55 }  //  mg42
 };
 
+/**
+ * @brief CG_AdjustZoomVal
+ * @param[in] val
+ * @param[in] type
+ */
 void CG_AdjustZoomVal(float val, int type)
 {
 	cg.zoomval += val;
@@ -846,6 +858,9 @@ void CG_AdjustZoomVal(float val, int type)
 	}
 }
 
+/**
+ * @brief CG_ZoomIn_f
+ */
 void CG_ZoomIn_f(void)
 {
 	// fixed being able to "latch" your zoom by weaponcheck + quick zoomin
@@ -864,6 +879,9 @@ void CG_ZoomIn_f(void)
 	}
 }
 
+/**
+ * @brief CG_ZoomOut_f
+ */
 void CG_ZoomOut_f(void)
 {
 	if (cg_entities[cg.snap->ps.clientNum].currentState.weapon == WP_GARAND_SCOPE)
@@ -880,11 +898,9 @@ void CG_ZoomOut_f(void)
 	}
 }
 
-/*
-==============
-CG_Zoom
-==============
-*/
+/**
+ * @brief CG_Zoom
+ */
 void CG_Zoom(void)
 {
 	// fix for demo playback
@@ -900,13 +916,13 @@ void CG_Zoom(void)
 		case WP_FG42SCOPE:
 		case WP_GARAND_SCOPE:
 		case WP_K43_SCOPE:
-			cg.zoomval = (cg.zoomval == 0) ? cg_zoomDefaultSniper.value : cg.zoomval;     // was DefaultFG, changed per atvi req
+			cg.zoomval = (cg.zoomval == 0.f) ? cg_zoomDefaultSniper.value : cg.zoomval;     // was DefaultFG, changed per atvi req
 			break;
 		default:
 			// show a zoomed binoculars view for spectators.. (still not actively zooming in/out)
 			if (cg.predictedPlayerState.eFlags & EF_ZOOMING)
 			{
-				cg.zoomval = (cg.zoomval == 0) ? cg_zoomDefaultSniper.value : cg.zoomval;
+				cg.zoomval = (cg.zoomval == 0.f) ? cg_zoomDefaultSniper.value : cg.zoomval;
 			}
 			else
 			{
@@ -967,22 +983,19 @@ void CG_Zoom(void)
 	}
 }
 
-/*
-====================
-CG_CalcFov
-
-Fixed fov at intermissions, otherwise account for fov variable and zooms.
-====================
-*/
 #define WAVE_AMPLITUDE  1
 #define WAVE_FREQUENCY  0.4
 
+/**
+ * @brief Fixed fov at intermissions, otherwise account for fov variable and zooms.
+ * @return
+ */
 static int CG_CalcFov(void)
 {
 	static float lastfov = 90;      // for transitions back from zoomed in modes
 	float        x;
 	int          contents;
-	float        fov_x, fov_y;
+	float        fov_x = 0.0f, fov_y;
 	int          inwater;
 
 	CG_Zoom();
@@ -1025,7 +1038,7 @@ static int CG_CalcFov(void)
 			float f;
 
 			// account for zooms
-			if (cg.zoomval)
+			if (cg.zoomval != 0.f)
 			{
 				zoomFov = cg.zoomval;   // use user scrolled amount
 
@@ -1047,7 +1060,7 @@ static int CG_CalcFov(void)
 			if (cg.zoomedBinoc)         // binoc zooming in
 			{
 				f = (cg.time - cg.zoomTime) / ZOOM_TIME;
-				if (f > 1.0)
+				if (f > 1.0f)
 				{
 					fov_x = zoomFov;
 				}
@@ -1057,7 +1070,7 @@ static int CG_CalcFov(void)
 				}
 				lastfov = fov_x;
 			}
-			else if (cg.zoomval)        // zoomed by sniper/snooper
+			else if (cg.zoomval != 0.f)        // zoomed by sniper/snooper
 			{
 				fov_x   = cg.zoomval;
 				lastfov = fov_x;
@@ -1065,7 +1078,7 @@ static int CG_CalcFov(void)
 			else                        // binoc zooming out
 			{
 				f = (cg.time - cg.zoomTime) / ZOOM_TIME;
-				if (f > 1.0)
+				if (f > 1.0f)
 				{
 					// fov_x = fov_x;
 				}
@@ -1159,9 +1172,9 @@ static int CG_CalcFov(void)
 	else if (!cg.zoomedBinoc)
 	{
 		// fix for zoomed in/out movement bug
-		if (cg.zoomval)
+		if (cg.zoomval != 0.f)
 		{
-			cg.zoomSensitivity = 0.6 * (cg.zoomval / 90.f);     // changed to get less sensitive as you zoom in
+			cg.zoomSensitivity = 0.6f * (cg.zoomval / 90.f);     // changed to get less sensitive as you zoom in
 		}
 		else
 		{
@@ -1170,28 +1183,25 @@ static int CG_CalcFov(void)
 	}
 	else
 	{
-		cg.zoomSensitivity = cg.refdef_current->fov_y / 75.0;
+		cg.zoomSensitivity = cg.refdef_current->fov_y / 75.0f;
 	}
 
 	return inwater;
 }
 
-/*
-==============
-CG_UnderwaterSounds
-==============
-*/
 #define UNDERWATER_BIT 16
+
+/**
+ * @brief CG_UnderwaterSounds
+ */
 static void CG_UnderwaterSounds(void)
 {
 	trap_S_AddLoopingSound(cg.snap->ps.origin, vec3_origin, cgs.media.underWaterSound, 255 | (1 << UNDERWATER_BIT), 0);
 }
 
-/*
-===============
-CG_DamageBlendBlob
-===============
-*/
+/**
+ * @brief CG_DamageBlendBlob
+ */
 static void CG_DamageBlendBlob(void)
 {
 	int          t, i;
@@ -1210,7 +1220,7 @@ static void CG_DamageBlendBlob(void)
 	{
 		vd = &cg.viewDamage[i];
 
-		if (!vd->damageValue)
+		if (vd->damageValue == 0.f)
 		{
 			continue;
 		}
@@ -1223,7 +1233,7 @@ static void CG_DamageBlendBlob(void)
 			continue;
 		}
 
-		pointDamage = !(!vd->damageX && !vd->damageY);
+		pointDamage = !(vd->damageX == 0.f && vd->damageY == 0.f);
 
 		// if not point Damage, only do flash blend
 		if (!pointDamage)
@@ -1239,26 +1249,23 @@ static void CG_DamageBlendBlob(void)
 		VectorMA(ent.origin, vd->damageX * -8, cg.refdef_current->viewaxis[1], ent.origin);
 		VectorMA(ent.origin, vd->damageY * 8, cg.refdef_current->viewaxis[2], ent.origin);
 
-		ent.radius = vd->damageValue * 0.4 * (0.5 + 0.5 * (float)t / maxTime) * (0.75 + 0.5 * fabs(sin(vd->damageTime)));
+		ent.radius = vd->damageValue * 0.4f * (0.5f + 0.5f * (float)t / maxTime) * (0.75f + 0.5f * (float)fabs(sin(vd->damageTime)));
 
 		ent.customShader  = cgs.media.viewBloodAni[(int)(floor(((float)t / maxTime) * 4.9))];      //cgs.media.viewBloodShader;
 		ent.shaderRGBA[0] = 255;
 		ent.shaderRGBA[1] = 255;
 		ent.shaderRGBA[2] = 255;
-		ent.shaderRGBA[3] = 255 * ((cg_bloodDamageBlend.value > 1.0f) ? 1.0f :
-		                           (cg_bloodDamageBlend.value < 0.0f) ? 0.0f : cg_bloodDamageBlend.value);
+		ent.shaderRGBA[3] = (byte)(255 * ((cg_bloodDamageBlend.value > 1.0f) ? 1.0f :
+		                                  (cg_bloodDamageBlend.value < 0.0f) ? 0.0f : cg_bloodDamageBlend.value));
 
 		trap_R_AddRefEntityToScene(&ent);
 	}
 }
 
-/*
-===============
-CG_CalcViewValues
-
-Sets cg.refdef view values
-===============
-*/
+/**
+ * @brief Sets cg.refdef view values
+ * @return
+ */
 int CG_CalcViewValues(void)
 {
 	playerState_t *ps;
@@ -1486,6 +1493,12 @@ int CG_CalcViewValues(void)
 
 //=========================================================================
 
+/**
+ * @brief CG_MustParse
+ * @param[in] pString
+ * @param[in] pErrorMsg
+ * @return
+ */
 char *CG_MustParse(char **pString, const char *pErrorMsg)
 {
 	char *token = COM_Parse(pString);
@@ -1497,6 +1510,9 @@ char *CG_MustParse(char **pString, const char *pErrorMsg)
 	return token;
 }
 
+/**
+ * @brief CG_ParseSkyBox
+ */
 void CG_ParseSkyBox(void)
 {
 	char *cstr, *token;
@@ -1510,18 +1526,18 @@ void CG_ParseSkyBox(void)
 	}
 
 	token               = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No skyboxViewOrg[0]\n");
-	cg.skyboxViewOrg[0] = atof(token);
+	cg.skyboxViewOrg[0] = (float)atof(token);
 
 	token               = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No skyboxViewOrg[1]\n");
-	cg.skyboxViewOrg[1] = atof(token);
+	cg.skyboxViewOrg[1] = (float)atof(token);
 
 	token               = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No skyboxViewOrg[2]\n");
-	cg.skyboxViewOrg[2] = atof(token);
+	cg.skyboxViewOrg[2] = (float)atof(token);
 
 	token            = CG_MustParse(&cstr, "CG_ParseSkyBox: error parsing skybox configstring. No skyboxViewFov\n");
 	cg.skyboxViewFov = atoi(token);
 
-	if (!cg.skyboxViewFov)
+	if (cg.skyboxViewFov == 0.f)
 	{
 		cg.skyboxViewFov = 90;
 	}
@@ -1534,13 +1550,13 @@ void CG_ParseSkyBox(void)
 		int fogStart, fogEnd;
 
 		token       = CG_MustParse(&cstr, "CG_DrawSkyBoxPortal: error parsing skybox configstring. No fog[0]\n");
-		fogColor[0] = atof(token);
+		fogColor[0] = (float)atof(token);
 
 		token       = CG_MustParse(&cstr, "CG_DrawSkyBoxPortal: error parsing skybox configstring. No fog[1]\n");
-		fogColor[1] = atof(token);
+		fogColor[1] = (float)atof(token);
 
 		token       = CG_MustParse(&cstr, "CG_DrawSkyBoxPortal: error parsing skybox configstring. No fog[2]\n");
-		fogColor[2] = atof(token);
+		fogColor[2] = (float)atof(token);
 
 		token    = COM_ParseExt(&cstr, qfalse);
 		fogStart = atoi(token);
@@ -1558,12 +1574,9 @@ void CG_ParseSkyBox(void)
 	cg.skyboxEnabled = qtrue;
 }
 
-/*
-==============
-CG_ParseTagConnects
-==============
-*/
-
+/**
+ * @brief CG_ParseTagConnects
+ */
 void CG_ParseTagConnects(void)
 {
 	int i;
@@ -1574,6 +1587,10 @@ void CG_ParseTagConnects(void)
 	}
 }
 
+/**
+ * @brief CG_ParseTagConnect
+ * @param tagNum
+ */
 void CG_ParseTagConnect(int tagNum)
 {
 	char *token, *pString = (char *)CG_ConfigString(tagNum);  //  bleh, i hate that cast away of the const
@@ -1604,11 +1621,10 @@ void CG_ParseTagConnect(int tagNum)
 	Q_strncpyz(cg_entities[entNum].tagName, token, MAX_QPATH);
 }
 
-/*
-==============
-CG_DrawSkyBoxPortal
-==============
-*/
+/**
+ * @brief CG_DrawSkyBoxPortal
+ * @param[in] fLocalView
+ */
 void CG_DrawSkyBoxPortal(qboolean fLocalView)
 {
 	refdef_t rd;
@@ -1651,7 +1667,7 @@ void CG_DrawSkyBoxPortal(qboolean fLocalView)
 			}
 
 			// account for zooms
-			if (cg.zoomval)
+			if (cg.zoomval != 0.f)
 			{
 				zoomFov = cg.zoomval;   // use user scrolled amount
 				if (zoomFov < 1)
@@ -1672,10 +1688,10 @@ void CG_DrawSkyBoxPortal(qboolean fLocalView)
 			if (cg.zoomedBinoc)            // binoc zooming in
 			{
 				f       = (cg.time - cg.zoomTime) / ZOOM_TIME;
-				fov_x   = (f > 1.0) ? zoomFov : fov_x + f * (zoomFov - fov_x);
+				fov_x   = (f > 1.0f) ? zoomFov : fov_x + f * (zoomFov - fov_x);
 				lastfov = fov_x;
 			}
-			else if (cg.zoomval)       // zoomed by sniper/snooper
+			else if (cg.zoomval != 0.f)       // zoomed by sniper/snooper
 			{
 				fov_x   = cg.zoomval;
 				lastfov = fov_x;
@@ -1683,7 +1699,7 @@ void CG_DrawSkyBoxPortal(qboolean fLocalView)
 			else                        // binoc zooming out
 			{
 				f     = (cg.time - cg.zoomTime) / ZOOM_TIME;
-				fov_x = (f > 1.0) ? fov_x : zoomFov + f * (fov_x - zoomFov);
+				fov_x = (f > 1.0f) ? fov_x : zoomFov + f * (fov_x - zoomFov);
 			}
 		}
 
@@ -1715,9 +1731,7 @@ void CG_DrawSkyBoxPortal(qboolean fLocalView)
 
 //=========================================================================
 
-/*
-**  Frustum code
-*/
+// Frustum code
 
 // some culling bits
 typedef struct plane_s
@@ -1731,7 +1745,7 @@ static plane_t frustum[4];
 //  CG_SetupFrustum
 void CG_SetupFrustum(void)
 {
-	float ang = cg.refdef_current->fov_x / 180 * M_PI * 0.5f;
+	float ang = cg.refdef_current->fov_x / 180 * M_PI * 0.5;
 	float xs  = sin(ang);
 	float xc  = cos(ang);
 	int i;
@@ -1742,7 +1756,7 @@ void CG_SetupFrustum(void)
 	VectorScale(cg.refdef_current->viewaxis[0], xs, frustum[1].normal);
 	VectorMA(frustum[1].normal, -xc, cg.refdef_current->viewaxis[1], frustum[1].normal);
 
-	ang = cg.refdef.fov_y / 180 * M_PI * 0.5f;
+	ang = cg.refdef.fov_y / 180 * M_PI * 0.5;
 	xs  = sin(ang);
 	xc  = cos(ang);
 
@@ -1758,7 +1772,11 @@ void CG_SetupFrustum(void)
 	}
 }
 
-//  CG_CullPoint - returns true if culled
+/**
+ * @brief CG_CullPoint
+ * @param pt
+ * @return true if culled otherwise false
+ */
 qboolean CG_CullPoint(vec3_t pt)
 {
 	int i;
@@ -1778,6 +1796,12 @@ qboolean CG_CullPoint(vec3_t pt)
 	return qfalse;
 }
 
+/**
+ * @brief CG_CullPointAndRadius
+ * @param[in] pt
+ * @param[in] radius
+ * @return
+ */
 qboolean CG_CullPointAndRadius(const vec3_t pt, vec_t radius)
 {
 	int i;
@@ -1799,6 +1823,9 @@ qboolean CG_CullPointAndRadius(const vec3_t pt, vec_t radius)
 
 //=========================================================================
 
+/**
+ * @brief CG_RenderLocations
+ */
 static void CG_RenderLocations(void)
 {
 	refEntity_t re;
@@ -1832,6 +1859,9 @@ static void CG_RenderLocations(void)
 	}
 }
 
+/**
+ * @brief CG_ProcessCvars
+ */
 void CG_ProcessCvars()
 {
 	char currentVal[256];
@@ -1843,9 +1873,9 @@ void CG_ProcessCvars()
 	{
 		trap_Cvar_VariableStringBuffer(cg.svCvars[i].cvarName, currentVal, sizeof(currentVal));
 
-		cvalF = atof(currentVal);
-		val1F = atof(cg.svCvars[i].Val1);
-		val2F = atof(cg.svCvars[i].Val2);
+		cvalF = (float)atof(currentVal);
+		val1F = (float)atof(cg.svCvars[i].Val1);
+		val2F = (float)atof(cg.svCvars[i].Val2);
 		//cvalI   = atoi(currentVal);
 		val1I   = atoi(cg.svCvars[i].Val1);
 		val2I   = atoi(cg.svCvars[i].Val2);
@@ -1907,14 +1937,14 @@ void CG_ProcessCvars()
 			}
 			break;
 		case SVC_INSIDE:
-			if (val1F || val1I)
+			if (val1F != 0.f || val1I)
 			{
 				if (cvalF < val1F)
 				{
 					trap_Cvar_Set(cg.svCvars[i].cvarName, cg.svCvars[i].Val1);
 				}
 			}
-			if (val2F || val2I)
+			if (val2F != 0.f || val2I)
 			{
 				if (cvalF > val2F)
 				{
@@ -1923,11 +1953,11 @@ void CG_ProcessCvars()
 			}
 			break;
 		case SVC_OUTSIDE:
-			if (val1F || val1I)
+			if (val1F != 0.f || val1I)
 			{
 				if (cvalF >= val1F)
 				{
-					if (!val2F || cvalF < val2F)
+					if (val2F == 0.f || cvalF < val2F)
 					{
 						if (cvalIsF || val1IsF)
 						{
@@ -1940,7 +1970,7 @@ void CG_ProcessCvars()
 					}
 				}
 			}
-			if (val2F || val2I)
+			if (val2F != 0.f || val2I)
 			{
 				if (cvalF <= val2F)
 				{
@@ -1992,6 +2022,9 @@ extern void CG_SetupDlightstyles(void);
 
 /**
  * @brief Generates and draws a game scene and status information at the given time.
+ * @param[in] serverTime
+ * @param[in] stereoView
+ * @param[in] demoPlayback
  */
 void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoPlayback)
 {
@@ -2149,7 +2182,7 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 
 			if (!cgs.demoCamera.wasRenderingWeaponCam)
 			{
-				trap_Cvar_Set("timescale", va("%0.2f", cg_timescale.value));
+				trap_Cvar_Set("timescale", va("%0.2f", (double)cg_timescale.value));
 			}
 		}
 
