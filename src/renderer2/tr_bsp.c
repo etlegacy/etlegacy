@@ -481,7 +481,7 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 		Ren_Drop("LoadRGBE: %s has an invalid image size\n", name);
 	}
 
-	*pic     = (float *)Com_Allocate(w * h * 3 * sizeof(float));
+	*pic     = (float *)ri.Hunk_AllocateTempMemory(w * h * 3 * sizeof(float));
 	floatbuf = *pic;
 	for (i = 0; i < (w * h); i++)
 	{
@@ -689,7 +689,7 @@ static void LoadRGBEToBytes(const char *name, byte **ldrImage, int *width, int *
 	}
 #endif
 
-	Com_Dealloc(hdrImage);
+	ri.Hunk_FreeTempMemory(hdrImage);
 }
 
 #define LIGHTMAP_SIZE   128
@@ -7349,7 +7349,7 @@ unsigned int VertexCoordGenerateHash(const vec3_t xyz)
 
 vertexHash_t **NewVertexHashTable(void)
 {
-	vertexHash_t **hashTable = (vertexHash_t **)Com_Allocate(HASHTABLE_SIZE * sizeof(vertexHash_t *));
+	vertexHash_t **hashTable = (vertexHash_t **) ri.Hunk_Alloc(HASHTABLE_SIZE * sizeof(vertexHash_t *), h_low);
 
 	Com_Memset(hashTable, 0, HASHTABLE_SIZE * sizeof(vertexHash_t *));
 
@@ -7382,12 +7382,12 @@ void FreeVertexHashTable(vertexHash_t **hashTable)
 				    Com_Dealloc(vertexHash->data);
 				}
 				*/
-				Com_Dealloc(vertexHash);
+				//Com_Dealloc(vertexHash); // ... now in hunk
 			}
 		}
 	}
 
-	Com_Dealloc(hashTable);
+	//Com_Dealloc(hashTable); // ... now in hunk
 }
 
 vertexHash_t *FindVertexInHashTable(vertexHash_t **hashTable, const vec3_t xyz, float distance)
@@ -7441,7 +7441,7 @@ vertexHash_t *AddVertexToHashTable(vertexHash_t **hashTable, vec3_t xyz, void *d
 		return NULL;
 	}
 
-	vertexHash = (vertexHash_t *)Com_Allocate(sizeof(vertexHash_t));
+	vertexHash = (vertexHash_t *)ri.Hunk_Alloc(sizeof(vertexHash_t), h_low);
 
 	if (!vertexHash)
 	{
