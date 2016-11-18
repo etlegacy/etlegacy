@@ -3,7 +3,7 @@
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
 # Aranud <aranud66@live.fr>, 2015-2016
-# Calinou, 2015
+# Hugo Locurcio, 2015
 # Mateos <mister_mateos@hotmail.fr>, 2015
 # Thomas Debesse <dev@illwieckz.net>, 2015
 msgid ""
