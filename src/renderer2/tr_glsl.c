@@ -2264,6 +2264,7 @@ void GLSL_DeleteShaderProramInfo(programInfo_t *program)
 	if (program->list)
 	{
 		GLSL_DeleteShaderProgramList(program->list);
+		Com_Dealloc(program->list);
 	}
 
 	if (program->extraMacros)
