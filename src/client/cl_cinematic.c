@@ -143,7 +143,7 @@ cinematic_t *CIN_GetCinematicByHandle(cinHandle_t handle)
 static void CIN_FreeCinematic(cinematic_t *cin, qboolean runtime)
 {
 	// Stop the cinematic
-	if (runtime && cin->flags & CIN_system)
+	if (runtime && (cin->flags & CIN_system))
 	{
 		Com_DPrintf("Stopped cinematic %s\n", cin->name);
 
