@@ -169,6 +169,13 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	mat4_from_angles(unrealToQuake, 0, 90, 0);
 
 	stream = AllocMemStream(buffer, bufferSize);
+
+	if (stream == NULL)
+	{
+		Ren_Warning("R_LoadPSK: can't allocate memory\n");
+		return qfalse;
+	}
+
 	GetChunkHeader(stream, &chunkHeader);
 
 	// check indent again

@@ -447,6 +447,13 @@ static qboolean R_LoadPSA(skelAnimation_t *skelAnim, byte *buffer, int bufferSiz
 	growList_t        extraAnims;
 
 	stream = AllocMemStream(buffer, bufferSize);
+
+	if (stream == NULL)
+	{
+		Ren_Warning("R_LoadPSA: can't allocate memory\n");
+		return qfalse;
+	}
+
 	GetChunkHeader(stream, &chunkHeader);
 
 	// check indent again
@@ -590,6 +597,7 @@ static qboolean R_LoadPSA(skelAnimation_t *skelAnim, byte *buffer, int bufferSiz
 
 		if (animInfo->numBones != numReferenceBones)
 		{
+			FreeMemStream(stream);
 			Ren_Drop("R_LoadPSA: axAnimationInfo_t contains different number than reference bones exist: %i != %i for anim '%s'", animInfo->numBones, numReferenceBones, name);
 		}
 
