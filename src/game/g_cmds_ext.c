@@ -64,10 +64,6 @@ static const cmd_reference_t aCommandInfo[] =
 	{ "autoscreenshot", qtrue,  qtrue,  NULL,                  ":^7 Creates a screenshot with a consistent naming scheme"                                   },
 	{ "bottomshots",    qtrue,  qfalse, G_weaponRankings_cmd,  ":^7 Shows WORST player for each weapon. Add ^3<weapon_ID>^7 to show all stats for a weapon" },
 	{ "callvote",       qtrue,  qfalse, (void (*)(gentity_t *, unsigned int, qboolean))Cmd_CallVote_f, " <params>:^7 Calls a vote"                          },
-//  { "coach",          qtrue,  qtrue,  NULL, ":^7 Accepts coach invitation/restarts coach view" },
-//  { "coachdecline",   qtrue,  qtrue,  NULL, ":^7 Declines coach invitation or resigns coach status" },
-//  { "coachinvite",    qtrue,  qtrue,  NULL, " <player_ID>:^7 Invites a player to coach team" },
-//  { "coachkick",      qtrue,  qtrue,  NULL, " <player_ID>:^7 Kicks active coach from team" },
 	{ "commands",       qtrue,  qtrue,  G_commands_cmd,        ":^7 Gives a list of commands"                                                               },
 	{ "currenttime",    qtrue,  qtrue,  NULL,                  ":^7 Displays current local time"                                                            },
 	{ "follow",         qfalse, qtrue,  Cmd_Follow_f,          " <player_ID|allies|axis>:^7 Spectates a particular player or team"                          },
@@ -98,20 +94,11 @@ static const cmd_reference_t aCommandInfo[] =
 	{ "unready",        qtrue,  qfalse, G_ready_cmd,           ":^7 Sets your status to ^5not ready^7 to start a match"                                     },
 	{ "weaponstats",    qtrue,  qfalse, G_weaponStats_cmd,     " [player_ID]:^7 Shows weapon accuracy stats for a player"                                   },
 #ifdef FEATURE_MULTIVIEW
-	// FIXME: add multiview commands? (following list is obsolete)
-//  { "viewcam",        qfalse, qtrue,  NULL, ":^7 Switches to cinematic camera mode" },
-//  { "vc_follow",      qfalse, qtrue,  NULL, " [player_ID]:^7 Puts viewcam in follow mode.  Can optionally to follow a specific player" },
-//  { "vc_free",        qfalse, qtrue,  NULL, ":^7 Toggle viewcam between manual/automatic change" },
-//  { "vc_view",        qfalse, qtrue,  NULL, ":^7 Toggle ViewCam between static/dynamic views" },
-//  { "viewadd",        qfalse, qtrue,  NULL, " <player_ID>:^7 Adds a player to multi-screen view" },
-//  { "viewall",        qfalse, qtrue,  NULL, ":^7 Adds all active players to a multi-screen view" },
-//  { "viewallies",     qfalse, qtrue,  NULL, ": ^7 Views entire allies/axis team" },
-//  { "viewaxis",       qfalse, qtrue,  NULL, ": ^7 Views entire allies/axis team" },
-//  { "viewcyclenext",  qfalse, qtrue,  NULL, ":^7 Cycles through players in current view" },
-//  { "viewfollow",     qfalse, qtrue,  NULL, ":^7 Follows current highlighted view" },
-//  { "viewnext",       qfalse, qtrue,  NULL, ":^7 Moves through active screen in a multi-screen display" },
-//  { "viewnone",       qfalse, qtrue,  NULL, ":^7 Disables multiview mode and goes back to spectator mode" },
-//  { "viewremove",     qfalse, qtrue,  NULL, " [player_ID]:^7 Removes current selected or specific player from multi-screen view" },
+	{ "mvwadd",         qfalse, qtrue,  NULL,                  " <player_ID>:^7 Adds a player to multi-screen view"                                         },
+	{ "mvallies",       qfalse, qtrue,  NULL,                  ": ^7 Views entire allies/axis team"                                                         },
+	{ "mvaxis",         qfalse, qtrue,  NULL,                  ": ^7 Views entire allies/axis team"                                                         },
+	{ "mvnone",         qfalse, qtrue,  NULL,                  ":^7 Disables multiview mode and goes back to spectator mode"                                },
+	{ "mvdel",          qfalse, qtrue,  NULL,                  " [player_ID]:^7 Removes current selected or specific player from multi-screen view"         },
 #endif
 	{ 0,                qfalse, qtrue,  NULL,                  0                                                                                            }
 };
