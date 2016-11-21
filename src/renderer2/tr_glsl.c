@@ -2313,6 +2313,11 @@ void GLSL_DeleteShaderProramInfo(programInfo_t *program)
 	{
 		Com_Dealloc(program->uniformValues[program->numUniformValues].type.name);
 	}
+
+	if (program->uniformValues[program->numUniformValues].value)
+	{
+		Com_Dealloc(program->uniformValues[program->numUniformValues].value);
+	}
 }
 
 void GLSL_InitGPUShaders(void)
