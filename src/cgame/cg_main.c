@@ -1529,7 +1529,7 @@ sfxHandle_t CG_GetGameSound(int index)
  */
 static void CG_RegisterGraphics(void)
 {
-	char              name[1024];
+	char              name[MAX_QPATH];
 	int               i;
 	static const char *sb_nums[11] =
 	{
@@ -1943,8 +1943,6 @@ static void CG_RegisterGraphics(void)
 
 	for (i = 0 ; i < 5 ; i++)
 	{
-		char name[32];
-
 		//Com_sprintf( name, sizeof(name), "textures/decals/blood%i", i+1 );
 		//cgs.media.bloodMarkShaders[i] = trap_R_RegisterShader( name );
 		Com_sprintf(name, sizeof(name), "blood_dot%i", i + 1);
@@ -1964,7 +1962,6 @@ static void CG_RegisterGraphics(void)
 
 	for (i = 1 ; i < cgs.numInlineModels ; i++)
 	{
-		char   name[10];
 		vec3_t mins, maxs;
 		int    j;
 
