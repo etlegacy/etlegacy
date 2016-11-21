@@ -67,11 +67,13 @@ int      lastListBoxClickTime = 0;
 #define MEM_POOL_SIZE  2048 * 1024  // was 1536, 1024
 #endif
 
-static char memoryPool[MEM_POOL_SIZE];
-static int  allocPoint, outOfMemory;
+static char     memoryPool[MEM_POOL_SIZE];
+static int      allocPoint;
+static qboolean outOfMemory;
 
 /**
  * @brief Convert rectangle-coordinates for use with the current aspectratio.
+ * @param[out] rect
  */
 void Cui_WideRect(rectDef_t *rect)
 {
@@ -80,7 +82,7 @@ void Cui_WideRect(rectDef_t *rect)
 	rect->w *= DC->xscale;
 	rect->h *= DC->yscale;
 
-	if (DC->glconfig.windowAspect > RATIO43 && DC->getCVarValue("r_mode") != 11)
+	if (DC->glconfig.windowAspect > RATIO43 && DC->getCVarValue("r_mode") != 11.f)
 	{
 		rect->x *= RATIO43 / DC->glconfig.windowAspect;
 		rect->w *= RATIO43 / DC->glconfig.windowAspect;
@@ -90,6 +92,8 @@ void Cui_WideRect(rectDef_t *rect)
 /**
  * @brief Convert an x-coordinate for use with the current aspectratio.
  * (if the current aspectratio is 4:3, then leave the x-coordinate unchanged)
+ * @param[in] x
+ * @return
  */
 float Cui_WideX(float x)
 {
@@ -104,6 +108,11 @@ float Cui_WideXoffset(void)
 	return (DC->glconfig.windowAspect <= RATIO43) ? 0.0f : ((640.0f * (DC->glconfig.windowAspect * RPRATIO43)) - 640.0f) * 0.5f;
 }
 
+/**
+ * @brief UI_Alloc
+ * @param[in] size
+ * @return
+ */
 void *UI_Alloc(int size)
 {
 	char *p;
@@ -126,12 +135,19 @@ void *UI_Alloc(int size)
 	return p;
 }
 
+/**
+ * @brief UI_InitMemory
+ */
 void UI_InitMemory(void)
 {
 	allocPoint  = 0;
 	outOfMemory = qfalse;
 }
 
+/**
+ * @brief UI_OutOfMemory
+ * @return
+ */
 qboolean UI_OutOfMemory(void)
 {
 	return outOfMemory;
@@ -141,6 +157,8 @@ qboolean UI_OutOfMemory(void)
 
 /**
  * @brief Return a hash value for the string
+ * @param[in] str
+ * @return
  */
 static long hashForString(const char *str)
 {
@@ -150,7 +168,7 @@ static long hashForString(const char *str)
 
 	while (str[i] != '\0')
 	{
-		letter = tolower(str[i]);
+		letter = (char)tolower(str[i]);
 		hash  += (long)(letter) * (i + 119);
 		i++;
 	}
@@ -171,6 +189,11 @@ static char strPool[STRING_POOL_SIZE];
 static int         strHandleCount = 0;
 static stringDef_t *strHandle[HASH_TABLE_SIZE];
 
+/**
+ * @brief String_Alloc
+ * @param[in] p
+ * @return
+ */
 const char *String_Alloc(const char *p)
 {
 	int               len;
@@ -235,6 +258,9 @@ const char *String_Alloc(const char *p)
 	return NULL;
 }
 
+/**
+ * @brief String_Report
+ */
 void String_Report(void)
 {
 	float f;
@@ -244,13 +270,16 @@ void String_Report(void)
 	f  = strPoolIndex;
 	f /= STRING_POOL_SIZE;
 	f *= 100;
-	Com_Printf("String Pool is %.1f%% full, %i bytes out of %i used.\n", f, strPoolIndex, STRING_POOL_SIZE);
+	Com_Printf("String Pool is %.1f%% full, %i bytes out of %i used.\n", (double)f, strPoolIndex, STRING_POOL_SIZE);
 	f  = allocPoint;
 	f /= MEM_POOL_SIZE;
 	f *= 100;
-	Com_Printf("Memory Pool is %.1f%% full, %i bytes out of %i used.\n", f, allocPoint, MEM_POOL_SIZE);
+	Com_Printf("Memory Pool is %.1f%% full, %i bytes out of %i used.\n", (double)f, allocPoint, MEM_POOL_SIZE);
 }
 
+/**
+ * @brief String_Init
+ */
 void String_Init(void)
 {
 	int i;
@@ -274,6 +303,10 @@ void String_Init(void)
 
 /**
  * @brief Lerp and clamp each component of @p a and @p b into @p c by the fraction @p t
+ * @param[in] a
+ * @param[in] b
+ * @param[in] c
+ * @param[in] t
  */
 void LerpColor(vec4_t a, vec4_t b, vec4_t c, float t)
 {
@@ -286,7 +319,7 @@ void LerpColor(vec4_t a, vec4_t b, vec4_t c, float t)
 		{
 			c[i] = 0;
 		}
-		else if (c[i] > 1.0)
+		else if (c[i] > 1.0f)
 		{
 			c[i] = 1.0;
 		}
@@ -297,6 +330,7 @@ void LerpColor(vec4_t a, vec4_t b, vec4_t c, float t)
 
 /**
  * @brief Initializes the display with a structure to all the drawing routines
+ * @param[in] dc
  */
 void Init_Display(displayContextDef_t *dc)
 {
@@ -305,6 +339,11 @@ void Init_Display(displayContextDef_t *dc)
 
 // type and style painting
 
+/**
+ * @brief GradientBar_Paint
+ * @param[in] rect
+ * @param[in] color
+ */
 void GradientBar_Paint(rectDef_t *rect, vec4_t color)
 {
 	// gradient bar takes two paints
@@ -315,6 +354,7 @@ void GradientBar_Paint(rectDef_t *rect, vec4_t color)
 
 /**
  * @brief Initializes a window structure ( windowDef_t ) with defaults
+ * @param[in,out] w
  */
 void Window_Init(Window *w)
 {
@@ -324,6 +364,16 @@ void Window_Init(Window *w)
 	w->cinematic    = -1;
 }
 
+/**
+ * @brief Fade
+ * @param[in,out] flags
+ * @param[in,out] f
+ * @param[in] clamp
+ * @param[in,out] nextTime
+ * @param[in] offsetTime
+ * @param[in] bFlags
+ * @param[in] fadeAmount
+ */
 void Fade(int *flags, float *f, float clamp, int *nextTime, int offsetTime, qboolean bFlags, float fadeAmount)
 {
 	if (*flags & (WINDOW_FADINGOUT | WINDOW_FADINGIN))
@@ -334,7 +384,7 @@ void Fade(int *flags, float *f, float clamp, int *nextTime, int offsetTime, qboo
 			if (*flags & WINDOW_FADINGOUT)
 			{
 				*f -= fadeAmount;
-				if (bFlags && *f <= 0.0)
+				if (bFlags && *f <= 0.0f)
 				{
 					*flags &= ~(WINDOW_FADINGOUT | WINDOW_VISIBLE);
 				}
@@ -355,9 +405,16 @@ void Fade(int *flags, float *f, float clamp, int *nextTime, int offsetTime, qboo
 	}
 }
 
+/**
+ * @brief Window_Paint
+ * @param[in,out] w
+ * @param[in] fadeAmount
+ * @param[in] fadeClamp
+ * @param[in] fadeCycle
+ */
 void Window_Paint(Window *w, float fadeAmount, float fadeClamp, float fadeCycle)
 {
-	vec4_t    color;
+	vec4_t    color = { 0.0, 0.0, 0.0, 0.0 };
 	rectDef_t fillRect;
 
 	if (w == NULL)
@@ -444,8 +501,8 @@ void Window_Paint(Window *w, float fadeAmount, float fadeClamp, float fadeCycle)
 
 	if (w->border == WINDOW_BORDER_FULL)
 	{
-		// full
-		// HACK HACK HACK
+
+		// WARNING: full HACK HACK HACK
 		if (w->style == WINDOW_STYLE_TEAMCOLOR)
 		{
 			if (color[0] > 0)
@@ -494,12 +551,22 @@ void Window_Paint(Window *w, float fadeAmount, float fadeClamp, float fadeCycle)
 	}
 }
 
+/**
+ * @brief IsVisible
+ * @param[in] flags
+ * @return
+ */
 qboolean IsVisible(int flags)
 {
 	return ((flags & WINDOW_VISIBLE) && !(flags & WINDOW_FADINGOUT));
 }
 
-qboolean FileExists(char *filename)
+/**
+ * @brief FileExists
+ * @param filename
+ * @return
+ */
+qboolean FileExists(const char *filename)
 {
 	fileHandle_t f;
 
@@ -515,6 +582,13 @@ qboolean FileExists(char *filename)
 	}
 }
 
+/**
+ * @brief AdjustFrom640
+ * @param[out] x
+ * @param[out] y
+ * @param[out] w
+ * @param[out] h
+ */
 void AdjustFrom640(float *x, float *y, float *w, float *h)
 {
 	*x *= DC->xscale;
@@ -530,6 +604,13 @@ void AdjustFrom640(float *x, float *y, float *w, float *h)
 	}
 }
 
+/**
+ * @brief Rect_ContainsPoint
+ * @param[in] rect
+ * @param[in] x
+ * @param[in] y
+ * @return
+ */
 qboolean Rect_ContainsPoint(rectDef_t *rect, float x, float y)
 {
 	if (rect)
@@ -546,6 +627,13 @@ qboolean Rect_ContainsPoint(rectDef_t *rect, float x, float y)
 	return qfalse;
 }
 
+/**
+ * @brief Rect_ContainsPointN
+ * @param[in] rect
+ * @param[in] x
+ * @param[in] y
+ * @return
+ */
 qboolean Rect_ContainsPointN(rectDef_t *rect, float x, float y)
 {
 	if (rect)
@@ -559,6 +647,10 @@ qboolean Rect_ContainsPointN(rectDef_t *rect, float x, float y)
 	return qfalse;
 }
 
+/**
+ * @brief Window_CloseCinematic
+ * @param[in,out] window
+ */
 void Window_CloseCinematic(windowDef_t *window)
 {
 	if (window->style == WINDOW_STYLE_CINEMATIC && window->cinematic >= 0)
@@ -568,6 +660,9 @@ void Window_CloseCinematic(windowDef_t *window)
 	}
 }
 
+/**
+ * @brief Display_CloseCinematics
+ */
 void Display_CloseCinematics(void)
 {
 	int i;
@@ -578,6 +673,10 @@ void Display_CloseCinematics(void)
 	}
 }
 
+/**
+ * @brief Display_VisibleMenuCount
+ * @return
+ */
 int Display_VisibleMenuCount(void)
 {
 	int i, count = 0;
@@ -593,17 +692,31 @@ int Display_VisibleMenuCount(void)
 	return count;
 }
 
+/**
+ * @brief ToWindowCoords
+ * @param[out] x
+ * @param[out] y
+ * @param[in] window
+ */
 void ToWindowCoords(float *x, float *y, windowDef_t *window)
 {
 	*x += window->rect.x;
 	*y += window->rect.y;
 }
 
-// @note Unused
+/**
+ * @brief Rect_ToWindowCoords
+ * @param rect
+ * @param window
+ *
+ * @note Unused
+ */
+/*
 void Rect_ToWindowCoords(rectDef_t *rect, windowDef_t *window)
 {
-	ToWindowCoords(&rect->x, &rect->y, window);
+    ToWindowCoords(&rect->x, &rect->y, window);
 }
+*/
 
 typedef struct
 {
@@ -620,82 +733,80 @@ typedef struct
 // These MUST be all lowercase now
 static bind_t g_bindings[] =
 {
-	{ "+forward",         'w',             -1,  K_UPARROW,       -1,  -1, -1 },
-	{ "+back",            's',             -1,  K_DOWNARROW,     -1,  -1, -1 },
-	{ "+moveleft",        'a',             -1,  K_LEFTARROW,     -1,  -1, -1 },
-	{ "+moveright",       'd',             -1,  K_RIGHTARROW,    -1,  -1, -1 },
-	{ "+moveup",          K_SPACE,         -1,  K_KP_INS,        -1,  -1, -1 },
-	{ "+movedown",        'c',             -1,  K_CTRL,          -1,  -1, -1 },
-	{ "+leanright",       'e',             -1,  K_PGDN,          -1,  -1, -1 },
-	{ "+leanleft",        'q',             -1,  K_DEL,           -1,  -1, -1 },
-	{ "+prone",           'x',             -1,  K_SHIFT,         -1,  -1, -1 },
-	{ "+attack",          K_MOUSE1,        -1,  K_MOUSE1,        -1,  -1, -1 },
-	{ "weapalt",          K_MOUSE2,        -1,  K_MOUSE2,        -1,  -1, -1 },
-	{ "weapprev",         K_MWHEELDOWN,    -1,  K_MWHEELDOWN,    -1,  -1, -1 },
-	{ "weapnext",         K_MWHEELUP,      -1,  K_MWHEELUP,      -1,  -1, -1 },
-	{ "weaponbank 10",    '0',             -1,  '0',             -1,  -1, -1 },
-	{ "weaponbank 1",     '1',             -1,  '1',             -1,  -1, -1 },
-	{ "weaponbank 2",     '2',             -1,  '2',             -1,  -1, -1 },
-	{ "weaponbank 3",     '3',             -1,  '3',             -1,  -1, -1 },
-	{ "weaponbank 4",     '4',             -1,  '4',             -1,  -1, -1 },
-	{ "weaponbank 5",     '5',             -1,  '5',             -1,  -1, -1 },
-	{ "weaponbank 6",     '6',             -1,  '6',             -1,  -1, -1 },
-	{ "weaponbank 7",     '7',             -1,  '7',             -1,  -1, -1 },
-	{ "weaponbank 8",     '8',             -1,  '8',             -1,  -1, -1 },
-	{ "weaponbank 9",     '9',             -1,  '9',             -1,  -1, -1 },
-	{ "+sprint",          K_SHIFT,         -1,  K_MOUSE3,        -1,  -1, -1 },
-	{ "+speed",           K_CAPSLOCK,      -1,  K_CAPSLOCK,      -1,  -1, -1 },
-	{ "+activate",        'f',             -1,  K_ENTER,         -1,  -1, -1 },
-	{ "+zoom",            'b',             -1,  'b',             -1,  -1, -1 },
-	{ "+mapexpand",       'g',             -1,  '#',             -1,  -1, -1 },
-	{ "+reload",          'r',             -1,  K_END,           -1,  -1, -1 },
-	{ "kill",             'k',             -1,  'k',             -1,  -1, -1 },
-	{ "+scores",          K_TAB,           -1,  K_TAB,           -1,  -1, -1 },
-	{ "+stats",           K_ALT,           -1,  K_F9,            -1,  -1, -1 },
-	{ "+topshots",        K_CTRL,          -1,  K_F10,           -1,  -1, -1 },
-	{ "+objectives",      'o',             -1,  'o',             -1,  -1, -1 },
-	{ "toggleconsole",    '`',             '~', '`',             '~', -1, -1 },
-	{ "togglemenu",       K_ESCAPE,        -1,  K_ESCAPE,        -1,  -1, -1 },
-	{ "openlimbomenu",    'l',             -1,  'l',             -1,  -1, -1 },
+	{ "+forward",         'w',             -1,  K_UPARROW,       -1,  -1, -1, -1 },
+	{ "+back",            's',             -1,  K_DOWNARROW,     -1,  -1, -1, -1 },
+	{ "+moveleft",        'a',             -1,  K_LEFTARROW,     -1,  -1, -1, -1 },
+	{ "+moveright",       'd',             -1,  K_RIGHTARROW,    -1,  -1, -1, -1 },
+	{ "+moveup",          K_SPACE,         -1,  K_KP_INS,        -1,  -1, -1, -1 },
+	{ "+movedown",        'c',             -1,  K_CTRL,          -1,  -1, -1, -1 },
+	{ "+leanright",       'e',             -1,  K_PGDN,          -1,  -1, -1, -1 },
+	{ "+leanleft",        'q',             -1,  K_DEL,           -1,  -1, -1, -1 },
+	{ "+prone",           'x',             -1,  K_SHIFT,         -1,  -1, -1, -1 },
+	{ "+attack",          K_MOUSE1,        -1,  K_MOUSE1,        -1,  -1, -1, -1 },
+	{ "weapalt",          K_MOUSE2,        -1,  K_MOUSE2,        -1,  -1, -1, -1 },
+	{ "weapprev",         K_MWHEELDOWN,    -1,  K_MWHEELDOWN,    -1,  -1, -1, -1 },
+	{ "weapnext",         K_MWHEELUP,      -1,  K_MWHEELUP,      -1,  -1, -1, -1 },
+	{ "weaponbank 10",    '0',             -1,  '0',             -1,  -1, -1, -1 },
+	{ "weaponbank 1",     '1',             -1,  '1',             -1,  -1, -1, -1 },
+	{ "weaponbank 2",     '2',             -1,  '2',             -1,  -1, -1, -1 },
+	{ "weaponbank 3",     '3',             -1,  '3',             -1,  -1, -1, -1 },
+	{ "weaponbank 4",     '4',             -1,  '4',             -1,  -1, -1, -1 },
+	{ "weaponbank 5",     '5',             -1,  '5',             -1,  -1, -1, -1 },
+	{ "weaponbank 6",     '6',             -1,  '6',             -1,  -1, -1, -1 },
+	{ "weaponbank 7",     '7',             -1,  '7',             -1,  -1, -1, -1 },
+	{ "weaponbank 8",     '8',             -1,  '8',             -1,  -1, -1, -1 },
+	{ "weaponbank 9",     '9',             -1,  '9',             -1,  -1, -1, -1 },
+	{ "+sprint",          K_SHIFT,         -1,  K_MOUSE3,        -1,  -1, -1, -1 },
+	{ "+speed",           K_CAPSLOCK,      -1,  K_CAPSLOCK,      -1,  -1, -1, -1 },
+	{ "+activate",        'f',             -1,  K_ENTER,         -1,  -1, -1, -1 },
+	{ "+zoom",            'b',             -1,  'b',             -1,  -1, -1, -1 },
+	{ "+mapexpand",       'g',             -1,  '#',             -1,  -1, -1, -1 },
+	{ "+reload",          'r',             -1,  K_END,           -1,  -1, -1, -1 },
+	{ "kill",             'k',             -1,  'k',             -1,  -1, -1, -1 },
+	{ "+scores",          K_TAB,           -1,  K_TAB,           -1,  -1, -1, -1 },
+	{ "+stats",           K_ALT,           -1,  K_F9,            -1,  -1, -1, -1 },
+	{ "+topshots",        K_CTRL,          -1,  K_F10,           -1,  -1, -1, -1 },
+	{ "+objectives",      'o',             -1,  'o',             -1,  -1, -1, -1 },
+	{ "toggleconsole",    '`',             '~', '`',             '~', -1, -1, -1 },
+	{ "togglemenu",       K_ESCAPE,        -1,  K_ESCAPE,        -1,  -1, -1, -1 },
+	{ "openlimbomenu",    'l',             -1,  'l',             -1,  -1, -1, -1 },
 #ifdef FEATURE_MULTIVIEW
-	{ "mvactivate",       'm',             -1,  'm',             -1,  -1, -1 },
-	{ "spechelp",         K_BACKSPACE,     -1,  K_BACKSPACE,     -1,  -1, -1 },
+	{ "mvactivate",       'm',             -1,  'm',             -1,  -1, -1, -1 },
+	{ "spechelp",         K_BACKSPACE,     -1,  K_BACKSPACE,     -1,  -1, -1, -1 },
 #endif
-	{ "mapzoomout",       ',',             -1,  '[',             -1,  -1, -1 },
-	{ "mapzoomin",        '.',             -1,  ']',             -1,  -1, -1 },
-	{ "zoomin",           '=',             -1,  '-',             -1,  -1, -1 },
-	{ "zoomout",          '-',             -1,  '=',             -1,  -1, -1 },
-	{ "messagemode",      't',             -1,  't',             -1,  -1, -1 },
-	{ "messagemode2",     'y',             -1,  'y',             -1,  -1, -1 },
-	{ "messagemode3",     'u',             -1,  'u',             -1,  -1, -1 },
-	{ "mp_quickmessage",  'v',             -1,  'v',             -1,  -1, -1 },
-	{ "mp_fireteammsg",   'z',             -1,  'c',             -1,  -1, -1 },
-	{ "vote yes",         K_F1,            -1,  K_F1,            -1,  -1, -1 },
-	{ "vote no",          K_F2,            -1,  K_F2,            -1,  -1, -1 },
-	{ "ready",            K_F3,            -1,  K_F3,            -1,  -1, -1 },
-	{ "notready",         K_F4,            -1,  K_F4,            -1,  -1, -1 },
-	{ "autoscreenshot",   K_F11,           -1,  K_F11,           -1,  -1, -1 },
-	{ "autoRecord",       K_F12,           -1,  K_F12,           -1,  -1, -1 },
-	{ "mp_fireteamadmin", K_KP_ENTER,      -1,  K_KP_ENTER,      -1,  -1, -1 },
-	{ "selectbuddy -1",   K_KP_PLUS,       -1,  K_KP_PLUS,       -1,  -1, -1 },
-	{ "selectbuddy 0",    K_KP_END,        -1,  K_KP_END,        -1,  -1, -1 },
-	{ "selectbuddy 1",    K_KP_DOWNARROW,  -1,  K_KP_DOWNARROW,  -1,  -1, -1 },
-	{ "selectbuddy 2",    K_KP_PGDN,       -1,  K_KP_PGDN,       -1,  -1, -1 },
-	{ "selectbuddy 3",    K_KP_LEFTARROW,  -1,  K_KP_LEFTARROW,  -1,  -1, -1 },
-	{ "selectbuddy 4",    K_KP_5,          -1,  K_KP_5,          -1,  -1, -1 },
-	{ "selectbuddy 5",    K_KP_RIGHTARROW, -1,  K_KP_RIGHTARROW, -1,  -1, -1 },
-	{ "selectbuddy 6",    K_KP_HOME,       -1,  K_KP_HOME,       -1,  -1, -1 },
-	{ "selectbuddy 7",    K_KP_UPARROW,    -1,  K_KP_UPARROW,    -1,  -1, -1 },
-	{ "selectbuddy -2",   K_KP_MINUS,      -1,  K_KP_MINUS,      -1,  -1, -1 },
+	{ "mapzoomout",       ',',             -1,  '[',             -1,  -1, -1, -1 },
+	{ "mapzoomin",        '.',             -1,  ']',             -1,  -1, -1, -1 },
+	{ "zoomin",           '=',             -1,  '-',             -1,  -1, -1, -1 },
+	{ "zoomout",          '-',             -1,  '=',             -1,  -1, -1, -1 },
+	{ "messagemode",      't',             -1,  't',             -1,  -1, -1, -1 },
+	{ "messagemode2",     'y',             -1,  'y',             -1,  -1, -1, -1 },
+	{ "messagemode3",     'u',             -1,  'u',             -1,  -1, -1, -1 },
+	{ "mp_quickmessage",  'v',             -1,  'v',             -1,  -1, -1, -1 },
+	{ "mp_fireteammsg",   'z',             -1,  'c',             -1,  -1, -1, -1 },
+	{ "vote yes",         K_F1,            -1,  K_F1,            -1,  -1, -1, -1 },
+	{ "vote no",          K_F2,            -1,  K_F2,            -1,  -1, -1, -1 },
+	{ "ready",            K_F3,            -1,  K_F3,            -1,  -1, -1, -1 },
+	{ "notready",         K_F4,            -1,  K_F4,            -1,  -1, -1, -1 },
+	{ "autoscreenshot",   K_F11,           -1,  K_F11,           -1,  -1, -1, -1 },
+	{ "autoRecord",       K_F12,           -1,  K_F12,           -1,  -1, -1, -1 },
+	{ "mp_fireteamadmin", K_KP_ENTER,      -1,  K_KP_ENTER,      -1,  -1, -1, -1 },
+	{ "selectbuddy -1",   K_KP_PLUS,       -1,  K_KP_PLUS,       -1,  -1, -1, -1 },
+	{ "selectbuddy 0",    K_KP_END,        -1,  K_KP_END,        -1,  -1, -1, -1 },
+	{ "selectbuddy 1",    K_KP_DOWNARROW,  -1,  K_KP_DOWNARROW,  -1,  -1, -1, -1 },
+	{ "selectbuddy 2",    K_KP_PGDN,       -1,  K_KP_PGDN,       -1,  -1, -1, -1 },
+	{ "selectbuddy 3",    K_KP_LEFTARROW,  -1,  K_KP_LEFTARROW,  -1,  -1, -1, -1 },
+	{ "selectbuddy 4",    K_KP_5,          -1,  K_KP_5,          -1,  -1, -1, -1 },
+	{ "selectbuddy 5",    K_KP_RIGHTARROW, -1,  K_KP_RIGHTARROW, -1,  -1, -1, -1 },
+	{ "selectbuddy 6",    K_KP_HOME,       -1,  K_KP_HOME,       -1,  -1, -1, -1 },
+	{ "selectbuddy 7",    K_KP_UPARROW,    -1,  K_KP_UPARROW,    -1,  -1, -1, -1 },
+	{ "selectbuddy -2",   K_KP_MINUS,      -1,  K_KP_MINUS,      -1,  -1, -1, -1 },
 };
 
 static const int g_bindCount = sizeof(g_bindings) / sizeof(bind_t);
 
-/*
-=================
-Controls_GetConfig
-=================
-*/
+/**
+ * @brief Controls_GetConfig
+ */
 void Controls_GetConfig(void)
 {
 	int i;
@@ -707,11 +818,10 @@ void Controls_GetConfig(void)
 	}
 }
 
-/*
-=================
-Controls_SetConfig
-=================
-*/
+/**
+ * @brief Controls_SetConfig
+ * @param[in] restart
+ */
 void Controls_SetConfig(qboolean restart)
 {
 	int i;
@@ -736,11 +846,10 @@ void Controls_SetConfig(qboolean restart)
 	}
 }
 
-/*
-=================
-Controls_SetDefaults
-=================
-*/
+/**
+ * @brief Controls_SetDefaults
+ * @param[in] lefthanded
+ */
 void Controls_SetDefaults(qboolean lefthanded)
 {
 	int i;
@@ -753,6 +862,11 @@ void Controls_SetDefaults(qboolean lefthanded)
 	}
 }
 
+/**
+ * @brief Binding_IDFromName
+ * @param[in] name
+ * @return
+ */
 int Binding_IDFromName(const char *name)
 {
 	int i;
@@ -768,6 +882,12 @@ int Binding_IDFromName(const char *name)
 	return -1;
 }
 
+/**
+ * @brief Binding_Set
+ * @param[in] id
+ * @param[in] b1
+ * @param[in] b2
+ */
 void Binding_Set(int id, int b1, int b2)
 {
 	if (id != -1)
@@ -793,6 +913,11 @@ void Binding_Set(int id, int b1, int b2)
 	}
 }
 
+/**
+ * @brief Binding_Unset
+ * @param[in] id
+ * @param[in] index
+ */
 void Binding_Unset(int id, int index)
 {
 	int key1;
@@ -815,6 +940,13 @@ void Binding_Unset(int id, int index)
 	}
 }
 
+/**
+ * @brief Binding_Check
+ * @param[in] id
+ * @param[in] b1
+ * @param[in] key
+ * @return
+ */
 qboolean Binding_Check(int id, qboolean b1, int key)
 {
 	if (id != -1)
@@ -838,6 +970,12 @@ qboolean Binding_Check(int id, qboolean b1, int key)
 	return qfalse;
 }
 
+/**
+ * @brief Binding_Get
+ * @param[in] id
+ * @param[in] b1
+ * @return
+ */
 int Binding_Get(int id, qboolean b1)
 {
 	if (id != -1)
@@ -855,6 +993,10 @@ int Binding_Get(int id, qboolean b1)
 	return -1;
 }
 
+/**
+ * @brief Binding_Count
+ * @return
+ */
 int Binding_Count(void)
 {
 	return g_bindCount;
@@ -863,6 +1005,11 @@ int Binding_Count(void)
 char g_nameBind1[32];
 char g_nameBind2[32];
 
+/**
+ * @brief Binding_FromName
+ * @param[in] cvar
+ * @return
+ */
 char *Binding_FromName(const char *cvar)
 {
 	int b1, b2;
@@ -890,16 +1037,30 @@ char *Binding_FromName(const char *cvar)
 	return g_nameBind1;
 }
 
+/**
+ * @brief Display_KeyBindPending
+ * @return
+ */
 qboolean Display_KeyBindPending(void)
 {
 	return g_waitingForKey;
 }
 
+/**
+ * @brief Display_GetContext
+ * @return
+ */
 displayContextDef_t *Display_GetContext()
 {
 	return DC;
 }
 
+/**
+ * @brief Display_CaptureItem
+ * @param[in] x
+ * @param[in] y
+ * @return
+ */
 void *Display_CaptureItem(int x, int y)
 {
 	int i;
@@ -917,8 +1078,15 @@ void *Display_CaptureItem(int x, int y)
 	return NULL;
 }
 
-// FIXME:
-// what to fix here?
+/**
+ * @brief Display_MouseMove
+ * @param[in,out] p
+ * @param[in] x
+ * @param[in] y
+ * @return
+ *
+ * @todo FIXME: what to fix here?
+ */
 qboolean Display_MouseMove(void *p, int x, int y)
 {
 	menuDef_t *menu = p;
@@ -952,6 +1120,12 @@ qboolean Display_MouseMove(void *p, int x, int y)
 	return qtrue;
 }
 
+/**
+ * @brief Display_CursorType
+ * @param[in] x
+ * @param[in] y
+ * @return
+ */
 int Display_CursorType(int x, int y)
 {
 	rectDef_t r2;
@@ -971,6 +1145,13 @@ int Display_CursorType(int x, int y)
 	return CURSOR_ARROW;
 }
 
+/**
+ * @brief Display_HandleKey
+ * @param[in] key
+ * @param[in] down
+ * @param[in] x
+ * @param[in] y
+ */
 void Display_HandleKey(int key, qboolean down, int x, int y)
 {
 	menuDef_t *menu = Display_CaptureItem(x, y);
@@ -986,6 +1167,10 @@ void Display_HandleKey(int key, qboolean down, int x, int y)
 	}
 }
 
+/**
+ * @brief Window_CacheContents
+ * @param[in] window
+ */
 static void Window_CacheContents(windowDef_t *window)
 {
 	if (window)
@@ -998,6 +1183,10 @@ static void Window_CacheContents(windowDef_t *window)
 	}
 }
 
+/**
+ * @brief Item_CacheContents
+ * @param[in] item
+ */
 static void Item_CacheContents(itemDef_t *item)
 {
 	if (item)
@@ -1006,6 +1195,10 @@ static void Item_CacheContents(itemDef_t *item)
 	}
 }
 
+/**
+ * @brief Menu_CacheContents
+ * @param[in] menu
+ */
 static void Menu_CacheContents(menuDef_t *menu)
 {
 	if (menu)
@@ -1026,6 +1219,9 @@ static void Menu_CacheContents(menuDef_t *menu)
 	}
 }
 
+/**
+ * @brief Display_CacheAll
+ */
 void Display_CacheAll(void)
 {
 	int i;
@@ -1036,13 +1232,12 @@ void Display_CacheAll(void)
 	}
 }
 
-/*
-=================
-PC_String_Parse_Trans
-
-  translates string
-=================
-*/
+/**
+ * @brief Translates string
+ * @param[in] handle
+ * @param[out] out
+ * @return
+ */
 qboolean PC_String_Parse_Trans(int handle, const char **out)
 {
 	pc_token_t token;
@@ -1056,11 +1251,12 @@ qboolean PC_String_Parse_Trans(int handle, const char **out)
 	return qtrue;
 }
 
-/*
-=================
-PC_Rect_Parse
-=================
-*/
+/**
+ * @brief PC_Rect_Parse
+ * @param[in] handle
+ * @param[in] r
+ * @return
+ */
 qboolean PC_Rect_Parse(int handle, rectDef_t *r)
 {
 	if (PC_Float_Parse(handle, &r->x))
@@ -1084,6 +1280,16 @@ qboolean PC_Rect_Parse(int handle, rectDef_t *r)
 // ======================================================
 panel_button_t *bg_focusButton;
 
+/**
+ * @brief BG_RectContainsPoint
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] px
+ * @param[in] py
+ * @return
+ */
 qboolean BG_RectContainsPoint(float x, float y, float w, float h, float px, float py)
 {
 	if (px > x && px < x + w && py > y && py < y + h)
@@ -1094,11 +1300,20 @@ qboolean BG_RectContainsPoint(float x, float y, float w, float h, float px, floa
 	return qfalse;
 }
 
+/**
+ * @brief BG_CursorInRect
+ * @param[in] rect
+ * @return
+ */
 qboolean BG_CursorInRect(rectDef_t *rect)
 {
 	return BG_RectContainsPoint(rect->x, rect->y, rect->w, rect->h, DC->cursorx, DC->cursory);
 }
 
+/**
+ * @brief BG_PanelButton_RenderEdit
+ * @param[in] button
+ */
 void BG_PanelButton_RenderEdit(panel_button_t *button)
 {
 	qboolean useCvar = button->data[0] ? qfalse : qtrue;
@@ -1172,6 +1387,12 @@ void BG_PanelButton_RenderEdit(panel_button_t *button)
 	}
 }
 
+/**
+ * @brief BG_PanelButton_EditClick
+ * @param[in] button
+ * @param[in] key
+ * @return
+ */
 qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
@@ -1198,10 +1419,10 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 	}
 	else
 	{
-		char     buffer[256];
-		char     *s = NULL;
-		int      len, maxlen;
-		qboolean useCvar = button->data[0] ? qfalse : qtrue;
+		char         buffer[256];
+		char         *s = NULL;
+		unsigned int len, maxlen;
+		qboolean     useCvar = button->data[0] ? qfalse : qtrue;
 
 		if (useCvar)
 		{
@@ -1211,7 +1432,7 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 		}
 		else
 		{
-			maxlen = button->data[0];
+			maxlen = (unsigned int)button->data[0];
 			s      = (char *)button->text;
 			len    = strlen(s);
 		}
@@ -1265,13 +1486,13 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 
 			if (useCvar)
 			{
-				buffer[len]     = key;
+				buffer[len]     = (char)key;
 				buffer[len + 1] = '\0';
 				trap_Cvar_Set(button->text, buffer);
 			}
 			else
 			{
-				s[len]     = key;
+				s[len]     = (char)key;
 				s[len + 1] = '\0';
 			}
 
@@ -1295,6 +1516,13 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 	return qtrue;
 }
 
+/**
+ * @brief BG_PanelButtonsKeyEvent
+ * @param[in] key
+ * @param[in] down
+ * @param[in] buttons
+ * @return
+ */
 qboolean BG_PanelButtonsKeyEvent(int key, qboolean down, panel_button_t **buttons)
 {
 	panel_button_t *button;
@@ -1377,6 +1605,10 @@ qboolean BG_PanelButtonsKeyEvent(int key, qboolean down, panel_button_t **button
 	return qfalse;
 }
 
+/**
+ * @brief BG_PanelButtonsSetup
+ * @param[in,out] buttons
+ */
 void BG_PanelButtonsSetup(panel_button_t **buttons)
 {
 	panel_button_t *button;
@@ -1392,6 +1624,11 @@ void BG_PanelButtonsSetup(panel_button_t **buttons)
 	}
 }
 
+/**
+ * @brief BG_PanelButtonsGetHighlightButton
+ * @param[in] buttons
+ * @return
+ */
 panel_button_t *BG_PanelButtonsGetHighlightButton(panel_button_t **buttons)
 {
 	panel_button_t *button;
@@ -1409,6 +1646,10 @@ panel_button_t *BG_PanelButtonsGetHighlightButton(panel_button_t **buttons)
 	return NULL;
 }
 
+/**
+ * @brief BG_PanelButtonsRender
+ * @param[in] buttons
+ */
 void BG_PanelButtonsRender(panel_button_t **buttons)
 {
 	panel_button_t *button;
@@ -1424,10 +1665,14 @@ void BG_PanelButtonsRender(panel_button_t **buttons)
 	}
 }
 
+/**
+ * @brief BG_PanelButtonsRender_TextExt
+ * @param[in] button
+ * @param[in] text
+ */
 void BG_PanelButtonsRender_TextExt(panel_button_t *button, const char *text)
 {
 	float x = button->rect.x;
-	float w = button->rect.w;
 
 	if (!button->font)
 	{
@@ -1436,9 +1681,7 @@ void BG_PanelButtonsRender_TextExt(panel_button_t *button, const char *text)
 
 	if (button->font->align == ITEM_ALIGN_CENTER)
 	{
-		w = DC->textWidthExt(text, button->font->scalex, 0, button->font->font);
-
-		x += ((button->rect.w - w) * 0.5f);
+		x += ((button->rect.w - DC->textWidthExt(text, button->font->scalex, 0, button->font->font)) * 0.5f);
 	}
 	else if (button->font->align == ITEM_ALIGN_RIGHT)
 	{
@@ -1457,11 +1700,19 @@ void BG_PanelButtonsRender_TextExt(panel_button_t *button, const char *text)
 	DC->drawTextExt(x, button->rect.y + button->data[0], button->font->scalex, button->font->scaley, button->font->colour, text, 0, 0, button->font->style, button->font->font);
 }
 
+/**
+ * @brief BG_PanelButtonsRender_Text
+ * @param[in] button
+ */
 void BG_PanelButtonsRender_Text(panel_button_t *button)
 {
 	BG_PanelButtonsRender_TextExt(button, button->text);
 }
 
+/**
+ * @brief BG_PanelButtonsRender_Img
+ * @param[in] button
+ */
 void BG_PanelButtonsRender_Img(panel_button_t *button)
 {
 	vec4_t clr = { 1.f, 1.f, 1.f, 1.f };
@@ -1491,17 +1742,33 @@ void BG_PanelButtonsRender_Img(panel_button_t *button)
 	}
 }
 
+/**
+ * @brief BG_PanelButtons_GetFocusButton
+ * @return
+ */
 panel_button_t *BG_PanelButtons_GetFocusButton(void)
 {
 	return bg_focusButton;
 }
 
+/**
+ * @brief BG_PanelButtons_SetFocusButton
+ * @param button
+ */
 void BG_PanelButtons_SetFocusButton(panel_button_t *button)
 {
 	bg_focusButton = button;
 }
 
-void BG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontHelper_t *font)
+/**
+ * @brief BG_FitTextToWidth_Ext
+ * @param[in,out] instr
+ * @param[in] scale
+ * @param[in] w
+ * @param[in] size
+ * @param[in] font
+ */
+void BG_FitTextToWidth_Ext(char *instr, float scale, float w, unsigned int size, fontHelper_t *font)
 {
 	char buffer[1024];
 	char *s, *p, *c, *ls = NULL;
@@ -1557,7 +1824,11 @@ void BG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontHelp
 	*c = '\0';
 }
 
-// adjusting panel coordinates so it is horizontally centered..
+/**
+ * @brief Adjusting panel coordinates so it is horizontally centered.
+ * @param[in,out] buttons
+ * @param[in] xoffset
+ */
 void C_PanelButtonsSetup(panel_button_t **buttons, float xoffset)
 {
 	panel_button_t *button;

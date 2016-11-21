@@ -96,6 +96,20 @@ qboolean _UI_IsFullscreen(void);
  * @brief vmMain
  * This is the only way control passes into the module.
  * This must be the very first function compiled into the .qvm file
+ * @param[in] command
+ * @param[in] arg0
+ * @param[in] arg1
+ * @param[in] arg2
+ * @param[in] arg3  - unused
+ * @param[in] arg4  - unused
+ * @param[in] arg5  - unused
+ * @param[in] arg6  - unused
+ * @param[in] arg7  - unused
+ * @param[in] arg8  - unused
+ * @param[in] arg9  - unused
+ * @param[in] arg10 - unused
+ * @param[in] arg11 - unused
+ * @return
  */
 Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_t arg2, intptr_t arg3, intptr_t arg4, intptr_t arg5, intptr_t arg6, intptr_t arg7, intptr_t arg8, intptr_t arg9, intptr_t arg10, intptr_t arg11)
 {
@@ -113,7 +127,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case UI_IS_FULLSCREEN:
 		return _UI_IsFullscreen();
 	case UI_SET_ACTIVE_MENU:
-		_UI_SetActiveMenu(arg0);
+		_UI_SetActiveMenu((uiMenuCommand_t)arg0);
 		return 0;
 	case UI_GET_ACTIVE_MENU:
 		return _UI_GetActiveMenu();
@@ -144,6 +158,9 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	return -1;
 }
 
+/**
+ * @brief AssetCache
+ */
 void AssetCache(void)
 {
 	int n;
@@ -177,6 +194,14 @@ void AssetCache(void)
 	}
 }
 
+/**
+ * @brief _UI_DrawSides
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] size
+ */
 void _UI_DrawSides(float x, float y, float w, float h, float size)
 {
 	UI_AdjustFrom640(&x, &y, &w, &h);
@@ -185,6 +210,14 @@ void _UI_DrawSides(float x, float y, float w, float h, float size)
 	trap_R_DrawStretchPic(x + w - size, y, size, h, 0, 0, 0, 0, uiInfo.uiDC.whiteShader);
 }
 
+/**
+ * @brief _UI_DrawTopBottom
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] size
+ */
 void _UI_DrawTopBottom(float x, float y, float w, float h, float size)
 {
 	UI_AdjustFrom640(&x, &y, &w, &h);
@@ -196,6 +229,12 @@ void _UI_DrawTopBottom(float x, float y, float w, float h, float size)
 /**
  * @brief UI_DrawRect
  * Coordinates are 640*480 virtual values
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ * @param[in] size
+ * @param[in] color
  */
 void _UI_DrawRect(float x, float y, float width, float height, float size, const float *color)
 {
@@ -207,11 +246,23 @@ void _UI_DrawRect(float x, float y, float width, float height, float size, const
 	trap_R_SetColor(NULL);
 }
 
+/**
+ * @brief Text_SetActiveFont
+ * @param[in] font
+ */
 void Text_SetActiveFont(int font)
 {
 	uiInfo.activeFont = font;
 }
 
+/**
+ * @brief Text_Width_Ext
+ * @param[in] text
+ * @param[in] scale
+ * @param[in] limit
+ * @param[in] font
+ * @return
+ */
 int Text_Width_Ext(const char *text, float scale, int limit, fontHelper_t *font)
 {
 	float       out = 0;
@@ -248,6 +299,13 @@ int Text_Width_Ext(const char *text, float scale, int limit, fontHelper_t *font)
 	return out * scale * Q_UTF8_GlyphScale(font);
 }
 
+/**
+ * @brief Text_Width
+ * @param[in] text
+ * @param[in] scale
+ * @param[in] limit
+ * @return
+ */
 int Text_Width(const char *text, float scale, int limit)
 {
 	fontHelper_t *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
@@ -255,6 +313,13 @@ int Text_Width(const char *text, float scale, int limit)
 	return Text_Width_Ext(text, scale, limit, font);
 }
 
+/**
+ * @brief Multiline_Text_Width
+ * @param[in] text
+ * @param[in] scale
+ * @param[in] limit
+ * @return
+ */
 int Multiline_Text_Width(const char *text, float scale, int limit)
 {
 	float        out = 0;
@@ -319,6 +384,14 @@ int Multiline_Text_Width(const char *text, float scale, int limit)
 	}
 }
 
+/**
+ * @brief Text_Height_Ext
+ * @param[in] text
+ * @param[in] scale
+ * @param[in] limit
+ * @param[in] font
+ * @return
+ */
 int Text_Height_Ext(const char *text, float scale, int limit, fontHelper_t *font)
 {
 	float       max = 0;
@@ -359,6 +432,13 @@ int Text_Height_Ext(const char *text, float scale, int limit, fontHelper_t *font
 	return max * scale * Q_UTF8_GlyphScale(font);
 }
 
+/**
+ * @brief Text_Height
+ * @param[in] text
+ * @param[in] scale
+ * @param[in] limit
+ * @return
+ */
 int Text_Height(const char *text, float scale, int limit)
 {
 	fontHelper_t *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
@@ -366,6 +446,13 @@ int Text_Height(const char *text, float scale, int limit)
 	return Text_Height_Ext(text, scale, limit, font);
 }
 
+/**
+ * @brief Multiline_Text_Height
+ * @param[in] text
+ * @param[in] scale
+ * @param[in] limit
+ * @return
+ */
 int Multiline_Text_Height(const char *text, float scale, int limit)
 {
 	float        max         = 0;
@@ -395,7 +482,7 @@ int Multiline_Text_Height(const char *text, float scale, int limit)
 			{
 				if (*s == '\n')
 				{
-					if (!totalheight)
+					if (totalheight == 0.f)
 					{
 						totalheight += 5;   // 5 is the vertical spacing that autowrap painting uses
 					}
@@ -418,7 +505,7 @@ int Multiline_Text_Height(const char *text, float scale, int limit)
 
 	if (totalheight > 0)
 	{
-		if (!totalheight)
+		if (totalheight == 0.f)
 		{
 			totalheight += 5;   // 5 is the vertical spacing that autowrap painting uses
 		}
@@ -431,6 +518,20 @@ int Multiline_Text_Height(const char *text, float scale, int limit)
 	}
 }
 
+/**
+ * @brief Text_PaintCharExt
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] scalex
+ * @param[in] scaley
+ * @param[in] s
+ * @param[in] t
+ * @param[in] s2
+ * @param[in] t2
+ * @param[in] hShader
+ */
 void Text_PaintCharExt(float x, float y, float w, float h, float scalex, float scaley, float s, float t, float s2, float t2, qhandle_t hShader)
 {
 	w *= scalex;
@@ -439,6 +540,19 @@ void Text_PaintCharExt(float x, float y, float w, float h, float scalex, float s
 	trap_R_DrawStretchPic(x, y, w, h, s, t, s2, t2, hShader);
 }
 
+/**
+ * @brief Text_PaintChar
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] scale
+ * @param[in] s
+ * @param[in] t
+ * @param[in] s2
+ * @param[in] t2
+ * @param[in] hShader
+ */
 void Text_PaintChar(float x, float y, float w, float h, float scale, float s, float t, float s2, float t2, qhandle_t hShader)
 {
 	w *= scale;
@@ -447,6 +561,19 @@ void Text_PaintChar(float x, float y, float w, float h, float scale, float s, fl
 	trap_R_DrawStretchPic(x, y, w, h, s, t, s2, t2, hShader);
 }
 
+/**
+ * @brief Text_Paint_Ext
+ * @param[in] x
+ * @param[in] y
+ * @param[in] scalex
+ * @param[in] scaley
+ * @param[in] color
+ * @param[in] text
+ * @param[in] adjust
+ * @param[in] limit
+ * @param[in] style
+ * @param[in] font
+ */
 void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontHelper_t *font)
 {
 	vec4_t      newColor = { 0, 0, 0, 0 };
@@ -523,6 +650,17 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 	}
 }
 
+/**
+ * @brief Text_Paint
+ * @param[in] x
+ * @param[in] y
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] text
+ * @param[in] adjust
+ * @param[in] limit
+ * @param[in] style
+ */
 void Text_Paint(float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit, int style)
 {
 	fontHelper_t *font = &uiInfo.uiDC.Assets.fonts[uiInfo.activeFont];
@@ -530,6 +668,18 @@ void Text_Paint(float x, float y, float scale, vec4_t color, const char *text, f
 	Text_Paint_Ext(x, y, scale, scale, color, text, adjust, limit, style, font);
 }
 
+/**
+ * @brief Text_PaintWithCursor
+ * @param[in] x
+ * @param[in] y
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] text
+ * @param[in] cursorPos
+ * @param[in] cursor
+ * @param[in] limit
+ * @param[in] style
+ */
 void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const char *text, int cursorPos, const char *cursor, int limit, int style)
 {
 	vec4_t       newColor = { 0, 0, 0, 0 };
@@ -625,6 +775,17 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 	}
 }
 
+/**
+ * @brief Text_Paint_Limit
+ * @param[in] maxX
+ * @param[in] x
+ * @param[in] y
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] text
+ * @param[in] adjust
+ * @param[in] limit
+ */
 static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t color, const char *text, float adjust, int limit)
 {
 	vec4_t      newColor = { 0, 0, 0, 0 };
@@ -691,6 +852,10 @@ static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t 
 	}
 }
 
+/**
+ * @brief UI_ShowPostGame
+ * @param[in] newHigh
+ */
 void UI_ShowPostGame(qboolean newHigh)
 {
 	trap_Cvar_Set("cg_thirdPerson", "0");
@@ -699,10 +864,12 @@ void UI_ShowPostGame(qboolean newHigh)
 	_UI_SetActiveMenu(UIMENU_POSTGAME);
 }
 
+#define UI_FPS_FRAMES   4
+
 /**
  * @brief _UI_Refresh
+ * @param[in] realtime
  */
-#define UI_FPS_FRAMES   4
 void _UI_Refresh(int realtime)
 {
 	static int index;
@@ -731,10 +898,10 @@ void _UI_Refresh(int realtime)
 
 	UI_UpdateCvars();
 
-	if (trap_Cvar_VariableValue("ui_connecting"))
+	if (trap_Cvar_VariableValue("ui_connecting") != 0.f)
 	{
 		UI_DrawLoadPanel(qfalse, qtrue);
-		if (!trap_Cvar_VariableValue("ui_connecting"))
+		if (trap_Cvar_VariableValue("ui_connecting") == 0.f)
 		{
 			trap_Cvar_Set("ui_connecting", "1");
 		}
@@ -773,6 +940,9 @@ void _UI_Refresh(int realtime)
 	}
 }
 
+/**
+ * @brief _UI_Shutdown
+ */
 void _UI_Shutdown(void)
 {
 	int i = 0;
@@ -789,6 +959,11 @@ void _UI_Shutdown(void)
 
 char *defaultMenu = NULL;
 
+/**
+ * @brief GetMenuBuffer
+ * @param[in] filename
+ * @return
+ */
 char *GetMenuBuffer(const char *filename)
 {
 	int          len;
@@ -815,6 +990,11 @@ char *GetMenuBuffer(const char *filename)
 	return buf;
 }
 
+/**
+ * @brief Asset_Parse
+ * @param[in] handle
+ * @return
+ */
 qboolean Asset_Parse(int handle)
 {
 	pc_token_t token;
@@ -981,14 +1161,21 @@ qboolean Asset_Parse(int handle)
 			continue;
 		}
 	}
-	return qfalse;
 }
 
+/**
+ * @brief UI_Report
+ */
 void UI_Report(void)
 {
 	String_Report();
 }
 
+/**
+ * @brief UI_ParseMenu
+ * @param[in] menuFile
+ * @return
+ */
 qboolean UI_ParseMenu(const char *menuFile)
 {
 	int        handle;
@@ -1037,6 +1224,11 @@ qboolean UI_ParseMenu(const char *menuFile)
 	return qtrue;
 }
 
+/**
+ * @brief Load_Menu
+ * @param[in] handle
+ * @return
+ */
 qboolean Load_Menu(int handle)
 {
 	pc_token_t token;
@@ -1069,9 +1261,13 @@ qboolean Load_Menu(int handle)
 
 		UI_ParseMenu(token.string);
 	}
-	return qfalse;
 }
 
+/**
+ * @brief UI_LoadMenus
+ * @param[in] menuFile
+ * @param[in] reset
+ */
 void UI_LoadMenus(const char *menuFile, qboolean reset)
 {
 	pc_token_t      token;
@@ -1143,6 +1339,9 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 	trap_PC_FreeSource(handle);
 }
 
+/**
+ * @brief UI_Load
+ */
 void UI_Load(void)
 {
 	char      lastName[1024];
@@ -1171,25 +1370,51 @@ void UI_Load(void)
 
 static const char *handicapValues[] = { "None", "95", "90", "85", "80", "75", "70", "65", "60", "55", "50", "45", "40", "35", "30", "25", "20", "15", "10", "5", NULL };
 
+/**
+ * @brief UI_DrawHandicap
+ * @param[in] rect
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] textStyle
+ */
 static void UI_DrawHandicap(rectDef_t *rect, float scale, vec4_t color, int textStyle)
 {
-	int h = Com_Clamp(5, 100, trap_Cvar_VariableValue("handicap"));
+	int h = Com_Clamp(5, 100, (int)(trap_Cvar_VariableValue("handicap")));
 	int i = 20 - h / 5;
 
 	Text_Paint(rect->x, rect->y, scale, color, handicapValues[i], 0, 0, textStyle);
 }
 
+/**
+ * @brief UI_DrawClanName
+ * @param[in] rect
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] textStyle
+ */
 static void UI_DrawClanName(rectDef_t *rect, float scale, vec4_t color, int textStyle)
 {
 	Text_Paint(rect->x, rect->y, scale, color, UI_Cvar_VariableString("ui_teamName"), 0, 0, textStyle);
 }
 
-// ui_gameType assumes gametype 0 is -1 ALL and will not show
+/**
+ * @brief UI_DrawGameType
+ * @param rect
+ * @param scale
+ * @param color
+ * @param textStyle
+ * @note ui_gameType assumes gametype 0 is -1 ALL and will not show
+ */
 static void UI_DrawGameType(rectDef_t *rect, float scale, vec4_t color, int textStyle)
 {
 	Text_Paint(rect->x, rect->y, scale, color, uiInfo.gameTypes[ui_gameType.integer].gameType, 0, 0, textStyle);
 }
 
+/**
+ * @brief UI_TeamIndexFromName
+ * @param[in] name
+ * @return
+ */
 static int UI_TeamIndexFromName(const char *name)
 {
 	if (name && *name)
@@ -1208,6 +1433,12 @@ static int UI_TeamIndexFromName(const char *name)
 	return 0;
 }
 
+/**
+ * @brief UI_DrawClanLogo
+ * @param[in] rect
+ * @param scale - unused
+ * @param[in] color
+ */
 static void UI_DrawClanLogo(rectDef_t *rect, float scale, vec4_t color)
 {
 	int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
@@ -1228,6 +1459,12 @@ static void UI_DrawClanLogo(rectDef_t *rect, float scale, vec4_t color)
 	}
 }
 
+/**
+ * @brief UI_DrawClanCinematic
+ * @param[in] rect
+ * @param scale - unused
+ * @param[in] color
+ */
 static void UI_DrawClanCinematic(rectDef_t *rect, float scale, vec4_t color)
 {
 	int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
@@ -1260,6 +1497,12 @@ static void UI_DrawClanCinematic(rectDef_t *rect, float scale, vec4_t color)
 	}
 }
 
+/**
+ * @brief UI_DrawPreviewCinematic
+ * @param[in] rect
+ * @param scale - unused
+ * @param color - unused
+ */
 static void UI_DrawPreviewCinematic(rectDef_t *rect, float scale, vec4_t color)
 {
 	if (uiInfo.previewMovie > -2)
@@ -1278,6 +1521,14 @@ static void UI_DrawPreviewCinematic(rectDef_t *rect, float scale, vec4_t color)
 	}
 }
 
+/**
+ * @brief UI_DrawTeamName
+ * @param[in] rect
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] blue
+ * @param[in] textStyle
+ */
 static void UI_DrawTeamName(rectDef_t *rect, float scale, vec4_t color, qboolean blue, int textStyle)
 {
 	int i = UI_TeamIndexFromName(UI_Cvar_VariableString((blue) ? "ui_blueTeam" : "ui_redTeam"));
@@ -1288,12 +1539,25 @@ static void UI_DrawTeamName(rectDef_t *rect, float scale, vec4_t color, qboolean
 	}
 }
 
+/**
+ * @brief UI_DrawEffects
+ * @param[in] rect
+ * @param scale - unused
+ * @param color - unused
+ */
 static void UI_DrawEffects(rectDef_t *rect, float scale, vec4_t color)
 {
 	UI_DrawHandlePic(rect->x, rect->y, 128, 8, uiInfo.uiDC.Assets.fxBasePic);
 	UI_DrawHandlePic(rect->x + uiInfo.effectsColor * 16 + 8, rect->y, 16, 12, uiInfo.uiDC.Assets.fxPic[uiInfo.effectsColor]);
 }
 
+/**
+ * @brief UI_DrawMapPreview
+ * @param[in] rect
+ * @param[in] scale
+ * @param color - unused
+ * @param[in] net
+ */
 void UI_DrawMapPreview(rectDef_t *rect, float scale, vec4_t color, qboolean net)
 {
 	int map  = (net) ? ui_currentNetMap.integer : ui_currentMap.integer;
@@ -1316,7 +1580,7 @@ void UI_DrawMapPreview(rectDef_t *rect, float scale, vec4_t color, qboolean net)
 
 	if (game == GT_WOLF_CAMPAIGN)
 	{
-		if (uiInfo.campaignList[map].mapTC[0][0] && uiInfo.campaignList[map].mapTC[1][0])
+		if (uiInfo.campaignList[map].mapTC[0][0] != 0.f && uiInfo.campaignList[map].mapTC[1][0] != 0.f)
 		{
 			float x, y, w, h;
 			int   i;
@@ -1484,6 +1748,13 @@ void UI_DrawMapPreview(rectDef_t *rect, float scale, vec4_t color, qboolean net)
 	*/
 }
 
+/**
+ * @brief UI_DrawNetMapPreview
+ * @param[in] rect
+ * @param scale - unused
+ * @param color - unused
+ * @param net - unused
+ */
 void UI_DrawNetMapPreview(rectDef_t *rect, float scale, vec4_t color, qboolean net)
 {
 	if (uiInfo.serverStatus.currentServerPreview > 0)
@@ -1496,6 +1767,13 @@ void UI_DrawNetMapPreview(rectDef_t *rect, float scale, vec4_t color, qboolean n
 	}
 }
 
+/**
+ * @brief UI_DrawMapCinematic
+ * @param[in] rect
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] net
+ */
 static void UI_DrawMapCinematic(rectDef_t *rect, float scale, vec4_t color, qboolean net)
 {
 	int map  = (net) ? ui_currentNetMap.integer : ui_currentMap.integer;
@@ -1561,6 +1839,13 @@ static void UI_DrawMapCinematic(rectDef_t *rect, float scale, vec4_t color, qboo
 	}
 }
 
+/**
+ * @brief UI_DrawCampaignPreview
+ * @param[in] rect
+ * @param scale - unused
+ * @param color - unused
+ * @param[in] net
+ */
 static void UI_DrawCampaignPreview(rectDef_t *rect, float scale, vec4_t color, qboolean net)
 {
 	int campaign = (net) ? ui_currentNetCampaign.integer : ui_currentCampaign.integer;
@@ -1595,6 +1880,13 @@ static void UI_DrawCampaignPreview(rectDef_t *rect, float scale, vec4_t color, q
 	}
 }
 
+/**
+ * @brief UI_DrawCampaignCinematic
+ * @param[in] rect
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] net
+ */
 static void UI_DrawCampaignCinematic(rectDef_t *rect, float scale, vec4_t color, qboolean net)
 {
 	int campaign = (net) ? ui_currentNetCampaign.integer : ui_currentCampaign.integer;
@@ -1637,6 +1929,14 @@ static void UI_DrawCampaignCinematic(rectDef_t *rect, float scale, vec4_t color,
 	}
 }
 
+/**
+ * @brief UI_DrawCampaignName
+ * @param[in] rect
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] textStyle
+ * @param[in] net
+ */
 static void UI_DrawCampaignName(rectDef_t *rect, float scale, vec4_t color, int textStyle, qboolean net)
 {
 	int campaign = (net) ? ui_currentNetCampaign.integer : ui_currentCampaign.integer;
@@ -1664,6 +1964,17 @@ static void UI_DrawCampaignName(rectDef_t *rect, float scale, vec4_t color, int 
 	Text_Paint(rect->x, rect->y, scale, color, va("%s", uiInfo.campaignList[campaign].campaignName), 0, 0, textStyle);
 }
 
+/**
+ * @brief UI_DrawCampaignDescription
+ * @param[in] rect
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] text_x
+ * @param[in] text_y - unused
+ * @param[in] textStyle
+ * @param[in] align
+ * @param[in] net
+ */
 void UI_DrawCampaignDescription(rectDef_t *rect, float scale, vec4_t color, float text_x, float text_y, int textStyle, int align, qboolean net)
 {
 	const char *p, *textPtr, *newLinePtr = NULL;
@@ -1769,6 +2080,17 @@ void UI_DrawCampaignDescription(rectDef_t *rect, float scale, vec4_t color, floa
 	}
 }
 
+/**
+ * @brief UI_DrawGametypeDescription
+ * @param[in] rect
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] text_x
+ * @param[in] text_y - unused
+ * @param[in] textStyle
+ * @param[in] align
+ * @param[in] net
+ */
 void UI_DrawGametypeDescription(rectDef_t *rect, float scale, vec4_t color, float text_x, float text_y, int textStyle, int align, qboolean net)
 {
 	const char *p, *textPtr = NULL, *newLinePtr = NULL;
@@ -1869,6 +2191,18 @@ void UI_DrawGametypeDescription(rectDef_t *rect, float scale, vec4_t color, floa
 	}
 }
 
+/**
+ * @brief UI_DrawCampaignMapDescription
+ * @param[in] rect
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] text_x
+ * @param[in] text_y
+ * @param[in] textStyle
+ * @param[in] align
+ * @param[in] net
+ * @param[in] number
+ */
 static void UI_DrawCampaignMapDescription(rectDef_t *rect, float scale, vec4_t color, float text_x, float text_y, int textStyle, int align, qboolean net, int number)
 {
 	int        campaign = (net) ? ui_currentNetCampaign.integer : ui_currentCampaign.integer;
@@ -1979,6 +2313,14 @@ static void UI_DrawCampaignMapDescription(rectDef_t *rect, float scale, vec4_t c
 	}
 }
 
+/**
+ * @brief UI_DrawCampaignMapPreview
+ * @param[in] rect
+ * @param[in] scale - unused
+ * @param[in] color - unused
+ * @param[in] net
+ * @param[in] map
+ */
 static void UI_DrawCampaignMapPreview(rectDef_t *rect, float scale, vec4_t color, qboolean net, int map)
 {
 	int campaign = (net) ? ui_currentNetCampaign.integer : ui_currentCampaign.integer;
@@ -2023,6 +2365,10 @@ static void UI_DrawCampaignMapPreview(rectDef_t *rect, float scale, vec4_t color
 	}
 }
 
+/**
+ * @brief UI_DrawMissionBriefingMap
+ * @param[in] rect
+ */
 static void UI_DrawMissionBriefingMap(rectDef_t *rect)
 {
 	char             buffer[64];
@@ -2044,6 +2390,13 @@ static void UI_DrawMissionBriefingMap(rectDef_t *rect)
 	}
 }
 
+/**
+ * @brief UI_DrawMissionBriefingTitle
+ * @param[in] rect
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] textStyle
+ */
 static void UI_DrawMissionBriefingTitle(rectDef_t *rect, float scale, vec4_t color, int textStyle)
 {
 	char    buffer[64];
@@ -2060,6 +2413,16 @@ static void UI_DrawMissionBriefingTitle(rectDef_t *rect, float scale, vec4_t col
 	Text_Paint(rect->x, rect->y, scale, color, va("%s Objectives", mi->mapName), 0, 0, textStyle);
 }
 
+/**
+ * @brief UI_DrawMissionBriefingObjectives
+ * @param[in] rect
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] text_x
+ * @param[in] text_y
+ * @param[in] textStyle
+ * @param[in] align
+ */
 static void UI_DrawMissionBriefingObjectives(rectDef_t *rect, float scale, vec4_t color, float text_x, float text_y, int textStyle, int align)
 {
 	const char *p, *textPtr, *newLinePtr;
@@ -2154,6 +2517,13 @@ static void UI_DrawMissionBriefingObjectives(rectDef_t *rect, float scale, vec4_
 
 static qboolean updateModel = qtrue;
 
+/**
+ * @brief UI_DrawNetFilter
+ * @param[in] rect
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] textStyle
+ */
 static void UI_DrawNetFilter(rectDef_t *rect, float scale, vec4_t color, int textStyle)
 {
 	if (ui_serverFilterType.integer < 0 || ui_serverFilterType.integer >= numServerFilters)
@@ -2163,6 +2533,9 @@ static void UI_DrawNetFilter(rectDef_t *rect, float scale, vec4_t color, int tex
 	Text_Paint(rect->x, rect->y, scale, color, va("Filter: %s", serverFilters[ui_serverFilterType.integer].description), 0, 0, textStyle);
 }
 
+/**
+ * @brief UI_NextOpponent
+ */
 static void UI_NextOpponent(void)
 {
 	int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_opponentName"));
@@ -2184,6 +2557,9 @@ static void UI_NextOpponent(void)
 	trap_Cvar_Set("ui_opponentName", uiInfo.teamList[i].teamName);
 }
 
+/**
+ * @brief UI_PriorOpponent
+ */
 static void UI_PriorOpponent(void)
 {
 	int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_opponentName"));
@@ -2205,6 +2581,11 @@ static void UI_PriorOpponent(void)
 	trap_Cvar_Set("ui_opponentName", uiInfo.teamList[i].teamName);
 }
 
+/**
+ * @brief UI_DrawPlayerLogo
+ * @param[in] rect
+ * @param[in] color
+ */
 static void UI_DrawPlayerLogo(rectDef_t *rect, vec3_t color)
 {
 	int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
@@ -2221,6 +2602,11 @@ static void UI_DrawPlayerLogo(rectDef_t *rect, vec3_t color)
 	trap_R_SetColor(NULL);
 }
 
+/**
+ * @brief UI_DrawPlayerLogoMetal
+ * @param[in] rect
+ * @param[in] color
+ */
 static void UI_DrawPlayerLogoMetal(rectDef_t *rect, vec3_t color)
 {
 	int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
@@ -2237,6 +2623,11 @@ static void UI_DrawPlayerLogoMetal(rectDef_t *rect, vec3_t color)
 	trap_R_SetColor(NULL);
 }
 
+/**
+ * @brief UI_DrawPlayerLogoName
+ * @param[in] rect
+ * @param[in] color
+ */
 static void UI_DrawPlayerLogoName(rectDef_t *rect, vec3_t color)
 {
 	int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
@@ -2253,6 +2644,11 @@ static void UI_DrawPlayerLogoName(rectDef_t *rect, vec3_t color)
 	trap_R_SetColor(NULL);
 }
 
+/**
+ * @brief UI_DrawOpponentLogo
+ * @param[in] rect
+ * @param[in] color
+ */
 static void UI_DrawOpponentLogo(rectDef_t *rect, vec3_t color)
 {
 	int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_opponentName"));
@@ -2269,6 +2665,11 @@ static void UI_DrawOpponentLogo(rectDef_t *rect, vec3_t color)
 	trap_R_SetColor(NULL);
 }
 
+/**
+ * @brief UI_DrawOpponentLogoMetal
+ * @param[in] rect
+ * @param[in] color
+ */
 static void UI_DrawOpponentLogoMetal(rectDef_t *rect, vec3_t color)
 {
 	int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_opponentName"));
@@ -2285,6 +2686,11 @@ static void UI_DrawOpponentLogoMetal(rectDef_t *rect, vec3_t color)
 	trap_R_SetColor(NULL);
 }
 
+/**
+ * @brief UI_DrawOpponentLogoName
+ * @param[in] rect
+ * @param[in] color
+ */
 static void UI_DrawOpponentLogoName(rectDef_t *rect, vec3_t color)
 {
 	int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_opponentName"));
@@ -2301,11 +2707,24 @@ static void UI_DrawOpponentLogoName(rectDef_t *rect, vec3_t color)
 	trap_R_SetColor(NULL);
 }
 
+/**
+ * @brief UI_DrawOpponentName
+ * @param[in] rect
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] textStyle
+ */
 static void UI_DrawOpponentName(rectDef_t *rect, float scale, vec4_t color, int textStyle)
 {
 	Text_Paint(rect->x, rect->y, scale, color, UI_Cvar_VariableString("ui_opponentName"), 0, 0, textStyle);
 }
 
+/**
+ * @brief UI_OwnerDrawWidth
+ * @param[in] ownerDraw
+ * @param[in] scale
+ * @return
+ */
 static int UI_OwnerDrawWidth(int ownerDraw, float scale)
 {
 	int        i, h, value;
@@ -2315,7 +2734,7 @@ static int UI_OwnerDrawWidth(int ownerDraw, float scale)
 	switch (ownerDraw)
 	{
 	case UI_HANDICAP:
-		h = Com_Clamp(5, 100, trap_Cvar_VariableValue("handicap"));
+		h = Com_Clamp(5, 100, (int)(trap_Cvar_VariableValue("handicap")));
 		i = 20 - h / 5;
 		s = handicapValues[i];
 		break;
@@ -2430,11 +2849,24 @@ static int UI_OwnerDrawWidth(int ownerDraw, float scale)
 	return 0;
 }
 
+/**
+ * @brief UI_DrawRedBlue
+ * @param[in] rect
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] textStyle
+ */
 static void UI_DrawRedBlue(rectDef_t *rect, float scale, vec4_t color, int textStyle)
 {
 	Text_Paint(rect->x, rect->y, scale, color, (uiInfo.redBlue == 0) ? "Red" : "Blue", 0, 0, textStyle);
 }
 
+/**
+ * @brief UI_DrawCrosshair
+ * @param[in] rect
+ * @param[in] scale - unused
+ * @param[in] color - unused
+ */
 static void UI_DrawCrosshair(rectDef_t *rect, float scale, vec4_t color)
 {
 	float size = cg_crosshairSize.integer;
@@ -2454,6 +2886,9 @@ static void UI_DrawCrosshair(rectDef_t *rect, float scale, vec4_t color)
 	trap_R_SetColor(NULL);
 }
 
+/**
+ * @brief UI_BuildPlayerList
+ */
 static void UI_BuildPlayerList(void)
 {
 	uiClientState_t cs;
@@ -2464,7 +2899,7 @@ static void UI_BuildPlayerList(void)
 	trap_GetClientState(&cs);
 	trap_GetConfigString(CS_PLAYERS + cs.clientNum, info, MAX_INFO_STRING);
 	uiInfo.playerNumber = cs.clientNum;
-	uiInfo.teamLeader   = (qboolean) atoi(Info_ValueForKey(info, "tl"));
+	uiInfo.teamLeader   = (qboolean)(atoi(Info_ValueForKey(info, "tl")));
 	team                = atoi(Info_ValueForKey(info, "t"));
 	trap_GetConfigString(CS_SERVERINFO, info, sizeof(info));
 	count              = atoi(Info_ValueForKey(info, "sv_maxclients"));
@@ -2514,7 +2949,7 @@ static void UI_BuildPlayerList(void)
 		trap_Cvar_Set("cg_selectedPlayer", va("%d", playerTeamNumber));
 	}
 
-	n = trap_Cvar_VariableValue("cg_selectedPlayer");
+	n = (int)(trap_Cvar_VariableValue("cg_selectedPlayer"));
 	if (n < 0 || n > uiInfo.myTeamCount)
 	{
 		n = 0;
@@ -2525,6 +2960,13 @@ static void UI_BuildPlayerList(void)
 	}
 }
 
+/**
+ * @brief UI_DrawSelectedPlayer
+ * @param[in] rect
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] textStyle
+ */
 static void UI_DrawSelectedPlayer(rectDef_t *rect, float scale, vec4_t color, int textStyle)
 {
 	if (uiInfo.uiDC.realTime > uiInfo.playerRefresh)
@@ -2535,14 +2977,21 @@ static void UI_DrawSelectedPlayer(rectDef_t *rect, float scale, vec4_t color, in
 	Text_Paint(rect->x, rect->y, scale, color, (uiInfo.teamLeader) ? UI_Cvar_VariableString("cg_selectedPlayerName") : UI_Cvar_VariableString("name"), 0, 0, textStyle);
 }
 
+/**
+ * @brief UI_DrawServerRefreshDate
+ * @param[in] rect
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] textStyle
+ */
 static void UI_DrawServerRefreshDate(rectDef_t *rect, float scale, vec4_t color, int textStyle)
 {
 	if (uiInfo.serverStatus.refreshActive)
 	{
-		vec4_t lowLight = { (0.8 * color[0]), (0.8 * color[1]), (0.8 * color[2]), (0.8 * color[3]) }, newColor;
+		vec4_t lowLight = { (0.8f * color[0]), (0.8f * color[1]), (0.8f * color[2]), (0.8f * color[3]) }, newColor;
 		int    serverCount;
 
-		LerpColor(color, lowLight, newColor, 0.5 + 0.5 * sin((float)(uiInfo.uiDC.realTime / PULSE_DIVISOR)));
+		LerpColor(color, lowLight, newColor, 0.5f + 0.5f * (float)(sin((double)(uiInfo.uiDC.realTime / PULSE_DIVISOR))));
 
 		serverCount = trap_LAN_GetServerCount(ui_netSource.integer);
 		if (serverCount >= 0)
@@ -2563,6 +3012,12 @@ static void UI_DrawServerRefreshDate(rectDef_t *rect, float scale, vec4_t color,
 	}
 }
 
+/**
+ * @brief UI_DrawServerMOTD
+ * @param[in] rect
+ * @param[in] scale
+ * @param[in] color
+ */
 static void UI_DrawServerMOTD(rectDef_t *rect, float scale, vec4_t color)
 {
 	if (uiInfo.serverStatus.motdLen)
@@ -2642,6 +3097,15 @@ static void UI_DrawServerMOTD(rectDef_t *rect, float scale, vec4_t color)
 	}
 }
 
+/**
+ * @brief UI_DrawKeyBindStatus
+ * @param[in] rect
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] textStyle
+ * @param[in] text_x
+ * @param[in] text_y
+ */
 static void UI_DrawKeyBindStatus(rectDef_t *rect, float scale, vec4_t color, int textStyle, float text_x, float text_y)
 {
 	if (Display_KeyBindPending())
@@ -2654,6 +3118,9 @@ static void UI_DrawKeyBindStatus(rectDef_t *rect, float scale, vec4_t color, int
 	}
 }
 
+/**
+ * @brief UI_ParseGLConfig
+ */
 static void UI_ParseGLConfig(void)
 {
 	char *eptr;
@@ -2685,7 +3152,25 @@ static void UI_ParseGLConfig(void)
 	uiInfo.numGlInfoLines += 4; // vendor, version and pixelformat + a whiteline
 }
 
-// FIXME: table drive
+/**
+ * @brief UI_OwnerDraw
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] text_x
+ * @param[in] text_y
+ * @param[in] ownerDraw
+ * @param[in] ownerDrawFlags - unused
+ * @param[in] align
+ * @param[in] special - unused
+ * @param[in] scale
+ * @param[in] color
+ * @param[in] shader - unused
+ * @param[in] textStyle
+ *
+ * @note FIXME: table drive
+ */
 static void UI_OwnerDraw(float x, float y, float w, float h, float text_x, float text_y, int ownerDraw, int ownerDrawFlags, int align, int special, float scale, vec4_t color, qhandle_t shader, int textStyle)
 {
 	rectDef_t rect;
@@ -2842,6 +3327,11 @@ static void UI_OwnerDraw(float x, float y, float w, float h, float text_x, float
 	}
 }
 
+/**
+ * @brief UI_OwnerDrawVisible
+ * @param[in] flags
+ * @return
+ */
 qboolean UI_OwnerDrawVisible(int flags)
 {
 	qboolean vis = qtrue;
@@ -2935,7 +3425,7 @@ qboolean UI_OwnerDrawVisible(int flags)
 			{
 				if (uiInfo.soundHighScore)
 				{
-					if (trap_Cvar_VariableValue("sv_killserver") == 0)
+					if (trap_Cvar_VariableValue("sv_killserver") == 0.f)
 					{
 						// wait on server to go down before playing sound
 						uiInfo.soundHighScore = qfalse;
@@ -3003,7 +3493,7 @@ qboolean UI_OwnerDrawVisible(int flags)
 		}
 		if (flags & UI_SHOW_SELECTEDCAMPAIGNMAPPLAYABLE)
 		{
-			int map = trap_Cvar_VariableValue("ui_campaignmap");
+			int map = (int)(trap_Cvar_VariableValue("ui_campaignmap"));
 
 			if (map > uiInfo.campaignList[ui_currentCampaign.integer].progress)
 			{
@@ -3013,7 +3503,7 @@ qboolean UI_OwnerDrawVisible(int flags)
 		}
 		if (flags & UI_SHOW_SELECTEDCAMPAIGNMAPNOTPLAYABLE)
 		{
-			int map = trap_Cvar_VariableValue("ui_campaignmap");
+			int map = (int)(trap_Cvar_VariableValue("ui_campaignmap"));
 
 			if (map <= uiInfo.campaignList[ui_currentCampaign.integer].progress)
 			{
@@ -3072,13 +3562,20 @@ qboolean UI_OwnerDrawVisible(int flags)
 	return vis;
 }
 
+/**
+ * @brief UI_Handicap_HandleKey
+ * @param flags - unused
+ * @param special - unused
+ * @param[in] key
+ * @return
+ */
 static qboolean UI_Handicap_HandleKey(int flags, int *special, int key)
 {
 	if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER)
 	{
 		int h;
 
-		h = Com_Clamp(5, 100, trap_Cvar_VariableValue("handicap"));
+		h = Com_Clamp(5, 100, (int)(trap_Cvar_VariableValue("handicap")));
 		if (key == K_MOUSE2)
 		{
 			h -= 5;
@@ -3101,6 +3598,13 @@ static qboolean UI_Handicap_HandleKey(int flags, int *special, int key)
 	return qfalse;
 }
 
+/**
+ * @brief UI_Effects_HandleKey
+ * @param flags - unused
+ * @param special - unused
+ * @param[in] key
+ * @return
+ */
 static qboolean UI_Effects_HandleKey(int flags, int *special, int key)
 {
 	if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER)
@@ -3129,6 +3633,13 @@ static qboolean UI_Effects_HandleKey(int flags, int *special, int key)
 	return qfalse;
 }
 
+/**
+ * @brief UI_ClanName_HandleKey
+ * @param flags - unused
+ * @param special - unused
+ * @param[in] key
+ * @return
+ */
 static qboolean UI_ClanName_HandleKey(int flags, int *special, int key)
 {
 	if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER)
@@ -3163,6 +3674,14 @@ static qboolean UI_ClanName_HandleKey(int flags, int *special, int key)
 	return qfalse;
 }
 
+/**
+ * @brief UI_GameType_HandleKey
+ * @param flags - unused
+ * @param special - unused
+ * @param[in] key
+ * @param[in] resetMap
+ * @return
+ */
 static qboolean UI_GameType_HandleKey(int flags, int *special, int key, qboolean resetMap)
 {
 	if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER)
@@ -3207,6 +3726,14 @@ static qboolean UI_GameType_HandleKey(int flags, int *special, int key, qboolean
 	return qfalse;
 }
 
+/**
+ * @brief UI_TeamName_HandleKey
+ * @param flags - unused
+ * @param special - unused
+ * @param[in] key
+ * @param[in] blue
+ * @return
+ */
 static qboolean UI_TeamName_HandleKey(int flags, int *special, int key, qboolean blue)
 {
 	if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER)
@@ -3238,6 +3765,15 @@ static qboolean UI_TeamName_HandleKey(int flags, int *special, int key, qboolean
 	return qfalse;
 }
 
+/**
+ * @brief UI_TeamMember_HandleKey
+ * @param flags - unused
+ * @param special - unused
+ * @param[in] key
+ * @param[in] resetMap
+ * @param[in] num
+ * @return
+ */
 static qboolean UI_TeamMember_HandleKey(int flags, int *special, int key, qboolean blue, int num)
 {
 	if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER)
@@ -3246,7 +3782,7 @@ static qboolean UI_TeamMember_HandleKey(int flags, int *special, int key, qboole
 		// 1 - Human
 		// 2..NumCharacters - Bot
 		char *cvar = va(blue ? "ui_blueteam%i" : "ui_redteam%i", num);
-		int  value = trap_Cvar_VariableValue(cvar);
+		int  value = (int)(trap_Cvar_VariableValue(cvar));
 
 		if (key == K_MOUSE2)
 		{
@@ -3272,6 +3808,13 @@ static qboolean UI_TeamMember_HandleKey(int flags, int *special, int key, qboole
 	return qfalse;
 }
 
+/**
+ * @brief UI_NetFilter_HandleKey
+ * @param flags - unused
+ * @param special - unused
+ * @param[in] key
+ * @return
+ */
 static qboolean UI_NetFilter_HandleKey(int flags, int *special, int key)
 {
 	if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER)
@@ -3299,6 +3842,13 @@ static qboolean UI_NetFilter_HandleKey(int flags, int *special, int key)
 	return qfalse;
 }
 
+/**
+ * @brief UI_OpponentName_HandleKey
+ * @param flags - unused
+ * @param special - unused
+ * @param[in] key
+ * @return
+ */
 static qboolean UI_OpponentName_HandleKey(int flags, int *special, int key)
 {
 	if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER)
@@ -3316,6 +3866,13 @@ static qboolean UI_OpponentName_HandleKey(int flags, int *special, int key)
 	return qfalse;
 }
 
+/**
+ * @brief UI_RedBlue_HandleKey
+ * @param flags - unused
+ * @param special - unused
+ * @param[in] key
+ * @return
+ */
 static qboolean UI_RedBlue_HandleKey(int flags, int *special, int key)
 {
 	if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER)
@@ -3326,6 +3883,13 @@ static qboolean UI_RedBlue_HandleKey(int flags, int *special, int key)
 	return qfalse;
 }
 
+/**
+ * @brief UI_Crosshair_HandleKey
+ * @param flags - unused
+ * @param special - unused
+ * @param[in] key
+ * @return
+ */
 static qboolean UI_Crosshair_HandleKey(int flags, int *special, int key)
 {
 	if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER)
@@ -3353,6 +3917,13 @@ static qboolean UI_Crosshair_HandleKey(int flags, int *special, int key)
 	return qfalse;
 }
 
+/**
+ * @brief UI_SelectedPlayer_HandleKey
+ * @param flags - unused
+ * @param special - unused
+ * @param[in] key
+ * @return
+ */
 static qboolean UI_SelectedPlayer_HandleKey(int flags, int *special, int key)
 {
 	if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER)
@@ -3364,7 +3935,7 @@ static qboolean UI_SelectedPlayer_HandleKey(int flags, int *special, int key)
 		{
 			return qfalse;
 		}
-		selected = trap_Cvar_VariableValue("cg_selectedPlayer");
+		selected = (int)(trap_Cvar_VariableValue("cg_selectedPlayer"));
 
 		if (key == K_MOUSE2)
 		{
@@ -3397,28 +3968,30 @@ static qboolean UI_SelectedPlayer_HandleKey(int flags, int *special, int key)
 	return qfalse;
 }
 
+/**
+ * @brief UI_OwnerDrawHandleKey
+ * @param[in] ownerDraw
+ * @param[in] flags
+ * @param[in] special
+ * @param[in] key
+ * @return
+ */
 static qboolean UI_OwnerDrawHandleKey(int ownerDraw, int flags, int *special, int key)
 {
 	switch (ownerDraw)
 	{
 	case UI_HANDICAP:
 		return UI_Handicap_HandleKey(flags, special, key);
-		break;
 	case UI_EFFECTS:
 		return UI_Effects_HandleKey(flags, special, key);
-		break;
 	case UI_CLANNAME:
 		return UI_ClanName_HandleKey(flags, special, key);
-		break;
 	case UI_GAMETYPE:
 		return UI_GameType_HandleKey(flags, special, key, qtrue);
-		break;
 	case UI_BLUETEAMNAME:
 		return UI_TeamName_HandleKey(flags, special, key, qtrue);
-		break;
 	case UI_REDTEAMNAME:
 		return UI_TeamName_HandleKey(flags, special, key, qfalse);
-		break;
 	case UI_BLUETEAM1:
 	case UI_BLUETEAM2:
 	case UI_BLUETEAM3:
@@ -3455,16 +4028,34 @@ static qboolean UI_OwnerDrawHandleKey(int ownerDraw, int flags, int *special, in
 	return qfalse;
 }
 
+/**
+ * @brief UI_GetValue
+ * @param ownerDraw - unused
+ * @param type - unused
+ * @return
+ * @todo FIXME: this does nothing (same as CG_GetValue)
+ */
 static float UI_GetValue(int ownerDraw, int type)
 {
 	return 0;
 }
 
+/**
+ * @brief UI_ServersQsortCompare
+ * @param[in] arg1
+ * @param[in] arg2
+ * @return
+ */
 static int QDECL UI_ServersQsortCompare(const void *arg1, const void *arg2)
 {
 	return trap_LAN_CompareServers(ui_netSource.integer, uiInfo.serverStatus.sortKey, uiInfo.serverStatus.sortDir, *(int *)arg1, *(int *)arg2);
 }
 
+/**
+ * @brief UI_ServersSort
+ * @param[in] column
+ * @param[in] force
+ */
 void UI_ServersSort(int column, qboolean force)
 {
 	if (!force)
@@ -3481,6 +4072,9 @@ void UI_ServersSort(int column, qboolean force)
 
 /**
  * @brief Sorting the mods list
+ * @param[in] a
+ * @param[in] b
+ * @return
  */
 int QDECL UI_SortMods(const void *a, const void *b)
 {
@@ -3490,14 +4084,17 @@ int QDECL UI_SortMods(const void *a, const void *b)
 	return strcmp(ca.modName, cb.modName);
 }
 
+/**
+ * @brief UI_LoadMods
+ */
 static void UI_LoadMods(void)
 {
-	int  numdirs;
-	char dirlist[2048];
-	char *dirptr;
-	char *descptr;
-	int  i;
-	int  dirlen;
+	int          numdirs;
+	char         dirlist[2048];
+	char         *dirptr;
+	char         *descptr;
+	int          i;
+	unsigned int dirlen;
 
 	uiInfo.modCount = 0;
 	numdirs         = trap_FS_GetFileList("$modlist", "", dirlist, sizeof(dirlist));
@@ -3520,13 +4117,16 @@ static void UI_LoadMods(void)
 	qsort(uiInfo.modList, uiInfo.modCount, sizeof(uiInfo.modList[0]), UI_SortMods);
 }
 
+/**
+ * @brief UI_LoadProfiles
+ */
 static void UI_LoadProfiles(void)
 {
-	int  numdirs;
-	char dirlist[2048];
-	char *dirptr;
-	int  i;
-	int  dirlen;
+	int          numdirs;
+	char         dirlist[2048];
+	char         *dirptr;
+	int          i;
+	unsigned int dirlen;
 
 	uiInfo.profileCount = 0;
 	uiInfo.profileIndex = -1;
@@ -3604,11 +4204,9 @@ static void UI_LoadProfiles(void)
 	}
 }
 
-/*
-===============
-UI_LoadMovies
-===============
-*/
+/**
+ * @brief UI_LoadMovies
+ */
 static void UI_LoadMovies(void)
 {
 	char movielist[4096];
@@ -3618,13 +4216,16 @@ static void UI_LoadMovies(void)
 
 	if (uiInfo.movieCount)
 	{
-		int i, len;
+		int          i;
+		unsigned int len;
 
 		if (uiInfo.movieCount > MAX_MOVIES)
 		{
 			uiInfo.movieCount = MAX_MOVIES;
 		}
+
 		moviename = movielist;
+
 		for (i = 0; i < uiInfo.movieCount; i++)
 		{
 			len = strlen(moviename);
@@ -3639,26 +4240,25 @@ static void UI_LoadMovies(void)
 	}
 }
 
-/*
-===============
-UI_LoadDemos
-===============
-*/
+/**
+ * @brief UI_LoadDemos
+ */
 static void UI_LoadDemos(void)
 {
 	char demolist[30000];
 	char demoExt[32];
 	char *demoname;
 
-	Com_sprintf(demoExt, sizeof(demoExt), "dm_%d", (int)trap_Cvar_VariableValue("protocol"));
+	Com_sprintf(demoExt, sizeof(demoExt), "dm_%d", (int)(trap_Cvar_VariableValue("protocol")));
 
 	uiInfo.demoCount = trap_FS_GetFileList("demos", demoExt, demolist, sizeof(demolist));
 
-	Com_sprintf(demoExt, sizeof(demoExt), ".dm_%d", (int)trap_Cvar_VariableValue("protocol"));
+	Com_sprintf(demoExt, sizeof(demoExt), ".dm_%d", (int)(trap_Cvar_VariableValue("protocol")));
 
 	if (uiInfo.demoCount)
 	{
-		int i, len;
+		int          i;
+		unsigned int len;
 
 		if (uiInfo.demoCount > MAX_DEMOS)
 		{
@@ -3678,6 +4278,11 @@ static void UI_LoadDemos(void)
 	}
 }
 
+/**
+ * @brief UI_CheckExecKey
+ * @param[in] key
+ * @return
+ */
 qboolean UI_CheckExecKey(int key)
 {
 	menuDef_t *menu = Menu_GetFocused();
@@ -3712,14 +4317,13 @@ qboolean UI_CheckExecKey(int key)
 	return qfalse;
 }
 
-/*
-==============
-UI_Update
-==============
-*/
+/**
+ * @brief UI_Update
+ * @param[in] name
+ */
 void UI_Update(const char *name)
 {
-	int val = trap_Cvar_VariableValue(name);
+	int val = (int)(trap_Cvar_VariableValue(name));
 
 	if (Q_stricmp(name, "ui_SetName") == 0)
 	{
@@ -3792,10 +4396,12 @@ void UI_Update(const char *name)
 	}
 }
 
-//uiscript glCustom
+/**
+ * @brief UI_GLCustom
+ */
 void UI_GLCustom()
 {
-	int ui_r_windowmode = DC->getCVarValue("ui_r_windowmode");
+	int ui_r_windowmode = (int)(DC->getCVarValue("ui_r_windowmode"));
 
 	switch (ui_r_windowmode)
 	{
@@ -3818,11 +4424,10 @@ void UI_GLCustom()
 }
 
 
-/*
-==============
-UI_RunMenuScript
-==============
-*/
+/**
+ * @brief UI_RunMenuScript
+ * @param[in] args
+ */
 void UI_RunMenuScript(char **args)
 {
 	const char *name, *name2;
@@ -3840,8 +4445,8 @@ void UI_RunMenuScript(char **args)
 			{
 				int pb_sv, pb_cl;
 
-				pb_sv = (int)trap_Cvar_VariableValue("sv_punkbuster");
-				pb_cl = (int)trap_Cvar_VariableValue("cl_punkbuster");
+				pb_sv = (int)(trap_Cvar_VariableValue("sv_punkbuster"));
+				pb_cl = (int)(trap_Cvar_VariableValue("cl_punkbuster"));
 
 				if (pb_sv && !pb_cl)
 				{
@@ -3877,7 +4482,7 @@ void UI_RunMenuScript(char **args)
 			// set user cvars here
 
 			// set timelimit
-			val = trap_Cvar_VariableValue("ui_userTimelimit");
+			val = (int)(trap_Cvar_VariableValue("ui_userTimelimit"));
 
 			if (val && val != uiInfo.mapList[ui_mapIndex.integer].Timelimit)
 			{
@@ -3889,7 +4494,7 @@ void UI_RunMenuScript(char **args)
 			}
 
 			// set axis respawn time
-			val = trap_Cvar_VariableValue("ui_userAxisRespawnTime");
+			val = (int)(trap_Cvar_VariableValue("ui_userAxisRespawnTime"));
 
 			if (val && val != uiInfo.mapList[ui_mapIndex.integer].AxisRespawnTime)
 			{
@@ -3901,7 +4506,7 @@ void UI_RunMenuScript(char **args)
 			}
 
 			// set allied respawn time
-			val = trap_Cvar_VariableValue("ui_userAlliedRespawnTime");
+			val = (int)(trap_Cvar_VariableValue("ui_userAlliedRespawnTime"));
 
 			if (val && val != uiInfo.mapList[ui_mapIndex.integer].AlliedRespawnTime)
 			{
@@ -4010,7 +4615,7 @@ void UI_RunMenuScript(char **args)
 		{
 			if (uiInfo.demoIndex >= 0 && uiInfo.demoIndex < uiInfo.demoCount)
 			{
-				trap_FS_Delete(va("demos/%s.dm_%d", uiInfo.demoList[uiInfo.demoIndex], (int)trap_Cvar_VariableValue("protocol")));
+				trap_FS_Delete(va("demos/%s.dm_%d", uiInfo.demoList[uiInfo.demoIndex], (int)(trap_Cvar_VariableValue("protocol"))));
 			}
 		}
 		else if (Q_stricmp(name, "closeJoin") == 0)
@@ -4069,7 +4674,7 @@ void UI_RunMenuScript(char **args)
 		{
 			// the server info dialog has been turned into a modal thing
 			// it can be called in several situations
-			if (trap_Cvar_VariableValue("ui_serverBrowser") == 1)
+			if (trap_Cvar_VariableValue("ui_serverBrowser") == 1.f)
 			{
 				// legacy, from the server browser
 				trap_LAN_GetServerAddressString(ui_netSource.integer, uiInfo.serverStatus.displayServers[uiInfo.serverStatus.currentServer], uiInfo.serverStatusAddress, sizeof(uiInfo.serverStatusAddress));
@@ -4176,7 +4781,7 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "Leave") == 0)
 		{
 			// if we are running a local server, make sure we kill it cleanly for other clients
-			if (trap_Cvar_VariableValue("sv_running"))
+			if (trap_Cvar_VariableValue("sv_running") != 0.f)
 			{
 				trap_Cvar_Set("sv_killserver", "1");
 			}
@@ -4277,7 +4882,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "voteGame") == 0)
 		{
-			int ui_voteGameType = trap_Cvar_VariableValue("ui_voteGameType");
+			int ui_voteGameType = (int)(trap_Cvar_VariableValue("ui_voteGameType"));
 
 			if (ui_voteGameType >= 0 && ui_voteGameType < uiInfo.numGameTypes)
 			{
@@ -4286,7 +4891,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "refGame") == 0)
 		{
-			int ui_voteGameType = trap_Cvar_VariableValue("ui_voteGameType");
+			int ui_voteGameType = (int)(trap_Cvar_VariableValue("ui_voteGameType"));
 
 			if (ui_voteGameType >= 0 && ui_voteGameType < uiInfo.numGameTypes)
 			{
@@ -4299,7 +4904,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "voteWarmupDamage") == 0)
 		{
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote warmupdamage %d\n", (int)trap_Cvar_VariableValue("ui_voteWarmupDamage")));
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("callvote warmupdamage %d\n", (int)(trap_Cvar_VariableValue("ui_voteWarmupDamage"))));
 
 		}
 		else if (Q_stricmp(name, "refTimelimit") == 0)
@@ -4308,7 +4913,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "refWarmupDamage") == 0)
 		{
-			trap_Cmd_ExecuteText(EXEC_APPEND, va("ref warmupdamage %d\n", (int)trap_Cvar_VariableValue("ui_voteWarmupDamage")));
+			trap_Cmd_ExecuteText(EXEC_APPEND, va("ref warmupdamage %d\n", (int)(trap_Cvar_VariableValue("ui_voteWarmupDamage"))));
 		}
 		else if (Q_stricmp(name, "voteInitToggles") == 0)
 		{
@@ -4456,7 +5061,7 @@ void UI_RunMenuScript(char **args)
 
 			if (String_Parse(args, &orders))
 			{
-				int selectedPlayer = trap_Cvar_VariableValue("cg_selectedPlayer");
+				int selectedPlayer = (int)(trap_Cvar_VariableValue("cg_selectedPlayer"));
 
 				if (selectedPlayer < uiInfo.myTeamCount)
 				{
@@ -4491,7 +5096,7 @@ void UI_RunMenuScript(char **args)
 
 			if (String_Parse(args, &orders))
 			{
-				int selectedPlayer = trap_Cvar_VariableValue("cg_selectedPlayer");
+				int selectedPlayer = (int)(trap_Cvar_VariableValue("cg_selectedPlayer"));
 
 				if (selectedPlayer == uiInfo.myTeamCount)
 				{
@@ -4510,11 +5115,11 @@ void UI_RunMenuScript(char **args)
 
 			if (String_Parse(args, &orders))
 			{
-				int selectedPlayer = trap_Cvar_VariableValue("cg_selectedPlayer");
+				int selectedPlayer = (int)(trap_Cvar_VariableValue("cg_selectedPlayer"));
 
 				if (selectedPlayer < uiInfo.myTeamCount)
 				{
-					Com_sprintf(buff, sizeof( buff ), orders, uiInfo.teamClientNums[selectedPlayer]);
+					Com_sprintf(buff, sizeof(buff), orders, uiInfo.teamClientNums[selectedPlayer]);
 					trap_Cmd_ExecuteText(EXEC_APPEND, buff);
 					trap_Cmd_ExecuteText(EXEC_APPEND, "\n");
 				}
@@ -4882,7 +5487,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "initHostGameFeatures") == 0)
 		{
-			int cvar = trap_Cvar_VariableValue("g_maxlives");
+			int cvar = (int)(trap_Cvar_VariableValue("g_maxlives"));
 
 			if (cvar)
 			{
@@ -4893,7 +5498,7 @@ void UI_RunMenuScript(char **args)
 				trap_Cvar_Set("ui_maxlives", "0");
 			}
 
-			cvar = trap_Cvar_VariableValue("g_heavyWeaponRestriction");
+			cvar = (int)(trap_Cvar_VariableValue("g_heavyWeaponRestriction"));
 			if (cvar == 100)
 			{
 				trap_Cvar_Set("ui_heavyWeaponRestriction", "0");
@@ -4905,7 +5510,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "toggleMaxLives") == 0)
 		{
-			int ui_ml = trap_Cvar_VariableValue("ui_maxlives");
+			int ui_ml = (int)(trap_Cvar_VariableValue("ui_maxlives"));
 
 			if (ui_ml)
 			{
@@ -4918,7 +5523,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "toggleWeaponRestriction") == 0)
 		{
-			int ui_hwr = trap_Cvar_VariableValue("ui_heavyWeaponRestriction");
+			int ui_hwr = (int)(trap_Cvar_VariableValue("ui_heavyWeaponRestriction"));
 
 			if (ui_hwr)
 			{
@@ -4952,7 +5557,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "clientCheckVote") == 0)
 		{
-			int flags = trap_Cvar_VariableValue("cg_ui_voteFlags");
+			int flags = (int)(trap_Cvar_VariableValue("cg_ui_voteFlags"));
 
 			if (flags == VOTING_DISABLED)
 			{
@@ -4988,8 +5593,8 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "vidSave") == 0)
 		{
-			int r_mode       = trap_Cvar_VariableValue("r_mode");
-			int r_fullscreen = trap_Cvar_VariableValue("r_fullscreen");
+			int r_mode       = (int)(trap_Cvar_VariableValue("r_mode"));
+			int r_fullscreen = (int)(trap_Cvar_VariableValue("r_fullscreen"));
 
 			// save the last usable settings
 			trap_Cvar_SetValue("r_oldMode", r_mode);
@@ -4997,8 +5602,8 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "vidReset") == 0)
 		{
-			int   r_oldMode       = trap_Cvar_VariableValue("r_oldMode");
-			int   r_oldFullscreen = trap_Cvar_VariableValue("r_oldFullscreen");
+			int   r_oldMode       = (int)(trap_Cvar_VariableValue("r_oldMode"));
+			int   r_oldFullscreen = (int)(trap_Cvar_VariableValue("r_oldFullscreen"));
 			float ui_r_gamma      = trap_Cvar_VariableValue("ui_r_gamma");
 			float r_gamma         = trap_Cvar_VariableValue("r_gamma");
 
@@ -5010,9 +5615,9 @@ void UI_RunMenuScript(char **args)
 
 			// if gamma has been changed in UI, but not saved
 			// reset it back to the last value
-			if ((ui_r_gamma != r_gamma) && (ui_r_gamma != 0))
+			if ((ui_r_gamma != r_gamma) && (ui_r_gamma != 0.f))
 			{
-				trap_Cvar_Set("r_gamma", va("%f", ui_r_gamma));
+				trap_Cvar_Set("r_gamma", va("%f", (double)ui_r_gamma));
 			}
 		}
 		else if (Q_stricmp(name, "vidConfirm") == 0)
@@ -5022,40 +5627,40 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "systemCvarsGet") == 0)
 		{
-			int   ui_r_mode                           = trap_Cvar_VariableValue("r_mode");
+			int   ui_r_mode                           = (int)(trap_Cvar_VariableValue("r_mode"));
 			float ui_r_gamma                          = trap_Cvar_VariableValue("r_gamma");
-			int   ui_rate                             = trap_Cvar_VariableValue("rate");
-			int   ui_cl_maxpackets                    = trap_Cvar_VariableValue("cl_maxpackets");
-			int   ui_cl_packetdup                     = trap_Cvar_VariableValue("cl_packetdup");
+			int   ui_rate                             = (int)(trap_Cvar_VariableValue("rate"));
+			int   ui_cl_maxpackets                    = (int)(trap_Cvar_VariableValue("cl_maxpackets"));
+			int   ui_cl_packetdup                     = (int)(trap_Cvar_VariableValue("cl_packetdup"));
 			float ui_sensitivity                      = trap_Cvar_VariableValue("sensitivity");
-			int   ui_r_colorbits                      = trap_Cvar_VariableValue("r_colorbits");
-			int   ui_r_fullscreen                     = trap_Cvar_VariableValue("r_fullscreen");
-			int   ui_r_noborder                       = trap_Cvar_VariableValue("r_noborder");
-			int   ui_r_lodbias                        = trap_Cvar_VariableValue("r_lodbias");
-			int   ui_r_subdivisions                   = trap_Cvar_VariableValue("r_subdivisions");
-			int   ui_r_picmip                         = trap_Cvar_VariableValue("r_picmip");
-			int   ui_r_texturebits                    = trap_Cvar_VariableValue("r_texturebits");
-			int   ui_r_depthbits                      = trap_Cvar_VariableValue("r_depthbits");
-			int   ui_r_ext_compressed_textures        = trap_Cvar_VariableValue("r_ext_compressed_textures");
-			int   ui_r_finish                         = trap_Cvar_VariableValue("r_finish");
-			int   ui_r_dynamiclight                   = trap_Cvar_VariableValue("r_dynamiclight");
-			int   ui_r_allowextensions                = trap_Cvar_VariableValue("r_allowextensions");
-			int   ui_m_filter                         = trap_Cvar_VariableValue("m_filter");
-			int   ui_s_initsound                      = trap_Cvar_VariableValue("s_initsound");
-			int   ui_s_khz                            = trap_Cvar_VariableValue("s_khz");
-			int   ui_r_detailtextures                 = trap_Cvar_VariableValue("r_detailtextures");
-			int   ui_r_ext_texture_filter_anisotropic = trap_Cvar_VariableValue("r_ext_texture_filter_anisotropic");
-			int   ui_cg_shadows                       = trap_Cvar_VariableValue("cg_shadows");
+			int   ui_r_colorbits                      = (int)(trap_Cvar_VariableValue("r_colorbits"));
+			int   ui_r_fullscreen                     = (int)(trap_Cvar_VariableValue("r_fullscreen"));
+			int   ui_r_noborder                       = (int)(trap_Cvar_VariableValue("r_noborder"));
+			int   ui_r_lodbias                        = (int)(trap_Cvar_VariableValue("r_lodbias"));
+			int   ui_r_subdivisions                   = (int)(trap_Cvar_VariableValue("r_subdivisions"));
+			int   ui_r_picmip                         = (int)(trap_Cvar_VariableValue("r_picmip"));
+			int   ui_r_texturebits                    = (int)(trap_Cvar_VariableValue("r_texturebits"));
+			int   ui_r_depthbits                      = (int)(trap_Cvar_VariableValue("r_depthbits"));
+			int   ui_r_ext_compressed_textures        = (int)(trap_Cvar_VariableValue("r_ext_compressed_textures"));
+			int   ui_r_finish                         = (int)(trap_Cvar_VariableValue("r_finish"));
+			int   ui_r_dynamiclight                   = (int)(trap_Cvar_VariableValue("r_dynamiclight"));
+			int   ui_r_allowextensions                = (int)(trap_Cvar_VariableValue("r_allowextensions"));
+			int   ui_m_filter                         = (int)(trap_Cvar_VariableValue("m_filter"));
+			int   ui_s_initsound                      = (int)(trap_Cvar_VariableValue("s_initsound"));
+			int   ui_s_khz                            = (int)(trap_Cvar_VariableValue("s_khz"));
+			int   ui_r_detailtextures                 = (int)(trap_Cvar_VariableValue("r_detailtextures"));
+			int   ui_r_ext_texture_filter_anisotropic = (int)(trap_Cvar_VariableValue("r_ext_texture_filter_anisotropic"));
+			int   ui_cg_shadows                       = (char)(trap_Cvar_VariableValue("cg_shadows"));
 			char  ui_r_texturemode[MAX_CVAR_VALUE_STRING];
 
 			trap_Cvar_VariableStringBuffer("r_texturemode", ui_r_texturemode, sizeof(ui_r_texturemode));
 
 			trap_Cvar_Set("ui_r_mode", va("%i", ui_r_mode));
-			trap_Cvar_Set("ui_r_gamma", va("%f", ui_r_gamma));
+			trap_Cvar_Set("ui_r_gamma", va("%f", (double)ui_r_gamma));
 			trap_Cvar_Set("ui_rate", va("%i", ui_rate));
 			trap_Cvar_Set("ui_cl_maxpackets", va("%i", ui_cl_maxpackets));
 			trap_Cvar_Set("ui_cl_packetdup", va("%i", ui_cl_packetdup));
-			trap_Cvar_Set("ui_sensitivity", va("%f", ui_sensitivity));
+			trap_Cvar_Set("ui_sensitivity", va("%f", (double)ui_sensitivity));
 			trap_Cvar_Set("ui_r_colorbits", va("%i", ui_r_colorbits));
 
 			if (ui_r_noborder && !ui_r_fullscreen && ui_r_mode == -2)
@@ -5115,30 +5720,30 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "systemCvarsApply") == 0)
 		{
-			int   ui_r_windowmode                     = trap_Cvar_VariableValue("ui_r_windowmode");
-			int   ui_r_mode                           = trap_Cvar_VariableValue("ui_r_mode");
-			int   ui_rate                             = trap_Cvar_VariableValue("ui_rate");
-			int   ui_cl_maxpackets                    = trap_Cvar_VariableValue("ui_cl_maxpackets");
-			int   ui_cl_packetdup                     = trap_Cvar_VariableValue("ui_cl_packetdup");
+			int   ui_r_windowmode                     = (int)(trap_Cvar_VariableValue("ui_r_windowmode"));
+			int   ui_r_mode                           = (int)(trap_Cvar_VariableValue("ui_r_mode"));
+			int   ui_rate                             = (int)(trap_Cvar_VariableValue("ui_rate"));
+			int   ui_cl_maxpackets                    = (int)(trap_Cvar_VariableValue("ui_cl_maxpackets"));
+			int   ui_cl_packetdup                     = (int)(trap_Cvar_VariableValue("ui_cl_packetdup"));
 			float ui_sensitivity                      = trap_Cvar_VariableValue("ui_sensitivity");
-			int   ui_r_colorbits                      = trap_Cvar_VariableValue("ui_r_colorbits");
-			int   ui_r_fullscreen                     = trap_Cvar_VariableValue("ui_r_fullscreen");
-			int   ui_r_noborder                       = trap_Cvar_VariableValue("ui_r_noborder");
-			int   ui_r_lodbias                        = trap_Cvar_VariableValue("ui_r_lodbias");
-			int   ui_r_subdivisions                   = trap_Cvar_VariableValue("ui_r_subdivisions");
-			int   ui_r_picmip                         = trap_Cvar_VariableValue("ui_r_picmip");
-			int   ui_r_texturebits                    = trap_Cvar_VariableValue("ui_r_texturebits");
-			int   ui_r_depthbits                      = trap_Cvar_VariableValue("ui_r_depthbits");
-			int   ui_r_ext_compressed_textures        = trap_Cvar_VariableValue("ui_r_ext_compressed_textures");
-			int   ui_r_finish                         = trap_Cvar_VariableValue("ui_r_finish");
-			int   ui_r_dynamiclight                   = trap_Cvar_VariableValue("ui_r_dynamiclight");
-			int   ui_r_allowextensions                = trap_Cvar_VariableValue("ui_r_allowextensions");
-			int   ui_m_filter                         = trap_Cvar_VariableValue("ui_m_filter");
-			int   ui_s_initsound                      = trap_Cvar_VariableValue("ui_s_initsound");
-			int   ui_s_khz                            = trap_Cvar_VariableValue("ui_s_khz");
-			int   ui_r_detailtextures                 = trap_Cvar_VariableValue("ui_r_detailtextures");
-			int   ui_r_ext_texture_filter_anisotropic = trap_Cvar_VariableValue("ui_r_ext_texture_filter_anisotropic");
-			int   ui_cg_shadows                       = trap_Cvar_VariableValue("ui_cg_shadows");
+			int   ui_r_colorbits                      = (int)(trap_Cvar_VariableValue("ui_r_colorbits"));
+			int   ui_r_fullscreen                     = (int)(trap_Cvar_VariableValue("ui_r_fullscreen"));
+			int   ui_r_noborder                       = (int)(trap_Cvar_VariableValue("ui_r_noborder"));
+			int   ui_r_lodbias                        = (int)(trap_Cvar_VariableValue("ui_r_lodbias"));
+			int   ui_r_subdivisions                   = (int)(trap_Cvar_VariableValue("ui_r_subdivisions"));
+			int   ui_r_picmip                         = (int)(trap_Cvar_VariableValue("ui_r_picmip"));
+			int   ui_r_texturebits                    = (int)(trap_Cvar_VariableValue("ui_r_texturebits"));
+			int   ui_r_depthbits                      = (int)(trap_Cvar_VariableValue("ui_r_depthbits"));
+			int   ui_r_ext_compressed_textures        = (int)(trap_Cvar_VariableValue("ui_r_ext_compressed_textures"));
+			int   ui_r_finish                         = (int)(trap_Cvar_VariableValue("ui_r_finish"));
+			int   ui_r_dynamiclight                   = (int)(trap_Cvar_VariableValue("ui_r_dynamiclight"));
+			int   ui_r_allowextensions                = (int)(trap_Cvar_VariableValue("ui_r_allowextensions"));
+			int   ui_m_filter                         = (int)(trap_Cvar_VariableValue("ui_m_filter"));
+			int   ui_s_initsound                      = (int)(trap_Cvar_VariableValue("ui_s_initsound"));
+			int   ui_s_khz                            = (int)(trap_Cvar_VariableValue("ui_s_khz"));
+			int   ui_r_detailtextures                 = (int)(trap_Cvar_VariableValue("ui_r_detailtextures"));
+			int   ui_r_ext_texture_filter_anisotropic = (int)(trap_Cvar_VariableValue("ui_r_ext_texture_filter_anisotropic"));
+			int   ui_cg_shadows                       = (int)(trap_Cvar_VariableValue("ui_cg_shadows"));
 			char  ui_r_texturemode[MAX_CVAR_VALUE_STRING];
 
 			trap_Cvar_VariableStringBuffer("ui_r_texturemode", ui_r_texturemode, sizeof(ui_r_texturemode));
@@ -5155,7 +5760,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("rate", va("%i", ui_rate));
 			trap_Cvar_Set("cl_maxpackets", va("%i", ui_cl_maxpackets));
 			trap_Cvar_Set("cl_packetdup", va("%i", ui_cl_packetdup));
-			trap_Cvar_Set("sensitivity", va("%f", ui_sensitivity));
+			trap_Cvar_Set("sensitivity", va("%f", (double)ui_sensitivity));
 			trap_Cvar_Set("r_colorbits", va("%i", ui_r_colorbits));
 
 			if (ui_r_windowmode == 2)
@@ -5213,14 +5818,14 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "profileCvarsGet") == 0)
 		{
-			int ui_profile_mousePitch = trap_Cvar_VariableValue("ui_mousePitch");
+			int ui_profile_mousePitch = (int)(trap_Cvar_VariableValue("ui_mousePitch"));
 
 			trap_Cvar_Set("ui_profile_mousePitch", va("%i", ui_profile_mousePitch));
 		}
 		else if (Q_stricmp(name, "profileCvarsApply") == 0)
 		{
-			int ui_handedness         = trap_Cvar_VariableValue("ui_handedness");
-			int ui_profile_mousePitch = trap_Cvar_VariableValue("ui_profile_mousePitch");
+			int ui_handedness         = (int)(trap_Cvar_VariableValue("ui_handedness"));
+			int ui_profile_mousePitch = (int)(trap_Cvar_VariableValue("ui_profile_mousePitch"));
 
 			trap_Cvar_Set("ui_mousePitch", va("%i", ui_profile_mousePitch));
 
@@ -5256,7 +5861,7 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "defaultControls") == 0)
 		{
-			int ui_handedness = trap_Cvar_VariableValue("ui_handedness");
+			int ui_handedness = (int)(trap_Cvar_VariableValue("ui_handedness"));
 
 			if (ui_handedness == 0)
 			{
@@ -5289,28 +5894,28 @@ void UI_RunMenuScript(char **args)
 		}
 		else if (Q_stricmp(name, "SetFontScale") == 0)
 		{
-			int fontScale = trap_Cvar_VariableValue("cg_fontScale");
+			int fontScale = (int)(trap_Cvar_VariableValue("cg_fontScale"));
 
 			if (fontScale == 1)
 			{
-				trap_Cvar_SetValue("cg_fontScaleTP", 0.30);
-				trap_Cvar_SetValue("cg_fontScaleSP", 0.20);
-				trap_Cvar_SetValue("cg_fontScaleCP", 0.20);
-				trap_Cvar_SetValue("cg_fontScaleCN", 0.22);
+				trap_Cvar_SetValue("cg_fontScaleTP", 0.30f);
+				trap_Cvar_SetValue("cg_fontScaleSP", 0.20f);
+				trap_Cvar_SetValue("cg_fontScaleCP", 0.20f);
+				trap_Cvar_SetValue("cg_fontScaleCN", 0.22f);
 			}
 			else if (fontScale == 2)
 			{
-				trap_Cvar_SetValue("cg_fontScaleTP", 0.25);
-				trap_Cvar_SetValue("cg_fontScaleSP", 0.18);
-				trap_Cvar_SetValue("cg_fontScaleCP", 0.18);
-				trap_Cvar_SetValue("cg_fontScaleCN", 0.20);
+				trap_Cvar_SetValue("cg_fontScaleTP", 0.25f);
+				trap_Cvar_SetValue("cg_fontScaleSP", 0.18f);
+				trap_Cvar_SetValue("cg_fontScaleCP", 0.18f);
+				trap_Cvar_SetValue("cg_fontScaleCN", 0.20f);
 			}
 			else
 			{
-				trap_Cvar_SetValue("cg_fontScaleTP", 0.35);
-				trap_Cvar_SetValue("cg_fontScaleSP", 0.22);
-				trap_Cvar_SetValue("cg_fontScaleCP", 0.22);
-				trap_Cvar_SetValue("cg_fontScaleCN", 0.25);
+				trap_Cvar_SetValue("cg_fontScaleTP", 0.35f);
+				trap_Cvar_SetValue("cg_fontScaleSP", 0.22f);
+				trap_Cvar_SetValue("cg_fontScaleCP", 0.22f);
+				trap_Cvar_SetValue("cg_fontScaleCN", 0.25f);
 			}
 		}
 		else
@@ -5320,15 +5925,20 @@ void UI_RunMenuScript(char **args)
 	}
 }
 
+/**
+ * @brief UI_GetTeamColor
+ * @param color - unused
+ * @todo FIXME: empty function
+ */
 static void UI_GetTeamColor(vec4_t *color)
 {
 }
 
-/*
-==================
-UI_MapCountByGameType
-==================
-*/
+/**
+ * @brief UI_MapCountByGameType
+ * @param[in] singlePlayer
+ * @return
+ */
 static int UI_MapCountByGameType(qboolean singlePlayer)
 {
 	int i;
@@ -5364,11 +5974,11 @@ static int UI_MapCountByGameType(qboolean singlePlayer)
 	return c;
 }
 
-/*
-==================
-UI_CampaignCount
-==================
-*/
+/**
+ * @brief UI_CampaignCount
+ * @param[in] singlePlayer
+ * @return
+ */
 static int UI_CampaignCount(qboolean singlePlayer)
 {
 	int i, c = 0;
@@ -5388,11 +5998,11 @@ static int UI_CampaignCount(qboolean singlePlayer)
 	return c;
 }
 
-/*
-==================
-UI_InsertServerIntoDisplayList
-==================
-*/
+/**
+ * @brief UI_InsertServerIntoDisplayList
+ * @param[in] num
+ * @param[in] position
+ */
 static void UI_InsertServerIntoDisplayList(int num, int position)
 {
 	int i;
@@ -5410,11 +6020,10 @@ static void UI_InsertServerIntoDisplayList(int num, int position)
 	uiInfo.serverStatus.displayServers[position] = num;
 }
 
-/*
-==================
-UI_RemoveServerFromDisplayList
-==================
-*/
+/**
+ * @brief UI_RemoveServerFromDisplayList
+ * @param[in] num
+ */
 static void UI_RemoveServerFromDisplayList(int num)
 {
 	int i, j;
@@ -5433,11 +6042,10 @@ static void UI_RemoveServerFromDisplayList(int num)
 	}
 }
 
-/*
-==================
-UI_BinaryServerInsertion
-==================
-*/
+/**
+ * @brief UI_BinaryServerInsertion
+ * @param[in] num
+ */
 static void UI_BinaryServerInsertion(int num)
 {
 	// use binary search to insert server
@@ -5477,11 +6085,10 @@ static void UI_BinaryServerInsertion(int num)
 	UI_InsertServerIntoDisplayList(num, offset);
 }
 
-/*
-==================
-UI_BuildServerDisplayList
-==================
-*/
+/**
+ * @brief UI_BuildServerDisplayList
+ * @param[in] force
+ */
 static void UI_BuildServerDisplayList(int force)
 {
 	int        i, count, clients, humans, maxClients, ping, game, len, friendlyFire, maxlives, punkbuster, antilag, password, weaponrestricted, balancedteams;
@@ -5912,11 +6519,10 @@ serverStatusCvar_t serverStatusCvars[] =
 	{ NULL,          NULL        }
 };
 
-/*
-==================
-UI_SortServerStatusInfo
-==================
-*/
+/**
+ * @brief UI_SortServerStatusInfo
+ * @param[in,out] info
+ */
 static void UI_SortServerStatusInfo(serverStatusInfo_t *info)
 {
 	int  i, j, index = 0;
@@ -5953,11 +6559,12 @@ static void UI_SortServerStatusInfo(serverStatusInfo_t *info)
 	}
 }
 
-/*
-==================
-UI_GetServerStatusInfo
-==================
-*/
+/**
+ * @brief UI_GetServerStatusInfo
+ * @param[in] serverAddress
+ * @param[in,out] info
+ * @return
+ */
 static int UI_GetServerStatusInfo(const char *serverAddress, serverStatusInfo_t *info)
 {
 	char      *p, *score, *ping, *name, *p_val = NULL, *p_name = NULL;
@@ -5971,7 +6578,8 @@ static int UI_GetServerStatusInfo(const char *serverAddress, serverStatusInfo_t 
 	memset(info, 0, sizeof(*info));
 	if (trap_LAN_ServerStatus(serverAddress, info->text, sizeof(info->text)))
 	{
-		int i, len;
+		int          i;
+		unsigned int len;
 
 		menu  = Menus_FindByName("serverinfo_popmenu");
 		menu2 = Menus_FindByName("popupError");
@@ -6113,12 +6721,13 @@ static int UI_GetServerStatusInfo(const char *serverAddress, serverStatusInfo_t 
 	return qfalse;
 }
 
-/*
-==================
-stristr
-==================
-*/
-static char *stristr(char *str, char *charset)
+/**
+ * @brief stristr
+ * @param[in,out] str
+ * @param[in] charset
+ * @return
+ */
+static char *stristr(char *str, const char *charset)
 {
 	int i;
 
@@ -6140,11 +6749,10 @@ static char *stristr(char *str, char *charset)
 	return NULL;
 }
 
-/*
-==================
-UI_BuildFindPlayerList
-==================
-*/
+/**
+ * @brief UI_BuildFindPlayerList
+ * @param[in] force
+ */
 static void UI_BuildFindPlayerList(qboolean force)
 {
 	static int         numFound, numTimeOuts;
@@ -6297,11 +6905,10 @@ static void UI_BuildFindPlayerList(qboolean force)
 	}
 }
 
-/*
-==================
-UI_BuildServerStatus
-==================
-*/
+/**
+ * @brief UI_BuildServerStatus
+ * @param[in] force
+ */
 static void UI_BuildServerStatus(qboolean force)
 {
 	menuDef_t       *menu;
@@ -6358,11 +6965,11 @@ static void UI_BuildServerStatus(qboolean force)
 	}
 }
 
-/*
-==================
-UI_FeederCount
-==================
-*/
+/**
+ * @brief UI_FeederCount
+ * @param[in] feederID
+ * @return
+ */
 static int UI_FeederCount(int feederID)
 {
 	switch (feederID)
@@ -6412,6 +7019,13 @@ static int UI_FeederCount(int feederID)
 	}
 }
 
+/**
+ * @brief UI_SelectedMap
+ * @param[in] singlePlayer
+ * @param[in] index
+ * @param[out] actual
+ * @return
+ */
 static const char *UI_SelectedMap(qboolean singlePlayer, int index, int *actual)
 {
 	int i;
@@ -6459,6 +7073,12 @@ static const char *UI_SelectedMap(qboolean singlePlayer, int index, int *actual)
 	return "";
 }
 
+/**
+ * @brief UI_SelectedCampaign
+ * @param[in] index
+ * @param[out] actual
+ * @return
+ */
 static const char *UI_SelectedCampaign(int index, int *actual)
 {
 	int i;
@@ -6475,6 +7095,9 @@ static const char *UI_SelectedCampaign(int index, int *actual)
 	return "";
 }
 
+/**
+ * @brief UI_UpdatePendingPings
+ */
 static void UI_UpdatePendingPings(void)
 {
 	trap_LAN_ResetPings(ui_netSource.integer);
@@ -6482,12 +7105,24 @@ static void UI_UpdatePendingPings(void)
 	uiInfo.serverStatus.refreshtime   = uiInfo.uiDC.realTime + 1000;
 }
 
+/**
+ * @brief UI_FeederAddItem
+ * @param feederID - unused
+ * @param name - unused
+ * @param index - unused
+ * @todo FIXME: empty function
+ */
 static void UI_FeederAddItem(int feederID, const char *name, int index)
 {
 }
 
-// added (whoops, this got nuked in a check-in...)
-static const char *UI_FileText(char *fileName)
+/**
+ * @brief UI_FileText
+ * @param[in] fileName
+ * @return
+ * @note added (whoops, this got nuked in a check-in...)
+ */
+static const char *UI_FileText(const char *fileName)
 {
 	int          len;
 	fileHandle_t f;
@@ -6505,6 +7140,15 @@ static const char *UI_FileText(char *fileName)
 	return &buf[0];
 }
 
+/**
+ * @brief UI_FeederItemText
+ * @param[in] feederID
+ * @param[in] index
+ * @param[in] column
+ * @param[out] handles
+ * @param[out] numhandles
+ * @return
+ */
 const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *handles, int *numhandles)
 {
 	static char info[MAX_STRING_CHARS];
@@ -6905,6 +7549,12 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 	return "";
 }
 
+/**
+ * @brief UI_FeederItemImage
+ * @param[in] feederID
+ * @param[in] index
+ * @return
+ */
 static qhandle_t UI_FeederItemImage(int feederID, int index)
 {
 	switch (feederID)
@@ -6978,6 +7628,11 @@ static qhandle_t UI_FeederItemImage(int feederID, int index)
 	return 0;
 }
 
+/**
+ * @brief UI_FeederSelection
+ * @param[in] feederID
+ * @param[in] index
+ */
 static void UI_FeederSelection(int feederID, int index)
 {
 	static char info[MAX_STRING_CHARS];
@@ -7153,6 +7808,11 @@ static void UI_FeederSelection(int feederID, int index)
 
 extern void Item_ListBox_MouseEnter(itemDef_t *item, float x, float y, qboolean click);
 
+/**
+ * @brief UI_FeederSelectionClick
+ * @param[in] item
+ * @return
+ */
 static qboolean UI_FeederSelectionClick(itemDef_t *item)
 {
 	listBoxDef_t *listPtr = (listBoxDef_t *)item->typeData;
@@ -7211,11 +7871,12 @@ static qboolean UI_FeederSelectionClick(itemDef_t *item)
 	return qfalse;
 }
 
-/*
-==============
-GameType_Parse
-==============
-*/
+/**
+ * @brief GameType_Parse
+ * @param[in] p
+ * @param[in] join
+ * @return
+ */
 static qboolean GameType_Parse(char **p, qboolean join)
 {
 	char *token;
@@ -7312,9 +7973,12 @@ static qboolean GameType_Parse(char **p, qboolean join)
 			}
 		}
 	}
-	return qfalse;
 }
 
+/**
+ * @brief UI_ParseGameInfo
+ * @param[in] teamFile
+ */
 static void UI_ParseGameInfo(const char *teamFile)
 {
 	char *token;
@@ -7356,6 +8020,10 @@ static void UI_ParseGameInfo(const char *teamFile)
 	}
 }
 
+/**
+ * @brief UI_Pause
+ * @param[in] b
+ */
 static void UI_Pause(qboolean b)
 {
 	if (b)
@@ -7373,11 +8041,24 @@ static void UI_Pause(qboolean b)
 	}
 }
 
+/**
+ * @brief UI_PlayCinematic
+ * @param[in] name
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @return
+ */
 static int UI_PlayCinematic(const char *name, float x, float y, float w, float h)
 {
 	return trap_CIN_PlayCinematic(name, x, y, w, h, (CIN_loop | CIN_silent));
 }
 
+/**
+ * @brief UI_StopCinematic
+ * @param[in] handle
+ */
 static void UI_StopCinematic(int handle)
 {
 	if (handle >= 0)
@@ -7419,17 +8100,34 @@ static void UI_StopCinematic(int handle)
 	}
 }
 
+/**
+ * @brief UI_DrawCinematic
+ * @param[in] handle
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ */
 static void UI_DrawCinematic(int handle, float x, float y, float w, float h)
 {
 	trap_CIN_SetExtents(handle, x, y, w, h);
 	trap_CIN_DrawCinematic(handle);
 }
 
+/**
+ * @brief UI_RunCinematicFrame
+ * @param[in] handle
+ */
 static void UI_RunCinematicFrame(int handle)
 {
 	trap_CIN_RunCinematic(handle);
 }
 
+/**
+ * @brief _UI_Init
+ * @param[in] legacyClient
+ * @param[in] clientVersion
+ */
 void _UI_Init(int legacyClient, int clientVersion)
 {
 	int x;
@@ -7447,12 +8145,12 @@ void _UI_Init(int legacyClient, int clientVersion)
 	UI_ParseGLConfig();
 
 	// for 640x480 virtualized screen
-	uiInfo.uiDC.yscale = uiInfo.uiDC.glconfig.vidHeight * (1.0 / 480.0);
-	uiInfo.uiDC.xscale = uiInfo.uiDC.glconfig.vidWidth * (1.0 / 640.0);
+	uiInfo.uiDC.yscale = uiInfo.uiDC.glconfig.vidHeight * (1.0f / 480.0f);
+	uiInfo.uiDC.xscale = uiInfo.uiDC.glconfig.vidWidth * (1.0f / 640.0f);
 	if (uiInfo.uiDC.glconfig.vidWidth * SCREEN_HEIGHT > uiInfo.uiDC.glconfig.vidHeight * SCREEN_WIDTH)
 	{
 		// wide screen
-		uiInfo.uiDC.bias = 0.5 * (uiInfo.uiDC.glconfig.vidWidth - (uiInfo.uiDC.glconfig.vidHeight * (640.0 / 480.0)));
+		uiInfo.uiDC.bias = 0.5f * (uiInfo.uiDC.glconfig.vidWidth - (uiInfo.uiDC.glconfig.vidHeight * (640.0f / 480.0f)));
 	}
 	else
 	{
@@ -7483,7 +8181,6 @@ void _UI_Init(int legacyClient, int clientVersion)
 	uiInfo.uiDC.drawSides            = &_UI_DrawSides;
 	uiInfo.uiDC.drawTopBottom        = &_UI_DrawTopBottom;
 	uiInfo.uiDC.clearScene           = &trap_R_ClearScene;
-	uiInfo.uiDC.drawSides            = &_UI_DrawSides;
 	uiInfo.uiDC.addRefEntityToScene  = &trap_R_AddRefEntityToScene;
 	uiInfo.uiDC.renderScene          = &trap_R_RenderScene;
 	uiInfo.uiDC.registerFont         = &trap_R_RegisterFont;
@@ -7491,7 +8188,7 @@ void _UI_Init(int legacyClient, int clientVersion)
 	uiInfo.uiDC.getValue             = &UI_GetValue;
 	uiInfo.uiDC.ownerDrawVisible     = &UI_OwnerDrawVisible;
 	uiInfo.uiDC.runScript            = &UI_RunMenuScript;
-	uiInfo.uiDC.getTeamColor         = &UI_GetTeamColor;
+	uiInfo.uiDC.getTeamColor         = &UI_GetTeamColor;    // not implemented
 	uiInfo.uiDC.setCVar              = trap_Cvar_Set;
 	uiInfo.uiDC.getCVarString        = trap_Cvar_VariableStringBuffer;
 	uiInfo.uiDC.getCVarValue         = trap_Cvar_VariableValue;
@@ -7581,13 +8278,13 @@ void _UI_Init(int legacyClient, int clientVersion)
 
 	// sets defaults for ui temp cvars
 	// bounds check array index, although I'm pretty sure this stuff isn't used anymore...
-	x = (int)trap_Cvar_VariableValue("color") - 1;
-	if (x < 0 || x >= sizeof(gamecodetoui) / sizeof(gamecodetoui[0]))
+	x = (int)(trap_Cvar_VariableValue("color") - 1);
+	if (x < 0 || x >= (int)(sizeof(gamecodetoui) / sizeof(gamecodetoui[0])))
 	{
 		x = 0;
 	}
 	uiInfo.effectsColor     = gamecodetoui[x];
-	uiInfo.currentCrosshair = (int)trap_Cvar_VariableValue("cg_drawCrosshair");
+	uiInfo.currentCrosshair = (int)(trap_Cvar_VariableValue("cg_drawCrosshair"));
 	trap_Cvar_Set("ui_mousePitch", (trap_Cvar_VariableValue("m_pitch") >= 0) ? "0" : "1");
 
 	uiInfo.serverStatus.currentServerCinematic = -1;
@@ -7604,6 +8301,11 @@ void _UI_Init(int legacyClient, int clientVersion)
 	trap_AddCommand("removefavs");
 }
 
+/**
+ * @brief _UI_KeyEvent
+ * @param[in] key
+ * @param[in] down
+ */
 void _UI_KeyEvent(int key, qboolean down)
 {
 	static qboolean bypassKeyClear = qfalse;
@@ -7613,7 +8315,7 @@ void _UI_KeyEvent(int key, qboolean down)
 		menuDef_t *menu = Menu_GetFocused();
 		if (menu)
 		{
-			if (trap_Cvar_VariableValue("cl_bypassMouseInput"))
+			if (trap_Cvar_VariableValue("cl_bypassMouseInput") != 0.f)
 			{
 				bypassKeyClear = qtrue;
 			}
@@ -7646,6 +8348,11 @@ void _UI_KeyEvent(int key, qboolean down)
 	}
 }
 
+/**
+ * @brief _UI_MouseEvent
+ * @param[in] dx
+ * @param[in] dy
+ */
 void _UI_MouseEvent(int dx, int dy)
 {
 	// update mouse screen position
@@ -7656,7 +8363,7 @@ void _UI_MouseEvent(int dx, int dy)
 	}
 	else if (uiInfo.uiDC.cursorx > Cui_WideX(SCREEN_WIDTH))
 	{
-		uiInfo.uiDC.cursorx = Cui_WideX(SCREEN_WIDTH);
+		uiInfo.uiDC.cursorx = (int)(Cui_WideX(SCREEN_WIDTH));
 	}
 
 	uiInfo.uiDC.cursory += dy;
@@ -7677,6 +8384,10 @@ void _UI_MouseEvent(int dx, int dy)
 
 static uiMenuCommand_t menutype = UIMENU_NONE;
 
+/**
+ * @brief _UI_GetActiveMenu
+ * @return
+ */
 uiMenuCommand_t _UI_GetActiveMenu(void)
 {
 	return menutype;
@@ -7684,6 +8395,10 @@ uiMenuCommand_t _UI_GetActiveMenu(void)
 
 #define MISSING_FILES_MSG "The following packs are missing:"
 
+/**
+ * @brief _UI_SetActiveMenu
+ * @param[in] menu
+ */
 void _UI_SetActiveMenu(uiMenuCommand_t menu)
 {
 	char buf[4096]; // com_errorMessage can go up to 4096
@@ -7836,7 +8551,7 @@ void _UI_SetActiveMenu(uiMenuCommand_t menu)
 
 		case UIMENU_WM_AUTOUPDATE:
 			// skip when vid_confirm popup appears on startup
-			if (!trap_Cvar_VariableValue("r_oldMode"))
+			if (trap_Cvar_VariableValue("r_oldMode") == 0.f)
 			{
 				// changing the auto-update strategy to a modal prompt
 				Menus_OpenByName("wm_autoupdate_modal");
@@ -7856,11 +8571,21 @@ void _UI_SetActiveMenu(uiMenuCommand_t menu)
 	}
 }
 
+/**
+ * @brief _UI_IsFullscreen
+ * @return
+ */
 qboolean _UI_IsFullscreen(void)
 {
 	return Menus_AnyFullScreenVisible();
 }
 
+/**
+ * @brief UI_ReadableSize
+ * @param[in] buf
+ * @param[in] bufsize
+ * @param[in] value
+ */
 void UI_ReadableSize(char *buf, int bufsize, int value)
 {
 	if (value > 1024 * 1024 * 1024)     // gigs
@@ -7885,7 +8610,12 @@ void UI_ReadableSize(char *buf, int bufsize, int value)
 	}
 }
 
-// Assumes time is in sec
+/**
+ * @brief UI_PrintTime
+ * @param buf
+ * @param bufsize
+ * @param time Assumes time is in sec
+ */
 void UI_PrintTime(char *buf, int bufsize, int time)
 {
 	//time /= 1000;  // change to seconds
@@ -7907,6 +8637,7 @@ void UI_PrintTime(char *buf, int bufsize, int time)
 /**
  * @brief This will also be overlaid on the cgame info screen during loading
  * to prevent it from blinking away too rapidly on local or lan games.
+ * @param overlay
  */
 void UI_DrawConnectScreen(qboolean overlay)
 {
@@ -8000,179 +8731,182 @@ vmCvar_t cl_bypassMouseInput;
 
 cvarTable_t cvarTable[] =
 {
-	{ NULL,                             "ui_textfield_temp",                   "",                           CVAR_TEMP                      },
-	{ &ui_glCustom,                     "ui_glCustom",                         "4",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "ui_textfield_temp",                   "",                           CVAR_TEMP,                      0 },
+	{ &ui_glCustom,                     "ui_glCustom",                         "4",                          CVAR_ARCHIVE,                   0 },
 
-	{ &ui_friendlyFire,                 "g_friendlyFire",                      "1",                          CVAR_ARCHIVE                   },
+	{ &ui_friendlyFire,                 "g_friendlyFire",                      "1",                          CVAR_ARCHIVE,                   0 },
 
-	{ &ui_userAlliedRespawnTime,        "ui_userAlliedRespawnTime",            "0",                          0                              },
-	{ &ui_userAxisRespawnTime,          "ui_userAxisRespawnTime",              "0",                          0                              },
+	{ &ui_userAlliedRespawnTime,        "ui_userAlliedRespawnTime",            "0",                          0,                              0 },
+	{ &ui_userAxisRespawnTime,          "ui_userAxisRespawnTime",              "0",                          0,                              0 },
 
-	{ &ui_brassTime,                    "cg_brassTime",                        "2500",                       CVAR_ARCHIVE                   },
-	{ &ui_drawCrosshair,                "cg_drawCrosshair",                    "1",                          CVAR_ARCHIVE                   },
-	{ &ui_drawCrosshairInfo,            "cg_drawCrosshairInfo",                "3",                          CVAR_ARCHIVE                   },
-	{ &ui_drawCrosshairNames,           "cg_drawCrosshairNames",               "1",                          CVAR_ARCHIVE                   },
-	{ &ui_drawCrosshairPickups,         "cg_drawCrosshairPickups",             "1",                          CVAR_ARCHIVE                   },
-	{ &ui_marks,                        "cg_markTime",                         "20000",                      CVAR_ARCHIVE                   },
-	{ &ui_autoactivate,                 "cg_autoactivate",                     "1",                          CVAR_ARCHIVE                   },
+	{ &ui_brassTime,                    "cg_brassTime",                        "2500",                       CVAR_ARCHIVE,                   0 },
+	{ &ui_drawCrosshair,                "cg_drawCrosshair",                    "1",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_drawCrosshairInfo,            "cg_drawCrosshairInfo",                "3",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_drawCrosshairNames,           "cg_drawCrosshairNames",               "1",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_drawCrosshairPickups,         "cg_drawCrosshairPickups",             "1",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_marks,                        "cg_markTime",                         "20000",                      CVAR_ARCHIVE,                   0 },
+	{ &ui_autoactivate,                 "cg_autoactivate",                     "1",                          CVAR_ARCHIVE,                   0 },
 
-	{ &ui_dedicated,                    "ui_dedicated",                        "0",                          CVAR_ARCHIVE                   },
-	{ &ui_selectedPlayer,               "cg_selectedPlayer",                   "0",                          CVAR_ARCHIVE                   },
-	{ &ui_selectedPlayerName,           "cg_selectedPlayerName",               "",                           CVAR_ARCHIVE                   },
-	{ &ui_netSource,                    "ui_netSource",                        "1",                          CVAR_ARCHIVE                   },
-	{ &ui_menuFiles,                    "ui_menuFiles",                        "ui/menus.txt",               CVAR_ARCHIVE                   },
-	{ &ui_gameType,                     "ui_gametype",                         "3",                          CVAR_ARCHIVE                   },
-	{ &ui_joinGameType,                 "ui_joinGametype",                     "-1",                         CVAR_ARCHIVE                   },
-	{ &ui_netGameType,                  "ui_netGametype",                      "4",                          CVAR_ARCHIVE                   }, // hardwired for now
+	{ &ui_dedicated,                    "ui_dedicated",                        "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_selectedPlayer,               "cg_selectedPlayer",                   "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_selectedPlayerName,           "cg_selectedPlayerName",               "",                           CVAR_ARCHIVE,                   0 },
+	{ &ui_netSource,                    "ui_netSource",                        "1",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_menuFiles,                    "ui_menuFiles",                        "ui/menus.txt",               CVAR_ARCHIVE,                   0 },
+	{ &ui_gameType,                     "ui_gametype",                         "3",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_joinGameType,                 "ui_joinGametype",                     "-1",                         CVAR_ARCHIVE,                   0 },
+	{ &ui_netGameType,                  "ui_netGametype",                      "4",                          CVAR_ARCHIVE,                   0 }, // hardwired for now
 
 	// multiplayer cvars
-	{ &ui_mapIndex,                     "ui_mapIndex",                         "0",                          CVAR_ARCHIVE                   },
-	{ &ui_currentMap,                   "ui_currentMap",                       "0",                          CVAR_ARCHIVE                   },
-	{ &ui_currentNetMap,                "ui_currentNetMap",                    "0",                          CVAR_ARCHIVE                   },
+	{ &ui_mapIndex,                     "ui_mapIndex",                         "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_currentMap,                   "ui_currentMap",                       "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_currentNetMap,                "ui_currentNetMap",                    "0",                          CVAR_ARCHIVE,                   0 },
 
-	{ &ui_browserShowEmptyOrFull,       "ui_browserShowEmptyOrFull",           "0",                          CVAR_ARCHIVE                   },
-	{ &ui_browserShowPasswordProtected, "ui_browserShowPasswordProtected",     "0",                          CVAR_ARCHIVE                   },
-	{ &ui_browserShowFriendlyFire,      "ui_browserShowFriendlyFire",          "0",                          CVAR_ARCHIVE                   },
-	{ &ui_browserShowMaxlives,          "ui_browserShowMaxlives",              "0",                          CVAR_ARCHIVE                   },
-	{ &ui_browserShowAntilag,           "ui_browserShowAntilag",               "0",                          CVAR_ARCHIVE                   },
-	{ &ui_browserShowWeaponsRestricted, "ui_browserShowWeaponsRestricted",     "0",                          CVAR_ARCHIVE                   },
-	{ &ui_browserShowTeamBalanced,      "ui_browserShowTeamBalanced",          "0",                          CVAR_ARCHIVE                   },
-	{ &ui_browserShowBots,              "ui_browserShowBots",                  "0",                          CVAR_ARCHIVE                   },
+	{ &ui_browserShowEmptyOrFull,       "ui_browserShowEmptyOrFull",           "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_browserShowPasswordProtected, "ui_browserShowPasswordProtected",     "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_browserShowFriendlyFire,      "ui_browserShowFriendlyFire",          "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_browserShowMaxlives,          "ui_browserShowMaxlives",              "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_browserShowAntilag,           "ui_browserShowAntilag",               "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_browserShowWeaponsRestricted, "ui_browserShowWeaponsRestricted",     "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_browserShowTeamBalanced,      "ui_browserShowTeamBalanced",          "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_browserShowBots,              "ui_browserShowBots",                  "0",                          CVAR_ARCHIVE,                   0 },
 
-	{ &ui_browserModFilter,             "ui_browserModFilter",                 "0",                          CVAR_ARCHIVE                   },
-	{ &ui_browserMapFilter,             "ui_browserMapFilter",                 "",                           CVAR_ARCHIVE                   },
-	{ &ui_browserMapFilterCheckBox,     "ui_browserMapFilterCheckBox",         "0",                          CVAR_ARCHIVE                   },
+	{ &ui_browserModFilter,             "ui_browserModFilter",                 "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_browserMapFilter,             "ui_browserMapFilter",                 "",                           CVAR_ARCHIVE,                   0 },
+	{ &ui_browserMapFilterCheckBox,     "ui_browserMapFilterCheckBox",         "0",                          CVAR_ARCHIVE,                   0 },
 
-	{ &ui_browserOssFilter,             "ui_browserOssFilter",                 "0",                          CVAR_ARCHIVE                   },
+	{ &ui_browserOssFilter,             "ui_browserOssFilter",                 "0",                          CVAR_ARCHIVE,                   0 },
 
-	{ &ui_serverStatusTimeOut,          "ui_serverStatusTimeOut",              "7000",                       CVAR_ARCHIVE                   },
+	{ &ui_serverStatusTimeOut,          "ui_serverStatusTimeOut",              "7000",                       CVAR_ARCHIVE,                   0 },
 
-	{ &g_gameType,                      "g_gameType",                          "4",                          CVAR_SERVERINFO | CVAR_LATCH   },
-	{ NULL,                             "cg_drawBuddies",                      "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_drawRoundTimer",                   "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_showblood",                        "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_bloodFlash",                       "1.0",                        CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_autoReload",                       "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_noAmmoAutoSwitch",                 "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_useWeapsForZoom",                  "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_zoomDefaultSniper",                "20",                         CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_zoomStepSniper",                   "2",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_voiceSpriteTime",                  "6000",                       CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_complaintPopUp",                   "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_printObjectiveInfo",               "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_useScreenshotJPEG",                "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_drawGun",                          "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_drawCompass",                      "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_drawRoundTimer",                   "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_drawReinforcementTime",            "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_cursorHints",                      "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_crosshairPulse",                   "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_drawCrosshairInfo",                "3",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_drawCrosshairNames",               "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_crosshairColor",                   "White",                      CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_crosshairAlpha",                   "1.0",                        CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_crosshairColorAlt",                "White",                      CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_coronafardist",                    "1536",                       CVAR_ARCHIVE                   },
-	{ NULL,                             "cg_wolfparticles",                    "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_password",                          "none",                       CVAR_USERINFO                  },
-	{ NULL,                             "g_antilag",                           "1",                          CVAR_SERVERINFO | CVAR_ARCHIVE },
-	{ NULL,                             "g_warmup",                            "60",                         CVAR_ARCHIVE                   },
-	{ NULL,                             "g_lms_roundlimit",                    "3",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_lms_matchlimit",                    "2",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_lms_followTeamOnly",                "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_heavyWeaponRestriction",            "100",                        CVAR_ARCHIVE | CVAR_SERVERINFO },
-	{ &cl_profile,                      "cl_profile",                          "",                           CVAR_ROM                       },
-	{ &cl_defaultProfile,               "cl_defaultProfile",                   "",                           CVAR_ROM                       },
-	{ &ui_profile,                      "ui_profile",                          "",                           CVAR_ROM                       },
-	{ &ui_currentCampaign,              "ui_currentCampaign",                  "0",                          CVAR_ARCHIVE                   },
-	{ &ui_currentNetCampaign,           "ui_currentNetCampaign",               "0",                          CVAR_ARCHIVE                   },
-	{ &ui_campaignIndex,                "ui_campaignIndex",                    "0",                          CVAR_ARCHIVE                   },
-	{ &ui_currentCampaignCompleted,     "ui_currentCampaignCompleted",         "0",                          CVAR_ARCHIVE                   },
+	{ &g_gameType,                      "g_gameType",                          "4",                          CVAR_SERVERINFO | CVAR_LATCH,   0 },
+	{ NULL,                             "cg_drawBuddies",                      "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_drawRoundTimer",                   "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_showblood",                        "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_bloodFlash",                       "1.0",                        CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_autoReload",                       "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_noAmmoAutoSwitch",                 "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_useWeapsForZoom",                  "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_zoomDefaultSniper",                "20",                         CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_zoomStepSniper",                   "2",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_voiceSpriteTime",                  "6000",                       CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_complaintPopUp",                   "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_printObjectiveInfo",               "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_useScreenshotJPEG",                "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_drawGun",                          "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_drawCompass",                      "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_drawRoundTimer",                   "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_drawReinforcementTime",            "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_cursorHints",                      "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_crosshairPulse",                   "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_drawCrosshairInfo",                "3",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_drawCrosshairNames",               "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_crosshairColor",                   "White",                      CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_crosshairAlpha",                   "1.0",                        CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_crosshairColorAlt",                "White",                      CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_coronafardist",                    "1536",                       CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "cg_wolfparticles",                    "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "g_password",                          "none",                       CVAR_USERINFO,                  0 },
+	{ NULL,                             "g_antilag",                           "1",                          CVAR_SERVERINFO | CVAR_ARCHIVE, 0 },
+	{ NULL,                             "g_warmup",                            "60",                         CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "g_lms_roundlimit",                    "3",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "g_lms_matchlimit",                    "2",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "g_lms_followTeamOnly",                "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "g_heavyWeaponRestriction",            "100",                        CVAR_ARCHIVE | CVAR_SERVERINFO, 0 },
+	{ &cl_profile,                      "cl_profile",                          "",                           CVAR_ROM,                       0 },
+	{ &cl_defaultProfile,               "cl_defaultProfile",                   "",                           CVAR_ROM,                       0 },
+	{ &ui_profile,                      "ui_profile",                          "",                           CVAR_ROM,                       0 },
+	{ &ui_currentCampaign,              "ui_currentCampaign",                  "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_currentNetCampaign,           "ui_currentNetCampaign",               "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_campaignIndex,                "ui_campaignIndex",                    "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_currentCampaignCompleted,     "ui_currentCampaignCompleted",         "0",                          CVAR_ARCHIVE,                   0 },
 
 	// cgame mappings
-	{ &ui_blackout,                     "ui_blackout",                         "0",                          CVAR_ROM                       },
-	{ &cg_crosshairAlpha,               "cg_crosshairAlpha",                   "1.0",                        CVAR_ARCHIVE                   },
-	{ &cg_crosshairAlphaAlt,            "cg_crosshairAlphaAlt",                "1.0",                        CVAR_ARCHIVE                   },
-	{ &cg_crosshairColor,               "cg_crosshairColor",                   "White",                      CVAR_ARCHIVE                   },
-	{ &cg_crosshairColorAlt,            "cg_crosshairColorAlt",                "White",                      CVAR_ARCHIVE                   },
-	{ &cg_crosshairSize,                "cg_crosshairSize",                    "48",                         CVAR_ARCHIVE                   },
+	{ &ui_blackout,                     "ui_blackout",                         "0",                          CVAR_ROM,                       0 },
+	{ &cg_crosshairAlpha,               "cg_crosshairAlpha",                   "1.0",                        CVAR_ARCHIVE,                   0 },
+	{ &cg_crosshairAlphaAlt,            "cg_crosshairAlphaAlt",                "1.0",                        CVAR_ARCHIVE,                   0 },
+	{ &cg_crosshairColor,               "cg_crosshairColor",                   "White",                      CVAR_ARCHIVE,                   0 },
+	{ &cg_crosshairColorAlt,            "cg_crosshairColorAlt",                "White",                      CVAR_ARCHIVE,                   0 },
+	{ &cg_crosshairSize,                "cg_crosshairSize",                    "48",                         CVAR_ARCHIVE,                   0 },
 
 	// game mappings (for create server option)
-	{ NULL,                             "g_altStopwatchMode",                  "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_ipcomplaintlimit",                  "3",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_complaintlimit",                    "6",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_doWarmup",                          "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_inactivity",                        "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_maxLives",                          "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "refereePassword",                     "none",                       CVAR_ARCHIVE                   },
-	{ NULL,                             "g_teamForceBalance",                  "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "sv_maxRate",                          "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_spectatorInactivity",               "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "match_latejoin",                      "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "match_minplayers",                    MATCH_MINPLAYERS,             CVAR_ARCHIVE                   },
-	{ NULL,                             "match_mutespecs",                     "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "match_readypercent",                  "100",                        CVAR_ARCHIVE                   },
-	{ NULL,                             "match_timeoutcount",                  "3",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "match_timeoutlength",                 "180",                        CVAR_ARCHIVE                   },
-	{ NULL,                             "match_warmupDamage",                  "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "g_customConfig",                      "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "server_motd0",                        " ^NEnemy Territory ^7MOTD ", CVAR_ARCHIVE                   },
-	{ NULL,                             "server_motd1",                        "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "server_motd2",                        "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "server_motd3",                        "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "server_motd4",                        "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "server_motd5",                        "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "team_maxPanzers",                     "-1",                         CVAR_ARCHIVE                   },
-	{ NULL,                             "team_maxplayers",                     "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "team_nocontrols",                     "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_gametype",                 "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_kick",                     "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_map",                      "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_mutespecs",                "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_nextmap",                  "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_config",                   "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_referee",                  "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_shuffleteamsxp",           "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_shuffleteamsxp_norestart", "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_swapteams",                "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_friendlyfire",             "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_timelimit",                "0",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_warmupdamage",             "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_antilag",                  "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_muting",                   "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_kick",                     "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_limit",                          "5",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_percent",                        "50",                         CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_surrender",                "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_restartcampaign",          "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_nextcampaign",             "1",                          CVAR_ARCHIVE                   },
-	{ NULL,                             "vote_allow_poll",                     "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "g_altStopwatchMode",                  "0",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "g_ipcomplaintlimit",                  "3",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "g_complaintlimit",                    "6",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "g_doWarmup",                          "0",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "g_inactivity",                        "0",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "g_maxLives",                          "0",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "refereePassword",                     "none",                       CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "g_teamForceBalance",                  "0",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "sv_maxRate",                          "0",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "g_spectatorInactivity",               "0",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "match_latejoin",                      "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "match_minplayers",                    MATCH_MINPLAYERS,             CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "match_mutespecs",                     "0",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "match_readypercent",                  "100",                        CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "match_timeoutcount",                  "3",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "match_timeoutlength",                 "180",                        CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "match_warmupDamage",                  "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "g_customConfig",                      "",                           CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "server_motd0",                        " ^NEnemy Territory ^7MOTD ", CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "server_motd1",                        "",                           CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "server_motd2",                        "",                           CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "server_motd3",                        "",                           CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "server_motd4",                        "",                           CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "server_motd5",                        "",                           CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "team_maxPanzers",                     "-1",                         CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "team_maxplayers",                     "0",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "team_nocontrols",                     "0",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_gametype",                 "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_kick",                     "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_map",                      "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_mutespecs",                "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_nextmap",                  "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_config",                   "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_referee",                  "0",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_shuffleteamsxp",           "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_shuffleteamsxp_norestart", "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_swapteams",                "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_friendlyfire",             "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_timelimit",                "0",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_warmupdamage",             "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_antilag",                  "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_muting",                   "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_kick",                     "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_limit",                          "5",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_percent",                        "50",                         CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_surrender",                "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_restartcampaign",          "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_nextcampaign",             "1",                          CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "vote_allow_poll",                     "1",                          CVAR_ARCHIVE,                   0 },
 
-	{ NULL,                             "ui_r_mode",                           "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "ui_r_gamma",                          "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "ui_r_ext_texture_filter_anisotropic", "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "ui_cg_shadows",                       "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "ui_rate",                             "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "ui_handedness",                       "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "ui_sensitivity",                      "",                           CVAR_ARCHIVE                   },
-	{ NULL,                             "ui_profile_mousePitch",               "",                           CVAR_ARCHIVE                   },
+	{ NULL,                             "ui_r_mode",                           "",                           CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "ui_r_gamma",                          "",                           CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "ui_r_ext_texture_filter_anisotropic", "",                           CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "ui_cg_shadows",                       "",                           CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "ui_rate",                             "",                           CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "ui_handedness",                       "",                           CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "ui_sensitivity",                      "",                           CVAR_ARCHIVE,                   0 },
+	{ NULL,                             "ui_profile_mousePitch",               "",                           CVAR_ARCHIVE,                   0 },
 
-	{ &cl_bypassMouseInput,             "cl_bypassMouseInput",                 "0",                          CVAR_TEMP                      },
+	{ &cl_bypassMouseInput,             "cl_bypassMouseInput",                 "0",                          CVAR_TEMP,                      0 },
 
-	{ NULL,                             "g_currentCampaign",                   "",                           CVAR_WOLFINFO | CVAR_ROM,      },
-	{ NULL,                             "g_currentCampaignMap",                "0",                          CVAR_WOLFINFO | CVAR_ROM,      },
+	{ NULL,                             "g_currentCampaign",                   "",                           CVAR_WOLFINFO | CVAR_ROM,       0 },
+	{ NULL,                             "g_currentCampaignMap",                "0",                          CVAR_WOLFINFO | CVAR_ROM,       0 },
 
-	{ NULL,                             "ui_showtooltips",                     "1",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "ui_showtooltips",                     "1",                          CVAR_ARCHIVE,                   0 },
 
-	{ NULL,                             "cg_locations",                        "3",                          CVAR_ARCHIVE                   },
+	{ NULL,                             "cg_locations",                        "3",                          CVAR_ARCHIVE,                   0 },
 };
 
-const int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
+const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
 
+/**
+ * @brief UI_RegisterCvars
+ */
 void UI_RegisterCvars(void)
 {
-	int         i;
-	cvarTable_t *cv;
+	unsigned int i;
+	cvarTable_t  *cv;
 
 	Com_Printf("%d UI cvars in use.\n", cvarTableSize);
 
@@ -8191,10 +8925,13 @@ void UI_RegisterCvars(void)
 	BG_setCrosshair(cg_crosshairColorAlt.string, uiInfo.xhairColorAlt, cg_crosshairAlphaAlt.value, "cg_crosshairColorAlt");
 }
 
+/**
+ * @brief UI_UpdateCvars
+ */
 void UI_UpdateCvars(void)
 {
-	int         i;
-	cvarTable_t *cv;
+	unsigned int i;
+	cvarTable_t  *cv;
 
 	for (i = 0, cv = cvarTable ; i < cvarTableSize ; i++, cv++)
 	{
@@ -8219,6 +8956,9 @@ void UI_UpdateCvars(void)
 	}
 }
 
+/**
+ * @brief UI_StopServerRefresh
+ */
 static void UI_StopServerRefresh(void)
 {
 	int count;
@@ -8240,6 +8980,9 @@ static void UI_StopServerRefresh(void)
 	}
 }
 
+/**
+ * @brief UI_DoServerRefresh
+ */
 static void UI_DoServerRefresh(void)
 {
 	qboolean wait = qfalse;
@@ -8291,6 +9034,10 @@ static void UI_DoServerRefresh(void)
 	UI_BuildServerDisplayList(0);
 }
 
+/**
+ * @brief UI_StartServerRefresh
+ * @param[in] full
+ */
 static void UI_StartServerRefresh(qboolean full)
 {
 	char    buff[64];
@@ -8332,12 +9079,15 @@ static void UI_StartServerRefresh(qboolean full)
 		{
 			if (UI_Cvar_VariableString(va("sv_master%i", i + 1))[0] != '\0')
 			{
-				trap_Cmd_ExecuteText(EXEC_APPEND, va("globalservers %d %d empty full\n", i, (int)trap_Cvar_VariableValue("protocol")));
+				trap_Cmd_ExecuteText(EXEC_APPEND, va("globalservers %d %d empty full\n", i, (int)(trap_Cvar_VariableValue("protocol"))));
 			}
 		}
 	}
 }
 
+/**
+ * @brief UI_Campaign_f
+ */
 void UI_Campaign_f(void)
 {
 	char           str[MAX_TOKEN_CHARS];
@@ -8382,6 +9132,9 @@ void UI_Campaign_f(void)
 	trap_Cmd_ExecuteText(EXEC_APPEND, va("map %s\n", campaign->mapInfos[0]->mapLoadName));
 }
 
+/**
+ * @brief UI_ListCampaigns_f
+ */
 void UI_ListCampaigns_f(void)
 {
 	int i, mpCampaigns = 0;

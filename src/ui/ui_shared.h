@@ -118,11 +118,11 @@
 #define ASSET_CHECKBOX_CHECK_NOT    "ui/assets/check_not.tga"
 #define ASSET_CHECKBOX_CHECK_NO     "ui/assets/check_no.tga"
 
-#define SCROLLBAR_SIZE      16.0
-#define SLIDER_WIDTH        96.0
-#define SLIDER_HEIGHT       10.0    // 16.0
-#define SLIDER_THUMB_WIDTH  12.0
-#define SLIDER_THUMB_HEIGHT 12.0    // 20.0
+#define SCROLLBAR_SIZE      16.0f
+#define SLIDER_WIDTH        96.0f
+#define SLIDER_HEIGHT       10.0f    // 16.0
+#define SLIDER_THUMB_WIDTH  12.0f
+#define SLIDER_THUMB_HEIGHT 12.0f    // 20.0
 #define NUM_CROSSHAIRS      16
 
 // FIXME: do something to separate text vs window stuff
@@ -436,7 +436,7 @@ typedef struct
 	qboolean (*ownerDrawHandleKey)(int ownerDraw, int flags, int *special, int key);
 	int (*feederCount)(int feederID);
 	const char *(*feederItemText)(int feederID, int index, int column, qhandle_t * handles, int *numhandles);
-	const char *(*fileText)(char *flieName);
+	const char *(*fileText)(const char *fileName);
 	qhandle_t (*feederItemImage)(int feederID, int index);
 	void (*feederSelection)(int feederID, int index);
 	qboolean (*feederSelectionClick)(itemDef_t *item);
@@ -604,7 +604,7 @@ void String_Report(void);
 qboolean IsVisible(int flags);
 void ToWindowCoords(float *x, float *y, windowDef_t *window);
 void Fade(int *flags, float *f, float clamp, int *nextTime, int offsetTime, qboolean bFlags, float fadeAmount);
-qboolean FileExists(char *filename);
+qboolean FileExists(const char *filename);
 void LerpColor(vec4_t a, vec4_t b, vec4_t c, float t);
 qboolean Rect_ContainsPoint(rectDef_t *rect, float x, float y);
 qboolean Rect_ContainsPointN(rectDef_t *rect, float x, float y);
@@ -688,7 +688,7 @@ panel_button_t *BG_PanelButtons_GetFocusButton(void);
 qboolean BG_RectContainsPoint(float x, float y, float w, float h, float px, float py);
 qboolean BG_CursorInRect(rectDef_t *rect);
 
-void BG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontHelper_t *font);
+void BG_FitTextToWidth_Ext(char *instr, float scale, float w, unsigned int size, fontHelper_t *font);
 
 void AdjustFrom640(float *x, float *y, float *w, float *h);
 

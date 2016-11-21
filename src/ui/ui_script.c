@@ -36,6 +36,12 @@
 #include "ui_shared.h"
 #include "ui_local.h"
 
+/**
+ * @brief Script_Show
+ * @param[in] item
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_Show(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
@@ -46,6 +52,12 @@ void Script_Show(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_SetColor
+ * @param[in] item
+ * @param bAbort - unused
+ * @param[in,out] args
+ */
 void Script_SetColor(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
@@ -88,6 +100,12 @@ void Script_SetColor(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_SetBackground
+ * @param[out] item
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_SetBackground(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
@@ -99,6 +117,12 @@ void Script_SetBackground(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_SetTeamColor
+ * @param[out] item
+ * @param bAbort - unused
+ * @param args - unused
+ */
 void Script_SetTeamColor(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	if (DC->getTeamColor)
@@ -114,6 +138,12 @@ void Script_SetTeamColor(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_SetItemColor
+ * @param[in] item
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_SetItemColor(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *itemname = NULL;
@@ -166,6 +196,12 @@ void Script_SetItemColor(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_SetMenuItemColor
+ * @param item - unused
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_SetMenuItemColor(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *menuname = NULL;
@@ -226,6 +262,12 @@ void Script_SetMenuItemColor(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_Hide
+ * @param[in] item
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_Hide(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
@@ -236,6 +278,12 @@ void Script_Hide(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_FadeIn
+ * @param[in] item
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_FadeIn(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
@@ -246,6 +294,12 @@ void Script_FadeIn(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_FadeOut
+ * @param[in] item
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_FadeOut(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
@@ -256,6 +310,12 @@ void Script_FadeOut(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_Open
+ * @param item - unused
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_Open(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
@@ -266,6 +326,12 @@ void Script_Open(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_FadeInMenu
+ * @param item - unused
+ * @param[in] bAbort
+ * @param[in] args
+ */
 void Script_FadeInMenu(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
@@ -276,6 +342,12 @@ void Script_FadeInMenu(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_FadeOutMenu
+ * @param item - unused
+ * @param[in] bAbort - unused
+ * @param[in] args
+ */
 void Script_FadeOutMenu(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
@@ -286,6 +358,12 @@ void Script_FadeOutMenu(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_ConditionalOpen
+ * @param item - unused
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_ConditionalOpen(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *cvar  = NULL;
@@ -331,6 +409,12 @@ void Script_ConditionalOpen(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_ConditionalScript
+ * @param[in] item
+ * @param[in] bAbort
+ * @param[in] args
+ */
 void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *cvar;
@@ -509,7 +593,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 					trap_FS_FCloseFile(f);
 				}
 
-				ui_rate = (int)DC->getCVarValue("ui_rate");
+				ui_rate = (int)(DC->getCVarValue("ui_rate"));
 
 				if (!alreadyExists && *ui_profileStr && ui_rate > 0)
 				{
@@ -522,36 +606,36 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 			}
 			else if (!Q_stricmp(cvar, "vidrestartIsRequired"))
 			{
-				int  ui_r_mode                           = DC->getCVarValue("ui_r_mode");
-				int  ui_r_colorbits                      = DC->getCVarValue("ui_r_colorbits");
-				int  ui_r_fullscreen                     = DC->getCVarValue("ui_r_fullscreen");
-				int  ui_r_noborder                       = DC->getCVarValue("ui_r_noborder");
-				int  ui_r_texturebits                    = DC->getCVarValue("ui_r_texturebits");
-				int  ui_r_depthbits                      = DC->getCVarValue("ui_r_depthbits");
-				int  ui_r_ext_compressed_textures        = DC->getCVarValue("ui_r_ext_compressed_textures");
-				int  ui_r_allowextensions                = DC->getCVarValue("ui_r_allowextensions");
-				int  ui_r_detailtextures                 = DC->getCVarValue("ui_r_detailtextures");
-				int  ui_r_subdivisions                   = DC->getCVarValue("ui_r_subdivisions");
-				int  ui_r_ext_texture_filter_anisotropic = DC->getCVarValue("ui_r_ext_texture_filter_anisotropic");
-				int  ui_cg_shadows                       = DC->getCVarValue("ui_cg_shadows");
-				int  ui_s_initsound                      = DC->getCVarValue("ui_s_initsound");
-				int  ui_s_khz                            = DC->getCVarValue("ui_s_khz");
+				int  ui_r_mode                           = (int)(DC->getCVarValue("ui_r_mode"));
+				int  ui_r_colorbits                      = (int)(DC->getCVarValue("ui_r_colorbits"));
+				int  ui_r_fullscreen                     = (int)(DC->getCVarValue("ui_r_fullscreen"));
+				int  ui_r_noborder                       = (int)(DC->getCVarValue("ui_r_noborder"));
+				int  ui_r_texturebits                    = (int)(DC->getCVarValue("ui_r_texturebits"));
+				int  ui_r_depthbits                      = (int)(DC->getCVarValue("ui_r_depthbits"));
+				int  ui_r_ext_compressed_textures        = (int)(DC->getCVarValue("ui_r_ext_compressed_textures"));
+				int  ui_r_allowextensions                = (int)(DC->getCVarValue("ui_r_allowextensions"));
+				int  ui_r_detailtextures                 = (int)(DC->getCVarValue("ui_r_detailtextures"));
+				int  ui_r_subdivisions                   = (int)(DC->getCVarValue("ui_r_subdivisions"));
+				int  ui_r_ext_texture_filter_anisotropic = (int)(DC->getCVarValue("ui_r_ext_texture_filter_anisotropic"));
+				int  ui_cg_shadows                       = (int)(DC->getCVarValue("ui_cg_shadows"));
+				int  ui_s_initsound                      = (int)(DC->getCVarValue("ui_s_initsound"));
+				int  ui_s_khz                            = (int)(DC->getCVarValue("ui_s_khz"));
 				char ui_r_texturemode[MAX_CVAR_VALUE_STRING];
 
-				int  r_mode                           = DC->getCVarValue("r_mode");
-				int  r_colorbits                      = DC->getCVarValue("r_colorbits");
-				int  r_fullscreen                     = DC->getCVarValue("r_fullscreen");
-				int  r_noborder                       = DC->getCVarValue("r_noborder");
-				int  r_texturebits                    = DC->getCVarValue("r_texturebits");
-				int  r_depthbits                      = DC->getCVarValue("r_depthbits");
-				int  r_ext_compressed_textures        = DC->getCVarValue("r_ext_compressed_textures");
-				int  r_allowextensions                = DC->getCVarValue("r_allowextensions");
-				int  r_detailtextures                 = DC->getCVarValue("r_detailtextures");
-				int  r_subdivisions                   = DC->getCVarValue("r_subdivisions");
-				int  r_ext_texture_filter_anisotropic = DC->getCVarValue("r_ext_texture_filter_anisotropic");
-				int  cg_shadows                       = DC->getCVarValue("cg_shadows");
-				int  s_initsound                      = DC->getCVarValue("s_initsound");
-				int  s_khz                            = DC->getCVarValue("s_khz");
+				int  r_mode                           = (int)(DC->getCVarValue("r_mode"));
+				int  r_colorbits                      = (int)(DC->getCVarValue("r_colorbits"));
+				int  r_fullscreen                     = (int)(DC->getCVarValue("r_fullscreen"));
+				int  r_noborder                       = (int)(DC->getCVarValue("r_noborder"));
+				int  r_texturebits                    = (int)(DC->getCVarValue("r_texturebits"));
+				int  r_depthbits                      = (int)(DC->getCVarValue("r_depthbits"));
+				int  r_ext_compressed_textures        = (int)(DC->getCVarValue("r_ext_compressed_textures"));
+				int  r_allowextensions                = (int)(DC->getCVarValue("r_allowextensions"));
+				int  r_detailtextures                 = (int)(DC->getCVarValue("r_detailtextures"));
+				int  r_subdivisions                   = (int)(DC->getCVarValue("r_subdivisions"));
+				int  r_ext_texture_filter_anisotropic = (int)(DC->getCVarValue("r_ext_texture_filter_anisotropic"));
+				int  cg_shadows                       = (int)(DC->getCVarValue("cg_shadows"));
+				int  s_initsound                      = (int)(DC->getCVarValue("s_initsound"));
+				int  s_khz                            = (int)(DC->getCVarValue("s_khz"));
 				char r_texturemode[MAX_CVAR_VALUE_STRING];
 
 				trap_Cvar_VariableStringBuffer("ui_r_texturemode", ui_r_texturemode, sizeof(ui_r_texturemode));
@@ -621,7 +705,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 			{
 				char r_oldModeStr[256];
 				int  r_oldMode;
-				int  r_mode = DC->getCVarValue("r_mode");
+				int  r_mode = (int)(DC->getCVarValue("r_mode"));
 
 				DC->getCVarString("r_oldMode", r_oldModeStr, sizeof(r_oldModeStr));
 				r_oldMode = atoi(r_oldModeStr);
@@ -646,6 +730,12 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_Close
+ * @param item - unused
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_Close(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
@@ -656,11 +746,23 @@ void Script_Close(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_CloseAll
+ * @param item - unused
+ * @param bAbort - unused
+ * @param args - unused
+ */
 void Script_CloseAll(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	Menus_CloseAll();
 }
 
+/**
+ * @brief Script_CloseAllOtherMenus
+ * @param[in] item
+ * @param bAbort - unused
+ * @param args - unused
+ */
 void Script_CloseAllOtherMenus(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	int i;
@@ -677,6 +779,12 @@ void Script_CloseAllOtherMenus(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_Transition
+ * @param[in] item
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_Transition(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
@@ -694,6 +802,12 @@ void Script_Transition(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_Orbit
+ * @param[in] item
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_Orbit(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
@@ -710,6 +824,12 @@ void Script_Orbit(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_SetFocus
+ * @param[in] item
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_SetFocus(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
@@ -735,11 +855,23 @@ void Script_SetFocus(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_ClearFocus
+ * @param[in] item
+ * @param bAbort - unused
+ * @param args - unused
+ */
 void Script_ClearFocus(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	Menu_ClearFocus(item->parent);
 }
 
+/**
+ * @brief Script_SetPlayerModel
+ * @param item - unused
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_SetPlayerModel(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
@@ -750,6 +882,12 @@ void Script_SetPlayerModel(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_SetPlayerHead
+ * @param item - unused
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_SetPlayerHead(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
@@ -760,8 +898,16 @@ void Script_SetPlayerHead(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
-// the parser misreads setCvar "bleh" ""
-// you have to use clearCvar "bleh"
+
+/**
+ * @brief Script_ClearCvar
+ * @param item - unused
+ * @param bAbort - unused
+ * @param[in] args
+ *
+ * @note The parser misreads setCvar "bleh" ""
+ * you have to use clearCvar "bleh"
+ */
 void Script_ClearCvar(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *cvar;
@@ -772,6 +918,12 @@ void Script_ClearCvar(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_SetCvar
+ * @param item - unused
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_SetCvar(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *cvar = NULL, *val = NULL;
@@ -782,6 +934,12 @@ void Script_SetCvar(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_CopyCvar
+ * @param item - unused
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_CopyCvar(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *cvar_src = NULL, *cvar_dst = NULL;
@@ -795,6 +953,12 @@ void Script_CopyCvar(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_Exec
+ * @param item - unused
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_Exec(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *val = NULL;
@@ -805,6 +969,12 @@ void Script_Exec(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_ExecNOW
+ * @param item - unused
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_ExecNOW(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *val = NULL;
@@ -815,6 +985,12 @@ void Script_ExecNOW(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_Play
+ * @param item - unused
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_Play(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *val = NULL;
@@ -825,6 +1001,12 @@ void Script_Play(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_playLooped
+ * @param item - unused
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_playLooped(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *val = NULL;
@@ -836,6 +1018,12 @@ void Script_playLooped(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_AddListItem
+ * @param[in] item
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_AddListItem(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *itemname = NULL, *val = NULL, *name = NULL;
@@ -851,16 +1039,34 @@ void Script_AddListItem(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_CheckAutoUpdate
+ * @param item - unused
+ * @param bAbort - unused
+ * @param args - unused
+ */
 void Script_CheckAutoUpdate(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	DC->checkAutoUpdate();
 }
 
+/**
+ * @brief Script_GetAutoUpdate
+ * @param item - unused
+ * @param bAbort - unused
+ * @param args - unused
+ */
 void Script_GetAutoUpdate(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	DC->getAutoUpdate();
 }
 
+/**
+ * @brief Script_SetMenuFocus
+ * @param[in] item
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_SetMenuFocus(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name;
@@ -877,7 +1083,12 @@ void Script_SetMenuFocus(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
-qboolean Script_CheckProfile(char *profile_path)
+/**
+ * @brief Script_CheckProfile
+ * @param[in] profile_path
+ * @return
+ */
+qboolean Script_CheckProfile(const char *profile_path)
 {
 	fileHandle_t f;
 	char         f_data[32];
@@ -909,7 +1120,12 @@ qboolean Script_CheckProfile(char *profile_path)
 	return qtrue;
 }
 
-qboolean Script_WriteProfile(char *profile_path)
+/**
+ * @brief Script_WriteProfile
+ * @param[in] profile_path
+ * @return
+ */
+qboolean Script_WriteProfile(const char *profile_path)
 {
 	fileHandle_t f;
 	char         com_pid[256];
@@ -940,6 +1156,12 @@ qboolean Script_WriteProfile(char *profile_path)
 	return qtrue;
 }
 
+/**
+ * @brief Script_ExecWolfConfig
+ * @param item - unused
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_ExecWolfConfig(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	int useprofile = 1;
@@ -973,6 +1195,12 @@ void Script_ExecWolfConfig(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_SetEditFocus
+ * @param[in] item
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_SetEditFocus(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *name = NULL;
@@ -1015,12 +1243,24 @@ void Script_SetEditFocus(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_Abort
+ * @param item - unused
+ * @param[out] bAbort
+ * @param args - unused
+ */
 void Script_Abort(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	*bAbort = qtrue;
 }
 
-// FIXME
+/**
+ * @brief Script_GetClipboard
+ * @param item - unused
+ * @param bAbort
+ * @param[in] args
+ * @todo FIXME: something need to be fixed here
+ */
 void Script_GetClipboard(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	char       clipbuff[1024];
@@ -1070,7 +1310,12 @@ void Script_GetClipboard(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
-// This is for toggling integer cvars using bitflags.
+/**
+ * @brief This is for toggling integer cvars using bitflags.
+ * @param item - unused
+ * @param bAbort - unused
+ * @param[in] args
+ */
 void Script_ToggleCvarBit(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	const char *cvar = NULL, *val = NULL;
@@ -1088,6 +1333,14 @@ void Script_ToggleCvarBit(itemDef_t *item, qboolean *bAbort, char **args)
 	}
 }
 
+/**
+ * @brief Script_Skip
+ * @param item - unused
+ * @param bAbort - unused
+ * @param args - unused
+ *
+ * @todo TODO: this function does nothing
+ */
 void Script_Skip(itemDef_t *item, qboolean *bAbort, char **args)
 {
 	//We do nothing here..
@@ -1141,8 +1394,14 @@ commandDef_t commandList[] =
 	{ "none",               &Script_Skip               }, // skip execution (used as a placeholder)
 };
 
-int scriptCommandCount = sizeof(commandList) / sizeof(commandDef_t);
+unsigned int scriptCommandCount = sizeof(commandList) / sizeof(commandDef_t);
 
+/**
+ * @brief Item_RunScript
+ * @param[in] item
+ * @param[in,out] bAbort
+ * @param[in] s
+ */
 void Item_RunScript(itemDef_t *item, qboolean *bAbort, const char *s)
 {
 	char     script[4096], *p;
@@ -1155,7 +1414,7 @@ void Item_RunScript(itemDef_t *item, qboolean *bAbort, const char *s)
 
 	if (item && s && s[0])
 	{
-		int i;
+		unsigned int i;
 
 		Q_strcat(script, 4096, s);
 		p = script;

@@ -204,7 +204,7 @@ typedef enum
 
 #define CONSOLE_KEY K_CONSOLE
 
-/*
+/**
  * @def K_LAST_KEY
  *
  * MAX_KEYS replaces K_LAST_KEY, however some mods may have used K_LAST_KEY
@@ -213,7 +213,7 @@ typedef enum
  */
 //#define K_LAST_KEY              256
 
-/*
+/**
  * @def K_CHAR_FLAG
  *
  * The menu code needs to get both key and char events, but

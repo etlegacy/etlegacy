@@ -34,7 +34,11 @@
 
 #include "ui_local.h"
 
-static void UI_LoadArenasFromFile(char *filename)
+/**
+ * @brief UI_LoadArenasFromFile
+ * @param[in] filename
+ */
+static void UI_LoadArenasFromFile(const char *filename)
 {
 	int        handle;
 	pc_token_t token;
@@ -224,6 +228,9 @@ static void UI_LoadArenasFromFile(char *filename)
 
 /**
  * @brief Sorting the map list
+ * @param[in] a
+ * @param[in] b
+ * @return
  */
 int QDECL UI_SortArenas(const void *a, const void *b)
 {
@@ -240,14 +247,17 @@ int QDECL UI_SortArenas(const void *a, const void *b)
 	return strcmp(cleanNameA, cleanNameB);
 }
 
+/**
+ * @brief UI_LoadArenas
+ */
 void UI_LoadArenas(void)
 {
-	int  numdirs;
-	char filename[128];
-	char dirlist[8192];
-	char *dirptr;
-	int  i;
-	int  dirlen;
+	int          numdirs;
+	char         filename[128];
+	char         dirlist[8192];
+	char         *dirptr;
+	int          i;
+	unsigned int dirlen;
 
 	uiInfo.mapCount = 0;
 
@@ -266,6 +276,11 @@ void UI_LoadArenas(void)
 	qsort(uiInfo.mapList, uiInfo.mapCount, sizeof(uiInfo.mapList[0]), UI_SortArenas);
 }
 
+/**
+ * @brief UI_FindMapInfoByMapname
+ * @param[in] name
+ * @return
+ */
 mapInfo *UI_FindMapInfoByMapname(const char *name)
 {
 	int i;
@@ -286,6 +301,10 @@ mapInfo *UI_FindMapInfoByMapname(const char *name)
 	return NULL;
 }
 
+/**
+ * @brief UI_LoadCampaignsFromFile
+ * @param[in] filename
+ */
 static void UI_LoadCampaignsFromFile(const char *filename)
 {
 	int        handle, i;
@@ -490,7 +509,10 @@ static void UI_LoadCampaignsFromFile(const char *filename)
 
 	trap_PC_FreeSource(handle);
 }
-
+/**
+ * @brief UI_DescriptionForCampaign
+ * @return
+ */
 const char *UI_DescriptionForCampaign(void)
 {
 	int  i = 0, j = 0;
@@ -515,6 +537,10 @@ const char *UI_DescriptionForCampaign(void)
 	return NULL;
 }
 
+/**
+ * @brief UI_NameForCampaign
+ * @return
+ */
 const char *UI_NameForCampaign(void)
 {
 	int  i = 0, j = 0;
@@ -539,6 +565,11 @@ const char *UI_NameForCampaign(void)
 	return NULL;
 }
 
+/**
+ * @brief UI_FindCampaignInCampaignList
+ * @param[in] shortName
+ * @return
+ */
 int UI_FindCampaignInCampaignList(const char *shortName)
 {
 	int i;
@@ -561,6 +592,10 @@ int UI_FindCampaignInCampaignList(const char *shortName)
 
 /**
  * @brief Sorting the campaign list
+ *
+ * @param a
+ * @param b
+ * @return
  */
 int QDECL UI_SortCampaigns(const void *a, const void *b)
 {
@@ -577,16 +612,19 @@ int QDECL UI_SortCampaigns(const void *a, const void *b)
 	return strcmp(cleanNameA, cleanNameB);
 }
 
+/**
+ * @brief UI_LoadCampaigns
+ */
 void UI_LoadCampaigns(void)
 {
-	int  numdirs;
-	char filename[128];
-	char dirlist[2048];
-	char *dirptr;
-	int  i, j;
-	int  dirlen;
-	long hash;
-	char *ch;
+	int          numdirs;
+	char         filename[128];
+	char         dirlist[2048];
+	char         *dirptr;
+	int          i, j;
+	unsigned int dirlen;
+	long         hash;
+	const char   *ch;
 
 	uiInfo.campaignCount = 0;
 	memset(&uiInfo.campaignList, 0, sizeof(uiInfo.campaignList));
@@ -642,7 +680,7 @@ void UI_LoadCampaigns(void)
 	for (i = 0; i < uiInfo.campaignCount; i++)
 	{
 		// generate hash for campaign shortname
-		for (hash = 0, ch = (char *)uiInfo.campaignList[i].campaignShortName; *ch != '\0'; ch++)
+		for (hash = 0, ch = uiInfo.campaignList[i].campaignShortName; *ch != '\0'; ch++)
 		{
 			hash += (long)(tolower(*ch)) * ((ch - uiInfo.campaignList[i].campaignShortName) + 119);
 		}

@@ -602,12 +602,9 @@ extern void UI_KeyEvent(int key);
 extern void UI_MouseEvent(int dx, int dy);
 extern void UI_Refresh(int realtime);
 extern qboolean UI_ConsoleCommand(int realTime);
-extern void UI_DrawNamedPic(float x, float y, float width, float height, const char *picname);
 extern void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShader);
 extern void UI_FillRect(float x, float y, float width, float height, const float *color);
-extern void UI_DrawRect(float x, float y, float width, float height, const float *color);
 extern void UI_DrawTopBottom(float x, float y, float w, float h);
-extern void UI_DrawSides(float x, float y, float w, float h);
 extern void UI_AdjustFrom640(float *x, float *y, float *w, float *h);
 extern qboolean UI_IsFullscreen(void);
 extern void UI_SetActiveMenu(uiMenuCommand_t menu);
@@ -626,6 +623,9 @@ extern void UI_DrawProportionalString(int x, int y, const char *str, int style, 
 extern int UI_ProportionalStringWidth(const char *str);
 extern void UI_DrawString(int x, int y, const char *str, int style, vec4_t color);
 extern void UI_DrawChar(int x, int y, int ch, int style, vec4_t color);
+extern void UI_DrawRect(float x, float y, float width, float height, const float *color);
+extern void UI_DrawSides(float x, float y, float w, float h);
+extern void UI_DrawNamedPic(float x, float y, float width, float height, const char *picname);
 extern void UI_DrawTextBox(int x, int y, int width, int lines);
 extern qboolean UI_CursorInRect(int x, int y, int width, int height);
 */

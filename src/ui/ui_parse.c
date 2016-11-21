@@ -36,6 +36,10 @@
 #include "ui_shared.h"
 #include "ui_local.h"
 
+/**
+ * @brief Tooltip_ComputePosition
+ * @param[in,out] item
+ */
 void Tooltip_ComputePosition(itemDef_t *item)
 {
 	rectDef_t *itemRect = &item->window.rectClient;
@@ -59,11 +63,10 @@ void Tooltip_ComputePosition(itemDef_t *item)
 	item->toolTipData->window.flags |= WINDOW_VISIBLE;
 }
 
-/*
-===============
-Item_ValidateTypeData
-===============
-*/
+/**
+ * @brief Item_ValidateTypeData
+ * @param[in,out] item
+ */
 void Item_ValidateTypeData(itemDef_t *item)
 {
 	if (item->typeData)
@@ -102,11 +105,11 @@ void Item_ValidateTypeData(itemDef_t *item)
 	}
 }
 
-/*
-========================
-Item_ValidateTooltipData
-========================
-*/
+/**
+ * @brief Item_ValidateTooltipData
+ * @param[in,out] item
+ * @return
+ */
 qboolean Item_ValidateTooltipData(itemDef_t *item)
 {
 	if (item->toolTipData != NULL)
@@ -126,6 +129,12 @@ qboolean Item_ValidateTooltipData(itemDef_t *item)
 	return qtrue;
 }
 
+/**
+ * @brief Float_Parse
+ * @param[in] p
+ * @param[out] f
+ * @return
+ */
 qboolean Float_Parse(char **p, float *f)
 {
 	char *token;
@@ -142,6 +151,12 @@ qboolean Float_Parse(char **p, float *f)
 	}
 }
 
+/**
+ * @brief Color_Parse
+ * @param[in] p
+ * @param[out] c
+ * @return
+ */
 qboolean Color_Parse(char **p, vec4_t *c)
 {
 	int   i;
@@ -160,6 +175,12 @@ qboolean Color_Parse(char **p, vec4_t *c)
 	return qtrue;
 }
 
+/**
+ * @brief Int_Parse
+ * @param[in] p
+ * @param[out] i
+ * @return
+ */
 qboolean Int_Parse(char **p, int *i)
 {
 	char *token;
@@ -177,6 +198,12 @@ qboolean Int_Parse(char **p, int *i)
 	}
 }
 
+/**
+ * @brief Rect_Parse
+ * @param[in] p
+ * @param[in] r
+ * @return
+ */
 qboolean Rect_Parse(char **p, rectDef_t *r)
 {
 	if (Float_Parse(p, &r->x))
@@ -196,6 +223,12 @@ qboolean Rect_Parse(char **p, rectDef_t *r)
 	return qfalse;
 }
 
+/**
+ * @brief String_Parse
+ * @param[in] p
+ * @param[out] out
+ * @return
+ */
 qboolean String_Parse(char **p, const char **out)
 {
 	char *token;
@@ -211,9 +244,12 @@ qboolean String_Parse(char **p, const char **out)
 }
 
 /**
-* @brief Same as PC_String_Parse except it uses a trap call
-* to client's gettext translation function.
-*/
+ * @brief Same as PC_String_Parse except it uses a trap call
+ * to client's gettext translation function.
+ * @param[in] handle
+ * @param[out] out
+ * @return
+ */
 qboolean PC_String_ParseTranslate(int handle, const char **out)
 {
 	pc_token_t token;
@@ -228,6 +264,12 @@ qboolean PC_String_ParseTranslate(int handle, const char **out)
 	return qtrue;
 }
 
+/**
+ * @brief PC_Char_Parse
+ * @param[in] handle
+ * @param[out] out
+ * @return
+ */
 qboolean PC_Char_Parse(int handle, char *out)
 {
 	pc_token_t token;
@@ -241,6 +283,12 @@ qboolean PC_Char_Parse(int handle, char *out)
 	return qtrue;
 }
 
+/**
+ * @brief PC_Script_Parse
+ * @param[in] handle
+ * @param[out] out
+ * @return
+ */
 qboolean PC_Script_Parse(int handle, const char **out)
 {
 	char       script[4096];
@@ -284,15 +332,7 @@ qboolean PC_Script_Parse(int handle, const char **out)
 
 		Q_strcat(script, 4096, " ");
 	}
-
-	return qfalse;
 }
-
-/*
-===============
-Keyword Hash
-===============
-*/
 
 #define KEYWORDHASH_SIZE    512
 
@@ -303,6 +343,11 @@ typedef struct keywordHash_s
 	struct keywordHash_s *next;
 } keywordHash_t;
 
+/**
+ * @brief KeywordHash_Key
+ * @param[int] keyword
+ * @return
+ */
 int KeywordHash_Key(const char *keyword)
 {
 	int register hash = 0, i;
@@ -323,6 +368,11 @@ int KeywordHash_Key(const char *keyword)
 	return hash;
 }
 
+/**
+ * @brief KeywordHash_Add
+ * @param[in,out] table
+ * @param[inout] key
+ */
 void KeywordHash_Add(keywordHash_t *table[], keywordHash_t *key)
 {
 	int hash = KeywordHash_Key(key->keyword);
@@ -335,6 +385,12 @@ void KeywordHash_Add(keywordHash_t *table[], keywordHash_t *key)
 	table[hash] = key;
 }
 
+/**
+ * @brief KeywordHash_Find
+ * @param[in] table
+ * @param[in] keyword
+ * @return
+ */
 keywordHash_t *KeywordHash_Find(keywordHash_t *table[], const char *keyword)
 {
 	keywordHash_t *key;
@@ -357,7 +413,12 @@ Item Keyword Parse functions
 ===============
 */
 
-// name <string>
+/**
+ * @brief ItemParse_name
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_name(itemDef_t *item, int handle)
 {
 	if (!PC_String_Parse(handle, &item->window.name))
@@ -368,7 +429,13 @@ qboolean ItemParse_name(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// name <string>
+
+/**
+ * @brief ItemParse_focusSound
+ * @param[out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_focusSound(itemDef_t *item, int handle)
 {
 	const char *temp = NULL;
@@ -382,7 +449,12 @@ qboolean ItemParse_focusSound(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// text <string>
+/**
+ * @brief ItemParse_text
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_text(itemDef_t *item, int handle)
 {
 	if (!PC_String_ParseTranslate(handle, &item->text))
@@ -393,8 +465,12 @@ qboolean ItemParse_text(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// textfile <string>
-// read an external textfile into item->text
+/**
+ * @brief Read an external textfile into item->text
+ * @param[out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_textfile(itemDef_t *item, int handle)
 {
 	const char *newtext;
@@ -411,7 +487,12 @@ qboolean ItemParse_textfile(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// group <string>
+/**
+ * @brief ItemParse_group
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_group(itemDef_t *item, int handle)
 {
 	if (!PC_String_Parse(handle, &item->window.group))
@@ -422,7 +503,12 @@ qboolean ItemParse_group(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// asset_model <string>
+/**
+ * @brief ItemParse_asset_model
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_asset_model(itemDef_t *item, int handle)
 {
 	const char *temp = NULL;
@@ -441,7 +527,12 @@ qboolean ItemParse_asset_model(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// asset_shader <string>
+/**
+ * @brief ItemParse_asset_shader
+ * @param[out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_asset_shader(itemDef_t *item, int handle)
 {
 	const char *temp = NULL;
@@ -455,7 +546,12 @@ qboolean ItemParse_asset_shader(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// model_origin <number> <number> <number>
+/**
+ * @brief ItemParse_model_origin
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_model_origin(itemDef_t *item, int handle)
 {
 	modelDef_t *modelPtr;
@@ -476,7 +572,12 @@ qboolean ItemParse_model_origin(itemDef_t *item, int handle)
 	return qfalse;
 }
 
-// model_fovx <number>
+/**
+ * @brief ItemParse_model_fovx
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_model_fovx(itemDef_t *item, int handle)
 {
 	modelDef_t *modelPtr;
@@ -491,7 +592,12 @@ qboolean ItemParse_model_fovx(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// model_fovy <number>
+/**
+ * @brief ItemParse_model_fovy
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_model_fovy(itemDef_t *item, int handle)
 {
 	modelDef_t *modelPtr;
@@ -506,7 +612,12 @@ qboolean ItemParse_model_fovy(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// model_rotation <integer>
+/**
+ * @brief ItemParse_model_rotation
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_model_rotation(itemDef_t *item, int handle)
 {
 	modelDef_t *modelPtr;
@@ -521,7 +632,12 @@ qboolean ItemParse_model_rotation(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// model_angle <integer>
+/**
+ * @brief ItemParse_model_angle
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_model_angle(itemDef_t *item, int handle)
 {
 	modelDef_t *modelPtr;
@@ -536,7 +652,12 @@ qboolean ItemParse_model_angle(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// model_animplay <int(startframe)> <int(numframes)> <int(loopframes)> <int(fps)>
+/**
+ * @brief ItemParse_model_animplay
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_model_animplay(itemDef_t *item, int handle)
 {
 	modelDef_t *modelPtr;
@@ -572,13 +693,23 @@ qboolean ItemParse_model_animplay(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// rect <rectangle>
+/**
+ * @brief ItemParse_rect
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_rect(itemDef_t *item, int handle)
 {
 	return(PC_Rect_Parse(handle, &item->window.rectClient));
 }
 
-// origin <integer, integer>
+/**
+ * @brief ItemParse_origin
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_origin(itemDef_t *item, int handle)
 {
 	int x = 0, y = 0;
@@ -599,7 +730,12 @@ qboolean ItemParse_origin(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// style <integer>
+/**
+ * @brief ItemParse_style
+ * @param item
+ * @param handle
+ * @return
+ */
 qboolean ItemParse_style(itemDef_t *item, int handle)
 {
 	if (!PC_Int_Parse(handle, &item->window.style))
@@ -610,28 +746,48 @@ qboolean ItemParse_style(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// decoration
+/**
+ * @brief ItemParse_decoration
+ * @param[in,out] item
+ * @param handle - unused
+ * @return
+ */
 qboolean ItemParse_decoration(itemDef_t *item, int handle)
 {
 	item->window.flags |= WINDOW_DECORATION;
 	return qtrue;
 }
 
-// textasint
+/**
+ * @brief ItemParse_textasint
+ * @param[in,out] item
+ * @param handle - unused
+ * @return
+ */
 qboolean ItemParse_textasint(itemDef_t *item, int handle)
 {
 	item->window.flags |= WINDOW_TEXTASINT;
 	return qtrue;
 }
 
-// textasfloat
+/**
+ * @brief ItemParse_textasfloat
+ * @param[in,out] item
+ * @param handle - unused
+ * @return
+ */
 qboolean ItemParse_textasfloat(itemDef_t *item, int handle)
 {
 	item->window.flags |= WINDOW_TEXTASFLOAT;
 	return qtrue;
 }
 
-// notselectable
+/**
+ * @brief ItemParse_notselectable
+ * @param[in,out] item
+ * @param handle - unused
+ * @return
+ */
 qboolean ItemParse_notselectable(itemDef_t *item, int handle)
 {
 	listBoxDef_t *listPtr;
@@ -645,21 +801,36 @@ qboolean ItemParse_notselectable(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// manually wrapped
+/**
+ * @brief ItemParse_wrapped
+ * @param[in,out] item
+ * @param handle - unused
+ * @return
+ */
 qboolean ItemParse_wrapped(itemDef_t *item, int handle)
 {
 	item->window.flags |= WINDOW_WRAPPED;
 	return qtrue;
 }
 
-// auto wrapped
+/**
+ * @brief ItemParse_autowrapped
+ * @param[in,out] item
+ * @param handle - unused
+ * @return
+ */
 qboolean ItemParse_autowrapped(itemDef_t *item, int handle)
 {
 	item->window.flags |= WINDOW_AUTOWRAPPED;
 	return qtrue;
 }
 
-// bitflag <integer>
+/**
+ * @brief ItemParse_bitflag
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_bitflag(itemDef_t *item, int handle)
 {
 	if (!PC_Int_Parse(handle, &item->bitflag))
@@ -669,14 +840,24 @@ qboolean ItemParse_bitflag(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// horizontalscroll
+/**
+ * @brief ItemParse_horizontalscroll
+ * @param[in,out] item
+ * @param handle - unused
+ * @return
+ */
 qboolean ItemParse_horizontalscroll(itemDef_t *item, int handle)
 {
 	item->window.flags |= WINDOW_HORIZONTAL;
 	return qtrue;
 }
 
-// type <integer>
+/**
+ * @brief ItemParse_type
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_type(itemDef_t *item, int handle)
 {
 	if (!PC_Int_Parse(handle, &item->type))
@@ -688,8 +869,13 @@ qboolean ItemParse_type(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// elementwidth, used for listbox image elements
-// uses textalignx for storage
+/**
+ * @brief Used for listbox image elements
+ * @details Uses textalignx for storage
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_elementwidth(itemDef_t *item, int handle)
 {
 	listBoxDef_t *listPtr;
@@ -704,8 +890,13 @@ qboolean ItemParse_elementwidth(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// elementheight, used for listbox image elements
-// uses textaligny for storage
+/**
+ * @brief Used for listbox image elements
+ * @details uses textaligny for storage
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_elementheight(itemDef_t *item, int handle)
 {
 	listBoxDef_t *listPtr;
@@ -720,7 +911,12 @@ qboolean ItemParse_elementheight(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// feeder <float>
+/**
+ * @brief ItemParse_feeder
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_feeder(itemDef_t *item, int handle)
 {
 	if (!PC_Int_Parse(handle, &item->special))
@@ -731,8 +927,13 @@ qboolean ItemParse_feeder(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// elementtype, used to specify what type of elements a listbox contains
-// uses textstyle for storage
+/**
+ * @brief Used to specify what type of elements a listbox contains
+ * @details Uses textstyle for storage
+ * @param item
+ * @param handle
+ * @return
+ */
 qboolean ItemParse_elementtype(itemDef_t *item, int handle)
 {
 	listBoxDef_t *listPtr;
@@ -752,7 +953,12 @@ qboolean ItemParse_elementtype(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// columns sets a number of columns and an x pos and width per..
+/**
+ * @brief Sets a number of columns and an x pos and width per..
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_columns(itemDef_t *item, int handle)
 {
 	int          num = 0;
@@ -799,6 +1005,12 @@ qboolean ItemParse_columns(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_border
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_border(itemDef_t *item, int handle)
 {
 	if (!PC_Int_Parse(handle, &item->window.border))
@@ -809,6 +1021,12 @@ qboolean ItemParse_border(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_bordersize
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_bordersize(itemDef_t *item, int handle)
 {
 	if (!PC_Float_Parse(handle, &item->window.borderSize))
@@ -819,6 +1037,12 @@ qboolean ItemParse_bordersize(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_visible
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_visible(itemDef_t *item, int handle)
 {
 	int i = 0;
@@ -836,6 +1060,12 @@ qboolean ItemParse_visible(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_ownerdraw
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_ownerdraw(itemDef_t *item, int handle)
 {
 	if (!PC_Int_Parse(handle, &item->window.ownerDraw))
@@ -847,6 +1077,12 @@ qboolean ItemParse_ownerdraw(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_align
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_align(itemDef_t *item, int handle)
 {
 	if (!PC_Int_Parse(handle, &item->alignment))
@@ -857,6 +1093,12 @@ qboolean ItemParse_align(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_textalign
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_textalign(itemDef_t *item, int handle)
 {
 	if (!PC_Int_Parse(handle, &item->textalignment))
@@ -867,6 +1109,12 @@ qboolean ItemParse_textalign(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_textalignx
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_textalignx(itemDef_t *item, int handle)
 {
 	if (!PC_Float_Parse(handle, &item->textalignx))
@@ -877,6 +1125,12 @@ qboolean ItemParse_textalignx(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_textaligny
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_textaligny(itemDef_t *item, int handle)
 {
 	if (!PC_Float_Parse(handle, &item->textaligny))
@@ -887,6 +1141,12 @@ qboolean ItemParse_textaligny(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_textscale
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_textscale(itemDef_t *item, int handle)
 {
 	if (!PC_Float_Parse(handle, &item->textscale))
@@ -897,6 +1157,12 @@ qboolean ItemParse_textscale(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_textstyle
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_textstyle(itemDef_t *item, int handle)
 {
 	if (!PC_Int_Parse(handle, &item->textStyle))
@@ -907,7 +1173,12 @@ qboolean ItemParse_textstyle(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// added for forcing a font for a given item
+/**
+ * @brief Forcing a font for a given item
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_textfont(itemDef_t *item, int handle)
 {
 	if (!PC_Int_Parse(handle, &item->font))
@@ -918,6 +1189,12 @@ qboolean ItemParse_textfont(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_backcolor
+ * @param[out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_backcolor(itemDef_t *item, int handle)
 {
 	int   i;
@@ -936,6 +1213,12 @@ qboolean ItemParse_backcolor(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_forecolor
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_forecolor(itemDef_t *item, int handle)
 {
 	int   i;
@@ -955,6 +1238,12 @@ qboolean ItemParse_forecolor(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_bordercolor
+ * @param[out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_bordercolor(itemDef_t *item, int handle)
 {
 	int   i;
@@ -973,6 +1262,12 @@ qboolean ItemParse_bordercolor(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_outlinecolor
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_outlinecolor(itemDef_t *item, int handle)
 {
 	if (!PC_Color_Parse(handle, &item->window.outlineColor))
@@ -983,6 +1278,12 @@ qboolean ItemParse_outlinecolor(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_background
+ * @param[out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_background(itemDef_t *item, int handle)
 {
 	const char *temp = NULL;
@@ -996,6 +1297,12 @@ qboolean ItemParse_background(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_cinematic
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_cinematic(itemDef_t *item, int handle)
 {
 	if (!PC_String_Parse(handle, &item->window.cinematicName))
@@ -1006,6 +1313,12 @@ qboolean ItemParse_cinematic(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_doubleClick
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_doubleClick(itemDef_t *item, int handle)
 {
 	listBoxDef_t *listPtr;
@@ -1026,6 +1339,12 @@ qboolean ItemParse_doubleClick(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_onTab
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_onTab(itemDef_t *item, int handle)
 {
 	if (!PC_Script_Parse(handle, &item->onTab))
@@ -1036,6 +1355,12 @@ qboolean ItemParse_onTab(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_onEsc
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_onEsc(itemDef_t *item, int handle)
 {
 	if (!PC_Script_Parse(handle, &item->onEsc))
@@ -1046,6 +1371,12 @@ qboolean ItemParse_onEsc(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_onEnter
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_onEnter(itemDef_t *item, int handle)
 {
 	if (!PC_Script_Parse(handle, &item->onEnter))
@@ -1056,6 +1387,12 @@ qboolean ItemParse_onEnter(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_onPaste
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_onPaste(itemDef_t *item, int handle)
 {
 	if (!PC_Script_Parse(handle, &item->onPaste))
@@ -1066,6 +1403,12 @@ qboolean ItemParse_onPaste(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_contextMenu
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_contextMenu(itemDef_t *item, int handle)
 {
 	listBoxDef_t *listPtr;
@@ -1086,6 +1429,12 @@ qboolean ItemParse_contextMenu(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_onFocus
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_onFocus(itemDef_t *item, int handle)
 {
 	if (!PC_Script_Parse(handle, &item->onFocus))
@@ -1096,6 +1445,12 @@ qboolean ItemParse_onFocus(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_leaveFocus
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_leaveFocus(itemDef_t *item, int handle)
 {
 	if (!PC_Script_Parse(handle, &item->leaveFocus))
@@ -1106,6 +1461,12 @@ qboolean ItemParse_leaveFocus(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_mouseEnter
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_mouseEnter(itemDef_t *item, int handle)
 {
 	if (!PC_Script_Parse(handle, &item->mouseEnter))
@@ -1116,6 +1477,12 @@ qboolean ItemParse_mouseEnter(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_mouseExit
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_mouseExit(itemDef_t *item, int handle)
 {
 	if (!PC_Script_Parse(handle, &item->mouseExit))
@@ -1126,6 +1493,12 @@ qboolean ItemParse_mouseExit(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_mouseEnterText
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_mouseEnterText(itemDef_t *item, int handle)
 {
 	if (!PC_Script_Parse(handle, &item->mouseEnterText))
@@ -1136,6 +1509,12 @@ qboolean ItemParse_mouseEnterText(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_mouseExitText
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_mouseExitText(itemDef_t *item, int handle)
 {
 	if (!PC_Script_Parse(handle, &item->mouseExitText))
@@ -1146,6 +1525,12 @@ qboolean ItemParse_mouseExitText(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_action
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_action(itemDef_t *item, int handle)
 {
 	if (!PC_Script_Parse(handle, &item->action))
@@ -1156,6 +1541,12 @@ qboolean ItemParse_action(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_accept
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_accept(itemDef_t *item, int handle)
 {
 	if (!PC_Script_Parse(handle, &item->onAccept))
@@ -1166,6 +1557,12 @@ qboolean ItemParse_accept(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_special
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_special(itemDef_t *item, int handle)
 {
 	if (!PC_Int_Parse(handle, &item->special))
@@ -1176,6 +1573,12 @@ qboolean ItemParse_special(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_cvarTest
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_cvarTest(itemDef_t *item, int handle)
 {
 	if (!PC_String_Parse(handle, &item->cvarTest))
@@ -1186,6 +1589,12 @@ qboolean ItemParse_cvarTest(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_cvar
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_cvar(itemDef_t *item, int handle)
 {
 	editFieldDef_t *editPtr;
@@ -1208,6 +1617,12 @@ qboolean ItemParse_cvar(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_maxChars
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_maxChars(itemDef_t *item, int handle)
 {
 	editFieldDef_t *editPtr;
@@ -1229,6 +1644,12 @@ qboolean ItemParse_maxChars(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_maxPaintChars
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_maxPaintChars(itemDef_t *item, int handle)
 {
 	editFieldDef_t *editPtr;
@@ -1250,6 +1671,12 @@ qboolean ItemParse_maxPaintChars(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_cvarFloat
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_cvarFloat(itemDef_t *item, int handle)
 {
 	editFieldDef_t *editPtr;
@@ -1272,6 +1699,12 @@ qboolean ItemParse_cvarFloat(itemDef_t *item, int handle)
 	return qfalse;
 }
 
+/**
+ * @brief ItemParse_cvarStrList
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_cvarStrList(itemDef_t *item, int handle)
 {
 	pc_token_t token;
@@ -1333,10 +1766,14 @@ qboolean ItemParse_cvarStrList(itemDef_t *item, int handle)
 			}
 		}
 	}
-
-	return qfalse;
 }
 
+/**
+ * @brief ItemParse_cvarFloatList
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_cvarFloatList(itemDef_t *item, int handle)
 {
 	pc_token_t token;
@@ -1392,10 +1829,14 @@ qboolean ItemParse_cvarFloatList(itemDef_t *item, int handle)
 			return qfalse;
 		}
 	}
-
-	return qfalse;
 }
 
+/**
+ * @brief ItemParse_cvarListUndefined
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_cvarListUndefined(itemDef_t *item, int handle)
 {
 	pc_token_t token;
@@ -1421,6 +1862,13 @@ qboolean ItemParse_cvarListUndefined(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ParseColorRange
+ * @param[in,out] item
+ * @param[in] handle
+ * @param[in] type
+ * @return
+ */
 qboolean ParseColorRange(itemDef_t *item, int handle, int type)
 {
 	colorRangeDef_t color;
@@ -1451,16 +1899,34 @@ qboolean ParseColorRange(itemDef_t *item, int handle, int type)
 	return qfalse;
 }
 
+/**
+ * @brief ItemParse_addColorRangeRel
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_addColorRangeRel(itemDef_t *item, int handle)
 {
 	return ParseColorRange(item, handle, RANGETYPE_RELATIVE);
 }
 
+/**
+ * @brief ItemParse_addColorRange
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_addColorRange(itemDef_t *item, int handle)
 {
 	return ParseColorRange(item, handle, RANGETYPE_ABSOLUTE);
 }
 
+/**
+ * @brief ItemParse_ownerdrawFlag
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_ownerdrawFlag(itemDef_t *item, int handle)
 {
 	int i = 0;
@@ -1473,6 +1939,12 @@ qboolean ItemParse_ownerdrawFlag(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_enableCvar
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_enableCvar(itemDef_t *item, int handle)
 {
 	if (PC_Script_Parse(handle, &item->enableCvar))
@@ -1484,6 +1956,12 @@ qboolean ItemParse_enableCvar(itemDef_t *item, int handle)
 	return qfalse;
 }
 
+/**
+ * @brief ItemParse_disableCvar
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_disableCvar(itemDef_t *item, int handle)
 {
 	if (PC_Script_Parse(handle, &item->enableCvar))
@@ -1495,12 +1973,24 @@ qboolean ItemParse_disableCvar(itemDef_t *item, int handle)
 	return qfalse;
 }
 
+/**
+ * @brief ItemParse_noToggle
+ * @param[in,out] item
+ * @param handle - unused
+ * @return
+ */
 qboolean ItemParse_noToggle(itemDef_t *item, int handle)
 {
 	item->cvarFlags |= CVAR_NOTOGGLE;
 	return qtrue;
 }
 
+/**
+ * @brief ItemParse_showCvar
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_showCvar(itemDef_t *item, int handle)
 {
 	if (PC_Script_Parse(handle, &item->enableCvar))
@@ -1512,6 +2002,12 @@ qboolean ItemParse_showCvar(itemDef_t *item, int handle)
 	return qfalse;
 }
 
+/**
+ * @brief ItemParse_hideCvar
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_hideCvar(itemDef_t *item, int handle)
 {
 	if (PC_Script_Parse(handle, &item->enableCvar))
@@ -1523,6 +2019,12 @@ qboolean ItemParse_hideCvar(itemDef_t *item, int handle)
 	return qfalse;
 }
 
+/**
+ * @brief ItemParse_execKey
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_execKey(itemDef_t *item, int handle)
 {
 	char keyname;
@@ -1545,7 +2047,12 @@ qboolean ItemParse_execKey(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// server setting tags
+/**
+ * @brief Server setting tags
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_settingDisabled(itemDef_t *item, int handle)
 {
 	qboolean fResult = PC_Int_Parse(handle, &item->settingTest);
@@ -1558,6 +2065,12 @@ qboolean ItemParse_settingDisabled(itemDef_t *item, int handle)
 	return(fResult);
 }
 
+/**
+ * @brief ItemParse_settingEnabled
+ * @param[out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_settingEnabled(itemDef_t *item, int handle)
 {
 	qboolean fResult = PC_Int_Parse(handle, &item->settingTest);
@@ -1570,21 +2083,45 @@ qboolean ItemParse_settingEnabled(itemDef_t *item, int handle)
 	return(fResult);
 }
 
+/**
+ * @brief ItemParse_tooltip
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_tooltip(itemDef_t *item, int handle)
 {
 	return(Item_ValidateTooltipData(item) && PC_String_ParseTranslate(handle, &item->toolTipData->text));
 }
 
+/**
+ * @brief ItemParse_tooltipalignx
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_tooltipalignx(itemDef_t *item, int handle)
 {
 	return(Item_ValidateTooltipData(item) && PC_Float_Parse(handle, &item->toolTipData->textalignx));
 }
 
+/**
+ * @brief ItemParse_tooltipaligny
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_tooltipaligny(itemDef_t *item, int handle)
 {
 	return(Item_ValidateTooltipData(item) && PC_Float_Parse(handle, &item->toolTipData->textaligny));
 }
 
+/**
+ * @brief ItemParse_voteFlag
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean ItemParse_voteFlag(itemDef_t *item, int handle)
 {
 	return(PC_Int_Parse(handle, &item->voteFlag));
@@ -1682,11 +2219,9 @@ keywordHash_t itemParseKeywords[] =
 
 keywordHash_t *itemParseKeywordHash[KEYWORDHASH_SIZE];
 
-/*
-===============
-Item_SetupKeywordHash
-===============
-*/
+/**
+ * @brief Item_SetupKeywordHash
+ */
 void Item_SetupKeywordHash(void)
 {
 	int i;
@@ -1698,11 +2233,12 @@ void Item_SetupKeywordHash(void)
 	}
 }
 
-/*
-===============
-Item_Parse
-===============
-*/
+/**
+ * @brief Item_Parse
+ * @param[in] handle
+ * @param[in] item
+ * @return
+ */
 qboolean Item_Parse(int handle, itemDef_t *item)
 {
 	pc_token_t    token;
@@ -1744,12 +2280,12 @@ qboolean Item_Parse(int handle, itemDef_t *item)
 			return qfalse;
 		}
 	}
-
-	return qfalse;
 }
 
-// Item_InitControls
-// init's special control types
+/**
+ * @brief Init's special control types
+ * @param[in,out] item
+ */
 void Item_InitControls(itemDef_t *item)
 {
 	if (item == NULL)
@@ -1780,6 +2316,15 @@ void Item_InitControls(itemDef_t *item)
 Menu Keyword Parse functions
 ===============
 */
+
+/**
+ * @brief MenuParse_name
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ *
+ * @todo TODO: main windows ?
+ */
 qboolean MenuParse_name(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -1798,6 +2343,12 @@ qboolean MenuParse_name(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_fullscreen
+ * @param[out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_fullscreen(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -1817,6 +2368,12 @@ qboolean MenuParse_fullscreen(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_rect
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_rect(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -1824,6 +2381,12 @@ qboolean MenuParse_rect(itemDef_t *item, int handle)
 	return(PC_Rect_Parse(handle, &menu->window.rect));
 }
 
+/**
+ * @brief MenuParse_style
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_style(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -1836,6 +2399,12 @@ qboolean MenuParse_style(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_visible
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_visible(itemDef_t *item, int handle)
 {
 	int       i     = 0;
@@ -1854,9 +2423,16 @@ qboolean MenuParse_visible(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_onOpen
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_onOpen(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
+
 	if (!PC_Script_Parse(handle, &menu->onOpen))
 	{
 		return qfalse;
@@ -1865,6 +2441,12 @@ qboolean MenuParse_onOpen(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_onClose
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_onClose(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -1877,6 +2459,12 @@ qboolean MenuParse_onClose(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_onESC
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_onESC(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -1889,6 +2477,12 @@ qboolean MenuParse_onESC(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_onEnter
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_onEnter(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -1900,6 +2494,13 @@ qboolean MenuParse_onEnter(itemDef_t *item, int handle)
 
 	return qtrue;
 }
+
+/**
+ * @brief MenuParse_onPaste
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_onPaste(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -1912,7 +2513,12 @@ qboolean MenuParse_onPaste(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// menu timeout function
+/**
+ * @brief Menu timeout
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_onTimeout(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -1930,6 +2536,12 @@ qboolean MenuParse_onTimeout(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_border
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_border(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -1942,6 +2554,12 @@ qboolean MenuParse_border(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_borderSize
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_borderSize(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -1954,6 +2572,12 @@ qboolean MenuParse_borderSize(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_backcolor
+ * @param[out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_backcolor(itemDef_t *item, int handle)
 {
 	int       i;
@@ -1973,6 +2597,12 @@ qboolean MenuParse_backcolor(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_forecolor
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_forecolor(itemDef_t *item, int handle)
 {
 	int       i;
@@ -1993,6 +2623,12 @@ qboolean MenuParse_forecolor(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_bordercolor
+ * @param[out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_bordercolor(itemDef_t *item, int handle)
 {
 	int       i;
@@ -2012,6 +2648,12 @@ qboolean MenuParse_bordercolor(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_focuscolor
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_focuscolor(itemDef_t *item, int handle)
 {
 	int       i;
@@ -2032,6 +2674,12 @@ qboolean MenuParse_focuscolor(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_disablecolor
+ * @param[out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_disablecolor(itemDef_t *item, int handle)
 {
 	int       i;
@@ -2051,6 +2699,12 @@ qboolean MenuParse_disablecolor(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_outlinecolor
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_outlinecolor(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -2063,6 +2717,12 @@ qboolean MenuParse_outlinecolor(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_background
+ * @param[out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_background(itemDef_t *item, int handle)
 {
 	const char *buff = NULL;
@@ -2077,6 +2737,12 @@ qboolean MenuParse_background(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_cinematic
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_cinematic(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -2089,6 +2755,12 @@ qboolean MenuParse_cinematic(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_ownerdrawFlag
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_ownerdrawFlag(itemDef_t *item, int handle)
 {
 	int       i     = 0;
@@ -2103,6 +2775,12 @@ qboolean MenuParse_ownerdrawFlag(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_ownerdraw
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_ownerdraw(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -2115,7 +2793,13 @@ qboolean MenuParse_ownerdraw(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// decoration
+/**
+ * @brief MenuParse_popup
+ * @param[in,out] item
+ * @param handle - unused
+ * @return
+ * @note decoration
+ */
 qboolean MenuParse_popup(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -2123,6 +2807,12 @@ qboolean MenuParse_popup(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_outOfBounds
+ * @param[in,out] item
+ * @param handle - unused
+ * @return
+ */
 qboolean MenuParse_outOfBounds(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -2131,6 +2821,12 @@ qboolean MenuParse_outOfBounds(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_soundLoop
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_soundLoop(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -2143,6 +2839,12 @@ qboolean MenuParse_soundLoop(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_fadeClamp
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_fadeClamp(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -2155,6 +2857,12 @@ qboolean MenuParse_fadeClamp(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_fadeAmount
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_fadeAmount(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -2167,6 +2875,12 @@ qboolean MenuParse_fadeAmount(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_fadeCycle
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_fadeCycle(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -2179,6 +2893,12 @@ qboolean MenuParse_fadeCycle(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_itemDef
+ * @param[in,out] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_itemDef(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -2210,6 +2930,12 @@ qboolean MenuParse_itemDef(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_execKey
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_execKey(itemDef_t *item, int handle)
 {
 	menuDef_t *menu   = (menuDef_t *)item;
@@ -2231,6 +2957,12 @@ qboolean MenuParse_execKey(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_execKeyInt
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_execKeyInt(itemDef_t *item, int handle)
 {
 	menuDef_t *menu   = (menuDef_t *)item;
@@ -2249,6 +2981,12 @@ qboolean MenuParse_execKeyInt(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_drawAlwaysOnTop
+ * @param[in,out] item
+ * @param handle - unused
+ * @return
+ */
 qboolean MenuParse_drawAlwaysOnTop(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -2256,7 +2994,12 @@ qboolean MenuParse_drawAlwaysOnTop(itemDef_t *item, int handle)
 	return qtrue;
 }
 
-// parse the command to set if we're looping through all items to find the current hotkey
+/**
+ * @brief Parse the command to set if we're looping through all items to find the current hotkey
+ * @param[in] item
+ * @param[in] handle
+ * @return
+ */
 qboolean MenuParse_itemHotkeyMode(itemDef_t *item, int handle)
 {
 	// like MenuParse_fullscreen - reading an int
@@ -2269,6 +3012,12 @@ qboolean MenuParse_itemHotkeyMode(itemDef_t *item, int handle)
 	return qtrue;
 }
 
+/**
+ * @brief MenuParse_modal
+ * @param[in,out] item
+ * @param handle - unused
+ * @return
+ */
 qboolean MenuParse_modal(itemDef_t *item, int handle)
 {
 	menuDef_t *menu = (menuDef_t *)item;
@@ -2320,11 +3069,9 @@ keywordHash_t menuParseKeywords[] =
 
 keywordHash_t *menuParseKeywordHash[KEYWORDHASH_SIZE];
 
-/*
-===============
-Menu_SetupKeywordHash
-===============
-*/
+/**
+ * @brief Menu_SetupKeywordHash
+ */
 void Menu_SetupKeywordHash(void)
 {
 	int i;
@@ -2336,11 +3083,12 @@ void Menu_SetupKeywordHash(void)
 	}
 }
 
-/*
-===============
-Menu_Parse
-===============
-*/
+/**
+ * @brief Menu_Parse
+ * @param[in] handle
+ * @param[in] menu
+ * @return
+ */
 qboolean Menu_Parse(int handle, menuDef_t *menu)
 {
 	pc_token_t    token;
@@ -2383,6 +3131,4 @@ qboolean Menu_Parse(int handle, menuDef_t *menu)
 			return qfalse;
 		}
 	}
-
-	return qfalse;
 }

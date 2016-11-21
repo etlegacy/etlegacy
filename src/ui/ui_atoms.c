@@ -35,14 +35,18 @@
 
 #include "ui_local.h"
 
+/**
+ * @brief Com_DPrintf
+ * @param[in] fmt
+ */
 void QDECL Com_DPrintf(const char *fmt, ...)
 {
 	va_list argptr;
 	char    msg[MAXPRINTMSG];
-	int     developer;
+	float   developer;
 
 	developer = trap_Cvar_VariableValue("developer");
-	if (!developer)
+	if (developer == 0.f)
 	{
 		return;
 	}
@@ -54,6 +58,11 @@ void QDECL Com_DPrintf(const char *fmt, ...)
 	Com_Printf("%s", msg);
 }
 
+/**
+ * @brief Com_Error
+ * @param level - unused
+ * @param[in] error
+ */
 void QDECL Com_Error(int level, const char *error, ...)
 {
 	va_list argptr;
@@ -66,6 +75,10 @@ void QDECL Com_Error(int level, const char *error, ...)
 	trap_Error(va("%s", text));
 }
 
+/**
+ * @brief Com_Printf
+ * @param[in] msg
+ */
 void QDECL Com_Printf(const char *msg, ...)
 {
 	va_list argptr;
@@ -78,6 +91,11 @@ void QDECL Com_Printf(const char *msg, ...)
 	trap_Print(va("%s", text));
 }
 
+/**
+ * @brief UI_Argv
+ * @param[in] arg
+ * @return
+ */
 char *UI_Argv(int arg)
 {
 	static char buffer[MAX_STRING_CHARS];
@@ -87,6 +105,11 @@ char *UI_Argv(int arg)
 	return buffer;
 }
 
+/**
+ * @brief UI_Cvar_VariableString
+ * @param[in] var_name
+ * @return
+ */
 char *UI_Cvar_VariableString(const char *var_name)
 {
 	static char buffer[2][MAX_STRING_CHARS];
@@ -99,11 +122,19 @@ char *UI_Cvar_VariableString(const char *var_name)
 	return buffer[toggle];
 }
 
+/**
+ * @brief UI_Cache_f
+ */
 static void UI_Cache_f(void)
 {
 	Display_CacheAll();
 }
 
+/**
+ * @brief UI_ConsoleCommand
+ * @param[in] realTime
+ * @return
+ */
 qboolean UI_ConsoleCommand(int realTime)
 {
 	char            *cmd;
@@ -143,7 +174,7 @@ qboolean UI_ConsoleCommand(int realTime)
 		UI_RemoveAllFavourites_f();
 		return qtrue;
 	}
-	else if (Q_stricmp(cmd, "show_menu") == 0 && DC->getCVarValue("developer"))
+	else if (Q_stricmp(cmd, "show_menu") == 0 && DC->getCVarValue("developer") != 0.f)
 	{
 		char *menu_name = UI_Argv(1);
 		if (menu_name)
@@ -172,6 +203,10 @@ qboolean UI_ConsoleCommand(int realTime)
 
 /**
  * @brief Adjusted for resolution and screen aspect ratio
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
  */
 void UI_AdjustFrom640(float *x, float *y, float *w, float *h)
 {
@@ -191,17 +226,31 @@ void UI_AdjustFrom640(float *x, float *y, float *w, float *h)
 
 /**
  * @brief UI_DrawNamedPic
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ * @param[in] picname
+ *
  * @note Unused.
- */
 void UI_DrawNamedPic(float x, float y, float width, float height, const char *picname)
 {
-	qhandle_t hShader;
+    qhandle_t hShader;
 
-	hShader = trap_R_RegisterShaderNoMip(picname);
-	UI_AdjustFrom640(&x, &y, &width, &height);
-	trap_R_DrawStretchPic(x, y, width, height, 0, 0, 1, 1, hShader);
+    hShader = trap_R_RegisterShaderNoMip(picname);
+    UI_AdjustFrom640(&x, &y, &width, &height);
+    trap_R_DrawStretchPic(x, y, width, height, 0, 0, 1, 1, hShader);
 }
+*/
 
+/**
+ * @brief UI_DrawHandlePic
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] hShader
+ */
 void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShader)
 {
 	float s0;
@@ -253,6 +302,14 @@ void UI_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hS
  * @brief UI_FillRect
  * Coordinates are 640*480 virtual values
  */
+/**
+ * @brief UI_FillRect
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ * @param[in] color
+ */
 void UI_FillRect(float x, float y, float width, float height, const float *color)
 {
 	trap_R_SetColor(color);
@@ -263,13 +320,29 @@ void UI_FillRect(float x, float y, float width, float height, const float *color
 	trap_R_SetColor(NULL);
 }
 
+/**
+ * @brief UI_DrawSides
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ *
+ * @note Unused
 void UI_DrawSides(float x, float y, float w, float h)
 {
-	UI_AdjustFrom640(&x, &y, &w, &h);
-	trap_R_DrawStretchPic(x, y, 1, h, 0, 0, 0, 0, uiInfo.uiDC.whiteShader);
-	trap_R_DrawStretchPic(x + w - 1, y, 1, h, 0, 0, 0, 0, uiInfo.uiDC.whiteShader);
+    UI_AdjustFrom640(&x, &y, &w, &h);
+    trap_R_DrawStretchPic(x, y, 1, h, 0, 0, 0, 0, uiInfo.uiDC.whiteShader);
+    trap_R_DrawStretchPic(x + w - 1, y, 1, h, 0, 0, 0, 0, uiInfo.uiDC.whiteShader);
 }
+*/
 
+/**
+ * @brief UI_DrawTopBottom
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ */
 void UI_DrawTopBottom(float x, float y, float w, float h)
 {
 	UI_AdjustFrom640(&x, &y, &w, &h);
@@ -280,38 +353,60 @@ void UI_DrawTopBottom(float x, float y, float w, float h)
 /**
  * @brief UI_DrawRect
  * Coordinates are 640*480 virtual values
- */
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ * @param[in] color
+ * @note Unused
 void UI_DrawRect(float x, float y, float width, float height, const float *color)
 {
-	trap_R_SetColor(color);
+    trap_R_SetColor(color);
 
-	UI_DrawTopBottom(x, y, width, height);
-	UI_DrawSides(x, y, width, height);
+    UI_DrawTopBottom(x, y, width, height);
+    UI_DrawSides(x, y, width, height);
 
-	trap_R_SetColor(NULL);
+    trap_R_SetColor(NULL);
 }
+*/
 
 /**
- * @note Unused.
+
  */
+/**
+ * @brief UI_DrawTextBox
+ * @param x
+ * @param y
+ * @param width
+ * @param lines
+ * @note Unused.
 void UI_DrawTextBox(int x, int y, int width, int lines)
 {
-	UI_FillRect(x + BIGCHAR_WIDTH / 2, y + BIGCHAR_HEIGHT / 2, (width + 1) * BIGCHAR_WIDTH, (lines + 1) * BIGCHAR_HEIGHT, colorBlack);
-	UI_DrawRect(x + BIGCHAR_WIDTH / 2, y + BIGCHAR_HEIGHT / 2, (width + 1) * BIGCHAR_WIDTH, (lines + 1) * BIGCHAR_HEIGHT, colorWhite);
+    UI_FillRect(x + BIGCHAR_WIDTH / 2, y + BIGCHAR_HEIGHT / 2, (width + 1) * BIGCHAR_WIDTH, (lines + 1) * BIGCHAR_HEIGHT, colorBlack);
+    UI_DrawRect(x + BIGCHAR_WIDTH / 2, y + BIGCHAR_HEIGHT / 2, (width + 1) * BIGCHAR_WIDTH, (lines + 1) * BIGCHAR_HEIGHT, colorWhite);
 }
+*/
 
 /**
  * @note Unused.
  */
+/**
+ * @brief UI_CursorInRect
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ * @return
 qboolean UI_CursorInRect(int x, int y, int width, int height)
 {
-	if (uiInfo.uiDC.cursorx < x ||
-	    uiInfo.uiDC.cursory < y ||
-	    uiInfo.uiDC.cursorx > x + width ||
-	    uiInfo.uiDC.cursory > y + height)
-	{
-		return qfalse;
-	}
+    if (uiInfo.uiDC.cursorx < x ||
+        uiInfo.uiDC.cursory < y ||
+        uiInfo.uiDC.cursorx > x + width ||
+        uiInfo.uiDC.cursory > y + height)
+    {
+        return qfalse;
+    }
 
-	return qtrue;
+    return qtrue;
 }
+*/

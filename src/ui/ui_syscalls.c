@@ -34,13 +34,21 @@
 
 #include "ui_local.h"
 
-static intptr_t (QDECL *syscall)(intptr_t arg, ...) = (intptr_t (QDECL *)(intptr_t, ...)) - 1;
+static intptr_t(QDECL * syscall)(intptr_t arg, ...) = (intptr_t(QDECL *)(intptr_t, ...)) - 1;
 
-Q_EXPORT void dllEntry(intptr_t (QDECL *syscallptr)(intptr_t arg, ...))
+/**
+ * @brief dllEntry
+ */
+Q_EXPORT void dllEntry(intptr_t(QDECL * syscallptr)(intptr_t arg, ...))
 {
 	syscall = syscallptr;
 }
 
+/**
+ * @brief PASSFLOAT
+ * @param[in] x
+ * @return
+ */
 int PASSFLOAT(float x)
 {
 	floatint_t fi;
@@ -49,11 +57,19 @@ int PASSFLOAT(float x)
 	return fi.i;
 }
 
+/**
+ * @brief trap_Print
+ * @param[in] string
+ */
 void trap_Print(const char *string)
 {
 	syscall(UI_PRINT, string);
 }
 
+/**
+ * @brief trap_Error
+ * @param[in] string
+ */
 void trap_Error(const char *string)
 {
 	syscall(UI_ERROR, string);
@@ -61,26 +77,51 @@ void trap_Error(const char *string)
 	exit(1);
 }
 
+/**
+ * @brief trap_Milliseconds
+ * @return
+ */
 int trap_Milliseconds(void)
 {
 	return syscall(UI_MILLISECONDS);
 }
 
+/**
+ * @brief trap_Cvar_Register
+ * @param[in] cvar
+ * @param[in] var_name
+ * @param[in] value
+ * @param[in] flags
+ */
 void trap_Cvar_Register(vmCvar_t *cvar, const char *var_name, const char *value, int flags)
 {
 	syscall(UI_CVAR_REGISTER, cvar, var_name, value, flags);
 }
 
+/**
+ * @brief trap_Cvar_Update
+ * @param[in] cvar
+ */
 void trap_Cvar_Update(vmCvar_t *cvar)
 {
 	syscall(UI_CVAR_UPDATE, cvar);
 }
 
+/**
+ * @brief trap_Cvar_Set
+ * @param[in] var_name
+ * @param[in] value
+ */
 void trap_Cvar_Set(const char *var_name, const char *value)
 {
 	syscall(UI_CVAR_SET, var_name, value);
 }
 
+/**
+ * @brief trap_Cvar_VariableValue
+ * @param[in] var_name
+ * @return
+ */
 float trap_Cvar_VariableValue(const char *var_name)
 {
 	floatint_t fi;
@@ -89,116 +130,238 @@ float trap_Cvar_VariableValue(const char *var_name)
 	return fi.f;
 }
 
+/**
+ * @brief trap_Cvar_VariableStringBuffer
+ * @param[in] var_name
+ * @param[in] buffer
+ * @param[in] bufsize
+ */
 void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize)
 {
 	syscall(UI_CVAR_VARIABLESTRINGBUFFER, var_name, buffer, bufsize);
 }
 
+/**
+ * @brief trap_Cvar_LatchedVariableStringBuffer
+ * @param[in] var_name
+ * @param[in] buffer
+ * @param[in] bufsize
+ */
 void trap_Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bufsize)
 {
 	syscall(UI_CVAR_LATCHEDVARIABLESTRINGBUFFER, var_name, buffer, bufsize);
 }
 
+/**
+ * @brief trap_Cvar_SetValue
+ * @param[in] var_name
+ * @param[in] value
+ */
 void trap_Cvar_SetValue(const char *var_name, float value)
 {
 	syscall(UI_CVAR_SETVALUE, var_name, PASSFLOAT(value));
 }
 
+/**
+ * @brief trap_Cvar_Reset
+ * @param[in] name
+ */
 void trap_Cvar_Reset(const char *name)
 {
 	syscall(UI_CVAR_RESET, name);
 }
 
+/**
+ * @brief trap_Cvar_Create
+ * @param[in] var_name
+ * @param[in] var_value
+ * @param[in] flags
+ */
 void trap_Cvar_Create(const char *var_name, const char *var_value, int flags)
 {
 	syscall(UI_CVAR_CREATE, var_name, var_value, flags);
 }
 
+/**
+ * @brief trap_Cvar_InfoStringBuffer
+ * @param[in] bit
+ * @param[in] buffer
+ * @param[in] bufsize
+ */
 void trap_Cvar_InfoStringBuffer(int bit, char *buffer, int bufsize)
 {
 	syscall(UI_CVAR_INFOSTRINGBUFFER, bit, buffer, bufsize);
 }
 
+/**
+ * @brief trap_Argc
+ * @return
+ */
 int trap_Argc(void)
 {
 	return syscall(UI_ARGC);
 }
 
+/**
+ * @brief trap_Argv
+ * @param[in] n
+ * @param[in] buffer
+ * @param[in] bufferLength
+ */
 void trap_Argv(int n, char *buffer, int bufferLength)
 {
 	syscall(UI_ARGV, n, buffer, bufferLength);
 }
 
+/**
+ * @brief trap_Cmd_ExecuteText
+ * @param[in] exec_when
+ * @param[in] text
+ */
 void trap_Cmd_ExecuteText(int exec_when, const char *text)
 {
 	syscall(UI_CMD_EXECUTETEXT, exec_when, text);
 }
 
+/**
+ * @brief trap_AddCommand
+ * @param[in] cmdName
+ */
 void trap_AddCommand(const char *cmdName)
 {
 	syscall(UI_ADDCOMMAND, cmdName);
 }
 
+/**
+ * @brief trap_FS_FOpenFile
+ * @param[in] qpath
+ * @param[in] f
+ * @param[in] mode
+ * @return
+ */
 int trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode)
 {
 	return syscall(UI_FS_FOPENFILE, qpath, f, mode);
 }
 
+/**
+ * @brief trap_FS_Read
+ * @param[in] buffer
+ * @param[in] len
+ * @param[in] f
+ */
 void trap_FS_Read(void *buffer, int len, fileHandle_t f)
 {
 	syscall(UI_FS_READ, buffer, len, f);
 }
 
+/**
+ * @brief trap_FS_Write
+ * @param[in] buffer
+ * @param[in] len
+ * @param[in] f
+ */
 void trap_FS_Write(const void *buffer, int len, fileHandle_t f)
 {
 	syscall(UI_FS_WRITE, buffer, len, f);
 }
 
+/**
+ * @brief trap_FS_FCloseFile
+ * @param[in] f
+ */
 void trap_FS_FCloseFile(fileHandle_t f)
 {
 	syscall(UI_FS_FCLOSEFILE, f);
 }
 
+/**
+ * @brief trap_FS_GetFileList
+ * @param[in] path
+ * @param[in] extension
+ * @param[in] listbuf
+ * @param[in] bufsize
+ * @return
+ */
 int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize)
 {
 	return syscall(UI_FS_GETFILELIST, path, extension, listbuf, bufsize);
 }
 
+/**
+ * @brief trap_FS_Delete
+ * @param[in] filename
+ * @return
+ */
 int trap_FS_Delete(const char *filename)
 {
 	return syscall(UI_FS_DELETEFILE, filename);
 }
 
+/**
+ * @brief trap_R_RegisterModel
+ * @param[in] name
+ * @return
+ */
 qhandle_t trap_R_RegisterModel(const char *name)
 {
 	return syscall(UI_R_REGISTERMODEL, name);
 }
 
+/**
+ * @brief trap_R_RegisterSkin
+ * @param[in] name
+ * @return
+ */
 qhandle_t trap_R_RegisterSkin(const char *name)
 {
 	return syscall(UI_R_REGISTERSKIN, name);
 }
 
+/**
+ * @brief trap_R_RegisterFont
+ * @param[in] fontName
+ * @param[in] pointSize
+ * @param[in] font
+ */
 void trap_R_RegisterFont(const char *fontName, int pointSize, void *font)
 {
 	syscall(UI_R_REGISTERFONT, fontName, pointSize, font, IS_FUNC_SUPPORTED(UNICODE_SUPPORT_VERSION));
 }
 
+/**
+ * @brief trap_R_RegisterShaderNoMip
+ * @param[in] name
+ * @return
+ */
 qhandle_t trap_R_RegisterShaderNoMip(const char *name)
 {
 	return syscall(UI_R_REGISTERSHADERNOMIP, name);
 }
 
+/**
+ * @brief trap_R_ClearScene
+ */
 void trap_R_ClearScene(void)
 {
 	syscall(UI_R_CLEARSCENE);
 }
 
+/**
+ * @brief trap_R_AddRefEntityToScene
+ * @param[in]  re
+ */
 void trap_R_AddRefEntityToScene(const refEntity_t *re)
 {
 	syscall(UI_R_ADDREFENTITYTOSCENE, re);
 }
 
+/**
+ * @brief trap_R_AddPolyToScene
+ * @param[in] hShader
+ * @param[in] numVerts
+ * @param[in] verts
+ */
 void trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts)
 {
 	syscall(UI_R_ADDPOLYTOSCENE, hShader, numVerts, verts);
@@ -208,62 +371,150 @@ void trap_R_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *ve
 //% void    trap_R_AddLightToScene( const vec3_t org, float intensity, float r, float g, float b, int overdraw ) {
 //%     syscall( UI_R_ADDLIGHTTOSCENE, org, PASSFLOAT(intensity), PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), overdraw );
 //% }
+/**
+ * @brief New dlight system
+ * @param[in] org
+ * @param[in] radius
+ * @param[in] intensity
+ * @param[in] r
+ * @param[in] g
+ * @param[in] b
+ * @param[in] hShader
+ * @param[in] flags
+ */
 void trap_R_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags)
 {
 	syscall(UI_R_ADDLIGHTTOSCENE, org, PASSFLOAT(radius), PASSFLOAT(intensity),
 	        PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), hShader, flags);
 }
 
+/**
+ * @brief trap_R_AddCoronaToScene
+ * @param[in] org
+ * @param[in] r
+ * @param[in] g
+ * @param[in] b
+ * @param[in] scale
+ * @param[in] id
+ * @param[in] visible
+ */
 void trap_R_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible)
 {
 	syscall(UI_R_ADDCORONATOSCENE, org, PASSFLOAT(r), PASSFLOAT(g), PASSFLOAT(b), PASSFLOAT(scale), id, visible);
 }
 
+/**
+ * @brief trap_R_RenderScene
+ * @param[in] fd
+ */
 void trap_R_RenderScene(const refdef_t *fd)
 {
 	syscall(UI_R_RENDERSCENE, fd);
 }
 
+/**
+ * @brief trap_R_SetColor
+ * @param[in] rgba
+ */
 void trap_R_SetColor(const float *rgba)
 {
 	syscall(UI_R_SETCOLOR, rgba);
 }
 
+/**
+ * @brief trap_R_Add2dPolys
+ * @param[in] verts
+ * @param[in] numverts
+ * @param[in] hShader
+ */
 void trap_R_Add2dPolys(polyVert_t *verts, int numverts, qhandle_t hShader)
 {
 	syscall(UI_R_DRAW2DPOLYS, verts, numverts, hShader);
 }
 
+/**
+ * @brief trap_R_DrawStretchPic
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] s1
+ * @param[in] t1
+ * @param[in] s2
+ * @param[in] t2
+ * @param[in] hShader
+ */
 void trap_R_DrawStretchPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader)
 {
 	syscall(UI_R_DRAWSTRETCHPIC, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1), PASSFLOAT(s2), PASSFLOAT(t2), hShader);
 }
 
+/**
+ * @brief trap_R_DrawRotatedPic
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] s1
+ * @param[in] t1
+ * @param[in] s2
+ * @param[in] t2
+ * @param[in] hShader
+ * @param[in] angle
+ */
 void trap_R_DrawRotatedPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, float angle)
 {
 	syscall(UI_R_DRAWROTATEDPIC, PASSFLOAT(x), PASSFLOAT(y), PASSFLOAT(w), PASSFLOAT(h), PASSFLOAT(s1), PASSFLOAT(t1), PASSFLOAT(s2), PASSFLOAT(t2), hShader, PASSFLOAT(angle));
 }
 
+/**
+ * @brief trap_R_ModelBounds
+ * @param[in] model
+ * @param[in] mins
+ * @param[in] maxs
+ */
 void trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs)
 {
 	syscall(UI_R_MODELBOUNDS, model, mins, maxs);
 }
 
+/**
+ * @brief trap_UpdateScreen
+ */
 void trap_UpdateScreen(void)
 {
 	syscall(UI_UPDATESCREEN);
 }
 
+/**
+ * @brief trap_CM_LerpTag
+ * @param[in] tag
+ * @param[in] refent
+ * @param[in] tagName
+ * @param[in] startIndex - unused
+ * @return
+ */
 int trap_CM_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName, int startIndex)
 {
 	return syscall(UI_CM_LERPTAG, tag, refent, tagName, 0);
 }
 
+/**
+ * @brief trap_S_StartLocalSound
+ * @param[in] sfx
+ * @param[in] channelNum
+ */
 void trap_S_StartLocalSound(sfxHandle_t sfx, int channelNum)
 {
 	syscall(UI_S_STARTLOCALSOUND, sfx, channelNum, 127 /*default volume always for the moment*/);
 }
 
+/**
+ * @brief trap_S_RegisterSound
+ * @param[in] sample
+ * @param[in] compressed
+ * @return
+ */
 sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 {
 	int i = syscall(UI_S_REGISTERSOUND, sample, compressed);
@@ -277,299 +528,610 @@ sfxHandle_t trap_S_RegisterSound(const char *sample, qboolean compressed)
 	return i;
 }
 
+/**
+ * @brief trap_S_FadeBackgroundTrack
+ * @param[in] targetvol
+ * @param[in] time
+ * @param[in] num
+ */
 void trap_S_FadeBackgroundTrack(float targetvol, int time, int num)       // yes, i know.  fadebackground coming in, fadestreaming going out.  will have to see where functionality leads...
 {
 	syscall(UI_S_FADESTREAMINGSOUND, PASSFLOAT(targetvol), time, num);     // 'num' is '0' if it's music, '1' if it's "all streaming sounds"
 }
 
+/**
+ * @brief trap_S_FadeAllSound
+ * @param[in] targetvol
+ * @param[in] time
+ * @param[in] stopsound
+ */
 void trap_S_FadeAllSound(float targetvol, int time, qboolean stopsound)
 {
 	syscall(UI_S_FADEALLSOUNDS, PASSFLOAT(targetvol), time, stopsound);
 }
 
+/**
+ * @brief trap_Key_KeynumToStringBuf
+ * @param[in] keynum
+ * @param[in] buf
+ * @param[in] buflen
+ */
 void trap_Key_KeynumToStringBuf(int keynum, char *buf, int buflen)
 {
 	syscall(UI_KEY_KEYNUMTOSTRINGBUF, keynum, buf, buflen);
 }
 
+/**
+ * @brief trap_Key_GetBindingBuf
+ * @param[in] keynum
+ * @param[in] buf
+ * @param[in] buflen
+ */
 void trap_Key_GetBindingBuf(int keynum, char *buf, int buflen)
 {
 	syscall(UI_KEY_GETBINDINGBUF, keynum, buf, buflen);
 }
 
-// binding MUST be lower case
+/**
+ * @brief trap_Key_KeysForBinding
+ * @param[in] binding
+ * @param[in] key1
+ * @param[in] key2
+ *
+ * @note binding MUST be lower case
+ */
 void trap_Key_KeysForBinding(const char *binding, int *key1, int *key2)
 {
 	syscall(UI_KEY_BINDINGTOKEYS, binding, key1, key2);
 }
 
+/**
+ * @brief trap_Key_SetBinding
+ * @param[in] keynum
+ * @param[in] binding
+ */
 void trap_Key_SetBinding(int keynum, const char *binding)
 {
 	syscall(UI_KEY_SETBINDING, keynum, binding);
 }
 
+/**
+ * @brief trap_Key_IsDown
+ * @param[in] keynum
+ * @return
+ */
 qboolean trap_Key_IsDown(int keynum)
 {
-	return syscall(UI_KEY_ISDOWN, keynum);
+	return (qboolean)(syscall(UI_KEY_ISDOWN, keynum));
 }
 
+/**
+ * @brief trap_Key_GetOverstrikeMode
+ * @return
+ */
 qboolean trap_Key_GetOverstrikeMode(void)
 {
-	return syscall(UI_KEY_GETOVERSTRIKEMODE);
+	return (qboolean)(syscall(UI_KEY_GETOVERSTRIKEMODE));
 }
 
+/**
+ * @brief trap_Key_SetOverstrikeMode
+ * @param[in] state
+ */
 void trap_Key_SetOverstrikeMode(qboolean state)
 {
 	syscall(UI_KEY_SETOVERSTRIKEMODE, state);
 }
 
+/**
+ * @brief trap_Key_ClearStates
+ */
 void trap_Key_ClearStates(void)
 {
 	syscall(UI_KEY_CLEARSTATES);
 }
 
+/**
+ * @brief trap_Key_GetCatcher
+ * @return
+ */
 int trap_Key_GetCatcher(void)
 {
 	return syscall(UI_KEY_GETCATCHER);
 }
 
+/**
+ * @brief trap_Key_SetCatcher
+ * @param[in] catcher
+ */
 void trap_Key_SetCatcher(int catcher)
 {
 	syscall(UI_KEY_SETCATCHER, catcher);
 }
 
+/**
+ * @brief trap_GetClipboardData
+ * @param[in] buf
+ * @param[in] bufsize
+ */
 void trap_GetClipboardData(char *buf, int bufsize)
 {
 	syscall(UI_GETCLIPBOARDDATA, buf, bufsize);
 }
 
+/**
+ * @brief trap_GetClientState
+ * @param[in] state
+ */
 void trap_GetClientState(uiClientState_t *state)
 {
 	syscall(UI_GETCLIENTSTATE, state);
 }
 
+/**
+ * @brief trap_GetGlconfig
+ * @param[in] glconfig
+ */
 void trap_GetGlconfig(glconfig_t *glconfig)
 {
 	syscall(UI_GETGLCONFIG, glconfig);
 }
 
+/**
+ * @brief trap_GetConfigString
+ * @param[in] index
+ * @param[in] buff
+ * @param[in] buffsize
+ * @return
+ */
 int trap_GetConfigString(int index, char *buff, int buffsize)
 {
 	return syscall(UI_GETCONFIGSTRING, index, buff, buffsize);
 }
 
+/**
+ * @brief trap_LAN_GetLocalServerCount
+ * @return
+ */
 int trap_LAN_GetLocalServerCount(void)
 {
 	return syscall(UI_LAN_GETLOCALSERVERCOUNT);
 }
 
+/**
+ * @brief trap_LAN_GetLocalServerAddressString
+ * @param[in] n
+ * @param[in] buf
+ * @param[in] buflen
+ */
 void trap_LAN_GetLocalServerAddressString(int n, char *buf, int buflen)
 {
 	syscall(UI_LAN_GETLOCALSERVERADDRESSSTRING, n, buf, buflen);
 }
 
+/**
+ * @brief trap_LAN_GetGlobalServerCount
+ * @return
+ */
 int trap_LAN_GetGlobalServerCount(void)
 {
 	return syscall(UI_LAN_GETGLOBALSERVERCOUNT);
 }
 
+/**
+ * @brief trap_LAN_GetGlobalServerAddressString
+ * @param[in] n
+ * @param[in] buf
+ * @param[in] buflen
+ */
 void trap_LAN_GetGlobalServerAddressString(int n, char *buf, int buflen)
 {
 	syscall(UI_LAN_GETGLOBALSERVERADDRESSSTRING, n, buf, buflen);
 }
 
+/**
+ * @brief trap_LAN_GetPingQueueCount
+ * @return
+ */
 int trap_LAN_GetPingQueueCount(void)
 {
 	return syscall(UI_LAN_GETPINGQUEUECOUNT);
 }
 
+/**
+ * @brief trap_LAN_ClearPing
+ * @param[in] n
+ */
 void trap_LAN_ClearPing(int n)
 {
 	syscall(UI_LAN_CLEARPING, n);
 }
 
+/**
+ * @brief trap_LAN_GetPing
+ * @param[in] n
+ * @param[in] buf
+ * @param[in] buflen
+ * @param[in] pingtime
+ */
 void trap_LAN_GetPing(int n, char *buf, int buflen, int *pingtime)
 {
 	syscall(UI_LAN_GETPING, n, buf, buflen, pingtime);
 }
 
+/**
+ * @brief trap_LAN_GetPingInfo
+ * @param[in] n
+ * @param[in] buf
+ * @param[in] buflen
+ */
 void trap_LAN_GetPingInfo(int n, char *buf, int buflen)
 {
 	syscall(UI_LAN_GETPINGINFO, n, buf, buflen);
 }
 
+/**
+ * @brief trap_LAN_UpdateVisiblePings
+ * @param[in] source
+ * @return
+ */
 qboolean trap_LAN_UpdateVisiblePings(int source)
 {
-	return syscall(UI_LAN_UPDATEVISIBLEPINGS, source);
+	return (qboolean)(syscall(UI_LAN_UPDATEVISIBLEPINGS, source));
 }
 
+/**
+ * @brief trap_LAN_GetServerCount
+ * @param[in] source
+ * @return
+ */
 int trap_LAN_GetServerCount(int source)
 {
 	return syscall(UI_LAN_GETSERVERCOUNT, source);
 }
 
+/**
+ * @brief trap_LAN_CompareServers
+ * @param[in] source
+ * @param[in] sortKey
+ * @param[in] sortDir
+ * @param[in] s1
+ * @param[in] s2
+ * @return
+ */
 int trap_LAN_CompareServers(int source, int sortKey, int sortDir, int s1, int s2)
 {
 	return syscall(UI_LAN_COMPARESERVERS, source, sortKey, sortDir, s1, s2);
 }
 
+/**
+ * @brief trap_LAN_GetServerAddressString
+ * @param[in] source
+ * @param[in] n
+ * @param[in] buf
+ * @param[in] buflen
+ */
 void trap_LAN_GetServerAddressString(int source, int n, char *buf, int buflen)
 {
 	syscall(UI_LAN_GETSERVERADDRESSSTRING, source, n, buf, buflen);
 }
 
+/**
+ * @brief trap_LAN_GetServerInfo
+ * @param[in] source
+ * @param[in] n
+ * @param[in] buf
+ * @param[in] buflen
+ */
 void trap_LAN_GetServerInfo(int source, int n, char *buf, int buflen)
 {
 	syscall(UI_LAN_GETSERVERINFO, source, n, buf, buflen);
 }
 
+/**
+ * @brief trap_LAN_AddServer
+ * @param[in] source
+ * @param[in] name
+ * @param[in] addr
+ * @return
+ */
 int trap_LAN_AddServer(int source, const char *name, const char *addr)
 {
 	return syscall(UI_LAN_ADDSERVER, source, name, addr);
 }
 
+/**
+ * @brief trap_LAN_RemoveServer
+ * @param[in] source
+ * @param[in] addr
+ */
 void trap_LAN_RemoveServer(int source, const char *addr)
 {
 	syscall(UI_LAN_REMOVESERVER, source, addr);
 }
 
+/**
+ * @brief trap_LAN_GetServerPing
+ * @param[in] source
+ * @param[in] n
+ * @return
+ */
 int trap_LAN_GetServerPing(int source, int n)
 {
 	return syscall(UI_LAN_GETSERVERPING, source, n);
 }
 
+/**
+ * @brief trap_LAN_ServerIsVisible
+ * @param[in] source
+ * @param[in] n
+ * @return
+ */
 int trap_LAN_ServerIsVisible(int source, int n)
 {
 	return syscall(UI_LAN_SERVERISVISIBLE, source, n);
 }
 
+/**
+ * @brief trap_LAN_ServerStatus
+ * @param[in] serverAddress
+ * @param[in] serverStatus
+ * @param[in] maxLen
+ * @return
+ */
 int trap_LAN_ServerStatus(const char *serverAddress, char *serverStatus, int maxLen)
 {
 	return syscall(UI_LAN_SERVERSTATUS, serverAddress, serverStatus, maxLen);
 }
 
+/**
+ * @brief trap_LAN_ServerIsInFavoriteList
+ * @param[in] source
+ * @param[in] n
+ * @return
+ */
 qboolean trap_LAN_ServerIsInFavoriteList(int source, int n)
 {
-	return syscall(UI_LAN_SERVERISINFAVORITELIST, source, n);
+	return (qboolean)(syscall(UI_LAN_SERVERISINFAVORITELIST, source, n));
 }
 
-// obsolete, kept as reminder - ETL saves on add/remove
-//void trap_LAN_SaveCachedServers(void)
-//{
-//	syscall(UI_LAN_SAVECACHEDSERVERS);
-//}
+/**
+ * @brief trap_LAN_SaveCachedServers
+ *
+ * @obsolete kept as reminder - ETL saves on add/remove
+ */
+/*
+void trap_LAN_SaveCachedServers(void)
+{
+    syscall(UI_LAN_SAVECACHEDSERVERS);
+}
+*/
 
+/**
+ * @brief trap_LAN_LoadCachedServers
+ */
 void trap_LAN_LoadCachedServers(void)
 {
 	syscall(UI_LAN_LOADCACHEDSERVERS);
 }
 
+/**
+ * @brief trap_LAN_MarkServerVisible
+ * @param[in] source
+ * @param[in] n
+ * @param[in] visible
+ */
 void trap_LAN_MarkServerVisible(int source, int n, qboolean visible)
 {
 	syscall(UI_LAN_MARKSERVERVISIBLE, source, n, visible);
 }
 
+/**
+ * @brief trap_LAN_ResetPings
+ * @param[in] n
+ */
 void trap_LAN_ResetPings(int n)
 {
 	syscall(UI_LAN_RESETPINGS, n);
 }
 
+/**
+ * @brief trap_MemoryRemaining
+ * @return
+ */
 int trap_MemoryRemaining(void)
 {
 	return syscall(UI_MEMORY_REMAINING);
 }
 
+/**
+ * @brief trap_PC_AddGlobalDefine
+ * @param[in] define
+ * @return
+ */
 int trap_PC_AddGlobalDefine(char *define)
 {
 	return syscall(UI_PC_ADD_GLOBAL_DEFINE, define);
 }
 
+/**
+ * @brief trap_PC_RemoveAllGlobalDefines
+ * @return
+ */
 int trap_PC_RemoveAllGlobalDefines(void)
 {
 	return syscall(UI_PC_REMOVE_ALL_GLOBAL_DEFINES);
 }
 
+/**
+ * @brief trap_PC_LoadSource
+ * @param[in] filename
+ * @return
+ */
 int trap_PC_LoadSource(const char *filename)
 {
 	return syscall(UI_PC_LOAD_SOURCE, filename);
 }
 
+/**
+ * @brief trap_PC_FreeSource
+ * @param[in] handle
+ * @return
+ */
 int trap_PC_FreeSource(int handle)
 {
 	return syscall(UI_PC_FREE_SOURCE, handle);
 }
 
+/**
+ * @brief trap_PC_ReadToken
+ * @param handle
+ * @param pc_token
+ * @return
+ */
 int trap_PC_ReadToken(int handle, pc_token_t *pc_token)
 {
 	return syscall(UI_PC_READ_TOKEN, handle, pc_token);
 }
 
+/**
+ * @brief trap_PC_SourceFileAndLine
+ * @param[in] handle
+ * @param[in] filename
+ * @param[in] line
+ * @return
+ */
 int trap_PC_SourceFileAndLine(int handle, char *filename, int *line)
 {
 	return syscall(UI_PC_SOURCE_FILE_AND_LINE, handle, filename, line);
 }
 
+/**
+ * @brief trap_PC_UnReadToken
+ * @param[in] handle
+ * @return
+ */
 int trap_PC_UnReadToken(int handle)
 {
 	return syscall(UI_PC_UNREAD_TOKEN, handle);
 }
 
+/**
+ * @brief trap_S_StopBackgroundTrack
+ */
 void trap_S_StopBackgroundTrack(void)
 {
 	syscall(UI_S_STOPBACKGROUNDTRACK);
 }
 
+/**
+ * @brief trap_S_StartBackgroundTrack
+ * @param[in] intro
+ * @param[in] loop
+ * @param[in] fadeupTime
+ */
 void trap_S_StartBackgroundTrack(const char *intro, const char *loop, int fadeupTime)
 {
 	syscall(UI_S_STARTBACKGROUNDTRACK, intro, loop, fadeupTime);
 }
 
+/**
+ * @brief trap_RealTime
+ * @param[in] qtime
+ * @return
+ */
 int trap_RealTime(qtime_t *qtime)
 {
 	return syscall(UI_REAL_TIME, qtime);
 }
 
-// this returns a handle.  arg0 is the name in the format "idlogo.roq", set arg1 to NULL, alteredstates to qfalse (do not alter gamestate)
+/**
+ * @brief This returns a handle.  arg0 is the name in the format "idlogo.roq", set arg1 to NULL, alteredstates to qfalse (do not alter gamestate)
+ * @param[in] arg0
+ * @param[in] xpos
+ * @param[in] ypos
+ * @param[in] width
+ * @param[in] height
+ * @param[in] bits
+ * @return
+ */
 int trap_CIN_PlayCinematic(const char *arg0, int xpos, int ypos, int width, int height, int bits)
 {
 	return syscall(UI_CIN_PLAYCINEMATIC, arg0, xpos, ypos, width, height, bits);
 }
 
-// stops playing the cinematic and ends it.  should always return FMV_EOF
-// cinematics must be stopped in reverse order of when they are started
+
+/**
+ * @brief stops playing the cinematic and ends it.  should always return FMV_EOF
+ * cinematics must be stopped in reverse order of when they are started
+ * @param[in] handle
+ * @return
+ */
 e_status trap_CIN_StopCinematic(int handle)
 {
-	return syscall(UI_CIN_STOPCINEMATIC, handle);
+	return (e_status)(syscall(UI_CIN_STOPCINEMATIC, handle));
 }
 
-// will run a frame of the cinematic but will not draw it.  Will return FMV_EOF if the end of the cinematic has been reached.
+/**
+ * @brief Will run a frame of the cinematic but will not draw it.
+ * Will return FMV_EOF if the end of the cinematic has been reached.
+ * @param[in] handle
+ * @return
+ */
 e_status trap_CIN_RunCinematic(int handle)
 {
-	return syscall(UI_CIN_RUNCINEMATIC, handle);
+	return (e_status)(syscall(UI_CIN_RUNCINEMATIC, handle));
 }
 
-// draws the current frame
+/**
+ * @brief Draws the current frame
+ * @param[in] handle
+ */
 void trap_CIN_DrawCinematic(int handle)
 {
 	syscall(UI_CIN_DRAWCINEMATIC, handle);
 }
 
-// allows you to resize the animation dynamically
+/**
+ * @brief Allows you to resize the animation dynamically
+ * @param[in] handle
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ */
 void trap_CIN_SetExtents(int handle, int x, int y, int w, int h)
 {
 	syscall(UI_CIN_SETEXTENTS, handle, x, y, w, h);
 }
 
+/**
+ * @brief trap_R_RemapShader
+ * @param[in] oldShader
+ * @param[in] newShader
+ * @param[in] timeOffset
+ */
 void trap_R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset)
 {
 	syscall(UI_R_REMAP_SHADER, oldShader, newShader, timeOffset);
 }
 
+/**
+ * @brief trap_GetLimboString
+ * @param[in] index
+ * @param[in] buf
+ * @return
+ */
 qboolean trap_GetLimboString(int index, char *buf)
 {
-	return syscall(UI_CL_GETLIMBOSTRING, index, buf);
+	return (qboolean)(syscall(UI_CL_GETLIMBOSTRING, index, buf));
 }
 
+/**
+ * @brief trap_TranslateString
+ * @param[in] string
+ * @return
+ */
 const char *trap_TranslateString(const char *string)
 {
 	// Allows the fnc to be used twice in same context
@@ -584,21 +1146,36 @@ const char *trap_TranslateString(const char *string)
 	return buf;
 }
 
+/**
+ * @brief trap_CheckAutoUpdate
+ */
 void trap_CheckAutoUpdate(void)
 {
 	syscall(UI_CHECKAUTOUPDATE);
 }
 
+/**
+ * @brief trap_GetAutoUpdate
+ */
 void trap_GetAutoUpdate(void)
 {
 	syscall(UI_GET_AUTOUPDATE);
 }
 
+/**
+ * @brief trap_openURL
+ * @param[in] s
+ */
 void trap_openURL(const char *s)
 {
 	syscall(UI_OPENURL, s);
 }
 
+/**
+ * @brief trap_GetHunkData
+ * @param[in] hunkused
+ * @param[in] hunkexpected
+ */
 void trap_GetHunkData(int *hunkused, int *hunkexpected)
 {
 	syscall(UI_GETHUNKDATA, hunkused, hunkexpected);
