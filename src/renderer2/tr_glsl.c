@@ -2308,6 +2308,11 @@ void GLSL_DeleteShaderProramInfo(programInfo_t *program)
 		Com_Dealloc(program->fragmentShaderText);
 		program->fragmentShaderText = NULL;
 	}
+
+	if (program->uniformValues[program->numUniformValues].type.name)
+	{
+		Com_Dealloc(program->uniformValues[program->numUniformValues].type.name);
+	}
 }
 
 void GLSL_InitGPUShaders(void)
