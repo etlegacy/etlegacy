@@ -585,8 +585,8 @@ cvarTable_t cvarTable[] =
 #endif
 };
 
-const int      cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
-qboolean cvarsLoaded   = qfalse;
+const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
+qboolean           cvarsLoaded   = qfalse;
 void CG_setClientFlags(void);
 
 /**
@@ -594,9 +594,9 @@ void CG_setClientFlags(void);
  */
 void CG_RegisterCvars(void)
 {
-	int         i;
-	cvarTable_t *cv;
-	char        var[MAX_TOKEN_CHARS];
+	unsigned int i;
+	cvarTable_t  *cv;
+	char         var[MAX_TOKEN_CHARS];
 
 	CG_Printf("%d client cvars in use.\n", cvarTableSize);
 
@@ -621,7 +621,7 @@ void CG_RegisterCvars(void)
 
 	// see if we are also running the server on this machine
 	trap_Cvar_VariableStringBuffer("sv_running", var, sizeof(var));
-	cgs.localServer = (qboolean)atoi(var);
+	cgs.localServer = (qboolean)(atoi(var));
 
 	// um, here, why?
 	CG_setClientFlags();
@@ -636,9 +636,9 @@ void CG_RegisterCvars(void)
  */
 void CG_UpdateCvars(void)
 {
-	int         i;
-	qboolean    fSetFlags = qfalse;
-	cvarTable_t *cv;
+	unsigned int i;
+	qboolean     fSetFlags = qfalse;
+	cvarTable_t  *cv;
 
 	if (!cvarsLoaded)
 	{
@@ -1529,8 +1529,8 @@ sfxHandle_t CG_GetGameSound(int index)
  */
 static void CG_RegisterGraphics(void)
 {
-	char        name[1024];
-	int         i;
+	char              name[1024];
+	int               i;
 	static const char *sb_nums[11] =
 	{
 		"gfx/2d/numbers/zero_32b",
