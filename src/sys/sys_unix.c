@@ -209,12 +209,12 @@ qboolean Sys_LowPhysicalMemory(void)
 	return qfalse;
 }
 
-const char *Sys_Basename(char *path)
+const char *Sys_Basename(const char *path)
 {
 	return basename(path);
 }
 
-const char *Sys_Dirname(char *path)
+const char *Sys_Dirname(const char *path)
 {
 	return dirname(path);
 }
@@ -275,7 +275,7 @@ DIRECTORY SCANNING
 ==============================================================
 */
 
-void Sys_ListFilteredFiles(const char *basedir, char *subdirs, char *filter, char **list, int *numfiles)
+void Sys_ListFilteredFiles(const char *basedir, const char *subdirs, const char *filter, char **list, int *numfiles)
 {
 	char          search[MAX_OSPATH], newsubdirs[MAX_OSPATH];
 	char          filename[MAX_OSPATH];
@@ -353,7 +353,7 @@ void Sys_ListFilteredFiles(const char *basedir, char *subdirs, char *filter, cha
  * @param      wantsubs  Do we want to list subdirectories too?
  * @return Array of strings with files
  */
-char **Sys_ListFiles(const char *directory, const char *extension, char *filter, int *numfiles, qboolean wantsubs)
+char **Sys_ListFiles(const char *directory, const char *extension, const char *filter, int *numfiles, qboolean wantsubs)
 {
 	struct dirent *d;
 	DIR           *fdir;
