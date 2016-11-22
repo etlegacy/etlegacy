@@ -42,11 +42,10 @@ static char         consoleLog[MAX_LOG];
 static unsigned int writePos = 0;
 static unsigned int readPos  = 0;
 
-/*
-==================
-CON_LogSize
-==================
-*/
+/**
+ * @brief CON_LogSize
+ * @return
+ */
 unsigned int CON_LogSize(void)
 {
 	if (readPos <= writePos)
@@ -59,21 +58,20 @@ unsigned int CON_LogSize(void)
 	}
 }
 
-/*
-==================
-CON_LogFree
-==================
-*/
+/**
+ * @brief CON_LogFree
+ * @return
+ */
 static unsigned int CON_LogFree(void)
 {
 	return MAX_LOG - CON_LogSize() - 1;
 }
 
-/*
-==================
-CON_LogWrite
-==================
-*/
+/**
+ * @brief CON_LogWrite
+ * @param[in] in
+ * @return
+ */
 unsigned int CON_LogWrite(const char *in)
 {
 	unsigned int length = strlen(in);
@@ -114,11 +112,12 @@ unsigned int CON_LogWrite(const char *in)
 	return length;
 }
 
-/*
-==================
-CON_LogRead
-==================
-*/
+/**
+ * @brief CON_LogRead
+ * @param[out] out
+ * @param[in] outSize
+ * @return
+ */
 unsigned int CON_LogRead(char *out, unsigned int outSize)
 {
 	unsigned int firstChunk;

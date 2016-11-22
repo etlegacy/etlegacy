@@ -83,7 +83,7 @@ void Sys_DestroyConsole(void);
 #endif
 
 void Sys_SetUpConsoleAndSignals(void);
-void Sys_GameLoop(void);
+void Sys_GameLoop(void) __attribute__((noreturn));
 
 #ifdef __APPLE__
 const char *OSX_ApplicationSupportPath(void);

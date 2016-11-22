@@ -921,7 +921,7 @@ unsigned int Com_BlockChecksumKey(void *buffer, int length, int key);
 char *Com_MD5FileETCompat(const char *filename);
 int Com_HashKey(char *string, int maxlen);
 int Com_Filter(char *filter, char *name, int casesensitive);
-int Com_FilterPath(char *filter, char *name, int casesensitive);
+int Com_FilterPath(const char *filter, const char *name, int casesensitive);
 int Com_RealTime(qtime_t *qtime);
 qboolean Com_SafeMode(void);
 void Com_RandomBytes(byte *string, int len);
@@ -1268,13 +1268,13 @@ char *Sys_Cwd(void);
 char *Sys_DefaultBasePath(void);
 char *Sys_DefaultInstallPath(void);
 char *Sys_DefaultHomePath(void);
-const char *Sys_Dirname(char *path);
-const char *Sys_Basename(char *path);
+const char *Sys_Dirname(const char *path);
+const char *Sys_Basename(const char *path);
 char *Sys_ConsoleInput(void);
 
 qboolean Sys_RandomBytes(byte *string, int len);
 
-char **Sys_ListFiles(const char *directory, const char *extension, char *filter, int *numfiles, qboolean wantsubs);
+char **Sys_ListFiles(const char *directory, const char *extension, const char *filter, int *numfiles, qboolean wantsubs);
 void Sys_FreeFileList(char **list);
 
 qboolean Sys_LowPhysicalMemory(void);

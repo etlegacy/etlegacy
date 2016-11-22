@@ -67,14 +67,12 @@ static HANDLE   qconsole_hout      = NULL;
 static HANDLE   qconsole_hin       = NULL;
 static qboolean qconsole_drawinput = qtrue;
 
-/*
-==================
-CON_ColorCharToAttrib
-
-Convert Quake color character to Windows text attrib
-==================
-*/
-static WORD CON_ColorCharToAttrib(char color)
+/**
+ * @brief Convert Quake color character to Windows text attrib
+ * @param[in] color
+ * @return
+ */
+static WORD CON_ColorCharToAttrib(const char color)
 {
 	WORD attrib;
 
@@ -88,10 +86,10 @@ static WORD CON_ColorCharToAttrib(char color)
 		float *rgba = g_color_table[ColorIndex(color)];
 
 		// set foreground color
-		attrib = (rgba[0] >= 0.5 ? FOREGROUND_RED : 0) |
-		         (rgba[1] >= 0.5 ? FOREGROUND_GREEN : 0) |
-		         (rgba[2] >= 0.5 ? FOREGROUND_BLUE : 0) |
-		         (rgba[3] >= 0.5 ? FOREGROUND_INTENSITY : 0);
+		attrib = (rgba[0] >= 0.5f ? FOREGROUND_RED : 0) |
+		         (rgba[1] >= 0.5f ? FOREGROUND_GREEN : 0) |
+		         (rgba[2] >= 0.5f ? FOREGROUND_BLUE : 0) |
+		         (rgba[3] >= 0.5f ? FOREGROUND_INTENSITY : 0);
 
 		// use console's background color
 		attrib |= qconsole_backgroundAttrib;
@@ -100,29 +98,28 @@ static WORD CON_ColorCharToAttrib(char color)
 	return attrib;
 }
 
-/*
-==================
-CON_CtrlHandler
-
-The Windows Console doesn't use signals for terminating the application
-with Ctrl-C, logging off, window closing, etc.  Instead it uses a special
-handler routine.  Fortunately, the values for Ctrl signals don't seem to
-overlap with true signal codes that Windows provides, so calling
-Sys_SigHandler() with those numbers should be safe for generating unique
-shutdown messages.
-==================
-*/
+/**
+ * @brief CON_CtrlHandler
+ *
+ * @details The Windows Console doesn't use signals for terminating the application
+ * with Ctrl-C, logging off, window closing, etc.  Instead it uses a special
+ * handler routine.  Fortunately, the values for Ctrl signals don't seem to
+ * overlap with true signal codes that Windows provides, so calling
+ * Sys_SigHandler() with those numbers should be safe for generating unique
+ * shutdown messages.
+ *
+ * @param[in] sig
+ * @return
+ */
 static BOOL WINAPI CON_CtrlHandler(DWORD sig)
 {
 	Sys_SigHandler(sig);
 	return TRUE;
 }
 
-/*
-==================
-CON_HistAdd
-==================
-*/
+/**
+ * @brief CON_HistAdd
+ */
 static void CON_HistAdd(void)
 {
 	Q_strncpyz(qconsole_history[qconsole_history_oldest], qconsole_line,
@@ -140,11 +137,9 @@ static void CON_HistAdd(void)
 	qconsole_history_pos = qconsole_history_oldest;
 }
 
-/*
-==================
-CON_HistPrev
-==================
-*/
+/**
+ * @brief CON_HistPrev
+ */
 static void CON_HistPrev(void)
 {
 	int pos;
@@ -164,11 +159,9 @@ static void CON_HistPrev(void)
 	qconsole_linelen = strlen(qconsole_line);
 }
 
-/*
-==================
-CON_HistNext
-==================
-*/
+/**
+ * @brief CON_HistNext
+ */
 static void CON_HistNext(void)
 {
 	int pos = (qconsole_history_pos >= QCONSOLE_HISTORY - 1) ?
@@ -188,11 +181,9 @@ static void CON_HistNext(void)
 	qconsole_linelen = strlen(qconsole_line);
 }
 
-/*
-==================
-CON_Show
-==================
-*/
+/**
+ * @brief CON_Show
+ */
 static void CON_Show(void)
 {
 	CONSOLE_SCREEN_BUFFER_INFO binfo;
@@ -259,11 +250,9 @@ static void CON_Show(void)
 	}
 }
 
-/*
-==================
-CON_Shutdown
-==================
-*/
+/**
+ * @brief CON_Shutdown
+ */
 void CON_Shutdown(void)
 {
 	SetConsoleMode(qconsole_hin, qconsole_orig_mode);
@@ -272,11 +261,9 @@ void CON_Shutdown(void)
 	CloseHandle(qconsole_hin);
 }
 
-/*
-==================
-CON_Init
-==================
-*/
+/**
+ * @brief CON_Init
+ */
 void CON_Init(void)
 {
 	CONSOLE_CURSOR_INFO        curs;
@@ -336,11 +323,10 @@ void CON_Init(void)
 	SetConsoleOutputCP(CP_UTF8);
 }
 
-/*
-==================
-CON_Input
-==================
-*/
+/**
+ * @brief CON_Input
+ * @return
+ */
 char *CON_Input(void)
 {
 	INPUT_RECORD buff[MAX_EDIT_LINE];
@@ -455,13 +441,10 @@ char *CON_Input(void)
 	return qconsole_line;
 }
 
-/*
-=================
-CON_WindowsColorPrint
-
-Set text colors based on Q3 color codes
-=================
-*/
+/**
+ * @brief Set text colors based on Q3 color codes
+ * @param[in] msg
+ */
 void CON_WindowsColorPrint(const char *msg)
 {
 	static char buffer[MAXPRINTMSG];
@@ -516,11 +499,10 @@ void CON_WindowsColorPrint(const char *msg)
 	}
 }
 
-/*
-==================
-CON_Print
-==================
-*/
+/**
+ * @brief CON_Print
+ * @param[in] msg
+ */
 void CON_Print(const char *msg)
 {
 	if (!qconsole_hout)

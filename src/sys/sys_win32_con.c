@@ -109,6 +109,11 @@ typedef struct
 
 static WinConData s_wcd;
 
+/**
+ * @brief CON_ResizeWindowsCon
+ * @param[in] cx
+ * @param[in] cy
+ */
 static void CON_ResizeWindowsCon(int cx, int cy)
 {
 	float sx, sy, x, y, w, h;
@@ -166,11 +171,14 @@ static void CON_ResizeWindowsCon(int cx, int cy)
 	s_wcd.windowHeight = cy;
 }
 
-/*
-==============
-ConWndProc
-==============
-*/
+/**
+ * @brief ConWndProc
+ * @param[in] hWnd
+ * @param[in] uMsg
+ * @param[in] wParam
+ * @param[in] lParam
+ * @return
+ */
 static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	char            *cmdString;
@@ -320,11 +328,10 @@ static field_t win_historyEditLines[WIN_COMMAND_HISTORY];
 static int     win_nextHistoryLine = 0;
 static int     win_historyLine     = 0;
 
-/*
-==============
-Win_FindIndexMatch
-==============
-*/
+/**
+ * @brief Win_FindIndexMatch
+ * @param[in] s
+ */
 static void Win_FindIndexMatch(const char *s)
 {
 	if (Q_stricmpn(s, win_completionString, strlen(win_completionString)))
@@ -339,11 +346,10 @@ static void Win_FindIndexMatch(const char *s)
 	win_findMatchIndex++;
 }
 
-/*
-==============
-Win_FindMatches
-==============
-*/
+/**
+ * @brief Win_FindMatches
+ * @param[in] s
+ */
 static void Win_FindMatches(const char *s)
 {
 	int i;
@@ -371,11 +377,9 @@ static void Win_FindMatches(const char *s)
 	win_currentMatch[i] = 0;
 }
 
-/*
-==============
-Win_KeyConcatArgs
-==============
-*/
+/**
+ * @brief Win_KeyConcatArgs
+ */
 static void Win_KeyConcatArgs(void)
 {
 	int  i;
@@ -403,11 +407,11 @@ static void Win_KeyConcatArgs(void)
 	}
 }
 
-/*
-==============
-Win_ConcatRemaining
-==============
-*/
+/**
+ * @brief Win_ConcatRemaining
+ * @param[in] src
+ * @param[in] start
+ */
 static void Win_ConcatRemaining(const char *src, const char *start)
 {
 	const char *str;
@@ -423,11 +427,10 @@ static void Win_ConcatRemaining(const char *src, const char *start)
 	Q_strcat(win_consoleField.buffer, sizeof(win_consoleField.buffer), str);
 }
 
-/*
-==============
-Win_PrintMatches
-==============
-*/
+/**
+ * @brief Win_PrintMatches
+ * @param[in] s
+ */
 static void Win_PrintMatches(const char *s)
 {
 	if (!Q_stricmpn(s, win_currentMatch, win_acLength))
@@ -436,13 +439,10 @@ static void Win_PrintMatches(const char *s)
 	}
 }
 
-/*
-==============
-Win_PrintCvarMatches
-
-ydnar: to display cvar values
-==============
-*/
+/**
+ * @brief ydnar: to display cvar values
+ * @param s
+ */
 static void Win_PrintCvarMatches(const char *s)
 {
 	if (!Q_stricmpn(s, win_currentMatch, win_acLength))
@@ -451,11 +451,10 @@ static void Win_PrintCvarMatches(const char *s)
 	}
 }
 
-/*
-==============
-Win_CompleteCommand
-==============
-*/
+/**
+ * @brief Win_CompleteCommand
+ * @param[in] showMatches
+ */
 static void Win_CompleteCommand(qboolean showMatches)
 {
 	field_t *edit = &win_consoleField;
@@ -556,11 +555,14 @@ static void Win_CompleteCommand(qboolean showMatches)
 	}
 }
 
-/*
-==============
-InputLineWndProc
-==============
-*/
+/**
+ * @brief InputLineWndProc
+ * @param[in] hWnd
+ * @param[in] uMsg
+ * @param[in] wParam
+ * @param[in] lParam
+ * @return
+ */
 LONG WINAPI InputLineWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
@@ -674,12 +676,11 @@ LONG WINAPI InputLineWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return CallWindowProc(s_wcd.SysInputLineWndProc, hWnd, uMsg, wParam, lParam);
 }
 
-/*
-==============
-Sys_CreateConsole
-==============
-*/
 #define IDI_ICON1 1
+
+/**
+ * @brief Sys_CreateConsole
+ */
 void Sys_CreateConsole(void)
 {
 	HDC      hDC;
@@ -820,11 +821,9 @@ void Sys_CreateConsole(void)
 	s_wcd.visLevel = 0;
 }
 
-/*
-==============
-Sys_DestroyConsole
-==============
-*/
+/**
+ * @brief Sys_DestroyConsole
+ */
 void Sys_DestroyConsole(void)
 {
 	if (s_wcd.hfBufferFont)
@@ -845,11 +844,11 @@ void Sys_DestroyConsole(void)
 	}
 }
 
-/*
-==============
-Sys_ShowConsole
-==============
-*/
+/**
+ * @brief Sys_ShowConsole
+ * @param[in] visLevel
+ * @param[in] quitOnClose
+ */
 void Sys_ShowConsole(int visLevel, qboolean quitOnClose)
 {
 	if (quitOnClose)
@@ -900,12 +899,11 @@ void Sys_ShowConsole(int visLevel, qboolean quitOnClose)
 	}
 }
 
-/*
-==============
-Sys_ConsoleInput
-==============
-*/
 #if defined (_WIN32)
+/**
+ * @brief Sys_ConsoleInput
+ * @return
+ */
 char *Sys_ConsoleInput(void)
 {
 	if (s_wcd.consoleText[0] == 0)
@@ -920,11 +918,10 @@ char *Sys_ConsoleInput(void)
 }
 #endif
 
-/*
-==============
-Conbuf_AppendText
-==============
-*/
+/**
+ * @brief Conbuf_AppendText
+ * @param[in] pMsg
+ */
 void Conbuf_AppendText(const char *pMsg)
 {
 	char                 buffer[CONSOLE_BUFFER_SIZE * 2], *b = buffer;
@@ -999,11 +996,10 @@ void Conbuf_AppendText(const char *pMsg)
 	SendMessage(s_wcd.hwndBuffer, EM_REPLACESEL, 0, (LPARAM) buffer);
 }
 
-/*
-==============
-Sys_SetErrorText
-==============
-*/
+/**
+ * @brief Sys_SetErrorText
+ * @param[in] buf
+ */
 void Sys_SetErrorText(const char *buf)
 {
 	Q_strncpyz(s_wcd.errorString, buf, sizeof(s_wcd.errorString));
@@ -1030,21 +1026,17 @@ void Sys_SetErrorText(const char *buf)
 	}
 }
 
-/*
-==============
-Sys_ClearViewlog_f
-==============
-*/
+/**
+ * @brief Sys_ClearViewlog_f
+ */
 void Sys_ClearViewlog_f(void)
 {
 	SendMessage(s_wcd.hwndBuffer, WM_SETTEXT, 0, (LPARAM)"");
 }
 
-/*
-==============
-Sys_PumpConsoleEvents
-==============
-*/
+/**
+ * @brief Sys_PumpConsoleEvents
+ */
 void Sys_PumpConsoleEvents(void)
 {
 	MSG msg;

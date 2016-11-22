@@ -69,7 +69,7 @@ static int     sys_retcode;
 static char    sys_exitstr[MAX_STRING_CHARS];
 
 /**
- * @return homepath pointing to "My Documents\ETLegacy"
+ * @return homepath pointing to "My Documents\\ETLegacy"
  */
 char *Sys_DefaultHomePath(void)
 {
@@ -97,12 +97,12 @@ char *Sys_DefaultHomePath(void)
 	return homePath;
 }
 
-/*
-================
-Sys_Milliseconds
-================
-*/
 int sys_timeBase;
+
+/**
+ * @brief Sys_Milliseconds
+ * @return
+ */
 int Sys_Milliseconds(void)
 {
 	int             sys_curtime;
@@ -119,11 +119,10 @@ int Sys_Milliseconds(void)
 	return sys_curtime;
 }
 
-/*
-==================
-Sys_SnapVector
-==================
-*/
+/**
+ * @brief Sys_SnapVector
+ * @param[in,out=] v
+ */
 void Sys_SnapVector(float *v)
 {
 	v[0] = rint(v[0]);
@@ -131,11 +130,12 @@ void Sys_SnapVector(float *v)
 	v[2] = rint(v[2]);
 }
 
-/*
-================
-Sys_RandomBytes
-================
-*/
+/**
+ * @brief Sys_RandomBytes
+ * @param[in] string
+ * @param[in] len
+ * @return
+ */
 qboolean Sys_RandomBytes(byte *string, int len)
 {
 	HCRYPTPROV prov;
@@ -156,11 +156,10 @@ qboolean Sys_RandomBytes(byte *string, int len)
 	return qtrue;
 }
 
-/*
-================
-Sys_GetCurrentUser
-================
-*/
+/**
+ * @brief Sys_GetCurrentUser
+ * @return
+ */
 char *Sys_GetCurrentUser(void)
 {
 	static char   s_userName[1024];
@@ -181,11 +180,10 @@ char *Sys_GetCurrentUser(void)
 
 #define MEM_THRESHOLD 96 * 1024 * 1024
 
-/*
-==================
-Sys_LowPhysicalMemory
-==================
-*/
+/**
+ * @brief Sys_LowPhysicalMemory
+ * @return
+ */
 qboolean Sys_LowPhysicalMemory(void)
 {
 	MEMORYSTATUS stat;
@@ -193,15 +191,15 @@ qboolean Sys_LowPhysicalMemory(void)
 	return (stat.dwTotalPhys <= MEM_THRESHOLD) ? qtrue : qfalse;
 }
 
-/*
-==============
-Sys_Basename
-==============
-*/
-const char *Sys_Basename(char *path)
+/**
+ * @brief Sys_Basename
+ * @param path
+ * @return
+ */
+const char *Sys_Basename(const char *path)
 {
-	static char base[MAX_OSPATH] = { 0 };
-	int         length;
+	static char  base[MAX_OSPATH] = { 0 };
+	unsigned int length;
 
 	length = strlen(path) - 1;
 
@@ -223,15 +221,15 @@ const char *Sys_Basename(char *path)
 	return base;
 }
 
-/*
-==============
-Sys_Dirname
-==============
-*/
-const char *Sys_Dirname(char *path)
+/**
+ * @brief Sys_Dirname
+ * @param path
+ * @return
+ */
+const char *Sys_Dirname(const char *path)
 {
-	static char dir[MAX_OSPATH] = { 0 };
-	int         length;
+	static char  dir[MAX_OSPATH] = { 0 };
+	unsigned int length;
 
 	Q_strncpyz(dir, path, sizeof(dir));
 	length = strlen(dir) - 1;
@@ -244,21 +242,22 @@ const char *Sys_Dirname(char *path)
 	return dir;
 }
 
-/*
-==============
-Sys_FOpen
-==============
-*/
+/**
+ * @brief Sys_FOpen
+ * @param[in] ospath
+ * @param[in] mode
+ * @return
+ */
 FILE *Sys_FOpen(const char *ospath, const char *mode)
 {
 	return fopen(ospath, mode);
 }
 
-/*
-==============
-Sys_Mkdir
-==============
-*/
+/**
+ * @brief Sys_Mkdir
+ * @param[in] path
+ * @return
+ */
 qboolean Sys_Mkdir(const char *path)
 {
 	if (!CreateDirectory(path, NULL))
@@ -272,11 +271,10 @@ qboolean Sys_Mkdir(const char *path)
 	return qtrue;
 }
 
-/*
-==============
-Sys_Cwd
-==============
-*/
+/**
+ * @brief Sys_Cwd
+ * @return
+ */
 char *Sys_Cwd(void)
 {
 	static char cwd[MAX_OSPATH];
@@ -293,12 +291,15 @@ DIRECTORY SCANNING
 ==============================================================
 */
 
-/*
-==============
-Sys_ListFilteredFiles
-==============
-*/
-void Sys_ListFilteredFiles(const char *basedir, char *subdirs, char *filter, char **list, int *numfiles)
+/**
+ * @brief Sys_ListFilteredFiles
+ * @param[in] basedir
+ * @param[in] subdirs
+ * @param[in] filter
+ * @param[out] list
+ * @param[in,out] numfiles
+ */
+void Sys_ListFilteredFiles(const char *basedir, const char *subdirs, const char *filter, char **list, int *numfiles)
 {
 	char               search[MAX_OSPATH], newsubdirs[MAX_OSPATH];
 	char               filename[MAX_OSPATH];
@@ -361,14 +362,15 @@ void Sys_ListFilteredFiles(const char *basedir, char *subdirs, char *filter, cha
 	_findclose(findhandle);
 }
 
-/*
-==============
-strgtr
-==============
-*/
+/**
+ * @brief strgtr
+ * @param[in] s0
+ * @param[in] s1
+ * @return
+ */
 static qboolean strgtr(const char *s0, const char *s1)
 {
-	int l0, l1, i;
+	unsigned int l0, l1, i;
 
 	l0 = strlen(s0);
 	l1 = strlen(s1);
@@ -393,12 +395,16 @@ static qboolean strgtr(const char *s0, const char *s1)
 	return qfalse;
 }
 
-/*
-==============
-Sys_ListFiles
-==============
-*/
-char **Sys_ListFiles(const char *directory, const char *extension, char *filter, int *numfiles, qboolean wantsubs)
+/**
+ * @brief Sys_ListFiles
+ * @param[in] directory
+ * @param[in] extension
+ * @param[in] filter
+ * @param[out] numfiles
+ * @param[in] wantsubs
+ * @return
+ */
+char **Sys_ListFiles(const char *directory, const char *extension, const char *filter, int *numfiles, qboolean wantsubs)
 {
 	char               search[MAX_OSPATH];
 	int                nfiles;
@@ -408,7 +414,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 	intptr_t           findhandle;
 	int                flag;
 	int                i;
-	int                extLen;
+	unsigned int       extLen;
 #ifdef DEDICATED
 	qboolean invalid;
 #endif
@@ -552,11 +558,10 @@ char **Sys_ListFiles(const char *directory, const char *extension, char *filter,
 	return listCopy;
 }
 
-/*
-==============
-Sys_FreeFileList
-==============
-*/
+/**
+ * @brief Sys_FreeFileList
+ * @param[in,out] list
+ */
 void Sys_FreeFileList(char **list)
 {
 	int i;
@@ -574,13 +579,10 @@ void Sys_FreeFileList(char **list)
 	Z_Free(list);
 }
 
-/*
-==============
-Sys_Sleep
-
-Block execution for msec or until input is received.
-==============
-*/
+/**
+ * @brief Block execution for msec or until input is received.
+ * @param msec
+ */
 void Sys_Sleep(int msec)
 {
 	if (msec == 0)
@@ -608,13 +610,10 @@ void Sys_Sleep(int msec)
 #endif
 }
 
-/*
-==============
-Sys_ErrorDialog
-
-Display an error message
-==============
-*/
+/**
+ * @brief Display an error message
+ * @param[in] error
+ */
 void Sys_ErrorDialog(const char *error)
 {
 	if (Sys_Dialog(DT_YES_NO, va("%s. Copy console log to clipboard?", error),
@@ -651,13 +650,13 @@ void Sys_ErrorDialog(const char *error)
 	}
 }
 
-/*
-==============
-Sys_Dialog
-
-Display a win32 dialog box
-==============
-*/
+/**
+ * @brief Display a win32 dialog box
+ * @param[in] type
+ * @param[in] message
+ * @param[in] title
+ * @return
+ */
 dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *title)
 {
 	UINT uType;
@@ -743,33 +742,30 @@ void Sys_GLimpInit(void)
 #endif
 }
 
-/*
-==============
-Sys_SetEnv
-
-set/unset environment variables (empty value removes it)
-==============
-*/
+/**
+ * @brief Set/unset environment variables (empty value removes it)
+ * @param name
+ * @param value
+ */
 void Sys_SetEnv(const char *name, const char *value)
 {
 	_putenv(va("%s=%s", name, value));
 }
 
-/*
-==============
-Sys_PID
-==============
-*/
+/**
+ * @brief Sys_PID
+ * @return
+ */
 int Sys_PID(void)
 {
 	return GetCurrentProcessId();
 }
 
-/*
-==============
-Sys_PIDIsRunning
-==============
-*/
+/**
+ * @brief Sys_PIDIsRunning
+ * @param[in] pid
+ * @return
+ */
 qboolean Sys_PIDIsRunning(unsigned int pid)
 {
 	DWORD        processes[1024];
@@ -795,11 +791,11 @@ qboolean Sys_PIDIsRunning(unsigned int pid)
 	return qfalse;
 }
 
-/*
-==================
-Sys_StartProcess
-==================
-*/
+/**
+ * @brief Sys_StartProcess
+ * @param[in] cmdline
+ * @param[in] doexit
+ */
 void Sys_StartProcess(char *cmdline, qboolean doexit)
 {
 	//TCHAR               szPathOrig[_MAX_PATH];
@@ -825,6 +821,10 @@ void Sys_StartProcess(char *cmdline, qboolean doexit)
 	}
 }
 
+/**
+ * @brief Sys_Splash
+ * @param[in] show
+ */
 void Sys_Splash(qboolean show)
 {
 #ifndef DEDICATED
@@ -851,11 +851,11 @@ void Sys_Splash(qboolean show)
 #endif
 }
 
-/*
-==================
-Sys_OpenURL
-==================
-*/
+/**
+ * @brief Sys_OpenURL
+ * @param[in] url
+ * @param[in] doexit
+ */
 void Sys_OpenURL(const char *url, qboolean doexit)
 {
 #ifndef DEDICATED
@@ -896,6 +896,9 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 #endif
 }
 
+/**
+ * @brief Sys_CreateConsoleWindow
+ */
 void Sys_CreateConsoleWindow(void)
 {
 #ifndef DEDICATED
@@ -928,14 +931,14 @@ void Sys_CreateConsoleWindow(void)
 	}
 
 	// redirect unbuffered STDOUT to the console
-	lStdHandle = (long)GetStdHandle(STD_OUTPUT_HANDLE);
+	lStdHandle = (long)(GetStdHandle(STD_OUTPUT_HANDLE));
 	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
 	fp         = _fdopen(hConHandle, "w");
 	*stdout    = *fp;
 	setvbuf(stdout, NULL, _IONBF, 0);
 
 	// redirect unbuffered STDIN to the console
-	lStdHandle = (long)GetStdHandle(STD_INPUT_HANDLE);
+	lStdHandle = (long)(GetStdHandle(STD_INPUT_HANDLE));
 	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
 	fp         = _fdopen(hConHandle, "r");
 	*stdin     = *fp;
@@ -943,7 +946,7 @@ void Sys_CreateConsoleWindow(void)
 	setvbuf(stdin, NULL, _IONBF, 0);
 
 	// redirect unbuffered STDERR to the console
-	lStdHandle = (long)GetStdHandle(STD_ERROR_HANDLE);
+	lStdHandle = (long)(GetStdHandle(STD_ERROR_HANDLE));
 	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
 	fp         = _fdopen(hConHandle, "w");
 	*stderr    = *fp;
@@ -956,9 +959,12 @@ void Sys_CreateConsoleWindow(void)
 #endif
 }
 
-// This could be enabled in the future
+// TODO: This could be enabled in the future
 //#define SET_PROCESS_AFFINITY 1
 
+/**
+ * @brief Sys_SetProcessProperties
+ */
 void Sys_SetProcessProperties(void)
 {
 #ifdef SET_PROCESS_AFFINITY
@@ -1010,13 +1016,9 @@ void Sys_SetProcessProperties(void)
 
 WinVars_t g_wv;
 
-/*
-==============
-Sys_PlatformInit
-
-Windows specific initialization
-==============
-*/
+/**
+ * @brief Windows specific initialization
+ */
 void Sys_PlatformInit(void)
 {
 	g_wv.hInstance = GetModuleHandle(NULL);

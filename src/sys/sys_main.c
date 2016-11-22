@@ -66,41 +66,37 @@ static qboolean nocurses = qfalse;
 void CON_Init_tty(void);
 #endif
 
-/*
-=================
-Sys_SetBinaryPath
-=================
-*/
+/**
+ * @brief Sys_SetBinaryPath
+ * @param[in] path
+ */
 void Sys_SetBinaryPath(const char *path)
 {
 	Q_strncpyz(binaryPath, path, sizeof(binaryPath));
 }
 
-/*
-=================
-Sys_BinaryPath
-=================
-*/
+/**
+ * @brief Sys_BinaryPath
+ * @return
+ */
 char *Sys_BinaryPath(void)
 {
 	return binaryPath;
 }
 
-/*
-=================
-Sys_SetDefaultInstallPath
-=================
-*/
+/**
+ * @brief Sys_SetDefaultInstallPath
+ * @param[in] path
+ */
 void Sys_SetDefaultInstallPath(const char *path)
 {
 	Q_strncpyz(installPath, path, sizeof(installPath));
 }
 
-/*
-=================
-Sys_DefaultInstallPath
-=================
-*/
+/**
+ * @brief Sys_DefaultInstallPath
+ * @return
+ */
 char *Sys_DefaultInstallPath(void)
 {
 	if (*installPath)
@@ -114,17 +110,17 @@ char *Sys_DefaultInstallPath(void)
 }
 
 /**
- * @brief Restart the input subsystem
+ * @brief Sys_In_Restart_f
  */
 void Sys_In_Restart_f(void)
 {
 	IN_Restart();
 }
 
+#ifndef USE_WINDOWS_CONSOLE
 /**
  * @brief Handle new console input
  */
-#ifndef USE_WINDOWS_CONSOLE
 char *Sys_ConsoleInput(void)
 {
 	return CON_Input();
@@ -133,8 +129,8 @@ char *Sys_ConsoleInput(void)
 
 /**
  * @brief Writes pid to profile or to the homepath root if running a server
- * @retval qtrue  if pid file successfully created
- * @retval qfalse if it wasn't possible to create a new pid file
+ * @return qtrue  if pid file successfully created
+ *         otherwise qfalse if it wasn't possible to create a new pid file
  */
 qboolean Sys_WritePIDFile(void)
 {
@@ -182,6 +178,7 @@ qboolean Sys_WritePIDFile(void)
 
 /**
  * @brief Single exit point (regular exit or in case of error)
+ * @param[in] exitCode
  */
 static __attribute__ ((noreturn)) void Sys_Exit(int exitCode)
 {
@@ -239,11 +236,9 @@ static __attribute__ ((noreturn)) void Sys_Exit(int exitCode)
 }
 
 
-/*
-=================
-Sys_Quit
-=================
-*/
+/**
+ * @brief Sys_Quit
+ */
 void Sys_Quit(void)
 {
 	Sys_Exit(0);
@@ -252,15 +247,13 @@ void Sys_Quit(void)
 #endif
 }
 
-/*
-=================
-Sys_Init
-=================
-*/
 #ifdef USE_WINDOWS_CONSOLE
 extern void Sys_ClearViewlog_f(void);
 #endif
 
+/**
+ * @brief Sys_Init
+ */
 void Sys_Init(void)
 {
 	Cmd_AddCommand("in_restart", Sys_In_Restart_f);
@@ -274,6 +267,7 @@ void Sys_Init(void)
 
 /**
  * @brief Transform Q3 colour codes to ANSI escape sequences
+ * @param[in] msg
  */
 void Sys_AnsiColorPrint(const char *msg)
 {
@@ -413,11 +407,10 @@ void Sys_AnsiColorPrint(const char *msg)
 	}
 }
 
-/*
-=================
-Sys_Print
-=================
-*/
+/**
+ * @brief Sys_Print
+ * @param msg
+ */
 void Sys_Print(const char *msg)
 {
 #ifdef USE_WINDOWS_CONSOLE
@@ -432,11 +425,10 @@ void Sys_Print(const char *msg)
 #endif
 }
 
-/*
-=================
-Sys_Error
-=================
-*/
+/**
+ * @brief Sys_Error
+ * @param[in] error
+ */
 void Sys_Error(const char *error, ...)
 {
 	va_list argptr;
@@ -482,13 +474,11 @@ void Sys_Error(const char *error, ...)
 	Sys_Exit(3);
 }
 
-/*
-============
-Sys_FileTime
-
-returns -1 if not present
-============
-*/
+/**
+ * @brief Sys_FileTime
+ * @param[in] path
+ * @return -1 if not present
+ */
 int Sys_FileTime(char *path)
 {
 	struct stat buf;
@@ -501,11 +491,10 @@ int Sys_FileTime(char *path)
 	return buf.st_mtime;
 }
 
-/*
-=================
-Sys_UnloadDll
-=================
-*/
+/**
+ * @brief Sys_UnloadDll
+ * @param[in] dllHandle
+ */
 void Sys_UnloadDll(void *dllHandle)
 {
 	if (!dllHandle)
@@ -517,15 +506,13 @@ void Sys_UnloadDll(void *dllHandle)
 	Sys_UnloadLibrary(dllHandle);
 }
 
-/*
-=================
-Sys_LoadDll
-
-First try to load library name from system library path,
-from executable path, then fs_basepath.
-=================
-*/
-
+/**
+ * @brief First try to load library name from system library path,
+ * from executable path, then fs_basepath.
+ * @param[in] name
+ * @param[in] useSystemLib
+ * @return
+ */
 void *Sys_LoadDll(const char *name, qboolean useSystemLib)
 {
 	void *dllhandle;
@@ -578,6 +565,11 @@ void *Sys_LoadDll(const char *name, qboolean useSystemLib)
 
 /**
  * @brief Used by Sys_LoadGameDll to get handle on a mod library
+ *
+ * @param[in] base
+ * @param[in] gamedir
+ * @param[in] fname
+ *
  * @return Handle to a mod library
  */
 static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const char *fname)
@@ -690,6 +682,11 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
  * #1 look in fs_homepath
  * #2 look in fs_basepath
  * #3 try to revert to the default mod library
+ *
+ * @param[in] name
+ * @param[in] extract
+ *
+ * @return
  */
 void *Sys_LoadGameDll(const char *name, qboolean extract,
                       intptr_t(**entryPoint) (int, ...),
@@ -773,8 +770,8 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 		return NULL;
 	}
 
-	dllEntry    = (void (QDECL *)(intptr_t (QDECL *)(intptr_t, ...)))Sys_LoadFunction(libHandle, "dllEntry");
-	*entryPoint = (intptr_t (QDECL *)(int, ...))Sys_LoadFunction(libHandle, "vmMain");
+	dllEntry    = (void(QDECL *)(intptr_t(QDECL *)(intptr_t, ...)))Sys_LoadFunction(libHandle, "dllEntry");
+	*entryPoint = (intptr_t(QDECL *)(int, ...))Sys_LoadFunction(libHandle, "vmMain");
 
 	if (!*entryPoint || !dllEntry)
 	{
@@ -790,11 +787,11 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 	return libHandle;
 }
 
-/*
-=================
-Sys_ParseArgs
-=================
-*/
+/**
+ * @brief Sys_ParseArgs
+ * @param[in] argc
+ * @param[in] argv
+ */
 void Sys_ParseArgs(int argc, char **argv)
 {
 #ifdef FEATURE_CURSES
@@ -828,6 +825,13 @@ void Sys_ParseArgs(int argc, char **argv)
 #endif
 }
 
+/**
+ * @brief Sys_BuildCommandLine
+ * @param[in] argc
+ * @param[in] argv
+ * @param[out] buffer
+ * @param[in] bufferSize
+ */
 void Sys_BuildCommandLine(int argc, char **argv, char *buffer, int bufferSize)
 {
 	int i = 0;
@@ -862,11 +866,10 @@ void Sys_BuildCommandLine(int argc, char **argv, char *buffer, int bufferSize)
 #       define DEFAULT_BASEDIR Sys_BinaryPath()
 #endif
 
-/*
-=================
-Sys_SigHandler
-=================
-*/
+/**
+ * @brief Sys_SigHandler
+ * @param[in] signal
+ */
 void Sys_SigHandler(int signal)
 {
 	static qboolean signalcaught = qfalse;
@@ -895,6 +898,9 @@ void Sys_SigHandler(int signal)
 	}
 }
 
+/**
+ * @brief Sys_SetUpConsoleAndSignals
+ */
 void Sys_SetUpConsoleAndSignals(void)
 {
 #ifndef USE_WINDOWS_CONSOLE
@@ -919,12 +925,9 @@ void Sys_SetUpConsoleAndSignals(void)
 	signal(SIGINT, Sys_SigHandler);
 }
 
-/*
-=================
-Sys_GameLoop
-Main game loop
-=================
-*/
+/**
+ * @brief Main game loop
+ */
 void Sys_GameLoop(void)
 {
 #ifdef LEGACY_DEBUG
@@ -963,11 +966,12 @@ void Sys_GameLoop(void)
 	}
 }
 
-/*
-=================
-main
-=================
-*/
+/**
+ * @brief SDL_main
+ * @param[in] argc
+ * @param[in] argv
+ * @return
+ */
 int main(int argc, char **argv)
 {
 	char commandLine[MAX_STRING_CHARS] = { 0 };
@@ -1018,7 +1022,7 @@ int main(int argc, char **argv)
 
 	Sys_SetDefaultInstallPath(DEFAULT_BASEDIR); // Sys_BinaryPath() by default
 
-												// Concatenate the command line for passing to Com_Init
+	// Concatenate the command line for passing to Com_Init
 	Sys_BuildCommandLine(argc, argv, commandLine, sizeof(commandLine));
 
 	Com_Init(commandLine);
