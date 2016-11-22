@@ -1984,27 +1984,30 @@ static void R_LoadSubmodels(lump_t *l)
 
 		assert(model != NULL);              // this should never happen
 
-		model->type         = MOD_BRUSH;
-		model->model.bmodel = out;
-		Com_sprintf(model->name, sizeof(model->name), "*%d", i);
-
-		for (j = 0 ; j < 3 ; j++)
+		if (model)   // stop clang to complain about dereference
 		{
-			out->bounds[0][j] = LittleFloat(in->mins[j]);
-			out->bounds[1][j] = LittleFloat(in->maxs[j]);
+			model->type         = MOD_BRUSH;
+			model->model.bmodel = out;
+			Com_sprintf(model->name, sizeof(model->name), "*%d", i);
+
+			for (j = 0 ; j < 3 ; j++)
+			{
+				out->bounds[0][j] = LittleFloat(in->mins[j]);
+				out->bounds[1][j] = LittleFloat(in->maxs[j]);
+			}
+
+			out->firstSurface = s_worldData.surfaces + LittleLong(in->firstSurface);
+			out->numSurfaces  = LittleLong(in->numSurfaces);
+
+			// for attaching fog brushes to models
+			out->firstBrush = LittleLong(in->firstBrush);
+			out->numBrushes = LittleLong(in->numBrushes);
+
+			// allocate decal memory
+			j           = (i == 0 ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS);
+			out->decals = ri.Hunk_Alloc(j * sizeof(*out->decals), h_low);
+			memset(out->decals, 0, j * sizeof(*out->decals));
 		}
-
-		out->firstSurface = s_worldData.surfaces + LittleLong(in->firstSurface);
-		out->numSurfaces  = LittleLong(in->numSurfaces);
-
-		// for attaching fog brushes to models
-		out->firstBrush = LittleLong(in->firstBrush);
-		out->numBrushes = LittleLong(in->numBrushes);
-
-		// allocate decal memory
-		j           = (i == 0 ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS);
-		out->decals = ri.Hunk_Alloc(j * sizeof(*out->decals), h_low);
-		memset(out->decals, 0, j * sizeof(*out->decals));
 	}
 }
 

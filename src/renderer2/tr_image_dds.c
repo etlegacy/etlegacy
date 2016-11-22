@@ -581,6 +581,8 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 	GLenum   type                 = GL_UNSIGNED_BYTE;
 	vec4_t   zeroClampBorder      = { 0, 0, 0, 1 };
 	vec4_t   alphaZeroClampBorder = { 0, 0, 0, 0 };
+    
+    memset(mipOffsets, 0, R_LoadDDSImage_MAX_MIPS + 1);
 
 	// comes from R_CreateImage
 	/*

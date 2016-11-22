@@ -589,7 +589,7 @@ ParseStage
 static qboolean ParseStage(shaderStage_t *stage, char **text)
 {
 	char     *token;
-	int      depthMaskBits     = GLS_DEPTHMASK_TRUE, blendSrcBits = 0, blendDstBits = 0, atestBits = 0, depthFuncBits = 0;
+	int      depthMaskBits = GLS_DEPTHMASK_TRUE, blendSrcBits = 0, blendDstBits = 0, atestBits = 0, depthFuncBits = 0;
 	qboolean depthMaskExplicit = qfalse;
 
 	stage->active = qtrue;
@@ -964,7 +964,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			}
 			else if (!Q_stricmp(token, "const"))
 			{
-				vec3_t color;
+				vec3_t color = { 0, 0, 0 };
 
 				ParseVector(text, 3, color);
 				stage->constantColor[0] = 255 * color[0];
@@ -3805,10 +3805,13 @@ static void ScanAndLoadShaderFiles(void)
 	char **shaderFiles;
 	char *buffers[MAX_SHADER_FILES];
 	int  buffersize[MAX_SHADER_FILES];
-	char *p;
+	char *p = NULL;
 	int  numShaders;
 	int  i;
 	long sum = 0;
+
+	memset(buffers, 0, MAX_SHADER_FILES);
+	memset(buffersize, 0, MAX_SHADER_FILES);
 
 	// scan for shader files
 	shaderFiles = ri.FS_ListFiles("scripts", ".shader", &numShaders);

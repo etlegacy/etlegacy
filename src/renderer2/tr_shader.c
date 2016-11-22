@@ -2152,7 +2152,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			}
 			else if (!Q_stricmp(token, "const"))
 			{
-				vec3_t color;
+				vec3_t color = { 0, 0, 0 };
 
 				ParseVector(text, 3, color);
 				stage->constantColor[0] = 255 * color[0];
@@ -6421,6 +6421,10 @@ static void ScanAndLoadShaderFiles(void)
 	int  shaderTextHashTableSizes[MAX_SHADERTEXT_HASH], hash, size;
 	char filename[MAX_QPATH];
 	long sum = 0, summand;
+
+	memset(buffers, 0, MAX_SHADER_FILES);
+	memset(shaderTextHashTableSizes, 0, MAX_SHADER_FILES);
+
 
 	// scan for shader files
 	shaderFiles = ri.FS_ListFiles("scripts", ".shader", &numShaderFiles);
