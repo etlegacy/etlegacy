@@ -3031,7 +3031,7 @@ qboolean trap_R_inPVS(const vec3_t p1, const vec3_t p2);
 void trap_GetHunkData(int *hunkused, int *hunkexpected);
 
 // binary message channel
-void trap_SendMessage(char *buf, int buflen);
+qboolean trap_SendMessage(char *buf, int buflen);
 messageStatus_t trap_MessageStatus(void);
 
 // dynamic shaders

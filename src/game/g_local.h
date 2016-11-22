@@ -1995,7 +1995,7 @@ void trap_BotUserCommand(int client, usercmd_t *ucmd);
 
 void trap_SnapVector(float *v);
 
-void trap_SendMessage(int clientNum, char *buf, int buflen);
+qboolean trap_SendMessage(int clientNum, char *buf, int buflen);
 messageStatus_t trap_MessageStatus(int clientNum);
 
 void G_ExplodeMissile(gentity_t *ent);

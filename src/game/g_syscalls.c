@@ -427,9 +427,16 @@ int trap_PC_UnReadToken(int handle)
 	return syscall(BOTLIB_PC_UNREAD_TOKEN, handle);
 }
 
-void trap_SendMessage(int clientNum, char *buf, int buflen)
+/**
+ * @brief Sends binary messages. Since ETL 2.76 this is no longer void.
+ *        See new return values
+ *
+ * @return 1 if message is in queue (will be sent) - 0 not sent
+ *
+ */
+qboolean trap_SendMessage(int clientNum, char *buf, int buflen)
 {
-	syscall(G_SENDMESSAGE, clientNum, buf, buflen);
+	return syscall(G_SENDMESSAGE, clientNum, buf, buflen);
 }
 
 messageStatus_t trap_MessageStatus(int clientNum)

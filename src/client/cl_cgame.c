@@ -489,17 +489,18 @@ void CL_SetExpectedHunkUsage(const char *mapname)
 CL_SendBinaryMessage
 ====================
 */
-static void CL_SendBinaryMessage(const char *buf, int buflen)
+static int CL_SendBinaryMessage(const char *buf, int buflen)
 {
 	if (buflen < 0 || buflen > MAX_BINARY_MESSAGE)
 	{
-		Com_Error(ERR_DROP, "CL_SendBinaryMessage: bad length %i", buflen);
+		Com_Printf("CL_SendBinaryMessage: bad length %i", buflen);
 		clc.binaryMessageLength = 0;
-		return;
+		return 0;
 	}
 
 	clc.binaryMessageLength = buflen;
 	Com_Memcpy(clc.binaryMessage, buf, buflen);
+	return 1;
 }
 
 /*
@@ -994,8 +995,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 
 	// binary channel
 	case CG_SENDMESSAGE:
-		CL_SendBinaryMessage(VMA(1), args[2]);
-		return 0;
+		return CL_SendBinaryMessage(VMA(1), args[2]);
 	case CG_MESSAGESTATUS:
 		return CL_BinaryMessageStatus();
 	case CG_R_LOADDYNAMICSHADER:

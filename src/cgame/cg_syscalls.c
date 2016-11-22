@@ -1860,10 +1860,11 @@ void trap_GetHunkData(int *hunkused, int *hunkexpected)
  * @brief Binary message channel
  * @param[out] buf
  * @param[in] buflen
+ * @return result
  */
-void trap_SendMessage(char *buf, int buflen)
+qboolean trap_SendMessage(char *buf, int buflen)
 {
-	syscall(CG_SENDMESSAGE, buf, buflen);
+	return syscall(CG_SENDMESSAGE, buf, buflen);
 }
 
 /**
