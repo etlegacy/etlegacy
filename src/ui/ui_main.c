@@ -9111,7 +9111,7 @@ void UI_Campaign_f(void)
 		}
 	}
 
-	if (i == uiInfo.campaignCount || !(campaign->typeBits & (1 << GT_WOLF)))
+	if (i == uiInfo.campaignCount || !campaign || !(campaign->typeBits & (1 << GT_WOLF)))
 	{
 		Com_Printf(trap_TranslateString("Can't find campaign '%s'\n"), str);
 		return;

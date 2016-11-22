@@ -437,21 +437,24 @@ itemDef_t *Menu_ClearFocus(menuDef_t *menu)
 
 	for (i = 0; i < menu->itemCount; i++)
 	{
-		if (menu->items[i]->window.flags & WINDOW_HASFOCUS)
+		if (menu->items[i] != NULL)
 		{
-			ret                           = menu->items[i];
-			menu->items[i]->window.flags &= ~WINDOW_HASFOCUS;
-		}
+			if (menu->items[i]->window.flags & WINDOW_HASFOCUS)
+			{
+				ret                           = menu->items[i];
+				menu->items[i]->window.flags &= ~WINDOW_HASFOCUS;
+			}
 
-		if (menu->items[i]->window.flags & WINDOW_MOUSEOVER)
-		{
-			Item_MouseLeave(menu->items[i]);
-			Item_SetMouseOver(menu->items[i], qfalse);
-		}
+			if (menu->items[i]->window.flags & WINDOW_MOUSEOVER)
+			{
+				Item_MouseLeave(menu->items[i]);
+				Item_SetMouseOver(menu->items[i], qfalse);
+			}
 
-		if (menu->items[i]->leaveFocus)
-		{
-			Item_RunScript(menu->items[i], NULL, menu->items[i]->leaveFocus);
+			if (menu->items[i]->leaveFocus)
+			{
+				Item_RunScript(menu->items[i], NULL, menu->items[i]->leaveFocus);
+			}
 		}
 	}
 
