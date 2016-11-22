@@ -196,7 +196,7 @@ qboolean Sys_LowPhysicalMemory(void)
  * @param path
  * @return
  */
-const char *Sys_Basename(const char *path)
+const char *Sys_Basename(char *path)
 {
 	static char  base[MAX_OSPATH] = { 0 };
 	unsigned int length;
@@ -226,7 +226,7 @@ const char *Sys_Basename(const char *path)
  * @param path
  * @return
  */
-const char *Sys_Dirname(const char *path)
+const char *Sys_Dirname(char *path)
 {
 	static char  dir[MAX_OSPATH] = { 0 };
 	unsigned int length;

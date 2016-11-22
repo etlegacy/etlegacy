@@ -209,12 +209,12 @@ qboolean Sys_LowPhysicalMemory(void)
 	return qfalse;
 }
 
-const char *Sys_Basename(const char *path)
+const char *Sys_Basename(char *path)
 {
 	return basename(path);
 }
 
-const char *Sys_Dirname(const char *path)
+const char *Sys_Dirname(char *path)
 {
 	return dirname(path);
 }
