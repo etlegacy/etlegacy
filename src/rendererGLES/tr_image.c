@@ -48,7 +48,7 @@ static image_t *hashTable[FILE_HASH_SIZE];
 // be read into this buffer. In order to keep things as fast as possible,
 // we'll give it a starting value, which will account for the majority of
 // images, but allow it to grow if the buffer isn't big enough
-#define R_IMAGE_BUFFER_SIZE     (512 * 512 * 4)       // 512 x 512 x 32bit
+#define R_IMAGE_BUFFER_SIZE     (1024 * 512 * 4)       // old value: 512 x 512 x 4 (32bit)
 
 int  imageBufferSize[BUFFER_MAX_TYPES] = { 0, 0, 0 };
 void *imageBufferPtr[BUFFER_MAX_TYPES] = { NULL, NULL, NULL };
@@ -197,14 +197,13 @@ void R_ImageList_f(void)
 {
 	int        i;
 	image_t    *image;
-	int        texels;
+	int        texels = 0;
 	const char *yesno[] =
 	{
 		"no ", "yes"
 	};
 
 	ri.Printf(PRINT_ALL, "\n      -w-- -h-- -mm- -TMU- -if-- wrap --name-------\n");
-	texels = 0;
 
 	for (i = 0 ; i < tr.numImages ; i++)
 	{
@@ -285,6 +284,11 @@ static void ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned *o
 	if (outwidth > 2048)
 	{
 		ri.Error(ERR_DROP, "ResampleTexture: max width");
+	}
+
+	if (outwidth < 1)
+	{
+		outwidth = 1;
 	}
 
 	fracstep = inwidth * 0x10000 / outwidth;
@@ -390,11 +394,10 @@ static void R_MipMap2(unsigned *in, int inWidth, int inHeight)
 	byte     *outpix;
 	int      inWidthMask, inHeightMask;
 	int      total;
-	int      outWidth, outHeight;
+	int      outWidth = inWidth >> 1;
+	int      outHeight = inHeight >> 1;
 	unsigned *temp;
 
-	outWidth  = inWidth >> 1;
-	outHeight = inHeight >> 1;
 	temp      = ri.Hunk_AllocateTempMemory(outWidth * outHeight * 4);
 
 	inWidthMask  = inWidth - 1;
@@ -677,7 +680,7 @@ static void Upload32(unsigned *data,
 
 	if (scaled_width != width || scaled_height != height)
 	{
-		resampledBuffer = R_GetImageBuffer(scaled_width * scaled_height * 4, BUFFER_RESAMPLED, "resample");
+		resampledBuffer = ri.Hunk_AllocateTempMemory(sizeof(unsigned) * scaled_width * scaled_height * 4);
 		ResampleTexture(data, width, height, resampledBuffer, scaled_width, scaled_height);
 		data   = resampledBuffer;
 		width  = scaled_width;
@@ -711,8 +714,7 @@ static void Upload32(unsigned *data,
 		scaled_height >>= 1;
 	}
 
-	//scaledBuffer = ri.Hunk_AllocateTempMemory( sizeof( unsigned ) * scaled_width * scaled_height );
-	scaledBuffer = R_GetImageBuffer(sizeof(unsigned) * scaled_width * scaled_height, BUFFER_SCALED, "resample");
+	scaledBuffer = ri.Hunk_AllocateTempMemory(sizeof(unsigned) * scaled_width * scaled_height);
 
 	// scan the texture for each channel's max values
 	// and verify if the alpha channel is being used or not
@@ -884,6 +886,15 @@ static void Upload32(unsigned *data,
 	}
 
 	GL_CheckErrors();
+
+	if (scaledBuffer != 0)
+	{
+		ri.Hunk_FreeTempMemory(scaledBuffer);
+	}
+	if (resampledBuffer != 0)
+	{
+		ri.Hunk_FreeTempMemory(resampledBuffer);
+	}
 }
 
 /*
@@ -1488,6 +1499,24 @@ void R_DeleteTextures(void)
 	{
 		qglDeleteTextures(1, &tr.images[i]->texnum);
 	}
+
+	// free all images for real
+	for (i = 0; i < tr.numImages; i++)
+	{
+		// note r_cache and r_cachedShaders use malloc, not ri.Hunk_Alloc
+		if (tr.images[i])
+		{
+			if (r_cache->integer && r_cacheShaders->integer)
+			{
+				free(tr.images[i]);
+			}
+			else
+			{   // untested
+				//ri.Free(tr.images[i])
+			}
+		}
+	}
+
 	Com_Memset(tr.images, 0, sizeof(tr.images));
 
 	tr.numImages = 0;
@@ -1523,10 +1552,9 @@ compatable with our normal parsing rules.
 static char *CommaParse(char **data_p)
 {
 	int         c = 0, len = 0;
-	char        *data;
+	char        *data = *data_p;
 	static char com_token[MAX_TOKEN_CHARS];
 
-	data         = *data_p;
 	com_token[0] = 0;
 
 	// make sure incoming data is valid
@@ -1633,9 +1661,8 @@ qboolean RE_GetSkinModel(qhandle_t skinid, const char *type, char *name)
 {
 	int    i;
 	int    hash;
-	skin_t *skin;
+	skin_t *skin = tr.skins[skinid];
 
-	skin = tr.skins[skinid];
 	hash = Com_HashKey((char *)type, strlen(type));
 
 	for (i = 0; i < skin->numModels; i++)
@@ -1646,7 +1673,7 @@ qboolean RE_GetSkinModel(qhandle_t skinid, const char *type, char *name)
 		}
 		if (!Q_stricmp(skin->models[i]->type, type))
 		{
-			// (SA) whoops, should've been this way
+			// whoops, should've been this way
 			Q_strncpyz(name, skin->models[i]->model, sizeof(skin->models[i]->model));
 			return qtrue;
 		}
@@ -1673,7 +1700,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 		surfnum = 0;
 	}
 
-	model = R_GetModelByHandle(modelid);    // (SA) should be correct now
+	model = R_GetModelByHandle(modelid);    // should be correct now
 
 	if (model)
 	{
