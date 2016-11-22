@@ -322,13 +322,14 @@ static void SV_SendBinaryMessage(int cno, char *buf, int buflen)
 {
 	if (cno < 0 || cno >= sv_maxclients->integer)
 	{
-		Com_Error(ERR_DROP, "SV_SendBinaryMessage: bad client %i", cno);
+		Com_Printf("SV_SendBinaryMessage: bad client %i - message not sent\n", cno);
+		svs.clients[cno].binaryMessageLength = 0;
 		return;
 	}
 
 	if (buflen < 0 || buflen > MAX_BINARY_MESSAGE)
 	{
-		Com_Error(ERR_DROP, "SV_SendBinaryMessage: bad length %i", buflen);
+		Com_Printf("SV_SendBinaryMessage: bad buffer length %i - message not sent\n", buflen);
 		svs.clients[cno].binaryMessageLength = 0;
 		return;
 	}
