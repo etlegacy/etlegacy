@@ -313,29 +313,29 @@ void SV_GetUsercmd(int clientNum, usercmd_t *cmd)
 	*cmd = svs.clients[clientNum].lastUsercmd;
 }
 
-/*
-====================
-SV_SendBinaryMessage
-====================
-*/
-static void SV_SendBinaryMessage(int cno, char *buf, int buflen)
+/**
+ * @brief SV_SendBinaryMessage
+ * @return 1 if message is in queue - 0 not sent (since 2.76)
+ */
+static int SV_SendBinaryMessage(int cno, char *buf, int buflen)
 {
 	if (cno < 0 || cno >= sv_maxclients->integer)
 	{
 		Com_Printf("SV_SendBinaryMessage: bad client %i - message not sent\n", cno);
 		svs.clients[cno].binaryMessageLength = 0;
-		return;
+		return 0;
 	}
 
 	if (buflen < 0 || buflen > MAX_BINARY_MESSAGE)
 	{
-		Com_Printf("SV_SendBinaryMessage: bad buffer length %i - message not sent\n", buflen);
+		Com_Printf("SV_SendBinaryMessage: bad buffer length %i - message not sent to client #%i\n", buflen, cno);
 		svs.clients[cno].binaryMessageLength = 0;
-		return;
+		return 0;
 	}
 
 	svs.clients[cno].binaryMessageLength = buflen;
 	memcpy(svs.clients[cno].binaryMessage, buf, buflen);
+	return 1;
 }
 
 /*
@@ -634,11 +634,10 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		return FloatAsInt(ceil(VMF(1)));
 
 	case PB_STAT_REPORT:
-		return 0 ;
+		return 0;
 
 	case G_SENDMESSAGE:
-		SV_SendBinaryMessage(args[1], VMA(2), args[3]);
-		return 0;
+		return SV_SendBinaryMessage(args[1], VMA(2), args[3]);
 	case G_MESSAGESTATUS:
 		return SV_BinaryMessageStatus(args[1]);
 
