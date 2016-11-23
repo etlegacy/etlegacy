@@ -45,13 +45,10 @@
 
 static time_t uptimeSince;
 
-/*
-==================
-SV_GetPlayerByName
-
-Returns the player with name from Cmd_Argv(1)
-==================
-*/
+/**
+ * @brief Returns the player with name from Cmd_Argv(1)
+ * @return
+ */
 static client_t *SV_GetPlayerByName(void)
 {
 	client_t *cl;
@@ -165,11 +162,12 @@ static void SV_Map_f(void)
 	}
 }
 
-/*
-================
-SV_CheckTransitionGameState
-================
-*/
+/**
+ * @brief SV_CheckTransitionGameState
+ * @param[in] new_gs
+ * @param[in] old_gs
+ * @return
+ */
 static qboolean SV_CheckTransitionGameState(gamestate_t new_gs, gamestate_t old_gs)
 {
 	if (old_gs == new_gs && new_gs != GS_PLAYING)
@@ -195,11 +193,13 @@ static qboolean SV_CheckTransitionGameState(gamestate_t new_gs, gamestate_t old_
 	return qtrue;
 }
 
-/*
-================
-SV_TransitionGameState
-================
-*/
+/**
+ * @brief SV_TransitionGameState
+ * @param[in] new_gs
+ * @param[in] old_gs
+ * @param delay - unused
+ * @return
+ */
 static qboolean SV_TransitionGameState(gamestate_t new_gs, gamestate_t old_gs, int delay)
 {
 	// we always do a warmup before starting match
@@ -227,20 +227,19 @@ static qboolean SV_TransitionGameState(gamestate_t new_gs, gamestate_t old_gs, i
 void MSG_PrioritiseEntitystateFields(void);
 void MSG_PrioritisePlayerStateFields(void);
 
+/**
+ * @brief SV_FieldInfo_f
+ */
 static void SV_FieldInfo_f(void)
 {
 	MSG_PrioritiseEntitystateFields();
 	MSG_PrioritisePlayerStateFields();
 }
 
-/*
-================
-SV_MapRestart_f
-
-Completely restarts a level, but doesn't send a new gamestate to the clients.
-This allows fair starts with variable load times.
-================
-*/
+/**
+ * @brief Completely restarts a level, but doesn't send a new gamestate to the clients.
+ * This allows fair starts with variable load times.
+ */
 static void SV_MapRestart_f(void)
 {
 	int         i;
@@ -403,11 +402,11 @@ static void SV_MapRestart_f(void)
 
 //===============================================================
 
-/*
-==================
-SV_TempBanNetAddress
-==================
-*/
+/**
+ * @brief SV_TempBanNetAddress
+ * @param[in] address
+ * @param[in] length
+ */
 void SV_TempBanNetAddress(netadr_t address, int length)
 {
 	int i;
@@ -438,6 +437,11 @@ void SV_TempBanNetAddress(netadr_t address, int length)
 	svs.tempBanAddresses[oldest].endtime = svs.time + length;
 }
 
+/**
+ * @brief SV_TempBanIsBanned
+ * @param[in] address
+ * @return
+ */
 qboolean SV_TempBanIsBanned(netadr_t address)
 {
 	int i;
@@ -456,14 +460,13 @@ qboolean SV_TempBanIsBanned(netadr_t address)
 	return qfalse;
 }
 
-/*
-================
-SV_Status_f
-================
-*/
+/**
+ * @brief SV_Status_f
+ */
 static void SV_Status_f(void)
 {
-	int           i, j, l;
+	int           i;
+	unsigned int  j, l;
 	client_t      *cl;
 	playerState_t *ps;
 	const char    *s;
@@ -545,11 +548,9 @@ static void SV_Status_f(void)
 	Com_Printf("\n");
 }
 
-/*
-==================
-SV_ConSay_f
-==================
-*/
+/**
+ * @brief SV_ConSay_f
+ */
 static void SV_ConSay_f(void)
 {
 	char *p;
@@ -581,25 +582,17 @@ static void SV_ConSay_f(void)
 	SV_SendServerCommand(NULL, "chat \"%s\"", text);
 }
 
-/*
-==================
-SV_Heartbeat_f
-
-Also called by SV_DropClient, SV_DirectConnect, and SV_SpawnServer
-==================
-*/
+/**
+ * @brief Also called by SV_DropClient, SV_DirectConnect, and SV_SpawnServer
+ */
 void SV_Heartbeat_f(void)
 {
 	svs.nextHeartbeatTime = -9999999;
 }
 
-/*
-===========
-SV_Serverinfo_f
-
-Examine the serverinfo string
-===========
-*/
+/**
+ * @brief Examine the serverinfo string
+ */
 static void SV_Serverinfo_f(void)
 {
 	// make sure server is running
@@ -613,26 +606,21 @@ static void SV_Serverinfo_f(void)
 	Info_Print(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
 }
 
-/*
-===========
-SV_Systeminfo_f
-
+/**
+ * @brief
 Examine or change the serverinfo string
-===========
-*/
+ */
 static void SV_Systeminfo_f(void)
 {
 	Com_Printf("System info settings:\n");
 	Info_Print(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
 }
 
-/*
-===========
-SV_DumpUser_f
-
-Examine all a users info strings FIXME: move to game
-===========
-*/
+/**
+ * @brief Examine all a users info strings
+ *
+ * @todo FIXME: move to game
+ */
 static void SV_DumpUser_f(void)
 {
 	client_t *cl;
@@ -661,21 +649,20 @@ static void SV_DumpUser_f(void)
 	Info_Print(cl->userinfo);
 }
 
-/*
-=================
-SV_KillServer
-=================
-*/
+/**
+ * @brief SV_KillServer_f
+ */
 static void SV_KillServer_f(void)
 {
 	SV_Shutdown("killserver");
 }
 
-/*
-==================
-SV_CompleteMapName
-==================
-*/
+
+/**
+ * @brief SV_CompleteMapName
+ * @param args - unused
+ * @param[in] argNum
+ */
 static void SV_CompleteMapName(char *args, int argNum)
 {
 	if (argNum == 2)
@@ -684,16 +671,17 @@ static void SV_CompleteMapName(char *args, int argNum)
 	}
 }
 
-/*
-=================
-SV_GameCompleteStatus_f
-=================
-*/
+/**
+ * @brief SV_GameCompleteStatus_f
+ */
 void SV_GameCompleteStatus_f(void)
 {
 	SV_MasterGameCompleteStatus();
 }
 
+/**
+ * @brief SV_UptimeReset
+ */
 void SV_UptimeReset(void)
 {
 	uptimeSince = time(NULL);
@@ -704,7 +692,7 @@ void SV_UptimeReset(void)
  */
 void SV_Uptime_f(void)
 {
-	const unsigned long uptime = difftime(time(NULL), uptimeSince);
+	const unsigned long uptime = (unsigned long)(difftime(time(NULL), uptimeSince));
 	const unsigned int  s      = uptime % 60,
 	                    m      = (uptime % 3600) / 60,
 	                    h      = (uptime % 86400) / 3600,
@@ -725,11 +713,9 @@ void SV_Uptime_f(void)
 
 //===========================================================
 
-/*
-==================
-SV_AddOperatorCommands
-==================
-*/
+/**
+ * @brief SV_AddOperatorCommands
+ */
 void SV_AddOperatorCommands(void)
 {
 	static qboolean initialized;
@@ -776,11 +762,9 @@ void SV_AddOperatorCommands(void)
 	SV_DemoInit();
 }
 
-/*
-==================
-SV_RemoveOperatorCommands
-==================
-*/
+/**
+ * @brief SV_RemoveOperatorCommands
+ */
 void SV_RemoveOperatorCommands(void)
 {
 #if 0

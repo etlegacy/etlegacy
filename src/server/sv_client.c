@@ -43,6 +43,9 @@ static void SV_CloseDownload(client_t *cl);
 
 /**
  * @brief A "getchallenge" OOB command has been received
+ *
+ * @param[in] from
+ *
  * @returns challenge number that can be used in a subsequent
  *          connectResponse command.
  *
@@ -130,6 +133,8 @@ void SV_GetChallenge(netadr_t from)
 
 /**
  * @brief A "connect" OOB command has been received
+ *
+ * @param[in] from
  */
 void SV_DirectConnect(netadr_t from)
 {
@@ -228,13 +233,13 @@ void SV_DirectConnect(netadr_t from)
 		// never reject a LAN client based on ping
 		if (!Sys_IsLANAddress(from))
 		{
-			if (sv_minPing->value && ping < sv_minPing->value)
+			if (sv_minPing->value != 0.f && ping < sv_minPing->value)
 			{
 				NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Server is for high pings only\n");
 				Com_DPrintf("Client %i rejected on a too low ping\n", i);
 				return;
 			}
-			if (sv_maxPing->value && ping > sv_maxPing->value)
+			if (sv_maxPing->value != 0.f && ping > sv_maxPing->value)
 			{
 				NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Server is for low pings only\n");
 				Com_DPrintf("Client %i rejected on a too high ping: %i\n", i, ping);
@@ -367,7 +372,7 @@ gotnewcl:
 	Q_strncpyz(newcl->userinfo, userinfo, sizeof(newcl->userinfo));
 
 	// get the game a chance to reject this connection or modify the userinfo
-	denied = (char *)VM_Call(gvm, GAME_CLIENT_CONNECT, clientNum, qtrue, qfalse); // firstTime = qtrue
+	denied = (char *)(VM_Call(gvm, GAME_CLIENT_CONNECT, clientNum, qtrue, qfalse)); // firstTime = qtrue
 	if (denied)
 	{
 		// we can't just use VM_ArgPtr, because that is only valid inside a VM_Call
@@ -424,6 +429,10 @@ gotnewcl:
  * @brief Called when the player is totally leaving the server, either willingly
  * or unwillingly.  This is NOT called if the entire server is quiting
  * or crashing -- SV_FinalCommand() will handle that
+ *
+ * @param[in,out] drop
+ * @param[in] reason
+ *
  */
 void SV_DropClient(client_t *drop, const char *reason)
 {
@@ -521,6 +530,8 @@ void SV_DropClient(client_t *drop, const char *reason)
  * This will be sent on the initial connection and upon each new map load.
  * It will be resent if the client acknowledges a later message but has
  * the wrong gamestate.
+ *
+ * @param[in,out] client
  */
 void SV_SendClientGameState(client_t *client)
 {
@@ -595,6 +606,11 @@ void SV_SendClientGameState(client_t *client)
 	SV_SendMessageToClient(&msg, client);
 }
 
+/**
+ * @brief SV_ClientEnterWorld
+ * @param[in,out] client
+ * @param[in] cmd
+ */
 void SV_ClientEnterWorld(client_t *client, usercmd_t *cmd)
 {
 	int            clientNum = client - svs.clients;
@@ -642,7 +658,8 @@ CLIENT COMMAND EXECUTION
 */
 
 /**
- * @brief clear/free any download vars
+ * @brief Clear/free any download vars
+ * @param[in,out] cl
  */
 static void SV_CloseDownload(client_t *cl)
 {
@@ -669,6 +686,7 @@ static void SV_CloseDownload(client_t *cl)
 
 /**
  * @brief Abort a download if in progress
+ * @param[in] cl
  */
 static void SV_StopDownload_f(client_t *cl)
 {
@@ -682,6 +700,7 @@ static void SV_StopDownload_f(client_t *cl)
 
 /**
  * @brief Downloads are finished
+ * @param[in] cl
  */
 static void SV_DoneDownload_f(client_t *cl)
 {
@@ -699,6 +718,7 @@ static void SV_DoneDownload_f(client_t *cl)
 /**
  * @brief The argument will be the last acknowledged block from the client, it should be
  * the same as cl->downloadClientBlock
+ * @param[in,out] cl
  */
 void SV_NextDownload_f(client_t *cl)
 {
@@ -727,6 +747,10 @@ void SV_NextDownload_f(client_t *cl)
 	SV_DropClient(cl, "broken download");
 }
 
+/**
+ * @brief SV_BeginDownload_f
+ * @param[in,out] cl
+ */
 void SV_BeginDownload_f(client_t *cl)
 {
 	// Kill any existing download
@@ -743,6 +767,10 @@ void SV_BeginDownload_f(client_t *cl)
 	Q_strncpyz(cl->downloadName, Cmd_Argv(1), sizeof(cl->downloadName));
 }
 
+/**
+ * @brief SV_WWWDownload_f
+ * @param[in,out] cl
+ */
 void SV_WWWDownload_f(client_t *cl)
 {
 	char *subcmd = Cmd_Argv(1);
@@ -811,7 +839,11 @@ void SV_WWWDownload_f(client_t *cl)
 	SV_DropClient(cl, va("SV_WWWDownload: unknown wwwdl subcommand '%s'", subcmd));
 }
 
-// abort an attempted download
+/**
+ * @brief Abort an attempted download
+ * @param[in] cl
+ * @param[in] msg
+ */
 void SV_BadDownload(client_t *cl, msg_t *msg)
 {
 	MSG_WriteByte(msg, svc_download);
@@ -823,6 +855,10 @@ void SV_BadDownload(client_t *cl, msg_t *msg)
 
 /**
  * @brief sv_wwwFallbackURL can be used to redirect clients to a web URL in case direct ftp/http didn't work (or is disabled on client's end)
+ *
+ * @param[in] cl
+ * @param[in] msg
+ *
  * @return return true when a redirect URL message was filled up
  * when the cvar is set to something, the download server will effectively never use a legacy download strategy
  */
@@ -844,7 +880,12 @@ static qboolean SV_CheckFallbackURL(client_t *cl, msg_t *msg)
 	return qtrue;
 }
 
-// Check if we are able to share the file
+/**
+ * @brief Check if we are able to share the file
+ * @param[in] cl
+ * @param[in] msg
+ * @return
+ */
 static qboolean SV_CheckDownloadAllowed(client_t *cl, msg_t *msg)
 {
 	char errorMessage[1024];
@@ -885,7 +926,12 @@ static qboolean SV_CheckDownloadAllowed(client_t *cl, msg_t *msg)
 	return qtrue;
 }
 
-// We open the file here
+/**
+ * @brief We open the file here
+ * @param[in,out] cl
+ * @param[in] msg
+ * @return
+ */
 static qboolean SV_SetupDownloadFile(client_t *cl, msg_t *msg)
 {
 	int          download_flag;
@@ -993,6 +1039,9 @@ static qboolean SV_SetupDownloadFile(client_t *cl, msg_t *msg)
 
 /**
  * @brief Check to see if the client wants a file, open it if needed and start pumping the client
+ * @param[in,out] cl
+ * @param[in] msg
+ * @return
  */
 static qboolean SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 {
@@ -1107,14 +1156,10 @@ static qboolean SV_WriteDownloadToClient(client_t *cl, msg_t *msg)
 	return qtrue;
 }
 
-/*
-==================
-SV_SendQueuedMessages
-
-Send one round of fragments, or queued messages to all clients that have data pending.
-Return the shortest time interval for sending next packet to client
-==================
-*/
+/**
+ * @brief Send one round of fragments, or queued messages to all clients that have data pending.
+ * @return The shortest time interval for sending next packet to client
+ */
 int SV_SendQueuedMessages(void)
 {
 	int      i, retval = -1, nextFragT;
@@ -1143,13 +1188,10 @@ int SV_SendQueuedMessages(void)
 	return retval;
 }
 
-/*
-==================
-SV_SendDownloadMessages
-
-Send one round of download messages to all clients
-==================
-*/
+/**
+ * @brief Send one round of download messages to all clients
+ * @return
+ */
 int SV_SendDownloadMessages(void)
 {
 	int      i, numDLs = 0;
@@ -1180,26 +1222,29 @@ int SV_SendDownloadMessages(void)
 }
 
 /**
- * @brief The client is going to disconnect, so remove the connection immediately  FIXME: move to game?
+ * @brief The client is going to disconnect, so remove the connection immediately
+ * @param[in] cl
+ *
+ * @todo FIXME: move to game?
  */
 static void SV_Disconnect_f(client_t *cl)
 {
 	SV_DropClient(cl, "disconnected");
 }
 
-/*
-=================
-SV_VerifyPaks_f
-
-If we are pure, disconnect the client if they do no meet the following conditions:
-
-1. the first two checksums match our view of cgame and ui DLLs
-   Wolf specific: the checksum is the checksum of the pk3 we found the DLL in
-2. there are no any additional checksums that we do not have
-
-This routine would be a bit simpler with a goto but i abstained
-=================
-*/
+/**
+ * @brief SV_VerifyPaks_f
+ * @details
+ * If we are pure, disconnect the client if they do no meet the following conditions:
+ *
+ * 1. the first two checksums match our view of cgame and ui DLLs
+ * Wolf specific: the checksum is the checksum of the pk3 we found the DLL in
+ * 2. there are no any additional checksums that we do not have
+ *
+ * This routine would be a bit simpler with a goto but i abstained
+ *
+ * @param[in,out] cl
+ */
 static void SV_VerifyPaks_f(client_t *cl)
 {
 	int        nChkSum1, nChkSum2;
@@ -1382,6 +1427,10 @@ static void SV_VerifyPaks_f(client_t *cl)
 	}
 }
 
+/**
+ * @brief SV_ResetPureClient_f
+ * @param[out] cl
+ */
 static void SV_ResetPureClient_f(client_t *cl)
 {
 	cl->pureAuthentic = 0;
@@ -1390,6 +1439,7 @@ static void SV_ResetPureClient_f(client_t *cl)
 
 /**
  * @brief Pull specific info from a newly changed userinfo string into a more C friendly form.
+ * @param[in,out] cl
  */
 void SV_UserinfoChanged(client_t *cl)
 {
@@ -1505,6 +1555,10 @@ void SV_UserinfoChanged(client_t *cl)
 	}
 }
 
+/**
+ * @brief SV_UpdateUserinfo_f
+ * @param[in] cl
+ */
 void SV_UpdateUserinfo_f(client_t *cl)
 {
 	char *arg = Cmd_Argv(1);
@@ -1554,11 +1608,15 @@ static ucmd_t ucmds[] =
 	{ "stopdl",     SV_StopDownload_f,    qfalse },
 	{ "donedl",     SV_DoneDownload_f,    qfalse },
 	{ "wwwdl",      SV_WWWDownload_f,     qfalse },
-	{ NULL,         NULL }
+	{ NULL,         NULL,                 qfalse }
 };
 
 /**
  * @brief Also called by bot code
+ * @param[in] cl
+ * @param[in] s
+ * @param[in] clientOK
+ * @param[in] premaprestart
  */
 void SV_ExecuteClientCommand(client_t *cl, const char *s, qboolean clientOK, qboolean premaprestart)
 {
@@ -1611,6 +1669,13 @@ void SV_ExecuteClientCommand(client_t *cl, const char *s, qboolean clientOK, qbo
 	}
 }
 
+/**
+ * @brief SV_ClientCommand
+ * @param[in,out] cl
+ * @param[in] msg
+ * @param[in] premaprestart
+ * @return
+ */
 static qboolean SV_ClientCommand(client_t *cl, msg_t *msg, qboolean premaprestart)
 {
 	int        seq;
@@ -1690,6 +1755,8 @@ static qboolean SV_ClientCommand(client_t *cl, msg_t *msg, qboolean premaprestar
 
 /**
  * @brief  Also called by bot code
+ * @param[in,out] cl
+ * @param[in] cmd
  */
 void SV_ClientThink(client_t *cl, usercmd_t *cmd)
 {
@@ -1703,18 +1770,20 @@ void SV_ClientThink(client_t *cl, usercmd_t *cmd)
 	VM_Call(gvm, GAME_CLIENT_THINK, cl - svs.clients);
 }
 
-/*
-==================
-SV_UserMove
-
-The message usually contains all the movement commands
-that were in the last three packets, so that the information
-in dropped packets can be recovered.
-
-On very fast clients, there may be multiple usercmd packed into
-each of the backup packets.
-==================
-*/
+/**
+ * @brief SV_UserMove
+ *
+ * @details The message usually contains all the movement commands
+ * that were in the last three packets, so that the information
+ * in dropped packets can be recovered.
+ *
+ * On very fast clients, there may be multiple usercmd packed into
+ * each of the backup packets.
+ *
+ * @param cl
+ * @param msg
+ * @param delta
+ */
 static void SV_UserMove(client_t *cl, msg_t *msg, qboolean delta)
 {
 	int       i, key;
@@ -1835,6 +1904,11 @@ static void SV_UserMove(client_t *cl, msg_t *msg, qboolean delta)
 	}
 }
 
+/**
+ * @brief SV_ParseBinaryMessage
+ * @param[in] cl
+ * @param[in] msg
+ */
 static void SV_ParseBinaryMessage(client_t *cl, msg_t *msg)
 {
 	int size;
@@ -1857,7 +1931,9 @@ USER CMD EXECUTION
 */
 
 /**
- * @brief Parses a client packet
+ * @brief SV_ExecuteClientMessage
+ * @param[in,out] cl
+ * @param[in] msg
  */
 void SV_ExecuteClientMessage(client_t *cl, msg_t *msg)
 {

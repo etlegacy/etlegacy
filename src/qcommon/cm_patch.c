@@ -2039,7 +2039,8 @@ Called from the renderer
 */
 typedef void (*BotPolyFunc)(int color, int numPoints, float *points);
 
-void BotDrawDebugPolygons(BotPolyFunc drawPoly, int value);
+// TODO: remove in sv_bot.c
+//void BotDrawDebugPolygons(BotPolyFunc drawPoly, int value);
 
 void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, float *points))
 {
@@ -2061,7 +2062,8 @@ void CM_DrawDebugSurface(void (*drawPoly)(int color, int numPoints, float *point
 
 	if (cv2->integer != 1)
 	{
-		BotDrawDebugPolygons(drawPoly, cv2->integer);
+        // TODO: remove in sv_bot.c
+		//BotDrawDebugPolygons(drawPoly, cv2->integer);
 		return;
 	}
 
