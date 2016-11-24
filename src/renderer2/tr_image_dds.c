@@ -433,8 +433,8 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 }*/
 
 static void R_UploadEncodedImageDirect(GLenum target, int level, GLenum format, GLenum int_fmat, int width, int height,
-                                       const void *data, void (*decoder) (byte out[4][4][4], int bx, int by, int format, int iw,
-                                                                          int ih, const void *image_base))
+                                       const void *data, void (*decoder)(byte out[4][4][4], int bx, int by, int format, int iw,
+                                                                         int ih, const void *image_base))
 {
 	int  x, y;
 	byte block[4][4][4];            // y, x, rgba
@@ -581,8 +581,8 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 	GLenum   type                 = GL_UNSIGNED_BYTE;
 	vec4_t   zeroClampBorder      = { 0, 0, 0, 1 };
 	vec4_t   alphaZeroClampBorder = { 0, 0, 0, 0 };
-    
-    memset(mipOffsets, 0, R_LoadDDSImage_MAX_MIPS + 1);
+
+	memset(mipOffsets, 0, R_LoadDDSImage_MAX_MIPS + 1);
 
 	// comes from R_CreateImage
 	/*

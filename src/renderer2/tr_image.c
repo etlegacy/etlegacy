@@ -2244,7 +2244,7 @@ static void R_Rotate(byte *in, int width, int height, int degrees)
 	byte *out, *tmp;
 
 	tmp = (byte *)Com_Allocate(width * height * 4);
-    memset(tmp, 0, width * height * 4);
+	memset(tmp, 0, width * height * 4);
 
 	// rotate into tmp buffer
 	for (y = 0; y < height; y++)
