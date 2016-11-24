@@ -279,7 +279,11 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 				def->uniformValues[def->numUniformValues].value = valptr;
 				//Ren_Print("%d\n",*((int*)valptr));
 			}
-			//FIXME: implement other formats
+			else
+			{
+				// FIXME: implement other formats
+				Ren_Warning("GLSL_ParseDefinition: uniform format not implemented.\n");
+			}
 			def->numUniformValues++;
 		}
 	}
@@ -848,7 +852,7 @@ static void GLSL_BuildShaderExtraDef()
 		{
 			BUFFEXT("#ifndef VSM\n#define VSM 1\n#endif\n");
 
-			//FIXME: this was enabled for ati card.. Should not be needed anymore? Remove from GLSL code in that case
+			// FIXME: this was enabled for ati card.. Should not be needed anymore? Remove from GLSL code in that case
 			//BUFFEXT("#ifndef VSM_CLAMP\n#define VSM_CLAMP 1\n#endif\n");
 		}
 
@@ -1068,7 +1072,7 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
 		temp = GetFallbackShader(fullname);
 		if (temp)
 		{
-			//Found a fallback shader and will use it
+			// Found a fallback shader and will use it
 			int strl = 0;
 			strl = strlen(temp) + 1;
 			if (append && *size)
@@ -1095,7 +1099,7 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
 	}
 	else
 	{
-		++dataSize; //We incease this for the newline
+		++dataSize; // We increase this for the newline
 		if (append && *size)
 		{
 			*data = ( char * ) realloc(*data, *size + dataSize);
@@ -1152,7 +1156,7 @@ static void GLSL_PreprocessShaderText(char *shaderBuffer, char *filetext, GLenum
 				ref += 2;
 			}
 		}
-		//We found a # command
+		// We found a # command
 		else if (c == '#')
 		{
 			char *ref2 = ref;
@@ -1162,7 +1166,7 @@ static void GLSL_PreprocessShaderText(char *shaderBuffer, char *filetext, GLenum
 
 			if (!Q_stricmp(token, "include"))
 			{
-				//handle include
+				// handle include
 				GLchar *libBuffer         = NULL;
 				int    libBufferSize      = 0;
 				int    currentOffset      = strlen(shaderBuffer);
@@ -1192,7 +1196,7 @@ static void GLSL_PreprocessShaderText(char *shaderBuffer, char *filetext, GLenum
 
 			offset = strlen(shaderBuffer);
 		}
-		//Just add the char to the buffer
+		// Just add the char to the buffer
 		else
 		{
 			shaderBuffer[offset] = c;
@@ -1227,13 +1231,13 @@ static char *GLSL_BuildGPUShaderText(programInfo_t *info, GLenum shadertype)
 		filename = (info->fragFilename ? info->fragFilename : info->filename);
 		break;
 	case GL_GEOMETRY_SHADER:
-	//TODO: handle
+	// TODO: handle
 	//break;
 	case GL_TESS_CONTROL_SHADER:
-	//TODO: handle
+	// TODO: handle
 	//break;
 	case GL_TESS_EVALUATION_SHADER:
-	//TODO: handle
+	// TODO: handle
 	//break;
 	default:
 		Ren_Fatal("WTF");
@@ -1894,7 +1898,7 @@ static qboolean GLSL_CompilePermutation(programInfo_t *info, int offset)
 		if (GLSL_GetProgramPermutation(info, offset, info->vertexShaderText, info->fragmentShaderText, tempString))
 		{
 			GLSL_BindProgram(&info->list->programs[offset]);
-			//Set uniform values
+			// Set uniform values
 			GLSL_SetTextureUnitBindings(info, offset);
 			GLSL_SetInitialUniformValues(info, offset);
 			GLSL_BindNullProgram();
@@ -2021,7 +2025,7 @@ programInfo_t *GLSL_GetShaderProgram(const char *name)
 
 	if (prog && !prog->compiled)
 	{
-		//Compile the shader program
+		// Compile the shader program
 		GLSL_CompileShaderProgram(prog);
 	}
 
@@ -2184,8 +2188,8 @@ void GLSL_SelectPermutation(programInfo_t *programlist)
 
 void GLSL_SetRequiredVertexPointers(programInfo_t *programlist)
 {
-	//FIXME: implement this
-	//see void GLShader::SetRequiredVertexPointers() in gl_shader.cpp
+	// FIXME: implement this
+	// see void GLShader::SetRequiredVertexPointers() in gl_shader.cpp
 	/*
 	uint32_t macroVertexAttribs = 0;
 	size_t   numMacros          = _compileMacros.size();
@@ -2330,7 +2334,7 @@ void GLSL_InitGPUShaders(void)
 
 	startTime = ri.Milliseconds();
 
-	//Load all definitions
+	// Load all definitions
 	GLSL_LoadDefinitions();
 	GLSL_BuildShaderExtraDef();
 
@@ -2349,7 +2353,7 @@ void GLSL_CompileGPUShaders(void)
 
 	//R_BindFBO(tr.deferredRenderFBO);
 
-	//Init simple shader and draw loading screen
+	// Init simple shader and draw loading screen
 
 	startTime = ri.Milliseconds();
 
