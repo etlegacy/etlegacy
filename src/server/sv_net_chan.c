@@ -36,14 +36,15 @@
 #include "../qcommon/qcommon.h"
 #include "server.h"
 
-/*
-==============
-SV_Netchan_Encode
-
-first four bytes of the data are always:
-    long reliableAcknowledge;
-==============
-*/
+/**
+ * @brief SV_Netchan_Encode
+ * @param[in] client
+ * @param[in,out] msg
+ * @param[in,out] commandString
+ *
+ * @note first four bytes of the data are always:
+ * long reliableAcknowledge;
+ */
 static void SV_Netchan_Encode(client_t *client, msg_t *msg, char *commandString)
 {
 	long     i, index;
@@ -95,16 +96,16 @@ static void SV_Netchan_Encode(client_t *client, msg_t *msg, char *commandString)
 	}
 }
 
-/*
-==============
-SV_Netchan_Decode
-
-first 12 bytes of the data are always:
-    long serverId;
-    long messageAcknowledge;
-    long reliableAcknowledge;
-==============
-*/
+/**
+ * @brief SV_Netchan_Decode
+ * @param[in] client
+ * @param[in,out] msg
+ *
+ * @note first 12 bytes of the data are always:
+ * long serverId;
+ * long messageAcknowledge;
+ * long reliableAcknowledge;
+ */
 static void SV_Netchan_Decode(client_t *client, msg_t *msg)
 {
 	int      serverId, messageAcknowledge, reliableAcknowledge;
@@ -148,11 +149,10 @@ static void SV_Netchan_Decode(client_t *client, msg_t *msg)
 	}
 }
 
-/*
-=================
-SV_Netchan_FreeQueue
-=================
-*/
+/**
+ * @brief SV_Netchan_ClearQueue
+ * @param[in,out] client
+ */
 void SV_Netchan_ClearQueue(client_t *client)
 {
 	netchan_buffer_t *netbuf, *next;
@@ -167,11 +167,10 @@ void SV_Netchan_ClearQueue(client_t *client)
 	client->netchan_end_queue   = &client->netchan_start_queue;
 }
 
-/*
-=================
-SV_Netchan_TransmitNextInQueue
-=================
-*/
+/**
+ * @brief SV_Netchan_TransmitNextInQueue
+ * @param[in,out] client
+ */
 void SV_Netchan_TransmitNextInQueue(client_t *client)
 {
 	netchan_buffer_t *netbuf;
@@ -198,11 +197,11 @@ void SV_Netchan_TransmitNextInQueue(client_t *client)
 	Z_Free(netbuf);
 }
 
-/*
-=================
-SV_Netchan_TransmitNextFragment
-=================
-*/
+/**
+ * @brief SV_Netchan_TransmitNextFragment
+ * @param[in] client
+ * @return
+ */
 int SV_Netchan_TransmitNextFragment(client_t *client)
 {
 	if (client->netchan.unsentFragments)
@@ -219,11 +218,11 @@ int SV_Netchan_TransmitNextFragment(client_t *client)
 	return -1;
 }
 
-/*
-===============
-SV_WriteBinaryMessage
-===============
-*/
+/**
+ * @brief SV_WriteBinaryMessage
+ * @param[in] msg
+ * @param[in,out] cl
+ */
 static void SV_WriteBinaryMessage(msg_t *msg, client_t *cl)
 {
 	if (!cl->binaryMessageLength)
@@ -244,15 +243,16 @@ static void SV_WriteBinaryMessage(msg_t *msg, client_t *cl)
 	cl->binaryMessageOverflowed = qfalse;
 }
 
-/*
-===============
-SV_Netchan_Transmit
-
-if there are some unsent fragments (which may happen if the snapshots
-and the gamestate are fragmenting, and collide on send for instance)
-then buffer them and make sure they get sent in correct order
-================
-*/
+/**
+ * @brief SV_Netchan_Transmit
+ *
+ * @details If there are some unsent fragments (which may happen if the snapshots
+ * and the gamestate are fragmenting, and collide on send for instance)
+ * then buffer them and make sure they get sent in correct order
+ *
+ * @param[in,out] client
+ * @param[in] msg
+ */
 void SV_Netchan_Transmit(client_t *client, msg_t *msg)
 {
 	MSG_WriteByte(msg, svc_EOF);
@@ -278,11 +278,12 @@ void SV_Netchan_Transmit(client_t *client, msg_t *msg)
 	}
 }
 
-/*
-=================
-Netchan_SV_Process
-=================
-*/
+/**
+ * @brief SV_Netchan_Process
+ * @param[in] client
+ * @param[in] msg
+ * @return
+ */
 qboolean SV_Netchan_Process(client_t *client, msg_t *msg)
 {
 	int ret = Netchan_Process(&client->netchan, msg);

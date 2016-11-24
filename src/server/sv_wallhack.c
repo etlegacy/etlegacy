@@ -44,9 +44,14 @@ static int bbox_vert;
 // local functions
 //======================================================================
 
-#define POS_LIM     1.0
-#define NEG_LIM    -1.0
+#define POS_LIM     1.0f
+#define NEG_LIM    -1.0f
 
+/**
+ * @brief zero_vector
+ * @param[in] v
+ * @return
+ */
 static int zero_vector(vec3_t v)
 {
 	if (v[0] > POS_LIM || v[0] < NEG_LIM)
@@ -68,13 +73,19 @@ static int zero_vector(vec3_t v)
 }
 
 //======================================================================
-/*
-  The following functions for predicting player positions
+/**
+  @note The following functions for predicting player positions
   have been adopted from 'g_unlagged.c' which is part of the
   'unlagged' system created by Neil "haste" Toronto.
   WEB site: http://www.ra.is/unlagged
 */
 
+/**
+ * @brief predict_clip_velocity
+ * @param[in] in
+ * @param[in] normal
+ * @param[out] out
+ */
 static void predict_clip_velocity(vec3_t in, vec3_t normal, vec3_t out)
 {
 	float backoff;
@@ -103,6 +114,14 @@ static void predict_clip_velocity(vec3_t in, vec3_t normal, vec3_t out)
 
 #define NUMBUMPS          4
 
+/**
+ * @brief predict_slide_move
+ * @param[in] ent
+ * @param[in] frametime
+ * @param[in] tr
+ * @param[out] result
+ * @return
+ */
 static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t *tr, vec3_t result)
 {
 	int    count, numplanes = 0, i, j, k;
@@ -132,7 +151,7 @@ static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t
 			return 0;
 		}
 
-		if (trace.fraction > 0.99) // moved the entire distance
+		if (trace.fraction > 0.99f) // moved the entire distance
 		{
 			VectorCopy(trace.endpos, result);
 			return 1;
@@ -157,7 +176,7 @@ static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t
 		// non-axial planes
 		for (i = 0; i < numplanes; i++)
 		{
-			if (DotProduct(trace.plane.normal, planes[i]) > 0.99)
+			if (DotProduct(trace.plane.normal, planes[i]) > 0.99f)
 			{
 				VectorAdd(trace.plane.normal, velocity, velocity);
 				break;
@@ -177,7 +196,7 @@ static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t
 		for (i = 0; i < numplanes; i++)
 		{
 			into = DotProduct(velocity, planes[i]);
-			if (into >= 0.1) // move doesn't interact with the plane
+			if (into >= 0.1f) // move doesn't interact with the plane
 			{
 				continue;
 			}
@@ -196,7 +215,7 @@ static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t
 					continue;
 				}
 
-				if (DotProduct(clipVelocity, planes[j]) >= 0.1) // move doesn't interact with the plane
+				if (DotProduct(clipVelocity, planes[j]) >= 0.1f) // move doesn't interact with the plane
 				{
 					continue;
 				}
@@ -230,7 +249,7 @@ static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t
 						continue;
 					}
 
-					if (DotProduct(clipVelocity, planes[k]) >= 0.1) // move doesn't interact with the plane
+					if (DotProduct(clipVelocity, planes[k]) >= 0.1f) // move doesn't interact with the plane
 					{
 						continue;
 					}
@@ -262,8 +281,13 @@ static int predict_slide_move(sharedEntity_t *ent, float frametime, trajectory_t
 
 #define STEPSIZE 18
 
-// 'frametime' is interpreted as seconds
-
+/**
+ * @brief predict_move
+ * @param[in] ent
+ * @param[in] frametime Is interpreted as seconds
+ * @param[in] tr
+ * @param[out] result
+ */
 static void predict_move(sharedEntity_t *ent, float frametime, trajectory_t *tr, vec3_t result)
 {
 	float   stepSize;
@@ -323,12 +347,16 @@ static void predict_move(sharedEntity_t *ent, float frametime, trajectory_t *tr,
  * @brief Calculates the view point of a player model at position 'org' using
  * information in the player state 'ps' of its client, and stores the
  * viewpoint coordinates in 'vp'.
+ *
+ * @param[in] ps
+ * @param[in] org
+ * @param[out] vp
  */
 static void calc_viewpoint(playerState_t *ps, vec3_t org, vec3_t vp)
 {
 	VectorCopy(org, vp);
 
-	if (ps->leanf != 0)
+	if (ps->leanf != 0.f)
 	{
 		vec3_t right, v3ViewAngles;
 
@@ -350,6 +378,13 @@ static void calc_viewpoint(playerState_t *ps, vec3_t org, vec3_t vp)
 
 //======================================================================
 
+/**
+ * @brief player_in_fov
+ * @param[in] viewangle
+ * @param[in] ppos
+ * @param[in] opos
+ * @return
+ */
 static int player_in_fov(vec3_t viewangle, vec3_t ppos, vec3_t opos)
 {
 	float  yaw, pitch, cos_angle;
@@ -361,7 +396,7 @@ static int player_in_fov(vec3_t viewangle, vec3_t ppos, vec3_t opos)
 	// and skip the test if not. We only want to eliminate info that
 	// would reveal the position of opponents behind the player on
 	// the same X/Y plane (e.g. on the same floor in a room).
-	if (vec3_length(los) < 5 * fabs(opos[2] - ppos[2]))
+	if (vec3_length(los) < (float)(5. * fabs((double)(opos[2] - ppos[2]))))
 	{
 		return 1;
 	}
@@ -388,6 +423,11 @@ static int player_in_fov(vec3_t viewangle, vec3_t ppos, vec3_t opos)
 
 //======================================================================
 
+/**
+ * @brief copy_trajectory
+ * @param[in] src
+ * @param[out] dst
+ */
 static void copy_trajectory(trajectory_t *src, trajectory_t *dst)
 {
 	dst->trType     = src->trType;
@@ -399,6 +439,12 @@ static void copy_trajectory(trajectory_t *src, trajectory_t *dst)
 
 //======================================================================
 
+/**
+ * @brief is_visible
+ * @param[in] start
+ * @param[in] end
+ * @return
+ */
 static int is_visible(vec3_t start, vec3_t end)
 {
 	trace_t trace;
@@ -415,6 +461,9 @@ static int is_visible(vec3_t start, vec3_t end)
 
 //======================================================================
 
+/**
+ * @brief init_horz_delta
+ */
 static void init_horz_delta(void)
 {
 	int i;
@@ -423,13 +472,16 @@ static void init_horz_delta(void)
 
 	for (i = 0; i < 8; i++)
 	{
-		delta[i][0] = ((float) bbox_horz * delta_sign[i][0]) / 2.0;
-		delta[i][1] = ((float) bbox_horz * delta_sign[i][1]) / 2.0;
+		delta[i][0] = (bbox_horz * delta_sign[i][0]) / 2.0f;
+		delta[i][1] = (bbox_horz * delta_sign[i][1]) / 2.0f;
 	}
 }
 
 //======================================================================
 
+/**
+ * @brief init_vert_delta
+ */
 static void init_vert_delta(void)
 {
 	int i;
@@ -438,7 +490,7 @@ static void init_vert_delta(void)
 
 	for (i = 0; i < 8; i++)
 	{
-		delta[i][2] = ((float) bbox_vert * delta_sign[i][2]) / 2.0;
+		delta[i][2] = (bbox_vert * delta_sign[i][2]) / 2.0f;
 	}
 }
 
@@ -446,6 +498,9 @@ static void init_vert_delta(void)
 // public functions
 //======================================================================
 
+/**
+ * @brief SV_InitWallhack
+ */
 void SV_InitWallhack(void)
 {
 	init_horz_delta();
@@ -453,25 +508,31 @@ void SV_InitWallhack(void)
 }
 
 //======================================================================
-/*
-  'SV_CanSee' checks if 'player' can see 'other' or not. First
-  a check is made if 'other' is in the maximum allowed fov of
-  'player'. If not, then zero is returned w/o any further checks.
-  Next traces are carried out from the present viewpoint of 'player'
-  to the corners of the bounding box of 'other'. If any of these
-  traces are successful (i.e. nothing solid is between the start
-  and end positions) then non-zero is returned.
 
-  Otherwise the expected positions of the two players are calculated,
-  by extrapolating their movements for PREDICT_TIME seconds and the above
-  tests are carried out again. The result is reported by returning non-zero
-  (expected to become visible) or zero (not expected to become visible
-  in the next frame).
-*/
-
-#define PREDICT_TIME      0.1
+#define PREDICT_TIME      0.1f
 #define VOFS              6
 
+/**
+ * @brief Checks if 'player' can see 'other' or not.
+ *
+ * @details First a check is made if 'other' is in the maximum allowed fov
+ * of 'player'. If not, then zero is returned w/o any further checks.
+ * Next traces are carried out from the present viewpoint of 'player'
+ * to the corners of the bounding box of 'other'. If any of these
+ * traces are successful (i.e. nothing solid is between the start
+ * and end positions) then non-zero is returned.
+ *
+ * Otherwise the expected positions of the two players are calculated,
+ * by extrapolating their movements for PREDICT_TIME seconds and the above
+ * tests are carried out again. The result is reported by returning non-zero
+ * (expected to become visible) or zero (not expected to become visible
+ * in the next frame).
+ *
+ * @param[in] player
+ * @param[in] other
+ *
+ * @return
+ */
 int SV_CanSee(int player, int other)
 {
 	sharedEntity_t *pent, *oent;
@@ -563,6 +624,9 @@ int SV_CanSee(int player, int other)
  * @brief Changes the position of client 'other' so that it is directly
  * below 'player'. The distance is maintained so that sound scaling
  * will work correctly.
+ *
+ * @param[in] player
+ * @param[in] other
  */
 void SV_RandomizePos(int player, int other)
 {
@@ -587,6 +651,10 @@ void SV_RandomizePos(int player, int other)
 
 //======================================================================
 
+/**
+ * @brief SV_RestorePos
+ * @param[in] cli
+ */
 void SV_RestorePos(int cli)
 {
 	sharedEntity_t *ent;
@@ -598,6 +666,11 @@ void SV_RestorePos(int cli)
 
 //======================================================================
 
+/**
+ * @brief SV_PositionChanged
+ * @param[in] cli
+ * @return
+ */
 int SV_PositionChanged(int cli)
 {
 	return origin_changed[cli];

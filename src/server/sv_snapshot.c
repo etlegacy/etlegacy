@@ -56,13 +56,12 @@ A normal server packet will look like:
 =============================================================================
 */
 
-/*
-=============
-SV_EmitPacketEntities
-
-Writes a delta update of an entityState_t list to the message.
-=============
-*/
+/**
+ * @brief Writes a delta update of an entityState_t list to the message.
+ * @param[in] from
+ * @param[in] to
+ * @param[in] msg
+ */
 static void SV_EmitPacketEntities(clientSnapshot_t *from, clientSnapshot_t *to, msg_t *msg)
 {
 	entityState_t *oldent  = NULL, *newent = NULL;
@@ -138,11 +137,11 @@ static void SV_EmitPacketEntities(clientSnapshot_t *from, clientSnapshot_t *to, 
 	MSG_WriteBits(msg, (MAX_GENTITIES - 1), GENTITYNUM_BITS);       // end of packetentities
 }
 
-/*
-==================
-SV_WriteSnapshotToClient
-==================
-*/
+/**
+ * @brief SV_WriteSnapshotToClient
+ * @param[in] client
+ * @param[in] msg
+ */
 static void SV_WriteSnapshotToClient(client_t *client, msg_t *msg)
 {
 	clientSnapshot_t *frame, *oldframe;
@@ -242,13 +241,11 @@ static void SV_WriteSnapshotToClient(client_t *client, msg_t *msg)
 	}
 }
 
-/*
-==================
-SV_UpdateServerCommandsToClient
-
-(re)send all server commands the client hasn't acknowledged yet
-==================
-*/
+/**
+ * @brief (re)send all server commands the client hasn't acknowledged yet
+ * @param[in] client
+ * @param[in] msg
+ */
 void SV_UpdateServerCommandsToClient(client_t *client, msg_t *msg)
 {
 	int i;
@@ -279,11 +276,12 @@ typedef struct
 	int snapshotEntities[MAX_SNAPSHOT_ENTITIES];
 } snapshotEntityNumbers_t;
 
-/*
-=======================
-SV_QsortEntityNumbers
-=======================
-*/
+/**
+ * @brief SV_QsortEntityNumbers
+ * @param[in] a
+ * @param[in] b
+ * @return
+ */
 static int QDECL SV_QsortEntityNumbers(const void *a, const void *b)
 {
 	int *ea, *eb;
@@ -304,11 +302,13 @@ static int QDECL SV_QsortEntityNumbers(const void *a, const void *b)
 	return 1;
 }
 
-/*
-===============
-SV_AddEntToSnapshot
-===============
-*/
+/**
+ * @brief SV_AddEntToSnapshot
+ * @param[in] clientEnt
+ * @param[in,out] svEnt
+ * @param[in] gEnt
+ * @param[in,out] eNums
+ */
 static void SV_AddEntToSnapshot(sharedEntity_t *clientEnt, svEntity_t *svEnt, sharedEntity_t *gEnt, snapshotEntityNumbers_t *eNums)
 {
 	// if we have already added this entity to this snapshot, don't add again
@@ -327,7 +327,7 @@ static void SV_AddEntToSnapshot(sharedEntity_t *clientEnt, svEntity_t *svEnt, sh
 
 	if (gEnt->r.snapshotCallback)
 	{
-		if (!(qboolean)VM_Call(gvm, GAME_SNAPSHOT_CALLBACK, gEnt->s.number, clientEnt->s.number))
+		if (!(qboolean)(VM_Call(gvm, GAME_SNAPSHOT_CALLBACK, gEnt->s.number, clientEnt->s.number)))
 		{
 			return;
 		}
@@ -337,11 +337,13 @@ static void SV_AddEntToSnapshot(sharedEntity_t *clientEnt, svEntity_t *svEnt, sh
 	eNums->numSnapshotEntities++;
 }
 
-/*
-===============
-SV_AddEntitiesVisibleFromPoint
-===============
-*/
+/**
+ * @brief SV_AddEntitiesVisibleFromPoint
+ * @param[in] origin
+ * @param[in,out] frame
+ * @param[in] eNums
+ * @param[in] portal
+ */
 #ifdef FEATURE_ANTICHEAT
 static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *frame, snapshotEntityNumbers_t *eNums, qboolean portal)
 #else
@@ -621,19 +623,17 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 	}
 }
 
-/*
-=============
-SV_BuildClientSnapshot
-
-Decides which entities are going to be visible to the client, and
-copies off the playerstate and areabits.
-
-This properly handles multiple recursive portals, but the render
-currently doesn't.
-
-For viewing through other player's eyes, clent can be something other than client->gentity
-=============
-*/
+/**
+ * @brief Decides which entities are going to be visible to the client, and
+ * copies off the playerstate and areabits.
+ *
+ * This properly handles multiple recursive portals, but the render
+ * currently doesn't.
+ *
+ * For viewing through other player's eyes, clent can be something other than client->gentity
+ *
+ * @param[in,out] client
+ */
 static void SV_BuildClientSnapshot(client_t *client)
 {
 	vec3_t                  org;
@@ -693,7 +693,7 @@ static void SV_BuildClientSnapshot(client_t *client)
 
 	// added for 'lean'
 	// need to account for lean, so areaportal doors draw properly
-	if (frame->ps.leanf != 0)
+	if (frame->ps.leanf != 0.f)
 	{
 		vec3_t right, v3ViewAngles;
 		VectorCopy(ps->viewangles, v3ViewAngles);
@@ -754,18 +754,17 @@ static void SV_BuildClientSnapshot(client_t *client)
 	}
 }
 
-/*
-====================
-SV_RateMsec
-
-Return the number of msec until another message can be sent to
-a client based on its rate settings
-====================
-*/
-
 #define UDPIP_HEADER_SIZE 28
 #define UDPIP6_HEADER_SIZE 48
 
+/**
+ * @brief Return the number of msec until another message can be sent to
+ * a client based on its rate settings
+ *
+ * @param[in] client
+ *
+ * @return The number of msec
+ */
 int SV_RateMsec(client_t *client)
 {
 	int rate, rateMsec;
@@ -807,7 +806,7 @@ int SV_RateMsec(client_t *client)
 		messageSize += UDPIP_HEADER_SIZE;
 	}
 
-	if (com_timescale->value > 0.0)
+	if (com_timescale->value > 0.f)
 	{
 		rateMsec = messageSize * 1000 / ((int)(rate * com_timescale->value));
 	}
@@ -827,13 +826,11 @@ int SV_RateMsec(client_t *client)
 	}
 }
 
-/*
-=======================
-SV_SendMessageToClient
-
-Called by SV_SendClientSnapshot and SV_SendClientGameState
-=======================
-*/
+/**
+ * @brief Called by SV_SendClientSnapshot and SV_SendClientGameState
+ * @param[in] msg
+ * @param[in,out] client
+ */
 void SV_SendMessageToClient(msg_t *msg, client_t *client)
 {
 	// record information about the message
@@ -845,14 +842,12 @@ void SV_SendMessageToClient(msg_t *msg, client_t *client)
 	SV_Netchan_Transmit(client, msg);
 }
 
-/*
-=======================
-SV_SendClientIdle
-
-There is no need to send full snapshots to clients who are loading a map.
-So we send them "idle" packets with the bare minimum required to keep them on the server.
-=======================
-*/
+/**
+ * @brief There is no need to send full snapshots to clients who are loading a map.
+ * So we send them "idle" packets with the bare minimum required to keep them on the server.
+ *
+ * @param[in] client
+ */
 void SV_SendClientIdle(client_t *client)
 {
 	byte  msg_buf[MAX_MSGLEN];
@@ -891,13 +886,13 @@ void SV_SendClientIdle(client_t *client)
 	sv.ubpsTotalBytes += msg.uncompsize / 8;    // net debugging
 }
 
-/*
-=======================
-SV_SendClientSnapshot
-
-Also called by SV_FinalCommand
-=======================
-*/
+/**
+ * @brief SV_SendClientSnapshot
+ *
+ * @param[in] client
+ *
+ * @note Also called by SV_FinalCommand
+ */
 void SV_SendClientSnapshot(client_t *client)
 {
 	byte  msg_buf[MAX_MSGLEN];
@@ -954,11 +949,9 @@ void SV_SendClientSnapshot(client_t *client)
 	sv.ubpsTotalBytes += msg.uncompsize / 8;    // net debugging
 }
 
-/*
-=======================
-SV_SendClientMessages
-=======================
-*/
+/**
+ * @brief SV_SendClientMessages
+ */
 void SV_SendClientMessages(void)
 {
 	int      i;
@@ -1083,11 +1076,14 @@ void SV_SendClientMessages(void)
 			sv.ucompNum++;
 
 			Com_DPrintf("bpspc(%2.0f) bps(%2.0f) pk(%i) ubps(%2.0f) upk(%i) cr(%2.2f) acr(%2.2f)\n",
-			            ave / (float)numclients, ave, sv.bpsMaxBytes, uave, sv.ubpsMaxBytes, comp_ratio, sv.ucompAve / sv.ucompNum);
+			            (double)(ave / (float)numclients), (double)ave, sv.bpsMaxBytes, (double)uave, sv.ubpsMaxBytes, (double)comp_ratio, (double)(sv.ucompAve / (float)sv.ucompNum));
 		}
 	}
 }
 
+/**
+ * @brief SV_CheckClientUserinfoTimer
+ */
 void SV_CheckClientUserinfoTimer(void)
 {
 	int      i;

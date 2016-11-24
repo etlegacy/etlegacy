@@ -35,15 +35,15 @@
 
 #include "server.h"
 
-/*
-================
-SV_ClipHandleForEntity
-
-Returns a headnode that can be used for testing or clipping to a
-given entity.  If the entity is a bsp model, the headnode will
-be returned, otherwise a custom box tree will be constructed.
-================
-*/
+/**
+ * @brief Return a headnode that can be used for testing or clipping to a
+ * given entity.
+ *
+ * @param[in] ent
+ *
+ * @return If the entity is a bsp model, the headnode will
+ * be returned, otherwise a custom box tree will be constructed.
+ */
 clipHandle_t SV_ClipHandleForEntity(const sharedEntity_t *ent)
 {
 	if (ent->r.bmodel)
@@ -86,11 +86,9 @@ typedef struct worldSector_s
 worldSector_t sv_worldSectors[AREA_NODES];
 int           sv_numworldSectors;
 
-/*
-===============
-SV_SectorList_f
-===============
-*/
+/**
+ * @brief SV_SectorList_f
+ */
 void SV_SectorList_f(void)
 {
 	int           i, c;
@@ -111,13 +109,13 @@ void SV_SectorList_f(void)
 	}
 }
 
-/*
-===============
-SV_CreateworldSector
-
-Builds a uniformly subdivided tree for the given world size
-===============
-*/
+/**
+ * @brief Builds a uniformly subdivided tree for the given world size
+ * @param[in] depth
+ * @param[in] mins
+ * @param[in] maxs
+ * @return
+ */
 worldSector_t *SV_CreateworldSector(int depth, vec3_t mins, vec3_t maxs)
 {
 	worldSector_t *anode = &sv_worldSectors[sv_numworldSectors];
@@ -143,7 +141,7 @@ worldSector_t *SV_CreateworldSector(int depth, vec3_t mins, vec3_t maxs)
 		anode->axis = 1;
 	}
 
-	anode->dist = 0.5 * (maxs[anode->axis] + mins[anode->axis]);
+	anode->dist = 0.5f * (maxs[anode->axis] + mins[anode->axis]);
 	VectorCopy(mins, mins1);
 	VectorCopy(mins, mins2);
 	VectorCopy(maxs, maxs1);
@@ -157,11 +155,9 @@ worldSector_t *SV_CreateworldSector(int depth, vec3_t mins, vec3_t maxs)
 	return anode;
 }
 
-/*
-===============
-SV_ClearWorld
-===============
-*/
+/**
+ * @brief SV_ClearWorld
+ */
 void SV_ClearWorld(void)
 {
 	clipHandle_t h;
@@ -176,11 +172,10 @@ void SV_ClearWorld(void)
 	SV_CreateworldSector(0, mins, maxs);
 }
 
-/*
-===============
-SV_UnlinkEntity
-===============
-*/
+/**
+ * @brief SV_UnlinkEntity
+ * @param[in,out] gEnt
+ */
 void SV_UnlinkEntity(sharedEntity_t *gEnt)
 {
 	svEntity_t    *ent;
@@ -216,13 +211,12 @@ void SV_UnlinkEntity(sharedEntity_t *gEnt)
 	Com_Printf("WARNING: SV_UnlinkEntity: not found in worldSector\n");
 }
 
-/*
-===============
-SV_LinkEntity
-===============
-*/
 #define MAX_TOTAL_ENT_LEAFS     128
 
+/**
+ * @brief SV_LinkEntity
+ * @param[in,out] gEnt
+ */
 void SV_LinkEntity(sharedEntity_t *gEnt)
 {
 	worldSector_t *node;
@@ -306,7 +300,7 @@ void SV_LinkEntity(sharedEntity_t *gEnt)
 	angles = gEnt->r.currentAngles;
 
 	// set the abs box
-	if (gEnt->r.bmodel && (angles[0] || angles[1] || angles[2]))
+	if (gEnt->r.bmodel && (angles[0] != 0.f || angles[1] != 0.f || angles[2] != 0.f))
 	{
 		// expand for rotation
 		float max;
@@ -365,7 +359,7 @@ void SV_LinkEntity(sharedEntity_t *gEnt)
 				{
 					Com_DPrintf("Entity %i touching 3 areas at %f %f %f\n",
 					            gEnt->s.number,
-					            gEnt->r.absmin[0], gEnt->r.absmin[1], gEnt->r.absmin[2]);
+					            (double)gEnt->r.absmin[0], (double)gEnt->r.absmin[1], (double)gEnt->r.absmin[2]);
 				}
 
 				ent->areanum2 = area;
@@ -447,11 +441,11 @@ typedef struct
 	int count, maxcount;
 } areaParms_t;
 
-/*
-====================
-SV_AreaEntities_r
-====================
-*/
+/**
+ * @brief SV_AreaEntities_r
+ * @param[in] node
+ * @param[in,out] ap
+ */
 void SV_AreaEntities_r(worldSector_t *node, areaParms_t *ap)
 {
 	svEntity_t     *check, *next;
@@ -504,11 +498,14 @@ void SV_AreaEntities_r(worldSector_t *node, areaParms_t *ap)
 	}
 }
 
-/*
-================
-SV_AreaEntities
-================
-*/
+/**
+ * @brief SV_AreaEntities
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] entityList
+ * @param[in] maxcount
+ * @return
+ */
 int SV_AreaEntities(const vec3_t mins, const vec3_t maxs, int *entityList, int maxcount)
 {
 	areaParms_t ap;
@@ -539,11 +536,17 @@ typedef struct
 	int capsule;
 } moveclip_t;
 
-/*
-====================
-SV_ClipToEntity
-====================
-*/
+/**
+ * @brief SV_ClipToEntity
+ * @param[in,out] trace
+ * @param[in] start
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] end
+ * @param[in] entityNum
+ * @param[in] contentmask
+ * @param[in] capsule
+ */
 void SV_ClipToEntity(trace_t *trace, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int entityNum, int contentmask, int capsule)
 {
 	sharedEntity_t *touch;
@@ -586,11 +589,10 @@ void SV_ClipToEntity(trace_t *trace, const vec3_t start, const vec3_t mins, cons
 // FIXME: Copied from cm_local.h
 #define BOX_MODEL_HANDLE        511
 
-/*
-====================
-SV_ClipMoveToEntities
-====================
-*/
+/**
+ * @brief SV_ClipMoveToEntities
+ * @param[in,out] clip
+ */
 void SV_ClipMoveToEntities(moveclip_t *clip)
 {
 	int            i, num;
@@ -705,14 +707,19 @@ void SV_ClipMoveToEntities(moveclip_t *clip)
 	}
 }
 
-/*
-==================
-SV_Trace
-
-Moves the given mins/maxs volume through the world from start to end.
-passEntityNum and entities owned by passEntityNum are explicitly not checked.
-==================
-*/
+/**
+ * @brief Moves the given mins/maxs volume through the world from start to end.
+ * passEntityNum and entities owned by passEntityNum are explicitly not checked.
+ *
+ * @param[out] results
+ * @param[in] start
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] end
+ * @param[in] passEntityNum
+ * @param[in] contentmask
+ * @param[in] capsule
+ */
 void SV_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask, int capsule)
 {
 	moveclip_t clip;
@@ -731,8 +738,8 @@ void SV_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const vec
 
 	// clip to world
 	CM_BoxTrace(&clip.trace, start, end, mins, maxs, 0, contentmask, capsule);
-	clip.trace.entityNum = clip.trace.fraction != 1.0 ? ENTITYNUM_WORLD : ENTITYNUM_NONE;
-	if (clip.trace.fraction == 0 || passEntityNum == -2)
+	clip.trace.entityNum = clip.trace.fraction != 1.0f ? ENTITYNUM_WORLD : ENTITYNUM_NONE;
+	if (clip.trace.fraction == 0.f || passEntityNum == -2)
 	{
 		*results = clip.trace;
 		return;     // blocked immediately by the world
@@ -771,11 +778,12 @@ void SV_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const vec
 	*results = clip.trace;
 }
 
-/*
-=============
-SV_PointContents
-=============
-*/
+/**
+ * @brief SV_PointContents
+ * @param[in] p
+ * @param[in] passEntityNum
+ * @return
+ */
 int SV_PointContents(const vec3_t p, int passEntityNum)
 {
 	int            touch[MAX_GENTITIES];
