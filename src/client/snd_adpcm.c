@@ -58,6 +58,13 @@ static int stepsizeTable[89] =
 	15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794, 32767
 };
 
+/**
+ * @brief S_AdpcmEncode
+ * @param[in] indata
+ * @param[out] outdata
+ * @param[in] len
+ * @param[in,out] state
+ */
 void S_AdpcmEncode(short indata[], char outdata[], int len, struct adpcm_state *state)
 {
 	short       *inp  = indata;  // Input buffer pointer
@@ -173,6 +180,13 @@ void S_AdpcmEncode(short indata[], char outdata[], int len, struct adpcm_state *
 	state->index  = index;
 }
 
+/**
+ * @brief S_AdpcmDecode
+ * @param[in] indata
+ * @param[out] outdata
+ * @param[in] len
+ * @param[in,out] state
+ */
 static void S_AdpcmDecode(const char indata[], short *outdata, int len, struct adpcm_state *state)
 {
 	signed char *inp = (signed char *)indata;  // Input buffer pointer
@@ -265,14 +279,14 @@ static void S_AdpcmDecode(const char indata[], short *outdata, int len, struct a
 	state->index  = index;
 }
 
+/**
+ * @brief S_AdpcmMemoryNeeded
+ * @param info
+ * @return The amount of memory (in bytes) needed to store the samples in out internal adpcm format
+ *
+ * @note Unused
+ */
 /*
-====================
-S_AdpcmMemoryNeeded - unused
-
-Returns the amount of memory (in bytes) needed to store the samples in out internal adpcm format
-
-====================
-
 int S_AdpcmMemoryNeeded(const wavinfo_t *info)
 {
     float scale;
@@ -304,11 +318,11 @@ int S_AdpcmMemoryNeeded(const wavinfo_t *info)
 }
 */
 
-/*
-====================
-S_AdpcmGetSamples
-====================
-*/
+/**
+ * @brief S_AdpcmGetSamples
+ * @param[in] chunk
+ * @param[out] to
+ */
 void S_AdpcmGetSamples(sndBuffer *chunk, short *to)
 {
 	adpcm_state_t state;
@@ -323,11 +337,11 @@ void S_AdpcmGetSamples(sndBuffer *chunk, short *to)
 	S_AdpcmDecode((char *) out, to, SND_CHUNK_SIZE_BYTE * 2, &state);
 }
 
-/*
-====================
-S_AdpcmEncodeSound
-====================
-*/
+/**
+ * @brief S_AdpcmEncodeSound
+ * @param[in,out] sfx
+ * @param[in] samples
+ */
 void S_AdpcmEncodeSound(sfx_t *sfx, short *samples)
 {
 	adpcm_state_t state;

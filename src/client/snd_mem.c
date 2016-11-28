@@ -60,6 +60,10 @@ void SND_free(sndBuffer *v)
 	inUse           += sizeof(sndBuffer);
 }
 
+/**
+ * @brief SND_malloc
+ * @return
+ */
 sndBuffer *SND_malloc(void)
 {
 	sndBuffer *v;
@@ -79,6 +83,9 @@ redo:
 	return v;
 }
 
+/**
+ * @brief SND_setup
+ */
 void SND_setup(void)
 {
 	sndBuffer *p, *q;
@@ -91,8 +98,9 @@ void SND_setup(void)
 	buffer = malloc(scs * sizeof(sndBuffer));
 	if (!buffer)
 	{
-		Com_Error(ERR_FATAL, "Sound buffer failed to allocate %1.1f megs", (float)scs / (1024 * 1024));
+		Com_Error(ERR_FATAL, "Sound buffer failed to allocate %1.1f megs", (double)(scs / (1024.f * 1024.f)));
 	}
+
 	// allocate the stack based hunk allocator
 	sfxScratchBuffer = malloc(SND_CHUNK_SIZE * sizeof(short) * 4);      //Hunk_Alloc(SND_CHUNK_SIZE * sizeof(short) * 4);
 	if (!sfxScratchBuffer)
@@ -115,26 +123,33 @@ void SND_setup(void)
 	Com_Printf("Sound memory manager started\n");
 }
 
+/**
+ * @brief SND_shutdown
+ */
 void SND_shutdown(void)
 {
 	free(sfxScratchBuffer);
 	free(buffer);
 }
 
-/*
-================
-ResampleSfx
-
-resample / decimate to the current source rate
-================
-*/
+/**
+ * @brief Resample / decimate to the current source rate
+ * @param[in] sfx
+ * @param[in] channels
+ * @param[in] inrate
+ * @param[in] inwidth
+ * @param[in] samples
+ * @param[in] data
+ * @param compressed - unused
+ * @return
+ */
 static int ResampleSfx(sfx_t *sfx, int channels, int inrate, int inwidth, int samples, byte *data, qboolean compressed)
 {
 	float     stepscale = (float)inrate / dma.speed;  // this is usually 0.5, 1, or 2
-	int       outcount  = samples / stepscale;
+	int       outcount  = (int)(samples / stepscale);
 	int       srcsample;
 	int       i, j;
-	int       sample, samplefrac = 0, fracstep = stepscale * 256 * channels;
+	int       sample, samplefrac = 0, fracstep = (int)(stepscale * 256 * channels);
 	int       part;
 	sndBuffer *chunk = sfx->soundData;
 
@@ -176,19 +191,22 @@ static int ResampleSfx(sfx_t *sfx, int channels, int inrate, int inwidth, int sa
 	return outcount;
 }
 
-/*
-================
-ResampleSfx
-
-resample / decimate to the current source rate
-================
-*/
+/**
+ * @brief Resample / decimate to the current source rate
+ * @param[in] sfx
+ * @param[in] channels
+ * @param[in] inrate
+ * @param[in] inwidth
+ * @param[in] samples
+ * @param[in] data
+ * @return
+ */
 static int ResampleSfxRaw(short *sfx, int channels, int inrate, int inwidth, int samples, byte *data)
 {
 	float stepscale = (float)inrate / dma.speed;  // this is usually 0.5, 1, or 2
-	int   outcount  = samples / stepscale;
+	int   outcount = (int)(samples / stepscale);
 	int   srcsample, i, j, sample;
-	int   samplefrac = 0, fracstep = stepscale * 256 * channels;
+	int   samplefrac = 0, fracstep = (int)(stepscale * 256 * channels);
 
 	for (i = 0 ; i < outcount ; i++)
 	{
@@ -213,14 +231,12 @@ static int ResampleSfxRaw(short *sfx, int channels, int inrate, int inwidth, int
 
 //=============================================================================
 
-/*
-==============
-S_LoadSound
-
-The filename may be different than sfx->name in the case
-of a forced fallback of a player specific sound
-==============
-*/
+/**
+ * @brief The filename may be different than sfx->name in the case
+ * of a forced fallback of a player specific sound
+ * @param[in,out] sfx
+ * @return
+ */
 qboolean S_LoadSound(sfx_t *sfx)
 {
 	byte       *data;
@@ -304,7 +320,10 @@ qboolean S_LoadSound(sfx_t *sfx)
 	return qtrue;
 }
 
+/**
+ * @brief S_DisplayFreeMemory
+ */
 void S_DisplayFreeMemory(void)
 {
-	Com_Printf("%d bytes (%6.2f MB) free sound buffer memory, %d bytes (%6.2f MB) total used.\n", inUse, inUse / Square(1024.f), totalInUse, totalInUse / Square(1024.f));
+	Com_Printf("%d bytes (%6.2f MB) free sound buffer memory, %d bytes (%6.2f MB) total used.\n", inUse, (double)(inUse / Square(1024.f)), totalInUse, (double)(totalInUse / Square(1024.f)));
 }

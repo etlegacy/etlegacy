@@ -48,6 +48,9 @@ short *snd_out;
 
 // #if !id386                                        // if configured not to use asm
 
+/**
+ * @brief S_WriteLinearBlastStereo16
+ */
 void S_WriteLinearBlastStereo16(void)
 {
 	int i;
@@ -134,6 +137,11 @@ void S_WriteLinearBlastStereo16(void)
 //
 // #endif
 
+/**
+ * @brief S_TransferStereo16
+ * @param[out] pbuf
+ * @param[in] endtime
+ */
 void S_TransferStereo16(unsigned long *pbuf, int endtime)
 {
 	int lpos;
@@ -169,12 +177,10 @@ void S_TransferStereo16(unsigned long *pbuf, int endtime)
 	}
 }
 
-/*
-===================
-S_TransferPaintBuffer
-
-===================
-*/
+/**
+ * @brief S_TransferPaintBuffer
+ * @param[in] endtime
+ */
 void S_TransferPaintBuffer(int endtime)
 {
 	unsigned long *pbuf = (unsigned long *)dma.buffer;
@@ -253,6 +259,14 @@ CHANNEL MIXING
 */
 
 #if idppc_altivec
+/**
+ * @brief S_PaintChannelFrom16_altivec
+ * @param[in] ch
+ * @param[in] sc
+ * @param[in] count
+ * @param[in] sampleOffset
+ * @param[in] bufferOffset
+ */
 static void S_PaintChannelFrom16_altivec(channel_t *ch, const sfx_t *sc, int count, int sampleOffset, int bufferOffset)
 {
 	int                   data, aoff, boff;
@@ -353,9 +367,9 @@ static void S_PaintChannelFrom16_altivec(channel_t *ch, const sfx_t *sc, int cou
 				vector signed int    merge0, merge1;
 				vector signed int    d0, d1, d2, d3;
 				vector unsigned char samplePermute0 =
-				    VECCONST_UINT8(0, 1, 4, 5, 0, 1, 4, 5, 2, 3, 6, 7, 2, 3, 6, 7);
+					VECCONST_UINT8(0, 1, 4, 5, 0, 1, 4, 5, 2, 3, 6, 7, 2, 3, 6, 7);
 				vector unsigned char samplePermute1 =
-				    VECCONST_UINT8(8, 9, 12, 13, 8, 9, 12, 13, 10, 11, 14, 15, 10, 11, 14, 15);
+					VECCONST_UINT8(8, 9, 12, 13, 8, 9, 12, 13, 10, 11, 14, 15, 10, 11, 14, 15);
 				vector unsigned char loadPermute0, loadPermute1;
 
 				// Rather than permute the vectors after we load them to do the sample
@@ -464,6 +478,14 @@ static void S_PaintChannelFrom16_altivec(channel_t *ch, const sfx_t *sc, int cou
 }
 #endif
 
+/**
+ * @brief S_PaintChannelFrom16_scalar
+ * @param[in] ch
+ * @param[in] sc
+ * @param[in] count
+ * @param[in] sampleOffset
+ * @param[in] bufferOffset
+ */
 static void S_PaintChannelFrom16_scalar(channel_t *ch, const sfx_t *sc, int count, int sampleOffset, int bufferOffset)
 {
 	int                   data, aoff, boff;
@@ -571,6 +593,14 @@ static void S_PaintChannelFrom16_scalar(channel_t *ch, const sfx_t *sc, int coun
 	}
 }
 
+/**
+ * @brief S_PaintChannelFrom16
+ * @param[in] ch
+ * @param[in] sc
+ * @param[in] count
+ * @param[in] sampleOffset
+ * @param[in] bufferOffset
+ */
 static void S_PaintChannelFrom16(channel_t *ch, const sfx_t *sc, int count, int sampleOffset, int bufferOffset)
 {
 #if idppc_altivec
@@ -584,6 +614,14 @@ static void S_PaintChannelFrom16(channel_t *ch, const sfx_t *sc, int count, int 
 	S_PaintChannelFrom16_scalar(ch, sc, count, sampleOffset, bufferOffset);
 }
 
+/**
+ * @brief S_PaintChannelFromWavelet
+ * @param[in] ch
+ * @param[in] sc
+ * @param[in] count
+ * @param[in] sampleOffset
+ * @param[in] bufferOffset
+ */
 void S_PaintChannelFromWavelet(channel_t *ch, sfx_t *sc, int count, int sampleOffset, int bufferOffset)
 {
 	int                   leftvol  = ch->leftvol * snd_vol;
@@ -626,6 +664,14 @@ void S_PaintChannelFromWavelet(channel_t *ch, sfx_t *sc, int count, int sampleOf
 	}
 }
 
+/**
+ * @brief S_PaintChannelFromADPCM
+ * @param[in] ch
+ * @param[in] sc
+ * @param[in] count
+ * @param[in] sampleOffset
+ * @param[in] bufferOffset
+ */
 void S_PaintChannelFromADPCM(channel_t *ch, sfx_t *sc, int count, int sampleOffset, int bufferOffset)
 {
 	int                   data;
@@ -673,6 +719,14 @@ void S_PaintChannelFromADPCM(channel_t *ch, sfx_t *sc, int count, int sampleOffs
 	}
 }
 
+/**
+ * @brief S_PaintChannelFromMuLaw
+ * @param[in] ch
+ * @param[in] sc
+ * @param[in] count
+ * @param[in] sampleOffset
+ * @param[in] bufferOffset
+ */
 void S_PaintChannelFromMuLaw(channel_t *ch, sfx_t *sc, int count, int sampleOffset, int bufferOffset)
 {
 	float                 ooff;
@@ -728,17 +782,16 @@ void S_PaintChannelFromMuLaw(channel_t *ch, sfx_t *sc, int count, int sampleOffs
 					chunk = sc->soundData;
 				}
 				samples = (byte *)chunk->sndChunk;
-				ooff    = 0.0;
+				ooff    = 0.0f;
 			}
 		}
 	}
 }
 
-/*
-===================
-S_PaintChannels
-===================
-*/
+/**
+ * @brief S_PaintChannels
+ * @param[in] endtime
+ */
 void S_PaintChannels(int endtime)
 {
 	int       i;

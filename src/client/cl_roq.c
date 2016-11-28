@@ -94,11 +94,13 @@ static short cin_soundSamples[ROQ_CHUNK_MAX_DATA_SIZE >> 2];
 
 static byte cin_chunkData[ROQ_CHUNK_HEADER_SIZE + ROQ_CHUNK_MAX_DATA_SIZE];
 
-/*
- ==================
- CIN_BlitBlock2x2
- ==================
-*/
+/**
+ * @brief CIN_BlitBlock2x2
+ * @param[in] cin
+ * @param[in] x
+ * @param[in] y
+ * @param[in] index
+ */
 static void CIN_BlitBlock2x2(cinematic_t *cin, int x, int y, int index)
 {
 	uint32_t *src, *dst;
@@ -113,11 +115,13 @@ static void CIN_BlitBlock2x2(cinematic_t *cin, int x, int y, int index)
 	dst[cin->frameWidth * 1 + 1] = src[3];
 }
 
-/*
- ==================
- CIN_BlitBlock4x4
- ==================
-*/
+/**
+ * @brief CIN_BlitBlock4x4
+ * @param[in] cin
+ * @param[in] x
+ * @param[in] y
+ * @param[in] index
+ */
 static void CIN_BlitBlock4x4(cinematic_t *cin, int x, int y, int index)
 {
 	uint32_t *src, *dst;
@@ -146,11 +150,13 @@ static void CIN_BlitBlock4x4(cinematic_t *cin, int x, int y, int index)
 	dst[cin->frameWidth * 3 + 3] = src[15];
 }
 
-/*
- ==================
- CIN_BlitBlock8x8
- ==================
-*/
+/**
+ * @brief CIN_BlitBlock8x8
+ * @param[in] cin
+ * @param[in] x
+ * @param[in] y
+ * @param[in] index
+ */
 static void CIN_BlitBlock8x8(cinematic_t *cin, int x, int y, int index)
 {
 	uint32_t *src, *dst;
@@ -231,11 +237,15 @@ static void CIN_BlitBlock8x8(cinematic_t *cin, int x, int y, int index)
 	dst[cin->frameWidth * 7 + 7] = src[63];
 }
 
-/*
- ==================
- CIN_MoveBlock4x4
- ==================
-*/
+/**
+ * @brief CIN_MoveBlock4x4
+ * @param[in] cin
+ * @param[in] x
+ * @param[in] y
+ * @param[in] xMean
+ * @param[in] yMean
+ * @param[in] xyMove
+ */
 static void CIN_MoveBlock4x4(cinematic_t *cin, int x, int y, int xMean, int yMean, int xyMove)
 {
 	uint32_t *src, *dst;
@@ -268,11 +278,15 @@ static void CIN_MoveBlock4x4(cinematic_t *cin, int x, int y, int xMean, int yMea
 	dst[cin->frameWidth * 3 + 3] = src[cin->frameWidth * 3 + 3];
 }
 
-/*
- ==================
- CIN_MoveBlock8x8
- ==================
-*/
+/**
+ * @brief CIN_MoveBlock8x8
+ * @param[in] cin
+ * @param[in] x
+ * @param[in] y
+ * @param[in] xMean
+ * @param[in] yMean
+ * @param[in] xyMove
+ */
 static void CIN_MoveBlock8x8(cinematic_t *cin, int x, int y, int xMean, int yMean, int xyMove)
 {
 	uint32_t *src, *dst;
@@ -357,11 +371,11 @@ static void CIN_MoveBlock8x8(cinematic_t *cin, int x, int y, int xMean, int yMea
 	dst[cin->frameWidth * 7 + 7] = src[cin->frameWidth * 7 + 7];
 }
 
-/*
- ==================
- CIN_DecodeQuadInfo
- ==================
-*/
+/**
+ * @brief CIN_DecodeQuadInfo
+ * @param[in,out] cin
+ * @param[in] data
+ */
 static void CIN_DecodeQuadInfo(cinematic_t *cin, const byte *data)
 {
 	if (cin->frameBuffer[0] && cin->frameBuffer[1])
@@ -382,11 +396,11 @@ static void CIN_DecodeQuadInfo(cinematic_t *cin, const byte *data)
 	cin->frameBuffer[1] = (byte *) Com_Allocate(cin->frameWidth * cin->frameHeight * 4);
 }
 
-/*
- ==================
- CIN_DecodeQuadCodebook
- ==================
-*/
+/**
+ * @brief CIN_DecodeQuadCodebook
+ * @param cin - unused
+ * @param[in,out] data
+ */
 static void CIN_DecodeQuadCodebook(cinematic_t *cin, const byte *data)
 {
 	uint32_t *quadVQ2, *quadVQ4, *quadVQ8;
@@ -548,11 +562,11 @@ static void CIN_DecodeQuadCodebook(cinematic_t *cin, const byte *data)
 	}
 }
 
-/*
- ==================
- CIN_DecodeQuadVQ
- ==================
-*/
+/**
+ * @brief CIN_DecodeQuadVQ
+ * @param[in,out] cin
+ * @param[in,out] data
+ */
 static void CIN_DecodeQuadVQ(cinematic_t *cin, const byte *data)
 {
 	int code, codeBits, codeWord;
@@ -708,11 +722,11 @@ static void CIN_DecodeQuadVQ(cinematic_t *cin, const byte *data)
 	}
 }
 
-/*
- ==================
- CIN_DecodeSoundMono22
- ==================
-*/
+/**
+ * @brief CIN_DecodeSoundMono22
+ * @param[in] cin
+ * @param[in] data
+ */
 static void CIN_DecodeSoundMono22(cinematic_t *cin, const byte *data)
 {
 	short prev;
@@ -737,11 +751,11 @@ static void CIN_DecodeSoundMono22(cinematic_t *cin, const byte *data)
 	S_RawSamples(0, chunkHeader->size, 22050, 2, 1, (byte *) cin_soundSamples, 1.0f, 1.0f);
 }
 
-/*
- ==================
- CIN_DecodeSoundStereo22
- ==================
-*/
+/**
+ * @brief CIN_DecodeSoundStereo22
+ * @param[in] cin
+ * @param[in] data
+ */
 static void CIN_DecodeSoundStereo22(cinematic_t *cin, const byte *data)
 {
 	short prevL, prevR;
@@ -769,11 +783,11 @@ static void CIN_DecodeSoundStereo22(cinematic_t *cin, const byte *data)
 	S_RawSamples(0, chunkHeader->size >> 1, 22050, 2, 2, (byte *) cin_soundSamples, 1.0f, 1.0f);
 }
 
-/*
- ==================
- CIN_DecodeSoundMono48
- ==================
-*/
+/**
+ * @brief CIN_DecodeSoundMono48
+ * @param[in] cin
+ * @param[in] data
+ */
 static void CIN_DecodeSoundMono48(cinematic_t *cin, const byte *data)
 {
 	short samp;
@@ -796,11 +810,11 @@ static void CIN_DecodeSoundMono48(cinematic_t *cin, const byte *data)
 	S_RawSamples(0, chunkHeader->size >> 1, 48000, 2, 1, (byte *) cin_soundSamples, 1.0f, 1.0f);
 }
 
-/*
- ==================
- CIN_DecodeSoundStereo48
- ==================
-*/
+/**
+ * @brief CIN_DecodeSoundStereo48
+ * @param[in] cin
+ * @param[in] data
+ */
 static void CIN_DecodeSoundStereo48(cinematic_t *cin, const byte *data)
 {
 	short sampL, sampR;
@@ -825,11 +839,11 @@ static void CIN_DecodeSoundStereo48(cinematic_t *cin, const byte *data)
 	S_RawSamples(0, chunkHeader->size >> 2, 48000, 2, 2, (byte *) cin_soundSamples, 1.0f, 1.0f);
 }
 
-/*
- ==================
- CIN_DecodeChunk
- ==================
-*/
+/**
+ * @brief CIN_DecodeChunk
+ * @param[in,out] cin
+ * @return
+ */
 static qboolean CIN_DecodeChunk(cinematic_t *cin)
 {
 	byte *data;
@@ -909,11 +923,11 @@ static qboolean CIN_DecodeChunk(cinematic_t *cin)
 	return qtrue;
 }
 
-/*
- ==================
- ROQ_UpdateCinematic
- ==================
-*/
+/**
+ * @brief ROQ_UpdateCinematic
+ * @param[in,out] cin
+ * @param[in] time
+ */
 void ROQ_UpdateCinematic(cinematic_t *cin, int time)
 {
 	int frame;
@@ -1001,12 +1015,21 @@ void ROQ_UpdateCinematic(cinematic_t *cin, int time)
 	return;
 }
 
+/**
+ * @brief ROQ_Reset
+ * @param[in,out] cin
+ */
 void ROQ_Reset(cinematic_t *cin)
 {
 	(void) FS_Seek(cin->file, ROQ_CHUNK_HEADER_SIZE, FS_SEEK_SET);
 	cin->offset = ROQ_CHUNK_HEADER_SIZE;
 }
 
+/**
+ * @brief ROQ_StartRead
+ * @param[in,out] cin
+ * @return
+ */
 qboolean ROQ_StartRead(cinematic_t *cin)
 {
 	uint16_t id, fps;
@@ -1037,6 +1060,10 @@ qboolean ROQ_StartRead(cinematic_t *cin)
 	return qtrue;
 }
 
+/**
+ * @brief ROQ_StopVideo
+ * @param[in,out] cin
+ */
 void ROQ_StopVideo(cinematic_t *cin)
 {
 	if (cin->data)
@@ -1046,6 +1073,9 @@ void ROQ_StopVideo(cinematic_t *cin)
 	}
 }
 
+/**
+ * @brief ROQ_Init
+ */
 void ROQ_Init(void)
 {
 	float   f;

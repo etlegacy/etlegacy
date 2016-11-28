@@ -39,6 +39,12 @@
 #define C2 0.2241438680420134
 #define C3 -0.1294095225512604
 
+/**
+ * @brief daub4
+ * @param b - unused
+ * @param[in] n
+ * @param[in] isign
+ */
 void daub4(float b[], unsigned long n, int isign)
 {
 	float wksp[4097];
@@ -78,6 +84,12 @@ void daub4(float b[], unsigned long n, int isign)
 #undef a
 }
 
+/**
+ * @brief wt1
+ * @param[in] a
+ * @param[in] n
+ * @param[in] isign
+ */
 void wt1(float a[], unsigned long n, int isign)
 {
 	unsigned long nn;
@@ -112,6 +124,11 @@ static unsigned char numBits[] =
 	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
 };
 
+/**
+ * @brief MuLawEncode
+ * @param[in] s
+ * @return
+ */
 byte MuLawEncode(short s)
 {
 	unsigned long adjusted;
@@ -169,6 +186,11 @@ short mulawToShort[256] =
 	56,     48,     40,     32,     24,     16,     8,      0
 };
 
+/**
+ * @brief encodeWavelet
+ * @param[out] sfx
+ * @param[in,out] packets
+ */
 void encodeWavelet(sfx_t *sfx, short *packets)
 {
 	float     wksp[4097], temp;
@@ -226,6 +248,11 @@ void encodeWavelet(sfx_t *sfx, short *packets)
 	}
 }
 
+/**
+ * @brief decodeWavelet
+ * @param[in] chunk
+ * @param[out] to
+ */
 void decodeWavelet(sndBuffer *chunk, short *to)
 {
 	float wksp[4097];
@@ -251,6 +278,11 @@ void decodeWavelet(sndBuffer *chunk, short *to)
 	}
 }
 
+/**
+ * @brief encodeMuLaw
+ * @param[out] sfx
+ * @param[in,out] packets
+ */
 void encodeMuLaw(sfx_t *sfx, short *packets)
 {
 	int       i, samples = sfx->soundLength, size, grade = 0, poop;
