@@ -48,6 +48,11 @@ cvar_t *db_url;
 sqlite3  *db;
 qboolean isDBActive;
 
+/**
+ * @brief DB_Init
+ *
+ * @return
+ */
 int DB_Init()
 {
 	char *to_ospath;
@@ -155,6 +160,8 @@ int DB_Init()
 
 /**
  * @brief creates tables and populates our scheme
+ *
+ * @return
  */
 static int DB_Create_Schema()
 {
@@ -234,6 +241,11 @@ static int DB_Create_Schema()
 	return 0;
 }
 
+/**
+ * @brief DB_Create
+ *
+ * @return
+ */
 int DB_Create()
 {
 	int result;
@@ -287,6 +299,8 @@ int DB_Create()
 
 /**
  * @brief saves memory db to disk
+ *
+ * @return
  */
 int DB_SaveMemDB()
 {
@@ -318,6 +332,11 @@ int DB_SaveMemDB()
 	return 0;
 }
 
+/**
+ * @brief DB_Close
+ *
+ * @return
+ */
 int DB_Close()
 {
 	int result;
@@ -373,6 +392,11 @@ int DB_Close()
  *
  * If the backup process is successfully completed, SQLITE_OK is returned.
  * Otherwise, if an error occurs, an SQLite error code is returned.
+ *
+ * @param zFilename
+ *
+ * @return
+ *
  */
 int DB_BackupDB(const char *zFilename, void (*xProgress)(int, int)) // Progress function to invoke
 {
@@ -430,6 +454,12 @@ int DB_BackupDB(const char *zFilename, void (*xProgress)(int, int)) // Progress 
  *
  * If the operation is successful, SQLITE_OK is returned. Otherwise, if
  * an error occurs, an SQLite error code is returned.
+ *
+ * @param[in] pInMemory
+ * @param[in] zFilename
+ * @param[in] isSave
+ *
+ * @return
  */
 int DB_LoadOrSaveDb(sqlite3 *pInMemory, const char *zFilename, int isSave)
 {
@@ -476,6 +506,16 @@ int DB_LoadOrSaveDb(sqlite3 *pInMemory, const char *zFilename, int isSave)
 	return rc;
 }
 
+/**
+ * @brief DB_callback
+ *
+ * @param NotUsed
+ * @param[in] argc
+ * @param[in] argv
+ * @param azColName
+ *
+ * @return
+ */
 int DB_callback(void *NotUsed, int argc, char **argv, char **azColName)
 {
 	int i;
@@ -500,7 +540,10 @@ int DB_callback(void *NotUsed, int argc, char **argv, char **azColName)
 
 /**
  * @brief Get the last inserted ROWID
- * see also "SELECT last_insert_rowid()"
+ *
+ * @see "SELECT last_insert_rowid()"
+ *
+ * @return If database is available, last insert row id. Otherwise -1
  */
 int DB_last_insert_rowid()
 {
