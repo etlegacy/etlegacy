@@ -116,7 +116,7 @@ static WinConData s_wcd;
  */
 static void CON_ResizeWindowsCon(int cx, int cy)
 {
-	float sx, sy, x, y, w, h;
+	float sx, /*sy,*/ x, y, w, h;
 
 	if (cx < SYSCON_DEFAULT_WIDTH)
 	{
@@ -128,7 +128,7 @@ static void CON_ResizeWindowsCon(int cx, int cy)
 	}
 
 	sx = (float)cx / SYSCON_DEFAULT_WIDTH;
-	sy = (float)cy / SYSCON_DEFAULT_HEIGHT;
+	// sy = (float)cy / SYSCON_DEFAULT_HEIGHT; // FIXME: never read !
 
 	x = 5;
 	w = cx - 15;
