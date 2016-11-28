@@ -494,6 +494,7 @@ typedef struct
 
 typedef enum
 {
+	KB_NONE = -1,
 	KB_LEFT,
 	KB_RIGHT,
 	KB_FORWARD,

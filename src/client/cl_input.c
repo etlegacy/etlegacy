@@ -63,7 +63,7 @@ static kbutton_t kb[NUM_BUTTONS];
 // doubleTap button mapping
 static kbuttons_t dtmapping[] =
 {
-	-1,                 // DT_NONE
+	KB_NONE,            // DT_NONE
 	KB_MOVELEFT,        // DT_MOVELEFT
 	KB_MOVERIGHT,       // DT_MOVERIGHT
 	KB_FORWARD,         // DT_FORWARD
@@ -73,16 +73,26 @@ static kbuttons_t dtmapping[] =
 	KB_UP               // DT_UP
 };
 
+/**
+ * @brief IN_MLookDown
+ */
 void IN_MLookDown(void)
 {
 	kb[KB_MLOOK].active = qtrue;
 }
 
+/**
+ * @brief IN_MLookUp
+ */
 void IN_MLookUp(void)
 {
 	kb[KB_MLOOK].active = qfalse;
 }
 
+/**
+ * @brief IN_KeyDown
+ * @param[in,out] b
+ */
 void IN_KeyDown(kbutton_t *b)
 {
 	int  k;
@@ -130,6 +140,10 @@ void IN_KeyDown(kbutton_t *b)
 	b->wasPressed = qtrue;
 }
 
+/**
+ * @brief IN_KeyUp
+ * @param[in,out] b
+ */
 void IN_KeyUp(kbutton_t *b)
 {
 	int      k;
@@ -183,13 +197,11 @@ void IN_KeyUp(kbutton_t *b)
 	b->active = qfalse;
 }
 
-/*
-===============
-CL_KeyState
-
-Returns the fraction of the frame that the key was down
-===============
-*/
+/**
+ * @brief CL_KeyState
+ * @param key
+ * @return The fraction of the frame that the key was down
+ */
 float CL_KeyState(kbutton_t *key)
 {
 	float val;
@@ -231,240 +243,443 @@ float CL_KeyState(kbutton_t *key)
 	return val;
 }
 
+/**
+ * @brief IN_UpDown
+ */
 void IN_UpDown(void)
 {
 	IN_KeyDown(&kb[KB_UP]);
 }
 
+/**
+ * @brief IN_UpUp
+ */
 void IN_UpUp(void)
 {
 	IN_KeyUp(&kb[KB_UP]);
 }
 
+/**
+ * @brief IN_DownDown
+ */
 void IN_DownDown(void)
 {
 	IN_KeyDown(&kb[KB_DOWN]);
 }
 
+/**
+ * @brief IN_DownUp
+ */
 void IN_DownUp(void)
 {
 	IN_KeyUp(&kb[KB_DOWN]);
 }
 
+/**
+ * @brief IN_LeftDown
+ */
 void IN_LeftDown(void)
 {
 	IN_KeyDown(&kb[KB_LEFT]);
 }
+
+/**
+ * @brief IN_LeftUp
+ */
 void IN_LeftUp(void)
 {
 	IN_KeyUp(&kb[KB_LEFT]);
 }
+
+/**
+ * @brief IN_RightDown
+ */
 void IN_RightDown(void)
 {
 	IN_KeyDown(&kb[KB_RIGHT]);
 }
+
+/**
+ * @brief IN_RightUp
+ */
 void IN_RightUp(void)
 {
 	IN_KeyUp(&kb[KB_RIGHT]);
 }
+
+/**
+ * @brief IN_ForwardDown
+ */
 void IN_ForwardDown(void)
 {
 	IN_KeyDown(&kb[KB_FORWARD]);
 }
+
+/**
+ * @brief IN_ForwardUp
+ */
 void IN_ForwardUp(void)
 {
 	IN_KeyUp(&kb[KB_FORWARD]);
 }
+
+/**
+ * @brief IN_BackDown
+ */
 void IN_BackDown(void)
 {
 	IN_KeyDown(&kb[KB_BACK]);
 }
+
+/**
+ * @brief IN_BackUp
+ */
 void IN_BackUp(void)
 {
 	IN_KeyUp(&kb[KB_BACK]);
 }
+
+/**
+ * @brief IN_LookupDown
+ */
 void IN_LookupDown(void)
 {
 	IN_KeyDown(&kb[KB_LOOKUP]);
 }
+
+/**
+ * @brief IN_LookupUp
+ */
 void IN_LookupUp(void)
 {
 	IN_KeyUp(&kb[KB_LOOKUP]);
 }
+
+/**
+ * @brief IN_LookdownDown
+ */
 void IN_LookdownDown(void)
 {
 	IN_KeyDown(&kb[KB_LOOKDOWN]);
 }
+
+/**
+ * @brief IN_LookdownUp
+ */
 void IN_LookdownUp(void)
 {
 	IN_KeyUp(&kb[KB_LOOKDOWN]);
 }
+
+/**
+ * @brief IN_MoveleftDown
+ */
 void IN_MoveleftDown(void)
 {
 	IN_KeyDown(&kb[KB_MOVELEFT]);
 }
+
+/**
+ * @brief IN_MoveleftUp
+ */
 void IN_MoveleftUp(void)
 {
 	IN_KeyUp(&kb[KB_MOVELEFT]);
 }
+
+/**
+ * @brief IN_MoverightDown
+ */
 void IN_MoverightDown(void)
 {
 	IN_KeyDown(&kb[KB_MOVERIGHT]);
 }
+
+/**
+ * @brief IN_MoverightUp
+ */
 void IN_MoverightUp(void)
 {
 	IN_KeyUp(&kb[KB_MOVERIGHT]);
 }
 
+/**
+ * @brief IN_SpeedDown
+ */
 void IN_SpeedDown(void)
 {
 	IN_KeyDown(&kb[KB_SPEED]);
 }
+
+/**
+ * @brief IN_SpeedUp
+ */
 void IN_SpeedUp(void)
 {
 	IN_KeyUp(&kb[KB_SPEED]);
 }
+
+/**
+ * @brief IN_StrafeDown
+ */
 void IN_StrafeDown(void)
 {
 	IN_KeyDown(&kb[KB_STRAFE]);
 }
+
+/**
+ * @brief IN_StrafeUp
+ */
 void IN_StrafeUp(void)
 {
 	IN_KeyUp(&kb[KB_STRAFE]);
 }
 
+/**
+ * @brief IN_Button0Down
+ */
 void IN_Button0Down(void)
 {
 	IN_KeyDown(&kb[KB_BUTTONS0]);
 }
+
+/**
+ * @brief IN_Button0Up
+ */
 void IN_Button0Up(void)
 {
 	IN_KeyUp(&kb[KB_BUTTONS0]);
 }
+
+/**
+ * @brief IN_Button1Down
+ */
 void IN_Button1Down(void)
 {
 	IN_KeyDown(&kb[KB_BUTTONS1]);
 }
+
+/**
+ * @brief IN_Button1Up
+ */
 void IN_Button1Up(void)
 {
 	IN_KeyUp(&kb[KB_BUTTONS1]);
 }
+
+/**
+ * @brief IN_UseItemDown
+ */
 void IN_UseItemDown(void)
 {
 	IN_KeyDown(&kb[KB_BUTTONS2]);
 }
+
+/**
+ * @brief IN_UseItemUp
+ */
 void IN_UseItemUp(void)
 {
 	IN_KeyUp(&kb[KB_BUTTONS2]);
 }
+
+/**
+ * @brief IN_Button3Down
+ */
 void IN_Button3Down(void)
 {
 	IN_KeyDown(&kb[KB_BUTTONS3]);
 }
+
+/**
+ * @brief IN_Button3Up
+ */
 void IN_Button3Up(void)
 {
 	IN_KeyUp(&kb[KB_BUTTONS3]);
 }
 
-/* @note unused
+/**
+ * @brief IN_Button4Down
+ *
+ * @note Unused
+ */
+/*
 void IN_Button4Down(void)
 {
     IN_KeyDown(&kb[KB_BUTTONS4]);
 }
 */
 
-/* @note unused
+/**
+ * @brief IN_Button4Up
+ *
+ * @note Unused
+ */
+/*
 void IN_Button4Up(void)
 {
     IN_KeyUp(&kb[KB_BUTTONS4]);
 }
 */
 
+/**
+ * @brief IN_ActivateDown
+ */
 void IN_ActivateDown(void)
 {
 	IN_KeyDown(&kb[KB_BUTTONS6]);
 }
+
+/**
+ * @brief IN_ActivateUp
+ */
 void IN_ActivateUp(void)
 {
 	IN_KeyUp(&kb[KB_BUTTONS6]);
 }
 
+/**
+ * @brief IN_SprintDown
+ */
 void IN_SprintDown(void)
 {
 	IN_KeyDown(&kb[KB_BUTTONS5]);
 }
+
+/**
+ * @brief IN_SprintUp
+ */
 void IN_SprintUp(void)
 {
 	IN_KeyUp(&kb[KB_BUTTONS5]);
 }
 
-// wbuttons (wolf buttons)
+/**
+ * @brief wbuttons (wolf buttons)
+ */
 void IN_Wbutton0Down(void)
 {
 	IN_KeyDown(&kb[KB_WBUTTONS0]);         // secondary fire button
 }
+
+/**
+ * @brief IN_Wbutton0Up
+ */
 void IN_Wbutton0Up(void)
 {
 	IN_KeyUp(&kb[KB_WBUTTONS0]);
 }
+
+/**
+ * @brief IN_ZoomDown
+ */
 void IN_ZoomDown(void)
 {
 	IN_KeyDown(&kb[KB_WBUTTONS1]);         // zoom key
 }
+
+/**
+ * @brief IN_ZoomUp
+ */
 void IN_ZoomUp(void)
 {
 	IN_KeyUp(&kb[KB_WBUTTONS1]);
 }
+
+/**
+ * @brief IN_ReloadDown
+ */
 void IN_ReloadDown(void)
 {
 	IN_KeyDown(&kb[KB_WBUTTONS3]);         // manual weapon re-load
 }
+
+/**
+ * @brief IN_ReloadUp
+ */
 void IN_ReloadUp(void)
 {
 	IN_KeyUp(&kb[KB_WBUTTONS3]);
 }
+
+/**
+ * @brief IN_LeanLeftDown
+ */
 void IN_LeanLeftDown(void)
 {
 	IN_KeyDown(&kb[KB_WBUTTONS4]);         // lean left
 }
+
+/**
+ * @brief IN_LeanLeftUp
+ */
 void IN_LeanLeftUp(void)
 {
 	IN_KeyUp(&kb[KB_WBUTTONS4]);
 }
+
+/**
+ * @brief IN_LeanRightDown
+ */
 void IN_LeanRightDown(void)
 {
 	IN_KeyDown(&kb[KB_WBUTTONS5]);         // lean right
 }
+
+/**
+ * @brief IN_LeanRightUp
+ */
 void IN_LeanRightUp(void)
 {
 	IN_KeyUp(&kb[KB_WBUTTONS5]);
 }
 
-// Kick
-// now wbutton prone
+/**
+ * @brief IN_ProneDown
+ * Kick
+ * now wbutton prone
+ */
 void IN_ProneDown(void)
 {
 	IN_KeyDown(&kb[KB_WBUTTONS7]);
 }
+
+/**
+ * @brief IN_ProneUp
+ */
 void IN_ProneUp(void)
 {
 	IN_KeyUp(&kb[KB_WBUTTONS7]);
 }
 
-/* @note unused
+/**
+ * @brief IN_ButtonDown
+ *
+ * @note Unused
+ */
+/*
 void IN_ButtonDown(void)
 {
     IN_KeyDown(&kb[KB_BUTTONS1]);
 }
 */
 
-/* @note unused
+/**
+ * @brief IN_ButtonUp
+ *
+ * @note Unused
+ */
+/*
 void IN_ButtonUp(void)
 {
     IN_KeyUp(&kb[KB_BUTTONS1]);
 }
 */
 
+/**
+ * @brief IN_Help
+ */
 void IN_Help(void)
 {
 	if (cls.state == CA_ACTIVE && !clc.demoplaying)
@@ -482,24 +697,20 @@ cvar_t *cl_recoilPitch;
 cvar_t *cl_bypassMouseInput;
 cvar_t *cl_doubletapdelay;
 
-/*
-================
-CL_AdjustAngles
-
-Moves the local angle positions
-================
-*/
+/**
+ * @brief Moves the local angle positions
+ */
 void CL_AdjustAngles(void)
 {
 	float speed;
 
 	if (kb[KB_SPEED].active)
 	{
-		speed = 0.001 * cls.frametime * cl_anglespeedkey->value;
+		speed = 0.001f * cls.frametime * cl_anglespeedkey->value;
 	}
 	else
 	{
-		speed = 0.001 * cls.frametime;
+		speed = 0.001f * cls.frametime;
 	}
 
 	if (!kb[KB_STRAFE].active)
@@ -512,13 +723,10 @@ void CL_AdjustAngles(void)
 	cl.viewangles[PITCH] += speed * cl_pitchspeed->value * CL_KeyState(&kb[KB_LOOKDOWN]);
 }
 
-/*
-================
-CL_KeyMove
-
-Sets the usercmd_t based on key states
-================
-*/
+/**
+ * @brief Sets the usercmd_t based on key states
+ * @param cmd
+ */
 void CL_KeyMove(usercmd_t *cmd)
 {
 	int movespeed;
@@ -611,11 +819,12 @@ void CL_KeyMove(usercmd_t *cmd)
 	}
 }
 
-/*
-=================
-CL_MouseEvent
-=================
-*/
+/**
+ * @brief CL_MouseEvent
+ * @param[in] dx
+ * @param[in] dy
+ * @param time - unused
+ */
 void CL_MouseEvent(int dx, int dy, int time)
 {
 	if (cls.keyCatchers & KEYCATCH_UI)
@@ -650,13 +859,12 @@ void CL_MouseEvent(int dx, int dy, int time)
 	}
 }
 
-/*
-=================
-CL_JoystickEvent
-
-Joystick values stay set until changed
-=================
-*/
+/**
+ * @brief Joystick values stay set until changed
+ * @param[in] axis
+ * @param[in] value
+ * @param time - unused
+ */
 void CL_JoystickEvent(int axis, int value, int time)
 {
 	if (axis < 0 || axis >= MAX_JOYSTICK_AXIS)
@@ -666,11 +874,10 @@ void CL_JoystickEvent(int axis, int value, int time)
 	cl.joystickAxis[axis] = value;
 }
 
-/*
-=================
-CL_JoystickMove
-=================
-*/
+/**
+ * @brief CL_JoystickMove
+ * @param[in,out] cmd
+ */
 void CL_JoystickMove(usercmd_t *cmd)
 {
 	float anglespeed;
@@ -682,11 +889,11 @@ void CL_JoystickMove(usercmd_t *cmd)
 
 	if (kb[KB_SPEED].active)
 	{
-		anglespeed = 0.001 * cls.frametime * cl_anglespeedkey->value;
+		anglespeed = 0.001f * cls.frametime * cl_anglespeedkey->value;
 	}
 	else
 	{
-		anglespeed = 0.001 * cls.frametime;
+		anglespeed = 0.001f * cls.frametime;
 	}
 
 	if (!kb[KB_STRAFE].active)
@@ -710,11 +917,10 @@ void CL_JoystickMove(usercmd_t *cmd)
 	cmd->upmove = ClampChar(cmd->upmove + cl.joystickAxis[AXIS_UP]);
 }
 
-/*
-=================
-CL_MouseMove
-=================
-*/
+/**
+ * @brief CL_MouseMove
+ * @param[in,out] cmd
+ */
 void CL_MouseMove(usercmd_t *cmd)
 {
 	float mx, my;
@@ -724,8 +930,8 @@ void CL_MouseMove(usercmd_t *cmd)
 	// allow mouse smoothing
 	if (m_filter->integer)
 	{
-		mx = (cl.mouseDx[0] + cl.mouseDx[1]) * 0.5;
-		my = (cl.mouseDy[0] + cl.mouseDy[1]) * 0.5;
+		mx = (cl.mouseDx[0] + cl.mouseDx[1]) * 0.5f;
+		my = (cl.mouseDy[0] + cl.mouseDy[1]) * 0.5f;
 	}
 	else
 	{
@@ -736,15 +942,15 @@ void CL_MouseMove(usercmd_t *cmd)
 	cl.mouseDx[cl.mouseIndex] = 0;
 	cl.mouseDy[cl.mouseIndex] = 0;
 
-	rate             = sqrt(mx * mx + my * my) / (float)frame_msec;
+	rate             = (float)(sqrt((double)(mx * mx + my * my)) / frame_msec);
 	accelSensitivity = cl_sensitivity->value + rate * cl_mouseAccel->value;
 
 	// scale by FOV
 	accelSensitivity *= cl.cgameSensitivity;
 
-	if (rate && cl_showMouseRate->integer)
+	if (rate != 0.f && cl_showMouseRate->integer)
 	{
-		Com_Printf("%f : %f\n", rate, accelSensitivity);
+		Com_Printf("%f : %f\n", (double)rate, (double)accelSensitivity);
 	}
 
 	// mg42
@@ -759,7 +965,7 @@ void CL_MouseMove(usercmd_t *cmd)
 		my *= accelSensitivity;
 	}
 
-	if (!mx && !my)
+	if (mx == 0.f && my == 0.f)
 	{
 		return;
 	}
@@ -784,11 +990,10 @@ void CL_MouseMove(usercmd_t *cmd)
 	}
 }
 
-/*
-==============
-CL_CmdButtons
-==============
-*/
+/**
+ * @brief CL_CmdButtons
+ * @param[in,out] cmd
+ */
 void CL_CmdButtons(usercmd_t *cmd)
 {
 	int i;
@@ -834,11 +1039,10 @@ void CL_CmdButtons(usercmd_t *cmd)
 	}
 }
 
-/*
-==============
-CL_FinishMove
-==============
-*/
+/**
+ * @brief CL_FinishMove
+ * @param[out] cmd
+ */
 void CL_FinishMove(usercmd_t *cmd)
 {
 	int i;
@@ -860,11 +1064,10 @@ void CL_FinishMove(usercmd_t *cmd)
 	}
 }
 
-/*
-=================
-CL_CreateCmd
-=================
-*/
+/**
+ * @brief CL_CreateCmd
+ * @return
+ */
 usercmd_t CL_CreateCmd(void)
 {
 	usercmd_t cmd;
@@ -927,13 +1130,9 @@ usercmd_t CL_CreateCmd(void)
 	return cmd;
 }
 
-/*
-=================
-CL_CreateNewCommands
-
-Create a new usercmd_t structure for this frame
-=================
-*/
+/**
+ * @brief Create a new usercmd_t structure for this frame
+ */
 void CL_CreateNewCommands(void)
 {
 	int cmdNum;
@@ -971,13 +1170,20 @@ void CL_CreateNewCommands(void)
 =================
 CL_ReadyToSendPacket
 
-Returns qfalse if we are over the maxpackets limit
-and should choke back the bandwidth a bit by not sending
-a packet this frame.  All the commands will still get
-delivered in the next packet, but saving a header and
-getting more delta compression will reduce total bandwidth.
+
 =================
 */
+/**
+ * @brief CL_ReadyToSendPacket
+ *
+ * @details Returns qfalse if we are over the maxpackets limit
+ * and should choke back the bandwidth a bit by not sending
+ * a packet this frame.  All the commands will still get
+ * delivered in the next packet, but saving a header and
+ * getting more delta compression will reduce total bandwidth.
+ *
+ * @return
+ */
 qboolean CL_ReadyToSendPacket(void)
 {
 	int oldPacketNum;
@@ -1038,27 +1244,22 @@ qboolean CL_ReadyToSendPacket(void)
 	return qtrue;
 }
 
-/*
-===================
-CL_WritePacket
-
-Create and send the command packet to the server
-Including both the reliable commands and the usercmds
-
-During normal gameplay, a client packet will contain something like:
-
-4   sequence number
-2   qport
-4   serverid
-4   acknowledged sequence number
-4   clc.serverCommandSequence
-<optional reliable commands>
-1   clc_move or clc_moveNoDelta
-1   command count
-<count * usercmds>
-
-===================
-*/
+/**
+ * @brief Create and send the command packet to the server
+ * Including both the reliable commands and the usercmds
+ *
+ * @details During normal gameplay, a client packet will contain something like:
+ *
+ * 4   sequence number
+ * 2   qport
+ * 4   serverid
+ * 4   acknowledged sequence number
+ * 4   clc.serverCommandSequence
+ * <optional reliable commands>
+ * 1   clc_move or clc_moveNoDelta
+ * 1   command count
+ * <count * usercmds>
+ */
 void CL_WritePacket(void)
 {
 	msg_t     buf;
@@ -1188,13 +1389,9 @@ void CL_WritePacket(void)
 	}
 }
 
-/*
-=================
-CL_SendCmd
-
-Called every frame to builds and sends a command packet to the server.
-=================
-*/
+/**
+ * @brief Called every frame to builds and sends a command packet to the server.
+ */
 void CL_SendCmd(void)
 {
 	// don't send any message if not connected
@@ -1225,11 +1422,9 @@ void CL_SendCmd(void)
 	CL_WritePacket();
 }
 
-/*
-============
-CL_InitInput
-============
-*/
+/**
+ * @brief CL_InitInput
+ */
 void CL_InitInput(void)
 {
 	Cmd_AddCommand("+moveup", IN_UpDown);
@@ -1300,11 +1495,9 @@ void CL_InitInput(void)
 	cl_debugMove = Cvar_Get("cl_debugMove", "0", 0);
 }
 
-/*
-============
-CL_ClearKeys
-============
-*/
+/**
+ * @brief CL_ClearKeys
+ */
 void CL_ClearKeys(void)
 {
 	memset(kb, 0, sizeof(kb));

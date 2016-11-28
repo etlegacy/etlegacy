@@ -77,12 +77,11 @@ typedef struct
 
 #define g_ogm ((cin_ogv_t *) cin->data)
 
-/*
-  OGV_LoadBlockToSync
-
-  return:
-  !0 -> no data transferred
-*/
+/**
+ * @brief OGV_LoadBlockToSync
+ * @param[in,out] cin
+ * @return !0 -> no data transferred
+ */
 static int OGV_LoadBlockToSync(cinematic_t *cin)
 {
 	int  r = -1;
@@ -102,12 +101,11 @@ static int OGV_LoadBlockToSync(cinematic_t *cin)
 	return r;
 }
 
-/*
-  OGV_LoadPagesToStreams
-
-  return:
-  !0 -> no data transferred (or not for all Streams)
-*/
+/**
+ * @brief OGV_LoadPagesToStreams
+ * @param cin - unused
+ * @return !0 -> no data transferred (or not for all Streams)
+ */
 static int OGV_LoadPagesToStreams(cinematic_t *cin)
 {
 	int              r          = -1;
@@ -148,10 +146,11 @@ static int OGV_LoadPagesToStreams(cinematic_t *cin)
 	return r;
 }
 
-/*
-
-  return: audio wants more packets
-*/
+/**
+ * @brief OGV_LoadAudio
+ * @param[in] cin
+ * @return audio wants more packets ?
+ */
 static qboolean OGV_LoadAudio(cinematic_t *cin)
 {
 	qboolean     anyDataTransferred = qtrue;
@@ -220,6 +219,14 @@ static qboolean OGV_LoadAudio(cinematic_t *cin)
 	return (qboolean)(g_ogm->currentTime + MIN_AUDIO_PRELOAD > (int)(g_ogm->vd.granulepos * 1000 / g_ogm->vi.rate));
 }
 
+/**
+ * @brief OGV_FindSizeShift
+ * @param[in] x
+ * @param[in] y
+ * @return
+ *
+ * @note Unused
+ */
 /*
 static int OGV_FindSizeShift(int x, int y)
 {
@@ -235,7 +242,17 @@ static int OGV_FindSizeShift(int x, int y)
 
     return -1;
 }
+*/
 
+/**
+ * @brief OGV_CheckFrame
+ * @param[in] yuv
+ * @param[in] info
+ * @return
+ *
+ * @note Unused
+ */
+/*
 static qboolean OGV_CheckFrame(yuv_buffer *yuv, theora_info *info)
 {
     int yWShift, uvWShift;
@@ -256,6 +273,13 @@ static qboolean OGV_CheckFrame(yuv_buffer *yuv, theora_info *info)
 }
 */
 
+/**
+ * @brief OGV_yuv_to_rgb24
+ * @param[in] yuv
+ * @param[in] info
+ * @param[out] output
+ * @return
+ */
 static qboolean OGV_yuv_to_rgb24(yuv_buffer *yuv, theora_info *info, uint32_t *output)
 {
 	int i, j;
@@ -303,11 +327,21 @@ static qboolean OGV_yuv_to_rgb24(yuv_buffer *yuv, theora_info *info, uint32_t *o
 	return qtrue;
 }
 
+/**
+ * @brief OGV_NextNeededVFrame
+ * @param cin - unused
+ * @return
+ */
 static int OGV_NextNeededVFrame(cinematic_t *cin)
 {
 	return (int)(g_ogm->currentTime * (ogg_int64_t) 10000 / g_ogm->Vtime_unit);
 }
 
+/**
+ * @brief OGV_LoadVideoFrame
+ * @param[in,out] cin
+ * @return
+ */
 static int OGV_LoadVideoFrame(cinematic_t *cin)
 {
 	int        r = 0;
@@ -374,6 +408,11 @@ static int OGV_LoadVideoFrame(cinematic_t *cin)
 	return r;
 }
 
+/**
+ * @brief OGV_LoadFrame
+ * @param[in] cin
+ * @return
+ */
 static qboolean OGV_LoadFrame(cinematic_t *cin)
 {
 	qboolean anyDataTransferred = qtrue;
@@ -425,6 +464,11 @@ static qboolean OGV_LoadFrame(cinematic_t *cin)
 	return (qboolean) !!anyDataTransferred;
 }
 
+/**
+ * @brief OGV_UpdateCinematic
+ * @param[in,out] cin
+ * @param[in] time
+ */
 void OGV_UpdateCinematic(cinematic_t *cin, int time)
 {
 	if (!cin->startTime)
@@ -456,6 +500,11 @@ void OGV_UpdateCinematic(cinematic_t *cin, int time)
 	return;
 }
 
+/**
+ * @brief OGV_StartRead
+ * @param[in,out] cin
+ * @return
+ */
 qboolean OGV_StartRead(cinematic_t *cin)
 {
 	int        status;
@@ -595,6 +644,10 @@ qboolean OGV_StartRead(cinematic_t *cin)
 	return qtrue;
 }
 
+/**
+ * @brief OGV_StopVideo
+ * @param[in,out] cin
+ */
 void OGV_StopVideo(cinematic_t *cin)
 {
 	if (cin->data)

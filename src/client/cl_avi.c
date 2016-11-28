@@ -87,11 +87,12 @@ static aviFileData_t afd;
 static byte buffer[MAX_AVI_BUFFER];
 static int  bufIndex;
 
-/*
-===============
-SafeFS_Write
-===============
-*/
+/**
+ * @brief SafeFS_Write
+ * @param[in] buffer
+ * @param[in] len
+ * @param[in] f
+ */
 static ID_INLINE void SafeFS_Write(const void *buffer, int len, fileHandle_t f)
 {
 	if (FS_Write(buffer, len, f) < len)
@@ -100,22 +101,20 @@ static ID_INLINE void SafeFS_Write(const void *buffer, int len, fileHandle_t f)
 	}
 }
 
-/*
-===============
-WRITE_STRING
-===============
-*/
+/**
+ * @brief WRITE_STRING
+ * @param[in] s
+ */
 static ID_INLINE void WRITE_STRING(const char *s)
 {
 	Com_Memcpy(&buffer[bufIndex], s, strlen(s));
 	bufIndex += strlen(s);
 }
 
-/*
-===============
-WRITE_4BYTES
-===============
-*/
+/**
+ * @brief WRITE_4BYTES
+ * @param x
+ */
 static ID_INLINE void WRITE_4BYTES(int x)
 {
 	buffer[bufIndex + 0] = (byte) ((x >> 0) & 0xFF);
@@ -125,11 +124,10 @@ static ID_INLINE void WRITE_4BYTES(int x)
 	bufIndex            += 4;
 }
 
-/*
-===============
-WRITE_2BYTES
-===============
-*/
+/**
+ * @brief WRITE_2BYTES
+ * @param x
+ */
 static ID_INLINE void WRITE_2BYTES(int x)
 {
 	buffer[bufIndex + 0] = (byte) ((x >> 0) & 0xFF);
@@ -137,11 +135,13 @@ static ID_INLINE void WRITE_2BYTES(int x)
 	bufIndex            += 2;
 }
 
+/**
+ * @brief WRITE_1BYTES
+ * @param[in] x
+ *
+ * @note Unused
+ */
 /*
-===============
-WRITE_1BYTES
-===============
-
 static ID_INLINE void WRITE_1BYTES(int x)
 {
     buffer[bufIndex] = x;
@@ -149,11 +149,10 @@ static ID_INLINE void WRITE_1BYTES(int x)
 }
 */
 
-/*
-===============
-START_CHUNK
-===============
-*/
+/**
+ * @brief START_CHUNK
+ * @param[in] s
+ */
 static ID_INLINE void START_CHUNK(const char *s)
 {
 	if (afd.chunkStackTop == MAX_RIFF_CHUNKS)
@@ -167,11 +166,9 @@ static ID_INLINE void START_CHUNK(const char *s)
 	WRITE_4BYTES(0);
 }
 
-/*
-===============
-END_CHUNK
-===============
-*/
+/**
+ * @brief END_CHUNK
+ */
 static ID_INLINE void END_CHUNK(void)
 {
 	int endIndex = bufIndex;
@@ -189,11 +186,9 @@ static ID_INLINE void END_CHUNK(void)
 	bufIndex = PAD(bufIndex, 2);
 }
 
-/*
-===============
-CL_WriteAVIHeader
-===============
-*/
+/**
+ * @brief CL_WriteAVIHeader
+ */
 void CL_WriteAVIHeader(void)
 {
 	bufIndex          = 0;
@@ -342,14 +337,13 @@ void CL_WriteAVIHeader(void)
 	}
 }
 
-/*
-===============
-CL_OpenAVIForWriting
-
-Creates an AVI file and gets it into a state where
-writing the actual data can begin
-===============
-*/
+/**
+ * @brief Creates an AVI file and gets it into a state where
+ * writing the actual data can begin
+ *
+ * @param[in] fileName
+ * @return
+ */
 qboolean CL_OpenAVIForWriting(const char *fileName)
 {
 	if (afd.fileOpen)
@@ -454,17 +448,17 @@ qboolean CL_OpenAVIForWriting(const char *fileName)
 	return qtrue;
 }
 
-/*
-===============
-CL_CheckFileSize
-===============
-*/
+/**
+ * @brief CL_CheckFileSize
+ * @param[in] bytesToAdd
+ * @return
+ */
 static qboolean CL_CheckFileSize(int bytesToAdd)
 {
-	unsigned int newFileSize = afd.fileSize +          // Current file size
-	                           bytesToAdd +            // What we want to add
-	                           (afd.numIndices * 16) + // The index
-	                           4;                      // The index size
+	int newFileSize = afd.fileSize +          // Current file size
+	                  bytesToAdd +                     // What we want to add
+	                  (afd.numIndices * 16) +          // The index
+	                  4;                               // The index size
 
 	// I assume all the operating systems
 	// we target can handle a 2Gb file
@@ -482,11 +476,11 @@ static qboolean CL_CheckFileSize(int bytesToAdd)
 	return qfalse;
 }
 
-/*
-===============
-CL_WriteAVIVideoFrame
-===============
-*/
+/**
+ * @brief CL_WriteAVIVideoFrame
+ * @param[in] imageBuffer
+ * @param[in] size
+ */
 void CL_WriteAVIVideoFrame(const byte *imageBuffer, int size)
 {
 	int  chunkOffset = afd.fileSize - afd.moviOffset - 8;
@@ -535,11 +529,11 @@ void CL_WriteAVIVideoFrame(const byte *imageBuffer, int size)
 
 #define PCM_BUFFER_SIZE 44100
 
-/*
-===============
-CL_WriteAVIAudioFrame
-===============
-*/
+/**
+ * @brief CL_WriteAVIAudioFrame
+ * @param[in] pcmBuffer
+ * @param[in] size
+ */
 void CL_WriteAVIAudioFrame(const byte *pcmBuffer, int size)
 {
 	static byte pcmCaptureBuffer[PCM_BUFFER_SIZE] = { 0 };
@@ -567,11 +561,11 @@ void CL_WriteAVIAudioFrame(const byte *pcmBuffer, int size)
 		size = PCM_BUFFER_SIZE - bytesInBuffer;
 	}
 
-	Com_Memcpy(&pcmCaptureBuffer[bytesInBuffer], pcmBuffer, size);
+	Com_Memcpy(&pcmCaptureBuffer[bytesInBuffer], pcmBuffer, (unsigned int)size);
 	bytesInBuffer += size;
 
 	// Only write if we have a frame's worth of audio
-	if (bytesInBuffer >= (int)ceil((float)afd.a.rate / (float)afd.frameRate) * afd.a.sampleSize)
+	if (bytesInBuffer >= (int)(ceil((double)afd.a.rate / (double)afd.frameRate) * afd.a.sampleSize))
 	{
 		int  chunkOffset = afd.fileSize - afd.moviOffset - 8;
 		int  chunkSize   = 8 + bytesInBuffer;
@@ -605,11 +599,9 @@ void CL_WriteAVIAudioFrame(const byte *pcmBuffer, int size)
 	}
 }
 
-/*
-===============
-CL_TakeVideoFrame
-===============
-*/
+/**
+ * @brief CL_TakeVideoFrame
+ */
 void CL_TakeVideoFrame(void)
 {
 	// AVI file isn't open
@@ -621,13 +613,10 @@ void CL_TakeVideoFrame(void)
 	re.TakeVideoFrame(afd.width, afd.height, afd.cBuffer, afd.eBuffer, afd.motionJpeg);
 }
 
-/*
-===============
-CL_CloseAVI
-
-Closes the AVI file and writes an index chunk
-===============
-*/
+/**
+ * @brief Closes the AVI file and writes an index chunk
+ * @return
+ */
 qboolean CL_CloseAVI(void)
 {
 	int        indexRemainder;
@@ -696,11 +685,10 @@ qboolean CL_CloseAVI(void)
 	return qtrue;
 }
 
-/*
-===============
-CL_VideoRecording
-===============
-*/
+/**
+ * @brief CL_VideoRecording
+ * @return
+ */
 qboolean CL_VideoRecording(void)
 {
 	return afd.fileOpen;

@@ -39,6 +39,8 @@
 
 typedef enum
 {
+	K_NONE = 0,
+
 	K_TAB    = 9,
 	K_ENTER  = 13,
 	K_ESCAPE = 27,

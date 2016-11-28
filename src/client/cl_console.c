@@ -47,7 +47,7 @@ console_t con;
 cvar_t *con_openspeed;
 cvar_t *con_autoclear;
 
-vec4_t console_highlightcolor = { 0.5, 0.5, 0.2, 0.45 };
+vec4_t console_highlightcolor = { 0.5f, 0.5f, 0.2f, 0.45f };
 
 /**
  * @brief Toggle console
@@ -77,7 +77,7 @@ void Con_ToggleConsole_f(void)
 		// short console
 		if (keys[K_CTRL].down)
 		{
-			con.desiredFrac = (4.0 * SMALLCHAR_HEIGHT) / cls.glconfig.vidHeight;
+			con.desiredFrac = (4.0f * SMALLCHAR_HEIGHT) / cls.glconfig.vidHeight;
 		}
 		// full console
 		else if (keys[K_ALT].down)
@@ -156,7 +156,7 @@ void Con_Dump_f(void)
 	}
 
 #ifdef _WIN32
-	bufferlen = con.linewidth + 3 * sizeof(char);
+	bufferlen = con.linewidth + 3 * (int)sizeof(char);
 #else
 	bufferlen = con.linewidth + 2 * sizeof(char);
 #endif
@@ -274,6 +274,8 @@ void Con_CheckResize(void)
 
 /**
  * @brief Complete file text name
+ * @param args - unused
+ * @param[in] argNum
  */
 void Cmd_CompleteTxtName(char *args, int argNum)
 {
@@ -348,8 +350,11 @@ void Con_Linefeed(void)
 #if defined(_WIN32) && !defined(LEGACY_DEBUG)
 #pragma optimize( "g", off ) // msvc totally screws this function up with optimize on
 #endif
+
 /**
  * @brief Handles cursor positioning, line wrapping, etc
+ *
+ * @param[in] txt
  */
 void CL_ConsolePrint(char *txt)
 {
@@ -511,6 +516,9 @@ void Con_DrawInput(void)
 
 /**
  * @brief Draw scrollbar
+ * @param[in] length
+ * @param[in] x
+ * @param[in] y
  */
 void Con_DrawScrollbar(int length, float x, float y)
 {
@@ -542,6 +550,7 @@ void Con_DrawScrollbar(int length, float x, float y)
 
 /**
  * @brief Draws the console with the solid background
+ * @param[in] frac
  */
 void Con_DrawSolidConsole(float frac)
 {
@@ -687,8 +696,8 @@ void Con_DrawSolidConsole(float frac)
 void Con_DrawConsole(void)
 {
 	// render console only if opened but also if disconnected
-	if (!con.displayFrac && !(cls.state == CA_DISCONNECTED &&
-	                          !(cls.keyCatchers & (KEYCATCH_UI | KEYCATCH_CGAME))))
+	if (con.displayFrac == 0.f && !(cls.state == CA_DISCONNECTED &&
+	                                !(cls.keyCatchers & (KEYCATCH_UI | KEYCATCH_CGAME))))
 	{
 		return;
 	}
@@ -718,7 +727,7 @@ void Con_RunConsole(void)
 	// scroll towards the destination height
 	if (con.finalFrac < con.displayFrac)
 	{
-		con.displayFrac -= con_openspeed->value * cls.realFrametime * 0.001;
+		con.displayFrac -= con_openspeed->value * cls.realFrametime * 0.001f;
 
 		if (con.finalFrac > con.displayFrac)
 		{
@@ -727,7 +736,7 @@ void Con_RunConsole(void)
 	}
 	else if (con.finalFrac > con.displayFrac)
 	{
-		con.displayFrac += con_openspeed->value * cls.realFrametime * 0.001;
+		con.displayFrac += con_openspeed->value * cls.realFrametime * 0.001f;
 
 		if (con.finalFrac < con.displayFrac)
 		{
@@ -739,7 +748,7 @@ void Con_RunConsole(void)
 	if (con.displayFrac > 0)
 	{
 		const float scrolldiff   = MAX(0.5f, abs(con.bottomDisplayedLine - con.scrollIndex));
-		int         nudgingValue = con_openspeed->value * cls.realFrametime * 0.005 * scrolldiff;
+		int         nudgingValue = con_openspeed->value * cls.realFrametime * 0.005f * scrolldiff;
 
 		// nudge might turn out to be 0 so just bump it to 1 so we actually move towards our goal
 		if (nudgingValue <= 0)
