@@ -66,6 +66,10 @@ typedef struct memoryblock_s
 
 memoryblock_t *memory;
 
+/**
+ * @brief LinkMemoryBlock
+ * @param[in,out] block
+ */
 void LinkMemoryBlock(memoryblock_t *block)
 {
 	block->prev = NULL;
@@ -77,6 +81,10 @@ void LinkMemoryBlock(memoryblock_t *block)
 	memory = block;
 }
 
+/**
+ * @brief UnlinkMemoryBlock
+ * @param[in,out] block
+ */
 void UnlinkMemoryBlock(memoryblock_t *block)
 {
 	if (block->prev)
@@ -96,6 +104,11 @@ void UnlinkMemoryBlock(memoryblock_t *block)
 #ifdef MEMDEBUG
 void *GetMemoryDebug(unsigned long size, char *label, char *file, int line)
 #else
+/**
+ * @brief Allocate a memory block of the given size
+ * @param[in] size
+ * @return
+ */
 void *GetMemory(unsigned long size)
 #endif //MEMDEBUG
 {
@@ -122,6 +135,11 @@ void *GetMemory(unsigned long size)
 #ifdef MEMDEBUG
 void *GetClearedMemoryDebug(unsigned long size, char *label, char *file, int line)
 #else
+/**
+ * @brief Allocate a memory block of the given size and clear it
+ * @param[in] size
+ * @return
+ */
 void *GetClearedMemory(unsigned long size)
 #endif //MEMDEBUG
 {
@@ -138,6 +156,11 @@ void *GetClearedMemory(unsigned long size)
 #ifdef MEMDEBUG
 void *GetHunkMemoryDebug(unsigned long size, char *label, char *file, int line)
 #else
+/**
+ * @brief Allocate a memory block of the given size
+ * @param[in] size
+ * @return
+ */
 void *GetHunkMemory(unsigned long size)
 #endif //MEMDEBUG
 {
@@ -164,6 +187,11 @@ void *GetHunkMemory(unsigned long size)
 #ifdef MEMDEBUG
 void *GetClearedHunkMemoryDebug(unsigned long size, char *label, char *file, int line)
 #else
+/**
+ * @brief Allocate a memory block of the given size and clear it
+ * @param[in] size
+ * @return
+ */
 void *GetClearedHunkMemory(unsigned long size)
 #endif //MEMDEBUG
 {
@@ -177,6 +205,12 @@ void *GetClearedHunkMemory(unsigned long size)
 	return ptr;
 }
 
+/**
+ * @brief BlockFromPointer
+ * @param[in] ptr
+ * @param[in] str
+ * @return
+ */
 memoryblock_t *BlockFromPointer(void *ptr, char *str)
 {
 	memoryblock_t *block;
@@ -204,6 +238,10 @@ memoryblock_t *BlockFromPointer(void *ptr, char *str)
 	return block;
 }
 
+/**
+ * @brief Free the given memory block
+ * @param[in] ptr
+ */
 void FreeMemory(void *ptr)
 {
 	memoryblock_t *block;
@@ -224,6 +262,11 @@ void FreeMemory(void *ptr)
 	}
 }
 
+/**
+ * @brief Get the size of the memory block in bytes
+ * @param[in] ptr
+ * @return The size of the memory block in bytes
+ */
 int MemoryByteSize(void *ptr)
 {
 	memoryblock_t *block;
@@ -236,6 +279,9 @@ int MemoryByteSize(void *ptr)
 	return block->size;
 }
 
+/**
+ * @brief Prints the total used memory size
+ */
 void PrintUsedMemorySize(void)
 {
 	botimport.Print(PRT_MESSAGE, "total allocated memory: %d KB\n", allocatedmemory >> 10);
@@ -243,6 +289,9 @@ void PrintUsedMemorySize(void)
 	botimport.Print(PRT_MESSAGE, "total memory blocks: %d\n", numblocks);
 }
 
+/**
+ * @brief Print all memory blocks with label
+ */
 void PrintMemoryLabels(void)
 {
 	memoryblock_t *block;
@@ -267,6 +316,9 @@ void PrintMemoryLabels(void)
 	}
 }
 
+/**
+ * @brief Free all allocated memory
+ */
 void DumpMemory(void)
 {
 	memoryblock_t *block;
@@ -284,6 +336,11 @@ void DumpMemory(void)
 #ifdef MEMDEBUG
 void *GetMemoryDebug(unsigned long size, char *label, char *file, int line)
 #else
+/**
+ * @brief Allocate a memory block of the given size
+ * @param size
+ * @return
+ */
 void *GetMemory(unsigned long size)
 #endif //MEMDEBUG
 {
@@ -303,6 +360,11 @@ void *GetMemory(unsigned long size)
 #ifdef MEMDEBUG
 void *GetClearedMemoryDebug(unsigned long size, char *label, char *file, int line)
 #else
+/**
+ * @brief Allocate a memory block of the given size and clear it
+ * @param[in] size
+ * @return
+ */
 void *GetClearedMemory(unsigned long size)
 #endif //MEMDEBUG
 {
@@ -319,6 +381,11 @@ void *GetClearedMemory(unsigned long size)
 #ifdef MEMDEBUG
 void *GetHunkMemoryDebug(unsigned long size, char *label, char *file, int line)
 #else
+/**
+ * @brief Allocate a memory block of the given size
+ * @param[in] size
+ * @return
+ */
 void *GetHunkMemory(unsigned long size)
 #endif //MEMDEBUG
 {
@@ -338,6 +405,11 @@ void *GetHunkMemory(unsigned long size)
 #ifdef MEMDEBUG
 void *GetClearedHunkMemoryDebug(unsigned long size, char *label, char *file, int line)
 #else
+/**
+ * @brief Allocate a memory block of the given size and clear it
+ * @param[in] size
+ * @return
+ */
 void *GetClearedHunkMemory(unsigned long size)
 #endif //MEMDEBUG
 {
@@ -351,6 +423,10 @@ void *GetClearedHunkMemory(unsigned long size)
 	return ptr;
 }
 
+/**
+ * @brief FreeMemory
+ * @param[in] ptr
+ */
 void FreeMemory(void *ptr)
 {
 	unsigned long int *memid;
@@ -363,10 +439,18 @@ void FreeMemory(void *ptr)
 	}
 }
 
+/**
+ * @brief PrintUsedMemorySize
+ * @note Empty
+ */
 void PrintUsedMemorySize(void)
 {
 }
 
+/**
+ * @brief PrintMemoryLabels
+ * @note Empty
+ */
 void PrintMemoryLabels(void)
 {
 }

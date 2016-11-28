@@ -50,7 +50,12 @@ int botlibsetup = qfalse;
 // several functions used by the exported functions
 //===========================================================================
 
-qboolean BotLibSetup(char *str)
+/**
+ * @brief BotLibSetup
+ * @param[in] str
+ * @return
+ */
+qboolean BotLibSetup(const char *str)
 {
 	if (!botlibsetup)
 	{
@@ -61,6 +66,12 @@ qboolean BotLibSetup(char *str)
 }
 
 extern define_t *globaldefines;
+
+/**
+ * @brief Export_BotLibSetup
+ * @param singleplayer - unused
+ * @return
+ */
 int Export_BotLibSetup(qboolean singleplayer)
 {
 	// initialize byte swapping (litte endian etc.)
@@ -74,6 +85,10 @@ int Export_BotLibSetup(qboolean singleplayer)
 	return BLERR_NOERROR;
 }
 
+/**
+ * @brief Export_BotLibShutdown
+ * @return
+ */
 int Export_BotLibShutdown(void)
 {
 	static int recursive = 0;
@@ -100,11 +115,12 @@ int Export_BotLibShutdown(void)
 	return BLERR_NOERROR;
 }
 
-/*
-============
-GetBotLibAPI
-============
-*/
+/**
+ * @brief GetBotLibAPI
+ * @param[in] apiVersion
+ * @param[in] import
+ * @return
+ */
 botlib_export_t *GetBotLibAPI(int apiVersion, botlib_import_t *import)
 {
 	botimport = *import;

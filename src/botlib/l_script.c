@@ -117,11 +117,16 @@ punctuation_t default_punctuations[] =
 #ifdef DOLLAR
 	{ "$",   P_DOLLAR,           NULL },
 #endif //DOLLAR
-	{ NULL,  0 }
+	{ NULL,  0,                  NULL }
 };
 
 char basefolder[MAX_QPATH];
 
+/**
+ * @brief PS_CreatePunctuationTable
+ * @param[in,out] script
+ * @param[in,out] punctuations
+ */
 void PS_CreatePunctuationTable(script_t *script, punctuation_t *punctuations)
 {
 	int           i;
@@ -172,6 +177,12 @@ void PS_CreatePunctuationTable(script_t *script, punctuation_t *punctuations)
 	}
 }
 
+/**
+ * @brief PunctuationFromNum
+ * @param[in] script
+ * @param[in] num
+ * @return A pointer to the punctuation with the given number
+ */
 char *PunctuationFromNum(script_t *script, int num)
 {
 	int i;
@@ -186,7 +197,12 @@ char *PunctuationFromNum(script_t *script, int num)
 	return "unknown punctuation";
 }
 
-void QDECL ScriptError(script_t *script, char *str, ...)
+/**
+ * @brief Print a script error with filename and line number
+ * @param[in] script
+ * @param[in] str
+ */
+void QDECL ScriptError(script_t *script, const char *str, ...)
 {
 	char    text[1024];
 	va_list ap;
@@ -202,7 +218,12 @@ void QDECL ScriptError(script_t *script, char *str, ...)
 	botimport.Print(PRT_ERROR, "file %s, line %d: %s\n", script->filename, script->line, text);
 }
 
-void QDECL ScriptWarning(script_t *script, char *str, ...)
+/**
+ * @brief Print a script warning with filename and line number
+ * @param[in]s script
+ * @param[in]s str
+ */
+void QDECL ScriptWarning(script_t *script, const char *str, ...)
 {
 	char    text[1024];
 	va_list ap;
@@ -218,6 +239,11 @@ void QDECL ScriptWarning(script_t *script, char *str, ...)
 	botimport.Print(PRT_WARNING, "file %s, line %d: %s\n", script->filename, script->line, text);
 }
 
+/**
+ * @brief Set an array with punctuations, NULL restores default C/C++ set
+ * @param[in,out] script
+ * @param[in] p
+ */
 void SetScriptPunctuations(script_t *script, punctuation_t *p)
 {
 #ifdef PUNCTABLE
@@ -240,8 +266,14 @@ void SetScriptPunctuations(script_t *script, punctuation_t *p)
 	}
 }
 
-// Reads spaces, tabs, C-like comments etc.
-// When a newline character is found the scripts line counter is increased.
+
+/**
+ * @brief Reads spaces, tabs, C-like comments etc.
+ * When a newline character is found the scripts line counter is increased.
+ *
+ * @param[in,out] script
+ * @return
+ */
 int PS_ReadWhiteSpace(script_t *script)
 {
 	while (1)
@@ -318,9 +350,12 @@ int PS_ReadWhiteSpace(script_t *script)
 	return 1;
 }
 
-// Reads an escape character.
-// Parameter:				script		: script to read from
-//								ch				: place to store the read escape character
+/**
+ * @brief Reads an escape character.
+ * @param[in,out] script Script to read from
+ * @param[out] ch Place to store the read escape character
+ * @return
+ */
 int PS_ReadEscapeCharacter(script_t *script, char *ch)
 {
 	int c, val, i;
@@ -412,14 +447,20 @@ int PS_ReadEscapeCharacter(script_t *script, char *ch)
 	return 1;
 }
 
-// Reads C-like string. Escape characters are interpretted.
-// Quotes are included with the string.
-// Reads two strings with a white space between them as one string.
-//
-// Parameter:				script		: script to read from
-//								token			: buffer to store the string
-// Returns:					qtrue when a string was read succesfully
-// Changes Globals:		-
+
+/**
+ * @brief Reads C-like string.
+ *
+ * @details Escape characters are interpretted.
+ * Quotes are included with the string.
+ * Reads two strings with a white space between them as one string.
+ *
+ * @param[in,out] script Script to read from
+ * @param[in,out] token	Buffer to store the string
+ * @param[in] quote
+ *
+ * @return qtrue when a string was read succesfully
+ */
 int PS_ReadString(script_t *script, token_t *token, int quote)
 {
 	int  len, tmpline;
@@ -513,6 +554,12 @@ int PS_ReadString(script_t *script, token_t *token, int quote)
 	return 1;
 }
 
+/**
+ * @brief PS_ReadName
+ * @param[in] script
+ * @param[out] token
+ * @return
+ */
 int PS_ReadName(script_t *script, token_t *token)
 {
 	int  len = 0;
@@ -539,6 +586,13 @@ int PS_ReadName(script_t *script, token_t *token)
 	return 1;
 }
 
+/**
+ * @brief NumberValue
+ * @param[in,out] string
+ * @param[in] subtype
+ * @param[out] intvalue
+ * @param[out] floatvalue
+ */
 void NumberValue(char *string, int subtype, unsigned long int *intvalue,
                  long double *floatvalue)
 {
@@ -621,6 +675,12 @@ void NumberValue(char *string, int subtype, unsigned long int *intvalue,
 	}
 }
 
+/**
+ * @brief PS_ReadNumber
+ * @param[in,out] script
+ * @param[out] token
+ * @return
+ */
 int PS_ReadNumber(script_t *script, token_t *token)
 {
 	int  len = 0, i;
@@ -748,7 +808,15 @@ int PS_ReadNumber(script_t *script, token_t *token)
 	return 1;
 }
 
-/* unused
+/**
+ * @brief PS_ReadLiteral
+ * @param[in,out] script
+ * @param[out] token
+ * @return
+ *
+ * @note unused
+ */
+/*
 int PS_ReadLiteral(script_t *script, token_t *token)
 {
     token->type = TT_LITERAL;
@@ -798,6 +866,12 @@ int PS_ReadLiteral(script_t *script, token_t *token)
 }
 */
 
+/**
+ * @brief PS_ReadPunctuation
+ * @param[in,out] script
+ * @param[in,out] token
+ * @return
+ */
 int PS_ReadPunctuation(script_t *script, token_t *token)
 {
 	int           len;
@@ -834,6 +908,12 @@ int PS_ReadPunctuation(script_t *script, token_t *token)
 	return 0;
 }
 
+/**
+ * @brief PS_ReadPrimitive
+ * @param[out] script
+ * @param[in,out] token
+ * @return
+ */
 int PS_ReadPrimitive(script_t *script, token_t *token)
 {
 	int len;
@@ -855,6 +935,12 @@ int PS_ReadPrimitive(script_t *script, token_t *token)
 	return 1;
 }
 
+/**
+ * @brief Read a token from the script
+ * @param[in,out] script
+ * @param[in,out] token
+ * @return
+ */
 int PS_ReadToken(script_t *script, token_t *token)
 {
 	// if there is a token available (from UnreadToken)
@@ -939,24 +1025,42 @@ int PS_ReadToken(script_t *script, token_t *token)
 	return 1;
 }
 
-int PS_ExpectTokenString(script_t *script, char *string)
+/**
+ * @brief Expect a certain token
+ * @param[in] script
+ * @param[in] string
+ * @return
+ *
+ * @note Unused
+ */
+/*
+int PS_ExpectTokenString(script_t *script, const char *string)
 {
-	token_t token;
+    token_t token;
 
-	if (!PS_ReadToken(script, &token))
-	{
-		ScriptError(script, "couldn't find expected %s", string);
-		return 0;
-	}
+    if (!PS_ReadToken(script, &token))
+    {
+        ScriptError(script, "couldn't find expected %s", string);
+        return 0;
+    }
 
-	if (strcmp(token.string, string))
-	{
-		ScriptError(script, "expected %s, found %s", string, token.string);
-		return 0;
-	}
-	return 1;
+    if (strcmp(token.string, string))
+    {
+        ScriptError(script, "expected %s, found %s", string, token.string);
+        return 0;
+    }
+    return 1;
 }
+*/
 
+/**
+ * @brief Expect a certain token type
+ * @param[in] script
+ * @param[in] type
+ * @param[in] subtype
+ * @param[in] token
+ * @return
+ */
 int PS_ExpectTokenType(script_t *script, int type, int subtype, token_t *token)
 {
 	if (!PS_ReadToken(script, token))
@@ -1053,6 +1157,12 @@ int PS_ExpectTokenType(script_t *script, int type, int subtype, token_t *token)
 	return 1;
 }
 
+/**
+ * @brief Expect a token
+ * @param[in] script
+ * @param[in] token
+ * @return
+ */
 int PS_ExpectAnyToken(script_t *script, token_t *token)
 {
 	if (!PS_ReadToken(script, token))
@@ -1066,82 +1176,143 @@ int PS_ExpectAnyToken(script_t *script, token_t *token)
 	}
 }
 
+/**
+ * @brief Check if token is available
+ * @param[in,out] script
+ * @param[in] string
+ * @return true when the token is available
+ *
+ * @note Unused
+ */
+/*
 int PS_CheckTokenString(script_t *script, char *string)
 {
-	token_t tok;
+    token_t tok;
 
-	if (!PS_ReadToken(script, &tok))
-	{
-		return 0;
-	}
-	// if the token is available
-	if (!strcmp(tok.string, string))
-	{
-		return 1;
-	}
-	// token not available
-	script->script_p = script->lastscript_p;
-	return 0;
+    if (!PS_ReadToken(script, &tok))
+    {
+        return 0;
+    }
+    // if the token is available
+    if (!strcmp(tok.string, string))
+    {
+        return 1;
+    }
+    // token not available
+    script->script_p = script->lastscript_p;
+    return 0;
 }
+*/
 
+/**
+ * @brief Check token type
+ * @param[in,out] script
+ * @param[in] type
+ * @param[in] subtype
+ * @param[out] token
+ * @return returns true and reads the token when a token with the given type is available
+ *
+ * @note Unused
+ */
+/*
 int PS_CheckTokenType(script_t *script, int type, int subtype, token_t *token)
 {
-	token_t tok;
+    token_t tok;
 
-	if (!PS_ReadToken(script, &tok))
-	{
-		return 0;
-	}
-	// if the type matches
-	if (tok.type == type &&
-	    (tok.subtype & subtype) == subtype)
-	{
-		memcpy(token, &tok, sizeof(token_t));
-		return 1;
-	}
-	// token is not available
-	script->script_p = script->lastscript_p;
-	return 0;
+    if (!PS_ReadToken(script, &tok))
+    {
+        return 0;
+    }
+    // if the type matches
+    if (tok.type == type &&
+        (tok.subtype & subtype) == subtype)
+    {
+        memcpy(token, &tok, sizeof(token_t));
+        return 1;
+    }
+    // token is not available
+    script->script_p = script->lastscript_p;
+    return 0;
 }
+*/
 
-int PS_SkipUntilString(script_t *script, char *string)
+/**
+ * @brief Skip tokens until the given token string is read
+ * @param[in] script
+ * @param[in] string
+ * @return
+ *
+ * @note Unused
+ */
+/*
+int PS_SkipUntilString(script_t *script, const char *string)
 {
-	token_t token;
+    token_t token;
 
-	while (PS_ReadToken(script, &token))
-	{
-		if (!strcmp(token.string, string))
-		{
-			return 1;
-		}
-	}
-	return 0;
+    while (PS_ReadToken(script, &token))
+    {
+        if (!strcmp(token.string, string))
+        {
+            return 1;
+        }
+    }
+    return 0;
 }
+*/
 
+/**
+ * @brief Unread the last token read from the script
+ * @param[out] script
+ *
+ * @note Unused
+ */
+/*
 void PS_UnreadLastToken(script_t *script)
 {
-	script->tokenavailable = 1;
+    script->tokenavailable = 1;
 }
+*/
 
+/**
+ * @brief Unread the given token
+ * @param[out] script
+ * @param[in] token
+ *
+ * @note Unused
+ */
+/*
 void PS_UnreadToken(script_t *script, token_t *token)
 {
-	memcpy(&script->token, token, sizeof(token_t));
-	script->tokenavailable = 1;
+    memcpy(&script->token, token, sizeof(token_t));
+    script->tokenavailable = 1;
 }
+*/
 
-// returns the next character of the read white space, returns NULL if none
+/**
+ * @brief PS_NextWhiteSpaceChar
+ * @param script
+ * @return The next character of the read white space, returns NULL if none
+ *
+ * @note Unused
+ */
+/*
 char PS_NextWhiteSpaceChar(script_t *script)
 {
-	if (script->whitespace_p != script->endwhitespace_p)
-	{
-		return *script->whitespace_p++;
-	}
-	else
-	{
-		return 0;
-	}
+    if (script->whitespace_p != script->endwhitespace_p)
+    {
+        return *script->whitespace_p++;
+    }
+    else
+    {
+        return 0;
+    }
 }
+*/
 
+/**
+ * @brief Remove any leading and trailing double quotes from the token
+ * @param[in,out] string
+ */
 void StripDoubleQuotes(char *string)
 {
 	if (*string == '\"')
@@ -1154,64 +1325,112 @@ void StripDoubleQuotes(char *string)
 	}
 }
 
+/**
+ * @brief Remove any leading and trailing single quotes from the token
+ * @param[in,out] string
+ *
+ * @note Unused
+ */
+/*
 void StripSingleQuotes(char *string)
 {
-	if (*string == '\'')
-	{
-		memmove(string, string + 1, strlen(string));
-	}
-	if (string[strlen(string) - 1] == '\'')
-	{
-		string[strlen(string) - 1] = '\0';
-	}
+    if (*string == '\'')
+    {
+        memmove(string, string + 1, strlen(string));
+    }
+    if (string[strlen(string) - 1] == '\'')
+    {
+        string[strlen(string) - 1] = '\0';
+    }
 }
+*/
 
+/**
+ * @brief Read a possible signed floating point number
+ * @param[in] script
+ * @return
+ *
+ * @note Unused
+ */
+/*
 long double ReadSignedFloat(script_t *script)
 {
-	token_t     token;
-	long double sign = 1;
+    token_t     token;
+    long double sign = 1;
 
-	PS_ExpectAnyToken(script, &token);
-	if (!strcmp(token.string, "-"))
-	{
-		sign = -1;
-		PS_ExpectTokenType(script, TT_NUMBER, 0, &token);
-	}
-	else if (token.type != TT_NUMBER)
-	{
-		ScriptError(script, "expected float value, found %s\n", token.string);
-	}
-	return sign * token.floatvalue;
+    PS_ExpectAnyToken(script, &token);
+    if (!strcmp(token.string, "-"))
+    {
+        sign = -1;
+        PS_ExpectTokenType(script, TT_NUMBER, 0, &token);
+    }
+    else if (token.type != TT_NUMBER)
+    {
+        ScriptError(script, "expected float value, found %s\n", token.string);
+    }
+    return sign * token.floatvalue;
 }
+*/
 
+/**
+ * @brief Read a possible signed integer
+ * @param[in] script
+ * @return
+ *
+ * @note Unused
+ */
+/*
 signed long int ReadSignedInt(script_t *script)
 {
-	token_t         token;
-	signed long int sign = 1;
+    token_t         token;
+    signed long int sign = 1;
 
-	PS_ExpectAnyToken(script, &token);
-	if (!strcmp(token.string, "-"))
-	{
-		sign = -1;
-		PS_ExpectTokenType(script, TT_NUMBER, TT_INTEGER, &token);
-	}
-	else if (token.type != TT_NUMBER || token.subtype == TT_FLOAT)
-	{
-		ScriptError(script, "expected integer value, found %s\n", token.string);
-	}
-	return sign * token.intvalue;
+    PS_ExpectAnyToken(script, &token);
+    if (!strcmp(token.string, "-"))
+    {
+        sign = -1;
+        PS_ExpectTokenType(script, TT_NUMBER, TT_INTEGER, &token);
+    }
+    else if (token.type != TT_NUMBER || token.subtype == TT_FLOAT)
+    {
+        ScriptError(script, "expected integer value, found %s\n", token.string);
+    }
+    return sign * token.intvalue;
 }
+*/
 
+/**
+ * @brief Set script flags
+ * @param[out] script
+ * @param[in] flags
+ *
+ * @note Unused
+ */
+/*
 void SetScriptFlags(script_t *script, int flags)
 {
-	script->flags = flags;
+    script->flags = flags;
 }
+*/
 
+/**
+ * @brief Get script flags
+ * @param[in] script
+ * @return Script flags
+ *
+ * @note Unused
+ */
+/*
 int GetScriptFlags(script_t *script)
 {
-	return script->flags;
+    return script->flags;
 }
+*/
 
+/**
+ * @brief ResetScript
+ * @param[in,out] script
+ */
 void ResetScript(script_t *script)
 {
 	// pointer in script buffer
@@ -1231,20 +1450,40 @@ void ResetScript(script_t *script)
 	memset(&script->token, 0, sizeof(token_t));
 }
 
+/**
+ * @brief EndOfScript
+ * @param[in,out] script
+ * @return
+ */
 int EndOfScript(script_t *script)
 {
 	return script->script_p >= script->end_p;
 }
 
-/* unused
+/**
+ * @brief NumLinesCrossed
+ * @param[in,out] script
+ * @return
+ *
+ * @note Unused
+ */
+/*
 int NumLinesCrossed(script_t *script)
 {
     return script->line - script->lastline;
 }
 */
 
-/* unused
-int ScriptSkipTo(script_t *script, char *value)
+/**
+ * @brief ScriptSkipTo
+ * @param[in,out] script
+ * @param[in] value
+ * @return True if at the end of the script
+ *
+ * @note Unused
+ */
+/*
+int ScriptSkipTo(script_t *script, const char *value)
 {
     int  len;
     char firstchar;
@@ -1272,6 +1511,11 @@ int ScriptSkipTo(script_t *script, char *value)
 }
 */
 
+/**
+ * @brief Load a script from the given file at the given offset with the given length
+ * @param[in] filename
+ * @return
+ */
 script_t *LoadScriptFile(const char *filename)
 {
 	fileHandle_t fp;
@@ -1321,7 +1565,14 @@ script_t *LoadScriptFile(const char *filename)
 	return script;
 }
 
-script_t *LoadScriptMemory(char *ptr, int length, char *name)
+/**
+ * @brief Load a script from the given memory with the given length
+ * @param[in] ptr
+ * @param[in] length
+ * @param[in] name
+ * @return
+ */
+script_t *LoadScriptMemory(const char *ptr, int length, const char *name)
 {
 	void     *buffer;
 	script_t *script;
@@ -1352,6 +1603,10 @@ script_t *LoadScriptMemory(char *ptr, int length, char *name)
 	return script;
 }
 
+/**
+ * @brief Free a script
+ * @param[in,out] script
+ */
 void FreeScript(script_t *script)
 {
 #ifdef PUNCTABLE
@@ -1363,7 +1618,11 @@ void FreeScript(script_t *script)
 	FreeMemory(script);
 }
 
-void PS_SetBaseFolder(char *path)
+/**
+ * @brief Set the base folder to load files from
+ * @param[in] path
+ */
+void PS_SetBaseFolder(const char *path)
 {
 	Com_sprintf(basefolder, sizeof(basefolder), "%s", path);
 }

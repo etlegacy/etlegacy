@@ -116,7 +116,7 @@ typedef struct botlib_export_s
 	// sets a library variable returns BLERR_
 
 	// sets a C-like define returns BLERR_
-	int (*PC_AddGlobalDefine)(char *string);
+	int (*PC_AddGlobalDefine)(const char *string);
 	void (*PC_RemoveAllGlobalDefines)(void);
 	int (*PC_LoadSourceHandle)(const char *filename);
 	int (*PC_FreeSourceHandle)(int handle);
