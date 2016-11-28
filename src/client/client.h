@@ -449,7 +449,7 @@ int CL_GetPingQueueCount(void);
 
 void CL_ShutdownRef(void);
 void CL_InitRef(void);
-int CL_ServerStatus(char *serverAddress, char *serverStatusString, int maxLen);
+int CL_ServerStatus(const char *serverAddress, char *serverStatusString, int maxLen);
 
 void CL_AddToLimboChat(const char *str);
 qboolean CL_GetLimboString(int index, char *buf);
@@ -538,7 +538,7 @@ void CL_WritePacket(void);
 void IN_Help(void);
 
 float CL_KeyState(kbutton_t *key);
-int Key_StringToKeynum(char *str);
+int Key_StringToKeynum(const char *str);
 char *Key_KeynumToString(int keynum);
 
 // cl_parse.c

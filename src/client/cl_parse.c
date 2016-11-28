@@ -49,6 +49,11 @@ const char *svc_strings[32] =
 	"svc_EOF"
 };
 
+/**
+ * @brief SHOWNET
+ * @param[in] msg
+ * @param[in] s
+ */
 void SHOWNET(msg_t *msg, const char *s)
 {
 	if (cl_shownet->integer >= 2)
@@ -66,6 +71,11 @@ MESSAGE PARSING
 
 int entLastVisible[MAX_CLIENTS];
 
+/**
+ * @brief isEntVisible
+ * @param[in,out] ent
+ * @return
+ */
 qboolean isEntVisible(entityState_t *ent)
 {
 	trace_t tr;
@@ -75,7 +85,7 @@ qboolean isEntVisible(entityState_t *ent)
 
 	VectorCopy(cl.cgameClientLerpOrigin, start);
 	start[2] += (cl.snap.ps.viewheight - 1);
-	if (cl.snap.ps.leanf != 0)
+	if (cl.snap.ps.leanf != 0.f)
 	{
 		vec3_t lright, v3ViewAngles;
 		VectorCopy(cl.snap.ps.viewangles, v3ViewAngles);
@@ -187,6 +197,12 @@ qboolean isEntVisible(entityState_t *ent)
 
 /**
  * @brief Parses deltas from the given base and adds the resulting entity to the current frame
+ *
+ * @param[in] msg
+ * @param[in,out] frame
+ * @param[in] newnum
+ * @param[in,out] old
+ * @param[in] unchanged
  */
 void CL_DeltaEntity(msg_t *msg, clSnapshot_t *frame, int newnum, entityState_t *old, qboolean unchanged)
 {
@@ -232,11 +248,12 @@ void CL_DeltaEntity(msg_t *msg, clSnapshot_t *frame, int newnum, entityState_t *
 	frame->numEntities++;
 }
 
-/*
-==================
-CL_ParsePacketEntities
-==================
-*/
+/**
+ * @brief CL_ParsePacketEntities
+ * @param[in] msg
+ * @param[in] oldframe
+ * @param[out] newframe
+ */
 void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *newframe)
 {
 	int           newnum;
@@ -373,6 +390,8 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
  * @brief If the snapshot is parsed properly, it will be copied to
  * cl.snap and saved in cl.snapshots[].  If the snapshot is invalid
  * for any reason, no changes to the state will be made at all.
+ *
+ * @param[in] msg
  */
 void CL_ParseSnapshot(msg_t *msg)
 {
@@ -566,11 +585,12 @@ void CL_ParseSnapshot(msg_t *msg)
 int cl_connectedToPureServer;
 int cl_connectedToCheatServer;
 
+void CL_PurgeCache(void);
+
 /**
  * @brief The systeminfo configstring has been changed, so parse new information out of it.
  * This will happen at every gamestate, and possibly during gameplay.
  */
-void CL_PurgeCache(void);
 void CL_SystemInfoChanged(void)
 {
 	char       *systemInfo = cl.gameState.stringData + cl.gameState.stringOffsets[CS_SYSTEMINFO];
@@ -661,7 +681,7 @@ void CL_SystemInfoChanged(void)
 
 	// big hack to clear the image cache on a pure change
 	//cl_connectedToPureServer = Cvar_VariableValue( "sv_pure" );
-	if (Cvar_VariableValue("sv_pure"))
+	if (Cvar_VariableValue("sv_pure") != 0.f)
 	{
 		if (!cl_connectedToPureServer && cls.state <= CA_CONNECTED)
 		{
@@ -679,11 +699,10 @@ void CL_SystemInfoChanged(void)
 	}
 }
 
-/*
-==================
-CL_ParseGamestate
-==================
-*/
+/**
+ * @brief CL_ParseGamestate
+ * @param[in] msg
+ */
 void CL_ParseGamestate(msg_t *msg)
 {
 	int           i;
@@ -782,6 +801,8 @@ void CL_ParseGamestate(msg_t *msg)
 
 /**
  * @brief A download message has been received from the server
+ *
+ * @param[in] msg
  */
 void CL_ParseDownload(msg_t *msg)
 {
@@ -878,7 +899,6 @@ void CL_ParseDownload(msg_t *msg)
 		if (cls.download.downloadSize < 0)
 		{
 			Com_Error(ERR_DROP, "%s", MSG_ReadString(msg));
-			return;
 		}
 	}
 
@@ -886,7 +906,6 @@ void CL_ParseDownload(msg_t *msg)
 	if (size < 0 || size > sizeof(data))
 	{
 		Com_Error(ERR_DROP, "CL_ParseDownload: Invalid size %d for download chunk.", size);
-		return;
 	}
 
 	MSG_ReadData(msg, data, size);
@@ -954,10 +973,15 @@ void CL_ParseDownload(msg_t *msg)
 =====================
 CL_ParseCommandString
 
-Command strings are just saved off until cgame asks for them
-when it transitions a snapshot
+
 =====================
 */
+/**
+ * @brief Command strings are just saved off until cgame asks for them
+ * when it transitions a snapshot
+ *
+ * @param[in] msg
+ */
 void CL_ParseCommandString(msg_t *msg)
 {
 	char *s;
@@ -978,11 +1002,10 @@ void CL_ParseCommandString(msg_t *msg)
 	Q_strncpyz(clc.serverCommands[index], s, sizeof(clc.serverCommands[index]));
 }
 
-/*
-=====================
-CL_ParseBinaryMessage
-=====================
-*/
+/**
+ * @brief CL_ParseBinaryMessage
+ * @param[in] msg
+ */
 void CL_ParseBinaryMessage(msg_t *msg)
 {
 	int size;
@@ -998,11 +1021,10 @@ void CL_ParseBinaryMessage(msg_t *msg)
 	CL_CGameBinaryMessageReceived(&msg->data[msg->readcount], size, cl.snap.serverTime);
 }
 
-/*
-=====================
-CL_ParseServerMessage
-=====================
-*/
+/**
+ * @brief CL_ParseServerMessage
+ * @param[in] msg
+ */
 void CL_ParseServerMessage(msg_t *msg)
 {
 	int cmd;
@@ -1032,7 +1054,6 @@ void CL_ParseServerMessage(msg_t *msg)
 		if (msg->readcount > msg->cursize)
 		{
 			Com_Error(ERR_DROP, "CL_ParseServerMessage: read past end of server message");
-			break;
 		}
 
 		cmd = MSG_ReadByte(msg);
@@ -1067,7 +1088,6 @@ void CL_ParseServerMessage(msg_t *msg)
 		{
 		default:
 			Com_Error(ERR_DROP, "CL_ParseServerMessage: Illegible server message %d", cmd);
-			break;
 		case svc_nop:
 			break;
 		case svc_serverCommand:
