@@ -129,6 +129,10 @@ vidmode_t glimp_vidModes[] =
 };
 static int s_numVidModes = ARRAY_LEN(glimp_vidModes);
 
+/**
+ * @brief GLimp_MainWindow
+ * @return
+ */
 void *GLimp_MainWindow(void)
 {
 	return main_window;
@@ -142,6 +146,14 @@ void GLimp_Minimize(void)
 	SDL_MinimizeWindow(main_window);
 }
 
+/**
+ * @brief GLimp_GetModeInfo
+ * @param[in,out] width
+ * @param[in,out] height
+ * @param[out] windowAspect
+ * @param[in] mode
+ * @return
+ */
 qboolean GLimp_GetModeInfo(int *width, int *height, float *windowAspect, int mode)
 {
 	vidmode_t *vm;
@@ -197,6 +209,9 @@ void GLimp_ModeList_f(void)
 	Com_Printf("\n");
 }
 
+/**
+ * @brief GLimp_InitCvars
+ */
 static void GLimp_InitCvars(void)
 {
 	//r_sdlDriver = Cvar_Get("r_sdlDriver", "", CVAR_ROM);
@@ -232,6 +247,9 @@ static void GLimp_InitCvars(void)
 	Cmd_AddCommand("minimize", GLimp_Minimize);
 }
 
+/**
+ * @brief GLimp_Shutdown
+ */
 void GLimp_Shutdown(void)
 {
 	IN_Shutdown();
@@ -251,6 +269,12 @@ void GLimp_Shutdown(void)
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
+/**
+ * @brief GLimp_CompareModes
+ * @param[in] a
+ * @param[in] b
+ * @return
+ */
 static int GLimp_CompareModes(const void *a, const void *b)
 {
 	const float ASPECT_EPSILON  = 0.001f;
@@ -278,6 +302,9 @@ static int GLimp_CompareModes(const void *a, const void *b)
 	}
 }
 
+/**
+ * @brief GLimp_DetectAvailableModes
+ */
 static void GLimp_DetectAvailableModes(void)
 {
 	int             i, j;
@@ -292,7 +319,6 @@ static void GLimp_DetectAvailableModes(void)
 		if (!SDL_GetNumVideoDisplays())
 		{
 			Com_Error(ERR_VID_FATAL, "There is no available display to open a game screen - %s", SDL_GetError());
-			return;
 		}
 
 		// Use the zero display index
@@ -378,6 +404,15 @@ static void GLimp_DetectAvailableModes(void)
 	}
 }
 
+/**
+ * @brief GLimp_SetMode
+ * @param[in,out] glConfig
+ * @param[in] mode
+ * @param[in] fullscreen
+ * @param[in] noborder
+ * @param[in] context
+ * @return
+ */
 static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qboolean noborder, windowContext_t *context)
 {
 	int             perChannelColorBits;
@@ -421,7 +456,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 	{
 		displayAspect = (float)desktopMode.w / (float)desktopMode.h;
 
-		Com_Printf("Estimated display aspect: %.3f\n", displayAspect);
+		Com_Printf("Estimated display aspect: %.3f\n", (double)displayAspect);
 	}
 	else
 	{
@@ -507,7 +542,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		colorBits = 24;
 	}
 
-	if (!r_depthbits->value)
+	if (r_depthbits->value == 0.f)
 	{
 		depthBits = 24;
 	}
@@ -752,6 +787,15 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 	return RSERR_OK;
 }
 
+/**
+ * @brief GLimp_StartDriverAndSetMode
+ * @param[in] glConfig
+ * @param[in] mode
+ * @param[in] fullscreen
+ * @param[in] noborder
+ * @param[in] context
+ * @return
+ */
 static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qboolean noborder, windowContext_t *context)
 {
 	rserr_t err;
@@ -789,11 +833,9 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
 		break;
 	case RSERR_OLD_GL:
 		Com_Error(ERR_VID_FATAL, "Could not create opengl 3 context");
-		break;
 	case RSERR_UNKNOWN: // fall through
 	default:
 		Com_Error(ERR_VID_FATAL, "Can't set mode - an unknown error occured");
-		break;
 	}
 
 	return qfalse;
@@ -803,6 +845,8 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
 
 /**
  * @brief This routine is responsible for initializing the OS specific portions of OpenGL
+ * @param[in,out] glConfig
+ * @param[in] context
  */
 void GLimp_Init(glconfig_t *glConfig, windowContext_t *context)
 {
@@ -938,11 +982,12 @@ void GLimp_EndFrame(void)
 #endif
 }
 
-/*
-=================
-GLimp_SetGamma
-=================
-*/
+/**
+ * @brief GLimp_SetGamma
+ * @param[in] red
+ * @param[in] green
+ * @param[in] blue
+ */
 void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned char blue[256])
 {
 	Uint16 table[3][256];

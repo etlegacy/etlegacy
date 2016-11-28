@@ -68,6 +68,10 @@ static int lasttime = 0; // if 0, Com_QueueEvent will use the current time. This
 
 #define CTRL(a) ((a) - 'a' + 1)
 
+/**
+ * @brief IN_GetClipboardData
+ * @return
+ */
 char *IN_GetClipboardData(void)
 {
 	if (SDL_HasClipboardText())
@@ -100,11 +104,10 @@ char *IN_GetClipboardData(void)
 	}
 }
 
-/*
-==============
-Sys_IsNumLockDown
-==============
-*/
+/**
+ * @brief Check if Num key is lock down
+ * @return qtrue if Num key is lock down, qfalse if not
+ */
 qboolean IN_IsNumLockDown(void)
 {
 #ifdef _WIN32
@@ -124,6 +127,9 @@ qboolean IN_IsNumLockDown(void)
 
 /**
  * @brief Prints keyboard identifiers in the console
+ * @param[in] keysym
+ * @param[in] key
+ * @param[in] down
  */
 static void IN_PrintKey(const SDL_Keysym *keysym, keyNum_t key, qboolean down)
 {
@@ -194,6 +200,12 @@ static void IN_PrintKey(const SDL_Keysym *keysym, keyNum_t key, qboolean down)
 
 #define MAX_CONSOLE_KEYS 16
 
+/**
+ * @brief IN_IsConsoleKey
+ * @param[in] key
+ * @param[in] character
+ * @return
+ */
 static qboolean IN_IsConsoleKey(keyNum_t key, int character)
 {
 	typedef struct consoleKey_s
@@ -301,7 +313,13 @@ static qboolean IN_IsConsoleKey(keyNum_t key, int character)
 }
 
 /**
- * @brief translates SDL keyboard identifier to its Q3 counterpart
+
+ */
+/**
+ * @brief Translates SDL keyboard identifier to its Q3 counterpart
+ * @param[in] keysym
+ * @param[in] down
+ * @return
  */
 static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 {
@@ -540,6 +558,9 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 	return key;
 }
 
+/**
+ * @brief IN_GobbleMotionEvents
+ */
 static void IN_GobbleMotionEvents(void)
 {
 	SDL_Event dummy[1];
@@ -550,6 +571,11 @@ static void IN_GobbleMotionEvents(void)
 		;
 }
 
+/**
+ * @brief IN_GrabMouse
+ * @param[in] grab
+ * @param[in] relative
+ */
 static void IN_GrabMouse(qboolean grab, qboolean relative)
 {
 	static qboolean mouse_grabbed   = qfalse, mouse_relative = qfalse;
@@ -580,6 +606,9 @@ static void IN_GrabMouse(qboolean grab, qboolean relative)
 	}
 }
 
+/**
+ * @brief IN_ActivateMouse
+ */
 static void IN_ActivateMouse(void)
 {
 	if (!mouseAvailable || !SDL_WasInit(SDL_INIT_VIDEO))
@@ -615,6 +644,9 @@ static void IN_ActivateMouse(void)
 	mouseActive = qtrue;
 }
 
+/**
+ * @brief IN_DeactivateMouse
+ */
 static void IN_DeactivateMouse(void)
 {
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
@@ -767,6 +799,9 @@ static void IN_InitJoystick(void)
 	SDL_JoystickEventState(SDL_QUERY);
 }
 
+/**
+ * @brief IN_ShutdownJoystick
+ */
 static void IN_ShutdownJoystick(void)
 {
 	// in_joystick cvar is latched
@@ -784,6 +819,9 @@ static void IN_ShutdownJoystick(void)
 	SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 }
 
+/**
+ * @brief IN_JoyMove
+ */
 static void IN_JoyMove(void)
 {
 	unsigned int axes  = 0;
@@ -1013,6 +1051,10 @@ static void IN_JoyMove(void)
 	stick_state.oldaxes = axes;
 }
 
+/**
+ * @brief IN_WindowResize
+ * @param[in] e
+ */
 static void IN_WindowResize(SDL_Event *e)
 {
 	// Only do a vid_restart if the size of the window actually changed. On OS X at least, it's possible
@@ -1034,6 +1076,10 @@ static void IN_WindowResize(SDL_Event *e)
 	}
 }
 
+/**
+ * @brief IN_WindowFocusLost
+ * @note Unused
+ */
 /*
 static void IN_WindowFocusLost()
 {
@@ -1044,6 +1090,9 @@ static void IN_WindowFocusLost()
 }
 */
 
+/**
+ * @brief IN_ProcessEvents
+ */
 static void IN_ProcessEvents(void)
 {
 	SDL_Event       e;
@@ -1229,6 +1278,9 @@ static void IN_ProcessEvents(void)
 	}
 }
 
+/**
+ * @brief IN_Frame
+ */
 void IN_Frame(void)
 {
 	// If not DISCONNECTED (main menu), ACTIVE (in game) or CINEMATIC (playing video), we're loading
@@ -1278,6 +1330,9 @@ void IN_Frame(void)
 	lasttime = start;
 }
 
+/**
+ * @brief IN_InitKeyLockStates
+ */
 static void IN_InitKeyLockStates(void)
 {
 	unsigned const char *keystate = SDL_GetKeyboardState(NULL);
@@ -1287,6 +1342,9 @@ static void IN_InitKeyLockStates(void)
 	keys[K_CAPSLOCK].down   = keystate[SDL_SCANCODE_CAPSLOCK];
 }
 
+/**
+ * @brief IN_Init
+ */
 void IN_Init(void)
 {
 	int appState;
@@ -1294,7 +1352,6 @@ void IN_Init(void)
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
 	{
 		Com_Error(ERR_FATAL, "IN_Init called before SDL_Init( SDL_INIT_VIDEO )");
-		return;
 	}
 
 	mainScreen = (SDL_Window *)GLimp_MainWindow();
@@ -1326,7 +1383,7 @@ void IN_Init(void)
 
 	SDL_StartTextInput();
 
-	mouseAvailable = (in_mouse->value != 0);
+	mouseAvailable = (in_mouse->value != 0.f);
 	IN_DeactivateMouse();
 
 	appState = SDL_GetWindowFlags(mainScreen);
@@ -1342,6 +1399,9 @@ void IN_Init(void)
 	Com_Printf("------------------------------------\n");
 }
 
+/**
+ * @brief IN_Shutdown
+ */
 void IN_Shutdown(void)
 {
 	SDL_StopTextInput();
@@ -1355,6 +1415,9 @@ void IN_Shutdown(void)
 	mainScreen = NULL;
 }
 
+/**
+ * @brief IN_Restart
+ */
 void IN_Restart(void)
 {
 	IN_ShutdownJoystick();
