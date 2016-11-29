@@ -34,6 +34,10 @@
 
 #include "g_local.h"
 
+/**
+ * @brief G_RemoveFromAllIgnoreLists
+ * @param[in] clientNum
+ */
 void G_RemoveFromAllIgnoreLists(int clientNum)
 {
 	int i;

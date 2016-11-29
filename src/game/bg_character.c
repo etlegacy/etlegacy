@@ -39,7 +39,13 @@
 bg_character_t alliedClassCharacters[NUM_PLAYER_CLASSES];
 bg_character_t axisClassCharacters[NUM_PLAYER_CLASSES];
 
-static qboolean BG_PCF_ParseError(int handle, char *format, ...)
+/**
+ * @brief BG_PCF_ParseError
+ * @param[in] handle
+ * @param[in] format
+ * @return
+ */
+static qboolean BG_PCF_ParseError(int handle, const char *format, ...)
 {
 	int         line;
 	char        filename[MAX_QPATH];
@@ -61,6 +67,12 @@ static qboolean BG_PCF_ParseError(int handle, char *format, ...)
 	return qfalse;
 }
 
+/**
+ * @brief BG_ParseCharacterFile
+ * @param[in] filename
+ * @param[out] characterDef
+ * @return
+ */
 qboolean BG_ParseCharacterFile(const char *filename, bg_characterDef_t *characterDef)
 {
 	pc_token_t token;
@@ -169,6 +181,12 @@ qboolean BG_ParseCharacterFile(const char *filename, bg_characterDef_t *characte
 	return qtrue;
 }
 
+/**
+ * @brief BG_GetCharacter
+ * @param[in] team
+ * @param[in] cls
+ * @return
+ */
 bg_character_t *BG_GetCharacter(int team, int cls)
 {
 	switch (team)
@@ -181,6 +199,11 @@ bg_character_t *BG_GetCharacter(int team, int cls)
 	}
 }
 
+/**
+ * @brief BG_GetCharacterForPlayerstate
+ * @param[in] ps
+ * @return
+ */
 bg_character_t *BG_GetCharacterForPlayerstate(playerState_t *ps)
 {
 	// FIXME: add disguise?
@@ -201,12 +224,20 @@ bg_character_t *BG_GetCharacterForPlayerstate(playerState_t *ps)
 bg_character_t bg_characterPool[MAX_CHARACTERS];
 qboolean       bg_characterPoolInuse[MAX_CHARACTERS];
 
+/**
+ * @brief BG_ClearCharacterPool
+ */
 void BG_ClearCharacterPool(void)
 {
 	memset(&bg_characterPool, 0, sizeof(bg_characterPool));
 	memset(&bg_characterPoolInuse, 0, sizeof(bg_characterPoolInuse));
 }
 
+/**
+ * @brief BG_FindFreeCharacter
+ * @param[in] characterFile
+ * @return
+ */
 bg_character_t *BG_FindFreeCharacter(const char *characterFile)
 {
 	int i;
@@ -240,6 +271,11 @@ bg_character_t *BG_FindFreeCharacter(const char *characterFile)
 	return NULL;
 }
 
+/**
+ * @brief BG_FindCharacter
+ * @param[in] characterFile
+ * @return
+ */
 bg_character_t *BG_FindCharacter(const char *characterFile)
 {
 	int i;

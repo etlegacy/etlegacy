@@ -3131,8 +3131,8 @@ void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qb
  * @param[in] tr
  * @param[in] atTime
  * @param[out] result
- * @param[in] isAngle
- * @param[in] splineData
+ * @param[in] isAngle - unused
+ * @param[in] splineData - unused
  */
 void BG_EvaluateTrajectoryDelta(const trajectory_t *tr, int atTime, vec3_t result, qboolean isAngle, int splineData)
 {
@@ -3420,7 +3420,7 @@ void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerStat
 	{
 		char buf[256];
 		trap_Cvar_VariableStringBuffer("showevents", buf, sizeof(buf));
-		if (atof(buf) != 0)
+		if (atof(buf) != 0.0)
 		{
 #ifdef QAGAME
 			Com_Printf(" game event svt %5d -> %5d: num = %20s parm %d\n", ps->pmove_framecount /*ps->commandTime*/, ps->eventSequence, newEvent < EV_MAX_EVENTS ? eventnames[newEvent] : "*unknown event*", eventParm);
@@ -3960,7 +3960,6 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill)
 		{
 			return(GetAmmoTableData(weaponNum)->maxammo);
 		}
-		break;
 	case WP_MP40:
 	case WP_THOMPSON:
 		if (skill[SK_FIRST_AID] >= 1 || skill[SK_LIGHT_WEAPONS] >= 1)
@@ -3971,7 +3970,6 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill)
 		{
 			return(GetAmmoTableData(weaponNum)->maxammo);
 		}
-		break;
 	case WP_M7:
 	case WP_GPG40:
 		if (skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 1)
@@ -3982,7 +3980,6 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill)
 		{
 			return(GetAmmoTableData(weaponNum)->maxammo);
 		}
-		break;
 	case WP_GRENADE_PINEAPPLE:
 	case WP_GRENADE_LAUNCHER:
 		// FIXME: this is class dependant, not ammo table
@@ -3998,7 +3995,6 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill)
 		{
 			return(GetAmmoTableData(weaponNum)->maxammo);
 		}
-		break;
 	/*case WP_MOBILE_MG42:
 	case WP_MOBILE_BROWNING
 	case WP_PANZERFAUST:
@@ -4008,7 +4004,6 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill)
 	        return( GetAmmoTableData(weaponNum)->maxammo + GetAmmoTableData(weaponNum)->maxclip );
 	    else
 	        return( GetAmmoTableData(weaponNum)->maxammo );
-	    break;
 	case WP_MORTAR:
 	case WP_MORTAR_SET:
 	case WP_MORTAR2:
@@ -4016,8 +4011,7 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill)
 	    if( skill[SK_HEAVY_WEAPONS] >= 1 )
 	        return( GetAmmoTableData(weaponNum)->maxammo + 2 );
 	    else
-	        return( GetAmmoTableData(weaponNum)->maxammo );
-	    break;*/
+	        return( GetAmmoTableData(weaponNum)->maxammo );*/
 	case WP_MEDIC_SYRINGE:
 		if (skill[SK_FIRST_AID] >= 2)
 		{
@@ -4027,7 +4021,6 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill)
 		{
 			return(GetAmmoTableData(weaponNum)->maxammo);
 		}
-		break;
 	case WP_GARAND:
 	case WP_K43:
 	case WP_FG42:
@@ -4039,7 +4032,6 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill)
 		{
 			return(GetAmmoTableData(weaponNum)->maxammo);
 		}
-		break;
 	case WP_GARAND_SCOPE:
 	case WP_K43_SCOPE:
 	case WP_FG42SCOPE:
@@ -4051,7 +4043,6 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill)
 		{
 			return(GetAmmoTableData(weaponNum)->maxammo);
 		}
-		break;
 	default:
 		return(GetAmmoTableData(weaponNum)->maxammo);
 	}

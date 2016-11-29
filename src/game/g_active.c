@@ -43,17 +43,18 @@
 #endif
 
 /**
- * @param[in,out] player Player Entity
+ * @brief Called just before a snapshot is sent to the given player.
  *
- * Called just before a snapshot is sent to the given player.
- * Totals up all damage and generates both the player_state_t
+ * @details Totals up all damage and generates both the player_state_t
  * damage values to that client for pain blends and kicks, and
  * global pain sound events for all clients.
+ *
+ * @param[in,out] player Player Entity
  */
 void P_DamageFeedback(gentity_t *player)
 {
 	gclient_t *client = player->client;
-	float     count;
+	int       count;
 
 	if (client->ps.pm_type == PM_DEAD)
 	{
@@ -88,8 +89,8 @@ void P_DamageFeedback(gentity_t *player)
 		vec3_t angles;
 
 		vectoangles(client->damage_from, angles);
-		client->ps.damagePitch = angles[PITCH] / 360.0 * 256;
-		client->ps.damageYaw   = angles[YAW] / 360.0 * 256;
+		client->ps.damagePitch = angles[PITCH] / 360.0f * 256;
+		client->ps.damageYaw   = angles[YAW] / 360.0f * 256;
 	}
 
 	// play an apropriate pain sound
@@ -225,6 +226,11 @@ void G_SetClientSound(gentity_t *ent)
 }
 
 #ifdef FEATURE_OMNIBOT
+/**
+ * @brief PushBot
+ * @param[in] ent
+ * @param[in] other
+ */
 void PushBot(gentity_t *ent, gentity_t *other)
 {
 	vec3_t dir, ang, f, r;
@@ -256,7 +262,7 @@ void PushBot(gentity_t *ent, gentity_t *other)
 	r[2] = 0;
 
 	VectorMA(other->client->ps.velocity, 200, f, other->client->ps.velocity);
-	s = 100 * ((level.time + (ent->s.number * 1000)) % 4000 < 2000 ? 1.0 : -1.0);
+	s = 100 * ((level.time + (ent->s.number * 1000)) % 4000 < 2000 ? 1.0f : -1.0f);
 	VectorMA(other->client->ps.velocity, s, r, other->client->ps.velocity);
 
 	if (VectorLengthSquared(other->client->ps.velocity) > Square(oldspeed))
@@ -349,6 +355,8 @@ qboolean ReadyToConstruct(gentity_t *ent, gentity_t *constructible, qboolean upd
 //==============================================================
 
 /**
+ * @brief ClientImpacts
+ *
  * @param[in] ent Entity
  * @param[in] pm  Player Move
  */
@@ -494,13 +502,11 @@ void G_TouchTriggers(gentity_t *ent)
 	}
 }
 
-/*
-=================
-G_SpectatorAttackFollow
-
-returns true if a player was found to follow
-=================
-*/
+/**
+ * @brief G_SpectatorAttackFollow
+ * @param ent
+ * @return true if a player was found to follow, otherwise false
+ */
 qboolean G_SpectatorAttackFollow(gentity_t *ent)
 {
 	trace_t       tr;
@@ -538,6 +544,11 @@ qboolean G_SpectatorAttackFollow(gentity_t *ent)
 	return qfalse;
 }
 
+/**
+ * @brief SpectatorThink
+ * @param[in,out] ent
+ * @param[in] ucmd
+ */
 void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 {
 	gclient_t *client       = ent->client;
@@ -686,13 +697,14 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 }
 
 /**
- * @return Returns qfalse if the client is dropped
- * @param client Client
- *
  * @brief
  * g_inactivity and g_spectatorinactivity :
  * Values have to be higher then 10 seconds, that is the time after the warn message is sent.
  * (if it's lower than that value, it will not work at all)
+ *
+ * @param[in,out] client Client
+ *
+ * @return Returns qfalse if the client is dropped
  */
 qboolean ClientInactivityTimer(gclient_t *client)
 {
@@ -917,6 +929,7 @@ void ClientTimerActions(gentity_t *ent, int msec)
 }
 
 /**
+ * @brief ClientIntermissionThink
  * @param[in,out] client Client
  */
 void ClientIntermissionThink(gclient_t *client)
@@ -934,6 +947,11 @@ void ClientIntermissionThink(gclient_t *client)
 	client->wbuttons    = client->pers.cmd.wbuttons;
 }
 
+/**
+ * @brief G_FallDamage
+ * @param[in,out] ent
+ * @param[in] event
+ */
 void G_FallDamage(gentity_t *ent, int event)
 {
 	int damage;
@@ -988,11 +1006,11 @@ void G_FallDamage(gentity_t *ent, int event)
 }
 
 /**
+ * @brief Events will be passed on to the clients for presentation,
+ * but any server game effects are handled here
+ *
  * @param[in] ent              Pointer to Entity
  * @param     oldEventSequence Old event sequence number
- *
- * Events will be passed on to the clients for presentation,
- * but any server game effects are handled here
  */
 void ClientEvents(gentity_t *ent, int oldEventSequence)
 {
@@ -1100,6 +1118,7 @@ void ClientEvents(gentity_t *ent, int oldEventSequence)
 }
 
 /**
+ * @brief WolfFindMedic
  * @param[in,out] self Current Player Entity
  */
 void WolfFindMedic(gentity_t *self)
@@ -1157,7 +1176,7 @@ void WolfFindMedic(gentity_t *self)
 		end[2] += cl->ps.viewheight;
 
 		trap_Trace(&tr, start, NULL, NULL, end, self->s.number, CONTENTS_SOLID);
-		if (tr.fraction < 0.95)
+		if (tr.fraction < 0.95f)
 		{
 			continue;
 		}
@@ -1180,13 +1199,13 @@ void WolfFindMedic(gentity_t *self)
 }
 
 /**
- * @param[in,out] ent Entity
- *
- * This will be called once for each client frame, which will
+ * @brief This will be called once for each client frame, which will
  * usually be a couple times for each server frame on fast clients.
  *
  * If "g_synchronousClients 1" is set, this will be called exactly
  * once for each server frame, which makes for smooth demo recording.
+ *
+ * @param[in,out] ent Entity
  */
 void ClientThink_real(gentity_t *ent)
 {
@@ -1385,7 +1404,7 @@ void ClientThink_real(gentity_t *ent)
 	// set up for pmove
 	oldEventSequence = client->ps.eventSequence;
 
-	client->currentAimSpreadScale = (float)client->ps.aimSpreadScale / 255.0;
+	client->currentAimSpreadScale = client->ps.aimSpreadScale / 255.0f;
 
 	memset(&pm, 0, sizeof(pm));
 
@@ -1667,7 +1686,7 @@ void ClientThink_cmd(gentity_t *ent, usercmd_t *cmd)
 
 /**
  * @brief A new command has arrived from the client
- * @param clientNum Client Number from 0 to MAX_CLIENTS
+ * @param[in] clientNum Client Number from 0 to MAX_CLIENTS
  */
 void ClientThink(int clientNum)
 {
@@ -1694,6 +1713,7 @@ void ClientThink(int clientNum)
 }
 
 /**
+ * @brief G_RunClient
  * @param[in,out] ent Entity
  */
 void G_RunClient(gentity_t *ent)
@@ -1728,6 +1748,7 @@ void G_RunClient(gentity_t *ent)
 }
 
 /**
+ * @brief SpectatorClientEndFrame
  * @param[in,out] ent Spectator Entity
  */
 void SpectatorClientEndFrame(gentity_t *ent)
@@ -1925,7 +1946,9 @@ void SpectatorClientEndFrame(gentity_t *ent)
 // to be safe to return them to PLAYERSOLID
 
 /**
+ * @brief StuckInClient
  * @param[in,out] self Current Player Entity
+ * @return
  */
 qboolean StuckInClient(gentity_t *self)
 {
@@ -1983,6 +2006,11 @@ qboolean StuckInClient(gentity_t *self)
 extern vec3_t playerMins, playerMaxs;
 #define WR_PUSHAMOUNT 25
 
+/**
+ * @brief WolfRevivePushEnt
+ * @param[in,out] self
+ * @param[in,out] other
+ */
 void WolfRevivePushEnt(gentity_t *self, gentity_t *other)
 {
 	vec3_t dir, push;
@@ -2012,8 +2040,10 @@ void WolfRevivePushEnt(gentity_t *self, gentity_t *other)
 }
 
 /**
+ * @brief WolfReviveBbox
  * @param[in,out] self Current Player Entity
- * @note completely revived for capsules
+ *
+ * @note Completely revived for capsules
  */
 void WolfReviveBbox(gentity_t *self)
 {
@@ -2080,11 +2110,11 @@ void WolfReviveBbox(gentity_t *self)
 }
 
 /**
- * @param[in,out] ent Entity
- *
- * Called at the end of each server frame for each connected client
+ * @brief Called at the end of each server frame for each connected client
  * A fast client will have multiple ClientThink for each ClientEndFrame,
  * while a slow client may have multiple ClientEndFrame between ClientThink.
+ *
+ * @param[in,out] ent Entity
  */
 void ClientEndFrame(gentity_t *ent)
 {
@@ -2113,7 +2143,7 @@ void ClientEndFrame(gentity_t *ent)
 	if (g_skillRating.integer && !(level.time % 2000))
 	{
 		level.axisProb   = G_CalculateWinProbability(TEAM_AXIS);
-		level.alliesProb = 1.0 - level.axisProb;
+		level.alliesProb = 1.0f - level.axisProb;
 	}
 #endif
 

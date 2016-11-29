@@ -1665,7 +1665,7 @@ qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime
 qboolean BG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime);
 qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfClips);
 
-#define OVERCLIP        1.001
+#define OVERCLIP        1.001f
 
 void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce);
 
@@ -2219,7 +2219,7 @@ typedef enum
 
 void BG_AdjustAAGunMuzzleForBarrel(vec_t *origin, vec_t *forward, vec_t *right, vec_t *up, int barrel);
 
-int BG_ClassTextToClass(char *token);
+int BG_ClassTextToClass(const char *token);
 skillType_t BG_ClassSkillForClass(int classnum);
 
 int BG_FootstepForSurface(int surfaceFlags);

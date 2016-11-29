@@ -49,6 +49,8 @@ bg_playerclass_t bg_allies_playerclasses[NUM_PLAYER_CLASSES] =
 			WP_BAZOOKA,
 			WP_MORTAR
 		},
+		0,
+		0,
 	},
 
 	{
@@ -59,6 +61,8 @@ bg_playerclass_t bg_allies_playerclasses[NUM_PLAYER_CLASSES] =
 		{
 			WP_THOMPSON,
 		},
+		0,
+		0,
 	},
 
 	{
@@ -70,6 +74,8 @@ bg_playerclass_t bg_allies_playerclasses[NUM_PLAYER_CLASSES] =
 			WP_THOMPSON,
 			WP_CARBINE,
 		},
+		0,
+		0,
 	},
 
 	{
@@ -80,6 +86,8 @@ bg_playerclass_t bg_allies_playerclasses[NUM_PLAYER_CLASSES] =
 		{
 			WP_THOMPSON,
 		},
+		0,
+		0,
 	},
 
 	{
@@ -92,6 +100,8 @@ bg_playerclass_t bg_allies_playerclasses[NUM_PLAYER_CLASSES] =
 			WP_FG42,
 			WP_GARAND,
 		},
+		0,
+		0,
 	},
 };
 
@@ -109,6 +119,8 @@ bg_playerclass_t bg_axis_playerclasses[NUM_PLAYER_CLASSES] =
 			WP_PANZERFAUST,
 			WP_MORTAR2
 		},
+		0,
+		0,
 	},
 
 	{
@@ -119,6 +131,8 @@ bg_playerclass_t bg_axis_playerclasses[NUM_PLAYER_CLASSES] =
 		{
 			WP_MP40,
 		},
+		0,
+		0,
 	},
 
 	{
@@ -130,6 +144,8 @@ bg_playerclass_t bg_axis_playerclasses[NUM_PLAYER_CLASSES] =
 			WP_MP40,
 			WP_KAR98,
 		},
+		0,
+		0,
 	},
 
 	{
@@ -140,6 +156,8 @@ bg_playerclass_t bg_axis_playerclasses[NUM_PLAYER_CLASSES] =
 		{
 			WP_MP40,
 		},
+		0,
+		0,
 	},
 
 	{
@@ -152,9 +170,17 @@ bg_playerclass_t bg_axis_playerclasses[NUM_PLAYER_CLASSES] =
 			WP_FG42,
 			WP_K43,
 		},
+		0,
+		0,
 	},
 };
 
+/**
+ * @brief BG_GetPlayerClassInfo
+ * @param[in] team
+ * @param[in] cls
+ * @return
+ */
 bg_playerclass_t *BG_GetPlayerClassInfo(int team, int cls)
 {
 	bg_playerclass_t *teamList;
@@ -178,11 +204,22 @@ bg_playerclass_t *BG_GetPlayerClassInfo(int team, int cls)
 	return &teamList[cls];
 }
 
+/**
+ * @brief BG_PlayerClassForPlayerState
+ * @param[in] ps
+ * @return
+ */
 bg_playerclass_t *BG_PlayerClassForPlayerState(playerState_t *ps)
 {
 	return BG_GetPlayerClassInfo(ps->persistant[PERS_TEAM], ps->stats[STAT_PLAYER_CLASS]);
 }
 
+/**
+ * @brief BG_ClassHasWeapon
+ * @param[in] classInfo
+ * @param[in] weap
+ * @return
+ */
 qboolean BG_ClassHasWeapon(bg_playerclass_t *classInfo, weapon_t weap)
 {
 	int i;
@@ -202,6 +239,13 @@ qboolean BG_ClassHasWeapon(bg_playerclass_t *classInfo, weapon_t weap)
 	return qfalse;
 }
 
+/**
+ * @brief BG_WeaponIsPrimaryForClassAndTeam
+ * @param[in] classnum
+ * @param[in] team
+ * @param[in] weapon
+ * @return
+ */
 qboolean BG_WeaponIsPrimaryForClassAndTeam(int classnum, team_t team, weapon_t weapon)
 {
 	bg_playerclass_t *classInfo;
@@ -228,6 +272,11 @@ qboolean BG_WeaponIsPrimaryForClassAndTeam(int classnum, team_t team, weapon_t w
 	return qfalse;
 }
 
+/**
+ * @brief BG_ShortClassnameForNumber
+ * @param[in] classNum
+ * @return
+ */
 const char *BG_ShortClassnameForNumber(int classNum)
 {
 	switch (classNum)
@@ -247,6 +296,11 @@ const char *BG_ShortClassnameForNumber(int classNum)
 	}
 }
 
+/**
+ * @brief BG_ClassnameForNumber
+ * @param[in] classNum
+ * @return
+ */
 const char *BG_ClassnameForNumber(int classNum)
 {
 	switch (classNum)
@@ -266,6 +320,11 @@ const char *BG_ClassnameForNumber(int classNum)
 	}
 }
 
+/**
+ * @brief BG_ClassnameForNumberFilename
+ * @param[in] classNum
+ * @return
+ */
 const char *BG_ClassnameForNumberFilename(int classNum)
 {
 	switch (classNum)
@@ -285,6 +344,11 @@ const char *BG_ClassnameForNumberFilename(int classNum)
 	}
 }
 
+/**
+ * @brief BG_ClassLetterForNumber
+ * @param[in] classNum
+ * @return
+ */
 const char *BG_ClassLetterForNumber(int classNum)
 {
 	switch (classNum)
@@ -304,7 +368,12 @@ const char *BG_ClassLetterForNumber(int classNum)
 	}
 }
 
-int BG_ClassTextToClass(char *token)
+/**
+ * @brief BG_ClassTextToClass
+ * @param[in] token
+ * @return
+ */
+int BG_ClassTextToClass(const char *token)
 {
 	if (!Q_stricmp(token, "soldier"))
 	{
@@ -330,6 +399,11 @@ int BG_ClassTextToClass(char *token)
 	return -1;
 }
 
+/**
+ * @brief BG_TeamnameForNumber
+ * @param[in] teamNum
+ * @return
+ */
 const char *BG_TeamnameForNumber(team_t teamNum)
 {
 	switch (teamNum)
@@ -349,6 +423,11 @@ const char *BG_TeamnameForNumber(team_t teamNum)
 
 skillType_t classskill[NUM_PLAYER_CLASSES] = { SK_HEAVY_WEAPONS, SK_FIRST_AID, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_SIGNALS, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS };
 
+/**
+ * @brief BG_ClassSkillForClass
+ * @param[in] classnum
+ * @return
+ */
 skillType_t BG_ClassSkillForClass(int classnum)
 {
 	if (classnum < 0 || classnum >= NUM_PLAYER_CLASSES)

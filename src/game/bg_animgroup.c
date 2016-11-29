@@ -40,12 +40,21 @@
 
 static animation_t animationPool[MAX_ANIMPOOL_SIZE];
 
+/**
+ * @brief BG_ClearAnimationPool
+ */
 void BG_ClearAnimationPool(void)
 {
 	memset(animationPool, 0, sizeof(animationPool));
 }
 
 #ifdef USE_MDXFILE
+/**
+ * @brief BG_RAG_FindFreeAnimation
+ * @param[in] mdxFile
+ * @param[in] name
+ * @return
+ */
 static animation_t *BG_RAG_FindFreeAnimation(qhandle_t mdxFile, const char *name)
 #else
 static animation_t * BG_RAG_FindFreeAnimation(const char *mdxFileName, const char *name)
@@ -85,7 +94,13 @@ static animation_t * BG_RAG_FindFreeAnimation(const char *mdxFileName, const cha
 	return NULL;
 }
 
-static qboolean BG_RAG_ParseError(int handle, char *format, ...)
+/**
+ * @brief BG_RAG_ParseError
+ * @param[in] handle
+ * @param[in] format
+ * @return
+ */
+static qboolean BG_RAG_ParseError(int handle, const char *format, ...)
 {
 	int         line;
 	char        filename[MAX_QPATH];
@@ -107,6 +122,12 @@ static qboolean BG_RAG_ParseError(int handle, char *format, ...)
 	return qfalse;
 }
 
+/**
+ * @brief BG_RAG_ParseAnimation
+ * @param[in] handle
+ * @param[in,out] animation
+ * @return
+ */
 static qboolean BG_RAG_ParseAnimation(int handle, animation_t *animation)
 {
 	int i;
@@ -138,8 +159,8 @@ static qboolean BG_RAG_ParseAnimation(int handle, animation_t *animation)
 		i = 1;
 	}
 
-	animation->frameLerp   = 1000 / (float)i;
-	animation->initialLerp = 1000 / (float)i;
+	animation->frameLerp   = (int)(1000 / (float)i);
+	animation->initialLerp = (int)(1000 / (float)i);
 
 	if (!PC_Int_Parse(handle, &animation->moveSpeed))
 	{
@@ -188,6 +209,12 @@ static qboolean BG_RAG_ParseAnimation(int handle, animation_t *animation)
 extern qhandle_t trap_R_RegisterModel(const char *name);
 #endif // USE_MDXFILE;
 
+/**
+ * @brief BG_RAG_ParseAnimFile
+ * @param[in] handle
+ * @param[in,out] animModelInfo
+ * @return
+ */
 static qboolean BG_RAG_ParseAnimFile(int handle, animModelInfo_t *animModelInfo)
 {
 	pc_token_t token;
@@ -255,6 +282,12 @@ static qboolean BG_RAG_ParseAnimFile(int handle, animModelInfo_t *animModelInfo)
 	return qtrue;
 }
 
+/**
+ * @brief BG_R_RegisterAnimationGroup
+ * @param[in] filename
+ * @param[out] animModelInfo
+ * @return
+ */
 qboolean BG_R_RegisterAnimationGroup(const char *filename, animModelInfo_t *animModelInfo)
 {
 	pc_token_t token;

@@ -36,7 +36,7 @@
 #ifndef INCLUDE_BG_LOCAL_H
 #define INCLUDE_BG_LOCAL_H
 
-#define MIN_WALK_NORMAL 0.7     // can't walk on very steep slopes
+#define MIN_WALK_NORMAL 0.7f     // can't walk on very steep slopes
 
 #define STEPSIZE        18
 

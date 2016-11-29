@@ -36,11 +36,11 @@
 
 void propExplosion(gentity_t *ent);
 
-/*
-==============
-alarmbox_updateparts
-==============
-*/
+/**
+ * @brief alarmbox_updateparts
+ * @param[in] ent
+ * @param[in] matestoo
+ */
 void alarmbox_updateparts(gentity_t *ent, qboolean matestoo)
 {
 	gentity_t *t, *mate;
@@ -122,11 +122,12 @@ void alarmbox_updateparts(gentity_t *ent, qboolean matestoo)
 	}
 }
 
-/*
-==============
-alarmbox_use
-==============
-*/
+/**
+ * @brief alarmbox_use
+ * @param[in,out] ent
+ * @param[in] other
+ * @param foo - unused
+ */
 void alarmbox_use(gentity_t *ent, gentity_t *other, gentity_t *foo)
 {
 	if (!(ent->active))
@@ -151,11 +152,14 @@ void alarmbox_use(gentity_t *ent, gentity_t *other, gentity_t *foo)
 	//	G_Printf("touched alarmbox\n");
 }
 
-/*
-==============
-alarmbox_die
-==============
-*/
+/**
+ * @brief alarmbox_die
+ * @param[in,out] ent
+ * @param inflictor - unused
+ * @param attacker - unused
+ * @param damage - unused
+ * @param mod - unused
+ */
 void alarmbox_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
 {
 	propExplosion(ent);
@@ -165,11 +169,10 @@ void alarmbox_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int
 	alarmbox_updateparts(ent, qtrue);
 }
 
-/*
-==============
-alarmbox_finishspawning
-==============
-*/
+/**
+ * @brief alarmbox_finishspawning
+ * @param[in] ent
+ */
 void alarmbox_finishspawning(gentity_t *ent)
 {
 	gentity_t *mate;
@@ -184,22 +187,28 @@ void alarmbox_finishspawning(gentity_t *ent)
 	alarmbox_updateparts(ent, qtrue);
 }
 
-/*QUAKED alarm_box (1 0 1) START_ON
-You need to have an origin brush as part of this entity
-current alarm box model is (8 x 16 x 28)
-"health" defaults to 10
-
-"noise" the sound to play over the system (this would be the siren sound)
-
-START_ON means the button is pushed in, any dlights are cycling, and alarms are sounding
-
-"team" key/value is valid for teamed alarm boxes
-teamed alarm_boxes work in tandem (switches/lights syncronize)
-target a box to dlights to have them activate/deactivate with the system (use a stylestring that matches the cycletime for the alarmbox sound)
-alarm sound locations are also placed in the dlights, so wherever you place an attached dlight, you will hear the alarm
-model: the model used is "models/mapobjects/electronics/alarmbox.md3"
-place the origin at the center of your trigger box
-*/
+/**
+ * @brief SP_alarm_box
+ *
+ * @details
+ * QUAKED alarm_box (1 0 1) START_ON
+ * You need to have an origin brush as part of this entity
+ * current alarm box model is (8 x 16 x 28)
+ * "health" defaults to 10
+ *
+ * "noise" the sound to play over the system (this would be the siren sound)
+ *
+ * START_ON means the button is pushed in, any dlights are cycling, and alarms are sounding
+ *
+ * "team" key/value is valid for teamed alarm boxes
+ * teamed alarm_boxes work in tandem (switches/lights syncronize)
+ * target a box to dlights to have them activate/deactivate with the system (use a stylestring that matches the cycletime for the alarmbox sound)
+ * alarm sound locations are also placed in the dlights, so wherever you place an attached dlight, you will hear the alarm
+ * model: the model used is "models/mapobjects/electronics/alarmbox.md3"
+ * place the origin at the center of your trigger box
+ *
+ * @param[in,out] ent
+ */
 void SP_alarm_box(gentity_t *ent)
 {
 	char *s;
@@ -226,7 +235,7 @@ void SP_alarm_box(gentity_t *ent)
 	G_SetAngle(ent, ent->s.angles);
 
 	// FIXME: temp
-	G_Printf("Alarm: %f %f %f\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);
+	G_Printf("Alarm: %f %f %f\n", (double)ent->s.origin[0], (double)ent->s.origin[1], (double)ent->s.origin[2]);
 
 	if (!ent->health)
 	{

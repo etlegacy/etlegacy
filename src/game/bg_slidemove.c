@@ -43,14 +43,13 @@ input: origin, velocity, bounds, groundPlane, trace function
 output: origin, velocity, impacts, stairup boolean
 */
 
-/*
-==================
-PM_SlideMove
-
-Returns qtrue if the velocity was clipped in some way
-==================
-*/
 #define MAX_CLIP_PLANES 5
+
+/**
+ * @brief PM_SlideMove
+ * @param[in] gravity
+ * @return qtrue if the velocity was clipped in some way
+ */
 qboolean PM_SlideMove(qboolean gravity)
 {
 	int     bumpcount, numbumps = 4, extrabumps = 0;
@@ -74,7 +73,7 @@ qboolean PM_SlideMove(qboolean gravity)
 	{
 		VectorCopy(pm->ps->velocity, endVelocity);
 		endVelocity[2]     -= pm->ps->gravity * pml.frametime;
-		pm->ps->velocity[2] = (pm->ps->velocity[2] + endVelocity[2]) * 0.5;
+		pm->ps->velocity[2] = (pm->ps->velocity[2] + endVelocity[2]) * 0.5f;
 		primal_velocity[2]  = endVelocity[2];
 		if (pml.groundPlane)
 		{
@@ -116,9 +115,9 @@ qboolean PM_SlideMove(qboolean gravity)
 		{
 			Com_Printf("%i:%d %d (%f %f %f)\n",
 			           c_pmove, trace.allsolid, trace.startsolid,
-			           trace.endpos[0],
-			           trace.endpos[1],
-			           trace.endpos[2]
+			           (double)trace.endpos[0],
+			           (double)trace.endpos[1],
+			           (double)trace.endpos[2]
 			           );
 		}
 
@@ -135,7 +134,7 @@ qboolean PM_SlideMove(qboolean gravity)
 			VectorCopy(trace.endpos, pm->ps->origin);
 		}
 
-		if (trace.fraction == 1)
+		if (trace.fraction == 1.f)
 		{
 			break;      // moved the entire distance
 		}
@@ -158,7 +157,7 @@ qboolean PM_SlideMove(qboolean gravity)
 
 		for (i = 0 ; i < numplanes ; i++)
 		{
-			if (DotProduct(trace.plane.normal, planes[i]) > 0.99)
+			if (DotProduct(trace.plane.normal, planes[i]) > 0.99f)
 			{
 				if (extrabumps <= 0)
 				{
@@ -201,7 +200,7 @@ qboolean PM_SlideMove(qboolean gravity)
 		for (i = 0 ; i < numplanes ; i++)
 		{
 			into = DotProduct(pm->ps->velocity, planes[i]);
-			if (into >= 0.1)
+			if (into >= 0.1f)
 			{
 				continue;       // move doesn't interact with the plane
 			}
@@ -225,7 +224,7 @@ qboolean PM_SlideMove(qboolean gravity)
 				{
 					continue;
 				}
-				if (DotProduct(clipVelocity, planes[j]) >= 0.1)
+				if (DotProduct(clipVelocity, planes[j]) >= 0.1f)
 				{
 					continue;       // move doesn't interact with the plane
 				}
@@ -258,7 +257,7 @@ qboolean PM_SlideMove(qboolean gravity)
 					{
 						continue;
 					}
-					if (DotProduct(clipVelocity, planes[k]) >= 0.1)
+					if (DotProduct(clipVelocity, planes[k]) >= 0.1f)
 					{
 						continue;       // move doesn't interact with the plane
 					}
@@ -290,11 +289,10 @@ qboolean PM_SlideMove(qboolean gravity)
 	return (bumpcount != 0);
 }
 
-/*
-==================
-PM_StepSlideMove
-==================
-*/
+/**
+ * @brief PM_StepSlideMove
+ * @param[in] gravity
+ */
 void PM_StepSlideMove(qboolean gravity)
 {
 	vec3_t  start_o, start_v;
@@ -318,12 +316,12 @@ void PM_StepSlideMove(qboolean gravity)
 		if (trace.allsolid && !wassolid)
 		{
 			Com_Printf("%i:PM_SlideMove solidified! (%f %f %f) -> (%f %f %f)\n", c_pmove,
-			           start_o[0],
-			           start_o[1],
-			           start_o[2],
-			           pm->ps->origin[0],
-			           pm->ps->origin[1],
-			           pm->ps->origin[2]
+			           (double)start_o[0],
+			           (double)start_o[1],
+			           (double)start_o[2],
+			           (double)pm->ps->origin[0],
+			           (double)pm->ps->origin[1],
+			           (double)pm->ps->origin[2]
 			           );
 		}
 
@@ -351,7 +349,7 @@ void PM_StepSlideMove(qboolean gravity)
 	PM_TraceAll(&trace, start_o, down);
 	VectorSet(up, 0, 0, 1);
 	// never step up when you still have up velocity
-	if (pm->ps->velocity[2] > 0 && (trace.fraction == 1.0 || DotProduct(trace.plane.normal, up) < 0.7))
+	if (pm->ps->velocity[2] > 0 && (trace.fraction == 1.0f || DotProduct(trace.plane.normal, up) < 0.7f))
 	{
 		return;
 	}
@@ -419,7 +417,7 @@ void PM_StepSlideMove(qboolean gravity)
 	{
 		VectorCopy(trace.endpos, pm->ps->origin);
 	}
-	if (trace.fraction < 1.0)
+	if (trace.fraction < 1.0f)
 	{
 		PM_ClipVelocity(pm->ps->velocity, trace.plane.normal, pm->ps->velocity, OVERCLIP);
 	}
