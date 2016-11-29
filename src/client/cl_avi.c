@@ -455,10 +455,10 @@ qboolean CL_OpenAVIForWriting(const char *fileName)
  */
 static qboolean CL_CheckFileSize(int bytesToAdd)
 {
-	int newFileSize = afd.fileSize +          // Current file size
-	                  bytesToAdd +                     // What we want to add
-	                  (afd.numIndices * 16) +          // The index
-	                  4;                               // The index size
+	unsigned int newFileSize = afd.fileSize +           // Current file size
+	                           bytesToAdd +            // What we want to add
+	                           (afd.numIndices * 16) + // The index
+	                           4;                      // The index size
 
 	// I assume all the operating systems
 	// we target can handle a 2Gb file
