@@ -894,10 +894,7 @@ nextInstruction2:
 			opStack[-1] = ((unsigned)r1) % (unsigned)r0;
 			opStack--;
 			goto nextInstruction;
-		case OP_MULI:
-			opStack[-1] = r1 * r0;
-			opStack--;
-			goto nextInstruction;
+		case OP_MULI: // fall through
 		case OP_MULU:
 			opStack[-1] = ((unsigned)r1) * ((unsigned)r0);
 			opStack--;
