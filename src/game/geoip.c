@@ -67,6 +67,11 @@ const char *country_name[MAX_COUNTRY_NUM] = { "N/A",                            
 	                                          "South Africa",                          "Zambia",                       "Montenegro",                      "Zimbabwe",                          "Anonymous Proxy",                      "Satellite Provider",                "Other",                     "Aland Islands",         "Guernsey",                               "Isle of Man",
 	                                          "Jersey",                                "Saint Barthelemy",             "Saint Martin",                    "Bonaire, Saint Eustatius and Saba", "South Sudan",                          "Other" };
 
+/**
+ * @brief GeoIP_addr_to_num
+ * @param[in] addr
+ * @return
+ */
 unsigned long GeoIP_addr_to_num(const char *addr)
 {
 	char          tok[4];
@@ -112,6 +117,12 @@ unsigned long GeoIP_addr_to_num(const char *addr)
 	return ipnum;
 }
 
+/**
+ * @brief GeoIP_seek_record
+ * @param[in] gi
+ * @param[in] ipnum
+ * @return
+ */
 unsigned int GeoIP_seek_record(GeoIP *gi, unsigned long ipnum)
 {
 	int                 depth;
@@ -150,6 +161,9 @@ unsigned int GeoIP_seek_record(GeoIP *gi, unsigned long ipnum)
 	return 255;
 }
 
+/**
+ * @brief GeoIP_open
+ */
 void GeoIP_open(void)
 {
 	// basically not necessary but to get sure we close a maybe existing database
@@ -206,6 +220,9 @@ void GeoIP_open(void)
 	}
 }
 
+/**
+ * @brief GeoIP_close
+ */
 void GeoIP_close(void)
 {
 	if (gidb != NULL)

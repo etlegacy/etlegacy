@@ -35,12 +35,13 @@
 
 #include "g_local.h"
 
-/*
-=============
-G_ConfigParse
-=============
-*/
-static qboolean G_ConfigError(int handle, char *format, ...)
+/**
+ * @brief G_ConfigError
+ * @param[in] handle
+ * @param[in] format
+ * @return
+ */
+static qboolean G_ConfigError(int handle, const char *format, ...)
 {
 	int         line = 0;
 	char        filename[MAX_QPATH];
@@ -62,6 +63,10 @@ static qboolean G_ConfigError(int handle, char *format, ...)
 	return qfalse;
 }
 
+/**
+ * @brief G_PrintConfigs
+ * @param[in] ent
+ */
 void G_PrintConfigs(gentity_t *ent)
 {
 	char configNames[8192];
@@ -90,6 +95,9 @@ void G_PrintConfigs(gentity_t *ent)
 
 /**
  * @brief Checks if config file is in paths (used before initiating a vote for configs)
+ *
+ * @param[in] ent
+ * @param[in] configname
  */
 qboolean G_isValidConfig(gentity_t *ent, const char *configname)
 {
@@ -117,6 +125,13 @@ qboolean G_isValidConfig(gentity_t *ent, const char *configname)
 	return qtrue;
 }
 
+/**
+ * @brief G_ParseSettings
+ * @param[in] handle
+ * @param[in] setvars
+ * @param[in] config
+ * @return
+ */
 qboolean G_ParseSettings(int handle, qboolean setvars, config_t *config)
 {
 	pc_token_t token;
@@ -249,6 +264,12 @@ qboolean G_ParseSettings(int handle, qboolean setvars, config_t *config)
 	return qtrue;
 }
 
+/**
+ * @brief G_ParseMapSettings
+ * @param[in] handle
+ * @param[in] config
+ * @return
+ */
 qboolean G_ParseMapSettings(int handle, config_t *config)
 {
 	pc_token_t token;
@@ -320,6 +341,10 @@ qboolean G_ParseMapSettings(int handle, config_t *config)
 	}
 }
 
+/**
+ * @brief G_configLoadAndSet
+ * @param[in] name
+ */
 void G_configLoadAndSet(const char *name)
 {
 	pc_token_t token;
@@ -431,7 +456,11 @@ void G_configLoadAndSet(const char *name)
 	G_UpdateCvars();
 }
 
-// Force settings to predefined state.
+/**
+ * @brief Force settings to predefined state.
+ * @param[in] configname
+ * @return
+ */
 qboolean G_configSet(const char *configname)
 {
 	fileHandle_t f;
@@ -471,7 +500,7 @@ qboolean G_configSet(const char *configname)
 
 	if (!level.config.publicConfig && g_gamestate.integer == GS_WARMUP_COUNTDOWN)
 	{
-		level.lastRestartTime = level.time;
+		level.lastRestartTime = (qboolean)level.time;
 		trap_SendConsoleCommand(EXEC_APPEND, va("map_restart 0 %i\n", GS_WARMUP));
 	}
 	else
@@ -482,6 +511,9 @@ qboolean G_configSet(const char *configname)
 	return qtrue;
 }
 
+/**
+ * @brief G_ConfigCheckLocked
+ */
 void G_ConfigCheckLocked()
 {
 	int      i;

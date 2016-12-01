@@ -1204,7 +1204,7 @@ void G_ParseField(const char *key, const char *value, gentity_t *ent);
 void Cmd_Score_f(gentity_t *ent);
 void StopFollowing(gentity_t *ent);
 void G_TeamDataForString(const char *teamstr, int clientNum, team_t *team, spectatorState_t *sState, int *specClient);
-qboolean SetTeam(gentity_t *ent, char *s, qboolean force, weapon_t w1, weapon_t w2, qboolean setweapons);
+qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, weapon_t w2, qboolean setweapons);
 void G_SetClientWeapons(gentity_t *ent, weapon_t w1, weapon_t w2, qboolean updateclient);
 void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots);
 qboolean G_FollowSame(gentity_t *ent);
@@ -1531,7 +1531,7 @@ void Svcmd_GameMem_f(void);
 
 // g_session.c
 void G_ReadSessionData(gclient_t *client);
-void G_InitSessionData(gclient_t *client, char *userinfo);
+void G_InitSessionData(gclient_t *client, const char *userinfo);
 
 void G_InitWorldSession(void);
 void G_WriteSessionData(qboolean restart);
@@ -2161,8 +2161,8 @@ void G_UpdateCvars(void);
 void G_wipeCvars(void);
 
 // g_cmds_ext.c
-qboolean G_commandCheck(gentity_t *ent, char *cmd, qboolean fDoAnytime);
-qboolean G_commandHelp(gentity_t *ent, char *pszCommand, unsigned int dwCommand);
+qboolean G_commandCheck(gentity_t *ent, const char *cmd, qboolean fDoAnytime);
+qboolean G_commandHelp(gentity_t *ent, const char *pszCommand, unsigned int dwCommand);
 qboolean G_cmdDebounce(gentity_t *ent, const char *pszCommand);
 void G_commands_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
 void G_lock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state);
@@ -2193,14 +2193,14 @@ int G_checkServerToggle(vmCvar_t *cv);
 char *G_createStats(gentity_t *refEnt);
 void G_deleteStats(int nClient);
 qboolean G_desiredFollow(gentity_t *ent, int nTeam);
-void G_globalSound(char *sound);
+void G_globalSound(const char *sound);
 void G_globalSoundEnum(int sound);
 void G_initMatch(void);
 void G_loadMatchGame(void);
 void G_matchInfoDump(unsigned int dwDumpType);
 void G_printMatchInfo(gentity_t *ent);
-void G_parseStats(char *pszStatsInfo);
-void G_printFull(char *str, gentity_t *ent);
+void G_parseStats(const char *pszStatsInfo);
+void G_printFull(const char *str, gentity_t *ent);
 void G_resetModeState(void);
 void G_resetRoundState(void);
 void G_spawnPrintf(int print_type, int print_time, gentity_t *owner);
@@ -2230,7 +2230,7 @@ typedef struct mod_ws_convert_s
 
 #ifdef FEATURE_MULTIVIEW
 // g_multiview.c
-qboolean G_smvCommands(gentity_t *ent, char *cmd);
+qboolean G_smvCommands(gentity_t *ent, const char *cmd);
 void G_smvAdd_cmd(gentity_t *ent);
 void G_smvAddTeam_cmd(gentity_t *ent, int nTeam);
 void G_smvDel_cmd(gentity_t *ent);
@@ -2250,11 +2250,11 @@ void G_smvUpdateClientCSList(gentity_t *ent);
 void Cmd_AuthRcon_f(gentity_t *ent);
 void G_refAllReady_cmd(gentity_t *ent);
 void G_ref_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
-qboolean G_refCommandCheck(gentity_t *ent, char *cmd);
+qboolean G_refCommandCheck(gentity_t *ent, const char *cmd);
 void G_refHelp_cmd(gentity_t *ent);
 void G_refLockTeams_cmd(gentity_t *ent, qboolean fLock);
 void G_refPause_cmd(gentity_t *ent, qboolean fPause);
-void G_refPlayerPut_cmd(gentity_t *ent, int team_id);
+void G_refPlayerPut_cmd(gentity_t *ent, team_t team_id);
 void G_refRemove_cmd(gentity_t *ent);
 void G_refSpeclockTeams_cmd(gentity_t *ent, qboolean fLock);
 void G_refWarmup_cmd(gentity_t *ent);

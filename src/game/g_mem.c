@@ -39,6 +39,11 @@
 static char memoryPool[POOLSIZE];
 static int  allocPoint;
 
+/**
+ * @brief G_Alloc
+ * @param[in] size
+ * @return
+ */
 void *G_Alloc(int size)
 {
 	char *p;
@@ -61,11 +66,17 @@ void *G_Alloc(int size)
 	return p;
 }
 
+/**
+ * @brief G_InitMemory
+ */
 void G_InitMemory(void)
 {
 	allocPoint = 0;
 }
 
+/**
+ * @brief Svcmd_GameMem_f
+ */
 void Svcmd_GameMem_f(void)
 {
 	G_Printf("Game memory status: %i out of %i bytes allocated - %i bytes free\n", allocPoint, POOLSIZE, POOLSIZE - allocPoint);

@@ -94,8 +94,13 @@ __inline
 __attribute__ ((__gnu_inline__))
 #endif
 #endif
-const struct g_strtoken_t *
-in_word_set(register const char *str, register unsigned int len)
+/**
+ * @brief in_word_set
+ * @param[in] str
+ * @param[in] len
+ * @return
+ */
+const struct g_strtoken_t *in_word_set(register const char *str, register unsigned int len)
 {
 	static const struct g_strtoken_t wordlist[] =
 	{

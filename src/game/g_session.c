@@ -37,19 +37,15 @@
 #include "g_local.h"
 #include "../../etmain/ui/menudef.h"
 
-/*
-=======================================================================
-  SESSION DATA
-=======================================================================
+/**
+ * SESSION DATA
 */
 
-/*
-================
-G_WriteClientSessionData
-
-Called on game shutdown
-================
-*/
+/**
+ * @brief Called on game shutdown
+ * @param[in] client
+ * @param[in] restart
+ */
 void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 {
 #ifdef FEATURE_MULTIVIEW
@@ -153,13 +149,10 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	}
 }
 
-/*
-================
-G_ClientSwap
-
-Client swap handling
-================
-*/
+/**
+ * @brief Client swap handling
+ * @param[in,out] client
+ */
 void G_ClientSwap(gclient_t *client)
 {
 	int flags = 0;
@@ -199,6 +192,10 @@ void G_ClientSwap(gclient_t *client)
 	client->sess.spec_team = flags;
 }
 
+/**
+ * @brief G_CalcRank
+ * @param[in,out] client
+ */
 void G_CalcRank(gclient_t *client)
 {
 	int i, highestskill = 0;
@@ -236,13 +233,10 @@ void G_CalcRank(gclient_t *client)
 	}
 }
 
-/*
-================
-G_ReadSessionData
-
-Called on a reconnect
-================
-*/
+/**
+ * @brief Called on a reconnect
+ * @param[in] client
+ */
 void G_ReadSessionData(gclient_t *client)
 {
 #ifdef FEATURE_MULTIVIEW
@@ -379,14 +373,12 @@ void G_ReadSessionData(gclient_t *client)
 	}
 }
 
-/*
-================
-G_InitSessionData
-
-Called on a first-time connect
-================
-*/
-void G_InitSessionData(gclient_t *client, char *userinfo)
+/**
+ * @brief Called on a first-time connect
+ * @param[in] client
+ * @param userinfo
+ */
+void G_InitSessionData(gclient_t *client, const char *userinfo)
 {
     clientSession_t *sess = &client->sess;
 
@@ -424,11 +416,9 @@ void G_InitSessionData(gclient_t *client, char *userinfo)
     G_WriteClientSessionData(client, qfalse);
 }
 
-/*
-==================
-G_InitWorldSession
-==================
-*/
+/**
+ * @brief G_InitWorldSession
+ */
 void G_InitWorldSession(void)
 {
     char s[MAX_STRING_CHARS];
@@ -549,11 +539,10 @@ void G_InitWorldSession(void)
 	}
 }
 
-/*
-==================
-G_WriteSessionData
-==================
-*/
+/**
+ * @brief G_WriteSessionData
+ * @param[in] restart
+ */
 void G_WriteSessionData(qboolean restart)
 {
     int  i;

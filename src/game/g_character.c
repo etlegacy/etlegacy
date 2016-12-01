@@ -41,11 +41,13 @@
 static char text[100000];           // <- was causing callstacks >64k
 
 #ifdef FEATURE_SERVERMDX
-/*
-==================
-G_CalcMoveSpeeds; adapted from BG_CalcMoveSpeeds
-==================
-*/
+
+/**
+ * @brief G_CalcMoveSpeeds
+ * @param[in,out] character
+ *
+ * @see Adapted from BG_CalcMoveSpeeds
+ */
 static void G_CalcMoveSpeeds(bg_character_t *character)
 {
 	char          *tags[2]  = { "tag_footleft", "tag_footright" };
@@ -132,13 +134,13 @@ static void G_CalcMoveSpeeds(bg_character_t *character)
 }
 #endif
 
-/*
-=====================
-G_ParseAnimationFiles
-
-  Read in all the configuration and script files for this model.
-=====================
-*/
+/**
+ * @brief Read in all the configuration and script files for this model.
+ * @param[in] character
+ * @param[in] animationGroup
+ * @param[in] animationScript
+ * @return
+ */
 static qboolean G_ParseAnimationFiles(bg_character_t *character, const char *animationGroup, const char *animationScript)
 {
 	fileHandle_t f;
@@ -177,16 +179,15 @@ static qboolean G_ParseAnimationFiles(bg_character_t *character, const char *ani
 	return qtrue;
 }
 
-/*
-==================
-G_CheckForExistingAnimModelInfo
-
-  If this player model has already been parsed, then use the existing information.
-  Otherwise, set the modelInfo pointer to the first free slot.
-
-  returns qtrue if existing model found, qfalse otherwise
-==================
-*/
+/**
+ * @brief If this player model has already been parsed, then use the existing information.
+ * Otherwise, set the modelInfo pointer to the first free slot.
+ *
+ * @param[in] animationGroup
+ * @param[in] animationScript
+ * @param[out] animModelInfo
+ * @return qtrue if existing model found, qfalse otherwise
+ */
 static qboolean G_CheckForExistingAnimModelInfo(const char *animationGroup, const char *animationScript, animModelInfo_t **animModelInfo)
 {
 	int             i;
@@ -224,11 +225,12 @@ static qboolean G_CheckForExistingAnimModelInfo(const char *animationGroup, cons
 	return qfalse;
 }
 
-/*
-===================
-G_RegisterCharacter
-===================
-*/
+/**
+ * @brief G_RegisterCharacter
+ * @param[in] characterFile
+ * @param[in] character
+ * @return
+ */
 qboolean G_RegisterCharacter(const char *characterFile, bg_character_t *character)
 {
 	bg_characterDef_t characterDef;
@@ -263,11 +265,9 @@ qboolean G_RegisterCharacter(const char *characterFile, bg_character_t *characte
 	return qtrue;
 }
 
-/*
-=======================
-G_RegisterPlayerClasses
-=======================
-*/
+/**
+ * @brief G_RegisterPlayerClasses
+ */
 void G_RegisterPlayerClasses(void)
 {
 	bg_playerclass_t *classInfo;
@@ -291,11 +291,10 @@ void G_RegisterPlayerClasses(void)
 	}
 }
 
-/*
-=================
-G_UpdateCharacter
-=================
-*/
+/**
+ * @brief G_UpdateCharacter
+ * @param[in,out] client
+ */
 void G_UpdateCharacter(gclient_t *client)
 {
 	char           infostring[MAX_INFO_STRING];

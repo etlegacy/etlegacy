@@ -56,13 +56,19 @@ vec3_t playerMins = { -18, -18, -24 };
 vec3_t playerMaxs = { 18, 18, 48 };
 
 /*
-QUAKED info_player_deathmatch (1 0 1) (-18 -18 -24) (18 18 48)
-potential spawning position for deathmatch games.
-Targets will be fired when someone spawns in on them.
-"nobots" will prevent bots from using this spot.
-"nohumans" will prevent non-bots from using this spot.
-If the start position is targeting an entity, the players camera will start out facing that ent (like an info_notnull)
+
 */
+/**
+ * @brief QUAKED info_player_deathmatch (1 0 1) (-18 -18 -24) (18 18 48)
+ * potential spawning position for deathmatch games.
+ * Targets will be fired when someone spawns in on them.
+ * "nobots" will prevent bots from using this spot.
+ * "nohumans" will prevent non-bots from using this spot.
+ *
+ * If the start position is targeting an entity, the players camera will start out facing that ent (like an info_notnull)
+ *
+ * @param[in,out] ent
+ */
 void SP_info_player_deathmatch(gentity_t *ent)
 {
 	int i;
@@ -88,31 +94,36 @@ void SP_info_player_deathmatch(gentity_t *ent)
 	}
 }
 
-/*
-QUAKED info_player_checkpoint (1 0 0) (-16 -16 -24) (16 16 32) a b c d
-these are start points /after/ the level start
-the letter (a b c d) designates the checkpoint that needs to be complete in order to use this start position
-*/
+/**
+ * @brief QUAKED info_player_checkpoint (1 0 0) (-16 -16 -24) (16 16 32) a b c d
+ * these are start points /after/ the level start
+ * the letter (a b c d) designates the checkpoint that needs to be complete in order to use this start position
+ *
+ * @param[in] ent
+ */
 void SP_info_player_checkpoint(gentity_t *ent)
 {
 	ent->classname = "info_player_checkpoint";
 	SP_info_player_deathmatch(ent);
 }
 
-/*
-QUAKED info_player_start (1 0 0) (-18 -18 -24) (18 18 48)
-equivelant to info_player_deathmatch
-*/
+/**
+ * @brief QUAKED info_player_start (1 0 0) (-18 -18 -24) (18 18 48)
+ * equivelant to info_player_deathmatch
+ * @param ent
+ */
 void SP_info_player_start(gentity_t *ent)
 {
 	ent->classname = "info_player_deathmatch";
 	SP_info_player_deathmatch(ent);
 }
 
-/*
-QUAKED info_player_intermission (1 0 1) (-16 -16 -24) (16 16 32) AXIS ALLIED
-The intermission will be viewed from this point.  Target an info_notnull for the view direction.
-*/
+/**
+ * @brief QUAKED info_player_intermission (1 0 1) (-16 -16 -24) (16 16 32) AXIS ALLIED
+ * The intermission will be viewed from this point.  Target an info_notnull for the view direction.
+ *
+ * @param ent - unused
+ */
 void SP_info_player_intermission(gentity_t *ent)
 {
 }
@@ -123,11 +134,11 @@ void SP_info_player_intermission(gentity_t *ent)
 =======================================================================
 */
 
-/*
-================
-SpotWouldTelefrag
-================
-*/
+/**
+ * @brief SpotWouldTelefrag
+ * @param[in] spot
+ * @return
+ */
 qboolean SpotWouldTelefrag(gentity_t *spot)
 {
 	int       i, num;
@@ -151,13 +162,11 @@ qboolean SpotWouldTelefrag(gentity_t *spot)
 	return qfalse;
 }
 
-/*
-================
-SelectNearestDeathmatchSpawnPoint
-
-Find the spot that we DON'T want to use
-================
-*/
+/**
+ * @brief Find the spot that we DON'T want to use
+ * @param[in] from
+ * @return
+ */
 gentity_t *SelectNearestDeathmatchSpawnPoint(vec3_t from)
 {
 	gentity_t *spot = NULL;
@@ -179,14 +188,12 @@ gentity_t *SelectNearestDeathmatchSpawnPoint(vec3_t from)
 	return nearestSpot;
 }
 
-/*
-================
-SelectRandomDeathmatchSpawnPoint
-
-go to a random point that doesn't telefrag
-================
-*/
 #define MAX_SPAWN_POINTS    128
+
+/**
+ * @brief Go to a random point that doesn't telefrag
+ * @return
+ */
 gentity_t *SelectRandomDeathmatchSpawnPoint(void)
 {
 	gentity_t *spot = NULL;
@@ -213,13 +220,14 @@ gentity_t *SelectRandomDeathmatchSpawnPoint(void)
 	return spots[selection];
 }
 
-/*
-===========
-SelectSpawnPoint
-
-Chooses a player start, deathmatch start, etc
-============
-*/
+/**
+ * @brief Chooses a player start, deathmatch start, etc
+ *
+ * @param[in] avoidPoint
+ * @param[in] origin
+ * @param[in] angles
+ * @return
+ */
 gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles)
 {
 	gentity_t *nearestSpot;
@@ -252,11 +260,12 @@ gentity_t *SelectSpawnPoint(vec3_t avoidPoint, vec3_t origin, vec3_t angles)
 	return spot;
 }
 
-/*
-===========
-SelectSpectatorSpawnPoint
-============
-*/
+/**
+ * @brief SelectSpectatorSpawnPoint
+ * @param[out] origin
+ * @param[out] angles
+ * @return
+ */
 gentity_t *SelectSpectatorSpawnPoint(vec3_t origin, vec3_t angles)
 {
 	FindIntermissionPoint();
@@ -273,11 +282,9 @@ BODYQUE
 =======================================================================
 */
 
-/*
-===============
-InitBodyQue
-===============
-*/
+/**
+ * @brief InitBodyQue
+ */
 void InitBodyQue(void)
 {
 	int       i;
@@ -299,13 +306,10 @@ void InitBodyQue(void)
 	}
 }
 
-/*
-=============
-BodyUnlink
-
-Called by BodySink
-=============
-*/
+/**
+ * @brief Called by BodySink
+ * @param[in,out ent
+ */
 void BodyUnlink(gentity_t *ent)
 {
 	gentity_t *tent;
@@ -319,6 +323,10 @@ void BodyUnlink(gentity_t *ent)
 	ent->physicsObject = qfalse;
 }
 
+/**
+ * @brief G_BodyDP
+ * @param[in,out] ent
+ */
 void G_BodyDP(gentity_t *ent)
 {
 	gentity_t *tent;
@@ -331,13 +339,10 @@ void G_BodyDP(gentity_t *ent)
 	G_FreeEntity(ent);
 }
 
-/*
-=============
-BodySink
-
-After sitting around for five seconds, fall into the ground and dissapear
-=============
-*/
+/**
+ * @brief After sitting around for five seconds, fall into the ground and dissapear
+ * @param[in,out] ent
+ */
 void BodySink2(gentity_t *ent)
 {
 	ent->physicsObject = qfalse;
@@ -360,13 +365,10 @@ void BodySink2(gentity_t *ent)
 	VectorSet(ent->s.pos.trDelta, 0, 0, -8);
 }
 
-/*
-=============
-BodySink
-
-After sitting around for five seconds, fall into the ground and dissapear
-=============
-*/
+/**
+ * @brief After sitting around for five seconds, fall into the ground and dissapear
+ * @param[in,out] ent
+ */
 void BodySink(gentity_t *ent)
 {
 	if (ent->activator)
@@ -388,13 +390,19 @@ void BodySink(gentity_t *ent)
 
 #ifdef FEATURE_SERVERMDX
 
+/**
+ * @brief G_IsPositionOK
+ * @param[in,out] ent
+ * @param[in] newOrigin
+ * @return
+ */
 static qboolean G_IsPositionOK(gentity_t *ent, vec3_t newOrigin)
 {
 	trace_t trace;
 
 	trap_TraceCapsule(&trace, ent->s.pos.trBase, ent->r.mins, ent->r.maxs, newOrigin, ent->s.number, MASK_PLAYERSOLID);
 
-	if (trace.fraction == 1)
+	if (trace.fraction == 1.f)
 	{
 		VectorCopy(trace.endpos, ent->s.pos.trBase);
 		return qtrue;
@@ -405,7 +413,14 @@ static qboolean G_IsPositionOK(gentity_t *ent, vec3_t newOrigin)
 	}
 }
 
-// note that this is only with first stage, corpse can just use slidemove
+/**
+ * @brief G_StepSlideCorpse
+ *
+ * @param[in,out] ent
+ * @param[in] newOrigin
+ *
+ * @note note that this is only with first stage, corpse can just use slidemove
+ */
 static void G_StepSlideCorpse(gentity_t *ent, vec3_t newOrigin)
 {
 	vec3_t  start, down, up;
@@ -420,7 +435,7 @@ static void G_StepSlideCorpse(gentity_t *ent, vec3_t newOrigin)
 		down[2] -= 16;
 		// item code is using these
 		trap_Trace(&trace, ent->s.pos.trBase, ent->r.mins, ent->r.maxs, down, ent->s.number, MASK_PLAYERSOLID);
-		if (trace.fraction == 1)
+		if (trace.fraction == 1.f)
 		{
 			// begin with falling again
 			ent->s.pos.trType = TR_GRAVITY;
@@ -442,7 +457,7 @@ static void G_StepSlideCorpse(gentity_t *ent, vec3_t newOrigin)
 
 	VectorSet(up, 0, 0, 1);
 	// never step up when you still have up velocity
-	if (ent->s.pos.trDelta[2] > 0 && (trace.fraction == 1.0 || DotProduct(trace.plane.normal, up) < 0.7))
+	if (ent->s.pos.trDelta[2] > 0 && (trace.fraction == 1.0f || DotProduct(trace.plane.normal, up) < 0.7f))
 	{
 		return;
 	}
@@ -484,7 +499,7 @@ static void G_StepSlideCorpse(gentity_t *ent, vec3_t newOrigin)
 		down[2] -= 16;
 		// item code is using these
 		trap_Trace(&trace, ent->s.pos.trBase, ent->r.mins, ent->r.maxs, down, ent->s.number, MASK_PLAYERSOLID);
-		if (trace.fraction == 1)
+		if (trace.fraction == 1.f)
 		{
 			// begin with falling again
 			ent->s.pos.trType = TR_GRAVITY;
@@ -498,14 +513,11 @@ static void G_StepSlideCorpse(gentity_t *ent, vec3_t newOrigin)
 }
 #endif
 
-/*
-=============
-CopyToBodyQue
-
-A player is respawning, so make an entity that looks
-just like the existing corpse to leave behind.
-=============
-*/
+/**
+ * @brief A player is respawning, so make an entity that looks
+ * just like the existing corpse to leave behind.
+ * @param[in] ent
+ */
 void CopyToBodyQue(gentity_t *ent)
 {
 	gentity_t *body;
@@ -666,11 +678,11 @@ void CopyToBodyQue(gentity_t *ent)
 
 //======================================================================
 
-/*
-==================
-SetClientViewAngle
-==================
-*/
+/**
+ * @brief SetClientViewAngle
+ * @param[in,out] ent
+ * @param[in] angle
+ */
 void SetClientViewAngle(gentity_t *ent, vec3_t angle)
 {
 	int i;
@@ -686,6 +698,10 @@ void SetClientViewAngle(gentity_t *ent, vec3_t angle)
 	VectorCopy(ent->s.angles, ent->client->ps.viewangles);
 }
 
+/**
+ * @brief G_DropLimboHealth
+ * @param[in,out] ent
+ */
 void G_DropLimboHealth(gentity_t *ent)
 {
 	if (g_dropHealth.integer == 0 || !ent->client || ent->client->sess.playerType != PC_MEDIC || g_gamestate.integer != GS_PLAYING)
@@ -723,6 +739,10 @@ void G_DropLimboHealth(gentity_t *ent)
 	}
 }
 
+/**
+ * @brief G_DropLimboAmmo
+ * @param[in,out] ent
+ */
 void G_DropLimboAmmo(gentity_t *ent)
 {
 	if (g_dropAmmo.integer == 0 || !ent->client || ent->client->sess.playerType != PC_FIELDOPS)
@@ -766,11 +786,11 @@ void G_DropLimboAmmo(gentity_t *ent)
 	}
 }
 
-/*
-================
-limbo
-================
-*/
+/**
+ * @brief limbo
+ * @param[in,out] ent
+ * @param[in] makeCorpse
+ */
 void limbo(gentity_t *ent, qboolean makeCorpse)
 {
 	if (!(ent->client->ps.pm_flags & PMF_LIMBO))
@@ -859,12 +879,10 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 	}
 }
 
-/*
-================
-reinforce
-    called when time expires for a team deployment cycle and there is at least one guy ready to go
-================
-*/
+/**
+ * @brief Called when time expires for a team deployment cycle and there is at least one guy ready to go
+ * @param[in,out] ent
+ */
 void reinforce(gentity_t *ent)
 {
 	int p;
@@ -891,11 +909,10 @@ void reinforce(gentity_t *ent)
 	respawn(ent);
 }
 
-/*
-================
-respawn
-================
-*/
+/**
+ * @brief respawn
+ * @param[in,out] ent
+ */
 void respawn(gentity_t *ent)
 {
 	ent->client->ps.pm_flags &= ~PMF_LIMBO; // turns off limbo
@@ -928,13 +945,14 @@ void respawn(gentity_t *ent)
 	ClientSpawn(ent, qfalse, qfalse, qtrue);
 }
 
-/*
-================
-TeamCount
-
-    Returns number of players on a team
-================
-*/
+/**
+ * @brief Count the number of players on a team
+ *
+ * @param[in] ignoreClientNum
+ * @param[in] team
+ *
+ * @return Number of players on a team
+ */
 int TeamCount(int ignoreClientNum, team_t team)
 {
 	int i, ref, count = 0;
@@ -954,11 +972,11 @@ int TeamCount(int ignoreClientNum, team_t team)
 	return count;
 }
 
-/*
-================
-PickTeam
-================
-*/
+/**
+ * @brief PickTeam
+ * @param[in] ignoreClientNum
+ * @return
+ */
 team_t PickTeam(int ignoreClientNum)
 {
 	int counts[TEAM_NUM_TEAMS] = { 0, 0, 0 };
@@ -979,11 +997,11 @@ team_t PickTeam(int ignoreClientNum)
 	return(((level.teamScores[TEAM_ALLIES] > level.teamScores[TEAM_AXIS]) ? TEAM_AXIS : TEAM_ALLIES));
 }
 
-/*
-===========
-AddExtraSpawnAmmo
-===========
-*/
+/**
+ * @brief AddExtraSpawnAmmo
+ * @param[in,out] client
+ * @param[in] weaponNum
+ */
 static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 {
 	switch (weaponNum)
@@ -1060,6 +1078,15 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 	}
 }
 
+/**
+ * @brief AddWeaponToPlayer
+ * @param[in,out] client
+ * @param[in] weapon
+ * @param[in] ammo
+ * @param[in] ammoclip
+ * @param[in] setcurrent
+ * @return
+ */
 qboolean AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammoclip, qboolean setcurrent)
 {
 	COM_BitSet(client->ps.weapons, weapon);
@@ -1080,11 +1107,10 @@ qboolean AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int amm
 	return qtrue;
 }
 
-/*
-===========
-SetWolfSpawnWeapons
-===========
-*/
+/**
+ * @brief SetWolfSpawnWeapons
+ * @param[in,out] client
+ */
 void SetWolfSpawnWeapons(gclient_t *client)
 {
 	int pc = client->sess.playerType;
@@ -1470,6 +1496,12 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	}
 }
 
+/**
+ * @brief G_CountTeamMedics
+ * @param[in] team
+ * @param[in] alivecheck
+ * @return
+ */
 int G_CountTeamMedics(team_t team, qboolean alivecheck)
 {
 	int numMedics = 0;
@@ -1508,7 +1540,10 @@ int G_CountTeamMedics(team_t team, qboolean alivecheck)
 	return numMedics;
 }
 
-// AddMedicTeamBonus
+/**
+ * @brief AddMedicTeamBonus
+ * @param[in,out] client
+ */
 void AddMedicTeamBonus(gclient_t *client)
 {
 	// compute health mod
@@ -1527,11 +1562,12 @@ void AddMedicTeamBonus(gclient_t *client)
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
 }
 
-/*
-===========
-ClientCheckName
-============
-*/
+/**
+ * @brief ClientCleanName
+ * @param[in] in
+ * @param[out] out
+ * @param[in] outSize
+ */
 static void ClientCleanName(const char *in, char *out, int outSize)
 {
 	int  len = 0, colorlessLen = 0;
@@ -1611,8 +1647,15 @@ static void ClientCleanName(const char *in, char *out, int outSize)
 	}
 }
 
-// courtesy of Dens
-// FIXME: IP6
+/**
+ * @brief GetParsedIP
+ * @param[in] ipadd
+ * @return
+ *
+ * @todo FIXME: IP6
+ *
+ * @note Courtesy of Dens
+ */
 const char *GetParsedIP(const char *ipadd)
 {
 	// code by Dan Pop, http://bytes.com/forum/thread212174.html
@@ -1644,13 +1687,19 @@ const char *GetParsedIP(const char *ipadd)
 	return ipge;
 }
 
-// based on userinfocheck.lua and combinedfixes.lua
-// FIXME: IP6
+/**
+ * @brief Based on userinfocheck.lua and combinedfixes.lua
+ * @param clientNum - unused
+ * @param[in] userinfo
+ * @return
+ *
+ * @note FIXME: IP6
+ */
 char *CheckUserinfo(int clientNum, char *userinfo)
 {
-	char *value;
-	int  length = strlen(userinfo);
-	int  i, slashCount = 0, count = 0;
+	char         *value;
+	unsigned int length = strlen(userinfo);
+	int          i, slashCount = 0, count = 0;
 
 	if (length < 1)
 	{
@@ -1794,17 +1843,15 @@ char *CheckUserinfo(int clientNum, char *userinfo)
 	return 0;
 }
 
-/*
-===========
-ClientUserInfoChanged
-
-Called from ClientConnect when the player first connects and
-directly by the server system when the player updates a userinfo variable.
-
-The game can override any of the settings and call trap_SetUserinfo
-if desired.
-============
-*/
+/**
+ * @brief Called from ClientConnect when the player first connects and
+ * directly by the server system when the player updates a userinfo variable.
+ *
+ * The game can override any of the settings and call trap_SetUserinfo
+ * if desired.
+ *
+ * @param[in] clientNum
+ */
 void ClientUserinfoChanged(int clientNum)
 {
 	gentity_t  *ent    = g_entities + clientNum;
@@ -2123,19 +2170,16 @@ void ClientUserinfoChanged(int clientNum)
 	G_DPrintf("ClientUserinfoChanged: %i :: %s\n", clientNum, s);
 }
 
-/*
-IsFakepConnection
-
-    Ported from the etpro lua module
-
-    FIXME: nice to have in engine too - implement this server side !!!
-*/
-
-// This defines the default value and also the minimum value we will allow the client to set...
+/** This defines the default value and also the minimum value we will allow the client to set...*/
 #define DEF_IP_MAX_CLIENTS  3
 
-// Return the length of the IP address if it has a port, or INT_MAX otherwise
-// FIXME: IPv6
+/**
+ * @brief GetIPLength
+ * @param ip
+ * @return The length of the IP address if it has a port, or INT_MAX otherwise
+ *
+ * @todo FIXME: IPv6
+ */
 int GetIPLength(char const *ip)
 {
 	char *start = strchr(ip, ':');
@@ -2143,6 +2187,12 @@ int GetIPLength(char const *ip)
 	return (start == NULL ? INT_MAX : start - ip);
 }
 
+/**
+ * @brief CompareIPNoPort
+ * @param[in] ip1
+ * @param[in] ip2
+ * @return
+ */
 qboolean CompareIPNoPort(char const *ip1, char const *ip2)
 {
 	int checkLength = MIN(GetIPLength(ip1), GetIPLength(ip2));
@@ -2162,6 +2212,15 @@ qboolean CompareIPNoPort(char const *ip1, char const *ip2)
 	}
 }
 
+/**
+ * @brief Ported from the etpro lua module
+ * @param clientNum
+ * @param ip
+ * @param rate
+ * @return
+ *
+ * @todo  FIXME: nice to have in engine too - implement this server side !!!
+ */
 char *IsFakepConnection(int clientNum, char const *ip, char const *rate)
 {
 	gentity_t *ent;
@@ -2252,26 +2311,25 @@ char *IsFakepConnection(int clientNum, char const *ip, char const *rate)
 
 extern const char *country_name[MAX_COUNTRY_NUM];
 
-/*
-===========
-ClientConnect
-
-Called when a player begins connecting to the server.
-Called again for every map change or tournement restart.
-
-The session information will be valid after exit.
-
-Return NULL if the client should be allowed, otherwise return
-a string with the reason for denial.
-
-Otherwise, the client will be sent the current gamestate
-and will eventually get to ClientBegin.
-
-firstTime will be qtrue the very first time a client connects
-to the server machine, but qfalse on map changes and tournement
-restarts.
-============
-*/
+/**
+ * @brief Called when a player begins connecting to the server.
+ * Called again for every map change or tournement restart.
+ *
+ * @details  The session information will be valid after exit.
+ *
+ * Return NULL if the client should be allowed, otherwise return
+ * a string with the reason for denial.
+ *
+ * Otherwise, the client will be sent the current gamestate
+ * and will eventually get to ClientBegin.
+ *
+ * @param[in] clientNum
+ * @param[in] firstTime will be qtrue the very first time a client connects to the server machine, but qfalse on map changes and tournement restarts.
+ * @param[in] isBot
+ *
+ * @return NULL if the client should be allowed, otherwise return
+ * a string with the reason for denial.
+ */
 char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 {
 	gclient_t  *client;
@@ -2586,14 +2644,19 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	return NULL;
 }
 
-// Scaling for late-joiners of maxlives based on current game time
+/**
+ * @brief Scaling for late-joiners of maxlives based on current game time
+ * @param cl - unused
+ * @param[in] maxRespawns
+ * @return
+ */
 int G_ComputeMaxLives(gclient_t *cl, int maxRespawns)
 {
 	float scaled;
 	int   val;
 
 	// don't scale of the timelimit is 0
-	if (g_timelimit.value == 0.0) // map end
+	if (g_timelimit.value == 0.0f) // map end
 	{
 		return maxRespawns - 1;
 	}
@@ -2611,15 +2674,13 @@ int G_ComputeMaxLives(gclient_t *cl, int maxRespawns)
 	return val;
 }
 
-/*
-===========
-ClientBegin
-
-called when a client has finished connecting, and is ready
-to be placed into the level.  This will happen every level load,
-and on transition between teams, but doesn't happen on respawns
-============
-*/
+/**
+ * @brief Called when a client has finished connecting, and is ready
+ * to be placed into the level.  This will happen every level load,
+ * and on transition between teams, but doesn't happen on respawns
+ *
+ * @param[in] clientNum
+ */
 void ClientBegin(int clientNum)
 {
 	gentity_t *ent    = g_entities + clientNum;
@@ -2876,6 +2937,13 @@ void ClientBegin(int clientNum)
 
 #define MAX_SPAWNPOINTFROMLIST_POINTS   16
 
+/**
+ * @brief SelectSpawnPointFromList
+ * @param[in] list
+ * @param[out] spawn_origin
+ * @param[out] spawn_angles
+ * @return
+ */
 gentity_t *SelectSpawnPointFromList(char *list, vec3_t spawn_origin, vec3_t spawn_angles)
 {
 	char      *pStr       = list, *token;
@@ -2938,15 +3006,16 @@ static char *G_CheckVersion(gentity_t *ent)
 }
 #endif
 
-/*
-===========
-ClientSpawn
-
-Called every time a client is placed fresh in the world:
-after the first ClientBegin, and after each respawn
-Initializes all non-persistant parts of playerState
-============
-*/
+/**
+ * @brief Called every time a client is placed fresh in the world:
+ * after the first ClientBegin, and after each respawn
+ * Initializes all non-persistant parts of playerState
+ *
+ * @param[in,out] ent
+ * @param[in] revived
+ * @param[in] teamChange
+ * @param[in] restoreHealth
+ */
 void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean restoreHealth)
 {
 	int                index = ent - g_entities;
@@ -2968,7 +3037,8 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	client->pers.lastBattleSenseBonusTime = level.timeCurrent;
 	client->pers.lastHQMineReportTime     = level.timeCurrent;
 
-/*#ifndef LEGACY_DEBUG
+/*
+#ifndef LEGACY_DEBUG
     if( !client->sess.versionOK ) {
         char *clientMismatchedVersion = G_CheckVersion( ent );	// returns NULL if version is identical
 
@@ -2978,7 +3048,8 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
             client->sess.versionOK = qtrue;
         }
     }
-#endif*/
+#endif
+*/
 
 	// find a spawn point
 	// do it before setting health back up, so farthest
@@ -3103,9 +3174,9 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 	client->ps.crouchMaxZ = client->ps.maxs[2] - (client->ps.standViewHeight - client->ps.crouchViewHeight);
 
-	client->ps.runSpeedScale    = 0.8;
-	client->ps.sprintSpeedScale = 1.1;
-	client->ps.crouchSpeedScale = 0.25;
+	client->ps.runSpeedScale    = 0.8f;
+	client->ps.sprintSpeedScale = 1.1f;
+	client->ps.crouchSpeedScale = 0.25f;
 	client->ps.weaponstate      = WEAPON_READY;
 
 	client->pmext.sprintTime   = SPRINTTIME;
@@ -3296,18 +3367,16 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	}
 }
 
-/*
-===========
-ClientDisconnect
-
-Called when a player drops from the server.
-Will not be called between levels.
-
-This should NOT be called directly by any game logic,
-call trap_DropClient(), which will call this and do
-server system housekeeping.
-============
-*/
+/**
+ * @brief Called when a player drops from the server.
+ * Will not be called between levels.
+ *
+ * @details This should NOT be called directly by any game logic,
+ * call trap_DropClient(), which will call this and do
+*  server system housekeeping.
+ *
+ * @param[in] clientNum
+ */
 void ClientDisconnect(int clientNum)
 {
 	gentity_t *ent  = g_entities + clientNum;
@@ -3338,7 +3407,7 @@ void ClientDisconnect(int clientNum)
 		flag = g_entities + level.sortedClients[i];
 		if (flag->client->disguiseClientNum == clientNum && flag->client->ps.powerups[PW_OPS_DISGUISED])
 		{
-			CPx(flag->s.number,"cp \"Your cover has been blown, steal a new uniform soon!\" 1");
+			CPx(flag->s.number, "cp \"Your cover has been blown, steal a new uniform soon!\" 1");
 			flag->client->disguiseClientNum = flag->s.clientNum;
 			// sound effect
 			G_AddEvent(flag, EV_DISGUISE_SOUND, 0); // FIXME: find a new sound?
@@ -3460,21 +3529,30 @@ void ClientDisconnect(int clientNum)
 	if (g_skillRating.integer)
 	{
 		level.axisProb   = G_CalculateWinProbability(TEAM_AXIS);
-		level.alliesProb = 1.0 - level.axisProb;
+		level.alliesProb = 1.0f - level.axisProb;
 	}
 #endif
 }
 
-// In just the GAME DLL, we want to store the groundtrace surface stuff,
-// so we don't have to keep tracing.
+
+/**
+ * @brief In just the GAME DLL, we want to store the groundtrace surface stuff,
+ * so we don't have to keep tracing.
+ *
+ * @param[in] clientNum
+ * @param[in] surfaceFlags
+ */
 void ClientStoreSurfaceFlags(int clientNum, int surfaceFlags)
 {
 	// Store the surface flags
 	g_entities[clientNum].surfaceFlags = surfaceFlags;
 }
 
-// ClientHitboxMaxZ returns the proper value to use for
-// the entity's r.maxs[2] when running a trace.
+/**
+ * @brief ClientHitboxMaxZ
+ * @param[in] hitEnt
+ * @return the proper value to use for the entity's r.maxs[2] when running a trace.
+ */
 float ClientHitboxMaxZ(gentity_t *hitEnt)
 {
 	if (!hitEnt)

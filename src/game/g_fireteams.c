@@ -84,7 +84,10 @@
 
 #define G_ClientPrint(entityNum, text) trap_SendServerCommand(entityNum, "cpm \"" text "\"\n");
 
-// Utility functions
+/**
+ * @brief G_FindFreeFireteam
+ * @return
+ */
 fireteamData_t *G_FindFreeFireteam(void)
 {
 	int i;
@@ -100,6 +103,11 @@ fireteamData_t *G_FindFreeFireteam(void)
 	return NULL;
 }
 
+/**
+ * @brief G_GetFireteamTeam
+ * @param[in] ft
+ * @return
+ */
 team_t G_GetFireteamTeam(fireteamData_t *ft)
 {
 	if (!ft->inuse)
@@ -115,6 +123,11 @@ team_t G_GetFireteamTeam(fireteamData_t *ft)
 	return g_entities[(int)ft->joinOrder[0]].client->sess.sessionTeam;
 }
 
+/**
+ * @brief G_CountTeamFireteams
+ * @param[in] team
+ * @return
+ */
 int G_CountTeamFireteams(team_t team)
 {
 	int i, cnt = 0;
@@ -130,6 +143,11 @@ int G_CountTeamFireteams(team_t team)
 	return cnt;
 }
 
+/**
+ * @brief G_CountFireteamMembers
+ * @param[in] ft
+ * @return
+ */
 int G_CountFireteamMembers(fireteamData_t *ft)
 {
 	int i, cnt = 0;
@@ -152,6 +170,10 @@ int G_CountFireteamMembers(fireteamData_t *ft)
 	return cnt;
 }
 
+/**
+ * @brief G_UpdateFireteamConfigString
+ * @param ft
+ */
 void G_UpdateFireteamConfigString(fireteamData_t *ft)
 {
 	char buffer[128];
@@ -180,6 +202,12 @@ void G_UpdateFireteamConfigString(fireteamData_t *ft)
 	trap_SetConfigstring(CS_FIRETEAMS + (ft - level.fireTeams), buffer);
 }
 
+/**
+ * @brief G_IsOnFireteam
+ * @param[in] entityNum
+ * @param[out] teamNum
+ * @return
+ */
 qboolean G_IsOnFireteam(int entityNum, fireteamData_t **teamNum)
 {
 	int i, j;
@@ -221,6 +249,12 @@ qboolean G_IsOnFireteam(int entityNum, fireteamData_t **teamNum)
 	return qfalse;
 }
 
+/**
+ * @brief G_IsFireteamLeader
+ * @param[in] entityNum
+ * @param[out] teamNum
+ * @return
+ */
 qboolean G_IsFireteamLeader(int entityNum, fireteamData_t **teamNum)
 {
 	int i;
@@ -254,6 +288,11 @@ qboolean G_IsFireteamLeader(int entityNum, fireteamData_t **teamNum)
 	return qfalse;
 }
 
+/**
+ * @brief G_FindFreeFireteamIdent
+ * @param[in] team
+ * @return
+ */
 int G_FindFreeFireteamIdent(team_t team)
 {
 	qboolean freeIdent[MAX_FIRETEAMS / 2];
@@ -286,7 +325,10 @@ int G_FindFreeFireteamIdent(team_t team)
 	return -1;
 }
 
-// Should be the only function that ever creates a fireteam
+/**
+ * @brief Should be the only function that ever creates a fireteam
+ * @param[in] entityNum
+ */
 void G_RegisterFireteam(int entityNum)
 {
 	fireteamData_t *ft;
@@ -333,7 +375,6 @@ void G_RegisterFireteam(int entityNum)
 	if (ident == 0)
 	{
 		G_Error("G_RegisterFireteam: free fireteam is invalid\n");
-		return;
 	}
 
 	// good to go now
@@ -362,7 +403,11 @@ void G_RegisterFireteam(int entityNum)
 	G_UpdateFireteamConfigString(ft);
 }
 
-// only way a client should ever join a fireteam, other than creating one
+/**
+ * @brief Only way a client should ever join a fireteam, other than creating one
+ * @param[in] entityNum
+ * @param[in] leaderNum
+ */
 void G_AddClientToFireteam(int entityNum, int leaderNum)
 {
 	fireteamData_t *ft;
@@ -420,9 +465,13 @@ void G_AddClientToFireteam(int entityNum, int leaderNum)
 	}
 }
 
-// Check if the fireteam contains only bots.
-// excludeEntityNum will be excluded from the test (if -1, it has no effect)
-// firstHuman returns the joinOrder of the first human found in the fireteam (-1 if none is found)
+/**
+ * @brief Check if the fireteam contains only bots.
+ * @param[in] ft
+ * @param[in] excludeEntityNum Will be excluded from the test (if -1, it has no effect)
+ * @param[out] firstHuman returns the joinOrder of the first human found in the fireteam (-1 if none is found)
+ * @return
+ */
 qboolean G_OnlyBotsInFireteam(fireteamData_t *ft, int excludeEntityNum, int *firstHuman)
 {
 	int      i;
@@ -460,7 +509,12 @@ qboolean G_OnlyBotsInFireteam(fireteamData_t *ft, int excludeEntityNum, int *fir
 	return botFound;
 }
 
-// The only way a client should be removed from a fireteam
+/**
+ * @brief The only way a client should be removed from a fireteam
+ * @param[in] entityNum
+ * @param[in] update
+ * @param[in] print
+ */
 void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 {
 	fireteamData_t *ft;
@@ -568,7 +622,11 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 	}
 }
 
-// The only way a client should ever be invited to join a team
+/**
+ * @brief The only way a client should ever be invited to join a team
+ * @param[in] entityNum
+ * @param[in] otherEntityNum
+ */
 void G_InviteToFireTeam(int entityNum, int otherEntityNum)
 {
 	fireteamData_t *ft;
@@ -625,6 +683,10 @@ void G_InviteToFireTeam(int entityNum, int otherEntityNum)
 #endif
 }
 
+/**
+ * @brief G_DestroyFireteam
+ * @param[in] entityNum
+ */
 void G_DestroyFireteam(int entityNum)
 {
 	fireteamData_t *ft;
@@ -656,6 +718,11 @@ void G_DestroyFireteam(int entityNum)
 	G_UpdateFireteamConfigString(ft);
 }
 
+/**
+ * @brief G_WarnFireTeamPlayer
+ * @param[in] entityNum
+ * @param[in] otherEntityNum
+ */
 void G_WarnFireTeamPlayer(int entityNum, int otherEntityNum)
 {
 	fireteamData_t *ft, *ft2;
@@ -694,6 +761,11 @@ void G_WarnFireTeamPlayer(int entityNum, int otherEntityNum)
 #endif
 }
 
+/**
+ * @brief G_KickFireTeamPlayer
+ * @param[in] entityNum
+ * @param[in] otherEntityNum
+ */
 void G_KickFireTeamPlayer(int entityNum, int otherEntityNum)
 {
 	fireteamData_t *ft, *ft2;
@@ -734,7 +806,11 @@ void G_KickFireTeamPlayer(int entityNum, int otherEntityNum)
 	G_ClientPrint(otherEntityNum, "You have been kicked from the fireteam");
 }
 
-// The only way a client should ever apply to join a team
+/**
+ * @brief The only way a client should ever apply to join a team
+ * @param[in] entityNum
+ * @param[in] fireteamNum
+ */
 void G_ApplyToFireTeam(int entityNum, int fireteamNum)
 {
 	gentity_t      *leader;
@@ -784,6 +860,11 @@ void G_ApplyToFireTeam(int entityNum, int fireteamNum)
 	leader->client->pers.applicationEndTime = level.time + 20000;
 }
 
+/**
+ * @brief G_ProposeFireTeamPlayer
+ * @param[in] entityNum
+ * @param[in] otherEntityNum
+ */
 void G_ProposeFireTeamPlayer(int entityNum, int otherEntityNum)
 {
 	fireteamData_t *ft;
@@ -846,6 +927,12 @@ void G_ProposeFireTeamPlayer(int entityNum, int otherEntityNum)
 #endif
 }
 
+/**
+ * @brief G_FireteamNumberForString
+ * @param[in] name
+ * @param[in] team
+ * @return
+ */
 int G_FireteamNumberForString(const char *name, team_t team)
 {
 	int i, fireteam = 0;
@@ -880,6 +967,11 @@ int G_FireteamNumberForString(const char *name, team_t team)
 	return fireteam;
 }
 
+/**
+ * @brief G_FindFreePublicFireteam
+ * @param[in] team
+ * @return
+ */
 fireteamData_t *G_FindFreePublicFireteam(team_t team)
 {
 	int i, j;
@@ -919,6 +1011,11 @@ fireteamData_t *G_FindFreePublicFireteam(team_t team)
 	return NULL;
 }
 
+/**
+ * @brief G_GiveAdminOfFireTeam
+ * @param[in] entityNum
+ * @param[in] otherEntityNum
+ */
 void G_GiveAdminOfFireTeam(int entityNum, int otherEntityNum)
 {
 	fireteamData_t *ft, *ft2;
@@ -982,7 +1079,10 @@ void G_GiveAdminOfFireTeam(int entityNum, int otherEntityNum)
 	G_ClientPrint(entityNum, "You have been been stripped of fireteam admin rights");
 }
 
-// Command handler
+/**
+ * @brief Cmd_FireTeam_MP_f
+ * @param[in] ent
+ */
 void Cmd_FireTeam_MP_f(gentity_t *ent)
 {
 	char command[32];

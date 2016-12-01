@@ -37,7 +37,13 @@
 
 #include "g_local.h"
 
-qboolean G_smvCommands(gentity_t *ent, char *cmd)
+/**
+ * @brief G_smvCommands
+ * @param[in] ent
+ * @param[in] cmd
+ * @return
+ */
+qboolean G_smvCommands(gentity_t *ent, const char *cmd)
 {
 	if (g_multiview.integer == 0)
 	{
@@ -82,6 +88,10 @@ qboolean G_smvCommands(gentity_t *ent, char *cmd)
 	return qtrue;
 }
 
+/**
+ * @brief G_smvAdd_cmd
+ * @param[in] ent
+ */
 void G_smvAdd_cmd(gentity_t *ent)
 {
 	int  pID;
@@ -112,6 +122,11 @@ void G_smvAdd_cmd(gentity_t *ent)
 	G_smvAddView(ent, pID);
 }
 
+/**
+ * @brief G_smvAddTeam_cmd
+ * @param[in] ent
+ * @param[in] nTeam
+ */
 void G_smvAddTeam_cmd(gentity_t *ent, int nTeam)
 {
 	int i, pID;
@@ -139,6 +154,10 @@ void G_smvAddTeam_cmd(gentity_t *ent, int nTeam)
 	}
 }
 
+/**
+ * @brief G_smvDel_cmd
+ * @param[in] ent
+ */
 void G_smvDel_cmd(gentity_t *ent)
 {
 	int  pID;
@@ -153,7 +172,12 @@ void G_smvDel_cmd(gentity_t *ent)
 	}
 }
 
-// Add a player entity to another player's multiview list
+/**
+ * @brief Add a player entity to another player's multiview list
+ *
+ * @param[in,out] ent
+ * @param[in] pID
+ */
 void G_smvAddView(gentity_t *ent, int pID)
 {
 	int       i;
@@ -220,7 +244,13 @@ void G_smvAddView(gentity_t *ent, int pID)
 	G_smvUpdateClientCSList(ent);
 }
 
-// Find, and optionally delete an entity in a player's MV list
+/**
+ * @brief Find, and optionally delete an entity in a player's MV list
+ * @param[in] ent
+ * @param[in] pID
+ * @param[in] fRemove
+ * @return
+ */
 qboolean G_smvLocateEntityInMVList(gentity_t *ent, int pID, qboolean fRemove)
 {
 	if (ent->client->pers.mvCount > 0)
@@ -243,7 +273,11 @@ qboolean G_smvLocateEntityInMVList(gentity_t *ent, int pID, qboolean fRemove)
 	return qfalse;
 }
 
-// Explicitly shutdown a camera and update global list
+/**
+ * @brief Explicitly shutdown a camera and update global list
+ * @param[in,out] ent
+ * @param[out] ref
+ */
 void G_smvRemoveEntityInMVList(gentity_t *ent, mview_t *ref)
 {
 	ref->entID   = -1;
@@ -255,7 +289,11 @@ void G_smvRemoveEntityInMVList(gentity_t *ent, mview_t *ref)
 	G_smvUpdateClientCSList(ent);
 }
 
-// Calculates a given client's MV player list
+/**
+ * @brief Calculates a given client's MV player list
+ * @param[in] ent
+ * @return
+ */
 unsigned int G_smvGenerateClientList(gentity_t *ent)
 {
 	unsigned int i, mClients = 0;
@@ -271,7 +309,11 @@ unsigned int G_smvGenerateClientList(gentity_t *ent)
 	return mClients;
 }
 
-// Calculates a given client's MV player list
+/**
+ * @brief Calculates a given client's MV player list
+ * @param[in] ent
+ * @param[in] clientList
+ */
 void G_smvRegenerateClients(gentity_t *ent, int clientList)
 {
 	int i;
@@ -285,14 +327,22 @@ void G_smvRegenerateClients(gentity_t *ent, int clientList)
 	}
 }
 
-// Update global MV list for a given client
+/**
+ * @brief Update global MV list for a given client
+ * @param[in,out] ent
+ */
 void G_smvUpdateClientCSList(gentity_t *ent)
 {
 	ent->client->ps.powerups[PW_MVCLIENTLIST] = G_smvGenerateClientList(ent);
 }
 
-// Remove all clients from a team we can't watch (due to updated speclock)
-// or if the viewer enters the game
+/**
+ * @brief Remove all clients from a team we can't watch (due to updated speclock)
+ * or if the viewer enters the game
+ *
+ * @param[in] ent
+ * @param[in] nTeam
+ */
 void G_smvRemoveInvalidClients(gentity_t *ent, int nTeam)
 {
 	int i, id;
@@ -314,7 +364,10 @@ void G_smvRemoveInvalidClients(gentity_t *ent, int nTeam)
 	}
 }
 
-// Scan all MV lists for a single client to remove
+/**
+ * @brief Scan all MV lists for a single client to remove
+ * @param[in] pID
+ */
 void G_smvAllRemoveSingleClient(int pID)
 {
 	int       i;
@@ -332,7 +385,11 @@ void G_smvAllRemoveSingleClient(int pID)
 	}
 }
 
-// Set up snapshot merge based on this portal
+/**
+ * @brief Set up snapshot merge based on this portal
+ * @param[in,out] ent
+ * @return
+ */
 qboolean G_smvRunCamera(gentity_t *ent)
 {
 	int           id = ent->TargetFlag;

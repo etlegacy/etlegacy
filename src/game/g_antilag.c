@@ -34,14 +34,13 @@
 
 #include "g_local.h"
 
-/*
-=============
-TimeShiftLerp (from g_unlagged.c)
-
-Used below to interpolate between two previous vectors
-Returns a vector "frac" times the distance between "start" and "end"
-=============
-*/
+/**
+ * @brief Used below to interpolate between two previous vectors
+ * @param[in] start
+ * @param[in] end
+ * @param[in] frac
+ * @param[out] result A vector "frac" times the distance between "start" and "end"
+ */
 static void TimeShiftLerp(vec3_t start, vec3_t end, float frac, vec3_t result)
 {
 // From CG_InterpolateEntityPosition in cg_ents.c:
@@ -64,6 +63,11 @@ static void TimeShiftLerp(vec3_t start, vec3_t end, float frac, vec3_t result)
 	result[2] = start[2] + frac * (end[2] - start[2]);
 }
 
+/**
+ * @brief G_AntilagSafe
+ * @param[in] ent
+ * @return
+ */
 static qboolean G_AntilagSafe(gentity_t *ent)
 {
 	if (!ent)
@@ -123,6 +127,10 @@ static qboolean G_AntilagSafe(gentity_t *ent)
 	return qtrue;
 }
 
+/**
+ * @brief G_StoreClientPosition
+ * @param[in,out] ent
+ */
 void G_StoreClientPosition(gentity_t *ent)
 {
 	int top;
@@ -178,6 +186,11 @@ void G_StoreClientPosition(gentity_t *ent)
 	ent->client->clientMarkers[top].legsPitching      = ent->legsFrame.pitching;
 }
 
+/**
+ * @brief G_AdjustSingleClientPosition
+ * @param[in,out] ent
+ * @param[in] time
+ */
 static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
 {
 	int i, j;
@@ -430,6 +443,10 @@ static void G_AdjustSingleClientPosition(gentity_t *ent, int time)
 	trap_LinkEntity(ent);
 }
 
+/**
+ * @brief G_ReAdjustSingleClientPosition
+ * @param[in,out] ent
+ */
 void G_ReAdjustSingleClientPosition(gentity_t *ent)
 {
 	if (!G_AntilagSafe(ent))
@@ -483,6 +500,12 @@ void G_ReAdjustSingleClientPosition(gentity_t *ent)
 	}
 }
 
+/**
+ * @brief G_AdjustClientPositions
+ * @param[in] ent
+ * @param[in] time
+ * @param[in] forward
+ */
 static void G_AdjustClientPositions(gentity_t *ent, int time, qboolean forward)
 {
 	int       i;
@@ -514,13 +537,17 @@ static void G_AdjustClientPositions(gentity_t *ent, int time, qboolean forward)
 	}
 }
 
+/**
+ * @brief G_ResetMarkers
+ * @param[in,out] ent
+ */
 void G_ResetMarkers(gentity_t *ent)
 {
 	int   i, time;
 	float period = sv_fps.value;
 	int   eFlags;
 
-	if (!period)
+	if (period == 0.f)
 	{
 		period = 50;
 	}
@@ -579,6 +606,10 @@ void G_ResetMarkers(gentity_t *ent)
 // This variable needs to be here in order for G_BuildLeg() to access it..
 static grefEntity_t refent;
 
+/**
+ * @brief G_AttachBodyParts
+ * @param[in] ent
+ */
 static void G_AttachBodyParts(gentity_t *ent)
 {
 	int       i;
@@ -607,6 +638,9 @@ static void G_AttachBodyParts(gentity_t *ent)
 	}
 }
 
+/**
+ * @brief G_DettachBodyParts
+ */
 static void G_DettachBodyParts(void)
 {
 	int       i;
@@ -626,6 +660,11 @@ static void G_DettachBodyParts(void)
 	}
 }
 
+/**
+ * @brief G_SwitchBodyPartEntity
+ * @param[in] ent
+ * @return
+ */
 static int G_SwitchBodyPartEntity(gentity_t *ent)
 {
 	if (ent->s.eType == ET_TEMPHEAD)
@@ -648,7 +687,17 @@ static int G_SwitchBodyPartEntity(gentity_t *ent)
 		results->entityNum = res;               \
 	}
 
-// Run a trace with players in historical positions.
+/**
+ * @brief Run a trace with players in historical positions.
+ * @param[in] ent
+ * @param[out] results
+ * @param[in] start
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] end
+ * @param[in] passEntityNum
+ * @param[in] contentmask
+ */
 void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask)
 {
 	float  maxsBackup[MAX_CLIENTS];
@@ -703,6 +752,10 @@ void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, con
 	G_AdjustClientPositions(ent, 0, qfalse);
 }
 
+/**
+ * @brief G_HistoricalTraceBegin
+ * @param[in] ent
+ */
 void G_HistoricalTraceBegin(gentity_t *ent)
 {
 	// don't do this with antilag off
@@ -713,6 +766,10 @@ void G_HistoricalTraceBegin(gentity_t *ent)
 	G_AdjustClientPositions(ent, ent->client->pers.cmd.serverTime, qtrue);
 }
 
+/**
+ * @brief G_HistoricalTraceEnd
+ * @param[in] ent
+ */
 void G_HistoricalTraceEnd(gentity_t *ent)
 {
 	// don't do this with antilag off
@@ -725,7 +782,15 @@ void G_HistoricalTraceEnd(gentity_t *ent)
 
 /**
  * @brief Run a trace without fixups (historical fixups will be done externally)
- * @param ignoreCorpses Skip corpses for bullet tracing (=non gibbing weapons)
+ * @param[in] ent
+ * @param[out] results
+ * @param[in] start
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] end
+ * @param[in] passEntityNum
+ * @param[in] contentmask
+ * @param[in] ignoreCorpses Skip corpses for bullet tracing (=non gibbing weapons)
  */
 void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask, qboolean ignoreCorpses)
 {
@@ -791,6 +856,11 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 	}
 }
 
+/**
+ * @brief G_SkipCorrectionSafe
+ * @param[in] ent
+ * @return
+ */
 qboolean G_SkipCorrectionSafe(gentity_t *ent)
 {
 	if (!ent)
@@ -854,7 +924,7 @@ qboolean G_SkipCorrectionSafe(gentity_t *ent)
 	}
 
 	// don't bother with skip correction if the player isn't moving horizontally
-	if (!ent->client->ps.velocity[0] && !ent->client->ps.velocity[1])
+	if (ent->client->ps.velocity[0] == 0.f && ent->client->ps.velocity[1] == 0.f)
 	{
 		return qfalse;
 	}
@@ -862,7 +932,7 @@ qboolean G_SkipCorrectionSafe(gentity_t *ent)
 	return qtrue;
 }
 
-/*
+/**
  * @brief Make use of the 'Pmove' functions to figure out where a player
  * would have moved in the short amount of time indicated by frametime.
  *
@@ -876,6 +946,8 @@ qboolean G_SkipCorrectionSafe(gentity_t *ent)
  * cannot be predicted and no prediction should be done for them
  * See G_SkipCorrectionSafe()
  *
+ * @param[in,out] ent
+ * @param[in] frametime
  */
 void G_PredictPmove(gentity_t *ent, float frametime)
 {

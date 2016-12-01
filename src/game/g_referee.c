@@ -36,10 +36,14 @@
 #include "g_local.h"
 #include "../../etmain/ui/menudef.h"
 
-// Parses for a referee command.
-//  --> ref arg allows for the server console to utilize all referee commands (ent == NULL)
-//
-qboolean G_refCommandCheck(gentity_t *ent, char *cmd)
+/**
+ * @brief Parses for a referee command.
+ * ref arg allows for the server console to utilize all referee commands (ent == NULL)
+ * @param[in] ent
+ * @param[in] cmd
+ * @return
+ */
+qboolean G_refCommandCheck(gentity_t *ent, const char *cmd)
 {
 	if (!Q_stricmp(cmd, "allready"))
 	{
@@ -113,7 +117,10 @@ qboolean G_refCommandCheck(gentity_t *ent, char *cmd)
 	return qtrue;
 }
 
-// Lists ref commands.
+/**
+ * @brief Lists ref commands.
+ * @param[in] ent
+ */
 void G_refHelp_cmd(gentity_t *ent)
 {
 	// List commands only for enabled refs.
@@ -145,7 +152,12 @@ void G_refHelp_cmd(gentity_t *ent)
 	}
 }
 
-// Request for ref status or lists ref commands.
+/**
+ * @brief Request for ref status or lists ref commands.
+ * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param fValue - unused
+ */
 void G_ref_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 {
 	char arg[MAX_TOKEN_CHARS];
@@ -209,7 +221,10 @@ void G_ref_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	}
 }
 
-// Readies all players in the game.
+/**
+ * @brief Readies all players in the game.
+ * @param[in] ent
+ */
 void G_refAllReady_cmd(gentity_t *ent)
 {
 	int       i;
@@ -237,7 +252,11 @@ void G_refAllReady_cmd(gentity_t *ent)
 	G_readyMatchState();
 }
 
-// Changes team lock status
+/**
+ * @brief Changes team lock status
+ * @param[in] ent
+ * @param[in] fLock
+ */
 void G_refLockTeams_cmd(gentity_t *ent, qboolean fLock)
 {
 	char *status;
@@ -261,7 +280,11 @@ void G_refLockTeams_cmd(gentity_t *ent, qboolean fLock)
 	trap_SetConfigstring(CS_SERVERTOGGLES, va("%d", level.server_settings));
 }
 
-// Pause/unpause a match.
+/**
+ * @brief Pause/unpause a match.
+ * @param[in] ent
+ * @param[in] fPause
+ */
 void G_refPause_cmd(gentity_t *ent, qboolean fPause)
 {
 	char *status[2] = { "^5UN", "^1" };
@@ -306,8 +329,12 @@ void G_refPause_cmd(gentity_t *ent, qboolean fPause)
 	}
 }
 
-// Puts a player on a team.
-void G_refPlayerPut_cmd(gentity_t *ent, int team_id)
+/**
+ * @brief Puts a player on a team.
+ * @param[in] ent
+ * @param[in] team_id
+ */
+void G_refPlayerPut_cmd(gentity_t *ent, team_t team_id)
 {
 	int       pid;
 	char      arg[MAX_TOKEN_CHARS];
@@ -360,7 +387,10 @@ void G_refPlayerPut_cmd(gentity_t *ent, int team_id)
 	}
 }
 
-// Removes a player from a team.
+/**
+ * @brief Removes a player from a team.
+ * @param[in] ent
+ */
 void G_refRemove_cmd(gentity_t *ent)
 {
 	int       pid;
@@ -402,7 +432,11 @@ void G_refRemove_cmd(gentity_t *ent)
 	}
 }
 
-// Changes team spectator lock status
+/**
+ * @brief Changes team spectator lock status
+ * @param ent - unused
+ * @param[in] fLock
+ */
 void G_refSpeclockTeams_cmd(gentity_t *ent, qboolean fLock)
 {
 	char *status;
@@ -426,6 +460,10 @@ void G_refSpeclockTeams_cmd(gentity_t *ent, qboolean fLock)
 	trap_SetConfigstring(CS_SERVERTOGGLES, va("%d", level.server_settings));
 }
 
+/**
+ * @brief G_refWarmup_cmd
+ * @param[in] ent
+ */
 void G_refWarmup_cmd(gentity_t *ent)
 {
 	char cmd[MAX_TOKEN_CHARS];
@@ -442,6 +480,10 @@ void G_refWarmup_cmd(gentity_t *ent)
 	trap_Cvar_Set("g_warmup", va("%d", atoi(cmd)));
 }
 
+/**
+ * @brief G_refWarning_cmd
+ * @param[in] ent
+ */
 void G_refWarning_cmd(gentity_t *ent)
 {
 	char cmd[MAX_TOKEN_CHARS];
@@ -473,7 +515,11 @@ void G_refWarning_cmd(gentity_t *ent)
 	}
 }
 
-// (Un)Mutes a player
+/**
+ * @brief (Un)Mutes a player
+ * @param[in] ent
+ * @param[in] mute
+ */
 void G_refMute_cmd(gentity_t *ent, qboolean mute)
 {
 	int       pid;
@@ -518,6 +564,10 @@ void G_refMute_cmd(gentity_t *ent, qboolean mute)
 	ClientUserinfoChanged(pid);
 }
 
+/**
+ * @brief G_refLogout_cmd
+ * @param[in] ent
+ */
 void G_refLogout_cmd(gentity_t *ent)
 {
 	if (ent && ent->client && ent->client->sess.referee == RL_REFEREE)
@@ -528,10 +578,10 @@ void G_refLogout_cmd(gentity_t *ent)
 	}
 }
 
-//////////////////////////////
-//  Client authentication
-//
-
+/**
+ * @brief Client authentication
+ * @param[in,out] ent
+ */
 void Cmd_AuthRcon_f(gentity_t *ent)
 {
 	char buf[MAX_TOKEN_CHARS], cmd[MAX_TOKEN_CHARS];
@@ -545,10 +595,13 @@ void Cmd_AuthRcon_f(gentity_t *ent)
 	}
 }
 
-//////////////////////////////
-//  Console admin commands
-//
+/**
+ * Console admin commands
+ */
 
+/**
+ * @brief G_PlayerBan
+ */
 void G_PlayerBan()
 {
 	char cmd[MAX_TOKEN_CHARS];
@@ -584,6 +637,9 @@ void G_PlayerBan()
 	}
 }
 
+/**
+ * @brief G_MakeReferee
+ */
 void G_MakeReferee()
 {
 	char cmd[MAX_TOKEN_CHARS];
@@ -620,6 +676,9 @@ void G_MakeReferee()
 	}
 }
 
+/**
+ * @brief G_RemoveReferee
+ */
 void G_RemoveReferee()
 {
 	char cmd[MAX_TOKEN_CHARS];
@@ -650,6 +709,9 @@ void G_RemoveReferee()
 	}
 }
 
+/**
+ * @brief G_MuteClient
+ */
 void G_MuteClient()
 {
 	char cmd[MAX_TOKEN_CHARS];
@@ -681,6 +743,9 @@ void G_MuteClient()
 	}
 }
 
+/**
+ * @brief G_UnMuteClient
+ */
 void G_UnMuteClient()
 {
 	char cmd[MAX_TOKEN_CHARS];
@@ -712,10 +777,16 @@ void G_UnMuteClient()
 	}
 }
 
-/////////////////
-//   Utility
-//
+/**
+ * Utility
+ */
 
+/**
+ * @brief G_refClientnumForName
+ * @param[in] ent
+ * @param[in] name
+ * @return
+ */
 int G_refClientnumForName(gentity_t *ent, const char *name)
 {
 	char cleanName[MAX_TOKEN_CHARS];
@@ -741,6 +812,11 @@ int G_refClientnumForName(gentity_t *ent, const char *name)
 	return MAX_CLIENTS;
 }
 
+/**
+ * @brief G_refPrintf
+ * @param[in] ent
+ * @param[in] fmt
+ */
 void G_refPrintf(gentity_t *ent, const char *fmt, ...)
 {
 	va_list argptr;

@@ -38,7 +38,7 @@
 
 int iWeap = WS_MAX;
 
-char *lock_status[2] = { "unlock", "lock" };
+const char *lock_status[2] = { "unlock", "lock" };
 
 // Update info:
 //  1. Add line to aCommandInfo w/appropriate info
@@ -103,8 +103,14 @@ static const cmd_reference_t aCommandInfo[] =
 	{ 0,                qfalse, qtrue,  NULL,                  0                                                                                            }
 };
 
-// Commands
-qboolean G_commandCheck(gentity_t *ent, char *cmd, qboolean fDoAnytime)
+/**
+ * @brief G_commandCheck
+ * @param[in] ent
+ * @param[in] cmd
+ * @param[in] fDoAnytime
+ * @return
+ */
+qboolean G_commandCheck(gentity_t *ent, const char *cmd, qboolean fDoAnytime)
 {
 	unsigned int          i, cCommands = sizeof(aCommandInfo) / sizeof(aCommandInfo[0]);
 	const cmd_reference_t *pCR;
@@ -129,8 +135,14 @@ qboolean G_commandCheck(gentity_t *ent, char *cmd, qboolean fDoAnytime)
 #endif
 }
 
-// Prints specific command help info.
-qboolean G_commandHelp(gentity_t *ent, char *pszCommand, unsigned int dwCommand)
+/**
+ * @brief Prints specific command help info.
+ * @param[in] ent
+ * @param[in] pszCommand
+ * @param[in] dwCommand
+ * @return
+ */
+qboolean G_commandHelp(gentity_t *ent, const char *pszCommand, unsigned int dwCommand)
 {
 	char arg[MAX_TOKEN_CHARS];
 
@@ -148,12 +160,17 @@ qboolean G_commandHelp(gentity_t *ent, char *pszCommand, unsigned int dwCommand)
 	return qfalse;
 }
 
-// Debounces cmd request as necessary.
+/**
+ * @brief Debounces cmd request as necessary.
+ * @param[innout] ent
+ * @param[in] pszCommandName
+ * @return
+ */
 qboolean G_cmdDebounce(gentity_t *ent, const char *pszCommandName)
 {
 	if (ent->client->pers.cmd_debounce > level.time)
 	{
-		CP(va("print \"Wait another %.1fs to issue ^3%s\n\"", 1.0 * (float)(ent->client->pers.cmd_debounce - level.time) / 1000.0,
+		CP(va("print \"Wait another %.1fs to issue ^3%s\n\"", (double)(1.0f * (float)(ent->client->pers.cmd_debounce - level.time) / 1000.0f),
 		      pszCommandName));
 		return qfalse;
 	}
@@ -162,6 +179,10 @@ qboolean G_cmdDebounce(gentity_t *ent, const char *pszCommandName)
 	return qtrue ;
 }
 
+/**
+ * @brief G_noTeamControls
+ * @param ent - unused
+ */
 void G_noTeamControls(gentity_t *ent)
 {
 	CP("cpm \"Team commands not enabled on this server.\n\"");
@@ -173,9 +194,12 @@ void G_noTeamControls(gentity_t *ent)
 /////
 /////
 
-// ************** COMMANDS / ?
-//
-// Lists server commands.
+/**
+ * @brief Lists server commands.
+ * @param ent - unused
+ * @param dwCommand - unused
+ * @param fValue - unused
+ */
 void G_commands_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 {
 	int i, rows, num_cmds = sizeof(aCommandInfo) / sizeof(aCommandInfo[0]) - 1;
@@ -219,7 +243,12 @@ void G_commands_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	CP("print \"\nType: ^3\\command_name ?^7 for more information\n\"");
 }
 
-// Locks/unlocks a player's team.
+/**
+ * @brief Locks/unlocks a player's team.
+ * @param[in] ent
+ * @param[in] dwCommand
+ * @param[in] fLock
+ */
 void G_lock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 {
 	if (team_nocontrols.integer)
@@ -255,7 +284,12 @@ void G_lock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 	}
 }
 
-// Pause/unpause a match.
+/**
+ * @brief Pause/unpause a match.
+ * @param[in] ent
+ * @param[in] dwCommand
+ * @param[in] fPause
+ */
 void G_pause_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fPause)
 {
 	char *status[2] = { "^5UN", "^1" };
@@ -328,7 +362,12 @@ void G_pause_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fPause)
 	}
 }
 
-// Show client info
+/**
+ * @brief Show client info
+ * @param[in] ent
+ * @param dwCommand - unused
+ * @param fValue - unused
+ */
 void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 {
 	int       i, idnum, max_rate, cnt = 0;
@@ -499,7 +538,12 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 	}
 }
 
-// Sets a player's "ready" status.
+/**
+ * @brief Sets a player's "ready" status.
+ * @param[in,out] ent
+ * @param[in] dwCommand
+ * @param[in] state
+ */
 void G_ready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
 {
 	char *status[2] = { " NOT", "" };
@@ -561,19 +605,34 @@ void G_ready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
 	G_readyMatchState();
 }
 
-// Team chat w/no location info
+/**
+ * @brief Team chat w/no location info
+ * @param[in] ent
+ * @param dwCommand - unused
+ * @param fValue - unused
+ */
 void G_say_teamnl_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 {
 	Cmd_Say_f(ent, SAY_TEAMNL, qfalse);
 }
 
-// Shows match stats to the requesting client.
+/**
+ * @brief Shows match stats to the requesting client.
+ * @param[in] ent
+ * @param dwCommand - unused
+ * @param fValue - unused
+ */
 void G_scores_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 {
 	G_printMatchInfo(ent);
 }
 
-// Sends an invitation to a player to spectate a team.
+/**
+ * @brief Sends an invitation to a player to spectate a team.
+ * @param[in] ent
+ * @param[in] dwCommand
+ * @param fLock - unused
+ */
 void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 {
 	gentity_t *player;
@@ -635,7 +694,12 @@ void G_specinvite_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 	}
 }
 
-// Locks/unlocks a player's team from spectators.
+/**
+ * @brief Locks/unlocks a player's team from spectators.
+ * @param[in] ent
+ * @param[in] dwCommand
+ * @param[in] fLock
+ */
 void G_speclock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 {
 	if (team_nocontrols.integer)
@@ -671,13 +735,23 @@ void G_speclock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock)
 	}
 }
 
-// Shows a player's stats to the requesting client.
+/**
+ * @brief Shows a player's stats to the requesting client.
+ * @param[in] ent
+ * @param dwCommand - unused
+ * @param fDump - unused
+ */
 void G_weaponStats_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 {
 	G_statsPrint(ent, 0);
 }
 
-// Shows all players' stats to the requesting client.
+/**
+ * @brief Shows all players' stats to the requesting client.
+ * @param ent
+ * @param dwCommand - unused
+ * @param fDump - unused
+ */
 void G_statsall_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 {
 	int       i;
@@ -694,7 +768,12 @@ void G_statsall_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 	}
 }
 
-// Sets a player's team "ready" status.
+/**
+ * @brief Sets a player's team "ready" status.
+ * @param[in] ent
+ * @param[in] dwCommand
+ * @param state - unused
+ */
 void G_teamready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
 {
 	int       i;
@@ -740,7 +819,9 @@ void G_teamready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
 	G_readyMatchState();
 }
 
-// These map to WS_* weapon indexes
+/**
+  * @var These map to WS_* weapon indexes
+  */
 const unsigned int cQualifyingShots[WS_MAX] =
 {
 	10,     // 0  WS_KNIFE
@@ -771,7 +852,12 @@ const unsigned int cQualifyingShots[WS_MAX] =
 	30,     // 25 WS_K43
 };
 
-// Gives back overall or specific weapon rankings
+/**
+ * @brief Gives back overall or specific weapon rankings
+ * @param[in] a
+ * @param[in] b
+ * @return
+ */
 int QDECL SortStats(const void *a, const void *b)
 {
 	gclient_t *ca, *cb;
@@ -819,7 +905,12 @@ int QDECL SortStats(const void *a, const void *b)
 	return 1;
 }
 
-// Shows the most accurate players for each weapon to the requesting client
+/**
+ * @brief Shows the most accurate players for each weapon to the requesting client
+ * @param ent - unused
+ * @param[in] doTop
+ * @param[in] doWindow
+ */
 void G_weaponStatsLeaders_cmd(gentity_t *ent, qboolean doTop, qboolean doWindow)
 {
 	int             i, iWeap, wBestAcc, cClients, cPlaces;
@@ -882,8 +973,12 @@ void G_weaponStatsLeaders_cmd(gentity_t *ent, qboolean doTop, qboolean doWindow)
 	CP(va("%sbstats%s %s 0", ((doWindow) ? "w" : ""), ((doTop) ? "" : "b"), z));
 }
 
-// Shows best/worst accuracy for all weapons, or sorted
-// accuracies for a single weapon.
+/**
+ * @brief Shows best/worst accuracy for all weapons, or sorted accuracies for a single weapon
+ * @param[in] ent
+ * @param[in] dwCommand
+ * @param[in] state
+ */
 void G_weaponRankings_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
 {
 	gclient_t *cl;
