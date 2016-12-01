@@ -1483,10 +1483,7 @@ typedef struct
 	sfxHandle_t bodyShot;
 	sfxHandle_t teamShot;
 
-	sfxHandle_t grenadePulseSound4;
-	sfxHandle_t grenadePulseSound3;
-	sfxHandle_t grenadePulseSound2;
-	sfxHandle_t grenadePulseSound1;
+	sfxHandle_t grenadePulseSound[4];
 
 	sfxHandle_t flameSound;
 	sfxHandle_t flameBlowSound;
