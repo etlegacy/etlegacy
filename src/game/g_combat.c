@@ -1520,7 +1520,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		VectorAdd(targ->client->ps.velocity, kvel, targ->client->ps.velocity);
 
 		// are we pushed? Do not count when already flying ...
-		if (attacker && attacker->client && (targ->client->ps.groundEntityNum != ENTITYNUM_NONE || G_ModIsExplosive(mod)))
+		if (attacker && attacker->client && (targ->client->ps.groundEntityNum != ENTITYNUM_NONE || modTable[mod].isExplosive))
 		{
 			targ->client->pmext.shoved = qtrue;
 			targ->client->pmext.pusher = attacker - g_entities;
