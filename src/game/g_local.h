@@ -189,9 +189,6 @@ typedef struct g_constructible_stats_s
 
 extern g_constructible_stats_t g_constructible_classes[NUM_CONSTRUCTIBLE_CLASSES];
 
-qboolean G_ModIsExplosive(meansOfDeath_t mod);
-int G_GetWeaponClassForMOD(meansOfDeath_t mod);
-
 //====================================================================
 
 #define MAX_NETNAME         36

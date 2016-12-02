@@ -1362,7 +1362,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 
 		if ((targ->spawnflags & 4) && !targ->isProp)
 		{
-			if (!G_ModIsExplosive(mod))
+			if (!modTable[mod].isExplosive)
 			{
 				return;
 			}
@@ -1389,7 +1389,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		}
 		break;
 	case ET_EXPLOSIVE:
-		if (targ->parent && G_GetWeaponClassForMOD(mod) == 2)
+		if (targ->parent && modTable[mod].weaponClassForMOD == 2)
 		{
 			return;
 		}
@@ -1400,7 +1400,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 			return;
 		}
 
-		if (G_GetWeaponClassForMOD(mod) < targ->constructibleStats.weaponclass)
+		if (modTable[mod].weaponClassForMOD < targ->constructibleStats.weaponclass)
 		{
 			return;
 		}
@@ -1410,7 +1410,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		{
 			if (targ->s.modelindex2)
 			{
-				if (G_ModIsExplosive(mod))
+				if (modTable[mod].isExplosive)
 				{
 					mapEntityData_t *mEnt;
 
@@ -1441,7 +1441,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 			return;
 		}
 
-		if (G_GetWeaponClassForMOD(mod) < targ->constructibleStats.weaponclass)
+		if (modTable[mod].weaponClassForMOD < targ->constructibleStats.weaponclass)
 		{
 			return;
 		}
@@ -1798,7 +1798,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		//if ( attacker == inflictor && targ->health <= GIB_HEALTH) {
 		if (targ->health <= GIB_HEALTH)
 		{
-			if (!G_ModIsExplosive(mod))
+			if (!modTable[mod].isExplosive)
 			{
 				targ->health = GIB_HEALTH + 1;
 			}

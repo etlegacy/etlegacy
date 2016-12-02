@@ -412,7 +412,7 @@ void G_ExplodeMissile(gentity_t *ent)
 
 				if (((hit->spawnflags & AXIS_OBJECTIVE) && (ent->s.teamNum == TEAM_ALLIES)) || ((hit->spawnflags & ALLIED_OBJECTIVE) && (ent->s.teamNum == TEAM_AXIS)))
 				{
-					if (ent->parent->client && G_GetWeaponClassForMOD(MOD_DYNAMITE) >= hit->target_ent->constructibleStats.weaponclass)
+					if (ent->parent->client && modTable[MOD_DYNAMITE].weaponClassForMOD >= hit->target_ent->constructibleStats.weaponclass)
 					{
 						G_AddKillSkillPointsForDestruction(ent->parent, MOD_DYNAMITE, &hit->target_ent->constructibleStats);
 					}

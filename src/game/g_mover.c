@@ -4124,7 +4124,9 @@ target_effect
 */
 void target_effect(gentity_t *self, gentity_t *other, gentity_t *activator)
 {
-	gentity_t *tent = G_TempEntity(self->r.currentOrigin, EV_EFFECT);
+	gentity_t *tent;
+
+	tent = G_TempEntity(self->r.currentOrigin, EV_EFFECT);
 
 	VectorCopy(self->r.currentOrigin, tent->s.origin);
 	if (self->spawnflags & 32)
@@ -4338,7 +4340,7 @@ void func_explosive_explode(gentity_t *self, gentity_t *inflictor, gentity_t *at
 #endif
 
 	// Skills stuff
-	if (G_GetWeaponClassForMOD(mod) >= self->constructibleStats.weaponclass)
+	if (modTable[mod].weaponClassForMOD >= self->constructibleStats.weaponclass)
 	{
 		G_AddKillSkillPointsForDestruction(attacker, mod, &self->constructibleStats);
 	}
@@ -5105,7 +5107,7 @@ void func_constructible_explode(gentity_t *self, gentity_t *inflictor, gentity_t
 			}
 
 			// Skills stuff
-			if (G_GetWeaponClassForMOD(mod) >= self->constructibleStats.weaponclass)
+			if (modTable[mod].weaponClassForMOD >= self->constructibleStats.weaponclass)
 			{
 				G_AddKillSkillPointsForDestruction(attacker, mod, &self->constructibleStats);
 			}
@@ -5143,7 +5145,7 @@ void func_constructible_explode(gentity_t *self, gentity_t *inflictor, gentity_t
 			G_Script_ScriptEvent(self, "death", "");
 
 			// Skills stuff
-			if (G_GetWeaponClassForMOD(mod) >= self->constructibleStats.weaponclass)
+			if (modTable[mod].weaponClassForMOD >= self->constructibleStats.weaponclass)
 			{
 				G_AddKillSkillPointsForDestruction(attacker, mod, &self->constructibleStats);
 			}
@@ -5183,7 +5185,7 @@ void func_constructible_explode(gentity_t *self, gentity_t *inflictor, gentity_t
 		}
 
 		// Skills stuff
-		if (G_GetWeaponClassForMOD(mod) >= self->constructibleStats.weaponclass)
+		if (modTable[mod].weaponClassForMOD >= self->constructibleStats.weaponclass)
 		{
 			G_AddKillSkillPointsForDestruction(attacker, mod, &self->constructibleStats);
 		}

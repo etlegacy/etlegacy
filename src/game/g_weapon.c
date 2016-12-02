@@ -47,18 +47,6 @@ vec3_t muzzleTrace;
 void Bullet_Fire(gentity_t *ent, float spread, int damage, qboolean distance_falloff);
 qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, int damage, qboolean distance_falloff);
 
-qboolean G_ModIsExplosive(meansOfDeath_t mod)
-{
-	// do a sanity check?
-	return modTable[mod].isExplosive;
-}
-
-int G_GetWeaponClassForMOD(meansOfDeath_t mod)
-{
-	// do a sanity check?
-	return modTable[mod].weaponClassForMOD;
-}
-
 /*
 ======================================================================
 KNIFE
