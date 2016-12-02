@@ -67,8 +67,8 @@ void AddRemap(const char *oldShader, const char *newShader, float timeOffset)
 	}
 	if (remapCount < MAX_SHADER_REMAPS)
 	{
-		strcpy(remappedShaders[remapCount].newShader, newShader);
-		strcpy(remappedShaders[remapCount].oldShader, oldShader);
+		Q_strncpyz(remappedShaders[remapCount].newShader, newShader, MAX_QPATH);
+		Q_strncpyz(remappedShaders[remapCount].oldShader, oldShader, MAX_QPATH);
 		remappedShaders[remapCount].timeOffset = timeOffset;
 		remapCount++;
 	}

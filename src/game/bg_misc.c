@@ -3735,7 +3735,7 @@ void BG_AddPathCorner(const char *name, vec3_t origin)
 	}
 
 	VectorCopy(origin, pathCorners[numPathCorners].origin);
-	Q_strncpyz(pathCorners[numPathCorners].name, name, 64);
+	Q_strncpyz(pathCorners[numPathCorners].name, name, MAX_QPATH);
 	numPathCorners++;
 }
 
@@ -3781,8 +3781,8 @@ splinePath_t *BG_AddSplinePath(const char *name, const char *target, vec3_t orig
 
 	VectorCopy(origin, spline->point.origin);
 
-	Q_strncpyz(spline->point.name, name, 64);
-	Q_strncpyz(spline->strTarget, target ? target : "", 64);
+	Q_strncpyz(spline->point.name, name, MAX_QPATH);
+	Q_strncpyz(spline->strTarget, target ? target : "", MAX_QPATH);
 
 	spline->numControls = 0;
 
@@ -3803,7 +3803,7 @@ void BG_AddSplineControl(splinePath_t *spline, const char *name)
 		Com_Error(ERR_DROP, "MAX SPLINE CONTROLS (%i) hit", MAX_SPLINE_CONTROLS);
 	}
 
-	Q_strncpyz(spline->controls[spline->numControls].name, name, 64);
+	Q_strncpyz(spline->controls[spline->numControls].name, name, MAX_QPATH);
 
 	spline->numControls++;
 }
