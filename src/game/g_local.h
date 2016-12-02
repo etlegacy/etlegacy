@@ -1436,7 +1436,7 @@ void limbo(gentity_t *ent, qboolean makeCorpse);
 void reinforce(gentity_t *ent);
 
 // *LUA* & map configs g_sha1.c
-char *G_SHA1(char *string);
+char *G_SHA1(const char *string);
 
 #define CF_ENABLE    1 // enables common countryflags functionallity
 #define CF_BOTS      2 // uses server country for bots

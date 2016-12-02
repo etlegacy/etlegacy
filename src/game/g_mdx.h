@@ -264,7 +264,7 @@ extern void mdx_legs_position(/*const*/ gentity_t *ent, /*const*/ grefEntity_t *
 #define RHTAG_WEAPON 2
 #define RHTAG_WEAPON2 3
 
-extern void mdx_tag_position(gentity_t *ent, grefEntity_t *refent, vec3_t org, char *tagName, float up_offset, float forward_offset);
+extern void mdx_tag_position(gentity_t *ent, grefEntity_t *refent, vec3_t org, const char *tagName, float up_offset, float forward_offset);
 
 extern void mdx_PlayerAngles(gentity_t *ent, vec3_t legsAngles, vec3_t torsoAngles, vec3_t headAngles, qboolean doswing);
 extern void mdx_PlayerAnimation(gentity_t *ent);

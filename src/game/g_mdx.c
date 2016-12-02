@@ -70,23 +70,36 @@ static char (*cachetag_names)[64] = NULL;
 static int   hit_count = 0;
 static hit_t *hits     = NULL;
 
-// Space for calculated bone origins -- new calculations overwrite the previous
+/**
+ * @var Space for calculated bone origins -- new calculations overwrite the previous_max
+ */
 static int    mdx_bones_max = 0;
 static vec3_t *mdx_bones    = NULL;
 
 #define INDEXTOQHANDLE(idx)     (qhandle_t)((idx) + 1)
-// Index may be NULL sometimes, so just default to the first model (FIXME: This is a HACK.)
+/**
+  * @var Index may be NULL sometimes, so just default to the first model
+  * @todo FIXME: This is a HACK.
+  */
 #define QHANDLETOINDEX(qh)      ((qh >= 1) ? ((int)(qh) - 1) : 0)
 #define QHANDLETOINDEX_SAFE(qh, old) ((qh >= 1) ? (int)(qh) - 1 : QHANDLETOINDEX(old))
 
-// draw debug lines
+/**
+ * @brief Draw debug lines
+ * @param origin - unused
+ * @param target - unused
+ * @param offset - unused
+ */
 void legacy_AddDebugLine(const vec3_t origin, const vec3_t target, const int offset)
 {
 
 }
 
 /**************************************************************/
-// free allocated memory
+
+/**
+ * @brief Free allocated memory
+ */
 void mdx_cleanup(void)
 {
 	int i;
@@ -131,10 +144,20 @@ void mdx_cleanup(void)
 }
 
 /**************************************************************/
-// Utility functions
+
+/**
+ * Utility functions
+ */
+
+/**
+ * @brief MatrixWeight
+ * @param[in] m
+ * @param[in] weight
+ * @param[out] mout
+ */
 static void MatrixWeight(/*const*/ vec3_t m[3], float weight, vec3_t mout[3])
 {
-	float one = 1.0 - weight;
+	float one = 1.0f - weight;
 
 	mout[0][0] = m[0][0] * weight + one;
 	mout[0][1] = m[0][1] * weight;
@@ -152,6 +175,9 @@ static void MatrixWeight(/*const*/ vec3_t m[3], float weight, vec3_t mout[3])
 /**
  * @brief The engine transforms short angles to an axis somewhat brokenly -
  *        it uses a LUT and has truely perplexing values
+ *
+ * @param[in] angles
+ * @param[out] matrix
  */
 static void AnglesToAxisBroken(const short angles[2], vec3_t matrix[3])
 {
@@ -188,6 +214,11 @@ static void AnglesToAxisBroken(const short angles[2], vec3_t matrix[3])
 }
 
 #ifdef BONE_HITTESTS
+/**
+ * @brief mdx_quaternion_to_matrix
+ * @param[in] q
+ * @param[out] m
+ */
 static void mdx_quaternion_to_matrix(vec4_t q, vec3_t m[3])
 {
 	m[0][0] = 1 - 2 * (q[1] * q[1] + q[2] * q[2]);
@@ -203,6 +234,13 @@ static void mdx_quaternion_to_matrix(vec4_t q, vec3_t m[3])
 	m[2][2] = 1 - 2 * (q[0] * q[0] + q[1] * q[1]);
 }
 
+/**
+ * @brief mdx_quaternion_nlerp
+ * @param[in] q1
+ * @param[in] q2
+ * @param[out] qout
+ * @param[in] backlerp
+ */
 static void mdx_quaternion_nlerp(const vec4_t q1, const vec4_t q2, vec4_t qout, float backlerp)
 {
 	float fwdlerp = 1.0 - backlerp;
@@ -229,7 +267,13 @@ static void mdx_quaternion_nlerp(const vec4_t q1, const vec4_t q2, vec4_t qout, 
 	}
 }
 
-// lerp two rotation matrcies; too lazy to work out how to do it in matrix space.
+/**
+ * @brief lerp two rotation matrcies; too lazy to work out how to do it in matrix space.
+ * @param[in] m1
+ * @param[in] m2
+ * @param[out] mout
+ * @param[in] backlerp
+ */
 static void mdx_lerp_matrix(vec3_t m1[3], vec3_t m2[3], vec3_t mout[3], float backlerp)
 {
 	vec4_t q1, q2, q;
@@ -241,6 +285,12 @@ static void mdx_lerp_matrix(vec3_t m1[3], vec3_t m2[3], vec3_t mout[3], float ba
 }
 #endif // BONE_HITTESTS
 
+/**
+ * @brief mdx_gentity_to_grefEntity
+ * @param[in] ent
+ * @param[out] refent
+ * @param[in] lerpTime
+ */
 void mdx_gentity_to_grefEntity(gentity_t *ent, grefEntity_t *refent, int lerpTime)
 {
 	bg_character_t *character;
@@ -267,11 +317,11 @@ void mdx_gentity_to_grefEntity(gentity_t *ent, grefEntity_t *refent, int lerpTim
 	refent->oldframeModel = ent->legsFrame.oldFrameModel;
 	if (ent->legsFrame.frameTime == ent->legsFrame.oldFrameTime)
 	{
-		refent->backlerp = 0.0;
+		refent->backlerp = 0.0f;
 	}
 	else
 	{
-		refent->backlerp = 1.0 - (float)(lerpTime - ent->legsFrame.oldFrameTime) / (ent->legsFrame.frameTime - ent->legsFrame.oldFrameTime);
+		refent->backlerp = 1.0f - (float)(lerpTime - ent->legsFrame.oldFrameTime) / (ent->legsFrame.frameTime - ent->legsFrame.oldFrameTime);
 	}
 
 	refent->torsoFrame      = ent->torsoFrame.frame;
@@ -281,11 +331,11 @@ void mdx_gentity_to_grefEntity(gentity_t *ent, grefEntity_t *refent, int lerpTim
 	refent->oldTorsoFrameModel = ent->torsoFrame.oldFrameModel;
 	if (ent->torsoFrame.frameTime == ent->torsoFrame.oldFrameTime)
 	{
-		refent->torsoBacklerp = 0.0;
+		refent->torsoBacklerp = 0.0f;
 	}
 	else
 	{
-		refent->torsoBacklerp = 1.0 - (float)(lerpTime - ent->torsoFrame.oldFrameTime) / (ent->torsoFrame.frameTime - ent->torsoFrame.oldFrameTime);
+		refent->torsoBacklerp = 1.0f - (float)(lerpTime - ent->torsoFrame.oldFrameTime) / (ent->torsoFrame.frameTime - ent->torsoFrame.oldFrameTime);
 	}
 
 	mdx_PlayerAngles(ent, legsAngles, torsoAngles, headAngles, qfalse);
@@ -295,10 +345,17 @@ void mdx_gentity_to_grefEntity(gentity_t *ent, grefEntity_t *refent, int lerpTim
 }
 
 /**************************************************************/
-// tag management
+/**
+ * Tag management
+ */
+
 #ifdef BONE_HITTESTS
 static int mdm_tag_lookup(const mdm_t *model, const char tagName[64]);
 
+/**
+ * @brief interntag_alloc
+ * @return
+ */
 static interntag_t *interntag_alloc(void)
 {
 	interntag_t *tag;
@@ -315,11 +372,19 @@ static interntag_t *interntag_alloc(void)
 	return tag;
 }
 
+/**
+ * @brief interntag_dealloc
+ */
 static void interntag_dealloc(void)
 {
 	--interntag_count;
 }
 
+/**
+ * @brief cachetag_cache
+ * @param[in] tagName
+ * @return
+ */
 static int cachetag_cache(const char tagName[64])
 {
 	int i;
@@ -337,6 +402,11 @@ static int cachetag_cache(const char tagName[64])
 	return (cachetag_count++);
 }
 
+/**
+ * @brief mdm_cachetag_resize
+ * @param[out] model
+ * @param[in] oldcount
+ */
 static void mdm_cachetag_resize(mdm_t *model, int oldcount)
 {
 	int i;
@@ -353,6 +423,10 @@ static void mdm_cachetag_resize(mdm_t *model, int oldcount)
 	}
 }
 
+/**
+ * @brief cachetag_resize
+ * @param[in] oldcount
+ */
 static void cachetag_resize(int oldcount)
 {
 	int i;
@@ -363,17 +437,36 @@ static void cachetag_resize(int oldcount)
 #endif // BONE_HITTESTS
 
 /**************************************************************/
-// File I/O
+
+/**
+ * File I/O
+ */
+
+/**
+ * @brief mdx_read_int
+ * @param[in] data
+ * @return
+ */
 static int mdx_read_int(const byte *data)
 {
 	return (data[0] << 0) | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
 }
 
+/**
+ * @brief mdx_read_short
+ * @param[in] data
+ * @return
+ */
 static short mdx_read_short(const byte *data)
 {
 	return (data[0] << 0) | (data[1] << 8);
 }
 
+/**
+ * @brief mdx_read_vec
+ * @param[in] data
+ * @return
+ */
 static vec_t mdx_read_vec(const byte *data)
 {
 	// FIXME: depends on size of int
@@ -383,6 +476,12 @@ static vec_t mdx_read_vec(const byte *data)
 }
 
 #ifdef BONE_HITTESTS
+/**
+ * @brief[in] mdx_bone_lookup
+ * @param[in] mdxModel
+ * @param[in] name
+ * @return
+ */
 static int mdx_bone_lookup(const mdx_t *mdxModel, const char *name)
 {
 	int i;
@@ -398,6 +497,12 @@ static int mdx_bone_lookup(const mdx_t *mdxModel, const char *name)
 }
 #endif // BONE_HITTESTS
 
+/**
+ * @brief mdm_tag_lookup
+ * @param[in] model
+ * @param[in] tagName
+ * @return
+ */
 static int mdm_tag_lookup(const mdm_t *model, const char tagName[64])
 {
 	int i;
@@ -421,6 +526,11 @@ static int mdm_tag_lookup(const mdm_t *model, const char tagName[64])
 	return -1;
 }
 
+/**
+ * @brief mdx_load
+ * @param[in] mdxModel
+ * @param[in] mem
+ */
 static void mdx_load(mdx_t *mdxModel, char *mem)
 {
 	char            *ptr;
@@ -510,6 +620,11 @@ static void mdx_load(mdx_t *mdxModel, char *mem)
 	}
 }
 
+/**
+ * @brief mdm_load
+ * @param[in] mdmModel
+ * @param[in] mem
+ */
 static void mdm_load(mdm_t *mdmModel, char *mem)
 {
 	struct mdm_hdr *hdr;
@@ -575,6 +690,13 @@ static void mdm_load(mdm_t *mdmModel, char *mem)
 }
 
 #ifdef BONE_HITTESTS
+/**
+ * @brief hit_parse_tag
+ * @param hitModel - unused
+ * @param[in] mdx
+ * @param[in,out] ptr
+ * @return
+ */
 static qboolean hit_parse_tag(hit_t *hitModel, mdx_t *mdx, char **ptr)
 {
 	char        *token;
@@ -745,6 +867,13 @@ err:
 	return qfalse;
 }
 
+/**
+ * @brief hit_parse_hit
+ * @param[in,out] hitModel
+ * @param[in] mdx
+ * @param[in,out] ptr
+ * @return
+ */
 static qboolean hit_parse_hit(hit_t *hitModel, mdx_t *mdx, char **ptr)
 {
 	char            *token;
@@ -995,6 +1124,11 @@ err:
  *  @brief Must be called _AFTER_ animModelInfo has valid animations[0]
  *         Assumes all animations have mdxFiles with the same bones, which
  *         I *hope* is a pretty safe assumption.
+ *
+ * @param[in,out] hitModel
+ * @param[in] animModelInfo
+ * @param[in] filename
+ * @return
  */
 static qboolean hit_load(hit_t *hitModel, const animModelInfo_t *animModelInfo, const char *filename)
 {
@@ -1071,6 +1205,11 @@ err:
 }
 #endif // BONE_HITTESTS
 
+/**
+ * @brief trap_R_RegisterModel
+ * @param[in] filename
+ * @return
+ */
 qhandle_t trap_R_RegisterModel(const char *filename)
 {
 	fileHandle_t fh;
@@ -1142,6 +1281,11 @@ qhandle_t trap_R_RegisterModel(const char *filename)
 	return INDEXTOQHANDLE(ret);
 }
 
+/**
+ * @brief mdx_LoadHitsFile
+ * @param[in] animationGroup
+ * @param[in] animModelInfo
+ */
 void mdx_LoadHitsFile(char *animationGroup, animModelInfo_t *animModelInfo)
 {
 #ifdef BONE_HITTESTS
@@ -1161,6 +1305,12 @@ void mdx_LoadHitsFile(char *animationGroup, animModelInfo_t *animModelInfo)
 }
 
 #ifdef BONE_HITTESTS
+/**
+ * @brief mdx_RegisterHits
+ * @param[in] animModelInfo
+ * @param[in] filename
+ * @return
+ */
 qhandle_t mdx_RegisterHits(animModelInfo_t *animModelInfo, const char *filename)
 {
 	int i;
@@ -1190,8 +1340,16 @@ qhandle_t mdx_RegisterHits(animModelInfo_t *animModelInfo, const char *filename)
 #endif // BONE_HITTESTS
 
 /**************************************************************/
-// Bone Calculations
+/**
+  * Bone Calculations
+  */
 
+/**
+ * @brief mdx_calculate_bone
+ * @param[out] dest
+ * @param[in] bone
+ * @param[in] frameBone
+ */
 static void mdx_calculate_bone(
     vec3_t dest,
     const struct bone *bone,
@@ -1209,6 +1367,16 @@ static void mdx_calculate_bone(
 	vec3_rotate(tmp, axis, dest);
 }
 
+/**
+ * @brief mdx_calculate_bone_lerp
+ * @param[in] refent
+ * @param[in] frameModel
+ * @param[in] oldFrameModel
+ * @param[in] torsoFrameModel
+ * @param[in] oldTorsoFrameModel
+ * @param[in] i
+ * @param[in] recursive
+ */
 static void mdx_calculate_bone_lerp(
     /*const*/ grefEntity_t *refent,
     mdx_t *frameModel,
@@ -1227,7 +1395,7 @@ static void mdx_calculate_bone_lerp(
 
 	vec3_t point, oldpoint;
 
-	if (frameModel->bones[i].torso_weight)
+	if (frameModel->bones[i].torso_weight != 0.f)
 	{
 		boneFrameModel    = torsoFrameModel;
 		oldBoneFrameModel = oldTorsoFrameModel;
@@ -1253,7 +1421,7 @@ static void mdx_calculate_bone_lerp(
 
 	if (i == 0)
 	{
-		float s = 1.0 - backlerp;
+		float s = 1.0f - backlerp;
 
 		VectorMA(vec3_origin, s, boneFrameModel->frames[frame].parent_offset, mdx_bones[i]);
 		VectorMA(mdx_bones[i], backlerp, oldBoneFrameModel->frames[oldFrame].parent_offset, mdx_bones[i]);
@@ -1288,7 +1456,10 @@ static void mdx_calculate_bone_lerp(
 }
 
 #ifdef BONE_HITTESTS
-// Calculates all bones
+/**
+ * @brief Calculates all bones
+ * @param[in] refent
+ */
 static void mdx_calculate_bones(/*const*/ grefEntity_t *refent)
 {
 	int i;
@@ -1321,6 +1492,11 @@ static void mdx_calculate_bones(/*const*/ grefEntity_t *refent)
 }
 #endif // BONE_HITTESTS
 
+/**
+ * @brief mdx_calculate_bones_single
+ * @param[in] refent
+ * @param[in] i
+ */
 void mdx_calculate_bones_single(/*const*/ grefEntity_t *refent, int i)
 {
 	mdx_t *frameModel    = &mdx_models[QHANDLETOINDEX(refent->frameModel)];
@@ -1347,6 +1523,13 @@ void mdx_calculate_bones_single(/*const*/ grefEntity_t *refent, int i)
 	    );
 }
 
+/**
+ * @brief mdx_bone_orientation
+ * @param[in] refent
+ * @param[in] idx
+ * @param[out] origin
+ * @param[out] axis
+ */
 static void mdx_bone_orientation(/*const*/ grefEntity_t *refent, int idx, vec3_t origin, vec3_t axis[3])
 {
 	mdx_t             *frameModel         = &mdx_models[QHANDLETOINDEX(refent->frameModel)];
@@ -1362,7 +1545,7 @@ static void mdx_bone_orientation(/*const*/ grefEntity_t *refent, int idx, vec3_t
 	vec3_t            axis1[3], tmpaxis[3];
 	float             s;
 
-	if (frameModel->bones[idx].torso_weight)
+	if (frameModel->bones[idx].torso_weight != 0.f)
 	{
 		boneFrameModel    = torsoFrameModel;
 		oldBoneFrameModel = oldTorsoFrameModel;
@@ -1394,7 +1577,7 @@ static void mdx_bone_orientation(/*const*/ grefEntity_t *refent, int idx, vec3_t
 	// FIXME: This probably isn't entirely correct; my test models fail,
 	// in any case.  It seems to produce the proper results with a real
 	// player model, though.
-	if (bone->torso_weight)
+	if (bone->torso_weight != 0.f)
 	{
 		vec3_t tmp, torso_origin;
 
@@ -1427,7 +1610,7 @@ static void mdx_bone_orientation(/*const*/ grefEntity_t *refent, int idx, vec3_t
 	// removing the SHORT2ANGLE() calls.
 	// Do it once at loading-time, and then use the floating point values..
 	VectorScale(oldFrameBone->anglesF, backlerp, angles);
-	s = (1.0 - backlerp);
+	s = (1.0f - backlerp);
 	VectorMA(angles, s, frameBone->anglesF, angles);
 	AnglesToAxis(angles, tmpaxis);
 
@@ -1442,6 +1625,15 @@ static void mdx_bone_orientation(/*const*/ grefEntity_t *refent, int idx, vec3_t
 }
 
 #ifdef BONE_HITTESTS
+/**
+ * @brief mdx_tag_orientation
+ * @param[in] refent
+ * @param[in] idx
+ * @param[in,out] origin
+ * @param[in,out] axis
+ * @param[in] withhead
+ * @param[in] recursion
+ */
 static void mdx_tag_orientation(/*const*/ grefEntity_t *refent, int idx, vec3_t origin, vec3_t axis[3], qboolean withhead, int recursion)
 {
 	int         i;
@@ -1525,6 +1717,13 @@ static void mdx_tag_orientation(/*const*/ grefEntity_t *refent, int idx, vec3_t 
 }
 #endif // BONE_HITTESTS
 
+/**
+ * @brief trap_R_LerpTagNumber
+ * @param[in,out] tag
+ * @param[in] refent
+ * @param[in] tagNum
+ * @return
+ */
 int trap_R_LerpTagNumber(orientation_t *tag, /*const*/ grefEntity_t *refent, int tagNum)
 {
 	mdm_t  *model;
@@ -1552,6 +1751,12 @@ int trap_R_LerpTagNumber(orientation_t *tag, /*const*/ grefEntity_t *refent, int
 	return 0;
 }
 
+/**
+ * @brief trap_R_LookupTag
+ * @param[in] refent
+ * @param[in] tagName
+ * @return
+ */
 int trap_R_LookupTag(/*const*/ grefEntity_t *refent, const char *tagName)
 {
 	mdm_t *model;
@@ -1559,6 +1764,14 @@ int trap_R_LookupTag(/*const*/ grefEntity_t *refent, const char *tagName)
 	return mdm_tag_lookup(model, tagName);
 }
 
+/**
+ * @brief trap_R_LerpTag
+ * @param[in] tag
+ * @param[in] refent
+ * @param[in] tagName
+ * @param[in] startIndex
+ * @return
+ */
 int trap_R_LerpTag(orientation_t *tag, /*const*/ grefEntity_t *refent, const char *tagName, int startIndex)
 {
 	int tagNum;
@@ -1580,7 +1793,15 @@ int trap_R_LerpTag(orientation_t *tag, /*const*/ grefEntity_t *refent, const cha
 #define SWING_LEFT  2
 
 /**
- * @brief mdx_SwingAngles, adapted from CG_SwingAngles
+ * @brief mdx_SwingAngles
+ * @param[in] destination
+ * @param[in] swingTolerance
+ * @param[in] clampTolerance
+ * @param[in] speed
+ * @param[in,out] angle
+ * @param[in,out] swinging
+ *
+ * @see adapted from CG_SwingAngles
  */
 static void mdx_SwingAngles(float destination, float swingTolerance, float clampTolerance,
                             float speed, float *angle, int *swinging)
@@ -1608,9 +1829,9 @@ static void mdx_SwingAngles(float destination, float swingTolerance, float clamp
 	swing  = AngleSubtract(destination, *angle);
 	scale  = fabs(swing);
 	scale *= 0.05;
-	if (scale < 0.5)
+	if (scale < 0.5f)
 	{
-		scale = 0.5;
+		scale = 0.5f;
 	}
 
 	// swing towards the destination angle
@@ -1655,13 +1876,18 @@ static void mdx_SwingAngles(float destination, float swingTolerance, float clamp
 	}
 }
 
-/*
-===============
-mdx_PlayerAngles, adapted from CG_PlayerAngles
-===============
-*/
-#define SWINGSPEED  0.1 // Cheat protected, so we don't care if it matches.
+#define SWINGSPEED  0.1f // Cheat protected, so we don't care if it matches.
 
+/**
+ * @brief mdx_PlayerAngles,
+ * @param[in,out] ent
+ * @param[in] legsAngles
+ * @param[in] torsoAngles
+ * @param[in] headAngles
+ * @param[in] doswing
+ *
+ * @see adapted from CG_PlayerAngles
+ */
 void mdx_PlayerAngles(gentity_t *ent, vec3_t legsAngles, vec3_t torsoAngles, vec3_t headAngles, qboolean doswing)
 {
 	float          dest;
@@ -1752,7 +1978,7 @@ void mdx_PlayerAngles(gentity_t *ent, vec3_t legsAngles, vec3_t torsoAngles, vec
 
 		if (!(client->ps.eFlags & EF_FIRING))
 		{
-			torsoAngles[YAW] = headAngles[YAW] + 0.35 * movementDir;
+			torsoAngles[YAW] = headAngles[YAW] + 0.35f * movementDir;
 			clampTolerance   = 90;
 		}
 		else        // must be firing
@@ -1779,7 +2005,7 @@ void mdx_PlayerAngles(gentity_t *ent, vec3_t legsAngles, vec3_t torsoAngles, vec
 			if (doswing)
 			{
 				ent->legsFrame.yawing = qfalse; // set it if they really need to swing
-				mdx_SwingAngles(legsAngles[YAW], 20, clampTolerance, 0.5 * SWINGSPEED, &ent->legsFrame.yawAngle, &ent->legsFrame.yawing);
+				mdx_SwingAngles(legsAngles[YAW], 20, clampTolerance, 0.5f * SWINGSPEED, &ent->legsFrame.yawAngle, &ent->legsFrame.yawing);
 			}
 		}
 		else if (strstr(BG_GetAnimString(character->animModelInfo, legsSet), "strafe"))
@@ -1822,11 +2048,11 @@ void mdx_PlayerAngles(gentity_t *ent, vec3_t legsAngles, vec3_t torsoAngles, vec
 	// only show a fraction of the pitch angle in the torso
 	if (headAngles[PITCH] > 180)
 	{
-		dest = (-360 + headAngles[PITCH]) * 0.75;
+		dest = (-360 + headAngles[PITCH]) * 0.75f;
 	}
 	else
 	{
-		dest = headAngles[PITCH] * 0.75;
+		dest = headAngles[PITCH] * 0.75f;
 	}
 
 	// zero out the head pitch when dead
@@ -1849,7 +2075,7 @@ void mdx_PlayerAngles(gentity_t *ent, vec3_t legsAngles, vec3_t torsoAngles, vec
 	{
 		if (doswing)
 		{
-			mdx_SwingAngles(dest, 15, 30, 0.1, &ent->torsoFrame.pitchAngle, &ent->torsoFrame.pitching);
+			mdx_SwingAngles(dest, 15, 30, 0.1f, &ent->torsoFrame.pitchAngle, &ent->torsoFrame.pitching);
 		}
 		torsoAngles[PITCH] = ent->torsoFrame.pitchAngle;
 	}
@@ -1859,12 +2085,12 @@ void mdx_PlayerAngles(gentity_t *ent, vec3_t legsAngles, vec3_t torsoAngles, vec
 	// lean towards the direction of travel
 	VectorCopy(client->ps.velocity, velocity);
 	speed = VectorNormalize(velocity);
-	if (speed)
+	if (speed != 0.f)
 	{
 		vec3_t axis[3];
 		float  side;
 
-		speed *= 0.05;
+		speed *= 0.05f;
 
 		AnglesToAxis(legsAngles, axis);
 		side              = speed * DotProduct(velocity, axis[1]);
@@ -1878,7 +2104,7 @@ void mdx_PlayerAngles(gentity_t *ent, vec3_t legsAngles, vec3_t torsoAngles, vec
 
 	// add leaning animation - modified from FalkonET
 	//if ( g_lean.integer & LEAN_VISIBLE ){
-	torsoAngles[ROLL] += ent->client->ps.leanf * 1.25;
+	torsoAngles[ROLL] += ent->client->ps.leanf * 1.25f;
 	headAngles[ROLL]  += ent->client->ps.leanf;
 	//}
 
@@ -1887,10 +2113,19 @@ void mdx_PlayerAngles(gentity_t *ent, vec3_t legsAngles, vec3_t torsoAngles, vec
 	AnglesSubtract(torsoAngles, legsAngles, torsoAngles);
 }
 
-// Adapted from CG_RunLerpFrameRate
-// FIXME: I'd rather not duplicate this much code....
 #define CROUCHING(anim) ((anim) && ((anim)->movetype & ((1 << ANIM_MT_IDLECR) | (1 << ANIM_MT_WALKCR) | (1 << ANIM_MT_WALKCRBK))))
 
+/**
+ * @brief mdx_SetLerpFrame
+ * @param[in] ent
+ * @param[in,out] lf
+ * @param[in] newAnimation
+ * @param[in] character
+ *
+ * @see Adapted from CG_RunLerpFrameRate
+ *
+ * @todo FIXME: I'd rather not duplicate this much code....
+ */
 static void mdx_SetLerpFrame(gentity_t *ent, glerpFrame_t *lf, int newAnimation, bg_character_t *character)
 {
 	animation_t *oldAnim;
@@ -1942,7 +2177,7 @@ static void mdx_SetLerpFrame(gentity_t *ent, glerpFrame_t *lf, int newAnimation,
 		else
 		{
 			// slow down transitions according to speed
-			if (anim->moveSpeed && lf->animSpeedScale < 1.0)
+			if (anim->moveSpeed && lf->animSpeedScale < 1.0f)
 			{
 				lf->animationTime += anim->initialLerp;
 			}
@@ -1965,12 +2200,20 @@ static void mdx_SetLerpFrame(gentity_t *ent, glerpFrame_t *lf, int newAnimation,
 	//G_Printf("[fT%6d->%-6d] NA %d%s sT %d\n", lf->oldFrameTime, lf->frameTime, lf->animationNumber, firstAnim?" (FIRST)":"", level.time);
 }
 
-#define ANIM_SCALEMAX_LOW   1.1
-#define ANIM_SCALEMAX_HIGH  1.6
+#define ANIM_SCALEMAX_LOW   1.1f
+#define ANIM_SCALEMAX_HIGH  1.6f
 
 #define ANIM_SPEEDMAX_LOW   100
 #define ANIM_SPEEDMAX_HIGH  20
 
+/**
+ * @brief mdx_RunLerpFrame
+ * @param[in] ent
+ * @param[in,out] lf
+ * @param[in] newAnimation
+ * @param[in] character
+ * @param recursion - unused
+ */
 static void mdx_RunLerpFrame(gentity_t *ent, glerpFrame_t *lf, int newAnimation, bg_character_t *character, int recursion)
 {
 	int         f;
@@ -2015,8 +2258,8 @@ static void mdx_RunLerpFrame(gentity_t *ent, glerpFrame_t *lf, int newAnimation,
 				lf->oldFramePos[0] = ent->s.pos.trBase[0];
 				lf->oldFramePos[1] = ent->s.pos.trBase[1];
 			}
-			serverDelta   = (float)(ent->s.pos.trTime - lf->oldFrameSnapshotTime) / 1000.0;
-			lf->moveSpeed = Distance(ent->s.pos.trBase, lf->oldFramePos) / serverDelta;
+			serverDelta   = (ent->s.pos.trTime - lf->oldFrameSnapshotTime) / 1000.0f;
+			lf->moveSpeed = (int)(Distance(ent->s.pos.trBase, lf->oldFramePos) / serverDelta);
 
 			VectorCopy(ent->s.pos.trBase, lf->oldFramePos);
 			lf->oldFrameSnapshotTime = ent->s.pos.trTime;
@@ -2031,19 +2274,19 @@ static void mdx_RunLerpFrame(gentity_t *ent, glerpFrame_t *lf, int newAnimation,
 		else
 		{
 			// move at normal speed
-			lf->animSpeedScale = 1.0;
+			lf->animSpeedScale = 1.0f;
 		}
 
 		// restrict the speed range
-		if (lf->animSpeedScale < 0.25)      // if it's too slow, then a really slow spped, combined with a sudden take-off, can leave them playing a really slow frame while they a moving really fast
+		if (lf->animSpeedScale < 0.25f)      // if it's too slow, then a really slow spped, combined with a sudden take-off, can leave them playing a really slow frame while they a moving really fast
 		{
-			if (lf->animSpeedScale < 0.01 && isLadderAnim)
+			if (lf->animSpeedScale < 0.01f && isLadderAnim)
 			{
-				lf->animSpeedScale = 0.0;
+				lf->animSpeedScale = 0.0f;
 			}
 			else
 			{
-				lf->animSpeedScale = 0.25;
+				lf->animSpeedScale = 0.25f;
 			}
 		}
 		else if (lf->animSpeedScale > ANIM_SCALEMAX_LOW)
@@ -2068,9 +2311,9 @@ static void mdx_RunLerpFrame(gentity_t *ent, glerpFrame_t *lf, int newAnimation,
 					lf->animSpeedScale = ANIM_SCALEMAX_HIGH - (ANIM_SCALEMAX_HIGH - ANIM_SCALEMAX_LOW) * (float)(anim->moveSpeed - ANIM_SPEEDMAX_HIGH) / (float)(ANIM_SPEEDMAX_LOW - ANIM_SPEEDMAX_HIGH);
 				}
 			}
-			else if (lf->animSpeedScale > 4.0)
+			else if (lf->animSpeedScale > 4.0f)
 			{
-				lf->animSpeedScale = 4.0;
+				lf->animSpeedScale = 4.0f;
 			}
 		}
 
@@ -2089,7 +2332,7 @@ static void mdx_RunLerpFrame(gentity_t *ent, glerpFrame_t *lf, int newAnimation,
 		}
 
 		// get the next frame based on the animation
-		if (!lf->animSpeedScale)
+		if (lf->animSpeedScale == 0.f)
 		{
 			// stopped on the ladder, so stay on the same frame
 			f              = lf->frame - anim->firstFrame;
@@ -2136,7 +2379,7 @@ static void mdx_RunLerpFrame(gentity_t *ent, glerpFrame_t *lf, int newAnimation,
 		}
 		else
 		{
-			lf->frameTime = lf->oldFrameTime + (int)((float)anim->frameLerp * (1.0 / lf->animSpeedScale));
+			lf->frameTime = lf->oldFrameTime + (int)(anim->frameLerp * (1.0f / lf->animSpeedScale));
 			if (anim->flags & ANIMFL_REVERSED)
 			{
 				f = (anim->numFrames - 1) - ((lf->frame - anim->firstFrame) - 1);
@@ -2187,6 +2430,10 @@ static void mdx_RunLerpFrame(gentity_t *ent, glerpFrame_t *lf, int newAnimation,
 	}
 }
 
+/**
+ * @brief mdx_PlayerAnimation
+ * @param[in] ent
+ */
 void mdx_PlayerAnimation(gentity_t *ent)
 {
 	bg_character_t *character;
@@ -2222,12 +2469,22 @@ void mdx_PlayerAnimation(gentity_t *ent)
 }
 
 /**************************************************************/
-// Hit testing
+/**
+ * Hit testing
+ */
 
 #ifdef BONE_HITTESTS
 /**
  * @brief Rotates and transforms everything in to the space of origin/axis/scale,
  *        then finds the closest point to the origin on the line start<->end
+ * @param[in] start
+ * @param[in] end
+ * @param[in] origin
+ * @param[in] axis
+ * @param[in] scale
+ * @param[out] tangent
+ * @param[in] fraction
+ * @return
  */
 static qboolean mdx_hit_warp(
     const vec3_t start, const vec3_t end,
@@ -2270,16 +2527,16 @@ static qboolean mdx_hit_warp(
 	*fraction = DotProduct(unstart, undir) / DotProduct(undir, undir);
 	VectorNegate(unstart, unstart);
 
-	if (*fraction < 0.0)
+	if (*fraction < 0.0f)
 	{
 		VectorCopy(unstart, tangent);
 		*fraction = 0;
 		return qfalse;  // don't shoot backwards..
 	}
-	else if (*fraction >= 1.0)
+	else if (*fraction >= 1.0f)
 	{
 		VectorCopy(unend, tangent);
-		*fraction = 1.0;
+		*fraction = 1.0f;
 	}
 	else
 	{
@@ -2298,6 +2555,13 @@ static qboolean mdx_hit_warp(
 	return qtrue;
 }
 
+/**
+ * @brief mdx_hit_test_cylinder
+ * @param[in] p1
+ * @param[in] p2
+ * @param[out] backlerp
+ * @return
+ */
 static qboolean mdx_hit_test_cylinder(const vec3_t p1, const vec3_t p2, float *backlerp)
 {
 	vec_t lerpt, lerp1, lerp2;
@@ -2317,7 +2581,7 @@ static qboolean mdx_hit_test_cylinder(const vec3_t p1, const vec3_t p2, float *b
 	// Check radius
 	lerpt     = p1[2] + -p2[2];
 	lerp1     = (lerpt - p1[2]) / lerpt;
-	lerp2     = 1.0 - lerp1;
+	lerp2     = 1.0f - lerp1;
 	*backlerp = lerp1;
 
 	distx  = p1[0] * lerp1 + p2[0] * lerp2;
@@ -2326,7 +2590,7 @@ static qboolean mdx_hit_test_cylinder(const vec3_t p1, const vec3_t p2, float *b
 	disty  = p1[1] * lerp1 + p2[1] * lerp2;
 	disty *= disty;
 
-	if ((distx + disty) > 1.0)
+	if ((distx + disty) > 1.0f)
 	{
 		return qfalse;
 	}
@@ -2334,6 +2598,13 @@ static qboolean mdx_hit_test_cylinder(const vec3_t p1, const vec3_t p2, float *b
 	return qtrue;
 }
 
+/**
+ * @brief mdx_hit_test_box2
+ * @param[in] p1
+ * @param[in] p2
+ * @param[out] backlerp
+ * @return
+ */
 static qboolean mdx_hit_test_box2(const vec3_t p1, const vec3_t p2, float *backlerp)
 {
 	vec_t lerpt, lerp1, lerp2;
@@ -2353,11 +2624,11 @@ static qboolean mdx_hit_test_box2(const vec3_t p1, const vec3_t p2, float *backl
 	// Check radius
 	lerpt     = p1[2] + -p2[2];
 	lerp1     = (lerpt - p1[2]) / lerpt;
-	lerp2     = 1.0 - lerp1;
+	lerp2     = 1.0f - lerp1;
 	*backlerp = lerp1;
 
 	distx = p1[0] * lerp1 + p2[0] * lerp2;
-	if (Q_fabs(distx) > 1.0)
+	if (Q_fabs(distx) > 1.0f)
 	{
 		return qfalse;
 	}
@@ -2371,6 +2642,11 @@ static qboolean mdx_hit_test_box2(const vec3_t p1, const vec3_t p2, float *backl
 	return qtrue;
 }
 
+/**
+ * @brief mdx_hit_test_sphere
+ * @param[in] p1
+ * @return
+ */
 static qboolean mdx_hit_test_sphere(const vec3_t p1)
 {
 	// Check radius
@@ -2383,6 +2659,11 @@ static qboolean mdx_hit_test_sphere(const vec3_t p1)
 	return qtrue;
 }
 
+/**
+ * @brief mdx_hit_test_box
+ * @param[in] p1
+ * @return
+ */
 static qboolean mdx_hit_test_box(const vec3_t p1)
 {
 	// Check radius
@@ -2403,6 +2684,17 @@ static qboolean mdx_hit_test_box(const vec3_t p1)
 	return qtrue;
 }
 
+/**
+ * @brief mdx_hit_test
+ * @param[in] start
+ * @param[in] end
+ * @param[in] ent
+ * @param[in] refent
+ * @param[out] hit_type
+ * @param[out] fraction
+ * @param[out] impactpoint
+ * @return
+ */
 qboolean mdx_hit_test(const vec3_t start, const vec3_t end, /*const*/ gentity_t *ent, /*const*/ grefEntity_t *refent, int *hit_type, vec_t *fraction, animScriptImpactPoint_t *impactpoint)
 {
 	int                     i;
@@ -2589,6 +2881,9 @@ qboolean mdx_hit_test(const vec3_t start, const vec3_t end, /*const*/ gentity_t 
 
 /**
  * @brief For new old-style hit tests; returns -center- positions, to have -centered- bbox applied.
+ * @param ent - unused
+ * @param[in] refent
+ * @param[in,out] org
  */
 void mdx_head_position(/*const*/ gentity_t *ent, /*const*/ grefEntity_t *refent, vec3_t org)
 {
@@ -2613,12 +2908,20 @@ void mdx_head_position(/*const*/ gentity_t *ent, /*const*/ grefEntity_t *refent,
 	MatrixMultiply(axis, refent->axis, orientation.axis);
 
 	// calculate center position for standard head (this offset is just a guess)
-	VectorMA(org, 6.5, orientation.axis[2], org); // up
-	VectorMA(org, 0.5, orientation.axis[0], org); // forward
+	VectorMA(org, 6.5f, orientation.axis[2], org); // up
+	VectorMA(org, 0.5f, orientation.axis[0], org); // forward
 }
 
-// returns tags needed for game, not by Zinx
-void mdx_tag_position(gentity_t *ent, grefEntity_t *refent, vec3_t org, char *tagName, float up_offset, float forward_offset)
+/**
+ * @brief Returns tags needed for game, not by Zinx
+ * @param ent - unused
+ * @param[in] refent
+ * @param[in,out] org
+ * @param[in] tagName
+ * @param[in] up_offset
+ * @param[in] forward_offset
+ */
+void mdx_tag_position(gentity_t *ent, grefEntity_t *refent, vec3_t org, const char *tagName, float up_offset, float forward_offset)
 {
 	orientation_t orientation;
 
@@ -2636,6 +2939,12 @@ void mdx_tag_position(gentity_t *ent, grefEntity_t *refent, vec3_t org, char *ta
 	VectorMA(org, forward_offset, orientation.axis[0], org); // forward
 }
 
+/**
+ * @brief mdx_legs_position
+ * @param ent - unused
+ * @param[in] refent
+ * @param[out] org
+ */
 void mdx_legs_position(/*const*/ gentity_t *ent, /*const*/ grefEntity_t *refent, vec3_t org)
 {
 	mdm_t         *model;
@@ -2661,6 +2970,6 @@ void mdx_legs_position(/*const*/ gentity_t *ent, /*const*/ grefEntity_t *refent,
 	VectorMA(org2, orientation.origin[2], refent->axis[2], org2);
 
 	VectorAdd(org1, org2, org);
-	VectorScale(org, 0.5, org);
+	VectorScale(org, 0.5f, org);
 }
 #endif

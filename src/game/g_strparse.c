@@ -46,6 +46,11 @@ typedef struct
 
 extern const g_strtoken_t *in_word_set(const char *str, unsigned int len);
 
+/**
+ * @brief G_GetTokenForString
+ * @param[in] str
+ * @return
+ */
 g_StringToken_t G_GetTokenForString(char const *str)
 {
 	// Use our minimal perfect hash generated code to give us the

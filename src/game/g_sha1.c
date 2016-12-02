@@ -8,7 +8,12 @@
 
 #include "../qcommon/crypto/sha-1/sha1.h"
 
-char *G_SHA1(char *string)
+/**
+ * @brief G_SHA1
+ * @param[in] string
+ * @return
+ */
+char *G_SHA1(const char *string)
 {
 	SHA1Context sha;
 

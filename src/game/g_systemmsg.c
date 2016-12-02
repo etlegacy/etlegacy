@@ -49,6 +49,11 @@ const char *systemMessages[SM_NUM_SYS_MSGS] =
 	"SYS_Destroyed",
 };
 
+/**
+ * @brief G_NeedEngineers
+ * @param[in] team
+ * @return
+ */
 qboolean G_NeedEngineers(int team)
 {
 	int       i;
@@ -87,6 +92,11 @@ qboolean G_NeedEngineers(int team)
 	return qfalse;
 }
 
+/**
+ * @brief G_GetSysMessageNumber
+ * @param[in] sysMsg
+ * @return
+ */
 int G_GetSysMessageNumber(const char *sysMsg)
 {
 	int i;
@@ -102,6 +112,11 @@ int G_GetSysMessageNumber(const char *sysMsg)
 	return -1;
 }
 
+/**
+ * @brief G_SendSystemMessage
+ * @param[in] message
+ * @param[in] team
+ */
 void G_SendSystemMessage(sysMsg_t message, int team)
 {
 	gentity_t *other;
@@ -135,7 +150,11 @@ void G_SendSystemMessage(sysMsg_t message, int team)
 	}
 }
 
-/* unused
+/**
+ * @brief G_CheckForNeededClasses
+ * @note Unused
+ */
+/*
 void G_CheckForNeededClasses(void)
 {
     qboolean   playerClasses[NUM_PLAYER_CLASSES - 1][2];
@@ -249,7 +268,11 @@ void G_CheckForNeededClasses(void)
 }
 */
 
-/* unused
+/**
+ * @brief G_CheckMenDown
+ * @note Unused
+ */
+/*
 void G_CheckMenDown(void)
 {
     int       alive[2], dead[2];
