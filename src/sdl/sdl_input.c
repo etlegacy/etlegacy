@@ -1392,8 +1392,6 @@ void IN_Init(void)
 
 	IN_InitKeyLockStates();
 
-	// FIXME: Joystick initialization crashes some Windows and Mac OS X clients (see SDL #2833)
-	//        (only some clients ... activated again for system which are not affected and to get some more feedback)
 	IN_InitJoystick();
 
 	Com_Printf("------------------------------------\n");
