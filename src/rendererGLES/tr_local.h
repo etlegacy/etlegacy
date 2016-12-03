@@ -1855,7 +1855,6 @@ void RE_TakeVideoFrame(int width, int height,
 
 // caching system
 // NOTE: to disable this for development, set "r_cache 0" in autoexec.cfg
-void R_InitTexnumImages(qboolean force);
 
 void *R_CacheModelAlloc(int size);
 void R_CacheModelFree(void *ptr);
