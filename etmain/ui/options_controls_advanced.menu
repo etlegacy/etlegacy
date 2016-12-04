@@ -42,6 +42,15 @@ menuDef {
 	BIND( 8, FIRETEAM_Y+124, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #7:"), .2, 8, "selectbuddy 6", "" )
 	BIND( 8, FIRETEAM_Y+136, (SUBWINDOW_WIDTH)-4, 10, _("Select Member #8:"), .2, 8, "selectbuddy 7", "" )
 
+
+// Joystick //
+#define JOYSTICK_Y 186
+	SUBWINDOW( 6, JOYSTICK_Y, (SUBWINDOW_WIDTH), 64, _("JOYSTICK") )
+	MULTI( 8, JOYSTICK_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Enable Joysticks:"), .2, 8, "in_joystick", cvarFloatList { _("No") 0 _("Yes") 1 }, _("General joystick initialization. Requires vid_restart.") )
+	EDITFIELD( 8, JOYSTICK_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Use Joystick#:"), .2, 8, "in_joystickNo", 64, 18, _("Specifies active joystick") )
+	MULTI( 8, JOYSTICK_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Analog Joystick:"), .2, 8, "in_joystickUseAnalog", cvarFloatList { _("No") 0 _("Yes") 1 }, _("Use analog joystick?") )
+	EDITFIELD( 8, JOYSTICK_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Joystick Threshold:"), .2, 8, "in_joystickThreshold", 64, 18, _("Sets joystick threshold sensitivity") )
+
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close options_controls_advanced ; open options_controls )
 }
