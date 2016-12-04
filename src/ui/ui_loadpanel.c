@@ -281,7 +281,7 @@ const char *UI_DownloadInfo(const char *downloadName)
 		// Extrapolate estimated completion time
 		if (downloadSize && xferRate)
 		{
-			int n        = downloadSize / xferRate; // estimated time for entire d/l in secs
+			int n = downloadSize / xferRate;        // estimated time for entire d/l in secs
 			int timeleft = 0, i;
 
 			// We do it in K (/1024) because we'd overflow around 4MB
@@ -343,7 +343,7 @@ void UI_LoadPanel_RenderLoadingText(panel_button_t *button)
 	char            downloadName[MAX_INFO_VALUE];
 	char            buff[2560];
 	char            *p1, *p2 = "";
-	const char      *s = NULL;
+	const char      *s = "";
 	float           y;
 
 	trap_GetClientState(&cstate);
