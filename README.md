@@ -86,7 +86,7 @@ DEPENDENCIES
 * **CMake** (compile-time only)
 * **OpenGL**
 * **GLEW** version 1.10
-* **SDL** version 2.0.4
+* **SDL** version 2.0.5
 * **ZLib** version 1.2.8
 * **MiniZip**
 * **libjpeg-turbo** version 1.3, or **libjpeg** version 8
