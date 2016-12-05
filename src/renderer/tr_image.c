@@ -48,7 +48,8 @@ static image_t *hashTable[FILE_HASH_SIZE];
 // be read into this buffer. In order to keep things as fast as possible,
 // we'll give it a starting value, which will account for the majority of
 // images, but allow it to grow if the buffer isn't big enough
-#define R_IMAGE_BUFFER_SIZE     (512 * 512 * 8)       // old value :  512 x 512 x 4 (32bit)
+// note: this image cache is bypassing the common q3 memory! -> the game isn't using hunk and zone memory only !!!
+#define R_IMAGE_BUFFER_SIZE     (512 * 512 * 4)
 
 int  imageBufferSize[BUFFER_MAX_TYPES] = { 0, 0, 0 };
 void *imageBufferPtr[BUFFER_MAX_TYPES] = { NULL, NULL, NULL };
@@ -59,8 +60,6 @@ void *R_GetImageBuffer(int size, bufferMemType_t bufferType, const char *filenam
 	{
 		imageBufferSize[bufferType] = R_IMAGE_BUFFER_SIZE;
 		imageBufferPtr[bufferType]  = malloc(imageBufferSize[bufferType]);
-		// TEST
-		//imageBufferPtr[bufferType] = Z_Malloc( imageBufferSize[bufferType] );
 	}
 	if (size > imageBufferSize[bufferType])       // it needs to grow
 	{
@@ -89,7 +88,7 @@ void R_FreeImageBuffer(void)
 	{
 		if (!imageBufferPtr[bufferType])
 		{
-			return;
+			continue;
 		}
 		free(imageBufferPtr[bufferType]);
 
@@ -1453,23 +1452,6 @@ void R_DeleteTextures(void)
 	for (i = 0; i < tr.numImages ; i++)
 	{
 		qglDeleteTextures(1, &tr.images[i]->texnum);
-	}
-
-	// free all images for real
-	for (i = 0; i < tr.numImages; i++)
-	{
-		// note r_cache and r_cachedShaders use malloc, not ri.Hunk_Alloc
-		if (tr.images[i])
-		{
-			if (r_cache->integer && r_cacheShaders->integer)
-			{
-				free(tr.images[i]);
-			}
-			else
-			{   // untested
-				//ri.Free(tr.images[i])
-			}
-		}
 	}
 
 	Com_Memset(tr.images, 0, sizeof(tr.images));
