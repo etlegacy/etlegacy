@@ -32,6 +32,8 @@
  * @file g_script.c
  * @author Ridah
  * @brief Wolfenstein Entity Scripting
+ * @details Scripting that allows the designers to control the behaviour of entities
+ * according to each different scenario.
  */
 
 #include "../game/g_local.h"
@@ -41,16 +43,13 @@
 #include "g_etbot_interface.h"
 #endif
 
-/*
-Scripting that allows the designers to control the behaviour of entities
-according to each different scenario.
-*/
-
 vmCvar_t g_scriptDebug;
 
 //====================================================================
 
-// these are the actions that each event can call
+/**
+ * @var These are the actions that each event can call
+ */
 g_script_stack_action_t gScriptActions[] =
 {
 	{ "gotomarker",                     G_ScriptAction_GotoMarker,                    GOTOMARKER_HASH                     },
@@ -155,14 +154,16 @@ g_script_stack_action_t gScriptActions[] =
 qboolean G_Script_EventMatch_StringEqual(g_script_event_t *event, char *eventParm);
 qboolean G_Script_EventMatch_IntInRange(g_script_event_t *event, char *eventParm);
 
-// the list of events that can start an action sequence
+/**
+ * @var The list of events that can start an action sequence
+ */
 g_script_event_define_t gScriptEvents[] =
 {
-	{ "spawn",       NULL,                            SPAWN_HASH       }, // called as each character is spawned into the game
-	{ "trigger",     G_Script_EventMatch_StringEqual, TRIGGER_HASH     }, // something has triggered us (always followed by an identifier)
-	{ "pain",        G_Script_EventMatch_IntInRange,  PAIN_HASH        }, // we've been hurt
-	{ "death",       NULL,                            DEATH_HASH       }, // RIP
-	{ "activate",    G_Script_EventMatch_StringEqual, ACTIVATE_HASH    }, // something has triggered us [activator team]
+	{ "spawn",       NULL,                            SPAWN_HASH       }, ///< called as each character is spawned into the game
+	{ "trigger",     G_Script_EventMatch_StringEqual, TRIGGER_HASH     }, ///< something has triggered us (always followed by an identifier)
+	{ "pain",        G_Script_EventMatch_IntInRange,  PAIN_HASH        }, ///< we've been hurt
+	{ "death",       NULL,                            DEATH_HASH       }, ///< RIP
+	{ "activate",    G_Script_EventMatch_StringEqual, ACTIVATE_HASH    }, ///< something has triggered us [activator team]
 	{ "stopcam",     NULL,                            STOPCAM_HASH     },
 	{ "playerstart", NULL,                            PLAYERSTART_HASH },
 	{ "built",       G_Script_EventMatch_StringEqual, BUILT_HASH       },
@@ -174,8 +175,8 @@ g_script_event_define_t gScriptEvents[] =
 	{ "dynamited",   NULL,                            DYNAMITED_HASH   },
 	{ "defused",     NULL,                            DEFUSED_HASH     },
 	{ "mg42",        G_Script_EventMatch_StringEqual, MG42_HASH        },
-	{ "message",     G_Script_EventMatch_StringEqual, MESSAGE_HASH     }, // contains a sequence of VO in a message
-	{ "exploded",    NULL,                            EXPLODED_HASH    }, // added for omni-bot 0.7
+	{ "message",     G_Script_EventMatch_StringEqual, MESSAGE_HASH     }, ///< contains a sequence of VO in a message
+	{ "exploded",    NULL,                            EXPLODED_HASH    }, ///< added for omni-bot 0.7
 
 	{ NULL,          NULL,                            00               }
 };
@@ -918,7 +919,7 @@ void script_linkentity(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-void script_mover_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
+void script_mover_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
 	G_Script_ScriptEvent(self, "death", "");
 

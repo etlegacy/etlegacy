@@ -268,7 +268,7 @@ void GibEntity(gentity_t *self, int killer)
  * @param damage - unused
  * @param meansOfDeath - unused
  */
-void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int meansOfDeath)
+void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t meansOfDeath)
 {
 	if (self->health <= GIB_HEALTH)
 	{
@@ -377,7 +377,7 @@ char *modNames[] =
  * @param[in] damage
  * @param[in] meansOfDeath
  */
-void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int meansOfDeath)
+void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t meansOfDeath)
 {
 	weapon_t  weap;
 	gclient_t *client;
@@ -1290,7 +1290,7 @@ static grefEntity_t refent;
  * @note inflictor, attacker, dir, and point can be NULL for environmental effects
  *
  */
-void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, int mod)
+void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, meansOfDeath_t mod)
 {
 	int         take;
 	int         knockback;

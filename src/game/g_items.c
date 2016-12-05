@@ -1372,7 +1372,7 @@ void G_RunItemProp(gentity_t *ent, vec3_t origin)
 	if (owner->client && trace.startsolid && traceEnt != owner && traceEnt != ent /* && !traceEnt->active*/)
 	{
 		ent->takedamage = qfalse;
-		ent->die(ent, ent, NULL, 10, 0);
+		ent->die(ent, ent, NULL, 10, MOD_UNKNOWN);
 		Prop_Break_Sound(ent);
 
 		return;

@@ -1156,7 +1156,7 @@ void aagun_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
  *
  * @note not implented yet ?
  */
-void aagun_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
+void aagun_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
 }
 
@@ -1673,7 +1673,7 @@ void mg42_stopusing(gentity_t *self)
  * @param damage - unused
  * @param mod - unused
  */
-void mg42_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
+void mg42_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
 	gentity_t *gun;
 	gentity_t *owner;

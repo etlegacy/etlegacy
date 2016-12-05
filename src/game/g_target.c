@@ -785,7 +785,7 @@ void G_KillEnts(const char *target, gentity_t *ignore, gentity_t *killer, meansO
 			{
 				G_AddKillSkillPointsForDestruction(killer, mod, &targ->constructibleStats);
 			}
-			targ->die(targ, killer, killer, targ->health, 0);
+			targ->die(targ, killer, killer, targ->health, MOD_UNKNOWN);
 			continue;
 		}
 

@@ -42,11 +42,11 @@
 
 void G_ExplodeMissile(gentity_t *ent);
 
-/*
-================
-G_BounceMissile
-================
-*/
+/**
+ * @brief G_BounceMissile
+ * @param[in,out] ent
+ * @param[in] trace
+ */
 void G_BounceMissile(gentity_t *ent, trace_t *trace)
 {
 	vec3_t    velocity;
@@ -67,7 +67,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 	}
 
 	// reflect the velocity on the trace plane
-	hitTime = level.previousTime + (level.time - level.previousTime) * trace->fraction;
+	hitTime = (int)(level.previousTime + (level.time - level.previousTime) * trace->fraction);
 	BG_EvaluateTrajectoryDelta(&ent->s.pos, hitTime, velocity, qfalse, ent->s.effect2Time);
 	dot = DotProduct(velocity, trace->plane.normal);
 	VectorMA(velocity, -2 * dot, trace->plane.normal, ent->s.pos.trDelta);
@@ -153,12 +153,12 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 	ent->s.pos.trTime = level.time;
 }
 
-/*
-================
-G_MissileImpact
-    impactDamage is how much damage the impact will do to func_explosives
-================
-*/
+/**
+ * @brief G_MissileImpact
+ * @param[in] ent
+ * @param[in] trace
+ * @param[in] impactDamage is how much damage the impact will do to func_explosives
+ */
 void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 {
 	gentity_t *other = &g_entities[trace->entityNum];
@@ -270,13 +270,10 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 	G_FreeEntity(ent);
 }
 
-/*
-================
-G_ExplodeMissile
-
-Explode a missile without an impact
-================
-*/
+/**
+ * @brief Explode a missile without an impact
+ * @param[in,out] ent
+ */
 void G_ExplodeMissile(gentity_t *ent)
 {
 	vec3_t dir;
@@ -455,11 +452,10 @@ void G_ExplodeMissile(gentity_t *ent)
 	}
 }
 
-/*
-=================
-Landmine_Check_Ground
-=================
-*/
+/**
+ * @brief Landmine_Check_Ground
+ * @param[in,out] self
+ */
 void Landmine_Check_Ground(gentity_t *self)
 {
 	vec3_t  mins, maxs;
@@ -482,11 +478,10 @@ void Landmine_Check_Ground(gentity_t *self)
 	}
 }
 
-/*
-================
-G_RunMissile
-================
-*/
+/**
+ * @brief G_RunMissile
+ * @param[in,out] ent
+ */
 void G_RunMissile(gentity_t *ent)
 {
 	vec3_t  origin;
@@ -717,11 +712,13 @@ void G_RunMissile(gentity_t *ent)
 	G_RunThink(ent);
 }
 
-/*
-================
-G_PredictBounceMissile
-================
-*/
+/**
+ * @brief G_PredictBounceMissile
+ * @param[in] ent
+ * @param[in,out] pos
+ * @param[in] trace
+ * @param[in] time
+ */
 void G_PredictBounceMissile(gentity_t *ent, trajectory_t *pos, trace_t *trace, int time)
 {
 	vec3_t velocity, origin;
@@ -759,15 +756,14 @@ void G_PredictBounceMissile(gentity_t *ent, trajectory_t *pos, trace_t *trace, i
 	pos->trTime = time;
 }
 
-/*
-================
-G_PredictMissile
-
-  selfNum is the character that is checking to see what the missile is going to do
-
-  returns qfalse if the missile won't explode, otherwise it'll return the time is it expected to explode
-================
-*/
+/**
+ * @brief G_PredictMissile
+ * @param[in,out] ent is the character that is checking to see what the missile is going to do
+ * @param[in] duration
+ * @param[out] endPos
+ * @param[in] allowBounce
+ * @return qfalse if the missile won't explode, otherwise it'll return the time is it expected to explode
+ */
 int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allowBounce)
 {
 	vec3_t       origin;
@@ -847,6 +843,12 @@ int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allow
 // Server side Flamethrower
 //=============================================================================
 
+/**
+ * @brief G_BurnTarget
+ * @param self
+ * @param[in,out] body
+ * @param[in] directhit
+ */
 void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 {
 	float   radius, dist;
@@ -966,12 +968,17 @@ void G_BurnTarget(gentity_t *self, gentity_t *body, qboolean directhit)
 	}
 }
 
+/**
+ * @brief G_FlameDamage
+ * @param[in] self
+ * @param[in] ignoreent
+ */
 void G_FlameDamage(gentity_t *self, gentity_t *ignoreent)
 {
 	gentity_t *body;
 	vec3_t    mins, maxs;
 	float     radius    = self->speed;
-	float     boxradius = M_SQRT2 * radius; // radius * sqrt(2) for bounding box enlargement
+	float     boxradius = (float)(M_SQRT2 * (double)radius); // radius * sqrt(2) for bounding box enlargement
 	int       entityList[MAX_GENTITIES];
 	int       i, e, numListedEntities;
 
@@ -996,6 +1003,10 @@ void G_FlameDamage(gentity_t *self, gentity_t *ignoreent)
 	}
 }
 
+/**
+ * @brief G_RunFlamechunk
+ * @param[in,out] ent
+ */
 void G_RunFlamechunk(gentity_t *ent)
 {
 	vec3_t    vel, add;
@@ -1109,11 +1120,13 @@ void G_RunFlamechunk(gentity_t *ent)
 	G_RunThink(ent);
 }
 
-/*
-=================
-fire_flamechunk
-=================
-*/
+/**
+ * @brief fire_flamechunk
+ * @param[in,out] self
+ * @param[in] start
+ * @param[in] dir
+ * @return
+ */
 gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir)
 {
 	gentity_t *bolt;
@@ -1162,6 +1175,10 @@ gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir)
 
 //=============================================================================
 
+/**
+ * @brief DynaSink
+ * @param[in,out] self
+ */
 void DynaSink(gentity_t *self)
 {
 	self->clipmask   = 0;
@@ -1178,6 +1195,10 @@ void DynaSink(gentity_t *self)
 	self->nextthink        = level.time + 50;
 }
 
+/**
+ * @brief DynaFree
+ * @param[in,out] self
+ */
 void DynaFree(gentity_t *self)
 {
 	// see if the dynamite was planted near a constructable object that would have been destroyed
@@ -1226,14 +1247,12 @@ void DynaFree(gentity_t *self)
 	}
 }
 
-/*
-==========
-G_FadeItems
-
-remove any items that the player should no longer have, on disconnect/class change etc
-changed to just set the parent to NULL
-==========
-*/
+/**
+ * @brief Remove any items that the player should no longer have, on disconnect/class change etc
+ * changed to just set the parent to NULL
+ * @param[in] ent
+ * @param[in] modType
+ */
 void G_FadeItems(gentity_t *ent, int modType)
 {
 	gentity_t *e = &g_entities[MAX_CLIENTS];
@@ -1268,6 +1287,11 @@ void G_FadeItems(gentity_t *ent, int modType)
 	}
 }
 
+/**
+ * @brief G_CountTeamLandmines
+ * @param[in] team
+ * @return
+ */
 int G_CountTeamLandmines(team_t team)
 {
 	gentity_t *e = &g_entities[MAX_CLIENTS];
@@ -1300,6 +1324,13 @@ int G_CountTeamLandmines(team_t team)
 	return cnt;
 }
 
+/**
+ * @brief G_SweepForLandmines
+ * @param[in] origin
+ * @param[in] radius
+ * @param[in] team
+ * @return
+ */
 qboolean G_SweepForLandmines(vec3_t origin, float radius, int team)
 {
 	gentity_t *e = &g_entities[MAX_CLIENTS];
@@ -1340,6 +1371,11 @@ qboolean G_SweepForLandmines(vec3_t origin, float radius, int team)
 	return qfalse;
 }
 
+/**
+ * @brief G_FindSatchel
+ * @param[in] ent
+ * @return
+ */
 gentity_t *G_FindSatchel(gentity_t *ent)
 {
 	gentity_t *e = &g_entities[MAX_CLIENTS];
@@ -1373,22 +1409,24 @@ gentity_t *G_FindSatchel(gentity_t *ent)
 	return NULL;
 }
 
-/*
-==========
-G_ExplodeMines
-==========
-*/
-// removes any weapon objects lying around in the map when they disconnect/switch team
+/**
+ * Removes any weapon objects lying around in the map when they disconnect/switch team
+ */
+
+/**
+ * @brief G_ExplodeMines
+ * @param[in] ent
+ */
 void G_ExplodeMines(gentity_t *ent)
 {
 	G_FadeItems(ent, MOD_LANDMINE);
 }
 
-/*
-==========
-G_ExplodeSatchels
-==========
-*/
+/**
+ * @brief G_ExplodeSatchels
+ * @param[in] ent
+ * @return
+ */
 qboolean G_ExplodeSatchels(gentity_t *ent)
 {
 	gentity_t *e = &g_entities[MAX_CLIENTS];
@@ -1431,6 +1469,10 @@ qboolean G_ExplodeSatchels(gentity_t *ent)
 	return blown;
 }
 
+/**
+ * @brief G_FreeSatchel
+ * @param[in,out] ent
+ */
 void G_FreeSatchel(gentity_t *ent)
 {
 	gentity_t *other;
@@ -1463,13 +1505,12 @@ void G_FreeSatchel(gentity_t *ent)
 	}
 }
 
-/*
-==========
-LandMineTrigger
-==========
-*/
 void LandminePostThink(gentity_t *self);
 
+/**
+ * @brief LandMineTrigger
+ * @param[in,out] self
+ */
 void LandMineTrigger(gentity_t *self)
 {
 	self->r.contents = CONTENTS_CORPSE;
@@ -1481,22 +1522,24 @@ void LandMineTrigger(gentity_t *self)
 	self->s.time = level.time;
 }
 
+/**
+ * @brief LandMinePostTrigger
+ * @param[out] self
+ */
 void LandMinePostTrigger(gentity_t *self)
 {
 	self->nextthink = level.time + 300;
 	self->think     = G_ExplodeMissile;
 }
 
-/*107     11      20      0       0       0       0       //fire gren
-
-==========
-G_LandmineThink
-==========
-*/
-
-// Function to check if an entity will set off a landmine
 #define LANDMINE_TRIGGER_DIST 64.0f
 
+/**
+ * @brief Check if an entity will set off a landmine
+ * @param[in] ent
+ * @param[in] mine
+ * @return
+ */
 qboolean sEntWillTriggerMine(gentity_t *ent, gentity_t *mine)
 {
 	// player types are the only things that set off mines (human and bot)
@@ -1507,7 +1550,7 @@ qboolean sEntWillTriggerMine(gentity_t *ent, gentity_t *mine)
 		VectorSubtract(mine->r.currentOrigin, ent->r.currentOrigin, dist);
 		// have to be within the trigger distance AND on the ground -- if we jump over a mine, we don't set it off
 		//      (or if we fly by after setting one off)
-		if ((VectorLengthSquared(dist) <= Square(LANDMINE_TRIGGER_DIST)) && (fabs(dist[2]) < 45))
+		if ((VectorLengthSquared(dist) <= Square(LANDMINE_TRIGGER_DIST)) && (fabs((double)dist[2]) < 45))
 		{
 			return qtrue;
 		}
@@ -1516,7 +1559,12 @@ qboolean sEntWillTriggerMine(gentity_t *ent, gentity_t *mine)
 	return qfalse;
 }
 
-// Landmine waits for 2 seconds then primes, which sets think to checking for "enemies"
+/**
+ * @brief Landmine waits for 2 seconds then primes, which sets think to checking for "enemies"
+ * @param[in,out] self
+ *
+ * @note 107     11      20      0       0       0       0       fire gren
+ */
 void G_LandmineThink(gentity_t *self)
 {
 	int       entityList[MAX_GENTITIES];
@@ -1582,6 +1630,10 @@ void G_LandmineThink(gentity_t *self)
 	}
 }
 
+/**
+ * @brief LandminePostThink
+ * @param[in,out] self
+ */
 void LandminePostThink(gentity_t *self)
 {
 	int       entityList[MAX_GENTITIES];
@@ -1624,17 +1676,22 @@ void LandminePostThink(gentity_t *self)
 	}
 }
 
-/*
-==========
-G_LandminePrime
-==========
-*/
+/**
+ * @brief G_LandminePrime
+ * @param[out] self
+ */
 void G_LandminePrime(gentity_t *self)
 {
 	self->nextthink = level.time + FRAMETIME;
 	self->think     = G_LandmineThink;
 }
 
+/**
+ * @brief G_LandmineSnapshotCallback
+ * @param[in] entityNum
+ * @param[in] clientNum
+ * @return
+ */
 qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum)
 {
 	gentity_t *ent   = &g_entities[entityNum];
@@ -1678,16 +1735,17 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum)
 	return qfalse;
 }
 
-/*
-=================
-fire_grenade
-
-    NOTE!!!! NOTE!!!!!
-
-    This accepts a /non-normalized/ direction vector to allow specification
-    of how hard it's thrown.  Please scale the vector before calling.
-=================
-*/
+/**
+ * @brief fire_grenade
+ * @param[in] self
+ * @param[in] start
+ * @param[in] dir
+ * @param[in] grenadeWPID
+ * @return
+ *
+ * @note IMPORTANT!!! : This accepts a /non-normalized/ direction vector to allow specification
+ * of how hard it's thrown.  Please scale the vector before calling.
+ */
 gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWPID)
 {
 	gentity_t *bolt;
@@ -1932,11 +1990,14 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 
 //=============================================================================
 
-/*
-=================
-fire_rocket
-=================
-*/
+/**
+ * @brief fire_rocket
+ * @param[in] self
+ * @param[in] start
+ * @param[in] dir
+ * @param[in] rocketType
+ * @return
+ */
 gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType)
 {
 	gentity_t *bolt;
@@ -1977,11 +2038,13 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType
 	return bolt;
 }
 
-/*
-======================
-fire_flamebarrel
-======================
-*/
+/**
+ * @brief fire_flamebarrel
+ * @param[in] self
+ * @param[in] start
+ * @param[in] dir
+ * @return
+ */
 gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir)
 {
 	gentity_t *bolt;
@@ -2021,12 +2084,13 @@ gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir)
 	return bolt;
 }
 
-/*
-==============
-fire_mortar
-    dir is a non-normalized direction/power vector
-==============
-*/
+/**
+ * @brief fire_mortar
+ * @param[in] self
+ * @param[in] start
+ * @param[in] dir is a non-normalized direction/power vector
+ * @return
+ */
 gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir)
 {
 	gentity_t *bolt;

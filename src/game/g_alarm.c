@@ -160,7 +160,7 @@ void alarmbox_use(gentity_t *ent, gentity_t *other, gentity_t *foo)
  * @param damage - unused
  * @param mod - unused
  */
-void alarmbox_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
+void alarmbox_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
 	propExplosion(ent);
 	ent->s.frame    = 2;

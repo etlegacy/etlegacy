@@ -34,6 +34,10 @@
 
 #include "g_local.h"
 
+/**
+ * @brief DropToFloorG
+ * @param[in,out] ent
+ */
 void DropToFloorG(gentity_t *ent)
 {
 	vec3_t  dest;
@@ -52,6 +56,10 @@ void DropToFloorG(gentity_t *ent)
 	ent->nextthink = level.time + FRAMETIME;
 }
 
+/**
+ * @brief DropToFloor
+ * @param[in,out] ent
+ */
 void DropToFloor(gentity_t *ent)
 {
 	vec3_t  dest;
@@ -65,9 +73,9 @@ void DropToFloor(gentity_t *ent)
 		return;
 	}
 
-	if (fabs(ent->r.currentOrigin[2] - tr.endpos[2]) > 1.0)
+	if (fabs((double)(ent->r.currentOrigin[2] - tr.endpos[2])) > 1.0)
 	{
-		tr.endpos[2] = (ent->r.currentOrigin[2] - 1.0);
+		tr.endpos[2] = (ent->r.currentOrigin[2] - 1.0f);
 	}
 
 	ent->s.groundEntityNum = tr.entityNum;
@@ -78,6 +86,12 @@ void DropToFloor(gentity_t *ent)
 	ent->nextthink = level.time + FRAMETIME;
 }
 
+/**
+ * @brief moveit
+ * @param[in,out] ent
+ * @param[in] yaw
+ * @param[in] dist
+ */
 void moveit(gentity_t *ent, float yaw, float dist)
 {
 	vec3_t  move;
@@ -85,30 +99,30 @@ void moveit(gentity_t *ent, float yaw, float dist)
 	trace_t tr;
 	vec3_t  mins, maxs;
 
-	yaw = yaw * M_PI * 2 / 360;
+	yaw = (float)(yaw * M_PI * 2 / 360);
 
-	move[0] = cos(yaw) * dist;
-	move[1] = sin(yaw) * dist;
+	move[0] = (float)cos((double)yaw) * dist;
+	move[1] = (float)sin((double)yaw) * dist;
 	move[2] = 0;
 
 	VectorAdd(ent->r.currentOrigin, move, origin);
 
 	mins[0] = ent->r.mins[0];
 	mins[1] = ent->r.mins[1];
-	mins[2] = ent->r.mins[2] + .01;
+	mins[2] = ent->r.mins[2] + .01f;
 
 	maxs[0] = ent->r.maxs[0];
 	maxs[1] = ent->r.maxs[1];
-	maxs[2] = ent->r.maxs[2] - .01;
+	maxs[2] = ent->r.maxs[2] - .01f;
 
 	trap_Trace(&tr, ent->r.currentOrigin, mins, maxs, origin, ent->s.number, MASK_SHOT);
 
 	if ((tr.endpos[0] != origin[0]) || (tr.endpos[1] != origin[1]))
 	{
-		mins[0] = ent->r.mins[0] - 2.0;
-		mins[1] = ent->r.mins[1] - 2.0;
-		maxs[0] = ent->r.maxs[0] + 2.0;
-		maxs[1] = ent->r.maxs[1] + 2.0;
+		mins[0] = ent->r.mins[0] - 2.0f;
+		mins[1] = ent->r.mins[1] - 2.0f;
+		maxs[0] = ent->r.maxs[0] + 2.0f;
+		maxs[1] = ent->r.maxs[1] + 2.0f;
 
 		trap_Trace(&tr, ent->r.currentOrigin, mins, maxs, origin, ent->s.number, MASK_SHOT);
 	}
@@ -120,6 +134,12 @@ void moveit(gentity_t *ent, float yaw, float dist)
 	trap_LinkEntity(ent);
 }
 
+/**
+ * @brief touch_props_box_32
+ * @param[in] self
+ * @param[in] other
+ * @param trace - unused
+ */
 void touch_props_box_32(gentity_t *self, gentity_t *other, trace_t *trace)
 {
 	float  ratio;
@@ -130,14 +150,16 @@ void touch_props_box_32(gentity_t *self, gentity_t *other, trace_t *trace)
 		return;
 	}
 
-	ratio = 2.5;
+	ratio = 2.5f;
 	VectorSubtract(self->r.currentOrigin, other->r.currentOrigin, v);
-	moveit(self, vectoyaw(v), (20 * ratio * FRAMETIME) * .001);
+	moveit(self, vectoyaw(v), (20 * ratio * FRAMETIME) * .001f);
 }
 
-/*
-QUAKED props_box_32 (1 0 0) (-16 -16 -16) (16 16 16)
-*/
+/**
+ * @brief SP_props_box_32
+ * QUAKED props_box_32 (1 0 0) (-16 -16 -16) (16 16 16)
+ * @param[out] self
+ */
 void SP_props_box_32(gentity_t *self)
 {
 	self->s.modelindex = G_ModelIndex("models/mapobjects/boxes/box32.md3");
@@ -157,6 +179,12 @@ void SP_props_box_32(gentity_t *self)
 	self->nextthink = level.time + FRAMETIME;
 }
 
+/**
+ * @brief touch_props_box_48
+ * @param[in] self
+ * @param[in] other
+ * @param trace - unused
+ */
 void touch_props_box_48(gentity_t *self, gentity_t *other, trace_t *trace)
 {
 	float  ratio;
@@ -169,12 +197,14 @@ void touch_props_box_48(gentity_t *self, gentity_t *other, trace_t *trace)
 
 	ratio = 2.0;
 	VectorSubtract(self->r.currentOrigin, other->r.currentOrigin, v);
-	moveit(self, vectoyaw(v), (20 * ratio * FRAMETIME) * .001);
+	moveit(self, vectoyaw(v), (20 * ratio * FRAMETIME) * .001f);
 }
 
-/*
-QUAKED props_box_48 (1 0 0) (-24 -24 -24) (24 24 24)
-*/
+/**
+ * @brief SP_props_box_48
+ * QUAKED props_box_48 (1 0 0) (-24 -24 -24) (24 24 24)
+ * @param[out] self
+ */
 void SP_props_box_48(gentity_t *self)
 {
 	self->s.modelindex = G_ModelIndex("models/mapobjects/boxes/box48.md3");
@@ -194,6 +224,12 @@ void SP_props_box_48(gentity_t *self)
 	self->nextthink = level.time + FRAMETIME;
 }
 
+/**
+ * @brief touch_props_box_64
+ * @param[in] self
+ * @param[in] other
+ * @param trace - unused
+ */
 void touch_props_box_64(gentity_t *self, gentity_t *other, trace_t *trace)
 {
 	float  ratio;
@@ -206,12 +242,14 @@ void touch_props_box_64(gentity_t *self, gentity_t *other, trace_t *trace)
 
 	ratio = 1.5;
 	VectorSubtract(self->r.currentOrigin, other->r.currentOrigin, v);
-	moveit(self, vectoyaw(v), (20 * ratio * FRAMETIME) * .001);
+	moveit(self, vectoyaw(v), (20 * ratio * FRAMETIME) * .001f);
 }
 
-/*
-QUAKED props_box_64 (1 0 0) (-32 -32 -32) (32 32 32)
-*/
+/**
+ * @brief SP_props_box_64
+ * QUAKED props_box_64 (1 0 0) (-32 -32 -32) (32 32 32)
+ * @param[out] self
+ */
 void SP_props_box_64(gentity_t *self)
 {
 	self->s.modelindex = G_ModelIndex("models/mapobjects/boxes/box64.md3");
@@ -231,6 +269,10 @@ void SP_props_box_64(gentity_t *self)
 	self->nextthink = level.time + FRAMETIME;
 }
 
+/**
+ * @brief Psmoke_think
+ * @param[out] ent
+ */
 void Psmoke_think(gentity_t *ent)
 {
 	gentity_t *tent;
@@ -254,6 +296,10 @@ void Psmoke_think(gentity_t *ent)
 	ent->nextthink = level.time + FRAMETIME;
 }
 
+/**
+ * @brief prop_smoke
+ * @param[in] ent
+ */
 void prop_smoke(gentity_t *ent)
 {
 	gentity_t *Psmoke;
@@ -265,23 +311,28 @@ void prop_smoke(gentity_t *ent)
 	Psmoke->nextthink = level.time + FRAMETIME;
 }
 
-/*
-QUAKED props_sparks (.8 .46 .16) (-8 -8 -8) (8 8 8) ELECTRIC
-the default direction is strait up use info_no_null for alt direction
-
-delay = how long till next spark effect
-wait = life of the spark with some random variance default 1.0 sec
-health = random number of sparks upto specified amount default 8
-
-start_size default 8 along the x
-end_size default 8 along the y
-by changing the size will change the spawn origin of the individual spark
-ei 16 x 8 or 24 x 32 would cause the sparks to spawn that many units from
-the origin
-
-speed controls how quickly the sparks will travel default is 2
-*/
-
+/**
+ * @brief PGUNsparks_use
+ *
+ * @details QUAKED props_sparks (.8 .46 .16) (-8 -8 -8) (8 8 8) ELECTRIC
+ * the default direction is strait up use info_no_null for alt direction
+ *
+ * delay = how long till next spark effect
+ * wait = life of the spark with some random variance default 1.0 sec
+ * health = random number of sparks upto specified amount default 8
+ *
+ * start_size default 8 along the x
+ * end_size default 8 along the y
+ * by changing the size will change the spawn origin of the individual spark
+ * ei 16 x 8 or 24 x 32 would cause the sparks to spawn that many units from
+ * the origin
+ *
+ * speed controls how quickly the sparks will travel default is 2
+ *
+ * @param[in] ent
+ * @param self - unused
+ * @param activator - unused
+ */
 void PGUNsparks_use(gentity_t *ent, gentity_t *self, gentity_t *activator)
 {
 	gentity_t *tent;
@@ -293,6 +344,12 @@ void PGUNsparks_use(gentity_t *ent, gentity_t *self, gentity_t *activator)
 	tent->s.angles2[2] = ent->speed;
 }
 
+/**
+ * @brief Psparks_think
+ * @param[in] ent
+ *
+ * @todo FIXME: MOVE TO CLIENT!
+ */
 void Psparks_think(gentity_t *ent)
 {
 	//gentity_t *tent;
@@ -321,6 +378,10 @@ void Psparks_think(gentity_t *ent)
 	*/
 }
 
+/**
+ * @brief sparks_angles_think
+ * @param[in,out] ent
+ */
 void sparks_angles_think(gentity_t *ent)
 {
 	gentity_t *target = NULL;
@@ -356,6 +417,10 @@ void sparks_angles_think(gentity_t *ent)
 	}
 }
 
+/**
+ * @brief SP_props_sparks
+ * @param[out] ent
+ */
 void SP_props_sparks(gentity_t *ent)
 {
 	// don't use in multiplayer right now since it makes decyphering net messages almost impossible
@@ -403,16 +468,19 @@ void SP_props_sparks(gentity_t *ent)
 	*/
 }
 
-/*
-QUAKED props_gunsparks (.8 .46 .16) (-8 -8 -8) (8 8 8)
-the default direction is strait up use info_no_null for alt direction
-
-this entity must be used to see the effect
-
-"speed" default is 20
-"health" number to spawn default is 4
-*/
-
+/**
+ * @brief SP_props_gunsparks
+ *
+ * @details QUAKED props_gunsparks (.8 .46 .16) (-8 -8 -8) (8 8 8)
+ * the default direction is strait up use info_no_null for alt direction
+ *
+ * this entity must be used to see the effect
+ *
+ * "speed" default is 20
+ * "health" number to spawn default is 4
+ *
+ * @param ent
+ */
 void SP_props_gunsparks(gentity_t *ent)
 {
 	G_SetOrigin(ent, ent->s.origin);
@@ -422,7 +490,7 @@ void SP_props_gunsparks(gentity_t *ent)
 	ent->think     = sparks_angles_think;
 	ent->nextthink = level.time + FRAMETIME;
 
-	if (!ent->speed)
+	if (ent->speed == 0.f)
 	{
 		ent->speed = 20;
 	}
@@ -435,11 +503,13 @@ void SP_props_gunsparks(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*
-QUAKED props_smokedust (.8 .46 .16) (-8 -8 -8) (8 8 8)
-health = how many pieces 16 is default
-*/
-
+/**
+ * @brief QUAKED props_smokedust (.8 .46 .16) (-8 -8 -8) (8 8 8)
+ * health = how many pieces 16 is default
+ * @param[in] ent
+ * @param self - unused
+ * @param activator - unused
+ */
 void smokedust_use(gentity_t *ent, gentity_t *self, gentity_t *activator)
 {
 	int       i;
@@ -459,6 +529,10 @@ void smokedust_use(gentity_t *ent, gentity_t *self, gentity_t *activator)
 	}
 }
 
+/**
+ * @brief SP_SmokeDust
+ * @param[in,out] ent
+ */
 void SP_SmokeDust(gentity_t *ent)
 {
 	ent->use = smokedust_use;
@@ -474,12 +548,17 @@ void SP_SmokeDust(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*
-QUAKED props_dust (.7 .3 .16) (-8 -8 -8) (8 8 8) WHITE
-you should give this ent a target use a not null
-or you could set its angles in the editor
-*/
-
+/**
+ * @brief dust_use
+ *
+ * @details QUAKED props_dust (.7 .3 .16) (-8 -8 -8) (8 8 8) WHITE
+ * you should give this ent a target use a not null
+ * or you could set its angles in the editor
+ *
+ * @param[in] ent
+ * @param self - unused
+ * @param activator - unused
+ */
 void dust_use(gentity_t *ent, gentity_t *self, gentity_t *activator)
 {
 	gentity_t *tent;
@@ -510,6 +589,10 @@ void dust_use(gentity_t *ent, gentity_t *self, gentity_t *activator)
 	}
 }
 
+/**
+ * @brief dust_angles_think
+ * @param[in] ent
+ */
 void dust_angles_think(gentity_t *ent)
 {
 	gentity_t *target;
@@ -527,6 +610,10 @@ void dust_angles_think(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
+/**
+ * @brief SP_Dust
+ * @param[in,out] ent
+ */
 void SP_Dust(gentity_t *ent)
 {
 	ent->use = dust_use;
@@ -548,7 +635,13 @@ void SP_Dust(gentity_t *ent)
 
 extern void G_ExplodeMissile(gentity_t *ent);
 
-/* unused
+/**
+ * @brief propExplosionLarge
+ * @param ent
+ *
+ * @note unused
+ */
+/*
 void propExplosionLarge(gentity_t *ent)
 {
     gentity_t *bolt = G_Spawn();
@@ -581,6 +674,10 @@ void propExplosionLarge(gentity_t *ent)
 
 void G_ExplodeMissile(gentity_t *ent);
 
+/**
+ * @brief propExplosion
+ * @param[in] ent
+ */
 void propExplosion(gentity_t *ent)
 {
 	gentity_t *bolt;
@@ -603,7 +700,7 @@ void propExplosion(gentity_t *ent)
 	bolt->parent              = ent;
 	bolt->damage              = ent->health;
 	bolt->splashDamage        = ent->health;
-	bolt->splashRadius        = ent->health * 1.5;
+	bolt->splashRadius        = (int)(ent->health * 1.5);
 	bolt->methodOfDeath       = MOD_GRENADE;
 	bolt->splashMethodOfDeath = MOD_GRENADE;
 	bolt->clipmask            = MASK_SHOT;
@@ -612,6 +709,10 @@ void propExplosion(gentity_t *ent)
 	VectorCopy(ent->r.currentOrigin, bolt->r.currentOrigin);
 }
 
+/**
+ * @brief InitProp
+ * @param[in,out] ent
+ */
 void InitProp(gentity_t *ent)
 {
 	float    light;
@@ -667,22 +768,22 @@ void InitProp(gentity_t *ent)
 	{
 		int r, g, b, i;
 
-		r = color[0] * 255;
+		r = (int)(color[0] * 255);
 		if (r > 255)
 		{
 			r = 255;
 		}
-		g = color[1] * 255;
+		g = (int)(color[1] * 255);
 		if (g > 255)
 		{
 			g = 255;
 		}
-		b = color[2] * 255;
+		b = (int)(color[2] * 255);
 		if (b > 255)
 		{
 			b = 255;
 		}
-		i = light / 4;
+		i = (int)(light / 4);
 		if (i > 255)
 		{
 			i = 255;
@@ -700,6 +801,10 @@ void InitProp(gentity_t *ent)
 	G_SetAngle(ent, ent->s.angles);
 }
 
+/**
+ * @brief props_bench_think
+ * @param[in,out] ent
+ */
 void props_bench_think(gentity_t *ent)
 {
 	ent->s.frame++;
@@ -718,17 +823,29 @@ void props_bench_think(gentity_t *ent)
 	}
 }
 
-void props_bench_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
+/**
+ * @brief props_bench_die
+ * @param[out] ent
+ * @param inflictor - unused
+ * @param attacker  - unused
+ * @param damage    - unused
+ * @param mod       - unused
+ */
+void props_bench_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
 	ent->think     = props_bench_think;
 	ent->nextthink = level.time + FRAMETIME;
 }
 
-/*
-QUAKED props_bench (.8 .6 .2) ?
-requires an origin brush
-health = 10 by default
-*/
+/**
+ * @brief SP_Props_Bench
+ *
+ * @details QUAKED props_bench (.8 .6 .2) ?
+ * requires an origin brush
+ * health = 10 by default
+ *
+ * @param ent
+ */
 void SP_Props_Bench(gentity_t *ent)
 {
 	trap_SetBrushModel(ent, ent->model);
@@ -749,7 +866,15 @@ void SP_Props_Bench(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-void props_radio_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
+/**
+ * @brief props_radio_die
+ * @param[in,out] ent
+ * @param inflictor - unused
+ * @param attacker  - unused
+ * @param damage    - unused
+ * @param mod       - unused
+ */
+void props_radio_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
 	propExplosion(ent);
 
@@ -760,11 +885,15 @@ void props_radio_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, 
 	G_FreeEntity(ent);
 }
 
-/*
-QUAKED props_radio (.8 .6 .2) ?
-requires an origin brush
-health = defaults to 100
-*/
+/**
+ * @brief SP_Props_Radio
+ *
+ * @details QUAKED props_radio (.8 .6 .2) ?
+ * requires an origin brush
+ * health = defaults to 100
+ *
+ * @param[in,out] ent
+ */
 void SP_Props_Radio(gentity_t *ent)
 {
 	if (!ent->model)
@@ -789,7 +918,15 @@ void SP_Props_Radio(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-void props_radio_dieSEVEN(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
+/**
+ * @brief props_radio_dieSEVEN
+ * @param[in,out] ent
+ * @param[in] inflictor
+ * @param attacker - unused
+ * @param damage   - unused
+ * @param mod      - unused
+ */
+void props_radio_dieSEVEN(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
 	int i;
 
@@ -812,20 +949,24 @@ void props_radio_dieSEVEN(gentity_t *ent, gentity_t *inflictor, gentity_t *attac
 	G_FreeEntity(ent);
 }
 
-/*
-QUAKED props_radioSEVEN (.8 .6 .2) ?
-requires an origin brush
-health = defaults to 100
-
-  the models dims are
-  x 32
-  y 136
-  z 32
-
-  if you want more explosions you'll need func explosive
-
-  it will fire all its targets upon death
-*/
+/**
+ * @brief SP_Props_RadioSEVEN
+ *
+ * @details QUAKED props_radioSEVEN (.8 .6 .2) ?
+ * requires an origin brush
+ * health = defaults to 100
+ *
+ *   the models dims are
+ *   x 32
+ *   y 136
+ *   z 32
+ *
+ *   if you want more explosions you'll need func explosive
+ *
+ *   it will fire all its targets upon death
+ *
+ * @param[in,out] ent
+ */
 void SP_Props_RadioSEVEN(gentity_t *ent)
 {
 	if (!ent->model)
@@ -852,6 +993,10 @@ void SP_Props_RadioSEVEN(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
+/**
+ * @brief locker_tall_think
+ * @param[in,out] ent
+ */
 void locker_tall_think(gentity_t *ent)
 {
 	if (ent->s.frame == 30)
@@ -866,7 +1011,15 @@ void locker_tall_think(gentity_t *ent)
 	}
 }
 
-void props_locker_tall_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
+/**
+ * @brief props_locker_tall_die
+ * @param[out] ent
+ * @param inflictor - unused
+ * @param attacker  - unused
+ * @param damage    - unused
+ * @param mod       - unused
+ */
+void props_locker_tall_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
 	ent->think     = locker_tall_think;
 	ent->nextthink = level.time + FRAMETIME;
@@ -876,10 +1029,14 @@ void props_locker_tall_die(gentity_t *ent, gentity_t *inflictor, gentity_t *atta
 	G_UseTargets(ent, NULL);
 }
 
-/*
-QUAKED props_locker_tall (.8 .6 .2) ?
-requires an origin brush
-*/
+/**
+ * @brief SP_Props_Locker_Tall
+ *
+ * @details QUAKED props_locker_tall (.8 .6 .2) ?
+ * requires an origin brush
+ *
+ * @param ent
+ */
 void SP_Props_Locker_Tall(gentity_t *ent)
 {
 	if (!ent->model)
@@ -971,8 +1128,12 @@ shard =
 */
 void Props_Chair_Think(gentity_t *self);
 void Props_Chair_Touch(gentity_t *self, gentity_t *other, trace_t *trace);
-void Props_Chair_Die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod);
+void Props_Chair_Die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod);
 
+/**
+ * @brief Just_Got_Thrown
+ * @param[in,out] self
+ */
 void Just_Got_Thrown(gentity_t *self)
 {
 	float  len = 0;
@@ -988,7 +1149,7 @@ void Just_Got_Thrown(gentity_t *self)
 
 			self->die = Props_Chair_Die;
 
-			self->die(self, self, NULL, 10, 0);
+			self->die(self, self, NULL, 10, MOD_UNKNOWN);
 		}
 
 		return;
@@ -1033,6 +1194,10 @@ void Just_Got_Thrown(gentity_t *self)
 	}
 }
 
+/**
+ * @brief Props_TurnLightsOff
+ * @param[in,out] self
+ */
 void Props_TurnLightsOff(gentity_t *self)
 {
 	if (!Q_stricmp(self->classname, "props_desklamp"))
@@ -1045,6 +1210,10 @@ void Props_TurnLightsOff(gentity_t *self)
 	}
 }
 
+/**
+ * @brief Props_Activated
+ * @param[in,out] self
+ */
 void Props_Activated(gentity_t *self)
 {
 	vec3_t angles;
@@ -1070,7 +1239,7 @@ void Props_Activated(gentity_t *self)
 		gentity_t *prop;
 
 		self->physicsObject = qtrue;
-		self->physicsBounce = 0.2;
+		self->physicsBounce = 0.2f;
 
 		self->s.groundEntityNum = -1;
 
@@ -1105,7 +1274,7 @@ void Props_Activated(gentity_t *self)
 		VectorSet(prop->r.maxs, 12, 12, 48);
 
 		prop->physicsObject = qtrue;
-		prop->physicsBounce = 0.2;
+		prop->physicsBounce = 0.2f;
 
 		VectorCopy(owner->client->ps.origin, prop->s.pos.trBase);
 
@@ -1185,6 +1354,10 @@ void Props_Activated(gentity_t *self)
 
 void Prop_Check_Ground(gentity_t *self);
 
+/**
+ * @brief Props_Chair_Think
+ * @param[in,out] self
+ */
 void Props_Chair_Think(gentity_t *self)
 {
 	trace_t tr;
@@ -1216,7 +1389,7 @@ void Props_Chair_Think(gentity_t *self)
 
 		trap_Trace(&tr, self->r.currentOrigin, mins, maxs, self->s.pos.trBase, self->s.number, MASK_SHOT);
 
-		if (tr.fraction == 1)
+		if (tr.fraction == 1.f)
 		{
 			VectorCopy(self->s.pos.trBase, self->r.currentOrigin);
 		}
@@ -1232,7 +1405,7 @@ void Props_Chair_Think(gentity_t *self)
 	if (self->s.groundEntityNum == -1)
 	{
 		self->physicsObject = qtrue;
-		self->physicsBounce = 0.2;
+		self->physicsBounce = 0.2f;
 
 		self->s.pos.trDelta[2] -= 200;
 
@@ -1264,6 +1437,13 @@ void Props_Chair_Think(gentity_t *self)
 	}
 }
 
+/**
+ * @brief Prop_Touch
+ * @param[in,out] self
+ * @param[in] other
+ * @param[in] v
+ * @return
+ */
 qboolean Prop_Touch(gentity_t *self, gentity_t *other, vec3_t v)
 {
 	vec3_t  forward;
@@ -1296,7 +1476,7 @@ qboolean Prop_Touch(gentity_t *self, gentity_t *other, vec3_t v)
 
 	trap_Trace(&tr, start, mins, maxs, end, self->s.number, MASK_SHOT);
 
-	if (tr.fraction != 1)
+	if (tr.fraction != 1.f)
 	{
 		return qfalse;
 	}
@@ -1313,6 +1493,10 @@ qboolean Prop_Touch(gentity_t *self, gentity_t *other, vec3_t v)
 	return qtrue;
 }
 
+/**
+ * @brief Prop_Check_Ground
+ * @param[in,out] self
+ */
 void Prop_Check_Ground(gentity_t *self)
 {
 	vec3_t  mins, maxs;
@@ -1329,12 +1513,18 @@ void Prop_Check_Ground(gentity_t *self)
 
 	trap_Trace(&tr, start, mins, maxs, end, self->s.number, MASK_SHOT);
 
-	if (tr.fraction == 1)
+	if (tr.fraction == 1.f)
 	{
 		self->s.groundEntityNum = -1;
 	}
 }
 
+/**
+ * @brief Props_Chair_Touch
+ * @param[in,out] self
+ * @param[in] other
+ * @param trace - unused
+ */
 void Props_Chair_Touch(gentity_t *self, gentity_t *other, trace_t *trace)
 {
 	vec3_t   v;
@@ -1378,6 +1568,10 @@ void Props_Chair_Touch(gentity_t *self, gentity_t *other, trace_t *trace)
 	}
 }
 
+/**
+ * @brief Props_Chair_Animate
+ * @param[in,out] ent
+ */
 void Props_Chair_Animate(gentity_t *ent)
 {
 	ent->touch = NULL;
@@ -1451,11 +1645,18 @@ void Props_Chair_Animate(gentity_t *ent)
 		vec3_t v;
 
 		VectorSubtract(ent->r.currentOrigin, ent->enemy->r.currentOrigin, v);
-		moveit(ent, vectoyaw(v), (ent->delay * 2.5f * FRAMETIME) * .001);
+		moveit(ent, vectoyaw(v), (ent->delay * 2.5f * FRAMETIME) * .001f);
 	}
 }
 
-void Spawn_Shard(gentity_t *ent, gentity_t *inflictor, int quantity, int type)
+/**
+ * @brief Spawn_Shard
+ * @param[in] ent
+ * @param[in] inflictor
+ * @param[in] quantity
+ * @param[in] type
+ */
+void Spawn_Shard(gentity_t *ent, gentity_t *inflictor, float quantity, int type)
 {
 	gentity_t *sfx;
 	vec3_t    dir, start;
@@ -1498,12 +1699,15 @@ void Spawn_Shard(gentity_t *ent, gentity_t *inflictor, int quantity, int type)
 
 	sfx->nextthink = level.time + 1000;
 
-	sfx->s.frame = quantity;
+	sfx->s.frame = (int)quantity;
 
 	trap_LinkEntity(sfx);
 }
 
-// this should work for all fx types now
+/**
+ * @brief This should work for all fx types now
+ * @param ent
+ */
 void Prop_Break_Sound(gentity_t *ent)
 {
 	// don't always play the wood sound
@@ -1517,23 +1721,25 @@ void Prop_Break_Sound(gentity_t *ent)
 	G_AddEvent(ent, EV_FX_SOUND, ent->count);
 }
 
-void Props_Chair_Die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
+/**
+ * @brief Props_Chair_Die
+ * @param[in,out] ent
+ * @param[in] inflictor
+ * @param attacker - unused
+ * @param[in] damage
+ * @param mod - unused
+ */
+void Props_Chair_Die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
-	int quantity;
-	int type;
-
 	ent->think     = Props_Chair_Animate;
 	ent->nextthink = level.time + FRAMETIME;
 
-	ent->health     = ent->duration;
+	ent->health     = (int)ent->duration;
 	ent->delay      = damage;
 	ent->takedamage = qfalse;
 	//ent->enemy = inflictor;
 
-	quantity = ent->wait;
-	type     = ent->count;
-
-	Spawn_Shard(ent, inflictor, quantity, type);
+	Spawn_Shard(ent, inflictor, ent->wait, ent->count);
 
 	Prop_Break_Sound(ent);
 
@@ -1546,11 +1752,19 @@ void Props_Chair_Die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, 
 	trap_LinkEntity(ent);
 }
 
+/**
+ * @brief Props_Chair_Skyboxtouch
+ * @param[out] ent
+ */
 void Props_Chair_Skyboxtouch(gentity_t *ent)
 {
 	ent->think = G_FreeEntity;
 }
 
+/**
+ * @brief SP_Props_Chair
+ * @param[in,out] ent
+ */
 void SP_Props_Chair(gentity_t *ent)
 {
 	int mass;
@@ -1603,6 +1817,10 @@ void SP_Props_Chair(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
+/**
+ * @brief SP_Props_ChairHiback
+ * @param[in,out] ent
+ */
 void SP_Props_ChairHiback(gentity_t *ent)
 {
 	int mass;
@@ -1655,6 +1873,10 @@ void SP_Props_ChairHiback(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
+/**
+ * @brief SP_Props_ChairSide
+ * @param[in,out] ent
+ */
 void SP_Props_ChairSide(gentity_t *ent)
 {
 	int mass;
@@ -1707,12 +1929,12 @@ void SP_Props_ChairSide(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-// can be one of two types, but they have the same animations/etc, so re-use what you can
-/*
-==============
-SP_Props_ChateauChair
-==============
-*/
+/**
+ * @brief SP_Props_ChateauChair
+ * @param[in,out] ent
+ *
+ * @note Can be one of two types, but they have the same animations/etc, so re-use what you can
+ */
 void SP_Props_ChateauChair(gentity_t *ent)
 {
 	int mass;
@@ -1763,28 +1985,32 @@ void SP_Props_ChateauChair(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*
-==============
-SP_Props_ChairChat
-==============
-*/
+/**
+ * @brief SP_Props_ChairChat
+ * @param[in,out] ent
+ */
 void SP_Props_ChairChat(gentity_t *ent)
 {
 	ent->s.modelindex = G_ModelIndex("models/furniture/chair/chair_chat.md3");
 	SP_Props_ChateauChair(ent);
 }
 
-/*
-==============
-SP_Props_ChairChatArm
-==============
-*/
+/**
+ * @brief SP_Props_ChairChatArm
+ * @param(in,out] ent
+ */
 void SP_Props_ChairChatArm(gentity_t *ent)
 {
 	ent->s.modelindex = G_ModelIndex("models/furniture/chair/chair_chatarm.md3");
 	SP_Props_ChateauChair(ent);
 }
 
+/**
+ * @brief Use_DamageInflictor
+ * @param[in] ent
+ * @param other - unused
+ * @param activator - unused
+ */
 void Use_DamageInflictor(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	gentity_t *daent = NULL;
@@ -1804,11 +2030,15 @@ void Use_DamageInflictor(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	G_FreeEntity(ent);
 }
 
-/*
-QUAKED props_damageinflictor (.8 .6 .6) (-8 -8 -8) (8 8 8)
-this entity when used will cause 9999 damage to all entities it is targeting
-then it will be removed
-*/
+/**
+ * @brief SP_Props_DamageInflictor
+ *
+ * @details QUAKED props_damageinflictor (.8 .6 .6) (-8 -8 -8) (8 8 8)
+ * this entity when used will cause 9999 damage to all entities it is targeting
+ * then it will be removed
+ *
+ * @param[in,out] ent
+ */
 void SP_Props_DamageInflictor(gentity_t *ent)
 {
 	G_SetOrigin(ent, ent->s.origin);
@@ -1819,34 +2049,40 @@ void SP_Props_DamageInflictor(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*
-QUAKED props_shard_generator (.8 .5 .1) (-4 -4 -4) (4 4 4)
-
-wait = defaults to 5 how many shards to spawn ( try not to exceed 20 )
-
-shard =
-    FXTYPE_WOOD = 0,
-    FXTYPE_GLASS = 1,
-    FXTYPE_METAL = 2
-
-*/
-
+/**
+ * @brief Use_Props_Shard_Generator
+ *
+ * @details QUAKED props_shard_generator (.8 .5 .1) (-4 -4 -4) (4 4 4)
+ *
+ * wait = defaults to 5 how many shards to spawn ( try not to exceed 20 )
+ *
+ * shard =
+ *     FXTYPE_WOOD = 0,
+ *     FXTYPE_GLASS = 1,
+ *     FXTYPE_METAL = 2
+ *
+ * @param[in] ent
+ * @param other - unused
+ * @param activator - unused
+ */
 void Use_Props_Shard_Generator(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
-	int       quantity = ent->wait;
-	int       type     = ent->count;
 	gentity_t *inflictor;
 
 	inflictor = G_Find(NULL, FOFS(targetname), ent->target);
 
 	if (inflictor)
 	{
-		Spawn_Shard(ent, inflictor, quantity, type);
+		Spawn_Shard(ent, inflictor, ent->wait, ent->count);
 	}
 
 	G_FreeEntity(ent);
 }
 
+/**
+ * @brief SP_props_shard_generator
+ * @param[in,out] ent
+ */
 void SP_props_shard_generator(gentity_t *ent)
 {
 	G_SetOrigin(ent, ent->s.origin);
@@ -1859,7 +2095,7 @@ void SP_props_shard_generator(gentity_t *ent)
 		ent->count = FXTYPE_WOOD;
 	}
 
-	if (!ent->wait)
+	if (ent->wait == 0.f)
 	{
 		ent->wait = 5;
 	}
@@ -1867,18 +2103,21 @@ void SP_props_shard_generator(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*
-QUAKED props_desklamp (.8 .6 .2) (-16 -16 0) (16 16 32)
-point entity
-health = default = 10
-wait = defaults to 5 how many shards to spawn ( try not to exceed 20 )
-
-shard =
-    FXTYPE_GLASS = 0,
-    FXTYPE_WOOD = 1,
-    FXTYPE_METAL = 2
-
-*/
+/**
+ * @brief SP_Props_Desklamp
+ *
+ * @details QUAKED props_desklamp (.8 .6 .2) (-16 -16 0) (16 16 32)
+ * point entity
+ * health = default = 10
+ * wait = defaults to 5 how many shards to spawn ( try not to exceed 20 )
+ *
+ * shard =
+ *     FXTYPE_GLASS = 0,
+ *     FXTYPE_WOOD = 1,
+ *     FXTYPE_METAL = 2
+ *
+ * @param[in,out] ent
+ */
 void SP_Props_Desklamp(gentity_t *ent)
 {
 	int mass;
@@ -1929,21 +2168,32 @@ void SP_Props_Desklamp(gentity_t *ent)
 	ent->takedamage = qtrue;
 	trap_LinkEntity(ent);
 }
-
-/*
-QUAKED props_flamebarrel (.8 .6 .2) (-13 -13 0) (13 13 40) SMOKING NOLID OIL -
-angle will determine which way the lid will fly off when it explodes
-
-when selecting the OIL spawnflag you have the option of giving it a target
-this will ensure that the oil sprite will show up where you want it
-( be sure to put it on the floor )
-the default is in the middle of the barrel on the floor
-*/
+/**
+ * @brief Props_Barrel_Touch
+ *
+ * @details QUAKED props_flamebarrel (.8 .6 .2) (-13 -13 0) (13 13 40) SMOKING NOLID OIL -
+ * angle will determine which way the lid will fly off when it explodes
+ *
+ * when selecting the OIL spawnflag you have the option of giving it a target
+ * this will ensure that the oil sprite will show up where you want it
+ * ( be sure to put it on the floor )
+ * the default is in the middle of the barrel on the floor
+ *
+ * @param self  - unused
+ * @param other - unused
+ * @param trace - unused
+ *
+ * @note Barrels cant move
+ */
 void Props_Barrel_Touch(gentity_t *self, gentity_t *other, trace_t *trace)
 {
 	return; // barrels cant move
 }
 
+/**
+ * @brief Props_Barrel_Animate
+ * @param[in,out] ent
+ */
 void Props_Barrel_Animate(gentity_t *ent)
 {
 	vec3_t v;
@@ -1978,10 +2228,14 @@ void Props_Barrel_Animate(gentity_t *ent)
 	{
 		//float ratio = 2.5;
 		VectorSubtract(ent->r.currentOrigin, ent->enemy->r.currentOrigin, v);
-		moveit(ent, vectoyaw(v), (ent->delay * 2.5 * FRAMETIME) * .001);
+		moveit(ent, vectoyaw(v), (ent->delay * 2.5f * FRAMETIME) * .001f);
 	}
 }
 
+/**
+ * @brief barrel_smoke
+ * @param[in] ent
+ */
 void barrel_smoke(gentity_t *ent)
 {
 	gentity_t *tent;
@@ -1999,6 +2253,10 @@ void barrel_smoke(gentity_t *ent)
 	tent->s.angles2[2] = 50;
 }
 
+/**
+ * @brief smoker_think
+ * @param[in,out] ent
+ */
 void smoker_think(gentity_t *ent)
 {
 	ent->count--;
@@ -2014,6 +2272,10 @@ void smoker_think(gentity_t *ent)
 	}
 }
 
+/**
+ * @brief SP_OilSlick
+ * @param[in] ent
+ */
 void SP_OilSlick(gentity_t *ent)
 {
 	gentity_t *tent;
@@ -2026,6 +2288,10 @@ void SP_OilSlick(gentity_t *ent)
 	tent->s.density    = ent->s.number;
 }
 
+/**
+ * @brief OilParticles_think
+ * @param[in,out] ent
+ */
 void OilParticles_think(gentity_t *ent)
 {
 	gentity_t *tent;
@@ -2047,7 +2313,13 @@ void OilParticles_think(gentity_t *ent)
 	}
 }
 
-// @note Unused
+/**
+ * @brief Delayed_Leak_Think
+ * @param[in] ent
+ *
+ * @note Unused
+ */
+/*
 void Delayed_Leak_Think(gentity_t *ent)
 {
 	vec3_t    point;
@@ -2063,7 +2335,14 @@ void Delayed_Leak_Think(gentity_t *ent)
 	tent->s.angles2[2] = 2000;
 	tent->s.density    = ent->count;
 }
+*/
 
+/**
+ * @brief validOilSlickSpawnPoint
+ * @param[in] point
+ * @param[in] ent
+ * @return
+ */
 qboolean validOilSlickSpawnPoint(vec3_t point, gentity_t *ent)
 {
 	trace_t   tr;
@@ -2081,7 +2360,7 @@ qboolean validOilSlickSpawnPoint(vec3_t point, gentity_t *ent)
 	{
 		if (!Q_stricmp(traceEnt->classname, "worldspawn"))
 		{
-			if (tr.plane.normal[0] == 0 && tr.plane.normal[1] == 0 && tr.plane.normal[2] == 1)
+			if (tr.plane.normal[0] == 0.f && tr.plane.normal[1] == 0.f && tr.plane.normal[2] == 1.f)
 			{
 				return qtrue;
 			}
@@ -2091,6 +2370,12 @@ qboolean validOilSlickSpawnPoint(vec3_t point, gentity_t *ent)
 	return qfalse;
 }
 
+/**
+ * @brief SP_OilParticles
+ * @param ent
+ *
+ * @todo FIXME: move this to client !
+ */
 void SP_OilParticles(gentity_t *ent)
 {
 
@@ -2131,6 +2416,13 @@ void SP_OilParticles(gentity_t *ent)
 	*/
 }
 
+/**
+ * @brief Props_Barrel_Pain
+ * @param[in,out] ent
+ * @param attacker - unused
+ * @param damage   - unused
+ * @param point    - unused
+ */
 void Props_Barrel_Pain(gentity_t *ent, gentity_t *attacker, int damage, vec3_t point)
 {
 	if (ent->health <= 0)
@@ -2152,6 +2444,10 @@ void Props_Barrel_Pain(gentity_t *ent, gentity_t *attacker, int damage, vec3_t p
 	}
 }
 
+/**
+ * @brief OilSlick_remove_think
+ * @param[in] ent
+ */
 void OilSlick_remove_think(gentity_t *ent)
 {
 	gentity_t *tent;
@@ -2161,6 +2457,10 @@ void OilSlick_remove_think(gentity_t *ent)
 	tent->s.density = ent->s.density;
 }
 
+/**
+ * @brief OilSlick_remove
+ * @param[in] ent
+ */
 void OilSlick_remove(gentity_t *ent)
 {
 	gentity_t *remove;
@@ -2174,10 +2474,16 @@ void OilSlick_remove(gentity_t *ent)
 	trap_LinkEntity(remove);
 }
 
-void Props_Barrel_Die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
+/**
+ * @brief Props_Barrel_Die
+ * @param[in,out] ent
+ * @param[in] inflictor
+ * @param attacker
+ * @param[in] damage
+ * @param mod
+ */
+void Props_Barrel_Die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
-	int    quantity;
-	int    type;
 	vec3_t dir;
 
 	if (ent->spawnflags & 1)
@@ -2211,16 +2517,13 @@ void Props_Barrel_Die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker,
 	ent->think     = Props_Barrel_Animate;
 	ent->nextthink = level.time + FRAMETIME;
 
-	ent->health = ent->duration;
+	ent->health = (int)ent->duration;
 	ent->delay  = damage;
 	ent->enemy  = inflictor;
 
-	quantity = ent->wait;
-	type     = ent->count;
-
 	if (inflictor)
 	{
-		Spawn_Shard(ent, inflictor, quantity, type);
+		Spawn_Shard(ent, inflictor, ent->wait, ent->count);
 	}
 
 	Prop_Break_Sound(ent);
@@ -2234,12 +2537,20 @@ void Props_Barrel_Die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker,
 	trap_LinkEntity(ent);
 }
 
+/**
+ * @brief Props_Barrel_Think
+ * @param[in,out] self
+ */
 void Props_Barrel_Think(gentity_t *self)
 {
 	self->active = qfalse;
 	Props_Chair_Think(self);
 }
 
+/**
+ * @brief SP_Props_Flamebarrel
+ * @param[in,out] ent
+ */
 void SP_Props_Flamebarrel(gentity_t *ent)
 {
 	int mass;
@@ -2306,50 +2617,12 @@ void SP_Props_Flamebarrel(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*
-QUAKED props_crate_64 (.8 .6 .2) (-32 -32 0) (32 32 64)
-breakable pushable
-
-  health = default = 20
-wait = defaults to 10 how many shards to spawn ( try not to exceed 20 )
-
-shard =
-    FXTYPE_GLASS = 0,
-    FXTYPE_WOOD = 1,
-    FXTYPE_METAL = 2
-
-*/
-
-/*
-QUAKED props_crate_32 (.8 .6 .2) (-16 -16 0) (16 16 32)
-breakable pushable
-
-  health = default = 20
-wait = defaults to 10 how many shards to spawn ( try not to exceed 20 )
-
-shard =
-    FXTYPE_GLASS = 0,
-    FXTYPE_WOOD = 1,
-    FXTYPE_METAL = 2
-*/
-
-/*
-QUAKED props_crate_32x64 (.8 .6 .2) ?
-requires an origin brush
-
-breakable NOT pushable
-
-brushmodel only
-
-  health = default = 20
-wait = defaults to 10 how many shards to spawn ( try not to exceed 20 )
-
-shard =
-    FXTYPE_GLASS = 0,
-    FXTYPE_WOOD = 1,
-    FXTYPE_METAL = 2
-*/
-
+/**
+ * @brief touch_crate_64
+ * @param[in] self
+ * @param[in] other
+ * @param trace - unused
+ */
 void touch_crate_64(gentity_t *self, gentity_t *other, trace_t *trace)
 {
 	//float ratio = 1.5;
@@ -2361,9 +2634,13 @@ void touch_crate_64(gentity_t *self, gentity_t *other, trace_t *trace)
 	}
 
 	VectorSubtract(self->r.currentOrigin, other->r.currentOrigin, v);
-	moveit(self, vectoyaw(v), (20 * 1.5 * FRAMETIME) * .001);
+	moveit(self, vectoyaw(v), (20 * 1.5f * FRAMETIME) * .001f);
 }
 
+/**
+ * @brief crate_animate
+ * @param[in,out] ent
+ */
 void crate_animate(gentity_t *ent)
 {
 	if (ent->s.frame == 17)
@@ -2380,12 +2657,17 @@ void crate_animate(gentity_t *ent)
 	ent->nextthink = level.time + (FRAMETIME / 2);
 }
 
-void crate_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
+/**
+ * @brief crate_die
+ * @param[in,out] ent
+ * @param[in] inflictor
+ * @param attacker - unused
+ * @param damage   - unused
+ * @param mod      - unused
+ */
+void crate_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
-	int quantity = ent->wait;
-	int type     = ent->count;
-
-	Spawn_Shard(ent, inflictor, quantity, type);
+	Spawn_Shard(ent, inflictor, ent->wait, ent->count);
 
 	ent->takedamage = qfalse;
 	ent->think      = crate_animate;
@@ -2401,6 +2683,22 @@ void crate_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int da
 	trap_LinkEntity(ent);
 }
 
+/**
+ * @brief SP_crate_64
+ *
+ * @details QUAKED props_crate_64 (.8 .6 .2) (-32 -32 0) (32 32 64)
+ * breakable pushable
+ *
+ *   health = default = 20
+ * wait = defaults to 10 how many shards to spawn ( try not to exceed 20 )
+ *
+ * shard =
+ *     FXTYPE_GLASS = 0,
+ *     FXTYPE_WOOD = 1,
+ *     FXTYPE_METAL = 2
+ *
+ * @param[in,out] self
+ */
 void SP_crate_64(gentity_t *self)
 {
 	self->s.modelindex = G_ModelIndex("models/furniture/crate/crate64.md3");
@@ -2433,7 +2731,7 @@ void SP_crate_64(gentity_t *self)
 		self->count = 1;
 	}
 
-	if (!self->wait)
+	if (self->wait == 0.f)
 	{
 		self->wait = 10;
 	}
@@ -2446,6 +2744,22 @@ void SP_crate_64(gentity_t *self)
 	self->nextthink = level.time + FRAMETIME;
 }
 
+/**
+ * @brief SP_crate_32
+ *
+ * @details QUAKED props_crate_32 (.8 .6 .2) (-16 -16 0) (16 16 32)
+ * breakable pushable
+ *
+ *   health = default = 20
+ * wait = defaults to 10 how many shards to spawn ( try not to exceed 20 )
+ *
+ * shard =
+ *     FXTYPE_GLASS = 0,
+ *     FXTYPE_WOOD = 1,
+ *     FXTYPE_METAL = 2
+ *
+ * @param[in,out] self
+ */
 void SP_crate_32(gentity_t *self)
 {
 	self->s.modelindex = G_ModelIndex("models/furniture/crate/crate32.md3");
@@ -2478,7 +2792,7 @@ void SP_crate_32(gentity_t *self)
 		self->count = 1;
 	}
 
-	if (!self->wait)
+	if (self->wait == 0.f)
 	{
 		self->wait = 10;
 	}
@@ -2493,6 +2807,26 @@ void SP_crate_32(gentity_t *self)
 
 //////////////////////////////////////////////
 
+/**
+ * @brief props_crate32x64_think
+ *
+ * @details QUAKED props_crate_32x64 (.8 .6 .2) ?
+ * requires an origin brush
+ *
+ * breakable NOT pushable
+ *
+ * brushmodel only
+ *
+ *   health = default = 20
+ * wait = defaults to 10 how many shards to spawn ( try not to exceed 20 )
+ *
+ * shard =
+ *     FXTYPE_GLASS = 0,
+ *     FXTYPE_WOOD = 1,
+ *     FXTYPE_METAL = 2
+ *
+ * @param[in,out] ent
+ */
 void props_crate32x64_think(gentity_t *ent)
 {
 	ent->s.frame++;
@@ -2511,12 +2845,24 @@ void props_crate32x64_think(gentity_t *ent)
 	}
 }
 
-void props_crate32x64_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
+/**
+ * @brief props_crate32x64_die
+ * @param[out] ent
+ * @param inflictor - unused
+ * @param attacker  - unused
+ * @param damage    - unused
+ * @param mod       - unused
+ */
+void props_crate32x64_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
 	ent->think     = props_crate32x64_think;
 	ent->nextthink = level.time + FRAMETIME;
 }
 
+/**
+ * @brief SP_Props_Crate32x64
+ * @param[in,out] ent
+ */
 void SP_Props_Crate32x64(gentity_t *ent)
 {
 	trap_SetBrushModel(ent, ent->model);
@@ -2537,14 +2883,19 @@ void SP_Props_Crate32x64(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*
-QUAKED props_flippy_table (.8 .6 .2) ? - - X_AXIS Y_AXIS LEADER
-this entity will need a leader and an origin brush
-!!!!!!!!!!!!!!
-just a reminder to put the origin brush in the proper location for the leader and the
-slave so that the table will flip over correctly.
-*/
-
+/**
+ * @brief flippy_table_use
+ *
+ * @details QUAKED props_flippy_table (.8 .6 .2) ? - - X_AXIS Y_AXIS LEADER
+ * this entity will need a leader and an origin brush
+ * !!!!!!!!!!!!!!
+ * just a reminder to put the origin brush in the proper location for the leader and the
+ * slave so that the table will flip over correctly.
+ *  *
+ * @param[in] ent
+ * @param[in] other
+ * @param activator - unused
+ */
 void flippy_table_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	// it would be odd to flip a table if your standing on it
@@ -2603,11 +2954,17 @@ void flippy_table_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	}
 }
 
+/**
+ * @brief flippy_table_animate
+ * @param ent
+ *
+ * @todo FIXME: remove ?
+ */
 void flippy_table_animate(gentity_t *ent)
 {
 	return;
 
-	/* FIXME/remove?
+	/* FIXME: remove ?
 	if (ent->s.frame == 9)
 	{
 	    G_UseTargets(ent, NULL);
@@ -2622,6 +2979,14 @@ void flippy_table_animate(gentity_t *ent)
 	*/
 }
 
+/**
+ * @brief props_flippy_table_die
+ * @param[out] ent
+ * @param inflictor - unused
+ * @param attacker  - unused
+ * @param damage    - unused
+ * @param mod       - unused
+ */
 void props_flippy_table_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
 {
 	ent->think      = flippy_table_animate;
@@ -2631,6 +2996,11 @@ void props_flippy_table_die(gentity_t *ent, gentity_t *inflictor, gentity_t *att
 	G_UseTargets(ent, NULL);
 }
 
+/**
+ * @brief props_flippy_blocked
+ * @param[in] ent
+ * @param[in,out] other
+ */
 void props_flippy_blocked(gentity_t *ent, gentity_t *other)
 {
 	vec3_t velocity;
@@ -2678,6 +3048,10 @@ void props_flippy_blocked(gentity_t *ent, gentity_t *other)
 	}
 }
 
+/**
+ * @brief SP_Props_Flipping_Table
+ * @param[in,out] ent
+ */
 void SP_Props_Flipping_Table(gentity_t *ent)
 {
 	if (!ent->model)
@@ -2738,25 +3112,28 @@ void SP_Props_Flipping_Table(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*
-QUAKED props_58x112tablew (.8 .6 .2) ?
-dimensions are 58 x 112 x 32 (x,y,z)
-
-requires an origin brush
-
-breakable NOT pushable
-
-brushmodel only
-
-  health = default = 10
-wait = defaults to 10 how many shards to spawn ( try not to exceed 20 )
-
-shard =
-    FXTYPE_GLASS = 0,
-    FXTYPE_WOOD = 1,
-    FXTYPE_METAL = 2
-*/
-
+/**
+ * @brief props_58x112tablew_think
+ *
+ * @details QUAKED props_58x112tablew (.8 .6 .2) ?
+ * dimensions are 58 x 112 x 32 (x,y,z)
+ *
+ * requires an origin brush
+ *
+ * breakable NOT pushable
+ *
+ * brushmodel only
+ *
+ *   health = default = 10
+ * wait = defaults to 10 how many shards to spawn ( try not to exceed 20 )
+ *
+ * shard =
+ *     FXTYPE_GLASS = 0,
+ *     FXTYPE_WOOD = 1,
+ *     FXTYPE_METAL = 2
+ *
+ * @param[in,out] ent
+ */
 void props_58x112tablew_think(gentity_t *ent)
 {
 	ent->s.frame++;
@@ -2774,13 +3151,25 @@ void props_58x112tablew_think(gentity_t *ent)
 	}
 }
 
-void props_58x112tablew_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
+/**
+ * @brief props_58x112tablew_die
+ * @param[out] ent
+ * @param inflictor - unused
+ * @param attacker  - unused
+ * @param damage    - unused
+ * @param mod       - unused
+ */
+void props_58x112tablew_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
 	ent->think      = props_58x112tablew_think;
 	ent->nextthink  = level.time + FRAMETIME;
 	ent->takedamage = qfalse;
 }
 
+/**
+ * @brief SP_Props_58x112tablew
+ * @param[in,out] ent
+ */
 void SP_Props_58x112tablew(gentity_t *ent)
 {
 	trap_SetBrushModel(ent, ent->model);
@@ -2801,25 +3190,30 @@ void SP_Props_58x112tablew(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*
-QUAKED props_castlebed (.8 .6 .2) ?
-dimensions are 112 x 128 x 80 (x,y,z)
-
-requires an origin brush
-
-breakable NOT pushable
-
-brushmodel only
-
-  health = default = 20
-wait = defaults to 10 how many shards to spawn ( try not to exceed 20 )
-
-shard =
-    FXTYPE_GLASS = 0,
-    FXTYPE_WOOD = 1,
-    FXTYPE_METAL = 2
-*/
-
+/**
+ * @brief props_castlebed_touch
+ *
+ * @details QUAKED props_castlebed (.8 .6 .2) ?
+ * dimensions are 112 x 128 x 80 (x,y,z)
+ *
+ * requires an origin brush
+ *
+ * breakable NOT pushable
+ *
+ * brushmodel only
+ *
+ *   health = default = 20
+ * wait = defaults to 10 how many shards to spawn ( try not to exceed 20 )
+ *
+ * shard =
+ *     FXTYPE_GLASS = 0,
+ *     FXTYPE_WOOD = 1,
+ *     FXTYPE_METAL = 2
+ *
+ * @param[in] ent
+ * @param[in,out] other
+ * @param trace - unused
+ */
 void props_castlebed_touch(gentity_t *ent, gentity_t *other, trace_t *trace)
 {
 	if (!other->client)
@@ -2843,6 +3237,10 @@ void props_castlebed_touch(gentity_t *ent, gentity_t *other, trace_t *trace)
 	}
 }
 
+/**
+ * @brief props_castlebed_animate
+ * @param[in,out] ent
+ */
 void props_castlebed_animate(gentity_t *ent)
 {
 	ent->s.frame++;
@@ -2859,7 +3257,15 @@ void props_castlebed_animate(gentity_t *ent)
 	}
 }
 
-void props_castlebed_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
+/**
+ * @brief props_castlebed_die
+ * @param[out] ent
+ * @param inflictor - unused
+ * @param attacker  - unused
+ * @param damage    - unused
+ * @param mod       - unused
+ */
+void props_castlebed_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
 	ent->think      = props_castlebed_animate;
 	ent->nextthink  = level.time + FRAMETIME;
@@ -2869,8 +3275,13 @@ void props_castlebed_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attack
 	ent->count = FXTYPE_WOOD;
 	Prop_Break_Sound(ent);
 }
-
-// @note unused
+/**
+ * @brief SP_props_castlebed
+ * @param[in,out] ent
+ *
+ * @note Unused
+ */
+/*
 void SP_props_castlebed(gentity_t *ent)
 {
 	trap_SetBrushModel(ent, ent->model);
@@ -2891,21 +3302,25 @@ void SP_props_castlebed(gentity_t *ent)
 
 	trap_LinkEntity(ent);
 }
-
-/*
-QUAKED props_snowGenerator (3 2 7) ? TOGGLE_ON ALWAYS_ON
-entity brush need to be targeted to an info notnull this
-will determine the direction the snow particles will travel.
-
-speed
-gravity
-turb
-
-count is the number of snowflurries 3 to 5 would be a good number
-
-duration is how long the effect will last 1 is 1 second
 */
 
+/**
+ * @brief props_snowGenerator_think
+ *
+ * @details QUAKED props_snowGenerator (3 2 7) ? TOGGLE_ON ALWAYS_ON
+ * entity brush need to be targeted to an info notnull this
+ * will determine the direction the snow particles will travel.
+ *
+ * speed
+ * gravity
+ * turb
+ *
+ * count is the number of snowflurries 3 to 5 would be a good number
+ *
+ * duration is how long the effect will last 1 is 1 second
+ *
+ * @param ent
+ */
 void props_snowGenerator_think(gentity_t *ent)
 {
 	gentity_t *tent;
@@ -2927,9 +3342,9 @@ void props_snowGenerator_think(gentity_t *ent)
 		VectorCopy(ent->pos1, point);
 
 		// we need to randomize to the extent of the brush
-		point[0] += crandom() * (deep * 0.5);
-		point[1] += crandom() * (wide * 0.5);
-		point[2] += crandom() * (high * 0.5);
+		point[0] += crandom() * (deep * 0.5f);
+		point[1] += crandom() * (wide * 0.5f);
+		point[2] += crandom() * (high * 0.5f);
 
 		tent = G_TempEntity(point, EV_SNOWFLURRY);
 		VectorCopy(point, tent->s.origin);
@@ -2948,6 +3363,12 @@ void props_snowGenerator_think(gentity_t *ent)
 	}
 }
 
+/**
+ * @brief props_snowGenerator_use
+ * @param[in,out] ent
+ * @param other     - unused
+ * @param activator - unused
+ */
 void props_snowGenerator_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	if (!(ent->spawnflags & 1))
@@ -2963,6 +3384,10 @@ void props_snowGenerator_use(gentity_t *ent, gentity_t *other, gentity_t *activa
 	}
 }
 
+/**
+ * @brief SP_props_snowGenerator
+ * @param[in,out] ent
+ */
 void SP_props_snowGenerator(gentity_t *ent)
 {
 	vec3_t center;
@@ -2970,7 +3395,7 @@ void SP_props_snowGenerator(gentity_t *ent)
 	trap_SetBrushModel(ent, ent->model);
 
 	VectorAdd(ent->r.absmin, ent->r.absmax, center);
-	VectorScale(center, 0.5, center);
+	VectorScale(center, 0.5f, center);
 
 	VectorCopy(center, ent->pos1);
 
@@ -3010,7 +3435,7 @@ void SP_props_snowGenerator(gentity_t *ent)
 
 	ent->use = props_snowGenerator_use;
 
-	if (!(ent->delay))
+	if (ent->delay == 0.f)
 	{
 		ent->delay = 100;
 	}
@@ -3019,12 +3444,12 @@ void SP_props_snowGenerator(gentity_t *ent)
 		ent->delay *= 100;
 	}
 
-	if (!(ent->count))
+	if (!ent->count)
 	{
 		ent->count = 32;
 	}
 
-	if (!(ent->duration))
+	if (ent->duration == 0.f)
 	{
 		ent->duration = 1;
 	}
@@ -3038,24 +3463,27 @@ void SP_props_snowGenerator(gentity_t *ent)
 // FIRES AND EXPLOSION PROPS
 /////////////////////////////
 
-/*
-QUAKED props_decoration (.6 .7 .7) (-8 -8 0) (8 8 16) STARTINVIS DEBRIS ANIMATE KEEPBLOCK TOUCHACTIVATE LOOPING STARTON
-"model2" will specify the model to load
-
-"noise"  the looping sound entity is to make
-
-"type" type of debris ("glass", "wood", "metal", "rubble") default is "wood"
-"count" how much debris ei. default 4 pieces
-
-you will need to specify the bounding box for the entity
-"high"  default is 4
-"wide"  default is 4
-
-"frames"    how many frames of animation to play
-"loop" when the animation is done start again on this frame
-"startonframe" on what frame do you want to start the animation
-*/
-
+/**
+ * @brief props_decoration_animate
+ *
+ * @details QUAKED props_decoration (.6 .7 .7) (-8 -8 0) (8 8 16) STARTINVIS DEBRIS ANIMATE KEEPBLOCK TOUCHACTIVATE LOOPING STARTON
+ * "model2" will specify the model to load
+ *
+ * "noise"  the looping sound entity is to make
+ *
+ * "type" type of debris ("glass", "wood", "metal", "rubble") default is "wood"
+ * "count" how much debris ei. default 4 pieces
+ *
+ * you will need to specify the bounding box for the entity
+ * "high"  default is 4
+ * "wide"  default is 4
+ *
+ * "frames"    how many frames of animation to play
+ * "loop" when the animation is done start again on this frame
+ * "startonframe" on what frame do you want to start the animation
+ *
+ * @param[in,out] ent
+ */
 void props_decoration_animate(gentity_t *ent)
 {
 	ent->s.frame++;
@@ -3084,7 +3512,15 @@ void props_decoration_animate(gentity_t *ent)
 	ent->nextthink = level.time + 50;
 }
 
-void props_decoration_death(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
+/**
+ * @brief props_decoration_death
+ * @param[in,out] ent
+ * @param[in] inflictor
+ * @param attacker - unused
+ * @param damage   - unused
+ * @param mod      - unused
+ */
+void props_decoration_death(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
 	if (!(ent->spawnflags & 8))
 	{
@@ -3113,6 +3549,12 @@ void props_decoration_death(gentity_t *ent, gentity_t *inflictor, gentity_t *att
 	G_FreeEntity(ent);
 }
 
+/**
+ * @brief Use_props_decoration
+ * @param[in,out] ent
+ * @param self      - unused
+ * @param activator - unused
+ */
 void Use_props_decoration(gentity_t *ent, gentity_t *self, gentity_t *activator)
 {
 	if (ent->spawnflags & 1)
@@ -3132,6 +3574,12 @@ void Use_props_decoration(gentity_t *ent, gentity_t *self, gentity_t *activator)
 	}
 }
 
+/**
+ * @brief props_touch
+ * @param[in] self
+ * @param[in] other
+ * @param trace - unused
+ */
 void props_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 {
 	if (self->spawnflags & 16)
@@ -3140,6 +3588,10 @@ void props_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 	}
 }
 
+/**
+ * @brief SP_props_decoration
+ * @param[in,out] ent
+ */
 void SP_props_decoration(gentity_t *ent)
 {
 	float    light;
@@ -3179,22 +3631,22 @@ void SP_props_decoration(gentity_t *ent)
 	{
 		int r, g, b, i;
 
-		r = color[0] * 255;
+		r = (int)(color[0] * 255);
 		if (r > 255)
 		{
 			r = 255;
 		}
-		g = color[1] * 255;
+		g = (int)(color[1] * 255);
 		if (g > 255)
 		{
 			g = 255;
 		}
-		b = color[2] * 255;
+		b = (int)(color[2] * 255);
 		if (b > 255)
 		{
 			b = 255;
 		}
-		i = light / 4;
+		i = (int)(light / 4);
 		if (i > 255)
 		{
 			i = 255;
@@ -3233,17 +3685,17 @@ void SP_props_decoration(gentity_t *ent)
 		}
 
 		G_SpawnString("high", "0", &high);
-		height = atof(high);
+		height = (float)atof(high);
 
-		if (!height)
+		if (height == 0.f)
 		{
 			height = 4;
 		}
 
 		G_SpawnString("wide", "0", &wide);
-		width = atof(wide);
+		width = (float)atof(wide);
 
-		if (!width)
+		if (width == 0.f)
 		{
 			width = 4;
 		}
@@ -3261,9 +3713,9 @@ void SP_props_decoration(gentity_t *ent)
 		ent->s.eType    = ET_MOVER;
 
 		G_SpawnString("frames", "0", &frames);
-		num_frames = atof(frames);
+		num_frames = (float)atof(frames);
 
-		ent->count2 = num_frames;
+		ent->count2 = (int)num_frames;
 
 		if (ent->targetname)
 		{
@@ -3276,9 +3728,9 @@ void SP_props_decoration(gentity_t *ent)
 	else if (!(ent->health) && (ent->spawnflags & 4))
 	{
 		G_SpawnString("frames", "0", &frames);
-		num_frames = atof(frames);
+		num_frames = (float)atof(frames);
 
-		ent->count2 = num_frames;
+		ent->count2 = (int)num_frames;
 		ent->use    = Use_props_decoration;
 	}
 
@@ -3303,23 +3755,27 @@ void SP_props_decoration(gentity_t *ent)
 	}
 }
 
-/*
-QUAKED props_decorBRUSH (.6 .7 .7) ? STARTINVIS DEBRIS ANIMATE KEEPBLOCK - LOOPING STARTON
-ANIMATE animate on death
-STARTON playanimation on death
-must have an origin brush
-
-"model2" will specify the model to load
-
-"noise"  the looping sound entity is to make
-
-"type" type of debris ("glass", "wood", "metal", "rubble") default is "wood"
-"count" how much debris ei. default 4 pieces
-
-"frames"    how many frames of animation to play
-"loop" when the animation is done start again on this frame
-"startonframe" on what frame do you want to start the animation
-*/
+/**
+ * @brief SP_props_decorBRUSH
+ *
+ * @details QUAKED props_decorBRUSH (.6 .7 .7) ? STARTINVIS DEBRIS ANIMATE KEEPBLOCK - LOOPING STARTON
+ * ANIMATE animate on death
+ * STARTON playanimation on death
+ * must have an origin brush
+ *
+ * "model2" will specify the model to load
+ *
+ * "noise"  the looping sound entity is to make
+ *
+ * "type" type of debris ("glass", "wood", "metal", "rubble") default is "wood"
+ * "count" how much debris ei. default 4 pieces
+ *
+ * "frames"    how many frames of animation to play
+ * "loop" when the animation is done start again on this frame
+ * "startonframe" on what frame do you want to start the animation
+ *
+ * @param[in,out] self
+ */
 void SP_props_decorBRUSH(gentity_t *self)
 {
 	trap_SetBrushModel(self, self->model);
@@ -3332,28 +3788,31 @@ void SP_props_decorBRUSH(gentity_t *self)
 	}
 }
 
-/*
-QUAKED props_decoration_scale (.6 .7 .7) (-8 -8 0) (8 8 16) STARTINVIS DEBRIS ANIMATE KEEPBLOCK TOUCHACTIVATE LOOPING STARTON
-
-"modelscale" - Scale multiplier (defaults to 1.0 and scales uniformly)
-"modelscale_vec" - Set scale per-axis.  Overrides "modelscale", so if you have both the "modelscale" is ignored
-
-"model2" will specify the model to load
-
-"noise"  the looping sound entity is to make
-
-"type" type of debris ("glass", "wood", "metal", "rubble") default is "wood"
-"count" how much debris ei. default 4 pieces
-
-you will need to specify the bounding box for the entity
-"high"  default is 4
-"wide"  default is 4
-
-"frames"    how many frames of animation to play
-"loop" when the animation is done start again on this frame
-"startonframe" on what frame do you want to start the animation
-*/
-
+/**
+ * @brief SP_props_decor_Scale
+ *
+ * @details QUAKED props_decoration_scale (.6 .7 .7) (-8 -8 0) (8 8 16) STARTINVIS DEBRIS ANIMATE KEEPBLOCK TOUCHACTIVATE LOOPING STARTON
+ *
+ * "modelscale" - Scale multiplier (defaults to 1.0 and scales uniformly)
+ * "modelscale_vec" - Set scale per-axis.  Overrides "modelscale", so if you have both the "modelscale" is ignored
+ *
+ * "model2" will specify the model to load
+ *
+ * "noise"  the looping sound entity is to make
+ *
+ * "type" type of debris ("glass", "wood", "metal", "rubble") default is "wood"
+ * "count" how much debris ei. default 4 pieces
+ *
+ * you will need to specify the bounding box for the entity
+ * "high"  default is 4
+ * "wide"  default is 4
+ *
+ * "frames"    how many frames of animation to play
+ * "loop" when the animation is done start again on this frame
+ * "startonframe" on what frame do you want to start the animation
+ *
+ * @param[in,out] ent
+ */
 void SP_props_decor_Scale(gentity_t *ent)
 {
 	float  scale[3] = { 1, 1, 1 };
@@ -3381,15 +3840,18 @@ void SP_props_decor_Scale(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*
-QUAKED props_skyportal (.6 .7 .7) (-8 -8 0) (8 8 16)
-"fov" for the skybox default is 90
-To have the portal sky fogged, enter any of the following values:
-"fogcolor" (r g b) (values 0.0-1.0)
-"fognear" distance from entity to start fogging
-"fogfar" distance from entity that fog is opaque
-
-*/
+/**
+ * @brief SP_skyportal
+ *
+ * @details QUAKED props_skyportal (.6 .7 .7) (-8 -8 0) (8 8 16)
+ * "fov" for the skybox default is 90
+ * To have the portal sky fogged, enter any of the following values:
+ * "fogcolor" (r g b) (values 0.0-1.0)
+ * "fognear" distance from entity to start fogging
+ * "fogfar" distance from entity that fog is opaque
+ *
+ * @param ent
+ */
 void SP_skyportal(gentity_t *ent)
 {
 	char   *fov;
@@ -3400,34 +3862,37 @@ void SP_skyportal(gentity_t *ent)
 	float  fov_x;
 
 	G_SpawnString("fov", "90", &fov);
-	fov_x = atof(fov);
+	fov_x = (float)atof(fov);
 
 	isfog += G_SpawnVector("fogcolor", "0 0 0", fogv);
 	isfog += G_SpawnInt("fognear", "0", &fogn);
 	isfog += G_SpawnInt("fogfar", "300", &fogf);
 
-	trap_SetConfigstring(CS_SKYBOXORG, va("%.2f %.2f %.2f %.1f %i %.2f %.2f %.2f %i %i", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2], fov_x, isfog, fogv[0], fogv[1], fogv[2], fogn, fogf));
+	trap_SetConfigstring(CS_SKYBOXORG, va("%.2f %.2f %.2f %.1f %i %.2f %.2f %.2f %i %i", (double)ent->s.origin[0], (double)ent->s.origin[1], (double)ent->s.origin[2], (double)fov_x, isfog, (double)fogv[0], (double)fogv[1], (double)fogv[2], fogn, fogf));
 }
 
-/*
-QUAKED props_statue (.6 .3 .2) (-8 -8 0) (8 8 128) HURT DEBRIS ANIMATE KEEPBLOCK
-"model2" will specify the model to load
-
-"noise"  the sound entity is to make
-
-"type" type of debris ("glass", "wood", "metal", "rubble") default is "wood"
-"count" how much debris ei. default 4 pieces
-
-you will need to specify the bounding box for the entity
-"high"  default is 4
-"wide"  default is 4
-
-"frames"    how many frames of animation to play
-"delay"     how long of a delay before damage is inflicted ei. 0.5 sec or 2.7 sec
-
-"damage"    amount of damage to be inflicted
-*/
-
+/**
+ * @brief props_statue_blocked
+ *
+ * @details QUAKED props_statue (.6 .3 .2) (-8 -8 0) (8 8 128) HURT DEBRIS ANIMATE KEEPBLOCK
+ * "model2" will specify the model to load
+ *
+ * "noise"  the sound entity is to make
+ *
+ * "type" type of debris ("glass", "wood", "metal", "rubble") default is "wood"
+ * "count" how much debris ei. default 4 pieces
+ *
+ * you will need to specify the bounding box for the entity
+ * "high"  default is 4
+ * "wide"  default is 4
+ *
+ * "frames"    how many frames of animation to play
+ * "delay"     how long of a delay before damage is inflicted ei. 0.5 sec or 2.7 sec
+ *
+ * "damage"    amount of damage to be inflicted
+ *
+ * @param[in] ent
+ */
 void props_statue_blocked(gentity_t *ent)
 {
 	trace_t   trace;
@@ -3467,7 +3932,7 @@ void props_statue_blocked(gentity_t *ent)
 
 	if (traceEnt->takedamage && traceEnt->client)
 	{
-		float  grav = 128;
+		int  grav = 128;
 		vec3_t kvel;
 
 		G_Damage(traceEnt, ent, ent, NULL, trace.endpos, ent->damage, 0, MOD_CRUSH);
@@ -3498,6 +3963,10 @@ void props_statue_blocked(gentity_t *ent)
 	}
 }
 
+/**
+ * @brief props_statue_animate
+ * @param[in,out] ent
+ */
 void props_statue_animate(gentity_t *ent)
 {
 	qboolean takeashot = qfalse;
@@ -3536,7 +4005,15 @@ void props_statue_animate(gentity_t *ent)
 	}
 }
 
-void props_statue_death(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
+/**
+ * @brief props_statue_death
+ * @param[in] ent
+ * @param[in] inflictor
+ * @param attacker - unused
+ * @param damage   - unused
+ * @param mod      - unused
+ */
+void props_statue_death(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
 	ent->timestamp = level.time;
 
@@ -3569,11 +4046,21 @@ void props_statue_death(gentity_t *ent, gentity_t *inflictor, gentity_t *attacke
 	G_FreeEntity(ent);
 }
 
+/**
+ * @brief props_statue_touch
+ * @param[in] self
+ * @param[in] other
+ * @param trace - unused
+ */
 void props_statue_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 {
 	props_statue_death(self, other, other, 9999, MOD_CRUSH);
 }
 
+/**
+ * @brief SP_props_statue
+ * @param[in,out] ent
+ */
 void SP_props_statue(gentity_t *ent)
 {
 	float    light;
@@ -3605,22 +4092,22 @@ void SP_props_statue(gentity_t *ent)
 	{
 		int r, g, b, i;
 
-		r = color[0] * 255;
+		r = (int)(color[0] * 255);
 		if (r > 255)
 		{
 			r = 255;
 		}
-		g = color[1] * 255;
+		g = (int)(color[1] * 255);
 		if (g > 255)
 		{
 			g = 255;
 		}
-		b = color[2] * 255;
+		b = (int)(color[2] * 255);
 		if (b > 255)
 		{
 			b = 255;
 		}
-		i = light / 4;
+		i = (int)(light / 4);
 		if (i > 255)
 		{
 			i = 255;
@@ -3651,16 +4138,16 @@ void SP_props_statue(gentity_t *ent)
 	}
 
 	G_SpawnString("high", "0", &high);
-	height = atof(high);
-	if (!height)
+	height = (float)atof(high);
+	if (height == 0.f)
 	{
 		height = 4;
 	}
 
 	G_SpawnString("wide", "0", &wide);
-	width = atof(wide);
+	width = (float)atof(wide);
 
-	if (!width)
+	if (width == 0.f)
 	{
 		width = 4;
 	}
@@ -3678,9 +4165,9 @@ void SP_props_statue(gentity_t *ent)
 	ent->s.eType    = ET_MOVER;
 
 	G_SpawnString("frames", "0", &frames);
-	num_frames = atof(frames);
+	num_frames = (float)atof(frames);
 
-	ent->count2 = num_frames;
+	ent->count2 = (int)num_frames;
 
 	ent->touch = props_statue_touch;
 
@@ -3697,23 +4184,27 @@ void SP_props_statue(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/*
-QUAKED props_statueBRUSH (.6 .3 .2) ? HURT DEBRIS ANIMATE KEEPBLOCK
-needs an origin brush
-
-"model2" will specify the model to load
-
-"noise"  the sound entity is to make
-
-"type" type of debris ("glass", "wood", "metal", "rubble") default is "wood"
-"count" how much debris ei. default 4 pieces
-
-"frames"    how many frames of animation to play
-"delay"     how long of a delay before damage is inflicted ei. 0.5 sec or 2.7 sec
-
-THE damage has been disabled at the moment
-"damage"    amount of damage to be inflicted
-*/
+/**
+ * @brief SP_props_statueBRUSH
+ *
+ * @details QUAKED props_statueBRUSH (.6 .3 .2) ? HURT DEBRIS ANIMATE KEEPBLOCK
+ * needs an origin brush
+ *
+ * "model2" will specify the model to load
+ *
+ * "noise"  the sound entity is to make
+ *
+ * "type" type of debris ("glass", "wood", "metal", "rubble") default is "wood"
+ * "count" how much debris ei. default 4 pieces
+ *
+ * "frames"    how many frames of animation to play
+ * "delay"     how long of a delay before damage is inflicted ei. 0.5 sec or 2.7 sec
+ *
+ * THE damage has been disabled at the moment
+ * "damage"    amount of damage to be inflicted
+ *
+ * @param[in,out] self
+ */
 void SP_props_statueBRUSH(gentity_t *self)
 {
 	trap_SetBrushModel(self, self->model);
@@ -3741,13 +4232,17 @@ void SP_props_statueBRUSH(gentity_t *self)
 
 //////////////////////////////////////////////////
 void init_locker(gentity_t *ent);
-void props_locker_death(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod);
+void props_locker_death(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod);
 //////////////////////////////////////////////////
 #define MAX_LOCKER_DEBRIS       5
 
 int locker_debris_model[MAX_LOCKER_DEBRIS];
 //////////////////////////////////////////////////
 
+/**
+ * @brief Spawn_Junk
+ * @param[in] ent
+ */
 void Spawn_Junk(gentity_t *ent)
 {
 	gentity_t *sfx;
@@ -3776,11 +4271,10 @@ void Spawn_Junk(gentity_t *ent)
 	trap_LinkEntity(sfx);
 }
 
-/*
-==============
-props_locker_endrattle
-==============
-*/
+/**
+ * @brief props_locker_endrattle
+ * @param(out] ent
+ */
 void props_locker_endrattle(gentity_t *ent)
 {
 	ent->s.frame   = 0; // idle
@@ -3789,9 +4283,15 @@ void props_locker_endrattle(gentity_t *ent)
 	ent->delay     = 0;
 }
 
+/**
+ * @brief props_locker_use
+ * @param[in,out] ent
+ * @param other     - unused
+ * @param activator - unused
+ */
 void props_locker_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
-	if (!ent->delay)
+	if (ent->delay == 0.f)
 	{
 		ent->s.frame = 1;   // rattle when pain starts
 	}
@@ -3800,11 +4300,22 @@ void props_locker_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	ent->nextthink = level.time + 1000; // rattle a sec
 }
 
+/**
+ * @brief props_locker_pain
+ * @param[in] ent
+ * @param[in] attacker
+ * @param damage   - unused
+ * @param point    - unused
+ */
 void props_locker_pain(gentity_t *ent, gentity_t *attacker, int damage, vec3_t point)
 {
 	props_locker_use(ent, attacker, attacker);
 }
 
+/**
+ * @brief init_locker
+ * @param[out] ent
+ */
 void init_locker(gentity_t *ent)
 {
 	ent->isProp     = qtrue;
@@ -3839,6 +4350,10 @@ void init_locker(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
+/**
+ * @brief props_locker_spawn_item
+ * @param[in] ent
+ */
 void props_locker_spawn_item(gentity_t *ent)
 {
 	gitem_t   *item;
@@ -3862,6 +4377,10 @@ void props_locker_spawn_item(gentity_t *ent)
 	}
 }
 
+/**
+ * @brief props_locker_mass
+ * @param[in] ent
+ */
 void props_locker_mass(gentity_t *ent)
 {
 	gentity_t *tent;
@@ -3891,41 +4410,43 @@ void props_locker_mass(gentity_t *ent)
 	tent->s.density   = 100;
 }
 
-/*
-QUAKED props_footlocker (.6 .7 .3) (-12 -21 -12) (12 21 12) ? NO_JUNK
-"noise"  the sound entity is to make upon death
-the default sounds are:
-  "wood"    - "sound/world/boardbreak.wav"
-  "glass"   - "sound/world/glassbreak.wav"
-  "metal"   - "sound/world/metalbreak.wav"
-  "gibs"    - "sound/player/gibsplit1.wav"
-  "brick"   - "sound/world/debris1.wav"
-  "stone"   - "sound/world/stonefall.wav"
-  "fabric"  - "sound/world/fabricbreak.wav"
-
-"locknoise" the locked sound to play
-"wait"   denotes how long the wait is going to be before the locked sound is played again default is 1 sec
-"health" default is 1
-
-"spawnitem" - will spawn this item unpon death use the pickup_name ei 9mm
-
-"type" - type of debris ("glass", "wood", "metal", "gibs", "brick", "rock", "fabric") default is "wood"
-"mass" - defaults to 75.  This determines how much debris is emitted.  You get one large chunk per 100 of mass (up to 8) and one small chunk per 25 of mass (up to 16).  So 800 gives the most.
-
-"dl_shader" needs to be set the same way as a target_effect
-
-FIXME/TBD: the spawning of junk still pending and animation when used
-
--------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
-model="models/mapobjects/furniture/footlocker.md3"
-*/
-
-/*
-==============
-props_locker_death
-==============
-*/
-void props_locker_death(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
+/**
+ * @brief props_locker_death
+ *
+ * @details QUAKED props_footlocker (.6 .7 .3) (-12 -21 -12) (12 21 12) ? NO_JUNK
+ * "noise"  the sound entity is to make upon death
+ * the default sounds are:
+ *   "wood"    - "sound/world/boardbreak.wav"
+ *   "glass"   - "sound/world/glassbreak.wav"
+ *   "metal"   - "sound/world/metalbreak.wav"
+ *   "gibs"    - "sound/player/gibsplit1.wav"
+ *   "brick"   - "sound/world/debris1.wav"
+ *   "stone"   - "sound/world/stonefall.wav"
+ *   "fabric"  - "sound/world/fabricbreak.wav"
+ *
+ * "locknoise" the locked sound to play
+ * "wait"   denotes how long the wait is going to be before the locked sound is played again default is 1 sec
+ * "health" default is 1
+ *
+ * "spawnitem" - will spawn this item unpon death use the pickup_name ei 9mm
+ *
+ * "type" - type of debris ("glass", "wood", "metal", "gibs", "brick", "rock", "fabric") default is "wood"
+ * "mass" - defaults to 75.  This determines how much debris is emitted.  You get one large chunk per 100 of mass (up to 8) and one small chunk per 25 of mass (up to 16).  So 800 gives the most.
+ *
+ * "dl_shader" needs to be set the same way as a target_effect
+ *
+ * @todo FIXME/TBD: the spawning of junk still pending and animation when used
+ *
+ * -------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
+ * model="models/mapobjects/furniture/footlocker.md3"
+ *
+ * @param[in,out] ent
+ * @param inflictor - unused
+ * @param attacker  - unused
+ * @param damage    - unused
+ * @param mod       - unused
+ */
+void props_locker_death(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
 	ent->takedamage = qfalse;
 	ent->s.frame    = 2; // opening animation
@@ -3938,6 +4459,10 @@ void props_locker_death(gentity_t *ent, gentity_t *inflictor, gentity_t *attacke
 	trap_LinkEntity(ent);
 }
 
+/**
+ * @brief SP_props_footlocker
+ * @param[in,out] self
+ */
 void SP_props_footlocker(gentity_t *self)
 {
 	char *type;
@@ -3950,7 +4475,7 @@ void SP_props_footlocker(gentity_t *self)
 	// if angle is xx or yy, rotate the bounding box 90 deg to match
 	// NOTE:    Non axis-aligned orientation not allowed.  It will work, but
 	//          the bounding box will not exactly match the model.
-	if (self->s.angles[1] == 90 || self->s.angles[1] == 270)
+	if (self->s.angles[1] == 90.f || self->s.angles[1] == 270.f)
 	{
 		VectorSet(self->r.mins, -21, -12, 0);
 		VectorSet(self->r.maxs, 21, 12, 24);
@@ -3973,7 +4498,7 @@ void SP_props_footlocker(gentity_t *self)
 		self->soundPos1 = G_SoundIndex(locked);
 	}
 
-	if (!(self->wait))
+	if (self->wait == 0.f)
 	{
 		self->wait = 1000;
 	}
@@ -4032,16 +4557,20 @@ void SP_props_footlocker(gentity_t *self)
 	init_locker(self);
 }
 
-/*
-QUAKED props_flamethrower (.6 .7 .3) (-8 -8 -8) (8 8 8) TRACKING NOSOUND
-the effect occurs when this entity is used
-needs to aim at a info_notnull
-"duration" how long the effect is going to last for example 1.2 sec 2.7 sec
-"random" how long of a random variance so the effect isnt exactly the same each time for example 1.1 sec or 0.2 sec
-"size" valid ranges are 1.0 to 0.1
-
-NOSOUND - silent (duh)
-*/
+/**
+ * @brief props_flamethrower_think
+ *
+ * @details QUAKED props_flamethrower (.6 .7 .3) (-8 -8 -8) (8 8 8) TRACKING NOSOUND
+ * the effect occurs when this entity is used
+ * needs to aim at a info_notnull
+ * "duration" how long the effect is going to last for example 1.2 sec 2.7 sec
+ * "random" how long of a random variance so the effect isnt exactly the same each time for example 1.1 sec or 0.2 sec
+ * "size" valid ranges are 1.0 to 0.1
+ *
+ * NOSOUND - silent (duh)
+ *
+ * @param[in,out] ent
+ */
 void props_flamethrower_think(gentity_t *ent)
 {
 	gentity_t *target = NULL;
@@ -4108,9 +4637,9 @@ void props_flamethrower_think(gentity_t *ent)
 		{
 			int rnd;
 
-			if (ent->random)
+			if (ent->random != 0.f)
 			{
-				int rval = ent->random * 1000;
+				int rval = (int)(ent->random * 1000);
 
 				rnd = rand() % rval;
 			}
@@ -4125,6 +4654,12 @@ void props_flamethrower_think(gentity_t *ent)
 	}
 }
 
+/**
+ * @brief props_flamethrower_use
+ * @param[in,out] ent
+ * @param other     - unused
+ * @param activator - unused
+ */
 void props_flamethrower_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	int rnd;
@@ -4141,9 +4676,9 @@ void props_flamethrower_use(gentity_t *ent, gentity_t *other, gentity_t *activat
 		ent->spawnflags |= 2;
 	}
 
-	if (ent->random)
+	if (ent->random != 0.f)
 	{
-		int rval = ent->random * 1000;
+		int rval = (int)(ent->random * 1000);
 		
 		rnd = rand() % rval;
 	}
@@ -4158,6 +4693,10 @@ void props_flamethrower_use(gentity_t *ent, gentity_t *other, gentity_t *activat
 	ent->nextthink = level.time + 50;
 }
 
+/**
+ * @brief props_flamethrower_init
+ * @param[in,out] ent
+ */
 void props_flamethrower_init(gentity_t *ent)
 {
 	gentity_t *target = NULL;
@@ -4188,6 +4727,10 @@ void props_flamethrower_init(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
+/**
+ * @brief SP_props_flamethrower
+ * @param[in,out] ent
+ */
 void SP_props_flamethrower(gentity_t *ent)
 {
 	char  *size;
@@ -4199,7 +4742,7 @@ void SP_props_flamethrower(gentity_t *ent)
 
 	G_SetOrigin(ent, ent->s.origin);
 
-	if (!(ent->duration))
+	if (ent->duration == 0.f)
 	{
 		ent->duration = 1000;
 	}
@@ -4209,8 +4752,8 @@ void SP_props_flamethrower(gentity_t *ent)
 	}
 
 	G_SpawnString("size", "0", &size);
-	dsize = atof(size);
-	if (!dsize)
+	dsize = (float)atof(size);
+	if (dsize == 0.f)
 	{
 		dsize = 1;
 	}
