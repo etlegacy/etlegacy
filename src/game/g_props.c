@@ -3932,28 +3932,28 @@ void props_statue_blocked(gentity_t *ent)
 
 	if (traceEnt->takedamage && traceEnt->client)
 	{
-		int  grav = 128;
+		//int  grav = 128;
 		vec3_t kvel;
 
 		G_Damage(traceEnt, ent, ent, NULL, trace.endpos, ent->damage, 0, MOD_CRUSH);
 
 		// TBD: push client back a bit
-		VectorScale(forward, grav, kvel);
+		//VectorScale(forward, grav, kvel);
+		VectorScale(forward, 128, kvel);
 		VectorAdd(traceEnt->client->ps.velocity, kvel, traceEnt->client->ps.velocity);
 
 		if (!traceEnt->client->ps.pm_time)
 		{
-			int t = grav * 2;
-
-			if (t < 50)
-			{
-				t = 50;
-			}
-			if (t > 200)
-			{
-				t = 200;
-			}
-			traceEnt->client->ps.pm_time   = t;
+			//int t = grav * 2;
+			//if (t < 50)
+			//{
+			//	t = 50;
+			//}
+			//if (t > 200)
+			//{
+			//	t = 200;
+			//}
+			traceEnt->client->ps.pm_time   = 200;
 			traceEnt->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
 		}
 	}
