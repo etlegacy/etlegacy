@@ -175,7 +175,7 @@ qboolean Sys_RandomBytes(byte *string, int len)
 
 	setvbuf(fp, NULL, _IONBF, 0); // don't buffer reads from /dev/urandom
 
-	if (!fread(string, sizeof(byte), len, fp))
+	if (fread(string, sizeof(byte), len, fp) != len)
 	{
 		fclose(fp);
 		return qfalse;
