@@ -1112,7 +1112,6 @@ void R_Register(void)
 	r_printShaders = ri.Cvar_Get("r_printShaders", "0", 0);
 	//r_saveFontData = ri.Cvar_Get("r_saveFontData", "0", 0);
 
-	// with r_cache enabled, non-win32 OSes were leaking 24Mb per R_Init..
 	r_cache        = ri.Cvar_Get("r_cache", "1", CVAR_LATCH); // leaving it as this for backwards compability. but it caches models and shaders also
 	r_cacheShaders = ri.Cvar_Get("r_cacheShaders", "1", CVAR_LATCH);
 
