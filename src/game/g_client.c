@@ -3521,7 +3521,7 @@ void ClientDisconnect(int clientNum)
 
 	CalculateRanks();
 
-	G_verifyMatchState(i);
+	G_verifyMatchState((team_t)i);
 #ifdef FEATURE_MULTIVIEW
 	G_smvAllRemoveSingleClient(ent - g_entities);
 #endif

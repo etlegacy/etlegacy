@@ -1518,7 +1518,7 @@ qboolean ReadyToConstruct(gentity_t *ent, gentity_t *constructible, qboolean upd
 
 // g_team.c
 qboolean OnSameTeam(gentity_t *ent1, gentity_t *ent2);
-int Team_ClassForString(char *string);
+//int Team_ClassForString(const char *string); // Unused
 void reset_numobjectives(void);
 
 // g_mem.c
@@ -2267,7 +2267,7 @@ void G_MuteClient(void);
 void G_UnMuteClient(void);
 
 // g_team.c
-extern char      *aTeams[TEAM_NUM_TEAMS];
+extern const char *aTeams[TEAM_NUM_TEAMS];
 extern team_info teamInfo[TEAM_NUM_TEAMS];
 
 qboolean G_allowFollow(gentity_t *ent, int nTeam);
@@ -2278,9 +2278,9 @@ void G_removeSpecInvite(int team);
 void G_shuffleTeams(void);
 void G_swapTeamLocks(void);
 void G_swapTeams(void);
-qboolean G_teamJoinCheck(int team_num, gentity_t *ent);
+qboolean G_teamJoinCheck(team_t team_num, gentity_t *ent);
 void G_teamReset(int team_num, qboolean fClearSpecLock);
-void G_verifyMatchState(int team_id);
+void G_verifyMatchState(team_t team_id);
 void G_updateSpecLock(int nTeam, qboolean fLock);
 
 // g_vote.c

@@ -515,7 +515,7 @@ int COM_Compress(char *data_p)
 
 char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 {
-	int      c           = 0, len = 0;
+	int      c = 0, len = 0;
 	qboolean hasNewLines = qfalse;
 	char     *data       = *data_p;
 
@@ -1744,12 +1744,12 @@ previous strings
 */
 char *QDECL va(const char *format, ...)
 {
-	va_list     argptr;
-	static char temp_buffer[MAX_VA_STRING];
-	static char string[MAX_VA_STRING];  // in case va is called by nested functions
-	static int  index = 0;
-	char        *buf;
-	int         len;
+	va_list       argptr;
+	static char   temp_buffer[MAX_VA_STRING];
+	static char   string[MAX_VA_STRING];  // in case va is called by nested functions
+	static size_t index = 0;
+	char          *buf;
+	size_t        len;
 
 	va_start(argptr, format);
 	vsprintf(temp_buffer, format, argptr); // Q_vsnprintf ???

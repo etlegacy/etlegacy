@@ -75,7 +75,9 @@ typedef struct
 	const char *pszVoteHelp;
 } vote_reference_t;
 
-// VC optimizes for dup strings :)
+/**
+ * @var VC optimizes for dup strings :)
+ */
 static const vote_reference_t aVoteInfo[] =
 {
 	{ 0x1ff, "gametype",                 G_Gametype_v,               "Set Gametype to",                  " <value>^7\n  Changes the current gametype"                          },
@@ -104,10 +106,17 @@ static const vote_reference_t aVoteInfo[] =
 	{ 0x1ff, "nextcampaign",             G_NextCampaign_v,           "Next Campaign",                    " ^7\n  Ends the current campaign and starts the next one."           },
 	{ 0x1ff, "poll",                     G_Poll_v,                   "[poll]",                           " <text>^7\n  Poll majority opinion."                                 },
 	{ 0x1ff, "config",                   G_Config_v,                 "Game config",                      " <configname>^7\n  Loads up the server game config"                  },
-	{ 0,     0,                          NULL,                       0 }
+	{ 0,     0,                          NULL,                       0,                                  0                                                                     },
 };
 
-// Checks for valid custom callvote requests from the client.
+/**
+ * @brief Checks for valid custom callvote requests from the client.
+ * @param[in] ent
+ * @param[in] arg
+ * @param[in] arg2
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_voteCmdCheck(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	unsigned int i, cVoteCommands = sizeof(aVoteInfo) / sizeof(aVoteInfo[0]);
@@ -135,7 +144,11 @@ int G_voteCmdCheck(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeCmd)
 	return G_NOTFOUND;
 }
 
-// Voting help summary.
+/**
+ * @brief Voting help summary.
+ * @param[in] ent
+ * @param[in] fShowVote
+ */
 void G_voteHelp(gentity_t *ent, qboolean fShowVote)
 {
 	int i, rows = 0, num_cmds = sizeof(aVoteInfo) / sizeof(aVoteInfo[0]) - 1;     // Remove terminator;
@@ -196,7 +209,9 @@ void G_voteHelp(gentity_t *ent, qboolean fShowVote)
 	return;
 }
 
-// Set disabled votes for client UI
+/**
+ * @brief Set disabled votes for client UI
+ */
 void G_voteFlags(void)
 {
 	int i, flags = 0;
@@ -215,8 +230,14 @@ void G_voteFlags(void)
 	}
 }
 
-// Prints specific callvote command help description.
-qboolean G_voteDescription(gentity_t *ent, qboolean fRefereeCmd, int cmd)
+/**
+ * @brief Prints specific callvote command help description.
+ * @param[in] ent
+ * @param[in] fRefereeCmd
+ * @param[in] cmd
+ * @return
+ */
+qboolean G_voteDescription(gentity_t *ent, qboolean fRefereeCmd, unsigned int cmd)
 {
 	char arg[MAX_TOKEN_CHARS];
 	char *ref_cmd = (fRefereeCmd) ? "\\ref" : "\\callvote";
@@ -237,27 +258,48 @@ qboolean G_voteDescription(gentity_t *ent, qboolean fRefereeCmd, int cmd)
 	return qfalse;
 }
 
-// Localize disable message info.
+/**
+ * @brief Localize disable message info.
+ * @param[in] ent
+ * @param[in] cmd
+ */
 void G_voteDisableMessage(gentity_t *ent, const char *cmd)
 {
 	G_refPrintf(ent, "Sorry, [lof]^3%s^7 [lon]voting has been disabled", cmd);
 }
 
-// Player ID message stub.
+/**
+ * @brief Player ID message stub.
+ * @param[in] ent
+ */
 void G_playersMessage(gentity_t *ent)
 {
 	G_refPrintf(ent, "Use the ^3players^7 command to find a valid player ID.");
 }
 
-
-// Localize current parameter setting.
+/**
+ * @brief Localize current parameter setting.
+ * @param[in] ent
+ * @param[in] cmd
+ * @param[in] setting
+ */
 void G_voteCurrentSetting(gentity_t *ent, const char *cmd, const char *setting)
 {
 	G_refPrintf(ent, "^2%s^7 is currently ^3%s\n", cmd, setting);
 }
 
-// Vote toggling
-int G_voteProcessOnOff(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeCmd, int curr_setting, int vote_allow, int vote_type)
+/**
+ * @brief Vote toggling
+ * @param[in] ent
+ * @param arg - unused
+ * @param[in] arg2
+ * @param[in] fRefereeCmd
+ * @param[in] curr_setting
+ * @param[in] vote_allow
+ * @param[in] vote_type
+ * @return
+ */
+int G_voteProcessOnOff(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeCmd, int curr_setting, int vote_allow, unsigned int vote_type)
 {
 	if (!vote_allow && ent && !ent->client->sess.referee)
 	{
@@ -283,10 +325,15 @@ int G_voteProcessOnOff(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeC
 	return G_OK;
 }
 
-//
-// Several commands to help with cvar setting
-//
+/**
+ * Several commands to help with cvar setting
+ */
 
+/**
+ * @brief G_voteSetOnOff
+ * @param[in] desc
+ * @param[in] cvar
+ */
 void G_voteSetOnOff(const char *desc, const char *cvar)
 {
 	AP(va("cpm \"^3%s is: ^5%s\n\"", desc, (atoi(level.voteInfo.vote_value)) ? ENABLED : DISABLED));
@@ -294,6 +341,11 @@ void G_voteSetOnOff(const char *desc, const char *cvar)
 	trap_Cvar_Set(cvar, level.voteInfo.vote_value);
 }
 
+/**
+ * @brief G_voteSetValue
+ * @param[in] desc
+ * @param[in] cvar
+ */
 void G_voteSetValue(const char *desc, const char *cvar)
 {
 	AP(va("cpm \"^3%s set to: ^5%s\n\"", desc, level.voteInfo.vote_value));
@@ -301,6 +353,10 @@ void G_voteSetValue(const char *desc, const char *cvar)
 	trap_Cvar_Set(cvar, level.voteInfo.vote_value);
 }
 
+/**
+ * @brief G_voteSetVoteString
+ * @param[in] desc
+ */
 void G_voteSetVoteString(const char *desc)
 {
 	AP(va("print \"^3%s set to: ^5%s\n\"", desc, level.voteInfo.vote_value));
@@ -313,6 +369,10 @@ void G_voteSetVoteString(const char *desc)
 
 // *** Load competition settings for current mode ***
 
+/**
+ * @brief G_GametypeList
+ * @param[in] ent
+ */
 void G_GametypeList(gentity_t *ent)
 {
 	int i;
@@ -330,7 +390,15 @@ void G_GametypeList(gentity_t *ent)
 	G_refPrintf(ent, "\n");
 }
 
-// *** GameType ***
+/**
+ * @brief GameType
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param[in,out] arg2
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_Gametype_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -384,7 +452,15 @@ int G_Gametype_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2
 	return G_OK;
 }
 
-// *** Player Kick ***
+/**
+ * @brief Player Kick
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param[in,out] arg2
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_Kick_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -442,7 +518,15 @@ int G_Kick_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qb
 	return G_OK;
 }
 
-// *** Player Mute ***
+/**
+ * @brief Player Mute
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param[in,out] arg2
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_Mute_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	if (fRefereeCmd)
@@ -514,7 +598,15 @@ int G_Mute_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qb
 	return G_OK;
 }
 
-// *** Player Un-Mute ***
+/**
+ * @brief Player Un-Mute
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param[in,out] arg2
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_UnMute_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	if (fRefereeCmd)
@@ -574,7 +666,15 @@ int G_UnMute_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, 
 	return G_OK;
 }
 
-// *** Map - simpleton: we dont verify map is allowed/exists ***
+/**
+ * @brief Map - simpleton: we dont verify map is allowed/exists
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param[in] arg2
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_Map_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -620,7 +720,15 @@ int G_Map_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qbo
 	return G_OK;
 }
 
-// *** Campaign - simpleton: we dont verify map is allowed/exists ***
+/**
+ * @brief Campaign - simpleton: we dont verify map is allowed/exists
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param[in] arg2
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_Campaign_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -663,7 +771,15 @@ int G_Campaign_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2
 	return G_OK;
 }
 
-// *** Map Restart ***
+/**
+ * @brief Map Restart
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param[in] arg2
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_MapRestart_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -690,7 +806,15 @@ int G_MapRestart_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 	return G_OK;
 }
 
-// *** Match Restart ***
+/**
+ * @brief Match Restart
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param arg2 - unused
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_MatchReset_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -717,7 +841,15 @@ int G_MatchReset_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 	return G_OK;
 }
 
-// *** Mute Spectators ***
+/**
+ * @brief Mute Spectators
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param[in] arg2
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_Mutespecs_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -738,7 +870,15 @@ int G_Mutespecs_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 	return G_OK;
 }
 
-// *** Nextmap ***
+/**
+ * @brief Nextmap
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param arg2 - unused
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_Nextmap_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -821,7 +961,15 @@ int G_Nextmap_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 	return G_OK;
 }
 
-// *** Referee voting ***
+/**
+ * @brief Referee voting
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param[in] arg2
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_Referee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -890,7 +1038,15 @@ int G_Referee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 	return G_OK;
 }
 
-// *** Shuffle teams
+/**
+ * @brief Shuffle teams
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param arg2 - unused
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_ShuffleTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -917,7 +1073,15 @@ int G_ShuffleTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *
 	return G_OK;
 }
 
-// *** Start Match ***
+/**
+ * @brief Start Match
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param[in] arg2
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_StartMatch_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -961,7 +1125,15 @@ int G_StartMatch_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 	return G_OK;
 }
 
-// *** Swap teams
+/**
+ * @brief Swap teams
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param arg2 - unused
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_SwapTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -989,7 +1161,15 @@ int G_SwapTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 	return G_OK;
 }
 
-// *** Team Damage ***
+/**
+ * @brief Team Damage
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param[in] arg2
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_FriendlyFire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -1010,7 +1190,15 @@ int G_FriendlyFire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *
 	return G_OK;
 }
 
-// Anti-Lag
+/**
+ * @brief Anti-Lag
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param[in] arg2
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_AntiLag_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -1031,7 +1219,15 @@ int G_AntiLag_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 	return G_OK;
 }
 
-// Balanced Teams
+/**
+ * @brief Balanced Teams
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param[in] arg2
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_BalancedTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -1054,6 +1250,15 @@ int G_BalancedTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char 
 	return G_OK;
 }
 
+/**
+ * @brief G_Config_v
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param[in] arg2
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_Config_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -1100,7 +1305,15 @@ int G_Config_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, 
 	return G_OK;
 }
 
-// *** Timelimit ***
+/**
+ * @brief Timelimit
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param[in] arg2
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_Timelimit_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -1136,11 +1349,15 @@ int G_Timelimit_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 	return G_OK;
 }
 
-char *warmupType[] = { "None", "Enemies Only", "Everyone" };
+const char *warmupType[] = { "None", "Enemies Only", "Everyone" };
 
+/**
+ * @brief G_WarmupDamageTypeList
+ * @param[in] ent
+ */
 void G_WarmupDamageTypeList(gentity_t *ent)
 {
-	int i;
+	size_t i;
 
 	G_refPrintf(ent, "\nAvailable Warmup Damage types:\n------------------------------");
 	for (i = 0; i < (sizeof(warmupType) / sizeof(char *)); i++)
@@ -1150,7 +1367,15 @@ void G_WarmupDamageTypeList(gentity_t *ent)
 	G_refPrintf(ent, "\n");
 }
 
-// *** Warmup Weapon Fire ***
+/**
+ * @brief Warmup Weapon Fire
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param[in,out] arg2
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_Warmupfire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -1202,7 +1427,15 @@ int G_Warmupfire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 	return G_OK;
 }
 
-// *** Un-Referee voting ***
+/**
+ * @brief Un-Referee voting
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param[in,out] arg2
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -1271,7 +1504,12 @@ int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 	return G_OK;
 }
 
-// MAPVOTE
+//MAPVOTE
+
+/**
+ * @brief G_IntermissionMapVote
+ * @param[in,out] ent
+ */
 void G_IntermissionMapVote(gentity_t *ent)
 {
 	char arg[MAX_TOKEN_CHARS];
@@ -1348,6 +1586,10 @@ void G_IntermissionMapVote(gentity_t *ent)
 	G_IntermissionVoteTally(NULL);
 }
 
+/**
+ * @brief G_IntermissionMapList
+ * @param[in] ent
+ */
 void G_IntermissionMapList(gentity_t *ent)
 {
 	int  i;
@@ -1381,6 +1623,10 @@ void G_IntermissionMapList(gentity_t *ent)
 	return;
 }
 
+/**
+ * @brief G_IntermissionVoteTally
+ * @param[in] ent
+ */
 void G_IntermissionVoteTally(gentity_t *ent)
 {
 	int  i;
@@ -1418,9 +1664,18 @@ void G_IntermissionVoteTally(gentity_t *ent)
 	}
 	return;
 }
+
 // MAPVOTE END
 
-// *** Shuffle teams
+/**
+ * @brief Shuffle teams
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param arg2 - unused
+ * @param[in] fRefereeCmd
+ * @return
+ */
 int G_ShuffleTeams_NoRestart_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -1448,6 +1703,15 @@ int G_ShuffleTeams_NoRestart_v(gentity_t *ent, unsigned int dwVoteIndex, char *a
 	return G_OK;
 }
 
+/**
+ * @brief G_Surrender_v
+ * @param[in] ent
+ * @param dwVoteIndex - unused
+ * @param[in] arg
+ * @param[in] arg2
+ * @param fRefereeCmd - unused
+ * @return
+ */
 int G_Surrender_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -1485,6 +1749,15 @@ int G_Surrender_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 	return G_OK;
 }
 
+/**
+ * @brief G_NextCampaign_v
+ * @param ent         - unused
+ * @param dwVoteIndex - unused
+ * @param[in] arg
+ * @param arg2        - unused
+ * @param fRefereeCmd - unused
+ * @return
+ */
 int G_NextCampaign_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -1513,6 +1786,15 @@ int G_NextCampaign_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *
 	return G_OK;
 }
 
+/**
+ * @brief G_RestartCampaign_v
+ * @param ent         - unused
+ * @param dwVoteIndex - unused
+ * @param[in] arg
+ * @param arg2        - unused
+ * @param fRefereeCmd - unused
+ * @return
+ */
 int G_RestartCampaign_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -1541,6 +1823,15 @@ int G_RestartCampaign_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, cha
 	return G_OK;
 }
 
+/**
+ * @brief G_Poll_v
+ * @param ent         - unused
+ * @param dwVoteIndex - unused
+ * @param[in] arg
+ * @param[out] arg2
+ * @param fRefereeCmd - unused
+ * @return
+ */
 int G_Poll_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
@@ -1550,8 +1841,7 @@ int G_Poll_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qb
 		{
 			return G_INVALID;
 		}
-		Com_sprintf(arg2,
-		            VOTE_MAXSTRING, "%s", ConcatArgs(2));
+		Com_sprintf(arg2, VOTE_MAXSTRING, "%s", ConcatArgs(2));
 	}
 	return G_OK;
 }

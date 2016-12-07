@@ -34,11 +34,12 @@
 
 #include "g_local.h"
 
-/*
-===================
-G_PushMapEntityToBuffer
-===================
-*/
+/**
+ * @brief G_PushMapEntityToBuffer
+ * @param[out] buffer
+ * @param[in] size
+ * @param[in] mEnt
+ */
 void G_PushMapEntityToBuffer(char *buffer, size_t size, mapEntityData_t *mEnt)
 {
 	char buf[32];
@@ -69,11 +70,10 @@ void G_PushMapEntityToBuffer(char *buffer, size_t size, mapEntityData_t *mEnt)
 	}
 }
 
-/*
-===================
-G_InitMapEntityData
-===================
-*/
+/**
+ * @brief G_InitMapEntityData
+ * @param[out] teamList
+ */
 void G_InitMapEntityData(mapEntityData_Team_t *teamList)
 {
 	int             i;
@@ -92,13 +92,12 @@ void G_InitMapEntityData(mapEntityData_Team_t *teamList)
 	}
 }
 
-/*
-==================
-G_FreeMapEntityData
-
-returns next entity in the array
-==================
-*/
+/**
+ * @brief G_FreeMapEntityData
+ * @param[in,out] teamList
+ * @param[in,out] mEnt
+ * @return Next entity in the array
+ */
 mapEntityData_t *G_FreeMapEntityData(mapEntityData_Team_t *teamList, mapEntityData_t *mEnt)
 {
 	mapEntityData_t *ret = mEnt->next;
@@ -119,11 +118,11 @@ mapEntityData_t *G_FreeMapEntityData(mapEntityData_Team_t *teamList, mapEntityDa
 	return(ret);
 }
 
-/*
-===================
-G_AllocMapEntityData
-===================
-*/
+/**
+ * @brief G_AllocMapEntityData
+ * @param[in,out] teamList
+ * @return
+ */
 mapEntityData_t *G_AllocMapEntityData(mapEntityData_Team_t *teamList)
 {
 	mapEntityData_t *mEnt;
@@ -149,11 +148,12 @@ mapEntityData_t *G_AllocMapEntityData(mapEntityData_Team_t *teamList)
 	return mEnt;
 }
 
-/*
-===================
-G_FindMapEntityData
-===================
-*/
+/**
+ * @brief G_FindMapEntityData
+ * @param[in] teamList
+ * @param[in] entNum
+ * @return
+ */
 mapEntityData_t *G_FindMapEntityData(mapEntityData_Team_t *teamList, int entNum)
 {
 	mapEntityData_t *mEnt;
@@ -174,11 +174,14 @@ mapEntityData_t *G_FindMapEntityData(mapEntityData_Team_t *teamList, int entNum)
 	return NULL;
 }
 
-/*
-===============================
-G_FindMapEntityDataSingleClient
-===============================
-*/
+/**
+ * @brief G_FindMapEntityDataSingleClient
+ * @param[in] teamList
+ * @param[in] start
+ * @param[in] entNum
+ * @param[in] clientNum
+ * @return
+ */
 mapEntityData_t *G_FindMapEntityDataSingleClient(mapEntityData_Team_t *teamList, mapEntityData_t *start, int entNum, int clientNum)
 {
 	mapEntityData_t *mEnt;
@@ -217,7 +220,10 @@ mapEntityData_t *G_FindMapEntityDataSingleClient(mapEntityData_Team_t *teamList,
 
 ////////////////////////////////////////////////////////////////////
 
-// some culling bits
+/**
+ * @struct plane_t
+ * @brief Some culling bits
+ */
 typedef struct plane_s
 {
 	vec3_t normal;
@@ -226,11 +232,10 @@ typedef struct plane_s
 
 static plane_t frustum[4];
 
-/*
-========================
-G_SetupFrustum
-========================
-*/
+/**
+ * @brief G_SetupFrustum
+ * @param[in] ent
+ */
 void G_SetupFrustum(gentity_t *ent)
 {
 	float  xs, xc;
@@ -238,7 +243,7 @@ void G_SetupFrustum(gentity_t *ent)
 	vec3_t axis[3];
 	vec3_t vieworg;
 
-	ang = DEG2RAD(90) * 0.5f;
+	ang = (float)(DEG2RAD(90) * 0.5);
 	SinCos(ang, xs, xc);
 
 	AnglesToAxis(ent->client->ps.viewangles, axis);
@@ -269,6 +274,10 @@ void G_SetupFrustum(gentity_t *ent)
 #define BINOCULAR_ANGLE 10.0f
 #define BOT_BINOCULAR_ANGLE 60.0f
 
+/**
+ * @brief G_SetupFrustum_ForBinoculars
+ * @param[in] ent
+ */
 void G_SetupFrustum_ForBinoculars(gentity_t *ent)
 {
 	float  xs, xc;
@@ -277,7 +286,7 @@ void G_SetupFrustum_ForBinoculars(gentity_t *ent)
 	vec3_t vieworg;
 	float  baseAngle = (ent->r.svFlags & SVF_BOT) ? BOT_BINOCULAR_ANGLE : BINOCULAR_ANGLE;
 
-	ang = DEG2RAD(baseAngle) * 0.5;
+	ang = (float)(DEG2RAD(baseAngle) * 0.5);
 	SinCos(ang, xs, xc);
 
 	AnglesToAxis(ent->client->ps.viewangles, axis);
@@ -303,11 +312,12 @@ void G_SetupFrustum_ForBinoculars(gentity_t *ent)
 	frustum[3].dist = DotProduct(vieworg, frustum[3].normal);
 }
 
-/*
-========================
-G_CullPointAndRadius - returns true if not culled
-========================
-*/
+/**
+ * @brief G_CullPointAndRadius
+ * @param[in] pt
+ * @param[in] radius
+ * @return true if not culled
+ */
 static qboolean G_CullPointAndRadius(vec3_t pt, float radius)
 {
 	float dist = DotProduct(pt, frustum[0].normal) - frustum[0].dist;
@@ -338,6 +348,13 @@ static qboolean G_CullPointAndRadius(vec3_t pt, float radius)
 	return qtrue;
 }
 
+/**
+ * @brief G_VisibleFromBinoculars
+ * @param[in] viewer
+ * @param[in] ent
+ * @param[in,out] origin
+ * @return
+ */
 qboolean G_VisibleFromBinoculars(gentity_t *viewer, gentity_t *ent, vec3_t origin)
 {
 	vec3_t  vieworg;
@@ -379,6 +396,15 @@ qboolean G_VisibleFromBinoculars(gentity_t *viewer, gentity_t *ent, vec3_t origi
 	return qtrue;
 }
 
+/**
+ * @brief G_VisibleFromBinoculars_Box
+ * @param[in] viewer
+ * @param[in] ent
+ * @param[in,out] origin
+ * @param[in] mins
+ * @param[in] maxs
+ * @return
+ */
 qboolean G_VisibleFromBinoculars_Box(gentity_t *viewer, gentity_t *ent, vec3_t origin, vec3_t mins, vec3_t maxs)
 {
 	vec3_t  vieworg;
@@ -420,12 +446,19 @@ qboolean G_VisibleFromBinoculars_Box(gentity_t *viewer, gentity_t *ent, vec3_t o
 	return qtrue;
 }
 
+/**
+ * @brief G_ResetTeamMapData
+ */
 void G_ResetTeamMapData()
 {
 	G_InitMapEntityData(&mapEntityData[0]);
 	G_InitMapEntityData(&mapEntityData[1]);
 }
 
+/**
+ * @brief G_UpdateTeamMapData_Construct
+ * @param[in] ent
+ */
 void G_UpdateTeamMapData_Construct(gentity_t *ent)
 {
 	int                  num = ent - g_entities;
@@ -480,6 +513,10 @@ void G_UpdateTeamMapData_Construct(gentity_t *ent)
 	mEnt->yaw       = 0;
 }
 
+/**
+ * @brief G_UpdateTeamMapData_Tank
+ * @param[in] ent
+ */
 void G_UpdateTeamMapData_Tank(gentity_t *ent)
 {
 	int                  num       = ent - g_entities;
@@ -527,6 +564,10 @@ void G_UpdateTeamMapData_Tank(gentity_t *ent)
 	mEnt->yaw = 0;
 }
 
+/**
+ * @brief G_UpdateTeamMapData_Destruct
+ * @param[in] ent
+ */
 void G_UpdateTeamMapData_Destruct(gentity_t *ent)
 {
 	int                  num = ent - g_entities;
@@ -608,6 +649,12 @@ void G_UpdateTeamMapData_Destruct(gentity_t *ent)
 	}
 }
 
+/**
+ * @brief G_UpdateTeamMapData_Player
+ * @param[in] ent
+ * @param[in] forceAllied
+ * @param[in] forceAxis
+ */
 void G_UpdateTeamMapData_Player(gentity_t *ent, qboolean forceAllied, qboolean forceAxis)
 {
 	int                  num = ent - g_entities;
@@ -690,6 +737,13 @@ void G_UpdateTeamMapData_Player(gentity_t *ent, qboolean forceAllied, qboolean f
 	}
 }
 
+/**
+ * @brief G_UpdateTeamMapData_DisguisedPlayer
+ * @param[in] spotter
+ * @param[in] ent
+ * @param[in] forceAllied
+ * @param[in] forceAxis
+ */
 static void G_UpdateTeamMapData_DisguisedPlayer(gentity_t *spotter, gentity_t *ent, qboolean forceAllied, qboolean forceAxis)
 {
 	int                  num = ent - g_entities;
@@ -755,6 +809,10 @@ static void G_UpdateTeamMapData_DisguisedPlayer(gentity_t *spotter, gentity_t *e
 	}
 }
 
+/**
+ * @brief G_UpdateTeamMapData_LandMine
+ * @param[in] ent
+ */
 void G_UpdateTeamMapData_LandMine(gentity_t *ent)
 {
 	int                  num = ent - g_entities;
@@ -797,6 +855,10 @@ void G_UpdateTeamMapData_LandMine(gentity_t *ent)
 	mEnt->type      = ME_LANDMINE;
 }
 
+/**
+ * @brief G_UpdateTeamMapData_CommandmapMarker
+ * @param[in] ent
+ */
 void G_UpdateTeamMapData_CommandmapMarker(gentity_t *ent)
 {
 	if (!ent->parent)
@@ -811,8 +873,8 @@ void G_UpdateTeamMapData_CommandmapMarker(gentity_t *ent)
 
 	if (ent->parent->spawnflags & (ALLIED_OBJECTIVE | AXIS_OBJECTIVE))
 	{
-		int                  num = ent - g_entities;
-		mapEntityData_Team_t *teamList;
+		int                  num       = ent - g_entities;
+		mapEntityData_Team_t *teamList = NULL;
 		mapEntityData_t      *mEnt;
 
 		if (ent->parent->spawnflags & ALLIED_OBJECTIVE)
@@ -839,6 +901,10 @@ void G_UpdateTeamMapData_CommandmapMarker(gentity_t *ent)
 	}
 }
 
+/**
+ * @brief G_SendSpectatorMapEntityInfo
+ * @param[in] e
+ */
 void G_SendSpectatorMapEntityInfo(gentity_t *e)
 {
 	// special version, sends different set of ents - only the objectives, but also team info (string is split in two basically)
@@ -931,6 +997,10 @@ void G_SendSpectatorMapEntityInfo(gentity_t *e)
 	}
 }
 
+/**
+ * @brief G_SendMapEntityInfo
+ * @param[in] e
+ */
 void G_SendMapEntityInfo(gentity_t *e)
 {
 	mapEntityData_t      *mEnt;
@@ -1011,6 +1081,10 @@ void G_SendMapEntityInfo(gentity_t *e)
 	}
 }
 
+/**
+ * @brief G_PopupMessageForMines
+ * @param[in] player
+ */
 void G_PopupMessageForMines(gentity_t *player) // int sound
 {
 	gentity_t *pm;
@@ -1023,6 +1097,9 @@ void G_PopupMessageForMines(gentity_t *player) // int sound
 	//pm->s.loopSound   = sound;
 }
 
+/**
+ * @brief G_CheckSpottedLandMines
+ */
 void G_CheckSpottedLandMines(void)
 {
 	int       i, j;
@@ -1140,6 +1217,9 @@ void G_CheckSpottedLandMines(void)
 	}
 }
 
+/**
+ * @brief G_UpdateTeamMapData
+ */
 void G_UpdateTeamMapData(void)
 {
 	int             i, j;
