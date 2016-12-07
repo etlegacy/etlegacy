@@ -34,13 +34,21 @@
 
 #include "g_local.h"
 
-static intptr_t (QDECL *syscall)(intptr_t arg, ...) = (intptr_t (QDECL *)(intptr_t, ...)) - 1;
+static intptr_t(QDECL * syscall)(intptr_t arg, ...) = (intptr_t(QDECL *)(intptr_t, ...)) - 1;
 
-Q_EXPORT void dllEntry(intptr_t (QDECL *syscallptr)(intptr_t arg, ...))
+/**
+ * @brief dllEntry
+ */
+Q_EXPORT void dllEntry(intptr_t(QDECL * syscallptr)(intptr_t arg, ...))
 {
 	syscall = syscallptr;
 }
 
+/**
+ * @brief PASSFLOAT
+ * @param[in] x
+ * @return
+ */
 int PASSFLOAT(float x)
 {
 	floatint_t fi;
@@ -49,11 +57,19 @@ int PASSFLOAT(float x)
 	return fi.i;
 }
 
+/**
+ * @brief trap_Printf
+ * @param[in] fmt
+ */
 void trap_Printf(const char *fmt)
 {
 	syscall(G_PRINT, fmt);
 }
 
+/**
+ * @brief trap_Error
+ * @param[in] fmt
+ */
 void trap_Error(const char *fmt)
 {
 	syscall(G_ERROR, fmt);
@@ -61,96 +77,206 @@ void trap_Error(const char *fmt)
 	exit(1);
 }
 
+/**
+ * @brief trap_Milliseconds
+ * @return
+ */
 int trap_Milliseconds(void)
 {
 	return syscall(G_MILLISECONDS);
 }
+
+/**
+ * @brief trap_Argc
+ * @return
+ */
 int trap_Argc(void)
 {
 	return syscall(G_ARGC);
 }
 
+/**
+ * @brief trap_Argv
+ * @param[in] n
+ * @param[out] buffer
+ * @param[in] bufferLength
+ */
 void trap_Argv(int n, char *buffer, int bufferLength)
 {
 	syscall(G_ARGV, n, buffer, bufferLength);
 }
 
+/**
+ * @brief trap_FS_FOpenFile
+ * @param[in] qpath
+ * @param[in] f
+ * @param[in] mode
+ * @return
+ */
 int trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode)
 {
 	return syscall(G_FS_FOPEN_FILE, qpath, f, mode);
 }
 
+/**
+ * @brief trap_FS_Read
+ * @param[out] buffer
+ * @param[in] len
+ * @param[in] f
+ */
 void trap_FS_Read(void *buffer, int len, fileHandle_t f)
 {
 	syscall(G_FS_READ, buffer, len, f);
 }
 
+/**
+ * @brief trap_FS_Write
+ * @param[in] buffer
+ * @param[in] len
+ * @param[in] f
+ * @return
+ */
 int trap_FS_Write(const void *buffer, int len, fileHandle_t f)
 {
 	return syscall(G_FS_WRITE, buffer, len, f);
 }
 
+/**
+ * @brief trap_FS_Rename
+ * @param[in] from
+ * @param[in] to
+ * @return
+ */
 int trap_FS_Rename(const char *from, const char *to)
 {
 	return syscall(G_FS_RENAME, from, to);
 }
 
+/**
+ * @brief trap_FS_FCloseFile
+ * @param[in] f
+ */
 void trap_FS_FCloseFile(fileHandle_t f)
 {
 	syscall(G_FS_FCLOSE_FILE, f);
 }
 
+/**
+ * @brief trap_FS_GetFileList
+ * @param[in] path
+ * @param[in] extension
+ * @param[out] listbuf
+ * @param[in] bufsize
+ * @return
+ */
 int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize)
 {
 	return syscall(G_FS_GETFILELIST, path, extension, listbuf, bufsize);
 }
 
+/**
+ * @brief trap_SendConsoleCommand
+ * @param[in] exec_when
+ * @param[in] text
+ */
 void trap_SendConsoleCommand(int exec_when, const char *text)
 {
 	syscall(G_SEND_CONSOLE_COMMAND, exec_when, text);
 }
 
+/**
+ * @brief trap_Cvar_Register
+ * @param[in] cvar
+ * @param[in] var_name
+ * @param[in] value
+ * @param[in] flags
+ */
 void trap_Cvar_Register(vmCvar_t *cvar, const char *var_name, const char *value, int flags)
 {
 	syscall(G_CVAR_REGISTER, cvar, var_name, value, flags);
 }
 
+/**
+ * @brief trap_Cvar_Update
+ * @param[in] cvar
+ */
 void trap_Cvar_Update(vmCvar_t *cvar)
 {
 	syscall(G_CVAR_UPDATE, cvar);
 }
 
+/**
+ * @brief trap_Cvar_Set
+ * @param[in] var_name
+ * @param[in] value
+ */
 void trap_Cvar_Set(const char *var_name, const char *value)
 {
 	syscall(G_CVAR_SET, var_name, value);
 }
 
+/**
+ * @brief trap_Cvar_VariableIntegerValue
+ * @param[in] var_name
+ * @return
+ */
 int trap_Cvar_VariableIntegerValue(const char *var_name)
 {
 	return syscall(G_CVAR_VARIABLE_INTEGER_VALUE, var_name);
 }
 
+/**
+ * @brief trap_Cvar_VariableStringBuffer
+ * @param[in] var_name
+ * @param[out] buffer
+ * @param[in] bufsize
+ */
 void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize)
 {
 	syscall(G_CVAR_VARIABLE_STRING_BUFFER, var_name, buffer, bufsize);
 }
 
+/**
+ * @brief trap_Cvar_LatchedVariableStringBuffer
+ * @param[in] var_name
+ * @param[out] buffer
+ * @param[in] bufsize
+ */
 void trap_Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bufsize)
 {
 	syscall(G_CVAR_LATCHEDVARIABLESTRINGBUFFER, var_name, buffer, bufsize);
 }
 
+/**
+ * @brief trap_LocateGameData
+ * @param[in] gEnts
+ * @param[in] numGEntities
+ * @param[in] sizeofGEntity_t
+ * @param[in] clients
+ * @param[in] sizeofGClient
+ */
 void trap_LocateGameData(gentity_t *gEnts, int numGEntities, int sizeofGEntity_t,
                          playerState_t *clients, int sizeofGClient)
 {
 	syscall(G_LOCATE_GAME_DATA, gEnts, numGEntities, sizeofGEntity_t, clients, sizeofGClient);
 }
 
+/**
+ * @brief trap_DropClient
+ * @param[in] clientNum
+ * @param[in] reason
+ * @param[in] length
+ */
 void trap_DropClient(int clientNum, const char *reason, int length)
 {
 	syscall(G_DROP_CLIENT, clientNum, reason, length);
 }
 
+/**
+ * @brief trap_SendServerCommand
+ * @param[in] clientNum
+ * @param[in] text
+ */
 void trap_SendServerCommand(int clientNum, const char *text)
 {
 	// commands over 1022 chars will crash the client engine upon receipt,
@@ -164,135 +290,291 @@ void trap_SendServerCommand(int clientNum, const char *text)
 	syscall(G_SEND_SERVER_COMMAND, clientNum, text);
 }
 
+/**
+ * @brief trap_SetConfigstring
+ * @param[in] num
+ * @param[in] string
+ */
 void trap_SetConfigstring(int num, const char *string)
 {
 	syscall(G_SET_CONFIGSTRING, num, string);
 }
 
+/**
+ * @brief trap_GetConfigstring
+ * @param[in] num
+ * @param[out] buffer
+ * @param[in] bufferSize
+ */
 void trap_GetConfigstring(int num, char *buffer, int bufferSize)
 {
 	syscall(G_GET_CONFIGSTRING, num, buffer, bufferSize);
 }
 
+/**
+ * @brief trap_GetUserinfo
+ * @param[in] num
+ * @param[out] buffer
+ * @param[in] bufferSize
+ */
 void trap_GetUserinfo(int num, char *buffer, int bufferSize)
 {
 	syscall(G_GET_USERINFO, num, buffer, bufferSize);
 }
 
+/**
+ * @brief trap_SetUserinfo
+ * @param[in] num
+ * @param[in] buffer
+ */
 void trap_SetUserinfo(int num, const char *buffer)
 {
 	syscall(G_SET_USERINFO, num, buffer);
 }
 
+/**
+ * @brief trap_GetServerinfo
+ * @param[out] buffer
+ * @param[in] bufferSize
+ */
 void trap_GetServerinfo(char *buffer, int bufferSize)
 {
 	syscall(G_GET_SERVERINFO, buffer, bufferSize);
 }
 
+/**
+ * @brief trap_SetBrushModel
+ * @param[in] ent
+ * @param[in] name
+ */
 void trap_SetBrushModel(gentity_t *ent, const char *name)
 {
 	syscall(G_SET_BRUSH_MODEL, ent, name);
 }
 
+/**
+ * @brief trap_Trace
+ * @param[out] results
+ * @param[in] start
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] end
+ * @param[in] passEntityNum
+ * @param[in] contentmask
+ */
 void trap_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask)
 {
 	syscall(G_TRACE, results, start, mins, maxs, end, passEntityNum, contentmask);
 }
 
+/**
+ * @brief trap_TraceNoEnts
+ * @param[out] results
+ * @param[in] start
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] end
+ * @param passEntityNum - unused
+ * @param[in] contentmask
+ */
 void trap_TraceNoEnts(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask)
 {
 	syscall(G_TRACE, results, start, mins, maxs, end, -2, contentmask);
 }
 
+/**
+ * @brief trap_TraceCapsule
+ * @param[out] results
+ * @param[in] start
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] end
+ * @param[in] passEntityNum
+ * @param[in] contentmask
+ */
 void trap_TraceCapsule(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask)
 {
 	syscall(G_TRACECAPSULE, results, start, mins, maxs, end, passEntityNum, contentmask);
 }
 
+/**
+ * @brief trap_TraceCapsuleNoEnts
+ * @param[out] results
+ * @param[in] start
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] end
+ * @param passEntityNum - unused
+ * @param[in] contentmask
+ */
 void trap_TraceCapsuleNoEnts(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask)
 {
 	syscall(G_TRACECAPSULE, results, start, mins, maxs, end, -2, contentmask);
 }
 
+/**
+ * @brief trap_PointContents
+ * @param[in] point
+ * @param[in] passEntityNum
+ * @return
+ */
 int trap_PointContents(const vec3_t point, int passEntityNum)
 {
 	return syscall(G_POINT_CONTENTS, point, passEntityNum);
 }
 
-
+/**
+ * @brief trap_InPVS
+ * @param[in] p1
+ * @param[in] p2
+ * @return
+ */
 qboolean trap_InPVS(const vec3_t p1, const vec3_t p2)
 {
-	return syscall(G_IN_PVS, p1, p2);
+	return (qboolean)(syscall(G_IN_PVS, p1, p2));
 }
 
+/**
+ * @brief trap_InPVSIgnorePortals
+ * @param[in] p1
+ * @param[in] p2
+ * @return
+ */
 qboolean trap_InPVSIgnorePortals(const vec3_t p1, const vec3_t p2)
 {
-	return syscall(G_IN_PVS_IGNORE_PORTALS, p1, p2);
+	return (qboolean)(syscall(G_IN_PVS_IGNORE_PORTALS, p1, p2));
 }
 
+/**
+ * @brief trap_AdjustAreaPortalState
+ * @param[in] ent
+ * @param[in] open
+ */
 void trap_AdjustAreaPortalState(gentity_t *ent, qboolean open)
 {
 	syscall(G_ADJUST_AREA_PORTAL_STATE, ent, open);
 }
 
+/**
+ * @brief trap_AreasConnected
+ * @param[in] area1
+ * @param[in] area2
+ * @return
+ */
 qboolean trap_AreasConnected(int area1, int area2)
 {
-	return syscall(G_AREAS_CONNECTED, area1, area2);
+	return (qboolean)(syscall(G_AREAS_CONNECTED, area1, area2));
 }
 
+/**
+ * @brief trap_LinkEntity
+ * @param[in] ent
+ */
 void trap_LinkEntity(gentity_t *ent)
 {
 	syscall(G_LINKENTITY, ent);
 }
 
+/**
+ * @brief trap_UnlinkEntity
+ * @param[in] ent
+ */
 void trap_UnlinkEntity(gentity_t *ent)
 {
 	syscall(G_UNLINKENTITY, ent);
 }
 
-
+/**
+ * @brief trap_EntitiesInBox
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[out] list
+ * @param[in] maxcount
+ * @return
+ */
 int trap_EntitiesInBox(const vec3_t mins, const vec3_t maxs, int *list, int maxcount)
 {
 	return syscall(G_ENTITIES_IN_BOX, mins, maxs, list, maxcount);
 }
 
+/**
+ * @brief trap_EntityContact
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] ent
+ * @return
+ */
 qboolean trap_EntityContact(const vec3_t mins, const vec3_t maxs, const gentity_t *ent)
 {
-	return syscall(G_ENTITY_CONTACT, mins, maxs, ent);
+	return (qboolean)(syscall(G_ENTITY_CONTACT, mins, maxs, ent));
 }
 
 qboolean trap_EntityContactCapsule(const vec3_t mins, const vec3_t maxs, const gentity_t *ent)
 {
-	return syscall(G_ENTITY_CONTACTCAPSULE, mins, maxs, ent);
+	return (qboolean)(syscall(G_ENTITY_CONTACTCAPSULE, mins, maxs, ent));
 }
 
-// #ifdef FEATURE_OMNIBOT FIXME: precompiler macros for engine ?
+//#ifdef FEATURE_OMNIBOT FIXME: precompiler macros for engine ?
+
+/**
+ * @brief trap_BotAllocateClient
+ * @param[in] clientNum
+ * @return
+ */
 int trap_BotAllocateClient(int clientNum)
 {
 	return syscall(G_BOT_ALLOCATE_CLIENT, clientNum);
 }
 
+/**
+ * @brief trap_BotGetServerCommand
+ * @param[in] clientNum
+ * @param[out] message
+ * @param[in] size
+ * @return
+ */
 int trap_BotGetServerCommand(int clientNum, char *message, int size)
 {
 	return syscall(BOTLIB_GET_CONSOLE_MESSAGE, clientNum, message, size);
 }
 
+/**
+ * @brief trap_BotUserCommand
+ * @param[in] clientNum
+ * @param[in] ucmd
+ */
 void trap_BotUserCommand(int clientNum, usercmd_t *ucmd)
 {
 	syscall(BOTLIB_USER_COMMAND, clientNum, ucmd);
 }
 
+/**
+ * @brief trap_EA_Command
+ * @param[in] client
+ * @param[in] command
+ */
 void trap_EA_Command(int client, char *command)
 {
 	syscall(BOTLIB_EA_COMMAND, client, command);
 }
 // #endif
 
+/**
+ * @brief trap_GetSoundLength
+ * @param[in] sfxHandle
+ * @return
+ */
 int trap_GetSoundLength(sfxHandle_t sfxHandle)
 {
 	return syscall(G_GET_SOUND_LENGTH, sfxHandle);
 }
 
+/**
+ * @brief trap_RegisterSound
+ * @param[in] sample
+ * @param[in] compressed
+ * @return
+ */
 sfxHandle_t trap_RegisterSound(const char *sample, qboolean compressed)
 {
 	return syscall(G_REGISTERSOUND, sample, compressed);
@@ -309,6 +591,11 @@ static int       cmdNumber[MAX_CLIENTS];
 #endif // FAKELAG
 #endif // DEBUG
 
+/**
+ * @brief trap_GetUsercmd
+ * @param[in] clientNum
+ * @param[in] cmd
+ */
 void trap_GetUsercmd(int clientNum, usercmd_t *cmd)
 {
 	syscall(G_GET_USERCMD, clientNum, cmd);
@@ -361,67 +648,141 @@ void trap_GetUsercmd(int clientNum, usercmd_t *cmd)
 #endif // FAKELAG
 }
 
+/**
+ * @brief trap_GetEntityToken
+ * @param[out] buffer
+ * @param[in] bufferSize
+ * @return
+ */
 qboolean trap_GetEntityToken(char *buffer, int bufferSize)
 {
-	return syscall(G_GET_ENTITY_TOKEN, buffer, bufferSize);
+	return (qboolean)(syscall(G_GET_ENTITY_TOKEN, buffer, bufferSize));
 }
 
+/**
+ * @brief trap_DebugPolygonCreate
+ * @param[in] color
+ * @param[in] numPoints
+ * @param[in] points
+ * @return
+ */
 int trap_DebugPolygonCreate(int color, int numPoints, vec3_t *points)
 {
 	return syscall(G_DEBUG_POLYGON_CREATE, color, numPoints, points);
 }
 
+/**
+ * @brief trap_DebugPolygonDelete
+ * @param[in] id
+ */
 void trap_DebugPolygonDelete(int id)
 {
 	syscall(G_DEBUG_POLYGON_DELETE, id);
 }
 
+/**
+ * @brief trap_RealTime
+ * @param[in] qtime
+ * @return
+ */
 int trap_RealTime(qtime_t *qtime)
 {
 	return syscall(G_REAL_TIME, qtime);
 }
 
+/**
+ * @brief trap_SnapVector
+ * @param[in] v
+ */
 void trap_SnapVector(float *v)
 {
 	syscall(G_SNAPVECTOR, v);
 	return;
 }
 
+/**
+ * @brief trap_GetTag
+ *
+ * @param[in] clientNum
+ * @param[in] tagFileNumber
+ * @param[out] tagName
+ * @param[out] or
+ */
 qboolean trap_GetTag(int clientNum, int tagFileNumber, char *tagName, orientation_t *or)
 {
-	return syscall(G_GETTAG, clientNum, tagFileNumber, tagName, or);
+	return (qboolean)(syscall(G_GETTAG, clientNum, tagFileNumber, tagName, or));
 }
 
+/**
+ * @brief trap_LoadTag
+ * @param[in] filename
+ * @return
+ */
 qboolean trap_LoadTag(const char *filename)
 {
-	return syscall(G_REGISTERTAG, filename);
+	return (qboolean)(syscall(G_REGISTERTAG, filename));
 }
 
+/**
+ * @brief trap_PC_AddGlobalDefine
+ * @param define - unused
+ * @return
+ *
+ * @note Empty function return 0
+ */
 int trap_PC_AddGlobalDefine(char *define)
 {
 	return 0;
 }
 
+/**
+ * @brief trap_PC_LoadSource
+ * @param[in] filename
+ * @return
+ */
 int trap_PC_LoadSource(const char *filename)
 {
 	return syscall(BOTLIB_PC_LOAD_SOURCE, filename);
 }
 
+/**
+ * @brief trap_PC_FreeSource
+ * @param[in] handle
+ * @return
+ */
 int trap_PC_FreeSource(int handle)
 {
 	return syscall(BOTLIB_PC_FREE_SOURCE, handle);
 }
 
+/**
+ * @brief trap_PC_ReadToken
+ * @param[in] handle
+ * @param[out] pc_token
+ * @return
+ */
 int trap_PC_ReadToken(int handle, pc_token_t *pc_token)
 {
 	return syscall(BOTLIB_PC_READ_TOKEN, handle, pc_token);
 }
 
+/**
+ * @brief trap_PC_SourceFileAndLine
+ * @param[in] handle
+ * @param[in] filename
+ * @param[in] line
+ * @return
+ */
 int trap_PC_SourceFileAndLine(int handle, char *filename, int *line)
 {
 	return syscall(BOTLIB_PC_SOURCE_FILE_AND_LINE, handle, filename, line);
 }
 
+/**
+ * @brief trap_PC_UnReadToken
+ * @param[in] handle
+ * @return
+ */
 int trap_PC_UnReadToken(int handle)
 {
 	return syscall(BOTLIB_PC_UNREAD_TOKEN, handle);
@@ -436,10 +797,15 @@ int trap_PC_UnReadToken(int handle)
  */
 qboolean trap_SendMessage(int clientNum, char *buf, int buflen)
 {
-	return syscall(G_SENDMESSAGE, clientNum, buf, buflen);
+	return (qboolean)(syscall(G_SENDMESSAGE, clientNum, buf, buflen));
 }
 
+/**
+ * @brief trap_MessageStatus
+ * @param[in] clientNum
+ * @return
+ */
 messageStatus_t trap_MessageStatus(int clientNum)
 {
-	return syscall(G_MESSAGESTATUS, clientNum);
+	return (messageStatus_t)(syscall(G_MESSAGESTATUS, clientNum));
 }

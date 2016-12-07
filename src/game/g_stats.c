@@ -38,6 +38,11 @@
 #include "g_lua.h"
 #endif
 
+/**
+ * @brief G_LogDeath
+ * @param[in,out] ent
+ * @param[in] weap
+ */
 void G_LogDeath(gentity_t *ent, weapon_t weap)
 {
 	if (!ent->client)
@@ -48,6 +53,11 @@ void G_LogDeath(gentity_t *ent, weapon_t weap)
 	ent->client->pers.playerStats.weaponStats[weap].killedby++;
 }
 
+/**
+ * @brief G_LogKill
+ * @param[in,out] ent
+ * @param[in] weap
+ */
 void G_LogKill(gentity_t *ent, weapon_t weap)
 {
 	if (!ent->client)
@@ -58,6 +68,11 @@ void G_LogKill(gentity_t *ent, weapon_t weap)
 	ent->client->pers.playerStats.weaponStats[weap].kills++;
 }
 
+/**
+ * @brief G_LogTeamKill
+ * @param[in,out] ent
+ * @param[in] weap
+ */
 void G_LogTeamKill(gentity_t *ent, weapon_t weap)
 {
 	if (!ent->client)
@@ -68,6 +83,11 @@ void G_LogTeamKill(gentity_t *ent, weapon_t weap)
 	ent->client->pers.playerStats.weaponStats[weap].teamkills++;
 }
 
+/**
+ * @brief G_LogRegionHit
+ * @param[in,out] ent
+ * @param[in] hr
+ */
 void G_LogRegionHit(gentity_t *ent, hitRegion_t hr)
 {
 	if (!ent->client)
@@ -77,6 +97,10 @@ void G_LogRegionHit(gentity_t *ent, hitRegion_t hr)
 	ent->client->pers.playerStats.hitRegions[hr]++;
 }
 
+/**
+ * @brief G_PrintAccuracyLog
+ * @param[in] ent
+ */
 void G_PrintAccuracyLog(gentity_t *ent)
 {
 	int  i;
@@ -115,6 +139,10 @@ void G_PrintAccuracyLog(gentity_t *ent)
 	trap_SendServerCommand(ent - g_entities, buffer);
 }
 
+/**
+ * @brief G_SetPlayerScore
+ * @param[in,out] client
+ */
 void G_SetPlayerScore(gclient_t *client)
 {
 	int i;
@@ -125,6 +153,11 @@ void G_SetPlayerScore(gclient_t *client)
 	}
 }
 
+/**
+ * @brief G_SetPlayerSkill
+ * @param[in,out] client
+ * @param[in] skill
+ */
 void G_SetPlayerSkill(gclient_t *client, skillType_t skill)
 {
 	int i;
@@ -151,7 +184,11 @@ void G_SetPlayerSkill(gclient_t *client, skillType_t skill)
 
 extern qboolean AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammoclip, qboolean setcurrent);
 
-// Local func to actual do skill upgrade, used by both MP skill system, and SP scripted skill system
+/**
+ * @brief Local func to actual do skill upgrade, used by both MP skill system, and SP scripted skill system
+ * @param[in,out] ent
+ * @param[in] skill
+ */
 void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 {
 	int i;
@@ -222,6 +259,12 @@ void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 	}
 }
 
+/**
+ * @brief G_LoseSkillPoints
+ * @param[in,out] ent
+ * @param[in] skill
+ * @param[in] points
+ */
 void G_LoseSkillPoints(gentity_t *ent, skillType_t skill, float points)
 {
 	int   oldskill;
@@ -260,12 +303,16 @@ void G_LoseSkillPoints(gentity_t *ent, skillType_t skill, float points)
 		ent->client->sess.skillpoints[skill] = skillLevels[skill][oldskill];
 	}
 
-	G_Printf("%s ^7just lost %.0f skill points for skill %s\n", ent->client->pers.netname, oldskillpoints - ent->client->sess.skillpoints[skill], skillNames[skill]);
+	G_Printf("%s ^7just lost %.0f skill points for skill %s\n", ent->client->pers.netname, (double)(oldskillpoints - ent->client->sess.skillpoints[skill]), skillNames[skill]);
 
 	level.teamScores[ent->client->ps.persistant[PERS_TEAM]]        -= oldskillpoints - ent->client->sess.skillpoints[skill];
 	level.teamXP[skill][ent->client->sess.sessionTeam - TEAM_AXIS] -= oldskillpoints - ent->client->sess.skillpoints[skill];
 }
 
+/**
+ * @brief G_ResetXP
+ * @param[in,out] ent
+ */
 void G_ResetXP(gentity_t *ent)
 {
 	int i = 0;
@@ -331,6 +378,12 @@ void G_ResetXP(gentity_t *ent)
 	ClientUserinfoChanged(ent - g_entities);
 }
 
+/**
+ * @brief G_AddSkillPoints
+ * @param[in,out] ent
+ * @param[in] skill
+ * @param[in] points
+ */
 void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points)
 {
 	int oldskill;
@@ -376,6 +429,10 @@ void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points)
 
 /**
  * @brief Loose skill for evil tkers :E
+ * @param[in] tker
+ * @param[in] mod
+ * @param hr - unused
+ * @param splash - unused
  */
 void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, qboolean splash)
 {
@@ -465,6 +522,13 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 	}
 }
 
+/**
+ * @brief G_AddKillSkillPoints
+ * @param[in] attacker
+ * @param[in] mod
+ * @param[in] hr
+ * @param[in] splash
+ */
 void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t hr, qboolean splash)
 {
 	if (!attacker->client)
@@ -612,6 +676,12 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
 	}
 }
 
+/**
+ * @brief G_AddKillSkillPointsForDestruction
+ * @param[in] attacker
+ * @param[in] mod
+ * @param[in] constructibleStats
+ */
 void G_AddKillSkillPointsForDestruction(gentity_t *attacker, meansOfDeath_t mod, g_constructible_stats_t *constructibleStats)
 {
 	switch (mod)
@@ -653,6 +723,9 @@ void G_AddKillSkillPointsForDestruction(gentity_t *attacker, meansOfDeath_t mod,
 
 static fileHandle_t skillDebugLog = -1;
 
+/**
+ * @brief G_DebugOpenSkillLog
+ */
 void G_DebugOpenSkillLog(void)
 {
 	vmCvar_t mapname;
@@ -681,6 +754,9 @@ void G_DebugOpenSkillLog(void)
 	trap_FS_Write(s, strlen(s), skillDebugLog);
 }
 
+/**
+ * @brief G_DebugCloseSkillLog
+ */
 void G_DebugCloseSkillLog(void)
 {
 	qtime_t ct;
@@ -700,6 +776,11 @@ void G_DebugCloseSkillLog(void)
 	trap_FS_FCloseFile(skillDebugLog);
 }
 
+/**
+ * @brief G_DebugAddSkillLevel
+ * @param[in] ent
+ * @param[in] skill
+ */
 void G_DebugAddSkillLevel(gentity_t *ent, skillType_t skill)
 {
 	qtime_t ct;
@@ -723,6 +804,13 @@ void G_DebugAddSkillLevel(gentity_t *ent, skillType_t skill)
 	}
 }
 
+/**
+ * @brief G_DebugAddSkillPoints
+ * @param[in] ent
+ * @param[in] skill
+ * @param[in] points
+ * @param[in] reason
+ */
 void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, const char *reason)
 {
 	qtime_t ct;
@@ -746,16 +834,18 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 	}
 }
 
-// - send name, team and value when there is a winner - else empty string
-// and TEAM_FREE = 0 (client structure is only used for awards!)
-// - connectedClients have a team but keep the check for TEAM_FREE
-// ... we'll never know for sure, connectedClients are determined in CalculateRanks
+/**
+ * @brief - send name, team and value when there is a winner - else empty string
+ * and TEAM_FREE = 0 (client structure is only used for awards!)
+ * - connectedClients have a team but keep the check for TEAM_FREE
+ * ... we'll never know for sure, connectedClients are determined in CalculateRanks
+ */
 void G_BuildEndgameStats(void)
 {
 	char      buffer[1024];
 	int       i, j;
-	gclient_t *best = NULL;
-	int       bestClientNum;
+	gclient_t *best         = NULL;
+	int       bestClientNum = -1;
 	float     mapXP, bestMapXP = 0.f;
 
 	G_CalcClientAccuracies();
@@ -994,7 +1084,7 @@ void G_BuildEndgameStats(void)
 	if (best)
 	{
 		best->hasaward = qtrue;
-		Q_strcat(buffer, 1024, va("%i %.1f %i ", bestClientNum, best->acc < 100.f ? best->acc : 100.f, best->sess.sessionTeam));
+		Q_strcat(buffer, 1024, va("%i %.1f %i ", bestClientNum, best->acc < 100.f ? (double)best->acc : 100.0, best->sess.sessionTeam));
 	}
 	else
 	{
@@ -1024,7 +1114,7 @@ void G_BuildEndgameStats(void)
 	if (best)
 	{
 		best->hasaward = qtrue;
-		Q_strcat(buffer, 1024, va("%i %.1f %i ", bestClientNum, best->hspct < 100.f ? best->hspct : 100.f, best->sess.sessionTeam));
+		Q_strcat(buffer, 1024, va("%i %.1f %i ", bestClientNum, best->hspct < 100.f ? (double)best->hspct : 100.0, best->sess.sessionTeam));
 	}
 	else
 	{
@@ -1054,7 +1144,7 @@ void G_BuildEndgameStats(void)
 	if (best)
 	{
 		best->hasaward = qtrue;
-		Q_strcat(buffer, 1024, va("%i %f %i ", bestClientNum, MIN(100 * best->sess.time_played / (float)(level.time - best->pers.enterTime), 100.f), best->sess.sessionTeam));
+		Q_strcat(buffer, 1024, va("%i %f %i ", bestClientNum, MIN(100.0 * best->sess.time_played / (double)(level.time - best->pers.enterTime), 100.0), best->sess.sessionTeam));
 	}
 	else
 	{

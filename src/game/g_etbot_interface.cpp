@@ -597,7 +597,7 @@ int Bot_PlayerClassGameToBot(int playerClass)
 	}
 }
 
-static int _weaponBotToGame(int weapon)
+static weapon_t _weaponBotToGame(int weapon)
 {
 	switch (weapon)
 	{
@@ -1286,7 +1286,7 @@ static int _choosePriWeap(gentity_t *bot, int playerClass, int team)
 	while (G_IsWeaponDisabled(bot, (weapon_t)_weaponBotToGame(iSelected), bot->client->sess.sessionTeam, qtrue));
 #else
 	}
-	while (G_IsWeaponDisabled(bot, (weapon_t)_weaponBotToGame(iSelected)));
+	while (G_IsWeaponDisabled(bot, _weaponBotToGame(iSelected)));
 #endif
 
 	return iSelected;
@@ -1533,7 +1533,7 @@ static int _chooseSecWeap(gentity_t *bot, int playerClass, int team)
 	while (G_IsWeaponDisabled(bot, (weapon_t)_weaponBotToGame(iSelected), bot->client->sess.sessionTeam, qtrue));
 #else
 	}
-	while (G_IsWeaponDisabled(bot, (weapon_t)_weaponBotToGame(iSelected)));
+	while (G_IsWeaponDisabled(bot, _weaponBotToGame(iSelected)));
 #endif // ETPUB_VERSION
 #endif // NOQUARTER
 
@@ -2284,13 +2284,13 @@ public:
 				bot->client->sess.latchPlayerWeapon2 = 0;
 			}
 #else
-			if (G_IsWeaponDisabled(bot, (weapon_t)bot->client->sess.latchPlayerWeapon))
+			if (G_IsWeaponDisabled(bot, bot->client->sess.latchPlayerWeapon))
 			{
-				bot->client->sess.latchPlayerWeapon = 0;
+				bot->client->sess.latchPlayerWeapon = WP_NONE;
 			}
-			if (G_IsWeaponDisabled(bot, (weapon_t)bot->client->sess.latchPlayerWeapon2))
+			if (G_IsWeaponDisabled(bot, bot->client->sess.latchPlayerWeapon2))
 			{
-				bot->client->sess.latchPlayerWeapon2 = 0;
+				bot->client->sess.latchPlayerWeapon2 = WP_NONE;
 			}
 #endif
 		}
@@ -2460,13 +2460,13 @@ public:
 				bot->client->sess.latchPlayerWeapon2 = 0;
 			}
 #else
-			if (G_IsWeaponDisabled(bot, (weapon_t)bot->client->sess.latchPlayerWeapon))
+			if (G_IsWeaponDisabled(bot, bot->client->sess.latchPlayerWeapon))
 			{
-				bot->client->sess.latchPlayerWeapon = 0;
+				bot->client->sess.latchPlayerWeapon = WP_NONE;
 			}
-			if (G_IsWeaponDisabled(bot, (weapon_t)bot->client->sess.latchPlayerWeapon2))
+			if (G_IsWeaponDisabled(bot, bot->client->sess.latchPlayerWeapon2))
 			{
-				bot->client->sess.latchPlayerWeapon2 = 0;
+				bot->client->sess.latchPlayerWeapon2 = WP_NONE;
 			}
 #endif
 		}

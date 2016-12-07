@@ -2046,9 +2046,9 @@ void G_SetClientWeapons(gentity_t *ent, weapon_t w1, weapon_t w2, qboolean updat
 	}
 	else
 	{
-		if (ent->client->sess.latchPlayerWeapon != 0)
+		if (ent->client->sess.latchPlayerWeapon != WP_NONE)
 		{
-			ent->client->sess.latchPlayerWeapon = 0;
+			ent->client->sess.latchPlayerWeapon = WP_NONE;
 			changed                             = qtrue;
 		}
 	}

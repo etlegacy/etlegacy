@@ -389,8 +389,8 @@ void G_InitSessionData(gclient_t *client, const char *userinfo)
     sess->spectatorTime = level.time;
 
     sess->latchPlayerType = sess->playerType = 0;
-    sess->latchPlayerWeapon = sess->playerWeapon = 0;
-    sess->latchPlayerWeapon2 = sess->playerWeapon2 = 0;
+    sess->latchPlayerWeapon = sess->playerWeapon = WP_NONE;
+    sess->latchPlayerWeapon2 = sess->playerWeapon2 = WP_NONE;
 
     sess->spawnObjectiveIndex = 0;
 

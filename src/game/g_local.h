@@ -553,12 +553,12 @@ typedef struct
 	spectatorState_t spectatorState;
 	int spectatorClient;            // for chasecam and follow mode
 	int playerType;                 // for GT_WOLF
-	int playerWeapon;               // for GT_WOLF
-	int playerWeapon2;              // secondary weapon
+	weapon_t playerWeapon;          // for GT_WOLF
+	weapon_t playerWeapon2;         // secondary weapon
 	int spawnObjectiveIndex;        // index of objective to spawn nearest to (returned from UI)
 	int latchPlayerType;            // for GT_WOLF not archived
-	int latchPlayerWeapon;          // for GT_WOLF not archived
-	int latchPlayerWeapon2;         // secondary weapon
+	weapon_t latchPlayerWeapon;     // for GT_WOLF not archived
+	weapon_t latchPlayerWeapon2;    // secondary weapon
 	int ignoreClients[MAX_CLIENTS / (sizeof(int) * 8)];
 	qboolean muted;
 	float skillpoints[SK_NUM_SKILLS];           // skillpoints
@@ -1453,7 +1453,7 @@ void G_ProcessIPBans(void);
 qboolean G_FilterIPBanPacket(char *from);
 qboolean G_FilterMaxLivesPacket(char *from);
 qboolean G_FilterMaxLivesIPPacket(char *from);
-void AddMaxLivesGUID(char *str);
+void AddMaxLivesGUID(const char *str);
 void AddMaxLivesBan(const char *str);
 void ClearMaxLivesBans(void);
 void AddIPBan(const char *str);
@@ -2417,18 +2417,18 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 #define TARGET_PUSH_BOUNCEPAD           1
 
 // func_door_rotating spawnflags
-#define DOOR_ROTATING_TOGGLE			2
-#define DOOR_ROTATING_X_AXIS			4
-#define DOOR_ROTATING_Y_AXIS			8
-#define DOOR_ROTATING_REVERSE			16
-#define DOOR_ROTATING_FORCE				32
-#define DOOR_ROTATING_STAYOPEN			64
+#define DOOR_ROTATING_TOGGLE            2
+#define DOOR_ROTATING_X_AXIS            4
+#define DOOR_ROTATING_Y_AXIS            8
+#define DOOR_ROTATING_REVERSE           16
+#define DOOR_ROTATING_FORCE             32
+#define DOOR_ROTATING_STAYOPEN          64
 
 // func_door spawnflags
-#define DOOR_START_OPEN					1
-#define DOOR_TOGGLE						2
-#define DOOR_CRUSHER					4
-#define DOOR_TOUCH						8
+#define DOOR_START_OPEN                 1
+#define DOOR_TOGGLE                     2
+#define DOOR_CRUSHER                    4
+#define DOOR_TOUCH                      8
 
 // Spawnflags end
 

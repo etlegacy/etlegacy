@@ -97,6 +97,12 @@ static ipFilterList_t ipMaxLivesFilters;
 static ipGUID_t guidMaxLivesFilters[MAX_IPFILTERS];
 static int      numMaxLivesFilters = 0;
 
+/**
+ * @brief StringToFilter
+ * @param[in,out] s
+ * @param[out] f
+ * @return
+ */
 qboolean StringToFilter(const char *s, ipFilter_t *f)
 {
 	char num[128];
@@ -150,6 +156,10 @@ qboolean StringToFilter(const char *s, ipFilter_t *f)
 	return qtrue;
 }
 
+/**
+ * @brief UpdateIPBans
+ * @param[in] ipFilterList
+ */
 static void UpdateIPBans(ipFilterList_t *ipFilterList)
 {
 	byte b[4];
@@ -195,6 +205,9 @@ static void UpdateIPBans(ipFilterList_t *ipFilterList)
 	trap_Cvar_Set(ipFilterList->cvarIPList, iplist_final);
 }
 
+/**
+ * @brief PrintMaxLivesGUID
+ */
 void PrintMaxLivesGUID(void)
 {
 	int i;
@@ -206,6 +219,12 @@ void PrintMaxLivesGUID(void)
 	G_LogPrintf("--- End of list\n");
 }
 
+/**
+ * @brief G_FilterPacket
+ * @param[in] ipFilterList
+ * @param[in] from
+ * @return
+ */
 qboolean G_FilterPacket(ipFilterList_t *ipFilterList, char *from)
 {
 	int      i = 0;
@@ -225,7 +244,8 @@ qboolean G_FilterPacket(ipFilterList_t *ipFilterList, char *from)
 		{
 			break;
 		}
-		i++, p++;
+		i++;
+		p++;
 	}
 
 	in = *(unsigned *)m;
@@ -241,11 +261,21 @@ qboolean G_FilterPacket(ipFilterList_t *ipFilterList, char *from)
 	return g_filterBan.integer == 0;
 }
 
+/**
+ * @brief G_FilterIPBanPacket
+ * @param[in] from
+ * @return
+ */
 qboolean G_FilterIPBanPacket(char *from)
 {
 	return(G_FilterPacket(&ipFilters, from));
 }
 
+/**
+ * @brief G_FilterMaxLivesIPPacket
+ * @param[in] from
+ * @return
+ */
 qboolean G_FilterMaxLivesIPPacket(char *from)
 {
 	return(G_FilterPacket(&ipMaxLivesFilters, from));
@@ -253,6 +283,8 @@ qboolean G_FilterMaxLivesIPPacket(char *from)
 
 /**
  * @brief Check to see if the user is trying to sneak back in with g_enforcemaxlives enabled
+ *
+ * @param[in] from
  */
 qboolean G_FilterMaxLivesPacket(char *from)
 {
@@ -268,6 +300,11 @@ qboolean G_FilterMaxLivesPacket(char *from)
 	return 0;
 }
 
+/**
+ * @brief AddIP
+ * @param[in] ipFilterList
+ * @param[in] str
+ */
 void AddIP(ipFilterList_t *ipFilterList, const char *str)
 {
 	int i;
@@ -298,21 +335,31 @@ void AddIP(ipFilterList_t *ipFilterList, const char *str)
 	UpdateIPBans(ipFilterList);
 }
 
+/**
+ * @brief AddIPBan
+ * @param[in] str
+ */
 void AddIPBan(const char *str)
 {
 	AddIP(&ipFilters, str);
 }
 
+/**
+ * @brief AddMaxLivesBan
+ * @param[in] str
+ */
 void AddMaxLivesBan(const char *str)
 {
 	AddIP(&ipMaxLivesFilters, str);
 }
 
 /**
- * @brief with g_enforcemaxlives enabled, this adds a client GUID to a list
+ * @brief >ith g_enforcemaxlives enabled, this adds a client GUID to a list
  * that prevents them from quitting and reconnecting
+ *
+ * @param[in] str
  */
-void AddMaxLivesGUID(char *str)
+void AddMaxLivesGUID(const char *str)
 {
 	if (numMaxLivesFilters == MAX_IPFILTERS)
 	{
@@ -323,6 +370,9 @@ void AddMaxLivesGUID(char *str)
 	numMaxLivesFilters++;
 }
 
+/**
+ * @brief G_ProcessIPBans
+ */
 void G_ProcessIPBans(void)
 {
 	char *s, *t;
@@ -350,6 +400,9 @@ void G_ProcessIPBans(void)
 	}
 }
 
+/**
+ * @brief Svcmd_AddIP_f
+ */
 void Svcmd_AddIP_f(void)
 {
 	char str[MAX_TOKEN_CHARS];
@@ -365,6 +418,9 @@ void Svcmd_AddIP_f(void)
 	AddIP(&ipFilters, str);
 }
 
+/**
+ * @brief Svcmd_RemoveIP_f
+ */
 void Svcmd_RemoveIP_f(void)
 {
 	ipFilter_t f;
@@ -417,7 +473,9 @@ void ClearMaxLivesBans()
 	Q_strncpyz(ipMaxLivesFilters.cvarIPList, "g_maxlivesbanIPs", sizeof(ipMaxLivesFilters.cvarIPList));
 }
 
-// names of enume entityType_t for Svcmd_EntityList_f
+/**
+ * @var names of enum entityType_t for Svcmd_EntityList_f
+ */
 char *enttypenames[] =
 {
 	"ET_GENERAL",
@@ -532,7 +590,7 @@ void Svcmd_EntityList_f(void)
 		// print the ents which are in use
 		//Q_strcat(line, sizeof(line), va("^7%4i: ", e));
 
-		
+
 		if (check->neverFree)
 		{
 			Com_sprintf(line, 128, "^1%4i: ", e);
@@ -541,7 +599,7 @@ void Svcmd_EntityList_f(void)
 		{
 			Com_sprintf(line, 128, "^7%4i: ", e);
 		}
-		
+
 		if (check->s.eType <= ET_EVENTS) // print events
 		{
 			Q_strcat(line, sizeof(line), va("^3%-27s^7", enttypenames[check->s.eType]));
@@ -563,10 +621,16 @@ void Svcmd_EntityList_f(void)
 	G_Printf("^2%4i: num_entities - %4i: entities not in use\n", level.num_entities, entsFree);
 }
 
-// note: if a player is called '3' and there are only 2 players
-// on the server (clientnum 0 and 1)
-// this function will say 'client 3 is not connected'
-// solution: first check for usernames, if none is found, check for slotnumbers
+/**
+ * @brief ClientForString
+ * @param[in] s
+ * @return
+ *
+ * @note If a player is called '3' and there are only 2 players
+ * on the server (clientnum 0 and 1)
+ * this function will say 'client 3 is not connected'
+ * solution: first check for usernames, if none is found, check for slotnumbers
+ */
 gclient_t *ClientForString(const char *s)
 {
 	gclient_t *cl;
@@ -611,14 +675,23 @@ gclient_t *ClientForString(const char *s)
 	return NULL;
 }
 
+/**
+ * @brief G_Is_SV_Running
+ * @return
+ */
 static qboolean G_Is_SV_Running(void)
 {
 	char cvar[MAX_TOKEN_CHARS];
 
 	trap_Cvar_VariableStringBuffer("sv_running", cvar, sizeof(cvar));
-	return (qboolean)atoi(cvar);
+	return (qboolean)(atoi(cvar));
 }
 
+/**
+ * @brief G_GetPlayerByNum
+ * @param[in] clientNum
+ * @return
+ */
 gclient_t *G_GetPlayerByNum(int clientNum)
 {
 	gclient_t *cl;
@@ -652,7 +725,12 @@ gclient_t *G_GetPlayerByNum(int clientNum)
 	return cl;
 }
 
-gclient_t *G_GetPlayerByName(char *name)
+/**
+ * @brief G_GetPlayerByName
+ * @param[in] name
+ * @return
+ */
+gclient_t *G_GetPlayerByName(const char *name)
 {
 	int       i;
 	gclient_t *cl;
@@ -693,7 +771,8 @@ gclient_t *G_GetPlayerByName(char *name)
 }
 
 /**
- * <code>forceteam \<player\> \<team\></code>
+ * @brief Svcmd_ForceTeam_f
+ * @details <code>forceteam \<player\> \<team\></code>
  */
 void Svcmd_ForceTeam_f(void)
 {
@@ -744,7 +823,9 @@ void Svcmd_StartMatch_f(void)
 }
 
 /**
- * @brief multiuse now for both map restarts and total match resets
+ * @brief Multi-use now for both map restarts and total match resets
+ * @param[in] fDoReset
+ * @param[in] fDoRestart
  */
 void Svcmd_ResetMatch_f(qboolean fDoReset, qboolean fDoRestart)
 {
@@ -790,7 +871,7 @@ void Svcmd_SwapTeams_f(void)
 
 /**
  * @brief randomly places players on teams
- * @param restart
+ * @param[in] restart
  */
 void Svcmd_ShuffleTeams_f(qboolean restart)
 {
@@ -814,6 +895,9 @@ void Svcmd_ShuffleTeams_f(qboolean restart)
 	}
 }
 
+/**
+ * @brief Svcmd_Campaign_f
+ */
 void Svcmd_Campaign_f(void)
 {
 	char             str[MAX_TOKEN_CHARS];
@@ -850,6 +934,9 @@ void Svcmd_Campaign_f(void)
 	trap_SendConsoleCommand(EXEC_APPEND, va("map %s\n", campaign->mapnames[0]));
 }
 
+/**
+ * @brief Svcmd_ListCampaigns_f
+ */
 void Svcmd_ListCampaigns_f(void)
 {
 	int i, mpCampaigns = 0;
@@ -883,9 +970,13 @@ void Svcmd_ListCampaigns_f(void)
 
 // modified from maddoc sp func
 extern void ReviveEntity(gentity_t *ent, gentity_t *traceEnt);
-extern int FindClientByName(char *name);
+extern int FindClientByName(const char *name);
 
-void Svcmd_RevivePlayer(char *name)
+/**
+ * @brief Svcmd_RevivePlayer
+ * @param[in] name
+ */
+void Svcmd_RevivePlayer(const char *name)
 {
 	int       clientNum;
 	gentity_t *player;
@@ -1058,10 +1149,11 @@ static void Svcmd_Die(void)
 
 #ifdef LEGACY_DEBUG
 extern animStringItem_t animEventTypesStr[];
+
 /**
  * @brief Test anim events
- * 
- * @note script anim events are not first person view set cg_thirdperson 1
+ *
+ * @note Script anim events are not first person view set cg_thirdperson 1
  */
 static void Svcmd_PlayerAnimEvent(void)
 {
@@ -1097,7 +1189,7 @@ static void Svcmd_PlayerAnimEvent(void)
 			{
 				continue;
 			}
-			BG_AnimScriptEvent(&vic->client->ps, vic->client->pers.character->animModelInfo, (scriptAnimEventTypes_t)atoi(anim), qfalse, qtrue);
+			BG_AnimScriptEvent(&vic->client->ps, vic->client->pers.character->animModelInfo, (scriptAnimEventTypes_t)(atoi(anim)), qfalse, qtrue);
 			count++;
 		}
 
@@ -1128,7 +1220,7 @@ static void Svcmd_PlayerAnimEvent(void)
 		return;
 	}
 
-	BG_AnimScriptEvent(&vic->client->ps, vic->client->pers.character->animModelInfo, (scriptAnimEventTypes_t)atoi(anim), qfalse, qtrue);
+	BG_AnimScriptEvent(&vic->client->ps, vic->client->pers.character->animModelInfo, (scriptAnimEventTypes_t)(atoi(anim)), qfalse, qtrue);
 
 	CPx(-1, (va("cp \"^7%s^7 anim event %s.\"", vic->client->pers.netname, animEventTypesStr[atoi(anim)].string)));
 
@@ -1382,10 +1474,14 @@ static void Svcmd_Burn(void)
 	return;
 }
 
-// FIXME/note:
-// beside the pip command EV_SPARKS and EV_SPARKS_ELECTRIC
-// aren't used for real ... we may delete these events
-// EV_SPARKS_ELECTRIC doesn't seem to work anyway
+/**
+ * @brief G_Pip
+ * @param[in] vic
+ *
+ * @todo FIXME: beside the pip command EV_SPARKS and EV_SPARKS_ELECTRIC
+ * aren't used for real ... we may delete these events
+ * EV_SPARKS_ELECTRIC doesn't seem to work anyway
+ */
 static void G_Pip(gentity_t *vic)
 {
 	gentity_t *pip = G_TempEntity(vic->r.currentOrigin, EV_SPARKS);
@@ -1477,6 +1573,10 @@ static void Svcmd_Pip(void)
 	return;
 }
 
+/**
+ * @brief Svcmd_Fling
+ * @param[in] flingType
+ */
 static void Svcmd_Fling(int flingType) // 0 = fling, 1 = throw, 2 = launch
 {
 	int       pids[MAX_CLIENTS];
@@ -1567,8 +1667,8 @@ static void Svcmd_Fling(int flingType) // 0 = fling, 1 = throw, 2 = launch
 	return;
 }
 
-// change into qfalse if you want to use the qagame banning system
-// which makes it possible to unban IP addresses
+///> change into qfalse if you want to use the qagame banning system
+///> which makes it possible to unban IP addresses
 #define USE_ENGINE_BANLIST qtrue
 
 /**
@@ -1780,6 +1880,9 @@ static void Svcmd_KickNum_f(void)
 	}
 }
 
+/**
+ * @brief G_UpdateSvCvars
+ */
 void G_UpdateSvCvars(void)
 {
 	char cs[MAX_INFO_STRING];
@@ -1919,6 +2022,9 @@ void CC_svcvar(void)
 
 char *ConcatArgs(int start);
 
+/**
+ * @brief CC_loadconfig
+ */
 void CC_loadconfig(void)
 {
 	char scriptName[MAX_QPATH];
@@ -1936,6 +2042,9 @@ void CC_loadconfig(void)
 	G_configSet(scriptName);
 }
 
+/**
+ * @brief Svcmd_CSInfo_f
+ */
 void Svcmd_CSInfo_f(void)
 {
 	int      i = 0, j;
@@ -1943,7 +2052,7 @@ void Svcmd_CSInfo_f(void)
 	char     cspart[MAX_TOKEN_CHARS];
 	char     valuestr[MAX_TOKEN_CHARS];
 	int      value       = -1;
-	int      size        = 0;
+	size_t   size        = 0;
 	int      total       = 0;
 	char     *str        = NULL;
 	qboolean arg1        = (trap_Argc() > 1) ? qtrue : qfalse;
@@ -2225,6 +2334,10 @@ void Svcmd_CSInfo_f(void)
 	G_Printf("--------------------------------------------\nTotal CONFIGSTRING Length: %i\n", total);
 }
 
+/**
+ * @brief ConsoleCommand
+ * @return
+ */
 qboolean ConsoleCommand(void)
 {
 	char cmd[MAX_TOKEN_CHARS];
@@ -2447,7 +2560,7 @@ qboolean ConsoleCommand(void)
 #ifdef LEGACY_DEBUG
 	if (!Q_stricmp(cmd, "ae"))
 	{
-	 	//ae <playername> <animEvent>
+		//ae <playername> <animEvent>
 		Svcmd_PlayerAnimEvent();
 		return qtrue;
 	}
