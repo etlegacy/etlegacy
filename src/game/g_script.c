@@ -151,8 +151,8 @@ g_script_stack_action_t gScriptActions[] =
 	{ NULL,                             NULL,                                         00                                  }
 };
 
-qboolean G_Script_EventMatch_StringEqual(g_script_event_t *event, char *eventParm);
-qboolean G_Script_EventMatch_IntInRange(g_script_event_t *event, char *eventParm);
+qboolean G_Script_EventMatch_StringEqual(g_script_event_t *event, const char *eventParm);
+qboolean G_Script_EventMatch_IntInRange(g_script_event_t *event, const char *eventParm);
 
 /**
  * @var The list of events that can start an action sequence
@@ -181,12 +181,13 @@ g_script_event_define_t gScriptEvents[] =
 	{ NULL,          NULL,                            00               }
 };
 
-/*
-===============
-G_Script_EventMatch_StringEqual
-===============
-*/
-qboolean G_Script_EventMatch_StringEqual(g_script_event_t *event, char *eventParm)
+/**
+ * @brief G_Script_EventMatch_StringEqual
+ * @param[in] event
+ * @param[in] eventParm
+ * @return
+ */
+qboolean G_Script_EventMatch_StringEqual(g_script_event_t *event, const char *eventParm)
 {
 	if (eventParm && !Q_stricmp(event->params, eventParm))
 	{
@@ -198,18 +199,19 @@ qboolean G_Script_EventMatch_StringEqual(g_script_event_t *event, char *eventPar
 	}
 }
 
-/*
-===============
-G_Script_EventMatch_IntInRange
-===============
-*/
-qboolean G_Script_EventMatch_IntInRange(g_script_event_t *event, char *eventParm)
+/**
+ * @brief G_Script_EventMatch_IntInRange
+ * @param[in] event
+ * @param[in] eventParm
+ * @return
+ */
+qboolean G_Script_EventMatch_IntInRange(g_script_event_t *event, const char *eventParm)
 {
 	char *pString, *token;
 	int  int1, int2, eInt;
 
 	// get the cast name
-	pString = eventParm;
+	pString = (char *)eventParm;
 	token   = COM_ParseExt(&pString, qfalse);
 	int1    = atoi(token);
 	token   = COM_ParseExt(&pString, qfalse);
@@ -227,11 +229,11 @@ qboolean G_Script_EventMatch_IntInRange(g_script_event_t *event, char *eventParm
 	}
 }
 
-/*
-===============
-G_Script_EventForString
-===============
-*/
+/**
+ * @brief G_Script_EventForString
+ * @param[in] string
+ * @return
+ */
 int G_Script_EventForString(const char *string)
 {
 	int i, hash;
@@ -249,12 +251,12 @@ int G_Script_EventForString(const char *string)
 	return -1;
 }
 
-/*
-===============
-G_Script_ActionForString
-===============
-*/
-g_script_stack_action_t *G_Script_ActionForString(char *string)
+/**
+ * @brief G_Script_ActionForString
+ * @param[in] string
+ * @return
+ */
+g_script_stack_action_t *G_Script_ActionForString(const char *string)
 {
 	int i, hash;
 
@@ -273,13 +275,9 @@ g_script_stack_action_t *G_Script_ActionForString(char *string)
 	return NULL;
 }
 
-/*
-=============
-G_Script_ScriptLoad
-
-  Loads the script for the current level into the buffer
-=============
-*/
+/**
+ * @brief Loads the script for the current level into the buffer
+ */
 void G_Script_ScriptLoad(void)
 {
 	char         filename[MAX_QPATH];
@@ -353,13 +351,10 @@ void G_Script_ScriptLoad(void)
 	trap_FS_FCloseFile(f);
 }
 
-/*
-==============
-G_Script_ScriptParse
-
-  Parses the script for the given entity
-==============
-*/
+/**
+ * @brief Parses the script for the given entity
+ * @param[in,out] ent
+ */
 void G_Script_ScriptParse(gentity_t *ent)
 {
 	char                    *pScript;
@@ -368,13 +363,13 @@ void G_Script_ScriptParse(gentity_t *ent)
 	qboolean                inScript;
 	int                     eventNum;
 	g_script_event_t        events[G_MAX_SCRIPT_STACK_ITEMS];
-	int                     numEventItems;
+	unsigned int            numEventItems;
 	g_script_event_t        *curEvent;
 	char                    params[MAX_INFO_STRING]; // was MAX_QPATH some of our multiplayer script commands have longer parameters
 	g_script_stack_action_t *action;
 	int                     i;
 	int                     bracketLevel;
-	int                     len;
+	unsigned int            len;
 	qboolean                buildScript;
 
 	if (!ent->scriptName)
@@ -386,7 +381,7 @@ void G_Script_ScriptParse(gentity_t *ent)
 		return;
 	}
 
-	buildScript = trap_Cvar_VariableIntegerValue("com_buildScript");
+	buildScript = (qboolean)(trap_Cvar_VariableIntegerValue("com_buildScript"));
 
 	pScript  = level.scriptEntity;
 	wantName = qtrue;
@@ -634,13 +629,13 @@ void G_Script_ScriptParse(gentity_t *ent)
 	}
 }
 
-/*
-================
-G_Script_ScriptChange
-================
-*/
 qboolean G_Script_ScriptRun(gentity_t *ent);
 
+/**
+ * @brief G_Script_ScriptChange
+ * @param[in,out] ent
+ * @param[in] newScriptNum
+ */
 void G_Script_ScriptChange(gentity_t *ent, int newScriptNum)
 {
 	g_script_status_t scriptStatusBackup;
@@ -664,15 +659,14 @@ void G_Script_ScriptChange(gentity_t *ent, int newScriptNum)
 	}
 }
 
-/*
-================
-G_Script_GetEventIndex
-
-  returns the event index within the entity for the specified event string
-  - extracted from G_Script_ScriptEvent.
-================
-*/
-int G_Script_GetEventIndex(gentity_t *ent, char *eventStr, char *params)
+/**
+ * @brief G_Script_GetEventIndex
+ * @param[in] ent
+ * @param[in] eventStr
+ * @param[in] params
+ * @return The event index within the entity for the specified event string extracted from G_Script_ScriptEvent.
+ */
+int G_Script_GetEventIndex(gentity_t *ent, const char *eventStr, const char *params)
 {
 	int i, eventNum = -1;
 	int hash;
@@ -719,17 +713,16 @@ int G_Script_GetEventIndex(gentity_t *ent, char *eventStr, char *params)
 	return -1;      // event not found/matched in this ent
 }
 
-/*
-================
-G_Script_ScriptEvent
-
-  An event has occured, for which a script may exist
-================
-*/
-void G_Script_ScriptEvent(gentity_t *ent, char *eventStr, char *params)
+/**
+ * @brief An event has occured, for which a script may exist
+ * @param[in] ent
+ * @param[in] eventStr
+ * @param[in] params
+ */
+void G_Script_ScriptEvent(gentity_t *ent, const char *eventStr, const char *params)
 {
 	int i;
-	
+
 	i = G_Script_GetEventIndex(ent, eventStr, params);
 
 	if (i >= 0)
@@ -791,13 +784,11 @@ void G_Script_ScriptEvent(gentity_t *ent, char *eventStr, char *params)
 #endif
 }
 
-/*
-=============
-G_Script_ScriptRun
-
-  returns qtrue if the script completed
-=============
-*/
+/**
+ * @brief G_Script_ScriptRun
+ * @param[in,out] ent
+ * @return qtrue if the script completed
+ */
 qboolean G_Script_ScriptRun(gentity_t *ent)
 {
 	g_script_stack_t *stack;
@@ -880,6 +871,10 @@ qboolean G_Script_ScriptRun(gentity_t *ent)
 //================================================================================
 // Script Entities
 
+/**
+ * @brief mountedmg42_fire
+ * @param[in,out] other
+ */
 void mountedmg42_fire(gentity_t *other)
 {
 	vec3_t    forward, right, up;
@@ -913,12 +908,24 @@ void mountedmg42_fire(gentity_t *other)
 	}
 }
 
+/**
+ * @brief script_linkentity
+ * @param[in] ent
+ */
 void script_linkentity(gentity_t *ent)
 {
 	// this is required since non-solid brushes need to be linked but not solid
 	trap_LinkEntity(ent);
 }
 
+/**
+ * @brief script_mover_die
+ * @param[in,out] self
+ * @param inflictor - unused
+ * @param attacker  - unused
+ * @param damage    - unused
+ * @param mod       - unused
+ */
 void script_mover_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
 	G_Script_ScriptEvent(self, "death", "");
@@ -936,11 +943,10 @@ void script_mover_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker
 	self->die = NULL;
 }
 
-/*
-================
-script_mover_think
-================
-*/
+/**
+ * @brief script_mover_think
+ * @param[in,out] ent
+ */
 void script_mover_think(gentity_t *ent)
 {
 	if (ent->spawnflags & 128)
@@ -949,7 +955,7 @@ void script_mover_think(gentity_t *ent)
 		{
 			if (ent->mg42weapHeat)
 			{
-				ent->mg42weapHeat -= (300.f * 100 * 0.001);
+				ent->mg42weapHeat -= (300.f * 100 * 0.001f);
 
 				if (ent->mg42weapHeat < 0)
 				{
@@ -970,6 +976,10 @@ void script_mover_think(gentity_t *ent)
 	ent->nextthink = level.time + FRAMETIME;
 }
 
+/**
+ * @brief script_mover_spawn
+ * @param[in,out] ent
+ */
 void script_mover_spawn(gentity_t *ent)
 {
 	if (ent->spawnflags & 128)
@@ -1012,6 +1022,12 @@ void script_mover_spawn(gentity_t *ent)
 	ent->nextthink = level.time + 200;
 }
 
+/**
+ * @brief script_mover_use
+ * @param[in] ent
+ * @param other     - unused
+ * @param activator - unused
+ */
 void script_mover_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	if (ent->spawnflags & 8)
@@ -1035,6 +1051,11 @@ void script_mover_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	}
 }
 
+/**
+ * @brief script_mover_blocked
+ * @param[in] ent
+ * @param[in] other
+ */
 void script_mover_blocked(gentity_t *ent, gentity_t *other)
 {
 	// remove it, we must not stop for anything or it will screw up script timing
@@ -1059,7 +1080,10 @@ void script_mover_blocked(gentity_t *ent, gentity_t *other)
 	G_Damage(other, ent, ent, NULL, NULL, 9999, 0, MOD_CRUSH);
 }
 
-// script mover flags
+/**
+ * Script mover flags
+ */
+
 #define SMF_TRIGGERSPAWN        1
 #define SMF_SOLID               2
 #define SMF_EXPLOSIVEDAMAGEONLY 4
@@ -1070,16 +1094,21 @@ void script_mover_blocked(gentity_t *ent, gentity_t *other)
 #define SMF_MOUNTED_GUN         128
 #define SMF_DENSITY             256
 
-/*QUAKED script_mover (0.5 0.25 1.0) ? TRIGGERSPAWN SOLID EXPLOSIVEDAMAGEONLY RESURECTABLE COMPASS ALLIED AXIS MOUNTED_GUN
-Scripted brush entity. A simplified means of moving brushes around based on events.
-
-"modelscale" - Scale multiplier (defaults to 1, and scales uniformly)
-"modelscale_vec" - Set scale per-axis.  Overrides "modelscale", so if you have both the "modelscale" is ignored
-"model2" optional md3 to draw over the solid clip brush
-"scriptname" name used for scripting purposes (like aiName in AI scripting)
-"health" optionally make this entity damagable
-"description" used with health, if the entity is damagable, it draws a healthbar with this description above it.
-*/
+/**
+ * @brief Scripted brush entity. A simplified means of moving brushes around based on events.
+ *
+ * @details
+ * QUAKED script_mover (0.5 0.25 1.0) ? TRIGGERSPAWN SOLID EXPLOSIVEDAMAGEONLY RESURECTABLE COMPASS ALLIED AXIS MOUNTED_GUN
+ *
+ * "modelscale" - Scale multiplier (defaults to 1, and scales uniformly)
+ * "modelscale_vec" - Set scale per-axis.  Overrides "modelscale", so if you have both the "modelscale" is ignored
+ * "model2" optional md3 to draw over the solid clip brush
+ * "scriptname" name used for scripting purposes (like aiName in AI scripting)
+ * "health" optionally make this entity damagable
+ * "description" used with health, if the entity is damagable, it draws a healthbar with this description above it.
+ *
+ * @param[in,out] ent
+ */
 void SP_script_mover(gentity_t *ent)
 {
 	float  scale[3] = { 1, 1, 1 };
@@ -1203,7 +1232,7 @@ void SP_script_mover(gentity_t *ent)
 		VectorCopy(scalevec, scale);
 	}
 
-	if (scale[0] != 1 || scale[1] != 1 || scale[2] != 1)
+	if (scale[0] != 1.f || scale[1] != 1.f || scale[2] != 1.f)
 	{
 		ent->s.density |= 1;
 		// scale is stored in 'angles2'
@@ -1236,6 +1265,10 @@ void SP_script_mover(gentity_t *ent)
 
 //..............................................................................
 
+/**
+ * @brief script_model_med_spawn
+ * @param[in,out] ent
+ */
 void script_model_med_spawn(gentity_t *ent)
 {
 	if (ent->spawnflags & 2)
@@ -1254,18 +1287,29 @@ void script_model_med_spawn(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
+/**
+ * @brief script_model_med_use
+ * @param[in] ent
+ * @param other     - unused
+ * @param activator - unused
+ */
 void script_model_med_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	script_model_med_spawn(ent);
 }
 
-/*QUAKED script_model_med (0.5 0.25 1.0) (-16 -16 -24) (16 16 64) TriggerSpawn Solid
-MEDIUM SIZED scripted entity, used for animating a model, moving it around, etc
-SOLID spawnflag means this entity will clip the player and AI, otherwise they can walk
-straight through it
-"model" the full path of the model to use
-"scriptname" name used for scripting purposes (like aiName in AI scripting)
-*/
+/**
+ * @brief SP_script_model_med
+ *
+ * @details QUAKED script_model_med (0.5 0.25 1.0) (-16 -16 -24) (16 16 64) TriggerSpawn Solid
+ * MEDIUM SIZED scripted entity, used for animating a model, moving it around, etc
+ * SOLID spawnflag means this entity will clip the player and AI, otherwise they can walk
+ * straight through it
+ * "model" the full path of the model to use
+ * "scriptname" name used for scripting purposes (like aiName in AI scripting)
+ *
+ * @param[in,out] ent
+ */
 void SP_script_model_med(gentity_t *ent)
 {
 	if (!ent->model)
@@ -1296,13 +1340,18 @@ void SP_script_model_med(gentity_t *ent)
 
 //..............................................................................
 
-/*QUAKED script_camera (1.0 0.25 1.0) (-8 -8 -8) (8 8 8) TriggerSpawn
-
-  This is a camera entity. Used by the scripting to show cinematics, via special
-  camera commands. See scripting documentation.
-
-"scriptname" name used for scripting purposes (like aiName in AI scripting)
-*/
+/**
+ * @brief This is a camera entity.
+ *
+ * @details QUAKED script_camera (1.0 0.25 1.0) (-8 -8 -8) (8 8 8) TriggerSpawn
+ *
+ * Used by the scripting to show cinematics, via special
+ * camera commands. See scripting documentation.
+ *
+ * "scriptname" name used for scripting purposes (like aiName in AI scripting)
+ *
+ * @param[in,out] ent
+ */
 void SP_script_camera(gentity_t *ent)
 {
 	if (!ent->scriptName)
@@ -1322,15 +1371,17 @@ void SP_script_camera(gentity_t *ent)
 	ent->r.svFlags |= SVF_NOCLIENT;     // only broadcast when in use
 }
 
-
-/*QUAKED script_multiplayer (1.0 0.25 1.0) (-8 -8 -8) (8 8 8)
-
-  This is used to script multiplayer maps.  Entity not displayed in game.
-
-// also storing some stuff that will change often but needs to be broadcast, so we dont want to use a configstring
-
-"scriptname" name used for scripting purposes (REQUIRED)
-*/
+/**
+ * @brief This is used to script multiplayer maps. Entity not displayed in game.
+ *
+ * @details QUAKED script_multiplayer (1.0 0.25 1.0) (-8 -8 -8) (8 8 8)
+ *
+ * "scriptname" name used for scripting purposes (REQUIRED)
+ *
+ * @param[in,out] ent
+ *
+ * @note Also storing some stuff that will change often but needs to be broadcast, so we dont want to use a configstring
+ */
 void SP_script_multiplayer(gentity_t *ent)
 {
 	ent->scriptName = "game_manager";

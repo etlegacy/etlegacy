@@ -1459,8 +1459,8 @@ static int _et_G_GetSpawnVar(lua_State *L)
 	gentity_t   *ent;
 	int         entnum = (int)luaL_checkinteger(L, 1);
 	const char  *key   = luaL_checkstring(L, 2);
-	int         index  = GetFieldIndex((char *)key);
-	fieldtype_t type   = GetFieldType((char *)key);
+	int         index  = GetFieldIndex(key);
+	fieldtype_t type   = GetFieldType(key);
 	int         ofs;
 
 	// break on invalid gentity field
@@ -1542,8 +1542,8 @@ static int _et_G_SetSpawnVar(lua_State *L)
 	gentity_t   *ent;
 	int         entnum = (int)luaL_checkinteger(L, 1);
 	const char  *key   = luaL_checkstring(L, 2);
-	int         index  = GetFieldIndex((char *)key);
-	fieldtype_t type   = GetFieldType((char *)key);
+	int         index  = GetFieldIndex(key);
+	fieldtype_t type   = GetFieldType(key);
 	int         ofs;
 	const char  *buffer;
 

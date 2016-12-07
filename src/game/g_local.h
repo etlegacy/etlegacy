@@ -149,7 +149,7 @@ typedef struct
 typedef struct
 {
 	char *eventStr;
-	qboolean (*eventMatch)(g_script_event_t *event, char *eventParm);
+	qboolean (*eventMatch)(g_script_event_t *event, const char *eventParm);
 	int hash;
 } g_script_event_define_t;
 
@@ -172,7 +172,7 @@ typedef struct
 
 #define G_MAX_SCRIPT_ACCUM_BUFFERS 10
 
-void G_Script_ScriptEvent(gentity_t *ent, char *eventStr, char *params);
+void G_Script_ScriptEvent(gentity_t *ent, const char *eventStr, const char *params);
 //====================================================================
 
 typedef struct g_constructible_stats_s
@@ -1522,7 +1522,7 @@ int Team_ClassForString(char *string);
 void reset_numobjectives(void);
 
 // g_mem.c
-void *G_Alloc(int size);
+void *G_Alloc(unsigned int size);
 void G_InitMemory(void);
 void Svcmd_GameMem_f(void);
 
@@ -1546,7 +1546,7 @@ char *Q_AddCR(char *s);
 // g_script.c
 void G_Script_ScriptParse(gentity_t *ent);
 qboolean G_Script_ScriptRun(gentity_t *ent);
-void G_Script_ScriptEvent(gentity_t *ent, char *eventStr, char *params);
+void G_Script_ScriptEvent(gentity_t *ent, const char *eventStr, const char *params);
 void G_Script_ScriptLoad(void);
 
 void mountedmg42_fire(gentity_t *other);
@@ -2462,8 +2462,8 @@ typedef struct
 } field_t;
 
 #ifdef FEATURE_LUA
-int GetFieldIndex(char *fieldname);
-fieldtype_t GetFieldType(char *fieldname);
+int GetFieldIndex(const char *fieldname);
+fieldtype_t GetFieldType(const char *fieldname);
 #endif
 
 // g_protect flags

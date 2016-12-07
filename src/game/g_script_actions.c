@@ -32,6 +32,10 @@
  * @file g_script_actions.c
  * @author Ridah
  * @brief Wolfenstein Entity Scripting
+ * @details Contains the code to handle the various commands available with an event script.
+ * These functions will return true if the action has been performed, and the script
+ * should proceed to the next item on the list.
+ *
  */
 
 #include "../game/g_local.h"
@@ -41,15 +45,14 @@
 #include "g_etbot_interface.h"
 #endif
 
-/*
-Contains the code to handle the various commands available with an event script.
-
-These functions will return true if the action has been performed, and the script
-should proceed to the next item on the list.
-*/
-
 void script_linkentity(gentity_t *ent);
 
+/**
+ * @brief G_ScriptAction_SetModelFromBrushmodel
+ * @param[out] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_SetModelFromBrushmodel(gentity_t *ent, char *params)
 {
 	char     *pString = params;
@@ -119,10 +122,14 @@ qboolean G_ScriptAction_SetModelFromBrushmodel(gentity_t *ent, char *params)
 	}
 
 	G_Error("G_ScriptAction_SetModelFromBrushmodel: setmodelfrombrushmodel target not found %s\n", modelname);
-
-	return qtrue;
 }
 
+/**
+ * @brief G_ScriptAction_SetPosition
+ * @param[in] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_SetPosition(gentity_t *ent, char *params)
 {
 	pathCorner_t *pPathCorner;
@@ -158,6 +165,12 @@ qboolean G_ScriptAction_SetPosition(gentity_t *ent, char *params)
 	return qtrue;
 }
 
+/**
+ * @brief G_ScriptAction_SetAutoSpawn
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_SetAutoSpawn(gentity_t *ent, char *params)
 {
 	char      *pString = params, *token;
@@ -178,7 +191,7 @@ qboolean G_ScriptAction_SetAutoSpawn(gentity_t *ent, char *params)
 	{
 		G_Error("G_ScriptAction_SetAutoSpawn: setautospawn must have a target team\n");
 	}
-	team           = atoi(token);
+	team           = (team_t)(atoi(token));
 	pTeamAutoSpawn = team == 0 ? &(level.axisAutoSpawn) : &(level.alliesAutoSpawn);
 
 	tent = G_Find(NULL, FOFS(message), spawnname);
@@ -201,6 +214,12 @@ qboolean G_ScriptAction_SetAutoSpawn(gentity_t *ent, char *params)
 	return qtrue;
 }
 
+/**
+ * @brief G_ScriptAction_ChangeModel
+ * @param[out] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_ChangeModel(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -221,10 +240,16 @@ qboolean G_ScriptAction_ChangeModel(gentity_t *ent, char *params)
 	return qtrue;
 }
 
+/**
+ * @brief G_ScriptAction_ShaderRemap
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_ShaderRemap(gentity_t *ent, char *params)
 {
 	char  *pString = params, *token;
-	float f        = level.time * 0.001;
+	float f        = level.time * 0.001f;
 	char  oldShader[MAX_QPATH];
 	char  newShader[MAX_QPATH];
 
@@ -247,12 +272,24 @@ qboolean G_ScriptAction_ShaderRemap(gentity_t *ent, char *params)
 	return qtrue;
 }
 
+/**
+ * @brief G_ScriptAction_ShaderRemapFlush
+ * @param ent - unused
+ * @param params - unused
+ * @return
+ */
 qboolean G_ScriptAction_ShaderRemapFlush(gentity_t *ent, char *params)
 {
 	trap_SetConfigstring(CS_SHADERSTATE, BuildShaderStateConfig());
 	return qtrue;
 }
 
+/**
+ * @brief G_ScriptAction_FollowPath
+ * @param[in,out] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_FollowPath(gentity_t *ent, char *params)
 {
 	char *pString, *token;
@@ -329,7 +366,7 @@ qboolean G_ScriptAction_FollowPath(gentity_t *ent, char *params)
 			G_Error("G_ScriptAction_FollowPath: followpath must have a speed\n");
 		}
 
-		speed = atof(token);
+		speed = (float)(atof(token));
 
 		while (token[0])
 		{
@@ -370,7 +407,7 @@ qboolean G_ScriptAction_FollowPath(gentity_t *ent, char *params)
 			dist += pSpline->segments[i].length;
 		}
 
-		ent->s.apos.trDuration = ent->s.pos.trDuration = 1000 * (dist / speed);
+		ent->s.apos.trDuration = ent->s.pos.trDuration = (int)(1000 * (dist / speed));
 
 		if (!wait)
 		{
@@ -398,6 +435,12 @@ qboolean G_ScriptAction_FollowPath(gentity_t *ent, char *params)
 	return qfalse;
 }
 
+/**
+ * @brief G_ScriptAction_AttatchToTrain
+ * @param[out] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_AttatchToTrain(gentity_t *ent, char *params)
 {
 	char      *pString = params;
@@ -431,6 +474,12 @@ qboolean G_ScriptAction_AttatchToTrain(gentity_t *ent, char *params)
 	return qtrue;
 }
 
+/**
+ * @brief G_ScriptAction_FreezeAnimation
+ * @param[out] ent
+ * @param params - unused
+ * @return
+ */
 qboolean G_ScriptAction_FreezeAnimation(gentity_t *ent, char *params)
 {
 	ent->s.loopSound = 1;
@@ -438,6 +487,12 @@ qboolean G_ScriptAction_FreezeAnimation(gentity_t *ent, char *params)
 	return qtrue;
 }
 
+/**
+ * @brief G_ScriptAction_UnFreezeAnimation
+ * @param[out] ent
+ * @param params - unused
+ * @return
+ */
 qboolean G_ScriptAction_UnFreezeAnimation(gentity_t *ent, char *params)
 {
 	ent->s.loopSound = 0;
@@ -445,6 +500,12 @@ qboolean G_ScriptAction_UnFreezeAnimation(gentity_t *ent, char *params)
 	return qtrue;
 }
 
+/**
+ * @brief G_ScriptAction_StartAnimation
+ * @param[out] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_StartAnimation(gentity_t *ent, char *params)
 {
 	int      fps      = 0;
@@ -481,7 +542,7 @@ qboolean G_ScriptAction_StartAnimation(gentity_t *ent, char *params)
 	// this is fps to animate with
 	if (fps > 0)
 	{
-		ent->s.weapon = 1000.f / fps;
+		ent->s.weapon = (int)(1000.f / fps);
 	}
 	else
 	{
@@ -540,6 +601,12 @@ qboolean G_ScriptAction_StartAnimation(gentity_t *ent, char *params)
 	return qtrue;
 }
 
+/**
+ * @brief G_ScriptAction_SetSpeed
+ * @param[in,out] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_SetSpeed(gentity_t *ent, char *params)
 {
 	vec3_t   speed;
@@ -595,6 +662,12 @@ qboolean G_ScriptAction_SetSpeed(gentity_t *ent, char *params)
 	return qtrue;
 }
 
+/**
+ * @brief G_ScriptAction_SetRotation
+ * @param[in,out] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_SetRotation(gentity_t *ent, char *params)
 {
 	vec3_t angles;
@@ -624,6 +697,12 @@ qboolean G_ScriptAction_SetRotation(gentity_t *ent, char *params)
 	return qtrue;
 }
 
+/**
+ * @brief G_ScriptAction_StopRotation
+ * @param[in,out] ent
+ * @param params - unused
+ * @return
+ */
 qboolean G_ScriptAction_StopRotation(gentity_t *ent, char *params)
 {
 	BG_EvaluateTrajectory(&ent->s.apos, level.time, ent->r.currentAngles, qtrue, ent->s.effect2Time);
@@ -636,16 +715,15 @@ qboolean G_ScriptAction_StopRotation(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===============
-G_ScriptAction_FollowSpline
-
-  syntax: followspline <targetname> <speed> [wait]
-
-  NOTE: speed may be modified to round the duration to the next 50ms for smooth
-  transitions
-===============
-*/
+/**
+ * @brief G_ScriptAction_FollowSpline
+ * @details syntax: followspline <targetname> <speed> [wait]
+ * @param[in,out] ent
+ * @param[in] params
+ * @return
+ *
+ * @note Speed may be modified to round the duration to the next 50ms for smooth transitions
+ */
 qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 {
 	char  *pString, *token;
@@ -760,7 +838,7 @@ qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 			G_Error("G_ScriptAction_FollowSpline: followspline must have a speed\n");
 		}
 
-		speed = atof(token) * g_moverScale.value;
+		speed = (float)(atof(token)) * g_moverScale.value;
 
 		while (token[0])
 		{
@@ -839,7 +917,7 @@ qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 		ent->s.effect2Time = backward ? -(pSpline - splinePaths + 1) : pSpline - splinePaths + 1;
 
 		VectorClear(ent->s.pos.trDelta);
-		ent->s.apos.trDuration = ent->s.pos.trDuration = 1000 * (pSpline->length / speed);
+		ent->s.apos.trDuration = ent->s.pos.trDuration = (int)(1000 * (pSpline->length / speed));
 
 		if (!wait)
 		{
@@ -868,13 +946,12 @@ qboolean G_ScriptAction_FollowSpline(gentity_t *ent, char *params)
 	return qfalse;
 }
 
-/*
-===============
-G_ScriptAction_AbortMove
-
-  syntax: abortmove
-===============
-*/
+/**
+ * @brief G_ScriptAction_AbortMove
+ * @param[in,out] ent
+ * @param params - unused
+ * @return
+ */
 qboolean G_ScriptAction_AbortMove(gentity_t *ent, char *params)
 {
 	ent->scriptStatus.scriptFlags &= ~SCFL_GOING_TO_MARKER;
@@ -905,6 +982,9 @@ qboolean G_ScriptAction_AbortMove(gentity_t *ent, char *params)
 /**
  * @brief syntax: setchargetimefactor \<team\> \<class\> \<factor\>
  *        team: 0 = axis, 1 = allies
+ * @param ent - unused
+ * @param[in] params
+ * @return
  */
 qboolean G_ScriptAction_SetChargeTimeFactor(gentity_t *ent, char *params)
 {
@@ -919,7 +999,7 @@ qboolean G_ScriptAction_SetChargeTimeFactor(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_SetChargeTimeFactor: setchargetimefactor must have a team\n");
 	}
 
-	team = atoi(token);
+	team = (team_t)(atoi(token));
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
@@ -936,7 +1016,7 @@ qboolean G_ScriptAction_SetChargeTimeFactor(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_SetChargeTimeFactor: setchargetimefactor must have a factor\n");
 	}
 
-	factor = atof(token);
+	factor = (float)atof(token);
 
 	if (factor < 0.f)
 	{
@@ -1004,15 +1084,17 @@ qboolean G_ScriptAction_SetChargeTimeFactor(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-// debris test
+/**
+ * Debris test
+ */
 
-/*
-=================
-G_ScriptAction_SpawnRubble
-
-  syntax: spawnrubble <targetname>
-=================
-*/
+/**
+ * @brief G_ScriptAction_SpawnRubble
+ * @details syntax: spawnrubble <targetname>
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_SpawnRubble(gentity_t *ent, char *params)
 {
 	int i;
@@ -1032,13 +1114,13 @@ qboolean G_ScriptAction_SpawnRubble(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-=================
-G_ScriptAction_AllowTankExit
-
-  syntax: allowtankexit <yes|on|no|off>
-=================
-*/
+/**
+ * @brief G_ScriptAction_AllowTankExit
+ * @details syntax: allowtankexit <yes|on|no|off>
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_AllowTankExit(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -1061,6 +1143,12 @@ qboolean G_ScriptAction_AllowTankExit(gentity_t *ent, char *params)
 	return qtrue;
 }
 
+/**
+ * @brief G_ScriptAction_AllowTankEnter
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_AllowTankEnter(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -1083,6 +1171,12 @@ qboolean G_ScriptAction_AllowTankEnter(gentity_t *ent, char *params)
 	return qtrue;
 }
 
+/**
+ * @brief G_ScriptAction_SetTankAmmo
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_SetTankAmmo(gentity_t *ent, char *params)
 {
 	char      *pString = params, *token;
@@ -1116,6 +1210,12 @@ qboolean G_ScriptAction_SetTankAmmo(gentity_t *ent, char *params)
 	return qtrue;
 }
 
+/**
+ * @brief G_ScriptAction_AddTankAmmo
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_AddTankAmmo(gentity_t *ent, char *params)
 {
 	char      *pString = params, *token;
@@ -1158,6 +1258,12 @@ qboolean G_ScriptAction_AddTankAmmo(gentity_t *ent, char *params)
 	return qtrue;
 }
 
+/**
+ * @brief G_ScriptAction_DisableMessage
+ * @param ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_DisableMessage(gentity_t *ent, char *params)
 {
 	char      *pString = params, *token;
@@ -1178,6 +1284,12 @@ qboolean G_ScriptAction_DisableMessage(gentity_t *ent, char *params)
 	return qtrue;
 }
 
+/**
+ * @brief G_ScriptAction_Kill
+ * @param[in] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_Kill(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -1193,13 +1305,13 @@ qboolean G_ScriptAction_Kill(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-=================
-G_ScriptAction_SetGlobalFog
-
-  syntax: setglobalfog <bool:restore> <int:duration> [float:r] [float:g] [float:b] [float:depthForOpaque]
-=================
-*/
+/**
+ * @brief G_ScriptAction_SetGlobalFog
+ * @details syntax: setglobalfog <bool:restore> <int:duration> [float:r] [float:g] [float:b] [float:depthForOpaque]
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_SetGlobalFog(gentity_t *ent, char *params)
 {
 	char     *pString = params, *token;
@@ -1214,7 +1326,7 @@ qboolean G_ScriptAction_SetGlobalFog(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_SetGlobalFog: setglobalfog must have a restore value\n");
 	}
 
-	restore = atoi(token);
+	restore = (float)atoi(token);
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
@@ -1238,7 +1350,7 @@ qboolean G_ScriptAction_SetGlobalFog(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_SetGlobalFog: setglobalfog without restore flag must have a depth for opaque value\n");
 	}
 
-	depthForOpaque = atof(token);
+	depthForOpaque = (float)atof(token);
 
 	trap_SetConfigstring(CS_GLOBALFOGVARS, va("0 %i %f %f %f %f", duration, color[0], color[1], color[2], depthForOpaque));
 
@@ -1247,22 +1359,22 @@ qboolean G_ScriptAction_SetGlobalFog(gentity_t *ent, char *params)
 
 // ===================
 
-/*
-===============
-G_ScriptAction_GotoMarker
-
-  syntax: gotomarker <targetname> <speed> [accel/deccel] [turntotarget] [wait] [relative <position>]
-
-  NOTE: speed may be modified to round the duration to the next 50ms for smooth
-  transitions
-===============
-*/
+/**
+ * @brief G_ScriptAction_GotoMarker
+ * @details syntax: gotomarker <targetname> <speed> [accel/deccel] [turntotarget] [wait] [relative <position>]
+ * @param[in,out] ent
+ * @param[in] params
+ * @return
+ *
+ * @note Speed may be modified to round the duration to the next 50ms for smooth
+ * transitions
+ */
 qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 {
 	char      *pString, *token;
 	gentity_t *target = NULL;
 	vec3_t    vec;
-	int       trType;
+	trType_t  trType;
 	vec3_t    diff;
 	vec3_t    angles;
 
@@ -1338,7 +1450,7 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 			G_Error("G_ScriptAction_GotoMarker: gotomarker must have a speed\n");
 		}
 
-		speed  = atof(token);
+		speed  = (float)atof(token);
 		trType = TR_LINEAR_STOP;
 
 		while (token[0])
@@ -1409,7 +1521,7 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 			SetMoverState(ent, MOVER_1TO2, level.time);
 			if (trType != TR_LINEAR_STOP)     // allow for acceleration/decceleration
 			{
-				ent->s.pos.trDuration = 1000.0 * dist / (speed / 2.0);
+				ent->s.pos.trDuration = (int)(1000.0f * dist / (speed / 2.0f));
 				ent->s.pos.trType     = trType;
 			}
 			ent->reached = NULL;
@@ -1421,7 +1533,7 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 				Bot_Util_SendTrigger(ent,
 				                     NULL,
 				                     va("%s_goto", pName ? pName : "<unknown>"),
-				                     va("%.2f %.2f %.2f", ent->s.pos.trDelta[0], ent->s.pos.trDelta[1], ent->s.pos.trDelta[2]));
+				                     va("%.2f %.2f %.2f", (double)ent->s.pos.trDelta[0], (double)ent->s.pos.trDelta[1], (double)ent->s.pos.trDelta[2]));
 			}
 #endif
 
@@ -1441,7 +1553,7 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 				VectorCopy(ent->s.angles, ent->s.apos.trBase);
 				if (duration)
 				{
-					VectorScale(diff, 1000.0 / (float)duration, ent->s.apos.trDelta);
+					VectorScale(diff, 1000.0f / (float)duration, ent->s.apos.trDelta);
 				}
 				else
 				{
@@ -1452,7 +1564,7 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 				ent->s.apos.trType     = TR_LINEAR_STOP;
 				if (trType != TR_LINEAR_STOP)     // allow for acceleration/decceleration
 				{
-					ent->s.pos.trDuration = 1000.0 * dist / (speed / 2.0);
+					ent->s.pos.trDuration = (int)(1000.0f * dist / (speed / 2.0f));
 					ent->s.pos.trType     = trType;
 				}
 			}
@@ -1465,7 +1577,7 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 			VectorCopy(ent->r.currentOrigin, ent->s.pos.trBase);
 			dist = VectorNormalize(vec);
 			VectorScale(vec, speed, ent->s.pos.trDelta);
-			ent->s.pos.trDuration = 1000 * (dist / speed);
+			ent->s.pos.trDuration = (int)(1000 * (dist / speed));
 
 			if (turntotarget && !pPathCorner)
 			{
@@ -1483,7 +1595,7 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 				VectorCopy(ent->s.angles, ent->s.apos.trBase);
 				if (duration)
 				{
-					VectorScale(diff, 1000.0 / (float)duration, ent->s.apos.trDelta);
+					VectorScale(diff, 1000.0f / (float)duration, ent->s.apos.trDelta);
 				}
 				else
 				{
@@ -1505,7 +1617,7 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 
 				if (frac < 1)
 				{
-					VectorScale(ent->s.pos.trDelta, 1.0 / (1.0 + frac), ent->s.pos.trDelta);
+					VectorScale(ent->s.pos.trDelta, 1.0f / (1.0f + frac), ent->s.pos.trDelta);
 					ent->s.pos.trDuration = (ent->s.pos.trDuration / 50) * 50 + 50;
 				}
 			}
@@ -1524,14 +1636,14 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 	return qfalse;
 }
 
-/*
-=================
-G_ScriptAction_Wait
-
-  syntax:   wait <duration>
-            wait random <min> <max>
-=================
-*/
+/**
+ * @brief G_ScriptAction_Wait
+ * @details syntax:   wait <duration>
+ *          wait random <min> <max>
+ * @param[in] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_Wait(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -1580,15 +1692,13 @@ qboolean G_ScriptAction_Wait(gentity_t *ent, char *params)
 	return (ent->scriptStatus.scriptStackChangeTime + duration < level.time);
 }
 
-/*
-=================
-G_ScriptAction_Trigger
-
-  syntax: trigger <aiName/scriptName> <trigger>
-
-  Calls the specified trigger for the given ai character or script entity
-=================
-*/
+/**
+ * @brief Calls the specified trigger for the given ai character or script entity
+ * @details syntax: trigger <aiName/scriptName> <trigger>
+ * @param[in] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_Trigger(gentity_t *ent, char *params)
 {
 	gentity_t *trent;
@@ -1712,17 +1822,15 @@ qboolean G_ScriptAction_Trigger(gentity_t *ent, char *params)
 	return qtrue;   // shutup the compiler
 }
 
-/*
-================
-G_ScriptAction_PlaySound
-
-  syntax: playsound <soundname OR scriptname> [LOOPING]
-
-  Currently only allows playing on the VOICE channel, unless you use a sound script.
-
-  Use the optional LOOPING paramater to attach the sound to the entities looping channel.
-================
-*/
+/**
+ * @brief Currently only allows playing on the VOICE channel, unless you use a sound script.
+ * Use the optional LOOPING paramater to attach the sound to the entities looping channel.
+ * syntax: playsound <soundname OR scriptname> [LOOPING]
+ *
+ * @param[in,out] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_PlaySound(gentity_t *ent, char *params)
 {
 	char     *pString, *token;
@@ -1780,16 +1888,13 @@ qboolean G_ScriptAction_PlaySound(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-================
-G_ScriptAction_FadeAllSounds
-
-  syntax: fadeallsounds [UP/DOWN] time
-
-  Fades all sounds up or down, going from the current level to max or zero in 'time' milliseconds
-
-================
-*/
+/**
+ * @brief Fades all sounds up or down, going from the current level to max or zero in 'time' milliseconds
+ * @details syntax: fadeallsounds [UP/DOWN] time
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_FadeAllSounds(gentity_t *ent, char *params)
 {
 	char     *pString, *token;
@@ -1830,12 +1935,14 @@ qboolean G_ScriptAction_FadeAllSounds(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-//GS Copied in code from old source for mu_start, mu_play & mu_stop
-/*
-==================
-AICast_ScriptAction_MusicStart
-==================
-*/
+/**
+ * @brief G_ScriptAction_MusicStart
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ *
+ * @see GS Copied in code from old source for mu_start, mu_play & mu_stop
+ */
 qboolean G_ScriptAction_MusicStart(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -1860,11 +1967,12 @@ qboolean G_ScriptAction_MusicStart(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-==================
-AICast_ScriptAction_MusicPlay
-==================
-*/
+/**
+ * @brief G_ScriptAction_MusicPlay
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_MusicPlay(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -1883,11 +1991,12 @@ qboolean G_ScriptAction_MusicPlay(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-==================
-AICast_ScriptAction_MusicStop
-==================
-*/
+/**
+ * @brief G_ScriptAction_MusicStop
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_MusicStop(gentity_t *ent, char *params)
 {
 	char *pString    = params, *token;
@@ -1904,11 +2013,12 @@ qboolean G_ScriptAction_MusicStop(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-==================
-G_ScriptAction_MusicQueue
-==================
-*/
+/**
+ * @brief G_ScriptAction_MusicQueue
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_MusicQueue(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -1926,11 +2036,12 @@ qboolean G_ScriptAction_MusicQueue(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-==================
-G_ScriptAction_MusicFade
-==================
-*/
+/**
+ * @brief G_ScriptAction_MusicFade
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_MusicFade(gentity_t *ent, char *params)
 {
 	char  *pString    = params, *token;
@@ -1942,7 +2053,7 @@ qboolean G_ScriptAction_MusicFade(gentity_t *ent, char *params)
 	{
 		G_Error("G_ScriptAction_MusicFade: syntax: mu_fade <target volume 0.0-1.0> <fadeout time>\n");
 	}
-	targetVol = atof(token);
+	targetVol = (float)atof(token);
 	if (targetVol < 0 || targetVol >= 1)
 	{
 		G_Error("G_ScriptAction_MusicFade: syntax: mu_fade <target volume 0.0-1.0> <fadeout time>\n");
@@ -1955,20 +2066,20 @@ qboolean G_ScriptAction_MusicFade(gentity_t *ent, char *params)
 	}
 	fadeoutTime = atoi(token);
 
-	trap_SendServerCommand(-1, va("mu_fade %f %i\n", targetVol, fadeoutTime));
+	trap_SendServerCommand(-1, va("mu_fade %f %i\n", (double)targetVol, fadeoutTime));
 
 	return qtrue;
 }
 
-/*
-=================
-G_ScriptAction_PlayAnim
-
-  syntax: playanim <startframe> <endframe> [looping <FOREVER/duration>] [rate <FPS>]
-
-  NOTE: all source animations must be at 20fps
-=================
-*/
+/**
+ * @brief G_ScriptAction_PlayAnim
+ * @details syntax: playanim <startframe> <endframe> [looping <FOREVER/duration>] [rate <FPS>]
+ * @param[in,out] ent
+ * @param[in] params
+ * @return
+ *
+ * @note All source animations must be at 20fps
+ */
 qboolean G_ScriptAction_PlayAnim(gentity_t *ent, char *params)
 {
 	char *pString = params, *token, tokens[2][MAX_QPATH];
@@ -2071,7 +2182,7 @@ qboolean G_ScriptAction_PlayAnim(gentity_t *ent, char *params)
 		}
 	}
 
-	idealframe = startframe + (int)floor((float)(level.time - ent->scriptStatus.scriptStackChangeTime) / (1000.0 / (float)rate));
+	idealframe = startframe + (int)(floor((level.time - ent->scriptStatus.scriptStackChangeTime) / (1000.0 / (double)rate)));
 	if (looping)
 	{
 		ent->s.frame = startframe + (idealframe - startframe) % frametime;
@@ -2094,17 +2205,15 @@ qboolean G_ScriptAction_PlayAnim(gentity_t *ent, char *params)
 	}
 
 	return (endtime <= level.time);
-};
+}
 
-/*
-=================
-G_ScriptAction_AlertEntity
-
-  syntax: alertentity <targetname>
-
-modified to target multiple entities with the same targetname
-=================
-*/
+/**
+ * @brief Modified to target multiple entities with the same targetname
+ * @details syntax: alertentity <targetname>
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_AlertEntity(gentity_t *ent, char *params)
 {
 	gentity_t *alertent     = NULL;
@@ -2157,13 +2266,13 @@ qboolean G_ScriptAction_AlertEntity(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-=================
-G_ScriptAction_ToggleSpeaker
-
-  syntax: togglespeaker <targetname>
-=================
-*/
+/**
+ * @brief G_ScriptAction_ToggleSpeaker
+ * @param syntax: togglespeaker <targetname>
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_ToggleSpeaker(gentity_t *ent, char *params)
 {
 	int          i;
@@ -2197,13 +2306,13 @@ qboolean G_ScriptAction_ToggleSpeaker(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-=================
-G_ScriptAction_DisableSpeaker
-
-  syntax: disablespeaker <targetname>
-=================
-*/
+/**
+ * @brief G_ScriptAction_DisableSpeaker
+ * @param syntax: disablespeaker <targetname>
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_DisableSpeaker(gentity_t *ent, char *params)
 {
 	int          i;
@@ -2237,13 +2346,13 @@ qboolean G_ScriptAction_DisableSpeaker(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-=================
-G_ScriptAction_EnableSpeaker
-
-  syntax: enablespeaker <targetname>
-=================
-*/
+/**
+ * @brief G_ScriptAction_EnableSpeaker
+ * @details syntax: enablespeaker <targetname>
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_EnableSpeaker(gentity_t *ent, char *params)
 {
 	int          i;
@@ -2277,30 +2386,30 @@ qboolean G_ScriptAction_EnableSpeaker(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-=================
-G_ScriptAction_Accum
-
-  syntax: accum <buffer_index> <command> <paramater...>
-
-  Commands:
-
-    accum <n> inc <m>
-    accum <n> abort_if_less_than <m>
-    accum <n> abort_if_greater_than <m>
-    accum <n> abort_if_not_equal <m>
-    accum <n> abort_if_equal <m>
-    accum <n> set <m>
-    accum <n> random <m>
-    accum <n> bitset <m>
-    accum <n> bitreset <m>
-    accum <n> abort_if_bitset <m>
-    accum <n> abort_if_not_bitset <m>
-    accum <n> trigger_if_equal <m> <s> <t>
-    accum <n> wait_while_equal <m>
-=================
-*/
-
+/**
+ * @brief G_ScriptAction_Accum
+ * @details syntax: accum <buffer_index> <command> <paramater...>
+ *
+ * Commands:
+ *
+ *   accum <n> inc <m>
+ *   accum <n> abort_if_less_than <m>
+ *   accum <n> abort_if_greater_than <m>
+ *   accum <n> abort_if_not_equal <m>
+ *   accum <n> abort_if_equal <m>
+ *   accum <n> set <m>
+ *   accum <n> random <m>
+ *   accum <n> bitset <m>
+ *   accum <n> bitreset <m>
+ *   accum <n> abort_if_bitset <m>
+ *   accum <n> abort_if_not_bitset <m>
+ *   accum <n> trigger_if_equal <m> <s> <t>
+ *   accum <n> wait_while_equal <m>
+ *
+ * @param[in,out] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 {
 	char *pString = params, *token, lastToken[MAX_QPATH], name[MAX_QPATH];
@@ -2560,29 +2669,31 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-=================
-G_ScriptAction_GlobalAccum
-
-  syntax: globalAccum <buffer_index> <command> <paramater...>
-
-  Commands:
-
-    globalAccum <n> inc <m>
-    globalAccum <n> abort_if_less_than <m>
-    globalAccum <n> abort_if_greater_than <m>
-    globalAccum <n> abort_if_not_equal <m>
-    globalAccum <n> abort_if_equal <m>
-    globalAccum <n> set <m>
-    globalAccum <n> random <m>
-    globalAccum <n> bitset <m>
-    globalAccum <n> bitreset <m>
-    globalAccum <n> abort_if_bitset <m>
-    globalAccum <n> abort_if_not_bitset <m>
-    globalAccum <n> trigger_if_equal <m> <s> <t>
-    globalAccum <n> wait_while_equal <m>
-=================
-*/
+/**
+ * @brief G_ScriptAction_GlobalAccum
+ *
+ * @details syntax: globalAccum <buffer_index> <command> <paramater...>
+ *
+ * Commands:
+ *
+ *   globalAccum <n> inc <m>
+ *   globalAccum <n> abort_if_less_than <m>
+ *   globalAccum <n> abort_if_greater_than <m>
+ *   globalAccum <n> abort_if_not_equal <m>
+ *   globalAccum <n> abort_if_equal <m>
+ *   globalAccum <n> set <m>
+ *   globalAccum <n> random <m>
+ *   globalAccum <n> bitset <m>
+ *   globalAccum <n> bitreset <m>
+ *   globalAccum <n> abort_if_bitset <m>
+ *   globalAccum <n> abort_if_not_bitset <m>
+ *   globalAccum <n> trigger_if_equal <m> <s> <t>
+ *   globalAccum <n> wait_while_equal <m>
+ *
+ * @param[in,out] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 {
 	char *pString = params, *token, lastToken[MAX_QPATH], name[MAX_QPATH];
@@ -2803,15 +2914,14 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-=================
-G_ScriptAction_Print
-
-  syntax: print <text>
-
-  Mostly for debugging purposes
-=================
-*/
+/**
+ * @brief Mostly for debugging purposes
+ * @details syntax: print <text>
+ *
+ * @param[in,out] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_Print(gentity_t *ent, char *params)
 {
 	// Default to printing whole string
@@ -2847,23 +2957,23 @@ qboolean G_ScriptAction_Print(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-=================
-G_ScriptAction_FaceAngles
-
-  syntax: faceangles <pitch> <yaw> <roll> <duration/GOTOTIME> [ACCEL/DECCEL]
-
-  The entity will face the given angles, taking <duration> to get their. If the
-  GOTOTIME is given instead of a timed duration, the duration calculated from the
-  last gotomarker command will be used instead.
-=================
-*/
+/**
+ * @brief The entity will face the given angles, taking <duration> to get their.
+ * If the GOTOTIME is given instead of a timed duration, the duration calculated
+ * from the last gotomarker command will be used instead.
+ *
+ * @details syntax: faceangles <pitch> <yaw> <roll> <duration/GOTOTIME> [ACCEL/DECCEL]
+ *
+ * @param[in,out] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_FaceAngles(gentity_t *ent, char *params)
 {
-	char   *pString, *token;
-	vec3_t diff;
-	vec3_t angles;
-	int    trType = TR_LINEAR_STOP;
+	char     *pString, *token;
+	vec3_t   diff;
+	vec3_t   angles;
+	trType_t trType = TR_LINEAR_STOP;
 
 	if (!params || !params[0])
 	{
@@ -2925,7 +3035,7 @@ qboolean G_ScriptAction_FaceAngles(gentity_t *ent, char *params)
 		VectorCopy(ent->s.angles, ent->s.apos.trBase);
 		if (duration)
 		{
-			VectorScale(diff, 1000.0 / (float)duration, ent->s.apos.trDelta);
+			VectorScale(diff, 1000.0f / (float)duration, ent->s.apos.trDelta);
 		}
 		else
 		{
@@ -2941,7 +3051,7 @@ qboolean G_ScriptAction_FaceAngles(gentity_t *ent, char *params)
 			{
 				if (duration)
 				{
-					ent->s.apos.trDelta[i] = 2.0 * 1000.0 * diff[i] / (float)duration;
+					ent->s.apos.trDelta[i] = 2.0f * 1000.0f * diff[i] / (float)duration;
 				}
 				// else ... vector is already cleared
 
@@ -2952,7 +3062,7 @@ qboolean G_ScriptAction_FaceAngles(gentity_t *ent, char *params)
 		{
 			const char *pName = _GetEntityName(ent);
 			Bot_Util_SendTrigger(ent, NULL, va("%s_start", pName ? pName : "<unknown>"),
-			                     va("%.2f %.2f %.2f", ent->s.apos.trDelta[0], ent->s.apos.trDelta[1], ent->s.apos.trDelta[2]));
+			                     va("%.2f %.2f %.2f", (double)ent->s.apos.trDelta[0], (double)ent->s.apos.trDelta[1], (double)ent->s.apos.trDelta[2]));
 		}
 #endif
 	}
@@ -2971,7 +3081,7 @@ qboolean G_ScriptAction_FaceAngles(gentity_t *ent, char *params)
 		{
 			const char *pName = _GetEntityName(ent);
 			Bot_Util_SendTrigger(ent, NULL, va("%s_stop", pName ? pName : "<unknown>"),
-			                     va("%.2f %.2f %.2f", ent->s.apos.trDelta[0], ent->s.apos.trDelta[1], ent->s.apos.trDelta[2]));
+			                     va("%.2f %.2f %.2f", (double) ent->s.apos.trDelta[0], (double)ent->s.apos.trDelta[1], (double)ent->s.apos.trDelta[2]));
 		}
 #endif
 
@@ -2986,13 +3096,12 @@ qboolean G_ScriptAction_FaceAngles(gentity_t *ent, char *params)
 	return qfalse;
 }
 
-/*
-===================
-G_ScriptAction_ResetScript
-
-    causes any currently running scripts to abort, in favour of the current script
-===================
-*/
+/**
+ * @brief Causes any currently running scripts to abort, in favour of the current script
+ * @param[in] ent
+ * @param params - unused
+ * @return
+ */
 qboolean G_ScriptAction_ResetScript(gentity_t *ent, char *params)
 {
 	if (level.time == ent->scriptStatus.scriptStackChangeTime)
@@ -3003,15 +3112,13 @@ qboolean G_ScriptAction_ResetScript(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_TagConnect
-
-    syntax: attachtotag <targetname/scriptname> <tagname>
-
-    connect this entity onto the tag of another entity
-===================
-*/
+/**
+ * @brief Connect this entity onto the tag of another entity
+ * @details syntax: attachtotag <targetname/scriptname> <tagname>
+ * @param[out] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_TagConnect(gentity_t *ent, char *params)
 {
 	char      *pString = params, *token;
@@ -3055,15 +3162,13 @@ qboolean G_ScriptAction_TagConnect(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-====================
-G_ScriptAction_Halt
-
-  syntax: halt
-
-  Stop moving.
-====================
-*/
+/**
+ * @brief Stop moving.
+ * @details syntax: halt
+ * @param[in,out] ent
+ * @param params - unused
+ * @return
+ */
 qboolean G_ScriptAction_Halt(gentity_t *ent, char *params)
 {
 	if (level.time == ent->scriptStatus.scriptStackChangeTime)
@@ -3098,15 +3203,13 @@ qboolean G_ScriptAction_Halt(gentity_t *ent, char *params)
 	}
 }
 
-/*
-===================
-G_ScriptAction_StopSound
-
-  syntax: stopsound
-
-  Stops any looping sounds for this entity.
-===================
-*/
+/**
+ * @brief Stops any looping sounds for this entity.
+ * @details syntax: stopsound
+ * @param ent
+ * @param params
+ * @return
+ */
 qboolean G_ScriptAction_StopSound(gentity_t *ent, char *params)
 {
 	ent->s.loopSound = 0;
@@ -3126,13 +3229,13 @@ qboolean G_ScriptAction_EntityScriptName(gentity_t *ent, char *params)
 
 // -----------------------------------------------------------------------
 
-/*
-===================
-G_ScriptAction_AxisRespawntime
-
-  syntax: wm_axis_respawntime <seconds>
-===================
-*/
+/**
+ * @brief G_ScriptAction_AxisRespawntime
+ * @details syntax: wm_axis_respawntime <seconds>
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_AxisRespawntime(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -3155,13 +3258,13 @@ qboolean G_ScriptAction_AxisRespawntime(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_AlliedRespawntime
-
-  syntax: wm_allied_respawntime <seconds>
-===================
-*/
+/**
+ * @brief G_ScriptAction_AlliedRespawntime
+ * @details syntax: wm_allied_respawntime <seconds>
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_AlliedRespawntime(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -3184,13 +3287,13 @@ qboolean G_ScriptAction_AlliedRespawntime(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_NumberofObjectives
-
-  syntax: wm_number_of_objectives <number>
-===================
-*/
+/**
+ * @brief G_ScriptAction_NumberofObjectives
+ * @details syntax: wm_number_of_objectives <number>
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_NumberofObjectives(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -3218,13 +3321,14 @@ qboolean G_ScriptAction_NumberofObjectives(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_SetMainObjective
-
-  syntax: wm_set_main_objective <objective_number> <team>
-===================
-*/
+/**
+ * @brief syntax: wm_set_main_objective <objective_number> <team>
+ * @param ent - unused
+ * @param params - unused
+ * @return
+ *
+ * @note TODO: This function always true
+ */
 qboolean G_ScriptAction_SetMainObjective(gentity_t *ent, char *params)
 {
 	/*  char *pString, *token;
@@ -3261,13 +3365,13 @@ qboolean G_ScriptAction_SetMainObjective(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_ObjectiveStatus
-
-  syntax: wm_objective_status <objective_number> <team> <status>
-===================
-*/
+/**
+ * @brief G_ScriptAction_ObjectiveStatus
+ * @details syntax: wm_objective_status <objective_number> <team> <status>
+ * @param[in] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_ObjectiveStatus(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -3329,7 +3433,12 @@ qboolean G_ScriptAction_ObjectiveStatus(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-
+/**
+ * @brief G_ScriptAction_SetDebugLevel
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_SetDebugLevel(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -3356,6 +3465,12 @@ qboolean G_ScriptAction_SetDebugLevel(gentity_t *ent, char *params)
 	return qtrue;
 }
 
+/**
+ * @brief G_ScriptAction_VoiceAnnounce
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_VoiceAnnounce(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -3390,20 +3505,19 @@ qboolean G_ScriptAction_VoiceAnnounce(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_VoiceAnnounce: invalid system message\n");
 	}
 
-	G_SendSystemMessage(sysmsg, !num ? TEAM_AXIS : TEAM_ALLIES);
+	G_SendSystemMessage((sysMsg_t)sysmsg, !num ? TEAM_AXIS : TEAM_ALLIES);
 
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_SetWinner
-
-  syntax: wm_setwinner <team>
-
-  team: 0==AXIS, 1==ALLIED
-===================
-*/
+/**
+ * @brief G_ScriptAction_SetWinner
+ * @details syntax: wm_setwinner <team>
+ * team: 0==AXIS, 1==ALLIED
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_SetWinner(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -3441,17 +3555,14 @@ qboolean G_ScriptAction_SetWinner(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_SetDefendingTeam
-
-  syntax: wm_set_objective_status <status>
-
-  status: 0==axis, 1==allies
-
-  sets defending team for stopwatch mode
-===================
-*/
+/**
+ * @brief Sets defending team for stopwatch mode
+ * @details syntax: wm_set_objective_status <status>
+ * status: 0==axis, 1==allies
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_SetDefendingTeam(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -3484,13 +3595,13 @@ qboolean G_ScriptAction_SetDefendingTeam(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_AddTeamVoiceAnnounce
-
-  syntax: wm_addteamvoiceannounce
-===================
-*/
+/**
+ * @brief G_ScriptAction_AddTeamVoiceAnnounce
+ * @details syntax: wm_addteamvoiceannounce
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_AddTeamVoiceAnnounce(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -3544,6 +3655,12 @@ qboolean G_ScriptAction_AddTeamVoiceAnnounce(gentity_t *ent, char *params)
 	return qtrue;
 }
 
+/**
+ * @brief G_ScriptAction_RemoveTeamVoiceAnnounce
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_RemoveTeamVoiceAnnounce(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -3584,13 +3701,13 @@ qboolean G_ScriptAction_RemoveTeamVoiceAnnounce(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_TeamVoiceAnnounce
-
-  syntax: wm_teamvoiceannounce <team> <soundname>
-===================
-*/
+/**
+ * @brief G_ScriptAction_TeamVoiceAnnounce
+ * @details syntax: wm_teamvoiceannounce <team> <soundname>
+ * @param[in] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_TeamVoiceAnnounce(gentity_t *ent, char *params)
 {
 	char      *pString = params, *token;
@@ -3635,13 +3752,13 @@ qboolean G_ScriptAction_TeamVoiceAnnounce(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_Announce_Icon
-
-  syntax: wm_announce_icon <icon number> <"text to send to all clients">
-===================
-*/
+/**
+ * @brief G_ScriptAction_Announce_Icon
+ * @details syntax: wm_announce_icon <icon number> <"text to send to all clients">
+ * @param[in] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_Announce_Icon(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -3681,13 +3798,13 @@ qboolean G_ScriptAction_Announce_Icon(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_Announce
-
-  syntax: wm_announce <"text to send to all clients">
-===================
-*/
+/**
+ * @brief G_ScriptAction_Announce
+ * @details syntax: wm_announce <"text to send to all clients">
+ * @param[in] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_Announce(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -3715,13 +3832,13 @@ qboolean G_ScriptAction_Announce(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_EndRound
-
-  syntax: wm_endround <>
-===================
-*/
+/**
+ * @brief G_ScriptAction_EndRound
+ * @details syntax: wm_endround <>
+ * @param ent - unused
+ * @param params - unused
+ * @return
+ */
 qboolean G_ScriptAction_EndRound(gentity_t *ent, char *params)
 {
 	if (g_gamestate.integer == GS_INTERMISSION)
@@ -3734,13 +3851,13 @@ qboolean G_ScriptAction_EndRound(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_SetRoundTimelimit
-
-  syntax: wm_set_round_timelimit <number>
-===================
-*/
+/**
+ * @brief G_ScriptAction_SetRoundTimelimit
+ * @details syntax: wm_set_round_timelimit <number>
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_SetRoundTimelimit(gentity_t *ent, char *params)
 {
 	char  *pString = params, *token;
@@ -3754,9 +3871,9 @@ qboolean G_ScriptAction_SetRoundTimelimit(gentity_t *ent, char *params)
 
 	nextTimeLimit = g_nextTimeLimit.value;
 
-	if (g_gametype.integer == GT_WOLF_STOPWATCH && nextTimeLimit)
+	if (g_gametype.integer == GT_WOLF_STOPWATCH && nextTimeLimit != 0.f)
 	{
-		trap_Cvar_Set("timelimit", va("%f", nextTimeLimit));
+		trap_Cvar_Set("timelimit", va("%f", (double)nextTimeLimit));
 	}
 	else if (g_gametype.integer == GT_WOLF_LMS)
 	{
@@ -3786,13 +3903,13 @@ qboolean G_ScriptAction_SetRoundTimelimit(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_RemoveEntity
-
-  syntax: remove
-===================
-*/
+/**
+ * @brief G_ScriptAction_RemoveEntity
+ * @details syntax: remove
+ * @param[out] ent
+ * @param params - unused
+ * @return
+ */
 qboolean G_ScriptAction_RemoveEntity(gentity_t *ent, char *params)
 {
 	ent->think     = G_FreeEntity;
@@ -3801,11 +3918,12 @@ qboolean G_ScriptAction_RemoveEntity(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_SetDamagable
-===================
-*/
+/**
+ * @brief G_ScriptAction_SetDamagable
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_SetDamagable(gentity_t *ent, char *params)
 {
 	gentity_t *target;
@@ -3838,13 +3956,13 @@ qboolean G_ScriptAction_SetDamagable(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_SetState
-
-  syntax: remove
-===================
-*/
+/**
+ * @brief G_ScriptAction_SetState
+ * @details syntax: remove
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_SetState(gentity_t *ent, char *params)
 {
 	gentity_t  *target;
@@ -3917,13 +4035,13 @@ qboolean G_ScriptAction_SetState(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_RepairMG42
-
-  syntax: repairmg42 <target>
-===================
-*/
+/**
+ * @brief G_ScriptAction_RepairMG42
+ * @details syntax: repairmg42 <target>
+ * @param[in] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_RepairMG42(gentity_t *ent, char *params)
 {
 	gentity_t *target;
@@ -3975,13 +4093,13 @@ qboolean G_ScriptAction_RepairMG42(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_SetHQStatus
-
-  syntax: sethqstatus <team> <status>
-===================
-*/
+/**
+ * @brief G_ScriptAction_SetHQStatus
+ * @details syntax: sethqstatus <team> <status>
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_SetHQStatus(gentity_t *ent, char *params)
 {
 	char     *pString = params, *token;
@@ -3994,7 +4112,7 @@ qboolean G_ScriptAction_SetHQStatus(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_SetHQStatus: sethqstatus must have a team\n");
 	}
 
-	team = atoi(token);
+	team = (team_t)(atoi(token));
 
 	token = COM_ParseExt(&pString, qfalse);
 	if (!token[0])
@@ -4002,7 +4120,7 @@ qboolean G_ScriptAction_SetHQStatus(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_SetHQStatus: sethqstatus must have a status\n");
 	}
 
-	exists = atoi(token);
+	exists = (qboolean)(atoi(token));
 
 	// just in case
 	if (!level.gameManager)
@@ -4026,15 +4144,13 @@ qboolean G_ScriptAction_SetHQStatus(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_PrintAccum
-
-  syntax: printaccum <accumNumber>
-
-  prints out the value of  accum 'accumNumber'
-===================
-*/
+/**
+ * @brief Prints out the value of  accum 'accumNumber'
+ * @details syntax: printaccum <accumNumber>
+ * @param[in] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_PrintAccum(gentity_t *ent, char *params)
 {
 	char *token, *pString = params;
@@ -4063,15 +4179,13 @@ qboolean G_ScriptAction_PrintAccum(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_PrintGlobalAccum
-
-  syntax: printGlobalAccum <globalaccumnumber>
-
-  prints out the value of global accum 'globalaccumnumber'
-===================
-*/
+/**
+ * @brief prints out the value of global accum 'globalaccumnumber'
+ * @details syntax: printGlobalAccum <globalaccumnumber>
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_PrintGlobalAccum(gentity_t *ent, char *params)
 {
 	char *token, *pString = params;
@@ -4101,6 +4215,12 @@ qboolean G_ScriptAction_PrintGlobalAccum(gentity_t *ent, char *params)
 
 void AutoBuildConstruction(gentity_t *constructible);
 
+/**
+ * @brief G_ScriptAction_Construct
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_Construct(gentity_t *ent, char *params)
 {
 	char      *pString = params, *token;
@@ -4122,13 +4242,13 @@ qboolean G_ScriptAction_Construct(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_ConstructibleClass
-
-  syntax: constructible_class <int:class>
-===================
-*/
+/**
+ * @brief G_ScriptAction_ConstructibleClass
+ * @details syntax: constructible_class <int:class>
+ * @param[out] ent
+ * @param params
+ * @return
+ */
 qboolean G_ScriptAction_ConstructibleClass(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -4155,13 +4275,13 @@ qboolean G_ScriptAction_ConstructibleClass(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_ConstructibleChargeBarReq
-
-  syntax: constructible_chargebarreq <float:fraction>
-===================
-*/
+/**
+ * @brief G_ScriptAction_ConstructibleChargeBarReq
+ * @details syntax: constructible_chargebarreq <float:fraction>
+ * @param[in] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_ConstructibleChargeBarReq(gentity_t *ent, char *params)
 {
 	char  *pString = params, *token;
@@ -4172,11 +4292,11 @@ qboolean G_ScriptAction_ConstructibleChargeBarReq(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_ConstructibleChargeBarReq: \"constructible_chargebarreq\" must have a fraction value\n");
 	}
 
-	value = atof(token);
+	value = (float)atof(token);
 
 	if (value < 0)
 	{
-		G_Error("G_ScriptAction_ConstructibleChargeBarReq: \"constructible_chargebarreq\" has a bad value %f\n", value);
+		G_Error("G_ScriptAction_ConstructibleChargeBarReq: \"constructible_chargebarreq\" has a bad value %f\n", (double)value);
 	}
 
 	ent->constructibleStats.chargebarreq = value;
@@ -4184,13 +4304,13 @@ qboolean G_ScriptAction_ConstructibleChargeBarReq(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_ConstructibleConstructXPBonus
-
-  syntax: constructible_constructxpbonus <int:xppoints>
-===================
-*/
+/**
+ * @brief G_ScriptAction_ConstructibleConstructXPBonus
+ * @details syntax: constructible_constructxpbonus <int:xppoints>
+ * @param[out] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_ConstructibleConstructXPBonus(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -4213,13 +4333,13 @@ qboolean G_ScriptAction_ConstructibleConstructXPBonus(gentity_t *ent, char *para
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_ConstructibleDestructXPBonus
-
-  syntax: constructible_destructxpbonus <int:xppoints>
-===================
-*/
+/**
+ * @brief G_ScriptAction_ConstructibleDestructXPBonus
+ * @details syntax: constructible_destructxpbonus <int:xppoints>
+ * @param[out] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_ConstructibleDestructXPBonus(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -4242,13 +4362,13 @@ qboolean G_ScriptAction_ConstructibleDestructXPBonus(gentity_t *ent, char *param
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_ConstructibleHealth
-
-  syntax: constructible_health <int:health>
-===================
-*/
+/**
+ * @brief G_ScriptAction_ConstructibleHealth
+ * @details syntax: constructible_health <int:health>
+ * @param[out] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_ConstructibleHealth(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -4272,13 +4392,13 @@ qboolean G_ScriptAction_ConstructibleHealth(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_ConstructibleWeaponclass
-
-  syntax: constructible_weaponclass <int:class>
-===================
-*/
+/**
+ * @brief G_ScriptAction_ConstructibleWeaponclass
+ * @details syntax: constructible_weaponclass <int:class>
+ * @param[out] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_ConstructibleWeaponclass(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -4302,13 +4422,13 @@ qboolean G_ScriptAction_ConstructibleWeaponclass(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_ConstructibleDuration
-
-  syntax: constructible_duration <int:duration>
-===================
-*/
+/**
+ * @brief G_ScriptAction_ConstructibleDuration
+ * @details syntax: constructible_duration <int:duration>
+ * @param[out] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_ConstructibleDuration(gentity_t *ent, char *params)
 {
 	char *pString = params, *token;
@@ -4331,13 +4451,13 @@ qboolean G_ScriptAction_ConstructibleDuration(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-===================
-G_ScriptAction_Cvar
-
-  syntax: cvar <cvarName> <operation> <value>
-===================
-*/
+/**
+ * @brief G_ScriptAction_Cvar
+ * @details syntax: cvar <cvarName> <operation> <value>
+ * @param[in,out] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 {
 	char *pString = params, *token, lastToken[MAX_QPATH], name[MAX_QPATH], cvarName[MAX_QPATH];
@@ -4555,11 +4675,12 @@ qboolean G_ScriptAction_Cvar(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-=====================
-G_ScriptAction_AbortIfWarmup
-=====================
-*/
+/**
+ * @brief G_ScriptAction_AbortIfWarmup
+ * @param[in,out] ent
+ * @param params - unused
+ * @return
+ */
 qboolean G_ScriptAction_AbortIfWarmup(gentity_t *ent, char *params)
 {
 	if (level.warmupTime)
@@ -4571,23 +4692,25 @@ qboolean G_ScriptAction_AbortIfWarmup(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-====================
-G_ScriptAction_AbortIfNotSinglePlayer
-====================
-*/
+/**
+ * @brief G_ScriptAction_AbortIfNotSinglePlayer
+ * @param[in,out] ent
+ * @param params - unused
+ * @return
+ */
 qboolean G_ScriptAction_AbortIfNotSinglePlayer(gentity_t *ent, char *params)
 {
 	ent->scriptStatus.scriptStackHead = ent->scriptEvents[ent->scriptStatus.scriptEventIndex].stack.numItems;
 	return qtrue;
 }
 
-/*
-===================
-G_ModifyTOI
-===================
-*/
-// FIXME should we just do set stuff BEFORE actual spawning code? or add update code to entities? ( there are certainly more entities requiring update after set{} )
+/**
+ * @brief G_ModifyTOI
+ * @param[in,out] ent
+ *
+ * @todo FIXME should we just do set stuff BEFORE actual spawning code? or add update code to entities?
+ * ( there are certainly more entities requiring update after set{} )
+ */
 void G_ModifyTOI(gentity_t *ent)
 {
 	char *scorestring;
@@ -4644,12 +4767,12 @@ void G_ModifyTOI(gentity_t *ent)
 
 	if (G_SpawnString("score", "0", &scorestring))
 	{
-		ent->accuracy = atof(scorestring);
+		ent->accuracy = (float)atof(scorestring);
 	}
 
 	trap_SetConfigstring(CS_OID_TRIGGERS + ent->s.teamNum, ent->track);
 
-	if (ent->s.origin[0] || ent->s.origin[1] || ent->s.origin[2])
+	if (ent->s.origin[0] != 0.f || ent->s.origin[1] != 0.f || ent->s.origin[2] != 0.f)
 	{
 		G_SetConfigStringValue(CS_OID_DATA + ent->s.teamNum, "x", va("%i", (int)ent->s.origin[0]));
 		G_SetConfigStringValue(CS_OID_DATA + ent->s.teamNum, "y", va("%i", (int)ent->s.origin[1]));
@@ -4679,22 +4802,24 @@ void G_ModifyTOI(gentity_t *ent)
 	}
 }
 
-/*
-===================
-etpro_ScriptAction_SetValues
-
-Ikkyo - change key/value pairs of any entity
-
-syntax (example):
-set
-{
-    origin "3510 -960 1280"
-    classname "ookblat"
-    etc etc
-}
-available fields can be found in field_t of g_spawn.c, it is quite simple to add new ones
-===================
-*/
+/**
+ * @brief etpro_ScriptAction_SetValues
+ * @details
+ * Ikkyo - change key/value pairs of any entity
+ *
+ * syntax (example):
+ * set
+ * {
+ *     origin "3510 -960 1280"
+ *     classname "ookblat"
+ *     etc etc
+ * }
+ * available fields can be found in field_t of g_spawn.c, it is quite simple to add new ones
+ *
+ * @param[in,out] ent
+ * @param[in] params
+ * @return
+ */
 qboolean etpro_ScriptAction_SetValues(gentity_t *ent, char *params)
 {
 	char     *token;
@@ -4723,7 +4848,6 @@ qboolean etpro_ScriptAction_SetValues(gentity_t *ent, char *params)
 		if (!token[0])
 		{
 			G_Error("etpro_ScriptAction_SetValues: key \"%s\" has no value\n", key);
-			break;
 		}
 
 		strcpy(value, token);
@@ -4790,13 +4914,12 @@ qboolean etpro_ScriptAction_SetValues(gentity_t *ent, char *params)
 
 extern field_t fields[];
 
-/*
-=============
-G_ScriptAction_Delete
-
-Delete entities that match all the criteria provided in "params"
-=============
-*/
+/**
+ * @brief Delete entities that match all the criteria provided in "params"
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 {
 	gentity_t *found = NULL;
@@ -4837,7 +4960,6 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 		if (!token[0])
 		{
 			G_Error("G_ScriptAction_Delete(): key \"%s\" has no value", key);
-			break;
 		}
 
 		strcpy(value, token);
@@ -4851,7 +4973,6 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 		if (!fields[i].name)
 		{
 			G_Error("G_ScriptAction_Delete(): non-existing key \"%s\"", key);
-			break;
 		}
 
 		// we have a key/value pair to search for..
@@ -4873,7 +4994,7 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 			break;
 
 		case F_FLOAT:
-			valueFloat = atof(value);
+			valueFloat = (float)atof(value);
 			while ((found = G_FindFloat(found, fields[i].ofs, valueFloat)) != NULL)
 			{
 				pass[found->s.number]++;
@@ -4898,7 +5019,7 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 
 		case F_ANGLEHACK:
 			valueVector[0] = 0;
-			valueVector[1] = atof(value);
+			valueVector[1] = (float)atof(value);
 			valueVector[2] = 0;
 			while ((found = G_FindVector(found, fields[i].ofs, valueVector)) != NULL)
 			{
@@ -4945,13 +5066,12 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 	return qfalse;
 }
 
-/*
-===================
-G_ScriptAction_Create
-
-Added for compatability with etpro map scripts.
-===================
-*/
+/**
+ * @brief Added for compatability with etpro map scripts.
+ * @param[in] ent
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_Create(gentity_t *ent, char *params)
 {
 	gentity_t *create;
@@ -4975,7 +5095,6 @@ qboolean G_ScriptAction_Create(gentity_t *ent, char *params)
 		if (!token[0])
 		{
 			G_Error("G_ScriptAction_Create(): key \"%s\" has no value", key);
-			break;
 		}
 
 		strcpy(value, token);

@@ -37,20 +37,20 @@
 #define POOLSIZE    (8 * 1024 * 1024) // up to 32 if required
 
 static char memoryPool[POOLSIZE];
-static int  allocPoint;
+static unsigned int  allocPoint;
 
 /**
  * @brief G_Alloc
  * @param[in] size
  * @return
  */
-void *G_Alloc(int size)
+void *G_Alloc(unsigned int size)
 {
 	char *p;
 
 	if (g_debugAlloc.integer)
 	{
-		G_Printf("G_Alloc of %i bytes (%i bytes left)\n", size, POOLSIZE - allocPoint - ((size + 31) & ~31));
+		G_Printf("G_Alloc of %i bytes (%i bytes left)\n", size, POOLSIZE - allocPoint - ((size + 31) & ~31u));
 	}
 
 	if (allocPoint + size > POOLSIZE)
@@ -61,7 +61,7 @@ void *G_Alloc(int size)
 
 	p = &memoryPool[allocPoint];
 
-	allocPoint += (size + 31) & ~31;
+	allocPoint += (size + 31) & ~31u;
 
 	return p;
 }
