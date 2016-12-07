@@ -446,7 +446,7 @@ The interpreted versions use this because
 they can't have pointers returned to them
 ============
 */
-void Cmd_ArgvBuffer(int arg, char *buffer, int bufferLength)
+void Cmd_ArgvBuffer(int arg, char *buffer, size_t bufferLength)
 {
 	Q_strncpyz(buffer, Cmd_Argv(arg), bufferLength);
 }
@@ -552,7 +552,7 @@ The interpreted versions use this because
 they can't have pointers returned to them
 ============
 */
-void Cmd_ArgsBuffer(char *buffer, int bufferLength)
+void Cmd_ArgsBuffer(char *buffer, size_t bufferLength)
 {
 	Q_strncpyz(buffer, Cmd_Args(), bufferLength);
 }

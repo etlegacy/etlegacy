@@ -3474,7 +3474,7 @@ void RE_Shutdown(qboolean destroyWindow);
 qboolean RE_GetSkinModel(qhandle_t skinid, const char *type, char *name);
 qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap);
 
-qboolean R_GetEntityToken(char *buffer, int size);
+qboolean R_GetEntityToken(char *buffer, size_t size);
 float R_ProcessLightmap(byte *pic, int in_padding, int width, int height, byte *pic_out);
 
 model_t *R_AllocModel(void);

@@ -183,7 +183,7 @@ void VM_LoadSymbols(vm_t *vm)
 	vmSymbol_t **prev, *sym;
 	int        count;
 	int        value;
-	int        chars;
+	size_t     chars;
 	int        segment;
 	int        numInstructions;
 

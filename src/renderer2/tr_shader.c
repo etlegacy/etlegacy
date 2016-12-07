@@ -1422,10 +1422,10 @@ static qboolean ParseTexMod(char **text, shaderStage_t *stage)
 	return qtrue;
 }
 
-static qboolean ParseMap(shaderStage_t *stage, char **text, char *buffer, int bufferSize)
+static qboolean ParseMap(shaderStage_t *stage, char **text, char *buffer, size_t bufferSize)
 {
-	int  len;
-	char *token;
+	size_t len;
+	char   *token;
 
 	// examples
 	// map textures/caves/tembrick1crum_local.tga
@@ -1569,9 +1569,9 @@ ParseStage
 static qboolean ParseStage(shaderStage_t *stage, char **text)
 {
 	char *token;
-	int  colorMaskBits = 0;
-	int  depthMaskBits = GLS_DEPTHMASK_TRUE, blendSrcBits = 0, blendDstBits = 0, atestBits = 0, depthFuncBits =
-		0, polyModeBits            = 0;
+	int  colorMaskBits             = 0;
+	int  depthMaskBits             = GLS_DEPTHMASK_TRUE, blendSrcBits = 0, blendDstBits = 0, atestBits = 0, depthFuncBits =
+	    0, polyModeBits            = 0;
 	qboolean     depthMaskExplicit = qfalse;
 	int          imageBits         = 0;
 	filterType_t filterType;
@@ -4138,7 +4138,7 @@ static qboolean ParseShader(char *_text)
 		// ET sunshader <name>
 		else if (!Q_stricmp(token, "sunshader"))
 		{
-			int tokenLen;
+			size_t tokenLen;
 
 			token = COM_ParseExt2(text, qfalse);
 			if (!token[0])

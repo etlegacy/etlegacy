@@ -1931,10 +1931,10 @@ Allocate permanent (until the hunk is cleared) memory
 =================
 */
 #ifdef HUNK_DEBUG
-void *Hunk_AllocDebug(int size, ha_pref preference, char *label, char *file, int line)
+void *Hunk_AllocDebug(size_t size, ha_pref preference, char *label, char *file, int line)
 {
 #else
-void *Hunk_Alloc(int size, ha_pref preference)
+void *Hunk_Alloc(size_t size, ha_pref preference)
 {
 #endif
 	void *buf;
@@ -1951,7 +1951,7 @@ void *Hunk_Alloc(int size, ha_pref preference)
 #endif
 
 	// round to cacheline
-	size = (size + 31) & ~31;
+	size = (size + 31) & ~31u;
 
 	if (hunk_low.temp + hunk_high.temp + size > s_hunkTotal)
 	{
@@ -2010,7 +2010,7 @@ Multiple files can be loaded in temporary memory.
 When the files-in-use count reaches zero, all temp memory will be deleted
 =================
 */
-void *Hunk_AllocateTempMemory(int size)
+void *Hunk_AllocateTempMemory(size_t size)
 {
 	void         *buf;
 	hunkHeader_t *hdr;

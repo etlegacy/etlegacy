@@ -76,8 +76,8 @@ char *IN_GetClipboardData(void)
 {
 	if (SDL_HasClipboardText())
 	{
-		char *data = NULL, *temp = NULL;
-		int  len   = 0;
+		char   *data = NULL, *temp = NULL;
+		size_t len   = 0;
 
 		temp = SDL_GetClipboardText();
 		if (!temp || !temp[0])

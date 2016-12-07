@@ -3217,7 +3217,7 @@ serverStatus_t *CL_GetServerStatus(netadr_t from)
 * @param[in] maxLen
 * @return
 */
-int CL_ServerStatus(const char *serverAddress, char *serverStatusString, int maxLen)
+int CL_ServerStatus(const char *serverAddress, char *serverStatusString, size_t maxLen)
 {
 	netadr_t       to;
 	serverStatus_t *serverStatus;
@@ -3534,7 +3534,7 @@ void CL_GlobalServers_f(void)
  * @param[in] buflen
  * @param[out] pingtime
  */
-void CL_GetPing(int n, char *buf, int buflen, int *pingtime)
+void CL_GetPing(int n, char *buf, size_t buflen, int *pingtime)
 {
 	const char *str;
 	int        time;
@@ -3580,7 +3580,7 @@ void CL_GetPing(int n, char *buf, int buflen, int *pingtime)
  * @param[out] buf
  * @param[in] buflen
  */
-void CL_GetPingInfo(int n, char *buf, int buflen)
+void CL_GetPingInfo(int n, char *buf, size_t buflen)
 {
 	if (n < 0 || n >= MAX_PINGREQUESTS || !cl_pinglist[n].adr.port)
 	{

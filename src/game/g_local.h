@@ -1219,7 +1219,7 @@ void G_IntermissionVoteTally(gentity_t *ent);
 
 void G_EntitySound(gentity_t *ent, const char *soundId, int volume); // Unused.
 void G_EntitySoundNoCut(gentity_t *ent, const char *soundId, int volume); // Unused.
-qboolean G_MatchOnePlayer(int *plist, char *err, int len);
+qboolean G_MatchOnePlayer(int *plist, char *err, size_t len);
 int ClientNumberFromString(gentity_t *to, char *s);
 void SanitizeString(char *in, char *out, qboolean fToLower);
 
@@ -1522,7 +1522,7 @@ int Team_ClassForString(char *string);
 void reset_numobjectives(void);
 
 // g_mem.c
-void *G_Alloc(unsigned int size);
+void *G_Alloc(size_t size);
 void G_InitMemory(void);
 void Svcmd_GameMem_f(void);
 

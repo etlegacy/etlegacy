@@ -340,7 +340,7 @@ static int LAN_GetServerCount(int source)
  * @param[out] buf
  * @param[in] buflen
  */
-static void LAN_GetServerAddressString(int source, int n, char *buf, int buflen)
+static void LAN_GetServerAddressString(int source, int n, char *buf, size_t buflen)
 {
 	switch (source)
 	{
@@ -376,7 +376,7 @@ static void LAN_GetServerAddressString(int source, int n, char *buf, int buflen)
  * @param[in] buf
  * @param[in] buflen
  */
-static void LAN_GetServerInfo(int source, int n, char *buf, int buflen)
+static void LAN_GetServerInfo(int source, int n, char *buf, size_t buflen)
 {
 	char         info[MAX_STRING_CHARS];
 	serverInfo_t *server = NULL;
@@ -630,7 +630,7 @@ static void LAN_ClearPing(int n)
  * @param[in] buflen
  * @param[out] pingtime
  */
-static void LAN_GetPing(int n, char *buf, int buflen, int *pingtime)
+static void LAN_GetPing(int n, char *buf, size_t buflen, int *pingtime)
 {
 	CL_GetPing(n, buf, buflen, pingtime);
 }
@@ -641,7 +641,7 @@ static void LAN_GetPing(int n, char *buf, int buflen, int *pingtime)
  * @param[out] buf
  * @param[in] buflen
  */
-static void LAN_GetPingInfo(int n, char *buf, int buflen)
+static void LAN_GetPingInfo(int n, char *buf, size_t buflen)
 {
 	CL_GetPingInfo(n, buf, buflen);
 }
@@ -755,7 +755,7 @@ qboolean LAN_UpdateVisiblePings(int source)
  * @param[in] maxLen
  * @return
  */
-int LAN_GetServerStatus(const char *serverAddress, char *serverStatus, int maxLen)
+int LAN_GetServerStatus(const char *serverAddress, char *serverStatus, size_t maxLen)
 {
 	return CL_ServerStatus(serverAddress, serverStatus, maxLen);
 }
@@ -823,7 +823,7 @@ static void CL_GetGlconfig(glconfig_t *config)
  * @param[out] buf
  * @param[in] buflen
  */
-static void GetClipboardData(char *buf, int buflen)
+static void GetClipboardData(char *buf, unsigned int buflen)
 {
 	char *cbd;
 
@@ -846,7 +846,7 @@ static void GetClipboardData(char *buf, int buflen)
  * @param[out] buf
  * @param[in] buflen
  */
-void Key_KeynumToStringBuf(int keynum, char *buf, int buflen)
+void Key_KeynumToStringBuf(int keynum, char *buf, size_t buflen)
 {
 	Q_strncpyz(buf, CL_TranslateStringBuf(Key_KeynumToString(keynum)), buflen);
 }
@@ -857,7 +857,7 @@ void Key_KeynumToStringBuf(int keynum, char *buf, int buflen)
  * @param[out] buf
  * @param[in] buflen
  */
-void Key_GetBindingBuf(int keynum, char *buf, int buflen)
+void Key_GetBindingBuf(int keynum, char *buf, size_t buflen)
 {
 	char *value;
 
@@ -905,7 +905,7 @@ void Key_SetCatcher(int catcher)
  * @param[in] size
  * @return
  */
-static int GetConfigString(int index, char *buf, int size)
+static int GetConfigString(int index, char *buf, size_t size)
 {
 	int offset;
 

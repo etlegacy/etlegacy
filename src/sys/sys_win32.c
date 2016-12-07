@@ -199,7 +199,7 @@ qboolean Sys_LowPhysicalMemory(void)
 const char *Sys_Basename(char *path)
 {
 	static char  base[MAX_OSPATH] = { 0 };
-	unsigned int length;
+	size_t length;
 
 	length = strlen(path) - 1;
 
@@ -229,7 +229,7 @@ const char *Sys_Basename(char *path)
 const char *Sys_Dirname(char *path)
 {
 	static char  dir[MAX_OSPATH] = { 0 };
-	unsigned int length;
+	size_t length;
 
 	Q_strncpyz(dir, path, sizeof(dir));
 	length = strlen(dir) - 1;
@@ -370,7 +370,7 @@ void Sys_ListFilteredFiles(const char *basedir, const char *subdirs, const char 
  */
 static qboolean strgtr(const char *s0, const char *s1)
 {
-	unsigned int l0, l1, i;
+	size_t l0, l1, i;
 
 	l0 = strlen(s0);
 	l1 = strlen(s1);
@@ -414,7 +414,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, const char *f
 	intptr_t           findhandle;
 	int                flag;
 	int                i;
-	unsigned int       extLen;
+	size_t       extLen;
 #ifdef DEDICATED
 	qboolean invalid;
 #endif
@@ -629,7 +629,7 @@ void Sys_ErrorDialog(const char *error)
 		{
 			char         *p = clipMemory;
 			char         buffer[1024];
-			unsigned int size;
+			size_t size;
 
 			while ((size = CON_LogRead(buffer, sizeof(buffer))) > 0)
 			{

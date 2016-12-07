@@ -39,7 +39,7 @@
 G_PushMapEntityToBuffer
 ===================
 */
-void G_PushMapEntityToBuffer(char *buffer, int size, mapEntityData_t *mEnt)
+void G_PushMapEntityToBuffer(char *buffer, size_t size, mapEntityData_t *mEnt)
 {
 	char buf[32];
 

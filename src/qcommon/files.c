@@ -3696,7 +3696,7 @@ we are not interested in a download string format, we want something human-reada
 (this is used for diagnostics while connecting to a pure server)
 ================
 */
-qboolean FS_ComparePaks(char *neededpaks, int len, qboolean dlstring)
+qboolean FS_ComparePaks(char *neededpaks, size_t len, qboolean dlstring)
 {
 	searchpath_t *sp;
 	qboolean     havepak;

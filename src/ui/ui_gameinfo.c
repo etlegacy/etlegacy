@@ -252,12 +252,12 @@ int QDECL UI_SortArenas(const void *a, const void *b)
  */
 void UI_LoadArenas(void)
 {
-	int          numdirs;
-	char         filename[128];
-	char         dirlist[8192];
-	char         *dirptr;
-	int          i;
-	unsigned int dirlen;
+	int    numdirs;
+	char   filename[128];
+	char   dirlist[8192];
+	char   *dirptr;
+	int    i;
+	size_t dirlen;
 
 	uiInfo.mapCount = 0;
 
@@ -617,14 +617,14 @@ int QDECL UI_SortCampaigns(const void *a, const void *b)
  */
 void UI_LoadCampaigns(void)
 {
-	int          numdirs;
-	char         filename[128];
-	char         dirlist[2048];
-	char         *dirptr;
-	int          i, j;
-	unsigned int dirlen;
-	long         hash;
-	const char   *ch;
+	int        numdirs;
+	char       filename[128];
+	char       dirlist[2048];
+	char       *dirptr;
+	int        i, j;
+	size_t     dirlen;
+	long       hash;
+	const char *ch;
 
 	uiInfo.campaignCount = 0;
 	memset(&uiInfo.campaignList, 0, sizeof(uiInfo.campaignList));

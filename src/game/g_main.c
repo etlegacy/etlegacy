@@ -5110,7 +5110,7 @@ void G_MapVoteInfoWrite()
  * @param[out] s
  * @param[in] size
  */
-void G_ReadConfigFileString(char **cnf, char *s, int size)
+void G_ReadConfigFileString(char **cnf, char *s, size_t size)
 {
 	char *t;
 

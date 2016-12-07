@@ -2539,7 +2539,7 @@ void R_LoadEntities(lump_t *l)
 R_GetEntityToken
 =================
 */
-qboolean R_GetEntityToken(char *buffer, int size)
+qboolean R_GetEntityToken(char *buffer, size_t size)
 {
 	const char *s;
 
@@ -2584,7 +2584,7 @@ void RE_LoadWorldMap(const char *name)
 	dheader_t *header;
 	byte      *buffer;
 	byte      *startMarker;
-	int       nameLength;
+	size_t    nameLength;
 
 	skyboxportal = 0;
 

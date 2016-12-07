@@ -1394,7 +1394,7 @@ commandDef_t commandList[] =
 	{ "none",               &Script_Skip               }, // skip execution (used as a placeholder)
 };
 
-unsigned int scriptCommandCount = sizeof(commandList) / sizeof(commandDef_t);
+size_t scriptCommandCount = sizeof(commandList) / sizeof(commandDef_t);
 
 /**
  * @brief Item_RunScript
@@ -1414,7 +1414,7 @@ void Item_RunScript(itemDef_t *item, qboolean *bAbort, const char *s)
 
 	if (item && s && s[0])
 	{
-		unsigned int i;
+		size_t i;
 
 		Q_strcat(script, 4096, s);
 		p = script;

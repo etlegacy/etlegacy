@@ -654,7 +654,7 @@ void trap_Key_SetCatcher(int catcher)
  * @param[in] buf
  * @param[in] bufsize
  */
-void trap_GetClipboardData(char *buf, int bufsize)
+void trap_GetClipboardData(char *buf, size_t bufsize)
 {
 	syscall(UI_GETCLIPBOARDDATA, buf, bufsize);
 }
@@ -684,7 +684,7 @@ void trap_GetGlconfig(glconfig_t *glconfig)
  * @param[in] buffsize
  * @return
  */
-int trap_GetConfigString(int index, char *buff, int buffsize)
+int trap_GetConfigString(int index, char *buff, size_t buffsize)
 {
 	return syscall(UI_GETCONFIGSTRING, index, buff, buffsize);
 }

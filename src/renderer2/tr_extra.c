@@ -482,9 +482,9 @@ Q_strreplace
 replaces content of find by replace in dest
 =============
 */
-qboolean Q_strreplace(char *dest, int destsize, const char *find, const char *replace)
+qboolean Q_strreplace(char *dest, size_t destsize, const char *find, const char *replace)
 {
-	int  lend;
+	size_t  lend;
 	char *s;
 	char backup[32000];             // big, but small enough to fit in PPC stack
 
@@ -501,7 +501,7 @@ qboolean Q_strreplace(char *dest, int destsize, const char *find, const char *re
 	}
 	else
 	{
-		int lstart, lfind, lreplace;
+		size_t lstart, lfind, lreplace;
 
 		Q_strncpyz(backup, dest, lend + 1);
 		lstart   = s - dest;

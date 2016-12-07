@@ -210,7 +210,7 @@ void SV_UpdateConfigStrings(void)
  * @param[out] buffer
  * @param[in] bufferSize
  */
-void SV_GetConfigstring(int index, char *buffer, int bufferSize)
+void SV_GetConfigstring(int index, char *buffer, size_t bufferSize)
 {
 	if (bufferSize < 1)
 	{
@@ -262,7 +262,7 @@ void SV_SetUserinfo(int index, const char *val)
  * @param[out] buffer
  * @param[in] bufferSize
  */
-void SV_GetUserinfo(int index, char *buffer, int bufferSize)
+void SV_GetUserinfo(int index, char *buffer, size_t bufferSize)
 {
 	if (bufferSize < 1)
 	{

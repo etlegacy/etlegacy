@@ -832,7 +832,7 @@ void Sys_ParseArgs(int argc, char **argv)
  * @param[out] buffer
  * @param[in] bufferSize
  */
-void Sys_BuildCommandLine(int argc, char **argv, char *buffer, int bufferSize)
+void Sys_BuildCommandLine(int argc, char **argv, char *buffer, size_t bufferSize)
 {
 	int i = 0;
 	// Concatenate the command line for passing to Com_Init

@@ -303,7 +303,7 @@ static void Decode(UINT4 *output, const unsigned char *input, unsigned int len)
 
 //===================================================================
 
-unsigned int Com_BlockChecksum(void *buffer, int length)
+unsigned int Com_BlockChecksum(void *buffer, size_t length)
 {
 	int      digest[4];
 	unsigned val;

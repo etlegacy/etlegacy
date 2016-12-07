@@ -4089,12 +4089,12 @@ int QDECL UI_SortMods(const void *a, const void *b)
  */
 static void UI_LoadMods(void)
 {
-	int          numdirs;
-	char         dirlist[2048];
-	char         *dirptr;
-	char         *descptr;
-	int          i;
-	unsigned int dirlen;
+	int    numdirs;
+	char   dirlist[2048];
+	char   *dirptr;
+	char   *descptr;
+	int    i;
+	size_t dirlen;
 
 	uiInfo.modCount = 0;
 	numdirs         = trap_FS_GetFileList("$modlist", "", dirlist, sizeof(dirlist));
@@ -4122,11 +4122,11 @@ static void UI_LoadMods(void)
  */
 static void UI_LoadProfiles(void)
 {
-	int          numdirs;
-	char         dirlist[2048];
-	char         *dirptr;
-	int          i;
-	unsigned int dirlen;
+	int    numdirs;
+	char   dirlist[2048];
+	char   *dirptr;
+	int    i;
+	size_t dirlen;
 
 	uiInfo.profileCount = 0;
 	uiInfo.profileIndex = -1;
@@ -4216,8 +4216,8 @@ static void UI_LoadMovies(void)
 
 	if (uiInfo.movieCount)
 	{
-		int          i;
-		unsigned int len;
+		int    i;
+		size_t len;
 
 		if (uiInfo.movieCount > MAX_MOVIES)
 		{
@@ -4257,8 +4257,8 @@ static void UI_LoadDemos(void)
 
 	if (uiInfo.demoCount)
 	{
-		int          i;
-		unsigned int len;
+		int    i;
+		size_t len;
 
 		if (uiInfo.demoCount > MAX_DEMOS)
 		{
@@ -6578,8 +6578,8 @@ static int UI_GetServerStatusInfo(const char *serverAddress, serverStatusInfo_t 
 	memset(info, 0, sizeof(*info));
 	if (trap_LAN_ServerStatus(serverAddress, info->text, sizeof(info->text)))
 	{
-		int          i;
-		unsigned int len;
+		int    i;
+		size_t len;
 
 		menu  = Menus_FindByName("serverinfo_popmenu");
 		menu2 = Menus_FindByName("popupError");
@@ -8898,15 +8898,15 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "cg_locations",                        "3",                          CVAR_ARCHIVE,                   0 },
 };
 
-const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
+const size_t cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
 
 /**
  * @brief UI_RegisterCvars
  */
 void UI_RegisterCvars(void)
 {
-	unsigned int i;
-	cvarTable_t  *cv;
+	size_t      i;
+	cvarTable_t *cv;
 
 	Com_Printf("%d UI cvars in use.\n", cvarTableSize);
 
@@ -8930,8 +8930,8 @@ void UI_RegisterCvars(void)
  */
 void UI_UpdateCvars(void)
 {
-	unsigned int i;
-	cvarTable_t  *cv;
+	size_t      i;
+	cvarTable_t *cv;
 
 	for (i = 0, cv = cvarTable ; i < cvarTableSize ; i++, cv++)
 	{

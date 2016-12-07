@@ -1568,12 +1568,13 @@ void AddMedicTeamBonus(gclient_t *client)
  * @param[out] out
  * @param[in] outSize
  */
-static void ClientCleanName(const char *in, char *out, int outSize)
+static void ClientCleanName(const char *in, char *out, size_t outSize)
 {
-	int  len = 0, colorlessLen = 0;
-	char ch;
-	char *p;
-	int  spaces = 0;
+	size_t len          = 0;
+	int    colorlessLen = 0;
+	char   ch;
+	char   *p;
+	int    spaces = 0;
 
 	// save room for trailing null byte
 	outSize--;

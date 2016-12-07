@@ -166,7 +166,7 @@ void COM_StripFilename(const char *in, char *out)
  * @brief if path doesn't have an extension, then append the specified one
  * (which should include the .)
  */
-void COM_DefaultExtension(char *path, int maxSize, const char *extension)
+void COM_DefaultExtension(char *path, size_t maxSize, const char *extension)
 {
 	const char *dot = strrchr(path, '.'), *slash;
 
@@ -1286,7 +1286,7 @@ int Q_vsnprintf(char *str, size_t size, const char *format, va_list ap)
 /**
  * @brief Safe strncpy that ensures a trailing zero
  */
-void Q_strncpyz(char *dest, const char *src, int destsize)
+void Q_strncpyz(char *dest, const char *src, size_t destsize)
 {
 	if (!dest)
 	{
@@ -1425,9 +1425,9 @@ char *Q_strupr(char *s1)
 }
 
 // never goes past bounds or leaves without a terminating 0
-void Q_strcat(char *dest, int size, const char *src)
+void Q_strcat(char *dest, size_t size, const char *src)
 {
-	int l1;
+	size_t l1;
 
 	l1 = strlen(dest);
 	if (l1 >= size)
@@ -1778,7 +1778,7 @@ char *QDECL va(const char *format, ...)
  */
 void Com_TruncateLongString(char *buffer, const char *s)
 {
-	int length = strlen(s);
+	size_t length = strlen(s);
 
 	if (length <= TRUNCATE_LENGTH)
 	{

@@ -419,8 +419,8 @@ void CG_ParseEntityFromSpawnVars(void)
  */
 char *CG_AddSpawnVarToken(const char *string)
 {
-	unsigned int l;
-	char         *dest;
+	size_t l;
+	char   *dest;
 
 	l = strlen(string);
 	if (cg.numSpawnVarChars + l + 1 > MAX_SPAWN_VARS_CHARS)
@@ -553,11 +553,11 @@ void SP_worldspawn(void)
 	CG_EffectParse(s);
 
 	cg.fiveMinuteSound_g[0]                       = \
-		cg.fiveMinuteSound_a[0]                   = \
-			cg.twoMinuteSound_g[0]                = \
-				cg.twoMinuteSound_a[0]            = \
-					cg.thirtySecondSound_g[0]     = \
-						cg.thirtySecondSound_a[0] = '\0';
+	    cg.fiveMinuteSound_a[0]                   = \
+	        cg.twoMinuteSound_g[0]                = \
+	            cg.twoMinuteSound_a[0]            = \
+	                cg.thirtySecondSound_g[0]     = \
+	                    cg.thirtySecondSound_a[0] = '\0';
 
 	CG_SpawnString("fiveMinuteSound_axis", "axis_hq_5minutes", &s);
 	Q_strncpyz(cg.fiveMinuteSound_g, s, sizeof(cg.fiveMinuteSound_g));

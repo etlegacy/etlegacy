@@ -480,9 +480,9 @@ extern leakyBucket_t outboundLeakyBucket;
 void SV_SetConfigstringNoUpdate(int index, const char *val);
 void SV_SetConfigstring(int index, const char *val);
 void SV_UpdateConfigStrings(void);
-void SV_GetConfigstring(int index, char *buffer, int bufferSize);
+void SV_GetConfigstring(int index, char *buffer, size_t bufferSize);
 void SV_SetUserinfo(int index, const char *val);
-void SV_GetUserinfo(int index, char *buffer, int bufferSize);
+void SV_GetUserinfo(int index, char *buffer, size_t bufferSize);
 void SV_ChangeMaxClients(void);
 void SV_SpawnServer(const char *server);
 void SV_WriteAttackLog(const char *log);
@@ -541,7 +541,7 @@ void SV_GameBinaryMessageReceived(int cno, const char *buf, int buflen, int comm
 // sv_bot.c
 int SV_BotAllocateClient(int clientNum);
 void SV_BotFreeClient(int clientNum);
-int SV_BotGetConsoleMessage(int client, char *buf, int size);
+int SV_BotGetConsoleMessage(int client, char *buf, size_t size);
 int BotImport_DebugPolygonCreate(int color, int numPoints, vec3_t *points);
 void BotImport_DebugPolygonDelete(int id);
 

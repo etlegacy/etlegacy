@@ -2346,7 +2346,7 @@ void CG_RegisterPlayerClasses(void);
 
 // cg_main.c
 const char *CG_ConfigString(int index);
-int CG_ConfigStringCopy(int index, char *buff, int buffsize);
+int CG_ConfigStringCopy(int index, char *buff, size_t buffsize);
 const char *CG_Argv(int arg);
 
 float CG_Cvar_Get(const char *cvar);

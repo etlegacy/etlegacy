@@ -132,8 +132,8 @@ EVENT MESSAGES
  */
 static char *SV_ExpandNewlines(char *in)
 {
-	static char  string[1024];
-	unsigned int l = 0;
+	static char string[1024];
+	size_t      l = 0;
 
 	while (*in && l < sizeof(string) - 3)
 	{

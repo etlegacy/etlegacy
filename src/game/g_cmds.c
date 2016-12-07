@@ -51,7 +51,7 @@ qboolean G_IsOnFireteam(int entityNum, fireteamData_t **teamNum);
  * @param[in] len
  * @return
  */
-qboolean G_MatchOnePlayer(int *plist, char *err, int len)
+qboolean G_MatchOnePlayer(int *plist, char *err, size_t len)
 {
 	err[0] = '\0';
 

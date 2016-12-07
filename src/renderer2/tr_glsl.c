@@ -967,7 +967,7 @@ static void GLSL_BuildShaderExtraDef()
 	shaderExtraDefLen = strlen(shaderExtraDef) + 1;
 }
 
-static void GLSL_GetShaderHeader(GLenum shaderType, char *dest, int size)
+static void GLSL_GetShaderHeader(GLenum shaderType, char *dest, size_t size)
 {
 	dest[0] = '\0';
 
@@ -1039,11 +1039,11 @@ static int GLSL_CompileGPUShader(GLhandleARB program, GLhandleARB *prevShader, c
 	return 1;
 }
 
-static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data, int *size, qboolean append)
+static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data, size_t *size, qboolean append)
 {
-	char fullname[MAX_QPATH];
-	int  dataSize = 0;
-	char *dataBuffer;
+	char   fullname[MAX_QPATH];
+	size_t dataSize = 0;
+	char   *dataBuffer;
 
 	if (shaderType == GL_VERTEX_SHADER)
 	{
@@ -1073,7 +1073,7 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
 		if (temp)
 		{
 			// Found a fallback shader and will use it
-			int strl = 0;
+			size_t strl = 0;
 			strl = strlen(temp) + 1;
 			if (append && *size)
 			{
@@ -1168,7 +1168,7 @@ static void GLSL_PreprocessShaderText(char *shaderBuffer, char *filetext, GLenum
 			{
 				// handle include
 				GLchar *libBuffer         = NULL;
-				int    libBufferSize      = 0;
+				size_t libBufferSize      = 0;
 				int    currentOffset      = strlen(shaderBuffer);
 				char   *shaderBufferPoint = NULL;
 
@@ -1214,7 +1214,7 @@ static char *GLSL_BuildGPUShaderText(programInfo_t *info, GLenum shadertype)
 {
 	static char shaderBuffer[GLSL_BUFF];
 	GLchar      *mainBuffer    = NULL;
-	int         mainBufferSize = 0;
+	size_t      mainBufferSize = 0;
 	char        *filename      = NULL;
 	char        *output        = NULL;
 
@@ -1758,9 +1758,9 @@ static qboolean GLSL_InitGPUShader2(shaderProgram_t *program, const char *name, 
 
 static qboolean GLSL_FinnishShaderTextAndCompile(programInfo_t *info, int permutation, const char *vertex, const char *frag, const char *macrostring)
 {
-	char vpSource[64000];
-	char fpSource[64000];
-	int  size = sizeof(vpSource);
+	char   vpSource[64000];
+	char   fpSource[64000];
+	size_t size = sizeof(vpSource);
 
 	GLSL_GetShaderHeader(GL_VERTEX_SHADER, vpSource, size);
 	GLSL_GetShaderHeader(GL_FRAGMENT_SHADER, fpSource, size);
@@ -1864,8 +1864,8 @@ static void GLSL_SetInitialUniformValues(programInfo_t *info, int permutation)
 
 void GLSL_GenerateCheckSum(programInfo_t *info, const char *vertex, const char *fragment)
 {
-	char *fullSource = NULL;
-	int  size        = 0;
+	char   *fullSource = NULL;
+	size_t size        = 0;
 
 	size += strlen(vertex);
 	size += strlen(fragment);

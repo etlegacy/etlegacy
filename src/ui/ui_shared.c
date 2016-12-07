@@ -1419,10 +1419,10 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 	}
 	else
 	{
-		char         buffer[256];
-		char         *s = NULL;
-		unsigned int len, maxlen;
-		qboolean     useCvar = button->data[0] ? qfalse : qtrue;
+		char     buffer[256];
+		char     *s = NULL;
+		size_t   len, maxlen;
+		qboolean useCvar = button->data[0] ? qfalse : qtrue;
 
 		if (useCvar)
 		{
@@ -1432,7 +1432,7 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 		}
 		else
 		{
-			maxlen = (unsigned int)button->data[0];
+			maxlen = (size_t)button->data[0];
 			s      = (char *)button->text;
 			len    = strlen(s);
 		}
@@ -1768,7 +1768,7 @@ void BG_PanelButtons_SetFocusButton(panel_button_t *button)
  * @param[in] size
  * @param[in] font
  */
-void BG_FitTextToWidth_Ext(char *instr, float scale, float w, unsigned int size, fontHelper_t *font)
+void BG_FitTextToWidth_Ext(char *instr, float scale, float w, size_t size, fontHelper_t *font)
 {
 	char buffer[1024];
 	char *s, *p, *c, *ls = NULL;

@@ -298,7 +298,7 @@ qboolean SV_EntityContact(const vec3_t mins, const vec3_t maxs, const sharedEnti
  * @param[out] buffer
  * @param[in] bufferSize
  */
-void SV_GetServerinfo(char *buffer, int bufferSize)
+void SV_GetServerinfo(char *buffer, size_t bufferSize)
 {
 	if (bufferSize < 1)
 	{

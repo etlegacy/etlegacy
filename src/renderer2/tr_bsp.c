@@ -5163,7 +5163,7 @@ void R_LoadEntities(lump_t *l)
 R_GetEntityToken
 =================
 */
-qboolean R_GetEntityToken(char *buffer, int size)
+qboolean R_GetEntityToken(char *buffer, size_t size)
 {
 	const char *s;
 

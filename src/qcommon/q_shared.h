@@ -526,9 +526,9 @@ typedef enum
 
 #ifdef HUNK_DEBUG
 #define Hunk_Alloc(size, preference)              Hunk_AllocDebug(size, preference, # size, __FILE__, __LINE__)
-void *Hunk_AllocDebug(int size, ha_pref preference, char *label, char *file, int line);
+void *Hunk_AllocDebug(size_t size, ha_pref preference, char *label, char *file, int line);
 #else
-void *Hunk_Alloc(int size, ha_pref preference);
+void *Hunk_Alloc(size_t size, ha_pref preference);
 #endif
 
 #define Com_Memset memset
@@ -568,7 +568,7 @@ void COM_StripExtension(const char *in, char *out, int destsize);
 qboolean COM_CompareExtension(const char *in, const char *ext);
 void COM_StripFilename(const char *in, char *out);
 
-void COM_DefaultExtension(char *path, int maxSize, const char *extension);
+void COM_DefaultExtension(char *path, size_t maxSize, const char *extension);
 
 void COM_BeginParseSession(const char *name);
 void COM_RestoreParseSession(char **data_p);
@@ -669,8 +669,8 @@ const char *Q_stristr(const char *s, const char *find);
 #define Q_strcpy(dest, src) strcpy(dest, src)
 
 // buffer size safe library replacements
-void Q_strncpyz(char *dest, const char *src, int destsize);
-void Q_strcat(char *dest, int size, const char *src);
+void Q_strncpyz(char *dest, const char *src, size_t destsize);
+void Q_strcat(char *dest, size_t size, const char *src);
 
 // strlen that discounts Quake color sequences
 int Q_PrintStrlen(const char *string);
