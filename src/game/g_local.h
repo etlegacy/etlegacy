@@ -1250,16 +1250,16 @@ void Spawn_Shard(gentity_t *ent, gentity_t *inflictor, float quantity, int type)
 int G_FindConfigstringIndex(const char *name, int start, int max, qboolean create);
 void G_RemoveConfigstringIndex(const char *name, int start, int max);
 
-int G_ModelIndex(char *name);
+int G_ModelIndex(const char *name);
 int G_SoundIndex(const char *name);
 int G_SkinIndex(const char *name);
-int G_ShaderIndex(char *name);
+int G_ShaderIndex(const char *name);
 int G_CharacterIndex(const char *name);
 int G_StringIndex(const char *string);
 qboolean G_AllowTeamsAllowed(gentity_t *ent, gentity_t *activator);
 void G_UseEntity(gentity_t *ent, gentity_t *other, gentity_t *activator);
 qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon);
-void G_TeamCommand(team_t team, char *cmd);
+void G_TeamCommand(team_t team, const char *cmd);
 
 gentity_t *G_Find(gentity_t *from, int fieldofs, const char *match);
 gentity_t *G_FindInt(gentity_t *from, int fieldofs, int match);
@@ -1267,14 +1267,14 @@ gentity_t *G_FindFloat(gentity_t *from, int fieldofs, float match);
 gentity_t *G_FindVector(gentity_t *from, int fieldofs, const vec3_t match);
 gentity_t *G_FindByTargetname(gentity_t *from, const char *match);
 gentity_t *G_FindByTargetnameFast(gentity_t *from, const char *match, int hash);
-gentity_t *G_PickTarget(char *targetname);
+gentity_t *G_PickTarget(const char *targetname);
 void G_UseTargets(gentity_t *ent, gentity_t *activator);
 void G_SetMovedir(vec3_t angles, vec3_t movedir);
 
 void G_InitGentity(gentity_t *e);
 gentity_t *G_Spawn(void);
-gentity_t *G_TempEntity(vec3_t origin, int event);
-gentity_t *G_TempEntityNotLinked(int event);
+gentity_t *G_TempEntity(vec3_t origin, entity_event_t event);
+gentity_t *G_TempEntityNotLinked(entity_event_t event);
 gentity_t *G_PopupMessage(popupMessageType_t type);
 void G_Sound(gentity_t *ent, int soundIndex);
 void G_AnimScriptSound(int soundIndex, vec3_t org, int client);
@@ -2107,7 +2107,7 @@ void G_InviteToFireTeam(int entityNum, int otherEntityNum);
 void G_UpdateFireteamConfigString(fireteamData_t *ft);
 void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print);
 
-void G_PrintClientSpammyCenterPrint(int entityNum, char *text);
+void G_PrintClientSpammyCenterPrint(int entityNum, const char *text);
 
 // Match settings
 #define PAUSE_NONE      0x00    // Match is NOT paused.
@@ -2368,7 +2368,7 @@ void SetPlayerSpawn(gentity_t *ent, int spawn, qboolean update);
 void G_UpdateSpawnCounts(void);
 
 void G_SetConfigStringValue(int num, const char *key, const char *value);
-void G_GlobalClientEvent(int event, int param, int client);
+void G_GlobalClientEvent(entity_event_t event, int param, int client);
 
 void G_InitTempTraceIgnoreEnts(void);
 void G_ResetTempTraceIgnoreEnts(void);

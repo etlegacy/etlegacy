@@ -51,6 +51,12 @@ typedef struct
 int           remapCount = 0;
 shaderRemap_t remappedShaders[MAX_SHADER_REMAPS];
 
+/**
+ * @brief AddRemap
+ * @param[in] oldShader
+ * @param[in] newShader
+ * @param[in] timeOffset
+ */
 void AddRemap(const char *oldShader, const char *newShader, float timeOffset)
 {
 	int i;
@@ -80,6 +86,9 @@ void AddRemap(const char *oldShader, const char *newShader, float timeOffset)
 	}
 }
 
+/**
+ * @brief G_ResetRemappedShaders
+ */
 void G_ResetRemappedShaders(void)
 {
 	int i;
@@ -95,6 +104,10 @@ void G_ResetRemappedShaders(void)
 	}
 }
 
+/**
+ * @brief BuildShaderStateConfig
+ * @return
+ */
 const char *BuildShaderStateConfig()
 {
 	static char buff[MAX_STRING_CHARS * 4];
@@ -108,23 +121,26 @@ const char *BuildShaderStateConfig()
 		i1 = G_ShaderIndex(remappedShaders[i].oldShader);
 		i2 = G_ShaderIndex(remappedShaders[i].newShader);
 
-		Com_sprintf(out, (MAX_QPATH * 2) + 5, "%i=%i:%5.2f@", i1, i2, remappedShaders[i].timeOffset);
+		Com_sprintf(out, (MAX_QPATH * 2) + 5, "%i=%i:%5.2f@", i1, i2, (double)remappedShaders[i].timeOffset);
 		Q_strcat(buff, sizeof(buff), out);
 	}
 	return buff;
 }
 
-/*
+/**
 =========================================================================
 model / sound configstring indexes
 =========================================================================
 */
 
-/*
-================
-G_FindConfigstringIndex
-================
-*/
+/**
+ * @brief G_FindConfigstringIndex
+ * @param[in] name
+ * @param[in] start
+ * @param[in] max
+ * @param[in] create
+ * @return
+ */
 int G_FindConfigstringIndex(const char *name, int start, int max, qboolean create)
 {
 	int  i;
@@ -166,6 +182,10 @@ int G_FindConfigstringIndex(const char *name, int start, int max, qboolean creat
 /**
  * @brief Prevent player always mounting the last gun used, on multiple tank maps.
  * Ported from the Bugfix project (#087)
+ *
+ * @param[in] name
+ * @param[in] start
+ * @param[in] max
  */
 void G_RemoveConfigstringIndex(const char *name, int start, int max)
 {
@@ -201,31 +221,61 @@ void G_RemoveConfigstringIndex(const char *name, int start, int max)
 	}
 }
 
-int G_ModelIndex(char *name)
+/**
+ * @brief G_ModelIndex
+ * @param[in] name
+ * @return
+ */
+int G_ModelIndex(const char *name)
 {
 	return G_FindConfigstringIndex(name, CS_MODELS, MAX_MODELS, qtrue);
 }
 
+/**
+ * @brief G_SoundIndex
+ * @param[in] name
+ * @return
+ */
 int G_SoundIndex(const char *name)
 {
 	return G_FindConfigstringIndex(name, CS_SOUNDS, MAX_SOUNDS, qtrue) + GAMESOUND_MAX;
 }
 
+/**
+ * @brief G_SkinIndex
+ * @param[in] name
+ * @return
+ */
 int G_SkinIndex(const char *name)
 {
 	return G_FindConfigstringIndex(name, CS_SKINS, MAX_CS_SKINS, qtrue);
 }
 
-int G_ShaderIndex(char *name)
+/**
+ * @brief G_ShaderIndex
+ * @param[in] name
+ * @return
+ */
+int G_ShaderIndex(const char *name)
 {
 	return G_FindConfigstringIndex(name, CS_SHADERS, MAX_CS_SHADERS, qtrue);
 }
 
+/**
+ * @brief G_CharacterIndex
+ * @param[in] name
+ * @return
+ */
 int G_CharacterIndex(const char *name)
 {
 	return G_FindConfigstringIndex(name, CS_CHARACTERS, MAX_CHARACTERS, qtrue);
 }
 
+/**
+ * @brief G_StringIndex
+ * @param[in] string
+ * @return
+ */
 int G_StringIndex(const char *string)
 {
 	return G_FindConfigstringIndex(string, CS_STRINGS, MAX_CSSTRINGS, qtrue);
@@ -235,8 +285,10 @@ int G_StringIndex(const char *string)
 
 /**
  * @brief Broadcasts a command to only a specific team
+ * @param[in] team
+ * @param[in] cmd
  */
-void G_TeamCommand(team_t team, char *cmd)
+void G_TeamCommand(team_t team, const char *cmd)
 {
 	int i;
 
@@ -257,6 +309,11 @@ void G_TeamCommand(team_t team, char *cmd)
  * the matching string at fieldofs (use the FOFS() macro) in the structure.
  * Searches beginning at the entity after from, or the beginning if NULL
  * NULL will be returned if the end of the list is reached.
+ *
+ * @param[in,out] from
+ * @param[in] fieldofs
+ * @param[in] match
+ * @return
  */
 gentity_t *G_Find(gentity_t *from, int fieldofs, const char *match)
 {
@@ -294,6 +351,10 @@ gentity_t *G_Find(gentity_t *from, int fieldofs, const char *match)
 
 /**
  * @brief Like G_Find, but searches for integer values.
+ * @param[in,out] from
+ * @param[in] fieldofs
+ * @param[in] match
+ * @return
  */
 gentity_t *G_FindInt(gentity_t *from, int fieldofs, int match)
 {
@@ -327,6 +388,10 @@ gentity_t *G_FindInt(gentity_t *from, int fieldofs, int match)
 
 /**
  * @brief Like G_Find, but searches for float values..
+ * @param[in,out] from
+ * @param[in] fieldofs
+ * @param[in] match
+ * @return
  */
 gentity_t *G_FindFloat(gentity_t *from, int fieldofs, float match)
 {
@@ -360,6 +425,10 @@ gentity_t *G_FindFloat(gentity_t *from, int fieldofs, float match)
 
 /**
  * @brief Like G_Find, but searches for vector values..
+ * @param[in,out] from
+ * @param[in] fieldofs
+ * @param[in] match
+ * @return
  */
 gentity_t *G_FindVector(gentity_t *from, int fieldofs, const vec3_t match)
 {
@@ -395,11 +464,12 @@ gentity_t *G_FindVector(gentity_t *from, int fieldofs, const vec3_t match)
 }
 
 
-/*
-=============
-G_FindByTargetname
-=============
-*/
+/**
+ * @brief G_FindByTargetname
+ * @param[in,out] from
+ * @param[in] match
+ * @return
+ */
 gentity_t *G_FindByTargetname(gentity_t *from, const char *match)
 {
 	gentity_t *max = &g_entities[level.num_entities];
@@ -444,7 +514,11 @@ gentity_t *G_FindByTargetname(gentity_t *from, const char *match)
 }
 
 /**
- * @brief this version should be used for loops, saves the constant hash building
+ * @brief This version should be used for loops, saves the constant hash building
+ * @param[in,out] from
+ * @param[in] match
+ * @param[in] hash
+ * @return
  */
 gentity_t *G_FindByTargetnameFast(gentity_t *from, const char *match, int hash)
 {
@@ -480,12 +554,14 @@ gentity_t *G_FindByTargetnameFast(gentity_t *from, const char *match, int hash)
 	return NULL;
 }
 
-/**
- * @brief Selects a random entity from among the targets
- */
 #define MAXCHOICES  32
 
-gentity_t *G_PickTarget(char *targetname)
+/**
+ * @brief Selects a random entity from among the targets
+ * @param[in] targetname
+ * @return
+ */
+gentity_t *G_PickTarget(const char *targetname)
 {
 	gentity_t *ent        = NULL;
 	int       num_choices = 0;
@@ -520,6 +596,12 @@ gentity_t *G_PickTarget(char *targetname)
 	return choice[rand() % num_choices];
 }
 
+/**
+ * @brief G_AllowTeamsAllowed
+ * @param[in] ent
+ * @param[in] activator
+ * @return
+ */
 qboolean G_AllowTeamsAllowed(gentity_t *ent, gentity_t *activator)
 {
 	if (ent->allowteams && activator && activator->client)
@@ -555,6 +637,9 @@ qboolean G_AllowTeamsAllowed(gentity_t *ent, gentity_t *activator)
 
 /**
  * @brief Added to allow more checking on what uses what
+ * @param[in,out] ent
+ * @param[in] other
+ * @param[in] activator
  */
 void G_UseEntity(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
@@ -569,9 +654,11 @@ void G_UseEntity(gentity_t *ent, gentity_t *other, gentity_t *activator)
 }
 
 /**
- * @brief "activator" should be set to the entity that initiated the firing.
- * Search for (string)targetname in all entities that
+ * @brief Search for (string)targetname in all entities that
  * match (string)self.target and call their .use function
+ *
+ * @param[in] ent
+ * @param[in] activator Should be set to the entity that initiated the firing.
  */
 void G_UseTargets(gentity_t *ent, gentity_t *activator)
 {
@@ -634,6 +721,8 @@ void G_UseTargets(gentity_t *ent, gentity_t *activator)
 
 /**
  * @brief This is just a convenience function for printing vectors
+ * @param[in] v
+ * @return
  */
 char *vtos(const vec3_t v)
 {
@@ -655,6 +744,9 @@ char *vtos(const vec3_t v)
  * but we have special constants to generate an up or down direction.
  * Angles will be cleared, because it is being used to represent a direction
  * instead of an orientation.
+ *
+ * @param[in,out] angles
+ * @param[out] movedir
  */
 void G_SetMovedir(vec3_t angles, vec3_t movedir)
 {
@@ -678,6 +770,10 @@ void G_SetMovedir(vec3_t angles, vec3_t movedir)
 	VectorClear(angles);
 }
 
+/**
+ * @brief G_InitGentity
+ * @param[in,out] e
+ */
 void G_InitGentity(gentity_t *e)
 {
 	e->inuse      = qtrue;
@@ -699,21 +795,19 @@ void G_InitGentity(gentity_t *e)
 #endif
 }
 
-/*
-=================
-G_Spawn
-
-Either finds a free entity, or allocates a new one.
-
-  The slots from 0 to MAX_CLIENTS-1 are always reserved for clients, and will
-never be used by anything else.
-
-Try to avoid reusing an entity that was recently freed, because it
-can cause the client to think the entity morphed into something else
-instead of being removed and recreated, which can cause interpolated
-angles and bad trails.
-=================
-*/
+/**
+ * @brief Either finds a free entity, or allocates a new one.
+ *
+ * @details The slots from 0 to MAX_CLIENTS-1 are always reserved for clients, and will
+ * never be used by anything else.
+ *
+ * Try to avoid reusing an entity that was recently freed, because it
+ * can cause the client to think the entity morphed into something else
+ * instead of being removed and recreated, which can cause interpolated
+ * angles and bad trails.
+ *
+ * @return
+ */
 gentity_t *G_Spawn(void)
 {
 	int       i  = 0, force;
@@ -769,14 +863,13 @@ gentity_t *G_Spawn(void)
 	return e;
 }
 
-/*
-=================
-G_EntitiesFree
-=================
-*/
+/**
+ * @brief G_EntitiesFree
+ * @return
+ */
 int G_EntitiesFree(void)
 {
-	int	      i;
+	int       i;
 	gentity_t *e       = &g_entities[MAX_CLIENTS];
 	int       entities = MAX_CLIENTS;
 
@@ -794,6 +887,8 @@ int G_EntitiesFree(void)
 
 /**
  * @brief Marks the entity as free
+ *
+ * @param[in,out] ed
  */
 void G_FreeEntity(gentity_t *ed)
 {
@@ -847,16 +942,17 @@ void G_FreeEntity(gentity_t *ed)
 	}
 }
 
-/*
-=================
-G_TempEntity
-
-Spawns an event entity that will be auto-removed
-The origin will be snapped to save net bandwidth, so care
-must be taken if the origin is right on a surface (snap towards start vector first)
-=================
-*/
-gentity_t *G_TempEntity(vec3_t origin, int event)
+/**
+ * @brief Spawns an event entity that will be auto-removed.
+ *
+ * @details The origin will be snapped to save net bandwidth, so care
+ * must be taken if the origin is right on a surface (snap towards start vector first)
+ *
+ * @param[in] origin
+ * @param[in] event
+ * @return
+ */
+gentity_t *G_TempEntity(vec3_t origin, entity_event_t event)
 {
 	gentity_t *e;
 	vec3_t    snapped;
@@ -880,17 +976,17 @@ gentity_t *G_TempEntity(vec3_t origin, int event)
 	return e;
 }
 
-/*
-=================
-G_TempEntityNotLinked
-
-Spawns an event entity that will be auto-removed
-Use this for non visible and not origin based events like global sounds etc.
-
-Note: Don't forget to call e->r.svFlags = SVF_BROADCAST; after
-=================
-*/
-gentity_t *G_TempEntityNotLinked(int event)
+/**
+ * @brief Spawns an event entity that will be auto-removed
+ * Use this for non visible and not origin based events like global sounds etc.
+ *
+ * @param[in] event
+ *
+ * @return
+ *
+ * @note Don't forget to call e->r.svFlags = SVF_BROADCAST; after
+ */
+gentity_t *G_TempEntityNotLinked(entity_event_t event)
 {
 	gentity_t *e;
 
@@ -906,6 +1002,11 @@ gentity_t *G_TempEntityNotLinked(int event)
 	return e;
 }
 
+/**
+ * @brief G_PopupMessage
+ * @param[in] type
+ * @return
+ */
 gentity_t *G_PopupMessage(popupMessageType_t type)
 {
 	gentity_t *e;
@@ -932,6 +1033,10 @@ gentity_t *G_PopupMessage(popupMessageType_t type)
  * @brief Use for non-pmove events that would also be predicted on the
  * client side: jumppads and item pickups
  * Adds an event+parm and twiddles the event counter
+ *
+ * @param[in] ent
+ * @param[in] event
+ * @param[in] eventParm
  */
 void G_AddPredictableEvent(gentity_t *ent, int event, int eventParm)
 {
@@ -944,6 +1049,9 @@ void G_AddPredictableEvent(gentity_t *ent, int event, int eventParm)
 
 /**
  * @brief Adds an event+parm and twiddles the event counter
+ * @param[in,out] ent
+ * @param[in] event
+ * @param[in] eventParm
  */
 void G_AddEvent(gentity_t *ent, int event, int eventParm)
 {
@@ -973,7 +1081,9 @@ void G_AddEvent(gentity_t *ent, int event, int eventParm)
 }
 
 /**
- * @brief removed channel parm, since it wasn't used, and could cause confusion
+ * @brief Removed channel parm, since it wasn't used, and could cause confusion
+ * @param[in] ent
+ * @param[in] soundIndex
  */
 void G_Sound(gentity_t *ent, int soundIndex)
 {
@@ -984,11 +1094,11 @@ void G_Sound(gentity_t *ent, int soundIndex)
 	te->s.eventParm = soundIndex;
 }
 
-/*
-=============
-G_ClientSound
-=============
-*/
+/**
+ * @brief G_ClientSound
+ * @param[in] ent
+ * @param[in] soundIndex
+ */
 void G_ClientSound(gentity_t *ent, int soundIndex)
 {
 	if (ent && ent->client)
@@ -1005,11 +1115,12 @@ void G_ClientSound(gentity_t *ent, int soundIndex)
 	}
 }
 
-/*
-=============
-G_AnimScriptSound
-=============
-*/
+/**
+ * @brief G_AnimScriptSound
+ * @param[in] soundIndex
+ * @param org - unused
+ * @param[in] client
+ */
 void G_AnimScriptSound(int soundIndex, vec3_t org, int client)
 {
 	gentity_t *e = &g_entities[client];
@@ -1021,6 +1132,8 @@ void G_AnimScriptSound(int soundIndex, vec3_t org, int client)
 
 /**
  * @brief Sets the pos trajectory for a fixed position
+ * @param[out] ent
+ * @param[in] origin
  */
 void G_SetOrigin(gentity_t *ent, vec3_t origin)
 {
@@ -1039,11 +1152,11 @@ void G_SetOrigin(gentity_t *ent, vec3_t origin)
 	}
 }
 
-/*
-==============
-G_SetAngle
-==============
-*/
+/**
+ * @brief G_SetAngle
+ * @param[out] ent
+ * @param[in] angle
+ */
 void G_SetAngle(gentity_t *ent, vec3_t angle)
 {
 	VectorCopy(angle, ent->s.apos.trBase);
@@ -1055,11 +1168,12 @@ void G_SetAngle(gentity_t *ent, vec3_t angle)
 	VectorCopy(angle, ent->r.currentAngles);
 }
 
-/*
-====================
-infront
-====================
-*/
+/**
+ * @brief infront
+ * @param[in] self
+ * @param[in] other
+ * @return
+ */
 qboolean infront(gentity_t *self, gentity_t *other)
 {
 	vec3_t vec;
@@ -1071,20 +1185,22 @@ qboolean infront(gentity_t *self, gentity_t *other)
 	VectorNormalize(vec);
 	dot = DotProduct(vec, forward);
 	// G_Printf( "other %5.2f\n",	dot);
-	if (dot > 0.0)
+	if (dot > 0.0f)
 	{
 		return qtrue;
 	}
 	return qfalse;
 }
 
-// tag connections
+/**
+ * Tag connections
+ */
 
-/*
-==================
-G_ProcessTagConnect
-==================
-*/
+/**
+ * @brief G_ProcessTagConnect
+ * @param[in,out] ent
+ * @param[in] clearAngles
+ */
 void G_ProcessTagConnect(gentity_t *ent, qboolean clearAngles)
 {
 	if (ent->tagName[0] == '\0')
@@ -1126,14 +1242,13 @@ void G_ProcessTagConnect(gentity_t *ent, qboolean clearAngles)
 	}
 }
 
-/*
-================
-DebugLine
-
-  debug polygons only work when running a local game
-  with r_debugSurface set to 2
-================
-*/
+/**
+ * @brief Debug polygons only work when running a local game with r_debugSurface set to 2
+ * @param[in] start
+ * @param[in] end
+ * @param[in] color
+ * @return
+ */
 int DebugLine(vec3_t start, vec3_t end, int color)
 {
 	vec3_t points[4], dir, cross, up = { 0, 0, 1 };
@@ -1148,7 +1263,7 @@ int DebugLine(vec3_t start, vec3_t end, int color)
 	VectorSubtract(end, start, dir);
 	VectorNormalize(dir);
 	dot = DotProduct(dir, up);
-	if (dot > 0.99 || dot < -0.99)
+	if (dot > 0.99f || dot < -0.99f)
 	{
 		VectorSet(cross, 1, 0, 0);
 	}
@@ -1167,13 +1282,11 @@ int DebugLine(vec3_t start, vec3_t end, int color)
 	return trap_DebugPolygonCreate(color, 4, points);
 }
 
-/*
-================
-G_SetEntState
-
-  sets the entstate of an entity.
-================
-*/
+/**
+ * @brief Sets the entstate of an entity.
+ * @param[in,out] ent
+ * @param[in] state
+ */
 void G_SetEntState(gentity_t *ent, entState_t state)
 {
 	if (ent->entstate == state)
@@ -1376,6 +1489,11 @@ void G_SetEntState(gentity_t *ent, entState_t state)
 	}
 }
 
+/**
+ * @brief G_LoadCampaignsFromFile
+ * @param[in] filename
+ * @return
+ */
 static qboolean G_LoadCampaignsFromFile(const char *filename)
 {
 	int        handle;
@@ -1575,6 +1693,10 @@ static qboolean G_LoadCampaignsFromFile(const char *filename)
 	return mapFound;
 }
 
+/**
+ * @brief G_MapIsValidCampaignStartMap
+ * @return
+ */
 qboolean G_MapIsValidCampaignStartMap(void)
 {
 	int i;
@@ -1592,6 +1714,9 @@ qboolean G_MapIsValidCampaignStartMap(void)
 
 char bigTextBuffer[100000];
 
+/**
+ * @brief G_ParseCampaigns
+ */
 void G_ParseCampaigns(void)
 {
 	int      i;
@@ -1619,10 +1744,10 @@ void G_ParseCampaigns(void)
 	if (!mapFound)
 	{
 		// get all campaigns from .campaign files
-		int  dirlen;
-		int  numdirs = trap_FS_GetFileList("scripts", ".campaign", bigTextBuffer, sizeof(bigTextBuffer));
-		char filename[MAX_QPATH]; // was 128
-		char *dirptr = bigTextBuffer;
+		size_t dirlen  = 0;
+		int    numdirs = trap_FS_GetFileList("scripts", ".campaign", bigTextBuffer, sizeof(bigTextBuffer));
+		char   filename[MAX_QPATH]; // was 128
+		char   *dirptr = bigTextBuffer;
 
 		for (i = 0; i < numdirs; i++, dirptr += dirlen + 1)
 		{
@@ -1688,7 +1813,12 @@ void G_ParseCampaigns(void)
 	}
 }
 
-void G_PrintClientSpammyCenterPrint(int entityNum, char *text)
+/**
+ * @brief G_PrintClientSpammyCenterPrint
+ * @param[in] entityNum
+ * @param[in] text
+ */
+void G_PrintClientSpammyCenterPrint(int entityNum, const char *text)
 {
 	if (!g_entities[entityNum].client)
 	{
@@ -1704,6 +1834,11 @@ void G_PrintClientSpammyCenterPrint(int entityNum, char *text)
 	g_entities[entityNum].client->lastSpammyCentrePrintTime = level.time;
 }
 
+/**
+ * @brief G_GetTeamFromEntity
+ * @param[in] ent
+ * @return
+ */
 team_t G_GetTeamFromEntity(gentity_t *ent)
 {
 	switch (ent->s.eType)
@@ -1717,7 +1852,6 @@ team_t G_GetTeamFromEntity(gentity_t *ent)
 		{
 			return TEAM_FREE;
 		}
-		break;
 	case ET_MISSILE:
 	case ET_GENERAL:
 		switch (ent->methodOfDeath)

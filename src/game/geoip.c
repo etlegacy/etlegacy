@@ -208,7 +208,7 @@ void GeoIP_open(void)
 		{
 			trap_FS_Read(gidb->cache, gidb->memsize, gidb->GeoIPDatabase);
 			trap_FS_FCloseFile(gidb->GeoIPDatabase);
-			G_Printf("GeoIP is enabled. Database memory size: %.2f kb\n", gidb->memsize / 1024.f);
+			G_Printf("GeoIP is enabled. Database memory size: %.2f kb\n", gidb->memsize / 1024.0);
 			return;
 		}
 
