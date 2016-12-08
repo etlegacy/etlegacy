@@ -34,26 +34,46 @@
 
 #include "../client/client.h"
 
+/**
+ * @brief IN_Init
+ */
 void IN_Init(void)
 {
 }
 
+/**
+ * @brief IN_Frame
+ */
 void IN_Frame(void)
 {
 }
 
+/**
+ * @brief IN_Shutdown
+ */
 void IN_Shutdown(void)
 {
 }
 
+/**
+ * @brief IN_MouseEvent
+ * @param mstate
+ */
 void IN_MouseEvent(int mstate)
 {
 }
 
+/**
+ * @brief IN_Activate
+ * @param active
+ */
 void IN_Activate(qboolean active)
 {
 }
 
+/**
+ * @brief IN_Restart
+ */
 void IN_Restart(void)
 {
 }

@@ -37,95 +37,182 @@
 cvar_t *cl_shownet;
 // win32 dedicated
 
+/**
+ * @brief CL_Shutdown
+ */
 void CL_Shutdown(void)
 {
 }
 
+/**
+ * @brief CL_Init
+ */
 void CL_Init(void)
 {
 	cl_shownet = Cvar_Get("cl_shownet", "0", CVAR_TEMP);
 }
 
+/**
+ * @brief CL_MouseEvent
+ * @param dx   - unused
+ * @param dy   - unused
+ * @param time - unused
+ */
 void CL_MouseEvent(int dx, int dy, int time)
 {
 }
 
+/**
+ * @brief Key_WriteBindings
+ * @param f - unused
+ */
 void Key_WriteBindings(fileHandle_t f)
 {
 }
 
+/**
+ * @brief CL_Frame
+ * @param msec
+ */
 void CL_Frame(int msec)
 {
 }
 
+/**
+ * @brief CL_PacketEvent
+ * @param from - unused
+ * @param msg  - unused
+ */
 void CL_PacketEvent(netadr_t from, msg_t *msg)
 {
 }
 
+/**
+ * @brief CL_CharEvent
+ * @param key - unused
+ */
 void CL_CharEvent(int key)
 {
 }
 
+/**
+ * @brief CL_Disconnect
+ * @param showMainMenu - unused
+ */
 void CL_Disconnect(qboolean showMainMenu)
 {
 }
 
+/**
+ * @brief CL_MapLoading
+ */
 void CL_MapLoading(void)
 {
 }
 
+/**
+ * @brief CL_GameCommand
+ * @return
+ */
 qboolean CL_GameCommand(void)
 {
 	return qfalse;
 }
 
+/**
+ * @brief CL_KeyEvent
+ * @param key  - unused
+ * @param down - unused
+ * @param time - unused
+ */
 void CL_KeyEvent(int key, qboolean down, unsigned time)
 {
 }
 
+/**
+ * @brief UI_GameCommand
+ * @return
+ */
 qboolean UI_GameCommand(void)
 {
 	return qfalse;
 }
 
+/**
+ * @brief CL_ForwardCommandToServer
+ * @param string - unused
+ */
 void CL_ForwardCommandToServer(const char *string)
 {
 }
 
+/**
+ * @brief CL_ConsolePrint
+ * @param txt - unused
+ */
 void CL_ConsolePrint(char *txt)
 {
 }
 
+/**
+ * @brief CL_JoystickEvent
+ * @param axis  - unused
+ * @param value - unused
+ * @param time  - unused
+ */
 void CL_JoystickEvent(int axis, int value, int time)
 {
 }
 
+/**
+ * @brief CL_InitKeyCommands
+ */
 void CL_InitKeyCommands(void)
 {
 }
 
+/**
+ * @brief CL_ConnectedToServer
+ * @return
+ */
 qboolean CL_ConnectedToServer(void)
 {
 	return qfalse;
 }
 
+/**
+ * @brief CL_FlushMemory
+ */
 void CL_FlushMemory(void)
 {
 }
 
+/**
+ * @brief CL_StartHunkUsers
+ */
 void CL_StartHunkUsers(void)
 {
 }
 
+/**
+ * @brief CL_ShutdownAll
+ */
 void CL_ShutdownAll(void)
 {
 }
 
-// for win32 dedicated
+/**
+ * @brief Key_ClearStates
+ *
+ * @note for win32 dedicated
+ */
 void Key_ClearStates(void)
 {
 }
 
+/**
+ * @brief CL_Snd_Shutdown
+ */
 void CL_Snd_Shutdown(void)
 {
 }

@@ -35,57 +35,105 @@
 
 #include "../client/client.h"
 
+/**
+ * @brief SNDDMA_Init
+ * @return
+ */
 qboolean SNDDMA_Init(void)
 {
 	return qfalse;
 }
 
+/**
+ * @brief SNDDMA_GetDMAPos
+ * @return
+ */
 int SNDDMA_GetDMAPos(void)
 {
 	return 0;
 }
 
+/**
+ * @brief SNDDMA_Shutdown
+ */
 void SNDDMA_Shutdown(void)
 {
 }
 
+/**
+ * @brief SNDDMA_BeginPainting
+ */
 void SNDDMA_BeginPainting(void)
 {
 }
 
+/**
+ * @brief SNDDMA_Submit
+ */
 void SNDDMA_Submit(void)
 {
 }
 
-// bk001119 - added boolean flag, match client/snd_public.h
+/**
+ * @brief S_RegisterSound
+ * @param name
+ * @param compressed
+ * @return
+ *
+ * @note bk001119 - added boolean flag, match client/snd_public.h
+ */
 sfxHandle_t S_RegisterSound(const char *name, qboolean compressed)
 {
 	return 0;
 }
 
+/**
+ * @brief S_StartLocalSound
+ * @param sfxHandle
+ * @param channelNum
+ * @param volume
+ */
 void S_StartLocalSound(sfxHandle_t sfxHandle, int channelNum, int volume)
 {
 }
 
+/**
+ * @brief S_ClearSoundBuffer
+ * @param killStreaming
+ */
 void S_ClearSoundBuffer(qboolean killStreaming)
 {
 }
 
-// added for win32 dedicated
+/**
+ * @brief SNDDMA_Activate
+ *
+ * @note Added for win32 dedicated
+ */
 void SNDDMA_Activate(void)
 {
 }
 
+/**
+ * @brief S_GetSoundLength
+ * @param sfxHandle
+ * @return
+ */
 int S_GetSoundLength(sfxHandle_t sfxHandle)
 {
 	Com_Error(ERR_DROP, "null_snddma.c: S_GetSoundLength");
-	return 0;
 }
 
+/**
+ * @brief S_UpdateThread
+ */
 void S_UpdateThread(void)
 {
 }
 
+/**
+ * @brief S_AddLoopSounds
+ */
 void S_AddLoopSounds(void)
 {
 }
