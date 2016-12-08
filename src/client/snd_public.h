@@ -93,8 +93,6 @@ void S_DisplayFreeMemory(void);
 
 void S_ClearSoundBuffer(qboolean killStreaming);
 
-void SNDDMA_Activate(void);
-
 int S_GetVoiceAmplitude(int entnum);
 
 int S_GetSoundLength(sfxHandle_t sfxHandle);

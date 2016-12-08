@@ -106,15 +106,6 @@ void S_ClearSoundBuffer(qboolean killStreaming)
 }
 
 /**
- * @brief SNDDMA_Activate
- *
- * @note Added for win32 dedicated
- */
-void SNDDMA_Activate(void)
-{
-}
-
-/**
  * @brief S_GetSoundLength
  * @param sfxHandle
  * @return
