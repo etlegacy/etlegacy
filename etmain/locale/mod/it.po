@@ -4,7 +4,7 @@
 # Translators:
 # redtide <redtid3@gmail.com>, 2015
 # redtide <transifex.redtide@gmail.com>, 2015
-# Sebastiano Guerrini <seb47tv@gmail.com>, 2016
+# Seb47TV <seb47tv@gmail.com>, 2016
 # redtide <redtid3@gmail.com>, 2015
 msgid ""
 msgstr ""
