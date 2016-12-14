@@ -856,8 +856,8 @@ float BG_GetSkyHeightAtPoint(vec3_t pos)
 
 	BG_ClampPointToTracemapExtends(pos, point);
 
-	i = ROUND_INT((point[0] - tracemap.world_mins[0]) * one_over_mapgrid_factor[0]);
-	j = ROUND_INT((point[1] - tracemap.world_mins[1]) * one_over_mapgrid_factor[1]);
+	i = round((point[0] - tracemap.world_mins[0]) * one_over_mapgrid_factor[0]);
+	j = round((point[1] - tracemap.world_mins[1]) * one_over_mapgrid_factor[1]);
 
 	// re-clamp the points, because a rounding error can cause
 	// them to go outside the array
@@ -888,8 +888,8 @@ float BG_GetSkyGroundHeightAtPoint(vec3_t pos)
 
 	BG_ClampPointToTracemapExtends(pos, point);
 
-	i = ROUND_INT((point[0] - tracemap.world_mins[0]) * one_over_mapgrid_factor[0]);
-	j = ROUND_INT((point[1] - tracemap.world_mins[1]) * one_over_mapgrid_factor[1]);
+	i = round((point[0] - tracemap.world_mins[0]) * one_over_mapgrid_factor[0]);
+	j = round((point[1] - tracemap.world_mins[1]) * one_over_mapgrid_factor[1]);
 
 	// re-clamp the points, because a rounding error can cause
 	// them to go outside the array
@@ -915,8 +915,8 @@ float BG_GetGroundHeightAtPoint(vec3_t pos)
 
 	BG_ClampPointToTracemapExtends(pos, point);
 
-	i = ROUND_INT((point[0] - tracemap.world_mins[0]) * one_over_mapgrid_factor[0]);
-	j = ROUND_INT((point[1] - tracemap.world_mins[1]) * one_over_mapgrid_factor[1]);
+	i = round((point[0] - tracemap.world_mins[0]) * one_over_mapgrid_factor[0]);
+	j = round((point[1] - tracemap.world_mins[1]) * one_over_mapgrid_factor[1]);
 
 	// re-clamp the points, because a rounding error can cause
 	// them to go outside the array

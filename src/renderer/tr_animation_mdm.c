@@ -1546,12 +1546,12 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 		{
 			lodScale = 0.35;
 		}
-		render_count = ROUND_INT((float) surface->numVerts * lodScale);
+		render_count = round((float) surface->numVerts * lodScale);
 
 	}
 	else
 	{
-		render_count = ROUND_INT((float) surface->numVerts * lodScale);
+		render_count = round((float) surface->numVerts * lodScale);
 		if (render_count < surface->minLod)
 		{
 			if (!(refent->reFlags & REFLAG_DEAD_LOD))

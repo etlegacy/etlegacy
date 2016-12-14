@@ -1677,8 +1677,7 @@ float rint(float v);
 #endif
 
 // this should be used to convert a floating-point value to an integer
-// FIXME remove this and use round() function (Math.h)
-#define ROUND_INT(x) (x >= 0 ? (int)(x + 0.5) : (int)(x - 0.5))
+//#define ROUND_INT(x) (x >= 0 ? (int)(x + 0.5) : (int)(x - 0.5)) // Unused
 
 /**
  * @struct demoPlayInfo_t

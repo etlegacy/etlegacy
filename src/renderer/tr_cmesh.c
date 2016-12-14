@@ -239,7 +239,7 @@ static int R_ComputeLOD(trRefEntity_t *ent)
 		}
 
 		flod *= tr.currentModel->numLods;
-		lod   = ROUND_INT(flod);
+		lod   = round(flod);
 
 		if (lod < 0)
 		{

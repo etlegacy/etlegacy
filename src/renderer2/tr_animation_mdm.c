@@ -308,7 +308,7 @@ static int RB_CalcMDMLodIndex(refEntity_t *ent, vec3_t origin, float radius, flo
 	}
 	else
 	{
-		int render_count = ROUND_INT((float)mdmSurface->numVerts * flod);
+		int render_count = round((float)mdmSurface->numVerts * flod);
 		if (render_count < mdmSurface->minLod)
 		{
 			if (!(ent->reFlags & REFLAG_DEAD_LOD))
@@ -1767,11 +1767,11 @@ void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surface)
 		{                       // allow dead to lod down to 35% (even if below surf->minLod) (%35 is arbitrary and probably not good generally.  worked for the blackguard/infantry as a test though)
 			lodScale = 0.35;
 		}
-		render_count = ROUND_INT((float)surface->numVerts * lodScale);
+		render_count = round((float)surface->numVerts * lodScale);
 	}
 	else
 	{
-		render_count = ROUND_INT((float)surface->numVerts * lodScale);
+		render_count = round((float)surface->numVerts * lodScale);
 		if (render_count < surface->minLod)
 		{
 			if (!(refent->reFlags & REFLAG_DEAD_LOD))
