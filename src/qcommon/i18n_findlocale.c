@@ -9,11 +9,23 @@
 
 #include "i18n_findlocale.h"
 
+/**
+ * @brief is_lcchar
+ * @param[in] c
+ * @return
+ */
 static int is_lcchar(const int c)
 {
 	return isalnum(c);
 }
 
+/**
+ * @brief lang_country_variant_from_envstring
+ * @param[in] str
+ * @param[out] lang
+ * @param[out] country
+ * @param[out] variant
+ */
 static void lang_country_variant_from_envstring(const char *str, char **lang, char **country, char **variant)
 {
 	int end   = 0;
@@ -102,6 +114,12 @@ static void lang_country_variant_from_envstring(const char *str, char **lang, ch
 	}
 }
 
+/**
+ * @brief accumulate_locstring
+ * @param[in] str
+ * @param[out] l
+ * @return
+ */
 static int accumulate_locstring(const char *str, FL_Locale *l)
 {
 	char *lang    = NULL;
@@ -125,6 +143,12 @@ static int accumulate_locstring(const char *str, FL_Locale *l)
 	return 0;
 }
 
+/**
+ * @brief accumulate_env
+ * @param[in] name
+ * @param[out] l
+ * @return
+ */
 static int accumulate_env(const char *name, FL_Locale *l)
 {
 	char *env;
@@ -143,6 +167,10 @@ static int accumulate_env(const char *name, FL_Locale *l)
 	return 0;
 }
 
+/**
+ * @brief canonise_fl
+ * @param[in,out] l
+ */
 static void canonise_fl(FL_Locale *l)
 {
 	// this function fixes some common locale-specifying mistakes
@@ -174,6 +202,9 @@ static void canonise_fl(FL_Locale *l)
 #define MLN(pn) MAKELANGID(LANG_ ## pn, SUBLANG_DEFAULT)
 #define RML(pn, sn) MAKELANGID(LANG_ ## pn, SUBLANG_ ## sn)
 
+/**
+ * @struct IDToCode
+ */
 typedef struct
 {
 	LANGID id;
@@ -419,12 +450,19 @@ static const IDToCode primary_to_code[] =
 static int num_primary_to_code = sizeof(primary_to_code) / sizeof(*primary_to_code);
 static int num_both_to_code    = sizeof(both_to_code) / sizeof(*both_to_code);
 
-static const int lcid_to_fl(LCID lcid, FL_Locale *rtn)
+/**
+ * @brief lcid_to_fl
+ * @param[in] lcid
+ * @param[in] rtn
+ * @return
+ */
+static int lcid_to_fl(LCID lcid, FL_Locale *rtn)
 {
 	LANGID langid       = LANGIDFROMLCID(lcid);
 	LANGID primary_lang = PRIMARYLANGID(langid);
-	LANGID sub_lang     = SUBLANGID(langid);
-	int    i;
+	// TODO: not implemented yet
+	//LANGID sub_lang     = SUBLANGID(langid);
+	int i;
 
 	// try to find an exact primary/sublanguage combo that we know about
 	for (i = 0; i < num_both_to_code; ++i)
@@ -448,6 +486,11 @@ static const int lcid_to_fl(LCID lcid, FL_Locale *rtn)
 }
 #endif
 
+/**
+ * @brief FL_FindLocale
+ * @param[out] locale
+ * @return
+ */
 FL_Success FL_FindLocale(FL_Locale **locale)
 {
 	FL_Success success = FL_FAILED;
@@ -512,6 +555,10 @@ FL_Success FL_FindLocale(FL_Locale **locale)
 	return success;
 }
 
+/**
+ * @brief FL_FreeLocale
+ * @param[in,out] locale
+ */
 void FL_FreeLocale(FL_Locale **locale)
 {
 	if (locale)

@@ -41,6 +41,8 @@
 
 /**
  * @brief Never returns more than 4
+ * @param[in] str
+ * @return
  */
 int Q_UTF8_Width(const char *str)
 {
@@ -79,6 +81,11 @@ int Q_UTF8_Width(const char *str)
 	return s - (const unsigned char *)str + 1;
 }
 
+/**
+ * @brief Q_UTF8_WidthCP
+ * @param[in] ch
+ * @return
+ */
 int Q_UTF8_WidthCP(int ch)
 {
 	if (ch <=   0x007F)
@@ -100,6 +107,11 @@ int Q_UTF8_WidthCP(int ch)
 	return 0;
 }
 
+/**
+ * @brief Q_UTF8_Strlen
+ * @param[in] str
+ * @return
+ */
 int Q_UTF8_Strlen(const char *str)
 {
 	int l = 0;
@@ -114,6 +126,11 @@ int Q_UTF8_Strlen(const char *str)
 	return l;
 }
 
+/**
+ * @brief Q_UTF8_PrintStrlen
+ * @param[in] str
+ * @return
+ */
 int Q_UTF8_PrintStrlen(const char *str)
 {
 	int l = 0;
@@ -138,6 +155,12 @@ int Q_UTF8_PrintStrlen(const char *str)
 	return l;
 }
 
+/**
+ * @brief Q_UTF8_ByteOffset
+ * @param[in] str
+ * @param[in] offset
+ * @return
+ */
 int Q_UTF8_ByteOffset(const char *str, int offset)
 {
 	int i = 0, l = 0, m = 0;
@@ -164,6 +187,14 @@ int Q_UTF8_ByteOffset(const char *str, int offset)
 	return i;
 }
 
+/**
+ * @brief Q_UTF8_Insert
+ * @param[in,out] dest
+ * @param[in] size
+ * @param[in] offset
+ * @param[in] key
+ * @param[in] overstrike
+ */
 void Q_UTF8_Insert(char *dest, int size, int offset, int key, qboolean overstrike)
 {
 	int  len  = 0, i = 0, byteOffset = 0;
@@ -199,6 +230,13 @@ void Q_UTF8_Insert(char *dest, int size, int offset, int key, qboolean overstrik
 	}
 }
 
+/**
+ * @brief Q_UTF8_Move
+ * @param[in,out] data
+ * @param[in] offset1
+ * @param[in] offset2
+ * @param[in] size
+ */
 void Q_UTF8_Move(char *data, size_t offset1, size_t offset2, size_t size)
 {
 	size_t byteOffset1 = 0, byteOffset2 = 0, byteSize = 0;
@@ -226,11 +264,22 @@ void Q_UTF8_Move(char *data, size_t offset1, size_t offset2, size_t size)
 	data[strlen(data) + 1] = '\0';
 }
 
+/**
+ * @brief Q_UTF8_ContByte
+ * @param[in] c
+ * @return
+ */
 qboolean Q_UTF8_ContByte(char c)
 {
 	return (unsigned char )0x80 <= (unsigned char)c && (unsigned char)c <= (unsigned char )0xBF;
 }
 
+/**
+ * @brief getbit
+ * @param[in,out] p
+ * @param[in] pos
+ * @return
+ */
 static qboolean getbit(const unsigned char *p, int pos)
 {
 	p   += pos / 8;
@@ -239,6 +288,12 @@ static qboolean getbit(const unsigned char *p, int pos)
 	return (*p & (1 << (7 - pos))) != 0;
 }
 
+/**
+ * @brief setbit
+ * @param[in,out] p
+ * @param[in] pos
+ * @param[in] on
+ */
 static void setbit(unsigned char *p, int pos, qboolean on)
 {
 	p   += pos / 8;
@@ -254,6 +309,12 @@ static void setbit(unsigned char *p, int pos, qboolean on)
 	}
 }
 
+/**
+ * @brief shiftbitsright
+ * @param[in,out] p
+ * @param[in] num
+ * @param[in] by
+ */
 static void shiftbitsright(unsigned char *p, unsigned long num, unsigned long by)
 {
 	int           step, off;
@@ -345,6 +406,11 @@ unsigned long Q_UTF8_CodePoint(const char *str)
 	return codepoint;
 }
 
+/**
+ * @brief Q_UTF8_Encode
+ * @param[in] codepoint
+ * @return
+ */
 char *Q_UTF8_Encode(unsigned long codepoint)
 {
 	static char sbuf[2][5];
@@ -387,6 +453,8 @@ char *Q_UTF8_Encode(unsigned long codepoint)
 
 /**
  * @brief Stores a single UTF8 char inside an int
+ * @param[in] s
+ * @return
  */
 int Q_UTF8_Store(const char *s)
 {
@@ -425,7 +493,12 @@ int Q_UTF8_Store(const char *s)
 }
 
 /**
+
+ */
+/**
  * @brief Converts a single UTF8 char stored as an int into a byte array
+ * @param[in] e
+ * @return
  */
 char *Q_UTF8_Unstore(int e)
 {
@@ -445,6 +518,12 @@ char *Q_UTF8_Unstore(int e)
 	return ( char * ) buf;
 }
 
+/**
+ * @brief Q_UTF8_GetGlyphExtended
+ * @param[in] fontdata
+ * @param[in] codepoint
+ * @return
+ */
 glyphInfo_t *Q_UTF8_GetGlyphExtended(void *fontdata, unsigned long codepoint)
 {
 	if (codepoint > GLYPH_UTF_END)
@@ -462,6 +541,12 @@ glyphInfo_t *Q_UTF8_GetGlyphExtended(void *fontdata, unsigned long codepoint)
 	}
 }
 
+/**
+ * @brief Q_UTF8_GetGlyphVanilla
+ * @param[in] fontdata
+ * @param[in] codepoint
+ * @return
+ */
 glyphInfo_t *Q_UTF8_GetGlyphVanilla(void *fontdata, unsigned long codepoint)
 {
 	if (codepoint > GLYPH_ASCII_END)
@@ -472,6 +557,13 @@ glyphInfo_t *Q_UTF8_GetGlyphVanilla(void *fontdata, unsigned long codepoint)
 	return &((fontInfo_t *)fontdata)->glyphs[codepoint];
 }
 
+/**
+ * @brief Q_UTF8_RegisterFont
+ * @param[in] fontName
+ * @param[in] pointSize
+ * @param[in,out] font
+ * @param[in] extended
+ */
 void Q_UTF8_RegisterFont(const char *fontName, int pointSize, fontHelper_t *font, qboolean extended, void (*font_register)(const char *, int, void *))
 {
 	if (!font)
@@ -495,6 +587,10 @@ void Q_UTF8_RegisterFont(const char *fontName, int pointSize, fontHelper_t *font
 	font_register(fontName, pointSize, font->fontData);
 }
 
+/**
+ * @brief Q_UTF8_FreeFont
+ * @param[in,out] font
+ */
 void Q_UTF8_FreeFont(fontHelper_t *font)
 {
 	if (font)
@@ -508,6 +604,12 @@ void Q_UTF8_FreeFont(fontHelper_t *font)
 	}
 }
 
+/**
+ * @brief Q_UTF8_ToUTF32
+ * @param[in,out] string
+ * @param[in] charArray
+ * @param[out] outlen
+ */
 void Q_UTF8_ToUTF32(char *string, int *charArray, int *outlen)
 {
 	int  i  = 0;

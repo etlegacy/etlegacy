@@ -52,7 +52,7 @@ vec4_t colorMdGrey = { 0.5, 0.5, 0.5, 1 };
 vec4_t colorDkGrey = { 0.25, 0.25, 0.25, 1 };
 vec4_t colorMdRed = { 0.5, 0, 0, 1 };
 vec4_t colorMdGreen = { 0, 0.5, 0, 1 };
-vec4_t colorDkGreen = { 0, 0.20, 0, 1 };
+vec4_t colorDkGreen = { 0, 0.20f, 0, 1 };
 vec4_t colorMdCyan = { 0, 0.5, 0.5, 1 };
 vec4_t colorMdYellow = { 0.5, 0.5, 0, 1 };
 vec4_t colorMdOrange = { 0.5, 0.25, 0, 1 };
@@ -63,11 +63,11 @@ vec4_t clrBrownDk = { 0.58f * 0.75f, 0.58f * 0.75f, 0.46f * 0.75f, 1.f };
 vec4_t clrBrownLine = { 0.0525f, 0.05f, 0.025f, 0.2f };
 vec4_t clrBrownLineFull = { 0.0525f, 0.05f, 0.025f, 1.f };
 
-vec4_t clrBrownTextLt2 = { 108 * 1.8 / 255.f, 88 * 1.8 / 255.f, 62 * 1.8 / 255.f, 1.f };
-vec4_t clrBrownTextLt = { 108 * 1.3 / 255.f, 88 * 1.3 / 255.f, 62 * 1.3 / 255.f, 1.f };
+vec4_t clrBrownTextLt2 = { 108 * 1.8f / 255.f, 88 * 1.8f / 255.f, 62 * 1.8f / 255.f, 1.f };
+vec4_t clrBrownTextLt = { 108 * 1.3f / 255.f, 88 * 1.3f / 255.f, 62 * 1.3f / 255.f, 1.f };
 vec4_t clrBrownText = { 108 / 255.f, 88 / 255.f, 62 / 255.f, 1.f };
 vec4_t clrBrownTextDk = { 20 / 255.f, 2 / 255.f, 0 / 255.f, 1.f };
-vec4_t clrBrownTextDk2 = { 108 * 0.75 / 255.f, 88 * 0.75 / 255.f, 62 * 0.75 / 255.f, 1.f };
+vec4_t clrBrownTextDk2 = { 108 * 0.75f / 255.f, 88 * 0.75f / 255.f, 62 * 0.75f / 255.f, 1.f };
 
 vec4_t g_color_table[32] =
 {
@@ -95,7 +95,7 @@ vec4_t g_color_table[32] =
 	{ 0.5,  0.0,  1.0,  1.0 },          // E                21
 	{ 0.2f, 0.6f, 0.8f, 1.0 },          // F                22
 	{ 0.8f, 1.0,  0.8f, 1.0 },          // G                23
-	{ 0.0,  0.4,  0.2f, 1.0 },          // H                24
+	{ 0.0,  0.4f, 0.2f, 1.0 },          // H                24
 	{ 1.0,  0.0,  0.2f, 1.0 },          // I                25
 	{ 0.7f, 0.1f, 0.1f, 1.0 },          // J                26
 	{ 0.6f, 0.2f, 0.0,  1.0 },          // K                27
@@ -107,110 +107,130 @@ vec4_t g_color_table[32] =
 
 vec3_t bytedirs[NUMVERTEXNORMALS] =
 {
-	{ -0.525731, 0.000000,  0.850651  }, { -0.442863, 0.238856,  0.864188  },
-	{ -0.295242, 0.000000,  0.955423  }, { -0.309017, 0.500000,  0.809017  },
-	{ -0.162460, 0.262866,  0.951056  }, { 0.000000,  0.000000,  1.000000  },
-	{ 0.000000,  0.850651,  0.525731  }, { -0.147621, 0.716567,  0.681718  },
-	{ 0.147621,  0.716567,  0.681718  }, { 0.000000,  0.525731,  0.850651  },
-	{ 0.309017,  0.500000,  0.809017  }, { 0.525731,  0.000000,  0.850651  },
-	{ 0.295242,  0.000000,  0.955423  }, { 0.442863,  0.238856,  0.864188  },
-	{ 0.162460,  0.262866,  0.951056  }, { -0.681718, 0.147621,  0.716567  },
-	{ -0.809017, 0.309017,  0.500000  }, { -0.587785, 0.425325,  0.688191  },
-	{ -0.850651, 0.525731,  0.000000  }, { -0.864188, 0.442863,  0.238856  },
-	{ -0.716567, 0.681718,  0.147621  }, { -0.688191, 0.587785,  0.425325  },
-	{ -0.500000, 0.809017,  0.309017  }, { -0.238856, 0.864188,  0.442863  },
-	{ -0.425325, 0.688191,  0.587785  }, { -0.716567, 0.681718,  -0.147621 },
-	{ -0.500000, 0.809017,  -0.309017 }, { -0.525731, 0.850651,  0.000000  },
-	{ 0.000000,  0.850651,  -0.525731 }, { -0.238856, 0.864188,  -0.442863 },
-	{ 0.000000,  0.955423,  -0.295242 }, { -0.262866, 0.951056,  -0.162460 },
-	{ 0.000000,  1.000000,  0.000000  }, { 0.000000,  0.955423,  0.295242  },
-	{ -0.262866, 0.951056,  0.162460  }, { 0.238856,  0.864188,  0.442863  },
-	{ 0.262866,  0.951056,  0.162460  }, { 0.500000,  0.809017,  0.309017  },
-	{ 0.238856,  0.864188,  -0.442863 }, { 0.262866,  0.951056,  -0.162460 },
-	{ 0.500000,  0.809017,  -0.309017 }, { 0.850651,  0.525731,  0.000000  },
-	{ 0.716567,  0.681718,  0.147621  }, { 0.716567,  0.681718,  -0.147621 },
-	{ 0.525731,  0.850651,  0.000000  }, { 0.425325,  0.688191,  0.587785  },
-	{ 0.864188,  0.442863,  0.238856  }, { 0.688191,  0.587785,  0.425325  },
-	{ 0.809017,  0.309017,  0.500000  }, { 0.681718,  0.147621,  0.716567  },
-	{ 0.587785,  0.425325,  0.688191  }, { 0.955423,  0.295242,  0.000000  },
-	{ 1.000000,  0.000000,  0.000000  }, { 0.951056,  0.162460,  0.262866  },
-	{ 0.850651,  -0.525731, 0.000000  }, { 0.955423,  -0.295242, 0.000000  },
-	{ 0.864188,  -0.442863, 0.238856  }, { 0.951056,  -0.162460, 0.262866  },
-	{ 0.809017,  -0.309017, 0.500000  }, { 0.681718,  -0.147621, 0.716567  },
-	{ 0.850651,  0.000000,  0.525731  }, { 0.864188,  0.442863,  -0.238856 },
-	{ 0.809017,  0.309017,  -0.500000 }, { 0.951056,  0.162460,  -0.262866 },
-	{ 0.525731,  0.000000,  -0.850651 }, { 0.681718,  0.147621,  -0.716567 },
-	{ 0.681718,  -0.147621, -0.716567 }, { 0.850651,  0.000000,  -0.525731 },
-	{ 0.809017,  -0.309017, -0.500000 }, { 0.864188,  -0.442863, -0.238856 },
-	{ 0.951056,  -0.162460, -0.262866 }, { 0.147621,  0.716567,  -0.681718 },
-	{ 0.309017,  0.500000,  -0.809017 }, { 0.425325,  0.688191,  -0.587785 },
-	{ 0.442863,  0.238856,  -0.864188 }, { 0.587785,  0.425325,  -0.688191 },
-	{ 0.688191,  0.587785,  -0.425325 }, { -0.147621, 0.716567,  -0.681718 },
-	{ -0.309017, 0.500000,  -0.809017 }, { 0.000000,  0.525731,  -0.850651 },
-	{ -0.525731, 0.000000,  -0.850651 }, { -0.442863, 0.238856,  -0.864188 },
-	{ -0.295242, 0.000000,  -0.955423 }, { -0.162460, 0.262866,  -0.951056 },
-	{ 0.000000,  0.000000,  -1.000000 }, { 0.295242,  0.000000,  -0.955423 },
-	{ 0.162460,  0.262866,  -0.951056 }, { -0.442863, -0.238856, -0.864188 },
-	{ -0.309017, -0.500000, -0.809017 }, { -0.162460, -0.262866, -0.951056 },
-	{ 0.000000,  -0.850651, -0.525731 }, { -0.147621, -0.716567, -0.681718 },
-	{ 0.147621,  -0.716567, -0.681718 }, { 0.000000,  -0.525731, -0.850651 },
-	{ 0.309017,  -0.500000, -0.809017 }, { 0.442863,  -0.238856, -0.864188 },
-	{ 0.162460,  -0.262866, -0.951056 }, { 0.238856,  -0.864188, -0.442863 },
-	{ 0.500000,  -0.809017, -0.309017 }, { 0.425325,  -0.688191, -0.587785 },
-	{ 0.716567,  -0.681718, -0.147621 }, { 0.688191,  -0.587785, -0.425325 },
-	{ 0.587785,  -0.425325, -0.688191 }, { 0.000000,  -0.955423, -0.295242 },
-	{ 0.000000,  -1.000000, 0.000000  }, { 0.262866,  -0.951056, -0.162460 },
-	{ 0.000000,  -0.850651, 0.525731  }, { 0.000000,  -0.955423, 0.295242  },
-	{ 0.238856,  -0.864188, 0.442863  }, { 0.262866,  -0.951056, 0.162460  },
-	{ 0.500000,  -0.809017, 0.309017  }, { 0.716567,  -0.681718, 0.147621  },
-	{ 0.525731,  -0.850651, 0.000000  }, { -0.238856, -0.864188, -0.442863 },
-	{ -0.500000, -0.809017, -0.309017 }, { -0.262866, -0.951056, -0.162460 },
-	{ -0.850651, -0.525731, 0.000000  }, { -0.716567, -0.681718, -0.147621 },
-	{ -0.716567, -0.681718, 0.147621  }, { -0.525731, -0.850651, 0.000000  },
-	{ -0.500000, -0.809017, 0.309017  }, { -0.238856, -0.864188, 0.442863  },
-	{ -0.262866, -0.951056, 0.162460  }, { -0.864188, -0.442863, 0.238856  },
-	{ -0.809017, -0.309017, 0.500000  }, { -0.688191, -0.587785, 0.425325  },
-	{ -0.681718, -0.147621, 0.716567  }, { -0.442863, -0.238856, 0.864188  },
-	{ -0.587785, -0.425325, 0.688191  }, { -0.309017, -0.500000, 0.809017  },
-	{ -0.147621, -0.716567, 0.681718  }, { -0.425325, -0.688191, 0.587785  },
-	{ -0.162460, -0.262866, 0.951056  }, { 0.442863,  -0.238856, 0.864188  },
-	{ 0.162460,  -0.262866, 0.951056  }, { 0.309017,  -0.500000, 0.809017  },
-	{ 0.147621,  -0.716567, 0.681718  }, { 0.000000,  -0.525731, 0.850651  },
-	{ 0.425325,  -0.688191, 0.587785  }, { 0.587785,  -0.425325, 0.688191  },
-	{ 0.688191,  -0.587785, 0.425325  }, { -0.955423, 0.295242,  0.000000  },
-	{ -0.951056, 0.162460,  0.262866  }, { -1.000000, 0.000000,  0.000000  },
-	{ -0.850651, 0.000000,  0.525731  }, { -0.955423, -0.295242, 0.000000  },
-	{ -0.951056, -0.162460, 0.262866  }, { -0.864188, 0.442863,  -0.238856 },
-	{ -0.951056, 0.162460,  -0.262866 }, { -0.809017, 0.309017,  -0.500000 },
-	{ -0.864188, -0.442863, -0.238856 }, { -0.951056, -0.162460, -0.262866 },
-	{ -0.809017, -0.309017, -0.500000 }, { -0.681718, 0.147621,  -0.716567 },
-	{ -0.681718, -0.147621, -0.716567 }, { -0.850651, 0.000000,  -0.525731 },
-	{ -0.688191, 0.587785,  -0.425325 }, { -0.587785, 0.425325,  -0.688191 },
-	{ -0.425325, 0.688191,  -0.587785 }, { -0.425325, -0.688191, -0.587785 },
-	{ -0.587785, -0.425325, -0.688191 }, { -0.688191, -0.587785, -0.425325 }
+	{ -0.525731f, 0.000000f,  0.850651f  }, { -0.442863f, 0.238856f,  0.864188f  },
+	{ -0.295242f, 0.000000f,  0.955423f  }, { -0.309017f, 0.500000f,  0.809017f  },
+	{ -0.162460f, 0.262866f,  0.951056f  }, { 0.000000f,  0.000000f,  1.000000f  },
+	{ 0.000000f,  0.850651f,  0.525731f  }, { -0.147621f, 0.716567f,  0.681718f  },
+	{ 0.147621f,  0.716567f,  0.681718f  }, { 0.000000f,  0.525731f,  0.850651f  },
+	{ 0.309017f,  0.500000f,  0.809017f  }, { 0.525731f,  0.000000f,  0.850651f  },
+	{ 0.295242f,  0.000000f,  0.955423f  }, { 0.442863f,  0.238856f,  0.864188f  },
+	{ 0.162460f,  0.262866f,  0.951056f  }, { -0.681718f, 0.147621f,  0.716567f  },
+	{ -0.809017f, 0.309017f,  0.500000f  }, { -0.587785f, 0.425325f,  0.688191f  },
+	{ -0.850651f, 0.525731f,  0.000000f  }, { -0.864188f, 0.442863f,  0.238856f  },
+	{ -0.716567f, 0.681718f,  0.147621f  }, { -0.688191f, 0.587785f,  0.425325f  },
+	{ -0.500000f, 0.809017f,  0.309017f  }, { -0.238856f, 0.864188f,  0.442863f  },
+	{ -0.425325f, 0.688191f,  0.587785f  }, { -0.716567f, 0.681718f,  -0.147621f },
+	{ -0.500000f, 0.809017f,  -0.309017f }, { -0.525731f, 0.850651f,  0.000000f  },
+	{ 0.000000f,  0.850651f,  -0.525731f }, { -0.238856f, 0.864188f,  -0.442863f },
+	{ 0.000000f,  0.955423f,  -0.295242f }, { -0.262866f, 0.951056f,  -0.162460f },
+	{ 0.000000f,  1.000000f,  0.000000f  }, { 0.000000f,  0.955423f,  0.295242f  },
+	{ -0.262866f, 0.951056f,  0.162460f  }, { 0.238856f,  0.864188f,  0.442863f  },
+	{ 0.262866f,  0.951056f,  0.162460f  }, { 0.500000f,  0.809017f,  0.309017f  },
+	{ 0.238856f,  0.864188f,  -0.442863f }, { 0.262866f,  0.951056f,  -0.162460f },
+	{ 0.500000f,  0.809017f,  -0.309017f }, { 0.850651f,  0.525731f,  0.000000f  },
+	{ 0.716567f,  0.681718f,  0.147621f  }, { 0.716567f,  0.681718f,  -0.147621f },
+	{ 0.525731f,  0.850651f,  0.000000f  }, { 0.425325f,  0.688191f,  0.587785f  },
+	{ 0.864188f,  0.442863f,  0.238856f  }, { 0.688191f,  0.587785f,  0.425325f  },
+	{ 0.809017f,  0.309017f,  0.500000f  }, { 0.681718f,  0.147621f,  0.716567f  },
+	{ 0.587785f,  0.425325f,  0.688191f  }, { 0.955423f,  0.295242f,  0.000000f  },
+	{ 1.000000f,  0.000000f,  0.000000f  }, { 0.951056f,  0.162460f,  0.262866f  },
+	{ 0.850651f,  -0.525731f, 0.000000f  }, { 0.955423f,  -0.295242f, 0.000000f  },
+	{ 0.864188f,  -0.442863f, 0.238856f  }, { 0.951056f,  -0.162460f, 0.262866f  },
+	{ 0.809017f,  -0.309017f, 0.500000f  }, { 0.681718f,  -0.147621f, 0.716567f  },
+	{ 0.850651f,  0.000000f,  0.525731f  }, { 0.864188f,  0.442863f,  -0.238856f },
+	{ 0.809017f,  0.309017f,  -0.500000f }, { 0.951056f,  0.162460f,  -0.262866f },
+	{ 0.525731f,  0.000000f,  -0.850651f }, { 0.681718f,  0.147621f,  -0.716567f },
+	{ 0.681718f,  -0.147621f, -0.716567f }, { 0.850651f,  0.000000f,  -0.525731f },
+	{ 0.809017f,  -0.309017f, -0.500000f }, { 0.864188f,  -0.442863f, -0.238856f },
+	{ 0.951056f,  -0.162460f, -0.262866f }, { 0.147621f,  0.716567f,  -0.681718f },
+	{ 0.309017f,  0.500000f,  -0.809017f }, { 0.425325f,  0.688191f,  -0.587785f },
+	{ 0.442863f,  0.238856f,  -0.864188f }, { 0.587785f,  0.425325f,  -0.688191f },
+	{ 0.688191f,  0.587785f,  -0.425325f }, { -0.147621f, 0.716567f,  -0.681718f },
+	{ -0.309017f, 0.500000f,  -0.809017f }, { 0.000000f,  0.525731f,  -0.850651f },
+	{ -0.525731f, 0.000000f,  -0.850651f }, { -0.442863f, 0.238856f,  -0.864188f },
+	{ -0.295242f, 0.000000f,  -0.955423f }, { -0.162460f, 0.262866f,  -0.951056f },
+	{ 0.000000f,  0.000000f,  -1.000000f }, { 0.295242f,  0.000000f,  -0.955423f },
+	{ 0.162460f,  0.262866f,  -0.951056f }, { -0.442863f, -0.238856f, -0.864188f },
+	{ -0.309017f, -0.500000f, -0.809017f }, { -0.162460f, -0.262866f, -0.951056f },
+	{ 0.000000f,  -0.850651f, -0.525731f }, { -0.147621f, -0.716567f, -0.681718f },
+	{ 0.147621f,  -0.716567f, -0.681718f }, { 0.000000f,  -0.525731f, -0.850651f },
+	{ 0.309017f,  -0.500000f, -0.809017f }, { 0.442863f,  -0.238856f, -0.864188f },
+	{ 0.162460f,  -0.262866f, -0.951056f }, { 0.238856f,  -0.864188f, -0.442863f },
+	{ 0.500000f,  -0.809017f, -0.309017f }, { 0.425325f,  -0.688191f, -0.587785f },
+	{ 0.716567f,  -0.681718f, -0.147621f }, { 0.688191f,  -0.587785f, -0.425325f },
+	{ 0.587785f,  -0.425325f, -0.688191f }, { 0.000000f,  -0.955423f, -0.295242f },
+	{ 0.000000f,  -1.000000f, 0.000000f  }, { 0.262866f,  -0.951056f, -0.162460f },
+	{ 0.000000f,  -0.850651f, 0.525731f  }, { 0.000000f,  -0.955423f, 0.295242f  },
+	{ 0.238856f,  -0.864188f, 0.442863f  }, { 0.262866f,  -0.951056f, 0.162460f  },
+	{ 0.500000f,  -0.809017f, 0.309017f  }, { 0.716567f,  -0.681718f, 0.147621f  },
+	{ 0.525731f,  -0.850651f, 0.000000f  }, { -0.238856f, -0.864188f, -0.442863f },
+	{ -0.500000f, -0.809017f, -0.309017f }, { -0.262866f, -0.951056f, -0.162460f },
+	{ -0.850651f, -0.525731f, 0.000000f  }, { -0.716567f, -0.681718f, -0.147621f },
+	{ -0.716567f, -0.681718f, 0.147621f  }, { -0.525731f, -0.850651f, 0.000000f  },
+	{ -0.500000f, -0.809017f, 0.309017f  }, { -0.238856f, -0.864188f, 0.442863f  },
+	{ -0.262866f, -0.951056f, 0.162460f  }, { -0.864188f, -0.442863f, 0.238856f  },
+	{ -0.809017f, -0.309017f, 0.500000f  }, { -0.688191f, -0.587785f, 0.425325f  },
+	{ -0.681718f, -0.147621f, 0.716567f  }, { -0.442863f, -0.238856f, 0.864188f  },
+	{ -0.587785f, -0.425325f, 0.688191f  }, { -0.309017f, -0.500000f, 0.809017f  },
+	{ -0.147621f, -0.716567f, 0.681718f  }, { -0.425325f, -0.688191f, 0.587785f  },
+	{ -0.162460f, -0.262866f, 0.951056f  }, { 0.442863f,  -0.238856f, 0.864188f  },
+	{ 0.162460f,  -0.262866f, 0.951056f  }, { 0.309017f,  -0.500000f, 0.809017f  },
+	{ 0.147621f,  -0.716567f, 0.681718f  }, { 0.000000f,  -0.525731f, 0.850651f  },
+	{ 0.425325f,  -0.688191f, 0.587785f  }, { 0.587785f,  -0.425325f, 0.688191f  },
+	{ 0.688191f,  -0.587785f, 0.425325f  }, { -0.955423f, 0.295242f,  0.000000f  },
+	{ -0.951056f, 0.162460f,  0.262866f  }, { -1.000000f, 0.000000f,  0.000000f  },
+	{ -0.850651f, 0.000000f,  0.525731f  }, { -0.955423f, -0.295242f, 0.000000f  },
+	{ -0.951056f, -0.162460f, 0.262866f  }, { -0.864188f, 0.442863f,  -0.238856f },
+	{ -0.951056f, 0.162460f,  -0.262866f }, { -0.809017f, 0.309017f,  -0.500000f },
+	{ -0.864188f, -0.442863f, -0.238856f }, { -0.951056f, -0.162460f, -0.262866f },
+	{ -0.809017f, -0.309017f, -0.500000f }, { -0.681718f, 0.147621f,  -0.716567f },
+	{ -0.681718f, -0.147621f, -0.716567f }, { -0.850651f, 0.000000f,  -0.525731f },
+	{ -0.688191f, 0.587785f,  -0.425325f }, { -0.587785f, 0.425325f,  -0.688191f },
+	{ -0.425325f, 0.688191f,  -0.587785f }, { -0.425325f, -0.688191f, -0.587785f },
+	{ -0.587785f, -0.425325f, -0.688191f }, { -0.688191f, -0.587785f, -0.425325f }
 };
 
 //==============================================================
 
+/**
+ * @brief Q_rand
+ * @param[in,out] seed
+ * @return
+ */
 int Q_rand(int *seed)
 {
 	*seed = (69069 * *seed + 1);
 	return *seed;
 }
 
+/**
+ * @brief Q_random
+ * @param[in] seed
+ * @return
+ */
 float Q_random(int *seed)
 {
 	return (Q_rand(seed) & 0xffff) / (float)0x10000;
 }
 
+/**
+ * @brief Q_crandom
+ * @param[in] seed
+ * @return
+ */
 float Q_crandom(int *seed)
 {
-	return 2.0 * (Q_random(seed) - 0.5);
+	return 2.0f * (Q_random(seed) - 0.5f);
 }
 
 
 //=======================================================
 
+/**
+ * @brief ClampChar
+ * @param[in] i
+ * @return
+ */
 signed char ClampChar(int i)
 {
 	if (i < -128)
@@ -225,21 +245,31 @@ signed char ClampChar(int i)
 }
 
 /**
+ * @brief ClampShort
+ * @param i
+ * @return
  * @note Unused.
  */
+/*
 signed short ClampShort(int i)
 {
-	if (i < -32768)
-	{
-		return -32768;
-	}
-	if (i > 0x7fff)
-	{
-		return 0x7fff;
-	}
-	return i;
+    if (i < -32768)
+    {
+        return -32768;
+    }
+    if (i > 0x7fff)
+    {
+        return 0x7fff;
+    }
+    return i;
 }
+*/
 
+/**
+ * @brief ClampByte
+ * @param[in] value
+ * @return
+ */
 byte ClampByte(int value)
 {
 	if (value < 0)
@@ -255,6 +285,10 @@ byte ClampByte(int value)
 	return (byte)value;
 }
 
+/**
+ * @brief ClampColor
+ * @param[in,out] color
+ */
 void ClampColor(vec4_t color)
 {
 	int i;
@@ -273,7 +307,13 @@ void ClampColor(vec4_t color)
 	}
 }
 
-// this isn't a real cheap function to call!
+/**
+ * @brief DirToByte
+ * @param[in] dir
+ * @return
+ *
+ * @note This isn't a real cheap function to call!
+ */
 int DirToByte(vec3_t dir)
 {
 	int   i, best;
@@ -299,6 +339,11 @@ int DirToByte(vec3_t dir)
 	return best;
 }
 
+/**
+ * @brief ByteToDir
+ * @param[in] b
+ * @param[out] dir
+ */
 void ByteToDir(int b, vec3_t dir)
 {
 	if (b < 0 || b >= NUMVERTEXNORMALS)
@@ -310,69 +355,91 @@ void ByteToDir(int b, vec3_t dir)
 }
 
 /**
+ * @brief ColorBytes3
+ * @param[in] r
+ * @param[in] g
+ * @param[in] b
+ *
  * @note Unused.
  */
+/*
 unsigned ColorBytes3(float r, float g, float b)
 {
-	unsigned i;
+    unsigned i;
 
-	((byte *)&i)[0] = r * 255;
-	((byte *)&i)[1] = g * 255;
-	((byte *)&i)[2] = b * 255;
+    ((byte *)&i)[0] = (byte)(r * 255);
+    ((byte *)&i)[1] = (byte)(g * 255);
+    ((byte *)&i)[2] = (byte)(b * 255);
 
-	return i;
+    return i;
 }
+*/
 
+/**
+ * @brief ColorBytes4
+ * @param[in] r
+ * @param[in] g
+ * @param[in] b
+ * @param[in] a
+ */
 unsigned ColorBytes4(float r, float g, float b, float a)
 {
 	unsigned i;
 
-	((byte *)&i)[0] = r * 255;
-	((byte *)&i)[1] = g * 255;
-	((byte *)&i)[2] = b * 255;
-	((byte *)&i)[3] = a * 255;
+	((byte *)&i)[0] = (byte)(r * 255);
+	((byte *)&i)[1] = (byte)(g * 255);
+	((byte *)&i)[2] = (byte)(b * 255);
+	((byte *)&i)[3] = (byte)(a * 255);
 
 	return i;
 }
 
 /**
+ * @brief NormalizeColor
+ * @param[in] in
+ * @param[out] out
+ * @return
+ *
  * @note Unused.
  */
+/*
 float NormalizeColor(const vec3_t in, vec3_t out)
 {
-	float max;
+    float max;
 
-	max = in[0];
-	if (in[1] > max)
-	{
-		max = in[1];
-	}
-	if (in[2] > max)
-	{
-		max = in[2];
-	}
+    max = in[0];
+    if (in[1] > max)
+    {
+        max = in[1];
+    }
+    if (in[2] > max)
+    {
+        max = in[2];
+    }
 
-	if (!max)
-	{
-		VectorClear(out);
-	}
-	else
-	{
-		out[0] = in[0] / max;
-		out[1] = in[1] / max;
-		out[2] = in[2] / max;
-	}
-	return max;
+    if (max == 0.f)
+    {
+        VectorClear(out);
+    }
+    else
+    {
+        out[0] = in[0] / max;
+        out[1] = in[1] / max;
+        out[2] = in[2] / max;
+    }
+    return max;
 }
-
-/*
-=====================
-PlaneFromPoints
-
-Returns false if the triangle is degenrate.
-The normal will point out of the clock for clockwise ordered points
-=====================
 */
+
+/**
+ * @brief PlaneFromPoints
+ * @param[in,out] plane
+ * @param[in] a
+ * @param[in] b
+ * @param[in] c
+ * @return false if the triangle is degenrate.
+ * The normal will point out of the clock for clockwise ordered points
+ */
 qboolean PlaneFromPoints(vec4_t plane, const vec3_t a, const vec3_t b, const vec3_t c)
 {
 	vec3_t d1, d2;
@@ -380,7 +447,7 @@ qboolean PlaneFromPoints(vec4_t plane, const vec3_t a, const vec3_t b, const vec
 	VectorSubtract(b, a, d1);
 	VectorSubtract(c, a, d2);
 	vec3_cross(d2, d1, plane);
-	if (vec3_norm(plane) == 0)
+	if (vec3_norm(plane) == 0.f)
 	{
 		return qfalse;
 	}
@@ -389,11 +456,11 @@ qboolean PlaneFromPoints(vec4_t plane, const vec3_t a, const vec3_t b, const vec
 	return qtrue;
 }
 
-/*
-================
-RotatePoint
-================
-*/
+/**
+ * @brief RotatePoint
+ * @param[out] point
+ * @param[in] matrix
+ */
 void RotatePoint(vec3_t point, vec3_t matrix[3])
 {
 	vec3_t tvec;
@@ -404,13 +471,15 @@ void RotatePoint(vec3_t point, vec3_t matrix[3])
 	point[2] = DotProduct(matrix[2], tvec);
 }
 
-/*
-===============
-RotatePointAroundVector
-
-This is not implemented very well...
-===============
-*/
+/**
+ * @brief RotatePointAroundVector
+ * @param[out] dst
+ * @param[in] dir
+ * @param[in] point
+ * @param[in] degrees
+ *
+ * @note This is not implemented very well...
+ */
 void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point,
                              float degrees)
 {
@@ -471,49 +540,57 @@ void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point,
 
 /**
  * @brief Rotate a point around a vertex.
+ * @param[in,out] pnt
+ * @param[in] rot_x
+ * @param[in] rot_y
+ * @param[in] rot_z
+ * @param[in] origin
+ *
  * @note Unused.
  */
+/*
 void RotatePointAroundVertex(vec3_t pnt, float rot_x, float rot_y, float rot_z, const vec3_t origin)
 {
-	float tmp[11];
+    float tmp[11];
 
-	// move pnt to rel{0,0,0}
-	VectorSubtract(pnt, origin, pnt);
+    // move pnt to rel{0,0,0}
+    VectorSubtract(pnt, origin, pnt);
 
-	// init temp values
-	tmp[0]  = sin(rot_x);
-	tmp[1]  = cos(rot_x);
-	tmp[2]  = sin(rot_y);
-	tmp[3]  = cos(rot_y);
-	tmp[4]  = sin(rot_z);
-	tmp[5]  = cos(rot_z);
-	tmp[6]  = pnt[1] * tmp[5];
-	tmp[7]  = pnt[0] * tmp[4];
-	tmp[8]  = pnt[0] * tmp[5];
-	tmp[9]  = pnt[1] * tmp[4];
-	tmp[10] = pnt[2] * tmp[3];
+    // init temp values
+    tmp[0]  = sin(rot_x);
+    tmp[1]  = cos(rot_x);
+    tmp[2]  = sin(rot_y);
+    tmp[3]  = cos(rot_y);
+    tmp[4]  = sin(rot_z);
+    tmp[5]  = cos(rot_z);
+    tmp[6]  = pnt[1] * tmp[5];
+    tmp[7]  = pnt[0] * tmp[4];
+    tmp[8]  = pnt[0] * tmp[5];
+    tmp[9]  = pnt[1] * tmp[4];
+    tmp[10] = pnt[2] * tmp[3];
 
-	// rotate point
-	pnt[0] = (tmp[3] * (tmp[8] - tmp[9]) + tmp[3] * tmp[2]);
-	pnt[1] = (tmp[0] * (tmp[2] * tmp[8] - tmp[2] * tmp[9] - tmp[10]) + tmp[1] * (tmp[7] + tmp[6]));
-	pnt[2] = (tmp[1] * (-tmp[2] * tmp[8] + tmp[2] * tmp[9] + tmp[10]) + tmp[0] * (tmp[7] + tmp[6]));
+    // rotate point
+    pnt[0] = (tmp[3] * (tmp[8] - tmp[9]) + tmp[3] * tmp[2]);
+    pnt[1] = (tmp[0] * (tmp[2] * tmp[8] - tmp[2] * tmp[9] - tmp[10]) + tmp[1] * (tmp[7] + tmp[6]));
+    pnt[2] = (tmp[1] * (-tmp[2] * tmp[8] + tmp[2] * tmp[9] + tmp[10]) + tmp[0] * (tmp[7] + tmp[6]));
 
-	// move pnt back
-	VectorAdd(pnt, origin, pnt);
+    // move pnt back
+    VectorAdd(pnt, origin, pnt);
 }
-
-/*
-===============
-RotateAroundDirection
-===============
 */
+
+/**
+ * @brief RotateAroundDirection
+ * @param[in,out] axis
+ * @param[in] yaw
+ */
 void RotateAroundDirection(vec3_t axis[3], float yaw)
 {
 	// create an arbitrary axis[1]
 	PerpendicularVector(axis[1], axis[0]);
 
 	// rotate it around axis[0] by yaw
-	if (yaw)
+	if (yaw != 0.f)
 	{
 		vec3_t temp;
 
@@ -525,22 +602,27 @@ void RotateAroundDirection(vec3_t axis[3], float yaw)
 	vec3_cross(axis[0], axis[1], axis[2]);
 }
 
-/*
-================
-BG_CreateRotationMatrix
-================
-*/
+/**
+ * @brief CreateRotationMatrix
+ * @param[in] angles
+ * @param[in,out] matrix
+ */
 void CreateRotationMatrix(const vec3_t angles, vec3_t matrix[3])
 {
 	angles_vectors(angles, matrix[0], matrix[1], matrix[2]);
 	vec3_inv(matrix[1]);
 }
 
+/**
+ * @brief vec3_to_angles
+ * @param[in] value1
+ * @param[out] angles
+ */
 void vec3_to_angles(const vec3_t value1, vec3_t angles)
 {
 	float yaw, pitch;
 
-	if (value1[1] == 0 && value1[0] == 0)
+	if (value1[1] == 0.f && value1[0] == 0.f)
 	{
 		yaw = 0;
 		if (value1[2] > 0)
@@ -556,7 +638,7 @@ void vec3_to_angles(const vec3_t value1, vec3_t angles)
 	{
 		float forward;
 
-		if (value1[0])
+		if (value1[0] != 0.f)
 		{
 			yaw = (atan2(value1[1], value1[0]) * 180 / M_PI);
 		}
@@ -586,11 +668,11 @@ void vec3_to_angles(const vec3_t value1, vec3_t angles)
 	angles[ROLL]  = 0;
 }
 
-/*
-=================
-AnglesToAxis
-=================
-*/
+/**
+ * @brief angles_to_axis
+ * @param[in] angles
+ * @param[in,out] axis
+ */
 void angles_to_axis(const vec3_t angles, vec3_t axis[3])
 {
 	vec3_t right;
@@ -600,6 +682,10 @@ void angles_to_axis(const vec3_t angles, vec3_t axis[3])
 	VectorSubtract(vec3_origin, right, axis[1]);
 }
 
+/**
+ * @brief axis_clear
+ * @param[out] axis
+ */
 void axis_clear(axis_t axis)
 {
 	axis[0][0] = 1;
@@ -613,6 +699,11 @@ void axis_clear(axis_t axis)
 	axis[2][2] = 1;
 }
 
+/**
+ * @brief axis_copy
+ * @param[in] in
+ * @param[out] out
+ */
 void axis_copy(axis_t in, axis_t out)
 {
 	VectorCopy(in[0], out[0]);
@@ -620,6 +711,12 @@ void axis_copy(axis_t in, axis_t out)
 	VectorCopy(in[2], out[2]);
 }
 
+/**
+ * @brief ProjectPointOnPlane
+ * @param[out] dst
+ * @param[in] p
+ * @param[in] normal
+ */
 void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal)
 {
 	float  d;
@@ -639,14 +736,13 @@ void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal)
 	dst[2] = p[2] - d * n[2];
 }
 
-/*
-================
-MakeNormalVectors
-
-Given a normalized forward vector, create two
-other perpendicular vectors
-================
-*/
+/**
+ * @brief Given a normalized forward vector, create two
+ * other perpendicular vectors
+ * @param[in] forward
+ * @param[in,out] right
+ * @param[out] up
+ */
 void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up)
 {
 	float d;
@@ -663,6 +759,12 @@ void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up)
 	vec3_cross(right, forward, up);
 }
 
+/**
+ * @brief vec3_rotate
+ * @param[in] in
+ * @param[in] matrix
+ * @param[out] out
+ */
 void vec3_rotate(const vec3_t in, vec3_t matrix[3], vec3_t out)
 {
 	/*
@@ -678,9 +780,12 @@ void vec3_rotate(const vec3_t in, vec3_t matrix[3], vec3_t out)
 //============================================================================
 
 #if !idppc
-/*
-** float q_rsqrt( float number )
-*/
+
+/**
+ * @brief Q_rsqrt
+ * @param[in] number
+ * @return
+ */
 float Q_rsqrt(float number)
 {
 	floatint_t  t;
@@ -697,6 +802,11 @@ float Q_rsqrt(float number)
 	return y;
 }
 
+/**
+ * @brief Q_fabs
+ * @param[in] f
+ * @return
+ */
 float Q_fabs(float f)
 {
 	floatint_t fi;
@@ -708,11 +818,13 @@ float Q_fabs(float f)
 
 //============================================================
 
-/*
-===============
-LerpAngle
-===============
-*/
+/**
+ * @brief angle_lerp
+ * @param[in] from
+ * @param[in] to
+ * @param[in] frac
+ * @return
+ */
 float angle_lerp(float from, float to, float frac)
 {
 	if (to - from > 180)
@@ -727,11 +839,13 @@ float angle_lerp(float from, float to, float frac)
 	return(from + frac * (to - from));
 }
 
-/*
-=================
-LerpPosition
-=================
-*/
+/**
+ * @brief vec3_lerp
+ * @param[in] start
+ * @param[in] end
+ * @param[in] frac
+ * @param[out] out
+ */
 void vec3_lerp(vec3_t start, vec3_t end, float frac, vec3_t out)
 {
 	vec3_t dist;
@@ -740,13 +854,12 @@ void vec3_lerp(vec3_t start, vec3_t end, float frac, vec3_t out)
 	VectorMA(start, frac, dist, out);
 }
 
-/*
-=================
-AngleSubtract
-
-Always returns a value from -180 to 180
-=================
-*/
+/**
+ * @brief angle_sub
+ * @param[in] a1
+ * @param[in] a2
+ * @return Always returns a value from -180 to 180
+ */
 float angle_sub(float a1, float a2)
 {
 	float a = a1 - a2;
@@ -762,6 +875,12 @@ float angle_sub(float a1, float a2)
 	return a;
 }
 
+/**
+ * @brief angles_sub
+ * @param[in] v1
+ * @param[in] v2
+ * @param[out] v3
+ */
 void angles_sub(vec3_t v1, vec3_t v2, vec3_t v3)
 {
 	v3[0] = angle_sub(v1[0], v2[0]);
@@ -769,56 +888,59 @@ void angles_sub(vec3_t v1, vec3_t v2, vec3_t v3)
 	v3[2] = angle_sub(v1[2], v2[2]);
 }
 
+/**
+ * @brief angle_mod
+ * @param[in] a
+ * @return
+ */
 float angle_mod(float a)
 {
-	return((360.0 / 65536) * ((int)(a * (65536 / 360.0)) & 65535));
+	return((360.0f / 65536) * ((int)(a * (65536 / 360.0f)) & 65535));
 }
 
 /**
  * @brief Returns angle normalized to the range [0 <= angle < 2*M_PI].
+ * @param[in] angle
  * @note Unused.
  */
+/*
 float angle_norm_pi(float angle)
 {
-	return DEG2RAD(angle_norm_360(RAD2DEG(angle)));
+    return DEG2RAD(angle_norm_360(RAD2DEG(angle)));
 }
-
-/*
-=================
-AngleNormalize360
-
-returns angle normalized to the range [0 <= angle < 360]
-=================
 */
+
+/**
+ * @brief angle_norm_360
+ * @param[in] angle
+ * @return angle normalized to the range [0 <= angle < 360]
+ */
 float angle_norm_360(float angle)
 {
-	return (360.0 / 65536) * ((int)(angle * (65536 / 360.0)) & 65535);
+	return (360.0f / 65536) * ((int)(angle * (65536 / 360.0f)) & 65535);
 }
 
-/*
-=================
-AngleNormalize180
-
-returns angle normalized to the range [-180 < angle <= 180]
-=================
-*/
+/**
+ * @brief angle_norm_180
+ * @param[in] angle
+ * @return angle normalized to the range [-180 < angle <= 180]
+ */
 float angle_norm_180(float angle)
 {
 	angle = angle_norm_360(angle);
-	if (angle > 180.0)
+	if (angle > 180.0f)
 	{
-		angle -= 360.0;
+		angle -= 360.0f;
 	}
 	return angle;
 }
 
-/*
-=================
-AngleDelta
-
-returns the normalized delta from angle1 to angle2
-=================
-*/
+/**
+ * @brief angle_delta
+ * @param[in] angle1
+ * @param[in] angle2
+ * @return the normalized delta from angle1 to angle2
+ */
 float angle_delta(float angle1, float angle2)
 {
 	return angle_norm_180(angle1 - angle2);
@@ -826,14 +948,13 @@ float angle_delta(float angle1, float angle2)
 
 //============================================================
 
-/*
-=================
-SetPlaneSignbits
-=================
-*/
+/**
+ * @brief SetPlaneSignbits
+ * @param[in,out] out
+ */
 void SetPlaneSignbits(struct cplane_s *out)
 {
-	int bits = 0, j;
+	byte bits = 0, j;
 
 	// for fast box on planeside test
 
@@ -847,13 +968,17 @@ void SetPlaneSignbits(struct cplane_s *out)
 	out->signbits = bits;
 }
 
+/**
+ * @brief BoxOnPlaneSide2
+ * @param[in] emins
+ * @param[in] emaxs
+ * @param[in] p
+ * @return 1, 2, or 1 + 2
+ *
+ * @note This is the slow, general version
+ * @note Unused
+ */
 /*
-==================
-BoxOnPlaneSide
-
-Returns 1, 2, or 1 + 2
-
-// this is the slow, general version
 int BoxOnPlaneSide2 (vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 {
     int     i;
@@ -884,11 +1009,17 @@ int BoxOnPlaneSide2 (vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 
     return sides;
 }
-
-==================
 */
+
 #if defined __LCC__ || defined C_ONLY || defined __GNUC__
 
+/**
+ * @brief BoxOnPlaneSide
+ * @param[in] emins
+ * @param[in] emaxs
+ * @param[in] p
+ * @return
+ */
 int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 {
 	float dist1, dist2;
@@ -1218,11 +1349,12 @@ int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 
 #endif
 
-/*
-=================
-RadiusFromBounds
-=================
-*/
+/**
+ * @brief RadiusFromBounds
+ * @param[in] mins
+ * @param[in] maxs
+ * @return
+ */
 float RadiusFromBounds(const vec3_t mins, const vec3_t maxs)
 {
 	int    i;
@@ -1239,12 +1371,23 @@ float RadiusFromBounds(const vec3_t mins, const vec3_t maxs)
 	return vec3_length(corner);
 }
 
+/**
+ * @brief ClearBounds
+ * @param[in,out] mins
+ * @param[in,out] maxs
+ */
 void ClearBounds(vec3_t mins, vec3_t maxs)
 {
 	mins[0] = mins[1] = mins[2] = 99999;
 	maxs[0] = maxs[1] = maxs[2] = -99999;
 }
 
+/**
+ * @brief AddPointToBounds
+ * @param[in] v
+ * @param[in,out] mins
+ * @param[in,out] maxs
+ */
 void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs)
 {
 	if (v[0] < mins[0])
@@ -1276,40 +1419,55 @@ void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs)
 }
 
 /**
+ * @brief PointInBounds
+ * @param[in] v
+ * @param[in] mins
+ * @param[in] maxs
+ * @return
+ *
  * @note Unused.
  */
+/*
 qboolean PointInBounds(const vec3_t v, const vec3_t mins, const vec3_t maxs)
 {
-	if (v[0] < mins[0])
-	{
-		return qfalse;
-	}
-	if (v[0] > maxs[0])
-	{
-		return qfalse;
-	}
+    if (v[0] < mins[0])
+    {
+        return qfalse;
+    }
+    if (v[0] > maxs[0])
+    {
+        return qfalse;
+    }
 
-	if (v[1] < mins[1])
-	{
-		return qfalse;
-	}
-	if (v[1] > maxs[1])
-	{
-		return qfalse;
-	}
+    if (v[1] < mins[1])
+    {
+        return qfalse;
+    }
+    if (v[1] > maxs[1])
+    {
+        return qfalse;
+    }
 
-	if (v[2] < mins[2])
-	{
-		return qfalse;
-	}
-	if (v[2] > maxs[2])
-	{
-		return qfalse;
-	}
+    if (v[2] < mins[2])
+    {
+        return qfalse;
+    }
+    if (v[2] > maxs[2])
+    {
+        return qfalse;
+    }
 
-	return qtrue;
+    return qtrue;
 }
+*/
 
+/**
+ * @brief BoundsAdd
+ * @param[in,out] mins
+ * @param[in,out] maxs
+ * @param[in] mins2
+ * @param[in] maxs2
+ */
 void BoundsAdd(vec3_t mins, vec3_t maxs, const vec3_t mins2, const vec3_t maxs2)
 {
 	if (mins2[0] < mins[0])
@@ -1343,6 +1501,12 @@ void BoundsAdd(vec3_t mins, vec3_t maxs, const vec3_t mins2, const vec3_t maxs2)
 	}
 }
 
+/**
+ * @brief vec3_compare
+ * @param[in] v1
+ * @param[in] v2
+ * @return
+ */
 qboolean vec3_compare(const vec3_t v1, const vec3_t v2)
 {
 	if (v1[0] != v2[0] || v1[1] != v2[1] || v1[2] != v2[2])
@@ -1353,13 +1517,18 @@ qboolean vec3_compare(const vec3_t v1, const vec3_t v2)
 	return qtrue;
 }
 
+/**
+ * @brief vec3_norm
+ * @param[in] v
+ * @return
+ */
 vec_t vec3_norm(vec3_t v)
 {
 	float length = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 
-	length = sqrt(length);
+	length = (float)sqrt((double)length);
 
-	if (length)
+	if (length != 0.f)
 	{
 		float ilength = 1 / length;
 
@@ -1371,10 +1540,11 @@ vec_t vec3_norm(vec3_t v)
 	return length;
 }
 
-
-// fast vector normalize routine that does not check to make sure
-// that length != 0, nor does it return length
-
+/**
+ * @brief fast vector normalize routine that does not check to make sure
+ * that length != 0, nor does it return length
+ * @param[in,out] v
+ */
 void vec3_norm_fast(vec3_t v)
 {
 	float ilength;
@@ -1386,13 +1556,19 @@ void vec3_norm_fast(vec3_t v)
 	v[2] *= ilength;
 }
 
+/**
+ * @brief vec3_norm2
+ * @param[in] v
+ * @param[out] out
+ * @return
+ */
 vec_t vec3_norm2(const vec3_t v, vec3_t out)
 {
 	float length = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 
-	length = sqrt(length);
+	length = (float)sqrt((double)length);
 
-	if (length)
+	if (length != 0.f)
 	{
 		float ilength = 1 / length;
 
@@ -1409,6 +1585,13 @@ vec_t vec3_norm2(const vec3_t v, vec3_t out)
 
 }
 
+/**
+ * @brief _VectorMA
+ * @param[in] veca
+ * @param[in] scale
+ * @param[in] vecb
+ * @param[out] vecc
+ */
 void _VectorMA(const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc)
 {
 	vecc[0] = veca[0] + scale * vecb[0];
@@ -1416,11 +1599,23 @@ void _VectorMA(const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc)
 	vecc[2] = veca[2] + scale * vecb[2];
 }
 
+/**
+ * @brief _DotProduct
+ * @param[in] v1
+ * @param[in] v2
+ * @return
+ */
 vec_t _DotProduct(const vec3_t v1, const vec3_t v2)
 {
 	return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
 }
 
+/**
+ * @brief _VectorSubtract
+ * @param[in] veca
+ * @param[in] vecb
+ * @param[out] out
+ */
 void _VectorSubtract(const vec3_t veca, const vec3_t vecb, vec3_t out)
 {
 	out[0] = veca[0] - vecb[0];
@@ -1428,6 +1623,12 @@ void _VectorSubtract(const vec3_t veca, const vec3_t vecb, vec3_t out)
 	out[2] = veca[2] - vecb[2];
 }
 
+/**
+ * @brief _VectorAdd
+ * @param[in] veca
+ * @param[in] vecb
+ * @param[out] out
+ */
 void _VectorAdd(const vec3_t veca, const vec3_t vecb, vec3_t out)
 {
 	out[0] = veca[0] + vecb[0];
@@ -1435,6 +1636,11 @@ void _VectorAdd(const vec3_t veca, const vec3_t vecb, vec3_t out)
 	out[2] = veca[2] + vecb[2];
 }
 
+/**
+ * @brief _VectorCopy
+ * @param[in] in
+ * @param[out] out
+ */
 void _VectorCopy(const vec3_t in, vec3_t out)
 {
 	out[0] = in[0];
@@ -1442,6 +1648,12 @@ void _VectorCopy(const vec3_t in, vec3_t out)
 	out[2] = in[2];
 }
 
+/**
+ * @brief _VectorScale
+ * @param[in] in
+ * @param[in] scale
+ * @param[out] out
+ */
 void _VectorScale(const vec3_t in, vec_t scale, vec3_t out)
 {
 	out[0] = in[0] * scale;
@@ -1449,6 +1661,12 @@ void _VectorScale(const vec3_t in, vec_t scale, vec3_t out)
 	out[2] = in[2] * scale;
 }
 
+/**
+ * @brief vec3_cross
+ * @param[in] v1
+ * @param[in] v2
+ * @param[out] cross
+ */
 void vec3_cross(const vec3_t v1, const vec3_t v2, vec3_t cross)
 {
 	cross[0] = v1[1] * v2[2] - v1[2] * v2[1];
@@ -1456,16 +1674,32 @@ void vec3_cross(const vec3_t v1, const vec3_t v2, vec3_t cross)
 	cross[2] = v1[0] * v2[1] - v1[1] * v2[0];
 }
 
+/**
+ * @brief vec3_length
+ * @param[in] v
+ * @return
+ */
 vec_t vec3_length(const vec3_t v)
 {
-	return sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+	return (float)sqrt((double)(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]));
 }
 
+/**
+ * @brief vec3_length_squared
+ * @param[in] v
+ * @return
+ */
 vec_t vec3_length_squared(const vec3_t v)
 {
 	return (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 }
 
+/**
+ * @brief vec3_distance
+ * @param[in] p1
+ * @param[in] p2
+ * @return
+ */
 vec_t vec3_distance(const vec3_t p1, const vec3_t p2)
 {
 	vec3_t v;
@@ -1474,6 +1708,12 @@ vec_t vec3_distance(const vec3_t p1, const vec3_t p2)
 	return vec3_length(v);
 }
 
+/**
+ * @brief vec3_distance_squared
+ * @param[in] p1
+ * @param[in] p2
+ * @return
+ */
 vec_t vec3_distance_squared(const vec3_t p1, const vec3_t p2)
 {
 	vec3_t v;
@@ -1482,6 +1722,10 @@ vec_t vec3_distance_squared(const vec3_t p1, const vec3_t p2)
 	return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
 }
 
+/**
+ * @brief vec3_inv
+ * @param[in,out] v
+ */
 void vec3_inv(vec3_t v)
 {
 	v[0] = -v[0];
@@ -1490,24 +1734,30 @@ void vec3_inv(vec3_t v)
 }
 
 /**
+ * @brief Q_log2
+ * @param val
+ * @return
  * @note Unused.
  */
+/*
 int Q_log2(int val)
 {
-	int answer = 0;
+    int answer = 0;
 
-	while ((val >>= 1) != 0)
-	{
-		answer++;
-	}
-	return answer;
+    while ((val >>= 1) != 0)
+    {
+        answer++;
+    }
+    return answer;
 }
-
-/*
-=================
-PlaneTypeForNormal
-=================
 */
+
+/**
+ * @brief PlaneTypeForNormal
+ * @param[in] normal
+ * @return
+ * @note Unused
+ */
 /*
 int PlaneTypeForNormal (vec3_t normal) {
     if ( normal[0] == 1.0 )
@@ -1521,11 +1771,12 @@ int PlaneTypeForNormal (vec3_t normal) {
 }
 */
 
-/*
-================
-MatrixMultiply
-================
-*/
+/**
+ * @brief _MatrixMultiply
+ * @param[in] in1
+ * @param[in] in2
+ * @param[out] out
+ */
 void _MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3])
 {
 	out[0][0] = in1[0][0] * in2[0][0] + in1[0][1] * in2[1][0] + in1[0][2] * in2[2][0];
@@ -1539,11 +1790,11 @@ void _MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3])
 	out[2][2] = in1[2][0] * in2[0][2] + in1[2][1] * in2[1][2] + in1[2][2] * in2[2][2];
 }
 
-/*
-================
-TransposeMatrix
-================
-*/
+/**
+ * @brief mat3_transpose
+ * @param[in] matrix
+ * @param[out] transpose
+ */
 void mat3_transpose(vec3_t matrix[3], vec3_t transpose[3])
 {
 #if 0
@@ -1569,23 +1820,30 @@ void mat3_transpose(vec3_t matrix[3], vec3_t transpose[3])
 #endif
 }
 
+/**
+ * @brief angles_vectors
+ * @param[in] angles
+ * @param[out] forward
+ * @param[out] right
+ * @param[out] up
+ */
 void angles_vectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up)
 {
 	float        angle;
 	static float sr, sp, sy, cr, cp, cy;
 	// static to help MS compiler fp bugs
 
-	angle = angles[YAW] * (M_PI * 2 / 360);
-	sy    = sin(angle);
-	cy    = cos(angle);
+	angle = (float)((double)angles[YAW] * (M_PI * 2 / 360));
+	sy    = (float)sin((double)angle);
+	cy    = (float)cos((double)angle);
 
-	angle = angles[PITCH] * (M_PI * 2 / 360);
-	sp    = sin(angle);
-	cp    = cos(angle);
+	angle = (float)((double)angles[PITCH] * (M_PI * 2 / 360));
+	sp    = (float)sin((double)angle);
+	cp    = (float)cos((double)angle);
 
-	angle = angles[ROLL] * (M_PI * 2 / 360);
-	sr    = sin(angle);
-	cr    = cos(angle);
+	angle = (float)((double)angles[ROLL] * (M_PI * 2 / 360));
+	sr    = (float)sin((double)angle);
+	cr    = (float)cos((double)angle);
 
 	if (forward)
 	{
@@ -1607,9 +1865,11 @@ void angles_vectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up
 	}
 }
 
-/*
-** assumes "src" is normalized
-*/
+/**
+ * @brief vec3_per
+ * @param[in] src assumes is normalized
+ * @param[out] dst
+ */
 void vec3_per(const vec3_t src, vec3_t dst)
 {
 	int    pos;
@@ -1636,13 +1896,13 @@ void vec3_per(const vec3_t src, vec3_t dst)
 	vec3_norm(dst);
 }
 
-/*
-=================
-GetPerpendicularViewVector
-
-  Used to find an "up" vector for drawing a sprite so that it always faces the view as best as possible
-=================
-*/
+/**
+ * @brief Used to find an "up" vector for drawing a sprite so that it always faces the view as best as possible
+ * @param[in] point
+ * @param[in] p1
+ * @param[in] p2
+ * @param[out] up
+ */
 void GetPerpendicularViewVector(const vec3_t point, const vec3_t p1, const vec3_t p2, vec3_t up)
 {
 	vec3_t v1, v2;
@@ -1657,11 +1917,13 @@ void GetPerpendicularViewVector(const vec3_t point, const vec3_t p1, const vec3_
 	vec3_norm(up);
 }
 
-/*
-================
-ProjectPointOntoVector
-================
-*/
+/**
+ * @brief ProjectPointOntoVector
+ * @param[in] point
+ * @param[in] vStart
+ * @param[in] vEnd
+ * @param[out] vProj
+ */
 void ProjectPointOntoVector(vec3_t point, vec3_t vStart, vec3_t vEnd, vec3_t vProj)
 {
 	vec3_t pVec, vec;
@@ -1673,11 +1935,13 @@ void ProjectPointOntoVector(vec3_t point, vec3_t vStart, vec3_t vEnd, vec3_t vPr
 	VectorMA(vStart, DotProduct(pVec, vec), vec, vProj);
 }
 
-/*
-================
-ProjectPointOntoVectorBounded
-================
-*/
+/**
+ * @brief ProjectPointOntoVectorBounded
+ * @param[in] point
+ * @param[in] vStart
+ * @param[in] vEnd
+ * @param[out] vProj
+ */
 void ProjectPointOntoVectorBounded(vec3_t point, vec3_t vStart, vec3_t vEnd, vec3_t vProj)
 {
 	vec3_t pVec, vec;
@@ -1708,11 +1972,13 @@ void ProjectPointOntoVectorBounded(vec3_t point, vec3_t vStart, vec3_t vEnd, vec
 	}
 }
 
-/*
-================
-DistanceFromLineSquared
-================
-*/
+/**
+ * @brief DistanceFromLineSquared
+ * @param[in] p
+ * @param[in] lp1
+ * @param[in] lp2
+ * @return
+ */
 float DistanceFromLineSquared(vec3_t p, vec3_t lp1, vec3_t lp2)
 {
 	vec3_t proj, t;
@@ -1741,11 +2007,13 @@ float DistanceFromLineSquared(vec3_t p, vec3_t lp1, vec3_t lp2)
 	return vec3_length_squared(t);
 }
 
-/*
-================
-DistanceFromVectorSquared
-================
-*/
+/**
+ * @brief DistanceFromVectorSquared
+ * @param[in] p
+ * @param[in] lp1
+ * @param[in] lp2
+ * @return
+ */
 float DistanceFromVectorSquared(vec3_t p, vec3_t lp1, vec3_t lp2)
 {
 	vec3_t proj, t;
@@ -1755,19 +2023,24 @@ float DistanceFromVectorSquared(vec3_t p, vec3_t lp1, vec3_t lp2)
 	return vec3_length_squared(t);
 }
 
+/**
+ * @brief vec3_to_yawn
+ * @param[in] vec
+ * @return
+ */
 float vec3_to_yawn(const vec3_t vec)
 {
 	float yaw;
 
-	if (vec[YAW] == 0 && vec[PITCH] == 0)
+	if (vec[YAW] == 0.f && vec[PITCH] == 0.f)
 	{
 		yaw = 0;
 	}
 	else
 	{
-		if (vec[PITCH])
+		if (vec[PITCH] != 0.f)
 		{
-			yaw = (atan2(vec[YAW], vec[PITCH]) * 180 / M_PI);
+			yaw = (float)(atan2(vec[YAW], vec[PITCH]) * 180 / M_PI);
 		}
 		else if (vec[YAW] > 0)
 		{
@@ -1786,16 +2059,15 @@ float vec3_to_yawn(const vec3_t vec)
 	return yaw;
 }
 
-/*
-=================
-AxisToAngles
-
-  Used to convert the MD3 tag axis to MDC tag angles, which are much smaller
-
-  This doesn't have to be fast, since it's only used for conversion in utils, try to avoid
-  using this during gameplay
-=================
-*/
+/**
+ * @brief Used to convert the MD3 tag axis to MDC tag angles, which are much smaller
+ *
+ * @details This doesn't have to be fast, since it's only used for conversion in utils, try to avoid
+ * using this during gameplay
+ *
+ * @param[in] axis
+ * @param[out] angles
+ */
 void axis_to_angles(axis_t axis, vec3_t angles)
 {
 	vec3_t right, roll_angles, tvec;
@@ -1827,6 +2099,12 @@ void axis_to_angles(axis_t axis, vec3_t angles)
 	angles[ROLL] = -roll_angles[PITCH];
 }
 
+/**
+ * @brief vec3_dist
+ * @param[in] v1
+ * @param[in] v2
+ * @return
+ */
 float vec3_dist(vec3_t v1, vec3_t v2)
 {
 	vec3_t dir;
@@ -1835,6 +2113,12 @@ float vec3_dist(vec3_t v1, vec3_t v2)
 	return vec3_length(dir);
 }
 
+/**
+ * @brief vec3_dist_squared
+ * @param[in] v1
+ * @param[in] v2
+ * @return
+ */
 float vec3_dist_squared(vec3_t v1, vec3_t v2)
 {
 	vec3_t dir;
@@ -1843,13 +2127,11 @@ float vec3_dist_squared(vec3_t v1, vec3_t v2)
 	return vec3_length_squared(dir);
 }
 
-/*
-================
-Q_isnan
-
-Don't pass doubles to this
-================
-*/
+/**
+ * @brief Don't pass doubles to this
+ * @param[in] x
+ * @return
+ */
 int Q_isnan(float x)
 {
 	floatint_t fi;
@@ -1870,6 +2152,9 @@ int Q_isnan(float x)
  * i = 1065353246;
  * acos(*(float*) &i) == -1.\#IND0
  * </code>
+ *
+ * @param[in] c
+ * @return
  */
 float Q_acos(float c)
 {
@@ -1885,6 +2170,7 @@ float Q_acos(float c)
 	{
 		return (float)M_PI;
 	}
+
 	return angle;
 }
 #endif
@@ -1893,6 +2179,11 @@ float Q_acos(float c)
 /* Quaternion                                                           */
 /************************************************************************/
 
+/**
+ * @brief quat_from_mat4
+ * @param[out] q
+ * @param[in] m
+ */
 void quat_from_mat4(quat_t q, const mat4_t m)
 {
 #if 1
@@ -2000,18 +2291,30 @@ void quat_from_mat4(quat_t q, const mat4_t m)
 #endif
 }
 
+/**
+ * @brief quat_from_axis
+ * @param[in] m
+ * @param[out] q
+ */
 void quat_from_axis(const axis_t m, quat_t q)
 {
 	vec_t w4;
 
-	q[3] = sqrt(1.0 + m[0][0] + m[1][1] + m[2][2]) / 2.0;
-	w4   = q[3] * 4.0;
+	q[3] = (float)(sqrt((double)(1.0f + m[0][0] + m[1][1] + m[2][2])) / 2.0);
+	w4   = q[3] * 4.0f;
 
 	q[0] = (m[1][2] - m[2][1]) / w4;
 	q[1] = (m[2][0] - m[0][2]) / w4;
 	q[2] = (m[0][1] - m[1][0]) / w4;
 }
 
+/**
+ * @brief quat_from_angles
+ * @param[out] q
+ * @param[in] pitch
+ * @param[in] yaw
+ * @param[in] roll
+ */
 void quat_from_angles(quat_t q, vec_t pitch, vec_t yaw, vec_t roll)
 {
 #if 1
@@ -2039,6 +2342,13 @@ void quat_from_angles(quat_t q, vec_t pitch, vec_t yaw, vec_t roll)
 #endif
 }
 
+/**
+ * @brief quat_to_vec3_FLU
+ * @param[in] q
+ * @param[out] forward
+ * @param[out] left
+ * @param[out] up
+ */
 void quat_to_vec3_FLU(const quat_t q, vec3_t forward, vec3_t left, vec3_t up)
 {
 	mat4_t tmp;
@@ -2047,6 +2357,13 @@ void quat_to_vec3_FLU(const quat_t q, vec3_t forward, vec3_t left, vec3_t up)
 	MatrixToVectorsFRU(tmp, forward, left, up);
 }
 
+/**
+ * @brief quat_to_vec3_FRU
+ * @param[in] q
+ * @param[out] forward
+ * @param[out] right
+ * @param[out] up
+ */
 void quat_to_vec3_FRU(const quat_t q, vec3_t forward, vec3_t right, vec3_t up)
 {
 	mat4_t tmp;
@@ -2055,6 +2372,11 @@ void quat_to_vec3_FRU(const quat_t q, vec3_t forward, vec3_t right, vec3_t up)
 	MatrixToVectorsFRU(tmp, forward, right, up);
 }
 
+/**
+ * @brief quat_to_axis
+ * @param[in] q
+ * @param[out] axis
+ */
 void quat_to_axis(const quat_t q, vec3_t axis[3])
 {
 	mat4_t tmp;
@@ -2063,13 +2385,18 @@ void quat_to_axis(const quat_t q, vec3_t axis[3])
 	MatrixToVectorsFLU(tmp, axis[0], axis[1], axis[2]);
 }
 
+/**
+ * @brief quat_norm
+ * @param[in,out] q
+ * @return
+ */
 vec_t quat_norm(quat_t q)
 {
 	float length = q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3];
 
-	length = sqrt(length);
+	length = (float)sqrt((double)length);
 
-	if (length)
+	if (length != 0.f)
 	{
 		float ilength = 1 / length;
 
@@ -2082,6 +2409,13 @@ vec_t quat_norm(quat_t q)
 	return length;
 }
 
+/**
+ * @brief quat_slerp
+ * @param[in] from
+ * @param[in] to
+ * @param[in] frac
+ * @param[out] out
+ */
 void quat_slerp(const quat_t from, const quat_t to, float frac, quat_t out)
 {
 #if 0
@@ -2104,8 +2438,8 @@ void quat_slerp(const quat_t from, const quat_t to, float frac, quat_t out)
 
 	if ((1.0 - cosom) > 0)
 	{
-		omega = acos(cosom);
-		sinom = sin(omega);
+		omega  = acos(cosom);
+		sinom  = sin(omega);
 		scale0 = sin((1.0 - frac) * omega) / sinom;
 		scale1 = sin(frac * omega) / sinom;
 	}
@@ -2147,14 +2481,14 @@ void quat_slerp(const quat_t from, const quat_t to, float frac, quat_t out)
 		return;
 	}
 
-	cosom = from[0] * to[0] + from[1] * to[1] + from[2] * to[2] + from[3] * to[3];
+	cosom    = from[0] * to[0] + from[1] * to[1] + from[2] * to[2] + from[3] * to[3];
 	absCosom = fabs(cosom);
 
 	if ((1.0f - absCosom) > 1e-6f)
 	{
 		float sinSqr = 1.0f - absCosom * absCosom;
-		float sinom = 1.0f / sqrt(sinSqr);
-		float omega = atan2(sinSqr * sinom, absCosom);
+		float sinom  = 1.0f / sqrt(sinSqr);
+		float omega  = atan2(sinSqr * sinom, absCosom);
 
 		scale0 = sin((1.0f - frac) * omega) * sinom;
 		scale1 = sin(frac * omega) * sinom;
@@ -2178,58 +2512,69 @@ void quat_slerp(const quat_t from, const quat_t to, float frac, quat_t out)
 /* Matrix 4                                                             */
 /************************************************************************/
 
+/**
+ * @brief mat4_compare
+ * @param[in] a
+ * @param[in] b
+ * @return
+ */
 qboolean mat4_compare(const mat4_t a, const mat4_t b)
 {
 	return (a[0] == b[0] && a[4] == b[4] && a[8] == b[8] && a[12] == b[12] &&
-		a[1] == b[1] && a[5] == b[5] && a[9] == b[9] && a[13] == b[13] &&
-		a[2] == b[2] && a[6] == b[6] && a[10] == b[10] && a[14] == b[14] &&
-		a[3] == b[3] && a[7] == b[7] && a[11] == b[11] && a[15] == b[15]);
+	        a[1] == b[1] && a[5] == b[5] && a[9] == b[9] && a[13] == b[13] &&
+	        a[2] == b[2] && a[6] == b[6] && a[10] == b[10] && a[14] == b[14] &&
+	        a[3] == b[3] && a[7] == b[7] && a[11] == b[11] && a[15] == b[15]);
 }
 
+/**
+ * @brief mat4_copy
+ * @param[in] in
+ * @param[out] out
+ */
 void mat4_copy(const mat4_t in, mat4_t out)
 {
 #if id386_sse && defined __GNUC__ && 0
 	asm volatile
-		(
-			"movups         (%%edx),        %%xmm0\n"
-			"movups         0x10(%%edx),    %%xmm1\n"
-			"movups         0x20(%%edx),    %%xmm2\n"
-			"movups         0x30(%%edx),    %%xmm3\n"
+	(
+	    "movups         (%%edx),        %%xmm0\n"
+	    "movups         0x10(%%edx),    %%xmm1\n"
+	    "movups         0x20(%%edx),    %%xmm2\n"
+	    "movups         0x30(%%edx),    %%xmm3\n"
 
-			"movups         %%xmm0,         (%%eax)\n"
-			"movups         %%xmm1,         0x10(%%eax)\n"
-			"movups         %%xmm2,         0x20(%%eax)\n"
-			"movups         %%xmm3,         0x30(%%eax)\n"
-			:
-	: "a" (out), "d" (in)
+	    "movups         %%xmm0,         (%%eax)\n"
+	    "movups         %%xmm1,         0x10(%%eax)\n"
+	    "movups         %%xmm2,         0x20(%%eax)\n"
+	    "movups         %%xmm3,         0x30(%%eax)\n"
+		:
+		: "a" (out), "d" (in)
 		: "memory"
-		);
+	);
 #elif id386_3dnow && defined __GNUC__
 	asm volatile
-		(
-			"femms\n"
-			"movq           (%%edx),        %%mm0\n"
-			"movq           8(%%edx),       %%mm1\n"
-			"movq           16(%%edx),      %%mm2\n"
-			"movq           24(%%edx),      %%mm3\n"
-			"movq           32(%%edx),      %%mm4\n"
-			"movq           40(%%edx),      %%mm5\n"
-			"movq           48(%%edx),      %%mm6\n"
-			"movq           56(%%edx),      %%mm7\n"
+	(
+	    "femms\n"
+	    "movq           (%%edx),        %%mm0\n"
+	    "movq           8(%%edx),       %%mm1\n"
+	    "movq           16(%%edx),      %%mm2\n"
+	    "movq           24(%%edx),      %%mm3\n"
+	    "movq           32(%%edx),      %%mm4\n"
+	    "movq           40(%%edx),      %%mm5\n"
+	    "movq           48(%%edx),      %%mm6\n"
+	    "movq           56(%%edx),      %%mm7\n"
 
-			"movq           %%mm0,          (%%eax)\n"
-			"movq           %%mm1,          8(%%eax)\n"
-			"movq           %%mm2,          16(%%eax)\n"
-			"movq           %%mm3,          24(%%eax)\n"
-			"movq           %%mm4,          32(%%eax)\n"
-			"movq           %%mm5,          40(%%eax)\n"
-			"movq           %%mm6,          48(%%eax)\n"
-			"movq           %%mm7,          56(%%eax)\n"
-			"femms\n"
-			:
-	: "a" (out), "d" (in)
+	    "movq           %%mm0,          (%%eax)\n"
+	    "movq           %%mm1,          8(%%eax)\n"
+	    "movq           %%mm2,          16(%%eax)\n"
+	    "movq           %%mm3,          24(%%eax)\n"
+	    "movq           %%mm4,          32(%%eax)\n"
+	    "movq           %%mm5,          40(%%eax)\n"
+	    "movq           %%mm6,          48(%%eax)\n"
+	    "movq           %%mm7,          56(%%eax)\n"
+	    "femms\n"
+		:
+		: "a" (out), "d" (in)
 		: "memory"
-		);
+	);
 #else
 	out[0] = in[0];       out[4] = in[4];       out[8] = in[8];       out[12] = in[12];
 	out[1] = in[1];       out[5] = in[5];       out[9] = in[9];       out[13] = in[13];
@@ -2238,10 +2583,17 @@ void mat4_copy(const mat4_t in, mat4_t out)
 #endif
 }
 
-/*
-replacement for glOrtho
-see glspec30.pdf chapter 2.12 Coordinate Transformations
-*/
+/**
+ * @brief replacement for glOrtho
+ * see glspec30.pdf chapter 2.12 Coordinate Transformations
+ * @param[out] m
+ * @param[in] left
+ * @param[in] right
+ * @param[in] bottom
+ * @param[in] top
+ * @param[in] nearvec
+ * @param[in] farvec
+ */
 void MatrixOrthogonalProjection(mat4_t m, vec_t left, vec_t right, vec_t bottom, vec_t top, vec_t nearvec, vec_t farvec)
 {
 	m[0] = 2 / (right - left);  m[4] = 0;                   m[8] = 0;                   m[12] = -(right + left) / (right - left);
@@ -2250,6 +2602,12 @@ void MatrixOrthogonalProjection(mat4_t m, vec_t left, vec_t right, vec_t bottom,
 	m[3] = 0;                   m[7] = 0;                   m[11] = 0;                  m[15] = 1;
 }
 
+/**
+ * @brief mat4_transform_vec4
+ * @param[in] m
+ * @param[in] in
+ * @param[out] out
+ */
 void mat4_transform_vec4(const mat4_t m, const vec4_t in, vec4_t out)
 {
 #if id386_sse
@@ -2263,10 +2621,10 @@ void mat4_transform_vec4(const mat4_t m, const vec4_t in, vec4_t out)
 	_m3 = _mm_loadu_ps(&m[12]);
 
 	_t0 = _mm_loadu_ps(in);
-	_x = _mm_shuffle_ps(_t0, _t0, _MM_SHUFFLE(0, 0, 0, 0));
-	_y = _mm_shuffle_ps(_t0, _t0, _MM_SHUFFLE(1, 1, 1, 1));
-	_z = _mm_shuffle_ps(_t0, _t0, _MM_SHUFFLE(2, 2, 2, 2));
-	_w = _mm_shuffle_ps(_t0, _t0, _MM_SHUFFLE(3, 3, 3, 3));
+	_x  = _mm_shuffle_ps(_t0, _t0, _MM_SHUFFLE(0, 0, 0, 0));
+	_y  = _mm_shuffle_ps(_t0, _t0, _MM_SHUFFLE(1, 1, 1, 1));
+	_z  = _mm_shuffle_ps(_t0, _t0, _MM_SHUFFLE(2, 2, 2, 2));
+	_w  = _mm_shuffle_ps(_t0, _t0, _MM_SHUFFLE(3, 3, 3, 3));
 
 	_t0 = _mm_mul_ps(_m3, _w);
 	_t1 = _mm_mul_ps(_m2, _z);
@@ -2287,6 +2645,13 @@ void mat4_transform_vec4(const mat4_t m, const vec4_t in, vec4_t out)
 #endif
 }
 
+/**
+ * @brief mat4_reset_translate
+ * @param[out] m
+ * @param[in] x
+ * @param[in] y
+ * @param[in] z
+ */
 void mat4_reset_translate(mat4_t m, vec_t x, vec_t y, vec_t z)
 {
 	m[0] = 1;      m[4] = 0;      m[8] = 0;      m[12] = x;
@@ -2295,11 +2660,23 @@ void mat4_reset_translate(mat4_t m, vec_t x, vec_t y, vec_t z)
 	m[3] = 0;      m[7] = 0;      m[11] = 0;      m[15] = 1;
 }
 
+/**
+ * @brief mat4_reset_translate_vec3
+ * @param[out] m
+ * @param[in] position
+ */
 void mat4_reset_translate_vec3(mat4_t m, vec3_t position)
 {
 	mat4_reset_translate(m, position[0], position[1], position[2]);
 }
 
+/**
+ * @brief mat4_reset_scale
+ * @param[out] m
+ * @param[in] x
+ * @param[in] y
+ * @param[in] z
+ */
 void mat4_reset_scale(mat4_t m, vec_t x, vec_t y, vec_t z)
 {
 	m[0] = x;      m[4] = 0;      m[8] = 0;      m[12] = 0;
@@ -2308,9 +2685,15 @@ void mat4_reset_scale(mat4_t m, vec_t x, vec_t y, vec_t z)
 	m[3] = 0;      m[7] = 0;      m[11] = 0;      m[15] = 1;
 }
 
+/**
+ * @brief mat4_mult
+ * @param[in] a
+ * @param[in] b
+ * @param[out] out
+ */
 void mat4_mult(const mat4_t a, const mat4_t b, mat4_t out)
 {
-#if id386_sse
+#ifdef id386_sse
 	//#error MatrixMultiply
 	int    i;
 	__m128 _t0, _t1, _t2, _t3, _t4, _t5, _t6, _t7;
@@ -2352,8 +2735,8 @@ void mat4_mult(const mat4_t a, const mat4_t b, mat4_t out)
 	out[6] = b[4] * a[2] + b[5] * a[6] + b[6] * a[10] + b[7] * a[14];
 	out[7] = b[4] * a[3] + b[5] * a[7] + b[6] * a[11] + b[7] * a[15];
 
-	out[8] = b[8] * a[0] + b[9] * a[4] + b[10] * a[8] + b[11] * a[12];
-	out[9] = b[8] * a[1] + b[9] * a[5] + b[10] * a[9] + b[11] * a[13];
+	out[8]  = b[8] * a[0] + b[9] * a[4] + b[10] * a[8] + b[11] * a[12];
+	out[9]  = b[8] * a[1] + b[9] * a[5] + b[10] * a[9] + b[11] * a[13];
 	out[10] = b[8] * a[2] + b[9] * a[6] + b[10] * a[10] + b[11] * a[14];
 	out[11] = b[8] * a[3] + b[9] * a[7] + b[10] * a[11] + b[11] * a[15];
 
@@ -2364,6 +2747,11 @@ void mat4_mult(const mat4_t a, const mat4_t b, mat4_t out)
 #endif
 }
 
+/**
+ * @brief mat4_mult_self
+ * @param[in,out] m
+ * @param[in,out] m2
+ */
 void mat4_mult_self(mat4_t m, const mat4_t m2)
 {
 	mat4_t tmp;
@@ -2372,6 +2760,10 @@ void mat4_mult_self(mat4_t m, const mat4_t m2)
 	mat4_mult(tmp, m2, m);
 }
 
+/**
+ * @brief mat4_ident
+ * @param[in] m
+ */
 void mat4_ident(mat4_t m)
 {
 	m[0] = 1;      m[4] = 0;      m[8] = 0;      m[12] = 0;
@@ -2380,6 +2772,12 @@ void mat4_ident(mat4_t m)
 	m[3] = 0;      m[7] = 0;      m[11] = 0;      m[15] = 1;
 }
 
+/**
+ * @brief mat4_transform_vec3
+ * @param[in] m
+ * @param[in] in
+ * @param[out] out
+ */
 void mat4_transform_vec3(const mat4_t m, const vec3_t in, vec3_t out)
 {
 	out[0] = m[0] * in[0] + m[4] * in[1] + m[8] * in[2] + m[12];
@@ -2387,6 +2785,11 @@ void mat4_transform_vec3(const mat4_t m, const vec3_t in, vec3_t out)
 	out[2] = m[2] * in[0] + m[6] * in[1] + m[10] * in[2] + m[14];
 }
 
+/**
+ * @brief mat4_transform_vec3_self
+ * @param[in] m
+ * @param[in,out] inout
+ */
 void mat4_transform_vec3_self(const mat4_t m, vec3_t inout)
 {
 	vec3_t tmp;
@@ -2398,6 +2801,11 @@ void mat4_transform_vec3_self(const mat4_t m, vec3_t inout)
 	VectorCopy(tmp, inout);
 }
 
+/**
+ * @brief mat4_transpose
+ * @param[in] in
+ * @param[out] out
+ */
 void mat4_transpose(const mat4_t in, mat4_t out)
 {
 #if id386_sse && defined __GNUC__ && 0
@@ -2405,23 +2813,28 @@ void mat4_transpose(const mat4_t in, mat4_t out)
 	MatrixTransposeIntoXMM(in);
 
 	asm volatile
-		(
-			"movups         %%xmm4,         (%%eax)\n"
-			"movups         %%xmm5,         0x10(%%eax)\n"
-			"movups         %%xmm6,         0x20(%%eax)\n"
-			"movups         %%xmm7,         0x30(%%eax)\n"
-			:
-	: "a" (out)
+	(
+	    "movups         %%xmm4,         (%%eax)\n"
+	    "movups         %%xmm5,         0x10(%%eax)\n"
+	    "movups         %%xmm6,         0x20(%%eax)\n"
+	    "movups         %%xmm7,         0x30(%%eax)\n"
+		:
+		: "a" (out)
 		: "memory"
-		);
+	);
 #else
-	out[0] = in[0];       out[1] = in[4];       out[2] = in[8];       out[3] = in[12];
-	out[4] = in[1];       out[5] = in[5];       out[6] = in[9];       out[7] = in[13];
-	out[8] = in[2];       out[9] = in[6];       out[10] = in[10];       out[11] = in[14];
+	out[0]  = in[0];       out[1] = in[4];       out[2] = in[8];       out[3] = in[12];
+	out[4]  = in[1];       out[5] = in[5];       out[6] = in[9];       out[7] = in[13];
+	out[8]  = in[2];       out[9] = in[6];       out[10] = in[10];       out[11] = in[14];
 	out[12] = in[3];       out[13] = in[7];       out[14] = in[11];       out[15] = in[15];
 #endif
 }
 
+/**
+ * @brief mat4_from_quat
+ * @param[out] m
+ * @param[in] q
+ */
 void mat4_from_quat(mat4_t m, const quat_t q)
 {
 #if 1
@@ -2462,11 +2875,11 @@ void mat4_from_quat(mat4_t m, const quat_t q)
 	m[5] = -xx2 - zz2 + 1.0f;
 	m[6] = yz2 + wx2;
 
-	m[8] = xz2 + wy2;
-	m[9] = yz2 - wx2;
+	m[8]  = xz2 + wy2;
+	m[9]  = yz2 - wx2;
 	m[10] = -xx2 - yy2 + 1.0f;
 
-	m[3] = m[7] = m[11] = m[12] = m[13] = m[14] = 0;
+	m[3]  = m[7] = m[11] = m[12] = m[13] = m[14] = 0;
 	m[15] = 1;
 
 #else
@@ -2507,21 +2920,28 @@ void mat4_from_quat(mat4_t m, const quat_t q)
 	zz = q[2] * q[2];
 	zw = q[2] * q[3];
 
-	m[0] = 1 - 2 * (yy + zz);
-	m[1] = 2 * (xy + zw);
-	m[2] = 2 * (xz - yw);
-	m[4] = 2 * (xy - zw);
-	m[5] = 1 - 2 * (xx + zz);
-	m[6] = 2 * (yz + xw);
-	m[8] = 2 * (xz + yw);
-	m[9] = 2 * (yz - xw);
+	m[0]  = 1 - 2 * (yy + zz);
+	m[1]  = 2 * (xy + zw);
+	m[2]  = 2 * (xz - yw);
+	m[4]  = 2 * (xy - zw);
+	m[5]  = 1 - 2 * (xx + zz);
+	m[6]  = 2 * (yz + xw);
+	m[8]  = 2 * (xz + yw);
+	m[9]  = 2 * (yz - xw);
 	m[10] = 1 - 2 * (xx + yy);
 
-	m[3] = m[7] = m[11] = m[12] = m[13] = m[14] = 0;
+	m[3]  = m[7] = m[11] = m[12] = m[13] = m[14] = 0;
 	m[15] = 1;
 #endif
 }
 
+/**
+ * @brief MatrixFromVectorsFLU
+ * @param[out] m
+ * @param[in] forward
+ * @param[in] left
+ * @param[in] up
+ */
 void MatrixFromVectorsFLU(mat4_t m, const vec3_t forward, const vec3_t left, const vec3_t up)
 {
 	m[0] = forward[0];     m[4] = left[0];        m[8] = up[0];  m[12] = 0;
@@ -2530,6 +2950,14 @@ void MatrixFromVectorsFLU(mat4_t m, const vec3_t forward, const vec3_t left, con
 	m[3] = 0;              m[7] = 0;              m[11] = 0;      m[15] = 1;
 }
 
+/**
+ * @brief MatrixSetupTransformFromVectorsFLU
+ * @param[in] m
+ * @param[out] forward
+ * @param[out] left
+ * @param[out] up
+ * @param[out] origin
+ */
 void MatrixSetupTransformFromVectorsFLU(mat4_t m, const vec3_t forward, const vec3_t left, const vec3_t up, const vec3_t origin)
 {
 	m[0] = forward[0];     m[4] = left[0];        m[8] = up[0];  m[12] = origin[0];
@@ -2538,6 +2966,13 @@ void MatrixSetupTransformFromVectorsFLU(mat4_t m, const vec3_t forward, const ve
 	m[3] = 0;              m[7] = 0;              m[11] = 0;      m[15] = 1;
 }
 
+/**
+ * @brief MatrixToVectorsFLU
+ * @param[in] m
+ * @param[out] forward
+ * @param[out] left
+ * @param[out] up
+ */
 void MatrixToVectorsFLU(const mat4_t m, vec3_t forward, vec3_t left, vec3_t up)
 {
 	if (forward)
@@ -2562,6 +2997,14 @@ void MatrixToVectorsFLU(const mat4_t m, vec3_t forward, vec3_t left, vec3_t up)
 	}
 }
 
+/**
+ * @brief MatrixSetupTransformFromVectorsFRU
+ * @param[out] m
+ * @param[in] forward
+ * @param[in] right
+ * @param[in] up
+ * @param[in] origin
+ */
 void MatrixSetupTransformFromVectorsFRU(mat4_t m, const vec3_t forward, const vec3_t right, const vec3_t up, const vec3_t origin)
 {
 	m[0] = forward[0];     m[4] = -right[0];        m[8] = up[0];  m[12] = origin[0];
@@ -2570,6 +3013,13 @@ void MatrixSetupTransformFromVectorsFRU(mat4_t m, const vec3_t forward, const ve
 	m[3] = 0;              m[7] = 0;                m[11] = 0;      m[15] = 1;
 }
 
+/**
+ * @brief MatrixToVectorsFRU
+ * @param[in] m
+ * @param[out] forward
+ * @param[out] right
+ * @param[out] up
+ */
 void MatrixToVectorsFRU(const mat4_t m, vec3_t forward, vec3_t right, vec3_t up)
 {
 	if (forward)
@@ -2594,132 +3044,137 @@ void MatrixToVectorsFRU(const mat4_t m, vec3_t forward, vec3_t right, vec3_t up)
 	}
 }
 
-// based on gluInvertMatrix
+/**
+ * @brief Based on gluInvertMatrix
+ * @param[in] m
+ * @param[out] out
+ * @return
+ */
 qboolean mat4_inverse(const mat4_t m, mat4_t out)
 {
 	vec_t inv[16], det;
-	int i;
+	int   i;
 
 	inv[0] = m[5] * m[10] * m[15] -
-		m[5] * m[11] * m[14] -
-		m[9] * m[6] * m[15] +
-		m[9] * m[7] * m[14] +
-		m[13] * m[6] * m[11] -
-		m[13] * m[7] * m[10];
+	         m[5] * m[11] * m[14] -
+	         m[9] * m[6] * m[15] +
+	         m[9] * m[7] * m[14] +
+	         m[13] * m[6] * m[11] -
+	         m[13] * m[7] * m[10];
 
 	inv[4] = -m[4] * m[10] * m[15] +
-		m[4] * m[11] * m[14] +
-		m[8] * m[6] * m[15] -
-		m[8] * m[7] * m[14] -
-		m[12] * m[6] * m[11] +
-		m[12] * m[7] * m[10];
+	         m[4] * m[11] * m[14] +
+	         m[8] * m[6] * m[15] -
+	         m[8] * m[7] * m[14] -
+	         m[12] * m[6] * m[11] +
+	         m[12] * m[7] * m[10];
 
 	inv[8] = m[4] * m[9] * m[15] -
-		m[4] * m[11] * m[13] -
-		m[8] * m[5] * m[15] +
-		m[8] * m[7] * m[13] +
-		m[12] * m[5] * m[11] -
-		m[12] * m[7] * m[9];
+	         m[4] * m[11] * m[13] -
+	         m[8] * m[5] * m[15] +
+	         m[8] * m[7] * m[13] +
+	         m[12] * m[5] * m[11] -
+	         m[12] * m[7] * m[9];
 
 	inv[12] = -m[4] * m[9] * m[14] +
-		m[4] * m[10] * m[13] +
-		m[8] * m[5] * m[14] -
-		m[8] * m[6] * m[13] -
-		m[12] * m[5] * m[10] +
-		m[12] * m[6] * m[9];
+	          m[4] * m[10] * m[13] +
+	          m[8] * m[5] * m[14] -
+	          m[8] * m[6] * m[13] -
+	          m[12] * m[5] * m[10] +
+	          m[12] * m[6] * m[9];
 
 	inv[1] = -m[1] * m[10] * m[15] +
-		m[1] * m[11] * m[14] +
-		m[9] * m[2] * m[15] -
-		m[9] * m[3] * m[14] -
-		m[13] * m[2] * m[11] +
-		m[13] * m[3] * m[10];
+	         m[1] * m[11] * m[14] +
+	         m[9] * m[2] * m[15] -
+	         m[9] * m[3] * m[14] -
+	         m[13] * m[2] * m[11] +
+	         m[13] * m[3] * m[10];
 
 	inv[5] = m[0] * m[10] * m[15] -
-		m[0] * m[11] * m[14] -
-		m[8] * m[2] * m[15] +
-		m[8] * m[3] * m[14] +
-		m[12] * m[2] * m[11] -
-		m[12] * m[3] * m[10];
+	         m[0] * m[11] * m[14] -
+	         m[8] * m[2] * m[15] +
+	         m[8] * m[3] * m[14] +
+	         m[12] * m[2] * m[11] -
+	         m[12] * m[3] * m[10];
 
 	inv[9] = -m[0] * m[9] * m[15] +
-		m[0] * m[11] * m[13] +
-		m[8] * m[1] * m[15] -
-		m[8] * m[3] * m[13] -
-		m[12] * m[1] * m[11] +
-		m[12] * m[3] * m[9];
+	         m[0] * m[11] * m[13] +
+	         m[8] * m[1] * m[15] -
+	         m[8] * m[3] * m[13] -
+	         m[12] * m[1] * m[11] +
+	         m[12] * m[3] * m[9];
 
 	inv[13] = m[0] * m[9] * m[14] -
-		m[0] * m[10] * m[13] -
-		m[8] * m[1] * m[14] +
-		m[8] * m[2] * m[13] +
-		m[12] * m[1] * m[10] -
-		m[12] * m[2] * m[9];
+	          m[0] * m[10] * m[13] -
+	          m[8] * m[1] * m[14] +
+	          m[8] * m[2] * m[13] +
+	          m[12] * m[1] * m[10] -
+	          m[12] * m[2] * m[9];
 
 	inv[2] = m[1] * m[6] * m[15] -
-		m[1] * m[7] * m[14] -
-		m[5] * m[2] * m[15] +
-		m[5] * m[3] * m[14] +
-		m[13] * m[2] * m[7] -
-		m[13] * m[3] * m[6];
+	         m[1] * m[7] * m[14] -
+	         m[5] * m[2] * m[15] +
+	         m[5] * m[3] * m[14] +
+	         m[13] * m[2] * m[7] -
+	         m[13] * m[3] * m[6];
 
 	inv[6] = -m[0] * m[6] * m[15] +
-		m[0] * m[7] * m[14] +
-		m[4] * m[2] * m[15] -
-		m[4] * m[3] * m[14] -
-		m[12] * m[2] * m[7] +
-		m[12] * m[3] * m[6];
+	         m[0] * m[7] * m[14] +
+	         m[4] * m[2] * m[15] -
+	         m[4] * m[3] * m[14] -
+	         m[12] * m[2] * m[7] +
+	         m[12] * m[3] * m[6];
 
 	inv[10] = m[0] * m[5] * m[15] -
-		m[0] * m[7] * m[13] -
-		m[4] * m[1] * m[15] +
-		m[4] * m[3] * m[13] +
-		m[12] * m[1] * m[7] -
-		m[12] * m[3] * m[5];
+	          m[0] * m[7] * m[13] -
+	          m[4] * m[1] * m[15] +
+	          m[4] * m[3] * m[13] +
+	          m[12] * m[1] * m[7] -
+	          m[12] * m[3] * m[5];
 
 	inv[14] = -m[0] * m[5] * m[14] +
-		m[0] * m[6] * m[13] +
-		m[4] * m[1] * m[14] -
-		m[4] * m[2] * m[13] -
-		m[12] * m[1] * m[6] +
-		m[12] * m[2] * m[5];
+	          m[0] * m[6] * m[13] +
+	          m[4] * m[1] * m[14] -
+	          m[4] * m[2] * m[13] -
+	          m[12] * m[1] * m[6] +
+	          m[12] * m[2] * m[5];
 
 	inv[3] = -m[1] * m[6] * m[11] +
-		m[1] * m[7] * m[10] +
-		m[5] * m[2] * m[11] -
-		m[5] * m[3] * m[10] -
-		m[9] * m[2] * m[7] +
-		m[9] * m[3] * m[6];
+	         m[1] * m[7] * m[10] +
+	         m[5] * m[2] * m[11] -
+	         m[5] * m[3] * m[10] -
+	         m[9] * m[2] * m[7] +
+	         m[9] * m[3] * m[6];
 
 	inv[7] = m[0] * m[6] * m[11] -
-		m[0] * m[7] * m[10] -
-		m[4] * m[2] * m[11] +
-		m[4] * m[3] * m[10] +
-		m[8] * m[2] * m[7] -
-		m[8] * m[3] * m[6];
+	         m[0] * m[7] * m[10] -
+	         m[4] * m[2] * m[11] +
+	         m[4] * m[3] * m[10] +
+	         m[8] * m[2] * m[7] -
+	         m[8] * m[3] * m[6];
 
 	inv[11] = -m[0] * m[5] * m[11] +
-		m[0] * m[7] * m[9] +
-		m[4] * m[1] * m[11] -
-		m[4] * m[3] * m[9] -
-		m[8] * m[1] * m[7] +
-		m[8] * m[3] * m[5];
+	          m[0] * m[7] * m[9] +
+	          m[4] * m[1] * m[11] -
+	          m[4] * m[3] * m[9] -
+	          m[8] * m[1] * m[7] +
+	          m[8] * m[3] * m[5];
 
 	inv[15] = m[0] * m[5] * m[10] -
-		m[0] * m[6] * m[9] -
-		m[4] * m[1] * m[10] +
-		m[4] * m[2] * m[9] +
-		m[8] * m[1] * m[6] -
-		m[8] * m[2] * m[5];
+	          m[0] * m[6] * m[9] -
+	          m[4] * m[1] * m[10] +
+	          m[4] * m[2] * m[9] +
+	          m[8] * m[1] * m[6] -
+	          m[8] * m[2] * m[5];
 
 	det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
 
-	if (det == 0)
+	if (det == 0.f)
 	{
 		return qfalse;
 	}
 
-	det = 1.0 / det;
+	det = 1.0f / det;
 
 	for (i = 0; i < 16; i++)
 	{
@@ -2729,24 +3184,36 @@ qboolean mat4_inverse(const mat4_t m, mat4_t out)
 	return qtrue;
 }
 
+/**
+ * @brief mat4_inverse_self
+ * @param[in,out] matrix
+ * @return
+ */
 qboolean mat4_inverse_self(mat4_t matrix)
 {
 	return mat4_inverse(matrix, matrix);
 }
 
+/**
+ * @brief mat4_from_angles
+ * @param[out] m
+ * @param[in] pitch
+ * @param[in] yaw
+ * @param[in] roll
+ */
 void mat4_from_angles(mat4_t m, vec_t pitch, vec_t yaw, vec_t roll)
 {
 	static float sr, sp, sy, cr, cp, cy;
 
 	// static to help MS compiler fp bugs
-	sp = sin(DEG2RAD(pitch));
-	cp = cos(DEG2RAD(pitch));
+	sp = (float)sin(DEG2RAD((double)pitch));
+	cp = (float)cos(DEG2RAD((double)pitch));
 
-	sy = sin(DEG2RAD(yaw));
-	cy = cos(DEG2RAD(yaw));
+	sy = (float)sin(DEG2RAD((double)yaw));
+	cy = (float)cos(DEG2RAD((double)yaw));
 
-	sr = sin(DEG2RAD(roll));
-	cr = cos(DEG2RAD(roll));
+	sr = (float)sin(DEG2RAD((double)roll));
+	cr = (float)cos(DEG2RAD((double)roll));
 
 	m[0] = cp * cy;  m[4] = (sr * sp * cy + cr * -sy);      m[8] = (cr * sp * cy + -sr * -sy);     m[12] = 0;
 	m[1] = cp * sy;  m[5] = (sr * sp * sy + cr * cy);       m[9] = (cr * sp * sy + -sr * cy);      m[13] = 0;

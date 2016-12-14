@@ -42,6 +42,9 @@
 #define Com_AddReliableCommand(x) CL_AddReliableCommand(x)
 #endif
 
+/**
+ * @brief Com_ClearDownload
+ */
 void Com_ClearDownload(void)
 {
 	dld.download           = 0;
@@ -57,12 +60,9 @@ void Com_ClearDownload(void)
 	dld.badChecksumList[0] = '\0';
 }
 
-/*
-=====================
-CL_ClearStaticDownload
-Clear download information that we keep in cls (disconnected download support)
-=====================
-*/
+/**
+ * @brief Clear download information that we keep in cls (disconnected download support)
+ */
 void Com_ClearStaticDownload(void)
 {
 	assert(!dld.bWWWDlDisconnected);    // reset before calling
@@ -124,14 +124,13 @@ static void Com_DownloadsComplete(void)
 #endif
 }
 
-/*
-=================
-Com_BeginDownload
-
-Requests a file to download from the server.  Stores it in the current
-game directory.
-=================
-*/
+/**
+ * @brief Requests a file to download from the server. Stores it in the current
+ * game directory.
+ *
+ * @param[in] localName
+ * @param[in] remoteName
+ */
 void Com_BeginDownload(const char *localName, const char *remoteName)
 {
 	//Com_DPrintf("***** Com_BeginDownload *****\n"
@@ -139,7 +138,7 @@ void Com_BeginDownload(const char *localName, const char *remoteName)
 	//          "Remotename: %s\n"
 	//          "****************************\n", localName, remoteName);
 
-	Com_Printf("Client downloading: %s\n",remoteName); // localName and remoteName are the same name
+	Com_Printf("Client downloading: %s\n", remoteName); // localName and remoteName are the same name
 
 	Q_strncpyz(dld.downloadName, localName, sizeof(dld.downloadName));
 	Com_sprintf(dld.downloadTempName, sizeof(dld.downloadTempName), "%s.tmp", localName);
@@ -158,13 +157,9 @@ void Com_BeginDownload(const char *localName, const char *remoteName)
 #endif
 }
 
-/*
-=================
-Com_NextDownload
-
-A download completed or failed
-=================
-*/
+/**
+ * @brief A download completed or failed
+ */
 void Com_NextDownload(void)
 {
 	char *s;
@@ -269,11 +264,9 @@ void Com_InitDownloads(void)
 	Com_DownloadsComplete();
 }
 
-/*
-==================
-Com_WWWDownload
-==================
-*/
+/**
+ * @brief Com_WWWDownload
+ */
 void Com_WWWDownload(void)
 {
 	char            *to_ospath;
@@ -372,15 +365,15 @@ void Com_WWWDownload(void)
 	Com_NextDownload();
 }
 
-/*
-==================
-Com_WWWBadChecksum
-
-FS code calls this when doing FS_ComparePaks
-we can detect files that we got from a www dl redirect with a wrong checksum
-this indicates that the redirect setup is broken, and next dl attempt should NOT redirect
-==================
-*/
+/**
+ * @brief FS code calls this when doing FS_ComparePaks
+ * we can detect files that we got from a www dl redirect with a wrong checksum
+ * this indicates that the redirect setup is broken, and next dl attempt should NOT redirect
+ *
+ * @param[in] pakname
+ *
+ * @return
+ */
 qboolean Com_WWWBadChecksum(const char *pakname)
 {
 	if (strstr(dld.redirectedList, va("@%s", pakname)))
@@ -400,6 +393,11 @@ qboolean Com_WWWBadChecksum(const char *pakname)
 	return qfalse;
 }
 
+/**
+ * @brief Com_SetupDownload
+ * @param[in] remote
+ * @param[in] filename
+ */
 static void Com_SetupDownload(const char *remote, const char *filename)
 {
 	dld.bWWWDl             = qtrue;
@@ -418,6 +416,9 @@ static void Com_SetupDownload(const char *remote, const char *filename)
 	}
 }
 
+/**
+ * @brief Com_Download_f
+ */
 void Com_Download_f(void)
 {
 #ifndef DEDICATED

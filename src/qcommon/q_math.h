@@ -287,7 +287,7 @@ float Q_rsqrt(float f);         // reciprocal square root
 #define SQRTFAST(x) (1.0f / Q_rsqrt(x))
 
 signed char ClampChar(int i);
-signed short ClampShort(int i); // Unused.
+//signed short ClampShort(int i); // Unused.
 byte ClampByte(int i);
 void ClampColor(vec4_t color);
 
@@ -386,7 +386,7 @@ float angle_lerp(float from, float to, float frac);
 float angle_sub(float a1, float a2);
 void angles_sub(vec3_t v1, vec3_t v2, vec3_t v3);
 
-float angle_norm_pi(float angle); // Unused.
+//float angle_norm_pi(float angle); // Unused.
 float angle_norm_360(float angle);
 float angle_norm_180(float angle);
 float angle_delta(float angle1, float angle2);
@@ -450,18 +450,18 @@ typedef struct
 #endif
 #endif
 
-unsigned ColorBytes3(float r, float g, float b); // Unused.
+//unsigned ColorBytes3(float r, float g, float b); // Unused.
 unsigned ColorBytes4(float r, float g, float b, float a);
 
-float NormalizeColor(const vec3_t in, vec3_t out); // Unused.
+//float NormalizeColor(const vec3_t in, vec3_t out); // Unused.
 
 float RadiusFromBounds(const vec3_t mins, const vec3_t maxs);
 void ClearBounds(vec3_t mins, vec3_t maxs);
 void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs);
-qboolean PointInBounds(const vec3_t v, const vec3_t mins, const vec3_t maxs); // Unused.
+//qboolean PointInBounds(const vec3_t v, const vec3_t mins, const vec3_t maxs); // Unused.
 void BoundsAdd(vec3_t mins, vec3_t maxs, const vec3_t mins2, const vec3_t maxs2);
 
-int Q_log2(int val); // Unused.
+//int Q_log2(int val); // Unused.
 
 float Q_acos(float c);
 
@@ -479,7 +479,7 @@ qboolean PlaneFromPoints(vec4_t plane, const vec3_t a, const vec3_t b, const vec
 void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal);
 void RotatePoint(vec3_t point, vec3_t matrix[3]);
 void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point, float degrees);
-void RotatePointAroundVertex(vec3_t pnt, float rot_x, float rot_y, float rot_z, const vec3_t origin); // Unused.
+//void RotatePointAroundVertex(vec3_t pnt, float rot_x, float rot_y, float rot_z, const vec3_t origin); // Unused.
 void RotateAroundDirection(vec3_t axis[3], float yaw);
 void CreateRotationMatrix(const vec3_t angles, vec3_t matrix[3]);
 void MakeNormalVectors(const vec3_t forward, vec3_t right, vec3_t up);

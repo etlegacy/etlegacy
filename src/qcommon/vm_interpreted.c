@@ -142,6 +142,11 @@ static inline unsigned int loadWord(void *addr)
 	#define loadWord(addr) *((int *)addr)
 #endif
 
+/**
+ * @brief VM_Indent
+ * @param[in] vm
+ * @return
+ */
 char *VM_Indent(vm_t *vm)
 {
 	static char *string = "                                        ";
@@ -153,6 +158,12 @@ char *VM_Indent(vm_t *vm)
 	return string + 2 * (20 - vm->callLevel);
 }
 
+/**
+ * @brief VM_StackTrace
+ * @param[in] vm
+ * @param[in] programCounter
+ * @param[in] programStack
+ */
 void VM_StackTrace(vm_t *vm, int programCounter, int programStack)
 {
 	int count = 0;
@@ -166,11 +177,11 @@ void VM_StackTrace(vm_t *vm, int programCounter, int programStack)
 	while (programCounter != -1 && ++count < 32);
 }
 
-/*
-====================
-VM_PrepareInterpreter
-====================
-*/
+/**
+ * @brief VM_PrepareInterpreter
+ * @param[in,out] vm
+ * @param[in] header
+ */
 void VM_PrepareInterpreter(vm_t *vm, vmHeader_t *header)
 {
 	int  op;
@@ -304,35 +315,36 @@ void VM_PrepareInterpreter(vm_t *vm, vmHeader_t *header)
 	}
 }
 
-/*
-==============
-VM_Call
-
-
-Upon a system call, the stack will look like:
-
-sp+32	parm1
-sp+28	parm0
-sp+24	return stack
-sp+20	return address
-sp+16	local1
-sp+14	local0
-sp+12	arg1
-sp+8	arg0
-sp+4	return stack
-sp		return address
-
-An interpreted function will immediately execute
-an OP_ENTER instruction, which will subtract space for
-locals from sp
-==============
-*/
 #define MAX_STACK   256
 #define STACK_MASK  (MAX_STACK - 1)
 //#define	DEBUG_VM
 
 #define DEBUGSTR va("%s%i", VM_Indent(vm), opStack - stack)
 
+/**
+ * @brief VM_CallInterpreted
+ *
+ * @details Upon a system call, the stack will look like:
+ *
+ * sp+32	parm1
+ * sp+28	parm0
+ * sp+24	return stack
+ * sp+20	return address
+ * sp+16	local1
+ * sp+14	local0
+ * sp+12	arg1
+ * sp+8	arg0
+ * sp+4	return stack
+ * sp		return address
+ *
+ * An interpreted function will immediately execute
+ * an OP_ENTER instruction, which will subtract space for
+ * locals from sp
+ *
+ * @param[in,out] vm
+ * @param[in] args
+ * @return
+ */
 int VM_CallInterpreted(vm_t *vm, int *args)
 {
 	int  stack[MAX_STACK];

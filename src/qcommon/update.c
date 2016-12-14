@@ -57,6 +57,9 @@
 
 autoupdate_t autoupdate;
 
+/**
+ * @brief Com_CheckAutoUpdate
+ */
 void Com_CheckAutoUpdate(void)
 {
 	char info[MAX_INFO_STRING];
@@ -95,15 +98,18 @@ void Com_CheckAutoUpdate(void)
 
 	NET_OutOfBandPrint(
 #ifdef DEDICATED
-	    NS_SERVER
+		NS_SERVER
 #else
-	    NS_CLIENT
+		NS_CLIENT
 #endif
-	    , autoupdate.autoupdateServer, "getUpdateInfo \"%s\"", info);
+		, autoupdate.autoupdateServer, "getUpdateInfo \"%s\"", info);
 
 	autoupdate.updateChecked = qtrue;
 }
 
+/**
+ * @brief Com_GetAutoUpdate
+ */
 void Com_GetAutoUpdate(void)
 {
 #ifdef FEATURE_AUTOUPDATE
@@ -196,6 +202,11 @@ void Com_GetAutoUpdate(void)
 }
 
 #ifdef FEATURE_AUTOUPDATE
+/**
+ * @brief Com_RunUpdateBinary
+ * @param[in] updateBinary
+ * @param[in] updateConfig
+ */
 static void Com_RunUpdateBinary(const char *updateBinary, const char *updateConfig)
 {
 	static char fn[MAX_OSPATH];
@@ -245,6 +256,13 @@ static void Com_RunUpdateBinary(const char *updateBinary, const char *updateConf
 #endif /* FEATURE_AUTOUPDATE */
 
 #ifdef FEATURE_AUTOUPDATE
+/**
+ * @brief Com_UnpackUpdatePackage
+ * @param[in] pack
+ * @param[in] bin
+ * @param[in] config
+ * @return
+ */
 static qboolean Com_UnpackUpdatePackage(const char *pack, const char *bin, const char *config)
 {
 	char *fn1 = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, pack);
@@ -274,6 +292,10 @@ static qboolean Com_UnpackUpdatePackage(const char *pack, const char *bin, const
 #endif /* FEATURE_AUTOUPDATE */
 
 #ifdef FEATURE_AUTOUPDATE
+/**
+ * @brief Com_CLeanUpdateFolder
+ * @param[in] bin
+ */
 static void Com_CLeanUpdateFolder(const char *bin)
 {
 	//We just remove the old updater here, if it exists.
@@ -286,6 +308,10 @@ static void Com_CLeanUpdateFolder(const char *bin)
 }
 #endif /* FEATURE_AUTOUPDATE */
 
+/**
+ * @brief Com_CheckUpdateDownloads
+ * @return
+ */
 qboolean Com_CheckUpdateDownloads(void)
 {
 #ifdef FEATURE_AUTOUPDATE
@@ -324,6 +350,10 @@ qboolean Com_CheckUpdateDownloads(void)
 	return qfalse;
 }
 
+/**
+ * @brief Com_InitUpdateDownloads
+ * @return
+ */
 qboolean Com_InitUpdateDownloads(void)
 {
 #ifdef FEATURE_AUTOUPDATE
@@ -369,7 +399,7 @@ qboolean Com_InitUpdateDownloads(void)
 				if (!DL_BeginDownload(upd.downloadTempName, upd.downloadName))
 				{
 					Com_Error(ERR_AUTOUPDATE, "Could not download an update file: \"%s\"", upd.downloadName);
-					upd.bWWWDlAborting = qtrue;
+					upd.bWWWDlAborting = qtrue; //TODO: never executed
 				}
 
 				while (1)
@@ -401,6 +431,11 @@ qboolean Com_InitUpdateDownloads(void)
 	return qfalse;
 }
 
+/**
+ * @brief Com_UpdatePacketEvent
+ * @param[in] from
+ * @return
+ */
 qboolean Com_UpdatePacketEvent(netadr_t from)
 {
 #ifdef FEATURE_AUTOUPDATE
@@ -420,11 +455,10 @@ qboolean Com_UpdatePacketEvent(netadr_t from)
 	return qfalse;
 }
 
-/*
-===================
-CL_UpdateInfoPacket
-===================
-*/
+/**
+ * @brief Com_UpdateInfoPacket
+ * @param[in] from
+ */
 void Com_UpdateInfoPacket(netadr_t from)
 {
 	if (autoupdate.autoupdateServer.type == NA_BAD)
@@ -470,7 +504,7 @@ void Com_UpdateInfoPacket(netadr_t from)
 #ifndef DEDICATED
 		if (uivm)
 		{
-			uiMenuCommand_t currentMenu = VM_Call(uivm, UI_GET_ACTIVE_MENU);
+			uiMenuCommand_t currentMenu = (uiMenuCommand_t)(VM_Call(uivm, UI_GET_ACTIVE_MENU));
 			if (currentMenu != UIMENU_WM_AUTOUPDATE)
 			{
 				VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_WM_AUTOUPDATE);
@@ -485,6 +519,9 @@ void Com_UpdateInfoPacket(netadr_t from)
 	}
 }
 
+/**
+ * @brief Com_CheckUpdateStarted
+ */
 void Com_CheckUpdateStarted(void)
 {
 	// If we have completed a connection to the Auto-Update server...
@@ -503,6 +540,10 @@ void Com_CheckUpdateStarted(void)
 	}
 }
 
+/**
+ * @brief Com_UpdateVarsClean
+ * @param[in] flags
+ */
 void Com_UpdateVarsClean(int flags)
 {
 	switch (flags)
@@ -521,6 +562,9 @@ void Com_UpdateVarsClean(int flags)
 	}
 }
 
+/**
+ * @brief Com_Update_f
+ */
 void Com_Update_f(void)
 {
 #ifndef DEDICATED

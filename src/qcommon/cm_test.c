@@ -34,11 +34,12 @@
 
 #include "cm_local.h"
 
-/*
-==================
-CM_PointLeafnum_r
-==================
-*/
+/**
+ * @brief CM_PointLeafnum_r
+ * @param[in] p
+ * @param[in] num
+ * @return
+ */
 int CM_PointLeafnum_r(const vec3_t p, int num)
 {
 	float    d;
@@ -73,6 +74,11 @@ int CM_PointLeafnum_r(const vec3_t p, int num)
 	return -1 - num;
 }
 
+/**
+ * @brief CM_PointLeafnum
+ * @param[in] p
+ * @return
+ */
 int CM_PointLeafnum(const vec3_t p)
 {
 	if (!cm.numNodes)       // map not loaded
@@ -83,12 +89,17 @@ int CM_PointLeafnum(const vec3_t p)
 	return CM_PointLeafnum_r(p, 0);
 }
 
-/*
+/**
 ======================================================================
 LEAF LISTING
 ======================================================================
 */
 
+/**
+ * @brief CM_StoreLeafs
+ * @param[in,out] ll
+ * @param[in] nodenum
+ */
 void CM_StoreLeafs(leafList_t *ll, int nodenum)
 {
 	int leafNum = -1 - nodenum;
@@ -108,6 +119,11 @@ void CM_StoreLeafs(leafList_t *ll, int nodenum)
 	ll->list[ll->count++] = leafNum;
 }
 
+/**
+ * @brief CM_StoreBrushes
+ * @param[in,out] ll
+ * @param[in] nodenum
+ */
 void CM_StoreBrushes(leafList_t *ll, int nodenum)
 {
 	int      i, k;
@@ -157,13 +173,12 @@ void CM_StoreBrushes(leafList_t *ll, int nodenum)
 #endif
 }
 
-/*
-=============
-CM_BoxLeafnums
-
-Fills in a list of all the leafs touched
-=============
-*/
+/**
+ * @brief Fills in a list of all the leafs touched
+ * @param[in,out] ll
+ * @param[in] nodenum
+ *
+ */
 void CM_BoxLeafnums_r(leafList_t *ll, int nodenum)
 {
 	cplane_t *plane;
@@ -198,11 +213,15 @@ void CM_BoxLeafnums_r(leafList_t *ll, int nodenum)
 	}
 }
 
-/*
-==================
-CM_BoxLeafnums
-==================
-*/
+/**
+ * @brief CM_BoxLeafnums
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] list
+ * @param[in] listsize
+ * @param[out] lastLeaf
+ * @return
+ */
 int CM_BoxLeafnums(const vec3_t mins, const vec3_t maxs, int *list, int listsize, int *lastLeaf)
 {
 	leafList_t ll;
@@ -224,11 +243,14 @@ int CM_BoxLeafnums(const vec3_t mins, const vec3_t maxs, int *list, int listsize
 	return ll.count;
 }
 
-/*
-==================
-CM_BoxBrushes
-==================
-*/
+/**
+ * @brief CM_BoxBrushes
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] list
+ * @param[in] listsize
+ * @return
+ */
 int CM_BoxBrushes(const vec3_t mins, const vec3_t maxs, cbrush_t **list, int listsize)
 {
 	leafList_t ll;
@@ -251,11 +273,12 @@ int CM_BoxBrushes(const vec3_t mins, const vec3_t maxs, cbrush_t **list, int lis
 
 //====================================================================
 
-/*
-==================
-CM_PointContents
-==================
-*/
+/**
+ * @brief CM_PointContents
+ * @param[in] p
+ * @param[in] model
+ * @return
+ */
 int CM_PointContents(const vec3_t p, clipHandle_t model)
 {
 	int      leafnum;
@@ -310,14 +333,15 @@ int CM_PointContents(const vec3_t p, clipHandle_t model)
 	return contents;
 }
 
-/*
-==================
-CM_TransformedPointContents
-
-Handles offseting and rotation of the end points for moving and
-rotating entities
-==================
-*/
+/**
+ * @brief Handles offseting and rotation of the end points for moving and
+ * rotating entities
+ * @param[in] p
+ * @param[in] model
+ * @param[in] origin
+ * @param[in] angles
+ * @return
+ */
 int CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t origin, const vec3_t angles)
 {
 	vec3_t p_l;
@@ -327,7 +351,7 @@ int CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t
 
 	// rotate start and end into the models frame of reference
 	if (model != BOX_MODEL_HANDLE &&
-	    (angles[0] || angles[1] || angles[2]))
+	    (angles[0] != 0.f || angles[1] != 0.f || angles[2] != 0.f))
 	{
 		vec3_t temp, forward, right, up;
 
@@ -342,12 +366,17 @@ int CM_TransformedPointContents(const vec3_t p, clipHandle_t model, const vec3_t
 	return CM_PointContents(p_l, model);
 }
 
-/*
+/**
 ===============================================================================
 PVS
 ===============================================================================
 */
 
+/**
+ * @brief CM_ClusterPVS
+ * @param[in] cluster
+ * @return
+ */
 byte *CM_ClusterPVS(int cluster)
 {
 	if (cluster < 0 || cluster >= cm.numClusters || !cm.vised)
@@ -358,12 +387,17 @@ byte *CM_ClusterPVS(int cluster)
 	return cm.visibility + cluster * cm.clusterBytes;
 }
 
-/*
+/**
 ===============================================================================
 AREAPORTALS
 ===============================================================================
 */
 
+/**
+ * @brief CM_FloodArea_r
+ * @param[in] areaNum
+ * @param[in] floodnum
+ */
 void CM_FloodArea_r(int areaNum, int floodnum)
 {
 	int     i;
@@ -392,11 +426,9 @@ void CM_FloodArea_r(int areaNum, int floodnum)
 	}
 }
 
-/*
-====================
-CM_FloodAreaConnections
-====================
-*/
+/**
+ * @brief CM_FloodAreaConnections
+ */
 void CM_FloodAreaConnections(void)
 {
 	int     i;
@@ -418,11 +450,12 @@ void CM_FloodAreaConnections(void)
 	}
 }
 
-/*
-====================
-CM_AdjustAreaPortalState
-====================
-*/
+/**
+ * @brief CM_AdjustAreaPortalState
+ * @param[in] area1
+ * @param[in] area2
+ * @param[in] open
+ */
 void CM_AdjustAreaPortalState(int area1, int area2, qboolean open)
 {
 	if (area1 < 0 || area2 < 0)
@@ -453,11 +486,12 @@ void CM_AdjustAreaPortalState(int area1, int area2, qboolean open)
 	CM_FloodAreaConnections();
 }
 
-/*
-====================
-CM_AreasConnected
-====================
-*/
+/**
+ * @brief CM_AreasConnected
+ * @param[in] area1
+ * @param[in] area2
+ * @return
+ */
 qboolean CM_AreasConnected(int area1, int area2)
 {
 	if (cm_noAreas->integer)
@@ -483,20 +517,19 @@ qboolean CM_AreasConnected(int area1, int area2)
 	return qfalse;
 }
 
-/*
-=================
-CM_WriteAreaBits
-
-Writes a bit vector of all the areas
-that are in the same flood as the area parameter
-Returns the number of bytes needed to hold all the bits.
-
-The bits are OR'd in, so you can CM_WriteAreaBits from multiple
-viewpoints and get the union of all visible areas.
-
-This is used to cull non-visible entities from snapshots
-=================
-*/
+/**
+ * @brief Writes a bit vector of all the areas that are in the same flood as the area parameter
+ *
+ * @details The bits are OR'd in, so you can CM_WriteAreaBits from multiple
+ * viewpoints and get the union of all visible areas.
+ *
+ * This is used to cull non-visible entities from snapshots
+ *
+ * @param[out] buffer
+ * @param[in] area
+ *
+ * @return The number of bytes needed to hold all the bits.
+ */
 int CM_WriteAreaBits(byte *buffer, int area)
 {
 	int bytes = (cm.numAreas + 7) >> 3;

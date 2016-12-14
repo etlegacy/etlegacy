@@ -48,11 +48,11 @@ int    cvar_numIndexes;
 static cvar_t *hashTable[FILE_HASH_SIZE];
 #define generateHashValue(fname) Q_GenerateHashValue(fname, FILE_HASH_SIZE, qtrue, qtrue)
 
-/*
-============
-Cvar_ValidateString
-============
-*/
+/**
+ * @brief Cvar_ValidateString
+ * @param[in] s
+ * @return
+ */
 static qboolean Cvar_ValidateString(const char *s)
 {
 	if (!s)
@@ -74,11 +74,11 @@ static qboolean Cvar_ValidateString(const char *s)
 	return qtrue;
 }
 
-/*
-============
-Cvar_FindVar
-============
-*/
+/**
+ * @brief Cvar_FindVar
+ * @param[in] var_name
+ * @return
+ */
 static cvar_t *Cvar_FindVar(const char *var_name)
 {
 	cvar_t *var;
@@ -97,11 +97,11 @@ static cvar_t *Cvar_FindVar(const char *var_name)
 	return NULL;
 }
 
-/*
-============
-Cvar_VariableValue
-============
-*/
+/**
+ * @brief Cvar_VariableValue
+ * @param[in] var_name
+ * @return
+ */
 float Cvar_VariableValue(const char *var_name)
 {
 	cvar_t *var;
@@ -114,11 +114,11 @@ float Cvar_VariableValue(const char *var_name)
 	return var->value;
 }
 
-/*
-============
-Cvar_VariableIntegerValue
-============
-*/
+/**
+ * @brief Cvar_VariableIntegerValue
+ * @param[in] var_name
+ * @return
+ */
 int Cvar_VariableIntegerValue(const char *var_name)
 {
 	cvar_t *var;
@@ -131,11 +131,11 @@ int Cvar_VariableIntegerValue(const char *var_name)
 	return var->integer;
 }
 
-/*
-============
-Cvar_VariableString
-============
-*/
+/**
+ * @brief Cvar_VariableString
+ * @param[in] var_name
+ * @return
+ */
 char *Cvar_VariableString(const char *var_name)
 {
 	cvar_t *var;
@@ -148,11 +148,12 @@ char *Cvar_VariableString(const char *var_name)
 	return var->string;
 }
 
-/*
-============
-Cvar_VariableStringBuffer
-============
-*/
+/**
+ * @brief Cvar_VariableStringBuffer
+ * @param[in] var_name
+ * @param[out] buffer
+ * @param[in] bufsize
+ */
 void Cvar_VariableStringBuffer(const char *var_name, char *buffer, size_t bufsize)
 {
 	cvar_t *var;
@@ -168,11 +169,12 @@ void Cvar_VariableStringBuffer(const char *var_name, char *buffer, size_t bufsiz
 	}
 }
 
-/*
-============
-Cvar_LatchedVariableStringBuffer
-============
-*/
+/**
+ * @brief Cvar_LatchedVariableStringBuffer
+ * @param[in] var_name
+ * @param[out] buffer
+ * @param[in] bufsize
+ */
 void Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, size_t bufsize)
 {
 	cvar_t *var;
@@ -195,11 +197,11 @@ void Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, size_t
 	}
 }
 
-/*
-============
-Cvar_Flags
-============
-*/
+/**
+ * @brief Cvar_Flags
+ * @param[in] var_name
+ * @return
+ */
 int Cvar_Flags(const char *var_name)
 {
 	cvar_t *var;
@@ -221,11 +223,9 @@ int Cvar_Flags(const char *var_name)
 	}
 }
 
-/*
-============
-Cvar_CommandCompletion
-============
-*/
+/**
+ * @brief Cvar_CommandCompletion
+ */
 void Cvar_CommandCompletion(void (*callback)(const char *s))
 {
 	cvar_t *cvar;
@@ -241,6 +241,10 @@ void Cvar_CommandCompletion(void (*callback)(const char *s))
 
 /**
  * @brief Some cvar values need to be safe from foreign characters
+ *
+ * @param[in] value
+ *
+ * @return
  */
 char *Cvar_ClearForeignCharacters(const char *value)
 {
@@ -263,6 +267,10 @@ char *Cvar_ClearForeignCharacters(const char *value)
 /**
  * @brief If the variable already exists, the value will not be set unless CVAR_ROM
  * The flags will be or'ed in if the variable exists.
+ * @param[in] var_name
+ * @param[in] var_value
+ * @param[in] flags
+ * @return
  */
 cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags)
 {
@@ -424,7 +432,7 @@ cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags)
 	var->string            = CopyString(var_value);
 	var->modified          = qtrue;
 	var->modificationCount = 1;
-	var->value             = atof(var->string);
+	var->value             = (float)(atof(var->string));
 	var->integer           = atoi(var->string);
 	var->resetString       = CopyString(var_value);
 
@@ -457,13 +465,13 @@ cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags)
 	return var;
 }
 
-/*
-============
-Cvar_Set2
-============
-*/
 #define FOREIGN_MSG "Foreign characters are not allowed in userinfo variables.\n"
 #ifndef DEDICATED
+/**
+ * @brief CL_TranslateStringBuf
+ * @param[in] string
+ * @return
+ */
 const char *CL_TranslateStringBuf(const char *string);
 #endif
 cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force)
@@ -616,27 +624,27 @@ cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force)
 	Z_Free(var->string);     // free the old value string
 
 	var->string  = CopyString(value);
-	var->value   = atof(var->string);
+	var->value   = (float)(atof(var->string));
 	var->integer = atoi(var->string);
 
 	return var;
 }
 
-/*
-============
-Cvar_Set
-============
-*/
+/**
+ * @brief Cvar_Set
+ * @param[in] var_name
+ * @param[in] value
+ */
 void Cvar_Set(const char *var_name, const char *value)
 {
 	Cvar_Set2(var_name, value, qtrue);
 }
 
-/*
-============
-Cvar_SetSafe
-============
-*/
+/**
+ * @brief Cvar_SetSafe
+ * @param var_name
+ * @param value
+ */
 void Cvar_SetSafe(const char *var_name, const char *value)
 {
 	int flags = Cvar_Flags(var_name);
@@ -653,26 +661,25 @@ void Cvar_SetSafe(const char *var_name, const char *value)
 			Com_Error(ERR_DROP, "Restricted source tried to "
 			                    "modify \"%s\"", var_name);
 		}
-		return;
 	}
 	Cvar_Set(var_name, value);
 }
 
-/*
-============
-Cvar_SetLatched
-============
-*/
+/**
+ * @brief Cvar_SetLatched
+ * @param[in] var_name
+ * @param[in] value
+ */
 void Cvar_SetLatched(const char *var_name, const char *value)
 {
 	Cvar_Set2(var_name, value, qfalse);
 }
 
-/*
-============
-Cvar_SetValue
-============
-*/
+/**
+ * @brief Cvar_SetValue
+ * @param[in] var_name
+ * @param[in] value
+ */
 void Cvar_SetValue(const char *var_name, float value)
 {
 	char val[32];
@@ -683,16 +690,16 @@ void Cvar_SetValue(const char *var_name, float value)
 	}
 	else
 	{
-		Com_sprintf(val, sizeof(val), "%f", value);
+		Com_sprintf(val, sizeof(val), "%f", (double)value);
 	}
 	Cvar_Set(var_name, val);
 }
 
-/*
-============
-Cvar_SetValueSafe
-============
-*/
+/**
+ * @brief Cvar_SetValueSafe
+ * @param[in] var_name
+ * @param[in] value
+ */
 void Cvar_SetValueSafe(const char *var_name, float value)
 {
 	char val[32];
@@ -703,38 +710,32 @@ void Cvar_SetValueSafe(const char *var_name, float value)
 	}
 	else
 	{
-		Com_sprintf(val, sizeof(val), "%f", value);
+		Com_sprintf(val, sizeof(val), "%f", (double)value);
 	}
 	Cvar_SetSafe(var_name, val);
 }
 
-/*
-============
-Cvar_Reset
-============
-*/
+/**
+ * @brief Cvar_Reset
+ * @param[in] var_name
+ */
 void Cvar_Reset(const char *var_name)
 {
 	Cvar_Set2(var_name, NULL, qfalse);
 }
 
-/*
-============
-Cvar_ForceReset
-============
-*/
+/**
+ * @brief Cvar_ForceReset
+ * @param[in] var_name
+ */
 void Cvar_ForceReset(const char *var_name)
 {
 	Cvar_Set2(var_name, NULL, qtrue);
 }
 
-/*
-============
-Cvar_SetCheatState
-
-Any testing variables will be reset to the safe values
-============
-*/
+/**
+ * @brief Any testing variables will be reset to the safe values
+ */
 void Cvar_SetCheatState(void)
 {
 	cvar_t *var;
@@ -761,6 +762,8 @@ void Cvar_SetCheatState(void)
 
 /**
  * @brief Prints the value, default, and latched string of the given variable
+ *
+ * @param[in] v
  */
 void Cvar_Print(cvar_t *v)
 {
@@ -787,13 +790,10 @@ void Cvar_Print(cvar_t *v)
 	}
 }
 
-/*
-============
-Cvar_Command
-
-Handles variable inspection and changing from the console
-============
-*/
+/**
+ * @brief Handles variable inspection and changing from the console
+ * @return
+ */
 qboolean Cvar_Command(void)
 {
 	cvar_t *v;
@@ -817,14 +817,10 @@ qboolean Cvar_Command(void)
 	return qtrue;
 }
 
-/*
-============
-Cvar_Print_f
-
-Prints the contents of a cvar
+/**
+ * @brief Prints the contents of a cvar
 (preferred over Cvar_Command where cvar names and commands conflict)
-============
-*/
+ */
 void Cvar_Print_f(void)
 {
 	char   *name;
@@ -850,14 +846,10 @@ void Cvar_Print_f(void)
 	}
 }
 
-/*
-============
-Cvar_Toggle_f
-
-Toggles a cvar for easy single key binding, optionally through a list of
-given values
-============
-*/
+/**
+ * @brief Toggles a cvar for easy single key binding, optionally through a list of
+ * given values
+ */
 void Cvar_Toggle_f(void)
 {
 	int  i, c = Cmd_Argc();
@@ -871,8 +863,7 @@ void Cvar_Toggle_f(void)
 
 	if (c == 2)
 	{
-		Cvar_Set2(Cmd_Argv(1), va("%d",
-		                          !Cvar_VariableValue(Cmd_Argv(1))),
+		Cvar_Set2(Cmd_Argv(1), va("%d", (Cvar_VariableValue(Cmd_Argv(1)) == 0.f)),
 		          qfalse);
 		return;
 	}
@@ -900,13 +891,9 @@ void Cvar_Toggle_f(void)
 	Cvar_Set2(Cmd_Argv(1), Cmd_Argv(2), qfalse);
 }
 
-/*
-============
-Cvar_Cycle_f - ydnar
-
-Cycles a cvar for easy single key binding
-============
-*/
+/**
+ * @brief Cycles a cvar for easy single key binding
+ */
 void Cvar_Cycle_f(void)
 {
 	int start, end, step, oldvalue, value;
@@ -917,7 +904,7 @@ void Cvar_Cycle_f(void)
 		return;
 	}
 
-	oldvalue = value = Cvar_VariableValue(Cmd_Argv(1));
+	oldvalue = value = (int)(Cvar_VariableValue(Cmd_Argv(1)));
 	start    = atoi(Cmd_Argv(2));
 	end      = atoi(Cmd_Argv(3));
 
@@ -955,14 +942,10 @@ void Cvar_Cycle_f(void)
 	Cvar_Set2(Cmd_Argv(1), va("%i", value), qfalse);
 }
 
-/*
-============
-Cvar_Set_f
-
-Allows setting and defining of arbitrary cvars from console, even if they
-weren't declared in C code.
-============
-*/
+/**
+ * @brief Allows setting and defining of arbitrary cvars from console, even if they
+ * weren't declared in C code.
+ */
 void Cvar_Set_f(void)
 {
 	int    c;
@@ -1025,11 +1008,9 @@ void Cvar_Set_f(void)
 	}
 }
 
-/*
-============
-Cvar_Reset_f
-============
-*/
+/**
+ * @brief Cvar_Reset_f
+ */
 void Cvar_Reset_f(void)
 {
 	if (Cmd_Argc() != 2)
@@ -1040,14 +1021,11 @@ void Cvar_Reset_f(void)
 	Cvar_Reset(Cmd_Argv(1));
 }
 
-/*
-============
-Cvar_WriteVariables
-
-Appends lines containing "set variable value" for all variables
-with the archive flag set to qtrue.
-============
-*/
+/**
+ * @brief Appends lines containing "set variable value" for all variables
+ * with the archive flag set to qtrue.
+ * @param[in] f
+ */
 void Cvar_WriteVariables(fileHandle_t f)
 {
 	cvar_t *var;
@@ -1105,11 +1083,9 @@ void Cvar_WriteVariables(fileHandle_t f)
 	}
 }
 
-/*
-============
-Cvar_List_f
-============
-*/
+/**
+ * @brief Cvar_List_f
+ */
 void Cvar_List_f(void)
 {
 	cvar_t   *var;
@@ -1244,13 +1220,11 @@ void Cvar_List_f(void)
 	Com_Printf("%i cvar indexes\n", cvar_numIndexes);
 }
 
-/*
-============
-Cvar_Unset
-
-Unsets a cvar
-============
-*/
+/**
+ * @brief Unsets a cvar
+ * @param[in,out] cv
+ * @return
+ */
 cvar_t *Cvar_Unset(cvar_t *cv)
 {
 	cvar_t *next = cv->next;
@@ -1306,13 +1280,9 @@ cvar_t *Cvar_Unset(cvar_t *cv)
 	return next;
 }
 
-/*
-============
-Cvar_Unset_f
-
-Unsets a userdefined cvar
-============
-*/
+/**
+ * @brief Unsets a userdefined cvar
+ */
 void Cvar_Unset_f(void)
 {
 	cvar_t *cv;
@@ -1340,14 +1310,11 @@ void Cvar_Unset_f(void)
 	}
 }
 
-/*
-============
-Cvar_Restart
-
-Resets all cvars to their hardcoded values and removes userdefined variables
-and variables added via the VMs if requested.
-============
-*/
+/**
+ * @brief Resets all cvars to their hardcoded values and removes userdefined variables
+ * and variables added via the VMs if requested.
+ * @param unsetVM
+ */
 void Cvar_Restart(qboolean unsetVM)
 {
 	cvar_t *curvar = cvar_vars;
@@ -1372,24 +1339,20 @@ void Cvar_Restart(qboolean unsetVM)
 	}
 }
 
-/*
-============
-Cvar_Restart_f
-
-Resets all cvars to their hardcoded values
-============
-*/
+/**
+ * @brief Resets all cvars to their hardcoded values
+ */
 void Cvar_Restart_f(void)
 {
 	Cvar_Restart(qfalse);
 	Com_Printf("Cvars have been reset.\n");
 }
 
-/*
-=====================
-Cvar_InfoString
-=====================
-*/
+/**
+ * @brief Cvar_InfoString
+ * @param[in] bit
+ * @return
+ */
 char *Cvar_InfoString(int bit)
 {
 	static char info[MAX_INFO_STRING];
@@ -1407,13 +1370,11 @@ char *Cvar_InfoString(int bit)
 	return info;
 }
 
-/*
-=====================
-Cvar_InfoString_Big
-
-  handles large info strings ( CS_SYSTEMINFO )
-=====================
-*/
+/**
+ * @brief Handles large info strings ( CS_SYSTEMINFO )
+ * @param bit
+ * @return
+ */
 char *Cvar_InfoString_Big(int bit)
 {
 	static char info[BIG_INFO_STRING];
@@ -1431,11 +1392,12 @@ char *Cvar_InfoString_Big(int bit)
 	return info;
 }
 
-/*
-=====================
-Cvar_InfoStringBuffer
-=====================
-*/
+/**
+ * @brief Cvar_InfoStringBuffer
+ * @param[in] bit
+ * @param[out] buff
+ * @param[in] buffsize
+ */
 void Cvar_InfoStringBuffer(int bit, char *buff, size_t buffsize)
 {
 	Q_strncpyz(buff, Cvar_InfoString(bit), buffsize);
@@ -1443,6 +1405,12 @@ void Cvar_InfoStringBuffer(int bit, char *buff, size_t buffsize)
 
 /**
  * @brief cvar range check - this isn't static so visible to all!
+ *
+ * @param[in] cv
+ * @param[in] minVal
+ * @param[in] maxVal
+ * @param[in] shouldBeIntegral
+ *
  * @todo FIXME: change this to ioquake style one day ...
  */
 void Cvar_AssertCvarRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral)
@@ -1484,13 +1452,14 @@ void Cvar_AssertCvarRange(cvar_t *cv, float minVal, float maxVal, qboolean shoul
 	}
 }
 
-/*
-=====================
-Cvar_Register
-
-basically a slightly modified Cvar_Get for the interpreted modules
-=====================
-*/
+/**
+ * @brief Basically a slightly modified Cvar_Get for the interpreted modules
+ *
+ * @param[in,out] vmCvar
+ * @param[in] varName
+ * @param[in] defaultValue
+ * @param[in] flags
+ */
 void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags)
 {
 	cvar_t *cv;
@@ -1516,13 +1485,10 @@ void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultVal
 	Cvar_Update(vmCvar);
 }
 
-/*
-=====================
-Cvar_Update
-
-updates an interpreted modules' version of a cvar
-=====================
-*/
+/**
+ * @brief Updates an interpreted modules' version of a cvar
+ * @param[in,out] vmCvar
+ */
 void Cvar_Update(vmCvar_t *vmCvar)
 {
 	cvar_t *cv = NULL;
@@ -1556,11 +1522,11 @@ void Cvar_Update(vmCvar_t *vmCvar)
 	vmCvar->integer = cv->integer;
 }
 
-/*
-==================
-Cvar_CompleteCvarName
-==================
-*/
+/**
+ * @brief Cvar_CompleteCvarName
+ * @param[in] args
+ * @param[in] argNum
+ */
 void Cvar_CompleteCvarName(char *args, int argNum)
 {
 	if (argNum == 2)
@@ -1575,13 +1541,9 @@ void Cvar_CompleteCvarName(char *args, int argNum)
 	}
 }
 
-/*
-============
-Cvar_Init
-
-Reads in all archived cvars
-============
-*/
+/**
+ * @brief Reads in all archived cvars
+ */
 void Cvar_Init(void)
 {
 	Com_Memset(cvar_indexes, '\0', sizeof(cvar_indexes));

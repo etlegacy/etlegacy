@@ -35,10 +35,15 @@
 
 #include "q_shared.h"
 
+/**
+ * @brief Com_PowerOf2
+ * @param[in] x
+ * @return
+ */
 qboolean Com_PowerOf2(int x)
 {
-	int bitsSet = 0;
-	int i;
+	int          bitsSet = 0;
+	unsigned int i;
 
 	for (i = 0; i < sizeof(int) * 8; ++i)
 	{
@@ -52,7 +57,8 @@ qboolean Com_PowerOf2(int x)
 }
 
 /**
- * @brief unixifies a pathname
+ * @brief COM_FixPath
+ * @param[in,out] pathname
  */
 void COM_FixPath(char *pathname)
 {
@@ -66,11 +72,11 @@ void COM_FixPath(char *pathname)
 	}
 }
 
-/*
-============
-COM_SkipPath
-============
-*/
+/**
+ * @brief COM_SkipPath
+ * @param[in,out] pathname
+ * @return
+ */
 char *COM_SkipPath(char *pathname)
 {
 	char *last = pathname;
@@ -86,11 +92,11 @@ char *COM_SkipPath(char *pathname)
 	return last;
 }
 
-/*
-============
-COM_GetExtension
-============
-*/
+/**
+ * @brief COM_GetExtension
+ * @param[in] name
+ * @return
+ */
 const char *COM_GetExtension(const char *name)
 {
 	const char *dot = strrchr(name, '.'), *slash;
@@ -105,11 +111,12 @@ const char *COM_GetExtension(const char *name)
 	}
 }
 
-/*
-============
-COM_StripExtension
-============
-*/
+/**
+ * @brief COM_StripExtension
+ * @param[in] in
+ * @param[out] out
+ * @param[in] destsize
+ */
 void COM_StripExtension(const char *in, char *out, int destsize)
 {
 	const char *dot = strrchr(in, '.'), *slash;
@@ -129,16 +136,15 @@ void COM_StripExtension(const char *in, char *out, int destsize)
 	}
 }
 
-/*
-============
-COM_CompareExtension
-
-string compare the end of the strings and return qtrue if strings match
-============
-*/
+/**
+ * @brief String compare the end of the strings and return qtrue if strings match
+ * @param[in] in
+ * @param[in] ext
+ * @return
+ */
 qboolean COM_CompareExtension(const char *in, const char *ext)
 {
-	int inlen = strlen(in), extlen = strlen(ext);
+	size_t inlen = strlen(in), extlen = strlen(ext);
 
 	if (extlen <= inlen)
 	{
@@ -153,6 +159,11 @@ qboolean COM_CompareExtension(const char *in, const char *ext)
 	return qfalse;
 }
 
+/**
+ * @brief COM_StripFilename
+ * @param[in] in
+ * @param[out] out
+ */
 void COM_StripFilename(const char *in, char *out)
 {
 	char *end;
@@ -165,6 +176,12 @@ void COM_StripFilename(const char *in, char *out)
 /**
  * @brief if path doesn't have an extension, then append the specified one
  * (which should include the .)
+ */
+/**
+ * @brief COM_DefaultExtension
+ * @param[in,out] path
+ * @param[in] maxSize
+ * @param[in] extension
  */
 void COM_DefaultExtension(char *path, size_t maxSize, const char *extension)
 {
@@ -180,11 +197,12 @@ void COM_DefaultExtension(char *path, size_t maxSize, const char *extension)
 	}
 }
 
-/*
-============
-Com_HashKey
-============
-*/
+/**
+ * @brief Com_HashKey
+ * @param[in,out] string
+ * @param[in] maxlen
+ * @return
+ */
 int Com_HashKey(char *string, int maxlen)
 {
 	int register hash = 0, i;
@@ -199,13 +217,12 @@ int Com_HashKey(char *string, int maxlen)
 
 //============================================================================
 
-/*
-==================
-COM_BitCheck
-
-  Allows bit-wise checks on arrays with more than one item (> 32 bits)
-==================
-*/
+/**
+ * @brief Allows bit-wise checks on arrays with more than one item (> 32 bits)
+ * @param[in] array
+ * @param[in] bitNum
+ * @return
+ */
 qboolean COM_BitCheck(const int array[], int bitNum)
 {
 	int i = 0;
@@ -219,13 +236,11 @@ qboolean COM_BitCheck(const int array[], int bitNum)
 	return ((array[i] & (1 << bitNum)) != 0);
 }
 
-/*
-==================
-COM_BitSet
-
-  Allows bit-wise SETS on arrays with more than one item (> 32 bits)
-==================
-*/
+/**
+ * @brief Allows bit-wise SETS on arrays with more than one item (> 32 bits)
+ * @param[in] array
+ * @param[out] bitNum
+ */
 void COM_BitSet(int array[], int bitNum)
 {
 	int i = 0;
@@ -239,13 +254,11 @@ void COM_BitSet(int array[], int bitNum)
 	array[i] |= (1 << bitNum);
 }
 
-/*
-==================
-COM_BitClear
-
-  Allows bit-wise CLEAR on arrays with more than one item (> 32 bits)
-==================
-*/
+/**
+ * @brief Allows bit-wise CLEAR on arrays with more than one item (> 32 bits)
+ * @param[out] array
+ * @param[in] bitNum
+ */
 void COM_BitClear(int array[], int bitNum)
 {
 	int i = 0;
@@ -260,19 +273,34 @@ void COM_BitClear(int array[], int bitNum)
 }
 //============================================================================
 
+/**
+ * @brief ShortSwap
+ * @param[in] l
+ * @return
+ */
 short ShortSwap(short l)
 {
 	byte b1 = l & 255;
 	byte b2 = (l >> 8) & 255;
 
-	return (b1 << 8) + b2;
+	return (short)((b1 << 8) + b2);
 }
 
+/**
+ * @brief ShortNoSwap
+ * @param[in] l
+ * @return
+ */
 short ShortNoSwap(short l)
 {
 	return l;
 }
 
+/**
+ * @brief LongSwap
+ * @param[in] l
+ * @return
+ */
 int LongSwap(int l)
 {
 	byte b1 = l & 255;
@@ -283,11 +311,21 @@ int LongSwap(int l)
 	return ((int)b1 << 24) + ((int)b2 << 16) + ((int)b3 << 8) + b4;
 }
 
+/**
+ * @brief LongNoSwap
+ * @param[in] l
+ * @return
+ */
 int LongNoSwap(int l)
 {
 	return l;
 }
 
+/**
+ * @brief FloatSwap
+ * @param[in] f
+ * @return
+ */
 float FloatSwap(const float *f)
 {
 	floatint_t out;
@@ -298,6 +336,11 @@ float FloatSwap(const float *f)
 	return out.f;
 }
 
+/**
+ * @brief FloatNoSwap
+ * @param[in] f
+ * @return
+ */
 float FloatNoSwap(float f)
 {
 	return f;
@@ -309,7 +352,9 @@ PARSING
 ============================================================================
 */
 
-// multiple character punctuation tokens
+/**
+ * @var Multiple character punctuation tokens
+ */
 const char *punctuation[] =
 {
 	"+=", "-=", "*=", "/=", "&=", "|=", "++", "--",
@@ -324,40 +369,69 @@ static int  com_lines;
 static int  backup_lines;
 static char *backup_text;
 
+/**
+ * @brief COM_BeginParseSession
+ * @param[in] name
+ */
 void COM_BeginParseSession(const char *name)
 {
 	com_lines = 0;
 	Com_sprintf(com_parsename, sizeof(com_parsename), "%s", name);
 }
 
+/**
+ * @brief COM_BackupParseSession
+ * @param[in] data_p
+ */
 void COM_BackupParseSession(char **data_p)
 {
 	backup_lines = com_lines;
 	backup_text  = *data_p;
 }
 
+/**
+ * @brief COM_RestoreParseSession
+ * @param[out] data_p
+ */
 void COM_RestoreParseSession(char **data_p)
 {
 	com_lines = backup_lines;
 	*data_p   = backup_text;
 }
 
+/**
+ * @brief COM_SetCurrentParseLine
+ * @param[in] line
+ */
 void COM_SetCurrentParseLine(int line)
 {
 	com_lines = line;
 }
 
+/**
+ * @brief COM_GetCurrentParseLine
+ * @return
+ */
 int COM_GetCurrentParseLine(void)
 {
 	return com_lines;
 }
 
+/**
+ * @brief COM_Parse
+ * @param[in] data_p
+ * @return
+ */
 char *COM_Parse(char **data_p)
 {
 	return COM_ParseExt(data_p, qtrue);
 }
 
-void COM_ParseError(char *format, ...)
+/**
+ * @brief COM_ParseError
+ * @param[in] format
+ */
+void COM_ParseError(const char *format, ...)
 {
 	va_list     argptr;
 	static char string[4096];
@@ -370,9 +444,12 @@ void COM_ParseError(char *format, ...)
 }
 
 /**
+ * @brief COM_ParseWarning
+ * @param[in] format
  * @note Unused.
  */
-void COM_ParseWarning(char *format, ...)
+/*
+void COM_ParseWarning(const char *format, ...)
 {
 	va_list     argptr;
 	static char string[4096];
@@ -383,19 +460,20 @@ void COM_ParseWarning(char *format, ...)
 
 	Com_Printf("WARNING COM_ParseWarning: %s, line %d: %s\n", com_parsename, com_lines, string);
 }
-
-/*
-==============
-COM_Parse
-
-Parse a token out of a string
-Will never return NULL, just empty strings
-
-If "allowLineBreaks" is qtrue then an empty
-string will be returned if the next token is
-a newline.
-==============
 */
+
+/**
+ * @brief Parse a token out of a string
+ * Will never return NULL, just empty strings
+ *
+ * If "allowLineBreaks" is qtrue then an empty
+ * string will be returned if the next token is
+ * a newline.
+ *
+ * @param[in,out] data
+ * @param[out] hasNewLines
+ * @return
+ */
 static char *SkipWhitespace(char *data, qboolean *hasNewLines)
 {
 	int c;
@@ -417,6 +495,11 @@ static char *SkipWhitespace(char *data, qboolean *hasNewLines)
 	return data;
 }
 
+/**
+ * @brief COM_Compress
+ * @param[in,out] data_p
+ * @return
+ */
 int COM_Compress(char *data_p)
 {
 	char *in, *out;
@@ -513,9 +596,15 @@ int COM_Compress(char *data_p)
 	return out - data_p;
 }
 
+/**
+ * @brief COM_ParseExt
+ * @param[in,out] data_p
+ * @param[in] allowLineBreaks
+ * @return
+ */
 char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 {
-	int      c = 0, len = 0;
+	int      c           = 0, len = 0;
 	qboolean hasNewLines = qfalse;
 	char     *data       = *data_p;
 
@@ -658,12 +747,23 @@ char *COM_ParseExt(char **data_p, qboolean allowLineBreaks)
 	return com_token;
 }
 
+/**
+ * @brief COM_Parse2
+ * @param[in] data_p
+ * @return
+ */
 char *COM_Parse2(char **data_p)
 {
 	return COM_ParseExt2(data_p, qtrue);
 }
 
 // *INDENT-OFF*
+/**
+ * @brief COM_ParseExt2
+ * @param[in,out] data_p
+ * @param[in] allowLineBreaks
+ * @return
+ */
 char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 {
 	int        c           = 0, len;
@@ -882,8 +982,7 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 	// check for multi-character punctuation token
 	for (punc = punctuation; *punc; punc++)
 	{
-		int l;
-		int j;
+		size_t j, l;
 
 		l = strlen(*punc);
 		for (j = 0; j < l; j++)
@@ -914,11 +1013,11 @@ char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks)
 }
 // *INDENT-ON*
 
-/*
-==================
-COM_MatchToken
-==================
-*/
+/**
+ * @brief COM_MatchToken
+ * @param[in] buf_p
+ * @param[in] match
+ */
 void COM_MatchToken(char **buf_p, char *match)
 {
 	char *token;
@@ -930,11 +1029,11 @@ void COM_MatchToken(char **buf_p, char *match)
 	}
 }
 
-/*
-=================
-SkipBracedSection_Depth
-=================
-*/
+/**
+ * @brief SkipBracedSection_Depth
+ * @param program
+ * @param depth
+ */
 void SkipBracedSection_Depth(char **program, int depth)
 {
 	char *token;
@@ -957,15 +1056,13 @@ void SkipBracedSection_Depth(char **program, int depth)
 	while (depth && *program);
 }
 
-/*
-=================
-SkipBracedSection
-
-The next token should be an open brace.
-Skips until a matching close brace is found.
-Internal brace depths are properly skipped.
-=================
-*/
+/**
+ * @brief The next token should be an open brace.
+ * Skips until a matching close brace is found.
+ * Internal brace depths are properly skipped.
+ *
+ * @param[in] program
+ */
 void SkipBracedSection(char **program)
 {
 	char *token;
@@ -989,11 +1086,10 @@ void SkipBracedSection(char **program)
 	while (depth && *program);
 }
 
-/*
-=================
-SkipRestOfLine
-=================
-*/
+/**
+ * @brief SkipRestOfLine
+ * @param[in,out] data
+ */
 void SkipRestOfLine(char **data)
 {
 	char *p = *data;
@@ -1011,6 +1107,12 @@ void SkipRestOfLine(char **data)
 	*data = p;
 }
 
+/**
+ * @brief Parse1DMatrix
+ * @param[in] buf_p
+ * @param[in] x
+ * @param[out] m
+ */
 void Parse1DMatrix(char **buf_p, int x, float *m)
 {
 	char *token;
@@ -1021,12 +1123,19 @@ void Parse1DMatrix(char **buf_p, int x, float *m)
 	for (i = 0 ; i < x ; i++)
 	{
 		token = COM_Parse(buf_p);
-		m[i]  = atof(token);
+		m[i]  = (float)(atof(token));
 	}
 
 	COM_MatchToken(buf_p, ")");
 }
 
+/**
+ * @brief Parse2DMatrix
+ * @param[in] buf_p
+ * @param[in] y
+ * @param[in] x
+ * @param[out] m
+ */
 void Parse2DMatrix(char **buf_p, int y, int x, float *m)
 {
 	int i;
@@ -1041,6 +1150,14 @@ void Parse2DMatrix(char **buf_p, int y, int x, float *m)
 	COM_MatchToken(buf_p, ")");
 }
 
+/**
+ * @brief Parse3DMatrix
+ * @param[in] buf_p
+ * @param[in] z
+ * @param[in] y
+ * @param[in] x
+ * @param[out] m
+ */
 void Parse3DMatrix(char **buf_p, int z, int y, int x, float *m)
 {
 	int i;
@@ -1055,11 +1172,13 @@ void Parse3DMatrix(char **buf_p, int z, int y, int x, float *m)
 	COM_MatchToken(buf_p, ")");
 }
 
-/*
-===============
-Com_ParseInfos
-===============
-*/
+/**
+ * @brief Com_ParseInfos
+ * @param[in] buf
+ * @param[in] max
+ * @param[out] infos
+ * @return
+ */
 int Com_ParseInfos(char *buf, int max, char infos[][MAX_INFO_STRING])
 {
 	const char *token;
@@ -1113,11 +1232,11 @@ int Com_ParseInfos(char *buf, int max, char infos[][MAX_INFO_STRING])
 	return count;
 }
 
-/*
-===================
-Com_HexStrToInt
-===================
-*/
+/**
+ * @brief Com_HexStrToInt
+ * @param[in] str
+ * @return
+ */
 int Com_HexStrToInt(const char *str)
 {
 	if (!str || !str[0])
@@ -1128,7 +1247,8 @@ int Com_HexStrToInt(const char *str)
 	// check for hex code
 	if (str[0] == '0' && str[1] == 'x')
 	{
-		int i, n = 0;
+		unsigned int i;
+		int          n = 0;
 
 		for (i = 2; i < strlen(str); i++)
 		{
@@ -1166,6 +1286,11 @@ int Com_HexStrToInt(const char *str)
 ============================================================================
 */
 
+/**
+ * @brief Q_isprint
+ * @param[in] c
+ * @return
+ */
 int Q_isprint(int c)
 {
 	if (c >= 0x20 && c <= 0x7E)
@@ -1175,6 +1300,11 @@ int Q_isprint(int c)
 	return (0);
 }
 
+/**
+ * @brief Q_islower
+ * @param[in] c
+ * @return
+ */
 int Q_islower(int c)
 {
 	if (c >= 'a' && c <= 'z')
@@ -1184,6 +1314,11 @@ int Q_islower(int c)
 	return (0);
 }
 
+/**
+ * @brief Q_isupper
+ * @param[in] c
+ * @return
+ */
 int Q_isupper(int c)
 {
 	if (c >= 'A' && c <= 'Z')
@@ -1193,6 +1328,11 @@ int Q_isupper(int c)
 	return (0);
 }
 
+/**
+ * @brief Q_isalpha
+ * @param[in] c
+ * @return
+ */
 int Q_isalpha(int c)
 {
 	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
@@ -1202,6 +1342,11 @@ int Q_isalpha(int c)
 	return (0);
 }
 
+/**
+ * @brief Q_isnumeric
+ * @param[in] c
+ * @return
+ */
 int Q_isnumeric(int c)
 {
 	if (c >= '0' && c <= '9')
@@ -1211,6 +1356,11 @@ int Q_isnumeric(int c)
 	return (0);
 }
 
+/**
+ * @brief Q_isalphanumeric
+ * @param[in] c
+ * @return
+ */
 int Q_isalphanumeric(int c)
 {
 	if (Q_isalpha(c) ||
@@ -1221,6 +1371,11 @@ int Q_isalphanumeric(int c)
 	return (0);
 }
 
+/**
+ * @brief Q_isanumber
+ * @param[in] s
+ * @return
+ */
 qboolean Q_isanumber(const char *s)
 {
 	char              *p;
@@ -1231,16 +1386,27 @@ qboolean Q_isanumber(const char *s)
 		return qfalse;
 	}
 
+	// FIXME: Why d was marked unused but was used ?
 	d = strtod(s, &p);
 
 	return *p == '\0';
 }
 
+/**
+ * @brief Q_isintegral
+ * @param[in] f
+ * @return
+ */
 qboolean Q_isintegral(float f)
 {
 	return (int)f == f;
 }
 
+/**
+ * @brief Q_isforfilename
+ * @param[in] c
+ * @return
+ */
 int Q_isforfilename(int c)
 {
 	if ((Q_isalphanumeric(c) || c == '_') && c != ' ')         // space not allowed in filename
@@ -1251,15 +1417,16 @@ int Q_isforfilename(int c)
 }
 
 #ifdef _MSC_VER
-/*
-=============
-Q_vsnprintf
 
-Special wrapper function for Microsoft's broken _vsnprintf() function.
-MinGW comes with its own snprintf() which is not broken.
-=============
-*/
-
+/**
+ * @brief Special wrapper function for Microsoft's broken _vsnprintf() function.
+ * MinGW comes with its own snprintf() which is not broken.
+ * @param[in,out] str
+ * @param[in] size
+ * @param[in] format
+ * @param[in] ap
+ * @return
+ */
 int Q_vsnprintf(char *str, size_t size, const char *format, va_list ap)
 {
 	int retval;
@@ -1285,6 +1452,9 @@ int Q_vsnprintf(char *str, size_t size, const char *format, va_list ap)
 
 /**
  * @brief Safe strncpy that ensures a trailing zero
+ * @param[out] dest
+ * @param[in] src
+ * @param[in] destsize
  */
 void Q_strncpyz(char *dest, const char *src, size_t destsize)
 {
@@ -1307,8 +1477,12 @@ void Q_strncpyz(char *dest, const char *src, size_t destsize)
 
 /**
  * @brief Compare strings without case sensitivity up to n characters
+ * @param[in] s1
+ * @param[in] s2
+ * @param[in] n
+ * @return
  */
-int Q_stricmpn(const char *s1, const char *s2, int n)
+int Q_stricmpn(const char *s1, const char *s2, size_t n)
 {
 	int c1, c2;
 
@@ -1361,8 +1535,12 @@ int Q_stricmpn(const char *s1, const char *s2, int n)
 
 /**
  * @brief Compare strings up to n characters
+ * @param[in] s1
+ * @param[in] s2
+ * @param[in] n
+ * @return
  */
-int Q_strncmp(const char *s1, const char *s2, int n)
+int Q_strncmp(const char *s1, const char *s2, size_t n)
 {
 	int c1, c2;
 
@@ -1388,12 +1566,20 @@ int Q_strncmp(const char *s1, const char *s2, int n)
 
 /**
  * @brief Compare whole strings without case sensitivity
+ * @param[in] s1
+ * @param[in] s2
+ * @return
  */
 int Q_stricmp(const char *s1, const char *s2)
 {
 	return (s1 && s2) ? Q_stricmpn(s1, s2, 99999) : -1;
 }
 
+/**
+ * @brief Q_strlwr
+ * @param[in,out] s1
+ * @return
+ */
 char *Q_strlwr(char *s1)
 {
 	char *s;
@@ -1409,6 +1595,11 @@ char *Q_strlwr(char *s1)
 	return s1;
 }
 
+/**
+ * @brief Q_strupr
+ * @param[in,out] s1
+ * @return
+ */
 char *Q_strupr(char *s1)
 {
 	char *cp;
@@ -1424,7 +1615,14 @@ char *Q_strupr(char *s1)
 	return s1;
 }
 
-// never goes past bounds or leaves without a terminating 0
+/**
+ * @brief Q_strcat
+ * @param[out] dest
+ * @param[in] size
+ * @param[in] src
+ *
+ * @note Never goes past bounds or leaves without a terminating 0
+ */
 void Q_strcat(char *dest, size_t size, const char *src)
 {
 	size_t l1;
@@ -1439,6 +1637,9 @@ void Q_strcat(char *dest, size_t size, const char *src)
 
 /**
  * @brief Find the first occurrence of find in s.
+ * @param[in] s
+ * @param[in] find
+ * @return
  */
 const char *Q_stristr(const char *s, const char *find)
 {
@@ -1475,6 +1676,11 @@ const char *Q_stristr(const char *s, const char *find)
 	return s;
 }
 
+/**
+ * @brief Q_PrintStrlen
+ * @param[in] string
+ * @return
+ */
 int Q_PrintStrlen(const char *string)
 {
 	int        len;
@@ -1503,6 +1709,8 @@ int Q_PrintStrlen(const char *string)
 
 /**
  * @brief Remove special characters and color sequences from string.
+ * @param[in,out] string
+ * @return
  */
 char *Q_CleanStr(char *string)
 {
@@ -1527,7 +1735,6 @@ char *Q_CleanStr(char *string)
 	return string;
 }
 
-
 /**
  * @brief Takes a plain "un-colored" string, and then colorizes it so the string is displayed in the given color.
  * If given a string such as "Bob" and asked to colorize to '1' (red)', the output would be "^1Bob". If given
@@ -1540,6 +1747,10 @@ char *Q_CleanStr(char *string)
  *	- Callers must pass in a buffer that is *at least* 3 bytes long.
  *  - inStr and outStr cannot overlap
  *
+ * @param[in] colorCode
+ * @param[in] inStr
+ * @param[out] outStr
+ * @param[in] outBufferLen
  */
 void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t outBufferLen)
 {
@@ -1589,7 +1800,11 @@ void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t ou
 	}
 }
 
-// strips whitespaces and bad characters
+/**
+ * @brief Strips whitespaces and bad characters
+ * @param[in] c
+ * @return
+ */
 qboolean Q_isBadDirChar(char c)
 {
 	char badchars[] = { ';', ':', '&', '(', ')', '|', '<', '>', '*', '?', '[', ']', '~', '+', '@', '!', '\\', '/', ' ', '\'', '\"', '\0' };
@@ -1606,6 +1821,11 @@ qboolean Q_isBadDirChar(char c)
 	return qfalse;
 }
 
+/**
+ * @brief Q_CleanDirName
+ * @param[in,out] dirname
+ * @return
+ */
 char *Q_CleanDirName(char *dirname)
 {
 	char *d = dirname;
@@ -1630,6 +1850,12 @@ char *Q_CleanDirName(char *dirname)
 	return dirname;
 }
 
+/**
+ * @brief Q_CountChar
+ * @param[in] string
+ * @param[in] tocount
+ * @return
+ */
 int Q_CountChar(const char *string, char tocount)
 {
 	int count;
@@ -1645,6 +1871,14 @@ int Q_CountChar(const char *string, char tocount)
 	return count;
 }
 
+/**
+ * @brief Q_GenerateHashValue
+ * @param[in] fname
+ * @param[in] size
+ * @param[in] fullPath
+ * @param[in] ignoreCase
+ * @return
+ */
 long Q_GenerateHashValue(const char *fname, int size, qboolean fullPath, qboolean ignoreCase)
 {
 	int  i    = 0;
@@ -1654,7 +1888,7 @@ long Q_GenerateHashValue(const char *fname, int size, qboolean fullPath, qboolea
 	if (!fname)
 	{
 		Com_Error(ERR_DROP, "Q_GenerateHashValue: null name");
-		return 0;
+		return 0; // FIXME: never executed
 	}
 
 	while (fname[i] != '\0')
@@ -1691,7 +1925,14 @@ long Q_GenerateHashValue(const char *fname, int size, qboolean fullPath, qboolea
 	return hash;
 }
 
-int QDECL Com_sprintf(char *dest, int size, const char *fmt, ...)
+/**
+ * @brief Com_sprintf
+ * @param dest
+ * @param size
+ * @param fmt
+ * @return
+ */
+int QDECL Com_sprintf(char *dest, size_t size, const char *fmt, ...)
 {
 	int     len;
 	va_list argptr;
@@ -1711,8 +1952,13 @@ int QDECL Com_sprintf(char *dest, int size, const char *fmt, ...)
 /**
  * @brief Does a varargs printf into a temp buffer, so I don't need to have
  * varargs versions of all text functions.
-
-char *QDECL va(char *format, ...)
+ * @param[in] format
+ * @return
+ *
+ * @note Unused
+ */
+/*
+char *QDECL va(const char *format, ...)
 {
     va_list     argptr;
     static char string[2][32000]; // in case va is called by nested functions
@@ -1728,20 +1974,21 @@ char *QDECL va(char *format, ...)
 
     return buf;
 }
- */
-
-/*
-============
-va
-
-does a varargs printf into a temp buffer, so I don't need to have
-varargs versions of all text functions.
-FIXME: make this buffer size safe someday
-
-- modified this into a circular list, to further prevent stepping on
-previous strings
-============
 */
+
+/**
+ * @brief Does a varargs printf into a temp buffer, so I don't need to have
+ * varargs versions of all text functions.
+ *
+ * @param[in] format
+ *
+ * @return
+ *
+ * @todo FIXME: make this buffer size safe someday
+ *
+ * @todo - modified this into a circular list, to further prevent stepping on
+ * previous strings
+ */
 char *QDECL va(const char *format, ...)
 {
 	va_list       argptr;
@@ -1775,6 +2022,8 @@ char *QDECL va(const char *format, ...)
 
 /**
  * @brief Assumes buffer is atleast TRUNCATE_LENGTH big
+ * @param[out] buffer
+ * @param[in] s
  */
 void Com_TruncateLongString(char *buffer, const char *s)
 {
@@ -1792,16 +2041,16 @@ void Com_TruncateLongString(char *buffer, const char *s)
 	}
 }
 
-/*
-=============
-TempVector
-
-This is straight out of g_utils.c around line 210
-
-This is just a convenience function
-for making temporary vectors for function calls
-=============
-*/
+/**
+ * @brief This is just a convenience function
+ * for making temporary vectors for function calls
+ * @param[in] x
+ * @param[in] y
+ * @param[in] z
+ * @return
+ *
+ * @see This is straight out of g_utils.c around line 210
+ */
 float *tv(float x, float y, float z)
 {
 	static int    index;
@@ -1828,6 +2077,9 @@ float *tv(float x, float y, float z)
 /**
  * @brief Searches the string for the given key and returns
  * the associated value, or an empty string.
+ * @param[in] s
+ * @param[in] key
+ * @return
  */
 char *Info_ValueForKey(const char *s, const char *key)
 {
@@ -1894,14 +2146,13 @@ char *Info_ValueForKey(const char *s, const char *key)
 	return "";
 }
 
-/*
-===================
-Info_NextPair
-
-Used to itterate through all the key/value pairs in an info string
-Return qfalse if we discover the infostring is invalid
-===================
-*/
+/**
+ * @brief Used to itterate through all the key/value pairs in an info string
+ * @param[in] head
+ * @param[out] key
+ * @param[out] value
+ * @return qfalse if we discover the infostring is invalid
+ */
 qboolean Info_NextPair(const char **head, char *key, char *value)
 {
 	char       *o;
@@ -1947,11 +2198,11 @@ qboolean Info_NextPair(const char **head, char *key, char *value)
 	return qtrue;
 }
 
-/*
-===================
-Info_RemoveKey
-===================
-*/
+/**
+ * @brief Info_RemoveKey
+ * @param[in,out] s
+ * @param[in] key
+ */
 void Info_RemoveKey(char *s, const char *key)
 {
 	char *start;
@@ -2014,11 +2265,11 @@ void Info_RemoveKey(char *s, const char *key)
 	}
 }
 
-/*
-===================
-Info_RemoveKey_Big
-===================
-*/
+/**
+ * @brief Info_RemoveKey_Big
+ * @param[in,out] s
+ * @param[in] key
+ */
 void Info_RemoveKey_Big(char *s, const char *key)
 {
 	char *start;
@@ -2079,14 +2330,12 @@ void Info_RemoveKey_Big(char *s, const char *key)
 	}
 }
 
-/*
-==================
-Info_Validate
-
-Some characters are illegal in info strings because they
-can mess up the server's parsing
-==================
-*/
+/**
+ * @brief Some characters are illegal in info strings because they
+ * can mess up the server's parsing
+ * @param[in] s
+ * @return
+ */
 qboolean Info_Validate(const char *s)
 {
 	if (strchr(s, '\"'))
@@ -2100,13 +2349,12 @@ qboolean Info_Validate(const char *s)
 	return qtrue;
 }
 
-/*
-==================
-Info_SetValueForKey
-
-Changes or adds a key/value pair
-==================
-*/
+/**
+ * @brief Changes or adds a key/value pair
+ * @param[in,out] s
+ * @param[in] key
+ * @param[in] value
+ */
 void Info_SetValueForKey(char *s, const char *key, const char *value)
 {
 	char newi[MAX_INFO_STRING];
@@ -2151,13 +2399,12 @@ void Info_SetValueForKey(char *s, const char *key, const char *value)
 	strcat(s, newi);
 }
 
-/*
-==================
-Info_SetValueForKey_Big
-
-Changes or adds a key/value pair
-==================
-*/
+/**
+ * @brief Changes or adds a key/value pair
+ * @param[in,out] s
+ * @param[in] key
+ * @param[in] value
+ */
 void Info_SetValueForKey_Big(char *s, const char *key, const char *value)
 {
 	char newi[BIG_INFO_STRING];
@@ -2202,14 +2449,21 @@ void Info_SetValueForKey_Big(char *s, const char *key, const char *value)
 	strcat(s, newi);
 }
 
+/**
+ * @brief Q_StrReplace
+ * @param[in,out] haystack
+ * @param[in] needle
+ * @param[in] newp
+ * @return
+ */
 char *Q_StrReplace(char *haystack, char *needle, char *newp)
 {
 	static char final[MAX_STRING_CHARS] = { "" };
 	char        dest[MAX_STRING_CHARS]  = { "" };
 	char        new[MAX_STRING_CHARS]   = { "" };
 	char        *destp;
-	int         needle_len = 0;
-	int         new_len    = 0;
+	size_t      needle_len = 0;
+	size_t      new_len    = 0;
 
 	if (!haystack || !*haystack)
 	{
@@ -2252,14 +2506,15 @@ char *Q_StrReplace(char *haystack, char *needle, char *newp)
 
 //====================================================================
 
-/*
-==================
-Com_CharIsOneOfCharset
-==================
-*/
-static qboolean Com_CharIsOneOfCharset(char c, char *set)
+/**
+ * @brief Com_CharIsOneOfCharset
+ * @param[in] c
+ * @param[in] set
+ * @return
+ */
+static qboolean Com_CharIsOneOfCharset(char c, const char *set)
 {
-	int i;
+	unsigned int i;
 
 	for (i = 0; i < strlen(set); i++)
 	{
@@ -2272,11 +2527,12 @@ static qboolean Com_CharIsOneOfCharset(char c, char *set)
 	return qfalse;
 }
 
-/*
-==================
-Com_SkipCharset
-==================
-*/
+/**
+ * @brief Com_SkipCharset
+ * @param[in] s
+ * @param[in] sep
+ * @return
+ */
 char *Com_SkipCharset(char *s, char *sep)
 {
 	char *p = s;
@@ -2296,12 +2552,14 @@ char *Com_SkipCharset(char *s, char *sep)
 	return p;
 }
 
-/*
-==================
-Com_SkipTokens
-==================
-*/
-char *Com_SkipTokens(char *s, int numTokens, char *sep)
+/**
+ * @brief Com_SkipTokens
+ * @param[in] s
+ * @param[in] numTokens
+ * @param[in] sep
+ * @return
+ */
+char *Com_SkipTokens(char *s, int numTokens, const char *sep)
 {
 	int  sepCount = 0;
 	char *p       = s;
@@ -2331,6 +2589,11 @@ char *Com_SkipTokens(char *s, int numTokens, char *sep)
 }
 
 #if defined(_MSC_VER) && (_MSC_VER < 1800)
+/**
+ * @brief rint
+ * @param[in] v
+ * @return
+ */
 float rint(float v)
 {
 	if (v >= 0.5f)
@@ -2344,6 +2607,15 @@ float rint(float v)
 }
 #endif
 
+/**
+ * @brief Q_LinearSearch
+ * @param[in] key
+ * @param[in] ptr
+ * @param[in] count
+ * @param[in] size
+ * @param[in] cmp
+ * @return
+ */
 void *Q_LinearSearch(const void *key, const void *ptr, size_t count, size_t size, cmpFunc_t cmp)
 {
 	size_t i;

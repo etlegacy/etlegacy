@@ -40,7 +40,12 @@
 
 static int bloc = 0;
 
-// clears data along the way so we dont have to memset() it ahead of time
+/**
+ * @brief Clears data along the way so we dont have to memset() it ahead of time
+ * @param[in] bit
+ * @param[out] fout
+ * @param[out] offset
+ */
 void Huff_putBit(int bit, byte *fout, int *offset)
 {
 	int x, y;
@@ -57,6 +62,12 @@ void Huff_putBit(int bit, byte *fout, int *offset)
 	*offset = bloc;
 }
 
+/**
+ * @brief Huff_getBit
+ * @param[in] fin
+ * @param[in,out] offset
+ * @return
+ */
 int Huff_getBit(byte *fin, int *offset)
 {
 	int t;
@@ -70,8 +81,11 @@ int Huff_getBit(byte *fin, int *offset)
 
 /**
  * @brief Clears data along the way so we dont have to memset() it ahead of time
+ *
+ * @param[in] bit
+ * @param[out] fout
  */
-static void add_bit(char bit, byte *fout)
+static void add_bit(const char bit, byte *fout)
 {
 	int x, y;
 
@@ -84,6 +98,11 @@ static void add_bit(char bit, byte *fout)
 	fout[y] |= bit << x;
 }
 
+/**
+ * @brief get_bit
+ * @param[in] fin
+ * @return
+ */
 static int get_bit(byte *fin)
 {
 	int t;
@@ -93,6 +112,11 @@ static int get_bit(byte *fin)
 	return t;
 }
 
+/**
+ * @brief get_ppnode
+ * @param[in,out] huff
+ * @return
+ */
 static node_t **get_ppnode(huff_t *huff)
 {
 	if (!huff->freelist)
@@ -108,6 +132,11 @@ static node_t **get_ppnode(huff_t *huff)
 	}
 }
 
+/**
+ * @brief free_ppnode
+ * @param[in,out] huff
+ * @param[in,out] ppnode
+ */
 static void free_ppnode(huff_t *huff, node_t **ppnode)
 {
 	*ppnode        = (node_t *)huff->freelist;
@@ -116,6 +145,9 @@ static void free_ppnode(huff_t *huff, node_t **ppnode)
 
 /**
  * @brief Swap the location of these two nodes in the tree
+ * @param[out] huff
+ * @param[in,out] node1
+ * @param[in,out] node2
  */
 static void swap(huff_t *huff, node_t *node1, node_t *node2)
 {
@@ -160,6 +192,8 @@ static void swap(huff_t *huff, node_t *node1, node_t *node2)
 
 /**
  * @brief Swap these two nodes in the linked list (update ranks)
+ * @param[in,out] node1
+ * @param[in,out] node2
  */
 static void swaplist(node_t *node1, node_t *node2)
 {
@@ -200,6 +234,8 @@ static void swaplist(node_t *node1, node_t *node2)
 
 /**
  * @brief Do the increments
+ * @param[in] huff
+ * @param[in,out] node
  */
 static void increment(huff_t *huff, node_t *node)
 {
@@ -251,6 +287,11 @@ static void increment(huff_t *huff, node_t *node)
 	}
 }
 
+/**
+ * @brief Huff_addRef
+ * @param[in,out] huff
+ * @param[in] ch
+ */
 void Huff_addRef(huff_t *huff, byte ch)
 {
 	if (huff->loc[ch] == NULL)     // if this is the first transmission of this node
@@ -343,6 +384,10 @@ void Huff_addRef(huff_t *huff, byte ch)
 
 /**
  * @brief Get a symbol
+ * @param[in] node
+ * @param[out] ch
+ * @param[in] fin
+ * @return
  */
 int Huff_Receive(node_t *node, int *ch, byte *fin)
 {
@@ -367,6 +412,10 @@ int Huff_Receive(node_t *node, int *ch, byte *fin)
 
 /**
  * @brief Get a symbol
+ * @param[in] node
+ * @param[out] ch
+ * @param[in] fin
+ * @param[out] offset
  */
 void Huff_offsetReceive(node_t *node, int *ch, byte *fin, int *offset)
 {
@@ -394,6 +443,9 @@ void Huff_offsetReceive(node_t *node, int *ch, byte *fin, int *offset)
 
 /**
  * @brief Send the prefix code for this node
+ * @param[in] node
+ * @param[in] child
+ * @param[in] fout
  */
 static void send(node_t *node, node_t *child, byte *fout)
 {
@@ -415,7 +467,10 @@ static void send(node_t *node, node_t *child, byte *fout)
 }
 
 /**
- * @brief Send a symbol
+ * @brief Huff_transmit
+ * @param[in] huff
+ * @param[in] ch
+ * @param[out] fout
  */
 void Huff_transmit(huff_t *huff, int ch, byte *fout)
 {
@@ -436,6 +491,13 @@ void Huff_transmit(huff_t *huff, int ch, byte *fout)
 	}
 }
 
+/**
+ * @brief Huff_offsetTransmit
+ * @param[in] huff
+ * @param[in] ch
+ * @param[out] fout
+ * @param[in,out] offset
+ */
 void Huff_offsetTransmit(huff_t *huff, int ch, byte *fout, int *offset)
 {
 	bloc = *offset;
@@ -443,6 +505,11 @@ void Huff_offsetTransmit(huff_t *huff, int ch, byte *fout, int *offset)
 	*offset = bloc;
 }
 
+/**
+ * @brief Huff_Decompress
+ * @param[in,out] mbuf
+ * @param[in] offset
+ */
 void Huff_Decompress(msg_t *mbuf, int offset)
 {
 	int    ch, cch, i, j, size;
@@ -504,6 +571,11 @@ void Huff_Decompress(msg_t *mbuf, int offset)
 
 extern int oldsize;
 
+/**
+ * @brief Huff_Compress
+ * @param[in,out] mbuf
+ * @param[in] offset
+ */
 void Huff_Compress(msg_t *mbuf, int offset)
 {
 	int    i, ch, size;
@@ -546,6 +618,10 @@ void Huff_Compress(msg_t *mbuf, int offset)
 	Com_Memcpy(mbuf->data + offset, seq, (bloc >> 3));
 }
 
+/**
+ * @brief Huff_Init
+ * @param[in,out] huff
+ */
 void Huff_Init(huffman_t *huff)
 {
 	Com_Memset(&huff->compressor, 0, sizeof(huff_t));

@@ -56,18 +56,30 @@ const char *vmStrs[MAX_VM] =
 void VM_VmInfo_f(void);
 void VM_VmProfile_f(void);
 
-// converts a VM pointer to a C pointer and
-// checks to make sure that the range is acceptable
+/**
+ * @brief Converts a VM pointer to a C pointer and
+ * checks to make sure that the range is acceptable
+ * @param[in] p
+ * @param length - unused
+ * @return
+ */
 void *VM_VM2C(vmptr_t p, int length)
 {
 	return (void *)p;
 }
 
+/**
+ * @brief VM_Debug
+ * @param[in] level
+ */
 void VM_Debug(int level)
 {
 	vm_debugLevel = level;
 }
 
+/**
+ * @brief VM_Init
+ */
 void VM_Init(void)
 {
 	Cmd_AddCommand("vmprofile", VM_VmProfile_f); // FIXME: doesn't print anything with +set developer 1
@@ -76,8 +88,11 @@ void VM_Init(void)
 	Com_Memset(vmTable, 0, sizeof(vmTable));
 }
 
-/*
- * Assumes a program counter value
+/**
+ * @brief Assumes a program counter value
+ * @param[in,out] vm
+ * @param[in] value
+ * @return
  */
 const char *VM_ValueToSymbol(vm_t *vm, int value)
 {
@@ -105,8 +120,11 @@ const char *VM_ValueToSymbol(vm_t *vm, int value)
 	return text;
 }
 
-/*
- * For profiling, find the symbol behind this value
+/**
+ * @brief For profiling, find the symbol behind this value
+ * @param[in,out] vm
+ * @param[in] value
+ * @return
  */
 vmSymbol_t *VM_ValueToFunctionSymbol(vm_t *vm, int value)
 {
@@ -126,6 +144,12 @@ vmSymbol_t *VM_ValueToFunctionSymbol(vm_t *vm, int value)
 	return sym;
 }
 
+/**
+ * @brief VM_SymbolToValue
+ * @param[in,out] vm
+ * @param[in] symbol
+ * @return
+ */
 int VM_SymbolToValue(vm_t *vm, const char *symbol)
 {
 	vmSymbol_t *sym;
@@ -140,6 +164,11 @@ int VM_SymbolToValue(vm_t *vm, const char *symbol)
 	return 0;
 }
 
+/**
+ * @brief ParseHex
+ * @param[in] text
+ * @return
+ */
 int ParseHex(const char *text)
 {
 	int value = 0;
@@ -167,138 +196,148 @@ int ParseHex(const char *text)
 	return value;
 }
 
-/*
- * @brief unused
+/**
+ * @brief VM_LoadSymbols
+ * @param[in,out] vm
+ * @note Unused
  */
+/*
 void VM_LoadSymbols(vm_t *vm)
 {
-	union
-	{
-		char *c;
-		void *v;
-	} mapfile;
-	char       *text_p, *token;
-	char       name[MAX_QPATH];
-	char       symbols[MAX_QPATH];
-	vmSymbol_t **prev, *sym;
-	int        count;
-	int        value;
-	size_t     chars;
-	int        segment;
-	int        numInstructions;
+    union
+    {
+        char *c;
+        void *v;
+    } mapfile;
+    char       *text_p, *token;
+    char       name[MAX_QPATH];
+    char       symbols[MAX_QPATH];
+    vmSymbol_t **prev, *sym;
+    int        count;
+    int        value;
+    size_t     chars;
+    int        segment;
+    int        numInstructions;
 
-	// don't load symbols if not developer
-	if (!com_developer->integer)
-	{
-		return;
-	}
+    // don't load symbols if not developer
+    if (!com_developer->integer)
+    {
+        return;
+    }
 
-	COM_StripExtension(vm->name, name, sizeof(name));
-	Com_sprintf(symbols, sizeof(symbols), "vm/%s.map", name);
-	FS_ReadFile(symbols, &mapfile.v);
-	if (!mapfile.c)
-	{
-		Com_Printf("Couldn't load symbol file: %s\n", symbols);
-		return;
-	}
+    COM_StripExtension(vm->name, name, sizeof(name));
+    Com_sprintf(symbols, sizeof(symbols), "vm/%s.map", name);
+    FS_ReadFile(symbols, &mapfile.v);
+    if (!mapfile.c)
+    {
+        Com_Printf("Couldn't load symbol file: %s\n", symbols);
+        return;
+    }
 
-	numInstructions = vm->instructionPointersLength >> 2;
+    numInstructions = vm->instructionPointersLength >> 2;
 
-	// parse the symbols
-	text_p = mapfile.c;
-	prev   = &vm->symbols;
-	count  = 0;
+    // parse the symbols
+    text_p = mapfile.c;
+    prev   = &vm->symbols;
+    count  = 0;
 
-	while (1)
-	{
-		token = COM_Parse(&text_p);
-		if (!token[0])
-		{
-			break;
-		}
-		segment = ParseHex(token);
-		if (segment)
-		{
-			COM_Parse(&text_p);
-			COM_Parse(&text_p);
-			continue;       // only load code segment values
-		}
+    while (1)
+    {
+        token = COM_Parse(&text_p);
+        if (!token[0])
+        {
+            break;
+        }
+        segment = ParseHex(token);
+        if (segment)
+        {
+            COM_Parse(&text_p);
+            COM_Parse(&text_p);
+            continue;       // only load code segment values
+        }
 
-		token = COM_Parse(&text_p);
-		if (!token[0])
-		{
-			Com_Printf("WARNING: incomplete line at end of file\n");
-			break;
-		}
-		value = ParseHex(token);
+        token = COM_Parse(&text_p);
+        if (!token[0])
+        {
+            Com_Printf("WARNING: incomplete line at end of file\n");
+            break;
+        }
+        value = ParseHex(token);
 
-		token = COM_Parse(&text_p);
-		if (!token[0])
-		{
-			Com_Printf("WARNING: incomplete line at end of file\n");
-			break;
-		}
-		chars     = strlen(token);
-		sym       = Hunk_Alloc(sizeof(*sym) + chars, h_high);
-		*prev     = sym;
-		prev      = &sym->next;
-		sym->next = NULL;
+        token = COM_Parse(&text_p);
+        if (!token[0])
+        {
+            Com_Printf("WARNING: incomplete line at end of file\n");
+            break;
+        }
+        chars     = strlen(token);
+        sym       = Hunk_Alloc(sizeof(*sym) + chars, h_high);
+        *prev     = sym;
+        prev      = &sym->next;
+        sym->next = NULL;
 
-		// convert value from an instruction number to a code offset
-		if (value >= 0 && value < numInstructions)
-		{
-			value = vm->instructionPointers[value];
-		}
+        // convert value from an instruction number to a code offset
+        if (value >= 0 && value < numInstructions)
+        {
+            value = vm->instructionPointers[value];
+        }
 
-		sym->symValue = value;
-		Q_strncpyz(sym->symName, token, chars + 1);
+        sym->symValue = value;
+        Q_strncpyz(sym->symName, token, chars + 1);
 
-		count++;
-	}
+        count++;
+    }
 
-	vm->numSymbols = count;
-	Com_Printf("%i symbols parsed from %s\n", count, symbols);
-	FS_FreeFile(mapfile.v);
+    vm->numSymbols = count;
+    Com_Printf("%i symbols parsed from %s\n", count, symbols);
+    FS_FreeFile(mapfile.v);
 }
+*/
 
 /*
 ============
 VM_DllSyscall
 
-Dlls will call this directly
 
- rcg010206 The horror; the horror.
-
-  The syscall mechanism relies on stack manipulation to get it's args.
-   This is likely due to C's inability to pass "..." parameters to
-   a function in one clean chunk. On PowerPC Linux, these parameters
-   are not necessarily passed on the stack, so while (&arg[0] == arg)
-   is true, (&arg[1] == 2nd function parameter) is not necessarily
-   accurate, as arg's value might have been stored to the stack or
-   other piece of scratch memory to give it a valid address, but the
-   next parameter might still be sitting in a register.
-
-  Quake's syscall system also assumes that the stack grows downward,
-   and that any needed types can be squeezed, safely, into a signed int.
-
-  This hack below copies all needed values for an argument to a
-   array in memory, so that Quake can get the correct values. This can
-   also be used on systems where the stack grows upwards, as the
-   presumably standard and safe stdargs.h macros are used.
-
-  As for having enough space in a signed int for your datatypes, well,
-   it might be better to wait for DOOM 3 before you start porting.  :)
-
-  The original code, while probably still inherently dangerous, seems
-   to work well enough for the platforms it already works on. Rather
-   than add the performance hit for those platforms, the original code
-   is still in use there.
-
-  For speed, we just grab 15 arguments, and don't worry about exactly
-   how many the syscall actually needs; the extra is thrown away.
 
 ============
 */
+/**
+ * @brief Dlls will call this directly
+ *
+ * @details cg010206 The horror; the horror.
+ *
+ * The syscall mechanism relies on stack manipulation to get it's args.
+ *  This is likely due to C's inability to pass "..." parameters to
+ *  a function in one clean chunk. On PowerPC Linux, these parameters
+ *  are not necessarily passed on the stack, so while (&arg[0] == arg)
+ *  is true, (&arg[1] == 2nd function parameter) is not necessarily
+ *  accurate, as arg's value might have been stored to the stack or
+ *  other piece of scratch memory to give it a valid address, but the
+ *  next parameter might still be sitting in a register.
+ *
+ * Quake's syscall system also assumes that the stack grows downward,
+ *  and that any needed types can be squeezed, safely, into a signed int.
+ *
+ * This hack below copies all needed values for an argument to a
+ *  array in memory, so that Quake can get the correct values. This can
+ *  also be used on systems where the stack grows upwards, as the
+ *  presumably standard and safe stdargs.h macros are used.
+ *
+ * As for having enough space in a signed int for your datatypes, well,
+ *  it might be better to wait for DOOM 3 before you start porting.  :)
+ *
+ * The original code, while probably still inherently dangerous, seems
+ *  to work well enough for the platforms it already works on. Rather
+ *  than add the performance hit for those platforms, the original code
+ *  is still in use there.
+ *
+ * For speed, we just grab 15 arguments, and don't worry about exactly
+ *  how many the syscall actually needs; the extra is thrown away.
+ *
+ * @param[in] arg
+ * @return
+ */
 intptr_t QDECL VM_DllSyscall(intptr_t arg, ...)
 {
 #if defined(__x86_64__) || defined (__llvm__) || ((defined __linux__) && (defined __powerpc__))
@@ -322,14 +361,16 @@ intptr_t QDECL VM_DllSyscall(intptr_t arg, ...)
 #endif
 }
 
-/*
- * Reload the data, but leave everything else in place
+/**
+ * @brief Reload the data, but leave everything else in place
  * This allows a server to do a map_restart without changing memory allocation
+ * @param[in,out] vm
+ * @return
  */
 vm_t *VM_Restart(vm_t *vm)
 {
 	vmHeader_t *header;
-	int        dataLength;
+	size_t     dataLength;
 	int        i;
 	char       filename[MAX_QPATH];
 
@@ -399,12 +440,16 @@ vm_t *VM_Restart(vm_t *vm)
 	return vm;
 }
 
-/*
- * If image ends in .qvm it will be interpreted, otherwise it will attempt to
- * load as a system dll
- */
 #define STACK_SIZE  0x20000
 
+/**
+ * @brief If image ends in .qvm it will be interpreted, otherwise it will attempt to
+ * load as a system dll
+ * @param module
+ * @param extract
+ * @param interpret
+ * @return
+ */
 vm_t *VM_Create(const char *module, qboolean extract, intptr_t (*systemCalls)(intptr_t *), vmInterpret_t interpret)
 {
 	vm_t *vm;
@@ -541,6 +586,10 @@ vm_t *VM_Create(const char *module, qboolean extract, intptr_t (*systemCalls)(in
 #endif
 }
 
+/**
+ * @brief VM_Free
+ * @param[in,out] vm
+ */
 void VM_Free(vm_t *vm)
 {
 	if (vm->dllHandle)
@@ -568,6 +617,9 @@ void VM_Free(vm_t *vm)
 	lastVM    = NULL;
 }
 
+/**
+ * @brief VM_Clear
+ */
 void VM_Clear(void)
 {
 	int i;
@@ -584,6 +636,11 @@ void VM_Clear(void)
 	lastVM    = NULL;
 }
 
+/**
+ * @brief VM_ArgPtr
+ * @param[in] intValue
+ * @return
+ */
 void *VM_ArgPtr(intptr_t intValue)
 {
 	if (!intValue)
@@ -606,6 +663,12 @@ void *VM_ArgPtr(intptr_t intValue)
 	}
 }
 
+/**
+ * @brief VM_ExplicitArgPtr
+ * @param[in] vm
+ * @param[in] intValue
+ * @return
+ */
 void *VM_ExplicitArgPtr(vm_t *vm, intptr_t intValue)
 {
 	if (!intValue)
@@ -630,7 +693,11 @@ void *VM_ExplicitArgPtr(vm_t *vm, intptr_t intValue)
 }
 
 /*
- * Upon a system call, the stack will look like:
+
+ */
+/**
+ * @brief VM_CallFunc
+ * @details Upon a system call, the stack will look like:
  *
  * sp+32   parm1
  * sp+28   parm0
@@ -645,6 +712,10 @@ void *VM_ExplicitArgPtr(vm_t *vm, intptr_t intValue)
  *
  * An interpreted function will immediately execute an OP_ENTER instruction,
  * which will subtract space for locals from sp
+ *
+ * @param[in] vm
+ * @param[in] callnum
+ * @return
  */
 intptr_t QDECL VM_CallFunc(vm_t *vm, int callnum, ...)
 {
@@ -671,7 +742,7 @@ intptr_t QDECL VM_CallFunc(vm_t *vm, int callnum, ...)
 		// rcg010207 -  see dissertation at top of VM_DllSyscall() in this file.
 		intptr_t args[VM_SYSCALL_ARGS] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		va_list  ap;
-		int      i;
+		size_t   i;
 
 		va_start(ap, callnum);
 		for (i = 0; i < ARRAY_LEN(args); i++)
@@ -713,6 +784,12 @@ intptr_t QDECL VM_CallFunc(vm_t *vm, int callnum, ...)
 	return r;
 }
 
+/**
+ * @brief VM_ProfileSort
+ * @param[in] a
+ * @param[in] b
+ * @return
+ */
 static int QDECL VM_ProfileSort(const void *a, const void *b)
 {
 	vmSymbol_t *sa, *sb;
@@ -731,6 +808,9 @@ static int QDECL VM_ProfileSort(const void *a, const void *b)
 	return 0;
 }
 
+/**
+ * @brief VM_VmProfile_f
+ */
 void VM_VmProfile_f(void)
 {
 	vm_t       *vm;
@@ -778,6 +858,9 @@ void VM_VmProfile_f(void)
 	Z_Free(sorted);
 }
 
+/**
+ * @brief VM_VmInfo_f
+ */
 void VM_VmInfo_f(void)
 {
 	vm_t *vm;
@@ -811,8 +894,9 @@ void VM_VmInfo_f(void)
 	}
 }
 
-/*
- * Insert calls to this while debugging the vm compiler
+/**
+ * @brief Insert calls to this while debugging the vm compiler
+ * @param args
  */
 void VM_LogSyscalls(int *args)
 {

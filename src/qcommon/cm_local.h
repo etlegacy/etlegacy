@@ -39,21 +39,27 @@
 #include "qcommon.h"
 #include "cm_polylib.h"
 
-// originally was 256 and 255 but needs more than that
-// since this includes func_static and func_explosives
+/// originally was 256 and 255 but needs more than that
+/// since this includes func_static and func_explosives
 #define MAX_SUBMODELS           512
 #define BOX_MODEL_HANDLE        511
 #define CAPSULE_MODEL_HANDLE    510
 
-// enable to make the collision detection a bunch faster
+/// enable to make the collision detection a bunch faster
 #define MRE_OPTIMIZE
 
+/**
+ * @struct cNode_t
+ */
 typedef struct
 {
 	cplane_t *plane;
-	int children[2];                // negative numbers are leafs
+	int children[2];                ///< negative numbers are leafs
 } cNode_t;
 
+/**
+ * @struct cLeaf_t
+ */
 typedef struct
 {
 	int cluster;
@@ -66,12 +72,18 @@ typedef struct
 	int numLeafSurfaces;
 } cLeaf_t;
 
+/**
+ * @struct cmodel_t
+ */
 typedef struct cmodel_s
 {
 	vec3_t mins, maxs;
-	cLeaf_t leaf;               // submodels don't reference the main tree
+	cLeaf_t leaf;               ///< submodels don't reference the main tree
 } cmodel_t;
 
+/**
+ * @struct cbrushside_t
+ */
 typedef struct
 {
 	cplane_t *plane;
@@ -79,30 +91,42 @@ typedef struct
 	int shaderNum;
 } cbrushside_t;
 
+/**
+ * @struct cbrush_t
+ */
 typedef struct
 {
-	int shaderNum;              // the shader that determined the contents
+	int shaderNum;              ///< the shader that determined the contents
 	int contents;
 	vec3_t bounds[2];
 	int numsides;
 	cbrushside_t *sides;
-	int checkcount;             // to avoid repeated testings
+	int checkcount;            ///< to avoid repeated testings
 } cbrush_t;
 
+/**
+ * @struct cPatch_t
+ */
 typedef struct
 {
-	int checkcount;                     // to avoid repeated testings
+	int checkcount;                    ///< to avoid repeated testings
 	int surfaceFlags;
 	int contents;
 	struct patchCollide_s *pc;
 } cPatch_t;
 
+/**
+ * @struct cArea_t
+ */
 typedef struct
 {
 	int floodnum;
 	int floodvalid;
 } cArea_t;
 
+/**
+ * @struct clipMap_t
+ */
 typedef struct
 {
 	char name[MAX_QPATH];
@@ -137,26 +161,26 @@ typedef struct
 	int numClusters;
 	int clusterBytes;
 	byte *visibility;
-	qboolean vised;             // if false, visibility is just a single cluster of ffs
+	qboolean vised;             ///< if false, visibility is just a single cluster of ffs
 
-	int numEntityChars;
+	//int numEntityChars;     // NOTE: Unused
 	char *entityString;
 
 	int numAreas;
 	cArea_t *areas;
-	int *areaPortals;           // [ numAreas*numAreas ] reference counts
+	int *areaPortals;           ///< [ numAreas*numAreas ] reference counts
 
 	int numSurfaces;
-	cPatch_t **surfaces;            // non-patches will be NULL
+	cPatch_t **surfaces;            ///< non-patches will be NULL
 
 	int floodvalid;
-	int checkcount;                         // incremented on each trace
+	int checkcount;                         ///< incremented on each trace
 } clipMap_t;
 
 
-// keep 1/8 unit away to keep the position valid before network snapping
-// and to avoid various numeric issues
-#define SURFACE_CLIP_EPSILON    (0.125)
+/// keep 1/8 unit away to keep the position valid before network snapping
+/// and to avoid various numeric issues
+#define SURFACE_CLIP_EPSILON    (0.125f)
 
 extern clipMap_t cm;
 extern int       c_pointcontents;
@@ -168,7 +192,10 @@ extern cvar_t    *cm_optimize;
 
 // cm_test.c
 
-// Used for oriented capsule collision detection
+/**
+ * @struct sphere_t
+ * @brief Used for oriented capsule collision detection
+ */
 typedef struct
 {
 	qboolean use;
@@ -177,20 +204,23 @@ typedef struct
 	vec3_t offset;
 } sphere_t;
 
+/**
+ * @struct traceWork_t
+ */
 typedef struct
 {
 	vec3_t start;
 	vec3_t end;
-	vec3_t size[2];         // size of the box being swept through the model
-	vec3_t offsets[8];      // [signbits][x] = either size[0][x] or size[1][x]
-	float maxOffset;        // longest corner length from origin
-	vec3_t extents;         // greatest of abs(size[0]) and abs(size[1])
-	vec3_t bounds[2];       // enclosing box of start and end surrounding by size
-	vec3_t modelOrigin;     // origin of the model tracing through
-	int contents;           // ored contents of the model tracing through
-	qboolean isPoint;       // optimized case
-	trace_t trace;          // returned from trace call
-	sphere_t sphere;        // sphere for oriendted capsule collision
+	vec3_t size[2];         ///< size of the box being swept through the model
+	vec3_t offsets[8];      ///< [signbits][x] = either size[0][x] or size[1][x]
+	float maxOffset;        ///< longest corner length from origin
+	vec3_t extents;         ///< greatest of abs(size[0]) and abs(size[1])
+	vec3_t bounds[2];       ///< enclosing box of start and end surrounding by size
+	vec3_t modelOrigin;     ///< origin of the model tracing through
+	int contents;           ///< ored contents of the model tracing through
+	qboolean isPoint;       ///< optimized case
+	trace_t trace;          ///< returned from trace call
+	sphere_t sphere;        ///< sphere for oriendted capsule collision
 
 	cplane_t tracePlane1;
 	cplane_t tracePlane2;
@@ -200,6 +230,9 @@ typedef struct
 
 } traceWork_t;
 
+/**
+ * @struct leafList_t
+ */
 typedef struct leafList_s
 {
 	int count;
@@ -207,7 +240,7 @@ typedef struct leafList_s
 	qboolean overflowed;
 	int *list;
 	vec3_t bounds[2];
-	int lastLeaf;           // for overflows where each leaf can't be stored individually
+	int lastLeaf;           ///< for overflows where each leaf can't be stored individually
 	void (*storeLeafs)(struct leafList_s *ll, int nodenum);
 } leafList_t;
 

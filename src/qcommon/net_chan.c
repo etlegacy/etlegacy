@@ -56,10 +56,10 @@ channel matches even if the IP port differs.  The IP port should be updated
 to the new value before sending out any replies.
 */
 
-#define MAX_PACKETLEN           1400        // max size of a network packet
+#define MAX_PACKETLEN           1400        ///< max size of a network packet
 
 #define FRAGMENT_SIZE           (MAX_PACKETLEN - 100)
-#define PACKET_HEADER           10          // two ints and a short
+#define PACKET_HEADER           10          ///< two ints and a short
 
 #define FRAGMENT_BIT    (1 << 31)
 
@@ -67,17 +67,16 @@ cvar_t *showpackets;
 cvar_t *showdrop;
 cvar_t *qport;
 
-static char *netsrcString[2] =
+static const char *netsrcString[2] =
 {
 	"client",
 	"server"
 };
 
-/*
-===============
-Netchan_Init
-===============
-*/
+/**
+ * @brief Netchan_Init
+ * @param[in] port
+ */
 void Netchan_Init(int port)
 {
 	port       &= 0xffff;
@@ -86,13 +85,13 @@ void Netchan_Init(int port)
 	qport       = Cvar_Get("net_qport", va("%i", port), CVAR_INIT);
 }
 
-/*
-==============
-Netchan_Setup
-
-called to open a channel to a remote system
-==============
-*/
+/**
+ * @brief Called to open a channel to a remote system
+ * @param[in] sock
+ * @param[out] chan
+ * @param[in] adr
+ * @param[in] qport
+ */
 void Netchan_Setup(netsrc_t sock, netchan_t *chan, netadr_t adr, int qport)
 {
 	Com_Memset(chan, 0, sizeof(*chan));
@@ -104,13 +103,10 @@ void Netchan_Setup(netsrc_t sock, netchan_t *chan, netadr_t adr, int qport)
 	chan->outgoingSequence = 1;
 }
 
-/*
-=================
-Netchan_TransmitNextFragment
-
-Send one fragment of the current message
-=================
-*/
+/**
+ * @brief Send one fragment of the current message.
+ * @param[in,out] chan
+ */
 void Netchan_TransmitNextFragment(netchan_t *chan)
 {
 	msg_t send;
@@ -168,15 +164,13 @@ void Netchan_TransmitNextFragment(netchan_t *chan)
 	}
 }
 
-
-/*
-===============
-Netchan_Transmit
-
-Sends a message to a connection, fragmenting if necessary
-A 0 length will still generate a packet.
-================
-*/
+/**
+ * @brief Sends a message to a connection, fragmenting if necessary
+ * A 0 length will still generate a packet.
+ * @param[in,out] chan
+ * @param[in] length
+ * @param[in] data
+ */
 void Netchan_Transmit(netchan_t *chan, int length, const byte *data)
 {
 	msg_t send;
@@ -236,8 +230,11 @@ void Netchan_Transmit(netchan_t *chan, int length, const byte *data)
  * @brief Msg must be large enough to hold #MAX_MSGLEN, because if this is the
  * final fragment of a multi-part message, the entire thing will be copied out.
  *
- * @retval qfalse   if the message should not be processed due to being
- *                  out of order or a fragment.
+ * @param[in,out] chan
+ * @param[in,out] msg
+ *
+ * @return qfalse if the message should not be processed due to being
+ *                out of order or a fragment.
  */
 qboolean Netchan_Process(netchan_t *chan, msg_t *msg)
 {
@@ -405,7 +402,7 @@ qboolean Netchan_Process(netchan_t *chan, msg_t *msg)
 
 //==============================================================================
 
-/*
+/**
 =============================================================================
 
 LOOPBACK BUFFERS FOR LOCAL PLAYER
@@ -413,16 +410,22 @@ LOOPBACK BUFFERS FOR LOCAL PLAYER
 =============================================================================
 */
 
-// there needs to be enough loopback messages to hold a complete
-// gamestate of maximum size
+/// There needs to be enough loopback messages to hold a complete
+/// gamestate of maximum size
 #define MAX_LOOPBACK    16
 
+/**
+ * @struct loopmsg_t
+ */
 typedef struct
 {
 	byte data[MAX_PACKETLEN];
 	int datalen;
 } loopmsg_t;
 
+/**
+ * @struct loopback_t
+ */
 typedef struct
 {
 	loopmsg_t msgs[MAX_LOOPBACK];
@@ -431,8 +434,14 @@ typedef struct
 
 loopback_t loopbacks[2];
 
-
-qboolean    NET_GetLoopPacket(netsrc_t sock, netadr_t *net_from, msg_t *net_message)
+/**
+ * @brief NET_GetLoopPacket
+ * @param[in] sock
+ * @param[out] net_from
+ * @param[out] net_message
+ * @return
+ */
+qboolean NET_GetLoopPacket(netsrc_t sock, netadr_t *net_from, msg_t *net_message)
 {
 	int        i;
 	loopback_t *loop;
@@ -460,6 +469,13 @@ qboolean    NET_GetLoopPacket(netsrc_t sock, netadr_t *net_from, msg_t *net_mess
 
 }
 
+/**
+ * @brief NET_SendLoopPacket
+ * @param[in] sock
+ * @param[in] length
+ * @param[in] data
+ * @param to - unused
+ */
 void NET_SendLoopPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 {
 	int        i;
@@ -476,6 +492,9 @@ void NET_SendLoopPacket(netsrc_t sock, int length, const void *data, netadr_t to
 
 //=============================================================================
 
+/**
+ * @struct packetQueue_t
+ */
 typedef struct packetQueue_s
 {
 	struct packetQueue_s *next;
@@ -487,6 +506,13 @@ typedef struct packetQueue_s
 
 packetQueue_t *packetQueue = NULL;
 
+/**
+ * @brief NET_QueuePacket
+ * @param[in] length
+ * @param[in] data
+ * @param[in] to
+ * @param[in] offset
+ */
 static void NET_QueuePacket(int length, const void *data, netadr_t to,
                             int offset)
 {
@@ -504,7 +530,7 @@ static void NET_QueuePacket(int length, const void *data, netadr_t to,
 	new->to     = to;
 	new->next   = NULL;
 
-	if (com_timescale->value > 0.0)
+	if (com_timescale->value > 0.0f)
 	{
 		new->release = Sys_Milliseconds() + (int)((float)offset / com_timescale->value);
 	}
@@ -529,6 +555,9 @@ static void NET_QueuePacket(int length, const void *data, netadr_t to,
 	}
 }
 
+/**
+ * @brief NET_FlushPacketQueue
+ */
 void NET_FlushPacketQueue(void)
 {
 	packetQueue_t *last;
@@ -550,6 +579,13 @@ void NET_FlushPacketQueue(void)
 	}
 }
 
+/**
+ * @brief NET_SendPacket
+ * @param[in] sock
+ * @param[in] length
+ * @param[in] data
+ * @param[in] to
+ */
 void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 {
 
@@ -589,6 +625,9 @@ void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 
 /**
  * @brief Sends a text message in an out-of-band datagram
+ * @param[in] sock
+ * @param[in] adr
+ * @param[in] format
  */
 void QDECL NET_OutOfBandPrint(netsrc_t sock, netadr_t adr, const char *format, ...)
 {
@@ -610,13 +649,13 @@ void QDECL NET_OutOfBandPrint(netsrc_t sock, netadr_t adr, const char *format, .
 	NET_SendPacket(sock, strlen(string), string, adr);
 }
 
-/*
-===============
-NET_OutOfBandPrint
-
-Sends a data message in an out-of-band datagram (only used for "connect")
-================
-*/
+/**
+ * @brief Sends a data message in an out-of-band datagram (only used for "connect")
+ * @param[in] sock
+ * @param[in] adr
+ * @param[in] format
+ * @param[in] len
+ */
 void QDECL NET_OutOfBandData(netsrc_t sock, netadr_t adr, const char *format, int len)
 {
 	byte  string[MAX_MSGLEN * 2];
@@ -643,6 +682,9 @@ void QDECL NET_OutOfBandData(netsrc_t sock, netadr_t adr, const char *format, in
 
 /**
  * @brief Traps "localhost" for loopback, passes everything else to system.
+ * @param[in] s
+ * @param[in,out] a
+ * @param[in] family
  * @return 0 on address not found, 1 on address found with port, 2 on address found without port.
  */
 int NET_StringToAdr(const char *s, netadr_t *a, netadrtype_t family)

@@ -61,17 +61,16 @@ cbrush_t *box_brush;
 void CM_InitBoxHull(void);
 void CM_FloodAreaConnections(void);
 
-/*
+/**
 ===============================================================================
                     MAP LOADING
 ===============================================================================
 */
 
-/*
-=================
-CMod_LoadShaders
-=================
-*/
+/**
+ * @brief CMod_LoadShaders
+ * @param[in] l
+ */
 void CMod_LoadShaders(lump_t *l)
 {
 	dshader_t *in;
@@ -106,11 +105,10 @@ void CMod_LoadShaders(lump_t *l)
 	}
 }
 
-/*
-=================
-CMod_LoadSubmodels
-=================
-*/
+/**
+ * @brief CMod_LoadSubmodels
+ * @param[in] l
+ */
 void CMod_LoadSubmodels(lump_t *l)
 {
 	dmodel_t *in;
@@ -171,11 +169,10 @@ void CMod_LoadSubmodels(lump_t *l)
 	}
 }
 
-/*
-=================
-CMod_LoadNodes
-=================
-*/
+/**
+ * @brief CMod_LoadNodes
+ * @param[in] l
+ */
 void CMod_LoadNodes(lump_t *l)
 {
 	dnode_t *in;
@@ -210,11 +207,10 @@ void CMod_LoadNodes(lump_t *l)
 	}
 }
 
-/*
-=================
-CM_BoundBrush
-=================
-*/
+/**
+ * @brief CM_BoundBrush
+ * @param[in] b
+ */
 void CM_BoundBrush(cbrush_t *b)
 {
 	b->bounds[0][0] = -b->sides[0].plane->dist;
@@ -227,11 +223,10 @@ void CM_BoundBrush(cbrush_t *b)
 	b->bounds[1][2] = b->sides[5].plane->dist;
 }
 
-/*
-=================
-CMod_LoadBrushes
-=================
-*/
+/**
+ * @brief CMod_LoadBrushes
+ * @param[in] l
+ */
 void CMod_LoadBrushes(lump_t *l)
 {
 	dbrush_t *in;
@@ -267,11 +262,10 @@ void CMod_LoadBrushes(lump_t *l)
 	}
 }
 
-/*
-=================
-CMod_LoadLeafs
-=================
-*/
+/**
+ * @brief CMod_LoadLeafs
+ * @param[in] l
+ */
 void CMod_LoadLeafs(lump_t *l)
 {
 	int     i;
@@ -318,11 +312,10 @@ void CMod_LoadLeafs(lump_t *l)
 	cm.areaPortals = Hunk_Alloc(cm.numAreas * cm.numAreas * sizeof(*cm.areaPortals), h_high);
 }
 
-/*
-=================
-CMod_LoadPlanes
-=================
-*/
+/**
+ * @brief CMod_LoadPlanes
+ * @param l
+ */
 void CMod_LoadPlanes(lump_t *l)
 {
 	int      i, j;
@@ -365,11 +358,10 @@ void CMod_LoadPlanes(lump_t *l)
 	}
 }
 
-/*
-=================
-CMod_LoadLeafBrushes
-=================
-*/
+/**
+ * @brief CMod_LoadLeafBrushes
+ * @param[in] l
+ */
 void CMod_LoadLeafBrushes(lump_t *l)
 {
 	int i;
@@ -396,11 +388,10 @@ void CMod_LoadLeafBrushes(lump_t *l)
 	}
 }
 
-/*
-=================
-CMod_LoadLeafSurfaces
-=================
-*/
+/**
+ * @brief CMod_LoadLeafSurfaces
+ * @param[in] l
+ */
 void CMod_LoadLeafSurfaces(lump_t *l)
 {
 	int i;
@@ -426,11 +417,10 @@ void CMod_LoadLeafSurfaces(lump_t *l)
 	}
 }
 
-/*
-=================
-CMod_LoadBrushSides
-=================
-*/
+/**
+ * @brief CMod_LoadBrushSides
+ * @param[in] l
+ */
 void CMod_LoadBrushSides(lump_t *l)
 {
 	int          i;
@@ -465,28 +455,27 @@ void CMod_LoadBrushSides(lump_t *l)
 	}
 }
 
-/*
-=================
-CMod_LoadEntityString
-=================
-*/
+/**
+ * @brief CMod_LoadEntityString
+ * @param[in] l
+ */
 void CMod_LoadEntityString(lump_t *l)
 {
-	cm.entityString   = Hunk_Alloc(l->filelen, h_high);
-	cm.numEntityChars = l->filelen;
+	cm.entityString = Hunk_Alloc(l->filelen, h_high);
+	//cm.numEntityChars = l->filelen;
 	memcpy(cm.entityString, cmod_base + l->fileofs, l->filelen);
 }
 
-/*
-=================
-CMod_LoadVisibility
-=================
-*/
 #define VIS_HEADER  8
+
+/**
+ * @brief CMod_LoadVisibility
+ * @param[in] l
+ */
 void CMod_LoadVisibility(lump_t *l)
 {
-	int  len = l->filelen;
-	byte *buf;
+	size_t len = l->filelen;
+	byte   *buf;
 
 	if (!len)
 	{
@@ -507,12 +496,13 @@ void CMod_LoadVisibility(lump_t *l)
 
 //==================================================================
 
-/*
-=================
-CMod_LoadPatches
-=================
-*/
 #define MAX_PATCH_VERTS     1024
+
+/**
+ * @brief CMod_LoadPatches
+ * @param[in] surfs
+ * @param[in] verts
+ */
 void CMod_LoadPatches(lump_t *surfs, lump_t *verts)
 {
 	drawVert_t *dv, *dv_p;
@@ -579,11 +569,19 @@ void CMod_LoadPatches(lump_t *surfs, lump_t *verts)
 
 //==================================================================
 
+/**
+ * @brief CM_LumpChecksum
+ * @param[in] lump
+ */
 unsigned CM_LumpChecksum(lump_t *lump)
 {
 	return LittleLong(Com_BlockChecksum(cmod_base + lump->fileofs, lump->filelen));
 }
 
+/**
+ * @brief CM_Checksum
+ * @param[in] header
+ */
 unsigned CM_Checksum(dheader_t *header)
 {
 	unsigned checksums[16];
@@ -603,21 +601,20 @@ unsigned CM_Checksum(dheader_t *header)
 	return LittleLong(Com_BlockChecksum(checksums, 11 * 4));
 }
 
-/*
-==================
-CM_LoadMap
-
-Loads in the map and all submodels
-==================
-*/
-void CM_LoadMap(const char *name, qboolean clientload, int *checksum)
+/**
+ * @brief Loads in the map and all submodels
+ * @param[in] name
+ * @param[in] clientload
+ * @param[out] checksum
+ */
+void CM_LoadMap(const char *name, qboolean clientload, unsigned int *checksum)
 {
 	union
 	{
 		int *i;
 		void *v;
 	} buf;
-	int             i;
+	unsigned int    i;
 	dheader_t       header;
 	int             length;
 	static unsigned last_checksum;
@@ -707,22 +704,20 @@ void CM_LoadMap(const char *name, qboolean clientload, int *checksum)
 	}
 }
 
-/*
-==================
-CM_ClearMap
-==================
-*/
+/**
+ * @brief CM_ClearMap
+ */
 void CM_ClearMap(void)
 {
 	Com_Memset(&cm, 0, sizeof(cm));
 	CM_ClearLevelPatches();
 }
 
-/*
-==================
-CM_ClipHandleToModel
-==================
-*/
+/**
+ * @brief CM_ClipHandleToModel
+ * @param[in] handle
+ * @return
+ */
 cmodel_t *CM_ClipHandleToModel(clipHandle_t handle)
 {
 	if (handle < 0)
@@ -748,11 +743,11 @@ cmodel_t *CM_ClipHandleToModel(clipHandle_t handle)
 	return NULL;
 }
 
-/*
-==================
-CM_InlineModel
-==================
-*/
+/**
+ * @brief CM_InlineModel
+ * @param[in] index
+ * @return
+ */
 clipHandle_t CM_InlineModel(int index)
 {
 	if (index < 0 || index >= cm.numSubModels)
@@ -763,21 +758,38 @@ clipHandle_t CM_InlineModel(int index)
 	return index;
 }
 
+/**
+ * @brief CM_NumClusters
+ * @return
+ */
 int CM_NumClusters(void)
 {
 	return cm.numClusters;
 }
 
+/**
+ * @brief CM_NumInlineModels
+ * @return
+ */
 int CM_NumInlineModels(void)
 {
 	return cm.numSubModels;
 }
 
+/**
+ * @brief CM_EntityString
+ * @return
+ */
 char *CM_EntityString(void)
 {
 	return cm.entityString;
 }
 
+/**
+ * @brief CM_LeafCluster
+ * @param[in] leafnum
+ * @return
+ */
 int CM_LeafCluster(int leafnum)
 {
 	if (leafnum < 0 || leafnum >= cm.numLeafs)
@@ -788,6 +800,11 @@ int CM_LeafCluster(int leafnum)
 	return cm.leafs[leafnum].cluster;
 }
 
+/**
+ * @brief CM_LeafArea
+ * @param[in] leafnum
+ * @return
+ */
 int CM_LeafArea(int leafnum)
 {
 	if (leafnum < 0 || leafnum >= cm.numLeafs)
@@ -800,17 +817,13 @@ int CM_LeafArea(int leafnum)
 
 //=======================================================================
 
-/*
-===================
-CM_InitBoxHull
-
-Set up the planes and nodes so that the six floats of a bounding box
-can just be stored out and get a proper clipping hull structure.
-===================
-*/
+/**
+ * @brief Set up the planes and nodes so that the six floats of a bounding box
+ * can just be stored out and get a proper clipping hull structure.
+ */
 void CM_InitBoxHull(void)
 {
-	int          i;
+	byte         i;
 	int          side;
 	cplane_t     *p;
 	cbrushside_t *s;
@@ -853,15 +866,16 @@ void CM_InitBoxHull(void)
 	}
 }
 
-/*
-===================
-CM_TempBoxModel
-
-To keep everything totally uniform, bounding boxes are turned into small
-BSP trees instead of being compared directly.
-Capsules are handled differently though.
-===================
-*/
+/**
+ * @brief To keep everything totally uniform, bounding boxes are turned into small
+ * BSP trees instead of being compared directly.
+ * Capsules are handled differently though.
+ *
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] capsule
+ * @return
+ */
 clipHandle_t CM_TempBoxModel(const vec3_t mins, const vec3_t maxs, int capsule)
 {
 	VectorCopy(mins, box_model.mins);
@@ -891,16 +905,21 @@ clipHandle_t CM_TempBoxModel(const vec3_t mins, const vec3_t maxs, int capsule)
 	return BOX_MODEL_HANDLE;
 }
 
+/**
+ * @brief CM_SetTempBoxModelContents
+ * @param[in] contents
+ */
 void CM_SetTempBoxModelContents(int contents)
 {
 	box_brush->contents = contents;
 }
 
-/*
-===================
-CM_ModelBounds
-===================
-*/
+/**
+ * @brief CM_ModelBounds
+ * @param[in] model
+ * @param[out] mins
+ * @param[out] maxs
+ */
 void CM_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs)
 {
 	cmodel_t *cmod;

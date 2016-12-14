@@ -38,6 +38,9 @@
 #include "q_shared.h"
 #include "qcommon.h"
 
+/**
+ * @enum opcode_t
+ */
 typedef enum
 {
 	OP_UNDEF,
@@ -87,7 +90,7 @@ typedef enum
 	OP_LOAD4,
 	OP_STORE1,
 	OP_STORE2,
-	OP_STORE4,              // *(stack[top-1]) = stack[top]
+	OP_STORE4,              ///< *(stack[top-1]) = stack[top]
 	OP_ARG,
 
 	OP_BLOCK_COPY,
@@ -128,12 +131,15 @@ typedef enum
 
 typedef intptr_t vmptr_t;
 
+/**
+ * @struct vmSymbol_t
+ */
 typedef struct vmSymbol_s
 {
 	struct vmSymbol_s *next;
 	int symValue;
 	int profileCount;
-	char symName[1];        // variable sized
+	char symName[1];        ///< variable sized
 } vmSymbol_t;
 
 #define VM_OFFSET_PROGRAM_STACK     0
@@ -141,11 +147,14 @@ typedef struct vmSymbol_s
 
 #define VM_SYSCALL_ARGS 16
 
+/**
+ * @struct vm_s
+ */
 struct vm_s
 {
 	// DO NOT MOVE OR CHANGE THESE WITHOUT CHANGING THE VM_OFFSET_* DEFINES
 	// USED BY THE ASM CODE
-	int programStack;               // the vm may be recursively entered
+	int programStack;               ///< the vm may be recursively entered
 	intptr_t (*systemCall)(intptr_t *parms);
 
 	//------------------------------------
@@ -156,7 +165,7 @@ struct vm_s
 
 	// for dynamic linked modules
 	void *dllHandle;
-	intptr_t (QDECL *entryPoint)(int callNum, ...);
+	intptr_t(QDECL * entryPoint)(int callNum, ...);
 
 	// for interpreted modules
 	qboolean currentlyInterpreting;
@@ -171,13 +180,13 @@ struct vm_s
 	byte *dataBase;
 	int dataMask;
 
-	int stackBottom;                // if programStack < stackBottom, error
+	int stackBottom;                ///< if programStack < stackBottom, error
 
 	int numSymbols;
 	struct vmSymbol_s *symbols;
 
-	int callLevel;                  // for debug indenting
-	int breakFunction;              // increment breakCount on function entry to this
+	int callLevel;                  ///< for debug indenting
+	int breakFunction;              ///< increment breakCount on function entry to this
 	int breakCount;
 	qboolean extract;
 };

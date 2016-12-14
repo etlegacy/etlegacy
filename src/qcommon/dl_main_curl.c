@@ -47,44 +47,64 @@
 
 #define GET_BUFFER_SIZE 1024 * 256
 
-// initialize once
+/**
+ * @var Initialize once
+ */
 static int dl_initialized = 0;
 
 static CURLM *dl_multi   = NULL;
 static CURL  *dl_request = NULL;
 static FILE  *dl_file    = NULL;
 
+/**
+ * @struct write_result_t
+ */
 typedef struct write_result_s
 {
 	char *data;
 	int pos;
 } write_result_t;
 
-/*
-============
-Write to file
-============
-*/
+/**
+ * @brief DL_cb_FWriteFile
+ * @param[in] ptr
+ * @param[in] size
+ * @param[in] nmemb
+ * @param[in] stream
+ * @return
+ */
 static size_t DL_cb_FWriteFile(void *ptr, size_t size, size_t nmemb, void *stream)
 {
 	FILE *file = (FILE *)stream;
 	return fwrite(ptr, size, nmemb, file);
 }
 
-/*
-============
-Print progress
-============
-*/
+/**
+ * @brief DL_cb_Progress
+ * @param clientp - unused
+ * @param dltotal - unused
+ * @param[in] dlnow
+ * @param ultotal - unused
+ * @param ulnow   - unused
+ * @return
+ *
+ * @note cl_downloadSize and cl_downloadTime are set by the Q3 protocol...
+ * and it would probably be expensive to verify them here.
+ */
 static int DL_cb_Progress(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
 {
-	/* cl_downloadSize and cl_downloadTime are set by the Q3 protocol...
-	   and it would probably be expensive to verify them here.   -zinx */
-
 	Cvar_SetValue("cl_downloadCount", (float)dlnow);
 	return 0;
 }
 
+/**
+ * @brief DL_write_function
+ * @param[in] ptr
+ * @param[in] size
+ * @param[in] nmemb
+ * @param[out] stream
+ * @return
+ */
 size_t DL_write_function(void *ptr, size_t size, size_t nmemb, void *stream)
 {
 	write_result_t *result = (write_result_t *)stream;
@@ -101,6 +121,9 @@ size_t DL_write_function(void *ptr, size_t size, size_t nmemb, void *stream)
 	return size * nmemb;
 }
 
+/**
+ * @brief DL_InitDownload
+ */
 void DL_InitDownload(void)
 {
 	if (dl_initialized)
@@ -117,11 +140,9 @@ void DL_InitDownload(void)
 	dl_initialized = 1;
 }
 
-/*
-================
-DL_Shutdown
-================
-*/
+/**
+ * @brief DL_Shutdown
+ */
 void DL_Shutdown(void)
 {
 	if (!dl_initialized)
@@ -137,12 +158,14 @@ void DL_Shutdown(void)
 	dl_initialized = 0;
 }
 
-/*
-===============
-inspired from http://www.w3.org/Library/Examples/LoadToFile.c
-setup the download, return once we have a connection
-===============
-*/
+/**
+ * @brief Inspired from http://www.w3.org/Library/Examples/LoadToFile.c
+ * setup the download, return once we have a connection
+ *
+ * @param localName
+ * @param remoteName
+ * @return
+ */
 int DL_BeginDownload(char *localName, const char *remoteName)
 {
 	char referer[MAX_STRING_CHARS + 5 /*"ET://"*/];
@@ -197,6 +220,11 @@ int DL_BeginDownload(char *localName, const char *remoteName)
 	return 1;
 }
 
+/**
+ * @brief DL_GetString
+ * @param[in] url
+ * @return
+ */
 char *DL_GetString(const char *url)
 {
 	CURL     *curl = NULL;
@@ -268,7 +296,12 @@ error_get:
 	return NULL;
 }
 
-// (maybe this should be CL_DL_DownloadLoop)
+/**
+ * @brief DL_DownloadLoop
+ * @return
+ *
+ * @note maybe this should be CL_DL_DownloadLoop
+ */
 dlStatus_t DL_DownloadLoop(void)
 {
 	CURLMcode  status;
