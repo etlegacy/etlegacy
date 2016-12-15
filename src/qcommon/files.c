@@ -1863,7 +1863,7 @@ int FS_OSStatFile(const char *ospath)
 	return 0;
 }
 #else
-int FS_OSStatFile(char *ospath)
+int FS_OSStatFile(const char *ospath)
 {
 	struct stat stat_buf;
 
