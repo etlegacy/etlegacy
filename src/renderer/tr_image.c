@@ -1076,7 +1076,7 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 				}
 				if (image->wrapClampMode != glWrapClampMode)
 				{
-					Ren_Print("WARNING: reused image %s with mixed glWrapClampMode parm\n", name);
+					Ren_Developer("WARNING: reused image %s with mixed glWrapClampMode parm\n", name);
 				}
 			}
 			return image;
@@ -1099,6 +1099,7 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 	R_LoadImage(name, &pic, &width, &height);
 	if (pic == NULL)
 	{
+		Ren_Developer("WARNING: Image '%s' not found. Note: This might be false positive for shaders w/o image.\n", name);
 		return NULL;
 	}
 
@@ -1117,7 +1118,7 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 
 	if (((width - 1) & width) || ((height - 1) & height))
 	{
-		Ren_Print("^1Image not power of 2 scaled: %s\n", name);
+		Ren_Developer("WARNING: Image not power of 2 scaled: %s\n", name);
 		return NULL;
 	}
 
@@ -1935,6 +1936,22 @@ void *R_CacheImageAlloc(int size)
 	else
 	{
 		return ri.Hunk_Alloc(size, h_low);
+	}
+}
+
+void R_CacheImageFreeAll()
+{
+	if (r_cache->integer && r_cacheShaders->integer)
+	{
+		int i = 0;
+
+		for (i = 0; i < FILE_HASH_SIZE; i++)
+		{
+			if (backupHashTable[i])
+			{
+				R_CacheImageFree(backupHashTable[i]);
+			}
+		}
 	}
 }
 
