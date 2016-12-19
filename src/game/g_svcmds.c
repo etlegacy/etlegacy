@@ -2052,7 +2052,7 @@ void Svcmd_CSInfo_f(void)
 	char     cspart[MAX_TOKEN_CHARS];
 	char     valuestr[MAX_TOKEN_CHARS];
 	int      value       = -1;
-	size_t   size        = 0;
+	int      size        = 0;
 	int      total       = 0;
 	char     *str        = NULL;
 	qboolean arg1        = (trap_Argc() > 1) ? qtrue : qfalse;
@@ -2088,7 +2088,7 @@ void Svcmd_CSInfo_f(void)
 	for (i = 0; i < MAX_CONFIGSTRINGS; i++)
 	{
 		trap_GetConfigstring(i, cs, sizeof(cs));
-		size   = strlen(cs);
+		size   = (int) strlen(cs);
 		total += size;
 		if (size == 0)
 		{

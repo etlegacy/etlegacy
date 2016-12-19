@@ -1357,7 +1357,7 @@ const char *warmupType[] = { "None", "Enemies Only", "Everyone" };
  */
 void G_WarmupDamageTypeList(gentity_t *ent)
 {
-	size_t i;
+	int i;
 
 	G_refPrintf(ent, "\nAvailable Warmup Damage types:\n------------------------------");
 	for (i = 0; i < (sizeof(warmupType) / sizeof(char *)); i++)
