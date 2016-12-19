@@ -302,7 +302,7 @@ void SV_GetServerinfo(char *buffer, size_t bufferSize)
 {
 	if (bufferSize < 1)
 	{
-		Com_Error(ERR_DROP, "SV_GetServerinfo: bufferSize == %i", bufferSize);
+		Com_Error(ERR_DROP, "SV_GetServerinfo: bufferSize == %zu", bufferSize);
 	}
 	Q_strncpyz(buffer, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), bufferSize);
 }
