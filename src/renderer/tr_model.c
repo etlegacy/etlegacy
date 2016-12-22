@@ -54,7 +54,7 @@ model_t *R_GetModelByHandle(qhandle_t index)
 {
 	model_t *mod;
 
-	// out of range gets the defualt model
+	// out of range gets the default model
 	if (index < 1 || index >= tr.numModels)
 	{
 		return tr.models[0];
@@ -315,6 +315,7 @@ qhandle_t RE_RegisterModel(const char *name)
 		if (ident != MD3_IDENT && ident != MDC_IDENT)
 		{
 			Ren_Warning("RE_RegisterModel: unknown fileid for %s\n", name);
+			ri.FS_FreeFile(buf);
 			goto fail;
 		}
 
@@ -989,6 +990,7 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_n
 			if (sh->defaultShader)
 			{
 				shader->shaderIndex = 0;
+				Ren_Print("Warning R_LoadMDC: model %s surf num %i is using default shader\n", mod_name , j);
 			}
 			else
 			{
@@ -1217,6 +1219,7 @@ static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *mod_n
 			if (sh->defaultShader)
 			{
 				shader->shaderIndex = 0;
+				Ren_Print("Warning R_LoadMD3: model %s surf num [%i] is using default shader\n", mod_name , j);
 			}
 			else
 			{
