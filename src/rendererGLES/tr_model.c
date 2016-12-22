@@ -313,6 +313,7 @@ qhandle_t RE_RegisterModel(const char *name)
 		if (ident != MD3_IDENT && ident != MDC_IDENT)
 		{
 			ri.Printf(PRINT_WARNING, "RE_RegisterModel: unknown fileid for %s\n", name);
+			ri.FS_FreeFile(buf);
 			goto fail;
 		}
 
