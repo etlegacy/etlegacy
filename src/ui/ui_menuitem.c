@@ -1231,7 +1231,7 @@ qboolean Item_YesNo_HandleKey(itemDef_t *item, int key)
 			// added the flag to toggle via action script only
 			if (!(item->cvarFlags & CVAR_NOTOGGLE))
 			{
-				DC->setCVar(item->cvar, va("%i", DC->getCVarValue(item->cvar) != 0.f));
+				DC->setCVar(item->cvar, va("%i", !DC->getCVarValue(item->cvar)));
 			}
 
 			return qtrue;
