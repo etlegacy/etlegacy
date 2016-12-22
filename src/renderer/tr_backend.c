@@ -674,14 +674,7 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 		if (drawSurf->sort == oldSort)
 		{
 			// fast path, same as previous sort
-			if (*drawSurf->surface < SF_NUM_SURFACE_TYPES)
-			{
-				rb_surfaceTable[*drawSurf->surface] (drawSurf->surface);
-			}
-			else
-			{
-				Com_Printf("^3Warning: RB_RenderDrawSurfList skipping invalid surface [%i] - i [%i]\n", *drawSurf->surface, i);
-			}
+			rb_surfaceTable[*drawSurf->surface] (drawSurf->surface);
 			continue;
 		}
 		oldSort = drawSurf->sort;
@@ -764,15 +757,8 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 			oldEntityNum = entityNum;
 		}
 
-		if (*drawSurf->surface < SF_NUM_SURFACE_TYPES)
-		{
-			// add the triangles for this surface
-			rb_surfaceTable[*drawSurf->surface] (drawSurf->surface);
-		}
-		else
-		{
-			Com_Printf("^3Warning: RB_RenderDrawSurfList skipping invalid surface [%i] - entity/old[%i:%i] - i [%i] shader [%s]\n", *drawSurf->surface, entityNum , oldEntityNum, i, shader->name);
-		}
+		// add the triangles for this surface
+		rb_surfaceTable[*drawSurf->surface] (drawSurf->surface);
 	}
 
 	// draw the contents of the last shader batch

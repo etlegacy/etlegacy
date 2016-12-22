@@ -1497,6 +1497,12 @@ void R_AddDrawSurf(surfaceType_t *surface, shader_t *shader, int fogNum, int fro
 		return;
 	}
 
+	if (*surface >= SF_NUM_SURFACE_TYPES)
+	{
+		Ren_Print("Warning R_AddDrawSurf: invalid surface type [%i] skipped (shader [%s] - fogNum [%i] - fontFace [%i] - dlightMap [%i])\n", *surface, shader->name, fogNum, frontFace, dlightMap);
+		return;
+	}
+
 	index = tr.refdef.numDrawSurfs;
 	// the sort data is packed into a single 32 bit value so it can be
 	// compared quickly during the qsorting process
