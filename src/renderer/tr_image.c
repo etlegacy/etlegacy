@@ -1626,6 +1626,7 @@ RE_GetShaderFromModel
     on the model, without the lighmap stage, if the shader has a lightmap stage
 
     NOTE: only works for bmodels right now.  Could modify for other models (md3's etc.)
+	FIXME:
 ==============
 */
 qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap)
@@ -1655,7 +1656,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 
 			surf = bmodel->firstSurface + surfnum;
 			// check for null shader (can happen on func_explosive's with botclips attached)
-			if (!surf->shader)
+			if (!surf->shader) // || surf->shader->defaultShader ?
 			{
 				return 0;
 			}
