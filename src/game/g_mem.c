@@ -44,7 +44,7 @@ static unsigned int  allocPoint;
  * @param[in] size
  * @return
  */
-void *G_Alloc(size_t size)
+void *G_Alloc(unsigned int size)
 {
 	char *p;
 

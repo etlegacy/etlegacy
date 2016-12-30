@@ -1996,7 +1996,7 @@ void *Hunk_Alloc(size_t size, ha_pref preference)
 		Hunk_Log();
 		Hunk_SmallLog();
 #endif
-		Com_Error(ERR_DROP, "Hunk_Alloc failed on %i", size);
+		Com_Error(ERR_DROP, "Hunk_Alloc failed on %zu", size);
 	}
 
 	if (hunk_permanent == &hunk_low)
@@ -2065,7 +2065,7 @@ void *Hunk_AllocateTempMemory(size_t size)
 
 	if (hunk_temp->temp + hunk_permanent->permanent + size > s_hunkTotal)
 	{
-		Com_Error(ERR_DROP, "Hunk_AllocateTempMemory: failed on %i", size);
+		Com_Error(ERR_DROP, "Hunk_AllocateTempMemory: failed on %zu", size);
 	}
 
 	if (hunk_temp == &hunk_low)

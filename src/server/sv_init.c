@@ -266,7 +266,7 @@ void SV_GetUserinfo(int index, char *buffer, size_t bufferSize)
 {
 	if (bufferSize < 1)
 	{
-		Com_Error(ERR_DROP, "SV_GetUserinfo: bufferSize == %i", bufferSize);
+		Com_Error(ERR_DROP, "SV_GetUserinfo: bufferSize == %zu", bufferSize);
 	}
 	if (index < 0 || index >= sv_maxclients->integer)
 	{
