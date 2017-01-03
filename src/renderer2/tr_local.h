@@ -1407,6 +1407,8 @@ typedef enum
 	UNIFORM_COUNT
 } uniform_t;
 
+#define MAX_UNIFORM_VALUES 64
+
 typedef enum
 {
 #define TEX_DECL
@@ -1475,7 +1477,7 @@ typedef struct programInfo_s
 	char *fragmentLibraries;
 	char *vertexShaderText;
 	char *fragmentShaderText;
-	uniformValue_t uniformValues[64];
+	uniformValue_t uniformValues[MAX_UNIFORM_VALUES];
 	int numUniformValues;
 	qboolean compiled;
 	unsigned int checkSum;

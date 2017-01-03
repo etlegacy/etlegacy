@@ -269,22 +269,32 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 		else if (!Q_stricmp(token, "uniform"))
 		{
 			token = COM_ParseExt(text, qtrue);
+
 			if (!Q_stricmp(token, "int"))
 			{
-				def->uniformValues[def->numUniformValues].type.type = GLSL_INT;
-				GLSL_CopyNextToken(text, &def->uniformValues[def->numUniformValues].type.name);
-				token                                           = COM_ParseExt(text, qtrue);
-				valptr                                          = Com_Allocate(sizeof(int));
-				*((int *)valptr)                                = atoi(token);
-				def->uniformValues[def->numUniformValues].value = valptr;
-				//Ren_Print("%d\n",*((int*)valptr));
+				if (def->numUniformValues < MAX_UNIFORM_VALUES - 1)
+				{
+					def->uniformValues[def->numUniformValues].type.type = GLSL_INT;
+					GLSL_CopyNextToken(text, &def->uniformValues[def->numUniformValues].type.name);
+					token                                           = COM_ParseExt(text, qtrue);
+					valptr                                          = Com_Allocate(sizeof(int));
+					*((int *)valptr)                                = atoi(token);
+					def->uniformValues[def->numUniformValues].value = valptr;
+					//Ren_Print("%d\n",*((int*)valptr));
+					def->numUniformValues++;
+				}
+				else
+				{
+					Ren_Warning("GLSL_ParseDefinition: MAX_UNIFORM_VALUES reached.\n");
+					goto parseerror;
+				}
 			}
 			else
 			{
 				// FIXME: implement other formats
 				Ren_Warning("GLSL_ParseDefinition: uniform format not implemented.\n");
+				goto parseerror;
 			}
-			def->numUniformValues++;
 		}
 	}
 
@@ -1425,8 +1435,9 @@ void GLSL_SelectTexture(shaderProgram_t *program, texture_def_t tex)
 {
 	if (program->textureBinds[tex] == -1)
 	{
+		// FIXME: #952
 		//Ren_Fatal("GLSL_SelectTexture: Trying to select non existing texture %i %s\n", tex, program->name);
-		Ren_Warning("GLSL_SelectTexture: Trying to select non existing texture %i - program name:'%s'\n", tex, program->name);
+		//Ren_Warning("GLSL_SelectTexture: Trying to select non existing texture %i - program name:'%s'\n", tex, program->name);
 		GL_SelectTexture(0);
 		return;
 	}
@@ -1928,9 +1939,10 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 	info->vertexShaderText   = GLSL_BuildGPUShaderText(info, GL_VERTEX_SHADER);
 	info->fragmentShaderText = GLSL_BuildGPUShaderText(info, GL_FRAGMENT_SHADER);
 #if GLSL_PRECOMPILE
-	int startTime, endTime;
+	int startTime, endTime, nextTicCount = 0;
+	size_t numCompiled = 0, tics = 0;
 #endif
-	size_t numPermutations = 0, numCompiled = 0, tics = 0, nextTicCount = 0;
+	size_t numPermutations = 0;
 	int    i               = 0, x = 0;
 
 	GLSL_GenerateCheckSum(info, info->vertexShaderText, info->fragmentShaderText);
@@ -2265,6 +2277,8 @@ void GLSL_DeleteShaderProgramList(shaderProgramList_t *programlist)
 
 void GLSL_DeleteShaderProramInfo(programInfo_t *program)
 {
+	int i;
+
 	if (program->list)
 	{
 		GLSL_DeleteShaderProgramList(program->list);
@@ -2313,14 +2327,17 @@ void GLSL_DeleteShaderProramInfo(programInfo_t *program)
 		program->fragmentShaderText = NULL;
 	}
 
-	if (program->uniformValues[program->numUniformValues].type.name)
+	for (i = 0; i < program->numUniformValues; i++)
 	{
-		Com_Dealloc(program->uniformValues[program->numUniformValues].type.name);
-	}
+		if (program->uniformValues[i].type.name)
+		{
+			Com_Dealloc(program->uniformValues[i].type.name);
+		}
 
-	if (program->uniformValues[program->numUniformValues].value)
-	{
-		Com_Dealloc(program->uniformValues[program->numUniformValues].value);
+		if (program->uniformValues[i].value)
+		{
+			Com_Dealloc(program->uniformValues[i].value);
+		}
 	}
 }
 
