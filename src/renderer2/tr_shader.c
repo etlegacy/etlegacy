@@ -2662,7 +2662,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 		{
 			Ren_Warning("WARNING: unknown shader stage parameter '%s' in shader '%s'\n", token, shader.name);
 			SkipRestOfLine(text);
-			return qfalse;
+			continue;
 		}
 	}
 
@@ -5491,12 +5491,13 @@ shader_t *R_FindShaderByName(const char *name)
 	int      hash;
 	shader_t *sh;
 
-	if ((name == NULL) || (name[0] == 0))
-	{                           // bk001205
+	if (name == NULL || name[0] == 0)
+	{
 		return tr.defaultShader;
 	}
 
 	COM_StripExtension(name, strippedName, sizeof(strippedName));
+	COM_FixPath(strippedName);
 
 	hash = generateHashValue(strippedName, FILE_HASH_SIZE);
 
@@ -5555,6 +5556,7 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 	}
 
 	COM_StripExtension(name, strippedName, sizeof(strippedName));
+	COM_FixPath(strippedName);
 
 	hash = generateHashValue(strippedName, FILE_HASH_SIZE);
 
@@ -5601,6 +5603,11 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 		if (!ParseShader(shaderText))
 		{
 			// had errors, so use default shader
+			// there are some shaders (textures/common/clipweap and others ..) which are ignored (see ParseShader())
+			// - this might report false positives but since FindShader is always returning the default shader
+			//   and we've had no real warnings about buggy shaders here nobody did notice that ...
+			//Ren_Print("Warning: Couldn't parse shader %s (%s)- returning default shader\n", strippedName, name);
+
 			shader.defaultShader = qtrue;
 			sh                   = FinishShader();
 			return sh;
@@ -5637,7 +5644,7 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 	                        mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
 	if (!image)
 	{
-		Ren_Developer("Couldn't find image file for shader %s\n", name);
+		Ren_Developer("Warning: Couldn't find image [%s] file for shader '%s' - returning default shader\n", fileName, strippedName);
 		shader.defaultShader = qtrue;
 		return FinishShader();
 	}
@@ -5667,18 +5674,16 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 			stageOffset++;
 		}
 
-		/*
-		tmpImage = R_FindImageFile(va("%s_disp", fileName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
-		if(tmpImage)
-		{
-		    stages[stageOffset].active = qtrue;
-		    stages[stageOffset].bundle[0].image[0] = tmpImage;
-		    stages[stageOffset].type = ST_;
-		    stages[stageOffset].rgbGen = CGEN_IDENTITY;
-		    stages[stageOffset].stateBits = GLS_DEFAULT;
-		    stageOffset++;
-		}
-		*/
+		//tmpImage = R_FindImageFile(va("%s_disp", fileName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
+		//if(tmpImage)
+		//{
+		//    stages[stageOffset].active = qtrue;
+		//    stages[stageOffset].bundle[0].image[0] = tmpImage;
+		//    stages[stageOffset].type = ST_;
+		//    stages[stageOffset].rgbGen = CGEN_IDENTITY;
+		//    stages[stageOffset].stateBits = GLS_DEFAULT;
+		//    stageOffset++;
+		//}
 	}
 
 	// set implicit cull type
@@ -5745,10 +5750,14 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 
 qhandle_t RE_RegisterShaderFromImage(const char *name, image_t *image, qboolean mipRawImage)
 {
+	char     strippedName[MAX_QPATH];
 	int      i, hash;
 	shader_t *sh;
 
-	hash = generateHashValue(name, FILE_HASH_SIZE);
+	COM_StripExtension(name, strippedName, sizeof(strippedName));
+	COM_FixPath(strippedName);
+
+	hash = generateHashValue(strippedName, FILE_HASH_SIZE);
 
 	// see if the shader is already loaded
 	for (sh = shaderHashTable[hash]; sh; sh = sh->next)
@@ -5757,7 +5766,7 @@ qhandle_t RE_RegisterShaderFromImage(const char *name, image_t *image, qboolean 
 		// then a default shader is created with type == SHADER_3D_DYNAMIC, so we
 		// have to check all default shaders otherwise for every call to R_FindShader
 		// with that same strippedName a new default shader is created.
-		if ((sh->type == SHADER_2D || sh->defaultShader) && !Q_stricmp(sh->name, name))
+		if ((sh->type == SHADER_2D || sh->defaultShader) && !Q_stricmp(sh->name, strippedName))
 		{
 			// match found
 			return sh->index;
@@ -5767,7 +5776,7 @@ qhandle_t RE_RegisterShaderFromImage(const char *name, image_t *image, qboolean 
 	// clear the global shader
 	Com_Memset(&shader, 0, sizeof(shader));
 	Com_Memset(&stages, 0, sizeof(stages));
-	Q_strncpyz(shader.name, name, sizeof(shader.name));
+	Q_strncpyz(shader.name, strippedName, sizeof(shader.name));
 	shader.type = SHADER_2D;
 	for (i = 0; i < MAX_SHADER_STAGES; i++)
 	{
