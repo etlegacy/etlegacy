@@ -1671,7 +1671,7 @@ qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const c
 	fs_filter_flag = 0;
 
 	// if its not in the pak, we bail
-	if (srcLength == -1)
+	if (srcLength <= 0)
 	{
 		Com_Printf("FS_CL_ExtractFromPakFile: failed to read '%s' from pak file\n", filename);
 		return qfalse;
