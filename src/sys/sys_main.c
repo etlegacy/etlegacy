@@ -686,7 +686,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
  * @param[in] name
  * @param[in] extract
  *
- * @return
+ * @return libHandle or NULL
  */
 void *Sys_LoadGameDll(const char *name, qboolean extract,
                       intptr_t(**entryPoint) (int, ...),
@@ -743,8 +743,16 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 #ifndef DEDICATED
 	if (LIB_DO_UNPACK && extract)
 	{
-		Com_Printf("Sys_LoadGameDll -> FS_CL_ExtractFromPakFile(%s, %s, %s)\n", homepath, gamedir, fname);
-		FS_CL_ExtractFromPakFile(homepath, gamedir, fname);
+
+		if (!FS_CL_ExtractFromPakFile(homepath, gamedir, fname))
+		{
+			// no drama, we still check SEARCHPATH2
+			Com_Printf("Sys_LoadDll(%s/%s) failed to extract library from fs_homepath\n", gamedir, name);
+		}
+		else
+		{
+			Com_Printf("Sys_LoadGameDll -> FS_CL_ExtractFromPakFile(%s, %s, %s)\n", homepath, gamedir, fname);
+		}
 	}
 #endif
 
@@ -758,8 +766,13 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 #ifndef DEDICATED
 	if (!libHandle && !LIB_DO_UNPACK && extract)
 	{
+		if (!FS_CL_ExtractFromPakFile(homepath, gamedir, fname))
+		{
+			Com_Printf("Sys_LoadDll(%s/%s) failed to extract library\n", gamedir, name);
+			return NULL;
+		}
+
 		Com_Printf("Sys_LoadGameDll -> FS_CL_ExtractFromPakFile(%s, %s, %s)\n", homepath, gamedir, fname);
-		FS_CL_ExtractFromPakFile(homepath, gamedir, fname);
 		libHandle = Sys_TryLibraryLoad(homepath, gamedir, fname);
 	}
 #endif
