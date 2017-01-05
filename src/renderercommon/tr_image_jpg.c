@@ -116,7 +116,7 @@ void R_LoadJPG(const char *filename, unsigned char **pic, int *width, int *heigh
 	 */
 
 	len = ri.FS_ReadFile(( char * ) filename, &fbuffer.v);
-	if (!fbuffer.b || len < 0)
+	if (!fbuffer.b || len <= 0)
 	{
 		return;
 	}

@@ -425,7 +425,7 @@ qboolean R_LoadPreRenderedFont(const char *datName, fontInfo_t *font)
 		ri.FS_FreeFile(faceData);
 		return qtrue;
 	}
-	else if (len == -1)
+	else if (len <= 0)
 	{
 		Ren_Warning("R_LoadPreRenderedFont: font file '%s' was not found.\n", datName);
 	}

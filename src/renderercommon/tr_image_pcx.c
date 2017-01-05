@@ -83,7 +83,7 @@ void R_LoadPCX(const char *filename, byte **pic, int *width, int *height, byte a
 
 	// load the file
 	len = ri.FS_ReadFile(( char * ) filename, &raw.v);
-	if (!raw.b || len < 0)
+	if (!raw.b || len <= 0)
 	{
 		return;
 	}
