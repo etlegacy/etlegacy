@@ -66,7 +66,7 @@ void AddRemap(const char *oldShader, const char *newShader, float timeOffset)
 		if (Q_stricmp(oldShader, remappedShaders[i].oldShader) == 0)
 		{
 			// found it, just update this one
-			strcpy(remappedShaders[i].newShader, newShader);
+			Q_strncpyz(remappedShaders[i].newShader, newShader, MAX_QPATH);
 			remappedShaders[i].timeOffset = timeOffset;
 			return;
 		}
