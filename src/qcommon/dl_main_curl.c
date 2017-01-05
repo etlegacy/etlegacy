@@ -176,7 +176,7 @@ int DL_BeginDownload(char *localName, const char *remoteName)
 		return 0;
 	}
 
-	if (!localName || !remoteName)
+	if (!localName[0] || !remoteName[0])
 	{
 		Com_Printf(S_COLOR_RED "DL_BeginDownload: Error - empty download URL or empty local file name\n");
 		return 0;

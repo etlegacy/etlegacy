@@ -2818,7 +2818,7 @@ void Com_Init(char *commandLine)
 		{
 			char *defaultProfile = NULL;
 
-			FS_ReadFile("profiles/defaultprofile.dat", (void **)&defaultProfile);
+			(void) FS_ReadFile("profiles/defaultprofile.dat", (void **)&defaultProfile);
 
 			if (defaultProfile)
 			{
