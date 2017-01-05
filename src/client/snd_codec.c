@@ -84,7 +84,7 @@ static snd_codec_t *S_FindCodecForFile(const char *filename)
 			COM_DefaultExtension(fn, MAX_QPATH, codec->ext);
 
 			// Check it exists
-			if (FS_ReadFile(fn, NULL) != -1)
+			if (FS_ReadFile(fn, NULL) > 0)
 			{
 				return codec;
 			}
