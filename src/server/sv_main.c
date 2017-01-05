@@ -1803,7 +1803,7 @@ int SV_LoadTag(const char *mod_name)
 		}
 	}
 
-	FS_ReadFile(mod_name, (void **)&buffer);
+	(void) FS_ReadFile(mod_name, (void **)&buffer);
 
 	if (!buffer)
 	{
