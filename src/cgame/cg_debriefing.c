@@ -2135,7 +2135,7 @@ void CG_Debriefing_ParseAwards(void)
 
 		if (value > 0)
 		{
-			Q_strcat(s, sizeof(s), (value == (int)(value)) ? va("^7 (%i)", (int)(value)) : va("^7 (%.1f)", value));
+			Q_strcat(s, size, (value == (int)(value)) ? va("^7 (%i)", (int)(value)) : va("^7 (%.1f)", value));
 		}
 
 		// award
