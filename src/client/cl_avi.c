@@ -107,7 +107,7 @@ static ID_INLINE void SafeFS_Write(const void *buffer, int len, fileHandle_t f)
  */
 static ID_INLINE void WRITE_STRING(const char *s)
 {
-	Com_Memcpy(&buffer[bufIndex], s, strlen(s));
+	Com_Memcpy(&buffer[bufIndex], s, MAX_AVI_BUFFER);
 	bufIndex += strlen(s);
 }
 
