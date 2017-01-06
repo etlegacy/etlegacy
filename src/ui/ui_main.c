@@ -4749,7 +4749,7 @@ void UI_RunMenuScript(char **args)
 				Menus_CloseAll();
 				trap_Cvar_Set("ui_connecting", "1");
 				trap_Cvar_Set("cg_thirdPerson", "0 ");
-				trap_LAN_GetServerAddressString(ui_netSource.integer, uiInfo.serverStatus.displayServers[uiInfo.serverStatus.currentServer], buff, 1024);
+				trap_LAN_GetServerAddressString(ui_netSource.integer, uiInfo.serverStatus.displayServers[uiInfo.serverStatus.currentServer], buff, MAX_STRING_CHARS);
 				trap_Cmd_ExecuteText(EXEC_APPEND, va("connect %s\n", buff));
 			}
 		}
@@ -5065,7 +5065,7 @@ void UI_RunMenuScript(char **args)
 
 				if (selectedPlayer < uiInfo.myTeamCount)
 				{
-					strcpy(buff, orders);
+					Q_strncpyz(buff, orders, sizeof(buff));
 					trap_Cmd_ExecuteText(EXEC_APPEND, va(buff, uiInfo.teamClientNums[selectedPlayer]));
 					trap_Cmd_ExecuteText(EXEC_APPEND, "\n");
 				}
@@ -5079,7 +5079,7 @@ void UI_RunMenuScript(char **args)
 						{
 							continue;
 						}
-						strcpy(buff, orders);
+						Q_strncpyz(buff, orders, sizeof(buff));
 						trap_Cmd_ExecuteText(EXEC_APPEND, va(buff, uiInfo.teamNames[i]));
 						trap_Cmd_ExecuteText(EXEC_APPEND, "\n");
 					}
@@ -6111,7 +6111,7 @@ static void UI_BuildServerDisplayList(int force)
 	len = Q_UTF8_Strlen(uiInfo.serverStatus.motd);
 	if (len == 0)
 	{
-		strcpy(uiInfo.serverStatus.motd, va("Enemy Territory: Legacy - Version: %s", ETLEGACY_VERSION));
+		Q_strncpyz(uiInfo.serverStatus.motd, va("Enemy Territory: Legacy - Version: %s", ETLEGACY_VERSION), sizeof(uiInfo.serverStatus.motd));
 		len = Q_UTF8_Strlen(uiInfo.serverStatus.motd);
 	}
 	if (len != uiInfo.serverStatus.motdLen)

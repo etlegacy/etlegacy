@@ -238,7 +238,7 @@ void GetMG42s()
 		name = (char *)_GetEntityName(trav);
 		if (name)
 		{
-			strcpy(mg42.name, name);
+			Q_strncpyz(mg42s[0].name, name, sizeof(mg42s[0].name));
 		}
 		else
 		{
@@ -282,7 +282,7 @@ void CheckForMG42(gentity_t *ent, const char *newname)
 		    (fabs(mg42s[i].position[1] - entpos[1]) < 100.0))
 		{
 			mg42s[i].buildable = true;
-			strcpy(mg42s[i].newname, newname);
+			Q_strncpyz(mg42s[i].newname, newname, sizeof(mg42s[0].newname));
 		}
 	}
 
@@ -6525,19 +6525,19 @@ const char *_GetEntityName(gentity_t *_ent)
 
 		if (_ent->track)
 		{
-			strcpy(newentname, _ent->track);
+			Q_strncpyz(newentname, _ent->track, sizeof(newentname));
 		}
 		else if (_ent->scriptName)
 		{
-			strcpy(newentname, _ent->scriptName);
+			Q_strncpyz(newentname, _ent->scriptName, sizeof(newentname));
 		}
 		else if (_ent->targetname)
 		{
-			strcpy(newentname, _ent->targetname);
+			Q_strncpyz(newentname, _ent->targetname, sizeof(newentname));
 		}
 		else if (_ent->message)
 		{
-			strcpy(newentname, _ent->message);
+			Q_strncpyz(newentname, _ent->message, sizeof(newentname));
 		}
 
 		name = newentname;

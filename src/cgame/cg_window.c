@@ -666,7 +666,7 @@ qboolean CG_addString(cg_window_t *w, const char *buf)
 		if (!cg.aStringPool[i].fActive)
 		{
 			cg.aStringPool[i].fActive = qtrue;
-			strcpy(cg.aStringPool[i].str, buf);
+			Q_strncpyz(cg.aStringPool[i].str, buf, sizeof(cg.aStringPool[0].str));
 			w->lineText[w->lineCount++] = (char *)&cg.aStringPool[i].str;
 
 			return qtrue;

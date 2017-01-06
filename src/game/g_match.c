@@ -78,7 +78,7 @@ void G_loadMatchGame(void)
 	for (i = 0; i < MAX_REINFSEEDS; i++)
 	{
 		aRandomValues[i] = (rand() % REINF_RANGE) * aReinfSeeds[i];
-		strcat(strReinfSeeds, va(" %d", aRandomValues[i]));
+		Q_strcat(strReinfSeeds, MAX_STRING_CHARS, va(" %d", aRandomValues[i]));
 	}
 
 	level.dwBlueReinfOffset = 1000 * aRandomValues[dwBlueOffset] / aReinfSeeds[dwBlueOffset];
