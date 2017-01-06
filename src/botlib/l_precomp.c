@@ -435,7 +435,7 @@ int PC_MergeTokens(token_t *t1, token_t *t2)
 		// remove trailing double quote
 		t1->string[strlen(t1->string) - 1] = '\0';
 		// concat without leading double quote
-		strcat(t1->string, &t2->string[1]);
+		Q_strcat(t1->string, sizeof(t1->string), &t2->string[1]);
 		return qtrue;
 	}
 	// FIXME: merging of two number of the same sub type
