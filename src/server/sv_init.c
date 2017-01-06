@@ -662,10 +662,10 @@ void SV_TouchCGameDLL(void)
  */
 void SV_SpawnServer(const char *server)
 {
-	int        i;
-	int        checksum;
-	qboolean   isBot;
-	const char *p;
+	int          i;
+	unsigned int checksum;
+	qboolean     isBot;
+	const char   *p;
 
 	// broadcast a level change to all connected clients
 	if (svs.clients && !com_errorEntered)
@@ -1155,7 +1155,7 @@ void SV_Init(void)
 	SV_BotInitBotLib();
 
 	svs.serverLoad = -1;
-	
+
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
 	IRC_Init();
 #endif

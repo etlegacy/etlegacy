@@ -189,7 +189,7 @@ qboolean CL_GetSnapshot(int snapshotNumber, snapshot_t *snapshot)
 	for (i = 0 ; i < count ; i++)
 	{
 		snapshot->entities[i] =
-		    cl.parseEntities[(clSnap->parseEntitiesNum + i) & (MAX_PARSE_ENTITIES - 1)];
+			cl.parseEntities[(clSnap->parseEntitiesNum + i) & (MAX_PARSE_ENTITIES - 1)];
 	}
 
 	// FIXME: configstring changes and server commands!!!
@@ -559,7 +559,7 @@ void CL_CGameBinaryMessageReceived(const byte *buf, int buflen, int serverTime)
  */
 void CL_CM_LoadMap(const char *mapname)
 {
-	int checksum;
+	unsigned int checksum;
 
 	// If we are not running the server, then set expected usage here
 	if (!com_sv_running->integer)
