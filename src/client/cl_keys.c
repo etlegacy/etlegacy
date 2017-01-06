@@ -1082,7 +1082,7 @@ void Key_Bind_f(void)
 	cmd[0] = 0;     // start out with a null string
 	for (i = 2 ; i < c ; i++)
 	{
-		strcat(cmd, Cmd_Argv(i));
+		Q_strcat(cmd, sizeof(cmd), Cmd_Argv(i));
 		if (i != (c - 1))
 		{
 			strcat(cmd, " ");
