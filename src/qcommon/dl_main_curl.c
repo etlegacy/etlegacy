@@ -259,7 +259,7 @@ char *DL_GetString(const char *url)
 	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, DL_write_function);
-	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &write_result);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&write_result);
 
 	status = curl_easy_perform(curl);
 	if (status != 0)
