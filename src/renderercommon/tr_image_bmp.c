@@ -54,6 +54,14 @@ typedef struct
 	unsigned char palette[256][4];
 } BMPHeader_t;
 
+/**
+ * @brief R_LoadBMP
+ * @param[in] name
+ * @param[out] pic
+ * @param[out] width
+ * @param[out] height
+ * @param alphaByte - unused
+ */
 void R_LoadBMP(const char *name, byte **pic, int *width, int *height, byte alphaByte)
 {
 	int      columns, rows;
@@ -84,8 +92,13 @@ void R_LoadBMP(const char *name, byte **pic, int *width, int *height, byte alpha
 	}
 
 	// load the file
+<<<<<<< HEAD
 	length = ri.FS_ReadFile(( char * ) name, &buffer.v);
 	if (!buffer.b || length <= 0)
+=======
+	length = ri.FS_ReadFile(name, &buffer.v);
+	if (!buffer.b || length < 0)
+>>>>>>> renderercommon: doc refs #55 + tinys changes
 	{
 		return;
 	}

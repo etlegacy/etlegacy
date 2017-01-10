@@ -40,6 +40,11 @@
 
 #define IQM_MAX_JOINTS      128
 
+/**
+ * @struct iqmHeader_t
+ * @typedef iqmheader
+ * @brief
+ */
 typedef struct iqmheader
 {
 	char magic[16];
@@ -58,6 +63,11 @@ typedef struct iqmheader
 	unsigned int num_extensions, ofs_extensions;
 } iqmHeader_t;
 
+/**
+ * @struct iqmMesh_t
+ * @typedef iqmmesh
+ * @brief
+ */
 typedef struct iqmmesh
 {
 	unsigned int name;
@@ -66,6 +76,10 @@ typedef struct iqmmesh
 	unsigned int first_triangle, num_triangles;
 } iqmMesh_t;
 
+/**
+ * @enum
+ * @brief
+ */
 enum
 {
 	IQM_POSITION     = 0,
@@ -78,6 +92,10 @@ enum
 	IQM_CUSTOM       = 0x10
 };
 
+/**
+ * @enum
+ * @brief
+ */
 enum
 {
 	IQM_BYTE   = 0,
@@ -91,11 +109,22 @@ enum
 	IQM_DOUBLE = 8
 };
 
+/**
+ * @struct iqmTriangle_t
+ * @typedef iqmtriangle
+ * @brief
+ */
 typedef struct iqmtriangle
 {
 	unsigned int vertex[3];
 } iqmTriangle_t;
 
+
+/**
+ * @struct iqmJointv1_t
+ * @typedef iqmjointv1
+ * @brief
+ */
 typedef struct iqmjointv1
 {
 	unsigned int name;
@@ -103,6 +132,11 @@ typedef struct iqmjointv1
 	float translate[3], rotate[3], scale[3];
 } iqmJointv1_t;
 
+/**
+ * @struct iqmJoint_t
+ * @typedef iqmjoint
+ * @brief
+ */
 typedef struct iqmjoint
 {
 	unsigned int name;
@@ -110,6 +144,11 @@ typedef struct iqmjoint
 	float translate[3], rotate[4], scale[3];
 } iqmJoint_t;
 
+/**
+ * @struct iqmPosev1_t
+ * @typedef iqmposev1
+ * @brief
+ */
 typedef struct iqmposev1
 {
 	int parent;
@@ -118,6 +157,11 @@ typedef struct iqmposev1
 	float channelscale[9];
 } iqmPosev1_t;
 
+/**
+ * @struct iqmPose_t
+ * @typedef iqmpose
+ * @brief
+ */
 typedef struct iqmpose
 {
 	int parent;
@@ -126,6 +170,11 @@ typedef struct iqmpose
 	float channelscale[10];
 } iqmPose_t;
 
+/**
+ * @struct iqmAnim_t
+ * @typedef iqmanim
+ * @brief
+ */
 typedef struct iqmanim
 {
 	unsigned int name;
@@ -134,11 +183,20 @@ typedef struct iqmanim
 	unsigned int flags;
 } iqmAnim_t;
 
+/**
+ * @enum
+ * @brief
+ */
 enum
 {
 	IQM_LOOP = 1 << 0
 };
 
+/**
+ * @struct iqmVertexArray_t
+ * @typedef iqmvertexarray
+ * @brief
+ */
 typedef struct iqmvertexarray
 {
 	unsigned int type;
@@ -148,12 +206,22 @@ typedef struct iqmvertexarray
 	unsigned int offset;
 } iqmVertexArray_t;
 
+/**
+ * @struct iqmBounds_t
+ * @typedef iqmbounds
+ * @brief
+ */
 typedef struct iqmbounds
 {
 	float bbmin[3], bbmax[3];
 	float xyradius, radius;
 } iqmBounds_t;
 
+/**
+ * @struct iqmExtension_t
+ * @typedef iqmextension
+ * @brief
+ */
 typedef struct iqmextension
 {
 	unsigned int name;

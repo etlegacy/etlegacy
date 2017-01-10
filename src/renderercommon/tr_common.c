@@ -42,6 +42,11 @@
 #   include "../renderer/tr_local.h"
 #endif
 
+/**
+ * @brief GL_CheckForExtension
+ * @param[in] ext
+ * @return
+ */
 qboolean GL_CheckForExtension(const char *ext)
 {
 #ifdef FEATURE_RENDERER2
@@ -72,6 +77,10 @@ qboolean GL_CheckForExtension(const char *ext)
 	"machine since it is missing one or more required OpenGL "                             \
 	"extensions. Please update your video card drivers and try again.\n"
 
+/**
+ * @brief GLimp_InitOpenGLContext
+ * @return
+ */
 static qboolean GLimp_InitOpenGLContext()
 {
 
@@ -80,17 +89,17 @@ static qboolean GLimp_InitOpenGLContext()
 #endif
 
 	// get vendor
-	Q_strncpyz(glConfig.vendor_string, (char *) qglGetString(GL_VENDOR), sizeof(glConfig.vendor_string));
+	Q_strncpyz(glConfig.vendor_string, (const char *) qglGetString(GL_VENDOR), sizeof(glConfig.vendor_string));
 
 	// get renderer
-	Q_strncpyz(glConfig.renderer_string, (char *) qglGetString(GL_RENDERER), sizeof(glConfig.renderer_string));
+	Q_strncpyz(glConfig.renderer_string, (const char *) qglGetString(GL_RENDERER), sizeof(glConfig.renderer_string));
 	if (*glConfig.renderer_string && glConfig.renderer_string[strlen(glConfig.renderer_string) - 1] == '\n')
 	{
 		glConfig.renderer_string[strlen(glConfig.renderer_string) - 1] = 0;
 	}
 
 	// get GL version
-	Q_strncpyz(glConfig.version_string, (char *) qglGetString(GL_VERSION), sizeof(glConfig.version_string));
+	Q_strncpyz(glConfig.version_string, (const char *) qglGetString(GL_VERSION), sizeof(glConfig.version_string));
 
 	Com_Printf("GL_VENDOR: %s\n", glConfig.vendor_string);
 	Com_Printf("GL_RENDERER: %s\n", glConfig.renderer_string);
@@ -129,11 +138,29 @@ static qboolean GLimp_InitOpenGLContext()
 
 #ifdef FEATURE_RENDERER2
 
+/**
+ * @brief Glimp_DebugCallback
+ * @param source    - unused
+ * @param type      - unused
+ * @param id        - unused
+ * @param severity  - unused
+ * @param length    - unused
+ * @param[in] message
+ * @param userParam - unused
+ */
 void GLAPIENTRY Glimp_DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const GLvoid *userParam)
 {
 	Ren_Warning("Driver message: %s\n", message);
 }
 
+/**
+ * @brief GLimp_CheckForVersionExtension
+ * @param[in] ext
+ * @param[in] coresince
+ * @param[in] required
+ * @param[in] var
+ * @return
+ */
 static qboolean GLimp_CheckForVersionExtension(const char *ext, int coresince, qboolean required, cvar_t *var)
 {
 	qboolean result = qfalse;
@@ -174,6 +201,9 @@ static qboolean GLimp_CheckForVersionExtension(const char *ext, int coresince, q
 	return result;
 }
 
+/**
+ * @brief GLimp_InitExtensionsR2
+ */
 static void GLimp_InitExtensionsR2(void)
 {
 	Com_Printf("Initializing OpenGL extensions\n");
@@ -361,6 +391,9 @@ static void GLimp_InitExtensionsR2(void)
 
 #ifndef FEATURE_RENDERER2
 
+/**
+ * @brief GLimp_InitExtensions
+ */
 static void GLimp_InitExtensions(void)
 {
 	if (!r_allowExtensions->integer)
@@ -378,7 +411,7 @@ static void GLimp_InitExtensions(void)
 	if (GLEW_ARB_texture_compression &&
 	    GLEW_EXT_texture_compression_s3tc)
 	{
-		if (r_ext_compressed_textures->value)
+		if (r_ext_compressed_textures->value != 0.f)
 		{
 			glConfig.textureCompression = TC_S3TC_ARB;
 			Com_Printf("...found OpenGL extension - GL_EXT_texture_compression_s3tc\n");
@@ -400,7 +433,7 @@ static void GLimp_InitExtensions(void)
 	{
 		if (GLEW_S3_s3tc)
 		{
-			if (r_ext_compressed_textures->value)
+			if (r_ext_compressed_textures->value != 0.f)
 			{
 				glConfig.textureCompression = TC_S3TC;
 				Com_Printf("...found OpenGL extension - GL_S3_s3tc\n");
@@ -462,7 +495,7 @@ static void GLimp_InitExtensions(void)
 #else
 	if (GLEW_ARB_multitexture)
 	{
-		if (r_ext_multitexture->value)
+		if (r_ext_multitexture->value != 0.f)
 		{
 			GLint glint = 0;
 
@@ -492,6 +525,9 @@ static void GLimp_InitExtensions(void)
 }
 #endif
 
+/**
+ * @brief Glimp_ClearScreen
+ */
 void Glimp_ClearScreen(void)
 {
 	qglClearColor(0, 0, 0, 1);
@@ -499,6 +535,10 @@ void Glimp_ClearScreen(void)
 	ri.GLimp_SwapFrame();
 }
 
+/**
+ * @brief RE_InitOpenGlSubsystems
+ * @return
+ */
 int RE_InitOpenGlSubsystems(void)
 {
 #ifndef FEATURE_RENDERER_GLES
@@ -532,6 +572,9 @@ int RE_InitOpenGlSubsystems(void)
 	return qtrue;
 }
 
+/**
+ * @brief RE_InitOpenGl
+ */
 void RE_InitOpenGl(void)
 {
 	//Clear the screen with a black color thanks
@@ -542,7 +585,7 @@ void RE_InitOpenGl(void)
 
 	// Get extension strings
 #ifndef FEATURE_RENDERER2
-	Q_strncpyz(glConfig.extensions_string, ( char * ) glGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
+	Q_strncpyz(glConfig.extensions_string, (const char *) glGetString(GL_EXTENSIONS), sizeof(glConfig.extensions_string));
 #else
 	{
 		int i = 0, exts = 0;
@@ -569,6 +612,9 @@ void RE_InitOpenGl(void)
 #endif
 }
 
+/**
+ * @brief R_DoGLimpShutdown
+ */
 void R_DoGLimpShutdown(void)
 {
 	ri.GLimp_Shutdown();
@@ -577,6 +623,10 @@ void R_DoGLimpShutdown(void)
 }
 
 #ifdef USE_RENDERER_DLOPEN
+/**
+ * @brief Com_Printf
+ * @param[in] msg
+ */
 void QDECL Com_Printf(const char *msg, ...)
 {
 	va_list argptr;
@@ -589,6 +639,10 @@ void QDECL Com_Printf(const char *msg, ...)
 	Ren_Print("%s", text);
 }
 
+/**
+ * @brief Com_DPrintf
+ * @param[in] msg
+ */
 void QDECL Com_DPrintf(const char *msg, ...)
 {
 	va_list argptr;
@@ -601,6 +655,11 @@ void QDECL Com_DPrintf(const char *msg, ...)
 	Ren_Developer("%s", text);
 }
 
+/**
+ * @brief Com_Error
+ * @param[in] level
+ * @param[in] error
+ */
 void QDECL Com_Error(int level, const char *error, ...)
 {
 	va_list argptr;

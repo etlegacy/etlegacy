@@ -34,19 +34,19 @@
 
 #include "tr_common.h"
 
-/*
+/**
  * Include file for users of JPEG library.
  * You will need to have included system headers that define at least
  * the typedefs FILE and size_t before you can include jpeglib.h.
  * (stdio.h is sufficient on ANSI-conforming systems.)
  * You may also wish to include "jerror.h".
  */
-
 #include <jpeglib.h>
 #include <setjmp.h>
 
-/*
- * Override default libjpeg error manager in order to be able to jump back
+/**
+ * @struct my_jpeg_error_mgr
+ * @brief Override default libjpeg error manager in order to be able to jump back
  * out to our routines during JPEG decoding.
  * setjmp/longjmp buffer is added to make a custom JPEG manager struct.
  */
@@ -56,7 +56,11 @@ typedef struct
 	jmp_buf jmpbuf;
 } my_jpeg_error_mgr;
 
-static void R_JPGErrorExit(j_common_ptr cinfo)
+/**
+ * @brief R_JPGErrorExit
+ * @param[in] cinfo
+ */
+static void __attribute__((noreturn)) R_JPGErrorExit(j_common_ptr cinfo)
 {
 	char              buffer[JMSG_LENGTH_MAX];
 	my_jpeg_error_mgr *mgr = (my_jpeg_error_mgr *)cinfo->err;
@@ -71,6 +75,10 @@ static void R_JPGErrorExit(j_common_ptr cinfo)
 	longjmp(mgr->jmpbuf, 23);
 }
 
+/**
+ * @brief R_JPGOutputMessage
+ * @param[in] cinfo
+ */
 static void R_JPGOutputMessage(j_common_ptr cinfo)
 {
 	char buffer[JMSG_LENGTH_MAX];
@@ -82,6 +90,14 @@ static void R_JPGOutputMessage(j_common_ptr cinfo)
 	Ren_Print("%s\n", buffer);
 }
 
+/**
+ * @brief R_LoadJPG
+ * @param[in] filename
+ * @param[out] pic
+ * @param[out] width
+ * @param[out] height
+ * @param alphaByte - unused
+ */
 void R_LoadJPG(const char *filename, unsigned char **pic, int *width, int *height, byte alphaByte)
 {
 	/* This struct contains the JPEG decompression parameters and pointers to
@@ -265,27 +281,26 @@ void R_LoadJPG(const char *filename, unsigned char **pic, int *width, int *heigh
 	/* And we're done! */
 }
 
-
-/* Expanded data destination object for stdio output */
-
+/**
+ * @struct my_destination_mgr
+ * @brief Expanded data destination object for stdio output
+ */
 typedef struct
 {
-	struct jpeg_destination_mgr pub; /* public fields */
+	struct jpeg_destination_mgr pub;    ///< public fields
 
-	byte *outfile;              /* target stream */
-	int size;
+	byte *outfile;                      ///< target stream
+	int size;                           ///< target size
 } my_destination_mgr;
 
 typedef my_destination_mgr *my_dest_ptr;
 
-
-/*
- * Initialize destination --- called by jpeg_start_compress
+/**
+ * @brief Initialize destination --- called by jpeg_start_compress
  * before any data is actually written.
+ * @param[in] cinfo
  */
-
-static void
-init_destination(j_compress_ptr cinfo)
+static void init_destination(j_compress_ptr cinfo)
 {
 	my_dest_ptr dest = ( my_dest_ptr ) cinfo->dest;
 
@@ -293,11 +308,10 @@ init_destination(j_compress_ptr cinfo)
 	dest->pub.free_in_buffer   = dest->size;
 }
 
-
-/*
- * Empty the output buffer --- called whenever buffer fills up.
+/**
+ * @brief Empty the output buffer --- Called whenever buffer fills up.
  *
- * In typical applications, this should write the entire output buffer
+ * @details In typical applications, this should write the entire output buffer
  * (ignoring the current state of next_output_byte & free_in_buffer),
  * reset the pointer & count to the start of the buffer, and return TRUE
  * indicating that the buffer has been dumped.
@@ -315,8 +329,11 @@ init_destination(j_compress_ptr cinfo)
  * indicate where the restart point will be if the current call returns FALSE.
  * Data beyond this point will be regenerated after resumption, so do not
  * write it out when emptying the buffer externally.
+ *
+ * @param[in] cinfo
+ *
+ * @return
  */
-
 static boolean empty_output_buffer(j_compress_ptr cinfo)
 {
 	my_dest_ptr dest = ( my_dest_ptr ) cinfo->dest;
@@ -330,23 +347,30 @@ static boolean empty_output_buffer(j_compress_ptr cinfo)
 	return FALSE;
 }
 
-/*
- * Terminate destination --- called by jpeg_finish_compress
+/**
+ * @brief Terminate destination --- called by jpeg_finish_compress
  * after all data has been written.  Usually needs to flush buffer.
  *
  * NB: *not* called by jpeg_abort or jpeg_destroy; surrounding
  * application must deal with any cleanup that should happen even
  * for error exit.
+ *
+ * @param cinfo - unused
+ *
+ * @note Empty function
  */
-
 static void term_destination(j_compress_ptr cinfo)
 {
 }
 
-/*
- * Prepare for output to a stdio stream.
+/**
+ * @brief Prepare for output to a stdio stream.
  * The caller must have already opened the stream, and is responsible
  * for closing it after finishing compression.
+ *
+ * @param[in] cinfo
+ * @param[in] outfile
+ * @param[in] size
  */
 static void jpegDest(j_compress_ptr cinfo, byte *outfile, int size)
 {
@@ -373,13 +397,18 @@ static void jpegDest(j_compress_ptr cinfo, byte *outfile, int size)
 	dest->size                    = size;
 }
 
-/*
-=================
-SaveJPGToBuffer
-Encodes JPEG from image in image_buffer and writes to buffer.
-Expects RGB input data
-=================
-*/
+/**
+ * @brief Encodes JPEG from image in image_buffer and writes to buffer.
+ * Expects RGB input data
+ * @param[out] buffer
+ * @param[in] bufSize
+ * @param[in] quality
+ * @param[in] image_width
+ * @param[in] image_height
+ * @param[in] image_buffer
+ * @param[in] padding
+ * @return
+ */
 size_t RE_SaveJPGToBuffer(byte *buffer, size_t bufSize, int quality, int image_width, int image_height, byte *image_buffer, int padding)
 {
 	struct jpeg_compress_struct cinfo;
@@ -446,7 +475,16 @@ size_t RE_SaveJPGToBuffer(byte *buffer, size_t bufSize, int quality, int image_w
 	return outcount;
 }
 
-void RE_SaveJPG(char *filename, int quality, int image_width, int image_height, byte *image_buffer, int padding)
+/**
+ * @brief RE_SaveJPG
+ * @param[in] filename
+ * @param[in] quality
+ * @param[in] image_width
+ * @param[in] image_height
+ * @param[in] image_buffer
+ * @param[in] padding
+ */
+void RE_SaveJPG(const char *filename, int quality, int image_width, int image_height, byte *image_buffer, int padding)
 {
 	byte   *out;
 	size_t bufSize;

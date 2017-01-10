@@ -99,6 +99,17 @@ static int              registeredFontCount = 0;
 static fontInfo_extra_t registeredFont[MAX_FONTS];
 
 #ifdef FEATURE_FREETYPE
+/**
+ * @brief R_GetGlyphInfo
+ * @param[in] glyph
+ * @param[out] left
+ * @param[out] right
+ * @param[out] width
+ * @param[out] top
+ * @param[out] bottom
+ * @param[out] height
+ * @param[out] pitch
+ */
 void R_GetGlyphInfo(FT_GlyphSlot glyph, int *left, int *right, int *width, int *top, int *bottom, int *height, int *pitch)
 {
 	*left  = _FLOOR(glyph->metrics.horiBearingX - 1);
@@ -111,6 +122,12 @@ void R_GetGlyphInfo(FT_GlyphSlot glyph, int *left, int *right, int *width, int *
 	*pitch  = (*width + 3) & - 4;
 }
 
+/**
+ * @brief R_RenderGlyph
+ * @param[in] glyph
+ * @param[out] glyphOut
+ * @return
+ */
 FT_Bitmap *R_RenderGlyph(FT_GlyphSlot glyph, glyphInfo_t *glyphOut)
 {
 	FT_Bitmap *bit2;
@@ -148,7 +165,14 @@ FT_Bitmap *R_RenderGlyph(FT_GlyphSlot glyph, glyphInfo_t *glyphOut)
 	return bit2;
 }
 
-void WriteTGA(char *filename, byte *data, int width, int height)
+/**
+ * @brief WriteTGA
+ * @param[in] filename
+ * @param[in] data
+ * @param[in] width
+ * @param[in] height
+ */
+void WriteTGA(const char *filename, byte *data, int width, int height)
 {
 	byte          *buffer;
 	int           i, c;
@@ -193,6 +217,18 @@ void WriteTGA(char *filename, byte *data, int width, int height)
 	ri.Free(buffer);
 }
 
+/**
+ * @brief RE_ConstructGlyphInfo
+ * @param[in] imageSize
+ * @param[in] imageOut
+ * @param[in,out] xOut
+ * @param[in,out] yOut
+ * @param[in,out] maxHeight
+ * @param[in] face
+ * @param[in] codepoint
+ * @param[in] calcHeight
+ * @return
+ */
 static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut, int *xOut, int *yOut, int *maxHeight, FT_Face face, unsigned long codepoint, qboolean calcHeight)
 {
 	static glyphInfo_t glyph;
@@ -337,6 +373,10 @@ static glyphInfo_t *RE_ConstructGlyphInfo(int imageSize, unsigned char *imageOut
 static int  fdOffset;
 static byte *fdFile;
 
+/**
+ * @brief readInt
+ * @return
+ */
 int readInt(void)
 {
 	int i = fdFile[fdOffset] + (fdFile[fdOffset + 1] << 8) + (fdFile[fdOffset + 2] << 16) + (fdFile[fdOffset + 3] << 24);
@@ -351,6 +391,10 @@ typedef union
 	float ffred;
 } poor;
 
+/**
+ * @brief readFloat
+ * @return
+ */
 float readFloat(void)
 {
 	poor me;
@@ -373,6 +417,9 @@ float readFloat(void)
 
 /**
  * @brief Loads ASCII texture font compatible with ET version 2.60b
+ * @param[in] datName
+ * @param[out] font
+ * @return
  */
 qboolean R_LoadPreRenderedFont(const char *datName, fontInfo_t *font)
 {
@@ -440,6 +487,11 @@ qboolean R_LoadPreRenderedFont(const char *datName, fontInfo_t *font)
 #ifdef FEATURE_FREETYPE
 /**
  * @brief Loads a unicode TrueType or OpenType font
+ * @param[in] fontName
+ * @param[in] pointSize
+ * @param[out] font
+ * @param[in] extended
+ * @return
  */
 static qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo_t *font, qboolean extended)
 {
@@ -447,7 +499,7 @@ static qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo
 	int           j, k, xOut, yOut, lastStart, imageNumber, len = 0;
 	int           scaledSize, newSize, maxHeight, left;
 	unsigned char *out, *imageBuff;
-	glyphInfo_t   *glyph;
+	glyphInfo_t   *glyph = NULL;
 	image_t       *image;
 	qhandle_t     h;
 	float         max;
@@ -699,6 +751,14 @@ static qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo
 }
 #endif
 
+/**
+ * @brief R_GetFont
+ * @param[in] fontName
+ * @param[in] pointSize
+ * @param[out] font
+ * @param[in] extended
+ * @return
+ */
 static qboolean R_GetFont(const char *fontName, int pointSize, fontInfo_t *font, qboolean extended)
 {
 	char datName[MAX_QPATH];
@@ -728,6 +788,13 @@ static qboolean R_GetFont(const char *fontName, int pointSize, fontInfo_t *font,
 	return qfalse;
 }
 
+/**
+ * @brief RE_RegisterFont
+ * @param[in] fontName
+ * @param[in] pointSize
+ * @param[out] output
+ * @param[in] extended
+ */
 void RE_RegisterFont(const char *fontName, int pointSize, void *output, qboolean extended)
 {
 	fontInfo_t *font = (fontInfo_t *)output;
@@ -752,6 +819,9 @@ void RE_RegisterFont(const char *fontName, int pointSize, void *output, qboolean
 	}
 }
 
+/**
+ * @brief R_InitFreeType
+ */
 void R_InitFreeType(void)
 {
 #ifdef FEATURE_FREETYPE
@@ -763,6 +833,9 @@ void R_InitFreeType(void)
 	registeredFontCount = 0;
 }
 
+/**
+ * @brief R_DoneFreeType
+ */
 void R_DoneFreeType(void)
 {
 #ifdef FEATURE_FREETYPE
