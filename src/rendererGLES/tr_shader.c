@@ -51,8 +51,13 @@ static cullType_t implicitCullType;
 static shader_t *hashTable[FILE_HASH_SIZE];
 #define generateHashValue(fname) Q_GenerateHashValue(fname, FILE_HASH_SIZE, qfalse, qtrue)
 
-// Table containing string indexes for each shader found in the scripts, referenced by their checksum
-// values.
+/**
+ * @struct shaderStringPointer_t
+ * @typedef shaderStringPointer_s
+ *
+ * @brief Table containing string indexes for each shader found in the scripts,
+ * referenced by their checksum values.
+ */
 typedef struct shaderStringPointer_s
 {
 	char *pStr;
@@ -61,6 +66,12 @@ typedef struct shaderStringPointer_s
 
 shaderStringPointer_t shaderChecksumLookup[FILE_HASH_SIZE];
 
+/**
+ * @brief R_RemapShader
+ * @param[in] shaderName
+ * @param[in] newShaderName
+ * @param[in] timeOffset
+ */
 void R_RemapShader(const char *shaderName, const char *newShaderName, const char *timeOffset)
 {
 	char      strippedName[MAX_QPATH];
@@ -117,11 +128,13 @@ void R_RemapShader(const char *shaderName, const char *newShaderName, const char
 	}
 }
 
-/*
-===============
-ParseVector
-===============
-*/
+/**
+ * @brief ParseVector
+ * @param[in,out] text
+ * @param[in] count
+ * @param[out] v
+ * @return
+ */
 static qboolean ParseVector(char **text, int count, float *v)
 {
 	char *token;
@@ -143,7 +156,7 @@ static qboolean ParseVector(char **text, int count, float *v)
 			ri.Printf(PRINT_WARNING, "WARNING: missing vector element in shader '%s'\n", shader.name);
 			return qfalse;
 		}
-		v[i] = atof(token);
+		v[i] = (float)atof(token);
 	}
 
 	token = COM_ParseExt(text, qfalse);
@@ -156,11 +169,10 @@ static qboolean ParseVector(char **text, int count, float *v)
 	return qtrue;
 }
 
-/*
-===============
-NameToAFunc
-===============
-*/
+/**
+ * @brief NameToAFunc
+ * @param[in] funcname
+ */
 static unsigned NameToAFunc(const char *funcname)
 {
 	if (!Q_stricmp(funcname, "GT0"))
@@ -180,11 +192,11 @@ static unsigned NameToAFunc(const char *funcname)
 	return 0;
 }
 
-/*
-===============
-NameToSrcBlendMode
-===============
-*/
+/**
+ * @brief NameToSrcBlendMode
+ * @param[in] name
+ * @return
+ */
 static int NameToSrcBlendMode(const char *name)
 {
 	if (!Q_stricmp(name, "GL_ONE"))
@@ -228,11 +240,12 @@ static int NameToSrcBlendMode(const char *name)
 	return GLS_SRCBLEND_ONE;
 }
 
-/*
-===============
-NameToDstBlendMode
-===============
-*/
+
+/**
+ * @brief NameToDstBlendMode
+ * @param[in] name
+ * @return
+ */
 static int NameToDstBlendMode(const char *name)
 {
 	if (!Q_stricmp(name, "GL_ONE"))
@@ -272,11 +285,11 @@ static int NameToDstBlendMode(const char *name)
 	return GLS_DSTBLEND_ONE;
 }
 
-/*
-===============
-NameToGenFunc
-===============
-*/
+/**
+ * @brief NameToGenFunc
+ * @param[in] funcname
+ * @return
+ */
 static genFunc_t NameToGenFunc(const char *funcname)
 {
 	if (!Q_stricmp(funcname, "sin"))
@@ -308,11 +321,11 @@ static genFunc_t NameToGenFunc(const char *funcname)
 	return GF_SIN;
 }
 
-/*
-===================
-ParseWaveForm
-===================
-*/
+/**
+ * @brief ParseWaveForm
+ * @param[in,out] text
+ * @param[out] wave
+ */
 static void ParseWaveForm(char **text, waveForm_t *wave)
 {
 	char *token;
@@ -359,11 +372,11 @@ static void ParseWaveForm(char **text, waveForm_t *wave)
 	wave->frequency = atof(token);
 }
 
-/*
-===================
-ParseTexMod
-===================
-*/
+/**
+ * @brief ParseTexMod
+ * @param[in,out] _text
+ * @param[in,out] stage
+ */
 static void ParseTexMod(char *_text, shaderStage_t *stage)
 {
 	const char   *token;
@@ -387,7 +400,7 @@ static void ParseTexMod(char *_text, shaderStage_t *stage)
 		tmi->type = TMOD_SWAP;
 	}
 	// turb
-	// (SA) added 'else' so it wouldn't claim 'swap' was unknown.
+	// added 'else' so it wouldn't claim 'swap' was unknown.
 	else if (!Q_stricmp(token, "turb"))
 	{
 		token = COM_ParseExt(text, qfalse);
@@ -581,11 +594,12 @@ static void ParseTexMod(char *_text, shaderStage_t *stage)
 	}
 }
 
-/*
-===================
-ParseStage
-===================
-*/
+/**
+ * @brief ParseStage
+ * @param[in,out] stage
+ * @param[in,out] text
+ * @return
+ */
 static qboolean ParseStage(shaderStage_t *stage, char **text)
 {
 	char     *token;
@@ -964,12 +978,12 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			}
 			else if (!Q_stricmp(token, "const"))
 			{
-				vec3_t color;
+				vec3_t color = { 0, 0, 0 };
 
 				ParseVector(text, 3, color);
-				stage->constantColor[0] = 255 * color[0];
-				stage->constantColor[1] = 255 * color[1];
-				stage->constantColor[2] = 255 * color[2];
+				stage->constantColor[0] = (byte)(255 * color[0]);
+				stage->constantColor[1] = (byte)(255 * color[1]);
+				stage->constantColor[2] = (byte)(255 * color[2]);
 
 				stage->rgbGen = CGEN_CONST;
 			}
@@ -1033,7 +1047,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			else if (!Q_stricmp(token, "const"))
 			{
 				token                   = COM_ParseExt(text, qfalse);
-				stage->constantColor[3] = 255 * atof(token);
+				stage->constantColor[3] = (byte)(255 * atof(token));
 				stage->alphaGen         = AGEN_CONST;
 			}
 			else if (!Q_stricmp(token, "identity"))
@@ -1054,7 +1068,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				token           = COM_ParseExt(text, qfalse);
 				if (token[0])
 				{
-					stage->constantColor[3] = 255 * atof(token);
+					stage->constantColor[3] = (byte)(255 * atof(token));
 				}
 				else
 				{
@@ -1230,20 +1244,19 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 	return qtrue;
 }
 
-/*
-===============
-ParseDeform
-
-deformVertexes wave <spread> <waveform> <base> <amplitude> <phase> <frequency>
-deformVertexes normal <frequency> <amplitude>
-deformVertexes move <vector> <waveform> <base> <amplitude> <phase> <frequency>
-deformVertexes bulge <bulgeWidth> <bulgeHeight> <bulgeSpeed>
-deformVertexes projectionShadow
-deformVertexes autoSprite
-deformVertexes autoSprite2
-deformVertexes text[0-7]
-===============
-*/
+/**
+ * @brief ParseDeform
+ * @param[in,out] text
+ *
+ * @note deformVertexes wave <spread> <waveform> <base> <amplitude> <phase> <frequency>
+ * deformVertexes normal <frequency> <amplitude>
+ * deformVertexes move <vector> <waveform> <base> <amplitude> <phase> <frequency>
+ * deformVertexes bulge <bulgeWidth> <bulgeHeight> <bulgeSpeed>
+ * deformVertexes projectionShadow
+ * deformVertexes autoSprite
+ * deformVertexes autoSprite2
+ * deformVertexes text[0-7]
+ */
 static void ParseDeform(char **text)
 {
 	char          *token;
@@ -1395,13 +1408,12 @@ static void ParseDeform(char **text)
 	ri.Printf(PRINT_WARNING, "WARNING: unknown deformVertexes subtype '%s' found in shader '%s'\n", token, shader.name);
 }
 
-/*
-===============
-ParseSkyParms
-
-skyParms <outerbox> <cloudheight> <innerbox>
-===============
-*/
+/**
+ * @brief ParseSkyParms
+ * @param[in,out] text
+ *
+ * @note skyParms <outerbox> <cloudheight> <innerbox>
+ */
 static void ParseSkyParms(char **text)
 {
 	char        *token;
@@ -1438,12 +1450,11 @@ static void ParseSkyParms(char **text)
 		return;
 	}
 	shader.sky.cloudHeight = atof(token);
-	if (!shader.sky.cloudHeight)
+	if (shader.sky.cloudHeight == 0.f)
 	{
 		shader.sky.cloudHeight = 512;
 	}
 	R_InitSkyTexCoords(shader.sky.cloudHeight);
-
 
 	// innerbox
 	token = COM_ParseExt(text, qfalse);
@@ -1469,11 +1480,10 @@ static void ParseSkyParms(char **text)
 	shader.isSky = qtrue;
 }
 
-/*
-=================
-ParseSort
-=================
-*/
+/**
+ * @brief ParseSort
+ * @param[in,out] text
+ */
 void ParseSort(char **text)
 {
 	char *token;
@@ -1527,8 +1537,14 @@ void ParseSort(char **text)
 	}
 }
 
-// this table is also present in q3map
-
+/**
+ * @struct infoParm_t
+ * @brief
+ *
+ * @note This table is also present in q3map
+ *
+ * @note clearSolid is never used
+ */
 typedef struct
 {
 	char *name;
@@ -1579,12 +1595,12 @@ infoParm_t infoParms[] =
 
 	{ "monsterslick",      0, SURF_MONSTERSLICK, 0                         }, // surf only slick for monsters
 
-	{ "glass",             0, SURF_GLASS,        0                         }, //----(SA) added
-	{ "splash",            0, SURF_SPLASH,       0                         }, //----(SA) added
+	{ "glass",             0, SURF_GLASS,        0                         },
+	{ "splash",            0, SURF_SPLASH,       0                         },
 
 	// steps
 	{ "metal",             0, SURF_METAL,        0                         },
-	{ "metalsteps",        0, SURF_METAL,        0                         }, // retain bw compatibility with Q3A metal shaders... (SA)
+	{ "metalsteps",        0, SURF_METAL,        0                         }, // retain bw compatibility with Q3A metal shaders...
 	{ "nosteps",           0, SURF_NOSTEPS,      0                         },
 	{ "woodsteps",         0, SURF_WOOD,         0                         },
 	{ "grasssteps",        0, SURF_GRASS,        0                         },
@@ -1607,13 +1623,12 @@ infoParm_t infoParms[] =
 	{ "monsterslickwest",  0, SURF_MONSLICK_W,   0                         }
 };
 
-/*
-===============
-ParseSurfaceParm
-
-surfaceparm <name>
-===============
-*/
+/**
+ * @brief ParseSurfaceParm
+ * @param[in,out] text
+ *
+ * @note surfaceparm <name>
+ */
 static void ParseSurfaceParm(char **text)
 {
 	char *token;
@@ -1638,15 +1653,14 @@ static void ParseSurfaceParm(char **text)
 	}
 }
 
-/*
-=================
-ParseShader
-
-The current text pointer is at the explicit text definition of the
-shader.  Parse it into the global shader variable.  Later functions
-will optimize it.
-=================
-*/
+/**
+ * @brief The current text pointer is at the explicit text definition of the
+ * shader. Parse it into the global shader variable.
+ * Later functions will optimize it.
+ *
+ * @param[in,out] text
+ * @return
+ */
 static qboolean ParseShader(char **text)
 {
 	char *token;
@@ -1856,7 +1870,7 @@ static qboolean ParseShader(char **text)
 		}
 		else if (!Q_stricmp(token, "sunshader"))
 		{
-			int tokenLen;
+			size_t tokenLen;
 
 			token = COM_ParseExt(text, qfalse);
 			if (!token[0])
@@ -1917,7 +1931,7 @@ static qboolean ParseShader(char **text)
 			// to change at some point, but I'm not sure how to track fog parameters
 			// on a "per-water volume" basis yet.
 
-			if (fogvar == 0)           // '0' specifies "use the map values for everything except the fog color
+			if (fogvar == 0.f)           // '0' specifies "use the map values for everything except the fog color
 			{   // TODO
 			}
 			else if (fogvar > 1)            // distance "linear" fog
@@ -1949,7 +1963,6 @@ static qboolean ParseShader(char **text)
 				ri.Printf(PRINT_WARNING, "WARNING: missing density value for the fog\n");
 				continue;
 			}
-
 
 			// NOTE:   fogFar > 1 means the shader is setting the farclip, < 1 means setting
 			//         density (so old maps or maps that just need softening fog don't have to care about farclip)
@@ -2037,7 +2050,7 @@ static qboolean ParseShader(char **text)
 			if (shader.distanceCull[1] - shader.distanceCull[0] > 0)
 			{
 				// distanceCull[ 3 ] is an optimization
-				shader.distanceCull[3] = 1.0 / (shader.distanceCull[1] - shader.distanceCull[0]);
+				shader.distanceCull[3] = 1.0f / (shader.distanceCull[1] - shader.distanceCull[0]);
 			}
 			else
 			{
@@ -2114,14 +2127,10 @@ SHADER OPTIMIZATION AND FOGGING
 ========================================================================================
 */
 
-/*
-===================
-ComputeStageIteratorFunc
-
-See if we can use on of the simple fastpath stage functions,
-otherwise set to the generic stage function
-===================
-*/
+/**
+ * @brief See if we can use on of the simple fastpath stage functions,
+ * otherwise set to the generic stage function
+ */
 static void ComputeStageIteratorFunc(void)
 {
 	shader.optimalStageIteratorFunc = RB_StageIteratorGeneric;
@@ -2130,7 +2139,7 @@ static void ComputeStageIteratorFunc(void)
 	if (shader.isSky)
 	{
 		shader.optimalStageIteratorFunc = RB_StageIteratorSky;
-		goto done;
+		return;
 	}
 
 	if (r_ignoreFastPath->integer)
@@ -2161,7 +2170,7 @@ static void ComputeStageIteratorFunc(void)
 							if (!shader.numDeforms)
 							{
 								shader.optimalStageIteratorFunc = RB_StageIteratorVertexLitTexture;
-								goto done;
+								return;
 							}
 						}
 					}
@@ -2185,16 +2194,13 @@ static void ComputeStageIteratorFunc(void)
 						if (shader.multitextureEnv)
 						{
 							shader.optimalStageIteratorFunc = RB_StageIteratorLightmappedMultitexture;
-							goto done;
+							return;
 						}
 					}
 				}
 			}
 		}
 	}
-
-done:
-	return;
 }
 
 typedef struct
@@ -2235,17 +2241,15 @@ static collapse_t collapse[] =
 	{ 0,                                          GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA | GLS_SRCBLEND_SRC_ALPHA,
 	  GL_DECAL, 0 },
 #endif
-	{ -1 }
+	{ -1,                                         -1,                                                       -1,-1 }
 };
 
-/*
-================
-CollapseMultitexture
-
-Attempt to combine two stages into a single multitexture stage
-FIXME: I think modulated add + modulated add collapses incorrectly
-=================
-*/
+/**
+ * @brief Attempt to combine two stages into a single multitexture stage
+ * @return
+ *
+ * @todo FIXME: I think modulated add + modulated add collapses incorrectly
+ */
 static qboolean CollapseMultitexture(void)
 {
 	int             abits, bbits;
@@ -2355,16 +2359,16 @@ static qboolean CollapseMultitexture(void)
 	return qtrue;
 }
 
-/*
-=============
-FixRenderCommandList
-
-This is a nasty issue. Shaders can be registered after drawsurfaces are generated
-but before the frame is rendered. This will, for the duration of one frame, cause drawsurfaces
-to be rendered with bad shaders. To fix this, need to go through all render commands and fix
-sortedIndex.
-==============
-*/
+/**
+ * @brief FixRenderCommandList
+ *
+ * @todo This is a nasty issue. Shaders can be registered after drawsurfaces are generated
+ * but before the frame is rendered. This will, for the duration of one frame, cause drawsurfaces
+ * to be rendered with bad shaders. To fix this, need to go through all render commands and fix
+ * sortedIndex.
+ *
+ * @param newShader
+ */
 static void FixRenderCommandList(int newShader)
 {
 	renderCommandList_t *cmdList = &backEndData->commands;
@@ -2382,6 +2386,7 @@ static void FixRenderCommandList(int newShader)
 			case RC_SET_COLOR:
 			{
 				const setColorCommand_t *sc_cmd = (const setColorCommand_t *)curCmd;
+
 				curCmd = (const void *)(sc_cmd + 1);
 				break;
 			}
@@ -2390,6 +2395,7 @@ static void FixRenderCommandList(int newShader)
 			case RC_STRETCH_PIC_GRADIENT:
 			{
 				const stretchPicCommand_t *sp_cmd = (const stretchPicCommand_t *)curCmd;
+
 				curCmd = (const void *)(sp_cmd + 1);
 				break;
 			}
@@ -2424,12 +2430,14 @@ static void FixRenderCommandList(int newShader)
 			case RC_DRAW_BUFFER:
 			{
 				const drawBufferCommand_t *db_cmd = (const drawBufferCommand_t *)curCmd;
+
 				curCmd = (const void *)(db_cmd + 1);
 				break;
 			}
 			case RC_SWAP_BUFFERS:
 			{
 				const swapBuffersCommand_t *sb_cmd = (const swapBuffersCommand_t *)curCmd;
+
 				curCmd = (const void *)(sb_cmd + 1);
 				break;
 			}
@@ -2441,24 +2449,18 @@ static void FixRenderCommandList(int newShader)
 	}
 }
 
-/*
-==============
-SortNewShader
-
-Positions the most recently created shader in the tr.sortedShaders[]
-array so that the shader->sort key is sorted reletive to the other
-shaders.
-
-Sets shader->sortedIndex
-==============
-*/
+/**
+ * @brief Positions the most recently created shader in the tr.sortedShaders[]
+ * array so that the shader->sort key is sorted reletive to the other
+ * shaders.
+ *
+ * @note Sets shader->sortedIndex
+ */
 static void SortNewShader(void)
 {
 	int      i;
-	float    sort;
 	shader_t *newShader = tr.shaders[tr.numShaders - 1];
-
-	sort = newShader->sort;
+	float    sort       = newShader->sort;
 
 	for (i = tr.numShaders - 2 ; i >= 0 ; i--)
 	{
@@ -2470,18 +2472,17 @@ static void SortNewShader(void)
 		tr.sortedShaders[i + 1]->sortedIndex++;
 	}
 
-	// Arnout: fix rendercommandlist
+	// fix rendercommandlist
 	FixRenderCommandList(i + 1);
 
 	newShader->sortedIndex  = i + 1;
 	tr.sortedShaders[i + 1] = newShader;
 }
 
-/*
-====================
-GeneratePermanentShader
-====================
-*/
+/**
+ * @brief GeneratePermanentShader
+ * @return
+ */
 static shader_t *GeneratePermanentShader(void)
 {
 	shader_t *newShader;
@@ -2553,12 +2554,12 @@ static shader_t *GeneratePermanentShader(void)
 	return newShader;
 }
 
+#if 0 // To shut up compiler warnings until we use this function.
 /**
  * @brief If vertex lighting is enabled, only render a single pass, trying to guess
  * which is the correct one to best aproximate what it is supposed to look like.
  * @note Unused in ET:L, but can be enabled with patches from the ioquake3 project.
  */
-#if 0 // To shut up compiler warnings until we use this function.
 static void VertexLightingCollapse(void)
 {
 	int           stage;
@@ -2659,10 +2660,10 @@ static void VertexLightingCollapse(void)
 }
 #endif // 0
 
-/*
-SetImplicitShaderStages()
-sets a shader's stages to one of several defaults
-*/
+/**
+ * @brief Sets a shader's stages to one of several defaults
+ * @param image
+ */
 static void SetImplicitShaderStages(image_t *image)
 {
 	// set implicit cull type
@@ -2681,7 +2682,6 @@ static void SetImplicitShaderStages(image_t *image)
 		stages[0].rgbGen             = CGEN_LIGHTING_DIFFUSE;
 		stages[0].stateBits          = implicitStateBits;
 		break;
-
 	// gui elements (note state bits are overridden)
 	case LIGHTMAP_2D:
 		stages[0].bundle[0].image[0] = image;
@@ -2690,10 +2690,8 @@ static void SetImplicitShaderStages(image_t *image)
 		stages[0].alphaGen           = AGEN_SKIP;
 		stages[0].stateBits          = GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA;
 		break;
-
 	// fullbright is disabled per atvi request
 	case LIGHTMAP_WHITEIMAGE:
-
 	// explicit colors at vertexes
 	case LIGHTMAP_BY_VERTEX:
 		stages[0].bundle[0].image[0] = image;
@@ -2702,7 +2700,6 @@ static void SetImplicitShaderStages(image_t *image)
 		stages[0].alphaGen           = AGEN_SKIP;
 		stages[0].stateBits          = implicitStateBits;
 		break;
-
 	// use lightmap pass
 	default:
 		// masked or blended implicit shaders need texture first
@@ -2737,14 +2734,11 @@ static void SetImplicitShaderStages(image_t *image)
 	}
 }
 
-/*
-=========================
-FinishShader
-
-Returns a freshly allocated shader with all the needed info
-from the current global working shader
-=========================
-*/
+/**
+ * @brief Returns a freshly allocated shader with all the needed info
+ * from the current global working shader
+ * @return
+ */
 static shader_t *FinishShader(void)
 {
 	int      stage, i;
@@ -2757,7 +2751,7 @@ static shader_t *FinishShader(void)
 	}
 
 	// set polygon offset
-	if (shader.polygonOffset && !shader.sort)
+	if (shader.polygonOffset && shader.sort == 0.f)
 	{
 		shader.sort = SS_DECAL;
 	}
@@ -2821,7 +2815,6 @@ static shader_t *FinishShader(void)
 			}
 		}
 
-
 		// determine sort order and fog color adjustment
 		if ((pStage->stateBits & (GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS)) &&
 		    (stages[0].stateBits & (GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS)))
@@ -2862,7 +2855,7 @@ static shader_t *FinishShader(void)
 			}
 
 			// don't screw with sort order if this is a portal or environment
-			if (!shader.sort)
+			if (shader.sort == 0.f)
 			{
 				// see through item, like a grill or grate
 				if (pStage->stateBits & GLS_DEPTHMASK_TRUE)
@@ -2879,7 +2872,7 @@ static shader_t *FinishShader(void)
 
 	// there are times when you will need to manually apply a sort to
 	// opaque alpha tested shaders that have later blend passes
-	if (!shader.sort)
+	if (shader.sort == 0.f)
 	{
 		shader.sort = SS_OPAQUE;
 	}
@@ -2919,8 +2912,12 @@ static shader_t *FinishShader(void)
 
 //========================================================================================
 
-// dynamic shader list
 typedef struct dynamicshader dynamicshader_t;
+
+/**
+ * @struct dynamicshader
+ * @brief Dynamic shader list
+ */
 struct dynamicshader
 {
 	char *shadertext;
@@ -2928,15 +2925,15 @@ struct dynamicshader
 };
 static dynamicshader_t *dshader = NULL;
 
-/*
-====================
-RE_LoadDynamicShader
-
-load a new dynamic shader
-if shadertext is NULL, looks for matching shadername and removes it
-returns qtrue if request was successful, qfalse if the gods were angered
-====================
-*/
+/**
+ * @brief load a new dynamic shader
+ * if shadertext is NULL, looks for matching shadername and removes it
+ *
+ * @param[in] shadername
+ * @param[in] shadertext
+ *
+ * @return qtrue if request was successful, qfalse if the gods were angered
+ */
 qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 {
 	const char      *func_err = "WARNING: RE_LoadDynamicShader";
@@ -3037,18 +3034,14 @@ qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 	return qtrue;
 }
 
-/*
-====================
-FindShaderInShaderText
-
-Scans the combined text description of all the shader files for
-the given shader name.
-
-return NULL if not found
-
-If found, it will return a valid shader
-=====================
-*/
+/**
+ * @brief Scans the combined text description of all the shader files for
+ * the given shader name.
+ *
+ * @param[in] shadername
+ *
+ * @return If found, it will return a valid shader. Otherwise return NULL if not found
+ */
 static char *FindShaderInShaderText(const char *shadername)
 {
 	char *p = s_shaderText;
@@ -3067,12 +3060,10 @@ static char *FindShaderInShaderText(const char *shadername)
 	// if we have any dynamic shaders loaded, check them first
 	if (dshader)
 	{
-		dynamicshader_t *dptr;
+		dynamicshader_t *dptr = dshader;
 		char            *q;
-		int             i;
+		int             i = 0;
 
-		dptr = dshader;
-		i    = 0;
 		while (dptr)
 		{
 			if (!dptr->shadertext || !strlen(dptr->shadertext))
@@ -3164,14 +3155,12 @@ static char *FindShaderInShaderText(const char *shadername)
 	return NULL;
 }
 
-/*
-==================
-R_FindShaderByName
-
-Will always return a valid shader, but it might be the
-default shader if the real one can't be found.
-==================
-*/
+/**
+ * @brief Will always return a valid shader, but it might be the
+ * default shader if the real one can't be found.
+ * @param[in] name
+ * @return
+ */
 shader_t *R_FindShaderByName(const char *name)
 {
 	char     strippedName[MAX_QPATH];
@@ -3206,16 +3195,13 @@ shader_t *R_FindShaderByName(const char *name)
 	return tr.defaultShader;
 }
 
-/*
-===============
-R_FindLightmap
-given a (potentially erroneous) lightmap index, attempts to load
-an external lightmap image and/or sets the index to a valid number
-===============
-*/
-
 #define EXTERNAL_LIGHTMAP   "lm_%04d.tga"    // THIS MUST BE IN SYNC WITH Q3MAP2
 
+/**
+ * @brief Given a (potentially erroneous) lightmap index, attempts to load
+ * an external lightmap image and/or sets the index to a valid number
+ * @param[in,out] lightmapIndex
+ */
 void R_FindLightmap(int *lightmapIndex)
 {
 	image_t *image;
@@ -3260,34 +3246,34 @@ void R_FindLightmap(int *lightmapIndex)
 	tr.lightmaps[*lightmapIndex] = image;
 }
 
-/*
-===============
-R_FindShader
-
-Will always return a valid shader, but it might be the
-default shader if the real one can't be found.
-
-In the interest of not requiring an explicit shader text entry to
-be defined for every single image used in the game, three default
-shader behaviors can be auto-created for any image:
-
-If lightmapIndex == LIGHTMAP_NONE, then the image will have
-dynamic diffuse lighting applied to it, as apropriate for most
-entity skin surfaces.
-
-If lightmapIndex == LIGHTMAP_2D, then the image will be used
-for 2D rendering unless an explicit shader is found
-
-If lightmapIndex == LIGHTMAP_BY_VERTEX, then the image will use
-the vertex rgba modulate values, as apropriate for misc_model
-pre-lit surfaces.
-
-Other lightmapIndex values will have a lightmap stage created
-and src*dest blending applied with the texture, as apropriate for
-most world construction surfaces.
-
-===============
-*/
+/**
+ * @brief Will always return a valid shader, but it might be the
+ * default shader if the real one can't be found.
+ *
+ * In the interest of not requiring an explicit shader text entry to
+ * be defined for every single image used in the game, three default
+ * shader behaviors can be auto-created for any image:
+ *
+ * If lightmapIndex == LIGHTMAP_NONE, then the image will have
+ * dynamic diffuse lighting applied to it, as apropriate for most
+ * entity skin surfaces.
+ *
+ * If lightmapIndex == LIGHTMAP_2D, then the image will be used
+ * for 2D rendering unless an explicit shader is found
+ *
+ * If lightmapIndex == LIGHTMAP_BY_VERTEX, then the image will use
+ * the vertex rgba modulate values, as apropriate for misc_model
+ * pre-lit surfaces.
+ *
+ * Other lightmapIndex values will have a lightmap stage created
+ * and src*dest blending applied with the texture, as apropriate for
+ * most world construction surfaces.
+ *
+ * @param[in] name
+ * @param[in] lightmapIndex
+ * @param[in] mipRawImage
+ * @return
+ */
 shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage)
 {
 	char     strippedName[MAX_QPATH];
@@ -3444,6 +3430,14 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 	return FinishShader();
 }
 
+/**
+ * @brief RE_RegisterShaderFromImage
+ * @param[in] name
+ * @param[in] lightmapIndex
+ * @param[in] image
+ * @param mipRawImage - unused
+ * @return
+ */
 qhandle_t RE_RegisterShaderFromImage(const char *name, int lightmapIndex, image_t *image, qboolean mipRawImage)
 {
 	int      i, hash;
@@ -3490,17 +3484,17 @@ qhandle_t RE_RegisterShaderFromImage(const char *name, int lightmapIndex, image_
 	return sh->index;
 }
 
-/*
-====================
-RE_RegisterShaderLightMap
-
-This is the exported shader entry point for the rest of the system
-It will always return an index that will be valid.
-
-This should really only be used for explicit shaders, because there is no
-way to ask for different implicit lighting modes (vertex, lightmap, etc)
-====================
-*/
+/**
+ * @brief This is the exported shader entry point for the rest of the system
+ * It will always return an index that will be valid.
+ *
+ * This should really only be used for explicit shaders, because there is no
+ * way to ask for different implicit lighting modes (vertex, lightmap, etc)
+ *
+ * @param[in] name
+ * @param[in] lightmapIndex
+ * @return
+ */
 qhandle_t RE_RegisterShaderLightMap(const char *name, int lightmapIndex)
 {
 	shader_t *sh;
@@ -3527,17 +3521,16 @@ qhandle_t RE_RegisterShaderLightMap(const char *name, int lightmapIndex)
 	return sh->index;
 }
 
-/*
-====================
-RE_RegisterShader
-
-This is the exported shader entry point for the rest of the system
-It will always return an index that will be valid.
-
-This should really only be used for explicit shaders, because there is no
-way to ask for different implicit lighting modes (vertex, lightmap, etc)
-====================
-*/
+/**
+ * @brief This is the exported shader entry point for the rest of the system
+ * It will always return an index that will be valid.
+ *
+ * This should really only be used for explicit shaders, because there is no
+ * way to ask for different implicit lighting modes (vertex, lightmap, etc)
+ *
+ * @param[in] name
+ * @return
+ */
 qhandle_t RE_RegisterShader(const char *name)
 {
 	shader_t *sh;
@@ -3564,13 +3557,13 @@ qhandle_t RE_RegisterShader(const char *name)
 	return sh->index;
 }
 
-/*
-====================
-RE_RegisterShaderNoMip
-
-For menu graphics that should never be picmiped
-====================
-*/
+/**
+ * @brief RE_RegisterShaderNoMip
+ * @param name
+ * @return
+ *
+ * @note For menu graphics that should never be picmiped
+ */
 qhandle_t RE_RegisterShaderNoMip(const char *name)
 {
 	shader_t *sh;
@@ -3597,14 +3590,12 @@ qhandle_t RE_RegisterShaderNoMip(const char *name)
 	return sh->index;
 }
 
-/*
-====================
-R_GetShaderByHandle
-
-When a handle is passed in by another module, this range checks
-it and returns a valid (possibly default) shader_t to be used internally.
-====================
-*/
+/**
+ * @brief When a handle is passed in by another module, this range checks
+ * it and returns a valid (possibly default) shader_t to be used internally.
+ * @param[in] hShader
+ * @return
+ */
 shader_t *R_GetShaderByHandle(qhandle_t hShader)
 {
 	if (hShader < 0)
@@ -3620,14 +3611,10 @@ shader_t *R_GetShaderByHandle(qhandle_t hShader)
 	return tr.shaders[hShader];
 }
 
-/*
-===============
-R_ShaderList_f
-
-Dump information on all valid shaders to the console
-A second parameter will cause it to print in sorted order
-===============
-*/
+/**
+ * @brief Dump information on all valid shaders to the console
+ * A second parameter will cause it to print in sorted order
+ */
 void R_ShaderList_f(void)
 {
 	int      i;
@@ -3724,11 +3711,9 @@ void R_ShaderList_f(void)
 #define MAX_SHADER_STRING_POINTERS  100000
 shaderStringPointer_t shaderStringPointerList[MAX_SHADER_STRING_POINTERS];
 
-/*
-====================
-BuildShaderChecksumLookup
-====================
-*/
+/**
+ * @brief BuildShaderChecksumLookup
+ */
 static void BuildShaderChecksumLookup(void)
 {
 	char               *p = s_shaderText, *pOld;
@@ -3786,15 +3771,11 @@ static void BuildShaderChecksumLookup(void)
 	}
 }
 
-/*
-====================
-ScanAndLoadShaderFiles
-
-Finds and loads all .shader files, combining them into
-a single large text block that can be scanned for shader names
-=====================
-*/
 #define MAX_SHADER_FILES    4096
+/**
+ * @brief Finds and loads all .shader files, combining them into
+ * a single large text block that can be scanned for shader names
+ */
 static void ScanAndLoadShaderFiles(void)
 {
 	char filename[MAX_QPATH];
@@ -3862,11 +3843,9 @@ static void ScanAndLoadShaderFiles(void)
 	}
 }
 
-/*
-====================
-CreateInternalShaders
-====================
-*/
+/**
+ * @brief CreateInternalShaders
+ */
 static void CreateInternalShaders(void)
 {
 	tr.numShaders = 0;
@@ -3903,11 +3882,14 @@ static int      numBackupShaders = 0;
 static shader_t *backupShaders[MAX_SHADERS];
 static shader_t *backupHashTable[FILE_HASH_SIZE];
 
-/*
-===============
-R_CacheShaderAllocExt
-===============
-*/
+/**
+ * @brief R_CacheShaderAllocExt
+ * @param name - unused
+ * @param[in] size
+ * @param file - unused
+ * @param line - unused
+ * @return
+ */
 void *R_CacheShaderAllocExt(const char *name, int size, const char *file, int line)
 {
 	if (r_cache->integer && r_cacheShaders->integer)
@@ -3921,11 +3903,13 @@ void *R_CacheShaderAllocExt(const char *name, int size, const char *file, int li
 	}
 }
 
-/*
-===============
-R_CacheShaderFreeExt
-===============
-*/
+/**
+ * @brief R_CacheShaderFreeExt
+ * @param name - unused
+ * @param[in] ptr
+ * @param file - unused
+ * @param line - unused
+ */
 void R_CacheShaderFreeExt(const char *name, void *ptr, const char *file, int line)
 {
 	if (r_cache->integer && r_cacheShaders->integer)
@@ -3934,13 +3918,12 @@ void R_CacheShaderFreeExt(const char *name, void *ptr, const char *file, int lin
 	}
 }
 
-/*
-===============
-R_PurgeShaders
-===============
-*/
-
 qboolean purgeallshaders = qfalse;
+
+/**
+ * @brief R_PurgeShaders
+ * @param count - unused
+ */
 void R_PurgeShaders(int count)
 {
 	if (!numBackupShaders)
@@ -3953,6 +3936,11 @@ void R_PurgeShaders(int count)
 	purgeallshaders = qfalse;
 }
 
+/**
+ * @brief R_ShaderCanBeCached
+ * @param[in] sh
+ * @return
+ */
 qboolean R_ShaderCanBeCached(shader_t *sh)
 {
 	int i, j, b;
@@ -3989,6 +3977,9 @@ qboolean R_ShaderCanBeCached(shader_t *sh)
 	return qtrue;
 }
 
+/**
+ * @brief R_PurgeLightmapShaders
+ */
 void R_PurgeLightmapShaders(void)
 {
 	int      j, b, i = 0;
@@ -4048,11 +4039,9 @@ void R_PurgeLightmapShaders(void)
 	}
 }
 
-/*
-===============
-R_BackupShaders
-===============
-*/
+/**
+ * @brief R_BackupShaders
+ */
 void R_BackupShaders(void)
 {
 	//int i;
@@ -4087,13 +4076,11 @@ void R_BackupShaders(void)
 	//Com_Printf( "=======================================\n" );
 }
 
-/*
-=================
-R_RegisterShaderImages
-
-  Make sure all images that belong to this shader remain valid
-=================
-*/
+/**
+ * @brief Make sure all images that belong to this shader remain valid
+ * @param[in] sh
+ * @return
+ */
 static qboolean R_RegisterShaderImages(shader_t *sh)
 {
 	int i, j, b;
@@ -4122,13 +4109,13 @@ static qboolean R_RegisterShaderImages(shader_t *sh)
 	return qtrue;
 }
 
-/*
-===============
-R_FindCachedShader
-
-  look for the given shader in the list of backupShaders
-===============
-*/
+/**
+ * @brief Look for the given shader in the list of backupShaders
+ * @param[in] name
+ * @param[in] lightmapIndex
+ * @param[in] hash
+ * @return
+ */
 shader_t *R_FindCachedShader(const char *name, int lightmapIndex, int hash)
 {
 	shader_t *sh, *shPrev;
@@ -4209,11 +4196,9 @@ shader_t *R_FindCachedShader(const char *name, int lightmapIndex, int hash)
 	return NULL;
 }
 
-/*
-===============
-R_LoadCacheShaders
-===============
-*/
+/**
+ * @brief R_LoadCacheShaders
+ */
 void R_LoadCacheShaders(void)
 {
 	int  len;
@@ -4254,11 +4239,9 @@ void R_LoadCacheShaders(void)
 
 //=============================================================================
 
-/*
-==================
-R_InitShaders
-==================
-*/
+/**
+ * @brief R_InitShaders
+ */
 void R_InitShaders(void)
 {
 	glfogNum = FOG_NONE;

@@ -61,6 +61,9 @@ int r_firstSceneDecal;
 
 int skyboxportal;
 
+/**
+ * @brief R_InitNextFrame
+ */
 void R_InitNextFrame(void)
 {
 	backEndData->commands.used = 0;
@@ -91,11 +94,9 @@ void R_InitNextFrame(void)
 	r_firstSceneDecal          = 0;
 }
 
-/*
-====================
-RE_ClearScene
-====================
-*/
+/**
+ * @brief RE_ClearScene
+ */
 void RE_ClearScene(void)
 {
 	// clear everything else
@@ -111,13 +112,9 @@ DISCRETE POLYS
 ===========================================================================
 */
 
-/*
-=====================
-R_AddPolygonSurfaces
-
-Adds all the scene's polys into this view's drawsurf list
-=====================
-*/
+/**
+ * @brief Adds all the scene's polys into this view's drawsurf list
+ */
 void R_AddPolygonSurfaces(void)
 {
 	int       i;
@@ -135,11 +132,12 @@ void R_AddPolygonSurfaces(void)
 	}
 }
 
-/*
-=====================
-RE_AddPolyToScene
-=====================
-*/
+/**
+ * @brief RE_AddPolyToScene
+ * @param[in] hShader
+ * @param[in] numVerts
+ * @param[in] verts
+ */
 void RE_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts)
 {
 	srfPoly_t *poly;
@@ -212,11 +210,13 @@ void RE_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts)
 	poly->fogIndex = fogIndex;
 }
 
-/*
-=====================
-RE_AddPolysToScene
-=====================
-*/
+/**
+ * @brief RE_AddPolysToScene
+ * @param[in] hShader
+ * @param[in] numVerts
+ * @param[in] verts
+ * @param[in] numPolys
+ */
 void RE_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts, int numPolys)
 {
 	srfPoly_t *poly;
@@ -302,13 +302,9 @@ void RE_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts
 	}
 }
 
-/*
-=====================
-R_AddPolygonSurfaces
-
-Adds all the scene's polys into this view's drawsurf list
-=====================
-*/
+/**
+ * @brief Adds all the scene's polys into this view's drawsurf list
+ */
 void R_AddPolygonBufferSurfaces(void)
 {
 	int             i;
@@ -326,11 +322,10 @@ void R_AddPolygonBufferSurfaces(void)
 	}
 }
 
-/*
-=====================
-RE_AddPolyBufferToScene
-=====================
-*/
+/**
+ * @brief RE_AddPolyBufferToScene
+ * @param[in] pPolyBuffer
+ */
 void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer)
 {
 	srfPolyBuffer_t *pPolySurf;
@@ -380,11 +375,10 @@ void RE_AddPolyBufferToScene(polyBuffer_t *pPolyBuffer)
 
 //=================================================================================
 
-/*
-=====================
-RE_AddRefEntityToScene
-=====================
-*/
+/**
+ * @brief RE_AddRefEntityToScene
+ * @param[in] ent
+ */
 void RE_AddRefEntityToScene(const refEntity_t *ent)
 {
 	if (!tr.registered)
@@ -424,20 +418,26 @@ void RE_AddRefEntityToScene(const refEntity_t *ent)
 	r_numentities++;
 
 	// add projected shadows for this model
-	// - casting const away
-	R_AddModelShadow((refEntity_t *) ent);
+	R_AddModelShadow(ent);
 }
 
-/*
-RE_AddLightToScene()
-    modified dlight system to support seperate radius and intensity
-*/
+/**
+ * @brief Modified dlight system to support seperate radius and intensity
+ * @param[in] org
+ * @param[in] radius
+ * @param[in] intensity
+ * @param[in] r
+ * @param[in] g
+ * @param[in] b
+ * @param[in] hShader
+ * @param[in] flags
+ */
 void RE_AddLightToScene(const vec3_t org, float radius, float intensity, float r, float g, float b, qhandle_t hShader, int flags)
 {
 	dlight_t *dl;
 
 	// early out
-	if (!tr.registered || radius <= 0 || intensity <= 0)
+	if (!tr.registered  || radius <= 0 || intensity <= 0)
 	{
 		return;
 	}
@@ -462,7 +462,7 @@ void RE_AddLightToScene(const vec3_t org, float radius, float intensity, float r
 	VectorCopy(org, dl->origin);
 	VectorCopy(org, dl->transformed);
 	dl->radius             = radius;
-	dl->radiusInverseCubed = (1.0 / dl->radius);
+	dl->radiusInverseCubed = (1.0f / dl->radius);
 	dl->radiusInverseCubed = dl->radiusInverseCubed * dl->radiusInverseCubed * dl->radiusInverseCubed;
 	dl->intensity          = intensity;
 	dl->color[0]           = r;
@@ -476,11 +476,16 @@ void RE_AddLightToScene(const vec3_t org, float radius, float intensity, float r
 	dl->flags = flags;
 }
 
-/*
-==============
-RE_AddCoronaToScene
-==============
-*/
+/**
+ * @brief RE_AddCoronaToScene
+ * @param[in] org
+ * @param[in] r
+ * @param[in] g
+ * @param[in] b
+ * @param[in] scale
+ * @param[in] id
+ * @param[in] visible
+ */
 void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, qboolean visible)
 {
 	corona_t *cor;
@@ -489,6 +494,7 @@ void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scal
 	{
 		return;
 	}
+
 	if (r_numcoronas >= MAX_CORONAS)
 	{
 		ri.Printf(PRINT_DEVELOPER, "RE_AddCoronaToScene: Dropping corona, reached MAX_CORONAS\n");
@@ -505,17 +511,15 @@ void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scal
 	cor->visible  = visible;
 }
 
-/*
-@@@@@@@@@@@@@@@@@@@@@
-RE_RenderScene
-
-Draw a 3D view into a part of the window, then return
-to 2D drawing.
-
-Rendering a scene may require multiple views to be rendered
-to handle mirrors,
-@@@@@@@@@@@@@@@@@@@@@
-*/
+/**
+ * @brief Draw a 3D view into a part of the window, then return
+ * to 2D drawing.
+ *
+ * Rendering a scene may require multiple views to be rendered
+ * to handle mirrors,
+ *
+ * @param[in] fd
+ */
 void RE_RenderScene(const refdef_t *fd)
 {
 	viewParms_t parms;

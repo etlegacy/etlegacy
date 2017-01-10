@@ -59,11 +59,11 @@ static vec3_t sky_clip[6] =
 static float sky_mins[2][6], sky_maxs[2][6];
 static float sky_min, sky_max;
 
-/*
-================
-AddSkyPolygon
-================
-*/
+/**
+ * @brief AddSkyPolygon
+ * @param[in] nump
+ * @param[in] vecs
+ */
 static void AddSkyPolygon(int nump, vec3_t vecs)
 {
 	int    i, j;
@@ -139,7 +139,7 @@ static void AddSkyPolygon(int nump, vec3_t vecs)
 		{
 			dv = -vecs[-j - 1];
 		}
-		if (dv < 0.001)
+		if (dv < 0.001f)
 		{
 			continue;   // don't divide by zero
 		}
@@ -183,11 +183,13 @@ static void AddSkyPolygon(int nump, vec3_t vecs)
 
 #define ON_EPSILON      0.1f            // point on plane side epsilon
 #define MAX_CLIP_VERTS  64
-/*
-================
-ClipSkyPolygon
-================
-*/
+
+/**
+ * @brief ClipSkyPolygon
+ * @param[in] nump
+ * @param[in] vecs
+ * @param[in] stage
+ */
 static void ClipSkyPolygon(int nump, vec3_t vecs, int stage)
 {
 	float    *norm;
@@ -285,11 +287,9 @@ static void ClipSkyPolygon(int nump, vec3_t vecs, int stage)
 	ClipSkyPolygon(newc[1], newv[1][0], stage + 1);
 }
 
-/*
-==============
-ClearSkyBox
-==============
-*/
+/**
+ * @brief ClearSkyBox
+ */
 static void ClearSkyBox(void)
 {
 	int i;
@@ -301,11 +301,10 @@ static void ClearSkyBox(void)
 	}
 }
 
-/*
-================
-RB_ClipSkyPolygons
-================
-*/
+/**
+ * @brief RB_ClipSkyPolygons
+ * @param[in] input
+ */
 void RB_ClipSkyPolygons(shaderCommands_t *input)
 {
 	vec3_t p[5];        // need one extra point for clipping
@@ -331,11 +330,14 @@ CLOUD VERTEX GENERATION
 ===================================================================================
 */
 
-/*
-MakeSkyVec
-
-Parms: s, t range from -1 to 1
-*/
+/**
+ * @brief MakeSkyVec
+ * @param[in] s range from -1 to 1
+ * @param[in] t range from -1 to 1
+ * @param[in] axis
+ * @param[out] outSt
+ * @param[out] outXYZ
+ */
 static void MakeSkyVec(float s, float t, int axis, float outSt[2], vec3_t outXYZ)
 {
 	// 1 = s, 2 = t, 3 = 2048
@@ -350,7 +352,6 @@ static void MakeSkyVec(float s, float t, int axis, float outSt[2], vec3_t outXYZ
 		{ -2, -1, 3 }, // 0 degrees yaw, look straight up
 		{ 2,  -1, -3}   // look straight down
 	};
-
 	vec3_t b;
 	int    j, k;
 	float  boxSize;
@@ -366,14 +367,14 @@ static void MakeSkyVec(float s, float t, int axis, float outSt[2], vec3_t outXYZ
 	}
 	else
 	{
-		boxSize = backEnd.viewParms.zFar / 1.75;        // div sqrt(3)
+		boxSize = backEnd.viewParms.zFar / 1.75f;        // div sqrt(3)
 
 	}
 	// JPW NERVE swiped from Sherman
 	// make sure the sky is not near clipped
-	if (boxSize < r_znear->value * 2.0)
+	if (boxSize < r_znear->value * 2.0f)
 	{
-		boxSize = r_znear->value * 2.0;
+		boxSize = r_znear->value * 2.0f;
 	}
 
 	b[0] = s * boxSize;
@@ -394,8 +395,8 @@ static void MakeSkyVec(float s, float t, int axis, float outSt[2], vec3_t outXYZ
 	}
 
 	// avoid bilerp seam
-	s = (s + 1) * 0.5;
-	t = (t + 1) * 0.5;
+	s = (s + 1) * 0.5f;
+	t = (t + 1) * 0.5f;
 	if (s < sky_min)
 	{
 		s = sky_min;
@@ -414,7 +415,7 @@ static void MakeSkyVec(float s, float t, int axis, float outSt[2], vec3_t outXYZ
 		t = sky_max;
 	}
 
-	t = 1.0 - t;
+	t = 1.0f - t;
 
 
 	if (outSt)
@@ -428,6 +429,12 @@ static int    sky_texorder[6] = { 0, 2, 1, 3, 4, 5 };
 static vec3_t s_skyPoints[SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1];
 static float  s_skyTexCoords[SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1][2];
 
+/**
+ * @brief DrawSkySide
+ * @param[in] image
+ * @param[in] mins
+ * @param[in] maxs
+ */
 static void DrawSkySide(struct image_s *image, const int mins[2], const int maxs[2])
 {
 	int s, t;
@@ -468,6 +475,12 @@ static void DrawSkySide(struct image_s *image, const int mins[2], const int maxs
 	}
 }
 
+/**
+ * @brief DrawSkySideInner
+ * @param[in] image
+ * @param[in] mins
+ * @param[in] maxs
+ */
 static void DrawSkySideInner(struct image_s *image, const int mins[2], const int maxs[2])
 {
 	int s, t;
@@ -515,6 +528,10 @@ static void DrawSkySideInner(struct image_s *image, const int mins[2], const int
 	qglDisable(GL_BLEND);
 }
 
+/**
+ * @brief DrawSkyBox
+ * @param[in] shader
+ */
 static void DrawSkyBox(shader_t *shader)
 {
 	int i;
@@ -597,6 +614,10 @@ static void DrawSkyBox(shader_t *shader)
 	}
 }
 
+/**
+ * @brief DrawSkyBoxInner
+ * @param[in] shader
+ */
 static void DrawSkyBoxInner(shader_t *shader)
 {
 	int i;
@@ -676,6 +697,12 @@ static void DrawSkyBoxInner(shader_t *shader)
 	}
 }
 
+/**
+ * @brief FillCloudySkySide
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] addIndexes
+ */
 static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean addIndexes)
 {
 	int s, t;
@@ -728,6 +755,11 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
 	}
 }
 
+/**
+ * @brief FillCloudBox
+ * @param shader - unused
+ * @param[in] stage
+ */
 static void FillCloudBox(const shader_t *shader, int stage)
 {
 	int   i;
@@ -838,25 +870,26 @@ static void FillCloudBox(const shader_t *shader, int stage)
 	}
 }
 
-/*
-R_BuildCloudData
-*/
+/**
+ * @brief R_BuildCloudData
+ * @param[in] input
+ */
 void R_BuildCloudData(shaderCommands_t *input)
 {
 	shader_t *shader = input->shader;
 
 	assert(shader->isSky);
 
-	sky_min = 1.0 / 256.0f;     // FIXME: not correct?
-	sky_max = 255.0 / 256.0f;
+	sky_min = 1.0f / 256.0f;     // FIXME: not correct?
+	sky_max = 255.0f / 256.0f;
 
 	// set up for drawing
 	tess.numIndexes  = 0;
 	tess.numVertexes = 0;
 
-	if (shader->sky.cloudHeight)
+	if (shader->sky.cloudHeight != 0.f)
 	{
-		// ok, this is really wierd. it's iterating through shader stages here,
+		// FIXME: ok, this is really wierd. it's iterating through shader stages here,
 		// which is unecessary for a multi-stage sky shader, as far as i can tell
 		// nuking this
 #if 0
@@ -876,10 +909,10 @@ void R_BuildCloudData(shaderCommands_t *input)
 	}
 }
 
-/*
-R_InitSkyTexCoords
-    Called when a sky shader is parsed
-*/
+/**
+ * @brief Called when a sky shader is parsed
+ * @param[in] heightCloud
+ */
 void R_InitSkyTexCoords(float heightCloud)
 {
 	int    i, s, t;
@@ -938,12 +971,11 @@ void R_InitSkyTexCoords(float heightCloud)
 
 //======================================================================================
 
-/*
-==============
-RB_DrawSun
-    FIXME: sun should render behind clouds, so passing dark areas cover it up
-==============
-*/
+/**
+ * @brief RB_DrawSun
+ *
+ * @todo FIXME: sun should render behind clouds, so passing dark areas cover it up
+ */
 void RB_DrawSun(void)
 {
 	float  size;
@@ -968,10 +1000,10 @@ void RB_DrawSun(void)
 	qglLoadMatrixf(backEnd.viewParms.world.modelMatrix);
 	qglTranslatef(backEnd.viewParms.orientation.origin[0], backEnd.viewParms.orientation.origin[1], backEnd.viewParms.orientation.origin[2]);
 
-	dist = backEnd.viewParms.zFar / 1.75;       // div sqrt(3)
+	dist = backEnd.viewParms.zFar / 1.75f;       // div sqrt(3)
 
 	// shrunk the size of the sun
-	size = dist * 0.2;
+	size = dist * 0.2f;
 
 	VectorScale(tr.sunDirection, dist, origin);
 	PerpendicularVector(vec1, tr.sunDirection);
@@ -1051,7 +1083,7 @@ void RB_DrawSun(void)
 		//      If we decide to use the flare business I will /definatly/ improve all this
 
 		// get a point a little closer
-		dist = dist * 0.7;
+		dist = dist * 0.7f;
 		VectorScale(tr.sunDirection, dist, origin);
 
 		// and make the flare a little smaller
@@ -1063,9 +1095,9 @@ void RB_DrawSun(void)
 		VectorNormalize(temp);
 
 		// amplify the result
-		origin[0] += temp[0] * 500.0;
-		origin[1] += temp[1] * 500.0;
-		origin[2] += temp[2] * 500.0;
+		origin[0] += temp[0] * 500.0f;
+		origin[1] += temp[1] * 500.0f;
+		origin[2] += temp[2] * 500.0f;
 
 		// FIXME: todo: flare effect should render last (on top of everything else) and only when sun is in view (sun moving out of camera past degree n should start to cause flare dimming until view angle to sun is off by angle n + x.
 
@@ -1080,15 +1112,11 @@ void RB_DrawSun(void)
 	qglPopMatrix();
 }
 
-/*
-================
-RB_StageIteratorSky
-
-All of the visible sky triangles are in tess
-
-Other things could be stuck in here, like birds in the sky, etc
-================
-*/
+/**
+ * @brief All of the visible sky triangles are in tess
+ *
+ * Other things could be stuck in here, like birds in the sky, etc
+ */
 void RB_StageIteratorSky(void)
 {
 	if (r_fastsky->integer)

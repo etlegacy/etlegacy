@@ -30,23 +30,22 @@
  */
 /**
  * @file rendererGLES/tr_shade.c
- * @brief This file deals with applying shaders to surface data in the tess
- * struct.
+ * @brief This file deals with applying shaders to surface data in the tess struct.
  *
- * THIS ENTIRE FILE IS BACK END
+ * @note THIS ENTIRE FILE IS BACK END
  */
 
 #include "tr_local.h"
 
-/*
-==================
-R_DrawElements
 
-Optionally performs our own glDrawElements that looks for strip conditions
-instead of using the single glDrawElements call that may be inefficient
-without compiled vertex arrays.
-==================
-*/
+/**
+ * @brief Optionally performs our own glDrawElements that looks for strip conditions
+ * instead of using the single glDrawElements call that may be inefficient
+ * without compiled vertex arrays.
+ *
+ * @param[in] numIndexes
+ * @param[in] indexes
+ */
 static void R_DrawElements(int numIndexes, const glIndex_t *indexes)
 {
 	qglDrawElements(GL_TRIANGLES, numIndexes, GL_INDEX_TYPE, indexes);
@@ -62,11 +61,10 @@ SURFACE SHADERS
 shaderCommands_t tess;
 static qboolean  setArraysOnce;
 
-/*
-=================
-R_BindAnimatedImage
-=================
-*/
+/**
+ * @brief R_BindAnimatedImage
+ * @param[in] bundle
+ */
 static void R_BindAnimatedImage(textureBundle_t *bundle)
 {
 	int64_t index;
@@ -115,13 +113,10 @@ static void R_BindAnimatedImage(textureBundle_t *bundle)
 	}
 }
 
-/*
-================
-DrawTris
-
-Draws triangle outlines for debugging
-================
-*/
+/**
+ * @brief Draws triangle outlines for debugging
+ * @param[in] input
+ */
 static void DrawTris(shaderCommands_t *input)
 {
 	char         *s        = r_trisColor->string;
@@ -135,13 +130,13 @@ static void DrawTris(shaderCommands_t *input)
 		s += 2;
 		if (Q_IsHexColorString(s))
 		{
-			trisColor[0] = ((float)(gethex(*(s)) * 16 + gethex(*(s + 1)))) / 255.00;
-			trisColor[1] = ((float)(gethex(*(s + 2)) * 16 + gethex(*(s + 3)))) / 255.00;
-			trisColor[2] = ((float)(gethex(*(s + 4)) * 16 + gethex(*(s + 5)))) / 255.00;
+			trisColor[0] = ((float)(gethex(*(s)) * 16 + gethex(*(s + 1)))) / 255.00f;
+			trisColor[1] = ((float)(gethex(*(s + 2)) * 16 + gethex(*(s + 3)))) / 255.00f;
+			trisColor[2] = ((float)(gethex(*(s + 4)) * 16 + gethex(*(s + 5)))) / 255.00f;
 
 			if (Q_HexColorStringHasAlpha(s))
 			{
-				trisColor[3] = ((float)(gethex(*(s + 6)) * 16 + gethex(*(s + 7)))) / 255.00;
+				trisColor[3] = ((float)(gethex(*(s + 6)) * 16 + gethex(*(s + 7)))) / 255.00f;
 			}
 		}
 	}
@@ -155,7 +150,7 @@ static void DrawTris(shaderCommands_t *input)
 			token = COM_Parse(&s);
 			if (token[0])
 			{
-				trisColor[i] = atof(token);
+				trisColor[i] = (float)atof(token);
 			}
 			else
 			{
@@ -163,7 +158,7 @@ static void DrawTris(shaderCommands_t *input)
 			}
 		}
 
-		if (!trisColor[3])
+		if (trisColor[3] == 0.f)
 		{
 			trisColor[3] = 1.f;
 		}
@@ -212,13 +207,10 @@ static void DrawTris(shaderCommands_t *input)
 	qglDepthRange(0, 1);
 }
 
-/*
-================
-DrawNormals
-
-Draws vertex normals for debugging
-================
-*/
+/**
+ * @brief Draws vertex normals for debugging
+ * @param[in] input
+ */
 static void DrawNormals(shaderCommands_t *input)
 {
 	vec3_t temp;
@@ -293,15 +285,14 @@ static void DrawNormals(shaderCommands_t *input)
 	qglDepthRange(0, 1);
 }
 
-/*
-==============
-RB_BeginSurface
-
-We must set some things up before beginning any tesselation,
-because a surface may be forced to perform a RB_End due
-to overflow.
-==============
-*/
+/**
+ * @brief We must set some things up before beginning any tesselation,
+ * because a surface may be forced to perform a RB_End due
+ * to overflow.
+ *
+ * @param[in] shader
+ * @param[in] fogNum
+ */
 void RB_BeginSurface(shader_t *shader, int fogNum)
 {
 	shader_t *state = (shader->remappedShader) ? shader->remappedShader : shader;
@@ -316,22 +307,22 @@ void RB_BeginSurface(shader_t *shader, int fogNum)
 	tess.currentStageIteratorFunc = state->optimalStageIteratorFunc;
 
 	tess.shaderTime = backEnd.refdef.floatTime - tess.shader->timeOffset;
-	if (tess.shader->clampTime && tess.shaderTime >= tess.shader->clampTime)
+	if (tess.shader->clampTime != 0.0 && tess.shaderTime >= tess.shader->clampTime)
 	{
 		tess.shaderTime = tess.shader->clampTime;
 	}
 }
 
-/*
-===================
-DrawMultitextured
-
-output = t0 * t1 or t0 + t1
-
-t0 = most upstream according to spec
-t1 = most downstream according to spec
-===================
-*/
+/**
+ * @brief DrawMultitextured
+ * @param[in] input
+ * @param[in] stage
+ *
+ * @note output = t0 * t1 or t0 + t1
+ *
+ * t0 = most upstream according to spec
+ * t1 = most downstream according to spec
+ */
 static void DrawMultitextured(shaderCommands_t *input, int stage)
 {
 	shaderStage_t *pStage = tess.xstages[stage];
@@ -386,13 +377,9 @@ static void DrawMultitextured(shaderCommands_t *input, int stage)
 	GL_SelectTexture(0);
 }
 
-/*
-===================
-DynamicLightSinglePass()
-
-perform all dynamic lighting with a single rendering pass
-===================
-*/
+/**
+ * @brief Perform all dynamic lighting with a single rendering pass
+ */
 static void DynamicLightSinglePass(void)
 {
 	int       i, l, a, b, c, color, *intColors;
@@ -436,7 +423,7 @@ static void DynamicLightSinglePass(void)
 		// directional lights have max intensity and washout remainder intensity
 		if (dl->flags & REF_DIRECTED_DLIGHT)
 		{
-			remainder = intensity * 0.125;
+			remainder = intensity * 0.125f;
 		}
 		else
 		{
@@ -494,11 +481,11 @@ static void DynamicLightSinglePass(void)
 
 			// add to color
 			color     = colors[0] + (int)(floatColor[0] * modulate);
-			colors[0] = color > 255 ? 255 : color;
+			colors[0] = color > 255 ? 255 : (byte)color;
 			color     = colors[1] + (int)(floatColor[1] * modulate);
-			colors[1] = color > 255 ? 255 : color;
+			colors[1] = color > 255 ? 255 : (byte)color;
 			color     = colors[2] + (int)(floatColor[2] * modulate);
-			colors[2] = color > 255 ? 255 : color;
+			colors[2] = color > 255 ? 255 : (byte)color;
 		}
 	}
 
@@ -548,6 +535,9 @@ DynamicLightPass()
 perform dynamic lighting with multiple rendering passes
 ===================
 */
+/**
+ * @brief DynamicLightPass
+ */
 static void DynamicLightPass(void)
 {
 	int       i, l, a, b, c, color, *intColors;
@@ -649,11 +639,11 @@ static void DynamicLightPass(void)
 
 			// set color
 			color     = (int)(floatColor[0] * modulate);
-			colors[0] = color > 255 ? 255 : color;
+			colors[0] = color > 255 ? 255 : (byte)color;
 			color     = (int)(floatColor[1] * modulate);
-			colors[1] = color > 255 ? 255 : color;
+			colors[1] = color > 255 ? 255 : (byte)color;
 			color     = (int)(floatColor[2] * modulate);
-			colors[2] = color > 255 ? 255 : color;
+			colors[2] = color > 255 ? 255 : (byte)color;
 		}
 
 		// build a list of triangles that need light
@@ -695,13 +685,11 @@ static void DynamicLightPass(void)
 	}
 }
 
-/*
-===================
-RB_FogPass
 
-Blends a fog texture on top of everything else
-===================
-*/
+
+/**
+ * @brief Blends a fog texture on top of everything else
+ */
 static void RB_FogPass(void)
 {
 	fog_t *fog;
@@ -748,11 +736,10 @@ static void RB_FogPass(void)
 	R_DrawElements(tess.numIndexes, tess.indexes);
 }
 
-/*
-===============
-ComputeColors
-===============
-*/
+/**
+ * @brief ComputeColors
+ * @param[in] pStage
+ */
 static void ComputeColors(shaderStage_t *pStage)
 {
 	// rgbGen
@@ -929,15 +916,15 @@ static void ComputeColors(shaderStage_t *pStage)
 			// special handling for Zombie fade effect
 			if (zombieEffect)
 			{
-				alpha  = (float)backEnd.currentEntity->e.shaderRGBA[3] * (dot + 1.0) / 2.0;
-				alpha += (2.0 * (float)backEnd.currentEntity->e.shaderRGBA[3]) * (1.0 - (dot + 1.0) / 2.0);
-				if (alpha > 255.0)
+				alpha  = (float)backEnd.currentEntity->e.shaderRGBA[3] * (dot + 1.0f) / 2.0f;
+				alpha += (2.0f * (float)backEnd.currentEntity->e.shaderRGBA[3]) * (1.0f - (dot + 1.0f) / 2.0f);
+				if (alpha > 255.0f)
 				{
-					alpha = 255.0;
+					alpha = 255.0f;
 				}
-				else if (alpha < 0.0)
+				else if (alpha < 0.0f)
 				{
-					alpha = 0.0;
+					alpha = 0.0f;
 				}
 				tess.svars.colors[i][3] = (byte)(alpha);
 				continue;
@@ -953,21 +940,21 @@ static void ComputeColors(shaderStage_t *pStage)
 					}
 					else
 					{
-						alpha = ((float)pStage->constantColor[3] * (1.0 - ((dot - lowest - range / 2) / (range / 2))));
+						alpha = ((float)pStage->constantColor[3] * (1.0f - ((dot - lowest - range / 2) / (range / 2))));
 					}
-					if (alpha > 255.0)
+					if (alpha > 255.0f)
 					{
-						alpha = 255.0;
+						alpha = 255.0f;
 					}
-					else if (alpha < 0.0)
+					else if (alpha < 0.0f)
 					{
-						alpha = 0.0;
+						alpha = 0.0f;
 					}
 
 					// finally, scale according to the entity's alpha
 					if (backEnd.currentEntity->e.hModel)
 					{
-						alpha *= (float)backEnd.currentEntity->e.shaderRGBA[3] / 255.0;
+						alpha *= (float)backEnd.currentEntity->e.shaderRGBA[3] / 255.0f;
 					}
 
 					tess.svars.colors[i][3] = (byte)(alpha);
@@ -1058,11 +1045,10 @@ static void ComputeColors(shaderStage_t *pStage)
 	}
 }
 
-/*
-===============
-ComputeTexCoords
-===============
-*/
+/**
+ * @brief ComputeTexCoords
+ * @param[in] pStage
+ */
 static void ComputeTexCoords(shaderStage_t *pStage)
 {
 	int i;
@@ -1169,12 +1155,9 @@ static void ComputeTexCoords(shaderStage_t *pStage)
 
 extern void R_Fog(glfog_t *curfog);
 
-/*
-==============
-SetIteratorFog
-    set the fog parameters for this pass
-==============
-*/
+/**
+ * @brief Set the fog parameters for this pass
+ */
 void SetIteratorFog(void)
 {
 	// changed for problem when you start the game with r_fastsky set to '1'
@@ -1223,11 +1206,10 @@ void SetIteratorFog(void)
 	}
 }
 
-/*
-===================
-RB_IterateStagesGeneric
-===================
-*/
+/**
+ * @brief RB_IterateStagesGeneric
+ * @param[in] input
+ */
 static void RB_IterateStagesGeneric(shaderCommands_t *input)
 {
 	shaderStage_t *pStage;
@@ -1348,11 +1330,9 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 	}
 }
 
-/*
-===================
-RB_StageIteratorGeneric
-===================
-*/
+/**
+ * @brief RB_StageIteratorGeneric
+ */
 void RB_StageIteratorGeneric(void)
 {
 	shaderCommands_t *input  = &tess;
@@ -1456,11 +1436,9 @@ void RB_StageIteratorGeneric(void)
 	}
 }
 
-/*
-===================
-RB_StageIteratorVertexLitTexture
-===================
-*/
+/**
+ * @brief RB_StageIteratorVertexLitTexture
+ */
 void RB_StageIteratorVertexLitTexture(void)
 {
 	shaderCommands_t *input  = &tess;
@@ -1533,11 +1511,9 @@ void RB_StageIteratorVertexLitTexture(void)
 
 //define    REPLACE_MODE
 
-/*
-===================
-RB_StageIteratorLightmappedMultitexture
-===================
-*/
+/**
+ * @brief RB_StageIteratorLightmappedMultitexture
+ */
 void RB_StageIteratorLightmappedMultitexture(void)
 {
 	shaderCommands_t *input  = &tess;
@@ -1650,11 +1626,9 @@ void RB_StageIteratorLightmappedMultitexture(void)
 	}
 }
 
-/*
-===================
-RB_EndSurface
-===================
-*/
+/**
+ * @brief RB_EndSurface
+ */
 void RB_EndSurface(void)
 {
 	shaderCommands_t *input = &tess;
@@ -1668,7 +1642,7 @@ void RB_EndSurface(void)
 	{
 		ri.Error(ERR_DROP, "RB_EndSurface() - input->maxShaderIndicies(%i) hit", input->maxShaderIndicies);
 	}
-	if (input->xyz[input->maxShaderVerts - 1].v[0] != 0)
+	if (input->xyz[input->maxShaderVerts - 1].v[0] != 0.f)
 	{
 		ri.Error(ERR_DROP, "RB_EndSurface() - input->maxShaderVerts(%i) hit", input->maxShaderVerts);
 	}

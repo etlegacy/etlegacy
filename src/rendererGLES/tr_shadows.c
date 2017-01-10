@@ -58,11 +58,16 @@ static int            facing[SHADER_MAX_INDEXES / 3];
 static unsigned short indexes[6 * MAX_EDGE_DEFS * SHADER_MAX_VERTEXES];
 static int            idx = 0;
 
+/**
+ * @brief R_AddEdgeDef
+ * @param[in] i1
+ * @param[in] i2
+ * @param[in] facing
+ */
 void R_AddEdgeDef(int i1, int i2, int facing)
 {
-	int c;
+	int c = numEdgeDefs[i1];
 
-	c = numEdgeDefs[i1];
 	if (c == MAX_EDGE_DEFS)
 	{
 		return;     // overflow
@@ -73,22 +78,22 @@ void R_AddEdgeDef(int i1, int i2, int facing)
 	numEdgeDefs[i1]++;
 }
 
+/**
+ * @brief R_RenderShadowEdges
+ */
 void R_RenderShadowEdges(void)
 {
 	int i;
 	int c, c2;
 	int j, k;
 	int i2;
-	int c_edges, c_rejected;
+	int c_edges = 0, c_rejected = 0;
 	int hit[2];
 
 	// an edge is NOT a silhouette edge if its face doesn't face the light,
 	// or if it has a reverse paired edge that also faces the light.
 	// A well behaved polyhedron would have exactly two faces for each edge,
 	// but lots of models have dangling edges or overfanned edges
-	c_edges    = 0;
-	c_rejected = 0;
-	idx        = 0;
 
 	for (i = 0 ; i < tess.numVertexes ; i++)
 	{
@@ -136,17 +141,15 @@ void R_RenderShadowEdges(void)
 	qglDrawElements(GL_TRIANGLES, idx, GL_UNSIGNED_SHORT, indexes);
 }
 
-/*
-=================
-RB_ShadowTessEnd
-
-triangleFromEdge[ v1 ][ v2 ]
-
-  set triangle from edge( v1, v2, tri )
-  if ( facing[ triangleFromEdge[ v1 ][ v2 ] ] && !facing[ triangleFromEdge[ v2 ][ v1 ] ) {
-  }
-=================
-*/
+/**
+ * @brief RB_ShadowTessEnd
+ *
+ * @note triangleFromEdge[ v1 ][ v2 ]
+ *
+ * set triangle from edge( v1, v2, tri )
+ * if ( facing[ triangleFromEdge[ v1 ][ v2 ] ] && !facing[ triangleFromEdge[ v2 ][ v1 ] ) {
+ * }
+ */
 void RB_ShadowTessEnd(void)
 {
 	int    i;
@@ -277,16 +280,13 @@ void RB_ShadowTessEnd(void)
 	qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 }
 
-/*
-=================
-RB_ShadowFinish
-
-Darken everything that is is a shadow volume.
-We have to delay this until everything has been shadowed,
-because otherwise shadows from different body parts would
-overlap and double darken.
-=================
-*/
+/**
+ * @brief Darken everything that is is a shadow volume.
+ *
+ * @details We have to delay this until everything has been shadowed,
+ * because otherwise shadows from different body parts would
+ * overlap and double darken.
+ */
 void RB_ShadowFinish(void)
 {
 	if (r_shadows->integer != 2)
@@ -342,12 +342,9 @@ void RB_ShadowFinish(void)
 	qglDisable(GL_STENCIL_TEST);
 }
 
-/*
-=================
-RB_ProjectionShadowDeform
-
-=================
-*/
+/**
+ * @brief RB_ProjectionShadowDeform
+ */
 void RB_ProjectionShadowDeform(void)
 {
 	float  *xyz;

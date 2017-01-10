@@ -37,6 +37,12 @@
 
 #include "tr_local.h"
 
+/**
+ * @brief ProjectRadius
+ * @param[in] r
+ * @param[in] location
+ * @return
+ */
 static float ProjectRadius(float r, vec3_t location)
 {
 	float  pr;
@@ -88,20 +94,19 @@ static float ProjectRadius(float r, vec3_t location)
 	return pr;
 }
 
-/*
-=============
-R_CullModel
-=============
-*/
+/**
+ * @brief R_CullModel
+ * @param[in] header
+ * @param[in] ent
+ * @return
+ */
 static int R_CullModel(mdcHeader_t *header, trRefEntity_t *ent)
 {
-	vec3_t     bounds[2];
-	md3Frame_t *oldFrame, *newFrame;
-	int        i;
-
+	vec3_t bounds[2];
+	int    i;
 	// compute frame pointers
-	newFrame = ( md3Frame_t * )(( byte * ) header + header->ofsFrames) + ent->e.frame;
-	oldFrame = ( md3Frame_t * )(( byte * ) header + header->ofsFrames) + ent->e.oldframe;
+	md3Frame_t *newFrame = ( md3Frame_t * )(( byte * ) header + header->ofsFrames) + ent->e.frame;
+	md3Frame_t *oldFrame = ( md3Frame_t * )(( byte * ) header + header->ofsFrames) + ent->e.oldframe;
 
 	// cull bounding sphere ONLY if this is not an upscaled entity
 	if (!ent->e.nonNormalizedAxes)
@@ -179,15 +184,14 @@ static int R_CullModel(mdcHeader_t *header, trRefEntity_t *ent)
 	}
 }
 
-/*
-=================
-R_ComputeLOD
-=================
-*/
+/**
+ * @brief R_ComputeLOD
+ * @param[in] ent
+ * @return
+ */
 static int R_ComputeLOD(trRefEntity_t *ent)
 {
-	md3Frame_t *frame;
-	int        lod;
+	int lod;
 
 	if (tr.currentModel->numLods < 2)
 	{
@@ -196,9 +200,10 @@ static int R_ComputeLOD(trRefEntity_t *ent)
 	}
 	else
 	{
-		float projectedRadius;
-		float radius;
-		float flod;
+		float      projectedRadius;
+		float      radius;
+		float      flod;
+		md3Frame_t *frame;
 
 		// multiple LODs exist, so compute projected bounding sphere
 		// and use that as a criteria for selecting LOD
@@ -224,7 +229,7 @@ static int R_ComputeLOD(trRefEntity_t *ent)
 		//          radius = radius/2.0f;
 		//}
 
-		if ((projectedRadius = ProjectRadius(radius, ent->e.origin)) != 0)
+		if ((projectedRadius = ProjectRadius(radius, ent->e.origin)) != 0.f)
 		{
 			float lodscale = r_lodscale->value;
 
@@ -241,7 +246,7 @@ static int R_ComputeLOD(trRefEntity_t *ent)
 		}
 
 		flod *= tr.currentModel->numLods;
-		lod   = ROUND_INT(flod);
+		lod   = round(flod);
 
 		if (lod < 0)
 		{
@@ -267,11 +272,12 @@ static int R_ComputeLOD(trRefEntity_t *ent)
 	return lod;
 }
 
-/*
-=================
-R_ComputeFogNum
-=================
-*/
+/**
+ * @brief R_ComputeFogNum
+ * @param[in] header
+ * @param[in] ent
+ * @return
+ */
 static int R_ComputeFogNum(mdcHeader_t *header, trRefEntity_t *ent)
 {
 	int        i, j;
@@ -310,11 +316,10 @@ static int R_ComputeFogNum(mdcHeader_t *header, trRefEntity_t *ent)
 	return 0;
 }
 
-/*
-=================
-R_AddMDCSurfaces
-=================
-*/
+/**
+ * @brief R_AddMDCSurfaces
+ * @param[in,out] ent
+ */
 void R_AddMDCSurfaces(trRefEntity_t *ent)
 {
 	int          i;
@@ -325,10 +330,7 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 	int          cull;
 	int          lod;
 	int          fogNum;
-	qboolean     personalModel;
-
-	// don't add third_person objects if not in a portal
-	personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal;
+	qboolean     personalModel = (ent->e.renderfx & RF_THIRD_PERSON) && !tr.viewParms.isPortal; // don't add third_person objects if not in a portal
 
 	if (ent->e.renderfx & RF_WRAP_FRAMES)
 	{

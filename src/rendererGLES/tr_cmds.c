@@ -34,11 +34,9 @@
 
 #include "tr_local.h"
 
-/*
-=====================
-R_PerformanceCounters
-=====================
-*/
+/**
+ * @brief R_PerformanceCounters
+ */
 void R_PerformanceCounters(void)
 {
 	if (!r_speeds->integer)
@@ -54,7 +52,7 @@ void R_PerformanceCounters(void)
 		ri.Printf(PRINT_ALL, "%i/%i shaders/surfs %i leafs %i verts %i/%i tris %.2f mtex %.2f dc\n",
 		          backEnd.pc.c_shaders, backEnd.pc.c_surfaces, tr.pc.c_leafs, backEnd.pc.c_vertexes,
 		          backEnd.pc.c_indexes / 3, backEnd.pc.c_totalIndexes / 3,
-		          R_SumOfUsedImages() / (1000000.0f), backEnd.pc.c_overDraw / (float)(glConfig.vidWidth * glConfig.vidHeight));
+		          R_SumOfUsedImages() / (1000000.0), (double)backEnd.pc.c_overDraw / (double)(glConfig.vidWidth * glConfig.vidHeight));
 	}
 
 	if (r_speeds->integer == 2)
@@ -94,16 +92,16 @@ void R_PerformanceCounters(void)
 	memset(&backEnd.pc, 0, sizeof(backEnd.pc));
 }
 
-/*
-====================
-R_IssueRenderCommands
-====================
-*/
+/**
+ * @brief R_IssueRenderCommands
+ * @param[in] runPerformanceCounters
+ */
 void R_IssueRenderCommands(qboolean runPerformanceCounters)
 {
 	renderCommandList_t *cmdList = &backEndData->commands;
 
-	assert(cmdList);
+	assert(cmdList != NULL);
+
 	// add an end-of-list command
 	*( int * )(cmdList->cmds + cmdList->used) = RC_END_OF_LIST;
 
@@ -123,16 +121,12 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 	}
 }
 
-/*
-====================
-R_IssuePendingRenderCommands
-
-Issue any pending commands and wait for them to complete.
-After exiting, the render thread will have completed its work
-and will remain idle and the main thread is free to issue
-OpenGL calls until R_IssueRenderCommands is called.
-====================
-*/
+/**
+ * @brief Issue any pending commands and wait for them to complete.
+ * After exiting, the render thread will have completed its work
+ * and will remain idle and the main thread is free to issue
+ * OpenGL calls until R_IssueRenderCommands is called.
+ */
 void R_IssuePendingRenderCommands(void)
 {
 	if (!tr.registered)
@@ -142,15 +136,14 @@ void R_IssuePendingRenderCommands(void)
 	R_IssueRenderCommands(qfalse);
 }
 
-/*
-============
-R_GetCommandBuffer
-
-make sure there is enough command space, waiting on the
-render thread if needed.
-============
-*/
-void *R_GetCommandBuffer(int bytes)
+/**
+ * @brief make sure there is enough command space, waiting on the
+ * render thread if needed.
+ *
+ * @param[in] bytes
+ * @return
+ */
+void *R_GetCommandBuffer(unsigned int bytes)
 {
 	renderCommandList_t *cmdList = &backEndData->commands;
 
@@ -159,7 +152,7 @@ void *R_GetCommandBuffer(int bytes)
 	{
 		if (bytes > MAX_RENDER_COMMANDS - (sizeof(swapBuffersCommand_t) + sizeof(int)))
 		{
-			ri.Error(ERR_FATAL, "R_GetCommandBuffer: bad size %i", bytes);
+			Ren_Fatal("R_GetCommandBuffer: bad size %u", bytes);
 		}
 		// if we run out of room, just start dropping commands
 		return NULL;
@@ -170,11 +163,11 @@ void *R_GetCommandBuffer(int bytes)
 	return cmdList->cmds + cmdList->used - bytes;
 }
 
-/*
-=============
-R_AddDrawSurfCmd
-=============
-*/
+/**
+ * @brief R_AddDrawSurfCmd
+ * @param[in] drawSurfs
+ * @param[in] numDrawSurfs
+ */
 void R_AddDrawSurfCmd(drawSurf_t *drawSurfs, int numDrawSurfs)
 {
 	drawSurfsCommand_t *cmd;
@@ -193,13 +186,10 @@ void R_AddDrawSurfCmd(drawSurf_t *drawSurfs, int numDrawSurfs)
 	cmd->viewParms = tr.viewParms;
 }
 
-/*
-=============
-RE_SetColor
-
-Passing NULL will set the color to white
-=============
-*/
+/**
+ * @brief Passing NULL will set the color to white
+ * @param[in] rgba
+ */
 void RE_SetColor(const float *rgba)
 {
 	setColorCommand_t *cmd;
@@ -223,11 +213,18 @@ void RE_SetColor(const float *rgba)
 	cmd->color[3] = rgba[3];
 }
 
-/*
-=============
-RE_StretchPic
-=============
-*/
+/**
+ * @brief RE_StretchPic
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] s1
+ * @param[in] t1
+ * @param[in] s2
+ * @param[in] t2
+ * @param[in] hShader
+ */
 void RE_StretchPic(float x, float y, float w, float h,
                    float s1, float t1, float s2, float t2, qhandle_t hShader)
 {
@@ -250,13 +247,14 @@ void RE_StretchPic(float x, float y, float w, float h,
 	cmd->t2        = t2;
 }
 
-/*
-=============
-RE_2DPolyies
-=============
-*/
 extern int r_numpolyverts;
 
+/**
+ * @brief RE_2DPolyies
+ * @param[in] verts
+ * @param[in] numverts
+ * @param[in] hShader
+ */
 void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 {
 	poly2dCommand_t *cmd;
@@ -282,11 +280,19 @@ void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 	r_numpolyverts += numverts;
 }
 
-/*
-=============
-RE_RotatedPic
-=============
-*/
+/**
+ * @brief RE_RotatedPic
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] s1
+ * @param[in] t1
+ * @param[in] s2
+ * @param[in] t2
+ * @param[in] hShader
+ * @param[in] angle
+ */
 void RE_RotatedPic(float x, float y, float w, float h,
                    float s1, float t1, float s2, float t2, qhandle_t hShader, float angle)
 {
@@ -309,7 +315,7 @@ void RE_RotatedPic(float x, float y, float w, float h,
 	cmd->h /= 2;
 	cmd->x += cmd->w;
 	cmd->y += cmd->h;
-	cmd->w  = sqrt((cmd->w * cmd->w) + (cmd->h * cmd->h));
+	cmd->w  = (float)sqrt((double)((cmd->w * cmd->w) + (cmd->h * cmd->h)));
 	cmd->h  = cmd->w;
 
 	cmd->angle = angle;
@@ -319,11 +325,20 @@ void RE_RotatedPic(float x, float y, float w, float h,
 	cmd->t2    = t2;
 }
 
-/*
-==============
-RE_StretchPicGradient
-==============
-*/
+/**
+ * @brief RE_StretchPicGradient
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] s1
+ * @param[in] t1
+ * @param[in] s2
+ * @param[in] t2
+ * @param[in] hShader
+ * @param[in] gradientColor
+ * @param[in] gradientType
+ */
 void RE_StretchPicGradient(float x, float y, float w, float h,
                            float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor, int gradientType)
 {
@@ -352,23 +367,22 @@ void RE_StretchPicGradient(float x, float y, float w, float h,
 		gradientColor = colorWhite;
 	}
 
-	cmd->gradientColor[0] = gradientColor[0] * 255;
-	cmd->gradientColor[1] = gradientColor[1] * 255;
-	cmd->gradientColor[2] = gradientColor[2] * 255;
-	cmd->gradientColor[3] = gradientColor[3] * 255;
+	cmd->gradientColor[0] = (byte)(gradientColor[0] * 255);
+	cmd->gradientColor[1] = (byte)(gradientColor[1] * 255);
+	cmd->gradientColor[2] = (byte)(gradientColor[2] * 255);
+	cmd->gradientColor[3] = (byte)(gradientColor[3] * 255);
 	cmd->gradientType     = gradientType;
 }
 
-/*
-====================
-RE_SetGlobalFog
-    rgb = colour
-    depthForOpaque is depth for opaque
-
-    the restore flag can be used to restore the original level fog
-    duration can be set to fade over a certain period
-====================
-*/
+/**
+ * @brief RE_SetGlobalFog
+ * @param[in] restore flag can be used to restore the original level fog
+ * @param[in] duration can be set to fade over a certain period
+ * @param[in] r colour
+ * @param[in] g colour
+ * @param[in] b colour
+ * @param[in] depthForOpaque is depth for opaque
+ */
 void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, float depthForOpaque)
 {
 	if (restore)
@@ -418,14 +432,12 @@ void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, 
 	}
 }
 
-/*
-====================
-RE_BeginFrame
-
-If running in stereo, RE_BeginFrame will be called twice
-for each RE_EndFrame
-====================
-*/
+/**
+ * @brief If running in stereo, RE_BeginFrame will be called twice
+ * for each RE_EndFrame
+ *
+ * @param[in] stereoFrame
+ */
 void RE_BeginFrame(stereoFrame_t stereoFrame)
 {
 	drawBufferCommand_t *cmd;
@@ -459,7 +471,7 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	// check for errors
 	if (!r_ignoreGLErrors->integer)
 	{
-		int err;
+		unsigned int err;
 
 		R_IssuePendingRenderCommands();
 		if ((err = qglGetError()) != GL_NO_ERROR)
@@ -497,11 +509,10 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 
 	// Needs to use reserved space, so no R_GetCommandBuffer.
 	cmdList = &backEndData->commands;
-	assert(cmdList);
+	assert(cmdList != NULL);
 	// add swap-buffers command
 	*( int * )(cmdList->cmds + cmdList->used) = RC_SWAP_BUFFERS;
 	cmdList->used                            += sizeof(swapBuffersCommand_t);
-
 
 	R_IssueRenderCommands(qtrue);
 
@@ -521,16 +532,19 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 	backEnd.pc.msec = 0;
 }
 
-/*
-==================
-RE_RenderToTexture
-==================
-*/
+/**
+ * @brief RE_RenderToTexture
+ * @param[in] textureid
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ */
 void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 {
 	renderToTextureCommand_t *cmd;
 
-	//  ri.Printf( PRINT_ALL, "RE_RenderToTexture\n" );
+	//ri.Printf( PRINT_ALL, "RE_RenderToTexture\n" );
 
 	if (textureid > tr.numImages || textureid < 0)
 	{
@@ -551,11 +565,9 @@ void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 	cmd->h         = h;
 }
 
-/*
-==================
-RE_Finish
-==================
-*/
+/**
+ * @brief RE_Finish
+ */
 void RE_Finish(void)
 {
 	renderFinishCommand_t *cmd;
@@ -570,11 +582,14 @@ void RE_Finish(void)
 	cmd->commandId = RC_FINISH;
 }
 
-/*
-=============
-RE_TakeVideoFrame
-=============
-*/
+/**
+ * @brief RE_TakeVideoFrame
+ * @param[in] width
+ * @param[in] height
+ * @param[in] captureBuffer
+ * @param[in] encodeBuffer
+ * @param[in] motionJpeg
+ */
 void RE_TakeVideoFrame(int width, int height,
                        byte *captureBuffer, byte *encodeBuffer, qboolean motionJpeg)
 {
