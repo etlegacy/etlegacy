@@ -61,6 +61,9 @@ const char *simpleGammaFrag = "#version 110\n"
                               "gl_FragColor = vec4(pow(texture2D(u_CurrentMap, vec2(gl_TexCoord[0])).rgb, vec3(1.0 / u_gamma)), 1);\n"
                               "}\n";
 
+/**
+ * @brief R_BuildGammaProgram
+ */
 static void R_BuildGammaProgram(void)
 {
 	GLint compiled;
@@ -127,6 +130,9 @@ static void R_BuildGammaProgram(void)
 	glUseProgramObjectARB(0);
 }
 
+/**
+ * @brief R_ScreenGamma
+ */
 void R_ScreenGamma(void)
 {
 	if (gammaProgram.program)
@@ -167,6 +173,9 @@ void R_ScreenGamma(void)
 	}
 }
 
+/**
+ * @brief R_InitGamma
+ */
 void R_InitGamma(void)
 {
 	byte *data;
@@ -186,7 +195,7 @@ void R_InitGamma(void)
 	data = (byte *)ri.Hunk_AllocateTempMemory(glConfig.vidWidth * glConfig.vidHeight * 4);
 	if (!data)
 	{
-		Ren_Print("WARNING: R_InitGamma() can't allocate temp memory\n"); // fatal?
+		Ren_Print("WARNING: R_InitGamma() can't allocate temp memory\n"); // TODO: fatal?
 		return;
 	}
 
@@ -203,6 +212,9 @@ void R_InitGamma(void)
 	R_BuildGammaProgram();
 }
 
+/**
+ * @brief R_ShutdownGamma
+ */
 void R_ShutdownGamma(void)
 {
 	if (gammaProgram.program)

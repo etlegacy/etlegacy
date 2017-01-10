@@ -49,8 +49,11 @@ static float s_flipMatrix[16] =
 
 refimport_t ri;
 
-// entities that will have procedurally generated surfaces will just
-// point at this for their sorting surface
+/**
+ * @var entitySurface
+ * @brief Entities that will have procedurally generated surfaces will just
+ * point at this for their sorting surface
+ */
 surfaceType_t entitySurface = SF_ENTITY;
 
 // fog stuff
@@ -58,11 +61,10 @@ glfog_t     glfogsettings[NUM_FOGS];
 glfogType_t glfogNum = FOG_NONE;
 qboolean    fogIsOn  = qfalse;
 
-/*
-=================
-R_Fog (void)
-=================
-*/
+/**
+ * @brief R_Fog
+ * @param[in] curfog
+ */
 void R_Fog(glfog_t *curfog)
 {
 	if (!r_wolffog->integer)
@@ -78,7 +80,7 @@ void R_Fog(glfog_t *curfog)
 	}
 
 	// assme values of '0' for these parameters means 'use default'
-	if (!curfog->density)
+	if (curfog->density == 0.f)
 	{
 		curfog->density = 1;
 	}
@@ -103,7 +105,7 @@ void R_Fog(glfog_t *curfog)
 
 	qglFogf(GL_FOG_START, curfog->start);
 
-	if (r_zfar->value)                 // allow override for helping level designers test fog distances
+	if (r_zfar->value != 0.f)                 // allow override for helping level designers test fog distances
 	{
 		qglFogf(GL_FOG_END, r_zfar->value);
 	}
@@ -115,7 +117,9 @@ void R_Fog(glfog_t *curfog)
 	qglClearColor(curfog->color[0], curfog->color[1], curfog->color[2], curfog->color[3]);
 }
 
-// allow disabling fog temporarily
+/**
+ * @brief Allow disabling fog temporarily
+ */
 void R_FogOff(void)
 {
 	if (!fogIsOn)
@@ -126,6 +130,9 @@ void R_FogOff(void)
 	fogIsOn = qfalse;
 }
 
+/**
+ * @brief R_FogOn
+ */
 void R_FogOn(void)
 {
 	if (fogIsOn)
@@ -154,24 +161,31 @@ void R_FogOn(void)
 	fogIsOn = qtrue;
 }
 
-/*
-==============
-R_SetFog
-
-  if fogvar == FOG_CMD_SWITCHFOG {
-    fogvar is the command
-    var1 is the fog to switch to
-    var2 is the time to transition
-  }
-  else {
-    fogvar is the fog that's being set
-    var1 is the near fog z value
-    var2 is the far fog z value
-    rgb = color
-    density is density, and is used to derive the values of 'mode', 'drawsky', and 'clearscreen'
-  }
-==============
-*/
+/**
+ * @brief R_SetFog
+ *
+ * @param[in] fogvar
+ * @param[in] var1
+ * @param[in] var2
+ * @param[in] r
+ * @param[in] g
+ * @param[in] b
+ * @param[in] density
+ *
+ * @note
+ * if fogvar == FOG_CMD_SWITCHFOG {
+ *   fogvar is the command
+ *   var1 is the fog to switch to
+ *   var2 is the time to transition
+ * }
+ * else {
+ *   fogvar is the fog that's being set
+ *   var1 is the near fog z value
+ *   var2 is the far fog z value
+ *   rgb = color
+ *   density is density, and is used to derive the values of 'mode', 'drawsky', and 'clearscreen'
+ * }
+ */
 void R_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float density)
 {
 	if (fogvar != FOG_CMD_SWITCHFOG)       // just set the parameters and return
@@ -236,13 +250,11 @@ void R_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float d
 	glfogsettings[FOG_TARGET].finishTime = tr.refdef.time + var2;
 }
 
-/*
-=================
-R_CullLocalBox
-
-Returns CULL_IN, CULL_CLIP, or CULL_OUT
-=================
-*/
+/**
+ * @brief R_CullLocalBox
+ * @param[in] bounds
+ * @return CULL_IN, CULL_CLIP, or CULL_OUT
+ */
 int R_CullLocalBox(vec3_t bounds[2])
 {
 	int      i, j;
@@ -310,9 +322,12 @@ int R_CullLocalBox(vec3_t bounds[2])
 	return CULL_CLIP;       // partially clipped
 }
 
-/*
-R_CullLocalPointAndRadius
-*/
+/**
+ * @brief R_CullLocalPointAndRadius
+ * @param[in] pt
+ * @param[in] radius
+ * @return
+ */
 int R_CullLocalPointAndRadius(vec3_t pt, float radius)
 {
 	vec3_t transformed;
@@ -322,9 +337,12 @@ int R_CullLocalPointAndRadius(vec3_t pt, float radius)
 	return R_CullPointAndRadius(transformed, radius);
 }
 
-/*
-R_CullPointAndRadius
-*/
+/**
+ * @brief R_CullPointAndRadius
+ * @param[in] pt
+ * @param[in] radius
+ * @return
+ */
 int R_CullPointAndRadius(vec3_t pt, float radius)
 {
 	int      i;
@@ -361,11 +379,11 @@ int R_CullPointAndRadius(vec3_t pt, float radius)
 	return CULL_IN;     // completely inside frustum
 }
 
-/*
-=================
-R_LocalNormalToWorld
-=================
-*/
+/**
+ * @brief R_LocalNormalToWorld
+ * @param[in] local
+ * @param[out] world
+ */
 void R_LocalNormalToWorld(vec3_t local, vec3_t world)
 {
 	world[0] = local[0] * tr.orientation.axis[0][0] + local[1] * tr.orientation.axis[1][0] + local[2] * tr.orientation.axis[2][0];
@@ -373,11 +391,11 @@ void R_LocalNormalToWorld(vec3_t local, vec3_t world)
 	world[2] = local[0] * tr.orientation.axis[0][2] + local[1] * tr.orientation.axis[1][2] + local[2] * tr.orientation.axis[2][2];
 }
 
-/*
-=================
-R_LocalPointToWorld
-=================
-*/
+/**
+ * @brief R_LocalPointToWorld
+ * @param[in] local
+ * @param[out] world
+ */
 void R_LocalPointToWorld(vec3_t local, vec3_t world)
 {
 	world[0] = local[0] * tr.orientation.axis[0][0] + local[1] * tr.orientation.axis[1][0] + local[2] * tr.orientation.axis[2][0] + tr.orientation.origin[0];
@@ -385,11 +403,11 @@ void R_LocalPointToWorld(vec3_t local, vec3_t world)
 	world[2] = local[0] * tr.orientation.axis[0][2] + local[1] * tr.orientation.axis[1][2] + local[2] * tr.orientation.axis[2][2] + tr.orientation.origin[2];
 }
 
-/*
-=================
-R_WorldToLocal
-=================
-*/
+/**
+ * @brief R_WorldToLocal
+ * @param[in] world
+ * @param[out] local
+ */
 void R_WorldToLocal(vec3_t world, vec3_t local)
 {
 	local[0] = DotProduct(world, tr.orientation.axis[0]);
@@ -397,11 +415,14 @@ void R_WorldToLocal(vec3_t world, vec3_t local)
 	local[2] = DotProduct(world, tr.orientation.axis[2]);
 }
 
-/*
-==========================
-R_TransformModelToClip
-==========================
-*/
+/**
+ * @brief R_TransformModelToClip
+ * @param[in] src
+ * @param[in] modelMatrix
+ * @param[in] projectionMatrix
+ * @param[out] eye
+ * @param[out] dst
+ */
 void R_TransformModelToClip(const vec3_t src, const float *modelMatrix, const float *projectionMatrix,
                             vec4_t eye, vec4_t dst)
 {
@@ -426,11 +447,13 @@ void R_TransformModelToClip(const vec3_t src, const float *modelMatrix, const fl
 	}
 }
 
-/*
-==========================
-R_TransformClipToWindow
-==========================
-*/
+/**
+ * @brief R_TransformClipToWindow
+ * @param[in] clip
+ * @param[in] view
+ * @param(out] normalized
+ * @param(out] window
+ */
 void R_TransformClipToWindow(const vec4_t clip, const viewParms_t *view, vec4_t normalized, vec4_t window)
 {
 	normalized[0] = clip[0] / clip[3];
@@ -441,15 +464,16 @@ void R_TransformClipToWindow(const vec4_t clip, const viewParms_t *view, vec4_t 
 	window[1] = 0.5f * (1.0f + normalized[1]) * view->viewportHeight;
 	window[2] = normalized[2];
 
-	window[0] = (int) (window[0] + 0.5);
-	window[1] = (int) (window[1] + 0.5);
+	window[0] = (int) (window[0] + 0.5f);
+	window[1] = (int) (window[1] + 0.5f);
 }
 
-/*
-==========================
-myGlMultMatrix
-==========================
-*/
+/**
+ * @brief myGlMultMatrix
+ * @param[in] a
+ * @param[in] b
+ * @param[out] out
+ */
 void myGlMultMatrix(const float *a, const float *b, float *out)
 {
 	int i, j;
@@ -467,15 +491,14 @@ void myGlMultMatrix(const float *a, const float *b, float *out)
 	}
 }
 
-/*
-=================
-R_RotateForEntity
-
-Generates an orientation for an entity and viewParms
-Does NOT produce any GL calls
-Called by both the front end and the back end
-=================
-*/
+/**
+ * @brief Generates an orientation for an entity and viewParms
+ * Does NOT produce any GL calls
+ * Called by both the front end and the back end
+ * @param[in] ent
+ * @param[in] viewParms
+ * @param[out] orientation
+ */
 void R_RotateForEntity(const trRefEntity_t *ent, const viewParms_t *viewParms,
                        orientationr_t *orientation)
 {
@@ -525,9 +548,9 @@ void R_RotateForEntity(const trRefEntity_t *ent, const viewParms_t *viewParms,
 	if (ent->e.nonNormalizedAxes)
 	{
 		axisLength = VectorLength(ent->e.axis[0]);
-		if (!axisLength)
+		if (axisLength == 0.f)
 		{
-			axisLength = 0;
+			axisLength = 0.f;
 		}
 		else
 		{
@@ -544,13 +567,9 @@ void R_RotateForEntity(const trRefEntity_t *ent, const viewParms_t *viewParms,
 	orientation->viewOrigin[2] = DotProduct(delta, orientation->axis[2]) * axisLength;
 }
 
-/*
-=================
-R_RotateForViewer
-
-Sets up the modelview matrix for a given viewParm
-=================
-*/
+/**
+ * @brief Sets up the modelview matrix for a given viewParm
+ */
 void R_RotateForViewer(void)
 {
 	float  viewerMatrix[16];
@@ -592,11 +611,9 @@ void R_RotateForViewer(void)
 	tr.viewParms.world = tr.orientation;
 }
 
-/*
-==============
-R_SetFrameFog
-==============
-*/
+/**
+ * @brief R_SetFrameFog
+ */
 void R_SetFrameFog(void)
 {
 	// new style global fog transitions
@@ -731,11 +748,9 @@ void R_SetFrameFog(void)
 	}
 }
 
-/*
-==============
-SetFarClip
-==============
-*/
+/**
+ * @brief SetFarClip
+ */
 static void SetFarClip(void)
 {
 	float farthestCornerDistance;
@@ -751,7 +766,7 @@ static void SetFarClip(void)
 
 	// this lets you use r_zfar from the command line to experiment with different
 	// distances, but setting it back to 0 uses the map (or procedurally generated) default
-	if (r_zfar->value)
+	if (r_zfar->value != 0.f)
 	{
 		tr.viewParms.zFar = r_zfar->integer;
 		R_SetFrameFog();
@@ -820,19 +835,15 @@ static void SetFarClip(void)
 	R_SetFrameFog();
 }
 
-/*
-=================
-R_SetupFrustum
-
-Setup that culling frustum planes for the current view
-=================
-*/
+/**
+ * @brief Setup that culling frustum planes for the current view
+ */
 void R_SetupFrustum(void)
 {
 	int   i;
-	float ang = tr.viewParms.fovX / 180 * M_PI * 0.5f;
-	float xs  = sin(ang);
-	float xc  = cos(ang);
+	float ang = (float)(tr.viewParms.fovX / 180 * M_PI * 0.5);
+	float xs  = (float)(sin(ang));
+	float xc  = (float)(cos(ang));
 
 	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustum[0].normal);
 	VectorMA(tr.viewParms.frustum[0].normal, xc, tr.viewParms.orientation.axis[1], tr.viewParms.frustum[0].normal);
@@ -840,9 +851,9 @@ void R_SetupFrustum(void)
 	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustum[1].normal);
 	VectorMA(tr.viewParms.frustum[1].normal, -xc, tr.viewParms.orientation.axis[1], tr.viewParms.frustum[1].normal);
 
-	ang = tr.viewParms.fovY / 180 * M_PI * 0.5f;
-	xs  = sin(ang);
-	xc  = cos(ang);
+	ang = (float)(tr.viewParms.fovY / 180 * M_PI * 0.5);
+	xs  = (float)(sin(ang));
+	xc  = (float)(cos(ang));
 
 	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustum[2].normal);
 	VectorMA(tr.viewParms.frustum[2].normal, xc, tr.viewParms.orientation.axis[2], tr.viewParms.frustum[2].normal);
@@ -864,11 +875,9 @@ void R_SetupFrustum(void)
 	SetPlaneSignbits(&tr.viewParms.frustum[4]);
 }
 
-/*
-===============
-R_SetupProjection
-===============
-*/
+/**
+ * @brief R_SetupProjection
+ */
 void R_SetupProjection(void)
 {
 	float xmin, xmax, ymin, ymax;
@@ -893,7 +902,7 @@ void R_SetupProjection(void)
 		zNear /= ((tr.refdef.fov_x - 90.0f) * 0.09f + 1.0f);
 	}
 
-	if (r_zfar->value)
+	if (r_zfar->value != 0.f)
 	{
 		zFar = r_zfar->value;   // allow override for helping level designers test fog distances
 	}
@@ -902,10 +911,10 @@ void R_SetupProjection(void)
 		zFar = tr.viewParms.zFar;
 	}
 
-	ymax = zNear * tan(tr.refdef.fov_y * M_PI / 360.0f);
+	ymax = (float)(zNear * tan(tr.refdef.fov_y * M_PI / 360.0));
 	ymin = -ymax;
 
-	xmax = zNear * tan(tr.refdef.fov_x * M_PI / 360.0f);
+	xmax = (float)(zNear * tan(tr.refdef.fov_x * M_PI / 360.0));
 	xmin = -xmax;
 
 	width  = xmax - xmin;
@@ -933,11 +942,13 @@ void R_SetupProjection(void)
 	tr.viewParms.projectionMatrix[15] = 0;
 }
 
-/*
-=================
-R_MirrorPoint
-=================
-*/
+/**
+ * @brief R_MirrorPoint
+ * @param[in] in
+ * @param[in] surface
+ * @param[in] camera
+ * @param[out] out
+ */
 void R_MirrorPoint(vec3_t in, orientation_t *surface, orientation_t *camera, vec3_t out)
 {
 	int    i;
@@ -957,6 +968,13 @@ void R_MirrorPoint(vec3_t in, orientation_t *surface, orientation_t *camera, vec
 	VectorAdd(transformed, camera->origin, out);
 }
 
+/**
+ * @brief R_MirrorVector
+ * @param[in] in
+ * @param[in] surface
+ * @param[in] camera
+ * @param[out] out
+ */
 void R_MirrorVector(vec3_t in, orientation_t *surface, orientation_t *camera, vec3_t out)
 {
 	int   i;
@@ -970,11 +988,11 @@ void R_MirrorVector(vec3_t in, orientation_t *surface, orientation_t *camera, ve
 	}
 }
 
-/*
-=============
-R_PlaneForSurface
-=============
-*/
+/**
+ * @brief R_PlaneForSurface
+ * @param[in] surfType
+ * @param[out] plane
+ */
 void R_PlaneForSurface(surfaceType_t *surfType, cplane_t *plane)
 {
 	if (!surfType)
@@ -1019,16 +1037,18 @@ void R_PlaneForSurface(surfaceType_t *surfType, cplane_t *plane)
 	}
 }
 
-/*
-=================
-R_GetPortalOrientation
-
-entityNum is the entity that the portal surface is a part of, which may
-be moving and rotating.
-
-Returns qtrue if it should be mirrored
-=================
-*/
+/**
+ * @brief R_GetPortalOrientations
+ *
+ * @param[in] drawSurf
+ * @param[in] entityNum is the entity that the portal surface is a part of, which may
+ * be moving and rotating.
+ * @param[in,out] surface
+ * @param[in,out] camera
+ * @param[out] pvsOrigin
+ * @param[out] mirror
+ * @return qtrue if it should be mirrored
+ */
 qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, int entityNum,
                                  orientation_t *surface, orientation_t *camera,
                                  vec3_t pvsOrigin, qboolean *mirror)
@@ -1129,7 +1149,7 @@ qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, int entityNum,
 			else
 			{
 				// bobbing rotate, with skinNum being the rotation offset
-				d = sin(tr.refdef.time * 0.003f);
+				d = sin(tr.refdef.time * 0.003);
 				d = e->e.skinNum + d * 4;
 				VectorCopy(camera->axis[1], transformed);
 				RotatePointAroundVector(camera->axis[1], camera->axis[0], transformed, d);
@@ -1161,6 +1181,12 @@ qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, int entityNum,
 	return qfalse;
 }
 
+/**
+ * @brief IsMirror
+ * @param[in] drawSurf
+ * @param[in] entityNum
+ * @return
+ */
 static qboolean IsMirror(const drawSurf_t *drawSurf, int entityNum)
 {
 	int           i;
@@ -1225,6 +1251,9 @@ static qboolean IsMirror(const drawSurf_t *drawSurf, int entityNum)
 
 /**
  * @brief Determines if a surface is completely offscreen.
+ * @param[in] drawSurf
+ * @param clipDest - unused
+ * @return
  */
 static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128])
 {
@@ -1321,13 +1350,12 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 	return qfalse;
 }
 
-/*
-========================
-R_MirrorViewBySurface
-
-Returns qtrue if another view has been rendered
-========================
-*/
+/**
+ * @brief R_MirrorViewBySurface
+ * @param[in] drawSurf
+ * @param[in] entityNum
+ * @return qtrue if another view has been rendered
+ */
 qboolean R_MirrorViewBySurface(drawSurf_t *drawSurf, int entityNum)
 {
 	vec4_t        clipDest[128];
@@ -1383,13 +1411,11 @@ qboolean R_MirrorViewBySurface(drawSurf_t *drawSurf, int entityNum)
 	return qtrue;
 }
 
-/*
-=================
-R_SpriteFogNum
-
-See if a sprite is inside a fog volume
-=================
-*/
+/**
+ * @brief See if a sprite is inside a fog volume
+ * @param ent
+ * @return
+ */
 int R_SpriteFogNum(trRefEntity_t *ent)
 {
 	int   i, j;
@@ -1429,11 +1455,13 @@ DRAWSURF SORTING
 ==========================================================================================
 */
 
-/*
-===============
-R_Radix
-===============
-*/
+/**
+ * @brief R_Radix
+ * @param[in] byte
+ * @param[in] size
+ * @param[in] source
+ * @param[out] dest
+ */
 static ID_INLINE void R_Radix(int byte, int size, drawSurf_t *source, drawSurf_t *dest)
 {
 	int           count[256] = { 0 };
@@ -1457,13 +1485,11 @@ static ID_INLINE void R_Radix(int byte, int size, drawSurf_t *source, drawSurf_t
 		dest[index[*sortKey]++] = source[i];
 }
 
-/*
-===============
-R_RadixSort
-
-Radix sort with 4 byte size buckets
-===============
-*/
+/**
+ * @brief Radix sort with 4 byte size buckets
+ * @param[in,out] source
+ * @param[in] size
+ */
 static void R_RadixSort(drawSurf_t *source, int size)
 {
 	static drawSurf_t scratch[MAX_DRAWSURFS];
@@ -1481,11 +1507,14 @@ static void R_RadixSort(drawSurf_t *source, int size)
 #endif //Q3_LITTLE_ENDIAN
 }
 
-/*
-=================
-R_AddDrawSurf
-=================
-*/
+/**
+ * @brief R_AddDrawSurf
+ * @param[in] surface
+ * @param[in] shader
+ * @param[in] fogNum
+ * @param[in] frontFace
+ * @param[in] dlightMap
+ */
 void R_AddDrawSurf(surfaceType_t *surface, shader_t *shader, int fogNum, int frontFace, int dlightMap)
 {
 	int index;
@@ -1512,11 +1541,15 @@ void R_AddDrawSurf(surfaceType_t *surface, shader_t *shader, int fogNum, int fro
 	tr.refdef.numDrawSurfs++;
 }
 
-/*
-=================
-R_DecomposeSort
-=================
-*/
+/**
+ * @brief R_DecomposeSort
+ * @param[int] sort
+ * @param[out] entityNum
+ * @param[out] shader
+ * @param[out] fogNum
+ * @param[out] frontFace
+ * @param[out] dlightMap
+ */
 void R_DecomposeSort(unsigned sort, int *entityNum, shader_t **shader, int *fogNum, int *frontFace, int *dlightMap)
 {
 	*fogNum    = (sort >> QSORT_FOGNUM_SHIFT) & 31;
@@ -1526,11 +1559,11 @@ void R_DecomposeSort(unsigned sort, int *entityNum, shader_t **shader, int *fogN
 	*dlightMap = sort & 1;
 }
 
-/*
-=================
-R_SortDrawSurfs
-=================
-*/
+/**
+ * @brief R_SortDrawSurfs
+ * @param[in] drawSurfs
+ * @param[in] numDrawSurfs
+ */
 void R_SortDrawSurfs(drawSurf_t *drawSurfs, int numDrawSurfs)
 {
 	shader_t *shader;
@@ -1591,11 +1624,9 @@ void R_SortDrawSurfs(drawSurf_t *drawSurfs, int numDrawSurfs)
 	R_AddDrawSurfCmd(drawSurfs, numDrawSurfs);
 }
 
-/*
-=============
-R_AddEntitySurfaces
-=============
-*/
+/**
+ * @brief R_AddEntitySurfaces
+ */
 void R_AddEntitySurfaces(void)
 {
 	trRefEntity_t *ent;
@@ -1684,22 +1715,18 @@ void R_AddEntitySurfaces(void)
 					break;
 				default:
 					Ren_Drop("R_AddEntitySurfaces: Bad modeltype");
-					break;
 				}
 			}
 			break;
 		default:
 			Ren_Drop("R_AddEntitySurfaces: Bad reType");
-			break;
 		}
 	}
 }
 
-/*
-====================
-R_GenerateDrawSurfs
-====================
-*/
+/**
+ * @brief R_GenerateDrawSurfs
+ */
 void R_GenerateDrawSurfs(void)
 {
 	// set the projection matrix (and view frustum) here
@@ -1737,11 +1764,12 @@ void R_GenerateDrawSurfs(void)
 	R_AddPolygonBufferSurfaces();
 }
 
-/*
-================
-R_DebugPolygon
-================
-*/
+/**
+ * @brief R_DebugPolygon
+ * @param[in] color
+ * @param[in] numPoints
+ * @param[in] points
+ */
 void R_DebugPolygon(int color, int numPoints, float *points)
 {
 	int i;
@@ -1770,11 +1798,17 @@ void R_DebugPolygon(int color, int numPoints, float *points)
 	qglDepthRange(0, 1);
 }
 
-/*
-================
-R_DebugText
-================
-*/
+/**
+ * @brief R_DebugText
+ * @param org          - unused
+ * @param r            - unused
+ * @param g            - unused
+ * @param b            - unused
+ * @param text         - unused
+ * @param neverOcclude - unused
+ *
+ * @todo TODO: R_DebugText Unimplemented!
+ */
 void R_DebugText(const vec3_t org, float r, float g, float b, const char *text, qboolean neverOcclude)
 {
 	Ren_Print("TODO: R_DebugText Unimplemented!\n");
@@ -1797,13 +1831,9 @@ void R_DebugText(const vec3_t org, float r, float g, float b, const char *text, 
 	*/
 }
 
-/*
-====================
-R_DebugGraphics
-
-Visualization aid for movement clipping debugging
-====================
-*/
+/**
+ * @brief Visualization aid for movement clipping debugging
+ */
 void R_DebugGraphics(void)
 {
 	if (!r_debugSurface->integer)
@@ -1821,14 +1851,11 @@ void R_DebugGraphics(void)
 	ri.CM_DrawDebugSurface(R_DebugPolygon);
 }
 
-/*
-================
-R_RenderView
-
-A view may be either the actual camera view,
-or a mirror / remote location
-================
-*/
+/**
+ * @brief A view may be either the actual camera view,
+ * or a mirror / remote location
+ * @param parms
+ */
 void R_RenderView(viewParms_t *parms)
 {
 	int firstDrawSurf;

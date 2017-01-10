@@ -34,16 +34,17 @@
 
 #include "tr_local.h"
 
-/*
-================
-R_CullSurface
-
-Tries to back face cull surfaces before they are lighted or
-added to the sorting list.
-
-This will also allow mirrors on both sides of a model without recursion.
-================
-*/
+/**
+ * @brief Tries to back face cull surfaces before they are lighted or
+ * added to the sorting list.
+ *
+ * This will also allow mirrors on both sides of a model without recursion.
+ *
+ * @param[in] surface
+ * @param[in] shader
+ * @param[out] frontFace
+ * @return
+ */
 static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *frontFace)
 {
 	srfGeneric_t *gen;
@@ -70,7 +71,7 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 		}
 		break;
 	case SF_FOLIAGE:
-		if (!r_drawfoliage->value)
+		if (r_drawfoliage->value == 0.f)
 		{
 			return qtrue;
 		}
@@ -142,17 +143,17 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 	return qfalse;
 }
 
-/*
-====================
-R_DlightSurface
-
-The given surface is going to be drawn, and it touches a leaf
-that is touched by one or more dlights, so try to throw out
-more dlights if possible.
-
- made this use generic surface
-====================
-*/
+/**
+ * @brief The given surface is going to be drawn, and it touches a leaf
+ * that is touched by one or more dlights, so try to throw out
+ * more dlights if possible.
+ *
+ * @param[in] surface
+ * @param[in] dlightBits
+ * @return
+ *
+ * @todo Made this use generic surface
+ */
 static int R_DlightSurface(msurface_t *surface, int dlightBits)
 {
 	int          i;
@@ -233,11 +234,13 @@ static int R_DlightSurface(msurface_t *surface, int dlightBits)
 	return dlightBits;
 }
 
-/*
-======================
-R_AddWorldSurface
-======================
-*/
+/**
+ * @brief R_AddWorldSurface
+ * @param[in,out] surf
+ * @param[in] shader
+ * @param[in] dlightMap
+ * @param[in] decalBits
+ */
 static void R_AddWorldSurface(msurface_t *surf, shader_t *shader, int dlightMap, int decalBits)
 {
 	int frontFace;
@@ -287,16 +290,16 @@ static void R_AddWorldSurface(msurface_t *surf, shader_t *shader, int dlightMap,
 =============================================================
 */
 
-/*
-=================
-R_BmodelFogNum
-
-See if a sprite is inside a fog volume
-Return positive with /any part/ of the brush falling within a fog volume
-
-the original implementation of this function is a bit flaky...
-=================
-*/
+/**
+ * @brief See if a sprite is inside a fog volume
+ *
+ * @param[in] re
+ * @param[in] bmodel
+ *
+ * @return Positive with /any part/ of the brush falling within a fog volume
+ *
+ * @note the original implementation of this function is a bit flaky...
+ */
 int R_BmodelFogNum(trRefEntity_t *re, bmodel_t *bmodel)
 {
 	int   i, j;
@@ -325,11 +328,10 @@ int R_BmodelFogNum(trRefEntity_t *re, bmodel_t *bmodel)
 	return 0;
 }
 
-/*
-=================
-R_AddBrushModelSurfaces
-=================
-*/
+/**
+ * @brief R_AddBrushModelSurfaces
+ * @param[in] ent
+ */
 void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 {
 	int              i, fognum, decalBits;
@@ -427,10 +429,12 @@ void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 =============================================================
 */
 
-/*
-R_AddLeafSurfaces()
-adds a leaf's drawsurfaces
-*/
+/**
+ * @brief Adds a leaf's drawsurfaces
+ * @param[in] node
+ * @param[in] dlightBits
+ * @param[in] decalBits
+ */
 static void R_AddLeafSurfaces(mnode_t *node, int dlightBits, int decalBits)
 {
 	int        c;
@@ -479,11 +483,13 @@ static void R_AddLeafSurfaces(mnode_t *node, int dlightBits, int decalBits)
 	}
 }
 
-/*
-================
-R_RecursiveWorldNode
-================
-*/
+/**
+ * @brief R_RecursiveWorldNode
+ * @param[in] node
+ * @param[in] planeBits
+ * @param[in] dlightBits
+ * @param[in] decalBits
+ */
 static void R_RecursiveWorldNode(mnode_t *node, int planeBits, int dlightBits, int decalBits)
 {
 	int      i, r;
@@ -636,11 +642,11 @@ static void R_RecursiveWorldNode(mnode_t *node, int planeBits, int dlightBits, i
 	R_AddLeafSurfaces(node, dlightBits, decalBits);
 }
 
-/*
-===============
-R_PointInLeaf
-===============
-*/
+/**
+ * @brief R_PointInLeaf
+ * @param[in] p
+ * @return
+ */
 static mnode_t *R_PointInLeaf(const vec3_t p)
 {
 	mnode_t  *node;
@@ -674,11 +680,11 @@ static mnode_t *R_PointInLeaf(const vec3_t p)
 	return node;
 }
 
-/*
-==============
-R_ClusterPVS
-==============
-*/
+/**
+ * @brief R_ClusterPVS
+ * @param[in] cluster
+ * @return
+ */
 static const byte *R_ClusterPVS(int cluster)
 {
 	if (!tr.world)
@@ -694,11 +700,12 @@ static const byte *R_ClusterPVS(int cluster)
 	return tr.world->vis + cluster * tr.world->clusterBytes;
 }
 
-/*
-=================
-R_inPVS
-=================
-*/
+/**
+ * @brief R_inPVS
+ * @param[in] p1
+ * @param[in] p2
+ * @return
+ */
 qboolean R_inPVS(const vec3_t p1, const vec3_t p2)
 {
 	mnode_t    *leaf;
@@ -716,14 +723,9 @@ qboolean R_inPVS(const vec3_t p1, const vec3_t p2)
 	return qtrue;
 }
 
-/*
-===============
-R_MarkLeaves
-
-Mark the leaves and nodes that are in the PVS for the current
-cluster
-===============
-*/
+/**
+ * @brief Mark the leaves and nodes that are in the PVS for the current cluster
+ */
 static void R_MarkLeaves(void)
 {
 	const byte *vis;
@@ -825,11 +827,9 @@ static void R_MarkLeaves(void)
 	}
 }
 
-/*
-=============
-R_AddWorldSurfaces
-=============
-*/
+/**
+ * @brief R_AddWorldSurfaces
+ */
 void R_AddWorldSurfaces(void)
 {
 	if (!r_drawworld->integer)

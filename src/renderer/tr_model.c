@@ -47,9 +47,11 @@ static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *name);
 
 model_t *loadmodel;
 
-/*
-R_GetModelByHandle
-*/
+/**
+ * @brief R_GetModelByHandle
+ * @param[in] index
+ * @return
+ */
 model_t *R_GetModelByHandle(qhandle_t index)
 {
 	model_t *mod;
@@ -67,9 +69,10 @@ model_t *R_GetModelByHandle(qhandle_t index)
 
 //===============================================================================
 
-/*
-R_AllocModel
-*/
+/**
+ * @brief[in] R_AllocModel
+ * @return
+ */
 model_t *R_AllocModel(void)
 {
 	model_t *mod;
@@ -87,10 +90,10 @@ model_t *R_AllocModel(void)
 	return mod;
 }
 
-/*
-R_LoadModelShadow()
-    loads a model's shadow script
-*/
+/**
+ * @brief Loads a model's shadow script
+ * @param[in,out] mod
+ */
 void R_LoadModelShadow(model_t *mod)
 {
 	unsigned *buf;
@@ -147,18 +150,17 @@ void R_LoadModelShadow(model_t *mod)
 	}
 }
 
-/*
-====================
-RE_RegisterModel
-
-Loads in a model for the given name
-
-Zero will be returned if the model fails to load.
-An entry will be retained for failed models as an
-optimization to prevent disk rescanning if they are
-asked for again.
-====================
-*/
+/**
+ * @brief Loads in a model for the given name
+ *
+ * Zero will be returned if the model fails to load.
+ * An entry will be retained for failed models as an
+ * optimization to prevent disk rescanning if they are
+ * asked for again.
+ *
+ * @param[in] name
+ * @return
+ */
 qhandle_t RE_RegisterModel(const char *name)
 {
 	model_t   *mod;
@@ -401,21 +403,21 @@ float r_anormals[NUMMDCVERTEXNORMALS][3] =
 #include "../renderercommon/anorms256.h"
 };
 
-/*
-=============
-R_MDC_GetVec
-=============
-*/
+/**
+ * @brief R_MDC_GetVec
+ * @param[in] anorm
+ * @param[out] dir
+ */
 void R_MDC_GetVec(unsigned char anorm, vec3_t dir)
 {
 	VectorCopy(r_anormals[anorm], dir);
 }
 
-/*
-=============
-R_MDC_GetAnorm
-=============
-*/
+/**
+ * @brief R_MDC_GetAnorm
+ * @param[in] dir
+ * @return
+ */
 unsigned char R_MDC_GetAnorm(const vec3_t dir)
 {
 	int   i, best_start_i[3] = { 0 }, next_start, next_end;
@@ -497,11 +499,13 @@ unsigned char R_MDC_GetAnorm(const vec3_t dir)
 	return (unsigned char)best;
 }
 
-/*
-=================
-R_MDC_EncodeOfsVec
-=================
-*/
+/**
+ * @brief R_MDC_EncodeXyzCompressed
+ * @param[in] vec
+ * @param[in] normal
+ * @param[out] out
+ * @return
+ */
 qboolean R_MDC_EncodeXyzCompressed(const vec3_t vec, const vec3_t normal, mdcXyzCompressed_t *out)
 {
 	mdcXyzCompressed_t retval;
@@ -528,11 +532,17 @@ qboolean R_MDC_EncodeXyzCompressed(const vec3_t vec, const vec3_t normal, mdcXyz
 
 // rain - unused
 #if 0
-/*
-=================
-R_MDC_GetXyzCompressed
-=================
-*/
+/**
+ * @brief R_MDC_GetXyzCompressed
+ * @param md3 - unused
+ * @param[in] newXyz
+ * @param[in] oldPos
+ * @param[out] out
+ * @param[in] verify
+ * @return
+ *
+ * @note Unused
+ */
 static qboolean R_MDC_GetXyzCompressed(md3Header_t *md3, md3XyzNormal_t *newXyz, vec3_t oldPos, mdcXyzCompressed_t *out, qboolean verify)
 {
 	vec3_t newPos, vec;
@@ -566,12 +576,17 @@ static qboolean R_MDC_GetXyzCompressed(md3Header_t *md3, md3XyzNormal_t *newXyz,
 	return qtrue;
 }
 
-
-/*
-=================
-R_MDC_CompressSurfaceFrame
-=================
-*/
+/**
+ * @brief R_MDC_CompressSurfaceFrame
+ * @param[in] md3
+ * @param[in] surf
+ * @param[in] frame
+ * @param[in] lastBaseFrame
+ * @param[out] out
+ * @return
+ *
+ * @note Unused
+ */
 static qboolean R_MDC_CompressSurfaceFrame(md3Header_t *md3, md3Surface_t *surf, int frame, int lastBaseFrame, mdcXyzCompressed_t *out)
 {
 	int            i, j;
@@ -597,11 +612,16 @@ static qboolean R_MDC_CompressSurfaceFrame(md3Header_t *md3, md3Surface_t *surf,
 	return qtrue;
 }
 
-/*
-=================
-R_MDC_CanCompressSurfaceFrame
-=================
-*/
+/**
+ * @brief R_MDC_CanCompressSurfaceFrame
+ * @param[in] md3
+ * @param[in] surf
+ * @param[in] frame
+ * @param[in] lastBaseFrame
+ * @return
+ *
+ * @note Unused
+ */
 static qboolean R_MDC_CanCompressSurfaceFrame(md3Header_t *md3, md3Surface_t *surf, int frame, int lastBaseFrame)
 {
 	int                i, j;
@@ -628,13 +648,15 @@ static qboolean R_MDC_CanCompressSurfaceFrame(md3Header_t *md3, md3Surface_t *su
 	return qtrue;
 }
 
-/*
-=================
-R_MD3toMDC
-
-  Converts a model_t from md3 to mdc format
-=================
-*/
+/**
+ * @brief Converts a model_t from md3 to mdc format
+ * @param[in] mod
+ * @param[in] lod
+ * @param[in] mod_name
+ * @return
+ *
+ * @note Unused
+ */
 static qboolean R_MDC_ConvertMD3(model_t *mod, int lod, const char *mod_name)
 {
 	int          i, j, f, c, k;
@@ -837,11 +859,14 @@ static qboolean R_MDC_ConvertMD3(model_t *mod, int lod, const char *mod_name)
 #endif
 // rain - #if 0
 
-/*
-=================
-R_LoadMDC
-=================
-*/
+/**
+ * @brief R_LoadMDC
+ * @param[in,out] mod
+ * @param[in] lod
+ * @param[in,out] buffer
+ * @param[in] mod_name
+ * @return
+ */
 static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_name)
 {
 	int                i, j;
@@ -990,7 +1015,7 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_n
 			if (sh->defaultShader)
 			{
 				shader->shaderIndex = 0;
-				Ren_Print("Warning R_LoadMDC: model %s surf num %i is using default shader\n", mod_name , j);
+				Ren_Print("Warning R_LoadMDC: model %s surf num %i is using default shader\n", mod_name, j);
 			}
 			else
 			{
@@ -1060,11 +1085,14 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_n
 
 //-------------------------------------------------------------------------------
 
-/*
-=================
-R_LoadMD3
-=================
-*/
+/**
+ * @brief R_LoadMD3
+ * @param[in,out] mod
+ * @param[in] lod
+ * @param[in,out] buffer
+ * @param[in] mod_name
+ * @return
+ */
 static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *mod_name)
 {
 	int            i, j;
@@ -1219,7 +1247,7 @@ static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *mod_n
 			if (sh->defaultShader)
 			{
 				shader->shaderIndex = 0;
-				Ren_Print("Warning R_LoadMD3: model %s surf num [%i] is using default shader\n", mod_name , j);
+				Ren_Print("Warning R_LoadMD3: model %s surf num [%i] is using default shader\n", mod_name, j);
 			}
 			else
 			{
@@ -1268,11 +1296,13 @@ static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *mod_n
 	return qtrue;
 }
 
-/*
-=================
-R_LoadMDS
-=================
-*/
+/**
+ * @brief R_LoadMDS
+ * @param[in,out] mod
+ * @param[in,out] buffer
+ * @param[in] mod_name
+ * @return
+ */
 static qboolean R_LoadMDS(model_t *mod, void *buffer, const char *mod_name)
 {
 	int           i, j, k;
@@ -1494,11 +1524,13 @@ static qboolean R_LoadMDS(model_t *mod, void *buffer, const char *mod_name)
 	return qtrue;
 }
 
-/*
-=================
-R_LoadMDM
-=================
-*/
+/**
+ * @brief R_LoadMDM
+ * @param[in,out] mod
+ * @param[in,out] buffer
+ * @param[in] mod_name
+ * @return
+ */
 static qboolean R_LoadMDM(model_t *mod, void *buffer, const char *mod_name)
 {
 	int         i, j, k;
@@ -1711,11 +1743,13 @@ static qboolean R_LoadMDM(model_t *mod, void *buffer, const char *mod_name)
 	return qtrue;
 }
 
-/*
-=================
-R_LoadMDX
-=================
-*/
+/**
+ * @brief R_LoadMDX
+ * @param[in,out] mod
+ * @param[in,out] buffer
+ * @param[in] mod_name
+ * @return
+ */
 static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
 {
 	mdxHeader_t   *pinmodel, *mdx;
@@ -1792,9 +1826,10 @@ static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
 
 //=============================================================================
 
-/*
-RE_BeginRegistration
-*/
+/**
+ * @brief RE_BeginRegistration
+ * @param[out] glconfigOut
+ */
 void RE_BeginRegistration(glconfig_t *glconfigOut)
 {
 	ri.Hunk_Clear();    // (SA) MEM NOTE: not in missionpack
@@ -1817,11 +1852,9 @@ void RE_BeginRegistration(glconfig_t *glconfigOut)
 	RE_StretchPic(0, 0, 0, 0, 0, 0, 1, 1, 0);
 }
 
-/*
-===============
-R_ModelInit
-===============
-*/
+/**
+ * @brief R_ModelInit
+ */
 void R_ModelInit(void)
 {
 	model_t *mod;
@@ -1836,11 +1869,9 @@ void R_ModelInit(void)
 	R_LoadCacheModels();
 }
 
-/*
-================
-R_Modellist_f
-================
-*/
+/**
+ * @brief R_Modellist_f
+ */
 void R_Modellist_f(void)
 {
 	int     i, j;
@@ -1874,11 +1905,15 @@ void R_Modellist_f(void)
 
 //=============================================================================
 
-/*
-================
-R_GetTag
-================
-*/
+/**
+ * @brief R_GetTag
+ * @param[in] mod
+ * @param[in] frame
+ * @param[in] tagName
+ * @param[in] startTagIndex
+ * @param[out] outTag
+ * @return
+ */
 static int R_GetTag(byte *mod, int frame, const char *tagName, int startTagIndex, md3Tag_t **outTag)
 {
 	md3Tag_t    *tag;
@@ -1913,11 +1948,15 @@ static int R_GetTag(byte *mod, int frame, const char *tagName, int startTagIndex
 	return -1;
 }
 
-/*
-================
-R_GetMDCTag
-================
-*/
+/**
+ * @brief R_GetMDCTag
+ * @param[in] mod
+ * @param[in] frame
+ * @param[in] tagName
+ * @param[in] startTagIndex
+ * @param[out] outTag
+ * @return
+ */
 static int R_GetMDCTag(byte *mod, int frame, const char *tagName, int startTagIndex, mdcTag_t **outTag)
 {
 	mdcTag_t     *tag;
@@ -1959,13 +1998,14 @@ static int R_GetMDCTag(byte *mod, int frame, const char *tagName, int startTagIn
 	return i;
 }
 
-/*
-================
-R_LerpTag
-
-  returns the index of the tag it found, for cycling through tags with the same name
-================
-*/
+/**
+ * @brief R_LerpTag
+ * @param[in,out] tag
+ * @param[in] refent
+ * @param[in] tagNameIn
+ * @param[in] startIndex
+ * @return The index of the tag it found, for cycling through tags with the same name
+ */
 int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagNameIn, int startIndex)
 {
 	md3Tag_t  *start, *end;
@@ -1983,7 +2023,7 @@ int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName
 	handle     = refent->hModel;
 	startFrame = refent->oldframe;
 	endFrame   = refent->frame;
-	frac       = 1.0 - refent->backlerp;
+	frac       = 1.0f - refent->backlerp;
 
 	Q_strncpyz(tagName, tagNameIn, MAX_QPATH);
 
@@ -1996,7 +2036,7 @@ int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName
 	}
 
 	frontLerp = frac;
-	backLerp  = 1.0 - frac;
+	backLerp  = 1.0f - frac;
 
 	if (model->type == MOD_MESH)
 	{
@@ -2044,10 +2084,10 @@ int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName
 		{
 			for (i = 0; i < 3; i++)
 			{
-				ustart.origin[i] = (float)cstart->xyz[i] * MD3_XYZ_SCALE;
-				uend.origin[i]   = (float)cend->xyz[i] * MD3_XYZ_SCALE;
-				sangles[i]       = (float)cstart->angles[i] * MDC_TAG_ANGLE_SCALE;
-				eangles[i]       = (float)cend->angles[i] * MDC_TAG_ANGLE_SCALE;
+				ustart.origin[i] = (float)(cstart->xyz[i] * MD3_XYZ_SCALE);
+				uend.origin[i]   = (float)(cend->xyz[i] * MD3_XYZ_SCALE);
+				sangles[i]       = (float)(cstart->angles[i] * MDC_TAG_ANGLE_SCALE);
+				eangles[i]       = (float)(cend->angles[i] * MDC_TAG_ANGLE_SCALE);
 			}
 
 			AnglesToAxis(sangles, ustart.axis);
@@ -2086,11 +2126,11 @@ int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName
 	return retval;
 }
 
-/*
-===============
-R_TagInfo_f
-===============
-*/
+/**
+ * @brief R_TagInfo_f
+ *
+ * @todo FIXME:
+ */
 void R_TagInfo_f(void)
 {
 	Ren_Print("command not functional\n");
@@ -2127,11 +2167,12 @@ void R_TagInfo_f(void)
 	*/
 }
 
-/*
-====================
-R_ModelBounds
-====================
-*/
+/**
+ * @brief R_ModelBounds
+ * @param[in] handle
+ * @param[out] mins
+ * @param[out] maxs
+ */
 void R_ModelBounds(qhandle_t handle, vec3_t mins, vec3_t maxs)
 {
 	model_t     *model;
@@ -2188,6 +2229,10 @@ int  cursize;
 #define R_HUNK_MEGS     24
 #define R_HUNK_SIZE     (R_HUNK_MEGS *1024 *1024)
 
+/**
+ * @brief R_Hunk_Begin
+ * @return
+ */
 void *R_Hunk_Begin(void)
 {
 	int maxsize = R_HUNK_SIZE;
@@ -2225,6 +2270,11 @@ void *R_Hunk_Begin(void)
 	return (void *)membase;
 }
 
+/**
+ * @brief R_Hunk_Alloc
+ * @param[in] size
+ * @return
+ */
 void *R_Hunk_Alloc(int size)
 {
 #ifdef _WIN32
@@ -2258,7 +2308,9 @@ void *R_Hunk_Alloc(int size)
 	return ( void * )(membase + cursize - size);
 }
 
-// this is only called when we shutdown GL
+/**
+ * @brief This is only called when we shutdown GL
+ */
 void R_Hunk_End(void)
 {
 	//Ren_Print("R_Hunk_End\n");
@@ -2275,6 +2327,9 @@ void R_Hunk_End(void)
 	membase = NULL;
 }
 
+/**
+ * @brief R_Hunk_Reset
+ */
 void R_Hunk_Reset(void)
 {
 	//Ren_Print("R_Hunk_Reset\n");
@@ -2303,11 +2358,11 @@ void R_Hunk_Reset(void)
 static model_t backupModels[MAX_MOD_KNOWN];
 static int     numBackupModels = 0;
 
-/*
-===============
-R_CacheModelAlloc
-===============
-*/
+/**
+ * @brief R_CacheModelAlloc
+ * @param[in] size
+ * @return
+ */
 void *R_CacheModelAlloc(int size)
 {
 	if (r_cache->integer && r_cacheModels->integer)
@@ -2320,11 +2375,10 @@ void *R_CacheModelAlloc(int size)
 	}
 }
 
-/*
-===============
-R_CacheModelFree
-===============
-*/
+/**
+ * @brief R_CacheModelFree
+ * @param ptr - unused
+ */
 void R_CacheModelFree(void *ptr)
 {
 	if (r_cache->integer && r_cacheModels->integer)
@@ -2338,11 +2392,10 @@ void R_CacheModelFree(void *ptr)
 	}
 }
 
-/*
-===============
-R_PurgeModels
-===============
-*/
+/**
+ * @brief R_PurgeModels
+ * @param count - unused
+ */
 void R_PurgeModels(int count)
 {
 	//static int lastPurged = 0;
@@ -2359,11 +2412,9 @@ void R_PurgeModels(int count)
 	R_Hunk_Reset();
 }
 
-/*
-===============
-R_BackupModels
-===============
-*/
+/**
+ * @brief R_BackupModels
+ */
 void R_BackupModels(void)
 {
 	int     i, j;
@@ -2437,11 +2488,11 @@ void R_BackupModels(void)
 	}
 }
 
-/*
-=================
-R_RegisterMDCShaders
-=================
-*/
+/**
+ * @brief R_RegisterMDCShaders
+ * @param[in] mod
+ * @param[in] lod
+ */
 static void R_RegisterMDCShaders(model_t *mod, int lod)
 {
 	mdcSurface_t *surf;
@@ -2473,11 +2524,11 @@ static void R_RegisterMDCShaders(model_t *mod, int lod)
 	}
 }
 
-/*
-=================
-R_RegisterMD3Shaders
-=================
-*/
+/**
+ * @brief R_RegisterMD3Shaders
+ * @param[in] mod
+ * @param[in] lod
+ */
 static void R_RegisterMD3Shaders(model_t *mod, int lod)
 {
 	md3Surface_t *surf;
@@ -2509,13 +2560,12 @@ static void R_RegisterMD3Shaders(model_t *mod, int lod)
 	}
 }
 
-/*
-===============
-R_FindCachedModel
-
-  look for the given model in the list of backupModels
-===============
-*/
+/**
+ * @brief Look for the given model in the list of backupModels
+ * @param[in] name
+ * @param[in,out] newmod
+ * @return
+ */
 qboolean R_FindCachedModel(const char *name, model_t *newmod)
 {
 	int     i, j, index;
@@ -2601,11 +2651,9 @@ qboolean R_FindCachedModel(const char *name, model_t *newmod)
 	return qfalse;
 }
 
-/*
-===============
-R_LoadCacheModels
-===============
-*/
+/**
+ * @brief R_LoadCacheModels
+ */
 void R_LoadCacheModels(void)
 {
 	int  len;

@@ -30,11 +30,17 @@
  */
 /**
  * @file renderer/tr_mesh.c
- * @note Any changes made here must be duplicated in tr_cmesh.c for MDC support
+ * @warning Any changes made here must be duplicated in tr_cmesh.c for MDC support
  */
 
 #include "tr_local.h"
 
+/**
+ * @brief ProjectRadius
+ * @param[in] r
+ * @param[in] location
+ * @return
+ */
 static float ProjectRadius(float r, vec3_t location)
 {
 	float  pr;
@@ -86,11 +92,12 @@ static float ProjectRadius(float r, vec3_t location)
 	return pr;
 }
 
-/*
-=============
-R_CullModel
-=============
-*/
+/**
+ * @brief R_CullModel
+ * @param[in] header
+ * @param[in] ent
+ * @return
+ */
 static int R_CullModel(md3Header_t *header, trRefEntity_t *ent)
 {
 	vec3_t bounds[2];
@@ -175,11 +182,11 @@ static int R_CullModel(md3Header_t *header, trRefEntity_t *ent)
 	}
 }
 
-/*
-=================
-R_ComputeLOD
-=================
-*/
+/**
+ * @brief R_ComputeLOD
+ * @param[in] ent
+ * @return
+ */
 int R_ComputeLOD(trRefEntity_t *ent)
 {
 	int lod;
@@ -220,7 +227,7 @@ int R_ComputeLOD(trRefEntity_t *ent)
 		//          radius = radius/2.0f;
 		//}
 
-		if ((projectedRadius = ProjectRadius(radius, ent->e.origin)) != 0)
+		if ((projectedRadius = ProjectRadius(radius, ent->e.origin)) != 0.f)
 		{
 			float lodscale = r_lodscale->value;
 
@@ -263,11 +270,12 @@ int R_ComputeLOD(trRefEntity_t *ent)
 	return lod;
 }
 
-/*
-=================
-R_ComputeFogNum
-=================
-*/
+/**
+ * @brief R_ComputeFogNum
+ * @param[in] header
+ * @param[in] ent
+ * @return
+ */
 static int R_ComputeFogNum(md3Header_t *header, trRefEntity_t *ent)
 {
 	int        i, j;
@@ -306,11 +314,10 @@ static int R_ComputeFogNum(md3Header_t *header, trRefEntity_t *ent)
 	return 0;
 }
 
-/*
-=================
-R_AddMD3Surfaces
-=================
-*/
+/**
+ * @brief R_AddMD3Surfaces
+ * @param[in,out] ent
+ */
 void R_AddMD3Surfaces(trRefEntity_t *ent)
 {
 	int          i;

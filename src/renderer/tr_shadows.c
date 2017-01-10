@@ -56,6 +56,12 @@ static edgeDef_t edgeDefs[SHADER_MAX_VERTEXES][MAX_EDGE_DEFS];
 static int       numEdgeDefs[SHADER_MAX_VERTEXES];
 static int       facing[SHADER_MAX_INDEXES / 3];
 
+/**
+ * @brief R_AddEdgeDef
+ * @param[in] i1
+ * @param[in] i2
+ * @param[in] facing
+ */
 void R_AddEdgeDef(int i1, int i2, int facing)
 {
 	int c = numEdgeDefs[i1];
@@ -70,6 +76,9 @@ void R_AddEdgeDef(int i1, int i2, int facing)
 	numEdgeDefs[i1]++;
 }
 
+/**
+ * @brief R_RenderShadowEdges
+ */
 void R_RenderShadowEdges(void)
 {
 	int i;
@@ -127,17 +136,15 @@ void R_RenderShadowEdges(void)
 	}
 }
 
-/*
-=================
-RB_ShadowTessEnd
-
-triangleFromEdge[ v1 ][ v2 ]
-
-  set triangle from edge( v1, v2, tri )
-  if ( facing[ triangleFromEdge[ v1 ][ v2 ] ] && !facing[ triangleFromEdge[ v2 ][ v1 ] ) {
-  }
-=================
-*/
+/**
+ * @brief RB_ShadowTessEnd
+ *
+ * @note triangleFromEdge[ v1 ][ v2 ]
+ *
+ * set triangle from edge( v1, v2, tri )
+ * if ( facing[ triangleFromEdge[ v1 ][ v2 ] ] && !facing[ triangleFromEdge[ v2 ][ v1 ] ) {
+ * }
+ */
 void RB_ShadowTessEnd(void)
 {
 	int    i;
@@ -249,16 +256,13 @@ void RB_ShadowTessEnd(void)
 	qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 }
 
-/*
-=================
-RB_ShadowFinish
-
-Darken everything that is is a shadow volume.
-We have to delay this until everything has been shadowed,
-because otherwise shadows from different body parts would
-overlap and double darken.
-=================
-*/
+/**
+ * @brief Darken everything that is is a shadow volume.
+ *
+ * @details We have to delay this until everything has been shadowed,
+ * because otherwise shadows from different body parts would
+ * overlap and double darken.
+ */
 void RB_ShadowFinish(void)
 {
 	if (r_shadows->integer != 2)
@@ -293,12 +297,9 @@ void RB_ShadowFinish(void)
 	qglDisable(GL_STENCIL_TEST);
 }
 
-/*
-=================
-RB_ProjectionShadowDeform
-
-=================
-*/
+/**
+ * @brief RB_ProjectionShadowDeform
+ */
 void RB_ProjectionShadowDeform(void)
 {
 	float  *xyz = ( float * ) tess.xyz;
@@ -313,12 +314,12 @@ void RB_ProjectionShadowDeform(void)
 	VectorCopy(backEnd.currentEntity->lightDir, lightDir);
 	d = DotProduct(lightDir, ground);
 	// don't let the shadows get too long or go negative
-	if (d < 0.5)
+	if (d < 0.5f)
 	{
-		VectorMA(lightDir, (0.5 - d), ground, lightDir);
+		VectorMA(lightDir, (0.5f - d), ground, lightDir);
 		d = DotProduct(lightDir, ground);
 	}
-	d = 1.0 / d;
+	d = 1.0f / d;
 
 	light[0] = lightDir[0] * d;
 	light[1] = lightDir[1] * d;

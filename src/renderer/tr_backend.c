@@ -47,9 +47,10 @@ static float s_flipMatrix[16] =
 	0,  0, 0,  1
 };
 
-/*
-GL_Bind
-*/
+/**
+ * @brief GL_Bind
+ * @param[in,out] image
+ */
 void GL_Bind(image_t *image)
 {
 	int texnum;
@@ -81,9 +82,10 @@ void GL_Bind(image_t *image)
 	}
 }
 
-/*
-GL_SelectTexture
-*/
+/**
+ * @brief GL_SelectTexture
+ * @param[in] unit
+ */
 void GL_SelectTexture(int unit)
 {
 	if (glState.currenttmu == unit)
@@ -113,85 +115,93 @@ void GL_SelectTexture(int unit)
 	glState.currenttmu = unit;
 }
 
+/**
+ * @brief GL_BindMultitexture
+ * @param image0
+ * @param env0 - unused
+ * @param image1
+ * @param env1 - unused
+ *
+ * @note Unused
+ */
 /*
-GL_BindMultitexture
-
-@note Unused
-*/
 void GL_BindMultitexture(image_t *image0, GLuint env0, image_t *image1, GLuint env1)
 {
-	int texnum0 = image0->texnum;
-	int texnum1 = image1->texnum;
+    int texnum0 = image0->texnum;
+    int texnum1 = image1->texnum;
 
-	if (r_nobind->integer && tr.dlightImage)            // performance evaluation option
-	{
-		texnum0 = texnum1 = tr.dlightImage->texnum;
-	}
+    if (r_nobind->integer && tr.dlightImage)            // performance evaluation option
+    {
+        texnum0 = texnum1 = tr.dlightImage->texnum;
+    }
 
-	if (glState.currenttextures[1] != texnum1)
-	{
-		GL_SelectTexture(1);
-		image1->frameUsed          = tr.frameCount;
-		glState.currenttextures[1] = texnum1;
-		qglBindTexture(GL_TEXTURE_2D, texnum1);
-	}
-	if (glState.currenttextures[0] != texnum0)
-	{
-		GL_SelectTexture(0);
-		image0->frameUsed          = tr.frameCount;
-		glState.currenttextures[0] = texnum0;
-		qglBindTexture(GL_TEXTURE_2D, texnum0);
-	}
+    if (glState.currenttextures[1] != texnum1)
+    {
+        GL_SelectTexture(1);
+        image1->frameUsed          = tr.frameCount;
+        glState.currenttextures[1] = texnum1;
+        qglBindTexture(GL_TEXTURE_2D, texnum1);
+    }
+    if (glState.currenttextures[0] != texnum0)
+    {
+        GL_SelectTexture(0);
+        image0->frameUsed          = tr.frameCount;
+        glState.currenttextures[0] = texnum0;
+        qglBindTexture(GL_TEXTURE_2D, texnum0);
+    }
 }
-
-/*
-GL_Cull
 */
+
+/**
+ * @brief GL_Cull
+ * @param[in] cullType
+ */
 void GL_Cull(int cullType)
 {
-	if (glState.faceCulling == cullType)
-	{
-		return;
-	}
+    if (glState.faceCulling == cullType)
+    {
+        return;
+    }
 
-	glState.faceCulling = cullType;
+    glState.faceCulling = cullType;
 
-	if (cullType == CT_TWO_SIDED)
-	{
-		qglDisable(GL_CULL_FACE);
-	}
-	else
-	{
-		qglEnable(GL_CULL_FACE);
+    if (cullType == CT_TWO_SIDED)
+    {
+        qglDisable(GL_CULL_FACE);
+    }
+    else
+    {
+        qglEnable(GL_CULL_FACE);
 
-		if (cullType == CT_BACK_SIDED)
-		{
-			if (backEnd.viewParms.isMirror)
-			{
-				qglCullFace(GL_FRONT);
-			}
-			else
-			{
-				qglCullFace(GL_BACK);
-			}
-		}
-		else
-		{
-			if (backEnd.viewParms.isMirror)
-			{
-				qglCullFace(GL_BACK);
-			}
-			else
-			{
-				qglCullFace(GL_FRONT);
-			}
-		}
-	}
+        if (cullType == CT_BACK_SIDED)
+        {
+            if (backEnd.viewParms.isMirror)
+            {
+                qglCullFace(GL_FRONT);
+            }
+            else
+            {
+                qglCullFace(GL_BACK);
+            }
+        }
+        else
+        {
+            if (backEnd.viewParms.isMirror)
+            {
+                qglCullFace(GL_BACK);
+            }
+            else
+            {
+                qglCullFace(GL_FRONT);
+            }
+        }
+    }
 }
 
-/*
-GL_TexEnv
-*/
+/**
+ * @brief GL_TexEnv
+ * @param[in] env
+ */
 void GL_TexEnv(int env)
 {
 	if (env == glState.texEnv[glState.currenttmu])
@@ -218,15 +228,13 @@ void GL_TexEnv(int env)
 		break;
 	default:
 		Ren_Drop("GL_TexEnv: invalid env '%d' passed\n", env);
-		break;
 	}
 }
 
-/*
-GL_State
-
-    This routine is responsible for setting the most commonly changed state in Q3.
-*/
+/**
+ * @brief This routine is responsible for setting the most commonly changed state in Q3.
+ * @param[in] stateBits
+ */
 void GL_State(unsigned long stateBits)
 {
 	unsigned long diff = stateBits ^ glState.glStateBits;
@@ -288,7 +296,6 @@ void GL_State(unsigned long stateBits)
 			default:
 				srcFactor = GL_ONE;     // to get warning to shut up
 				Ren_Drop("GL_State: invalid src blend state bits\n");
-				break;
 			}
 
 			switch (stateBits & GLS_DSTBLEND_BITS)
@@ -320,7 +327,6 @@ void GL_State(unsigned long stateBits)
 			default:
 				dstFactor = GL_ONE;     // to get warning to shut up
 				Ren_Drop("GL_State: invalid dst blend state bits\n");
-				break;
 			}
 
 			qglEnable(GL_BLEND);
@@ -400,13 +406,9 @@ void GL_State(unsigned long stateBits)
 	glState.glStateBits = stateBits;
 }
 
-/*
-================
-RB_Hyperspace
-
-A player has predicted a teleport, but hasn't arrived yet
-================
-*/
+/**
+ * @brief A player has predicted a teleport, but hasn't arrived yet
+ */
 static void RB_Hyperspace(void)
 {
 	float c = (backEnd.refdef.time & 255) / 255.0f;
@@ -417,6 +419,9 @@ static void RB_Hyperspace(void)
 	backEnd.isHyperspace = qtrue;
 }
 
+/**
+ * @brief SetViewportAndScissor
+ */
 static void SetViewportAndScissor(void)
 {
 	qglMatrixMode(GL_PROJECTION);
@@ -430,14 +435,10 @@ static void SetViewportAndScissor(void)
 	           backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
 }
 
-/*
-=================
-RB_BeginDrawingView
-
-Any mirrored or portaled views have already been drawn, so prepare
-to actually render the visible surfaces for this view
-=================
-*/
+/**
+ * @brief Any mirrored or portaled views have already been drawn, so prepare
+ * to actually render the visible surfaces for this view
+ */
 void RB_BeginDrawingView(void)
 {
 	int clearBits = 0;
@@ -567,7 +568,7 @@ void RB_BeginDrawingView(void)
 			}
 			else
 			{
-				qglClearColor(0.05, 0.05, 0.05, 1.0);    // JPW NERVE changed per id req was 0.5s
+				qglClearColor(0.05f, 0.05f, 0.05f, 1.0f);    // JPW NERVE changed per id req was 0.5s
 			}
 		}
 		else  // world scene, no portal sky, not fastsky, clear color if fog says to, otherwise, just set the clearcolor
@@ -636,11 +637,11 @@ void RB_BeginDrawingView(void)
 	}
 }
 
-/*
-==================
-RB_RenderDrawSurfList
-==================
-*/
+/**
+ * @brief RB_RenderDrawSurfList
+ * @param[in] drawSurfs
+ * @param[in] numDrawSurfs
+ */
 void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 {
 	shader_t   *shader, *oldShader;
@@ -684,7 +685,7 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 		// a "entityMergable" shader is a shader that can have surfaces from seperate
 		// entities merged into a single batch, like smoke and blood puff sprites
 		if (shader && (shader != oldShader || fogNum != oldFogNum || dlighted != oldDlighted
-		    || (entityNum != oldEntityNum && !shader->entityMergable)))
+		               || (entityNum != oldEntityNum && !shader->entityMergable)))
 		{
 			if (oldShader != NULL)
 			{
@@ -795,11 +796,9 @@ RENDER BACK END FUNCTIONS
 ============================================================================
 */
 
-/*
-================
-RB_SetGL2D
-================
-*/
+/**
+ * @brief RB_SetGL2D
+ */
 void RB_SetGL2D(void)
 {
 	backEnd.projection2D = qtrue;
@@ -822,18 +821,25 @@ void RB_SetGL2D(void)
 
 	// set time for 2D shaders
 	backEnd.refdef.time      = ri.Milliseconds();
-	backEnd.refdef.floatTime = backEnd.refdef.time * 0.001f;
+	backEnd.refdef.floatTime = backEnd.refdef.time * 0.001;
 }
 
-/*
-=============
-RE_StretchRaw
-
-FIXME: not exactly backend
-Stretches a raw 32 bit power of 2 bitmap image over the given screen rectangle.
-Used for cinematics.
-=============
-*/
+/**
+ * @brief Stretches a raw 32 bit power of 2 bitmap image over the given screen rectangle.
+ * Used for cinematics.
+ *
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] cols
+ * @param[in] rows
+ * @param[in] data
+ * @param[in] client
+ * @param[in] dirty
+ *
+ * @todo FIXME: not exactly backend
+ */
 void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty)
 {
 	int i, j;
@@ -915,6 +921,17 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	qglEnd();
 }
 
+/**
+ * @brief RE_UploadCinematic
+ *
+ * @param w - unused
+ * @param h - unused
+ * @param[in] cols
+ * @param[in] rows
+ * @param[in] data
+ * @param[in] client
+ * @param[in] dirty
+ */
 void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty)
 {
 	GL_Bind(tr.scratchImage[client]);
@@ -941,29 +958,28 @@ void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int 
 	}
 }
 
-/*
-=============
-RB_SetColor
-
-=============
-*/
+/**
+ * @brief RB_SetColor
+ * @param[in] data
+ * @return
+ */
 const void *RB_SetColor(const void *data)
 {
 	const setColorCommand_t *cmd = ( const setColorCommand_t * ) data;
 
-	backEnd.color2D[0] = cmd->color[0] * 255;
-	backEnd.color2D[1] = cmd->color[1] * 255;
-	backEnd.color2D[2] = cmd->color[2] * 255;
-	backEnd.color2D[3] = cmd->color[3] * 255;
+	backEnd.color2D[0] = (byte)(cmd->color[0] * 255);
+	backEnd.color2D[1] = (byte)(cmd->color[1] * 255);
+	backEnd.color2D[2] = (byte)(cmd->color[2] * 255);
+	backEnd.color2D[3] = (byte)(cmd->color[3] * 255);
 
 	return ( const void * ) (cmd + 1);
 }
 
-/*
-=============
-RB_StretchPic
-=============
-*/
+/**
+ * @brief RB_StretchPic
+ * @param[in] data
+ * @return
+ */
 const void *RB_StretchPic(const void *data)
 {
 	const stretchPicCommand_t *cmd = ( const stretchPicCommand_t * ) data;
@@ -1001,9 +1017,9 @@ const void *RB_StretchPic(const void *data)
 	tess.indexes[numIndexes + 5] = numVerts + 1;
 
 	*( int * ) tess.vertexColors[numVerts].v                 =
-	    *( int * ) tess.vertexColors[numVerts + 1].v         =
-	        *( int * ) tess.vertexColors[numVerts + 2].v     =
-	            *( int * ) tess.vertexColors[numVerts + 3].v = *( int * ) backEnd.color2D;
+		*( int * ) tess.vertexColors[numVerts + 1].v         =
+			*( int * ) tess.vertexColors[numVerts + 2].v     =
+				*( int * ) tess.vertexColors[numVerts + 3].v = *( int * ) backEnd.color2D;
 
 	tess.xyz[numVerts].v[0] = cmd->x;
 	tess.xyz[numVerts].v[1] = cmd->y;
@@ -1036,6 +1052,11 @@ const void *RB_StretchPic(const void *data)
 	return ( const void * ) (cmd + 1);
 }
 
+/**
+ * @brief RB_Draw2dPolys
+ * @param[in] data
+ * @return
+ */
 const void *RB_Draw2dPolys(const void *data)
 {
 	const poly2dCommand_t *cmd = ( const poly2dCommand_t * ) data;
@@ -1087,11 +1108,11 @@ const void *RB_Draw2dPolys(const void *data)
 	return ( const void * ) (cmd + 1);
 }
 
-/*
-=============
-RB_RotatedPic
-=============
-*/
+/**
+ * @brief RB_RotatedPic
+ * @param[in] data
+ * @return
+ */
 const void *RB_RotatedPic(const void *data)
 {
 	const stretchPicCommand_t *cmd = ( const stretchPicCommand_t * ) data;
@@ -1131,9 +1152,9 @@ const void *RB_RotatedPic(const void *data)
 	tess.indexes[numIndexes + 5] = numVerts + 1;
 
 	*( int * ) tess.vertexColors[numVerts].v                 =
-	    *( int * ) tess.vertexColors[numVerts + 1].v         =
-	        *( int * ) tess.vertexColors[numVerts + 2].v     =
-	            *( int * ) tess.vertexColors[numVerts + 3].v = *( int * ) backEnd.color2D;
+		*( int * ) tess.vertexColors[numVerts + 1].v         =
+			*( int * ) tess.vertexColors[numVerts + 2].v     =
+				*( int * ) tess.vertexColors[numVerts + 3].v = *( int * ) backEnd.color2D;
 
 	angle                   = cmd->angle * pi2;
 	tess.xyz[numVerts].v[0] = cmd->x + (cos(angle) * cmd->w);
@@ -1170,11 +1191,11 @@ const void *RB_RotatedPic(const void *data)
 	return ( const void * ) (cmd + 1);
 }
 
-/*
-==============
-RB_StretchPicGradient
-==============
-*/
+/**
+ * @brief RB_StretchPicGradient
+ * @param[in] data
+ * @return
+ */
 const void *RB_StretchPicGradient(const void *data)
 {
 	const stretchPicCommand_t *cmd = ( const stretchPicCommand_t * ) data;
@@ -1212,10 +1233,10 @@ const void *RB_StretchPicGradient(const void *data)
 	tess.indexes[numIndexes + 5] = numVerts + 1;
 
 	*( int * ) tess.vertexColors[numVerts].v         =
-	    *( int * ) tess.vertexColors[numVerts + 1].v = *( int * ) backEnd.color2D;
+		*( int * ) tess.vertexColors[numVerts + 1].v = *( int * ) backEnd.color2D;
 
 	*( int * ) tess.vertexColors[numVerts + 2].v     =
-	    *( int * ) tess.vertexColors[numVerts + 3].v = *( int * ) cmd->gradientColor;
+		*( int * ) tess.vertexColors[numVerts + 3].v = *( int * ) cmd->gradientColor;
 
 	tess.xyz[numVerts].v[0] = cmd->x;
 	tess.xyz[numVerts].v[1] = cmd->y;
@@ -1248,11 +1269,11 @@ const void *RB_StretchPicGradient(const void *data)
 	return ( const void * ) (cmd + 1);
 }
 
-/*
-=============
-RB_DrawSurfs
-=============
-*/
+/**
+ * @brief RB_DrawSurfs
+ * @param[in] data
+ * @return
+ */
 const void *RB_DrawSurfs(const void *data)
 {
 	const drawSurfsCommand_t *cmd;
@@ -1273,11 +1294,11 @@ const void *RB_DrawSurfs(const void *data)
 	return ( const void * ) (cmd + 1);
 }
 
-/*
-=============
-RB_DrawBuffer
-=============
-*/
+/**
+ * @brief RB_DrawBuffer
+ * @param[in] data
+ * @return
+ */
 const void *RB_DrawBuffer(const void *data)
 {
 	const drawBufferCommand_t *cmd = ( const drawBufferCommand_t * ) data;
@@ -1294,6 +1315,9 @@ const void *RB_DrawBuffer(const void *data)
 	return ( const void * ) (cmd + 1);
 }
 
+/**
+ * @brief RB_GammaScreen
+ */
 void RB_GammaScreen(void)
 {
 	// We force the 2D drawing
@@ -1301,16 +1325,12 @@ void RB_GammaScreen(void)
 	R_ScreenGamma();
 }
 
-/*
-===============
-RB_ShowImages
-
-Draw all the images to the screen, on top of whatever
-was there.  This is used to test for texture thrashing.
-
-Also called by RE_EndRegistration
-===============
-*/
+/**
+ * @brief Draw all the images to the screen, on top of whatever
+ * was there.  This is used to test for texture thrashing.
+ *
+ * Also called by RE_EndRegistration
+ */
 void RB_ShowImages(void)
 {
 	int     i;
@@ -1366,56 +1386,62 @@ void RB_ShowImages(void)
 }
 
 /**
+ * @brief RB_DrawBounds
+ * @param[in,out] mins
+ * @param[in,out] maxs
+ *
  * @note Unused.
  */
+/*
 void RB_DrawBounds(vec3_t mins, vec3_t maxs)
 {
-	vec3_t center;
+    vec3_t center;
 
-	GL_Bind(tr.whiteImage);
-	GL_State(GLS_POLYMODE_LINE);
+    GL_Bind(tr.whiteImage);
+    GL_State(GLS_POLYMODE_LINE);
 
-	// box corners
-	qglBegin(GL_LINES);
-	qglColor3f(1, 1, 1);
+    // box corners
+    qglBegin(GL_LINES);
+    qglColor3f(1, 1, 1);
 
-	qglVertex3f(mins[0], mins[1], mins[2]);
-	qglVertex3f(maxs[0], mins[1], mins[2]);
-	qglVertex3f(mins[0], mins[1], mins[2]);
-	qglVertex3f(mins[0], maxs[1], mins[2]);
-	qglVertex3f(mins[0], mins[1], mins[2]);
-	qglVertex3f(mins[0], mins[1], maxs[2]);
+    qglVertex3f(mins[0], mins[1], mins[2]);
+    qglVertex3f(maxs[0], mins[1], mins[2]);
+    qglVertex3f(mins[0], mins[1], mins[2]);
+    qglVertex3f(mins[0], maxs[1], mins[2]);
+    qglVertex3f(mins[0], mins[1], mins[2]);
+    qglVertex3f(mins[0], mins[1], maxs[2]);
 
-	qglVertex3f(maxs[0], maxs[1], maxs[2]);
-	qglVertex3f(mins[0], maxs[1], maxs[2]);
-	qglVertex3f(maxs[0], maxs[1], maxs[2]);
-	qglVertex3f(maxs[0], mins[1], maxs[2]);
-	qglVertex3f(maxs[0], maxs[1], maxs[2]);
-	qglVertex3f(maxs[0], maxs[1], mins[2]);
-	qglEnd();
+    qglVertex3f(maxs[0], maxs[1], maxs[2]);
+    qglVertex3f(mins[0], maxs[1], maxs[2]);
+    qglVertex3f(maxs[0], maxs[1], maxs[2]);
+    qglVertex3f(maxs[0], mins[1], maxs[2]);
+    qglVertex3f(maxs[0], maxs[1], maxs[2]);
+    qglVertex3f(maxs[0], maxs[1], mins[2]);
+    qglEnd();
 
-	center[0] = (mins[0] + maxs[0]) * 0.5;
-	center[1] = (mins[1] + maxs[1]) * 0.5;
-	center[2] = (mins[2] + maxs[2]) * 0.5;
+    center[0] = (mins[0] + maxs[0]) * 0.5f;
+    center[1] = (mins[1] + maxs[1]) * 0.5f;
+    center[2] = (mins[2] + maxs[2]) * 0.5f;
 
-	// center axis
-	qglBegin(GL_LINES);
-	qglColor3f(1, 0.85, 0);
+    // center axis
+    qglBegin(GL_LINES);
+    qglColor3f(1, 0.85f, 0);
 
-	qglVertex3f(mins[0], center[1], center[2]);
-	qglVertex3f(maxs[0], center[1], center[2]);
-	qglVertex3f(center[0], mins[1], center[2]);
-	qglVertex3f(center[0], maxs[1], center[2]);
-	qglVertex3f(center[0], center[1], mins[2]);
-	qglVertex3f(center[0], center[1], maxs[2]);
-	qglEnd();
+    qglVertex3f(mins[0], center[1], center[2]);
+    qglVertex3f(maxs[0], center[1], center[2]);
+    qglVertex3f(center[0], mins[1], center[2]);
+    qglVertex3f(center[0], maxs[1], center[2]);
+    qglVertex3f(center[0], center[1], mins[2]);
+    qglVertex3f(center[0], center[1], maxs[2]);
+    qglEnd();
 }
-
-/*
-=============
-RB_SwapBuffers
-=============
 */
+
+/**
+ * @brief RB_SwapBuffers
+ * @param[in] data
+ * @return
+ */
 const void *RB_SwapBuffers(const void *data)
 {
 	const swapBuffersCommand_t *cmd;
@@ -1470,11 +1496,11 @@ const void *RB_SwapBuffers(const void *data)
 	return ( const void * ) (cmd + 1);
 }
 
-/*
-=============
-RB_RenderToTexture
-=============
-*/
+/**
+ * @brief RB_RenderToTexture
+ * @param[in] data
+ * @return
+ */
 const void *RB_RenderToTexture(const void *data)
 {
 	const renderToTextureCommand_t *cmd = ( const renderToTextureCommand_t * ) data;
@@ -1491,11 +1517,11 @@ const void *RB_RenderToTexture(const void *data)
 	return ( const void * ) (cmd + 1);
 }
 
-/*
-=============
-RB_Finish
-=============
-*/
+/**
+ * @brief RB_Finish
+ * @param[in] data
+ * @return
+ */
 const void *RB_Finish(const void *data)
 {
 	const renderFinishCommand_t *cmd = ( const renderFinishCommand_t * ) data;
@@ -1507,6 +1533,10 @@ const void *RB_Finish(const void *data)
 	return ( const void * ) (cmd + 1);
 }
 
+/**
+ * @brief RB_ExecuteRenderCommands
+ * @param[in] data
+ */
 void RB_ExecuteRenderCommands(const void *data)
 {
 	int t1, t2;
