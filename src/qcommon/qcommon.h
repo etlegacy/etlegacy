@@ -1108,7 +1108,7 @@ qboolean Hunk_CheckMark(void);
 //void *Hunk_Alloc( int size );
 // void *Hunk_Alloc( int size, ha_pref preference );
 void Hunk_ClearTempMemory(void);
-void *Hunk_AllocateTempMemory(size_t size);
+void *Hunk_AllocateTempMemory(unsigned int size);
 void Hunk_FreeTempMemory(void *buf);
 int Hunk_MemoryRemaining(void);
 void Hunk_SmallLog(void);

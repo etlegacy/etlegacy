@@ -210,11 +210,11 @@ void SV_UpdateConfigStrings(void)
  * @param[out] buffer
  * @param[in] bufferSize
  */
-void SV_GetConfigstring(int index, char *buffer, size_t bufferSize)
+void SV_GetConfigstring(int index, char *buffer, unsigned int bufferSize)
 {
 	if (bufferSize < 1)
 	{
-		Com_Error(ERR_DROP, "SV_GetConfigstring: bufferSize == %zu", bufferSize);
+		Com_Error(ERR_DROP, "SV_GetConfigstring: bufferSize == %u", bufferSize);
 	}
 	if (index < 0 || index >= MAX_CONFIGSTRINGS)
 	{
@@ -262,11 +262,11 @@ void SV_SetUserinfo(int index, const char *val)
  * @param[out] buffer
  * @param[in] bufferSize
  */
-void SV_GetUserinfo(int index, char *buffer, size_t bufferSize)
+void SV_GetUserinfo(int index, char *buffer, unsigned int bufferSize)
 {
 	if (bufferSize < 1)
 	{
-		Com_Error(ERR_DROP, "SV_GetUserinfo: bufferSize == %zu", bufferSize);
+		Com_Error(ERR_DROP, "SV_GetUserinfo: bufferSize == %u", bufferSize);
 	}
 	if (index < 0 || index >= sv_maxclients->integer)
 	{

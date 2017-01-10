@@ -1932,7 +1932,7 @@ long Q_GenerateHashValue(const char *fname, int size, qboolean fullPath, qboolea
  * @param fmt
  * @return
  */
-int QDECL Com_sprintf(char *dest, size_t size, const char *fmt, ...)
+int QDECL Com_sprintf(char *dest, unsigned int size, const char *fmt, ...)
 {
 	int     len;
 	va_list argptr;
@@ -1943,7 +1943,7 @@ int QDECL Com_sprintf(char *dest, size_t size, const char *fmt, ...)
 
 	if (len >= size)
 	{
-		Com_Printf("Com_sprintf: Output length %zu too short, require %d bytes.\n", size, len + 1);
+		Com_Printf("Com_sprintf: Output length %u too short, require %d bytes.\n", size, len + 1);
 	}
 
 	return len;

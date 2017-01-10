@@ -298,11 +298,11 @@ qboolean SV_EntityContact(const vec3_t mins, const vec3_t maxs, const sharedEnti
  * @param[out] buffer
  * @param[in] bufferSize
  */
-void SV_GetServerinfo(char *buffer, size_t bufferSize)
+void SV_GetServerinfo(char *buffer, unsigned int bufferSize)
 {
 	if (bufferSize < 1)
 	{
-		Com_Error(ERR_DROP, "SV_GetServerinfo: bufferSize == %zu", bufferSize);
+		Com_Error(ERR_DROP, "SV_GetServerinfo: bufferSize == %u", bufferSize);
 	}
 	Q_strncpyz(buffer, Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE), bufferSize);
 }

@@ -1968,7 +1968,7 @@ static void Hunk_SwapBanks(void)
  * @param[in] line
  * @return
  */
-void *Hunk_AllocDebug(size_t size, ha_pref preference, char *label, char *file, int line)
+void *Hunk_AllocDebug(unsigned int size, ha_pref preference, char *label, char *file, int line)
 {
 #else
 void *Hunk_Alloc(size_t size, ha_pref preference)
@@ -1996,7 +1996,7 @@ void *Hunk_Alloc(size_t size, ha_pref preference)
 		Hunk_Log();
 		Hunk_SmallLog();
 #endif
-		Com_Error(ERR_DROP, "Hunk_Alloc failed on %zu", size);
+		Com_Error(ERR_DROP, "Hunk_Alloc failed on %u", size);
 	}
 
 	if (hunk_permanent == &hunk_low)
@@ -2045,7 +2045,7 @@ void *Hunk_Alloc(size_t size, ha_pref preference)
  * @param size
  * @return
  */
-void *Hunk_AllocateTempMemory(size_t size)
+void *Hunk_AllocateTempMemory(unsigned int size)
 {
 	void         *buf;
 	hunkHeader_t *hdr;
@@ -2065,7 +2065,7 @@ void *Hunk_AllocateTempMemory(size_t size)
 
 	if (hunk_temp->temp + hunk_permanent->permanent + size > s_hunkTotal)
 	{
-		Com_Error(ERR_DROP, "Hunk_AllocateTempMemory: failed on %zu", size);
+		Com_Error(ERR_DROP, "Hunk_AllocateTempMemory: failed on %u", size);
 	}
 
 	if (hunk_temp == &hunk_low)

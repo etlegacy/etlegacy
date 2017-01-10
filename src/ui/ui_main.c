@@ -6172,16 +6172,16 @@ static void UI_BuildServerDisplayList(int force)
 				maxClients = atoi(Info_ValueForKey(info, "sv_maxclients"));
 
 				if (clients < maxClients && (
-				        (!clients && ui_browserShowEmptyOrFull.integer == 2) ||
-				        (clients && ui_browserShowEmptyOrFull.integer == 1)))
+						(!clients && ui_browserShowEmptyOrFull.integer == 2) ||
+						(clients && ui_browserShowEmptyOrFull.integer == 1)))
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
 
 				if (clients && (
-				        (clients >= maxClients && ui_browserShowEmptyOrFull.integer == 2) ||
-				        (clients < maxClients && ui_browserShowEmptyOrFull.integer == 1)))
+						(clients >= maxClients && ui_browserShowEmptyOrFull.integer == 2) ||
+						(clients < maxClients && ui_browserShowEmptyOrFull.integer == 1)))
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
@@ -8898,17 +8898,17 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "cg_locations",                        "3",                          CVAR_ARCHIVE,                   0 },
 };
 
-const size_t cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
+const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
 
 /**
  * @brief UI_RegisterCvars
  */
 void UI_RegisterCvars(void)
 {
-	size_t      i;
-	cvarTable_t *cv;
+	unsigned int i;
+	cvarTable_t  *cv;
 
-	Com_Printf("%zu UI cvars in use.\n", cvarTableSize);
+	Com_Printf("%u UI cvars in use.\n", cvarTableSize);
 
 	for (i = 0, cv = cvarTable ; i < cvarTableSize ; i++, cv++)
 	{
