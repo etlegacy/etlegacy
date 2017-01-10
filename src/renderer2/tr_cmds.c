@@ -203,7 +203,7 @@ void R_IssuePendingRenderCommands(void)
  * @param bytes
  * @return
  */
-void *R_GetCommandBuffer(int bytes)
+void *R_GetCommandBuffer(unsigned int bytes)
 {
 	renderCommandList_t *cmdList = &backEndData->commands;
 
