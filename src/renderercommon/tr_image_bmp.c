@@ -92,13 +92,8 @@ void R_LoadBMP(const char *name, byte **pic, int *width, int *height, byte alpha
 	}
 
 	// load the file
-<<<<<<< HEAD
-	length = ri.FS_ReadFile(( char * ) name, &buffer.v);
-	if (!buffer.b || length <= 0)
-=======
 	length = ri.FS_ReadFile(name, &buffer.v);
 	if (!buffer.b || length < 0)
->>>>>>> renderercommon: doc refs #55 + tinys changes
 	{
 		return;
 	}
