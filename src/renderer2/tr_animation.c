@@ -477,7 +477,7 @@ static qboolean R_LoadPSA(skelAnimation_t *skelAnim, byte *buffer, int bufferSiz
 
 	if (chunkHeader.dataSize != sizeof(axReferenceBone_t))
 	{
-		Ren_Warning("R_LoadPSA: '%s' has wrong chunk dataSize ('%i' should be '%zu')\n", name, chunkHeader.dataSize, sizeof(axReferenceBone_t));
+		Ren_Warning("R_LoadPSA: '%s' has wrong chunk dataSize ('%i' should be '%lu')\n", name, chunkHeader.dataSize, (unsigned long) sizeof(axReferenceBone_t));
 		FreeMemStream(stream);
 		return qfalse;
 	}
@@ -551,7 +551,7 @@ static qboolean R_LoadPSA(skelAnimation_t *skelAnim, byte *buffer, int bufferSiz
 
 	if (chunkHeader.dataSize != sizeof(axAnimationInfo_t))
 	{
-		Ren_Warning("R_LoadPSA: '%s' has wrong chunk dataSize ('%i' should be '%zu')\n", name, chunkHeader.dataSize, sizeof(axAnimationInfo_t));
+		Ren_Warning("R_LoadPSA: '%s' has wrong chunk dataSize ('%i' should be '%lu')\n", name, chunkHeader.dataSize, (unsigned long) sizeof(axAnimationInfo_t));
 		FreeMemStream(stream);
 		return qfalse;
 	}
@@ -657,7 +657,7 @@ static qboolean R_LoadPSA(skelAnimation_t *skelAnim, byte *buffer, int bufferSiz
 
 	if (chunkHeader.dataSize != sizeof(axAnimationKey_t))
 	{
-		Ren_Warning("R_LoadPSA: '%s' has wrong chunk dataSize ('%i' should be '%zu')\n", name, chunkHeader.dataSize, sizeof(axAnimationKey_t));
+		Ren_Warning("R_LoadPSA: '%s' has wrong chunk dataSize ('%i' should be '%lu')\n", name, chunkHeader.dataSize, (unsigned long) sizeof(axAnimationKey_t));
 		FreeMemStream(stream);
 		return qfalse;
 	}
