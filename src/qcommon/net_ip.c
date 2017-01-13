@@ -1092,8 +1092,8 @@ int NET_IPSocket(const char *net_interface, int port, int *err)
 	u_long             _true = 1;
 	int                i     = 1;
 
-//	struct timeval tv;
-//	tv.tv_sec  = 1;
+	struct timeval timeout;
+	timeout.tv_sec = 1;
 
 	*err = 0;
 
@@ -1122,16 +1122,19 @@ int NET_IPSocket(const char *net_interface, int port, int *err)
 	}
 
 	// make it broadcast capable
-	if (setsockopt(newsocket, SOL_SOCKET, SO_BROADCAST, (char *) &i, sizeof(i)) == SOCKET_ERROR)
+	if (setsockopt(newsocket, SOL_SOCKET, SO_BROADCAST, (char *)&i, sizeof(i)) == SOCKET_ERROR)
 	{
 		Com_Printf("WARNING: NET_IPSocket - setsockopt SO_BROADCAST: %s\n", NET_ErrorString());
 	}
 
 	// set socket timeout
-	//if (setsockopt(newsocket, SOL_SOCKET, SO_RCVTIMEO , &tv,sizeof(tv)) < 0)
-	//{
-	//	Com_Printf("WARNING: NET_IPSocket - can't set RCVTIMEO: %s\n", NET_ErrorString());
-	//}
+#ifdef _WIN32
+	timeout.tv_sec *= 1000; // win32 uses msec
+#endif
+	if (setsockopt(newsocket, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) < 0)
+	{
+		Com_Printf("WARNING: NET_IPSocket - can't set RCVTIMEO: %s\n", NET_ErrorString());
+	}
 
 	if (!net_interface || !net_interface[0])
 	{
