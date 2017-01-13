@@ -172,7 +172,6 @@ vmCvar_t cg_tracerLength;
 vmCvar_t cg_tracerSpeed;
 vmCvar_t cg_autoswitch;
 vmCvar_t cg_fov;
-vmCvar_t cg_gun_fovscale;
 vmCvar_t cg_muzzleFlash;
 vmCvar_t cg_zoomStepSniper;
 vmCvar_t cg_zoomDefaultSniper;
@@ -362,7 +361,6 @@ cvarTable_t cvarTable[] =
 	{ &cg_zoomDefaultSniper,      "cg_zoomDefaultSniper",      "20",          CVAR_ARCHIVE,                 0 }, // changed per atvi req
 	{ &cg_zoomStepSniper,         "cg_zoomStepSniper",         "2",           CVAR_ARCHIVE,                 0 },
 	{ &cg_fov,                    "cg_fov",                    "90",          CVAR_ARCHIVE,                 0 },
-	{ &cg_gun_fovscale,           "cg_gun_fovscale",           "0",           0,                            0 },
 	{ &cg_muzzleFlash,            "cg_muzzleFlash",            "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_letterbox,              "cg_letterbox",              "0",           CVAR_TEMP,                    0 },
 	{ &cg_stereoSeparation,       "cg_stereoSeparation",       "0.4",         CVAR_ARCHIVE,                 0 },

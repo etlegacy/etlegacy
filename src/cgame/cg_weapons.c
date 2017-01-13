@@ -3428,7 +3428,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 	}
 
 	// drop gun lower at higher fov
-	if (!cg_gun_fovscale.integer && cg_fov.value > 90)
+	if (cg_fov.value > 90)
 	{
 		fovOffset = -0.2f * (cg_fov.value - 90);
 	}
@@ -3509,8 +3509,6 @@ void CG_AddViewWeapon(playerState_t *ps)
 
 	if (ps->weapon > WP_NONE)
 	{
-		float lengthscale;
-
 		weapon = &cg_weapons[ps->weapon];
 
 		memset(&hand, 0, sizeof(hand));
@@ -3583,24 +3581,6 @@ void CG_AddViewWeapon(playerState_t *ps)
 			hand.axis[0][2]       *= .8f;
 			hand.nonNormalizedAxes = qtrue;
 		}
-
-		if (cg_gun_fovscale.integer && cg_fov.value != 0.f)
-		{
-			if (cg_gun_fovscale.integer > 0 && cg_fov.value <= 90)
-			{
-				lengthscale = 1.0f;
-			}
-			else
-			{
-				lengthscale = (float)(1.0 / tan(DEG2RAD((double)cg_fov.value / 2.0)));
-			}
-		}
-		else
-		{
-			lengthscale = 1.0f;
-		}
-
-		VectorScale(hand.axis[0], lengthscale, hand.axis[0]);
 
 		// add everything onto the hand
 		CG_AddPlayerWeapon(&hand, ps, &cg.predictedPlayerEntity);
