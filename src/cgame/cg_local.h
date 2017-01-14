@@ -507,8 +507,8 @@ typedef struct localEntity_s
 	int breakCount;                     // break-up this many times before we can break no more
 	float sizeScale;
 
-	int	data1;
-	int	data2;
+	int data1;
+	int data2;
 
 } localEntity_t;
 
@@ -1647,6 +1647,9 @@ typedef struct
 
 	qhandle_t disconnectIcon;
 
+	qhandle_t cm_spec_icon;
+	qhandle_t cm_arrow_spec;
+
 	qhandle_t fireteamicons[6];
 
 	qhandle_t countryFlags; // GeoIP
@@ -2638,7 +2641,7 @@ char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag);
 void CG_LoadLocations(void);
 
 // cg_effects.c
-int CG_GetOriginForTag(centity_t * cent, refEntity_t * parent, const char *tagName, int startIndex, vec3_t org, vec3_t axis[3]);
+int CG_GetOriginForTag(centity_t *cent, refEntity_t *parent, const char *tagName, int startIndex, vec3_t org, vec3_t axis[3]);
 localEntity_t *CG_SmokePuff(const vec3_t p,
                             const vec3_t vel,
                             float radius,

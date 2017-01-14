@@ -2155,6 +2155,9 @@ static void CG_RegisterGraphics(void)
 	cgs.media.alliedFlag     = trap_R_RegisterShaderNoMip("gfx/limbo/flag_allied");
 	cgs.media.disconnectIcon = trap_R_RegisterShaderNoMip("gfx/2d/net");
 
+    cgs.media.cm_spec_icon  = trap_R_RegisterShaderNoMip("ui/assets/mp_spec");
+    cgs.media.cm_arrow_spec = trap_R_RegisterShaderNoMip("ui/assets/mp_arrow_spec");
+
 	for (i = 0; i < 6; i++)
 	{
 		cgs.media.fireteamicons[i] = trap_R_RegisterShaderNoMip(va("gfx/hud/fireteam/fireteam%i", i + 1));

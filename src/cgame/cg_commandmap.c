@@ -1259,51 +1259,48 @@ CG_DrawMap_draw:
 	//  CG_DrawMapEntity( mEnt, x, y, w, h, mEntFilter, scissor, interactive, snap, icon_size );
 	//}
 
+	// spawn point info
 	CG_DrawSpawnPointInfo(x, y, w, h, qtrue, scissor, exspawn);
 
+	// mortar impact markers
 	CG_DrawMortarMarker(x, y, w, h, qtrue, scissor, exspawn);
 
 	// draw spectator position and direction
 	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
 	{
-		vec2_t           pos, size;
+		vec2_t           icon_pos, icon_extends;
 		bg_playerclass_t *classInfo;
 
-		if (snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+		icon_extends[0] = 2 * icon_size;
+		icon_extends[1] = 2 * icon_size;
+
+		if (scissor)
 		{
-			size[0] = size[1] = 16;
+			icon_extends[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+			icon_extends[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
 		}
 		else
 		{
-			size[0] = size[1] = 12;
+			icon_extends[0] *= cgs.ccZoomFactor;
+			icon_extends[1] *= cgs.ccZoomFactor;
 		}
 
 		if (scissor)
 		{
-			size[0] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
-			size[1] *= (scissor->zoomFactor / AUTOMAP_ZOOM);
+			icon_pos[0] = ((cg.predictedPlayerEntity.lerpOrigin[0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * w * scissor->zoomFactor - scissor->tl[0] + x;
+			icon_pos[1] = ((cg.predictedPlayerEntity.lerpOrigin[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * h * scissor->zoomFactor - scissor->tl[1] + y;
 		}
 		else
 		{
-			size[0] *= cgs.ccZoomFactor;
-			size[1] *= cgs.ccZoomFactor;
-		}
-		if (scissor)
-		{
-			pos[0] = ((cg.predictedPlayerEntity.lerpOrigin[0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * w * scissor->zoomFactor - scissor->tl[0] + x;
-			pos[1] = ((cg.predictedPlayerEntity.lerpOrigin[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * h * scissor->zoomFactor - scissor->tl[1] + y;
-		}
-		else
-		{
-			pos[0] = x + ((cg.predictedPlayerEntity.lerpOrigin[0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * w;
-			pos[1] = y + ((cg.predictedPlayerEntity.lerpOrigin[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * h;
+			icon_pos[0] = x + ((cg.predictedPlayerEntity.lerpOrigin[0] - cg.mapcoordsMins[0]) * cg.mapcoordsScale[0]) * w;
+			icon_pos[1] = y + ((cg.predictedPlayerEntity.lerpOrigin[1] - cg.mapcoordsMins[1]) * cg.mapcoordsScale[1]) * h;
 		}
 
 		if (snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 		{
-			// draw a arrow when free-spectating.
-			// FIXME: don't reuse the ccMortarTargetArrow
-			CG_DrawRotatedPic(pos[0] - (size[0] * 0.5f), pos[1] - (size[1] * 0.5f), size[0], size[1], cgs.media.ccMortarTargetArrow, (0.625f - (cg.predictedPlayerState.viewangles[YAW] - 180.f) / 360.f));
+			// draw a arrow when free-spectating
+			CG_DrawPic(icon_pos[0] - (icon_extends[0] * 0.5f), icon_pos[1] - (icon_extends[1] * 0.5f), icon_extends[0], icon_extends[1], cgs.media.cm_spec_icon);
+			CG_DrawRotatedPic(icon_pos[0] - (icon_extends[0] * 0.5f) - 1, icon_pos[1] - (icon_extends[1] * 0.5f) - 1, icon_extends[0] + 2, icon_extends[1] + 2, cgs.media.cm_arrow_spec, (0.5f - (cg.predictedPlayerState.viewangles[YAW] - 180.f) / 360.f));
 		}
 		else
 		{
@@ -1312,19 +1309,19 @@ CG_DrawMap_draw:
 
 			if (snap->ps.powerups[PW_OPS_DISGUISED])
 			{
-				CG_DrawPic(pos[0] - (size[0] * 0.5f), pos[1] - (size[1] * 0.5f), size[0], size[1], classInfo->icon);
-				CG_DrawPic(pos[0] - (size[0] * 0.5f), pos[1] - (size[1] * 0.5f), size[0], size[1], cgs.media.friendShader);
+				CG_DrawPic(icon_pos[0] - (icon_extends[0] * 0.5f), icon_pos[1] - (icon_extends[1] * 0.5f), icon_extends[0], icon_extends[1], classInfo->icon);
+				CG_DrawPic(icon_pos[0] - (icon_extends[0] * 0.5f), icon_pos[1] - (icon_extends[1] * 0.5f), icon_extends[0], icon_extends[1], cgs.media.friendShader);
 			}
 			else if (snap->ps.powerups[PW_REDFLAG] || snap->ps.powerups[PW_BLUEFLAG])
 			{
-				CG_DrawPic(pos[0] - (size[0] * 0.5f), pos[1] - (size[1] * 0.5f), size[0], size[1], cgs.media.objectiveShader);
+				CG_DrawPic(icon_pos[0] - (icon_extends[0] * 0.5f), icon_pos[1] - (icon_extends[1] * 0.5f), icon_extends[0], icon_extends[1], cgs.media.objectiveShader);
 			}
 			else
 			{
-				CG_DrawPic(pos[0] - (size[0] * 0.5f), pos[1] - (size[1] * 0.5f), size[0], size[1], classInfo->icon);
+				CG_DrawPic(icon_pos[0] - (icon_extends[0] * 0.5f), icon_pos[1] - (icon_extends[1] * 0.5f), icon_extends[0], icon_extends[1], classInfo->icon);
 			}
 
-			CG_DrawRotatedPic(pos[0] - (size[0] * 0.5f) - 1, pos[1] - (size[1] * 0.5f) - 1, size[0] + 2, size[1] + 2, classInfo->arrow, (0.5f - (cg.predictedPlayerState.viewangles[YAW] - 180.f) / 360.f));
+			CG_DrawRotatedPic(icon_pos[0] - (icon_extends[0] * 0.5f) - 1, icon_pos[1] - (icon_extends[1] * 0.5f) - 1, icon_extends[0] + 2, icon_extends[1] + 2, classInfo->arrow, (0.5f - (cg.predictedPlayerState.viewangles[YAW] - 180.f) / 360.f));
 		}
 	}
 }
