@@ -188,12 +188,13 @@ static int _et_G_LogPrint(lua_State *L)
 	if (level.logFile)
 	{
 		char string[1024];
-/*
-        if ( g_logOptions.integer & LOGOPTS_REALTIME )
-        {
-            Com_sprintf(string, sizeof(string), "%s %s", G_GetRealTime(), text);
-        }
-        else*/{
+
+		//if ( g_logOptions.integer & LOGOPTS_REALTIME )
+		//{
+        //    Com_sprintf(string, sizeof(string), "%s %s", G_GetRealTime(), text);
+        //}
+        //else
+		{
 			int min, tens, sec;
 
 			sec  = level.time / 1000;
@@ -570,7 +571,7 @@ static int _et_trap_FS_GetFileList(lua_State *L)
 	const char *dirname            = luaL_checkstring(L, 1);
 	const char *filename_extension = luaL_checkstring(L, 2);
 	int        newTable, index = 1, i, filelen, numfiles;
-	char       filename[MAX_QPATH]; // was 128
+	char       filename[MAX_QPATH];
 	char       *filenameptr = bigTextBuffer;
 
 	numfiles = trap_FS_GetFileList(dirname, filename_extension, bigTextBuffer, sizeof(bigTextBuffer));
@@ -1037,18 +1038,16 @@ static const gentity_field_t gclient_fields[] =
 #endif
 	_et_gclient_addfield(sess.uci,                       FIELD_INT,         0),
 
-	_et_gclient_addfield(sess.aWeaponStats,              FIELD_WEAPONSTAT,  0),
-	// TODO
+	_et_gclient_addfield(sess.aWeaponStats,              FIELD_WEAPONSTAT,  FIELD_FLAG_READONLY),
+
 	//_et_gclient_addfieldalias(aWeaponStats, sess.aWeaponStats, FIELD_WEAPONSTAT_EXT, FIELD_FLAG_READONLY),
 
 	// origin: use ps.origin instead of r.currentOrigin
 	// for client entities
 	_et_gclient_addfieldalias(origin,                    ps.origin,         FIELD_VEC3,          0),
 
-	// missing sess.semiadmin
-	// missing sess.gibs
-	// _et_gclient_addfieldalias(sess.team_damage, sess.team_damage_given, FIELD_INT, 0),
-	// _et_gclient_addfieldalias(sess.team_received, sess.team_damage_received, FIELD_INT, 0),
+	_et_gclient_addfieldalias(sess.team_damage, sess.team_damage_given, FIELD_INT, 0),
+	_et_gclient_addfieldalias(sess.team_received, sess.team_damage_received, FIELD_INT, 0),
 
 	{ NULL },
 };
@@ -1100,7 +1099,7 @@ static const gentity_field_t gentity_fields[] =
 	_et_gentity_addfield(r.currentAngles,     FIELD_VEC3,       0),
 	_et_gentity_addfield(r.currentOrigin,     FIELD_VEC3,       0),
 	_et_gentity_addfield(r.eventTime,         FIELD_INT,        0),
-	// _et_gentity_addfield(r.linkcount, FIELD_INT, FIELD_FLAG_READONLY), // not used, kept for ET compatibility, so we don't provide it
+	//_et_gentity_addfield(r.linkcount, FIELD_INT, FIELD_FLAG_READONLY), // no need to provide it
 	_et_gentity_addfield(r.linked,            FIELD_INT,        FIELD_FLAG_READONLY),
 	_et_gentity_addfield(r.maxs,              FIELD_VEC3,       0),
 	_et_gentity_addfield(r.mins,              FIELD_VEC3,       0),
@@ -1372,7 +1371,7 @@ static int _et_G_Lua_DeleteEntity(lua_State *L)
 {
 	char *params = (char *)luaL_checkstring(L, 1);
 
-	lua_pushinteger(L, G_ScriptAction_Delete(NULL, params)); // FIXME: make own function for proper outputs?
+	lua_pushinteger(L, G_ScriptAction_Delete(NULL, params));
 	return 1;
 }
 
@@ -1512,7 +1511,7 @@ static int _et_G_GetSpawnVar(lua_State *L)
 		return 1;
 	case F_ENTITY:
 	{
-		// core: return the entity-number  of the entity that the pointer is pointing at.
+		// return the entity-number  of the entity that the pointer is pointing at.
 		int entNum = C_gentity_ptr_to_entNum(*(int *)((byte *)ent + ofs));
 
 		if (entNum < 0)
@@ -1827,7 +1826,7 @@ static int _et_G_SetGlobalFog(lua_State *L)
 {
 	char *params = (char *)luaL_checkstring(L, 1);
 
-	lua_pushinteger(L, G_ScriptAction_SetGlobalFog(NULL, params)); // FIXME: make own function for proper outputs?
+	lua_pushinteger(L, G_ScriptAction_SetGlobalFog(NULL, params));
 	return 1;
 }
 
@@ -1860,8 +1859,8 @@ static const luaL_Reg etlib[] =
 	{ "trap_SendServerCommand",  _et_trap_SendServerCommand  },
 	{ "trap_DropClient",         _et_trap_DropClient         },
 	{ "ClientNumberFromString",  _et_ClientNumberFromString  },
-	//	{"trap_SendMessage",			_et_trap_SendMessage},
-	//	{"trap_MessageStatus",			_et_trap_MessageStatus},
+	//{"trap_SendMessage",			_et_trap_SendMessage},
+	//{"trap_MessageStatus",			_et_trap_MessageStatus},
 	{ "G_Say",                   _et_G_Say                   },
 	{ "MutePlayer",              _et_MutePlayer              },
 	{ "UnmutePlayer",            _et_UnmutePlayer            },
@@ -2700,7 +2699,7 @@ void G_LuaHook_InitGame(int levelTime, int randomSeed, int restart)
 		vm = lVM[i];
 		if (vm)
 		{
-			if (vm->id < 0 /*|| vm->err*/)
+			if (vm->id < 0) //|| vm->err)
 			{
 				continue;
 			}
@@ -2737,7 +2736,7 @@ void G_LuaHook_ShutdownGame(int restart)
 		vm = lVM[i];
 		if (vm)
 		{
-			if (vm->id < 0 /*|| vm->err*/)
+			if (vm->id < 0) //|| vm->err)
 			{
 				continue;
 			}
@@ -2772,7 +2771,7 @@ void G_LuaHook_RunFrame(int levelTime)
 		vm = lVM[i];
 		if (vm)
 		{
-			if (vm->id < 0 /*|| vm->err*/)
+			if (vm->id < 0) //|| vm->err)
 			{
 				continue;
 			}
@@ -2807,7 +2806,7 @@ qboolean G_LuaHook_ClientConnect(int clientNum, qboolean firstTime, qboolean isB
 		vm = lVM[i];
 		if (vm)
 		{
-			if (vm->id < 0 /*|| vm->err*/)
+			if (vm->id < 0) //|| vm->err)
 			{
 				continue;
 			}
@@ -2850,7 +2849,7 @@ void G_LuaHook_ClientDisconnect(int clientNum)
 		vm = lVM[i];
 		if (vm)
 		{
-			if (vm->id < 0 /*|| vm->err*/)
+			if (vm->id < 0) //|| vm->err)
 			{
 				continue;
 			}
@@ -2885,7 +2884,7 @@ void G_LuaHook_ClientBegin(int clientNum)
 		vm = lVM[i];
 		if (vm)
 		{
-			if (vm->id < 0 /*|| vm->err*/)
+			if (vm->id < 0) //|| vm->err)
 			{
 				continue;
 			}
@@ -2920,7 +2919,7 @@ void G_LuaHook_ClientUserinfoChanged(int clientNum)
 		vm = lVM[i];
 		if (vm)
 		{
-			if (vm->id < 0 /*|| vm->err*/)
+			if (vm->id < 0) //|| vm->err)
 			{
 				continue;
 			}
@@ -2955,7 +2954,7 @@ void G_LuaHook_ClientSpawn(int clientNum, qboolean revived, qboolean teamChange,
 		vm = lVM[i];
 		if (vm)
 		{
-			if (vm->id < 0 /*|| vm->err*/)
+			if (vm->id < 0) //|| vm->err)
 			{
 				continue;
 			}
@@ -2993,7 +2992,7 @@ qboolean G_LuaHook_ClientCommand(int clientNum, char *command)
 		vm = lVM[i];
 		if (vm)
 		{
-			if (vm->id < 0 /*|| vm->err*/)
+			if (vm->id < 0) //|| vm->err)
 			{
 				continue;
 			}
@@ -3037,7 +3036,7 @@ qboolean G_LuaHook_ConsoleCommand(char *command)
 		vm = lVM[i];
 		if (vm)
 		{
-			if (vm->id < 0 /*|| vm->err*/)
+			if (vm->id < 0) //|| vm->err)
 			{
 				continue;
 			}
@@ -3080,7 +3079,7 @@ qboolean G_LuaHook_UpgradeSkill(int cno, skillType_t skill)
 		vm = lVM[i];
 		if (vm)
 		{
-			if (vm->id < 0 /*|| vm->err*/)
+			if (vm->id < 0) //|| vm->err)
 			{
 				continue;
 			}
@@ -3124,7 +3123,7 @@ qboolean G_LuaHook_SetPlayerSkill(int cno, skillType_t skill)
 		vm = lVM[i];
 		if (vm)
 		{
-			if (vm->id < 0 /*|| vm->err*/)
+			if (vm->id < 0) //|| vm->err)
 			{
 				continue;
 			}
@@ -3175,7 +3174,7 @@ void G_LuaHook_Print(printMessageType_t category, char *text)
 		vm = lVM[i];
 		if (vm)
 		{
-			if (vm->id < 0 /*|| vm->err*/)
+			if (vm->id < 0) //|| vm->err)
 			{
 				continue;
 			}
@@ -3319,6 +3318,5 @@ void G_LuaHook_SpawnEntitiesFromString()
 }
 
 /** @} */ // doxygen addtogroup lua_etevents
-
 
 #endif // FEATURE_LUA
