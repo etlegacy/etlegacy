@@ -1093,7 +1093,8 @@ int NET_IPSocket(const char *net_interface, int port, int *err)
 	int                i     = 1;
 
 	struct timeval timeout;
-	timeout.tv_sec = 1;
+	timeout.tv_sec  = 1;
+	timeout.tv_usec = 0;
 
 	*err = 0;
 
