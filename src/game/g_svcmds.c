@@ -2567,6 +2567,23 @@ qboolean ConsoleCommand(void)
 #endif
 	//}
 
+	// console also gets ref commands
+	if (Q_stricmp(cmd, "ref") == 0)
+	{
+		if (!level.fLocalHost)
+		{
+			return qfalse;
+		}
+
+		//G_refCommandCheck expects the next argument (warn, pause, lock,..)
+		trap_Argv(1, cmd, sizeof(cmd));
+		if (!G_refCommandCheck(NULL, cmd))
+		{
+			G_refHelp_cmd(NULL);
+		}
+		return qtrue;
+	}
+
 	if (g_dedicated.integer)
 	{
 		// FIXME
@@ -2580,18 +2597,6 @@ qboolean ConsoleCommand(void)
 		if (!Q_stricmp(cmd, "chat"))
 		{
 			trap_SendServerCommand(-1, va("chat \"console: %s\"", Q_AddCR(ConcatArgs(1))));
-			return qtrue;
-		}
-
-		// console also gets ref commands
-		if (!level.fLocalHost && Q_stricmp(cmd, "ref") == 0)
-		{
-			//G_refCommandCheck expects the next argument (warn, pause, lock,..)
-			trap_Argv(1, cmd, sizeof(cmd));
-			if (!G_refCommandCheck(NULL, cmd))
-			{
-				G_refHelp_cmd(NULL);
-			}
 			return qtrue;
 		}
 
