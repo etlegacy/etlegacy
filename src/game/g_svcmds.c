@@ -1484,7 +1484,9 @@ static void Svcmd_Burn(void)
  */
 static void G_Pip(gentity_t *vic)
 {
-	gentity_t *pip = G_TempEntity(vic->r.currentOrigin, EV_SPARKS);
+	gentity_t *pip;
+
+	pip = G_TempEntity(vic->r.currentOrigin, EV_SPARKS);
 
 	VectorCopy(vic->r.currentOrigin, pip->s.origin);
 	VectorCopy(vic->r.currentAngles, pip->s.angles);
@@ -2350,147 +2352,148 @@ qboolean ConsoleCommand(void)
 		G_LuaStatus(NULL);
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "lua_api") == 0)
+	else if (Q_stricmp(cmd, "lua_api") == 0)
 	{
 		G_LuaStackDump();
 		return qtrue;
 	}
 	// *LUA* API callbacks
-	if (G_LuaHook_ConsoleCommand(cmd))
+	else if (G_LuaHook_ConsoleCommand(cmd))
 	{
 		return qtrue;
 	}
+	else
 #endif
 	if (Q_stricmp(cmd, "entitylist") == 0)
 	{
 		Svcmd_EntityList_f();
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "csinfo") == 0)
+	else if (Q_stricmp(cmd, "csinfo") == 0)
 	{
 		Svcmd_CSInfo_f();
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "forceteam") == 0)
+	else if (Q_stricmp(cmd, "forceteam") == 0)
 	{
 		Svcmd_ForceTeam_f();
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "game_memory") == 0)
+	else if (Q_stricmp(cmd, "game_memory") == 0)
 	{
 		Svcmd_GameMem_f();
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "addip") == 0)
+	else if (Q_stricmp(cmd, "addip") == 0)
 	{
 		Svcmd_AddIP_f();
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "removeip") == 0)
+	else if (Q_stricmp(cmd, "removeip") == 0)
 	{
 		Svcmd_RemoveIP_f();
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "listip") == 0)
+	else if (Q_stricmp(cmd, "listip") == 0)
 	{
 		trap_SendConsoleCommand(EXEC_INSERT, "g_banIPs\n");
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "listmaxlivesip") == 0)
+	else if (Q_stricmp(cmd, "listmaxlivesip") == 0)
 	{
 		PrintMaxLivesGUID();
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "start_match") == 0)
+	else if (Q_stricmp(cmd, "start_match") == 0)
 	{
 		Svcmd_StartMatch_f();
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "reset_match") == 0)
+	else if (Q_stricmp(cmd, "reset_match") == 0)
 	{
 		Svcmd_ResetMatch_f(qtrue, qtrue);
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "swap_teams") == 0)
+	else if (Q_stricmp(cmd, "swap_teams") == 0)
 	{
 		Svcmd_SwapTeams_f();
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "shuffle_teams") == 0)
+	else if (Q_stricmp(cmd, "shuffle_teams") == 0)
 	{
 		Svcmd_ShuffleTeams_f(qtrue);
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "shuffle_teams_norestart") == 0)
+	else if (Q_stricmp(cmd, "shuffle_teams_norestart") == 0)
 	{
 		Svcmd_ShuffleTeams_f(qfalse);
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "makeReferee") == 0)
+	else if (Q_stricmp(cmd, "makeReferee") == 0)
 	{
 		G_MakeReferee();
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "removeReferee") == 0)
+	else if (Q_stricmp(cmd, "removeReferee") == 0)
 	{
 		G_RemoveReferee();
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "mute") == 0)
+	else if (Q_stricmp(cmd, "mute") == 0)
 	{
 		G_MuteClient();
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "unmute") == 0)
+	else if (Q_stricmp(cmd, "unmute") == 0)
 	{
 		G_UnMuteClient();
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "ban") == 0)
+	else if (Q_stricmp(cmd, "ban") == 0)
 	{
 		G_PlayerBan();
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "campaign") == 0)
+	else if (Q_stricmp(cmd, "campaign") == 0)
 	{
 		Svcmd_Campaign_f();
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "listcampaigns") == 0)
+	else if (Q_stricmp(cmd, "listcampaigns") == 0)
 	{
 		Svcmd_ListCampaigns_f();
 		return qtrue;
 	}
-	if (Q_stricmp(cmd, "revive") == 0)
+	else if (Q_stricmp(cmd, "revive") == 0)
 	{
 		trap_Argv(1, cmd, sizeof(cmd));
 		Svcmd_RevivePlayer(cmd);
 		return qtrue;
 	}
 	// moved from engine
-	if (!Q_stricmp(cmd, "kick"))
+	else if (!Q_stricmp(cmd, "kick"))
 	{
 		Svcmd_Kick_f();
 		return qtrue;
 	}
-	if (!Q_stricmp(cmd, "clientkick"))
+	else if (!Q_stricmp(cmd, "clientkick"))
 	{
 		Svcmd_KickNum_f();
 		return qtrue;
 	}
 #ifdef FEATURE_OMNIBOT
-	if (!Q_stricmp(cmd, "bot"))
+	else if (!Q_stricmp(cmd, "bot"))
 	{
 		Bot_Interface_ConsoleCommand();
 		return qtrue;
 	}
 #endif
-	if (!Q_stricmp(cmd, "cp"))
+	else if (!Q_stricmp(cmd, "cp"))
 	{
 		trap_SendServerCommand(-1, va("cp \"%s\"", Q_AddCR(ConcatArgs(1))));
 		return qtrue;
 	}
-	if (!Q_stricmp(cmd, "reloadConfig"))
+	else if (!Q_stricmp(cmd, "reloadConfig"))
 	{
 		trap_SetConfigstring(CS_CONFIGNAME, "");
 		memset(&level.config, 0, sizeof(config_t));
@@ -2498,77 +2501,72 @@ qboolean ConsoleCommand(void)
 
 		return qtrue;
 	}
-	if (!Q_stricmp(cmd, "loadConfig"))
+	else if (!Q_stricmp(cmd, "loadConfig"))
 	{
 		CC_loadconfig();
 		return qtrue;
 	}
-	if (!Q_stricmp(cmd, "sv_cvarempty"))
+	else if (!Q_stricmp(cmd, "sv_cvarempty"))
 	{
 		memset(level.svCvars, 0, sizeof(level.svCvars));
 		level.svCvarsCount = 0;
 		G_UpdateSvCvars();
 		return qtrue;
 	}
-	if (!Q_stricmp(cmd, "sv_cvar"))
+	else if (!Q_stricmp(cmd, "sv_cvar"))
 	{
 		CC_svcvar();
 		return qtrue;
 	}
-	if (!Q_stricmp(cmd, "playsound") || !Q_stricmp(cmd, "playsound_env"))
+	else if (!Q_stricmp(cmd, "playsound") || !Q_stricmp(cmd, "playsound_env"))
 	{
 		G_PlaySound_Cmd();
 		return qtrue;
 	}
-	//if (g_cheats.integer)
-	//{
-	if (!Q_stricmp(cmd, "gib"))
+	else if (!Q_stricmp(cmd, "gib"))
 	{
 		Svcmd_Gib();
 		return qtrue;
 	}
-	if (!Q_stricmp(cmd, "die"))
+	else if (!Q_stricmp(cmd, "die"))
 	{
 		Svcmd_Die();
 		return qtrue;
 	}
-	if (!Q_stricmp(cmd, "freeze"))
+	else if (!Q_stricmp(cmd, "freeze"))
 	{
 		Svcmd_Freeze();
 		return qtrue;
 	}
-	if (!Q_stricmp(cmd, "unfreeze"))
+	else if (!Q_stricmp(cmd, "unfreeze"))
 	{
 		Svcmd_Unfreeze();
 		return qtrue;
 	}
-	if (!Q_stricmp(cmd, "burn"))
+	else if (!Q_stricmp(cmd, "burn"))
 	{
 		Svcmd_Burn();
 		return qtrue;
 	}
-	if (!Q_stricmp(cmd, "pip"))
+	else if (!Q_stricmp(cmd, "pip"))
 	{
 		Svcmd_Pip();
 		return qtrue;
 	}
-	if (!Q_stricmp(cmd, "throw"))
+	else if (!Q_stricmp(cmd, "throw"))
 	{
 		Svcmd_Fling(1);
 		return qtrue;
 	}
 #ifdef LEGACY_DEBUG
-	if (!Q_stricmp(cmd, "ae"))
+	else if (!Q_stricmp(cmd, "ae"))
 	{
 		//ae <playername> <animEvent>
 		Svcmd_PlayerAnimEvent();
 		return qtrue;
 	}
 #endif
-	//}
-
-	// console also gets ref commands
-	if (Q_stricmp(cmd, "ref") == 0)
+	else if (!Q_stricmp(cmd, "ref")) // console also gets ref commands
 	{
 		if (!level.fLocalHost)
 		{
