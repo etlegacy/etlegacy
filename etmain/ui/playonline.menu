@@ -166,7 +166,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.66*((FILTERS_WIDTH)-6)+2+2+12, 92, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowAntilag", cvarFloatList { _("Filter Disabled") 0 _("Only show...") 1 _("Don't show...") 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Anti-Lag Servers", "Includes or excludes servers with support for modem players from the server list" )
+	TRICHECKBOXACTIONMULTI( 8+.66*((FILTERS_WIDTH)-6)+2+2+12, 92, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowAntilag", cvarFloatList { _("Filter Disabled") 0 _("Only show...") 1 _("Don't show...") 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Anti-Lag Servers", "Includes or excludes servers with anti-lag support from the server list" )
 
 	itemDef {
 		name		"filtericonTeamBalance"
