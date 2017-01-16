@@ -463,7 +463,7 @@ void Com_UpdateInfoPacket(netadr_t from)
 {
 	if (autoupdate.autoupdateServer.type == NA_BAD)
 	{
-		Com_DPrintf("CL_UpdateInfoPacket: Update server has bad address\n");
+		Com_DPrintf("Com_UpdateInfoPacket: Update server has bad address\n");
 		return;
 	}
 
