@@ -2451,9 +2451,9 @@ static void registerConstants(lua_vm_t *vm)
 qboolean G_LuaStartVM(lua_vm_t *vm)
 {
 	int        res;
-	char       basepath[MAX_QPATH];
-	char       homepath[MAX_QPATH];
-	char       gamepath[MAX_QPATH];
+	char       basepath[MAX_OSPATH];
+	char       homepath[MAX_OSPATH];
+	char       gamepath[MAX_OSPATH];
 	const char *luaPath, *luaCPath;
 
 	// Open a new lua state
