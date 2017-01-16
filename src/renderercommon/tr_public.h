@@ -39,23 +39,26 @@
 
 #define REF_API_VERSION     10
 
-// these are the functions exported by the refresh module
+/**
+ * @struct refexport_t
+ * @brief these are the functions exported by the refresh module
+ */
 typedef struct
 {
-	// called before the library is unloaded
-	// if the system is just reconfiguring, pass destroyWindow = qfalse,
-	// which will keep the screen from flashing to the desktop.
+	/// called before the library is unloaded
+	/// if the system is just reconfiguring, pass destroyWindow = qfalse,
+	/// which will keep the screen from flashing to the desktop.
 	void (*Shutdown)(qboolean destroyWindow);
 
 	// All data that will be used in a level should be
 	// registered before rendering any frames to prevent disk hits,
 	// but they can still be registered at a later time
 	// if necessary.
-	//
-	// BeginRegistration makes any existing media pointers invalid
-	// and returns the current gl configuration, including screen width
-	// and height, which can be used by the client to intelligently
-	// size display elements
+
+	/// BeginRegistration makes any existing media pointers invalid
+	/// and returns the current gl configuration, including screen width
+	/// and height, which can be used by the client to intelligently
+	///  size display elements
 	void (*BeginRegistration)(glconfig_t *config);
 	qhandle_t (*RegisterModel)(const char *name);
 	qhandle_t (*RegisterModelAllLODs)(const char *name);
@@ -68,16 +71,16 @@ typedef struct
 	qboolean (*GetSkinModel)(qhandle_t skinid, const char *type, char *name);
 	qhandle_t (*GetShaderFromModel)(qhandle_t modelid, int surfnum, int withlightmap);
 
-	// the vis data is a large enough block of data that we go to the trouble
-	// of sharing it with the clipmodel subsystem
+	/// the vis data is a large enough block of data that we go to the trouble
+	/// of sharing it with the clipmodel subsystem
 	void (*SetWorldVisData)(const byte *vis);
 
-	// EndRegistration will draw a tiny polygon with each texture, forcing
-	// them to be loaded into card memory
+	/// EndRegistration will draw a tiny polygon with each texture, forcing
+	/// them to be loaded into card memory
 	void (*EndRegistration)(void);
 
-	// a scene is built up by calls to R_ClearScene and the various R_Add functions.
-	// Nothing is drawn until R_RenderScene is called.
+	/// a scene is built up by calls to R_ClearScene and the various R_Add functions.
+	/// Nothing is drawn until R_RenderScene is called.
 	void (*ClearScene)(void);
 	void (*AddRefEntityToScene)(const refEntity_t *re);
 	int (*LightForPoint)(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir);
@@ -88,19 +91,19 @@ typedef struct
 	void (*SetFog)(int fogvar, int var1, int var2, float r, float g, float b, float density);
 	void (*RenderScene)(const refdef_t *fd);
 
-	void (*SetColor)(const float *rgba);        // NULL = 1,1,1,1
-	void (*DrawStretchPic)(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader);          // 0 = white
-	void (*DrawRotatedPic)(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, float angle);         // NERVE - SMF
+	void (*SetColor)(const float *rgba);        /// NULL = 1,1,1,1
+	void (*DrawStretchPic)(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader);          /// 0 = white
+	void (*DrawRotatedPic)(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, float angle);         /// NERVE - SMF
 	void (*DrawStretchPicGradient)(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor, int gradientType);
 	void (*Add2dPolys)(polyVert_t *polys, int numverts, qhandle_t hShader);
 
-	// Draw images for cinematic rendering, pass as 32 bit rgba
+	/// Draw images for cinematic rendering, pass as 32 bit rgba
 	void (*DrawStretchRaw)(int x, int y, int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty);
 	void (*UploadCinematic)(int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty);
 
 	void (*BeginFrame)(stereoFrame_t stereoFrame);
 
-	// if the pointers are not NULL, timing info will be returned
+	/// if the pointers are not NULL, timing info will be returned
 	void (*EndFrame)(int *frontEndMsec, int *backEndMsec);
 
 
@@ -136,7 +139,7 @@ typedef struct
 	int (*GetTextureId)(const char *imagename);
 	void (*Finish)(void);
 
-	// avi output stuff
+	/// avi output stuff
 	void (*TakeVideoFrame)(int h, int w, byte *captureBuffer, byte *encodeBuffer, qboolean motionJpeg);
 
 	void (*InitOpenGL)(void);
@@ -146,7 +149,7 @@ typedef struct
 	void (*AddRefLightToScene)(const refLight_t *light);
 #endif
 
-	// RB: alternative skeletal animation system
+	/// RB: alternative skeletal animation system
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
 	qhandle_t (*RegisterAnimation)(const char *name);
 	int (*CheckSkeleton)(refSkeleton_t *skel, qhandle_t model, qhandle_t anim);
@@ -160,22 +163,25 @@ typedef struct
 
 } refexport_t;
 
-// these are the functions imported by the refresh module
+/**
+ * @struct refimport_t
+ * @brief These are the functions imported by the refresh module
+ */
 typedef struct
 {
-	// print message on the local console
-	void (QDECL *Printf)(int printLevel, const char *fmt, ...) __attribute__ ((format(printf, 2, 3)));
+	/// print message on the local console
+	void(QDECL * Printf)(int printLevel, const char *fmt, ...) __attribute__ ((format(printf, 2, 3)));
 
-	// abort the game
-	void (QDECL *Error)(int errorLevel, const char *fmt, ...) __attribute__ ((noreturn, format(printf, 2, 3)));
+	/// abort the game
+	void(QDECL * Error)(int errorLevel, const char *fmt, ...) __attribute__ ((noreturn, format(printf, 2, 3)));
 
-	// milliseconds should only be used for profiling, never
-	// for anything game related.  Get time from the refdef
+	/// milliseconds should only be used for profiling, never
+	/// for anything game related. Get time from the refdef
 	int (*Milliseconds)(void);
 	int (*RealTime)(qtime_t *qtime);
 
-	// stack based memory allocation for per-level things that
-	// won't be freed
+	/// stack based memory allocation for per-level things that
+	/// won't be freed
 	void (*Hunk_Clear)(void);
 #ifdef HUNK_DEBUG
 	void * (*Hunk_AllocDebug)(unsigned int size, ha_pref pref, char *label, char *file, int line);
@@ -185,7 +191,7 @@ typedef struct
 	void * (*Hunk_AllocateTempMemory)(unsigned int size);
 	void (*Hunk_FreeTempMemory)(void *block);
 
-	// dynamic memory allocator for things that need to be freed
+	/// dynamic memory allocator for things that need to be freed
 #ifdef ZONE_DEBUG
 	void * (*Z_MallocDebug)(int bytes, char *label, char *file, int line);
 #else
@@ -207,12 +213,12 @@ typedef struct
 
 	void (*Cmd_ExecuteText)(int exec_when, const char *text);
 
-	// visualization for debugging collision detection
+	/// visualization for debugging collision detection
 	int (*CM_PointContents)(const vec3_t p, clipHandle_t model);
 	void (*CM_DrawDebugSurface)(void (*drawPoly)(int color, int numPoints, float *points));
 
-	// a -1 return means the file does not exist
-	// NULL can be passed for buf to just determine existance
+	/// a -1 return means the file does not exist
+	/// NULL can be passed for buf to just determine existance
 	int (*FS_FileIsInPAK)(const char *name, int *pChecksum);
 	int (*FS_ReadFile)(const char *name, void **buf);
 	void (*FS_FreeFile)(void *buf);
@@ -224,12 +230,12 @@ typedef struct
 	long (*FS_FOpenFileRead)(const char *filename, fileHandle_t *file, qboolean uniqueFILE);
 	int (*FS_Read)(void *buffer, int len, fileHandle_t f);
 
-	// cinematic stuff
+	/// cinematic stuff
 	void (*CIN_UploadCinematic)(int handle);
 	int (*CIN_PlayCinematic)(const char *arg0, int xpos, int ypos, int width, int height, int bits);
 	e_status (*CIN_RunCinematic)(int handle);
 
-	// avi output stuff
+	/// avi output stuff
 	qboolean (*CL_VideoRecording)(void);
 	void (*CL_WriteAVIVideoFrame)(const byte *buffer, int size);
 
@@ -237,7 +243,7 @@ typedef struct
 	void (*Sys_GLimpInit)(void);
 	void (*Sys_SetEnv)(const char *name, const char *value);
 
-	// input event handling
+	/// input event handling
 	void (*IN_Init)(void);
 	void (*IN_Shutdown)(void);
 	void (*IN_Restart)(void);
@@ -248,9 +254,9 @@ typedef struct
 	void (*GLimp_SetGamma)(unsigned char red[256], unsigned char green[256], unsigned char blue[256]);
 } refimport_t;
 
-// this is the only function actually exported at the linker level
-// If the module can't init to a valid rendering state, NULL will be
-// returned.
+/// this is the only function actually exported at the linker level
+/// If the module can't init to a valid rendering state, NULL will be
+/// returned.
 #ifdef USE_RENDERER_DLOPEN
 typedef refexport_t * (QDECL * GetRefAPI_t)(int apiVersion, refimport_t *rimp);
 #else

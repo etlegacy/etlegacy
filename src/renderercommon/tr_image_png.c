@@ -30,28 +30,27 @@
  */
 /**
  * @file tr_image_png.c
+ * @brief PNG LOADING
  */
 
 #include "tr_common.h"
 #include "../qcommon/puff.h"
 
-// we could limit the png size to a lower value here
+/**
+ * @def INT_MAX
+ * @brief We could limit the png size to a lower value here
+ */
 #ifndef INT_MAX
 #define INT_MAX 0x1fffffff
 #endif
 
-/*
-=================
-PNG LOADING
-=================
+/**
+ * @def Q3IMAGE_BYTESPERPIXEL
+ * @brief Quake 3 image format : RGBA
 */
-
-/*
- *  Quake 3 image format : RGBA
- */
 #define Q3IMAGE_BYTESPERPIXEL (4)
 
-/*
+/**
  *  PNG specifications
  *  The first 8 Bytes of every PNG-File are a fixed signature
  *  to identify the file as a PNG.
@@ -59,10 +58,11 @@ PNG LOADING
 #define PNG_Signature "\x89\x50\x4E\x47\xD\xA\x1A\xA"
 #define PNG_Signature_Size (8)
 
-/*
- *  After the signature diverse chunks follow.
- *  A chunk consists of a header and if Length
- *  is bigger than 0 a body and a CRC of the body follow.
+/**
+ * @struct PNG_ChunkHeader
+ * @brief After the signature diverse chunks follow.
+ * A chunk consists of a header and if Length
+ * is bigger than 0 a body and a CRC of the body follow.
  */
 struct PNG_ChunkHeader
 {
@@ -76,9 +76,10 @@ typedef uint32_t PNG_ChunkCRC;
 
 #define PNG_ChunkCRC_Size (4)
 
-/*
- *  We use the following ChunkTypes.
- *  All others are ignored.
+/**
+ * @def MAKE_CHUNKTYPE
+ * @brief We use the following ChunkTypes.
+ * All others are ignored.
  */
 #define MAKE_CHUNKTYPE(a, b, c, d) (((a) << 24) | ((b) << 16) | ((c) << 8) | ((d)))
 
@@ -88,8 +89,9 @@ typedef uint32_t PNG_ChunkCRC;
 #define PNG_ChunkType_IEND MAKE_CHUNKTYPE('I', 'E', 'N', 'D')
 #define PNG_ChunkType_tRNS MAKE_CHUNKTYPE('t', 'R', 'N', 'S')
 
-/*
- *  Per specification the first chunk after the signature SHALL be IHDR.
+/**
+ * @struct PNG_Chunk_IHDR
+ * @brief Per specification the first chunk after the signature SHALL be IHDR.
  */
 struct PNG_Chunk_IHDR
 {
@@ -104,7 +106,7 @@ struct PNG_Chunk_IHDR
 
 #define PNG_Chunk_IHDR_Size (13)
 
-/*
+/**
  *  ColourTypes
  */
 #define PNG_ColourType_Grey      (0)
@@ -113,7 +115,7 @@ struct PNG_Chunk_IHDR
 #define PNG_ColourType_GreyAlpha (4)
 #define PNG_ColourType_TrueAlpha (6)
 
-/*
+/**
  *  number of colour components
  *
  *  Grey      : 1 grey
@@ -128,7 +130,7 @@ struct PNG_Chunk_IHDR
 #define PNG_NumColourComponents_GreyAlpha (2)
 #define PNG_NumColourComponents_TrueAlpha (4)
 
-/*
+/**
  *  For the different ColourTypes
  *  different BitDepths are specified.
  */
@@ -138,17 +140,19 @@ struct PNG_Chunk_IHDR
 #define PNG_BitDepth_8  (8)
 #define PNG_BitDepth_16 (16)
 
-/*
- *  Only one valid CompressionMethod is standardized.
+/**
+ * @def PNG_CompressionMethod_0
+ * @brief Only one valid CompressionMethod is standardized.
  */
 #define PNG_CompressionMethod_0 (0)
 
-/*
- *  Only one valid FilterMethod is currently standardized.
+/**
+ * @def PNG_FilterMethod_0
+ * @brief Only one valid FilterMethod is currently standardized.
  */
 #define PNG_FilterMethod_0 (0)
 
-/*
+/**
  *  This FilterMethod defines 5 FilterTypes
  */
 #define PNG_FilterType_None    (0)
@@ -157,7 +161,7 @@ struct PNG_Chunk_IHDR
 #define PNG_FilterType_Average (3)
 #define PNG_FilterType_Paeth   (4)
 
-/*
+/**
  *  Two InterlaceMethods are standardized :
  *  0 - NonInterlaced
  *  1 - Interlaced
@@ -165,14 +169,16 @@ struct PNG_Chunk_IHDR
 #define PNG_InterlaceMethod_NonInterlaced (0)
 #define PNG_InterlaceMethod_Interlaced    (1)
 
-/*
- *  The Adam7 interlace method uses 7 passes.
+/**
+ * @def PNG_Adam7_NumPasses
+ * @brief The Adam7 interlace method uses 7 passes.
  */
 #define PNG_Adam7_NumPasses (7)
 
-/*
- *  The compressed data starts with a header ...
- *  @brief unused
+/**
+ * @struct PNG_ZlibHeader
+ * @brief The compressed data starts with a header ...
+ * @note Unused
  */
 //struct PNG_ZlibHeader
 //{
@@ -182,8 +188,9 @@ struct PNG_Chunk_IHDR
 
 #define PNG_ZlibHeader_Size (2)
 
-/*
- *  ... and is followed by a check value
+/**
+ * @def PNG_ZlibCheckValue_Size
+ * @brief ... and is followed by a check value
  */
 #define PNG_ZlibCheckValue_Size (4)
 
@@ -191,8 +198,9 @@ struct PNG_Chunk_IHDR
  *  Some support functions for buffered files follow.
  */
 
-/*
- *  buffered file representation
+/**
+ * @struct BufferedFile
+ * @brief Buffered file representation
  */
 struct BufferedFile
 {
@@ -202,8 +210,10 @@ struct BufferedFile
 	int BytesLeft;
 };
 
-/*
- *  Read a file into a buffer.
+/**
+ * @brief Read a file into a buffer.
+ * @param[in] name
+ * @return
  */
 static struct BufferedFile *ReadBufferedFile(const char *name)
 {
@@ -234,7 +244,7 @@ static struct BufferedFile *ReadBufferedFile(const char *name)
 	BF->BytesLeft = 0;
 
 	// Read the file.
-	BF->Length = ri.FS_ReadFile((char *) name, &buffer.v);
+	BF->Length = ri.FS_ReadFile(name, &buffer.v);
 	BF->Buffer = buffer.b;
 
 
@@ -253,8 +263,9 @@ static struct BufferedFile *ReadBufferedFile(const char *name)
 	return(BF);
 }
 
-/*
- *  Close a buffered file.
+/**
+ * @brief Close a buffered file.
+ * @param[in] BF
  */
 static void CloseBufferedFile(struct BufferedFile *BF)
 {
@@ -269,8 +280,11 @@ static void CloseBufferedFile(struct BufferedFile *BF)
 	}
 }
 
-/*
- *  Get a pointer to the requested bytes.
+/**
+ * @brief Get a pointer to the requested bytes.
+ * @param[in,out] BF
+ * @param[in] Length
+ * @return
  */
 static void *BufferedFileRead(struct BufferedFile *BF, unsigned Length)
 {
@@ -298,8 +312,11 @@ static void *BufferedFileRead(struct BufferedFile *BF, unsigned Length)
 	return(RetVal);
 }
 
-/*
- *  Rewind the buffer.
+/**
+ * @brief Rewind the buffer.
+ * @param[in,out] BF
+ * @param[in] Offset
+ * @return
  */
 static qboolean BufferedFileRewind(struct BufferedFile *BF, unsigned Offset)
 {
@@ -336,8 +353,11 @@ static qboolean BufferedFileRewind(struct BufferedFile *BF, unsigned Offset)
 	return qtrue;
 }
 
-/*
- *  Skip some bytes.
+/**
+ * @brief Skip some bytes.
+ * @param[in,out] BF
+ * @param[in] Offset
+ * @return
  */
 static qboolean BufferedFileSkip(struct BufferedFile *BF, unsigned Offset)
 {
@@ -360,8 +380,11 @@ static qboolean BufferedFileSkip(struct BufferedFile *BF, unsigned Offset)
 	return qtrue;
 }
 
-/*
- *  Find a chunk
+/**
+ * @brief Find a chunk
+ * @param[in] BF
+ * @param[in] ChunkType
+ * @return
  */
 static qboolean FindChunk(struct BufferedFile *BF, uint32_t ChunkType)
 {
@@ -414,8 +437,11 @@ static qboolean FindChunk(struct BufferedFile *BF, uint32_t ChunkType)
 	return qtrue;
 }
 
-/*
- *  Decompress all IDATs
+/**
+ * @brief Decompress all IDATs
+ * @param[in] BF
+ * @param[out] Buffer
+ * @return
  */
 static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 {
@@ -616,8 +642,12 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 	return(DecompressedDataLength);
 }
 
-/*
- *  the Paeth predictor
+/**
+ * @brief The Paeth predictor
+ * @param[in] a
+ * @param[in] b
+ * @param[in] c
+ * @return
  */
 static uint8_t PredictPaeth(uint8_t a, uint8_t b, uint8_t c)
 {
@@ -652,8 +682,13 @@ static uint8_t PredictPaeth(uint8_t a, uint8_t b, uint8_t c)
 	return(Pr);
 }
 
-/*
- *  Reverse the filters.
+/**
+ * @brief Reverse the filters.
+ * @param[in,out] DecompressedData
+ * @param[in] ImageHeight
+ * @param[in] BytesPerScanline
+ * @param[in] BytesPerPixel
+ * @return
  */
 static qboolean UnfilterImage(uint8_t *DecompressedData,
                               uint32_t ImageHeight,
@@ -780,8 +815,15 @@ static qboolean UnfilterImage(uint8_t *DecompressedData,
 	return qtrue;
 }
 
-/*
- *  Convert a raw input pixel to Quake 3 RGA format.
+/**
+ * @brief Convert a raw input pixel to Quake 3 RGA format.
+ * @param[in] IHDR
+ * @param[out] OutPtr
+ * @param[in] DecompPtr
+ * @param[in] HasTransparentColour
+ * @param[in] TransparentColour
+ * @param[in] OutPal
+ * @return
  */
 static qboolean ConvertPixel(struct PNG_Chunk_IHDR *IHDR,
                              byte *OutPtr,
@@ -1013,8 +1055,16 @@ static qboolean ConvertPixel(struct PNG_Chunk_IHDR *IHDR,
 	return qtrue;
 }
 
-/*
- *  Decode a non-interlaced image.
+/**
+ * @brief Decode a non-interlaced image.
+ * @param[in] IHDR
+ * @param[out] OutBuffer
+ * @param[in] DecompressedData
+ * @param[in] DecompressedDataLength
+ * @param[in] HasTransparentColour
+ * @param[in] TransparentColour
+ * @param[out] OutPal
+ * @return
  */
 static qboolean DecodeImageNonInterlaced(struct PNG_Chunk_IHDR *IHDR,
                                          byte *OutBuffer,
@@ -1256,8 +1306,16 @@ static qboolean DecodeImageNonInterlaced(struct PNG_Chunk_IHDR *IHDR,
 	return qtrue;
 }
 
-/*
- *  Decode an interlaced image.
+/**
+ * @brief Decode an interlaced image.
+ * @param[in] IHDR
+ * @param[out] OutBuffer
+ * @param[in] DecompressedData
+ * @param[in] DecompressedDataLength
+ * @param[in] HasTransparentColour
+ * @param[in] TransparentColour
+ * @param[out] OutPal
+ * @return
  */
 static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
                                       byte *OutBuffer,
@@ -1584,9 +1642,13 @@ static qboolean DecodeImageInterlaced(struct PNG_Chunk_IHDR *IHDR,
 	return qtrue;
 }
 
-/*
- *  The PNG loader
- *	alphaByte is not yet implemented
+/**
+ * @brief The PNG loader
+ * @param[in] name
+ * @param[out] pic
+ * @param[out] width
+ * @param[out] height
+ * @param alphaByte is not yet implemented
  */
 void R_LoadPNG(const char *name, byte **pic, int *width, int *height, byte alphaByte)
 {

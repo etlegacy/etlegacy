@@ -53,6 +53,14 @@ typedef struct
 	unsigned char data[];
 } pcx_t;
 
+/**
+ * @brief R_LoadPCX
+ * @param[in] filename
+ * @param[out] pic
+ * @param[out] width
+ * @param[out] height
+ * @param alphaByte - unused
+ */
 void R_LoadPCX(const char *filename, byte **pic, int *width, int *height, byte alphaByte)
 {
 	union
@@ -68,7 +76,7 @@ void R_LoadPCX(const char *filename, byte **pic, int *width, int *height, byte a
 	unsigned short w, h;
 	byte           *pic8;
 	byte           *palette;
-	int            i;
+	unsigned int   i;
 	unsigned       size = 0;
 
 	if (width)
@@ -82,7 +90,7 @@ void R_LoadPCX(const char *filename, byte **pic, int *width, int *height, byte a
 	*pic = NULL;
 
 	// load the file
-	len = ri.FS_ReadFile(( char * ) filename, &raw.v);
+	len = ri.FS_ReadFile(filename, &raw.v);
 	if (!raw.b || len <= 0)
 	{
 		return;
