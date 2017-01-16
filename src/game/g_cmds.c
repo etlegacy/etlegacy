@@ -381,9 +381,9 @@ void G_SendScore(gentity_t *ent)
 #endif
 
 	Q_strncpyz(startbuffer, va(
-	               "sc0 %i %i",
-	               level.teamScores[TEAM_AXIS],
-	               level.teamScores[TEAM_ALLIES]),
+				   "sc0 %i %i",
+				   level.teamScores[TEAM_AXIS],
+				   level.teamScores[TEAM_ALLIES]),
 	           sizeof(startbuffer));
 
 	// keep adding scores to the sc0 command until we fill
@@ -2721,7 +2721,7 @@ void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *
 		return;
 	}
 
-	// if spectator, no chatting to players in WolfMP
+	// if spectator, no chatting to players
 	if (match_mutespecs.integer > 0 && ent->client->sess.referee == 0 &&
 	    ((ent->client->sess.sessionTeam == TEAM_FREE && other->client->sess.sessionTeam != TEAM_FREE) ||
 	     (ent->client->sess.sessionTeam == TEAM_SPECTATOR && other->client->sess.sessionTeam != TEAM_SPECTATOR)))
@@ -2901,7 +2901,8 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 
 	if (mode == SAY_TEAM && !OnSameTeam(ent, other))
 	{
-		if (ent->client->sess.playerType == PC_COVERTOPS &&
+		if (other->client->sess.sessionTeam != TEAM_SPECTATOR &&
+		    ent->client->sess.playerType == PC_COVERTOPS &&
 		    ent->client->ps.powerups[PW_OPS_DISGUISED] &&
 		    (!Q_stricmp(id, "Medic") || !Q_stricmp(id, "NeedAmmo") || !Q_stricmp(id, "FTHealMe") || !Q_stricmp(id, "FTResupplyMe"))
 		    )
