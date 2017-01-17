@@ -1455,13 +1455,31 @@ int CG_GetVoiceChat(voiceChatList_t *voiceChatList, const char *id, sfxHandle_t 
  */
 voiceChatList_t *CG_VoiceChatListForClient(int clientNum)
 {
-	if (cgs.clientinfo[clientNum].team == TEAM_AXIS)
+	centity_t *cent;
+
+	cent = &cg_entities[clientNum];
+
+	if (cent && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))
 	{
-		return &voiceChatLists[0];
+		if (cgs.clientinfo[clientNum].team == TEAM_AXIS)
+		{
+			return &voiceChatLists[1];
+		}
+		else
+		{
+			return &voiceChatLists[0];
+		}
 	}
 	else
 	{
-		return &voiceChatLists[1];
+		if (cgs.clientinfo[clientNum].team == TEAM_AXIS)
+		{
+			return &voiceChatLists[0];
+		}
+		else
+		{
+			return &voiceChatLists[1];
+		}
 	}
 }
 
