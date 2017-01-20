@@ -157,7 +157,7 @@ int c_blockedOnMain;
 
 /**
  * @brief R_IssueRenderCommands
- * @param runPerformanceCounters
+ * @param[in] runPerformanceCounters
  */
 void R_IssueRenderCommands(qboolean runPerformanceCounters)
 {
@@ -200,7 +200,7 @@ void R_IssuePendingRenderCommands(void)
 /**
  * @brief Make sure there is enough command space, waiting on the
  * render thread if needed.
- * @param bytes
+ * @param[in] bytes
  * @return
  */
 void *R_GetCommandBuffer(unsigned int bytes)
@@ -244,7 +244,7 @@ void R_AddDrawViewCmd()
 
 /**
  * @brief Passing NULL will set the color to white
- * @param rgba
+ * @param[in] rgba
  */
 void RE_SetColor(const float *rgba)
 {
@@ -275,14 +275,14 @@ void RE_SetColor(const float *rgba)
 
 /**
  * @brief R_ClipRegion
- * @param x
- * @param y
- * @param w
- * @param h
- * @param s1
- * @param t1
- * @param s2
- * @param t2
+ * @param[in,out] x
+ * @param[in,out] y
+ * @param[in,out] w
+ * @param[in,out] h
+ * @param[in,out] s1
+ * @param[in,out] t1
+ * @param[in,out] s2
+ * @param[in,out] t2
  * @return
  */
 static qboolean R_ClipRegion(float *x, float *y, float *w, float *h, float *s1, float *t1, float *s2, float *t2)
@@ -358,7 +358,7 @@ static qboolean R_ClipRegion(float *x, float *y, float *w, float *h, float *s1, 
 
 /**
  * @brief RE_SetClipRegion
- * @param region
+ * @param[in] region
  */
 void RE_SetClipRegion(const float *region)
 {
@@ -374,15 +374,15 @@ void RE_SetClipRegion(const float *region)
 
 /**
  * @brief RE_StretchPic
- * @param x
- * @param y
- * @param w
- * @param h
- * @param s1
- * @param t1
- * @param s2
- * @param t2
- * @param hShader
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] s1
+ * @param[in] t1
+ * @param[in] s2
+ * @param[in] t2
+ * @param[in] hShader
  */
 void RE_StretchPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader)
 {
@@ -420,9 +420,9 @@ extern int r_numPolyVerts;
 
 /**
  * @brief RE_2DPolyies
- * @param verts
- * @param numverts
- * @param hShader
+ * @param[in] verts
+ * @param[in] numverts
+ * @param[in] hShader
  */
 void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 {
@@ -450,16 +450,16 @@ void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 
 /**
  * @brief RE_RotatedPic
- * @param x
- * @param y
- * @param w
- * @param h
- * @param s1
- * @param t1
- * @param s2
- * @param t2
- * @param hShader
- * @param angle
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] s1
+ * @param[in] t1
+ * @param[in] s2
+ * @param[in] t2
+ * @param[in] hShader
+ * @param[in] angle
  */
 void RE_RotatedPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, float angle)
 {
@@ -487,17 +487,17 @@ void RE_RotatedPic(float x, float y, float w, float h, float s1, float t1, float
 
 /**
  * @brief RE_StretchPicGradient
- * @param x
- * @param y
- * @param w
- * @param h
- * @param s1
- * @param t1
- * @param s2
- * @param t2
- * @param hShader
- * @param gradientColor
- * @param gradientType
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] s1
+ * @param[in] t1
+ * @param[in] s2
+ * @param[in] t2
+ * @param[in] hShader
+ * @param[in] gradientColor
+ * @param[in] gradientType
  */
 void RE_StretchPicGradient(float x, float y, float w, float h,
                            float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor,
@@ -528,17 +528,17 @@ void RE_StretchPicGradient(float x, float y, float w, float h,
 		gradientColor = colorWhite;
 	}
 
-	cmd->gradientColor[0] = gradientColor[0] * 255;
-	cmd->gradientColor[1] = gradientColor[1] * 255;
-	cmd->gradientColor[2] = gradientColor[2] * 255;
-	cmd->gradientColor[3] = gradientColor[3] * 255;
+	cmd->gradientColor[0] = (byte)(gradientColor[0] * 255);
+	cmd->gradientColor[1] = (byte)(gradientColor[1] * 255);
+	cmd->gradientColor[2] = (byte)(gradientColor[2] * 255);
+	cmd->gradientColor[3] = (byte)(gradientColor[3] * 255);
 	cmd->gradientType     = gradientType;
 }
 
 /**
  * @brief If running in stereo, RE_BeginFrame will be called twice
  * for each RE_EndFrame
- * @param stereoFrame
+ * @param[in] stereoFrame
  */
 void RE_BeginFrame(stereoFrame_t stereoFrame)
 {
@@ -693,8 +693,8 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 
 /**
  * @brief Returns the number of msec spent in the back end
- * @param frontEndMsec
- * @param backEndMsec
+ * @param[out] frontEndMsec
+ * @param[out] backEndMsec
  */
 void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 {
@@ -736,11 +736,11 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 
 /**
  * @brief RE_TakeVideoFrame
- * @param width
- * @param height
- * @param captureBuffer
- * @param encodeBuffer
- * @param motionJpeg
+ * @param[in] width
+ * @param[in] height
+ * @param[in] captureBuffer
+ * @param[in] encodeBuffer
+ * @param[in] motionJpeg
  */
 void RE_TakeVideoFrame(int width, int height, byte *captureBuffer, byte *encodeBuffer, qboolean motionJpeg)
 {
@@ -768,11 +768,11 @@ void RE_TakeVideoFrame(int width, int height, byte *captureBuffer, byte *encodeB
 
 /**
  * @brief RE_RenderToTexture
- * @param textureid
- * @param x
- * @param y
- * @param w
- * @param h
+ * @param[in] textureid
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
  */
 void RE_RenderToTexture(int textureid, int x, int y, int w, int h)
 {

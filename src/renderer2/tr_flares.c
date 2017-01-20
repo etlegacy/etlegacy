@@ -31,55 +31,54 @@
  */
 /**
  * @file renderer2/tr_flares.c
+ * @brief LIGHT FLARES
+ *
+ * A light flare is an effect that takes place inside the eye when bright light
+ * sources are visible.  The size of the flare reletive to the screen is nearly
+ * constant, irrespective of distance, but the intensity should be proportional to the
+ * projected area of the light source.
+ *
+ * A surface that has been flagged as having a light flare will calculate the depth
+ * buffer value that it's midpoint should have when the surface is added.
+ *
+ * After all opaque surfaces have been rendered, the depth buffer is read back for
+ * each flare in view.  If the point has not been obscured by a closer surface, the
+ * flare should be drawn.
+ *
+ * Surfaces that have a repeated texture should never be flagged as flaring, because
+ * there will only be a single flare added at the midpoint of the polygon.
+ *
+ * To prevent abrupt popping, the intensity of the flare is interpolated up and
+ * down as it changes visibility.  This involves scene to scene state, unlike almost
+ * all other aspects of the renderer, and is complicated by the fact that a single
+ * frame may have multiple scenes.
+ *
+ * RB_RenderFlares() will be called once per view (twice in a mirrored scene, potentially
+ * up to five or more times in a frame with 3D status bar icons).
  */
 
 #include "tr_local.h"
 
-/*
-=============================================================================
-LIGHT FLARES
-
-A light flare is an effect that takes place inside the eye when bright light
-sources are visible.  The size of the flare reletive to the screen is nearly
-constant, irrespective of distance, but the intensity should be proportional to the
-projected area of the light source.
-
-A surface that has been flagged as having a light flare will calculate the depth
-buffer value that it's midpoint should have when the surface is added.
-
-After all opaque surfaces have been rendered, the depth buffer is read back for
-each flare in view.  If the point has not been obscured by a closer surface, the
-flare should be drawn.
-
-Surfaces that have a repeated texture should never be flagged as flaring, because
-there will only be a single flare added at the midpoint of the polygon.
-
-To prevent abrupt popping, the intensity of the flare is interpolated up and
-down as it changes visibility.  This involves scene to scene state, unlike almost
-all other aspects of the renderer, and is complicated by the fact that a single
-frame may have multiple scenes.
-
-RB_RenderFlares() will be called once per view (twice in a mirrored scene, potentially
-up to five or more times in a frame with 3D status bar icons).
-=============================================================================
-*/
-
-// flare states maintain visibility over multiple frames for fading layers: view, mirror, menu
+/**
+ * @struct flare_t
+ * @typedef flare_s
+ * @brief Flare states maintain visibility over multiple frames for fading layers: view, mirror, menu
+ */
 typedef struct flare_s
 {
-	struct flare_s *next;       // for active chain
+	struct flare_s *next;       ///< for active chain
 
 	int addedFrame;
 
-	qboolean inPortal;          // true if in a portal view of the scene
+	qboolean inPortal;          ///< true if in a portal view of the scene
 	int frameSceneNum;
 	void *surface;
 	int fogNum;
 
 	int fadeTime;
 
-	qboolean visible;           // state of last test
-	float drawIntensity;            // may be non 0 even if !visible due to fading
+	qboolean visible;           ///< state of last test
+	float drawIntensity;        ///< may be non 0 even if !visible due to fading
 
 	int windowX, windowY;
 	float eyeZ;
@@ -94,6 +93,9 @@ flare_t *r_activeFlares, *r_inactiveFlares;
 
 int flareCoeff;
 
+/**
+ * @brief R_ClearFlares
+ */
 void R_ClearFlares(void)
 {
 	int i;
@@ -109,13 +111,14 @@ void R_ClearFlares(void)
 	}
 }
 
-/*
-==================
-RB_AddFlare
-
-This is called at surface tesselation time
-==================
-*/
+/**
+ * @brief This is called at surface tesselation time
+ * @param[in] surface
+ * @param[in] fogNum
+ * @param[in] point
+ * @param[in] color
+ * @param[in] normal
+ */
 void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t normal)
 {
 	int     i;
@@ -124,7 +127,7 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 	vec4_t  eye, clip, normalized, window;
 	float   distBias = 512.0;
 	float   distLerp = 0.5;
-	float   d1       = 0.0f, d2 = 0.0f;
+	float   d1 = 0.0f, d2 = 0.0f;
 
 	backEnd.pc.c_flareAdds++;
 
@@ -195,12 +198,12 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 	d2 = -eye[2];
 	if (d2 > distBias)
 	{
-		if (d2 > (distBias * 2.0))
+		if (d2 > (distBias * 2.0f))
 		{
-			d2 = (distBias * 2.0);
+			d2 = (distBias * 2.0f);
 		}
 		d2 -= distBias;
-		d2  = 1.0 - (d2 * (1.0 / distBias));
+		d2  = 1.0f - (d2 * (1.0f / distBias));
 		d2 *= distLerp;
 	}
 	else
@@ -215,7 +218,7 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 		VectorSubtract(backEnd.viewParms.orientation.origin, point, local);
 		VectorNormalize(local);
 		d1  = DotProduct(local, normal);
-		d1 *= (1.0 - distLerp);
+		d1 *= (1.0f - distLerp);
 		d1 += d2;
 	}
 
@@ -228,11 +231,9 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 	f->eyeZ = eye[2];
 }
 
-/*
-==================
-RB_AddLightFlares
-==================
-*/
+/**
+ * @brief RB_AddLightFlares
+ */
 void RB_AddLightFlares(void)
 {
 	int          i, j, k;
@@ -286,11 +287,10 @@ FLARE BACK END
 ===============================================================================
 */
 
-/*
-==================
-RB_TestFlare
-==================
-*/
+/**
+ * @brief RB_TestFlare
+ * @param[in,out] f
+ */
 void RB_TestFlare(flare_t *f)
 {
 	float    depth;
@@ -343,11 +343,10 @@ void RB_TestFlare(flare_t *f)
 	f->drawIntensity = fade;
 }
 
-/*
-==================
-RB_RenderFlare
-==================
-*/
+/**
+ * @brief RB_RenderFlare
+ * @param[in] f
+ */
 void RB_RenderFlare(flare_t *f)
 {
 	float  size;
@@ -465,22 +464,18 @@ void RB_RenderFlare(flare_t *f)
 	Tess_End();
 }
 
-/*
-==================
-RB_RenderFlares
-
-Because flares are simulating an occular effect, they should be drawn after
-everything (all views) in the entire frame has been drawn.
-
-Because of the way portals use the depth buffer to mark off areas, the
-needed information would be lost after each view, so we are forced to draw
-flares after each view.
-
-The resulting artifact is that flares in mirrors or portals don't dim properly
-when occluded by something in the main view, and portal flares that should
-extend past the portal edge will be overwritten.
-==================
-*/
+/**
+ * @brief Because flares are simulating an occular effect, they should be drawn after
+ * everything (all views) in the entire frame has been drawn.
+ *
+ * Because of the way portals use the depth buffer to mark off areas, the
+ * needed information would be lost after each view, so we are forced to draw
+ * flares after each view.
+ *
+ * The resulting artifact is that flares in mirrors or portals don't dim properly
+ * when occluded by something in the main view, and portal flares that should
+ * extend past the portal edge will be overwritten.
+ */
 void RB_RenderFlares(void)
 {
 	flare_t  *f;
@@ -523,7 +518,7 @@ void RB_RenderFlares(void)
 		{
 			RB_TestFlare(f);
 
-			if (f->drawIntensity)
+			if (f->drawIntensity != 0.f)
 			{
 				draw = qtrue;
 			}
@@ -558,7 +553,7 @@ void RB_RenderFlares(void)
 
 	for (f = r_activeFlares; f; f = f->next)
 	{
-		if (f->frameSceneNum == backEnd.viewParms.frameSceneNum && f->inPortal == backEnd.viewParms.isPortal && f->drawIntensity)
+		if (f->frameSceneNum == backEnd.viewParms.frameSceneNum && f->inPortal == backEnd.viewParms.isPortal && f->drawIntensity != 0.f)
 		{
 			RB_RenderFlare(f);
 		}

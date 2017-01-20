@@ -41,6 +41,11 @@ mat4_t matrixIdentity = { 1, 0, 0, 0,
 	                      0, 0, 0, 1 };
 quat_t quatIdentity = { 0, 0, 0, 1 };
 
+/**
+ * @brief NearestPowerOfTwo
+ * @param[in] val
+ * @return
+ */
 int NearestPowerOfTwo(int val)
 {
 	int answer;
@@ -50,6 +55,14 @@ int NearestPowerOfTwo(int val)
 	return answer;
 }
 
+/**
+ * @brief PlanesGetIntersectionPoint
+ * @param[in] plane1
+ * @param[in] plane2
+ * @param[in] plane3
+ * @param[out] out
+ * @return
+ */
 qboolean PlanesGetIntersectionPoint(const vec4_t plane1, const vec4_t plane2, const vec4_t plane3, vec3_t out)
 {
 	// http://www.cgafaq.info/wiki/Intersection_of_three_planes
@@ -69,7 +82,7 @@ qboolean PlanesGetIntersectionPoint(const vec4_t plane1, const vec4_t plane2, co
 	denom = DotProduct(n1, n2n3);
 
 	// check if the denominator is zero (which would mean that no intersection is to be found
-	if (denom == 0)
+	if (denom == 0.f)
 	{
 		// no intersection could be found, return <0,0,0>
 		VectorClear(out);
@@ -87,6 +100,13 @@ qboolean PlanesGetIntersectionPoint(const vec4_t plane1, const vec4_t plane2, co
 	return qtrue;
 }
 
+/**
+ * @brief MatrixMultiplyScale
+ * @param[in,out] m
+ * @param[in] x
+ * @param[in] y
+ * @param[in] z
+ */
 void MatrixMultiplyScale(mat4_t m, vec_t x, vec_t y, vec_t z)
 {
 #if 0
@@ -103,6 +123,12 @@ void MatrixMultiplyScale(mat4_t m, vec_t x, vec_t y, vec_t z)
 #endif
 }
 
+/**
+ * @brief MatrixSetupTransformFromRotation
+ * @param[out] m
+ * @param[in] rot
+ * @param[in] origin
+ */
 void MatrixSetupTransformFromRotation(mat4_t m, const mat4_t rot, const vec3_t origin)
 {
 	m[0] = rot[0];     m[4] = rot[4];        m[8] = rot[8];  m[12] = origin[0];
@@ -111,6 +137,11 @@ void MatrixSetupTransformFromRotation(mat4_t m, const mat4_t rot, const vec3_t o
 	m[3] = 0;           m[7] = 0;              m[11] = 0;        m[15] = 1;
 }
 
+/**
+ * @brief MatrixAffineInverse
+ * @param[in] in
+ * @param[out] out
+ */
 void MatrixAffineInverse(const mat4_t in, mat4_t out)
 {
 #if 0
@@ -129,6 +160,14 @@ void MatrixAffineInverse(const mat4_t in, mat4_t out)
 #endif
 }
 
+/**
+ * @brief MatrixPerspectiveProjectionFovXYRH
+ * @param[out] m
+ * @param[in] fovX
+ * @param[in] fovY
+ * @param[in] nearvec
+ * @param[in] farvec
+ */
 void MatrixPerspectiveProjectionFovXYRH(mat4_t m, vec_t fovX, vec_t fovY, vec_t nearvec, vec_t farvec)
 {
 	vec_t width, height;
@@ -142,6 +181,13 @@ void MatrixPerspectiveProjectionFovXYRH(mat4_t m, vec_t fovX, vec_t fovY, vec_t 
 	m[3] = 0;           m[7] = 0;           m[11] = -1;                     m[15] = 0;
 }
 
+/**
+ * @brief MatrixLookAtRH
+ * @param[out] m
+ * @param[in] eye
+ * @param[in] dir
+ * @param[in] up
+ */
 void MatrixLookAtRH(mat4_t m, const vec3_t eye, const vec3_t dir, const vec3_t up)
 {
 	vec3_t dirN;
@@ -162,6 +208,13 @@ void MatrixLookAtRH(mat4_t m, const vec3_t eye, const vec3_t dir, const vec3_t u
 	m[3] = 0;          m[7] = 0;              m[11] = 0;              m[15] = 1;
 }
 
+/**
+ * @brief PlaneIntersectRay
+ * @param[in] rayPos
+ * @param[in] rayDir
+ * @param[in] plane
+ * @param[out] res
+ */
 void PlaneIntersectRay(const vec3_t rayPos, const vec3_t rayDir, const vec4_t plane, vec3_t res)
 {
 	vec3_t dir;
@@ -174,11 +227,20 @@ void PlaneIntersectRay(const vec3_t rayPos, const vec3_t rayDir, const vec4_t pl
 	VectorAdd(rayPos, dir, res);
 }
 
-/*
-same as D3DXMatrixOrthoOffCenterRH
-
-http://msdn.microsoft.com/en-us/library/bb205348(VS.85).aspx
-*/
+/**
+ * @brief MatrixOrthogonalProjectionRH
+ * @param(out] m
+ * @param[in] left
+ * @param[in] right
+ * @param[in] bottom
+ * @param[in] top
+ * @param[in] nearvec
+ * @param[in] farvec
+ *
+ * @note same as D3DXMatrixOrthoOffCenterRH
+ *
+ * http://msdn.microsoft.com/en-us/library/bb205348(VS.85).aspx
+ */
 void MatrixOrthogonalProjectionRH(mat4_t m, vec_t left, vec_t right, vec_t bottom, vec_t top, vec_t nearvec, vec_t farvec)
 {
 	m[0] = 2 / (right - left);  m[4] = 0;                   m[8] = 0;                   m[12] = (left + right) / (left - right);
@@ -187,6 +249,12 @@ void MatrixOrthogonalProjectionRH(mat4_t m, vec_t left, vec_t right, vec_t botto
 	m[3] = 0;                   m[7] = 0;                   m[11] = 0;                  m[15] = 1;
 }
 
+/**
+ * @brief MatrixCrop
+ * @param[out] m
+ * @param[in] mins
+ * @param[in] maxs
+ */
 void MatrixCrop(mat4_t m, const vec3_t mins, const vec3_t maxs)
 {
 	float scaleX, scaleY, scaleZ;
@@ -207,6 +275,13 @@ void MatrixCrop(mat4_t m, const vec3_t mins, const vec3_t maxs)
 	m[3] = 0;          m[7] = 0;          m[11] = 0;          m[15] = 1;
 }
 
+/**
+ * @brief MatrixMultiplyTranslation
+ * @param[in,out] m
+ * @param[in] x
+ * @param[in] y
+ * @param[in] z
+ */
 void MatrixMultiplyTranslation(mat4_t m, vec_t x, vec_t y, vec_t z)
 {
 #if 1
@@ -223,6 +298,11 @@ void MatrixMultiplyTranslation(mat4_t m, vec_t x, vec_t y, vec_t z)
 #endif
 }
 
+/**
+ * @brief MatrixSetupZRotation
+ * @param[out] m
+ * @param[in] degrees
+ */
 void MatrixSetupZRotation(mat4_t m, vec_t degrees)
 {
 	vec_t a = DEG2RAD(degrees);
@@ -233,6 +313,11 @@ void MatrixSetupZRotation(mat4_t m, vec_t degrees)
 	m[3] = 0;              m[7] = 0;              m[11] = 0;      m[15] = 1;
 }
 
+/**
+ * @brief MatrixMultiplyZRotation
+ * @param[in,out] m
+ * @param[in] degrees
+ */
 void MatrixMultiplyZRotation(mat4_t m, vec_t degrees)
 {
 	mat4_t tmp, rot;
@@ -243,6 +328,14 @@ void MatrixMultiplyZRotation(mat4_t m, vec_t degrees)
 	mat4_mult(tmp, rot, m);
 }
 
+/**
+ * @brief BoundsIntersect
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] mins2
+ * @param[in] maxs2
+ * @return
+ */
 qboolean BoundsIntersect(const vec3_t mins, const vec3_t maxs, const vec3_t mins2, const vec3_t maxs2)
 {
 	if (maxs[0] < mins2[0] ||
@@ -254,11 +347,19 @@ qboolean BoundsIntersect(const vec3_t mins, const vec3_t maxs, const vec3_t mins
 	return qtrue;
 }
 
+/**
+ * @brief BoundsIntersectSphere
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] origin
+ * @param[in] radius
+ * @return
+ */
 qboolean BoundsIntersectSphere(const vec3_t mins, const vec3_t maxs, const vec3_t origin, vec_t radius)
 {
 	if (origin[0] - radius > maxs[0] ||
 	    origin[0] + radius < mins[0] ||
-	                         origin[1] - radius > maxs[1] ||
+	    origin[1] - radius > maxs[1] ||
 	    origin[1] + radius < mins[1] || origin[2] - radius > maxs[2] || origin[2] + radius < mins[2])
 	{
 		return qfalse;
@@ -267,6 +368,13 @@ qboolean BoundsIntersectSphere(const vec3_t mins, const vec3_t maxs, const vec3_
 	return qtrue;
 }
 
+/**
+ * @brief BoundsIntersectPoint
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] origin
+ * @return
+ */
 qboolean BoundsIntersectPoint(const vec3_t mins, const vec3_t maxs, const vec3_t origin)
 {
 	if (origin[0] > maxs[0] ||
@@ -278,12 +386,23 @@ qboolean BoundsIntersectPoint(const vec3_t mins, const vec3_t maxs, const vec3_t
 	return qtrue;
 }
 
+/**
+ * @brief ZeroBounds
+ * @param[out] mins
+ * @param[out] maxs
+ */
 void ZeroBounds(vec3_t mins, vec3_t maxs)
 {
 	mins[0] = mins[1] = mins[2] = 0;
 	maxs[0] = maxs[1] = maxs[2] = 0;
 }
 
+/**
+ * @brief MatrixSetupTransformFromQuat
+ * @param[out] m
+ * @param[in] quat
+ * @param[in] origin
+ */
 void MatrixSetupTransformFromQuat(mat4_t m, const quat_t quat, const vec3_t origin)
 {
 	mat4_t rot;
@@ -296,12 +415,17 @@ void MatrixSetupTransformFromQuat(mat4_t m, const quat_t quat, const vec3_t orig
 	m[3] = 0;           m[7] = 0;              m[11] = 0;        m[15] = 1;
 }
 
+/**
+ * @brief PlaneNormalize
+ * @param[in,out] plane
+ * @return
+ */
 vec_t PlaneNormalize(vec4_t plane)
 {
 	vec_t length, ilength;
 
 	length = sqrt(plane[0] * plane[0] + plane[1] * plane[1] + plane[2] * plane[2]);
-	if (length == 0)
+	if (length == 0.f)
 	{
 		VectorClear(plane);
 		return 0;
@@ -316,6 +440,12 @@ vec_t PlaneNormalize(vec4_t plane)
 	return length;
 }
 
+/**
+ * @brief MatrixTransformNormal
+ * @param[in] m
+ * @param[in] in
+ * @param[out] out
+ */
 void MatrixTransformNormal(const mat4_t m, const vec3_t in, vec3_t out)
 {
 	out[0] = m[0] * in[0] + m[4] * in[1] + m[8] * in[2];
@@ -323,6 +453,11 @@ void MatrixTransformNormal(const mat4_t m, const vec3_t in, vec3_t out)
 	out[2] = m[2] * in[0] + m[6] * in[1] + m[10] * in[2];
 }
 
+/**
+ * @brief MatrixTransformNormal2
+ * @param[in] m
+ * @param[in,out] inout
+ */
 void MatrixTransformNormal2(const mat4_t m, vec3_t inout)
 {
 	vec3_t tmp;
@@ -334,6 +469,12 @@ void MatrixTransformNormal2(const mat4_t m, vec3_t inout)
 	VectorCopy(tmp, inout);
 }
 
+/**
+ * @brief MatrixTransformPlane
+ * @param[in] m
+ * @param[in] in
+ * @param[out] out
+ */
 void MatrixTransformPlane(const mat4_t m, const vec4_t in, vec4_t out)
 {
 	vec3_t translation;
@@ -349,6 +490,11 @@ void MatrixTransformPlane(const mat4_t m, const vec4_t in, vec4_t out)
 	out[3] = DotProduct(out, planePos);
 }
 
+/**
+ * @brief MatrixTransformPlane2
+ * @param[in] m
+ * @param[in,out] inout
+ */
 void MatrixTransformPlane2(const mat4_t m, vec4_t inout)
 {
 	vec4_t tmp;
@@ -357,7 +503,15 @@ void MatrixTransformPlane2(const mat4_t m, vec4_t inout)
 	Vector4Copy(tmp, inout);
 }
 
-// far plane at infinity, see RobustShadowVolumes.pdf by Nvidia
+/**
+ * @brief MatrixPerspectiveProjectionFovXYInfiniteRH
+ * @param[out] m
+ * @param[in] fovX
+ * @param[in] fovY
+ * @param[in] nearvec
+ *
+ * @note far plane at infinity, see RobustShadowVolumes.pdf by Nvidia
+ */
 void MatrixPerspectiveProjectionFovXYInfiniteRH(mat4_t m, vec_t fovX, vec_t fovY, vec_t nearvec)
 {
 	vec_t width, height;
@@ -371,6 +525,12 @@ void MatrixPerspectiveProjectionFovXYInfiniteRH(mat4_t m, vec_t fovX, vec_t fovY
 	m[3] = 0;           m[7] = 0;           m[11] = -1;                     m[15] = 0;
 }
 
+/**
+ * @brief QuatTransformVector
+ * @param[in] q
+ * @param[in] in
+ * @param[out] out
+ */
 void QuatTransformVector(const quat_t q, const vec3_t in, vec3_t out)
 {
 	mat4_t m;
@@ -379,6 +539,11 @@ void QuatTransformVector(const quat_t q, const vec3_t in, vec3_t out)
 	MatrixTransformNormal(m, in, out);
 }
 
+/**
+ * @brief QuatMultiply0
+ * @param[in,out] qa
+ * @param[in] qb
+ */
 void QuatMultiply0(quat_t qa, const quat_t qb)
 {
 	quat_t tmp;
@@ -387,16 +552,20 @@ void QuatMultiply0(quat_t qa, const quat_t qb)
 	QuatMultiply1(tmp, qb, qa);
 }
 
+/**
+ * @brief QuatMultiply1
+ * @param[in] qa
+ * @param[in] qb
+ * @param[out] qc
+ */
 void QuatMultiply1(const quat_t qa, const quat_t qb, quat_t qc)
 {
-	/*
-	   from matrix and quaternion faq
-	   x = w1x2 + x1w2 + y1z2 - z1y2
-	   y = w1y2 + y1w2 + z1x2 - x1z2
-	   z = w1z2 + z1w2 + x1y2 - y1x2
+	// from matrix and quaternion faq
+	//x = w1x2 + x1w2 + y1z2 - z1y2
+	//y = w1y2 + y1w2 + z1x2 - x1z2
+	//z = w1z2 + z1w2 + x1y2 - y1x2
 
-	   w = w1w2 - x1x2 - y1y2 - z1z2
-	 */
+	//w = w1w2 - x1x2 - y1y2 - z1z2
 
 	qc[0] = qa[3] * qb[0] + qa[0] * qb[3] + qa[1] * qb[2] - qa[2] * qb[1];
 	qc[1] = qa[3] * qb[1] + qa[1] * qb[3] + qa[2] * qb[0] - qa[0] * qb[2];
@@ -404,6 +573,12 @@ void QuatMultiply1(const quat_t qa, const quat_t qb, quat_t qc)
 	qc[3] = qa[3] * qb[3] - qa[0] * qb[0] - qa[1] * qb[1] - qa[2] * qb[2];
 }
 
+/**
+ * @brief QuatMultiply2
+ * @param[in] qa
+ * @param[in] qb
+ * @param[out] qc
+ */
 void QuatMultiply2(const quat_t qa, const quat_t qb, quat_t qc)
 {
 	qc[0] = qa[3] * qb[0] + qa[0] * qb[3] + qa[1] * qb[2] + qa[2] * qb[1];
@@ -412,6 +587,12 @@ void QuatMultiply2(const quat_t qa, const quat_t qb, quat_t qc)
 	qc[3] = qa[3] * qb[3] - qa[0] * qb[0] - qa[1] * qb[1] + qa[2] * qb[2];
 }
 
+/**
+ * @brief QuatMultiply3
+ * @param[in] qa
+ * @param[in] qb
+ * @param[out] qc
+ */
 void QuatMultiply3(const quat_t qa, const quat_t qb, quat_t qc)
 {
 	qc[0] = qa[3] * qb[0] + qa[0] * qb[3] + qa[1] * qb[2] + qa[2] * qb[1];
@@ -420,6 +601,12 @@ void QuatMultiply3(const quat_t qa, const quat_t qb, quat_t qc)
 	qc[3] = -qa[3] * qb[3] + qa[0] * qb[0] - qa[1] * qb[1] + qa[2] * qb[2];
 }
 
+/**
+ * @brief QuatMultiply4
+ * @param[in] qa
+ * @param[in] qb
+ * @param[out] qc
+ */
 void QuatMultiply4(const quat_t qa, const quat_t qb, quat_t qc)
 {
 	qc[0] = qa[3] * qb[0] - qa[0] * qb[3] - qa[1] * qb[2] - qa[2] * qb[1];
@@ -428,6 +615,12 @@ void QuatMultiply4(const quat_t qa, const quat_t qb, quat_t qc)
 	qc[3] = -qa[3] * qb[3] - qa[0] * qb[0] + qa[1] * qb[1] - qa[2] * qb[2];
 }
 
+/**
+ * @brief MatrixSetupShear
+ * @param[out] m
+ * @param[in] x
+ * @param[in] y
+ */
 void MatrixSetupShear(mat4_t m, vec_t x, vec_t y)
 {
 	m[0] = 1;      m[4] = x;      m[8] = 0;      m[12] = 0;
@@ -436,6 +629,12 @@ void MatrixSetupShear(mat4_t m, vec_t x, vec_t y)
 	m[3] = 0;      m[7] = 0;      m[11] = 0;      m[15] = 1;
 }
 
+/**
+ * @brief MatrixMultiplyShear
+ * @param[in,out] m
+ * @param[in] x
+ * @param[in] y
+ */
 void MatrixMultiplyShear(mat4_t m, vec_t x, vec_t y)
 {
 	mat4_t tmp, shear;
@@ -445,6 +644,16 @@ void MatrixMultiplyShear(mat4_t m, vec_t x, vec_t y)
 	mat4_mult(tmp, shear, m);
 }
 
+/**
+ * @brief MatrixFromPlanes
+ * @param[out] m
+ * @param[in] left
+ * @param[in] right
+ * @param[in] bottom
+ * @param[in] top
+ * @param[in] nearvec
+ * @param[in] farvec
+ */
 void MatrixFromPlanes(mat4_t m, const vec4_t left, const vec4_t right, const vec4_t bottom, const vec4_t top, const vec4_t nearvec, const vec4_t farvec)
 {
 	m[0] = (right[0] - left[0]) / 2;
@@ -475,18 +684,19 @@ void MatrixFromPlanes(mat4_t m, const vec4_t left, const vec4_t right, const vec
 #endif
 }
 
-/*
-=============
-Q_strreplace
-
-replaces content of find by replace in dest
-=============
-*/
+/**
+ * @brief Replaces content of find by replace in dest
+ * @param[out] dest
+ * @param[in] destsize
+ * @param[in] find
+ * @param[in] replace
+ * @return
+ */
 qboolean Q_strreplace(char *dest, size_t destsize, const char *find, const char *replace)
 {
-	size_t  lend;
-	char *s;
-	char backup[32000];             // big, but small enough to fit in PPC stack
+	size_t lend;
+	char   *s;
+	char   backup[32000];           // big, but small enough to fit in PPC stack
 
 	lend = strlen(dest);
 	if (lend >= destsize)
@@ -517,6 +727,12 @@ qboolean Q_strreplace(char *dest, size_t destsize, const char *find, const char 
 
 //=============================================================================
 
+/**
+ * @brief AllocMemStream
+ * @param[in] buffer
+ * @param[in] bufSize
+ * @return
+ */
 memStream_t *AllocMemStream(byte *buffer, int bufSize)
 {
 	memStream_t *s;
@@ -542,11 +758,22 @@ memStream_t *AllocMemStream(byte *buffer, int bufSize)
 	return s;
 }
 
+/**
+ * @brief FreeMemStream
+ * @param[in] s
+ */
 void FreeMemStream(memStream_t *s)
 {
 	Com_Dealloc(s);
 }
 
+/**
+ * @brief MemStreamRead
+ * @param[in,out] s
+ * @param[out] buffer
+ * @param[in] len
+ * @return
+ */
 int MemStreamRead(memStream_t *s, void *buffer, int len)
 {
 	int ret = 1;
@@ -571,6 +798,11 @@ int MemStreamRead(memStream_t *s, void *buffer, int len)
 	return ret;
 }
 
+/**
+ * @brief MemStreamGetC
+ * @param[in] s
+ * @return
+ */
 int MemStreamGetC(memStream_t *s)
 {
 	int c = 0;
@@ -588,6 +820,11 @@ int MemStreamGetC(memStream_t *s)
 	return c;
 }
 
+/**
+ * @brief MemStreamGetLong
+ * @param[in] s
+ * @return
+ */
 int MemStreamGetLong(memStream_t *s)
 {
 	int c = 0;
@@ -605,6 +842,11 @@ int MemStreamGetLong(memStream_t *s)
 	return LittleLong(c);
 }
 
+/**
+ * @brief MemStreamGetShort
+ * @param[in] s
+ * @return
+ */
 int MemStreamGetShort(memStream_t *s)
 {
 	int c = 0;
@@ -622,6 +864,11 @@ int MemStreamGetShort(memStream_t *s)
 	return LittleShort(c);
 }
 
+/**
+ * @brief MemStreamGetFloat
+ * @param[in] s
+ * @return
+ */
 float MemStreamGetFloat(memStream_t *s)
 {
 	floatint_t c;
@@ -641,6 +888,11 @@ float MemStreamGetFloat(memStream_t *s)
 
 //============================================================================
 
+/**
+ * @brief printBits
+ * @param[in] size
+ * @param[in] ptr
+ */
 void printBits(size_t const size, void const *const ptr)
 {
 	unsigned char *b = (unsigned char *) ptr;

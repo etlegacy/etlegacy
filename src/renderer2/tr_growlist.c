@@ -43,6 +43,11 @@ GROWLISTS
 
 // malloc / free all in one place for debugging
 
+/**
+ * @brief Com_InitGrowList
+ * @param[out] list
+ * @param[in] maxElements
+ */
 void Com_InitGrowList(growList_t *list, int maxElements)
 {
 	list->maxElements     = maxElements;
@@ -50,12 +55,23 @@ void Com_InitGrowList(growList_t *list, int maxElements)
 	list->elements        = (void **)Com_Allocate(list->maxElements * sizeof(void *));
 }
 
+/**
+ * @brief Com_DestroyGrowList
+ * @param[in,out] list
+ */
 void Com_DestroyGrowList(growList_t *list)
 {
 	Com_Dealloc(list->elements);
+
 	memset(list, 0, sizeof(*list));
 }
 
+/**
+ * @brief Com_AddToGrowList
+ * @param[in,out] list
+ * @param[in] data
+ * @return
+ */
 int Com_AddToGrowList(growList_t *list, void *data)
 {
 	void **old;
@@ -99,15 +115,28 @@ int Com_AddToGrowList(growList_t *list, void *data)
 	return Com_AddToGrowList(list, data);
 }
 
+/**
+ * @brief Com_GrowListElement
+ * @param[in] list
+ * @param[in] index
+ * @return
+ */
 void *Com_GrowListElement(const growList_t *list, int index)
 {
 	if (index < 0 || index >= list->currentElements)
 	{
 		Ren_Drop("Com_GrowListElement: %i out of range of %i", index, list->currentElements);
 	}
+
 	return list->elements[index];
 }
 
+/**
+ * @brief Com_IndexForGrowListElement
+ * @param[in] list
+ * @param[in] element
+ * @return
+ */
 int Com_IndexForGrowListElement(const growList_t *list, const void *element)
 {
 	int i;
@@ -119,5 +148,6 @@ int Com_IndexForGrowListElement(const growList_t *list, const void *element)
 			return i;
 		}
 	}
+
 	return -1;
 }

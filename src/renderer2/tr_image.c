@@ -47,6 +47,11 @@ image_t *r_imageHashTable[IMAGE_FILE_HASH_SIZE];
 // TODO: check if this fullpath shit is really needed for anything
 #define generateHashValue(fname) Q_GenerateHashValue(fname, IMAGE_FILE_HASH_SIZE, qtrue, qtrue)
 
+/**
+ * @brief R_GammaCorrect
+ * @param[in,out] buffer
+ * @param[in] bufSize
+ */
 void R_GammaCorrect(byte *buffer, int bufSize)
 {
 	int i;
@@ -57,6 +62,10 @@ void R_GammaCorrect(byte *buffer, int bufSize)
 	}
 }
 
+/**
+ * @struct textureMode_t
+ * @brief
+ */  
 typedef struct
 {
 	char *name;
@@ -73,6 +82,10 @@ textureMode_t modes[] =
 	{ "GL_LINEAR_MIPMAP_LINEAR",   GL_LINEAR_MIPMAP_LINEAR,   GL_LINEAR  }
 };
 
+/**
+ * @brief GL_TextureMode
+ * @param[in] string
+ */
 void GL_TextureMode(const char *string)
 {
 	int     i;
@@ -102,7 +115,7 @@ void GL_TextureMode(const char *string)
 		{
 			ri.Cvar_Set("r_ext_texture_filter_anisotropic", va("%f", glConfig2.maxTextureAnisotropy));
 		}
-		else if (r_ext_texture_filter_anisotropic->value < 1.0)
+		else if (r_ext_texture_filter_anisotropic->value < 1.0f)
 		{
 			ri.Cvar_Set("r_ext_texture_filter_anisotropic", "1.0");
 		}
@@ -130,6 +143,10 @@ void GL_TextureMode(const char *string)
 	}
 }
 
+/**
+ * @brief R_SumOfUsedImages
+ * @return 
+ */
 int R_SumOfUsedImages(void)
 {
 	int     total = 0;
@@ -149,6 +166,9 @@ int R_SumOfUsedImages(void)
 	return total;
 }
 
+/**
+ * @brief R_ImageList_f
+ */
 void R_ImageList_f(void)
 {
 	int        i;
@@ -309,19 +329,23 @@ void R_ImageList_f(void)
 
 //=======================================================================
 
-/*
-================
-R_ResampleTexture
-
-Used to resample images in a more general than quartering fashion.
-
-This will only be filtered properly if the resampled size
-is greater than half the original size.
-
-If a larger shrinking is needed, use the mipmap function
-before or after.
-================
-*/
+/**
+ * @brief Used to resample images in a more general than quartering fashion.
+ *  
+ * This will only be filtered properly if the resampled size
+ * is greater than half the original size.
+ * 
+ * If a larger shrinking is needed, use the mipmap function
+ * before or after.
+ * 
+ * @param[in,out] in
+ * @param[in] inwidth
+ * @param[in] inheight
+ * @param[out] out
+ * @param[in] outwidth
+ * @param[in] outheight
+ * @param[in] normalMap
+ */
 static void R_ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned *out, int outwidth, int outheight, qboolean normalMap)
 {
 	int      x, y;
@@ -372,27 +396,27 @@ static void R_ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned 
 				pix3 = (byte *) inrow2 + p1[x];
 				pix4 = (byte *) inrow2 + p2[x];
 
-				n[0] = (pix1[0] * inv127 - 1.0);
-				n[1] = (pix1[1] * inv127 - 1.0);
-				n[2] = (pix1[2] * inv127 - 1.0);
+				n[0] = (pix1[0] * inv127 - 1.0f);
+				n[1] = (pix1[1] * inv127 - 1.0f);
+				n[2] = (pix1[2] * inv127 - 1.0f);
 
-				n2[0] = (pix2[0] * inv127 - 1.0);
-				n2[1] = (pix2[1] * inv127 - 1.0);
-				n2[2] = (pix2[2] * inv127 - 1.0);
+				n2[0] = (pix2[0] * inv127 - 1.0f);
+				n2[1] = (pix2[1] * inv127 - 1.0f);
+				n2[2] = (pix2[2] * inv127 - 1.0f);
 
-				n3[0] = (pix3[0] * inv127 - 1.0);
-				n3[1] = (pix3[1] * inv127 - 1.0);
-				n3[2] = (pix3[2] * inv127 - 1.0);
+				n3[0] = (pix3[0] * inv127 - 1.0f);
+				n3[1] = (pix3[1] * inv127 - 1.0f);
+				n3[2] = (pix3[2] * inv127 - 1.0f);
 
-				n4[0] = (pix4[0] * inv127 - 1.0);
-				n4[1] = (pix4[1] * inv127 - 1.0);
-				n4[2] = (pix4[2] * inv127 - 1.0);
+				n4[0] = (pix4[0] * inv127 - 1.0f);
+				n4[1] = (pix4[1] * inv127 - 1.0f);
+				n4[2] = (pix4[2] * inv127 - 1.0f);
 
 				VectorAdd(n, n2, n);
 				VectorAdd(n, n3, n);
 				VectorAdd(n, n4, n);
 
-				if (!VectorNormalize(n))
+				if (VectorNormalize(n) == 0.f)
 				{
 					VectorSet(n, 0, 0, 1);
 				}
@@ -429,14 +453,14 @@ static void R_ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned 
 	}
 }
 
-/*
-================
-R_LightScaleTexture
-
-Scale up the pixel values in a texture to increase the
-lighting range
-================
-*/
+/**
+ * @brief Scale up the pixel values in a texture to increase the
+ * lighting range
+ * @param[in,out] in
+ * @param[in] inwidth
+ * @param[in] inheight
+ * @param[in] onlyGamma
+ */
 void R_LightScaleTexture(unsigned *in, int inwidth, int inheight, qboolean onlyGamma)
 {
 	if (onlyGamma)
@@ -484,14 +508,13 @@ void R_LightScaleTexture(unsigned *in, int inwidth, int inheight, qboolean onlyG
 	}
 }
 
-/*
-================
-R_MipMap2
-
-Operates in place, quartering the size of the texture
-Proper linear filter
-================
-*/
+/**
+ * @brief Operates in place, quartering the size of the texture
+ * Proper linear filter
+ * @param[in] in
+ * @param[in] inWidth
+ * @param inHeight
+ */
 static void R_MipMap2(unsigned *in, int inWidth, int inHeight)
 {
 	int      i, j, k;
@@ -540,13 +563,12 @@ static void R_MipMap2(unsigned *in, int inWidth, int inHeight)
 	ri.Hunk_FreeTempMemory(temp);
 }
 
-/*
-================
-R_MipMap
-
-Operates in place, quartering the size of the texture
-================
-*/
+/**
+ * @brief Operates in place, quartering the size of the texture
+ * @param[in,out] in
+ * @param[in] width
+ * @param[in] height
+ */
 static void R_MipMap(byte *in, int width, int height)
 {
 	int  i, j;
@@ -594,14 +616,13 @@ static void R_MipMap(byte *in, int width, int height)
 	}
 }
 
-/*
-================
-R_MipNormalMap
-
-Operates in place, quartering the size of the texture
-================
-*/
 // *INDENT-OFF*
+/**
+ * @brief Operates in place, quartering the size of the texture
+ * @param[in,out] in
+ * @param[in] width
+ * @param[in] height
+ */
 static void R_MipNormalMap(byte *in, int width, int height)
 {
 	int    i, j;
@@ -624,20 +645,20 @@ static void R_MipNormalMap(byte *in, int width, int height)
 	{
 		for (j = 0; j < width; j += 8, out += 4, in += 8)
 		{
-			n[0] = (in[0] * inv255 - 0.5) * 2.0 +
-			       (in[4] * inv255 - 0.5) * 2.0 +
-			       (in[width + 0] * inv255 - 0.5) * 2.0 +
-			       (in[width + 4] * inv255 - 0.5) * 2.0;
+			n[0] = (in[0] * inv255 - 0.5f) * 2.0f +
+			       (in[4] * inv255 - 0.5f) * 2.0f +
+			       (in[width + 0] * inv255 - 0.5f) * 2.0f +
+			       (in[width + 4] * inv255 - 0.5f) * 2.0f;
 
-			n[1] = (in[1] * inv255 - 0.5) * 2.0 +
-			       (in[5] * inv255 - 0.5) * 2.0 +
-			       (in[width + 1] * inv255 - 0.5) * 2.0 +
-			       (in[width + 5] * inv255 - 0.5) * 2.0;
+			n[1] = (in[1] * inv255 - 0.5f) * 2.0f +
+			       (in[5] * inv255 - 0.5f) * 2.0f +
+			       (in[width + 1] * inv255 - 0.5f) * 2.0f +
+			       (in[width + 5] * inv255 - 0.5f) * 2.0f;
 
-			n[2] = (in[2] * inv255 - 0.5) * 2.0 +
-			       (in[6] * inv255 - 0.5) * 2.0 +
-			       (in[width + 2] * inv255 - 0.5) * 2.0 +
-			       (in[width + 6] * inv255 - 0.5) * 2.0;
+			n[2] = (in[2] * inv255 - 0.5f) * 2.0f +
+			       (in[6] * inv255 - 0.5f) * 2.0f +
+			       (in[width + 2] * inv255 - 0.5f) * 2.0f +
+			       (in[width + 6] * inv255 - 0.5f) * 2.0f;
 
 			n[3] = (inv255 * in[3]) +
 			       (inv255 * in[7]) +
@@ -646,7 +667,7 @@ static void R_MipNormalMap(byte *in, int width, int height)
 
 			length = VectorLength(n);
 
-			if (length)
+			if (length != 0.f)
 			{
 				n[0] /= length;
 				n[1] /= length;
@@ -660,13 +681,20 @@ static void R_MipNormalMap(byte *in, int width, int height)
 			out[0] = (byte) (128 + 127 * n[0]);
 			out[1] = (byte) (128 + 127 * n[1]);
 			out[2] = (byte) (128 + 127 * n[2]);
-			out[3] = (byte) (n[3] * 255.0 / 4.0);
+			out[3] = (byte) (n[3] * 255.0f / 4.0f);
 			//out[3] = (in[3] + in[7] + in[width + 3] + in[width + 7]) >> 2;
 		}
 	}
 }
 // *INDENT-ON*
 
+/**
+ * @brief R_HeightMapToNormalMap
+ * @param[in,out] in
+ * @param[in] width
+ * @param[in] height
+ * @param[in] scale
+ */
 static void R_HeightMapToNormalMap(byte *in, int width, int height, float scale)
 {
 	int    x, y;
@@ -727,7 +755,7 @@ static void R_HeightMapToNormalMap(byte *in, int width, int height, float scale)
 
 			// normalize the vector
 			VectorSet(n, dcx, dcy, 1.0);    //scale);
-			if (!VectorNormalize(n))
+			if (VectorNormalize(n) == 0.f)
 			{
 				VectorSet(n, 0, 0, 1);
 			}
@@ -744,6 +772,13 @@ static void R_HeightMapToNormalMap(byte *in, int width, int height, float scale)
 	}
 }
 
+/**
+ * @brief R_DisplaceMap
+ * @param[in,out] in
+ * @param[in] in2
+ * @param[in] width
+ * @param[in] height
+ */
 static void R_DisplaceMap(byte *in, byte *in2, int width, int height)
 {
 	int    x, y;
@@ -756,9 +791,9 @@ static void R_DisplaceMap(byte *in, byte *in2, int width, int height)
 	{
 		for (x = 0; x < width; x++)
 		{
-			n[0] = (in[4 * (y * width + x) + 0] * inv255 - 0.5) * 2.0;
-			n[1] = (in[4 * (y * width + x) + 1] * inv255 - 0.5) * 2.0;
-			n[2] = (in[4 * (y * width + x) + 2] * inv255 - 0.5) * 2.0;
+			n[0] = (in[4 * (y * width + x) + 0] * inv255 - 0.5f) * 2.0f;
+			n[1] = (in[4 * (y * width + x) + 1] * inv255 - 0.5f) * 2.0f;
+			n[2] = (in[4 * (y * width + x) + 2] * inv255 - 0.5f) * 2.0f;
 
 			avg  = 0;
 			avg += in2[4 * (y * width + x) + 0];
@@ -774,6 +809,13 @@ static void R_DisplaceMap(byte *in, byte *in2, int width, int height)
 	}
 }
 
+/**
+ * @brief R_AddNormals
+ * @param[in,out] in
+ * @param[in] in2
+ * @param[in] width
+ * @param[in] height
+ */
 static void R_AddNormals(byte *in, byte *in2, int width, int height)
 {
 	int    x, y;
@@ -788,19 +830,19 @@ static void R_AddNormals(byte *in, byte *in2, int width, int height)
 	{
 		for (x = 0; x < width; x++)
 		{
-			n[0] = (in[4 * (y * width + x) + 0] * inv255 - 0.5) * 2.0;
-			n[1] = (in[4 * (y * width + x) + 1] * inv255 - 0.5) * 2.0;
-			n[2] = (in[4 * (y * width + x) + 2] * inv255 - 0.5) * 2.0;
+			n[0] = (in[4 * (y * width + x) + 0] * inv255 - 0.5f) * 2.0f;
+			n[1] = (in[4 * (y * width + x) + 1] * inv255 - 0.5f) * 2.0f;
+			n[2] = (in[4 * (y * width + x) + 2] * inv255 - 0.5f) * 2.0f;
 			a    = in[4 * (y * width + x) + 3];
 
-			n2[0] = (in2[4 * (y * width + x) + 0] * inv255 - 0.5) * 2.0;
-			n2[1] = (in2[4 * (y * width + x) + 1] * inv255 - 0.5) * 2.0;
-			n2[2] = (in2[4 * (y * width + x) + 2] * inv255 - 0.5) * 2.0;
+			n2[0] = (in2[4 * (y * width + x) + 0] * inv255 - 0.5f) * 2.0f;
+			n2[1] = (in2[4 * (y * width + x) + 1] * inv255 - 0.5f) * 2.0f;
+			n2[2] = (in2[4 * (y * width + x) + 2] * inv255 - 0.5f) * 2.0f;
 			a2    = in2[4 * (y * width + x) + 3];
 
 			VectorAdd(n, n2, n);
 
-			if (!VectorNormalize(n))
+			if (VectorNormalize(n) == 0.f)
 			{
 				VectorSet(n, 0, 0, 1);
 			}
@@ -813,6 +855,12 @@ static void R_AddNormals(byte *in, byte *in2, int width, int height)
 	}
 }
 
+/**
+ * @brief R_InvertAlpha
+ * @param[in,out] in
+ * @param[in] width
+ * @param[in] height
+ */
 static void R_InvertAlpha(byte *in, int width, int height)
 {
 	int  x, y;
@@ -827,6 +875,12 @@ static void R_InvertAlpha(byte *in, int width, int height)
 	}
 }
 
+/**
+ * @brief R_InvertColor
+ * @param[in,out] in
+ * @param[in] width
+ * @param[in] height
+ */
 static void R_InvertColor(byte *in, int width, int height)
 {
 	int  x, y;
@@ -843,6 +897,12 @@ static void R_InvertColor(byte *in, int width, int height)
 	}
 }
 
+/**
+ * @brief R_MakeIntensity
+ * @param[in,out] in
+ * @param width
+ * @param height
+ */
 static void R_MakeIntensity(byte *in, int width, int height)
 {
 	int  x, y;
@@ -862,6 +922,12 @@ static void R_MakeIntensity(byte *in, int width, int height)
 	}
 }
 
+/**
+ * @brief R_MakeAlpha
+ * @param[in,out] in
+ * @param[in] width
+ * @param[in] height
+ */
 static void R_MakeAlpha(byte *in, int width, int height)
 {
 	int  x, y;
@@ -886,13 +952,12 @@ static void R_MakeAlpha(byte *in, int width, int height)
 	}
 }
 
-/*
-==================
-R_BlendOverTexture
-
-Apply a color blend over a set of pixels
-==================
-*/
+/**
+ * @brief Apply a color blend over a set of pixels
+ * @param[in,out] data
+ * @param[in] pixelCount
+ * @param[in] blend
+ */
 static void R_BlendOverTexture(byte *data, int pixelCount, byte blend[4])
 {
 	int i;
@@ -905,9 +970,9 @@ static void R_BlendOverTexture(byte *data, int pixelCount, byte blend[4])
 
 	for (i = 0; i < pixelCount; i++, data += 4)
 	{
-		data[0] = (data[0] * inverseAlpha + premult[0]) >> 9;
-		data[1] = (data[1] * inverseAlpha + premult[1]) >> 9;
-		data[2] = (data[2] * inverseAlpha + premult[2]) >> 9;
+		data[0] = (byte)((data[0] * inverseAlpha + premult[0]) >> 9);
+		data[1] = (byte)((data[1] * inverseAlpha + premult[1]) >> 9);
+		data[2] = (byte)((data[2] * inverseAlpha + premult[2]) >> 9);
 	}
 }
 
@@ -947,11 +1012,12 @@ byte mipBlendColors[16][4] =
 	,
 };
 
-/*
-===============
-R_UploadImage
-===============
-*/
+/**
+ * @brief R_UploadImage
+ * @param[in] dataArray
+ * @param[in] numData
+ * @param[in] image
+ */
 void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 {
 	const byte *data         = dataArray[0];
@@ -1373,11 +1439,12 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 	}
 }
 
-/*
-================
-R_AllocImage
-================
-*/
+/**
+ * @brief R_AllocImage
+ * @param[in] name
+ * @param[in] linkIntoHashTable
+ * @return 
+ */
 image_t *R_AllocImage(const char *name, qboolean linkIntoHashTable)
 {
 	image_t *image;
@@ -1411,11 +1478,17 @@ image_t *R_AllocImage(const char *name, qboolean linkIntoHashTable)
 	return image;
 }
 
-/*
-================
-R_CreateImage
-================
-*/
+/**
+ * @brief R_CreateImage
+ * @param[in] name
+ * @param[in] pic
+ * @param[in] width
+ * @param[in] height
+ * @param[in] bits
+ * @param[in] filterType
+ * @param[in] wrapType
+ * @return 
+ */
 image_t *R_CreateImage(const char *name,
                        const byte *pic, int width, int height, int bits, filterType_t filterType, wrapType_t wrapType)
 {
@@ -1446,11 +1519,17 @@ image_t *R_CreateImage(const char *name,
 	return image;
 }
 
-/*
-================
-R_CreateCubeImage
-================
-*/
+/**
+ * @brief R_CreateCubeImage
+ * @param[in] name
+ * @param[in] pic
+ * @param[in] width
+ * @param[in] height
+ * @param[in] bits
+ * @param[in] filterType
+ * @param[in] wrapType
+ * @return 
+ */
 image_t *R_CreateCubeImage(const char *name,
                            const byte *pic[6],
                            int width, int height, int bits, filterType_t filterType, wrapType_t wrapType)
@@ -1484,6 +1563,16 @@ image_t *R_CreateCubeImage(const char *name,
 static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int *bits, const char *materialName);
 //image_t *R_LoadDDSImage(const char *name, int bits, filterType_t filterType, wrapType_t wrapType);
 
+/**
+ * @brief ParseHeightMap
+ * @param[in,out] text
+ * @param[out] pic
+ * @param[out] width
+ * @param[out] height
+ * @param[out] bits
+ * @param[in] materialName
+ * @return 
+ */
 static qboolean ParseHeightMap(char **text, byte **pic, int *width, int *height, int *bits, const char *materialName)
 {
 	char  *token;
@@ -1528,6 +1617,16 @@ static qboolean ParseHeightMap(char **text, byte **pic, int *width, int *height,
 	return qtrue;
 }
 
+/**
+ * @brief ParseDisplaceMap
+ * @param[in,out] text
+ * @param[out] pic
+ * @param[out] width
+ * @param[out] height
+ * @param[out] bits
+ * @param[in] materialName
+ * @return 
+ */
 static qboolean ParseDisplaceMap(char **text, byte **pic, int *width, int *height, int *bits, const char *materialName)
 {
 	char *token;
@@ -1587,6 +1686,16 @@ static qboolean ParseDisplaceMap(char **text, byte **pic, int *width, int *heigh
 	return qtrue;
 }
 
+/**
+ * @brief ParseAddNormals
+ * @param[in,out] text
+ * @param[out] pic
+ * @param[out] width
+ * @param[out] height
+ * @param[out] bits
+ * @param[in] materialName
+ * @return 
+ */
 static qboolean ParseAddNormals(char **text, byte **pic, int *width, int *height, int *bits, const char *materialName)
 {
 	char *token;
@@ -1646,6 +1755,16 @@ static qboolean ParseAddNormals(char **text, byte **pic, int *width, int *height
 	return qtrue;
 }
 
+/**
+ * @brief ParseInvertAlpha
+ * @param[in,out] text
+ * @param[out] pic
+ * @param[out] width
+ * @param[out] height
+ * @param[out] bits
+ * @param[in] materialName
+ * @return 
+ */
 static qboolean ParseInvertAlpha(char **text, byte **pic, int *width, int *height, int *bits, const char *materialName)
 {
 	char *token;
@@ -1676,6 +1795,16 @@ static qboolean ParseInvertAlpha(char **text, byte **pic, int *width, int *heigh
 	return qtrue;
 }
 
+/**
+ * @brief ParseInvertColor
+ * @param[in,out] text
+ * @param[out] pic
+ * @param[out] width
+ * @param[out] height
+ * @param[out] bits
+ * @param[in] materialName
+ * @return 
+ */
 static qboolean ParseInvertColor(char **text, byte **pic, int *width, int *height, int *bits, const char *materialName)
 {
 	char *token;
@@ -1706,6 +1835,16 @@ static qboolean ParseInvertColor(char **text, byte **pic, int *width, int *heigh
 	return qtrue;
 }
 
+/**
+ * @brief ParseMakeIntensity
+ * @param[in,out] text
+ * @param[out] pic
+ * @param[out] width
+ * @param[out] height
+ * @param[out] bits
+ * @param[in] materialName
+ * @return 
+ */
 static qboolean ParseMakeIntensity(char **text, byte **pic, int *width, int *height, int *bits, const char *materialName)
 {
 	char *token;
@@ -1739,6 +1878,16 @@ static qboolean ParseMakeIntensity(char **text, byte **pic, int *width, int *hei
 	return qtrue;
 }
 
+/**
+ * @brief ParseMakeAlpha
+ * @param[in,out] text
+ * @param[out] pic
+ * @param[out] width
+ * @param[out] height
+ * @param[out] bits
+ * @param[in] materialName
+ * @return 
+ */
 static qboolean ParseMakeAlpha(char **text, byte **pic, int *width, int *height, int *bits, const char *materialName)
 {
 	char *token;
@@ -1772,14 +1921,21 @@ static qboolean ParseMakeAlpha(char **text, byte **pic, int *width, int *height,
 	return qtrue;
 }
 
+/**
+ * @struct imageExtToLoaderMap_t
+ * @brief 
+ */ 
 typedef struct
 {
 	char *ext;
 	void (*ImageLoader)(const char *, unsigned char **, int *, int *, byte);
 } imageExtToLoaderMap_t;
 
-// Note that the ordering indicates the order of preference used
-// when there are multiple images of different formats available
+/**
+ * @var imageLoaders
+ * @brief Note that the ordering indicates the order of preference used 
+ * when there are multiple images of different formats available 
+ */  
 static imageExtToLoaderMap_t imageLoaders[] =
 {
 	{ "png",  R_LoadPNG },
@@ -1792,13 +1948,13 @@ static imageExtToLoaderMap_t imageLoaders[] =
 
 static int numImageLoaders = sizeof(imageLoaders) / sizeof(imageLoaders[0]);
 
-/*
-=================
-R_GetImageBuffer
-
-This is a hack to get the common imageloaders working properly
-=================
-*/
+/**
+ * @brief This is a hack to get the common imageloaders working properly
+ * @param size
+ * @param bufferType
+ * @param filename
+ * @return 
+ */
 void *R_GetImageBuffer(int size, bufferMemType_t bufferType, const char *filename)
 {
 	void *buf = NULL;
@@ -1818,14 +1974,16 @@ void *R_GetImageBuffer(int size, bufferMemType_t bufferType, const char *filenam
 	return buf;
 }
 
-/*
-=================
-R_LoadImage
-
-Loads any of the supported image types into a canonical
-32 bit format.
-=================
-*/
+/**
+ * @brief Loads any of the supported image types into a canonical
+ * 32 bit format.
+ * @param buffer
+ * @param pic
+ * @param width
+ * @param height
+ * @param bits
+ * @param materialName
+ */
 static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int *bits, const char *materialName)
 {
 	char *token;

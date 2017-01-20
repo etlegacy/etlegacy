@@ -35,6 +35,11 @@
 
 #include "tr_local.h"
 
+/**
+ * @brief R_CheckFBO
+ * @param[in] fbo
+ * @return
+ */
 qboolean R_CheckFBO(const FBO_t *fbo)
 {
 	int code;
@@ -87,6 +92,13 @@ qboolean R_CheckFBO(const FBO_t *fbo)
 	return qfalse;
 }
 
+/**
+ * @brief R_CreateFBO
+ * @param[in] name
+ * @param[in] width
+ * @param[in] height
+ * @return
+ */
 FBO_t *R_CreateFBO(const char *name, int width, int height)
 {
 	int   i = 0;
@@ -131,13 +143,12 @@ FBO_t *R_CreateFBO(const char *name, int width, int height)
 	return fbo;
 }
 
-/*
-================
-R_CreateFBOColorBuffer
-
-Framebuffer must be bound
-================
-*/
+/**
+ * @brief Framebuffer must be bound
+ * @param[in,out] fbo
+ * @param[in] format
+ * @param[in] index
+ */
 void R_CreateFBOColorBuffer(FBO_t *fbo, int format, int index)
 {
 	qboolean      absent;
@@ -179,6 +190,11 @@ void R_CreateFBOColorBuffer(FBO_t *fbo, int format, int index)
 	GL_CheckErrors();
 }
 
+/**
+ * @brief R_CreateFBODepthBuffer
+ * @param[in,out] fbo
+ * @param[in] format
+ */
 void R_CreateFBODepthBuffer(FBO_t *fbo, int format)
 {
 	qboolean      absent;
@@ -212,6 +228,11 @@ void R_CreateFBODepthBuffer(FBO_t *fbo, int format)
 	GL_CheckErrors();
 }
 
+/**
+ * @brief R_CreateFBOStencilBuffer
+ * @param[in,out] fbo
+ * @param[in] format
+ */
 void R_CreateFBOStencilBuffer(FBO_t *fbo, int format)
 {
 	qboolean      absent;
@@ -247,6 +268,11 @@ void R_CreateFBOStencilBuffer(FBO_t *fbo, int format)
 	GL_CheckErrors();
 }
 
+/**
+ * @brief R_CreateFBOPackedDepthStencilBuffer
+ * @param[in,out] fbo
+ * @param[in] format
+ */
 void R_CreateFBOPackedDepthStencilBuffer(FBO_t *fbo, int format)
 {
 	qboolean      absent;
@@ -280,6 +306,11 @@ void R_CreateFBOPackedDepthStencilBuffer(FBO_t *fbo, int format)
 	GL_CheckErrors();
 }
 
+/**
+ * @brief R_AttachFBOTexture1D
+ * @param[in] texId
+ * @param[in] index
+ */
 void R_AttachFBOTexture1D(int texId, int index)
 {
 	if (index < 0 || index >= glConfig2.maxColorAttachments)
@@ -291,6 +322,12 @@ void R_AttachFBOTexture1D(int texId, int index)
 	glFramebufferTexture1D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_1D, texId, 0);
 }
 
+/**
+ * @brief R_AttachFBOTexture2D
+ * @param[in] target
+ * @param[in] texId
+ * @param[in] index
+ */
 void R_AttachFBOTexture2D(int target, int texId, int index)
 {
 	if (target != GL_TEXTURE_2D && (target < GL_TEXTURE_CUBE_MAP_POSITIVE_X || target > GL_TEXTURE_CUBE_MAP_NEGATIVE_Z))
@@ -308,6 +345,12 @@ void R_AttachFBOTexture2D(int target, int texId, int index)
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, target, texId, 0);
 }
 
+/**
+ * @brief R_AttachFBOTexture3D
+ * @param[in] texId
+ * @param[in] index
+ * @param[in] zOffset
+ */
 void R_AttachFBOTexture3D(int texId, int index, int zOffset)
 {
 	if (index < 0 || index >= glConfig2.maxColorAttachments)
@@ -319,17 +362,32 @@ void R_AttachFBOTexture3D(int texId, int index, int zOffset)
 	glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_3D, texId, 0, zOffset);
 }
 
+/**
+ * @brief R_AttachFBOTextureDepth
+ * @param[in] texId
+ */
 void R_AttachFBOTextureDepth(int texId)
 {
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texId, 0);
 }
 
+/**
+ * @brief R_AttachFBOTexturePackedDepthStencil
+ * @param[in] texId
+ */
 void R_AttachFBOTexturePackedDepthStencil(int texId)
 {
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texId, 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, texId, 0);
 }
 
+/**
+ * @brief R_CopyToFBO
+ * @param[in] from
+ * @param[in] to
+ * @param[in] mask
+ * @param[in] filter
+ */
 void R_CopyToFBO(FBO_t *from, FBO_t *to, GLuint mask, GLuint filter)
 {
 	if (glConfig2.framebufferBlitAvailable)
@@ -362,6 +420,10 @@ void R_CopyToFBO(FBO_t *from, FBO_t *to, GLuint mask, GLuint filter)
 	}
 }
 
+/**
+ * @brief R_BindFBO
+ * @param[in] fbo
+ */
 void R_BindFBO(FBO_t *fbo)
 {
 	if (!fbo)
@@ -395,6 +457,9 @@ void R_BindFBO(FBO_t *fbo)
 	}
 }
 
+/**
+ * @brief R_BindNullFBO
+ */
 void R_BindNullFBO(void)
 {
 	Ren_LogComment("--- R_BindNullFBO ---\n");
@@ -407,6 +472,9 @@ void R_BindNullFBO(void)
 	}
 }
 
+/**
+ * @brief R_SetDefaultFBO
+ */
 void R_SetDefaultFBO(void)
 {
 	if (glConfig2.framebufferObjectAvailable)
@@ -417,6 +485,9 @@ void R_SetDefaultFBO(void)
 	}
 }
 
+/**
+ * @brief R_CheckDefaultBuffer
+ */
 static void R_CheckDefaultBuffer()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -439,6 +510,14 @@ static void R_CheckDefaultBuffer()
 	}
 }
 
+/**
+ * @brief R_AttachColorBufferToFBO
+ * @param[in,out] fbo
+ * @param[in] format
+ * @param[in] target
+ * @param[in] texture
+ * @param[in] index
+ */
 void R_AttachColorBufferToFBO(FBO_t *fbo, int format, int target, image_t *texture, int index)
 {
 	R_CreateFBOColorBuffer(fbo, format, index);
@@ -446,6 +525,12 @@ void R_AttachColorBufferToFBO(FBO_t *fbo, int format, int target, image_t *textu
 	fbo->colorBuffers[index].texture = texture;
 }
 
+/**
+ * @brief R_CreateReadyFBO
+ * @param[in] name
+ * @param[in] size
+ * @return
+ */
 FBO_t *R_CreateReadyFBO(const char *name, float size)
 {
 	int   width, height;
@@ -469,6 +554,9 @@ FBO_t *R_CreateReadyFBO(const char *name, float size)
 	return tmp;
 }
 
+/**
+ * @brief R_InitFBOs
+ */
 void R_InitFBOs(void)
 {
 	int i;
@@ -810,6 +898,9 @@ void R_InitFBOs(void)
 	R_BindNullFBO();
 }
 
+/**
+ * @brief R_ShutdownFBOs
+ */
 void R_ShutdownFBOs(void)
 {
 	int   i, j;
@@ -853,6 +944,9 @@ void R_ShutdownFBOs(void)
 	}
 }
 
+/**
+ * @brief R_FBOList_f
+ */
 void R_FBOList_f(void)
 {
 	int   i;
