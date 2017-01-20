@@ -2882,9 +2882,8 @@ void Cmd_Say_f(gentity_t *ent, int mode, qboolean arg0)
  */
 void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qboolean voiceonly, float randomNum)
 {
-	int      color;
-	char     *cmd;
-	qboolean disguise = qfalse;
+	int  color;
+	char *cmd;
 
 	if (!other)
 	{
@@ -2901,18 +2900,7 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 
 	if (mode == SAY_TEAM && !OnSameTeam(ent, other))
 	{
-		if (other->client->sess.sessionTeam != TEAM_SPECTATOR &&
-		    ent->client->sess.playerType == PC_COVERTOPS &&
-		    ent->client->ps.powerups[PW_OPS_DISGUISED] &&
-		    (!Q_stricmp(id, "Medic") || !Q_stricmp(id, "NeedAmmo") || !Q_stricmp(id, "FTHealMe") || !Q_stricmp(id, "FTResupplyMe"))
-		    )
-		{
-			disguise = qtrue;
-		}
-		else
-		{
-			return;
-		}
+		return;
 	}
 
 	// spec vchat rules follow the same as normal chatting rules
@@ -2972,7 +2960,7 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
 
 	if (mode == SAY_TEAM || mode == SAY_BUDDY)
 	{
-		CPx(other - g_entities, va("%s %d %d %d %s %i %i %i %f %i", cmd, voiceonly, (int)(ent - g_entities), color, id, (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2], (double)randomNum, disguise));
+		CPx(other - g_entities, va("%s %d %d %d %s %i %i %i %f", cmd, voiceonly, (int)(ent - g_entities), color, id, (int)ent->s.pos.trBase[0], (int)ent->s.pos.trBase[1], (int)ent->s.pos.trBase[2], (double)randomNum));
 	}
 	else
 	{
