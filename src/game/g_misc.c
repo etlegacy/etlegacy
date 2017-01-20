@@ -958,7 +958,7 @@ void flakPuff(vec3_t origin)
  *
  * @note Before calling this ensure    ent->s.eFlags  and activator->s.eFlags are set (EF_MG42_ACTIVE or EF_AAGUN_ACTIVE)
  */
-void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damage, vec3_t muzzle, vec3_t forward, vec3_t right, vec3_t up, int mod)
+void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damage, vec3_t muzzle, vec3_t forward, vec3_t right, vec3_t up, meansOfDeath_t mod)
 {
 	trace_t   tr;
 	vec3_t    end;

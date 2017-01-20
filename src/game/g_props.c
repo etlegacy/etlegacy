@@ -2987,7 +2987,7 @@ void flippy_table_animate(gentity_t *ent)
  * @param damage    - unused
  * @param mod       - unused
  */
-void props_flippy_table_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
+void props_flippy_table_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
 	ent->think      = flippy_table_animate;
 	ent->nextthink  = level.time + FRAMETIME;

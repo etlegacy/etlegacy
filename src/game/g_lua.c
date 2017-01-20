@@ -191,9 +191,9 @@ static int _et_G_LogPrint(lua_State *L)
 
 		//if ( g_logOptions.integer & LOGOPTS_REALTIME )
 		//{
-        //    Com_sprintf(string, sizeof(string), "%s %s", G_GetRealTime(), text);
-        //}
-        //else
+		//    Com_sprintf(string, sizeof(string), "%s %s", G_GetRealTime(), text);
+		//}
+		//else
 		{
 			int min, tens, sec;
 
@@ -568,7 +568,7 @@ static int _et_trap_FS_Rename(lua_State *L)
 extern char bigTextBuffer[100000];
 static int _et_trap_FS_GetFileList(lua_State *L)
 {
-	const char *dirname            = luaL_checkstring(L, 1);
+	const char *dirname = luaL_checkstring(L, 1);
 	const char *filename_extension = luaL_checkstring(L, 2);
 	int        newTable, index = 1, i, filelen, numfiles;
 	char       filename[MAX_QPATH];
@@ -670,12 +670,12 @@ static int _et_isBitSet(lua_State *L)
 // et.G_Damage( target, inflictor, attacker, damage, dflags, mod )
 static int _et_G_Damage(lua_State *L)
 {
-	int target    = (int)luaL_checkinteger(L, 1);
-	int inflictor = (int)luaL_checkinteger(L, 2);
-	int attacker  = (int)luaL_checkinteger(L, 3);
-	int damage    = (int)luaL_checkinteger(L, 4);
-	int dflags    = (int)luaL_checkinteger(L, 5);
-	int mod       = (int)luaL_checkinteger(L, 6);
+	int            target    = (int)luaL_checkinteger(L, 1);
+	int            inflictor = (int)luaL_checkinteger(L, 2);
+	int            attacker  = (int)luaL_checkinteger(L, 3);
+	int            damage    = (int)luaL_checkinteger(L, 4);
+	int            dflags    = (int)luaL_checkinteger(L, 5);
+	meansOfDeath_t mod       = (meansOfDeath_t)(luaL_checkinteger(L, 6));
 
 	G_Damage(g_entities + target,
 	         g_entities + inflictor,
@@ -813,12 +813,12 @@ static int _et_G_ResetXP(lua_State *L)
 // et.AddWeaponToPlayer( clientNum, weapon, ammo, ammoclip, setcurrent )
 static int _et_AddWeaponToPlayer(lua_State *L)
 {
-	int        clientnum    = (int)luaL_checkinteger(L, 1);
-	gentity_t *ent          = g_entities + clientnum;
-	weapon_t   weapon       = (int)luaL_checkinteger(L, 2);
-	int        ammo         = (int)luaL_checkinteger(L, 3);
-	int        ammoclip     = (int)luaL_checkinteger(L, 4);
-	int        setcurrent   = (int)luaL_checkinteger(L, 5);
+	int       clientnum  = (int)luaL_checkinteger(L, 1);
+	gentity_t *ent       = g_entities + clientnum;
+	weapon_t  weapon     = (int)luaL_checkinteger(L, 2);
+	int       ammo       = (int)luaL_checkinteger(L, 3);
+	int       ammoclip   = (int)luaL_checkinteger(L, 4);
+	int       setcurrent = (int)luaL_checkinteger(L, 5);
 
 	if (!ent->client)
 	{
@@ -826,7 +826,7 @@ static int _et_AddWeaponToPlayer(lua_State *L)
 		return 0;
 	}
 
-	if(!IS_VALID_WEAPON(weapon))
+	if (!IS_VALID_WEAPON(weapon))
 	{
 		luaL_error(L, "weapon \"%d\" is not a valid weapon", weapon);
 		return 0;
@@ -851,10 +851,10 @@ static int _et_AddWeaponToPlayer(lua_State *L)
 // et.RemoveWeaponFromPlayer( clientNum, weapon )
 static int _et_RemoveWeaponFromPlayer(lua_State *L)
 {
-	int        clientnum    = (int)luaL_checkinteger(L, 1);
-	gentity_t  *ent         = g_entities + clientnum;
-	gclient_t  *client      = ent->client;
-	weapon_t   weapon       = (int)luaL_checkinteger(L, 2);
+	int       clientnum = (int)luaL_checkinteger(L, 1);
+	gentity_t *ent      = g_entities + clientnum;
+	gclient_t *client   = ent->client;
+	weapon_t  weapon    = (int)luaL_checkinteger(L, 2);
 
 	if (!ent->client)
 	{
@@ -916,138 +916,138 @@ static int _et_RemoveWeaponFromPlayer(lua_State *L)
 // client entity fields
 static const gentity_field_t gclient_fields[] =
 {
-	_et_gclient_addfield(noclip,                            FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(lastKillTime,                      FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(saved_persistant,                  FIELD_INT_ARRAY,   FIELD_FLAG_READONLY),
-	_et_gclient_addfield(lastConstructibleBlockingWarnTime, FIELD_INT,      FIELD_FLAG_READONLY),
-	_et_gclient_addfield(landmineSpottedTime,               FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(lasthurt_client,                   FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(lasthurt_mod,                      FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(lasthurt_time,                     FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(respawnTime,                       FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(inactivityTime,                    FIELD_INT,         0),
-	_et_gclient_addfield(inactivityWarning,                 FIELD_INT,         0),
-	_et_gclient_addfield(PCSpecialPickedUpCount,            FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(combatState,                       FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(deathAnimTime,                     FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(deathTime,                         FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(disguiseClientNum,                 FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(medals,                            FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(acc,                               FIELD_FLOAT,       FIELD_FLAG_READONLY),
-	_et_gclient_addfield(hspct,                             FIELD_FLOAT,       FIELD_FLAG_READONLY),
-	_et_gclient_addfield(freezed,                           FIELD_INT,         0),
-	_et_gclient_addfield(constructSoundTime,                FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(noclip,                            FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(lastKillTime,                      FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(saved_persistant,                  FIELD_INT_ARRAY,           FIELD_FLAG_READONLY),
+	_et_gclient_addfield(lastConstructibleBlockingWarnTime, FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(landmineSpottedTime,               FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(lasthurt_client,                   FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(lasthurt_mod,                      FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(lasthurt_time,                     FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(respawnTime,                       FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(inactivityTime,                    FIELD_INT,                 0),
+	_et_gclient_addfield(inactivityWarning,                 FIELD_INT,                 0),
+	_et_gclient_addfield(PCSpecialPickedUpCount,            FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(combatState,                       FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(deathAnimTime,                     FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(deathTime,                         FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(disguiseClientNum,                 FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(medals,                            FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(acc,                               FIELD_FLOAT,               FIELD_FLAG_READONLY),
+	_et_gclient_addfield(hspct,                             FIELD_FLOAT,               FIELD_FLAG_READONLY),
+	_et_gclient_addfield(freezed,                           FIELD_INT,                 0),
+	_et_gclient_addfield(constructSoundTime,                FIELD_INT,                 FIELD_FLAG_READONLY),
 
 	// to be compatible with ETPro:
-	_et_gclient_addfieldalias(client.inactivityTime,     inactivityTime,    FIELD_INT,           0),
-	_et_gclient_addfieldalias(client.inactivityWarning,  inactivityWarning, FIELD_INT,           0),
+	_et_gclient_addfieldalias(client.inactivityTime,        inactivityTime,            FIELD_INT,           0),
+	_et_gclient_addfieldalias(client.inactivityWarning,     inactivityWarning,         FIELD_INT,           0),
 
-	_et_gclient_addfield(pers.connected,                 FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.netname,                   FIELD_STRING,      FIELD_FLAG_NOPTR),
-	_et_gclient_addfield(pers.localClient,               FIELD_INT,         0),
-	_et_gclient_addfield(pers.initialSpawn,              FIELD_INT,         0),
-	_et_gclient_addfield(pers.enterTime,                 FIELD_INT,         0),
-	_et_gclient_addfield(pers.connectTime,               FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.teamState.state,           FIELD_INT,         0),
-	_et_gclient_addfield(pers.voteCount,                 FIELD_INT,         0),
-	_et_gclient_addfield(pers.complaints,                FIELD_INT,         0),
-	_et_gclient_addfield(pers.complaintClient,           FIELD_INT,         0),
-	_et_gclient_addfield(pers.complaintEndTime,          FIELD_INT,         0),
-	_et_gclient_addfield(pers.lastReinforceTime,         FIELD_INT,         0),
-	_et_gclient_addfield(pers.applicationClient,         FIELD_INT,         0),
-	_et_gclient_addfield(pers.applicationEndTime,        FIELD_INT,         0),
-	_et_gclient_addfield(pers.invitationClient,          FIELD_INT,         0),
-	_et_gclient_addfield(pers.invitationEndTime,         FIELD_INT,         0),
-	_et_gclient_addfield(pers.propositionClient,         FIELD_INT,         0),
-	_et_gclient_addfield(pers.propositionClient2,        FIELD_INT,         0),
-	_et_gclient_addfield(pers.propositionEndTime,        FIELD_INT,         0),
-	_et_gclient_addfield(pers.autofireteamEndTime,       FIELD_INT,         0),
-	_et_gclient_addfield(pers.autofireteamCreateEndTime, FIELD_INT,         0),
-	_et_gclient_addfield(pers.autofireteamJoinEndTime,   FIELD_INT,         0),
-	_et_gclient_addfield(pers.lastSpawnTime,             FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.ready,                     FIELD_INT,         0),
-	_et_gclient_addfield(pers.lastkilled_client,         FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.lastrevive_client,         FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.lastkiller_client,         FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.lastammo_client,           FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.lasthealth_client,         FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.lastteambleed_client,      FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.lastteambleed_dmg,         FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.playerStats.hitRegions,    FIELD_INT_ARRAY,   FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.lastBattleSenseBonusTime,  FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.lastHQMineReportTime,      FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.maxHealth,                 FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(pers.playerStats.selfkills,     FIELD_INT,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.connected,                    FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.netname,                      FIELD_STRING,              FIELD_FLAG_NOPTR),
+	_et_gclient_addfield(pers.localClient,                  FIELD_INT,                 0),
+	_et_gclient_addfield(pers.initialSpawn,                 FIELD_INT,                 0),
+	_et_gclient_addfield(pers.enterTime,                    FIELD_INT,                 0),
+	_et_gclient_addfield(pers.connectTime,                  FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.teamState.state,              FIELD_INT,                 0),
+	_et_gclient_addfield(pers.voteCount,                    FIELD_INT,                 0),
+	_et_gclient_addfield(pers.complaints,                   FIELD_INT,                 0),
+	_et_gclient_addfield(pers.complaintClient,              FIELD_INT,                 0),
+	_et_gclient_addfield(pers.complaintEndTime,             FIELD_INT,                 0),
+	_et_gclient_addfield(pers.lastReinforceTime,            FIELD_INT,                 0),
+	_et_gclient_addfield(pers.applicationClient,            FIELD_INT,                 0),
+	_et_gclient_addfield(pers.applicationEndTime,           FIELD_INT,                 0),
+	_et_gclient_addfield(pers.invitationClient,             FIELD_INT,                 0),
+	_et_gclient_addfield(pers.invitationEndTime,            FIELD_INT,                 0),
+	_et_gclient_addfield(pers.propositionClient,            FIELD_INT,                 0),
+	_et_gclient_addfield(pers.propositionClient2,           FIELD_INT,                 0),
+	_et_gclient_addfield(pers.propositionEndTime,           FIELD_INT,                 0),
+	_et_gclient_addfield(pers.autofireteamEndTime,          FIELD_INT,                 0),
+	_et_gclient_addfield(pers.autofireteamCreateEndTime,    FIELD_INT,                 0),
+	_et_gclient_addfield(pers.autofireteamJoinEndTime,      FIELD_INT,                 0),
+	_et_gclient_addfield(pers.lastSpawnTime,                FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.ready,                        FIELD_INT,                 0),
+	_et_gclient_addfield(pers.lastkilled_client,            FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.lastrevive_client,            FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.lastkiller_client,            FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.lastammo_client,              FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.lasthealth_client,            FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.lastteambleed_client,         FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.lastteambleed_dmg,            FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.playerStats.hitRegions,       FIELD_INT_ARRAY,           FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.lastBattleSenseBonusTime,     FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.lastHQMineReportTime,         FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.maxHealth,                    FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(pers.playerStats.selfkills,        FIELD_INT,                 FIELD_FLAG_READONLY),
 
-	_et_gclient_addfield(ps.pm_flags,                    FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.pm_time,                     FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.eFlags,                      FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.weapon,                      FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.weaponstate,                 FIELD_INT,         FIELD_FLAG_READONLY),
-	_et_gclient_addfield(ps.stats,                       FIELD_INT_ARRAY,   0),
-	_et_gclient_addfield(ps.persistant,                  FIELD_INT_ARRAY,   0),
-	_et_gclient_addfield(ps.ping,                        FIELD_INT,         FIELD_FLAG_READONLY), // no ping change for lua scripts
-	_et_gclient_addfield(ps.powerups,                    FIELD_INT_ARRAY,   0),
-	_et_gclient_addfield(ps.origin,                      FIELD_VEC3,        0),
-	_et_gclient_addfield(ps.ammo,                        FIELD_INT_ARRAY,   0),
-	_et_gclient_addfield(ps.ammoclip,                    FIELD_INT_ARRAY,   0),
-	_et_gclient_addfield(ps.classWeaponTime,             FIELD_INT,         0),
+	_et_gclient_addfield(ps.pm_flags,                       FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.pm_time,                        FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.eFlags,                         FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.weapon,                         FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.weaponstate,                    FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(ps.stats,                          FIELD_INT_ARRAY,           0),
+	_et_gclient_addfield(ps.persistant,                     FIELD_INT_ARRAY,           0),
+	_et_gclient_addfield(ps.ping,                           FIELD_INT,                 FIELD_FLAG_READONLY),// no ping change for lua scripts
+	_et_gclient_addfield(ps.powerups,                       FIELD_INT_ARRAY,           0),
+	_et_gclient_addfield(ps.origin,                         FIELD_VEC3,                0),
+	_et_gclient_addfield(ps.ammo,                           FIELD_INT_ARRAY,           0),
+	_et_gclient_addfield(ps.ammoclip,                       FIELD_INT_ARRAY,           0),
+	_et_gclient_addfield(ps.classWeaponTime,                FIELD_INT,                 0),
 
 	// same order as in g_local.h
-	_et_gclient_addfield(sess.sessionTeam,               FIELD_INT,         0),
-	_et_gclient_addfield(sess.spectatorTime,             FIELD_INT,         0),
-	_et_gclient_addfield(sess.spectatorState,            FIELD_INT,         0),
-	_et_gclient_addfield(sess.spectatorClient,           FIELD_INT,         0),
-	_et_gclient_addfield(sess.playerType,                FIELD_INT,         0),
-	_et_gclient_addfield(sess.playerWeapon,              FIELD_INT,         0),
-	_et_gclient_addfield(sess.playerWeapon2,             FIELD_INT,         0),
-	_et_gclient_addfield(sess.spawnObjectiveIndex,       FIELD_INT,         0),
-	_et_gclient_addfield(sess.latchPlayerType,           FIELD_INT,         0),
-	_et_gclient_addfield(sess.latchPlayerWeapon,         FIELD_INT,         0),
-	_et_gclient_addfield(sess.latchPlayerWeapon2,        FIELD_INT,         0),
-	_et_gclient_addfield(sess.ignoreClients,             FIELD_INT_ARRAY,   0),
-	_et_gclient_addfield(sess.muted,                     FIELD_INT,         0),
-	_et_gclient_addfield(sess.skillpoints,               FIELD_FLOAT_ARRAY, FIELD_FLAG_READONLY),
-	_et_gclient_addfield(sess.startskillpoints,          FIELD_FLOAT_ARRAY, FIELD_FLAG_READONLY),
-	_et_gclient_addfield(sess.startxptotal,              FIELD_FLOAT,       FIELD_FLAG_READONLY),
-	_et_gclient_addfield(sess.skill,                     FIELD_INT_ARRAY,   0),
-	_et_gclient_addfield(sess.rank,                      FIELD_INT,         0),
-	_et_gclient_addfield(sess.medals,                    FIELD_INT_ARRAY,   0),
-	_et_gclient_addfield(sess.referee,                   FIELD_INT,         0),
-	_et_gclient_addfield(sess.rounds,                    FIELD_INT,         0),
-	_et_gclient_addfield(sess.spec_invite,               FIELD_INT,         0),
-	_et_gclient_addfield(sess.spec_team,                 FIELD_INT,         0),
-	_et_gclient_addfield(sess.kills,                     FIELD_INT,         0),
-	_et_gclient_addfield(sess.deaths,                    FIELD_INT,         0),
-	_et_gclient_addfield(sess.gibs,                      FIELD_INT,         0),
-	_et_gclient_addfield(sess.self_kills,                FIELD_INT,         0),
-	_et_gclient_addfield(sess.team_kills,                FIELD_INT,         0),
-	_et_gclient_addfield(sess.team_gibs,                 FIELD_INT,         0),
-	_et_gclient_addfield(sess.damage_given,              FIELD_INT,         0),
-	_et_gclient_addfield(sess.damage_received,           FIELD_INT,         0),
-	_et_gclient_addfield(sess.team_damage_given,         FIELD_INT,         0),
-	_et_gclient_addfield(sess.team_damage_received,      FIELD_INT,         0),
-	_et_gclient_addfield(sess.time_axis,                 FIELD_INT,         0),
-	_et_gclient_addfield(sess.time_allies,               FIELD_INT,         0),
-	_et_gclient_addfield(sess.time_played,               FIELD_INT,         0),
+	_et_gclient_addfield(sess.sessionTeam,                  FIELD_INT,                 0),
+	_et_gclient_addfield(sess.spectatorTime,                FIELD_INT,                 0),
+	_et_gclient_addfield(sess.spectatorState,               FIELD_INT,                 0),
+	_et_gclient_addfield(sess.spectatorClient,              FIELD_INT,                 0),
+	_et_gclient_addfield(sess.playerType,                   FIELD_INT,                 0),
+	_et_gclient_addfield(sess.playerWeapon,                 FIELD_INT,                 0),
+	_et_gclient_addfield(sess.playerWeapon2,                FIELD_INT,                 0),
+	_et_gclient_addfield(sess.spawnObjectiveIndex,          FIELD_INT,                 0),
+	_et_gclient_addfield(sess.latchPlayerType,              FIELD_INT,                 0),
+	_et_gclient_addfield(sess.latchPlayerWeapon,            FIELD_INT,                 0),
+	_et_gclient_addfield(sess.latchPlayerWeapon2,           FIELD_INT,                 0),
+	_et_gclient_addfield(sess.ignoreClients,                FIELD_INT_ARRAY,           0),
+	_et_gclient_addfield(sess.muted,                        FIELD_INT,                 0),
+	_et_gclient_addfield(sess.skillpoints,                  FIELD_FLOAT_ARRAY,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(sess.startskillpoints,             FIELD_FLOAT_ARRAY,         FIELD_FLAG_READONLY),
+	_et_gclient_addfield(sess.startxptotal,                 FIELD_FLOAT,               FIELD_FLAG_READONLY),
+	_et_gclient_addfield(sess.skill,                        FIELD_INT_ARRAY,           0),
+	_et_gclient_addfield(sess.rank,                         FIELD_INT,                 0),
+	_et_gclient_addfield(sess.medals,                       FIELD_INT_ARRAY,           0),
+	_et_gclient_addfield(sess.referee,                      FIELD_INT,                 0),
+	_et_gclient_addfield(sess.rounds,                       FIELD_INT,                 0),
+	_et_gclient_addfield(sess.spec_invite,                  FIELD_INT,                 0),
+	_et_gclient_addfield(sess.spec_team,                    FIELD_INT,                 0),
+	_et_gclient_addfield(sess.kills,                        FIELD_INT,                 0),
+	_et_gclient_addfield(sess.deaths,                       FIELD_INT,                 0),
+	_et_gclient_addfield(sess.gibs,                         FIELD_INT,                 0),
+	_et_gclient_addfield(sess.self_kills,                   FIELD_INT,                 0),
+	_et_gclient_addfield(sess.team_kills,                   FIELD_INT,                 0),
+	_et_gclient_addfield(sess.team_gibs,                    FIELD_INT,                 0),
+	_et_gclient_addfield(sess.damage_given,                 FIELD_INT,                 0),
+	_et_gclient_addfield(sess.damage_received,              FIELD_INT,                 0),
+	_et_gclient_addfield(sess.team_damage_given,            FIELD_INT,                 0),
+	_et_gclient_addfield(sess.team_damage_received,         FIELD_INT,                 0),
+	_et_gclient_addfield(sess.time_axis,                    FIELD_INT,                 0),
+	_et_gclient_addfield(sess.time_allies,                  FIELD_INT,                 0),
+	_et_gclient_addfield(sess.time_played,                  FIELD_INT,                 0),
 #ifdef FEATURE_RATING
-	_et_gclient_addfield(sess.mu,                        FIELD_FLOAT,       0),
-	_et_gclient_addfield(sess.sigma,                     FIELD_FLOAT,       0),
-	_et_gclient_addfield(sess.oldmu,                     FIELD_FLOAT,       0),
-	_et_gclient_addfield(sess.oldsigma,                  FIELD_FLOAT,       0),
+	_et_gclient_addfield(sess.mu,                           FIELD_FLOAT,               0),
+	_et_gclient_addfield(sess.sigma,                        FIELD_FLOAT,               0),
+	_et_gclient_addfield(sess.oldmu,                        FIELD_FLOAT,               0),
+	_et_gclient_addfield(sess.oldsigma,                     FIELD_FLOAT,               0),
 #endif
-	_et_gclient_addfield(sess.uci,                       FIELD_INT,         0),
+	_et_gclient_addfield(sess.uci,                          FIELD_INT,                 0),
 
-	_et_gclient_addfield(sess.aWeaponStats,              FIELD_WEAPONSTAT,  FIELD_FLAG_READONLY),
+	_et_gclient_addfield(sess.aWeaponStats,                 FIELD_WEAPONSTAT,          FIELD_FLAG_READONLY),
 
 	//_et_gclient_addfieldalias(aWeaponStats, sess.aWeaponStats, FIELD_WEAPONSTAT_EXT, FIELD_FLAG_READONLY),
 
 	// origin: use ps.origin instead of r.currentOrigin
 	// for client entities
-	_et_gclient_addfieldalias(origin,                    ps.origin,         FIELD_VEC3,          0),
+	_et_gclient_addfieldalias(origin,                       ps.origin,                 FIELD_VEC3,          0),
 
-	_et_gclient_addfieldalias(sess.team_damage, sess.team_damage_given, FIELD_INT, 0),
-	_et_gclient_addfieldalias(sess.team_received, sess.team_damage_received, FIELD_INT, 0),
+	_et_gclient_addfieldalias(sess.team_damage,             sess.team_damage_given,    FIELD_INT,           0),
+	_et_gclient_addfieldalias(sess.team_received,           sess.team_damage_received, FIELD_INT,           0),
 
 	{ NULL },
 };
@@ -1299,7 +1299,7 @@ static void _et_gentity_getweaponstat(lua_State *L, weapon_stat_t *ws)
 	lua_settable(L, -3);
 }
 
-gentity_t* G_Lua_CreateEntity(char *params)
+gentity_t *G_Lua_CreateEntity(char *params)
 {
 	gentity_t *create;
 	char      *token;
@@ -1795,7 +1795,7 @@ static int _et_G_AddEvent(lua_State *L)
 // et.G_ShaderRemap( oldShader, newShader )
 static int _et_G_ShaderRemap(lua_State *L)
 {
-	float f               = level.time * 0.001;
+	float      f          = level.time * 0.001;
 	const char *oldShader = luaL_checkstring(L, 1);
 	const char *newShader = luaL_checkstring(L, 2);
 
@@ -2525,7 +2525,7 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 	lua_setglobal(vm->L, "et");
 
 	// Load the code
-	G_Printf("%s API: %sLoading %s\n", LUA_VERSION, S_COLOR_BLUE ,vm->file_name);
+	G_Printf("%s API: %sLoading %s\n", LUA_VERSION, S_COLOR_BLUE, vm->file_name);
 
 	res = luaL_loadbuffer(vm->L, vm->code, vm->code_size, vm->file_name);
 
@@ -2547,7 +2547,7 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 		vm->err++;
 		return qfalse;
 	default:
-		G_Printf("%s API: unknown error %i ( %s )\n", LUA_VERSION, res ,vm->file_name);
+		G_Printf("%s API: unknown error %i ( %s )\n", LUA_VERSION, res, vm->file_name);
 		vm->err++;
 		return qfalse;
 	}
@@ -3244,7 +3244,7 @@ qboolean G_LuaHook_Obituary(int victim, int killer, int meansOfDeath)
 
 // G_LuaHook_Damage
 // et_Damage( target, attacker, damage, dflags, mod)
-qboolean G_LuaHook_Damage(int target, int attacker, int damage, int dflags, int mod)
+qboolean G_LuaHook_Damage(int target, int attacker, int damage, int dflags, meansOfDeath_t mod)
 {
 	int      i;
 	lua_vm_t *vm;

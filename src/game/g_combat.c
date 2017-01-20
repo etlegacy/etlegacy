@@ -1038,7 +1038,7 @@ gentity_t *G_BuildLeg(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
  * @param[in] newRefent
  * @return
  */
-qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod, grefEntity_t *refent, qboolean newRefent)
+qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, meansOfDeath_t mod, grefEntity_t *refent, qboolean newRefent)
 {
 	gentity_t *head;
 	trace_t   tr;
@@ -1108,7 +1108,7 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod, grefEnti
  * @param[in] newRefent
  * @return
  */
-qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod, grefEntity_t *refent, qboolean newRefent)
+qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, meansOfDeath_t mod, grefEntity_t *refent, qboolean newRefent)
 {
 	gentity_t *leg;
 
@@ -1197,7 +1197,7 @@ qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, int mod, grefEntit
  * @param[in] mod
  * @return
  */
-qboolean IsArmShot(gentity_t *targ, gentity_t *ent, vec3_t point, int mod)
+qboolean IsArmShot(gentity_t *targ, gentity_t *ent, vec3_t point, meansOfDeath_t mod)
 {
 	vec3_t path, view;
 	vec_t  dot;
@@ -2153,7 +2153,7 @@ void G_AdjustedDamageVec(gentity_t *ent, vec3_t origin, vec3_t v)
  * @param[in] mod
  * @return
  */
-qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, int mod)
+qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, meansOfDeath_t mod)
 {
 	float     points, dist;
 	gentity_t *ent;
@@ -2290,7 +2290,7 @@ qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker
  * @param[in] clientsonly
  * @return
  */
-qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, int mod, qboolean clientsonly)
+qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, meansOfDeath_t mod, qboolean clientsonly)
 {
 	float     points, dist;
 	gentity_t *ent;

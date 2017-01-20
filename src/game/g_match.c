@@ -269,7 +269,7 @@ void G_spawnPrintf(int print_type, int print_time, gentity_t *owner)
  * @param[in] dmg_ref
  * @param[in] mod
  */
-void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
+void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, meansOfDeath_t mod)
 {
 	int dmg, ref;
 
@@ -390,7 +390,7 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod)
  * @param[in,out] attacker
  * @param[in] mod
  */
-void G_addStatsHeadShot(gentity_t *attacker, int mod)
+void G_addStatsHeadShot(gentity_t *attacker, meansOfDeath_t mod)
 {
 #ifndef DEBUG_STATS
 	if (g_gamestate.integer != GS_PLAYING)

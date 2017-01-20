@@ -1339,8 +1339,8 @@ typedef struct
 void G_AdjustedDamageVec(gentity_t *ent, vec3_t origin, vec3_t vec);
 qboolean CanDamage(gentity_t *targ, vec3_t origin);
 void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, meansOfDeath_t mod);
-qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, int mod);
-qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, int mod, qboolean clientsonly);
+qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, meansOfDeath_t mod);
+qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, meansOfDeath_t mod, qboolean clientsonly);
 void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t meansOfDeath);
 void TossWeapons(gentity_t *self);
 gentity_t *G_BuildHead(gentity_t *ent, grefEntity_t *refent, qboolean newRefent);
@@ -1365,7 +1365,7 @@ gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir);
 gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t aimdir, int grenadeWPID);
 gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType);
 
-void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damage, vec3_t muzzle, vec3_t forward, vec3_t right, vec3_t up, int mod);
+void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damage, vec3_t muzzle, vec3_t forward, vec3_t right, vec3_t up, meansOfDeath_t mod);
 
 gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir);
 gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir);
@@ -2184,8 +2184,8 @@ void G_PrintConfigs(gentity_t *ent);
 qboolean G_isValidConfig(gentity_t *ent, const char *configname);
 
 // g_match.c
-void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, int mod);
-void G_addStatsHeadShot(gentity_t *attacker, int mod);
+void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, meansOfDeath_t mod);
+void G_addStatsHeadShot(gentity_t *attacker, meansOfDeath_t mod);
 int G_checkServerToggle(vmCvar_t *cv);
 char *G_createStats(gentity_t *refEnt);
 void G_deleteStats(int nClient);
