@@ -554,7 +554,14 @@ static int env_connect(lua_State *L)
   sourcename = luaL_checkstring(L, 2);
 
 #if SQLITE_VERSION_NUMBER > 3006013
-  res = sqlite3_open_v2(sourcename, &conn, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+  if (strstr(sourcename, ":memory:")) /* TODO: rework this and get/add param 'flag' for sqlite3_open_v2 - see TODO below */
+  {
+	  res = sqlite3_open_v2(sourcename, &conn, SQLITE_OPEN_READWRITE | SQLITE_OPEN_MEMORY, NULL);
+  }
+  else
+  {
+	  res = sqlite3_open_v2(sourcename, &conn, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+  }
 #else
   res = sqlite3_open(sourcename, &conn);
 #endif
