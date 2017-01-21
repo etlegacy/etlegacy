@@ -56,6 +56,9 @@ qboolean isDBActive;
 int DB_Init()
 {
 	char *to_ospath;
+	int  msec;
+
+	msec = Sys_Milliseconds();
 
 	isDBActive = qfalse;
 
@@ -88,8 +91,7 @@ int DB_Init()
 		if (db_mode->integer == 1)
 		{
 			// init memory table
-			//result = sqlite3_open(":memory:", &db); // memory table, not shared see https://www.sqlite.org/inmemorydb.html
-			result = sqlite3_open("file::memory:?cache=shared", &db); // In-memory databases with shared cache
+			result = sqlite3_open_v2("file::memory:?cache=shared", &db, (SQLITE_OPEN_READWRITE | SQLITE_OPEN_MEMORY), NULL); // we may use SQLITE_OPEN_SHAREDCACHE see URI
 
 			if (result != SQLITE_OK)
 			{
@@ -152,7 +154,7 @@ int DB_Init()
 		}
 	}
 
-	Com_Printf("SQLite3 ET: L [%i] database '%s' init - autocommit %i\n", ETL_DBMS_VERSION, to_ospath, sqlite3_get_autocommit(db));
+	Com_Printf("SQLite3 ET: L [%i] database '%s' init in [%i] ms - autocommit %i\n", ETL_DBMS_VERSION, to_ospath, (Sys_Milliseconds() - msec), sqlite3_get_autocommit(db));
 
 	isDBActive = qtrue;
 	return 0;
@@ -249,11 +251,13 @@ static int DB_Create_Schema()
 int DB_Create()
 {
 	int result;
+	int msec;
+
+	msec = Sys_Milliseconds();
 
 	if (db_mode->integer == 1)
 	{
-		//result = sqlite3_open(":memory:", &db); // memory table, not shared see https://www.sqlite.org/inmemorydb.html
-		result = sqlite3_open("file::memory:?cache=shared", &db); // In-memory databases with shared cache
+		result = sqlite3_open_v2("file::memory:?cache=shared", &db, (SQLITE_OPEN_READWRITE | SQLITE_OPEN_MEMORY), NULL); // we may use SQLITE_OPEN_SHAREDCACHE see URI
 
 		if (result != SQLITE_OK)
 		{
@@ -293,7 +297,7 @@ int DB_Create()
 		return 1;
 	}
 
-	Com_Printf("... database %s created\n", db_url->string);
+	Com_Printf("... database %s created in [%i] ms\n", db_url->string, (Sys_Milliseconds() - msec));
 	return 0;
 }
 
@@ -323,7 +327,7 @@ int DB_SaveMemDB()
 			Com_Printf("... WARNING can't save memory database file [%i]\n", result);
 			return 1;
 		}
-		Com_Printf("SQLite3 in-memory tables saved to disk @[%s] in [%i] msec\n", to_ospath, (Sys_Milliseconds() - msec));
+		Com_Printf("SQLite3 in-memory tables saved to disk @[%s] in [%i] ms\n", to_ospath, (Sys_Milliseconds() - msec));
 	}
 	else
 	{
