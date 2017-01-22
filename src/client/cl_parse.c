@@ -845,7 +845,7 @@ void CL_ParseDownload(msg_t *msg)
 				return;
 			}
 			Cvar_SetValue("cl_downloadSize", cls.download.downloadSize);
-			Com_DPrintf("Server redirected download: %s\n", cls.download.downloadName);
+			Com_Printf("Server redirected download: %s\n", cls.download.downloadName);
 			cls.download.bWWWDl = qtrue; // activate wwwdl client loop
 			CL_AddReliableCommand("wwwdl ack");
 			// make sure the server is not trying to redirect us again on a bad checksum
@@ -912,7 +912,7 @@ void CL_ParseDownload(msg_t *msg)
 
 	if (cls.download.downloadBlock != block)
 	{
-		Com_DPrintf("CL_ParseDownload: Expected block %d, got %d\n", cls.download.downloadBlock, block);
+		Com_Printf("CL_ParseDownload: Expected block %d, got %d\n", cls.download.downloadBlock, block);
 		return;
 	}
 
@@ -932,7 +932,12 @@ void CL_ParseDownload(msg_t *msg)
 
 	if (size)
 	{
-		(void) FS_Write(data, size, cls.download.download);
+		if (FS_Write(data, size, cls.download.download) == 0)
+		{
+			Com_Printf("CL_ParseDownload: Can't write download to disk\n");
+			// FIXME: close file and clean up
+			//Com_Error(ERR_DROP, "CL_ParseDownload: Can't write download to disk");
+		}
 	}
 
 	CL_AddReliableCommand(va("nextdl %d", cls.download.downloadBlock));
@@ -969,13 +974,6 @@ void CL_ParseDownload(msg_t *msg)
 	}
 }
 
-/*
-=====================
-CL_ParseCommandString
-
-
-=====================
-*/
 /**
  * @brief Command strings are just saved off until cgame asks for them
  * when it transitions a snapshot
