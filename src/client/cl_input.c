@@ -1229,9 +1229,9 @@ qboolean CL_ReadyToSendPacket(void)
 	{
 		Cvar_Set("cl_maxpackets", "15");
 	}
-	else if (cl_maxpackets->integer > 100)
+	else if (cl_maxpackets->integer > 125)
 	{
-		Cvar_Set("cl_maxpackets", "100");
+		Cvar_Set("cl_maxpackets", "125");
 	}
 	oldPacketNum = (clc.netchan.outgoingSequence - 1) & PACKET_MASK;
 	delta        = cls.realtime -  cl.outPackets[oldPacketNum].p_realtime;

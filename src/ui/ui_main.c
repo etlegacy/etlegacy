@@ -5752,7 +5752,7 @@ void UI_RunMenuScript(char **args)
 			if (ui_rate == 0)
 			{
 				ui_rate          = 25000;
-				ui_cl_maxpackets = 100;
+				ui_cl_maxpackets = 125;
 				ui_cl_packetdup  = 1;
 			}
 
