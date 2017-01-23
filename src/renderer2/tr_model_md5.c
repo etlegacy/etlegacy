@@ -37,6 +37,14 @@
 #include "tr_local.h"
 #include "tr_model_skel.h"
 
+/**
+ * @brief R_LoadMD5
+ * @param[in,out] mod
+ * @param[in,out] buffer
+ * @param bufferSize - unused
+ * @param[in] modName
+ * @return
+ */
 qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modName)
 {
 	int           i, j, k;

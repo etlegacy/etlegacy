@@ -362,6 +362,11 @@ static qboolean InitOpenGL(void)
 	return qtrue;
 }
 
+/**
+ * @brief GL_CheckErrors_
+ * @param[in] fileName
+ * @param[in] line
+ */
 void GL_CheckErrors_(const char *fileName, int line)
 {
 	int  err;
@@ -425,16 +430,20 @@ the format is etxreal-YYYY_MM_DD-HH_MM_SS-MS.tga/jpeg/png
 ==============================================================================
 */
 
-/*
-==================
-RB_ReadPixels
-
-Reads an image but takes care of alignment issues for reading RGB images.
-Prepends the specified number of (uninitialized) bytes to the buffer.
-
-The returned buffer must be freed with ri.Hunk_FreeTempMemory().
-==================
-*/
+/**
+ * @brief Reads an image but takes care of alignment issues for reading RGB images.
+ * Prepends the specified number of (uninitialized) bytes to the buffer.
+ *
+ * The returned buffer must be freed with ri.Hunk_FreeTempMemory().
+ *
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ * @param[in,out] offset
+ * @param[out] padlen
+ * @return
+ */
 byte *RB_ReadPixels(int x, int y, int width, int height, size_t *offset, int *padlen)
 {
 	byte  *buffer, *bufstart;
@@ -458,12 +467,15 @@ byte *RB_ReadPixels(int x, int y, int width, int height, size_t *offset, int *pa
 	return buffer;
 }
 
-/*
-==================
-R_TakeScreenshot
-==================
-*/
-static void RB_TakeScreenshot(int x, int y, int width, int height, char *fileName)
+/**
+ * @brief RB_TakeScreenshot
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ * @param[in] fileName
+ */
+static void RB_TakeScreenshot(int x, int y, int width, int height, const char *fileName)
 {
 	byte   *allbuf, *buffer;
 	byte   *srcptr, *destptr;
@@ -520,12 +532,15 @@ static void RB_TakeScreenshot(int x, int y, int width, int height, char *fileNam
 	ri.Hunk_FreeTempMemory(allbuf);
 }
 
-/*
-==================
-RB_TakeScreenshotJPEG
-==================
-*/
-static void RB_TakeScreenshotJPEG(int x, int y, int width, int height, char *fileName)
+/**
+ * @brief RB_TakeScreenshotJPEG
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ * @param[in] fileName
+ */
+static void RB_TakeScreenshotJPEG(int x, int y, int width, int height, const char *fileName)
 {
 	byte   *buffer;
 	size_t offset = 0, memcount;
@@ -544,11 +559,11 @@ static void RB_TakeScreenshotJPEG(int x, int y, int width, int height, char *fil
 	ri.Hunk_FreeTempMemory(buffer);
 }
 
-/*
-==================
-RB_TakeScreenshotCmd
-==================
-*/
+/**
+ * @brief RB_TakeScreenshotCmd
+ * @param[in] data
+ * @return
+ */
 const void *RB_TakeScreenshotCmd(const void *data)
 {
 	const screenshotCommand_t *cmd = (const screenshotCommand_t *)data;
@@ -569,11 +584,11 @@ const void *RB_TakeScreenshotCmd(const void *data)
 	return (const void *)(cmd + 1);
 }
 
-/*
-==================
-R_TakeScreenshot
-==================
-*/
+/**
+ * @brief R_TakeScreenshot
+ * @param[in] name
+ * @param[in] format
+ */
 void R_TakeScreenshot(const char *name, ssFormat_t format)
 {
 	static char         fileName[MAX_OSPATH]; // bad things may happen if two screenshots per frame are taken.
@@ -627,29 +642,38 @@ void R_TakeScreenshot(const char *name, ssFormat_t format)
 	cmd->format    = format;
 }
 
-/*
-==================
-R_ScreenShot_f
-
-screenshot
-screenshot [filename]
-==================
-*/
+/**
+ * @brief R_ScreenShot_f
+ */
 static void R_ScreenShot_f(void)
 {
 	R_TakeScreenshot("tga", SSF_TGA);
 }
 
+/**
+ * @brief R_ScreenShotJPEG_f
+ */
 static void R_ScreenShotJPEG_f(void)
 {
 	R_TakeScreenshot("jpg", SSF_JPEG);
 }
 
+/**
+ * @brief R_ScreenShotPNG_f
+ */
 static void R_ScreenShotPNG_f(void)
 {
 	R_TakeScreenshot("png", SSF_PNG);
 }
 
+/**
+ * @brief MaterialNameCompare
+ * @param[in] a
+ * @param[in] b
+ * @return
+ *
+ * @note Unused
+ */
 /*
 static int QDECL MaterialNameCompare(const void *a, const void *b)
 {
@@ -698,6 +722,11 @@ static int QDECL MaterialNameCompare(const void *a, const void *b)
 }
 */
 
+/**
+ * @brief R_GenerateMaterialFile_f
+ *
+ * @note Unused
+ */
 /*
 static void R_GenerateMaterialFile_f(void)
 {
@@ -808,6 +837,11 @@ static void R_GenerateMaterialFile_f(void)
 
 //============================================================================
 
+/**
+ * @brief RB_TakeVideoFrameCmd
+ * @param[in] data
+ * @return
+ */
 const void *RB_TakeVideoFrameCmd(const void *data)
 {
 	const videoFrameCommand_t *cmd = (const videoFrameCommand_t *)data;
@@ -876,6 +910,9 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 
 //============================================================================
 
+/**
+ * @brief GL_SetDefaultState
+ */
 void GL_SetDefaultState(void)
 {
 	int i;
@@ -960,15 +997,12 @@ void GL_SetDefaultState(void)
 	}
 }
 
-/*
-================
-R_PrintLongString
-
-Workaround for ri.Printf's 1024 characters buffer limit.
-
-FIXME: move to renderercommon
-================
-*/
+/**
+ * @brief Workaround for ri.Printf's 1024 characters buffer limit.
+ * @param string
+ *
+ * @todo FIXME: move to renderercommon
+ */
 void R_PrintLongString(const char *string)
 {
 	char       buffer[1024];
@@ -984,11 +1018,9 @@ void R_PrintLongString(const char *string)
 	}
 }
 
-/*
-================
-GfxInfo_f
-================
-*/
+/**
+ * @brief GfxInfo_f
+ */
 void GfxInfo_f(void)
 {
 	/*const char     *enablestrings[] = {
@@ -1115,6 +1147,9 @@ void GfxInfo_f(void)
 	Ren_Print("Renderer: legacy\n");
 }
 
+/**
+ * @brief GLSL_restart_f
+ */
 static void GLSL_restart_f(void)
 {
 	// make sure the render thread is stopped
@@ -1125,6 +1160,9 @@ static void GLSL_restart_f(void)
 	GLSL_CompileGPUShaders();
 }
 
+/**
+ * @brief R_Register
+ */
 void R_Register(void)
 {
 	// OpenGL context selection
@@ -1471,6 +1509,9 @@ void R_Register(void)
 	ri.Cmd_AddSystemCommand("glsl_restart", GLSL_restart_f, "Restart the GLSL subsystem", NULL);
 }
 
+/**
+ * @brief R_Init
+ */
 void R_Init(void)
 {
 	int i;
@@ -1492,7 +1533,7 @@ void R_Init(void)
 	// init function tables
 	for (i = 0; i < FUNCTABLE_SIZE; i++)
 	{
-		tr.sinTable[i]             = sin(DEG2RAD(i * 360.0f / ((float)(FUNCTABLE_SIZE - 1))));
+		tr.sinTable[i]             = sin(DEG2RAD(i * 360.0 / ((double)(FUNCTABLE_SIZE - 1))));
 		tr.squareTable[i]          = (i < FUNCTABLE_SIZE / 2) ? 1.0f : -1.0f;
 		tr.sawToothTable[i]        = (float)i / FUNCTABLE_SIZE;
 		tr.inverseSawToothTable[i] = 1.0f - tr.sawToothTable[i];
@@ -1573,6 +1614,10 @@ void R_Init(void)
 	Ren_Print("----- finished R_Init -----\n");
 }
 
+/**
+ * @brief RE_Shutdown
+ * @param[in] destroyWindow
+ */
 void RE_Shutdown(qboolean destroyWindow)
 {
 	Ren_Print("RE_Shutdown( destroyWindow = %i )\n", destroyWindow);
@@ -1656,25 +1701,24 @@ void RE_Shutdown(qboolean destroyWindow)
 	tr.registered = qfalse;
 }
 
-/*
-=============
-RE_EndRegistration
-
-Touch all images to make sure they are resident
-=============
-*/
+/**
+ * @brief Touch all images to make sure they are resident
+ */
 void RE_EndRegistration(void)
 {
 	R_IssuePendingRenderCommands();
 
-	/*
-	   if(!Sys_LowPhysicalMemory())
-	   {
-	   RB_ShowImages();
-	   }
-	 */
+
+	//if(!Sys_LowPhysicalMemory())
+	//{
+	//    RB_ShowImages();
+	//}
+
 }
 
+/**
+ * @brief RE_PurgeCache
+ */
 static void RE_PurgeCache(void)
 {
 	// r2 doesn't use caching system!
@@ -1686,6 +1730,12 @@ static void RE_PurgeCache(void)
 #ifdef USE_RENDERER_DLOPEN
 Q_EXPORT refexport_t * QDECL GetRefAPI(int apiVersion, refimport_t *rimp)
 #else
+/**
+ * @brief GetRefAPI
+ * @param[in] apiVersion
+ * @param[in] rimp
+ * @return
+ */
 refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 #endif
 {

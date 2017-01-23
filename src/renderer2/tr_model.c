@@ -47,9 +47,11 @@ qboolean R_LoadPSK(model_t *mod, byte *buffer, int bufferSize, const char *name)
 
 model_t *loadmodel;
 
-/*
- R_GetModelByHandle
-*/
+/**
+ * @brief R_GetModelByHandle
+ * @param[in] index
+ * @return
+ */
 model_t *R_GetModelByHandle(qhandle_t index)
 {
 	model_t *mod;
@@ -67,9 +69,10 @@ model_t *R_GetModelByHandle(qhandle_t index)
 
 //===============================================================================
 
-/*
- R_AllocModel
-*/
+/**
+ * @brief R_AllocModel
+ * @return
+ */
 model_t *R_AllocModel(void)
 {
 	model_t *mod;
@@ -87,18 +90,14 @@ model_t *R_AllocModel(void)
 	return mod;
 }
 
-/*
-====================
-RE_RegisterModel
-
-Loads in a model for the given name
-
-Zero will be returned if the model fails to load.
-An entry will be retained for failed models as an
-optimization to prevent disk rescanning if they are
-asked for again.
-====================
-*/
+/**
+ * @brief Loads in a model for the given name
+ * @param[in] name
+ * @return Zero will be returned if the model fails to load.
+ * An entry will be retained for failed models as an
+ * optimization to prevent disk rescanning if they are
+ * asked for again.
+ */
 qhandle_t RE_RegisterModel(const char *name)
 {
 	model_t   *mod;
@@ -327,11 +326,13 @@ fail:
 	return 0;
 }
 
-/*
-=================
-R_LoadMDX
-=================
-*/
+/**
+ * @brief R_LoadMDX
+ * @param[in,out] mod
+ * @param[out] buffer
+ * @param[in] mod_name
+ * @return
+ */
 static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
 {
 	int           i, j;
@@ -405,28 +406,37 @@ static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
 
 //=============================================================================
 
+/**
+ * @brief R_XMLError
+ * @param ctx - unused
+ * @param[in] fmt
+ *
+ * @note Unused
+ */
 /*
-=================
-R_XMLError
-=================
-*/
 void R_XMLError(void *ctx, const char *fmt, ...)
 {
-	va_list     argptr;
-	static char msg[4096];
+    va_list     argptr;
+    static char msg[4096];
 
-	va_start(argptr, fmt);
-	Q_vsnprintf(msg, sizeof(msg), fmt, argptr);
-	va_end(argptr);
+    va_start(argptr, fmt);
+    Q_vsnprintf(msg, sizeof(msg), fmt, argptr);
+    va_end(argptr);
 
-	Ren_Warning("%s", msg);
+    Ren_Warning("%s", msg);
 }
-
-/*
-=================
-R_LoadDAE
-=================
 */
+
+/**
+ * @brief R_LoadDAE
+ * @param mod - unused
+ * @param[out] buffer
+ * @param[in] bufferLen
+ * @param[in] modName
+ * @return
+ *
+ * @note Unused
+ */
 /*
 static qboolean R_LoadDAE(model_t * mod, void *buffer, int bufferLen, const char *modName)
 {
@@ -474,7 +484,8 @@ static qboolean R_LoadDAE(model_t * mod, void *buffer, int bufferLen, const char
 //=============================================================================
 
 /**
- * RE_BeginRegistration
+ * @brief RE_BeginRegistration
+ * @param[out] glconfigOut
  */
 void RE_BeginRegistration(glconfig_t *glconfigOut)
 {
@@ -519,11 +530,9 @@ void RE_BeginRegistration(glconfig_t *glconfigOut)
 
 //=============================================================================
 
-/*
-===============
-R_ModelInit
-===============
-*/
+/**
+ * @brief R_ModelInit
+ */
 void R_ModelInit(void)
 {
 	model_t *mod;
@@ -535,11 +544,9 @@ void R_ModelInit(void)
 	mod->type = MOD_BAD;
 }
 
-/*
-================
-R_Modellist_f
-================
-*/
+/**
+ * @brief R_Modellist_f
+ */
 void R_Modellist_f(void)
 {
 	int      i, j, k;
@@ -625,11 +632,15 @@ void R_Modellist_f(void)
 
 //=============================================================================
 
-/*
-================
-R_GetTag
-================
-*/
+/**
+ * @brief R_GetTag
+ * @param[in] model
+ * @param[in] frame
+ * @param[in] _tagName
+ * @param[in] startTagIndex
+ * @param(out] outTag
+ * @return
+ */
 static int R_GetTag(mdvModel_t *model, int frame, const char *_tagName, int startTagIndex, mdvTag_t **outTag)
 {
 	int          i;
@@ -662,11 +673,16 @@ static int R_GetTag(mdvModel_t *model, int frame, const char *_tagName, int star
 	return -1;
 }
 
-/*
-================
-RE_LerpTagQ3A
-================
-*/
+/**
+ * @brief RE_LerpTagQ3A
+ * @param[in,out] tag
+ * @param[in] handle
+ * @param[in] startFrame
+ * @param[in] endFrame
+ * @param[in] frac
+ * @param[in] tagNameIn
+ * @return
+ */
 int RE_LerpTagQ3A(orientation_t *tag, qhandle_t handle, int startFrame, int endFrame, float frac, const char *tagNameIn)
 {
 	mdvTag_t *start, *end;
@@ -713,11 +729,14 @@ int RE_LerpTagQ3A(orientation_t *tag, qhandle_t handle, int startFrame, int endF
 	return retval;
 }
 
-/*
-================
-RE_LerpTag
-================
-*/
+/**
+ * @brief RE_LerpTagET
+ * @param[in,out] tag
+ * @param[in] refent
+ * @param[in] tagNameIn
+ * @param[in] startIndex
+ * @return
+ */
 int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagNameIn, int startIndex)
 {
 	mdvTag_t  *start, *end;
@@ -725,7 +744,7 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
 	float     frontLerp, backLerp;
 	model_t   *model;
 	char      tagName[MAX_QPATH];       //, *ch;
-	int       retval;
+	int       retval = 0;
 	qhandle_t handle;
 	int       startFrame, endFrame;
 	float     frac;
@@ -733,7 +752,7 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
 	handle     = refent->hModel;
 	startFrame = refent->oldframe;
 	endFrame   = refent->frame;
-	frac       = 1.0 - refent->backlerp;
+	frac       = 1.0f - refent->backlerp;
 
 	Q_strncpyz(tagName, tagNameIn, MAX_QPATH);
 /*
@@ -755,7 +774,7 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
 	*/
 
 	frontLerp = frac;
-	backLerp  = 1.0 - frac;
+	backLerp  = 1.0f - frac;
 
 	start = end = NULL;
 
@@ -872,11 +891,12 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
 	return retval;
 }
 
-/*
-================
-RE_BoneIndex
-================
-*/
+/**
+ * @brief RE_BoneIndex
+ * @param[in] hModel
+ * @param[in] boneName
+ * @return
+ */
 int RE_BoneIndex(qhandle_t hModel, const char *boneName)
 {
 	int        i;
@@ -905,11 +925,12 @@ int RE_BoneIndex(qhandle_t hModel, const char *boneName)
 	return -1;
 }
 
-/*
-====================
-R_ModelBounds
-====================
-*/
+/**
+ * @brief R_ModelBounds
+ * @param[in] handle
+ * @param[out] mins
+ * @param[out] maxs
+ */
 void R_ModelBounds(qhandle_t handle, vec3_t mins, vec3_t maxs)
 {
 	model_t    *model;

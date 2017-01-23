@@ -38,8 +38,11 @@
 
 trGlobals_t tr;
 
-// convert from our coordinate system (looking down X)
-// to OpenGL's coordinate system (looking down -Z)
+/**
+ * @var quakeToOpenGLMatrix
+ * @brief Convert from our coordinate system (looking down X)
+ * to OpenGL's coordinate system (looking down -Z)
+ */
 const mat4_t quakeToOpenGLMatrix =
 {
 	0,  0, -1, 0,
@@ -48,7 +51,10 @@ const mat4_t quakeToOpenGLMatrix =
 	0,  0, 0,  1
 };
 
-// inverse of quakeToOpenGL matrix
+/**
+ * @var openGLToQuakeMatrix
+ * @brief Inverse of quakeToOpenGL matrix
+ */
 const mat4_t openGLToQuakeMatrix =
 {
 	0,  -1, 0, 0,
@@ -57,8 +63,11 @@ const mat4_t openGLToQuakeMatrix =
 	0,  0,  0, 1
 };
 
-// convert from our right handed coordinate system (looking down X)
-// to D3D's left handed coordinate system (looking down Z)
+/**
+ * @var openGLToQuakeMatrix
+ * @brief convert from our right handed coordinate system (looking down X)
+ * to D3D's left handed coordinate system (looking down Z)
+ */
 const mat4_t quakeToD3DMatrix =
 {
 	0,  0, 1, 0,
@@ -88,17 +97,24 @@ int sunShadowMapResolutions[5] = { 2048, 2048, 1024, 1024, 1024 };
 
 refimport_t ri;
 
-// entities that will have procedurally generated surfaces will just
-// point at this for their sorting surface
+/// entities that will have procedurally generated surfaces will just
+/// point at this for their sorting surface
 surfaceType_t entitySurface = SF_ENTITY;
 
+/**
+ * @brief R_CompareVert
+ * @param[in] v1
+ * @param[in] v2
+ * @param[in] checkST
+ * @return
+ */
 qboolean R_CompareVert(srfVert_t *v1, srfVert_t *v2, qboolean checkST)
 {
 	int i;
 
 	for (i = 0; i < 3; i++)
 	{
-		if (floor(v1->xyz[i] + 0.1) != floor(v2->xyz[i] + 0.1))
+		if (floor(v1->xyz[i] + 0.1f) != floor(v2->xyz[i] + 0.1f))
 		{
 			return qfalse;
 		}
@@ -112,6 +128,13 @@ qboolean R_CompareVert(srfVert_t *v1, srfVert_t *v2, qboolean checkST)
 	return qtrue;
 }
 
+/**
+ * @brief R_CalcNormalForTriangle
+ * @param[in] normal
+ * @param[in] v0
+ * @param[in] v1
+ * @param[in] v2
+ */
 void R_CalcNormalForTriangle(vec3_t normal, const vec3_t v0, const vec3_t v1, const vec3_t v2)
 {
 	vec3_t udir, vdir;
@@ -124,12 +147,19 @@ void R_CalcNormalForTriangle(vec3_t normal, const vec3_t v0, const vec3_t v1, co
 	VectorNormalize(normal);
 }
 
-/*
-=============
-R_CalcTangentsForTriangle
-http://members.rogers.com/deseric/tangentspace.htm
-=============
-*/
+/**
+ * @brief R_CalcTangentsForTriangle
+ * @param[out] tangent
+ * @param[out] binormal
+ * @param[in] v0
+ * @param[in] v1
+ * @param[in] v2
+ * @param[in] t0
+ * @param[in] t1
+ * @param[in] t2
+ *
+ * @note http://members.rogers.com/deseric/tangentspace.htm
+ */
 void R_CalcTangentsForTriangle(vec3_t tangent, vec3_t binormal,
                                const vec3_t v0, const vec3_t v1, const vec3_t v2,
                                const vec2_t t0, const vec2_t t1, const vec2_t t2)
@@ -168,6 +198,18 @@ void R_CalcTangentsForTriangle(vec3_t tangent, vec3_t binormal,
 	VectorNormalize(binormal);
 }
 
+/**
+ * @brief R_CalcTangentSpace
+ * @param[out] tangent
+ * @param[out] binormal
+ * @param[out] normal
+ * @param[in] v0
+ * @param[in] v1
+ * @param[in] v2
+ * @param[in] t0
+ * @param[in] t1
+ * @param[in] t2
+ */
 void R_CalcTangentSpace(vec3_t tangent, vec3_t binormal, vec3_t normal,
                         const vec3_t v0, const vec3_t v1, const vec3_t v2, const vec2_t t0, const vec2_t t1, const vec2_t t2)
 {
@@ -244,6 +286,18 @@ void R_CalcTangentSpace(vec3_t tangent, vec3_t binormal, vec3_t normal,
 	VectorCopy(faceNormal, normal);
 }
 
+/**
+ * @brief R_CalcTangentSpaceFast
+ * @param[out] tangent
+ * @param[out] binormal
+ * @param[out] normal
+ * @param[in] v0
+ * @param[in] v1
+ * @param[in] v2
+ * @param[in] t0
+ * @param[in] t1
+ * @param[in] t2
+ */
 void R_CalcTangentSpaceFast(vec3_t tangent, vec3_t binormal, vec3_t normal,
                             const vec3_t v0, const vec3_t v1, const vec3_t v2, const vec2_t t0, const vec2_t t1, const vec2_t t2)
 {
@@ -315,9 +369,20 @@ void R_CalcTangentSpaceFast(vec3_t tangent, vec3_t binormal, vec3_t normal,
 	VectorCopy(faceNormal, normal);
 }
 
-/*
-http://www.terathon.com/code/tangent.html
-*/
+/**
+ * @brief R_CalcTBN
+ * @param[out] tangent
+ * @param[out] bitangent
+ * @param[out] normal
+ * @param[in] v1
+ * @param[in] v2
+ * @param[in] v3
+ * @param[in] w1
+ * @param[in] w2
+ * @param[in] w3
+ *
+ * @note http://www.terathon.com/code/tangent.html
+ */
 void R_CalcTBN(vec3_t tangent, vec3_t bitangent, vec3_t normal,
                const vec3_t v1, const vec3_t v2, const vec3_t v3, const vec2_t w1, const vec2_t w2, const vec2_t w3)
 {
@@ -355,6 +420,18 @@ void R_CalcTBN(vec3_t tangent, vec3_t bitangent, vec3_t normal,
 	//CrossProduct(normal, tangent, bitangent);
 }
 
+/**
+ * @brief R_CalcTBN2
+ * @param[out] tangent
+ * @param[out] binormal
+ * @param[out] normal
+ * @param[in] v1
+ * @param[in] v2
+ * @param[in] v3
+ * @param[in] t1
+ * @param[in] t2
+ * @param[in] t3
+ */
 void R_CalcTBN2(vec3_t tangent, vec3_t binormal, vec3_t normal,
                 const vec3_t v1, const vec3_t v2, const vec3_t v3, const vec2_t t1, const vec2_t t2, const vec2_t t3)
 {
@@ -451,6 +528,11 @@ void R_CalcTBN2(vec3_t tangent, vec3_t binormal, vec3_t normal,
 	}
 }
 
+/**
+ * @brief R_CalcTangentVectors
+ * @param[in,out] dv
+ * @return
+ */
 qboolean R_CalcTangentVectors(srfVert_t *dv[3])
 {
 	int    i;
@@ -459,7 +541,7 @@ qboolean R_CalcTangentVectors(srfVert_t *dv[3])
 
 	// calculate barycentric basis for the triangle
 	bb = (dv[1]->st[0] - dv[0]->st[0]) * (dv[2]->st[1] - dv[0]->st[1]) - (dv[2]->st[0] - dv[0]->st[0]) * (dv[1]->st[1] - dv[0]->st[1]);
-	if (fabs(bb) < 0.00000001f)
+	if (fabs(bb) < 0.00000001)
 	{
 		return qfalse;
 	}
@@ -503,11 +585,12 @@ qboolean R_CalcTangentVectors(srfVert_t *dv[3])
 	return qtrue;
 }
 
-/*
-=================
-R_CalcSurfaceTrianglePlanes
-=================
-*/
+/**
+ * @brief R_CalcSurfaceTrianglePlanes
+ * @param[in] numTriangles
+ * @param[in] triangles
+ * @param[in] verts
+ */
 void R_CalcSurfaceTrianglePlanes(int numTriangles, srfTriangle_t *triangles, srfVert_t *verts)
 {
 	vec3_t        d1, d2;
@@ -529,9 +612,17 @@ void R_CalcSurfaceTrianglePlanes(int numTriangles, srfTriangle_t *triangles, srf
 	}
 }
 
+/**
+ * @brief R_CalcFov
+ * @param[in] fovX
+ * @param[in] width
+ * @param[in] height
+ * @return
+ *
+ * @note This function breaks the VC9 compiler for some unknown reason ...
+ * @note Unused
+ */
 /*
-this function breaks the VC9 compiler for some unknown reason ...
-
 float R_CalcFov(float fovX, float width, float height)
 {
     static float	x;
@@ -545,13 +636,11 @@ float R_CalcFov(float fovX, float width, float height)
 }
 */
 
-/*
-=================
-R_CullLocalBox
-
-Returns CULL_IN, CULL_CLIP, or CULL_OUT
-=================
-*/
+/**
+ * @brief R_CullLocalBox
+ * @param[in] localBounds
+ * @return CULL_IN, CULL_CLIP, or CULL_OUT
+ */
 cullResult_t R_CullLocalBox(vec3_t localBounds[2])
 {
 #if 0
@@ -673,11 +762,12 @@ cullResult_t R_CullLocalBox(vec3_t localBounds[2])
 #endif
 }
 
-/*
-=================
-R_CullLocalPointAndRadius
-=================
-*/
+/**
+ * @brief R_CullLocalPointAndRadius
+ * @param[in] pt
+ * @param[in] radius
+ * @return
+ */
 int R_CullLocalPointAndRadius(vec3_t pt, float radius)
 {
 	vec3_t transformed;
@@ -687,11 +777,12 @@ int R_CullLocalPointAndRadius(vec3_t pt, float radius)
 	return R_CullPointAndRadius(transformed, radius);
 }
 
-/*
-=================
-R_CullPointAndRadius
-=================
-*/
+/**
+ * @brief R_CullPointAndRadius
+ * @param[in] pt
+ * @param[in] radius
+ * @return
+ */
 int R_CullPointAndRadius(vec3_t pt, float radius)
 {
 	int      i;
@@ -728,11 +819,12 @@ int R_CullPointAndRadius(vec3_t pt, float radius)
 	return CULL_IN;             // completely inside frustum
 }
 
-/*
-=================
-R_FogLocalPointAndRadius
-=================
-*/
+/**
+ * @brief R_FogLocalPointAndRadius
+ * @param[in] pt
+ * @param[in] radius
+ * @return
+ */
 int R_FogLocalPointAndRadius(const vec3_t pt, float radius)
 {
 	vec3_t transformed;
@@ -742,11 +834,12 @@ int R_FogLocalPointAndRadius(const vec3_t pt, float radius)
 	return R_FogPointAndRadius(transformed, radius);
 }
 
-/*
-=================
-R_FogPointAndRadius
-=================
-*/
+/**
+ * @brief R_FogPointAndRadius
+ * @param[in] pt
+ * @param[in] radius
+ * @return
+ */
 int R_FogPointAndRadius(const vec3_t pt, float radius)
 {
 	int   i, j;
@@ -782,11 +875,11 @@ int R_FogPointAndRadius(const vec3_t pt, float radius)
 	return 0;
 }
 
-/*
-=================
-R_FogWorldBox
-=================
-*/
+/**
+ * @brief R_FogWorldBox
+ * @param[out] bounds
+ * @return
+ */
 int R_FogWorldBox(vec3_t bounds[2])
 {
 	int   i, j;
@@ -823,31 +916,34 @@ int R_FogWorldBox(vec3_t bounds[2])
 	return 0;
 }
 
-/*
-=================
-R_LocalNormalToWorld
-=================
-*/
+/**
+ * @brief R_LocalNormalToWorld
+ * @param[in] local
+ * @param[in] world
+ */
 void R_LocalNormalToWorld(const vec3_t local, vec3_t world)
 {
 	MatrixTransformNormal(tr.orientation.transformMatrix, local, world);
 }
 
-/*
-=================
-R_LocalPointToWorld
-=================
-*/
+/**
+ * @brief R_LocalPointToWorld
+ * @param[in] local
+ * @param[in] world
+ */
 void R_LocalPointToWorld(const vec3_t local, vec3_t world)
 {
 	mat4_transform_vec3(tr.orientation.transformMatrix, local, world);
 }
 
-/*
-==========================
-R_TransformWorldToClip
-==========================
-*/
+/**
+ * @brief R_TransformWorldToClip
+ * @param[in] src
+ * @param[in] cameraViewMatrix
+ * @param[in] projectionMatrix
+ * @param[in] eye
+ * @param[out] dst
+ */
 void R_TransformWorldToClip(const vec3_t src, const float *cameraViewMatrix, const float *projectionMatrix, vec4_t eye,
                             vec4_t dst)
 {
@@ -860,11 +956,14 @@ void R_TransformWorldToClip(const vec3_t src, const float *cameraViewMatrix, con
 	mat4_transform_vec4(projectionMatrix, eye, dst);
 }
 
-/*
-==========================
-R_TransformModelToClip
-==========================
-*/
+/**
+ * @brief R_TransformModelToClip
+ * @param[in] src
+ * @param[in] modelViewMatrix
+ * @param[in] projectionMatrix
+ * @param[in] eye
+ * @param[out] dst
+ */
 void R_TransformModelToClip(const vec3_t src, const float *modelViewMatrix, const float *projectionMatrix, vec4_t eye, vec4_t dst)
 {
 	vec4_t src2;
@@ -876,11 +975,13 @@ void R_TransformModelToClip(const vec3_t src, const float *modelViewMatrix, cons
 	mat4_transform_vec4(projectionMatrix, eye, dst);
 }
 
-/*
-==========================
-R_TransformClipToWindow
-==========================
-*/
+/**
+ * @brief R_TransformClipToWindow
+ * @param[in] clip
+ * @param[in] view
+ * @param[out] normalized
+ * @param[out] window
+ */
 void R_TransformClipToWindow(const vec4_t clip, const viewParms_t *view, vec4_t normalized, vec4_t window)
 {
 	normalized[0] = clip[0] / clip[3];
@@ -891,15 +992,16 @@ void R_TransformClipToWindow(const vec4_t clip, const viewParms_t *view, vec4_t 
 	window[1] = view->viewportY + (0.5f * (1.0f + normalized[1]) * view->viewportHeight);
 	window[2] = normalized[2];
 
-	window[0] = (int)(window[0] + 0.5);
-	window[1] = (int)(window[1] + 0.5);
+	window[0] = (int)(window[0] + 0.5f);
+	window[1] = (int)(window[1] + 0.5f);
 }
 
-/*
-================
-R_ProjectRadius
-================
-*/
+/**
+ * @brief R_ProjectRadius
+ * @param[in] r
+ * @param[in] location
+ * @return
+ */
 float R_ProjectRadius(float r, vec3_t location)
 {
 	float  pr;
@@ -943,12 +1045,11 @@ float R_ProjectRadius(float r, vec3_t location)
 	return pr;
 }
 
-/*
-=================
-R_SetupEntityWorldBounds
-- needs R_RotateEntityForViewParms
-=================
-*/
+/**
+ * @brief R_SetupEntityWorldBounds
+ * @param[in] ent
+ * @note needs R_RotateEntityForViewParms
+ */
 void R_SetupEntityWorldBounds(trRefEntity_t *ent)
 {
 	int    j;
@@ -973,11 +1074,18 @@ void R_SetupEntityWorldBounds(trRefEntity_t *ent)
 =================
 R_RotateEntityForViewParms
 
-Generates an orientation for an entity and viewParms
-Does NOT produce any GL calls
-Called by both the front end and the back end
+
 =================
 */
+/**
+ * @brief Generates an orientation for an entity and viewParms.
+ * Does NOT produce any GL calls.
+ * Called by both the front end and the back end.
+ *
+ * @param[in] ent
+ * @param[in] viewParms
+ * @param[out] _or
+ */
 void R_RotateEntityForViewParms(const trRefEntity_t *ent, const viewParms_t *viewParms, orientationr_t *_or)
 {
 	vec3_t delta;
@@ -1007,7 +1115,7 @@ void R_RotateEntityForViewParms(const trRefEntity_t *ent, const viewParms_t *vie
 	if (ent->e.nonNormalizedAxes)
 	{
 		axisLength = VectorLength(ent->e.axis[0]);
-		if (!axisLength)
+		if (axisLength == 0.f)
 		{
 			axisLength = 0;
 		}
@@ -1026,15 +1134,15 @@ void R_RotateEntityForViewParms(const trRefEntity_t *ent, const viewParms_t *vie
 	_or->viewOrigin[2] = DotProduct(delta, _or->axis[2]) * axisLength;
 }
 
-/*
-=================
-R_RotateEntityForLight
-
-Generates an orientation for an entity and light
-Does NOT produce any GL calls
-Called by both the front end and the back end
-=================
-*/
+/**
+ * @brief Generates an orientation for an entity and light.
+ * Does NOT produce any GL calls.
+ * Called by both the front end and the back end.
+ *
+ * @param[in] ent
+ * @param[in] light
+ * @param(out] _or
+ */
 void R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light, orientationr_t *_or)
 {
 	vec3_t delta;
@@ -1076,7 +1184,7 @@ void R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light,
 	if (ent->e.nonNormalizedAxes)
 	{
 		axisLength = VectorLength(ent->e.axis[0]);
-		if (!axisLength)
+		if (axisLength == 0.f)
 		{
 			axisLength = 0;
 		}
@@ -1095,11 +1203,12 @@ void R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light,
 	_or->viewOrigin[2] = DotProduct(delta, _or->axis[2]) * axisLength;
 }
 
-/*
-=================
-R_RotateLightForViewParms
-=================
-*/
+/**
+ * @brief R_RotateLightForViewParms
+ * @param[in] light
+ * @param[in] viewParms
+ * @param[out] _or
+ */
 void R_RotateLightForViewParms(const trRefLight_t *light, const viewParms_t *viewParms, orientationr_t *_or)
 {
 	vec3_t delta;
@@ -1121,13 +1230,9 @@ void R_RotateLightForViewParms(const trRefLight_t *light, const viewParms_t *vie
 	_or->viewOrigin[2] = DotProduct(delta, _or->axis[2]);
 }
 
-/*
-=================
-R_RotateForViewer
-
-Sets up the modelview matrix for a given viewParm
-=================
-*/
+/**
+ * @brief Sets up the modelview matrix for a given viewParm
+ */
 void R_RotateForViewer(void)
 {
 	mat4_t transformMatrix;
@@ -1250,9 +1355,9 @@ void R_RotateForViewer(void)
 	tr.viewParms.world = tr.orientation;
 }
 
-/*
-SetFarClip
-*/
+/**
+ * @brief SetFarClip
+ */
 static void SetFarClip(void)
 {
 	float farthestCornerDistance;
@@ -1463,12 +1568,11 @@ static void SetFarClip(void)
 #endif
 }
 
-/*
-===============
-R_SetupProjection
-===============
-*/
 // *INDENT-OFF*
+/**
+ * @brief R_SetupProjection
+ * @param[in] infiniteFarClip
+ */
 static void R_SetupProjection(qboolean infiniteFarClip)
 {
 	//float xMin, xMax, yMin, yMax;
@@ -1482,7 +1586,7 @@ static void R_SetupProjection(qboolean infiniteFarClip)
 
 	zNear = tr.viewParms.zNear = r_znear->value;
 
-	if (r_zfar->value)
+	if (r_zfar->value != 0.f)
 	{
 		zFar = tr.viewParms.zFar = Q_max(tr.viewParms.zFar, r_zfar->value);
 	}
@@ -1561,13 +1665,9 @@ static void R_SetupProjection(qboolean infiniteFarClip)
 #endif
 }
 // *INDENT-ON*
-
-/*
-=================
-R_SetupUnprojection
-create a matrix with similar functionality like gluUnproject, project from window space to world space
-=================
-*/
+/**
+ * @brief Create a matrix with similar functionality like gluUnproject, project from window space to world space
+ */
 static void R_SetupUnprojection(void)
 {
 	float *unprojectMatrix = tr.viewParms.unprojectionMatrix;
@@ -1582,21 +1682,17 @@ static void R_SetupUnprojection(void)
 	// -(float)glConfig.vidHeight / (float)tr.viewParms.viewportHeight, -1.0);
 
 	MatrixMultiplyTranslation(unprojectMatrix, -1.0, -1.0, -1.0);
-	MatrixMultiplyScale(unprojectMatrix, 2.0 * Q_recip((float)glConfig.vidWidth), 2.0 * Q_recip((float)glConfig.vidHeight), 2.0);
+	MatrixMultiplyScale(unprojectMatrix, 2.0f * Q_recip((float)glConfig.vidWidth), 2.0f * Q_recip((float)glConfig.vidHeight), 2.0f);
 }
 
-/*
-=================
-R_SetupFrustum
-
-Setup that culling frustum planes for the current view
-=================
-*/
+/**
+ * @brief Setup that culling frustum planes for the current view
+ */
 static void R_SetupFrustum(void)
 {
 	int    i;
 	float  xs, xc;
-	float  ang = tr.viewParms.fovX / 180 * M_PI * 0.5f;
+	float  ang = tr.viewParms.fovX / 180 * M_PI * 0.5;
 	vec3_t planeOrigin;
 
 	xs = sin(ang);
@@ -1608,7 +1704,7 @@ static void R_SetupFrustum(void)
 	VectorScale(tr.viewParms.orientation.axis[0], xs, tr.viewParms.frustums[0][1].normal);
 	VectorMA(tr.viewParms.frustums[0][1].normal, -xc, tr.viewParms.orientation.axis[1], tr.viewParms.frustums[0][1].normal);
 
-	ang = tr.viewParms.fovY / 180 * M_PI * 0.5f;
+	ang = tr.viewParms.fovY / 180 * M_PI * 0.5;
 	xs  = sin(ang);
 	xc  = cos(ang);
 
@@ -1633,15 +1729,13 @@ static void R_SetupFrustum(void)
 	tr.viewParms.frustums[0][FRUSTUM_NEAR].dist = DotProduct(planeOrigin, tr.viewParms.frustums[0][FRUSTUM_NEAR].normal);
 	SetPlaneSignbits(&tr.viewParms.frustums[0][FRUSTUM_NEAR]);
 }
-
-/*
-=================
-R_SetupFrustum
-
-Setup that culling frustum planes for the current view
-=================
-*/
 // *INDENT-OFF*
+
+/**
+ * @brief Setup that culling frustum planes for the current view
+ * @param[out] frustum
+ * @param[in] mvp
+ */
 void R_SetupFrustum2(frustum_t frustum, const mat4_t mvp)
 {
 	// http://www2.ravensoft.com/users/ggribb/plane%20extraction.pdf
@@ -1691,9 +1785,9 @@ void R_SetupFrustum2(frustum_t frustum, const mat4_t mvp)
 
 		// normalize
 		length = VectorLength(frustum[i].normal);
-		if (length)
+		if (length != 0.f)
 		{
-			ilength               = 1.0 / length;
+			ilength               = 1.0f / length;
 			frustum[i].normal[0] *= ilength;
 			frustum[i].normal[1] *= ilength;
 			frustum[i].normal[2] *= ilength;
@@ -1705,6 +1799,11 @@ void R_SetupFrustum2(frustum_t frustum, const mat4_t mvp)
 }
 // *INDENT-ON*
 
+/**
+ * @brief CopyPlane
+ * @param[in] in
+ * @param[out] out
+ */
 static void CopyPlane(const cplane_t *in, cplane_t *out)
 {
 	VectorCopy(in->normal, out->normal);
@@ -1715,6 +1814,9 @@ static void CopyPlane(const cplane_t *in, cplane_t *out)
 	out->pad[1]   = in->pad[1];
 }
 
+/**
+ * @brief R_SetupSplitFrustums
+ */
 static void R_SetupSplitFrustums(void)
 {
 	int    i, j;
@@ -1764,11 +1866,13 @@ static void R_SetupSplitFrustums(void)
 	}
 }
 
-/*
-=================
-R_MirrorPoint
-=================
-*/
+/**
+ * @brief R_MirrorPoint
+ * @param[in] in
+ * @param[in] surface
+ * @param[in] camera
+ * @param[out] out
+ */
 void R_MirrorPoint(vec3_t in, orientation_t *surface, orientation_t *camera, vec3_t out)
 {
 	int    i;
@@ -1788,6 +1892,13 @@ void R_MirrorPoint(vec3_t in, orientation_t *surface, orientation_t *camera, vec
 	VectorAdd(transformed, camera->origin, out);
 }
 
+/**
+ * @brief R_MirrorVector
+ * @param[in] in
+ * @param[in] surface
+ * @param[in] camera
+ * @param(out] out
+ */
 void R_MirrorVector(vec3_t in, orientation_t *surface, orientation_t *camera, vec3_t out)
 {
 	int   i;
@@ -1801,11 +1912,11 @@ void R_MirrorVector(vec3_t in, orientation_t *surface, orientation_t *camera, ve
 	}
 }
 
-/*
-=============
-R_PlaneForSurface
-=============
-*/
+/**
+ * @brief R_PlaneForSurface
+ * @param[in] surfType
+ * @param[out] plane
+ */
 void R_PlaneForSurface(surfaceType_t *surfType, cplane_t *plane)
 {
 	srfTriangles_t *tri;
@@ -1846,16 +1957,16 @@ void R_PlaneForSurface(surfaceType_t *surfType, cplane_t *plane)
 	}
 }
 
-/*
-=================
-R_GetPortalOrientation
-
-entityNum is the entity that the portal surface is a part of, which may
-be moving and rotating.
-
-Returns qtrue if it should be mirrored
-=================
-*/
+/**
+ * @brief entityNum is the entity that the portal surface is a part of, which may
+ * be moving and rotating.
+ * @param[in] drawSurf
+ * @param[in] surface
+ * @param[out] camera
+ * @param[out] pvsOrigin
+ * @param[out] mirror
+ * @return qtrue if it should be mirrored
+ */
 static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, orientation_t *surface, orientation_t *camera, vec3_t pvsOrigin,
                                         qboolean *mirror)
 {
@@ -1974,7 +2085,7 @@ static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, orientation_t *sur
 			else
 			{
 				// bobbing rotate, with skinNum being the rotation offset
-				d = sin(tr.refdef.time * 0.003f);
+				d = sin(tr.refdef.time * 0.003);
 				d = e->e.skinNum + d * 4;
 				VectorCopy(camera->axis[1], transformed);
 				RotatePointAroundVector(camera->axis[1], camera->axis[0], transformed, d);
@@ -2009,6 +2120,11 @@ static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, orientation_t *sur
 	return qfalse;
 }
 
+/**
+ * @brief IsMirror
+ * @param[in] drawSurf
+ * @return
+ */
 static qboolean IsMirror(const drawSurf_t *drawSurf)
 {
 	int           i;
@@ -2066,11 +2182,12 @@ static qboolean IsMirror(const drawSurf_t *drawSurf)
 	return qfalse;
 }
 
-/*
-SurfIsOffscreen
-
- Determines if a surface is completely offscreen.
-*/
+/**
+ * @brief Determines if a surface is completely offscreen.
+ * @param[in] drawSurf
+ * @param clipDest - unused
+ * @return
+ */
 static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128])
 {
 	float        shortest = 100000000;
@@ -2180,13 +2297,11 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 	return qfalse;
 }
 
-/*
-========================
-R_MirrorViewBySurface
-
-Returns qtrue if another view has been rendered
-========================
-*/
+/**
+ * @brief R_MirrorViewBySurface
+ * @param[in] drawSurf
+ * @return qtrue if another view has been rendered
+ */
 static qboolean R_MirrorViewBySurface(drawSurf_t *drawSurf)
 {
 	vec4_t        clipDest[128];
@@ -2246,13 +2361,11 @@ static qboolean R_MirrorViewBySurface(drawSurf_t *drawSurf)
 	return qtrue;
 }
 
-/*
-=================
-R_SpriteFogNum
-
-See if a sprite is inside a fog volume
-=================
-*/
+/**
+ * @brief See if a sprite is inside a fog volume
+ * @param[in] ent
+ * @return
+ */
 int R_SpriteFogNum(trRefEntity_t *ent)
 {
 	int   i, j;
@@ -2286,11 +2399,13 @@ int R_SpriteFogNum(trRefEntity_t *ent)
 	return 0;
 }
 
-/*
-=================
-R_AddDrawSurf
-=================
-*/
+/**
+ * @brief R_AddDrawSurf
+ * @param[in] surface
+ * @param[in] shader
+ * @param[in] lightmapNum
+ * @param[in] fogNum
+ */
 void R_AddDrawSurf(surfaceType_t *surface, shader_t *shader, int lightmapNum, int fogNum)
 {
 	int        index;
@@ -2311,12 +2426,12 @@ void R_AddDrawSurf(surfaceType_t *surface, shader_t *shader, int lightmapNum, in
 	tr.refdef.numDrawSurfs++;
 }
 
-/*
-=================
-DrawSurfCompare
-compare function for qsort()
-=================
-*/
+/**
+ * @brief Compare function for qsort()
+ * @param[in] a
+ * @param[in] b
+ * @return
+ */
 static int DrawSurfCompare(const void *a, const void *b)
 {
 #if 1
@@ -2378,11 +2493,9 @@ static int DrawSurfCompare(const void *a, const void *b)
 	return 0;
 }
 
-/*
-=================
-R_SortDrawSurfs
-=================
-*/
+/**
+ * @brief R_SortDrawSurfs
+ */
 static void R_SortDrawSurfs(void)
 {
 	drawSurf_t *drawSurf;
@@ -2465,11 +2578,9 @@ static void R_SortDrawSurfs(void)
 	R_AddDrawViewCmd();
 }
 
-/*
-=============
-R_AddEntitySurfaces
-=============
-*/
+/**
+ * @brief R_AddEntitySurfaces
+ */
 void R_AddEntitySurfaces(void)
 {
 	int           i;
@@ -2560,22 +2671,21 @@ void R_AddEntitySurfaces(void)
 					break;
 				default:
 					Ren_Drop("R_AddEntitySurfaces: Bad modeltype");
-					break;
+					//break;
 				}
 			}
 			break;
 		default:
 			Ren_Drop("R_AddEntitySurfaces: Bad reType");
-			break;
+			//break;
 		}
 	}
 }
 
-/*
-=============
-R_AddEntityInteractions
-=============
-*/
+/**
+ * @brief R_AddEntityInteractions
+ * @param[in] light
+ */
 void R_AddEntityInteractions(trRefLight_t *light)
 {
 	int           i;
@@ -2643,22 +2753,21 @@ void R_AddEntityInteractions(trRefLight_t *light)
 					break;
 				default:
 					Ren_Drop("R_AddEntityInteractions: Bad modeltype");
-					break;
+					//break;
 				}
 			}
 			break;
 		default:
 			Ren_Drop("R_AddEntityInteractions: Bad reType");
-			break;
+			//break;
 		}
 	}
 }
 
-/*
-=====================
-R_AddPolygonInteractions
-=====================
-*/
+/**
+ * @brief R_AddPolygonInteractions
+ * @param[in] light
+ */
 void R_AddPolygonInteractions(trRefLight_t *light)
 {
 	int       i, j;
@@ -2699,11 +2808,9 @@ void R_AddPolygonInteractions(trRefLight_t *light)
 	}
 }
 
-/*
-=============
-R_AddLightInteractions
-=============
-*/
+/**
+ * @brief R_AddLightInteractions
+ */
 void R_AddLightInteractions()
 {
 	int          i; //j;
@@ -2928,6 +3035,9 @@ void R_AddLightInteractions()
 	}
 }
 
+/**
+ * @brief R_AddLightBoundsToVisBounds
+ */
 void R_AddLightBoundsToVisBounds()
 {
 	int          i; //j;
@@ -3097,6 +3207,11 @@ void R_AddLightBoundsToVisBounds()
 	}
 }
 
+/**
+ * @brief R_DebugAxis
+ * @param[in] origin
+ * @param[in] transformMatrix
+ */
 void R_DebugAxis(const vec3_t origin, const mat4_t transformMatrix)
 {
 #if 0
@@ -3128,7 +3243,15 @@ void R_DebugAxis(const vec3_t origin, const mat4_t transformMatrix)
 #endif
 }
 
-// from botlib
+/**
+ * @brief R_DebugBoundingBox
+ * @param[in] origin
+ * @param[in] mins
+ * @param[in] maxs
+ * @param[in] color
+ *
+ * @note from botlib
+ */
 void R_DebugBoundingBox(const vec3_t origin, const vec3_t mins, const vec3_t maxs, vec4_t color)
 {
 #if 0
@@ -3178,11 +3301,12 @@ void R_DebugBoundingBox(const vec3_t origin, const vec3_t mins, const vec3_t max
 #endif
 }
 
-/*
-================
-R_DebugPolygon
-================
-*/
+/**
+ * @brief R_DebugPolygon
+ * @param[in] color
+ * @param[in] numPoints
+ * @param[in] points
+ */
 void R_DebugPolygon(int color, int numPoints, float *points)
 {
 #if 0
@@ -3215,11 +3339,15 @@ void R_DebugPolygon(int color, int numPoints, float *points)
 #endif
 }
 
-/*
-================
-R_DebugText
-================
-*/
+/**
+ * @brief R_DebugText
+ * @param[in] org
+ * @param[in] r
+ * @param[in] g
+ * @param[in] b
+ * @param[in] text
+ * @param[in] neverOcclude
+ */
 void R_DebugText(const vec3_t org, float r, float g, float b, const char *text, qboolean neverOcclude)
 {
 #if 0
@@ -3243,13 +3371,9 @@ void R_DebugText(const vec3_t org, float r, float g, float b, const char *text, 
 #endif
 }
 
-/*
-====================
-R_DebugGraphics
-
-Visualization aid for movement clipping debugging
-====================
-*/
+/**
+ * @brief Visualization aid for movement clipping debugging
+ */
 static void R_DebugGraphics(void)
 {
 	if (r_debugSurface->integer)
@@ -3265,14 +3389,11 @@ static void R_DebugGraphics(void)
 	}
 }
 
-/*
-================
-R_RenderView
-
-A view may be either the actual camera view,
-or a mirror / remote location
-================
-*/
+/**
+ * @brief A view may be either the actual camera view,
+ * or a mirror / remote location
+ * @param[in] parms
+ */
 void R_RenderView(viewParms_t *parms)
 {
 	int    firstDrawSurf;

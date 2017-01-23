@@ -36,12 +36,31 @@
 
 #include "tr_local.h"
 
-/*static int CompareBoneIndices(const void *a, const void *b)
+/**
+ * @brief CompareBoneIndices
+ * @param[in] a
+ * @param[in] b
+ * @return
+ *
+ * @note Unused
+ */
+/*
+static int CompareBoneIndices(const void *a, const void *b)
 {
         return *(int *)a - *(int *)b;
-}*/
+}
+*/
 
-/*static int CompareTrianglesByBoneReferences(const void *a, const void *b)
+/**
+ * @brief CompareTrianglesByBoneReferences
+ * @param[in] a
+ * @param[in] b
+ * @return
+ *
+ * @note Unused
+ */
+/*
+static int CompareTrianglesByBoneReferences(const void *a, const void *b)
 {
         int             i, j;
 
@@ -116,6 +135,14 @@
         return 0;
 }*/
 
+/**
+ * @brief AddTriangleToVBOTriangleList
+ * @param[in] vboTriangles
+ * @param[in] tri
+ * @param[in,out] numBoneReferences
+ * @param[in,out] boneReferences
+ * @return
+ */
 qboolean AddTriangleToVBOTriangleList(growList_t *vboTriangles, skelTriangle_t *tri, int *numBoneReferences, int boneReferences[MAX_BONES])
 {
 	int         i, j, k;
@@ -206,6 +233,16 @@ qboolean AddTriangleToVBOTriangleList(growList_t *vboTriangles, skelTriangle_t *
 	return qfalse;
 }
 
+/**
+ * @brief AddSurfaceToVBOSurfacesList
+ * @param[in] vboSurfaces
+ * @param[in] vboTriangles
+ * @param[in] md5
+ * @param[in] surf
+ * @param[in] skinIndex
+ * @param numBoneReferences - unused
+ * @param[in] boneReferences
+ */
 void AddSurfaceToVBOSurfacesList(growList_t *vboSurfaces, growList_t *vboTriangles, md5Model_t *md5, md5Surface_t *surf, int skinIndex, int numBoneReferences, int boneReferences[MAX_BONES])
 {
 	int             j, k;
@@ -425,6 +462,17 @@ void AddSurfaceToVBOSurfacesList(growList_t *vboSurfaces, growList_t *vboTriangl
 	 */
 }
 
+/**
+ * @brief AddSurfaceToVBOSurfacesList2
+ * @param[in] vboSurfaces
+ * @param[in] vboTriangles
+ * @param[in] vboVertexes
+ * @param[in] md5
+ * @param[in] skinIndex
+ * @param[in] materialName
+ * @param numBoneReferences - unused
+ * @param[in] boneReferences
+ */
 void AddSurfaceToVBOSurfacesList2(growList_t *vboSurfaces, growList_t *vboTriangles, growList_t *vboVertexes, md5Model_t *md5, int skinIndex, const char *materialName, int numBoneReferences, int boneReferences[MAX_BONES])
 {
 	int             j, k;

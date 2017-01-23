@@ -37,6 +37,11 @@
 #include "tr_local.h"
 #include "tr_model_skel.h"
 
+/**
+ * @brief GetChunkHeader
+ * @param[in] s
+ * @param[out] chunkHeader
+ */
 static void GetChunkHeader(memStream_t *s, axChunkHeader_t *chunkHeader)
 {
 	int i;
@@ -51,6 +56,10 @@ static void GetChunkHeader(memStream_t *s, axChunkHeader_t *chunkHeader)
 	chunkHeader->numData  = MemStreamGetLong(s);
 }
 
+/**
+ * @brief PrintChunkHeader
+ * @param[in] chunkHeader
+ */
 static void PrintChunkHeader(axChunkHeader_t *chunkHeader)
 {
 #if 0
@@ -62,6 +71,11 @@ static void PrintChunkHeader(axChunkHeader_t *chunkHeader)
 #endif
 }
 
+/**
+ * @brief GetBone
+ * @param[in] s
+ * @param[out] bone
+ */
 static void GetBone(memStream_t *s, axBone_t *bone)
 {
 	int i;
@@ -83,6 +97,12 @@ static void GetBone(memStream_t *s, axBone_t *bone)
 	bone->zSize = MemStreamGetFloat(s);
 }
 
+/**
+ * @brief CompareTrianglesByMaterialIndex
+ * @param[in] a
+ * @param[in] b
+ * @return
+ */
 static int CompareTrianglesByMaterialIndex(const void *a, const void *b)
 {
 	axTriangle_t *t1, *t2;
@@ -103,6 +123,14 @@ static int CompareTrianglesByMaterialIndex(const void *a, const void *b)
 	return 0;
 }
 
+/**
+ * @brief R_LoadPSK
+ * @param[in,out] mod
+ * @param[in,out] buffer
+ * @param[in] bufferSize
+ * @param[in] modName
+ * @return
+ */
 qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modName)
 {
 	int         i, j, k;

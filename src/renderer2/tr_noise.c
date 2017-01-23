@@ -44,6 +44,14 @@
 static float s_noise_table[NOISE_SIZE];
 static int   s_noise_perm[NOISE_SIZE];
 
+/**
+ * @brief GetNoiseValue
+ * @param[in] x
+ * @param[in] y
+ * @param[in] z
+ * @param[in] t
+ * @return
+ */
 static float GetNoiseValue(int x, int y, int z, int t)
 {
 	int index = INDEX((int)x, (int)y, (int)z, (int)t);
@@ -51,6 +59,9 @@ static float GetNoiseValue(int x, int y, int z, int t)
 	return s_noise_table[index];
 }
 
+/**
+ * @brief R_NoiseInit
+ */
 void R_NoiseInit(void)
 {
 	int i;
@@ -59,11 +70,19 @@ void R_NoiseInit(void)
 
 	for (i = 0; i < NOISE_SIZE; i++)
 	{
-		s_noise_table[i] = (float)(((rand() / (float)RAND_MAX) * 2.0 - 1.0));
+		s_noise_table[i] = (float)(((rand() / (float)RAND_MAX) * 2.0f - 1.0f));
 		s_noise_perm[i]  = (unsigned char)(rand() / (float)RAND_MAX * 255);
 	}
 }
 
+/**
+ * @brief R_NoiseGet4f
+ * @param[in] x
+ * @param[in] y
+ * @param[in] z
+ * @param[in] t
+ * @return
+ */
 float R_NoiseGet4f(float x, float y, float z, float t)
 {
 	int   i;
@@ -73,13 +92,13 @@ float R_NoiseGet4f(float x, float y, float z, float t)
 	float back[4];
 	float fvalue, bvalue, value[2], finalvalue;
 
-	ix = (int)floor(x);
+	ix = (int)(floor(x));
 	fx = x - ix;
-	iy = (int)floor(y);
+	iy = (int)(floor(y));
 	fy = y - iy;
-	iz = (int)floor(z);
+	iz = (int)(floor(z));
 	fz = z - iz;
-	it = (int)floor(t);
+	it = (int)(floor(t));
 	ft = t - it;
 
 	for (i = 0; i < 2; i++)

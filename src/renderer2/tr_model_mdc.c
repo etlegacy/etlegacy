@@ -39,16 +39,20 @@
 #define NUMMDCVERTEXNORMALS 256
 // *INDENT-ON*
 
-// NOTE: MDC_MAX_ERROR is effectively the compression level. the lower this value, the higher
-// the accuracy, but with lower compression ratios.
-#define MDC_MAX_ERROR     0.1 // if any compressed vert is off by more than this from the
-// actual vert, make this a baseframe
+/**
+ * @def MDC_MAX_ERROR
+ *
+ * @brief MDC_MAX_ERROR is effectively the compression level. the lower this value, the higher
+ * the accuracy, but with lower compression ratios.
+ * If any compressed vert is off by more than this from the
+ * actual vert, make this a baseframe
+ */
+#define MDC_MAX_ERROR     0.1
 
-#define MDC_DIST_SCALE    0.05 // lower for more accuracy, but less range
+#define MDC_DIST_SCALE    0.05  ///< lower for more accuracy, but less range
 
-// note: we are locked in at 8 or less bits since changing to byte-encoded normals
-#define MDC_BITS_PER_AXIS 8
-#define MDC_MAX_OFS       127.0 // to be safe
+#define MDC_BITS_PER_AXIS 8     ///< we are locked in at 8 or less bits since changing to byte-encoded normals
+#define MDC_MAX_OFS       127.0 ///< to be safe
 
 #define MDC_MAX_DIST      (MDC_MAX_OFS * MDC_DIST_SCALE)
 
@@ -64,6 +68,10 @@
 	(out)[2] = ((float)((ofsVec >> 16) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
 	//VectorCopy( ( r_anormals )[( ofsVec >> 24 )], normal ); //This doesn't do anything...
 
+/**
+ * @brief R_MDC_CreateVBO_Surfaces
+ * @param[in,out] mdvModel
+ */
 static void R_MDC_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 {
 	int            i, j, k;
@@ -322,12 +330,15 @@ static void R_MDC_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 	Com_DestroyGrowList(&vboSurfaces);
 }
 
-
-/*
-=================
-R_LoadMDC
-=================
-*/
+/**
+ * @brief R_LoadMDC
+ * @param[in,out] mod
+ * @param[in] lod
+ * @param[in,out] buffer
+ * @param bufferSize - unused
+ * @param[in] modName
+ * @return
+ */
 qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, int bufferSize, const char *modName)
 {
 	int                i, j, k;

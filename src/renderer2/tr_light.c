@@ -35,16 +35,14 @@
 
 #include "tr_local.h"
 
-/*
-=============
-R_AddBrushModelInteractions
-
-Determine which dynamic lights may effect this bmodel
-=============
-*/
+/**
+ * @brief Determine which dynamic lights may effect this bmodel
+ * @param[in] ent
+ * @param[in] light
+ */
 void R_AddBrushModelInteractions(trRefEntity_t *ent, trRefLight_t *light)
 {
-	int               i;
+	unsigned int      i;
 	bspSurface_t      *surf;
 	bspModel_t        *bspModel = NULL;
 	model_t           *pModel   = NULL;
@@ -168,11 +166,11 @@ LIGHT SAMPLING
 =============================================================================
 */
 
-/*
-=================
-R_SetupEntityLightingGrid
-=================
-*/
+/**
+ * @brief R_SetupEntityLightingGrid
+ * @param[in,out] ent
+ * @param[in] forcedOrigin
+ */
 static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 {
 	vec3_t         lightOrigin;
@@ -271,7 +269,7 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 	}
 
 #if 1
-	if (totalFactor > 0 && totalFactor < 0.99)
+	if (totalFactor > 0 && totalFactor < 0.99f)
 	{
 		totalFactor = 1.0f / totalFactor;
 		VectorScale(ent->ambientLight, totalFactor, ent->ambientLight);
@@ -289,21 +287,23 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 	}
 
 	// cheats?  check for single player?
-	if (tr.lightGridMulDirected)
+	if (tr.lightGridMulDirected != 0.f)
 	{
 		VectorScale(ent->directedLight, tr.lightGridMulDirected, ent->directedLight);
 	}
-	if (tr.lightGridMulAmbient)
+	if (tr.lightGridMulAmbient != 0.f)
 	{
 		VectorScale(ent->ambientLight, tr.lightGridMulAmbient, ent->ambientLight);
 	}
 }
 
-/* unused
-===============
-LogLight
-===============
-
+/**
+ * @brief LogLight
+ * @param(in] ent
+ *
+ * @note Unused
+ */
+/*
 static void LogLight(trRefEntity_t *ent)
 {
     int max1, max2;
@@ -337,14 +337,13 @@ static void LogLight(trRefEntity_t *ent)
 }
 */
 
-/*
-=================
-R_SetupEntityLighting
-
-Calculates all the lighting values that will be used
-by the Calc_* functions
-=================
-*/
+/**
+ * @brief Calculates all the lighting values that will be used
+ * by the Calc_* functions
+ * @param[in] refdef
+ * @param[in,out] ent
+ * @param[in] forcedOrigin
+ */
 void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t forcedOrigin)
 {
 	//vec3_t          lightDir;
@@ -430,7 +429,7 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 	}
 
 #if 1
-	if (ent->e.hilightIntensity)
+	if (ent->e.hilightIntensity != 0.f)
 	{
 		// level of intensity was set because the item was looked at
 		ent->ambientLight[0] += tr.identityLight * 0.5f * ent->e.hilightIntensity;
@@ -474,11 +473,14 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 	//ent->lightDir[2] = DotProduct(lightDir, ent->e.axis[2]);
 }
 
-/*
-=================
-R_LightForPoint
-=================
-*/
+/**
+ * @brief R_LightForPoint
+ * @param[in] point
+ * @param[out] ambientLight
+ * @param[out] directedLight
+ * @param[out] lightDir
+ * @return
+ */
 int R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir)
 {
 	trRefEntity_t ent;
@@ -499,12 +501,12 @@ int R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec
 	return qtrue;
 }
 
-/*
-=================
-R_SetupLightOrigin
-- needs finished transformMatrix
-=================
-*/
+/**
+ * @brief R_SetupLightOrigin
+ * @param[in,out] light
+ *
+ * @note Needs finished transformMatrix
+ */
 void R_SetupLightOrigin(trRefLight_t *light)
 {
 	vec3_t transformed;
@@ -540,11 +542,10 @@ void R_SetupLightOrigin(trRefLight_t *light)
 	}
 }
 
-/*
-=================
-R_SetupLightLocalBounds
-=================
-*/
+/**
+ * @brief R_SetupLightLocalBounds
+ * @param[in,out] light
+ */
 void R_SetupLightLocalBounds(trRefLight_t *light)
 {
 	switch (light->l.rlType)
@@ -623,12 +624,12 @@ void R_SetupLightLocalBounds(trRefLight_t *light)
 	light->sphereRadius = RadiusFromBounds(light->localBounds[0], light->localBounds[1]);
 }
 
-/*
-=================
-R_SetupLightWorldBounds
-- needs finished transformMatrix
-=================
-*/
+/**
+ * @brief R_SetupLightWorldBounds
+ * @param[in] light
+ *
+ * @note Needs finished transformMatrix
+ */
 void R_SetupLightWorldBounds(trRefLight_t *light)
 {
 	int    j;
@@ -649,11 +650,10 @@ void R_SetupLightWorldBounds(trRefLight_t *light)
 	}
 }
 
-/*
-=================
-R_SetupLightView
-=================
-*/
+/**
+ * @brief R_SetupLightView
+ * @param[in] light
+ */
 void R_SetupLightView(trRefLight_t *light)
 {
 	switch (light->l.rlType)
@@ -680,15 +680,14 @@ void R_SetupLightView(trRefLight_t *light)
 	*/
 	default:
 		Ren_Drop("R_SetupLightView: Bad rlType");
-		break;
+		//break;
 	}
 }
 
-/*
-=================
-R_SetupLightFrustum
-=================
-*/
+/**
+ * @brief R_SetupLightFrustum
+ * @param[in,out] light
+ */
 void R_SetupLightFrustum(trRefLight_t *light)
 {
 	switch (light->l.rlType)
@@ -731,9 +730,9 @@ void R_SetupLightFrustum(trRefLight_t *light)
 
 			// normalize
 			length = VectorLength(light->frustum[i].normal);
-			if (length)
+			if (length != 0.f)
 			{
-				ilength                      = 1.0 / length;
+				ilength                      = 1.0f / length;
 				light->frustum[i].normal[0] *= ilength;
 				light->frustum[i].normal[1] *= ilength;
 				light->frustum[i].normal[2] *= ilength;
@@ -939,12 +938,11 @@ void R_SetupLightFrustum(trRefLight_t *light)
 	}
 }
 
-/*
-=================
-R_SetupLightProjection
-=================
-*/
 // *INDENT-OFF*
+/**
+ * @brief R_SetupLightProjection
+ * @param[in,out] light
+ */
 void R_SetupLightProjection(trRefLight_t *light)
 {
 	switch (light->l.rlType)
@@ -952,7 +950,7 @@ void R_SetupLightProjection(trRefLight_t *light)
 	case RL_OMNI:
 	case RL_DIRECTIONAL:
 	{
-		mat4_reset_scale(light->projectionMatrix, 1.0 / light->l.radius[0], 1.0 / light->l.radius[1], 1.0 / light->l.radius[2]);
+		mat4_reset_scale(light->projectionMatrix, 1.0f / light->l.radius[0], 1.0f / light->l.radius[1], 1.0f / light->l.radius[2]);
 		break;
 	}
 	case RL_PROJ:
@@ -1002,14 +1000,14 @@ void R_SetupLightProjection(trRefLight_t *light)
 		{
 			a   = DotProduct4(targetGlobal, lightProject[0]);
 			b   = DotProduct4(targetGlobal, lightProject[2]);
-			ofs = 0.5 - a / b;
+			ofs = 0.5f - a / b;
 
 			Vector4MA(lightProject[0], ofs, lightProject[2], lightProject[0]);
 		}
 		{
 			a   = DotProduct4(targetGlobal, lightProject[1]);
 			b   = DotProduct4(targetGlobal, lightProject[2]);
-			ofs = 0.5 - a / b;
+			ofs = 0.5f - a / b;
 
 			Vector4MA(lightProject[1], ofs, lightProject[2], lightProject[1]);
 		}
@@ -1102,16 +1100,20 @@ void R_SetupLightProjection(trRefLight_t *light)
 
 	default:
 		Ren_Drop("R_SetupLightProjection: Bad rlType");
-		break;
+		//break;
 	}
 }
 // *INDENT-ON*
 
-/*
-=================
-R_AddLightInteraction
-=================
-*/
+/**
+ * @brief R_AddLightInteraction
+ * @param[in,out] light
+ * @param[in] surface
+ * @param[in] surfaceShader
+ * @param[in] cubeSideBits
+ * @param[in] iaType
+ * @return
+ */
 qboolean R_AddLightInteraction(trRefLight_t *light, surfaceType_t *surface, shader_t *surfaceShader, byte cubeSideBits,
                                interactionType_t iaType)
 {
@@ -1205,13 +1207,12 @@ qboolean R_AddLightInteraction(trRefLight_t *light, surfaceType_t *surface, shad
 	return qtrue;
 }
 
-
-/*
-=================
-InteractionCompare
-compare function for qsort()
-=================
-*/
+/**
+ * @brief Compare function for qsort()
+ * @param[in] a
+ * @param[in] b
+ * @return
+ */
 static int InteractionCompare(const void *a, const void *b)
 {
 #if 1
@@ -1249,11 +1250,10 @@ static int InteractionCompare(const void *a, const void *b)
 	return 0;
 }
 
-/*
-=================
-R_SortInteractions
-=================
-*/
+/**
+ * @brief R_SortInteractions
+ * @param[in] light
+ */
 void R_SortInteractions(trRefLight_t *light)
 {
 	int           i;
@@ -1295,11 +1295,13 @@ void R_SortInteractions(trRefLight_t *light)
 	}
 }
 
-/*
-=================
-R_IntersectRayPlane
-=================
-*/
+/**
+ * @brief R_IntersectRayPlane
+ * @param[in] v1
+ * @param[in] v2
+ * @param[in] plane
+ * @param[out] res
+ */
 static void R_IntersectRayPlane(const vec3_t v1, const vec3_t v2, cplane_t *plane, vec3_t res)
 {
 	vec3_t v;
@@ -1311,11 +1313,11 @@ static void R_IntersectRayPlane(const vec3_t v1, const vec3_t v2, cplane_t *plan
 	VectorAdd(v1, v, res);
 }
 
-/*
-=================
-R_AddPointToLightScissor
-=================
-*/
+/**
+ * @brief R_AddPointToLightScissor
+ * @param[in,out] light
+ * @param[in] world
+ */
 static void R_AddPointToLightScissor(trRefLight_t *light, const vec3_t world)
 {
 	vec4_t eye, clip, normalized, window;
@@ -1344,11 +1346,12 @@ static void R_AddPointToLightScissor(trRefLight_t *light, const vec3_t world)
 	}
 }
 
-/*
-=================
-R_AddEdgeToLightScissor
-=================
-*/
+/**
+ * @brief R_AddEdgeToLightScissor
+ * @param[in,out] light
+ * @param[in] local1
+ * @param[in] local2
+ */
 static void R_AddEdgeToLightScissor(trRefLight_t *light, vec3_t local1, vec3_t local2)
 {
 	int      i;
@@ -1365,8 +1368,8 @@ static void R_AddEdgeToLightScissor(trRefLight_t *light, vec3_t local1, vec3_t l
 		frust = &tr.viewParms.frustums[0][i];
 
 		// check edge to frustrum plane
-		side1 = ((DotProduct(frust->normal, world1) - frust->dist) >= 0.0);
-		side2 = ((DotProduct(frust->normal, world2) - frust->dist) >= 0.0);
+		side1 = ((DotProduct(frust->normal, world1) - frust->dist) >= 0.0f);
+		side2 = ((DotProduct(frust->normal, world2) - frust->dist) >= 0.0f);
 
 		if (glConfig2.occlusionQueryAvailable && i == FRUSTUM_NEAR)
 		{
@@ -1400,14 +1403,12 @@ static void R_AddEdgeToLightScissor(trRefLight_t *light, vec3_t local1, vec3_t l
 	}
 }
 
-/*
-=================
-R_SetLightScissor
-Recturns the screen space rectangle taken by the box.
-    (Clips the box to the near plane to have correct results even if the box intersects the near plane)
-- recoded from Tenebrae2
-=================
-*/
+/**
+ * @brief Recturns the screen space rectangle taken by the box.
+ * (Clips the box to the near plane to have correct results even if the box intersects the near plane)
+ * - recoded from Tenebrae2
+ * @param[in,out] light
+ */
 void R_SetupLightScissor(trRefLight_t *light)
 {
 	vec3_t v1, v2;
@@ -1567,86 +1568,88 @@ void R_SetupLightScissor(trRefLight_t *light)
 	Q_clamp(light->scissor.coords[3], tr.viewParms.viewportY, tr.viewParms.viewportY + tr.viewParms.viewportHeight);
 }
 
+/**
+ * @brief R_SetupLightDepthBounds
+ * @param[in,out] light
+ *
+ * @note Unused
+ */
 /*
-=================
-R_SetupLightDepthBounds
-=================
-*/
 void R_SetupLightDepthBounds(trRefLight_t *light)
 {
-#if 0
-	int    i, j;
-	vec3_t v, world;
-	vec4_t eye, clip, normalized, window;
-	float  depthMin, depthMax;
+    int    i, j;
+    vec3_t v, world;
+    vec4_t eye, clip, normalized, window;
+    float  depthMin, depthMax;
 
-	if (r_shadows->integer == SHADOWING_STENCIL && glDepthBoundsEXT)
-	{
-		tr.pc.c_depthBoundsTestsRejected++;
+    if (r_shadows->integer == SHADOWING_STENCIL && glDepthBoundsEXT)
+    {
+        tr.pc.c_depthBoundsTestsRejected++;
 
-		depthMin = 1.0;
-		depthMax = 0.0;
+        depthMin = 1.0;
+        depthMax = 0.0;
 
-		for (j = 0; j < 8; j++)
-		{
-			v[0] = light->localBounds[j & 1][0];
-			v[1] = light->localBounds[(j >> 1) & 1][1];
-			v[2] = light->localBounds[(j >> 2) & 1][2];
+        for (j = 0; j < 8; j++)
+        {
+            v[0] = light->localBounds[j & 1][0];
+            v[1] = light->localBounds[(j >> 1) & 1][1];
+            v[2] = light->localBounds[(j >> 2) & 1][2];
 
-			// transform local bounds vertices into world space
-			MatrixTransformPoint(light->transformMatrix, v, world);
-			R_TransformWorldToClip(world, tr.viewParms.world.viewMatrix, tr.viewParms.projectionMatrix, eye, clip);
+            // transform local bounds vertices into world space
+            MatrixTransformPoint(light->transformMatrix, v, world);
+            R_TransformWorldToClip(world, tr.viewParms.world.viewMatrix, tr.viewParms.projectionMatrix, eye, clip);
 
-			//R_TransformModelToClip(v, tr.or.modelViewMatrix, tr.viewParms.projectionMatrix, eye, clip);
+            //R_TransformModelToClip(v, tr.or.modelViewMatrix, tr.viewParms.projectionMatrix, eye, clip);
 
-			// check to see if the point is completely off screen
-			for (i = 0; i < 3; i++)
-			{
-				if (clip[i] >= clip[3] || clip[i] <= -clip[3])
-				{
-					light->noDepthBoundsTest = qtrue;
-					return;
-				}
-			}
+            // check to see if the point is completely off screen
+            for (i = 0; i < 3; i++)
+            {
+                if (clip[i] >= clip[3] || clip[i] <= -clip[3])
+                {
+                    light->noDepthBoundsTest = qtrue;
+                    return;
+                }
+            }
 
-			R_TransformClipToWindow(clip, &tr.viewParms, normalized, window);
+            R_TransformClipToWindow(clip, &tr.viewParms, normalized, window);
 
-			if (window[0] < 0 || window[0] >= tr.viewParms.viewportWidth
-			    || window[1] < 0 || window[1] >= tr.viewParms.viewportHeight)
-			{
-				// shouldn't happen, since we check the clip[] above, except for FP rounding
-				light->noDepthBoundsTest = qtrue;
-				return;
-			}
+            if (window[0] < 0 || window[0] >= tr.viewParms.viewportWidth
+                || window[1] < 0 || window[1] >= tr.viewParms.viewportHeight)
+            {
+                // shouldn't happen, since we check the clip[] above, except for FP rounding
+                light->noDepthBoundsTest = qtrue;
+                return;
+            }
 
-			depthMin = min(normalized[2], depthMin);
-			depthMax = max(normalized[2], depthMax);
-		}
+            depthMin = min(normalized[2], depthMin);
+            depthMax = max(normalized[2], depthMax);
+        }
 
-		if (depthMin > depthMax)
-		{
-			// light behind near plane or clipped
-			light->noDepthBoundsTest = qtrue;
-		}
-		else
-		{
-			light->noDepthBoundsTest = qfalse;
-			light->depthNear         = depthMin;
-			light->depthFar          = depthMax;
+        if (depthMin > depthMax)
+        {
+            // light behind near plane or clipped
+            light->noDepthBoundsTest = qtrue;
+        }
+        else
+        {
+            light->noDepthBoundsTest = qfalse;
+            light->depthNear         = depthMin;
+            light->depthFar          = depthMax;
 
-			tr.pc.c_depthBoundsTestsRejected--;
-			tr.pc.c_depthBoundsTests++;
-		}
-	}
-#endif
+            tr.pc.c_depthBoundsTestsRejected--;
+            tr.pc.c_depthBoundsTests++;
+        }
+    }
 }
-
-/*
-=============
-R_CalcLightCubeSideBits
-=============
 */
+
 // *INDENT-OFF*
+/**
+ * @brief R_CalcLightCubeSideBits
+ * @param[in] light
+ * @param[in] worldBounds
+ * @return
+ */
 byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 {
 	int       i;
@@ -1743,10 +1746,10 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 		zNear = 1.0;
 		zFar  = light->sphereRadius;
 
-		xMax = zNear * tan(fovX * M_PI / 360.0f);
+		xMax = zNear * tan(fovX * M_PI / 360.0);
 		xMin = -xMax;
 
-		yMax = zNear * tan(fovY * M_PI / 360.0f);
+		yMax = zNear * tan(fovY * M_PI / 360.0);
 		yMin = -yMax;
 
 		width  = xMax - xMin;
@@ -1810,11 +1813,10 @@ byte R_CalcLightCubeSideBits(trRefLight_t *light, vec3_t worldBounds[2])
 }
 // *INDENT-ON*
 
-/*
-=================
-R_SetupLightLOD
-=================
-*/
+/**
+ * @brief R_SetupLightLOD
+ * @param[in,out] light
+ */
 void R_SetupLightLOD(trRefLight_t *light)
 {
 	float radius;
@@ -1835,7 +1837,7 @@ void R_SetupLightLOD(trRefLight_t *light)
 	// and use that as a criteria for selecting LOD
 	radius = light->sphereRadius;
 
-	if ((projectedRadius = R_ProjectRadius(radius, light->l.origin)) != 0)
+	if ((projectedRadius = R_ProjectRadius(radius, light->l.origin)) != 0.f)
 	{
 		lodscale = r_shadowLodScale->value;
 
@@ -1888,11 +1890,10 @@ void R_SetupLightLOD(trRefLight_t *light)
 	light->shadowLOD = lod;
 }
 
-/*
-=================
-R_SetupLightShader
-=================
-*/
+/**
+ * @brief R_SetupLightShader
+ * @param[in,out] light
+ */
 void R_SetupLightShader(trRefLight_t *light)
 {
 	if (!light->l.attenuationShader)
@@ -1930,11 +1931,11 @@ void R_SetupLightShader(trRefLight_t *light)
 	}
 }
 
-/*
-===============
-R_ComputeFinalAttenuation
-===============
-*/
+/**
+ * @brief R_ComputeFinalAttenuation
+ * @param[in] pStage
+ * @param[in] light
+ */
 void R_ComputeFinalAttenuation(shaderStage_t *pStage, trRefLight_t *light)
 {
 	mat4_t matrix;
@@ -1946,13 +1947,12 @@ void R_ComputeFinalAttenuation(shaderStage_t *pStage, trRefLight_t *light)
 	mat4_mult(matrix, light->attenuationMatrix, light->attenuationMatrix2);
 }
 
-/*
-=================
-R_CullLightPoint
-
-Returns CULL_IN, CULL_CLIP, or CULL_OUT
-=================
-*/
+/**
+ * @brief R_CullLightPoint
+ * @param[in] light
+ * @param[in] p
+ * @return CULL_IN, CULL_CLIP, or CULL_OUT
+ */
 int R_CullLightPoint(trRefLight_t *light, const vec3_t p)
 {
 	int      i;
@@ -1976,13 +1976,12 @@ int R_CullLightPoint(trRefLight_t *light, const vec3_t p)
 	return CULL_IN;
 }
 
-/*
-=================
-R_CullLightTriangle
-
-Returns CULL_IN, CULL_CLIP, or CULL_OUT
-=================
-*/
+/**
+ * @brief R_CullLightTriangle
+ * @param[in] light
+ * @param[in] verts
+ * @return CULL_IN, CULL_CLIP, or CULL_OUT
+ */
 int R_CullLightTriangle(trRefLight_t *light, vec3_t verts[3])
 {
 	int    i;
@@ -2003,13 +2002,12 @@ int R_CullLightTriangle(trRefLight_t *light, vec3_t verts[3])
 	return R_CullLightWorldBounds(light, worldBounds);
 }
 
-/*
-=================
-R_CullLightTriangle
-
-Returns CULL_IN, CULL_CLIP, or CULL_OUT
-=================
-*/
+/**
+ * @brief R_CullLightWorldBounds
+ * @param[in] light
+ * @param[in] worldBounds
+ * @return CULL_IN, CULL_CLIP, or CULL_OUT
+ */
 int R_CullLightWorldBounds(trRefLight_t *light, vec3_t worldBounds[2])
 {
 	int      i;
