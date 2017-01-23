@@ -857,7 +857,7 @@ void G_BuildEndgameStats(void)
 
 	*buffer = '\0';
 
-	// highest fragger - check kills, then damage given
+	// highest ranking officer - check rank, then medals and XP
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
@@ -865,16 +865,17 @@ void G_BuildEndgameStats(void)
 		{
 			continue;
 		}
-		if (cl->sess.kills <= 0)
-		{
-			continue;
-		}
-		if (!best || cl->sess.kills > best->sess.kills)
+		if (!best || cl->sess.rank > best->sess.rank)
 		{
 			best          = cl;
 			bestClientNum = level.sortedClients[i];
 		}
-		else if (cl->sess.kills == best->sess.kills && cl->sess.damage_given > best->sess.damage_given)
+		else if (cl->sess.rank == best->sess.rank && cl->medals > best->medals)
+		{
+			best          = cl;
+			bestClientNum = level.sortedClients[i];
+		}
+		else if (cl->sess.rank == best->sess.rank && cl->medals == best->medals && cl->ps.persistant[PERS_SCORE] > best->ps.persistant[PERS_SCORE])
 		{
 			best          = cl;
 			bestClientNum = level.sortedClients[i];
@@ -883,7 +884,7 @@ void G_BuildEndgameStats(void)
 	if (best)
 	{
 		best->hasaward = qtrue;
-		Q_strcat(buffer, 1024, va("%i %i %i ", bestClientNum, best->sess.kills, best->sess.sessionTeam));
+		Q_strcat(buffer, 1024, va("%i 0 %i ", bestClientNum, best->sess.sessionTeam));
 	}
 	else
 	{
@@ -955,42 +956,6 @@ void G_BuildEndgameStats(void)
 
 	best = NULL;
 
-	// highest ranking officer - check rank, then medals and XP
-	for (i = 0; i < level.numConnectedClients; i++)
-	{
-		gclient_t *cl = &level.clients[level.sortedClients[i]];
-		if (cl->sess.sessionTeam == TEAM_FREE)
-		{
-			continue;
-		}
-		if (!best || cl->sess.rank > best->sess.rank)
-		{
-			best          = cl;
-			bestClientNum = level.sortedClients[i];
-		}
-		else if (cl->sess.rank == best->sess.rank && cl->medals > best->medals)
-		{
-			best          = cl;
-			bestClientNum = level.sortedClients[i];
-		}
-		else if (cl->sess.rank == best->sess.rank && cl->medals == best->medals && cl->ps.persistant[PERS_SCORE] > best->ps.persistant[PERS_SCORE])
-		{
-			best          = cl;
-			bestClientNum = level.sortedClients[i];
-		}
-	}
-	if (best)
-	{
-		best->hasaward = qtrue;
-		Q_strcat(buffer, 1024, va("%i 0 %i ", bestClientNum, best->sess.sessionTeam));
-	}
-	else
-	{
-		Q_strcat(buffer, 1024, "-1 0 0 ");
-	}
-
-	best = NULL;
-
 	// most highly decorated - check medals then XP
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
@@ -1023,6 +988,41 @@ void G_BuildEndgameStats(void)
 	{
 		Q_strcat(buffer, 1024, "-1 0 0 ");
 	}
+
+	// highest fragger - check kills, then damage given
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		gclient_t *cl = &level.clients[level.sortedClients[i]];
+		if (cl->sess.sessionTeam == TEAM_FREE)
+		{
+			continue;
+		}
+		if (cl->sess.kills <= 0)
+		{
+			continue;
+		}
+		if (!best || cl->sess.kills > best->sess.kills)
+		{
+			best          = cl;
+			bestClientNum = level.sortedClients[i];
+		}
+		else if (cl->sess.kills == best->sess.kills && cl->sess.damage_given > best->sess.damage_given)
+		{
+			best          = cl;
+			bestClientNum = level.sortedClients[i];
+		}
+	}
+	if (best)
+	{
+		best->hasaward = qtrue;
+		Q_strcat(buffer, 1024, va("%i %i %i ", bestClientNum, best->sess.kills, best->sess.sessionTeam));
+	}
+	else
+	{
+		Q_strcat(buffer, 1024, "-1 0 0 ");
+	}
+
+	best = NULL;
 
 	// highest skills - check skills points (this map only, min lvl 1)
 	for (i = 0; i < SK_NUM_SKILLS; i++)
