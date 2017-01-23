@@ -35,11 +35,14 @@
 
 #include "tr_local.h"
 
-/*
-============
-R_CreateVBO
-============
-*/
+/**
+ * @brief R_CreateVBO
+ * @param[in] name
+ * @param[in] vertexes
+ * @param[in] vertexesSize
+ * @param[in] usage
+ * @return
+ */
 VBO_t *R_CreateVBO(const char *name, byte *vertexes, int vertexesSize, vboUsage_t usage)
 {
 	VBO_t *vbo;
@@ -56,7 +59,7 @@ VBO_t *R_CreateVBO(const char *name, byte *vertexes, int vertexesSize, vboUsage_
 	default:
 		glUsage = 0; //Prevents warning
 		Ren_Fatal("bad vboUsage_t given: %i", usage);
-		break;
+		//break;
 	}
 
 	if (strlen(name) >= MAX_QPATH)
@@ -103,11 +106,15 @@ VBO_t *R_CreateVBO(const char *name, byte *vertexes, int vertexesSize, vboUsage_
 	return vbo;
 }
 
-/*
-============
-R_CreateVBO2
-============
-*/
+/**
+ * @brief R_CreateVBO2
+ * @param[in] name
+ * @param[in] numVertexes
+ * @param[in] verts
+ * @param[in] stateBits
+ * @param[in] usage
+ * @return
+ */
 VBO_t *R_CreateVBO2(const char *name, int numVertexes, srfVert_t *verts, unsigned int stateBits, vboUsage_t usage)
 {
 	VBO_t        *vbo;
@@ -129,7 +136,7 @@ VBO_t *R_CreateVBO2(const char *name, int numVertexes, srfVert_t *verts, unsigne
 	default:
 		glUsage = 0;
 		Ren_Fatal("bad vboUsage_t given: %i", usage);
-		break;
+		//break;
 	}
 
 	if (!numVertexes)
@@ -263,11 +270,14 @@ VBO_t *R_CreateVBO2(const char *name, int numVertexes, srfVert_t *verts, unsigne
 	return vbo;
 }
 
-/*
-============
-R_CreateIBO
-============
-*/
+/**
+ * @brief R_CreateIBO
+ * @param[in] name
+ * @param[in] indexes
+ * @param[in] indexesSize
+ * @param[in] usage
+ * @return
+ */
 IBO_t *R_CreateIBO(const char *name, byte *indexes, int indexesSize, vboUsage_t usage)
 {
 	IBO_t *ibo;
@@ -284,7 +294,7 @@ IBO_t *R_CreateIBO(const char *name, byte *indexes, int indexesSize, vboUsage_t 
 	default:
 		glUsage = 0;
 		Ren_Fatal("bad vboUsage_t given: %i", usage);
-		break;
+		//break;
 	}
 
 	if (strlen(name) >= MAX_QPATH)
@@ -314,11 +324,14 @@ IBO_t *R_CreateIBO(const char *name, byte *indexes, int indexesSize, vboUsage_t 
 	return ibo;
 }
 
-/*
-============
-R_CreateIBO2
-============
-*/
+/**
+ * @brief R_CreateIBO2
+ * @param[in] name
+ * @param[in] numTriangles
+ * @param[in] triangles
+ * @param[in] usage
+ * @return
+ */
 IBO_t *R_CreateIBO2(const char *name, int numTriangles, srfTriangle_t *triangles, vboUsage_t usage)
 {
 	IBO_t         *ibo;
@@ -341,7 +354,7 @@ IBO_t *R_CreateIBO2(const char *name, int numTriangles, srfTriangle_t *triangles
 	default:
 		glUsage = 0;
 		Ren_Fatal("bad vboUsage_t given: %i", usage);
-		break;
+		//break;
 	}
 
 	if (!numTriangles)
@@ -395,18 +408,17 @@ IBO_t *R_CreateIBO2(const char *name, int numTriangles, srfTriangle_t *triangles
 	return ibo;
 }
 
-/*
-============
-R_BindVBO
-============
-*/
+/**
+ * @brief R_BindVBO
+ * @param[in] vbo
+ */
 void R_BindVBO(VBO_t *vbo)
 {
 	if (!vbo)
 	{
 		//R_BindNullVBO();
 		Ren_Drop("R_BindNullVBO: NULL vbo");
-		return;
+		//return;
 	}
 
 	Ren_LogComment("--- R_BindVBO( %s ) ---\n", vbo->name);
@@ -428,11 +440,9 @@ void R_BindVBO(VBO_t *vbo)
 	}
 }
 
-/*
-============
-R_BindNullVBO
-============
-*/
+/**
+ * @brief R_BindNullVBO
+ */
 void R_BindNullVBO(void)
 {
 	Ren_LogComment("--- R_BindNullVBO ---\n");
@@ -446,18 +456,17 @@ void R_BindNullVBO(void)
 	GL_CheckErrors();
 }
 
-/*
-============
-R_BindIBO
-============
-*/
+/**
+ * @brief R_BindIBO
+ * @param[in] ibo
+ */
 void R_BindIBO(IBO_t *ibo)
 {
 	if (!ibo)
 	{
 		//R_BindNullIBO();
 		Ren_Drop("R_BindIBO: NULL ibo");
-		return;
+		//return;
 	}
 
 	Ren_LogComment("--- R_BindIBO( %s ) ---\n", ibo->name);
@@ -472,11 +481,9 @@ void R_BindIBO(IBO_t *ibo)
 	}
 }
 
-/*
-============
-R_BindNullIBO
-============
-*/
+/**
+ * @brief R_BindNullIBO
+ */
 void R_BindNullIBO(void)
 {
 	Ren_LogComment("--- R_BindNullIBO ---\n");
@@ -489,6 +496,9 @@ void R_BindNullIBO(void)
 	}
 }
 
+/**
+ * @brief R_InitUnitCubeVBO
+ */
 static void R_InitUnitCubeVBO()
 {
 	vec3_t        mins = { -1, -1, -1 };
@@ -534,11 +544,9 @@ static void R_InitUnitCubeVBO()
 	tess.numVertexes         = 0;
 }
 
-/*
-============
-R_InitVBOs
-============
-*/
+/**
+ * @brief R_InitVBOs
+ */
 void R_InitVBOs(void)
 {
 	int  dataSize;
@@ -584,11 +592,9 @@ void R_InitVBOs(void)
 	GL_CheckErrors();
 }
 
-/*
-============
-R_ShutdownVBOs
-============
-*/
+/**
+ * @brief R_ShutdownVBOs
+ */
 void R_ShutdownVBOs(void)
 {
 	int   i;
@@ -652,11 +658,9 @@ void R_ShutdownVBOs(void)
 	Com_DestroyGrowList(&tr.ibos);
 }
 
-/*
-============
-R_VBOList_f
-============
-*/
+/**
+ * @brief R_VBOList_f
+ */
 void R_VBOList_f(void)
 {
 	int   i;

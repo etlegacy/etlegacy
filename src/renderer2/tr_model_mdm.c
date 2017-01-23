@@ -39,6 +39,16 @@
 
 const float mdmLODResolutions[MD3_MAX_LODS] = { 1.0f, 0.75f, 0.5f, 0.35f };
 
+/**
+ * @brief AddSurfaceToVBOSurfacesListMDM
+ * @param[in] vboSurfaces
+ * @param[in] vboTriangles
+ * @param[in] mdm
+ * @param[in] surf
+ * @param[in] skinIndex
+ * @param numBoneReferences - unused
+ * @param[in] boneReferences
+ */
 static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *vboTriangles, mdmModel_t *mdm, mdmSurfaceIntern_t *surf, int skinIndex, int numBoneReferences, int boneReferences[MAX_BONES])
 {
 	int             j, k, lod;
@@ -377,6 +387,13 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 	 */
 }
 
+/**
+ * @brief R_LoadMDM
+ * @param[in,out] mod
+ * @param[in,out] buffer
+ * @param[in] modName
+ * @return
+ */
 qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 {
 	int         i, j, k;

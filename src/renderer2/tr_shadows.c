@@ -35,30 +35,29 @@
 
 #include "tr_local.h"
 
-/*
-====================================================
-  for a projection shadow:
-
-  point[x] += light vector * ( z - shadow plane )
-  point[y] +=
-  point[z] = shadow plane
-
-  1 0 light[x] / light[z]
-====================================================
-*/
-
 shadowState_t shadowState;
 
+/**
+ * @brief RB_ProjectionShadowDeform
+ *
+ * @note   for a projection shadow:
+ *
+ * point[x] += light vector * ( z - shadow plane )
+ * point[y] +=
+ * point[z] = shadow plane
+ *
+ * 1 0 light[x] / light[z]
+ */
 void RB_ProjectionShadowDeform(void)
 {
-	float  *xyz = (float *)tess.xyz;
-	int    i;
-	float  h;
-	vec3_t ground;
-	vec3_t light;
-	float  groundDist;
-	float  d;
-	vec3_t lightDir;
+	float        *xyz = (float *)tess.xyz;
+	unsigned int i;
+	float        h;
+	vec3_t       ground;
+	vec3_t       light;
+	float        groundDist;
+	float        d;
+	vec3_t       lightDir;
 
 	ground[0] = backEnd.orientation.axis[0][2];
 	ground[1] = backEnd.orientation.axis[1][2];
@@ -69,12 +68,12 @@ void RB_ProjectionShadowDeform(void)
 	VectorCopy(backEnd.currentEntity->lightDir, lightDir);
 	d = DotProduct(lightDir, ground);
 	// don't let the shadows get too long or go negative
-	if (d < 0.5)
+	if (d < 0.5f)
 	{
-		VectorMA(lightDir, (0.5 - d), ground, lightDir);
+		VectorMA(lightDir, (0.5f - d), ground, lightDir);
 		d = DotProduct(lightDir, ground);
 	}
-	d = 1.0 / d;
+	d = 1.0f / d;
 
 	light[0] = lightDir[0] * d;
 	light[1] = lightDir[1] * d;

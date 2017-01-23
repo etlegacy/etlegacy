@@ -3303,10 +3303,10 @@ void CG_Debriefing_MissionTitle_Draw(panel_button_t *button)
 
 const char *awardNames[NUM_ENDGAME_AWARDS] =
 {
-	"Highest Fragger",
-	"Highest Experience Points",
 	"Highest Ranking Officer",
+	"Highest Experience Points",
 	"Most Highly Decorated",
+	"Highest Fragger",
 	"Highest Battle Sense",
 	"Best Engineer",
 	"Best Medic",

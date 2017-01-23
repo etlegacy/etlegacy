@@ -31,18 +31,23 @@
  */
 /**
  * @file renderer2/tr_shade.c
+ *
+ * @brief THIS ENTIRE FILE IS BACK END!
+ * This file deals with applying shaders to surface data in the tess struct.
  */
 
 #include "tr_local.h"
 
-/*
-=================================================================================
-THIS ENTIRE FILE IS BACK END!
-
-This file deals with applying shaders to surface data in the tess struct.
-=================================================================================
-*/
-
+/**
+ * @brief MyMultiDrawElements
+ * @param[in] mode
+ * @param[in] count
+ * @param[in] type
+ * @param[in] indices
+ * @param[in] primcount
+ *
+ * @note Unused
+ */
 /*
 static void MyMultiDrawElements(GLenum mode, const GLsizei *count, GLenum type, const void* *indices, GLsizei primcount)
 {
@@ -56,6 +61,9 @@ static void MyMultiDrawElements(GLenum mode, const GLsizei *count, GLenum type, 
 }
 */
 
+/**
+ * @brief Tess_DrawElements
+ */
 void Tess_DrawElements()
 {
 	if ((tess.numIndexes == 0 || tess.numVertexes == 0) && tess.multiDrawPrimitives == 0)
@@ -115,6 +123,9 @@ SURFACE SHADERS
 
 shaderCommands_t tess;
 
+/**
+ * @brief BindLightMap
+ */
 static void BindLightMap()
 {
 	image_t *lightmap;
@@ -137,11 +148,9 @@ static void BindLightMap()
 	GL_Bind(lightmap);
 }
 
-/*
-=================
-BindDeluxeMap
-=================
-*/
+/**
+ * @brief BindDeluxeMap
+ */
 static void BindDeluxeMap()
 {
 	image_t *deluxemap;
@@ -164,13 +173,9 @@ static void BindDeluxeMap()
 	GL_Bind(deluxemap);
 }
 
-/*
-================
-DrawTris
-
-Draws triangle outlines for debugging
-================
-*/
+/**
+ * @brief Draws triangle outlines for debugging
+ */
 static void DrawTris()
 {
 	vec_t *color;
@@ -237,16 +242,19 @@ static void DrawTris()
 	glDepthRange(0, 1);
 }
 
-/*
-==============
-Tess_Begin
-
-We must set some things up before beginning any tesselation,
-because a surface may be forced to perform a Tess_End due
-to overflow.
-==============
-*/
 // *INDENT-OFF*
+/**
+ * @brief We must set some things up before beginning any tesselation,
+ * because a surface may be forced to perform a Tess_End due
+ * to overflow.
+ *
+ * @param[in] surfaceShader
+ * @param[in] lightShader
+ * @param[in] skipTangentSpaces
+ * @param[in] skipVBO
+ * @param[in] lightmapNum
+ * @param[in] fogNum
+ */
 void Tess_Begin(void (*stageIteratorFunc)(),
                 void (*stageIteratorFunc2)(),
                 shader_t *surfaceShader, shader_t *lightShader,
@@ -327,6 +335,10 @@ void Tess_Begin(void (*stageIteratorFunc)(),
 }
 // *INDENT-ON*
 
+/**
+ * @brief Render_generic
+ * @param[in] stage
+ */
 static void Render_generic(int stage)
 {
 	shaderStage_t *pStage;
@@ -433,6 +445,10 @@ static void Render_generic(int stage)
 	GL_CheckErrors();
 }
 
+/**
+ * @brief Render_vertexLighting_DBS_entity
+ * @param[in] stage
+ */
 static void Render_vertexLighting_DBS_entity(int stage)
 {
 	vec3_t        viewOrigin;
@@ -642,6 +658,10 @@ static void Render_vertexLighting_DBS_entity(int stage)
 	GL_CheckErrors();
 }
 
+/**
+ * @brief Render_vertexLighting_DBS_world
+ * @param[in] stage
+ */
 static void Render_vertexLighting_DBS_world(int stage)
 {
 	vec3_t        viewOrigin;
@@ -782,6 +802,12 @@ static void Render_vertexLighting_DBS_world(int stage)
 	GL_CheckErrors();
 }
 
+/**
+ * @brief Render_lightMapping
+ * @param[in] stage
+ * @param[in] asColorMap
+ * @param[in] normalMapping
+ */
 static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalMapping)
 {
 	shaderStage_t *pStage;
@@ -936,6 +962,10 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	GL_CheckErrors();
 }
 
+/**
+ * @brief Render_depthFill
+ * @param[in] stage
+ */
 static void Render_depthFill(int stage)
 {
 	shaderStage_t *pStage;
@@ -1038,6 +1068,10 @@ static void Render_depthFill(int stage)
 	GL_CheckErrors();
 }
 
+/**
+ * @brief Render_shadowFill
+ * @param[in] stage
+ */
 static void Render_shadowFill(int stage)
 {
 	shaderStage_t *pStage;
@@ -1133,6 +1167,13 @@ static void Render_shadowFill(int stage)
 	GL_CheckErrors();
 }
 
+/**
+ * @brief Render_forwardLighting_DBS_omni
+ * @param[in] diffuseStage
+ * @param[in] attenuationXYStage
+ * @param[in] attenuationZStage
+ * @param[in] light
+ */
 static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
                                             shaderStage_t *attenuationXYStage,
                                             shaderStage_t *attenuationZStage, trRefLight_t *light)
@@ -1347,6 +1388,13 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	GL_CheckErrors();
 }
 
+/**
+ * @brief Render_forwardLighting_DBS_proj
+ * @param[in] diffuseStage
+ * @param[in] attenuationXYStage
+ * @param[in] attenuationZStage
+ * @param[in] light
+ */
 static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
                                             shaderStage_t *attenuationXYStage,
                                             shaderStage_t *attenuationZStage, trRefLight_t *light)
@@ -1563,6 +1611,13 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	GL_CheckErrors();
 }
 
+/**
+ * @brief Render_forwardLighting_DBS_directional
+ * @param[in] diffuseStage
+ * @param attenuationXYStage - unused
+ * @param attenuationZStage - unused
+ * @param[in] light
+ */
 static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
                                                    shaderStage_t *attenuationXYStage,
                                                    shaderStage_t *attenuationZStage, trRefLight_t *light)
@@ -1793,6 +1848,10 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 #endif
 }
 
+/**
+ * @brief Render_reflection_CB
+ * @param[in] stage
+ */
 static void Render_reflection_CB(int stage)
 {
 	shaderStage_t *pStage = tess.surfaceStages[stage];
@@ -1863,6 +1922,10 @@ static void Render_reflection_CB(int stage)
 	GL_CheckErrors();
 }
 
+/**
+ * @brief Render_refraction_C
+ * @param[in] stage
+ */
 static void Render_refraction_C(int stage)
 {
 	vec3_t        viewOrigin;
@@ -1902,6 +1965,10 @@ static void Render_refraction_C(int stage)
 	GL_CheckErrors();
 }
 
+/**
+ * @brief Render_dispersion_C
+ * @param[in] stage
+ */
 static void Render_dispersion_C(int stage)
 {
 	vec3_t        viewOrigin;
@@ -1949,6 +2016,10 @@ static void Render_dispersion_C(int stage)
 	GL_CheckErrors();
 }
 
+/**
+ * @brief Render_skybox
+ * @param[in] stage
+ */
 static void Render_skybox(int stage)
 {
 	shaderStage_t *pStage = tess.surfaceStages[stage];
@@ -1988,6 +2059,10 @@ static void Render_skybox(int stage)
 	GL_CheckErrors();
 }
 
+/**
+ * @brief Render_screen
+ * @param[in] stage
+ */
 static void Render_screen(int stage)
 {
 	shaderStage_t *pStage = tess.surfaceStages[stage];
@@ -2021,6 +2096,10 @@ static void Render_screen(int stage)
 	GL_CheckErrors();
 }
 
+/**
+ * @brief Render_portal
+ * @param[in] stage
+ */
 static void Render_portal(int stage)
 {
 	shaderStage_t *pStage = tess.surfaceStages[stage];
@@ -2057,6 +2136,10 @@ static void Render_portal(int stage)
 	GL_CheckErrors();
 }
 
+/**
+ * @brief Render_heatHaze
+ * @param[in] stage
+ */
 static void Render_heatHaze(int stage)
 {
 	uint32_t      stateBits;
@@ -2247,6 +2330,10 @@ static void Render_heatHaze(int stage)
 	GL_CheckErrors();
 }
 
+/**
+ * @brief Render_liquid
+ * @param[in] stage
+ */
 static void Render_liquid(int stage)
 {
 	vec3_t        viewOrigin;
@@ -2265,14 +2352,14 @@ static void Render_liquid(int stage)
 	// set uniforms
 	VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin);   // in world space
 
-	fogDensity = RB_EvalExpression(&pStage->fogDensityExp, 0.001);
+	fogDensity = RB_EvalExpression(&pStage->fogDensityExp, 0.001f);
 
 	SetUniformVec3(UNIFORM_VIEWORIGIN, viewOrigin);
-	SetUniformFloat(UNIFORM_REFRACTIONINDEX, RB_EvalExpression(&pStage->refractionIndexExp, 1.0));
-	SetUniformFloat(UNIFORM_FRESNELPOWER, RB_EvalExpression(&pStage->fresnelPowerExp, 2.0));
-	SetUniformFloat(UNIFORM_FRESNELSCALE, RB_EvalExpression(&pStage->fresnelScaleExp, 1.0));
-	SetUniformFloat(UNIFORM_FRESNELBIAS, RB_EvalExpression(&pStage->fresnelBiasExp, 0.05));
-	SetUniformFloat(UNIFORM_NORMALSCALE, RB_EvalExpression(&pStage->normalScaleExp, 0.05));
+	SetUniformFloat(UNIFORM_REFRACTIONINDEX, RB_EvalExpression(&pStage->refractionIndexExp, 1.0f));
+	SetUniformFloat(UNIFORM_FRESNELPOWER, RB_EvalExpression(&pStage->fresnelPowerExp, 2.0f));
+	SetUniformFloat(UNIFORM_FRESNELSCALE, RB_EvalExpression(&pStage->fresnelScaleExp, 1.0f));
+	SetUniformFloat(UNIFORM_FRESNELBIAS, RB_EvalExpression(&pStage->fresnelBiasExp, 0.05f));
+	SetUniformFloat(UNIFORM_NORMALSCALE, RB_EvalExpression(&pStage->normalScaleExp, 0.05f));
 	SetUniformFloat(UNIFORM_FOGDENSITY, fogDensity);
 	SetUniformVec3(UNIFORM_FOGCOLOR, tess.svars.color);
 	SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
@@ -2317,6 +2404,9 @@ static void Render_liquid(int stage)
 	GL_CheckErrors();
 }
 
+/**
+ * @brief Render_fog
+ */
 static void Render_fog()
 {
 	fog_t  *fog;
@@ -2449,7 +2539,10 @@ static void Render_fog()
 	GL_CheckErrors();
 }
 
-// see Fog Polygon Volumes documentation by Nvidia for further information
+/**
+ * @brief Render_volumetricFog
+ * @note see Fog Polygon Volumes documentation by Nvidia for further information
+ */
 static void Render_volumetricFog()
 {
 	vec3_t viewOrigin;
@@ -2556,6 +2649,10 @@ static void Render_volumetricFog()
 	GL_CheckErrors();
 }
 
+/**
+ * @brief Tess_ComputeColor
+ * @param[in] pStage
+ */
 void Tess_ComputeColor(shaderStage_t *pStage)
 {
 	float rgb;
@@ -2597,34 +2694,34 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	}
 	case CGEN_CONST:
 	{
-		tess.svars.color[0] = pStage->constantColor[0] * (1.0 / 255.0);
-		tess.svars.color[1] = pStage->constantColor[1] * (1.0 / 255.0);
-		tess.svars.color[2] = pStage->constantColor[2] * (1.0 / 255.0);
-		tess.svars.color[3] = pStage->constantColor[3] * (1.0 / 255.0);
+		tess.svars.color[0] = pStage->constantColor[0] * (1.0f / 255.0f);
+		tess.svars.color[1] = pStage->constantColor[1] * (1.0f / 255.0f);
+		tess.svars.color[2] = pStage->constantColor[2] * (1.0f / 255.0f);
+		tess.svars.color[3] = pStage->constantColor[3] * (1.0f / 255.0f);
 		break;
 	}
 	case CGEN_ENTITY:
 	{
 		if (backEnd.currentLight)
 		{
-			tess.svars.color[0] = Q_bound(0.0, backEnd.currentLight->l.color[0], 1.0);
-			tess.svars.color[1] = Q_bound(0.0, backEnd.currentLight->l.color[1], 1.0);
-			tess.svars.color[2] = Q_bound(0.0, backEnd.currentLight->l.color[2], 1.0);
+			tess.svars.color[0] = Q_bound(0.0f, backEnd.currentLight->l.color[0], 1.0f);
+			tess.svars.color[1] = Q_bound(0.0f, backEnd.currentLight->l.color[1], 1.0f);
+			tess.svars.color[2] = Q_bound(0.0f, backEnd.currentLight->l.color[2], 1.0f);
 			tess.svars.color[3] = 1.0;
 		}
 		else if (backEnd.currentEntity)
 		{
-			tess.svars.color[0] = Q_bound(0.0, backEnd.currentEntity->e.shaderRGBA[0] * (1.0 / 255.0), 1.0);
-			tess.svars.color[1] = Q_bound(0.0, backEnd.currentEntity->e.shaderRGBA[1] * (1.0 / 255.0), 1.0);
-			tess.svars.color[2] = Q_bound(0.0, backEnd.currentEntity->e.shaderRGBA[2] * (1.0 / 255.0), 1.0);
-			tess.svars.color[3] = Q_bound(0.0, backEnd.currentEntity->e.shaderRGBA[3] * (1.0 / 255.0), 1.0);
+			tess.svars.color[0] = Q_bound(0.0f, backEnd.currentEntity->e.shaderRGBA[0] * (1.0f / 255.0f), 1.0f);
+			tess.svars.color[1] = Q_bound(0.0f, backEnd.currentEntity->e.shaderRGBA[1] * (1.0f / 255.0f), 1.0f);
+			tess.svars.color[2] = Q_bound(0.0f, backEnd.currentEntity->e.shaderRGBA[2] * (1.0f / 255.0f), 1.0f);
+			tess.svars.color[3] = Q_bound(0.0f, backEnd.currentEntity->e.shaderRGBA[3] * (1.0f / 255.0f), 1.0f);
 		}
 		else
 		{
-			tess.svars.color[0] = 1.0;
-			tess.svars.color[1] = 1.0;
-			tess.svars.color[2] = 1.0;
-			tess.svars.color[3] = 1.0;
+			tess.svars.color[0] = 1.0f;
+			tess.svars.color[1] = 1.0f;
+			tess.svars.color[2] = 1.0f;
+			tess.svars.color[3] = 1.0f;
 		}
 		break;
 	}
@@ -2632,24 +2729,24 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	{
 		if (backEnd.currentLight)
 		{
-			tess.svars.color[0] = 1.0 - Q_bound(0.0, backEnd.currentLight->l.color[0], 1.0);
-			tess.svars.color[1] = 1.0 - Q_bound(0.0, backEnd.currentLight->l.color[1], 1.0);
-			tess.svars.color[2] = 1.0 - Q_bound(0.0, backEnd.currentLight->l.color[2], 1.0);
-			tess.svars.color[3] = 0.0;      // FIXME
+			tess.svars.color[0] = 1.0f - Q_bound(0.0f, backEnd.currentLight->l.color[0], 1.0f);
+			tess.svars.color[1] = 1.0f - Q_bound(0.0f, backEnd.currentLight->l.color[1], 1.0f);
+			tess.svars.color[2] = 1.0f - Q_bound(0.0f, backEnd.currentLight->l.color[2], 1.0f);
+			tess.svars.color[3] = 0.0f;      // FIXME
 		}
 		else if (backEnd.currentEntity)
 		{
-			tess.svars.color[0] = 1.0 - Q_bound(0.0, backEnd.currentEntity->e.shaderRGBA[0] * (1.0 / 255.0), 1.0);
-			tess.svars.color[1] = 1.0 - Q_bound(0.0, backEnd.currentEntity->e.shaderRGBA[1] * (1.0 / 255.0), 1.0);
-			tess.svars.color[2] = 1.0 - Q_bound(0.0, backEnd.currentEntity->e.shaderRGBA[2] * (1.0 / 255.0), 1.0);
-			tess.svars.color[3] = 1.0 - Q_bound(0.0, backEnd.currentEntity->e.shaderRGBA[3] * (1.0 / 255.0), 1.0);
+			tess.svars.color[0] = 1.0f - Q_bound(0.0f, backEnd.currentEntity->e.shaderRGBA[0] * (1.0f / 255.0f), 1.0f);
+			tess.svars.color[1] = 1.0f - Q_bound(0.0f, backEnd.currentEntity->e.shaderRGBA[1] * (1.0f / 255.0f), 1.0f);
+			tess.svars.color[2] = 1.0f - Q_bound(0.0f, backEnd.currentEntity->e.shaderRGBA[2] * (1.0f / 255.0f), 1.0f);
+			tess.svars.color[3] = 1.0f - Q_bound(0.0f, backEnd.currentEntity->e.shaderRGBA[3] * (1.0f / 255.0f), 1.0f);
 		}
 		else
 		{
-			tess.svars.color[0] = 0.0;
-			tess.svars.color[1] = 0.0;
-			tess.svars.color[2] = 0.0;
-			tess.svars.color[3] = 0.0;
+			tess.svars.color[0] = 0.0f;
+			tess.svars.color[1] = 0.0f;
+			tess.svars.color[2] = 0.0f;
+			tess.svars.color[3] = 0.0f;
 		}
 		break;
 	}
@@ -2681,12 +2778,12 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 		tess.svars.color[0] = glow;
 		tess.svars.color[1] = glow;
 		tess.svars.color[2] = glow;
-		tess.svars.color[3] = 1.0;
+		tess.svars.color[3] = 1.0f;
 		break;
 	}
 	case CGEN_CUSTOM_RGB:
 	{
-		rgb = Q_bound(0.0, RB_EvalExpression(&pStage->rgbExp, 1.0), 1.0);
+		rgb = Q_bound(0.0f, RB_EvalExpression(&pStage->rgbExp, 1.0f), 1.0f);
 
 		tess.svars.color[0] = rgb;
 		tess.svars.color[1] = rgb;
@@ -2697,26 +2794,26 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	{
 		if (backEnd.currentLight)
 		{
-			red   = Q_bound(0.0, RB_EvalExpression(&pStage->redExp, backEnd.currentLight->l.color[0]), 1.0);
-			green = Q_bound(0.0, RB_EvalExpression(&pStage->greenExp, backEnd.currentLight->l.color[1]), 1.0);
-			blue  = Q_bound(0.0, RB_EvalExpression(&pStage->blueExp, backEnd.currentLight->l.color[2]), 1.0);
+			red   = Q_bound(0.0f, RB_EvalExpression(&pStage->redExp, backEnd.currentLight->l.color[0]), 1.0f);
+			green = Q_bound(0.0f, RB_EvalExpression(&pStage->greenExp, backEnd.currentLight->l.color[1]), 1.0f);
+			blue  = Q_bound(0.0f, RB_EvalExpression(&pStage->blueExp, backEnd.currentLight->l.color[2]), 1.0f);
 		}
 		else if (backEnd.currentEntity)
 		{
 			red =
-			    Q_bound(0.0, RB_EvalExpression(&pStage->redExp, backEnd.currentEntity->e.shaderRGBA[0] * (1.0 / 255.0)), 1.0);
+			    Q_bound(0.0f, RB_EvalExpression(&pStage->redExp, backEnd.currentEntity->e.shaderRGBA[0] * (1.0f / 255.0)), 1.0f);
 			green =
-			    Q_bound(0.0, RB_EvalExpression(&pStage->greenExp, backEnd.currentEntity->e.shaderRGBA[1] * (1.0 / 255.0)),
-			            1.0);
+			    Q_bound(0.0f, RB_EvalExpression(&pStage->greenExp, backEnd.currentEntity->e.shaderRGBA[1] * (1.0f / 255.0f)),
+			            1.0f);
 			blue =
-			    Q_bound(0.0, RB_EvalExpression(&pStage->blueExp, backEnd.currentEntity->e.shaderRGBA[2] * (1.0 / 255.0)),
-			            1.0);
+			    Q_bound(0.0f, RB_EvalExpression(&pStage->blueExp, backEnd.currentEntity->e.shaderRGBA[2] * (1.0f / 255.0f)),
+			            1.0f);
 		}
 		else
 		{
-			red   = Q_bound(0.0, RB_EvalExpression(&pStage->redExp, 1.0), 1.0);
-			green = Q_bound(0.0, RB_EvalExpression(&pStage->greenExp, 1.0), 1.0);
-			blue  = Q_bound(0.0, RB_EvalExpression(&pStage->blueExp, 1.0), 1.0);
+			red   = Q_bound(0.0f, RB_EvalExpression(&pStage->redExp, 1.0f), 1.0f);
+			green = Q_bound(0.0f, RB_EvalExpression(&pStage->greenExp, 1.0f), 1.0f);
+			blue  = Q_bound(0.0f, RB_EvalExpression(&pStage->blueExp, 1.0f), 1.0f);
 		}
 
 		tess.svars.color[0] = red;
@@ -2734,9 +2831,9 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	{
 		if (pStage->rgbGen != CGEN_IDENTITY)
 		{
-			if ((pStage->rgbGen == CGEN_VERTEX && tr.identityLight != 1) || pStage->rgbGen != CGEN_VERTEX)
+			if ((pStage->rgbGen == CGEN_VERTEX && tr.identityLight != 1.f) || pStage->rgbGen != CGEN_VERTEX)
 			{
-				tess.svars.color[3] = 1.0;
+				tess.svars.color[3] = 1.0f;
 			}
 		}
 		break;
@@ -2744,14 +2841,14 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	case AGEN_VERTEX:
 	case AGEN_ONE_MINUS_VERTEX:
 	{
-		tess.svars.color[3] = 0.0;
+		tess.svars.color[3] = 0.0f;
 		break;
 	}
 	case AGEN_CONST:
 	{
 		if (pStage->rgbGen != CGEN_CONST)
 		{
-			tess.svars.color[3] = pStage->constantColor[3] * (1.0 / 255.0);
+			tess.svars.color[3] = pStage->constantColor[3] * (1.0f / 255.0f);
 		}
 		break;
 	}
@@ -2759,15 +2856,15 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	{
 		if (backEnd.currentLight)
 		{
-			tess.svars.color[3] = 1.0;      // FIXME ?
+			tess.svars.color[3] = 1.0f;      // FIXME ?
 		}
 		else if (backEnd.currentEntity)
 		{
-			tess.svars.color[3] = Q_bound(0.0, backEnd.currentEntity->e.shaderRGBA[3] * (1.0 / 255.0), 1.0);
+			tess.svars.color[3] = Q_bound(0.0f, backEnd.currentEntity->e.shaderRGBA[3] * (1.0f / 255.0f), 1.0f);
 		}
 		else
 		{
-			tess.svars.color[3] = 1.0;
+			tess.svars.color[3] = 1.0f;
 		}
 		break;
 	}
@@ -2775,15 +2872,15 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	{
 		if (backEnd.currentLight)
 		{
-			tess.svars.color[3] = 0.0;      // FIXME ?
+			tess.svars.color[3] = 0.0f;      // FIXME ?
 		}
 		else if (backEnd.currentEntity)
 		{
-			tess.svars.color[3] = 1.0 - Q_bound(0.0, backEnd.currentEntity->e.shaderRGBA[3] * (1.0 / 255.0), 1.0);
+			tess.svars.color[3] = 1.0f - Q_bound(0.0f, backEnd.currentEntity->e.shaderRGBA[3] * (1.0f / 255.0f), 1.0f);
 		}
 		else
 		{
-			tess.svars.color[3] = 0.0;
+			tess.svars.color[3] = 0.0f;
 		}
 		break;
 	}
@@ -2831,15 +2928,15 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 			// special handling for Zombie fade effect
 			if (zombieEffect)
 			{
-				alpha  = (float)backEnd.currentEntity->e.shaderRGBA[3] * (dot + 1.0) / 2.0;
-				alpha += (2.0 * (float)backEnd.currentEntity->e.shaderRGBA[3]) * (1.0 - (dot + 1.0) / 2.0);
-				if (alpha > 255.0)
+				alpha  = (float)backEnd.currentEntity->e.shaderRGBA[3] * (dot + 1.0f) / 2.0f;
+				alpha += (2.0f * (float)backEnd.currentEntity->e.shaderRGBA[3]) * (1.0f - (dot + 1.0f) / 2.0f);
+				if (alpha > 255.0f)
 				{
 					alpha = 255.0;
 				}
-				else if (alpha < 0.0)
+				else if (alpha < 0.0f)
 				{
-					alpha = 0.0;
+					alpha = 0.0f;
 				}
 				tess.svars.color[3] = (byte) (alpha);
 				continue;
@@ -2855,21 +2952,21 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 					}
 					else
 					{
-						alpha = ((float)pStage->constantColor[3] * (1.0 - ((dot - lowest - range / 2) / (range / 2))));
+						alpha = ((float)pStage->constantColor[3] * (1.0f - ((dot - lowest - range / 2) / (range / 2))));
 					}
-					if (alpha > 255.0)
+					if (alpha > 255.0f)
 					{
-						alpha = 255.0;
+						alpha = 255.0f;
 					}
-					else if (alpha < 0.0)
+					else if (alpha < 0.0f)
 					{
-						alpha = 0.0;
+						alpha = 0.0f;
 					}
 
 					// finally, scale according to the entity's alpha
 					if (backEnd.currentEntity->e.hModel)
 					{
-						alpha *= (float)backEnd.currentEntity->e.shaderRGBA[3] / 255.0;
+						alpha *= (float)backEnd.currentEntity->e.shaderRGBA[3] / 255.0f;
 					}
 
 					tess.svars.color[3] = (byte) (alpha);
@@ -2901,7 +2998,7 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	}
 	case AGEN_CUSTOM:
 	{
-		alpha = Q_bound(0.0, RB_EvalExpression(&pStage->alphaExp, 1.0), 1.0);
+		alpha = Q_bound(0.0f, RB_EvalExpression(&pStage->alphaExp, 1.0f), 1.0f);
 
 		tess.svars.color[3] = alpha;
 		break;
@@ -2909,12 +3006,10 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	}
 }
 
-
-/*
-===============
-Tess_ComputeTexMatrices
-===============
-*/
+/**
+ * @brief Tess_ComputeTexMatrices
+ * @param[☺in] pStage
+ */
 static void Tess_ComputeTexMatrices(shaderStage_t *pStage)
 {
 	int   i;
@@ -2937,12 +3032,9 @@ static void Tess_ComputeTexMatrices(shaderStage_t *pStage)
 	}
 }
 
-/*
-==============
-SetIteratorFog
-    set the fog parameters for this pass
-==============
-*/
+/**
+ * @brief Set the fog parameters for this pass
+ */
 static void SetIteratorFog()
 {
 	Ren_LogComment("--- SetIteratorFog() ---\n");
@@ -2993,6 +3085,9 @@ static void SetIteratorFog()
 	}
 }
 
+/**
+ * @brief Tess_StageIteratorDebug
+ */
 void Tess_StageIteratorDebug()
 {
 	Ren_LogComment("--- Tess_StageIteratorDebug( %i vertices, %i triangles ) ---\n", tess.numVertexes, tess.numIndexes / 3);
@@ -3008,6 +3103,11 @@ void Tess_StageIteratorDebug()
 	Tess_DrawElements();
 }
 
+/**
+ * @brief RB_StencilOp
+ * @param[in] op
+ * @return
+ */
 static ID_INLINE GLenum RB_StencilOp(int op)
 {
 	switch (op & STO_MASK)
@@ -3029,6 +3129,11 @@ static ID_INLINE GLenum RB_StencilOp(int op)
 	}
 }
 
+/**
+ * @brief RB_SetStencil
+ * @param[in] side
+ * @param[in] stencil
+ */
 static void RB_SetStencil(GLenum side, stencil_t *stencil)
 {
 	GLenum sfailOp, zfailOp, zpassOp;
@@ -3080,6 +3185,9 @@ static void RB_SetStencil(GLenum side, stencil_t *stencil)
 	glStencilMaskSeparate(side, (GLuint) stencil->writeMask);
 }
 
+/**
+ * @brief Tess_StageIteratorGeneric
+ */
 void Tess_StageIteratorGeneric()
 {
 	int stage;
@@ -3126,7 +3234,7 @@ void Tess_StageIteratorGeneric()
 			break;
 		}
 
-		if (!RB_EvalExpression(&pStage->ifExp, 1.0))
+		if (RB_EvalExpression(&pStage->ifExp, 1.0f) == 0.f)
 		{
 			continue;
 		}
@@ -3283,6 +3391,9 @@ void Tess_StageIteratorGeneric()
 	}
 }
 
+/**
+ * @brief Tess_StageIteratorDepthFill
+ */
 void Tess_StageIteratorDepthFill()
 {
 	int stage;
@@ -3319,7 +3430,7 @@ void Tess_StageIteratorDepthFill()
 			break;
 		}
 
-		if (!RB_EvalExpression(&pStage->ifExp, 1.0))
+		if (RB_EvalExpression(&pStage->ifExp, 1.0f) == 0.f)
 		{
 			continue;
 		}
@@ -3357,6 +3468,9 @@ void Tess_StageIteratorDepthFill()
 	glDisable(GL_POLYGON_OFFSET_FILL);
 }
 
+/**
+ * @brief Tess_StageIteratorShadowFill
+ */
 void Tess_StageIteratorShadowFill()
 {
 	int stage;
@@ -3393,7 +3507,7 @@ void Tess_StageIteratorShadowFill()
 			break;
 		}
 
-		if (!RB_EvalExpression(&pStage->ifExp, 1.0))
+		if (RB_EvalExpression(&pStage->ifExp, 1.0f) == 0.f)
 		{
 			continue;
 		}
@@ -3429,6 +3543,9 @@ void Tess_StageIteratorShadowFill()
 	glDisable(GL_POLYGON_OFFSET_FILL);
 }
 
+/**
+ * @brief Tess_StageIteratorLighting
+ */
 void Tess_StageIteratorLighting()
 {
 	int           i, j;
@@ -3490,7 +3607,7 @@ void Tess_StageIteratorLighting()
 			break;
 		}
 
-		if (!RB_EvalExpression(&diffuseStage->ifExp, 1.0))
+		if (RB_EvalExpression(&diffuseStage->ifExp, 1.0f) == 0.f)
 		{
 			continue;
 		}
@@ -3511,7 +3628,7 @@ void Tess_StageIteratorLighting()
 				continue;
 			}
 
-			if (!RB_EvalExpression(&attenuationXYStage->ifExp, 1.0))
+			if (RB_EvalExpression(&attenuationXYStage->ifExp, 1.0f) == 0.f)
 			{
 				continue;
 			}
@@ -3557,13 +3674,9 @@ void Tess_StageIteratorLighting()
 	}
 }
 
-/*
-=================
-Tess_End
-
-Render tesselated data
-=================
-*/
+/**
+ * @brief Render tesselated data
+ */
 void Tess_End()
 {
 	if ((tess.numIndexes == 0 || tess.numVertexes == 0) && tess.multiDrawPrimitives == 0)
@@ -3575,7 +3688,7 @@ void Tess_End()
 	{
 		Ren_Drop("Tess_End() - SHADER_MAX_INDEXES hit");
 	}
-	if (tess.xyz[SHADER_MAX_VERTEXES - 1][0] != 0)
+	if (tess.xyz[SHADER_MAX_VERTEXES - 1][0] != 0.f)
 	{
 		Ren_Drop("Tess_End() - SHADER_MAX_VERTEXES hit");
 	}

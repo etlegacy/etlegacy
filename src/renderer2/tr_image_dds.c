@@ -36,18 +36,26 @@
 
 #include "tr_local.h"
 
+/**
+ * @struct DDCOLORKEY_t
+ * @brief
+ */
 typedef struct
 {
-	unsigned int dwColorSpaceLowValue;      // low boundary of color space that is to
-	// be treated as Color Key, inclusive
+	unsigned int dwColorSpaceLowValue;      ///< low boundary of color space that is to
+	                                        ///< be treated as Color Key, inclusive
 
-	unsigned int dwColorSpaceHighValue;     // high boundary of color space that is
-	// to be treated as Color Key, inclusive
+	unsigned int dwColorSpaceHighValue;     ///< high boundary of color space that is
+	                                        ///< to be treated as Color Key, inclusive
 } DDCOLORKEY_t;
 
+/**
+ * @struct DDSCAPS2_t
+ * @brief
+ */
 typedef struct
 {
-	unsigned int dwCaps;        // capabilities of surface wanted
+	unsigned int dwCaps;        ///< capabilities of surface wanted
 	unsigned int dwCaps2;
 	unsigned int dwCaps3;
 	union
@@ -57,130 +65,137 @@ typedef struct
 	} u0;
 } DDSCAPS2_t;
 
+/**
+ * @struct DDPIXELFORMAT_t
+ * @brief
+ */
 typedef struct
 {
-	unsigned int dwSize;        // size of structure
-	unsigned int dwFlags;   // pixel format flags
-	unsigned int dwFourCC;      // (FOURCC code)
+	unsigned int dwSize;                        ///< size of structure
+	unsigned int dwFlags;                       ///< pixel format flags
+	unsigned int dwFourCC;                      ///< (FOURCC code)
 
 	union
 	{
-		unsigned int dwRGBBitCount;     // how many bits per pixel
-		unsigned int dwYUVBitCount;     // how many bits per pixel
-		unsigned int dwZBufferBitDepth;     // how many total bits/pixel in z buffer (including any stencil bits)
-		unsigned int dwAlphaBitDepth;   // how many bits for alpha channels
-		unsigned int dwLuminanceBitCount;   // how many bits per pixel
-		unsigned int dwBumpBitCount;    // how many bits per "buxel", total
-		unsigned int dwPrivateFormatBitCount;   // Bits per pixel of private driver formats. Only valid in texture
-		// format list and if DDPF_D3DFORMAT is set
+		unsigned int dwRGBBitCount;             ///< how many bits per pixel
+		unsigned int dwYUVBitCount;             ///< how many bits per pixel
+		unsigned int dwZBufferBitDepth;         ///< how many total bits/pixel in z buffer (including any stencil bits)
+		unsigned int dwAlphaBitDepth;           ///< how many bits for alpha channels
+		unsigned int dwLuminanceBitCount;       ///< how many bits per pixel
+		unsigned int dwBumpBitCount;            ///< how many bits per "buxel", total
+		unsigned int dwPrivateFormatBitCount;   ///< Bits per pixel of private driver formats. Only valid in texture
+		                                        ///< format list and if DDPF_D3DFORMAT is set
 	} u0;
 
 	union
 	{
-		unsigned int dwRBitMask;    // mask for red bit
-		unsigned int dwYBitMask;    // mask for Y bits
-		unsigned int dwStencilBitDepth;     // how many stencil bits (note: dwZBufferBitDepth-dwStencilBitDepth is total Z-only bits)
-		unsigned int dwLuminanceBitMask;    // mask for luminance bits
-		unsigned int dwBumpDuBitMask;   // mask for bump map U delta bits
-		unsigned int dwOperations;      // DDPF_D3DFORMAT Operations
+		unsigned int dwRBitMask;                ///< mask for red bit
+		unsigned int dwYBitMask;                ///< mask for Y bits
+		unsigned int dwStencilBitDepth;         ///< how many stencil bits (note: dwZBufferBitDepth-dwStencilBitDepth is total Z-only bits)
+		unsigned int dwLuminanceBitMask;        ///< mask for luminance bits
+		unsigned int dwBumpDuBitMask;           ///< mask for bump map U delta bits
+		unsigned int dwOperations;              ///< DDPF_D3DFORMAT Operations
 	} u1;
 
 	union
 	{
-		unsigned int dwGBitMask;    // mask for green bits
-		unsigned int dwUBitMask;    // mask for U bits
-		unsigned int dwZBitMask;    // mask for Z bits
-		unsigned int dwBumpDvBitMask;   // mask for bump map V delta bits
+		unsigned int dwGBitMask;                ///< mask for green bits
+		unsigned int dwUBitMask;                ///< mask for U bits
+		unsigned int dwZBitMask;                ///< mask for Z bits
+		unsigned int dwBumpDvBitMask;           ///< mask for bump map V delta bits
 		struct
 		{
-			unsigned short wFlipMSTypes;    // Multisample methods supported via flip for this D3DFORMAT
-			unsigned short wBltMSTypes;     // Multisample methods supported via blt for this D3DFORMAT
+			unsigned short wFlipMSTypes;        ///< Multisample methods supported via flip for this D3DFORMAT
+			unsigned short wBltMSTypes;         ///< Multisample methods supported via blt for this D3DFORMAT
 		} MultiSampleCaps;
 
 	} u2;
 
 	union
 	{
-		unsigned int dwBBitMask;    // mask for blue bits
-		unsigned int dwVBitMask;    // mask for V bits
-		unsigned int dwStencilBitMask;      // mask for stencil bits
-		unsigned int dwBumpLuminanceBitMask;    // mask for luminance in bump map
+		unsigned int dwBBitMask;                ///< mask for blue bits
+		unsigned int dwVBitMask;                ///< mask for V bits
+		unsigned int dwStencilBitMask;          ///< mask for stencil bits
+		unsigned int dwBumpLuminanceBitMask;    ///< mask for luminance in bump map
 	} u3;
 
 	union
 	{
-		unsigned int dwRGBAlphaBitMask;     // mask for alpha channel
-		unsigned int dwYUVAlphaBitMask;     // mask for alpha channel
-		unsigned int dwLuminanceAlphaBitMask;   // mask for alpha channel
-		unsigned int dwRGBZBitMask;     // mask for Z channel
-		unsigned int dwYUVZBitMask;     // mask for Z channel
+		unsigned int dwRGBAlphaBitMask;         ///< mask for alpha channel
+		unsigned int dwYUVAlphaBitMask;         ///< mask for alpha channel
+		unsigned int dwLuminanceAlphaBitMask;   ///< mask for alpha channel
+		unsigned int dwRGBZBitMask;             ///< mask for Z channel
+		unsigned int dwYUVZBitMask;             ///< mask for Z channel
 	} u4;
 } DDPIXELFORMAT_t;
 
+/**
+ * @struct DDSURFACEDESC2_t
+ */
 typedef struct
 {
-	unsigned int dwSize;        // size of the DDSURFACEDESC structure
-	unsigned int dwFlags;   // determines what fields are valid
-	unsigned int dwHeight;      // height of surface to be created
-	unsigned int dwWidth;   // width of input surface
+	unsigned int dwSize;                    ///< size of the DDSURFACEDESC structure
+	unsigned int dwFlags;                   ///< determines what fields are valid
+	unsigned int dwHeight;                  ///< height of surface to be created
+	unsigned int dwWidth;                   ///< width of input surface
 
 	union
 	{
-		int lPitch;             // distance to start of next line (return value only)
-		unsigned int dwLinearSize;      // Formless late-allocated optimized surface size
+		int lPitch;                         ///< distance to start of next line (return value only)
+		unsigned int dwLinearSize;          ///< Formless late-allocated optimized surface size
 	} u0;
 
 	union
 	{
-		unsigned int dwBackBufferCount;     // number of back buffers requested
-		unsigned int dwDepth;   // the depth if this is a volume texture
+		unsigned int dwBackBufferCount;     ///< number of back buffers requested
+		unsigned int dwDepth;               ///< the depth if this is a volume texture
 	} u1;
 
 	union
 	{
-		unsigned int dwMipMapCount;     // number of mip-map levels requestde
-		// dwZBufferBitDepth removed, use ddpfPixelFormat one instead
-		unsigned int dwRefreshRate;     // refresh rate (used when display mode is described)
-		unsigned int dwSrcVBHandle;     // The source used in VB::Optimize
+		unsigned int dwMipMapCount;         ///< number of mip-map levels requestde
+		                                    ///< dwZBufferBitDepth removed, use ddpfPixelFormat one instead
+		unsigned int dwRefreshRate;         ///< refresh rate (used when display mode is described)
+		unsigned int dwSrcVBHandle;         ///< The source used in VB::Optimize
 	} u2;
 
-	unsigned int dwAlphaBitDepth;   // depth of alpha buffer requested
-	unsigned int dwReserved;    // reserved
-	void *lpSurface;            // pointer to the associated surface memory
+	unsigned int dwAlphaBitDepth;           ///< depth of alpha buffer requested
+	unsigned int dwReserved;                ///< reserved
+	void *lpSurface;                        ///< pointer to the associated surface memory
 
 	union
 	{
-		DDCOLORKEY_t ddckCKDestOverlay;     // color key for destination overlay use
-		unsigned int dwEmptyFaceColor;      // Physical color for empty cubemap faces
+		DDCOLORKEY_t ddckCKDestOverlay;     ///< color key for destination overlay use
+		unsigned int dwEmptyFaceColor;      ///< Physical color for empty cubemap faces
 	} u3;
-	DDCOLORKEY_t ddckCKDestBlt;     // color key for destination blt use
-	DDCOLORKEY_t ddckCKSrcOverlay;      // color key for source overlay use
-	DDCOLORKEY_t ddckCKSrcBlt;      // color key for source blt use
+	DDCOLORKEY_t ddckCKDestBlt;             ///< color key for destination blt use
+	DDCOLORKEY_t ddckCKSrcOverlay;          ///< color key for source overlay use
+	DDCOLORKEY_t ddckCKSrcBlt;              ///< color key for source blt use
 	union
 	{
-		DDPIXELFORMAT_t ddpfPixelFormat;    // pixel format description of the surface
-		unsigned int dwFVF;     // vertex format description of vertex buffers
+		DDPIXELFORMAT_t ddpfPixelFormat;    ///< pixel format description of the surface
+		unsigned int dwFVF;                 ///< vertex format description of vertex buffers
 	} u4;
-	DDSCAPS2_t ddsCaps;         // direct draw surface capabilities
-	unsigned int dwTextureStage;    // stage in multitexture cascade
+	DDSCAPS2_t ddsCaps;                     ///< direct draw surface capabilities
+	unsigned int dwTextureStage;            ///< stage in multitexture cascade
 } DDSURFACEDESC2_t;
 
 //
 // DDSURFACEDESC2 flags that mark the validity of the struct data
 //
-#define DDSD_CAPS                               0x00000001l // default
-#define DDSD_HEIGHT                             0x00000002l // default
-#define DDSD_WIDTH                              0x00000004l // default
-#define DDSD_PIXELFORMAT                        0x00001000l // default
-#define DDSD_PITCH                              0x00000008l // For uncompressed formats
+#define DDSD_CAPS                               0x00000001l ///< default
+#define DDSD_HEIGHT                             0x00000002l ///< default
+#define DDSD_WIDTH                              0x00000004l ///< default
+#define DDSD_PIXELFORMAT                        0x00001000l ///< default
+#define DDSD_PITCH                              0x00000008l ///< For uncompressed formats
 #define DDSD_MIPMAPCOUNT                        0x00020000l
-#define DDSD_LINEARSIZE                         0x00080000l // For compressed formats
-#define DDSD_DEPTH                              0x00800000l // Volume Textures
+#define DDSD_LINEARSIZE                         0x00080000l ///< For compressed formats
+#define DDSD_DEPTH                              0x00800000l ///< Volume Textures
 
 // DDPIXELFORMAT flags
 #define DDPF_ALPHAPIXELS                        0x00000001l
-#define DDPF_FOURCC                             0x00000004l // Compressed formats
-#define DDPF_RGB                                0x00000040l // Uncompressed formats
+#define DDPF_FOURCC                             0x00000004l ///< Compressed formats
+#define DDPF_RGB                                0x00000040l ///< Uncompressed formats
 #define DDPF_ALPHA                              0x00000002l
 #define DDPF_COMPRESSED                         0x00000080l
 #define DDPF_LUMINANCE                          0x00020000l
@@ -190,7 +205,7 @@ typedef struct
 
 // DDSCAPS flags
 #define DDSCAPS_COMPLEX                         0x00000008l
-#define DDSCAPS_TEXTURE                         0x00001000l // default
+#define DDSCAPS_TEXTURE                         0x00001000l ///< default
 #define DDSCAPS_MIPMAP                          0x00400000l
 
 #define DDSCAPS2_VOLUME                         0x00200000l
@@ -221,17 +236,32 @@ typedef struct
 
 #define R_LoadDDSImage_MAX_MIPS 16
 
+/**
+ * @brief UnpackRGB565
+ * @param[out] rgb
+ * @param[in] cl
+ */
 static ID_INLINE void UnpackRGB565(byte rgb[3], uint16_t cl)
 {
 	byte r = (byte) ((cl >> 11) & 0x1F);
 	byte g = (byte) ((cl >> 5) & 0x3F);
 	byte b = (byte) (cl & 0x1F);
 
-	rgb[0] = (r << 3) | (r >> 2);   //multiply by 8.22 -> 8.25
-	rgb[1] = (g << 2) | (g >> 4);   //multiply by 4.047 -> 4.0625
-	rgb[2] = (b << 3) | (b >> 2);   //multiply by 8.22 -> 8.25
+	rgb[0] = (byte) ((r << 3) | (r >> 2));   // multiply by 8.22 -> 8.25
+	rgb[1] = (byte) ((g << 2) | (g >> 4));   // multiply by 4.047 -> 4.0625
+	rgb[2] = (byte) ((b << 3) | (b >> 2));   // multiply by 8.22 -> 8.25
 }
 
+/**
+ * @brief R_DecodeS3TCBlock
+ * @param[out] out
+ * @param[in] bx
+ * @param[in] by
+ * @param[in] format
+ * @param[in] iw
+ * @param ih - unused
+ * @param[in] image_base
+ */
 static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int iw, int ih, const void *image_base)
 {
 	int x, y;
@@ -273,8 +303,8 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 		break;
 	}
 
-	c0 = (uint16_t) color_base[0] | ((uint16_t) color_base[1] << 8);
-	c1 = (uint16_t) color_base[2] | ((uint16_t) color_base[3] << 8);
+	c0 = (uint16_t) (color_base[0] | ((uint16_t) color_base[1] << 8));
+	c1 = (uint16_t) (color_base[2] | ((uint16_t) color_base[3] << 8));
 
 	UnpackRGB565(rgba[0], c0);
 	UnpackRGB565(rgba[1], c1);
@@ -343,7 +373,7 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 			{
 				byte b = (alpha_base[(y * 2) + (x / 2)] >> ((x & 1) * 4)) & 0x0F;
 
-				out[y][x][3] = b | (b << 4);        //multiply by 17, this one works out exactly
+				out[y][x][3] = (byte) (b | (b << 4));        // multiply by 17, this one works out exactly
 			}
 		}
 		break;
@@ -403,7 +433,20 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 	}
 }
 
-/*static void R_DecodeRGB565Block(byte out[4][4][4], int bx, int by, int format, int iw, int ih, const void *image_base)
+/**
+ * @brief R_DecodeRGB565Block
+ * @param[out] out
+ * @param[in] bx
+ * @param[in] by
+ * @param format - unused
+ * @param[in] iw
+ * @param ih - unused
+ * @param[in] image_base
+ *
+ * @note Unused
+ */
+/*
+static void R_DecodeRGB565Block(byte out[4][4][4], int bx, int by, int format, int iw, int ih, const void *image_base)
 {
     int             x, y;
     const byte     *row;
@@ -430,8 +473,19 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 
         row += pitch;
     }
-}*/
+}
+*/
 
+/**
+ * @brief R_UploadEncodedImageDirect
+ * @param[in] target
+ * @param[in] level
+ * @param[in] format
+ * @param[in] int_fmat
+ * @param[in] width
+ * @param[in] height
+ * @param[in] data
+ */
 static void R_UploadEncodedImageDirect(GLenum target, int level, GLenum format, GLenum int_fmat, int width, int height,
                                        const void *data, void (*decoder)(byte out[4][4][4], int bx, int by, int format, int iw,
                                                                          int ih, const void *image_base))
@@ -464,6 +518,17 @@ static void R_UploadEncodedImageDirect(GLenum target, int level, GLenum format, 
 	}
 }
 
+/**
+ * @brief R_UploadCompressedImage2D
+ * @param[in,out] img
+ * @param[in] target
+ * @param[in] level
+ * @param[in] format
+ * @param[in] width
+ * @param[in] height
+ * @param[in] size
+ * @param[in] data
+ */
 static void R_UploadCompressedImage2D(image_t *img, GLenum target, int level, GLenum format, int width, int height, int size,
                                       const void *data)
 {
@@ -535,6 +600,20 @@ static void R_UploadCompressedImage2D(image_t *img, GLenum target, int level, GL
 	R_UploadEncodedImageDirect(target, level, format, int_fmat, width, height, data, R_DecodeS3TCBlock);
 }
 
+/**
+ * @brief R_UploadImage2D
+ * @param img - unused
+ * @param[in] target
+ * @param[in] level
+ * @param[in] int_fmat
+ * @param[in] width
+ * @param[in] height
+ * @param[in] format
+ * @param[in] type
+ * @param[in] data
+ *
+ * @todo TODO:
+ */
 static void R_UploadImage2D(image_t *img, GLenum target, int level, GLenum int_fmat,
                             int width, int height, GLenum format, GLenum type, const void *data)
 {
@@ -554,6 +633,15 @@ static void R_UploadImage2D(image_t *img, GLenum target, int level, GLenum int_f
 	glTexImage2D(target, level, int_fmat, width, height, 0, format, type, data);
 }
 
+/**
+ * @brief R_LoadDDSImageData
+ * @param[in] pImageData
+ * @param[in] name
+ * @param bits - unused
+ * @param[in] filterType
+ * @param[in] wrapType
+ * @return
+ */
 image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filterType_t filterType, wrapType_t wrapType)
 {
 	image_t          *ret = NULL;
@@ -1188,7 +1276,14 @@ ret_error:
 	return ret;
 }
 
-
+/**
+ * @brief R_LoadDDSImage
+ * @param[in] name
+ * @param[in] bits
+ * @param[in] filterType
+ * @param[in] wrapType
+ * @return
+ */
 image_t *R_LoadDDSImage(const char *name, int bits, filterType_t filterType, wrapType_t wrapType)
 {
 	image_t *ret;

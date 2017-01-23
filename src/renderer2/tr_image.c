@@ -65,7 +65,7 @@ void R_GammaCorrect(byte *buffer, int bufSize)
 /**
  * @struct textureMode_t
  * @brief
- */  
+ */
 typedef struct
 {
 	char *name;
@@ -145,7 +145,7 @@ void GL_TextureMode(const char *string)
 
 /**
  * @brief R_SumOfUsedImages
- * @return 
+ * @return
  */
 int R_SumOfUsedImages(void)
 {
@@ -331,13 +331,13 @@ void R_ImageList_f(void)
 
 /**
  * @brief Used to resample images in a more general than quartering fashion.
- *  
+ *
  * This will only be filtered properly if the resampled size
  * is greater than half the original size.
- * 
+ *
  * If a larger shrinking is needed, use the mipmap function
  * before or after.
- * 
+ *
  * @param[in,out] in
  * @param[in] inwidth
  * @param[in] inheight
@@ -1443,7 +1443,7 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
  * @brief R_AllocImage
  * @param[in] name
  * @param[in] linkIntoHashTable
- * @return 
+ * @return
  */
 image_t *R_AllocImage(const char *name, qboolean linkIntoHashTable)
 {
@@ -1487,7 +1487,7 @@ image_t *R_AllocImage(const char *name, qboolean linkIntoHashTable)
  * @param[in] bits
  * @param[in] filterType
  * @param[in] wrapType
- * @return 
+ * @return
  */
 image_t *R_CreateImage(const char *name,
                        const byte *pic, int width, int height, int bits, filterType_t filterType, wrapType_t wrapType)
@@ -1528,7 +1528,7 @@ image_t *R_CreateImage(const char *name,
  * @param[in] bits
  * @param[in] filterType
  * @param[in] wrapType
- * @return 
+ * @return
  */
 image_t *R_CreateCubeImage(const char *name,
                            const byte *pic[6],
@@ -1569,9 +1569,9 @@ static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int 
  * @param[out] pic
  * @param[out] width
  * @param[out] height
- * @param[out] bits
+ * @param[in,out] bits
  * @param[in] materialName
- * @return 
+ * @return
  */
 static qboolean ParseHeightMap(char **text, byte **pic, int *width, int *height, int *bits, const char *materialName)
 {
@@ -1625,7 +1625,7 @@ static qboolean ParseHeightMap(char **text, byte **pic, int *width, int *height,
  * @param[out] height
  * @param[out] bits
  * @param[in] materialName
- * @return 
+ * @return
  */
 static qboolean ParseDisplaceMap(char **text, byte **pic, int *width, int *height, int *bits, const char *materialName)
 {
@@ -1694,7 +1694,7 @@ static qboolean ParseDisplaceMap(char **text, byte **pic, int *width, int *heigh
  * @param[out] height
  * @param[out] bits
  * @param[in] materialName
- * @return 
+ * @return
  */
 static qboolean ParseAddNormals(char **text, byte **pic, int *width, int *height, int *bits, const char *materialName)
 {
@@ -1763,7 +1763,7 @@ static qboolean ParseAddNormals(char **text, byte **pic, int *width, int *height
  * @param[out] height
  * @param[out] bits
  * @param[in] materialName
- * @return 
+ * @return
  */
 static qboolean ParseInvertAlpha(char **text, byte **pic, int *width, int *height, int *bits, const char *materialName)
 {
@@ -1803,7 +1803,7 @@ static qboolean ParseInvertAlpha(char **text, byte **pic, int *width, int *heigh
  * @param[out] height
  * @param[out] bits
  * @param[in] materialName
- * @return 
+ * @return
  */
 static qboolean ParseInvertColor(char **text, byte **pic, int *width, int *height, int *bits, const char *materialName)
 {
@@ -1843,7 +1843,7 @@ static qboolean ParseInvertColor(char **text, byte **pic, int *width, int *heigh
  * @param[out] height
  * @param[out] bits
  * @param[in] materialName
- * @return 
+ * @return
  */
 static qboolean ParseMakeIntensity(char **text, byte **pic, int *width, int *height, int *bits, const char *materialName)
 {
@@ -1886,7 +1886,7 @@ static qboolean ParseMakeIntensity(char **text, byte **pic, int *width, int *hei
  * @param[out] height
  * @param[out] bits
  * @param[in] materialName
- * @return 
+ * @return
  */
 static qboolean ParseMakeAlpha(char **text, byte **pic, int *width, int *height, int *bits, const char *materialName)
 {
@@ -1923,8 +1923,8 @@ static qboolean ParseMakeAlpha(char **text, byte **pic, int *width, int *height,
 
 /**
  * @struct imageExtToLoaderMap_t
- * @brief 
- */ 
+ * @brief
+ */
 typedef struct
 {
 	char *ext;
@@ -1933,9 +1933,9 @@ typedef struct
 
 /**
  * @var imageLoaders
- * @brief Note that the ordering indicates the order of preference used 
- * when there are multiple images of different formats available 
- */  
+ * @brief Note that the ordering indicates the order of preference used
+ * when there are multiple images of different formats available
+ */
 static imageExtToLoaderMap_t imageLoaders[] =
 {
 	{ "png",  R_LoadPNG },
@@ -1950,10 +1950,10 @@ static int numImageLoaders = sizeof(imageLoaders) / sizeof(imageLoaders[0]);
 
 /**
  * @brief This is a hack to get the common imageloaders working properly
- * @param size
- * @param bufferType
- * @param filename
- * @return 
+ * @param[in] size
+ * @param[in] bufferType
+ * @param[in] filename
+ * @return
  */
 void *R_GetImageBuffer(int size, bufferMemType_t bufferType, const char *filename)
 {
@@ -1977,12 +1977,12 @@ void *R_GetImageBuffer(int size, bufferMemType_t bufferType, const char *filenam
 /**
  * @brief Loads any of the supported image types into a canonical
  * 32 bit format.
- * @param buffer
- * @param pic
- * @param width
- * @param height
- * @param bits
- * @param materialName
+ * @param[in,out] buffer
+ * @param[out] pic
+ * @param[out] width
+ * @param[out] height
+ * @param[in,out] bits
+ * @param[in] materialName
  */
 static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int *bits, const char *materialName)
 {
@@ -2196,6 +2196,14 @@ static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int 
 	}
 }
 
+/**
+ * @brief R_ImageCopyBack
+ * @param[in] image
+ * @param[in] x
+ * @param[in] y
+ * @param[in] width
+ * @param[in] height
+ */
 void R_ImageCopyBack(image_t *image, int x, int y, int width, int height)
 {
 	GL_Bind(image);
@@ -2220,14 +2228,15 @@ void R_ImageCopyBack(image_t *image, int x, int y, int width, int height)
 	}
 }
 
-/*
-===============
-R_FindImageFile
-
-Finds or loads the given image.
-Returns NULL if it fails, not a default image.
-==============
-*/
+/**
+ * @brief Finds or loads the given image.
+ * @param[in] imageName
+ * @param[in] bits
+ * @param[in] filterType
+ * @param[in] wrapType
+ * @param[in] materialName
+ * @return NULL if it fails, not a default image.
+ */
 image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterType, wrapType_t wrapType, const char *materialName)
 {
 	image_t *image = NULL;
@@ -2343,6 +2352,16 @@ image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterTyp
 	return image;
 }
 
+/**
+ * @brief R_SwapPixel
+ * @param[in,out] inout
+ * @param[in] x
+ * @param[in] y
+ * @param[in] x2
+ * @param[in] y2
+ * @param[in] width
+ * @param height - unused
+ */
 static ID_INLINE void R_SwapPixel(byte *inout, int x, int y, int x2, int y2, int width, int height)
 {
 	byte color[4];
@@ -2369,6 +2388,12 @@ static ID_INLINE void R_SwapPixel(byte *inout, int x, int y, int x2, int y2, int
 	inout[4 * (y2 * width + x2) + 3] = color[3];
 }
 
+/**
+ * @brief R_Flip
+ * @param[in,out] in
+ * @param[in] width
+ * @param[in] height
+ */
 static void R_Flip(byte *in, int width, int height)
 {
 	int x, y;
@@ -2382,6 +2407,12 @@ static void R_Flip(byte *in, int width, int height)
 	}
 }
 
+/**
+ * @brief R_Flop
+ * @param[in,out] in
+ * @param[in] width
+ * @param[in] height
+ */
 static void R_Flop(byte *in, int width, int height)
 {
 	int x, y;
@@ -2395,6 +2426,13 @@ static void R_Flop(byte *in, int width, int height)
 	}
 }
 
+/**
+ * @brief R_Rotate
+ * @param[in,out] in
+ * @param[in] width
+ * @param[in] height
+ * @param[in] degrees
+ */
 static void R_Rotate(byte *in, int width, int height, int degrees)
 {
 	byte color[4];
@@ -2461,28 +2499,36 @@ static void R_Rotate(byte *in, int width, int height, int degrees)
 	Com_Dealloc(tmp);
 }
 
-/*
-===============
-R_SubImageCpy
-
-Copies between a smaller image and a larger image.
-Last flag controls is copy in or out of larger image.
-
-e.g.
-dest = malloc(4*4*channels);
-[________]
-[________]
-[________]
-[________]
-src = malloc(2*2*channels);
-[____]
-[____]
-R_SubImageCpy(dest, 0, 0, 4, 4, src, 2, 2, channels, qtrue);
-[____]___]
-[____]___]
-[________]
-[________]
-===============
+/**
+ * @brief Copies between a smaller image and a larger image.
+ * Last flag controls is copy in or out of larger image.
+ *
+ * @param[in,out] dest
+ * @param[in] destx
+ * @param[in] desty
+ * @param[in] destw
+ * @param[in] desth
+ * @param[in,out] src
+ * @param[in] srcw
+ * @param[in] srch
+ * @param[in] bytes
+ * @param[in] in
+ *
+ * @note e.g.
+ * dest = malloc(4*4*channels);
+ * [________]
+ * [________]
+ * [________]
+ * [________]
+ * src = malloc(2*2*channels);
+ * [____]
+ * [____]
+ * R_SubImageCpy(dest, 0, 0, 4, 4, src, 2, 2, channels, qtrue);
+ * [____]___]
+ * [____]___]
+ * [________]
+ * [________]
+ * ===============
 */
 void R_SubImageCpy(byte *dest, size_t destx, size_t desty, size_t destw, size_t desth, byte *src, size_t srcw, size_t srch, size_t bytes, qboolean in)
 {
@@ -2508,16 +2554,17 @@ void R_SubImageCpy(byte *dest, size_t destx, size_t desty, size_t destw, size_t 
 	}
 }
 
-/*
-===============
-R_FindCubeImage
-
-Finds or loads the given image.
-Returns NULL if it fails, not a default image.
-
-fear the use of goto
-==============
-*/
+/**
+ * @brief Finds or loads the given image.
+ * @param[in] imageName
+ * @param[in] bits
+ * @param[in] filterType
+ * @param[in] wrapType
+ * @param[in] materialName
+ * @return NULL if it fails, not a default image.
+ *
+ * @note Fear the use of goto
+ */
 image_t *R_FindCubeImage(const char *imageName, int bits, filterType_t filterType, wrapType_t wrapType, const char *materialName)
 {
 	int         i;
@@ -2703,44 +2750,40 @@ skipCubeImage:
 	return image;
 }
 
-/*
-=================
-R_InitFogTable
-=================
-*/
+/**
+ * @brief R_InitFogTable
+ */
 void R_InitFogTable(void)
 {
 	int i;
 
 	for (i = 0; i < FOG_TABLE_SIZE; i++)
 	{
-		tr.fogTable[i] = pow((float)i / (FOG_TABLE_SIZE - 1), DEFAULT_FOG_EXP_DENSITY);
+		tr.fogTable[i] = pow((double)i / (FOG_TABLE_SIZE - 1), DEFAULT_FOG_EXP_DENSITY);
 	}
 }
 
-/*
-================
-R_FogFactor
-
-Returns a 0.0 to 1.0 fog density value
-This is called for each texel of the fog texture on startup
-and for each vertex of transparent shaders in fog dynamically
-================
-*/
+/**
+ * @brief This is called for each texel of the fog texture on startup
+ * and for each vertex of transparent shaders in fog dynamically
+ * @param[in] s
+ * @param[in] t
+ * @return A 0.0 to 1.0 fog density value.
+ */
 float R_FogFactor(float s, float t)
 {
 	float d;
 
-	s -= 1.0 / 512;
+	s -= 1.0f / 512;
 	if (s < 0)
 	{
 		return 0;
 	}
-	if (t < 1.0 / 32)
+	if (t < 1.0f / 32)
 	{
 		return 0;
 	}
-	if (t < 31.0 / 32)
+	if (t < 31.0f / 32)
 	{
 		s *= (t - 1.0f / 32.0f) / (30.0f / 32.0f);
 	}
@@ -2748,9 +2791,9 @@ float R_FogFactor(float s, float t)
 	// we need to leave a lot of clamp range
 	s *= 8;
 
-	if (s > 1.0)
+	if (s > 1.0f)
 	{
-		s = 1.0;
+		s = 1.0f;
 	}
 
 	d = tr.fogTable[(int)(s * (FOG_TABLE_SIZE - 1))];
@@ -2758,13 +2801,12 @@ float R_FogFactor(float s, float t)
 	return d;
 }
 
-/*
-================
-R_CreateFogImage
-================
-*/
 #define FOG_S   256
 #define FOG_T   32
+
+/**
+ * @brief R_CreateFogImage
+ */
 static void R_CreateFogImage(void)
 {
 	int   x, y;
@@ -2799,12 +2841,11 @@ static void R_CreateFogImage(void)
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 }
 
-/*
-==================
-R_CreateDefaultImage
-==================
-*/
 #define DEFAULT_SIZE    128
+
+/**
+ * @brief R_CreateDefaultImage
+ */
 static void R_CreateDefaultImage(void)
 {
 	int  x, y;
@@ -2841,6 +2882,9 @@ static void R_CreateDefaultImage(void)
 	tr.defaultImage = R_CreateImage("_default", (byte *) data, DEFAULT_SIZE, DEFAULT_SIZE, IF_NOPICMIP, FT_DEFAULT, WT_REPEAT);
 }
 
+/**
+ * @brief R_CreateRandomNormalsImage
+ */
 static void R_CreateRandomNormalsImage(void)
 {
 	int  x, y;
@@ -2872,6 +2916,9 @@ static void R_CreateRandomNormalsImage(void)
 	tr.randomNormalsImage = R_CreateImage("_randomNormals", (byte *) data, DEFAULT_SIZE, DEFAULT_SIZE, IF_NOPICMIP, FT_DEFAULT, WT_REPEAT);
 }
 
+/**
+ * @brief R_CreateNoFalloffImage
+ */
 static void R_CreateNoFalloffImage(void)
 {
 	byte data[DEFAULT_SIZE][DEFAULT_SIZE][4];
@@ -2882,6 +2929,10 @@ static void R_CreateNoFalloffImage(void)
 }
 
 #define ATTENUATION_XY_SIZE 128
+
+/**
+ * @brief R_CreateAttenuationXYImage
+ */
 static void R_CreateAttenuationXYImage(void)
 {
 	float d;
@@ -2914,6 +2965,17 @@ static void R_CreateAttenuationXYImage(void)
 	                  WT_CLAMP);
 }
 
+/**
+ * @brief R_CreateCubeRenderImage
+ * @param[in] name
+ * @param[in] color
+ * @param[in] width
+ * @param[in] height
+ * @param[in] bits
+ * @param[in] filterType
+ * @param[in] wrapType
+ * @return
+ */
 image_t *R_CreateCubeRenderImage(const char *name, int color, int width, int height, int bits, filterType_t filterType, wrapType_t wrapType)
 {
 	int     i;
@@ -2942,6 +3004,16 @@ image_t *R_CreateCubeRenderImage(const char *name, int color, int width, int hei
 	return ret;
 }
 
+/**
+ * @brief R_CreateRenderImageSize
+ * @param[in] name
+ * @param[in] width
+ * @param[in] height
+ * @param[in] bits
+ * @param[in] filterType
+ * @param[in] wrapType
+ * @return
+ */
 image_t *R_CreateRenderImageSize(const char *name, int width, int height, int bits, filterType_t filterType, wrapType_t wrapType)
 {
 	byte    *data = NULL;
@@ -2961,6 +3033,15 @@ image_t *R_CreateRenderImageSize(const char *name, int width, int height, int bi
 	return ret;
 }
 
+/**
+ * @brief R_CreateRenderImage
+ * @param[in] name
+ * @param[in] quat
+ * @param[in] bits
+ * @param[in] filterType
+ * @param[in] wrapType
+ * @return
+ */
 image_t *R_CreateRenderImage(const char *name, qboolean quat, int bits, filterType_t filterType, wrapType_t wrapType)
 {
 	int width, height;
@@ -2985,6 +3066,9 @@ image_t *R_CreateRenderImage(const char *name, qboolean quat, int bits, filterTy
 	return R_CreateRenderImageSize(name, width, height, bits, filterType, wrapType);
 }
 
+/**
+ * @brief R_CreateContrastRenderFBOImage
+ */
 static void R_CreateContrastRenderFBOImage(void)
 {
 	if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
@@ -2997,6 +3081,9 @@ static void R_CreateContrastRenderFBOImage(void)
 	}
 }
 
+/**
+ * @brief R_CreateBloomRenderFBOImage
+ */
 static void R_CreateBloomRenderFBOImage(void)
 {
 	int i;
@@ -3013,16 +3100,25 @@ static void R_CreateBloomRenderFBOImage(void)
 	}
 }
 
+/**
+ * @brief R_CreateCurrentRenderImage
+ */
 static void R_CreateCurrentRenderImage(void)
 {
 	tr.currentRenderImage = R_CreateRenderImage("_currentRender", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
 }
 
+/**
+ * @brief R_CreateDepthRenderImage
+ */
 static void R_CreateDepthRenderImage(void)
 {
 	tr.depthRenderImage = R_CreateRenderImage("_depthRender", qfalse, IF_DEPTH24, FT_NEAREST, WT_CLAMP);
 }
 
+/**
+ * @brief R_CreatePortalRenderImage
+ */
 static void R_CreatePortalRenderImage(void)
 {
 	if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
@@ -3035,11 +3131,17 @@ static void R_CreatePortalRenderImage(void)
 	}
 }
 
+/**
+ * @brief R_CreateOcclusionRenderFBOImage
+ */
 static void R_CreateOcclusionRenderFBOImage(void)
 {
 	tr.occlusionRenderFBOImage = R_CreateRenderImage("_occlusionFBORender", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
 }
 
+/**
+ * @brief R_CreateDepthToColorFBOImages
+ */
 static void R_CreateDepthToColorFBOImages(void)
 {
 
@@ -3052,7 +3154,11 @@ static void R_CreateDepthToColorFBOImages(void)
 	tr.depthToColorFrontFacesFBOImage = R_CreateRenderImage("_depthToColorFrontFacesFBORender", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
 }
 
-// clean up this mess some day ...
+/**
+ * @brief R_CreateDownScaleFBOImages
+ *
+ * @todo Clean up this mess some day ...
+ */
 static void R_CreateDownScaleFBOImages(void)
 {
 	if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
@@ -3103,6 +3209,9 @@ static void R_CreateDownScaleFBOImages(void)
 #endif
 }
 
+/**
+ * @brief R_CreateDeferredRenderFBOImages
+ */
 static void R_CreateDeferredRenderFBOImages(void)
 {
 	tr.deferredNormalFBOImage = R_CreateRenderImage("_deferredNormalFBO", qfalse, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
@@ -3126,6 +3235,9 @@ static void R_CreateDeferredRenderFBOImages(void)
 	}
 }
 
+/**
+ * @brief R_CreateShadowMapFBOImage
+ */
 static void R_CreateShadowMapFBOImage(void)
 {
 	int          i, size, bits;
@@ -3207,6 +3319,9 @@ static void R_CreateShadowMapFBOImage(void)
 	}
 }
 
+/**
+ * @brief R_CreateShadowCubeFBOImage
+ */
 static void R_CreateShadowCubeFBOImage(void)
 {
 	int          j, size, bits;
@@ -3254,6 +3369,9 @@ static void R_CreateShadowCubeFBOImage(void)
 	}
 }
 
+/**
+ * @brief R_CreateColorCubeImages
+ */
 static void R_CreateColorCubeImages(void)
 {
 	tr.blackCubeImage = R_CreateCubeRenderImage("_blackCube", 0, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, 0, FT_LINEAR, WT_EDGE_CLAMP);
@@ -3261,11 +3379,9 @@ static void R_CreateColorCubeImages(void)
 	tr.whiteCubeImage = R_CreateCubeRenderImage("_whiteCube", 0xFF, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, 0, FT_LINEAR, WT_EDGE_CLAMP);
 }
 
-/*
-==================
-R_CreateBuiltinImages
-==================
-*/
+/**
+ * @brief R_CreateBuiltinImages
+ */
 void R_CreateBuiltinImages(void)
 {
 	int   x, y;
@@ -3382,11 +3498,9 @@ void R_CreateBuiltinImages(void)
 	R_CreateColorCubeImages();
 }
 
-/*
-===============
-R_SetColorMappings
-===============
-*/
+/**
+ * @brief R_SetColorMappings
+ */
 void R_SetColorMappings(void)
 {
 	int   i, j;
@@ -3459,7 +3573,7 @@ void R_SetColorMappings(void)
 		}
 		else
 		{
-			inf = 255 * pow(i / 255.0f, 1.0f / g) + 0.5f;
+			inf = 255 * pow(i / 255.0, 1.0f / g) + 0.5;
 		}
 
 		inf <<= shift;
@@ -3497,11 +3611,9 @@ void R_SetColorMappings(void)
 	*/
 }
 
-/*
-===============
-R_InitImages
-===============
-*/
+/**
+ * @brief R_InitImages
+ */
 void R_InitImages(void)
 {
 	const char *charsetImage  = "gfx/2d/consolechars";
@@ -3540,11 +3652,9 @@ void R_InitImages(void)
 	}
 }
 
-/*
-===============
-R_ShutdownImages
-===============
-*/
+/**
+ * @brief R_ShutdownImages
+ */
 void R_ShutdownImages(void)
 {
 	int     i;
@@ -3569,6 +3679,11 @@ void R_ShutdownImages(void)
 	FreeVertexHashTable(tr.cubeHashTable);
 }
 
+/**
+ * @brief RE_GetTextureId
+ * @param name
+ * @return
+ */
 int RE_GetTextureId(const char *name)
 {
 	int     i;

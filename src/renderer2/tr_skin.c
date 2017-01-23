@@ -44,6 +44,8 @@ SKINS
 /**
  * @brief This is unfortunate, but the skin files aren't
  * compatable with our normal parsing rules.
+ *
+ * @param[in,out] data_p
  */
 static char *CommaParse(char **data_p)
 {
@@ -148,6 +150,13 @@ static char *CommaParse(char **data_p)
 	return com_token;
 }
 
+/**
+ * @brief RE_GetSkinModel
+ * @param[in] skinid
+ * @param[in] type
+ * @param[out] name
+ * @return
+ */
 qboolean RE_GetSkinModel(qhandle_t skinid, const char *type, char *name)
 {
 	int    i;
@@ -172,16 +181,16 @@ qboolean RE_GetSkinModel(qhandle_t skinid, const char *type, char *name)
 	return qfalse;
 }
 
-/*
-==============
-RE_GetShaderFromModel
-    return a shader index for a given model's surface
-    'withlightmap' set to '0' will create a new shader that is a copy of the one found
-    on the model, without the lighmap stage, if the shader has a lightmap stage
-
-    NOTE: only works for bmodels right now.  Could modify for other models (md3's etc.)
-==============
-*/
+/**
+ * @brief RE_GetShaderFromModel
+ * @param[in] modelid
+ * @param[in] surfnum
+ * @param withlightmap set to '0' will create a new shader that is a copy of the one found
+ * on the model, without the lighmap stage, if the shader has a lightmap stage - unused
+ * @return a shader index for a given model's surface
+ *
+ * @note Only works for bmodels right now.  Could modify for other models (md3's etc.)
+ */
 qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap)
 {
 	model_t      *model;
@@ -248,6 +257,11 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 	return 0;
 }
 
+/**
+ * @brief RE_RegisterSkin
+ * @param[in] name
+ * @return
+ */
 qhandle_t RE_RegisterSkin(const char *name)
 {
 	qhandle_t     hSkin;
@@ -398,6 +412,9 @@ qhandle_t RE_RegisterSkin(const char *name)
 	return hSkin;
 }
 
+/**
+ * @brief R_InitSkins
+ */
 void R_InitSkins(void)
 {
 	skin_t *skin;
@@ -412,6 +429,11 @@ void R_InitSkins(void)
 	skin->surfaces[0]->shader = tr.defaultShader;
 }
 
+/**
+ * @brief R_GetSkinByHandle
+ * @param[in] hSkin
+ * @return
+ */
 skin_t *R_GetSkinByHandle(qhandle_t hSkin)
 {
 	if (hSkin < 1 || hSkin >= tr.numSkins)
@@ -421,6 +443,9 @@ skin_t *R_GetSkinByHandle(qhandle_t hSkin)
 	return tr.skins[hSkin];
 }
 
+/**
+ * @brief R_SkinList_f
+ */
 void R_SkinList_f(void)
 {
 	int    i, j;
