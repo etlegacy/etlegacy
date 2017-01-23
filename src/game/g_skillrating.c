@@ -161,7 +161,7 @@ void G_UpdateSkillRating(int winner)
 	int   playerTeam, rankFactor, i;
 
 	// total play time
-	int totalTime = level.intermissiontime - level.startTime - level.timeDelta;
+	int totalTime = level.intermissionQueued - level.startTime - level.timeDelta;
 
 	// map side parameter
 	if (g_skillRating.integer > 1)
