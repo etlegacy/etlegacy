@@ -105,7 +105,7 @@ qhandle_t RE_RegisterModel(const char *name)
 	int       bufferLen = 0;
 	int       lod;
 	int       ident;
-	qboolean  loaded;
+	qboolean  loaded = qfalse;
 	qhandle_t hModel;
 	int       numLoaded;
 
