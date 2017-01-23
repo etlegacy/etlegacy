@@ -266,6 +266,44 @@ static int DB_CreateSchema()
 
 */
 
+#ifdef FEATURE_RATING
+	// rating users table
+	sql = "CREATE TABLE IF NOT EXISTS rating_users (guid TEXT PRIMARY KEY NOT NULL, mu REAL, sigma REAL, created TEXT, updated TEXT, UNIQUE (guid));";
+
+	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
+
+	if (result != SQLITE_OK)
+	{
+		Com_Printf("... failed to create table rating_users: %s\n", err_msg);
+		sqlite3_free(err_msg);
+		return 1;
+	}
+
+	// rating match table
+	sql = "CREATE TABLE IF NOT EXISTS rating_match (guid TEXT PRIMARY KEY NOT NULL, mu REAL, sigma REAL, time_axis INT, time_allies INT, UNIQUE (guid));";
+
+	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
+
+	if (result != SQLITE_OK)
+	{
+		Com_Printf("... failed to create table rating_match: %s\n", err_msg);
+		sqlite3_free(err_msg);
+		return 1;
+	}
+
+	// rating maps table
+	sql = "CREATE TABLE IF NOT EXISTS rating_maps (mapname TEXT PRIMARY KEY NOT NULL, win_axis INT, win_allies INT, UNIQUE (mapname));";
+
+	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
+
+	if (result != SQLITE_OK)
+	{
+		Com_Printf("... failed to create table rating_maps: %s\n", err_msg);
+		sqlite3_free(err_msg);
+		return 1;
+	}
+#endif
+
 	return 0;
 }
 

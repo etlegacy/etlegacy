@@ -2623,6 +2623,14 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 #endif
 
 	G_UpdateCharacter(client);
+
+#ifdef FEATURE_RATING
+	if (g_skillRating.integer)
+	{
+		G_SkillRatingGetUserRating(client, firstTime);
+	}
+#endif
+
 	ClientUserinfoChanged(clientNum);
 
 	// don't do the "xxx connected" messages if they were caried over from previous level
@@ -3383,6 +3391,14 @@ void ClientDisconnect(int clientNum)
 	{
 		return;
 	}
+
+#ifdef FEATURE_RATING
+	if (g_skillRating.integer && !level.intermissiontime)
+	{
+		// rating already recorded before intermission
+		G_SkillRatingSetUserRating(ent->client);
+	}
+#endif
 
 #ifdef FEATURE_LUA
 	// LUA API callbacks

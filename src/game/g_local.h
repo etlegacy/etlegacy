@@ -1093,6 +1093,17 @@ typedef struct config_s
 	qboolean publicConfig;
 } config_t;
 
+#ifdef FEATURE_RATING
+#include "sqlite3.h"
+
+typedef struct database_s
+{
+	char path[MAX_OSPATH];
+	sqlite3 *db;
+	int initialized;
+} database_t;
+#endif
+
 /**
  * @struct level_locals_s
  * @typedef level_locals_t
@@ -1281,6 +1292,7 @@ typedef struct level_locals_s
 	float alliesProb;
 	float axisProb;
 	float mapProb;             ///< win prob of Axis team
+	database_t database;
 #endif
 } level_locals_t;
 
@@ -2371,8 +2383,28 @@ unsigned int G_weapStatIndex_MOD(unsigned int iWeaponMOD);
 #define TAU     (SIGMA / 100)   ///< dynamics factor
 #define EPSILON 0.f             ///< draw margin (assumed null)
 
-void G_CalculateSkillRatings();
+void G_CalculateSkillRatings(void);
 float G_CalculateWinProbability(int team);
+void G_UpdateSkillRating(int winner);
+
+typedef struct srData_s
+{
+	const unsigned char *guid;
+	float mu;
+	float sigma;
+	int time_axis;
+	int time_allies;
+} srData_t;
+
+int G_SkillRatingDB_Init(void);
+int G_SkillRatingDB_DeInit(void);
+int G_SkillRatingDB_Check(char *dbpath, int db_mode);
+int G_SkillRatingPrepareMatchRating(void);
+int G_SkillRatingGetMatchRating(char *guid, srData_t *sr_data);
+int G_SkillRatingSetMatchRating(char *guid, srData_t *sr_data);
+void G_SkillRatingGetUserRating(gclient_t *cl, qboolean firstTime);
+void G_SkillRatingSetUserRating(gclient_t *cl);
+int G_SkillRatingSetUserRatingData(srData_t *sr_data);
 #endif
 
 // g_stats.c

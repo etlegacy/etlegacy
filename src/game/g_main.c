@@ -1943,7 +1943,7 @@ void G_UpdateCvars(void)
 					}
 
 #ifdef FEATURE_RATING
-					Info_SetValueForKey(cs, "R", (va("%i", g_skillRating.integer)));
+					Info_SetValueForKey(cs, "R", va("%i", g_skillRating.integer));
 
 					if (g_skillRating.integer > 1)
 					{
@@ -2523,9 +2523,17 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 	level.mapsSinceLastXPReset = 0;
 
 #ifdef FEATURE_RATING
+	// check and initialize db
+	if (g_skillRating.integer && G_SkillRatingDB_Init() != 0)
+	{
+		G_Printf("^1ERROR: g_skillrating changed to 0\n");
+		trap_Cvar_Set("g_skillRating", "0");
+	}
+
+	// get map rating
 	if (g_skillRating.integer > 1)
 	{
-		level.mapProb = 0.f;
+		level.mapProb = G_SkillRatingGetMapRating(level.rawmapname);
 	}
 #endif
 
@@ -3588,6 +3596,25 @@ void G_LogExit(const char *string)
 
 	G_LogPrintf("Exit: %s\n", string);
 
+#ifdef FEATURE_RATING
+	// record match ratings
+	if (g_skillRating.integer && (g_gametype.integer != GT_WOLF_STOPWATCH && g_gametype.integer != GT_WOLF_LMS))
+	{
+		for (i = 0; i < level.numConnectedClients; i++)
+		{
+			gentity_t *ent = &g_entities[level.sortedClients[i]];
+
+			if (!ent)
+			{
+				continue;
+			}
+
+			// record match rating before intermission
+			G_SkillRatingSetUserRating(ent->client);
+		}
+	}
+#endif
+
 	level.intermissionQueued = level.time;
 
 	// this will keep the clients from playing any voice sounds
@@ -3615,18 +3642,18 @@ void G_LogExit(const char *string)
 		G_LogPrintf("score: %i  ping: %i  client: %i %s\n", cl->ps.persistant[PERS_SCORE], (cl->ps.ping < 999 ? cl->ps.ping : 999), level.sortedClients[i], cl->pers.netname);
 	}
 
+	G_LogPrintf("axis:%i  allies:%i\n", level.teamScores[TEAM_AXIS], level.teamScores[TEAM_ALLIES]);
+
+	// Send gameCompleteStatus message to master servers
+	trap_SendConsoleCommand(EXEC_APPEND, "gameCompleteStatus\n");
+
 #ifdef FEATURE_RATING
-	// calculate skill ratings
+	// calculate skill ratings once intermission is queued
 	if (g_skillRating.integer && (g_gametype.integer != GT_WOLF_STOPWATCH && g_gametype.integer != GT_WOLF_LMS))
 	{
 		G_CalculateSkillRatings();
 	}
 #endif
-
-	G_LogPrintf("axis:%i  allies:%i\n", level.teamScores[TEAM_AXIS], level.teamScores[TEAM_ALLIES]);
-
-	// Send gameCompleteStatus message to master servers
-	trap_SendConsoleCommand(EXEC_APPEND, "gameCompleteStatus\n");
 
 	if (g_gametype.integer == GT_WOLF_STOPWATCH)
 	{
@@ -3918,6 +3945,15 @@ void CheckIntermissionExit(void)
 			return;
 		}
 	}
+
+#ifdef FEATURE_RATING
+	if (g_skillRating.integer)
+	{
+		// deinitialize db at the last moment to ensure bots/players
+		// connecting in intermission still have db access
+		G_SkillRatingDB_DeInit();
+	}
+#endif
 
 	ExitLevel();
 }
