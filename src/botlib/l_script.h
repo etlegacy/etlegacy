@@ -36,18 +36,18 @@
 #ifndef INCLUDE_L_SCRIPT_H
 #define INCLUDE_L_SCRIPT_H
 
-// undef if binary numbers of the form 0b... or 0B... are not allowed
+/// undef if binary numbers of the form 0b... or 0B... are not allowed
 #define BINARYNUMBERS
-// undef if not using the token.intvalue and token.floatvalue
+/// undef if not using the token.intvalue and token.floatvalue
 #define NUMBERVALUE
-// use dollar sign also as punctuation
+/// use dollar sign also as punctuation
 #define DOLLAR
 
-// maximum token length
+/// maximum token length
 #define MAX_TOKEN               1024
-// maximum path length
+/// maximum path length
 #ifndef _MAX_PATH
-// used to be MAX_QPATH, which is the game filesystem max len, and not the OS max len
+/// used to be MAX_QPATH, which is the game filesystem max len, and not the OS max len
 #define _MAX_PATH               1024
 #endif
 
@@ -57,15 +57,15 @@
 #define SCFL_NOSTRINGWHITESPACES    0x0004
 #define SCFL_NOSTRINGESCAPECHARS    0x0008
 #define SCFL_PRIMITIVE              0x0010
-#define SCFL_NOBINARYNUMBERS        0x0020 // unused
-#define SCFL_NONUMBERVALUES         0x0040 // unused
+#define SCFL_NOBINARYNUMBERS        0x0020 ///< unused
+#define SCFL_NONUMBERVALUES         0x0040 ///< unused
 
 // token types
-#define TT_STRING                   1           // string
-#define TT_LITERAL                  2           // literal
-#define TT_NUMBER                   3           // number
-#define TT_NAME                     4           // name
-#define TT_PUNCTUATION              5           // punctuation
+#define TT_STRING                   1      ///< string
+#define TT_LITERAL                  2      ///< literal
+#define TT_NUMBER                   3      ///< number
+#define TT_NAME                     4      ///< name
+#define TT_PUNCTUATION              5      ///< punctuation
 
 //string sub type
 //---------------
@@ -75,16 +75,16 @@
 //      the ASCII code of the literal
 //number sub type
 //---------------
-#define TT_DECIMAL                  0x0008  // decimal number
-#define TT_HEX                      0x0100  // hexadecimal number
-#define TT_OCTAL                    0x0200  // octal number
+#define TT_DECIMAL                  0x0008  ///< decimal number
+#define TT_HEX                      0x0100  ///< hexadecimal number
+#define TT_OCTAL                    0x0200  ///< octal number
 #ifdef BINARYNUMBERS
-#define TT_BINARY                   0x0400  // binary number
+#define TT_BINARY                   0x0400  ///< binary number
 #endif //BINARYNUMBERS
-#define TT_FLOAT                    0x0800  // floating point number
-#define TT_INTEGER                  0x1000  // integer number
-#define TT_LONG                     0x2000  // long number
-#define TT_UNSIGNED                 0x4000  // unsigned number
+#define TT_FLOAT                    0x0800  ///< floating point number
+#define TT_INTEGER                  0x1000  ///< integer number
+#define TT_LONG                     0x2000  ///< long number
+#define TT_UNSIGNED                 0x4000  ///< unsigned number
 // punctuation sub type
 //--------------------
 #define P_RSHIFT_ASSIGN             1
@@ -152,50 +152,62 @@
 //-------------
 //      the length of the name
 
-// punctuation
+/**
+ * @struct punctuation_t
+ * @typedef punctuation_s
+ * @brief Punctuation
+ */
 typedef struct punctuation_s
 {
-	char *p;                        // punctuation character(s)
-	int n;                          // punctuation indication
-	struct punctuation_s *next;     // next punctuation
+	char *p;                            ///< punctuation character(s)
+	int n;                              ///< punctuation indication
+	struct punctuation_s *next;         ///< next punctuation
 } punctuation_t;
 
-// token
+/**
+ * @struct token_t
+ * @typedef token_s
+ * @brief Token
+ */
 typedef struct token_s
 {
-	char string[MAX_TOKEN];         // available token
-	int type;                       // last read token type
-	int subtype;                    // last read token sub type
+	char string[MAX_TOKEN];             ///< available token
+	int type;                           ///< last read token type
+	int subtype;                        ///< last read token sub type
 #ifdef NUMBERVALUE
-	unsigned long int intvalue; // integer value
-	long double floatvalue;         // floating point value
+	unsigned long int intvalue;         ///< integer value
+	long double floatvalue;             ///< floating point value
 #endif //NUMBERVALUE
-	char *whitespace_p;             // start of white space before token
-	char *endwhitespace_p;          // start of white space before token
-	int line;                       // line the token was on
-	int linescrossed;               // lines crossed in white space
-	struct token_s *next;           // next token in chain
+	char *whitespace_p;                 ///< start of white space before token
+	char *endwhitespace_p;              ///< start of white space before token
+	int line;                           ///< line the token was on
+	int linescrossed;                   ///< lines crossed in white space
+	struct token_s *next;               ///< next token in chain
 } token_t;
 
-//script file
+/**
+ * @struct script_t
+ * @typedef script_s
+ * @brief Script file
+ */
 typedef struct script_s
 {
-	char filename[_MAX_PATH];       //file name of the script
-	char *buffer;                   //buffer containing the script
-	char *script_p;                 // current pointer in the script
-	char *end_p;                    // pointer to the end of the script
-	char *lastscript_p;             // script pointer before reading token
-	char *whitespace_p;             // begin of the white space
-	char *endwhitespace_p;          // end of the white space
-	int length;                     // length of the script in bytes
-	int line;                       // current line in script
-	int lastline;                   // line before reading token
-	int tokenavailable;             // set by UnreadLastToken
-	int flags;                      // several script flags
-	punctuation_t *punctuations;    // the punctuations used in the script
+	char filename[_MAX_PATH];           ///< file name of the script
+	char *buffer;                       ///< buffer containing the script
+	char *script_p;                     ///< current pointer in the script
+	char *end_p;                        ///< pointer to the end of the script
+	char *lastscript_p;                 ///< script pointer before reading token
+	char *whitespace_p;                 ///< begin of the white space
+	char *endwhitespace_p;              ///< end of the white space
+	int length;                         ///< length of the script in bytes
+	int line;                           ///< current line in script
+	int lastline;                       ///< line before reading token
+	int tokenavailable;                 ///< set by UnreadLastToken
+	int flags;                          ///< several script flags
+	punctuation_t *punctuations;        ///< the punctuations used in the script
 	punctuation_t **punctuationtable;
-	token_t token;                  // available token
-	struct script_s *next;          // next script in a chain
+	token_t token;                      ///< available token
+	struct script_s *next;              ///< next script in a chain
 } script_t;
 
 // read a token from the script

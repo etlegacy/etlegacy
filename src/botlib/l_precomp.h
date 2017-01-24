@@ -54,43 +54,55 @@
 #define INDENT_IFDEF            0x0008
 #define INDENT_IFNDEF           0x0010
 
-// macro definitions
+/**
+ * @struct define_t
+ * @typedef define_s
+ * @brief Macro definitions
+ */
 typedef struct define_s
 {
-	char *name;                         // define name
-	int flags;                          // define flags
-	int builtin;                        // > 0 if builtin define
-	int numparms;                       // number of define parameters
-	token_t *parms;                     // define parameters
-	token_t *tokens;                    // macro tokens (possibly containing parm tokens)
-	struct define_s *next;              // next defined macro in a list
-	struct define_s *hashnext;          // next define in the hash chain
+	char *name;                         ///< define name
+	int flags;                          ///< define flags
+	int builtin;                        ///< > 0 if builtin define
+	int numparms;                       ///< number of define parameters
+	token_t *parms;                     ///< define parameters
+	token_t *tokens;                    ///< macro tokens (possibly containing parm tokens)
+	struct define_s *next;              ///< next defined macro in a list
+	struct define_s *hashnext;          ///< next define in the hash chain
 } define_t;
 
-// indents
-// used for conditional compilation directives:
-// #if, #else, #elif, #ifdef, #ifndef
+/**
+ * @struct indent_t
+ * @typedef indent_s
+ * @brief indents
+ * used for conditional compilation directives:
+ * #if, #else, #elif, #ifdef, #ifndef
+ */
 typedef struct indent_s
 {
-	int type;                               // indent type
-	int skip;                               // true if skipping current indent
-	script_t *script;                       // script the indent was in
-	struct indent_s *next;                  // next indent on the indent stack
+	int type;                           ///< indent type
+	int skip;                           ///< true if skipping current indent
+	script_t *script;                   ///< script the indent was in
+	struct indent_s *next;              ///< next indent on the indent stack
 } indent_t;
 
-// source file
+/**
+ * @struct source_t
+ * @typedef source_s
+ * @brief Source File
+ */
 typedef struct source_s
 {
-	char filename[_MAX_PATH];               // file name of the script
-	char includepath[_MAX_PATH];            // path to include files
-	punctuation_t *punctuations;            // punctuations to use
-	script_t *scriptstack;                  // stack with scripts of the source
-	token_t *tokens;                        // tokens to read first
-	define_t *defines;                      // list with macro definitions
-	define_t **definehash;                  // hash chain with defines
-	indent_t *indentstack;                  // stack with indents
-	int skip;                               // > 0 if skipping conditional code
-	token_t token;                          // last read token
+	char filename[_MAX_PATH];           ///< file name of the script
+	char includepath[_MAX_PATH];        ///< path to include files
+	punctuation_t *punctuations;        ///< punctuations to use
+	script_t *scriptstack;              ///< stack with scripts of the source
+	token_t *tokens;                    ///< tokens to read first
+	define_t *defines;                  ///< list with macro definitions
+	define_t **definehash;              ///< hash chain with defines
+	indent_t *indentstack;              ///< stack with indents
+	int skip;                           ///< > 0 if skipping conditional code
+	token_t token;                      ///< last read token
 } source_t;
 
 // read a token from the source
