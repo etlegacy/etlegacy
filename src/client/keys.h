@@ -37,10 +37,14 @@
 
 #include "../ui/keycodes.h"
 
+/**
+ * @struct qkey_t
+ * @brief
+ */
 typedef struct
 {
 	qboolean down;
-	int repeats;                // if > 1, it is autorepeating
+	int repeats;                ///< if > 1, it is autorepeating
 	char *binding;
 	int hash;
 } qkey_t;

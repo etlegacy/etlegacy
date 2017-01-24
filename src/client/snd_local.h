@@ -41,24 +41,38 @@
 #include "snd_public.h"
 #include "snd_codec.h"
 
-#define PAINTBUFFER_SIZE        4096                    // this is in samples
+#define PAINTBUFFER_SIZE        4096                    ///< this is in samples
 
-#define SND_CHUNK_SIZE          1024                    // samples
-#define SND_CHUNK_SIZE_FLOAT    (SND_CHUNK_SIZE / 2)    // floats
-#define SND_CHUNK_SIZE_BYTE     (SND_CHUNK_SIZE * 2)    // floats
+#define SND_CHUNK_SIZE          1024                    ///< samples
+#define SND_CHUNK_SIZE_FLOAT    (SND_CHUNK_SIZE / 2)    ///< floats
+#define SND_CHUNK_SIZE_BYTE     (SND_CHUNK_SIZE * 2)    ///< floats
 
+/**
+ * @struct portable_samplepair_t
+ * @brief
+ */
 typedef struct
 {
-	int left;           // the final values will be clamped to +/- 0x00ffff00 and shifted down
+	int left;           ///< the final values will be clamped to +/- 0x00ffff00 and shifted down
 	int right;
 } portable_samplepair_t;
 
+/**
+ * @struct adpcm_state_t
+ * @typedef adpcm_state
+ * @brief
+ */
 typedef struct adpcm_state
 {
-	short sample;       /* Previous output value */
-	char index;         /* Index into stepsize table */
+	short sample;       ///< Previous output value
+	char index;         ///< Index into stepsize table
 } adpcm_state_t;
 
+/**
+ * @struct sndBuffer
+ * @typedef sndBuffer_s
+ * @brief
+ */
 typedef struct sndBuffer_s
 {
 	short sndChunk[SND_CHUNK_SIZE];
@@ -67,12 +81,17 @@ typedef struct sndBuffer_s
 	adpcm_state_t adpcm;
 } sndBuffer;
 
+/**
+ * @struct sfx_t
+ * @typedef sfx_s
+ * @brief
+ */
 typedef struct sfx_s
 {
 	sndBuffer *soundData;
-	qboolean defaultSound;                  // couldn't be loaded, so use buzz
-	qboolean inMemory;                      // not in Memory
-	qboolean soundCompressed;               // not in Memory
+	qboolean defaultSound;          ///< couldn't be loaded, so use buzz
+	qboolean inMemory;              ///< not in Memory
+	qboolean soundCompressed;       ///< not in Memory
 	int soundCompressionMethod;
 	int soundLength;
 	int soundChannels;
@@ -81,11 +100,15 @@ typedef struct sfx_s
 	struct sfx_s *next;
 } sfx_t;
 
+/**
+ * @struct dma_t
+ * @brief
+ */
 typedef struct
 {
 	int channels;
-	int samples;                        // mono samples in buffer
-	int submission_chunk;               // don't mix less than this #
+	int samples;                ///< mono samples in buffer
+	int submission_chunk;       ///< don't mix less than this #
 	int samplebits;
 	int speed;
 	byte *buffer;
@@ -93,8 +116,13 @@ typedef struct
 
 #define START_SAMPLE_IMMEDIATE  0x7fffffff
 
-#define MAX_DOPPLER_SCALE 50.0f // arbitrary
+#define MAX_DOPPLER_SCALE 50.0f ///< arbitrary
 
+/**
+ * @struct loopSound_t
+ * @typedef loopSound_s
+ * @brief
+ */
 typedef struct loopSound_s
 {
 	vec3_t origin;
@@ -114,26 +142,34 @@ typedef struct loopSound_s
 	int startSample;
 } loopSound_t;
 
+/**
+ * @struct channel_t
+ * @brief
+ */
 typedef struct
 {
 	int allocTime;
-	int startSample;            // START_SAMPLE_IMMEDIATE = set immediately on next mix
-	int entnum;                 // to allow overriding a specific sound
-	int entchannel;             // to allow overriding a specific sound
-	int leftvol;                // 0-255 volume after spatialization
-	int rightvol;               // 0-255 volume after spatialization
-	int master_vol;             // 0-255 volume before spatialization
+	int startSample;            ///< START_SAMPLE_IMMEDIATE = set immediately on next mix
+	int entnum;                 ///< to allow overriding a specific sound
+	int entchannel;             ///< to allow overriding a specific sound
+	int leftvol;                ///< 0-255 volume after spatialization
+	int rightvol;               ///< 0-255 volume after spatialization
+	int master_vol;             ///< 0-255 volume before spatialization
 	float dopplerScale;
 	float oldDopplerScale;
-	vec3_t origin;              // only use if fixed_origin is set
-	qboolean fixed_origin;      // use origin instead of fetching entnum's origin
-	sfx_t *thesfx;              // sfx structure
+	vec3_t origin;              ///< only use if fixed_origin is set
+	qboolean fixed_origin;      ///< use origin instead of fetching entnum's origin
+	sfx_t *thesfx;              ///< sfx structure
 	qboolean doppler;
 	int flags;
 } channel_t;
 
 #define WAV_FORMAT_PCM      1
 
+/**
+ * @struct wavinfo_t
+ * @brief
+ */
 typedef struct
 {
 	int format;
@@ -141,10 +177,13 @@ typedef struct
 	int width;
 	int channels;
 	int samples;
-	int dataofs;                // chunk starts this many bytes from file start
+	int dataofs;                ///< chunk starts this many bytes from file start
 } wavinfo_t;
 
-// Interface between Q3 sound "api" and the sound backend
+/**
+ * @struct soundInterface_t
+ * @brief Interface between Q3 sound "api" and the sound backend
+ */
 typedef struct
 {
 	void (*Shutdown)(void);
@@ -295,14 +334,17 @@ qboolean S_Base_Init(soundInterface_t *si);
 
 #ifdef FEATURE_OPENAL
 
-// OpenAL stuff
+/**
+ * @enum alSrcPriority_t
+ * @brief OpenAL stuff
+ */
 typedef enum
 {
-	SRCPRI_AMBIENT = 0, // Ambient sound effects
-	SRCPRI_ENTITY,      // Entity sound effects
-	SRCPRI_ONESHOT,     // One-shot sounds
-	SRCPRI_LOCAL,       // Local sounds
-	SRCPRI_STREAM       // Streams (music, cutscenes)
+	SRCPRI_AMBIENT = 0, ///< Ambient sound effects
+	SRCPRI_ENTITY,      ///< Entity sound effects
+	SRCPRI_ONESHOT,     ///< One-shot sounds
+	SRCPRI_LOCAL,       ///< Local sounds
+	SRCPRI_STREAM       ///< Streams (music, cutscenes)
 } alSrcPriority_t;
 
 

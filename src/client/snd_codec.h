@@ -38,6 +38,11 @@
 #include "../qcommon/q_shared.h"
 #include "../qcommon/qcommon.h"
 
+/**
+ * @struct snd_info_t
+ * @typedef snd_info_s
+ * @brief
+ */
 typedef struct snd_info_s
 {
 	int rate;
@@ -50,6 +55,11 @@ typedef struct snd_info_s
 
 typedef struct snd_codec_s snd_codec_t;
 
+/**
+ * @struct snd_stream_t
+ * @typedef snd_stream_s
+ * @brief
+ */
 typedef struct snd_stream_s
 {
 	snd_codec_t *codec;
@@ -66,7 +76,10 @@ typedef snd_stream_t *(*CODEC_OPEN)(const char *filename);
 typedef int (*CODEC_READ)(snd_stream_t *stream, int bytes, void *buffer);
 typedef void (*CODEC_CLOSE)(snd_stream_t *stream);
 
-// Codec data structure
+/**
+ * @struct snd_codec_s
+ * @brief Codec data structure
+ */
 struct snd_codec_s
 {
 	char *ext;

@@ -51,7 +51,7 @@
 #include <AL/alext.h>
 #include <AL/efx.h>
 
-/* Hack to enable compiling both on OpenAL SDK and OpenAL-soft. */
+// Hack to enable compiling both on OpenAL SDK and OpenAL-soft.
 #ifndef ALC_ENUMERATE_ALL_EXT
 #  define ALC_ENUMERATE_ALL_EXT 1
 #  define ALC_DEFAULT_ALL_DEVICES_SPECIFIER        0x1012
