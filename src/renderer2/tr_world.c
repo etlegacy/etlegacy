@@ -35,14 +35,14 @@
 
 #include "tr_local.h"
 
-/*
-=================
-R_CullTriSurf
-
-Returns true if the grid is completely culled away.
-Also sets the clipped hint bit in tess
-=================
-*/
+/**
+ * @brief Returns true if the grid is completely culled away.
+ * Also sets the clipped hint bit in tess
+ * @param[in] cv
+ * @return
+ *
+ * @note Unused
+ */
 /*
 static qboolean R_CullTriSurf(srfTriangles_t * cv)
 {
@@ -58,14 +58,14 @@ static qboolean R_CullTriSurf(srfTriangles_t * cv)
 }
 */
 
-/*
-=================
-R_CullGrid
-
-Returns true if the grid is completely culled away.
-Also sets the clipped hint bit in tess
-=================
-*/
+/**
+ * @brief Returns true if the grid is completely culled away.
+ * Also sets the clipped hint bit in tess
+ * @param cv
+ * @return
+ *
+ * @note Unused
+ */
 /*
 static qboolean R_CullGrid(srfGridMesh_t * cv)
 {
@@ -123,16 +123,16 @@ static qboolean R_CullGrid(srfGridMesh_t * cv)
 }
 */
 
-/*
-================
-R_CullSurface
-
-Tries to back face cull surfaces before they are lighted or
-added to the sorting list.
-
-This will also allow mirrors on both sides of a model without recursion.
-================
-*/
+/**
+ * @brief Tries to back face cull surfaces before they are lighted or
+ * added to the sorting list.
+ *
+ * This will also allow mirrors on both sides of a model without recursion.
+ * @param[in] surface
+ * @param[in] shader
+ * @param[out] frontFace
+ * @return
+ */
 static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *frontFace)
 {
 	srfGeneric_t *gen;
@@ -160,7 +160,7 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 		}
 		break;
 	case SF_FOLIAGE:
-		if (!r_drawfoliage->value)
+		if (r_drawfoliage->value == 0.f)
 		{
 			return qtrue;
 		}
@@ -228,6 +228,13 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 	return qfalse;
 }
 
+/**
+ * @brief R_LightSurfaceGeneric
+ * @param[in] face
+ * @param[in] light
+ * @param[out] cubeSideBits
+ * @return
+ */
 static qboolean R_LightSurfaceGeneric(srfGeneric_t *face, trRefLight_t *light, byte *cubeSideBits)
 {
 	// do a quick AABB cull
@@ -252,6 +259,11 @@ static qboolean R_LightSurfaceGeneric(srfGeneric_t *face, trRefLight_t *light, b
 	return qtrue;
 }
 
+/**
+ * @brief R_AddInteractionSurface
+ * @param[in,out] surf
+ * @param[in] light
+ */
 static void R_AddInteractionSurface(bspSurface_t *surf, trRefLight_t *light)
 {
 	qboolean          intersects;
@@ -320,6 +332,11 @@ static void R_AddInteractionSurface(bspSurface_t *surf, trRefLight_t *light)
 	}
 }
 
+/**
+ * @brief R_AddWorldSurface
+ * @param[in,out] surf
+ * @param[in] decalBits
+ */
 static void R_AddWorldSurface(bspSurface_t *surf, int decalBits)
 {
 	int frontFace;
@@ -376,6 +393,11 @@ static void R_AddWorldSurface(bspSurface_t *surf, int decalBits)
 =============================================================
 */
 
+/**
+ * @brief R_AddBrushModelSurface
+ * @param[in,out] surf
+ * @param[in] fogIndex
+ */
 static void R_AddBrushModelSurface(bspSurface_t *surf, int fogIndex)
 {
 	int frontFace;
@@ -395,15 +417,19 @@ static void R_AddBrushModelSurface(bspSurface_t *surf, int fogIndex)
 	R_AddDrawSurf(surf->data, surf->shader, surf->lightmapNum, fogIndex);
 }
 
+/**
+ * @brief R_AddBSPModelSurfaces
+ * @param[in,out] ent
+ */
 void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 {
-	bspModel_t *bspModel;
-	model_t    *pModel;
-	int        i;
-	vec3_t     v;
-	vec3_t     transformed;
-	vec3_t     boundsCenter;
-	int        fogNum;
+	bspModel_t   *bspModel;
+	model_t      *pModel;
+	unsigned int i;
+	vec3_t       v;
+	vec3_t       transformed;
+	vec3_t       boundsCenter;
+	int          fogNum;
 	//float	   boundsRadius;
 
 	pModel   = R_GetModelByHandle(ent->e.hModel);
@@ -452,7 +478,6 @@ void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 
 	if (r_vboModels->integer && bspModel->numVBOSurfaces)
 	{
-		int          i;
 		srfVBOMesh_t *vboSurface;
 
 		for (i = 0; i < bspModel->numVBOSurfaces; i++)
@@ -490,6 +515,11 @@ void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 =============================================================
 */
 
+/**
+ * @brief R_AddLeafSurfaces
+ * @param[in] node
+ * @param[in] decalBits
+ */
 static void R_AddLeafSurfaces(bspNode_t *node, int decalBits)
 {
 	int          c;
@@ -537,6 +567,12 @@ static void R_AddLeafSurfaces(bspNode_t *node, int decalBits)
 	}
 }
 
+/**
+ * @brief R_RecursiveWorldNode
+ * @param[in] node
+ * @param[in] planeBits
+ * @param[in] decalBits
+ */
 static void R_RecursiveWorldNode(bspNode_t *node, int planeBits, int decalBits)
 {
 	do
@@ -618,6 +654,12 @@ static void R_RecursiveWorldNode(bspNode_t *node, int planeBits, int decalBits)
 	}
 }
 
+/**
+ * @brief R_RecursiveInteractionNode
+ * @param[in,out] node
+ * @param[in] light
+ * @param[in] planeBits
+ */
 static void R_RecursiveInteractionNode(bspNode_t *node, trRefLight_t *light, int planeBits)
 {
 	int i;
@@ -713,6 +755,11 @@ static void R_RecursiveInteractionNode(bspNode_t *node, trRefLight_t *light, int
 	}
 }
 
+/**
+ * @brief R_PointInLeaf
+ * @param[in] p
+ * @return
+ */
 static bspNode_t *R_PointInLeaf(const vec3_t p)
 {
 	bspNode_t *node;
@@ -746,6 +793,11 @@ static bspNode_t *R_PointInLeaf(const vec3_t p)
 	return node;
 }
 
+/**
+ * @brief R_ClusterPVS
+ * @param[in] cluster
+ * @return
+ */
 static const byte *R_ClusterPVS(int cluster)
 {
 	if (!tr.world)
@@ -761,6 +813,12 @@ static const byte *R_ClusterPVS(int cluster)
 	return tr.world->vis + cluster * tr.world->clusterBytes;
 }
 
+/**
+ * @brief R_inPVS
+ * @param[in] p1
+ * @param[in] p2
+ * @return
+ */
 qboolean R_inPVS(const vec3_t p1, const vec3_t p2)
 {
 	bspNode_t  *leaf;
@@ -777,10 +835,13 @@ qboolean R_inPVS(const vec3_t p1, const vec3_t p2)
 	return qtrue;
 }
 
-/**
- * @brief compare function for qsort()
- */
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
+/**
+ * @brief Compare function for qsort()
+ * @param[in] a
+ * @param[in] b
+ * @return
+ */
 static int BSPSurfaceCompare(const void *a, const void *b)
 {
 	bspSurface_t *aa, *bb;
@@ -811,6 +872,9 @@ static int BSPSurfaceCompare(const void *a, const void *b)
 	return 0;
 }
 
+/**
+ * @brief R_UpdateClusterSurfaces
+ */
 static void R_UpdateClusterSurfaces()
 {
 	int i, k, l;
@@ -1307,6 +1371,11 @@ static void R_MarkLeaves(void)
 	}
 }
 
+/**
+ * @brief DrawLeaf
+ * @param[in] node
+ * @param[in] decalBits
+ */
 static void DrawLeaf(bspNode_t *node, int decalBits)
 {
 	// leaf node, so add mark surfaces
@@ -1359,6 +1428,12 @@ static void DrawLeaf(bspNode_t *node, int decalBits)
 // BSP OCCLUSION CULLING
 // ================================================================================================
 
+/**
+ * @brief InsideViewFrustum
+ * @param[in] node
+ * @param[in] planeBits
+ * @return
+ */
 static qboolean InsideViewFrustum(bspNode_t *node, int planeBits)
 {
 	if (!r_nocull->integer)
@@ -1390,7 +1465,12 @@ static qboolean InsideViewFrustum(bspNode_t *node, int planeBits)
 
 /**
  * @brief DrawNode_r
+ * @param[in,out] node
+ * @param[in] planeBits
+ *
  * @note Unused
+ */
+/*
 static void DrawNode_r(bspNode_t *node, int planeBits)
 {
     do
@@ -1460,8 +1540,14 @@ static void DrawNode_r(bspNode_t *node, int planeBits)
     }
     while (1);
 }
- */
+*/
 
+/**
+ * @brief IssueOcclusionQuery
+ * @param[in] queue
+ * @param[in,out] node
+ * @param[in] resetMultiQueryLink
+ */
 static void IssueOcclusionQuery(link_t *queue, bspNode_t *node, qboolean resetMultiQueryLink)
 {
 #if defined(DEBUG_CHC)
@@ -1535,6 +1621,11 @@ static void IssueOcclusionQuery(link_t *queue, bspNode_t *node, qboolean resetMu
 	Ren_LogComment("--- IssueOcclusionQuery end ---\n");
 }
 
+/**
+ * @brief IssueMultiOcclusionQueries
+ * @param[in] multiQueue
+ * @param[in] individualQueue
+ */
 static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQueue)
 {
 	bspNode_t *node;
@@ -1640,6 +1731,11 @@ static void IssueMultiOcclusionQueries(link_t *multiQueue, link_t *individualQue
 	Ren_LogComment("--- IssueMultiOcclusionQueries end ---\n");
 }
 
+/**
+ * @brief ResultAvailable
+ * @param[in] node
+ * @return
+ */
 static GLint ResultAvailable(bspNode_t *node)
 {
 	GLint available;
@@ -1656,6 +1752,10 @@ static GLint ResultAvailable(bspNode_t *node)
 	return available;
 }
 
+/**
+ * @brief GetOcclusionQueryResult
+ * @param[in,out] node
+ */
 static void GetOcclusionQueryResult(bspNode_t *node)
 {
 	link_t *l, *sentinel;
@@ -1703,6 +1803,10 @@ static void GetOcclusionQueryResult(bspNode_t *node)
 	}
 }
 
+/**
+ * @brief PullUpVisibility
+ * @param[in] node
+ */
 static void PullUpVisibility(bspNode_t *node)
 {
 	bspNode_t *parent = node;
@@ -1716,6 +1820,13 @@ static void PullUpVisibility(bspNode_t *node)
 	}
 }
 
+/**
+ * @brief PushNode
+ * @param[in,out] traversalStack
+ * @param[in] node
+ *
+ * @note Unused
+ */
 /*
 static void PushNode(link_t * traversalStack, bspNode_t * node)
 {
@@ -1762,6 +1873,11 @@ static void PushNode(link_t * traversalStack, bspNode_t * node)
 }
 */
 
+/**
+ * @brief TraverseNode
+ * @param[in] distanceQueue
+ * @param[in] node
+ */
 static void TraverseNode(link_t *distanceQueue, bspNode_t *node)
 {
 #if defined(DEBUG_CHC)
@@ -1813,6 +1929,10 @@ static void TraverseNode(link_t *distanceQueue, bspNode_t *node)
 	}
 }
 
+/**
+ * @brief BuildNodeTraversalStackPost_r
+ * @param[in,out] node
+ */
 static void BuildNodeTraversalStackPost_r(bspNode_t *node)
 {
 	do
@@ -1856,6 +1976,11 @@ static void BuildNodeTraversalStackPost_r(bspNode_t *node)
 	while (1);
 }
 
+/**
+ * @brief WasVisible
+ * @param[in] node
+ * @return
+ */
 static qboolean WasVisible(bspNode_t *node)
 {
 	if (node->visible[tr.viewCount] && ((tr.frameCount - node->lastVisited[tr.viewCount]) <= r_chcMaxVisibleFrames->integer))
@@ -1865,6 +1990,11 @@ static qboolean WasVisible(bspNode_t *node)
 	return qfalse;
 }
 
+/**
+ * @brief QueryReasonable
+ * @param[in] node
+ * @return
+ */
 static qboolean QueryReasonable(bspNode_t *node)
 {
 	// if r_chcMaxVisibleFrames 10 then range from 5 to 10
@@ -1876,6 +2006,9 @@ static qboolean QueryReasonable(bspNode_t *node)
 	return qfalse;
 }
 
+/**
+ * @brief R_CoherentHierachicalCulling
+ */
 static void R_CoherentHierachicalCulling()
 {
 	bspNode_t *node;
@@ -2266,6 +2399,9 @@ static void R_CoherentHierachicalCulling()
 	}
 }
 
+/**
+ * @brief R_AddWorldSurfaces
+ */
 void R_AddWorldSurfaces(void)
 {
 	if (!r_drawworld->integer)
@@ -2351,6 +2487,10 @@ void R_AddWorldSurfaces(void)
 	}
 }
 
+/**
+ * @brief R_AddWorldInteractions
+ * @param[in] light
+ */
 void R_AddWorldInteractions(trRefLight_t *light)
 {
 	if (!r_drawworld->integer)
@@ -2370,6 +2510,10 @@ void R_AddWorldInteractions(trRefLight_t *light)
 	R_RecursiveInteractionNode(tr.world->nodes, light, FRUSTUM_CLIPALL);
 }
 
+/**
+ * @brief R_AddPrecachedWorldInteractions
+ * @param[in] light
+ */
 void R_AddPrecachedWorldInteractions(trRefLight_t *light)
 {
 	interactionType_t iaType = IA_DEFAULT;
