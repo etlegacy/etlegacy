@@ -744,7 +744,7 @@ static void CG_DrawPlayerStatusHead(hudComponent_t comp)
 		}
 	}
 
-	CG_DrawPlayerHead(headRect, character, headcharacter, 180, 0, cg.snap->ps.eFlags & EF_HEADSHOT ? qfalse : qtrue, anim, painshader, cgs.clientinfo[cg.snap->ps.clientNum].rank, qfalse, cgs.clientinfo[cg.snap->ps.clientNum].team);
+	CG_DrawPlayerHead(headRect, character, headcharacter, 180, 0, (cg.snap->ps.eFlags & EF_HEADSHOT) ? qfalse : qtrue, anim, painshader, cgs.clientinfo[cg.snap->ps.clientNum].rank, qfalse, cgs.clientinfo[cg.snap->ps.clientNum].team);
 }
 
 /**
@@ -2855,11 +2855,11 @@ void CG_DrawGlobalHud(void)
 {
 	if (cg_altHudFlags.integer & FLAGS_MOVE_POPUPS)
 	{
-		CG_DrawPMItems(activehud->popupmessages.location, (cg_altHudFlags.integer & FLAGS_POPUPS_SHADOW ? ITEM_TEXTSTYLE_SHADOWED : 0));
+		CG_DrawPMItems(activehud->popupmessages.location, (cg_altHudFlags.integer & FLAGS_POPUPS_SHADOW) ? ITEM_TEXTSTYLE_SHADOWED : 0);
 	}
 	else
 	{
-		CG_DrawPMItems(hud0.popupmessages.location, (cg_altHudFlags.integer & FLAGS_POPUPS_SHADOW ? ITEM_TEXTSTYLE_SHADOWED : 0));
+		CG_DrawPMItems(hud0.popupmessages.location, (cg_altHudFlags.integer & FLAGS_POPUPS_SHADOW) ? ITEM_TEXTSTYLE_SHADOWED : 0);
 	}
 
 	if (!(cg_altHudFlags.integer & FLAGS_REMOVE_RANKS))

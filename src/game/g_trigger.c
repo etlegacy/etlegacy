@@ -1617,13 +1617,13 @@ void Think_SetupObjectiveInfo(gentity_t *ent)
 		constructibles[0] = ent->target_ent;
 		constructibles[1] = G_FindByTargetname(constructibles[0], ent->target);     // see if we are targetting a 2nd one for two team constructibles
 
-		team[0] = constructibles[0]->spawnflags & AXIS_CONSTRUCTIBLE ? TEAM_AXIS : TEAM_ALLIES;
+		team[0] = (constructibles[0]->spawnflags & AXIS_CONSTRUCTIBLE) ? TEAM_AXIS : TEAM_ALLIES;
 
 		constructibles[0]->s.otherEntityNum2 = ent->s.teamNum;
 
 		if (constructibles[1])
 		{
-			team[1] = constructibles[1]->spawnflags & AXIS_CONSTRUCTIBLE ? TEAM_AXIS : TEAM_ALLIES;
+			team[1] = (constructibles[1]->spawnflags & AXIS_CONSTRUCTIBLE) ? TEAM_AXIS : TEAM_ALLIES;
 
 			if (constructibles[1]->s.eType != ET_CONSTRUCTIBLE)
 			{

@@ -198,7 +198,7 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 	}
 	else if ((flags & BAR_BORDER) || (flags & BAR_BORDER_SMALL))
 	{
-		int indent = (flags & BAR_BORDER_SMALL ? 1 : BAR_BORDERSIZE);
+		int indent = (flags & BAR_BORDER_SMALL) ? 1 : BAR_BORDERSIZE;
 
 		CG_DrawRect_FixedBorder(x, y, w, h, indent, bgColor);
 		x += indent;
