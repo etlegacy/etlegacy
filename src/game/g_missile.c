@@ -114,6 +114,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 		}
 
 		// calculate relative delta for stop calcs
+		// FIXME: this condition is always true due to || 1 ... why ?
 		if (ent->s.groundEntityNum == ENTITYNUM_WORLD || 1)
 		{
 			VectorCopy(ent->s.pos.trDelta, relativeDelta);

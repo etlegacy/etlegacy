@@ -2463,6 +2463,7 @@ void CG_AddRefEntityWithPowerups(refEntity_t *ent, int powerups, int team, entit
 
 	trap_R_AddRefEntityToScene(ent);
 
+	// FIXME: onFire is always true !
 	if (!onFire && CG_EntOnFire(&cg_entities[es->number]))
 	{
 		float fireStart, fireEnd;
