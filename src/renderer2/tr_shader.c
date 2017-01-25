@@ -6245,10 +6245,9 @@ static void ScanAndLoadGuideFiles(void)
 	char **guideFiles;
 	char *buffers[MAX_GUIDE_FILES];
 	char *p;
-	int  numGuides;
-	int  i;
+	int  numGuides, i;
 	char *oldp, *token, *hashMem;
-	int  guideTextHashTableSizes[MAX_GUIDETEXT_HASH], hash, size;
+	int  guideTextHashTableSizes[MAX_GUIDETEXT_HASH], hash, size, fileSum;
 	char filename[MAX_QPATH];
 	long sum = 0;
 
@@ -6278,7 +6277,15 @@ static void ScanAndLoadGuideFiles(void)
 	{
 		Com_sprintf(filename, sizeof(filename), "guides/%s", guideFiles[i]);
 
-		sum += ri.FS_ReadFile(filename, NULL);
+		fileSum = ri.FS_ReadFile(filename, NULL);
+		if (fileSum > 0)
+		{
+			sum += fileSum;
+		}
+		else
+		{
+			Ren_Drop("Couldn't load %s", filename);
+		}
 	}
 	s_guideText = (char *)ri.Hunk_Alloc(sum + numGuides * 2, h_low);
 
@@ -6291,7 +6298,7 @@ static void ScanAndLoadGuideFiles(void)
 		sum += ri.FS_ReadFile(filename, (void **)&buffers[i]);
 		if (!buffers[i])
 		{
-			Ren_Drop("Couldn't load %s", filename);
+			Ren_Drop("Couldn't load %s", filename); // in theory this shouldn't occure anymore - see build single large buffer
 		}
 
 		strcat(s_guideText, "\n");
@@ -6482,10 +6489,9 @@ static void ScanAndLoadShaderFiles(void)
 	char **shaderFiles;
 	char *buffers[MAX_SHADER_FILES];
 	char *p;
-	int  numShaderFiles;
-	int  i;
+	int  numShaderFiles, i;
 	char *oldp, *token, *hashMem, *textEnd;
-	int  shaderTextHashTableSizes[MAX_SHADERTEXT_HASH], hash, size;
+	int  shaderTextHashTableSizes[MAX_SHADERTEXT_HASH], hash, size, fileSum;
 	char filename[MAX_QPATH];
 	long sum = 0, summand;
 
@@ -6514,7 +6520,15 @@ static void ScanAndLoadShaderFiles(void)
 	for (i = 0; i < numShaderFiles; i++)
 	{
 		Com_sprintf(filename, sizeof(filename), "scripts/%s", shaderFiles[i]);
-		sum += ri.FS_ReadFile(filename, NULL);
+		fileSum = ri.FS_ReadFile(filename, NULL);
+		if (fileSum > 0)
+		{
+			sum += fileSum;
+		}
+		else
+		{
+			Ren_Drop("Couldn't load %s", filename);
+		}
 	}
 	s_shaderText = (char *)ri.Hunk_Alloc(sum + numShaderFiles * 2, h_low);
 
@@ -6529,7 +6543,7 @@ static void ScanAndLoadShaderFiles(void)
 
 		if (!buffers[i])
 		{
-			Ren_Drop("Couldn't load %s", filename);
+			Ren_Drop("Couldn't load %s", filename); // in theory this shouldn't occure anymore - see build single large buffer
 		}
 
 		p = buffers[i];
