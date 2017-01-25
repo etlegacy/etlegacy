@@ -294,7 +294,7 @@ static void CG_CalcMoveSpeeds(bg_character_t *character)
 		}
 
 		// record the speed
-		anim->moveSpeed = (int)((totalSpeed / numSpeed) * 1000.0f / anim->frameLerp);
+		anim->moveSpeed = round(((totalSpeed / numSpeed) * 1000.0f / anim->frameLerp));
 	}
 }
 
