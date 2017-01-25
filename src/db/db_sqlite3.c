@@ -111,7 +111,7 @@ int DB_Init()
 		}
 		else if (db_mode->integer == 2)
 		{
-			result = sqlite3_open(to_ospath, &db);
+			result = sqlite3_open_v2(to_ospath, &db, (SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE), NULL);
 
 			if (result != SQLITE_OK)
 			{
@@ -273,7 +273,7 @@ int DB_Create()
 		to_ospath                        = FS_BuildOSPath(Cvar_VariableString("fs_homepath"), db_url->string, ""); // FIXME: check for empty db_url
 		to_ospath[strlen(to_ospath) - 1] = '\0';
 
-		result = sqlite3_open(to_ospath, &db);
+		result = sqlite3_open_v2(to_ospath, &db, (SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE), NULL);
 
 		if (result != SQLITE_OK)
 		{
@@ -410,6 +410,9 @@ int DB_BackupDB(const char *zFilename, void (*xProgress)(int, int)) // Progress 
 
 	// Open the database file identified by zFilename.
 	rc = sqlite3_open(zFilename, &pFile);
+	// FIXME
+	//rc = sqlite3_open_v2(zFilename, &pFile, (SQLITE_OPEN_READWRITE | "SQLITE_OPEN_CREATE"), NULL);
+
 	if (rc == SQLITE_OK)
 	{
 		// Open the sqlite3_backup object used to accomplish the transfer
@@ -475,6 +478,9 @@ int DB_LoadOrSaveDb(sqlite3 *pInMemory, const char *zFilename, int isSave)
 
 	// Open the database file identified by zFilename. Exit early if this fails for any reason.
 	rc = sqlite3_open(zFilename, &pFile);
+	// FIXME
+	//rc = sqlite3_open_v2(zFilename, &pFile, (SQLITE_OPEN_READWRITE | "SQLITE_OPEN_CREATE"), NULL);
+
 	if (rc == SQLITE_OK)
 	{
 		// If this is a 'load' operation (isSave==0), then data is copied
