@@ -210,7 +210,7 @@ ammotable_t ammoTableMP[WP_NUM_WEAPONS] =
 
 // [0]  = weapon         -
 // [1]  = weapAlts       -
-// [2]  = akimboSideram
+// [2]  = akimboSideArm
 // [3]  = ammoIndex
 // [4]  = clipIndex
 // [5]  = isScoped

@@ -821,7 +821,7 @@ typedef struct weapontable_s
 {
 	int weapon;               // reference
 	int weapAlts;             // bg
-	weapon_t akimboSideram;   // bg
+	weapon_t akimboSideArm;   // bg
 
 	weapon_t ammoIndex;       // bg type of weapon ammo this uses.  (ex. WP_MP40 and WP_LUGER share 9mm ammo, so they both have WP_LUGER for giAmmoIndex)
 	weapon_t clipIndex;       // bg which clip this weapon uses.  this allows the sniper rifle to use the same clip as the garand, etc.

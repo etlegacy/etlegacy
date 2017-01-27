@@ -2935,7 +2935,7 @@ static void PM_ReloadClip(int weapon)
 	// reload akimbo stuff
 	if (IS_AKIMBO_WEAPON(weapon))
 	{
-		PM_ReloadClip(weaponTable[weapon].akimboSideram);
+		PM_ReloadClip(weaponTable[weapon].akimboSideArm);
 	}
 }
 
@@ -3026,7 +3026,7 @@ void PM_CheckForReload(int weapon)
 				// akimbo should also check other weapon status
 				if (IS_AKIMBO_WEAPON(weapon))
 				{
-					if (pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[weapon].akimboSideram)] < GetAmmoTableData(BG_FindClipForWeapon(weaponTable[weapon].akimboSideram))->maxclip)
+					if (pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[weapon].akimboSideArm)] < GetAmmoTableData(BG_FindClipForWeapon(weaponTable[weapon].akimboSideArm))->maxclip)
 					{
 						doReload = qtrue;
 					}
@@ -3039,7 +3039,7 @@ void PM_CheckForReload(int weapon)
 			{
 				if (IS_AKIMBO_WEAPON(weapon))
 				{
-					if (!pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[weapon].akimboSideram)])
+					if (!pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[weapon].akimboSideArm)])
 					{
 						doReload = qtrue;
 					}
@@ -3126,9 +3126,9 @@ void PM_WeaponUseAmmo(int wp, int amount)
 
 		if (IS_AKIMBO_WEAPON(wp))
 		{
-			if (!BG_AkimboFireSequence(wp, pm->ps->ammoclip[BG_FindClipForWeapon(wp)], pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[wp].akimboSideram)]))
+			if (!BG_AkimboFireSequence(wp, pm->ps->ammoclip[BG_FindClipForWeapon(wp)], pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[wp].akimboSideArm)]))
 			{
-				takeweapon = weaponTable[wp].akimboSideram;
+				takeweapon = weaponTable[wp].akimboSideArm;
 			}
 		}
 
@@ -3161,9 +3161,9 @@ int PM_WeaponAmmoAvailable(int wp)
 
 		if (IS_AKIMBO_WEAPON(wp))
 		{
-			if (!BG_AkimboFireSequence(wp, pm->ps->ammoclip[BG_FindClipForWeapon(wp)], pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[wp].akimboSideram)]))
+			if (!BG_AkimboFireSequence(wp, pm->ps->ammoclip[BG_FindClipForWeapon(wp)], pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[wp].akimboSideArm)]))
 			{
-				takeweapon = weaponTable[wp].akimboSideram;
+				takeweapon = weaponTable[wp].akimboSideArm;
 			}
 		}
 
@@ -3728,7 +3728,7 @@ static void PM_Weapon(void)
 
 	if (IS_AKIMBO_WEAPON(pm->ps->weapon))
 	{
-		akimboFire = BG_AkimboFireSequence(pm->ps->weapon, pm->ps->ammoclip[BG_FindClipForWeapon(pm->ps->weapon)], pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[pm->ps->weapon].akimboSideram)]);
+		akimboFire = BG_AkimboFireSequence(pm->ps->weapon, pm->ps->ammoclip[BG_FindClipForWeapon(pm->ps->weapon)], pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[pm->ps->weapon].akimboSideArm)]);
 	}
 	else
 	{
@@ -4673,7 +4673,7 @@ static void PM_Weapon(void)
 				addTime = 2 * GetAmmoTableData(pm->ps->weapon)->nextShotTime;
 			}
 		}
-		else if (!pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[pm->ps->weapon].akimboSideram)])
+		else if (!pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[pm->ps->weapon].akimboSideArm)])
 		{
 			if (akimboFire)
 			{
