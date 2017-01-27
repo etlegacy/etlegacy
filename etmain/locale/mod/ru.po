@@ -2,15 +2,15 @@
 # Copyright (C) 2012-2015 ET: Legacy Team
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
-# Artem Vorotnikov <artem@vorotnikov.me>, 2014-2016
+# Artem Vorotnikov <artem@vorotnikov.me>, 2014-2017
 # Simple88, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2016-12-15 08:29+0000\n"
-"Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
+"PO-Revision-Date: 2017-01-22 16:51+0000\n"
+"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
 "Language-Team: Russian (http://www.transifex.com/etlegacy/etlegacy/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -165,11 +165,11 @@ msgstr "ОЗВУЧКА"
 
 #: etmain/ui/credits_additional.menu:203
 msgid "Voice of Allied / Axis soldiers"
-msgstr "Озвучка солдат союзников / нацистов"
+msgstr ""
 
 #: etmain/ui/credits_additional.menu:205
 msgid "Voice of Axis Commander"
-msgstr "Озвучка командира нацистов"
+msgstr "Озвучка командира фашистов"
 
 #: etmain/ui/credits_additional.menu:207
 msgid "Voice of Allied Commander"
@@ -684,11 +684,11 @@ msgstr "Заменить время респа союзников по умол�
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Axis Spawn Time:"
-msgstr "Время респа нацистов:"
+msgstr "Время респа фашистов:"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Override the default Axis spawn time"
-msgstr "Заменить время респа нацистов по умолчанию"
+msgstr "Заменить время респа фашистов по умолчанию"
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Allied Max Lives:"
@@ -700,11 +700,11 @@ msgstr "Указать число жизней у союзников в игре
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Axis Max Lives:"
-msgstr "Максимум жизней у нацистов:"
+msgstr "Макс. жизней у фашистов:"
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Specify the number of Axis lives in a max lives game"
-msgstr "Указать число жизней у нацистов в игре с ограниченным числом жизней"
+msgstr "Указать число жизней у фашистов в игре с ограниченным числом жизней"
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid "Stopwatch Round-Type:"
@@ -1341,7 +1341,7 @@ msgstr "В ИЗБРАННОЕ"
 
 #: etmain/ui/ingame_tapoutlms.menu:49 etmain/ui/ingame_tapout.menu:49
 msgid "RESPAWNING"
-msgstr "ВОЗРОДИТЬСЯ"
+msgstr "ВОЗРОЖДЕНИЕ"
 
 #: etmain/ui/ingame_tapoutlms.menu:50
 msgid ""
@@ -1373,7 +1373,7 @@ msgstr "УБРАТЬ БОТОВ"
 
 #: etmain/ui/ingame_vote_bot.menu:55
 msgid "AXIS BOTS"
-msgstr "БОТЫ ЗА НАЦИСТОВ"
+msgstr "БОТЫ-ФАШИСТЫ"
 
 #: etmain/ui/ingame_vote_bot.menu:56
 msgid "ALLIED BOTS"
@@ -1486,12 +1486,12 @@ msgstr "РАЗГЛУШИТЬ ЗРИТЕЛЕЙ"
 #: etmain/ui/ingame_vote_misc.menu:53
 #: etmain/ui/ingame_vote_misc_refrcon.menu:52
 msgid "FRIENDLY FIRE ON"
-msgstr "ДРУЖ. ОГОНЬ ВКЛ"
+msgstr ""
 
 #: etmain/ui/ingame_vote_misc.menu:54
 #: etmain/ui/ingame_vote_misc_refrcon.menu:53
 msgid "FRIENDLY FIRE OFF"
-msgstr "ДРУЖ. ОГОНЬ ВЫКЛ"
+msgstr ""
 
 #: etmain/ui/ingame_vote_misc.menu:55
 #: etmain/ui/ingame_vote_misc_refrcon.menu:54
@@ -1607,7 +1607,7 @@ msgstr "СНЯТЬ СУДЕЙСТВО"
 
 #: etmain/ui/ingame_vote_players.menu:66
 msgid "MAKE AXIS"
-msgstr "СДЕЛАТЬ НАЦИСТОМ"
+msgstr "СДЕЛАТЬ ФАШИСТОМ"
 
 #: etmain/ui/ingame_vote_players.menu:67
 msgid "MAKE ALLIED"
@@ -4475,7 +4475,7 @@ msgstr "Нельзя использовать личный голосовой ч
 #: src/cgame/cg_consolecmds.c:1143 src/cgame/cg_popupmessages.c:733
 #: src/cgame/cg_popupmessages.c:735
 msgid "Axis"
-msgstr "Нацисты"
+msgstr "Фашисты"
 
 #: src/cgame/cg_consolecmds.c:1147 src/cgame/cg_popupmessages.c:733
 #: src/cgame/cg_popupmessages.c:735
@@ -4555,7 +4555,7 @@ msgstr "СОЮЗНИКИ ПОБЕДИЛИ!"
 
 #: src/cgame/cg_debriefing.c:3177
 msgid "AXIS WIN!"
-msgstr "НАЦИСТЫ ПОБЕДИЛИ!"
+msgstr "ФАШИСТЫ ПОБЕДИЛИ!"
 
 #: src/cgame/cg_debriefing.c:3179
 msgid "IT'S A TIE!"
@@ -4571,11 +4571,11 @@ msgstr "СОЮЗНИКИ НЕ УСПЕЛИ ВОВРЕМЯ!"
 
 #: src/cgame/cg_debriefing.c:3222
 msgid "AXIS SUCCESSFULLY BEAT THE CLOCK!"
-msgstr "НАЦИСТЫ УСПЕЛИ ВОВРЕМЯ!"
+msgstr "ФАШИСТЫ УЛОЖИЛИСЬ ВО ВРЕМЯ!"
 
 #: src/cgame/cg_debriefing.c:3226
 msgid "AXIS COULDN'T BEAT THE CLOCK!"
-msgstr "НАЦИСТЫ НЕ УСПЕЛИ ВОВРЕМЯ!"
+msgstr "ФАШИСТЫ ОПОЗДАЛИ!"
 
 #: src/cgame/cg_debriefing.c:3236
 #, c-format
@@ -5178,7 +5178,7 @@ msgstr "^3ЗРИТЕЛЬ"
 
 #: src/cgame/cg_scoreboard.c:811 src/cgame/cg_scoreboard.c:828
 msgid "AXIS"
-msgstr "НАЦИСТЫ"
+msgstr "ФАШИСТЫ"
 
 #: src/cgame/cg_scoreboard.c:812 src/cgame/cg_scoreboard.c:819
 msgid "FIRST BLOOD"
@@ -5404,7 +5404,7 @@ msgid "You are near"
 msgstr "Вы рядом с"
 
 msgid "joined the Axis team\n"
-msgstr "присоединился к команде нацистов\n"
+msgstr "присоединился к фашистам\n"
 
 msgid "joined the Allies team\n"
 msgstr "присоединился к команде союзников\n"
@@ -5580,7 +5580,7 @@ msgid "^1THE TEAM"
 msgstr "^1КОМАНДА"
 
 msgid "Axis team"
-msgstr "Нацисты"
+msgstr "Фашисты"
 
 msgid "Allied team"
 msgstr "Союзники"
@@ -5616,7 +5616,7 @@ msgid "The Allies have too many players.\n"
 msgstr "У союзников слишком много игроков.\n"
 
 msgid "The Axis has too many players.\n"
-msgstr "У нацистов слишком много игроков.\n"
+msgstr "У фашистов слишком много игроков.\n"
 
 msgid "Attack!"
 msgstr "Атакуем!"
@@ -5885,7 +5885,7 @@ msgid "Arming landmine..."
 msgstr "Закладка мины..."
 
 msgid "Landmine armed"
-msgstr ""
+msgstr "Мина заложена"
 
 msgid "Dynamite is set, but NOT armed!"
 msgstr "Динамит выброшен, но НЕ заряжен!"
@@ -5897,13 +5897,13 @@ msgid "Dynamite is now armed with a 30 second timer!"
 msgstr "Динамит заряжен с 30-секундным таймером!"
 
 msgid "Defusing landmine..."
-msgstr ""
+msgstr "Обезвреживание мины..."
 
 msgid "Landmine defused"
-msgstr ""
+msgstr "Мина обезврежена"
 
 msgid "Defusing dynamite..."
-msgstr "Обезврежевание динамита..."
+msgstr "Обезвреживание динамита..."
 
 msgid "Affirmative!!"
 msgstr "Так точно!!"
@@ -5912,7 +5912,7 @@ msgid "^1Spam Protection^7: VoiceChat ignored"
 msgstr ""
 
 msgid "Mines have been reported in this area."
-msgstr "Тут замечены мины."
+msgstr "Здесь мины."
 
 msgid "'s Landmine"
 msgstr ""
@@ -5945,7 +5945,7 @@ msgid "Allied Command Post constructed. Charge speed increased!"
 msgstr "Союзники построили командный пост. Зарядка ускорена!"
 
 msgid "Axis Command Post constructed. Charge speed increased!"
-msgstr "Нацисты построили командный пост. Зарядка ускорена!"
+msgstr "Фашисты построили командный пост. Зарядка ускорена!"
 
 msgid ""
 "^3All players ready!^7\n"
@@ -5959,7 +5959,7 @@ msgid "^1*** Match Reset! ***\n"
 msgstr "^1*** Перезапуск матча! ***\n"
 
 msgid "You are on the Axis team"
-msgstr "Вы в команде нацистов"
+msgstr "Вы в команде фашистов"
 
 msgid "Warning, leave the construction area..."
 msgstr "Покиньте зону строительства..."
@@ -6011,7 +6011,7 @@ msgid "Public Settings Loaded!\n"
 msgstr "Общие настройки загружены!\n"
 
 msgid "Landmine cannot be armed here"
-msgstr ""
+msgstr "Мину нельзя здесь заложить"
 
 msgid "Your team has too many landmines placed..."
 msgstr "У Вашей команды уже заложено слишком много мин..."
@@ -6299,7 +6299,7 @@ msgid "Allies team\n"
 msgstr "Команда союзников\n"
 
 msgid "Axis team\n"
-msgstr "Команда нацистов\n"
+msgstr "Фашисты\n"
 
 msgid "Sorry, "
 msgstr "Извините,"
@@ -7028,7 +7028,7 @@ msgstr ""
 
 #: src/cgame/cg_scoreboard.c:211
 msgid "MATCH BEGINS NOW!"
-msgstr ""
+msgstr "МАТЧ НАЧИНАЕТСЯ СЕЙЧАС!"
 
 msgid "Mute Players:"
 msgstr ""
@@ -7061,16 +7061,16 @@ msgid "Allow players to vote for next campaign"
 msgstr ""
 
 msgid "CHANGE SYSTEM SETTINGS"
-msgstr ""
+msgstr "ИЗМЕНИТЬ СИСТЕМНЫЕ НАСТРОЙКИ"
 
 msgid "RESTART CAMPAIGN"
-msgstr ""
+msgstr "ПЕРЕЗАПУСК КАМПАНИИ"
 
 msgid "SURRENDER"
-msgstr ""
+msgstr "СДАТЬСЯ"
 
 msgid "NO XP SHUFFLE"
-msgstr ""
+msgstr "НЕ ТАСОВАТЬ ПО ОПЫТУ"
 
 msgid "Multiview:"
 msgstr ""
@@ -7094,7 +7094,7 @@ msgid "^7BACKSPACE ^mgo  back"
 msgstr ""
 
 msgid "CURRENT PROFILE"
-msgstr ""
+msgstr "ТЕКУЩИЙ ПРОФИЛЬ"
 
 #: src/cgame/cg_draw.c:1504
 msgid "%s^7's dynamite"
@@ -7137,7 +7137,7 @@ msgid ""
 msgstr ""
 
 msgid "JOYSTICK"
-msgstr ""
+msgstr "ДЖОЙСТИК"
 
 msgid "Enable Joysticks:"
 msgstr ""
