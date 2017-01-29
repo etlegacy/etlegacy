@@ -789,7 +789,7 @@ typedef struct
 	demoPlayInfo_t *demoinfo;
 	int legacyClient;               // is either 0 (vanilla client) 1 (old legacy client) or a version integer from git_version.h
 	qboolean loading;               // don't defer players at initial startup
-	qboolean intermissionStarted;       // don't play voice rewards, because game will end shortly
+	qboolean intermissionStarted;   // don't draw disconnect icon/message because game will end shortly
 
 	// there are only one or two snapshot_t that are relevent at a time
 	int latestSnapshotNum;          // the number of snapshots the client system has received

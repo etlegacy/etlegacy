@@ -1190,9 +1190,9 @@ static void CG_DrawGunIcon(rectDef_t location)
 
 	if (
 #ifdef FEATURE_MULTIVIEW
-	    cg.mvTotalClients < 1 &&
+		cg.mvTotalClients < 1 &&
 #endif
-	    cg_drawWeaponIconFlash.integer == 0)
+		cg_drawWeaponIconFlash.integer == 0)
 	{
 		CG_DrawPlayerWeaponIcon(&rect, qtrue, ITEM_ALIGN_RIGHT, &colorWhite);
 	}
@@ -1200,9 +1200,9 @@ static void CG_DrawGunIcon(rectDef_t location)
 	{
 		int ws =
 #ifdef FEATURE_MULTIVIEW
-		    (cg.mvTotalClients > 0) ? cgs.clientinfo[cg.snap->ps.clientNum].weaponState :
+			(cg.mvTotalClients > 0) ? cgs.clientinfo[cg.snap->ps.clientNum].weaponState :
 #endif
-		    BG_simpleWeaponState(cg.snap->ps.weaponstate);
+			BG_simpleWeaponState(cg.snap->ps.weaponstate);
 
 		CG_DrawPlayerWeaponIcon(&rect, (qboolean)(ws != WSTATE_IDLE), ITEM_ALIGN_RIGHT, ((ws == WSTATE_SWITCH || ws == WSTATE_RELOAD) ? &colorYellow : (ws == WSTATE_FIRE) ? &colorRed : &colorWhite));
 	}
@@ -1993,12 +1993,14 @@ static float CG_DrawFPS(float y)
 	static int index;
 	static int oldSamples;
 	const char *s;
-	int        t         = trap_Milliseconds(); // don't use serverTime, because that will be drifting to correct for internet lag changes, timescales, timedemos, etc
-	int        frameTime = t - previous;
-	int        x, w, w2;
+	int        t = trap_Milliseconds();      // don't use serverTime, because that will be drifting to correct for internet lag changes, timescales, timedemos, etc
+	int        frameTime;
 	int        samples = cg_drawFPS.integer;
+	int        x, w, w2;
 
-	previous = t;
+
+	frameTime = t - previous;
+	previous  = t;
 
 	if (samples < 4)
 	{
@@ -2385,6 +2387,12 @@ static float CG_DrawDisconnect(float y)
 
 	// don't draw if the server is respawning
 	if (cg.serverRespawning)
+	{
+		return y + w2 + 13;
+	}
+
+	// don't draw if intermission is about to start
+	if (cg.intermissionStarted)
 	{
 		return y + w2 + 13;
 	}
