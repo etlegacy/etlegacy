@@ -320,19 +320,11 @@ extern void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack);
 // new ui stuff
 #define MAX_HEADS 64
 #define MAX_ALIASES 64
-#define MAX_HEADNAME  32
 #define MAX_TEAMS 64
 
 #define MAX_MAPS 256
-#define MAX_SPMAPS 16
-#define PLAYERS_PER_TEAM 5
 #define MAX_PINGREQUESTS        16
 #define MAX_ADDRESSLENGTH       64
-#define MAX_HOSTNAMELENGTH      22
-#define MAX_MAPNAMELENGTH       16
-#define MAX_STATUSLENGTH        64
-#define MAX_LISTBOXWIDTH        59
-#define UI_FONT_THRESHOLD       0.1
 #define MAX_DISPLAY_SERVERS     4096
 #define MAX_SERVERSTATUS_LINES  128
 #define MAX_SERVERSTATUS_TEXT   2048
@@ -345,8 +337,6 @@ extern void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack);
 #define MAX_PLAYERMODELS 256
 #define MAX_SPAWNPOINTS 128
 #define MAX_SPAWNDESC   128
-#define MAX_PBLINES     128
-#define MAX_PBWIDTH     42
 
 #define MAX_PROFILES 64
 
