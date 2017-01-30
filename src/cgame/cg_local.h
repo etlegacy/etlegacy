@@ -2911,6 +2911,10 @@ void CG_LoadRankIcons(void);
 qboolean CG_DrawStatsRanksMedals(void);
 void CG_StatsRanksMedalsClick(int key);
 
+/**
+ * @enum animType_t
+ * @brief
+ */
 typedef enum
 {
 	ANIM_IDLE = 0,
@@ -2979,6 +2983,10 @@ void CG_scores_cmd(void);
 
 void CG_UpdateSvCvars(void);
 
+/**
+ * @struct consoleCommand_t
+ * @brief
+ */
 typedef struct
 {
 	const char *cmd;
@@ -3267,6 +3275,10 @@ extern qboolean ccInitial;
 #define CC_FILTER_DESTRUCTIONS  (1 << 6)
 #define CC_FILTER_OBJECTIVES    (1 << 7)
 
+/**
+ * @struct rankicon_t
+ * @brief
+ */
 typedef struct
 {
 	qhandle_t shader;
@@ -3442,11 +3454,14 @@ int CG_LimboPanel_GetWeaponNumberForPos(int pos);
 void CG_LimboPanel_SetSelectedWeaponNumForSlot(int index, int number);
 weapon_t CG_LimboPanel_GetSelectedWeaponForSlot(int index);
 
-// cg_commandmap.c
-// A scissored map always has the player in the center
+/**
+ * @struct mapScissor_t
+ * @brief A scissored map always has the player in the center
+ * @see cg_commandmap.c
+ */
 typedef struct mapScissor_s
 {
-	qboolean circular;  // if qfalse, rect
+	qboolean circular;  ///< if qfalse, rect
 	float zoomFactor;
 	vec2_t tl;
 	vec2_t br;
@@ -3576,6 +3591,10 @@ void CG_Fireteams_MenuText_Draw(panel_button_t *button);
 void CG_Fireteams_MenuTitleText_Draw(panel_button_t *button);
 
 // hitsounds flags
+/**
+ * @enum hitsooundFlags
+ * @brief
+ */
 typedef enum
 {
 	HITSOUNDS_ON         = BIT(0),
