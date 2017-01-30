@@ -73,76 +73,104 @@ typedef struct {
 */
 
 /* ******************* MDM/MDX file format, etc */
-// from http://games.theteamkillers.net/rtcw/mdx/ (linky is dead)
+/**
+ * @struct mdm_hdr
+ * @brief The mdm_hdr struct
+ * @note From http://games.theteamkillers.net/rtcw/mdx/ (linky is dead)
+ */
 struct mdm_hdr
 {
-	char ident[4];            // "MDMW"
-	byte version[4];          // uint32
+	char ident[4];              ///< "MDMW"
+	byte version[4];            ///< uint32
 	char filename[MAX_QPATH];
-	byte lod_bias[4];         // vec_t
-	byte lod_scale[4];        // vec_t
-	byte surface_count[4];    // uint32
-	byte surface_offset[4];   // uint32
-	byte tag_count[4];        // uint32
-	byte tag_offset[4];       // uint32
-	byte eof_offset[4];       // uint32
+	byte lod_bias[4];           ///< vec_t
+	byte lod_scale[4];          ///< vec_t
+	byte surface_count[4];      ///< uint32
+	byte surface_offset[4];     ///< uint32
+	byte tag_count[4];          ///< uint32
+	byte tag_offset[4];         ///< uint32
+	byte eof_offset[4];         ///< uint32
 };
 
+/**
+ * @struct mdm_tag
+ * @brief
+ */
 struct mdm_tag
 {
 	char name[64];
-	byte axis[3][3][4];  // vec_t[3][3]
-	byte attach_bone[4]; // uint32
-	byte offset[3][4];   // vec_t[3]
-	byte bone_count[4];  // uint32
-	byte bone_offset[4]; // uint32
-	byte tag_size[4];    // uint32
+	byte axis[3][3][4];         ///< vec_t[3][3]
+	byte attach_bone[4];        ///< uint32
+	byte offset[3][4];          ///< vec_t[3]
+	byte bone_count[4];         ///< uint32
+	byte bone_offset[4];        ///< uint32
+	byte tag_size[4];           ///< uint32
 	// bone indexes (uint32) follow
 };
 
+/**
+ * @struct mdx_hdr
+ * @brief
+ */
 struct mdx_hdr
 {
-	char ident[4];          // "MDXW"
-	byte version[4];        // uint32
+	char ident[4];              ///< "MDXW"
+	byte version[4];            ///< uint32
 	char filename[MAX_QPATH];
-	byte frame_count[4];    // uint32
-	byte bone_count[4];     // uint32
-	byte frame_offset[4];   // uint32
-	byte bone_offset[4];    // uint32
-	byte torso_parent[4];   // uint32
-	byte eof_offset[4];     // uint32
+	byte frame_count[4];        ///< uint32
+	byte bone_count[4];         ///< uint32
+	byte frame_offset[4];       ///< uint32
+	byte bone_offset[4];        ///< uint32
+	byte torso_parent[4];       ///< uint32
+	byte eof_offset[4];         ///< uint32
 };
 
+/**
+ * @struct mdx_frame_bone
+ * @brief
+ */
 struct mdx_frame_bone
 {
-	byte angles[3][2];          // int16[3]
-	byte unused[2];             // int16
-	byte offset_angles[2][2];   // int16[2]
+	byte angles[3][2];          ///< int16[3]
+	byte unused[2];             ///< int16
+	byte offset_angles[2][2];   ///< int16[2]
 };
 
+/**
+ * @struct mdx_frame
+ * @brief
+ */
 struct mdx_frame
 {
-	byte mins[3][4];            // vec_t[3]
-	byte maxs[3][4];            // vec_t[3]
-	byte origin[3][4];          // vec_t[3]
-	byte radius[4];             // vec_t
-	byte parent_offset[3][4];   // vec_t[3]
+	byte mins[3][4];            ///< vec_t[3]
+	byte maxs[3][4];            ///< vec_t[3]
+	byte origin[3][4];          ///< vec_t[3]
+	byte radius[4];             ///< vec_t
+	byte parent_offset[3][4];   ///< vec_t[3]
 	// mdx_frame_bones follow
 };
 
+/**
+ * @struct mdx_bone
+ * @brief
+ */
 struct mdx_bone
 {
 	char name[64];
-	byte parent_index[4];   // int32
-	byte torso_weight[4];   // vec_t
-	byte parent_dist[4];    // vec_t
-	byte is_tag[4];         // uint32
+	byte parent_index[4];       ///< int32
+	byte torso_weight[4];       ///< vec_t
+	byte parent_dist[4];        ///< vec_t
+	byte is_tag[4];             ///< uint32
 };
 
+/**
+ * @struct mdx
+ * @brief
+ */
 struct mdx
 {
 	struct mdx_hdr *hdr;
-	void *frame; // struct mdx_frame; struct mdx_frame_bone*bone_count; ...
+	void *frame;            ///< struct mdx_frame; struct mdx_frame_bone*bone_count; ...
 	struct mdx_bone *bone;
 	int frames, bones;
 };
@@ -150,6 +178,10 @@ struct mdx
 
 //////////////////////
 
+/**
+ * @struct bone
+ * @brief
+ */
 struct bone
 {
 	char name[64];
@@ -158,14 +190,22 @@ struct bone
 	vec_t torso_weight;
 };
 
+/**
+ * @struct frame_bone
+ * @brief
+ */
 struct frame_bone
 {
-	short angles[3];            // Orientation angle
-	short offset_angles[2];     // Offset angle
-	float anglesF[3];           // floating point values instead of short integers
-	float offset_anglesF[2];    // floating point values instead of short integers
+	short angles[3];            ///< Orientation angle
+	short offset_angles[2];     ///< Offset angle
+	float anglesF[3];           ///< floating point values instead of short integers
+	float offset_anglesF[2];    ///< floating point values instead of short integers
 };
 
+/**
+ * @struct frame
+ * @brief
+ */
 struct frame
 {
 	vec_t radius;
@@ -173,19 +213,27 @@ struct frame
 	struct frame_bone *bones;
 };
 
+/**
+ * @struct hit_area
+ * @brief
+ */
 struct hit_area
 {
 	int hit_type;
 	animScriptImpactPoint_t impactpoint;
 
-	int tag[2];     // internal (cached) tag numbers
+	int tag[2];             ///< internal (cached) tag numbers
 	vec3_t scale[2];
 	qboolean ishead[2];
 	qboolean isbox;
 
-	vec3_t axis[3]; // additional axis rotation before scale
+	vec3_t axis[3];         ///< additional axis rotation before scale
 };
 
+/**
+ * @struct tag
+ * @brief
+ */
 struct tag
 {
 	char name[64];
@@ -204,14 +252,23 @@ struct tag
 #define INTERNTAG_TAG_MASK  (~INTERNTAG_TAG)
 #endif
 
+/**
+ * @struct interntag_s
+ * @brief
+ */
 typedef struct interntag_s
 {
 	struct tag tag;
-	qboolean merged;    // merge with cachetag
-	float weight;       // weight for merge (1.0 = only first)
-	qboolean ishead;    // use head angles (for offset)
+	qboolean merged;    ///< merge with cachetag
+	float weight;       ///< weight for merge (1.0 = only first)
+	qboolean ishead;    ///< use head angles (for offset)
 } interntag_t;
 
+/**
+ * @struct mdm_t
+ * @typedef mdm_s
+ * @brief
+ */
 typedef struct mdm_s
 {
 	char path[MAX_QPATH];
@@ -226,6 +283,11 @@ typedef struct mdm_s
 #endif // BONE_HITTESTS
 } mdm_t;
 
+/**
+ * @struct mdx_t
+ * @typedef mdx_s
+ * @brief
+ */
 typedef struct mdx_s
 {
 	char path[MAX_QPATH];
@@ -239,6 +301,11 @@ typedef struct mdx_s
 	int torso_parent;
 } mdx_t;
 
+/**
+ * @struct hit_s
+ * @typedef hit_t
+ * @brief
+ */
 typedef struct hit_s
 {
 	const animModelInfo_t *animModelInfo;

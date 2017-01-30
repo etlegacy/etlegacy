@@ -36,7 +36,7 @@
 #ifndef INCLUDE_BG_LOCAL_H
 #define INCLUDE_BG_LOCAL_H
 
-#define MIN_WALK_NORMAL 0.7f     // can't walk on very steep slopes
+#define MIN_WALK_NORMAL 0.7f     ///< Can't walk on very steep slopes
 
 #define STEPSIZE        18
 
@@ -44,9 +44,12 @@
 
 #define MAX_MG42_HEAT   1500.f
 
-// all of the locals will be zeroed before each
-// pmove, just to make damn sure we don't have
-// any differences when running on client or server
+/**
+ * @struct pml_t
+ * @brief All of the locals will be zeroed before each
+ * pmove, just to make damn sure we don't have
+ * any differences when running on client or server
+ */
 typedef struct
 {
 	vec3_t forward, right, up;

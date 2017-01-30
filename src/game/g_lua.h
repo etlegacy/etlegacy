@@ -35,7 +35,7 @@
 #endif
 
 #define LUA_NUM_VM 16
-#define LUA_MAX_FSIZE 1024 * 1024 // 1MB
+#define LUA_MAX_FSIZE 1024 * 1024 ///< 1MB
 
 #define FIELD_INT           0
 #define FIELD_STRING        1
@@ -48,10 +48,10 @@
 #define FIELD_WEAPONSTAT    8
 //#define FIELD_WEAPONSTAT_EXT	9
 
-#define FIELD_FLAG_GENTITY  1 // marks a gentity_s field
-#define FIELD_FLAG_GCLIENT  2 // marks a gclient_s field
+#define FIELD_FLAG_GENTITY  1 ///< marks a gentity_s field
+#define FIELD_FLAG_GCLIENT  2 ///< marks a gclient_s field
 #define FIELD_FLAG_NOPTR    4
-#define FIELD_FLAG_READONLY 8 // read-only access
+#define FIELD_FLAG_READONLY 8 ///< read-only access
 
 // define HOSTARCH and EXTENSION depending on host architecture
 #if defined WIN32
@@ -78,6 +78,10 @@
 #define _et_gclient_addfield(n, t, f) { #n, t, offsetof(struct gclient_s, n), FIELD_FLAG_GCLIENT + f }
 #define _et_gclient_addfieldalias(n, a, t, f) { #n, t, offsetof(struct gclient_s, a), FIELD_FLAG_GCLIENT + f }
 
+/**
+ * @struct lua_vm_t
+ * @brief
+ */
 typedef struct
 {
 	int id;
@@ -90,6 +94,10 @@ typedef struct
 	lua_State *L;
 } lua_vm_t;
 
+/**
+ * @struct gentity_field_t
+ * @brief
+ */
 typedef struct
 {
 	const char *name;
@@ -100,6 +108,11 @@ typedef struct
 
 extern lua_vm_t *lVM[LUA_NUM_VM];
 
+/**
+ * @enum printMessageType_t
+ * @typedef printMessageType_e
+ * @brief
+ */
 typedef enum printMessageType_e
 {
 	GPRINT_TEXT = 0,
@@ -107,6 +120,11 @@ typedef enum printMessageType_e
 	GPRINT_ERROR
 } printMessageType_t;
 
+/**
+ * @struct luaPrintFunctions_t
+ * @typedef luaPrintFunctions_s
+ * @brief
+ */
 typedef struct luaPrintFunctions_s
 {
 	printMessageType_t category;

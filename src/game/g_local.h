@@ -42,7 +42,10 @@
 
 //==================================================================
 
-// the "gameversion" client command will print this plus compile date
+/**
+ * @def GAMEVERSION
+ * @brief The "gameversion" client command will print this plus compile date.
+ */
 #define GAMEVERSION         "legacy"
 
 #define BODY_QUEUE_SIZE     8
@@ -51,8 +54,10 @@
 
 #define MG42_MULTIPLAYER_HEALTH 350
 
-// How long do bodies last?
-// Both teams 10 seconds
+/**
+ * @def BODY_TIME
+ * @brief How long do bodies last? Both teams 10 seconds.
+ */
 #define BODY_TIME(t) 10000
 
 #define MAX_MG42_HEAT           1500.f
@@ -60,17 +65,17 @@
 // gentity->flags
 #define FL_GODMODE              0x00000010
 #define FL_NOTARGET             0x00000020
-#define FL_TEAMSLAVE            0x00000400  // not the first on the team
+#define FL_TEAMSLAVE            0x00000400  ///< not the first on the team
 #define FL_NO_KNOCKBACK         0x00000800
 #define FL_DROPPED_ITEM         0x00001000
-#define FL_NO_BOTS              0x00002000  // spawn point not for bot use
-#define FL_NO_HUMANS            0x00004000  // spawn point just for bots
-#define FL_NOFATIGUE            0x00010000  // cheat flag no fatigue
+#define FL_NO_BOTS              0x00002000  ///< spawn point not for bot use
+#define FL_NO_HUMANS            0x00004000  ///< spawn point just for bots
+#define FL_NOFATIGUE            0x00010000  ///< cheat flag no fatigue
 
-#define FL_TOGGLE               0x00020000  // ent is toggling (doors use this for ex.)
-#define FL_KICKACTIVATE         0x00040000  // ent has been activated by a kick (doors use this too for ex.)
-#define FL_SOFTACTIVATE         0x00000040  // ent has been activated while 'walking' (doors use this too for ex.)
-//#define FL_DEFENSE_GUARD        0x00080000  // warzombie defense pose
+#define FL_TOGGLE               0x00020000  ///< ent is toggling (doors use this for ex.)
+#define FL_KICKACTIVATE         0x00040000  ///< ent has been activated by a kick (doors use this too for ex.)
+#define FL_SOFTACTIVATE         0x00000040  ///< ent has been activated while 'walking' (doors use this too for ex.)
+//#define FL_DEFENSE_GUARD        0x00080000  ///< warzombie defense pose
 
 #define FL_NODRAW               0x01000000
 
@@ -78,7 +83,10 @@
 #define TKFL_AIRSTRIKE          0x00000002
 #define TKFL_MORTAR             0x00000004
 
-// movers are things like doors, plats, buttons, etc
+/**
+ * @enum moverState_t
+ * @brief Movers are things like doors, plats, buttons, etc
+ */
 typedef enum
 {
 	MOVER_POS1 = 0,
@@ -99,7 +107,7 @@ typedef enum
 // Worldspawn spawnflags to indicate if a gametype is not supported
 #define NO_GT_WOLF      1
 #define NO_STOPWATCH    2
-#define NO_CHECKPOINT   4 // unused
+#define NO_CHECKPOINT   4 ///< unused
 #define NO_LMS          8
 
 #define MAX_CONSTRUCT_STAGES 3
@@ -115,7 +123,10 @@ typedef struct gclient_s gclient_t;
 
 //====================================================================
 
-// Scripting (parsed at each start)
+/**
+ * @struct g_script_stack_action_t
+ * @brief Scripting (parsed at each start)
+ */
 typedef struct
 {
 	char *actionString;
@@ -123,29 +134,45 @@ typedef struct
 	int hash;
 } g_script_stack_action_t;
 
+/**
+ * @struct g_script_stack_item_t
+ * @brief
+ */
 typedef struct
 {
 	// set during script parsing
-	g_script_stack_action_t *action;                // points to an action to perform
+	g_script_stack_action_t *action;                ///< points to an action to perform
 	char *params;
 } g_script_stack_item_t;
 
-// value set high for the tank
+/// value set high for the tank
 #define G_MAX_SCRIPT_STACK_ITEMS    196
 
+/**
+ * @struct g_script_stack_t
+ * @brief
+ */
 typedef struct
 {
 	g_script_stack_item_t items[G_MAX_SCRIPT_STACK_ITEMS];
 	int numItems;
 } g_script_stack_t;
 
+/**
+ * @struct g_script_stack_t
+ * @brief
+ */
 typedef struct
 {
-	int eventNum;                           // index in scriptEvents[]
-	char *params;                           // trigger targetname, etc
+	int eventNum;                           ///< index in scriptEvents[]
+	char *params;                           ///< trigger targetname, etc
 	g_script_stack_t stack;
 } g_script_event_t;
 
+/**
+ * @struct g_script_event_define_t
+ * @brief
+ */
 typedef struct
 {
 	char *eventStr;
@@ -158,16 +185,19 @@ typedef struct
 #define SCFL_ANIMATING          0x2
 #define SCFL_FIRST_CALL         0x4
 
-// Scripting Status (NOTE: this MUST NOT contain any pointer vars)
+/**
+ * @struct g_script_status_t
+ * @brief Scripting Status (NOTE: this MUST NOT contain any pointer vars)
+ */
 typedef struct
 {
 	int scriptStackHead, scriptStackChangeTime;
-	int scriptEventIndex;       // current event containing stack of actions to perform
+	int scriptEventIndex;           ///< current event containing stack of actions to perform
 	// scripting system variables
-	int scriptId;                   // incremented each time the script changes
+	int scriptId;                   ///< incremented each time the script changes
 	int scriptFlags;
-	int actionEndTime;              // time to end the current action
-	char *animatingParams;          // read 8 lines up for why i love this code ;)
+	int actionEndTime;              ///< time to end the current action
+	char *animatingParams;          ///< read 8 lines up for why i love this code ;)
 } g_script_status_t;
 
 #define G_MAX_SCRIPT_ACCUM_BUFFERS 10
@@ -175,6 +205,11 @@ typedef struct
 void G_Script_ScriptEvent(gentity_t *ent, const char *eventStr, const char *params);
 //====================================================================
 
+/**
+ * @struct g_constructible_stats_t
+ * @typedef g_constructible_stats_s
+ * @brief
+ */
 typedef struct g_constructible_stats_s
 {
 	float chargebarreq;
@@ -195,12 +230,20 @@ extern g_constructible_stats_t g_constructible_classes[NUM_CONSTRUCTIBLE_CLASSES
 
 #define MAX_COMMANDER_TEAM_SOUNDS 16
 
+/**
+ * @struct commanderTeamChat_s
+ * @typedef commanderTeamChat_t
+ * @brief
+ */
 typedef struct commanderTeamChat_s
 {
 	int index;
 } commanderTeamChat_t;
 
-// MAPVOTE
+/**
+ * @struct mapVoteInfo_t
+ * @brief MAPVOTE
+ */
 typedef struct
 {
 	char bspName[128];
@@ -212,21 +255,23 @@ typedef struct
 	int zOrder;
 } mapVoteInfo_t;
 
-// forty - realistic hitboxes
-//         based on lerpFrame_t
+/**
+ * @struct glerpFrame_t
+ * @brief realistic hitboxes based on lerpFrame_t
+ */
 typedef struct
 {
 	qhandle_t oldFrameModel;
 	qhandle_t frameModel;
 
 	int oldFrame;
-	int oldFrameTime;               // time when ->oldFrame was exactly on
+	int oldFrameTime;               ///< time when ->oldFrame was exactly on
 	int oldFrameSnapshotTime;
 
 	vec3_t oldFramePos;
 
 	int frame;
-	int frameTime;              // time when ->frame will be exactly on
+	int frameTime;                  ///< time when ->frame will be exactly on
 
 	float yawAngle;
 	int yawing;
@@ -235,55 +280,60 @@ typedef struct
 
 	int moveSpeed;
 
-	int animationNumber;            // may include ANIM_TOGGLEBIT
-	int oldAnimationNumber;         // may include ANIM_TOGGLEBIT
+	int animationNumber;            ///< may include ANIM_TOGGLEBIT
+	int oldAnimationNumber;         ///< may include ANIM_TOGGLEBIT
 	animation_t *animation;
-	int animationTime;              // time when the first frame of the animation will be exact
+	int animationTime;              ///< time when the first frame of the animation will be exact
 	float animSpeedScale;
 
 } glerpFrame_t;
 
+/**
+ * @struct gentity_t
+ * @typedef gentity_s
+ * @brief
+ */
 struct gentity_s
 {
-	entityState_t s;                // communicated by server to clients
-	entityShared_t r;               // shared by both the server system and game
+	entityState_t s;                ///< communicated by server to clients
+	entityShared_t r;               ///< shared by both the server system and game
 
 	// DO NOT MODIFY ANYTHING ABOVE THIS, THE SERVER
 	// EXPECTS THE FIELDS IN THAT ORDER!
 	//================================
 
-	struct gclient_s *client;               // NULL if not a client
+	struct gclient_s *client;       ///< NULL if not a client
 
 	qboolean inuse;
 
-	vec3_t instantVelocity;         // per entity instantaneous velocity, set per frame
+	vec3_t instantVelocity;         ///< per entity instantaneous velocity, set per frame
 
-	const char *classname;          // set in QuakeEd
-	int spawnflags;                 // set in QuakeEd
+	const char *classname;          ///< set in QuakeEd
+	int spawnflags;                 ///< set in QuakeEd
 
-	qboolean neverFree;             // if true, FreeEntity will only unlink
-	// bodyque uses this
+	qboolean neverFree;             ///< if true, FreeEntity will only unlink
+	///< bodyque uses this
 
-	int flags;                      // FL_* variables
+	int flags;                      ///< FL_* variables
 
 	char *model;
 	char *model2;
-	int freetime;                   // level.time when the object was freed
+	int freetime;                   ///< level.time when the object was freed
 
-	int eventTime;                  // events will be cleared EVENT_VALID_MSEC after set
+	int eventTime;                  ///< events will be cleared EVENT_VALID_MSEC after set
 	qboolean freeAfterEvent;
 	qboolean unlinkAfterEvent;
 
-	qboolean physicsObject;         // if true, it can be pushed by movers and fall off edges
-	// all game items are physicsObjects,
-	float physicsBounce;            // 1.0 = continuous bounce, 0.0 = no bounce
-	int clipmask;                   // brushes with this content value will be collided against
-	// when moving.  items and corpses do not collide against
-	// players, for instance
+	qboolean physicsObject;         ///< if true, it can be pushed by movers and fall off edges
+	                                ///< all game items are physicsObjects,
+	float physicsBounce;            ///< 1.0 = continuous bounce, 0.0 = no bounce
+	int clipmask;                   ///< brushes with this content value will be collided against
+	                                ///< when moving.  items and corpses do not collide against
+	                                ///< players, for instance
 
-	int realClipmask;               // use these to backup the contents value when we go to state under construction
+	int realClipmask;               ///< use these to backup the contents value when we go to state under construction
 	int realContents;
-	qboolean realNonSolidBModel;    // For script_movers with spawnflags 2 set
+	qboolean realNonSolidBModel;    ///< For script_movers with spawnflags 2 set
 
 	// movers
 	moverState_t moverState;
@@ -308,19 +358,19 @@ struct gentity_s
 
 	char *message;
 
-	int timestamp;              // body queue sinking, etc
+	int timestamp;                  ///< body queue sinking, etc
 
-	float angle;                // set in editor, -1 = up, -2 = down
+	float angle;                    ///< set in editor, -1 = up, -2 = down
 	char *target;
 
 	char *targetname;
-	int targetnamehash;         // adding a hash for this for faster lookups
+	int targetnamehash;             ///< adding a hash for this for faster lookups
 
 	char *team;
 	gentity_t *target_ent;
 
 	float speed;
-	float closespeed;           // for movers that close at a different speed than they open
+	float closespeed;               ///< for movers that close at a different speed than they open
 	vec3_t movedir;
 
 	int gDuration;
@@ -331,7 +381,7 @@ struct gentity_s
 	int nextthink;
 	void (*free)(gentity_t *self);
 	void (*think)(gentity_t *self);
-	void (*reached)(gentity_t *self);           // movers call this when hitting endpoint
+	void (*reached)(gentity_t *self);           ///< movers call this when hitting endpoint
 	void (*blocked)(gentity_t *self, gentity_t *other);
 	void (*touch)(gentity_t *self, gentity_t *other, trace_t *trace);
 	void (*use)(gentity_t *self, gentity_t *other, gentity_t *activator);
@@ -339,14 +389,14 @@ struct gentity_s
 	void (*die)(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod);
 
 	int pain_debounce_time;
-	int fly_sound_debounce_time;            // wind tunnel
+	int fly_sound_debounce_time;    ///< wind tunnel
 
 	int health;
 
 	qboolean takedamage;
 
 	int damage;
-	int splashDamage;           // quad will increase this without increasing radius
+	int splashDamage;               ///< quad will increase this without increasing radius
 	int splashRadius;
 	int methodOfDeath;
 	int splashMethodOfDeath;
@@ -356,8 +406,8 @@ struct gentity_s
 	gentity_t *chain;
 	gentity_t *enemy;
 	gentity_t *activator;
-	gentity_t *teamchain;       // next entity in team
-	gentity_t *teammaster;      // master of the team
+	gentity_t *teamchain;           ///< next entity in team
+	gentity_t *teammaster;          ///< master of the team
 
 	meansOfDeath_t deathType;
 
@@ -379,7 +429,7 @@ struct gentity_s
 	float duration;
 	vec3_t rotate;
 	vec3_t TargetAngles;
-	gitem_t *item;              // for bonus items
+	gitem_t *item;                  ///< for bonus items
 
 	// Ridah, AI fields
 	char *aiName;
@@ -392,7 +442,7 @@ struct gentity_s
 	char *dl_shader;
 	int dl_atten;
 
-	int key;                    // used by:  target_speaker->nopvs,
+	int key;                        ///< used by:  target_speaker->nopvs,
 
 	qboolean active;
 
@@ -402,12 +452,12 @@ struct gentity_s
 
 	int props_frame_state;
 
-	int missionLevel;               // mission we are currently trying to complete
+	int missionLevel;               ///< mission we are currently trying to complete
 	// gets reset each new level
 	int start_size;
 	int end_size;
 
-	qboolean isProp;                // teamkilled or not
+	qboolean isProp;                ///< teamkilled or not
 
 	int mg42BaseEnt;
 
@@ -417,8 +467,8 @@ struct gentity_s
 
 	int count2;
 
-	int grenadeExplodeTime;         // we've caught a grenade, which was due to explode at this time
-	int grenadeFired;               // the grenade entity we last fired
+	int grenadeExplodeTime;         ///< we've caught a grenade, which was due to explode at this time
+	int grenadeFired;               ///< the grenade entity we last fired
 
 	char *track;
 
@@ -426,21 +476,21 @@ struct gentity_s
 	char *scriptName;
 
 	int numScriptEvents;
-	g_script_event_t *scriptEvents;     // contains a list of actions to perform for each event type
-	g_script_status_t scriptStatus;     // current status of scripting
+	g_script_event_t *scriptEvents;     ///< contains a list of actions to perform for each event type
+	g_script_status_t scriptStatus;     ///< current status of scripting
 	// the accumulation buffer
 	int scriptAccumBuffer[G_MAX_SCRIPT_ACCUM_BUFFERS];
 
 	float accuracy;
 
-	char tagName[MAX_QPATH];            // name of the tag we are attached to
+	char tagName[MAX_QPATH];            ///< name of the tag we are attached to
 	gentity_t *tagParent;
 	gentity_t *tankLink;
 
 	int lastHintCheckTime;
 	int voiceChatSquelch;
 	int voiceChatPreviousTime;
-	int lastBurnedFrameNumber; // to fix FT instant-kill exploit
+	int lastBurnedFrameNumber;          ///< to fix FT instant-kill exploit
 
 	entState_t entstate;
 	char *constages;
@@ -457,7 +507,7 @@ struct gentity_s
 	gentity_t *dmgparent;
 	qboolean dmginloop;
 
-	int tagNumber;              // "handle" to a tag header
+	int tagNumber;                      ///< "handle" to a tag header
 
 	int linkTagTime;
 
@@ -467,12 +517,12 @@ struct gentity_s
 	qboolean back;
 	qboolean moving;
 
-	// What sort of surface are we standing on?
+	/// What sort of surface are we standing on?
 	int surfaceFlags;
 
 	char tagBuffer[32];
 
-	// bleh - ugly
+	// FIXME: bleh - ugly
 	int backupWeaponTime;
 	int mg42weapHeat;
 
@@ -482,8 +532,8 @@ struct gentity_s
 
 	g_constructible_stats_t constructibleStats;
 
-	int etpro_misc_1; // bit 0 = it's a planted/ticking dynamite
-	int etpro_misc_2; // the entityNumber of the (last) planted dyna. bit strange it's only 1 dyna..
+	int etpro_misc_1;                   ///< bit 0 = it's a planted/ticking dynamite
+	int etpro_misc_2;                   ///< the entityNumber of the (last) planted dyna. bit strange it's only 1 dyna..
 
 	int numPlayers;
 
@@ -493,10 +543,14 @@ struct gentity_s
 	int timeShiftTime;
 
 #ifdef FEATURE_OMNIBOT
-	int numPlanted; // Omni-bot increment dyno count
+	int numPlanted;                     ///< Omni-bot increment dyno count
 #endif
 };
 
+/**
+ * @enum clientConnected_t
+ * @brief
+ */
 typedef enum
 {
 	CON_DISCONNECTED = 0,
@@ -504,6 +558,10 @@ typedef enum
 	CON_CONNECTED
 } clientConnected_t;
 
+/**
+ * @enum spectatorState_t
+ * @brief
+ */
 typedef enum
 {
 	SPECTATOR_NOT = 0,
@@ -511,6 +569,10 @@ typedef enum
 	SPECTATOR_FOLLOW
 } spectatorState_t;
 
+/**
+ * @enum combatstate_t
+ * @brief
+ */
 typedef enum
 {
 	COMBATSTATE_COLD = 0,
@@ -519,10 +581,14 @@ typedef enum
 	COMBATSTATE_KILLEDPLAYER
 } combatstate_t;
 
+/**
+ * @enum playerTeamStateState_t
+ * @brief
+ */
 typedef enum
 {
-	TEAM_BEGIN = 0,     // Beginning a team game, spawn at base
-	TEAM_ACTIVE     // Now actively playing
+	TEAM_BEGIN = 0,         ///< Beginning a team game, spawn at base
+	TEAM_ACTIVE             ///< Now actively playing
 } playerTeamStateState_t;
 
 typedef struct
@@ -532,7 +598,10 @@ typedef struct
 
 } playerTeamState_t;
 
-// weapon stat counters
+/**
+ * @struct playerTeamStateState_t
+ * @brief Weapon stat counters
+ */
 typedef struct
 {
 	unsigned int atts;
@@ -542,31 +611,34 @@ typedef struct
 	unsigned int kills;
 } weapon_stat_t;
 
-// client data that stays across multiple levels or tournament restarts
-// this is achieved by writing all the data to cvar strings at game shutdown
-// time and reading them back at connection time.  Anything added here
-// MUST be dealt with in G_InitSessionData() / G_ReadSessionData() / G_WriteSessionData()
+/**
+ * @struct playerTeamStateState_t
+ * @brief Client data that stays across multiple levels or tournament restarts
+ * this is achieved by writing all the data to cvar strings at game shutdown
+ * time and reading them back at connection time.  Anything added here
+ * MUST be dealt with in G_InitSessionData() / G_ReadSessionData() / G_WriteSessionData()
+ */
 typedef struct
 {
 	team_t sessionTeam;
-	int spectatorTime;              // for determining next-in-line to play
+	int spectatorTime;                                  ///< for determining next-in-line to play
 	spectatorState_t spectatorState;
-	int spectatorClient;            // for chasecam and follow mode
-	int playerType;                 // for GT_WOLF
-	weapon_t playerWeapon;          // for GT_WOLF
-	weapon_t playerWeapon2;         // secondary weapon
-	int spawnObjectiveIndex;        // index of objective to spawn nearest to (returned from UI)
-	int latchPlayerType;            // for GT_WOLF not archived
-	weapon_t latchPlayerWeapon;     // for GT_WOLF not archived
-	weapon_t latchPlayerWeapon2;    // secondary weapon
+	int spectatorClient;                                ///< for chasecam and follow mode
+	int playerType;                                     ///< for GT_WOLF
+	weapon_t playerWeapon;                              ///< for GT_WOLF
+	weapon_t playerWeapon2;                             ///< secondary weapon
+	int spawnObjectiveIndex;                            ///< index of objective to spawn nearest to (returned from UI)
+	int latchPlayerType;                                ///< for GT_WOLF not archived
+	weapon_t latchPlayerWeapon;                         ///< for GT_WOLF not archived
+	weapon_t latchPlayerWeapon2;                        ///< secondary weapon
 	int ignoreClients[MAX_CLIENTS / (sizeof(int) * 8)];
 	qboolean muted;
-	float skillpoints[SK_NUM_SKILLS];           // skillpoints
-	float startskillpoints[SK_NUM_SKILLS];      // initial skillpoints at map beginning
+	float skillpoints[SK_NUM_SKILLS];                   ///< skillpoints
+	float startskillpoints[SK_NUM_SKILLS];              ///< initial skillpoints at map beginning
 	float startxptotal;
-	int skill[SK_NUM_SKILLS];                   // skill
-	int rank;                                   // rank
-	int medals[SK_NUM_SKILLS];                  // medals
+	int skill[SK_NUM_SKILLS];                           ///< skill
+	int rank;                                           ///< rank
+	int medals[SK_NUM_SKILLS];                          ///< medals
 
 	int referee;
 	int rounds;
@@ -596,23 +668,23 @@ typedef struct
 	// MAPVOTE
 	int mapVotedFor[3];
 
-	weapon_stat_t aWeaponStats[WS_MAX + 1];   // Weapon stats.  +1 to avoid invalid weapon check
+	weapon_stat_t aWeaponStats[WS_MAX + 1];             ////< Weapon stats.  +1 to avoid invalid weapon check
 
 	qboolean versionOK;
 
-	unsigned int uci;               // GeoIP
+	unsigned int uci;                                   ////< GeoIP
 
 #ifdef FEATURE_OMNIBOT
 	//Omni-bot
-	qboolean botSuicide;            // /kill before next spawn
-	qboolean botPush;               // allow for disabling of bot pushing via script
+	qboolean botSuicide;                                ///< /kill before next spawn
+	qboolean botPush;                                   ///< allow for disabling of bot pushing via script
 #endif
 
 } clientSession_t;
 
-#define PICKUP_ACTIVATE 0   // pickup items only when using "+activate"
-#define PICKUP_TOUCH    1   // pickup items when touched
-#define PICKUP_FORCE    2   // pickup the next item when touched (and reset to PICKUP_ACTIVATE when done)
+#define PICKUP_ACTIVATE 0   ///< pickup items only when using "+activate"
+#define PICKUP_TOUCH    1   ///< pickup items when touched
+#define PICKUP_FORCE    2   ///< pickup the next item when touched (and reset to PICKUP_ACTIVATE when done)
 
 // zinx etpro antiwarp
 #define LAG_MAX_COMMANDS 512
@@ -622,8 +694,13 @@ typedef struct
 #define LAG_DECAY 1.02f
 
 #ifdef FEATURE_MULTIVIEW
-// multiview handling
+
 #define MULTIVIEW_MAXVIEWS  16
+
+/**
+ * @struct mview_t
+ * @brief Multiview handling
+ */
 typedef struct
 {
 	qboolean fActive;
@@ -632,6 +709,11 @@ typedef struct
 } mview_t;
 #endif
 
+/**
+ * @struct ipFilter_t
+ * @typedef ipFilter_s
+ * @brief
+ */
 typedef struct ipFilter_s
 {
 	unsigned mask;
@@ -640,51 +722,54 @@ typedef struct ipFilter_s
 
 #define MAX_COMPLAINTIPS 5
 
-// client data that stays across multiple respawns, but is cleared
-// on each level change or team change at ClientBegin()
+/**
+ * @struct clientPersistant_t
+ * @brief Client data that stays across multiple respawns, but is cleared
+ * on each level change or team change at ClientBegin()
+ */
 typedef struct
 {
 	clientConnected_t connected;
-	usercmd_t cmd;                  // we would lose angles if not persistant
-	usercmd_t oldcmd;               // previous command processed by pmove()
-	qboolean localClient;           // true if "ip" info key is "localhost"
-	qboolean initialSpawn;          // the first spawn should be at a cool location
-	qboolean predictItemPickup;     // based on cg_predictItems userinfo
-	qboolean pmoveFixed;            //
-	int pmoveMsec;                  // antiwarp
+	usercmd_t cmd;                      ///< we would lose angles if not persistant
+	usercmd_t oldcmd;                   ///< previous command processed by pmove()
+	qboolean localClient;               ///< true if "ip" info key is "localhost"
+	qboolean initialSpawn;              ///< the first spawn should be at a cool location
+	qboolean predictItemPickup;         ///< based on cg_predictItems userinfo
+	qboolean pmoveFixed;                ///<
+	int pmoveMsec;                      ///< antiwarp
 
 	char netname[MAX_NETNAME];
-	char client_ip[MAX_IP4_LENGTH]; // ip 'caching' - it won't change
+	char client_ip[MAX_IP4_LENGTH];     ///< ip 'caching' - it won't change
 	char cl_guid[MAX_GUID_LENGTH + 1];
 
-	int autoActivate;               // based on cg_autoactivate userinfo        (uses the PICKUP_ values above)
+	int autoActivate;                   ///< based on cg_autoactivate userinfo        (uses the PICKUP_ values above)
 
-	int maxHealth;                  // for handicapping
-	int enterTime;                  // level.time the client entered the game
-	int connectTime;                // level.time the client first connected to the server
-	playerTeamState_t teamState;    // status in teamplay games
-	int voteCount;                  // to prevent people from constantly calling votes
-	int teamVoteCount;              // FIXME: unused - to prevent people from constantly calling votes
+	int maxHealth;                      ///< for handicapping
+	int enterTime;                      ///< level.time the client entered the game
+	int connectTime;                    ///< level.time the client first connected to the server
+	playerTeamState_t teamState;        ///< status in teamplay games
+	int voteCount;                      ///< to prevent people from constantly calling votes
+	int teamVoteCount;                  ///< FIXME: unused - to prevent people from constantly calling votes
 
-	int complaints;                     // number of complaints lodged against this client
-	int complaintClient;                // able to lodge complaint against this client
-	int complaintEndTime;               // until this time has expired
+	int complaints;                     ///< number of complaints lodged against this client
+	int complaintClient;                ///< able to lodge complaint against this client
+	int complaintEndTime;               ///< until this time has expired
 
-	int lastReinforceTime;              // last reinforcement
+	int lastReinforceTime;              ///< last reinforcement
 
-	qboolean teamInfo;                  // send team overlay updates?
+	qboolean teamInfo;                  ///< send team overlay updates?
 
-	qboolean bAutoReloadAux;            // auxiliary storage for pmoveExt_t::bAutoReload, to achieve persistance
+	qboolean bAutoReloadAux;            ///< auxiliary storage for pmoveExt_t::bAutoReload, to achieve persistance
 
-	int applicationClient;              // this client has requested to join your fireteam
-	int applicationEndTime;             // you have X seconds to reply or this message will self destruct!
+	int applicationClient;              ///< this client has requested to join your fireteam
+	int applicationEndTime;             ///< you have X seconds to reply or this message will self destruct!
 
-	int invitationClient;               // you have been invited to join this client's fireteam
-	int invitationEndTime;              // quickly now, chop chop!.....
+	int invitationClient;               ///< you have been invited to join this client's fireteam
+	int invitationEndTime;              ///< quickly now, chop chop!.....
 
-	int propositionClient;              // propositionClient2 has requested you invite this client to join the fireteam
-	int propositionClient2;             //
-	int propositionEndTime;             // tick, tick, tick....
+	int propositionClient;              ///< propositionClient2 has requested you invite this client to join the fireteam
+	int propositionClient2;             ///<
+	int propositionEndTime;             ///< tick, tick, tick....
 
 	int autofireteamEndTime;
 	int autofireteamCreateEndTime;
@@ -698,23 +783,23 @@ typedef struct
 
 	int lastSpawnTime;
 
-	unsigned int autoaction;            // End-of-match auto-requests
-	unsigned int clientFlags;           // Client settings that need server involvement
-	unsigned int clientMaxPackets;      // Client com_maxpacket settings
-	unsigned int clientTimeNudge;       // Client cl_timenudge settings
-	int cmd_debounce;                   // Dampening of command spam
-	unsigned int invite;                // Invitation to a team to join
+	unsigned int autoaction;            ///< End-of-match auto-requests
+	unsigned int clientFlags;           ///< Client settings that need server involvement
+	unsigned int clientMaxPackets;      ///< Client com_maxpacket settings
+	unsigned int clientTimeNudge;       ///< Client cl_timenudge settings
+	int cmd_debounce;                   ///< Dampening of command spam
+	unsigned int invite;                ///< Invitation to a team to join
 
 #ifdef FEATURE_MULTIVIEW
-	mview_t mv[MULTIVIEW_MAXVIEWS];     // portals
-	int mvCount;                        // Number of active portals
-	int mvReferenceList;                // Reference list used to generate views after a map_restart
-	int mvScoreUpdate;                  // Period to send score info to MV clients
+	mview_t mv[MULTIVIEW_MAXVIEWS];     ///< portals
+	int mvCount;                        ///< Number of active portals
+	int mvReferenceList;                ///< Reference list used to generate views after a map_restart
+	int mvScoreUpdate;                  ///< Period to send score info to MV clients
 #endif
 
-	int panzerDropTime;                 // Time which a player dropping panzer still "has it" if limiting panzer counts
-	int panzerSelectTime;               // *when* a client selected a panzer as spawn weapon
-	qboolean ready;                     // Ready state to begin play
+	int panzerDropTime;                 ///< Time which a player dropping panzer still "has it" if limiting panzer counts
+	int panzerSelectTime;               ///< *when* a client selected a panzer as spawn weapon
+	qboolean ready;                     ///< Ready state to begin play
 
 	bg_character_t *character;
 	int characterIndex;
@@ -731,6 +816,10 @@ typedef struct
 
 } clientPersistant_t;
 
+/**
+ * @struct clientMarker_t
+ * @brief
+ */
 typedef struct
 {
 	vec3_t mins;
@@ -739,10 +828,10 @@ typedef struct
 	vec3_t origin;
 
 	// for BuildHead/Legs
-	int eFlags;             // s.eFlags to ps.eFlags
-	int viewheight;         // ps for both
-	int pm_flags;           // ps for both
-	vec3_t viewangles;      // s.apos.trBase to ps.viewangles
+	int eFlags;             ///< s.eFlags to ps.eFlags
+	int viewheight;         ///< ps for both
+	int pm_flags;           ///< ps for both
+	vec3_t viewangles;      ///< s.apos.trBase to ps.viewangles
 
 	int time;
 
@@ -773,10 +862,14 @@ typedef struct
 
 #define MAX_CLIENT_MARKERS 17
 
-#define LT_SPECIAL_PICKUP_MOD   3       // # of times (minus one for modulo) LT must drop ammo before scoring a point
-#define MEDIC_SPECIAL_PICKUP_MOD    4   // same thing for medic
+#define LT_SPECIAL_PICKUP_MOD   3       ///< Number of times (minus one for modulo) LT must drop ammo before scoring a point
+#define MEDIC_SPECIAL_PICKUP_MOD    4   ///< Same thing for medic
 
-// debris test
+/**
+ * @struct debrisChunk_t
+ * @typedef debrisChunk_s
+ * @brief Debris test
+ */
 typedef struct debrisChunk_s
 {
 	vec3_t origin;
@@ -787,14 +880,19 @@ typedef struct debrisChunk_s
 } debrisChunk_t;
 
 #define MAX_DEBRISCHUNKS        256
+
 // ===================
 
-// this structure is cleared on each ClientSpawn(),
-// except for 'client->pers' and 'client->sess'
+/**
+ * @struct gclient_t
+ * @typedef gclient_s
+ * @brief This structure is cleared on each ClientSpawn(),
+ * except for 'client->pers' and 'client->sess'
+ */
 struct gclient_s
 {
 	// ps MUST be the first element, because the server expects it
-	playerState_t ps;               // communicated by server to clients
+	playerState_t ps;               ///< Communicated by server to clients
 
 	// the rest of the structure is private to game
 	clientPersistant_t pers;
@@ -815,28 +913,28 @@ struct gclient_s
 
 	// sum up damage over an entire frame, so
 	// shotgun blasts give a single big kick
-	int damage_blood;               // damage taken out of health
-	int damage_knockback;           // impact damage
-	vec3_t damage_from;             // origin for vector calculation
-	qboolean damage_fromWorld;      // if true, don't use the damage_from vector
+	int damage_blood;                       ///< damage taken out of health
+	int damage_knockback;                   ///< impact damage
+	vec3_t damage_from;                     ///< origin for vector calculation
+	qboolean damage_fromWorld;              ///< if true, don't use the damage_from vector
 
-	//int         accuracy_shots;     // total number of shots
-	//int         accuracy_hits;      // total number of hits
+	//int         accuracy_shots;             ///< total number of shots
+	//int         accuracy_hits;              ///< total number of hits
 
 	// ingame status
-	int lasthurt_client;            // last client that damaged this client
-	int lasthurt_mod;               // type of damage the client did
-	int lasthurt_time;              // level.time of last damage
+	int lasthurt_client;                    ///< last client that damaged this client
+	int lasthurt_mod;                       ///< type of damage the client did
+	int lasthurt_time;                      ///< level.time of last damage
 
 	// timers
-	int respawnTime;                // can respawn when time > this, force after g_forcerespwan
-	int inactivityTime;             // kick players when time > this
-	qboolean inactivityWarning;     // qtrue if the five seoond warning has been given
-	int inactivitySecondsLeft;      // for displaying a counting-down time on clients (milliseconds before activity kicks in..)
+	int respawnTime;                        ///< can respawn when time > this, force after g_forcerespwan
+	int inactivityTime;                     ///< kick players when time > this
+	qboolean inactivityWarning;             ///< qtrue if the five seoond warning has been given
+	int inactivitySecondsLeft;              ///< for displaying a counting-down time on clients (milliseconds before activity kicks in..)
 
 	int airOutTime;
 
-	int lastKillTime;               // for multiple kill rewards FIXME: implement this/make available to Lua
+	int lastKillTime;                       ///< for multiple kill rewards FIXME: implement this/make available to Lua
 
 	// timeResidual is used to handle events that happen every second
 	// like health / armor countdowns and regeneration
@@ -844,13 +942,13 @@ struct gclient_s
 
 	float currentAimSpreadScale;
 
-	int dropWeaponTime;          // last time a weapon was dropped
-	int limboDropWeapon;         // weapon to drop in limbo
-	int lastBurnTime;            // last time index for flamethrower burn
-	int PCSpecialPickedUpCount;           // used to count # of times somebody's picked up this LTs ammo (or medic health) (for scoring)
-	int saved_persistant[MAX_PERSISTANT]; // Save ps->persistant here during Limbo
+	int dropWeaponTime;                     ///< last time a weapon was dropped
+	int limboDropWeapon;                    ///< weapon to drop in limbo
+	int lastBurnTime;                       ///< last time index for flamethrower burn
+	int PCSpecialPickedUpCount;             ///< used to count # of times somebody's picked up this LTs ammo (or medic health) (for scoring)
+	int saved_persistant[MAX_PERSISTANT];   ///< Save ps->persistant here during Limbo
 
-	gentity_t *touchingTOI;               // the trigger_objective_info a player is touching this frame
+	gentity_t *touchingTOI;                 ///< the trigger_objective_info a player is touching this frame
 
 	int lastConstructibleBlockingWarnTime;
 
@@ -871,13 +969,13 @@ struct gclient_s
 	qboolean warping;
 	qboolean warped;
 	int lastCmdRealTime;
-	int cmdhead;            // antiwarp command queue head
-	int cmdcount;           // antiwarp command queue # valid commands
-	float cmddelta;         // antiwarp command queue # valid commands
-	usercmd_t cmds[LAG_MAX_COMMANDS]; // antiwarp command queue
+	int cmdhead;                            ///< antiwarp command queue head
+	int cmdcount;                           ///< antiwarp command queue # valid commands
+	float cmddelta;                         ///< antiwarp command queue # valid commands
+	usercmd_t cmds[LAG_MAX_COMMANDS];       ///< antiwarp command queue
 
-	gentity_t *tempHead;            // storing a temporary head for bullet head shot detection
-	gentity_t *tempLeg;             // storing a temporary leg for bullet head shot detection
+	gentity_t *tempHead;                    ///< storing a temporary head for bullet head shot detection
+	gentity_t *tempLeg;                     ///< storing a temporary leg for bullet head shot detection
 
 	int flagParent;
 
@@ -888,11 +986,11 @@ struct gclient_s
 	int lastSpammyCentrePrintTime;
 	pmoveExt_t pmext;
 #ifdef FEATURE_SERVERMDX
-	qboolean deathAnim;             // if true body has effect1Time set so death animation may start
+	qboolean deathAnim;                     ///< if true body has effect1Time set so death animation may start
 #endif
-	int deathAnimTime;              // time when anim ends
+	int deathAnimTime;                      ///< time when anim ends
 
-	int deathTime;                  // if we are dead, when did we die
+	int deathTime;                          ///< if we are dead, when did we die
 
 	int disguiseClientNum;
 
@@ -900,23 +998,32 @@ struct gclient_s
 	float acc;
 	float hspct;
 
-	int flametime; // flamethrower exploit fix
+	int flametime;                          ///< flamethrower exploit fix
 
 	qboolean hasaward;
 	qboolean wantsscore;
 	qboolean maxlivescalced;
 
-	qboolean freezed; // client is frozen see PM_FREEZE
+	qboolean freezed;                       ///< client is frozen see PM_FREEZE
 
-	int constructSoundTime; // construction sound time
+	int constructSoundTime;                 ///< construction sound time
 };
 
+/**
+ * @struct brushmodelInfo_t
+ * @brief
+ */
 typedef struct
 {
 	char modelname[32];
 	int model;
 } brushmodelInfo_t;
 
+/**
+ * @struct limbo_cam_t
+ * @typedef limbo_cam_s
+ * @brief
+ */
 typedef struct limbo_cam_s
 {
 	qboolean hasEnt;
@@ -932,29 +1039,44 @@ typedef struct limbo_cam_s
 // this structure is cleared as each map is entered
 #define MAX_SPAWN_VARS           64
 #define MAX_SPAWN_VARS_CHARS     2048
-#define VOTE_MAXSTRING           256     // Same value as MAX_STRING_TOKENS
-#define MAX_SCRIPT_ACCUM_BUFFERS 10      // increased from 8 to 10 for compatability with maps that relied on it before Project: Bug Fix #055
+#define VOTE_MAXSTRING           256     ///< Same value as MAX_STRING_TOKENS
+#define MAX_SCRIPT_ACCUM_BUFFERS 10      ///< increased from 8 to 10 for compatability with maps that relied on it before Project: Bug Fix #055
 
+/**
+ * @struct voteInfo_t
+ * @typedef voteInfo_s
+ * @brief
+ */
 typedef struct voteInfo_s
 {
 	char voteString[MAX_STRING_CHARS];
-	int voteTime;                       // level.time vote was called
+	int voteTime;                       ///< level.time vote was called
 	int voteYes;
 	int voteNo;
-	int numVotingClients;               // set by CalculateRanks
+	int numVotingClients;               ///< set by CalculateRanks
 	int numVotingTeamClients[2];
 	int (*vote_fn)(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
-	char vote_value[VOTE_MAXSTRING];        // Desired vote item setting.
-	int voteCaller;         // id of the vote caller
-	int voteTeam;           // id of the vote caller's team
+	char vote_value[VOTE_MAXSTRING];    ///< Desired vote item setting.
+	int voteCaller;                     ///< id of the vote caller
+	int voteTeam;                       ///< id of the vote caller's team
 } voteInfo_t;
 
+/**
+ * @struct cfgCvar_t
+ * @typedef cfgCvar_s
+ * @brief
+ */
 typedef struct cfgCvar_s
 {
 	char name[256];
 	char value[256];
 } cfgCvar_t;
 
+/**
+ * @struct config_t
+ * @typedef config_s
+ * @brief
+ */
 typedef struct config_s
 {
 	char name[256];
@@ -967,15 +1089,20 @@ typedef struct config_s
 	qboolean publicConfig;
 } config_t;
 
+/**
+ * @struct level_locals_t
+ * @typedef level_locals_s
+ * @brief
+ */
 typedef struct level_locals_s
 {
-	struct gclient_s *clients;          // [maxclients]
+	struct gclient_s *clients;                  ///< [maxclients]
 
 	struct gentity_s *gentities;
 
-	int num_entities;                   // current number, <= MAX_GENTITIES - this is an index of highest used entity and grows very quickly to MAX_GENTITIES
+	int num_entities;                           ///< current number, <= MAX_GENTITIES - this is an index of highest used entity and grows very quickly to MAX_GENTITIES
 
-	int warmupTime;                     // restart match at this time
+	int warmupTime;                             ///< restart match at this time
 
 	fileHandle_t logFile;
 
@@ -983,29 +1110,28 @@ typedef struct level_locals_s
 
 	char rawmapname[MAX_QPATH];
 
-	// store latched cvars here that we want to get at often
-	int maxclients;
+	int maxclients;                             ///< store latched cvars here that we want to get at often
 
 	int framenum;
-	int time;                           // in msec
-	int overTime;                       // workaround for dual objective timelimit bug
-	int previousTime;                   // so movers can back up when blocked
-	int frameTime;                      // time the frame started, for antilag stuff
+	int time;                                   ///< in msec
+	int overTime;                               ///< workaround for dual objective timelimit bug
+	int previousTime;                           ///< so movers can back up when blocked
+	int frameTime;                              ///< time the frame started, for antilag stuff
 
-	int startTime;                      // level.time the map was started
+	int startTime;                              ///< level.time the map was started
 
 	int teamScores[TEAM_NUM_TEAMS];
-	int lastTeamLocationTime;           // last time of client team location update
+	int lastTeamLocationTime;                   ///< last time of client team location update
 
-	qboolean restarted;                 // waiting for a map_restart to fire
+	qboolean restarted;                         ///< waiting for a map_restart to fire
 
 	int numConnectedClients;
-	int numNonSpectatorClients;         // includes connecting clients
-	int numPlayingClients;              // connected, non-spectators
-	int sortedClients[MAX_CLIENTS];     // sorted by score
-	int follow1, follow2;               // clientNums for auto-follow spectators
+	int numNonSpectatorClients;                 ///< includes connecting clients
+	int numPlayingClients;                      ///< connected, non-spectators
+	int sortedClients[MAX_CLIENTS];             ///< sorted by score
+	int follow1, follow2;                       ///< clientNums for auto-follow spectators
 
-	int warmupModificationCount;            // for detecting if g_warmup is changed
+	int warmupModificationCount;                ///< for detecting if g_warmup is changed
 
 	// voting
 	voteInfo_t voteInfo;
@@ -1013,39 +1139,37 @@ typedef struct level_locals_s
 	int numVotingTeamClients[2];
 
 	// spawn variables
-	qboolean spawning;                  // the G_Spawn*() functions are valid
+	qboolean spawning;                          ///< the G_Spawn*() functions are valid
 	int numSpawnVars;
-	char *spawnVars[MAX_SPAWN_VARS][2];         // key / value pairs
+	char *spawnVars[MAX_SPAWN_VARS][2];         ///< key / value pairs
 	int numSpawnVarChars;
 	char spawnVarChars[MAX_SPAWN_VARS_CHARS];
 
-	// intermission state
-	int intermissionQueued;             // intermission was qualified, but
-	// wait INTERMISSION_DELAY_TIME before
-	// actually going there so the last
-	// frag can be watched.  Disable future
-	// kills during this delay
-	int intermissiontime;               // time the intermission was started
+	/// intermission state
+	int intermissionQueued;                     ///< intermission was qualified, but wait INTERMISSION_DELAY_TIME before
+	                                            ///< actually going there so the last frag can be watched. Disable future
+	                                            ///< kills during this delay
+	int intermissiontime;                       ///< time the intermission was started
 	int exitTime;
-	vec3_t intermission_origin;         // also used for spectator spawns
+	vec3_t intermission_origin;                 ///< also used for spectator spawns
 	vec3_t intermission_angle;
-	qboolean lmsDoNextMap;              // should LMS do a map_restart or a vstr nextmap
+	qboolean lmsDoNextMap;                      ///< should LMS do a map_restart or a vstr nextmap
 
-	int bodyQueIndex;                   // dead bodies
+	int bodyQueIndex;                           ///< dead bodies
 	gentity_t *bodyQue[BODY_QUEUE_SIZE];
 
-	vec3_t spawntargets[MAX_MULTI_SPAWNTARGETS];      // coordinates of spawn targets
-	int numspawntargets;         // # spawntargets in this map
+	vec3_t spawntargets[MAX_MULTI_SPAWNTARGETS];    ///< coordinates of spawn targets
+	int numspawntargets;                        ////< # spawntargets in this map
 
-	// entity scripting
+	/// entity scripting
 	char *scriptEntity;
 
-	// player/AI model scripting (server repository)
+	/// player/AI model scripting (server repository)
 	animScriptData_t animScriptData;
 
 	qboolean lastRestartTime;
 
-	int numFinalDead[2];                // unable to respawn and in limbo (per team)
+	int numFinalDead[2];                        ///< unable to respawn and in limbo (per team)
 	int numOidTriggers;
 
 	qboolean latchGametype;
@@ -1084,9 +1208,9 @@ typedef struct level_locals_s
 	int numBrushModels;
 	gentity_t *gameManager;
 
-	qboolean doorAllowTeams;    // used by bots to decide whether or not to use team travel flags
+	qboolean doorAllowTeams;                    ///< used by bots to decide whether or not to use team travel flags
 
-	// for multiplayer fireteams
+	/// for multiplayer fireteams
 	fireteamData_t fireTeams[MAX_FIRETEAMS];
 
 	qboolean ccLayers;
@@ -1095,18 +1219,18 @@ typedef struct level_locals_s
 	int dwRedReinfOffset;
 	qboolean fLocalHost;
 	qboolean fResetStats;
-	int match_pause;                        // Paused state of the match
-	qboolean ref_allready;                  // Referee forced match start
-	int server_settings;
-	int sortedStats[MAX_CLIENTS];           // sorted by weapon stat
-	int timeCurrent;                        // Real game clock
-	int timeDelta;                          // Offset from internal clock - used to calculate real match time
+	int match_pause;                            ///< Paused state of the match
+	qboolean ref_allready;                      ///< Referee forced match start
+	int server_settings;                        ///<
+	int sortedStats[MAX_CLIENTS];               ///< sorted by weapon stat
+	int timeCurrent;                            ///< Real game clock
+	int timeDelta;                              ///< Offset from internal clock - used to calculate real match time
 
 	qboolean mapcoordsValid, tracemapLoaded;
 	vec2_t mapcoordsMins, mapcoordsMaxs;
 
-	char tinfoAxis[1024];   // sent as server command (limited to 1022 chars)
-	char tinfoAllies[1024]; // sent as server command (limited to 1022 chars)
+	char tinfoAxis[1024];                       ///< sent as server command (limited to 1022 chars)
+	char tinfoAllies[1024];                     ///< sent as server command (limited to 1022 chars)
 
 	// debris test
 	int numDebrisChunks;
@@ -1116,7 +1240,7 @@ typedef struct level_locals_s
 	qboolean disableTankEnter;
 
 	int axisBombCounter, alliedBombCounter;
-	int axisArtyCounter, alliedArtyCounter; // arty/airstrike rate limiting
+	int axisArtyCounter, alliedArtyCounter;     ///< arty/airstrike rate limiting
 	int axisAutoSpawn, alliesAutoSpawn;
 
 	limbo_cam_t limboCams[MAX_LIMBO_CAMS];
@@ -1146,16 +1270,20 @@ typedef struct level_locals_s
 	svCvar_t svCvars[MAX_SVCVARS];
 	int svCvarsCount;
 
-	config_t config;            // etpro style config
+	config_t config;            ///< etpro style config
 
 #ifdef FEATURE_RATING
 	// skill rating
 	float alliesProb;
 	float axisProb;
-	float mapProb;             // win prob of Axis team
+	float mapProb;             ///< win prob of Axis team
 #endif
 } level_locals_t;
 
+/**
+ * @struct g_campaignInfo_t
+ * @brief
+ */
 typedef struct
 {
 	char mapnames[MAX_MAPS_PER_CAMPAIGN][MAX_QPATH];
@@ -1306,23 +1434,26 @@ qboolean G_MapIsValidCampaignStartMap(void);
 
 team_t G_GetTeamFromEntity(gentity_t *ent);
 
-/* cut down refEntity_t w/ only stuff needed for player bone calculation */
-/* Used only by game code - not engine */
-/* core: This struct was moved here from etpro_mdx.h */
+/**
+ * @struct grefEntity_t
+ * @brief cut down refEntity_t w/ only stuff needed for player bone calculation
+ * Used only by game code - not engine
+ * core: This struct was moved here from etpro_mdx.h
+ */
 typedef struct
 {
-	qhandle_t hModel;               // opaque type outside refresh
+	qhandle_t hModel;                   ///< opaque type outside refresh
 
 	vec3_t headAxis[3];
 
 	// most recent data
-	vec3_t axis[3];             // rotation vectors
-	vec3_t torsoAxis[3];            // rotation vectors for torso section of skeletal animation
-	//	qboolean	nonNormalizedAxes;	// axis are not normalized, i.e. they have scale
+	vec3_t axis[3];                     ///< rotation vectors
+	vec3_t torsoAxis[3];                ///< rotation vectors for torso section of skeletal animation
+	// qboolean nonNormalizedAxes;         ///< axis are not normalized, i.e. they have scale
 	float origin[3];
 	int frame;
 	qhandle_t frameModel;
-	int torsoFrame;                 // skeletal torso can have frame independant of legs frame
+	int torsoFrame;                     ///< skeletal torso can have frame independant of legs frame
 	qhandle_t torsoFrameModel;
 
 	// previous data for frame interpolation
@@ -1331,7 +1462,7 @@ typedef struct
 	qhandle_t oldframeModel;
 	int oldTorsoFrame;
 	qhandle_t oldTorsoFrameModel;
-	float backlerp;                 // 0.0 = current, 1.0 = old
+	float backlerp;                     ///< 0.0 = current, 1.0 = old
 	float torsoBacklerp;
 } grefEntity_t;
 
@@ -1347,12 +1478,12 @@ gentity_t *G_BuildHead(gentity_t *ent, grefEntity_t *refent, qboolean newRefent)
 gentity_t *G_BuildLeg(gentity_t *ent, grefEntity_t *refent, qboolean newRefent);
 
 // damage flags
-#define DAMAGE_RADIUS               0x00000001  // damage was indirect
-#define DAMAGE_HALF_KNOCKBACK       0x00000002  // do less knockback
-#define DAMAGE_NO_KNOCKBACK         0x00000008  // do not affect velocity, just view angles
-#define DAMAGE_NO_PROTECTION        0x00000020  // armor, shields, invulnerability, and godmode have no effect
-#define DAMAGE_NO_TEAM_PROTECTION   0x00000010  // unused. Armor, shields, invulnerability, and godmode have no effect
-#define DAMAGE_DISTANCEFALLOFF      0x00000040  // distance falloff
+#define DAMAGE_RADIUS               0x00000001  ///< damage was indirect
+#define DAMAGE_HALF_KNOCKBACK       0x00000002  ///< do less knockback
+#define DAMAGE_NO_KNOCKBACK         0x00000008  ///< do not affect velocity, just view angles
+#define DAMAGE_NO_PROTECTION        0x00000020  ///< armor, shields, invulnerability, and godmode have no effect
+#define DAMAGE_NO_TEAM_PROTECTION   0x00000010  ///< unused. Armor, shields, invulnerability, and godmode have no effect
+#define DAMAGE_DISTANCEFALLOFF      0x00000040  ///< distance falloff
 
 // g_missile.c
 void G_RunMissile(gentity_t *ent);
@@ -1438,9 +1569,9 @@ void reinforce(gentity_t *ent);
 // *LUA* & map configs g_sha1.c
 char *G_SHA1(const char *string);
 
-#define CF_ENABLE    1 // enables common countryflags functionallity
-#define CF_BOTS      2 // uses server country for bots
-#define CF_CONNECT   4 // draws country name in connect announcer
+#define CF_ENABLE    1 ///< enables common countryflags functionallity
+#define CF_BOTS      2 ///< uses server country for bots
+#define CF_CONNECT   4 ///< draws country name in connect announcer
 
 // g_character.c
 qboolean G_RegisterCharacter(const char *characterFile, bg_character_t *character);
@@ -1650,7 +1781,7 @@ void Props_Chair_Skyboxtouch(gentity_t *ent);
 #include "g_team.h" // teamplay specific stuff
 
 extern level_locals_t   level;
-extern gentity_t        g_entities[];   // was explicitly set to MAX_ENTITIES
+extern gentity_t        g_entities[];   ///< was explicitly set to MAX_ENTITIES
 extern g_campaignInfo_t g_campaigns[];
 
 #define FOFS(x) ((size_t)&(((gentity_t *)0)->x))
@@ -1670,9 +1801,9 @@ extern vmCvar_t g_gametype;
 extern vmCvar_t g_log;
 extern vmCvar_t g_dedicated;
 extern vmCvar_t g_cheats;
-extern vmCvar_t g_maxclients;               // allow this many total, including spectators
-extern vmCvar_t g_maxGameClients;           // allow this many active
-extern vmCvar_t g_minGameClients;           // we need at least this many before match actually starts
+extern vmCvar_t g_maxclients;               ///< allow this many total, including spectators
+extern vmCvar_t g_maxGameClients;           ///< allow this many active
+extern vmCvar_t g_minGameClients;           ///< we need at least this many before match actually starts
 extern vmCvar_t g_restarted;
 
 extern vmCvar_t g_timelimit;
@@ -1696,16 +1827,16 @@ extern vmCvar_t g_motd;
 extern vmCvar_t g_warmup;
 extern vmCvar_t voteFlags;
 
-extern vmCvar_t g_complaintlimit;           // number of complaints allowed before kick/ban
+extern vmCvar_t g_complaintlimit;           ///< number of complaints allowed before kick/ban
 extern vmCvar_t g_ipcomplaintlimit;
 extern vmCvar_t g_filtercams;
-extern vmCvar_t g_maxlives;                 // number of respawns allowed (0==infinite)
+extern vmCvar_t g_maxlives;                 ///< number of respawns allowed (0==infinite)
 extern vmCvar_t g_maxlivesRespawnPenalty;
-extern vmCvar_t g_voiceChatsAllowed;        // number before spam control
+extern vmCvar_t g_voiceChatsAllowed;        ///< number before spam control
 extern vmCvar_t g_alliedmaxlives;
 extern vmCvar_t g_axismaxlives;
-extern vmCvar_t g_fastres;                  // Fast medic res'ing
-extern vmCvar_t g_enforcemaxlives;          // Temp ban with maxlives between rounds
+extern vmCvar_t g_fastres;                  ///< Fast medic res'ing
+extern vmCvar_t g_enforcemaxlives;          ///< Temp ban with maxlives between rounds
 
 extern vmCvar_t g_needpass;
 extern vmCvar_t g_balancedteams;
@@ -1718,7 +1849,7 @@ extern vmCvar_t g_filterBan;
 extern vmCvar_t pmove_fixed;
 extern vmCvar_t pmove_msec;
 
-extern vmCvar_t g_scriptName;           // name of script file to run (instead of default for that map)
+extern vmCvar_t g_scriptName;               ///< name of script file to run (instead of default for that map)
 extern vmCvar_t g_scriptDebug;
 
 extern vmCvar_t g_userAim;
@@ -1736,10 +1867,10 @@ extern vmCvar_t g_covertopsChargeTime;
 extern vmCvar_t g_debugConstruct;
 extern vmCvar_t g_landminetimeout;
 
-// What level of detail do we want script printing to go to.
+/// What level of detail do we want script printing to go to.
 extern vmCvar_t g_scriptDebugLevel;
 
-// How fast do SP player and allied bots move?
+/// How fast do SP player and allied bots move?
 extern vmCvar_t g_movespeed;
 
 extern vmCvar_t g_axismapxp;
@@ -1892,7 +2023,7 @@ extern vmCvar_t g_moverScale;
 extern vmCvar_t g_debugHitboxes;
 extern vmCvar_t g_debugPlayerHitboxes;
 
-extern vmCvar_t g_voting; // see VOTEF_* defines
+extern vmCvar_t g_voting; ///< see VOTEF_* defines
 
 extern vmCvar_t g_corpses;
 
@@ -1911,6 +2042,11 @@ extern vmCvar_t g_skillRating;
 extern vmCvar_t g_multiview;
 #endif
 
+/**
+ * @struct GeoIP
+ * @typedef GeoIPTag
+ * @brief
+ */
 typedef struct GeoIPTag
 {
 	fileHandle_t GeoIPDatabase;
@@ -2022,6 +2158,11 @@ void G_RemoveFromAllIgnoreLists(int clientNum);
 
 // g_teammapdata.c
 
+/**
+ * @struct mapEntityData_t
+ * @typedef mapEntityData_s
+ * @brief
+ */
 typedef struct mapEntityData_s
 {
 	vec3_t org;
@@ -2035,11 +2176,16 @@ typedef struct mapEntityData_s
 	struct mapEntityData_s *next, *prev;
 } mapEntityData_t;
 
+/**
+ * @struct mapEntityData_Team_t
+ * @typedef mapEntityData_Team_s
+ * @brief
+ */
 typedef struct mapEntityData_Team_s
 {
 	mapEntityData_t mapEntityData_Team[MAX_GENTITIES];
-	mapEntityData_t *freeMapEntityData;                 // single linked list
-	mapEntityData_t activeMapEntityData;                // double linked list
+	mapEntityData_t *freeMapEntityData;                 ///< single linked list
+	mapEntityData_t activeMapEntityData;                ///< double linked list
 } mapEntityData_Team_t;
 
 extern mapEntityData_Team_t mapEntityData[2];
@@ -2078,6 +2224,10 @@ void G_DebugCloseSkillLog(void);
 void G_DebugAddSkillLevel(gentity_t *ent, skillType_t skill);
 void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, const char *reason);
 
+/**
+ * @enum sysMsg_t
+ * @brief
+ */
 typedef enum
 {
 	SM_NEED_MEDIC = 0,
@@ -2110,40 +2260,46 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 void G_PrintClientSpammyCenterPrint(int entityNum, const char *text);
 
 // Match settings
-#define PAUSE_NONE      0x00    // Match is NOT paused.
-#define PAUSE_UNPAUSING 0x01    // Pause is about to expire
+#define PAUSE_NONE      0x00    ///< Match is NOT paused.
+#define PAUSE_UNPAUSING 0x01    ///< Pause is about to expire
 
 // HRESULTS
 #define G_OK         0
 #define G_INVALID   -1
 #define G_NOTFOUND  -2
 
-#define AP(x) trap_SendServerCommand(-1, x)                     // Print to all
-#define CP(x) trap_SendServerCommand(ent - g_entities, x)       // Print to an ent
-#define CPx(x, y) trap_SendServerCommand(x, y)                  // Print to id = x
+#define AP(x) trap_SendServerCommand(-1, x)                     ///< Print to all
+#define CP(x) trap_SendServerCommand(ent - g_entities, x)       ///< Print to an ent
+#define CPx(x, y) trap_SendServerCommand(x, y)                  ///< Print to id = x
 
 #define HELP_COLUMNS    4
 
-#define CMD_DEBOUNCE    5000    // 5s between cmds
+#define CMD_DEBOUNCE    5000    ///< 5s between cmds
 
-#define EOM_WEAPONSTATS 0x01    // Dump of player weapon stats at end of match.
-#define EOM_MATCHINFO   0x02    // Dump of match stats at end of match.
+#define EOM_WEAPONSTATS 0x01    ///< Dump of player weapon stats at end of match.
+#define EOM_MATCHINFO   0x02    ///< Dump of match stats at end of match.
 
-#define AA_STATSALL     0x01    // Client AutoAction: Dump ALL player stats
-#define AA_STATSTEAM    0x02    // Client AutoAction: Dump TEAM player stats
+#define AA_STATSALL     0x01    ///< Client AutoAction: Dump ALL player stats
+#define AA_STATSTEAM    0x02    ///< Client AutoAction: Dump TEAM player stats
 
-// "Delayed Print" ent enumerations
+/**
+ * @enum enum_t_dp
+ * @brief "Delayed Print" ent enumerations
+ */
 typedef enum
 {
-	DP_PAUSEINFO = 0,       // Print current pause info
-	DP_UNPAUSING,       // Print unpause countdown + unpause
-	DP_CONNECTINFO,     // Display info on connect
-	DP_MVSPAWN          // Set up MV views for clients who need them
+	DP_PAUSEINFO = 0,   ///< Print current pause info
+	DP_UNPAUSING,       ///< Print unpause countdown + unpause
+	DP_CONNECTINFO,     ///< Display info on connect
+	DP_MVSPAWN          ///< Set up MV views for clients who need them
 } enum_t_dp;
 
 // Remember: Axis = RED, Allies = BLUE ... right?!
 
-// Team extras
+/**
+ * @struct team_info
+ * @brief Team extras
+ */
 typedef struct
 {
 	qboolean spec_lock;
@@ -2206,11 +2362,11 @@ unsigned int G_weapStatIndex_MOD(unsigned int iWeaponMOD);
 
 #ifdef FEATURE_RATING
 // g_skillrating.c
-#define MU      25.f            // mean
-#define SIGMA   (MU / 3)        // standard deviation
-#define BETA    (SIGMA / 2)     // skill chain length
-#define TAU     (SIGMA / 100)   // dynamics factor
-#define EPSILON 0.f             // draw margin (assumed null)
+#define MU      25.f            ///< mean
+#define SIGMA   (MU / 3)        ///< standard deviation
+#define BETA    (SIGMA / 2)     ///< skill chain length
+#define TAU     (SIGMA / 100)   ///< dynamics factor
+#define EPSILON 0.f             ///< draw margin (assumed null)
 
 void G_CalculateSkillRatings();
 float G_CalculateWinProbability(int team);
@@ -2219,6 +2375,10 @@ float G_CalculateWinProbability(int team);
 // g_stats.c
 void G_UpgradeSkill(gentity_t *ent, skillType_t skill);
 
+/**
+ * @struct mod_ws_convert_t
+ * @brief
+ */
 typedef struct mod_ws_convert_s
 {
 	meansOfDeath_t mod;
@@ -2268,7 +2428,7 @@ void G_UnMuteClient(void);
 
 // g_team.c
 extern const char *aTeams[TEAM_NUM_TEAMS];
-extern team_info teamInfo[TEAM_NUM_TEAMS];
+extern team_info  teamInfo[TEAM_NUM_TEAMS];
 
 qboolean G_allowFollow(gentity_t *ent, int nTeam);
 int G_blockoutTeam(gentity_t *ent, int nTeam);
@@ -2386,10 +2546,10 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 #define OBJECTIVE_INFO_ALLIED_OBJECTIVE     2
 #define OBJECTIVE_INFO_MESSAGE_OVERRIDE     4
 #define OBJECTIVE_INFO_TANK                 8
-#define OBJECTIVE_INFO_IS_OBJECTIVE         16  //(see cg_commandmap - TODO: make these available to client)
-#define OBJECTIVE_INFO_IS_HEALTHAMMOCABINET 32  //(see cg_commandmap)
-#define OBJECTIVE_INFO_IS_COMMANDPOST       64  //(see cg_commandmap)
-                                                // 128 is disabled
+#define OBJECTIVE_INFO_IS_OBJECTIVE         16  ///<(see cg_commandmap - TODO: make these available to client)
+#define OBJECTIVE_INFO_IS_HEALTHAMMOCABINET 32  ///<(see cg_commandmap)
+#define OBJECTIVE_INFO_IS_COMMANDPOST       64  ///<(see cg_commandmap)
+                                                ///< 128 is disabled
 
 // script_mover spawnflags
 #define MOVER_TRIGGERSPAWN              1
@@ -2411,8 +2571,8 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 #define MULTI_TRIGGER_MEDICONLY         64
 #define MULTI_TRIGGER_ENGINEERONLY      128
 #define MULTI_TRIGGER_COVERTOPSONLY     256
-#define MULTI_TRIGGER_DISGUISEDSONLY    512  // legacy only
-#define MULTI_TRIGGER_OBJECTIVEONLY     1024 // legacy only
+#define MULTI_TRIGGER_DISGUISEDSONLY    512  ///< legacy only
+#define MULTI_TRIGGER_OBJECTIVEONLY     1024 ///< legacy only
 
 #define TARGET_PUSH_BOUNCEPAD           1
 
@@ -2434,25 +2594,33 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 
 // MAPVOTE - used when mapvoting is enabled
 #define MAPVOTE_TIE_LEASTPLAYED  1
-#define MAPVOTE_ALT_INTERMISSION 2 // unused
+#define MAPVOTE_ALT_INTERMISSION 2 ///< unused
 #define MAPVOTE_MULTI_VOTE       4
-#define MAPVOTE_NO_RANDOMIZE     8 // unused
+#define MAPVOTE_NO_RANDOMIZE     8 ///< unused
 #define MAPVOTE_NEXTMAP_VOTEMAP  16
 
+/**
+ * @enum fieldtype_t
+ * @brief
+ */
 typedef enum
 {
 	F_INT = 0,
 	F_FLOAT,
-	F_LSTRING,          // string on disk, pointer in memory, TAG_LEVEL
-	F_GSTRING,          // string on disk, pointer in memory, TAG_GAME
+	F_LSTRING,          ///< string on disk, pointer in memory, TAG_LEVEL
+	F_GSTRING,          ///< string on disk, pointer in memory, TAG_GAME
 	F_VECTOR,
 	F_ANGLEHACK,
-	F_ENTITY,           // index on disk, pointer in memory
-	F_ITEM,             // index on disk, pointer in memory
-	F_CLIENT,           // index on disk, pointer in memory
+	F_ENTITY,           ///< index on disk, pointer in memory
+	F_ITEM,             ///< index on disk, pointer in memory
+	F_CLIENT,           ///< index on disk, pointer in memory
 	F_IGNORE
 } fieldtype_t;
 
+/**
+ * @struct field_t
+ * @brief
+ */
 typedef struct
 {
 	char *name;
@@ -2483,17 +2651,17 @@ void G_MapVoteInfoRead(void);
 #define G_MISC_LOOSE_SPAWN_PROTECTION  BIT(5)
 
 // g_voting flags
-#define VOTEF_USE_TOTAL_VOTERS      1   // use total voters instead of total players to decide if a vote passes
-#define VOTEF_NO_POPULIST_PENALTY   2   // successful votes do not count against vote_limit
-#define VOTEF_DISP_CALLER           4   // append "(called by name)" in vote string
+#define VOTEF_USE_TOTAL_VOTERS      1   ///< use total voters instead of total players to decide if a vote passes
+#define VOTEF_NO_POPULIST_PENALTY   2   ///< successful votes do not count against vote_limit
+#define VOTEF_DISP_CALLER           4   ///< append "(called by name)" in vote string
 
 // Server frametime is calculated with the sv_fps
-#define SERVER_FRAMETIME    (1000 / trap_Cvar_VariableIntegerValue("sv_fps"))   // (1000/20) default
+#define SERVER_FRAMETIME    (1000 / trap_Cvar_VariableIntegerValue("sv_fps"))   ///< (1000/20) default
 #define SERVER_FRAMETIME_F  (1000.f / trap_Cvar_VariableIntegerValue("sv_fps"))
 
 // Calculated deltas
-#define SERVER_FRAMETIME_DELTA      (2 * SERVER_FRAMETIME)     // msec
-#define SERVER_FRAMETIME_DELTA_F    (2.f * SERVER_FRAMETIME_F)   // msec
+#define SERVER_FRAMETIME_DELTA      (2 * SERVER_FRAMETIME)          ///< msec
+#define SERVER_FRAMETIME_DELTA_F    (2.f * SERVER_FRAMETIME_F)      ///< msec
 
 void G_RailTrail(vec_t *start, vec_t *end, vec_t *color);
 void G_RailBox(vec_t *origin, vec_t *mins, vec_t *maxs, vec_t *color, int index);

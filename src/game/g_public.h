@@ -48,7 +48,7 @@
 #define SVF_NOCLIENT            0x00000001  ///< don't send entity to clients, even if it has effects
 #define SVF_VISDUMMY            0x00000004  ///< this ent is a "visibility dummy" and needs it's master to be sent to clients that can see it even if they can't see the master ent
 #define SVF_BOT                 0x00000008
-#define SVF_POW                 0x00000010  ///< Unused
+//#define SVF_POW                 0x00000010  ///< Unused
 
 #define SVF_BROADCAST           0x00000020  ///< send to all connected clients
 #define SVF_PORTAL              0x00000040  ///< merge a second pvs at origin2 into snapshots

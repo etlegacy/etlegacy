@@ -38,24 +38,31 @@
 
 //#define NO_BOT_SUPPORT
 
-// IMPORTANT: when changed this has to be copied manually to GAMEVERSION (g_local.h)
+/**
+ * @def OMNIBOT_NAME
+ * @brief
+ * @warning IMPORTANT: when changed this has to be copied manually to GAMEVERSION (g_local.h)
+ */
 #define OMNIBOT_NAME "Legacy"
 
 #define OMNIBOT_MODNAME    GAMEVERSION
 #define OMNIBOT_MODVERSION ETLEGACY_VERSION_SHORT
 
 //////////////////////////////////////////////////////////////////////////
-// g_OmniBotFlags bits
+/**
+ * @enum g_OmniBotFlags bits
+ * @brief The BotFlagOptions enum
+ */
 enum BotFlagOptions
 {
-	OBF_DONT_XPSAVE        = (1 << 0), // Disables XPSave for bots
-	OBF_DONT_MOUNT_TANKS   = (1 << 1), // Bots cannot mount tanks
-	OBF_DONT_MOUNT_GUNS    = (1 << 2), // Bots cannot mount emplaced guns
-	OBF_DONT_SHOW_BOTCOUNT = (1 << 3), // Don't count bots
-	OBF_GIBBING            = (1 << 4), // Bots will target ungibbed enemies
-	OBF_TRIGGER_MINES      = (1 << 5), // Bots will trigger team and spotted mines
-	OBF_SHOVING            = (1 << 6), // Bots can use g_shove
-	OBF_NEXT_FLAG          = (1 << 16), // mod specific flags start from here
+	OBF_DONT_XPSAVE        = (1 << 0),  ///< Disables XPSave for bots
+	OBF_DONT_MOUNT_TANKS   = (1 << 1),  ///< Bots cannot mount tanks
+	OBF_DONT_MOUNT_GUNS    = (1 << 2),  ///< Bots cannot mount emplaced guns
+	OBF_DONT_SHOW_BOTCOUNT = (1 << 3),  ///< Don't count bots
+	OBF_GIBBING            = (1 << 4),  ///< Bots will target ungibbed enemies
+	OBF_TRIGGER_MINES      = (1 << 5),  ///< Bots will trigger team and spotted mines
+	OBF_SHOVING            = (1 << 6),  ///< Bots can use g_shove
+	OBF_NEXT_FLAG          = (1 << 16), ///< mod specific flags start from here
 };
 //////////////////////////////////////////////////////////////////////////
 
