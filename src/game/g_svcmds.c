@@ -2347,15 +2347,15 @@ qboolean ConsoleCommand(void)
 	trap_Argv(0, cmd, sizeof(cmd));
 
 #ifdef FEATURE_LUA
-	if (!Q_stricmp(cmd, "lua_restart"))
-	{	
-		G_LuaShutdown();
-		G_LuaInit();
-	}
-
 	if (!Q_stricmp(cmd, "lua_status"))
 	{
 		G_LuaStatus(NULL);
+		return qtrue;
+	}
+	else if (!Q_stricmp(cmd, "lua_restart"))
+	{
+		G_LuaShutdown();
+		G_LuaInit();
 		return qtrue;
 	}
 	else if (Q_stricmp(cmd, "lua_api") == 0)
