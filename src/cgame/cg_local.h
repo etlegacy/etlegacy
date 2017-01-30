@@ -60,16 +60,16 @@
 #define PAIN_TWITCH_TIME    200
 #define ZOOM_TIME           150.0f
 #define MUZZLE_FLASH_TIME   30
-#define SINK_TIME           3000        // time for fragments to sink into ground before going away
+#define SINK_TIME           3000        ///< time for fragments to sink into ground before going away
 
 #define PRONE_TIME          500
 
 #define MAX_STEP_CHANGE     32
 
 #define MAX_VERTS_ON_POLY   10
-#define MAX_MARK_POLYS      256 // was 1024
+#define MAX_MARK_POLYS      256     ///< was 1024
 
-#define STAT_MINUS          10  // num frame for '-' stats digit
+#define STAT_MINUS          10      ///< num frame for '-' stats digit
 
 #define TEAMCHAT_WIDTH      70
 #define TEAMCHAT_HEIGHT     8
@@ -113,39 +113,44 @@
 #define MAX_STRINGS             80
 #define MAX_STRING_POOL_LENGTH  128
 
-#define WINDOW_FONTWIDTH    8       // For non-true-type: width to scale from
-#define WINDOW_FONTHEIGHT   8       // For non-true-type: height to scale from
+#define WINDOW_FONTWIDTH    8       ///< For non-true-type: width to scale from
+#define WINDOW_FONTHEIGHT   8       ///< For non-true-type: height to scale from
 
-#define WID_NONE            0x00    // General window
-#define WID_STATS           0x01    // Stats (reusable due to scroll effect)
-#define WID_TOPSHOTS        0x02    // Top/Bottom-shots
-#define WID_MOTD            0x04    // MOTD
-//#define WID_DEMOHELP      0x08    // Demo key control info
-//#define WID_SPECHELP      0x10    // MV spectator key control info
+#define WID_NONE            0x00    ///< General window
+#define WID_STATS           0x01    ///< Stats (reusable due to scroll effect)
+#define WID_TOPSHOTS        0x02    ///< Top/Bottom-shots
+#define WID_MOTD            0x04    ///< MOTD
+//#define WID_DEMOHELP      0x08    ///< Demo key control info
+//#define WID_SPECHELP      0x10    ///< MV spectator key control info
 
-#define WFX_TEXTSIZING      0x01    // Size the window based on text/font setting
-#define WFX_FLASH           0x02    // Alternate between bg and b2 every half second
-#define WFX_TRUETYPE        0x04    // Use truetype fonts for text
-#define WFX_MULTIVIEW       0x08    // Multiview window
+#define WFX_TEXTSIZING      0x01    ///< Size the window based on text/font setting
+#define WFX_FLASH           0x02    ///< Alternate between bg and b2 every half second
+#define WFX_TRUETYPE        0x04    ///< Use truetype fonts for text
+#define WFX_MULTIVIEW       0x08    ///< Multiview window
 // These need to be last
-#define WFX_FADEIN          0x10    // Fade the window in (and back out when closing)
-#define WFX_SCROLLUP        0x20    // Scroll window up from the bottom (and back down when closing)
-#define WFX_SCROLLDOWN      0x40    // Scroll window down from the top (and back up when closing)
-#define WFX_SCROLLLEFT      0x80    // Scroll window in from the left (and back right when closing)
-#define WFX_SCROLLRIGHT     0x100   // Scroll window in from the right (and back left when closing)
+#define WFX_FADEIN          0x10    ///< Fade the window in (and back out when closing)
+#define WFX_SCROLLUP        0x20    ///< Scroll window up from the bottom (and back down when closing)
+#define WFX_SCROLLDOWN      0x40    ///< Scroll window down from the top (and back up when closing)
+#define WFX_SCROLLLEFT      0x80    ///< Scroll window in from the left (and back right when closing)
+#define WFX_SCROLLRIGHT     0x100   ///< Scroll window in from the right (and back left when closing)
 
-#define WSTATE_COMPLETE     0x00    // Window is up with startup effects complete
-#define WSTATE_START        0x01    // Window is "initializing" w/effects
-#define WSTATE_SHUTDOWN     0x02    // Window is shutting down with effects
-#define WSTATE_OFF          0x04    // Window is completely shutdown
+#define WSTATE_COMPLETE     0x00    ///< Window is up with startup effects complete
+#define WSTATE_START        0x01    ///< Window is "initializing" w/effects
+#define WSTATE_SHUTDOWN     0x02    ///< Window is shutting down with effects
+#define WSTATE_OFF          0x04    ///< Window is completely shutdown
 
 #ifdef FEATURE_MULTIVIEW
-#define MV_PID              0x00FF  // Bits available for player IDs for MultiView windows
-#define MV_SELECTED         0x0100  // MultiView selected window flag is the 9th bit
+#define MV_PID              0x00FF  ///< Bits available for player IDs for MultiView windows
+#define MV_SELECTED         0x0100  ///< MultiView selected window flag is the 9th bit
 #endif
 
 #define ISVALIDCLIENTNUM(clientNum) (clientNum >= 0 && clientNum < MAX_CLIENTS)
 
+/**
+ * @struct specName_t
+ * @typedef specName_s
+ * @brief
+ */
 typedef struct specName_s
 {
 	float x;
@@ -159,85 +164,96 @@ typedef struct specName_s
 	float alpha;
 } specName_t;
 
+/**
+ * @struct cg_window_t
+ * @brief
+ */
 typedef struct
 {
-	vec4_t colorBorder;         // Window border color
-	vec4_t colorBackground;     // Window fill color
-	vec4_t colorBackground2;    // Window fill color2 (for flashing)
-	int curX;                   // Scrolling X position
-	int curY;                   // Scrolling Y position
-	int effects;                // Window effects
-	float flashMidpoint;        // Flashing transition point (in ms)
-	int flashPeriod;            // Background flashing period (in ms)
-	int fontHeight;             // For non-truetype font drawing
-	float fontScaleX;           // Font scale factor
-	float fontScaleY;           // Font scale factor
-	int fontWidth;              // For non-truetype font drawing
-	float h;                    // Height
-	int id;                     // Window ID for special handling (i.e. stats, motd, etc.)
-	qboolean inuse;             // Activity flag
-	int lineCount;              // Number of lines to display
-	int lineHeight[MAX_WINDOW_LINES];      // Height property for each line
-	char *lineText[MAX_WINDOW_LINES];     // Text info
+	vec4_t colorBorder;                 ///< Window border color
+	vec4_t colorBackground;             ///< Window fill color
+	vec4_t colorBackground2;            ///< Window fill color2 (for flashing)
+	int curX;                           ///< Scrolling X position
+	int curY;                           ///< Scrolling Y position
+	int effects;                        ///< Window effects
+	float flashMidpoint;                ///< Flashing transition point (in ms)
+	int flashPeriod;                    ///< Background flashing period (in ms)
+	int fontHeight;                     ///< For non-truetype font drawing
+	float fontScaleX;                   ///< Font scale factor
+	float fontScaleY;                   ///< Font scale factor
+	int fontWidth;                      ///< For non-truetype font drawing
+	float h;                            ///< Height
+	int id;                             ///< Window ID for special handling (i.e. stats, motd, etc.)
+	qboolean inuse;                     ///< Activity flag
+	int lineCount;                      ///< Number of lines to display
+	int lineHeight[MAX_WINDOW_LINES];   ///< Height property for each line
+	char *lineText[MAX_WINDOW_LINES];   ///< Text info
 #ifdef FEATURE_MULTIVIEW
-	float m_x;                  // Mouse X position
-	float m_y;                  // Mouse Y position
-	int mvInfo;                 // lower 8 = player id, 9 = is_selected
+	float m_x;                          ///< Mouse X position
+	float m_y;                          ///< Mouse Y position
+	int mvInfo;                         ///< lower 8 = player id, 9 = is_selected
 #endif
-	int targetTime;             // Time to complete any defined effect
-	int state;                  // Current state of the window
-	int time;                   // Current window time
-	float w;                    // Width
-	float x;                    // Target x-coordinate
-	//    negative values will align the window from the right minus the (window width + offset(x))
-	float y;                    // Target y-coordinate
-	//    negative values will align the window from the bottom minus the (window height + offset(y))
+	int targetTime;                     ///< Time to complete any defined effect
+	int state;                          ///< Current state of the window
+	int time;                           ///< Current window time
+	float w;                            ///< Width
+	float x;                            ///< Target x-coordinate
+	                                    ///< negative values will align the window from the right minus the (window width + offset(x))
+	float y;                            ///< Target y-coordinate
+	                                    ///< negative values will align the window from the bottom minus the (window height + offset(y))
 } cg_window_t;
 
+/**
+ * @struct cg_string_t
+ * @brief
+ */
 typedef struct
 {
 	qboolean fActive;
 	char str[MAX_STRING_POOL_LENGTH];
 } cg_string_t;
 
+/**
+ * @struct cg_windowHandler_t
+ * @brief
+ */
 typedef struct
 {
-	int activeWindows[MAX_WINDOW_COUNT];                // List of active windows
-	int numActiveWindows;                               // Number of active windows in use
-	cg_window_t window[MAX_WINDOW_COUNT];           // Static allocation of all windows
+	int activeWindows[MAX_WINDOW_COUNT];    ///< List of active windows
+	int numActiveWindows;                   ///< Number of active windows in use
+	cg_window_t window[MAX_WINDOW_COUNT];   ///< Static allocation of all windows
 } cg_windowHandler_t;
 
 #ifdef FEATURE_MULTIVIEW
+/**
+ * @struct cg_mvinfo_t
+ * @brief
+ */
 typedef struct
 {
-	int pID;                    // Player ID
-	int classID;                // Player's current class
-	int width;                  // Width of text box
-	char info[8];               // On-screen info (w/color coding)
-	qboolean fActive;           // Overlay element is active
-	cg_window_t *w;         // Window handle (may be NULL)
+	int pID;            ///< Player ID
+	int classID;        ///< Player's current class
+	int width;          ///< Width of text box
+	char info[8];       ///< On-screen info (w/color coding)
+	qboolean fActive;   ///< Overlay element is active
+	cg_window_t *w;     ///< Window handle (may be NULL)
 } cg_mvinfo_t;
 #endif
 
 //=================================================
 
-// player entities need to track more information
-// than any other type of entity.
-
-// note that not every player entity is a client entity,
-// because corpses after respawn are outside the normal
-// client numbering range
-
-// when changing animation, set animationTime to frameTime + lerping time
-// The current lerp will finish out, then it will lerp to the new animation
+/**
+ * @struct lerpFrame_t
+ * @brief
+ */
 typedef struct
 {
 	int oldFrame;
-	int oldFrameTime;               // time when ->oldFrame was exactly on
+	int oldFrameTime;               ///< time when ->oldFrame was exactly on
 	qhandle_t oldFrameModel;
 
 	int frame;
-	int frameTime;                  // time when ->frame will be exactly on
+	int frameTime;                  ///< time when ->frame will be exactly on
 	qhandle_t frameModel;
 
 	float backlerp;
@@ -247,10 +263,10 @@ typedef struct
 	float pitchAngle;
 	qboolean pitching;
 
-	int animationNumber;            // may include ANIM_TOGGLEBIT
-	int oldAnimationNumber;         // may include ANIM_TOGGLEBIT
+	int animationNumber;            ///< may include ANIM_TOGGLEBIT
+	int oldAnimationNumber;         ///< may include ANIM_TOGGLEBIT
 	animation_t *animation;
-	int animationTime;              // time when the first frame of the animation will be exact
+	int animationTime;              ///< time when the first frame of the animation will be exact
 
 	// variable speed anims
 	vec3_t oldFramePos;
@@ -260,17 +276,29 @@ typedef struct
 
 } lerpFrame_t;
 
+/**
+ * @struct playerEntity_t
+ * @brief Player entities need to track more information
+ * than any other type of entity.
+ *
+ * Note that not every player entity is a client entity,
+ * because corpses after respawn are outside the normal
+ * client numbering range.
+ *
+ * When changing animation, set animationTime to frameTime + lerping time.
+ * The current lerp will finish out, then it will lerp to the new animation.
+ */
 typedef struct
 {
 	lerpFrame_t legs;
 	lerpFrame_t torso;
 	lerpFrame_t head;
-	lerpFrame_t weap;       // autonomous weapon animations
+	lerpFrame_t weap;           ////< autonomous weapon animations
 	lerpFrame_t hudhead;
 
 	int painTime;
 	int painDuration;
-	int painDirection;              // flip from 0 to 1
+	int painDirection;          ///< flip from 0 to 1
 	int painAnimTorso;
 	int painAnimLegs;
 	int lightningFiring;
@@ -279,7 +307,7 @@ typedef struct
 	refEntity_t bodyRefEnt, headRefEnt, gunRefEnt;
 	int gunRefEntFrame;
 
-	float animSpeed;            // for manual adjustment
+	float animSpeed;            ///< for manual adjustment
 
 	int lastFiredWeaponTime;
 	int weaponFireTime;
@@ -293,30 +321,39 @@ typedef struct
 
 //=================================================
 
+/**
+ * @struct tag_t
+ * @typedef tag_s
+ * @brief
+ */
 typedef struct tag_s
 {
 	vec3_t origin;
 	vec3_t axis[3];
 } tag_t;
 
-// centity_t have a direct corespondence with gentity_t in the game, but
-// only the entityState_t is directly communicated to the cgame
+/**
+ * @struct centity_t
+ * @typedef centity_s
+ * @brief centity_t have a direct corespondence with gentity_t in the game, but
+ * only the entityState_t is directly communicated to the cgame
+ */
 typedef struct centity_s
 {
-	entityState_t currentState;     // from cg.frame
-	entityState_t nextState;        // from cg.nextFrame, if available
-	qboolean interpolate;           // true if next is valid to interpolate to
-	qboolean currentValid;          // true if cg.frame holds this entity
+	entityState_t currentState;     ///< from cg.frame
+	entityState_t nextState;        ///< from cg.nextFrame, if available
+	qboolean interpolate;           ///< true if next is valid to interpolate to
+	qboolean currentValid;          ///< true if cg.frame holds this entity
 
-	int muzzleFlashTime;            // move to playerEntity?
+	int muzzleFlashTime;            ///< move to playerEntity?
 	int overheatTime;
 	int previousEvent;
 	int previousEventSequence;
 	int teleportFlag;
 
-	int trailTime;                  // so missile trails can handle dropped initial packets
+	int trailTime;                  ///< so missile trails can handle dropped initial packets
 	int miscTime;
-	int soundTime;                  // so looping sounds can start when triggered
+	int soundTime;                  ///< so looping sounds can start when triggered
 
 	playerEntity_t pe;
 
@@ -327,15 +364,15 @@ typedef struct centity_s
 	vec3_t lerpOrigin;
 	vec3_t lerpAngles;
 
-	vec3_t lastLerpAngles;          // for remembering the last position when a state changes
-	vec3_t lastLerpOrigin;          // Added for linked trains player adjust prediction
+	vec3_t lastLerpAngles;          ///< for remembering the last position when a state changes
+	vec3_t lastLerpOrigin;          ///< Added for linked trains player adjust prediction
 
 	// trail effects
 	int headJuncIndex;
 	int headJuncIndex2;
 	int lastTrailTime;
 
-	vec3_t fireRiseDir;             // if standing still this will be up, otherwise it'll point away from movement dir
+	vec3_t fireRiseDir;             ///< if standing still this will be up, otherwise it'll point away from movement dir
 	int lastFuseSparkTime;
 
 	// client side dlights
@@ -348,11 +385,11 @@ typedef struct centity_s
 	int dl_atten;
 
 	lerpFrame_t lerpFrame;
-	vec3_t highlightOrigin;             // center of the geometry.  for things like corona placement on treasure
+	vec3_t highlightOrigin;             ///< center of the geometry.  for things like corona placement on treasure
 	qboolean usehighlightOrigin;
 
 	refEntity_t refEnt;
-	int processedFrame;                 // frame we were last added to the scene
+	int processedFrame;                 ///< frame we were last added to the scene
 
 	int voiceChatSprite;
 	int voiceChatSpriteTime;
@@ -385,15 +422,17 @@ typedef struct centity_s
 
 //======================================================================
 
-// local entities are created as a result of events or predicted actions,
-// and live independantly from all server transmitted entities
-
+/**
+ * @struct markPoly_t
+ * @typedef markPoly_s
+ * @brief
+ */
 typedef struct markPoly_s
 {
 	struct markPoly_s *prevMark, *nextMark;
 	int time;
 	qhandle_t markShader;
-	qboolean alphaFade;          // fade alpha instead of rgb
+	qboolean alphaFade;          ///< fade alpha instead of rgb
 	float color[4];
 	poly_t poly;
 	polyVert_t verts[MAX_VERTS_ON_POLY];
@@ -401,7 +440,11 @@ typedef struct markPoly_s
 	int duration;
 } markPoly_t;
 
-// moved in from cg_view.c
+/**
+ * @enum EZoom_t
+ * @brief
+ * @note Moved in from cg_view.c
+ */
 typedef enum
 {
 	ZOOM_NONE = 0,
@@ -413,14 +456,22 @@ typedef enum
 	ZOOM_MAX_ZOOMS
 } EZoom_t;
 
+/**
+ * @enum EZoomInOut_t
+ * @brief
+ */
 typedef enum
 {
-	ZOOM_OUT = 0, // widest angle
-	ZOOM_IN     // tightest angle (approaching 0)
+	ZOOM_OUT = 0,   ///< widest angle
+	ZOOM_IN         ///< tightest angle (approaching 0)
 } EZoomInOut_t;
 
 extern float zoomTable[ZOOM_MAX_ZOOMS][2];
 
+/**
+ * @enum leType_t
+ * @brief
+ */
 typedef enum
 {
 	LE_MARK = 0,
@@ -440,21 +491,33 @@ typedef enum
 	LE_EMITTER
 } leType_t;
 
+/**
+ * @enum leFlag_t
+ * @brief
+ */
 typedef enum
 {
-	LEF_PUFF_DONT_SCALE = 0x0001            // do not scale size over time
-	, LEF_TUMBLE        = 0x0002            // tumble over time, used for ejecting shells
-	, LEF_NOFADEALPHA   = 0x0004            // sparks
-	, LEF_SMOKING       = 0x0008            // smoking
-	, LEF_TUMBLE_SLOW   = 0x0010            // slow down tumble on hitting ground
+	LEF_PUFF_DONT_SCALE = 0x0001    ///< do not scale size over time
+	, LEF_TUMBLE        = 0x0002    ///< tumble over time, used for ejecting shells
+	, LEF_NOFADEALPHA   = 0x0004    ///< sparks
+	, LEF_SMOKING       = 0x0008    ///< smoking
+	, LEF_TUMBLE_SLOW   = 0x0010    ///< slow down tumble on hitting ground
 } leFlag_t;
 
+/**
+ * @enum leMarkType_t
+ * @brief Fragment local entities can leave marks on walls
+ */
 typedef enum
 {
 	LEMT_NONE = 0,
 	LEMT_BLOOD
-} leMarkType_t;         // fragment local entities can leave marks on walls
+} leMarkType_t;
 
+/**
+ * @enum leBounceSoundType_t
+ * @brief Fragment local entities can make sounds on impacts
+ */
 typedef enum
 {
 	LEBS_NONE = 0,
@@ -465,8 +528,14 @@ typedef enum
 	LEBS_METAL,
 	LEBS_BONE,
 	LEBS_SG_BRASS
-} leBounceSoundType_t;  // fragment local entities can make sounds on impacts
+} leBounceSoundType_t;
 
+/**
+ * @struct localEntity_t
+ * @typedef localEntity_s
+ * @brief Local entities are created as a result of events or predicted actions,
+ * and live independantly from all server transmitted entities
+ */
 typedef struct localEntity_s
 {
 	struct localEntity_s *prev, *next;
@@ -477,12 +546,12 @@ typedef struct localEntity_s
 	int endTime;
 	int fadeInTime;
 
-	float lifeRate;                     // 1.0 / (endTime - startTime)
+	float lifeRate;                     ///< 1.0 / (endTime - startTime)
 
 	trajectory_t pos;
 	trajectory_t angles;
 
-	float bounceFactor;                 // 0.0 = no bounce, 1.0 = perfect
+	float bounceFactor;                 ///< 0.0 = no bounce, 1.0 = perfect
 
 	float color[4];
 
@@ -491,7 +560,7 @@ typedef struct localEntity_s
 	float light;
 	vec3_t lightColor;
 
-	leMarkType_t leMarkType;            // mark to leave on fragment impact
+	leMarkType_t leMarkType;            ///< mark to leave on fragment impact
 	leBounceSoundType_t leBounceSoundType;
 
 	refEntity_t refEntity;
@@ -500,11 +569,11 @@ typedef struct localEntity_s
 	int headJuncIndex, headJuncIndex2;
 	float effectWidth;
 	int effectFlags;
-	struct localEntity_s *chain;        // used for grouping entities (like for flamethrower junctions)
+	struct localEntity_s *chain;        ///< Used for grouping entities (like for flamethrower junctions)
 	int onFireStart, onFireEnd;
 	int ownerNum;
 
-	int breakCount;                     // break-up this many times before we can break no more
+	int breakCount;                     ///< break-up this many times before we can break no more
 	float sizeScale;
 
 	int data1;
@@ -514,6 +583,10 @@ typedef struct localEntity_s
 
 //======================================================================
 
+/**
+ * @struct score_t
+ * @brief
+ */
 typedef struct
 {
 	int client;
@@ -530,11 +603,15 @@ typedef struct
 #endif
 } score_t;
 
-// each client has an associated clientInfo_t
-// that contains media references necessary to present the
-// client model and other color coded effects
-// this is regenerated each time a client's configstring changes,
-// usually as a result of a userinfo (name, model, etc) change
+/**
+ * @struct clientInfo_t
+ * @typedef clientInfo_s
+ * @brief Each client has an associated clientInfo_t
+ * that contains media references necessary to present the
+ * client model and other color coded effects
+ * this is regenerated each time a client's configstring changes,
+ * usually as a result of a userinfo (name, model, etc) change
+ */
 typedef struct clientInfo_s
 {
 	qboolean infoValid;
@@ -545,11 +622,11 @@ typedef struct clientInfo_s
 	char cleanname[MAX_QPATH];
 	team_t team;
 
-	int botSkill;                   // OBSOLETE remove!
-	int score;                      // updated by score servercmds
-	int location[3];                // location in 3d for team mode (was 2d before)
-	int health;                     // you only get this info about your teammates
-	int powerups;                   // so can display quad/flag status
+	int botSkill;                   ///< OBSOLETE remove!
+	int score;                      ///< updated by score servercmds
+	int location[3];                ///< location in 3d for team mode (was 2d before)
+	int health;                     ///< you only get this info about your teammates
+	int powerups;                   ///< so can display quad/flag status
 	int breathPuffTime;
 	int cls;
 	int latchedcls;
@@ -559,7 +636,7 @@ typedef struct clientInfo_s
 	int fireteam;
 	int medals[SK_NUM_SKILLS];
 	int skill[SK_NUM_SKILLS];
-	int skillpoints[SK_NUM_SKILLS];      // filled OOB by +wstats
+	int skillpoints[SK_NUM_SKILLS];      ///< filled OOB by +wstats
 
 	int disguiseClientNum;
 
@@ -571,10 +648,10 @@ typedef struct clientInfo_s
 
 	bg_character_t *character;
 
-	// caching fireteam pointer here, better than trying to work it out all the time
+	/// caching fireteam pointer here, better than trying to work it out all the time
 	fireteamData_t *fireteamData;
 
-	// for fireteams, has been selected
+	/// for fireteams, has been selected
 	qboolean selected;
 
 	// Intermission stats
@@ -603,8 +680,8 @@ typedef struct clientInfo_s
 	int chargeTime;
 	qboolean fCrewgun;
 	int cursorHint;
-	int grenadeTimeLeft;                // Actual time remaining
-	int grenadeTimeStart;               // Time trigger base to compute TimeLeft
+	int grenadeTimeLeft;                ///< Actual time remaining
+	int grenadeTimeStart;               ///< Time trigger base to compute TimeLeft
 	int hintTime;
 	int sprintTime;
 	int weapHeat;
@@ -614,6 +691,10 @@ typedef struct clientInfo_s
 
 } clientInfo_t;
 
+/**
+ * @enum barrelType_t
+ * @brief
+ */
 typedef enum
 {
 	W_PART_1 = 0,
@@ -626,51 +707,69 @@ typedef enum
 	W_MAX_PARTS
 } barrelType_t;
 
+/**
+ * @enum modelViewType_t
+ * @brief
+ */
 typedef enum
 {
-	W_TP_MODEL = 0,         //  third person model
-	W_FP_MODEL,         //  first person model
-	W_PU_MODEL,         //  pickup model
+	W_TP_MODEL = 0,     ///< Third person model
+	W_FP_MODEL,         ///< First person model
+	W_PU_MODEL,         ///< Pickup model
 	W_NUM_TYPES
 } modelViewType_t;
 
+/**
+ * @struct partModel_t
+ * @typedef partModel_s
+ * @brief
+ */
 typedef struct partModel_s
 {
 	char tagName[MAX_QPATH];
 	qhandle_t model;
-	qhandle_t skin[3];              // 0: neutral, 1: axis, 2: allied
+	qhandle_t skin[3];              ///< 0: neutral, 1: axis, 2: allied
 } partModel_t;
 
+/**
+ * @struct weaponModel_t
+ * @typedef weaponModel_s
+ * @brief
+ */
 typedef struct weaponModel_s
 {
 	qhandle_t model;
-	qhandle_t skin[3];              // 0: neutral, 1: axis, 2: allied
+	qhandle_t skin[3];              ///< 0: neutral, 1: axis, 2: allied
 } weaponModel_t;
 
-// each WP_* weapon enum has an associated weaponInfo_t
-// that contains media references necessary to present the weapon and its effects
+/**
+ * @struct weaponInfo_t
+ * @typedef weaponInfo_s
+ * @brief each WP_* weapon enum has an associated weaponInfo_t
+ * that contains media references necessary to present the weapon and its effects
+ */
 typedef struct weaponInfo_s
 {
 	qboolean registered;
 
 	animation_t weapAnimations[MAX_WP_ANIMATIONS];
 
-	qhandle_t handsModel;               // the hands don't actually draw, they just position the weapon
+	qhandle_t handsModel;               ///< the hands don't actually draw, they just position the weapon
 
-	qhandle_t standModel;               // not drawn.  tags used for positioning weapons for pickup
+	qhandle_t standModel;               ///< not drawn.  tags used for positioning weapons for pickup
 	qboolean droppedAnglesHack;
 
 	weaponModel_t weaponModel[W_NUM_TYPES];
 	partModel_t partModels[W_NUM_TYPES][W_MAX_PARTS];
 	qhandle_t flashModel[W_NUM_TYPES];
-	qhandle_t modModels[6];             // like the scope for the rifles
+	qhandle_t modModels[6];             ///< like the scope for the rifles
 
 	vec3_t flashDlightColor;
-	sfxHandle_t flashSound[4];          // fast firing weapons randomly choose
-	sfxHandle_t flashEchoSound[4];      // distant gun firing sound
-	sfxHandle_t lastShotSound[4];       // sound of the last shot can be different (mauser doesn't have bolt action on last shot for example)
+	sfxHandle_t flashSound[4];          ///< fast firing weapons randomly choose
+	sfxHandle_t flashEchoSound[4];      ///< distant gun firing sound
+	sfxHandle_t lastShotSound[4];       ///< sound of the last shot can be different (mauser doesn't have bolt action on last shot for example)
 
-	qhandle_t weaponIcon[2];            // [0] is weap icon, [1] is highlight icon
+	qhandle_t weaponIcon[2];            ///< [0] is weap icon, [1] is highlight icon
 	int weaponIconScale;
 
 	qhandle_t missileModel;
@@ -684,19 +783,24 @@ typedef struct weaponInfo_s
 
 	void (*ejectBrassFunc)(centity_t *);
 
-	sfxHandle_t readySound;             // an amibient sound the weapon makes when it's /not/ firing
+	sfxHandle_t readySound;             ///< an amibient sound the weapon makes when it's /not/ firing
 	sfxHandle_t firingSound;
 	sfxHandle_t overheatSound;
 	sfxHandle_t reloadSound;
 	sfxHandle_t reloadFastSound;
 
-	sfxHandle_t spinupSound;        // sound started when fire button goes down, and stepped on when the first fire event happens
-	sfxHandle_t spindownSound;      // sound called if the above is running but player doesn't follow through and fire
+	sfxHandle_t spinupSound;        ///< sound started when fire button goes down, and stepped on when the first fire event happens
+	sfxHandle_t spindownSound;      ///< sound called if the above is running but player doesn't follow through and fire
 
 	sfxHandle_t switchSound;
 } weaponInfo_t;
 
 #define MAX_VIEWDAMAGE  8
+
+/**
+ * @struct viewDamage_t
+ * @brief
+ */
 typedef struct
 {
 	int damageTime, damageDuration;
@@ -719,12 +823,22 @@ typedef struct
 #define MAX_BUFFERED_SOUNDSCRIPTS 16
 #define MAX_SOUNDSCRIPT_SOUNDS 16
 
+/**
+ * @struct soundScriptHandle_t
+ * @typedef soundScriptHandle_s
+ * @brief
+ */
 typedef struct soundScriptHandle_s
 {
 	char filename[MAX_QPATH];
 	sfxHandle_t sfxHandle;
 } soundScriptHandle_t;
 
+/**
+ * @struct soundScriptSound_t
+ * @typedef soundScriptSound_s
+ * @brief
+ */
 typedef struct soundScriptSound_s
 {
 	soundScriptHandle_t sounds[MAX_SOUNDSCRIPT_SOUNDS];
@@ -735,6 +849,11 @@ typedef struct soundScriptSound_s
 	struct soundScriptSound_s *next;
 } soundScriptSound_t;
 
+/**
+ * @struct soundScript_t
+ * @typedef soundScript_s
+ * @brief
+ */
 typedef struct soundScript_s
 {
 	int index;
@@ -743,13 +862,17 @@ typedef struct soundScript_s
 	int attenuation;
 	qboolean streaming;
 	qboolean looping;
-	qboolean random;           // TODO
+	qboolean random;                    ///< TODO
 	int numSounds;
-	soundScriptSound_t *soundList;          // pointer into the global list of soundScriptSounds (defined below)
+	soundScriptSound_t *soundList;      ///< pointer into the global list of soundScriptSounds (defined below)
 
-	struct soundScript_s *nextHash;         // next soundScript in our hashTable list position
+	struct soundScript_s *nextHash;     ///< next soundScript in our hashTable list position
 } soundScript_t;
 
+/**
+ * @struct mapEntityData_t
+ * @brief
+ */
 typedef struct
 {
 	int x, y, z;
@@ -763,6 +886,10 @@ typedef struct
 	team_t team;
 } mapEntityData_t;
 
+/**
+ * @enum showView_t
+ * @brief
+ */
 typedef enum
 {
 	SHOW_OFF = 0,
@@ -777,9 +904,13 @@ void CG_ParseMapEntityInfo(int axis_number, int allied_number);
 
 #define MAX_BACKUP_STATES (CMD_BACKUP + 2)
 
+/**
+ * @struct cg_t
+ * @brief
+ */
 typedef struct
 {
-	int clientFrame;                // incremented each frame
+	int clientFrame;                        ///< incremented each frame
 
 	int clientNum;
 	int xp;
@@ -787,61 +918,61 @@ typedef struct
 
 	qboolean demoPlayback;
 	demoPlayInfo_t *demoinfo;
-	int legacyClient;               // is either 0 (vanilla client) 1 (old legacy client) or a version integer from git_version.h
-	qboolean loading;               // don't defer players at initial startup
-	qboolean intermissionStarted;   // don't draw disconnect icon/message because game will end shortly
+	int legacyClient;                       ///< is either 0 (vanilla client) 1 (old legacy client) or a version integer from git_version.h
+	qboolean loading;                       ///< don't defer players at initial startup
+	qboolean intermissionStarted;           ///< don't draw disconnect icon/message because game will end shortly
 
 	// there are only one or two snapshot_t that are relevent at a time
-	int latestSnapshotNum;          // the number of snapshots the client system has received
-	int latestSnapshotTime;         // the time from latestSnapshotNum, so we don't need to read the snapshot yet
+	int latestSnapshotNum;                  ///< the number of snapshots the client system has received
+	int latestSnapshotTime;                 ///< the time from latestSnapshotNum, so we don't need to read the snapshot yet
 
-	snapshot_t *snap;               // cg.snap->serverTime <= cg.time
-	snapshot_t *nextSnap;           // cg.nextSnap->serverTime > cg.time, or NULL
+	snapshot_t *snap;                       ///< cg.snap->serverTime <= cg.time
+	snapshot_t *nextSnap;                   ///< cg.nextSnap->serverTime > cg.time, or NULL
 	snapshot_t activeSnapshots[2];
 
-	float frameInterpolation;       // (float)( cg.time - cg.frame->serverTime ) / (cg.nextFrame->serverTime - cg.frame->serverTime)
+	float frameInterpolation;               ///< (float)( cg.time - cg.frame->serverTime ) / (cg.nextFrame->serverTime - cg.frame->serverTime)
 
 	qboolean thisFrameTeleport;
 	qboolean nextFrameTeleport;
 
-	int frametime;                      // cg.time - cg.oldTime
+	int frametime;                          ///< cg.time - cg.oldTime
 
-	int time;                           // this is the time value that the client
-	// is rendering at.
-	int oldTime;                        // time at last frame, used for missile trails and prediction checking
+	int time;                               ///< this is the time value that the client
+	///< is rendering at.
+	int oldTime;                            ///< time at last frame, used for missile trails and prediction checking
 
-	int physicsTime;                    // either cg.snap->time or cg.nextSnap->time
+	int physicsTime;                        ///< either cg.snap->time or cg.nextSnap->time
 
-	int timelimitWarnings;              // 5 min, 1 min, overtime
+	int timelimitWarnings;                  ///< 5 min, 1 min, overtime
 
-	qboolean mapRestart;                // set on a map restart to set back the weapon
+	qboolean mapRestart;                    ///< set on a map restart to set back the weapon
 
-	qboolean renderingThirdPerson;      // during deaths, chasecams, etc
+	qboolean renderingThirdPerson;          ///< during deaths, chasecams, etc
 
 	// prediction state
-	qboolean hyperspace;                // true if prediction has hit a trigger_teleport
+	qboolean hyperspace;                    ///< true if prediction has hit a trigger_teleport
 	playerState_t predictedPlayerState;
 	centity_t predictedPlayerEntity;
-	qboolean validPPS;                  // clear until the first call to CG_PredictPlayerState
+	qboolean validPPS;                      ///< clear until the first call to CG_PredictPlayerState
 	int predictedErrorTime;
 	vec3_t predictedError;
 
 	int eventSequence;
 	int predictableEvents[MAX_PREDICTED_EVENTS];
 
-	float stepChange;                   // for stair up smoothing
+	float stepChange;                       ///< for stair up smoothing
 	int stepTime;
 
-	float duckChange;                   // for duck viewheight smoothing
+	float duckChange;                       ///< for duck viewheight smoothing
 	int duckTime;
 
-	float landChange;                   // for landing hard
+	float landChange;                       ///< for landing hard
 	int landTime;
 
-	// input state sent to server
+	/// input state sent to server
 	int weaponSelect;
 
-	// auto rotating items
+	/// auto rotating items
 	vec3_t autoAnglesSlow;
 	vec3_t autoAxisSlow[3];
 	vec3_t autoAngles;
@@ -851,7 +982,7 @@ typedef struct
 
 	// view rendering
 	refdef_t refdef;
-	vec3_t refdefViewAngles;            // will be converted to refdef.viewaxis
+	vec3_t refdefViewAngles;                ///< will be converted to refdef.viewaxis
 
 	// zoom key
 	qboolean zoomed;
@@ -861,28 +992,28 @@ typedef struct
 	float zoomSensitivity;
 	float zoomval;
 
-	// information screen text during loading
+	/// information screen text during loading
 	char infoScreenText[MAX_STRING_CHARS];
 
 	// scoreboard
 	int scoresRequestTime;
-	int mapVoteListTime;                     // MAPVOTE - gametype 6
+	int mapVoteListTime;                     ///< MAPVOTE - gametype 6
 	int numScores;
 	int selectedScore;
 	int teamScores[2];
-	int teamPlayers[TEAM_NUM_TEAMS];         // for scoreboard
+	int teamPlayers[TEAM_NUM_TEAMS];         ///< for scoreboard
 	score_t scores[MAX_CLIENTS];
 	qboolean showScores;
 	qboolean scoreBoardShowing;
 	int scoreFadeTime;
-	char spectatorList[MAX_STRING_CHARS];     // list of names
-	int spectatorLen;                        // length of list
-	float spectatorWidth;                    // width in device units
-	int spectatorTime;                       // next time to offset
-	int spectatorPaintX;                     // current paint x
-	int spectatorPaintX2;                    // current paint x
-	int spectatorOffset;                     // current offset from start
-	int spectatorPaintLen;                   // current offset from start
+	char spectatorList[MAX_STRING_CHARS];    ///< list of names
+	int spectatorLen;                        ///< length of list
+	float spectatorWidth;                    ///< width in device units
+	int spectatorTime;                       ///< next time to offset
+	int spectatorPaintX;                     ///< current paint x
+	int spectatorPaintX2;                    ///< current paint x
+	int spectatorOffset;                     ///< current offset from start
+	int spectatorPaintLen;                   ///< current offset from start
 
 	qboolean lightstylesInited;
 
@@ -923,7 +1054,7 @@ typedef struct
 	qboolean crosshairClientNoShoot;
 	qboolean crosshairTerrain;
 
-	int teamFirstBlood;                     // 0: allies 1: axis -1: nobody
+	int teamFirstBlood;                         ///< 0: allies 1: axis -1: nobody
 	int teamWonRounds[2];
 
 	qboolean filtercams;
@@ -955,8 +1086,8 @@ typedef struct
 
 	// blend blobs
 	viewDamage_t viewDamage[MAX_VIEWDAMAGE];
-	float damageTime;           // last time any kind of damage was recieved
-	int damageIndex;            // slot that was filled in
+	float damageTime;                           ///< last time any kind of damage was recieved
+	int damageIndex;                            ///< slot that was filled in
 	float damageX, damageY, damageValue;
 
 	int grenLastTime;
@@ -969,14 +1100,14 @@ typedef struct
 	int nextIdleTime;
 	int lastIdleTimeEnd;
 	hudHeadAnimNumber_t idleAnim;
-	int lastWeapSelInBank[MAX_WEAP_BANKS_MP]; // remember which weapon was last selected in a bank for 'weaponbank' commands
+	int lastWeapSelInBank[MAX_WEAP_BANKS_MP];   ///< remember which weapon was last selected in a bank for 'weaponbank' commands
 
 	// view movement
 	float v_dmg_time;
 	float v_dmg_pitch;
 	float v_dmg_roll;
 
-	vec3_t kick_angles; // weapon kicks
+	vec3_t kick_angles;                         ///< weapon kicks
 	vec3_t kick_origin;
 
 	// view flames when getting burnt
@@ -996,13 +1127,13 @@ typedef struct
 	qboolean testGun;
 
 	// kick angles
-	vec3_t kickAVel; // for damage feedback, weapon recoil, etc
-	// This is the angular velocity, to give a smooth
-	// rotational feedback, rather than sudden jerks
-	vec3_t kickAngles;          // for damage feedback, weapon recoil, etc
-	// NOTE: this is not transmitted through MSG.C stream
-	// since weapon kicks are client-side, and damage feedback
-	// is rare enough that we can transmit that as an event
+	vec3_t kickAVel;                            ///< for damage feedback, weapon recoil, etc
+	                                            ///< This is the angular velocity, to give a smooth
+	                                            ///< rotational feedback, rather than sudden jerks
+	vec3_t kickAngles;                          ///< for damage feedback, weapon recoil, etc
+	                                            /// NOTE: this is not transmitted through MSG.C stream
+	                                            /// since weapon kicks are client-side, and damage feedback
+	                                            /// is rare enough that we can transmit that as an event
 	float recoilPitch, recoilPitchAngle;
 
 	// Objective info display
@@ -1034,9 +1165,9 @@ typedef struct
 	qboolean latchVictorySound;
 
 	// spawn variables
-	qboolean spawning;                          // the CG_Spawn*() functions are valid
+	qboolean spawning;                          ///< the CG_Spawn*() functions are valid
 	int numSpawnVars;
-	char *spawnVars[MAX_SPAWN_VARS][2];         // key / value pairs
+	char *spawnVars[MAX_SPAWN_VARS][2];         ///< key / value pairs
 	unsigned int numSpawnVarChars;
 	char spawnVarChars[MAX_SPAWN_VARS_CHARS];
 
@@ -1067,16 +1198,16 @@ typedef struct
 	cg_window_t *msgWstatsWindow;
 	cg_window_t *msgWtopshotsWindow;
 #ifdef FEATURE_MULTIVIEW
-	int mv_cnt;                                 // Number of active MV windows
-	int mvClientList;                           // Cached client listing of who is merged
-	cg_window_t *mvCurrentActive;               // Client ID of current active window (-1 = none)
-	cg_window_t *mvCurrentMainview;             // Client ID used in the main display (should always be set if mv_cnt > 0)
-	cg_mvinfo_t mvOverlay[MAX_MVCLIENTS];       // Cached info for MV overlay
+	int mv_cnt;                                     ///< Number of active MV windows
+	int mvClientList;                               ///< Cached client listing of who is merged
+	cg_window_t *mvCurrentActive;                   ///< Client ID of current active window (-1 = none)
+	cg_window_t *mvCurrentMainview;                 ///< Client ID used in the main display (should always be set if mv_cnt > 0)
+	cg_mvinfo_t mvOverlay[MAX_MVCLIENTS];           ///< Cached info for MV overlay
 	int mvTeamList[TEAM_NUM_TEAMS][MAX_MVCLIENTS];
-	int mvTotalClients;                         // Total # of clients available for MV processing
+	int mvTotalClients;                             ///< Total # of clients available for MV processing
 	int mvTotalTeam[TEAM_NUM_TEAMS];
 #endif
-	refdef_t *refdef_current;                   // Handling of some drawing elements for MV (not only MV!)
+	refdef_t *refdef_current;                       ///< Handling of some drawing elements for MV (not only MV!)
 
 	qboolean showStats;
 	int spechelpWindow;
@@ -1084,7 +1215,7 @@ typedef struct
 	cg_window_t *statsWindow;
 	int topshotsRequestTime;
 	cg_window_t *topshotsWindow;
-	cg_window_t *windowCurrent;                 // Current window to update.. a bit of a hack :p
+	cg_window_t *windowCurrent;                     ///< Current window to update.. a bit of a hack :p
 	cg_windowHandler_t winHandler;
 	vec4_t xhairColor;
 	vec4_t xhairColorAlt;
@@ -1177,7 +1308,8 @@ typedef struct
 	int cvarBackupsCount;
 
 	fileHandle_t logFile;
-	// tracing bullet, predict hitboxes used on server
+
+	/// tracing bullet, predict hitboxes used on server
 	qboolean bulletTrace;
 
 	specName_t specOnScreenNames[MAX_CLIENTS];
@@ -1199,10 +1331,13 @@ typedef struct
 
 #define MAX_IMPACT_SOUNDS   5
 
-// all of the model, shader, and sound references that are
-// loaded at gamestate time are stored in cgMedia_t
-// Other media that can be tied to clients, weapons, or items are
-// stored in the clientInfo_t, itemInfo_t, and weaponInfo_t
+/**
+ * @struct cgMedia_t
+ * @brief all of the model, shader, and sound references that are
+ * loaded at gamestate time are stored in cgMedia_t
+ * Other media that can be tied to clients, weapons, or items are
+ * stored in the clientInfo_t, itemInfo_t, and weaponInfo_t
+ */
 typedef struct
 {
 	qhandle_t charsetShader;
@@ -1265,7 +1400,7 @@ typedef struct
 	qhandle_t binocShader;
 	qhandle_t binocShaderSimple;
 
-	qhandle_t fleshSmokePuffShader;   // for bullet hit flesh smoke puffs
+	qhandle_t fleshSmokePuffShader;                 ///< for bullet hit flesh smoke puffs
 
 	qhandle_t smokePuffShader;
 	// qhandle_t smokePuffRageProShader;
@@ -1520,7 +1655,7 @@ typedef struct
 	sfxHandle_t itemPickUpSounds[ITEM_MAX_ITEMS];
 
 	qhandle_t ccStamps[2];
-	qhandle_t ccFilterPics[8]; // was 10, set to 8 (we init 0-7)
+	qhandle_t ccFilterPics[8];                      ///< was 10, set to 8 (we init 0-7)
 	qhandle_t ccFilterBackOn;
 	qhandle_t ccFilterBackOff;
 
@@ -1545,10 +1680,10 @@ typedef struct
 	qhandle_t hWeaponEchoSnd_2;
 	qhandle_t hWeaponHeatSnd_2;
 
-	qhandle_t hflakWeaponSnd;       //  "models/mapobjects/weapons/flak_a.md3"
-	qhandle_t hMountedMG42Base;     //  "models/mapobjects/tanks_sd/mg42nestbase.md3"
-	qhandle_t hMountedMG42Nest;     //  "models/mapobjects/tanks_sd/mg42nest.md3"
-	qhandle_t hMountedMG42;         //  "models/mapobjects/tanks_sd/mg42.md3"
+	qhandle_t hflakWeaponSnd;                       ///< "models/mapobjects/weapons/flak_a.md3"
+	qhandle_t hMountedMG42Base;                     ///< "models/mapobjects/tanks_sd/mg42nestbase.md3"
+	qhandle_t hMountedMG42Nest;                     ///< "models/mapobjects/tanks_sd/mg42nest.md3"
+	qhandle_t hMountedMG42;                         ///< "models/mapobjects/tanks_sd/mg42.md3"
 	qhandle_t hMountedBrowning;
 	qhandle_t hMountedFPMG42;
 	qhandle_t hMountedFPBrowning;
@@ -1652,10 +1787,14 @@ typedef struct
 
 	qhandle_t fireteamicons[6];
 
-	qhandle_t countryFlags; // GeoIP
+	qhandle_t countryFlags;         ///< GeoIP
 
 } cgMedia_t;
 
+/**
+ * @struct arenaInfo_t
+ * @brief
+ */
 typedef struct
 {
 	char lmsdescription[1024];
@@ -1666,6 +1805,10 @@ typedef struct
 	vec2_t mappos;
 } arenaInfo_t;
 
+/**
+ * @struct cg_campaignInfo_t
+ * @brief
+ */
 typedef struct
 {
 	char campaignDescription[2048];
@@ -1680,9 +1823,14 @@ typedef struct
 
 #define MAX_COMMAND_INFO MAX_CLIENTS
 
-#define MAX_STATIC_GAMEMODELS   1024  // some maps have > 512 game models (f.e. 'raiders' with 555)
+#define MAX_STATIC_GAMEMODELS   1024    ///< some maps have > 512 game models (f.e. 'raiders' with 555)
 #define MAX_GAMECORONAS 1024
 
+/**
+ * @struct cg_gamemodel_t
+ * @typedef cg_gamemodel_s
+ * @brief
+ */
 typedef struct cg_gamemodel_s
 {
 	qhandle_t model;
@@ -1691,6 +1839,11 @@ typedef struct cg_gamemodel_s
 	vec_t radius;
 } cg_gamemodel_t;
 
+/**
+ * @struct cg_corona_t
+ * @typedef cg_corona_s
+ * @brief
+ */
 typedef struct cg_corona_s
 {
 	float scale;
@@ -1698,6 +1851,11 @@ typedef struct cg_corona_s
 	vec3_t color;
 } cg_corona_t;
 
+/**
+ * @struct cg_weaponstats_t
+ * @typedef cg_weaponstats_s
+ * @brief
+ */
 typedef struct cg_weaponstats_s
 {
 	int numKills;
@@ -1705,6 +1863,11 @@ typedef struct cg_weaponstats_s
 	int numShots;
 } cg_weaponstats_t;
 
+/**
+ * @struct gameStats_t
+ * @typedef gameStats_s
+ * @brief
+ */
 typedef struct
 {
 	char strWS[WS_MAX][MAX_STRING_TOKENS];
@@ -1721,6 +1884,10 @@ typedef struct
 	int requestTime;
 } gameStats_t;
 
+/**
+ * @struct topshotStats_t
+ * @brief
+ */
 typedef struct
 {
 	char strWS[WS_MAX * 2][MAX_STRING_TOKENS];
@@ -1730,6 +1897,11 @@ typedef struct
 	int requestTime;
 } topshotStats_t;
 
+/**
+ * @struct oidInfo_t
+ * @typedef oidInfo_s
+ * @brief
+ */
 typedef struct oidInfo_s
 {
 	int spawnflags;
@@ -1741,8 +1913,9 @@ typedef struct oidInfo_s
 	vec3_t origin;
 } oidInfo_t;
 
-// locations
+/// Locations
 #define MAX_C_LOCATIONS 1024
+
 // locations draw bits and cvar
 /*
 #define LOC_FTEAM                   1
@@ -1754,6 +1927,7 @@ typedef struct oidInfo_s
 #define LOC_SHOWDISTANCE            32
 #define LOC_DEBUG                   512
 */
+
 enum
 {
 	LOC_FTEAM        = BIT(0),
@@ -1781,6 +1955,10 @@ enum
 	BAR_BORDER_SMALL   = BIT(9),
 };
 
+/**
+ * @struct objectives_t
+ * @brief
+ */
 typedef struct
 {
 	int fadeTime;
@@ -1788,6 +1966,11 @@ typedef struct
 	int requestTime;
 } objectives_t;
 
+/**
+ * @struct location_t
+ * @typedef location_s
+ * @brief
+ */
 typedef struct location_s
 {
 	int index;
@@ -1795,6 +1978,11 @@ typedef struct location_s
 	char message[128];
 } location_t;
 
+/**
+ * @struct clientLocation_t
+ * @typedef clientLocation_s
+ * @brief
+ */
 typedef struct
 {
 	int lastLocation;
@@ -1803,8 +1991,8 @@ typedef struct
 	float lastZ;
 } clientLocation_t;
 
-#define NUM_ENDGAME_AWARDS     19   // total number of endgame awards
-#define NUMSHOW_ENDGAME_AWARDS 14   // number of awards to display that will fit on screen
+#define NUM_ENDGAME_AWARDS     19   ///< total number of endgame awards
+#define NUMSHOW_ENDGAME_AWARDS 14   ///< number of awards to display that will fit on screen
 
 #ifdef FEATURE_EDV
 // used by demo_autotimescaleweapons;
@@ -1819,17 +2007,22 @@ typedef struct
 #define DWC_MORTAR              0x02
 #define DWC_GRENADE             0x04
 #define DWC_DYNAMITE            0x08
-#define DWC_SMOKE               0x10 // FIXME: add to demo control?
+#define DWC_SMOKE               0x10    ///< FIXME: add to demo control?
 
+/**
+ * @struct cam_s
+ * @typedef cam_t
+ * @brief
+ */
 typedef struct cam_s
 {
 	qboolean renderingFreeCam;
 	qboolean renderingWeaponCam;
 	qboolean wasRenderingWeaponCam;
-	qboolean setCamAngles;   //are we overriding angles via freecamSetPos
+	qboolean setCamAngles;              ///< Are we overriding angles via freecamSetPos
 
-	vec3_t camAngle; // stores the angle of our cam
-	vec3_t camOrigin; // stores the origin of our cam
+	vec3_t camAngle;                    ///< Stores the angle of our cam
+	vec3_t camOrigin;                   ///< Stores the origin of our cam
 	vec3_t velocity;
 
 	qboolean startLean;
@@ -1843,8 +2036,11 @@ typedef struct cam_s
 	int turn;
 } cam_t;
 
-// ML_ = menu level
-// used in the demo helpmenu
+/**
+ * @enum mlType_t
+ * @brief ML_ = menu level
+ * used in the demo helpmenu
+ */
 typedef enum
 {
 	ML_MAIN,
@@ -1852,22 +2048,26 @@ typedef enum
 } mlType_t;
 #endif
 
-// The client game static (cgs) structure hold everything
-// loaded or calculated from the gamestate.  It will NOT
-// be cleared when a tournement restart is done, allowing
-// all clients to begin playing instantly
+/**
+ * @struct cgs_t
+ * @typedef cgs_s
+ * @brief The client game static (cgs) structure hold everything
+ * loaded or calculated from the gamestate.  It will NOT
+ * be cleared when a tournement restart is done, allowing
+ * all clients to begin playing instantly
+ */
 typedef struct cgs_s
 {
-	gameState_t gameState;              // gamestate from server
-	glconfig_t glconfig;                // rendering configuration
-	float screenXScale;                 // derived from glconfig
+	gameState_t gameState;                          ///< gamestate from server
+	glconfig_t glconfig;                            ///< rendering configuration
+	float screenXScale;                             ///< derived from glconfig
 	float screenYScale;
 	float screenXBias;
 
-	int serverCommandSequence;              // reliable command stream counter
-	int processedSnapshotNum;            // the number of snapshots cgame has requested
+	int serverCommandSequence;                      ///< reliable command stream counter
+	int processedSnapshotNum;                       ///< the number of snapshots cgame has requested
 
-	qboolean localServer;               // detected on startup by checking sv_running
+	qboolean localServer;                           ///< detected on startup by checking sv_running
 
 	// parsed from serverinfo
 	gametype_t gametype;
@@ -1882,7 +2082,7 @@ typedef struct cgs_s
 	int voteTime;
 	int voteYes;
 	int voteNo;
-	qboolean voteModified;                  // beep whenever changed
+	qboolean voteModified;                          ///< beep whenever changed
 	char voteString[MAX_STRING_TOKENS];
 
 	int levelStartTime;
@@ -1895,7 +2095,7 @@ typedef struct cgs_s
 	qhandle_t gameModelSkins[MAX_CS_SKINS];
 	bg_character_t *gameCharacters[MAX_CHARACTERS];
 	sfxHandle_t gameSounds[MAX_SOUNDS];
-	sfxHandle_t cachedSounds[GAMESOUND_MAX];    // static game sounds
+	sfxHandle_t cachedSounds[GAMESOUND_MAX];        ///< static game sounds
 
 	int numInlineModels;
 	qhandle_t inlineDrawModel[MAX_MODELS];
@@ -1973,22 +2173,22 @@ typedef struct cgs_s
 	qboolean autoMapExpanded;
 	int autoMapExpandTime;
 
-	qboolean autoMapOff;                // is automap on or off
+	qboolean autoMapOff;                                ///< is automap on or off
 
-	int aviDemoRate;                                    // Demo playback recording
-	int aReinfOffset[TEAM_NUM_TEAMS];                   // Team reinforcement offsets
-	int cursorUpdate;                                   // Timeout for mouse pointer view
-	fileHandle_t dumpStatsFile;                         // File to dump stats
-	char *dumpStatsFileName;                            // Name of file to dump stats
-	int dumpStatsTime;                                  // Next stats command that comes back will be written to a logfile
-	int game_versioninfo;                               // game base version
+	int aviDemoRate;                                    ///< Demo playback recording
+	int aReinfOffset[TEAM_NUM_TEAMS];                   ///< Team reinforcement offsets
+	int cursorUpdate;                                   ///< Timeout for mouse pointer view
+	fileHandle_t dumpStatsFile;                         ///< File to dump stats
+	char *dumpStatsFileName;                            ///< Name of file to dump stats
+	int dumpStatsTime;                                  ///< Next stats command that comes back will be written to a logfile
+	int game_versioninfo;                               ///< game base version
 	gameStats_t gamestats;
 	topshotStats_t topshots;
 	objectives_t objectives;
-	qboolean fResize;                                   // MV window "resize" status
-	qboolean fSelect;                                   // MV window "select" status
-	qboolean fKeyPressed[256];                          // Key status to get around console issues
-	int timescaleUpdate;                                // Timescale display for demo playback
+	qboolean fResize;                                   ///< MV window "resize" status
+	qboolean fSelect;                                   ///< MV window "select" status
+	qboolean fKeyPressed[256];                          ///< Key status to get around console issues
+	int timescaleUpdate;                                ///< Timescale display for demo playback
 	int thirdpersonUpdate;
 
 	cg_gamemodel_t miscGameModels[MAX_STATIC_GAMEMODELS];
@@ -2001,7 +2201,7 @@ typedef struct cgs_s
 	int ccSelectedLayer;
 	int ccSelectedObjective;
 	int ccSelectedSpawnPoint;
-	int ccSelectedTeam;                     // ( 1 = ALLIES, 0 = AXIS )
+	int ccSelectedTeam;                                 ///< ( 1 = ALLIES, 0 = AXIS )
 	int ccSelectedWeaponNumber;
 	int ccSelectedClass;
 	int ccSelectedWeapon;
@@ -2062,9 +2262,9 @@ typedef struct cgs_s
 	clientLocation_t clientLocation[MAX_CLIENTS];
 
 	// screen adjustments
-	float adr43;                        // aspectratio / RATIO43
-	float r43da;                        // RATIO43 / aspectratio
-	float wideXoffset;                  // the x-offset for displaying horizontally centered loading/limbo screens
+	float adr43;                        ///< aspectratio / RATIO43
+	float r43da;                        ///< RATIO43 / aspectratio
+	float wideXoffset;                  ///< the x-offset for displaying horizontally centered loading/limbo screens
 
 	// MAPVOTE
 	int dbMapVoteListOffset;
@@ -2291,7 +2491,7 @@ extern vmCvar_t cg_locations;
 extern vmCvar_t cg_spawnTimer_period;
 extern vmCvar_t cg_spawnTimer_set;
 
-extern vmCvar_t cg_countryflags; // GeoIP
+extern vmCvar_t cg_countryflags; ///< GeoIP
 
 extern vmCvar_t cg_altHud;
 extern vmCvar_t cg_altHudFlags;
@@ -2406,11 +2606,11 @@ void CG_Letterbox(float xsize, float ysize, qboolean center);
 // cg_drawtools.c
 
 // widescreen monitor support
-#define RATIO43     (4.0f / 3.0f) // 4:3 aspectratio is the default for this game engine ...
-#define RPRATIO43   (1 / RATIO43) //
-qboolean Ccg_Is43Screen(void);  // does this game-window have a 4:3 aspectratio. note: this is also true for a 800x600 windowed game on a widescreen monitor
-float Ccg_WideX(float x);       // convert an x-coordinate to a widescreen x-coordinate. (only if the game-window is non 4:3 aspectratio)
-float Ccg_WideXoffset(void);    // the horizontal center of screen pixel-difference of a 4:3 ratio vs. the current aspectratio
+#define RATIO43     (4.0f / 3.0f)   ///< 4:3 aspectratio is the default for this game engine ...
+#define RPRATIO43   (1 / RATIO43)   ///<
+qboolean Ccg_Is43Screen(void);      // does this game-window have a 4:3 aspectratio. note: this is also true for a 800x600 windowed game on a widescreen monitor
+float Ccg_WideX(float x);           // convert an x-coordinate to a widescreen x-coordinate. (only if the game-window is non 4:3 aspectratio)
+float Ccg_WideXoffset(void);        // the horizontal center of screen pixel-difference of a 4:3 ratio vs. the current aspectratio
 void CG_AdjustFrom640(float *x, float *y, float *w, float *h);
 void CG_FillRect(float x, float y, float width, float height, const float *color);
 void CG_HorizontalPercentBar(float x, float y, float width, float height, float percent);
@@ -2641,7 +2841,7 @@ char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag);
 void CG_LoadLocations(void);
 
 // cg_effects.c
-int CG_GetOriginForTag(centity_t *cent, refEntity_t *parent, const char *tagName, int startIndex, vec3_t org, vec3_t axis[3]);
+int CG_GetOriginForTag(centity_t * cent, refEntity_t * parent, const char *tagName, int startIndex, vec3_t org, vec3_t axis[3]);
 localEntity_t *CG_SmokePuff(const vec3_t p,
                             const vec3_t vel,
                             float radius,

@@ -35,38 +35,46 @@
 #ifndef INCLUDE_CG_PUBLIC_H
 #define INCLUDE_CG_PUBLIC_H
 
+/// Allow a lot of command backups for very fast systems
+/// multiple commands may be combined into a single packet, so this
+/// needs to be larger than PACKET_BACKUP
 #define CMD_BACKUP          64
 #define CMD_MASK            (CMD_BACKUP - 1)
-// allow a lot of command backups for very fast systems
-// multiple commands may be combined into a single packet, so this
-// needs to be larger than PACKET_BACKUP
-
 
 #define MAX_ENTITIES_IN_SNAPSHOT    512
 
-// snapshots are a view of the server at a given time
-
-// Snapshots are generated at regular time intervals by the server,
-// but they may not be sent if a client's rate level is exceeded, or
-// they may be dropped by the network.
+/**
+ * @struct snapshot_t
+ *
+ * @brief Snapshots are a view of the server at a given time.
+ *
+ * @details Snapshots are generated at regular time intervals by the server,
+ * but they may not be sent if a client's rate level is exceeded, or
+ * they may be dropped by the network.
+ */
 typedef struct
 {
-	int snapFlags;                      // SNAPFLAG_RATE_DELAYED, etc
+	int snapFlags;                      ///< SNAPFLAG_RATE_DELAYED, etc
 	int ping;
 
-	int serverTime;                     // server time the message is valid for (in msec)
+	int serverTime;                     ///< server time the message is valid for (in msec)
 
-	byte areamask[MAX_MAP_AREA_BYTES];  // portalarea visibility bits
+	byte areamask[MAX_MAP_AREA_BYTES];  ///< portalarea visibility bits
 
-	playerState_t ps;                   // complete information about the current player at this time
+	playerState_t ps;                   ///< complete information about the current player at this time
 
-	int numEntities;                    // all of the entities that need to be presented
-	entityState_t entities[MAX_ENTITIES_IN_SNAPSHOT];   // at the time of this snapshot
+	int numEntities;                    ///< all of the entities that need to be presented
+	entityState_t entities[MAX_ENTITIES_IN_SNAPSHOT];   ///< at the time of this snapshot
 
-	int numServerCommands;              // text based server commands to execute when this
-	int serverCommandSequence;          // snapshot becomes current
+	int numServerCommands;              ///< text based server commands to execute when this
+	int serverCommandSequence;          ///< snapshot becomes current
 } snapshot_t;
 
+/**
+ * @enum cgameEvent_t
+ * @typedef cgameEvent_e
+ * @brief
+ */
 typedef enum cgameEvent_e
 {
 	CGAME_EVENT_NONE,
@@ -78,14 +86,12 @@ typedef enum cgameEvent_e
 	CGAME_EVENT_MULTIVIEW
 } cgameEvent_t;
 
-/*
-==================================================================
-functions imported from the main executable
-==================================================================
-*/
-
 #define CGAME_IMPORT_API_VERSION    3
 
+/**
+ * @enum cgameImport_t
+ * @brief Functions imported from the main executable
+ */
 typedef enum
 {
 	CG_PRINT = 0,
@@ -98,7 +104,7 @@ typedef enum
 	CG_CVAR_LATCHEDVARIABLESTRINGBUFFER,
 	CG_ARGC,
 	CG_ARGV,
-	CG_ARGS,                    // 10
+	CG_ARGS,                    ///< 10
 	CG_FS_FOPENFILE,
 	CG_FS_READ,
 	CG_FS_WRITE,
@@ -108,7 +114,7 @@ typedef enum
 	CG_SENDCONSOLECOMMAND,
 	CG_ADDCOMMAND,
 	CG_SENDCLIENTCOMMAND,
-	CG_UPDATESCREEN,            // 20
+	CG_UPDATESCREEN,            ///< 20
 	CG_CM_LOADMAP,
 	CG_CM_NUMINLINEMODELS,
 	CG_CM_INLINEMODEL,
@@ -119,42 +125,42 @@ typedef enum
 	CG_CM_BOXTRACE,
 	CG_CM_TRANSFORMEDBOXTRACE,
 
-	CG_CM_CAPSULETRACE,         // 30
+	CG_CM_CAPSULETRACE,         ///< 30
 	CG_CM_TRANSFORMEDCAPSULETRACE,
 	CG_CM_TEMPCAPSULEMODEL,
 
 	CG_CM_MARKFRAGMENTS,
-	CG_R_PROJECTDECAL,          // projects a decal onto brush models
-	CG_R_CLEARDECALS,           // clears world/entity decals
+	CG_R_PROJECTDECAL,          ///< projects a decal onto brush models
+	CG_R_CLEARDECALS,           ///< clears world/entity decals
 	CG_S_STARTSOUND,
 	CG_S_STARTSOUNDEX,
 	CG_S_STARTLOCALSOUND,
 	CG_S_CLEARLOOPINGSOUNDS,
-	CG_S_CLEARSOUNDS,           // 40
+	CG_S_CLEARSOUNDS,           ///< 40
 	CG_S_ADDLOOPINGSOUND,
 	CG_S_UPDATEENTITYPOSITION,
 
-	CG_S_GETVOICEAMPLITUDE,     // talking animations
+	CG_S_GETVOICEAMPLITUDE,     ///< talking animations
 
 	CG_S_RESPATIALIZE,
 	CG_S_REGISTERSOUND,
 	CG_S_STARTBACKGROUNDTRACK,
 	CG_S_FADESTREAMINGSOUND,
-	CG_S_FADEALLSOUNDS,         // added for fading out everything
+	CG_S_FADEALLSOUNDS,         ///< added for fading out everything
 	CG_S_STARTSTREAMINGSOUND,
-	CG_S_GETSOUNDLENGTH,        // 50 get the length (in milliseconds) of the sound
+	CG_S_GETSOUNDLENGTH,        ///< 50 get the length (in milliseconds) of the sound
 	CG_S_GETCURRENTSOUNDTIME,
 	CG_R_LOADWORLDMAP,
 	CG_R_REGISTERMODEL,
 	CG_R_REGISTERSKIN,
 	CG_R_REGISTERSHADER,
 
-	CG_R_GETSKINMODEL,          // client allowed to view what the .skin loaded so they can set their model appropriately
-	CG_R_GETMODELSHADER,        // client allowed the shader handle for given model/surface (for things like debris inheriting shader from explosive)
+	CG_R_GETSKINMODEL,          ///< client allowed to view what the .skin loaded so they can set their model appropriately
+	CG_R_GETMODELSHADER,        ///< client allowed the shader handle for given model/surface (for things like debris inheriting shader from explosive)
 
 	CG_R_REGISTERFONT,
 	CG_R_CLEARSCENE,
-	CG_R_ADDREFENTITYTOSCENE,  // 60
+	CG_R_ADDREFENTITYTOSCENE,   ///< 60
 	CG_GET_ENTITY_TOKEN,
 	CG_R_ADDPOLYTOSCENE,
 
@@ -168,7 +174,7 @@ typedef enum
 	CG_R_SETGLOBALFOG,
 
 	CG_R_RENDERSCENE,
-	CG_R_SAVEVIEWPARMS,        // 70
+	CG_R_SAVEVIEWPARMS,         ///< 70
 	CG_R_RESTOREVIEWPARMS,
 	CG_R_SETCOLOR,
 	CG_R_DRAWSTRETCHPIC,
@@ -178,7 +184,7 @@ typedef enum
 	CG_GETGLCONFIG,
 	CG_GETGAMESTATE,
 	CG_GETCURRENTSNAPSHOTNUMBER,
-	CG_GETSNAPSHOT,            // 80
+	CG_GETSNAPSHOT,             ///< 80
 	CG_GETSERVERCOMMAND,
 	CG_GETCURRENTCMDNUMBER,
 	CG_GETUSERCMD,
@@ -189,7 +195,7 @@ typedef enum
 
 	CG_KEY_ISDOWN,
 	CG_KEY_GETCATCHER,
-	CG_KEY_SETCATCHER,         // 90
+	CG_KEY_SETCATCHER,          ///< 90
 	CG_KEY_GETKEY,
 	CG_KEY_GETOVERSTRIKEMODE,
 	CG_KEY_SETOVERSTRIKEMODE,
@@ -201,25 +207,25 @@ typedef enum
 	CG_PC_SOURCE_FILE_AND_LINE,
 	CG_PC_UNREAD_TOKEN,
 
-	CG_S_STOPBACKGROUNDTRACK,  // 100
+	CG_S_STOPBACKGROUNDTRACK,   ///< 100
 	CG_REAL_TIME,
 	CG_SNAPVECTOR,
 	CG_REMOVECOMMAND,
-	CG_R_LIGHTFORPOINT, // unused
+	CG_R_LIGHTFORPOINT,         ///< unused
 
 	CG_CIN_PLAYCINEMATIC,
 	CG_CIN_STOPCINEMATIC,
 	CG_CIN_RUNCINEMATIC,
 	CG_CIN_DRAWCINEMATIC,
 	CG_CIN_SETEXTENTS,
-	CG_R_REMAP_SHADER,         // 110
+	CG_R_REMAP_SHADER,          ///< 110
 	CG_S_ADDREALLOOPINGSOUND,
 	CG_S_STOPSTREAMINGSOUND,
 
-	CG_LOADCAMERA,    // unused
-	CG_STARTCAMERA,   // unused
-	CG_STOPCAMERA,    // unused
-	CG_GETCAMERAINFO, // unused
+	CG_LOADCAMERA,              ///< unused
+	CG_STARTCAMERA,             ///< unused
+	CG_STOPCAMERA,              ///< unused
+	CG_GETCAMERAINFO,           ///< unused
 
 	CG_MEMSET = 150,
 	CG_MEMCPY,
@@ -232,7 +238,7 @@ typedef enum
 	CG_CEIL,
 
 	CG_TESTPRINTINT,
-	CG_TESTPRINTFLOAT,         // 160
+	CG_TESTPRINTFLOAT,          ///< 160
 	CG_ACOS,
 
 	CG_INGAME_POPUP,
@@ -247,7 +253,7 @@ typedef enum
 	CG_KEY_KEYNUMTOSTRINGBUF,
 	CG_KEY_BINDINGTOKEYS,
 
-	CG_TRANSLATE_STRING,       // 170
+	CG_TRANSLATE_STRING,        ///< 170
 
 	CG_R_INPVS,
 	CG_GETHUNKDATA,
@@ -263,66 +269,64 @@ typedef enum
 
 	CG_R_GETTEXTUREID,
 
-	CG_R_FINISH,               // 179
+	CG_R_FINISH,                ///< 179
 
 } cgameImport_t;
 
-/*
-==================================================================
-functions exported to the main executable
-==================================================================
-*/
-
+/**
+ * @enum cgameExport_t
+ * @brief Functions exported to the main executable
+ */
 typedef enum
 {
 	CG_INIT = 0,
-	//  void CG_Init( int serverMessageNum, int serverCommandSequence )
-	// called when the level loads or when the renderer is restarted
-	// all media should be registered at this time
-	// cgame will display loading status by calling SCR_Update, which
-	// will call CG_DrawInformation during the loading process
-	// reliableCommandSequence will be 0 on fresh loads, but higher for
-	// demos, tourney restarts, or vid_restarts
+	///<  void CG_Init( int serverMessageNum, int serverCommandSequence )
+	///< called when the level loads or when the renderer is restarted
+	///< all media should be registered at this time
+	///< cgame will display loading status by calling SCR_Update, which
+	///< will call CG_DrawInformation during the loading process
+	///< reliableCommandSequence will be 0 on fresh loads, but higher for
+	///< demos, tourney restarts, or vid_restarts
 
 	CG_SHUTDOWN,
-	//  void (*CG_Shutdown)( void );
-	// oportunity to flush and close any open files
+	///<  void (*CG_Shutdown)( void );
+	///< oportunity to flush and close any open files
 
 	CG_CONSOLE_COMMAND,
-	//  qboolean (*CG_ConsoleCommand)( void );
-	// a console command has been issued locally that is not recognized by the
-	// main game system.
-	// use Cmd_Argc() / Cmd_Argv() to read the command, return qfalse if the
-	// command is not known to the game
+	///<  qboolean (*CG_ConsoleCommand)( void );
+	///< a console command has been issued locally that is not recognized by the
+	///< main game system.
+	///< use Cmd_Argc() / Cmd_Argv() to read the command, return qfalse if the
+	///< command is not known to the game
 
 	CG_DRAW_ACTIVE_FRAME,
-	//  void (*CG_DrawActiveFrame)( int serverTime, stereoFrame_t stereoView, qboolean demoPlayback );
-	// Generates and draws a game scene and status information at the given time.
-	// If demoPlayback is set, local movement prediction will not be enabled
+	///<  void (*CG_DrawActiveFrame)( int serverTime, stereoFrame_t stereoView, qboolean demoPlayback );
+	///< Generates and draws a game scene and status information at the given time.
+	///< If demoPlayback is set, local movement prediction will not be enabled
 
 	CG_CROSSHAIR_PLAYER,
-	//  int (*CG_CrosshairPlayer)( void );
+	///<  int (*CG_CrosshairPlayer)( void );
 
 	CG_LAST_ATTACKER,
-	//  int (*CG_LastAttacker)( void );
+	///<  int (*CG_LastAttacker)( void );
 
 	CG_KEY_EVENT,
-	//  void    (*CG_KeyEvent)( int key, qboolean down );
+	///<  void    (*CG_KeyEvent)( int key, qboolean down );
 
 	CG_MOUSE_EVENT,
-	//  void    (*CG_MouseEvent)( int dx, int dy );
+	///<  void    (*CG_MouseEvent)( int dx, int dy );
 	CG_EVENT_HANDLING,
-	//  void (*CG_EventHandling)(int type, qboolean fForced);
+	///<  void (*CG_EventHandling)(int type, qboolean fForced);
 
 	CG_GET_TAG,
-	//  qboolean CG_GetTag( int clientNum, char *tagname, orientation_t *or );
+	///<  qboolean CG_GetTag( int clientNum, char *tagname, orientation_t *or );
 
 	CG_CHECKEXECKEY,
 
 	CG_WANTSBINDKEYS,
 
 	CG_MESSAGERECEIVED,
-	//  void (*CG_MessageReceived)( const char *buf, int buflen, int serverTime );
+	///<  void (*CG_MessageReceived)( const char *buf, int buflen, int serverTime );
 
 } cgameExport_t;
 
