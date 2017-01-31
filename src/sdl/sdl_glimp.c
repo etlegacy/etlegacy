@@ -70,7 +70,6 @@ cvar_t *r_swapInterval;
 cvar_t *r_mode;
 cvar_t *r_customaspect;
 cvar_t *r_displayRefresh;
-cvar_t *r_stereoEnabled;
 
 // Window surface cvars
 cvar_t *r_stencilbits;  // number of desired stencil bits
@@ -225,7 +224,6 @@ static void GLimp_InitCvars(void)
 	r_customwidth    = Cvar_Get("r_customwidth", "1600", CVAR_ARCHIVE | CVAR_LATCH);
 	r_customheight   = Cvar_Get("r_customheight", "1024", CVAR_ARCHIVE | CVAR_LATCH);
 	r_swapInterval   = Cvar_Get("r_swapInterval", "0", CVAR_ARCHIVE);
-	r_stereoEnabled  = Cvar_Get("r_stereoEnabled", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_mode           = Cvar_Get("r_mode", "-2", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_customaspect   = Cvar_Get("r_customaspect", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_displayRefresh = Cvar_Get("r_displayRefresh", "0", CVAR_LATCH);
@@ -667,17 +665,6 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 
 		// SDL2 uses opengl by default, if we want opengl es we need to set this attribute
 		//SDL_GL_SetAttribute(SDL_GL_CONTEXT_EGL, 1);
-
-		if (r_stereoEnabled->integer)
-		{
-			glConfig->stereoEnabled = qtrue;
-			SDL_GL_SetAttribute(SDL_GL_STEREO, 1);
-		}
-		else
-		{
-			glConfig->stereoEnabled = qfalse;
-			SDL_GL_SetAttribute(SDL_GL_STEREO, 0);
-		}
 
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 

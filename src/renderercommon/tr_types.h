@@ -84,11 +84,6 @@
 /// the last N-bit number (2^REFENTITYNUM_BITS - 1) is reserved for the special world refentity,
 /// and this is reflected by the value of MAX_REFENTITIES (which therefore is not a power-of-2)
 #define MAX_REFENTITIES     ((1 << REFENTITYNUM_BITS) - 1)
-
-#define RF_CROSSHAIR        0x0010      ///< This item is a cross hair and will draw over everything similar to
-///< DEPTHHACK in stereo rendering mode, with the difference that the
-///< projection matrix won't be hacked to reduce the stereo separation as
-///< is done for the gun.
 // renderer2 END
 
 /**
@@ -391,17 +386,6 @@ typedef struct
 } refdef_t;
 
 /**
- * @enum stereoFrame_t
- * @brief
- */
-typedef enum
-{
-	STEREO_CENTER,
-	STEREO_LEFT,
-	STEREO_RIGHT
-} stereoFrame_t;
-
-/**
  * @enum textureCompression_t
  * @brief
  */
@@ -495,7 +479,6 @@ typedef struct
 
 	// synonymous with "does rendering consume the entire screen?"
 	qboolean isFullscreen;
-	qboolean stereoEnabled;
 	qboolean smpActive;                     ///< obsolete, kept for compatibility
 } glconfig_t;
 

@@ -1880,8 +1880,6 @@ typedef struct
 	vec3_t vieworg;
 	vec3_t viewaxis[3];                 ///< transformation matrix
 
-	stereoFrame_t stereoFrame;
-
 	int time;                           ///< time in milliseconds for shader effects and other time dependent rendering issues
 	int rdflags;                        ///< RDF_NOWORLDMODEL, etc
 
@@ -2028,7 +2026,6 @@ typedef struct
 
 	int numInteractions;
 	struct interaction_s *interactions;
-	stereoFrame_t stereoFrame;
 } viewParms_t;
 
 /*
@@ -4123,7 +4120,7 @@ void RB_SetViewMVPM(void);
 void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty);
 void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty);
 
-void RE_BeginFrame(stereoFrame_t stereoFrame);
+void RE_BeginFrame(void);
 void RE_EndFrame(int *frontEndMsec, int *backEndMsec);
 void RE_BeginRegistration(glconfig_t *glconfig);
 void RE_LoadWorldMap(const char *mapname);

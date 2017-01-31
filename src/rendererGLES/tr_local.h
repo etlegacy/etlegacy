@@ -1592,7 +1592,7 @@ void GL_Cull(int cullType);
 void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty);
 void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty);
 
-void RE_BeginFrame(stereoFrame_t stereoFrame);
+void RE_BeginFrame(void);
 void RE_BeginRegistration(glconfig_t *glconfig);
 void RE_LoadWorldMap(const char *mapname);
 void RE_SetWorldVisData(const byte *vis);
@@ -2174,7 +2174,7 @@ void RE_StretchPicGradient(float x, float y, float w, float h,
                            float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor, int gradientType);
 void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader);
 void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, float depthForOpaque);
-void RE_BeginFrame(stereoFrame_t stereoFrame);
+void RE_BeginFrame(void);
 void RE_EndFrame(int *frontEndMsec, int *backEndMsec);
 void RE_SaveJPG(char *filename, int quality, int image_width, int image_height,
                 unsigned char *image_buffer, int padding);

@@ -2023,10 +2023,9 @@ extern void CG_SetupDlightstyles(void);
 /**
  * @brief Generates and draws a game scene and status information at the given time.
  * @param[in] serverTime
- * @param[in] stereoView
  * @param[in] demoPlayback
  */
-void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoPlayback)
+void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 {
 #ifdef DEBUGTIME_ENABLED
 	int dbgTime = trap_Milliseconds(), elapsed;
@@ -2299,17 +2298,14 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 
 		DEBUGTIME
 
-		// make sure the lagometerSample and frame timing isn't done twice when in stereo
-		if (stereoView != STEREO_RIGHT)
+		//lagometer sample and frame timing
+		cg.frametime = cg.time - cg.oldTime;
+		if (cg.frametime < 0)
 		{
-			cg.frametime = cg.time - cg.oldTime;
-			if (cg.frametime < 0)
-			{
-				cg.frametime = 0;
-			}
-			cg.oldTime = cg.time;
-			CG_AddLagometerFrameInfo();
+			cg.frametime = 0;
 		}
+		cg.oldTime = cg.time;
+		CG_AddLagometerFrameInfo();
 
 		DEBUGTIME
 
@@ -2317,7 +2313,7 @@ void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoP
 		trap_SetClientLerpOrigin(cg.refdef.vieworg[0], cg.refdef.vieworg[1], cg.refdef.vieworg[2]);
 
 		// actually issue the rendering calls
-		CG_DrawActive(stereoView);
+		CG_DrawActive();
 
 		DEBUGTIME
 

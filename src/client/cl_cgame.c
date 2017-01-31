@@ -1211,11 +1211,10 @@ qboolean CL_GameCommand(void)
 
 /**
  * @brief CL_CGameRendering
- * @param[in] stereo
  */
-void CL_CGameRendering(stereoFrame_t stereo)
+void CL_CGameRendering()
 {
-	VM_Call(cgvm, CG_DRAW_ACTIVE_FRAME, cl.serverTime, stereo, clc.demoplaying);
+	VM_Call(cgvm, CG_DRAW_ACTIVE_FRAME, cl.serverTime, 0, clc.demoplaying);
 	VM_Debug(0);
 }
 

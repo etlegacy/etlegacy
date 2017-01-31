@@ -433,12 +433,9 @@ void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, 
 }
 
 /**
- * @brief If running in stereo, RE_BeginFrame will be called twice
- * for each RE_EndFrame
- *
- * @param[in] stereoFrame
+ * @brief RE_BeginFrame
  */
-void RE_BeginFrame(stereoFrame_t stereoFrame)
+void RE_BeginFrame()
 {
 	drawBufferCommand_t *cmd;
 

@@ -75,7 +75,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case CG_CONSOLE_COMMAND:
 		return CG_ConsoleCommand();
 	case CG_DRAW_ACTIVE_FRAME:
-		CG_DrawActiveFrame(arg0, (stereoFrame_t)arg1, (qboolean)arg2);
+		CG_DrawActiveFrame(arg0, (qboolean)arg2); // arg1 removed, order kept for vanilla client compatibility
 		return 0;
 	case CG_CROSSHAIR_PLAYER:
 		return CG_CrosshairPlayer();
@@ -178,7 +178,6 @@ vmCvar_t cg_zoomDefaultSniper;
 vmCvar_t cg_thirdPerson;
 vmCvar_t cg_thirdPersonRange;
 vmCvar_t cg_thirdPersonAngle;
-vmCvar_t cg_stereoSeparation;
 #ifdef ALLOW_GSYNC
 vmCvar_t cg_synchronousClients;
 #endif // ALLOW_GSYNC
@@ -363,7 +362,6 @@ cvarTable_t cvarTable[] =
 	{ &cg_fov,                    "cg_fov",                    "90",          CVAR_ARCHIVE,                 0 },
 	{ &cg_muzzleFlash,            "cg_muzzleFlash",            "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_letterbox,              "cg_letterbox",              "0",           CVAR_TEMP,                    0 },
-	{ &cg_stereoSeparation,       "cg_stereoSeparation",       "0.4",         CVAR_ARCHIVE,                 0 },
 	{ &cg_shadows,                "cg_shadows",                "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_gibs,                   "cg_gibs",                   "1",           CVAR_ARCHIVE,                 0 },
 	// we now draw reticles always in non demoplayback

@@ -2364,7 +2364,6 @@ extern vmCvar_t cg_zoomStepSniper;
 extern vmCvar_t cg_thirdPersonRange;
 extern vmCvar_t cg_thirdPersonAngle;
 extern vmCvar_t cg_thirdPerson;
-extern vmCvar_t cg_stereoSeparation;
 #ifdef ALLOW_GSYNC
 extern vmCvar_t cg_synchronousClients;
 #endif // ALLOW_GSYNC
@@ -2598,7 +2597,7 @@ void CG_SetupFrustum(void);
 qboolean CG_CullPoint(vec3_t pt);
 qboolean CG_CullPointAndRadius(const vec3_t pt, vec_t radius);
 
-void CG_DrawActiveFrame(int serverTime, stereoFrame_t stereoView, qboolean demoPlayback);
+void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback);
 void CG_DrawSkyBoxPortal(qboolean fLocalView);
 
 void CG_Letterbox(float xsize, float ysize, qboolean center);
@@ -2646,7 +2645,7 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap);
 void CG_CenterPrint(const char *str, int y, float fontScale);
 void CG_PriorityCenterPrint(const char *str, int y, float fontScale, int priority);
 void CG_ObjectivePrint(const char *str, float fontScale);
-void CG_DrawActive(stereoFrame_t stereoView);
+void CG_DrawActive(void);
 void CG_CheckForCursorHints(void);
 void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team);
 void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontHelper_t *font);

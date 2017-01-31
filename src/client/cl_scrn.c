@@ -259,8 +259,6 @@ void SCR_DrawStringExt(int x, int y, float w, float h, const char *string, float
 	re.SetColor(NULL);
 }
 
-//===============================================================================
-
 /**
  * @brief SCR_DrawDemoRecording
  */
@@ -273,12 +271,6 @@ void SCR_DrawDemoRecording(void)
 
 	Cvar_Set("cl_demooffset", va("%d", FS_FTell(clc.demofile)));
 }
-
-/*
-===============================================================================
-DEBUG GRAPH
-===============================================================================
-*/
 
 static int   current;
 static float values[1024];
@@ -325,8 +317,6 @@ void SCR_DrawDebugGraph(void)
 	}
 }
 
-//=============================================================================
-
 /**
  * @brief SCR_Init
  */
@@ -341,16 +331,12 @@ void SCR_Init(void)
 	scr_initialized = qtrue;
 }
 
-//=======================================================
-
 /**
- * @brief This will be called twice if rendering in stereo mode
- *
- * @param[in] stereoFrame
+ * @brief SCR_DrawScreenField
  */
-void SCR_DrawScreenField(stereoFrame_t stereoFrame)
+void SCR_DrawScreenField(void)
 {
-	re.BeginFrame(stereoFrame);
+	re.BeginFrame();
 
 	// wide aspect ratio screens need to have the sides cleared
 	// unless they are displaying game renderings
@@ -401,7 +387,7 @@ void SCR_DrawScreenField(stereoFrame_t stereoFrame)
 		case CA_LOADING:
 		case CA_PRIMED:
 			// draw the game information screen and loading progress
-			CL_CGameRendering(stereoFrame);
+			CL_CGameRendering();
 
 			// also draw the connection information, so it doesn't
 			// flash away too briefly on local or lan games
@@ -410,7 +396,7 @@ void SCR_DrawScreenField(stereoFrame_t stereoFrame)
 			VM_Call(uivm, UI_DRAW_CONNECT_SCREEN, qtrue);
 			break;
 		case CA_ACTIVE:
-			CL_CGameRendering(stereoFrame);
+			CL_CGameRendering();
 			SCR_DrawDemoRecording();
 			break;
 		}
@@ -454,18 +440,7 @@ void SCR_UpdateScreen(void)
 	}
 	recursive = 1;
 
-	// if running in stereo, we need to draw the frame twice
-#ifndef FEATURE_RENDERER_GLES
-	if (cls.glconfig.stereoEnabled)
-	{
-		SCR_DrawScreenField(STEREO_LEFT);
-		SCR_DrawScreenField(STEREO_RIGHT);
-	}
-	else
-#endif
-	{
-		SCR_DrawScreenField(STEREO_CENTER);
-	}
+	SCR_DrawScreenField();
 
 	if (com_speeds->integer)
 	{

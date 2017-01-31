@@ -737,7 +737,7 @@ void CG_mvDraw(cg_window_t *sw)
 
 	if (sw == cg.mvCurrentMainview)
 	{
-		CG_DrawActive(STEREO_CENTER);
+		CG_DrawActive();
 		if (cg.mvCurrentActive == cg.mvCurrentMainview)
 		{
 			trap_S_Respatialize(cg.clientNum, refdef.vieworg, refdef.viewaxis, qfalse);

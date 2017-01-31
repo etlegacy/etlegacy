@@ -433,12 +433,9 @@ void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, 
 }
 
 /**
- * @brief If running in stereo, RE_BeginFrame will be called twice
- * for each RE_EndFrame
- *
- * @param[in] stereoFrame
+ * @brief Will be called once for each RE_EndFrame
  */
-void RE_BeginFrame(stereoFrame_t stereoFrame)
+void RE_BeginFrame(void)
 {
 	drawBufferCommand_t *cmd;
 
@@ -525,35 +522,13 @@ void RE_BeginFrame(stereoFrame_t stereoFrame)
 	}
 	cmd->commandId = RC_DRAW_BUFFER;
 
-	if (glConfig.stereoEnabled)
+	if (!Q_stricmp(r_drawBuffer->string, "GL_FRONT"))
 	{
-		if (stereoFrame == STEREO_LEFT)
-		{
-			cmd->buffer = (int)GL_BACK_LEFT;
-		}
-		else if (stereoFrame == STEREO_RIGHT)
-		{
-			cmd->buffer = (int)GL_BACK_RIGHT;
-		}
-		else
-		{
-			Ren_Fatal("RE_BeginFrame: Stereo is enabled, but stereoFrame was %i", stereoFrame);
-		}
+		cmd->buffer = (int)GL_FRONT;
 	}
 	else
 	{
-		if (stereoFrame != STEREO_CENTER)
-		{
-			Ren_Fatal("RE_BeginFrame: Stereo is disabled, but stereoFrame was %i", stereoFrame);
-		}
-		if (!Q_stricmp(r_drawBuffer->string, "GL_FRONT"))
-		{
-			cmd->buffer = (int)GL_FRONT;
-		}
-		else
-		{
-			cmd->buffer = (int)GL_BACK;
-		}
+		cmd->buffer = (int)GL_BACK;
 	}
 }
 
