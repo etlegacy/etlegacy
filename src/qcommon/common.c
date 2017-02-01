@@ -3759,7 +3759,16 @@ void Field_CompleteCommand(char *cmd, qboolean doCommands, qboolean doCvars)
 	}
 	else
 	{
-		Q_strncpyz(completionString, Cmd_Argv(completionArgument - 1), sizeof(completionString));
+		char *c;
+
+		c = Cmd_Argv(completionArgument - 1);
+
+		if (!c)
+		{
+			return;
+		}
+
+		Q_strncpyz(completionString, c, sizeof(completionString));
 		//completionString = Cmd_Argv(completionArgument - 1);
 	}
 
