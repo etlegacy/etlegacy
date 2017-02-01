@@ -45,37 +45,37 @@
 #define MAX_MENUDEFFILE 4096
 #define MAX_MENUFILE 32768
 #define MAX_MENUS 128
-#define MAX_MENUITEMS 128 // ioquake3 has 96
+#define MAX_MENUITEMS 128       ///< ioquake3 has 96
 #define MAX_COLOR_RANGES 10
 #define MAX_MODAL_MENUS 16
 
-#define WINDOW_MOUSEOVER        0x00000001  // mouse is over it, non exclusive
-#define WINDOW_HASFOCUS         0x00000002  // has cursor focus, exclusive
-#define WINDOW_VISIBLE          0x00000004  // is visible
-#define WINDOW_GREY             0x00000008  // is visible but grey ( non-active )
-#define WINDOW_DECORATION       0x00000010  // for decoration only, no mouse, keyboard, etc..
-#define WINDOW_FADINGOUT        0x00000020  // fading out, non-active
-#define WINDOW_FADINGIN         0x00000040  // fading in
-#define WINDOW_MOUSEOVERTEXT    0x00000080  // mouse is over it, non exclusive
-#define WINDOW_INTRANSITION     0x00000100  // window is in transition
-#define WINDOW_FORECOLORSET     0x00000200  // forecolor was explicitly set ( used to color alpha images or not )
-#define WINDOW_HORIZONTAL       0x00000400  // for list boxes and sliders, vertical is default this is set of horizontal
-#define WINDOW_LB_LEFTARROW     0x00000800  // mouse is over left/up arrow
-#define WINDOW_LB_RIGHTARROW    0x00001000  // mouse is over right/down arrow
-#define WINDOW_LB_THUMB         0x00002000  // mouse is over thumb
-#define WINDOW_LB_PGUP          0x00004000  // mouse is over page up
-#define WINDOW_LB_PGDN          0x00008000  // mouse is over page down
-#define WINDOW_ORBITING         0x00010000  // item is in orbit
-#define WINDOW_OOB_CLICK        0x00020000  // close on out of bounds click
-#define WINDOW_WRAPPED          0x00040000  // manually wrap text
-#define WINDOW_AUTOWRAPPED      0x00080000  // auto wrap text
-#define WINDOW_FORCED           0x00100000  // forced open
-#define WINDOW_POPUP            0x00200000  // popup
-#define WINDOW_BACKCOLORSET     0x00400000  // backcolor was explicitly set
-#define WINDOW_TIMEDVISIBLE     0x00800000  // visibility timing ( NOT implemented )
-#define WINDOW_IGNORE_HUDALPHA  0x01000000  // window will apply cg_hudAlpha value to colors unless this flag is set
+#define WINDOW_MOUSEOVER        0x00000001  ///< mouse is over it, non exclusive
+#define WINDOW_HASFOCUS         0x00000002  ///< has cursor focus, exclusive
+#define WINDOW_VISIBLE          0x00000004  ///< is visible
+#define WINDOW_GREY             0x00000008  ///< is visible but grey ( non-active )
+#define WINDOW_DECORATION       0x00000010  ///< for decoration only, no mouse, keyboard, etc..
+#define WINDOW_FADINGOUT        0x00000020  ///< fading out, non-active
+#define WINDOW_FADINGIN         0x00000040  ///< fading in
+#define WINDOW_MOUSEOVERTEXT    0x00000080  ///< mouse is over it, non exclusive
+#define WINDOW_INTRANSITION     0x00000100  ///< window is in transition
+#define WINDOW_FORECOLORSET     0x00000200  ///< forecolor was explicitly set ( used to color alpha images or not )
+#define WINDOW_HORIZONTAL       0x00000400  ///< for list boxes and sliders, vertical is default this is set of horizontal
+#define WINDOW_LB_LEFTARROW     0x00000800  ///< mouse is over left/up arrow
+#define WINDOW_LB_RIGHTARROW    0x00001000  ///< mouse is over right/down arrow
+#define WINDOW_LB_THUMB         0x00002000  ///< mouse is over thumb
+#define WINDOW_LB_PGUP          0x00004000  ///< mouse is over page up
+#define WINDOW_LB_PGDN          0x00008000  ///< mouse is over page down
+#define WINDOW_ORBITING         0x00010000  ///< item is in orbit
+#define WINDOW_OOB_CLICK        0x00020000  ///< close on out of bounds click
+#define WINDOW_WRAPPED          0x00040000  ///< manually wrap text
+#define WINDOW_AUTOWRAPPED      0x00080000  ///< auto wrap text
+#define WINDOW_FORCED           0x00100000  ///< forced open
+#define WINDOW_POPUP            0x00200000  ///< popup
+#define WINDOW_BACKCOLORSET     0x00400000  ///< backcolor was explicitly set
+#define WINDOW_TIMEDVISIBLE     0x00800000  ///< visibility timing ( NOT implemented )
+#define WINDOW_IGNORE_HUDALPHA  0x01000000  ///< window will apply cg_hudAlpha value to colors unless this flag is set
 #define WINDOW_DRAWALWAYSONTOP  0x02000000
-#define WINDOW_MODAL            0x04000000 // window is modal, the window to go back to is stored in a stack
+#define WINDOW_MODAL            0x04000000 ///< window is modal, the window to go back to is stored in a stack
 #define WINDOW_FOCUSPULSE       0x08000000
 #define WINDOW_TEXTASINT        0x10000000
 #define WINDOW_TEXTASFLOAT      0x20000000
@@ -120,40 +120,50 @@
 
 #define SCROLLBAR_SIZE      16.0f
 #define SLIDER_WIDTH        96.0f
-#define SLIDER_HEIGHT       10.0f    // 16.0
+#define SLIDER_HEIGHT       10.0f    ///< 16.0
 #define SLIDER_THUMB_WIDTH  12.0f
-#define SLIDER_THUMB_HEIGHT 12.0f    // 20.0
+#define SLIDER_THUMB_HEIGHT 12.0f    ///< 20.0
 #define NUM_CROSSHAIRS      16
 
-// FIXME: do something to separate text vs window stuff
+/**
+ * @struct windowDef_t
+ * @typedef Window
+ * @brief
+ *
+ * @todo FIXME: do something to separate text vs window stuff
+ */
 typedef struct
 {
-	rectDef_t rect;                 // client coord rectangle
-	rectDef_t rectClient;           // screen coord rectangle
-	const char *name;               //
-	const char *model;              //
-	const char *group;              // if it belongs to a group
-	const char *cinematicName;      // cinematic name
-	int cinematic;                  // cinematic handle
-	int style;                      //
-	int border;                     //
-	int ownerDraw;                  // ownerDraw style
-	int ownerDrawFlags;             // show flags for ownerdraw items
-	float borderSize;               //
-	int flags;                      // visible, focus, mouseover, cursor
-	rectDef_t rectEffects;          // for various effects
-	rectDef_t rectEffects2;         // for various effects
-	int offsetTime;                 // time based value for various effects
-	int nextTime;                   // time next effect should cycle
-	vec4_t foreColor;               // text color
-	vec4_t backColor;               // border color
-	vec4_t borderColor;             // border color
-	vec4_t outlineColor;            // border color
-	qhandle_t background;           // background asset
+	rectDef_t rect;                 ///< client coord rectangle
+	rectDef_t rectClient;           ///< screen coord rectangle
+	const char *name;               ///<
+	const char *model;              ///<
+	const char *group;              ///< if it belongs to a group
+	const char *cinematicName;      ///< cinematic name
+	int cinematic;                  ///< cinematic handle
+	int style;                      ///<
+	int border;                     ///<
+	int ownerDraw;                  ///< ownerDraw style
+	int ownerDrawFlags;             ///< show flags for ownerdraw items
+	float borderSize;               ///<
+	int flags;                      ///< visible, focus, mouseover, cursor
+	rectDef_t rectEffects;          ///< for various effects
+	rectDef_t rectEffects2;         ///< for various effects
+	int offsetTime;                 ///< time based value for various effects
+	int nextTime;                   ///< time next effect should cycle
+	vec4_t foreColor;               ///< text color
+	vec4_t backColor;               ///< border color
+	vec4_t borderColor;             ///< border color
+	vec4_t outlineColor;            ///< border color
+	qhandle_t background;           ///< background asset
 } windowDef_t;
 
 typedef windowDef_t Window;
 
+/**
+ * @struct colorRangeDef_t
+ * @brief
+ */
 typedef struct
 {
 	vec4_t color;
@@ -174,6 +184,11 @@ typedef struct
 //
 #define MAX_LB_COLUMNS 16
 
+/**
+ * @struct columnInfo_t
+ * @typedef columnInfo_s
+ * @brief
+ */
 typedef struct columnInfo_s
 {
 	int pos;
@@ -181,6 +196,11 @@ typedef struct columnInfo_s
 	int maxChars;
 } columnInfo_t;
 
+/**
+ * @struct listBoxDef_t
+ * @typedef listBoxDef_s
+ * @brief
+ */
 typedef struct listBoxDef_s
 {
 	int startPos;
@@ -197,19 +217,29 @@ typedef struct listBoxDef_s
 	qboolean notselectable;
 } listBoxDef_t;
 
+/**
+ * @struct editFieldDef_t
+ * @typedef editFieldDef_s
+ * @brief
+ */
 typedef struct editFieldDef_s
 {
-	float minVal;                   //  edit field limits
-	float maxVal;                   //
-	float defVal;                   //
-	float range;                    //
-	int maxChars;                   // for edit fields
-	int maxPaintChars;              // for edit fields
-	int paintOffset;                //
+	float minVal;                   ///<  edit field limits
+	float maxVal;                   ///<
+	float defVal;                   ///<
+	float range;                    ///<
+	int maxChars;                   ///< for edit fields
+	int maxPaintChars;              ///< for edit fields
+	int paintOffset;                ///<
 } editFieldDef_t;
 
 #define MAX_MULTI_CVARS 32
 
+/**
+ * @struct multiDef_t
+ * @typedef multiDef_s
+ * @brief
+ */
 typedef struct multiDef_s
 {
 	const char *cvarList[MAX_MULTI_CVARS];
@@ -220,6 +250,11 @@ typedef struct multiDef_s
 	const char *undefinedStr;
 } multiDef_t;
 
+/**
+ * @struct modelDef_t
+ * @typedef modelDef_s
+ * @brief
+ */
 typedef struct modelDef_s
 {
 	int angle;
@@ -252,40 +287,45 @@ typedef struct modelDef_s
 
 #define UI_MAX_TEXT_LINES 64
 
+/**
+ * @struct itemDef_t
+ * @typedef itemDef_s
+ * @brief
+ */
 typedef struct itemDef_s
 {
-	Window window;                  // common positional, border, style, layout info
-	rectDef_t textRect;             // rectangle the text ( if any ) consumes
-	int type;                       // text, button, radiobutton, checkbox, textfield, listbox, combo
-	int alignment;                  // left center right
-	int textalignment;              // ( optional ) alignment for text within rect based on text width
-	float textalignx;               // ( optional ) text alignment x coord
-	float textaligny;               // ( optional ) text alignment x coord
-	float textscale;                // scale percentage from 72pts
-	int font;                       //
-	int textStyle;                  // ( optional ) style, normal and shadowed are it for now
-	const char *text;   // display text
-	void *parent;                   // menu owner
-	qhandle_t asset;                // handle to asset
-	const char *mouseEnterText;     // mouse enter script
-	const char *mouseExitText;      // mouse exit script
-	const char *mouseEnter;         // mouse enter script
-	const char *mouseExit;          // mouse exit script
-	const char *action;             // select script
-	const char *onAccept;           // run when the users presses the enter key
-	const char *onFocus;            // select script
-	const char *leaveFocus;         // select script
-	const char *cvar;               // associated cvar
-	const char *cvarTest;           // associated cvar for enable actions
-	const char *enableCvar;         // enable, disable, show, or hide based on value, this can contain a list
-	int cvarFlags;                  //  what type of action to take on cvarenables
+	Window window;                  ///< common positional, border, style, layout info
+	rectDef_t textRect;             ///< rectangle the text ( if any ) consumes
+	int type;                       ///< text, button, radiobutton, checkbox, textfield, listbox, combo
+	int alignment;                  ///< left center right
+	int textalignment;              ///< ( optional ) alignment for text within rect based on text width
+	float textalignx;               ///< ( optional ) text alignment x coord
+	float textaligny;               ///< ( optional ) text alignment x coord
+	float textscale;                ///< scale percentage from 72pts
+	int font;                       ///<
+	int textStyle;                  ///< ( optional ) style, normal and shadowed are it for now
+	const char *text;               ///< display text
+	void *parent;                   ///< menu owner
+	qhandle_t asset;                ///< handle to asset
+	const char *mouseEnterText;     ///< mouse enter script
+	const char *mouseExitText;      ///< mouse exit script
+	const char *mouseEnter;         ///< mouse enter script
+	const char *mouseExit;          ///< mouse exit script
+	const char *action;             ///< select script
+	const char *onAccept;           ///< run when the users presses the enter key
+	const char *onFocus;            ///< select script
+	const char *leaveFocus;         ///< select script
+	const char *cvar;               ///< associated cvar
+	const char *cvarTest;           ///< associated cvar for enable actions
+	const char *enableCvar;         ///< enable, disable, show, or hide based on value, this can contain a list
+	int cvarFlags;                  ///<  what type of action to take on cvarenables
 	sfxHandle_t focusSound;
-	int numColors;                  // number of color ranges
+	int numColors;                  ///< number of color ranges
 	colorRangeDef_t colorRanges[MAX_COLOR_RANGES];
-	int colorRangeType;             // either
-	int special;                    // used for feeder id's etc.. diff per type
-	int cursorPos;                  // cursor position in characters
-	void *typeData;                 // type specific data ptr's
+	int colorRangeType;             ///< either
+	int special;                    ///< used for feeder id's etc.. diff per type
+	int cursorPos;                  ///< cursor position in characters
+	void *typeData;                 ///< type specific data ptr's
 
 	//      For the bot menu, we have context sensitive menus
 	//      the way it works, we could have multiple items in a menu with the same hotkey
@@ -304,47 +344,55 @@ typedef struct itemDef_s
 	const char *onEnter;
 	const char *onPaste;
 
-	struct itemDef_s *toolTipData;  // Tag an item to this item for auto-help popups
+	struct itemDef_s *toolTipData;  ///< Tag an item to this item for auto-help popups
 
-	// ETL: checkbox for bitflags in an integer cvar. The value it has is the bitvalue (1,2,4,8 etc)
+	/// ETL: checkbox for bitflags in an integer cvar. The value it has is the bitvalue (1,2,4,8 etc)
 	int bitflag;
 } itemDef_t;
 
+/**
+ * @struct menuDef_t
+ * @brief
+ */
 typedef struct
 {
 	Window window;
-	const char *font;               // font
-	qboolean fullScreen;            // covers entire screen
-	int itemCount;                  // number of items;
-	int fontIndex;                  //
-	int cursorItem;                 // which item as the cursor
-	int fadeCycle;                  //
-	float fadeClamp;                //
-	float fadeAmount;               //
-	const char *onOpen;             // run when the menu is first opened
-	const char *onClose;            // run when the menu is closed
-	const char *onESC;              // run when the escape key is hit
-	const char *onEnter;            // run when the enter key is hit
-	const char *onPaste;            // run when the paste action is activated
+	const char *font;               ///< font
+	qboolean fullScreen;            ///< covers entire screen
+	int itemCount;                  ///< number of items;
+	int fontIndex;                  ///<
+	int cursorItem;                 ///< which item as the cursor
+	int fadeCycle;                  ///<
+	float fadeClamp;                ///<
+	float fadeAmount;               ///<
+	const char *onOpen;             ///< run when the menu is first opened
+	const char *onClose;            ///< run when the menu is closed
+	const char *onESC;              ///< run when the escape key is hit
+	const char *onEnter;            ///< run when the enter key is hit
+	const char *onPaste;            ///< run when the paste action is activated
 
-	int timeout;                    // milliseconds until menu times out
-	int openTime;                   // time menu opened
-	const char *onTimeout;          // run when menu times out
+	int timeout;                    ///< milliseconds until menu times out
+	int openTime;                   ///< time menu opened
+	const char *onTimeout;          ///< run when menu times out
 
-	const char *onKey[MAX_KEYS];    // execs commands when a key is pressed
-	const char *soundName;          // background loop sound for menu
+	const char *onKey[MAX_KEYS];    ///< execs commands when a key is pressed
+	const char *soundName;          ///< background loop sound for menu
 
-	vec4_t focusColor;              // focus color for items
-	vec4_t disableColor;            // focus color for items
-	itemDef_t *items[MAX_MENUITEMS]; // items this menu contains
+	vec4_t focusColor;              ///< focus color for items
+	vec4_t disableColor;            ///< focus color for items
+	itemDef_t *items[MAX_MENUITEMS]; ///< items this menu contains
 
-	// should we search through all the items to find the hotkey instead of using the onKey array?
-	//      The bot command menu needs to do this, see note above
+	/// TODO: Should we search through all the items to find the hotkey instead of using the onKey array?
+	/// The bot command menu needs to do this, see note above
 	qboolean itemHotkeyMode;
 } menuDef_t;
 
 #define UI_FONT_COUNT 6
 
+/**
+ * @struct cachedAssets_t
+ * @brief
+ */
 typedef struct
 {
 	const char *fontStr;
@@ -390,12 +438,20 @@ typedef struct
 
 } cachedAssets_t;
 
+/**
+ * @struct commandDef_t
+ * @brief
+ */
 typedef struct
 {
 	const char *name;
 	void (*handler)(itemDef_t *item, qboolean *bAbort, char **args);
 } commandDef_t;
 
+/**
+ * @struct displayContextDef_t
+ * @brief
+ */
 typedef struct
 {
 	qhandle_t (*registerShaderNoMip)(const char *p);
@@ -629,6 +685,11 @@ int trap_PC_UnReadToken(int handle);
 
 typedef struct panel_button_s panel_button_t;
 
+/**
+ * @struct panel_button_text_t
+ * @typedef panel_button_text_s
+ * @brief
+ */
 typedef struct panel_button_text_s
 {
 	float scalex, scaley;
@@ -643,23 +704,27 @@ typedef qboolean (*panel_button_key_up)(panel_button_t *, int);
 typedef void (*panel_button_render)(panel_button_t *);
 typedef void (*panel_button_postprocess)(panel_button_t *);
 
-// Button struct
+/**
+ * @struct panel_button_t
+ * @typedef panel_button_s
+ * @brief Button struct
+ */
 struct panel_button_s
 {
 	// compile time stuff
 	// ======================
 	const char *shaderNormal;
 
-	// text
+	/// text
 	const char *text;
 
-	// rect
+	/// rect
 	rectDef_t rect;
 
-	// data
+	/// data
 	int data[8];
 
-	// "font"
+	/// "font"
 	panel_button_text_t *font;
 
 	// functions

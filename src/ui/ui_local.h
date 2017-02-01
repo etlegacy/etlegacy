@@ -113,6 +113,11 @@ extern vmCvar_t cl_bypassMouseInput;
 #define MAX_MENUDEPTH           8
 #define MAX_MENUITEMS           128
 
+/**
+ * @struct menuframework_s
+ * @typedef _tag_menuframework
+ * @brief
+ */
 typedef struct _tag_menuframework
 {
 	int cursor;
@@ -132,6 +137,10 @@ typedef struct _tag_menuframework
 
 } menuframework_s;
 
+/**
+ * @struct menucommon_s
+ * @brief
+ */
 typedef struct
 {
 	int type;
@@ -151,6 +160,10 @@ typedef struct
 	void (*ownerdraw)(void *self);
 } menucommon_s;
 
+/**
+ * @struct mfield_t
+ * @brief
+ */
 typedef struct
 {
 	int cursor;
@@ -160,12 +173,20 @@ typedef struct
 	int maxchars;
 } mfield_t;
 
+/**
+ * @struct menufield_s
+ * @brief
+ */
 typedef struct
 {
 	menucommon_s generic;
 	mfield_t field;
 } menufield_s;
 
+/**
+ * @struct menuslider_s
+ * @brief
+ */
 typedef struct
 {
 	menucommon_s generic;
@@ -177,6 +198,10 @@ typedef struct
 	float range;
 } menuslider_s;
 
+/**
+ * @struct menulist_s
+ * @brief
+ */
 typedef struct
 {
 	menucommon_s generic;
@@ -194,17 +219,29 @@ typedef struct
 	int seperation;
 } menulist_s;
 
+/**
+ * @struct menuaction_s
+ * @brief
+ */
 typedef struct
 {
 	menucommon_s generic;
 } menuaction_s;
 
+/**
+ * @struct menuradiobutton_s
+ * @brief
+ */
 typedef struct
 {
 	menucommon_s generic;
 	int curvalue;
 } menuradiobutton_s;
 
+/**
+ * @struct menubitmap_s
+ * @brief
+ */
 typedef struct
 {
 	menucommon_s generic;
@@ -217,6 +254,10 @@ typedef struct
 	float *focuscolor;
 } menubitmap_s;
 
+/**
+ * @struct menutext_s
+ * @brief
+ */
 typedef struct
 {
 	menucommon_s generic;
@@ -253,8 +294,8 @@ extern vec4_t text_color_disabled;
 extern vec4_t text_color_normal;
 extern vec4_t text_color_highlight;
 
-extern menuDef_t Menus[MAX_MENUS];      // defined menus
-extern int       menuCount;         // how many
+extern menuDef_t Menus[MAX_MENUS];      ///< defined menus
+extern int       menuCount;             ///< how many menus
 
 extern menuDef_t *modalMenuStack[MAX_MODAL_MENUS];
 extern int       modalMenuCount;
@@ -345,6 +386,11 @@ extern void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack);
 #define SCROLL_TIME_ADJUSTOFFSET    40
 #define SCROLL_TIME_FLOOR           20
 
+/**
+ * @struct scrollInfo_t
+ * @typedef scrollInfo_s
+ * @brief
+ */
 typedef struct scrollInfo_s
 {
 	int nextScrollTime;
@@ -359,6 +405,10 @@ typedef struct scrollInfo_s
 
 extern scrollInfo_t scrollInfo;
 
+/**
+ * @struct characterInfo
+ * @brief
+ */
 typedef struct
 {
 	const char *name;
@@ -367,6 +417,10 @@ typedef struct
 	qboolean female;
 } characterInfo;
 
+/**
+ * @struct aliasInfo
+ * @brief
+ */
 typedef struct
 {
 	const char *name;
@@ -374,6 +428,10 @@ typedef struct
 	const char *action;
 } aliasInfo;
 
+/**
+ * @struct teamInfo
+ * @brief
+ */
 typedef struct
 {
 	const char *teamName;
@@ -385,6 +443,10 @@ typedef struct
 	int cinematic;
 } teamInfo;
 
+/**
+ * @struct gameTypeInfo
+ * @brief
+ */
 typedef struct
 {
 	const char *gameType;
@@ -393,18 +455,32 @@ typedef struct
 	const char *gameTypeDescription;
 } gameTypeInfo;
 
+/**
+ * @struct profileInfo_t
+ * @brief
+ */
 typedef struct
 {
 	const char *name;
 	const char *dir;
 } profileInfo_t;
 
+/**
+ * @struct serverFilter_s
+ * @typedef serverFilter_s
+ * @brief
+ */
 typedef struct serverFilter_s
 {
 	const char *description;
 	const char *basedir;
 } serverFilter_t;
 
+/**
+ * @struct serverStatus_t
+ * @typedef serverStatus_s
+ * @brief
+ */
 typedef struct serverStatus_s
 {
 	int refreshtime;
@@ -427,6 +503,10 @@ typedef struct serverStatus_s
 	char motd[MAX_STRING_CHARS];
 } serverStatus_t;
 
+/**
+ * @struct pendingServer_t
+ * @brief
+ */
 typedef struct
 {
 	char adrstr[MAX_ADDRESSLENGTH];
@@ -436,12 +516,20 @@ typedef struct
 	qboolean valid;
 } pendingServer_t;
 
+/**
+ * @struct pendingServerStatus_t
+ * @brief
+ */
 typedef struct
 {
 	int num;
 	pendingServer_t server[MAX_SERVERSTATUSREQUESTS];
 } pendingServerStatus_t;
 
+/**
+ * @struct serverStatusInfo_t
+ * @brief
+ */
 typedef struct
 {
 	char address[MAX_ADDRESSLENGTH];
@@ -451,20 +539,30 @@ typedef struct
 	int numLines;
 } serverStatusInfo_t;
 
+/**
+ * @struct modInfo_t
+ * @brief
+ */
 typedef struct
 {
 	const char *modName;
 	const char *modDescr;
 } modInfo_t;
 
+/**
+ * @struct uiInfo_t
+ * @brief
+ *
+ * @todo Cleanup
+ */
 typedef struct
 {
 	displayContextDef_t uiDC;
-	int newHighScoreTime; // FIXME: remove
-	int newBestTime; // FIXME: remove
-	qboolean newHighScore; // FIXME: remove
-	qboolean demoAvailable; // FIXME: remove?
-	qboolean soundHighScore; // FIXME: remove
+	int newHighScoreTime;       ///< FIXME: remove
+	int newBestTime;            ///< FIXME: remove
+	qboolean newHighScore;      ///< FIXME: remove
+	qboolean demoAvailable;     ///< FIXME: remove?
+	qboolean soundHighScore;    ///< FIXME: remove
 
 	int legacyClient;
 
@@ -606,7 +704,7 @@ extern char *UI_Cvar_VariableString(const char *var_name);
 extern void UI_Refresh(int time);
 extern void UI_KeyEvent(int key);
 
-/* unused
+/* TODO: unused
 extern void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color);
 extern float UI_ProportionalSizeScale(int style);
 extern void UI_DrawProportionalString(int x, int y, const char *str, int style, vec4_t color);
@@ -734,7 +832,7 @@ const char *trap_TranslateString(const char *string); // localization
 const char *UI_DescriptionForCampaign(void);
 const char *UI_NameForCampaign(void);
 
-// 4:3 aspectratio is the default for this game engine..
+/// 4:3 aspectratio is the default for this game engine..
 #define RATIO43     (4.0f / 3.0f)
 #define RPRATIO43   (1 / RATIO43)
 

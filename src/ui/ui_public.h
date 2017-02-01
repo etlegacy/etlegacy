@@ -36,6 +36,10 @@
 
 #define UI_API_VERSION  4
 
+/**
+ * @struct uiClientState_t
+ * @brief
+ */
 typedef struct
 {
 	connstate_t connState;
@@ -46,6 +50,10 @@ typedef struct
 	char messageString[MAX_STRING_CHARS];
 } uiClientState_t;
 
+/**
+ * @enum uiImport_t
+ * @brief
+ */
 typedef enum
 {
 	UI_ERROR,
@@ -87,7 +95,7 @@ typedef enum
 	UI_R_DRAW2DPOLYS,
 	UI_R_DRAWSTRETCHPIC,
 	UI_R_DRAWROTATEDPIC,
-	UI_UPDATESCREEN,        // 30
+	UI_UPDATESCREEN,                        ///< 30
 	UI_CM_LERPTAG,
 	UI_CM_LOADMODEL,
 	UI_S_REGISTERSOUND,
@@ -110,7 +118,7 @@ typedef enum
 	UI_GETCONFIGSTRING,
 	UI_LAN_GETLOCALSERVERCOUNT,
 	UI_LAN_GETLOCALSERVERADDRESSSTRING,
-	UI_LAN_GETGLOBALSERVERCOUNT,        // 50
+	UI_LAN_GETGLOBALSERVERCOUNT,            ///< 50
 	UI_LAN_GETGLOBALSERVERADDRESSSTRING,
 	UI_LAN_GETPINGQUEUECOUNT,
 	UI_LAN_CLEARPING,
@@ -120,8 +128,8 @@ typedef enum
 	UI_CVAR_UPDATE,
 	UI_MEMORY_REMAINING,
 
-	UI_GET_CDKEY, /* do not remove */
-	UI_SET_CDKEY, /* do not remove */
+	UI_GET_CDKEY,                           ///< do not remove
+	UI_SET_CDKEY,                           ///< do not remove
 	UI_R_REGISTERFONT,
 	UI_R_MODELBOUNDS,
 	UI_PC_ADD_GLOBAL_DEFINE,
@@ -150,7 +158,7 @@ typedef enum
 	UI_CIN_DRAWCINEMATIC,
 	UI_CIN_SETEXTENTS,
 	UI_R_REMAP_SHADER,
-	UI_VERIFY_CDKEY, /* do not remove */
+	UI_VERIFY_CDKEY,                        ///< do not remove
 	UI_LAN_SERVERSTATUS,
 	UI_LAN_GETSERVERPING,
 	UI_LAN_SERVERISVISIBLE,
@@ -186,43 +194,47 @@ typedef enum
 #define SORT_FILTERS        5
 #define SORT_FAVOURITES     6
 
+/**
+ * @enum uiExport_t
+ * @brief
+ */
 typedef enum
 {
-	UI_GETAPIVERSION = 0,   // system reserved
+	UI_GETAPIVERSION = 0,   ///< system reserved
 
 	UI_INIT,
-	// void	UI_Init( void );
+	///</< void	UI_Init( void );
 
 	UI_SHUTDOWN,
-	// void	UI_Shutdown( void );
+	///< void	UI_Shutdown( void );
 
 	UI_KEY_EVENT,
-	// void	UI_KeyEvent( int key );
+	///< void	UI_KeyEvent( int key );
 
 	UI_MOUSE_EVENT,
-	// void	UI_MouseEvent( int dx, int dy );
+	///< void	UI_MouseEvent( int dx, int dy );
 
 	UI_REFRESH,
-	// void	UI_Refresh( int time );
+	///< void	UI_Refresh( int time );
 
 	UI_IS_FULLSCREEN,
-	// qboolean UI_IsFullscreen( void );
+	///< qboolean UI_IsFullscreen( void );
 
 	UI_SET_ACTIVE_MENU,
-	// void	UI_SetActiveMenu( uiMenuCommand_t menu );
+	///< void	UI_SetActiveMenu( uiMenuCommand_t menu );
 
 	UI_GET_ACTIVE_MENU,
-	// void	UI_GetActiveMenu( void );
+	///< void	UI_GetActiveMenu( void );
 
 	UI_CONSOLE_COMMAND,
-	// qboolean UI_ConsoleCommand( void );
+	///< qboolean UI_ConsoleCommand( void );
 
 	UI_DRAW_CONNECT_SCREEN,
-	// void	UI_DrawConnectScreen( qboolean overlay );
-	UI_HASUNIQUECDKEY, /* do not remove */
-	// if !overlay, the background will be drawn, otherwise it will be
-	// overlayed over whatever the cgame has drawn.
-	// a GetClientState syscall will be made to get the current strings
+	///< void	UI_DrawConnectScreen( qboolean overlay );
+	UI_HASUNIQUECDKEY, ///< do not remove
+	///< if !overlay, the background will be drawn, otherwise it will be
+	///< overlayed over whatever the cgame has drawn.
+	///< a GetClientState syscall will be made to get the current strings
 	UI_CHECKEXECKEY,
 
 	UI_WANTSBINDKEYS,
