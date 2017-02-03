@@ -294,8 +294,8 @@ void Tess_AddQuadStamp2(vec4_t quadVerts[4], const vec4_t color)
 
 /**
  * @brief Tess_AddQuadStamp2WithNormals
- * @param(in] quadVerts
- * @param(in] color
+ * @param[in] quadVerts
+ * @param[in] color
  */
 void Tess_AddQuadStamp2WithNormals(vec4_t quadVerts[4], const vec4_t color)
 {

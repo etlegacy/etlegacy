@@ -76,7 +76,8 @@ typedef struct
 } vote_reference_t;
 
 /**
- * @var VC optimizes for dup strings :)
+ * @var aVoteInfo
+ * @brief VC optimizes for dup strings :)
  */
 static const vote_reference_t aVoteInfo[] =
 {

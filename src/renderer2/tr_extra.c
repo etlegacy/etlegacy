@@ -229,7 +229,7 @@ void PlaneIntersectRay(const vec3_t rayPos, const vec3_t rayDir, const vec4_t pl
 
 /**
  * @brief MatrixOrthogonalProjectionRH
- * @param(out] m
+ * @param[out] m
  * @param[in] left
  * @param[in] right
  * @param[in] bottom

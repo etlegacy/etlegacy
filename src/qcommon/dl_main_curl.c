@@ -48,7 +48,8 @@
 #define GET_BUFFER_SIZE 1024 * 256
 
 /**
- * @var Initialize once
+ * @var dl_initialized
+ * @brief Initialize once
  */
 static int dl_initialized = 0;
 
@@ -57,7 +58,7 @@ static CURL  *dl_request = NULL;
 static FILE  *dl_file    = NULL;
 
 /**
- * @struct write_result_t
+ * @struct write_result_s
  */
 typedef struct write_result_s
 {

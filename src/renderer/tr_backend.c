@@ -123,8 +123,6 @@ void GL_SelectTexture(int unit)
  * @param env1 - unused
  *
  * @note Unused
- */
-/*
 void GL_BindMultitexture(image_t *image0, GLuint env0, image_t *image1, GLuint env1)
 {
     int texnum0 = image0->texnum;
@@ -1391,8 +1389,6 @@ void RB_ShowImages(void)
  * @param[in,out] maxs
  *
  * @note Unused.
- */
-/*
 void RB_DrawBounds(vec3_t mins, vec3_t maxs)
 {
     vec3_t center;

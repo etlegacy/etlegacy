@@ -36,30 +36,26 @@
 
 #include "tr_local.h"
 
-/**
+/*
  * @brief CompareBoneIndices
  * @param[in] a
  * @param[in] b
  * @return
  *
  * @note Unused
- */
-/*
 static int CompareBoneIndices(const void *a, const void *b)
 {
         return *(int *)a - *(int *)b;
 }
 */
 
-/**
+/*
  * @brief CompareTrianglesByBoneReferences
  * @param[in] a
  * @param[in] b
  * @return
  *
  * @note Unused
- */
-/*
 static int CompareTrianglesByBoneReferences(const void *a, const void *b)
 {
         int             i, j;

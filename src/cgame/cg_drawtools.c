@@ -108,7 +108,7 @@ void CG_FillRect(float x, float y, float width, float height, const float *color
 	trap_R_SetColor(NULL);
 }
 
-/**
+/*
  * @brief CG_FillRectGradient
  * @param x
  * @param y
@@ -117,7 +117,7 @@ void CG_FillRect(float x, float y, float width, float height, const float *color
  * @param color
  * @param gradcolor
  * @param gradientType
- * @note unused
+ * @note Unused
 void CG_FillRectGradient(float x, float y, float width, float height, const float *color, const float *gradcolor, int gradientType)
 {
     trap_R_SetColor(color);
@@ -694,7 +694,7 @@ const char *CG_TranslateString(const char *string)
 	return buf;
 }
 
-/**
+/*
  * @note Unused.
  *
 static int propMap[128][3] =
@@ -809,7 +809,7 @@ static int propMap[128][3] =
 };
 */
 
-/**
+/*
  * @note Unused.
  *
 static int propMapB[26][3] =
@@ -850,7 +850,7 @@ static int propMapB[26][3] =
 #define PROPB_HEIGHT        36
 */
 
-/**
+/*
  * @brief UI_DrawBannerString2
  * @note Unused.
  *
@@ -896,7 +896,7 @@ static void UI_DrawBannerString2(int x, int y, const char *str, vec4_t color)
 }
 */
 
-/**
+/*
  * @brief UI_DrawBannerString
  * @note Unused.
  *
@@ -949,7 +949,7 @@ void UI_DrawBannerString(int x, int y, const char *str, int style, vec4_t color)
 }
 */
 
-/**
+/*
  * @brief UI_ProportionalStringWidth
  * @note Unused.
  *
@@ -977,7 +977,7 @@ int UI_ProportionalStringWidth(const char *str)
 }
 */
 
-/**
+/*
  * @brief UI_DrawProportionalString2
  * @note Unused.
  *
@@ -1027,7 +1027,7 @@ static void UI_DrawProportionalString2(int x, int y, const char *str, vec4_t col
 }
 */
 
-/**
+/*
  * @brief UI_ProportionalSizeScale
  * @note Unused.
  *
@@ -1046,7 +1046,7 @@ float UI_ProportionalSizeScale(int style)
 }
 */
 
-/**
+/*
  * @brief UI_DrawProportionalString
  * @note Unused.
  *

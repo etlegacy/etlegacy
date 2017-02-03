@@ -389,7 +389,7 @@ void Cmd_Echo_f(void)
 */
 
 /**
- * @struct cmd_function_t
+ * @struct cmd_function_s
  */
 typedef struct cmd_function_s
 {
@@ -721,7 +721,7 @@ void Cmd_TokenizeString(const char *text_in)
 
 /**
  * @brief Cmd_TokenizeStringIgnoreQuotes
- * @param[in]s text_in
+ * @param[in] text_in
  */
 void Cmd_TokenizeStringIgnoreQuotes(const char *text_in)
 {

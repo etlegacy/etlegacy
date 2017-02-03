@@ -364,14 +364,12 @@ static int RB_CalcMDMLodIndex(refEntity_t *ent, vec3_t origin, float radius, flo
 	return lod;
 }
 
-/**
+/*
  * @brief R_ComputeFogNum
  * @param[in] ent
  * @return
  *
  * @note Unused
- */
-/*
 static int R_ComputeFogNum(trRefEntity_t * ent)
 {
     int             i, j;
@@ -812,7 +810,7 @@ static ID_INLINE void LocalAngleVector(vec3_t angles, vec3_t forward)
 }
 #endif
 
-/**
+/*
  * @brief LocalVectorMA
  * @param[in] org
  * @param[in] dist
@@ -820,8 +818,6 @@ static ID_INLINE void LocalAngleVector(vec3_t angles, vec3_t forward)
  * @param[out] out
  *
  * @note Unused
- */
-/*
 static ID_INLINE void LocalVectorMA(vec3_t org, float dist, vec3_t vec, vec3_t out)
 {
     out[0] = org[0] + dist * vec[0];
@@ -912,15 +908,13 @@ static void InglesToAxis(int ingles[3], vec3_t axis[3])
 ===============================================================================
 */
 
-/**
+/*
  * @brief Matrix4Multiply
  * @param[in] a
  * @param[in] b
  * @param[out] dst
  *
  * @note Unused
- */
-/*
 static ID_INLINE void Matrix4Multiply(const vec4_t a[4], const vec4_t b[4], vec4_t dst[4])
 {
     dst[0][0] = a[0][0] * b[0][0] + a[0][1] * b[1][0] + a[0][2] * b[2][0] + a[0][3] * b[3][0];

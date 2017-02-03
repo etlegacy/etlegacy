@@ -533,7 +533,7 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
 	//		ent->lightDir[ 0 ], ent->lightDir[ 1 ], ent->lightDir[ 2 ] );
 }
 
-/**
+/*
  * @brief R_LightForPoint
  * @param[in] point
  * @param[out] ambientLight
@@ -542,8 +542,6 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent)
  * @return
  *
  * @note Unused
- */
-/*
 int R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir)
 {
     trRefEntity_t ent;

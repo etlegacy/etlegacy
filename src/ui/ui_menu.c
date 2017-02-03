@@ -149,13 +149,11 @@ void Menu_Init(menuDef_t *menu)
 	Window_Init(&menu->window);
 }
 
-/**
+/*
  * @brief Menu_GetFocusedItem
  * @param menu
  * @return
  * @note Unused
- */
-/*
 itemDef_t *Menu_GetFocusedItem(menuDef_t *menu)
 {
     if (menu)
@@ -764,15 +762,13 @@ void Menus_CloseAll(void)
 	}
 }
 
-/**
+/*
  * @brief Menu_HitTest
  * @param[in] menu
  * @param[in] x
  * @param[in] y
  * @return
  * @note Unused
- */
-/*
 itemDef_t *Menu_HitTest(menuDef_t *menu, float x, float y)
 {
     int i;

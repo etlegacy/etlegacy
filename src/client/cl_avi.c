@@ -135,13 +135,11 @@ static ID_INLINE void WRITE_2BYTES(int x)
 	bufIndex            += 2;
 }
 
-/**
+/*
  * @brief WRITE_1BYTES
  * @param[in] x
  *
  * @note Unused
- */
-/*
 static ID_INLINE void WRITE_1BYTES(int x)
 {
     buffer[bufIndex] = x;

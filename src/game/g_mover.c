@@ -94,7 +94,7 @@ const char *hintStrings[HINT_NUM_HINTS] =
 	"",                         // HINT_BAD_USER
 };
 
-/**
+/*
 ===============================================================================
 PUSHMOVE
 ===============================================================================
@@ -204,14 +204,12 @@ gentity_t *G_TestEntityPosition(gentity_t *ent)
 	return NULL;
 }
 
-/**
+/*
  * @brief G_TestEntityDropToFloor
  * @param[in,out] ent
  * @param[in] maxdrop
  *
  * @note Unused
- */
-/*
 void G_TestEntityDropToFloor(gentity_t *ent, float maxdrop)
 {
     trace_t tr;
@@ -253,12 +251,10 @@ void G_TestEntityDropToFloor(gentity_t *ent, float maxdrop)
 }
 */
 
-/**
+/*
  * @brief G_TestEntityMoveTowardsPos
  * @param[in,out] ent
  * @param[in] pos
- */
-/*
 void G_TestEntityMoveTowardsPos(gentity_t *ent, vec3_t pos)
 {
     trace_t tr;
@@ -853,7 +849,7 @@ void G_RunMover(gentity_t *ent)
 	G_RunThink(ent);
 }
 
-/**
+/*
 ============================================================================
 GENERAL MOVERS
 
@@ -2415,7 +2411,7 @@ void G_TryDoor(gentity_t *ent, gentity_t *other, gentity_t *activator)
  *      7 - wood (quiet)
  *
  * SOUND NAMING INFO -
- * inside "sound/movers/doors/door<number>...
+ * inside "sound/movers/doors/door\<number\>...
  *     _open.wav       // opening
  *     _endo.wav       // open
  *     _close.wav      // closing
@@ -2681,7 +2677,7 @@ void SP_func_secret(gentity_t *ent)
 	ent->think     = finishSpawningKeyedMover;
 }
 
-/**
+/*
 ===============================================================================
 PLAT
 ===============================================================================
@@ -2831,7 +2827,7 @@ void SP_func_plat(gentity_t *ent)
 	}
 }
 
-/**
+/*
 ===============================================================================
 BUTTON
 ===============================================================================
@@ -2924,20 +2920,16 @@ void SP_func_button(gentity_t *ent)
 	InitMover(ent);
 }
 
-/**
+/*
 ===============================================================================
 TRAIN
 ===============================================================================
 */
 
-/**
- * @note Unused
- */
 //#define TRAIN_START_ON      1
-/**
- * @note Unused
- */
+
 //#define TRAIN_TOGGLE        2
+
 #define TRAIN_BLOCK_STOPS   4
 
 /**
@@ -3615,7 +3607,7 @@ void SP_func_train_rotating(gentity_t *self)
 	self->think     = Think_SetupTrainTargets_rotating;
 }
 
-/**
+/*
 ===============================================================================
 STATIC
 ===============================================================================
@@ -3697,7 +3689,7 @@ void G_BlockThink(gentity_t *ent)
 /**
  * @brief SP_func_leaky
  *
- * @param QUAKED func_leaky (0 .5 .8) ?
+ * @details QUAKED func_leaky (0 .5 .8) ?
  * "type" - leaks particles of this type
  *
  * 1:oil
@@ -3808,7 +3800,7 @@ void SP_func_static(gentity_t *ent)
 	}
 }
 
-/**
+/*
 ===============================================================================
 ROTATING
 ===============================================================================
@@ -3908,14 +3900,14 @@ void SP_func_rotating(gentity_t *ent)
 	}
 }
 
-/**
+/*
 ===============================================================================
 BOBBING
 ===============================================================================
 */
 
 /**
- * @brief
+ * @brief SP_func_bobbing
  *
  * @details QUAKED func_bobbing (0 .5 .8) ? X_AXIS Y_AXIS
  * Normally bobs on the Z axis
@@ -3964,7 +3956,7 @@ void SP_func_bobbing(gentity_t *ent)
 	}
 }
 
-/**
+/*
 ===============================================================================
 PENDULUM
 ===============================================================================

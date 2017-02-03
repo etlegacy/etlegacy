@@ -60,8 +60,8 @@
 #include "tr_local.h"
 
 /**
- * @struct flare_t
- * @typedef flare_s
+ * @struct flare_s
+ * @typedef flare_t
  * @brief Flare states maintain visibility over multiple frames for fading layers: view, mirror, menu
  */
 typedef struct flare_s

@@ -45,8 +45,8 @@
 // renderer2 END
 
 #define MAX_CORONAS         64          ///< not really a reason to limit this other than trying to keep a reasonable count
-///< increased from 32 to 64 for ETL
-///< mods compiling against vanilla engine don't use it and/or use the lower value which doesn't affect us
+                                        ///< increased from 32 to 64 for ETL
+                                        ///< mods compiling against vanilla engine don't use it and/or use the lower value which doesn't affect us
 #define MAX_DLIGHTS         32          ///< can't be increased, because bit flags are used on surfaces
 #define MAX_ENTITIES        1023        ///< can't be increased without changing drawsurf bit packing - keep this for the mod
 
@@ -58,12 +58,12 @@
 #define RF_NOSHADOW         0x000010    ///< don't add stencil shadows
 
 #define RF_LIGHTING_ORIGIN  0x000020    ///< use refEntity->lightingOrigin instead of refEntity->origin
-///< for lighting.  This allows entities to sink into the floor
-///< with their origin going solid, and allows all parts of a
-///< player to get the same lighting
+                                        ///< for lighting.  This allows entities to sink into the floor
+                                        ///< with their origin going solid, and allows all parts of a
+                                        ///< player to get the same lighting
 #define RF_SHADOW_PLANE     0x0100      ///< use refEntity->shadowPlane  0x000040
 #define RF_WRAP_FRAMES      0x0200      ///< mod the model frames by the maxframes to allow continuous  0x000080
-///< animation without needing to know the frame count
+                                        ///< animation without needing to know the frame count
 #define RF_HILIGHT          0x000100    ///< more than RF_MINLIGHT.  For when an object is "Highlighted" (looked at/training identification/etc)
 #define RF_BLINK            0x000200    ///< eyes in 'blink' state
 #define RF_FORCENOLOD       0x000400
@@ -98,8 +98,8 @@ typedef struct
 } polyVert_t;
 
 /**
- * @struct poly_t
- * @typedef poly_s
+ * @struct poly_s
+ * @typedef poly_t
  * @brief
  */
 typedef struct poly_s
@@ -495,8 +495,8 @@ typedef enum
 } windowContextType_t;
 
 /**
- * @struct windowContext_t
- * @typedef windowContext_s
+ * @struct windowContext_s
+ * @typedef windowContext_t
  * @brief
  */
 typedef struct windowContext_s
@@ -512,8 +512,8 @@ typedef struct windowContext_s
 #define MAX_PB_INDICIES (MAX_PB_VERTS * 6)
 
 /**
- * @struct polyBuffer_t
- * @typedef polyBuffer_s
+ * @struct polyBuffer_s
+ * @typedef polyBuffer_t
  * @brief
  */
 typedef struct polyBuffer_s

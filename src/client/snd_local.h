@@ -48,7 +48,7 @@
 #define SND_CHUNK_SIZE_BYTE     (SND_CHUNK_SIZE * 2)    ///< floats
 
 /**
- * @struct portable_samplepair_t
+ * @struct portable_samplepair_s
  * @brief
  */
 typedef struct
@@ -58,8 +58,8 @@ typedef struct
 } portable_samplepair_t;
 
 /**
- * @struct adpcm_state_t
- * @typedef adpcm_state
+ * @struct adpcm_state
+ * @typedef adpcm_state_t
  * @brief
  */
 typedef struct adpcm_state
@@ -69,8 +69,8 @@ typedef struct adpcm_state
 } adpcm_state_t;
 
 /**
- * @struct sndBuffer
- * @typedef sndBuffer_s
+ * @struct sndBuffer_s
+ * @typedef sndBuffer
  * @brief
  */
 typedef struct sndBuffer_s
@@ -82,8 +82,8 @@ typedef struct sndBuffer_s
 } sndBuffer;
 
 /**
- * @struct sfx_t
- * @typedef sfx_s
+ * @struct sfx_s
+ * @typedef sfx_t
  * @brief
  */
 typedef struct sfx_s
@@ -101,7 +101,7 @@ typedef struct sfx_s
 } sfx_t;
 
 /**
- * @struct dma_t
+ * @struct dma_s
  * @brief
  */
 typedef struct
@@ -119,8 +119,8 @@ typedef struct
 #define MAX_DOPPLER_SCALE 50.0f ///< arbitrary
 
 /**
- * @struct loopSound_t
- * @typedef loopSound_s
+ * @struct loopSound_s
+ * @typedef loopSound_t
  * @brief
  */
 typedef struct loopSound_s
@@ -143,7 +143,7 @@ typedef struct loopSound_s
 } loopSound_t;
 
 /**
- * @struct channel_t
+ * @struct channel_s
  * @brief
  */
 typedef struct
@@ -167,7 +167,7 @@ typedef struct
 #define WAV_FORMAT_PCM      1
 
 /**
- * @struct wavinfo_t
+ * @struct wavinfo_s
  * @brief
  */
 typedef struct
@@ -181,7 +181,7 @@ typedef struct
 } wavinfo_t;
 
 /**
- * @struct soundInterface_t
+ * @struct soundInterface_s
  * @brief Interface between Q3 sound "api" and the sound backend
  */
 typedef struct
@@ -335,7 +335,7 @@ qboolean S_Base_Init(soundInterface_t *si);
 #ifdef FEATURE_OPENAL
 
 /**
- * @enum alSrcPriority_t
+ * @enum alSrcPriority_e
  * @brief OpenAL stuff
  */
 typedef enum

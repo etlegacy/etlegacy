@@ -35,15 +35,13 @@
 
 #include "tr_local.h"
 
-/**
+/*
  * @brief Returns true if the grid is completely culled away.
  * Also sets the clipped hint bit in tess
  * @param[in] cv
  * @return
  *
  * @note Unused
- */
-/*
 static qboolean R_CullTriSurf(srfTriangles_t * cv)
 {
     int             boxCull;
@@ -58,15 +56,13 @@ static qboolean R_CullTriSurf(srfTriangles_t * cv)
 }
 */
 
-/**
+/*
  * @brief Returns true if the grid is completely culled away.
  * Also sets the clipped hint bit in tess
  * @param cv
  * @return
  *
  * @note Unused
- */
-/*
 static qboolean R_CullGrid(srfGridMesh_t * cv)
 {
     int             boxCull;
@@ -1463,14 +1459,12 @@ static qboolean InsideViewFrustum(bspNode_t *node, int planeBits)
 
 //#define DEBUG_CHC 1
 
-/**
+/*
  * @brief DrawNode_r
  * @param[in,out] node
  * @param[in] planeBits
  *
  * @note Unused
- */
-/*
 static void DrawNode_r(bspNode_t *node, int planeBits)
 {
     do
@@ -1820,14 +1814,12 @@ static void PullUpVisibility(bspNode_t *node)
 	}
 }
 
-/**
+/*
  * @brief PushNode
  * @param[in,out] traversalStack
  * @param[in] node
  *
  * @note Unused
- */
-/*
 static void PushNode(link_t * traversalStack, bspNode_t * node)
 {
     if(node->contents != -1)

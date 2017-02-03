@@ -121,7 +121,7 @@ int Sys_Milliseconds(void)
 
 /**
  * @brief Sys_SnapVector
- * @param[in,out=] v
+ * @param[in,out] v
  */
 void Sys_SnapVector(float *v)
 {

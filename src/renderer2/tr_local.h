@@ -126,8 +126,8 @@ typedef enum
 } cullResult_t;
 
 /**
- * @struct screenRect_t
- * @typedef screenRect_s
+ * @struct screenRect_s
+ * @typedef screenRect_t
  * @brief
  */
 typedef struct screenRect_s
@@ -166,8 +166,8 @@ enum
 };
 
 /**
- * @struct link_t
- * @typedef link_s
+ * @struct link_s
+ * @typedef link_t
  * @brief
  */
 typedef struct link_s
@@ -210,14 +210,12 @@ static ID_INLINE void RemoveLink(link_t *l)
 	l->prev = l->next = NULL;
 }
 
-/**
+/*
  * @brief InsertLinkBefore
  * @param[in,out] l
  * @param[in] sentinel
  *
  * @note Unused
- */
-/*
 static ID_INLINE void InsertLinkBefore(link_t *l, link_t *sentinel)
 {
     l->next = sentinel;
@@ -358,14 +356,12 @@ static ID_INLINE void EnQueue(link_t *sentinel, void *data)
 	sentinel->numElements++;
 }
 
-/**
+/*
  * @brief EnQueue2
  * @param[in,out] sentinel
  * @param[in] data
  *
  * @note Unused
- */
-/*
 static ID_INLINE void EnQueue2(link_t *sentinel, void *data, void *(*mallocFunc)(size_t __size))
 {
     link_t *l;
@@ -419,8 +415,8 @@ static ID_INLINE link_t *QueueFront(link_t *l)
 }
 
 /**
- * @struct trRefLight_t
- * @typedef trRefLight_s
+ * @struct trRefLight_s
+ * @typedef trRefLight_t
  * @brief A trRefLight_t has all the information passed in by
  * the client game, as well as some locally derived info
  */
@@ -500,7 +496,7 @@ typedef struct trRefLight_s
 } trRefLight_t;
 
 /**
- * @struct trRefEntity_t
+ * @struct trRefEntity_s
  * @brief a trRefEntity_t has all the information passed in by
  * the client game, as well as some locally derived info
  */
@@ -544,8 +540,8 @@ typedef struct
 } orientationr_t;
 
 /**
- * @struct vertexHash_t
- * @typedef vertexHash_s
+ * @struct vertexHash_s
+ * @typedef vertexHash_t
  * @brief Useful helper struct
  */
 typedef struct vertexHash_s
@@ -556,9 +552,6 @@ typedef struct vertexHash_s
 	struct vertexHash_s *next;
 } vertexHash_t;
 
-/**
- * @enum
- */
 enum
 {
 	IF_NONE,
@@ -594,6 +587,10 @@ typedef enum
 	FT_NEAREST
 } filterType_t;
 
+/**
+ * @struct wrapType_t
+ * @brief
+ */
 typedef enum
 {
 	WT_REPEAT,
@@ -604,8 +601,8 @@ typedef enum
 } wrapType_t;
 
 /**
- * @struct image_t
- * @typedef image_s
+ * @struct image_s
+ * @typedef image_t
  * @brief
  */
 typedef struct image_s
@@ -632,8 +629,8 @@ typedef struct image_s
 } image_t;
 
 /**
- * @struct BufferImage_t
- * @typedef BufferImage_s
+ * @struct BufferImage_s
+ * @typedef BufferImage_t
  * @brief
  *
  * @todo TODO: add this to the framebuffer structure
@@ -658,8 +655,8 @@ typedef enum
 } BuffetType_t;
 
 /**
- * @struct FBO_t
- * @typedef FBO_s
+ * @struct FBO_s
+ * @typedef FBO_t
  * @brief
  */
 typedef struct FBO_s
@@ -690,8 +687,8 @@ typedef enum
 } vboUsage_t;
 
 /**
- * @struct VBO_t
- * @typedef VBO_s
+ * @struct VBO_s
+ * @typedef VBO_t
  * @brief
  */
 typedef struct VBO_s
@@ -722,8 +719,8 @@ typedef struct VBO_s
 } VBO_t;
 
 /**
- * @struct IBO_t
- * @typedef IBO_s
+ * @struct IBO_s
+ * @typedef IBO_t
  * @brief
  */
 typedef struct IBO_s
@@ -782,8 +779,8 @@ typedef enum
 } shaderSort_t;
 
 /**
- * @struct shaderTable_t
- * @typedef shaderTable_s
+ * @struct shaderTable_s
+ * @typedef shaderTable_t
  * @brief
  */
 typedef struct shaderTable_s
@@ -1144,10 +1141,6 @@ typedef struct
 
 #define MAX_IMAGE_ANIMATIONS    16
 
-/**
- * @enum
- * @brief
- */
 enum
 {
 	TB_COLORMAP   = 0,
@@ -1266,8 +1259,8 @@ typedef enum
 } stencilShift_t;
 
 /**
- * @struct stencil_t
- * @typedef stencil_s
+ * @struct stencil_s
+ * @typedef stencil_t
  * @brief Shifts
  */
 typedef struct stencil_s
@@ -1416,8 +1409,8 @@ typedef enum
 } shaderType_t;
 
 /**
- * @struct shader_t
- * @typedef shader_s
+ * @struct shader_s
+ * @typedef shader_t
  * @brief
  */
 typedef struct shader_s
@@ -1739,8 +1732,8 @@ typedef enum
 } texture_def_t;
 
 /**
- * @struct shaderProgram_t
- * @typedef shaderProgram_s
+ * @struct shaderProgram_s
+ * @typedef shaderProgram_t
  * @brief shaderProgram_t represents a pair of one
  * GLSL vertex and one GLSL fragment shader
  */
@@ -1766,8 +1759,8 @@ typedef struct shaderProgram_s
 } shaderProgram_t;
 
 /**
- * @struct shaderProgramList_t
- * @typedef shaderProgramList_s
+ * @struct shaderProgramList_s
+ * @typedef shaderProgramList_t
  * @brief
  */
 typedef struct shaderProgramList_s
@@ -1782,8 +1775,8 @@ typedef struct shaderProgramList_s
 } shaderProgramList_t;
 
 /**
- * @struct uniformInfo_t
- * @typedef uniformInfo_s
+ * @struct uniformInfo_s
+ * @typedef uniformInfo_t
  * @brief
  */
 typedef struct uniformInfo_s
@@ -1793,8 +1786,8 @@ typedef struct uniformInfo_s
 }uniformInfo_t;
 
 /**
- * @struct uniformValue_t
- * @typedef uniformValue_s
+ * @struct uniformValue_s
+ * @typedef uniformValue_t
  * @brief
  */
 typedef struct uniformValue_s
@@ -1804,8 +1797,8 @@ typedef struct uniformValue_s
 } uniformValue_t;
 
 /**
- * @struct programInfo_t
- * @typedef programInfo_s
+ * @struct programInfo_s
+ * @typedef programInfo_t
  * @brief
  */
 typedef struct programInfo_s
@@ -1834,8 +1827,8 @@ typedef struct programInfo_s
 //=================================================================================
 
 /**
- * @struct decalProjector_t
- * @typedef decalProjector_s
+ * @struct decalProjector_s
+ * @typedef decalProjector_t
  * @brief Decal projection
  */
 typedef struct decalProjector_s
@@ -1854,8 +1847,8 @@ typedef struct decalProjector_s
 } decalProjector_t;
 
 /**
- * @struct corona_t
- * @typedef corona_s
+ * @struct corona_s
+ * @typedef corona_t
  * @brief
  */
 typedef struct corona_s
@@ -1869,7 +1862,7 @@ typedef struct corona_s
 } corona_t;
 
 /**
- * @struct trRefdef_t
+ * @struct trRefdef_s
  * @brief trRefdef_t holds everything that comes in refdef_t,
  * as well as the locally generated scene information
  */
@@ -1953,8 +1946,8 @@ typedef struct
 } skinModel_t;
 
 /**
- * @struct skin_t
- * @typedef skin_s
+ * @struct skin_s
+ * @typedef skin_t
  * @brief
  */
 typedef struct skin_s
@@ -2071,8 +2064,8 @@ typedef enum
 } surfaceType_t;
 
 /**
- * @struct drawSurf_t
- * @typedef drawSurf_s
+ * @struct drawSurf_s
+ * @typedef drawSurf_t
  * @brief
  */
 typedef struct drawSurf_s
@@ -2097,8 +2090,8 @@ typedef enum
 } interactionType_t;
 
 /**
- * @struct interactionCache_t
- * @typedef interactionCache_s
+ * @struct interactionCache_s
+ * @typedef interactionCache_t
  * @brief An interactionCache is a node between a light and a precached world surface
  */
 typedef struct interactionCache_s
@@ -2115,8 +2108,8 @@ typedef struct interactionCache_s
 } interactionCache_t;
 
 /**
- * @struct interactionVBO_t
- * @typedef interactionVBO_s
+ * @struct interactionVBO_s
+ * @typedef interactionVBO_t
  * @brief
  */
 typedef struct interactionVBO_s
@@ -2133,8 +2126,8 @@ typedef struct interactionVBO_s
 } interactionVBO_t;
 
 /**
- * @struct interaction_t
- * @typedef interaction_s
+ * @struct interaction_s
+ * @typedef interaction_t
  * @brief An interaction is a node between a light and any surface
  */
 typedef struct interaction_s
@@ -2185,8 +2178,8 @@ extern shadowState_t shadowState;
 #define MAX_GRID_SIZE       65  ///< max dimensions of a grid mesh in memory
 
 /**
- * @struct srfPoly_t
- * @typedef srfPoly_s
+ * @struct srfPoly_s
+ * @typedef srfPoly_t
  * @brief When cgame directly specifies a polygon, it becomes a srfPoly_t
  * as soon as it is called
  */
@@ -2200,8 +2193,8 @@ typedef struct srfPoly_s
 } srfPoly_t;
 
 /**
- * @struct srfPolyBuffer_t
- * @typedef srfPolyBuffer_s
+ * @struct srfPolyBuffer_s
+ * @typedef srfPolyBuffer_t
  * @brief
  */
 typedef struct srfPolyBuffer_s
@@ -2217,8 +2210,8 @@ typedef struct srfPolyBuffer_s
 #define MAX_ENTITY_DECALS       128
 
 /**
- * @struct srfDecal_t
- * @typedef srfDecal_s
+ * @struct srfDecal_s
+ * @typedef srfDecal_t
  * @brief
  */
 typedef struct srfDecal_s
@@ -2230,8 +2223,8 @@ typedef struct srfDecal_s
 srfDecal_t;
 
 /**
- * @struct srfFlare_t
- * @typedef srfFlare_s
+ * @struct srfFlare_s
+ * @typedef srfFlare_t
  * @brief
  */
 typedef struct srfFlare_s
@@ -2276,8 +2269,8 @@ typedef struct
 } srfTriangle_t;
 
 /**
- * @struct srfGeneric_t
- * @typedef srfGeneric_s
+ * @struct srfGeneric_s
+ * @typedef srfGeneric_t
  * @brief Normal map drawsurfaces must match this header
  */
 typedef struct srfGeneric_s
@@ -2296,8 +2289,8 @@ typedef struct srfGeneric_s
 srfGeneric_t;
 
 /**
- * @struct srfGridMesh_t
- * @typedef srfGridMesh_s
+ * @struct srfGridMesh_s
+ * @typedef srfGridMesh_t
  * @brief
  */
 typedef struct srfGridMesh_s
@@ -2450,8 +2443,8 @@ typedef struct
 } srfFoliage_t;
 
 /**
- * @struct srfVBOMesh_t
- * @typedef srfVBOMesh_s
+ * @struct srfVBOMesh_s
+ * @typedef srfVBOMesh_t
  * @brief
  */
 typedef struct srfVBOMesh_s
@@ -2474,8 +2467,8 @@ typedef struct srfVBOMesh_s
 } srfVBOMesh_t;
 
 /**
- * @struct srfVBOMD5Mesh_t
- * @typedef srfVBOMD5Mesh_s
+ * @struct srfVBOMD5Mesh_s
+ * @typedef srfVBOMD5Mesh_t
  * @brief
  */
 typedef struct srfVBOMD5Mesh_s
@@ -2501,8 +2494,8 @@ typedef struct srfVBOMD5Mesh_s
 } srfVBOMD5Mesh_t;
 
 /**
- * @struct srfVBOMDMMesh_t
- * @typedef srfVBOMDMMesh_s
+ * @struct srfVBOMDMMesh_s
+ * @typedef srfVBOMDMMesh_t
  * @brief
  */
 typedef struct srfVBOMDMMesh_s
@@ -2529,8 +2522,8 @@ typedef struct srfVBOMDMMesh_s
 } srfVBOMDMMesh_t;
 
 /**
- * @struct srfVBOMDVMesh_t
- * @typedef srfVBOMDVMesh_s
+ * @struct srfVBOMDVMesh_s
+ * @typedef srfVBOMDVMesh_t
  * @brief
  */
 typedef struct srfVBOMDVMesh_s
@@ -2558,8 +2551,8 @@ BRUSH MODELS - in memory representation
 */
 
 /**
- * @struct bspSurface_t
- * @typedef bspSurface_s
+ * @struct bspSurface_s
+ * @typedef bspSurface_t
  * @brief
  */
 typedef struct bspSurface_s
@@ -2574,8 +2567,8 @@ typedef struct bspSurface_s
 } bspSurface_t;
 
 /**
- * @struct decal_t
- * @typedef decal_s
+ * @struct decal_s
+ * @typedef decal_t
  * @brief bsp model decal surfaces
  */
 typedef struct decal_s
@@ -2594,8 +2587,8 @@ decal_t;
 #define CONTENTS_NODE       -1
 
 /**
- * @struct bspNode_t
- * @typedef bspNode_s
+ * @struct bspNode_s
+ * @typedef bspNode_t
  * @brief
  */
 typedef struct bspNode_s
@@ -2644,7 +2637,7 @@ typedef struct bspNode_s
 
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
 /**
- * @struct bspCluster_t
+ * @struct bspCluster_s
  * @brief
  */
 typedef struct
@@ -2656,13 +2649,11 @@ typedef struct
 } bspCluster_t;
 #endif
 
-/**
+/*
  * @struct bspArea_t
  * @brief
  *
  * @note Unused
- */
-/*
 typedef struct
 {
     int             numMarkSurfaces;
@@ -2673,13 +2664,11 @@ typedef struct
 } bspArea_t;
 */
 
-/**
+/*
  * @struct bspAreaPortal_t
  * @brief
  *
  * @note Unused
- */
-/*
 typedef struct
 {
     int             areas[2];
@@ -2882,8 +2871,8 @@ typedef struct
 } mdvSt_t;
 
 /**
- * @struct mdvSurface_t
- * @typedef mdvSurface_s
+ * @struct mdvSurface_s
+ * @typedef mdvSurface_t
  * @brief
  */
 typedef struct mdvSurface_s
@@ -2905,8 +2894,8 @@ typedef struct mdvSurface_s
 } mdvSurface_t;
 
 /**
- * @struct mdvModel_t
- * @typedef mdvModel_s
+ * @struct mdvModel_s
+ * @typedef mdvModel_t
  * @brief
  */
 typedef struct mdvModel_s
@@ -2963,13 +2952,11 @@ typedef struct
 	md5Weight_t **weights;
 } md5Vertex_t;
 
-/**
+/*
  * @struct md5Triangle_t
  * @brief
  *
  * @note Unused
- */
-/*
 typedef struct
 {
     int             indexes[3];
@@ -3015,8 +3002,8 @@ typedef struct
 } md5Bone_t;
 
 /**
- * @struct md5Model_t
- * @typedef md5Model_s
+ * @struct md5Model_s
+ * @typedef md5Model_t
  * @brief
  */
 typedef struct md5Model_s
@@ -3050,8 +3037,8 @@ typedef struct
 } mdmTagIntern_t;
 
 /**
- * @struct mdmSurfaceIntern_t
- * @typedef mdmSurfaceIntern_s
+ * @struct mdmSurfaceIntern_s
+ * @typedef mdmSurfaceIntern_t
  * @brief
  */
 typedef struct mdmSurfaceIntern_s
@@ -3082,8 +3069,8 @@ typedef struct mdmSurfaceIntern_s
 } mdmSurfaceIntern_t;
 
 /**
- * @struct mdmModel_t
- * @typedef mdmModel_s
+ * @struct mdmModel_s
+ * @typedef mdmModel_t
  * @brief
  */
 typedef struct mdmModel_s
@@ -3234,8 +3221,8 @@ typedef enum
 } modtype_t;
 
 /**
- * @struct model_t
- * @typedef model_s
+ * @struct model_s
+ * @typedef model_t
  * @brief
  */
 typedef struct model_s
@@ -3674,8 +3661,8 @@ typedef struct
 
 
 /**
- * @struct trPrograms_t
- * @typedef trPrograms_s
+ * @struct trPrograms_s
+ * @typedef trPrograms_t
  * @brief
  */
 typedef struct trPrograms_s
@@ -4214,8 +4201,8 @@ TESSELATOR/SHADER DECLARATIONS
 typedef byte color4ub_t[4];
 
 /**
- * @struct stageVars_t
- * @typedef stageVars
+ * @struct stageVars
+ * @typedef stageVars_t
  * @brief
  */
 typedef struct stageVars

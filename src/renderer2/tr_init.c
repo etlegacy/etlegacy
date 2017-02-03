@@ -666,15 +666,13 @@ static void R_ScreenShotPNG_f(void)
 	R_TakeScreenshot("png", SSF_PNG);
 }
 
-/**
+/*
  * @brief MaterialNameCompare
  * @param[in] a
  * @param[in] b
  * @return
  *
  * @note Unused
- */
-/*
 static int QDECL MaterialNameCompare(const void *a, const void *b)
 {
     char           *s1, *s2;
@@ -722,12 +720,10 @@ static int QDECL MaterialNameCompare(const void *a, const void *b)
 }
 */
 
-/**
+/*
  * @brief R_GenerateMaterialFile_f
  *
  * @note Unused
- */
-/*
 static void R_GenerateMaterialFile_f(void)
 {
     char          **dirnames;

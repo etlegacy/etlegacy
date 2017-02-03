@@ -38,7 +38,7 @@
 #include "../ui/keycodes.h"
 
 /**
- * @struct qkey_t
+ * @struct qkey_s
  * @brief
  */
 typedef struct

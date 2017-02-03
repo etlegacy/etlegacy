@@ -297,13 +297,11 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 	}
 }
 
-/**
+/*
  * @brief LogLight
- * @param(in] ent
+ * @param[in] ent
  *
  * @note Unused
- */
-/*
 static void LogLight(trRefEntity_t *ent)
 {
     int max1, max2;
@@ -1568,13 +1566,11 @@ void R_SetupLightScissor(trRefLight_t *light)
 	Q_clamp(light->scissor.coords[3], tr.viewParms.viewportY, tr.viewParms.viewportY + tr.viewParms.viewportHeight);
 }
 
-/**
+/*
  * @brief R_SetupLightDepthBounds
  * @param[in,out] light
  *
  * @note Unused
- */
-/*
 void R_SetupLightDepthBounds(trRefLight_t *light)
 {
     int    i, j;

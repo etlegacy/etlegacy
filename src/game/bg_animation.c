@@ -1508,7 +1508,7 @@ int BG_ExecuteCommand(playerState_t *ps, animModelInfo_t *animModelInfo, animScr
 /**
  * @brief Runs the normal locomotive animations
  * @param[in,out] ps
- * @param[in],out animModelInfo
+ * @param[in,out] animModelInfo
  * @param[in] movetype
  * @param[in] isContinue
  * @return 1 if an animation was set, -1 if no animation was found, 0 otherwise

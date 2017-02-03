@@ -249,7 +249,7 @@ static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const v
 	}
 }
 
-/**
+/*
  * @brief CG_ClipMoveToEntities_FT
  * @param[in] start
  * @param[in] mins
@@ -260,8 +260,6 @@ static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const v
  * @param[in] capsule
  * @param[in,out] tr
  * @note Unused
- */
-/*
 static void CG_ClipMoveToEntities_FT(const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask, int capsule, trace_t *tr)
 {
     int           i, x, zd, zu;
@@ -369,7 +367,7 @@ void CG_Trace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3
 	*result = t;
 }
 
-/**
+/*
  * @brief CG_Trace_World
  * @param[out] result
  * @param[in] start
@@ -379,8 +377,6 @@ void CG_Trace(trace_t *result, const vec3_t start, const vec3_t mins, const vec3
  * @param[in] skipNumber
  * @param[in] mask
  * @note Unused
- */
-/*
 void CG_Trace_World(trace_t *result, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
                     int skipNumber, int mask)
 {
@@ -393,7 +389,7 @@ void CG_Trace_World(trace_t *result, const vec3_t start, const vec3_t mins, cons
 }
 */
 
-/**
+/*
  * @brief CG_FTTrace
  * @param[out] result
  * @param[in] start
@@ -901,13 +897,16 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	return 0;
 }
 
-//  we need to keep pmext around for old frames, because Pmove()
-// fills in some values when it does prediction.  This in itself is fine,
-// but the prediction loop starts in the past and predicts from the
-// snapshot time up to the current time, and having things like jumpTime
-// appear to be set for prediction runs where they previously weren't
-// is a Bad Thing.  This is my bugfix for #166.
-
+/**
+ * @var oldpmext
+ * @brief
+ * @details We need to keep pmext around for old frames, because Pmove()
+ * fills in some values when it does prediction. This in itself is fine,
+ * but the prediction loop starts in the past and predicts from the
+ * snapshot time up to the current time, and having things like jumpTime
+ * appear to be set for prediction runs where they previously weren't
+ * is a Bad Thing. This is my bugfix for #166.
+ */
 pmoveExt_t oldpmext[CMD_BACKUP];
 
 const char *predictionStrings[] =
@@ -945,6 +944,7 @@ const char *predictionStrings[] =
 /**
  * @brief Generates cg.predictedPlayerState for the current cg.time
  * cg.predictedPlayerState is guaranteed to be valid after exiting.
+ *
  * @details For demo playback, this will be an interpolation between two valid
  * playerState_t.
  *

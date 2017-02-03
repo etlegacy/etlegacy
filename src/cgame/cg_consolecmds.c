@@ -896,11 +896,9 @@ void CG_dumpStats_f(void)
 	}
 }
 
-/**
- * @brief CG_wStatsDown_f
- * @note unused
- */
 /*
+ * @brief CG_wStatsDown_f
+ * @note Unused
 void CG_wStatsDown_f(void)
 {
     if (
@@ -929,11 +927,9 @@ void CG_wStatsDown_f(void)
 }
 */
 
-/**
+/*
  * @brief CG_wStatsUp_f
  * @note unused
- */
-/*
 void CG_wStatsUp_f(void)
 {
     cg.showStats = qfalse;

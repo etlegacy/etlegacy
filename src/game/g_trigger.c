@@ -282,7 +282,7 @@ void SP_trigger_multiple(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/**
+/*
 ==============================================================================
 trigger_always
 ==============================================================================
@@ -310,21 +310,19 @@ void SP_trigger_always(gentity_t *ent)
 	ent->think     = trigger_always_think;
 }
 
-/**
+/*
 ==============================================================================
 trigger_push
 ==============================================================================
 */
 
-/**
+/*
  * @brief trigger_push_touch
  * @param self  - unused
  * @param other - unused
  * @param trace - unused
  *
- * @note Inused
- */
-/*
+ * @note Unused
 void trigger_push_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 {
 }
@@ -450,7 +448,7 @@ void SP_target_push(gentity_t *self)
 	self->use = Use_target_push;
 }
 
-/**
+/*
 ==============================================================================
 trigger_teleport
 ==============================================================================
@@ -508,7 +506,7 @@ void SP_trigger_teleport(gentity_t *self)
 	trap_LinkEntity(self);
 }
 
-/**
+/*
 ==============================================================================
 trigger_hurt
 ==============================================================================
@@ -654,7 +652,7 @@ void SP_trigger_hurt(gentity_t *self)
 	self->delay = dalife;
 }
 
-/**
+/*
 ==============================================================================
 trigger_heal
 ==============================================================================
@@ -880,7 +878,7 @@ void SP_trigger_heal(gentity_t *self)
 	self->damage = healvalue;   // store the rate of heal in damage
 }
 
-/**
+/*
 ==============================================================================
 trigger_ammo
 ==============================================================================
@@ -1093,7 +1091,7 @@ void SP_trigger_ammo(gentity_t *self)
 	self->damage = ammovalue;
 }
 
-/**
+/*
 ==============================================================================
 timer
 ==============================================================================
@@ -1169,7 +1167,7 @@ void SP_func_timer(gentity_t *self)
 	self->r.svFlags = SVF_NOCLIENT;
 }
 
-/**
+/*
 ==============================================================================
 Wolf triggers
 ==============================================================================
@@ -1346,7 +1344,7 @@ void Touch_flagonly_multiple(gentity_t *ent, gentity_t *other, trace_t *trace)
  * RED_FLAG -- only trigger if player is carrying red flag
  * BLUE_FLAG -- only trigger if player is carrying blue flag
  *
- * @param[inout ent
+ * @param[in,out] ent
  */
 void SP_trigger_flagonly(gentity_t *ent)
 {

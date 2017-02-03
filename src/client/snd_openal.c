@@ -1264,7 +1264,7 @@ static srcHandle_t S_AL_SrcAlloc(alSrcPriority_t priority, int entnum, int chann
 	return empty;
 }
 
-/**
+/*
  * @brief Finds an active source with matching entity and channel numbers
  * Returns -1 if there isn't one
  * @param entnum
@@ -1272,8 +1272,6 @@ static srcHandle_t S_AL_SrcAlloc(alSrcPriority_t priority, int entnum, int chann
  * @return
  *
  * @note Unused
- */
-/*
 static srcHandle_t S_AL_SrcFind(int entnum, int channel)
 {
     int i;

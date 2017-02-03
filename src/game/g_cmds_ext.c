@@ -162,7 +162,7 @@ qboolean G_commandHelp(gentity_t *ent, const char *pszCommand, unsigned int dwCo
 
 /**
  * @brief Debounces cmd request as necessary.
- * @param[innout] ent
+ * @param[in,out] ent
  * @param[in] pszCommandName
  * @return
  */

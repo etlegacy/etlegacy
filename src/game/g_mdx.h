@@ -265,8 +265,8 @@ typedef struct interntag_s
 } interntag_t;
 
 /**
- * @struct mdm_t
- * @typedef mdm_s
+ * @struct mdm_s
+ * @typedef mdm_t
  * @brief
  */
 typedef struct mdm_s
@@ -284,8 +284,8 @@ typedef struct mdm_s
 } mdm_t;
 
 /**
- * @struct mdx_t
- * @typedef mdx_s
+ * @struct mdx_s
+ * @typedef mdx_t
  * @brief
  */
 typedef struct mdx_s

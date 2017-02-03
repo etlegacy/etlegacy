@@ -41,8 +41,8 @@
 #define IQM_MAX_JOINTS      128
 
 /**
- * @struct iqmHeader_t
- * @typedef iqmheader
+ * @struct iqmheader
+ * @typedef iqmHeader_t
  * @brief
  */
 typedef struct iqmheader
@@ -64,8 +64,8 @@ typedef struct iqmheader
 } iqmHeader_t;
 
 /**
- * @struct iqmMesh_t
- * @typedef iqmmesh
+ * @struct iqmmesh
+ * @typedef iqmMesh_t
  * @brief
  */
 typedef struct iqmmesh
@@ -76,10 +76,6 @@ typedef struct iqmmesh
 	unsigned int first_triangle, num_triangles;
 } iqmMesh_t;
 
-/**
- * @enum
- * @brief
- */
 enum
 {
 	IQM_POSITION     = 0,
@@ -92,10 +88,6 @@ enum
 	IQM_CUSTOM       = 0x10
 };
 
-/**
- * @enum
- * @brief
- */
 enum
 {
 	IQM_BYTE   = 0,
@@ -110,8 +102,8 @@ enum
 };
 
 /**
- * @struct iqmTriangle_t
- * @typedef iqmtriangle
+ * @struct iqmtriangle
+ * @typedef iqmTriangle_t
  * @brief
  */
 typedef struct iqmtriangle
@@ -121,8 +113,8 @@ typedef struct iqmtriangle
 
 
 /**
- * @struct iqmJointv1_t
- * @typedef iqmjointv1
+ * @struct iqmjointv1
+ * @typedef iqmJointv1_t
  * @brief
  */
 typedef struct iqmjointv1
@@ -133,8 +125,8 @@ typedef struct iqmjointv1
 } iqmJointv1_t;
 
 /**
- * @struct iqmJoint_t
- * @typedef iqmjoint
+ * @struct iqmjoint
+ * @typedef iqmJoint_t
  * @brief
  */
 typedef struct iqmjoint
@@ -145,8 +137,8 @@ typedef struct iqmjoint
 } iqmJoint_t;
 
 /**
- * @struct iqmPosev1_t
- * @typedef iqmposev1
+ * @struct iqmposev1
+ * @typedef iqmPosev1_t
  * @brief
  */
 typedef struct iqmposev1
@@ -158,8 +150,8 @@ typedef struct iqmposev1
 } iqmPosev1_t;
 
 /**
- * @struct iqmPose_t
- * @typedef iqmpose
+ * @struct iqmpose
+ * @typedef iqmPose_t
  * @brief
  */
 typedef struct iqmpose
@@ -171,8 +163,8 @@ typedef struct iqmpose
 } iqmPose_t;
 
 /**
- * @struct iqmAnim_t
- * @typedef iqmanim
+ * @struct iqmanim
+ * @typedef iqmAnim_t
  * @brief
  */
 typedef struct iqmanim
@@ -183,18 +175,14 @@ typedef struct iqmanim
 	unsigned int flags;
 } iqmAnim_t;
 
-/**
- * @enum
- * @brief
- */
 enum
 {
 	IQM_LOOP = 1 << 0
 };
 
 /**
- * @struct iqmVertexArray_t
- * @typedef iqmvertexarray
+ * @struct iqmvertexarray
+ * @typedef iqmVertexArray_t
  * @brief
  */
 typedef struct iqmvertexarray
@@ -207,8 +195,8 @@ typedef struct iqmvertexarray
 } iqmVertexArray_t;
 
 /**
- * @struct iqmBounds_t
- * @typedef iqmbounds
+ * @struct iqmbounds
+ * @typedef iqmBounds_t
  * @brief
  */
 typedef struct iqmbounds
@@ -218,8 +206,8 @@ typedef struct iqmbounds
 } iqmBounds_t;
 
 /**
- * @struct iqmExtension_t
- * @typedef iqmextension
+ * @struct iqmextension
+ * @typedef iqmExtension_t
  * @brief
  */
 typedef struct iqmextension

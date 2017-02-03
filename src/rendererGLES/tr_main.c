@@ -451,8 +451,8 @@ void R_TransformModelToClip(const vec3_t src, const float *modelMatrix, const fl
  * @brief R_TransformClipToWindow
  * @param[in] clip
  * @param[in] view
- * @param(out] normalized
- * @param(out] window
+ * @param[out] normalized
+ * @param[out] window
  */
 void R_TransformClipToWindow(const vec4_t clip, const viewParms_t *view, vec4_t normalized, vec4_t window)
 {
@@ -1537,7 +1537,7 @@ void R_AddDrawSurf(surfaceType_t *surface, shader_t *shader, int fogNum, int fro
 
 /**
  * @brief R_DecomposeSort
- * @param[int] sort
+ * @param[in] sort
  * @param[out] entityNum
  * @param[out] shader
  * @param[out] fogNum

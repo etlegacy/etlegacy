@@ -316,11 +316,9 @@ static void RB_RenderDrawSurfaces(qboolean opaque, int drawSurfFilter)
 	GL_CheckErrors();
 }
 
-/**
+/*
  * @brief RB_RenderOpaqueSurfacesIntoDepth
  * @note Unused
- */
-/*
 static void RB_RenderOpaqueSurfacesIntoDepth(qboolean onlyWorld)
 {
     trRefEntity_t *entity, *oldEntity;

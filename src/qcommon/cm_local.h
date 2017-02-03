@@ -49,7 +49,7 @@
 #define MRE_OPTIMIZE
 
 /**
- * @struct cNode_t
+ * @struct cNode_s
  */
 typedef struct
 {
@@ -58,7 +58,7 @@ typedef struct
 } cNode_t;
 
 /**
- * @struct cLeaf_t
+ * @struct cLeaf_s
  */
 typedef struct
 {
@@ -73,7 +73,7 @@ typedef struct
 } cLeaf_t;
 
 /**
- * @struct cmodel_t
+ * @struct cmodel_s
  */
 typedef struct cmodel_s
 {
@@ -82,7 +82,7 @@ typedef struct cmodel_s
 } cmodel_t;
 
 /**
- * @struct cbrushside_t
+ * @struct cbrushside_s
  */
 typedef struct
 {
@@ -92,7 +92,7 @@ typedef struct
 } cbrushside_t;
 
 /**
- * @struct cbrush_t
+ * @struct cbrush_s
  */
 typedef struct
 {
@@ -105,7 +105,7 @@ typedef struct
 } cbrush_t;
 
 /**
- * @struct cPatch_t
+ * @struct cPatch_s
  */
 typedef struct
 {
@@ -116,7 +116,7 @@ typedef struct
 } cPatch_t;
 
 /**
- * @struct cArea_t
+ * @struct cArea_s
  */
 typedef struct
 {
@@ -125,7 +125,7 @@ typedef struct
 } cArea_t;
 
 /**
- * @struct clipMap_t
+ * @struct clipMap_s
  */
 typedef struct
 {
@@ -193,7 +193,7 @@ extern cvar_t    *cm_optimize;
 // cm_test.c
 
 /**
- * @struct sphere_t
+ * @struct sphere_s
  * @brief Used for oriented capsule collision detection
  */
 typedef struct
@@ -205,7 +205,7 @@ typedef struct
 } sphere_t;
 
 /**
- * @struct traceWork_t
+ * @struct traceWork_s
  */
 typedef struct
 {
@@ -231,7 +231,7 @@ typedef struct
 } traceWork_t;
 
 /**
- * @struct leafList_t
+ * @struct leafList_s
  */
 typedef struct leafList_s
 {

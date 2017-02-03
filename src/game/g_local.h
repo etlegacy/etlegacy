@@ -187,7 +187,8 @@ typedef struct
 
 /**
  * @struct g_script_status_t
- * @brief Scripting Status (NOTE: this MUST NOT contain any pointer vars)
+ * @brief Scripting Status
+ * @warning: This MUST NOT contain any pointer vars
  */
 typedef struct
 {
@@ -206,8 +207,8 @@ void G_Script_ScriptEvent(gentity_t *ent, const char *eventStr, const char *para
 //====================================================================
 
 /**
- * @struct g_constructible_stats_t
- * @typedef g_constructible_stats_s
+ * @struct g_constructible_stats_s
+ * @typedef g_constructible_stats_t
  * @brief
  */
 typedef struct g_constructible_stats_s
@@ -289,8 +290,8 @@ typedef struct
 } glerpFrame_t;
 
 /**
- * @struct gentity_t
- * @typedef gentity_s
+ * @struct gentity_s
+ * @typedef gentity_t
  * @brief
  */
 struct gentity_s
@@ -591,6 +592,10 @@ typedef enum
 	TEAM_ACTIVE             ///< Now actively playing
 } playerTeamStateState_t;
 
+/**
+ * @struct playerTeamState_t
+ * @brief
+ */
 typedef struct
 {
 	playerTeamStateState_t state;
@@ -710,8 +715,8 @@ typedef struct
 #endif
 
 /**
- * @struct ipFilter_t
- * @typedef ipFilter_s
+ * @struct ipFilter_s
+ * @typedef ipFilter_t
  * @brief
  */
 typedef struct ipFilter_s
@@ -866,8 +871,8 @@ typedef struct
 #define MEDIC_SPECIAL_PICKUP_MOD    4   ///< Same thing for medic
 
 /**
- * @struct debrisChunk_t
- * @typedef debrisChunk_s
+ * @struct debrisChunk_s
+ * @typedef debrisChunk_t
  * @brief Debris test
  */
 typedef struct debrisChunk_s
@@ -884,8 +889,8 @@ typedef struct debrisChunk_s
 // ===================
 
 /**
- * @struct gclient_t
- * @typedef gclient_s
+ * @struct gclient_s
+ * @typedef gclient_t
  * @brief This structure is cleared on each ClientSpawn(),
  * except for 'client->pers' and 'client->sess'
  */
@@ -1020,8 +1025,8 @@ typedef struct
 } brushmodelInfo_t;
 
 /**
- * @struct limbo_cam_t
- * @typedef limbo_cam_s
+ * @struct limbo_cam_s
+ * @typedef limbo_cam_t
  * @brief
  */
 typedef struct limbo_cam_s
@@ -1043,8 +1048,8 @@ typedef struct limbo_cam_s
 #define MAX_SCRIPT_ACCUM_BUFFERS 10      ///< increased from 8 to 10 for compatability with maps that relied on it before Project: Bug Fix #055
 
 /**
- * @struct voteInfo_t
- * @typedef voteInfo_s
+ * @struct voteInfo_s
+ * @typedef voteInfo_t
  * @brief
  */
 typedef struct voteInfo_s
@@ -1062,8 +1067,8 @@ typedef struct voteInfo_s
 } voteInfo_t;
 
 /**
- * @struct cfgCvar_t
- * @typedef cfgCvar_s
+ * @struct cfgCvar_s
+ * @typedef cfgCvar_t
  * @brief
  */
 typedef struct cfgCvar_s
@@ -1073,8 +1078,8 @@ typedef struct cfgCvar_s
 } cfgCvar_t;
 
 /**
- * @struct config_t
- * @typedef config_s
+ * @struct config_s
+ * @typedef config_t
  * @brief
  */
 typedef struct config_s
@@ -1090,8 +1095,8 @@ typedef struct config_s
 } config_t;
 
 /**
- * @struct level_locals_t
- * @typedef level_locals_s
+ * @struct level_locals_s
+ * @typedef level_locals_t
  * @brief
  */
 typedef struct level_locals_s
@@ -2043,8 +2048,8 @@ extern vmCvar_t g_multiview;
 #endif
 
 /**
- * @struct GeoIP
- * @typedef GeoIPTag
+ * @struct GeoIPTag
+ * @typedef GeoIP
  * @brief
  */
 typedef struct GeoIPTag
@@ -2159,8 +2164,8 @@ void G_RemoveFromAllIgnoreLists(int clientNum);
 // g_teammapdata.c
 
 /**
- * @struct mapEntityData_t
- * @typedef mapEntityData_s
+ * @struct mapEntityData_s
+ * @typedef mapEntityData_t
  * @brief
  */
 typedef struct mapEntityData_s
@@ -2177,8 +2182,8 @@ typedef struct mapEntityData_s
 } mapEntityData_t;
 
 /**
- * @struct mapEntityData_Team_t
- * @typedef mapEntityData_Team_s
+ * @struct mapEntityData_Team_s
+ * @typedef mapEntityData_Team_t
  * @brief
  */
 typedef struct mapEntityData_Team_s
@@ -2376,7 +2381,8 @@ float G_CalculateWinProbability(int team);
 void G_UpgradeSkill(gentity_t *ent, skillType_t skill);
 
 /**
- * @struct mod_ws_convert_t
+ * @struct mod_ws_convert_s
+ * @typedef mod_ws_convert_t
  * @brief
  */
 typedef struct mod_ws_convert_s

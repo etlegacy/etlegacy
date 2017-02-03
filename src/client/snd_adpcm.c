@@ -279,14 +279,12 @@ static void S_AdpcmDecode(const char indata[], short *outdata, int len, struct a
 	state->index  = index;
 }
 
-/**
+/*
  * @brief S_AdpcmMemoryNeeded
  * @param info
  * @return The amount of memory (in bytes) needed to store the samples in out internal adpcm format
  *
  * @note Unused
- */
-/*
 int S_AdpcmMemoryNeeded(const wavinfo_t *info)
 {
     float scale;

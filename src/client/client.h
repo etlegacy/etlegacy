@@ -541,7 +541,7 @@ typedef enum
 	KB_BUTTONS4,
 	KB_BUTTONS5,
 	KB_BUTTONS6,
-	KB_BUTTONS7, ///< unused
+	KB_BUTTONS7,                ///< unused
 	KB_WBUTTONS0,
 	KB_WBUTTONS1,
 	KB_WBUTTONS2,

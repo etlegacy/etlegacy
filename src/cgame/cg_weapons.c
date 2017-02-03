@@ -37,7 +37,10 @@
 
 vec3_t ejectBrassCasingOrigin;
 
-// the new loadout for WolfXP
+/**
+ * @var weapBanksMultiPlayer
+ * @brief The new loadout for WolfXP
+ */
 weapon_t weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP] =
 {
 	{ 0,                   0,                    0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0     }, // empty bank '0'
@@ -414,7 +417,7 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 	le->leMarkType = LEMT_NONE;
 }
 
-/**
+/*
  * @brief Simple bubble trail behind a missile
  * @param[in] ent
  * @param[in] wi
@@ -445,7 +448,7 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 
 /**
  * @brief Compute random wind vector for smoke puff
- * @param dir
+ * @param[out] dir
  */
 void CG_GetWindVector(vec3_t dir)
 {

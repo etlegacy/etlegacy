@@ -31,7 +31,7 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  */
 /**
- * @file cl_irc.c
+ * @file irc_client.c
  * @brief irc ingame client
  */
 
@@ -1500,7 +1500,7 @@ static int IRCH_ServerError()
 	return IRC_CMD_RETRY;
 }
 
-/**
+/*
  * @brief Some fatal error was received, the IRC thread must die.
  * @note unused
 static int IRCH_FatalError()

@@ -50,8 +50,8 @@
 
 //////////////////////////////////////////////////////////////////////////
 /**
- * @enum g_OmniBotFlags bits
- * @brief The BotFlagOptions enum
+ * @enum BotFlagOptions
+ * @brief g_OmniBotFlags bits
  */
 enum BotFlagOptions
 {

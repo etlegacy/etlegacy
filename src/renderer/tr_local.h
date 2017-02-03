@@ -91,7 +91,8 @@ typedef struct
 } orientationr_t;
 
 /**
- * @struct orientationr_t
+ * @struct image_s
+ * @struct image_t
  * @brief
  */
 typedef struct image_s
@@ -452,8 +453,8 @@ typedef struct
 } fogParms_t;
 
 /**
- * @struct shader_t
- * @typedef shader_s
+ * @struct shader_s
+ * @typedef shader_t
  * @brief
  */
 typedef struct shader_s
@@ -520,8 +521,8 @@ typedef struct shader_s
 } shader_t;
 
 /**
- * @struct corona_t
- * @typedef corona_s
+ * @struct corona_s
+ * @typedef corona_t
  * @brief
  */
 typedef struct corona_s
@@ -553,8 +554,8 @@ typedef struct dlight_s
 } dlight_t;
 
 /**
- * @struct decalProjector_t
- * @typedef decalProjector_s
+ * @struct decalProjector_s
+ * @typedef decalProjector_t
  * @brief Decal projection
  */
 typedef struct decalProjector_s
@@ -651,8 +652,8 @@ typedef struct
 } skinModel_t;
 
 /**
- * @struct skin_t
- * @typedef skin_s
+ * @struct skin_s
+ * @typedef skin_t
  * @brief
  */
 typedef struct skin_s
@@ -665,8 +666,8 @@ typedef struct skin_s
 } skin_t;
 
 /**
- * @struct skin_t
- * @typedef skin_s
+ * @struct skin_s
+ * @typedef skin_t
  * @brief
  */
 typedef struct
@@ -762,8 +763,8 @@ typedef struct drawSurf_s
 typedef byte color4ub_t[4];
 
 /**
- * @struct color4ubhack_t
- * @typedef color4ubhack_s
+ * @struct color4ubhack_s
+ * @typedef color4ubhack_t
  * @brief
  */
 typedef struct color4ubhack_s
@@ -772,8 +773,8 @@ typedef struct color4ubhack_s
 } color4ubhack_t;
 
 /**
- * @struct vec4hack_t
- * @typedef vec4hack_s
+ * @struct vec4hack_s
+ * @typedef vec4hack_t
  * @brief
  */
 typedef struct vec4hack_s
@@ -783,8 +784,8 @@ typedef struct vec4hack_s
 
 
 /**
- * @struct vec2hack_t
- * @typedef vec2hack_s
+ * @struct vec2hack_s
+ * @typedef vec2hack_t
  * @brief
  */
 typedef struct vec2hack_s
@@ -793,8 +794,8 @@ typedef struct vec2hack_s
 } vec2hack_t;
 
 /**
- * @struct srfPoly_t
- * @typedef srfPoly_s
+ * @struct srfPoly_s
+ * @typedef srfPoly_t
  * @brief >hen cgame directly specifies a polygon, it becomes a srfPoly_t
  * as soon as it is called
  */
@@ -808,8 +809,8 @@ typedef struct srfPoly_s
 } srfPoly_t;
 
 /**
- * @struct srfPolyBuffer_t
- * @typedef srfPolyBuffer_s
+ * @struct srfPolyBuffer_s
+ * @typedef srfPolyBuffer_t
  * @brief
  */
 typedef struct srfPolyBuffer_s
@@ -825,8 +826,8 @@ typedef struct srfPolyBuffer_s
 #define MAX_ENTITY_DECALS       128
 
 /**
- * @struct srfDecal_t
- * @typedef srfDecal_s
+ * @struct srfDecal_s
+ * @typedef srfDecal_t
  * @brief
  */
 typedef struct srfDecal_s
@@ -839,8 +840,8 @@ srfDecal_t;
 
 
 /**
- * @struct srfDisplayList_t
- * @typedef srfDisplayList_s
+ * @struct srfDisplayList_s
+ * @typedef srfDisplayList_t
  * @brief
  */
 typedef struct srfDisplayList_s
@@ -850,8 +851,8 @@ typedef struct srfDisplayList_s
 } srfDisplayList_t;
 
 /**
- * @struct srfFlare_t
- * @typedef srfFlare_s
+ * @struct srfFlare_s
+ * @typedef srfFlare_t
  * @brief
  */
 typedef struct srfFlare_s
@@ -863,8 +864,8 @@ typedef struct srfFlare_s
 } srfFlare_t;
 
 /**
- * @struct srfGeneric_t
- * @typedef srfGeneric_s
+ * @struct srfGeneric_s
+ * @typedef srfGeneric_t
  * @brief Normal map drawsurfaces must match this header
  */
 typedef struct srfGeneric_s
@@ -879,12 +880,11 @@ typedef struct srfGeneric_s
 
 	/// dynamic lighting information
 	int dlightBits;
-}
-srfGeneric_t;
+} srfGeneric_t;
 
 /**
- * @struct srfGridMesh_t
- * @typedef srfGridMesh_s
+ * @struct srfGridMesh_s
+ * @typedef srfGridMesh_t
  * @brief
  */
 typedef struct srfGridMesh_s
@@ -918,8 +918,8 @@ typedef struct srfGridMesh_s
 #define VERTEXSIZE  8
 
 /**
- * @struct srfSurfaceFace_t
- * @typedef srfSurfaceFace_s
+ * @struct srfSurfaceFace_s
+ * @typedef srfSurfaceFace_t
  * @brief
  */
 typedef struct srfSurfaceFace_s
@@ -944,8 +944,8 @@ typedef struct srfSurfaceFace_s
 } srfSurfaceFace_t;
 
 /**
- * @struct srfTriangles_t
- * @typedef srfTriangles_s
+ * @struct srfTriangles_s
+ * @typedef srfTriangles_t
  * @brief misc_models in maps are turned into direct geometry by q3map2 ;D
  */
 typedef struct srfTriangles_s
@@ -967,12 +967,11 @@ typedef struct srfTriangles_s
 
 	int numVerts;
 	drawVert_t *verts;
-}
-srfTriangles_t;
+} srfTriangles_t;
 
 /**
- * @struct srfTriangles2_t
- * @typedef srfTriangles2_s
+ * @struct srfTriangles2_s
+ * @typedef srfTriangles2_t
  * @brief
  */
 typedef struct srfTriangles2_s
@@ -1012,8 +1011,7 @@ typedef struct
 {
 	vec3_t origin;
 	fcolor4ub_t color;
-}
-foliageInstance_t;
+} foliageInstance_t;
 
 /**
  * @struct srfFoliage_t
@@ -1045,8 +1043,7 @@ typedef struct
 	// origins
 	int numInstances;
 	foliageInstance_t *instances;
-}
-srfFoliage_t;
+} srfFoliage_t;
 
 extern void(*rb_surfaceTable[SF_NUM_SURFACE_TYPES]) (void *);
 
@@ -1063,8 +1060,8 @@ BRUSH MODELS
 #define SIDE_ON     2
 
 /**
- * @struct msurface_t
- * @typedef msurface_s
+ * @struct msurface_s
+ * @typedef msurface_t
  * @brief
  */
 typedef struct msurface_s
@@ -1077,8 +1074,8 @@ typedef struct msurface_s
 } msurface_t;
 
 /**
- * @struct decal_t
- * @typedef decal_s
+ * @struct decal_s
+ * @typedef decal_t
  * @brief bsp model decal surfaces
  */
 typedef struct decal_s
@@ -1091,14 +1088,13 @@ typedef struct decal_s
 	polyVert_t verts[MAX_DECAL_VERTS];
 	int projectorNum;
 	int frameAdded;                     ///< need to keep decal for at least one frame so we know not to reproject it in later views
-}
-decal_t;
+} decal_t;
 
 #define CONTENTS_NODE       -1
 
 /**
- * @struct mnode_t
- * @typedef mnode_s
+ * @struct mnode_s
+ * @typedef mnode_t
  * @brief
  */
 typedef struct mnode_s
@@ -1123,8 +1119,8 @@ typedef struct mnode_s
 } mnode_t;
 
 /**
- * @struct bmodel_t
- * @typedef bmodel_s
+ * @struct bmodel_s
+ * @typedef bmodel_t
  * @brief
  */
 typedef struct bmodel_s
@@ -1236,8 +1232,8 @@ typedef union
 } model_u;
 
 /**
- * @struct model_t
- * @typedef model_s
+ * @struct model_s
+ * @typedef model_t
  * @brief
  */
 typedef struct model_s
@@ -1655,11 +1651,11 @@ TESSELATOR/SHADER DECLARATIONS
 */
 
 /**
- * @struct stageVars_t
- * @typedef stageVars
+ * @struct stageVars
+ * @typedef stageVars_t
  * @brief
  */
-typedef struct stageVars
+typedef struct
 {
 	color4ub_t colors[SHADER_MAX_VERTEXES];
 	vec2_t texcoords[NUM_TEXTURE_BUNDLES][SHADER_MAX_VERTEXES];
@@ -1673,8 +1669,8 @@ extern glIndex_t      tess_indexes[SHADER_MAX_INDEXES];
 extern color4ubhack_t tess_vertexColors[SHADER_MAX_VERTEXES];
 
 /**
- * @struct shaderCommands_t
- * @typedef shaderCommands_s
+ * @struct shaderCommands_s
+ * @typedef shaderCommands_t
  * @brief
  */
 typedef struct shaderCommands_s
@@ -1966,7 +1962,7 @@ typedef struct
 } subImageCommand_t;
 
 /**
- * @struct swapBuffersCommand_t
+ * @struct swapBuffersCommand_s
  * @brief
  */
 typedef struct

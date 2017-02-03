@@ -704,14 +704,12 @@ void ToWindowCoords(float *x, float *y, windowDef_t *window)
 	*y += window->rect.y;
 }
 
-/**
+/*
  * @brief Rect_ToWindowCoords
  * @param rect
  * @param window
  *
  * @note Unused
- */
-/*
 void Rect_ToWindowCoords(rectDef_t *rect, windowDef_t *window)
 {
     ToWindowCoords(&rect->x, &rect->y, window);
@@ -730,7 +728,11 @@ typedef struct
 	int bind2;
 } bind_t;
 
-// These MUST be all lowercase now
+/**
+ * @var g_bindings
+ * @brief
+ * @note These MUST be all lowercase now
+ */
 static bind_t g_bindings[] =
 {
 	{ "+forward",         'w',             -1,  K_UPARROW,       -1,  -1, -1, -1 },

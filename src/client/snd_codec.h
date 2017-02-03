@@ -39,8 +39,8 @@
 #include "../qcommon/qcommon.h"
 
 /**
- * @struct snd_info_t
- * @typedef snd_info_s
+ * @struct snd_info_s
+ * @typedef snd_info_t
  * @brief
  */
 typedef struct snd_info_s
@@ -56,8 +56,8 @@ typedef struct snd_info_s
 typedef struct snd_codec_s snd_codec_t;
 
 /**
- * @struct snd_stream_t
- * @typedef snd_stream_s
+ * @struct snd_stream_s
+ * @typedef snd_stream_t
  * @brief
  */
 typedef struct snd_stream_s

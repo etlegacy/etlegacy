@@ -379,13 +379,11 @@ static sfx_t *S_FindName(const char *name)
 	return sfx;
 }
 
-/**
+/*
  * @brief S_DefaultSound
  * @param[out] sfx
  *
  * @note Unused
- */
-/*
 void S_DefaultSound(sfx_t *sfx)
 {
     int i;
@@ -2030,9 +2028,9 @@ void S_Base_StopBackgroundTrack(void)
 
 /**
  * @brief S_Base_StartBackgroundTrack
- * @param[in) intro
- * @param[in) loop
- * @param[in) fadeupTime
+ * @param[in] intro
+ * @param[in] loop
+ * @param[in] fadeupTime
  */
 void S_Base_StartBackgroundTrack(const char *intro, const char *loop, int fadeupTime)
 {

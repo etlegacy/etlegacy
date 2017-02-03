@@ -196,12 +196,10 @@ int ParseHex(const char *text)
 	return value;
 }
 
-/**
+/*
  * @brief VM_LoadSymbols
  * @param[in,out] vm
  * @note Unused
- */
-/*
 void VM_LoadSymbols(vm_t *vm)
 {
     union
@@ -294,14 +292,6 @@ void VM_LoadSymbols(vm_t *vm)
 }
 */
 
-/*
-============
-VM_DllSyscall
-
-
-
-============
-*/
 /**
  * @brief Dlls will call this directly
  *
@@ -445,9 +435,10 @@ vm_t *VM_Restart(vm_t *vm)
 /**
  * @brief If image ends in .qvm it will be interpreted, otherwise it will attempt to
  * load as a system dll
- * @param module
- * @param extract
- * @param interpret
+ * @param[in] module
+ * @param[in] extract
+ * @param systemCalls
+ * @param[in] interpret
  * @return
  */
 vm_t *VM_Create(const char *module, qboolean extract, intptr_t (*systemCalls)(intptr_t *), vmInterpret_t interpret)

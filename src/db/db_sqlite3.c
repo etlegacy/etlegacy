@@ -397,12 +397,13 @@ int DB_Close()
  * If the backup process is successfully completed, SQLITE_OK is returned.
  * Otherwise, if an error occurs, an SQLite error code is returned.
  *
- * @param zFilename
+ * @param[in] zFilename
+ * @param xProgress Progress function to invoke
  *
  * @return
  *
  */
-int DB_BackupDB(const char *zFilename, void (*xProgress)(int, int)) // Progress function to invoke
+int DB_BackupDB(const char *zFilename, void (*xProgress)(int, int))
 {
 	int            rc;        // Function return code
 	sqlite3        *pFile;    // Database connection opened on zFilename

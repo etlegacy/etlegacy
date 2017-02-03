@@ -563,6 +563,7 @@ glyphInfo_t *Q_UTF8_GetGlyphVanilla(void *fontdata, unsigned long codepoint)
  * @param[in] pointSize
  * @param[in,out] font
  * @param[in] extended
+ * @param font_register
  */
 void Q_UTF8_RegisterFont(const char *fontName, int pointSize, fontHelper_t *font, qboolean extended, void (*font_register)(const char *, int, void *))
 {

@@ -415,7 +415,7 @@ LOOPBACK BUFFERS FOR LOCAL PLAYER
 #define MAX_LOOPBACK    16
 
 /**
- * @struct loopmsg_t
+ * @struct loopmsg_s
  */
 typedef struct
 {
@@ -424,7 +424,7 @@ typedef struct
 } loopmsg_t;
 
 /**
- * @struct loopback_t
+ * @struct loopback_s
  */
 typedef struct
 {
@@ -493,7 +493,7 @@ void NET_SendLoopPacket(netsrc_t sock, int length, const void *data, netadr_t to
 //=============================================================================
 
 /**
- * @struct packetQueue_t
+ * @struct packetQueue_s
  */
 typedef struct packetQueue_s
 {

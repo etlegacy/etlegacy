@@ -1258,11 +1258,9 @@ void CL_Clientinfo_f(void)
 	Com_Printf("--------------------------------------\n");
 }
 
-/**
+/*
  * @brief Eat misc console commands to prevent exploits
  * @note Unused
- */
-/*
 void CL_EatMe_f(void)
 {
     // do nothing kthxbye
@@ -2389,8 +2387,8 @@ void CL_SetRecommended_f(void)
 /**
  * @brief CL_RefPrintf
  *
- * @param[in) print_level
- * @param[in) fmt
+ * @param[in] print_level
+ * @param[in] fmt
  *
  * @note DLL glue
  */

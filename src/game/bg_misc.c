@@ -4083,12 +4083,11 @@ void BG_AdjustAAGunMuzzleForBarrel(vec_t *origin, vec_t *forward, vec_t *right, 
 	}
 }
 
-/**
+/*
  * @brief PC_SourceWarning
  * @param[in] handle
  * @param[in] format
  * @note Unused
- */
 void PC_SourceWarning(int handle, const char *format, ...)
 {
 	int         line;
@@ -4106,6 +4105,7 @@ void PC_SourceWarning(int handle, const char *format, ...)
 
 	Com_Printf(S_COLOR_YELLOW "WARNING: %s, line %d: %s\n", filename, line, string);
 }
+*/
 
 /**
  * @brief PC_SourceError

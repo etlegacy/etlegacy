@@ -132,7 +132,9 @@ typedef enum
 typedef intptr_t vmptr_t;
 
 /**
- * @struct vmSymbol_t
+ * @struct vmSymbol_s
+ * @typedef vmSymbol_t
+ * @brief
  */
 typedef struct vmSymbol_s
 {
@@ -149,6 +151,7 @@ typedef struct vmSymbol_s
 
 /**
  * @struct vm_s
+ * @brief
  */
 struct vm_s
 {

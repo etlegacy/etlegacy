@@ -69,7 +69,7 @@ void RB_CheckOverflow(int verts, int indexes)
 	RB_BeginSurface(tess.shader, tess.fogNum);
 }
 
-/**
+/*
  * @brief Creates a sprite with the center at colors[3] alpha, and the corners all 0 alpha
  * @param[in] origin
  * @param[in] left
@@ -81,8 +81,6 @@ void RB_CheckOverflow(int verts, int indexes)
  * @param[in] t2
  *
  * @note Unused.
- */
-/*
 void RB_AddQuadStampFadingCornersExt(vec3_t origin, vec3_t left, vec3_t up, byte *color, float s1, float t1, float s2, float t2)
 {
     vec3_t normal;

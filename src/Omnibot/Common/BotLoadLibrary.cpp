@@ -200,7 +200,7 @@ const char *OB_VA(const char *_msg, ...)
 	return pNextBuffer;
 }
 
-/**
+/*
  * @brief OB_VA_OWNBUFFER
  * @param[out] _buffer
  * @param[in] _buffersize
@@ -208,8 +208,6 @@ const char *OB_VA(const char *_msg, ...)
  * @return
  *
  * @note Unused
- */
-/*
 int OB_VA_OWNBUFFER(char *_buffer, size_t _buffersize, const char *_msg, ...)
 {
     va_list list;
@@ -440,8 +438,8 @@ bool KeyVals::SetFloat(const char *_key, float _val)
 
 /**
  * @brief KeyVals::SetEntity
- * @param[in) _key
- * @param[in) _val
+ * @param[in] _key
+ * @param[in] _val
  * @return
  */
 bool KeyVals::SetEntity(const char *_key, GameEntity _val)

@@ -308,7 +308,7 @@ void InitBodyQue(void)
 
 /**
  * @brief Called by BodySink
- * @param[in,out ent
+ * @param[in,out] ent
  */
 void BodyUnlink(gentity_t *ent)
 {

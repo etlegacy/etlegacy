@@ -37,7 +37,7 @@
 #include "tr_local.h"
 
 /**
- * @struct DDCOLORKEY_t
+ * @struct DDCOLORKEY_s
  * @brief
  */
 typedef struct
@@ -50,7 +50,7 @@ typedef struct
 } DDCOLORKEY_t;
 
 /**
- * @struct DDSCAPS2_t
+ * @struct DDSCAPS2_s
  * @brief
  */
 typedef struct
@@ -66,7 +66,7 @@ typedef struct
 } DDSCAPS2_t;
 
 /**
- * @struct DDPIXELFORMAT_t
+ * @struct DDPIXELFORMAT_s
  * @brief
  */
 typedef struct
@@ -130,7 +130,7 @@ typedef struct
 } DDPIXELFORMAT_t;
 
 /**
- * @struct DDSURFACEDESC2_t
+ * @struct DDSURFACEDESC2_s
  */
 typedef struct
 {
@@ -433,7 +433,7 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
 	}
 }
 
-/**
+/*
  * @brief R_DecodeRGB565Block
  * @param[out] out
  * @param[in] bx
@@ -444,8 +444,6 @@ static void R_DecodeS3TCBlock(byte out[4][4][4], int bx, int by, int format, int
  * @param[in] image_base
  *
  * @note Unused
- */
-/*
 static void R_DecodeRGB565Block(byte out[4][4][4], int bx, int by, int format, int iw, int ih, const void *image_base)
 {
     int             x, y;

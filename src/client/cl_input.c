@@ -499,24 +499,20 @@ void IN_Button3Up(void)
 	IN_KeyUp(&kb[KB_BUTTONS3]);
 }
 
-/**
+/*
  * @brief IN_Button4Down
  *
  * @note Unused
- */
-/*
 void IN_Button4Down(void)
 {
     IN_KeyDown(&kb[KB_BUTTONS4]);
 }
 */
 
-/**
+/*
  * @brief IN_Button4Up
  *
  * @note Unused
- */
-/*
 void IN_Button4Up(void)
 {
     IN_KeyUp(&kb[KB_BUTTONS4]);
@@ -653,24 +649,20 @@ void IN_ProneUp(void)
 	IN_KeyUp(&kb[KB_WBUTTONS7]);
 }
 
-/**
+/*
  * @brief IN_ButtonDown
  *
  * @note Unused
- */
-/*
 void IN_ButtonDown(void)
 {
     IN_KeyDown(&kb[KB_BUTTONS1]);
 }
 */
 
-/**
+/*
  * @brief IN_ButtonUp
  *
  * @note Unused
- */
-/*
 void IN_ButtonUp(void)
 {
     IN_KeyUp(&kb[KB_BUTTONS1]);
@@ -1255,10 +1247,10 @@ qboolean CL_ReadyToSendPacket(void)
  * 4   serverid
  * 4   acknowledged sequence number
  * 4   clc.serverCommandSequence
- * <optional reliable commands>
+ * \<optional reliable commands\>
  * 1   clc_move or clc_moveNoDelta
  * 1   command count
- * <count * usercmds>
+ * \<count * usercmds\>
  */
 void CL_WritePacket(void)
 {

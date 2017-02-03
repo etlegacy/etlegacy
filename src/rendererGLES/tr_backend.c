@@ -115,7 +115,7 @@ void GL_SelectTexture(int unit)
 	glState.currenttmu = unit;
 }
 
-/**
+/*
  * @brief GL_BindMultitexture
  * @param image0
  * @param env0 - unused
@@ -123,8 +123,6 @@ void GL_SelectTexture(int unit)
  * @param env1 - unused
  *
  * @note Unused
- */
-/*
 void GL_BindMultitexture(image_t *image0, GLuint env0, image_t *image1, GLuint env1)
 {
     int texnum0 = image0->texnum;
@@ -1411,14 +1409,12 @@ void RB_ShowImages(void)
 	ri.Printf(PRINT_ALL, "%i msec to draw all images\n", end - start);
 }
 
-/**
+/*
  * @brief RB_DrawBounds
  * @param[in,out] mins
  * @param[in,out] maxs
  *
  * @note Unused.
- */
-/*
 void RB_DrawBounds(vec3_t mins, vec3_t maxs)
 {
     vec3_t center;

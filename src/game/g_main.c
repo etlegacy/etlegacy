@@ -622,12 +622,14 @@ cvarTable_t gameCvarTable[] =
 };
 
 /**
- * @var Made static to avoid aliasing
+ * @var gameCvarTableSize
+ * @brief Made static to avoid aliasing
  */
 static int gameCvarTableSize = sizeof(gameCvarTable) / sizeof(gameCvarTable[0]);
 
 /**
- * @var Flag to store executed final auto-actions
+ * @var fActions
+ * @brief Flag to store executed final auto-actions
  */
 static int fActions = 0;
 

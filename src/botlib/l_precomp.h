@@ -55,8 +55,8 @@
 #define INDENT_IFNDEF           0x0010
 
 /**
- * @struct define_t
- * @typedef define_s
+ * @struct define_s
+ * @typedef define_t
  * @brief Macro definitions
  */
 typedef struct define_s
@@ -72,11 +72,11 @@ typedef struct define_s
 } define_t;
 
 /**
- * @struct indent_t
- * @typedef indent_s
+ * @struct indent_s
+ * @typedef indent_t
  * @brief indents
  * used for conditional compilation directives:
- * #if, #else, #elif, #ifdef, #ifndef
+ * \#if, \#else, \#elif, \#ifdef, \#ifndef
  */
 typedef struct indent_s
 {
@@ -87,8 +87,8 @@ typedef struct indent_s
 } indent_t;
 
 /**
- * @struct source_t
- * @typedef source_s
+ * @struct source_s
+ * @typedef source_t
  * @brief Source File
  */
 typedef struct source_s

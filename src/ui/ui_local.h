@@ -114,8 +114,8 @@ extern vmCvar_t cl_bypassMouseInput;
 #define MAX_MENUITEMS           128
 
 /**
- * @struct menuframework_s
- * @typedef _tag_menuframework
+ * @struct _tag_menuframework
+ * @typedef menuframework_s
  * @brief
  */
 typedef struct _tag_menuframework
@@ -161,7 +161,7 @@ typedef struct
 } menucommon_s;
 
 /**
- * @struct mfield_t
+ * @struct mfield_s
  * @brief
  */
 typedef struct
@@ -387,8 +387,8 @@ extern void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack);
 #define SCROLL_TIME_FLOOR           20
 
 /**
- * @struct scrollInfo_t
- * @typedef scrollInfo_s
+ * @struct scrollInfo_s
+ * @typedef scrollInfo_t
  * @brief
  */
 typedef struct scrollInfo_s
@@ -456,7 +456,7 @@ typedef struct
 } gameTypeInfo;
 
 /**
- * @struct profileInfo_t
+ * @struct profileInfo_s
  * @brief
  */
 typedef struct
@@ -467,7 +467,7 @@ typedef struct
 
 /**
  * @struct serverFilter_s
- * @typedef serverFilter_s
+ * @typedef serverFilter_t
  * @brief
  */
 typedef struct serverFilter_s
@@ -477,8 +477,8 @@ typedef struct serverFilter_s
 } serverFilter_t;
 
 /**
- * @struct serverStatus_t
- * @typedef serverStatus_s
+ * @struct serverStatus_s
+ * @typedef serverStatus_t
  * @brief
  */
 typedef struct serverStatus_s
@@ -504,7 +504,7 @@ typedef struct serverStatus_s
 } serverStatus_t;
 
 /**
- * @struct pendingServer_t
+ * @struct pendingServer_s
  * @brief
  */
 typedef struct
@@ -517,7 +517,7 @@ typedef struct
 } pendingServer_t;
 
 /**
- * @struct pendingServerStatus_t
+ * @struct pendingServerStatus_s
  * @brief
  */
 typedef struct
@@ -527,7 +527,7 @@ typedef struct
 } pendingServerStatus_t;
 
 /**
- * @struct serverStatusInfo_t
+ * @struct serverStatusInfo_s
  * @brief
  */
 typedef struct
@@ -540,7 +540,7 @@ typedef struct
 } serverStatusInfo_t;
 
 /**
- * @struct modInfo_t
+ * @struct modInfo_s
  * @brief
  */
 typedef struct
@@ -550,7 +550,7 @@ typedef struct
 } modInfo_t;
 
 /**
- * @struct uiInfo_t
+ * @struct uiInfo_s
  * @brief
  *
  * @todo Cleanup

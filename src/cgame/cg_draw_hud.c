@@ -111,7 +111,7 @@ hudStucture_t hudlist[MAXHUDS];
 hudStucture_t *activehud;
 hudStucture_t hud0;
 
-/**
+/*
  * @brief CG_getRect
  * @param x
  * @param y
@@ -119,8 +119,6 @@ hudStucture_t hud0;
  * @param h
  * @return
  * @note Unused
- */
-/*
 rectDef_t CG_getRect(float x, float y, float w, float h)
 {
     rectDef_t rect = { x, y, w, h };
@@ -178,12 +176,10 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->localtime    = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 55, SCREEN_HEIGHT - 60, 0, 0, qtrue, STYLE_NORMAL);
 }
 
-/**
+/*
  * @brief CG_getNextFreeHud
  * @return
- * @note unused
- */
-/*
+ * @note Unused
 static hudStucture_t *CG_getNextFreeHud()
 {
     hudStucture_t *temp;
@@ -1494,7 +1490,7 @@ int CG_DrawField(int x, int y, int width, int value, int charWidth, int charHeig
 
 /**
  * @brief CG_DrawLivesLeft
- * @param[in]comp - unused
+ * @param[in] comp - unused
  */
 void CG_DrawLivesLeft(hudComponent_t comp)
 {

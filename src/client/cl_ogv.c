@@ -219,15 +219,13 @@ static qboolean OGV_LoadAudio(cinematic_t *cin)
 	return (qboolean)(g_ogm->currentTime + MIN_AUDIO_PRELOAD > (int)(g_ogm->vd.granulepos * 1000 / g_ogm->vi.rate));
 }
 
-/**
+/*
  * @brief OGV_FindSizeShift
  * @param[in] x
  * @param[in] y
  * @return
  *
  * @note Unused
- */
-/*
 static int OGV_FindSizeShift(int x, int y)
 {
     int             i;
@@ -244,15 +242,13 @@ static int OGV_FindSizeShift(int x, int y)
 }
 */
 
-/**
+/*
  * @brief OGV_CheckFrame
  * @param[in] yuv
  * @param[in] info
  * @return
  *
  * @note Unused
- */
-/*
 static qboolean OGV_CheckFrame(yuv_buffer *yuv, theora_info *info)
 {
     int yWShift, uvWShift;

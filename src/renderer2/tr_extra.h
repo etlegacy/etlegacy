@@ -169,10 +169,6 @@ typedef enum
 
 int NearestPowerOfTwo(int val);
 
-
-
-
-
 qboolean PlanesGetIntersectionPoint(const vec4_t plane1, const vec4_t plane2, const vec4_t plane3, vec3_t out);
 void MatrixMultiplyScale(mat4_t m, vec_t x, vec_t y, vec_t z);
 void MatrixSetupTransformFromRotation(mat4_t m, const mat4_t rot, const vec3_t origin);
@@ -191,7 +187,6 @@ qboolean BoundsIntersectPoint(const vec3_t mins, const vec3_t maxs, const vec3_t
 
 void ZeroBounds(vec3_t mins, vec3_t maxs);
 void MatrixSetupTransformFromQuat(mat4_t m, const quat_t quat, const vec3_t origin);
-
 
 vec_t PlaneNormalize(vec4_t plane); ///< returns normal length
 
@@ -350,8 +345,8 @@ enum
 };
 
 /**
- * @struct memStream_t
- * @typedef memStream_s
+ * @struct memStream_s
+ * @typedef memStream_t
  * @brief Helper struct for reading binary file formats
  */
 typedef struct memStream_s
@@ -360,8 +355,7 @@ typedef struct memStream_s
 	int bufSize;
 	byte *curPos;
 	int flags;
-}
-memStream_t;
+} memStream_t;
 
 memStream_t *AllocMemStream(byte *buffer, int bufSize);
 void            FreeMemStream(memStream_t *s);

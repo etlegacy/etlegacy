@@ -635,13 +635,11 @@ void SP_Dust(gentity_t *ent)
 
 extern void G_ExplodeMissile(gentity_t *ent);
 
-/**
+/*
  * @brief propExplosionLarge
  * @param ent
  *
  * @note unused
- */
-/*
 void propExplosionLarge(gentity_t *ent)
 {
     gentity_t *bolt = G_Spawn();
@@ -1997,7 +1995,7 @@ void SP_Props_ChairChat(gentity_t *ent)
 
 /**
  * @brief SP_Props_ChairChatArm
- * @param(in,out] ent
+ * @param[in,out] ent
  */
 void SP_Props_ChairChatArm(gentity_t *ent)
 {
@@ -2313,13 +2311,11 @@ void OilParticles_think(gentity_t *ent)
 	}
 }
 
-/**
+/*
  * @brief Delayed_Leak_Think
  * @param[in] ent
  *
  * @note Unused
- */
-/*
 void Delayed_Leak_Think(gentity_t *ent)
 {
 	vec3_t    point;
@@ -3275,13 +3271,11 @@ void props_castlebed_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attack
 	ent->count = FXTYPE_WOOD;
 	Prop_Break_Sound(ent);
 }
-/**
+/*
  * @brief SP_props_castlebed
  * @param[in,out] ent
  *
  * @note Unused
- */
-/*
 void SP_props_castlebed(gentity_t *ent)
 {
 	trap_SetBrushModel(ent, ent->model);
@@ -4273,7 +4267,7 @@ void Spawn_Junk(gentity_t *ent)
 
 /**
  * @brief props_locker_endrattle
- * @param(out] ent
+ * @param[out] ent
  */
 void props_locker_endrattle(gentity_t *ent)
 {

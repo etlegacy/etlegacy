@@ -416,15 +416,13 @@ static void MakeSkyVec(float s, float t, int axis, vec4_t outSt, vec4_t outXYZ)
 static vec4_t s_skyPoints[SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1];
 static float  s_skyTexCoords[SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1][4];
 
-/**
+/*
  * @brief DrawSkySide
  * @param[in] image
  * @param[in] mins
  * @param[in] maxs
  *
  * @note Unused
- */
-/*
 static void DrawSkySide(struct image_s *image, const int mins[2], const int maxs[2])
 {
     int             s, t;

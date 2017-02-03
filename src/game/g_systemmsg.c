@@ -150,11 +150,9 @@ void G_SendSystemMessage(sysMsg_t message, int team)
 	}
 }
 
-/**
+/*
  * @brief G_CheckForNeededClasses
  * @note Unused
- */
-/*
 void G_CheckForNeededClasses(void)
 {
     qboolean   playerClasses[NUM_PLAYER_CLASSES - 1][2];
@@ -268,11 +266,9 @@ void G_CheckForNeededClasses(void)
 }
 */
 
-/**
+/*
  * @brief G_CheckMenDown
  * @note Unused
- */
-/*
 void G_CheckMenDown(void)
 {
     int       alive[2], dead[2];

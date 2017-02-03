@@ -224,7 +224,7 @@ void UI_AdjustFrom640(float *x, float *y, float *w, float *h)
 	}
 }
 
-/**
+/*
  * @brief UI_DrawNamedPic
  * @param[in] x
  * @param[in] y
@@ -286,7 +286,7 @@ void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShader)
 	trap_R_DrawStretchPic(x, y, w, h, s0, t0, s1, t1, hShader);
 }
 
-/**
+/*
  * @brief UI_DrawRotatedPic
  * Coordinates are 640*480 virtual values
  * @note Unused (cool stuff for ETL logo?!)
@@ -299,11 +299,7 @@ void UI_DrawRotatedPic(float x, float y, float width, float height, qhandle_t hS
 */
 
 /**
- * @brief UI_FillRect
  * Coordinates are 640*480 virtual values
- */
-/**
- * @brief UI_FillRect
  * @param[in] x
  * @param[in] y
  * @param[in] width
@@ -320,7 +316,7 @@ void UI_FillRect(float x, float y, float width, float height, const float *color
 	trap_R_SetColor(NULL);
 }
 
-/**
+/*
  * @brief UI_DrawSides
  * @param[in] x
  * @param[in] y
@@ -350,7 +346,7 @@ void UI_DrawTopBottom(float x, float y, float w, float h)
 	trap_R_DrawStretchPic(x, y + h - 1, w, 1, 0, 0, 0, 0, uiInfo.uiDC.whiteShader);
 }
 
-/**
+/*
  * @brief UI_DrawRect
  * Coordinates are 640*480 virtual values
  * @param[in] x
@@ -370,10 +366,7 @@ void UI_DrawRect(float x, float y, float width, float height, const float *color
 }
 */
 
-/**
-
- */
-/**
+/*
  * @brief UI_DrawTextBox
  * @param x
  * @param y
@@ -387,16 +380,15 @@ void UI_DrawTextBox(int x, int y, int width, int lines)
 }
 */
 
-/**
- * @note Unused.
- */
-/**
+/*
  * @brief UI_CursorInRect
  * @param[in] x
  * @param[in] y
  * @param[in] width
  * @param[in] height
  * @return
+ *
+ * @note Unused.
 qboolean UI_CursorInRect(int x, int y, int width, int height)
 {
     if (uiInfo.uiDC.cursorx < x ||

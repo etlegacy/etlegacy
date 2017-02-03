@@ -1019,7 +1019,7 @@ void CG_GetTeamColor(vec4_t *color)
 /**
  * @brief CG_RunMenuScript
  * @param args - unused
- * @note Unused function ?
+ * @todo Unused function ?
  */
 void CG_RunMenuScript(char **args)
 {

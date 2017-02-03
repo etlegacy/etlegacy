@@ -48,7 +48,8 @@ vmCvar_t g_scriptDebug;
 //====================================================================
 
 /**
- * @var These are the actions that each event can call
+ * @var gScriptActions
+ * @brief These are the actions that each event can call
  */
 g_script_stack_action_t gScriptActions[] =
 {
@@ -155,7 +156,8 @@ qboolean G_Script_EventMatch_StringEqual(g_script_event_t *event, const char *ev
 qboolean G_Script_EventMatch_IntInRange(g_script_event_t *event, const char *eventParm);
 
 /**
- * @var The list of events that can start an action sequence
+ * @var gScriptEvents
+ * @details The list of events that can start an action sequence
  */
 g_script_event_define_t gScriptEvents[] =
 {

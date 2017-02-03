@@ -310,12 +310,10 @@ void CG_CheckPlayerstateEvents(playerState_t *ps, playerState_t *ops)
 	}
 }
 
-/**
+/*
  * @brief CG_CheckChangedPredictableEvents
  * @param ps
  * @note Unused
- */
-/*
 void CG_CheckChangedPredictableEvents(playerState_t *ps)
 {
     int       i;

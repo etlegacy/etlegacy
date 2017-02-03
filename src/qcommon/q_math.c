@@ -244,13 +244,11 @@ signed char ClampChar(int i)
 	return i;
 }
 
-/**
+/*
  * @brief ClampShort
  * @param i
  * @return
  * @note Unused.
- */
-/*
 signed short ClampShort(int i)
 {
     if (i < -32768)
@@ -354,15 +352,13 @@ void ByteToDir(int b, vec3_t dir)
 	VectorCopy(bytedirs[b], dir);
 }
 
-/**
+/*
  * @brief ColorBytes3
  * @param[in] r
  * @param[in] g
  * @param[in] b
  *
  * @note Unused.
- */
-/*
 unsigned ColorBytes3(float r, float g, float b)
 {
     unsigned i;
@@ -394,15 +390,13 @@ unsigned ColorBytes4(float r, float g, float b, float a)
 	return i;
 }
 
-/**
+/*
  * @brief NormalizeColor
  * @param[in] in
  * @param[out] out
  * @return
  *
  * @note Unused.
- */
-/*
 float NormalizeColor(const vec3_t in, vec3_t out)
 {
     float max;
@@ -538,7 +532,7 @@ void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point,
 	}
 }
 
-/**
+/*
  * @brief Rotate a point around a vertex.
  * @param[in,out] pnt
  * @param[in] rot_x
@@ -547,8 +541,6 @@ void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point,
  * @param[in] origin
  *
  * @note Unused.
- */
-/*
 void RotatePointAroundVertex(vec3_t pnt, float rot_x, float rot_y, float rot_z, const vec3_t origin)
 {
     float tmp[11];
@@ -898,12 +890,10 @@ float angle_mod(float a)
 	return((360.0f / 65536) * ((int)(a * (65536 / 360.0f)) & 65535));
 }
 
-/**
+/*
  * @brief Returns angle normalized to the range [0 <= angle < 2*M_PI].
  * @param[in] angle
  * @note Unused.
- */
-/*
 float angle_norm_pi(float angle)
 {
     return DEG2RAD(angle_norm_360(RAD2DEG(angle)));
@@ -968,7 +958,7 @@ void SetPlaneSignbits(struct cplane_s *out)
 	out->signbits = bits;
 }
 
-/**
+/*
  * @brief BoxOnPlaneSide2
  * @param[in] emins
  * @param[in] emaxs
@@ -977,8 +967,6 @@ void SetPlaneSignbits(struct cplane_s *out)
  *
  * @note This is the slow, general version
  * @note Unused
- */
-/*
 int BoxOnPlaneSide2 (vec3_t emins, vec3_t emaxs, struct cplane_s *p)
 {
     int     i;
@@ -1418,7 +1406,7 @@ void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs)
 	}
 }
 
-/**
+/*
  * @brief PointInBounds
  * @param[in] v
  * @param[in] mins
@@ -1426,8 +1414,6 @@ void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs)
  * @return
  *
  * @note Unused.
- */
-/*
 qboolean PointInBounds(const vec3_t v, const vec3_t mins, const vec3_t maxs)
 {
     if (v[0] < mins[0])
@@ -1733,13 +1719,11 @@ void vec3_inv(vec3_t v)
 	v[2] = -v[2];
 }
 
-/**
+/*
  * @brief Q_log2
  * @param val
  * @return
  * @note Unused.
- */
-/*
 int Q_log2(int val)
 {
     int answer = 0;
@@ -1752,13 +1736,11 @@ int Q_log2(int val)
 }
 */
 
-/**
+/*
  * @brief PlaneTypeForNormal
  * @param[in] normal
  * @return
  * @note Unused
- */
-/*
 int PlaneTypeForNormal (vec3_t normal) {
     if ( normal[0] == 1.0 )
         return PLANE_X;

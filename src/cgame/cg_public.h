@@ -44,7 +44,7 @@
 #define MAX_ENTITIES_IN_SNAPSHOT    512
 
 /**
- * @struct snapshot_t
+ * @struct snapshot_s
  *
  * @brief Snapshots are a view of the server at a given time.
  *
@@ -71,8 +71,8 @@ typedef struct
 } snapshot_t;
 
 /**
- * @enum cgameEvent_t
- * @typedef cgameEvent_e
+ * @enum cgameEvent_e
+ * @typedef cgameEvent_t
  * @brief
  */
 typedef enum cgameEvent_e

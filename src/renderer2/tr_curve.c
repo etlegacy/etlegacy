@@ -414,7 +414,7 @@ static int MakeMeshTriangles(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE
 	return numTriangles;
 }
 
-/**
+/*
  * @brief MakeTangentSpaces
  * @param[in] width
  * @param[in] height
@@ -423,8 +423,6 @@ static int MakeMeshTriangles(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE
  * @param[out] triangles
  *
  * @note Unused
- */
-/*
 static void MakeTangentSpaces(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE], int numTriangles,
                               srfTriangle_t triangles[SHADER_MAX_TRIANGLES])
 {

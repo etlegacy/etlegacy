@@ -50,7 +50,7 @@
 // msg.c
 
 /**
- * @struct msg_t
+ * @struct msg_s
  * @brief
  */
 typedef struct
@@ -339,6 +339,10 @@ typedef struct
 
 #define AUTOUPDATE_DIR "update"
 
+/**
+ * @struct autoupdate_t
+ * @brief
+ */
 typedef struct
 {
 	netadr_t autoupdateServer;
@@ -384,8 +388,9 @@ You or the server may be running older versions of the game. Press the auto-upda
 #define PROTOCOL_VERSION    84
 
 /**
- * @var Maintain a list of compatible protocols for demo playing
- * @note that stuff only works with two digits protocols
+ * @var demo_protocols
+ * @brief Maintain a list of compatible protocols for demo playing
+ * @note That stuff only works with two digits protocols
  */
 extern int demo_protocols[];
 
@@ -446,6 +451,10 @@ VIRTUAL MACHINE
 
 typedef struct vm_s vm_t;
 
+/**
+ * @enum vmInterpret_t
+ * @brief
+ */
 typedef enum
 {
 	VMI_NATIVE,
@@ -453,7 +462,11 @@ typedef enum
 	VMI_COMPILED
 } vmInterpret_t;
 
-
+/**
+ * @enum vmSlots_e
+ * @typedef vmSlots_t
+ * @brief
+ */
 typedef enum vmSlots_e
 {
 	VM_GAME = 0,
@@ -464,6 +477,10 @@ typedef enum vmSlots_e
 
 extern const char *vmStrs[MAX_VM];
 
+/**
+ * @enum sharedTraps_t
+ * @brief
+ */
 typedef enum
 {
 	TRAP_MEMSET = 100,
@@ -507,6 +524,10 @@ void *VM_ArgPtr(intptr_t intValue);
 void *VM_ExplicitArgPtr(vm_t *vm, intptr_t intValue);
 
 #define VMA(x) VM_ArgPtr(args[x])
+/**
+ * @brief _vmf
+ * @param[in] intptr_t
+ */
 static ID_INLINE float _vmf(intptr_t x)
 {
 	floatint_t fi;
@@ -945,6 +966,11 @@ Edit fields and command line history/completion
 */
 
 #define MAX_EDIT_LINE   512
+
+/**
+ * @struct field_t
+ * @brief
+ */
 typedef struct
 {
 	int cursor;
@@ -1054,6 +1080,10 @@ extern qboolean com_errorEntered;
 extern fileHandle_t com_journalFile;
 extern fileHandle_t com_journalDataFile;
 
+/**
+ * @enum memtag_t
+ * @brief
+ */
 typedef enum
 {
 	TAG_FREE,
@@ -1179,6 +1209,11 @@ void CL_Snd_Shutdown(void);
 // Restart sound subsystem
 
 // udpate.c
+
+/**
+ * @enum UPDATE_FLAGS
+ * @brief
+ */
 enum UPDATE_FLAGS
 {
 	CLEAR_STATUS = 0,
@@ -1416,8 +1451,8 @@ void CON_Clear_tty(void);
 #define INTERNAL_NODE (HMAX + 1)
 
 /**
- * @struct node_t
- * @typedef nodetype
+ * @struct nodetype
+ * @typedef node_t
  * @brief
  */
 typedef struct nodetype

@@ -52,8 +52,8 @@ static shader_t *hashTable[FILE_HASH_SIZE];
 #define generateHashValue(fname) Q_GenerateHashValue(fname, FILE_HASH_SIZE, qfalse, qtrue)
 
 /**
- * @struct shaderStringPointer_t
- * @typedef shaderStringPointer_s
+ * @struct shaderStringPointer_s
+ * @typedef shaderStringPointer_t
  *
  * @brief Table containing string indexes for each shader found in the scripts,
  * referenced by their checksum values.
@@ -1538,7 +1538,7 @@ void ParseSort(char **text)
 }
 
 /**
- * @struct infoParm_t
+ * @struct infoParm_s
  * @brief
  *
  * @note This table is also present in q3map

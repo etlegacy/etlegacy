@@ -353,7 +353,8 @@ PARSING
 */
 
 /**
- * @var Multiple character punctuation tokens
+ * @var punctuation
+ * @brief Multiple character punctuation tokens
  */
 const char *punctuation[] =
 {
@@ -443,12 +444,10 @@ void COM_ParseError(const char *format, ...)
 	Com_Printf("ERROR COM_ParseError: %s, line %d: %s\n", com_parsename, com_lines, string);
 }
 
-/**
+/*
  * @brief COM_ParseWarning
  * @param[in] format
  * @note Unused.
- */
-/*
 void COM_ParseWarning(const char *format, ...)
 {
 	va_list     argptr;
@@ -1949,15 +1948,13 @@ int QDECL Com_sprintf(char *dest, unsigned int size, const char *fmt, ...)
 	return len;
 }
 
-/**
+/*
  * @brief Does a varargs printf into a temp buffer, so I don't need to have
  * varargs versions of all text functions.
  * @param[in] format
  * @return
  *
  * @note Unused
- */
-/*
 char *QDECL va(const char *format, ...)
 {
     va_list     argptr;

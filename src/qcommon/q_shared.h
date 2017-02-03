@@ -339,8 +339,16 @@ static ID_INLINE float idSqrt(float x)
 
 typedef unsigned char byte;
 
+/**
+ * @enum qboolean
+ * @brief Boolean definition
+ */
 typedef enum { qfalse, qtrue }    qboolean;
 
+/**
+ * @union floatint_t
+ * @brief
+ */
 typedef union
 {
 	float f;
@@ -471,7 +479,6 @@ typedef enum
 
 /**
  * @enum printParm_t
- *
  * @brief print levels from renderer (FIXME: set up for game / cgame?)
  */
 typedef enum
@@ -534,6 +541,7 @@ typedef enum
 
 /**
  * @enum ha_pref
+ * @brief
  */
 typedef enum
 {
@@ -557,6 +565,7 @@ void *Hunk_Alloc(size_t size, ha_pref preference);
 
 /**
  * @enum CIN_Flags
+ * @brief
  */
 typedef enum
 {
@@ -622,7 +631,9 @@ void COM_BitClear(int array[], int bitNum);
 #endif
 
 /**
- * @struct pc_token_t
+ * @struct pc_token_s
+ * @typedef pc_token_t
+ * @brief
  */
 typedef struct pc_token_s
 {
@@ -793,8 +804,8 @@ default values.
 #define CVAR_NONEXISTENT            2147483648U  ///< Cvar doesn't exist.
 
 /**
- * @struct cvar_t
- * @typedef cvar_s
+ * @struct cvar_s
+ * @typedef cvar_t
  * @brief
  *
  * @note Nothing outside the Cvar_*() functions should modify these fields!
@@ -861,7 +872,8 @@ PlaneTypeForNormal
 #define PlaneTypeForNormal(x) (x[0] == 1.0f ? PLANE_X : (x[1] == 1.0f ? PLANE_Y : (x[2] == 1.0f ? PLANE_Z : (x[0] == 0.f && x[1] == 0.f && x[2] == 0.f ? PLANE_NON_PLANAR : PLANE_NON_AXIAL))))
 
 /**
- * @struct cplane_t
+ * @struct cplane_s
+ * @typedef cplane_t
  * @brief
  *
  * @note !!! if this is changed, it must be changed in asm code too !!!
@@ -1048,8 +1060,8 @@ typedef enum
 #define PS_PMOVEFRAMECOUNTBITS  6
 
 /**
- * @struct playerState_t
- * @typedef playerState_s
+ * @struct playerState_s
+ * @typedef playerState_t
  * @brief playerState_t is the information needed by both the client and server
  * to predict player motion and actions
  * nothing outside of pmove should modify these, or some degree of prediction error
@@ -1077,7 +1089,7 @@ typedef struct playerState_s
 	vec3_t velocity;
 	int weaponTime;
 	int weaponDelay;            ///< for weapons that don't fire immediately when 'fire' is hit (grenades, venom, ...)
-	int grenadeTimeLeft;        ///< for delayed grenade throwing.  this is set to a #define for grenade
+	int grenadeTimeLeft;        ///< for delayed grenade throwing.  this is set to a \#define for grenade
 	                            ///< lifetime when the attack button goes down, then when attack is released
 	                            ///< this is the amount of time left before the grenade goes off (or if it
 	                            ///< gets to 0 while in players hand, it explodes)
@@ -1256,8 +1268,8 @@ typedef enum
 } dtType_t;
 
 /**
- * @struct usercmd_t
- * @typedef usercmd_s
+ * @struct usercmd_s
+ * @typedef usercmd_t
  * @brief usercmd_t is sent to the server each client frame
  */
 typedef struct usercmd_s
@@ -1414,8 +1426,8 @@ typedef enum
 } entityType_t;
 
 /**
- * @enum entityState_t
- * @typedef entityState_s
+ * @struct entityState_s
+ * @typedef entityState_t
  * @brief
  */
 typedef struct entityState_s
@@ -1576,8 +1588,8 @@ typedef struct
 //=============================================
 
 /**
- * @struct qtime_t
- * @typedef qtime_s
+ * @struct qtime_s
+ * @typedef qtime_t
  * @brief
  */
 typedef struct qtime_s
@@ -1656,8 +1668,8 @@ typedef enum
 } gamestate_t;
 
 /**
- * @struct rectDef_t
- * @typedef rectDef_s
+ * @struct rectDef_s
+ * @typedef rectDef_t
  * @brief server/game states
  */
 typedef struct rectDef_s
@@ -1680,8 +1692,8 @@ float rint(float v);
 //#define ROUND_INT(x) (x >= 0 ? (int)(x + 0.5) : (int)(x - 0.5)) // Unused
 
 /**
- * @struct demoPlayInfo_t
- * @typedef demoPlayInfo_s
+ * @struct demoPlayInfo_s
+ * @typedef demoPlayInfo_t
  * @brief
  */
 typedef struct demoPlayInfo_s

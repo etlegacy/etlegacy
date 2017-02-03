@@ -717,7 +717,7 @@ qboolean G_ScriptAction_StopRotation(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_FollowSpline
- * @details syntax: followspline <targetname> <speed> [wait]
+ * @details syntax: followspline \<targetname\> \<speed\> \[wait\]
  * @param[in,out] ent
  * @param[in] params
  * @return
@@ -1090,7 +1090,7 @@ qboolean G_ScriptAction_SetChargeTimeFactor(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_SpawnRubble
- * @details syntax: spawnrubble <targetname>
+ * @details syntax: spawnrubble \<targetname\>
  * @param ent - unused
  * @param[in] params
  * @return
@@ -1116,7 +1116,7 @@ qboolean G_ScriptAction_SpawnRubble(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_AllowTankExit
- * @details syntax: allowtankexit <yes|on|no|off>
+ * @details syntax: allowtankexit \<yes|on|no|off\>
  * @param ent - unused
  * @param[in] params
  * @return
@@ -1307,7 +1307,7 @@ qboolean G_ScriptAction_Kill(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_SetGlobalFog
- * @details syntax: setglobalfog <bool:restore> <int:duration> [float:r] [float:g] [float:b] [float:depthForOpaque]
+ * @details syntax: setglobalfog \<bool:restore\> \<int:duration\> \[float:r\] \[float:g\] \[float:b\] \[float:depthForOpaque\]
  * @param ent - unused
  * @param[in] params
  * @return
@@ -1361,7 +1361,7 @@ qboolean G_ScriptAction_SetGlobalFog(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_GotoMarker
- * @details syntax: gotomarker <targetname> <speed> [accel/deccel] [turntotarget] [wait] [relative <position>]
+ * @details syntax: gotomarker \<targetname\> \<speed\> \[accel\/deccel\] \[turntotarget\] \[wait\] \[relative \<position\>\]
  * @param[in,out] ent
  * @param[in] params
  * @return
@@ -1638,8 +1638,8 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_Wait
- * @details syntax:   wait <duration>
- *          wait random <min> <max>
+ * @details syntax:   wait \<duration\>
+ *          wait random \<min\> \<max\>
  * @param[in] ent
  * @param[in] params
  * @return
@@ -1694,7 +1694,7 @@ qboolean G_ScriptAction_Wait(gentity_t *ent, char *params)
 
 /**
  * @brief Calls the specified trigger for the given ai character or script entity
- * @details syntax: trigger <aiName/scriptName> <trigger>
+ * @details syntax: trigger \<aiName\/scriptName\> \<trigger\>
  * @param[in] ent
  * @param[in] params
  * @return
@@ -1825,7 +1825,7 @@ qboolean G_ScriptAction_Trigger(gentity_t *ent, char *params)
 /**
  * @brief Currently only allows playing on the VOICE channel, unless you use a sound script.
  * Use the optional LOOPING paramater to attach the sound to the entities looping channel.
- * syntax: playsound <soundname OR scriptname> [LOOPING]
+ * syntax: playsound \<soundname OR scriptname\> [LOOPING]
  *
  * @param[in,out] ent
  * @param[in] params
@@ -1890,7 +1890,7 @@ qboolean G_ScriptAction_PlaySound(gentity_t *ent, char *params)
 
 /**
  * @brief Fades all sounds up or down, going from the current level to max or zero in 'time' milliseconds
- * @details syntax: fadeallsounds [UP/DOWN] time
+ * @details syntax: fadeallsounds \[UP\/DOWN\] time
  * @param ent - unused
  * @param[in] params
  * @return
@@ -2073,7 +2073,7 @@ qboolean G_ScriptAction_MusicFade(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_PlayAnim
- * @details syntax: playanim <startframe> <endframe> [looping <FOREVER/duration>] [rate <FPS>]
+ * @details syntax: playanim \<startframe\> \<endframe\> \[looping \<FOREVER\/duration\>\] \[rate \<FPS\>\]
  * @param[in,out] ent
  * @param[in] params
  * @return
@@ -2209,7 +2209,7 @@ qboolean G_ScriptAction_PlayAnim(gentity_t *ent, char *params)
 
 /**
  * @brief Modified to target multiple entities with the same targetname
- * @details syntax: alertentity <targetname>
+ * @details syntax: alertentity \<targetname\>
  * @param ent - unused
  * @param[in] params
  * @return
@@ -2268,7 +2268,7 @@ qboolean G_ScriptAction_AlertEntity(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_ToggleSpeaker
- * @param syntax: togglespeaker <targetname>
+ * @details syntax: togglespeaker \<targetname\>
  * @param ent - unused
  * @param[in] params
  * @return
@@ -2308,7 +2308,7 @@ qboolean G_ScriptAction_ToggleSpeaker(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_DisableSpeaker
- * @param syntax: disablespeaker <targetname>
+ * @details syntax: disablespeaker \<targetname\>
  * @param ent - unused
  * @param[in] params
  * @return
@@ -2348,7 +2348,7 @@ qboolean G_ScriptAction_DisableSpeaker(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_EnableSpeaker
- * @details syntax: enablespeaker <targetname>
+ * @details syntax: enablespeaker \<targetname\>
  * @param ent - unused
  * @param[in] params
  * @return
@@ -2388,23 +2388,23 @@ qboolean G_ScriptAction_EnableSpeaker(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_Accum
- * @details syntax: accum <buffer_index> <command> <paramater...>
+ * @details syntax: accum \<buffer_index\> \<command\> \<paramater...\>
  *
  * Commands:
  *
- *   accum <n> inc <m>
- *   accum <n> abort_if_less_than <m>
- *   accum <n> abort_if_greater_than <m>
- *   accum <n> abort_if_not_equal <m>
- *   accum <n> abort_if_equal <m>
- *   accum <n> set <m>
- *   accum <n> random <m>
- *   accum <n> bitset <m>
- *   accum <n> bitreset <m>
- *   accum <n> abort_if_bitset <m>
- *   accum <n> abort_if_not_bitset <m>
- *   accum <n> trigger_if_equal <m> <s> <t>
- *   accum <n> wait_while_equal <m>
+ *   accum \<n\> inc \<m\>
+ *   accum \<n\> abort_if_less_than \<m\>
+ *   accum \<n\> abort_if_greater_than \<m\>
+ *   accum \<n\> abort_if_not_equal \<m\>
+ *   accum \<n\> abort_if_equal \<m\>
+ *   accum \<n\> set \<m\>
+ *   accum \<n\> random \<m\>
+ *   accum \<n\> bitset \<m\>
+ *   accum \<n\> bitreset \<m\>
+ *   accum \<n\> abort_if_bitset \<m\>
+ *   accum \<n\> abort_if_not_bitset \<m\>
+ *   accum \<n\> trigger_if_equal \<m\> \<s\> \<t\>
+ *   accum \<n\> wait_while_equal \<m\>
  *
  * @param[in,out] ent
  * @param[in] params
@@ -2672,23 +2672,23 @@ qboolean G_ScriptAction_Accum(gentity_t *ent, char *params)
 /**
  * @brief G_ScriptAction_GlobalAccum
  *
- * @details syntax: globalAccum <buffer_index> <command> <paramater...>
+ * @details syntax: globalAccum \<buffer_index\> \<command\> \<paramater...\>
  *
  * Commands:
  *
- *   globalAccum <n> inc <m>
- *   globalAccum <n> abort_if_less_than <m>
- *   globalAccum <n> abort_if_greater_than <m>
- *   globalAccum <n> abort_if_not_equal <m>
- *   globalAccum <n> abort_if_equal <m>
- *   globalAccum <n> set <m>
- *   globalAccum <n> random <m>
- *   globalAccum <n> bitset <m>
- *   globalAccum <n> bitreset <m>
- *   globalAccum <n> abort_if_bitset <m>
- *   globalAccum <n> abort_if_not_bitset <m>
- *   globalAccum <n> trigger_if_equal <m> <s> <t>
- *   globalAccum <n> wait_while_equal <m>
+ *   globalAccum \<n\> inc \<m\>
+ *   globalAccum \<n\> abort_if_less_than \<m\>
+ *   globalAccum \<n\> abort_if_greater_than \<m\>
+ *   globalAccum \<n\> abort_if_not_equal \<m\>
+ *   globalAccum \<n\> abort_if_equal \<m\>
+ *   globalAccum \<n\> set \<m\>
+ *   globalAccum \<n\> random \<m\>
+ *   globalAccum \<n\> bitset \<m\>
+ *   globalAccum \<n\> bitreset \<m\>
+ *   globalAccum \<n\> abort_if_bitset \<m\>
+ *   globalAccum \<n\> abort_if_not_bitset \<m\>
+ *   globalAccum \<n\> trigger_if_equal \<m\> \<s\> \<t\>
+ *   globalAccum \<n\> wait_while_equal \<m\>
  *
  * @param[in,out] ent
  * @param[in] params
@@ -2916,7 +2916,7 @@ qboolean G_ScriptAction_GlobalAccum(gentity_t *ent, char *params)
 
 /**
  * @brief Mostly for debugging purposes
- * @details syntax: print <text>
+ * @details syntax: print \<text\>
  *
  * @param[in,out] ent
  * @param[in] params
@@ -2958,11 +2958,11 @@ qboolean G_ScriptAction_Print(gentity_t *ent, char *params)
 }
 
 /**
- * @brief The entity will face the given angles, taking <duration> to get their.
+ * @brief The entity will face the given angles, taking \<duration\> to get their.
  * If the GOTOTIME is given instead of a timed duration, the duration calculated
  * from the last gotomarker command will be used instead.
  *
- * @details syntax: faceangles <pitch> <yaw> <roll> <duration/GOTOTIME> [ACCEL/DECCEL]
+ * @details syntax: faceangles \<pitch\> \<yaw\> \<roll\> \<duration\/GOTOTIME\> \[ACCEL\/DECCEL\]
  *
  * @param[in,out] ent
  * @param[in] params
@@ -3114,7 +3114,7 @@ qboolean G_ScriptAction_ResetScript(gentity_t *ent, char *params)
 
 /**
  * @brief Connect this entity onto the tag of another entity
- * @details syntax: attachtotag <targetname/scriptname> <tagname>
+ * @details syntax: attachtotag \<targetname\/scriptname\> \<tagname\>
  * @param[out] ent
  * @param[in] params
  * @return
@@ -3216,11 +3216,12 @@ qboolean G_ScriptAction_StopSound(gentity_t *ent, char *params)
 	return qtrue;
 }
 
-/*
-=================
-G_ScriptAction_EntityScriptName
-=================
-*/
+/**
+ * @brief G_ScriptAction_EntityScriptName
+ * @param ent - unused
+ * @param[in] params
+ * @return
+ */
 qboolean G_ScriptAction_EntityScriptName(gentity_t *ent, char *params)
 {
 	trap_Cvar_Set("g_scriptName", params);
@@ -3231,7 +3232,7 @@ qboolean G_ScriptAction_EntityScriptName(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_AxisRespawntime
- * @details syntax: wm_axis_respawntime <seconds>
+ * @details syntax: wm_axis_respawntime \<seconds\>
  * @param ent - unused
  * @param[in] params
  * @return
@@ -3260,7 +3261,7 @@ qboolean G_ScriptAction_AxisRespawntime(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_AlliedRespawntime
- * @details syntax: wm_allied_respawntime <seconds>
+ * @details syntax: wm_allied_respawntime \<seconds\>
  * @param ent - unused
  * @param[in] params
  * @return
@@ -3289,7 +3290,7 @@ qboolean G_ScriptAction_AlliedRespawntime(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_NumberofObjectives
- * @details syntax: wm_number_of_objectives <number>
+ * @details syntax: wm_number_of_objectives \<number\>
  * @param ent - unused
  * @param[in] params
  * @return
@@ -3322,12 +3323,12 @@ qboolean G_ScriptAction_NumberofObjectives(gentity_t *ent, char *params)
 }
 
 /**
- * @brief syntax: wm_set_main_objective <objective_number> <team>
+ * @brief syntax: wm_set_main_objective \<objective_number\> \<team\>
  * @param ent - unused
  * @param params - unused
  * @return
  *
- * @note TODO: This function always true
+ * @todo TODO: This function always return true
  */
 qboolean G_ScriptAction_SetMainObjective(gentity_t *ent, char *params)
 {
@@ -3367,7 +3368,7 @@ qboolean G_ScriptAction_SetMainObjective(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_ObjectiveStatus
- * @details syntax: wm_objective_status <objective_number> <team> <status>
+ * @details syntax: wm_objective_status \<objective_number\> \<team\> \<status\>
  * @param[in] ent
  * @param[in] params
  * @return
@@ -3512,7 +3513,7 @@ qboolean G_ScriptAction_VoiceAnnounce(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_SetWinner
- * @details syntax: wm_setwinner <team>
+ * @details syntax: wm_setwinner \<team\>
  * team: 0==AXIS, 1==ALLIED
  * @param ent - unused
  * @param[in] params
@@ -3557,7 +3558,7 @@ qboolean G_ScriptAction_SetWinner(gentity_t *ent, char *params)
 
 /**
  * @brief Sets defending team for stopwatch mode
- * @details syntax: wm_set_objective_status <status>
+ * @details syntax: wm_set_objective_status \<status\>
  * status: 0==axis, 1==allies
  * @param ent - unused
  * @param[in] params
@@ -3703,7 +3704,7 @@ qboolean G_ScriptAction_RemoveTeamVoiceAnnounce(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_TeamVoiceAnnounce
- * @details syntax: wm_teamvoiceannounce <team> <soundname>
+ * @details syntax: wm_teamvoiceannounce \<team\> \<soundname\>
  * @param[in] ent
  * @param[in] params
  * @return
@@ -3754,7 +3755,7 @@ qboolean G_ScriptAction_TeamVoiceAnnounce(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_Announce_Icon
- * @details syntax: wm_announce_icon <icon number> <"text to send to all clients">
+ * @details syntax: wm_announce_icon \<icon number\> \<"text to send to all clients"\>
  * @param[in] ent
  * @param[in] params
  * @return
@@ -3800,7 +3801,7 @@ qboolean G_ScriptAction_Announce_Icon(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_Announce
- * @details syntax: wm_announce <"text to send to all clients">
+ * @details syntax: wm_announce \<"text to send to all clients"\>
  * @param[in] ent
  * @param[in] params
  * @return
@@ -3834,7 +3835,7 @@ qboolean G_ScriptAction_Announce(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_EndRound
- * @details syntax: wm_endround <>
+ * @details syntax: wm_endround \<\>
  * @param ent - unused
  * @param params - unused
  * @return
@@ -3853,7 +3854,7 @@ qboolean G_ScriptAction_EndRound(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_SetRoundTimelimit
- * @details syntax: wm_set_round_timelimit <number>
+ * @details syntax: wm_set_round_timelimit \<number\>
  * @param ent - unused
  * @param[in] params
  * @return
@@ -4037,7 +4038,7 @@ qboolean G_ScriptAction_SetState(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_RepairMG42
- * @details syntax: repairmg42 <target>
+ * @details syntax: repairmg42 \<target\>
  * @param[in] ent
  * @param[in] params
  * @return
@@ -4095,7 +4096,7 @@ qboolean G_ScriptAction_RepairMG42(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_SetHQStatus
- * @details syntax: sethqstatus <team> <status>
+ * @details syntax: sethqstatus \<team\> \<status\>
  * @param ent - unused
  * @param[in] params
  * @return
@@ -4146,7 +4147,7 @@ qboolean G_ScriptAction_SetHQStatus(gentity_t *ent, char *params)
 
 /**
  * @brief Prints out the value of  accum 'accumNumber'
- * @details syntax: printaccum <accumNumber>
+ * @details syntax: printaccum \<accumNumber\>
  * @param[in] ent
  * @param[in] params
  * @return
@@ -4181,7 +4182,7 @@ qboolean G_ScriptAction_PrintAccum(gentity_t *ent, char *params)
 
 /**
  * @brief prints out the value of global accum 'globalaccumnumber'
- * @details syntax: printGlobalAccum <globalaccumnumber>
+ * @details syntax: printGlobalAccum \<globalaccumnumber\>
  * @param ent - unused
  * @param[in] params
  * @return
@@ -4244,7 +4245,7 @@ qboolean G_ScriptAction_Construct(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_ConstructibleClass
- * @details syntax: constructible_class <int:class>
+ * @details syntax: constructible_class \<int:class\>
  * @param[out] ent
  * @param params
  * @return
@@ -4277,7 +4278,7 @@ qboolean G_ScriptAction_ConstructibleClass(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_ConstructibleChargeBarReq
- * @details syntax: constructible_chargebarreq <float:fraction>
+ * @details syntax: constructible_chargebarreq \<float:fraction\>
  * @param[in] ent
  * @param[in] params
  * @return
@@ -4306,7 +4307,7 @@ qboolean G_ScriptAction_ConstructibleChargeBarReq(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_ConstructibleConstructXPBonus
- * @details syntax: constructible_constructxpbonus <int:xppoints>
+ * @details syntax: constructible_constructxpbonus \<int:xppoints\>
  * @param[out] ent
  * @param[in] params
  * @return
@@ -4335,7 +4336,7 @@ qboolean G_ScriptAction_ConstructibleConstructXPBonus(gentity_t *ent, char *para
 
 /**
  * @brief G_ScriptAction_ConstructibleDestructXPBonus
- * @details syntax: constructible_destructxpbonus <int:xppoints>
+ * @details syntax: constructible_destructxpbonus \<int:xppoints\>
  * @param[out] ent
  * @param[in] params
  * @return
@@ -4364,7 +4365,7 @@ qboolean G_ScriptAction_ConstructibleDestructXPBonus(gentity_t *ent, char *param
 
 /**
  * @brief G_ScriptAction_ConstructibleHealth
- * @details syntax: constructible_health <int:health>
+ * @details syntax: constructible_health \<int:health\>
  * @param[out] ent
  * @param[in] params
  * @return
@@ -4394,7 +4395,7 @@ qboolean G_ScriptAction_ConstructibleHealth(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_ConstructibleWeaponclass
- * @details syntax: constructible_weaponclass <int:class>
+ * @details syntax: constructible_weaponclass \<int:class\>
  * @param[out] ent
  * @param[in] params
  * @return
@@ -4424,7 +4425,7 @@ qboolean G_ScriptAction_ConstructibleWeaponclass(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_ConstructibleDuration
- * @details syntax: constructible_duration <int:duration>
+ * @details syntax: constructible_duration \<int:duration\>
  * @param[out] ent
  * @param[in] params
  * @return
@@ -4453,7 +4454,7 @@ qboolean G_ScriptAction_ConstructibleDuration(gentity_t *ent, char *params)
 
 /**
  * @brief G_ScriptAction_Cvar
- * @details syntax: cvar <cvarName> <operation> <value>
+ * @details syntax: cvar \<cvarName\> \<operation\> \<value\>
  * @param[in,out] ent
  * @param[in] params
  * @return
@@ -4708,7 +4709,7 @@ qboolean G_ScriptAction_AbortIfNotSinglePlayer(gentity_t *ent, char *params)
  * @brief G_ModifyTOI
  * @param[in,out] ent
  *
- * @todo FIXME should we just do set stuff BEFORE actual spawning code? or add update code to entities?
+ * @todo FIXME should we just do set stuff BEFORE actual spawning code? or add update code to entities ?
  * ( there are certainly more entities requiring update after set{} )
  */
 void G_ModifyTOI(gentity_t *ent)

@@ -1975,13 +1975,11 @@ void SP_mg42(gentity_t *self)
 #define GUN3_LASTFIRE   11
 #define GUN4_LASTFIRE   15
 
-/**
+/*
  * @brief Flak_Animate
  * @param[in,out] ent
  *
  * @note Unused
- */
-/*
 void Flak_Animate(gentity_t *ent)
 {
     //G_Printf ("frame %i\n", ent->s.frame);

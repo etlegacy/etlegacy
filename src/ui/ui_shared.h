@@ -126,7 +126,7 @@
 #define NUM_CROSSHAIRS      16
 
 /**
- * @struct windowDef_t
+ * @struct windowDef_s
  * @typedef Window
  * @brief
  *
@@ -161,7 +161,7 @@ typedef struct
 typedef windowDef_t Window;
 
 /**
- * @struct colorRangeDef_t
+ * @struct colorRangeDef_s
  * @brief
  */
 typedef struct
@@ -185,8 +185,8 @@ typedef struct
 #define MAX_LB_COLUMNS 16
 
 /**
- * @struct columnInfo_t
- * @typedef columnInfo_s
+ * @struct columnInfo_s
+ * @typedef columnInfo_t
  * @brief
  */
 typedef struct columnInfo_s
@@ -197,8 +197,8 @@ typedef struct columnInfo_s
 } columnInfo_t;
 
 /**
- * @struct listBoxDef_t
- * @typedef listBoxDef_s
+ * @struct listBoxDef_s
+ * @typedef listBoxDef_t
  * @brief
  */
 typedef struct listBoxDef_s
@@ -218,8 +218,8 @@ typedef struct listBoxDef_s
 } listBoxDef_t;
 
 /**
- * @struct editFieldDef_t
- * @typedef editFieldDef_s
+ * @struct editFieldDef_s
+ * @typedef editFieldDef_t
  * @brief
  */
 typedef struct editFieldDef_s
@@ -236,8 +236,8 @@ typedef struct editFieldDef_s
 #define MAX_MULTI_CVARS 32
 
 /**
- * @struct multiDef_t
- * @typedef multiDef_s
+ * @struct multiDef_s
+ * @typedef multiDef_t
  * @brief
  */
 typedef struct multiDef_s
@@ -251,8 +251,8 @@ typedef struct multiDef_s
 } multiDef_t;
 
 /**
- * @struct modelDef_t
- * @typedef modelDef_s
+ * @struct modelDef_s
+ * @typedef modelDef_t
  * @brief
  */
 typedef struct modelDef_s
@@ -288,8 +288,8 @@ typedef struct modelDef_s
 #define UI_MAX_TEXT_LINES 64
 
 /**
- * @struct itemDef_t
- * @typedef itemDef_s
+ * @struct itemDef_s
+ * @typedef itemDef_t
  * @brief
  */
 typedef struct itemDef_s
@@ -351,7 +351,7 @@ typedef struct itemDef_s
 } itemDef_t;
 
 /**
- * @struct menuDef_t
+ * @struct menuDef_s
  * @brief
  */
 typedef struct
@@ -390,7 +390,7 @@ typedef struct
 #define UI_FONT_COUNT 6
 
 /**
- * @struct cachedAssets_t
+ * @struct cachedAssets_s
  * @brief
  */
 typedef struct
@@ -439,7 +439,7 @@ typedef struct
 } cachedAssets_t;
 
 /**
- * @struct commandDef_t
+ * @struct commandDef_s
  * @brief
  */
 typedef struct
@@ -449,7 +449,7 @@ typedef struct
 } commandDef_t;
 
 /**
- * @struct displayContextDef_t
+ * @struct displayContextDef_s
  * @brief
  */
 typedef struct
@@ -550,7 +550,7 @@ typedef struct
 } displayContextDef_t;
 
 void PC_SourceError(int handle, const char *format, ...);
-void PC_SourceWarning(int handle, const char *format, ...);
+//void PC_SourceWarning(int handle, const char *format, ...); // Unused
 qboolean PC_Float_Parse(int handle, float *f);
 qboolean PC_Color_Parse(int handle, vec4_t *c);
 qboolean PC_Int_Parse(int handle, int *i);
@@ -686,8 +686,8 @@ int trap_PC_UnReadToken(int handle);
 typedef struct panel_button_s panel_button_t;
 
 /**
- * @struct panel_button_text_t
- * @typedef panel_button_text_s
+ * @struct panel_button_text_s
+ * @typedef panel_button_text_t
  * @brief
  */
 typedef struct panel_button_text_s
@@ -705,8 +705,8 @@ typedef void (*panel_button_render)(panel_button_t *);
 typedef void (*panel_button_postprocess)(panel_button_t *);
 
 /**
- * @struct panel_button_t
- * @typedef panel_button_s
+ * @struct panel_button_s
+ * @typedef panel_button_t
  * @brief Button struct
  */
 struct panel_button_s

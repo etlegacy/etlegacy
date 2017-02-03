@@ -76,7 +76,7 @@
 typedef qboolean (*addToSnapshotCallback)(int entityNum, int clientNum);
 
 /**
-  * @struct entityShared_t
+  * @struct entityShared_s
   * @brief entityShared_t
   *
   * @warning Don't add or remove fields to keep 2.60 compatibility

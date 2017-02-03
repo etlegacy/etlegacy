@@ -454,7 +454,7 @@ static ID_INLINE void LocalMatrixTransformVector(vec3_t in, vec3_t mat[3], vec3_
 	out[2] = in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2];
 }
 
-/**
+/*
  * @brief LocalMatrixTransformVectorTranslate
  * @param[in] in
  * @param[in] mat
@@ -462,8 +462,6 @@ static ID_INLINE void LocalMatrixTransformVector(vec3_t in, vec3_t mat[3], vec3_
  * @param[out] out
  *
  * @note Unused
- */
-/*
 static ID_INLINE void LocalMatrixTransformVectorTranslate(vec3_t in, vec3_t mat[3], vec3_t tr, vec3_t out)
 {
     out[0] = in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2] + tr[0];
@@ -486,7 +484,7 @@ static ID_INLINE void LocalScaledMatrixTransformVector(vec3_t in, float s, vec3_
 	out[2] = (1.0f - s) * in[2] + s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2]);
 }
 
-/**
+/*
  * @brief LocalScaledMatrixTransformVectorTranslate
  * @param[in] in
  * @param[in] s
@@ -495,8 +493,6 @@ static ID_INLINE void LocalScaledMatrixTransformVector(vec3_t in, float s, vec3_
  * @param[out] out
  *
  * @note Unused
- */
-/*
 static ID_INLINE void LocalScaledMatrixTransformVectorTranslate(vec3_t in, float s, vec3_t mat[3], vec3_t tr, vec3_t out)
 {
     out[0] = (1.0f - s) * in[0] + s * (in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2] + tr[0]);
@@ -505,7 +501,7 @@ static ID_INLINE void LocalScaledMatrixTransformVectorTranslate(vec3_t in, float
 }
 */
 
-/**
+/*
  * @brief LocalScaledMatrixTransformVectorFullTranslate
  * @param[in] in
  * @param[in] s
@@ -514,8 +510,6 @@ static ID_INLINE void LocalScaledMatrixTransformVectorTranslate(vec3_t in, float
  * @param[out] out
  *
  * @note Unused
- */
-/*
 static ID_INLINE void LocalScaledMatrixTransformVectorFullTranslate(vec3_t in, float s, vec3_t mat[3], vec3_t tr, vec3_t out)
 {
     out[0] = (1.0f - s) * in[0] + s * (in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2]) + tr[0];
@@ -524,7 +518,7 @@ static ID_INLINE void LocalScaledMatrixTransformVectorFullTranslate(vec3_t in, f
 }
 */
 
-/**
+/*
  * @brief LocalAddScaledMatrixTransformVectorFullTranslate
  * @param[in] in
  * @param[in] s
@@ -533,8 +527,6 @@ static ID_INLINE void LocalScaledMatrixTransformVectorFullTranslate(vec3_t in, f
  * @param[out] out
  *
  * @note Unused
- */
-/*
 static ID_INLINE void LocalAddScaledMatrixTransformVectorFullTranslate(vec3_t in, float s, vec3_t mat[3], vec3_t tr, vec3_t out)
 {
     out[0] += s * (in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2]) + tr[0];
@@ -636,15 +628,13 @@ static ID_INLINE void SLerp_Normal(vec3_t from, vec3_t to, float tt, vec3_t out)
 ===============================================================================
 */
 
-/**
+/*
  * @brief Matrix4Multiply
  * @param[in] a
  * @param[in] b
  * @param[out] dst
  *
  * @note Unused
- */
-/*
 static ID_INLINE void Matrix4Multiply(const vec4_t a[4], const vec4_t b[4], vec4_t dst[4])
 {
     dst[0][0] = a[0][0] * b[0][0] + a[0][1] * b[1][0] + a[0][2] * b[2][0] + a[0][3] * b[3][0];
@@ -697,14 +687,12 @@ static ID_INLINE void Matrix4MultiplyInto3x3AndTranslation(/*const*/ vec4_t a[4]
 	t[2]      = a[2][0] * b[0][3] + a[2][1] * b[1][3] + a[2][2] * b[2][3] + a[2][3] * b[3][3];
 }
 
-/**
+/*
  * @brief Matrix4Transpose
  * @param[in] matrix
  * @param[out] transpose
  *
  * @note Unused
- */
-/*
 static ID_INLINE void Matrix4Transpose(const vec4_t matrix[4], vec4_t transpose[4])
 {
     int i, j;
@@ -857,14 +845,12 @@ static ID_INLINE void Matrix4FromScaledAxisPlusTranslation(/*const*/ vec3_t axis
 	dst[3][3] = 1;
 }
 
-/**
+/*
  * @brief Matrix4FromScale
  * @param[in] scale
  * @param[out ] dst
  *
  * @note Unused
- */
-/*
 static ID_INLINE void Matrix4FromScale(const float scale, vec4_t dst[4])
 {
     int i, j;
@@ -887,15 +873,13 @@ static ID_INLINE void Matrix4FromScale(const float scale, vec4_t dst[4])
 }
 */
 
-/**
+/*
  * @brief Matrix4TransformVector
  * @param[in] m
  * @param[in] src
  * @param[out] dst
  *
  * @note Unused
- */
-/*
 static ID_INLINE void Matrix4TransformVector(const vec4_t m[4], const vec3_t src, vec3_t dst)
 {
     dst[0] = m[0][0] * src[0] + m[0][1] * src[1] + m[0][2] * src[2] + m[0][3];

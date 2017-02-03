@@ -442,13 +442,11 @@ int PC_MergeTokens(token_t *t1, token_t *t2)
 	return qfalse;
 }
 
-/**
+/*
  * @brief PC_PrintDefine
  * @param[in] define
  *
  * @note Unused
- */
-/*
 void PC_PrintDefine(define_t *define)
 {
     printf("define->name = %s\n", define->name);
@@ -462,13 +460,11 @@ void PC_PrintDefine(define_t *define)
 */
 #if DEFINEHASHING
 
-/**
+/*
  * @brief PC_PrintDefineHashTable
  * @param definehash
  *
  * @note unused
- */
-/*
 void PC_PrintDefineHashTable(define_t **definehash)
 {
     int      i;
@@ -612,13 +608,11 @@ void PC_FreeDefine(define_t *define)
 	FreeMemory(define);
 }
 
-/**
+/*
  * @brief Add builtin defines
  * @param[in] source
  *
  * @note Unused. Keep it here for the time being.
- */
-/*
 void PC_AddBuiltinDefines(source_t *source)
 {
     int      i;
@@ -1445,14 +1439,12 @@ int PC_AddGlobalDefine(const char *string)
 	return qtrue;
 }
 
-/**
+/*
  * @brief Remove the given global define
  * @param[in] name
  * @return
  *
  * @note Unused. Keep it here for the time being.
- */
-/*
 int PC_RemoveGlobalDefine(const char *name)
 {
     define_t *define;
@@ -3076,15 +3068,13 @@ int PC_ReadToken(source_t *source, token_t *token)
 	}
 }
 
-/**
+/*
  * @brief Expect a certain token
  * @param[in] source
  * @param[in] string
  * @return
  *
  * @note Unused. Keep it here for the time being.
- */
-/*
 int PC_ExpectTokenString(source_t *source, char *string)
 {
     token_t token;
@@ -3104,7 +3094,7 @@ int PC_ExpectTokenString(source_t *source, char *string)
 }
 */
 
-/**
+/*
  * @brief Expect a certain token type
  * @param[in] source
  * @param[in] type
@@ -3113,8 +3103,6 @@ int PC_ExpectTokenString(source_t *source, char *string)
  * @return
  *
  * @note Unused. Keep it here for the time being.
- */
-/*
 int PC_ExpectTokenType(source_t *source, int type, int subtype, token_t *token)
 {
     if (!PC_ReadToken(source, token))
@@ -3206,15 +3194,13 @@ int PC_ExpectTokenType(source_t *source, int type, int subtype, token_t *token)
 }
 */
 
-/**
+/*
  * @brief Expect a token
  * @param[in] source
  * @param[in] token
  * @return
  *
  * @note Unused. Keep it here for the time being.
- */
-/*
 int PC_ExpectAnyToken(source_t *source, token_t *token)
 {
     if (!PC_ReadToken(source, token))
@@ -3253,7 +3239,7 @@ int PC_CheckTokenString(source_t *source, const char *string)
 	return qfalse;
 }
 
-/**
+/*
  * @brief PC_CheckTokenType
  * @param[in] source
  * @param[in] type
@@ -3262,8 +3248,6 @@ int PC_CheckTokenString(source_t *source, const char *string)
  * @return Return true and reads the token when a token with the given type is available
  *
  * @note Unused. Keep it here for the time being.
- */
-/*
 int PC_CheckTokenType(source_t *source, int type, int subtype, token_t *token)
 {
     token_t tok;
@@ -3285,15 +3269,13 @@ int PC_CheckTokenType(source_t *source, int type, int subtype, token_t *token)
 }
 */
 
-/**
+/*
  * @brief Skip tokens until the given token string is read
  * @param[in] source
  * @param[in] string
  * @return
  *
  * @note Unused. Keep it here for the time being.
- */
-/*
 int PC_SkipUntilString(source_t *source, const char *string)
 {
     token_t token;
@@ -3330,14 +3312,12 @@ void PC_UnreadToken(source_t *source, token_t *token)
 
 
 
-/**
+/*
  * @brief Set the source include path
  * @param[in,out] source
  * @param[in] path
  *
  * @note Unused. Keep it here for the time being.
- */
-/*
 void PC_SetIncludePath(source_t *source, const char *path)
 {
     size_t len;
@@ -3355,14 +3335,12 @@ void PC_SetIncludePath(source_t *source, const char *path)
 */
 
 
-/**
+/*
  * @brief Set the punction set
  * @param[out] source
  * @param[in] p
  *
  * @note Unused. Keep it here for the time being.
- */
-/*
 void PC_SetPunctuations(source_t *source, punctuation_t *p)
 {
     source->punctuations = p;
@@ -3405,7 +3383,7 @@ source_t *LoadSourceFile(const char *filename)
 	return source;
 }
 
-/**
+/*
  * @brief Load a source from memory
  * @param[in] ptr
  * @param[in] length
@@ -3413,8 +3391,6 @@ source_t *LoadSourceFile(const char *filename)
  * @return
  *
  * @note Unused. Keep it here for the time being.
- */
-/*
 source_t *LoadSourceMemory(char *ptr, int length, const char *name)
 {
     source_t *source;
@@ -3649,13 +3625,11 @@ int PC_SourceFileAndLine(int handle, char *filename, int *line)
 	return qtrue;
 }
 
-/**
+/*
  * @brief Set the base folder to load files from
  * @param[in] path
  *
  * @note Unused. Keep it here for the time being.
- */
-/*
 void PC_SetBaseFolder(const char *path)
 {
     PS_SetBaseFolder(path);

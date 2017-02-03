@@ -98,6 +98,11 @@ typedef struct
  */
 #define MD3_XYZ_SCALE       (1.0 / 64)
 
+/**
+ * @struct md3Frame_s
+ * @typedef md3Frame_t
+ * @brief
+ */
 typedef struct md3Frame_s
 {
 	vec3_t bounds[2];
@@ -106,6 +111,11 @@ typedef struct md3Frame_s
 	char name[16];
 } md3Frame_t;
 
+/**
+ * @struct md3Tag_s
+ * @typedef md3Tag_t
+ * @brief
+ */
 typedef struct md3Tag_s
 {
 	char name[MAX_QPATH];           // tag name
@@ -635,13 +645,11 @@ typedef struct
 	int ofsEnd;                     // next surface follows
 } mdmSurface_t;
 
-/**
+/*
  * @struct mdmFrame_t
  * @brief
  *
  * @note Unused
- */
-/*
 typedef struct {
     vec3_t      bounds[2];          ///< bounds of all surfaces of all LOD's for this frame
     vec3_t      localOrigin;        ///< midpoint of bounds, used for sphere cull
@@ -660,13 +668,11 @@ typedef struct
 	int ofsEnd;                     ///< next lod follows
 } mdmLOD_t;
 
-/**
- * @struct mdmTag_t
+/*
+ * @struct mdmTag_s
  * @brief
  *
  * @note Unused
- */
-/*
 typedef struct {
     char        name[MAX_QPATH];    ///< name of tag
     float       torsoWeight;
@@ -1048,7 +1054,7 @@ typedef struct
 #define HEADER_LUMPS        17
 
 /**
- * @struct dheader_t
+ * @struct dheader_s
  * @brief
  */
 typedef struct

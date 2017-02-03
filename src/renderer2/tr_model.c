@@ -406,14 +406,12 @@ static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
 
 //=============================================================================
 
-/**
+/*
  * @brief R_XMLError
  * @param ctx - unused
  * @param[in] fmt
  *
  * @note Unused
- */
-/*
 void R_XMLError(void *ctx, const char *fmt, ...)
 {
     va_list     argptr;
@@ -427,7 +425,7 @@ void R_XMLError(void *ctx, const char *fmt, ...)
 }
 */
 
-/**
+/*
  * @brief R_LoadDAE
  * @param mod - unused
  * @param[out] buffer
@@ -436,8 +434,6 @@ void R_XMLError(void *ctx, const char *fmt, ...)
  * @return
  *
  * @note Unused
- */
-/*
 static qboolean R_LoadDAE(model_t * mod, void *buffer, int bufferLen, const char *modName)
 {
     xmlDocPtr       doc;
@@ -638,7 +634,7 @@ void R_Modellist_f(void)
  * @param[in] frame
  * @param[in] _tagName
  * @param[in] startTagIndex
- * @param(out] outTag
+ * @param[out] outTag
  * @return
  */
 static int R_GetTag(mdvModel_t *model, int frame, const char *_tagName, int startTagIndex, mdvTag_t **outTag)

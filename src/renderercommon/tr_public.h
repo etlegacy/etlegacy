@@ -40,7 +40,7 @@
 #define REF_API_VERSION     10
 
 /**
- * @struct refexport_t
+ * @struct refexport_s
  * @brief these are the functions exported by the refresh module
  */
 typedef struct
@@ -164,7 +164,7 @@ typedef struct
 } refexport_t;
 
 /**
- * @struct refimport_t
+ * @struct refimport_s
  * @brief These are the functions imported by the refresh module
  */
 typedef struct

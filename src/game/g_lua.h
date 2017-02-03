@@ -79,7 +79,7 @@
 #define _et_gclient_addfieldalias(n, a, t, f) { #n, t, offsetof(struct gclient_s, a), FIELD_FLAG_GCLIENT + f }
 
 /**
- * @struct lua_vm_t
+ * @struct lua_vm_s
  * @brief
  */
 typedef struct
@@ -95,7 +95,7 @@ typedef struct
 } lua_vm_t;
 
 /**
- * @struct gentity_field_t
+ * @struct gentity_field_s
  * @brief
  */
 typedef struct
@@ -109,8 +109,8 @@ typedef struct
 extern lua_vm_t *lVM[LUA_NUM_VM];
 
 /**
- * @enum printMessageType_t
- * @typedef printMessageType_e
+ * @enum printMessageType_e
+ * @typedef printMessageType_t
  * @brief
  */
 typedef enum printMessageType_e
@@ -121,8 +121,8 @@ typedef enum printMessageType_e
 } printMessageType_t;
 
 /**
- * @struct luaPrintFunctions_t
- * @typedef luaPrintFunctions_s
+ * @struct luaPrintFunctions_s
+ * @typedef luaPrintFunctions_t
  * @brief
  */
 typedef struct luaPrintFunctions_s

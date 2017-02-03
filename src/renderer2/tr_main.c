@@ -612,7 +612,7 @@ void R_CalcSurfaceTrianglePlanes(int numTriangles, srfTriangle_t *triangles, srf
 	}
 }
 
-/**
+/*
  * @brief R_CalcFov
  * @param[in] fovX
  * @param[in] width
@@ -621,8 +621,6 @@ void R_CalcSurfaceTrianglePlanes(int numTriangles, srfTriangle_t *triangles, srf
  *
  * @note This function breaks the VC9 compiler for some unknown reason ...
  * @note Unused
- */
-/*
 float R_CalcFov(float fovX, float width, float height)
 {
     static float	x;
@@ -1070,13 +1068,6 @@ void R_SetupEntityWorldBounds(trRefEntity_t *ent)
 	}
 }
 
-/*
-=================
-R_RotateEntityForViewParms
-
-
-=================
-*/
 /**
  * @brief Generates an orientation for an entity and viewParms.
  * Does NOT produce any GL calls.
@@ -1141,7 +1132,7 @@ void R_RotateEntityForViewParms(const trRefEntity_t *ent, const viewParms_t *vie
  *
  * @param[in] ent
  * @param[in] light
- * @param(out] _or
+ * @param[out] _or
  */
 void R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light, orientationr_t *_or)
 {
@@ -1897,7 +1888,7 @@ void R_MirrorPoint(vec3_t in, orientation_t *surface, orientation_t *camera, vec
  * @param[in] in
  * @param[in] surface
  * @param[in] camera
- * @param(out] out
+ * @param[out] out
  */
 void R_MirrorVector(vec3_t in, orientation_t *surface, orientation_t *camera, vec3_t out)
 {

@@ -1,8 +1,7 @@
-//
-// Created by jere on 21.9.2015.
-//
 /**
- * @file cgcamera.c
+ * @file cg_camera.c
+ * @author jere
+ * @date 21.9.2015
  */
 
 #include "cg_local.h"

@@ -96,15 +96,13 @@ int CL_GetCurrentCmdNumber(void)
 	return cl.cmdNumber;
 }
 
-/**
+/*
  * @brief CL_GetParseEntityState
  * @param[in] parseEntityNumber
  * @param[out] state
  * @return
  *
  * @note Unused
- */
-/*
 qboolean CL_GetParseEntityState(int parseEntityNumber, entityState_t *state)
 {
     // can't return anything that hasn't been parsed yet
@@ -312,7 +310,7 @@ void CL_ConfigstringModified(void)
 
 /**
  * @brief Set up argc/argv for the given command
- * @param serverCommandNumber
+ * @param[in] serverCommandNumber
  * @return
  */
 qboolean CL_GetServerCommand(int serverCommandNumber)
@@ -1218,16 +1216,6 @@ void CL_CGameRendering()
 	VM_Debug(0);
 }
 
-/*
-=================
-CL_AdjustTimeDelta
-
-
-
-
-=================
-*/
-
 #define RESET_TIME  500
 
 /**
@@ -1456,7 +1444,7 @@ void CL_SetCGameTime(void)
 	}
 }
 
-/**
+/*
  * @brief CL_GetTag
  * @param[in] clientNum
  * @param[in] tagname
@@ -1464,8 +1452,6 @@ void CL_SetCGameTime(void)
  * @return
  *
  * @note Unused
- */
-/*
 qboolean CL_GetTag(int clientNum, char *tagname, orientation_t *orientation)
 {
     if (!cgvm)

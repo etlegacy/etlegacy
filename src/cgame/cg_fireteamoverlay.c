@@ -641,7 +641,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 	}
 }
 
-/**
+/*
  * @brief CG_FireteamGetBoxNeedsButtons
  * @return
  * @note Unused
@@ -679,7 +679,7 @@ qboolean CG_FireteamGetBoxNeedsButtons(void)
 }
 */
 
-/**
+/*
  * @brief CG_FireteamGetBoxText
  * @return
  * @note Unused

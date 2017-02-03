@@ -130,7 +130,7 @@ int rotatingFlames = qtrue;
  * @param[in] oldV
  * @param[in] newV
  * @param[in] backLerp
- * @param[int,out] outV
+ * @param[in,out] outV
  */
 void CG_FlameLerpVec(const vec3_t oldV, const vec3_t newV, float backLerp, vec3_t outV)
 {

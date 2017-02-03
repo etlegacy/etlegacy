@@ -147,8 +147,8 @@
 #define ISVALIDCLIENTNUM(clientNum) (clientNum >= 0 && clientNum < MAX_CLIENTS)
 
 /**
- * @struct specName_t
- * @typedef specName_s
+ * @struct specName_s
+ * @typedef specName_t
  * @brief
  */
 typedef struct specName_s
@@ -165,7 +165,7 @@ typedef struct specName_s
 } specName_t;
 
 /**
- * @struct cg_window_t
+ * @struct cg_window_s
  * @brief
  */
 typedef struct
@@ -204,7 +204,7 @@ typedef struct
 } cg_window_t;
 
 /**
- * @struct cg_string_t
+ * @struct cg_string_s
  * @brief
  */
 typedef struct
@@ -214,7 +214,7 @@ typedef struct
 } cg_string_t;
 
 /**
- * @struct cg_windowHandler_t
+ * @struct cg_windowHandler_s
  * @brief
  */
 typedef struct
@@ -226,7 +226,7 @@ typedef struct
 
 #ifdef FEATURE_MULTIVIEW
 /**
- * @struct cg_mvinfo_t
+ * @struct cg_mvinfo_s
  * @brief
  */
 typedef struct
@@ -243,7 +243,7 @@ typedef struct
 //=================================================
 
 /**
- * @struct lerpFrame_t
+ * @struct lerpFrame_s
  * @brief
  */
 typedef struct
@@ -277,7 +277,7 @@ typedef struct
 } lerpFrame_t;
 
 /**
- * @struct playerEntity_t
+ * @struct playerEntity_s
  * @brief Player entities need to track more information
  * than any other type of entity.
  *
@@ -322,8 +322,8 @@ typedef struct
 //=================================================
 
 /**
- * @struct tag_t
- * @typedef tag_s
+ * @struct tag_s
+ * @typedef tag_t
  * @brief
  */
 typedef struct tag_s
@@ -333,8 +333,8 @@ typedef struct tag_s
 } tag_t;
 
 /**
- * @struct centity_t
- * @typedef centity_s
+ * @struct centity_s
+ * @typedef centity_t
  * @brief centity_t have a direct corespondence with gentity_t in the game, but
  * only the entityState_t is directly communicated to the cgame
  */
@@ -423,8 +423,8 @@ typedef struct centity_s
 //======================================================================
 
 /**
- * @struct markPoly_t
- * @typedef markPoly_s
+ * @struct markPoly_s
+ * @typedef markPoly_t
  * @brief
  */
 typedef struct markPoly_s
@@ -531,8 +531,8 @@ typedef enum
 } leBounceSoundType_t;
 
 /**
- * @struct localEntity_t
- * @typedef localEntity_s
+ * @struct localEntity_s
+ * @typedef localEntity_t
  * @brief Local entities are created as a result of events or predicted actions,
  * and live independantly from all server transmitted entities
  */
@@ -604,8 +604,8 @@ typedef struct
 } score_t;
 
 /**
- * @struct clientInfo_t
- * @typedef clientInfo_s
+ * @struct clientInfo_s
+ * @typedef clientInfo_t
  * @brief Each client has an associated clientInfo_t
  * that contains media references necessary to present the
  * client model and other color coded effects
@@ -720,8 +720,8 @@ typedef enum
 } modelViewType_t;
 
 /**
- * @struct partModel_t
- * @typedef partModel_s
+ * @struct partModel_s
+ * @typedef partModel_t
  * @brief
  */
 typedef struct partModel_s
@@ -732,8 +732,8 @@ typedef struct partModel_s
 } partModel_t;
 
 /**
- * @struct weaponModel_t
- * @typedef weaponModel_s
+ * @struct weaponModel_s
+ * @typedef weaponModel_t
  * @brief
  */
 typedef struct weaponModel_s
@@ -743,8 +743,8 @@ typedef struct weaponModel_s
 } weaponModel_t;
 
 /**
- * @struct weaponInfo_t
- * @typedef weaponInfo_s
+ * @struct weaponInfo_s
+ * @typedef weaponInfo_t
  * @brief each WP_* weapon enum has an associated weaponInfo_t
  * that contains media references necessary to present the weapon and its effects
  */
@@ -824,8 +824,8 @@ typedef struct
 #define MAX_SOUNDSCRIPT_SOUNDS 16
 
 /**
- * @struct soundScriptHandle_t
- * @typedef soundScriptHandle_s
+ * @struct soundScriptHandle_s
+ * @typedef soundScriptHandle_t
  * @brief
  */
 typedef struct soundScriptHandle_s
@@ -835,8 +835,8 @@ typedef struct soundScriptHandle_s
 } soundScriptHandle_t;
 
 /**
- * @struct soundScriptSound_t
- * @typedef soundScriptSound_s
+ * @struct soundScriptSound_s
+ * @typedef soundScriptSound_t
  * @brief
  */
 typedef struct soundScriptSound_s
@@ -850,8 +850,8 @@ typedef struct soundScriptSound_s
 } soundScriptSound_t;
 
 /**
- * @struct soundScript_t
- * @typedef soundScript_s
+ * @struct soundScript_s
+ * @typedef soundScript_t
  * @brief
  */
 typedef struct soundScript_s
@@ -1827,8 +1827,8 @@ typedef struct
 #define MAX_GAMECORONAS 1024
 
 /**
- * @struct cg_gamemodel_t
- * @typedef cg_gamemodel_s
+ * @struct cg_gamemodel_s
+ * @typedef cg_gamemodel_t
  * @brief
  */
 typedef struct cg_gamemodel_s
@@ -1840,8 +1840,8 @@ typedef struct cg_gamemodel_s
 } cg_gamemodel_t;
 
 /**
- * @struct cg_corona_t
- * @typedef cg_corona_s
+ * @struct cg_corona_s
+ * @typedef cg_corona_t
  * @brief
  */
 typedef struct cg_corona_s
@@ -1852,8 +1852,8 @@ typedef struct cg_corona_s
 } cg_corona_t;
 
 /**
- * @struct cg_weaponstats_t
- * @typedef cg_weaponstats_s
+ * @struct cg_weaponstats_s
+ * @typedef cg_weaponstats_t
  * @brief
  */
 typedef struct cg_weaponstats_s
@@ -1865,7 +1865,6 @@ typedef struct cg_weaponstats_s
 
 /**
  * @struct gameStats_t
- * @typedef gameStats_s
  * @brief
  */
 typedef struct
@@ -1898,8 +1897,8 @@ typedef struct
 } topshotStats_t;
 
 /**
- * @struct oidInfo_t
- * @typedef oidInfo_s
+ * @struct oidInfo_s
+ * @typedef oidInfo_t
  * @brief
  */
 typedef struct oidInfo_s
@@ -1967,8 +1966,8 @@ typedef struct
 } objectives_t;
 
 /**
- * @struct location_t
- * @typedef location_s
+ * @struct location_s
+ * @typedef location_t
  * @brief
  */
 typedef struct location_s
@@ -1980,7 +1979,6 @@ typedef struct location_s
 
 /**
  * @struct clientLocation_t
- * @typedef clientLocation_s
  * @brief
  */
 typedef struct
@@ -2037,7 +2035,7 @@ typedef struct cam_s
 } cam_t;
 
 /**
- * @enum mlType_t
+ * @enum mlType_e
  * @brief ML_ = menu level
  * used in the demo helpmenu
  */
@@ -2049,8 +2047,8 @@ typedef enum
 #endif
 
 /**
- * @struct cgs_t
- * @typedef cgs_s
+ * @struct cgs_s
+ * @typedef cgs_t
  * @brief The client game static (cgs) structure hold everything
  * loaded or calculated from the gamestate.  It will NOT
  * be cleared when a tournement restart is done, allowing
@@ -3454,7 +3452,8 @@ void CG_LimboPanel_SetSelectedWeaponNumForSlot(int index, int number);
 weapon_t CG_LimboPanel_GetSelectedWeaponForSlot(int index);
 
 /**
- * @struct mapScissor_t
+ * @struct mapScissor_s
+ * @typedef mapScissor_t
  * @brief A scissored map always has the player in the center
  * @see cg_commandmap.c
  */

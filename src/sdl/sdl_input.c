@@ -1076,11 +1076,9 @@ static void IN_WindowResize(SDL_Event *e)
 	}
 }
 
-/**
+/*
  * @brief IN_WindowFocusLost
  * @note Unused
- */
-/*
 static void IN_WindowFocusLost()
 {
     if (cls.rendererStarted && cls.glconfig.isFullscreen)

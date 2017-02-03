@@ -196,7 +196,7 @@ or configs will never get loaded from disk!
 #define MAX_FILEHASH_SIZE   1024
 
 /**
- * @struct fileInPack_t
+ * @struct fileInPack_s
  */
 typedef struct fileInPack_s
 {
@@ -207,7 +207,7 @@ typedef struct fileInPack_s
 } fileInPack_t;
 
 /**
- * @struct pack_t
+ * @struct pack_s
  */
 typedef struct
 {
@@ -226,7 +226,7 @@ typedef struct
 } pack_t;
 
 /**
- * @struct directory_t
+ * @struct directory_s
  */
 typedef struct
 {
@@ -236,7 +236,7 @@ typedef struct
 } directory_t;
 
 /**
- * @struct searchpath_t
+ * @struct searchpath_s
  */
 typedef struct searchpath_s
 {
@@ -246,22 +246,48 @@ typedef struct searchpath_s
 	directory_t *dir;
 } searchpath_t;
 
-char                fs_gamedir[MAX_OSPATH]; ///< @var This will be a single file name with no separators
+/**
+ * @var fs_gamedir
+ * @brief This will be a single file name with no separators
+ */
+char                fs_gamedir[MAX_OSPATH];
 static cvar_t       *fs_debug;
 static cvar_t       *fs_homepath;
 static cvar_t       *fs_basepath;
 static cvar_t       *fs_basegame;
 static cvar_t       *fs_gamedirvar;
 static searchpath_t *fs_searchpaths;
-static int          fs_readCount;           ///< @var Total bytes read
-static int          fs_loadCount;           ///< @var Total files read
-static int          fs_loadStack;           ///< @var Total files in memory
-static int          fs_packFiles = 0;       ///< @var Total number of files in packs
+
+/**
+ * @var fs_readCount
+ * @brief Total bytes read
+ */
+static int fs_readCount;
+
+/**
+ * @var fs_loadCount
+ * @brief Total files read
+ */
+static int fs_loadCount;
+
+/**
+ * @var fs_loadStack
+ * @brief Total files in memory
+ */
+static int fs_loadStack;
+
+/**
+ * @var fs_packFiles
+ * @brief Total number of files in packs
+ */
+static int fs_packFiles = 0;
 
 static int fs_checksumFeed;
 
 /**
- * @union qfile_gut
+ * @union qfile_gus
+ * @typedef qfile_gut
+ * @brief
  */
 typedef union qfile_gus
 {
@@ -270,7 +296,9 @@ typedef union qfile_gus
 } qfile_gut;
 
 /**
- * @struct qfile_ut
+ * @struct qfile_us
+ * @typedef qfile_ut
+ * @brief
  */
 typedef struct qfile_us
 {
@@ -279,7 +307,8 @@ typedef struct qfile_us
 } qfile_ut;
 
 /**
- * @struct fileHandleData_t
+ * @struct fileHandleData_s
+ * @brief
  */
 typedef struct
 {
@@ -295,7 +324,10 @@ typedef struct
 
 static fileHandleData_t fsh[MAX_FILE_HANDLES];
 
-/// @var wether we did a reorder on the current search path when joining the server
+/**
+ * @var fs_reordered
+ * @brief wether we did a reorder on the current search path when joining the server
+ */
 static qboolean fs_reordered;
 
 // never load anything from pk3 files that are not present at the server when pure
@@ -770,9 +802,9 @@ qboolean FS_FileInPathExists(const char *testpath)
  * DOES NOT search the paths. This is to determine if opening a file to
  * write (which always goes into the current gamedir) will cause any overwrites.
  *
- * @param[in]
+ * @param[in] file
  *
- * @note this goes with FS_FOpenFileWrite for opening the file afterwards
+ * @note This goes with FS_FOpenFileWrite for opening the file afterwards
  */
 qboolean FS_FileExists(const char *file)
 {
@@ -1066,7 +1098,7 @@ fileHandle_t FS_FOpenFileWrite(const char *filename)
 
 /**
  * @brief FS_FOpenDLLWrite
- * @param[in) filename
+ * @param[in] filename
  * @return
  */
 fileHandle_t FS_FOpenDLLWrite(const char *filename)
@@ -1258,10 +1290,11 @@ static int fs_filter_flag = 0;
  * @brief Finds the file in the search path.
  * Used for streaming data out of either a separate file or a ZIP file.
  *
- * @param[in]   filename to be opened
- * @param[out]  file set to open FILE pointer
- * @param[in]   uniqueFILE
- * @param[in]   unpure
+ * @param[in] filename to be opened
+ * @param[in] search
+ * @param[out] file set to open FILE pointer
+ * @param[in] uniqueFILE
+ * @param[in] unpure
  * @returns filesize or qboolean indicating if file exists when FILE pointer param is NULL
  */
 long FS_FOpenFileReadDir(const char *filename, searchpath_t *search, fileHandle_t *file, qboolean uniqueFILE, qboolean unpure)
@@ -1638,7 +1671,7 @@ long FS_FOpenFileRead_Filtered(const char *qpath, fileHandle_t *file, qboolean u
  * @brief Extracts the latest file from a pak file.
  *
  * @details Compares packed file against extracted file. If no differences, does not copy.
- * This is necessary for exe/dlls which may or may not be locked.
+ * This is necessary for exe\/dlls which may or may not be locked.
  *
  * @param[in] base
  * @param[in] gamedir
@@ -1648,8 +1681,8 @@ long FS_FOpenFileRead_Filtered(const char *qpath, fileHandle_t *file, qboolean u
  * (i.e. either the right file was extracted successfully, or it was already present)
  *
  * @note fullpath gives the full OS path to the dll that will potentially be loaded
- *   on win32 it's always in fs_basepath/<fs_game>/
- *   on linux it can be in fs_homepath/<fs_game>/ or fs_basepath/<fs_game>/
+ *   on win32 it's always in fs_basepath\/\<fs_game\>\/
+ *   on linux it can be in fs_homepath\/\<fs_game\>\/ or fs_basepath\/\<fs_game\>\/
  * The dll is extracted to fs_homepath (== fs_basepath on win32) if needed
  *
  * @note cvar_lastVersion is the optional name of a CVAR_ARCHIVE used to store the wolf version for the last extracted .so
@@ -3706,7 +3739,7 @@ qboolean FS_idPak(const char *pak, const char *base)
 }
 
 /**
- * @struct officialpak_t
+ * @struct officialpak_s
  */
 typedef struct
 {
@@ -4863,6 +4896,7 @@ void FS_Flush(fileHandle_t f)
  * @param[in] numext
  * @param[in] ext
  * @param[in] stripExt
+ * @param callback
  * @param[in] allowNonPureFilesOnDisk
  */
 void FS_FilenameCompletion(const char *dir, int numext, const char **ext,

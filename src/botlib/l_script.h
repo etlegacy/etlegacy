@@ -153,8 +153,8 @@
 //      the length of the name
 
 /**
- * @struct punctuation_t
- * @typedef punctuation_s
+ * @struct punctuation_s
+ * @typedef punctuation_t
  * @brief Punctuation
  */
 typedef struct punctuation_s
@@ -165,8 +165,8 @@ typedef struct punctuation_s
 } punctuation_t;
 
 /**
- * @struct token_t
- * @typedef token_s
+ * @struct token_s
+ * @typedef token_t
  * @brief Token
  */
 typedef struct token_s
@@ -186,8 +186,8 @@ typedef struct token_s
 } token_t;
 
 /**
- * @struct script_t
- * @typedef script_s
+ * @struct script_s
+ * @typedef script_t
  * @brief Script file
  */
 typedef struct script_s

@@ -220,8 +220,8 @@ void QDECL ScriptError(script_t *script, const char *str, ...)
 
 /**
  * @brief Print a script warning with filename and line number
- * @param[in]s script
- * @param[in]s str
+ * @param[in] script
+ * @param[in] str
  */
 void QDECL ScriptWarning(script_t *script, const char *str, ...)
 {
@@ -808,15 +808,13 @@ int PS_ReadNumber(script_t *script, token_t *token)
 	return 1;
 }
 
-/**
+/*
  * @brief PS_ReadLiteral
  * @param[in,out] script
  * @param[out] token
  * @return
  *
- * @note unused
- */
-/*
+ * @note Unused
 int PS_ReadLiteral(script_t *script, token_t *token)
 {
     token->type = TT_LITERAL;
@@ -1025,15 +1023,13 @@ int PS_ReadToken(script_t *script, token_t *token)
 	return 1;
 }
 
-/**
+/*
  * @brief Expect a certain token
  * @param[in] script
  * @param[in] string
  * @return
  *
  * @note Unused
- */
-/*
 int PS_ExpectTokenString(script_t *script, const char *string)
 {
     token_t token;
@@ -1176,15 +1172,13 @@ int PS_ExpectAnyToken(script_t *script, token_t *token)
 	}
 }
 
-/**
+/*
  * @brief Check if token is available
  * @param[in,out] script
  * @param[in] string
  * @return true when the token is available
  *
  * @note Unused
- */
-/*
 int PS_CheckTokenString(script_t *script, char *string)
 {
     token_t tok;
@@ -1204,7 +1198,7 @@ int PS_CheckTokenString(script_t *script, char *string)
 }
 */
 
-/**
+/*
  * @brief Check token type
  * @param[in,out] script
  * @param[in] type
@@ -1213,8 +1207,6 @@ int PS_CheckTokenString(script_t *script, char *string)
  * @return returns true and reads the token when a token with the given type is available
  *
  * @note Unused
- */
-/*
 int PS_CheckTokenType(script_t *script, int type, int subtype, token_t *token)
 {
     token_t tok;
@@ -1236,15 +1228,13 @@ int PS_CheckTokenType(script_t *script, int type, int subtype, token_t *token)
 }
 */
 
-/**
+/*
  * @brief Skip tokens until the given token string is read
  * @param[in] script
  * @param[in] string
  * @return
  *
  * @note Unused
- */
-/*
 int PS_SkipUntilString(script_t *script, const char *string)
 {
     token_t token;
@@ -1260,27 +1250,23 @@ int PS_SkipUntilString(script_t *script, const char *string)
 }
 */
 
-/**
+/*
  * @brief Unread the last token read from the script
  * @param[out] script
  *
  * @note Unused
- */
-/*
 void PS_UnreadLastToken(script_t *script)
 {
     script->tokenavailable = 1;
 }
 */
 
-/**
+/*
  * @brief Unread the given token
  * @param[out] script
  * @param[in] token
  *
  * @note Unused
- */
-/*
 void PS_UnreadToken(script_t *script, token_t *token)
 {
     memcpy(&script->token, token, sizeof(token_t));
@@ -1288,14 +1274,12 @@ void PS_UnreadToken(script_t *script, token_t *token)
 }
 */
 
-/**
+/*
  * @brief PS_NextWhiteSpaceChar
  * @param script
  * @return The next character of the read white space, returns NULL if none
  *
  * @note Unused
- */
-/*
 char PS_NextWhiteSpaceChar(script_t *script)
 {
     if (script->whitespace_p != script->endwhitespace_p)
@@ -1325,13 +1309,11 @@ void StripDoubleQuotes(char *string)
 	}
 }
 
-/**
+/*
  * @brief Remove any leading and trailing single quotes from the token
  * @param[in,out] string
  *
  * @note Unused
- */
-/*
 void StripSingleQuotes(char *string)
 {
     if (*string == '\'')
@@ -1345,14 +1327,12 @@ void StripSingleQuotes(char *string)
 }
 */
 
-/**
+/*
  * @brief Read a possible signed floating point number
  * @param[in] script
  * @return
  *
  * @note Unused
- */
-/*
 long double ReadSignedFloat(script_t *script)
 {
     token_t     token;
@@ -1372,14 +1352,12 @@ long double ReadSignedFloat(script_t *script)
 }
 */
 
-/**
+/*
  * @brief Read a possible signed integer
  * @param[in] script
  * @return
  *
  * @note Unused
- */
-/*
 signed long int ReadSignedInt(script_t *script)
 {
     token_t         token;
@@ -1399,28 +1377,24 @@ signed long int ReadSignedInt(script_t *script)
 }
 */
 
-/**
+/*
  * @brief Set script flags
  * @param[out] script
  * @param[in] flags
  *
  * @note Unused
- */
-/*
 void SetScriptFlags(script_t *script, int flags)
 {
     script->flags = flags;
 }
 */
 
-/**
+/*
  * @brief Get script flags
  * @param[in] script
  * @return Script flags
  *
  * @note Unused
- */
-/*
 int GetScriptFlags(script_t *script)
 {
     return script->flags;
@@ -1460,29 +1434,25 @@ int EndOfScript(script_t *script)
 	return script->script_p >= script->end_p;
 }
 
-/**
+/*
  * @brief NumLinesCrossed
  * @param[in,out] script
  * @return
  *
  * @note Unused
- */
-/*
 int NumLinesCrossed(script_t *script)
 {
     return script->line - script->lastline;
 }
 */
 
-/**
+/*
  * @brief ScriptSkipTo
  * @param[in,out] script
  * @param[in] value
  * @return True if at the end of the script
  *
  * @note Unused
- */
-/*
 int ScriptSkipTo(script_t *script, const char *value)
 {
     int  len;

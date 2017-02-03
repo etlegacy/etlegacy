@@ -76,7 +76,7 @@ properly.
 #define MAX_PATCH_PLANES    2048
 
 /**
- * @struct patchPlane_t
+ * @struct patchPlane_s
  */
 typedef struct
 {
@@ -85,7 +85,7 @@ typedef struct
 } patchPlane_t;
 
 /**
- * @struct facet_t
+ * @struct facet_s
  */
 typedef struct
 {
@@ -97,7 +97,7 @@ typedef struct
 } facet_t;
 
 /**
- * @struct patchCollide_t
+ * @struct patchCollide_s
  */
 typedef struct patchCollide_s
 {
@@ -111,7 +111,7 @@ typedef struct patchCollide_s
 #define MAX_GRID_SIZE   129
 
 /**
- * @struct cGrid_t
+ * @struct cGrid_s
  */
 typedef struct
 {

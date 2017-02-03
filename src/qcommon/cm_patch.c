@@ -1483,20 +1483,18 @@ struct patchCollide_s *CM_GeneratePatchCollide(int width, int height, vec3_t *po
 	return pf;
 }
 
-/**
+/*
 ================================================================================
 TRACE TESTING
 ================================================================================
 */
 
-/**
+/*
  * @brief Modifies tr->tr if any of the facets effect the trace
  * @param[in,out] tw
  * @param[in] pc
  *
  * @note Unused
- */
-/*
 void CM_TraceThroughPatchCollide( traceWork_t *tw, const struct patchCollide_s *pc )
 {
     int i, j, n;
@@ -1933,8 +1931,8 @@ POSITION DETECTION
 
 /**
  * @brief CM_PositionTestInPatchCollide
- * @param tw
- * @param pc
+ * @param[in] tw
+ * @param[in] pc
  * @return
  */
 qboolean CM_PositionTestInPatchCollide(traceWork_t *tw, const struct patchCollide_s *pc)

@@ -277,7 +277,8 @@ void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int da
 }
 
 /**
-  * @var These are just for logging, the client prints its own messages
+ * @var modNames
+ * @brief These are just for logging, the client prints its own messages
   */
 char *modNames[] =
 {
@@ -1235,34 +1236,9 @@ qboolean IsArmShot(gentity_t *targ, gentity_t *ent, vec3_t point, meansOfDeath_t
 	return qtrue;
 }
 
-
-/*
-============
-G_Damage
-
-targ        entity that is being damaged
-inflictor   entity that is causing the damage
-attacker    entity that caused the inflictor to damage targ
-    example: targ=monster, inflictor=rocket, attacker=player
-
-dir         direction of the attack for knockback
-point       point at which the damage is being inflicted, used for headshots
-damage      amount of damage being inflicted
-knockback   force to be applied against targ as a result of the damage
-
-inflictor, attacker, dir, and point can be NULL for environmental effects
-
-dflags      these flags are used to control how T_Damage works
-    DAMAGE_RADIUS           damage was indirect (from a nearby explosion)
-    DAMAGE_NO_ARMOR         armor does not protect from this damage
-    DAMAGE_NO_KNOCKBACK     do not affect velocity, just view angles
-    DAMAGE_NO_PROTECTION    kills godmode, armor, everything
-============
-*/
-
-//
 /**
- * @var This variable needs to be here in order for isHeadShot() to access it..
+ * @var refent
+ * @brief This variable needs to be here in order for isHeadShot() to access it..
  */
 static grefEntity_t refent;
 
@@ -1277,7 +1253,6 @@ static grefEntity_t refent;
  * @param[in] dir         direction of the attack for knockback
  * @param[in] point       point at which the damage is being inflicted, used for headshots
  * @param[in] damage      amount of damage being inflicted
- * @param[in] knockback   force to be applied against targ as a result of the damage
  *
  * @param[in] dflags      these flags are used to control how T_Damage works
  *     DAMAGE_RADIUS           damage was indirect (from a nearby explosion)
@@ -1288,6 +1263,8 @@ static grefEntity_t refent;
  * @param[in] mod
  *
  * @note inflictor, attacker, dir, and point can be NULL for environmental effects
+ *
+ * @note This parameter was previously present : knockback   force to be applied against targ as a result of the damage
  *
  */
 void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, meansOfDeath_t mod)

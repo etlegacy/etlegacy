@@ -407,7 +407,8 @@ void G_addStatsHeadShot(gentity_t *attacker, meansOfDeath_t mod)
 }
 
 /**
-  * @var --> MOD_* to WS_* conversion
+  * @var aWeapMOD
+  * @brief --> MOD_* to WS_* conversion
   * WS_MAX = no equivalent/not used
   *
   * @todo FIXME: move to mod table

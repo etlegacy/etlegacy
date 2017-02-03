@@ -173,6 +173,7 @@ static void         (*rd_flush)(char *buffer);
  * @brief Com_BeginRedirect
  * @param[in] buffer
  * @param[in] buffersize
+ * @param[in] flush Function pointer
  */
 void Com_BeginRedirect(char *buffer, size_t buffersize, void (*flush)(char *))
 {
@@ -430,7 +431,7 @@ void Com_Quit_f(void)
 	Sys_Quit();
 }
 
-/**
+/*
 ============================================================================
 COMMAND LINE FUNCTIONS
 
@@ -452,7 +453,7 @@ char *com_consoleLines[MAX_CONSOLE_LINES];
 /**
  * @brief Break it up into multiple console lines
  *
- * @param[in,out]
+ * @param[in,out] commandLine
  */
 void Com_ParseCommandLine(char *commandLine)
 {
@@ -913,7 +914,7 @@ all big things are allocated on the hunk.
 #define MINFRAGMENT 64
 
 /**
- * @struct zonedebug_t
+ * @struct zonedebug_s
  */
 typedef struct zonedebug_s
 {
@@ -924,7 +925,7 @@ typedef struct zonedebug_s
 } zonedebug_t;
 
 /**
- * @struct memblock_t
+ * @struct memblock_s
  */
 typedef struct memblock_s
 {
@@ -938,7 +939,7 @@ typedef struct memblock_s
 } memblock_t;
 
 /**
- * @struct memzone_t
+ * @struct memzone_s
  */
 typedef struct
 {
@@ -1448,7 +1449,7 @@ Goals:
 #define HUNK_FREE_MAGIC 0x89537893
 
 /**
- * @struct hunkHeader_t
+ * @struct hunkHeader_s
  */
 typedef struct
 {
@@ -1457,7 +1458,7 @@ typedef struct
 } hunkHeader_t;
 
 /**
- * @struct hunkUsed_t
+ * @struct hunkUsed_s
  */
 typedef struct
 {
@@ -1468,7 +1469,7 @@ typedef struct
 } hunkUsed_t;
 
 /**
- * @struct hunkblock_t
+ * @struct hunkblock_s
  */
 typedef struct hunkblock_s
 {
@@ -4019,7 +4020,7 @@ void Console_AutoComplete(field_t *field, int *completionOffset)
 /**
  * @brief Perform Tab expansion
  *
- * @param{in] field
+ * @param[in] field
  */
 void Field_AutoComplete(field_t *field)
 {

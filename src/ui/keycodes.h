@@ -206,7 +206,7 @@ typedef enum
 
 #define CONSOLE_KEY K_CONSOLE
 
-/**
+/*
  * @def K_LAST_KEY
  *
  * MAX_KEYS replaces K_LAST_KEY, however some mods may have used K_LAST_KEY

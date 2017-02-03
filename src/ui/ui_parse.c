@@ -336,6 +336,11 @@ qboolean PC_Script_Parse(int handle, const char **out)
 
 #define KEYWORDHASH_SIZE    512
 
+/**
+ * @struct keywordHash_s
+ * @typedef keywordHash_t
+ * @brief
+ */
 typedef struct keywordHash_s
 {
 	const char *keyword;
@@ -345,7 +350,7 @@ typedef struct keywordHash_s
 
 /**
  * @brief KeywordHash_Key
- * @param[int] keyword
+ * @param[in] keyword
  * @return
  */
 int KeywordHash_Key(const char *keyword)

@@ -221,7 +221,7 @@ mapEntityData_t *G_FindMapEntityDataSingleClient(mapEntityData_Team_t *teamList,
 ////////////////////////////////////////////////////////////////////
 
 /**
- * @struct plane_t
+ * @struct plane_s
  * @brief Some culling bits
  */
 typedef struct plane_s

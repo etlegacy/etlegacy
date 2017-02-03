@@ -1604,15 +1604,12 @@ void SP_team_WOLF_checkpoint(gentity_t *ent)
 	trap_LinkEntity(ent);
 }
 
-/**
- * @note Unused
- */
-/**
+/*
  * @brief Team_ClassForString
  * @param[in] string
  * @return
- */
-/*
+ *
+ * @note Unused
 int Team_ClassForString(const char *string)
 {
     if (!Q_stricmp(string, "soldier"))

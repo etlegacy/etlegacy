@@ -63,7 +63,7 @@ void R_GammaCorrect(byte *buffer, int bufSize)
 }
 
 /**
- * @struct textureMode_t
+ * @struct textureMode_s
  * @brief
  */
 typedef struct
@@ -1922,7 +1922,7 @@ static qboolean ParseMakeAlpha(char **text, byte **pic, int *width, int *height,
 }
 
 /**
- * @struct imageExtToLoaderMap_t
+ * @struct imageExtToLoaderMap_s
  * @brief
  */
 typedef struct

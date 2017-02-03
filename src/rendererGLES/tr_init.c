@@ -372,7 +372,7 @@ byte *RB_ReadZBuffer(int x, int y, int width, int height, int *padlen)
 	return buffer;
 }
 
-/**
+/*
  * @brief zbuffer writer for the future implementation of the Depth of field effect
  * @param[in] x
  * @param[in] y
@@ -381,8 +381,6 @@ byte *RB_ReadZBuffer(int x, int y, int width, int height, int *padlen)
  * @param[in] fileName
  *
  * @note Unused.
- */
-/*
 void RB_TakeDepthshot(int x, int y, int width, int height, const char *fileName)
 {
     byte   *allbuf, *buffer;

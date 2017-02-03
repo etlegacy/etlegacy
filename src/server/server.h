@@ -61,8 +61,8 @@
 #define MAX_BPS_WINDOW      20      ///< net debugging
 
 /**
- * @struct svEntity_t
- * @typedef svEntity_s
+ * @struct svEntity_s
+ * @typedef svEntity_t
  * @brief
  */
 typedef struct svEntity_s
@@ -183,8 +183,8 @@ typedef enum
 } clientState_t;
 
 /**
- * @struct netchan_buffer_t
- * @typedef netchan_buffer_s
+ * @struct netchan_buffer_s
+ * @typedef netchan_buffer_t
  * @brief
  */
 typedef struct netchan_buffer_s
@@ -196,7 +196,7 @@ typedef struct netchan_buffer_s
 } netchan_buffer_t;
 
 /**
- * @struct client_t
+ * @struct client_s
  * @typedef client_t
  * @brief
  */
@@ -340,8 +340,8 @@ typedef struct
 #define MAX_INFO_RECEIPTS  48
 
 /**
- * @struct tempBan_t
- * @typedef tempBan_s
+ * @struct tempBan_s
+ * @typedef tempBan_t
  * @brief
  */
 typedef struct tempBan_s
@@ -357,7 +357,6 @@ typedef struct tempBan_s
 
 /**
  * @struct serverStatic_t
- * @typedef serverStatic_s
  * @brief This structure will be cleared only when the game dll changes
  */
 typedef struct
@@ -505,6 +504,12 @@ void SV_MasterGameCompleteStatus(void);
 int SV_RateMsec(client_t *client);
 
 typedef struct leakyBucket_s leakyBucket_t;
+
+/**
+ * @struct leakyBucket_s
+ * @typedef leakyBucket_t
+ * @brief
+ */
 struct leakyBucket_s
 {
 	netadrtype_t type;

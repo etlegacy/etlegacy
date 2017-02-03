@@ -151,13 +151,11 @@ int ClientNumbersFromString(char *s, int *plist)
 	return found;
 }
 
-/**
+/*
  * @brief G_TeamDamageStats
  * @param[in] ent
  *
  * @note Unused
- */
-/*
 void G_TeamDamageStats(gentity_t *ent)
 {
     if (!ent->client) return;
@@ -1506,15 +1504,13 @@ void StopFollowing(gentity_t *ent)
 	}
 }
 
-/**
+/*
  * @brief G_NumPlayersWithWeapon
  * @param[in] weap
  * @param[in] team
  * @return
  *
  * @note Unused
- */
-/*
 int G_NumPlayersWithWeapon(weapon_t weap, team_t team)
 {
     int i, j, cnt = 0;

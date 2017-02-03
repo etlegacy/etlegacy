@@ -685,6 +685,8 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
  *
  * @param[in] name
  * @param[in] extract
+ * @param entryPoint
+ * @param systemcalls
  *
  * @return libHandle or NULL
  */

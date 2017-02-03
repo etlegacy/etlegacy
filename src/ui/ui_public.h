@@ -203,7 +203,7 @@ typedef enum
 	UI_GETAPIVERSION = 0,   ///< system reserved
 
 	UI_INIT,
-	///</< void	UI_Init( void );
+	///< void	UI_Init( void );
 
 	UI_SHUTDOWN,
 	///< void	UI_Shutdown( void );

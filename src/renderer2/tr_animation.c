@@ -1629,7 +1629,7 @@ int RE_BlendSkeleton(refSkeleton_t *skel, const refSkeleton_t *blend, float frac
  * @param[in] hAnim
  * @return
  *
- * @note Unused ?
+ * @todo Unused ?
  */
 int RE_AnimNumFrames(qhandle_t hAnim)
 {
@@ -1655,7 +1655,7 @@ int RE_AnimNumFrames(qhandle_t hAnim)
  * @param[in] hAnim
  * @return
  *
- * @note Unused ?
+ * @todo Unused ?
  */
 int RE_AnimFrameRate(qhandle_t hAnim)
 {

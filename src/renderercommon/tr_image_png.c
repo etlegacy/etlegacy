@@ -175,16 +175,16 @@ struct PNG_Chunk_IHDR
  */
 #define PNG_Adam7_NumPasses (7)
 
-/**
+/*
  * @struct PNG_ZlibHeader
  * @brief The compressed data starts with a header ...
  * @note Unused
- */
-//struct PNG_ZlibHeader
-//{
-//	uint8_t CompressionMethod;
-//	uint8_t Flags;
-//};
+struct PNG_ZlibHeader
+{
+	uint8_t CompressionMethod;
+	uint8_t Flags;
+};
+*/
 
 #define PNG_ZlibHeader_Size (2)
 

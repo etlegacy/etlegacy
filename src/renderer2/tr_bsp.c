@@ -5258,7 +5258,7 @@ static void R_PrecacheInteraction(trRefLight_t *light, bspSurface_t *surface)
 	iaCache->redundant = qfalse;
 }
 
-/**
+/*
  * @brief R_BuildShadowVolume
  * @param[in] numTriangles
  * @param[in] triangles
@@ -5267,8 +5267,6 @@ static void R_PrecacheInteraction(trRefLight_t *light, bspSurface_t *surface)
  * @return
  *
  * @note Unused
- */
-/*
 static int R_BuildShadowVolume(int numTriangles, const srfTriangle_t * triangles, int numVerts, int indexes[SHADER_MAX_INDEXES])
 {
     int             i;
@@ -5351,7 +5349,7 @@ static int R_BuildShadowVolume(int numTriangles, const srfTriangle_t * triangles
 }
 */
 
-/**
+/*
  * @brief R_BuildShadowPlanes
  * @param[in] numTriangles
  * @param[in] triangles
@@ -5362,8 +5360,6 @@ static int R_BuildShadowVolume(int numTriangles, const srfTriangle_t * triangles
  * @return
  *
  * @note Unused
- */
-/*
 static int R_BuildShadowPlanes(int numTriangles, const srfTriangle_t * triangles, int numVerts, srfVert_t * verts,
                                cplane_t shadowPlanes[SHADER_MAX_TRIANGLES], trRefLight_t * light)
 {

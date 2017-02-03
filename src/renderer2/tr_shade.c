@@ -38,7 +38,7 @@
 
 #include "tr_local.h"
 
-/**
+/*
  * @brief MyMultiDrawElements
  * @param[in] mode
  * @param[in] count
@@ -47,8 +47,6 @@
  * @param[in] primcount
  *
  * @note Unused
- */
-/*
 static void MyMultiDrawElements(GLenum mode, const GLsizei *count, GLenum type, const void* *indices, GLsizei primcount)
 {
     int			i;
@@ -248,6 +246,8 @@ static void DrawTris()
  * because a surface may be forced to perform a Tess_End due
  * to overflow.
  *
+ * @param stageIteratorFunc
+ * @param stageIteratorFunc2
  * @param[in] surfaceShader
  * @param[in] lightShader
  * @param[in] skipTangentSpaces
