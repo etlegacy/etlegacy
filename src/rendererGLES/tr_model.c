@@ -200,7 +200,7 @@ qhandle_t RE_RegisterModel(const char *name)
 		{
 			if (mod->type == MOD_BAD)
 			{
-				ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel: bad model '%s'\n", name);
+				ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel: bad model '%s' - already registered but in bad condition - returning 0\n", name);
 				return 0;
 			}
 
