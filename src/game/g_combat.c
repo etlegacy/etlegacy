@@ -540,7 +540,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	{
 		char *obit;
 
-		if (meansOfDeath < 0 || meansOfDeath >= sizeof(modNames) / sizeof(modNames[0]))
+		if (meansOfDeath >= sizeof(modNames) / sizeof(modNames[0]))
 		{
 			obit = "<bad obituary>";
 		}
