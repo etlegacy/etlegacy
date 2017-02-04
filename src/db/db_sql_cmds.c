@@ -63,7 +63,7 @@ void DB_ExecSQLCommand_f(void)
 	// debug
 	//Com_Printf("sql: '%s'\n", sql);
 
-	result = sqlite3_exec(db, sql, DB_callback, 0, &err_msg);
+	result = sqlite3_exec(db, sql, DB_Callback, 0, &err_msg);
 
 	if (result != SQLITE_OK)
 	{

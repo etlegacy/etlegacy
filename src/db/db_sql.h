@@ -57,7 +57,7 @@ int DB_SaveMemDB(void); // use in code
 
 void DB_SaveMemDB_f(void); // console command to store memory db at any time to disk
 
-int DB_callback(void *, int, char **, char **);
+int DB_Callback(void *, int, char **, char **);
 
 void DB_ExecSQLCommand_f(void);
 

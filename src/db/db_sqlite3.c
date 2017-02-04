@@ -165,7 +165,7 @@ int DB_Init()
  *
  * @return
  */
-static int DB_Create_Schema()
+static int DB_CreateSchema()
 {
 	int  result;
 	char *err_msg = 0;
@@ -288,7 +288,7 @@ int DB_Create()
 		return 1;
 	}
 
-	result = DB_Create_Schema();
+	result = DB_CreateSchema();
 
 	if (result != 0)
 	{
@@ -518,7 +518,7 @@ int DB_LoadOrSaveDb(sqlite3 *pInMemory, const char *zFilename, int isSave)
 }
 
 /**
- * @brief DB_callback
+ * @brief DB_Callback
  *
  * @param NotUsed
  * @param[in] argc
@@ -527,7 +527,7 @@ int DB_LoadOrSaveDb(sqlite3 *pInMemory, const char *zFilename, int isSave)
  *
  * @return
  */
-int DB_callback(void *NotUsed, int argc, char **argv, char **azColName)
+int DB_Callback(void *NotUsed, int argc, char **argv, char **azColName)
 {
 	int i;
 	// NotUsed = 0;
@@ -556,7 +556,7 @@ int DB_callback(void *NotUsed, int argc, char **argv, char **azColName)
  *
  * @return If database is available, last insert row id. Otherwise -1
  */
-int DB_last_insert_rowid()
+int DB_LastInsertRowId()
 {
 	if (db)
 	{
