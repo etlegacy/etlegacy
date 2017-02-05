@@ -867,7 +867,7 @@ typedef struct
 
 #define MAX_CLIENT_MARKERS 17
 
-#define LT_SPECIAL_PICKUP_MOD   3       ///< Number of times (minus one for modulo) LT must drop ammo before scoring a point
+#define FIELDOPS_SPECIAL_PICKUP_MOD 3   ///< Number of times (minus one for modulo) field ops must drop ammo before scoring a point
 #define MEDIC_SPECIAL_PICKUP_MOD    4   ///< Same thing for medic
 
 /**
