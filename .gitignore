@@ -19,6 +19,7 @@ etmain/ui/git_version.h
 # Linux/KDE
 *~
 *.sh
+!/misc/*.sh
 /.directory
 *.kdev4
 
