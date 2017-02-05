@@ -2054,7 +2054,7 @@ void CG_Cabinet(centity_t *cent, cabinetType_t type)
 	}
 	else
 	{
-		cnt = MAX_CABINET_TAGS * (cent->currentState.onFireStart / cent->currentState.onFireEnd);
+		cnt = MAX_CABINET_TAGS * (cent->currentState.onFireStart / (float)cent->currentState.onFireEnd);
 		if (cnt == 0 && cent->currentState.onFireStart)
 		{
 			cnt = 1;
