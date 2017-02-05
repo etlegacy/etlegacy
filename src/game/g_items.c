@@ -586,8 +586,8 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 			other->client->pers.lastammo_client = ent->parent->s.clientNum;
 		}
 
-		// if LT isn't giving ammo to self or another LT or the enemy, give him some props
-		if (other->client->ps.stats[STAT_PLAYER_CLASS] != PC_FIELDOPS)
+		// if field ops isn't giving ammo to self or the enemy, give him some props
+		if (ent->parent && (ent->parent->client != other->client))
 		{
 			if (ent->parent && ent->parent->client && other->client->sess.sessionTeam == ent->parent->client->sess.sessionTeam)
 			{
@@ -760,8 +760,8 @@ int Pickup_Health(gentity_t *ent, gentity_t *other)
 		other->client->pers.lasthealth_client = ent->parent->s.clientNum;
 	}
 
-	// if medic isn't giving ammo to self or another medic or the enemy, give him some props
-	if (other->client->ps.stats[STAT_PLAYER_CLASS] != PC_MEDIC)
+	// if medic isn't giving ammo to self or the enemy, give him some props
+	if (ent->parent && (ent->parent->client != other->client))
 	{
 		if (ent->parent && ent->parent->client && other->client->sess.sessionTeam == ent->parent->client->sess.sessionTeam)
 		{
