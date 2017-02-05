@@ -161,33 +161,6 @@ void SP_target_delay(gentity_t *ent)
 	ent->use = Use_Target_Delay;
 }
 
-//==========================================================
-
-/**
- * @brief The activator is given this many points.
- * QUAKED target_score (1 0 0) (-8 -8 -8) (8 8 8)
- * "count" number of points to add, default 1
- *
- * @param[in,out] ent
- * @param other - unused
- * @param[in] activator
- */
-void Use_Target_Score(gentity_t *ent, gentity_t *other, gentity_t *activator)
-{
-	AddScore(activator, ent->count);
-}
-
-void SP_target_score(gentity_t *ent)
-{
-	if (!ent->count)
-	{
-		ent->count = 1;
-	}
-	ent->use = Use_Target_Score;
-}
-
-//==========================================================
-
 /**
  * @brief Use_Target_Print
  * QUAKED target_print (1 0 0) (-8 -8 -8) (8 8 8) redteam blueteam private

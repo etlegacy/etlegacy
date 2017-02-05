@@ -296,7 +296,6 @@ void SP_target_speaker(gentity_t *ent);
 void SP_target_print(gentity_t *ent);
 void SP_target_laser(gentity_t *self);
 
-void SP_target_score(gentity_t *ent);
 void SP_target_teleporter(gentity_t *ent);
 void SP_target_relay(gentity_t *ent);
 void SP_target_kill(gentity_t *ent);
@@ -498,7 +497,6 @@ spawn_t spawns[] =
 	{ "target_speaker",            SP_target_speaker            },
 	{ "target_print",              SP_target_print              },
 	{ "target_laser",              SP_target_laser              },
-	{ "target_score",              SP_target_score              },
 	{ "target_teleporter",         SP_target_teleporter         },
 	{ "target_relay",              SP_target_relay              },
 	{ "target_kill",               SP_target_kill               },

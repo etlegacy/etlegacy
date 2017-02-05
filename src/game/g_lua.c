@@ -927,7 +927,6 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(respawnTime,                       FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(inactivityTime,                    FIELD_INT,                 0),
 	_et_gclient_addfield(inactivityWarning,                 FIELD_INT,                 0),
-	_et_gclient_addfield(PCSpecialPickedUpCount,            FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(combatState,                       FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(deathAnimTime,                     FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(deathTime,                         FIELD_INT,                 FIELD_FLAG_READONLY),

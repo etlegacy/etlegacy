@@ -164,144 +164,6 @@ qboolean OnSameTeam(gentity_t *ent1, gentity_t *ent2)
 #define WCP_ANIM_AMERICAN_FALLING   8
 
 /**
- * @brief Calculate the bonuses for flag defense, flag carrier defense, etc.
- *
- * @details Note that bonuses are not cumlative. You get one, they are in importance
- * order.
- *
- * @param[in] targ
- * @param inflictor - unused
- * @param[in] attacker
- */
-void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker)
-{
-	int       flag_pw, enemy_flag_pw;
-	int       otherteam;
-	gentity_t *flag, *carrier = NULL;
-	char      *c;
-	vec3_t    v1, v2;
-	int       team;
-
-	// no bonus for fragging yourself
-	if (!targ->client || !attacker->client || targ == attacker)
-	{
-		return;
-	}
-
-	team      = targ->client->sess.sessionTeam;
-	otherteam = OtherTeam(targ->client->sess.sessionTeam);
-	if (otherteam < 0)
-	{
-		return; // whoever died isn't on a team
-
-	}
-	// no bonuses for fragging friendlies, penalties scored elsewhere
-	if (team == attacker->client->sess.sessionTeam)
-	{
-		return;
-	}
-
-	// same team, if the flag at base, check to he has the enemy flag
-	if (team == TEAM_AXIS)
-	{
-		flag_pw       = PW_REDFLAG;
-		enemy_flag_pw = PW_BLUEFLAG;
-	}
-	else
-	{
-		flag_pw       = PW_BLUEFLAG;
-		enemy_flag_pw = PW_REDFLAG;
-	}
-
-	// did the attacker frag the flag carrier?
-	if (targ->client->ps.powerups[enemy_flag_pw])
-	{
-		AddScore(attacker, WOLF_FRAG_CARRIER_BONUS);
-
-		return;
-	}
-	// flag and flag carrier area defense bonuses
-
-	// we have to find the flag and carrier entities
-
-	// find the flag
-	switch (attacker->client->sess.sessionTeam)
-	{
-	case TEAM_AXIS:
-		c = "team_CTF_redflag";
-		break;
-	case TEAM_ALLIES:
-		c = "team_CTF_blueflag";
-		break;
-	default:
-		return;
-	}
-
-	flag = NULL;
-	while ((flag = G_Find(flag, FOFS(classname), c)) != NULL)
-	{
-		if (!(flag->flags & FL_DROPPED_ITEM))
-		{
-			break;
-		}
-	}
-
-	if (flag)     // added some more stuff after this fn
-	{ //      return; // can't find attacker's flag
-		int i;
-
-		// find attacker's team's flag carrier
-		for (i = 0; i < g_maxclients.integer; i++)
-		{
-			carrier = g_entities + i;
-			if (carrier->inuse && carrier->client->ps.powerups[flag_pw])
-			{
-				break;
-			}
-			carrier = NULL;
-		}
-
-		// ok we have the attackers flag and a pointer to the carrier
-
-		// check to see if we are defending the base's flag
-		VectorSubtract(targ->client->ps.origin, flag->s.origin, v1);
-		VectorSubtract(attacker->client->ps.origin, flag->s.origin, v2);
-
-		if ((VectorLengthSquared(v1) < Square(CTF_TARGET_PROTECT_RADIUS) ||
-		     VectorLengthSquared(v2) < Square(CTF_TARGET_PROTECT_RADIUS) ||
-		     CanDamage(flag, targ->client->ps.origin) || CanDamage(flag, attacker->client->ps.origin)) &&
-		    attacker->client->sess.sessionTeam != targ->client->sess.sessionTeam)
-		{
-			// we defended the base flag
-			// FIXME -- don't report flag defense messages, change to gooder message
-			AddScore(attacker, WOLF_FLAG_DEFENSE_BONUS);
-			return;
-		}
-	}
-
-	// look for nearby checkpoints and spawnpoints
-	flag = NULL;
-	while ((flag = G_Find(flag, FOFS(classname), "team_WOLF_checkpoint")) != NULL)
-	{
-		VectorSubtract(targ->client->ps.origin, flag->s.origin, v1);
-		if ((flag->s.frame != WCP_ANIM_NOFLAG) && (flag->count == attacker->client->sess.sessionTeam))
-		{
-			if (VectorLengthSquared(v1) < Square(WOLF_CP_PROTECT_RADIUS))
-			{
-				if (flag->spawnflags & 1)                         // protected spawnpoint
-				{
-					AddScore(attacker, WOLF_SP_PROTECT_BONUS);
-				}
-				else
-				{
-					AddScore(attacker, WOLF_CP_PROTECT_BONUS);    // protected checkpoint
-				}
-			}
-		}
-	}
-}
-
-/**
  * @brief Team_ResetFlag
  * @param[in] ent
  */
@@ -419,8 +281,6 @@ int Team_TouchOurFlag(gentity_t *ent, gentity_t *other, int team)
 	if (ent->flags & FL_DROPPED_ITEM)
 	{
 		// hey, its not home.  return it by teleporting it back
-		AddScore(other, WOLF_SECURE_OBJ_BONUS);
-
 		if (cl->sess.sessionTeam == TEAM_AXIS)
 		{
 			if (level.gameManager)
@@ -475,8 +335,6 @@ int Team_TouchEnemyFlag(gentity_t *ent, gentity_t *other, int team)
 	ent->s.density--;
 
 	// hey, its not our flag, pick it up
-	AddScore(other, WOLF_STEAL_OBJ_BONUS);
-
 	tmp         = ent->parent;
 	ent->parent = other;
 
@@ -1265,15 +1123,6 @@ void checkpoint_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 		return;
 	}
 
-	if (self->s.frame == WCP_ANIM_NOFLAG)
-	{
-		AddScore(other, WOLF_CP_CAPTURE);
-	}
-	else
-	{
-		AddScore(other, WOLF_CP_RECOVER);
-	}
-
 	// Set controlling team
 	self->count = other->client->sess.sessionTeam;
 
@@ -1355,15 +1204,6 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 	if (self->count == other->client->sess.sessionTeam)
 	{
 		return;
-	}
-
-	if (self->s.frame == WCP_ANIM_NOFLAG)
-	{
-		AddScore(other, WOLF_SP_CAPTURE);
-	}
-	else
-	{
-		AddScore(other, WOLF_SP_RECOVER);
 	}
 
 	if (self->count < 0)

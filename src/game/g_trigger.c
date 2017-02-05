@@ -1225,8 +1225,6 @@ void Touch_flagonly(gentity_t *ent, gentity_t *other, trace_t *trace)
 			other->client->speedScale              = 0;
 		}
 
-		AddScore(other, ent->accuracy);   // set from map, defaults to 20
-
 		tmp         = ent->parent;
 		ent->parent = other;
 
@@ -1252,8 +1250,6 @@ void Touch_flagonly(gentity_t *ent, gentity_t *other, trace_t *trace)
 			other->client->ps.powerups[PW_BLUEFLAG] = 0;
 			other->client->speedScale               = 0;
 		}
-
-		AddScore(other, ent->accuracy);   // set from map, defaults to 20
 
 		tmp         = ent->parent;
 		ent->parent = other;
@@ -1295,8 +1291,6 @@ void Touch_flagonly_multiple(gentity_t *ent, gentity_t *other, trace_t *trace)
 		other->client->ps.powerups[PW_REDFLAG] = 0;
 		other->client->speedScale              = 0;
 
-		AddScore(other, ent->accuracy);   // set from map, defaults to 20
-
 		tmp         = ent->parent;
 		ent->parent = other;
 
@@ -1314,8 +1308,6 @@ void Touch_flagonly_multiple(gentity_t *ent, gentity_t *other, trace_t *trace)
 	{
 		other->client->ps.powerups[PW_BLUEFLAG] = 0;
 		other->client->speedScale               = 0;
-
-		AddScore(other, ent->accuracy);   // set from map, defaults to 20
 
 		tmp         = ent->parent;
 		ent->parent = other;

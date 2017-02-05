@@ -525,8 +525,6 @@ void Weapon_Syringe(gentity_t *ent)
 
 		if (!traceEnt->isProp)     // flag for if they were teamkilled or not
 		{
-			AddScore(ent, WOLF_MEDIC_BONUS);   // props to the medic for the swift and dexterous bit o healitude
-
 			G_AddSkillPoints(ent, SK_FIRST_AID, 4.f);
 			G_DebugAddSkillPoints(ent, SK_FIRST_AID, 4.f, "reviving a player");
 		}
@@ -581,7 +579,6 @@ void Weapon_Syringe(gentity_t *ent)
 
 		if (!traceEnt->isProp)      // flag for if they were teamkilled or not
 		{
-			AddScore(ent, WOLF_HEALTH_UP);
 			G_AddSkillPoints(ent, SK_FIRST_AID, 2.f);
 			G_DebugAddSkillPoints(ent, SK_FIRST_AID, 2.f, "syringe heal a player");
 		}
@@ -1179,8 +1176,6 @@ static qboolean TryConstructing(gentity_t *ent)
 			constructible->s.angles2[1] = 1;
 		}
 
-		AddScore(ent, constructible->accuracy);   // give drop score to guy who built it
-
 		// unlink the objective info to get rid of the indicator for now
 		// don't unlink, we still want the location popup. Instead, constructible_indicator_think got changed to free
 		// the indicator when the constructible is constructed
@@ -1726,7 +1721,6 @@ void Weapon_Engineer(gentity_t *ent)
 			if (traceEnt->sound3to2 != ent->client->sess.sessionTeam)
 			{
 				// constructible xp sharing - some lucky dood is going to get the last 0.00035 points and the repair bonus
-				AddScore(ent, WOLF_REPAIR_BONUS);
 				G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 0.00035f);
 				G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 0.00035f, "repairing a MG42");
 			}
@@ -2205,7 +2199,6 @@ evilbanigoto:
 
 							if (!(hit->spawnflags & OBJECTIVE_DESTROYED))
 							{
-								AddScore(traceEnt->parent, WOLF_DYNAMITE_PLANT);       // give drop score to guy who dropped it
 								if (traceEnt->parent && traceEnt->parent->client)
 								{
 									G_LogPrintf("Dynamite_Plant: %d\n", (int)(traceEnt->parent - g_entities));
@@ -2295,7 +2288,6 @@ evilbanigoto:
 							if ((!(hit->parent->spawnflags & OBJECTIVE_DESTROYED)) &&
 							    hit->s.teamNum && (hit->s.teamNum == ent->client->sess.sessionTeam))              // ==, as it's inverse
 							{
-								AddScore(traceEnt->parent, WOLF_DYNAMITE_PLANT);       // give drop score to guy who dropped it
 								if (traceEnt->parent && traceEnt->parent->client)
 								{
 									G_LogPrintf("Dynamite_Plant: %d\n", (int)(traceEnt->parent - g_entities));
@@ -2395,7 +2387,6 @@ evilbanigoto:
 							{
 								if ((hit->spawnflags & AXIS_OBJECTIVE) && (!scored))
 								{
-									AddScore(ent, WOLF_DYNAMITE_DIFFUSE);
 									G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f);
 									G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing enemy dynamite");
 									scored++;
@@ -2422,7 +2413,6 @@ evilbanigoto:
 							{
 								if ((hit->spawnflags & ALLIED_OBJECTIVE) && (!scored))
 								{
-									AddScore(ent, WOLF_DYNAMITE_DIFFUSE);
 									G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f);
 									G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing enemy dynamite");
 									scored++;
@@ -2500,7 +2490,6 @@ evilbanigoto:
 							{
 								if (hit->s.teamNum == TEAM_AXIS && (!scored))
 								{
-									AddScore(ent, WOLF_DYNAMITE_DIFFUSE);
 									G_LogPrintf("Dynamite_Diffuse: %d\n", (int)(ent - g_entities));
 									G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f);
 									G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing enemy dynamite");
@@ -2523,7 +2512,6 @@ evilbanigoto:
 							{
 								if (hit->s.teamNum == TEAM_ALLIES && (!scored))
 								{
-									AddScore(ent, WOLF_DYNAMITE_DIFFUSE);
 									if (ent->client)
 									{
 										G_LogPrintf("Dynamite_Diffuse: %d\n", (int)(ent - g_entities));

@@ -591,15 +591,6 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 		{
 			if (ent->parent && ent->parent->client && other->client->sess.sessionTeam == ent->parent->client->sess.sessionTeam)
 			{
-				if (!(ent->parent->client->PCSpecialPickedUpCount % FIELDOPS_SPECIAL_PICKUP_MOD))
-				{
-					AddScore(ent->parent, WOLF_AMMO_UP);
-					if (ent->parent && ent->parent->client)
-					{
-						G_LogPrintf("Ammo_Pack: %d %d\n", (int)(ent->parent - g_entities), (int)(other - g_entities));
-					}
-				}
-				ent->parent->client->PCSpecialPickedUpCount++;
 				G_AddSkillPoints(ent->parent, SK_SIGNALS, 1.f);
 				G_DebugAddSkillPoints(ent->parent, SK_SIGNALS, 1.f, "ammo pack picked up");
 
@@ -610,7 +601,6 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 					Bot_Event_RecievedAmmo(other - g_entities, ent->parent);
 				}
 #endif
-
 				// extracted code originally here into AddMagicAmmo
 				// add 1 clip of magic ammo for any two-handed weapon
 			}
@@ -765,14 +755,8 @@ int Pickup_Health(gentity_t *ent, gentity_t *other)
 	{
 		if (ent->parent && ent->parent->client && other->client->sess.sessionTeam == ent->parent->client->sess.sessionTeam)
 		{
-			if (!(ent->parent->client->PCSpecialPickedUpCount % MEDIC_SPECIAL_PICKUP_MOD))
-			{
-				AddScore(ent->parent, WOLF_HEALTH_UP);
-				G_LogPrintf("Health_Pack: %d %d\n", (int)(ent->parent - g_entities), (int)(other - g_entities));
-			}
 			G_AddSkillPoints(ent->parent, SK_FIRST_AID, 1.f);
 			G_DebugAddSkillPoints(ent->parent, SK_FIRST_AID, 1.f, "health pack picked up");
-			ent->parent->client->PCSpecialPickedUpCount++;
 		}
 	}
 

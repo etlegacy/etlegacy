@@ -950,7 +950,6 @@ struct gclient_s
 	int dropWeaponTime;                     ///< last time a weapon was dropped
 	int limboDropWeapon;                    ///< weapon to drop in limbo
 	int lastBurnTime;                       ///< last time index for flamethrower burn
-	int PCSpecialPickedUpCount;             ///< used to count # of times somebody's picked up this LTs ammo (or medic health) (for scoring)
 	int saved_persistant[MAX_PERSISTANT];   ///< Save ps->persistant here during Limbo
 
 	gentity_t *touchingTOI;                 ///< the trigger_objective_info a player is touching this frame
@@ -1562,7 +1561,6 @@ void BeginIntermission(void);
 void InitBodyQue(void);
 void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean restoreHealth);
 void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod);
-void AddScore(gentity_t *ent, int score);
 void AddKillScore(gentity_t *ent, int score);
 void CalculateRanks(void);
 qboolean SpotWouldTelefrag(gentity_t *spot);

@@ -47,35 +47,7 @@
 extern vec3_t muzzleTrace;
 
 /**
- * @brief Adds score to both the client and his team
- * @param[in] ent
- * @param score - unused
- */
-void AddScore(gentity_t *ent, int score)
-{
-	if (!ent || !ent->client)
-	{
-		return;
-	}
-	// no scoring during pre-match warmup
-	if (g_gamestate.integer != GS_PLAYING)
-	{
-		return;
-	}
-
-	if (g_gametype.integer == GT_WOLF_LMS)
-	{
-		return;
-	}
-
-	//ent->client->ps.persistant[PERS_SCORE] += score;
-
-	//level.teamScores[ ent->client->ps.persistant[PERS_TEAM] ] += score;
-	CalculateRanks();
-}
-
-/**
- * @brief Adds score to both the client and his team, only used for playerkills, for lms
+ * @brief Adds score to both the client and his team, only used for LMS
  * @param[in,out] ent
  * @param[in] score
  */
@@ -85,6 +57,7 @@ void AddKillScore(gentity_t *ent, int score)
 	{
 		return;
 	}
+
 	// no scoring during pre-match warmup
 	if (level.warmupTime)
 	{
@@ -97,11 +70,8 @@ void AddKillScore(gentity_t *ent, int score)
 		return;
 	}
 
-	if (g_gametype.integer == GT_WOLF_LMS)
-	{
-		ent->client->ps.persistant[PERS_SCORE]                  += score;
-		level.teamScores[ent->client->ps.persistant[PERS_TEAM]] += score;
-	}
+	ent->client->ps.persistant[PERS_SCORE]                  += score;
+	level.teamScores[ent->client->ps.persistant[PERS_TEAM]] += score;
 
 	CalculateRanks();
 }
@@ -653,14 +623,11 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 			// high penalty to offset medic heal
 			if (g_gametype.integer == GT_WOLF_LMS)
 			{
-				AddKillScore(attacker, WOLF_FRIENDLY_PENALTY);
+				AddKillScore(attacker, -3);
 			}
 		}
 		else
 		{
-			// mostly added as conveneience so we can tweak from the #defines all in one place
-			AddScore(attacker, WOLF_FRAG_BONUS);
-
 			if (g_gametype.integer == GT_WOLF_LMS)
 			{
 				if (level.firstbloodTeam == -1)
@@ -668,7 +635,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 					level.firstbloodTeam = attacker->client->sess.sessionTeam;
 				}
 
-				AddKillScore(attacker, WOLF_FRAG_BONUS);
+				AddKillScore(attacker, 1);
 			}
 
 			attacker->client->lastKillTime = level.time;
@@ -676,16 +643,11 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	}
 	else
 	{
-		AddScore(self, -1);
-
 		if (g_gametype.integer == GT_WOLF_LMS)
 		{
 			AddKillScore(self, -1);
 		}
 	}
-
-	// Add team bonuses
-	Team_FragBonuses(self, inflictor, attacker);
 
 	G_DropItems(self);
 
@@ -1399,11 +1361,6 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 					if ((mEnt = G_FindMapEntityData(&mapEntityData[1], targ - g_entities)) != NULL)
 					{
 						G_FreeMapEntityData(&mapEntityData[1], mEnt);
-					}
-
-					if (attacker && attacker->client)
-					{
-						AddScore(attacker, 1);
 					}
 
 					G_ExplodeMissile(targ);
