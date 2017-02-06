@@ -1075,8 +1075,8 @@ void SV_Init(void)
 	sv_rconPassword    = Cvar_Get("rconPassword", "", CVAR_TEMP);
 	sv_privatePassword = Cvar_Get("sv_privatePassword", "", CVAR_TEMP);
 	sv_fps             = Cvar_Get("sv_fps", "20", CVAR_TEMP);
-	sv_timeout         = Cvar_Get("sv_timeout", "40", CVAR_TEMP); // used in game (also vid_restart)
-	sv_dl_timeout      = Cvar_Get("sv_dl_timeout", "240", CVAR_TEMP);
+	sv_timeout         = Cvar_Get("sv_timeout", "60", CVAR_TEMP); // used in game (also vid_restart)
+	sv_dl_timeout      = Cvar_Get("sv_dl_timeout", "300", CVAR_TEMP); // in between this time a client should download the biggest custom pk3
 	sv_zombietime      = Cvar_Get("sv_zombietime", "2", CVAR_TEMP);
 	Cvar_Get("nextmap", "", CVAR_TEMP);
 

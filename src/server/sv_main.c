@@ -1390,9 +1390,9 @@ static void SV_CheckTimeouts(void)
 {
 	client_t *cl;
 	int      i;
-	int      droppoint    = svs.time - 1000 * sv_timeout->integer;    // default 40 - used in game and while vid_restart
+	int      droppoint    = svs.time - 1000 * sv_timeout->integer;    // default 60 - used in game and while vid_restart
 	int      zombiepoint  = svs.time - 1000 * sv_zombietime->integer; // default 2
-	int      droppoint_dl = svs.time - 1000 * sv_dl_timeout->integer; // default 240
+	int      droppoint_dl = svs.time - 1000 * sv_dl_timeout->integer; // default 300
 
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
 	{
@@ -1426,7 +1426,7 @@ static void SV_CheckTimeouts(void)
 				cl->state = CS_FREE;    // don't bother with zombie state
 			}
 		}
-		else if ((cl->state == CS_CONNECTED || cl->state == CS_PRIMED) && (cl->lastPacketTime < droppoint_dl || cl->lastValidGamestate < droppoint))
+		else if ((cl->state == CS_CONNECTED || cl->state == CS_PRIMED) && (cl->lastPacketTime < droppoint_dl || cl->lastValidGamestate < droppoint_dl))
 		{
 			// wait several frames so a debugger session doesn't cause a timeout
 			if (++cl->timeoutCount > 5)
