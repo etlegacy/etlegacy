@@ -34,8 +34,6 @@
  *
  * TODO:  - extend our db scheme
  *        - implement version system & auto updates
- *        - ...
- *        - clean up
  *
  *        Tutorial: http://zetcode.com/db/sqlitec/
  */
@@ -154,14 +152,14 @@ int DB_Init()
 		}
 	}
 
-	Com_Printf("SQLite3 ET: L [%i] database '%s' init in [%i] ms - autocommit %i\n", ETL_DBMS_VERSION, to_ospath, (Sys_Milliseconds() - msec), sqlite3_get_autocommit(db));
+	Com_Printf("SQLite3 ET: L [%i] database '%s' init in [%i] ms - autocommit %i\n", SQL_DBMS_SCHEMA_VERSION, to_ospath, (Sys_Milliseconds() - msec), sqlite3_get_autocommit(db));
 
 	isDBActive = qtrue;
 	return 0;
 }
 
 /**
- * @brief creates tables and populates our scheme
+ * @brief creates tables and populates our scheme.
  *
  * @return
  */
@@ -172,12 +170,9 @@ static int DB_CreateSchema()
 
 	// FIXME:
 	// - split this into client and server DB?!
-	// - set index for search fields // CREATE INDEX player_guid ON PLAYER(guid)
 
-	// version table
-	char *sql = "DROP TABLE IF EXISTS etl_version;"
-	            "CREATE TABLE etl_version (Id INT PRIMARY KEY NOT NULL, name TEXT, sql TEXT, created TEXT);"
-	            "INSERT INTO etl_version VALUES (1, 'ET: L DBMS', '', CURRENT_TIMESTAMP);"; // FIXME: separate version inserts for updates ...
+	// version table - client and server
+	char *sql = "DROP TABLE IF EXISTS etl_version; CREATE TABLE etl_version (Id INT PRIMARY KEY NOT NULL, name TEXT, sql TEXT, created TEXT);";
 
 	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
@@ -187,6 +182,20 @@ static int DB_CreateSchema()
 		sqlite3_free(err_msg);
 		return 1;
 	}
+
+	// version data
+	sql = va("INSERT INTO etl_version VALUES (%i, 'ET: L DBMS schema V%i for %s', '', CURRENT_TIMESTAMP);", SQL_DBMS_SCHEMA_VERSION, SQL_DBMS_SCHEMA_VERSION, ET_VERSION);
+
+	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
+
+	if (result != SQLITE_OK)
+	{
+		Com_Printf("SQLite3 failed to write ETL version: %s\n", err_msg);
+		sqlite3_free(err_msg);
+		return 1;
+	}
+/* FIXME: addressed in 2.77
+  	// server tables
 
 	// ban/mute table (ensure we can also do IP range ban entries)
 	// type = mute/ban
@@ -206,11 +215,13 @@ static int DB_CreateSchema()
 		return 1;
 	}
 
-	// player/client table
-	// FIXME: do we want to track player names as PB did?
+
+	// client tables
+
+	// player table - if we want to store sessions & favourites and such for clients we need a reference to the used profile
 	sql = "DROP TABLE IF EXISTS player;"
-	      "CREATE TABLE player (Id INT PRIMARY KEY NOT NULL, name TEXT, guid TEXT, user TEXT, password TEXT, mail TEXT, bans INT, mutes INT, created TEXT, updated TEXT);"
-	      "CREATE INDEX player_name_idx ON player(name);"
+	      "CREATE TABLE player (Id INT PRIMARY KEY NOT NULL, profile TEXT, username TEXT, created TEXT, updated TEXT);"
+	      "CREATE INDEX player_name_idx ON player(profile);"
 	      "CREATE INDEX player_guid_idx ON player(guid);";
 
 	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
@@ -222,11 +233,10 @@ static int DB_CreateSchema()
 		return 1;
 	}
 
-	// session table - server side tracking of players, client side tracking of games
-	// note: we might drop length field (created = start, updated = end of session
+	// session table - tracking of games
+	// note: created = start, updated = end of session
 	sql = "DROP TABLE IF EXISTS session;"
-	      "CREATE TABLE session (Id INT PRIMARY KEY NOT NULL, pId INT , address TEXT, port INT, type INT, duration TEXT, map TEXT, length TEXT, created TEXT, updated TEXT, FOREIGN KEY(pId) REFERENCES player(Id));"
-	      "";
+	      "CREATE TABLE session (Id INT PRIMARY KEY NOT NULL, pId INT , server TEXT, port INT, gametype INT,  map TEXT,created TEXT, updated TEXT, FOREIGN KEY(pId) REFERENCES player(Id));";
 
 	result = sqlite3_exec(db, sql, 0, 0, &err_msg);
 
@@ -240,6 +250,9 @@ static int DB_CreateSchema()
 	// FIXME:
 	// add server table - store available maps, uptime & such
 	// add favourite table ?! (client)
+
+*/
+
 	return 0;
 }
 
