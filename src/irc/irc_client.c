@@ -2160,10 +2160,10 @@ Establishes the IRC connection, sets the nick, etc...
 
 static int IRC_AttemptConnection()
 {
-	struct sockaddr_in address;        // socket address
-	struct hostent     *host;          // host lookup
-	char               host_name[128]; // host name
-	char               name[32];       // player's name
+	struct sockaddr_in address;               // socket address
+	struct hostent     *host;                 // host lookup
+	char               host_name[128];        // host name
+	char               name[MAX_NAME_LENGTH]; // player's name
 	int                err_code;
 	int                port;
 
