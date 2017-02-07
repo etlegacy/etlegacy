@@ -2172,10 +2172,10 @@ static int IRC_AttemptConnection()
 	Com_Printf("IRC: connecting to server %s:%i\n", irc_server->string,  irc_port->integer);
 
 #ifdef DEDICATED
-	strcpy(name, Cvar_VariableString("sv_hostname"));
+	Q_strncpyz(name, Cvar_VariableString("sv_hostname"), sizeof(name));
 #else
 	// Force players to use a non-default name
-	strcpy(name, Cvar_VariableString("name"));
+	Q_strncpyz(name, Cvar_VariableString("name"), sizeof(name));
 #endif
 	// FIXME: add default player and server name
 	if (!Q_stricmpn(name, "player", 7) || name[0] == '\0')
