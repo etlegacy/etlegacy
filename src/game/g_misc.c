@@ -2552,7 +2552,7 @@ qboolean G_ConstructionBegun(gentity_t *ent)
 		return qtrue;
 	}
 
-	if (ent->s.angles2[0] == 0.f)
+	if (ent->s.angles2[0] != 0.f)
 	{
 		return qtrue;
 	}
