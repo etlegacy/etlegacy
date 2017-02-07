@@ -1283,7 +1283,7 @@ static void IRC_Display(int event, const char *nick, const char *message)
 	{
 		return;
 	}
-	
+
 	// Determine message format
 	switch (IRC_EventType(event))
 	{
@@ -2168,6 +2168,7 @@ static int IRC_AttemptConnection()
 	int                port;
 
 	CHECK_SHUTDOWN;
+	Com_Memset(&address.sin_zero, 0, sizeof(address.sin_zero));
 	Com_Printf("IRC: connecting to server %s:%i\n", irc_server->string,  irc_port->integer);
 
 #ifdef DEDICATED
