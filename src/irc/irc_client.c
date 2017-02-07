@@ -1928,7 +1928,7 @@ static qboolean IRC_AddSendItem(qboolean is_action, const char *string)
 		return qfalse;
 	}
 
-	strcpy(IRC_SendQueue[IRC_SendQueue_Write].string, string);
+	Q_strncpyz(IRC_SendQueue[IRC_SendQueue_Write].string, string, IRC_MAX_SEND_LEN);
 	IRC_SendQueue[IRC_SendQueue_Write].is_action   = is_action;
 	IRC_SendQueue[IRC_SendQueue_Write].has_content = qtrue;
 	IRC_SendQueue_Write                            = (IRC_SendQueue_Write + 1) % IRC_SENDQUEUE_SIZE;
