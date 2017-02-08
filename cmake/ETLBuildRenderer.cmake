@@ -40,7 +40,7 @@ if(RENDERER_DYNAMIC OR NOT FEATURE_RENDERER2)
 		add_dependencies(${R1_NAME} bundled_freetype)
 	endif(BUNDLED_FREETYPE)
 
-	target_link_libraries(${R1_NAME} ${RENDERER_LIBRARIES})
+	target_link_libraries(${R1_NAME} ${RENDERER_LIBRARIES} 'm')
 
 	# install the dynamic lib only
 	if(RENDERER_DYNAMIC)
@@ -149,7 +149,7 @@ if(FEATURE_RENDERER2)
 	if(BUNDLED_FREETYPE)
 		add_dependencies(${R2_NAME} bundled_freetype)
 	endif(BUNDLED_FREETYPE)
-	target_link_libraries(${R2_NAME} ${RENDERER_LIBRARIES})
+	target_link_libraries(${R2_NAME} ${RENDERER_LIBRARIES} 'm')
 
 	set_target_properties(${R2_NAME}
 		PROPERTIES COMPILE_DEFINITIONS "FEATURE_RENDERER2"
