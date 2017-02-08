@@ -98,17 +98,33 @@ menuDef {
 	MULTIACTION( 6+(SUBWINDOW_WIDTH_L)+6+2, NETWORK_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Packet Duplication:"), .2, 8, "ui_cl_packetdup", cvarFloatList { _("No") 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", _("Number of duplicates for every data packet sent upstream, minimized packetloss") )
 
 // Downloads //
-#define DOWNLOADS_Y 188
+#define DOWNLOADS_Y 190
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, DOWNLOADS_Y, (SUBWINDOW_WIDTH_R), 40, _("DOWNLOADS") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, DOWNLOADS_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Get Missing Files:"), .2, 8, "cl_allowDownload", _("Download missing files when available") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, DOWNLOADS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Use HTTP/FTP Downloads:"), .2, 8, "cl_wwwDownload", _("Enables or disables http/ftp downloads") )
 
 // Updates //
 #ifdef LEGACY
-#define UPDATES_Y 236
+#define UPDATES_Y 238
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, UPDATES_Y, (SUBWINDOW_WIDTH_R), 28, _("UPDATES") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, UPDATES_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Start-Up Updates Check:"), .2, 8, "cl_autoupdate", _("Automatically check for updates") )
 #endif
+
+// IRC //
+#define IRC_Y 274
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, IRC_Y, (SUBWINDOW_WIDTH_R), 102, _("IRC Client") )
+// FIXME: pull down/MULTIACTION?
+//0 - (default) 	off 	
+//1 - Direct connect on startup
+//2 - Override irc nickname
+//4 - Mute channel
+	NUMERICFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Mode:"), .2, 8, "irc_mode", 5, _("Specifies IRC client behaviour") )
+	EDITFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Server:"), .2, 8, "irc_server", 25, 18, _("Name of IRC server") )
+	EDITFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Channel #:"), .2, 8, "irc_channel", 25, 18, _("Name of IRC channel - no '#' required") )	
+	NUMERICFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Port:"), .2, 8, "irc_port", 5, _("Port of IRC server") )
+	EDITFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Nickname:"), .2, 8, "irc_nickname", 25, 18, _("IRC nickame in channel") )	
+	NUMERICFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Kick rejoin time ms:"), .2, 8, "irc_kick_rejoin", 5, _("Auto rejoin time after kick") )
+	NUMERICFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Reconnect time ms:"), .2, 8, "irc_reconnect_delay", 5, _("Reconnect time in ms") )
 
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("BACK"), .3, 14, uiScript vidReset ; close options_system ; open options )
