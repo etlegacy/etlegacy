@@ -215,6 +215,9 @@ void CG_AddLightstyle(centity_t *cent)
 
 void CG_GetWindVector(vec3_t dir);
 
+#define DEFAULT_SPEAKER_RANGE  1250
+#define DEFAULT_SPEAKER_VOLUME  255
+
 /**
  * @brief Add continuous entity effects, like local entity emission and lighting
  * @param[in,out] cent
@@ -243,7 +246,7 @@ static void CG_EntityEffects(centity_t *cent)
 			}
 			else
 			{
-				trap_S_AddRealLoopingSound(cent->lerpOrigin, vec3_origin, CG_GetGameSound(cent->currentState.loopSound), 1250, cent->currentState.onFireStart, cent->soundTime);
+				trap_S_AddRealLoopingSound(cent->lerpOrigin, vec3_origin, CG_GetGameSound(cent->currentState.loopSound), DEFAULT_SPEAKER_RANGE, cent->currentState.onFireStart, cent->soundTime);
 			}
 		}
 		else if (cent->currentState.eType == ET_MOVER)
@@ -260,7 +263,7 @@ static void CG_EntityEffects(centity_t *cent)
 		}
 		else
 		{
-			trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, CG_GetGameSound(cent->currentState.loopSound), 255, cent->soundTime);
+			trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, CG_GetGameSound(cent->currentState.loopSound), DEFAULT_SPEAKER_VOLUME, cent->soundTime);
 		}
 	}
 	else if (cent->soundTime)
@@ -291,9 +294,9 @@ static void CG_EntityEffects(centity_t *cent)
 	if (CG_EntOnFire(cent))
 	{
 		// play a flame blow sound when moving
-		trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, cgs.media.flameBlowSound, (int)(255.0 * (1.0 - fabs((double)cent->fireRiseDir[2]))), 0);
+		trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, cgs.media.flameBlowSound, (int)(DEFAULT_SPEAKER_VOLUME * (1.0 - fabs((double)cent->fireRiseDir[2]))), 0);
 		// play a burning sound when not moving
-		trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, cgs.media.flameSound, (int)(0.3 * 255.0 * (pow((double)cent->fireRiseDir[2], 2))), 0);
+		trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, cgs.media.flameSound, (int)(0.3 * DEFAULT_SPEAKER_VOLUME * (pow((double)cent->fireRiseDir[2], 2))), 0);
 	}
 
 	// overheating is a special effect
