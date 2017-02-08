@@ -30,9 +30,10 @@
  */
 /**
  * @file htable.c
+ * @brief
+ *
+ * @note This is FEATURE_IRC_CLIENT and FEATURE_IRC_SERVER only
  */
-
-// this is FEATURE_IRC_CLIENT and FEATURE_IRC_SERVER only
 
 #include "htable.h"
 
@@ -40,34 +41,36 @@
  * Type definitions                            *
  *=============================================*/
 
-/*
- * "List heads" - used to store various lists
+/**
+ * @struct listhead_t
+ * @brief "List heads" - used to store various lists
  */
-
 struct listhead_t
 {
 	struct listhead_t *previous;
 	struct listhead_t *next;
 };
 
-/*
- * Resets a list head
+/**
+ * @def RESET_LIST
+ * @brief Resets a list head
  */
 #define RESET_LIST(LPTR) \
 	((LPTR)->previous = (LPTR)->next = (LPTR))
 
-/*
- * Table entry - used to store actual items
+/**
+ * @struct tentry_t
+ * @brief Table entry - used to store actual items
  */
 struct tentry_t
 {
-	/* Entry in one of the table's sub-lists */
+	/// Entry in one of the table's sub-lists
 	struct listhead_t loc_list;
 
-	/* Entry in the table's main list */
+	/// Entry in the table's main list
 	struct listhead_t full_list;
 
-	/* Cached hash value */
+	/// Cached hash value
 	unsigned int hash;
 };
 
@@ -79,38 +82,39 @@ typedef unsigned int ( *getkey_t )(const char *key);
 typedef char * ( *keyfromentry_t )(struct tentry_t *entry, size_t key_offset);
 typedef int ( *comparekey_t )(const char *k1, const char *k2);
 
-
-/*
- * Main hash table structure
+/**
+ * @struct hashtable_s
+ * @brief Main hash table structure
  */
 struct hashtable_s
 {
-	/* Actual size of the table */
+	/// Actual size of the table
 	size_t size;
 
-	/* Table flags */
+	/// Table flags
 	unsigned int flags;
 
-	/* Item size */
+	/// Item size
 	size_t item_size;
 
-	/* Key offset in an item */
+	/// Key offset in an item
 	size_t key_offset;
 
-	/* Length of key (0 for pointer) */
+	/// Length of key (0 for pointer)
 	size_t key_length;
 
-	/* Functions */
+	/// Functions
 	getkey_t GetKey;
 	keyfromentry_t KeyFromEntry;
 	comparekey_t CompareKey;
 
-	/* List of all items */
+	/// List of all items
 	struct listhead_t all_items;
 };
 
-/*
- * Macro that finds the first list head after a table's main structure
+/**
+ * @def TABLE_START
+ * @brief Macro that finds the first list head after a table's main structure
  */
 #define TABLE_START(TABLE) \
 	((struct listhead_t *)(((char *)(TABLE)) + sizeof(struct hashtable_s)))
@@ -119,40 +123,51 @@ struct hashtable_s
  * Internal functions prototypes               *
  *=============================================*/
 
-/* Checks if a size is a prime number */
+/// Checks if a size is a prime number
 static qboolean _HT_IsPrime(size_t n);
 
-/* Finds the next higher prime number */
+/// Finds the next higher prime number
 static size_t _HT_NextPrime(size_t n);
 
-/* Computes a string's hash key (case insensitive) */
+/// Computes a string's hash key (case insensitive)
 static unsigned int _HT_GetCIKey(const char *key);
 
-/* Computes a string's hash key (case sensitive) */
+/// Computes a string's hash key (case sensitive)
 static unsigned int _HT_GetKey(const char *key);
 
-/* Returns a table entry's key (in-table items, fixed size key) */
+/// Returns a table entry's key (in-table items, fixed size key)
 static char *_HT_KeyFromEntryII(struct tentry_t *entry, size_t key_offset);
 
-/* Returns a table entry's key (in-table items, pointer key) */
+/// Returns a table entry's key (in-table items, pointer key)
 static char *_HT_KeyFromEntryIP(struct tentry_t *entry, size_t key_offset);
 
-/* Returns a table entry's key (external items, fixed size key) */
+/// Returns a table entry's key (external items, fixed size key)
 static char *_HT_KeyFromEntryPI(struct tentry_t *entry, size_t key_offset);
 
-/* Returns a table entry's key (external items, pointer key) */
+/// Returns a table entry's key (external items, pointer key)
 static char *_HT_KeyFromEntryPP(struct tentry_t *entry, size_t key_offset);
 
-/* Allocate and initialise a table entry. */
+/// Allocate and initialise a table entry.
 static struct tentry_t *_HT_CreateEntry(hashtable_t table, unsigned int hash, struct listhead_t *list_entry, const char *key);
 
-/* Insert a table entry into a table's global list */
+/// Insert a table entry into a table's global list
 static void _HT_InsertInGlobalList(hashtable_t table, struct tentry_t *t_entry, const char *key);
 
 /*=============================================*
  * Hash table public functions                 *
  *=============================================*/
 
+/**
+ * @brief Hash table creation
+ *
+ * @param[in] size Size of the table (will be rounded up to the next
+ *		      prime number)
+ * @param[in] flags Combination of HT_FLAG_* for the table
+ * @param[in] item_size	Size of the table's items
+ * @param[in] key_offset Offset of the key in the table's items
+ * @param[in] key_length Maximal length of the key in the table; if 0, the key
+ *			  will be accessed as a pointer instead of an array
+ */
 hashtable_t HT_Create(
     size_t size,
     unsigned int flags,
@@ -195,12 +210,17 @@ hashtable_t HT_Create(
 	while (real_size > 0)
 	{
 		RESET_LIST(t_item);
-		t_item++, real_size--;
+		t_item++;
+		real_size--;
 	}
 
 	return table;
 }
 
+/**
+ * @brief Hash table destruction
+ * @param[in] table
+ */
 void HT_Destroy(hashtable_t table)
 {
 	qboolean          del_key;
@@ -230,7 +250,15 @@ void HT_Destroy(hashtable_t table)
 	Z_Free(table);
 }
 
-
+/**
+ * @brief Gets an item from the table.
+ *
+ * @param[in] table The hash table to access
+ * @param[in] key The key to look up
+ * @param[out] create Pointer to a boolean which will be set to true if
+ *             the item was created; if NULL, no creation will take
+ *             place
+ */
 void *HT_GetItem(
     hashtable_t table,
     const char *key,
@@ -310,6 +338,22 @@ void *HT_GetItem(
 	return data;
 }
 
+/**
+ * @brief Stores an item into the table
+ *
+ * @param[in] table	The hash table to add an item to
+ * @param[in] item The item to add to the table
+ * @param[in] allow_replacement	whether replacement of a previous item
+ *			  is allowed
+ *
+ * @return The item that matched the specified key, or NULL if no item
+ * using the same key existed
+ *
+ * @note Replacement behaviour varies greatly depending on the flags.
+ * If the items are stored in-table, or if the table must free the
+ * memory they use, a replacement will still return NULL, as the
+ * memory will have been freed or reused.
+ */
 void *HT_PutItem(
     hashtable_t table,
     void *item,
@@ -322,7 +366,7 @@ void *HT_PutItem(
 	unsigned int      hash;
 	struct listhead_t *list_head;
 	struct listhead_t *list_entry;
-	struct tentry_t   *t_entry;
+	struct tentry_t   *t_entry = NULL;
 
 	// Extract item key
 	if (table->key_length)
@@ -415,6 +459,19 @@ void *HT_PutItem(
 	return ret_val;
 }
 
+/**
+ * @brief Deletes an item from the table
+ *
+ * @param[in] table The hash table from which an item is to be deleted
+ * @param[in] key The key to delete
+ * @param[out] found A pointer to a pointer which will be set to
+ *			   the deleted item's value; may be NULL
+ *
+ * @return true if an item was deleted, false otherwise
+ *
+ * @note If the items are stored in-table or are freed automatically, then
+ * the "found" parameter will always be ignored.
+ */
 qboolean HT_DeleteItem(
     hashtable_t table,
     const char *key,
@@ -424,8 +481,8 @@ qboolean HT_DeleteItem(
 	unsigned int      hash;
 	struct listhead_t *list_head;
 	struct listhead_t *list_entry;
-	struct tentry_t   *t_entry;
-	void              *data = NULL;
+	struct tentry_t   *t_entry = NULL;
+	void              *data    = NULL;
 
 	// Try finding the item
 	hash       = table->GetKey(key);
@@ -498,6 +555,19 @@ qboolean HT_DeleteItem(
 	return qtrue;
 }
 
+/**
+ * @brief Applies a function to all items in the table.
+ *
+ * @param[in] table	The hash table onto which the function is to be applied
+ * @param[in] function Pointer to the function to apply
+ * @param[in] data Extra data to pass as the function's second parameter
+ *
+ * @note The order in which the function is applied is either the insertion
+ * order or, if the table has HT_FLAG_SORTED set, the increasing key
+ * order.
+ *
+ * @note The function should return false if processing is to stop.
+ */
 void HT_Apply(
     hashtable_t table,
     ht_apply_funct function,
@@ -530,6 +600,11 @@ void HT_Apply(
  * Functions related to prime numbers          *
  *=============================================*/
 
+/**
+ * @brief _HT_IsPrime
+ * @param[in] n
+ * @return
+ */
 static qboolean _HT_IsPrime(size_t n)
 {
 	size_t temp;
@@ -556,6 +631,11 @@ static qboolean _HT_IsPrime(size_t n)
 	return qtrue;
 }
 
+/**
+ * @brief _HT_NextPrime
+ * @param[in] n
+ * @return
+ */
 static size_t _HT_NextPrime(size_t n)
 {
 	size_t value = n;
@@ -568,6 +648,11 @@ static size_t _HT_NextPrime(size_t n)
  * Key computation functions                   *
  *=============================================*/
 
+/**
+ * @brief _HT_GetCIKey
+ * @param[in] key
+ * @return
+ */
 static unsigned int _HT_GetCIKey(const char *key)
 {
 	const char   *current = key;
@@ -588,6 +673,11 @@ static unsigned int _HT_GetCIKey(const char *key)
 	return hash;
 }
 
+/**
+ * @brief _HT_GetKey
+ * @param[in] key
+ * @return
+ */
 static unsigned int _HT_GetKey(const char *key)
 {
 	const char   *current = key;
@@ -612,6 +702,12 @@ static unsigned int _HT_GetKey(const char *key)
  * Key retrieval                               *
  *=============================================*/
 
+/**
+ * @brief _HT_KeyFromEntryII
+ * @param[in] entry
+ * @param[in] key_offset
+ * @return
+ */
 static char *_HT_KeyFromEntryII(struct tentry_t *entry, size_t key_offset)
 {
 	void *item_addr;
@@ -620,6 +716,12 @@ static char *_HT_KeyFromEntryII(struct tentry_t *entry, size_t key_offset)
 	return (char *)(((char *)item_addr) + key_offset);
 }
 
+/**
+ * @brief _HT_KeyFromEntryIP
+ * @param[in] entry
+ * @param[in] key_offset
+ * @return
+ */
 static char *_HT_KeyFromEntryIP(struct tentry_t *entry, size_t key_offset)
 {
 	void *item_addr;
@@ -628,6 +730,12 @@ static char *_HT_KeyFromEntryIP(struct tentry_t *entry, size_t key_offset)
 	return *(char **)(((char *)item_addr) + key_offset);
 }
 
+/**
+ * @brief _HT_KeyFromEntryPI
+ * @param[in] entry
+ * @param[in] key_offset
+ * @return
+ */
 static char *_HT_KeyFromEntryPI(struct tentry_t *entry, size_t key_offset)
 {
 	void *item_addr;
@@ -636,6 +744,12 @@ static char *_HT_KeyFromEntryPI(struct tentry_t *entry, size_t key_offset)
 	return (char *)(((char *)item_addr) + key_offset);
 }
 
+/**
+ * @brief _HT_KeyFromEntryPP
+ * @param[in] entry
+ * @param[in] key_offset
+ * @return
+ */
 static char *_HT_KeyFromEntryPP(struct tentry_t *entry, size_t key_offset)
 {
 	void *item_addr;
@@ -648,6 +762,14 @@ static char *_HT_KeyFromEntryPP(struct tentry_t *entry, size_t key_offset)
  * Other internal functions                    *
  *=============================================*/
 
+/**
+ * @brief _HT_CreateEntry
+ * @param[in] table
+ * @param[in] hash
+ * @param[in,out] list_entry
+ * @param[in] key
+ * @return
+ */
 static struct tentry_t *_HT_CreateEntry(
     hashtable_t table,
     unsigned int hash,
@@ -672,6 +794,12 @@ static struct tentry_t *_HT_CreateEntry(
 	return t_entry;
 }
 
+/**
+ * @brief _HT_InsertInGlobalList
+ * @param[in] table
+ * @param[in,out] t_entry
+ * @param[in] key
+ */
 static void _HT_InsertInGlobalList(hashtable_t table, struct tentry_t *t_entry, const char *key)
 {
 	if ((table->flags & HT_FLAG_SORTED) == 0)

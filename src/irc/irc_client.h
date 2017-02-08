@@ -30,9 +30,10 @@
  */
 /**
  * @file irc_client.h
+ * @brief
+ *
+ * @note This is FEATURE_IRC_CLIENT and FEATURE_IRC_SERVER only
  */
-
-// this is FEATURE_IRC_CLIENT and FEATURE_IRC_SERVER only
 
 // Hash table interface
 #ifndef IRC_CLIENT_H
