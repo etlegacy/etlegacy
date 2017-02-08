@@ -402,6 +402,13 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, const char *mess
 	{
 		listItem->message[strlen(listItem->message) - 1] = 0;
 	}
+
+	// do not write obituary popups into console - we'll get double kill-messages otherwise
+	if (type != PM_DEATH)
+	{
+	    trap_Print(va("%s\n", listItem->message));
+	}
+
 	// chop off the newline at the end if any
 	while ((end = strchr(listItem->message, '\n')))
 	{
