@@ -112,17 +112,12 @@ menuDef {
 
 // IRC //
 #define IRC_Y 274
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, IRC_Y, (SUBWINDOW_WIDTH_R), 102, _("IRC Client") )
-// FIXME: pull down/MULTIACTION?
-//0 - (default) 	off 	
-//1 - Direct connect on startup
-//2 - Override irc nickname
-//4 - Mute channel
-	NUMERICFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Mode:"), .2, 8, "irc_mode", 5, _("Specifies IRC client behaviour") )
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, IRC_Y, (SUBWINDOW_WIDTH_R), 102, _("IRC CLIENT") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Mode:"), .2, 8, "irc_mode", cvarFloatList { _("Disabled") 0 _("Direct connect") 1 _("Override nickname") 2 _("Mute channel") 4 _("Direct + Override") 3 _("Direct + Mute") 5 _("Override + Mute") 6 _("Direct + Over. + Mute") 7 }, _("Specifies IRC client behavior") )
 	EDITFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Server:"), .2, 8, "irc_server", 25, 18, _("Name of IRC server") )
-	EDITFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Channel #:"), .2, 8, "irc_channel", 25, 18, _("Name of IRC channel - no '#' required") )	
+	EDITFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Channel #:"), .2, 8, "irc_channel", 25, 18, _("Name of IRC channel - no '#' required") )
 	NUMERICFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Port:"), .2, 8, "irc_port", 5, _("Port of IRC server") )
-	EDITFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Nickname:"), .2, 8, "irc_nickname", 25, 18, _("IRC nickame in channel") )	
+	EDITFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Nickname:"), .2, 8, "irc_nickname", 25, 18, _("IRC nickame in channel") )
 	NUMERICFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Kick rejoin time ms:"), .2, 8, "irc_kick_rejoin", 5, _("Auto rejoin time after kick") )
 	NUMERICFIELD( 6+(SUBWINDOW_WIDTH_L)+6+2, IRC_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Reconnect time ms:"), .2, 8, "irc_reconnect_delay", 5, _("Reconnect time in ms") )
 
