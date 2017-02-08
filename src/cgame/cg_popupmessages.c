@@ -491,7 +491,9 @@ void CG_PMItemBigSound(pmListItemBig_t *item)
  */
 void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t shader)
 {
-	pmListItemBig_t *listItem = CG_FindFreePMItem2();
+	pmListItemBig_t *listItem;
+
+	listItem = CG_FindFreePMItem2();
 
 	if (!listItem)
 	{

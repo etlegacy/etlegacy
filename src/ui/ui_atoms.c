@@ -316,22 +316,6 @@ void UI_FillRect(float x, float y, float width, float height, const float *color
 	trap_R_SetColor(NULL);
 }
 
-/*
- * @brief UI_DrawSides
- * @param[in] x
- * @param[in] y
- * @param[in] w
- * @param[in] h
- *
- * @note Unused
-void UI_DrawSides(float x, float y, float w, float h)
-{
-    UI_AdjustFrom640(&x, &y, &w, &h);
-    trap_R_DrawStretchPic(x, y, 1, h, 0, 0, 0, 0, uiInfo.uiDC.whiteShader);
-    trap_R_DrawStretchPic(x + w - 1, y, 1, h, 0, 0, 0, 0, uiInfo.uiDC.whiteShader);
-}
-*/
-
 /**
  * @brief UI_DrawTopBottom
  * @param[in] x
@@ -346,59 +330,3 @@ void UI_DrawTopBottom(float x, float y, float w, float h)
 	trap_R_DrawStretchPic(x, y + h - 1, w, 1, 0, 0, 0, 0, uiInfo.uiDC.whiteShader);
 }
 
-/*
- * @brief UI_DrawRect
- * Coordinates are 640*480 virtual values
- * @param[in] x
- * @param[in] y
- * @param[in] width
- * @param[in] height
- * @param[in] color
- * @note Unused
-void UI_DrawRect(float x, float y, float width, float height, const float *color)
-{
-    trap_R_SetColor(color);
-
-    UI_DrawTopBottom(x, y, width, height);
-    UI_DrawSides(x, y, width, height);
-
-    trap_R_SetColor(NULL);
-}
-*/
-
-/*
- * @brief UI_DrawTextBox
- * @param x
- * @param y
- * @param width
- * @param lines
- * @note Unused.
-void UI_DrawTextBox(int x, int y, int width, int lines)
-{
-    UI_FillRect(x + BIGCHAR_WIDTH / 2, y + BIGCHAR_HEIGHT / 2, (width + 1) * BIGCHAR_WIDTH, (lines + 1) * BIGCHAR_HEIGHT, colorBlack);
-    UI_DrawRect(x + BIGCHAR_WIDTH / 2, y + BIGCHAR_HEIGHT / 2, (width + 1) * BIGCHAR_WIDTH, (lines + 1) * BIGCHAR_HEIGHT, colorWhite);
-}
-*/
-
-/*
- * @brief UI_CursorInRect
- * @param[in] x
- * @param[in] y
- * @param[in] width
- * @param[in] height
- * @return
- *
- * @note Unused.
-qboolean UI_CursorInRect(int x, int y, int width, int height)
-{
-    if (uiInfo.uiDC.cursorx < x ||
-        uiInfo.uiDC.cursory < y ||
-        uiInfo.uiDC.cursorx > x + width ||
-        uiInfo.uiDC.cursory > y + height)
-    {
-        return qfalse;
-    }
-
-    return qtrue;
-}
-*/
