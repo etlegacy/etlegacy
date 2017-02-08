@@ -3008,7 +3008,7 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 
 /**
  * @brief Tess_ComputeTexMatrices
- * @param[☺in] pStage
+ * @param[in] pStage
  */
 static void Tess_ComputeTexMatrices(shaderStage_t *pStage)
 {

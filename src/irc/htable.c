@@ -255,7 +255,7 @@ void HT_Destroy(hashtable_t table)
  *
  * @param[in] table The hash table to access
  * @param[in] key The key to look up
- * @param[out] create Pointer to a boolean which will be set to true if
+ * @param[out] created Pointer to a boolean which will be set to true if
  *             the item was created; if NULL, no creation will take
  *             place
  */

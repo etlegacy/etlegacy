@@ -483,6 +483,7 @@ static void R_DecodeRGB565Block(byte out[4][4][4], int bx, int by, int format, i
  * @param[in] width
  * @param[in] height
  * @param[in] data
+ * @param decoder
  */
 static void R_UploadEncodedImageDirect(GLenum target, int level, GLenum format, GLenum int_fmat, int width, int height,
                                        const void *data, void (*decoder)(byte out[4][4][4], int bx, int by, int format, int iw,

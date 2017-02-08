@@ -32,8 +32,8 @@
  * @file files.c
  * @brief Handle based filesystem for ET: Legacy
  *
- *        note: this implementation is POSIX only see
- *        https://www.securecoding.cert.org/confluence/display/c/FIO19-C.+Do+not+use+fseek%28%29+and+ftell%28%29+to+compute+the+size+of+a+regular+file
+ * @note This implementation is POSIX only see
+ * https://www.securecoding.cert.org/confluence/display/c/FIO19-C.+Do+not+use+fseek%28%29+and+ftell%28%29+to+compute+the+size+of+a+regular+file
  */
 
 #include "q_shared.h"
@@ -197,6 +197,7 @@ or configs will never get loaded from disk!
 
 /**
  * @struct fileInPack_s
+ * @brief
  */
 typedef struct fileInPack_s
 {
@@ -208,11 +209,12 @@ typedef struct fileInPack_s
 
 /**
  * @struct pack_s
+ * @brief
  */
 typedef struct
 {
-	char pakPathname[MAX_OSPATH];               ///< c:\etlegacy\etmain
-	char pakFilename[MAX_OSPATH];               ///< c:\etlegacy\etmain\pak0.pk3
+	char pakPathname[MAX_OSPATH];               ///< c:\\etlegacy\\etmain
+	char pakFilename[MAX_OSPATH];               ///< c:\\etlegacy\\etmain\\pak0.pk3
 	char pakBasename[MAX_OSPATH];               ///< pak0
 	char pakGamename[MAX_OSPATH];               ///< etmain
 	unzFile handle;                             ///< handle to zip file
@@ -227,22 +229,24 @@ typedef struct
 
 /**
  * @struct directory_s
+ * @brief
  */
 typedef struct
 {
-	char path[MAX_OSPATH];          ///< c:\etlegacy
-	char fullpath[MAX_OSPATH];      ///< c:\etlegacy\etmain
+	char path[MAX_OSPATH];          ///< c:\\etlegacy
+	char fullpath[MAX_OSPATH];      ///< c:\\etlegacy\\etmain
 	char gamedir[MAX_OSPATH];       ///< etmain
 } directory_t;
 
 /**
  * @struct searchpath_s
+ * @brief
  */
 typedef struct searchpath_s
 {
 	struct searchpath_s *next;
 
-	pack_t *pack;           ///< only one of pack / dir will be non NULL
+	pack_t *pack;           ///< only one of pack \/ dir will be non NULL
 	directory_t *dir;
 } searchpath_t;
 

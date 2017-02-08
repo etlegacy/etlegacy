@@ -1247,10 +1247,10 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
  * @brief ParseDeform
  * @param[in,out] text
  *
- * @note deformVertexes wave <spread> <waveform> <base> <amplitude> <phase> <frequency>
- * deformVertexes normal <frequency> <amplitude>
- * deformVertexes move <vector> <waveform> <base> <amplitude> <phase> <frequency>
- * deformVertexes bulge <bulgeWidth> <bulgeHeight> <bulgeSpeed>
+ * @note deformVertexes wave \<spread\> \<waveform\> \<base\> \<amplitude\> \<phase\> \<frequency\>
+ * deformVertexes normal \<frequency\> \<amplitude\>
+ * deformVertexes move \<vector\> \<waveform\> \<base\> \<amplitude\> \<phase\> \<frequency\>
+ * deformVertexes bulge \<bulgeWidth\> \<bulgeHeight\> \<bulgeSpeed\>
  * deformVertexes projectionShadow
  * deformVertexes autoSprite
  * deformVertexes autoSprite2
@@ -1411,7 +1411,7 @@ static void ParseDeform(char **text)
  * @brief ParseSkyParms
  * @param[in,out] text
  *
- * @note skyParms <outerbox> <cloudheight> <innerbox>
+ * @note skyParms \<outerbox\> \<cloudheight\> \<innerbox\>
  */
 static void ParseSkyParms(char **text)
 {
@@ -1633,7 +1633,7 @@ infoParm_t infoParms[] =
  * @brief ParseSurfaceParm
  * @param[in,out] text
  *
- * @note surfaceparm <name>
+ * @note surfaceparm \<name\>
  */
 static void ParseSurfaceParm(char **text)
 {

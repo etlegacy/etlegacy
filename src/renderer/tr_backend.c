@@ -37,10 +37,13 @@
 backEndData_t  *backEndData;
 backEndState_t backEnd;
 
+/**
+ * @var s_flipMatrix
+ * @brief Convert from our coordinate system (looking down X)
+ * to OpenGL's coordinate system (looking down -Z)
+ */
 static float s_flipMatrix[16] =
 {
-	// convert from our coordinate system (looking down X)
-	// to OpenGL's coordinate system (looking down -Z)
 	0,  0, -1, 0,
 	-1, 0, 0,  0,
 	0,  1, 0,  0,

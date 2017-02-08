@@ -3770,7 +3770,7 @@ static qboolean UI_TeamName_HandleKey(int flags, int *special, int key, qboolean
  * @param flags - unused
  * @param special - unused
  * @param[in] key
- * @param[in] resetMap
+ * @param[in] blue
  * @param[in] num
  * @return
  */

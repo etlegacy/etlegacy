@@ -526,7 +526,7 @@ void *VM_ExplicitArgPtr(vm_t *vm, intptr_t intValue);
 #define VMA(x) VM_ArgPtr(args[x])
 /**
  * @brief _vmf
- * @param[in] intptr_t
+ * @param[in] x
  */
 static ID_INLINE float _vmf(intptr_t x)
 {

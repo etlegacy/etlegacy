@@ -6,7 +6,7 @@
 
 #include "cg_local.h"
 
-/**
+/*
  * @brief CG_CalcBezierPoint
  * @param[in] start
  * @param[in] ctrl1
@@ -14,7 +14,8 @@
  * @param[in] end
  * @param[in] offset
  * @param[out] out
- */
+ *
+ * @note Unused
 void CG_CalcBezierPoint(vec3_t start, vec3_t ctrl1, vec3_t ctrl2, vec3_t end, float offset, vec3_t out)
 {
 	float var1, var2, var3;
@@ -29,3 +30,4 @@ void CG_CalcBezierPoint(vec3_t start, vec3_t ctrl1, vec3_t ctrl2, vec3_t end, fl
 	out[1] = var2 * start[1] + 3 * offset * var1 * var1 * ctrl1[1] + 3 * offset * offset * var1 * ctrl2[1] + var3 * end[1];
 	out[2] = var2 * start[2] + 3 * offset * var1 * var1 * ctrl1[2] + 3 * offset * offset * var1 * ctrl2[2] + var3 * end[2];
 }
+*/
