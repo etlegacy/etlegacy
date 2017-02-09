@@ -2464,7 +2464,7 @@ qboolean CG_AddLinkedEntity(centity_t *cent, qboolean ignoreframe, int atTime)
 				return qfalse;
 			}
 
-			cent->backdelta = sParent->pos.trDuration ? (atTime - sParent->pos.trTime) / sParent->pos.trDuration : 0;
+			cent->backdelta = sParent->pos.trDuration ? (atTime - sParent->pos.trTime) / (float)sParent->pos.trDuration : 0;
 
 			if (cent->backdelta < 0.f)
 			{
