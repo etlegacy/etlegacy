@@ -2097,7 +2097,7 @@ static void PM_Footsteps(void)
 	float    bobmove;
 	int      old;
 	qboolean footstep;
-	int      animResult = -1;
+	int      animResult = -1;   // FIXME: never used
 
 	if (pm->ps->eFlags & EF_DEAD)
 	{

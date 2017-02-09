@@ -1186,9 +1186,9 @@ static void CG_DrawGunIcon(rectDef_t location)
 
 	if (
 #ifdef FEATURE_MULTIVIEW
-		cg.mvTotalClients < 1 &&
+	    cg.mvTotalClients < 1 &&
 #endif
-		cg_drawWeaponIconFlash.integer == 0)
+	    cg_drawWeaponIconFlash.integer == 0)
 	{
 		CG_DrawPlayerWeaponIcon(&rect, qtrue, ITEM_ALIGN_RIGHT, &colorWhite);
 	}
@@ -1196,9 +1196,9 @@ static void CG_DrawGunIcon(rectDef_t location)
 	{
 		int ws =
 #ifdef FEATURE_MULTIVIEW
-			(cg.mvTotalClients > 0) ? cgs.clientinfo[cg.snap->ps.clientNum].weaponState :
+		    (cg.mvTotalClients > 0) ? cgs.clientinfo[cg.snap->ps.clientNum].weaponState :
 #endif
-			BG_simpleWeaponState(cg.snap->ps.weaponstate);
+		    BG_simpleWeaponState(cg.snap->ps.weaponstate);
 
 		CG_DrawPlayerWeaponIcon(&rect, (qboolean)(ws != WSTATE_IDLE), ITEM_ALIGN_RIGHT, ((ws == WSTATE_SWITCH || ws == WSTATE_RELOAD) ? &colorYellow : (ws == WSTATE_FIRE) ? &colorRed : &colorWhite));
 	}

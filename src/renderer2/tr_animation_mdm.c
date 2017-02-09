@@ -421,6 +421,8 @@ static int R_ComputeFogNum(trRefEntity_t * ent)
  * @param[in] ent
  * @param[in] mdmSurface
  * @return
+ *
+ * @todo FIXME: cleanup ?
  */
 static shader_t *GetMDMSurfaceShader(const trRefEntity_t *ent, mdmSurfaceIntern_t *mdmSurface)
 {

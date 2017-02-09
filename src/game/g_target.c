@@ -1377,7 +1377,7 @@ void target_rumble_think(gentity_t *ent)
 		{
 			time  = level.time - ent->timestamp;
 			time2 = (ent->timestamp + ent->start_size + ent->end_size) - ent->timestamp;
-			ratio = time2 / time;
+			ratio = time2 / time;   // FIXME: div / 0
 		}
 		else
 		{

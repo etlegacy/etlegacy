@@ -993,7 +993,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 	ret->uploadHeight = ret->height = height;
 
 	ret->internalFormat = internal_format;
-	//ret->hasAlpha = usingAlpha;
+	//ret->hasAlpha = usingAlpha; FIXME: ?
 
 	ret->filterType = ((filterType == FT_DEFAULT) && (mipLevels > 1)) ? FT_DEFAULT : FT_LINEAR;
 

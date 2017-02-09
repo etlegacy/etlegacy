@@ -512,7 +512,7 @@ qboolean R_MDC_EncodeXyzCompressed(const vec3_t vec, const vec3_t normal, mdcXyz
 	int                i;
 	unsigned char      anorm;
 
-	i = sizeof(mdcXyzCompressed_t);
+	i = sizeof(mdcXyzCompressed_t); // FIXME: never read
 
 	retval.ofsVec = 0;
 	for (i = 0; i < 3; i++)

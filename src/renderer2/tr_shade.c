@@ -970,7 +970,7 @@ static void Render_depthFill(int stage)
 {
 	shaderStage_t *pStage;
 	vec4_t        ambientColor;
-	uint32_t      stateBits;
+	uint32_t      stateBits;        // FIXME: never read & used
 
 	Ren_LogComment("--- Render_depthFill ---\n");
 

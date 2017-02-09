@@ -5023,6 +5023,7 @@ qboolean FS_UnzipTo(const char *filename, const char *outpath, qboolean quiet)
 		char          newFilePath[MAX_OSPATH];
 		FILE          *newFile;
 
+        // FIXME: err is never read
 		err = unzGetCurrentFileInfo(zipFile, &file_info, newFileName, sizeof(newFileName), NULL, 0, NULL, 0);
 
 		Com_sprintf(newFilePath, sizeof(newFilePath), "%s%c%s", outpath, PATH_SEP, newFileName);

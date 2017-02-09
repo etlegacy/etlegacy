@@ -3969,7 +3969,7 @@ void RB_RenderEntityOcclusionQueries()
 		R2_TIMING(RSPEEDS_OCCLUSION_QUERIES)
 		{
 			backEnd.pc.c_occlusionQueriesResponseTime = ri.Milliseconds() - startTime;
-			startTime                                 = ri.Milliseconds();
+			startTime                                 = ri.Milliseconds();  // FIXME: never read
 		}
 
 		// go back to the world modelview matrix
