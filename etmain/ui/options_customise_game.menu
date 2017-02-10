@@ -62,14 +62,14 @@ menuDef {
 #define CHAT_Y 32
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, CHAT_Y, (SUBWINDOW_WIDTH_R), 64, _("CHAT") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Quick Chat Mode:"), .2, 8, "cg_quickMessageAlt", cvarFloatList { _("Alpha") 0 _("Numeric") 1 }, _("Use alpha or numeric keys to send radio messages") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat Icon Time:"), .2, 8, "cg_voicespritetime", cvarFloatList { _("Short") 3000 _("Normal") 6000 _("Long") 12000 _("Really Long") 24000 }, _("Specify how long the chat icon appears above other players' heads") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Chat Icon Time:"), .2, 8, "cg_voiceSpriteTime", cvarFloatList { _("Short") 3000 _("Normal") 6000 _("Long") 12000 _("Really Long") 24000 }, _("Specify how long the chat icon appears above other players' heads") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Team chat only:"), .2, 8, "cg_teamChatsOnly", _("Play only team chat in-game") )
-	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("No voice text:"), .2, 8, "cg_noVoiceText", _("Don't show voice text in-game") )
+	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CHAT_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Voice text:"), .2, 8, "cg_voiceText", _("Show voice text in-game") )
 
 // Sounds //
 #define SOUND_Y 102
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, SOUND_Y, (SUBWINDOW_WIDTH_R), 40, _("SOUND") )
-	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("No voice chat:"), .2, 8, "cg_noVoiceChats", _("Don't play voice chat in-game") )
+	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Voice chat:"), .2, 8, "cg_voiceChats", _("Play voice chat in-game") )
 	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, SOUND_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Hitsounds:"), .2, 8, "cg_hitsounds", cvarFloatList { _("None") 0 _("All") 1 _("No Body Hit Sound") 2 _("No Head Hit Sound") 4 _("No Team Hit Sound") 8 }, _("Set hit sounds") )
 
 // Miscellaneous //

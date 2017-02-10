@@ -145,8 +145,8 @@ vmCvar_t cg_crosshairX;
 vmCvar_t cg_crosshairY;
 vmCvar_t cg_crosshairHealth;
 vmCvar_t cg_teamChatsOnly;
-vmCvar_t cg_noVoiceChats;
-vmCvar_t cg_noVoiceText;
+vmCvar_t cg_voiceChats;
+vmCvar_t cg_voiceText;
 vmCvar_t cg_drawStatus;
 vmCvar_t cg_animSpeed;
 vmCvar_t cg_drawSpreadScale;
@@ -436,8 +436,8 @@ cvarTable_t cvarTable[] =
 	{ &cg_voiceSpriteTime,        "cg_voiceSpriteTime",        "6000",        CVAR_ARCHIVE,                 0 },
 
 	{ &cg_teamChatsOnly,          "cg_teamChatsOnly",          "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_noVoiceChats,           "cg_noVoiceChats",           "0",           CVAR_ARCHIVE,                 0 },
-	{ &cg_noVoiceText,            "cg_noVoiceText",            "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_voiceChats,             "cg_voiceChats",             "1",           CVAR_ARCHIVE,                 0 },
+	{ &cg_voiceText,              "cg_voiceText",              "1",           CVAR_ARCHIVE,                 0 },
 
 	// the following variables are created in other parts of the system,
 	// but we also reference them here

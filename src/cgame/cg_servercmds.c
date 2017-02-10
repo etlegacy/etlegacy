@@ -1486,7 +1486,7 @@ bufferedVoiceChat_t voiceChatBuffer[MAX_VOICECHATBUFFER];
  */
 void CG_PlayVoiceChat(bufferedVoiceChat_t *vchat)
 {
-	if (!cg_noVoiceChats.integer)
+	if (cg_voiceChats.integer)
 	{
 		trap_S_StartLocalSound(vchat->snd, CHAN_VOICE);
 
@@ -1522,7 +1522,7 @@ void CG_PlayVoiceChat(bufferedVoiceChat_t *vchat)
 		}
 
 	}
-	if (!vchat->voiceOnly && !cg_noVoiceText.integer)
+	if (!vchat->voiceOnly && cg_voiceText.integer)
 	{
 		CG_AddToTeamChat(vchat->message, vchat->clientNum);
 		CG_Printf("[skipnotify]%s\n", vchat->message);
