@@ -2,7 +2,7 @@
 # Copyright (C) 2012-2015 ET: Legacy Team
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
-# IR4T4 <gutzu@gmx.ch>, 2016
+# IR4T4 <gutzu@gmx.ch>, 2016-2017
 # IR4T4 <gutzu@gmx.ch>, 2015-2016
 # Joshua <git@sky-e.de>, 2015
 # Julius <wm_jkm@yahoo.com>, 2015
@@ -13,8 +13,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2016-12-15 08:29+0000\n"
-"Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
+"PO-Revision-Date: 2017-02-04 23:07+0000\n"
+"Last-Translator: IR4T4 <gutzu@gmx.ch>\n"
 "Language-Team: German (http://www.transifex.com/etlegacy/etlegacy/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1264,7 +1264,7 @@ msgstr "Menü"
 #: etmain/ui/ingame_main.menu:34 etmain/ui/ingame_vote_disabled.menu:50
 #: etmain/ui/ingame_vote.menu:35
 msgid "VOTE"
-msgstr "Abstimmen"
+msgstr "ABSTIMMEN"
 
 #: etmain/ui/ingame_main.menu:39 etmain/ui/ingame_vote.menu:53
 msgid "REFEREE"
@@ -1500,12 +1500,12 @@ msgstr "EIGENBESCHUß AUS"
 #: etmain/ui/ingame_vote_misc.menu:55
 #: etmain/ui/ingame_vote_misc_refrcon.menu:54
 msgid "BALANCED TEAMS ON"
-msgstr "AUSGEGLICHENE TEAMS AN"
+msgstr ""
 
 #: etmain/ui/ingame_vote_misc.menu:56
 #: etmain/ui/ingame_vote_misc_refrcon.menu:55
 msgid "BALANCED TEAMS OFF"
-msgstr "AUSGEGLICHENE TEAMS AUS"
+msgstr ""
 
 #: etmain/ui/ingame_vote_misc.menu:58
 #: etmain/ui/ingame_vote_misc_refrcon.menu:57
