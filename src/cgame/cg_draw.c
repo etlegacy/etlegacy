@@ -3520,6 +3520,11 @@ static void CG_Draw2D(void)
 {
 	CG_ScreenFade();
 
+	if (trap_Key_GetCatcher() & KEYCATCH_UI)
+	{
+		return;
+	}
+
 	if (cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
 		CG_DrawIntermission();
