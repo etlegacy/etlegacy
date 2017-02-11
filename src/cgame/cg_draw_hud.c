@@ -1186,9 +1186,9 @@ static void CG_DrawGunIcon(rectDef_t location)
 
 	if (
 #ifdef FEATURE_MULTIVIEW
-	    cg.mvTotalClients < 1 &&
+		cg.mvTotalClients < 1 &&
 #endif
-	    cg_drawWeaponIconFlash.integer == 0)
+		cg_drawWeaponIconFlash.integer == 0)
 	{
 		CG_DrawPlayerWeaponIcon(&rect, qtrue, ITEM_ALIGN_RIGHT, &colorWhite);
 	}
@@ -1196,9 +1196,9 @@ static void CG_DrawGunIcon(rectDef_t location)
 	{
 		int ws =
 #ifdef FEATURE_MULTIVIEW
-		    (cg.mvTotalClients > 0) ? cgs.clientinfo[cg.snap->ps.clientNum].weaponState :
+			(cg.mvTotalClients > 0) ? cgs.clientinfo[cg.snap->ps.clientNum].weaponState :
 #endif
-		    BG_simpleWeaponState(cg.snap->ps.weaponstate);
+			BG_simpleWeaponState(cg.snap->ps.weaponstate);
 
 		CG_DrawPlayerWeaponIcon(&rect, (qboolean)(ws != WSTATE_IDLE), ITEM_ALIGN_RIGHT, ((ws == WSTATE_SWITCH || ws == WSTATE_RELOAD) ? &colorYellow : (ws == WSTATE_FIRE) ? &colorRed : &colorWhite));
 	}
@@ -1964,15 +1964,19 @@ static void CG_DrawStatsDebug(void)
  */
 static float CG_DrawSnapshot(float y)
 {
-	char *s = va("t:%i sn:%i cmd:%i", cg.snap->serverTime, cg.latestSnapshotNum, cgs.serverCommandSequence);
+	char *s = va("t:%i", cg.snap->serverTime);
 	int  w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
 	int  w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
 	int  x  = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
 
-	CG_FillRect(x, y, w2 + 5, 12 + 2, HUD_Background);
-	CG_DrawRect_FixedBorder(x, y, w2 + 5, 12 + 2, 1, HUD_Border);
+	CG_FillRect(x, y, w2 + 5, 36 + 2, HUD_Background);
+	CG_DrawRect_FixedBorder(x, y, w2 + 5, 36 + 2, 1, HUD_Border);
 	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, HUD_Text, s, 0, 0, 0, &cgs.media.limboFont1);
-	return y + 12 + 4;
+	s = va("sn:%i", cg.latestSnapshotNum);
+	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 23, 0.19f, 0.19f, HUD_Text, s, 0, 0, 0, &cgs.media.limboFont1);
+	s = va("cmd:%i", cgs.serverCommandSequence);
+	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 35, 0.19f, 0.19f, HUD_Text, s, 0, 0, 0, &cgs.media.limboFont1);
+	return y + 36 + 4;
 }
 
 #define MAX_FPS_FRAMES  500
