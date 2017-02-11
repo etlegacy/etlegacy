@@ -1728,7 +1728,8 @@ void Weapon_Engineer(gentity_t *ent)
 			traceEnt->takedamage = qtrue;
 			traceEnt->s.eFlags  &= ~EF_SMOKING;
 
-			trap_SendServerCommand(ent - g_entities, "cp \"You have repaired the MG\"");
+			trap_SendServerCommand(ent - g_entities, "cp \"You have repaired the MG42\" 1");
+
 			G_AddEvent(ent, EV_MG42_FIXED, 0);
 		}
 		else
@@ -1736,6 +1737,9 @@ void Weapon_Engineer(gentity_t *ent)
 			float xpperround = 0.03529f;
 
 			traceEnt->health += 3;
+
+			G_PrintClientSpammyCenterPrint(ent - g_entities, "Repairing MG42...");
+
 			// constructible xp sharing - repairing an emplaced mg42
 			G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, xpperround);
 			G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, xpperround, "repairing a MG42");
