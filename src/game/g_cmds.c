@@ -316,9 +316,21 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
 	{
 		int j;
 
-		for (j = SK_BATTLE_SENSE; j < SK_NUM_SKILLS; j++)
+		if ((g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
+		    (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0))
 		{
-			totalXP += cl->sess.skillpoints[j];
+			for (j = SK_BATTLE_SENSE; j < SK_NUM_SKILLS; j++)
+			{
+				totalXP += cl->sess.skillpoints[j];
+			}
+		}
+		else
+		{
+			for (j = SK_BATTLE_SENSE; j < SK_NUM_SKILLS; j++)
+			{
+				// current map XPs only
+				totalXP += cl->sess.skillpoints[j] - cl->sess.startskillpoints[j];
+			}
 		}
 	}
 

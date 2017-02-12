@@ -768,7 +768,7 @@ void G_printMatchInfo(gentity_t *ent)
             tot_dr     += cl->sess.damage_received;
             tot_tdg    += cl->sess.team_damage_given;
             tot_tdr    += cl->sess.team_damage_received;
-            tot_xp     += cl->ps.persistant[PERS_SCORE];
+            tot_xp     += (g_gametype.integer == GT_WOLF_LMS) ? cl->ps.persistant[PERS_SCORE] : cl->ps.stats[STAT_XP];
 #ifdef FEATURE_RATING
             tot_rating += cl->sess.mu - 3 * cl->sess.sigma;
             tot_delta  += (cl->sess.mu - 3 * cl->sess.sigma) - (cl->sess.oldmu - 3 * cl->sess.oldsigma);
@@ -815,7 +815,7 @@ void G_printMatchInfo(gentity_t *ent)
                                                         cl->sess.damage_received,
                                                         cl->sess.team_damage_given,
                                                         cl->sess.team_damage_received,
-                                                        cl->ps.persistant[PERS_SCORE]
+                                                        (g_gametype.integer == GT_WOLF_LMS) ? cl->ps.persistant[PERS_SCORE] : cl->ps.stats[STAT_XP]
 #ifdef FEATURE_RATING
                                                         ,
                                                         (cl->sess.mu - 3 * cl->sess.sigma < 0.f) ? 0 : cl->sess.mu - 3 * cl->sess.sigma,

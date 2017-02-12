@@ -1768,9 +1768,21 @@ void SpectatorClientEndFrame(gentity_t *ent)
 		int i;
 		ent->client->ps.stats[STAT_XP] = 0;
 
-		for (i = 0; i < SK_NUM_SKILLS; ++i)
+		if ((g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
+		    (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0))
 		{
-			ent->client->ps.stats[STAT_XP] += ent->client->sess.skillpoints[i];
+			for (i = 0; i < SK_NUM_SKILLS; ++i)
+			{
+				ent->client->ps.stats[STAT_XP] += ent->client->sess.skillpoints[i];
+			}
+		}
+		else
+		{
+			for (i = 0; i < SK_NUM_SKILLS; ++i)
+			{
+				// current map XPs only
+				ent->client->ps.stats[STAT_XP] += ent->client->sess.skillpoints[i] - ent->client->sess.startskillpoints[i];
+			}
 		}
 
 		// to avoid overflows for big XP values(>= 32768), count each overflow and add it
@@ -2199,9 +2211,21 @@ void ClientEndFrame(gentity_t *ent)
 	}
 
 	ent->client->ps.stats[STAT_XP] = 0;
-	for (i = 0; i < SK_NUM_SKILLS; i++)
+	if ((g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
+	    (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0))
 	{
-		ent->client->ps.stats[STAT_XP] += ent->client->sess.skillpoints[i];
+		for (i = 0; i < SK_NUM_SKILLS; ++i)
+		{
+			ent->client->ps.stats[STAT_XP] += ent->client->sess.skillpoints[i];
+		}
+	}
+	else
+	{
+		for (i = 0; i < SK_NUM_SKILLS; ++i)
+		{
+			// current map XPs only
+			ent->client->ps.stats[STAT_XP] += ent->client->sess.skillpoints[i] - ent->client->sess.startskillpoints[i];
+		}
 	}
 
 	// to avoid overflows for big XP values(>= 32768), count each overflow and add it

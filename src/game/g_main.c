@@ -2766,13 +2766,11 @@ int QDECL SortRanks(const void *a, const void *b)
 	if (g_gametype.integer == GT_WOLF_LMS)
 	{
 		// then sort by score
-		if (ca->ps.persistant[PERS_SCORE]
-		    > cb->ps.persistant[PERS_SCORE])
+		if (ca->ps.persistant[PERS_SCORE] > cb->ps.persistant[PERS_SCORE])
 		{
 			return -1;
 		}
-		if (ca->ps.persistant[PERS_SCORE]
-		    < cb->ps.persistant[PERS_SCORE])
+		if (ca->ps.persistant[PERS_SCORE] < cb->ps.persistant[PERS_SCORE])
 		{
 			return 1;
 		}
@@ -2785,6 +2783,14 @@ int QDECL SortRanks(const void *a, const void *b)
 		{
 			totalXP[0] += ca->sess.skillpoints[i];
 			totalXP[1] += cb->sess.skillpoints[i];
+		}
+
+		if (!((g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
+		    (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0)))
+		{
+			// current map XPs only
+			totalXP[0] -= ca->sess.startxptotal;
+			totalXP[1] -= cb->sess.startxptotal;
 		}
 
 		// then sort by xp

@@ -619,7 +619,7 @@ typedef enum
 	STAT_MAX_HEALTH,               ///< health / armor limit, changable by handicap
 	STAT_PLAYER_CLASS,             ///< player class in multiplayer
 	STAT_XP,                       ///< "realtime" version of xp that doesnt need to go thru the scoreboard
-	STAT_XP_OVERFLOW,              ///< count XP overflow(every 2^15)
+	STAT_XP_OVERFLOW,              ///< count XP overflow(every 2^15) (FIXME: remove?)
 	STAT_PS_FLAGS,
 	STAT_AIRLEFT,                  ///< airtime for CG_DrawBreathBar()
 	STAT_SPRINTTIME,               ///< sprinttime for CG_DrawStaminaBar()
