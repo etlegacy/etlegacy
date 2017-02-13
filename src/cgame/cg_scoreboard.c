@@ -500,7 +500,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 		}
 
 		w = CG_Text_Width_Ext(s, 0.24f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(tempx + totalwidth - w - INFO_LATENCY_WIDTH, y, 0.24f, 0.28f, colorYellow, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + totalwidth - w - INFO_LATENCY_WIDTH - 12, y, 0.24f, 0.28f, colorYellow, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		CG_Text_Paint_Ext(tempx + totalwidth - INFO_LATENCY_WIDTH, y, 0.24f, 0.28f, colorWhite, p, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 
 		return;
@@ -721,7 +721,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 			p = va("%4i", score->ping);
 		}
 		w = CG_Text_Width_Ext(s, 0.20f, 0, FONT_TEXT);
-		CG_Text_Paint_Ext(tempx + totalwidth - w - INFO_LATENCY_WIDTH, y, 0.20f, 0.25f, colorYellow, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + totalwidth - w - INFO_LATENCY_WIDTH - 18, y, 0.20f, 0.25f, colorYellow, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		CG_Text_Paint_Ext(tempx + totalwidth - INFO_LATENCY_WIDTH, y, 0.20f, 0.25f, colorWhite, p, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		return;
 	}
@@ -735,12 +735,12 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 		}
 	}
 
-	tempx += INFO_CLASS_WIDTH + 6;
+	tempx += INFO_CLASS_WIDTH + 8;
 
 #ifdef FEATURE_RATING
 	if (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR)
 	{
-		CG_Text_Paint_Ext(tempx + 8, y, 0.20f, 0.25f, colorWhite, va("^7%5.2f", (double)score->rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
+		CG_Text_Paint_Ext(tempx + 6, y, 0.20f, 0.25f, colorWhite, va("^7%5.2f", (double)score->rating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
 	else
 	{
