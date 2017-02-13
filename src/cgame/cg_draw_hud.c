@@ -1955,7 +1955,7 @@ static void CG_DrawStatsDebug(void)
 */
 
 #define UPPERRIGHT_X 634
-#define UPPERRIGHT_W 50
+#define UPPERRIGHT_W 52
 
 /**
  * @brief CG_DrawSnapshot
@@ -2923,6 +2923,11 @@ void CG_DrawUpperRight(void)
 		}
 	}
 
+	if ((cg_drawTime.integer & LOCALTIME_ON) && !(cg_altHudFlags.integer & FLAGS_MOVE_TIMERS))
+	{
+		y = CG_DrawLocalTime(y);
+	}
+
 	if (cg_drawFPS.integer)
 	{
 		y = CG_DrawFPS(y);
@@ -2931,11 +2936,6 @@ void CG_DrawUpperRight(void)
 	if (cg_drawSnapshot.integer)
 	{
 		y = CG_DrawSnapshot(y);
-	}
-
-	if ((cg_drawTime.integer & LOCALTIME_ON) && !(cg_altHudFlags.integer & FLAGS_MOVE_TIMERS))
-	{
-		y = CG_DrawLocalTime(y);
 	}
 
 	if (cg_drawPing.integer)
