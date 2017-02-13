@@ -2711,7 +2711,7 @@ void CG_Hud_Setup(void)
 	hud1.healthbar       = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 36), 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud1.weaponchargebar = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 16), 388, 12, 72, qtrue, STYLE_NORMAL);
 	hud1.healthtext      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 60, SCREEN_HEIGHT - 65, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.xptext          = CG_getComponent(28, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
+	hud1.xptext          = CG_getComponent(48, SCREEN_HEIGHT - 4, 0, 0, qtrue, STYLE_NORMAL);
 	hud1.statsdisplay    = CG_getComponent(24, SCREEN_HEIGHT - 95, 0, 0, qtrue, STYLE_SIMPLE);
 	hud1.weaponicon      = CG_getComponent((Ccg_WideX(SCREEN_WIDTH) - 82 - 20), (SCREEN_HEIGHT - 56), 60, 32, qtrue, STYLE_NORMAL);
 	hud1.weaponammo      = CG_getComponent(Ccg_WideX(SCREEN_WIDTH) - 22 - 20, SCREEN_HEIGHT - 1 * (16 + 2) + 12 - 4, 0, 0, qtrue, STYLE_NORMAL);
@@ -2722,10 +2722,10 @@ void CG_Hud_Setup(void)
 	hud1.cursorhint      = CG_getComponent(.5f * SCREEN_WIDTH - .5f * 48, 260, 48, 48, qtrue, STYLE_NORMAL);
 	hud1.weaponstability = CG_getComponent(50, 208, 10, 64, qtrue, STYLE_NORMAL);
 	hud1.livesleft       = CG_getComponent(0, 0, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.reinforcment    = CG_getComponent(55, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.roundtimer      = CG_getComponent(75, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.spawntimer      = CG_getComponent(55, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL);
-	hud1.localtime       = CG_getComponent(75, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL);
+	hud1.reinforcment    = CG_getComponent(70, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL);
+	hud1.roundtimer      = CG_getComponent(85, SCREEN_HEIGHT - 12, 0, 0, qtrue, STYLE_NORMAL);
+	hud1.spawntimer      = CG_getComponent(70, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL);
+	hud1.localtime       = CG_getComponent(85, SCREEN_HEIGHT - 2, 0, 0, qtrue, STYLE_NORMAL);
 	CG_addHudToList(&hud1);
 
 	// Hud2
