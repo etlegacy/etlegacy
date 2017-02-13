@@ -1784,11 +1784,6 @@ void SpectatorClientEndFrame(gentity_t *ent)
 				ent->client->ps.stats[STAT_XP] += ent->client->sess.skillpoints[i] - ent->client->sess.startskillpoints[i];
 			}
 		}
-
-		// to avoid overflows for big XP values(>= 32768), count each overflow and add it
-		// again in cg_draw.c at display time
-		ent->client->ps.stats[STAT_XP_OVERFLOW] = ent->client->ps.stats[STAT_XP] >> 15;     // >>15 == /32768
-		ent->client->ps.stats[STAT_XP]          = ent->client->ps.stats[STAT_XP] & 0x7FFF;
 	}
 
 	// if we are doing a chase cam or a remote view, grab the latest info
@@ -2227,11 +2222,6 @@ void ClientEndFrame(gentity_t *ent)
 			ent->client->ps.stats[STAT_XP] += ent->client->sess.skillpoints[i] - ent->client->sess.startskillpoints[i];
 		}
 	}
-
-	// to avoid overflows for big XP values(>= 32768), count each overflow and add it
-	// again in cg_draw.c at display time
-	ent->client->ps.stats[STAT_XP_OVERFLOW] = ent->client->ps.stats[STAT_XP] >> 15;     // >>15 == /32768
-	ent->client->ps.stats[STAT_XP]          = ent->client->ps.stats[STAT_XP] & 0x7FFF;  // & 0x7FFF == %32768
 
 	// If we're paused, make sure other timers stay in sync
 	//		--> Any new things in ET we should worry about?

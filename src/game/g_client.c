@@ -2688,7 +2688,7 @@ void ClientBegin(int clientNum)
 	gclient_t *client = level.clients + clientNum;
 	int       flags;
 	int       spawn_count, lives_left;
-	int       stat_xp, stat_xp_overflow, score; // restore xp & score
+	int       stat_xp, score; // restore xp & score
 	qboolean  inIntermission = (g_gamestate.integer == GS_INTERMISSION && client->ps.pm_type == PM_INTERMISSION) ? qtrue : qfalse;
 
 #ifdef FEATURE_LUA
@@ -2732,9 +2732,8 @@ void ClientBegin(int clientNum)
 	flags = client->ps.eFlags;
 
 	// restore xp & score
-	stat_xp          = ent->client->ps.stats[STAT_XP];
-	stat_xp_overflow = ent->client->ps.stats[STAT_XP_OVERFLOW];
-	score            = ent->client->ps.persistant[PERS_SCORE];
+	stat_xp = ent->client->ps.stats[STAT_XP];
+	score   = ent->client->ps.persistant[PERS_SCORE];
 
 	memset(&client->ps, 0, sizeof(client->ps));
 
@@ -2742,8 +2741,7 @@ void ClientBegin(int clientNum)
 
 	if (ent->client->sess.spectatorState == SPECTATOR_FREE) // restore xp
 	{
-		ent->client->ps.stats[STAT_XP]          = stat_xp;
-		ent->client->ps.stats[STAT_XP_OVERFLOW] = stat_xp_overflow;
+		ent->client->ps.stats[STAT_XP] = stat_xp;
 	}
 
 	if (inIntermission == qtrue)

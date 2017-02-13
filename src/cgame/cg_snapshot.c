@@ -222,13 +222,11 @@ void CG_SetInitialSnapshot(snapshot_t *snap)
 	// update client XP for spectator frames
 	if (cg.snap->ps.clientNum == cg.clientNum)    // sanity check
 	{
-		int cXP = (32768 * cg.snap->ps.stats[STAT_XP_OVERFLOW]) + cg.snap->ps.stats[STAT_XP];
-
-		if (cg.xp < cXP)
+		if (cg.xp < cg.snap->ps.stats[STAT_XP])
 		{
 			cg.xpChangeTime = cg.time;
 		}
-		cg.xp = cXP;
+		cg.xp = cg.snap->ps.stats[STAT_XP];
 	}
 }
 
@@ -285,13 +283,11 @@ static void CG_TransitionSnapshot(void)
 
 	if (cg.snap->ps.clientNum == cg.clientNum)
 	{
-		int cXP = (32768 * cg.snap->ps.stats[STAT_XP_OVERFLOW]) + cg.snap->ps.stats[STAT_XP];
-
-		if (cg.xp < cXP)
+		if (cg.xp < cg.snap->ps.stats[STAT_XP])
 		{
 			cg.xpChangeTime = cg.time;
 		}
-		cg.xp = cXP;
+		cg.xp = cg.snap->ps.stats[STAT_XP];
 	}
 
 	BG_PlayerStateToEntityState(&cg.snap->ps, &cg_entities[cg.snap->ps.clientNum].currentState, cg.time, qfalse);
