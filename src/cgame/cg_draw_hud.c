@@ -2109,9 +2109,12 @@ static void CG_DrawTimersAlt(rectDef_t *respawn, rectDef_t *spawntimer, rectDef_
 	// spawntimer
 	if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate == GS_PLAYING)
 	{
-		seconds = msec / 1000;
-		s       = va("^1%d", cg_spawnTimer_period.integer + (seconds - cg_spawnTimer_set.integer) % cg_spawnTimer_period.integer);
-		CG_Text_Paint_Ext(spawntimer->x, spawntimer->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+		if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW))
+		{
+			seconds = msec / 1000;
+			s       = va("^1%d", cg_spawnTimer_period.integer + (seconds - cg_spawnTimer_set.integer) % cg_spawnTimer_period.integer);
+			CG_Text_Paint_Ext(spawntimer->x, spawntimer->y, 0.19f, 0.19f, color, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont1);
+		}
 	}
 	else if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate != GS_PLAYING)
 	{
@@ -2219,8 +2222,11 @@ static float CG_DrawTimerNormal(float y)
 	// spawntimer
 	if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate == GS_PLAYING)
 	{
-		seconds = msec / 1000;
-		s       = va("^1%d %s", cg_spawnTimer_period.integer + (seconds - cg_spawnTimer_set.integer) % cg_spawnTimer_period.integer, s);
+		if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW))
+		{
+			seconds = msec / 1000;
+			s       = va("^1%d %s", cg_spawnTimer_period.integer + (seconds - cg_spawnTimer_set.integer) % cg_spawnTimer_period.integer, s);
+		}
 	}
 	else if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate != GS_PLAYING)
 	{
