@@ -405,7 +405,7 @@ panel_button_t playerXPCounterText =
 {
 	NULL,
 	"XP",
-	{ 546,                        108,   60, 16 },
+	{ 566,                        108,   60, 16 },
 	{ 2,                          0,     0,  0, 0, 0, 0, 0},
 	&spawnLimboFont,              /* font     */
 	NULL,                         /* keyDown  */
@@ -419,7 +419,7 @@ panel_button_t playerXPCounter =
 {
 	NULL,
 	NULL,
-	{ 564,                      96,   60, 16 },
+	{ 584,                      96,   40, 16 },
 	{ 2,                        0,    0,  0, 0, 0, 0, 0},
 	NULL,                       /* font     */
 	NULL,                       /* keyDown  */
@@ -2850,7 +2850,7 @@ int CG_LimboPanel_RenderCounter_NumRollers(panel_button_t *button)
 		{
 			return 0;
 		}
-		return 6;
+		return 4;
 	default:
 		break;
 	}
