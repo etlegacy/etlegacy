@@ -1016,19 +1016,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 		hintDist = CH_MAX_DIST;
 	}
 
-	// building something - add this here because we don't have anything solid to trace to - quite ugly-ish
-	if (ent->client->touchingTOI && ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
-	{
-		gentity_t *constructible;
-
-		if ((constructible = G_IsConstructible(ent->client->sess.sessionTeam, ent->client->touchingTOI)))
-		{
-			ps->serverCursorHint    = HINT_CONSTRUCTIBLE;
-			ps->serverCursorHintVal = (int)constructible->s.angles2[0];
-			return;
-		}
-	}
-
 	if (ps->stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
 	{
 		if (ent->client->landmineSpottedTime && level.time - ent->client->landmineSpottedTime < 500)
@@ -1081,7 +1068,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 	}
 	else if (tr->entityNum < MAX_CLIENTS)
 	{
-		// Show medics a syringe if they can revive someone
+		// show medics a syringe if they can revive someone
 		if (traceEnt->client && traceEnt->client->sess.sessionTeam == ent->client->sess.sessionTeam)
 		{
 			if (ps->stats[STAT_PLAYER_CLASS] == PC_MEDIC && traceEnt->client->ps.pm_type == PM_DEAD && !(traceEnt->client->ps.pm_flags & PMF_LIMBO))
@@ -1106,10 +1093,8 @@ void G_CheckForCursorHints(gentity_t *ent)
 		// so find the target and set checkEnt to that to show the proper hint.
 		if (traceEnt->s.eType == ET_GENERAL)
 		{
-
 			// ignore trigger_aidoor.  can't just not trace for triggers, since I need invisible_users...
 			// damn, I would like to ignore some of these triggers though.
-
 			if (!Q_stricmp(traceEnt->classname, "trigger_aidoor"))
 			{
 				return;
@@ -1302,13 +1287,12 @@ void G_CheckForCursorHints(gentity_t *ent)
 					}
 					else
 					{
-						//hintDist = CH_NONE_DIST;
-						//hintType = ps->serverCursorHint = HINT_FORCENONE;
-						//hintVal  = ps->serverCursorHintVal = 0;
+						// hintDist = CH_NONE_DIST;
+						// hintType = ps->serverCursorHint = HINT_FORCENONE;
+						// hintVal  = ps->serverCursorHintVal = 0;
 						return;
 					}
 				}
-
 				break;
 			case ET_ALARMBOX:
 				if (checkEnt->health > 0)
@@ -1316,7 +1300,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 					hintType = HINT_ACTIVATE;
 				}
 				break;
-
 			case ET_ITEM:
 			{
 				gitem_t *it = &bg_itemlist[checkEnt->item - bg_itemlist];
@@ -1390,6 +1373,17 @@ void G_CheckForCursorHints(gentity_t *ent)
 						hintDist = CH_ACTIVATE_DIST;
 						hintType = HINT_ACTIVATE;
 					}
+					else if (ent->client->touchingTOI && ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
+					{
+						gentity_t *constructible;
+
+						if ((constructible = G_IsConstructible(ent->client->sess.sessionTeam, ent->client->touchingTOI)))
+						{
+							hintDist = CH_ACTIVATE_DIST;
+							hintType = ps->serverCursorHint    = HINT_CONSTRUCTIBLE;
+							hintVal  = ps->serverCursorHintVal = (int)constructible->s.angles2[0];
+						}
+					}
 				}
 				else if (!Q_stricmp(checkEnt->classname, "func_door_rotating"))
 				{
@@ -1431,7 +1425,17 @@ void G_CheckForCursorHints(gentity_t *ent)
 					hintDist = CH_BREAKABLE_DIST * 2;
 					hintType = HINT_BREAKABLE;
 				}
+				else if (ent->client->touchingTOI && ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
+				{
+					gentity_t *constructible;
 
+					if ((constructible = G_IsConstructible(ent->client->sess.sessionTeam, ent->client->touchingTOI)))
+					{
+						hintDist = CH_ACTIVATE_DIST;
+						hintType = ps->serverCursorHint    = HINT_CONSTRUCTIBLE;
+						hintVal  = ps->serverCursorHintVal = (int)constructible->s.angles2[0];
+					}
+				}
 				break;
 			case ET_MISSILE:
 				if (ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
@@ -1485,13 +1489,27 @@ void G_CheckForCursorHints(gentity_t *ent)
 					return;
 				}
 			}
+
+			// set hint distance
+            if (dist <= Square(hintDist))
+            {
+                ps->serverCursorHint    = hintType;
+                ps->serverCursorHintVal = hintVal;
+            }
+            return;
 		}
 	}
 
-	if (dist <= Square(hintDist))
+	// building something - add this here because we don't have anything solid to trace to - quite ugly-ish
+	if (ent->client->touchingTOI && ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
 	{
-		ps->serverCursorHint    = hintType;
-		ps->serverCursorHintVal = hintVal;
+		gentity_t *constructible;
+
+		if ((constructible = G_IsConstructible(ent->client->sess.sessionTeam, ent->client->touchingTOI)))
+		{
+			ps->serverCursorHint    = HINT_CONSTRUCTIBLE;
+			ps->serverCursorHintVal = (int)constructible->s.angles2[0];
+		}
 	}
 }
 

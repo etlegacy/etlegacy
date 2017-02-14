@@ -1646,14 +1646,6 @@ void Weapon_Engineer(gentity_t *ent)
 		return;
 	}
 
-	if (ent->client->touchingTOI)
-	{
-		if (TryConstructing(ent))
-		{
-			return;
-		}
-	}
-
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
 	VectorCopy(ent->client->ps.origin, muzzleTrace);
 	muzzleTrace[2] += ent->client->ps.viewheight;
@@ -1661,23 +1653,27 @@ void Weapon_Engineer(gentity_t *ent)
 	VectorMA(muzzleTrace, 64, forward, end);             // CH_BREAKABLE_DIST
 	trap_EngineerTrace(&tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT | CONTENTS_TRIGGER);
 
-	if (tr.surfaceFlags & SURF_NOIMPACT)
+	if (tr.surfaceFlags & SURF_NOIMPACT || tr.fraction == 1.0f || tr.entityNum == ENTITYNUM_NONE || tr.entityNum == ENTITYNUM_WORLD)
 	{
+		// might be constructible
+		if (!ent->client->touchingTOI)
+		{
+			goto weapengineergoto1;
+		}
+		else
+		{
+			if (TryConstructing(ent))
+			{
+				return;
+			}
+		}
 		return;
 	}
 
-	// no contact
-	if (tr.fraction == 1.0f)
-	{
-		return;
-	}
-
-	if (tr.entityNum == ENTITYNUM_NONE || tr.entityNum == ENTITYNUM_WORLD)
-	{
-		return;
-	}
+weapengineergoto1:
 
 	traceEnt = &g_entities[tr.entityNum];
+
 	if (G_EmplacedGunIsRepairable(traceEnt, ent))
 	{
 		// "Ammo" for this weapon is time based
@@ -1748,18 +1744,26 @@ void Weapon_Engineer(gentity_t *ent)
 	else
 	{
 		trap_EngineerTrace(&tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
-		if (tr.surfaceFlags & SURF_NOIMPACT)
+
+		if (tr.surfaceFlags & SURF_NOIMPACT || tr.fraction == 1.0f || tr.entityNum == ENTITYNUM_NONE || tr.entityNum == ENTITYNUM_WORLD)
 		{
+			// might be constructible
+			if (!ent->client->touchingTOI)
+			{
+				goto weapengineergoto2;
+			}
+			else
+			{
+				if (TryConstructing(ent))
+				{
+					return;
+				}
+			}
 			return;
 		}
-		if (tr.fraction == 1.0f)
-		{
-			return;
-		}
-		if (tr.entityNum == ENTITYNUM_NONE || tr.entityNum == ENTITYNUM_WORLD)
-		{
-			return;
-		}
+
+weapengineergoto2:
+
 		traceEnt = &g_entities[tr.entityNum];
 
 		if (traceEnt->methodOfDeath == MOD_LANDMINE)
@@ -1780,7 +1784,7 @@ void Weapon_Engineer(gentity_t *ent)
 
 				Add_Ammo(ent, WP_LANDMINE, 1, qfalse);
 
-				// Give back the correct charge amount
+				// give back the correct charge amount
 				if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
 				{
 					ent->client->ps.classWeaponTime -= .33f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
@@ -1823,14 +1827,14 @@ void Weapon_Engineer(gentity_t *ent)
 				}
 				else
 				{
-					goto evilbanigoto;
+					goto weapengineergoto3;
 				}
 			}
 			else
 			{
 				if (G_LandmineUnarmed(traceEnt))
 				{
-					// Opposing team cannot accidentally arm it
+					// opposing team cannot accidentally arm it
 					if (G_LandmineTeam(traceEnt) != ent->client->sess.sessionTeam)
 					{
 						return;
@@ -1838,7 +1842,7 @@ void Weapon_Engineer(gentity_t *ent)
 
 					G_PrintClientSpammyCenterPrint(ent - g_entities, "Arming landmine...");
 
-					// Give health until it is full, don't continue
+					// give health until it is full, don't continue
 					if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 2)
 					{
 						traceEnt->health += 24;
@@ -1871,7 +1875,7 @@ void Weapon_Engineer(gentity_t *ent)
 					traceEnt->r.contents = 0;   // (player can walk through)
 					trap_LinkEntity(traceEnt);
 
-					// Don't allow disarming for sec (so guy that WAS arming doesn't start disarming it!
+					// don't allow disarming for sec (so guy that WAS arming doesn't start disarming it!
 					traceEnt->timestamp = level.time + 1000;
 					traceEnt->health    = 0;
 
@@ -1883,7 +1887,7 @@ void Weapon_Engineer(gentity_t *ent)
 				}
 				else
 				{
-evilbanigoto:
+weapengineergoto3:
 					if (traceEnt->timestamp > level.time)
 					{
 						return;
@@ -1949,7 +1953,7 @@ evilbanigoto:
 				return;
 			}
 
-			// Give health until it is full, don't continue
+			// give health until it is full, don't continue
 			traceEnt->health += 3;
 
 			G_PrintClientSpammyCenterPrint(ent - g_entities, "Disarming satchel charge...");
@@ -1977,7 +1981,7 @@ evilbanigoto:
 			vec3_t    maxs;
 			int       i, num;
 
-			// Not armed
+			// not armed
 			if (traceEnt->s.teamNum >= 4)
 			{
 				qboolean friendlyObj = qfalse;
@@ -2108,13 +2112,13 @@ evilbanigoto:
 					return;
 				}
 
-				// Don't allow disarming for sec (so guy that WAS arming doesn't start disarming it!
+				// don't allow disarming for sec (so guy that WAS arming doesn't start disarming it!
 				traceEnt->timestamp = level.time + 1000;
 				traceEnt->health    = 5;
 
 				// set teamnum so we can check it for drop/defuse exploit
 				traceEnt->s.teamNum = ent->client->sess.sessionTeam;
-				// For dynamic light pulsing
+				// for dynamic light pulsing
 				traceEnt->s.effect1Time = level.time;
 
 				// dynamite crosshair ID
@@ -2127,7 +2131,7 @@ evilbanigoto:
 					traceEnt->s.otherEntityNum = MAX_CLIENTS + 1;
 				}
 
-				// ARM IT!
+				// arm it
 				traceEnt->nextthink = level.time + 30000;
 				traceEnt->think     = G_ExplodeMissile;
 
@@ -2542,6 +2546,13 @@ evilbanigoto:
 						}
 					}
 				}
+			}
+		}
+		else if (ent->client->touchingTOI)
+		{
+			if (TryConstructing(ent))
+			{
+				return;
 			}
 		}
 	}
