@@ -73,6 +73,7 @@ void AddKillScore(gentity_t *ent, int score)
 	ent->client->ps.persistant[PERS_SCORE]                  += score;
 	level.teamScores[ent->client->ps.persistant[PERS_TEAM]] += score;
 
+	// prepare scoreboard
 	CalculateRanks();
 }
 

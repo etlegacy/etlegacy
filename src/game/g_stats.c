@@ -307,6 +307,9 @@ void G_LoseSkillPoints(gentity_t *ent, skillType_t skill, float points)
 
 	level.teamScores[ent->client->ps.persistant[PERS_TEAM]]        -= oldskillpoints - ent->client->sess.skillpoints[skill];
 	level.teamXP[skill][ent->client->sess.sessionTeam - TEAM_AXIS] -= oldskillpoints - ent->client->sess.skillpoints[skill];
+
+	// prepare scoreboard
+	CalculateRanks();
 }
 
 /**
@@ -425,6 +428,9 @@ void G_AddSkillPoints(gentity_t *ent, skillType_t skill, float points)
 		// call the new func that encapsulates the skill giving behavior
 		G_UpgradeSkill(ent, skill);
 	}
+
+	// prepare scoreboard
+	CalculateRanks();
 }
 
 /**
@@ -520,6 +526,9 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 	default:
 		break;
 	}
+
+	// prepare scoreboard
+	CalculateRanks();
 }
 
 /**
@@ -674,6 +683,9 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
 	default:
 		break;
 	}
+
+	// prepare scoreboard
+	CalculateRanks();
 }
 
 /**
@@ -717,6 +729,9 @@ void G_AddKillSkillPointsForDestruction(gentity_t *attacker, meansOfDeath_t mod,
 	default:
 		break;
 	}
+
+	// prepare scoreboard
+	CalculateRanks();
 }
 
 /////// SKILL DEBUGGING ///////
