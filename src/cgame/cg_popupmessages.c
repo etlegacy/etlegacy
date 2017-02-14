@@ -404,9 +404,9 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, const char *mess
 	}
 
 	// do not write obituary popups into console - we'll get double kill-messages otherwise
-	if (type != PM_DEATH)
+	if (type != PM_DEATH && type != PM_TEAM)
 	{
-	    trap_Print(va("%s\n", listItem->message));
+	    trap_Print(va("%s\n", listItem->message)); // FIXME: translate this (does it makes sense?)
 	}
 
 	// chop off the newline at the end if any
