@@ -299,6 +299,8 @@ void Psmoke_think(gentity_t *ent)
 /**
  * @brief prop_smoke
  * @param[in] ent
+ *
+ * @note Unused
  */
 void prop_smoke(gentity_t *ent)
 {
@@ -2080,6 +2082,8 @@ void Use_Props_Shard_Generator(gentity_t *ent, gentity_t *other, gentity_t *acti
 /**
  * @brief SP_props_shard_generator
  * @param[in,out] ent
+ *
+ * @note Unused
  */
 void SP_props_shard_generator(gentity_t *ent)
 {
@@ -2254,6 +2258,8 @@ void barrel_smoke(gentity_t *ent)
 /**
  * @brief smoker_think
  * @param[in,out] ent
+ *
+ * @note Unused
  */
 void smoker_think(gentity_t *ent)
 {
@@ -2289,6 +2295,8 @@ void SP_OilSlick(gentity_t *ent)
 /**
  * @brief OilParticles_think
  * @param[in,out] ent
+ *
+ * @note Unused ? See SP_OilParticles
  */
 void OilParticles_think(gentity_t *ent)
 {
@@ -2338,6 +2346,8 @@ void Delayed_Leak_Think(gentity_t *ent)
  * @param[in] point
  * @param[in] ent
  * @return
+ *
+ * @note Unused
  */
 qboolean validOilSlickSpawnPoint(vec3_t point, gentity_t *ent)
 {
@@ -2982,6 +2992,8 @@ void flippy_table_animate(gentity_t *ent)
  * @param attacker  - unused
  * @param damage    - unused
  * @param mod       - unused
+ *
+ * @note Unused (see SP_Props_Flipping_Table)
  */
 void props_flippy_table_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
@@ -3209,6 +3221,8 @@ void SP_Props_58x112tablew(gentity_t *ent)
  * @param[in] ent
  * @param[in,out] other
  * @param trace - unused
+ *
+ * @note Unused
  */
 void props_castlebed_touch(gentity_t *ent, gentity_t *other, trace_t *trace)
 {
@@ -3236,6 +3250,8 @@ void props_castlebed_touch(gentity_t *ent, gentity_t *other, trace_t *trace)
 /**
  * @brief props_castlebed_animate
  * @param[in,out] ent
+ *
+ * @note Unused
  */
 void props_castlebed_animate(gentity_t *ent)
 {
@@ -3260,6 +3276,9 @@ void props_castlebed_animate(gentity_t *ent)
  * @param attacker  - unused
  * @param damage    - unused
  * @param mod       - unused
+ *
+ *
+ * @note Unused
  */
 void props_castlebed_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
@@ -3271,11 +3290,13 @@ void props_castlebed_die(gentity_t *ent, gentity_t *inflictor, gentity_t *attack
 	ent->count = FXTYPE_WOOD;
 	Prop_Break_Sound(ent);
 }
-/*
+
+/**
  * @brief SP_props_castlebed
  * @param[in,out] ent
  *
  * @note Unused
+ */
 void SP_props_castlebed(gentity_t *ent)
 {
 	trap_SetBrushModel(ent, ent->model);
@@ -3296,7 +3317,6 @@ void SP_props_castlebed(gentity_t *ent)
 
 	trap_LinkEntity(ent);
 }
-*/
 
 /**
  * @brief props_snowGenerator_think
@@ -3313,7 +3333,7 @@ void SP_props_castlebed(gentity_t *ent)
  *
  * duration is how long the effect will last 1 is 1 second
  *
- * @param ent
+ * @param[in,out] ent
  */
 void props_snowGenerator_think(gentity_t *ent)
 {
@@ -4236,6 +4256,8 @@ int locker_debris_model[MAX_LOCKER_DEBRIS];
 /**
  * @brief Spawn_Junk
  * @param[in] ent
+ *
+ * @note Unused
  */
 void Spawn_Junk(gentity_t *ent)
 {
@@ -4374,6 +4396,8 @@ void props_locker_spawn_item(gentity_t *ent)
 /**
  * @brief props_locker_mass
  * @param[in] ent
+ *
+ * @note Unused
  */
 void props_locker_mass(gentity_t *ent)
 {

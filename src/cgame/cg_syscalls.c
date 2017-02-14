@@ -1227,6 +1227,8 @@ int trap_MemoryRemaining(void)
  * @param camNum - unused
  * @param name - unused
  * @return
+ *
+ * @note Unused
  */
 qboolean trap_loadCamera(int camNum, const char *name)
 {
@@ -1237,6 +1239,8 @@ qboolean trap_loadCamera(int camNum, const char *name)
  * @brief trap_startCamera
  * @param camNum - unused
  * @param time - unused
+ *
+ * @note Unused
  */
 void trap_startCamera(int camNum, int time)
 {
@@ -1245,6 +1249,8 @@ void trap_startCamera(int camNum, int time)
 /**
  * @brief trap_stopCamera
  * @param camNum - unused
+ *
+ * @note Unused
  */
 void trap_stopCamera(int camNum)
 {
@@ -1258,6 +1264,8 @@ void trap_stopCamera(int camNum)
  * @param angles - unused
  * @param fov  - unused
  * @return
+ *
+ * @note Unused
  */
 qboolean trap_getCameraInfo(int camNum, int time, vec3_t *origin, vec3_t *angles, float *fov)
 {

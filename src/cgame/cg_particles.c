@@ -1574,6 +1574,8 @@ void CG_ParticleExplosion(const char *animStr, vec3_t origin, vec3_t vel, int du
  * @brief CG_NewParticleArea
  * @param[in] num
  * @return
+ *
+ * @note Unused
  */
 int CG_NewParticleArea(int num)
 {
@@ -1728,6 +1730,7 @@ void CG_ParticleImpactSmokePuff(qhandle_t pshader, vec3_t origin)
 	CG_ParticleImpactSmokePuffExtended(pshader, origin, 500, 20, 20, 30, 0.25f, 8.f);
 }
 
+#ifdef BLOOD_PARTICLE_TRAIL
 /**
  * @brief CG_Particle_Bleed
  * @param[in] pshader
@@ -1800,6 +1803,7 @@ void CG_Particle_Bleed(qhandle_t pshader, vec3_t start, vec3_t dir, int fleshEnt
 	}
 	p->alpha = 0.75f;
 }
+#endif
 
 /**
  * @brief CG_Particle_OilParticle

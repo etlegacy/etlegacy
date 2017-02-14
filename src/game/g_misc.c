@@ -925,6 +925,8 @@ void SP_dlight(gentity_t *ent)
 /**
  * @brief flakPuff
  * @param[in] origin
+ *
+ * @note Unused
  */
 void flakPuff(vec3_t origin)
 {
@@ -2469,6 +2471,8 @@ void SP_misc_commandmap_marker(gentity_t *ent)
 
 /**
  * @brief System to temporarily ignore certain ents during traces
+ *
+ * @note Unused
  */
 void G_InitTempTraceIgnoreEnts(void)
 {

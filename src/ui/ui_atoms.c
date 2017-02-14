@@ -322,6 +322,8 @@ void UI_FillRect(float x, float y, float width, float height, const float *color
  * @param[in] y
  * @param[in] w
  * @param[in] h
+ *
+ * @note Unused
  */
 void UI_DrawTopBottom(float x, float y, float w, float h)
 {
@@ -329,4 +331,3 @@ void UI_DrawTopBottom(float x, float y, float w, float h)
 	trap_R_DrawStretchPic(x, y, w, 1, 0, 0, 0, 0, uiInfo.uiDC.whiteShader);
 	trap_R_DrawStretchPic(x, y + h - 1, w, 1, 0, 0, 0, 0, uiInfo.uiDC.whiteShader);
 }
-

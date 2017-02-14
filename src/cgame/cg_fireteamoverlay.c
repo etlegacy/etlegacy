@@ -257,6 +257,8 @@ fireteamData_t *CG_IsFireTeamLeader(int clientNum)
  * @param[in] pos
  * @param[in] max
  * @return Client information
+ *
+ * @note Unused
  */
 clientInfo_t *CG_ClientInfoForPosition(int pos, int max)
 {
@@ -282,6 +284,8 @@ clientInfo_t *CG_ClientInfoForPosition(int pos, int max)
  * @param[in] pos
  * @param[in] max
  * @return
+ *
+ * @note Unused
  */
 fireteamData_t *CG_FireTeamForPosition(int pos, int max)
 {
@@ -307,6 +311,8 @@ fireteamData_t *CG_FireTeamForPosition(int pos, int max)
  * @param[in] pos
  * @param[in] max
  * @return
+ *
+ * @note Unused
  */
 clientInfo_t *CG_FireTeamPlayerForPosition(int pos, int max)
 {

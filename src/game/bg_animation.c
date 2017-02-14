@@ -418,12 +418,13 @@ static int BG_AnimationIndexForString(char *string, animModelInfo_t *animModelIn
 	return -1;  // shutup compiler
 }
 
-/**
+/*
  * @brief BG_AnimationForString
  * @param[in] string
  * @param[in] animModelInfo
  * @return
- */
+ *
+ * @note Unused
 animation_t *BG_AnimationForString(char *string, animModelInfo_t *animModelInfo)
 {
 	int         i, hash = BG_StringHashValue(string);
@@ -442,6 +443,7 @@ animation_t *BG_AnimationForString(char *string, animModelInfo_t *animModelInfo)
 	Com_Error(ERR_DROP, "BG_AnimationForString: unknown animation '%s' for animation group '%s'", string, animModelInfo->animationGroup);
 	return NULL;
 }
+*/
 
 /**
  * @brief errors out if no match found
@@ -1328,11 +1330,12 @@ animScriptItem_t *BG_FirstValidItem(int client, animScript_t *script)
 	return NULL;
 }
 
-/**
+/*
  * @brief Clears the animation timer. this is useful when we want to break a animscriptevent
  * @param[out] ps
  * @param[in] bodyPart
- */
+ *
+ * @note Unused
 void BG_ClearAnimTimer(playerState_t *ps, animBodyPart_t bodyPart)
 {
 	switch (bodyPart)
@@ -1350,6 +1353,7 @@ void BG_ClearAnimTimer(playerState_t *ps, animBodyPart_t bodyPart)
 		break;
 	}
 }
+*/
 
 /**
  * @brief BG_PlayAnim
@@ -1433,7 +1437,7 @@ int BG_PlayAnim(playerState_t *ps, animModelInfo_t *animModelInfo, int animNum, 
 	return duration;
 }
 
-/**
+/*
  * @brief BG_PlayAnimName
  * @param[in,out] ps
  * @param[in] animModelInfo
@@ -1443,11 +1447,14 @@ int BG_PlayAnim(playerState_t *ps, animModelInfo_t *animModelInfo, int animNum, 
  * @param[in] isContinue
  * @param[in] force
  * @return
- */
+ *
+ * @note Unused
+ *
 int BG_PlayAnimName(playerState_t *ps, animModelInfo_t *animModelInfo, char *animName, animBodyPart_t bodyPart, qboolean setTimer, qboolean isContinue, qboolean force)
 {
 	return BG_PlayAnim(ps, animModelInfo, BG_AnimationIndexForString(animName, animModelInfo), bodyPart, 0, setTimer, isContinue, force);
 }
+*/
 
 /**
  * @brief BG_ExecuteCommand
@@ -1576,12 +1583,13 @@ int BG_AnimScriptAnimation(playerState_t *ps, animModelInfo_t *animModelInfo, sc
 	return(BG_ExecuteCommand(ps, animModelInfo, scriptCommand, qfalse, isContinue, qfalse) != -1);
 }
 
-/**
+/*
  * @brief Uses the current movetype for this client to play a canned animation
  * @param[in,out] ps
  * @param[in] animModelInfo
  * @return The duration in milliseconds that this model should be paused. -1 if no anim found
- */
+ *
+ * @note Unused
 int BG_AnimScriptCannedAnimation(playerState_t *ps, animModelInfo_t *animModelInfo)
 {
 	animScript_t          *script;
@@ -1616,6 +1624,7 @@ int BG_AnimScriptCannedAnimation(playerState_t *ps, animModelInfo_t *animModelIn
 	// run it
 	return BG_ExecuteCommand(ps, animModelInfo, scriptCommand, qtrue, qfalse, qfalse);
 }
+*/
 
 /**
  * @brief BG_AnimScriptEvent
@@ -1860,12 +1869,13 @@ int BG_GetAnimScriptAnimation(int client, animModelInfo_t *animModelInfo, aistat
 	return scriptCommand->animIndex[0];
 }
 
-/**
+/*
  * @brief BG_GetAnimScriptEvent
  * @param[in] ps
  * @param[in] event
  * @return The animation index for this event
- */
+ *
+ * @note Unused
 int BG_GetAnimScriptEvent(playerState_t *ps, scriptAnimEventTypes_t event)
 {
 	animModelInfo_t     *animModelInfo;
@@ -1896,6 +1906,7 @@ int BG_GetAnimScriptEvent(playerState_t *ps, scriptAnimEventTypes_t event)
 	// return the animation
 	return scriptCommand->animIndex[0];
 }
+*/
 
 /**
  * @brief BG_GetAnimationForIndex

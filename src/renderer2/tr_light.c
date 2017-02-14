@@ -1948,6 +1948,8 @@ void R_ComputeFinalAttenuation(shaderStage_t *pStage, trRefLight_t *light)
  * @param[in] light
  * @param[in] p
  * @return CULL_IN, CULL_CLIP, or CULL_OUT
+ *
+ * @note Unused
  */
 int R_CullLightPoint(trRefLight_t *light, const vec3_t p)
 {

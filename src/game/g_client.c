@@ -2942,6 +2942,8 @@ void ClientBegin(int clientNum)
  * @param[out] spawn_origin
  * @param[out] spawn_angles
  * @return
+ *
+ * @note Unused
  */
 gentity_t *SelectSpawnPointFromList(char *list, vec3_t spawn_origin, vec3_t spawn_angles)
 {
@@ -2988,6 +2990,13 @@ gentity_t *SelectSpawnPointFromList(char *list, vec3_t spawn_origin, vec3_t spaw
 }
 
 #if 0 // not used
+/**
+ * @brief G_CheckVersion
+ * @param ent
+ * @return
+ *
+ * @note Unused
+ */
 static char *G_CheckVersion(gentity_t *ent)
 {
 	// Prevent nasty version mismatches (or people sticking in Q3Aimbot cgames)

@@ -884,6 +884,8 @@ void S_Init(void)
 
 /**
  * @brief S_Reload
+ *
+ * @note Unused
  */
 void S_Reload(void)
 {

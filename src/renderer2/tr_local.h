@@ -4513,7 +4513,10 @@ void R_InitNextFrame(void);
 
 void RE_ClearScene(void);
 void RE_AddRefEntityToScene(const refEntity_t *ent);
+
+#if defined(USE_REFLIGHT)
 void RE_AddRefLightToScene(const refLight_t *light);
+#endif
 
 void RE_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts);
 void RE_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts, int numPolys);

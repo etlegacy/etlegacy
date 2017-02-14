@@ -225,6 +225,8 @@ int DL_BeginDownload(char *localName, const char *remoteName)
  * @brief DL_GetString
  * @param[in] url
  * @return
+ *
+ * @note Unused
  */
 char *DL_GetString(const char *url)
 {

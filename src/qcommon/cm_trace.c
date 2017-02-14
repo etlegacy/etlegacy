@@ -64,6 +64,8 @@ void CM_ProjectPointOntoVector(vec3_t point, vec3_t vStart, vec3_t vDir, vec3_t 
 	VectorMA(vStart, DotProduct(pVec, vDir), vDir, vProj);
 }
 
+#if !defined(ALWAYS_BBOX_VS_BBOX)
+
 /**
  * @brief CM_DistanceFromLineSquared
  * @param[in] p
@@ -120,6 +122,8 @@ float SquareRootFloat(float number)
 	y = y * (f - (x * y * y));
 	return number * y;
 }
+
+#endif
 
 /**
 ===============================================================================

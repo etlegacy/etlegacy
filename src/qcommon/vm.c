@@ -62,6 +62,8 @@ void VM_VmProfile_f(void);
  * @param[in] p
  * @param length - unused
  * @return
+ *
+ * @note Unused
  */
 void *VM_VM2C(vmptr_t p, int length)
 {
@@ -120,6 +122,7 @@ const char *VM_ValueToSymbol(vm_t *vm, int value)
 	return text;
 }
 
+#ifdef DEBUG_VM
 /**
  * @brief For profiling, find the symbol behind this value
  * @param[in,out] vm
@@ -143,12 +146,15 @@ vmSymbol_t *VM_ValueToFunctionSymbol(vm_t *vm, int value)
 
 	return sym;
 }
+#endif
 
 /**
  * @brief VM_SymbolToValue
  * @param[in,out] vm
  * @param[in] symbol
  * @return
+ *
+ * @note Unused
  */
 int VM_SymbolToValue(vm_t *vm, const char *symbol)
 {
@@ -168,6 +174,8 @@ int VM_SymbolToValue(vm_t *vm, const char *symbol)
  * @brief ParseHex
  * @param[in] text
  * @return
+ *
+ * @note Unused
  */
 int ParseHex(const char *text)
 {
@@ -196,10 +204,11 @@ int ParseHex(const char *text)
 	return value;
 }
 
-/*
+/**
  * @brief VM_LoadSymbols
  * @param[in,out] vm
  * @note Unused
+ */
 void VM_LoadSymbols(vm_t *vm)
 {
     union
@@ -290,7 +299,6 @@ void VM_LoadSymbols(vm_t *vm)
     Com_Printf("%i symbols parsed from %s\n", count, symbols);
     FS_FreeFile(mapfile.v);
 }
-*/
 
 /**
  * @brief Dlls will call this directly

@@ -764,6 +764,7 @@ void G_PredictBounceMissile(gentity_t *ent, trajectory_t *pos, trace_t *trace, i
  * @param[out] endPos
  * @param[in] allowBounce
  * @return qfalse if the missile won't explode, otherwise it'll return the time is it expected to explode
+ *
  */
 int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allowBounce)
 {
@@ -815,15 +816,15 @@ int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allow
 			break;
 		}
 	}
-	/*
-	    if (!allowBounce && tr.fraction < 1 && tr.entityNum > level.maxclients) {
-	        // go back a bit in time, so we can catch it in the air
-	        time -= 200;
-	        if (time < level.time + FRAMETIME)
-	            time = level.time + FRAMETIME;
-	        BG_EvaluateTrajectory( &pos, time, org );
-	    }
-	*/
+
+    //if (!allowBounce && tr.fraction < 1 && tr.entityNum > level.maxclients) {
+    //    // go back a bit in time, so we can catch it in the air
+    //    time -= 200;
+    //    if (time < level.time + FRAMETIME)
+    //        time = level.time + FRAMETIME;
+    //    BG_EvaluateTrajectory( &pos, time, org );
+    //}
+
 
 	// get current position
 	VectorCopy(org, endPos);

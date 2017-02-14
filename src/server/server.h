@@ -489,8 +489,8 @@ void SV_DemoStopAll(void);
 void SV_DemoInit(void);
 
 // sv_demo_ext.c
-int SV_GentityGetHealthField(sharedEntity_t *gent);
-void SV_GentitySetHealthField(sharedEntity_t *gent, int value);
+//int SV_GentityGetHealthField(sharedEntity_t *gent);   // Test purpose
+//void SV_GentitySetHealthField(sharedEntity_t *gent, int value);   // Test purpose
 void SV_GentityUpdateHealthField(sharedEntity_t *gent, playerState_t *player);
 
 // sv_main.c

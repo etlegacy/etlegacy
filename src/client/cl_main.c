@@ -426,6 +426,12 @@ void CL_ShutdownAll(void)
 	}
 }
 
+/**
+ * @brief CL_ConnectedToServer
+ * @return
+ *
+ * @note Unused
+ */
 qboolean CL_ConnectedToServer(void)
 {
 	return (qboolean)(cls.state >= CA_CONNECTED);
@@ -3919,6 +3925,8 @@ void CL_ShowIP_f(void)
 /**
  * @brief CL_AddToLimboChat
  * @param[in] str
+ *
+ * @note Unused
  */
 void CL_AddToLimboChat(const char *str)
 {

@@ -51,6 +51,8 @@ botlib_export_t *botlib_export;
  * @brief SV_NumForGentity
  * @param[in] ent
  * @return
+ *
+ * @note Unused
  */
 int SV_NumForGentity(sharedEntity_t *ent)
 {

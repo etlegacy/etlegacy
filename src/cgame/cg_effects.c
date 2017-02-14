@@ -772,6 +772,8 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir)
  * @brief CG_SparklerSparks
  * @param[in] origin
  * @param[in] count
+ *
+ * @note Unused
  */
 void CG_SparklerSparks(vec3_t origin, int count)
 {

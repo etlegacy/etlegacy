@@ -1923,6 +1923,9 @@ void ProjectPointOntoVector(vec3_t point, vec3_t vStart, vec3_t vEnd, vec3_t vPr
  * @param[in] vStart
  * @param[in] vEnd
  * @param[out] vProj
+ *
+ * @note Unused
+ *
  */
 void ProjectPointOntoVectorBounded(vec3_t point, vec3_t vStart, vec3_t vEnd, vec3_t vProj)
 {
@@ -1995,6 +1998,8 @@ float DistanceFromLineSquared(vec3_t p, vec3_t lp1, vec3_t lp2)
  * @param[in] lp1
  * @param[in] lp2
  * @return
+ *
+ * @note Unused
  */
 float DistanceFromVectorSquared(vec3_t p, vec3_t lp1, vec3_t lp2)
 {
@@ -2273,6 +2278,7 @@ void quat_from_mat4(quat_t q, const mat4_t m)
 #endif
 }
 
+#ifdef BONE_HITTESTS
 /**
  * @brief quat_from_axis
  * @param[in] m
@@ -2289,6 +2295,7 @@ void quat_from_axis(const axis_t m, quat_t q)
 	q[1] = (m[2][0] - m[0][2]) / w4;
 	q[2] = (m[0][1] - m[1][0]) / w4;
 }
+#endif
 
 /**
  * @brief quat_from_angles
@@ -2296,6 +2303,8 @@ void quat_from_axis(const axis_t m, quat_t q)
  * @param[in] pitch
  * @param[in] yaw
  * @param[in] roll
+ *
+ * @note Unused
  */
 void quat_from_angles(quat_t q, vec_t pitch, vec_t yaw, vec_t roll)
 {
@@ -2330,6 +2339,8 @@ void quat_from_angles(quat_t q, vec_t pitch, vec_t yaw, vec_t roll)
  * @param[out] forward
  * @param[out] left
  * @param[out] up
+ *
+ * @note Unused
  */
 void quat_to_vec3_FLU(const quat_t q, vec3_t forward, vec3_t left, vec3_t up)
 {
@@ -2771,6 +2782,8 @@ void mat4_transform_vec3(const mat4_t m, const vec3_t in, vec3_t out)
  * @brief mat4_transform_vec3_self
  * @param[in] m
  * @param[in,out] inout
+ *
+ * @note Unused
  */
 void mat4_transform_vec3_self(const mat4_t m, vec3_t inout)
 {
@@ -2986,6 +2999,8 @@ void MatrixToVectorsFLU(const mat4_t m, vec3_t forward, vec3_t left, vec3_t up)
  * @param[in] right
  * @param[in] up
  * @param[in] origin
+ *
+ * @note Unused
  */
 void MatrixSetupTransformFromVectorsFRU(mat4_t m, const vec3_t forward, const vec3_t right, const vec3_t up, const vec3_t origin)
 {

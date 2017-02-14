@@ -356,6 +356,8 @@ void Field_Draw(field_t *edit, int x, int y, int width, qboolean showCursor, qbo
  * @param[in] width
  * @param[in] showCursor
  * @param[in] noColorEscape
+ *
+ * @note Unused
  */
 void Field_BigDraw(field_t *edit, int x, int y, int width, qboolean showCursor, qboolean noColorEscape)
 {

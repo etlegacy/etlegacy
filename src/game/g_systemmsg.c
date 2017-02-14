@@ -53,6 +53,8 @@ const char *systemMessages[SM_NUM_SYS_MSGS] =
  * @brief G_NeedEngineers
  * @param[in] team
  * @return
+ *
+ * @note Unused
  */
 qboolean G_NeedEngineers(int team)
 {

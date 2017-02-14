@@ -368,6 +368,7 @@ void RE_AddRefEntityToScene(const refEntity_t *ent)
 	r_numEntities++;
 }
 
+#if defined(USE_REFLIGHT)
 /**
  * @brief RE_AddRefLightToScene
  * @param[in] l
@@ -421,6 +422,7 @@ void RE_AddRefLightToScene(const refLight_t *l)
 		light->l.noShadows = qtrue;
 	}
 }
+#endif
 
 /**
  * @brief R_AddWorldLightsToScene

@@ -1396,12 +1396,13 @@ define_t *PC_DefineFromString(const char *string)
 	return NULL;
 }
 
-/**
+/*
  * @brief Add a define to the source
  * @param[in] source
  * @param[in] string
  * @return
- */
+ *
+ * @note Unused
 int PC_AddDefine(source_t *source, const char *string)
 {
 	define_t *define;
@@ -1419,6 +1420,7 @@ int PC_AddDefine(source_t *source, const char *string)
 #endif //DEFINEHASHING
 	return qtrue;
 }
+*/
 
 /**
  * @brief Add a globals define that will be added to all opened sources
@@ -3291,14 +3293,16 @@ int PC_SkipUntilString(source_t *source, const char *string)
 }
 */
 
-/**
+/*
  * @brief Inread the last token read from the script
  * @param[in] source
- */
+ *
+ * @note Unused
 void PC_UnreadLastToken(source_t *source)
 {
 	PC_UnreadSourceToken(source, &source->token);
 }
+*/
 
 /**
  * @brief Unread the given token

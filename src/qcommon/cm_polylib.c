@@ -102,6 +102,8 @@ int c_removed;
 /**
  * @brief RemoveColinearPoints
  * @param[in,out] w
+ *
+ * @note Unused
  */
 void RemoveColinearPoints(winding_t *w)
 {
@@ -209,6 +211,8 @@ void WindingBounds(winding_t *w, vec3_t mins, vec3_t maxs)
  * @brief WindingCenter
  * @param[in] w
  * @param[in,out] center
+ *
+ * @note Unused
  */
 void WindingCenter(winding_t *w, vec3_t center)
 {
@@ -317,6 +321,8 @@ winding_t *CopyWinding(winding_t *w)
  * @brief ReverseWinding
  * @param[in] w
  * @return
+ *
+ * @note Unused
  */
 winding_t *ReverseWinding(winding_t *w)
 {
@@ -589,6 +595,8 @@ void ChopWindingInPlace(winding_t **inout, vec3_t normal, vec_t dist, vec_t epsi
  * @param[in] dist
  * @return The fragment of in that is on the front side of the cliping plane.
  * The original is freed.
+ *
+ * @note Unused
  */
 winding_t *ChopWinding(winding_t *in, vec3_t normal, vec_t dist)
 {
@@ -607,6 +615,8 @@ winding_t *ChopWinding(winding_t *in, vec3_t normal, vec_t dist)
 /**
  * @brief CheckWinding
  * @param[in] w
+ *
+ * @note Unused
  */
 void CheckWinding(winding_t *w)
 {
@@ -685,6 +695,8 @@ void CheckWinding(winding_t *w)
  * @param[in] normal
  * @param[in] dist
  * @return
+ *
+ * @note Unused
  */
 int WindingOnPlaneSide(winding_t *w, vec3_t normal, vec_t dist)
 {
@@ -736,6 +748,8 @@ int WindingOnPlaneSide(winding_t *w, vec3_t normal, vec_t dist)
  * @param[in,out] w
  * @param[in,out] hull
  * @param[in] normal
+ *
+ * @note Unused
  */
 void AddWindingToConvexHull(winding_t *w, winding_t **hull, vec3_t normal)
 {

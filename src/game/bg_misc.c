@@ -2196,11 +2196,12 @@ gitem_t *BG_FindItem(const char *pickupName)
 	return NULL;
 }
 
-/**
+/*
  * @brief BG_FindItemForClassName
  * @param[in] className
  * @return
- */
+ *
+ * @note Unused
 gitem_t *BG_FindItemForClassName(const char *className)
 {
 	gitem_t *it;
@@ -2215,6 +2216,8 @@ gitem_t *BG_FindItemForClassName(const char *className)
 
 	return NULL;
 }
+*/
+
 /**
  * @brief Items can be picked up without actually touching their physical bounds to make
  *        grabbing them easier

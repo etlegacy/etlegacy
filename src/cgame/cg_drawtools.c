@@ -252,12 +252,14 @@ void CG_FilledBar(float x, float y, float w, float h, float *startColor, float *
 
 /**
  * @brief Generic routine for pretty much all status indicators that show a fractional
- * value to the palyer by virtue of how full a drawn box is.
+ * value to the player by virtue of how full a drawn box is.
  * @param[in] x
  * @param[in] y
  * @param[in] width
  * @param[in] height
  * @param[in] percent
+ *
+ * @note Unused
  */
 void CG_HorizontalPercentBar(float x, float y, float width, float height, float percent)
 {
@@ -564,6 +566,8 @@ static vec4_t spectator = { 0.7f, 0.7f, 0.7f, 1.0f };
  * @brief CG_TeamColor
  * @param[in] team
  * @return
+ *
+ * @note Unused
  */
 float *CG_TeamColor(int team)
 {
@@ -584,6 +588,8 @@ float *CG_TeamColor(int team)
  * @brief CG_GetColorForHealth
  * @param[in] health
  * @param[in] hcolor
+ *
+ * @note Unused
  */
 void CG_GetColorForHealth(int health, vec4_t hcolor)
 {

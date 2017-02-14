@@ -308,6 +308,8 @@ static int QDECL LightmapNameCompare(const void *a, const void *b)
  *
  * @note Ward uses ldexp(col+0.5,exp-(128+8)). However we wanted pixels
  * in the range [0,1] to map back into the range [0,1].
+ *
+ * @note Unused
  */
 static ID_INLINE void rgbe2float(float *red, float *green, float *blue, unsigned char rgbe[4])
 {
@@ -5766,6 +5768,8 @@ static void R_RecursiveAddInteractionNode(bspNode_t *node, trRefLight_t *light)
  * @param[in] shadowPlanes
  * @param[in] worldBounds
  * @return CULL_IN, CULL_CLIP, or CULL_OUT
+ *
+ * @note Unused
  */
 int R_ShadowFrustumCullWorldBounds(int numShadowPlanes, cplane_t *shadowPlanes, vec3_t worldBounds[2])
 {
@@ -5807,11 +5811,11 @@ int R_ShadowFrustumCullWorldBounds(int numShadowPlanes, cplane_t *shadowPlanes, 
 	return CULL_CLIP;
 }
 
-/**
+/*
  * @brief R_KillRedundantInteractions
  * @param[in] light
- */
-/*
+ *
+ * @note Unused
 static void R_KillRedundantInteractions(trRefLight_t * light)
 {
     interactionCache_t *iaCache, *iaCache2;

@@ -434,6 +434,8 @@ codec_found_valid:
 /**
  * @brief CIN_ResetCinematic
  * @param[in] handle
+ *
+ * @note Unused
  */
 void CIN_ResetCinematic(cinHandle_t handle)
 {

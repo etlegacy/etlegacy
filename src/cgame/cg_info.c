@@ -2084,8 +2084,8 @@ typedef struct
 	const char *info;
 } helpType_t;
 
-#define SH_X    8       // spacing from left
-#define SH_Y    155     // spacing from top
+#define SH_X    8       ///< spacing from left
+#define SH_Y    155     ///< spacing from top
 
 /**
  * @brief CG_SpecHelpDraw

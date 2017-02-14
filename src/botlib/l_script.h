@@ -217,7 +217,7 @@ int PS_ReadToken(script_t *script, token_t *token);
 // expect a certain token type
 int PS_ExpectTokenType(script_t *script, int type, int subtype, token_t *token);
 // expect a token
-int PS_ExpectAnyToken(script_t *script, token_t *token);
+//int PS_ExpectAnyToken(script_t *script, token_t *token);
 // returns true when the token is available
 //int PS_CheckTokenString(script_t *script, char *string);
 // returns true and reads the token when a token with the given type is available

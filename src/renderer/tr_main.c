@@ -407,6 +407,8 @@ void R_LocalPointToWorld(vec3_t local, vec3_t world)
  * @brief R_WorldToLocal
  * @param[in] world
  * @param[out] local
+ *
+ * @note Unused
  */
 void R_WorldToLocal(vec3_t world, vec3_t local)
 {

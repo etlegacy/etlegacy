@@ -265,6 +265,8 @@ int G_ShaderIndex(const char *name)
  * @brief G_CharacterIndex
  * @param[in] name
  * @return
+ *
+ * @note Unused
  */
 int G_CharacterIndex(const char *name)
 {

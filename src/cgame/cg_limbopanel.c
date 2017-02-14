@@ -3581,6 +3581,8 @@ int CG_LimboPanel_WeaponCount_ForSlot(int number)
  * @brief CG_LimboPanel_GetWeaponNumberForPos
  * @param[in] pos
  * @return
+ *
+ * @note Unused
  */
 int CG_LimboPanel_GetWeaponNumberForPos(int pos)
 {

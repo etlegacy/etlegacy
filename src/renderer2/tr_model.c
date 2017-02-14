@@ -679,6 +679,8 @@ static int R_GetTag(mdvModel_t *model, int frame, const char *_tagName, int star
  * @param[in] frac
  * @param[in] tagNameIn
  * @return
+ *
+ * @note Unused
  */
 int RE_LerpTagQ3A(orientation_t *tag, qhandle_t handle, int startFrame, int endFrame, float frac, const char *tagNameIn)
 {

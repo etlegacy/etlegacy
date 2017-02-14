@@ -44,6 +44,8 @@
  * @brief OtherTeam
  * @param[in] team
  * @return
+ *
+ * @note Unused
  */
 int OtherTeam(int team)
 {
@@ -84,6 +86,8 @@ const char *TeamName(int team)
  * @brief TeamColorString
  * @param[in] team
  * @return
+ *
+ * @note Unused
  */
 const char *TeamColorString(int team)
 {
@@ -1057,6 +1061,8 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace);
 /**
  * @brief checkpoint_hold_think
  * @param[out] self
+ *
+ * @note Unused
  */
 void checkpoint_hold_think(gentity_t *self)
 {
@@ -1867,6 +1873,8 @@ void G_swapTeamLocks(void)
 /**
  * @brief Removes everyone's specinvite for a particular team.
  * @param[in] team
+ *
+ * @note Unused
  */
 void G_removeSpecInvite(int team)
 {

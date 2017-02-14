@@ -2677,6 +2677,8 @@ static void FS_FreePak(pack_t *thepak)
  * @brief Compares whether the given pak file matches a referenced checksum
  * @param[in] zipfile
  * @return
+ *
+ * @note Unused
  */
 qboolean FS_CompareZipChecksum(const char *zipfile)
 {

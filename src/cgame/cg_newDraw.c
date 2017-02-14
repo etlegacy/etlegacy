@@ -41,6 +41,8 @@
  * @param[in] w
  * @param[in] size
  * @return
+ *
+ * @note Unused
  */
 int CG_TrimLeftPixels(char *instr, float scale, float w, int size)
 {
@@ -140,6 +142,8 @@ void CG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontHelp
  * @param[in] scale
  * @param[in] w
  * @param[in] size
+ *
+ * @note Unused
  */
 void CG_FitTextToWidth2(char *instr, float scale, float w, int size)
 {
@@ -203,6 +207,8 @@ void CG_FitTextToWidth2(char *instr, float scale, float w, int size)
  * @param[in] scale
  * @param[in] w
  * @param[in] size
+ *
+ * @note Unused
  */
 void CG_FitTextToWidth_SingleLine(char *instr, float scale, float w, int size)
 {

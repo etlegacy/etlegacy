@@ -581,6 +581,8 @@ unsigned CM_LumpChecksum(lump_t *lump)
 /**
  * @brief CM_Checksum
  * @param[in] header
+ *
+ * @note Unused
  */
 unsigned CM_Checksum(dheader_t *header)
 {

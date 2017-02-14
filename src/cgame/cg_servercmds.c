@@ -314,6 +314,8 @@ static void CG_ParseWarmup(void)
  * @brief CG_OIDInfoForEntityNum
  * @param[in] num
  * @return
+ *
+ * @note Unused
  */
 oidInfo_t *CG_OIDInfoForEntityNum(int num)
 {

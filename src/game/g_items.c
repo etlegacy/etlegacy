@@ -257,6 +257,8 @@ weapon_t G_GetPrimaryWeaponForClient(gclient_t *client)
  * @param[in] client
  * @param primary - unused
  * @return
+ *
+ * @note Unused
  */
 weapon_t G_GetSecondaryWeaponForClient(gclient_t *client, weapon_t primary)
 {

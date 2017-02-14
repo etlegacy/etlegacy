@@ -250,6 +250,8 @@ int CM_BoxLeafnums(const vec3_t mins, const vec3_t maxs, int *list, int listsize
  * @param[in] list
  * @param[in] listsize
  * @return
+ *
+ * @note Unused
  */
 int CM_BoxBrushes(const vec3_t mins, const vec3_t maxs, cbrush_t **list, int listsize)
 {

@@ -1051,6 +1051,8 @@ qboolean Display_KeyBindPending(void)
 /**
  * @brief Display_GetContext
  * @return
+ *
+ * @note Unused
  */
 displayContextDef_t *Display_GetContext()
 {
@@ -1127,6 +1129,8 @@ qboolean Display_MouseMove(void *p, int x, int y)
  * @param[in] x
  * @param[in] y
  * @return
+ *
+ * @note Unused
  */
 int Display_CursorType(int x, int y)
 {
@@ -1153,6 +1157,8 @@ int Display_CursorType(int x, int y)
  * @param[in] down
  * @param[in] x
  * @param[in] y
+ *
+ * @note Unused
  */
 void Display_HandleKey(int key, qboolean down, int x, int y)
 {
@@ -1234,12 +1240,13 @@ void Display_CacheAll(void)
 	}
 }
 
-/**
+/*
  * @brief Translates string
  * @param[in] handle
  * @param[out] out
  * @return
- */
+ *
+ * @note Unused
 qboolean PC_String_Parse_Trans(int handle, const char **out)
 {
 	pc_token_t token;
@@ -1252,6 +1259,7 @@ qboolean PC_String_Parse_Trans(int handle, const char **out)
 	*(out) = String_Alloc(DC->translateString(token.string));
 	return qtrue;
 }
+*/
 
 /**
  * @brief PC_Rect_Parse

@@ -1779,6 +1779,8 @@ const char *CG_Debriefing_TimeToString(float msec)
 /**
  * @brief CG_DebriefingTitle_Draw
  * @param[in] button
+ *
+ * @note Unused
  */
 void CG_DebriefingTitle_Draw(panel_button_t *button)
 {
@@ -3022,6 +3024,8 @@ void CG_Debriefing_ChatEditFinish(panel_button_t *button)
 /**
  * @brief CG_Debriefing_CalcCampaignProgress
  * @return
+ *
+ * @note Unused
  */
 float CG_Debriefing_CalcCampaignProgress(void)
 {

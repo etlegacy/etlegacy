@@ -43,11 +43,12 @@
  * Functions used to update some special aspects of the demo and which need to be separated from the main sv_demo.c file because of different includes that are necessary
  ***********************************************/
 
-/**
+/*
  * @brief Get the value of the gentity_t->health field (only used for testing purposes)
  * @param[in] gent
  * @return
- */
+ *
+ * @note Unused - Test purpose
 int SV_GentityGetHealthField(sharedEntity_t *gent)
 {
 	gentity_t *ent = (gentity_t *)gent;
@@ -55,18 +56,21 @@ int SV_GentityGetHealthField(sharedEntity_t *gent)
 	//Com_Printf("DEMODEBUG GENGETFIELD: health: %i\n", ent->health);
 	return ent->health;
 }
+*/
 
-/**
+/*
  * @brief Set the value of the gentity_t->health field (only used for testing purposes)
  * @param[out] gent
  * @param[in] value
- */
+ *
+ * @note Unused - Test purpose
 void SV_GentitySetHealthField(sharedEntity_t *gent, int value)
 {
 	gentity_t *ent = (gentity_t *)gent;
 
 	ent->health = value;
 }
+*/
 
 /**
  * @brief Update the value of the gentity_t->health field with playerState_t->stats[STAT_HEALTH] for a given player

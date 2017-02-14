@@ -816,6 +816,8 @@ void Cmd_SetCommandCompletionFunc(const char *command, completionFunc_t complete
  * @brief Cmd_SetCommandDescription
  * @param[in] command
  * @param[in] description
+ *
+ * @note Unused
  */
 void Cmd_SetCommandDescription(const char *command, const char *description)
 {

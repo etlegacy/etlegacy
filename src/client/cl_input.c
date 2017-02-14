@@ -1158,13 +1158,6 @@ void CL_CreateNewCommands(void)
 	cl.cmds[cmdNum] = CL_CreateCmd();
 }
 
-/*
-=================
-CL_ReadyToSendPacket
-
-
-=================
-*/
 /**
  * @brief CL_ReadyToSendPacket
  *
@@ -1489,6 +1482,8 @@ void CL_InitInput(void)
 
 /**
  * @brief CL_ClearKeys
+ *
+ * @note Unused
  */
 void CL_ClearKeys(void)
 {

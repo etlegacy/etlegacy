@@ -208,6 +208,8 @@ void CG_Text_PaintChar_Ext(float x, float y, float w, float h, float scalex, flo
  * @param[in] s2
  * @param[in] t2
  * @param[in] hShader
+ *
+ * @note Unused
  */
 void CG_Text_PaintChar(float x, float y, float width, float height, float scale, float s, float t, float s2, float t2, qhandle_t hShader)
 {
@@ -340,6 +342,8 @@ void CG_Text_Paint(float x, float y, float scale, vec4_t color, const char *text
  * @param[in] h
  * @param[in] alpha
  * @param[in] team
+ *
+ * @note Unused
  */
 void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team)
 {

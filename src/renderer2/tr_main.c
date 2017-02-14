@@ -382,6 +382,8 @@ void R_CalcTangentSpaceFast(vec3_t tangent, vec3_t binormal, vec3_t normal,
  * @param[in] w3
  *
  * @note http://www.terathon.com/code/tangent.html
+ *
+ * @note Unused
  */
 void R_CalcTBN(vec3_t tangent, vec3_t bitangent, vec3_t normal,
                const vec3_t v1, const vec3_t v2, const vec3_t v3, const vec2_t w1, const vec2_t w2, const vec2_t w3)
@@ -431,6 +433,8 @@ void R_CalcTBN(vec3_t tangent, vec3_t bitangent, vec3_t normal,
  * @param[in] t1
  * @param[in] t2
  * @param[in] t3
+ *
+ * @note Unused
  */
 void R_CalcTBN2(vec3_t tangent, vec3_t binormal, vec3_t normal,
                 const vec3_t v1, const vec3_t v2, const vec3_t v3, const vec2_t t1, const vec2_t t2, const vec2_t t3)
@@ -822,6 +826,9 @@ int R_CullPointAndRadius(vec3_t pt, float radius)
  * @param[in] pt
  * @param[in] radius
  * @return
+ *
+ * @note Unused
+ *
  */
 int R_FogLocalPointAndRadius(const vec3_t pt, float radius)
 {

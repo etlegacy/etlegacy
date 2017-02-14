@@ -1959,6 +1959,8 @@ void *R_CacheImageAlloc(int size)
 
 /**
  * @brief R_CacheImageFreeAll
+ *
+ * @note Unused
  */
 void R_CacheImageFreeAll()
 {

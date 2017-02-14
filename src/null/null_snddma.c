@@ -117,6 +117,8 @@ int S_GetSoundLength(sfxHandle_t sfxHandle)
 
 /**
  * @brief S_UpdateThread
+ *
+ * @note Unused
  */
 void S_UpdateThread(void)
 {
@@ -124,6 +126,8 @@ void S_UpdateThread(void)
 
 /**
  * @brief S_AddLoopSounds
+ *
+ * @todo TODO: empty
  */
 void S_AddLoopSounds(void)
 {

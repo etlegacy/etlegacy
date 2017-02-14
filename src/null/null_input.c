@@ -58,6 +58,8 @@ void IN_Shutdown(void)
 /**
  * @brief IN_MouseEvent
  * @param mstate
+ *
+ * @note Unused
  */
 void IN_MouseEvent(int mstate)
 {
@@ -66,6 +68,8 @@ void IN_MouseEvent(int mstate)
 /**
  * @brief IN_Activate
  * @param active
+ *
+ * @note Unused
  */
 void IN_Activate(qboolean active)
 {

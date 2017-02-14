@@ -39,6 +39,8 @@
  * @brief Com_PowerOf2
  * @param[in] x
  * @return
+ *
+ * @note Unused
  */
 qboolean Com_PowerOf2(int x)
 {
@@ -290,6 +292,8 @@ short ShortSwap(short l)
  * @brief ShortNoSwap
  * @param[in] l
  * @return
+ *
+ * @note Unused
  */
 short ShortNoSwap(short l)
 {
@@ -315,6 +319,8 @@ int LongSwap(int l)
  * @brief LongNoSwap
  * @param[in] l
  * @return
+ *
+ * @note Unused
  */
 int LongNoSwap(int l)
 {
@@ -340,6 +346,8 @@ float FloatSwap(const float *f)
  * @brief FloatNoSwap
  * @param[in] f
  * @return
+ *
+ * @note Unused
  */
 float FloatNoSwap(float f)
 {
@@ -1032,6 +1040,8 @@ void COM_MatchToken(char **buf_p, char *match)
  * @brief SkipBracedSection_Depth
  * @param program
  * @param depth
+ *
+ * @note Unused
  */
 void SkipBracedSection_Depth(char **program, int depth)
 {
@@ -1156,6 +1166,8 @@ void Parse2DMatrix(char **buf_p, int y, int x, float *m)
  * @param[in] y
  * @param[in] x
  * @param[out] m
+ *
+ * @note Unused
  */
 void Parse3DMatrix(char **buf_p, int z, int y, int x, float *m)
 {
@@ -1177,6 +1189,8 @@ void Parse3DMatrix(char **buf_p, int z, int y, int x, float *m)
  * @param[in] max
  * @param[out] infos
  * @return
+ *
+ * @note Unused
  */
 int Com_ParseInfos(char *buf, int max, char infos[][MAX_INFO_STRING])
 {

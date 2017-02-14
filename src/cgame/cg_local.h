@@ -2783,7 +2783,9 @@ void CG_ParticleExplosion(const char *animStr, vec3_t origin, vec3_t vel, int du
 
 void CG_ParticleImpactSmokePuff(qhandle_t pshader, vec3_t origin);
 void CG_ParticleImpactSmokePuffExtended(qhandle_t pshader, vec3_t origin, int lifetime, int vel, int acc, int maxroll, float alpha, float size);        // so I can add more parameters without screwing up the one that's there
+#ifdef BLOOD_PARTICLE_TRAIL
 void CG_Particle_Bleed(qhandle_t pshader, vec3_t start, vec3_t dir, int fleshEntityNum, int duration);
+#endif
 void CG_GetBleedOrigin(vec3_t head_origin, vec3_t body_origin, int fleshEntityNum);
 void CG_Particle_OilParticle(qhandle_t pshader, vec3_t origin, vec3_t origin2, int ptime, int snum);
 void CG_Particle_OilSlick(qhandle_t pshader, centity_t *cent);

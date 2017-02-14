@@ -37,25 +37,47 @@
 
 #include "dl_public.h"
 
+/**
+ * @brief DL_InitDownload
+ */
 void DL_InitDownload(void)
 {
 }
 
+/**
+ * @brief DL_Shutdown
+ */
 void DL_Shutdown(void)
 {
 }
 
+/**
+ * @brief DL_BeginDownload
+ * @param localName - unused
+ * @param remoteName - unused
+ * @return
+ */
 int DL_BeginDownload(char *localName, const char *remoteName)
 {
 	return 1;
 }
 
+/**
+ * @brief DL_GetString
+ * @param url - unused
+ * @return
+ */
 char *DL_GetString(const char *url)
 {
 	return 0;
 }
 
-// (maybe this should be CL_DL_DownloadLoop)
+/**
+ * @brief DL_DownloadLoop
+ * @return
+ *
+ * @note Maybe this should be CL_DL_DownloadLoop
+ */
 dlStatus_t DL_DownloadLoop(void)
 {
 	return DL_DONE;

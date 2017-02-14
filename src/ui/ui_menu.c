@@ -195,6 +195,8 @@ menuDef_t *Menu_GetFocused(void)
  * @param[in] menu
  * @param[in] feeder
  * @param[in] down
+ *
+ * @note Unused
  */
 void Menu_ScrollFeeder(menuDef_t *menu, int feeder, qboolean down)
 {
@@ -668,6 +670,8 @@ menuDef_t *Menus_FindByName(const char *p)
 /**
  * @brief Menus_ShowByName
  * @param[in] p
+ *
+ * @note Unused
  */
 void Menus_ShowByName(const char *p)
 {

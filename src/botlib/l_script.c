@@ -1049,14 +1049,15 @@ int PS_ExpectTokenString(script_t *script, const char *string)
 }
 */
 
-/**
+/*
  * @brief Expect a certain token type
  * @param[in] script
  * @param[in] type
  * @param[in] subtype
  * @param[in] token
  * @return
- */
+ *
+ * @note Unused
 int PS_ExpectTokenType(script_t *script, int type, int subtype, token_t *token)
 {
 	if (!PS_ReadToken(script, token))
@@ -1152,13 +1153,15 @@ int PS_ExpectTokenType(script_t *script, int type, int subtype, token_t *token)
 	}
 	return 1;
 }
+*/
 
-/**
+/*
  * @brief Expect a token
  * @param[in] script
  * @param[in] token
  * @return
- */
+ *
+ * @note Unused
 int PS_ExpectAnyToken(script_t *script, token_t *token)
 {
 	if (!PS_ReadToken(script, token))
@@ -1171,6 +1174,7 @@ int PS_ExpectAnyToken(script_t *script, token_t *token)
 		return 1;
 	}
 }
+*/
 
 /*
  * @brief Check if token is available
@@ -1401,10 +1405,11 @@ int GetScriptFlags(script_t *script)
 }
 */
 
-/**
+/*
  * @brief ResetScript
  * @param[in,out] script
- */
+ *
+ * @note Unused
 void ResetScript(script_t *script)
 {
 	// pointer in script buffer
@@ -1423,6 +1428,7 @@ void ResetScript(script_t *script)
 	// clear the saved token
 	memset(&script->token, 0, sizeof(token_t));
 }
+*/
 
 /**
  * @brief EndOfScript

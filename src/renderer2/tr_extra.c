@@ -354,6 +354,8 @@ qboolean BoundsIntersect(const vec3_t mins, const vec3_t maxs, const vec3_t mins
  * @param[in] origin
  * @param[in] radius
  * @return
+ *
+ * @note Unused
  */
 qboolean BoundsIntersectSphere(const vec3_t mins, const vec3_t maxs, const vec3_t origin, vec_t radius)
 {
@@ -374,6 +376,8 @@ qboolean BoundsIntersectSphere(const vec3_t mins, const vec3_t maxs, const vec3_
  * @param[in] maxs
  * @param[in] origin
  * @return
+ *
+ * @note Unused
  */
 qboolean BoundsIntersectPoint(const vec3_t mins, const vec3_t maxs, const vec3_t origin)
 {
@@ -543,6 +547,8 @@ void QuatTransformVector(const quat_t q, const vec3_t in, vec3_t out)
  * @brief QuatMultiply0
  * @param[in,out] qa
  * @param[in] qb
+ *
+ * @note Unused
  */
 void QuatMultiply0(quat_t qa, const quat_t qb)
 {
@@ -578,6 +584,8 @@ void QuatMultiply1(const quat_t qa, const quat_t qb, quat_t qc)
  * @param[in] qa
  * @param[in] qb
  * @param[out] qc
+ *
+ * @note Unused
  */
 void QuatMultiply2(const quat_t qa, const quat_t qb, quat_t qc)
 {
@@ -592,6 +600,8 @@ void QuatMultiply2(const quat_t qa, const quat_t qb, quat_t qc)
  * @param[in] qa
  * @param[in] qb
  * @param[out] qc
+ *
+ * @note Unused
  */
 void QuatMultiply3(const quat_t qa, const quat_t qb, quat_t qc)
 {
@@ -606,6 +616,8 @@ void QuatMultiply3(const quat_t qa, const quat_t qb, quat_t qc)
  * @param[in] qa
  * @param[in] qb
  * @param[out] qc
+ *
+ * @note Unused
  */
 void QuatMultiply4(const quat_t qa, const quat_t qb, quat_t qc)
 {
@@ -892,6 +904,8 @@ float MemStreamGetFloat(memStream_t *s)
  * @brief printBits
  * @param[in] size
  * @param[in] ptr
+ *
+ * @note Unused
  */
 void printBits(size_t const size, void const *const ptr)
 {

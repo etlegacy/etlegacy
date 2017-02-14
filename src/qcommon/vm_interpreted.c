@@ -158,6 +158,7 @@ char *VM_Indent(vm_t *vm)
 	return string + 2 * (20 - vm->callLevel);
 }
 
+#ifdef DEBUG_VM
 /**
  * @brief VM_StackTrace
  * @param[in] vm
@@ -176,6 +177,7 @@ void VM_StackTrace(vm_t *vm, int programCounter, int programStack)
 	}
 	while (programCounter != -1 && ++count < 32);
 }
+#endif
 
 /**
  * @brief VM_PrepareInterpreter

@@ -1353,6 +1353,8 @@ void SP_script_model_med(gentity_t *ent)
  * "scriptname" name used for scripting purposes (like aiName in AI scripting)
  *
  * @param[in,out] ent
+ *
+ * @note Unused
  */
 void SP_script_camera(gentity_t *ent)
 {

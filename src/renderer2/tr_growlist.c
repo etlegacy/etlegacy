@@ -136,6 +136,8 @@ void *Com_GrowListElement(const growList_t *list, int index)
  * @param[in] list
  * @param[in] element
  * @return
+ *
+ * @note Unused
  */
 int Com_IndexForGrowListElement(const growList_t *list, const void *element)
 {

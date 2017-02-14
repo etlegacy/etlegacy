@@ -64,6 +64,7 @@ void CG_createStatsWindow(void)
 
 /**
  * @brief CG_createTopShotsWindow
+ * @note Unused
  */
 void CG_createTopShotsWindow(void)
 {
@@ -87,6 +88,8 @@ void CG_createTopShotsWindow(void)
 
 /**
  * @brief CG_createMOTDWindow
+ *
+ * @todo TODO: dynamic game server MOTD window, see CG_DrawInformation()
  */
 void CG_createMOTDWindow(void)
 {

@@ -272,11 +272,12 @@ qboolean BG_WeaponIsPrimaryForClassAndTeam(int classnum, team_t team, weapon_t w
 	return qfalse;
 }
 
-/**
+/*
  * @brief BG_ShortClassnameForNumber
  * @param[in] classNum
  * @return
- */
+ *
+ * @note Unused
 const char *BG_ShortClassnameForNumber(int classNum)
 {
 	switch (classNum)
@@ -295,6 +296,7 @@ const char *BG_ShortClassnameForNumber(int classNum)
 		return "^1ERROR";
 	}
 }
+*/
 
 /**
  * @brief BG_ClassnameForNumber
@@ -344,11 +346,12 @@ const char *BG_ClassnameForNumberFilename(int classNum)
 	}
 }
 
-/**
+/*
  * @brief BG_ClassLetterForNumber
  * @param[in] classNum
  * @return
- */
+ *
+ * @note Unused
 const char *BG_ClassLetterForNumber(int classNum)
 {
 	switch (classNum)
@@ -367,12 +370,14 @@ const char *BG_ClassLetterForNumber(int classNum)
 		return "^1E";
 	}
 }
+*/
 
-/**
+/*
  * @brief BG_ClassTextToClass
  * @param[in] token
  * @return
- */
+ *
+ * @note Unused
 int BG_ClassTextToClass(const char *token)
 {
 	if (!Q_stricmp(token, "soldier"))
@@ -398,6 +403,7 @@ int BG_ClassTextToClass(const char *token)
 
 	return -1;
 }
+*/
 
 /**
  * @brief BG_TeamnameForNumber

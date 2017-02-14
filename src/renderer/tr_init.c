@@ -334,6 +334,8 @@ byte *RB_ReadPixels(int x, int y, int width, int height, size_t *offset, int *pa
  * @param[in,out] height
  * @param[in,out] padlen
  * @return
+ *
+ * @note Unused
  */
 byte *RB_ReadZBuffer(int x, int y, int width, int height, int *padlen)
 {
