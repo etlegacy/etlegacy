@@ -1443,7 +1443,7 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 		else
 		{
 			maxlen = (size_t)button->data[0];
-			s      = (char *)button->text;
+			s      = button->text;
 			len    = strlen(s);
 		}
 

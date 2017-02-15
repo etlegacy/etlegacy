@@ -716,7 +716,7 @@ struct panel_button_s
 	const char *shaderNormal;
 
 	/// text
-	const char *text;
+	char *text;
 
 	/// rect
 	rectDef_t rect;

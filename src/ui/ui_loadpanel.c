@@ -210,11 +210,11 @@ void UI_LoadPanel_RenderHeaderText(panel_button_t *button)
 
 	if ((cstate.connState == CA_DISCONNECTED || cstate.connState == CA_CONNECTED) && *downloadName)
 	{
-		button->text = trap_TranslateString("DOWNLOADING...");
+		button->text = (char*)(trap_TranslateString("DOWNLOADING..."));
 	}
 	else
 	{
-		button->text = trap_TranslateString("CONNECTING...");
+		button->text = (char*)(trap_TranslateString("CONNECTING..."));
 	}
 
 	BG_PanelButtonsRender_Text(button);
