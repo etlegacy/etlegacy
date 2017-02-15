@@ -1149,23 +1149,28 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 
 		//GLuint texnum;
 
+		// TODO:
+		/*
 		if ((w & (w - 1)) || (h & (h - 1)))
 		{
-			// non-pow2: check extensions
+		    // non-pow2: check extensions
 
-			if (glConfig2.textureNPOTAvailable)
-			{
-				ret->type = GL_TEXTURE_2D;
-			}
-			else
-			{
-				ret->type = GL_TEXTURE_2D; // FIXME R_StateGetRectTarget();
-			}
+		    if (glConfig2.textureNPOTAvailable)
+		    {
+		        ret->type = GL_TEXTURE_2D;
+		    }
+		    else
+		    {
+		        ret->type = GL_TEXTURE_2D; // FIXME R_StateGetRectTarget();
+		    }
 		}
 		else
 		{
-			ret->type = GL_TEXTURE_2D;
+		    ret->type = GL_TEXTURE_2D;
 		}
+		*/
+
+		ret->type = GL_TEXTURE_2D;
 
 		//texnum = ret->texnum;
 

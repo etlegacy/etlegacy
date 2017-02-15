@@ -7135,40 +7135,28 @@ static void R_CreateVBOShadowCubeMeshes(trRefLight_t *light)
 					}
 				}
 
+#if CALC_REDUNDANT_SHADOWVERTS
 				if (alphaTest)
 				{
-#if CALC_REDUNDANT_SHADOWVERTS
 					//OptimizeTriangles(s_worldData.numVerts, s_worldData.verts, numTriangles, triangles, CompareShadowVertAlphaTest);
 					OptimizeTrianglesLite(s_worldData.redundantShadowAlphaTestVerts, numTriangles, triangles);
-					if (c_redundantVertexes)
-					{
-						Ren_Developer(
-							"...removed %i redundant vertices from staticShadowPyramidMesh %i ( %s, %i verts %i tris )\n",
-							c_redundantVertexes, c_vboShadowSurfaces, shader->name, numVerts, numTriangles);
-					}
-#endif
-					vboSurf->vbo = s_worldData.vbo;
-					vboSurf->ibo =
-						R_CreateIBO2(va("staticShadowPyramidMesh_IBO %i", c_vboShadowSurfaces), numTriangles, triangles,
-						             VBO_USAGE_STATIC);
 				}
 				else
 				{
-#if CALC_REDUNDANT_SHADOWVERTS
 					//OptimizeTriangles(s_worldData.numVerts, s_worldData.verts, numTriangles, triangles, CompareShadowVert);
 					OptimizeTrianglesLite(s_worldData.redundantShadowVerts, numTriangles, triangles);
-					if (c_redundantVertexes)
-					{
-						Ren_Developer(
-							"...removed %i redundant vertices from staticShadowPyramidMesh %i ( %s, %i verts %i tris )\n",
-							c_redundantVertexes, c_vboShadowSurfaces, shader->name, numVerts, numTriangles);
-					}
-#endif
-					vboSurf->vbo = s_worldData.vbo;
-					vboSurf->ibo =
-						R_CreateIBO2(va("staticShadowPyramidMesh_IBO %i", c_vboShadowSurfaces), numTriangles, triangles,
-						             VBO_USAGE_STATIC);
 				}
+
+				if (c_redundantVertexes)
+				{
+					Ren_Developer(
+						"...removed %i redundant vertices from staticShadowPyramidMesh %i ( %s, %i verts %i tris )\n",
+						c_redundantVertexes, c_vboShadowSurfaces, shader->name, numVerts, numTriangles);
+				}
+#endif
+				vboSurf->vbo = s_worldData.vbo;
+				vboSurf->ibo = R_CreateIBO2(va("staticShadowPyramidMesh_IBO %i", c_vboShadowSurfaces), numTriangles, triangles,
+				                            VBO_USAGE_STATIC);
 
 				ri.Hunk_FreeTempMemory(triangles);
 
