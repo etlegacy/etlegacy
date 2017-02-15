@@ -483,23 +483,7 @@ const char *CG_PickupItemText(int item)
 {
 	if (bg_itemlist[item].giType == IT_HEALTH)
 	{
-		// avoid health packs telling 0
-		if (bg_itemlist[item].quantity > 0)
-		{
-			if (bg_itemlist[item].world_model[2])      // this is a multi-stage item
-			{
-				// FIXME: print the correct amount for multi-stage
-				return va(CG_TranslateString("a %s"), bg_itemlist[item].pickup_name);
-			}
-			else
-			{
-				return va("%i %s", bg_itemlist[item].quantity, bg_itemlist[item].pickup_name); // FIXME: translations ?
-			}
-		}
-		else
-		{
-			return va(CG_TranslateString("a %s"), bg_itemlist[item].pickup_name);
-		}
+		return va(CG_TranslateString("a %s"), bg_itemlist[item].pickup_name);
 	}
 	else if (bg_itemlist[item].giType == IT_TEAM)
 	{

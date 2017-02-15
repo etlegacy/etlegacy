@@ -618,7 +618,7 @@ gitem_t bg_itemlist[] =
 		},
 		NULL,
 		NULL,   // ammo icon
-		"Small Health",
+		"Small Health Pack",
 		5,
 		IT_HEALTH,
 		0,
@@ -637,7 +637,7 @@ gitem_t bg_itemlist[] =
 		},
 		NULL,
 		NULL,   // ammo icon
-		"Med Health",
+		"Health Pack",
 		20,
 		IT_HEALTH,
 		0,
@@ -656,7 +656,7 @@ gitem_t bg_itemlist[] =
 		},
 		NULL,
 		NULL,   // ammo icon
-		"Med Health",
+		"Mega Health Pack",
 		50,             // increased to 50 from 30 and used it for SP.
 		IT_HEALTH,
 		0,
