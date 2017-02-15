@@ -1331,7 +1331,7 @@ void BG_PanelButton_RenderEdit(panel_button_t *button)
 
 	if (useCvar)
 	{
-		char buffer[256 + 1];
+		char buffer[MAX_EDITFIELD + 1];
 
 		trap_Cvar_VariableStringBuffer(button->text, buffer, sizeof(buffer));
 
@@ -1354,7 +1354,7 @@ void BG_PanelButton_RenderEdit(panel_button_t *button)
 		do
 		{
 			offset++;
-			if (buffer + offset  == '\0')
+			if (buffer[offset] == '\0')
 			{
 				break;
 			}
@@ -1386,7 +1386,7 @@ void BG_PanelButton_RenderEdit(panel_button_t *button)
 		do
 		{
 			offset++;
-			if (s + offset  == '\0')
+			if (s[offset] == '\0')
 			{
 				break;
 			}

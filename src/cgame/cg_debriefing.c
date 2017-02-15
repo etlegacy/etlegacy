@@ -1374,7 +1374,7 @@ void CG_Debriefing_ChatEdit_Draw(panel_button_t *button)
 	do
 	{
 		offset++;
-		if (buffer + offset == '\0')
+		if (buffer[offset] == '\0')
 		{
 			break;
 		}
