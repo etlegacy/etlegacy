@@ -66,9 +66,9 @@ panel_button_t debriefPlayerWeaponStatsHeader =
 	"Weapon Stats",
 	{ 18,                      248,0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
-	&debriefPlayerHeadingSmallerFont,/* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&debriefPlayerHeadingSmallerFont,// font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -80,9 +80,9 @@ panel_button_t debriefPlayerWeaponStatsNameHeader =
 	"Name",
 	{ 18,                      262,0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
-	&debriefPlayerHeadingSmallerFont,/* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&debriefPlayerHeadingSmallerFont,// font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -94,9 +94,9 @@ panel_button_t debriefPlayerWeaponStatsShotsHeader =
 	"Shots",
 	{ 78,                      262,0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
-	&debriefPlayerHeadingSmallerFont,/* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&debriefPlayerHeadingSmallerFont,// font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -108,9 +108,9 @@ panel_button_t debriefPlayerWeaponStatsHitsHeader =
 	"Hits",
 	{ 118,                     262, 0, 0 },
 	{ 0,                       0,   0, 0, 0, 0, 0, 0},
-	&debriefPlayerHeadingSmallerFont,/* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&debriefPlayerHeadingSmallerFont,// font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -122,9 +122,9 @@ panel_button_t debriefPlayerWeaponStatsKillsHeader =
 	"Kills",
 	{ 148,                     262,0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
-	&debriefPlayerHeadingSmallerFont,/* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&debriefPlayerHeadingSmallerFont,// font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -136,9 +136,9 @@ panel_button_t debriefPlayerWeaponStatsList =
 	NULL,
 	{ 18,                               262,  164, 80 },
 	{ 0,                                0,    0,   0, 0, 0, 0, 0},
-	&debriefPlayerHeadingSmallerFont,   /* font     */
-	NULL,                               /* keyDown  */
-	NULL,                               /* keyUp    */
+	&debriefPlayerHeadingSmallerFont,   // font
+	NULL,                               // keyDown
+	NULL,                               // keyUp
 	CG_DebriefingPlayerWeaponStats_Draw,
 	NULL,
 	0
@@ -150,9 +150,9 @@ panel_button_t debriefPlayerWeaponStatsListScroll =
 	NULL,
 	{ 18 + 164,                  262,        16, 80 },
 	{ 1,                         0,          0,  0, 0, 0, 0, 0},
-	NULL,                        /* font     */
-	CG_Debriefing_Scrollbar_KeyDown,/* keyDown  */
-	CG_Debriefing_Scrollbar_KeyUp,/* keyUp    */
+	NULL,                        // font
+	CG_Debriefing_Scrollbar_KeyDown,// keyDown
+	CG_Debriefing_Scrollbar_KeyUp,// keyUp
 	CG_Debriefing_Scrollbar_Draw,
 	NULL,
 	0
@@ -164,9 +164,9 @@ panel_button_t debriefTitleWindow =
 	NULL,
 	{ 10,                           4,  620, 22 },
 	{ 0,                            0,  0,   0, 0, 0, 0, 0},
-	NULL,                           /* font     */
-	NULL,                           /* keyDown  */
-	NULL,                           /* keyUp    */
+	NULL,                           // font
+	NULL,                           // keyDown
+	NULL,                           // keyUp
 	CG_Debriefing_MissionTitle_Draw,
 	NULL,
 	0
@@ -178,9 +178,9 @@ panel_button_t debriefMissionTitleWindow =
 	NULL,
 	{ 10,                        30,  193, 326 },
 	{ 0,                         0,   0,   0, 0, 0, 0, 0},
-	NULL,                        /* font     */
-	NULL,                        /* keyDown  */
-	NULL,                        /* keyUp    */
+	NULL,                        // font
+	NULL,                        // keyDown
+	NULL,                        // keyUp
 	CG_PanelButtonsRender_Window,
 	NULL,
 	0
@@ -192,9 +192,9 @@ panel_button_t debriefMissionImage =
 	NULL,
 	{ 16,                      46,  181, 161 },
 	{ 0,                       0,   0,   0, 0, 0, 0, 0},
-	NULL,                      /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	NULL,                      // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	CG_Debriefing_Mission_Draw,
 	NULL,
 	0
@@ -206,9 +206,9 @@ panel_button_t debriefMissionMaps =
 	NULL,
 	{ 12,                   210,  189, 60 },
 	{ 0,                    0,    0,   0, 0, 0, 0, 0},
-	NULL,                   /* font     */
-	CG_Debriefing_Maps_KeyDown,/* keyDown  */
-	NULL,                   /* keyUp    */
+	NULL,                   // font
+	CG_Debriefing_Maps_KeyDown,// keyDown
+	NULL,                   // keyUp
 	CG_Debriefing_Maps_Draw,
 	NULL,
 	0
@@ -220,9 +220,9 @@ panel_button_t debriefMissionAwardsWindow =
 	"ROLL OF HONOR",
 	{ 213,                       30, 417, 240 },
 	{ ITEM_ALIGN_CENTER,         0,  0,   0, 0, 0, 0, 0},
-	NULL,                        /* font     */
-	NULL,                        /* keyDown  */
-	NULL,                        /* keyUp    */
+	NULL,                        // font
+	NULL,                        // keyDown
+	NULL,                        // keyUp
 	CG_PanelButtonsRender_Window,
 	NULL,
 	0
@@ -234,9 +234,9 @@ panel_button_t debriefMissionAwardsList =
 	NULL,
 	{ 215,                    44,   413, 220 },
 	{ ITEM_ALIGN_CENTER,      0,    0,   0, 0, 0, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
+	NULL,                     // font
+	NULL,                     // keyDown
+	NULL,                     // keyUp
 	CG_Debriefing_Awards_Draw,
 	NULL,
 	0
@@ -262,9 +262,9 @@ panel_button_t debriefMissionStatsWindow =
 	"MISSION STATS",
 	{ 213,                       280 - 6,417, 70 + 12 },
 	{ 0,                         0,  0,   0, 0, 0, 0, 0},
-	NULL,                        /* font     */
-	NULL,                        /* keyDown  */
-	NULL,                        /* keyUp    */
+	NULL,                        // font
+	NULL,                        // keyDown
+	NULL,                        // keyUp
 	CG_PanelButtonsRender_Window,
 	NULL,
 	0
@@ -276,9 +276,9 @@ panel_button_t debriefMissionStatsHeaders =
 	NULL,
 	{ 219,                              298,   405, 16 },
 	{ 0,                                0,     0,   0, 0, 0, 0, 0},
-	NULL,                               /* font     */
-	NULL,                               /* keyDown  */
-	NULL,                               /* keyUp    */
+	NULL,                               // font
+	NULL,                               // keyDown
+	NULL,                               // keyUp
 	CG_Debriefing_TeamSkillHeaders_Draw,
 	NULL,
 	0
@@ -290,9 +290,9 @@ panel_button_t debriefMissionStatsWinner =
 	NULL,
 	{ 219,                         314,   405, 16 },
 	{ 0,                           0,     0,   0, 0, 0, 0, 0},
-	NULL,                          /* font     */
-	NULL,                          /* keyDown  */
-	NULL,                          /* keyUp    */
+	NULL,                          // font
+	NULL,                          // keyDown
+	NULL,                          // keyUp
 	CG_Debriefing_TeamSkillXP_Draw,
 	NULL,
 	0
@@ -304,9 +304,9 @@ panel_button_t debriefMissionStatsLoser =
 	NULL,
 	{ 219,                         330,   405, 16 },
 	{ 1,                           0,     0,   0, 0, 0, 0, 0},
-	NULL,                          /* font     */
-	NULL,                          /* keyDown  */
-	NULL,                          /* keyUp    */
+	NULL,                          // font
+	NULL,                          // keyDown
+	NULL,                          // keyUp
 	CG_Debriefing_TeamSkillXP_Draw,
 	NULL,
 	0
@@ -318,9 +318,9 @@ panel_button_t debriefPlayerListWindow =
 	"PLAYERS",
 	{ 213,                       30, 417, 326 },
 	{ 0,                         0,  0,   0, 0, 0, 0, 0},
-	NULL,                        /* font     */
-	NULL,                        /* keyDown  */
-	NULL,                        /* keyUp    */
+	NULL,                        // font
+	NULL,                        // keyDown
+	NULL,                        // keyUp
 	CG_PanelButtonsRender_Window,
 	NULL,
 	0
@@ -340,9 +340,9 @@ panel_button_t debriefHeadingRank =
 	"Rank",
 	{ DB_RANK_X,               DH_HEADING_Y,       0, 0 },
 	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
-	&debriefPlayerListFont,    /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&debriefPlayerListFont,    // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -354,9 +354,9 @@ panel_button_t debriefHeadingName =
 	"Name",
 	{ DB_NAME_X,               DH_HEADING_Y,       0, 0 },
 	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
-	&debriefPlayerListFont,    /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&debriefPlayerListFont,    // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -368,9 +368,9 @@ panel_button_t debriefHeadingTime =
 	"Time",
 	{ DB_TIME_X,               DH_HEADING_Y,       0, 0 },
 	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
-	&debriefPlayerListFont,    /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&debriefPlayerListFont,    // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -382,9 +382,9 @@ panel_button_t debriefHeadingKills =
 	"Kll",
 	{ DB_KILLS_X,              DH_HEADING_Y,         0, 0 },
 	{ 0,                       0,                    0, 0, 0, 0, 0, 0},
-	&debriefPlayerListFont,    /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&debriefPlayerListFont,    // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -396,9 +396,9 @@ panel_button_t debriefHeadingDeaths =
 	"Dth",
 	{ DB_DEATHS_X,             DH_HEADING_Y,          0, 0 },
 	{ 0,                       0,                     0, 0, 0, 0, 0, 0},
-	&debriefPlayerListFont,    /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&debriefPlayerListFont,    // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -410,9 +410,9 @@ panel_button_t debriefHeadingGibs =
 	"Gib",
 	{ DB_GIBS_X,               DH_HEADING_Y,        0, 0 },
 	{ 0,                       0,                   0, 0, 0, 0, 0, 0},
-	&debriefPlayerListFont,    /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&debriefPlayerListFont,    // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -424,9 +424,9 @@ panel_button_t debriefHeadingSelfKills =
 	"SK",
 	{ DB_SELFKILLS_X,          DH_HEADING_Y,              0, 0 },
 	{ 0,                       0,                         0, 0, 0, 0, 0, 0},
-	&debriefPlayerListFont,    /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&debriefPlayerListFont,    // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -438,9 +438,9 @@ panel_button_t debriefHeadingTeamKills =
 	"TK",
 	{ DB_TEAMKILLS_X,          DH_HEADING_Y,              0, 0 },
 	{ 0,                       0,                         0, 0, 0, 0, 0, 0},
-	&debriefPlayerListFont,    /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&debriefPlayerListFont,    // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -452,9 +452,9 @@ panel_button_t debriefHeadingTeamGibs =
 	"TG",
 	{ DB_TEAMGIBS_X,           DH_HEADING_Y,             0, 0 },
 	{ 0,                       0,                        0, 0, 0, 0, 0, 0},
-	&debriefPlayerListFont,    /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&debriefPlayerListFont,    // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -466,9 +466,9 @@ panel_button_t debriefHeadingXP =
 	"XP",
 	{ DB_XP_X,                 DH_HEADING_Y,       0, 0 },
 	{ 0,                       0,                  0, 0, 0, 0, 0, 0},
-	&debriefPlayerListFont,    /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&debriefPlayerListFont,    // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	CG_DebriefingXPHeader_Draw,
 	NULL,
 	0
@@ -480,9 +480,9 @@ panel_button_t debriefPlayerList =
 	NULL,
 	{ DB_RANK_X,                 DH_HEADING_Y,         SCREEN_WIDTH - 10 - 8 - 16 - DB_RANK_X - 16, 292 },
 	{ 0,                         0,                    0,                                           0, 0, 0, 0, 0},
-	&debriefPlayerListFont,      /* font     */
-	CG_DebriefingPlayerList_KeyDown,/* keyDown  */
-	NULL,                        /* keyUp    */
+	&debriefPlayerListFont,      // font
+	CG_DebriefingPlayerList_KeyDown,// keyDown
+	NULL,                        // keyUp
 	CG_DebriefingPlayerList_Draw,
 	NULL,
 	0
@@ -494,9 +494,9 @@ panel_button_t debriefPlayerListScroll =
 	NULL,
 	{ SCREEN_WIDTH - 10 - 8 - 16,DH_HEADING_Y,                          16, 292 },
 	{ 0,                         0,                                     0,  0, 0, 0, 0, 0},
-	NULL,                        /* font     */
-	CG_Debriefing_Scrollbar_KeyDown,/* keyDown  */
-	CG_Debriefing_Scrollbar_KeyUp,/* keyUp    */
+	NULL,                        // font
+	CG_Debriefing_Scrollbar_KeyDown,// keyDown
+	CG_Debriefing_Scrollbar_KeyUp,// keyUp
 	CG_Debriefing_Scrollbar_Draw,
 	NULL,
 	0
@@ -516,9 +516,9 @@ panel_button_t debriefPlayerInfoWindow =
 	"PLAYER STATS",
 	{ 10,                        30, 193, 326 },
 	{ 0,                         0,  0,   0, 0, 0, 0, 0},
-	NULL,                        /* font     */
-	NULL,                        /* keyDown  */
-	NULL,                        /* keyUp    */
+	NULL,                        // font
+	NULL,                        // keyDown
+	NULL,                        // keyUp
 	CG_PanelButtonsRender_Window,
 	NULL,
 	0
@@ -530,9 +530,9 @@ panel_button_t debriefPlayerInfoName =
 	NULL,
 	{ 14,                         56,  0, 0 },
 	{ 0,                          0,   0, 0, 0, 0, 0, 0},
-	&debriefPlayerInfoFont,       /* font     */
-	NULL,                         /* keyDown  */
-	NULL,                         /* keyUp    */
+	&debriefPlayerInfoFont,       // font
+	NULL,                         // keyDown
+	NULL,                         // keyUp
 	CG_Debriefing_PlayerName_Draw,
 	NULL,
 	0
@@ -544,9 +544,9 @@ panel_button_t debriefPlayerInfoRank =
 	NULL,
 	{ 68,                         70,  0, 0 },
 	{ 0,                          0,   0, 0, 0, 0, 0, 0},
-	&debriefPlayerInfoFont,       /* font     */
-	NULL,                         /* keyDown  */
-	NULL,                         /* keyUp    */
+	&debriefPlayerInfoFont,       // font
+	NULL,                         // keyDown
+	NULL,                         // keyUp
 	CG_Debriefing_PlayerRank_Draw,
 	NULL,
 	0
@@ -558,9 +558,9 @@ panel_button_t debriefPlayerInfoMedals =
 	NULL,
 	{ 68,                           84,  0, 0 },
 	{ 0,                            0,   0, 0, 0, 0, 0, 0},
-	&debriefPlayerInfoFont,         /* font     */
-	NULL,                           /* keyDown  */
-	NULL,                           /* keyUp    */
+	&debriefPlayerInfoFont,         // font
+	NULL,                           // keyDown
+	NULL,                           // keyUp
 	CG_Debriefing_PlayerMedals_Draw,
 	NULL,
 	0
@@ -572,9 +572,9 @@ panel_button_t debriefPlayerInfoTime =
 	NULL,
 	{ 68,                         98,  0, 0 },
 	{ 0,                          0,   0, 0, 0, 0, 0, 0},
-	&debriefPlayerInfoFont,       /* font     */
-	NULL,                         /* keyDown  */
-	NULL,                         /* keyUp    */
+	&debriefPlayerInfoFont,       // font
+	NULL,                         // keyDown
+	NULL,                         // keyUp
 	CG_Debriefing_PlayerTime_Draw,
 	NULL,
 	0
@@ -586,9 +586,9 @@ panel_button_t debriefPlayerInfoXP =
 	NULL,
 	{ 68,                       112,  0, 0 },
 	{ 0,                        0,    0, 0, 0, 0, 0, 0},
-	&debriefPlayerInfoFont,     /* font     */
-	NULL,                       /* keyDown  */
-	NULL,                       /* keyUp    */
+	&debriefPlayerInfoFont,     // font
+	NULL,                       // keyDown
+	NULL,                       // keyUp
 	CG_Debriefing_PlayerXP_Draw,
 	NULL,
 	0
@@ -601,9 +601,9 @@ panel_button_t debriefPlayerInfoSR =
 	NULL,
 	{ 136,                      112,   0, 0 },
 	{ 0,                        0,     0, 0, 0, 0, 0, 0},
-	&debriefPlayerInfoFont,     /* font     */
-	NULL,                       /* keyDown  */
-	NULL,                       /* keyUp    */
+	&debriefPlayerInfoFont,     // font
+	NULL,                       // keyDown
+	NULL,                       // keyUp
 	CG_Debriefing_PlayerSR_Draw,
 	NULL,
 	0
@@ -616,9 +616,9 @@ panel_button_t debriefPlayerInfoACC =
 	NULL,
 	{ 68,                        126,  0, 0 },
 	{ 0,                         0,    0, 0, 0, 0, 0, 0},
-	&debriefPlayerInfoFont,      /* font     */
-	NULL,                        /* keyDown  */
-	NULL,                        /* keyUp    */
+	&debriefPlayerInfoFont,      // font
+	NULL,                        // keyDown
+	NULL,                        // keyUp
 	CG_Debriefing_PlayerACC_Draw,
 	NULL,
 	0
@@ -630,9 +630,9 @@ panel_button_t debriefPlayerInfoHS =
 	NULL,
 	{ 136,                      126,   0, 0 },
 	{ 0,                        0,     0, 0, 0, 0, 0, 0},
-	&debriefPlayerInfoFont,     /* font     */
-	NULL,                       /* keyDown  */
-	NULL,                       /* keyUp    */
+	&debriefPlayerInfoFont,     // font
+	NULL,                       // keyDown
+	NULL,                       // keyUp
 	CG_Debriefing_PlayerHS_Draw,
 	NULL,
 	0
