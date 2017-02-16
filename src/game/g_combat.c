@@ -72,9 +72,6 @@ void AddKillScore(gentity_t *ent, int score)
 
 	ent->client->ps.persistant[PERS_SCORE]                  += score;
 	level.teamScores[ent->client->ps.persistant[PERS_TEAM]] += score;
-
-	// prepare scoreboard
-	CalculateRanks();
 }
 
 /**
@@ -604,7 +601,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 					{
 						if (g_complaintlimit.integer)
 						{
-
 							if (!(meansOfDeath == MOD_LANDMINE && (g_disableComplaints.integer & TKFL_MINES)) &&
 							    !((meansOfDeath == MOD_ARTY || meansOfDeath == MOD_AIRSTRIKE) && (g_disableComplaints.integer & TKFL_AIRSTRIKE)) &&
 							    !((meansOfDeath == MOD_MORTAR || meansOfDeath == MOD_MORTAR2) && (g_disableComplaints.integer & TKFL_MORTAR)))
@@ -649,6 +645,9 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 			AddKillScore(self, -1);
 		}
 	}
+
+	// prepare scoreboard
+	CalculateRanks();
 
 	G_DropItems(self);
 
