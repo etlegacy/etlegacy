@@ -1807,6 +1807,7 @@ void Com_InitHunkMemory(void)
 
 	// allocate the stack based hunk allocator
 	cv = Cvar_Get("com_hunkMegs", DEF_COMHUNKMEGS_S, CVAR_LATCH | CVAR_ARCHIVE);
+    Cvar_SetDescription(cv, "The size of the hunk memory segment");
 
 	// if we are not dedicated min allocation is 56, otherwise min is 1
 	if (com_dedicated && com_dedicated->integer)
@@ -3270,7 +3271,7 @@ void Com_Frame(void)
 
 	if (!com_dedicated->integer && !com_timedemo->integer && !com_developer->integer)
 	{
-		Cvar_AssertCvarRange(com_maxfps, 20, 333, qtrue);
+		Cvar_CheckRange(com_maxfps, 20, 333, qtrue);
 	}
 
 	// we may want to spin here if things are going too fast

@@ -265,6 +265,140 @@ char *Cvar_ClearForeignCharacters(const char *value)
 }
 
 /**
+ * @brief Cvar_Validate
+ * @param[in,out] var
+ * @param[in] value
+ * @param[in] warn
+ * @return
+ */
+static const char *Cvar_Validate(cvar_t *cv, const char *value, qboolean warn)
+{
+	static char s[MAX_CVAR_VALUE_STRING];
+	float       valuef;
+	qboolean    changed = qfalse;
+
+	if (!cv->validate)
+	{
+		return value;
+	}
+
+	if (!value)
+	{
+		return value;
+	}
+
+	if (Q_isanumber(value))
+	{
+		valuef = atof(value);
+
+		if (cv->integral)
+		{
+			if (!Q_isintegral(valuef))
+			{
+				if (warn)
+				{
+					Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' must be integral (%f)", cv->name, valuef);
+				}
+
+				valuef  = (int)valuef;
+				changed = qtrue;
+			}
+		}
+	}
+	else
+	{
+		if (warn)
+		{
+			Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' must be numeric (%i)", cv->name, (int)valuef);
+		}
+
+		valuef  = atof(cv->resetString);
+		changed = qtrue;
+	}
+
+	if (valuef < cv->min)
+	{
+		if (warn)
+		{
+			if (changed)
+			{
+				Com_Printf(S_COLOR_YELLOW " and is");
+			}
+			else
+			{
+				Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s'", cv->name);
+			}
+
+			if (Q_isintegral(cv->min))
+			{
+				Com_Printf(S_COLOR_YELLOW " out of range (%i < %i)", (int)valuef, (int)cv->min);
+			}
+			else
+			{
+				Com_Printf(S_COLOR_YELLOW " out of range (%f < %f)", valuef, cv->min);
+			}
+		}
+
+		valuef  = cv->min;
+		changed = qtrue;
+	}
+	else if (valuef > cv->max)
+	{
+		if (warn)
+		{
+			if (changed)
+			{
+				Com_Printf(S_COLOR_YELLOW " and is");
+			}
+			else
+			{
+				Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s'", cv->name);
+			}
+
+			if (Q_isintegral(cv->max))
+			{
+				Com_Printf(S_COLOR_YELLOW " out of range (%i > %i)", (int)valuef, (int)cv->max);
+			}
+			else
+			{
+				Com_Printf(S_COLOR_YELLOW " out of range (%f > %f)", valuef, cv->max);
+			}
+		}
+
+		valuef  = cv->max;
+		changed = qtrue;
+	}
+
+	if (changed)
+	{
+		if (Q_isintegral(valuef))
+		{
+			Com_sprintf(s, sizeof(s), "%d", (int)valuef);
+
+			if (warn)
+			{
+				Com_Printf(S_COLOR_YELLOW ", setting to %d\n", (int)valuef);
+			}
+		}
+		else
+		{
+			Com_sprintf(s, sizeof(s), "%f", valuef);
+
+			if (warn)
+			{
+				Com_Printf(S_COLOR_YELLOW ", setting to %f\n", valuef);
+			}
+		}
+
+		return s;
+	}
+	else
+	{
+		return value;
+	}
+}
+
+/**
  * @brief If the variable already exists, the value will not be set unless CVAR_ROM
  * The flags will be or'ed in if the variable exists.
  * @param[in] var_name
@@ -300,6 +434,8 @@ cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags)
 	var = Cvar_FindVar(var_name);
 	if (var)
 	{
+		var_value = Cvar_Validate(var, var_value, qfalse);
+
 		// if the C code is now specifying a variable that the user already
 		// set a value for, take the new value as the reset value
 		if (var->flags & CVAR_USER_CREATED)
@@ -435,6 +571,8 @@ cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags)
 	var->value             = (float)(atof(var->string));
 	var->integer           = atoi(var->string);
 	var->resetString       = CopyString(var_value);
+	var->validate          = qfalse;
+	var->description       = NULL;
 
 	// link the variable in
 	var->next = cvar_vars;
@@ -508,6 +646,8 @@ cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force)
 	{
 		value = var->resetString;
 	}
+
+	value = Cvar_Validate(var, value, qtrue);
 
 	if (var->flags & CVAR_USERINFO)
 	{
@@ -787,6 +927,11 @@ void Cvar_Print(cvar_t *v)
 	if (v->latchedString)
 	{
 		Com_Printf("latched: \"%s\"\n", v->latchedString);
+	}
+
+	if (v->description)
+	{
+		Com_Printf("%s\n", v->description);
 	}
 }
 
@@ -1248,6 +1393,10 @@ cvar_t *Cvar_Unset(cvar_t *cv)
 	{
 		Z_Free(cv->resetString);
 	}
+	if (cv->description)
+	{
+		Z_Free(cv->description);
+	}
 
 	if (cv->prev)
 	{
@@ -1404,51 +1553,78 @@ void Cvar_InfoStringBuffer(int bit, char *buff, size_t buffsize)
 }
 
 /**
- * @brief cvar range check - this isn't static so visible to all!
+ * @brief cvar range check
  *
  * @param[in] cv
  * @param[in] minVal
  * @param[in] maxVal
  * @param[in] shouldBeIntegral
  *
- * @todo FIXME: change this to ioquake style one day ...
+ * @note This isn't static so visible to all!
  */
-void Cvar_AssertCvarRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral)
+void Cvar_CheckRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral)
 {
+	cv->validate = qtrue;
+	cv->min      = minVal;
+	cv->max      = maxVal;
+	cv->integral = shouldBeIntegral;
+
+	// Force an initial range check
+	Cvar_Set(cv->name, cv->string);
+
+	/*
 	if (shouldBeIntegral)
 	{
-		if (cv->value != cv->integer)
-		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' must be integral (%f)\n", cv->name, cv->value);
-			Cvar_Set(cv->name, va("%d", cv->integer));
-		}
+	    if (cv->value != cv->integer)
+	    {
+	        Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' must be integral (%f)\n", cv->name, cv->value);
+	        Cvar_Set(cv->name, va("%d", cv->integer));
+	    }
 	}
 
 	if (cv->value < minVal)
 	{
-		if (shouldBeIntegral)
-		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' out of range (%i < %i)\n", cv->name, cv->integer, (int) minVal);
-			Cvar_Set(cv->name, va("%i", (int) minVal));
-		}
-		else
-		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' out of range (%f < %f)\n", cv->name, cv->value, minVal);
-			Cvar_Set(cv->name, va("%f", minVal));
-		}
+	    if (shouldBeIntegral)
+	    {
+	        Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' out of range (%i < %i)\n", cv->name, cv->integer, (int) minVal);
+	        Cvar_Set(cv->name, va("%i", (int) minVal));
+	    }
+	    else
+	    {
+	        Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' out of range (%f < %f)\n", cv->name, cv->value, minVal);
+	        Cvar_Set(cv->name, va("%f", minVal));
+	    }
 	}
 	else if (cv->value > maxVal)
 	{
-		if (shouldBeIntegral)
+	    if (shouldBeIntegral)
+	    {
+	        Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' out of range (%i > %i)\n", cv->name, cv->integer, (int) maxVal);
+	        Cvar_Set(cv->name, va("%i", (int) maxVal));
+	    }
+	    else
+	    {
+	        Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' out of range (%f > %f)\n", cv->name, cv->value, maxVal);
+	        Cvar_Set(cv->name, va("%f", maxVal));
+	    }
+	}
+	*/
+}
+
+/**
+ * @brief Cvar_SetDescription
+ * @param[in,out] var
+ * @param[in] var_description
+ */
+void Cvar_SetDescription(cvar_t *cv, const char *var_description)
+{
+	if (var_description && var_description[0] != '\0')
+	{
+		if (cv->description != NULL)
 		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' out of range (%i > %i)\n", cv->name, cv->integer, (int) maxVal);
-			Cvar_Set(cv->name, va("%i", (int) maxVal));
+			Z_Free(cv->description);
 		}
-		else
-		{
-			Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' out of range (%f > %f)\n", cv->name, cv->value, maxVal);
-			Cvar_Set(cv->name, va("%f", maxVal));
-		}
+		cv->description = CopyString(var_description);
 	}
 }
 
