@@ -567,12 +567,28 @@ char *G_createStats(gentity_t *refEnt)
 	}
 
 	// Add skillpoints as necessary
-	for (i = SK_BATTLE_SENSE; i < SK_NUM_SKILLS; i++)
+	if ((g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
+	    (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0))
 	{
-		if (refEnt->client->sess.skillpoints[i] != 0.f) // Skillpoints can be negative
+		for (i = SK_BATTLE_SENSE; i < SK_NUM_SKILLS; i++)
 		{
-			dwSkillPointMask |= (1 << i);
-			Q_strcat(strSkillInfo, sizeof(strSkillInfo), va(" %d", (int)refEnt->client->sess.skillpoints[i]));
+			if (refEnt->client->sess.skillpoints[i] != 0.f) // Skillpoints can be negative
+			{
+				dwSkillPointMask |= (1 << i);
+				Q_strcat(strSkillInfo, sizeof(strSkillInfo), va(" %d", (int)refEnt->client->sess.skillpoints[i]));
+			}
+		}
+	}
+	else
+	{
+		for (i = SK_BATTLE_SENSE; i < SK_NUM_SKILLS; i++)
+		{
+			// current map XPs only
+			if ((refEnt->client->sess.skillpoints[i] - refEnt->client->sess.startskillpoints[i]) != 0.f) // Skillpoints can be negative
+			{
+				dwSkillPointMask |= (1 << i);
+				Q_strcat(strSkillInfo, sizeof(strSkillInfo), va(" %d", (int)(refEnt->client->sess.skillpoints[i] - refEnt->client->sess.startskillpoints[i])));
+			}
 		}
 	}
 
