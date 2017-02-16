@@ -1782,7 +1782,6 @@ void BG_FitTextToWidth_Ext(char *instr, float scale, float w, size_t size, fontH
 {
 	char buffer[1024];
 	char *s, *p, *c, *ls = NULL;
-	int  l = 0;
 
 	Q_strncpyz(buffer, instr, 1024);
 	memset(instr, 0, size);
@@ -1793,7 +1792,6 @@ void BG_FitTextToWidth_Ext(char *instr, float scale, float w, size_t size, fontH
 	while (*p)
 	{
 		*c = *p++;
-		l++;
 
 		if (*c == ' ')
 		{
@@ -1805,7 +1803,6 @@ void BG_FitTextToWidth_Ext(char *instr, float scale, float w, size_t size, fontH
 		if (*p == '\n')
 		{
 			s = c + 1;
-			l = 0;
 		}
 		else if (DC->textWidthExt(s, scale, 0, font) > w)
 		{
@@ -1822,7 +1819,6 @@ void BG_FitTextToWidth_Ext(char *instr, float scale, float w, size_t size, fontH
 			}
 
 			ls = NULL;
-			l  = 0;
 		}
 	}
 
