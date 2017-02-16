@@ -3413,7 +3413,8 @@ void CG_DrawDemoRecording(void)
 	}
 	else
 	{
-		strncpy(demostatus, "", sizeof(demostatus));
+		Q_strncpyz(demostatus, "", sizeof(demostatus));
+
 	}
 
 	if (cl_waverecording.integer)
@@ -3422,7 +3423,7 @@ void CG_DrawDemoRecording(void)
 	}
 	else
 	{
-		strncpy(wavestatus, "", sizeof(wavestatus));
+		Q_strncpyz(wavestatus, "", sizeof(wavestatus));
 	}
 
 	Com_sprintf(status, sizeof(status), "RECORDING%s%s", demostatus, wavestatus);
