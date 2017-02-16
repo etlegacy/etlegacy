@@ -655,8 +655,6 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 		}
 	}
 
-	return libHandle;
-
 #else // __APPLE__
 
 	fn = FS_BuildOSPath(base, gamedir, fname);
@@ -670,9 +668,9 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 		return NULL;
 	}
 
-#endif // __APPLE__
+    Com_Printf("succeeded\n");
 
-	Com_Printf("succeeded\n");
+#endif // __APPLE__
 
 	return libHandle;
 }
