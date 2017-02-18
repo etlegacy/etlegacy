@@ -274,7 +274,7 @@ char *Cvar_ClearForeignCharacters(const char *value)
 static const char *Cvar_Validate(cvar_t *cv, const char *value, qboolean warn)
 {
 	static char s[MAX_CVAR_VALUE_STRING];
-	float       valuef;
+	float       valuef  = 0.f;
 	qboolean    changed = qfalse;
 
 	if (!cv->validate)
