@@ -1870,6 +1870,16 @@ static void CG_DrawNewCompass(rectDef_t location)
 				continue;
 			}
 
+			// draw disguise and objective icons (if they are carrying one)
+			if (cgs.clientinfo[ent->clientNum].powerups & (1 << PW_OPS_DISGUISED))
+			{
+				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.friendShader);
+			}
+			else if (cgs.clientinfo[ent->clientNum].powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
+			{
+				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.objectiveShader);
+			}
+
 			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.buddyShader); //if( !(cgs.ccFilter & CC_FILTER_BUDDIES) ) {
 		}
 	}
