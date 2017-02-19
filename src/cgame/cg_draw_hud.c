@@ -1801,6 +1801,12 @@ static void CG_DrawNewCompass(rectDef_t location)
 				continue;
 			}
 
+			// also draw disguise icon or objective icon (if they are carrying one)
+			if (cgs.clientinfo[i].powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG) | (1 << PW_OPS_DISGUISED)))
+			{
+				continue;
+			}
+
 			if (cgs.clientinfo[i].health <= 0)
 			{
 				// reset
@@ -1871,16 +1877,17 @@ static void CG_DrawNewCompass(rectDef_t location)
 			}
 
 			// draw disguise or objective (if they are carrying one) or default buddy icon
-			if (cgs.clientinfo[ent->clientNum].powerups & (1 << PW_OPS_DISGUISED))
-			{
-				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.friendShader);
-			}
-			else if (cgs.clientinfo[ent->clientNum].powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
+			if (cgs.clientinfo[ent->clientNum].powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG)))
 			{
 				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.objectiveShader);
 			}
 			else
 			{
+				// draw overlapping no-shoot icon if disguised
+				if (cgs.clientinfo[ent->clientNum].powerups & (1 << PW_OPS_DISGUISED))
+				{
+					CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.friendShader);
+				}
 				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, ent->pos.trBase, cgs.media.buddyShader); //if( !(cgs.ccFilter & CC_FILTER_BUDDIES) ) {
 			}
 		}
