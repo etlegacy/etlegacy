@@ -575,11 +575,6 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			return;
 		}
 
-		if (mEnt->type == ME_PLAYER_OBJECTIVE && !(cent->currentState.powerups & ((1 << PW_REDFLAG) | (1 << PW_BLUEFLAG))))
-		{
-			return;
-		}
-
 		classInfo = CG_PlayerClassForClientinfo(ci, cent);
 
 		// For these, if available, ignore the coordinate data and grab the most up to date pvs data
