@@ -1604,7 +1604,8 @@ void AddMaxLivesBan(const char *str);
 void ClearMaxLivesBans(void);
 void AddIPBan(const char *str);
 
-void Svcmd_ShuffleTeams_f(qboolean restart);
+void Svcmd_ShuffleTeamsXP_f(qboolean restart);
+void Svcmd_ShuffleTeamsSR_f(qboolean restart);
 
 // g_weapon.c
 void FireWeapon(gentity_t *ent);
@@ -1947,6 +1948,10 @@ extern vmCvar_t vote_allow_nextmap;
 extern vmCvar_t vote_allow_referee;
 extern vmCvar_t vote_allow_shuffleteamsxp;
 extern vmCvar_t vote_allow_shuffleteamsxp_norestart;
+#ifdef FEATURE_RATING
+extern vmCvar_t vote_allow_shuffleteamssr;
+extern vmCvar_t vote_allow_shuffleteamssr_norestart;
+#endif
 extern vmCvar_t vote_allow_swapteams;
 extern vmCvar_t vote_allow_friendlyfire;
 extern vmCvar_t vote_allow_timelimit;
@@ -2474,7 +2479,8 @@ int G_blockoutTeam(gentity_t *ent, int nTeam);
 qboolean G_checkReady(void);
 qboolean G_readyMatchState(void);
 void G_removeSpecInvite(int team);
-void G_shuffleTeams(void);
+void G_shuffleTeamsXP(void);
+void G_shuffleTeamsSR(void);
 void G_swapTeamLocks(void);
 void G_swapTeams(void);
 qboolean G_teamJoinCheck(team_t team_num, gentity_t *ent);
@@ -2499,8 +2505,12 @@ int G_MatchReset_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 int G_Mutespecs_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_Nextmap_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_Referee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
-int G_ShuffleTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
-int G_ShuffleTeams_NoRestart_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+int G_ShuffleTeamsXP_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+int G_ShuffleTeamsXP_NoRestart_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+#ifdef FEATURE_RATING
+int G_ShuffleTeamsSR_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+int G_ShuffleTeamsSR_NoRestart_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
+#endif
 int G_StartMatch_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_SwapTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);
 int G_FriendlyFire_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd);

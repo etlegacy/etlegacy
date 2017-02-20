@@ -81,33 +81,37 @@ typedef struct
  */
 static const vote_reference_t aVoteInfo[] =
 {
-	{ 0x1ff, "gametype",                 G_Gametype_v,               "Set Gametype to",                  " <value>^7\n  Changes the current gametype"                          },
-	{ 0x1ff, "kick",                     G_Kick_v,                   "KICK",                             " <player_id>^7\n  Attempts to kick player from server"               },
-	{ 0x1ff, "mute",                     G_Mute_v,                   "MUTE",                             " <player_id>^7\n  Removes the chat capabilities of a player"         },
-	{ 0x1ff, "unmute",                   G_UnMute_v,                 "UN-MUTE",                          " <player_id>^7\n  Restores the chat capabilities of a player"        },
-	{ 0x1ff, "map",                      G_Map_v,                    "Change map to",                    " <mapname>^7\n  Votes for a new map to be loaded"                    },
-	{ 0x1ff, "campaign",                 G_Campaign_v,               "Change campaign to",               " <campaign>^7\n  Votes for a new map to be loaded"                   },
-	{ 0x1ff, "maprestart",               G_MapRestart_v,             "Map Restart",                      "^7\n  Restarts the current map in progress"                          },
-	{ 0x1ff, "matchreset",               G_MatchReset_v,             "Match Reset",                      "^7\n  Resets the entire match"                                       },
-	{ 0x1ff, "mutespecs",                G_Mutespecs_v,              "Mute Spectators",                  " <0|1>^7\n  Mutes in-game spectator chat"                            },
-	{ 0x1ff, "nextmap",                  G_Nextmap_v,                "Load Next Map",                    "^7\n  Loads the next map or campaign in the map queue"               },
-	{ 0x1ff, "referee",                  G_Referee_v,                "Referee",                          " <player_id>^7\n  Elects a player to have admin abilities"           },
-	{ 0x1ff, "shuffleteamsxp",           G_ShuffleTeams_v,           "Shuffle Teams by XP",              " ^7\n  Randomly place players on each team, based on XP"             },
-	{ 0x1ff, "shuffleteamsxp_norestart", G_ShuffleTeams_NoRestart_v, "Shuffle Teams by XP (No Restart)", " ^7\n  Randomly place players on each team, based on XP"             },
-	{ 0x1ff, "startmatch",               G_StartMatch_v,             "Start Match",                      " ^7\n  Sets all players to \"ready\" status to start the match"      },
-	{ 0x1ff, "swapteams",                G_SwapTeams_v,              "Swap Teams",                       " ^7\n  Switch the players on each team"                              },
-	{ 0x1ff, "friendlyfire",             G_FriendlyFire_v,           "Friendly Fire",                    " <0|1>^7\n  Toggles ability to hurt teammates"                       },
-	{ 0x1ff, "timelimit",                G_Timelimit_v,              "Timelimit",                        " <value>^7\n  Changes the current timelimit"                         },
-	{ 0x1ff, "unreferee",                G_Unreferee_v,              "UNReferee",                        " <player_id>^7\n  Elects a player to have admin abilities removed"   },
-	{ 0x1ff, "warmupdamage",             G_Warmupfire_v,             "Warmup Damage",                    " <0|1|2>^7\n  Specifies if players can inflict damage during warmup" },
-	{ 0x1ff, "antilag",                  G_AntiLag_v,                "Anti-Lag",                         " <0|1>^7\n  Toggles Anit-Lag on the server"                          },
-	{ 0x1ff, "balancedteams",            G_BalancedTeams_v,          "Balanced Teams",                   " <0|1>^7\n  Toggles team balance forcing"                            },
-	{ 0x1ff, "surrender",                G_Surrender_v,              "Surrender",                        "  ^7\n  Ends the match."                                             },
-	{ 0x1ff, "restartcampaign",          G_RestartCampaign_v,        "Restart Campaign",                 " ^7\n  Restarts the current Camapaign"                               },
-	{ 0x1ff, "nextcampaign",             G_NextCampaign_v,           "Next Campaign",                    " ^7\n  Ends the current campaign and starts the next one."           },
-	{ 0x1ff, "poll",                     G_Poll_v,                   "[poll]",                           " <text>^7\n  Poll majority opinion."                                 },
-	{ 0x1ff, "config",                   G_Config_v,                 "Game config",                      " <configname>^7\n  Loads up the server game config"                  },
-	{ 0,     0,                          NULL,                       0,                                  0                                                                     },
+	{ 0x1ff, "gametype",                 G_Gametype_v,                 "Set Gametype to",                  " <value>^7\n  Changes the current gametype"                          },
+	{ 0x1ff, "kick",                     G_Kick_v,                     "KICK",                             " <player_id>^7\n  Attempts to kick player from server"               },
+	{ 0x1ff, "mute",                     G_Mute_v,                     "MUTE",                             " <player_id>^7\n  Removes the chat capabilities of a player"         },
+	{ 0x1ff, "unmute",                   G_UnMute_v,                   "UN-MUTE",                          " <player_id>^7\n  Restores the chat capabilities of a player"        },
+	{ 0x1ff, "map",                      G_Map_v,                      "Change map to",                    " <mapname>^7\n  Votes for a new map to be loaded"                    },
+	{ 0x1ff, "campaign",                 G_Campaign_v,                 "Change campaign to",               " <campaign>^7\n  Votes for a new map to be loaded"                   },
+	{ 0x1ff, "maprestart",               G_MapRestart_v,               "Map Restart",                      "^7\n  Restarts the current map in progress"                          },
+	{ 0x1ff, "matchreset",               G_MatchReset_v,               "Match Reset",                      "^7\n  Resets the entire match"                                       },
+	{ 0x1ff, "mutespecs",                G_Mutespecs_v,                "Mute Spectators",                  " <0|1>^7\n  Mutes in-game spectator chat"                            },
+	{ 0x1ff, "nextmap",                  G_Nextmap_v,                  "Load Next Map",                    "^7\n  Loads the next map or campaign in the map queue"               },
+	{ 0x1ff, "referee",                  G_Referee_v,                  "Referee",                          " <player_id>^7\n  Elects a player to have admin abilities"           },
+	{ 0x1ff, "shuffleteamsxp",           G_ShuffleTeamsXP_v,           "Shuffle Teams by XP",              " ^7\n  Randomly place players on each team, based on XP"             },
+	{ 0x1ff, "shuffleteamsxp_norestart", G_ShuffleTeamsXP_NoRestart_v, "Shuffle Teams by XP (No Restart)", " ^7\n  Randomly place players on each team, based on XP"             },
+#ifdef FEATURE_RATING
+	{ 0x1ff, "shuffleteamssr",           G_ShuffleTeamsSR_v,           "Shuffle Teams by SR",              " ^7\n  Randomly place players on each team, based on Skill Rating"   },
+	{ 0x1ff, "shuffleteamssr_norestart", G_ShuffleTeamsSR_NoRestart_v, "Shuffle Teams by SR (No Restart)", " ^7\n  Randomly place players on each team, based on Skill Rating"   },
+#endif
+	{ 0x1ff, "startmatch",               G_StartMatch_v,               "Start Match",                      " ^7\n  Sets all players to \"ready\" status to start the match"      },
+	{ 0x1ff, "swapteams",                G_SwapTeams_v,                "Swap Teams",                       " ^7\n  Switch the players on each team"                              },
+	{ 0x1ff, "friendlyfire",             G_FriendlyFire_v,             "Friendly Fire",                    " <0|1>^7\n  Toggles ability to hurt teammates"                       },
+	{ 0x1ff, "timelimit",                G_Timelimit_v,                "Timelimit",                        " <value>^7\n  Changes the current timelimit"                         },
+	{ 0x1ff, "unreferee",                G_Unreferee_v,                "UNReferee",                        " <player_id>^7\n  Elects a player to have admin abilities removed"   },
+	{ 0x1ff, "warmupdamage",             G_Warmupfire_v,               "Warmup Damage",                    " <0|1|2>^7\n  Specifies if players can inflict damage during warmup" },
+	{ 0x1ff, "antilag",                  G_AntiLag_v,                  "Anti-Lag",                         " <0|1>^7\n  Toggles Anit-Lag on the server"                          },
+	{ 0x1ff, "balancedteams",            G_BalancedTeams_v,            "Balanced Teams",                   " <0|1>^7\n  Toggles team balance forcing"                            },
+	{ 0x1ff, "surrender",                G_Surrender_v,                "Surrender",                        "  ^7\n  Ends the match."                                             },
+	{ 0x1ff, "restartcampaign",          G_RestartCampaign_v,          "Restart Campaign",                 " ^7\n  Restarts the current Camapaign"                               },
+	{ 0x1ff, "nextcampaign",             G_NextCampaign_v,             "Next Campaign",                    " ^7\n  Ends the current campaign and starts the next one."           },
+	{ 0x1ff, "poll",                     G_Poll_v,                     "[poll]",                           " <text>^7\n  Poll majority opinion."                                 },
+	{ 0x1ff, "config",                   G_Config_v,                   "Game config",                      " <configname>^7\n  Loads up the server game config"                  },
+	{ 0,     0,                          NULL,                         0,                                  0                                                                     },
 };
 
 /**
@@ -1055,7 +1059,7 @@ int G_Referee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
 }
 
 /**
- * @brief Shuffle teams
+ * @brief Shuffle teams by XP
  * @param[in] ent
  * @param[in] dwVoteIndex
  * @param[in] arg
@@ -1063,7 +1067,7 @@ int G_Referee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2,
  * @param[in] fRefereeCmd
  * @return
  */
-int G_ShuffleTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
+int G_ShuffleTeamsXP_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
 	if (arg)
@@ -1082,12 +1086,49 @@ int G_ShuffleTeams_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *
 	}
 	else
 	{
-		// Swap the teams!
-		Svcmd_ShuffleTeams_f(qtrue);
+		// Shuffle the teams!
+		Svcmd_ShuffleTeamsXP_f(qtrue);
 	}
 
 	return G_OK;
 }
+
+#ifdef FEATURE_RATING
+/**
+ * @brief Shuffle teams by SR
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param arg2 - unused
+ * @param[in] fRefereeCmd
+ * @return
+ */
+int G_ShuffleTeamsSR_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
+{
+	// Vote request (vote is being initiated)
+	if (arg)
+	{
+		if (trap_Argc() > 2)
+		{
+			G_refPrintf(ent, "Usage: ^3%s %s%s\n", ((fRefereeCmd) ? "\\ref" : "\\callvote"), arg, aVoteInfo[dwVoteIndex].pszVoteHelp);
+			return G_INVALID;
+		}
+		else if (!vote_allow_shuffleteamssr.integer && ent && !ent->client->sess.referee)
+		{
+			G_voteDisableMessage(ent, arg);
+			return G_INVALID;
+		}
+		// Vote action (vote has passed)
+	}
+	else
+	{
+		// Shuffle the teams!
+		Svcmd_ShuffleTeamsSR_f(qtrue);
+	}
+
+	return G_OK;
+}
+#endif
 
 /**
  * @brief Start Match
@@ -1684,7 +1725,7 @@ void G_IntermissionVoteTally(gentity_t *ent)
 // MAPVOTE END
 
 /**
- * @brief Shuffle teams
+ * @brief Shuffle teams by XP without restart
  * @param[in] ent
  * @param[in] dwVoteIndex
  * @param[in] arg
@@ -1692,7 +1733,7 @@ void G_IntermissionVoteTally(gentity_t *ent)
  * @param[in] fRefereeCmd
  * @return
  */
-int G_ShuffleTeams_NoRestart_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
+int G_ShuffleTeamsXP_NoRestart_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
 {
 	// Vote request (vote is being initiated)
 	if (arg)
@@ -1712,12 +1753,50 @@ int G_ShuffleTeams_NoRestart_v(gentity_t *ent, unsigned int dwVoteIndex, char *a
 	}
 	else
 	{
-		// Swap the teams!
-		Svcmd_ShuffleTeams_f(qfalse);
+		// Shuffle the teams!
+		Svcmd_ShuffleTeamsXP_f(qfalse);
 	}
 
 	return G_OK;
 }
+
+#ifdef FEATURE_RATING
+/**
+ * @brief Shuffle teams by SR without restart
+ * @param[in] ent
+ * @param[in] dwVoteIndex
+ * @param[in] arg
+ * @param arg2 - unused
+ * @param[in] fRefereeCmd
+ * @return
+ */
+int G_ShuffleTeamsSR_NoRestart_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd)
+{
+	// Vote request (vote is being initiated)
+	if (arg)
+	{
+		if (trap_Argc() > 2)
+		{
+			// CHRUKER: b047 - Removed unneeded linebreak
+			G_refPrintf(ent, "Usage: ^3%s %s%s\n", ((fRefereeCmd) ? "\\ref" : "\\callvote"), arg, aVoteInfo[dwVoteIndex].pszVoteHelp);
+			return G_INVALID;
+		}
+		else if (!vote_allow_shuffleteamssr_norestart.integer && ent && !ent->client->sess.referee)
+		{
+			G_voteDisableMessage(ent, arg);
+			return G_INVALID;
+		}
+		// Vote action (vote has passed)
+	}
+	else
+	{
+		// Shuffle the teams!
+		Svcmd_ShuffleTeamsSR_f(qfalse);
+	}
+
+	return G_OK;
+}
+#endif
 
 /**
  * @brief G_Surrender_v

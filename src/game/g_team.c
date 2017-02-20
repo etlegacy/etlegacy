@@ -1565,9 +1565,32 @@ int QDECL G_SortPlayersByXP(const void *a, const void *b)
 }
 
 /**
+ * @brief G_SortPlayersBySR
+ * @param[in] a
+ * @param[in] b
+ * @return
+ */
+int QDECL G_SortPlayersBySR(const void *a, const void *b)
+{
+	gclient_t *cla = &level.clients[*((int *)a)];
+	gclient_t *clb = &level.clients[*((int *)b)];
+
+	if ((cla->sess.mu - 3 * cla->sess.sigma)  > (clb->sess.mu - 3 * clb->sess.sigma))
+	{
+		return -1;
+	}
+	if ((clb->sess.mu - 3 * clb->sess.sigma)  > (cla->sess.mu - 3 * cla->sess.sigma))
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+/**
  * @brief Shuffle active players onto teams
  */
-void G_shuffleTeams(void)
+void G_shuffleTeamsXP(void)
 {
 	int       i;
 	team_t    cTeam; //, cMedian = level.numNonSpectatorClients / 2;
@@ -1617,7 +1640,64 @@ void G_shuffleTeams(void)
 		ClientBegin(sortClients[i]);
 	}
 
-	AP("cp \"^1Teams have been shuffled!\n\"");
+	AP("cp \"^1Teams have been shuffled by XP!\n\"");
+}
+
+
+/**
+ * @brief Shuffle active players onto teams by skill rating
+ */
+void G_shuffleTeamsSR(void)
+{
+	int       i;
+	team_t    cTeam; //, cMedian = level.numNonSpectatorClients / 2;
+	int       cnt = 0;
+	int       sortClients[MAX_CLIENTS];
+	gclient_t *cl;
+
+	G_teamReset(TEAM_AXIS, qtrue);
+	G_teamReset(TEAM_ALLIES, qtrue);
+
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		cl = level.clients + level.sortedClients[i];
+
+		if (cl->sess.sessionTeam != TEAM_AXIS && cl->sess.sessionTeam != TEAM_ALLIES)
+		{
+			continue;
+		}
+
+		sortClients[cnt++] = level.sortedClients[i];
+	}
+
+	qsort(sortClients, cnt, sizeof(int), G_SortPlayersBySR);
+
+	for (i = 0; i < cnt; i++)
+	{
+		cl = level.clients + sortClients[i];
+
+		//	cTeam = (i % 2) + TEAM_AXIS;
+		cTeam = (((i + 1) % 4) - ((i + 1) % 2)) / 2 + TEAM_AXIS;
+
+		if (cl->sess.sessionTeam != cTeam)
+		{
+			G_LeaveTank(g_entities + sortClients[i], qfalse);
+			G_RemoveClientFromFireteams(sortClients[i], qtrue, qfalse);
+			if (g_landminetimeout.integer)
+			{
+				G_ExplodeMines(g_entities + sortClients[i]);
+			}
+			G_FadeItems(g_entities + sortClients[i], MOD_SATCHEL);
+		}
+
+		cl->sess.sessionTeam = cTeam;
+
+		G_UpdateCharacter(cl);
+		ClientUserinfoChanged(sortClients[i]);
+		ClientBegin(sortClients[i]);
+	}
+
+	AP("cp \"^1Teams have been shuffled by Skill Rating!\n\"");
 }
 
 /**

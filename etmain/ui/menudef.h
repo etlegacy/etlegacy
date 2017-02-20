@@ -408,9 +408,9 @@
 #define CV_SVF_MATCHRESET       16
 #define CV_SVF_MUTESPECS        32
 #define CV_SVF_NEXTMAP          64
-//#define CV_SVF_PUB              128 //This is freed for reuse
-#define CV_SVF_REFEREE          256
-#define CV_SVF_SHUFFLETEAMS     512
+#define CV_SVF_REFEREE          128
+#define CV_SVF_SHUFFLETEAMSXP   256
+#define CV_SVF_SHUFFLETEAMSSR   512
 #define CV_SVF_SWAPTEAMS        1024
 #define CV_SVF_FRIENDLYFIRE     2048
 #define CV_SVF_TIMELIMIT        4096
@@ -423,7 +423,8 @@
 #define	CV_SVF_NEXTCAMPAIGN     524288
 #define	CV_SVF_POLL             1048576
 #define	CV_SVF_MAPRESTART       2097152
-#define CV_SVF_SHUFFLETEAMS_NORESTART 4194304
+#define CV_SVF_SHUFFLETEAMSXP_NORESTART 4194304
+#define CV_SVF_SHUFFLETEAMSSR_NORESTART 8388608
 
 // referee level
 #define RL_NONE                 0

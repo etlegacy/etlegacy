@@ -873,14 +873,40 @@ void Svcmd_SwapTeams_f(void)
  * @brief randomly places players on teams
  * @param[in] restart
  */
-void Svcmd_ShuffleTeams_f(qboolean restart)
+void Svcmd_ShuffleTeamsXP_f(qboolean restart)
 {
 	if (restart)
 	{
 		G_resetRoundState();
 	}
 
-	G_shuffleTeams();
+	G_shuffleTeamsXP();
+
+	if ((g_gamestate.integer == GS_INITIALIZE) ||
+	    (g_gamestate.integer == GS_WARMUP) ||
+	    (g_gamestate.integer == GS_RESET))
+	{
+		return;
+	}
+	if (restart)
+	{
+		G_resetModeState();
+		Svcmd_ResetMatch_f(qfalse, qtrue);
+	}
+}
+
+/**
+ * @brief randomly places players on teams
+ * @param[in] restart
+ */
+void Svcmd_ShuffleTeamsSR_f(qboolean restart)
+{
+	if (restart)
+	{
+		G_resetRoundState();
+	}
+
+	G_shuffleTeamsSR();
 
 	if ((g_gamestate.integer == GS_INITIALIZE) ||
 	    (g_gamestate.integer == GS_WARMUP) ||
@@ -2427,12 +2453,22 @@ qboolean ConsoleCommand(void)
 	}
 	else if (Q_stricmp(cmd, "shuffle_teams") == 0)
 	{
-		Svcmd_ShuffleTeams_f(qtrue);
+		Svcmd_ShuffleTeamsXP_f(qtrue);
 		return qtrue;
 	}
 	else if (Q_stricmp(cmd, "shuffle_teams_norestart") == 0)
 	{
-		Svcmd_ShuffleTeams_f(qfalse);
+		Svcmd_ShuffleTeamsXP_f(qfalse);
+		return qtrue;
+	}
+	else if (Q_stricmp(cmd, "shuffle_teams_sr") == 0)
+	{
+		Svcmd_ShuffleTeamsSR_f(qtrue);
+		return qtrue;
+	}
+	else if (Q_stricmp(cmd, "shuffle_teams_sr_norestart") == 0)
+	{
+		Svcmd_ShuffleTeamsSR_f(qfalse);
 		return qtrue;
 	}
 	else if (Q_stricmp(cmd, "makeReferee") == 0)

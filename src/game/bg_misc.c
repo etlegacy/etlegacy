@@ -4329,27 +4329,31 @@ const char *bg_fireteamNames[MAX_FIRETEAMS / 2] =
 
 const voteType_t voteToggles[] =
 {
-	{ "vote_allow_config",                   CV_SVF_CONFIG                 },
-	{ "vote_allow_gametype",                 CV_SVF_GAMETYPE               },
-	{ "vote_allow_kick",                     CV_SVF_KICK                   },
-	{ "vote_allow_map",                      CV_SVF_MAP                    },
-	{ "vote_allow_matchreset",               CV_SVF_MATCHRESET             },
-	{ "vote_allow_mutespecs",                CV_SVF_MUTESPECS              },
-	{ "vote_allow_nextmap",                  CV_SVF_NEXTMAP                },
-	{ "vote_allow_referee",                  CV_SVF_REFEREE                },
-	{ "vote_allow_shuffleteamsxp",           CV_SVF_SHUFFLETEAMS           },
-	{ "vote_allow_shuffleteamsxp_norestart", CV_SVF_SHUFFLETEAMS_NORESTART },
-	{ "vote_allow_swapteams",                CV_SVF_SWAPTEAMS              },
-	{ "vote_allow_friendlyfire",             CV_SVF_FRIENDLYFIRE           },
-	{ "vote_allow_timelimit",                CV_SVF_TIMELIMIT              },
-	{ "vote_allow_warmupdamage",             CV_SVF_WARMUPDAMAGE           },
-	{ "vote_allow_antilag",                  CV_SVF_ANTILAG                },
-	{ "vote_allow_balancedteams",            CV_SVF_BALANCEDTEAMS          },
-	{ "vote_allow_muting",                   CV_SVF_MUTING                 },
-	{ "vote_allow_surrender",                CV_SVF_SURRENDER              },
-	{ "vote_allow_restartcampaign",          CV_SVF_RESTARTCAMPAIGN        },
-	{ "vote_allow_nextcampaign",             CV_SVF_NEXTCAMPAIGN           },
-	{ "vote_allow_poll",                     CV_SVF_POLL                   }
+	{ "vote_allow_config",                   CV_SVF_CONFIG                   },
+	{ "vote_allow_gametype",                 CV_SVF_GAMETYPE                 },
+	{ "vote_allow_kick",                     CV_SVF_KICK                     },
+	{ "vote_allow_map",                      CV_SVF_MAP                      },
+	{ "vote_allow_matchreset",               CV_SVF_MATCHRESET               },
+	{ "vote_allow_mutespecs",                CV_SVF_MUTESPECS                },
+	{ "vote_allow_nextmap",                  CV_SVF_NEXTMAP                  },
+	{ "vote_allow_referee",                  CV_SVF_REFEREE                  },
+	{ "vote_allow_shuffleteamsxp",           CV_SVF_SHUFFLETEAMSXP           },
+	{ "vote_allow_shuffleteamsxp_norestart", CV_SVF_SHUFFLETEAMSXP_NORESTART },
+#ifdef FEATURE_RATING
+	{ "vote_allow_shuffleteamssr",           CV_SVF_SHUFFLETEAMSSR           },
+	{ "vote_allow_shuffleteamssr_norestart", CV_SVF_SHUFFLETEAMSSR_NORESTART },
+#endif
+	{ "vote_allow_swapteams",                CV_SVF_SWAPTEAMS                },
+	{ "vote_allow_friendlyfire",             CV_SVF_FRIENDLYFIRE             },
+	{ "vote_allow_timelimit",                CV_SVF_TIMELIMIT                },
+	{ "vote_allow_warmupdamage",             CV_SVF_WARMUPDAMAGE             },
+	{ "vote_allow_antilag",                  CV_SVF_ANTILAG                  },
+	{ "vote_allow_balancedteams",            CV_SVF_BALANCEDTEAMS            },
+	{ "vote_allow_muting",                   CV_SVF_MUTING                   },
+	{ "vote_allow_surrender",                CV_SVF_SURRENDER                },
+	{ "vote_allow_restartcampaign",          CV_SVF_RESTARTCAMPAIGN          },
+	{ "vote_allow_nextcampaign",             CV_SVF_NEXTCAMPAIGN             },
+	{ "vote_allow_poll",                     CV_SVF_POLL                     }
 };
 
 int numVotesAvailable = sizeof(voteToggles) / sizeof(voteType_t);
