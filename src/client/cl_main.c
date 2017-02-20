@@ -1972,7 +1972,7 @@ void CL_StartVideoRecording(const char *aviname)
 {
 	char filename[MAX_OSPATH];
 
-	if (!aviname || aviname == '\0')
+	if (!aviname)
 	{
 		int i, last;
 		int a, b, c, d;
