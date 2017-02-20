@@ -1192,7 +1192,7 @@ void CL_DemoCompleted(void)
 void CL_DemoRun(void)
 {
 #if NEW_DEMOFUNC
-	int        loopCount = 0;
+	int        loopCount = -1;
 	int        startTime;
 	static int lastTime = -1;
 #endif
@@ -1220,9 +1220,7 @@ void CL_DemoRun(void)
 		return;
 	}
 
-
 #if NEW_DEMOFUNC
-	loopCount = -1;
 	startTime = cl.snap.serverTime;
 #endif  // NEW_DEMOFUNC
 
