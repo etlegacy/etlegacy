@@ -1211,10 +1211,11 @@ static void CG_Missile(centity_t *cent)
 	case WP_GPG40:
 	case WP_M7:
 	case WP_SMOKE_MARKER: // edv renderingWeaponCam fix
-	case WP_SMOKE_BOMB:
-	case WP_DYNAMITE:
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
+	// don't do this for single view games FIXME: check edv
+	//case WP_SMOKE_BOMB:
+	//case WP_DYNAMITE:
+	//case WP_GRENADE_LAUNCHER:
+	//case WP_GRENADE_PINEAPPLE:
 	{
 		vec3_t delta;
 
