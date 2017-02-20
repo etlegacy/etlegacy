@@ -7983,9 +7983,8 @@ static void UI_ParseGameInfo(const char *teamFile)
 {
 	char *token;
 	char *p;
-	char *buff = NULL;
+	char *buff = GetMenuBuffer(teamFile);
 
-	buff = GetMenuBuffer(teamFile);
 	if (!buff)
 	{
 		return;
