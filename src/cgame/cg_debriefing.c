@@ -3909,6 +3909,50 @@ void CG_Debriefing_TeamSkillXP_Draw(panel_button_t *button)
 }
 
 /**
+ * @brief CG_parseMapVoteListInfo
+ */
+void CG_parseMapVoteListInfo()
+{
+	int i;
+
+	cgs.dbNumMaps = (trap_Argc() - 2) / 4;
+
+	if (atoi(CG_Argv(1)))
+	{
+		cgs.dbMapMultiVote = qtrue;
+	}
+
+	for (i = 0; i < cgs.dbNumMaps; i++)
+	{
+		Q_strncpyz(cgs.dbMaps[i], CG_Argv((i * 4) + 2),
+		           sizeof(cgs.dbMaps[0]));
+		cgs.dbMapVotes[i]      = 0;
+		cgs.dbMapID[i]         = atoi(CG_Argv((i * 4) + 3));
+		cgs.dbMapLastPlayed[i] = atoi(CG_Argv((i * 4) + 4));
+		cgs.dbMapTotalVotes[i] = atoi(CG_Argv((i * 4) + 5));
+		if (CG_FindArenaInfo(va("scripts/%s.arena", cgs.dbMaps[i]),
+		                     cgs.dbMaps[i], &cgs.arenaData))
+		{
+			Q_strncpyz(cgs.dbMapDispName[i],
+			           cgs.arenaData.longname,
+			           sizeof(cgs.dbMaps[0]));
+		}
+		else
+		{
+			Q_strncpyz(cgs.dbMapDispName[i],
+			           cgs.dbMaps[i],
+			           sizeof(cgs.dbMaps[0]));
+		}
+	}
+
+	CG_LocateArena();
+
+	cgs.dbMapListReceived = qtrue;
+
+	return;
+}
+
+/**
  * @brief CG_parseMapVoteTally
  */
 void CG_parseMapVoteTally()
