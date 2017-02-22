@@ -89,13 +89,26 @@ int DB_Init()
 		if (db_mode->integer == 1)
 		{
 			// init memory table
-			result = sqlite3_open_v2("file::memory:?cache=shared", &db, (SQLITE_OPEN_READWRITE | SQLITE_OPEN_MEMORY), NULL); // we may use SQLITE_OPEN_SHAREDCACHE see URI
+			result = sqlite3_open_v2("file::memory:?mode=memory&cache=shared", &db, (SQLITE_OPEN_READWRITE | SQLITE_OPEN_MEMORY | SQLITE_OPEN_SHAREDCACHE), NULL);
 
 			if (result != SQLITE_OK)
 			{
 				Com_Printf("... failed to open memory database - error: %s\n", sqlite3_errstr(result));
 				(void) sqlite3_close(db);
 				return 1;
+			}
+
+			result = sqlite3_enable_shared_cache(1);
+
+			if (result != SQLITE_OK)
+			{
+				Com_Printf("... failed to share memory database - error: %s\n", sqlite3_errstr(result));
+				(void) sqlite3_close(db);
+				return 1;
+			}
+			else
+			{
+				Com_Printf("... shared cache enabled\n");
 			}
 
 			// load from disk into memory
