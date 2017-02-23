@@ -74,7 +74,7 @@ void G_loadMatchGame(void)
 	dwRedOffset  = rand() % MAX_REINFSEEDS;
 	Q_strncpyz(strReinfSeeds, va("%d %d", (dwBlueOffset << REINF_BLUEDELT) + (rand() % (1 << REINF_BLUEDELT)),
 	                             (dwRedOffset << REINF_REDDELT)  + (rand() % (1 << REINF_REDDELT))),
-	                             MAX_STRING_CHARS);
+	           MAX_STRING_CHARS);
 
 	for (i = 0; i < MAX_REINFSEEDS; i++)
 	{
@@ -281,9 +281,9 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, meansOfDeath_
 	// Keep track of only active player-to-player interactions in a real game
 	if (
 #ifndef DEBUG_STATS
-	    g_gamestate.integer != GS_PLAYING ||
+		g_gamestate.integer != GS_PLAYING ||
 #endif
-	    mod == MOD_SWITCHTEAM || (targ->client->ps.pm_flags & PMF_LIMBO))
+		mod == MOD_SWITCHTEAM || (targ->client->ps.pm_flags & PMF_LIMBO))
 	{
 		return;
 	}
@@ -713,11 +713,8 @@ void G_parseStats(const char *pszStatsInfo)
  */
 void G_printMatchInfo(gentity_t *ent)
 {
-    int i, j, cnt = 0, eff, time_eff;
-    int tot_timex, tot_timel, tot_timep, tot_kills, tot_deaths, tot_gibs, tot_sk, tot_tk, tot_tg, tot_dg, tot_dr, tot_tdg, tot_tdr, tot_xp;
-#ifdef FEATURE_RATING
-    float tot_rating, tot_delta;
-#endif
+    int       i, j, cnt = 0, eff, time_eff;
+    int       tot_timex, tot_timel, tot_timep, tot_kills, tot_deaths, tot_gibs, tot_sk, tot_tk, tot_tg, tot_dg, tot_dr, tot_tdg, tot_tdr, tot_xp;
     gclient_t *cl;
     char      *ref;
     char      n2[MAX_STRING_CHARS];
@@ -743,10 +740,6 @@ void G_printMatchInfo(gentity_t *ent)
         tot_tdg    = 0;
         tot_tdr    = 0;
         tot_xp     = 0;
-#ifdef FEATURE_RATING
-        tot_rating = 0.f;
-        tot_delta  = 0.f;
-#endif
 
         CP("sc \"\n\"");
 #ifdef FEATURE_RATING
@@ -785,10 +778,6 @@ void G_printMatchInfo(gentity_t *ent)
             tot_tdg    += cl->sess.team_damage_given;
             tot_tdr    += cl->sess.team_damage_received;
             tot_xp     += (g_gametype.integer == GT_WOLF_LMS) ? cl->ps.persistant[PERS_SCORE] : cl->ps.stats[STAT_XP];
-#ifdef FEATURE_RATING
-            tot_rating += cl->sess.mu - 3 * cl->sess.sigma;
-            tot_delta  += (cl->sess.mu - 3 * cl->sess.sigma) - (cl->sess.oldmu - 3 * cl->sess.oldsigma);
-#endif
 
             eff = (cl->sess.deaths + cl->sess.kills == 0) ? 0 : 100 * cl->sess.kills / (cl->sess.deaths + cl->sess.kills);
             if (eff < 0)
@@ -850,11 +839,10 @@ void G_printMatchInfo(gentity_t *ent)
 
 #ifdef FEATURE_RATING
         CP("sc \"^7--------------------------------------------------------------------------------------------------------------\n\"");
-        trap_SendServerCommand(ent - g_entities, va("sc \"%-14s ^5%-15s^1%4d^4%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^4%5d^3%7d^8%8.2f^5%+7.2f\n\"",
 #else
         CP("sc \"^7-----------------------------------------------------------------------------------------------\n\"");
-        trap_SendServerCommand(ent - g_entities, va("sc \"%-14s ^5%-15s^1%4d^4%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
 #endif
+        trap_SendServerCommand(ent - g_entities, va("sc \"%-14s ^5%-15s^1%4d^4%4d^5%4d%4d%4d%4d%4d%4d%4d^5%4d^2%6d^1%6d^6%5d^4%5d^3%7d\n\"",
                                                     aTeams[i],
                                                     "Totals",
                                                     tot_timex / 60000,
@@ -872,11 +860,6 @@ void G_printMatchInfo(gentity_t *ent)
                                                     tot_tdg,
                                                     tot_tdr,
                                                     tot_xp
-#ifdef FEATURE_RATING
-                                                    ,
-                                                    (TeamCount(-1, i) == 0) ? 0 : ((tot_rating < 0.f) ? 0 : tot_rating / TeamCount(-1, i)),
-                                                    (TeamCount(-1, i) == 0) ? 0 : tot_delta / TeamCount(-1, i)
-#endif
                                                     ));
 	}
 
@@ -1020,7 +1003,7 @@ int G_checkServerToggle(vmCvar_t *cv)
         {
             level.server_settings &= ~CV_SVS_WARMUPDMG;
             nFlag                  = (cv->integer > 2) ? 2 : cv->integer;
-                                      nFlag = nFlag << 2;
+            nFlag                  = nFlag << 2;
 		}
         else
         {
