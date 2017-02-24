@@ -61,12 +61,18 @@ static srData_t sr_data;
 #define SRUSERS_SQLWRAP_UPDATE "UPDATE rating_users " \
 	                           "SET mu = '%f', sigma = '%f', updated = CURRENT_TIMESTAMP WHERE guid = '%s';"
 #define SRMATCH_SQLWRAP_TABLE  "SELECT * FROM rating_match;"
+#define SRMAPS_SQLWRAP_SELECT  "SELECT * FROM rating_maps WHERE mapname = '%s';"
+#define SRMAPS_SQLWRAP_INSERT  "INSERT INTO rating_maps " \
+	                           "(win_axis, win_allies, mapname) VALUES ('%i', '%i', '%s');"
+#define SRMAPS_SQLWRAP_UPDATE  "UPDATE rating_maps " \
+	                           "SET win_axis = win_axis + '%i', win_allies = win_allies + '%i' WHERE mapname = '%s';"
 
 // MU      25            - mean
 // SIGMA   MU / 3        - standard deviation
 // BETA    SIGMA / 2     - skill chain length
 // TAU     SIGMA / 100   - dynamics factor
 // EPSILON 0.f           - draw margin (assumed null)
+// LAMBDA  10            - map continuity correction
 
 /**
  * @brief G_SkillRatingDB_Init
@@ -753,13 +759,79 @@ int G_SkillRatingSetUserRatingData(srData_t *sr_data)
  */
 float G_SkillRatingGetMapRating(char *mapname)
 {
+	float        mapProb;
+	int          win_axis, win_allies;
+	int          result;
+	char         *err_msg = NULL;
+	char         *sql;
+	sqlite3_stmt *sqlstmt;
+
 	if (!level.database.initialized)
 	{
 		G_Printf("G_SkillRatingGetMapRating: access to non-initialized database\n");
 		return 0.5f;
 	}
 
-	return 0.5f;
+	sql = va(SRMAPS_SQLWRAP_SELECT, mapname);
+
+	result = sqlite3_prepare(level.database.db, sql, strlen(sql), &sqlstmt, NULL);
+
+	if (result != SQLITE_OK)
+	{
+		G_Printf("G_SkillRatingGetMapRating: sqlite3_prepare failed: %s\n", err_msg);
+		sqlite3_free(err_msg);
+		return 0.5f;
+	}
+
+	result = sqlite3_step(sqlstmt);
+
+	if (result == SQLITE_ROW)
+	{
+		// assign map data
+		win_axis   = sqlite3_column_int(sqlstmt, 1);
+		win_allies = sqlite3_column_int(sqlstmt, 2);
+
+		// map bias continuity correction
+		if (win_axis + win_allies < 2 * LAMBDA)
+		{
+			// use integer division to decay one value for every 2 matches played
+			int win_corrected_axis   = win_axis + LAMBDA - (win_axis + win_allies) / 2;
+			int win_corrected_allies = win_allies + LAMBDA - (win_axis + win_allies) / 2;
+
+			win_axis   = win_corrected_axis;
+			win_allies = win_corrected_allies;
+		}
+
+		// calculate map bias
+		mapProb = win_axis / (float)(win_axis + win_allies);
+	}
+	else
+	{
+		// no entry found or other failure
+		if (result == SQLITE_DONE)
+		{
+			// assign default value
+			mapProb = 0.5f;
+		}
+		else
+		{
+			sqlite3_finalize(sqlstmt);
+
+			G_Printf("G_SkillRatingGetMapRating: sqlite3_step failed: %s\n", err_msg);
+			sqlite3_free(err_msg);
+			return 1;
+		}
+	}
+
+	result = sqlite3_finalize(sqlstmt);
+
+	if (result != SQLITE_OK)
+	{
+		G_Printf("G_SkillRatingGetMapRating: sqlite3_finalize failed\n");
+		return 0.5f;
+	}
+
+	return mapProb;
 }
 
 /**
@@ -769,9 +841,76 @@ float G_SkillRatingGetMapRating(char *mapname)
  */
 void G_SkillRatingSetMapRating(char *mapname, int winner)
 {
+	int          result;
+	char         *err_msg = NULL;
+	char         *sql;
+	sqlite3_stmt *sqlstmt;
+
 	if (!level.database.initialized)
 	{
 		G_Printf("G_SkillRatingSetMapRating: access to non-initialized database\n");
+		return;
+	}
+
+	sql = va(SRMAPS_SQLWRAP_SELECT, mapname);
+
+	result = sqlite3_prepare(level.database.db, sql, strlen(sql), &sqlstmt, NULL);
+
+	if (result != SQLITE_OK)
+	{
+		G_Printf("G_SkillRatingSetMapRating: sqlite3_prepare failed: %s\n", err_msg);
+		sqlite3_free(err_msg);
+		return;
+	}
+
+	result = sqlite3_step(sqlstmt);
+
+	if (result == SQLITE_DONE)
+	{
+		if (winner == TEAM_AXIS)
+		{
+			sql = va(SRMAPS_SQLWRAP_INSERT, 1, 0, mapname);
+		}
+		else // winner == TEAM_ALLIES
+		{
+			sql = va(SRMAPS_SQLWRAP_INSERT, 0, 1, mapname);
+		}
+
+		result = sqlite3_exec(level.database.db, sql, NULL, NULL, &err_msg);
+
+		if (result != SQLITE_OK)
+		{
+			G_Printf("G_SkillRatingSetMapRating: sqlite3_exec:INSERT failed: %s\n", err_msg);
+			sqlite3_free(err_msg);
+			return;
+		}
+	}
+	else
+	{
+		if (winner == TEAM_AXIS)
+		{
+			sql = va(SRMAPS_SQLWRAP_UPDATE, 1, 0, mapname);
+		}
+		else // winner == TEAM_ALLIES
+		{
+			sql = va(SRMAPS_SQLWRAP_UPDATE, 0, 1, mapname);
+		}
+
+		result = sqlite3_exec(level.database.db, sql, NULL, NULL, &err_msg);
+
+		if (result != SQLITE_OK)
+		{
+			G_Printf("G_SkillRatingSetMapRating: sqlite3_exec:UPDATE failed: %s\n", err_msg);
+			sqlite3_free(err_msg);
+			return;
+		}
+	}
+
+	result = sqlite3_finalize(sqlstmt);
+
+	if (result != SQLITE_OK)
+	{
+		G_Printf("G_SkillRatingSetMapRating: sqlite3_finalize failed\n");
 		return;
 	}
 
@@ -810,8 +949,17 @@ void G_CalculateSkillRatings(void)
 	G_LogPrintf("SKILL_RATING: Map: %s, Winner: %d, Time: %d, Timelimit: %d\n",
 	            level.rawmapname, winner, level.intermissionQueued - level.startTime - level.timeDelta, g_timelimit.integer * 60000);
 
-	// set updated map rating
-	G_SkillRatingSetMapRating(level.rawmapname, winner);
+	// update map rating
+	if (g_skillRating.integer > 1)
+	{
+		G_SkillRatingSetMapRating(level.rawmapname, winner);
+		level.mapProb = G_SkillRatingGetMapRating(level.rawmapname);
+
+		// update map bias on intermission scoreboard
+		trap_GetConfigstring(CS_LEGACYINFO, cs, sizeof(cs));
+		Info_SetValueForKey(cs, "M", va("%f", level.mapProb));
+		trap_SetConfigstring(CS_LEGACYINFO, cs);
+	}
 
 	G_UpdateSkillRating(winner);
 }
@@ -871,11 +1019,6 @@ float W(float t, float epsilon)
  */
 float G_MapWinProb(int team)
 {
-	char cs[MAX_STRING_CHARS];
-
-	trap_GetConfigstring(CS_LEGACYINFO, cs, sizeof(cs));
-	level.mapProb = atof(Info_ValueForKey(cs, "M"));
-
 	if (!level.mapProb)
 	{
 		level.mapProb = 0.5f;

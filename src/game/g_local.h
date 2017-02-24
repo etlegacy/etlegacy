@@ -2382,6 +2382,7 @@ unsigned int G_weapStatIndex_MOD(unsigned int iWeaponMOD);
 #define BETA    (SIGMA / 2)     ///< skill chain length
 #define TAU     (SIGMA / 100)   ///< dynamics factor
 #define EPSILON 0.f             ///< draw margin (assumed null)
+#define LAMBDA  10              ///< map continuity correction (n = 2 * LAMBDA, n >= 20)
 
 void G_CalculateSkillRatings(void);
 float G_CalculateWinProbability(int team);
@@ -2405,6 +2406,8 @@ int G_SkillRatingSetMatchRating(char *guid, srData_t *sr_data);
 void G_SkillRatingGetUserRating(gclient_t *cl, qboolean firstTime);
 void G_SkillRatingSetUserRating(gclient_t *cl);
 int G_SkillRatingSetUserRatingData(srData_t *sr_data);
+float G_SkillRatingGetMapRating(char *mapname);
+void G_SkillRatingSetMapRating(char *mapname, int winner);
 #endif
 
 // g_stats.c

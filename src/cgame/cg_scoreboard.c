@@ -123,6 +123,16 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		s   = CG_ConfigString(CS_MULTI_MAPWINNER);
 		buf = Info_ValueForKey(s, "w");
 
+#ifdef FEATURE_RATING
+		// update intermission scoreboard
+		if (cgs.skillRating > 1)
+		{
+			const char *info = CG_ConfigString(CS_LEGACYINFO);
+
+			cgs.mapProb = (float)atof(Info_ValueForKey(info, "M"));
+		}
+#endif
+
 		if (atoi(buf) == -1)
 		{
 			// "ITS A TIE!";

@@ -1947,7 +1947,7 @@ void G_UpdateCvars(void)
 
 					if (g_skillRating.integer > 1)
 					{
-						Info_SetValueForKey(cs, "M", (va("%f", level.mapProb)));
+						Info_SetValueForKey(cs, "M", va("%f", level.mapProb));
 					}
 #endif
 
