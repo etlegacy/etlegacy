@@ -264,7 +264,7 @@ void G_UpdateSkillRating(int winner)
 		rankFactor  = (playerTeam == winner) ? 1 : -1;
 
 		// rating update
-		cl->sess.mu    = cl->sess.mu + rankFactor * muFactor * v;
+		cl->sess.mu    = cl->sess.mu + rankFactor * muFactor * v * abs(cl->sess.time_axis - cl->sess.time_allies) / (float)totalTime;
 		cl->sess.sigma = sqrt((pow(cl->sess.sigma, 2) + pow(TAU, 2)) * (1 - sigmaFactor * w));
 	}
 }
