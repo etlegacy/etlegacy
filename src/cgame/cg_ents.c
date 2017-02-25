@@ -1205,13 +1205,14 @@ static void CG_Missile(centity_t *cent)
 	{
 	case WP_MORTAR_SET:
 	case WP_MORTAR2_SET:
-	case WP_PANZERFAUST:
-	case WP_BAZOOKA:
-	case WP_MAPMORTAR: // why we do this for map mortar?
-	case WP_GPG40:
-	case WP_M7:
-	case WP_SMOKE_MARKER: // edv renderingWeaponCam fix
-	// don't do this for single view games FIXME: check edv
+	case WP_MAPMORTAR:
+	// reverted to vanilla behaviour
+	// FIXME: check FEATURE_EDV weapon cam (see default case of switch)
+	//case WP_PANZERFAUST:
+	//case WP_BAZOOKA:
+	//case WP_GPG40:
+	//case WP_M7:
+	//case WP_SMOKE_MARKER:
 	//case WP_SMOKE_BOMB:
 	//case WP_DYNAMITE:
 	//case WP_GRENADE_LAUNCHER:
@@ -1260,6 +1261,7 @@ static void CG_Missile(centity_t *cent)
 	}
 	break;
 	default:
+		// FIXME: anything to do/save for edv?
 		if (VectorNormalize2(s1->pos.trDelta, ent.axis[0]) == 0.f)
 		{
 			ent.axis[0][2] = 1;
