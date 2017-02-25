@@ -3623,7 +3623,7 @@ void G_LogExit(const char *string)
 	}
 #endif
 
-	G_LogPrintf("red:%i  blue:%i\n", level.teamScores[TEAM_AXIS], level.teamScores[TEAM_ALLIES]);
+	G_LogPrintf("axis:%i  allies:%i\n", level.teamScores[TEAM_AXIS], level.teamScores[TEAM_ALLIES]);
 
 	// Send gameCompleteStatus message to master servers
 	trap_SendConsoleCommand(EXEC_APPEND, "gameCompleteStatus\n");
