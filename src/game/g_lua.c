@@ -1030,10 +1030,10 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(sess.time_allies,                  FIELD_INT,                 0),
 	_et_gclient_addfield(sess.time_played,                  FIELD_INT,                 0),
 #ifdef FEATURE_RATING
-	_et_gclient_addfield(sess.mu,                           FIELD_FLOAT,               0),
-	_et_gclient_addfield(sess.sigma,                        FIELD_FLOAT,               0),
-	_et_gclient_addfield(sess.oldmu,                        FIELD_FLOAT,               0),
-	_et_gclient_addfield(sess.oldsigma,                     FIELD_FLOAT,               0),
+	_et_gclient_addfield(sess.mu,                           FIELD_FLOAT,               FIELD_FLAG_READONLY),
+	_et_gclient_addfield(sess.sigma,                        FIELD_FLOAT,               FIELD_FLAG_READONLY),
+	_et_gclient_addfield(sess.oldmu,                        FIELD_FLOAT,               FIELD_FLAG_READONLY),
+	_et_gclient_addfield(sess.oldsigma,                     FIELD_FLOAT,               FIELD_FLAG_READONLY),
 #endif
 	_et_gclient_addfield(sess.uci,                          FIELD_INT,                 0),
 
