@@ -60,7 +60,7 @@ int DB_Init()
 
 	isDBActive = qfalse;
 
-	db_mode = Cvar_Get("db_mode", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	db_mode = Cvar_Get("db_mode", "2", CVAR_ARCHIVE | CVAR_LATCH);
 	db_uri  = Cvar_Get("db_uri", "etl.db", CVAR_ARCHIVE | CVAR_LATCH); // filename in path (not real DB URL for now)
 
 	if (db_mode->integer < 1 || db_mode->integer > 2)
