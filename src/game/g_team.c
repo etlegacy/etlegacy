@@ -1552,11 +1552,11 @@ int QDECL G_SortPlayersByXP(const void *a, const void *b)
 	gclient_t *cla = &level.clients[*((int *)a)];
 	gclient_t *clb = &level.clients[*((int *)b)];
 
-	if (cla->ps.persistant[PERS_SCORE] > clb->ps.persistant[PERS_SCORE])
+	if (cla->ps.stats[STAT_XP] > clb->ps.stats[STAT_XP])
 	{
 		return -1;
 	}
-	if (clb->ps.persistant[PERS_SCORE] > cla->ps.persistant[PERS_SCORE])
+	if (clb->ps.stats[STAT_XP] > cla->ps.stats[STAT_XP])
 	{
 		return 1;
 	}
