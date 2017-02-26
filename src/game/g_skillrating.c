@@ -146,11 +146,45 @@ int G_SkillRatingDB_Init()
 	}
 	else // db_mode == 2
 	{
+		char         *err_msg = NULL;
+		sqlite3_stmt *sqlstmt;
+
 		result = sqlite3_open_v2(level.database.path, &level.database.db, (SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE), NULL);
 
 		if (result != SQLITE_OK)
 		{
 			G_Printf("G_SkillRatingDB_Init: sqlite3_open_v2 failed: %s\n", sqlite3_errstr(result));
+			return 1;
+		}
+
+		// set pragma sync off
+		result = sqlite3_prepare(level.database.db, "PRAGMA synchronous = OFF", -1, &sqlstmt, NULL);
+
+		if (result != SQLITE_OK)
+		{
+			G_Printf("G_SkillRatingDB_Init: sqlite3_prepare failed: %s\n", sqlite3_errstr(result));
+			return 1;
+		}
+
+		result = sqlite3_step(sqlstmt);
+
+		if (result == SQLITE_DONE)
+		{
+			result = sqlite3_exec(level.database.db, "PRAGMA synchronous = OFF", NULL, NULL, &err_msg);
+
+			if (result != SQLITE_OK)
+			{
+				G_Printf("G_SkillRatingDB_Init: sqlite3_exec:PRAGMA failed: %s\n", err_msg);
+				sqlite3_free(err_msg);
+				return 1;
+			}
+		}
+
+		result = sqlite3_finalize(sqlstmt);
+
+		if (result != SQLITE_OK)
+		{
+			G_Printf("G_SkillRatingDB_Init: sqlite3_finalize failed\n");
 			return 1;
 		}
 	}
