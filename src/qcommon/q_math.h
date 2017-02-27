@@ -116,7 +116,7 @@ extern vec4_t clrBrownLineFull;
 #define FRAMETIME           100                 // msec
 
 #define Q_COLOR_ESCAPE  '^'
-#define Q_IsColorString(p) ((p) && *(p) == Q_COLOR_ESCAPE && *((p) + 1) && isgraph(*((p) + 1)) && *((p) + 1) != Q_COLOR_ESCAPE)
+#define Q_IsColorString(p) (*p == Q_COLOR_ESCAPE && *(p + 1) && isgraph(*(p + 1)) && *(p + 1) != Q_COLOR_ESCAPE)
 
 #define COLOR_BLACK     '0'
 #define COLOR_RED       '1'
