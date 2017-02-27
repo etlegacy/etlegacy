@@ -1026,9 +1026,9 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(sess.damage_received,              FIELD_INT,                 0),
 	_et_gclient_addfield(sess.team_damage_given,            FIELD_INT,                 0),
 	_et_gclient_addfield(sess.team_damage_received,         FIELD_INT,                 0),
-	_et_gclient_addfield(sess.time_axis,                    FIELD_INT,                 0),
-	_et_gclient_addfield(sess.time_allies,                  FIELD_INT,                 0),
-	_et_gclient_addfield(sess.time_played,                  FIELD_INT,                 0),
+	_et_gclient_addfield(sess.time_axis,                    FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(sess.time_allies,                  FIELD_INT,                 FIELD_FLAG_READONLY),
+	_et_gclient_addfield(sess.time_played,                  FIELD_INT,                 FIELD_FLAG_READONLY),
 #ifdef FEATURE_RATING
 	_et_gclient_addfield(sess.mu,                           FIELD_FLOAT,               FIELD_FLAG_READONLY),
 	_et_gclient_addfield(sess.sigma,                        FIELD_FLOAT,               FIELD_FLAG_READONLY),
