@@ -2486,7 +2486,7 @@ void R_LoadEntities(lump_t *l)
 	w->entityParsePoint = w->entityString;
 
 	token = COM_ParseExt(&p, qtrue);
-	if (!*token || *token != '{')
+	if (*token != '{')
 	{
 		return;
 	}
