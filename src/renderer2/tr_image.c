@@ -1586,7 +1586,7 @@ static qboolean ParseHeightMap(char **text, byte **pic, int *width, int *height,
 	}
 
 	R_LoadImage(text, pic, width, height, bits, materialName);
-	if (!pic)
+	if (!*pic)
 	{
 		Ren_Warning("WARNING: failed loading of image for heightMap\n");
 		return qfalse;
@@ -1641,7 +1641,7 @@ static qboolean ParseDisplaceMap(char **text, byte **pic, int *width, int *heigh
 	}
 
 	R_LoadImage(text, pic, width, height, bits, materialName);
-	if (!pic)
+	if (!*pic)
 	{
 		Ren_Warning("WARNING: failed loading of first image for displaceMap\n");
 		return qfalse;
