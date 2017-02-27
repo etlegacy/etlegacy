@@ -3129,9 +3129,10 @@ static void UI_ParseGLConfig(void)
 
 	eptr = uiInfo.uiDC.glconfig.extensions_string; // NOTE: extension_strings of newer gfx cards might be greater than 4096
 	                                               // (engine side is fixed & glconfig.extensions_string is just kept for compatibility reasons)
+
 	while (*eptr)
 	{
-		while (*eptr && *eptr == ' ')
+		while (*eptr == ' ')
 			*eptr++ = '\0';
 
 		// track start of valid string
@@ -6172,16 +6173,16 @@ static void UI_BuildServerDisplayList(int force)
 				maxClients = atoi(Info_ValueForKey(info, "sv_maxclients"));
 
 				if (clients < maxClients && (
-						(!clients && ui_browserShowEmptyOrFull.integer == 2) ||
-						(clients && ui_browserShowEmptyOrFull.integer == 1)))
+				        (!clients && ui_browserShowEmptyOrFull.integer == 2) ||
+				        (clients && ui_browserShowEmptyOrFull.integer == 1)))
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
 
 				if (clients && (
-						(clients >= maxClients && ui_browserShowEmptyOrFull.integer == 2) ||
-						(clients < maxClients && ui_browserShowEmptyOrFull.integer == 1)))
+				        (clients >= maxClients && ui_browserShowEmptyOrFull.integer == 2) ||
+				        (clients < maxClients && ui_browserShowEmptyOrFull.integer == 1)))
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
@@ -7737,7 +7738,7 @@ static void UI_FeederSelection(int feederID, int index)
 		break;
 	case FEEDER_SERVERS:
 	{
-		const char *mapName = NULL;
+		const char *mapName;
 
 		uiInfo.serverStatus.currentServer = index;
 		trap_LAN_GetServerInfo(ui_netSource.integer, uiInfo.serverStatus.displayServers[index], info, MAX_STRING_CHARS);
