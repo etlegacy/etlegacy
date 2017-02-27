@@ -5231,7 +5231,7 @@ void ClientCommand(int clientNum)
 }
 
 /**
- * @brief Replaces all occurances of "\\n" with '\\n'
+ * @brief Replaces all occurances of "\\\\n" with '\\n'
  *
  * @param[in] s
  */
@@ -5251,7 +5251,7 @@ char *Q_AddCR(char *s)
 			copy  = s;
 			place = s;
 			s++;
-			if (*s && *s == 'n')
+			if (*s == 'n')
 			{
 				*copy = '\n';
 				while (*++s)
