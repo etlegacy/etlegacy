@@ -908,6 +908,34 @@ void G_BuildEndgameStats(void)
 
 	best = NULL;
 
+#ifdef FEATURE_RATING
+	// highest rated player - check skill rating
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		gclient_t *cl = &level.clients[level.sortedClients[i]];
+		if (cl->sess.sessionTeam == TEAM_FREE)
+		{
+			continue;
+		}
+		if (!best || (cl->sess.mu - 3 * cl->sess.sigma) > (best->sess.mu - 3 * best->sess.sigma))
+		{
+			best          = cl;
+			bestClientNum = level.sortedClients[i];
+		}
+	}
+	if (best)
+	{
+		best->hasaward = qtrue;
+		Q_strcat(buffer, 1024, va("%i %.1f %i ", bestClientNum, best->sess.mu - 3 * best->sess.sigma, best->sess.sessionTeam));
+	}
+	else
+	{
+		Q_strcat(buffer, 1024, "-1 0 0 ");
+	}
+
+	best = NULL;
+#endif
+
 	// highest experience points - check XP (total in campaign, otherwise this map only then total XP)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{

@@ -1989,7 +1989,11 @@ typedef struct
 	float lastZ;
 } clientLocation_t;
 
+#ifdef FEATURE_RATING
+#define NUM_ENDGAME_AWARDS     20   ///< total number of endgame awards
+#else
 #define NUM_ENDGAME_AWARDS     19   ///< total number of endgame awards
+#endif
 #define NUMSHOW_ENDGAME_AWARDS 14   ///< number of awards to display that will fit on screen
 
 #ifdef FEATURE_EDV
