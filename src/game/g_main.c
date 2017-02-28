@@ -3615,7 +3615,7 @@ void G_LogExit(const char *string)
 		{
 			gentity_t *ent = &g_entities[level.sortedClients[i]];
 
-			if (!ent)
+			if (!ent->inuse)
 			{
 				continue;
 			}
