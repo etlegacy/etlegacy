@@ -926,7 +926,7 @@ void G_BuildEndgameStats(void)
 	if (best)
 	{
 		best->hasaward = qtrue;
-		Q_strcat(buffer, 1024, va("%i %.1f %i ", bestClientNum, best->sess.mu - 3 * best->sess.sigma, best->sess.sessionTeam));
+		Q_strcat(buffer, 1024, va("%i %.2f %i ", bestClientNum, best->sess.mu - 3 * best->sess.sigma, best->sess.sessionTeam));
 	}
 	else
 	{
@@ -1127,7 +1127,7 @@ void G_BuildEndgameStats(void)
 	if (best)
 	{
 		best->hasaward = qtrue;
-		Q_strcat(buffer, 1024, va("%i %.1f %i ", bestClientNum, best->acc < 100.f ? (double)best->acc : 100.0, best->sess.sessionTeam));
+		Q_strcat(buffer, 1024, va("%i %.2f %i ", bestClientNum, best->acc < 100.f ? (double)best->acc : 100.f, best->sess.sessionTeam));
 	}
 	else
 	{
@@ -1157,7 +1157,7 @@ void G_BuildEndgameStats(void)
 	if (best)
 	{
 		best->hasaward = qtrue;
-		Q_strcat(buffer, 1024, va("%i %.1f %i ", bestClientNum, best->hspct < 100.f ? (double)best->hspct : 100.0, best->sess.sessionTeam));
+		Q_strcat(buffer, 1024, va("%i %.2f %i ", bestClientNum, best->hspct < 100.f ? (double)best->hspct : 100.f, best->sess.sessionTeam));
 	}
 	else
 	{
@@ -1187,7 +1187,7 @@ void G_BuildEndgameStats(void)
 	if (best)
 	{
 		best->hasaward = qtrue;
-		Q_strcat(buffer, 1024, va("%i %f %i ", bestClientNum, MIN(100.0 * best->sess.time_played / (double)(level.time - best->pers.enterTime), 100.0), best->sess.sessionTeam));
+		Q_strcat(buffer, 1024, va("%i %.2f %i ", bestClientNum, MIN(100.f * best->sess.time_played / (double)(level.time - best->pers.enterTime), 100.f), best->sess.sessionTeam));
 	}
 	else
 	{

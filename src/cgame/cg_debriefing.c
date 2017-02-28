@@ -134,7 +134,7 @@ panel_button_t debriefPlayerWeaponStatsList =
 {
 	NULL,
 	NULL,
-	{ 18,                               262,  164, 80 },
+	{ 18,                               262,  168, 80 },
 	{ 0,                                0,    0,   0, 0, 0, 0, 0},
 	&debriefPlayerHeadingSmallerFont,   // font
 	NULL,                               // keyDown
@@ -148,7 +148,7 @@ panel_button_t debriefPlayerWeaponStatsListScroll =
 {
 	NULL,
 	NULL,
-	{ 18 + 164,                  262,        16, 80 },
+	{ 18 + 168,                  262,        16, 80 },
 	{ 1,                         0,          0,  0, 0, 0, 0, 0},
 	NULL,                        // font
 	CG_Debriefing_Scrollbar_KeyDown,// keyDown
@@ -176,7 +176,7 @@ panel_button_t debriefMissionTitleWindow =
 {
 	NULL,
 	NULL,
-	{ 10,                        30,  193, 326 },
+	{ 10,                        30,  198, 326 },
 	{ 0,                         0,   0,   0, 0, 0, 0, 0},
 	NULL,                        // font
 	NULL,                        // keyDown
@@ -190,7 +190,7 @@ panel_button_t debriefMissionImage =
 {
 	NULL,
 	NULL,
-	{ 16,                      46,  181, 161 },
+	{ 16,                      46,  186, 161 },
 	{ 0,                       0,   0,   0, 0, 0, 0, 0},
 	NULL,                      // font
 	NULL,                      // keyDown
@@ -204,7 +204,7 @@ panel_button_t debriefMissionMaps =
 {
 	NULL,
 	NULL,
-	{ 12,                   210,  189, 60 },
+	{ 12,                   210,  194, 60 },
 	{ 0,                    0,    0,   0, 0, 0, 0, 0},
 	NULL,                   // font
 	CG_Debriefing_Maps_KeyDown,// keyDown
@@ -514,7 +514,7 @@ panel_button_t debriefPlayerInfoWindow =
 {
 	NULL,
 	"PLAYER STATS",
-	{ 10,                        30, 193, 326 },
+	{ 10,                        30, 198, 326 },
 	{ 0,                         0,  0,   0, 0, 0, 0, 0},
 	NULL,                        // font
 	NULL,                        // keyDown
@@ -542,7 +542,7 @@ panel_button_t debriefPlayerInfoRank =
 {
 	NULL,
 	NULL,
-	{ 68,                         70,  0, 0 },
+	{ 66,                         70,  0, 0 },
 	{ 0,                          0,   0, 0, 0, 0, 0, 0},
 	&debriefPlayerInfoFont,       // font
 	NULL,                         // keyDown
@@ -556,7 +556,7 @@ panel_button_t debriefPlayerInfoMedals =
 {
 	NULL,
 	NULL,
-	{ 68,                           84,  0, 0 },
+	{ 66,                           84,  0, 0 },
 	{ 0,                            0,   0, 0, 0, 0, 0, 0},
 	&debriefPlayerInfoFont,         // font
 	NULL,                           // keyDown
@@ -570,7 +570,7 @@ panel_button_t debriefPlayerInfoTime =
 {
 	NULL,
 	NULL,
-	{ 68,                         98,  0, 0 },
+	{ 66,                         98,  0, 0 },
 	{ 0,                          0,   0, 0, 0, 0, 0, 0},
 	&debriefPlayerInfoFont,       // font
 	NULL,                         // keyDown
@@ -584,7 +584,7 @@ panel_button_t debriefPlayerInfoXP =
 {
 	NULL,
 	NULL,
-	{ 68,                       112,  0, 0 },
+	{ 66,                       112,  0, 0 },
 	{ 0,                        0,    0, 0, 0, 0, 0, 0},
 	&debriefPlayerInfoFont,     // font
 	NULL,                       // keyDown
@@ -599,7 +599,7 @@ panel_button_t debriefPlayerInfoSR =
 {
 	NULL,
 	NULL,
-	{ 136,                      112,   0, 0 },
+	{ 134,                      112,   0, 0 },
 	{ 0,                        0,     0, 0, 0, 0, 0, 0},
 	&debriefPlayerInfoFont,     // font
 	NULL,                       // keyDown
@@ -614,7 +614,7 @@ panel_button_t debriefPlayerInfoACC =
 {
 	NULL,
 	NULL,
-	{ 68,                        126,  0, 0 },
+	{ 66,                        126,  0, 0 },
 	{ 0,                         0,    0, 0, 0, 0, 0, 0},
 	&debriefPlayerInfoFont,      // font
 	NULL,                        // keyDown
@@ -628,7 +628,7 @@ panel_button_t debriefPlayerInfoHS =
 {
 	NULL,
 	NULL,
-	{ 136,                      126,   0, 0 },
+	{ 134,                      126,   0, 0 },
 	{ 0,                        0,     0, 0, 0, 0, 0, 0},
 	&debriefPlayerInfoFont,     // font
 	NULL,                       // keyDown
@@ -2137,7 +2137,7 @@ void CG_Debriefing_ParseAwards(void)
 
 		if (value > 0)
 		{
-			Q_strcat(s, size, (value == (int)(value)) ? va("^7 (%i)", (int)(value)) : va("^7 (%.1f)", value));
+			Q_strcat(s, size, (value == (int)(value)) ? va("^7 (%i)", (int)(value)) : va("^7 (%.2f)", value));
 		}
 
 		// award
@@ -2619,7 +2619,7 @@ void CG_Debriefing_PlayerACC_Draw(panel_button_t *button)
 	w  = CG_Text_Width_Ext("ACC: ", button->font->scalex, 0, button->font->font);
 
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("ACC:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.1f%%", ci->totalWeapAcc), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.2f%%", ci->totalWeapAcc), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
 
 /**
@@ -2635,7 +2635,7 @@ void CG_Debriefing_PlayerHS_Draw(panel_button_t *button)
 	w  = CG_Text_Width_Ext("HS: ", button->font->scalex, 0, button->font->font);
 
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("HS:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.1f%%", ci->totalWeapHSpct), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.2f%%", ci->totalWeapHSpct), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
 
 /**
@@ -2672,7 +2672,7 @@ void CG_Debriefing_PlayerSR_Draw(panel_button_t *button)
 
 		CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("SR:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
-		CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.1f (^5%+.1f^9)", ci->rating, ci->deltaRating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+		CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%.2f ^5%+.2f^9", ci->rating, ci->deltaRating), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 	}
 }
 #endif
@@ -2706,7 +2706,7 @@ void CG_Debriefing_PlayerTime_Draw(panel_button_t *button)
 	w = CG_Text_Width_Ext("Time: ", button->font->scalex, 0, button->font->font);
 	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("Time:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%i^9/^1%i^9/^4%i^9 (%.0f%% played)", score->time, ci->timeAxis / 60000, ci->timeAllies / 60000, (ci->timeAxis + ci->timeAllies) > 0 ? 100.f * ci->timePlayed / (ci->timeAxis + ci->timeAllies) : 0), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("%i^9/^1%i^9/^4%i^9  %.0f%% played", score->time, ci->timeAxis / 60000, ci->timeAllies / 60000, (ci->timeAxis + ci->timeAllies) > 0 ? 100.f * ci->timePlayed / (ci->timeAxis + ci->timeAllies) : 0), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
 
 /**
