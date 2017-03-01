@@ -240,27 +240,38 @@ void G_PlaySound_Cmd(void)
  */
 static void G_SendSkillRating(gentity_t *ent)
 {
-	int       i;
+	char      buffer[1024];
+	int       i, clientNum;
 	gclient_t *cl;
-	char      buff[1021] = { "sr " };
+
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
+	trap_Argv(1, buffer, sizeof(buffer));
+
+	clientNum = atoi(buffer);
+	if (clientNum < 0 || clientNum > g_maxclients.integer)
+	{
+		return;
+	}
+
+	Q_strncpyz(buffer, "sr ", sizeof(buffer));
 
 	// win probability
-	Q_strcat(buff, sizeof(buff), va("%.1f ", (double)(level.axisProb * 100.0f)));
-	Q_strcat(buff, sizeof(buff), va("%.1f ", (double)(level.alliesProb * 100.0f)));
+	Q_strcat(buffer, sizeof(buffer), va("%.1f ", level.axisProb * 100.f));
+	Q_strcat(buffer, sizeof(buffer), va("%.1f ", level.alliesProb * 100.f));
 
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		cl = &level.clients[level.sortedClients[i]];
-		Q_strcat(buff, sizeof(buff), va("%.3f %.3f ",
-		                                MAX(cl->sess.mu - 3 * cl->sess.sigma, 0),
-		                                cl->sess.mu - 3 * cl->sess.sigma - (cl->sess.oldmu - 3 * cl->sess.oldsigma)));
+		Q_strcat(buffer, sizeof(buffer), va("%.3f %.3f ",
+		                                    MAX(cl->sess.mu - 3 * cl->sess.sigma, 0.f),
+		                                    cl->sess.mu - 3 * cl->sess.sigma - (cl->sess.oldmu - 3 * cl->sess.oldsigma)));
 	}
 
-	if (strlen(buff) > 3)
-	{
-		buff[strlen(buff) - 1] = '\0';
-	}
-	trap_SendServerCommand(ent - g_entities, va("%s", buff));
+	trap_SendServerCommand(ent - g_entities, buffer);
 }
 #endif
 
@@ -4634,8 +4645,9 @@ void Cmd_IntermissionPlayerTime_f(gentity_t *ent)
  */
 void Cmd_IntermissionSkillRating_f(gentity_t *ent)
 {
-	char buffer[1024];
-	int  i;
+	char      buffer[1024];
+	int       i;
+	gclient_t *cl;
 
 	if (!ent || !ent->client)
 	{
@@ -4647,9 +4659,10 @@ void Cmd_IntermissionSkillRating_f(gentity_t *ent)
 	{
 		if (g_entities[i].inuse)
 		{
+			cl = &level.clients[i];
 			Q_strcat(buffer, sizeof(buffer), va("%.3f %.3f ",
-			                                    MAX(level.clients[i].sess.mu - 3 * level.clients[i].sess.sigma, 0),
-			                                    level.clients[i].sess.mu - 3 * level.clients[i].sess.sigma - (level.clients[i].sess.oldmu - 3 * level.clients[i].sess.oldsigma)));
+			                                    MAX(cl->sess.mu - 3 * cl->sess.sigma, 0),
+			                                    cl->sess.mu - 3 * cl->sess.sigma - (cl->sess.oldmu - 3 * cl->sess.oldsigma)));
 		}
 		else
 		{
