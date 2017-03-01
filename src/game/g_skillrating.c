@@ -40,7 +40,7 @@
 #include <sqlite3.h>
 #endif
 
-static char     sr_userinfo[MAX_INFO_STRING];
+static char     userinfo[MAX_INFO_STRING];
 static srData_t sr_data;
 
 #define SRCHECK_SQLWRAP_TABLES "SELECT * FROM rating_users; " \
@@ -529,8 +529,8 @@ void G_SkillRatingGetUserRating(gclient_t *cl, qboolean firstTime)
 	clientNum = cl - level.clients;
 
 	// retrieve guid
-	trap_GetUserinfo(clientNum, sr_userinfo, sizeof(sr_userinfo));
-	guid = Info_ValueForKey(sr_userinfo, "cl_guid");
+	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
+	guid = Info_ValueForKey(userinfo, "cl_guid");
 
 	// retrieve current rating_users or assign default values
 	// use level.startTime workaround for warmup players not getting rating_users data when GS_PLAYING starts
@@ -645,8 +645,8 @@ void G_SkillRatingSetUserRating(gclient_t *cl)
 	clientNum = cl - level.clients;
 
 	// retrieve guid
-	trap_GetUserinfo(clientNum, sr_userinfo, sizeof(sr_userinfo));
-	guid = Info_ValueForKey(sr_userinfo, "cl_guid");
+	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
+	guid = Info_ValueForKey(userinfo, "cl_guid");
 
 	// assign match data
 	sr_data.mu          = cl->sess.mu;
@@ -1204,7 +1204,6 @@ void G_UpdateSkillRating(int winner)
 	while (sqlite3_step(sqlstmt) == SQLITE_ROW)
 	{
 		// assign match data
-		sr_data.guid        = sqlite3_column_text(sqlstmt, 0);
 		sr_data.mu          = sqlite3_column_double(sqlstmt, 1);
 		sr_data.sigma       = sqlite3_column_double(sqlstmt, 2);
 		sr_data.time_axis   = sqlite3_column_int(sqlstmt, 3);
@@ -1261,7 +1260,6 @@ void G_UpdateSkillRating(int winner)
 		cl = level.clients + level.sortedClients[i];
 
 		G_SkillRatingGetUserRating(cl, qfalse);
-		ClientUserinfoChanged(cl - level.clients);
 	}
 }
 
@@ -1273,10 +1271,13 @@ void G_UpdateSkillRating(int winner)
  */
 float G_CalculateWinProbability(int team)
 {
-	int       i;
-	float     c, t, winningMu, losingMu;
-	float     mapProb, mapMu, mapSigma, mapBeta;
-	gclient_t *cl;
+	int          result;
+	char         *err_msg = NULL;
+	sqlite3_stmt *sqlstmt;
+	int          i;
+	float        c, t, winningMu, losingMu;
+	float        mapProb, mapMu, mapSigma, mapBeta;
+	gclient_t    *cl;
 
 	float teamMuX      = 0;
 	float teamMuL      = 0;
@@ -1297,7 +1298,7 @@ float G_CalculateWinProbability(int team)
 		mapBeta  = mapSigma / 2;
 	}
 
-	// player additive factors
+	// player additive factors (currently playing)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		cl = level.clients + level.sortedClients[i];
@@ -1346,6 +1347,78 @@ float G_CalculateWinProbability(int team)
 				teamSigmaSqL += pow(cl->sess.sigma, 2);
 				numPlayersL++;
 			}
+		}
+	}
+
+	// player additive factors - take time of disconnected players into account
+	if (g_gamestate.integer == GS_PLAYING)
+	{
+		result = sqlite3_prepare(level.database.db, SRMATCH_SQLWRAP_TABLE, strlen(SRMATCH_SQLWRAP_TABLE), &sqlstmt, NULL);
+
+		if (result != SQLITE_OK)
+		{
+			G_Printf("G_CalculateWinProbability: sqlite3_prepare failed: %s\n", err_msg);
+			sqlite3_free(err_msg);
+			return 0.5f;
+		}
+
+		while (sqlite3_step(sqlstmt) == SQLITE_ROW)
+		{
+			// assign match data
+			sr_data.guid        = sqlite3_column_text(sqlstmt, 0);
+			sr_data.mu          = sqlite3_column_double(sqlstmt, 1);
+			sr_data.sigma       = sqlite3_column_double(sqlstmt, 2);
+			sr_data.time_axis   = sqlite3_column_int(sqlstmt, 3);
+			sr_data.time_allies = sqlite3_column_int(sqlstmt, 4);
+
+			// player has not played at all
+			if (sr_data.time_axis == 0 && sr_data.time_allies == 0)
+			{
+				continue;
+			}
+
+			// player has reconnected
+			qboolean isPlaying = qfalse;
+
+			for (i = 0, cl = level.clients; i < level.maxclients; i++, cl++)
+			{
+				trap_GetUserinfo(cl - level.clients, userinfo, sizeof(userinfo));
+				char *guid = Info_ValueForKey(userinfo, "cl_guid");
+
+				if (!Q_strncmp(sr_data.guid, guid, MAX_GUID_LENGTH + 1))
+				{
+					isPlaying = qtrue;
+					break;
+				}
+			}
+
+			if (isPlaying)
+			{
+				continue;
+			}
+
+			// player has played in at least one of the team
+			if (sr_data.time_axis > 0)
+			{
+				teamMuX      += sr_data.mu * (sr_data.time_axis / (float)currentTime);
+				teamSigmaSqX += pow(sr_data.sigma, 2);
+				numPlayersX++;
+			}
+
+			if (sr_data.time_allies > 0)
+			{
+				teamMuL      += sr_data.mu * (sr_data.time_allies / (float)currentTime);
+				teamSigmaSqL += pow(sr_data.sigma, 2);
+				numPlayersL++;
+			}
+		}
+
+		result = sqlite3_finalize(sqlstmt);
+
+		if (result != SQLITE_OK)
+		{
+			G_Printf("G_CalculateWinProbability: sqlite3_finalize failed\n");
+			return 0.5f;
 		}
 	}
 
