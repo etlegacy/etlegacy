@@ -657,6 +657,12 @@ void G_SkillRatingSetUserRating(gclient_t *cl)
 	// save match rating or update new user rating after calculation
 	if (!level.intermissionQueued)
 	{
+		// player has not played at all
+		if (sr_data.time_axis == 0 && sr_data.time_allies == 0)
+		{
+			return;
+		}
+
 		// save or update rating in rating_match table
 		if (G_SkillRatingSetMatchRating(guid, &sr_data))
 		{
@@ -1204,6 +1210,7 @@ void G_UpdateSkillRating(int winner)
 	while (sqlite3_step(sqlstmt) == SQLITE_ROW)
 	{
 		// assign match data
+		sr_data.guid        = sqlite3_column_text(sqlstmt, 0);
 		sr_data.mu          = sqlite3_column_double(sqlstmt, 1);
 		sr_data.sigma       = sqlite3_column_double(sqlstmt, 2);
 		sr_data.time_axis   = sqlite3_column_int(sqlstmt, 3);
