@@ -40,9 +40,6 @@
 #include <sqlite3.h>
 #endif
 
-static char     userinfo[MAX_INFO_STRING];
-static srData_t sr_data;
-
 #define SRCHECK_SQLWRAP_TABLES "SELECT * FROM rating_users; " \
 	                           "SELECT * FROM rating_match; " \
 	                           "SELECT * FROM rating_maps;"
@@ -361,11 +358,10 @@ int G_SkillRatingPrepareMatchRating(void)
 
 /**
  * @brief Retrieve rating from the rating_match table
- * @param[in] guid
  * @param[in] sr_data
  * @return 0 if if successful, 0 otherwise.
  */
-int G_SkillRatingGetMatchRating(char *guid, srData_t *sr_data)
+int G_SkillRatingGetMatchRating(srData_t *sr_data)
 {
 	int          result;
 	char         *err_msg = NULL;
@@ -378,7 +374,7 @@ int G_SkillRatingGetMatchRating(char *guid, srData_t *sr_data)
 		return 1;
 	}
 
-	sql = va(SRMATCH_SQLWRAP_SELECT, guid);
+	sql = va(SRMATCH_SQLWRAP_SELECT, sr_data->guid);
 
 	result = sqlite3_prepare(level.database.db, sql, strlen(sql), &sqlstmt, NULL);
 
@@ -433,11 +429,10 @@ int G_SkillRatingGetMatchRating(char *guid, srData_t *sr_data)
 
 /**
  * @brief Sets or updates rating and time played in the rating_match table
- * @param[in] guid
  * @param[in] sr_data
  * @return 0 if if successful, 0 otherwise.
  */
-int G_SkillRatingSetMatchRating(char *guid, srData_t *sr_data)
+int G_SkillRatingSetMatchRating(srData_t *sr_data)
 {
 	int          result;
 	char         *err_msg = NULL;
@@ -450,7 +445,7 @@ int G_SkillRatingSetMatchRating(char *guid, srData_t *sr_data)
 		return 1;
 	}
 
-	sql = va(SRMATCH_SQLWRAP_SELECT, guid);
+	sql = va(SRMATCH_SQLWRAP_SELECT, sr_data->guid);
 
 	result = sqlite3_prepare(level.database.db, sql, strlen(sql), &sqlstmt, NULL);
 
@@ -465,7 +460,7 @@ int G_SkillRatingSetMatchRating(char *guid, srData_t *sr_data)
 
 	if (result == SQLITE_DONE)
 	{
-		sql = va(SRMATCH_SQLWRAP_INSERT, guid, sr_data->mu, sr_data->sigma, sr_data->time_axis, sr_data->time_allies);
+		sql = va(SRMATCH_SQLWRAP_INSERT, sr_data->guid, sr_data->mu, sr_data->sigma, sr_data->time_axis, sr_data->time_allies);
 
 		result = sqlite3_exec(level.database.db, sql, NULL, NULL, &err_msg);
 
@@ -478,7 +473,7 @@ int G_SkillRatingSetMatchRating(char *guid, srData_t *sr_data)
 	}
 	else
 	{
-		sql = va(SRMATCH_SQLWRAP_UPDATE, sr_data->mu, sr_data->sigma, sr_data->time_axis, sr_data->time_allies, guid);
+		sql = va(SRMATCH_SQLWRAP_UPDATE, sr_data->mu, sr_data->sigma, sr_data->time_axis, sr_data->time_allies, sr_data->guid);
 
 		result = sqlite3_exec(level.database.db, sql, NULL, NULL, &err_msg);
 
@@ -508,12 +503,14 @@ int G_SkillRatingSetMatchRating(char *guid, srData_t *sr_data)
  */
 void G_SkillRatingGetUserRating(gclient_t *cl, qboolean firstTime)
 {
+	char         userinfo[MAX_INFO_STRING];
 	char         *guid;
 	int          clientNum;
 	int          result;
 	char         *err_msg = NULL;
 	char         *sql;
 	sqlite3_stmt *sqlstmt;
+	srData_t     sr_data;
 
 	if (!level.database.initialized)
 	{
@@ -596,8 +593,11 @@ void G_SkillRatingGetUserRating(gclient_t *cl, qboolean firstTime)
 	}
 	else
 	{
+		// assign guid
+		sr_data.guid = (const unsigned char *)guid;
+
 		// retrieve rating in rating_match table
-		if (G_SkillRatingGetMatchRating(guid, &sr_data))
+		if (G_SkillRatingGetMatchRating(&sr_data))
 		{
 			return;
 		}
@@ -624,12 +624,14 @@ void G_SkillRatingGetUserRating(gclient_t *cl, qboolean firstTime)
  */
 void G_SkillRatingSetUserRating(gclient_t *cl)
 {
+	char         userinfo[MAX_INFO_STRING];
 	char         *guid;
 	int          clientNum;
 	int          result;
 	char         *err_msg = NULL;
 	char         *sql;
 	sqlite3_stmt *sqlstmt;
+	srData_t     sr_data;
 
 	if (!level.database.initialized)
 	{
@@ -649,6 +651,7 @@ void G_SkillRatingSetUserRating(gclient_t *cl)
 	guid = Info_ValueForKey(userinfo, "cl_guid");
 
 	// assign match data
+	sr_data.guid        = (const unsigned char *)guid;
 	sr_data.mu          = cl->sess.mu;
 	sr_data.sigma       = cl->sess.sigma;
 	sr_data.time_axis   = cl->sess.time_axis;
@@ -664,7 +667,7 @@ void G_SkillRatingSetUserRating(gclient_t *cl)
 		}
 
 		// save or update rating in rating_match table
-		if (G_SkillRatingSetMatchRating(guid, &sr_data))
+		if (G_SkillRatingSetMatchRating(&sr_data))
 		{
 			return;
 		}
@@ -1084,6 +1087,7 @@ void G_UpdateSkillRating(int winner)
 	int          result;
 	char         *err_msg = NULL;
 	sqlite3_stmt *sqlstmt;
+	srData_t     sr_data;
 
 	int       i, playerTeam, rankFactor;
 	float     c, v, w, t, winningMu, losingMu, muFactor, sigmaFactor;
@@ -1278,13 +1282,10 @@ void G_UpdateSkillRating(int winner)
  */
 float G_CalculateWinProbability(int team)
 {
-	int          result;
-	char         *err_msg = NULL;
-	sqlite3_stmt *sqlstmt;
-	int          i;
-	float        c, t, winningMu, losingMu;
-	float        mapProb, mapMu, mapSigma, mapBeta;
-	gclient_t    *cl;
+	int       i;
+	float     c, t, winningMu, losingMu;
+	float     mapProb, mapMu, mapSigma, mapBeta;
+	gclient_t *cl;
 
 	float teamMuX      = 0;
 	float teamMuL      = 0;
@@ -1360,6 +1361,11 @@ float G_CalculateWinProbability(int team)
 	// player additive factors - take time of disconnected players into account
 	if (g_gamestate.integer == GS_PLAYING)
 	{
+		int          result;
+		char         *err_msg = NULL;
+		sqlite3_stmt *sqlstmt;
+		srData_t     sr_data;
+
 		result = sqlite3_prepare(level.database.db, SRMATCH_SQLWRAP_TABLE, strlen(SRMATCH_SQLWRAP_TABLE), &sqlstmt, NULL);
 
 		if (result != SQLITE_OK)
@@ -1389,10 +1395,13 @@ float G_CalculateWinProbability(int team)
 
 			for (i = 0, cl = level.clients; i < level.maxclients; i++, cl++)
 			{
-				trap_GetUserinfo(cl - level.clients, userinfo, sizeof(userinfo));
-				char *guid = Info_ValueForKey(userinfo, "cl_guid");
+				char userinfo[MAX_INFO_STRING];
+				char *guid;
 
-				if (!Q_strncmp(sr_data.guid, guid, MAX_GUID_LENGTH + 1))
+				trap_GetUserinfo(cl - level.clients, userinfo, sizeof(userinfo));
+				guid = Info_ValueForKey(userinfo, "cl_guid");
+
+				if (!Q_strncmp((const char *)sr_data.guid, guid, MAX_GUID_LENGTH + 1))
 				{
 					isPlaying = qtrue;
 					break;
