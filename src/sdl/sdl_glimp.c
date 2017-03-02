@@ -690,7 +690,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 			{
 			case 16: modefullScreen.format = SDL_PIXELFORMAT_RGB565; break;
 			case 24: modefullScreen.format = SDL_PIXELFORMAT_RGB24;  break;
-			default: Com_DPrintf("testColorBits is %d, can't fullscreen\n", testColorBits); continue;
+			default: Com_Printf("SDL_SetWindowDisplayMode failed: testColorBits is %d, can't fullscreen\n", testColorBits); continue;
 			}
 
 			modefullScreen.w            = glConfig->vidWidth;
