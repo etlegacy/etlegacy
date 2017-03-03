@@ -1336,8 +1336,8 @@ void CG_LimboPanel_SendSetupMsg(qboolean forceteam)
 	weap1 = CG_LimboPanel_GetSelectedWeaponForSlot(1);
 	weap2 = CG_LimboPanel_GetSelectedWeaponForSlot(0);
 
-    // TODO: handle all case ?
-    switch (team)
+	// TODO: handle all case ?
+	switch (team)
 	{
 	case TEAM_AXIS:
 		str = "r";
@@ -3248,6 +3248,7 @@ qboolean CG_LimboPanel_Draw(void)
 {
 	static panel_button_t *lastHighlight;
 	panel_button_t        *hilight;
+	qboolean              objRequested = qfalse;
 
 	hilight = BG_PanelButtonsGetHighlightButton(limboPanelButtons);
 	if (hilight && hilight != lastHighlight)
@@ -3264,6 +3265,13 @@ qboolean CG_LimboPanel_Draw(void)
 
 	trap_R_SetColor(NULL);
 	CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
+
+	// initial camera update
+	if (!objRequested)
+	{
+		CG_LimboPanel_RequestObjective();
+		objRequested = qtrue;
+	}
 
 	if (cgs.ccRequestedObjective != -1)
 	{
