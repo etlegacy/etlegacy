@@ -876,10 +876,12 @@ void G_BuildEndgameStats(void)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
+
 		if (cl->sess.sessionTeam == TEAM_FREE)
 		{
 			continue;
 		}
+
 		if (!best || cl->sess.rank > best->sess.rank)
 		{
 			best          = cl;
@@ -896,6 +898,7 @@ void G_BuildEndgameStats(void)
 			bestClientNum = level.sortedClients[i];
 		}
 	}
+
 	if (best)
 	{
 		best->hasaward = qtrue;
@@ -913,16 +916,24 @@ void G_BuildEndgameStats(void)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
+
 		if (cl->sess.sessionTeam == TEAM_FREE)
 		{
 			continue;
 		}
+
+		if (cl->sess.mu - 3 * cl->sess.sigma <= 0)
+		{
+			continue;
+		}
+
 		if (!best || (cl->sess.mu - 3 * cl->sess.sigma) > (best->sess.mu - 3 * best->sess.sigma))
 		{
 			best          = cl;
 			bestClientNum = level.sortedClients[i];
 		}
 	}
+
 	if (best)
 	{
 		best->hasaward = qtrue;
@@ -940,10 +951,12 @@ void G_BuildEndgameStats(void)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
+
 		if (cl->sess.sessionTeam == TEAM_FREE)
 		{
 			continue;
 		}
+
 		if (cl->ps.persistant[PERS_SCORE] <= 0)
 		{
 			continue;
@@ -980,9 +993,11 @@ void G_BuildEndgameStats(void)
 			}
 		}
 	}
+
 	if (best)
 	{
 		best->hasaward = qtrue;
+
 		if (g_gametype.integer == GT_WOLF_CAMPAIGN)
 		{
 			Q_strcat(buffer, 1024, va("%i %i %i ", bestClientNum, best->ps.persistant[PERS_SCORE], best->sess.sessionTeam));
@@ -1003,14 +1018,17 @@ void G_BuildEndgameStats(void)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
+
 		if (cl->sess.sessionTeam == TEAM_FREE)
 		{
 			continue;
 		}
+
 		if (cl->medals <= 0)
 		{
 			continue;
 		}
+
 		if (!best || cl->medals > best->medals)
 		{
 			best          = cl;
@@ -1022,6 +1040,7 @@ void G_BuildEndgameStats(void)
 			bestClientNum = level.sortedClients[i];
 		}
 	}
+
 	if (best)
 	{
 		best->hasaward = qtrue;
@@ -1036,14 +1055,17 @@ void G_BuildEndgameStats(void)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
+
 		if (cl->sess.sessionTeam == TEAM_FREE)
 		{
 			continue;
 		}
+
 		if (cl->sess.kills <= 0)
 		{
 			continue;
 		}
+
 		if (!best || cl->sess.kills > best->sess.kills)
 		{
 			best          = cl;
@@ -1055,6 +1077,7 @@ void G_BuildEndgameStats(void)
 			bestClientNum = level.sortedClients[i];
 		}
 	}
+
 	if (best)
 	{
 		best->hasaward = qtrue;
@@ -1075,24 +1098,29 @@ void G_BuildEndgameStats(void)
 		for (j = 0; j < level.numConnectedClients; j++)
 		{
 			gclient_t *cl = &level.clients[level.sortedClients[j]];
+
 			if (cl->sess.sessionTeam == TEAM_FREE)
 			{
 				continue;
 			}
+
 			if ((cl->sess.skillpoints[i] - cl->sess.startskillpoints[i]) <= 0)
 			{
 				continue;
 			}
+
 			if (cl->sess.skill[i] < 1)
 			{
 				continue;
 			}
+
 			if (!best || (cl->sess.skillpoints[i] - cl->sess.startskillpoints[i]) > (best->sess.skillpoints[i] - best->sess.startskillpoints[i]))
 			{
 				best          = cl;
 				bestClientNum = level.sortedClients[j];
 			}
 		}
+
 		if (best)
 		{
 			best->hasaward = qtrue;
@@ -1110,20 +1138,24 @@ void G_BuildEndgameStats(void)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
+
 		if (cl->sess.sessionTeam == TEAM_FREE)
 		{
 			continue;
 		}
+
 		if (cl->acc <= 0)
 		{
 			continue;
 		}
+
 		if (!best || cl->acc > best->acc)
 		{
 			best          = cl;
 			bestClientNum = level.sortedClients[i];
 		}
 	}
+
 	if (best)
 	{
 		best->hasaward = qtrue;
@@ -1140,20 +1172,24 @@ void G_BuildEndgameStats(void)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
+
 		if (cl->sess.sessionTeam == TEAM_FREE)
 		{
 			continue;
 		}
+
 		if (cl->hspct <= 0)
 		{
 			continue;
 		}
+
 		if (!best || cl->hspct > best->hspct)
 		{
 			best          = cl;
 			bestClientNum = level.sortedClients[i];
 		}
 	}
+
 	if (best)
 	{
 		best->hasaward = qtrue;
@@ -1170,20 +1206,24 @@ void G_BuildEndgameStats(void)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
+
 		if (cl->sess.sessionTeam == TEAM_FREE)
 		{
 			continue;
 		}
+
 		if ((level.time - cl->pers.enterTime) / (float)(level.time - level.intermissiontime) < 0.5f)
 		{
 			continue;
 		}
+
 		if (!best || (cl->sess.time_played / (float)(level.time - cl->pers.enterTime)) > (best->sess.time_played / (float)(level.time - best->pers.enterTime)))
 		{
 			best          = cl;
 			bestClientNum = level.sortedClients[i];
 		}
 	}
+
 	if (best)
 	{
 		best->hasaward = qtrue;
@@ -1200,14 +1240,17 @@ void G_BuildEndgameStats(void)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
+
 		if (cl->sess.sessionTeam == TEAM_FREE)
 		{
 			continue;
 		}
+
 		if (cl->sess.gibs <= 0)
 		{
 			continue;
 		}
+
 		if (!best || cl->sess.gibs > best->sess.gibs)
 		{
 			best          = cl;
@@ -1219,6 +1262,7 @@ void G_BuildEndgameStats(void)
 			bestClientNum = level.sortedClients[i];
 		}
 	}
+
 	if (best)
 	{
 		best->hasaward = qtrue;
@@ -1235,14 +1279,17 @@ void G_BuildEndgameStats(void)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
+
 		if (cl->sess.sessionTeam == TEAM_FREE)
 		{
 			continue;
 		}
+
 		if (cl->sess.self_kills <= 0)
 		{
 			continue;
 		}
+
 		if (!best || cl->sess.self_kills > best->sess.self_kills)
 		{
 			best          = cl;
@@ -1254,6 +1301,7 @@ void G_BuildEndgameStats(void)
 			bestClientNum = level.sortedClients[i];
 		}
 	}
+
 	if (best)
 	{
 		best->hasaward = qtrue;
@@ -1270,14 +1318,17 @@ void G_BuildEndgameStats(void)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
+
 		if (cl->sess.sessionTeam == TEAM_FREE)
 		{
 			continue;
 		}
+
 		if (cl->sess.deaths <= 0)
 		{
 			continue;
 		}
+
 		if (!best || cl->sess.deaths > best->sess.deaths)
 		{
 			best          = cl;
@@ -1289,6 +1340,7 @@ void G_BuildEndgameStats(void)
 			bestClientNum = level.sortedClients[i];
 		}
 	}
+
 	if (best)
 	{
 		best->hasaward = qtrue;
@@ -1305,10 +1357,12 @@ void G_BuildEndgameStats(void)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
+
 		if (cl->sess.sessionTeam == TEAM_FREE)
 		{
 			continue;
 		}
+
 		if (!best || cl->sess.team_kills > best->sess.team_kills)
 		{
 			best          = cl;
@@ -1320,6 +1374,7 @@ void G_BuildEndgameStats(void)
 			bestClientNum = level.sortedClients[i];
 		}
 	}
+
 	if (best)
 	{
 		best->hasaward = qtrue;
@@ -1332,16 +1387,19 @@ void G_BuildEndgameStats(void)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
+
 		if (cl->sess.sessionTeam == TEAM_FREE)
 		{
 			continue;
 		}
+
 		if (!best || (cl->ps.persistant[PERS_SCORE] / (float)(level.time - cl->pers.enterTime)) > (best->ps.persistant[PERS_SCORE] / (float)(level.time - best->pers.enterTime)))
 		{
 			best          = cl;
 			bestClientNum = level.sortedClients[i];
 		}
 	}
+
 	if (best)
 	{
 		if ((best->sess.startxptotal - best->ps.persistant[PERS_SCORE]) >= 100 || best->medals || best->hasaward)
