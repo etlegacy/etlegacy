@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2017-02-04 23:07+0000\n"
+"PO-Revision-Date: 2017-03-03 13:09+0000\n"
 "Last-Translator: IR4T4 <gutzu@gmx.ch>\n"
 "Language-Team: German (http://www.transifex.com/etlegacy/etlegacy/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -169,11 +169,11 @@ msgstr "SPRACH KÜNSTLER"
 
 #: etmain/ui/credits_additional.menu:203
 msgid "Voice of Allied / Axis soldiers"
-msgstr "Sprache der Alliierten / Axen Soldaten"
+msgstr "Stimme der Alliierten / Achsen Soldaten"
 
 #: etmain/ui/credits_additional.menu:205
 msgid "Voice of Axis Commander"
-msgstr "Stimme des Axen Kommandant"
+msgstr "Stimme des Achsen Kommandanten"
 
 #: etmain/ui/credits_additional.menu:207
 msgid "Voice of Allied Commander"
@@ -688,11 +688,11 @@ msgstr "Standard Spielwiedereintrittszeit für die Alliierten nicht beachten"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Axis Spawn Time:"
-msgstr "Spielwiedereintrittszeit Axen:"
+msgstr "Spielwiedereintrittszeit Achsen:"
 
 #: etmain/ui/hostgame_advanced.menu:55
 msgid "Override the default Axis spawn time"
-msgstr "Standard Spielwiedereintrittszeit für die Axenmächte nicht beachten"
+msgstr "Standard Spielwiedereintrittszeit für die Achsenmächte nicht beachten"
 
 #: etmain/ui/hostgame_advanced.menu:56
 msgid "Allied Max Lives:"
@@ -704,11 +704,11 @@ msgstr "Spezifiziere die Anzahl der Leben für die Alliierten in einem Maximale 
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Axis Max Lives:"
-msgstr "Axen max. Leben:"
+msgstr "Achsen max. Leben:"
 
 #: etmain/ui/hostgame_advanced.menu:57
 msgid "Specify the number of Axis lives in a max lives game"
-msgstr "Spezifiziere die Anzahl der Leben für die Axenmächte in einem Maximale Leben Spiel"
+msgstr "Spezifiziere die Anzahl der Leben für die Achsenmächte in einem Maximale Leben Spiel (LMS)"
 
 #: etmain/ui/hostgame_advanced.menu:58
 msgid "Stopwatch Round-Type:"
@@ -1007,7 +1007,7 @@ msgstr "Basis URL:"
 
 #: etmain/ui/hostgame_advanced.menu:161
 msgid "Used to build the URL given to clients for download"
-msgstr ""
+msgstr "Wird verwendet um die URL zu erstellen, die dem Client für den Download übermittelt wird"
 
 #: etmain/ui/hostgame_advanced.menu:165
 msgid "EXTENDED"
@@ -1213,7 +1213,7 @@ msgstr "Waffenbeschränkungen"
 msgid ""
 "Restricts the number of weapons available to players to a percentage of the "
 "team size to reduce spam"
-msgstr ""
+msgstr "Limitiert die Anzahl der verfügbaren Waffen für Spieler prozentual auf die Größe des Teams um Spam zu reduzieren."
 
 #: etmain/ui/hostgame.menu:109
 msgid "Balanced Teams"
@@ -1223,7 +1223,7 @@ msgstr "Ausgewogene Teams"
 msgid ""
 "Enforces balanced teams by forcing players to join the team with the lowest "
 "player count"
-msgstr ""
+msgstr "Spieler werden gezwungen dem Team beizutreten, welches weniger Spieler hat"
 
 #: etmain/ui/hostgame.menu:113
 msgid "NAME"
@@ -1299,7 +1299,7 @@ msgstr "SENDE NACHRICHT"
 
 #: etmain/ui/ingame_messagemode.menu:55 etmain/ui/ingame_messagemode.menu:57
 msgid "Say:"
-msgstr ""
+msgstr "sagen:"
 
 #: etmain/ui/ingame_messagemode.menu:55 etmain/ui/ingame_messagemode.menu:57
 msgid "Enter text here - press ESCAPE twice to cancel"
@@ -1307,7 +1307,7 @@ msgstr "Text hier eingeben - zweimal ESCAPE drücken, um abzubrechen"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "To:"
-msgstr ""
+msgstr "an:"
 
 #: etmain/ui/ingame_messagemode.menu:59
 #: etmain/ui/options_customise_game.menu:73 etmain/ui/playonline.menu:83
@@ -1351,7 +1351,7 @@ msgstr "WIEDEREINSTEIGEN"
 msgid ""
 "In Last Man Standing mode you will not respawn if you tap out now. Are you "
 "sure?"
-msgstr ""
+msgstr "Im Last Man Standing Mode bleibst du tot wenn du jetzt aussteigst. Bist du sicher?"
 
 #: etmain/ui/ingame_tapout.menu:50
 msgid ""
@@ -1377,7 +1377,7 @@ msgstr "KICKE ALLE BOTS"
 
 #: etmain/ui/ingame_vote_bot.menu:55
 msgid "AXIS BOTS"
-msgstr "AXEN BOTS"
+msgstr "ACHSEN BOTS"
 
 #: etmain/ui/ingame_vote_bot.menu:56
 msgid "ALLIED BOTS"
@@ -1500,12 +1500,12 @@ msgstr "EIGENBESCHUß AUS"
 #: etmain/ui/ingame_vote_misc.menu:55
 #: etmain/ui/ingame_vote_misc_refrcon.menu:54
 msgid "BALANCED TEAMS ON"
-msgstr ""
+msgstr "AUSGEGL. TEAMS AN"
 
 #: etmain/ui/ingame_vote_misc.menu:56
 #: etmain/ui/ingame_vote_misc_refrcon.menu:55
 msgid "BALANCED TEAMS OFF"
-msgstr ""
+msgstr "AUSGEGL. TEAMS AUS"
 
 #: etmain/ui/ingame_vote_misc.menu:58
 #: etmain/ui/ingame_vote_misc_refrcon.menu:57
@@ -1570,19 +1570,19 @@ msgstr ""
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:83
 msgid "LOCK TEAMS"
-msgstr ""
+msgstr "SPERRE TEAMS"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:84
 msgid "UNLOCK TEAMS"
-msgstr ""
+msgstr "ENTSPERRE TEAMS"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:86
 msgid "LOCK SPECS"
-msgstr ""
+msgstr "SPERRE ZUSCH."
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:87
 msgid "UNLOCK SPECS"
-msgstr ""
+msgstr "ENTSPERRE ZUSCH."
 
 #: etmain/ui/ingame_vote_players.menu:49 etmain/ui/ingame_vote_players.menu:50
 #: etmain/ui/ingame_vote_players.menu:51 src/cgame/cg_fireteams.c:359
@@ -1611,11 +1611,11 @@ msgstr ""
 
 #: etmain/ui/ingame_vote_players.menu:66
 msgid "MAKE AXIS"
-msgstr ""
+msgstr "MACHE ACHSE"
 
 #: etmain/ui/ingame_vote_players.menu:67
 msgid "MAKE ALLIED"
-msgstr ""
+msgstr "MACHE ALLIIERT"
 
 #: etmain/ui/ingame_vote_players.menu:68
 msgid "MAKE SPEC"
@@ -1763,7 +1763,7 @@ msgstr "EINFACHES SÄUBERN"
 
 #: etmain/ui/options_clean.menu:43
 msgid "Remove tmp and custom pk3 files"
-msgstr ""
+msgstr "Entferne tmp. und benutzerdefinierte Dateien"
 
 #: etmain/ui/options_clean.menu:44
 msgid "FULL CLEAN"
@@ -2359,7 +2359,7 @@ msgstr "Trefferklänge:"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Team Hit Sound"
-msgstr ""
+msgstr "Kein Team Treffer Klang"
 
 #: etmain/ui/options_customise_game.menu:73
 msgid "No Head Hit Sound"
@@ -3400,7 +3400,7 @@ msgstr ""
 
 #: etmain/ui/options_graphics.menu:70
 msgid "Sync Every Frame:"
-msgstr ""
+msgstr "Synch Jeden Frame:"
 
 #: etmain/ui/options_graphics.menu:70
 msgid "Prevent screen tearing"
@@ -3542,7 +3542,7 @@ msgstr ""
 
 #: etmain/ui/options_system.menu:62
 msgid "Use HTTP/FTP Downloads:"
-msgstr "Benutze HTTP/FTP Downloads:"
+msgstr "Benutze HTTP/FTP:"
 
 #: etmain/ui/options_system.menu:106
 msgid "UPDATES"
@@ -4151,7 +4151,7 @@ msgstr "7. Jubeln"
 #: etmain/ui/wm_ftquickmessageAlt.menu:155
 #: etmain/ui/wm_quickmessageAlt.menu:155
 msgid "8. More Globals"
-msgstr ""
+msgstr "8. Mehr..."
 
 #: etmain/ui/wm_ftquickmessageAlt.menu:161
 #: etmain/ui/wm_quickmessageAlt.menu:161
@@ -4479,7 +4479,7 @@ msgstr ""
 #: src/cgame/cg_consolecmds.c:1143 src/cgame/cg_popupmessages.c:733
 #: src/cgame/cg_popupmessages.c:735
 msgid "Axis"
-msgstr "Axen"
+msgstr "Achsen"
 
 #: src/cgame/cg_consolecmds.c:1147 src/cgame/cg_popupmessages.c:733
 #: src/cgame/cg_popupmessages.c:735
@@ -4559,7 +4559,7 @@ msgstr "ALLIIERTE GEWINNEN!"
 
 #: src/cgame/cg_debriefing.c:3177
 msgid "AXIS WIN!"
-msgstr "AXEN GEWINNEN!"
+msgstr "ACHSEN GEWINNEN!"
 
 #: src/cgame/cg_debriefing.c:3179
 msgid "IT'S A TIE!"
@@ -4575,11 +4575,11 @@ msgstr ""
 
 #: src/cgame/cg_debriefing.c:3222
 msgid "AXIS SUCCESSFULLY BEAT THE CLOCK!"
-msgstr ""
+msgstr "ACHSEN HABEN ERFOLGREICH DIE UHR GESCHLAGEN!"
 
 #: src/cgame/cg_debriefing.c:3226
 msgid "AXIS COULDN'T BEAT THE CLOCK!"
-msgstr ""
+msgstr "ACHSEN KONNTEN DIE UHR NICHT SCHLAGEN!"
 
 #: src/cgame/cg_debriefing.c:3236
 #, c-format
@@ -4905,7 +4905,7 @@ msgstr ""
 
 #: src/cgame/cg_event.c:566
 msgid "died"
-msgstr ""
+msgstr "starb"
 
 #: src/cgame/cg_event.c:614
 #, c-format
@@ -5035,7 +5035,7 @@ msgstr ""
 #: src/cgame/cg_limbopanel.c:1224
 #, c-format
 msgid "You will spawn as an %s %s with a %s."
-msgstr ""
+msgstr "Du wirst als %s %s mit einer %s spawnen."
 
 #: src/cgame/cg_limbopanel.c:1228
 #, c-format
@@ -5182,7 +5182,7 @@ msgstr "^3ZUSCHAUER"
 
 #: src/cgame/cg_scoreboard.c:811 src/cgame/cg_scoreboard.c:828
 msgid "AXIS"
-msgstr "AXEN"
+msgstr "ACHSEN"
 
 #: src/cgame/cg_scoreboard.c:812 src/cgame/cg_scoreboard.c:819
 msgid "FIRST BLOOD"
@@ -5353,7 +5353,7 @@ msgstr "^3Gefiltert/Gesamt: %04i/%04i"
 msgid ""
 "^3Check your filters - no servers found!              Filtered/Total: "
 "%04i/%04i"
-msgstr ""
+msgstr "^3Überprüfe die Filter - keine Server gefunden! Gefiltert/Gesamt: %04i/%04i"
 
 #: src/ui/ui_main.c:5883
 msgid ""
@@ -5408,7 +5408,7 @@ msgid "You are near"
 msgstr "Du bist nahe"
 
 msgid "joined the Axis team\n"
-msgstr ""
+msgstr "tritt dem Achsen Team bei\n"
 
 msgid "joined the Allies team\n"
 msgstr "tritt den Allierten bei\n"
@@ -5584,7 +5584,7 @@ msgid "^1THE TEAM"
 msgstr "^1DAS TEAM"
 
 msgid "Axis team"
-msgstr "Axen Team"
+msgstr "Achsen Team"
 
 msgid "Allied team"
 msgstr "Alliierten Team"
@@ -5620,7 +5620,7 @@ msgid "The Allies have too many players.\n"
 msgstr ""
 
 msgid "The Axis has too many players.\n"
-msgstr ""
+msgstr "Die Achsen haben zu viele Spieler\n"
 
 msgid "Attack!"
 msgstr "Angriff!"
@@ -5949,7 +5949,7 @@ msgid "Allied Command Post constructed. Charge speed increased!"
 msgstr ""
 
 msgid "Axis Command Post constructed. Charge speed increased!"
-msgstr ""
+msgstr "Achsen Kommando Posten gebaut. Lade Geschwindigkeit erhöht!"
 
 msgid ""
 "^3All players ready!^7\n"
@@ -5963,7 +5963,7 @@ msgid "^1*** Match Reset! ***\n"
 msgstr ""
 
 msgid "You are on the Axis team"
-msgstr ""
+msgstr "Du bist im Achsen Team"
 
 msgid "Warning, leave the construction area..."
 msgstr ""
@@ -6135,7 +6135,7 @@ msgid "The ^4Allies^7 team is LOCKED!\n"
 msgstr ""
 
 msgid "The ^1Axis^7 team is LOCKED!\n"
-msgstr ""
+msgstr "Das ^1Achsen^7 Team ist GESPERRT!\n"
 
 msgid "^3Referee ^1PAUSED^3 the match^3!\n"
 msgstr ""
@@ -6174,7 +6174,7 @@ msgid "^5You've been removed from the ^4Allies^7 team\n"
 msgstr ""
 
 msgid "^5You've been removed from the ^1Axis^7 team\n"
-msgstr ""
+msgstr "^5Du wurdest aus dem  ^1Achsen^7 Team entfernt\n\n"
 
 msgid "Referee has ^3SPECTATOR LOCKED^7 teams\n"
 msgstr ""
@@ -6250,10 +6250,10 @@ msgid "Spectators can't unlock a team!\n"
 msgstr ""
 
 msgid "The ^1Axis^7 team is now locked!\n"
-msgstr ""
+msgstr "Das ^1Achsen^7 Team ist jetzt gesperrt!\n"
 
 msgid "The ^1Axis^7 team is now unlocked!\n"
-msgstr ""
+msgstr "Das ^1Achsen^7 Team ist nicht mehr gesperrt!\n"
 
 msgid "Team commands not enabled on this server.\n"
 msgstr ""
@@ -6285,7 +6285,7 @@ msgid "The ^4Allies^7 team is ready!\n"
 msgstr "Das ^4Alliierte^7 Team ist bereit!\n"
 
 msgid "The ^1Axis^7 team is ready!\n"
-msgstr "Das ^1Axen^7 Team ist bereit!\n"
+msgstr "Das ^1Achsen^7 Team ist bereit!\n"
 
 msgid "A vote is already in progress.\n"
 msgstr "Eine Abstimmung findet schon statt.\n"
@@ -6303,7 +6303,7 @@ msgid "Allies team\n"
 msgstr ""
 
 msgid "Axis team\n"
-msgstr ""
+msgstr "Achsen Team\n"
 
 msgid "Sorry, "
 msgstr ""
@@ -6399,7 +6399,7 @@ msgid "You must be alive to use this command.\n"
 msgstr ""
 
 msgid "The ^1Axis^7 team is empty!  Follow command ignored.\n"
-msgstr ""
+msgstr "Das ^1Achsen^7 Team ist leer!  Folge Kommando ignoriert.\n"
 
 msgid "The ^4Allies^7 team is empty!  Follow command ignored.\n"
 msgstr ""
@@ -6453,13 +6453,13 @@ msgid "^1*** Level Restarted! ***\n"
 msgstr ""
 
 msgid "You have been switched to the Axis team"
-msgstr ""
+msgstr "Du bist zum Achsen Team übergelaufen"
 
 msgid "Keep the Allies from beating the clock!"
 msgstr ""
 
 msgid "Keep the Axis from beating the clock!"
-msgstr ""
+msgstr "Halte die Achsen ab die Uhr zu schlagen!"
 
 msgid "You have been switched to the Allied team"
 msgstr ""
@@ -6817,13 +6817,13 @@ msgid "Kick"
 msgstr ""
 
 msgid "Warn"
-msgstr ""
+msgstr "Warne"
 
 msgid "Change admin"
 msgstr ""
 
 msgid "Highest Fragger"
-msgstr ""
+msgstr "Schützenkönig"
 
 msgid "Highest Experience Points"
 msgstr ""
@@ -7098,7 +7098,7 @@ msgid "^7BACKSPACE ^mgo  back"
 msgstr ""
 
 msgid "CURRENT PROFILE"
-msgstr ""
+msgstr "AKTUELLES PROFIL"
 
 #: src/cgame/cg_draw.c:1504
 msgid "%s^7's dynamite"
@@ -7118,7 +7118,7 @@ msgid "Set your desired renderer (does a video restart)"
 msgstr ""
 
 msgid "Custom Width:"
-msgstr ""
+msgstr "Benutzerdef. Breite:"
 
 msgid ""
 "Specifies custom resolution width - requires custom resolution set. *Use on "
@@ -7126,7 +7126,7 @@ msgid ""
 msgstr ""
 
 msgid "Custom Height:"
-msgstr ""
+msgstr "Benutzerdef. Höhe:"
 
 msgid ""
 "Specifies custom resolution height - requires custom resolution set .*Use on"
@@ -7141,10 +7141,10 @@ msgid ""
 msgstr ""
 
 msgid "JOYSTICK"
-msgstr ""
+msgstr "JOYSTICK"
 
 msgid "Enable Joysticks:"
-msgstr ""
+msgstr "Joysticks einschalten:"
 
 msgid "General joystick initialization. Requires vid_restart."
 msgstr ""
@@ -7156,10 +7156,10 @@ msgid "Specifies active joystick"
 msgstr ""
 
 msgid "Analog Joystick:"
-msgstr ""
+msgstr "Analoger Joystick:"
 
 msgid "Use analog joystick?"
-msgstr ""
+msgstr "Benutze analogen Joystick?"
 
 msgid "Joystick Threshold:"
 msgstr ""
