@@ -516,7 +516,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 		return;
 	}
 	// allow MV clients see the class of its merged client's on the scoreboard
-	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cg.snap->ps.pm_type == PM_INTERMISSION
+	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR || cg.snap->ps.pm_type == PM_INTERMISSION
 #ifdef FEATURE_MULTIVIEW
 	         || CG_mvMergedClientLocate(score->client)
 #endif
@@ -735,7 +735,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 		CG_Text_Paint_Ext(tempx + totalwidth - INFO_LATENCY_WIDTH, y, 0.20f, 0.25f, colorWhite, p, 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 		return;
 	}
-	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cg.snap->ps.pm_type == PM_INTERMISSION)
+	else if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR || cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
 		CG_DrawPic(tempx, y - 9, 10, 10, cgs.media.skillPics[SkillNumForClass(ci->cls)]);
 
