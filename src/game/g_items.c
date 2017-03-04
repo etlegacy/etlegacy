@@ -566,6 +566,18 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
 		}
 	}
 
+	// prevent picking up while reloading
+	if (ent->client->ps.weaponstate == WEAPON_RELOADING)
+	{
+		return qfalse;
+	}
+
+	// prevent picking up when overheating
+	if (ent->client->ps.weaponTime > 0)
+	{
+		return qfalse;
+	}
+
 	return BG_WeaponIsPrimaryForClassAndTeam(ent->client->sess.playerType, ent->client->sess.sessionTeam, weapon);
 }
 /**
