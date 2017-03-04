@@ -48,10 +48,6 @@ cvar_t *r_glMajorVersion;
 cvar_t *r_glMinorVersion;
 cvar_t *r_glDebugProfile;
 
-#ifdef USE_GLSL_OPTIMIZER
-cvar_t *r_glslOptimizer;
-#endif
-
 cvar_t *r_flares;
 cvar_t *r_flareSize;
 cvar_t *r_flareFade;
@@ -1165,10 +1161,6 @@ void R_Register(void)
 	r_glMajorVersion = ri.Cvar_Get("r_glMajorVersion", "", CVAR_LATCH);
 	r_glMinorVersion = ri.Cvar_Get("r_glMinorVersion", "", CVAR_LATCH);
 	r_glDebugProfile = ri.Cvar_Get("r_glDebugProfile", "", CVAR_LATCH);
-
-#ifdef USE_GLSL_OPTIMIZER
-	r_glslOptimizer = ri.Cvar_Get("r_glslOptimizer", "1", CVAR_ARCHIVE | CVAR_LATCH);
-#endif
 
 	// latched and archived variables
 	r_ext_compressed_textures        = ri.Cvar_Get("r_ext_compressed_textures", "1", CVAR_ARCHIVE | CVAR_LATCH);
