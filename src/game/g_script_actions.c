@@ -3325,43 +3325,44 @@ qboolean G_ScriptAction_NumberofObjectives(gentity_t *ent, char *params)
 /**
  * @brief syntax: wm_set_main_objective \<objective_number\> \<team\>
  * @param ent - unused
- * @param params - unused
- * @return
+ * @param params
+ * @return true or aborts
  *
- * @todo TODO: This function always return true
  */
 qboolean G_ScriptAction_SetMainObjective(gentity_t *ent, char *params)
 {
-	/*  char *pString, *token;
-	    char    cs[MAX_STRING_CHARS];
-	    char*   parm;
-	    int     num, cs_obj;
+	char  *pString, *token;
+	char  cs[MAX_STRING_CHARS];
+	char* parm;
+	int   num, cs_obj;
+					
+	pString = params;
+	token = COM_Parse(&pString);
+	if (!token[0])
+	{
+		G_Error("G_ScriptAction_ObjectiveImage: number parameter required\n");
+	}
 
-	    pString = params;
-	    token = COM_Parse(&pString);
-	    if (!token[0])
-	    {
-	        G_Error( "G_ScriptAction_ObjectiveImage: number parameter required\n" );
-	    }
+	num = atoi(token);
+	if (num < 1 || num > MAX_OBJECTIVES)
+	{
+		G_Error( "G_ScriptAction_ObjectiveImage: Invalid objective number\n");
+	}
+	parm = va("%i", num);
 
-	    num = atoi( token );
-	    if ( num < 1 || num > MAX_OBJECTIVES ) {
-	        G_Error( "G_ScriptAction_ObjectiveImage: Invalid objective number\n" );
-	    }
-	    parm = va("%i", num);
+	token = COM_Parse(&pString);
+	if (!token[0])
+	{
+		G_Error("G_ScriptAction_ObjectiveImage: team parameter required\n");
+	}
 
-	    token = COM_Parse(&pString);
-	    if (!token[0])
-	    {
-	        G_Error( "G_ScriptAction_ObjectiveImage: team parameter required\n" );
-	    }
+	cs_obj = !atoi(token) ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE;
+	trap_GetConfigstring(cs_obj, cs, sizeof(cs));
 
-	    cs_obj = !atoi(token) ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE;
-	    trap_GetConfigstring( cs_obj, cs, sizeof(cs) );
-
-	    if ( Q_stricmp( cs , parm ) ) {
-	        trap_SetConfigstring( cs_obj, parm );
-	    }*/
+	if (Q_stricmp(cs , parm))
+	{
+		trap_SetConfigstring(cs_obj, parm);
+	}
 
 	return qtrue;
 }
