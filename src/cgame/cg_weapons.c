@@ -3214,7 +3214,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			if (weaponNum == WP_STEN || IS_MG_WEAPON(weaponNum) || IS_MG_WEAPON_SET(weaponNum))
 			{
 				// hot smoking gun
-				if (cg.time - cent->overheatTime < 3000)
+				if ((cg.time - cent->overheatTime < 300) && !(cent->currentState.powerups & (1 << PW_INVULNERABLE)))
 				{
 					if (!(rand() % 3))
 					{
