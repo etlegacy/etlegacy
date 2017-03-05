@@ -129,7 +129,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 		if (trace->plane.normal[2] > 0.2f && VectorLengthSquared(relativeDelta) < 1600) // Square(40)
 		{
 			// make the world the owner of the dynamite, so the player can shoot it after it stops moving
-			if (ent->s.weapon == WP_DYNAMITE || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL || ent->s.weapon == WP_SMOKE_BOMB)
+			if (ent->s.weapon == WP_DYNAMITE || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL)
 			{
 				ent->r.ownerNum = ENTITYNUM_WORLD;
 			}
