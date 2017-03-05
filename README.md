@@ -10,6 +10,7 @@ Enemy Territory: Legacy [![Travis Status](https://travis-ci.org/etlegacy/etlegac
 * Development (bug reports and feature requests): [https://dev.etlegacy.com](https://dev.etlegacy.com)
 * Repository: [https://github.com/etlegacy/etlegacy](https://github.com/etlegacy/etlegacy)
 * Assets Repository: [https://gitlab.com/etlegacy](https://gitlab.com/etlegacy)
+* Legacy Lua API: [http://legacy-lua-api.readthedocs.io](http://legacy-lua-api.readthedocs.io)
 * Translation: [https://www.transifex.com/projects/p/etlegacy/](https://www.transifex.com/projects/p/etlegacy/)
 * Contact: [\#etlegacy](http://webchat.freenode.net/?channels=#etlegacy) on irc.freenode.net and [etlegacy/etlegacy](https://gitter.im/etlegacy/etlegacy) on Gitter.im
 
