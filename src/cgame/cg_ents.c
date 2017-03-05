@@ -1140,11 +1140,6 @@ static void CG_Missile(centity_t *cent)
 
 	if (cent->currentState.weapon == WP_LANDMINE)
 	{
-		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_SPECTATOR)
-		{
-			return;
-		}
-
 		VectorCopy(ent.origin, ent.lightingOrigin);
 		ent.renderfx |= RF_LIGHTING_ORIGIN;
 
@@ -1162,7 +1157,7 @@ static void CG_Missile(centity_t *cent)
 				else if (!cent->currentState.modelindex2)
 				{
 					// see if we have the skill to see them and are close enough
-					if (cgs.clientinfo[cg.snap->ps.clientNum].skill[SK_BATTLE_SENSE] >= 4)
+					if (cgs.clientinfo[cg.snap->ps.clientNum].team != TEAM_SPECTATOR && cgs.clientinfo[cg.snap->ps.clientNum].skill[SK_BATTLE_SENSE] >= 4)
 					{
 						vec_t distSquared = DistanceSquared(cent->lerpOrigin, cg.predictedPlayerEntity.lerpOrigin);
 
