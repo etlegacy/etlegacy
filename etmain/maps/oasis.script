@@ -2,6 +2,57 @@ game_manager
 {
 	spawn
 	{
+		// bugs and cheat fixes
+		create
+		{
+			scriptName "cheatfix"
+			classname "func_fakebrush"
+			origin "7591 6428 -109"
+			contents 65536	// CONTENTS_PLAYERCLIP
+			mins "-100 -50 -50"
+			maxs "100 50 200"
+		}
+
+		create
+		{
+			scriptName "bugfix1"
+			classname "func_fakebrush"
+			origin "3592 7176 -430"
+			contents 65536  // CONTENTS_PLAYERCLIP
+			mins "-40 -2 -66"
+			maxs "40 2 136"
+		}
+
+		create
+		{
+			scriptName "bugfix2"
+			classname "func_fakebrush"
+			origin "3534 7212 -430"
+			contents 65536  // CONTENTS_PLAYERCLIP
+			mins "-10 -40 -66"
+			maxs "20 145 136"
+		}
+
+		create
+		{
+			scriptName "bugfix3"
+			classname "func_fakebrush"
+			origin "2194 5550 -265"
+			contents 65536  // CONTENTS_PLAYERCLIP
+			mins "-7 -50 -37"
+			maxs "7 50 37"
+		}
+
+		create
+		{
+			scriptName "bugfix4"
+			classname "func_fakebrush"
+			origin "9255 3991 -467"
+			contents 65536  // CONTENTS_PLAYERCLIP
+			mins "-10 -2 -11"
+			maxs "10 2 11"
+		}
+
 		accum 1 set 0		// State of objective number one
 		accum 5 set 0		// Corrent number of Pak 75mm guns destroyed
 		accum 6 set 0		// Current number of water pumps built
@@ -63,7 +114,7 @@ game_manager
 		// Old City
 		wait 150
 
-		setautospawn "Old City"			1
+		setautospawn "Allied Camp"		1
 		setautospawn "Old City"			0
 
 		wait 350
@@ -109,7 +160,7 @@ game_manager
 		accum 1 set 1				// Both pak guns destroyed
 
 		wait 8000
-		
+
 		// Call function to check if the round has been won
 		trigger game_manager checkgame
 	}
@@ -153,7 +204,7 @@ game_manager
 	{
 		// Call function to check if the round has been won
 		trigger game_manager checkgame
-		
+
 		trigger end_boom_north check_0
 		trigger end_boom_south check_1
 	}
@@ -191,6 +242,10 @@ oldcityflag
 		wm_objective_status 		4 1 2
 
 		alertentity old_city_wobj
+
+		// set autospawn
+		setautospawn "Allied Camp"		1
+		setautospawn "Old City"			0
 	}
 
 	trigger allied_capture	// Flag has been touched by an allied player
@@ -220,6 +275,10 @@ oldcityflag
 		wm_objective_status 		4 1 1
 
 		alertentity old_city_wobj
+
+		// set autospawn
+		setautospawn "Old City"			1
+		setautospawn "Axis Garrison"	0
 	}
 
 	trigger check_obj
@@ -237,6 +296,10 @@ oldcityflag
 
 		alertentity old_city_wobj
 		alertentity oldcityspawns
+
+		// set autospawn
+		setautospawn "Old City"			1
+		setautospawn "Axis Garrison"	0
 	}
 
 	trigger kill
@@ -289,7 +352,6 @@ oldcitywall //Broken section of Old City wall
 		wm_set_main_objective	1 1
 	}
 }
-
 
 // ================================================
 // ========== CONSTRUCTIBLE STUFF =================
@@ -837,6 +899,19 @@ pak75_clip_2
 
 water_tunnel
 {
+	spawn
+	{
+		// these are put into the world as CONTENTS_SOLID,
+		// which is a Bad Thing if WolfReviveBBox gets called
+		// while we're in the water
+		wait 100
+		set
+		{
+			contents 32 // CONTENTS_WATER
+			clipmask 32 // CONTENTS_WATER
+		}
+	}
+
 	trigger up
 	{
 		gotomarker path_water_tunnel_top 3 wait
@@ -852,6 +927,19 @@ water_tunnel
 
 water_tunnel2
 {
+	spawn
+	{
+		// these are put into the world as CONTENTS_SOLID,
+		// which is a Bad Thing if WolfReviveBBox gets called
+		// while we're in the water
+		wait 100
+		set
+		{
+			contents 32 // CONTENTS_WATER
+			clipmask 32 // CONTENTS_WATER
+		}
+	}
+
 	trigger up
 	{
 		gotomarker path_water_tunnel_top 3 wait
@@ -867,6 +955,19 @@ water_tunnel2
 
 water_discharge
 {
+	spawn
+	{
+		// these are put into the world as CONTENTS_SOLID,
+		// which is a Bad Thing if WolfReviveBBox gets called
+		// while we're in the water
+		wait 100
+		set
+		{
+			contents 32 // CONTENTS_WATER
+			clipmask 32 // CONTENTS_WATER
+		}
+	}
+
 	trigger up
 	{
 		gotomarker path_water_discharge_top 3 wait
@@ -880,6 +981,19 @@ water_discharge
 
 water_discharge_2
 {
+	spawn
+	{
+		// these are put into the world as CONTENTS_SOLID,
+		// which is a Bad Thing if WolfReviveBBox gets called
+		// while we're in the water
+		wait 100
+		set
+		{
+			contents 32 // CONTENTS_WATER
+			clipmask 32 // CONTENTS_WATER
+		}
+	}
+
 	trigger up
 	{
 		gotomarker path_water_discharge_2_top 3 wait

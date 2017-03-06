@@ -5,6 +5,58 @@ game_manager
 {
 	spawn
 	{
+		// bug fixes
+		create
+		{
+			scriptName "bugfix1"
+			classname "func_fakebrush"
+			origin "2936 3292 191"
+			contents 65536  // CONTENTS_PLAYERCLIP
+			mins "-1 -15 -63"
+			maxs "3 25 80"
+		}
+
+		create
+		{
+			scriptName "bugfix2"
+			classname "func_fakebrush"
+			origin "1274 5142 298"
+			contents 65536  // CONTENTS_PLAYERCLIP
+			mins "-10 -10 -22"
+			maxs "10 10 22"
+		}
+
+		create
+		{
+			scriptName "bugfix3"
+			classname "func_fakebrush"
+			origin "3789 2011 296"
+			contents 65536  // CONTENTS_PLAYERCLIP
+			mins "-10 -10 -28"
+			maxs "10 10 28"
+		}
+
+		create
+		{
+			scriptName "bugfix4"
+			classname "func_fakebrush"
+			origin "2560 768 616"
+			contents 65536  // CONTENTS_PLAYERCLIP
+			mins "-80 -64 -200"
+			maxs "80 64 200"
+		}
+
+		create
+		{
+			scriptName "bugfix5"
+			classname "trigger_hurt"
+			origin "2560 768 616"
+			mins "-75 -60 -200"
+			maxs "75 60 200"
+			spawnflags 16
+			dmg 25
+		}
+
 		// Game rules
 		wm_axis_respawntime	20
 		wm_allied_respawntime	20

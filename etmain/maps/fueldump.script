@@ -6,6 +6,38 @@ game_manager
 {
 	spawn
 	{
+		// fueldump anti-trickjump player clips
+
+		create
+		{
+			scriptName "fueljump1"
+			classname "func_fakebrush"
+			origin "-8762 -5157 648"
+			contents 65536  // CONTENTS_PLAYERCLIP      // high fueljump
+			mins "-250 -50 -50"
+			maxs "50 50 150"
+		}
+
+		create
+		{
+			scriptName "fueljump2"
+			classname "func_fakebrush"
+			origin "-10430 -5126 424"
+			contents 65536  // CONTENTS_PLAYERCLIP      // mg bunker
+			mins "-50 -20 -20"
+			maxs "20 20 30"
+		}
+
+		create
+		{
+			scriptName "fueljump3"
+			classname "func_fakebrush"
+			origin "-9536 -5215 340"
+			contents 1                                  // main gate "hut"
+			mins "-35 -35 -20"
+			maxs "35 35 5"
+		}
+
 		// Game rules
 		wm_axis_respawntime	30
 		wm_allied_respawntime	20
@@ -301,7 +333,7 @@ axis_radio_built
 
 		trigger axis_radio_built_model enable_axis_features
 		enablespeaker axishq_sound
-		
+
 		setstate axishqstuff default
 	}
 
@@ -3448,22 +3480,22 @@ tank_enabler
 
 tank_trigger
 {
-     spawn
-     {
-          wait 100
+	 spawn
+	 {
+		  wait 100
 
-          attachtotag tank tag_turret
-     }
+		  attachtotag tank tag_turret
+	 }
 }
 
 tank_build
 {
-     spawn
-     {
-          wait 100
+	 spawn
+	 {
+		  wait 100
 
-          attachtotag tank tag_turret
-     }
+		  attachtotag tank tag_turret
+	 }
 }
 
 tank_construct
@@ -4457,7 +4489,7 @@ tank_flash
 	trigger run
 	{
 		setstate tank_flash default
- 		attachtotag tank_turret tag_flash
+		attachtotag tank_turret tag_flash
 		faceangles 0 90 0 50
 
 		wait 50
@@ -4468,7 +4500,7 @@ tank_flash
 	trigger run2
 	{
 		setstate tank_flash default
- 		attachtotag tank_turret tag_flash
+		attachtotag tank_turret tag_flash
 		faceangles 0 90 0 50
 
 		wait 50
@@ -4479,7 +4511,7 @@ tank_flash
 	trigger run3
 	{
 		setstate tank_flash default
- 		attachtotag tank_turret tag_flash
+		attachtotag tank_turret tag_flash
 		faceangles 0 90 0 50
 
 		wait 50
@@ -4490,7 +4522,7 @@ tank_flash
 	trigger run4
 	{
 		setstate tank_flash default
- 		attachtotag tank_turret tag_flash
+		attachtotag tank_turret tag_flash
 		faceangles 0 90 0 50
 
 		wait 50

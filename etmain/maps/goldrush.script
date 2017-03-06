@@ -2,10 +2,21 @@ game_manager
 {
 	spawn
 	{
+		// bug fixes
+		create
+		{
+			scriptName "bugfix1"
+			classname "func_fakebrush"
+			origin "509 -301 293 "
+			contents 65536  // CONTENTS_PLAYERCLIP
+			mins "-50 -5 -55"
+			maxs "50 5 55"
+		}
+
 		remapshader "models/mapobjects/tanks_sd/mg42turret" "models/mapobjects/tanks_sd/mg42turret_2"
-		
+
 		remapshaderflush
-		
+
 		// Game rules
 		wm_axis_respawntime	30
 		wm_allied_respawntime	20
@@ -3293,7 +3304,7 @@ gold_crate
 	trigger secured
 	{
 		accum 1 inc 1
-		
+
 		accum 1 trigger_if_equal 1 gold_crate secured1
 		accum 1 trigger_if_equal 2 gold_crate secured2
 	}

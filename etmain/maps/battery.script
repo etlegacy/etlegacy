@@ -6,6 +6,37 @@ game_manager
 {
 	spawn
 	{
+		// bug fixes
+		create
+		{
+			scriptName "bugfix1"
+			classname "func_fakebrush"
+			origin "3632 -4313 881"
+			contents 65536  // CONTENTS_PLAYERCLIP
+			mins "-40 -1 -20"
+			maxs "40 1 10"
+		}
+
+		create
+		{
+			scriptName "bugfix2"
+			classname "func_fakebrush"
+			origin "4495 -4280 1070"
+			contents 1  // CONTENTS_SOLID
+			mins "-50 -80 -50"
+			maxs "50 120 50"
+		}
+
+		create
+		{
+			scriptName "bugfix3"
+			classname "func_fakebrush"
+			origin "4490 -4140 1070"
+			contents 1  // CONTENTS_SOLID
+			mins "-50 -5 -50"
+			maxs "35 10 50"
+		}
+
 		// Game rules
 		wm_axis_respawntime	30
 		wm_allied_respawntime	20
