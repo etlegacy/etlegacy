@@ -1,0 +1,954 @@
+game_manager
+{
+	spawn
+	{
+		// Game rules
+		wm_number_of_objectives 1
+		wm_set_round_timelimit	5
+
+		wait 50
+		// Set all the non-LMS entities invisible
+		setstate bank_door2 invisible
+		setstate bank_door1 invisible
+		setstate bankdoors_toi invisible
+		setstate bankdoors_cm_marker invisible
+		setstate defense1_toi invisible
+		setstate defense1_hurt invisible
+		setstate defense1_flag invisible
+		setstate defense1_wire invisible
+		setstate defense1_teeth1 invisible
+		setstate defense1_teeth2 invisible
+		setstate defense1_materials invisible
+		setstate defense1_materials_clip invisible
+		setstate defense2_toi invisible
+		setstate defense2_hurt invisible
+		setstate defense2_flag invisible
+		setstate defense2_materials invisible
+		setstate defense2_materials_clip invisible
+		setstate defense2_wire invisible
+		setstate defense2_teeth1 invisible
+		setstate defense2_teeth2 invisible
+		setstate defense3_toi invisible
+		setstate defense3_hurt invisible
+		setstate defense3_flag invisible
+		setstate defense3_materials invisible
+		setstate defense3_materials_clip invisible
+		setstate defense3_wire invisible
+		setstate defense3_teeth1 invisible
+		setstate defense3_teeth2 invisible
+		setstate defense4_toi invisible
+		setstate defense4_hurt invisible
+		setstate defense4_flag invisible
+		setstate defense4_materials invisible
+		setstate defense4_materials_clip invisible
+		setstate defense4_wire invisible
+		setstate defense4_teeth1 invisible
+		setstate defense4_teeth2 invisible
+		setstate doorframe invisible
+		setstate goldbars_toi invisible
+		setstate goldbars_cm_marker invisible
+		setstate kill_tank invisible
+		setstate mg42_3 invisible
+		setstate north_hacabinet_toi invisible
+		setstate north_hacabinet_cm_marker invisible
+		setstate tank invisible
+		setstate tank_smoke invisible
+		setstate truck invisible
+		setstate truck_smoke invisible
+
+		// LMS spawning
+		setautospawn	"Axis Spawn"	0
+		setautospawn	"Allied Spawn"	1
+
+		// start triggered loops on/off as required (eg: command post radio sounds)
+		disablespeaker allies_compost_sound
+		disablespeaker axis_compost_sound
+		disablespeaker allies_compost_sound_lms
+		disablespeaker axis_compost_sound_lms
+
+		wait 1000
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_teamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+	}
+}
+
+// ================================================
+// =========== SPAWN POINT CONTROLS ===============
+// ================================================
+tankdepot_axis_spawns
+{
+	spawn
+	{
+		remove
+	}
+}
+
+tankdepotblob
+{
+	spawn
+	{
+		remove
+	}
+}
+
+ceilingfan
+{
+	spawn
+	{
+		wait 100
+		setrotation	0 300 0
+	}
+}
+// ============== end spawn point controls ========
+// ================================================
+
+
+// =====================================================
+// ============ NEUTRAL COMMAND POST LMS ===============
+// =====================================================
+
+allied_compost_built_lms
+{
+	spawn
+	{
+		wait 400
+		trigger allied_compost_built_lms setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+	}
+
+	buildstart final
+	{
+		setstate allied_compost_built_model_lms underconstruction
+		setstate neutral_compost_closed_clip_lms invisible
+		setstate neutral_compost_closed_model_lms invisible
+	}
+
+	built final
+	{
+		setstate allied_compost_built_model_lms default
+		setstate neutral_compost_closed_clip_lms invisible
+		setstate neutral_compost_closed_model_lms invisible
+
+		trigger allied_compost_built_model_lms enable_allied_features
+
+		enablespeaker allies_compost_sound_lms
+	}
+
+	decayed final
+	{
+		setstate allied_compost_built_model_lms invisible
+		setstate neutral_compost_closed_clip_lms default
+		setstate neutral_compost_closed_model_lms default
+	}
+
+	death
+	{
+		setstate allied_compost_built_model_lms invisible
+		setstate neutral_compost_closed_clip_lms default
+		setstate neutral_compost_closed_model_lms default
+
+		trigger allied_compost_built_model_lms disable_allied_features
+
+		disablespeaker allies_compost_sound_lms
+	}
+}
+
+allied_compost_built_model_lms
+{
+	spawn
+	{
+		wait 400
+		setstate allied_compost_built_model_lms invisible
+	}
+
+	trigger enable_allied_features
+	{
+		setchargetimefactor 1 soldier 0.75
+		setchargetimefactor 1 lieutenant 0.75
+		setchargetimefactor 1 medic 0.75
+		setchargetimefactor 1 engineer 0.75
+		setchargetimefactor 1 covertops 0.75
+		sethqstatus 1 1
+
+		wm_announce	"Allied Command Post constructed. Charge speed increased!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed_allies"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed"
+
+		wm_removeteamvoiceannounce 1 "allies_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+	}
+
+	trigger disable_allied_features
+	{
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+
+		wm_announce	"Axis team has destroyed the Allied Command Post!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_teamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_damaged"
+		// *---------------------------------------------------------------------------------*
+	}
+}
+
+axis_compost_built_lms
+{
+	spawn
+	{
+		wait 400
+		trigger axis_compost_built_lms setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setchargetimefactor 0 soldier 1
+		setchargetimefactor 0 lieutenant 1
+		setchargetimefactor 0 medic 1
+		setchargetimefactor 0 engineer 1
+		setchargetimefactor 0 covertops 1
+		sethqstatus 0 0
+	}
+
+	buildstart final
+	{
+		setstate axis_compost_built_model_lms underconstruction
+		setstate neutral_compost_closed_clip_lms invisible
+		setstate neutral_compost_closed_model_lms invisible
+	}
+
+	built final
+	{
+		setstate axis_compost_built_model_lms default
+		setstate neutral_compost_closed_clip_lms invisible
+		setstate neutral_compost_closed_model_lms invisible
+
+		trigger axis_compost_built_model_lms enable_axis_features
+
+		enablespeaker axis_compost_sound_lms
+	}
+
+	decayed final
+	{
+		setstate axis_compost_built_model_lms invisible
+		setstate neutral_compost_closed_clip_lms default
+		setstate neutral_compost_closed_model_lms default
+	}
+
+	death
+	{
+		setstate axis_compost_built_model_lms invisible
+		setstate neutral_compost_closed_clip_lms default
+		setstate neutral_compost_closed_model_lms default
+
+		trigger axis_compost_built_model_lms disable_axis_features
+
+		disablespeaker axis_compost_sound_lms
+	}
+}
+
+axis_compost_built_model_lms
+{
+	spawn
+	{
+		wait 400
+		setstate axis_compost_built_model_lms invisible
+	}
+
+	trigger enable_axis_features
+	{
+		setchargetimefactor 0 soldier 0.75
+		setchargetimefactor 0 lieutenant 0.75
+		setchargetimefactor 0 medic 0.75
+		setchargetimefactor 0 engineer 0.75
+		setchargetimefactor 0 covertops 0.75
+		sethqstatus 0 1
+
+		wm_announce	"Axis Command Post constructed. Charge speed increased!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed_axis"
+
+		wm_removeteamvoiceannounce 0 "axis_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+	}
+
+	trigger disable_axis_features
+	{
+		setchargetimefactor 0 soldier 1
+		setchargetimefactor 0 lieutenant 1
+		setchargetimefactor 0 medic 1
+		setchargetimefactor 0 engineer 1
+		setchargetimefactor 0 covertops 1
+		sethqstatus 0 0
+
+		wm_announce	"Allied team has destroyed the Axis Command Post!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_teamvoiceannounce 0 "axis_hq_compost_damaged"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+	}
+}
+
+// ================================
+// ===== REMOVE NON-LMS STUFF =====
+// ================================
+
+// -----------------
+// TANK
+// -----------------
+tank
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+tank_disabler
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+tank_enabler
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+tank_trigger
+{
+	spawn
+	{
+		wait 200
+		remove
+	}
+}
+
+tank_build
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+tank_construct
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+
+
+tank_smoke
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+tank_flash
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+tank_shooter
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+tank_rtrack
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+tank_ltrack
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+tank_turret
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+tank_shell
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+rubble2_damaged
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+// -----------------
+// GOLD
+// -----------------
+goldbars_toi
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+goldbars_cm_marker
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+gold_full_0
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+gold_full_1
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+gold_trans_0
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+gold_trans_1
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+// -----------------
+// TRUCK
+// -----------------
+
+truck
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+truck_disabler
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+truck_enabler
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+truck_trigger
+{
+	spawn
+	{
+		wait 200
+		remove
+	}
+}
+
+truck_build
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+truck_construct
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+truck_smoke
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+truck_fwheel
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+truck_bwheel1
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+truck_bwheel2
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+truck_engine
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+goldbar_holder
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+// -----------------
+// BANK EXPLOSION
+// -----------------
+doorframe
+{
+	spawn
+	{
+		wait 50
+		remove
+	}
+}
+
+bankdoors_toi
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+bankdoors_cm_marker
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+bank_door1
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+boomtrigger
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+hurt_barrelblast1
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+hurt_barrelblast2
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+hurt_barrelblast3
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+hurt_bankblast
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+// -----------------
+// BARRIERS
+// -----------------
+defense1
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+defense1_toi
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+defense2
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+defense2_toi
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+defense3
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+defense3_toi
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+defense4
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+defense4_toi
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+// -----------------------
+// Tank Bay Command Post
+// -----------------------
+tankbay_commandpost_wires
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+neutral_compost_toi
+{
+	spawn
+	{
+		wait 50
+		setstate neutral_compost_toi invisible
+	}
+}
+
+neutral_compost_clip
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+neutral_compost_closed_clip
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+neutral_compost_closed_model
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+allied_compost_built
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+allied_compost_built_model
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+axis_compost_built
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+axis_compost_built_model
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+// -------------------------------------
+// Health & Ammo Cabinets near Tank Bay
+// -------------------------------------
+north_hacabinet_toi
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+north_hacabinet_cm_marker
+{
+	spawn
+	{
+		wait 500
+		remove
+	}
+}
+
+north_trigger_ammo
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+north_ammocabinet
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+
+north_ammocabinet_clip
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+north_trigger_heal
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+north_healthcabinet
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+north_healthcabinet_clip
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
