@@ -754,8 +754,8 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 				CG_DrawPic(icon_pos[0], icon_pos[1], icon_extends[0], icon_extends[1], classInfo->icon);
 			}
 			CG_DrawRotatedPic(icon_pos[0] - 1, icon_pos[1] - 1, icon_extends[0] + 2, icon_extends[1] + 2, classInfo->arrow, (0.5f - (mEnt->yaw - 180.f) / 360.f));
-			trap_R_SetColor(NULL);
 		}
+		trap_R_SetColor(NULL);
 		return;
 	case ME_CONSTRUCT:
 	case ME_DESTRUCT:
@@ -836,7 +836,22 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 		if (oidInfo)
 		{
+			int infoId;
+
 			customimage = mEnt->team == TEAM_AXIS ? oidInfo->customimageaxis : oidInfo->customimageallies;
+
+			// we have an oidInfo - check for main objective and do special color in case of
+			// note: many map scripts are faulty and set wrong wm_objective_status!
+			infoId = atoi(CG_ConfigString(mEnt->team == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE)) -1;
+
+			if (infoId >= 0 && infoId < MAX_OID_TRIGGERS)
+			{
+				if (cgs.oidInfo[infoId].entityNum == oidInfo->entityNum)
+				{
+					// we should change this - let it flicker, draw in hud or?
+					trap_R_SetColor(colorYellow);
+				}
+			}
 		}
 
 		switch (mEnt->type)
@@ -844,6 +859,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		case ME_CONSTRUCT:
 			if (mEntFilter & CC_FILTER_CONSTRUCTIONS)
 			{
+				trap_R_SetColor(NULL);
 				return;
 			}
 			pic = mEnt->team == TEAM_AXIS ? cgs.media.ccConstructIcon[0] : cgs.media.ccConstructIcon[1];
@@ -851,6 +867,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		case ME_TANK:
 			if (mEntFilter & CC_FILTER_OBJECTIVES)
 			{
+				trap_R_SetColor(NULL);
 				return;
 			}
 			pic = cgs.media.ccTankIcon; // FIXME: this is churchill - add jagdpanther?
@@ -858,6 +875,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		case ME_TANK_DEAD:
 			if (mEntFilter & CC_FILTER_OBJECTIVES)
 			{
+				trap_R_SetColor(NULL);
 				return;
 			}
 			pic = cgs.media.ccTankIcon; // FIXME: this is churchill - add jagdpanther?
@@ -872,6 +890,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		default:
 			if (mEntFilter & CC_FILTER_DESTRUCTIONS)
 			{
+				trap_R_SetColor(NULL);
 				return;
 			}
 			pic = mEnt->team == TEAM_AXIS ? cgs.media.ccDestructIcon[cent->currentState.effect1Time][0] : cgs.media.ccDestructIcon[cent->currentState.effect1Time][1];
@@ -890,6 +909,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			{
 				if (mEntFilter & CC_FILTER_OBJECTIVES)
 				{
+					trap_R_SetColor(NULL);
 					return;
 				}
 			}
@@ -897,6 +917,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 			{
 				if (mEntFilter & CC_FILTER_HACABINETS)
 				{
+					trap_R_SetColor(NULL);
 					return;
 				}
 			}
@@ -908,6 +929,7 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 				}
 				if (mEntFilter & CC_FILTER_CMDPOST)
 				{
+					trap_R_SetColor(NULL);
 					return;
 				}
 			}
