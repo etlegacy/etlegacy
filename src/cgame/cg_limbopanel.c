@@ -312,7 +312,7 @@ CLASS_COUNTER(4);
 	panel_button_t filterButton ## number = { \
 		NULL,                               \
 		NULL,                               \
-		{ 15,                      54 + (number * 31), 26, 26 },     \
+		{ 14,                      50 + (number * 30), 26, 26 },     \
 		{ number,                  0,                  0,  0, 0, 0, 0, 0},    \
 		NULL,                      /* font       */          \
 		CG_LimboPanel_Filter_KeyDown,/* keyDown    */              \
@@ -330,6 +330,7 @@ FILTER_BUTTON(4);
 FILTER_BUTTON(5);
 FILTER_BUTTON(6);
 FILTER_BUTTON(7);
+FILTER_BUTTON(8);
 
 panel_button_t filterTitleText =
 {
@@ -1007,7 +1008,7 @@ panel_button_t plusButton =
 {
 	NULL,
 	NULL,
-	{ 19,                     320,  18, 14 },
+	{ 18,                     325,  18, 12 },
 	{ 12,                     0,    0,  0, 0, 0, 0, 0},
 	NULL,                     /* font     */
 	CG_LimboPanel_PlusButton_KeyDown,/* keyDown  */
@@ -1021,7 +1022,7 @@ panel_button_t plusButtonText =
 {
 	NULL,
 	"+",
-	{ 19,                      321,  18, 14 },
+	{ 18,                      323,  18, 12 },
 	{ 12,                      0,    0,  0, 0, 0, 0, 0},
 	&titleLimboFontBigCenter,  /* font     */
 	NULL,                      /* keyDown  */
@@ -1035,7 +1036,7 @@ panel_button_t minusButton =
 {
 	NULL,
 	NULL,
-	{ 19,                     346,  18, 14 },
+	{ 18,                     348,  18, 12 },
 	{ 12,                     0,    0,  0, 0, 0, 0, 0},
 	NULL,                     /* font     */
 	CG_LimboPanel_MinusButton_KeyDown,/* keyDown  */
@@ -1049,7 +1050,7 @@ panel_button_t minusButtonText =
 {
 	NULL,
 	"-",
-	{ 19,                      346,  18, 14 },
+	{ 18,                      346,  18, 12 },
 	{ 12,                      0,    0,  0, 0, 0, 0, 0},
 	&titleLimboFontBigCenter,  /* font     */
 	NULL,                      /* keyDown  */
@@ -1073,7 +1074,7 @@ panel_button_t *limboPanelButtons[] =
 	&leftFrame05,             &leftFrame06,               &leftFrame07,           &leftFrame08,
 
 	&filterButton0,           &filterButton1,             &filterButton2,         &filterButton3, &filterButton4,
-	&filterButton5,           &filterButton6,             &filterButton7,         /* &filterButton8,*/
+	&filterButton5,           &filterButton6,             &filterButton7,         &filterButton8,
 	&filterTitleText,
 
 	&medalPic0,               &medalPic1,                 &medalPic2,             &medalPic3,     &medalPic4,    &medalPic5,&medalPic6,

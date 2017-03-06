@@ -1655,7 +1655,7 @@ typedef struct
 	sfxHandle_t itemPickUpSounds[ITEM_MAX_ITEMS];
 
 	qhandle_t ccStamps[2];
-	qhandle_t ccFilterPics[8];                      ///< was 10, set to 8 (we init 0-7)
+	qhandle_t ccFilterPics[9];                      ///< was 10, set to 9 (we init 0-8)
 	qhandle_t ccFilterBackOn;
 	qhandle_t ccFilterBackOff;
 
@@ -3276,7 +3276,10 @@ extern qboolean ccInitial;
 #define CC_FILTER_HACABINETS    (1 << 4)
 #define CC_FILTER_CONSTRUCTIONS (1 << 5)
 #define CC_FILTER_DESTRUCTIONS  (1 << 6)
-#define CC_FILTER_OBJECTIVES    (1 << 7)
+#define CC_FILTER_LANDMINES     (1 << 7)
+#define CC_FILTER_OBJECTIVES    (1 << 8)
+// #define CC_FILTER_BUDDIES       (1 << 9)
+// #define CC_FILTER_REQUESTS      (1 << 10)
 
 /**
  * @struct rankicon_t

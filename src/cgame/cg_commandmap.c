@@ -1046,9 +1046,10 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 		trap_R_SetColor(NULL);
 		return;
 	case ME_LANDMINE:
-		/*          if(mEntFilter & CC_FILTER_LANDMINES) {
-		            continue;
-		        }*/
+		if (mEntFilter & CC_FILTER_LANDMINES)
+		{
+			return;
+		}
 
 		// now check to see if the entity is within our clip region
 		if (scissor && CG_ScissorEntIsCulled(mEnt, scissor))

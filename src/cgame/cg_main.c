@@ -1816,8 +1816,8 @@ static void CG_RegisterGraphics(void)
 	cgs.media.ccFilterPics[4] = trap_R_RegisterShaderNoMip("gfx/limbo/filter_healthammo");
 	cgs.media.ccFilterPics[5] = trap_R_RegisterShaderNoMip("gfx/limbo/filter_construction");
 	cgs.media.ccFilterPics[6] = trap_R_RegisterShaderNoMip("gfx/limbo/filter_destruction");
-	cgs.media.ccFilterPics[7] = trap_R_RegisterShaderNoMip("gfx/limbo/filter_objective");
-	//cgs.media.ccFilterPics[8] = trap_R_RegisterShaderNoMip( "gfx/limbo/filter_objective" );
+	cgs.media.ccFilterPics[7] = trap_R_RegisterShaderNoMip("gfx/limbo/filter_landmine");
+	cgs.media.ccFilterPics[8] = trap_R_RegisterShaderNoMip("gfx/limbo/filter_objective");
 
 	cgs.media.ccFilterBackOn  = trap_R_RegisterShaderNoMip("gfx/limbo/filter_back_on");
 	cgs.media.ccFilterBackOff = trap_R_RegisterShaderNoMip("gfx/limbo/filter_back_off");
