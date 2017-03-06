@@ -1,0 +1,6884 @@
+// globalaccum 0 = for train1 direction
+// globalaccum 1 = for train2 direction
+
+game_manager
+{
+	spawn
+	{
+		// Game rules
+		wm_axis_respawntime	20
+		wm_allied_respawntime	20
+		wm_number_of_objectives 8
+		wm_set_round_timelimit	30
+
+		// Objectives
+		// 1: Load the ammo onto the tug engine
+		// 2: Transport the ammo to the construction site
+		// 3: Load the ammo onto the second tug engine
+		// 4: Transport the ammo to the railgun
+		// 5: Fire the railgun
+		// 6: Capture the depot spawn
+		// 7: Allied command post
+		// 8: Axis command post
+
+		// Current main objectives for each team (0=Axis, 1=Allies)
+		wm_set_main_objective		1	0
+		wm_set_main_objective		1	1
+
+		// Objective overview status indicators
+		//wm_objective_status <objective> <team (0=Axis, 1=Allies)> <status (0=neutral 1=complete 2=failed)>
+		wm_objective_status 1 1 0
+		wm_objective_status 1 0 0
+		wm_objective_status 2 1 0
+		wm_objective_status 2 0 0
+		wm_objective_status 3 1 0
+		wm_objective_status 3 0 0
+		wm_objective_status 4 1 0
+		wm_objective_status 4 0 0
+		wm_objective_status 5 1 0
+		wm_objective_status 5 0 0
+		wm_objective_status 6 1 0
+		wm_objective_status 6 0 0
+		wm_objective_status 7 1 0
+		wm_objective_status 7 0 0
+		wm_objective_status 8 1 0
+		wm_objective_status 8 0 0
+
+		// Stopwatch mode defending team (0=Axis, 1=Allies)
+		wm_set_defending_team	1
+
+		// Winner on expiration of round timer (0=Axis, 1=Allies)
+		wm_setwinner	1
+
+		accum 0 set 2 // Generator + panel
+		accum 1 set 3 // 2*Generator + panel
+		accum 2 set 0 // Ammo in place?
+
+		accum 3 set 0 // states of objectives
+
+		accum 4 set 0 // flag for firing sequence
+
+		disablespeaker allies_compost_sound	// command post speaker
+		disablespeaker axis_compost_sound	// command post speaker
+
+		wait 2000
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "railgun_axis_tug1_depot"
+		wm_addteamvoiceannounce 0 "railgun_axis_depot_capture"
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_addteamvoiceannounce 1 "railgun_allies_tug1_depot"
+		wm_addteamvoiceannounce 1 "railgun_allies_depot_capture"
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_teamvoiceannounce 0 "railgun_axis_tug1_depot"
+		wm_teamvoiceannounce 0 "railgun_axis_depot_capture"
+		wm_teamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_teamvoiceannounce 1 "railgun_allies_tug1_depot"
+		wm_teamvoiceannounce 1 "railgun_allies_depot_capture"
+		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+	}
+
+	trigger enable_gun
+	{
+		accum 4 abort_if_not_equal 0
+		accum 4 set 1
+		wm_announce "Axis team have loaded the Rail Gun!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "railgun_axis_railgun_loaded"
+		wm_teamvoiceannounce 0 "railgun_axis_railgun_fire"
+
+		wm_teamvoiceannounce 1 "railgun_allies_railgun_fire"
+		// *---------------------------------------------------------------------------------*
+
+		accum 2 set 1
+
+		trigger panel3 gun_loaded
+
+		wm_objective_status	4 1 2
+		wm_objective_status	4 0 1
+
+		wm_set_main_objective	5 0
+		wm_set_main_objective	5 1
+	}
+
+	trigger axis_win
+	{
+		accum 2 abort_if_not_equal 1
+		// disable the button so it can't be retriggered
+		trigger trigger_end disable
+		// set associated objective image
+		wm_announce "Axis fired the Rail Gun!"
+
+		wm_objective_status	5 1 2
+		wm_objective_status	5 0 1
+
+		wm_setwinner 0
+
+		wait 2400
+
+		wm_endround
+
+		wait 6000
+
+		alertentity end_explosion
+		togglespeaker end_explosion_speaker
+	}
+
+	trigger depotflagblue
+	{
+		// Change the objective state internally, so UI can update, etc.
+		// Allied takes control of depot
+
+		// Some kind of UI pop-up to alert players
+		wm_announce	"Allies capture the Depot Yard!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "railgun_axis_capture_depot"
+
+		wm_teamvoiceannounce 0 "railgun_axis_depot_lost"
+
+		wm_teamvoiceannounce 1 "railgun_allies_depot_captured"
+
+		wm_removeteamvoiceannounce 1 "railgun_allies_depot_capture"
+		// *---------------------------------------------------------------------------------*
+
+		wm_objective_status	6 1 1
+		wm_objective_status	6 0 2
+
+		trigger switch_invtrig1 allies_have_depot
+	}
+
+	trigger depotflagred
+	{
+		// Change the objective state internally, so UI can update, etc.
+		// Axis takes control of depot
+
+		// Some kind of UI pop-up to alert players
+		wm_announce	"Axis captures the Depot Yard!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 1 "railgun_allies_depot_capture"
+
+		wm_teamvoiceannounce 0 "railgun_axis_depot_captured"
+
+		wm_teamvoiceannounce 1 "railgun_allies_depot_lost"
+
+		wm_removeteamvoiceannounce 0 "railgun_axis_depot_capture"
+		// *---------------------------------------------------------------------------------*
+
+		wm_objective_status	6 1 2
+		wm_objective_status	6 0 1
+
+		trigger switch_invtrig1 axis_have_depot
+	}
+
+	trigger timelimit_hit
+	{
+		alertentity end_alliedsmoke
+	}
+}
+
+// BIG NOTE BY GORDON: NEVER EVER PUT ANY WAIT COMMANDS IN ANYTHING BUT THE SPAWN FUNCTION OF THIS ENTITY
+train1
+{
+	spawn
+	{
+		accum 0 set 0 // is ammo loaded?
+		accum 2 set 0 // is enabled (someone stood in trigger)
+		accum 3 set -72 // prestage - first ammo loaded stage is 0
+		accum 4 set 0 // is moving? (1 = moving)
+		accum 5 set 0 // switch state
+		accum 6 set 0 // who's got the tug? (0 = axis / 1 = allies)
+
+		wait 200
+		followspline globalaccum 1 spln67 200 wait length 224
+
+		playsound sound/vehicles/tug/tug_idle.wav looping
+	}
+
+	trigger run_stage1
+	{
+		accum 0 abort_if_equal 0
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage1
+		trigger train1_back run_stage1
+		trigger crane_box run_stage1
+		followspline globalaccum 0 spln_4 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage2
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage2
+		trigger train1_back run_stage2
+		trigger crane_box run_stage2
+		followspline globalaccum 0 spln_3 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage3
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage3
+		trigger train1_back run_stage3
+		trigger crane_box run_stage3
+		followspline globalaccum 0 spln_2 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage4
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage4
+		trigger train1_back run_stage4
+		trigger crane_box run_stage4
+		followspline globalaccum 0 spln_1 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage5
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage5
+		trigger train1_back run_stage5
+		trigger crane_box run_stage5
+		followspline globalaccum 0 spln0 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage6
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage6
+		trigger train1_back run_stage6
+		trigger crane_box run_stage6
+		followspline globalaccum 0 spln1 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage7
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage7
+		trigger train1_back run_stage7
+		trigger crane_box run_stage7
+		followspline globalaccum 0 spln2 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage8
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage8
+		trigger train1_back run_stage8
+		trigger crane_box run_stage8
+		followspline globalaccum 0 spln3 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage9
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage9
+		trigger train1_back run_stage9
+		trigger crane_box run_stage9
+		followspline globalaccum 0 spln4 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage10
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage10
+		trigger train1_back run_stage10
+		trigger crane_box run_stage10
+		followspline globalaccum 0 spln5 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage11
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage11
+		trigger train1_back run_stage11
+		trigger crane_box run_stage11
+		followspline globalaccum 0 spln6 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage12
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage12
+		trigger train1_back run_stage12
+		trigger crane_box run_stage12
+		followspline globalaccum 0 spln7 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage13
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage13
+		trigger train1_back run_stage13
+		trigger crane_box run_stage13
+		followspline globalaccum 0 spln8 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage14
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage14
+		trigger train1_back run_stage14
+		trigger crane_box run_stage14
+		followspline globalaccum 0 spln9 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+
+		// allied -> depot spawn here
+		trigger switch_invtrig1 allies_want_depot
+	}
+
+	trigger run_stage15
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage15
+		trigger train1_back run_stage15
+		trigger crane_box run_stage15
+		followspline globalaccum 0 spln10 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+
+		// allied -> base spawn here
+		trigger switch_invtrig1 allies_want_base
+	}
+
+	trigger run_stage16
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage16
+		trigger train1_back run_stage16
+		trigger crane_box run_stage16
+		followspline globalaccum 0 spln11 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage17
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage17
+		trigger train1_back run_stage17
+		trigger crane_box run_stage17
+		followspline globalaccum 0 spln12 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage18
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage18
+		trigger train1_back run_stage18
+		trigger crane_box run_stage18
+		followspline globalaccum 0 spln13 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage19
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage19
+		trigger train1_back run_stage19
+		trigger crane_box run_stage19
+		followspline globalaccum 0 spln14 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage20
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage20
+		trigger train1_back run_stage20
+		trigger crane_box run_stage20
+		followspline globalaccum 0 spln15 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage21
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage21
+		trigger train1_back run_stage21
+		trigger crane_box run_stage21
+		followspline globalaccum 0 spln16 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage22
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage22
+		trigger train1_back run_stage22
+		trigger crane_box run_stage22
+		followspline globalaccum 0 spln17 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage23
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage23
+		trigger train1_back run_stage23
+		trigger crane_box run_stage23
+		followspline globalaccum 0 spln18 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage24
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage24
+		trigger train1_back run_stage24
+		trigger crane_box run_stage24
+		followspline globalaccum 0 spln19 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage25
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage25
+		trigger train1_back run_stage25
+		trigger crane_box run_stage25
+		followspline globalaccum 0 spln20 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage26
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage26
+		trigger train1_back run_stage26
+		trigger crane_box run_stage26
+		followspline globalaccum 0 spln21 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger self switch_vo_axis_raise // axis riding to north crane
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage27
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage27
+		trigger train1_back run_stage27
+		trigger crane_box run_stage27
+		followspline globalaccum 0 spln22 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger self switch_vo_allies_lower // tug just passed switch so it can be lowered
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage28
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage28
+		trigger train1_back run_stage28
+		trigger crane_box run_stage28
+		followspline globalaccum 0 spln23 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage29
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage29
+		trigger train1_back run_stage29
+		trigger crane_box run_stage29
+		followspline globalaccum 0 spln24 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage30
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage30
+		trigger train1_back run_stage30
+		trigger crane_box run_stage30
+		followspline globalaccum 0 spln25 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage31
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage31
+		trigger train1_back run_stage31
+		trigger crane_box run_stage31
+		followspline globalaccum 0 spln26 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage32
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage32
+		trigger train1_back run_stage32
+		trigger crane_box run_stage32
+		followspline globalaccum 0 spln27 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+
+		// axis -> depot spawn here
+		trigger switch_invtrig1 axis_want_depot
+	}
+
+	trigger run_stage33
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage33
+		trigger train1_back run_stage33
+		trigger crane_box run_stage33
+		followspline globalaccum 0 spln28 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+
+		// axis -> base spawn here
+		trigger switch_invtrig1 axis_want_base
+	}
+
+	trigger run_stage34
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage34
+		trigger train1_back run_stage34
+		trigger crane_box run_stage34
+		followspline globalaccum 0 spln29 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage35
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage35
+		trigger train1_back run_stage35
+		trigger crane_box run_stage35
+		followspline globalaccum 0 spln30 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger self switch_vo_axis_lower	// tug just passed switch so it can be lowered
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage36
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage36
+		trigger train1_back run_stage36
+		trigger crane_box run_stage36
+		followspline globalaccum 0 spln31 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage37
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage37
+		trigger train1_back run_stage37
+		trigger crane_box run_stage37
+		followspline globalaccum 0 spln32 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger self switch_vo_allies_raise // allies riding back to depot
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage38
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage38
+		trigger train1_back run_stage38
+		trigger crane_box run_stage38
+		followspline globalaccum 0 spln33 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage39
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage39
+		trigger train1_back run_stage39
+		trigger crane_box run_stage39
+		followspline globalaccum 0 spln34 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage40
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage40
+		trigger train1_back run_stage40
+		trigger crane_box run_stage40
+		followspline globalaccum 0 spln35 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage41
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage41
+		trigger train1_back run_stage41
+		trigger crane_box run_stage41
+		followspline globalaccum 0 spln36 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage42
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage42
+		trigger train1_back run_stage42
+		trigger crane_box run_stage42
+		followspline globalaccum 0 spln37 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage43
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage43
+		trigger train1_back run_stage43
+		trigger crane_box run_stage43
+		followspline globalaccum 0 spln38 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage44
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage44
+		trigger train1_back run_stage44
+		trigger crane_box run_stage44
+		followspline globalaccum 0 spln39 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage45
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage45
+		trigger train1_back run_stage45
+		trigger crane_box run_stage45
+		followspline globalaccum 0 spln40 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage46
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage46
+		trigger train1_back run_stage46
+		trigger crane_box run_stage46
+		followspline globalaccum 0 spln41 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage47
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage47
+		trigger train1_back run_stage47
+		trigger crane_box run_stage47
+		followspline globalaccum 0 spln42 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage48
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage48
+		trigger train1_back run_stage48
+		trigger crane_box run_stage48
+		followspline globalaccum 0 spln43 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage49
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage49
+		trigger train1_back run_stage49
+		trigger crane_box run_stage49
+		followspline globalaccum 0 spln44 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage50
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage50
+		trigger train1_back run_stage50
+		trigger crane_box run_stage50
+		followspline globalaccum 0 spln45 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage51
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage51
+		trigger train1_back run_stage51
+		trigger crane_box run_stage51
+		followspline globalaccum 0 spln46 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage52
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage52
+		trigger train1_back run_stage52
+		trigger crane_box run_stage52
+		followspline globalaccum 0 spln47 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage53
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage53
+		trigger train1_back run_stage53
+		trigger crane_box run_stage53
+		followspline globalaccum 0 spln48 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+
+		// allied -> depot spawn here
+		trigger switch_invtrig1 allies_want_depot
+	}
+
+	trigger run_stage54
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage54
+		trigger train1_back run_stage54
+		trigger crane_box run_stage54
+		followspline globalaccum 0 spln49 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+
+		// allied -> base spawn here
+		trigger switch_invtrig1 allies_want_base
+	}
+
+	trigger run_stage55
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage55
+		trigger train1_back run_stage55
+		trigger crane_box run_stage55
+		followspline globalaccum 0 spln50 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage56
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage56
+		trigger train1_back run_stage56
+		trigger crane_box run_stage56
+		followspline globalaccum 0 spln51 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage57
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage57
+		trigger train1_back run_stage57
+		trigger crane_box run_stage57
+		followspline globalaccum 0 spln52 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage58
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage58
+		trigger train1_back run_stage58
+		trigger crane_box run_stage58
+		followspline globalaccum 0 spln53 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage59
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage59
+		trigger train1_back run_stage59
+		trigger crane_box run_stage59
+		followspline globalaccum 0 spln54 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_stage60
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_stage60
+		trigger train1_back run_stage60
+		trigger crane_box run_stage60
+		followspline globalaccum 0 spln55 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		wm_announce "Axis transported the Ammo to the North Crane!"
+
+		wm_objective_status	2 1 2
+		wm_objective_status	2 0 1
+
+		wm_set_main_objective	3 0
+		wm_set_main_objective	3 1
+
+		trigger crane2_controller startcrane
+	}
+
+
+	trigger update_counter_axis
+	{
+		accum 2 abort_if_not_equal 1
+		accum 3 inc 1
+	}
+
+	trigger update_counter_allies
+	{
+		accum 2 abort_if_not_equal 2
+		accum 3 inc -1
+	}
+
+
+
+// *********************************************
+// 			pre-run scripting
+// *********************************************
+
+	trigger run_Prestage2
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage2
+		trigger train1_back run_Prestage2
+		followspline globalaccum 0 spln67 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage3
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage3
+		trigger train1_back run_Prestage3
+		followspline globalaccum 0 spln66 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage4
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage4
+		trigger train1_back run_Prestage4
+		followspline globalaccum 0 spln65 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage5
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage5
+		trigger train1_back run_Prestage5
+		followspline globalaccum 0 spln64 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage6
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage6
+		trigger train1_back run_Prestage6
+		followspline globalaccum 0 spln63 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage7
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage7
+		trigger train1_back run_Prestage7
+		followspline globalaccum 0 spln62 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage8
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage8
+		trigger train1_back run_Prestage8
+		followspline globalaccum 0 spln61 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage9
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage9
+		trigger train1_back run_Prestage9
+		followspline globalaccum 0 spln60 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage10
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage10
+		trigger train1_back run_Prestage10
+		followspline globalaccum 0 spln59 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage11
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage11
+		trigger train1_back run_Prestage11
+		followspline globalaccum 0 spln58 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage12
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage12
+		trigger train1_back run_Prestage12
+		followspline globalaccum 0 spln57 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage13
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage13
+		trigger train1_back run_Prestage13
+		followspline globalaccum 0 spln56 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage14
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage14
+		trigger train1_back run_Prestage14
+		followspline globalaccum 0 spln55 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage15
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage15
+		trigger train1_back run_Prestage15
+		followspline globalaccum 0 spln54 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage16
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage16
+		trigger train1_back run_Prestage16
+		followspline globalaccum 0 spln53 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage17
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage17
+		trigger train1_back run_Prestage17
+		followspline globalaccum 0 spln52 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage18
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage18
+		trigger train1_back run_Prestage18
+		followspline globalaccum 0 spln51 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage19
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage19
+		trigger train1_back run_Prestage19
+		followspline globalaccum 0 spln50 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage20
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage20
+		trigger train1_back run_Prestage20
+		followspline globalaccum 0 spln49 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage21
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage21
+		trigger train1_back run_Prestage21
+		followspline globalaccum 0 spln48 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+
+		// allied -> depot spawn here
+		trigger switch_invtrig1 allies_want_depot
+	}
+
+	trigger run_Prestage22
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage22
+		trigger train1_back run_Prestage22
+		followspline globalaccum 0 spln47 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+
+		// allied -> base spawn here
+		trigger switch_invtrig1 allies_want_base
+	}
+
+	trigger run_Prestage23
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage23
+		trigger train1_back run_Prestage23
+		followspline globalaccum 0 spln46 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage24
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage24
+		trigger train1_back run_Prestage24
+		followspline globalaccum 0 spln45 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage25
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage25
+		trigger train1_back run_Prestage25
+		followspline globalaccum 0 spln44 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage26
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage26
+		trigger train1_back run_Prestage26
+		followspline globalaccum 0 spln43 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage27
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage27
+		trigger train1_back run_Prestage27
+		followspline globalaccum 0 spln42 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage28
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage28
+		trigger train1_back run_Prestage28
+		followspline globalaccum 0 spln41 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage29
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage29
+		trigger train1_back run_Prestage29
+		followspline globalaccum 0 spln40 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage30
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage30
+		trigger train1_back run_Prestage30
+		followspline globalaccum 0 spln39 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage31
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage31
+		trigger train1_back run_Prestage31
+		followspline globalaccum 0 spln38 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage32
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage32
+		trigger train1_back run_Prestage32
+		followspline globalaccum 0 spln37 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage33
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage33
+		trigger train1_back run_Prestage33
+		followspline globalaccum 0 spln36 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage34
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage34
+		trigger train1_back run_Prestage34
+		followspline globalaccum 0 spln35 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage35
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage35
+		trigger train1_back run_Prestage35
+		followspline globalaccum 0 spln34 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage36
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage36
+		trigger train1_back run_Prestage36
+		followspline globalaccum 0 spln33 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage37
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage37
+		trigger train1_back run_Prestage37
+		followspline globalaccum 0 spln32 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage38
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage38
+		trigger train1_back run_Prestage38
+		followspline globalaccum 0 spln31 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger self switch_vo_axis_raise	// axis riding to depot
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage39
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage39
+		trigger train1_back run_Prestage39
+		followspline globalaccum 0 spln30 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger self switch_vo_allies_lower // tug just passed switch so it can be lowered
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage40
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage40
+		trigger train1_back run_Prestage40
+		followspline globalaccum 0 spln29 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage41
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage41
+		trigger train1_back run_Prestage41
+		followspline globalaccum 0 spln28 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage42
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage42
+		trigger train1_back run_Prestage42
+		followspline globalaccum 0 spln27 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+
+		// axis -> base spawn here
+		trigger switch_invtrig1 axis_want_base
+	}
+
+	trigger run_Prestage43
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage43
+		trigger train1_back run_Prestage43
+		followspline globalaccum 0 spln26 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+
+		// axis -> depot spawn here
+		trigger switch_invtrig1 axis_want_depot
+	}
+
+	trigger run_Prestage44
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage44
+		trigger train1_back run_Prestage44
+		followspline globalaccum 0 spln25 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage45
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage45
+		trigger train1_back run_Prestage45
+		followspline globalaccum 0 spln24 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage46
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage46
+		trigger train1_back run_Prestage46
+		followspline globalaccum 0 spln23 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage47
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage47
+		trigger train1_back run_Prestage47
+		followspline globalaccum 0 spln22 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger self switch_vo_axis_lower	// tug just passed switch so it can be lowered
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage48
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage48
+		trigger train1_back run_Prestage48
+		followspline globalaccum 0 spln21 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger self switch_vo_allies_raise	// allies riding back to north crane
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage49
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage49
+		trigger train1_back run_Prestage49
+		followspline globalaccum 0 spln20 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage50
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage50
+		trigger train1_back run_Prestage50
+		followspline globalaccum 0 spln19 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage51
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage51
+		trigger train1_back run_Prestage51
+		followspline globalaccum 0 spln18 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage52
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage52
+		trigger train1_back run_Prestage52
+		followspline globalaccum 0 spln17 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage53
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage53
+		trigger train1_back run_Prestage53
+		followspline globalaccum 0 spln16 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage54
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage54
+		trigger train1_back run_Prestage54
+		followspline globalaccum 0 spln15 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage55
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage55
+		trigger train1_back run_Prestage55
+		followspline globalaccum 0 spln14 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage56
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage56
+		trigger train1_back run_Prestage56
+		followspline globalaccum 0 spln13 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage57
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage57
+		trigger train1_back run_Prestage57
+		followspline globalaccum 0 spln12 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage58
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage58
+		trigger train1_back run_Prestage58
+		followspline globalaccum 0 spln11 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage59
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage59
+		trigger train1_back run_Prestage59
+		followspline globalaccum 0 spln10 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+
+		// allied -> base spawn here
+		trigger switch_invtrig1 allies_want_base
+	}
+
+	trigger run_Prestage60
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage60
+		trigger train1_back run_Prestage60
+		followspline globalaccum 0 spln9 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+
+		// allied -> depot spawn here
+		trigger switch_invtrig1 allies_want_depot
+	}
+
+	trigger run_Prestage61
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage61
+		trigger train1_back run_Prestage61
+		followspline globalaccum 0 spln8 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage62
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage62
+		trigger train1_back run_Prestage62
+		followspline globalaccum 0 spln7 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage63
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage63
+		trigger train1_back run_Prestage63
+		followspline globalaccum 0 spln6 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage64
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage64
+		trigger train1_back run_Prestage64
+		followspline globalaccum 0 spln5 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage65
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage65
+		trigger train1_back run_Prestage65
+		followspline globalaccum 0 spln4 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage66
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage66
+		trigger train1_back run_Prestage66
+		followspline globalaccum 0 spln3 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage67
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage67
+		trigger train1_back run_Prestage67
+		followspline globalaccum 0 spln2 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage68
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage68
+		trigger train1_back run_Prestage68
+		followspline globalaccum 0 spln1 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage69
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage69
+		trigger train1_back run_Prestage69
+		followspline globalaccum 0 spln0 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage70
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage70
+		trigger train1_back run_Prestage70
+		followspline globalaccum 0 spln_1 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage71
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage71
+		trigger train1_back run_Prestage71
+		followspline globalaccum 0 spln_2 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage72
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage72
+		trigger train1_back run_Prestage72
+		followspline globalaccum 0 spln_3 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger train1 dispatch_allies
+		trigger train1 dispatch_axis
+	}
+
+	trigger run_Prestage73
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train1_trigger run_Prestage73
+		trigger train1_back run_Prestage73
+		followspline globalaccum 0 spln_4 200 wait length 224
+
+		trigger train1 update_counter_axis
+		trigger train1 update_counter_allies
+		accum 4 set 0
+
+		trigger crane_controller startcrane
+	}
+
+	trigger train_enable_axis
+	{
+		accum 4 abort_if_equal 1
+
+		accum 6 set 0
+
+		accum 2 set 1
+		accum 1 set 0
+
+		trigger train1 dispatch_axis
+	}
+
+	trigger train_enable_allies
+	{
+		accum 4 abort_if_equal 1
+
+		accum 6 set 1
+
+		accum 2 set 2
+		accum 1 set 0
+
+		trigger train1 dispatch_allies
+	}
+
+	trigger switch_vo_axis_raise
+	{
+		accum 5 abort_if_equal 0
+		accum 6 abort_if_equal 1
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "railgun_axis_switch_raise"
+		// *---------------------------------------------------------------------------------*
+	}
+
+	trigger switch_vo_allies_raise
+	{
+		accum 5 abort_if_equal 0
+		accum 6 abort_if_equal 0
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 1 "railgun_allies_switch_raise"
+		// *---------------------------------------------------------------------------------*
+	}
+
+	trigger switch_vo_axis_lower
+	{
+		accum 5 abort_if_equal 1
+		accum 6 abort_if_equal 1
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "railgun_axis_switch_lower"
+		// *---------------------------------------------------------------------------------*
+	}
+
+	trigger switch_vo_allies_lower
+	{
+		accum 5 abort_if_equal 1
+		accum 6 abort_if_equal 0
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 1 "railgun_allies_switch_lower"
+		// *---------------------------------------------------------------------------------*
+	}
+
+	trigger switch_closed
+	{
+		accum 5 set 1
+	}
+
+	trigger switch_open
+	{
+		accum 5 set 0
+	}
+
+	trigger dispatch_switch_check
+	{
+		accum 5 abort_if_equal 0
+		resetscript
+	}
+
+	trigger dispatch_axis
+	{
+		accum 2 abort_if_not_equal 1
+		accum 1 abort_if_not_equal 0
+
+		globalaccum 0 set 1
+
+		// construction site to depot (pre-run minus the ammo)
+		accum 3 trigger_if_equal -72 train1 run_Prestage2
+		accum 3 trigger_if_equal -71 train1 run_Prestage3
+		accum 3 trigger_if_equal -70 train1 run_Prestage4
+		accum 3 trigger_if_equal -69 train1 run_Prestage5
+		accum 3 trigger_if_equal -68 train1 run_Prestage6
+		accum 3 trigger_if_equal -67 train1 run_Prestage7
+		accum 3 trigger_if_equal -66 train1 run_Prestage8
+		accum 3 trigger_if_equal -65 train1 run_Prestage9
+		accum 3 trigger_if_equal -64 train1 run_Prestage10
+		accum 3 trigger_if_equal -63 train1 run_Prestage11
+		accum 3 trigger_if_equal -62 train1 run_Prestage12
+		accum 3 trigger_if_equal -61 train1 run_Prestage13
+		accum 3 trigger_if_equal -60 train1 run_Prestage14
+		accum 3 trigger_if_equal -59 train1 run_Prestage15
+		accum 3 trigger_if_equal -58 train1 run_Prestage16
+		accum 3 trigger_if_equal -57 train1 run_Prestage17
+		accum 3 trigger_if_equal -56 train1 run_Prestage18
+		accum 3 trigger_if_equal -55 train1 run_Prestage19
+		accum 3 trigger_if_equal -54 train1 run_Prestage20
+		accum 3 trigger_if_equal -53 train1 run_Prestage21
+		accum 3 trigger_if_equal -52 train1 run_Prestage22
+		accum 3 trigger_if_equal -51 train1 run_Prestage23
+		accum 3 trigger_if_equal -50 train1 run_Prestage24
+		accum 3 trigger_if_equal -49 train1 run_Prestage25
+		accum 3 trigger_if_equal -48 train1 run_Prestage26
+		accum 3 trigger_if_equal -47 train1 run_Prestage27
+		accum 3 trigger_if_equal -46 train1 run_Prestage28
+		accum 3 trigger_if_equal -45 train1 run_Prestage29
+		accum 3 trigger_if_equal -44 train1 run_Prestage30
+		accum 3 trigger_if_equal -43 train1 run_Prestage31
+		accum 3 trigger_if_equal -42 train1 run_Prestage32
+		accum 3 trigger_if_equal -41 train1 run_Prestage33
+		accum 3 trigger_if_equal -40 train1 run_Prestage34
+		accum 3 trigger_if_equal -39 train1 run_Prestage35
+		accum 3 trigger_if_equal -38 train1 run_Prestage36
+		accum 3 trigger_if_equal -37 train1 run_Prestage37
+		accum 3 trigger_if_equal -36 train1 run_Prestage38
+
+		accum 3 trigger_if_equal -35 train1 dispatch_switch_check
+		accum 3 trigger_if_equal -35 switch_invtrig1 hard_disable
+		accum 3 trigger_if_equal -35 train1 run_Prestage39
+
+		accum 3 trigger_if_equal -34 train1 run_Prestage40
+		accum 3 trigger_if_equal -33 train1 run_Prestage41
+		accum 3 trigger_if_equal -32 train1 run_Prestage42
+		accum 3 trigger_if_equal -31 train1 run_Prestage43
+		accum 3 trigger_if_equal -30 train1 run_Prestage44
+		accum 3 trigger_if_equal -29 train1 run_Prestage45
+		accum 3 trigger_if_equal -28 train1 run_Prestage46
+
+		accum 3 trigger_if_equal -27 switch_invtrig1 hard_enable
+
+		// New barrier stuff - Wils
+		// Axis on train, travelling to depot for ammo, just passed switch
+		accum 3 trigger_if_equal -27 switch_invtrig1 alliesbenefit
+		// End new barrier stuff
+
+		accum 3 trigger_if_equal -27 train1 run_Prestage47
+		accum 3 trigger_if_equal -26 train1 run_Prestage48
+		accum 3 trigger_if_equal -25 train1 run_Prestage49
+		accum 3 trigger_if_equal -24 train1 run_Prestage50
+		accum 3 trigger_if_equal -23 train1 run_Prestage51
+		accum 3 trigger_if_equal -22 train1 run_Prestage52
+		accum 3 trigger_if_equal -21 train1 run_Prestage53
+		accum 3 trigger_if_equal -20 train1 run_Prestage54
+		accum 3 trigger_if_equal -19 train1 run_Prestage55
+		accum 3 trigger_if_equal -18 train1 run_Prestage56
+		accum 3 trigger_if_equal -17 train1 run_Prestage57
+		accum 3 trigger_if_equal -16 train1 run_Prestage58
+		accum 3 trigger_if_equal -15 train1 run_Prestage59
+		accum 3 trigger_if_equal -14 train1 run_Prestage60
+		accum 3 trigger_if_equal -13 train1 run_Prestage61
+		accum 3 trigger_if_equal -12 train1 run_Prestage62
+		accum 3 trigger_if_equal -11 train1 run_Prestage63
+		accum 3 trigger_if_equal -10 train1 run_Prestage64
+		accum 3 trigger_if_equal -9 train1 run_Prestage65
+		accum 3 trigger_if_equal -8 train1 run_Prestage66
+		accum 3 trigger_if_equal -7 train1 run_Prestage67
+		accum 3 trigger_if_equal -6 train1 run_Prestage68
+		accum 3 trigger_if_equal -5 train1 run_Prestage69
+		accum 3 trigger_if_equal -4 train1 run_Prestage70
+		accum 3 trigger_if_equal -3 train1 run_Prestage71
+		accum 3 trigger_if_equal -2 train1 run_Prestage72
+		accum 3 trigger_if_equal -1 train1 run_Prestage73
+
+		globalaccum 0 set 0
+
+		// depot to construction site crane
+		accum 3 trigger_if_equal 0 train1 run_Stage1
+		accum 3 trigger_if_equal 1 train1 run_Stage2
+		accum 3 trigger_if_equal 2 train1 run_Stage3
+		accum 3 trigger_if_equal 3 train1 run_Stage4
+		accum 3 trigger_if_equal 4 train1 run_Stage5
+		accum 3 trigger_if_equal 5 train1 run_Stage6
+		accum 3 trigger_if_equal 6 train1 run_Stage7
+		accum 3 trigger_if_equal 7 train1 run_Stage8
+		accum 3 trigger_if_equal 8 train1 run_Stage9
+		accum 3 trigger_if_equal 9 train1 run_Stage10
+		accum 3 trigger_if_equal 10 train1 run_Stage11
+		accum 3 trigger_if_equal 11 train1 run_Stage12
+		accum 3 trigger_if_equal 12 train1 run_Stage13
+		accum 3 trigger_if_equal 13 train1 run_Stage14
+		accum 3 trigger_if_equal 14 train1 run_Stage15
+		accum 3 trigger_if_equal 15 train1 run_Stage16
+		accum 3 trigger_if_equal 16 train1 run_Stage17
+		accum 3 trigger_if_equal 17 train1 run_Stage18
+		accum 3 trigger_if_equal 18 train1 run_Stage19
+		accum 3 trigger_if_equal 19 train1 run_Stage20
+		accum 3 trigger_if_equal 20 train1 run_Stage21
+		accum 3 trigger_if_equal 21 train1 run_Stage22
+		accum 3 trigger_if_equal 22 train1 run_Stage23
+		accum 3 trigger_if_equal 23 train1 run_Stage24
+		accum 3 trigger_if_equal 24 train1 run_Stage25
+		accum 3 trigger_if_equal 25 train1 run_Stage26
+		accum 3 trigger_if_equal 26 train1 run_Stage27
+
+		accum 3 trigger_if_equal 27 train1 dispatch_switch_check
+		accum 3 trigger_if_equal 27 switch_invtrig1 hard_disable
+		accum 3 trigger_if_equal 27 train1 run_Stage28
+
+		accum 3 trigger_if_equal 28 train1 run_Stage29
+		accum 3 trigger_if_equal 29 train1 run_Stage30
+		accum 3 trigger_if_equal 30 train1 run_Stage31
+		accum 3 trigger_if_equal 31 train1 run_Stage32
+		accum 3 trigger_if_equal 32 train1 run_Stage33
+		accum 3 trigger_if_equal 33 train1 run_Stage34
+		accum 3 trigger_if_equal 34 train1 run_Stage35
+
+		accum 3 trigger_if_equal 35 switch_invtrig1 hard_enable
+
+		// New barrier stuff - Wils
+		// Axis on train, travelling from depot with ammo, just passed switch"
+		accum 3 trigger_if_equal 35 switch_invtrig1 alliesbenefit
+		// End new barrier stuff
+
+		accum 3 trigger_if_equal 35 train1 run_Stage36
+
+		accum 3 trigger_if_equal 36 train1 run_Stage37
+		accum 3 trigger_if_equal 37 train1 run_Stage38
+		accum 3 trigger_if_equal 38 train1 run_Stage39
+		accum 3 trigger_if_equal 39 train1 run_Stage40
+		accum 3 trigger_if_equal 40 train1 run_Stage41
+		accum 3 trigger_if_equal 41 train1 run_Stage42
+		accum 3 trigger_if_equal 42 train1 run_Stage43
+		accum 3 trigger_if_equal 43 train1 run_Stage44
+		accum 3 trigger_if_equal 44 train1 run_Stage45
+		accum 3 trigger_if_equal 45 train1 run_Stage46
+		accum 3 trigger_if_equal 46 train1 run_Stage47
+		accum 3 trigger_if_equal 47 train1 run_Stage48
+		accum 3 trigger_if_equal 48 train1 run_Stage49
+		accum 3 trigger_if_equal 49 train1 run_Stage50
+		accum 3 trigger_if_equal 50 train1 run_Stage51
+		accum 3 trigger_if_equal 51 train1 run_Stage52
+		accum 3 trigger_if_equal 52 train1 run_Stage53
+		accum 3 trigger_if_equal 53 train1 run_Stage54
+		accum 3 trigger_if_equal 54 train1 run_Stage55
+		accum 3 trigger_if_equal 55 train1 run_Stage56
+		accum 3 trigger_if_equal 56 train1 run_Stage57
+		accum 3 trigger_if_equal 57 train1 run_Stage58
+		accum 3 trigger_if_equal 58 train1 run_Stage59
+		accum 3 trigger_if_equal 59 train1 run_Stage60
+	}
+
+	trigger dispatch_allies
+	{
+		accum 2 abort_if_not_equal 2
+		accum 1 abort_if_not_equal 0
+
+		globalaccum 0 set 0
+
+		// construction site to depot (pre-run minus the ammo)
+		accum 3 trigger_if_equal -71 train1 run_Prestage2
+		accum 3 trigger_if_equal -70 train1 run_Prestage3
+		accum 3 trigger_if_equal -69 train1 run_Prestage4
+		accum 3 trigger_if_equal -68 train1 run_Prestage5
+		accum 3 trigger_if_equal -67 train1 run_Prestage6
+		accum 3 trigger_if_equal -66 train1 run_Prestage7
+		accum 3 trigger_if_equal -65 train1 run_Prestage8
+		accum 3 trigger_if_equal -64 train1 run_Prestage9
+		accum 3 trigger_if_equal -63 train1 run_Prestage10
+		accum 3 trigger_if_equal -62 train1 run_Prestage11
+		accum 3 trigger_if_equal -61 train1 run_Prestage12
+		accum 3 trigger_if_equal -60 train1 run_Prestage13
+		accum 3 trigger_if_equal -59 train1 run_Prestage14
+		accum 3 trigger_if_equal -58 train1 run_Prestage15
+		accum 3 trigger_if_equal -57 train1 run_Prestage16
+		accum 3 trigger_if_equal -56 train1 run_Prestage17
+		accum 3 trigger_if_equal -55 train1 run_Prestage18
+		accum 3 trigger_if_equal -54 train1 run_Prestage19
+		accum 3 trigger_if_equal -53 train1 run_Prestage20
+		accum 3 trigger_if_equal -52 train1 run_Prestage21
+		accum 3 trigger_if_equal -51 train1 run_Prestage22
+		accum 3 trigger_if_equal -50 train1 run_Prestage23
+		accum 3 trigger_if_equal -49 train1 run_Prestage24
+		accum 3 trigger_if_equal -48 train1 run_Prestage25
+		accum 3 trigger_if_equal -47 train1 run_Prestage26
+		accum 3 trigger_if_equal -46 train1 run_Prestage27
+		accum 3 trigger_if_equal -45 train1 run_Prestage28
+		accum 3 trigger_if_equal -44 train1 run_Prestage29
+		accum 3 trigger_if_equal -43 train1 run_Prestage30
+		accum 3 trigger_if_equal -42 train1 run_Prestage31
+		accum 3 trigger_if_equal -41 train1 run_Prestage32
+		accum 3 trigger_if_equal -40 train1 run_Prestage33
+		accum 3 trigger_if_equal -39 train1 run_Prestage34
+		accum 3 trigger_if_equal -38 train1 run_Prestage35
+		accum 3 trigger_if_equal -37 train1 run_Prestage36
+		accum 3 trigger_if_equal -36 train1 run_Prestage37
+
+		accum 3 trigger_if_equal -35 switch_invtrig1 hard_enable
+
+		// New barrier stuff - Wils
+		// Allies on train, returning to north crane to stop axis getting ammo, just passed switch
+		accum 3 trigger_if_equal -35 switch_invtrig1 axisbenefit
+		// End new barrier stuff
+
+		accum 3 trigger_if_equal -35 train1 run_Prestage38
+
+		accum 3 trigger_if_equal -34 train1 run_Prestage39
+		accum 3 trigger_if_equal -33 train1 run_Prestage40
+		accum 3 trigger_if_equal -32 train1 run_Prestage41
+		accum 3 trigger_if_equal -31 train1 run_Prestage42
+		accum 3 trigger_if_equal -30 train1 run_Prestage43
+		accum 3 trigger_if_equal -29 train1 run_Prestage44
+		accum 3 trigger_if_equal -28 train1 run_Prestage45
+
+		accum 3 trigger_if_equal -27 train1 dispatch_switch_check
+		accum 3 trigger_if_equal -27 switch_invtrig1 hard_disable
+		accum 3 trigger_if_equal -27 train1 run_Prestage46
+
+
+		accum 3 trigger_if_equal -26 train1 run_Prestage47
+		accum 3 trigger_if_equal -25 train1 run_Prestage48
+		accum 3 trigger_if_equal -24 train1 run_Prestage49
+		accum 3 trigger_if_equal -23 train1 run_Prestage50
+		accum 3 trigger_if_equal -22 train1 run_Prestage51
+		accum 3 trigger_if_equal -21 train1 run_Prestage52
+		accum 3 trigger_if_equal -20 train1 run_Prestage53
+		accum 3 trigger_if_equal -19 train1 run_Prestage54
+		accum 3 trigger_if_equal -18 train1 run_Prestage55
+		accum 3 trigger_if_equal -17 train1 run_Prestage56
+		accum 3 trigger_if_equal -16 train1 run_Prestage57
+		accum 3 trigger_if_equal -15 train1 run_Prestage58
+		accum 3 trigger_if_equal -14 train1 run_Prestage59
+		accum 3 trigger_if_equal -13 train1 run_Prestage60
+		accum 3 trigger_if_equal -12 train1 run_Prestage61
+		accum 3 trigger_if_equal -11 train1 run_Prestage62
+		accum 3 trigger_if_equal -10 train1 run_Prestage63
+		accum 3 trigger_if_equal -9 train1 run_Prestage64
+		accum 3 trigger_if_equal -8 train1 run_Prestage65
+		accum 3 trigger_if_equal -7 train1 run_Prestage66
+		accum 3 trigger_if_equal -6 train1 run_Prestage67
+		accum 3 trigger_if_equal -5 train1 run_Prestage68
+		accum 3 trigger_if_equal -4 train1 run_Prestage69
+		accum 3 trigger_if_equal -3 train1 run_Prestage70
+		accum 3 trigger_if_equal -2 train1 run_Prestage71
+		accum 3 trigger_if_equal -1 train1 run_Prestage72
+
+		globalaccum 0 set 1
+
+		// depot to construction site crane
+		accum 3 trigger_if_equal 1 train1 run_Stage1
+		accum 3 trigger_if_equal 2 train1 run_Stage2
+		accum 3 trigger_if_equal 3 train1 run_Stage3
+		accum 3 trigger_if_equal 4 train1 run_Stage4
+		accum 3 trigger_if_equal 5 train1 run_Stage5
+		accum 3 trigger_if_equal 6 train1 run_Stage6
+		accum 3 trigger_if_equal 7 train1 run_Stage7
+		accum 3 trigger_if_equal 8 train1 run_Stage8
+		accum 3 trigger_if_equal 9 train1 run_Stage9
+		accum 3 trigger_if_equal 10 train1 run_Stage10
+		accum 3 trigger_if_equal 11 train1 run_Stage11
+		accum 3 trigger_if_equal 12 train1 run_Stage12
+		accum 3 trigger_if_equal 13 train1 run_Stage13
+		accum 3 trigger_if_equal 14 train1 run_Stage14
+		accum 3 trigger_if_equal 15 train1 run_Stage15
+		accum 3 trigger_if_equal 16 train1 run_Stage16
+		accum 3 trigger_if_equal 17 train1 run_Stage17
+		accum 3 trigger_if_equal 18 train1 run_Stage18
+		accum 3 trigger_if_equal 19 train1 run_Stage19
+		accum 3 trigger_if_equal 20 train1 run_Stage20
+		accum 3 trigger_if_equal 21 train1 run_Stage21
+		accum 3 trigger_if_equal 22 train1 run_Stage22
+		accum 3 trigger_if_equal 23 train1 run_Stage23
+		accum 3 trigger_if_equal 24 train1 run_Stage24
+		accum 3 trigger_if_equal 25 train1 run_Stage25
+		accum 3 trigger_if_equal 26 train1 run_Stage26
+		accum 3 trigger_if_equal 27 train1 run_Stage27
+
+		accum 3 trigger_if_equal 28 switch_invtrig1 hard_enable
+
+		// New barrier stuff - Wils
+		// Allies on train, travelling to depot with ammo to prevent axis getting to north crane, just passed switch
+		accum 3 trigger_if_equal 28 switch_invtrig1 axisbenefit
+		// End new barrier stuff
+
+		accum 3 trigger_if_equal 28 train1 run_Stage28
+
+		accum 3 trigger_if_equal 29 train1 run_Stage29
+		accum 3 trigger_if_equal 30 train1 run_Stage30
+		accum 3 trigger_if_equal 31 train1 run_Stage31
+		accum 3 trigger_if_equal 32 train1 run_Stage32
+		accum 3 trigger_if_equal 33 train1 run_Stage33
+		accum 3 trigger_if_equal 34 train1 run_Stage34
+		accum 3 trigger_if_equal 35 train1 run_Stage35
+
+		accum 3 trigger_if_equal 36 train1 dispatch_switch_check
+		accum 3 trigger_if_equal 36 switch_invtrig1 hard_disable
+		accum 3 trigger_if_equal 36 train1 run_Stage36
+
+		accum 3 trigger_if_equal 37 train1 run_Stage37
+		accum 3 trigger_if_equal 38 train1 run_Stage38
+		accum 3 trigger_if_equal 39 train1 run_Stage39
+		accum 3 trigger_if_equal 40 train1 run_Stage40
+		accum 3 trigger_if_equal 41 train1 run_Stage41
+		accum 3 trigger_if_equal 42 train1 run_Stage42
+		accum 3 trigger_if_equal 43 train1 run_Stage43
+		accum 3 trigger_if_equal 44 train1 run_Stage44
+		accum 3 trigger_if_equal 45 train1 run_Stage45
+		accum 3 trigger_if_equal 46 train1 run_Stage46
+		accum 3 trigger_if_equal 47 train1 run_Stage47
+		accum 3 trigger_if_equal 48 train1 run_Stage48
+		accum 3 trigger_if_equal 49 train1 run_Stage49
+		accum 3 trigger_if_equal 50 train1 run_Stage50
+		accum 3 trigger_if_equal 51 train1 run_Stage51
+		accum 3 trigger_if_equal 52 train1 run_Stage52
+		accum 3 trigger_if_equal 53 train1 run_Stage53
+		accum 3 trigger_if_equal 54 train1 run_Stage54
+		accum 3 trigger_if_equal 55 train1 run_Stage55
+		accum 3 trigger_if_equal 56 train1 run_Stage56
+		accum 3 trigger_if_equal 57 train1 run_Stage57
+		accum 3 trigger_if_equal 58 train1 run_Stage58
+		accum 3 trigger_if_equal 59 train1 run_Stage59
+		accum 3 trigger_if_equal 61 train1 run_Stage60
+	}
+
+	trigger train_disable
+	{
+
+		accum 1 set 1
+
+		accum 4 trigger_if_equal 0 train1 sound_idle
+		// Gordon: This shouldn't be here Tim, as this isnt when the train actually stops
+		// Tim: i know, but it does the trick for now :E
+	}
+
+	trigger sound_move
+	{
+		accum 4 abort_if_equal 0
+		stopsound
+		playsound sound/vehicles/tug/tug_move.wav looping
+	}
+
+	trigger sound_idle
+	{
+		stopsound
+		playsound sound/vehicles/tug/tug_idle.wav looping
+	}
+
+	trigger ammo_loaded
+	{
+		wm_announce "Axis loaded the Rail Gun Ammo onto the First Tug!"
+		trigger switch_invtrig1 axisbenefit
+		accum 0 set 1
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "railgun_axis_tug1_north"
+
+		wm_addteamvoiceannounce 1 "railgun_allies_tug1_north"
+
+		wm_teamvoiceannounce 0 "railgun_axis_tug1_loaded"
+		wm_teamvoiceannounce 0 "railgun_axis_tug1_north"
+
+		wm_teamvoiceannounce 1 "railgun_allies_tug1_loaded"
+		wm_teamvoiceannounce 1 "railgun_allies_tug1_north"
+
+		wm_removeteamvoiceannounce 0 "railgun_axis_tug1_depot"
+
+		wm_removeteamvoiceannounce 1 "railgun_allies_tug1_depot"
+		// *----------------------------------- vo ------------------------------------------*
+
+		wm_objective_status	1 1 2
+		wm_objective_status	1 0 1
+
+		wm_set_main_objective	2 0
+		wm_set_main_objective	2 1
+	}
+}
+
+train1_controller
+{
+	trigger allied_request
+	{
+		accum 1 inc 1
+		accum 0 set 0
+		accum 2 set 0
+
+		accum 1 abort_if_less_than 3
+		trigger train1 train_enable_allies
+		trigger train1 sound_move
+	}
+
+	trigger axis_request
+	{
+		accum 0 inc 1
+		accum 1 set 0
+		accum 2 set 0
+
+		accum 0 abort_if_less_than 3
+		trigger train1 train_enable_axis
+		trigger train1 sound_move
+	}
+
+	trigger timer
+	{
+		accum 2 inc 1
+		accum 2 abort_if_less_than 3
+
+		accum 0 set 0
+		accum 1 set 0
+
+		trigger train1 train_disable
+	}
+}
+
+train1_sound
+{
+}
+
+crane_controller
+{
+	spawn
+	{
+		accum 1 set 0
+	}
+
+	trigger startcrane
+	{
+		wait 2000
+		accum 1 abort_if_not_equal 0
+
+		trigger crane shift_left
+		trigger crane_hook shift_left
+
+		accum 1 set 1
+	}
+}
+
+
+crane_sound
+{
+	trigger crane_start
+	{
+		trigger crane crane_start
+		wait 250
+		trigger crane crane_loop
+	}
+
+	trigger crane_stop
+	{
+		trigger crane crane_stop
+	}
+
+	trigger hook_start
+	{
+		trigger crane hook_start
+		wait 700
+		trigger crane hook_loop
+	}
+
+	trigger hook_stop
+	{
+		trigger crane hook_stop
+	}
+}
+
+crane
+{
+	trigger shift_left
+	{
+		trigger crane_sound crane_start
+
+		gotomarker crane_path_3 50 wait
+
+		trigger crane_sound crane_stop
+	}
+
+	trigger shift_right
+	{
+		trigger crane_sound crane_start
+
+		gotomarker crane_path_8 50 wait
+
+		trigger crane_sound crane_stop
+	}
+
+	trigger shift_far_right
+	{
+		trigger crane_sound crane_start
+
+		gotomarker crane_path_12 50 wait
+
+		trigger crane_sound crane_stop
+	}
+
+	trigger crane_start
+	{
+		stopsound
+		playsound sound/movers/motors/motor_start_02.wav volume 96
+	}
+
+	trigger crane_loop
+	{
+		playsound sound/movers/motors/motor_loop_02.wav looping
+	}
+
+	trigger crane_stop
+	{
+		stopsound
+		playsound sound/movers/motors/motor_end_02.wav volume 96
+	}
+
+	trigger hook_start
+	{
+		stopsound
+		playsound sound/movers/motors/motor_start_01.wav volume 96
+	}
+
+	trigger hook_loop
+	{
+		playsound sound/movers/motors/motor_loop_01.wav looping
+	}
+
+	trigger hook_stop
+	{
+		stopsound
+		playsound sound/movers/motors/motor_end_01.wav volume 96
+	}
+}
+
+crane_hook
+{
+	trigger shift_left
+	{
+		gotomarker crane_path_1 50 wait
+
+		trigger crane_hook raise_small
+	}
+
+	trigger raise_small
+	{
+		gotomarker crane_path_2 50 wait
+
+		trigger crane_box raise_large
+		trigger crane_hook raise_large
+	}
+
+	trigger raise_large
+	{
+		trigger crane_sound hook_start
+
+		gotomarker crane_path_5 50 wait
+
+		trigger crane shift_right
+		trigger crane_box shift_right
+		trigger crane_hook shift_right
+	}
+
+	trigger shift_right
+	{
+		trigger crane_sound hook_stop
+
+		gotomarker crane_path_7 50 wait
+
+		trigger crane_box lower_large
+		trigger crane_hook lower_large
+	}
+
+	trigger lower_large
+	{
+		trigger crane_sound hook_start
+
+		gotomarker crane_path_10 50 wait
+
+		trigger crane_hook lower_small
+	}
+
+	trigger lower_small
+	{
+		gotomarker crane_path_9 50 wait
+
+		trigger crane shift_far_right
+		trigger crane_hook shift_far_right
+	}
+
+	trigger shift_far_right
+	{
+		trigger crane_sound hook_stop
+		gotomarker crane_path_11 50 wait
+
+		trigger train1 ammo_loaded
+	}
+}
+
+crane_box
+{
+	trigger raise_large
+	{
+		gotomarker crane_path_13 50 wait
+	}
+
+	trigger shift_right
+	{
+		gotomarker crane_path_14 50 wait
+	}
+
+	trigger lower_large
+	{
+		gotomarker crane_path_15 50 wait
+	}
+
+	trigger raise_large2
+	{
+		gotomarker crane2_path13 50 wait
+	}
+
+	trigger shift_right2
+	{
+		gotomarker crane2_path14 50 wait
+	}
+
+	trigger lower_small2
+	{
+		gotomarker crane2_path15 50 wait
+
+		setstate crane_box invisible
+		setstate crane2_box default
+	}
+
+	trigger run_stage1
+	{
+		followspline globalaccum 0 spln_4 200 wait length -224
+	}
+
+	trigger run_stage2
+	{
+		followspline globalaccum 0 spln_3 200 wait length -224
+	}
+
+	trigger run_stage3
+	{
+		followspline globalaccum 0 spln_2 200 wait length -224
+	}
+
+	trigger run_stage4
+	{
+		followspline globalaccum 0 spln_1 200 wait length -224
+	}
+
+	trigger run_stage5
+	{
+		followspline globalaccum 0 spln0 200 wait length -224
+	}
+
+	trigger run_stage6
+	{
+		followspline globalaccum 0 spln1 200 wait length -224
+	}
+
+	trigger run_stage7
+	{
+		followspline globalaccum 0 spln2 200 wait length -224
+	}
+
+	trigger run_stage8
+	{
+		followspline globalaccum 0 spln3 200 wait length -224
+	}
+
+	trigger run_stage9
+	{
+		followspline globalaccum 0 spln4 200 wait length -224
+	}
+
+	trigger run_stage10
+	{
+		followspline globalaccum 0 spln5 200 wait length -224
+	}
+
+	trigger run_stage11
+	{
+		followspline globalaccum 0 spln6 200 wait length -224
+	}
+
+	trigger run_stage12
+	{
+		followspline globalaccum 0 spln7 200 wait length -224
+	}
+
+	trigger run_stage13
+	{
+		followspline globalaccum 0 spln8 200 wait length -224
+	}
+
+	trigger run_stage14
+	{
+		followspline globalaccum 0 spln9 200 wait length -224
+	}
+
+	trigger run_stage15
+	{
+		followspline globalaccum 0 spln10 200 wait length -224
+	}
+
+	trigger run_stage16
+	{
+		followspline globalaccum 0 spln11 200 wait length -224
+	}
+
+	trigger run_stage17
+	{
+		followspline globalaccum 0 spln12 200 wait length -224
+	}
+
+	trigger run_stage18
+	{
+		followspline globalaccum 0 spln13 200 wait length -224
+	}
+
+	trigger run_stage19
+	{
+		followspline globalaccum 0 spln14 200 wait length -224
+	}
+
+	trigger run_stage20
+	{
+		followspline globalaccum 0 spln15 200 wait length -224
+	}
+
+	trigger run_stage21
+	{
+		followspline globalaccum 0 spln16 200 wait length -224
+	}
+
+	trigger run_stage22
+	{
+		followspline globalaccum 0 spln17 200 wait length -224
+	}
+
+	trigger run_stage23
+	{
+		followspline globalaccum 0 spln18 200 wait length -224
+	}
+
+	trigger run_stage24
+	{
+		followspline globalaccum 0 spln19 200 wait length -224
+	}
+
+	trigger run_stage25
+	{
+		followspline globalaccum 0 spln20 200 wait length -224
+	}
+
+	trigger run_stage26
+	{
+		followspline globalaccum 0 spln21 200 wait length -224
+	}
+
+	trigger run_stage27
+	{
+		followspline globalaccum 0 spln22 200 wait length -224
+	}
+
+	trigger run_stage28
+	{
+		followspline globalaccum 0 spln23 200 wait length -224
+	}
+
+	trigger run_stage29
+	{
+		followspline globalaccum 0 spln24 200 wait length -224
+	}
+
+	trigger run_stage30
+	{
+		followspline globalaccum 0 spln25 200 wait length -224
+	}
+
+	trigger run_stage31
+	{
+		followspline globalaccum 0 spln26 200 wait length -224
+	}
+
+	trigger run_stage32
+	{
+		followspline globalaccum 0 spln27 200 wait length -224
+	}
+
+	trigger run_stage33
+	{
+		followspline globalaccum 0 spln28 200 wait length -224
+	}
+
+	trigger run_stage34
+	{
+		followspline globalaccum 0 spln29 200 wait length -224
+	}
+
+	trigger run_stage35
+	{
+		followspline globalaccum 0 spln30 200 wait length -224
+	}
+
+	trigger run_stage36
+	{
+		followspline globalaccum 0 spln31 200 wait length -224
+	}
+
+	trigger run_stage37
+	{
+		followspline globalaccum 0 spln32 200 wait length -224
+	}
+
+	trigger run_stage38
+	{
+		followspline globalaccum 0 spln33 200 wait length -224
+	}
+
+	trigger run_stage39
+	{
+		followspline globalaccum 0 spln34 200 wait length -224
+	}
+
+	trigger run_stage40
+	{
+		followspline globalaccum 0 spln35 200 wait length -224
+	}
+
+	trigger run_stage41
+	{
+		followspline globalaccum 0 spln36 200 wait length -224
+	}
+
+	trigger run_stage42
+	{
+		followspline globalaccum 0 spln37 200 wait length -224
+	}
+
+	trigger run_stage43
+	{
+		followspline globalaccum 0 spln38 200 wait length -224
+	}
+
+	trigger run_stage44
+	{
+		followspline globalaccum 0 spln39 200 wait length -224
+	}
+
+	trigger run_stage45
+	{
+		followspline globalaccum 0 spln40 200 wait length -224
+	}
+
+	trigger run_stage46
+	{
+		followspline globalaccum 0 spln41 200 wait length -224
+	}
+
+	trigger run_stage47
+	{
+		followspline globalaccum 0 spln42 200 wait length -224
+	}
+
+	trigger run_stage48
+	{
+		followspline globalaccum 0 spln43 200 wait length -224
+	}
+
+	trigger run_stage49
+	{
+		followspline globalaccum 0 spln44 200 wait length -224
+	}
+
+	trigger run_stage50
+	{
+		followspline globalaccum 0 spln45 200 wait length -224
+	}
+
+	trigger run_stage51
+	{
+		followspline globalaccum 0 spln46 200 wait length -224
+	}
+
+	trigger run_stage52
+	{
+		followspline globalaccum 0 spln47 200 wait length -224
+	}
+
+	trigger run_stage53
+	{
+		followspline globalaccum 0 spln48 200 wait length -224
+	}
+
+	trigger run_stage54
+	{
+		followspline globalaccum 0 spln49 200 wait length -224
+	}
+
+	trigger run_stage55
+	{
+		followspline globalaccum 0 spln50 200 wait length -224
+	}
+
+	trigger run_stage56
+	{
+		followspline globalaccum 0 spln51 200 wait length -224
+	}
+
+	trigger run_stage57
+	{
+		followspline globalaccum 0 spln52 200 wait length -224
+	}
+
+	trigger run_stage58
+	{
+		followspline globalaccum 0 spln53 200 wait length -224
+	}
+
+	trigger run_stage59
+	{
+		followspline globalaccum 0 spln54 200 wait length -224
+	}
+
+	trigger run_stage60
+	{
+		followspline globalaccum 0 spln55 200 wait length -224
+	}
+}
+
+train1_trigger
+{
+	spawn
+	{
+		wait 200
+		followspline globalaccum 0 spln67 200 wait length 224
+	}
+
+	trigger run_Prestage1
+	{
+		followspline globalaccum 0 spln68 200 wait length 224
+	}
+
+	trigger run_Prestage2
+	{
+		followspline globalaccum 0 spln67 200 wait length 224
+	}
+
+	trigger run_Prestage3
+	{
+		followspline globalaccum 0 spln66 200 wait length 224
+	}
+
+	trigger run_Prestage4
+	{
+		followspline globalaccum 0 spln65 200 wait length 224
+	}
+
+	trigger run_Prestage5
+	{
+		followspline globalaccum 0 spln64 200 wait length 224
+	}
+
+	trigger run_Prestage6
+	{
+		followspline globalaccum 0 spln63 200 wait length 224
+	}
+
+	trigger run_Prestage7
+	{
+		followspline globalaccum 0 spln62 200 wait length 224
+	}
+
+	trigger run_Prestage8
+	{
+		followspline globalaccum 0 spln61 200 wait length 224
+	}
+
+	trigger run_Prestage9
+	{
+		followspline globalaccum 0 spln60 200 wait length 224
+	}
+
+	trigger run_Prestage10
+	{
+		followspline globalaccum 0 spln59 200 wait length 224
+	}
+
+	trigger run_Prestage11
+	{
+		followspline globalaccum 0 spln58 200 wait length 224
+	}
+
+	trigger run_Prestage12
+	{
+		followspline globalaccum 0 spln57 200 wait length 224
+	}
+
+	trigger run_Prestage13
+	{
+		followspline globalaccum 0 spln56 200 wait length 224
+	}
+
+	trigger run_Prestage14
+	{
+		followspline globalaccum 0 spln55 200 wait length 224
+	}
+
+	trigger run_Prestage15
+	{
+		followspline globalaccum 0 spln54 200 wait length 224
+	}
+
+	trigger run_Prestage16
+	{
+		followspline globalaccum 0 spln53 200 wait length 224
+	}
+
+	trigger run_Prestage17
+	{
+		followspline globalaccum 0 spln52 200 wait length 224
+	}
+
+	trigger run_Prestage18
+	{
+		followspline globalaccum 0 spln51 200 wait length 224
+	}
+
+	trigger run_Prestage19
+	{
+		followspline globalaccum 0 spln50 200 wait length 224
+	}
+
+	trigger run_Prestage20
+	{
+		followspline globalaccum 0 spln49 200 wait length 224
+	}
+
+	trigger run_Prestage21
+	{
+		followspline globalaccum 0 spln48 200 wait length 224
+	}
+
+	trigger run_Prestage22
+	{
+		followspline globalaccum 0 spln47 200 wait length 224
+	}
+
+	trigger run_Prestage23
+	{
+		followspline globalaccum 0 spln46 200 wait length 224
+	}
+
+	trigger run_Prestage24
+	{
+		followspline globalaccum 0 spln45 200 wait length 224
+	}
+
+	trigger run_Prestage25
+	{
+		followspline globalaccum 0 spln44 200 wait length 224
+	}
+
+	trigger run_Prestage26
+	{
+		followspline globalaccum 0 spln43 200 wait length 224
+	}
+
+	trigger run_Prestage27
+	{
+		followspline globalaccum 0 spln42 200 wait length 224
+	}
+
+	trigger run_Prestage28
+	{
+		followspline globalaccum 0 spln41 200 wait length 224
+	}
+
+	trigger run_Prestage29
+	{
+		followspline globalaccum 0 spln40 200 wait length 224
+	}
+
+	trigger run_Prestage30
+	{
+		followspline globalaccum 0 spln39 200 wait length 224
+	}
+
+	trigger run_Prestage31
+	{
+		followspline globalaccum 0 spln38 200 wait length 224
+	}
+
+	trigger run_Prestage32
+	{
+		followspline globalaccum 0 spln37 200 wait length 224
+	}
+
+	trigger run_Prestage33
+	{
+		followspline globalaccum 0 spln36 200 wait length 224
+	}
+
+	trigger run_Prestage34
+	{
+		followspline globalaccum 0 spln35 200 wait length 224
+	}
+
+	trigger run_Prestage35
+	{
+		followspline globalaccum 0 spln34 200 wait length 224
+	}
+
+	trigger run_Prestage36
+	{
+		followspline globalaccum 0 spln33 200 wait length 224
+	}
+
+	trigger run_Prestage37
+	{
+		followspline globalaccum 0 spln32 200 wait length 224
+	}
+
+	trigger run_Prestage38
+	{
+		followspline globalaccum 0 spln31 200 wait length 224
+	}
+
+	trigger run_Prestage39
+	{
+		followspline globalaccum 0 spln30 200 wait length 224
+	}
+
+	trigger run_Prestage40
+	{
+		followspline globalaccum 0 spln29 200 wait length 224
+	}
+
+	trigger run_Prestage41
+	{
+		followspline globalaccum 0 spln28 200 wait length 224
+	}
+
+	trigger run_Prestage42
+	{
+		followspline globalaccum 0 spln27 200 wait length 224
+	}
+
+	trigger run_Prestage43
+	{
+		followspline globalaccum 0 spln26 200 wait length 224
+	}
+
+	trigger run_Prestage44
+	{
+		followspline globalaccum 0 spln25 200 wait length 224
+	}
+
+	trigger run_Prestage45
+	{
+		followspline globalaccum 0 spln24 200 wait length 224
+	}
+
+	trigger run_Prestage46
+	{
+		followspline globalaccum 0 spln23 200 wait length 224
+	}
+
+	trigger run_Prestage47
+	{
+		followspline globalaccum 0 spln22 200 wait length 224
+	}
+
+	trigger run_Prestage48
+	{
+		followspline globalaccum 0 spln21 200 wait length 224
+	}
+
+	trigger run_Prestage49
+	{
+		followspline globalaccum 0 spln20 200 wait length 224
+	}
+
+	trigger run_Prestage50
+	{
+		followspline globalaccum 0 spln19 200 wait length 224
+	}
+
+	trigger run_Prestage51
+	{
+		followspline globalaccum 0 spln18 200 wait length 224
+	}
+
+	trigger run_Prestage52
+	{
+		followspline globalaccum 0 spln17 200 wait length 224
+	}
+
+	trigger run_Prestage53
+	{
+		followspline globalaccum 0 spln16 200 wait length 224
+	}
+
+	trigger run_Prestage54
+	{
+		followspline globalaccum 0 spln15 200 wait length 224
+	}
+
+	trigger run_Prestage55
+	{
+		followspline globalaccum 0 spln14 200 wait length 224
+	}
+
+	trigger run_Prestage56
+	{
+		followspline globalaccum 0 spln13 200 wait length 224
+	}
+
+	trigger run_Prestage57
+	{
+		followspline globalaccum 0 spln12 200 wait length 224
+	}
+
+	trigger run_Prestage58
+	{
+		followspline globalaccum 0 spln11 200 wait length 224
+	}
+
+	trigger run_Prestage59
+	{
+		followspline globalaccum 0 spln10 200 wait length 224
+	}
+
+	trigger run_Prestage60
+	{
+		followspline globalaccum 0 spln9 200 wait length 224
+	}
+
+	trigger run_Prestage61
+	{
+		followspline globalaccum 0 spln8 200 wait length 224
+	}
+
+	trigger run_Prestage62
+	{
+		followspline globalaccum 0 spln7 200 wait length 224
+	}
+
+	trigger run_Prestage63
+	{
+		followspline globalaccum 0 spln6 200 wait length 224
+	}
+
+	trigger run_Prestage64
+	{
+		followspline globalaccum 0 spln5 200 wait length 224
+	}
+
+	trigger run_Prestage65
+	{
+		followspline globalaccum 0 spln4 200 wait length 224
+	}
+
+	trigger run_Prestage66
+	{
+		followspline globalaccum 0 spln3 200 wait length 224
+	}
+
+	trigger run_Prestage67
+	{
+		followspline globalaccum 0 spln2 200 wait length 224
+	}
+
+	trigger run_Prestage68
+	{
+		followspline globalaccum 0 spln1 200 wait length 224
+	}
+
+	trigger run_Prestage69
+	{
+		followspline globalaccum 0 spln0 200 wait length 224
+	}
+
+	trigger run_Prestage70
+	{
+		followspline globalaccum 0 spln_1 200 wait length 224
+	}
+
+	trigger run_Prestage71
+	{
+		followspline globalaccum 0 spln_2 200 wait length 224
+	}
+
+	trigger run_Prestage72
+	{
+		followspline globalaccum 0 spln_3 200 wait length 224
+	}
+
+	trigger run_Prestage73
+	{
+		followspline globalaccum 0 spln_4 200 wait length 224
+	}
+
+	trigger run_stage1
+	{
+		followspline globalaccum 0 spln_4 200 wait length 224
+	}
+
+	trigger run_stage2
+	{
+		followspline globalaccum 0 spln_3 200 wait length 224
+	}
+
+	trigger run_stage3
+	{
+		followspline globalaccum 0 spln_2 200 wait length 224
+	}
+
+	trigger run_stage4
+	{
+		followspline globalaccum 0 spln_1 200 wait length 224
+	}
+
+	trigger run_stage5
+	{
+		followspline globalaccum 0 spln0 200 wait length 224
+	}
+
+	trigger run_stage6
+	{
+		followspline globalaccum 0 spln1 200 wait length 224
+	}
+
+	trigger run_stage7
+	{
+		followspline globalaccum 0 spln2 200 wait length 224
+	}
+
+	trigger run_stage8
+	{
+		followspline globalaccum 0 spln3 200 wait length 224
+	}
+
+	trigger run_stage9
+	{
+		followspline globalaccum 0 spln4 200 wait length 224
+	}
+
+	trigger run_stage10
+	{
+		followspline globalaccum 0 spln5 200 wait length 224
+	}
+
+	trigger run_stage11
+	{
+		followspline globalaccum 0 spln6 200 wait length 224
+	}
+
+	trigger run_stage12
+	{
+		followspline globalaccum 0 spln7 200 wait length 224
+	}
+
+	trigger run_stage13
+	{
+		followspline globalaccum 0 spln8 200 wait length 224
+	}
+
+	trigger run_stage14
+	{
+		followspline globalaccum 0 spln9 200 wait length 224
+	}
+
+	trigger run_stage15
+	{
+		followspline globalaccum 0 spln10 200 wait length 224
+	}
+
+	trigger run_stage16
+	{
+		followspline globalaccum 0 spln11 200 wait length 224
+	}
+
+	trigger run_stage17
+	{
+		followspline globalaccum 0 spln12 200 wait length 224
+	}
+
+	trigger run_stage18
+	{
+		followspline globalaccum 0 spln13 200 wait length 224
+	}
+
+	trigger run_stage19
+	{
+		followspline globalaccum 0 spln14 200 wait length 224
+	}
+
+	trigger run_stage20
+	{
+		followspline globalaccum 0 spln15 200 wait length 224
+	}
+
+	trigger run_stage21
+	{
+		followspline globalaccum 0 spln16 200 wait length 224
+	}
+
+	trigger run_stage22
+	{
+		followspline globalaccum 0 spln17 200 wait length 224
+	}
+
+	trigger run_stage23
+	{
+		followspline globalaccum 0 spln18 200 wait length 224
+	}
+
+	trigger run_stage24
+	{
+		followspline globalaccum 0 spln19 200 wait length 224
+	}
+
+	trigger run_stage25
+	{
+		followspline globalaccum 0 spln20 200 wait length 224
+	}
+
+	trigger run_stage26
+	{
+		followspline globalaccum 0 spln21 200 wait length 224
+	}
+
+	trigger run_stage27
+	{
+		followspline globalaccum 0 spln22 200 wait length 224
+	}
+
+	trigger run_stage28
+	{
+		followspline globalaccum 0 spln23 200 wait length 224
+	}
+
+	trigger run_stage29
+	{
+		followspline globalaccum 0 spln24 200 wait length 224
+	}
+
+	trigger run_stage30
+	{
+		followspline globalaccum 0 spln25 200 wait length 224
+	}
+
+	trigger run_stage31
+	{
+		followspline globalaccum 0 spln26 200 wait length 224
+	}
+
+	trigger run_stage32
+	{
+		followspline globalaccum 0 spln27 200 wait length 224
+	}
+
+	trigger run_stage33
+	{
+		followspline globalaccum 0 spln28 200 wait length 224
+	}
+
+	trigger run_stage34
+	{
+		followspline globalaccum 0 spln29 200 wait length 224
+	}
+
+	trigger run_stage35
+	{
+		followspline globalaccum 0 spln30 200 wait length 224
+	}
+
+	trigger run_stage36
+	{
+		followspline globalaccum 0 spln31 200 wait length 224
+	}
+
+	trigger run_stage37
+	{
+		followspline globalaccum 0 spln32 200 wait length 224
+	}
+
+	trigger run_stage38
+	{
+		followspline globalaccum 0 spln33 200 wait length 224
+	}
+
+	trigger run_stage39
+	{
+		followspline globalaccum 0 spln34 200 wait length 224
+	}
+
+	trigger run_stage40
+	{
+		followspline globalaccum 0 spln35 200 wait length 224
+	}
+
+	trigger run_stage41
+	{
+		followspline globalaccum 0 spln36 200 wait length 224
+	}
+
+	trigger run_stage42
+	{
+		followspline globalaccum 0 spln37 200 wait length 224
+	}
+
+	trigger run_stage43
+	{
+		followspline globalaccum 0 spln38 200 wait length 224
+	}
+
+	trigger run_stage44
+	{
+		followspline globalaccum 0 spln39 200 wait length 224
+	}
+
+	trigger run_stage45
+	{
+		followspline globalaccum 0 spln40 200 wait length 224
+	}
+
+	trigger run_stage46
+	{
+		followspline globalaccum 0 spln41 200 wait length 224
+	}
+
+	trigger run_stage47
+	{
+		followspline globalaccum 0 spln42 200 wait length 224
+	}
+
+	trigger run_stage48
+	{
+		followspline globalaccum 0 spln43 200 wait length 224
+	}
+
+	trigger run_stage49
+	{
+		followspline globalaccum 0 spln44 200 wait length 224
+	}
+
+	trigger run_stage50
+	{
+		followspline globalaccum 0 spln45 200 wait length 224
+	}
+
+	trigger run_stage51
+	{
+		followspline globalaccum 0 spln46 200 wait length 224
+	}
+
+	trigger run_stage52
+	{
+		followspline globalaccum 0 spln47 200 wait length 224
+	}
+
+	trigger run_stage53
+	{
+		followspline globalaccum 0 spln48 200 wait length 224
+	}
+
+	trigger run_stage54
+	{
+		followspline globalaccum 0 spln49 200 wait length 224
+	}
+
+	trigger run_stage55
+	{
+		followspline globalaccum 0 spln50 200 wait length 224
+	}
+
+	trigger run_stage56
+	{
+		followspline globalaccum 0 spln51 200 wait length 224
+	}
+
+	trigger run_stage57
+	{
+		followspline globalaccum 0 spln52 200 wait length 224
+	}
+
+	trigger run_stage58
+	{
+		followspline globalaccum 0 spln53 200 wait length 224
+	}
+
+	trigger run_stage59
+	{
+		followspline globalaccum 0 spln54 200 wait length 224
+	}
+
+	trigger run_stage60
+	{
+		followspline globalaccum 0 spln55 200 wait length 224
+	}
+}
+
+train1_back
+{
+	spawn
+	{
+		wait 200
+		followspline globalaccum 1 spln67 200 wait length -224
+	}
+
+	trigger run_Prestage1
+	{
+		followspline globalaccum 0 spln68 200 wait length -224
+	}
+
+	trigger run_Prestage2
+	{
+		followspline globalaccum 0 spln67 200 wait length -224
+	}
+
+	trigger run_Prestage3
+	{
+		followspline globalaccum 0 spln66 200 wait length -224
+	}
+
+	trigger run_Prestage4
+	{
+		followspline globalaccum 0 spln65 200 wait length -224
+	}
+
+	trigger run_Prestage5
+	{
+		followspline globalaccum 0 spln64 200 wait length -224
+	}
+
+	trigger run_Prestage6
+	{
+		followspline globalaccum 0 spln63 200 wait length -224
+	}
+
+	trigger run_Prestage7
+	{
+		followspline globalaccum 0 spln62 200 wait length -224
+	}
+
+	trigger run_Prestage8
+	{
+		followspline globalaccum 0 spln61 200 wait length -224
+	}
+
+	trigger run_Prestage9
+	{
+		followspline globalaccum 0 spln60 200 wait length -224
+	}
+
+	trigger run_Prestage10
+	{
+		followspline globalaccum 0 spln59 200 wait length -224
+	}
+
+	trigger run_Prestage11
+	{
+		followspline globalaccum 0 spln58 200 wait length -224
+	}
+
+	trigger run_Prestage12
+	{
+		followspline globalaccum 0 spln57 200 wait length -224
+	}
+
+	trigger run_Prestage13
+	{
+		followspline globalaccum 0 spln56 200 wait length -224
+	}
+
+	trigger run_Prestage14
+	{
+		followspline globalaccum 0 spln55 200 wait length -224
+	}
+
+	trigger run_Prestage15
+	{
+		followspline globalaccum 0 spln54 200 wait length -224
+	}
+
+	trigger run_Prestage16
+	{
+		followspline globalaccum 0 spln53 200 wait length -224
+	}
+
+	trigger run_Prestage17
+	{
+		followspline globalaccum 0 spln52 200 wait length -224
+	}
+
+	trigger run_Prestage18
+	{
+		followspline globalaccum 0 spln51 200 wait length -224
+	}
+
+	trigger run_Prestage19
+	{
+		followspline globalaccum 0 spln50 200 wait length -224
+	}
+
+	trigger run_Prestage20
+	{
+		followspline globalaccum 0 spln49 200 wait length -224
+	}
+
+	trigger run_Prestage21
+	{
+		followspline globalaccum 0 spln48 200 wait length -224
+	}
+
+	trigger run_Prestage22
+	{
+		followspline globalaccum 0 spln47 200 wait length -224
+	}
+
+	trigger run_Prestage23
+	{
+		followspline globalaccum 0 spln46 200 wait length -224
+	}
+
+	trigger run_Prestage24
+	{
+		followspline globalaccum 0 spln45 200 wait length -224
+	}
+
+	trigger run_Prestage25
+	{
+		followspline globalaccum 0 spln44 200 wait length -224
+	}
+
+	trigger run_Prestage26
+	{
+		followspline globalaccum 0 spln43 200 wait length -224
+	}
+
+	trigger run_Prestage27
+	{
+		followspline globalaccum 0 spln42 200 wait length -224
+	}
+
+	trigger run_Prestage28
+	{
+		followspline globalaccum 0 spln41 200 wait length -224
+	}
+
+	trigger run_Prestage29
+	{
+		followspline globalaccum 0 spln40 200 wait length -224
+	}
+
+	trigger run_Prestage30
+	{
+		followspline globalaccum 0 spln39 200 wait length -224
+	}
+
+	trigger run_Prestage31
+	{
+		followspline globalaccum 0 spln38 200 wait length -224
+	}
+
+	trigger run_Prestage32
+	{
+		followspline globalaccum 0 spln37 200 wait length -224
+	}
+
+	trigger run_Prestage33
+	{
+		followspline globalaccum 0 spln36 200 wait length -224
+	}
+
+	trigger run_Prestage34
+	{
+		followspline globalaccum 0 spln35 200 wait length -224
+	}
+
+	trigger run_Prestage35
+	{
+		followspline globalaccum 0 spln34 200 wait length -224
+	}
+
+	trigger run_Prestage36
+	{
+		followspline globalaccum 0 spln33 200 wait length -224
+	}
+
+	trigger run_Prestage37
+	{
+		followspline globalaccum 0 spln32 200 wait length -224
+	}
+
+	trigger run_Prestage38
+	{
+		followspline globalaccum 0 spln31 200 wait length -224
+	}
+
+	trigger run_Prestage39
+	{
+		followspline globalaccum 0 spln30 200 wait length -224
+	}
+
+	trigger run_Prestage40
+	{
+		followspline globalaccum 0 spln29 200 wait length -224
+	}
+
+	trigger run_Prestage41
+	{
+		followspline globalaccum 0 spln28 200 wait length -224
+	}
+
+	trigger run_Prestage42
+	{
+		followspline globalaccum 0 spln27 200 wait length -224
+	}
+
+	trigger run_Prestage43
+	{
+		followspline globalaccum 0 spln26 200 wait length -224
+	}
+
+	trigger run_Prestage44
+	{
+		followspline globalaccum 0 spln25 200 wait length -224
+	}
+
+	trigger run_Prestage45
+	{
+		followspline globalaccum 0 spln24 200 wait length -224
+	}
+
+	trigger run_Prestage46
+	{
+		followspline globalaccum 0 spln23 200 wait length -224
+	}
+
+	trigger run_Prestage47
+	{
+		followspline globalaccum 0 spln22 200 wait length -224
+	}
+
+	trigger run_Prestage48
+	{
+		followspline globalaccum 0 spln21 200 wait length -224
+	}
+
+	trigger run_Prestage49
+	{
+		followspline globalaccum 0 spln20 200 wait length -224
+	}
+
+	trigger run_Prestage50
+	{
+		followspline globalaccum 0 spln19 200 wait length -224
+	}
+
+	trigger run_Prestage51
+	{
+		followspline globalaccum 0 spln18 200 wait length -224
+	}
+
+	trigger run_Prestage52
+	{
+		followspline globalaccum 0 spln17 200 wait length -224
+	}
+
+	trigger run_Prestage53
+	{
+		followspline globalaccum 0 spln16 200 wait length -224
+	}
+
+	trigger run_Prestage54
+	{
+		followspline globalaccum 0 spln15 200 wait length -224
+	}
+
+	trigger run_Prestage55
+	{
+		followspline globalaccum 0 spln14 200 wait length -224
+	}
+
+	trigger run_Prestage56
+	{
+		followspline globalaccum 0 spln13 200 wait length -224
+	}
+
+	trigger run_Prestage57
+	{
+		followspline globalaccum 0 spln12 200 wait length -224
+	}
+
+	trigger run_Prestage58
+	{
+		followspline globalaccum 0 spln11 200 wait length -224
+	}
+
+	trigger run_Prestage59
+	{
+		followspline globalaccum 0 spln10 200 wait length -224
+	}
+
+	trigger run_Prestage60
+	{
+		followspline globalaccum 0 spln9 200 wait length -224
+	}
+
+	trigger run_Prestage61
+	{
+		followspline globalaccum 0 spln8 200 wait length -224
+	}
+
+	trigger run_Prestage62
+	{
+		followspline globalaccum 0 spln7 200 wait length -224
+	}
+
+	trigger run_Prestage63
+	{
+		followspline globalaccum 0 spln6 200 wait length -224
+	}
+
+	trigger run_Prestage64
+	{
+		followspline globalaccum 0 spln5 200 wait length -224
+	}
+
+	trigger run_Prestage65
+	{
+		followspline globalaccum 0 spln4 200 wait length -224
+	}
+
+	trigger run_Prestage66
+	{
+		followspline globalaccum 0 spln3 200 wait length -224
+	}
+
+	trigger run_Prestage67
+	{
+		followspline globalaccum 0 spln2 200 wait length -224
+	}
+
+	trigger run_Prestage68
+	{
+		followspline globalaccum 0 spln1 200 wait length -224
+	}
+
+	trigger run_Prestage69
+	{
+		followspline globalaccum 0 spln0 200 wait length -224
+	}
+
+	trigger run_Prestage70
+	{
+		followspline globalaccum 0 spln_1 200 wait length -224
+	}
+
+	trigger run_Prestage71
+	{
+		followspline globalaccum 0 spln_2 200 wait length -224
+	}
+
+	trigger run_Prestage72
+	{
+		followspline globalaccum 0 spln_3 200 wait length -224
+	}
+
+	trigger run_Prestage73
+	{
+		followspline globalaccum 0 spln_4 200 wait length -224
+	}
+
+	trigger run_stage1
+	{
+		followspline globalaccum 0 spln_4 200 wait length -224
+	}
+
+	trigger run_stage2
+	{
+		followspline globalaccum 0 spln_3 200 wait length -224
+	}
+
+	trigger run_stage3
+	{
+		followspline globalaccum 0 spln_2 200 wait length -224
+	}
+
+	trigger run_stage4
+	{
+		followspline globalaccum 0 spln_1 200 wait length -224
+	}
+
+	trigger run_stage5
+	{
+		followspline globalaccum 0 spln0 200 wait length -224
+	}
+
+	trigger run_stage6
+	{
+		followspline globalaccum 0 spln1 200 wait length -224
+	}
+
+	trigger run_stage7
+	{
+		followspline globalaccum 0 spln2 200 wait length -224
+	}
+
+	trigger run_stage8
+	{
+		followspline globalaccum 0 spln3 200 wait length -224
+	}
+
+	trigger run_stage9
+	{
+		followspline globalaccum 0 spln4 200 wait length -224
+	}
+
+	trigger run_stage10
+	{
+		followspline globalaccum 0 spln5 200 wait length -224
+	}
+
+	trigger run_stage11
+	{
+		followspline globalaccum 0 spln6 200 wait length -224
+	}
+
+	trigger run_stage12
+	{
+		followspline globalaccum 0 spln7 200 wait length -224
+	}
+
+	trigger run_stage13
+	{
+		followspline globalaccum 0 spln8 200 wait length -224
+	}
+
+	trigger run_stage14
+	{
+		followspline globalaccum 0 spln9 200 wait length -224
+	}
+
+	trigger run_stage15
+	{
+		followspline globalaccum 0 spln10 200 wait length -224
+	}
+
+	trigger run_stage16
+	{
+		followspline globalaccum 0 spln11 200 wait length -224
+	}
+
+	trigger run_stage17
+	{
+		followspline globalaccum 0 spln12 200 wait length -224
+	}
+
+	trigger run_stage18
+	{
+		followspline globalaccum 0 spln13 200 wait length -224
+	}
+
+	trigger run_stage19
+	{
+		followspline globalaccum 0 spln14 200 wait length -224
+	}
+
+	trigger run_stage20
+	{
+		followspline globalaccum 0 spln15 200 wait length -224
+	}
+
+	trigger run_stage21
+	{
+		followspline globalaccum 0 spln16 200 wait length -224
+	}
+
+	trigger run_stage22
+	{
+		followspline globalaccum 0 spln17 200 wait length -224
+	}
+
+	trigger run_stage23
+	{
+		followspline globalaccum 0 spln18 200 wait length -224
+	}
+
+	trigger run_stage24
+	{
+		followspline globalaccum 0 spln19 200 wait length -224
+	}
+
+	trigger run_stage25
+	{
+		followspline globalaccum 0 spln20 200 wait length -224
+	}
+
+	trigger run_stage26
+	{
+		followspline globalaccum 0 spln21 200 wait length -224
+	}
+
+	trigger run_stage27
+	{
+		followspline globalaccum 0 spln22 200 wait length -224
+	}
+
+	trigger run_stage28
+	{
+		followspline globalaccum 0 spln23 200 wait length -224
+	}
+
+	trigger run_stage29
+	{
+		followspline globalaccum 0 spln24 200 wait length -224
+	}
+
+	trigger run_stage30
+	{
+		followspline globalaccum 0 spln25 200 wait length -224
+	}
+
+	trigger run_stage31
+	{
+		followspline globalaccum 0 spln26 200 wait length -224
+	}
+
+	trigger run_stage32
+	{
+		followspline globalaccum 0 spln27 200 wait length -224
+	}
+
+	trigger run_stage33
+	{
+		followspline globalaccum 0 spln28 200 wait length -224
+	}
+
+	trigger run_stage34
+	{
+		followspline globalaccum 0 spln29 200 wait length -224
+	}
+
+	trigger run_stage35
+	{
+		followspline globalaccum 0 spln30 200 wait length -224
+	}
+
+	trigger run_stage36
+	{
+		followspline globalaccum 0 spln31 200 wait length -224
+	}
+
+	trigger run_stage37
+	{
+		followspline globalaccum 0 spln32 200 wait length -224
+	}
+
+	trigger run_stage38
+	{
+		followspline globalaccum 0 spln33 200 wait length -224
+	}
+
+	trigger run_stage39
+	{
+		followspline globalaccum 0 spln34 200 wait length -224
+	}
+
+	trigger run_stage40
+	{
+		followspline globalaccum 0 spln35 200 wait length -224
+	}
+
+	trigger run_stage41
+	{
+		followspline globalaccum 0 spln36 200 wait length -224
+	}
+
+	trigger run_stage42
+	{
+		followspline globalaccum 0 spln37 200 wait length -224
+	}
+
+	trigger run_stage43
+	{
+		followspline globalaccum 0 spln38 200 wait length -224
+	}
+
+	trigger run_stage44
+	{
+		followspline globalaccum 0 spln39 200 wait length -224
+	}
+
+	trigger run_stage45
+	{
+		followspline globalaccum 0 spln40 200 wait length -224
+	}
+
+	trigger run_stage46
+	{
+		followspline globalaccum 0 spln41 200 wait length -224
+	}
+
+	trigger run_stage47
+	{
+		followspline globalaccum 0 spln42 200 wait length -224
+	}
+
+	trigger run_stage48
+	{
+		followspline globalaccum 0 spln43 200 wait length -224
+	}
+
+	trigger run_stage49
+	{
+		followspline globalaccum 0 spln44 200 wait length -224
+	}
+
+	trigger run_stage50
+	{
+		followspline globalaccum 0 spln45 200 wait length -224
+	}
+
+	trigger run_stage51
+	{
+		followspline globalaccum 0 spln46 200 wait length -224
+	}
+
+	trigger run_stage52
+	{
+		followspline globalaccum 0 spln47 200 wait length -224
+	}
+
+	trigger run_stage53
+	{
+		followspline globalaccum 0 spln48 200 wait length -224
+	}
+
+	trigger run_stage54
+	{
+		followspline globalaccum 0 spln49 200 wait length -224
+	}
+
+	trigger run_stage55
+	{
+		followspline globalaccum 0 spln50 200 wait length -224
+	}
+
+	trigger run_stage56
+	{
+		followspline globalaccum 0 spln51 200 wait length -224
+	}
+
+	trigger run_stage57
+	{
+		followspline globalaccum 0 spln52 200 wait length -224
+	}
+
+	trigger run_stage58
+	{
+		followspline globalaccum 0 spln53 200 wait length -224
+	}
+
+	trigger run_stage59
+	{
+		followspline globalaccum 0 spln54 200 wait length -224
+	}
+
+	trigger run_stage60
+	{
+		followspline globalaccum 0 spln55 200 wait length -224
+	}
+}
+
+
+
+
+crane2_controller
+{
+	trigger startcrane
+	{
+		wait 2000
+		trigger crane2 shift_left
+		trigger crane2_hook shift_left
+
+		accum 1 set 2
+	}
+}
+
+crane_sound2
+{
+	trigger crane_start
+	{
+		trigger crane2 crane_start
+		wait 250
+		trigger crane2 crane_loop
+	}
+
+	trigger crane_stop
+	{
+		trigger crane2 crane_stop
+	}
+
+	trigger hook_start
+	{
+		trigger crane2 hook_start
+		wait 700
+		trigger crane2 hook_loop
+	}
+
+	trigger hook_stop
+	{
+		trigger crane2 hook_stop
+	}
+}
+
+crane2
+{
+	trigger shift_left
+	{
+		trigger crane_sound2 crane_start
+		gotomarker crane2_path9 50 wait
+	}
+
+	trigger shift_right_small
+	{
+		trigger crane_sound2 crane_start
+		gotomarker crane2_path10 50 wait
+		trigger crane_sound2 crane_stop
+	}
+
+	trigger shift_right2
+	{
+		trigger crane_sound2 crane_start
+		gotomarker crane2_path12 50 wait
+		trigger crane_sound2 crane_stop
+	}
+
+	trigger shift_left2
+	{
+		trigger crane_sound2 crane_start
+		gotomarker crane2_path11 50 wait
+		trigger crane_sound2 crane_stop
+	}
+
+	trigger crane_start
+	{
+		stopsound
+		playsound sound/movers/motors/motor_start_02.wav volume 96
+	}
+
+	trigger crane_loop
+	{
+		playsound sound/movers/motors/motor_loop_02.wav looping
+	}
+
+	trigger crane_stop
+	{
+		stopsound
+		playsound sound/movers/motors/motor_end_02.wav volume 96
+	}
+	trigger hook_start
+	{
+		stopsound
+		playsound sound/movers/motors/motor_start_01.wav volume 96
+	}
+
+	trigger hook_loop
+	{
+		playsound sound/movers/motors/motor_loop_01.wav looping
+	}
+
+	trigger hook_stop
+	{
+		stopsound
+		playsound sound/movers/motors/motor_end_01.wav volume 96
+	}
+}
+
+crane2_hook
+{
+	trigger shift_left
+	{
+		gotomarker crane2_path1 50 wait
+
+		trigger crane2_hook lower_small
+	}
+
+	trigger lower_small
+	{
+		trigger crane_sound2 hook_start
+
+		gotomarker crane2_path2 50 wait
+
+		trigger crane2 shift_right_small
+		trigger crane2_hook shift_right_small
+	}
+
+	trigger shift_right_small
+	{
+		trigger crane_sound2 hook_stop
+
+		gotomarker crane2_path3 50 wait
+
+		trigger crane2_hook raise_small
+	}
+
+	trigger raise_small
+	{
+		trigger crane_sound2 hook_start
+
+		gotomarker crane2_path4 50 wait
+
+		trigger crane_box raise_large2
+		trigger crane2_hook raise_large2
+	}
+
+	trigger raise_large2
+	{
+		trigger crane_sound2 hook_start
+
+		gotomarker crane2_path5 50 wait
+
+		trigger crane_box shift_right2
+		trigger crane2 shift_right2
+		trigger crane2_hook shift_right2
+	}
+
+	trigger shift_right2
+	{
+		trigger crane_sound2 hook_stop
+
+		gotomarker crane2_path6 50 wait
+
+		trigger crane_box lower_small2
+		trigger crane2_hook lower_small2
+	}
+
+	trigger lower_small2
+	{
+		trigger crane_sound2 hook_start
+
+		gotomarker crane2_path7 50 wait
+
+		trigger crane2 shift_left2
+		trigger crane2_hook shift_left2
+	}
+
+	trigger shift_left2
+	{
+		trigger crane_sound2 hook_stop
+
+		gotomarker crane2_path8 50 wait
+
+		trigger train2 ammo_loaded
+	}
+}
+
+train2
+{
+	spawn
+	{
+		accum 0 set 0 // is ammo loaded?
+		accum 2 set 0 // is enabled?
+		accum 3 set 0 // stage
+		accum 4 set 0 // is moving?
+
+		playsound sound/vehicles/tug/tug_idle.wav looping
+	}
+
+	trigger run_stage1
+	{
+		accum 0 abort_if_equal 0
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train2_trigger run_stage1
+		trigger train2_back run_stage1
+		trigger crane2_box run_stage1
+		followspline globalaccum 1 spn0 200 wait length -224
+
+		trigger train2 update_counter_axis
+		trigger train2 update_counter_allies
+		accum 4 set 0
+
+		trigger train2 dispatch_allies
+		trigger train2 dispatch_axis
+	}
+
+	trigger run_stage2
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train2_trigger run_stage2
+		trigger train2_back run_stage2
+		trigger crane2_box run_stage2
+		followspline globalaccum 1 spn1 200 wait length -224
+
+		trigger train2 update_counter_axis
+		trigger train2 update_counter_allies
+		accum 4 set 0
+
+		trigger train2 dispatch_allies
+		trigger train2 dispatch_axis
+	}
+
+	trigger run_stage3
+	{
+		accum 0 abort_if_equal 0
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train2_trigger run_stage3
+		trigger train2_back run_stage3
+		trigger crane2_box run_stage3
+		followspline globalaccum 1 spn2 200 wait length -224
+
+		trigger train2 update_counter_axis
+		trigger train2 update_counter_allies
+		accum 4 set 0
+
+		trigger train2 dispatch_allies
+		trigger train2 dispatch_axis
+	}
+
+	trigger run_stage4
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train2_trigger run_stage4
+		trigger train2_back run_stage4
+		trigger crane2_box run_stage4
+		followspline globalaccum 1 spn3 200 wait length -224
+
+		trigger train2 update_counter_axis
+		trigger train2 update_counter_allies
+		accum 4 set 0
+
+		trigger train2 dispatch_allies
+		trigger train2 dispatch_axis
+	}
+
+	trigger run_stage5
+	{
+		accum 0 abort_if_equal 0
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train2_trigger run_stage5
+		trigger train2_back run_stage5
+		trigger crane2_box run_stage5
+		followspline globalaccum 1 spn4 200 wait length -224
+
+		trigger train2 update_counter_axis
+		trigger train2 update_counter_allies
+		accum 4 set 0
+
+		trigger train2 dispatch_allies
+		trigger train2 dispatch_axis
+	}
+
+	trigger run_stage6
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train2_trigger run_stage6
+		trigger train2_back run_stage6
+		trigger crane2_box run_stage6
+		followspline globalaccum 1 spn5 200 wait length -224
+
+		trigger train2 update_counter_axis
+		trigger train2 update_counter_allies
+		accum 4 set 0
+
+		trigger train2 dispatch_allies
+		trigger train2 dispatch_axis
+	}
+
+	trigger run_stage7
+	{
+		accum 0 abort_if_equal 0
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train2_trigger run_stage7
+		trigger train2_back run_stage7
+		trigger crane2_box run_stage7
+		followspline globalaccum 1 spn6 200 wait length -224
+
+		trigger train2 update_counter_axis
+		trigger train2 update_counter_allies
+		accum 4 set 0
+
+		trigger train2 dispatch_allies
+		trigger train2 dispatch_axis
+	}
+
+	trigger run_stage8
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train2_trigger run_stage8
+		trigger train2_back run_stage8
+		trigger crane2_box run_stage8
+		followspline globalaccum 1 spn7 200 wait length -224
+
+		trigger train2 update_counter_axis
+		trigger train2 update_counter_allies
+		accum 4 set 0
+
+		trigger train2 dispatch_allies
+		trigger train2 dispatch_axis
+	}
+
+	trigger run_stage9
+	{
+		accum 0 abort_if_equal 0
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train2_trigger run_stage9
+		trigger train2_back run_stage9
+		trigger crane2_box run_stage9
+		followspline globalaccum 1 spn8 200 wait length -224
+
+		trigger train2 update_counter_axis
+		trigger train2 update_counter_allies
+		accum 4 set 0
+
+		trigger train2 dispatch_allies
+		trigger train2 dispatch_axis
+	}
+
+	trigger run_stage10
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train2_trigger run_stage10
+		trigger train2_back run_stage10
+		trigger crane2_box run_stage10
+		followspline globalaccum 1 spn9 200 wait length -224
+
+		trigger train2 update_counter_axis
+		trigger train2 update_counter_allies
+		accum 4 set 0
+
+		trigger train2 dispatch_allies
+		trigger train2 dispatch_axis
+	}
+
+	trigger run_stage11
+	{
+		accum 0 abort_if_equal 0
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train2_trigger run_stage11
+		trigger train2_back run_stage11
+		trigger crane2_box run_stage11
+		followspline globalaccum 1 spn10 200 wait length -224
+
+		trigger train2 update_counter_axis
+		trigger train2 update_counter_allies
+		accum 4 set 0
+
+		trigger train2 dispatch_allies
+		trigger train2 dispatch_axis
+	}
+
+	trigger run_stage12
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train2_trigger run_stage12
+		trigger train2_back run_stage12
+		trigger crane2_box run_stage12
+		followspline globalaccum 1 spn11 200 wait length -224
+
+		trigger train2 update_counter_axis
+		trigger train2 update_counter_allies
+		accum 4 set 0
+
+		trigger train2 dispatch_allies
+		trigger train2 dispatch_axis
+	}
+
+	trigger run_stage13
+	{
+		accum 0 abort_if_equal 0
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train2_trigger run_stage13
+		trigger train2_back run_stage13
+		trigger crane2_box run_stage13
+		followspline globalaccum 1 spn12 200 wait length -224
+
+		trigger train2 update_counter_axis
+		trigger train2 update_counter_allies
+		accum 4 set 0
+
+		trigger train2 dispatch_allies
+		trigger train2 dispatch_axis
+	}
+
+	trigger run_stage14
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train2_trigger run_stage14
+		trigger train2_back run_stage14
+		trigger crane2_box run_stage14
+		followspline globalaccum 1 spn13 200 wait length -224
+
+		trigger train2 update_counter_axis
+		trigger train2 update_counter_allies
+		accum 4 set 0
+
+		trigger train2 dispatch_allies
+		trigger train2 dispatch_axis
+	}
+
+	trigger run_stage15
+	{
+		accum 0 abort_if_equal 0
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train2_trigger run_stage15
+		trigger train2_back run_stage15
+		trigger crane2_box run_stage15
+		followspline globalaccum 1 spn14 200 wait length -224
+
+		trigger train2 update_counter_axis
+		trigger train2 update_counter_allies
+		accum 4 set 0
+
+		trigger train2 dispatch_allies
+		trigger train2 dispatch_axis
+	}
+
+	trigger run_stage16
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train2_trigger run_stage16
+		trigger train2_back run_stage16
+		trigger crane2_box run_stage16
+		followspline globalaccum 1 spn15 200 wait length -224
+
+		trigger train2 update_counter_axis
+		trigger train2 update_counter_allies
+		accum 4 set 0
+
+		trigger train2 dispatch_allies
+		trigger train2 dispatch_axis
+	}
+
+	trigger run_stage17
+	{
+		accum 2 abort_if_equal 0
+
+		accum 4 set 1
+		trigger train2_trigger run_stage17
+		trigger train2_back run_stage17
+		trigger crane2_box run_stage17
+		followspline globalaccum 1 spn16 200 wait length -224
+
+		trigger train2 update_counter_axis
+		trigger train2 update_counter_allies
+		accum 4 set 0
+
+		trigger game_manager enable_gun
+	}
+
+	trigger train_enable_axis
+	{
+		accum 4 abort_if_equal 1
+
+		accum 2 set 1
+		accum 1 set 0
+
+		trigger train2 dispatch_axis
+	}
+
+	trigger train_enable_allies
+	{
+		accum 4 abort_if_equal 1
+
+		accum 2 set 2
+		accum 1 set 0
+
+		trigger train2 dispatch_allies
+	}
+
+	trigger dispatch_axis
+	{
+		accum 2 abort_if_not_equal 1
+		accum 1 abort_if_not_equal 0
+
+		globalaccum 1 set 0
+
+		accum 3 trigger_if_equal 0 train2 run_Stage1
+		accum 3 trigger_if_equal 1 train2 run_Stage2
+		accum 3 trigger_if_equal 2 train2 run_Stage3
+		accum 3 trigger_if_equal 3 train2 run_Stage4
+		accum 3 trigger_if_equal 4 train2 run_Stage5
+		accum 3 trigger_if_equal 5 train2 run_Stage6
+		accum 3 trigger_if_equal 6 train2 run_Stage7
+		accum 3 trigger_if_equal 7 train2 run_Stage8
+		accum 3 trigger_if_equal 8 train2 run_Stage9
+		accum 3 trigger_if_equal 9 train2 run_Stage10
+		accum 3 trigger_if_equal 10 train2 run_Stage11
+		accum 3 trigger_if_equal 11 train2 run_Stage12
+		accum 3 trigger_if_equal 12 train2 run_Stage13
+		accum 3 trigger_if_equal 13 train2 run_Stage14
+		accum 3 trigger_if_equal 14 train2 run_Stage15
+		accum 3 trigger_if_equal 15 train2 run_Stage16
+		accum 3 trigger_if_equal 16 train2 run_Stage17
+	}
+
+	trigger dispatch_allies
+	{
+		accum 2 abort_if_not_equal 2
+		accum 1 abort_if_not_equal 0
+
+		globalaccum 1 set 1
+
+		accum 3 trigger_if_equal 1 train2 run_Stage1
+		accum 3 trigger_if_equal 2 train2 run_Stage2
+		accum 3 trigger_if_equal 3 train2 run_Stage3
+		accum 3 trigger_if_equal 4 train2 run_Stage4
+		accum 3 trigger_if_equal 5 train2 run_Stage5
+		accum 3 trigger_if_equal 6 train2 run_Stage6
+		accum 3 trigger_if_equal 7 train2 run_Stage7
+		accum 3 trigger_if_equal 8 train2 run_Stage8
+		accum 3 trigger_if_equal 9 train2 run_Stage9
+		accum 3 trigger_if_equal 10 train2 run_Stage10
+		accum 3 trigger_if_equal 11 train2 run_Stage11
+		accum 3 trigger_if_equal 12 train2 run_Stage12
+		accum 3 trigger_if_equal 13 train2 run_Stage13
+		accum 3 trigger_if_equal 14 train2 run_Stage14
+		accum 3 trigger_if_equal 15 train2 run_Stage15
+		accum 3 trigger_if_equal 16 train2 run_Stage16
+	}
+
+	trigger train_disable
+	{
+		accum 1 set 1
+
+		accum 4 trigger_if_equal 0 train2 sound_idle
+	}
+
+	trigger sound_move
+	{
+		accum 4 abort_if_equal 0
+		stopsound
+		playsound sound/vehicles/tug/tug_move.wav looping
+	}
+
+	trigger sound_idle
+	{
+		stopsound
+		playsound sound/vehicles/tug/tug_idle.wav looping
+	}
+
+	trigger ammo_loaded
+	{
+		wm_announce "Axis transferred the Ammo to the Second Tug!"
+		accum 0 set 1
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "railgun_axis_tug2_railgun"
+
+		wm_addteamvoiceannounce 1 "railgun_allies_tug2_railgun"
+
+		wm_teamvoiceannounce 0 "railgun_axis_tug2_loaded"
+		wm_teamvoiceannounce 0 "railgun_axis_tug2_railgun"
+
+		wm_teamvoiceannounce 1 "railgun_allies_tug2_loaded"
+		wm_teamvoiceannounce 1 "railgun_allies_tug2_railgun"
+
+		wm_removeteamvoiceannounce 0 "railgun_axis_tug1_north"
+
+		wm_removeteamvoiceannounce 1 "railgun_allies_tug1_north"
+		// *----------------------------------- vo ------------------------------------------*
+
+
+		wm_objective_status	3 1 2
+		wm_objective_status	3 0 1
+
+		wm_set_main_objective	4 0
+		wm_set_main_objective	4 1
+	}
+
+	trigger update_counter_axis
+	{
+		accum 2 abort_if_not_equal 1
+		accum 3 inc 1
+	}
+
+	trigger update_counter_allies
+	{
+		accum 2 abort_if_not_equal 2
+		accum 3 inc -1
+	}
+
+}
+
+train2_controller
+{
+	trigger allied_request
+	{
+		accum 1 inc 1
+		accum 0 set 0
+		accum 2 set 0
+
+		accum 1 abort_if_less_than 3
+		trigger train2 train_enable_allies
+		trigger train2 sound_move
+	}
+
+	trigger axis_request
+	{
+		accum 0 inc 1
+		accum 1 set 0
+		accum 2 set 0
+
+		accum 0 abort_if_less_than 3
+		trigger train2 train_enable_axis
+		trigger train2 sound_move
+	}
+
+	trigger timer
+	{
+		accum 2 inc 1
+		accum 2 abort_if_less_than 3
+
+		accum 0 set 0
+		accum 1 set 0
+
+		trigger train2 train_disable
+	}
+}
+
+train2_sound
+{
+}
+
+train2_back
+{
+	trigger run_stage1
+	{
+		followspline globalaccum 1 spn0 200 wait length 224
+	}
+
+	trigger run_stage2
+	{
+		followspline globalaccum 1 spn1 200 wait length 224
+	}
+
+	trigger run_stage3
+	{
+		followspline globalaccum 1 spn2 200 wait length 224
+	}
+
+	trigger run_stage4
+	{
+		followspline globalaccum 1 spn3 200 wait length 224
+	}
+
+	trigger run_stage5
+	{
+		followspline globalaccum 1 spn4 200 wait length 224
+	}
+
+	trigger run_stage6
+	{
+		followspline globalaccum 1 spn5 200 wait length 224
+	}
+
+	trigger run_stage7
+	{
+		followspline globalaccum 1 spn6 200 wait length 224
+	}
+
+	trigger run_stage8
+	{
+		followspline globalaccum 1 spn7 200 wait length 224
+	}
+
+	trigger run_stage9
+	{
+		followspline globalaccum 1 spn8 200 wait length 224
+	}
+
+	trigger run_stage10
+	{
+		followspline globalaccum 1 spn9 200 wait length 224
+	}
+
+	trigger run_stage11
+	{
+		followspline globalaccum 1 spn10 200 wait length 224
+	}
+
+	trigger run_stage12
+	{
+		followspline globalaccum 1 spn11 200 wait length 224
+	}
+
+	trigger run_stage13
+	{
+		followspline globalaccum 1 spn12 200 wait length 224
+	}
+
+	trigger run_stage14
+	{
+		followspline globalaccum 1 spn13 200 wait length 224
+	}
+
+	trigger run_stage15
+	{
+		followspline globalaccum 1 spn14 200 wait length 224
+	}
+
+	trigger run_stage16
+	{
+		followspline globalaccum 1 spn15 200 wait length 224
+	}
+
+	trigger run_stage17
+	{
+		followspline globalaccum 1 spn16 200 wait length 224
+	}
+}
+
+crane2_box
+{
+	spawn
+	{
+		setstate crane2_box invisible
+	}
+
+	trigger run_stage1
+	{
+		followspline globalaccum 1 spn0 200 wait length 224
+	}
+
+	trigger run_stage2
+	{
+		followspline globalaccum 1 spn1 200 wait length 224
+	}
+
+	trigger run_stage3
+	{
+		followspline globalaccum 1 spn2 200 wait length 224
+	}
+
+	trigger run_stage4
+	{
+		followspline globalaccum 1 spn3 200 wait length 224
+	}
+
+	trigger run_stage5
+	{
+		followspline globalaccum 1 spn4 200 wait length 224
+	}
+
+	trigger run_stage6
+	{
+		followspline globalaccum 1 spn5 200 wait length 224
+	}
+
+	trigger run_stage7
+	{
+		followspline globalaccum 1 spn6 200 wait length 224
+	}
+
+	trigger run_stage8
+	{
+		followspline globalaccum 1 spn7 200 wait length 224
+	}
+
+	trigger run_stage9
+	{
+		followspline globalaccum 1 spn8 200 wait length 224
+	}
+
+	trigger run_stage10
+	{
+		followspline globalaccum 1 spn9 200 wait length 224
+	}
+
+	trigger run_stage11
+	{
+		followspline globalaccum 1 spn10 200 wait length 224
+	}
+
+	trigger run_stage12
+	{
+		followspline globalaccum 1 spn11 200 wait length 224
+	}
+
+	trigger run_stage13
+	{
+		followspline globalaccum 1 spn12 200 wait length 224
+	}
+
+	trigger run_stage14
+	{
+		followspline globalaccum 1 spn13 200 wait length 224
+	}
+
+	trigger run_stage15
+	{
+		followspline globalaccum 1 spn14 200 wait length 224
+	}
+
+	trigger run_stage16
+	{
+		followspline globalaccum 1 spn15 200 wait length 224
+	}
+
+	trigger run_stage17
+	{
+		followspline globalaccum 1 spn16 200 wait length 224
+	}
+}
+
+train2_trigger
+{
+	spawn
+	{
+	}
+
+	trigger run_stage1
+	{
+		followspline globalaccum 1 spn0 200 wait length -224
+	}
+
+	trigger run_stage2
+	{
+		followspline globalaccum 1 spn1 200 wait length -224
+	}
+
+	trigger run_stage3
+	{
+		followspline globalaccum 1 spn2 200 wait length -224
+	}
+
+	trigger run_stage4
+	{
+		followspline globalaccum 1 spn3 200 wait length -224
+	}
+
+	trigger run_stage5
+	{
+		followspline globalaccum 1 spn4 200 wait length -224
+	}
+
+	trigger run_stage6
+	{
+		followspline globalaccum 1 spn5 200 wait length -224
+	}
+
+	trigger run_stage7
+	{
+		followspline globalaccum 1 spn6 200 wait length -224
+	}
+
+	trigger run_stage8
+	{
+		followspline globalaccum 1 spn7 200 wait length -224
+	}
+
+	trigger run_stage9
+	{
+		followspline globalaccum 1 spn8 200 wait length -224
+	}
+
+	trigger run_stage10
+	{
+		followspline globalaccum 1 spn9 200 wait length -224
+	}
+
+	trigger run_stage11
+	{
+		followspline globalaccum 1 spn10 200 wait length -224
+	}
+
+	trigger run_stage12
+	{
+		followspline globalaccum 1 spn11 200 wait length -224
+	}
+
+	trigger run_stage13
+	{
+		followspline globalaccum 1 spn12 200 wait length -224
+	}
+
+	trigger run_stage14
+	{
+		followspline globalaccum 1 spn13 200 wait length -224
+	}
+
+	trigger run_stage15
+	{
+		followspline globalaccum 1 spn14 200 wait length -224
+	}
+
+	trigger run_stage16
+	{
+		followspline globalaccum 1 spn15 200 wait length -224
+	}
+
+	trigger run_stage17
+	{
+		followspline globalaccum 1 spn16 200 wait length -224
+	}
+}
+
+trigger_end
+{
+	spawn
+	{
+		accum 1 set 0 // has gun been fired?
+	}
+
+	trigger disable
+	{
+		accum 1 set 1
+	}
+
+	trigger run
+	{
+		// Prevent players stalling the end sequence
+		// by repeatedly triggering the gun to fire
+		accum 1 abort_if_not_equal 0
+		trigger game_manager axis_win
+	}
+}
+
+train1_enabler_axis
+{
+	trigger run
+	{
+		trigger train1_controller axis_request
+	}
+}
+
+train1_enabler_allies
+{
+	trigger run
+	{
+		trigger train1_controller allied_request
+	}
+}
+
+train1_disabler
+{
+	trigger run
+	{
+		trigger train1 train_disable
+	}
+}
+
+train2_enabler_axis
+{
+	trigger run
+	{
+		trigger train2_controller axis_request
+	}
+}
+
+train2_enabler_allies
+{
+	trigger run
+	{
+		trigger train2_controller allied_request
+	}
+}
+
+train2_disabler
+{
+	trigger run
+	{
+		trigger train2 train_disable
+	}
+}
+
+depotflag
+{
+	spawn
+	{
+		wait 200
+		setstate capturespawn invisible
+		accum 0 set 0
+	}
+
+	trigger axis_capture
+	{
+		trigger game_manager depotflagred
+		trigger depotflag setaxis
+	}
+
+	trigger allied_capture
+	{
+		trigger game_manager depotflagblue
+		trigger depotflag setallies
+	}
+
+	trigger setaxis
+	{
+		setstate capturespawn default
+		accum 0 abort_if_equal 0
+		accum 0 set 0
+		alertentity capturespawn
+	}
+
+	trigger setallies
+	{
+		setstate capturespawn default
+		accum 0 abort_if_equal 1
+		accum 0 set 1
+		alertentity capturespawn
+	}
+}
+
+// railgun fire controls (panel 3 of 1...)
+panel3
+{
+	spawn
+	{
+		wait 400
+		constructible_class 3
+
+		accum 0 set 0 // checks if gun is loaded
+		accum 1 set 1 // checks if panel is built
+
+		setstate panel_user3 invisible
+
+		trigger panel3 setup
+	}
+
+	trigger setup
+	{
+		setstate panel3_materials invisible
+		setstate panel3_materials_clip invisible
+		setstate panel3_flag invisible
+		setstate panel3 default
+	}
+
+	buildstart final
+	{
+		setstate panel3_materials default
+		setstate panel3_materials_clip default
+		setstate panel3_flag default
+		setstate panel3 underconstruction
+	}
+
+	built final
+	{
+		setstate panel3_materials invisible
+		setstate panel3_materials_clip invisible
+		setstate panel3_flag invisible
+		setstate panel3 default
+
+		wm_announce	"Rail Gun Firing Controls rebuilt!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "railgun_axis_controls_defend"
+
+		wm_addteamvoiceannounce 1 "railgun_allies_controls_destroy"
+
+		wm_teamvoiceannounce 0 "railgun_axis_controls_defend"
+
+		wm_teamvoiceannounce 1 "railgun_allies_controls_repaired"
+		wm_teamvoiceannounce 1 "railgun_allies_controls_destroy"
+
+		wm_removeteamvoiceannounce 0 "railgun_axis_controls_construct"
+		// *---------------------------------------------------------------------------------*
+
+		accum 1 set 1
+		accum 0 abort_if_equal 0
+		setstate panel_user3 default
+	}
+
+	decayed final
+	{
+		setstate panel3_materials default
+		setstate panel3_materials_clip default
+		setstate panel3_flag default
+		setstate panel_user3 invisible
+		setstate panel3 invisible
+	}
+
+	death
+	{
+		setstate panel3_materials default
+		setstate panel3_materials_clip default
+		setstate panel3_flag default
+		setstate panel_user3 invisible
+		setstate panel3 invisible
+
+		wm_announce "Rail Gun Firing Controls destroyed!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "railgun_axis_controls_construct"
+
+		wm_teamvoiceannounce 0 "railgun_axis_controls_destroyed"
+		wm_teamvoiceannounce 0 "railgun_axis_controls_construct"
+
+		wm_teamvoiceannounce 1 "railgun_allies_controls_destroyed"
+
+		wm_removeteamvoiceannounce 0 "railgun_axis_controls_defend"
+
+		wm_removeteamvoiceannounce 1 "railgun_allies_controls_destroy"
+		// *---------------------------------------------------------------------------------*
+
+
+		accum 1 set 0
+	}
+
+	trigger gun_loaded
+	{
+		accum 0 set 1
+
+		accum 1 abort_if_equal 0
+
+		setstate panel_user3 default
+	}
+}
+
+// ================================================
+// ============ NEUTRAL COMMAND POST ==============
+// ================================================
+
+allied_compost_built
+{
+	spawn
+	{
+		wait 400
+		trigger allied_compost_built setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+	}
+
+	buildstart final
+	{
+		setstate allied_compost_built_model underconstruction
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+	}
+
+	built final
+	{
+		setstate allied_compost_built_model default
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+
+		trigger allied_compost_built_model enable_allied_features
+
+		enablespeaker allies_compost_sound
+	}
+
+	decayed final
+	{
+		setstate allied_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+	}
+
+	death
+	{
+		setstate allied_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+
+		trigger allied_compost_built_model disable_allied_features
+
+		disablespeaker allies_compost_sound
+	}
+}
+
+allied_compost_built_model
+{
+	spawn
+	{
+		wait 400
+		setstate allied_compost_built_model invisible
+	}
+
+	trigger enable_allied_features
+	{
+		setchargetimefactor 1 soldier 0.75
+		setchargetimefactor 1 lieutenant 0.75
+		setchargetimefactor 1 medic 0.75
+		setchargetimefactor 1 engineer 0.75
+		setchargetimefactor 1 covertops 0.75
+		sethqstatus 1 1
+
+		wm_announce	"Allied Command Post constructed. Charge speed increased!"
+
+		wm_objective_status	7 1 1
+		wm_objective_status	7 0 2
+		wm_objective_status	8 1 1
+		wm_objective_status	8 0 2
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed_allies"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed"
+
+		wm_removeteamvoiceannounce 1 "allies_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+	}
+
+	trigger disable_allied_features
+	{
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+
+		wm_announce	"Axis team has destroyed the Allied Command Post!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_damaged"
+		// *---------------------------------------------------------------------------------*
+
+		wm_objective_status	7 1 0
+		wm_objective_status	7 0 0
+		wm_objective_status	8 1 0
+		wm_objective_status	8 0 0
+	}
+}
+
+axis_compost_built
+{
+	spawn
+	{
+		wait 400
+		trigger axis_compost_built setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setchargetimefactor 0 soldier 1
+		setchargetimefactor 0 lieutenant 1
+		setchargetimefactor 0 medic 1
+		setchargetimefactor 0 engineer 1
+		setchargetimefactor 0 covertops 1
+		sethqstatus 0 0
+	}
+
+	buildstart final
+	{
+		setstate axis_compost_built_model underconstruction
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+	}
+
+	built final
+	{
+		setstate axis_compost_built_model default
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+
+		trigger axis_compost_built_model enable_axis_features
+
+		enablespeaker axis_compost_sound
+	}
+
+	decayed final
+	{
+		setstate axis_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+	}
+
+	death
+	{
+		setstate axis_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+
+		trigger axis_compost_built_model disable_axis_features
+
+		disablespeaker axis_compost_sound
+	}
+}
+
+axis_compost_built_model
+{
+	spawn
+	{
+		wait 400
+		setstate axis_compost_built_model invisible
+	}
+
+	trigger enable_axis_features
+	{
+		setchargetimefactor 0 soldier 0.75
+		setchargetimefactor 0 lieutenant 0.75
+		setchargetimefactor 0 medic 0.75
+		setchargetimefactor 0 engineer 0.75
+		setchargetimefactor 0 covertops 0.75
+		sethqstatus 0 1
+
+		wm_announce	"Axis Command Post constructed. Charge speed increased!"
+
+		wm_objective_status	7 1 2
+		wm_objective_status	7 0 1
+		wm_objective_status	8 1 2
+		wm_objective_status	8 0 1
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed_axis"
+
+		wm_removeteamvoiceannounce 0 "axis_hq_compost_construct"
+		// *----------------------------------- vo ------------------------------------------*
+	}
+
+	trigger disable_axis_features
+	{
+		setchargetimefactor 0 soldier 1
+		setchargetimefactor 0 lieutenant 1
+		setchargetimefactor 0 medic 1
+		setchargetimefactor 0 engineer 1
+		setchargetimefactor 0 covertops 1
+		sethqstatus 0 0
+
+		wm_announce	"Allied team has destroyed the Axis Command Post!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "axis_hq_construct_compost"
+
+		wm_teamvoiceannounce 0 "axis_hq_compost_damaged"
+		// *----------------------------------- vo ------------------------------------------*
+
+		wm_objective_status	7 1 0
+		wm_objective_status	7 0 0
+		wm_objective_status	8 1 0
+		wm_objective_status	8 0 0
+	}
+}
+
+
+// Depot Yard MG nest
+browning_clip_1
+{
+	spawn
+	{
+		wait 200
+
+		constructible_class 2
+
+		trigger self setup
+	}
+
+	trigger setup
+	{
+		setstate browning_1 invisible
+		setstate browning_materials_1 default
+		setstate browning_materials_clip_1 default
+		setstate browning_flag_1 default
+	}
+
+	buildstart final
+	{
+		setstate browning_1 underconstruction
+		setstate browning_materials_1 default
+		setstate browning_materials_clip_1 default
+		setstate browning_flag_1 default
+	}
+
+	built final
+	{
+		setstate browning_1 default
+		setstate browning_materials_1 invisible
+		setstate browning_materials_clip_1 invisible
+		setstate browning_flag_1 invisible
+
+		wm_announce	"The Depot Yard MG has been constructed."
+	}
+
+	decayed final
+	{
+		setstate browning_1 invisible
+		setstate browning_materials_1 default
+		setstate browning_materials_clip_1 default
+		setstate browning_flag_1 default
+	}
+
+	death
+	{
+		setstate browning_1 invisible
+		repairmg42 browning_1
+		setstate browning_materials_1 default
+		setstate browning_materials_clip_1 default
+		setstate browning_flag_1 default
+
+		wm_announce	"The Depot Yard MG has been destroyed."
+	}
+}
+
+mg42depot_clip_1
+{
+	spawn
+	{
+		wait 200
+
+		constructible_class 2
+
+		trigger self setup
+	}
+
+	trigger setup
+	{
+		setstate browning_1 invisible
+		setstate browning_materials_1 default
+		setstate browning_materials_clip_1 default
+		setstate browning_flag_1 default
+	}
+
+	buildstart final
+	{
+		setstate browning_1 underconstruction
+		setstate browning_materials_1 default
+		setstate browning_materials_clip_1 default
+		setstate browning_flag_1 default
+	}
+
+	built final
+	{
+		setstate browning_1 default
+		setstate browning_materials_1 invisible
+		setstate browning_materials_clip_1 invisible
+		setstate browning_flag_1 invisible
+
+		wm_announce	"The Depot Yard MG Nest has been constructed."
+	}
+
+	decayed final
+	{
+		setstate browning_1 invisible
+		setstate browning_materials_1 default
+		setstate browning_materials_clip_1 default
+		setstate browning_flag_1 default
+	}
+
+	death
+	{
+		setstate browning_1 invisible
+		repairmg42 browning_1
+		setstate browning_materials_1 default
+		setstate browning_materials_clip_1 default
+		setstate browning_flag_1 default
+
+		wm_announce	"The Depot Yard MG Nest has been destroyed."
+	}
+}
+
+// Track Switch MG nest
+browning_clip_2
+{
+	spawn
+	{
+		wait 200
+
+		constructible_class 2
+
+		trigger self setup
+	}
+
+	trigger setup
+	{
+		setstate browning_2 invisible
+		setstate browning_materials_2 default
+		setstate browning_materials_clip_2 default
+		setstate browning_flag_2 default
+	}
+
+	buildstart final
+	{
+		setstate browning_2 underconstruction
+		setstate browning_materials_2 default
+		setstate browning_materials_clip_2 default
+		setstate browning_flag_2 default
+	}
+
+	built final
+	{
+		setstate browning_2 default
+		setstate browning_materials_2 invisible
+		setstate browning_materials_clip_2 invisible
+		setstate browning_flag_2 invisible
+
+		wm_announce	"The Track Switch MG Nest has been constructed."
+	}
+
+	decayed final
+	{
+		setstate browning_2 invisible
+		setstate browning_materials_2 default
+		setstate browning_materials_clip_2 default
+		setstate browning_flag_2 default
+	}
+
+	death
+	{
+		setstate browning_2 invisible
+		repairmg42 browning_2
+		setstate browning_materials_2 default
+		setstate browning_materials_clip_2 default
+		setstate browning_flag_2 default
+
+		wm_announce	"The Track Switch MG Nest has been destroyed."
+	}
+}
+
+// =====================
+// 	THE SWITCH!
+// =====================
+
+switchlever
+{
+	spawn
+	{
+		trigger self init	// display of any subsequent "Track Barrier closed!" messages - tim
+
+	}
+
+	trigger init
+	{
+		togglespeaker track_switch
+
+		faceangles 0 0 0 1000
+		trigger leftswitchrail close
+		trigger rightswitchrail close
+		trigger switchbarrier close
+	}
+
+	trigger close
+	{
+		togglespeaker track_switch
+
+		faceangles 0 0 0 1000
+		trigger leftswitchrail close
+		trigger rightswitchrail close
+		trigger switchbarrier close
+
+		wm_announce	"Track Switch lowered!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "railgun_axis_switch_lowered"
+
+		wm_teamvoiceannounce 1 "railgun_allies_switch_lowered"
+		// *----------------------------------- vo ------------------------------------------*
+	}
+
+	trigger open
+	{
+		togglespeaker track_switch
+
+		faceangles 90 0 0 1000
+		trigger leftswitchrail open
+		trigger rightswitchrail open
+		trigger switchbarrier open
+
+		wm_announce	"Track Switch raised!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "railgun_axis_switch_raised"
+
+		wm_teamvoiceannounce 1 "railgun_allies_switch_raised"
+		// *----------------------------------- vo ------------------------------------------*
+	}
+}
+
+switchbarrier
+{
+	spawn
+	{
+		trigger self close
+	}
+
+	trigger close
+	{
+		faceangles -90 0 0 2000
+		wait 2000
+		trigger switch_invtrig1 enable
+	}
+
+	trigger open
+	{
+		faceangles 0 0 0 2000
+		wait 2000
+		trigger switch_invtrig1 enable
+	}
+}
+
+leftswitchrail
+{
+	spawn
+	{
+		trigger self close
+	}
+
+	trigger close
+	{
+		playsound sound/maps/track_move.wav volume 192
+
+		faceangles 0 1 0 1000
+	}
+
+	trigger open
+	{
+		playsound sound/maps/track_move.wav volume 192
+
+		faceangles 0 0 0 1000
+	}
+}
+
+rightswitchrail
+{
+	spawn
+	{
+		trigger self close
+	}
+
+	trigger close
+	{
+		faceangles 0 1 0 1000
+	}
+
+	trigger open
+	{
+		faceangles 0 0 0 1000
+	}
+}
+
+switch_invtrig1
+{
+	spawn
+	{
+		wait 200
+		trigger self allies_want_depot
+		trigger self axis_want_base
+
+		wait 200
+		trigger train1 switch_closed
+		accum 3 set 0 // Which team is the switch being closed beneficial to? (0=Axis, 1=Allies)
+	}
+
+	trigger enable
+	{
+		accum 0 set 0
+	}
+
+	trigger disable
+	{
+		accum 0 set 1
+	}
+
+	trigger hard_enable
+	{
+		accum 2 set 0
+	}
+
+	trigger hard_disable
+	{
+		accum 2 set 1
+	}
+
+	activate axis
+	{
+		trigger self axisopen
+		trigger self axisclose
+	}
+
+	activate allies
+	{
+		trigger self alliesclose
+		trigger self alliesopen
+	}
+
+	trigger axisbenefit
+	{
+		accum 3 set 0
+	}
+
+	trigger alliesbenefit
+	{
+		accum 3 set 1
+	}
+
+	trigger axisopen
+	{
+		accum 3 abort_if_not_equal 0
+		trigger self open
+	}
+
+	trigger axisclose
+	{
+		accum 3 abort_if_not_equal 1
+		trigger self close
+	}
+
+	trigger alliesopen
+	{
+		accum 3 abort_if_not_equal 1
+		trigger self open
+	}
+
+	trigger alliesclose
+	{
+		accum 3 abort_if_not_equal 0
+		trigger self close
+	}
+
+	trigger open
+	{
+		accum 0 abort_if_equal 1
+		accum 2 abort_if_equal 1
+		accum 1 abort_if_equal 1
+
+		trigger self disable
+		accum 1 set 1
+
+		trigger train1 switch_open
+		trigger switchlever open
+	}
+
+	trigger close
+	{
+		accum 0 abort_if_equal 1
+		accum 2 abort_if_equal 1
+		accum 1 abort_if_equal 0
+
+		trigger self disable
+		accum 1 set 0
+
+		trigger train1 switch_closed
+		trigger switchlever close
+	}
+
+
+	// digibob: hijacking this to do some autospawn functionality on the side, using accum 4-6
+	trigger allies_want_depot
+	{
+		accum 4 set 1
+
+		trigger self spawn_update
+	}
+
+	trigger allies_want_base
+	{
+		accum 4 set 0
+
+		trigger self spawn_update
+	}
+
+	trigger axis_want_depot
+	{
+		accum 5 set 1
+
+		trigger self spawn_update
+	}
+
+	trigger axis_want_base
+	{
+		accum 5 set 0
+
+		trigger self spawn_update
+	}
+
+	trigger axis_have_depot
+	{
+		accum 6 set 1
+
+		trigger self spawn_update
+	}
+
+	trigger allies_have_depot
+	{
+		accum 6 set 2
+
+		trigger self spawn_update
+	}
+
+	trigger allies_set_base
+	{
+		setautospawn	"Allied Camp"	1
+	}
+
+	trigger allies_set_depot
+	{
+		setautospawn	"Depot Yard"	1
+	}
+
+	trigger axis_set_base
+	{
+		setautospawn	"Axis Construction Site"	0
+	}
+
+	trigger axis_set_depot
+	{
+		setautospawn	"Depot Yard"	0
+	}
+
+	trigger spawn_update_allies
+	{
+		accum 4 trigger_if_equal 0 switch_invtrig1 spawn_update_allies_base
+		accum 4 trigger_if_equal 1 switch_invtrig1 spawn_update_allies_depot
+	}
+
+	trigger spawn_update_allies_base
+	{
+		trigger self allies_set_base
+	}
+
+	trigger spawn_update_allies_depot
+	{
+		accum 6 trigger_if_equal 0 switch_invtrig1 allies_set_base
+		accum 6 trigger_if_equal 1 switch_invtrig1 allies_set_base
+		accum 6 trigger_if_equal 2 switch_invtrig1 allies_set_depot // we have the depot and want it, so set it
+	}
+
+	trigger spawn_update_axis
+	{
+		accum 5 trigger_if_equal 0 switch_invtrig1 spawn_update_axis_base
+		accum 5 trigger_if_equal 1 switch_invtrig1 spawn_update_axis_depot
+	}
+
+	trigger spawn_update_axis_base
+	{
+		trigger self axis_set_base
+	}
+
+	trigger spawn_update_axis_depot
+	{
+		accum 6 trigger_if_equal 0 switch_invtrig1 axis_set_base
+		accum 6 trigger_if_equal 1 switch_invtrig1 axis_set_depot // we have the depot and want it, so set it
+		accum 6 trigger_if_equal 2 switch_invtrig1 axis_set_base
+	}
+
+	trigger spawn_update
+	{
+		trigger self spawn_update_axis
+		trigger self spawn_update_allies
+	}
+}
+
+alliedlmsspawns
+{
+	spawn
+	{
+		wait 50
+		remove
+	}
+}
+
+axislmsspawns
+{
+	spawn
+	{
+		wait 50
+		remove
+	}
+}

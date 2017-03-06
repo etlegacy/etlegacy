@@ -1,0 +1,1331 @@
+game_manager
+{
+	spawn
+	{
+		// Game rules
+		wm_number_of_objectives 1
+		wm_set_round_timelimit	5
+
+		// Remove tunnel spawn point
+		setstate tunnel_wobj invisible
+
+		// Setup the auto spawn points for the map
+		wait 50
+		setstate t108 invisible
+		setautospawn "Allied Entrance Spawn" 1
+		setautospawn "Axis Fuel Dump" 1
+
+		// Garage Doors
+		globalaccum 4 set 0		// Flexible Door 1 status. (0=stationary, 1=moving)
+		globalaccum 5 set 0		// Flexible Door 2 status. (0=stationary, 1=moving)
+
+		wait 1000
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_teamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+	}
+}
+
+// ============================================================================
+// OBJ stuff to remove from LMS mode
+// ============================================================================
+thebridge_lms
+{
+	spawn
+	{
+		wait 100
+		setstate thebridge_lms default
+		setstate lms_alliedstaircase default
+
+		setstate tankbay_hacabinet_cm_marker invisible
+		setstate tankbay_hacabinet_toi invisible
+
+		setstate tankbay_healthcabinet invisible
+		setstate tankbay_ammocabinet invisible
+		setstate tankbay_healthtrigger invisible
+		setstate tankbay_ammotrigger invisible
+		setstate tankbay_healthcabinet_dmg invisible
+		setstate tankbay_ammocabinet_dmg invisible
+		setstate tankbay_healthcabinet_clip invisible
+		setstate tankbay_ammocabinet_clip invisible
+
+		setstate alliedhut_hacabinet_cm_marker invisible
+		setstate alliedhut_hacabinet_toi invisible
+
+		setstate alliedhut_healthcabinet invisible
+		setstate alliedhut_ammocabinet invisible
+		setstate alliedhut_healthtrigger invisible
+		setstate alliedhut_ammotrigger invisible
+		setstate alliedhut_healthcabinet_clip invisible
+		setstate alliedhut_ammocabinet_clip invisible
+
+		setstate tunneldoor_toi invisible
+		setstate depotgate_toi invisible
+		setstate depotsidewall_toi invisible
+
+		setstate hurt_tunnelgrateblast invisible
+		setstate hurt_cavedoorblast invisible
+		setstate hurt_basedoorblast invisible
+		setstate hurt_basewallblast invisible
+		setstate hurt_fueldumpblast invisible
+		setstate axistunneltowerblast invisible
+		setstate axissidetowerblast invisible
+		setstate axistunneltowerblast invisible
+		setstate axissidetowerblast invisible
+
+		setstate fueldump_solid invisible
+		setstate fueldump_damaged default
+		setstate fueldump_smoke1 invisible
+		setstate fueldump_smoke2 invisible
+		setstate fueldump_smoke3 invisible
+	}
+}
+
+// ============================================================================
+// Team doors to be removed from LMS
+// ============================================================================
+axisbasedoor
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+axiscentraldoor
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+
+// ----------------------------------------------------------------------------
+// Water grate entrance on Allied side of map
+// Func_explosive/func_static entities
+// ----------------------------------------------------------------------------
+tunnelgrate_solid
+{
+	spawn
+	{
+		wait 100
+		setstate tunnelgrate_dmg default
+		setstate tunnelgrate_solid invisible
+	}
+}
+
+// ----------------------------------------------------------------------------
+// Cave door on Allied side of map
+// Func_explosive/func_static entities
+// ----------------------------------------------------------------------------
+cavedoor_solid
+{
+	spawn
+	{
+		wait 100
+		setstate cavedoor_dmg default
+		setstate cavedoor_solid invisible
+	}
+}
+
+// ----------------------------------------------------------------------------
+// Front gate of axis complex
+// Func_explosive/func_static entities
+// ----------------------------------------------------------------------------
+basedoor_solid
+{
+	spawn
+	{
+		wait 100
+		setstate basedoor_dmg default
+		setstate basedoor_solid invisible
+	}
+}
+
+// ----------------------------------------------------------------------------
+// Side wall of axis complex
+// Func_explosive/func_static entities
+// ----------------------------------------------------------------------------
+basewall_solid
+{
+	spawn
+	{
+		wait 100
+		setstate basewall_solid invisible
+		setstate basewall_trighurt invisible
+	}
+}
+
+// ===========================================================================================
+// Fuel Dump Barricades
+// ===========================================================================================
+frontdump
+{
+	spawn
+	{
+		wait 100
+		setstate frontdumpmaterials_stage1 invisible
+		setstate frontdumpmaterials_stage2 invisible
+		setstate frontdump_toi invisible
+		setstate frontdump1_trighurt invisible
+		setstate frontdump2_trighurt invisible
+		wait 100
+		remove
+	}
+}
+
+reardump
+{
+	spawn
+	{
+		wait 100
+		setstate reardumpmaterials_stage1 invisible
+		setstate reardumpmaterials_stage2 invisible
+		setstate reardump_toi invisible
+		setstate reardump1_trighurt invisible
+		setstate reardump2_trighurt invisible
+		wait 100
+		remove
+	}
+}
+
+axisfueldump
+{
+	spawn
+	{
+		wait 100
+		setstate fueldump_ladder invisible
+		setstate fueldump_toi invisible
+		wait 100
+		remove
+	}
+}
+
+// ===========================================================================================
+// The Tanker stuff
+// ===========================================================================================
+tank
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+tank_disabler
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+tank_enabler
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+tank_trigger
+{
+	spawn
+	{
+		wait 200
+		remove
+	}
+}
+
+tank_build
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+tank_construct
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+tank_turret
+{
+	spawn
+	{
+		wait 100
+		remove
+	}
+}
+
+//================================================================================
+// Test brushage for the tank turret
+//================================================================================
+tank_turret2solid
+{
+	spawn
+	{
+		wait 50
+		remove
+	}
+}
+
+tank_turret2
+{
+	spawn
+	{
+		wait 50
+		remove
+	}
+}
+
+tank_smoke
+{
+	spawn
+	{
+		wait 50
+		remove
+	}
+}
+
+tank_flash
+{
+	spawn
+	{
+		wait 50
+		remove
+	}
+}
+
+// ============================================================================
+// The Bridge ... its the big one that takes ages to build ...
+// ============================================================================
+thebridge
+{
+	spawn
+	{
+		wait 200
+		setstate bridgematerials_stage1 invisible
+		setstate bridgematerials_stage2 invisible
+		setstate bridge_construct_toi invisible
+		wait 100
+		remove
+	}
+}
+
+// ============================================================================
+// Footbridge on Allied side of the map
+// ============================================================================
+footbridge
+{
+	spawn
+	{
+		wait 200
+		// the construct command only works on single stage func_constructible objects.
+//		construct footbridge
+		setstate footbridgematerials invisible
+		setstate footbridge_toi invisible
+
+		setstate footbridge invisible
+		setstate lms_footbridge default
+	}
+}
+
+// ============================================================================
+// Allied MG42 Nest - on Allied side of the map
+// ============================================================================
+alliedbarnmg42nest
+{
+	spawn
+	{
+		wait 200
+		constructible_class 2
+		setstate alliedbarnmg42 invisible
+		setstate alliedbarnmg42materials default
+	}
+
+	buildstart final
+	{
+		setstate alliedbarnmg42 underconstruction
+	}
+
+	built final
+	{
+		setstate alliedbarnmg42 default
+		setstate alliedbarnmg42materials invisible
+	}
+
+	death
+	{
+		setstate alliedbarnmg42 invisible
+		setstate alliedbarnmg42materials default
+		repairmg42 alliedbarnmg42
+	}
+}
+
+// ============================================================================
+// AXIS GUARD TOWER - on Allied side of the map
+// ============================================================================
+axistunneltower
+{
+	spawn
+	{
+		wait 200
+		constructible_class 2
+		setstate tunneltowerstructure invisible
+		setstate axistunneltowermg42 invisible
+		setstate tunneltowermaterials default
+	}
+
+	buildstart final
+	{
+		setstate tunneltowerstructure underconstruction
+		setstate axistunneltowermg42 underconstruction
+	}
+
+	built final
+	{
+		setstate tunneltowerstructure default
+		setstate axistunneltowermg42 default
+		setstate tunneltowermaterials invisible
+	}
+
+	death
+	{
+		setstate tunneltowerstructure invisible
+		setstate axistunneltowermg42 invisible
+		setstate tunneltowermaterials default
+		repairmg42 axistunneltowermg42
+
+		// Some kind of UI pop-up to alert players
+		wm_announce	"Allied team has destroyed the Tunnel Guard Tower!"
+		wm_voiceannounce 0 SYS_ObjDestroyed
+		wm_voiceannounce 1 SYS_ObjDestroyed
+	}
+}
+
+
+// ============================================================================
+// ALLIED MG42 NEST next to the tank bay
+// - on Axis side of the map
+// ============================================================================
+alliedsidemg42
+{
+	spawn
+	{
+		wait 200
+		constructible_class 2
+		setstate alliedsidemg42_sandbags invisible
+		setstate alliedsidemg42_gun invisible
+	}
+
+	buildstart final
+	{
+		setstate alliedsidemg42_sandbags underconstruction
+		setstate alliedsidemg42_gun underconstruction
+	}
+
+	built final
+	{
+		setstate alliedsidemg42_sandbags default
+		setstate alliedsidemg42_gun default
+		setstate sidetowermaterials invisible
+	}
+
+	death
+	{
+		setstate alliedsidemg42_sandbags invisible
+		setstate alliedsidemg42_gun invisible
+		repairmg42 alliedsidemg42_gun
+
+		setstate sidetowermaterials default
+
+		// Some kind of UI pop-up to alert players
+		wm_announce	"Axis team has destroyed the Side MG42 Nest!"
+		wm_voiceannounce 0 SYS_ObjDestroyed
+		wm_voiceannounce 1 SYS_ObjDestroyed
+	}
+}
+
+// ============================================================================
+// AXIS GUARD TOWER next to the tank bay
+// - on Axis side of the map
+// ============================================================================
+axissidetower
+{
+	spawn
+	{
+		wait 200
+		constructible_class 2
+		setstate sidetowerstructure invisible
+		setstate axissidetowermg42 invisible
+		setstate sidetowermaterials default
+	}
+
+	buildstart final
+	{
+		setstate sidetowerstructure underconstruction
+		setstate axissidetowermg42 underconstruction
+	}
+
+	built final
+	{
+		setstate sidetowerstructure default
+		setstate axissidetowermg42 default
+		setstate sidetowermaterials invisible
+	}
+
+	death
+	{
+		setstate sidetowerstructure invisible
+		setstate axissidetowermg42 invisible
+		repairmg42 axissidetowermg42
+
+		setstate sidetowermaterials default
+
+		// Some kind of UI pop-up to alert players
+		wm_announce	"Allied team has destroyed the Side Guard Tower!"
+		wm_voiceannounce 0 SYS_ObjDestroyed
+		wm_voiceannounce 1 SYS_ObjDestroyed
+	}
+}
+
+// ===========================================================================================
+// Garage Doors for Tank
+// ===========================================================================================
+tbdoor1_trigger1
+{
+	spawn
+	{
+		accum 3 set 0			// Initial state of lever. (0=down, 1=up)
+	}
+	trigger main
+	{
+		trigger tbdoor1_trigger1 up
+		trigger tbdoor1_trigger1 down
+	}
+
+	trigger up
+	{
+		accum 3 abort_if_not_equal 0		// Lever up already ?
+		globalaccum 4 abort_if_not_equal 0	// Flexible Door moving ?
+		resetscript
+
+//		print "Flex Door 1 opening ..."
+		globalaccum 4 set 1			// Door is opening ...
+		accum 3 set 1				// Lever is in up position
+		trigger tbflywheel1 start			// Set flywheel moving
+		trigger tbflywheel1 clockwise		// Start turning
+		trigger tbflywheel1_sound wheel1_run
+		trigger tbdoor1_lever1 up		// Move lever
+		trigger tbdoor1-9 open		// Start moving all the door sections
+	}
+
+	trigger down
+	{
+		accum 3 abort_if_not_equal 1		// Lever down already ?
+		globalaccum 4 abort_if_not_equal 0	// Flexible Door moving ?
+		resetscript
+
+//		print "Flex Door 1 closing ..."
+		globalaccum 4 set 1			// Door is opening ...
+		accum 3 set 0				// Lever is in up position
+		trigger tbflywheel1 start			// Set flywheel moving
+		trigger tbflywheel1 anticlockwise		// Start turning
+		trigger tbflywheel1_sound wheel1_run
+		trigger tbdoor1_lever1 down		// Move lever
+		trigger tbdoor1-9 close		// Start moving all the door sections
+	}
+}
+
+tbdoor1_lever1
+{
+	trigger down
+	{
+		gotomarker tbdoor1_lever1_downpos 16
+		playsound sound/movers/switches/butn2.wav
+	}
+	trigger up
+	{
+		gotomarker tbdoor1_lever1_uppos 16
+		playsound sound/movers/switches/switch.wav
+	}
+}
+
+tbflywheel1_sound
+{
+	trigger wheel1_run
+	{
+		trigger tbflywheel1 sound_start
+		wait 400
+		trigger tbflywheel1 sound_run
+	}
+}
+
+tbflywheel1
+{
+	spawn
+	{
+		accum 3 set 0			// Flywheel moving (0=No, 1=Yes)
+	}
+
+	trigger sound_start
+	{
+		stopsound
+		playsound sound/movers/motors/motor_start_01.wav volume 127
+	}
+
+	trigger sound_run
+	{
+		playsound sound/movers/motors/motor_loop_01.wav looping volume 512
+	}
+
+	trigger sound_stop
+	{
+		stopsound
+		playsound sound/movers/motors/motor_end_01.wav volume 127
+	}
+
+	trigger clockwise
+	{
+		accum 3 abort_if_not_equal 1	// Flywheel moving ?
+		faceangles 90 0 0 250 wait
+		accum 3 abort_if_not_equal 1	// Flywheel moving ?
+		faceangles 180 0 0 250 wait
+		accum 3 abort_if_not_equal 1	// Flywheel moving ?
+		faceangles 270 0 0 250 wait
+		accum 3 abort_if_not_equal 1	// Flywheel moving ?
+		faceangles 0 0 0 250 wait
+
+		trigger tbflywheel1 clockwise
+	}
+
+	trigger anticlockwise
+	{
+		accum 3 abort_if_not_equal 1	// Flywheel moving ?
+		faceangles 270 0 0 250 wait
+		accum 3 abort_if_not_equal 1	// Flywheel moving ?
+		faceangles 180 0 0 250 wait
+		accum 3 abort_if_not_equal 1	// Flywheel moving ?
+		faceangles 90 0 0 250 wait
+		accum 3 abort_if_not_equal 1	// Flywheel moving ?
+		faceangles 0 0 0 250 wait
+
+		trigger tbflywheel1 anticlockwise
+	}
+
+	trigger start
+	{
+		accum 3 set 1			// Start wheel moving
+	}
+
+	trigger stop
+	{
+		accum 3 set 0			// Stop wheel moving
+		trigger self sound_stop
+	}
+}
+
+tbdoor1-9
+{
+	spawn
+	{
+		wait 200
+		followpath 1 tbdrspln1-2 100 wait length 16
+	}
+
+	trigger open
+	{
+		stopsound				// Kill all currently playing sounds belonging to this entity only
+		playsound sound/movers/misc/garage_door_start_01.wav volume 96
+		wait 50
+		playsound sound/movers/misc/garage_door_loop_01.wav looping volume 512
+		followpath 1 tbdrspln1-3 50 wait length 16
+		followpath 1 tbdrspln1-4 50 wait length 16
+		trigger tbflywheel1 stop		// Turn off flywheel
+		globalaccum 4 set 0		// Flexible door 1 has stopped moving
+		stopsound				// Kill all currently playing sounds belonging to this entity only
+		playsound sound/movers/misc/garage_door_end_01.wav volume 96
+	}
+
+	trigger close
+	{
+		stopsound				// Kill all currently playing sounds belonging to this entity only
+		playsound sound/movers/misc/garage_door_start_01.wav volume 96
+		wait 50
+		playsound sound/movers/misc/garage_door_loop_01.wav looping volume 512
+		followpath 0 tbdrspln1-4 50 wait length 16
+		followpath 0 tbdrspln1-3 50 wait length 16
+		trigger tbflywheel1 stop		// Turn off flywheel
+		globalaccum 4 set 0		// Flexible door 1 has stopped moving
+		stopsound				// Kill all currently playing sounds belonging to this entity only
+		playsound sound/movers/misc/garage_door_end_01.wav volume 96
+	}
+}
+
+tbdoor1-8
+{
+	spawn
+	{
+		wait 100
+		attatchtotrain tbdoor1-9 16
+	}
+}
+
+tbdoor1-7
+{
+	spawn
+	{
+		wait 100
+		attatchtotrain tbdoor1-8 16
+	}
+}
+
+tbdoor1-6
+{
+	spawn
+	{
+		wait 100
+		attatchtotrain tbdoor1-7 16
+	}
+}
+
+tbdoor1-5
+{
+	spawn
+	{
+		wait 100
+		attatchtotrain tbdoor1-6 16
+	}
+}
+
+tbdoor1-4
+{
+	spawn
+	{
+		wait 100
+		attatchtotrain tbdoor1-5 16
+	}
+}
+
+tbdoor1-3
+{
+	spawn
+	{
+		wait 100
+		attatchtotrain tbdoor1-4 16
+	}
+}
+
+tbdoor1-2
+{
+	spawn
+	{
+		wait 100
+		attatchtotrain tbdoor1-3 16
+	}
+}
+
+tbdoor1-1
+{
+	spawn
+	{
+		wait 100
+		attatchtotrain tbdoor1-2 16
+	}
+}
+
+// ===========================================================================================
+// Garage Doors for Tank
+// ===========================================================================================
+
+tbdoor2_trigger1
+{
+	spawn
+	{
+		accum 3 set 0			// Initial state of lever. (0=down, 1=up)
+	}
+	trigger main
+	{
+		trigger tbdoor2_trigger1 up
+		trigger tbdoor2_trigger1 down
+	}
+
+	trigger up
+	{
+		accum 3 abort_if_not_equal 0		// Lever up already ?
+		globalaccum 5 abort_if_not_equal 0	// Flexible Door moving ?
+		resetscript
+
+		globalaccum 5 set 1			// Door is opening ...
+		accum 3 set 1				// Lever is in up position
+		trigger tbflywheel2 start			// Set flywheel moving
+		trigger tbflywheel2 clockwise		// Start turning
+		trigger tbflywheel2_sound wheel2_run
+		trigger tbdoor2_lever1 up		// Move lever
+		trigger tbdoor2-9 open		// Start moving all the door sections
+	}
+
+	trigger down
+	{
+		accum 3 abort_if_not_equal 1		// Lever down already ?
+		globalaccum 5 abort_if_not_equal 0	// Flexible Door moving ?
+		resetscript
+
+		globalaccum 5 set 1			// Door is opening ...
+		accum 3 set 0				// Lever is in up position
+		trigger tbflywheel2 start		// Set flywheel moving
+		trigger tbflywheel2 anticlockwise	// Start turning
+		trigger tbflywheel2_sound wheel2_run
+		trigger tbdoor2_lever1 down		// Move lever
+		trigger tbdoor2-9 close		// Start moving all the door sections
+	}
+}
+
+tbdoor2_lever1
+{
+	trigger down
+	{
+		gotomarker tbdoor2_lever1_downpos 16
+		playsound sound/movers/switches/butn2.wav
+	}
+	trigger up
+	{
+		gotomarker tbdoor2_lever1_uppos 16
+		playsound sound/movers/switches/switch.wav
+	}
+}
+
+tbflywheel2_sound
+{
+	trigger wheel2_run
+	{
+		trigger tbflywheel2 sound_start
+		wait 400
+		trigger tbflywheel2 sound_run
+	}
+}
+
+tbflywheel2
+{
+	spawn
+	{
+		accum 3 set 0			// Flywheel moving (0=No, 1=Yes)
+	}
+
+	trigger sound_start
+	{
+		stopsound
+		playsound sound/movers/motors/motor_start_01.wav volume 127
+	}
+
+	trigger sound_run
+	{
+		playsound sound/movers/motors/motor_loop_01.wav looping volume 512
+	}
+
+	trigger sound_stop
+	{
+		stopsound
+		playsound sound/movers/motors/motor_end_01.wav volume 127
+	}
+
+	trigger clockwise
+	{
+		accum 3 abort_if_not_equal 1	// Flywheel moving ?
+		faceangles 90 0 0 250 wait
+		accum 3 abort_if_not_equal 1	// Flywheel moving ?
+		faceangles 180 0 0 250 wait
+		accum 3 abort_if_not_equal 1	// Flywheel moving ?
+		faceangles 270 0 0 250 wait
+		accum 3 abort_if_not_equal 1	// Flywheel moving ?
+		faceangles 0 0 0 250 wait
+
+		trigger tbflywheel2 clockwise
+	}
+
+	trigger anticlockwise
+	{
+		accum 3 abort_if_not_equal 1	// Flywheel moving ?
+		faceangles 270 0 0 250 wait
+		accum 3 abort_if_not_equal 1	// Flywheel moving ?
+		faceangles 180 0 0 250 wait
+		accum 3 abort_if_not_equal 1	// Flywheel moving ?
+		faceangles 90 0 0 250 wait
+		accum 3 abort_if_not_equal 1	// Flywheel moving ?
+		faceangles 0 0 0 250 wait
+
+		trigger tbflywheel2 anticlockwise
+	}
+
+	trigger start
+	{
+		accum 3 set 1			// Start wheel moving
+	}
+	trigger stop
+	{
+		accum 3 set 0			// Stop wheel moving
+
+		trigger self sound_stop
+	}
+}
+
+tbdoor2-9
+{
+	spawn
+	{
+		wait 200
+		trigger tbdoor2_trigger1 up
+	}
+
+	trigger open
+	{
+		stopsound				// Kill all currently playing sounds belonging to this entity only
+		playsound sound/movers/misc/garage_door_start_01.wav volume 96
+		wait 50
+		playsound sound/movers/misc/garage_door_loop_01.wav looping volume 512
+		followpath 1 tbdrspln2-3 50 wait length 16
+		followpath 1 tbdrspln2-4 50 wait length 16
+		trigger tbflywheel2 stop		// Turn off flywheel
+		globalaccum 5 set 0		// Flexible door 1 has stopped moving
+		stopsound				// Kill all currently playing sounds belonging to this entity only
+		playsound sound/movers/misc/garage_door_end_01.wav volume 96
+	}
+
+	trigger close
+	{
+		stopsound				// Kill all currently playing sounds belonging to this entity only
+		playsound sound/movers/misc/garage_door_start_01.wav volume 96
+		wait 50
+		playsound sound/movers/misc/garage_door_loop_01.wav looping volume 512
+		followpath 0 tbdrspln2-4 50 wait length 16
+		followpath 0 tbdrspln2-3 50 wait length 16
+		trigger tbflywheel2 stop		// Turn off flywheel
+		globalaccum 5 set 0		// Flexible door 1 has stopped moving
+		stopsound				// Kill all currently playing sounds belonging to this entity only
+		playsound sound/movers/misc/garage_door_end_01.wav volume 96
+	}
+}
+
+tbdoor2-8
+{
+	spawn
+	{
+		wait 100
+		attatchtotrain tbdoor2-9 16
+	}
+}
+
+tbdoor2-7
+{
+	spawn
+	{
+		wait 100
+		attatchtotrain tbdoor2-8 16
+	}
+}
+
+tbdoor2-6
+{
+	spawn
+	{
+		wait 100
+		attatchtotrain tbdoor2-7 16
+	}
+}
+
+tbdoor2-5
+{
+	spawn
+	{
+		wait 100
+		attatchtotrain tbdoor2-6 16
+	}
+}
+
+tbdoor2-4
+{
+	spawn
+	{
+		wait 100
+		attatchtotrain tbdoor2-5 16
+	}
+}
+
+tbdoor2-3
+{
+	spawn
+	{
+		wait 100
+		attatchtotrain tbdoor2-4 16
+	}
+}
+
+tbdoor2-2
+{
+	spawn
+	{
+		wait 100
+		attatchtotrain tbdoor2-3 16
+	}
+}
+
+tbdoor2-1
+{
+	spawn
+	{
+		wait 100
+		attatchtotrain tbdoor2-2 16
+	}
+}
+
+// ============================================================================
+// AXIS HQ bits and pieces
+// ============================================================================
+axis_radio_destroyed
+{
+	spawn
+	{
+		wait 200
+		setstate axis_radio_destroyed invisible
+		setstate axis_radio_destroyed_model invisible
+	}
+	trigger hide
+	{
+		setstate axis_radio_destroyed invisible
+		setstate axis_radio_destroyed_model invisible
+	}
+	trigger show
+	{
+		setstate axis_radio_destroyed default
+		setstate axis_radio_destroyed_model default
+		setstate axishqstuff invisible // Arial tower outside of building
+	}
+}
+
+axis_radio_closed
+{
+	spawn
+	{
+		wait 200
+		setstate axis_radio_closed default
+		setstate axis_radio_closed_model default
+	}
+	trigger hide
+	{
+		setstate axis_radio_closed invisible
+		setstate axis_radio_closed_model invisible
+	}
+	trigger show
+	{
+		setstate axis_radio_closed default
+		setstate axis_radio_closed_model default
+	}
+}
+
+axis_radio_built
+{
+	spawn
+	{
+		wait 400
+
+		constructible_class 2
+
+		trigger self setup
+		setstate axishqstuff invisible
+
+	}
+
+	trigger setup
+	{
+		setchargetimefactor 0 soldier 0.75
+		setchargetimefactor 0 lieutenant 0.75
+		setchargetimefactor 0 medic 0.75
+		setchargetimefactor 0 engineer 0.75
+		setchargetimefactor 0 covertops 0.75
+		sethqstatus 0 1
+	}
+
+	buildstart final
+	{
+		trigger axis_radio_built_model trans
+		trigger axis_radio_destroyed hide
+		trigger axis_radio_closed hide
+	}
+
+	decayed final
+	{
+		trigger axis_radio_built_model hide
+		trigger axis_radio_closed show
+	}
+
+	built final
+	{
+		trigger axis_radio_built_model show
+		trigger axis_radio_closed hide
+		trigger axis_radio_destroyed hide
+
+		trigger allied_radio_built_model enable_axis_features
+		enablespeaker axishq_sound
+	}
+
+	death
+	{
+		trigger axis_radio_built_model hide
+		trigger axis_radio_destroyed show
+
+		trigger axis_radio_built_model disable_axis_features
+		disablespeaker axishq_sound
+	}
+}
+
+axis_radio_built_model
+{
+	spawn
+	{
+		wait 400
+		setstate axis_radio_built_model invisible
+
+		accum 0 bitreset 0	// set if radio is built
+		accum 0 bitreset 1	// set if goal should be ignored
+	}
+
+	trigger show
+	{
+		setstate axis_radio_built_model default
+	}
+
+	trigger hide
+	{
+		setstate axis_radio_built_model invisible
+	}
+
+	trigger trans
+	{
+		setstate axis_radio_built_model underconstruction
+	}
+
+	trigger enable_axis_features
+	{
+		setchargetimefactor 0 soldier 0.75
+		setchargetimefactor 0 lieutenant 0.75
+		setchargetimefactor 0 medic 0.75
+		setchargetimefactor 0 engineer 0.75
+		setchargetimefactor 0 covertops 0.75
+		sethqstatus 0 1
+
+		wm_announce	"Axis Command Post constructed. Charge speed increased!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed_axis"
+
+		wm_removeteamvoiceannounce 0 "axis_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+
+		accum 0 bitset 0
+	}
+
+	trigger disable_axis_features
+	{
+		setchargetimefactor 0 soldier 1
+		setchargetimefactor 0 lieutenant 1
+		setchargetimefactor 0 medic 1
+		setchargetimefactor 0 engineer 1
+		setchargetimefactor 0 covertops 1
+		sethqstatus 0 0
+
+		wm_announce	"Allied team has destroyed the Axis Command Post!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_teamvoiceannounce 0 "axis_hq_compost_damaged"
+		// *---------------------------------------------------------------------------------*
+
+		accum 0 bitreset 0
+	}
+}
+
+// ============================================================================
+// Allied HQ bits and pieces
+// ============================================================================
+allied_radio_destroyed
+{
+	spawn
+	{
+		wait 200
+		setstate allied_radio_destroyed invisible
+		setstate allied_radio_destroyed_model invisible
+	}
+	trigger hide
+	{
+		setstate allied_radio_destroyed invisible
+		setstate allied_radio_destroyed_model invisible
+	}
+	trigger show
+	{
+		setstate allied_radio_destroyed default
+		setstate allied_radio_destroyed_model default
+	}
+}
+
+allied_radio_closed
+{
+	spawn
+	{
+		wait 200
+		setstate allied_radio_closed default
+		setstate allied_radio_closed_model default
+	}
+	trigger hide
+	{
+		setstate allied_radio_closed invisible
+		setstate allied_radio_closed_model invisible
+	}
+	trigger show
+	{
+		setstate allied_radio_closed default
+		setstate allied_radio_closed_model default
+	}
+}
+
+allied_radio_built
+{
+	spawn
+	{
+		wait 400
+		constructible_class 2
+		trigger allied_radio_built setup
+	}
+
+	trigger setup
+	{
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+	}
+
+	buildstart final
+	{
+		trigger allied_radio_built_model trans
+		trigger allied_radio_destroyed hide
+		trigger allied_radio_closed hide
+	}
+
+	decayed final
+	{
+		trigger allied_radio_built_model hide
+		trigger allied_radio_closed show
+	}
+
+	built final
+	{
+		trigger allied_radio_built_model show
+		trigger allied_radio_closed hide
+		trigger allied_radio_destroyed hide
+
+		trigger allied_radio_built_model enable_allied_features
+		enablespeaker alliedhq_sound
+	}
+
+	death
+	{
+		trigger allied_radio_built_model hide
+		trigger allied_radio_destroyed show
+
+		trigger allied_radio_built_model disable_allied_features
+		disablespeaker alliedhq_sound
+	}
+}
+
+allied_radio_built_model
+{
+	spawn
+	{
+		wait 400
+		setstate allied_radio_built_model invisible
+
+		accum 0 bitreset 0	// set if radio is built
+		accum 0 bitreset 1	// set if goal should be ignored
+	}
+
+	trigger show
+	{
+		setstate allied_radio_built_model default
+	}
+
+	trigger hide
+	{
+		setstate allied_radio_built_model invisible
+	}
+
+	trigger trans
+	{
+		setstate allied_radio_built_model underconstruction
+	}
+
+	trigger enable_allied_features
+	{
+		setchargetimefactor 1 soldier 0.75
+		setchargetimefactor 1 lieutenant 0.75
+		setchargetimefactor 1 medic 0.75
+		setchargetimefactor 1 engineer 0.75
+		setchargetimefactor 1 covertops 0.75
+		sethqstatus 1 1
+
+		wm_announce	"Allied Command Post constructed. Charge speed increased!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed_allies"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed"
+
+		wm_removeteamvoiceannounce 1 "allies_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+
+		accum 0 bitset 0
+	}
+
+	trigger disable_allied_features
+	{
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 1
+
+		wm_announce	"Axis team has destroyed the Allied Command Post!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_damaged"
+		// *---------------------------------------------------------------------------------*
+
+		accum 0 bitreset 0
+	}
+}

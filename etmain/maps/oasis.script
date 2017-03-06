@@ -1,0 +1,1646 @@
+game_manager
+{
+	spawn
+	{
+		accum 1 set 0		// State of objective number one
+		accum 5 set 0		// Corrent number of Pak 75mm guns destroyed
+		accum 6 set 0		// Current number of water pumps built
+		accum 7 set 0		// Value used in checking whether or not to announce "Axis have damaged both water pumps!"
+
+		globalaccum 5 set 0
+		globalaccum 6 set 0
+
+		// Game rules
+		wm_axis_respawntime	30
+		wm_allied_respawntime	20
+		wm_number_of_objectives 8
+		wm_set_round_timelimit	30
+
+		// Objectives
+		// 1: Primary1 : Destroy the North gun
+		// 2: Primary2 : Destroy the South gun
+		// 3: Primary3 : Breach Old City wall
+		// 4: Secondary1 : Capture forward spawn point
+		// 5: Secondary2 : Drain/flood cave system by repairing/damaging the Oasis pump
+		// 6: Secondary3 : Drain/flood cave system by repairing/damaging the Old City pump
+		// 7: Allied command post
+		// 8: Axis command post
+
+		// Current main objectives for each team (0=Axis, 1=Allies)
+		wm_set_main_objective		3	0
+		wm_set_main_objective		3	1
+
+		// Objective overview status indicators
+		//wm_objective_status <objective> <team (0=Axis, 1=Allies)> <status (0=neutral 1=complete 2=failed)>
+		wm_objective_status 1 1 0
+		wm_objective_status 1 0 0
+		wm_objective_status 2 1 0
+		wm_objective_status 2 0 0
+		wm_objective_status 3 1 0
+		wm_objective_status 3 0 0
+		wm_objective_status 4 1 0
+		wm_objective_status 4 0 0
+		wm_objective_status 5 1 0
+		wm_objective_status 5 0 0
+		wm_objective_status 6 1 0
+		wm_objective_status 6 0 0
+		wm_objective_status 7 1 0
+		wm_objective_status 7 0 0
+		wm_objective_status 8 1 0
+		wm_objective_status 8 0 0
+
+		// Stopwatch mode defending team (0=Axis, 1=Allies)
+		wm_set_defending_team	0
+
+		// If the round timer expires, the Axis have won, so set the current winning team
+		// Set the round winner:  0 == AXIS, 1 == ALLIED
+		wm_setwinner 0
+
+		// Set autospawn markers <team (0 = axis, 1 = allies)> <message key of marker>
+		// Spawns on siwa:
+		// Axis Garrison
+		// Allied Camp
+		// Old City
+		wait 150
+
+		setautospawn "Old City"			1
+		setautospawn "Old City"			0
+
+		wait 350
+
+		disablespeaker wp1_sound				// water pump 1
+		disablespeaker wp2_sound				// water pump 2
+		disablespeaker hose1_sound1				// water outlet 1
+		disablespeaker hose1_sound2				// water tunnel 1
+		disablespeaker hose2_sound1				// water outlet 2
+		disablespeaker hose2_sound2				// water tunnel 2
+		disablespeaker allies_compost_sound		// allies command post
+		disablespeaker axis_compost_sound		// axis command post
+		disablespeaker axis_compost_sound_lms	// axis command post lms
+
+		wait 2000
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "oasis_axis_city_defend"
+		wm_addteamvoiceannounce 0 "oasis_axis_pumps_stop"
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_addteamvoiceannounce 1 "oasis_allies_city_capture"
+		wm_addteamvoiceannounce 1 "oasis_allies_pumps_repair"
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_teamvoiceannounce 0 "oasis_axis_city_defend"
+		wm_teamvoiceannounce 0 "oasis_axis_pumps_stop"
+		wm_teamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_teamvoiceannounce 1 "oasis_allies_city_capture"
+		wm_teamvoiceannounce 1 "oasis_allies_pumps_repair"
+		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+	}
+
+	trigger 75mm_gun_counter
+	{
+		accum 5 inc 1				// Increase game counter
+		accum 5 abort_if_not_equal 2		// All guns destroyed ?
+
+		wm_announce	"Allies have destroyed both Anti-Tank Guns!"
+
+		accum 1 set 1				// Both pak guns destroyed
+
+		wait 8000
+		
+		// Call function to check if the round has been won
+		trigger game_manager checkgame
+	}
+
+	trigger water_pumps_counter
+	{
+		accum 6 inc 1				// Increase game counter
+		accum 6 abort_if_not_equal 2		// Pumps completed?
+		accum 7 set 1
+		wm_announce	"Allies have repaired both Water Pumps!"
+	}
+
+	trigger water_pumps_destroyed
+	{
+		accum 6 abort_if_equal 0		// Can't damage pumps before they're repaired
+		accum 6 inc -1				// Decrease game counter
+
+		accum 6 abort_if_not_equal 0
+		accum 7 abort_if_not_equal 1
+		accum 7 set 0
+		wm_announce	"Axis have damaged both Water Pumps!"
+	}
+
+	trigger checkgame
+	{
+		accum 1 abort_if_not_equal 1
+
+		// Set the round winner:  0 == AXIS, 1 == ALLIED
+		wm_setwinner 1
+
+		// End the round
+		wm_endround
+
+		wait 500
+
+		trigger end_tank Yippie
+		trigger end_turret Yippie
+	}
+
+	trigger timelimit_hit
+	{
+		// Call function to check if the round has been won
+		trigger game_manager checkgame
+		
+		trigger end_boom_north check_0
+		trigger end_boom_south check_1
+	}
+}
+
+oldcityflag
+{
+	spawn
+	{
+		accum 0 set 0	// Who has the flag: 0-Axis, 1-Allied
+	}
+
+	trigger axis_capture	// Flag has been touched by an Axis player
+	{
+		accum 0 abort_if_equal 0 // do Axis own flag?
+
+		accum 0 set 0 // Axis own the pole
+		wm_announce	"Axis reclaim the Old City!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "oasis_axis_city_defend"
+
+		wm_addteamvoiceannounce 1 "oasis_allies_city_capture"
+
+		wm_teamvoiceannounce 0 "oasis_axis_city_captured"
+
+		wm_teamvoiceannounce 1 "oasis_allies_city_lost"
+
+		wm_removeteamvoiceannounce 0 "oasis_axis_wall_defend"
+
+		wm_removeteamvoiceannounce 1 "oasis_allies_wall_destroy"
+		// *---------------------------------------------------------------------------------*
+
+		wm_objective_status 		4 0 1
+		wm_objective_status 		4 1 2
+
+		alertentity old_city_wobj
+	}
+
+	trigger allied_capture	// Flag has been touched by an allied player
+	{
+		accum 0 abort_if_equal 1 // do Allies own flag?
+
+		accum 0 set 1 // Allied own the flag
+		wm_announce	"Allies capture the Old City!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "oasis_axis_wall_defend"
+
+		wm_addteamvoiceannounce 1 "oasis_allies_wall_destroy"
+
+		wm_teamvoiceannounce 0 "oasis_axis_city_lost"
+		wm_teamvoiceannounce 0 "oasis_axis_wall_defend"
+
+		wm_teamvoiceannounce 1 "oasis_allies_city_captured"
+		wm_teamvoiceannounce 1 "oasis_allies_wall_destroy"
+
+		wm_removeteamvoiceannounce 0 "oasis_axis_city_defend"
+
+		wm_removeteamvoiceannounce 1 "oasis_allies_city_capture"
+		// *---------------------------------------------------------------------------------*
+
+		wm_objective_status 		4 0 2
+		wm_objective_status 		4 1 1
+
+		alertentity old_city_wobj
+	}
+
+	trigger check_obj
+	{
+		accum 0 abort_if_equal 1 // Do Allied own the flag?
+
+		wm_objective_status 		4 0 2
+		wm_objective_status 		4 1 1
+
+	}
+
+	trigger force_allied
+	{
+		accum 0 abort_if_equal 1 // Do Allied own the flag?
+
+		alertentity old_city_wobj
+		alertentity oldcityspawns
+	}
+
+	trigger kill
+	{
+		remove
+	}
+}
+
+oldcitywall //Broken section of Old City wall
+{
+	spawn
+	{
+		wait 200
+
+		constructible_class 3
+	}
+
+	death
+	{
+		trigger oldcityflag force_allied // Switch forward spawn to Allied ONLY
+
+		trigger oldcityflag check_obj
+
+		trigger oldcityflag kill
+
+		wm_announce "Allies have breached the Old City wall"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "oasis_axis_paks_defend"
+
+		wm_addteamvoiceannounce 1 "oasis_allies_paks_destroy"
+
+		wm_teamvoiceannounce 0 "oasis_axis_wall_destroyed"
+		wm_teamvoiceannounce 0 "oasis_axis_paks_defend"
+
+		wm_teamvoiceannounce 1 "oasis_allies_wall_destroyed"
+		wm_teamvoiceannounce 1 "oasis_allies_paks_destroy"
+
+		wm_removeteamvoiceannounce 0 "oasis_axis_wall_defend"
+		wm_removeteamvoiceannounce 0 "oasis_axis_city_defend"
+
+		wm_removeteamvoiceannounce 1 "oasis_allies_wall_destroy"
+		wm_removeteamvoiceannounce 1 "oasis_allies_city_capture"
+		// *---------------------------------------------------------------------------------*
+
+		wm_objective_status 		3 0 2
+		wm_objective_status 		3 1 1
+
+		wm_set_main_objective	1 0
+		wm_set_main_objective	1 1
+	}
+}
+
+
+// ================================================
+// ========== CONSTRUCTIBLE STUFF =================
+// ================================================
+
+// Desert ruins/oasis area (pump 1)
+water_pump_1
+{
+	spawn
+	{
+		wait 200
+
+		constructible_class 3
+
+		trigger water_pump_1 setup
+	}
+
+	trigger setup
+	{
+		setstate pump_materials_1 default
+		setstate pump_materials_clip_1 default
+		setstate pump_flag_1 default
+		setstate pump1_p1 default
+		setstate pump1_p2 invisible
+		setstate water_pump_1_oldclip default
+	}
+
+	buildstart final
+	{
+		setstate pump_materials_1 default
+		setstate pump_materials_clip_1 default
+		setstate pump_flag_1 default
+		setstate pump1_p2 underconstruction
+
+	}
+
+	built final
+	{
+		setstate pump_materials_1 invisible
+		setstate pump_materials_clip_1 invisible
+		setstate pump_flag_1 invisible
+		setstate water_pump_1_oldclip invisible
+		setstate pump1_p2 default
+
+		enablespeaker wp1_sound
+		enablespeaker hose1_sound1
+
+		trigger water_tunnel down
+
+		trigger water_discharge up
+
+		wm_announce	"Allies have built the Oasis Water Pump!"
+
+		wm_objective_status 		5 0 2
+		wm_objective_status 		5 1 1
+
+		// Update game manager counter for objectives
+		trigger game_manager water_pumps_counter
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "oasis_axis_pump_disable"
+		wm_teamvoiceannounce 0 "oasis_axis_caves_drain"
+
+		wm_teamvoiceannounce 1 "oasis_allies_pump_repaired"
+		wm_teamvoiceannounce 1 "oasis_allies_caves_drain"
+
+		wm_removeteamvoiceannounce 0 "oasis_axis_pump_stop"
+		wm_removeteamvoiceannounce 0 "oasis_axis_pumps_stop"
+
+		wm_removeteamvoiceannounce 1 "oasis_allies_pumps_repair"
+		wm_removeteamvoiceannounce 1 "oasis_allies_pump_repair"
+		// *---------------------------------------------------------------------------------*
+	}
+
+	death
+	{
+		setstate pump_materials_1 default
+		setstate pump_materials_clip_1 default
+		setstate pump_flag_1 default
+		setstate pump1_p2 invisible
+		setstate pump_sound invisible
+		setstate water_pump_1_oldclip default
+
+		disablespeaker wp1_sound
+		enablespeaker hose1_sound2
+
+		trigger water_tunnel up
+
+		trigger water_discharge down
+
+		wm_announce	"Axis have damaged the Oasis Water Pump!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "oasis_axis_pump_stop"
+
+		wm_addteamvoiceannounce 1 "oasis_allies_pump_repair"
+
+		wm_teamvoiceannounce 0 "oasis_axis_pump_disabled"
+		wm_teamvoiceannounce 0 "oasis_axis_caves_flood"
+
+		wm_teamvoiceannounce 1 "oasis_allies_pump_disabled"
+		wm_teamvoiceannounce 1 "oasis_allies_caves_flood"
+		// *---------------------------------------------------------------------------------*
+
+		wm_objective_status 		5 0 1
+		wm_objective_status 		5 1 2
+
+		// Update game manager counter for objectives
+		trigger game_manager water_pumps_destroyed
+	}
+
+	decayed final
+	{
+		setstate pump_materials_1 default
+		setstate pump_materials_clip_1 default
+		setstate pump_flag_1 default
+		setstate pump1_p1 default
+		setstate pump1_p2 invisible
+		setstate water_pump_1_oldclip default
+	}
+}
+
+pump1_p2
+{
+	spawn
+	{
+		startanimation 0 40 20 nolerp
+	}
+}
+
+pump2_p2
+{
+	spawn
+	{
+		startanimation 0 40 20 nolerp
+	}
+}
+
+// Old City - new location (pump 2)
+water_pump_2
+{
+	spawn
+	{
+		wait 200
+
+		constructible_class 3
+
+		trigger water_pump_2 setup
+	}
+
+	trigger setup
+	{
+		setstate pump_materials_2 default
+		setstate pump_materials_clip_2 default
+		setstate pump_flag_2 default
+		setstate pump2_p1 default
+		setstate pump2_p2 invisible
+		setstate pump2_sound invisible
+		setstate water_pump_2_oldclip default
+	}
+
+	buildstart final
+	{
+		setstate pump_materials_2 default
+		setstate pump_materials_clip_2 default
+		setstate pump_flag_2 default
+		setstate pump2_p2 underconstruction
+	}
+
+	built final
+	{
+		setstate pump_materials_2 invisible
+		setstate pump_materials_clip_2 invisible
+		setstate pump_flag_2 invisible
+		setstate water_pump_2_oldclip invisible
+		setstate pump2_p2 default
+
+		enablespeaker wp2_sound
+		enablespeaker hose2_sound1
+
+		trigger water_tunnel2 down
+
+		trigger water_discharge_2 up
+
+		wm_announce	"Allies have built the Old City Water Pump!"
+
+		wm_objective_status 		6 0 2
+		wm_objective_status 		6 1 1
+
+		// Update game manager counter for objectives
+		trigger game_manager water_pumps_counter
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "oasis_axis_pump_disable"
+		wm_teamvoiceannounce 0 "oasis_axis_caves_drain"
+
+		wm_teamvoiceannounce 1 "oasis_allies_pump_repaired"
+		wm_teamvoiceannounce 1 "oasis_allies_caves_drain"
+
+		wm_removeteamvoiceannounce 0 "oasis_axis_pump_stop"
+		wm_removeteamvoiceannounce 0 "oasis_axis_pumps_stop"
+
+		wm_removeteamvoiceannounce 1 "oasis_allies_pumps_repair"
+		wm_removeteamvoiceannounce 1 "oasis_allies_pump_repair"
+		// *---------------------------------------------------------------------------------*
+	}
+
+	death
+	{
+		setstate pump_materials_2 default
+		setstate pump_materials_clip_2 default
+		setstate pump_flag_2 default
+		setstate water_pump_2_oldclip default
+
+		setstate pump2_p2 invisible
+		setstate pump2_sound invisible
+
+		disablespeaker wp2_sound
+		enablespeaker hose2_sound2
+
+		trigger water_tunnel2 up
+
+		trigger water_discharge_2 down
+
+		wm_announce	"Axis have damaged the Old City Water Pump!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "oasis_axis_pump_stop"
+
+		wm_addteamvoiceannounce 1 "oasis_allies_pump_repair"
+
+		wm_teamvoiceannounce 0 "oasis_axis_pump_disabled"
+		wm_teamvoiceannounce 0 "oasis_axis_caves_flood"
+
+		wm_teamvoiceannounce 1 "oasis_allies_pump_disabled"
+		wm_teamvoiceannounce 1 "oasis_allies_caves_flood"
+		// *---------------------------------------------------------------------------------*
+
+		wm_objective_status 		6 0 1
+		wm_objective_status 		6 1 2
+
+		// Update game manager counter for objectives
+		trigger game_manager water_pumps_destroyed
+	}
+
+	decayed final
+	{
+		setstate pump_materials_2 default
+		setstate pump_materials_clip_2 default
+		setstate pump_flag_2 default
+		setstate pump2_p1 default
+		setstate pump2_p2 invisible
+		setstate pump2_sound invisible
+		setstate water_pump_2_oldclip default
+	}
+
+}
+
+water_pump_1_lms_clip
+{
+	spawn
+	{
+		wait 200
+		remove
+	}
+}
+
+water_pump_2_lms_clip
+{
+	spawn
+	{
+		wait 200
+		remove
+	}
+}
+
+// Axis ONLY - Garrison MG Nest
+mg42_clip_1
+{
+	spawn
+	{
+		wait 200
+
+		constructible_class 2
+
+		trigger mg42_clip_1 setup
+	}
+
+	trigger setup
+	{
+		setstate mg42_1 invisible
+
+		setstate mg42_materials_1 default
+		setstate mg42_materials_clip_1 default
+		setstate mg42_flag_1 default
+	}
+
+	buildstart final
+	{
+		setstate mg42_1 underconstruction
+
+		setstate mg42_materials_1 default
+		setstate mg42_materials_clip_1 default
+		setstate mg42_flag_1 default
+	}
+
+	built final
+	{
+		setstate mg42_1 default
+
+		setstate mg42_materials_1 invisible
+		setstate mg42_materials_clip_1 invisible
+		setstate mg42_flag_1 invisible
+
+		wm_announce	"The Garrison MG Nest has been constructed!"
+	}
+
+	death
+	{
+		setstate mg42_1 invisible
+		repairmg42 mg42_1
+		setstate mg42_materials_1 default
+		setstate mg42_materials_clip_1 default
+		setstate mg42_flag_1 default
+
+		wm_announce	"The Garrison MG Nest has been damaged!"
+	}
+
+	decayed final
+	{
+		setstate mg42_1 invisible
+
+		setstate mg42_materials_1 default
+		setstate mg42_materials_clip_1 default
+		setstate mg42_flag_1 default
+	}
+}
+
+// Allied ONLY - Old City MG Nest
+mg42_clip_2
+{
+	spawn
+	{
+		wait 200
+
+		constructible_class 2
+
+		trigger mg42_clip_2 setup
+	}
+
+	trigger setup
+	{
+		setstate mg42_2 invisible
+
+		setstate mg42_materials_2 default
+		setstate mg42_materials_clip_2 default
+		setstate mg42_flag_2 default
+	}
+
+	buildstart final
+	{
+		setstate mg42_2 underconstruction
+
+		setstate mg42_materials_2 default
+		setstate mg42_materials_clip_2 default
+		setstate mg42_flag_2 default
+	}
+
+	built final
+	{
+		setstate mg42_2 default
+
+		setstate mg42_materials_2 invisible
+		setstate mg42_materials_clip_2 invisible
+		setstate mg42_flag_2 invisible
+
+		wm_announce	"The Old City MG Nest has been constructed!"
+	}
+
+	death
+	{
+		setstate mg42_2 invisible
+		repairmg42 mg42_2
+		setstate mg42_materials_2 default
+		setstate mg42_materials_clip_2 default
+		setstate mg42_flag_2 default
+
+		wm_announce	"The Old City MG Nest has been damaged!"
+	}
+
+	decayed final
+	{
+		setstate mg42_2 invisible
+
+		setstate mg42_materials_2 default
+		setstate mg42_materials_clip_2 default
+		setstate mg42_flag_2 default
+	}
+}
+
+// ================================================
+// ======== END CONSTRUCTIBLE STUFF ===============
+// ================================================
+
+
+// ================================================
+// ========== DESTRUCTIBLE STUFF ==================
+// ================================================
+
+// North Gun
+pak75_clip_1
+{
+	spawn
+	{
+		wait 200
+
+		constructible_class 3
+
+		trigger pak75_clip_1 setup
+	}
+
+	trigger setup
+	{
+		setstate pak75_smoke_1 invisible
+		setstate pak75_model_broken_1 invisible
+		setstate pak75_clip_broken_1 invisible
+
+		setstate pak75_model_1 default
+	}
+
+	death
+	{
+		setstate pak75_smoke_1 default
+		setstate pak75_model_broken_1 default
+		setstate pak75_clip_broken_1 default
+
+		setstate pak75_model_1 invisible
+
+		togglespeaker pak75_expl_1
+
+		wm_announce "Allies have destroyed the North Anti-Tank Gun!"
+
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "oasis_axis_paksouth_defend"
+
+		wm_addteamvoiceannounce 1 "oasis_allies_paksouth_destroy"
+
+		wm_teamvoiceannounce 0 "oasis_axis_paknorth_destroyed"
+
+		wm_teamvoiceannounce 1 "oasis_allies_paknorth_destroyed"
+
+		wm_removeteamvoiceannounce 0 "oasis_axis_paks_defend"
+		wm_removeteamvoiceannounce 0 "oasis_axis_paknorth_defend"
+
+		wm_removeteamvoiceannounce 1 "oasis_allies_paks_destroy"
+		wm_removeteamvoiceannounce 1 "oasis_allies_paknorth_destroy"
+		// *---------------------------------------------------------------------------------*
+
+		wm_objective_status 		1 0 2
+		wm_objective_status 		1 1 1
+
+		wm_set_main_objective	2 0
+		wm_set_main_objective	2 1
+
+		// Update game manager counter for objectives
+		trigger game_manager 75mm_gun_counter
+
+		trigger end_boom_north north_pak_destroyed
+	}
+}
+
+// South Gun
+pak75_clip_2
+{
+	spawn
+	{
+		wait 200
+
+		constructible_class 3
+
+		trigger pak75_clip_2 setup
+	}
+
+	trigger setup
+	{
+		setstate pak75_smoke_2 invisible
+		setstate pak75_model_broken_2 invisible
+		setstate pak75_clip_broken_2 invisible
+
+		setstate pak75_model_2 default
+	}
+
+	death
+	{
+		setstate pak75_smoke_2 default
+		setstate pak75_model_broken_2 default
+		setstate pak75_clip_broken_2 default
+
+		setstate pak75_model_2 invisible
+
+		togglespeaker pak75_expl_2
+
+		wm_announce "Allied team has destroyed the South Anti-Tank Gun!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "oasis_axis_paknorth_defend"
+
+		wm_addteamvoiceannounce 1 "oasis_allies_paknorth_destroy"
+
+		wm_teamvoiceannounce 0 "oasis_axis_paksouth_destroyed"
+
+		wm_teamvoiceannounce 1 "oasis_allies_paksouth_destroyed"
+
+		wm_removeteamvoiceannounce 0 "oasis_axis_paks_defend"
+		wm_removeteamvoiceannounce 0 "oasis_axis_paksouth_defend"
+
+		wm_removeteamvoiceannounce 1 "oasis_allies_paks_destroy"
+		wm_removeteamvoiceannounce 1 "oasis_allies_paksouth_destroy"
+		// *---------------------------------------------------------------------------------*
+
+		wm_objective_status 		2 0 2
+		wm_objective_status 		2 1 1
+
+		// Update game manager counter for objectives
+		trigger game_manager 75mm_gun_counter
+
+		trigger end_boom_south south_pak_destroyed
+	}
+}
+
+// ================================================
+// ======== END DESTRUCTIBLE STUFF ================
+// ================================================
+
+
+
+
+
+
+
+// ================================================
+// ============== WATER STUFF =====================
+// ================================================
+
+water_tunnel
+{
+	trigger up
+	{
+		gotomarker path_water_tunnel_top 3 wait
+		disablespeaker hose1_sound2
+	}
+
+	trigger down
+	{
+		gotomarker path_water_tunnel_lower 3 wait
+		disablespeaker hose1_sound1
+	}
+}
+
+water_tunnel2
+{
+	trigger up
+	{
+		gotomarker path_water_tunnel_top 3 wait
+		disablespeaker hose2_sound2
+	}
+
+	trigger down
+	{
+		gotomarker path_water_tunnel_lower 3 wait
+		disablespeaker hose2_sound1
+	}
+}
+
+water_discharge
+{
+	trigger up
+	{
+		gotomarker path_water_discharge_top 3 wait
+	}
+
+	trigger down
+	{
+		gotomarker path_water_discharge_bottom 3 wait
+	}
+}
+
+water_discharge_2
+{
+	trigger up
+	{
+		gotomarker path_water_discharge_2_top 3 wait
+	}
+
+	trigger down
+	{
+		gotomarker path_water_discharge_2_bottom 3 wait
+	}
+}
+
+// ================================================
+// ============== END WATER STUFF =================
+// ================================================
+
+
+
+// ================================================
+// =============== COMMAND POSTS ==================
+// ================================================
+
+allied_radio_destroyed
+{
+	spawn
+	{
+		wait 400
+		setstate allied_radio_destroyed invisible
+		setstate allied_radio_destroyed_model invisible
+	}
+
+	trigger hide
+	{
+		setstate allied_radio_destroyed invisible
+		setstate allied_radio_destroyed_model invisible
+	}
+
+	trigger show
+	{
+		accum 0 abort_if_equal 0
+		setstate allied_radio_destroyed default
+		setstate allied_radio_destroyed_model default
+	}
+
+	trigger enable
+	{
+		accum 0 set 1
+	}
+}
+
+allied_radio_closed
+{
+	trigger hide
+	{
+		setstate allied_radio_closed invisible
+		setstate allied_radio_closed_model invisible
+	}
+
+	trigger show
+	{
+		accum 0 abort_if_equal 1
+		setstate allied_radio_closed default
+		setstate allied_radio_closed_model default
+	}
+
+	trigger disable
+	{
+		accum 0 set 1
+	}
+}
+
+allied_radio_built
+{
+	spawn
+	{
+		wait 400
+
+		constructible_class 2
+
+		trigger allied_radio_built setup
+	}
+
+	trigger setup
+	{
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+	}
+
+	buildstart final
+	{
+		trigger allied_radio_built_model trans
+
+		trigger allied_radio_destroyed hide
+		trigger allied_radio_closed 	hide
+	}
+
+	built final
+	{
+		trigger allied_radio_built_model show
+
+		trigger allied_radio_destroyed enable
+		trigger allied_radio_closed 	disable
+
+		trigger allied_radio_built_model enable_allied_features
+
+		enablespeaker allies_compost_sound
+	}
+
+	decayed final
+	{
+		trigger allied_radio_built_model hide
+
+		trigger allied_radio_destroyed show
+		trigger allied_radio_closed 	show
+	}
+
+	death
+	{
+		trigger allied_radio_built_model hide
+
+		trigger allied_radio_destroyed show
+
+		trigger allied_radio_built_model disable_allied_features
+
+		disablespeaker allies_compost_sound
+	}
+}
+
+allied_radio_built_model
+{
+	spawn
+	{
+		wait 400
+		setstate allied_radio_built_model invisible
+	}
+
+	trigger show
+	{
+		setstate allied_radio_built_model default
+	}
+
+	trigger hide
+	{
+		setstate allied_radio_built_model invisible
+	}
+
+	trigger trans
+	{
+		setstate allied_radio_built_model underconstruction
+	}
+
+	trigger enable_allied_features
+	{
+		setchargetimefactor 1 soldier 0.75
+		setchargetimefactor 1 lieutenant 0.75
+		setchargetimefactor 1 medic 0.75
+		setchargetimefactor 1 engineer 0.75
+		setchargetimefactor 1 covertops 0.75
+		sethqstatus 1 1
+
+		wm_announce	"Allied Command Post constructed. Charge speed increased!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed_allies"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed"
+
+		wm_removeteamvoiceannounce 1 "allies_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+
+		wm_objective_status 7 1 1
+		wm_objective_status 7 0 2
+
+	}
+
+	trigger disable_allied_features
+	{
+		// Some kind of UI pop-up to alert players
+		wm_announce	"Axis team has destroyed the Allied Command Post!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 1 "allies_hqt_compost_construc"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_damaged"
+		// *----------------------------------- vo ------------------------------------------*
+
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+
+		wm_objective_status 7 1 0
+		wm_objective_status 7 0 0
+	}
+}
+
+axis_radio_destroyed
+{
+	spawn
+	{
+		wait 400
+		setstate axis_radio_destroyed invisible
+		setstate axis_radio_destroyed_model invisible
+	}
+
+	trigger hide
+	{
+		setstate axis_radio_destroyed invisible
+		setstate axis_radio_destroyed_model invisible
+	}
+
+	trigger show
+	{
+		accum 0 abort_if_equal 0
+		setstate axis_radio_destroyed default
+		setstate axis_radio_destroyed_model default
+	}
+
+	trigger enable
+	{
+		accum 0 set 1
+	}
+}
+
+axis_radio_closed
+{
+	trigger hide
+	{
+		setstate axis_radio_closed invisible
+		setstate axis_radio_closed_model invisible
+	}
+
+	trigger show
+	{
+		accum 0 abort_if_equal 1
+		setstate axis_radio_closed default
+		setstate axis_radio_closed_model default
+	}
+
+	trigger disable
+	{
+		accum 0 set 1
+	}
+}
+
+axis_radio_built
+{
+	spawn
+	{
+		wait 400
+
+		constructible_class 2
+
+		trigger axis_radio_built setup
+	}
+
+	trigger setup
+	{
+		setchargetimefactor 0 soldier 1
+		setchargetimefactor 0 lieutenant 1
+		setchargetimefactor 0 medic 1
+		setchargetimefactor 0 engineer 1
+		setchargetimefactor 0 covertops 1
+		sethqstatus 0 0
+	}
+
+	buildstart final
+	{
+		trigger axis_radio_built_model trans
+
+		trigger axis_radio_destroyed hide
+		trigger axis_radio_closed 	hide
+	}
+
+	built final
+	{
+		trigger axis_radio_built_model show
+
+		trigger axis_radio_destroyed enable
+		trigger axis_radio_closed 	disable
+
+		trigger axis_radio_built_model enable_axis_features
+
+		enablespeaker axis_compost_sound
+	}
+
+	decayed final
+	{
+		trigger axis_radio_built_model hide
+
+		trigger axis_radio_destroyed show
+		trigger axis_radio_closed 	show
+	}
+
+	death
+	{
+		trigger axis_radio_built_model hide
+
+		trigger axis_radio_destroyed show
+
+		trigger axis_radio_built_model disable_axis_features
+
+		disablespeaker axis_compost_sound
+	}
+}
+
+axis_radio_built_model
+{
+	spawn
+	{
+		wait 400
+		setstate axis_radio_built_model invisible
+	}
+
+	trigger show
+	{
+		setstate axis_radio_built_model default
+	}
+
+	trigger hide
+	{
+		setstate axis_radio_built_model invisible
+	}
+
+	trigger trans
+	{
+		setstate axis_radio_built_model underconstruction
+	}
+
+	trigger enable_axis_features
+	{
+		setchargetimefactor 0 soldier 0.75
+		setchargetimefactor 0 lieutenant 0.75
+		setchargetimefactor 0 medic 0.75
+		setchargetimefactor 0 engineer 0.75
+		setchargetimefactor 0 covertops 0.75
+		sethqstatus 0 1
+
+		wm_announce	"Axis Command Post constructed. Charge speed increased!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed_axis"
+
+		wm_removeteamvoiceannounce 0 "axis_hq_compost_construct"
+		// *----------------------------------- vo ------------------------------------------*
+
+		wm_objective_status 8 1 2
+		wm_objective_status 8 0 1
+
+	}
+
+	trigger disable_axis_features
+	{
+		// Some kind of UI pop-up to alert players
+		wm_announce	"Allied team has destroyed the Axis Command Post!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_teamvoiceannounce 0 "axis_hq_compost_damaged"
+		// *----------------------------------- vo ------------------------------------------*
+
+		setchargetimefactor 0 soldier 1
+		setchargetimefactor 0 lieutenant 1
+		setchargetimefactor 0 medic 1
+		setchargetimefactor 0 engineer 1
+		setchargetimefactor 0 covertops 1
+		sethqstatus 0 0
+
+		wm_objective_status 8 1 0
+		wm_objective_status 8 0 0
+	}
+}
+
+
+axis_command_post_lms_toi
+{
+	spawn
+	{
+		wait 400
+
+		remove
+	}
+}
+
+axis_radio_lms_closed
+{
+	spawn
+	{
+		wait 400
+
+		remove
+	}
+}
+
+axis_radio_lms_destroyed
+{
+	spawn
+	{
+		wait 400
+
+		remove
+	}
+}
+
+axis_radio_built_lms
+{
+	spawn
+	{
+		wait 400
+
+		remove
+	}
+}
+
+axis_radio_closed_lms_model
+{
+	spawn
+	{
+		wait 400
+
+		remove
+	}
+}
+
+axis_radio_destroyed_lms_model
+{
+	spawn
+	{
+		wait 400
+
+		remove
+	}
+}
+
+axis_radio_built_lms_model
+{
+	spawn
+	{
+		wait 400
+
+		remove
+	}
+}
+
+axis_command_post_clip_lms
+{
+	spawn
+	{
+		wait 400
+
+		remove
+	}
+}
+// ===================================================
+// ============== END COMMAND POSTS ==================
+// ===================================================
+
+
+// ======================================================
+// ==============  END SEQUENCE Start  ==================
+// ======================================================
+
+end_tank
+{
+	spawn
+	{
+		wait 50
+
+		trigger self setinvisible
+	}
+
+	trigger setinvisible
+	{
+		setstate end_tank invisible
+	}
+
+	trigger Yippie
+	{
+		setstate end_tank default
+
+		trigger self tracks_forward
+
+		setspeed -1400 0 0
+		wait 1000
+		setspeed -100 0 0
+
+		trigger end_tank sound_move
+
+		wait 8200
+
+		setspeed -40 0 0
+
+		trigger end_tank sound_stop
+
+		trigger self tracks_stop
+
+		faceangles 2 180 0 300
+		setspeed 0 0 0
+		faceangles 0 180 0 650
+	}
+
+	trigger sound_move
+	{
+		stopsound
+		playsound sound/vehicles/tank/tank_move.wav looping volume 512
+	}
+
+	trigger sound_stop
+	{
+		stopsound
+		playsound sound/vehicles/tank/tank_revdown.wav volume 196
+	}
+
+	trigger tracks_forward
+	{
+
+		remapshader models/mapobjects/tanks_sd/bits_r models/mapobjects/tanks_sd/bits_forward_oasis
+		remapshader models/mapobjects/tanks_sd/wheel_r models/mapobjects/tanks_sd/wheel_forward_oasis
+		remapshader models/mapobjects/tanks_sd/bits_l models/mapobjects/tanks_sd/bits_forward_oasis
+		remapshader models/mapobjects/tanks_sd/wheel_l models/mapobjects/tanks_sd/wheel_forward_oasis
+		remapshaderflush
+	}
+
+	trigger tracks_stop
+	{
+		remapshader models/mapobjects/tanks_sd/bits_r models/mapobjects/tanks_sd/bits_r
+		remapshader models/mapobjects/tanks_sd/wheel_r models/mapobjects/tanks_sd/wheel_r
+		remapshader models/mapobjects/tanks_sd/bits_l models/mapobjects/tanks_sd/bits_l
+		remapshader models/mapobjects/tanks_sd/wheel_l models/mapobjects/tanks_sd/wheel_l
+		remapshaderflush
+	}
+}
+
+end_turret
+{
+	spawn
+	{
+		wait 100
+
+		attachtotag end_tank tag_turret
+
+		trigger self setinvisible
+	}
+
+	trigger setinvisible
+	{
+		setstate end_turret invisible
+	}
+
+	trigger Yippie
+	{
+		setstate end_turret default
+
+		wait 4050
+
+		playsound sound/vehicles/tank/turret_spin.wav looping
+		faceangles 0 40 0 2100
+		stopsound
+
+		wait 600
+
+		playsound sound/vehicles/tank/turret_spin.wav looping
+		faceangles 0 -48 0 2800
+		stopsound
+		playsound sound/vehicles/tank/turret_end.wav
+
+		wait 2400
+
+		playsound sound/vehicles/tank/turret_spin.wav looping
+		faceangles 0 -20 0 4000
+		stopsound
+		playsound sound/vehicles/tank/turret_end.wav
+	}
+}
+
+end_boom_north
+{
+	spawn
+	{
+		wait 400
+
+		accum 0 set 0
+	}
+
+	trigger check_0
+	{
+		accum 0 abort_if_greater_than 1
+
+		wait 100
+
+		trigger self Yippie_north
+
+	}
+
+	trigger north_pak_destroyed
+	{
+		accum 0 set 2
+	}
+
+	trigger Yippie_north
+	{
+		wait 200
+
+		trigger pak75_model_1 aim
+
+		wait 1800
+
+		alertentity end_boom_north
+
+		trigger end_north_pak_muzzle Yippie
+
+		trigger pak75_model_1 Yippie
+
+		wait 400
+
+		trigger self sound_explosion
+	}
+
+	trigger sound_explosion
+	{
+		togglespeaker end_explosion_north
+	}
+}
+
+end_boom_south
+{
+	spawn
+	{
+		wait 400
+
+		accum 1 set 0
+	}
+
+	trigger check_1
+	{
+		accum 1 abort_if_greater_than 1
+
+		wait 100
+
+		trigger self Yippie_south
+
+	}
+
+	trigger south_pak_destroyed
+	{
+		accum 1 set 2
+	}
+
+	trigger Yippie_south
+	{
+		wait 400
+
+		trigger pak75_model_2 aim
+
+		wait 3800
+
+		alertentity end_boom_south
+
+		trigger end_south_pak_muzzle Yippie
+
+		trigger pak75_model_2 Yippie
+
+		wait 300
+
+		trigger self sound_explosion
+	}
+
+	trigger sound_explosion
+	{
+			togglespeaker end_explosion_south
+	}
+}
+
+end_north_pak_muzzle
+{
+	spawn
+	{
+		wait 150
+
+		setstate end_north_pak_muzzle invisible
+	}
+
+	trigger Yippie
+	{
+		setstate end_north_pak_muzzle default
+		trigger self sound_shot
+		wait 100
+		setstate end_north_pak_muzzle invisible
+	}
+
+	trigger sound_shot
+	{
+		togglespeaker north_pak_fire
+	}
+}
+
+end_south_pak_muzzle
+{
+	spawn
+	{
+		wait 150
+
+		setstate end_south_pak_muzzle invisible
+	}
+
+	trigger Yippie
+	{
+		setstate end_south_pak_muzzle default
+		trigger self sound_shot
+		wait 100
+		setstate end_south_pak_muzzle invisible
+	}
+
+	trigger sound_shot
+	{
+		togglespeaker south_pak_fire
+	}
+}
+
+pak75_model_1
+{
+	trigger aim
+	{
+		faceangles 0 286 0 1400
+	}
+
+	trigger Yippie
+	{
+		setspeed -100 0 0
+		wait 150
+		setspeed 30 0 0
+		wait 500
+		setspeed 0 0 0
+	}
+}
+
+pak75_model_2
+{
+	trigger aim
+	{
+		faceangles 0 276 0 3200
+	}
+
+	trigger Yippie
+	{
+		setspeed -100 0 0
+		wait 150
+		setspeed 30 0 0
+		wait 500
+		setspeed 0 0 0
+	}
+}
+
+// ======================================================
+// ==============   END SEQUENCE End   ==================
+// ======================================================

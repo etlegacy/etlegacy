@@ -1,0 +1,1799 @@
+//
+// Map: Atlantic Seawall Battery
+// BSP: battery
+
+game_manager
+{
+	spawn
+	{
+		// Game rules
+		wm_axis_respawntime	30
+		wm_allied_respawntime	20
+		wm_number_of_objectives 6
+		wm_set_round_timelimit	20
+
+		// Objectives
+
+		// Primary:
+		// 1: Destroy Battery Gun / Defend Battery Gun
+		// Secondary:
+		// 2: Construct Beach Assault Ramp / Prevent Beach Assault Ramp
+		// 3: Capture West Bunker / Defend West Bunker
+		// 4: Destroy Door Controls / Protect Door Controls
+		// 5: Allied command post
+		// 6: Axis command post
+
+		wm_objective_status 1 0 0 // <objective team status>
+		wm_objective_status 1 1 0 // status: 0 = default
+		wm_objective_status 2 0 0 //		 1 = succeeded
+		wm_objective_status 2 1 0 //		 2 = failed
+		wm_objective_status 3 0 0
+		wm_objective_status 3 1 0
+		wm_objective_status 4 0 0
+		wm_objective_status 4 1 0
+		wm_objective_status 5 0 0
+		wm_objective_status 5 1 0
+		wm_objective_status 6 0 0
+		wm_objective_status 6 1 0
+
+		wm_set_main_objective		1	0
+		wm_set_main_objective		1	1
+
+		wait 100
+		// rain - use proper initial spawns
+		setautospawn	"Allied West Beach"	1
+		setautospawn	"West Bunker"	0
+
+		setstate eastbunker_wobj invisible
+
+		// Stopwatch mode defending team (0=Axis, 1=Allies)
+		wm_set_defending_team	0
+
+		// If the round timer expires, the Axis have won, so set the current winning team
+		// Set the round winner:  0 == AXIS, 1 == ALLIED
+		wm_setwinner 0
+
+		// Set doors to operable at game start (0 = operable, 1 = disabled)
+		globalaccum 1 set 0
+
+		// Set status of backup generator (0 = built, 1 = destroyed)
+		globalaccum 2 set 0
+
+		wait 450
+
+		// start triggered loops on/off as required (eg: command post radio sounds)
+		disablespeaker allies_compost_sound
+		disablespeaker allies_compost_sound_lms
+		disablespeaker axis_compost_sound
+		disablespeaker axis_compost_sound_lms
+		enablespeaker doorcontrols_sound
+
+		wait 2000
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 1 "battery_allies_ramp_construct"
+		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_teamvoiceannounce 0 "battery_axis_ramp_stop"
+		wm_teamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_addteamvoiceannounce 1 "battery_allies_ramp_construct"
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_addteamvoiceannounce 0 "battery_axis_ramp_stop"
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+	}
+
+	trigger westbunker_flagblue
+	{
+		// Some kind of UI pop-up to alert players
+		wm_announce	"Allies capture the Forward Bunker!"
+
+		wm_objective_status	3 1 1
+		wm_objective_status	3 0 2
+	}
+
+	trigger westbunker_flagred
+	{
+		// Some kind of UI pop-up to alert players
+		wm_announce	"Axis capture the West Bunker!"
+
+		wm_objective_status	3 1 2
+		wm_objective_status	3 0 1
+	}
+
+	trigger gun_tracking
+	{
+		// UI pop-up to alert players
+		wm_announce	"Allies have destroyed the gun tracking"
+
+		wm_objective_status 1 0 2
+		wm_objective_status 1 1 1
+
+		accum 1 set 1				// End of game completed
+
+		// Call function to check if the round has been won
+		trigger game_manager checkgame
+	}
+
+	trigger timelimit_hit
+	{
+		wait 8000
+
+		alertentity end_explosion
+		togglespeaker end_explosion_speaker
+	}
+
+	trigger checkgame
+	{
+		accum 1 abort_if_not_equal 1
+
+		// Set the round winner:  0 == AXIS, 1 == ALLIED
+		wm_setwinner 1
+
+		// End the round
+		wm_endround
+	}
+
+	trigger opendoors
+	{
+		// Generator is down, but emergency systems haven't kicked in yet
+		globalaccum 1 set 1
+
+		// Horrible messy check to make sure the backup generator
+		// remains destroyed for 5 seconds, in 10 half second lumps
+		wait 500
+		globalaccum 2 abort_if_not_equal 1
+		wait 500
+		globalaccum 2 abort_if_not_equal 1
+		wait 500
+		globalaccum 2 abort_if_not_equal 1
+		wait 500
+		globalaccum 2 abort_if_not_equal 1
+		wait 500
+		globalaccum 2 abort_if_not_equal 1
+		wait 500
+		globalaccum 2 abort_if_not_equal 1
+		wait 500
+		globalaccum 2 abort_if_not_equal 1
+		wait 500
+		globalaccum 2 abort_if_not_equal 1
+		wait 500
+		globalaccum 2 abort_if_not_equal 1
+		wait 500
+		globalaccum 2 abort_if_not_equal 1
+
+		wm_announce "Magnetic seal deactivated - opening emergency bunker doors"
+
+		// trigger doors
+		trigger leftdoor_trigger1 down
+		trigger rightdoor_trigger1 down
+		trigger frontdoor_trigger1 down
+		trigger reardoor_left open
+		trigger reardoor_right open
+	}
+}
+
+// ================================================
+// =========== SPAWN POINT CONTROLS ===============
+// ================================================
+// description			: team_wolf_objectives	: spawns
+// Allied East Beach 	: eastbeach_wobj		: eastbeach_spawns
+// Allied West Beach 	: westbeach_wobj		: westbeach_spawns
+// Axis Main Bunker		: mainbunker_wobj		: mainbunker_spawns
+// East Bunker			: eastbunker_wobj		: eastbunker_spawns
+// West Bunker			: westbunker_wobj		: westbunker_spawns
+
+allied_lms_spawns
+{
+	spawn
+	{
+		remove
+	}
+}
+
+allied_lms_wobj
+{
+	spawn
+	{
+		remove
+	}
+}
+
+axis_lms_spawns
+{
+	spawn
+	{
+		remove
+	}
+}
+
+axis_lms_wobj
+{
+	spawn
+	{
+		remove
+	}
+}
+
+westbunker_spawns
+{
+	spawn
+	{
+//		setstate westbunker_spawns invisible
+	}
+}
+
+westbunker_wobj
+{
+	spawn
+	{
+//		wait 100
+
+//		setstate westbunker_wobj invisible
+	}
+}
+
+westbunker_flag
+{
+	spawn
+	{
+		accum 0 set 0	// Who has the flag: 0-Axis, 1-Allied
+	}
+
+	trigger allied_capture
+	{
+		accum 0 abort_if_equal 1 // do Allies own flag?
+
+		trigger game_manager westbunker_flagblue
+
+		setstate westbunker_spawns default
+		setstate westbunker_wobj default
+
+		trigger westbunker_flag setallies
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "battery_axis_controls_defend"
+		wm_addteamvoiceannounce 0 "battery_axis_bunker_capture"
+
+		wm_addteamvoiceannounce 1 "battery_allies_controls_destroy"
+
+		wm_teamvoiceannounce 0 "battery_axis_bunker_lost"
+		wm_teamvoiceannounce 0 "battery_axis_controls_defend"
+
+		wm_teamvoiceannounce 1 "battery_allies_bunker_captured"
+		wm_teamvoiceannounce 1 "battery_allies_controls_destroy"
+
+		wm_removeteamvoiceannounce 0 "battery_axis_bunker_defend"
+
+		wm_removeteamvoiceannounce 1 "battery_allies_bunker_capture"
+		// *---------------------------------------------------------------------------------*
+	}
+
+	trigger setallies
+	{
+		accum 0 abort_if_equal 1
+		accum 0 set 1
+
+		alertentity westbunker_wobj
+		alertentity westbunker_spawns
+
+		setautospawn "Axis Main Bunker" 0
+		// bani - set allied spawn
+		setautospawn "West Bunker" 1
+	}
+
+	trigger axis_capture
+	{
+		accum 0 abort_if_equal 0 // do Axis own flag?
+
+		trigger game_manager westbunker_flagred
+
+		setstate westbunker_spawns default
+		setstate westbunker_wobj default
+
+		trigger westbunker_flag setaxis
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "battery_axis_bunker_defend"
+
+		wm_addteamvoiceannounce 1 "battery_allies_bunker_capture"
+
+		wm_teamvoiceannounce 0 "battery_axis_bunker_captured"
+
+		wm_teamvoiceannounce 1 "battery_allies_bunker_lost"
+
+		wm_removeteamvoiceannounce 0 "battery_axis_bunker_capture"
+
+		wm_removeteamvoiceannounce 1 "battery_allies_controls_destroy"
+		// *---------------------------------------------------------------------------------*
+	}
+
+	trigger setaxis
+	{
+		accum 0 abort_if_equal 0
+		accum 0 set 0
+
+		alertentity westbunker_wobj
+		alertentity westbunker_spawns
+
+		// bani - reset both spawns
+		setautospawn "West Bunker" 0
+		setautospawn "Allied West Beach" 1
+	}
+}
+// ============== end spawn point controls ========
+// ================================================
+
+// Directly below gun casing
+guncontrols
+{
+	spawn
+	{
+		wait 50
+		constructible_class 3
+	}
+
+	death
+	{
+		trigger game_manager gun_tracking
+		setstate guncontrols_smoke1 default
+		setstate guncontrols_smoke2 default
+	}
+}
+
+guncontrols_smoke1
+{
+	spawn
+	{
+		setstate guncontrols_smoke1 invisible
+	}
+}
+
+guncontrols_smoke2
+{
+	spawn
+	{
+		setstate guncontrols_smoke2 invisible
+	}
+}
+
+fan01
+{
+	spawn
+	{
+		wait 50
+		setrotation	0 0 -600
+	}
+}
+
+fan02
+{
+	spawn
+	{
+		wait 50
+		faceangles 0 270 0 1
+		setrotation	0 0 -300
+	}
+}
+
+lighthouse_light
+{
+	spawn
+	{
+		wait 100
+		setrotation	0 30 0
+	}
+}
+
+hatch_controller
+{
+	activate
+	{
+		trigger hatch use
+	}
+}
+
+hatch
+{
+	trigger use
+	{
+		trigger hatch open
+		trigger hatch close
+	}
+
+	trigger open
+	{
+		accum 1 abort_if_equal 1
+		accum 0 abort_if_equal 1
+		accum 1 set 1
+		accum 0 set 1
+
+		wait 50
+		playsound sound/movers/doors/door5_open.wav
+		faceangles 0 0 270 1500
+
+		accum 0 set 0
+	}
+
+	trigger close
+	{
+		accum 1 abort_if_equal 0
+		accum 0 abort_if_equal 1
+		accum 1 set 0
+		accum 0 set 1
+
+		wait 50
+		playsound sound/movers/doors/door5_close.wav
+		faceangles 0 0 0 1500
+		playsound sound/movers/doors/door5_endc.wav
+
+		accum 0 set 0
+	}
+}
+
+// ================================================
+// ========== CONSTRUCTIBLE STUFF =================
+// ================================================
+
+doorcontrols
+{
+	spawn
+	{
+		wait 200
+		trigger doorcontrols setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setstate doorcontrols default
+
+		setstate doorcontrols_materials invisible
+		setstate doorcontrols_materials_clip invisible
+		setstate doorcontrols_flag invisible
+	}
+
+	buildstart final
+	{
+		setstate doorcontrols underconstruction
+
+		setstate doorcontrols_materials default
+		setstate doorcontrols_materials_clip default
+		setstate doorcontrols_flag default
+	}
+
+	built final
+	{
+		setstate doorcontrols default
+
+		setstate doorcontrols_materials invisible
+		setstate doorcontrols_materials_clip invisible
+		setstate doorcontrols_flag invisible
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "battery_axis_generator_defend"
+
+		wm_addteamvoiceannounce 1 "battery_allies_generator_destroy"
+
+		wm_teamvoiceannounce 0 "battery_axis_generator_constructed"
+
+		wm_teamvoiceannounce 1 "battery_allies_generator_destroy"
+		// *---------------------------------------------------------------------------------*
+
+		// Some kind of UI pop-up to alert players
+		wm_announce	"Axis have constructed the Door Controls Generator!"
+
+		enablespeaker doorcontrols_sound
+
+		wm_objective_status 4 0 1
+		wm_objective_status 4 1 2
+
+		// set status to built
+		globalaccum 2 set 0
+		// allow doors to operate again
+		globalaccum 1 set 0
+		trigger reardoor_left close
+		trigger reardoor_right close
+	}
+
+	decayed final
+	{
+		setstate doorcontrols invisible
+
+		setstate doorcontrols_materials default
+		setstate doorcontrols_materials_clip default
+		setstate doorcontrols_flag default
+	}
+
+	death
+	{
+		setstate doorcontrols invisible
+
+		setstate doorcontrols_materials default
+		setstate doorcontrols_materials_clip default
+		setstate doorcontrols_flag default
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "battery_axis_controls_defend"
+
+		wm_teamvoiceannounce 0 "battery_axis_generator_destroyed"
+		wm_teamvoiceannounce 0 "battery_axis_controls_defend"
+
+		wm_teamvoiceannounce 1 "battery_allies_generator_destroyed"
+		wm_teamvoiceannounce 1 "battery_allies_controls_destroy"
+
+		wm_removeteamvoiceannounce 0 "battery_axis_generator_defend"
+
+		wm_removeteamvoiceannounce 1 "battery_allies_generator_destroy"
+		// *---------------------------------------------------------------------------------*
+
+		// Some kind of UI pop-up to alert players
+		wm_announce	"Allied team has destroyed the Door Controls Generator!"
+
+		disablespeaker doorcontrols_sound
+
+		wm_objective_status 4 0 2
+		wm_objective_status 4 1 1
+
+		// set status to destroyed
+		globalaccum 2 set 1
+
+		// Call seperate trigger to open doors.
+		// This is necessary to handle cases where a allied player
+		// destroys the generator and an axis player repairs it
+		// before the power to the doors is lost.
+		trigger game_manager opendoors
+	}
+}
+
+beachplanks
+{
+	spawn
+	{
+		wait 200
+		trigger beachplanks setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setstate beachplanks invisible
+
+		setstate beachplanks_materials default
+		setstate beachplanks_materials_clip default
+		setstate beachplanks_flag default
+	}
+
+	buildstart final
+	{
+		setstate beachplanks underconstruction
+
+		setstate beachplanks_materials default
+		setstate beachplanks_materials_clip default
+		setstate beachplanks_flag default
+	}
+
+	built final
+	{
+		setstate beachplanks default
+
+		setstate beachplanks_materials invisible
+		setstate beachplanks_materials_clip invisible
+		setstate beachplanks_flag invisible
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "battery_axis_controls_defend"
+		wm_addteamvoiceannounce 0 "battery_axis_bunker_defend"
+
+		wm_addteamvoiceannounce 1 "battery_allies_bunker_capture"
+
+		wm_teamvoiceannounce 0 "battery_axis_ramp_constructed"
+		wm_teamvoiceannounce 0 "battery_axis_controls_defend"
+		wm_teamvoiceannounce 0 "battery_axis_bunker_defend"
+
+		wm_teamvoiceannounce 1 "battery_allies_ramp_constructed"
+		wm_teamvoiceannounce 1 "battery_allies_bunker_capture"
+
+		wm_removeteamvoiceannounce 0 "battery_axis_ramp_stop"
+
+		wm_removeteamvoiceannounce 1 "battery_allies_ramp_construct"
+		// *---------------------------------------------------------------------------------*
+
+		// Some kind of UI pop-up to alert players
+		wm_announce	"The Allied Beach Assault Ramp has been constructed."
+
+		wm_objective_status 2 0 2
+		wm_objective_status 2 1 1
+
+	}
+
+	decayed final
+	{
+		setstate beachplanks invisible
+
+		setstate beachplanks_materials default
+		setstate beachplanks_materials_clip default
+		setstate beachplanks_flag default
+	}
+
+	death
+	{
+		setstate beachplanks invisible
+
+		setstate beachplanks_materials default
+		setstate beachplanks_materials_clip default
+		setstate beachplanks_flag default
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "battery_axis_ramp_stop"
+
+		wm_addteamvoiceannounce 1 "battery_allies_ramp_construct"
+
+		wm_teamvoiceannounce 0 "battery_axis_ramp_destroyed"
+
+		wm_teamvoiceannounce 1 "battery_allies_ramp_destroyed"
+
+		wm_removeteamvoiceannounce 0 "battery_axis_controls_defend"
+		wm_removeteamvoiceannounce 0 "battery_axis_bunker_defend"
+
+		wm_removeteamvoiceannounce 1 "battery_allies_bunker_capture"
+		// *---------------------------------------------------------------------------------*
+
+		// Some kind of UI pop-up to alert players
+		wm_announce	"Axis have destroyed the Allied Beach Assault Ramp."
+
+		wm_objective_status 2 0 1
+		wm_objective_status 2 1 2
+	}
+}
+
+// -----------------------------
+// Gun Emplacements
+// -----------------------------
+
+// West Beach
+browning_clip_1
+{
+	spawn
+	{
+		wait 200
+		trigger browning_clip_1 setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setstate browning_1 invisible
+		setstate browning_sbags_1 invisible
+
+		setstate browning_materials_1 default
+		setstate browning_materials_clip_1 default
+		setstate browning_flag_1 default
+	}
+
+	buildstart final
+	{
+		setstate browning_1 underconstruction
+		setstate browning_sbags_1 underconstruction
+
+		setstate browning_materials_1 default
+		setstate browning_materials_clip_1 default
+		setstate browning_flag_1 default
+	}
+
+	built final
+	{
+		setstate browning_1 default
+		setstate browning_sbags_1 default
+
+		setstate browning_materials_1 invisible
+		setstate browning_materials_clip_1 invisible
+		setstate browning_flag_1 invisible
+
+		wm_announce "The Allied West beach MG Nest has been constructed."
+	}
+
+	decayed final
+	{
+		setstate browning_1 invisible
+		setstate browning_sbags_1 invisible
+
+		setstate browning_materials_1 default
+		setstate browning_materials_clip_1 default
+		setstate browning_flag_1 default
+	}
+
+	death
+	{
+		setstate browning_1 invisible
+		setstate browning_sbags_1 invisible
+		repairmg42 browning_1
+		setstate browning_materials_1 default
+		setstate browning_materials_clip_1 default
+		setstate browning_flag_1 default
+
+		wm_announce "The Allied West beach MG Nest has been destroyed."
+	}
+}
+
+// East Beach
+browning_clip_2
+{
+	spawn
+	{
+		wait 200
+		trigger browning_clip_2 setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setstate browning_2 invisible
+		setstate browning_sbags_2 invisible
+
+		setstate browning_materials_2 default
+		setstate browning_materials_clip_2 default
+		setstate browning_flag_1 default
+	}
+
+	buildstart final
+	{
+		setstate browning_2 underconstruction
+		setstate browning_sbags_2 underconstruction
+
+		setstate browning_materials_2 default
+		setstate browning_materials_clip_2 default
+		setstate browning_flag_2 default
+	}
+
+	built final
+	{
+		setstate browning_2 default
+		setstate browning_sbags_2 default
+
+		setstate browning_materials_2 invisible
+		setstate browning_materials_clip_2 invisible
+		setstate browning_flag_2 invisible
+
+		wm_announce "The Allied East beach MG Nest has been constructed."
+	}
+
+	decayed final
+	{
+		setstate browning_2 invisible
+		setstate browning_sbags_2 invisible
+
+		setstate browning_materials_2 default
+		setstate browning_materials_clip_2 default
+		setstate browning_flag_2 default
+	}
+
+	death
+	{
+		setstate browning_2 invisible
+		setstate browning_sbags_2 invisible
+		repairmg42 browning_2
+		setstate browning_materials_2 default
+		setstate browning_materials_clip_2 default
+		setstate browning_flag_2 default
+
+		wm_announce "The Allied East beach MG Nest has been destroyed."
+	}
+}
+
+// Axis Main Bunker interior
+mg42_clip_1
+{
+	spawn
+	{
+		wait 200
+		trigger mg42_clip_1 setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setstate mg42_1 invisible
+
+		setstate mg42_materials_1 default
+		setstate mg42_materials_clip_1 default
+		setstate mg42_flag_1 default
+	}
+
+	buildstart final
+	{
+		setstate mg42_1 underconstruction
+
+		setstate mg42_materials_1 default
+		setstate mg42_materials_clip_1 default
+		setstate mg42_flag_1 default
+	}
+
+	built final
+	{
+		setstate mg42_1 default
+
+		setstate mg42_materials_1 invisible
+		setstate mg42_materials_clip_1 invisible
+		setstate mg42_flag_1 invisible
+
+		wm_announce "The Axis Main Bunker MG Nest has been constructed."
+	}
+
+	decayed final
+	{
+		setstate mg42_1 invisible
+
+		setstate mg42_materials_1 default
+		setstate mg42_materials_clip_1 default
+		setstate mg42_flag_1 default
+	}
+
+	death
+	{
+		setstate mg42_1 invisible
+		repairmg42 mg42_1
+		setstate mg42_materials_1 default
+		setstate mg42_materials_clip_1 default
+		setstate mg42_flag_1 default
+
+		wm_announce "The Axis Main Bunker MG Nest has been destroyed."
+	}
+}
+
+// near the door controls
+mg42_clip_2
+{
+	spawn
+	{
+		wait 200
+		trigger mg42_clip_2 setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setstate mg42_2 invisible
+
+		setstate mg42_materials_2 default
+		setstate mg42_materials_clip_2 default
+		setstate mg42_flag_2 default
+	}
+
+	buildstart final
+	{
+		setstate mg42_2 underconstruction
+
+		setstate mg42_materials_2 default
+		setstate mg42_materials_clip_2 default
+		setstate mg42_flag_2 default
+	}
+
+	built final
+	{
+		setstate mg42_2 default
+
+		setstate mg42_materials_2 invisible
+		setstate mg42_materials_clip_2 invisible
+		setstate mg42_flag_2 invisible
+
+		wm_announce "The Axis South-East MG Nest has been constructed."
+	}
+
+	decayed final
+	{
+		setstate mg42_2 invisible
+
+		setstate mg42_materials_2 default
+		setstate mg42_materials_clip_2 default
+		setstate mg42_flag_2 default
+	}
+
+	death
+	{
+		setstate mg42_2 invisible
+		repairmg42 mg42_2
+		setstate mg42_materials_2 default
+		setstate mg42_materials_clip_2 default
+		setstate mg42_flag_2 default
+
+		wm_announce "The Axis South-East MG Nest has been destroyed."
+	}
+}
+
+// overlooking West entrance to Axis Main Bunker
+mg42_clip_3
+{
+	spawn
+	{
+		wait 200
+		trigger mg42_clip_3 setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setstate mg42_3 invisible
+		setstate mg42_sbags_3 invisible
+		setstate mg42_clip_3 invisible
+
+		setstate mg42_materials_3 default
+		setstate mg42_materials_clip_3 default
+		setstate mg42_flag_3 default
+	}
+
+	buildstart final
+	{
+		setstate mg42_3 underconstruction
+		setstate mg42_sbags_3 underconstruction
+
+		setstate mg42_materials_3 default
+		setstate mg42_materials_clip_3 default
+		setstate mg42_flag_3 default
+	}
+
+	built final
+	{
+		setstate mg42_3 default
+		setstate mg42_sbags_3 default
+		setstate mg42_clip_3 default
+
+		setstate mg42_materials_3 invisible
+		setstate mg42_materials_clip_3 invisible
+		setstate mg42_flag_3 invisible
+
+		wm_announce "The Axis North-West MG Nest has been constructed."
+	}
+
+	decayed final
+	{
+		setstate mg42_3 invisible
+		setstate mg42_sbags_3 invisible
+		setstate mg42_clip_3 invisible
+
+		setstate mg42_materials_3 default
+		setstate mg42_materials_clip_3 default
+		setstate mg42_flag_3 default
+	}
+
+	death
+	{
+		setstate mg42_3 invisible
+		setstate mg42_sbags_3 invisible
+		setstate mg42_clip_3 invisible
+		repairmg42 mg42_3
+		setstate mg42_materials_3 default
+		setstate mg42_materials_clip_3 default
+		setstate mg42_flag_3 default
+
+		wm_announce "The Axis North-West MG Nest has been destroyed."
+	}
+}
+
+// --------------------------------------------------------------------
+// Front door of bunker next to the trench/radar/beach forward bunker
+// Single wall switch for operation of door.
+// --------------------------------------------------------------------
+frontdoor_trigger1
+{
+	spawn
+	{
+		accum 5 set 1			// Initial state is down
+		wait 500			// Wait for everything to settle
+		trigger frontdoor_trigger1 main	// Open front door of complex initially
+	}
+	trigger main
+	{
+		globalaccum 1 abort_if_not_equal 0
+		trigger frontdoor_trigger1 up
+		trigger frontdoor_trigger1 down
+
+	}
+	trigger up
+	{
+			accum 5 abort_if_not_equal 1	// Ready to run up routine == 1
+			resetscript			// return to trigger that called it
+
+			trigger frontdoor_lever1 up
+			accum 5 set 0			// Setup accum for up routine
+	}
+	trigger down
+	{
+			accum 5 abort_if_not_equal 0	// Ready to run down routine == 0
+			resetscript			// return to trigger that called it
+
+			trigger frontdoor_lever1 down
+			accum 5 set 1			// Setup accum for up routine
+	}
+}
+
+frontdoor_lever1
+{
+	spawn
+	{
+	}
+	trigger down
+	{
+		gotomarker frontdoor_lever1_downpos 16
+		playsound sound/movers/switches/butn2.wav
+		trigger frontdoor_left open
+		trigger frontdoor_right open
+	}
+	trigger up
+	{
+		gotomarker frontdoor_lever1_uppos 16
+		playsound sound/movers/switches/switch.wav
+		trigger frontdoor_left close
+		trigger frontdoor_right close
+	}
+}
+
+frontdoor_left
+{
+	spawn
+	{
+	}
+
+	trigger open
+	{
+		wait 500
+		playsound sound/movers/misc/big_gate1.wav volume 127
+		wait 350
+		enablespeaker frontdoor_sound
+		gotomarker frontdoor_left_pc2 15 wait
+		disablespeaker frontdoor_sound
+		playsound sound/movers/misc/big_gate3.wav volume 127
+	}
+
+	trigger close
+	{
+		wait 500
+		playsound sound/movers/misc/big_gate1.wav volume 127
+		wait 400
+		enablespeaker frontdoor_sound
+		gotomarker frontdoor_left_pc1 15 wait
+		disablespeaker frontdoor_sound
+		playsound sound/movers/misc/big_gate3.wav volume 127
+	}
+}
+
+frontdoor_right
+{
+	spawn
+	{
+	}
+
+	trigger open
+	{
+		wait 850
+		gotomarker frontdoor_right_pc2 18 wait
+		playsound sound/movers/misc/big_gate3.wav volume 127
+	}
+
+	trigger close
+	{
+		wait 500
+		playsound sound/movers/misc/big_gate1.wav volume 127
+		wait 350
+		gotomarker frontdoor_right_pc1 18 wait
+		playsound sound/movers/misc/big_gate3.wav volume 127
+	}
+}
+
+// --------------------------------------------------------------------
+// Rear door of bunker
+// Non-player operable door.
+// --------------------------------------------------------------------
+reardoor_trigger1
+{
+	spawn
+	{
+		accum 5 set 1
+		wait 500
+	}
+	trigger main
+	{
+		globalaccum 1 abort_if_not_equal 0
+		trigger frontdoor_trigger1 up
+		trigger frontdoor_trigger1 down
+
+	}
+	trigger up
+	{
+			accum 5 abort_if_not_equal 1
+			resetscript
+
+			accum 5 set 0
+	}
+	trigger down
+	{
+			accum 5 abort_if_not_equal 0
+			resetscript
+
+			accum 5 set 1
+	}
+}
+
+reardoor_left
+{
+	spawn
+	{
+	}
+
+	trigger open
+	{
+		wait 500
+		playsound sound/movers/misc/big_gate1.wav volume 127
+		wait 350
+		enablespeaker reardoor_sound
+		gotomarker reardoor_left_pc2 15 wait
+		disablespeaker reardoor_sound
+		playsound sound/movers/misc/big_gate3.wav volume 127
+	}
+
+	trigger close
+	{
+		wait 500
+		playsound sound/movers/misc/big_gate1.wav volume 127
+		wait 350
+		enablespeaker reardoor_sound
+		gotomarker reardoor_left_pc1 15 wait
+		disablespeaker reardoor_sound
+		playsound sound/movers/misc/big_gate3.wav volume 127
+	}
+}
+
+reardoor_right
+{
+	spawn
+	{
+	}
+
+	trigger open
+	{
+		wait 850
+		gotomarker reardoor_right_pc2 18 wait
+		playsound sound/movers/misc/big_gate3.wav volume 127
+	}
+
+	trigger close
+	{
+		wait 500
+		playsound sound/movers/misc/big_gate1.wav volume 127
+		wait 350
+		gotomarker reardoor_right_pc1 18 wait
+		stopsound
+		playsound sound/movers/misc/big_gate3.wav volume 127
+	}
+}
+
+// --------------------------------------------------------------------
+// Left door of gun chamber
+// Single wall switch for operation of door.
+// --------------------------------------------------------------------
+leftdoor_trigger1
+{
+	spawn
+	{
+		accum 6 set 1
+		wait 500
+		trigger leftdoor_trigger1 main
+	}
+	trigger main
+	{
+		globalaccum 1 abort_if_not_equal 0
+		trigger leftdoor_trigger1 up
+		trigger leftdoor_trigger1 down
+
+	}
+	trigger up
+	{
+			accum 6 abort_if_not_equal 1
+			resetscript
+
+			trigger leftdoor_lever1 up
+			accum 6 set 0
+	}
+	trigger down
+	{
+			accum 6 abort_if_not_equal 0
+			resetscript
+
+			trigger leftdoor_lever1 down
+			accum 6 set 1
+	}
+}
+
+leftdoor_lever1
+{
+	spawn
+	{
+	}
+	trigger down
+	{
+		gotomarker leftdoor_lever1_downpos 16
+		playsound sound/movers/switches/butn2.wav
+		trigger leftdoor_left open
+		trigger leftdoor_right open
+	}
+	trigger up
+	{
+		gotomarker leftdoor_lever1_uppos 16
+		playsound sound/movers/switches/switch.wav
+		trigger leftdoor_left close
+		trigger leftdoor_right close
+	}
+}
+
+leftdoor_left
+{
+	spawn
+	{
+	}
+
+	trigger open
+	{
+		wait 500
+		playsound sound/movers/misc/big_gate1.wav volume 127
+		wait 350
+		enablespeaker leftdoor_sound
+		gotomarker leftdoor_left_pc2 17 wait
+		disablespeaker leftdoor_sound
+		playsound sound/movers/misc/big_gate3.wav volume 127
+	}
+
+	trigger close
+	{
+		wait 500
+		playsound sound/movers/misc/big_gate1.wav volume 127
+		wait 350
+		enablespeaker leftdoor_sound
+		gotomarker leftdoor_left_pc1 17 wait
+		disablespeaker leftdoor_sound
+		playsound sound/movers/misc/big_gate3.wav volume 127
+	}
+}
+
+leftdoor_right
+{
+	spawn
+	{
+	}
+
+	trigger open
+	{
+		wait 850
+		gotomarker leftdoor_right_pc2 17 wait
+		playsound sound/movers/misc/big_gate3.wav volume 127
+	}
+
+	trigger close
+	{
+		wait 500
+		playsound sound/movers/misc/big_gate1.wav volume 127
+		wait 350
+		gotomarker leftdoor_right_pc1 17 wait
+		playsound sound/movers/misc/big_gate3.wav volume 127
+	}
+}
+
+// --------------------------------------------------------------------
+// right door of gun chamber
+// Single wall switch for operation of door.
+// --------------------------------------------------------------------
+rightdoor_trigger1
+{
+	spawn
+	{
+		accum 6 set 1
+		wait 500
+		trigger rightdoor_trigger1 main
+	}
+	trigger main
+	{
+		globalaccum 1 abort_if_not_equal 0
+		trigger rightdoor_trigger1 up
+		trigger rightdoor_trigger1 down
+
+	}
+	trigger up
+	{
+			accum 6 abort_if_not_equal 1
+			resetscript
+
+			trigger rightdoor_lever1 up
+			accum 6 set 0
+	}
+	trigger down
+	{
+			accum 6 abort_if_not_equal 0
+			resetscript
+
+			trigger rightdoor_lever1 down
+			accum 6 set 1
+	}
+}
+
+rightdoor_lever1
+{
+	spawn
+	{
+	}
+	trigger down
+	{
+		gotomarker rightdoor_lever1_downpos 16
+		playsound sound/movers/switches/butn2.wav
+		trigger rightdoor_left open
+		trigger rightdoor_right open
+	}
+	trigger up
+	{
+		gotomarker rightdoor_lever1_uppos 16
+		playsound sound/movers/switches/switch.wav
+		trigger rightdoor_left close
+		trigger rightdoor_right close
+	}
+}
+
+rightdoor_left
+{
+	spawn
+	{
+	}
+
+	trigger open
+	{
+		wait 500
+		playsound sound/movers/misc/big_gate1.wav volume 127
+		wait 350
+		enablespeaker rightdoor_sound
+		gotomarker rightdoor_left_pc2 17 wait
+		disablespeaker rightdoor_sound
+		playsound sound/movers/misc/big_gate3.wav volume 127
+	}
+
+	trigger close
+	{
+		wait 500
+		playsound sound/movers/misc/big_gate1.wav volume 127
+		wait 350
+		enablespeaker rightdoor_sound
+		gotomarker rightdoor_left_pc1 17 wait
+		disablespeaker rightdoor_sound
+		playsound sound/movers/misc/big_gate3.wav volume 127
+	}
+}
+
+rightdoor_right
+{
+	spawn
+	{
+	}
+
+	trigger open
+	{
+		wait 850
+		gotomarker rightdoor_right_pc2 18 wait
+		playsound sound/movers/misc/big_gate3.wav volume 127
+	}
+
+	trigger close
+	{
+		wait 500
+		playsound sound/movers/misc/big_gate1.wav volume 127
+		wait 350
+		gotomarker rightdoor_right_pc1 18 wait
+		playsound sound/movers/misc/big_gate3.wav volume 127
+	}
+}
+
+// ================================================
+// ============ NEUTRAL COMMAND POST ==============
+// ================================================
+
+allied_compost_built
+{
+	spawn
+	{
+		wait 400
+		trigger allied_compost_built setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+	}
+
+	buildstart final
+	{
+		setstate allied_compost_built_model underconstruction
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+	}
+
+	built final
+	{
+		setstate allied_compost_built_model default
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+
+		trigger allied_compost_built_model enable_allied_features
+
+		enablespeaker allies_compost_sound
+	}
+
+	decayed final
+	{
+		setstate allied_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+	}
+
+	death
+	{
+		setstate allied_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+
+		trigger allied_compost_built_model disable_allied_features
+
+		disablespeaker allies_compost_sound
+	}
+}
+
+allied_compost_built_model
+{
+	spawn
+	{
+		wait 400
+		setstate allied_compost_built_model invisible
+	}
+
+	trigger enable_allied_features
+	{
+		setchargetimefactor 1 soldier 0.75
+		setchargetimefactor 1 lieutenant 0.75
+		setchargetimefactor 1 medic 0.75
+		setchargetimefactor 1 engineer 0.75
+		setchargetimefactor 1 covertops 0.75
+		sethqstatus 1 1
+
+		alertentity eastbunker_spawns
+		setstate eastbunker_wobj default
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed_allies"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed"
+
+		wm_removeteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_removeteamvoiceannounce 1 "allies_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+
+		wm_announce	"Allied Command Post constructed. Charge speed increased!"
+
+		wm_objective_status 5 0 2
+		wm_objective_status 5 1 1
+	}
+
+	trigger disable_allied_features
+	{
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+
+		alertentity eastbunker_spawns
+		setstate eastbunker_wobj invisible
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_teamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_damaged"
+		// *---------------------------------------------------------------------------------*
+
+		wm_announce	"Axis team has destroyed the Allied Command Post!"
+
+		wm_objective_status 5 0 0
+		wm_objective_status 5 1 0
+	}
+}
+
+axis_compost_built
+{
+	spawn
+	{
+		wait 400
+		trigger axis_compost_built setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setchargetimefactor 0 soldier 1
+		setchargetimefactor 0 lieutenant 1
+		setchargetimefactor 0 medic 1
+		setchargetimefactor 0 engineer 1
+		setchargetimefactor 0 covertops 1
+		sethqstatus 0 0
+	}
+
+	buildstart final
+	{
+		setstate axis_compost_built_model underconstruction
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+	}
+
+	built final
+	{
+		setstate axis_compost_built_model default
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+
+		trigger axis_compost_built_model enable_axis_features
+
+		enablespeaker axis_compost_sound
+	}
+
+	decayed final
+	{
+		setstate axis_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+	}
+
+	death
+	{
+		setstate axis_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+
+		trigger axis_compost_built_model disable_axis_features
+
+		disablespeaker axis_compost_sound
+	}
+}
+
+axis_compost_built_model
+{
+	spawn
+	{
+		wait 400
+		setstate axis_compost_built_model invisible
+	}
+
+	trigger enable_axis_features
+	{
+		setchargetimefactor 0 soldier 0.75
+		setchargetimefactor 0 lieutenant 0.75
+		setchargetimefactor 0 medic 0.75
+		setchargetimefactor 0 engineer 0.75
+		setchargetimefactor 0 covertops 0.75
+		sethqstatus 0 1
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed_axis"
+
+		wm_removeteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_removeteamvoiceannounce 1 "allies_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+
+		wm_announce	"Axis Command Post constructed. Charge speed increased!"
+
+		wm_objective_status 6 0 1
+		wm_objective_status 6 1 2
+	}
+
+	trigger disable_axis_features
+	{
+		setchargetimefactor 0 soldier 1
+		setchargetimefactor 0 lieutenant 1
+		setchargetimefactor 0 medic 1
+		setchargetimefactor 0 engineer 1
+		setchargetimefactor 0 covertops 1
+		sethqstatus 0 0
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_teamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_damaged"
+		// *---------------------------------------------------------------------------------*
+
+		wm_announce	"Allied team has destroyed the Axis Command Post!"
+
+		wm_objective_status 6 0 0
+		wm_objective_status 6 1 0
+	}
+}
+
+// ================================
+// ======= REMOVE LMS STUFF =======
+// ================================
+beachplanks_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+// Axis Main Bunker Command Post for LMS
+neutral_compost_toi_lms
+{
+	spawn
+	{
+		wait 50
+		setstate neutral_compost_toi_lms invisible
+	}
+}
+
+neutral_compost_clip_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+neutral_compost_closed_clip_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+neutral_compost_closed_model_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+allied_compost_built_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+allied_compost_built_model_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+axis_compost_built_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+axis_compost_built_model_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+
+// Axis Main Bunker Health & Ammo Cabinets
+mainbunker_hacabinet_toi_lms
+{
+	spawn
+	{
+		wait 50
+		remove
+	}
+}
+
+mainbunker_hacabinet_cm_marker_lms
+{
+	spawn
+	{
+		wait 50
+		remove
+	}
+}
+
+mainbunker_trigger_ammo_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+mainbunker_ammocabinet_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+
+mainbunker_ammocabinet_clip_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+mainbunker_trigger_heal_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+mainbunker_healthcabinet_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}
+
+mainbunker_healthcabinet_clip_lms
+{
+	spawn
+	{
+		wait 400
+		remove
+	}
+}

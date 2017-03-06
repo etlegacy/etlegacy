@@ -1,0 +1,663 @@
+game_manager
+{
+	spawn
+	{
+		// Game rules
+		wm_number_of_objectives 1
+		wm_set_round_timelimit	5
+
+		disablespeaker allies_compost_sound	// command post speaker
+		disablespeaker axis_compost_sound	// command post speaker
+
+		wait 1000
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_teamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+	}
+}
+
+alliedobjspawns
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+axisobjspawns
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+alliedcampmarker
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+axisconstmarker
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+axisdepotmarker
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+train2_trigger
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+train2_enabler_axis
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+train2_enabler_allies
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+train2_disabler
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+train2_controller
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+no_lms
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+train1_trigger
+{
+	spawn
+	{
+		setstate train1_trigger invisible
+	}
+}
+
+train1_enabler_axis
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+train1_enabler_allies
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+train1_disabler
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+depotflag
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+capturespawn
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+panel3
+{
+	spawn
+	{
+		wait 400
+		setstate panel3_materials_clip invisible
+		setstate panel3_flag invisible
+		setstate panel3_materials invisible
+		setstate panel3 default
+		disablemessage panel3 // Turn off func_constructible track message
+	}
+}
+
+panel3_toi
+{
+	spawn
+	{	
+		setstate panel3_toi invisible
+	}
+}
+
+panel_user3
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+trigger_end
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+end_explosion
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+end_alliedsmoke
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+fakeobj2
+{
+	spawn
+	{
+		wait 500
+
+		remove
+	}
+}
+
+
+// ================================================
+// ============ NEUTRAL COMMAND POST ==============
+// ================================================
+
+allied_compost_built
+{
+	spawn
+	{
+		wait 400
+		trigger allied_compost_built setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+	}
+
+	buildstart final
+	{
+		setstate allied_compost_built_model underconstruction
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+	}
+
+	built final
+	{
+		setstate allied_compost_built_model default
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+
+		trigger allied_compost_built_model enable_allied_features
+
+		enablespeaker allies_compost_sound
+	}
+
+	decayed final
+	{
+		setstate allied_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+	}
+
+	death
+	{
+		setstate allied_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+
+		trigger allied_compost_built_model disable_allied_features
+
+		disablespeaker allies_compost_sound
+	}
+}
+
+allied_compost_built_model
+{
+	spawn
+	{
+		wait 400
+		setstate allied_compost_built_model invisible
+	}
+
+	trigger enable_allied_features
+	{
+		setchargetimefactor 1 soldier 0.75
+		setchargetimefactor 1 lieutenant 0.75
+		setchargetimefactor 1 medic 0.75
+		setchargetimefactor 1 engineer 0.75
+		setchargetimefactor 1 covertops 0.75
+		sethqstatus 1 1
+
+		wm_announce	"Allied Command Post constructed. Charge speed increased!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed_allies"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed"
+
+		wm_removeteamvoiceannounce 1 "allies_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+	}
+
+	trigger disable_allied_features
+	{
+		setchargetimefactor 1 soldier 1
+		setchargetimefactor 1 lieutenant 1
+		setchargetimefactor 1 medic 1
+		setchargetimefactor 1 engineer 1
+		setchargetimefactor 1 covertops 1
+		sethqstatus 1 0
+
+		wm_announce	"Axis team has destroyed the Allied Command Post!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_teamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_damaged"
+		// *---------------------------------------------------------------------------------*
+
+		//wm_voiceannounce 0 SYS_ObjDestroyed
+		//wm_voiceannounce 1 SYS_ObjDestroyed
+	}
+}
+
+axis_compost_built
+{
+	spawn
+	{
+		wait 400
+		trigger axis_compost_built setup
+
+		constructible_class 2
+	}
+
+	trigger setup
+	{
+		setchargetimefactor 0 soldier 1
+		setchargetimefactor 0 lieutenant 1
+		setchargetimefactor 0 medic 1
+		setchargetimefactor 0 engineer 1
+		setchargetimefactor 0 covertops 1
+		sethqstatus 0 0
+	}
+
+	buildstart final
+	{
+		setstate axis_compost_built_model underconstruction
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+	}
+
+	built final
+	{
+		setstate axis_compost_built_model default
+		setstate neutral_compost_closed_clip invisible
+		setstate neutral_compost_closed_model invisible
+
+		trigger axis_compost_built_model enable_axis_features
+
+		enablespeaker axis_compost_sound
+	}
+
+	decayed final
+	{
+		setstate axis_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+	}
+
+	death
+	{
+		setstate axis_compost_built_model invisible
+		setstate neutral_compost_closed_clip default
+		setstate neutral_compost_closed_model default
+
+		trigger axis_compost_built_model disable_axis_features
+
+		disablespeaker axis_compost_sound
+	}
+}
+
+axis_compost_built_model
+{
+	spawn
+	{
+		wait 400
+		setstate axis_compost_built_model invisible
+	}
+
+	trigger enable_axis_features
+	{
+		setchargetimefactor 0 soldier 0.75
+		setchargetimefactor 0 lieutenant 0.75
+		setchargetimefactor 0 medic 0.75
+		setchargetimefactor 0 engineer 0.75
+		setchargetimefactor 0 covertops 0.75
+		sethqstatus 0 1
+
+		wm_announce	"Axis Command Post constructed. Charge speed increased!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_teamvoiceannounce 0 "axis_hq_compost_constructed"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_constructed_axis"
+
+		wm_removeteamvoiceannounce 0 "axis_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+	}
+
+	trigger disable_axis_features
+	{
+		setchargetimefactor 0 soldier 1
+		setchargetimefactor 0 lieutenant 1
+		setchargetimefactor 0 medic 1
+		setchargetimefactor 0 engineer 1
+		setchargetimefactor 0 covertops 1
+		sethqstatus 0 0
+
+		wm_announce	"Allied team has destroyed the Axis Command Post!"
+
+		// *----------------------------------- vo ------------------------------------------*
+		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
+
+		wm_addteamvoiceannounce 1 "allies_hq_compost_construct"
+
+		wm_teamvoiceannounce 0 "axis_hq_compost_damaged"
+
+		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
+		// *---------------------------------------------------------------------------------*
+
+		//wm_voiceannounce 0 SYS_ObjDestroyed
+		//wm_voiceannounce 1 SYS_ObjDestroyed
+	}
+}
+
+
+// Depot Yard MG Nest
+browning_clip_1
+{
+	spawn
+	{
+		wait 200
+
+		constructible_class 2
+
+		trigger self setup
+	}
+
+	trigger setup
+	{
+		setstate browning_1 invisible
+		setstate browning_materials_1 default
+		setstate browning_materials_clip_1 default
+		setstate browning_flag_1 default
+	}
+
+	buildstart final
+	{
+		setstate browning_1 underconstruction
+		setstate browning_materials_1 default
+		setstate browning_materials_clip_1 default
+		setstate browning_flag_1 default
+	}
+
+	built final
+	{
+		setstate browning_1 default
+		setstate browning_materials_1 invisible
+		setstate browning_materials_clip_1 invisible
+		setstate browning_flag_1 invisible
+
+		wm_announce	"The Depot Yard MG has been constructed!"
+	}
+
+	decayed final
+	{
+		setstate browning_1 invisible
+		setstate browning_materials_1 default
+		setstate browning_materials_clip_1 default
+		setstate browning_flag_1 default
+	}
+
+	death
+	{
+		setstate browning_1 invisible
+		repairmg42 browning_1
+		setstate browning_materials_1 default
+		setstate browning_materials_clip_1 default
+		setstate browning_flag_1 default
+
+		wm_announce	"The Depot Yard MG has been destroyed!"
+	}
+}
+
+mg42depot_clip_1
+{
+	spawn
+	{
+		wait 200
+
+		constructible_class 2
+
+		trigger self setup
+	}
+
+	trigger setup
+	{
+		setstate browning_1 invisible
+		setstate browning_materials_1 default
+		setstate browning_materials_clip_1 default
+		setstate browning_flag_1 default
+	}
+
+	buildstart final
+	{
+		setstate browning_1 underconstruction
+		setstate browning_materials_1 default
+		setstate browning_materials_clip_1 default
+		setstate browning_flag_1 default
+	}
+
+	built final
+	{
+		setstate browning_1 default
+		setstate browning_materials_1 invisible
+		setstate browning_materials_clip_1 invisible
+		setstate browning_flag_1 invisible
+
+		wm_announce	"The Depot Yard MG has been constructed!"
+	}
+
+	decayed final
+	{
+		setstate browning_1 invisible
+		setstate browning_materials_1 default
+		setstate browning_materials_clip_1 default
+		setstate browning_flag_1 default
+	}
+
+	death
+	{
+		setstate browning_1 invisible
+		repairmg42 browning_1
+		setstate browning_materials_1 default
+		setstate browning_materials_clip_1 default
+		setstate browning_flag_1 default
+
+		wm_announce	"The Depot Yard MG has been destroyed!"
+	}
+}
+
+// Track Switch MG Nest
+browning_clip_2
+{
+	spawn
+	{
+		wait 200
+
+		constructible_class 2
+
+		trigger self setup
+	}
+
+	trigger setup
+	{
+		setstate browning_2 invisible
+		setstate browning_materials_2 default
+		setstate browning_materials_clip_2 default
+		setstate browning_flag_2 default
+	}
+
+	buildstart final
+	{
+		setstate browning_2 underconstruction
+		setstate browning_materials_2 default
+		setstate browning_materials_clip_2 default
+		setstate browning_flag_2 default
+	}
+
+	built final
+	{
+		setstate browning_2 default
+		setstate browning_materials_2 invisible
+		setstate browning_materials_clip_2 invisible
+		setstate browning_flag_2 invisible
+
+		wm_announce	"The Track Switch MG has been constructed!"
+	}
+
+	decayed final
+	{
+		setstate browning_2 invisible
+		setstate browning_materials_2 default
+		setstate browning_materials_clip_2 default
+		setstate browning_flag_2 default
+	}
+
+	death
+	{
+		setstate browning_2 invisible
+		repairmg42 browning_2
+		setstate browning_materials_2 default
+		setstate browning_materials_clip_2 default
+		setstate browning_flag_2 default
+
+		wm_announce	"The Track Switch MG has been destroyed!"
+	}
+}
