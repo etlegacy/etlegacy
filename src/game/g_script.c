@@ -992,7 +992,9 @@ void script_mover_spawn(gentity_t *ent)
 		}
 		else
 		{
-			gentity_t *tent = G_FindByTargetname(NULL, ent->tagBuffer);
+			gentity_t *tent;
+
+			tent = G_FindByTargetname(NULL, ent->tagBuffer);
 
 			if (!tent)
 			{

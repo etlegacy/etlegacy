@@ -1545,7 +1545,9 @@ void Think_SetupObjectiveInfo(gentity_t *ent)
 		// this is for compass usage
 		if ((ent->spawnflags & AXIS_OBJECTIVE) || (ent->spawnflags & ALLIED_OBJECTIVE))
 		{
-			gentity_t *e = G_Spawn();
+			gentity_t *e;
+
+			e = G_Spawn();
 
 			e->r.svFlags = SVF_BROADCAST;
 			e->classname = "explosive_indicator";

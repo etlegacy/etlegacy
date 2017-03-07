@@ -836,21 +836,17 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 		if (oidInfo)
 		{
-			int infoId;
+			int entNum;
 
 			customimage = mEnt->team == TEAM_AXIS ? oidInfo->customimageaxis : oidInfo->customimageallies;
 
 			// we have an oidInfo - check for main objective and do special color in case of
-			// note: many map scripts are faulty and set wrong wm_objective_status!
-			infoId = atoi(CG_ConfigString(mEnt->team == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE)) -1;
+			// note: to make this work map scripts have to be adjusted
+			entNum = atoi(CG_ConfigString(mEnt->team == TEAM_AXIS ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE));
 
-			if (infoId >= 0 && infoId < MAX_OID_TRIGGERS)
+			if (entNum == oidInfo->entityNum)
 			{
-				if (cgs.oidInfo[infoId].entityNum == oidInfo->entityNum)
-				{
-					// we should change this - let it flicker, draw in hud or?
-					trap_R_SetColor(colorYellow);
-				}
+				trap_R_SetColor(colorYellow);
 			}
 		}
 

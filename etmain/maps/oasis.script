@@ -77,10 +77,6 @@ game_manager
 		// 7: Allied command post
 		// 8: Axis command post
 
-		// Current main objectives for each team (0=Axis, 1=Allies)
-		wm_set_main_objective		3	0
-		wm_set_main_objective		3	1
-
 		// Objective overview status indicators
 		//wm_objective_status <objective> <team (0=Axis, 1=Allies)> <status (0=neutral 1=complete 2=failed)>
 		wm_objective_status 1 1 0
@@ -148,6 +144,12 @@ game_manager
 		wm_teamvoiceannounce 1 "oasis_allies_pumps_repair"
 		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
 		// *---------------------------------------------------------------------------------*
+		
+		// Current main objectives for each team (0=Axis, 1=Allies)
+		// call this the very first time after wm_objective_status is executed for each objective
+		// otherwise you might run into target not found issues 
+		wm_set_main_objective	"old_city_wall_toi"	0
+		wm_set_main_objective	"old_city_wall_toi"	1
 	}
 
 	trigger 75mm_gun_counter
@@ -348,8 +350,8 @@ oldcitywall //Broken section of Old City wall
 		wm_objective_status 		3 0 2
 		wm_objective_status 		3 1 1
 
-		wm_set_main_objective	1 0
-		wm_set_main_objective	1 1
+		wm_set_main_objective	"pak75_1_toi" 0
+		wm_set_main_objective	"pak75_1_toi" 1
 	}
 }
 
@@ -814,8 +816,8 @@ pak75_clip_1
 		wm_objective_status 		1 0 2
 		wm_objective_status 		1 1 1
 
-		wm_set_main_objective	2 0
-		wm_set_main_objective	2 1
+		wm_set_main_objective	"pak75_2_toi" 0
+		wm_set_main_objective	"pak75_2_toi" 1
 
 		// Update game manager counter for objectives
 		trigger game_manager 75mm_gun_counter

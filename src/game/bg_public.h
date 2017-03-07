@@ -327,7 +327,7 @@ extern const int aReinfSeeds[MAX_REINFSEEDS];
 
 #define CS_LEVEL_START_TIME             11     ///< so the timer only shows the current level
 #define CS_INTERMISSION                 12     ///< when 1, intermission will start in a second or two
-#define CS_MULTI_INFO                   13
+#define CS_MULTI_INFO                   13     ///< stores number of objectives, defender and num of spawn targets
 #define CS_MULTI_MAPWINNER              14
 #define CS_MULTI_OBJECTIVE              15
 

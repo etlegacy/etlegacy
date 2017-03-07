@@ -3323,7 +3323,7 @@ qboolean G_ScriptAction_NumberofObjectives(gentity_t *ent, char *params)
 }
 
 /**
- * @brief syntax: wm_set_main_objective \<objective_number\> \<team\>
+ * @brief syntax: wm_set_main_objective \<objective_targetname\> \<team\>
  * @param ent - unused
  * @param params
  * @return true or aborts
@@ -3331,29 +3331,38 @@ qboolean G_ScriptAction_NumberofObjectives(gentity_t *ent, char *params)
  */
 qboolean G_ScriptAction_SetMainObjective(gentity_t *ent, char *params)
 {
-	char  *pString, *token;
-	char  cs[MAX_STRING_CHARS];
-	char* parm;
-	int   num, cs_obj;
+	gentity_t *target;
+	char      *pString, *token;
+	char      cs[MAX_STRING_CHARS];
+	char*     parm;
+	int       cs_obj;
 					
 	pString = params;
 	token = COM_Parse(&pString);
 	if (!token[0])
 	{
-		G_Error("G_ScriptAction_ObjectiveImage: number parameter required\n");
+		G_Error("G_ScriptAction_SetMainObjective: number parameter required\n");
 	}
 
-	num = atoi(token);
-	if (num < 1 || num > MAX_OBJECTIVES)
+	if (!strstr(token, "_toi"))
 	{
-		G_Error( "G_ScriptAction_ObjectiveImage: Invalid objective number\n");
+		// for old map scripts compatibilty we don't abort
+		//G_Printf("^1G_ScriptAction_SetMainObjective Warning: obsolete or invalid wm_set_main_objective script command call '%s'\n", token);
+		return qfalse;
 	}
-	parm = va("%i", num);
+	
+	target = &g_entities[MAX_CLIENTS - 1];
+	target = G_FindByTargetname(target, token);
+	if (!target || target->s.eType != ET_OID_TRIGGER)
+	{
+		G_Error("G_ScriptAction_SetMainObjective: can't find toi entity with \"targetname\" = \"%s\"\n", token);
+	}
 
+	parm = va("%i", (target - g_entities));
 	token = COM_Parse(&pString);
 	if (!token[0])
 	{
-		G_Error("G_ScriptAction_ObjectiveImage: team parameter required\n");
+		G_Error("G_ScriptAction_SetMainObjective: team parameter required\n");
 	}
 
 	cs_obj = !atoi(token) ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE;
@@ -3412,7 +3421,7 @@ qboolean G_ScriptAction_ObjectiveStatus(gentity_t *ent, char *params)
 	}
 
 	trap_GetConfigstring(CS_MULTI_OBJECTIVE, cs, sizeof(cs));
-	Info_SetValueForKey(cs, va("%s%i", parm, num), token);
+	Info_SetValueForKey(cs, va("%s%i:", parm, num), token);
 	trap_SetConfigstring(CS_MULTI_OBJECTIVE, cs);
 
 #ifdef FEATURE_OMNIBOT
