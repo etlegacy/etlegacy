@@ -253,9 +253,9 @@ panel_button_t demoSliderButton =
 	NULL,
 	{ 0,                       0,  0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
-	NULL,                      /* font     */
-	CG_DemoControlButtonDown,  /* keyDown  */
-	CG_DemoControlButtonUp,    /* keyUp    */
+	NULL,                      // font
+	CG_DemoControlButtonDown,  // keyDown
+	CG_DemoControlButtonUp,    // keyUp
 	CG_DemoControlButtonRender,
 	NULL,
 	0
@@ -267,9 +267,9 @@ panel_button_t demoRewindButton =
 	"<<",
 	{ 0,                       0,  0, 0 },
 	{ 1,                       0,  0, 0, 0, 0, 0, 0},
-	NULL,                      /* font     */
-	CG_DemoControlButtonDown,  /* keyDown  */
-	CG_DemoControlButtonUp,    /* keyUp    */
+	NULL,                      // font
+	CG_DemoControlButtonDown,  // keyDown
+	CG_DemoControlButtonUp,    // keyUp
 	CG_DemoControlButtonRender,
 	NULL,
 	0
@@ -281,9 +281,9 @@ panel_button_t demoPauseButton =
 	"||",
 	{ 0,                       0,  0, 0 },
 	{ 2,                       0,  0, 0, 0, 0, 0, 0},
-	NULL,                      /* font     */
-	CG_DemoControlButtonDown,  /* keyDown  */
-	CG_DemoControlButtonUp,    /* keyUp    */
+	NULL,                      // font
+	CG_DemoControlButtonDown,  // keyDown
+	CG_DemoControlButtonUp,    // keyUp
 	CG_DemoControlButtonRender,
 	NULL,
 	0
@@ -295,9 +295,9 @@ panel_button_t demoFFButton =
 	">>",
 	{ 0,                       0,  0, 0 },
 	{ 3,                       0,  0, 0, 0, 0, 0, 0},
-	NULL,                      /* font     */
-	CG_DemoControlButtonDown,  /* keyDown  */
-	CG_DemoControlButtonUp,    /* keyUp    */
+	NULL,                      // font
+	CG_DemoControlButtonDown,  // keyDown
+	CG_DemoControlButtonUp,    // keyUp
 	CG_DemoControlButtonRender,
 	NULL,
 	0
@@ -314,17 +314,12 @@ static panel_button_t *demoControlButtons[] =
 
 /**
  * @brief Demo playback key catcher support
- * @param key
- * @param down
+ * @param[in] key
+ * @param[in] down
  */
 void CG_DemoClick(int key, qboolean down)
 {
 	int milli = trap_Milliseconds();
-
-#ifdef FEATURE_EDV
-	mlType_t menuLevel = cgs.currentMenuLevel;
-	cgs.demoCamera.factor = 5;
-#endif
 
 	// Avoid active console keypress issues
 	if (!down && !cgs.fKeyPressed[key])
@@ -340,16 +335,19 @@ void CG_DemoClick(int key, qboolean down)
 	}
 
 #ifdef FEATURE_EDV
+
+	cgs.demoCamera.factor = 5;
+
 	if (cg.demohelpWindow == SHOW_ON)
 	{
 		// pull up extended helpmenu
-		if (menuLevel == ML_MAIN && key == K_ALT)
+		if (cgs.currentMenuLevel == ML_MAIN && key == K_ALT)
 		{
 			cgs.currentMenuLevel = ML_EDV;
 			return;
 		}
 		// return to main helpmenu
-		if (menuLevel == ML_EDV && key == K_BACKSPACE)
+		if (cgs.currentMenuLevel == ML_EDV && key == K_BACKSPACE)
 		{
 			// back to main menu
 			if (!down)
@@ -359,9 +357,9 @@ void CG_DemoClick(int key, qboolean down)
 			return;
 		}
 	}
+#endif
 
 	// FIXME: fix the macros/keys - the following switches need some sorting ...
-	//        merge switches into one!
 	//        sync help/key window (see K_SPACE f.e.)
 	//        atm when FEATURE_EDV is enabled there is no key bound to call console cmd pausedemo
 
@@ -394,17 +392,18 @@ void CG_DemoClick(int key, qboolean down)
 			CG_mvToggleView_f();            // Toggle a window for the client
 		}
 		return;
-#endif
+#endif // ifdef FEATURE_MULTIVIEW
 
 	// Third-person controls
 	case K_ENTER:
 		if (!down)
 		{
+#ifdef FEATURE_EDV
 			if (cgs.demoCamera.renderingFreeCam)
 			{
 				cgs.demoCamera.renderingFreeCam = qfalse;
 			}
-
+#endif
 			trap_Cvar_Set("cg_thirdperson", ((cg_thirdPerson.integer == 0) ? "1" : "0"));
 		}
 		return;
@@ -429,10 +428,12 @@ void CG_DemoClick(int key, qboolean down)
 				trap_Cvar_Set("cg_thirdPersonRange", va("%f", range));
 			}
 		}
+#ifdef FEATURE_EDV
 		else
 		{
 			CG_RunBinding(key, down);
 		}
+#endif
 		return;
 	case K_RIGHTARROW:
 	case K_LEFTARROW:
@@ -460,50 +461,45 @@ void CG_DemoClick(int key, qboolean down)
 				trap_Cvar_Set("cg_thirdPersonAngle", va("%f", angle));
 			}
 		}
+#ifdef FEATURE_EDV
 		else
 		{
 			CG_RunBinding(key, down);
 		}
+#endif
 		return;
-	/*
-	        case K_LEFTARROW:
-	                if (cg.renderingThirdPerson && !etpro_cgs.demoCamera.renderingFreeCam) {
-	                        if(milli > cgs.thirdpersonUpdate) {
-	                                float angle = cg_thirdPersonAngle.value + DEMO_ANGLEDELTA;
 
-	                                cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
-	                                if(angle >= 360.0f) angle -= 360.0f;
-	                                trap_Cvar_Set("cg_thirdPersonAngle", va("%f", angle));
-	                        }
-	                } else {
-	                        etpro_RunBinding(key, down);
-	                }
-	                return;
-	*/
+#ifndef FEATURE_EDV
+	case K_SPACE: // most everyone's favorite jump key, :x
+		if (!down)
+		{
+			trap_SendConsoleCommand("pausedemo");
+		}
+		return;
+#endif
 	// Timescale controls
 	case K_KP_5:
-	//case K_KP_INS: // needed for "more options"
-	//case K_SPACE: // most everyone's favorite jump key, :x
-	case K_ESCAPE:  // escape also
+#ifndef FEATURE_EDV
+	case K_KP_INS: // needed for "more options" --> FEATURE_EDV
+#endif
 		if (!down)
 		{
 			trap_Cvar_Set("timescale", "1");
 			cgs.timescaleUpdate = cg.time + 1000;
 		}
 		return;
-	// Help info
-	case K_BACKSPACE:
+
+	case K_ESCAPE:
+#ifndef FEATURE_EDV
+		CG_ShowHelp_Off(&cg.demohelpWindow);
+		CG_keyOff_f();
+#else
 		if (!down)
 		{
-			if (cg.demohelpWindow != SHOW_ON)
-			{
-				CG_ShowHelp_On(&cg.demohelpWindow);
-			}
-			else
-			{
-				CG_ShowHelp_Off(&cg.demohelpWindow);
-			}
+			trap_Cvar_Set("timescale", "1");
+			cgs.timescaleUpdate = cg.time + 1000;
 		}
+#endif
 		return;
 	case K_KP_ENTER:
 		if (!down)
@@ -599,27 +595,6 @@ void CG_DemoClick(int key, qboolean down)
 			trap_Cvar_Set("demo_pvshint", ((demo_pvshint.integer == 0) ? "1" : "0"));
 		}
 		return;
-	default:
-		break;
-	}
-#endif
-
-	switch (key)
-	{
-	case K_ESCAPE:
-		CG_ShowHelp_Off(&cg.demohelpWindow);
-		CG_keyOff_f();
-		return;
-	case K_TAB:
-		if (down)
-		{
-			CG_ScoresDown_f();
-		}
-		else
-		{
-			CG_ScoresUp_f();
-		}
-		return;
 	// Help info
 	case K_BACKSPACE:
 		if (!down)
@@ -633,7 +608,29 @@ void CG_DemoClick(int key, qboolean down)
 				CG_ShowHelp_Off(&cg.demohelpWindow);
 			}
 		}
+		if (!down)
+		{
+			if (cg.demohelpWindow != SHOW_ON)
+			{
+				CG_ShowHelp_On(&cg.demohelpWindow);
+			}
+			else
+			{
+				CG_ShowHelp_Off(&cg.demohelpWindow);
+			}
+		}
 		return;
+	case K_TAB:
+		if (down)
+		{
+			CG_ScoresDown_f();
+		}
+		else
+		{
+			CG_ScoresUp_f();
+		}
+		return;
+
 	// Screenshot keys
 	case K_F11:
 		if (!down)
@@ -649,115 +646,13 @@ void CG_DemoClick(int key, qboolean down)
 		return;
 	// Window controls
 	case K_SHIFT:
-	case K_CTRL:
+	//case K_CTRL:
 	case K_MOUSE4:
 		cgs.fResize = down;
 		return;
 	case K_MOUSE1:
 		cgs.fSelect = down;
 		return;
-
-#ifndef FEATURE_EDV
-
-#ifdef FEATURE_MULTIVIEW
-	case K_MOUSE2:
-		if (!down)
-		{
-			CG_mvSwapViews_f();             // Swap the window with the main view
-		}
-		return;
-	case K_INS:
-	case K_KP_PGUP:
-		if (!down)
-		{
-			CG_mvShowView_f();              // Make a window for the client
-		}
-		return;
-	case K_DEL:
-	case K_KP_PGDN:
-		if (!down)
-		{
-			CG_mvHideView_f();              // Delete the window for the client
-		}
-		return;
-	case K_MOUSE3:
-		if (!down)
-		{
-			CG_mvToggleView_f();            // Toggle a window for the client
-		}
-		return;
-#endif
-
-	// Third-person controls
-	case K_ENTER:
-		if (!down)
-		{
-			trap_Cvar_Set("cg_thirdperson", ((cg_thirdPerson.integer == 0) ? "1" : "0"));
-		}
-		return;
-	case K_UPARROW:
-		if (milli > cgs.thirdpersonUpdate)
-		{
-			float range = cg_thirdPersonRange.value;
-
-			cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
-			range                -= ((range >= 4 * DEMO_RANGEDELTA) ? DEMO_RANGEDELTA : (range - DEMO_RANGEDELTA));
-			trap_Cvar_Set("cg_thirdPersonRange", va("%f", range));
-		}
-		return;
-	case K_DOWNARROW:
-		if (milli > cgs.thirdpersonUpdate)
-		{
-			float range = cg_thirdPersonRange.value;
-
-			cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
-			range                += ((range >= 120 * DEMO_RANGEDELTA) ? 0 : DEMO_RANGEDELTA);
-			trap_Cvar_Set("cg_thirdPersonRange", va("%f", range));
-		}
-		return;
-	case K_RIGHTARROW:
-		if (milli > cgs.thirdpersonUpdate)
-		{
-			float angle = cg_thirdPersonAngle.value - DEMO_ANGLEDELTA;
-
-			cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
-			if (angle < 0)
-			{
-				angle += 360.0f;
-			}
-			trap_Cvar_Set("cg_thirdPersonAngle", va("%f", angle));
-		}
-		return;
-	case K_LEFTARROW:
-		if (milli > cgs.thirdpersonUpdate)
-		{
-			float angle = cg_thirdPersonAngle.value + DEMO_ANGLEDELTA;
-
-			cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
-			if (angle >= 360.0f)
-			{
-				angle -= 360.0f;
-			}
-			trap_Cvar_Set("cg_thirdPersonAngle", va("%f", angle));
-		}
-		return;
-	// Timescale controls
-	case K_KP_5:
-	case K_KP_INS:
-		if (!down)
-		{
-			trap_Cvar_Set("timescale", "1");
-			cgs.timescaleUpdate = cg.time + 1000;
-		}
-		return;
-	case K_SPACE:
-		if (!down)
-		{
-			trap_SendConsoleCommand("pausedemo");
-		}
-		return;
-
-#endif // ifndef FEATURE_EDV
 
 	case K_KP_DOWNARROW:
 		if (!down)
@@ -869,11 +764,11 @@ void CG_DemoClick(int key, qboolean down)
 			trap_Cvar_Set("cl_avidemo", demo_avifpsF5.string);
 		}
 		return;
-#ifdef FEATURE_EDV
 	default:
+#ifdef FEATURE_EDV
 		CG_RunBinding(key, down);
+#endif // ifdef FEATURE_EDV
 		break;
-#endif
 	}
 }
 
