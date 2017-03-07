@@ -3421,7 +3421,7 @@ qboolean G_ScriptAction_ObjectiveStatus(gentity_t *ent, char *params)
 	}
 
 	trap_GetConfigstring(CS_MULTI_OBJECTIVE, cs, sizeof(cs));
-	Info_SetValueForKey(cs, va("%s%i:", parm, num), token);
+	Info_SetValueForKey(cs, va("%s%i", parm, num), token);
 	trap_SetConfigstring(CS_MULTI_OBJECTIVE, cs);
 
 #ifdef FEATURE_OMNIBOT
