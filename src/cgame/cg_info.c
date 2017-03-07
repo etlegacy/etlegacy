@@ -393,114 +393,6 @@ void CG_DemoClick(int key, qboolean down)
 		}
 		return;
 #endif // ifdef FEATURE_MULTIVIEW
-
-	// Third-person controls
-	case K_ENTER:
-		if (!down)
-		{
-#ifdef FEATURE_EDV
-			if (cgs.demoCamera.renderingFreeCam)
-			{
-				cgs.demoCamera.renderingFreeCam = qfalse;
-			}
-#endif
-			trap_Cvar_Set("cg_thirdperson", ((cg_thirdPerson.integer == 0) ? "1" : "0"));
-		}
-		return;
-	case K_UPARROW:
-	case K_DOWNARROW:
-		// when not in thirdperson, arrowkeys should be bindable to +freecam_turnleft, ...
-		if (cg.renderingThirdPerson && !cgs.demoCamera.renderingFreeCam)
-		{
-			if (milli > cgs.thirdpersonUpdate)
-			{
-				float range = cg_thirdPersonRange.value;
-
-				cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
-				if (key == K_UPARROW)
-				{
-					range -= ((range >= 4 * DEMO_RANGEDELTA) ? DEMO_RANGEDELTA : (range - DEMO_RANGEDELTA));
-				}
-				else
-				{
-					range += ((range >= 120 * DEMO_RANGEDELTA) ? 0 : DEMO_RANGEDELTA);
-				}
-				trap_Cvar_Set("cg_thirdPersonRange", va("%f", range));
-			}
-		}
-#ifdef FEATURE_EDV
-		else
-		{
-			CG_RunBinding(key, down);
-		}
-#endif
-		return;
-	case K_RIGHTARROW:
-	case K_LEFTARROW:
-		if (cg.renderingThirdPerson && !cgs.demoCamera.renderingFreeCam)
-		{
-			if (milli > cgs.thirdpersonUpdate)
-			{
-				float angle = cg_thirdPersonAngle.value - DEMO_ANGLEDELTA;
-
-				cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
-				if (key == K_RIGHTARROW)
-				{
-					if (angle < 0)
-					{
-						angle += 360.0f;
-					}
-				}
-				else
-				{
-					if (angle >= 360.0f)
-					{
-						angle -= 360.0f;
-					}
-				}
-				trap_Cvar_Set("cg_thirdPersonAngle", va("%f", angle));
-			}
-		}
-#ifdef FEATURE_EDV
-		else
-		{
-			CG_RunBinding(key, down);
-		}
-#endif
-		return;
-
-#ifndef FEATURE_EDV
-	case K_SPACE: // most everyone's favorite jump key, :x
-		if (!down)
-		{
-			trap_SendConsoleCommand("pausedemo");
-		}
-		return;
-#endif
-	// Timescale controls
-	case K_KP_5:
-#ifndef FEATURE_EDV
-	case K_KP_INS: // needed for "more options" --> FEATURE_EDV
-#endif
-		if (!down)
-		{
-			trap_Cvar_Set("timescale", "1");
-			cgs.timescaleUpdate = cg.time + 1000;
-		}
-		return;
-
-	case K_ESCAPE:
-#ifndef FEATURE_EDV
-		CG_ShowHelp_Off(&cg.demohelpWindow);
-		CG_keyOff_f();
-#else
-		if (!down)
-		{
-			trap_Cvar_Set("timescale", "1");
-			cgs.timescaleUpdate = cg.time + 1000;
-		}
-#endif
-		return;
 #ifdef FEATURE_EDV
 	case K_KP_ENTER:
 		if (!down)
@@ -597,6 +489,110 @@ void CG_DemoClick(int key, qboolean down)
 		}
 		return;
 #endif // ifdef FEATURE_EDV
+
+	// Third-person controls
+	case K_ENTER:
+		if (!down)
+		{
+#ifdef FEATURE_EDV
+			if (cgs.demoCamera.renderingFreeCam)
+			{
+				cgs.demoCamera.renderingFreeCam = qfalse;
+			}
+#endif
+			trap_Cvar_Set("cg_thirdperson", ((cg_thirdPerson.integer == 0) ? "1" : "0"));
+		}
+		return;
+	case K_UPARROW:
+	case K_DOWNARROW:
+		// when not in thirdperson, arrowkeys should be bindable to +freecam_turnleft, ...
+		if (cg.renderingThirdPerson && !cgs.demoCamera.renderingFreeCam)
+		{
+			if (milli > cgs.thirdpersonUpdate)
+			{
+				float range = cg_thirdPersonRange.value;
+
+				cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
+				if (key == K_UPARROW)
+				{
+					range -= ((range >= 4 * DEMO_RANGEDELTA) ? DEMO_RANGEDELTA : (range - DEMO_RANGEDELTA));
+				}
+				else
+				{
+					range += ((range >= 120 * DEMO_RANGEDELTA) ? 0 : DEMO_RANGEDELTA);
+				}
+				trap_Cvar_Set("cg_thirdPersonRange", va("%f", range));
+			}
+		}
+#ifdef FEATURE_EDV
+		else
+		{
+			CG_RunBinding(key, down);
+		}
+#endif
+		return;
+	case K_RIGHTARROW:
+	case K_LEFTARROW:
+		if (cg.renderingThirdPerson && !cgs.demoCamera.renderingFreeCam)
+		{
+			if (milli > cgs.thirdpersonUpdate)
+			{
+				float angle = cg_thirdPersonAngle.value - DEMO_ANGLEDELTA;
+
+				cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
+				if (key == K_RIGHTARROW)
+				{
+					if (angle < 0)
+					{
+						angle += 360.0f;
+					}
+				}
+				else
+				{
+					if (angle >= 360.0f)
+					{
+						angle -= 360.0f;
+					}
+				}
+				trap_Cvar_Set("cg_thirdPersonAngle", va("%f", angle));
+			}
+		}
+#ifdef FEATURE_EDV
+		else
+		{
+			CG_RunBinding(key, down);
+		}
+#endif
+		return;
+
+#ifndef FEATURE_EDV
+	case K_SPACE: // most everyone's favorite jump key, :x
+		if (!down)
+		{
+			trap_SendConsoleCommand("pausedemo");
+		}
+		return;
+#endif
+	// Timescale controls
+	case K_KP_5:
+		//case K_KP_INS: // needed for "more options" --> FEATURE_EDV
+		if (!down)
+		{
+			trap_Cvar_Set("timescale", "1");
+			cgs.timescaleUpdate = cg.time + 1000;
+		}
+		return;
+	case K_ESCAPE:
+#ifdef FEATURE_EDV
+		if (!down)
+		{
+			trap_Cvar_Set("timescale", "1");
+			cgs.timescaleUpdate = cg.time + 1000;
+		}
+#endif
+		CG_ShowHelp_Off(&cg.demohelpWindow);
+		CG_keyOff_f();
+		return;
 	// Help info
 	case K_BACKSPACE:
 		if (!down)
