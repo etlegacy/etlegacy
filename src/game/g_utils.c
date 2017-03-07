@@ -505,7 +505,7 @@ gentity_t *G_FindByTargetname(gentity_t *from, const char *match)
 		{
 			continue;
 		}
-		G_Printf("-----> %s\n", from->targetname);
+
 		if (from->targetnamehash == hash && !Q_stricmp(from->targetname, match))
 		{
 			return from;
@@ -880,7 +880,6 @@ int G_EntitiesFree(void)
 		if (e->inuse)
 		{
 			entities++;
-			//continue;
 		}
 	}
 
