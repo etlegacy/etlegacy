@@ -545,7 +545,7 @@ void CG_DemoClick(int key, qboolean down)
 		{
 			if (milli > cgs.thirdpersonUpdate)
 			{
-				float angle = cg_thirdPersonAngle.value;// - DEMO_ANGLEDELTA;
+				float angle = cg_thirdPersonAngle.value;
 
 				angle += (key == K_LEFTARROW ? DEMO_ANGLEDELTA : -DEMO_ANGLEDELTA);
 

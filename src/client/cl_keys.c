@@ -1378,6 +1378,14 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 		{
 			cls.keyCatchers &= ~KEYCATCH_CGAME;
 			VM_Call(cgvm, CG_EVENT_HANDLING, CGAME_EVENT_NONE);
+
+			if (clc.demoplaying)
+			{
+				CL_Disconnect_f();
+				S_StopAllSounds();
+				VM_Call(uivm, UI_SET_ACTIVE_MENU, UIMENU_MAIN);
+			}
+
 			return;
 		}
 
