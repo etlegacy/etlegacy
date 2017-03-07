@@ -505,8 +505,12 @@ void CG_DemoClick(int key, qboolean down)
 		return;
 	case K_UPARROW:
 	case K_DOWNARROW:
+#ifdef FEATURE_EDV
 		// when not in thirdperson, arrowkeys should be bindable to +freecam_turnleft, ...
 		if (cg.renderingThirdPerson && !cgs.demoCamera.renderingFreeCam)
+#else
+		if (cg.renderingThirdPerson)
+#endif
 		{
 			if (milli > cgs.thirdpersonUpdate)
 			{
@@ -533,16 +537,22 @@ void CG_DemoClick(int key, qboolean down)
 		return;
 	case K_RIGHTARROW:
 	case K_LEFTARROW:
+#ifdef FEATURE_EDV
 		if (cg.renderingThirdPerson && !cgs.demoCamera.renderingFreeCam)
+#else
+		if (cg.renderingThirdPerson)
+#endif
 		{
 			if (milli > cgs.thirdpersonUpdate)
 			{
-				float angle = cg_thirdPersonAngle.value - DEMO_ANGLEDELTA;
+				float angle = cg_thirdPersonAngle.value;// - DEMO_ANGLEDELTA;
+
+				angle += (key == K_LEFTARROW ? DEMO_ANGLEDELTA : -DEMO_ANGLEDELTA);
 
 				cgs.thirdpersonUpdate = milli + DEMO_THIRDPERSONUPDATE;
 				if (key == K_RIGHTARROW)
 				{
-					if (angle < 0)
+					if (angle < 0.f)
 					{
 						angle += 360.0f;
 					}
@@ -565,14 +575,13 @@ void CG_DemoClick(int key, qboolean down)
 #endif
 		return;
 
-#ifndef FEATURE_EDV
 	case K_SPACE: // most everyone's favorite jump key, :x
 		if (!down)
 		{
 			trap_SendConsoleCommand("pausedemo");
 		}
 		return;
-#endif
+
 	// Timescale controls
 	case K_KP_5:
 		//case K_KP_INS: // needed for "more options" --> FEATURE_EDV
@@ -583,13 +592,11 @@ void CG_DemoClick(int key, qboolean down)
 		}
 		return;
 	case K_ESCAPE:
-#ifdef FEATURE_EDV
 		if (!down)
 		{
 			trap_Cvar_Set("timescale", "1");
 			cgs.timescaleUpdate = cg.time + 1000;
 		}
-#endif
 		CG_ShowHelp_Off(&cg.demohelpWindow);
 		CG_keyOff_f();
 		return;
@@ -617,20 +624,6 @@ void CG_DemoClick(int key, qboolean down)
 			CG_ScoresUp_f();
 		}
 		return;
-
-	// Screenshot keys
-	case K_F11:
-		if (!down)
-		{
-			trap_SendConsoleCommand(va("screenshot%s\n", ((cg_useScreenshotJPEG.integer) ? "JPEG" : "")));
-		}
-		return;
-	case K_F12:
-		if (!down)
-		{
-			CG_autoScreenShot_f();
-		}
-		return;
 	// Window controls
 	case K_SHIFT:
 	//case K_CTRL:
@@ -640,7 +633,6 @@ void CG_DemoClick(int key, qboolean down)
 	case K_MOUSE1:
 		cgs.fSelect = down;
 		return;
-
 	case K_KP_DOWNARROW:
 		if (!down)
 		{
@@ -749,6 +741,19 @@ void CG_DemoClick(int key, qboolean down)
 		else
 		{
 			trap_Cvar_Set("cl_avidemo", demo_avifpsF5.string);
+		}
+		return;
+	// Screenshot keys
+	case K_F11:
+		if (!down)
+		{
+			trap_SendConsoleCommand(va("screenshot%s\n", ((cg_useScreenshotJPEG.integer) ? "JPEG" : "")));
+		}
+		return;
+	case K_F12:
+		if (!down)
+		{
+			CG_autoScreenShot_f();
 		}
 		return;
 	default:
@@ -869,12 +874,12 @@ void CG_GameStatsDraw(void)
 		    tSpacing * ((gs->cWeapons > 0) ? gs->cWeapons : 1) +
 		    tSpacing * ((gs->fHasStats) ? 7 : 0) +
 		    ((cgs.gametype == GT_WOLF_LMS) ? 0 :
-		     (
-		         4 + 2 * tSpacing +                                 // Rank/XP/Skill Rating
-		         1 + tSpacing +
-		         4 + 2 * tSpacing +                                 // Skill columns
-		         1 +                                                // Skillz
-		         tSpacing * ((gs->cSkills > 0) ? gs->cSkills : 1)
+			 (
+				 4 + 2 * tSpacing +                                 // Rank/XP/Skill Rating
+				 1 + tSpacing +
+				 4 + 2 * tSpacing +                                 // Skill columns
+				 1 +                                                // Skillz
+				 tSpacing * ((gs->cSkills > 0) ? gs->cSkills : 1)
 		     )
 		    ) +
 		    5;
@@ -1040,7 +1045,7 @@ void CG_TopShotsDraw(void)
 	}
 	else
 	{
-		int            x                = Ccg_WideX(SCREEN_WIDTH) + TS_X - TS_W, y = SCREEN_HEIGHT, h;
+		int            x = Ccg_WideX(SCREEN_WIDTH) + TS_X - TS_W, y = SCREEN_HEIGHT, h;
 		topshotStats_t *ts              = &cgs.topshots;
 		vec4_t         bgColor          = COLOR_BG; // window
 		vec4_t         borderColor      = COLOR_BORDER; // window
@@ -1692,7 +1697,8 @@ void CG_DemoHelpDraw(void)
 			"^7KP_LEFT   ^3slow down (-)",
 			"^7KP_UP     ^3speed up (++)",
 			"^7KP_RIGHT  ^3speed up (+)",
-			"^7SPACE     ^3normal speed",
+			"^7KP_5      ^3normal speed",
+			"^7SPACE     ^3pause demo",
 			NULL,
 			"^7ENTER     ^3External view",
 			"^7LFT/RGHT  ^3Change angle",
@@ -1768,9 +1774,9 @@ void CG_DemoHelpDraw(void)
 		// FIXME: Should compute this beforehand
 		w = DH_W + (
 #ifdef FEATURE_MULTIVIEW
-		    (cg.mvTotalClients > 1) ? 12 :
+			(cg.mvTotalClients > 1) ? 12 :
 #endif
-		    0);
+			0);
 		x = Ccg_WideX(SCREEN_WIDTH) + 3 * DH_X - w;
 
 		if (menuLevel == ML_MAIN)
@@ -1800,9 +1806,9 @@ void CG_DemoHelpDraw(void)
 		// FIXME: Should compute this beforehand
 		w = DH_W + (
 #ifdef FEATURE_MULTIVIEW
-		    (cg.mvTotalClients > 1) ? 12 :
+			(cg.mvTotalClients > 1) ? 12 :
 #endif
-		    0);
+			0);
 		x = Ccg_WideX(SCREEN_WIDTH) + 3 * DH_X - w;
 		h = tSpacing + 9 +
 		    tSpacing * (2 +
