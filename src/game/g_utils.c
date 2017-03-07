@@ -482,7 +482,7 @@ gentity_t *G_FindByTargetname(gentity_t *from, const char *match)
 	if (hash == -1) // if there is no name (not empty string!) BG_StringHashValue returns -1
 	{
 		G_Printf("G_FindByTargetname WARNING: invalid match pointer '%s' - run devmap & g_scriptdebug 1 to get more info about\n", match);
-		//return NULL; ?! - won't be found - NULL is returned anyway
+		return NULL;
 	}
 
 	if (!from)
@@ -505,7 +505,7 @@ gentity_t *G_FindByTargetname(gentity_t *from, const char *match)
 		{
 			continue;
 		}
-
+		G_Printf("-----> %s\n", from->targetname);
 		if (from->targetnamehash == hash && !Q_stricmp(from->targetname, match))
 		{
 			return from;
