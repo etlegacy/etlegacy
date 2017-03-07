@@ -501,6 +501,7 @@ void CG_DemoClick(int key, qboolean down)
 		}
 #endif
 		return;
+#ifdef FEATURE_EDV
 	case K_KP_ENTER:
 		if (!down)
 		{
@@ -595,19 +596,9 @@ void CG_DemoClick(int key, qboolean down)
 			trap_Cvar_Set("demo_pvshint", ((demo_pvshint.integer == 0) ? "1" : "0"));
 		}
 		return;
+#endif // ifdef FEATURE_EDV
 	// Help info
 	case K_BACKSPACE:
-		if (!down)
-		{
-			if (cg.demohelpWindow != SHOW_ON)
-			{
-				CG_ShowHelp_On(&cg.demohelpWindow);
-			}
-			else
-			{
-				CG_ShowHelp_Off(&cg.demohelpWindow);
-			}
-		}
 		if (!down)
 		{
 			if (cg.demohelpWindow != SHOW_ON)
