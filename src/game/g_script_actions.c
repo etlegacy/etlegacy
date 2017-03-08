@@ -3344,18 +3344,17 @@ qboolean G_ScriptAction_SetMainObjective(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_SetMainObjective: number parameter required\n");
 	}
 
-	if (!strstr(token, "_toi"))
-	{
-		// for old map scripts compatibilty we don't abort
-		//G_Printf("^1G_ScriptAction_SetMainObjective Warning: obsolete or invalid wm_set_main_objective script command call '%s'\n", token);
-		return qfalse;
-	}
+	// FIXME we might check here for param is number to distinguish between old and new wm_set_main_objective cmd - throw next uncommented G_Error
+	//G_Printf("^1G_ScriptAction_SetMainObjective Warning: obsolete or invalid wm_set_main_objective script command call '%s'\n", token);
 
 	target = &g_entities[MAX_CLIENTS - 1];
 	target = G_FindByTargetname(target, token);
 	if (!target || target->s.eType != ET_OID_TRIGGER)
 	{
-		G_Error("G_ScriptAction_SetMainObjective: can't find toi entity with \"targetname\" = \"%s\"\n", token);
+		//G_Error("G_ScriptAction_SetMainObjective: can't find toi entity with \"targetname\" = \"%s\"\n", token);
+
+		// for old map scripts compatibilty we don't abort FIXME throw G_Error if number check is done
+		return qfalse;
 	}
 
 	parm = va("%i", (int)(target - g_entities));
