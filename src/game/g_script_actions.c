@@ -3336,7 +3336,7 @@ qboolean G_ScriptAction_SetMainObjective(gentity_t *ent, char *params)
 	char      cs[MAX_STRING_CHARS];
 	char*     parm;
 	int       cs_obj;
-					
+
 	pString = params;
 	token = COM_Parse(&pString);
 	if (!token[0])
@@ -3350,7 +3350,7 @@ qboolean G_ScriptAction_SetMainObjective(gentity_t *ent, char *params)
 		//G_Printf("^1G_ScriptAction_SetMainObjective Warning: obsolete or invalid wm_set_main_objective script command call '%s'\n", token);
 		return qfalse;
 	}
-	
+
 	target = &g_entities[MAX_CLIENTS - 1];
 	target = G_FindByTargetname(target, token);
 	if (!target || target->s.eType != ET_OID_TRIGGER)
@@ -3358,7 +3358,7 @@ qboolean G_ScriptAction_SetMainObjective(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_SetMainObjective: can't find toi entity with \"targetname\" = \"%s\"\n", token);
 	}
 
-	parm = va("%i", (target - g_entities));
+	parm = va("%i", (int)(target - g_entities));
 	token = COM_Parse(&pString);
 	if (!token[0])
 	{
