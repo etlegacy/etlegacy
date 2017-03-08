@@ -44,9 +44,6 @@ game_manager
 		wm_number_of_objectives 7
 		wm_set_round_timelimit	30
 
-		wm_set_main_objective 2	0
-		wm_set_main_objective 1	1
-
 		wm_objective_status 1 1 0
 		wm_objective_status 1 0 0
 		wm_objective_status 2 1 0
@@ -96,6 +93,9 @@ game_manager
 
 		wm_teamvoiceannounce 1 "fueldump_allies_bridge_construct"
 		// *---------------------------------------------------------------------------------*
+		
+		wm_set_main_objective "tank_build"	0
+		wm_set_main_objective "tank_build"	1 
 	}
 
 
@@ -131,9 +131,6 @@ game_manager
 
 		wm_removeteamvoiceannounce 0 "fueldump_axis_tunnel_stop"
 		// *---------------------------------------------------------------------------------*
-
-		wm_set_main_objective	2	0
-		wm_set_main_objective	2	1
 	}
 
 	//-----------------------------------------------------------------------
@@ -161,6 +158,10 @@ game_manager
 
 		wm_removeteamvoiceannounce 1 "fueldump_allies_tank_depot"
 		// *---------------------------------------------------------------------------------*
+
+		// main objective -> depot
+		wm_set_main_objective	"fueldump_toi"	0
+		wm_set_main_objective	"fueldump_toi"	1
 	}
 
 	//-----------------------------------------------------------------------
@@ -743,8 +744,6 @@ thebridge
 
 		wm_removeteamvoiceannounce 1 "fueldump_allies_bridge_reinforce"
 		// *---------------------------------------------------------------------------------*
-
-		wm_set_main_objective		1	0	// Completed an objective
 	}
 
 	//-----------------------------------------------------------------------
