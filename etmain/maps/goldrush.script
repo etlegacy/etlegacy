@@ -32,10 +32,6 @@ game_manager
 		// 6: Allied command post
 		// 7: Axis command post
 
-		// Current main objectives for each team (0=Axis, 1=Allies)
-		wm_set_main_objective		1	0
-		wm_set_main_objective		1	1
-
 		wm_objective_status 1 0 0
 		wm_objective_status 1 1 0
 		wm_objective_status 2 0 0
@@ -50,9 +46,6 @@ game_manager
 		wm_objective_status 6 1 0
 		wm_objective_status 7 0 0
 		wm_objective_status 7 1 0
-
-		wm_set_main_objective		1	0
-		wm_set_main_objective		1	1
 
 		// Stopwatch mode defending team (0=Axis, 1=Allies)
 		wm_set_defending_team	0
@@ -87,6 +80,11 @@ game_manager
 		wm_teamvoiceannounce 1 "goldrush_allies_tank_steal"
 		wm_teamvoiceannounce 1 "allies_hq_compost_construct"
 		// *---------------------------------------------------------------------------------*
+				
+		// Current main objectives for each team (0=Axis, 1=Allies)
+		// note - tank is already painted red!
+		wm_set_main_objective	"Jagdpanther"	0
+		wm_set_main_objective	"Jagdpanther"	1
 	}
 
 	trigger allies_win
@@ -118,12 +116,12 @@ game_manager
 		setautospawn	"Tank Depot"	1
 
 		accum 4 set 1
-		wm_set_main_objective		2	0
-		wm_set_main_objective		2	1
 
 		trigger game_manager allies_steal_tank_allied_msg
 		trigger game_manager allies_steal_tank_axis_msg
 
+		wm_set_main_objective	"tank_build"	0
+		wm_set_main_objective	"tank_build"	1
 	}
 
 	trigger allies_steal_tank_allied_msg
@@ -218,7 +216,6 @@ tank_sound
 //  - tracks_stop
 //  - tracks_turn_left
 //  - tracks_turn_right
-
 
 tank
 {
@@ -1731,9 +1728,6 @@ tank_turret
 		wm_objective_status 3 0 2
 		wm_objective_status 3 1 1
 
-		wm_set_main_objective		4	0
-		wm_set_main_objective		4	1
-
 		wait 100
 		trigger bank_door2_damaged bankbackboom
 
@@ -1743,6 +1737,9 @@ tank_turret
 		playsound sound/vehicles/tank/turret_end.wav
 		trigger tank sound_death
 		trigger tank script_lockout_stop
+		
+		wm_set_main_objective	"goldbars_toi"	0
+		wm_set_main_objective	"goldbars_toi"	1
 	}
 }
 
@@ -2099,11 +2096,11 @@ truck
 		wm_objective_status 4 0 2
 		wm_objective_status 4 1 1
 
-		wm_set_main_objective 5 0
-		wm_set_main_objective 5 1
-
 		setstate goldbars_toi invisible
 		setstate goldbars_cm_marker invisible
+
+		wm_set_main_objective "truck_build" 0
+		wm_set_main_objective "truck_build" 1
 	}
 
 	trigger truck_escape_msg
