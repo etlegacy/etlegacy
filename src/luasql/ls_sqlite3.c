@@ -556,7 +556,7 @@ static int env_connect(lua_State *L)
 #if SQLITE_VERSION_NUMBER > 3006013
   if (strstr(sourcename, ":memory:")) /* TODO: rework this and get/add param 'flag' for sqlite3_open_v2 - see TODO below */
   {
-	  res = sqlite3_open_v2(sourcename, &conn, SQLITE_OPEN_READWRITE | SQLITE_OPEN_MEMORY | SQLITE_OPEN_SHAREDCACHE, NULL);
+	  res = sqlite3_open_v2(sourcename, &conn, SQLITE_OPEN_READWRITE | SQLITE_OPEN_MEMORY, NULL);
   }
   else
   {
@@ -685,5 +685,8 @@ LUASQL_API int luaopen_luasql_sqlite3(lua_State *L)
   lua_newtable (L);
   luaL_setfuncs (L, driver, 0);
   luasql_set_info (L);
+  lua_pushliteral (L, "_CLIENTVERSION");
+  lua_pushliteral (L, SQLITE_VERSION);
+  lua_settable (L, -3);
   return 1;
 }
