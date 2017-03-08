@@ -639,8 +639,14 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 		check = &g_entities[moveList[e]];
 
 		// some situations in front of mover should gib players (by damage)
-		if (check->s.eType == ET_PLAYER && check->client)
+		switch (check->s.eType)
 		{
+		case ET_PLAYER:
+			if (!check->client)
+			{
+				break;
+			}
+
 			if (check->s.groundEntityNum != pusher->s.number)
 			{
 				if (check->client->ps.eFlags & (EF_DEAD | EF_PRONE | EF_PRONE_MOVING))
@@ -651,15 +657,28 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 					continue;
 				}
 			}
-		}
-		if (check->s.eType == ET_CORPSE) // always gib corpses ...
-		{
+			break;
+		case ET_CORPSE:	// always gib corpses ...
 			trap_LinkEntity(check);
 			GibEntity(check, ENTITYNUM_WORLD);
 			moveList[e] = ENTITYNUM_NONE; // prevent re-linking later on
 			continue;
+		case ET_ITEM:
+			// items should be removed (except CTF objectives)
+			if (check->s.groundEntityNum == ENTITYNUM_WORLD)
+			{
+				if (check->item->giType != IT_TEAM)
+				{
+					trap_LinkEntity(check);
+					G_FreeEntity(check);
+					moveList[e] = ENTITYNUM_NONE;
+					continue;
+				}
+			}
+			break;
+		default:
+			break;
 		}
-
 		// the entity needs to be pushed
 		pushedStackDepth = 0;   // new push, reset stack depth
 		if (G_TryPushingEntity(check, pusher, move, amove))
