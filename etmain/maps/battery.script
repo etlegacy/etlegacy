@@ -67,9 +67,6 @@ game_manager
 		wm_objective_status 6 0 0
 		wm_objective_status 6 1 0
 
-		wm_set_main_objective		1	0
-		wm_set_main_objective		1	1
-
 		wait 100
 		// rain - use proper initial spawns
 		setautospawn	"Allied West Beach"	1
@@ -114,6 +111,9 @@ game_manager
 		wm_addteamvoiceannounce 0 "battery_axis_ramp_stop"
 		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
 		// *---------------------------------------------------------------------------------*
+
+		wm_set_main_objective	"guncontrols_toi"	0
+		wm_set_main_objective	"guncontrols_toi"	1
 	}
 
 	trigger westbunker_flagblue
