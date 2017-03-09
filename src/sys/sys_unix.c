@@ -279,7 +279,7 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 	    lstat_info.st_dev != fstat_info.st_dev)
 	{
 		Com_Printf("Sys_FOpen: stat before and after chmod are different. The file ('%s') may differ (TOCTOU Attacks ?)\n", ospath);
-		fclose(fp);
+		fclose(fd);
 		return NULL;
 	}
 
