@@ -1533,7 +1533,7 @@ void Touch_ObjectiveInfo(gentity_t *ent, gentity_t *other, trace_t *trace)
  */
 void Think_SetupObjectiveInfo(gentity_t *ent)
 {
-	ent->target_ent = G_FindByTargetname(NULL, ent->target);
+	ent->target_ent = G_FindByTargetname(&g_entities[MAX_CLIENTS - 1], ent->target);
 
 	if (!ent->target_ent)
 	{
@@ -1747,6 +1747,16 @@ void SP_trigger_objective_info(gentity_t *ent)
 		{
 			G_Error("'trigger_objective_info' has override flag set but no override text\n");
 		}
+	}
+
+	// fix target w/o targetname toi
+	// occures on railgun & other maps
+	if (ent->target && !ent->targetname)
+	{
+		ent->targetname = va("%s_toi",ent->target);
+		ent->targetnamehash = BG_StringHashValue(ent->targetname);
+		// FIXME: mappers should read this (devmap)
+		G_Printf("^3SP_trigger_objective_info warning: oid '%s' w/o targetname - targetname set to '%s'\n", ent->target, ent->targetname);
 	}
 
 	// for specifying which commandmap objectives this entity "belongs" to
