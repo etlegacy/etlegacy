@@ -67,7 +67,7 @@ void DB_ExecSQLCommand_f(void)
 
 	if (result != SQLITE_OK)
 	{
-		Com_Printf("SQL command failed: %s\n", err_msg);
+		Com_Printf("SQL command '%s' failed: %s\n", sql, err_msg);
 		sqlite3_free(err_msg);
 		return;
 	}
