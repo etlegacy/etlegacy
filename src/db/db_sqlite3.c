@@ -329,6 +329,19 @@ int DB_Create()
 			(void) sqlite3_close(db);
 			return 1;
 		}
+
+		result = sqlite3_enable_shared_cache(1);
+
+		if (result != SQLITE_OK)
+		{
+			Com_Printf("... failed to share memory database - error: %s\n", sqlite3_errstr(result));
+			(void) sqlite3_close(db);
+			return 1;
+		}
+		else
+		{
+			Com_Printf("... shared cache enabled\n");
+		}
 	}
 	else if (db_mode->integer == 2)
 	{
