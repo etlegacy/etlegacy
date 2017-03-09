@@ -247,6 +247,16 @@ const char *Sys_Dirname(char *path)
  */
 FILE *Sys_FOpen(const char *ospath, const char *mode)
 {
+	struct stat buf;
+
+	// check if path exists and is a directory
+	if (!stat(ospath, &buf) && S_ISDIR(buf.st_mode))
+	{
+		return NULL;
+	}
+
+	// FIXME: do open depending of mode parameter
+	/*
 	struct stat lstat_info;
 	struct stat fstat_info;
 	int         fd;
@@ -254,23 +264,23 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 	// Check the state (if path exists) and is a directory
 	if (lstat(ospath, &lstat_info) && S_ISDIR(lstat_info.st_mode) != 0)
 	{
-		Com_Printf("Sys_FOpen: first stat('%s')  failed: errno %d\n", ospath, errno);
-		return NULL;
+	    Com_Printf("Sys_FOpen: first stat('%s')  failed: errno %d\n", ospath, errno);
+	    return NULL;
 	}
 
 	// Try to open the file
 	if ((fd = open(ospath, O_RDONLY)) == -1)
 	{
-		Com_Printf("Sys_FOpen: open('%s', O_RDONLY) failed: errno %d\n", ospath, errno);
-		return NULL;
+	    Com_Printf("Sys_FOpen: open('%s', O_RDONLY) failed: errno %d\n", ospath, errno);
+	    return NULL;
 	}
 
 	// Get the state of the current handle file
 	if (fstat(fd, &fstat_info) != 0)
 	{
-		Com_Printf("Sys_FOpen: second stat('%s')  failed: errno %d\n", ospath, errno);
-		fclose(fd);
-		return NULL;
+	    Com_Printf("Sys_FOpen: second stat('%s')  failed: errno %d\n", ospath, errno);
+	    fclose(fd);
+	    return NULL;
 	}
 
 	// Compare the state before and after opening
@@ -278,11 +288,11 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 	    lstat_info.st_ino != fstat_info.st_ino ||
 	    lstat_info.st_dev != fstat_info.st_dev)
 	{
-		Com_Printf("Sys_FOpen: stat before and after chmod are different. The file ('%s') may differ (TOCTOU Attacks ?)\n", ospath);
-		fclose(fd);
-		return NULL;
+	    Com_Printf("Sys_FOpen: stat before and after chmod are different. The file ('%s') may differ (TOCTOU Attacks ?)\n", ospath);
+	    fclose(fd);
+	    return NULL;
 	}
-
+	*/
 	return fopen(ospath, mode);
 }
 
