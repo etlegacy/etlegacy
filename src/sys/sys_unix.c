@@ -249,7 +249,7 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 {
 	struct stat lstat_info;
 	struct stat fstat_info;
-	FILE        *fp;
+	int         fd;
 
 	// Check the state (if path exists) and is a directory
 	if (lstat(ospath, &lstat_info) && S_ISDIR(lstat_info.st_mode) != 0)
@@ -259,17 +259,17 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 	}
 
 	// Try to open the file
-	if (!(fp = fopen(ospath, mode)))
+	if ((fd = open(ospath, O_RDONLY)) == -1)
 	{
-		Com_Printf("Sys_FOpen: fopen('%s', %s) failed: errno %d\n", ospath, mode, errno);
+		Com_Printf("Sys_FOpen: open('%s', O_RDONLY) failed: errno %d\n", ospath, errno);
 		return NULL;
 	}
 
 	// Get the state of the current handle file
-	if (fstat(fp, &fstat_info) != 0)
+	if (fstat(fd, &fstat_info) != 0)
 	{
 		Com_Printf("Sys_FOpen: second stat('%s')  failed: errno %d\n", ospath, errno);
-		fclose(fp);
+		fclose(fd);
 		return NULL;
 	}
 
@@ -283,7 +283,7 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 		return NULL;
 	}
 
-	return fp;
+	return fopen(ospath, mode);
 }
 
 /**
