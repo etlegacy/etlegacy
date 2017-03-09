@@ -339,7 +339,7 @@ void SP_misc_gamemodel(gentity_t *ent)
  */
 void locateMaster(gentity_t *ent)
 {
-	ent->target_ent = G_FindByTargetname(NULL, ent->target);
+	ent->target_ent = G_FindByTargetname(&g_entities[MAX_CLIENTS - 1], ent->target);
 	if (ent->target_ent)
 	{
 		ent->s.otherEntityNum = ent->target_ent->s.number;
@@ -2230,7 +2230,7 @@ void misc_firetrails_think(gentity_t *ent)
 {
 	gentity_t *left, *right, *airplane;
 
-	airplane = G_FindByTargetname(NULL, ent->target);
+	airplane = G_FindByTargetname(&g_entities[MAX_CLIENTS - 1], ent->target);
 	if (!airplane)
 	{
 		G_Error("can't find airplane with targetname \"%s\" for firetrails\n", ent->target);
@@ -2290,7 +2290,7 @@ void SP_misc_firetrails(gentity_t *ent)
  */
 void constructiblemarker_setup(gentity_t *ent)
 {
-	ent->target_ent = G_FindByTargetname(NULL, ent->target);
+	ent->target_ent = G_FindByTargetname(&g_entities[MAX_CLIENTS - 1], ent->target);
 
 	if (!ent->target_ent)
 	{
