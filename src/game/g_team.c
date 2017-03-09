@@ -1334,9 +1334,14 @@ void checkpoint_spawntouch(gentity_t *self, gentity_t *other, trace_t *trace)
 	// toggles spawnflags 2 for spawnpoint entities
 	if (self->target)
 	{
+		int hash;
+
+		hash = BG_StringHashValue(self->target);
+
 		while (1)
 		{
-			ent = G_FindByTargetname(ent, self->target);
+			ent = G_FindByTargetnameFast(ent, self->target, hash);
+
 			if (!ent)
 			{
 				break;
