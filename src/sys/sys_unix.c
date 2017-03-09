@@ -95,21 +95,41 @@ char *Sys_DefaultHomePath(void)
  */
 void Sys_Chmod(char *file, int mode)
 {
-	struct stat s_buf;
+	struct stat stat_infoBefore;
+	struct stat fstat_infoAfter;
 	int         perm;
 
-	if (stat(file, &s_buf) != 0)
+	if (stat(file, &stat_infoBefore) != 0)
 	{
-		Com_Printf("stat('%s')  failed: errno %d\n", file, errno);
+		Com_Printf("Sys_Chmod: first stat('%s')  failed: errno %d\n", file, errno);
 		return;
 	}
-	perm = s_buf.st_mode | mode;
+
+	perm = stat_infoBefore.st_mode | mode;
+
 	if (chmod(file, perm) != 0)
 	{
-		Com_Printf("chmod('%s', %d) failed: errno %d\n", file, perm, errno);
+		Com_Printf("Sys_Chmod: chmod('%s', %d) failed: errno %d\n", file, perm, errno);
+		Com_DPrintf("chmod +%d '%s'\n", mode, file);
+		return;
 	}
 
 	Com_DPrintf("chmod +%d '%s'\n", mode, file);
+
+	// Get the state of the file
+	if (!stat(file, &fstat_infoAfter))
+	{
+		Com_Printf("Sys_Chmod: second stat('%s')  failed: errno %d\n", file, errno);
+		return;
+	}
+
+	// Compare the state before and after opening
+	if (stat_infoBefore.st_ino != fstat_infoAfter.st_ino ||
+	    stat_infoBefore.st_dev != fstat_infoAfter.st_dev)
+	{
+		Com_Printf("Sys_Chmod: stat before and after chmod are different. The file ('%s') may differ (TOCTOU Attacks ?)\n", file);
+		return;
+	}
 }
 
 /**
@@ -219,17 +239,51 @@ const char *Sys_Dirname(char *path)
 	return dirname(path);
 }
 
+/**
+ * @brief Sys_FOpen
+ * @param[in] ospath
+ * @param[in] mode
+ * @return
+ */
 FILE *Sys_FOpen(const char *ospath, const char *mode)
 {
-	struct stat buf;
+	struct stat lstat_info;
+	struct stat fstat_info;
+	FILE        *fp;
 
-	// check if path exists and is a directory
-	if (!stat(ospath, &buf) && S_ISDIR(buf.st_mode))
+	// Check the state (if path exists) and is a directory
+	if (!lstat(ospath, &lstat_info) && S_ISDIR(lstat_info.st_mode))
 	{
+		Com_Printf("Sys_FOpen: first stat('%s')  failed: errno %d\n", ospath, errno);
 		return NULL;
 	}
 
-	return fopen(ospath, mode);
+	// Try to open the file
+	if (!(fp = fopen(ospath, mode)))
+	{
+		Com_Printf("Sys_FOpen: fopen('%s', %s) failed: errno %d\n", ospath, mode, errno);
+		return NULL;
+	}
+
+	// Get the state of the current handle file
+	if (!fstat(fp, &fstat_info))
+	{
+		Com_Printf("Sys_FOpen: second stat('%s')  failed: errno %d\n", ospath, errno);
+		fclose(fp);
+		return NULL;
+	}
+
+	// Compare the state before and after opening
+	if (lstat_info.st_mode != fstat_info.st_mode ||
+	    lstat_info.st_ino != fstat_info.st_ino ||
+	    lstat_info.st_dev != fstat_info.st_dev)
+	{
+		Com_Printf("Sys_FOpen: stat before and after chmod are different. The file ('%s') may differ (TOCTOU Attacks ?)\n", ospath);
+		fclose(fp);
+		return NULL;
+	}
+
+	return fp;
 }
 
 /**
