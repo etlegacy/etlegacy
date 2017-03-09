@@ -117,7 +117,7 @@ void Sys_Chmod(char *file, int mode)
 	Com_DPrintf("chmod +%d '%s'\n", mode, file);
 
 	// Get the state of the file
-	if (!stat(file, &fstat_infoAfter))
+	if (stat(file, &fstat_infoAfter) != 0)
 	{
 		Com_Printf("Sys_Chmod: second stat('%s')  failed: errno %d\n", file, errno);
 		return;
@@ -252,7 +252,7 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 	FILE        *fp;
 
 	// Check the state (if path exists) and is a directory
-	if (!lstat(ospath, &lstat_info) && S_ISDIR(lstat_info.st_mode))
+	if (lstat(ospath, &lstat_info) && S_ISDIR(lstat_info.st_mode) != 0)
 	{
 		Com_Printf("Sys_FOpen: first stat('%s')  failed: errno %d\n", ospath, errno);
 		return NULL;
@@ -266,7 +266,7 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 	}
 
 	// Get the state of the current handle file
-	if (!fstat(fp, &fstat_info))
+	if (fstat(fp, &fstat_info) != 0)
 	{
 		Com_Printf("Sys_FOpen: second stat('%s')  failed: errno %d\n", ospath, errno);
 		fclose(fp);
