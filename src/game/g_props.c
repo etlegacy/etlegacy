@@ -2015,6 +2015,7 @@ void Use_DamageInflictor(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	gentity_t *daent = NULL;
 
+	// FIXME: daent is NULL - we won't find daent->target!
 	while ((daent = G_FindByTargetname(daent, daent->target)) != NULL)
 	{
 		if (daent == ent)
