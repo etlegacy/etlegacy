@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2017-03-03 13:09+0000\n"
+"PO-Revision-Date: 2017-03-08 16:17+0000\n"
 "Last-Translator: IR4T4 <gutzu@gmx.ch>\n"
 "Language-Team: German (http://www.transifex.com/etlegacy/etlegacy/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -574,7 +574,7 @@ msgstr "Sollen Spieler in ein Team eintreten können nachdem das Spiel gestartet
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Mute Spectators:"
-msgstr "Beobachter stumm:"
+msgstr "Zuschauer stumm:"
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Whether spectators are muted"
@@ -2437,11 +2437,11 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Show Tool Tips:"
-msgstr "Zeige Werkzeug Hinweise:"
+msgstr "Zeige Tooltips:"
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Display Tool Tips in the UI"
-msgstr "Zeige Werkzeughinweise im UI"
+msgstr "Zeige Tooltips im UI"
 
 #: etmain/ui/options_customise_hud.menu:28 etmain/ui/options.menu:33
 #: etmain/ui/viewreplay.menu:62
@@ -5131,7 +5131,7 @@ msgstr "%s^7 getrennt"
 #: src/cgame/cg_scoreboard.c:178 src/cgame/cg_scoreboard.c:184
 #: src/cgame/cg_scoreboard.c:188 src/cgame/cg_scoreboard.c:193
 msgid "MISSION TIME:"
-msgstr "EINSATZ ZEIT:"
+msgstr "EINSATZZEIT:"
 
 #: src/cgame/cg_scoreboard.c:184
 msgid "GAME STOPPED"
@@ -5405,13 +5405,13 @@ msgstr "Alle Server Favouriten gelöscht."
 
 #: src/cgame/cg_predict.c:641
 msgid "You are near"
-msgstr "Du bist nahe"
+msgstr ""
 
 msgid "joined the Axis team\n"
 msgstr "tritt dem Achsen Team bei\n"
 
 msgid "joined the Allies team\n"
-msgstr "tritt den Allierten bei\n"
+msgstr "tritt dem Allierten Team bei\n"
 
 msgid "entered the game\n"
 msgstr "tritt dem Spiel bei\n"
