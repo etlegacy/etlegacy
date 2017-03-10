@@ -130,8 +130,8 @@ game_manager
 		// *---------------------------------------------------------------------------------*
 
 		// Current main objectives for each team (0=Axis, 1=Allies)
-		wm_set_main_objective	"fakeobj1_toi"	0
-		wm_set_main_objective	"fakeobj1_toi"	1
+		wm_set_main_objective	"fakeobj1"	0
+		wm_set_main_objective	"fakeobj1"	1
 	}
 
 	trigger enable_gun
@@ -154,8 +154,8 @@ game_manager
 		wm_objective_status	4 1 2
 		wm_objective_status	4 0 1
 
-		wm_set_main_objective	"panel3_toi" 0
-		wm_set_main_objective	"panel3_toi" 1
+		wm_set_main_objective	"panel3" 0
+		wm_set_main_objective	"panel3" 1
 	}
 
 	trigger axis_win
@@ -1363,9 +1363,8 @@ train1
 
 		trigger crane2_controller startcrane
 		
-		// still tug1
-		//wm_set_main_objective	"fakeobj1_toi" 0
-		//wm_set_main_objective	"fakeobj1_toi" 1
+		wm_set_main_objective	"fakeobj2" 0
+		wm_set_main_objective	"fakeobj2" 1
 	}
 
 
@@ -3108,8 +3107,8 @@ train1
 		wm_objective_status	1 0 1
 
 		// still tug1
-		//wm_set_main_objective	"fakeobj1_toi" 0
-		//wm_set_main_objective	"fakeobj1_toi" 1
+		//wm_set_main_objective	"fakeobj1" 0
+		//wm_set_main_objective	"fakeobj1" 1
 	}
 }
 
@@ -5013,8 +5012,6 @@ train1_back
 }
 
 
-
-
 crane2_controller
 {
 	trigger startcrane
@@ -5635,9 +5632,6 @@ train2
 
 		wm_objective_status	3 1 2
 		wm_objective_status	3 0 1
-
-		wm_set_main_objective	"fakeobj2_toi" 0
-		wm_set_main_objective	"fakeobj2_toi" 1
 	}
 
 	trigger update_counter_axis

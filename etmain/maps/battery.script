@@ -112,8 +112,8 @@ game_manager
 		wm_addteamvoiceannounce 0 "axis_hq_compost_construct"
 		// *---------------------------------------------------------------------------------*
 
-		wm_set_main_objective	"guncontrols_toi"	0
-		wm_set_main_objective	"guncontrols_toi"	1
+		wm_set_main_objective	"guncontrols"	0
+		wm_set_main_objective	"guncontrols"	1
 	}
 
 	trigger westbunker_flagblue

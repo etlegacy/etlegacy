@@ -83,8 +83,8 @@ game_manager
 				
 		// Current main objectives for each team (0=Axis, 1=Allies)
 		// note - tank is already painted red!
-		wm_set_main_objective	"Jagdpanther"	0
-		wm_set_main_objective	"Jagdpanther"	1
+		//wm_set_main_objective	"tank_construct"	0
+		//wm_set_main_objective	"tank_construct"	1
 	}
 
 	trigger allies_win
@@ -120,8 +120,8 @@ game_manager
 		trigger game_manager allies_steal_tank_allied_msg
 		trigger game_manager allies_steal_tank_axis_msg
 
-		wm_set_main_objective	"tank_build"	0
-		wm_set_main_objective	"tank_build"	1
+		wm_set_main_objective	"tank_construct"	0
+		wm_set_main_objective	"tank_construct"	1
 	}
 
 	trigger allies_steal_tank_allied_msg
@@ -1738,8 +1738,8 @@ tank_turret
 		trigger tank sound_death
 		trigger tank script_lockout_stop
 		
-		wm_set_main_objective	"goldbars_toi"	0
-		wm_set_main_objective	"goldbars_toi"	1
+		wm_set_main_objective	"goldbars_cm_marker"	0
+		wm_set_main_objective	"goldbars_cm_marker"	1
 	}
 }
 
@@ -2099,8 +2099,8 @@ truck
 		setstate goldbars_toi invisible
 		setstate goldbars_cm_marker invisible
 
-		wm_set_main_objective "truck_build" 0
-		wm_set_main_objective "truck_build" 1
+		wm_set_main_objective "truck_construct" 0
+		wm_set_main_objective "truck_construct" 1
 	}
 
 	trigger truck_escape_msg

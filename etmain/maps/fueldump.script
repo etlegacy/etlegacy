@@ -94,8 +94,8 @@ game_manager
 		wm_teamvoiceannounce 1 "fueldump_allies_bridge_construct"
 		// *---------------------------------------------------------------------------------*
 		
-		wm_set_main_objective "tank_build"	0
-		wm_set_main_objective "tank_build"	1 
+		wm_set_main_objective "tank_construct"	0
+		wm_set_main_objective "tank_construct"	1 
 	}
 
 
@@ -160,8 +160,8 @@ game_manager
 		// *---------------------------------------------------------------------------------*
 
 		// main objective -> depot
-		wm_set_main_objective	"fueldump_toi"	0
-		wm_set_main_objective	"fueldump_toi"	1
+		wm_set_main_objective	"t109"	0
+		wm_set_main_objective	"t109"	1
 	}
 
 	//-----------------------------------------------------------------------
