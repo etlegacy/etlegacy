@@ -571,7 +571,7 @@ void Svcmd_EntityList_f(void)
 	gentity_t *check = g_entities;
 	char      line[128];
 
-	G_Printf("^7 No.: ^3Type^7/^2Event^7/(freed)          ^7Classname                 ^1Targetname\n");
+	G_Printf("^7 No.: ^3Type^7/^2Event^7/(freed)          ^7Classname                 ^1Target                        ^2Targetname                    ^2TNH\n");
 
 	for (e = 0; e < MAX_GENTITIES ; e++, check++)
 	{
@@ -589,7 +589,6 @@ void Svcmd_EntityList_f(void)
 
 		// print the ents which are in use
 		//Q_strcat(line, sizeof(line), va("^7%4i: ", e));
-
 
 		if (check->neverFree)
 		{
@@ -611,7 +610,7 @@ void Svcmd_EntityList_f(void)
 
 		if (check->classname)
 		{
-			G_Printf("%s %-25s ^1%s^7\n", line, check->classname, check->targetname);
+			G_Printf("%s %-25s ^1%-29s ^2%-29s^7 %i\n", line, check->classname, check->target, check->targetname, check->targetnamehash);
 		}
 		else
 		{
