@@ -265,7 +265,7 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 	struct stat fstat_info;
 	FILE        *fp;
 	int         fd;
-	int         oflag;
+	int         oflag = 0;
 
 	// Retrive the oflag for open depending of mode parameter
 	if (*mode == 'w')
