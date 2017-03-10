@@ -18,9 +18,6 @@ game_manager
 		// 4: Axis Field Command
 		// 5: Allies Base of Operations
 
-		wm_set_main_objective		1	0
-		wm_set_main_objective		1	1
-
 		wm_objective_status 1 1 0
 		wm_objective_status 1 0 0
 		wm_objective_status 2 1 0
@@ -70,6 +67,12 @@ game_manager
 		wm_teamvoiceannounce 1 "radar_allies_entrances_destroy"
 		wm_teamvoiceannounce 1 "radar_allies_bunker_capture"
 		// *---------------------------------------------------------------------------------*
+
+		// don't use wm_set_main_objective
+		// on radar there are always several main objectives (maindoor-sidedoor, radar1-radar2 ...)
+		// FIXME: we might add main objective at end when there is only 1 radar left
+		//wm_set_main_objective	1	0
+		//wm_set_main_objective	1	1
 	}
 
 	trigger stolen_circuit
@@ -82,9 +85,6 @@ game_manager
 	{
 		wm_objective_status 1 1 1
 		wm_objective_status 1 0 2
-
-		wm_set_main_objective		2	0
-		wm_set_main_objective		2	1
 
 		// spawns:
 		// Abandoned Villa
@@ -117,15 +117,15 @@ game_manager
 		wm_removeteamvoiceannounce 1 "radar_allies_entrance1_destroy"
 		wm_removeteamvoiceannounce 1 "radar_allies_bunker_capture"
 		// *---------------------------------------------------------------------------------*
+
+		//wm_set_main_objective	2	0
+		//wm_set_main_objective	2	1
 	}
 
 	trigger sidedoor1_destroyed
 	{
 		wm_objective_status 1 1 1
 		wm_objective_status 1 0 2
-
-		wm_set_main_objective		2	0
-		wm_set_main_objective		2	1
 
 		wm_announce	"Allies have breached the Side Entrance!"
 
@@ -144,6 +144,9 @@ game_manager
 		wm_removeteamvoiceannounce 1 "radar_allies_entrances_destroy"
 		wm_removeteamvoiceannounce 1 "radar_allies_entrance2_destroy"
 		// *---------------------------------------------------------------------------------*
+
+		//wm_set_main_objective	2	0
+		//wm_set_main_objective	2	1
 	}
 
 	trigger checkgame
