@@ -240,60 +240,93 @@ const char *Sys_Dirname(char *path)
 }
 
 /**
- * @brief Sys_FOpen
- * @param[in] ospath
- * @param[in] mode
+ * @brief Safe function to open a file and preventing TOCTOU attacks
+ * @param[in] ospath The file path to open
+ * @param[in] mode The mode used to open the file ('rb','wb','ab')
  * @return
  */
 FILE *Sys_FOpen(const char *ospath, const char *mode)
 {
-	struct stat buf;
+	struct stat lstat_info;
+	struct stat fstat_info;
+	FILE        *fp;
+	int         fd;
+	int         oflag;
 
-	// check if path exists and is a directory
-	if (!stat(ospath, &buf) && S_ISDIR(buf.st_mode))
+	// Retrive the oflag for open depending of mode parameter
+	if (*mode == 'w')
 	{
+		oflag |= O_WRONLY | O_CREAT;
+	}
+	else if (*mode == 'r')
+	{
+		oflag |= O_RDONLY;
+	}
+	else if (*mode == 'a')
+	{
+		oflag |= O_WRONLY | O_APPEND;
+	}
+	else
+	{
+		Com_Printf("Sys_FOpen: invalid mode parameter to open file ('%s')", mode);
 		return NULL;
 	}
 
-	// FIXME: do open depending of mode parameter
-	/*
-	struct stat lstat_info;
-	struct stat fstat_info;
-	int         fd;
-
-	// Check the state (if path exists) and is a directory
-	if (lstat(ospath, &lstat_info) && S_ISDIR(lstat_info.st_mode) != 0)
+	// Check the state (if path exists)
+	if (lstat(ospath, &lstat_info) == -1)
 	{
-	    Com_Printf("Sys_FOpen: first stat('%s')  failed: errno %d\n", ospath, errno);
-	    return NULL;
+		// Check the error in case the the file doesn't exist
+		if (errno != ENOENT)
+		{
+			Com_Printf("Sys_FOpen: first stat('%s')  failed: errno %d\n", ospath, errno);
+			return NULL;
+		}
+	}
+	else
+	{
+		// Check if the existing path is a directory
+		if (S_ISDIR(lstat_info.st_mode))
+		{
+			Com_Printf("Sys_FOpen: S_ISDIR('%s')  failed: errno %d\n", ospath, errno);
+			return NULL;
+		}
 	}
 
-	// Try to open the file
-	if ((fd = open(ospath, O_RDONLY)) == -1)
+	// Try to open the file and get the file descriptor
+	if ((fd = open(ospath, oflag)) == -1)
 	{
-	    Com_Printf("Sys_FOpen: open('%s', O_RDONLY) failed: errno %d\n", ospath, errno);
-	    return NULL;
+		Com_Printf("Sys_FOpen: open('%s', %d) failed: errno %d\n", ospath, oflag, errno);
+		return NULL;
 	}
 
-	// Get the state of the current handle file
-	if (fstat(fd, &fstat_info) != 0)
+	// Get the state of the current handle file only if the file wasn't created
+	if (*mode != 'w' && fstat(fd, &fstat_info) != 0)
 	{
-	    Com_Printf("Sys_FOpen: second stat('%s')  failed: errno %d\n", ospath, errno);
-	    fclose(fd);
-	    return NULL;
+		Com_Printf("Sys_FOpen: second stat('%s')  failed: errno %d\n", ospath, errno);
+		close(fd);
+		return NULL;
 	}
 
-	// Compare the state before and after opening
-	if (lstat_info.st_mode != fstat_info.st_mode ||
-	    lstat_info.st_ino != fstat_info.st_ino ||
-	    lstat_info.st_dev != fstat_info.st_dev)
+	// Compare the state before and after opening only if the file wasn't created
+	if (*mode != 'w' && (lstat_info.st_mode != fstat_info.st_mode ||
+	                     lstat_info.st_ino != fstat_info.st_ino ||
+	                     lstat_info.st_dev != fstat_info.st_dev))
 	{
-	    Com_Printf("Sys_FOpen: stat before and after chmod are different. The file ('%s') may differ (TOCTOU Attacks ?)\n", ospath);
-	    fclose(fd);
-	    return NULL;
+		Com_Printf("Sys_FOpen: stat before and after chmod are different. The file ('%s') may differ (TOCTOU Attacks ?)\n", ospath);
+		close(fd);
+		return NULL;
 	}
-	*/
-	return fopen(ospath, mode);
+
+	// Try to open the file with the file descriptor
+	if (!(fp = fdopen(fd, mode)))
+	{
+		Com_Printf("Sys_FOpen: fdopen('%s', %s) failed: errno %d\n", ospath, mode, errno);
+		close(fd);
+		unlink(ospath);
+		return NULL;
+	}
+
+	return fp;
 }
 
 /**
