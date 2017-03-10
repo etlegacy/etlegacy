@@ -3042,7 +3042,7 @@ void Think_SetupTrainTargets(gentity_t *ent)
 {
 	gentity_t *path, *next, *start;
 
-	ent->nextTrain = G_FindByTargetname(NULL, ent->target);
+	ent->nextTrain = G_FindByTargetname(&g_entities[MAX_CLIENTS - 1], ent->target);
 	if (!ent->nextTrain)
 	{
 		G_Printf("func_train at %s with an unfound target\n",
@@ -3070,7 +3070,7 @@ void Think_SetupTrainTargets(gentity_t *ent)
 		// find a path_corner among the targets
 		// there may also be other targets that get fired when the corner
 		// is reached
-		next = NULL;
+		next = &g_entities[MAX_CLIENTS - 1];
 		do
 		{
 			next = G_FindByTargetname(next, path->target);
@@ -3233,7 +3233,7 @@ void info_limbo_camera_setup(gentity_t *self)
 		G_Error("info_limbo_camera with no target\n");
 	}
 
-	target = G_FindByTargetname(NULL, self->target);
+	target = G_FindByTargetname(&g_entities[MAX_CLIENTS - 1], self->target);
 	if (!target)
 	{
 		G_Error("info_limbo_camera cannot find target '%s'\n", self->target);
@@ -3513,7 +3513,7 @@ void Think_SetupTrainTargets_rotating(gentity_t *ent)
 {
 	gentity_t *path, *next, *start;
 
-	ent->nextTrain = G_FindByTargetname(NULL, ent->target);
+	ent->nextTrain = G_FindByTargetname(&g_entities[MAX_CLIENTS - 1], ent->target);
 	if (!ent->nextTrain)
 	{
 		G_Printf("func_train at %s with an unfound target\n",
@@ -3543,7 +3543,7 @@ void Think_SetupTrainTargets_rotating(gentity_t *ent)
 		// find a path_corner among the targets
 		// there may also be other targets that get fired when the corner
 		// is reached
-		next = NULL;
+		next = &g_entities[MAX_CLIENTS - 1];
 		do
 		{
 			next = G_FindByTargetname(next, path->target);
@@ -4340,7 +4340,8 @@ void func_explosive_explode(gentity_t *self, gentity_t *inflictor, gentity_t *at
 	vec3_t    origin;
 	vec3_t    size;
 	vec3_t    dir   = { 0, 0, 1 };
-	gentity_t *tent = 0;
+	gentity_t *tent = &g_entities[MAX_CLIENTS - 1];
+	int       hash;
 
 	self->takedamage = qfalse;          // don't allow anything try to hurt me now that i'm exploding
 
@@ -4367,11 +4368,14 @@ void func_explosive_explode(gentity_t *self, gentity_t *inflictor, gentity_t *at
 	// find target, aim at that
 	if (self->target)
 	{
+		// FIXME: use self->targetnamehash one day ...
+		hash = BG_StringHashValue(self->target);
+
 		// since the explosive might need to fire the target rather than
 		// aim at it, only aim at 'info_notnull' ents
 		while (1)
 		{
-			tent = G_FindByTargetname(tent, self->target);
+			tent = G_FindByTargetnameFast(tent, self->target, hash);
 			if (!tent)
 			{
 				break;
@@ -5441,7 +5445,7 @@ void func_constructiblespawn(gentity_t *ent)
 					G_Error("'func_constructible' has more than %i targets in the constages key\n", MAX_CONSTRUCT_STAGES - 1);
 				}
 
-				if ((bmodel_ent = G_FindByTargetname(NULL, buf)) != NULL)
+				if ((bmodel_ent = G_FindByTargetname(&g_entities[MAX_CLIENTS - 1], buf)) != NULL)
 				{
 					char *bmodel;
 
@@ -5478,7 +5482,7 @@ void func_constructiblespawn(gentity_t *ent)
 						G_Error("'func_constructible' has more than %i targets in the desstages key\n", MAX_CONSTRUCT_STAGES - 2);
 					}
 
-					if ((bmodel_ent = G_FindByTargetname(NULL, buf)) != NULL)
+					if ((bmodel_ent = G_FindByTargetname(&g_entities[MAX_CLIENTS - 1], buf)) != NULL)
 					{
 						char *bmodel;
 
@@ -5855,7 +5859,7 @@ void G_LinkDebris(void)
 	{
 		debris = &level.debrisChunks[i];
 
-		target = G_FindByTargetname(NULL, debris->target);
+		target = G_FindByTargetname(&g_entities[MAX_CLIENTS - 1], debris->target);
 		if (!target)
 		{
 			G_Error("ERROR: func_debris with no target (%s)", debris->target);
