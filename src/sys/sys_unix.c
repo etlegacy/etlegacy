@@ -89,16 +89,18 @@ char *Sys_DefaultHomePath(void)
 }
 
 /**
- * @brief Chmod a file
+ * @brief Safe function to Chmod a file and preventing TOCTOU attacks
  * @param[in] file Filename
- * @param     mode Access Mode
+ * @param[in] mode Access Mode
  */
-void Sys_Chmod(char *file, int mode)
+void Sys_Chmod(const char *file, int mode)
 {
 	struct stat stat_infoBefore;
 	struct stat fstat_infoAfter;
 	int         perm;
+	int         fd;
 
+	// Get the state of the file
 	if (stat(file, &stat_infoBefore) != 0)
 	{
 		Com_Printf("Sys_Chmod: first stat('%s')  failed: errno %d\n", file, errno);
@@ -107,29 +109,41 @@ void Sys_Chmod(char *file, int mode)
 
 	perm = stat_infoBefore.st_mode | mode;
 
-	if (chmod(file, perm) != 0)
+	// Try to get the file descriptor
+	if ((fd = open(file, O_RDONLY, S_IXUSR)) != 0)
 	{
-		Com_Printf("Sys_Chmod: chmod('%s', %d) failed: errno %d\n", file, perm, errno);
-		Com_DPrintf("chmod +%d '%s'\n", mode, file);
+		Com_Printf("Sys_Chmod: open('%s', %d, %d) failed: errno %d\n", file, O_RDONLY, S_IXUSR, errno);
 		return;
 	}
 
 	Com_DPrintf("chmod +%d '%s'\n", mode, file);
 
-	// Get the state of the file
+	// Get the state of the file after opening function
 	if (stat(file, &fstat_infoAfter) != 0)
 	{
 		Com_Printf("Sys_Chmod: second stat('%s')  failed: errno %d\n", file, errno);
+		close(fd);
 		return;
 	}
 
 	// Compare the state before and after opening
 	if (stat_infoBefore.st_ino != fstat_infoAfter.st_ino ||
+	    stat_infoBefore.st_ino != fstat_infoAfter.st_ino ||
 	    stat_infoBefore.st_dev != fstat_infoAfter.st_dev)
 	{
-		Com_Printf("Sys_Chmod: stat before and after chmod are different. The file ('%s') may differ (TOCTOU Attacks ?)\n", file);
+		Com_Printf("Sys_Chmod: stat before and after open are different. The file ('%s') may differ (TOCTOU Attacks ?)\n", file);
+		close(fd);
 		return;
 	}
+
+	// Chmod the file by using the file descriptor
+	if (fchmod(fd, perm) != 0)
+	{
+		Com_Printf("Sys_Chmod: fchmod('%s', %d) failed: errno %d\n", file, perm, errno);
+	}
+
+	close(fd);
+	Com_DPrintf("chmod +%d '%s'\n", mode, file);
 }
 
 /**
