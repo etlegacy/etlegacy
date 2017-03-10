@@ -1749,16 +1749,6 @@ void SP_trigger_objective_info(gentity_t *ent)
 		}
 	}
 
-	// fix target w/o targetname toi
-	// occures on railgun & other maps
-	if (ent->target && !ent->targetname)
-	{
-		ent->targetname = va("%s_toi",ent->target);
-		ent->targetnamehash = BG_StringHashValue(ent->targetname);
-		// FIXME: mappers should read this (devmap)
-		G_Printf("^3SP_trigger_objective_info warning: oid '%s' w/o targetname - targetname set to '%s'\n", ent->target, ent->targetname);
-	}
-
 	// for specifying which commandmap objectives this entity "belongs" to
 	G_SpawnInt("objflags", "0", &objflags);
 

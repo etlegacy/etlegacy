@@ -149,6 +149,7 @@ qboolean G_ScriptAction_SetPosition(gentity_t *ent, char *params)
 	else
 	{
 		// find the entity with the given "targetname"
+		// FIXME: optimize ... is this used for players?
 		target = G_FindByTargetname(NULL, token);
 		if (!target)
 		{
@@ -453,6 +454,7 @@ qboolean G_ScriptAction_AttatchToTrain(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_AttatchToTrain: attatchtotrain must have a target\n");
 	}
 
+	// FIXME: optimize ... is this used for players?
 	target = G_FindByTargetname(NULL, token);
 	if (!target)
 	{
@@ -1188,7 +1190,7 @@ qboolean G_ScriptAction_SetTankAmmo(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_SetTankAmmo: settankammo must have a target\n");
 	}
 
-	tank = G_FindByTargetname(NULL, token);
+	tank = G_FindByTargetname(&g_entities[MAX_CLIENTS - 1], token);
 	if (!tank)
 	{
 		G_Error("G_ScriptAction_SetTankAmmo: settankammo, failed to find target (%s)\n", token);
@@ -1227,7 +1229,7 @@ qboolean G_ScriptAction_AddTankAmmo(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_AddTankAmmo: addtankammo must have a target\n");
 	}
 
-	tank = G_FindByTargetname(NULL, token);
+	tank = G_FindByTargetname(&g_entities[MAX_CLIENTS - 1], token);
 	if (!tank)
 	{
 		G_Error("G_ScriptAction_AddTankAmmo: addtankammo, failed to find target (%s)\n", token);
@@ -1259,13 +1261,14 @@ qboolean G_ScriptAction_AddTankAmmo(gentity_t *ent, char *params)
 }
 
 /**
- * @brief G_ScriptAction_DisableMessage
+ * @brief G_ScriptAction_DisableMessage - obsolete function used for old bot ai
  * @param ent
  * @param[in] params
  * @return
  */
 qboolean G_ScriptAction_DisableMessage(gentity_t *ent, char *params)
 {
+/*
 	char      *pString = params, *token;
 	gentity_t *target  = NULL;
 
@@ -1280,6 +1283,7 @@ qboolean G_ScriptAction_DisableMessage(gentity_t *ent, char *params)
 	{
 		target->s.aiState = AISTATE_QUERY;
 	}
+*/
 
 	return qtrue;
 }
@@ -1434,6 +1438,7 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 		else
 		{
 			// find the entity with the given "targetname"
+			// FIXME: optimize ... is this used for players?
 			target = G_FindByTargetname(NULL, token);
 
 			if (!target)
@@ -1486,7 +1491,7 @@ qboolean G_ScriptAction_GotoMarker(gentity_t *ent, char *params)
 					{
 						VectorCopy(pPathCorner2->origin, vec2);
 					}
-					else if ((target2 = G_FindByTargetname(NULL, token)))
+					else if ((target2 = G_FindByTargetname(NULL, token))) // FIXME: optimize ... is this used for players?
 					{
 						VectorCopy(target2->r.currentOrigin, vec2);
 					}
@@ -3130,6 +3135,7 @@ qboolean G_ScriptAction_TagConnect(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_TagConnect: syntax: attachtotag <targetname> <tagname>\n");
 	}
 
+	// FIXME: optimize ... is this used for players?
 	parent = G_FindByTargetname(NULL, token);
 	if (!parent)
 	{
@@ -3344,17 +3350,20 @@ qboolean G_ScriptAction_SetMainObjective(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_SetMainObjective: number parameter required\n");
 	}
 
-	// FIXME we might check here for param is number to distinguish between old and new wm_set_main_objective cmd - throw next uncommented G_Error
+	// FIXME check for param is number to distinguish between old and new wm_set_main_objective cmd - throw next commented G_Error
 	//G_Printf("^1G_ScriptAction_SetMainObjective Warning: obsolete or invalid wm_set_main_objective script command call '%s'\n", token);
 
-	target = &g_entities[MAX_CLIENTS - 1];
-	target = G_FindByTargetname(target, token);
+	//target = G_FindByTargetname(, token);
+
+	target = G_Find(&g_entities[MAX_CLIENTS - 1], FOFS(target), token);
+
 	if (!target || target->s.eType != ET_OID_TRIGGER)
 	{
+		// FIXME throw this if we can't find the target by name
 		//G_Error("G_ScriptAction_SetMainObjective: can't find toi entity with \"targetname\" = \"%s\"\n", token);
 
-		// for old map scripts compatibilty we don't abort FIXME throw G_Error if number check is done
-		return qfalse;
+		// for old map scripts compatibilty we don't abort
+		return qtrue; // important to set true!
 	}
 
 	parm = va("%i", (int)(target - g_entities));
@@ -4241,7 +4250,7 @@ qboolean G_ScriptAction_Construct(gentity_t *ent, char *params)
 		G_Error("G_ScriptAction_Construct: \"construct\" must have a targetname\n");
 	}
 
-	constructible = G_FindByTargetname(NULL, token);
+	constructible = G_FindByTargetname(&g_entities[MAX_CLIENTS - 1], token);
 	if (!constructible || !constructible->inuse || constructible->s.eType != ET_CONSTRUCTIBLE)
 	{
 		G_Error("G_ScriptAction_Construct: \"construct\" could not find entity with targetname: %s\n", token);
