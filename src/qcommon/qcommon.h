@@ -1425,7 +1425,7 @@ void Sys_StartProcess(char *cmdline, qboolean doexit);
 void Sys_OpenURL(const char *url, qboolean doexit);
 
 #ifndef _WIN32
-void Sys_Chmod(char *file, int mode);
+void Sys_Chmod(const char *file, int mode);
 #endif
 
 // Console
