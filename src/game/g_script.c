@@ -994,7 +994,7 @@ void script_mover_spawn(gentity_t *ent)
 		{
 			gentity_t *tent;
 
-			tent = G_FindByTargetname(NULL, ent->tagBuffer);
+			tent = G_FindByTargetname(&g_entities[MAX_CLIENTS - 1], ent->tagBuffer);
 
 			if (!tent)
 			{
