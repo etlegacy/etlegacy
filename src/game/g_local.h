@@ -1794,8 +1794,6 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params);
 // g_props.c
 void Props_Chair_Skyboxtouch(gentity_t *ent);
 
-#include "g_team.h" // teamplay specific stuff
-
 extern level_locals_t   level;
 extern gentity_t        g_entities[];   ///< was explicitly set to MAX_ENTITIES
 extern g_campaignInfo_t g_campaigns[];
@@ -2488,6 +2486,16 @@ void G_teamReset(int team_num, qboolean fClearSpecLock);
 void G_verifyMatchState(team_t team_id);
 void G_updateSpecLock(int nTeam, qboolean fLock);
 
+int OtherTeam(int team);
+const char *TeamName(int team);
+const char *TeamColorString(int team);
+void Team_DroppedFlagThink(gentity_t *ent);
+void Team_ReturnFlag(gentity_t *ent);
+gentity_t *SelectCTFSpawnPoint(team_t team, int teamstate, vec3_t origin, vec3_t angles, int spawnObjective);
+void TeamplayInfoMessage(team_t team);
+void CheckTeamStatus(void);
+int Pickup_Team(gentity_t *ent, gentity_t *other);
+
 // g_vote.c
 int G_voteCmdCheck(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeCmd);
 void G_voteFlags(void);
@@ -2640,6 +2648,26 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 #define DOOR_TOUCH                      8
 
 // Spawnflags end
+
+// teamplay specific stuff
+#define AXIS_OBJECTIVE                   1
+#define ALLIED_OBJECTIVE                 2
+#define OBJECTIVE_DESTROYED              4
+
+#define CONSTRUCTIBLE_START_BUILT            1
+#define CONSTRUCTIBLE_INVULNERABLE           2
+#define AXIS_CONSTRUCTIBLE                   4
+#define ALLIED_CONSTRUCTIBLE                 8
+#define CONSTRUCTIBLE_BLOCK_PATHS_WHEN_BUILD 16
+#define CONSTRUCTIBLE_NO_AAS_BLOCKING        32
+//#define CONSTRUCTIBLE_AAS_SCRIPTED           64
+
+#define EXPLOSIVE_START_INVIS            1
+#define EXPLOSIVE_TOUCHABLE              2
+#define EXPLOSIVE_USESHADER              4
+#define EXPLOSIVE_LOWGRAV                8
+//#define EXPLOSIVE_NO_AAS_BLOCKING        16 // obsolete (might be used in older maps)
+#define EXPLOSIVE_TANK                   32
 
 // MAPVOTE - used when mapvoting is enabled
 #define MAPVOTE_TIE_LEASTPLAYED  1
