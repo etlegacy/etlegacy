@@ -217,31 +217,45 @@ void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 
 	G_DebugAddSkillLevel(ent, skill);
 
-	if (i == SK_NUM_SKILLS)
+#ifdef FEATURE_RATING
+	if (g_skillRating.integer)
 	{
-		// increase rank
-		ent->client->sess.rank++;
+		float rating = 0.f;
+
+		rating = (ent->client->sess.mu - 3 * ent->client->sess.sigma < 0.f) ? 0.f : ent->client->sess.mu - 3 * ent->client->sess.sigma;
+		ent->client->sess.rank = (int)(rating / (2 * MU) * NUM_EXPERIENCE_LEVELS);
 	}
-
-	if (ent->client->sess.rank >= 4)
+	else
 	{
-		int cnt = 0;
-
-		// count the number of maxed out skills
-		for (i = 0; i < SK_NUM_SKILLS; i++)
+#endif
+		if (i == SK_NUM_SKILLS)
 		{
-			if (ent->client->sess.skill[i] >= 4)
+			// increase rank
+			ent->client->sess.rank++;
+		}
+
+		if (ent->client->sess.rank >= 4)
+		{
+			int cnt = 0;
+
+			// count the number of maxed out skills
+			for (i = 0; i < SK_NUM_SKILLS; i++)
 			{
-				cnt++;
+				if (ent->client->sess.skill[i] >= 4)
+				{
+					cnt++;
+				}
+			}
+
+			ent->client->sess.rank = cnt + 3;
+			if (ent->client->sess.rank > 10)
+			{
+				ent->client->sess.rank = 10;
 			}
 		}
-
-		ent->client->sess.rank = cnt + 3;
-		if (ent->client->sess.rank > 10)
-		{
-			ent->client->sess.rank = 10;
-		}
+#ifdef FEATURE_RATING
 	}
+#endif
 
 	ClientUserinfoChanged(ent - g_entities);
 
@@ -327,7 +341,13 @@ void G_ResetXP(gentity_t *ent)
 		return;
 	}
 
-	ent->client->sess.rank = 0;
+#ifdef FEATURE_RATING
+	if (!g_skillRating.integer)
+#endif
+	{
+		ent->client->sess.rank = 0;
+	}
+
 	for (i = 0; i < SK_NUM_SKILLS; i++)
 	{
 		ent->client->sess.skillpoints[i] = 0.0f;

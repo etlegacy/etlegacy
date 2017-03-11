@@ -200,6 +200,23 @@ void G_CalcRank(gclient_t *client)
 {
 	int i, highestskill = 0;
 
+#ifdef FEATURE_RATING
+	float rating = 0.f;
+
+	if (g_skillRating.integer)
+	{
+		for (i = 0; i < SK_NUM_SKILLS; i++)
+		{
+			G_SetPlayerSkill(client, i);
+		}
+
+		rating = (client->sess.mu - 3 * client->sess.sigma < 0.f) ? 0.f : client->sess.mu - 3 * client->sess.sigma;
+		client->sess.rank = (int)(rating / (2 * MU) * NUM_EXPERIENCE_LEVELS);
+
+		return;
+	}
+#endif
+
 	for (i = 0; i < SK_NUM_SKILLS; i++)
 	{
 		G_SetPlayerSkill(client, i);

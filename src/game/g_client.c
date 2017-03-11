@@ -2628,6 +2628,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	if (g_skillRating.integer)
 	{
 		G_SkillRatingGetUserRating(client, firstTime);
+		G_CalcRank(client);
 	}
 #endif
 
