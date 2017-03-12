@@ -1688,6 +1688,18 @@ void CG_NoClip_f(void)
 }
 #endif
 
+void CG_PrintObjectiveInfo()
+{
+	int i;
+
+	CG_Printf("^2Objective Info\n");
+
+	for (i = 0; i < MAX_OID_TRIGGERS; i++)
+	{
+		CG_Printf("[%2i] %-26s -> num: %3i - spawnflags: %3i - objflags: %3i\n", i , cgs.oidInfo[i].name, cgs.oidInfo[i].entityNum, cgs.oidInfo[i].spawnflags, cgs.oidInfo[i].objflags);
+	}
+}
+
 static consoleCommand_t commands[] =
 {
 	{ "testgun",             CG_TestGun_f              },
@@ -1802,6 +1814,8 @@ static consoleCommand_t commands[] =
 
 	{ "noclip",              CG_NoClip_f               },
 #endif
+	// objective info list for mappers/scripters (and players? - we might extend it)
+	{ "oinfo",               CG_PrintObjectiveInfo     }
 };
 
 /**
