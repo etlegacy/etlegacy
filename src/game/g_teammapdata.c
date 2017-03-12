@@ -591,7 +591,7 @@ void G_UpdateTeamMapData_Destruct(gentity_t *ent)
 	}
 	else
 	{
-		if (ent->parent->target_ent && (ent->parent->target_ent->s.eType == ET_CONSTRUCTIBLE || ent->parent->target_ent->s.eType == ET_EXPLOSIVE))
+		if (ent->parent->target_ent && (ent->parent->target_ent->s.eType == ET_CONSTRUCTIBLE))
 		{
 			if (ent->parent->spawnflags & ((1 << 6) | (1 << 4)))
 			{
@@ -608,6 +608,22 @@ void G_UpdateTeamMapData_Destruct(gentity_t *ent)
 				mEnt->type      = ME_DESTRUCT_2;
 				mEnt->yaw       = 0;
 			}
+		}
+		else if (ent->parent->target_ent && ent->parent->target_ent->s.eType == ET_EXPLOSIVE)
+		{
+				// do we have any spawn vars to check?
+				teamList = &mapEntityData[1];   // inverted
+				mEnt     = G_FindMapEntityData(teamList, num);
+				if (!mEnt)
+				{
+					mEnt         = G_AllocMapEntityData(teamList);
+					mEnt->entNum = num;
+				}
+				VectorCopy(ent->s.pos.trBase, mEnt->org);
+				mEnt->data      = mEnt->entNum; //ent->s.modelindex2;
+				mEnt->startTime = level.time;
+				mEnt->type      = ME_DESTRUCT; // or ME_DESTRUCT_2?
+				mEnt->yaw       = 0;
 		}
 	}
 
@@ -628,7 +644,7 @@ void G_UpdateTeamMapData_Destruct(gentity_t *ent)
 	}
 	else
 	{
-		if (ent->parent->target_ent && (ent->parent->target_ent->s.eType == ET_CONSTRUCTIBLE || ent->parent->target_ent->s.eType == ET_EXPLOSIVE))
+		if (ent->parent->target_ent && (ent->parent->target_ent->s.eType == ET_CONSTRUCTIBLE))
 		{
 			if (ent->parent->spawnflags & ((1 << 6) | (1 << 4)))
 			{
@@ -645,6 +661,22 @@ void G_UpdateTeamMapData_Destruct(gentity_t *ent)
 				mEnt->type      = ME_DESTRUCT_2;
 				mEnt->yaw       = 0;
 			}
+		}
+		else if (ent->parent->target_ent && ent->parent->target_ent->s.eType == ET_EXPLOSIVE)
+		{
+			// do we have any spawn vars to check?
+			teamList = &mapEntityData[0];   // inverted
+			mEnt     = G_FindMapEntityData(teamList, num);
+			if (!mEnt)
+			{
+				mEnt         = G_AllocMapEntityData(teamList);
+				mEnt->entNum = num;
+			}
+			VectorCopy(ent->s.pos.trBase, mEnt->org);
+			mEnt->data      = mEnt->entNum; //ent->s.modelindex2;
+			mEnt->startTime = level.time;
+			mEnt->type      = ME_DESTRUCT; // or ME_DESTRUCT_2?
+			mEnt->yaw       = 0;
 		}
 	}
 }
