@@ -2931,6 +2931,8 @@ void ClientBegin(int clientNum)
 #endif
 }
 
+#if 0 // not used
+
 #define MAX_SPAWNPOINTFROMLIST_POINTS   16
 
 /**
@@ -2986,7 +2988,6 @@ gentity_t *SelectSpawnPointFromList(char *list, vec3_t spawn_origin, vec3_t spaw
 	return spawnPoint;
 }
 
-#if 0 // not used
 /**
  * @brief G_CheckVersion
  * @param ent
