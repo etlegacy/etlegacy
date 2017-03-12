@@ -1904,11 +1904,11 @@ void CG_LimboPanel_RenderObjectiveText(panel_button_t *button)
 
 		if (cgs.ccSelectedObjective == CG_LimboPanel_GetMaxObjectives())
 		{
-			ofTxt = va("1of%i", CG_LimboPanel_GetMaxObjectives() + 1);
+			ofTxt = va(CG_TranslateString("1of%i"), CG_LimboPanel_GetMaxObjectives() + 1);
 		}
 		else
 		{
-			ofTxt = va("%iof%i", cgs.ccSelectedObjective + 2, CG_LimboPanel_GetMaxObjectives() + 1);
+			ofTxt = va(CG_TranslateString("%iof%i"), cgs.ccSelectedObjective + 2, CG_LimboPanel_GetMaxObjectives() + 1);
 		}
 
 		w = CG_Text_Width_Ext(ofTxt, 0.2f, 0, &cgs.media.limboFont2);
@@ -2550,7 +2550,7 @@ void CG_LimboPanel_WeaponPanel(panel_button_t *button)
 
 		memcpy(&rect, &button->rect, sizeof(rect));
 
-		CG_LimboPanel_WeaponPanel_DrawWeapon(&rect, weap, qtrue, va("%iof%i", CG_LimboPanel_GetSelectedWeaponNum() + 1, cnt), CG_LimboPanel_RealWeaponIsDisabled(weap));
+		CG_LimboPanel_WeaponPanel_DrawWeapon(&rect, weap, qtrue, va(CG_TranslateString("%iof%i"), CG_LimboPanel_GetSelectedWeaponNum() + 1, cnt), CG_LimboPanel_RealWeaponIsDisabled(weap));
 		if (BG_CursorInRect(&rect))
 		{
 			if (button->data[7] != 0)
@@ -2567,7 +2567,7 @@ void CG_LimboPanel_WeaponPanel(panel_button_t *button)
 
 			if (cycleWeap != weap)
 			{
-				CG_LimboPanel_WeaponPanel_DrawWeapon(&rect, cycleWeap, qtrue, va("%iof%i", i + 1, cnt), CG_LimboPanel_RealWeaponIsDisabled(cycleWeap));
+				CG_LimboPanel_WeaponPanel_DrawWeapon(&rect, cycleWeap, qtrue, va(CG_TranslateString("%iof%i"), i + 1, cnt), CG_LimboPanel_RealWeaponIsDisabled(cycleWeap));
 
 				if (BG_CursorInRect(&rect))
 				{
@@ -2587,7 +2587,7 @@ void CG_LimboPanel_WeaponPanel(panel_button_t *button)
 	else
 	{
 		// render in normal mode
-		CG_LimboPanel_WeaponPanel_DrawWeapon(&button->rect, weap, cnt > 1 ? qtrue : qfalse, va("%iof%i", CG_LimboPanel_GetSelectedWeaponNum() + 1, cnt), CG_LimboPanel_RealWeaponIsDisabled(weap));
+		CG_LimboPanel_WeaponPanel_DrawWeapon(&button->rect, weap, cnt > 1 ? qtrue : qfalse, va(CG_TranslateString("%iof%i"), CG_LimboPanel_GetSelectedWeaponNum() + 1, cnt), CG_LimboPanel_RealWeaponIsDisabled(weap));
 
 		if (cnt <= 1 || !BG_CursorInRect(&button->rect))
 		{
