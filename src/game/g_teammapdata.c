@@ -909,17 +909,24 @@ void G_UpdateTeamMapData_CommandmapMarker(gentity_t *ent)
 		mapEntityData_Team_t *teamList = NULL;
 		mapEntityData_t      *mEnt;
 
-		if (ent->parent->spawnflags & ALLIED_OBJECTIVE)
+		// alies
+		teamList = &mapEntityData[0];
+		mEnt     = G_FindMapEntityData(teamList, num);
+		if (!mEnt)
 		{
-			teamList = &mapEntityData[0];
+			mEnt         = G_AllocMapEntityData(teamList);
+			mEnt->entNum = num;
 		}
+		VectorCopy(ent->s.origin, mEnt->org);
+		mEnt->data      = ent->parent ? ent->parent->s.teamNum : -1;
+		mEnt->startTime = level.time;
+		mEnt->type      = ME_COMMANDMAP_MARKER;
+		mEnt->yaw       = 0;
 
-		if (ent->parent->spawnflags & AXIS_OBJECTIVE)
-		{
-			teamList = &mapEntityData[1];
-		}
 
-		mEnt = G_FindMapEntityData(teamList, num);
+		// axis
+		teamList = &mapEntityData[1];
+		mEnt     = G_FindMapEntityData(teamList, num);
 		if (!mEnt)
 		{
 			mEnt         = G_AllocMapEntityData(teamList);
