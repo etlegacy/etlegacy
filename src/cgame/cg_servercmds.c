@@ -477,7 +477,7 @@ void CG_ParseSpawns(void)
 	{
 		info = CG_ConfigString(CS_MULTI_SPAWNTARGETS + i - 1);
 
-		s = Info_ValueForKey(info, "spawn_targ");
+		s = Info_ValueForKey(info, "s"); // spawn_targ
 
 		if (!s || !strlen(s))
 		{

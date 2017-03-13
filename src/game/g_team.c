@@ -872,7 +872,7 @@ void team_wolf_objective_use(gentity_t *self, gentity_t *other, gentity_t *activ
 
 	// And update configstring
 	trap_GetConfigstring(self->count, cs, sizeof(cs));
-	Info_SetValueForKey(cs, "spawn_targ", self->message);
+	Info_SetValueForKey(cs, "s", self->message); // spawn_targ
 	Info_SetValueForKey(cs, "x", va("%i", (int)self->s.origin[0]));
 	Info_SetValueForKey(cs, "y", va("%i", (int)self->s.origin[1]));
 	Info_SetValueForKey(cs, "t", va("%i", self->count2));
@@ -897,7 +897,7 @@ void objective_Register(gentity_t *self)
 	{
 		cs_obj += numobjectives;
 		trap_GetConfigstring(cs_obj, cs, sizeof(cs));
-		Info_SetValueForKey(cs, "spawn_targ", self->message);
+		Info_SetValueForKey(cs, "s", self->message); // spawn_targ
 		Info_SetValueForKey(cs, "x", va("%i", (int)self->s.origin[0]));
 		Info_SetValueForKey(cs, "y", va("%i", (int)self->s.origin[1]));
 		if (level.ccLayers)
