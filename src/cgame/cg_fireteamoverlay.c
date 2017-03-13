@@ -147,17 +147,6 @@ void CG_ParseFireteams()
 
 		p = CG_ConfigString(CS_FIRETEAMS + i);
 
-		/*      s = Info_ValueForKey(p, "n");
-		        if(!s || !*s) {
-		            cg.fireTeams[i].inuse = qfalse;
-		            continue;
-		        } else {
-		            cg.fireTeams[i].inuse = qtrue;
-		        }*/
-
-		//Q_strncpyz(cg.fireTeams[i].name, s, 32);
-		//CG_Printf("Fireteam: %s\n", cg.fireTeams[i].name);
-
 		j = atoi(Info_ValueForKey(p, "id"));
 		if (j == -1)
 		{
