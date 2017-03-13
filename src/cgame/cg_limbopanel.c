@@ -1647,7 +1647,7 @@ void CG_LimboPanel_ClassBar_Draw(panel_button_t *button)
 	Q_strupr(buffer);
 
 	w = CG_Text_Width_Ext(buffer, button->font->scalex, 0, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, buffer, 0, 0, button->font->style, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString(buffer), 0, 0, button->font->style, button->font->font);
 }
 
 vec4_t clrRenderClassButton = { 1.f, 1.f, 1.f, 0.4f };
