@@ -2061,7 +2061,7 @@ void WolfReviveBbox(gentity_t *self)
 
 	if (hit && (hit->s.number == ENTITYNUM_WORLD || (hit->client && (hit->client->ps.persistant[PERS_HWEAPON_USE] || (hit->client->ps.eFlags & EF_MOUNTEDTANK)))))
 	{
-		G_DPrintf("WolfReviveBbox: Player stuck in world or MG42 using player\n");
+		G_DPrintf("WolfReviveBbox: Player stuck in world or MG 42 using player\n");
 		// Move corpse directly to the person who revived them
 		if (self->props_frame_state >= 0)
 		{
