@@ -823,7 +823,7 @@ void G_printMatchInfo(gentity_t *ent)
                                                         (g_gametype.integer == GT_WOLF_LMS) ? cl->ps.persistant[PERS_SCORE] : cl->ps.stats[STAT_XP]
 #ifdef FEATURE_RATING
                                                         ,
-                                                        MAX(cl->sess.mu - 3 * cl->sess.sigma, 0.f),
+                                                        MIN(MAX(cl->sess.mu - 3 * cl->sess.sigma, 0.f), 2 * MU),
                                                         (cl->sess.mu - 3 * cl->sess.sigma) - (cl->sess.oldmu - 3 * cl->sess.oldsigma)
 #endif
                                                         ));
