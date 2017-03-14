@@ -1624,8 +1624,8 @@ void G_shuffleTeamsXP(void)
 	{
 		cl = level.clients + sortClients[i];
 
-		//	cTeam = (i % 2) + TEAM_AXIS;
-		cTeam = (((i + 1) % 4) - ((i + 1) % 2)) / 2 + TEAM_AXIS;
+		//	cTeam = (i % 2) + TEAM_AXIS;  // 0101...
+		cTeam = (((i + 1) % 4) - ((i + 1) % 2)) / 2 + TEAM_AXIS; // 0110... fairer shuffle
 
 		if (cl->sess.sessionTeam != cTeam)
 		{
@@ -1658,6 +1658,7 @@ void G_shuffleTeamsSR(void)
 	team_t    cTeam; //, cMedian = level.numNonSpectatorClients / 2;
 	int       cnt = 0;
 	int       sortClients[MAX_CLIENTS];
+	int       mapBias = 0;
 	gclient_t *cl;
 
 	G_teamReset(TEAM_AXIS, qtrue);
@@ -1677,12 +1678,25 @@ void G_shuffleTeamsSR(void)
 
 	qsort(sortClients, cnt, sizeof(int), G_SortPlayersBySR);
 
+	// map bias check (1 = axis advantage)
+	if (g_skillRating.integer > 1)
+	{
+		mapBias = level.mapProb > 0.5f ? 1 : 0;
+	}
+
 	for (i = 0; i < cnt; i++)
 	{
 		cl = level.clients + sortClients[i];
 
-		//	cTeam = (i % 2) + TEAM_AXIS;
-		cTeam = (((i + 1) % 4) - ((i + 1) % 2)) / 2 + TEAM_AXIS;
+		// put best rated player on weakest side
+		if (g_skillRating.integer > 1 && mapBias)
+		{
+			cTeam = 3 - ((((i + 1) % 4) - ((i + 1) % 2)) / 2 + TEAM_AXIS);
+		}
+		else
+		{
+			cTeam = (((i + 1) % 4) - ((i + 1) % 2)) / 2 + TEAM_AXIS;
+		}
 
 		if (cl->sess.sessionTeam != cTeam)
 		{
