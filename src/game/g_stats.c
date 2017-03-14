@@ -220,10 +220,12 @@ void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 #ifdef FEATURE_RATING
 	if (g_skillRating.integer)
 	{
-		float rating = 0.f;
+		ent->client->sess.rank = (int)(MAX(ent->client->sess.mu - 3 * ent->client->sess.sigma, 0.f) / (2 * MU) * NUM_EXPERIENCE_LEVELS);
 
-		rating = (ent->client->sess.mu - 3 * ent->client->sess.sigma < 0.f) ? 0.f : ent->client->sess.mu - 3 * ent->client->sess.sigma;
-		ent->client->sess.rank = (int)(rating / (2 * MU) * NUM_EXPERIENCE_LEVELS);
+		if (ent->client->sess.rank > 10)
+		{
+			ent->client->sess.rank = 10;
+		}
 	}
 	else
 	{
