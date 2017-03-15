@@ -281,9 +281,9 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, meansOfDeath_
 	// Keep track of only active player-to-player interactions in a real game
 	if (
 #ifndef DEBUG_STATS
-		g_gamestate.integer != GS_PLAYING ||
+	    g_gamestate.integer != GS_PLAYING ||
 #endif
-		mod == MOD_SWITCHTEAM || (targ->client->ps.pm_flags & PMF_LIMBO))
+	    mod == MOD_SWITCHTEAM || (targ->client->ps.pm_flags & PMF_LIMBO))
 	{
 		return;
 	}
@@ -407,100 +407,6 @@ void G_addStatsHeadShot(gentity_t *attacker, meansOfDeath_t mod)
 }
 
 /**
-  * @var aWeapMOD
-  * @brief --> MOD_* to WS_* conversion
-  * WS_MAX = no equivalent/not used
-  *
-  * @todo FIXME: move to mod table
-  */
-static const mod_ws_convert_t aWeapMOD[MOD_NUM_MODS] =
-{
-	{ MOD_UNKNOWN,                            WS_MAX             },
-	{ MOD_MACHINEGUN,                         WS_MG42            },
-	{ MOD_BROWNING,                           WS_BROWNING        },
-	{ MOD_MG42,                               WS_MG42            },
-	{ MOD_GRENADE,                            WS_GRENADE         }, // FIXME: explosion (world kills = WS_GREANDE) ?!
-
-	{ MOD_KNIFE,                              WS_KNIFE           },
-	{ MOD_LUGER,                              WS_LUGER           },
-	{ MOD_COLT,                               WS_COLT            },
-	{ MOD_MP40,                               WS_MP40            },
-	{ MOD_THOMPSON,                           WS_THOMPSON        },
-	{ MOD_STEN,                               WS_STEN            },
-	{ MOD_GARAND,                             WS_GARAND          },
-
-	{ MOD_SILENCER,                           WS_LUGER           },
-	{ MOD_FG42,                               WS_FG42            },
-	{ MOD_FG42SCOPE,                          WS_FG42            },
-	{ MOD_PANZERFAUST,                        WS_PANZERFAUST     },
-	{ MOD_GRENADE_LAUNCHER,                   WS_GRENADE         },
-	{ MOD_FLAMETHROWER,                       WS_FLAMETHROWER    },
-	{ MOD_GRENADE_PINEAPPLE,                  WS_GRENADE         },
-
-	{ MOD_MAPMORTAR,                          WS_MORTAR          }, // FIXME: do we have to convert an attacker=world weapon as WS?
-	{ MOD_MAPMORTAR_SPLASH,                   WS_MORTAR          },
-
-	{ MOD_KICKED,                             WS_MAX             },
-
-	{ MOD_DYNAMITE,                           WS_DYNAMITE        },
-	{ MOD_AIRSTRIKE,                          WS_AIRSTRIKE       },
-	{ MOD_SYRINGE,                            WS_MAX             },
-	{ MOD_AMMO,                               WS_MAX             },
-	{ MOD_ARTY,                               WS_ARTILLERY       },
-
-	{ MOD_WATER,                              WS_MAX             },
-	{ MOD_SLIME,                              WS_MAX             },
-	{ MOD_LAVA,                               WS_MAX             },
-	{ MOD_CRUSH,                              WS_MAX             },
-	{ MOD_TELEFRAG,                           WS_MAX             },
-	{ MOD_FALLING,                            WS_MAX             },
-	{ MOD_SUICIDE,                            WS_MAX             },
-	{ MOD_TARGET_LASER,                       WS_MAX             },
-	{ MOD_TRIGGER_HURT,                       WS_MAX             },
-	{ MOD_EXPLOSIVE,                          WS_MAX             },
-
-	{ MOD_CARBINE,                            WS_CARBINE         },
-	{ MOD_KAR98,                              WS_KAR98           },
-	{ MOD_GPG40,                              WS_GRENADELAUNCHER },
-	{ MOD_M7,                                 WS_GRENADELAUNCHER },
-	{ MOD_LANDMINE,                           WS_LANDMINE        },
-	{ MOD_SATCHEL,                            WS_SATCHEL         },
-
-	{ MOD_SMOKEBOMB,                          WS_MAX             },
-	{ MOD_MOBILE_MG42,                        WS_MG42            },
-	{ MOD_SILENCED_COLT,                      WS_COLT            },
-	{ MOD_GARAND_SCOPE,                       WS_GARAND          },
-
-	{ MOD_CRUSH_CONSTRUCTION,                 WS_MAX             },
-	{ MOD_CRUSH_CONSTRUCTIONDEATH,            WS_MAX             },
-	{ MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER, WS_MAX             },
-
-	{ MOD_K43,                                WS_K43             },
-	{ MOD_K43_SCOPE,                          WS_K43             },
-
-	{ MOD_MORTAR,                             WS_MORTAR          },
-
-	{ MOD_AKIMBO_COLT,                        WS_COLT            },
-	{ MOD_AKIMBO_LUGER,                       WS_LUGER           },
-	{ MOD_AKIMBO_SILENCEDCOLT,                WS_COLT            },
-	{ MOD_AKIMBO_SILENCEDLUGER,               WS_LUGER           },
-
-	{ MOD_SMOKEGRENADE,                       WS_AIRSTRIKE       }, // airstrike tag
-
-	{ MOD_SWAP_PLACES,                        WS_MAX             },
-
-	{ MOD_SWITCHTEAM,                         WS_MAX             },
-
-	{ MOD_SHOVE,                              WS_MAX             },
-
-	{ MOD_KNIFE_KABAR,                        WS_KNIFE_KBAR      },
-	{ MOD_MOBILE_BROWNING,                    WS_BROWNING        },
-	{ MOD_MORTAR2,                            WS_MORTAR2         },
-	{ MOD_BAZOOKA,                            WS_BAZOOKA         },
-	{ MOD_BACKSTAB,                           WS_KNIFE           },
-};
-
-/**
  * @brief Get right stats index based on weapon mod
  * @param[in] iWeaponMOD
  * @return
@@ -512,7 +418,7 @@ unsigned int G_weapStatIndex_MOD(unsigned int iWeaponMOD)
 		return WS_MAX;
 	}
 
-	return aWeapMOD[iWeaponMOD].iWS;
+	return modTable[iWeaponMOD].iWS;
 }
 
 /**

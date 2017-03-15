@@ -991,12 +991,14 @@ typedef struct weapontable_s
  */
 typedef struct modtable_s
 {
-	int mod;                ///< reference
+	int mod;                      ///< reference
 
-	qboolean isHeadshot;    ///< g
-	qboolean isExplosive;   ///< g
+	qboolean isHeadshot;          ///< g
+	qboolean isExplosive;         ///< g
 
-	int weaponClassForMOD;  ///< g
+	int weaponClassForMOD;        ///< g
+	unsigned int iWS;             ///< g
+
 } modTable_t;
 
 extern weaponTable_t *GetWeaponTableData(int weaponIndex);
