@@ -359,10 +359,6 @@ void CG_DemoClick(int key, qboolean down)
 	}
 #endif
 
-	// FIXME: fix the macros/keys - the following switches need some sorting ...
-	//        sync help/key window (see K_SPACE f.e.)
-	//        atm when FEATURE_EDV is enabled there is no key bound to call console cmd pausedemo
-
 	switch (key)
 	{
 #ifdef FEATURE_MULTIVIEW
