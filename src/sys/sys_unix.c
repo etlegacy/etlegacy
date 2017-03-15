@@ -110,7 +110,7 @@ void Sys_Chmod(const char *file, int mode)
 	perm = stat_infoBefore.st_mode | mode;
 
 	// Try to get the file descriptor
-	if ((fd = open(file, O_RDONLY, S_IXUSR)) == 1)
+	if ((fd = open(file, O_RDONLY, S_IXUSR)) != 0)
 	{
 		Com_Printf("Sys_Chmod: open('%s', %d, %d) failed: errno %d\n", file, O_RDONLY, S_IXUSR, errno);
 		close(fd);
@@ -288,7 +288,7 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 	}
 
 	// Check the state (if path exists)
-	if (stat(ospath, &stat_infoBefore) == -1)
+	if (stat(ospath, &stat_infoBefore) != 0)
 	{
 		// Check the error in case the the file doesn't exist
 		if (errno != ENOENT)
@@ -307,7 +307,7 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 	}
 
 	// Try to open the file and get the file descriptor
-	if ((fd = open(ospath, oflag)) == -1)
+	if ((fd = open(ospath, oflag, S_IRWXU)) != 0)
 	{
 		Com_Printf("Sys_FOpen: open('%s', %d) failed: errno %d\n", ospath, oflag, errno);
 		close(fd);
