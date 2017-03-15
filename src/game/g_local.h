@@ -2416,17 +2416,6 @@ void G_SkillRatingSetMapRating(char *mapname, int winner);
 // g_stats.c
 void G_UpgradeSkill(gentity_t *ent, skillType_t skill);
 
-/**
- * @struct mod_ws_convert_s
- * @typedef mod_ws_convert_t
- * @brief
- */
-typedef struct mod_ws_convert_s
-{
-	meansOfDeath_t mod;
-	extWeaponStats_t iWS;
-} mod_ws_convert_t;
-
 #ifdef FEATURE_MULTIVIEW
 // g_multiview.c
 qboolean G_smvCommands(gentity_t *ent, const char *cmd);
