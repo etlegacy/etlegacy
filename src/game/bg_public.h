@@ -977,6 +977,8 @@ typedef struct weapontable_s
 	// icons
 	const char *desc;               ///< c - description for spawn weapons
 
+	unsigned int iWS;
+
 } weaponTable_t;
 
 #define WEAPON_CLASS_FOR_MOD_NO       -1
@@ -2673,19 +2675,6 @@ extern modTable_t modTable[MOD_NUM_MODS];
 qboolean BG_BBoxCollision(vec3_t min1, vec3_t max1, vec3_t min2, vec3_t max2);
 
 //#define VISIBLE_TRIGGERS
-
-// bg_stats.c
-
-/**
- * @struct weap_ws_convert_s
- * @typedef weap_ws_convert_t
- * @brief
- */
-typedef struct weap_ws_convert_s
-{
-	weapon_t iWeapon;
-	extWeaponStats_t iWS;
-} weap_ws_convert_t;
 
 extWeaponStats_t BG_WeapStatForWeapon(weapon_t iWeaponID);
 
