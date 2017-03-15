@@ -2376,7 +2376,7 @@ void G_resetModeState(void);
 void G_resetRoundState(void);
 void G_spawnPrintf(int print_type, int print_time, gentity_t *owner);
 void G_statsPrint(gentity_t *ent, int nType);
-unsigned int G_weapStatIndex_MOD(unsigned int iWeaponMOD);
+extWeaponStats_t G_weapStatIndex_MOD(unsigned int iWeaponMOD);
 
 #ifdef FEATURE_RATING
 // g_skillrating.c

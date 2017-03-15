@@ -411,7 +411,7 @@ void G_addStatsHeadShot(gentity_t *attacker, meansOfDeath_t mod)
  * @param[in] iWeaponMOD
  * @return
  */
-unsigned int G_weapStatIndex_MOD(unsigned int iWeaponMOD)
+extWeaponStats_t G_weapStatIndex_MOD(unsigned int iWeaponMOD)
 {
 	if (iWeaponMOD >= MOD_NUM_MODS)
 	{
