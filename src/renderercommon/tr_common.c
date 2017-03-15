@@ -622,6 +622,25 @@ void R_DoGLimpShutdown(void)
 	Com_Memset(&glState, 0, sizeof(glState));
 }
 
+/**
+ * @brief Workaround for ri.Printf's 1024 characters buffer limit.
+ * @param[in] string
+ */
+void R_PrintLongString(const char *string)
+{
+	char       buffer[1024];
+	const char *p   = string;
+	int        size = strlen(string);
+
+	while (size > 0)
+	{
+		Q_strncpyz(buffer, p, sizeof(buffer));
+		Ren_Print("%s", buffer);
+		p    += 1023;
+		size -= 1023;
+	}
+}
+
 #ifdef USE_RENDERER_DLOPEN
 /**
  * @brief Com_Printf

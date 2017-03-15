@@ -937,25 +937,6 @@ void GL_SetDefaultState(void)
 }
 
 /**
- * @brief Workaround for ri.Printf's 1024 characters buffer limit.
- * @param[in] string
- */
-void R_PrintLongString(const char *string)
-{
-	char       buffer[1024];
-	const char *p   = string;
-	int        size = strlen(string);
-
-	while (size > 0)
-	{
-		Q_strncpyz(buffer, p, sizeof(buffer));
-		ri.Printf(PRINT_ALL, "%s", buffer);
-		p    += 1023;
-		size -= 1023;
-	}
-}
-
-/**
  * @brief GfxInfo_f
  */
 void GfxInfo_f(void)

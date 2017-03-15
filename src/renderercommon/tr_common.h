@@ -84,6 +84,7 @@ void RE_InitOpenGl(void);
 int RE_InitOpenGlSubsystems(void);
 
 void R_DoGLimpShutdown(void);
+void R_PrintLongString(const char *string);
 
 // font stuff
 void R_InitFreeType(void);
