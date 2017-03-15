@@ -3772,7 +3772,7 @@ void CG_LimboPanel_RequestWeaponStats(void)
 
 	if (weapStat == WS_MAX)
 	{
-		// Bleh?
+		// FIXME: Bleh?
 		return;
 	}
 
