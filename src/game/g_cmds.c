@@ -3181,14 +3181,14 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 		}
 		else if (level.intermissiontime)
 		{
-			CP("cp \"Cannot callvote during intermission.\"");
+			CP("cp \"You cannot call a vote during intermission.\"");
 			return qfalse;
 		}
 		else if (!ent->client->sess.referee)
 		{
 			if (voteFlags.integer == VOTING_DISABLED)
 			{
-				CP("cp \"Voting not enabled on this server.\"");
+				CP("cp \"Voting is disabled on this server.\"");
 				return qfalse;
 			}
 			else if (vote_limit.integer > 0 && ent->client->pers.voteCount >= vote_limit.integer)
@@ -3198,7 +3198,7 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 			}
 			else if (ent->client->sess.sessionTeam == TEAM_SPECTATOR)
 			{
-				CP("cp \"Not allowed to call a vote as a spectator.\"");
+				CP("cp \"You cannot call a vote as a spectator.\"");
 				return qfalse;
 			}
 		}
