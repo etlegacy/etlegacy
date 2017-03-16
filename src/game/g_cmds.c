@@ -3164,17 +3164,12 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 	char     arg1[MAX_STRING_TOKENS];
 	char     arg2[MAX_STRING_TOKENS];
 	char     voteDesc[VOTE_MAXSTRING];
-	qboolean muted = qfalse;
 
-	if (ent->client->sess.muted /*|| G_shrubbot_mute_check(level.clients[ent-g_entities].pers.client_ip, level.clients[ent-g_entities].pers.cl_guid)*/)
-	{
-		muted = qtrue;
-	}
 	// Normal checks, if its not being issued as a referee command
 	if (!fRefCommand)
 	{
 		// added mute check
-		if (muted)
+		if (ent->client->sess.muted)
 		{
 			CP("cp \"You cannot call a vote while muted.\"");
 			return qfalse;
@@ -3191,15 +3186,12 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 		}
 		else if (!ent->client->sess.referee)
 		{
-			qboolean sbfNoVoteLimit = qfalse; //G_shrubbot_permission( ent, SBF_NO_VOTE_LIMIT ); // FIXME this is Lua/game manager stuff
-
-			if (voteFlags.integer == VOTING_DISABLED && !sbfNoVoteLimit)
+			if (voteFlags.integer == VOTING_DISABLED)
 			{
 				CP("cp \"Voting not enabled on this server.\"");
 				return qfalse;
 			}
-			else if (vote_limit.integer > 0 && ent->client->pers.voteCount >= vote_limit.integer &&
-			         !sbfNoVoteLimit)
+			else if (vote_limit.integer > 0 && ent->client->pers.voteCount >= vote_limit.integer)
 			{
 				CP(va("cp \"You have already called the maximum number of votes (%d).\"", vote_limit.integer));
 				return qfalse;
@@ -3209,11 +3201,6 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCom
 				CP("cp \"Not allowed to call a vote as a spectator.\"");
 				return qfalse;
 			}
-			// flag to control vote permissions
-			//else if ( !sbfNoVoteLimit && G_shrubbot_permission(ent, SBF_NOVOTE) ) {
-			//	CP("cp \"Your adminlevel isn't allowed to call votes.\"");
-			//	return qfalse;
-			//}
 		}
 	}
 
@@ -3367,12 +3354,6 @@ qboolean G_FindFreeComplainIP(gclient_t *cl, ipFilter_t *ip)
 void Cmd_Vote_f(gentity_t *ent)
 {
 	char     msg[64];
-	qboolean muted = qfalse;
-
-	if (ent->client->sess.muted /*|| G_shrubbot_mute_check(ent->client->pers.client_ip, ent->client->pers.cl_guid)*/)
-	{
-		muted = qtrue;
-	}
 
 	// Complaints supercede voting (and share command)
 	if (ent->client->pers.complaintEndTime > level.time && g_gamestate.integer == GS_PLAYING && g_complaintlimit.integer)
@@ -3645,7 +3626,7 @@ void Cmd_Vote_f(gentity_t *ent)
 		return;
 	}
 
-	if (muted)
+	if (ent->client->sess.muted)
 	{
 		trap_SendServerCommand(ent - g_entities, "print \"Not allowed to vote when muted.\n\"");
 		return;

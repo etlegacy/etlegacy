@@ -748,8 +748,8 @@ qboolean ClientInactivityTimer(gclient_t *client)
 		return qtrue;
 	}
 
-	// No inactivity for localhost and shrubbot-set clients
-	if (client->pers.localClient /*|| G_shrubbot_permission(&g_entities[client-level.clients], SBF_ACTIVITY)*/)    // FIXME: refs?, how to deal with game manager
+	// No inactivity for localhost
+	if (client->pers.localClient)
 	{
 		return qtrue;
 	}
