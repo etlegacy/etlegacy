@@ -113,7 +113,6 @@ void Sys_Chmod(const char *file, int mode)
 	if ((fd = open(file, O_RDONLY, S_IXUSR)) == -1)
 	{
 		Com_Printf("Sys_Chmod: open('%s', %d, %d) failed: errno %d\n", file, O_RDONLY, S_IXUSR, errno);
-		close(fd);
 		return;
 	}
 
@@ -309,7 +308,6 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 	if ((fd = open(ospath, oflag, S_IRWXU)) == -1)
 	{
 		Com_Printf("Sys_FOpen: open('%s', %d) failed: errno %d\n", ospath, oflag, errno);
-		close(fd);
 		return NULL;
 	}
 
