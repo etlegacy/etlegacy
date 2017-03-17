@@ -101,7 +101,7 @@ void Sys_Chmod(const char *file, int mode)
 	int         fd;
 
 	// Get the state of the file
-	if (stat(file, &stat_infoBefore) != 0)
+	if (stat(file, &stat_infoBefore) == -1)
 	{
 		Com_Printf("Sys_Chmod: first stat('%s')  failed: errno %d\n", file, errno);
 		return;
@@ -110,7 +110,7 @@ void Sys_Chmod(const char *file, int mode)
 	perm = stat_infoBefore.st_mode | mode;
 
 	// Try to get the file descriptor
-	if ((fd = open(file, O_RDONLY, S_IXUSR)) != 0)
+	if ((fd = open(file, O_RDONLY, S_IXUSR)) == -1)
 	{
 		Com_Printf("Sys_Chmod: open('%s', %d, %d) failed: errno %d\n", file, O_RDONLY, S_IXUSR, errno);
 		close(fd);
@@ -120,7 +120,7 @@ void Sys_Chmod(const char *file, int mode)
 	Com_DPrintf("chmod +%d '%s'\n", mode, file);
 
 	// Get the state of the file after opening function
-	if (stat(file, &fstat_infoAfter) != 0)
+	if (stat(file, &fstat_infoAfter) == -1)
 	{
 		Com_Printf("Sys_Chmod: second stat('%s')  failed: errno %d\n", file, errno);
 		close(fd);
@@ -129,8 +129,7 @@ void Sys_Chmod(const char *file, int mode)
 
 	// Compare the state before and after opening
 	if (stat_infoBefore.st_mode != fstat_infoAfter.st_mode ||
-	    stat_infoBefore.st_ino != fstat_infoAfter.st_ino ||
-	    stat_infoBefore.st_dev != fstat_infoAfter.st_dev)
+	    stat_infoBefore.st_ino != fstat_infoAfter.st_ino)
 	{
 		Com_Printf("Sys_Chmod: stat before and after open are different. The file ('%s') may differ (TOCTOU Attacks ?)\n", file);
 		close(fd);
@@ -288,7 +287,7 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 	}
 
 	// Check the state (if path exists)
-	if (stat(ospath, &stat_infoBefore) != 0)
+	if (stat(ospath, &stat_infoBefore) == -1)
 	{
 		// Check the error in case the the file doesn't exist
 		if (errno != ENOENT)
@@ -307,7 +306,7 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 	}
 
 	// Try to open the file and get the file descriptor
-	if ((fd = open(ospath, oflag, S_IRWXU)) != 0)
+	if ((fd = open(ospath, oflag, S_IRWXU)) == -1)
 	{
 		Com_Printf("Sys_FOpen: open('%s', %d) failed: errno %d\n", ospath, oflag, errno);
 		close(fd);
@@ -315,7 +314,7 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 	}
 
 	// Get the state of the current handle file only if the file wasn't created
-	if (*mode != 'w' && fstat(fd, &stat_infoAfter) != 0)
+	if (*mode != 'w' && fstat(fd, &stat_infoAfter) == -1)
 	{
 		Com_Printf("Sys_FOpen: second stat('%s')  failed: errno %d\n", ospath, errno);
 		close(fd);
@@ -324,8 +323,7 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 
 	// Compare the state before and after opening only if the file wasn't created
 	if (*mode != 'w' && (stat_infoBefore.st_mode != stat_infoAfter.st_mode ||
-	                     stat_infoBefore.st_ino != stat_infoAfter.st_ino ||
-	                     stat_infoBefore.st_dev != stat_infoAfter.st_dev))
+	                     stat_infoBefore.st_ino != stat_infoAfter.st_ino))
 	{
 		Com_Printf("Sys_FOpen: stat before and after chmod are different. The file ('%s') may differ (TOCTOU Attacks ?)\n", ospath);
 		close(fd);

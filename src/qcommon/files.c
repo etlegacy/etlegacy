@@ -1729,8 +1729,8 @@ qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const c
 		if (destLength > 0)
 		{
 			destData = (unsigned char *)Z_Malloc(destLength);
-
-			if (fread(destData, destLength, 1, destHandle) != 1)
+            
+			if (fread(destData, destLength, 1, destHandle) != 1 && (!feof(destHandle) || ferror(destHandle)))
 			{
 				Com_Error(ERR_FATAL, "FS_CL_ExtractFromPakFile: Short read '%s'", filename);
 			}
