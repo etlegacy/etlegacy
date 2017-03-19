@@ -180,7 +180,7 @@ char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag)
 
 		if ((cg_locations.integer & LOC_SHOWCOORDS) && locValid)
 		{
-			Q_strcat(locStr, 64, va(" ^3%s", BG_GetLocationString(origin[0], origin[1])));   // append a location
+			Q_strcat(locStr, 64, va(" ^3(%s)", BG_GetLocationString(origin[0], origin[1])));   // append a location
 		}
 	}
 	else
