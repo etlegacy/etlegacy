@@ -1249,6 +1249,8 @@ void G_CheckForCursorHints(gentity_t *ent)
 				break;
 			}
 			case ET_CONSTRUCTIBLE:
+			case ET_CONSTRUCTIBLE_INDICATOR:
+			case ET_CONSTRUCTIBLE_MARKER:
 				if (G_ConstructionIsPartlyBuilt(checkEnt) && !(checkEnt->spawnflags & CONSTRUCTIBLE_INVULNERABLE))
 				{
 					// only show hint for players who can blow it up
@@ -1291,6 +1293,17 @@ void G_CheckForCursorHints(gentity_t *ent)
 						// hintType = ps->serverCursorHint = HINT_FORCENONE;
 						// hintVal  = ps->serverCursorHintVal = 0;
 						return;
+					}
+				}
+				else if (ent->client->touchingTOI && ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
+				{
+					gentity_t *constructible;
+
+					if ((constructible = G_IsConstructible(ent->client->sess.sessionTeam, ent->client->touchingTOI)))
+					{
+						hintDist = CH_ACTIVATE_DIST;
+						hintType = ps->serverCursorHint    = HINT_CONSTRUCTIBLE;
+						hintVal  = ps->serverCursorHintVal = (int)constructible->s.angles2[0];
 					}
 				}
 				break;
@@ -1491,12 +1504,12 @@ void G_CheckForCursorHints(gentity_t *ent)
 			}
 
 			// set hint distance
-            if (dist <= Square(hintDist))
-            {
-                ps->serverCursorHint    = hintType;
-                ps->serverCursorHintVal = hintVal;
-            }
-            return;
+			if (dist <= Square(hintDist))
+			{
+				ps->serverCursorHint    = hintType;
+				ps->serverCursorHintVal = hintVal;
+			}
+			return;
 		}
 	}
 
