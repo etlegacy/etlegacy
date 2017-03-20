@@ -4182,6 +4182,11 @@ void CG_AltWeapon_f(void)
 		return;
 	}
 
+	if (cg.snap->ps.pm_type == PM_FREEZE)
+	{
+		return;
+	}
+
 	// Overload for spec mode when following
 	if (((cg.snap->ps.pm_flags & PMF_FOLLOW) || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 #ifdef FEATURE_MULTIVIEW
@@ -4255,6 +4260,16 @@ void CG_AltWeapon_f(void)
 	}
 	// Don't try to switch when in the middle of reloading.
 	if (cg.snap->ps.weaponstate == WEAPON_RELOADING)
+	{
+		return;
+	}
+
+	if (cg.predictedPlayerState.pm_type == PM_DEAD)
+	{
+		return;
+	}
+
+	if (cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
 	{
 		return;
 	}
@@ -5079,6 +5094,21 @@ void CG_WeaponBank_f(void)
 
 	// Don't try to switch when in the middle of reloading.
 	if (cg.snap->ps.weaponstate == WEAPON_RELOADING)
+	{
+		return;
+	}
+
+	if (cg.predictedPlayerState.pm_type == PM_DEAD)
+	{
+		return;
+	}
+
+	if (cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.weaponDelay > 0)
 	{
 		return;
 	}
