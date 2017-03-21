@@ -32,11 +32,9 @@ elseif(WIN32)
 		COMMAND ${UNZIP_EXECUTABLE} -u ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_GEOIP_ARCHIVE}
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/legacy
 	)
-endif()
 
 message(STATUS "Adding GeoIP to installer scripts")
 install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/legacy"
 	DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
 )
 endif(UNIX)
-
