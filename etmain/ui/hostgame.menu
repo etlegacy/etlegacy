@@ -193,7 +193,8 @@ menuDef {
 // Buttons //
 	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("BACK"), .3, 14, close hostgame ; open main )
 	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, _("ADVANCED"), .3, 14, close hostgame ; open hostgame_advanced )
-	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("START SERVER"), .3, 14, conditionalScript ui_dedicated 0
+	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("START SERVER"), .3, 14,
+		conditionalScript ui_dedicated 0
 		( "open hostgame_dedicated_warning" )
 		( "uiScript StartServer" ) )
 }

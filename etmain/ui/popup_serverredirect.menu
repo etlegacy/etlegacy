@@ -33,7 +33,7 @@ menuDef {
 
 	onESC {
 		uiScript clearError ;
-		close popupServerRedirect;
+		close popupServerRedirect ;
 		open main
 	}
 

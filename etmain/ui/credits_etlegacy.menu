@@ -173,14 +173,14 @@ menuDef {
 	LABELWHITE( 6, CREDITS_Y+288, .7*(WINDOW_WIDTH-12), 10, "www.etlegacy.com", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
 // Copyright Notices //
-        LABEL( 6, CREDITS_Y+306, .7*(WINDOW_WIDTH-12), 10, _("© 2012-2017 ET:Legacy Team - under the terms of GPL version 3."), .17, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
+	LABEL( 6, CREDITS_Y+306, .7*(WINDOW_WIDTH-12), 10, _("© 2012-2017 ET:Legacy Team - under the terms of GPL version 3."), .17, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
 // Buttons //
 #ifdef FUI
-        BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, close credits_etlegacy ; open main )
+	BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, close credits_etlegacy ; open main )
 #else
-        BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, close credits_etlegacy ; open ingame_main )
+	BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, close credits_etlegacy ; open ingame_main )
 #endif
-        BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, _("HALL OF FAME"), .3, 14, close credits_etlegacy ; open credits_halloffame )
-        BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "SPLASH DAMAGE", .3, 14, close credits_etlegacy ; open credits_splashdamage )
+	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, _("HALL OF FAME"), .3, 14, close credits_etlegacy ; open credits_halloffame )
+	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "SPLASH DAMAGE", .3, 14, close credits_etlegacy ; open credits_splashdamage )
 }

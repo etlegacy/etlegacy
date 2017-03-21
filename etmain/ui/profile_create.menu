@@ -30,8 +30,8 @@ menuDef {
 
 	onOpen {
 		conditionalscript ui_profile_create_error 1
-			( "clearcvar ui_profile_create_error ; abort" )
-			( "clearfocus" )
+		( "clearcvar ui_profile_create_error ; abort" )
+		( "clearfocus" )
 
 		setitemcolor background backcolor 0 0 0 0 ;
 		fadein background ;
@@ -43,12 +43,12 @@ menuDef {
 		DEFAULT_SETTINGS
 
 		conditionalscript com_recommendedSet 0
-			( "clearfocus" )
-			( "abort" )
+		( "clearfocus" )
+		( "abort" )
 
 		conditionalscript com_recommended 3
-			( "setcvar ui_glCustom 1 ; uiScript update ui_glCustom" )
-			( "copycvar com_recommended ui_glCustom ; uiScript update ui_glCustom" ) "-1"
+		( "setcvar ui_glCustom 1 ; uiScript update ui_glCustom" )
+		( "copycvar com_recommended ui_glCustom ; uiScript update ui_glCustom" ) "-1"
 	}
 
 	onESC {
@@ -109,34 +109,34 @@ menuDef {
 	MULTI( SUBWINDOW_X+4, SUBWINDOW_Y+238, (SUBWINDOW_WIDTH)-8, 10, _("Handedness:"), .2, 8, "ui_handedness", cvarFloatList { _("Right") 0 _("Left") 1 }, _("Left or Right Handed? This sets your default controls\nwhich you can modify later via the options menu") )
 
 	BUTTON( (SUBWINDOW_X+4)+.5*((SUBWINDOW_WIDTH)-164), SUBWINDOW_Y+252, 164, 14, _("DEFAULT SETTINGS"), .24, 11, DEFAULT_SETTINGS ;
-																												conditionalscript com_recommendedSet 0
-																													( "clearfocus" )
-																													( "abort" )
-
-																												conditionalscript com_recommended 3
-																													( "setcvar ui_glCustom 1 ; uiScript update ui_glCustom" )
-																													( "copycvar com_recommended ui_glCustom ; uiScript update ui_glCustom" ) "-1" )
+			conditionalscript com_recommendedSet 0
+			( "clearfocus" )
+			( "abort" )
+			conditionalscript com_recommended 3
+			( "setcvar ui_glCustom 1 ; uiScript update ui_glCustom" )
+			( "copycvar com_recommended ui_glCustom ; uiScript update ui_glCustom" ) "-1" )
 
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("BACK"), .3, 14, close profile_create ; open profile )
-	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("CREATE"), .3, 14, conditionalscript UIProfileValidName 2
-																																		( "clearFocus" )
-																																		( "setcvar ui_profile_create_error \\\"Can't create profile. Please enter a valid player alias.\\\" ; open profile_create_error ; abort" )
-																																	 conditionalscript ui_rate 0
-																																		( "clearFocus" )
-																																		( "setcvar ui_profile_create_error \\\"Can't create profile. Please select your connection type. If you are unsure what to select, choose Modem.\\\" ; open profile_create_error ; abort" )
-																																	 conditionalscript UIProfileAlreadyExists 2
-																																		( "setcvar ui_profile_create_error \\\"Can't create profile. A profile with the same name already exists.\\\" ; open profile_create_error ; abort" )
-																																		( "clearFocus" )
+	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("CREATE"), .3, 14,
+			conditionalscript UIProfileValidName 2
+			( "clearFocus" )
+			( "setcvar ui_profile_create_error \\\"Can't create profile. Please enter a valid player alias.\\\" ; open profile_create_error ; abort" )
+			conditionalscript ui_rate 0
+			( "clearFocus" )
+			( "setcvar ui_profile_create_error \\\"Can't create profile. Please select your connection type. If you are unsure what to select, choose Modem.\\\" ; open profile_create_error ; abort" )
+			conditionalscript UIProfileAlreadyExists 2
+			( "setcvar ui_profile_create_error \\\"Can't create profile. A profile with the same name already exists.\\\" ; open profile_create_error ; abort" )
+			( "clearFocus" )
 
-																																	close profile_create ;
-																																	uiscript createProfile ;
-																																	uiScript vidSave ;
-																																	uiscript clearPID ;
-																																	uiscript applyProfile ;
-																																	execwolfconfig 1 ;
-																																	uiscript systemCvarsApply ;
-																																	uiscript profileCvarsApply ;
-																																	setcvar ui_showtooltips 1 ;
-																																	uiscript loadCachedServers ;
-																																	exec vid_restart ; )
+			close profile_create ;
+			uiScript createProfile ;
+			uiScript vidSave ;
+			uiScript clearPID ;
+			uiScript applyProfile ;
+			execwolfconfig 1 ;
+			uiScript systemCvarsApply ;
+			uiScript profileCvarsApply ;
+			setcvar ui_showtooltips 1 ;
+			uiScript loadCachedServers ;
+			exec vid_restart ; )
 }

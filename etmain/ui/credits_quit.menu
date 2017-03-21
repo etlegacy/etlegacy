@@ -17,7 +17,7 @@ menuDef {
 	style		WINDOW_STYLE_FILLED
 
 	onESC {
-		uiScript Quit;
+		uiScript Quit
 	}
 
 

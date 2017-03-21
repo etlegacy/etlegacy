@@ -20,28 +20,28 @@ menuDef {
 
 		// sort by servername ?
 		conditionalScript serversort_0 2
-			( "setitemcolor grpColumns backcolor 0 0 0 0 ; setitemcolor grpTabs backcolor .1 .1 .1 .3 ; setitemcolor grpTabs forecolor .6 .6 .6 1 ; setitemcolor serverColumn backcolor .35 .35 .35 .2 ; setitemcolor serverColumnTab backcolor .35 .35 .35 .2 ; setitemcolor serverColumnTab forecolor .9 .9 .9 1" )
-			( "clearFocus" )
+		( "setitemcolor grpColumns backcolor 0 0 0 0 ; setitemcolor grpTabs backcolor .1 .1 .1 .3 ; setitemcolor grpTabs forecolor .6 .6 .6 1 ; setitemcolor serverColumn backcolor .35 .35 .35 .2 ; setitemcolor serverColumnTab backcolor .35 .35 .35 .2 ; setitemcolor serverColumnTab forecolor .9 .9 .9 1" )
+		( "clearFocus" )
 
 		// sort by mapname ?
 		conditionalScript serversort_1 2
-			( "setitemcolor grpColumns backcolor 0 0 0 0 ; setitemcolor grpTabs backcolor .1 .1 .1 .3 ; setitemcolor grpTabs forecolor .6 .6 .6 1 ; setitemcolor mapColumn backcolor .35 .35 .35 .2 ; setitemcolor mapColumnTab backcolor .35 .35 .35 .2 ; setitemcolor mapColumnTab forecolor .9 .9 .9 1" )
-			( "clearFocus" )
+		( "setitemcolor grpColumns backcolor 0 0 0 0 ; setitemcolor grpTabs backcolor .1 .1 .1 .3 ; setitemcolor grpTabs forecolor .6 .6 .6 1 ; setitemcolor mapColumn backcolor .35 .35 .35 .2 ; setitemcolor mapColumnTab backcolor .35 .35 .35 .2 ; setitemcolor mapColumnTab forecolor .9 .9 .9 1" )
+		( "clearFocus" )
 
 		// sort by playercount ?
 		conditionalScript serversort_2 2
-			( "setitemcolor grpColumns backcolor 0 0 0 0 ; setitemcolor grpTabs backcolor .1 .1 .1 .3 ; setitemcolor grpTabs forecolor .6 .6 .6 1 ;	setitemcolor playerColumn backcolor .35 .35 .35 .2 ; setitemcolor playerColumnTab backcolor .35 .35 .35 .2 ; setitemcolor playerColumnTab forecolor .9 .9 .9 1" )
-			( "clearFocus" )
+		( "setitemcolor grpColumns backcolor 0 0 0 0 ; setitemcolor grpTabs backcolor .1 .1 .1 .3 ; setitemcolor grpTabs forecolor .6 .6 .6 1 ;	setitemcolor playerColumn backcolor .35 .35 .35 .2 ; setitemcolor playerColumnTab backcolor .35 .35 .35 .2 ; setitemcolor playerColumnTab forecolor .9 .9 .9 1" )
+		( "clearFocus" )
 
 		// sort by gametype ?
 		conditionalScript serversort_3 2
-			( "setitemcolor grpColumns backcolor 0 0 0 0 ; setitemcolor grpTabs backcolor .1 .1 .1 .3 ; setitemcolor grpTabs forecolor .6 .6 .6 1 ; setitemcolor gametypeColumn backcolor .35 .35 .35 .2 ; setitemcolor gametypeColumnTab backcolor .35 .35 .35 .2 ; setitemcolor gametypeColumnTab forecolor .9 .9 .9 1" )
-			( "clearFocus" )
+		( "setitemcolor grpColumns backcolor 0 0 0 0 ; setitemcolor grpTabs backcolor .1 .1 .1 .3 ; setitemcolor grpTabs forecolor .6 .6 .6 1 ; setitemcolor gametypeColumn backcolor .35 .35 .35 .2 ; setitemcolor gametypeColumnTab backcolor .35 .35 .35 .2 ; setitemcolor gametypeColumnTab forecolor .9 .9 .9 1" )
+		( "clearFocus" )
 
 		// sort by ping ?
 		conditionalScript serversort_4 2
-			( "setitemcolor grpColumns backcolor 0 0 0 0 ; setitemcolor grpTabs backcolor .1 .1 .1 .3 ; setitemcolor grpTabs forecolor .6 .6 .6 1 ; setitemcolor pingColumn backcolor .35 .35 .35 .2 ; setitemcolor pingColumnTab backcolor .35 .35 .35 .2 ; setitemcolor pingColumnTab forecolor .9 .9 .9 1" )
-			( "clearFocus" )
+		( "setitemcolor grpColumns backcolor 0 0 0 0 ; setitemcolor grpTabs backcolor .1 .1 .1 .3 ; setitemcolor grpTabs forecolor .6 .6 .6 1 ; setitemcolor pingColumn backcolor .35 .35 .35 .2 ; setitemcolor pingColumnTab backcolor .35 .35 .35 .2 ; setitemcolor pingColumnTab forecolor .9 .9 .9 1" )
+		( "clearFocus" )
 
 		clearCvar ui_filterdescription
 	}

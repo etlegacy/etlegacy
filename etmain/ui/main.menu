@@ -118,7 +118,7 @@ menuDef {
 	LABEL( 80, 368, SECURITY_WIDTH, 18, _("^1SECURITY INFORMATION"), .3, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
 	LABELWHITE( 80, 384, SECURITY_WIDTH, 9, _("You are running old software"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
 	LABEL( 80, 398, SECURITY_WIDTH, 9, _("We do recommend to\nupgrade your ET client"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
-	BUTTON( 80+6, 428, SECURITY_WIDTH-12, 18, _("UPGRADE NOW"), .3, 14, clearFocus; uiScript validate_openURL )
+	BUTTON( 80+6, 428, SECURITY_WIDTH-12, 18, _("UPGRADE NOW"), .3, 14, clearFocus ; uiScript validate_openURL )
 	//LABEL( 80, 440, SECURITY_WIDTH, 18, _("Join ET Legacy and keep the game alive"), .2, ITEM_ALIGN_CENTER, .5*SECURITY_WIDTH, 8 )
 #endif
 

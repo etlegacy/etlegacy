@@ -125,22 +125,22 @@ menuDef {
 	LABELWHITE( 6, CREDITS_Y+252, .8*(WINDOW_WIDTH-12), 10, "Spanish: The Loko", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
 // Fun //
-        itemDef {
-                name            "fun"
-                rect            $evalfloat(.3*(WINDOW_WIDTH-24)) $evalfloat(CREDITS_Y+272) 268 32
-                style           WINDOW_STYLE_SHADER
-                background      "gfx/2d/classic1"
-                forecolor       1 1 1 1
-                visible         1
-                decoration
-        }
+	itemDef {
+		name            "fun"
+		rect            $evalfloat(.3*(WINDOW_WIDTH-24)) $evalfloat(CREDITS_Y+272) 268 32
+		style           WINDOW_STYLE_SHADER
+		background      "gfx/2d/classic1"
+		forecolor       1 1 1 1
+		visible         1
+		decoration
+	}
 
 // Buttons //
 #ifdef FUI
-        BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, close credits_halloffame ; open main )
+	BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, close credits_halloffame ; open main )
 #else
-        BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, close credits_halloffame ; open ingame_main )
+	BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, close credits_halloffame ; open ingame_main )
 #endif
-        BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, "ET LEGACY", .3, 14, close credits_halloffame ; open credits_etlegacy )
-        BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "SPLASH DAMAGE", .3, 14, close credits_halloffame ; open credits_splashdamage )
+	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, "ET LEGACY", .3, 14, close credits_halloffame ; open credits_etlegacy )
+	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "SPLASH DAMAGE", .3, 14, close credits_halloffame ; open credits_splashdamage )
 }

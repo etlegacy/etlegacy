@@ -129,7 +129,8 @@ menuDef {
         LABEL( 6, SUBWINDOW_Y+328, .7*(WINDOW_WIDTH-24), 10, "^7www.etlegacy.com", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-24), 8 )
 
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("QUIT"), .3, 14, close profile_create_initial ; close main ; open credits_quit )
-	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("CREATE"), .3, 14, conditionalscript UIProfileValidName 2
+	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("CREATE"), .3, 14,
+		conditionalscript UIProfileValidName 2
 		( "clearFocus" )
 		( "setcvar ui_profile_create_error \\\"Can't create profile. Please enter a valid player alias.\\\" ; open profile_create_error ; abort" )
 		conditionalscript ui_rate 0
@@ -140,14 +141,14 @@ menuDef {
 		( "clearFocus" )
 
 		close profile_create_initial ;
-		uiscript createProfile ;
+		uiScript createProfile ;
 		uiScript vidSave ;
-		uiscript setDefaultProfile ;
-		uiscript applyProfile ;
+		uiScript setDefaultProfile ;
+		uiScript applyProfile ;
 		execwolfconfig 1 ;
-		uiscript systemCvarsApply ;
-		uiscript profileCvarsApply ;
+		uiScript systemCvarsApply ;
+		uiScript profileCvarsApply ;
 		setcvar ui_showtooltips 1 ;
-		uiscript loadCachedServers ;
+		uiScript loadCachedServers ;
 		exec vid_restart ; )
 }

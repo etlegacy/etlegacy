@@ -66,7 +66,8 @@ menuDef {
 		visible		1
 		decoration
 	}
-	EDITFIELDLEFTACTION( SUBWINDOW_X+4, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, _("Server IP:"), .2, 8, "ui_connectToIPAddress", 32, 25, conditionalscript ui_connectToIPAddress 1
+	EDITFIELDLEFTACTION( SUBWINDOW_X+4, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, _("Server IP:"), .2, 8, "ui_connectToIPAddress", 32, 25,
+		conditionalscript ui_connectToIPAddress 1
 		( "uiScript JoinDirectServer" )
 		( "open main_quickconnect" ), _("Enter the IP address seperated by dots: xxx.xxx.xxx.xxx") )
 
@@ -79,12 +80,14 @@ menuDef {
 		visible		1
 		decoration
 	}
-	EDITFIELDLEFTACTION( SUBWINDOW_X+4, SUBWINDOW_Y+30, (SUBWINDOW_WIDTH)-8, 10, _("Server PW:"), .2, 8, "password", 32, 25, conditionalscript ui_connectToIPAddress 1
+	EDITFIELDLEFTACTION( SUBWINDOW_X+4, SUBWINDOW_Y+30, (SUBWINDOW_WIDTH)-8, 10, _("Server PW:"), .2, 8, "password", 32, 25,
+		conditionalscript ui_connectToIPAddress 1
 		( "uiScript JoinDirectServer" )
 		( "open main_quickconnect" ), _("Enter the server password if any") )
 
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("BACK"), .3, 14, close main_quickconnect ; open main )
-	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("CONNECT"), .3, 14, conditionalscript ui_connectToIPAddress 1
+	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("CONNECT"), .3, 14,
+		conditionalscript ui_connectToIPAddress 1
 		( "uiScript JoinDirectServer" )
 		( "open main_quickconnect" ) )
 }

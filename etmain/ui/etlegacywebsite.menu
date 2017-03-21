@@ -27,7 +27,7 @@ menuDef
 	{
 		setitemcolor background backcolor 0 0 0 0 ;
 		fadein background
-		exec "set cl_noprint 1; exec etlegacy.cfg; set cl_noprint 0"
+		exec "set cl_noprint 1 ; exec etlegacy.cfg ; set cl_noprint 0"
 	}
 
 	onESC
@@ -50,8 +50,8 @@ menuDef
 	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, _("Do you want to open\n www.etlegacy.com ?"), .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("YES"), .3, 14, close etlegacywebsite ; uiScript validate_openURL )
 #ifdef FUI
-    BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("NO"), .3, 14, close etlegacywebsite ; open main )
+	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("NO"), .3, 14, close etlegacywebsite ; open main )
 #else
-    BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("NO"), .3, 14, close etlegacywebsite ; open ingame_main )
+	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("NO"), .3, 14, close etlegacywebsite ; open ingame_main )
 #endif // FUI
 }
