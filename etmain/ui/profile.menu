@@ -53,7 +53,7 @@ menuDef {
 			conditionalscript ui_profile 1
 				// Load the cached servers before the vid_restart (which saves the cached servers),
 				// ui_profile is set so servers will be loaded from profile directory
-				( "close profile; uiscript clearPID; uiscript applyProfile; execwolfconfig 1 ;uiscript loadCachedServers; exec vid_restart" )
+				( "close profile; uiscript clearPID ; uiscript applyProfile ; execwolfconfig 1 ; uiscript loadCachedServers ; exec vid_restart" )
 				( "open profile" )
 		}
 	}
@@ -72,6 +72,6 @@ menuDef {
 	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("SELECT PROFILE"), .3, 14, conditionalscript ui_profile 1
 																			// Load the cached servers before the vid_restart (which saves the cached servers),
 																			// ui_profile is set so servers will be loaded from profile directory
-																			( "close profile; uiscript clearPID; uiscript applyProfile; execwolfconfig 1; uiscript loadCachedServers; exec vid_restart" )
+																			( "close profile ; uiscript clearPID ; uiscript applyProfile ; execwolfconfig 1; uiscript loadCachedServers ; exec vid_restart" )
 																			( "open profile" ) )
 }
