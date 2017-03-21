@@ -75,7 +75,7 @@ extern vmCvar_t ui_browserShowMaxlives;
 extern vmCvar_t ui_browserShowAntilag;
 extern vmCvar_t ui_browserShowWeaponsRestricted;
 extern vmCvar_t ui_browserShowTeamBalanced;
-extern vmCvar_t ui_browserShowBots;
+extern vmCvar_t ui_browserShowHumans;
 
 extern vmCvar_t ui_browserModFilter;
 extern vmCvar_t ui_browserMapFilter;

@@ -5887,7 +5887,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserShowWeaponsRestricted", "0");
 			trap_Cvar_Set("ui_browserShowAntilag", "0");
 			trap_Cvar_Set("ui_browserShowTeamBalanced", "0");
-			trap_Cvar_Set("ui_browserShowBots", "0");
+			trap_Cvar_Set("ui_browserShowHumans", "0");
 			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
 			trap_Cvar_Set("ui_browserModFilter", "0");
 			trap_Cvar_Set("ui_browserOssFilter", "0");
@@ -6272,13 +6272,20 @@ static void UI_BuildServerDisplayList(int force)
 				}
 			}
 
-			trap_Cvar_Update(&ui_browserShowBots);
-			if (ui_browserShowBots.integer)
+			trap_Cvar_Update(&ui_browserShowHumans);
+			if (ui_browserShowHumans.integer)
 			{
+				// ETL servers only
+				// FIXME: check for ping and compute humans/bots number for vanilla server?
+				if (strstr(Info_ValueForKey(info, "version"), PRODUCT_LABEL) == NULL)
+				{
+					continue;
+				}
+
 				humans = atoi(Info_ValueForKey(info, "humans"));
 
-				if ((clients != humans && ui_browserShowBots.integer == 2) ||
-				    ((clients == 0 || (clients - humans < clients)) && ui_browserShowBots.integer == 1))
+				if ((humans == 0 && ui_browserShowHumans.integer == 1) ||
+				    (humans > 0 && ui_browserShowHumans.integer == 2))
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
@@ -8693,7 +8700,7 @@ vmCvar_t ui_browserShowMaxlives;
 vmCvar_t ui_browserShowAntilag;
 vmCvar_t ui_browserShowWeaponsRestricted;
 vmCvar_t ui_browserShowTeamBalanced;
-vmCvar_t ui_browserShowBots;
+vmCvar_t ui_browserShowHumans;
 
 vmCvar_t ui_browserModFilter;
 vmCvar_t ui_browserMapFilter;
@@ -8768,7 +8775,7 @@ cvarTable_t cvarTable[] =
 	{ &ui_browserShowAntilag,           "ui_browserShowAntilag",               "0",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_browserShowWeaponsRestricted, "ui_browserShowWeaponsRestricted",     "0",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_browserShowTeamBalanced,      "ui_browserShowTeamBalanced",          "0",                          CVAR_ARCHIVE,                   0 },
-	{ &ui_browserShowBots,              "ui_browserShowBots",                  "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_browserShowHumans,            "ui_browserShowHumans",                "0",                          CVAR_ARCHIVE,                   0 },
 
 	{ &ui_browserModFilter,             "ui_browserModFilter",                 "0",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_browserMapFilter,             "ui_browserMapFilter",                 "",                           CVAR_ARCHIVE,                   0 },
