@@ -117,6 +117,8 @@ LangString DESC_Section19 ${LANG_ENGLISH} "Uninstall Enemy Territory: Legacy and
 LangString DESC_Section20 ${LANG_ENGLISH} "Delete Wolfenstein: Enemy Territory .pk3 assets (pak0.pk3, pak1.pk3, pak2.pk3)."
 LangString DESC_Section21 ${LANG_ENGLISH} "Delete ETKEY and all created or downloaded files inside the $DOCUMENTS\ETLegacy folder."
 LangString DESC_Section22 ${LANG_ENGLISH} "ET: Legacy requires MS VC++ 2013 Redistributable, do you want to install it?"
+LangString DESC_Section23 ${LANG_ENGLISH} "Download Error: Couldn't fetch GeoIP file."
+LangString DESC_Section24 ${LANG_ENGLISH} "Fatal Error: GeoIP extraction failed."
 VIProductVersion "@FILE_VERSION@"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "Enemy Territory Legacy Installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "ETL game installer"
@@ -125,6 +127,8 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalTrademarks" "© 2012-2017 ET:Legacy T
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "© 2012-2017 ET:Legacy Team"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "ETL Installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "@FILE_VERSION@"
+LangString DESC_Section23 ${LANG_ENGLISH} "Install GeoIP file. "
+LangString DESC_Section24 ${LANG_ENGLISH} "Integrity Error: GeoIP MD5 checksum failed. "
 
 ; Polish
 LangString DESC_Section1 ${LANG_POLISH} "ET: Legacy ${VERSION} zostalo zainstalowane na twoim komputerze.$\n$\n\
@@ -150,6 +154,8 @@ LangString DESC_Section19 ${LANG_POLISH} "Odinstaluj Enemy Territory: Legacy i p
 LangString DESC_Section20 ${LANG_POLISH} "Usun glowne pliki .pk3 Wolfenstein: Enemy Territory (pak0.pk3, pak1.pk3, pak2.pk3)."
 LangString DESC_Section21 ${LANG_POLISH} "Usun ETKEY i wszystkie inne pliki z folderu $DOCUMENTS\ETLegacy."
 LangString DESC_Section22 ${LANG_POLISH} "ET: Legacy wymaga MS VC++ 2013 Redistributable, czy chcesz to zaintalowac?"
+LangString DESC_Section23 ${LANG_ENGLISH} "Blad Pobierania: Nie udalo sie sciagnac pliku GeoIP."
+LangString DESC_Section24 ${LANG_ENGLISH} "Blad Krytyczny: Wypakowywanie GeoIP nie powiodlo sie."
 VIAddVersionKey /LANG=${LANG_POLISH} "ProductName" "Instalator Enemy Territory Legacy"
 VIAddVersionKey /LANG=${LANG_POLISH} "Comments" "Instalator gry ETL"
 VIAddVersionKey /LANG=${LANG_POLISH} "CompanyName" "Legacy Team"
@@ -157,6 +163,8 @@ VIAddVersionKey /LANG=${LANG_POLISH} "LegalTrademarks" "© 2012-2017 ET:Legacy Te
 VIAddVersionKey /LANG=${LANG_POLISH} "LegalCopyright" "© 2012-2017 ET:Legacy Team"
 VIAddVersionKey /LANG=${LANG_POLISH} "FileDescription" "Instalator ETL"
 VIAddVersionKey /LANG=${LANG_POLISH} "FileVersion" "@FILE_VERSION@"
+LangString DESC_Section23 ${LANG_ENGLISH} "Zainstaluj GeoIP"
+LangString DESC_Section24 ${LANG_ENGLISH} "Blad Integrarnosci: Zla suma kontrolna MD5 GeoIP "
 
 ; ------------------------
 ; INSTALL
@@ -311,6 +319,26 @@ Section "Omni-bot" OMNIBOT
         CreateShortCut "$SMPROGRAMS\Enemy Territory - Legacy\Launch Enemy Territory - Legacy with Omni-bot.lnk" "$INSTDIR\etl.exe"  "+set omnibot_enable 1 +set omnibot_path legacy\omni-bot\"
 SectionEnd
 
+Section "GeoIP" GEOIP
+    AddSize 600 ; approx
+    SetOutPath $TEMP
+    GOTO GET_GEOIP
+
+    GET_GEOIP:
+        IfFileExists "$TEMP\@ETLEGACY_GEOIP_ARCHIVE@" UNPACK_GEOIP
+        NSISdl::download "@ETLEGACY_GEOIP_ARCHIVE_URL@" @ETLEGACY_GEOIP_ARCHIVE@
+        IfFileExists "$TEMP\@ETLEGACY_GEOIP_ARCHIVE@" UNPACK_GEOIP
+        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section23) \
+        IDCANCEL END IDRETRY GET_GEOIP
+
+    UNPACK_GEOIP:
+        ZipDLL::extractall "$TEMP\@ETLEGACY_GEOIP_ARCHIVE@" "$INSTDIR\legacy"
+        IfFileExists "$INSTDIR\legacy\GeoIP.dat" END
+        MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section24)
+
+    END:
+SectionEnd
+		
 Section -URI
     WriteRegStr HKCR "et" "URL Protocol" ""
     WriteRegStr HKCR "et" "" "URL: Enemy Territory Protocol"
@@ -402,6 +430,7 @@ FunctionEnd
     !insertmacro MUI_DESCRIPTION_TEXT ${FILES} $(DESC_Section16)
     !insertmacro MUI_DESCRIPTION_TEXT ${ASSETS} $(DESC_Section17)
     !insertmacro MUI_DESCRIPTION_TEXT ${OMNIBOT} $(DESC_Section18)
+	!insertmacro MUI_DESCRIPTION_TEXT ${GEOIP} $(DESC_Section23)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ; ------------------------
