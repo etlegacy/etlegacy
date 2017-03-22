@@ -127,8 +127,7 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalTrademarks" "© 2012-2017 ET:Legacy T
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "© 2012-2017 ET:Legacy Team"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "ETL Installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "@FILE_VERSION@"
-LangString DESC_Section23 ${LANG_ENGLISH} "Install GeoIP file. "
-LangString DESC_Section24 ${LANG_ENGLISH} "Integrity Error: GeoIP MD5 checksum failed. "
+LangString DESC_Section25 ${LANG_ENGLISH} "Install GeoIP file. "
 
 ; Polish
 LangString DESC_Section1 ${LANG_POLISH} "ET: Legacy ${VERSION} zostalo zainstalowane na twoim komputerze.$\n$\n\
@@ -154,8 +153,8 @@ LangString DESC_Section19 ${LANG_POLISH} "Odinstaluj Enemy Territory: Legacy i p
 LangString DESC_Section20 ${LANG_POLISH} "Usun glowne pliki .pk3 Wolfenstein: Enemy Territory (pak0.pk3, pak1.pk3, pak2.pk3)."
 LangString DESC_Section21 ${LANG_POLISH} "Usun ETKEY i wszystkie inne pliki z folderu $DOCUMENTS\ETLegacy."
 LangString DESC_Section22 ${LANG_POLISH} "ET: Legacy wymaga MS VC++ 2013 Redistributable, czy chcesz to zaintalowac?"
-LangString DESC_Section23 ${LANG_ENGLISH} "Blad Pobierania: Nie udalo sie sciagnac pliku GeoIP."
-LangString DESC_Section24 ${LANG_ENGLISH} "Blad Krytyczny: Wypakowywanie GeoIP nie powiodlo sie."
+LangString DESC_Section23 ${LANG_POLISH} "Blad Pobierania: Nie udalo sie sciagnac pliku GeoIP."
+LangString DESC_Section24 ${LANG_POLISH} "Blad Krytyczny: Wypakowywanie GeoIP nie powiodlo sie."
 VIAddVersionKey /LANG=${LANG_POLISH} "ProductName" "Instalator Enemy Territory Legacy"
 VIAddVersionKey /LANG=${LANG_POLISH} "Comments" "Instalator gry ETL"
 VIAddVersionKey /LANG=${LANG_POLISH} "CompanyName" "Legacy Team"
@@ -163,8 +162,7 @@ VIAddVersionKey /LANG=${LANG_POLISH} "LegalTrademarks" "© 2012-2017 ET:Legacy Te
 VIAddVersionKey /LANG=${LANG_POLISH} "LegalCopyright" "© 2012-2017 ET:Legacy Team"
 VIAddVersionKey /LANG=${LANG_POLISH} "FileDescription" "Instalator ETL"
 VIAddVersionKey /LANG=${LANG_POLISH} "FileVersion" "@FILE_VERSION@"
-LangString DESC_Section23 ${LANG_ENGLISH} "Zainstaluj GeoIP"
-LangString DESC_Section24 ${LANG_ENGLISH} "Blad Integrarnosci: Zla suma kontrolna MD5 GeoIP "
+LangString DESC_Section25 ${LANG_POLISH} "Zainstaluj GeoIP"
 
 ; ------------------------
 ; INSTALL
@@ -430,7 +428,7 @@ FunctionEnd
     !insertmacro MUI_DESCRIPTION_TEXT ${FILES} $(DESC_Section16)
     !insertmacro MUI_DESCRIPTION_TEXT ${ASSETS} $(DESC_Section17)
     !insertmacro MUI_DESCRIPTION_TEXT ${OMNIBOT} $(DESC_Section18)
-	!insertmacro MUI_DESCRIPTION_TEXT ${GEOIP} $(DESC_Section23)
+	!insertmacro MUI_DESCRIPTION_TEXT ${GEOIP} $(DESC_Section25)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ; ------------------------
