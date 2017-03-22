@@ -2899,7 +2899,12 @@ void CG_DrawGlobalHud(void)
 	{
 		CG_DrawPMItemsBig();
 	}
-
+#ifdef FEATURE_EDV
+	if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
+	{
+		return;
+	}
+#endif
 	CG_DrawNewCompass(activehud->compas.location);
 }
 
