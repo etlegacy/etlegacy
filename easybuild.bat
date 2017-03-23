@@ -7,7 +7,7 @@
 @echo off
 @setLocal EnableDelayedExpansion
 
-:: The default VS version (minimal supported vs version is 12)
+:: The default VS version (minimal supported vs version is 12, max is 14)
 set vsversion=14
 set vsvarsbat=!VS%vsversion%0COMNTOOLS!\vsvars32.bat
 :: set vsvarsbat=
@@ -17,6 +17,7 @@ SET build_64=0
 SET mod_only=0
 SET use_autoupdate=1
 SET use_omnibot=1
+SET use_geoip=1
 SET build_r2=1
 
 CALL:SETUPMSBUILD
@@ -67,6 +68,7 @@ FOR %%A IN (%*) DO (
 	IF /I "%%A"=="-mod" @SET mod_only=1
 	IF /I "%%A"=="-noupdate" @SET use_autoupdate=0
 	IF /I "%%A"=="-noob" @SET use_omnibot=0
+	IF /I "%%A"=="-nogeoip" @SET use_geoip=0
 	IF /I "%%A"=="-debug" @SET build_type=Debug
 	IF /I "%%A"=="-nor2" @SET build_r2=0
 )
@@ -329,6 +331,7 @@ GOTO :EOF
 	-DCMAKE_BUILD_TYPE=!build_type! ^
 	-DFEATURE_AUTOUPDATE=!use_autoupdate! ^
 	-DINSTALL_OMNIBOT=!use_omnibot! ^
+	-DINSTALL_GEOIP=!use_geoip! ^
 	-DCROSS_COMPILE32=!CROSSCOMP! ^
 	-DRENDERER_DYNAMIC=!build_r2! ^
 	-DFEATURE_RENDERER2=!build_r2!

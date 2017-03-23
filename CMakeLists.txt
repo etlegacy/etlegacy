@@ -111,8 +111,8 @@ cmake_dependent_option(FEATURE_RATING	"Enable skill rating support (mod)"				ON 
 cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot support (mod)"					ON "WIN32 OR APPLE OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
 cmake_dependent_option(INSTALL_OMNIBOT	"Install Omni-bot"								ON "FEATURE_OMNIBOT" OFF)
 
+option(INSTALL_GEOIP			"Install GeoLite country geolocation database"			ON)
 option(ARM						"Build ARM version"										OFF)
-option(INSTALL_GEOIP	"Install GeoIP"												 ON)
 
 set(ET_FS_BASEPATH "" CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
 cmake_dependent_option(ET_KEY	"Copy existing etkey file from ET_FS_BASEPATH)"			ON "ET_FS_BASEPATH" OFF)
@@ -183,14 +183,15 @@ endif(BUILD_PAK3_PK3)
 # Post build
 #-----------------------------------------------------------------
 
-if(INSTALL_OMNIBOT AND BUILD_MOD)
-	include(cmake/ETLInstallOmniBot.cmake)
-endif(INSTALL_OMNIBOT AND BUILD_MOD)
+if (BUILD_MOD)
+	if(INSTALL_OMNIBOT)
+		include(cmake/ETLInstallOmniBot.cmake)
+	endif(INSTALL_OMNIBOT)
+	if(INSTALL_GEOIP)
+		include(cmake/ETLInstallGeoIP.cmake)
+	endif(INSTALL_GEOIP)
+endif(BUILD_MOD)
 
-if(INSTALL_GEOIP AND BUILD_MOD)
-	include(cmake/ETLInstallGeoIP.cmake)
-endif(INSTALL_GEOIP AND BUILD_MOD)
-	
 # Generate install and uninstall packs
 include(cmake/ETLInstall.cmake)
 
