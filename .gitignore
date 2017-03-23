@@ -51,3 +51,7 @@ win_resource.aps
 
 # Clion
 .idea/
+
+# Visual Studio 2017
+.vs/
+CMakeSettings.json
