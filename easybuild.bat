@@ -160,7 +160,7 @@ GOTO:EOF
 	CALL:CLEANPATH "!game_basepath!\legacy\" "*.pk3 *.dll *.dat"
 	CALL:CLEANPATH "!game_homepath!\legacy\" "*.pk3 *.dll *.dat"
 	CALL:COPYFROMPATH "%cd%\" "et*.exe renderer_openg*.dll SDL2.dll" "!game_basepath!\"
-	CALL:COPYFROMPATH "%cd%\legacy\" "*.pk3 qagame*.dll" "!game_basepath!\legacy\"
+	CALL:COPYFROMPATH "%cd%\legacy\" "*.pk3 qagame*.dll *.dat" "!game_basepath!\legacy\"
 GOTO:EOF
 
 :CLEANPATH
