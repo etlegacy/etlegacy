@@ -6225,6 +6225,12 @@ void R_ShaderExp_f(void)
 		strcat(buffer, " ");
 	}
 	len             = strlen(buffer);
+	
+	if (len == 0) {
+		Ren_Print("Please enter an expression to evaluate\n");
+		return;
+	}	
+	
 	buffer[len - 1] = 0;        // replace last " " with tailing zero
 
 	ParseExpression(&buffer_p, &exp);
