@@ -83,7 +83,8 @@ void main()
 	texDiffuse.st  += texOffset;
 	texNormal.st   += texOffset;
 	texSpecular.st += texOffset;
-#endif // USE_PARALLAX_MAPPING
+#endif
+// USE_PARALLAX_MAPPING
 
 	// compute the diffuse term
 	vec4 diffuse = texture2D(u_DiffuseMap, texDiffuse);
@@ -181,13 +182,15 @@ void main()
 	// gl_FragColor = vec4(vec3(var_LightColor.a, var_LightColor.a, var_LightColor.a), 1.0);
 	// gl_FragColor = var_LightColor;
 
-#if 0 //defined(r_ShowTerrainBlends)
+//defined(r_ShowTerrainBlends)
+#if 0
 	color = vec4(vec3(var_LightColor.a), 1.0);
 #endif
 
 	gl_FragColor = color;
 
-#else // USE_NORMAL_MAPPING
+#else
+// USE_NORMAL_MAPPING
 
 	// compute the diffuse term
 	vec4 diffuse = texture2D(u_DiffuseMap, var_TexDiffuseNormal.st);

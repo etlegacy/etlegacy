@@ -1132,7 +1132,7 @@ static int GLSL_CompileGPUShader(GLhandleARB program, GLhandleARB *prevShader, c
 		ri.FS_WriteFile(va("debug/%s_%s.debug", name, (shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment")), buffer, size);
 		GLSL_PrintShaderSource(shader);
 		GLSL_PrintInfoLog(shader, qfalse, qfalse);
-		Ren_Fatal("Couldn't compile shader");
+		Ren_Fatal("Couldn't compile shader \"%s\"", name);
 		//return 0;
 	}
 
