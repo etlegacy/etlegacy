@@ -112,6 +112,7 @@ cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot support (mod)"					ON "W
 cmake_dependent_option(INSTALL_OMNIBOT	"Install Omni-bot"								ON "FEATURE_OMNIBOT" OFF)
 
 option(INSTALL_GEOIP			"Install GeoLite country geolocation database"			ON)
+option(INSTALL_WOLFADMIN		"Install WolfAdmin server enhancement suite"			ON)
 option(ARM						"Build ARM version"										OFF)
 
 set(ET_FS_BASEPATH "" CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
@@ -190,6 +191,9 @@ if (BUILD_MOD)
 	if(INSTALL_GEOIP)
 		include(cmake/ETLInstallGeoIP.cmake)
 	endif(INSTALL_GEOIP)
+	if(INSTALL_WOLFADMIN)
+		include(cmake/ETLInstallWolfAdmin.cmake)
+	endif(INSTALL_WOLFADMIN)
 endif(BUILD_MOD)
 
 # Generate install and uninstall packs

@@ -211,6 +211,9 @@ parse_commandline() {
 		elif [ "$var" = "-nogeoip" ]; then
 			einfo "Will disable geoip installation"
 			INSTALL_GEOIP=0
+		elif [ "$var" = "-nowa" ]; then
+			einfo "Will disable wolfadmin installation"
+			INSTALL_WOLFADMIN=0
 		elif [ "$var" = "-noupdate" ]; then
 			einfo "Will disable autoupdate"
 			FEATURE_AUTOUPDATE=0
@@ -340,6 +343,7 @@ generate_configuration() {
 	FEATURE_OMNIBOT=${FEATURE_OMNIBOT:-1}
 	INSTALL_OMNIBOT=${INSTALL_OMNIBOT:-1}
 	INSTALL_GEOIP=${INSTALL_GEOIP:-1}
+	INSTALL_WOLFADMIN=${INSTALL_WOLFADMIN:-1}
 
 	einfo "Configuring ET Legacy..."
 	_CFGSTRING="
@@ -386,6 +390,7 @@ generate_configuration() {
 		-DFEATURE_OMNIBOT=${FEATURE_OMNIBOT}
 		-DINSTALL_OMNIBOT=${INSTALL_OMNIBOT}
 		-DINSTALL_GEOIP=${INSTALL_GEOIP}
+		-DINSTALL_WOLFADMIN=${INSTALL_WOLFADMIN}
 	"
 
 	if [ "${DEV}" != 1 ]; then
@@ -647,7 +652,7 @@ print_help() {
 	ehead "help - print this help"
 	echo
 	einfo "Properties"
-	ehead "-64, -debug, -clang, -nodb -nor2, -nodynamic, -systemlib, -noob, -nogeoip, --noupdate, -norating, -mod"
+	ehead "-64, -debug, -clang, -nodb -nor2, -nodynamic, -systemlib, -noob, -nogeoip, -nowa, -noupdate, -norating, -mod"
 	echo
 }
 

@@ -121,6 +121,9 @@ LangString DESC_Section22 ${LANG_ENGLISH} "ET: Legacy requires MS VC++ 2013 Redi
 LangString DESC_Section23 ${LANG_ENGLISH} "Download Error: Couldn't fetch GeoIP file."
 LangString DESC_Section24 ${LANG_ENGLISH} "Fatal Error: GeoIP extraction failed."
 LangString DESC_Section25 ${LANG_ENGLISH} "Install GeoIP file."
+LangString DESC_Section26 ${LANG_ENGLISH} "Download Error: Couldn't fetch WolfAdmin files."
+LangString DESC_Section27 ${LANG_ENGLISH} "Fatal Error: WolfAdmin extraction failed."
+LangString DESC_Section28 ${LANG_ENGLISH} "Install WolfAdmin files."
 VIProductVersion "@FILE_VERSION@"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "Enemy Territory Legacy Installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "ETL game installer"
@@ -157,6 +160,7 @@ LangString DESC_Section22 ${LANG_POLISH} "ET: Legacy wymaga MS VC++ 2013 Redistr
 LangString DESC_Section23 ${LANG_POLISH} "Blad Pobierania: Nie udalo sie sciagnac pliku GeoIP."
 LangString DESC_Section24 ${LANG_POLISH} "Blad Krytyczny: Wypakowywanie GeoIP nie powiodlo sie."
 LangString DESC_Section25 ${LANG_POLISH} "Zainstaluj GeoIP"
+
 VIAddVersionKey /LANG=${LANG_POLISH} "ProductName" "Instalator Enemy Territory Legacy"
 VIAddVersionKey /LANG=${LANG_POLISH} "Comments" "Instalator gry ETL"
 VIAddVersionKey /LANG=${LANG_POLISH} "CompanyName" "Legacy Team"
@@ -324,16 +328,36 @@ Section "GeoIP" GEOIP
     GOTO GET_GEOIP
 
     GET_GEOIP:
-        IfFileExists "$TEMP\@ETLEGACY_GEOIP_ARCHIVE@" UNPACK_GEOIP
-        NSISdl::download "@ETLEGACY_GEOIP_ARCHIVE_URL@" @ETLEGACY_GEOIP_ARCHIVE@
-        IfFileExists "$TEMP\@ETLEGACY_GEOIP_ARCHIVE@" UNPACK_GEOIP
+        IfFileExists "$TEMP\@GEOIP_ARCHIVE@" UNPACK_GEOIP
+        NSISdl::download "@GEOIP_ARCHIVE_URL@" @GEOIP_ARCHIVE@
+        IfFileExists "$TEMP\@GEOIP_ARCHIVE@" UNPACK_GEOIP
         MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section23) \
         IDCANCEL END IDRETRY GET_GEOIP
 
     UNPACK_GEOIP:
-        untgz::extract "$TEMP\@ETLEGACY_GEOIP_ARCHIVE@" "$INSTDIR\legacy"
+        untgz::extract "$TEMP\@GEOIP_ARCHIVE@" "$INSTDIR\legacy"
         IfFileExists "$INSTDIR\legacy\GeoIP.dat" END
         MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section24)
+
+    END:
+SectionEnd
+
+Section "WolfAdmin" WOLFADMIN
+    AddSize 1800 ; approx
+    SetOutPath $TEMP
+    GOTO GET_WOLFADMIN
+
+    GET_WOLFADMIN:
+        IfFileExists "$TEMP\@WOLFADMIN_ARCHIVE@" UNPACK_WOLFADMIN
+        NSISdl::download "@WOLFADMIN_ARCHIVE_URL@" @WOLFADMIN_ARCHIVE@
+        IfFileExists "$TEMP\@WOLFADMIN_ARCHIVE@" UNPACK_WOLFADMIN
+        MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(DESC_Section26) \
+        IDCANCEL END IDRETRY GET_WOLFADMIN
+
+    UNPACK_WOLFADMIN:
+        untgz::extract "$TEMP\@WOLFADMIN_ARCHIVE@" "$INSTDIR\legacy"
+        IfFileExists "$INSTDIR\legacy\GeoIP.dat" END
+        MessageBox MB_ICONEXCLAMATION|MB_OK $(DESC_Section27)
 
     END:
 SectionEnd
@@ -430,6 +454,7 @@ FunctionEnd
 !insertmacro MUI_DESCRIPTION_TEXT ${ASSETS} $(DESC_Section17)
 !insertmacro MUI_DESCRIPTION_TEXT ${OMNIBOT} $(DESC_Section18)
 !insertmacro MUI_DESCRIPTION_TEXT ${GEOIP} $(DESC_Section25)
+!insertmacro MUI_DESCRIPTION_TEXT ${WOLFADMIN} $(DESC_Section28)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ; ------------------------
