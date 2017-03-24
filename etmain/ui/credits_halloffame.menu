@@ -95,15 +95,15 @@ menuDef {
 	}
 
 
-	LABELWHITE( 6, CREDITS_Y+12, .7*(WINDOW_WIDTH-12), 10, _("Advices, Bug reports, Patches"), .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
+	LABELWHITE( 6, CREDITS_Y+14, .7*(WINDOW_WIDTH-12), 10, _("Advices, Bug reports, Patches, Translations"), .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
-	LABELWHITE( 6, CREDITS_Y+36, .8*(WINDOW_WIDTH-12), 10, "100zherBG - 3togo - acqu - Anna - antman - Aranud - Bill - blaubarschbube - boutetnico - BSzili - Calinou - chriswww - cubs - Das_Fleisch - deep - deki - Dominator56 - Dragonji - Ensiform - Harlekin - hifi - ilm - invictus - Jonathan Gray - Kissaki - kkthx - lakersforce - Lammert - lottin - Lul3k - MAN-AT-ARMS - Mateos - Mathieu Olivier - Maverick - mavit - merethan - merlin - muessli - Niek - Odal - Ododo - otty - perey - pbhj - ponce - PtitSeb - Ragnar - rurza - S3ti - skybon - sneak310 - StM - swillits - Dusan 'TheDushan' Jocic - Timothy - TunPal - Unode - winrid - yfcz - Zer0 - Zack 'zturtleman' Middleton", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
+	LABELWHITE( 6, CREDITS_Y+38, .8*(WINDOW_WIDTH-12), 10, "100zherBG - 3togo - acqu - Anna - antman - belst - Bill - blaubarschbube - Boojangles - boutetnico - BSzili - Calinou - chriswww - cubs - Das_Fleisch - deep - deki - /dev/humancontroller - Dominator56 - Dragonji - Ensiform - Harlekin - hifi - illwieckz - ilm - invictus - lrq3000 - Jonathan Gray - Kissaki - kkthx - kungfooman - lakersforce - Lammert - lonkamikaze - lottin - Lul3k - MAN-AT-ARMS - Mateos - Mathieu Olivier - Maverick - mavit - merethan - merlin - muessli - Niek - Odal - Ododo - otty - perey - pbhj - ponce - PtitSeb - Ragnar - rurza - S3ti - skybon - smcv - sneak310 - StM - swillits - Dusan 'TheDushan' Jocic - The Loko - TunPal - Unode - winrid - yfcz - Zer0 - Zack 'zturtleman' Middleton", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
 	itemDef {
-		name		"headerTranslations"
+		name		"headerContributors"
 		group		GROUP_NAME
-		rect		6 $evalfloat(CREDITS_Y+156) $evalfloat(WINDOW_WIDTH-12) 12
-		text		_("^1TRANSLATIONS")
+		rect		6 $evalfloat(CREDITS_Y+194) $evalfloat(WINDOW_WIDTH-12) 12
+		text		_("^1JOIN US")
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
 		textscale	.19
@@ -115,14 +115,7 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+168, .8*(WINDOW_WIDTH-12), 10, "Czech: Radegast", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
-	LABELWHITE( 6, CREDITS_Y+180, .8*(WINDOW_WIDTH-12), 10, "Dutch: Lammert", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
-	LABELWHITE( 6, CREDITS_Y+192, .8*(WINDOW_WIDTH-12), 10, "Finnish: Jacker, Saukko", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
-	LABELWHITE( 6, CREDITS_Y+204, .8*(WINDOW_WIDTH-12), 10, "French: illwieckz", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
-	LABELWHITE( 6, CREDITS_Y+216, .8*(WINDOW_WIDTH-12), 10, "German: IR4T4", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
-	LABELWHITE( 6, CREDITS_Y+228, .8*(WINDOW_WIDTH-12), 10, "Polish: morsik, RaFal, Lul3k, Zer0", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
-	LABELWHITE( 6, CREDITS_Y+240, .8*(WINDOW_WIDTH-12), 10, "Russian: skybon", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
-	LABELWHITE( 6, CREDITS_Y+252, .8*(WINDOW_WIDTH-12), 10, "Spanish: The Loko", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
+	LABELWHITE( 6, CREDITS_Y+208, .8*(WINDOW_WIDTH-12), 10, "ET: Legacy development is a collaborative effort done in an open, transparent and friendly manner. Anyone is welcome to join our efforts!", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
 // Fun //
 	itemDef {
