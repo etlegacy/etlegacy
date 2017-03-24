@@ -17,6 +17,7 @@ env:
     - BUNDLED_JPEG=1
     - BUNDLED_LUA=1
     - BUNDLED_OGG=1
+    - INSTALL_EXTRA=0
 
 before_script:
   - ./misc/travis-setup.sh
