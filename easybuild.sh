@@ -205,21 +205,15 @@ parse_commandline() {
 			BUNDLED_FREETYPE=0
 			BUNDLED_JANSSON=0
 			BUNDLED_SQLITE3=0
-		elif [ "$var" = "-noob" ]; then
-			einfo "Will disable omni-bot installation"
+		elif [ "$var" = "-noextra" ]; then
+			einfo "Will disable installation of Omni-bot, GeoIP and WolfAdmin"
+			INSTALL_EXTRA=0
 			INSTALL_OMNIBOT=0
-		elif [ "$var" = "-nogeoip" ]; then
-			einfo "Will disable geoip installation"
 			INSTALL_GEOIP=0
-		elif [ "$var" = "-nowa" ]; then
-			einfo "Will disable wolfadmin installation"
 			INSTALL_WOLFADMIN=0
 		elif [ "$var" = "-noupdate" ]; then
 			einfo "Will disable autoupdate"
 			FEATURE_AUTOUPDATE=0
-		elif [ "$var" = "-norating" ]; then
-			einfo "Will disable skill rating"
-			FEATURE_RATING=0
 		elif [ "$var" = "-RPI" ]; then
 			einfo "Will enable Raspberry PI build ..."
 			ARM=1
@@ -652,7 +646,7 @@ print_help() {
 	ehead "help - print this help"
 	echo
 	einfo "Properties"
-	ehead "-64, -debug, -clang, -nodb -nor2, -nodynamic, -systemlib, -noob, -nogeoip, -nowa, -noupdate, -norating, -mod"
+	ehead "-64, -debug, -clang, -nodb -nor2, -nodynamic, -systemlib, -noextra, -noupdate, -mod"
 	echo
 }
 
