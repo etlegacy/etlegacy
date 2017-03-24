@@ -187,7 +187,8 @@ endif(BUILD_PAK3_PK3)
 # Post build
 #-----------------------------------------------------------------
 
-if (BUILD_MOD)
+# Install third-party add-ons
+if(BUILD_MOD AND INSTALL_EXTRA)
 	if(INSTALL_OMNIBOT)
 		include(cmake/ETLInstallOmniBot.cmake)
 	endif(INSTALL_OMNIBOT)
@@ -197,7 +198,7 @@ if (BUILD_MOD)
 	if(INSTALL_WOLFADMIN)
 		include(cmake/ETLInstallWolfAdmin.cmake)
 	endif(INSTALL_WOLFADMIN)
-endif(BUILD_MOD)
+endif(BUILD_MOD AND INSTALL_EXTRA)
 
 # Generate install and uninstall packs
 include(cmake/ETLInstall.cmake)
