@@ -46,7 +46,6 @@ void main()
 #if 0
 	gl_FragColor = vec4(vec3(1.0, 0.0, 0.0), color.a);
 #else
-	color[0] = 1.0;
 	gl_FragColor = color;
 #endif
 }
