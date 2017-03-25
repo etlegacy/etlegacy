@@ -94,36 +94,34 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+12, .5*(WINDOW_WIDTH-24), 10, "Jan 'Radegast' Simek", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+12, .5*(WINDOW_WIDTH-24), 10, _("Project founder, semi-retired"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+24, .5*(WINDOW_WIDTH-24), 10, "'Aranud'", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+12, .5*(WINDOW_WIDTH-24), 10, "Arnaud 'Aranud' Marty", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+12, .5*(WINDOW_WIDTH-24), 10, _("Almighty Developer"), .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6, CREDITS_Y+24, .5*(WINDOW_WIDTH-24), 10, "Olaf 'IR4T4' R.", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+24, .5*(WINDOW_WIDTH-24), 10, _("Almighty Developer"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+36, .5*(WINDOW_WIDTH-24), 10, "Olaf 'IR4T4' R.", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6, CREDITS_Y+36, .5*(WINDOW_WIDTH-24), 10, "Jere 'Jacker' S.", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+36, .5*(WINDOW_WIDTH-24), 10, _("Almighty Developer"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+48, .5*(WINDOW_WIDTH-24), 10, "Jere 'Jacker' S.", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+48, .5*(WINDOW_WIDTH-24), 10, _("Almighty Developer"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+60, .5*(WINDOW_WIDTH-24), 10, "Cedric 'Kemon' E.", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+60, .5*(WINDOW_WIDTH-24), 10, _("2D artist & Marketing"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+72, .5*(WINDOW_WIDTH-24), 10, "Konrad 'morsik' Moson", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+72, .5*(WINDOW_WIDTH-24), 10, _("Infrastructure management"), .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6, CREDITS_Y+48, .5*(WINDOW_WIDTH-24), 10, "Cedric 'Kemon' E.", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+48, .5*(WINDOW_WIDTH-24), 10, _("2D artist & Marketing"), .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6, CREDITS_Y+60, .5*(WINDOW_WIDTH-24), 10, "Konrad 'morsik' Moson", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+60, .5*(WINDOW_WIDTH-24), 10, _("Infrastructure management"), .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6, CREDITS_Y+72, .5*(WINDOW_WIDTH-24), 10, "Jan 'Radegast' Simek", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+72, .5*(WINDOW_WIDTH-24), 10, _("Project founder, semi-retired"), .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABELWHITE( 6, CREDITS_Y+84, .5*(WINDOW_WIDTH-24), 10, "Rafal 'RaFal' Pawlak", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+84, .5*(WINDOW_WIDTH-24), 10, _("Quality Assurance"), .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABELWHITE( 6, CREDITS_Y+96, .5*(WINDOW_WIDTH-24), 10, "Sauli 'Saukko' V.", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+96, .5*(WINDOW_WIDTH-24), 10, _("Quality Assurance"), .2, ITEM_ALIGN_LEFT, 0, 8 )
 	LABELWHITE( 6, CREDITS_Y+108, .5*(WINDOW_WIDTH-24), 10, "Remy 'Spyhawk' M.", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
 	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+108, .5*(WINDOW_WIDTH-24), 10, _("Almighty Developer"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+120, .5*(WINDOW_WIDTH-24), 10, "'Timothy'", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+120, .5*(WINDOW_WIDTH-24), 10, _("Administration Suite"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+132, .5*(WINDOW_WIDTH-24), 10, "'Thunder'", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+132, .5*(WINDOW_WIDTH-24), 10, _("3D artist & Shaders"), .2, ITEM_ALIGN_LEFT, 0, 8 )
-	LABELWHITE( 6, CREDITS_Y+144, .5*(WINDOW_WIDTH-24), 10, "Lauri 'Zecklar' L.", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
-	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+144, .5*(WINDOW_WIDTH-24), 10, _("Almighty Developer"), .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6, CREDITS_Y+120, .5*(WINDOW_WIDTH-24), 10, "Are 'Thunder' Kristiansen", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+120, .5*(WINDOW_WIDTH-24), 10, _("3D artist & Shaders"), .2, ITEM_ALIGN_LEFT, 0, 8 )
+	LABELWHITE( 6, CREDITS_Y+132, .5*(WINDOW_WIDTH-24), 10, "Timo 'Timothy' S.", .2, ITEM_ALIGN_RIGHT, .5*(WINDOW_WIDTH-24), 8 )
+	LABELWHITE( 6+.5*(WINDOW_WIDTH-24)+12, CREDITS_Y+132, .5*(WINDOW_WIDTH-24), 10, _("Administration Suite"), .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 // Contributors //
 	itemDef {
 		name		"headerContributors"
 		group		GROUP_NAME
-		rect		6 $evalfloat(CREDITS_Y+164) $evalfloat(WINDOW_WIDTH-12) 12
+		rect		6 $evalfloat(CREDITS_Y+158) $evalfloat(WINDOW_WIDTH-12) 12
 		text		_("^1CONTRIBUTORS")
 		textfont	UI_FONT_ARIBLK_16
 		textstyle	ITEM_TEXTSTYLE_SHADOWED
@@ -136,7 +134,7 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+180, .7*(WINDOW_WIDTH-12), 10, _("See HALL OF FAME below"), .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
+	LABELWHITE( 6, CREDITS_Y+174, .7*(WINDOW_WIDTH-12), 10, _("See HALL OF FAME below"), .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
 // Greetings //
 	itemDef {
@@ -155,7 +153,7 @@ menuDef {
 		decoration
 	}
 
-	LABELWHITE( 6, CREDITS_Y+212, (WINDOW_WIDTH-12), 10, "ETPro Team - ETPub Team - Jaymod Team - Lazlo Menczel \n Neil 'haste' Toronto - NoQuarter Team - Omni-Bot Team - Q3MME Team - QtZ Team \n RTCW COOP Team - Ryan C. Gordon - Splash Damage ET community \n Timothee 'TTimo' Besset - Unvanquished Team - Xreal Team - Zynx", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
+	LABELWHITE( 6, CREDITS_Y+212, (WINDOW_WIDTH-12), 10, "ETPro Team - ETPub Team - Jaymod Team - Lazlo Menczel\nStephen 'lrq3000' Larroque - Neil 'haste' Toronto - NoQuarter Team - Omni-Bot Team\nQ3MME Team - QtZ Team - RTCW COOP Team - Ryan C. Gordon - Splash Damage ET community\nTimothee 'TTimo' Besset - Unvanquished Team - Xreal Team - Zynx", .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
 	LABELWHITE( 6, CREDITS_Y+270, (WINDOW_WIDTH-12), 10, _("Many thanks to Splash Damage for their release of the source code, ioWolfET & raedwulf-et (especially Ralph Eastwood) for our code base and ioQuake3 for their inspirations."), .2, ITEM_ALIGN_CENTER, .5*(WINDOW_WIDTH-12), 8 )
 
