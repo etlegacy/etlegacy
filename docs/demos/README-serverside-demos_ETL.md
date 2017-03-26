@@ -1,11 +1,11 @@
 
-Server-side demos patch (entities/events oriented) for ioquake3
+Server-side demos (entities/events oriented) for ET: Legacy
 ===============================================================================================
 
 
 DESCRIPTION
 -----------
-Fully working server-side demos for ioquake3 are now a reality!
+Fully working server-side demos for ET: Legacy are now a reality!
 
 This patch provide a full server-side demos facility for ioquake3 github commit of 2017-03-04. For the original patch for OpenArena with full commit history, see https://github.com/lrq3000/openarena_engine_serversidedemos .
 
@@ -33,26 +33,13 @@ FEATURES
 * Can be used as an alternative to GTV by rebroadcasting a demo (can be done in realtime as the demo is being written)
 
 
-
-INSTALL
--------
-
-Simply compile the code into a binary, and use these binaries. You do not need to add any .pk3 nor make your server unpure, this will be totally transparent.
-
-Servers obviously need these binaries to record and play demos.
-
-Clients also need these binaries to play demos locally, unless they connect to a server replaying the demos, in this case they don't need anything.
-
-Indeed, a server issuing `/demo_play <filename>` will be accessible to spectators. This can be useful to replay a big event. This can also be used as a replacement to GTV, since you can read a demo at the same time as it is being written.
-USAGE
------
-
 Commands:
 
 * `demo_play <filename>` : playback a server-side demo (to be found, the demo must be in the current mod folder, even if it was recorded with another mod). Note that clients need to go back to the main menu before issuing the `/demo_play <filename>` command, else the demo won't be found. The demo will automatically switch mods if necessary, and load the correct map.
 * `demo_record <filename>` : record a server-side demo with the given filename (will be saved in mod/svdemos folder). For automated demo recording, see sv_autoDemo cvar below.
 * `demo_stop` : stop any playback/recording (will automatically restore any previous setting on the server/client). Note that shutting down the server/quitting the game will not break the demo, the demo will still be readable.
 * `status` : as with normal clients, when a demo is replaying, democlients will also be shown in the status (with ping DEMO).
+
 
 Special cvars:
 
@@ -62,68 +49,6 @@ Special cvars:
 * `sv_demoState` : show the current demo state (0: none, 1: waiting to play a demo, 2: demo playback, 3: waiting to stop a demo, 4: demo recording).
 
 
-
-UPDATE ON GIT
--------------
-
-Just like the openarena_engine repo, this one was rebased onto the latest openarena_engine repo (ioquake3+OA088), so that all changes from ioquake3 to openarena are on top of the latest ioquake3 changes, and all the changes from openarena to this sv_demo patch are on top of the openarena commits. Thus, you have a linear commit graph which is easy to rebase against new versions, and the history is more human readable.
-
-To update this repo, you can:
-
-    # First clone the git repo locally on your computer
-    git clone git://github.com/lrq3000/openarena_engine_serversidedemos.git
-    
-    # Then either sync with openarena_engine
-    git remote add upstream git://github.com/lrq3000/openarena_engine.git
-    
-    # Or directly with ioquake3
-    # git://github.com/ioquake/ioq3.git
-    
-    AUTO-PROCEDURE
-    ##############
-    # Then try to pull + rebase the changes automatically
-    git pull --rebase upstream master
-    
-    # If it works, then all is done! You have an updated version on your computer. You can stop here and just compile the engine using the tutorials in the ioq3 wiki: http://wiki.ioquake3.org/Building_ioquake3
-    # PS: for Windows, use the cygwin tutorial, don't try mingw unless you are very experienced and have got a lot of spare time to mess with the weird errors you will get.
-    
-    MANUAL PROCEDURE
-    ################
-    # Else, you have to redo the process but manually this time. Following steps:
-    
-    # First, you have to reinitialize you repo, else it won't accept you do anything:
-    $ git rebase --abort
-    $ git reset --hard origin/master
-    
-    # Git rebase interactive so that you get the list of the last commits. This will open you a text file in your default text editor program. What you have to do here is to cut all the lines that concerns commits about the sv_demo patch. Then paste these lines in a temporary text file for you (we will later use the SHA code of the commmits).
-    git rebase HEAD~10 --interactive
-    
-    # Now you should have a clean repo without the sv_demo commits, only an old revision of the openarena_engine.
-    
-    # We will now sync to the latest changes of openarena_engine or ioquake3:
-    git pull -s recursive -X theirs upstream master
-    # This will pull all remote changes and accept them automatically.
-    
-    # Now, you should have a clean repo synced to the latest revision of the engine. We just have now to reapply the sv_demo commits one by one.
-    
-    # Reopen the text file where you pasted those sv_demo commits lines before (when we did rebase --interactive), and follow the commits in the natural order: from the top to the bottom. The top commit being the oldest one, and the lowest the latest.
-    # You have to pick the oldest commit first, then to the more recent and so on. Look at the SHA code (the second column after the command "pick"), and copy this SHA code below in place of 617a:
-    git cherry-pick 617a
-    # This command will pick this very specific commit and will try to reapply it.
-    # It will try to automatically merge the conflicts.
-    
-    # In the case there are some unresolved conflicts, you can resolve them manually by doing:
-    git mergetool
-    
-    # If you resolved manually the conflicts, then you have to do:
-    git commit
-    
-    # And then, you can continue onto the next sv_demo commit:
-    git cherry-pick ...
-    
-    # Until you reapplied all the commits, and voila, you have an up-to-date engine with the sv_demo patch!
-
-
 DEV NOTES
 ---------
 
@@ -131,14 +56,6 @@ DEV NOTES
   NOTE: This was merged in a patch in the ioquake3 project, and this fix is now officially part of the engine.
 
 * usercmd_t management (players movement commands simulation) is implemented but commented out. It fully works, but it's not necessary for the demo functionnalities, and it adds a LOT of data to the demo file, so demo files take a lot more harddrive space when this function is enabled. If you want to do demo analysis, it is advised to turn on this feature, else you should probably not.
-
-
-
-TODO
-----
-
-* Update to latest OpenArena v3.0.0a (don't expect this to be done anytime soon, but it should be easy using the [ioquake3 patch](https://github.com/lrq3000/ioq3/tree/server-side-demo), if you want to give it a shot!).
-
 
 
 SHOULD DO (but not now)
@@ -157,7 +74,6 @@ SHOULD DO (but not now)
   }
 
 * When demo replaying a demo client-side with mod switching, sv_cheats is disabled (prevent timescale and other commands to be used)
-
 
 
 KNOWN BUGS (WONT FIX FOR NOW)
@@ -196,7 +112,6 @@ Below is a list of known bugs or wished features, but if you encounter them, ple
 * Cvars changed in the demo aren't set when replayed, but if they affect an aspect of the gameplay (such as changing g_gravity), it will be reflected in the demo because the whole entities states are recorded, so it will be faithfully reproduced even if the cvars aren't set (if you have a demo where that's not the case, please post it and describe).
 
 * ExcessivePlus: when replaying a demo, democlients whose initial team was spectator can be spectated (but subsequent team change will make them unspectatable if they go to spec).
-
 
 
 CHANGELOG (newest to the bottom)
@@ -267,3 +182,4 @@ CHANGELOG (newest to the bottom)
 * fix: Compatibility with OA 0.8.8: fix: fixed "FIXING ENT->S.NUMBER!!!" error, crashing demo playback with OA > 0.8.5. Now, the patch is compatible with OA 0.8.8
 * fix: compatibility with maps containing mover objects (like moving platforms of Kaos2): "Reached_BinaryMover: bad moverState" error. Fixed by stopping ent->reached from being called by setting entity->s.pos.trType = TR_LINEAR when entity->s.pos.trType == TR_LINEAR_STOP.
 * add: Compiled for ioquake3 latest version (but not yet merged in OA v3): https://github.com/lrq3000/ioq3/tree/server-side-demo
+
