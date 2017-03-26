@@ -808,7 +808,7 @@ void CG_EventHandling(int type, qboolean fForced)
 
 	if (type != CGAME_EVENT_NONE)
 	{
-		trap_Cvar_Set("cl_bypassMouseInput", 0);
+		trap_Cvar_Set("cl_bypassMouseInput", "0");
 	}
 
 	switch (type)
