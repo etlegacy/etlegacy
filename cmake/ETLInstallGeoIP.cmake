@@ -20,7 +20,7 @@ endif()
 message(STATUS "Extracting GeoIP to ${CMAKE_CURRENT_BINARY_DIR}/legacy")
 if(UNIX)
 	execute_process(
-		COMMAND gunzip ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_GEOIP_ARCHIVE}
+		COMMAND gunzip -f ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_GEOIP_ARCHIVE}
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/legacy
 	)
 elseif(WIN32 AND GZIP_EXECUTABLE)
@@ -31,6 +31,6 @@ elseif(WIN32 AND GZIP_EXECUTABLE)
 endif(UNIX)
 
 message(STATUS "Adding GeoIP to installer scripts")
-install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/legacy/"
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/legacy/GeoIP.dat"
 	DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
 )

@@ -30,7 +30,6 @@ message(STATUS "Extracting Omni-Bot to ${CMAKE_CURRENT_BINARY_DIR}/legacy/omni-b
 if(UNIX)
 	execute_process(
 		COMMAND tar -xf ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}
-		COMMAND rm -f ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/legacy
 	)
 elseif(WIN32)
@@ -49,6 +48,6 @@ install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/legacy/omni-bot/"
 if(UNIX)
 	execute_process(
 		COMMAND chmod -R 644 "${INSTALL_DEFAULT_MODDIR}/legacy/omni-bot/"
-		WORKING_DIRECTORY "${INSTALL_DEFAULT_MODDIR}/legacy"
+		WORKING_DIRECTORY "${INSTALL_DEFAULT_MODDIR}/legacy/omni-bot"
 	)
 endif(UNIX)
