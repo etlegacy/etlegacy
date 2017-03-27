@@ -695,6 +695,10 @@ void SV_ShutdownGameProgs(void)
 		return;
 	}
 
+	// stop any demos
+	SV_DemoStopAll();
+
+	// shutdown game
 	VM_Call(gvm, GAME_SHUTDOWN, qfalse);
 	VM_Free(gvm);
 	gvm = NULL;
@@ -721,6 +725,12 @@ static void SV_InitGameVM(qboolean restart)
 	// use the current msec count for a random seed
 	// init for this gamestate
 	VM_Call(gvm, GAME_INIT, svs.time, Com_Milliseconds(), restart, qtrue, ETLEGACY_VERSION_INT);
+
+	// start recording a demo
+	if (sv_autoDemo->integer)
+	{
+		SV_DemoAutoDemoRecord();
+	}
 }
 
 /**

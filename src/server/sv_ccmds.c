@@ -138,8 +138,6 @@ static void SV_Map_f(void)
 		cheat = qfalse;
 	}
 
-	SV_DemoStopAll();
-
 	// save the map name here cause on a map restart we reload the etconfig.cfg
 	// and thus nuke the arguments of the map command
 	Q_strncpyz(mapname, map, sizeof(mapname));
@@ -305,8 +303,6 @@ static void SV_MapRestart_f(void)
 		return;
 	}
 
-	SV_DemoStopAll();
-
 	// toggle the server bit so clients can detect that a
 	// map_restart has happened
 	svs.snapFlagServerBit ^= SNAPFLAG_SERVERCOUNT;
@@ -392,12 +388,6 @@ static void SV_MapRestart_f(void)
 	// run another frame to allow things to look at all the players
 	VM_Call(gvm, GAME_RUN_FRAME, svs.time);
 	svs.time += FRAMETIME;
-
-	// start recording a demo
-	if (sv_autoDemo->integer)
-	{
-		SV_DemoAutoDemoRecord();
-	}
 }
 
 //===============================================================

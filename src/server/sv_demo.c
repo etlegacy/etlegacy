@@ -761,6 +761,14 @@ void SV_DemoAutoDemoRecord(void)
 	char    *demoname = (char *)malloc(MAX_QPATH * sizeof(char));
 	Com_RealTime(&now);
 
+	// break if a demo is already being recorded
+	// FIXME: this should not happen, this is a failsafe but if it's used it means there are redundant calls that we can maybe remove
+	if (sv.demoState == DS_RECORDING)
+	{
+		return;
+	}
+
+	// generate the demo filename
 	Q_strncpyz(demoname, va("%s_%04d-%02d-%02d-%02d-%02d-%02d_%s",
 	                        SV_CleanFilename(va("%s", sv_hostname->string)),
 	                        1900 + now.tm_year,
@@ -772,10 +780,13 @@ void SV_DemoAutoDemoRecord(void)
 	                        SV_CleanFilename(Cvar_VariableString("mapname"))),
 	           MAX_QPATH);
 
+	// print a message
 	Com_Printf("DEMO: recording a server-side demo to: %s/svdemos/%s.%s%d\n", strlen(Cvar_VariableString("fs_game")) ? Cvar_VariableString("fs_game") : BASEGAME, demoname, SVDEMOEXT, PROTOCOL_VERSION);
 
+	// launch the demo recording
 	Cbuf_AddText(va("demo_record %s\n", demoname));
 
+	// free memory of the filename
 	free(demoname);
 }
 
@@ -1468,7 +1479,7 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 		SV_SetConfigstring(CS_PLAYERS + num, configstring);
 
 		// Set some infos about this user:
-		svs.clients[num].demoClient = qtrue; // to check if a client is a democlient, you can either rely on this variable, either you can check if num (index of client) is >= CS_PLAYERS + sv_democlients->integer && < CS_PLAYERS + sv_maxclients->integer (if it's not a configstring, remove CS_PLAYERS from your if)
+		svs.clients[num].demoClient = qtrue; // to check if a client is a democlient, you can either rely on this variable, either you can check if it's a real client num (index of client) is >= CS_PLAYERS + sv_democlients->integer && < CS_PLAYERS + sv_maxclients->integer (if it's not a configstring, remove CS_PLAYERS from your if)
 		Q_strncpyz(svs.clients[num].name, Info_ValueForKey(configstring, "n"), MAX_NAME_LENGTH);     // set the name (useful for internal functions such as status_f). Anyway userinfo will automatically set both name (server-side) and netname (gamecode-side).
 
 
