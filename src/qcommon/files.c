@@ -499,33 +499,22 @@ void FS_ForceFlush(fileHandle_t f)
  */
 long FS_fplength(FILE *h)
 {
-	long pos;
-	long end;
+	int         fd;
+	struct stat stat_info;
 
-	pos = ftell(h);
-
-	if (fseek(h, 0, SEEK_END) != 0)
+	if ((fd = fileno(h)) == -1)
 	{
-		Com_Error(ERR_DROP, "FS_fplength: can't seek end of file");
+		Com_Error(ERR_DROP, "Sys_fplength: can't get file descriptor. failed: errno %d\n", errno);
 	}
 
-	end = ftell(h);
-
-	if (pos < 0)
+	if (fstat(fd, &stat_info) != 0)
 	{
-		Com_Error(ERR_DROP, "FS_fplength: pos < 0");
+		Com_Error(ERR_DROP, "Sys_fplength: can't get file stat. failed: errno %d\n", errno);
 	}
 
-	if (fseek(h, pos, SEEK_SET) != 0)
-	{
-		Com_Error(ERR_DROP, "FS_fplength: can't seek beginning of file");
-	}
-	return end;
+	return stat_info.st_size;
 }
 
-/**
-
- */
 /**
  * @brief If this is called on a non-unique FILE (from a pak file), it will return
  * the size of the pak file, not the expected size of the file.
@@ -1729,7 +1718,7 @@ qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const c
 		if (destLength > 0)
 		{
 			destData = (unsigned char *)Z_Malloc(destLength);
-            
+
 			if (fread(destData, destLength, 1, destHandle) != 1 && (!feof(destHandle) || ferror(destHandle)))
 			{
 				Com_Error(ERR_FATAL, "FS_CL_ExtractFromPakFile: Short read '%s'", filename);
@@ -5025,7 +5014,7 @@ qboolean FS_UnzipTo(const char *filename, const char *outpath, qboolean quiet)
 		char          newFilePath[MAX_OSPATH];
 		FILE          *newFile;
 
-        // FIXME: err is never read
+		// FIXME: err is never read
 		err = unzGetCurrentFileInfo(zipFile, &file_info, newFileName, sizeof(newFileName), NULL, 0, NULL, 0);
 
 		Com_sprintf(newFilePath, sizeof(newFilePath), "%s%c%s", outpath, PATH_SEP, newFileName);
