@@ -499,15 +499,15 @@ void FS_ForceFlush(fileHandle_t f)
  */
 long FS_fplength(FILE *h)
 {
-	int         fd;
+	int         fd, errno;
 	struct stat stat_info;
 
 	if ((fd = fileno(h)) == -1)
 	{
-		Com_Error(ERR_DROP, "Sys_fplength: can't get file descriptor. failed: errno %d\n", errno);
+		Com_Error(ERR_DROP, "Sys_fplength: can't get file descriptor. failed: -1\n");
 	}
 
-	if (fstat(fd, &stat_info) != 0)
+	if ((errno = fstat(fd, &stat_info)) < 0)
 	{
 		Com_Error(ERR_DROP, "Sys_fplength: can't get file stat. failed: errno %d\n", errno);
 	}
