@@ -758,17 +758,19 @@ void SV_DemoWriteFrame(void)
 void SV_DemoAutoDemoRecord(void)
 {
 	qtime_t now;
-	char    *demoname = (char *)malloc(MAX_QPATH * sizeof(char));
-	Com_RealTime(&now);
+	char    *demoname;
 
 	// break if a demo is already being recorded
 	// FIXME: this should not happen, this is a failsafe but if it's used it means there are redundant calls that we can maybe remove
 	if (sv.demoState == DS_RECORDING)
 	{
+		Com_Printf("SV_DemoAutoDemoRecord: already recording a demo!\n");
 		return;
 	}
 
 	// generate the demo filename
+	*demoname = (char *)malloc(MAX_QPATH * sizeof(char));
+	Com_RealTime(&now);
 	Q_strncpyz(demoname, va("%s_%04d-%02d-%02d-%02d-%02d-%02d_%s",
 	                        SV_CleanFilename(va("%s", sv_hostname->string)),
 	                        1900 + now.tm_year,
