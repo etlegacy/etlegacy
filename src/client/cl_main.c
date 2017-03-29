@@ -969,6 +969,13 @@ void CL_Connect_f(void)
 	// server connection string
 	Cvar_Set("cl_currentServerAddress", server);
 	Cvar_Set("cl_currentServerIP", ip_port);
+
+#ifdef FEATURE_IRC_CLIENT
+	if (irc_mode->integer & IRCM_AUTO_CONNECT)
+	{
+		IRC_Connect();
+	}
+#endif
 }
 
 #define MAX_RCON_MESSAGE 1024

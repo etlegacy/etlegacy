@@ -39,6 +39,20 @@
 #ifndef IRC_CLIENT_H
 #define IRC_CLIENT_H
 
+/* IRC control cvars */
+cvar_t *irc_mode;
+cvar_t *irc_server;
+cvar_t *irc_channel;
+cvar_t *irc_port;
+cvar_t *irc_nickname;
+cvar_t *irc_kick_rejoin;
+cvar_t *irc_reconnect_delay;
+
+#define IRCM_AUTO_CONNECT           1
+#define IRCM_AUTO_OVERRIDE_NICKNAME 2
+#define IRCM_MUTE_CHANNEL           4
+#define IRCM_CHANNEL_TO_CHAT        8 ///< dedicated only
+
 void IRC_Init(void);
 void IRC_Connect(void);
 void IRC_InitiateShutdown(void);

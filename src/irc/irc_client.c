@@ -39,6 +39,7 @@
 
 //#include "../client/client.h"
 #include "htable.h"
+#include "irc_client.h"
 
 #ifdef WIN32
 # include <winsock.h>
@@ -63,20 +64,6 @@ typedef int irc_socket_t;
 #  define INVALID_SOCKET (-1)
 # endif
 #endif
-
-/* IRC control cvars */
-cvar_t *irc_mode;
-cvar_t *irc_server;
-cvar_t *irc_channel;
-cvar_t *irc_port;
-cvar_t *irc_nickname;
-cvar_t *irc_kick_rejoin;
-cvar_t *irc_reconnect_delay;
-
-#define IRCM_AUTO_CONNECT           1
-#define IRCM_AUTO_OVERRIDE_NICKNAME 2
-#define IRCM_MUTE_CHANNEL           4
-#define IRCM_CHANNEL_TO_CHAT        8 ///< dedicated only
 
 /*
  * Timing controls
@@ -2510,11 +2497,6 @@ void IRC_Init(void)
 	irc_nickname        = Cvar_Get("irc_nickname", "ETLClient", CVAR_ARCHIVE);
 	irc_kick_rejoin     = Cvar_Get("irc_kick_rejoin", "0", CVAR_ARCHIVE);
 	irc_reconnect_delay = Cvar_Get("irc_reconnect_delay", "100", CVAR_ARCHIVE);
-
-	if (irc_mode->integer & IRCM_AUTO_CONNECT)
-	{
-		IRC_Connect();
-	}
 }
 
 /**
