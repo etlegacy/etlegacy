@@ -1500,6 +1500,7 @@ static void S_AL_SrcLoop(alSrcPriority_t priority, sfxHandle_t sfx,
 	src_t     *curSource;
 	vec3_t    sorigin, svelocity;
 
+	//TODO: implement soundTime
 	//if(S_AL_CheckInput(entityNum, sfx))
 	//  return;
 
@@ -1543,15 +1544,8 @@ static void S_AL_SrcLoop(alSrcPriority_t priority, sfxHandle_t sfx,
 	sent->loopSfx      = sfx;
 	sent->volume       = volume;
 
-	if (soundTime != 0)
-	{
-		// If this is not set then the looping sound is stopped.
-		sent->loopAddedThisFrame = qtrue;
-	}
-	else
-	{
-		sent->loopAddedThisFrame = qfalse;
-	}
+	// If this is not set then the looping sound is stopped.
+	sent->loopAddedThisFrame = qtrue;
 	
 	// UGH
 	// These lines should be called via S_AL_SrcSetup, but we
