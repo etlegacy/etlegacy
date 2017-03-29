@@ -504,12 +504,12 @@ long FS_fplength(FILE *h)
 
 	if ((fd = fileno(h)) == -1)
 	{
-		Com_Error(ERR_DROP, "Sys_fplength: can't get file descriptor. failed: -1\n");
+		Com_Error(ERR_DROP, "FS_fplength: can't get file descriptor. failed: -1\n");
 	}
 
 	if ((errno = fstat(fd, &stat_info)) < 0)
 	{
-		Com_Error(ERR_DROP, "Sys_fplength: can't get file stat. failed: errno %d\n", errno);
+		Com_Error(ERR_DROP, "FS_fplength: can't get file stat. failed: errno %d\n", errno);
 	}
 
 	return stat_info.st_size;
