@@ -292,7 +292,7 @@ void SV_DirectConnect(netadr_t from)
 
 	// check for privateClient password
 	password = Info_ValueForKey(userinfo, "password");
-	if (!strcmp(password, sv_privatePassword->string))
+	if (*password && !strcmp(password, sv_privatePassword->string))
 	{
 		startIndex = sv_democlients->integer;
 	}
