@@ -565,7 +565,6 @@ void SV_ExecuteClientCommand(client_t *cl, const char *s, qboolean clientOK, qbo
 void SV_ClientThink(client_t *cl, usercmd_t *cmd);
 int SV_SendDownloadMessages(void);
 int SV_SendQueuedMessages(void);
-void SV_UpdateUserinfo_f(client_t *cl);
 
 // sv_ccmds.c
 void SV_Heartbeat_f(void);
