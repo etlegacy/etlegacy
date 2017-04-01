@@ -777,7 +777,7 @@ void SV_DemoAutoDemoRecord(void)
 	Com_Printf("DEMO: recording a server-side demo to: %s/svdemos/%s.%s%d\n", strlen(Cvar_VariableString("fs_game")) ? Cvar_VariableString("fs_game") : BASEGAME, demoname, SVDEMOEXT, PROTOCOL_VERSION);
 
 	// launch the demo recording
-	Cbuf_AddText(va("demo_record %s\n", demoname));
+	Cbuf_AddText(va("sv_record %s\n", demoname));
 }
 
 /**
@@ -941,7 +941,7 @@ static void SV_DemoStartPlayback(void)
 	char *fs       = (char *)malloc(MAX_QPATH * sizeof(char));
 	char *hostname = (char *)malloc(MAX_NAME_LENGTH * sizeof(char));
 	char *datetime = (char *)malloc(1024 * sizeof(char));   // there's no limit in the whole engine specifically designed for dates and time...
-	char *metadata; // = malloc( 1024 * sizeof * metadata ); // used to store the current metadata index
+	char *metadata; // used to store the current metadata index
 
 	// Init vars with empty values (to avoid compilation warnings)
 	clients = fps = gametype = timelimit = fraglimit = capturelimit = 0;
@@ -1368,6 +1368,7 @@ static void SV_DemoReadClientCommand(msg_t *msg)
 {
 	char *cmd;
 	int  num;
+
 	num = MSG_ReadByte(msg);
 	cmd = MSG_ReadString(msg);
 
@@ -1923,7 +1924,7 @@ read_next_demo_event: // used to read next demo event
 
 				return;     // else we end the current demo frame
 			case demo_endDemo:     // end of the demo file - just stop playback and restore saved cvars
-				Com_Printf("demo_endDemo...\n");
+				Com_Printf("End of demo reached.\n");
 				SV_DemoStopPlayback();
 				return;
 			}
@@ -1961,7 +1962,7 @@ static void SV_Demo_Record_f(void)
 
 	if (Cmd_Argc() > 2)
 	{
-		Com_Printf("Usage: demo_record <demoname>\n");
+		Com_Printf("Usage: sv_record <demoname>\n");
 		return;
 	}
 
@@ -2057,15 +2058,7 @@ static void SV_Demo_Stop_f(void)
 		return;
 	}
 
-	// Close the demo file
-	if (sv.demoState == DS_PLAYBACK || sv.demoState == DS_WAITINGPLAYBACK)
-	{
-		SV_DemoStopPlayback();
-	}
-	else
-	{
-		SV_DemoStopRecord();
-	}
+	SV_DemoStopAll();
 }
 
 /**

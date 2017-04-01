@@ -465,7 +465,7 @@ extern cvar_t *sv_wh_bbox_vert;
 extern cvar_t *sv_wh_check_fov;
 #endif
 
-//server side demo recording
+// server side demo recording
 extern cvar_t *sv_demopath;
 extern cvar_t *sv_demoState;
 extern cvar_t *sv_autoDemo;
