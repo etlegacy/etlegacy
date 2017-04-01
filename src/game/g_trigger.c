@@ -1648,8 +1648,9 @@ void Think_SetupObjectiveInfo(gentity_t *ent)
 
 			e = G_Spawn();
 
-			e->r.svFlags = SVF_BROADCAST;
-			e->classname = "constructible_indicator";
+			e->r.svFlags      = SVF_BROADCAST;
+			e->classname      = "constructible_indicator";
+			e->targetnamehash = -1;
 			if (ent->spawnflags & 8)
 			{
 				e->s.eType = ET_TANK_INDICATOR_DEAD;
