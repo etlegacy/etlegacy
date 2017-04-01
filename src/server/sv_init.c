@@ -1242,9 +1242,10 @@ void SV_Shutdown(const char *finalmsg)
 	SV_RemoveOperatorCommands();
 	SV_MasterShutdown();
 	SV_ShutdownGameProgs();
-
-	SV_DemoStopAll();
-
+	
+	// SV_ShutdownGameProgs calls SV_DemoStopAll();
+	SV_DemoShutdown();
+	
 	// free current level
 	SV_ClearServer();
 

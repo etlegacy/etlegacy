@@ -432,13 +432,6 @@ void SV_DemoWriteServerCommand(const char *cmd)
 	SV_DemoWriteMessage(&msg);
 }
 
-/*
-====================
-SV_DemoWriteGameCommand
-
-
-====================
-*/
 /**
  * @brief Write a game command to the demo file
  * @param[in] clientNum
@@ -758,7 +751,7 @@ void SV_DemoWriteFrame(void)
 void SV_DemoAutoDemoRecord(void)
 {
 	qtime_t now;
-	char    *demoname = NULL;
+	char    demoname[MAX_QPATH];
 
 	// break if a demo is already being recorded
 	// FIXME: this should not happen, this is a failsafe but if it's used it means there are redundant calls that we can maybe remove
@@ -768,8 +761,6 @@ void SV_DemoAutoDemoRecord(void)
 		return;
 	}
 
-	// generate the demo filename
-	demoname = (char *)malloc(MAX_QPATH * sizeof(char));
 	Com_RealTime(&now);
 	Q_strncpyz(demoname, va("%s_%04d-%02d-%02d-%02d-%02d-%02d_%s",
 	                        SV_CleanFilename(va("%s", sv_hostname->string)),
@@ -787,9 +778,6 @@ void SV_DemoAutoDemoRecord(void)
 
 	// launch the demo recording
 	Cbuf_AddText(va("demo_record %s\n", demoname));
-
-	// free memory of the filename
-	free(demoname);
 }
 
 /**
@@ -1025,10 +1013,9 @@ static void SV_DemoStartPlayback(void)
 				// automatically adjusting sv_democlients, sv_maxclients and bot_minplayers
 				Cvar_SetValue("sv_democlients", clients);
 				Cvar_SetLatched("sv_maxclients", va("%i", sv_maxclients->integer + clients));
-				/* BUGGY makes a dedicated server crash
-				Cvar_Get( "sv_maxclients", "8", 0 );
-				sv_maxclients->modified = qfalse;
-				*/
+				// BUGGY makes a dedicated server crash
+				//Cvar_Get( "sv_maxclients", "8", 0 );
+				//sv_maxclients->modified = qfalse;
 			}
 		}
 		else if (!Q_stricmp(metadata, "time"))
@@ -2104,6 +2091,18 @@ void SV_DemoInit(void)
 {
 	Cmd_AddCommand("sv_record", SV_Demo_Record_f);
 	Cmd_AddCommand("sv_demo", SV_Demo_Play_f);
-	Cmd_SetCommandCompletionFunc("sv_demo", SV_CompleteDemoName);
 	Cmd_AddCommand("sv_demostop", SV_Demo_Stop_f);
+
+	Cmd_SetCommandCompletionFunc("sv_demo", SV_CompleteDemoName);
 }
+
+/**
+ * @brief SV_DemoShutdown
+ */
+void SV_DemoShutdown(void)
+{
+	Cmd_RemoveCommand("sv_record");
+	Cmd_RemoveCommand("sv_demo");
+	Cmd_RemoveCommand("sv_demostop");
+}
+

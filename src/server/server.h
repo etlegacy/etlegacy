@@ -487,6 +487,7 @@ void SV_DemoWriteClientUserinfo(client_t *client, const char *userinfo);
 qboolean SV_CheckLastCmd(const char *cmd, qboolean onlyStore);
 void SV_DemoStopAll(void);
 void SV_DemoInit(void);
+void SV_DemoShutdown(void);
 
 // sv_demo_ext.c
 //int SV_GentityGetHealthField(sharedEntity_t *gent);   // Test purpose
@@ -565,6 +566,7 @@ void SV_ExecuteClientCommand(client_t *cl, const char *s, qboolean clientOK, qbo
 void SV_ClientThink(client_t *cl, usercmd_t *cmd);
 int SV_SendDownloadMessages(void);
 int SV_SendQueuedMessages(void);
+void SV_UpdateUserinfo_f(client_t *cl);
 
 // sv_ccmds.c
 void SV_Heartbeat_f(void);
