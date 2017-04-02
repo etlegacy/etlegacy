@@ -477,7 +477,7 @@ void SV_DemoWriteConfigString(int cs_index, const char *cs_string)
 
 	MSG_Init(&msg, buf, sizeof(buf));
 	MSG_WriteByte(&msg, demo_configString);
-	sprintf(cindex, "%i", cs_index); // convert index to a string since we don't have any other way to store values that are greater than a byte (and max_configstrings is 1024 currently) - FIXME: try to replace by a WriteLong instead of WriteString? Or WriteData (with length! and it uses WriteByte)
+	Com_sprintf(cindex, sizeof(cindex) ,"%i", cs_index); // convert index to a string since we don't have any other way to store values that are greater than a byte (and max_configstrings is 1024 currently) - FIXME: try to replace by a WriteLong instead of WriteString? Or WriteData (with length! and it uses WriteByte)
 	MSG_WriteString(&msg, (const char *)cindex);
 	MSG_WriteString(&msg, cs_string);
 	SV_DemoWriteMessage(&msg);
@@ -1968,7 +1968,7 @@ static void SV_Demo_Record_f(void)
 
 	if (Cmd_Argc() == 2)
 	{
-		sprintf(sv.demoName, "svdemos/%s.%s%d", Cmd_Argv(1), SVDEMOEXT, PROTOCOL_VERSION);
+		Com_sprintf(sv.demoName, sizeof(sv.demoName),"svdemos/%s.%s%d", Cmd_Argv(1), SVDEMOEXT, PROTOCOL_VERSION);
 	}
 	else
 	{
