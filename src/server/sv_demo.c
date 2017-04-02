@@ -269,7 +269,7 @@ void SV_DemoFilterClientUserinfo(char *userinfo)
 {
 	Info_RemoveKey(userinfo, "cl_guid");
 	Info_RemoveKey(userinfo, "ip");
-	Info_SetValueForKey(userinfo, "cl_voip", "0");
+	//Info_SetValueForKey(userinfo, "cl_voip", "0");
 }
 
 /**
@@ -522,7 +522,7 @@ void SV_DemoWriteClientUserinfo(client_t *client, const char *userinfo)
 	if (strlen(userinfo) > 0)
 	{
 		// do the filtering only if the string is not empty
-		SV_DemoFilterClientUserinfo(fuserinfo);   // filters out privacy keys such as ip, cl_guid, cl_voip
+		SV_DemoFilterClientUserinfo(fuserinfo);   // filters out privacy keys such as ip, cl_guid, (cl_voip)
 	}
 
 	MSG_Init(&msg, buf, sizeof(buf));
