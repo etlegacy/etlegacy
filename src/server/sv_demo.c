@@ -137,11 +137,12 @@ qboolean SV_CheckClientCommand(client_t *client, const char *cmd)
 	// If that's a userinfo command, we directly handle that with a specialized function (and we check that it contains at least 10 characters so that when we copy the string we don't end up copying a random address in memory)
 	if (strlen(cmd) > 9 && !Q_strncmp(cmd, "userinfo", 8))
 	{
-		char *userinfo = (char *)malloc(MAX_INFO_STRING * sizeof(char));
+		char userinfo[MAX_INFO_STRING];
+
+		Com_Memset(userinfo, 0, MAX_INFO_STRING);
 
 		Q_strncpyz(userinfo, cmd + 9, MAX_INFO_STRING); // trimming out the "userinfo " substring (because we only need the userinfo string)
 		SV_DemoWriteClientUserinfo(client, (const char *)userinfo); // passing relay to the specialized function for this job
-		free(userinfo);
 
 		return qfalse; // we return false if the check wasn't right (meaning that this function does not need to process anything)
 	}
@@ -181,8 +182,11 @@ qboolean SV_CheckLastCmd(const char *cmd, qboolean onlyStore)
 {
 	static char prevcmddata[MAX_STRING_CHARS];
 	static char *prevcmd        = prevcmddata;
-	char        *cleanedprevcmd = (char *)malloc(MAX_STRING_CHARS * sizeof(char));
-	char        *cleanedcmd     = (char *)malloc(MAX_STRING_CHARS * sizeof(char));
+	char        cleanedprevcmd[MAX_STRING_CHARS];
+	char        cleanedcmd[MAX_STRING_CHARS];
+
+	Com_Memset(cleanedprevcmd, 0, MAX_STRING_CHARS);
+	Com_Memset(cleanedcmd, 0, MAX_STRING_CHARS);
 
 	Q_strncpyz(cleanedprevcmd, SV_CleanStrCmd(va("%s", prevcmd)), MAX_STRING_CHARS);
 	Q_strncpyz(cleanedcmd, SV_CleanStrCmd(va("%s", cmd)), MAX_STRING_CHARS);
@@ -191,17 +195,11 @@ qboolean SV_CheckLastCmd(const char *cmd, qboolean onlyStore)
 	if (!onlyStore && strlen(prevcmd) > 0 && !Q_stricmp(cleanedprevcmd, cleanedcmd))
 	{
 		// check that the previous cmd was different from the current cmd.
-		// Clean the vars before exiting the func
-		free(cleanedprevcmd);
-		free(cleanedcmd);
 		return qfalse; // drop this command, it's a repetition of the previous one
 	}
 	else
 	{
 		Q_strncpyz(prevcmd, cmd, MAX_STRING_CHARS); // memorize the current cmd for the next check (clean the cmd before, because sometimes the same string is issued by the engine with some empty colors?)
-		// Clean the vars before exiting the func
-		free(cleanedprevcmd);
-		free(cleanedcmd);
 		return qtrue;
 	}
 }
@@ -928,12 +926,16 @@ static void SV_DemoStartPlayback(void)
 {
 	msg_t msg;
 	int   r, time, i, clients, fps, gametype, timelimit, fraglimit, capturelimit;
+	char  map[MAX_QPATH];
+	char  fs[MAX_QPATH]; // FIXME:  MAX_QPATH - only 64 chars ?!!!
+	char  hostname[MAX_NAME_LENGTH];
+	char  datetime[1024]; // there's no limit in the whole engine specifically designed for dates and time...
+	char  *metadata; // used to store the current metadata index
 
-	char *map      = (char *)malloc(MAX_QPATH * sizeof(char));
-	char *fs       = (char *)malloc(MAX_QPATH * sizeof(char));
-	char *hostname = (char *)malloc(MAX_NAME_LENGTH * sizeof(char));
-	char *datetime = (char *)malloc(1024 * sizeof(char));   // there's no limit in the whole engine specifically designed for dates and time...
-	char *metadata; // used to store the current metadata index
+	Com_Memset(map, 0, MAX_QPATH);
+	Com_Memset(fs, 0, MAX_QPATH);
+	Com_Memset(hostname, 0, MAX_NAME_LENGTH);
+	Com_Memset(datetime, 0, 1024);
 
 	// Init vars with empty values (to avoid compilation warnings)
 	clients = fps = gametype = timelimit = fraglimit = capturelimit = 0;
@@ -998,7 +1000,7 @@ static void SV_DemoStartPlayback(void)
 					savedMaxClients = sv_maxclients->integer;
 				}
 
-				// automatically adjusting sv_democlients, sv_maxclients and bot_minplayers // FIXME: omnibot?
+				// automatically adjusting sv_democlients, sv_maxclients and bot_minplayers
 				Cvar_SetValue("sv_democlients", clients);
 				Cvar_SetLatched("sv_maxclients", va("%i", sv_maxclients->integer + clients));
 				// BUGGY makes a dedicated server crash
@@ -1227,13 +1229,13 @@ static void SV_DemoStartPlayback(void)
 	SV_DemoReadFrame(); // reading the first frame, which should contain some initialization events (eg: initial confistrings/userinfo when demo recording started, initial entities states and placement, etc..)
 
 demo_startplayback_clean:
-	// Free memory
-	free(map);
-	free(fs);
-	free(hostname);
-	free(datetime);
-	// it seems glibc already frees this pointer automatically since the malloc was removed, if we specify this line we'll get a crash
-	//free( metadata );
+	// clean the vars
+	//Com_Memset(map, 0, MAX_QPATH);
+	//Com_Memset(fs, 0, MAX_QPATH);
+	//Com_Memset(hostname, 0, MAX_NAME_LENGTH);
+	//Com_Memset(datetime, 0, 1024);
+
+	//metadata = "";
 	return;
 }
 
@@ -1471,6 +1473,8 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 			    )
 			{
 				// If the client changed team, we manually issue a team change (workaround by using a clientCommand team)
+
+/* FIXME: find the reason of crash/no need to execute this now
 				char *svdnewteamstr = malloc(10 * sizeof *svdnewteamstr);
 
 				// random string, we just want the server to considerate the democlient in a team, whatever the team is. It will be automatically adjusted later with a clientCommand or userinfo string.
@@ -1490,11 +1494,9 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 					strcpy(svdnewteamstr, "free");
 					break;
 				}
-
-				//This causes a crash
+*/
+				// FIXME: This causes a crash
 				//SV_ExecuteClientCommand(&svs.clients[num], va("team %s", svdnewteamstr), qtrue,qfalse); // workaround to force the server's gamecode and clients to update the team for this client - note: in fact, setting any team (except spectator) will make the engine set the client to a random team, but it's only sessionTeam! so the democlients will still be shown in the right team on the scoreboard, but the engine will consider them in a random team (this has no concrete adverse effect to the demo to my knowledge)
-
-				free(svdnewteamstr);
 			}
 		}
 
@@ -1531,10 +1533,13 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 static void SV_DemoReadClientUserinfo(msg_t *msg)
 {
 	client_t *client;
-	char     *userinfo; // = malloc( MAX_INFO_STRING * sizeof *userinfo);
+	char     *userinfo;
 	int      num;
-	char     *svdoldteam;
-	char     *svdnewteam;
+	char     svdoldteam[MAX_NAME_LENGTH];
+	char     svdnewteam[MAX_NAME_LENGTH];
+
+	Com_Memset(svdoldteam, 0, MAX_NAME_LENGTH);
+	Com_Memset(svdnewteam, 0, MAX_NAME_LENGTH);
 
 	// Get client
 	num    = MSG_ReadByte(msg);
@@ -1543,8 +1548,6 @@ static void SV_DemoReadClientUserinfo(msg_t *msg)
 	userinfo = MSG_ReadString(msg);
 
 	// Get the old and new team for the client
-	svdoldteam = (char *)malloc(MAX_NAME_LENGTH * sizeof(char));
-	svdnewteam = (char *)malloc(MAX_NAME_LENGTH * sizeof(char));
 	Q_strncpyz(svdoldteam, Info_ValueForKey(client->userinfo, "team"), MAX_NAME_LENGTH);
 	Q_strncpyz(svdnewteam, Info_ValueForKey(userinfo, "team"), MAX_NAME_LENGTH);
 
@@ -1577,11 +1580,6 @@ static void SV_DemoReadClientUserinfo(msg_t *msg)
 		// FIXME? If you are trying to port this patch and weirdly some democlients are visible in scoreboard but can't be followed, try to uncomment these lines
 		SV_ExecuteClientCommand(client, "team spectator", qtrue, qfalse);
 	}
-
-	// Free memory
-	//free( userinfo ); // automatically freed by glibc, if uncommented will produce a crash
-	free(svdoldteam);
-	free(svdnewteam);
 }
 
 /**
@@ -2086,4 +2084,3 @@ void SV_DemoShutdown(void)
 	Cmd_RemoveCommand("sv_demo");
 	Cmd_RemoveCommand("sv_demostop");
 }
-
