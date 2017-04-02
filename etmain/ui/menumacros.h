@@ -99,7 +99,7 @@
 		group GROUP_NAME                                                                                  \
 		rect        0 0 WINDOW_WIDTH WINDOW_HEIGHT                                                              \
 		style WINDOW_STYLE_FILLED                                                                         \
-		backcolor   0 0 0 .6                                                                                    \
+		backcolor   0 0 0 .9                                                                                    \
 		border WINDOW_BORDER_FULL                                                                          \
 		bordercolor .5 .5 .5 .5                                                                                 \
 		visible     1                                                                                           \
