@@ -38,9 +38,8 @@
 // static function decl
 static void SV_DemoWriteClientConfigString(int clientNum, const char *cs_string);
 
-#define SV_DEMO_DIR va("demos/server%s%s", sv_demopath->string[0] ? "/" : "", sv_demopath->string[0] ? sv_demopath->string : "")
 #define Q_IsColorStringGameCommand(p)      ((p) && *(p) == Q_COLOR_ESCAPE && *((p) + 1)) // ^[anychar]
-#define CEIL(VARIABLE) ((VARIABLE - (int)VARIABLE) == 0 ? (int)VARIABLE : (int)VARIABLE + 1) // UNUSED but can be useful
+//#define CEIL(VARIABLE) ((VARIABLE - (int)VARIABLE) == 0 ? (int)VARIABLE : (int)VARIABLE + 1) // UNUSED but can be useful
 
 /***********************************************
  * VARIABLES
@@ -74,13 +73,11 @@ static byte buf[0x400000];
 
 // Save maxclients and democlients and restore them after the demo
 static int savedMaxClients    = -1;
-static int savedBotMinPlayers = -1;
 static int savedFPS           = -1;
 static int savedGametype      = -1;
 
 static int savedDoWarmup  = -1;
 static int savedAllowVote = -1;
-// static int savedTeamAutoJoin = -1; // unused
 
 static int savedTimelimit    = -1;
 static int savedFraglimit    = -1;
@@ -753,6 +750,8 @@ void SV_DemoAutoDemoRecord(void)
 	qtime_t now;
 	char    demoname[MAX_QPATH];
 
+	Com_Memset(demoname, 0, MAX_QPATH);
+
 	// break if a demo is already being recorded
 	// FIXME: this should not happen, this is a failsafe but if it's used it means there are redundant calls that we can maybe remove
 	if (sv.demoState == DS_RECORDING)
@@ -785,8 +784,7 @@ void SV_DemoAutoDemoRecord(void)
  */
 static void SV_DemoStopPlayback(void)
 {
-	int olddemostate;
-	olddemostate = sv.demoState;
+	int olddemostate = sv.demoState;
 
 	// Clear client configstrings
 	if (olddemostate == DS_PLAYBACK)
@@ -816,12 +814,6 @@ static void SV_DemoStopPlayback(void)
 		{
 			Cvar_SetLatched("sv_maxclients", va("%i", savedMaxClients));
 			savedMaxClients = -1;
-		}
-
-		if (savedBotMinPlayers >= 0)
-		{
-			Cvar_SetValue("bot_minplayers", savedBotMinPlayers);
-			savedBotMinPlayers = -1;
 		}
 
 		if (savedFPS > 0)
@@ -1005,12 +997,8 @@ static void SV_DemoStartPlayback(void)
 				{
 					savedMaxClients = sv_maxclients->integer;
 				}
-				if (savedBotMinPlayers < 0)
-				{
-					savedBotMinPlayers = Cvar_VariableIntegerValue("bot_minplayers");
-				}
 
-				// automatically adjusting sv_democlients, sv_maxclients and bot_minplayers
+				// automatically adjusting sv_democlients, sv_maxclients and bot_minplayers // FIXME: omnibot?
 				Cvar_SetValue("sv_democlients", clients);
 				Cvar_SetLatched("sv_maxclients", va("%i", sv_maxclients->integer + clients));
 				// BUGGY makes a dedicated server crash
@@ -1968,7 +1956,7 @@ static void SV_Demo_Record_f(void)
 
 	if (sv.demoState != DS_NONE)
 	{
-		Com_Printf("A demo is already being recorded/played. Use demo_stop and retry.\n");
+		Com_Printf("A demo is already being recorded/played. Use sv_demostop and retry.\n");
 		return;
 	}
 
@@ -2021,7 +2009,7 @@ static void SV_Demo_Play_f(void)
 
 	if (sv.demoState != DS_NONE && sv.demoState != DS_WAITINGPLAYBACK)
 	{
-		Com_Printf("A demo is already being recorded/played. Use demo_stop and retry.\n");
+		Com_Printf("A demo is already being recorded/played. Use sv_demostop and retry.\n");
 		return;
 	}
 
