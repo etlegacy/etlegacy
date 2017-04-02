@@ -774,7 +774,7 @@ void SV_DemoAutoDemoRecord(void)
 	Com_Printf("DEMO: recording a server-side demo to: %s/svdemos/%s.%s%d\n", strlen(Cvar_VariableString("fs_game")) ? Cvar_VariableString("fs_game") : BASEGAME, demoname, SVDEMOEXT, PROTOCOL_VERSION);
 
 	// launch the demo recording
-	Cbuf_AddText(va("sv_record %s\n", demoname));
+	Cbuf_AddText(va("demo_record %s\n", demoname));
 }
 
 /**
@@ -1206,7 +1206,9 @@ static void SV_DemoStartPlayback(void)
 	Com_Memset(sv.demoEntities, 0, sizeof(sv.demoEntities));
 	Com_Memset(sv.demoPlayerStates, 0, sizeof(sv.demoPlayerStates));
 	Cvar_SetValue("sv_democlients", clients); // Note: we need SV_Startup() to NOT use SV_ChangeMaxClients for this to work without crashing when changing fs_game
-	Cvar_SetValue("bot_minplayers", 0); // if we have bots that autoconnect, this will make up for a very weird demo!
+
+	// FIXME: omnibot?
+	//Cvar_SetValue("bot_minplayers", 0); // if we have bots that autoconnect, this will make up for a very weird demo!
 
 	// Force all real clients already connected before the demo begins to be set to spectator team
 	for (i = sv_democlients->integer; i < sv_maxclients->integer; i++)
@@ -1948,13 +1950,13 @@ static void SV_Demo_Record_f(void)
 
 	if (Cmd_Argc() > 2)
 	{
-		Com_Printf("Usage: sv_record <demoname>\n");
+		Com_Printf("Usage: demo_record <demoname>\n");
 		return;
 	}
 
 	if (sv.demoState != DS_NONE)
 	{
-		Com_Printf("A demo is already being recorded/played. Use sv_demostop and retry.\n");
+		Com_Printf("A demo is already being recorded/played. Use demo_stop and retry.\n");
 		return;
 	}
 
@@ -2001,13 +2003,13 @@ static void SV_Demo_Play_f(void)
 
 	if (Cmd_Argc() != 2)
 	{
-		Com_Printf("Usage: sv_demo <demoname>\n");
+		Com_Printf("Usage: demo_play <demoname>\n");
 		return;
 	}
 
 	if (sv.demoState != DS_NONE && sv.demoState != DS_WAITINGPLAYBACK)
 	{
-		Com_Printf("A demo is already being recorded/played. Use sv_demostop and retry.\n");
+		Com_Printf("A demo is already being recorded/played. Use demo_stop and retry.\n");
 		return;
 	}
 
@@ -2068,11 +2070,11 @@ static void SV_CompleteDemoName(char *args, int argNum)
  */
 void SV_DemoInit(void)
 {
-	Cmd_AddCommand("sv_record", SV_Demo_Record_f);
-	Cmd_AddCommand("sv_demo", SV_Demo_Play_f);
-	Cmd_AddCommand("sv_demostop", SV_Demo_Stop_f);
+	Cmd_AddCommand("demo_record", SV_Demo_Record_f);
+	Cmd_AddCommand("demo_play", SV_Demo_Play_f);
+	Cmd_AddCommand("demo_stop", SV_Demo_Stop_f);
 
-	Cmd_SetCommandCompletionFunc("sv_demo", SV_CompleteDemoName);
+	Cmd_SetCommandCompletionFunc("demo_play", SV_CompleteDemoName);
 }
 
 /**
@@ -2080,7 +2082,7 @@ void SV_DemoInit(void)
  */
 void SV_DemoShutdown(void)
 {
-	Cmd_RemoveCommand("sv_record");
-	Cmd_RemoveCommand("sv_demo");
-	Cmd_RemoveCommand("sv_demostop");
+	Cmd_RemoveCommand("demo_record");
+	Cmd_RemoveCommand("demo_play");
+	Cmd_RemoveCommand("demo_stop");
 }
