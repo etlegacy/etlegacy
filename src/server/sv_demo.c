@@ -948,20 +948,19 @@ static void SV_DemoStartPlayback(void)
 	r = FS_Read(&msg.cursize, 4, sv.demoFile);
 	if (r != 4)
 	{
-		Com_Error(ERR_DROP, "DEMOERROR: SV_DemoReadFrame: demo is corrupted (not initialized correctly!)\n");
 		SV_DemoStopPlayback();
-		goto demo_startplayback_clean;
+		Com_Error(ERR_DROP, "DEMOERROR: SV_DemoReadFrame: demo is corrupted (not initialized correctly!)\n");
 	}
 	msg.cursize = LittleLong(msg.cursize);
 	if (msg.cursize == -1)
 	{
-		Com_Error(ERR_DROP, "DEMOERROR: SV_DemoReadFrame: demo is corrupted (demo file is empty?)\n");
 		SV_DemoStopPlayback();
-		goto demo_startplayback_clean;
+		Com_Error(ERR_DROP, "DEMOERROR: SV_DemoReadFrame: demo is corrupted (demo file is empty?)\n");
 	}
 
 	if (msg.cursize > msg.maxsize)
 	{
+		SV_DemoStopPlayback();
 		Com_Error(ERR_DROP, "DEMOERROR: SV_DemoReadFrame: demo message too long\n");
 	}
 
@@ -970,7 +969,7 @@ static void SV_DemoStartPlayback(void)
 	{
 		Com_Printf("DEMOERROR: Demo file was truncated.\n");
 		SV_DemoStopPlayback();
-		goto demo_startplayback_clean;
+		return;
 	}
 
 	// Reading meta-data (infos about the demo)
@@ -1016,7 +1015,7 @@ static void SV_DemoStartPlayback(void)
 			{
 				Com_Printf("DEMO: Demo time too small: %d.\n", time);
 				SV_DemoStopPlayback();
-				goto demo_startplayback_clean;
+				return;
 			}
 		}
 		else if (!Q_stricmp(metadata, "sv_fps"))
@@ -1056,7 +1055,7 @@ static void SV_DemoStartPlayback(void)
 			{
 				Com_Printf("Map does not exist: %s.\n", map);
 				SV_DemoStopPlayback();
-				goto demo_startplayback_clean;
+				return;
 			}
 		}
 		else if (!Q_stricmp(metadata, "timelimit"))
@@ -1123,7 +1122,7 @@ static void SV_DemoStartPlayback(void)
 	}
 	// Remove g_doWarmup (bugfix: else it will produce a weird bug with all gametypes except CTF and Double Domination because of CheckTournament() in g_main.c which will make the demo stop after the warmup time)
 
-	//FIXME: THIS IS HACKED TO 1 for now (should be 0 or we need to make our own etgame mod bin)
+	// FIXME: THIS IS HACKED TO 1 for now (should be 0 or we need to make our own etgame mod bin)
 	Cvar_SetValue("g_doWarmup", 1);
 
 	// g_allowVote
@@ -1148,8 +1147,7 @@ static void SV_DemoStartPlayback(void)
 	    Q_stricmp(Cvar_VariableString("fs_game"), fs) ||
 	    !Cvar_VariableIntegerValue("sv_cheats") ||
 	    (time < svs.time && !keepSaved) || // if the demo initial time is below server time AND we didn't already restart for demo playback, then we must restart to reinit the server time (because else, it might happen that the server time is still above demo time if the demo was recorded during a warmup time, in this case we won't restart the demo playback but just iterate a few demo frames in the void to catch up the server time, see below the else statement)
-	    sv_maxclients->modified
-	    ||
+	    sv_maxclients->modified || // FIXME: demo_play with sv_maxclients 64 doesn't start because of this and wants to set sv_mmaxclients 128?!
 	    (sv_gametype->integer != gametype && !(gametype == GT_SINGLE_PLAYER && sv_gametype->integer == GT_COOP))  // check for gametype change (need a restart to take effect since it's a latched var) AND check that the gametype difference is not between SinglePlayer and DM/FFA, which are in fact the same gametype (and the server will automatically change SinglePlayer to FFA, so we need to detect that and ignore this automatic change)
 	    )
 	{
@@ -1188,7 +1186,7 @@ static void SV_DemoStartPlayback(void)
 
 		Cbuf_AddText(va("g_gametype %i\ndevmap %s\n", gametype, map)); // Change gametype and map (using devmap to enable cheats)
 
-		goto demo_startplayback_clean;
+		return;
 	}
 	else if (time < svs.time && keepSaved)
 	{
@@ -1230,14 +1228,6 @@ static void SV_DemoStartPlayback(void)
 	keepSaved = qfalse; // Don't save values anymore: the next time we stop playback, we will restore previous values (because now we are really launching the playback, so anything that might happen now is either a big bug or the end of demo, in any case we want to restore the values)
 	SV_DemoReadFrame(); // reading the first frame, which should contain some initialization events (eg: initial confistrings/userinfo when demo recording started, initial entities states and placement, etc..)
 
-demo_startplayback_clean:
-	// clean the vars
-	//Com_Memset(map, 0, MAX_QPATH);
-	//Com_Memset(fs, 0, MAX_QPATH);
-	//Com_Memset(hostname, 0, MAX_NAME_LENGTH);
-	//Com_Memset(datetime, 0, 1024);
-
-	//metadata = "";
 	return;
 }
 
@@ -1829,15 +1819,15 @@ read_next_demo_event: // used to read next demo event
 
 		if (msg.cursize > msg.maxsize) // if the size is too big, we throw an error
 		{
+			SV_DemoStopPlayback();
 			Com_Error(ERR_FATAL, "DEMOERROR: SV_DemoReadFrame: demo message too long\n");
 		}
 
 		r = FS_Read(msg.data, msg.cursize, sv.demoFile); // fetch the demo message (using the length we got) from the demo file sv.demoFile, and store it into msg.data (will be accessed automatically by MSG_thing() functions), and store in r the length of the data returned (used to check that it's correct)
 		if (r != msg.cursize) // if the returned length of the read demo message is not the same as the length we expected (the one that was stored just prior to the demo message), we return an error because we miss the demo message, and the only reason is that the file is truncated, so there's nothing to read after
 		{
-			Com_Printf("DEMOERROR: Demo file was truncated.\n");
 			SV_DemoStopPlayback();
-			return;
+			Com_Error(ERR_FATAL, "DEMOERROR: Demo file was truncated.\n");
 		}
 
 		// Parse the message
@@ -1854,6 +1844,7 @@ read_next_demo_event: // used to read next demo event
 				}
 				else
 				{     // else we just drop the demo and throw a big fat error
+					SV_DemoStopPlayback();
 					Com_Error(ERR_FATAL, "SV_DemoReadFrame: Illegible demo message\n");
 				}
 			case demo_EOF:     // end of a demo event (the loop will continue to real the next event)
