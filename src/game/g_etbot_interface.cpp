@@ -253,6 +253,14 @@ void UpdateMG42(gentity_t *ent)
 {
 	vec3_t entpos;
 
+	for (int i = 0; i < numofmg42s; ++i)
+	{
+		if (mg42s[i].ent == ent)
+		{
+			return;
+		}
+	}
+
 	GetEntityCenter(ent, entpos);
 
 	for (int i = 0 ; i < numofmg42s ; ++i)
