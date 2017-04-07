@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2017-03-28 12:00+0000\n"
-"Last-Translator: André Felipe Urbano <andre_urbano@gmx.com>\n"
+"PO-Revision-Date: 2017-04-05 15:25+0000\n"
+"Last-Translator: rafal1137 <rafal1137@yahoo.pl>\n"
 "Language-Team: Portuguese (http://www.transifex.com/etlegacy/etlegacy/language/pt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -7162,4 +7162,107 @@ msgid "Joystick Threshold:"
 msgstr ""
 
 msgid "Sets joystick threshold sensitivity"
+msgstr ""
+
+msgid ""
+"Includes or excludes servers with anti-lag support from the server list"
+msgstr ""
+
+msgid "Allow players to vote for teams to be shuffled by XP"
+msgstr ""
+
+msgid "Allow players to vote for teams to be shuffled by XP without a restart"
+msgstr ""
+
+msgid "SR Shuffle:"
+msgstr ""
+
+msgid "Allow players to vote for teams to be shuffled by SR"
+msgstr ""
+
+msgid "SR Shuffle No Rstrt:"
+msgstr ""
+
+msgid "Allow players to vote for teams to be shuffled by SR without a restart"
+msgstr ""
+
+msgid "Voice text:"
+msgstr ""
+
+msgid "Show voice text in-game"
+msgstr ""
+
+msgid "Voice chat:"
+msgstr ""
+
+msgid "Play voice chat in-game"
+msgstr ""
+
+#: cgame/cg_limbopanel:1907
+msgid "1of%i"
+msgstr ""
+
+#: cgame/cg_limbopanel:1911 cgame/cg_limbopanel:2553 cgame/cg_limbopanel:2570
+#: cgame/cg_limbopanel:2590
+msgid "%iof%i"
+msgstr ""
+
+msgid "IRC CLIENT"
+msgstr ""
+
+msgid "Mode:"
+msgstr ""
+
+msgid "Specifies IRC client behavior"
+msgstr ""
+
+msgid "Name of IRC server"
+msgstr ""
+
+msgid "Channel #:"
+msgstr ""
+
+msgid "Name of IRC channel - no '#' required"
+msgstr ""
+
+msgid "Port of IRC server"
+msgstr ""
+
+msgid "Nickname:"
+msgstr ""
+
+msgid "IRC nickame in channel"
+msgstr ""
+
+msgid "Auto rejoin time after kick"
+msgstr ""
+
+msgid "Reconnect time ms:"
+msgstr ""
+
+msgid "Reconnect time in ms"
+msgstr ""
+
+msgid "SR SHUFFLE"
+msgstr ""
+
+msgid "NO SR SHUFFLE"
+msgstr ""
+
+msgid "JOIN A TEAM"
+msgstr ""
+
+msgid "SOLDIER"
+msgstr ""
+
+msgid "MEDIC"
+msgstr ""
+
+msgid "ENGINEER"
+msgstr ""
+
+msgid "FIELD OPS"
+msgstr ""
+
+msgid "COVERT OPS"
 msgstr ""
