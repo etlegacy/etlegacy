@@ -469,6 +469,8 @@ void CL_SetExpectedHunkUsage(const char *mapname)
 
 		// now parse the file, filtering out the current map
 		buftrav = buf;
+
+		COM_BeginParseSession("CL_SetExpectedHunkUsage");
 		while ((token = COM_Parse(&buftrav)) != NULL && token[0])
 		{
 			if (!Q_stricmp(token, (char *)mapname))
@@ -1052,19 +1054,22 @@ void CL_UpdateLevelHunkUsage(void)
 		char *buftrav, *outbuftrav;
 		char *outbuf;
 		char *token;
-		char *buf = (char *)Z_Malloc(len + 1);
+		char *buf;
 
+		buf = (char *)Z_Malloc(len + 1);
 		memset(buf, 0, len + 1);
 		outbuf = (char *)Z_Malloc(len + 1);
 		memset(outbuf, 0, len + 1);
 
-		FS_Read((void *)buf, len, handle);
+		(void) FS_Read((void *)buf, len, handle);
 		FS_FCloseFile(handle);
 
 		// now parse the file, filtering out the current map
 		buftrav       = buf;
 		outbuftrav    = outbuf;
 		outbuftrav[0] = '\0';
+
+		COM_BeginParseSession("CL_UpdateLevelHunkUsage");
 		while ((token = COM_Parse(&buftrav)) != NULL && token[0])
 		{
 			if (!Q_stricmp(token, cl.mapname))
@@ -1093,6 +1098,9 @@ void CL_UpdateLevelHunkUsage(void)
 				}
 				else
 				{
+					//Com_Error does memory clean up
+					//Z_Free(buf);
+					//Z_Free(outbuf);
 					Com_Error(ERR_DROP, "hunkusage.dat file is corrupt");
 				}
 			}
@@ -1115,7 +1123,7 @@ void CL_UpdateLevelHunkUsage(void)
 		Z_Free(outbuf);
 	}
 	// now append the current map to the current file
-	FS_FOpenFileByMode(memlistfile, &handle, FS_APPEND);
+	(void) FS_FOpenFileByMode(memlistfile, &handle, FS_APPEND);
 	if (handle < 0)
 	{
 		Com_Error(ERR_DROP, "cannot write to hunkusage.dat, check disk full");
