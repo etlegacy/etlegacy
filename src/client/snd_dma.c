@@ -609,13 +609,6 @@ void S_SpatializeOrigin(vec3_t origin, int master_vol, int *left_vol, int *right
 // Start a sound effect
 // =======================================================================
 
-/*
-====================
-S_StartSoundEx
-
-
-====================
-*/
 /**
  * @brief Validates the parms and ques the sound up
  * if pos is NULL, the sound will be dynamically sourced from the entity

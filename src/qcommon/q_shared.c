@@ -176,11 +176,7 @@ void COM_StripFilename(const char *in, char *out)
 }
 
 /**
- * @brief if path doesn't have an extension, then append the specified one
- * (which should include the .)
- */
-/**
- * @brief COM_DefaultExtension
+ * @brief if path doesn't have an extension, then append the specified one (which should include the .)
  * @param[in,out] path
  * @param[in] maxSize
  * @param[in] extension
