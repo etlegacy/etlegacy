@@ -6504,22 +6504,19 @@ static void ScanAndLoadShaderFiles(void)
 	memset(buffers, 0, MAX_SHADER_FILES);
 	memset(shaderTextHashTableSizes, 0, MAX_SHADER_FILES);
 
-
 	// scan for shader files
-	shaderFiles = ri.FS_ListFiles("scripts", ".shader", &numShaderFiles);
+	shaderFiles = ri.FS_ListFiles("scripts2", ".shader", &numShaderFiles);
 
 	Ren_Print("----- ScanAndLoadShaderFiles (%i files)-----\n", numShaderFiles);
 
 	if (!shaderFiles || !numShaderFiles)
 	{
-		Ren_Warning("WARNING: ScanAndLoadShaderFiles: no shader files found\n");
-		return;
+		Ren_Drop("No shader files found!"); // FIXME: ?  segfaults - do we ever have the case w/o shaders? (with proper installs :)
 	}
 
-	if (numShaderFiles > MAX_SHADER_FILES)
+	if (numShaderFiles >= MAX_SHADER_FILES)
 	{
-		numShaderFiles = MAX_SHADER_FILES;
-		Ren_Warning("WARNING: ScanAndLoadShaderFiles: MAX_SHADER_FILES reached\n");
+		Ren_Drop("MAX_SHADER_FILES limit is reached!");
 	}
 
 	// build single large buffer
