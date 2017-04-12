@@ -4866,13 +4866,6 @@ static void FixRenderCommandList(int newShader)
 				drawSurf_t              *drawSurf;
 				const drawViewCommand_t *dv_cmd = (const drawViewCommand_t *)curCmd;
 
-				for (i = 0, drawSurf = dv_cmd->viewParms.drawSurfs; i < dv_cmd->viewParms.numDrawSurfs; i++, drawSurf++)
-				{
-					if (drawSurf->shaderNum >= newShader)
-					{
-						drawSurf->shaderNum++;
-					}
-				}
 				curCmd = (const void *)(dv_cmd + 1);
 				break;
 			}
@@ -4925,7 +4918,7 @@ static void SortNewShader(void)
 	}
 
 	// fix rendercommandlist
-	FixRenderCommandList(i + 1);
+	//FixRenderCommandList(i + 1);
 
 	newShader->sortedIndex  = i + 1;
 	tr.sortedShaders[i + 1] = newShader;
@@ -6290,7 +6283,7 @@ static void ScanAndLoadGuideFiles(void)
 		}
 		else
 		{
-			Ren_Drop("Couldn't load %s", filename);
+			Ren_Drop("Couldn't load %s (single buffer)", filename);
 		}
 	}
 	s_guideText = (char *)ri.Hunk_Alloc(sum + numGuides * 2, h_low);
@@ -6304,7 +6297,7 @@ static void ScanAndLoadGuideFiles(void)
 		sum += ri.FS_ReadFile(filename, (void **)&buffers[i]);
 		if (!buffers[i])
 		{
-			Ren_Drop("Couldn't load %s", filename); // in theory this shouldn't occure anymore - see build single large buffer
+			Ren_Drop("Couldn't load %s (buffer)", filename); // in theory this shouldn't occure anymore - see build single large buffer
 		}
 
 		strcat(s_guideText, "\n");
@@ -6522,8 +6515,10 @@ static void ScanAndLoadShaderFiles(void)
 	// build single large buffer
 	for (i = 0; i < numShaderFiles; i++)
 	{
-		Com_sprintf(filename, sizeof(filename), "scripts/%s", shaderFiles[i]);
+		Com_sprintf(filename, sizeof(filename), "scripts2/%s", shaderFiles[i]);
 		fileSum = ri.FS_ReadFile(filename, NULL);
+
+		Ren_Print("----- READ FILE '%s' (%i sum)-----\n", filename ,fileSum);
 		if (fileSum > 0)
 		{
 			sum += fileSum;
@@ -6538,7 +6533,7 @@ static void ScanAndLoadShaderFiles(void)
 	// load and parse shader files
 	for (i = 0; i < numShaderFiles; i++)
 	{
-		Com_sprintf(filename, sizeof(filename), "scripts/%s", shaderFiles[i]);
+		Com_sprintf(filename, sizeof(filename), "scripts2/%s", shaderFiles[i]);
 		COM_BeginParseSession(filename);
 
 		Ren_Developer("...loading '%s'\n", filename);
