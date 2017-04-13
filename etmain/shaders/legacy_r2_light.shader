@@ -1,5 +1,4 @@
 // legacy_r2.shader
-
 // Shader definitions for ET: Legacy renderer2
 
 lights/defaultDynamicLight
