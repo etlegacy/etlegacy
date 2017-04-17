@@ -6498,7 +6498,7 @@ static void ScanAndLoadShaderFiles(void)
 	memset(shaderTextHashTableSizes, 0, MAX_SHADER_FILES);
 
 	// scan for shader files
-	shaderFiles = ri.FS_ListFiles("shaders", ".shader", &numShaderFiles);
+	shaderFiles = ri.FS_ListFiles("materials", ".shader", &numShaderFiles);
 
 	Ren_Print("----- ScanAndLoadShaderFiles (%i files)-----\n", numShaderFiles);
 
@@ -6515,10 +6515,9 @@ static void ScanAndLoadShaderFiles(void)
 	// build single large buffer
 	for (i = 0; i < numShaderFiles; i++)
 	{
-		Com_sprintf(filename, sizeof(filename), "shaders/%s", shaderFiles[i]);
+		Com_sprintf(filename, sizeof(filename), "materials/%s", shaderFiles[i]);
 		fileSum = ri.FS_ReadFile(filename, NULL);
 
-		Ren_Print("----- READ FILE '%s' (%i sum)-----\n", filename ,fileSum);
 		if (fileSum > 0)
 		{
 			sum += fileSum;
@@ -6533,7 +6532,7 @@ static void ScanAndLoadShaderFiles(void)
 	// load and parse shader files
 	for (i = 0; i < numShaderFiles; i++)
 	{
-		Com_sprintf(filename, sizeof(filename), "shaders/%s", shaderFiles[i]);
+		Com_sprintf(filename, sizeof(filename), "materials/%s", shaderFiles[i]);
 		COM_BeginParseSession(filename);
 
 		Ren_Developer("...loading '%s'\n", filename);
