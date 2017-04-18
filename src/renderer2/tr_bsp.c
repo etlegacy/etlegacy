@@ -3994,7 +3994,7 @@ static void R_LoadSubmodels(lump_t *l)
 
 		model = R_AllocModel();
 
-		assert(model != NULL);  // this should never happen
+		etl_assert(model != NULL);  // this should never happen
 		if (model == NULL)
 		{
 			Ren_Drop("R_LoadSubmodels: R_AllocModel() failed");

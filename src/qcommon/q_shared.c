@@ -1766,6 +1766,7 @@ void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t ou
 	if (outBufferLen < 3 || inStr == outStr)
 	{
 		// Failure... How do we assert in WET?
+		etl_assert(qfalse);
 	}
 	else
 	{

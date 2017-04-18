@@ -1738,6 +1738,18 @@ typedef struct demoPlayInfo_s
 #define NUMARGS(...)  (sizeof((int[]) { 0, ## __VA_ARGS__ }) / sizeof(int) - 1)
 #endif
 
+#ifdef LEGACY_DEBUG
+#if defined(_MSC_VER)
+#define etl_assert(x) if (!(x)) __debugbreak()
+#elif defined(_WIN32)
+#define etl_assert(x) if (!(x)) __asm { int 3 }
+#else
+#define	etl_assert(cond) assert(cond)
+#endif
+#else
+#define etl_assert(x) {}
+#endif
+
 typedef int (*cmpFunc_t)(const void *a, const void *b);
 
 void *Q_LinearSearch(const void *key, const void *ptr, size_t count, size_t size, cmpFunc_t cmp);

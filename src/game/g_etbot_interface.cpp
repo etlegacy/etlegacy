@@ -6118,7 +6118,7 @@ public:
 		{
 			gentity_t *pStart = g_entities;
 			int iIndex        = pEnt - pStart;
-			assert(iIndex >= 0);
+			etl_assert(iIndex >= 0);
 			return (iIndex < MAX_GENTITIES) ? iIndex : -1;
 		}
 		return -1;

@@ -699,7 +699,7 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 	char *homepath;
 	char *gamedir;
 
-	assert(name);
+	etl_assert(name);
 
 	Com_sprintf(fname, sizeof(fname), Sys_GetDLLName("%s"), name);
 

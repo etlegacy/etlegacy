@@ -1987,7 +1987,7 @@ static void R_LoadSubmodels(lump_t *l)
 
 		model = R_AllocModel();
 
-		assert(model != NULL);              // this should never happen
+		etl_assert(model != NULL);              // this should never happen
 
 		if (model)   // stop clang to complain about dereference
 		{

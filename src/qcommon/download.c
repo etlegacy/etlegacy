@@ -65,7 +65,7 @@ void Com_ClearDownload(void)
  */
 void Com_ClearStaticDownload(void)
 {
-	assert(!dld.bWWWDlDisconnected);    // reset before calling
+	etl_assert(!dld.bWWWDlDisconnected);    // reset before calling
 	dld.noReconnect             = qfalse;
 	dld.downloadRestart         = qfalse;
 	dld.downloadTempName[0]     = '\0';
@@ -117,7 +117,7 @@ static void Com_DownloadsComplete(void)
 #endif
 
 	// I wonder if that happens - it should not but I suspect it could happen if a download fails in the middle or is aborted
-	assert(!dld.bWWWDlDisconnected);
+	etl_assert(!dld.bWWWDlDisconnected);
 
 #ifndef DEDICATED
 	CL_DownloadsComplete();

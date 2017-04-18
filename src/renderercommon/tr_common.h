@@ -78,7 +78,7 @@ extern int gl_NormalFontBase;
 #define Ren_Drop(...) ri.Error(ERR_DROP, __VA_ARGS__)
 #define Ren_Fatal(...) ri.Error(ERR_FATAL, __VA_ARGS__)
 
-#define Ren_Assert(x) if (x) { Ren_Fatal("Ren_Assert: %s failed at %s (%s:%d)\n", #x, __FUNCTION__, __FILE__, __LINE__); }
+#define Ren_Assert(x) if (x) { etl_assert(qfalse); Ren_Fatal("Ren_Assert: %s failed at %s (%s:%d)\n", #x, __FUNCTION__, __FILE__, __LINE__); }
 
 void RE_InitOpenGl(void);
 int RE_InitOpenGlSubsystems(void);

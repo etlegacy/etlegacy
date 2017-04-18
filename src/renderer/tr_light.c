@@ -230,7 +230,7 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
 	VectorClear(ent->directedLight);
 	VectorClear(direction);
 
-	assert(tr.world->lightGridData);   // bk010103 - NULL with -nolight maps
+	etl_assert(tr.world->lightGridData);   // bk010103 - NULL with -nolight maps
 
 	// trilerp the light value
 	gridStep[0] = 8;

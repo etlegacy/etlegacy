@@ -183,7 +183,7 @@ hashtable_t HT_Create(
 	// Allocate table
 	real_size = _HT_NextPrime(size);
 	table     = Z_Malloc(sizeof(struct hashtable_s) + real_size * sizeof(struct listhead_t));
-	assert(table);
+	etl_assert(table);
 
 	// Initialise main table fields
 	table->size       = real_size;
@@ -271,7 +271,7 @@ void *HT_GetItem(
 	struct tentry_t   *t_entry;
 	void              *data;
 
-	assert(table->key_length == 0 || table->key_length >= strlen(key));
+	etl_assert(table->key_length == 0 || table->key_length >= strlen(key));
 
 	// Try finding the item
 	hash       = table->GetKey(key);
@@ -824,7 +824,7 @@ static void _HT_InsertInGlobalList(hashtable_t table, struct tentry_t *t_entry, 
 			ai_key   = table->KeyFromEntry(ai_entry, table->key_offset);
 			cres     = table->CompareKey(ai_key, key);
 
-			assert(cres != 0);
+			etl_assert(cres != 0);
 			if (cres > 0)
 			{
 				break;

@@ -1058,7 +1058,7 @@ void MSG_WriteDeltaEntity(msg_t *msg, struct entityState_s *from, struct entityS
 	// the "number" field is not part of the field list
 	// if this assert fails, someone added a field to the entityState_t
 	// struct without updating the message fields
-	assert(numFields + 1 == sizeof(*from) / 4);
+	etl_assert(numFields + 1 == sizeof(*from) / 4);
 
 	// a NULL to is a delta remove message
 	if (to == NULL)
@@ -1452,7 +1452,7 @@ void MSG_WriteDeltaSharedEntity(msg_t *msg, void *from, void *to, qboolean force
 	// all fields should be 32 bits to avoid any compiler packing issues
 	// if this assert fails, someone added a field to the entityShared_t
 	// struct without updating the message fields
-	//assert(numFields == (sizeof(entityShared_t) - sizeof(entityState_t)) / 4);
+	//etl_assert(numFields == (sizeof(entityShared_t) - sizeof(entityState_t)) / 4);
 
 	lc = 0;
 	// build the change vector as bytes so it is endien independent

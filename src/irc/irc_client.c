@@ -328,7 +328,7 @@ static ID_INLINE void IRC_AddHandler(const char *command, irc_handler_func_t han
 	struct irc_handler_t *rv;
 
 	rv = HT_GetItem(IRC_Handlers, command, &created);
-	assert(created);
+	etl_assert(created);
 	rv->handler = handler;
 }
 
@@ -343,7 +343,7 @@ static void IRC_AddCTCPHandler(const char *command, ctcp_handler_func_t handler)
 	struct irc_handler_t *rv;
 
 	rv = HT_GetItem(IRC_CTCPHandlers, command, &created);
-	assert(created);
+	etl_assert(created);
 	rv->handler = handler;
 }
 
@@ -412,7 +412,7 @@ static struct irc_delayed_t *IRC_DEQueue = NULL;
 static void IRC_SetTimeout(irc_handler_func_t function, int time)
 {
 	struct irc_delayed_t *qe, *find;
-	assert(time > 0);
+	etl_assert(time > 0);
 
 	// Create entry
 	qe            = (struct irc_delayed_t *) malloc(sizeof(struct irc_delayed_t));
@@ -1119,7 +1119,7 @@ static void IRC_Sleep(int seconds)
 {
 	int i;
 
-	assert(seconds > 0);
+	etl_assert(seconds > 0);
 	for (i = 0 ; i < seconds * IRC_TIMEOUTS_PER_SEC && !IRC_QuitRequested ; i++)
 	{
 #ifdef WIN32

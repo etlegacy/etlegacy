@@ -100,7 +100,7 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 {
 	renderCommandList_t *cmdList = &backEndData->commands;
 
-	assert(cmdList != NULL);
+	etl_assert(cmdList != NULL);
 
 	// add an end-of-list command
 	*( int * )(cmdList->cmds + cmdList->used) = RC_END_OF_LIST;
@@ -548,7 +548,7 @@ void RE_EndFrame(int *frontEndMsec, int *backEndMsec)
 
 	// Needs to use reserved space, so no R_GetCommandBuffer.
 	cmdList = &backEndData->commands;
-	assert(cmdList != NULL);
+	etl_assert(cmdList != NULL);
 	// add swap-buffers command
 	*( int * )(cmdList->cmds + cmdList->used) = RC_SWAP_BUFFERS;
 	cmdList->used                            += sizeof(swapBuffersCommand_t);

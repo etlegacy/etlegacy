@@ -701,7 +701,7 @@ static void Tess_SurfaceSprite(void)
  */
 static void VectorArrayNormalize(vec4_t *normals, unsigned int count)
 {
-//    assert(count);
+//    etl_assert(count);
 
 #if idppc
 	{

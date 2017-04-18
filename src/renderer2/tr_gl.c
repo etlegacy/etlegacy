@@ -708,7 +708,7 @@ void GL_State(uint32_t stateBits)
 	}
 #endif
 
-	
+
     //if(diff & GLS_ATEST_BITS)
 	//{
 	//switch (stateBits & GLS_ATEST_BITS)
@@ -734,11 +734,11 @@ void GL_State(uint32_t stateBits)
 	//glAlphaFunc(GL_GREATER, 0.5f);
 	//break;
 	//default:
-	//assert(0);
+	//etl_assert(0);
 	//break;
 	//}
 	//}
-	
+
 
 	// stenciltest
 	if (diff & GLS_STENCILTEST_ENABLE)

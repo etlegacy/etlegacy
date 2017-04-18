@@ -399,7 +399,7 @@ void GL_State(unsigned long stateBits)
 			qglAlphaFunc(GL_GEQUAL, 0.5f);
 			break;
 		default:
-			assert(0);
+			etl_assert(0);
 			break;
 		}
 	}

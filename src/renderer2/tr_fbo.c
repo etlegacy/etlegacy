@@ -83,7 +83,7 @@ qboolean R_CheckFBO(const FBO_t *fbo)
 	default:
 		Ren_Warning("R_CheckFBO: (%s) unknown error 0x%X\n", fbo->name, code);
 		//Ren_Fatal( "R_CheckFBO: (%s) unknown error 0x%X", fbo->name, code);
-		//assert(0);
+		//etl_assert(0);
 		break;
 	}
 

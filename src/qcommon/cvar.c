@@ -1676,7 +1676,7 @@ void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultVal
 void Cvar_Update(vmCvar_t *vmCvar)
 {
 	cvar_t *cv = NULL;
-	assert(vmCvar);
+	etl_assert(vmCvar);
 
 	if ((unsigned)vmCvar->handle >= cvar_numIndexes)
 	{

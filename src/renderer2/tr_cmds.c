@@ -163,7 +163,7 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 {
 	renderCommandList_t *cmdList = &backEndData->commands;
 
-	assert(cmdList != NULL);
+	etl_assert(cmdList != NULL);
 	// add an end-of-list command
 	*(int *)(cmdList->cmds + cmdList->used) = RC_END_OF_LIST;
 
