@@ -269,7 +269,7 @@ FILE *Sys_FOpen(const char *ospath, const char *mode)
 	// Retrive the oflag for open depending of mode parameter
 	if (*mode == 'w')
 	{
-		oflag |= O_WRONLY | O_CREAT;
+		oflag |= O_WRONLY | O_CREAT | O_TRUNC;
 	}
 	else if (*mode == 'r')
 	{
