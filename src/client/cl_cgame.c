@@ -187,7 +187,7 @@ qboolean CL_GetSnapshot(int snapshotNumber, snapshot_t *snapshot)
 	for (i = 0 ; i < count ; i++)
 	{
 		snapshot->entities[i] =
-			cl.parseEntities[(clSnap->parseEntitiesNum + i) & (MAX_PARSE_ENTITIES - 1)];
+		    cl.parseEntities[(clSnap->parseEntitiesNum + i) & (MAX_PARSE_ENTITIES - 1)];
 	}
 
 	// FIXME: configstring changes and server commands!!!
@@ -451,9 +451,9 @@ rescan:
  */
 void CL_SetExpectedHunkUsage(const char *mapname)
 {
-	int  handle;
-	char *memlistfile = "hunkusage.dat";
-	int  len;
+	int        handle;
+	const char *memlistfile = "hunkusage.dat";
+	int        len;
 
 	len = FS_FOpenFileByMode(memlistfile, &handle, FS_READ);
 	if (len >= 0)     // the file exists, so read it in, strip out the current entry for this map, and save it out, so we can append the new value
@@ -473,7 +473,7 @@ void CL_SetExpectedHunkUsage(const char *mapname)
 		COM_BeginParseSession("CL_SetExpectedHunkUsage");
 		while ((token = COM_Parse(&buftrav)) != NULL && token[0])
 		{
-			if (!Q_stricmp(token, (char *)mapname))
+			if (!Q_stricmp(token, mapname))
 			{
 				// found a match
 				token = COM_Parse(&buftrav);    // read the size
@@ -1041,10 +1041,10 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
  */
 void CL_UpdateLevelHunkUsage(void)
 {
-	int  handle;
-	char *memlistfile = "hunkusage.dat";
-	char outstr[256];
-	int  len, memusage;
+	int        handle;
+	const char *memlistfile = "hunkusage.dat";
+	char       outstr[256];
+	int        len, memusage;
 
 	memusage = Cvar_VariableIntegerValue("com_hunkused");
 
