@@ -1742,7 +1742,7 @@ typedef struct demoPlayInfo_s
 #if defined(_MSC_VER)
 #define etl_assert(x) if (!(x)) __debugbreak()
 #elif defined(_WIN32)
-#define etl_assert(x) if (!(x)) __asm { int 3 }
+#define etl_assert(x) if (!(x)) __asm ("int {$}3":)
 #else
 #define	etl_assert(cond) assert(cond)
 #endif
