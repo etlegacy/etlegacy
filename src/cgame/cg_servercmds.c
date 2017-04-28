@@ -1012,7 +1012,7 @@ static void CG_AddToTeamChat(const char *str, int clientnum)
 {
 	int  len;
 	char *p, *ls;
-	int  lastcolor;
+	char lastcolor;
 	int  chatHeight;
 
 	// -1 is sent when console is chatting

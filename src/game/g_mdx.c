@@ -84,6 +84,7 @@ static vec3_t *mdx_bones    = NULL;
 #define QHANDLETOINDEX(qh)      ((qh >= 1) ? ((int)(qh) - 1) : 0)
 #define QHANDLETOINDEX_SAFE(qh, old) ((qh >= 1) ? (int)(qh) - 1 : QHANDLETOINDEX(old))
 
+#ifdef LEGACY_DEBUG
 /**
  * @brief Draw debug lines
  * @param origin - unused
@@ -94,6 +95,7 @@ void legacy_AddDebugLine(const vec3_t origin, const vec3_t target, const int off
 {
 
 }
+#endif
 
 /**************************************************************/
 
@@ -2763,7 +2765,9 @@ qboolean mdx_hit_test(const vec3_t start, const vec3_t end, /*const*/ gentity_t 
 
 			if (g_debugBullets.integer >= 3)
 			{
+#ifdef LEGACY_DEBUG
 				legacy_AddDebugLine(o1, o2, 1);
+#endif
 
 				VectorScale(a2[0], hit->scale[0][0], a1[0]);
 				VectorScale(a2[1], hit->scale[0][1], a1[1]);

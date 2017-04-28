@@ -1191,8 +1191,8 @@ void CL_DemoCompleted(void)
  */
 void CL_DemoRun(void)
 {
-	int loopCount = 0;
 #if NEW_DEMOFUNC
+	int        loopCount = -1;
 	int        startTime;
 	static int lastTime = -1;
 #endif
@@ -1220,10 +1220,9 @@ void CL_DemoRun(void)
 		return;
 	}
 
-	loopCount = 0;
 #if NEW_DEMOFUNC
 	startTime = cl.snap.serverTime;
-#endif
+#endif  // NEW_DEMOFUNC
 
 	while (cl.serverTime >= cl.snap.serverTime)
 	{
@@ -1231,11 +1230,12 @@ void CL_DemoRun(void)
 		CL_ReadDemoMessage();
 
 #if NEW_DEMOFUNC
+		loopCount++;
 		DEMODEBUG("cl.serverTime >= cl.snap.serverTime   %d  %d  %d\n", cl.serverTime, cl.snap.serverTime, loopCount);
 
 		if (cls.state == CA_ACTIVE  &&  cl.serverTime > cl.snap.serverTime)
 		{
-			if (com_timescale->value > 1.0)
+			if (com_timescale->value > 1.0f)
 			{
 				if (startTime == cl.snap.serverTime || lastTime == cl.snap.serverTime)
 				{  // offline demo
@@ -1255,15 +1255,12 @@ void CL_DemoRun(void)
 				}
 			}
 		}
-#endif
-
+#endif  // NEW_DEMOFUNC
 		if (cls.state != CA_ACTIVE)
 		{
 			Cvar_Set("timescale", "1");
 			return;     // end of demo
 		}
-
-		loopCount++;
 	}
 }
 

@@ -308,6 +308,7 @@ drop_packet:
 		    );
 	}
 
+#ifdef LEGACY_DEBUG
 	// debug; size is added lag (amount above player's network lag)
 	// rotation is time
 	if ((g_antiwarp.integer & 16) && ent->client->cmdcount)
@@ -327,6 +328,7 @@ drop_packet:
 
 		//legacy_AddDebugLine( org, parms, ((ent - g_entities) % 32), LINEMODE_SPOKES, LINESHADER_RAILCORE, 0, qfalse );
 	}
+#endif
 
 	ent->client->ps.stats[STAT_ANTIWARP_DELAY] = latestTime - ent->client->ps.commandTime;
 	if (ent->client->ps.stats[STAT_ANTIWARP_DELAY] < 0)

@@ -85,7 +85,7 @@ void R_RenderShadowEdges(void)
 	int c, c2;
 	int j, k;
 	int i2;
-	int c_edges = 0, c_rejected = 0;
+	//int c_edges = 0, c_rejected = 0;  // TODO: remove ?
 	int hit[2];
 
 	// an edge is NOT a silhouette edge if its face doesn't face the light,
@@ -126,12 +126,14 @@ void R_RenderShadowEdges(void)
 				qglVertex3fv(tess.xyz[i2].v);
 				qglVertex3fv(tess.xyz[i2 + tess.numVertexes].v);
 				qglEnd();
-				c_edges++;
+				//c_edges++;
 			}
+            /*
 			else
 			{
 				c_rejected++;
 			}
+            */
 		}
 	}
 }

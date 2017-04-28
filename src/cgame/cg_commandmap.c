@@ -62,7 +62,7 @@ int CG_CurLayerForZ(int z)
 {
 	int curlayer = 0;
 
-	while (z > cgs.ccLayerCeils[curlayer] && curlayer < cgs.ccLayers)
+	while (curlayer < cgs.ccLayers && z > cgs.ccLayerCeils[curlayer])
 	{
 		curlayer++;
 	}

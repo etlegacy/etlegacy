@@ -2065,7 +2065,7 @@ qboolean G_ScriptAction_MusicFade(gentity_t *ent, char *params)
 	}
 
 	token = COM_ParseExt(&pString, qfalse);
-	if (!token[0] || token[0] < '0' || token[0] > '9')
+	if (token[0] < '0' || token[0] > '9')
 	{
 		G_Error("G_ScriptAction_MusicFade: syntax: mu_fade <target volume 0.0-1.0> <fadeout time>\n");
 	}

@@ -709,7 +709,7 @@ char *G_NewString(const char *string)
 	// turn \n into a real linefeed
 	for (i = 0 ; i < l ; i++)
 	{
-		if (string[i] == '\\' && i < l - 1)
+		if (i < l - 1 && string[i] == '\\')
 		{
 			i++;
 			if (string[i] == 'n')
