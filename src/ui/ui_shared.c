@@ -501,6 +501,7 @@ void Window_Paint(Window *w, float fadeAmount, float fadeClamp, float fadeCycle)
 
 	if (w->border == WINDOW_BORDER_FULL)
 	{
+
 		// WARNING: full HACK HACK HACK
 		if (w->style == WINDOW_STYLE_TEAMCOLOR)
 		{
