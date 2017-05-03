@@ -1025,7 +1025,7 @@ void Com_SetRecommended(void);
 
 // profile functions
 void Com_TrackProfile(const char *profile_path);
-qboolean Com_CheckProfile(void);
+qboolean Com_CheckPidFile(void);
 
 extern cvar_t *com_crashed;
 extern cvar_t *com_ignorecrash;

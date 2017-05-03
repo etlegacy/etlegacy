@@ -2646,7 +2646,7 @@ void Com_SetRecommended()
  * @brief Checks if profile.pid is valid
  * @return qtrue if valid, otherwise qfalse if invalid(!)
  */
-qboolean Com_CheckProfile(void)
+qboolean Com_CheckPidFile(void)
 {
 	fileHandle_t f;
 	char         f_data[32];
@@ -2658,10 +2658,16 @@ qboolean Com_CheckProfile(void)
 		return qtrue;
 	}
 
-	if (FS_FOpenFileRead(com_pidfile->string, &f, qtrue) < 0)
+	if (!FS_FileInPathExists(com_pidfile->string))
 	{
 		// no profile found, we're ok
 		return qtrue;
+	}
+
+	if (FS_FOpenFileRead(com_pidfile->string, &f, qtrue) < 0)
+	{
+		Com_Printf("Warning: can't open file '%s' to read pid data\n", com_pidfile->string);
+		return qfalse;
 	}
 
 	if (FS_Read(&f_data, sizeof(f_data) - 1, f) < 0)
@@ -2669,7 +2675,7 @@ qboolean Com_CheckProfile(void)
 		// b0rk3d!
 		FS_FCloseFile(f);
 		// try to delete corrupted pid file
-		FS_Delete(com_pidfile->string);
+		(void) FS_Delete(com_pidfile->string);
 		return qfalse;
 	}
 
@@ -2712,7 +2718,7 @@ void Com_TrackProfile(const char *profile_path)
 			if (FS_FileExists(last_profile_path))
 			{
 				Com_Printf("Com_TrackProfile: Deleting old pid file [%s] [%s]\n", fs_gamedir, last_profile_path);
-				FS_Delete(last_profile_path);
+				(void) FS_Delete(last_profile_path);
 			}
 			// restore current fs_gamedir
 			Q_strncpyz(fs_gamedir, temp_fs_gamedir, sizeof(fs_gamedir));
@@ -2825,7 +2831,9 @@ void Com_Init(char *commandLine)
 			if (defaultProfile)
 			{
 				char *text_p = defaultProfile;
-				char *token  = COM_Parse(&text_p);
+				char *token;
+
+				token  = COM_Parse(&text_p);
 
 				if (token && token[0])
 				{
@@ -2848,7 +2856,7 @@ void Com_Init(char *commandLine)
 		if (cl_profileStr[0])
 		{
 			// check existing pid file and make sure it's ok
-			if (!Com_CheckProfile())
+			if (!Com_CheckPidFile())
 			{
 #if !defined(DEDICATED) && !defined(LEGACY_DEBUG)
 				test = Sys_Dialog(DT_YES_NO, "ET:L crashed last time it was running. Do you want to reset settings to default values?\n\nNote:\nIf you are running several client instances ensure a different value\nof CVAR fs_homepath is set for each client.\nOtherwise the same profile path is used which may cause other side effects.", "Reset settings") == DR_YES;

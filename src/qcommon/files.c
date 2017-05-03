@@ -1588,11 +1588,17 @@ long FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueF
 {
 	searchpath_t *search;
 	long         len;
+	//qboolean     isLocalConfig;
+
+	// FIXME: activate ioq3 fix
+	//autoexec.cfg and q3config.cfg can only be loaded outside of pk3 files.
 
 	if (!fs_searchpaths)
 	{
 		Com_Error(ERR_FATAL, "FS_FOpenFileRead: Filesystem call made without initialization");
 	}
+
+	//isLocalConfig = !strcmp(filename, "autoexec.cfg") || !strcmp(filename, CONFIG_NAME);
 
 	for (search = fs_searchpaths; search; search = search->next)
 	{
@@ -1604,6 +1610,13 @@ long FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueF
 		{
 			continue;
 		}
+
+		// autoexec.cfg and q3config.cfg can only be loaded outside of pk3 files.
+		//if (isLocalConfig && search->pack)
+		//{
+		//	Com_Printf("Rejecting local config '%s'\n", filename);
+		//	continue;
+		//}
 
 		len = FS_FOpenFileReadDir(filename, search, file, uniqueFILE, ALLOW_RAW_FILE_ACCESS);
 
@@ -4700,7 +4713,7 @@ void FS_Restart(int checksumFeed)
 			if (cl_profileStr[0])
 			{
 				// check existing pid file and make sure it's ok
-				if (!Com_CheckProfile())
+				if (!Com_CheckPidFile())
 				{
 #ifndef LEGACY_DEBUG
 					Com_Printf(S_COLOR_YELLOW "WARNING: profile.pid found for profile '%s' - system settings will revert to defaults\n", cl_profileStr);
