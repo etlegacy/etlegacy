@@ -339,11 +339,19 @@ cinHandle_t CIN_PlayCinematic(const char *name, int x, int y, int w, int h, int 
 
 	// Open the file
 	size = FS_FOpenFileRead(name, &file, qtrue);
+
+	if (size <= 0)
+	{
+		Com_Printf("Cinematic '%s' file not found or can't be read\n", name);
+		return 0;
+	}
+
+
 	if (!file)
 	{
 		if (flags & CIN_system)
 		{
-			Com_Printf("Cinematic %s not found\n", name);
+			Com_Printf("Cinematic %s file not found\n", name);
 		}
 
 		return 0;
