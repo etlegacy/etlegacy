@@ -646,13 +646,13 @@ void R_PrintLongString(const char *string)
  * @brief Com_Printf
  * @param[in] msg
  */
-void QDECL Com_Printf(const char *msg, ...)
+void QDECL Com_Printf(const char *fmt, ...)
 {
 	va_list argptr;
 	char    text[1024];
 
-	va_start(argptr, msg);
-	Q_vsnprintf(text, sizeof(text), msg, argptr);
+	va_start(argptr, fmt);
+	Q_vsnprintf(text, sizeof(text), fmt, argptr);
 	va_end(argptr);
 
 	Ren_Print("%s", text);
@@ -662,13 +662,13 @@ void QDECL Com_Printf(const char *msg, ...)
  * @brief Com_DPrintf
  * @param[in] msg
  */
-void QDECL Com_DPrintf(const char *msg, ...)
+void QDECL Com_DPrintf(const char *fmt, ...)
 {
 	va_list argptr;
 	char    text[1024];
 
-	va_start(argptr, msg);
-	Q_vsnprintf(text, sizeof(text), msg, argptr);
+	va_start(argptr, fmt);
+	Q_vsnprintf(text, sizeof(text), fmt, argptr);
 	va_end(argptr);
 
 	Ren_Developer("%s", text);
@@ -676,10 +676,10 @@ void QDECL Com_DPrintf(const char *msg, ...)
 
 /**
  * @brief Com_Error
- * @param[in] level
+ * @param[in] code
  * @param[in] error
  */
-void QDECL Com_Error(int level, const char *error, ...)
+void QDECL Com_Error(int code, const char *error, ...)
 {
 	va_list argptr;
 	char    text[1024];
@@ -688,6 +688,6 @@ void QDECL Com_Error(int level, const char *error, ...)
 	Q_vsnprintf(text, sizeof(text), error, argptr);
 	va_end(argptr);
 
-	ri.Error(level, "%s", text);
+	ri.Error(code, "%s", text);
 }
 #endif

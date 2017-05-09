@@ -1996,7 +1996,7 @@ char *IRC_GetName(const char *name)
 	int  i       = 0, j = 0, k = 0;
 	int  namelen = strlen(name);
 	char c;
-	char *retName = NULL;
+	char *retName;
 
 	retName = (char *) malloc((sizeof(char) * namelen) + 1);
 	memset(retName, 0, (sizeof(char) * namelen) + 1);
@@ -2092,7 +2092,7 @@ static int IRC_AttemptConnection()
 
 	CHECK_SHUTDOWN;
 	Com_Memset(&address.sin_zero, 0, sizeof(address.sin_zero));
-	Com_Printf("IRC: connecting to server %s:%i\n", irc_server->string,  irc_port->integer);
+	Com_Printf("IRC: connecting to server %s:%i\n", irc_server->string, irc_port->integer);
 
 #ifdef DEDICATED
 	Q_strncpyz(name, Cvar_VariableString("sv_hostname"), sizeof(name));

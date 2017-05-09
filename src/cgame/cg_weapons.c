@@ -5553,7 +5553,7 @@ void CG_WeaponFireRecoil(int weapon)
  */
 void CG_FireWeapon(centity_t *cent)
 {
-	entityState_t *ent = NULL;
+	entityState_t *ent;
 	int           c;
 	weaponInfo_t  *weap;
 	sfxHandle_t   *firesound;

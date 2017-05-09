@@ -2203,6 +2203,8 @@ void Props_Barrel_Animate(gentity_t *ent)
 
 	if (ent->s.frame == 14)
 	{
+
+		// FIXME : Duplicate branch if/else
 		if (ent->spawnflags & 1)
 		{
 			//  G_UseTargets (ent, NULL);
@@ -2327,18 +2329,18 @@ void OilParticles_think(gentity_t *ent)
  * @note Unused
 void Delayed_Leak_Think(gentity_t *ent)
 {
-	vec3_t    point;
-	gentity_t *tent;
+    vec3_t    point;
+    gentity_t *tent;
 
-	VectorCopy(ent->r.currentOrigin, point);
+    VectorCopy(ent->r.currentOrigin, point);
 
-	tent = G_TempEntity(point, EV_OILSLICK);
-	VectorCopy(point, tent->s.origin);
+    tent = G_TempEntity(point, EV_OILSLICK);
+    VectorCopy(point, tent->s.origin);
 
-	tent->s.angles2[0] = 0;
-	tent->s.angles2[1] = 0;
-	tent->s.angles2[2] = 2000;
-	tent->s.density    = ent->count;
+    tent->s.angles2[0] = 0;
+    tent->s.angles2[1] = 0;
+    tent->s.angles2[2] = 2000;
+    tent->s.density    = ent->count;
 }
 */
 
@@ -4698,7 +4700,7 @@ void props_flamethrower_use(gentity_t *ent, gentity_t *other, gentity_t *activat
 	if (ent->random != 0.f)
 	{
 		int rval = (int)(ent->random * 1000);
-		
+
 		rnd = rand() % rval;
 	}
 	else

@@ -261,6 +261,8 @@ void QDECL Com_Printf(const char *fmt, ...)
 
 			if (logfile)
 			{
+				// FIXME: Obsolete function 'asctime' called. It is recommended to use 'strftime' instead.
+				// Does we really need to change it ?
 				Com_Printf("logfile opened on %s\n", asctime(newtime));
 				if (com_logfile->integer > 1)
 				{
@@ -1067,10 +1069,14 @@ void Z_Free(void *ptr)
 /**
  * @brief Z_FreeTags
  * @param[in] tag
+ *
+ * @todo FIXME: remove debug count ?
  */
 void Z_FreeTags(int tag)
 {
-	int       count = 0;
+#ifdef LEGACY_DEBUG
+	int count = 0;
+#endif
 	memzone_t *zone;
 
 	if (tag == TAG_SMALL)
@@ -1089,7 +1095,9 @@ void Z_FreeTags(int tag)
 	{
 		if (zone->rover->tag == tag)
 		{
+#ifdef LEGACY_DEBUG
 			count++;
+#endif
 			Z_Free(( void * )(zone->rover + 1));
 			continue;
 		}
@@ -1807,7 +1815,7 @@ void Com_InitHunkMemory(void)
 
 	// allocate the stack based hunk allocator
 	cv = Cvar_Get("com_hunkMegs", DEF_COMHUNKMEGS_S, CVAR_LATCH | CVAR_ARCHIVE);
-    Cvar_SetDescription(cv, "The size of the hunk memory segment");
+	Cvar_SetDescription(cv, "The size of the hunk memory segment");
 
 	// if we are not dedicated min allocation is 56, otherwise min is 1
 	if (com_dedicated && com_dedicated->integer)
@@ -2646,7 +2654,7 @@ void Com_SetRecommended()
  * @brief Checks if profile.pid is valid
  * @return qtrue if valid, otherwise qfalse if invalid(!)
  */
-qboolean Com_CheckPidFile(void)
+qboolean Com_CheckProfile(void)
 {
 	fileHandle_t f;
 	char         f_data[32];
@@ -2658,16 +2666,10 @@ qboolean Com_CheckPidFile(void)
 		return qtrue;
 	}
 
-	if (!FS_FileInPathExists(com_pidfile->string))
+	if (FS_FOpenFileRead(com_pidfile->string, &f, qtrue) < 0)
 	{
 		// no profile found, we're ok
 		return qtrue;
-	}
-
-	if (FS_FOpenFileRead(com_pidfile->string, &f, qtrue) < 0)
-	{
-		Com_Printf("Warning: can't open file '%s' to read pid data\n", com_pidfile->string);
-		return qfalse;
 	}
 
 	if (FS_Read(&f_data, sizeof(f_data) - 1, f) < 0)
@@ -2675,7 +2677,7 @@ qboolean Com_CheckPidFile(void)
 		// b0rk3d!
 		FS_FCloseFile(f);
 		// try to delete corrupted pid file
-		(void) FS_Delete(com_pidfile->string);
+		FS_Delete(com_pidfile->string);
 		return qfalse;
 	}
 
@@ -2718,7 +2720,7 @@ void Com_TrackProfile(const char *profile_path)
 			if (FS_FileExists(last_profile_path))
 			{
 				Com_Printf("Com_TrackProfile: Deleting old pid file [%s] [%s]\n", fs_gamedir, last_profile_path);
-				(void) FS_Delete(last_profile_path);
+				FS_Delete(last_profile_path);
 			}
 			// restore current fs_gamedir
 			Q_strncpyz(fs_gamedir, temp_fs_gamedir, sizeof(fs_gamedir));
@@ -2831,9 +2833,7 @@ void Com_Init(char *commandLine)
 			if (defaultProfile)
 			{
 				char *text_p = defaultProfile;
-				char *token;
-
-				token  = COM_Parse(&text_p);
+				char *token  = COM_Parse(&text_p);
 
 				if (token && token[0])
 				{
@@ -2856,7 +2856,7 @@ void Com_Init(char *commandLine)
 		if (cl_profileStr[0])
 		{
 			// check existing pid file and make sure it's ok
-			if (!Com_CheckPidFile())
+			if (!Com_CheckProfile())
 			{
 #if !defined(DEDICATED) && !defined(LEGACY_DEBUG)
 				test = Sys_Dialog(DT_YES_NO, "ET:L crashed last time it was running. Do you want to reset settings to default values?\n\nNote:\nIf you are running several client instances ensure a different value\nof CVAR fs_homepath is set for each client.\nOtherwise the same profile path is used which may cause other side effects.", "Reset settings") == DR_YES;
@@ -3544,11 +3544,11 @@ command line completion
  * @brief Field_Clear
  * @param[out] edit
  */
-void Field_Clear(field_t *edit)
+void Field_Clear(field_t *field)
 {
-	Com_Memset(edit->buffer, 0, MAX_EDIT_LINE);
-	edit->cursor = 0;
-	edit->scroll = 0;
+	Com_Memset(field->buffer, 0, MAX_EDIT_LINE);
+	field->cursor = 0;
+	field->scroll = 0;
 }
 
 static char completionString[MAX_TOKEN_CHARS];

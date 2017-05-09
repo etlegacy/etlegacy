@@ -507,7 +507,7 @@ void Huff_offsetTransmit(huff_t *huff, int ch, byte *fout, int *offset)
 
 /**
  * @brief Huff_Decompress
- * @param[in,out] mbuf
+ * @param[in,out] buf
  * @param[in] offset
  */
 void Huff_Decompress(msg_t *mbuf, int offset)

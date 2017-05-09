@@ -204,11 +204,11 @@ static qboolean S_ValidSoundInterface(soundInterface_t *si)
  * @param[in] volume
  */
 void S_StartSound(vec3_t origin, int entnum, int entchannel,
-                  sfxHandle_t sfx, int volume)
+                  sfxHandle_t sfxHandle, int volume)
 {
 	if (si.StartSound)
 	{
-		si.StartSound(origin, entnum, entchannel, sfx, volume);
+		si.StartSound(origin, entnum, entchannel, sfxHandle, volume);
 	}
 }
 
@@ -222,11 +222,11 @@ void S_StartSound(vec3_t origin, int entnum, int entchannel,
  * @param[in] volume
  */
 void S_StartSoundEx(vec3_t origin, int entnum, int entchannel,
-                    sfxHandle_t sfx, int flags, int volume)
+                    sfxHandle_t sfxHandle, int flags, int volume)
 {
 	if (si.StartSoundEx)
 	{
-		si.StartSoundEx(origin, entnum, entchannel, sfx, flags, volume);
+		si.StartSoundEx(origin, entnum, entchannel, sfxHandle, flags, volume);
 	}
 }
 
@@ -236,11 +236,11 @@ void S_StartSoundEx(vec3_t origin, int entnum, int entchannel,
  * @param[in] channelNum
  * @param[in] volume
  */
-void S_StartLocalSound(sfxHandle_t sfx, int channelNum, int volume)
+void S_StartLocalSound(sfxHandle_t sfxHandle, int channelNum, int volume)
 {
 	if (si.StartLocalSound)
 	{
-		si.StartLocalSound(sfx, channelNum, volume);
+		si.StartLocalSound(sfxHandle, channelNum, volume);
 	}
 }
 
@@ -296,11 +296,11 @@ float S_StartStreamingSound(const char *intro, const char *loop,
  * @brief S_StopEntStreamingSound
  * @param[in] entnum
  */
-void S_StopEntStreamingSound(int entnum)
+void S_StopEntStreamingSound(int entNum)
 {
 	if (si.StopEntStreamingSound)
 	{
-		si.StopEntStreamingSound(entnum);
+		si.StopEntStreamingSound(entNum);
 	}
 }
 
@@ -432,12 +432,12 @@ void S_AddRealLoopingSound(const vec3_t origin, const vec3_t velocity,
  * @param[in] axis
  * @param[in] inwater
  */
-void S_Respatialize(int entityNum, const vec3_t origin,
+void S_Respatialize(int entNum, const vec3_t origin,
                     vec3_t axis[3], int inwater)
 {
 	if (si.Respatialize)
 	{
-		si.Respatialize(entityNum, origin, axis, inwater);
+		si.Respatialize(entNum, origin, axis, inwater);
 	}
 }
 
@@ -446,11 +446,11 @@ void S_Respatialize(int entityNum, const vec3_t origin,
  * @param[in] entityNum
  * @param[in] origin
  */
-void S_UpdateEntityPosition(int entityNum, const vec3_t origin)
+void S_UpdateEntityPosition(int entNum, const vec3_t origin)
 {
 	if (si.UpdateEntityPosition)
 	{
-		si.UpdateEntityPosition(entityNum, origin);
+		si.UpdateEntityPosition(entNum, origin);
 	}
 }
 
@@ -508,15 +508,15 @@ void S_BeginRegistration(void)
 
 /**
  * @brief S_RegisterSound
- * @param[in] sample
+ * @param[in] name
  * @param[in] compressed
  * @return
  */
-sfxHandle_t S_RegisterSound(const char *sample, qboolean compressed)
+sfxHandle_t S_RegisterSound(const char *name, qboolean compressed)
 {
 	if (si.RegisterSound)
 	{
-		return si.RegisterSound(sample, compressed);
+		return si.RegisterSound(name, compressed);
 	}
 	else
 	{
@@ -563,11 +563,11 @@ void S_SoundList(void)
  * @param[in] entityNum
  * @return
  */
-int S_GetVoiceAmplitude(int entityNum)
+int S_GetVoiceAmplitude(int entNum)
 {
 	if (si.GetVoiceAmplitude)
 	{
-		return si.GetVoiceAmplitude(entityNum);
+		return si.GetVoiceAmplitude(entNum);
 	}
 	else
 	{

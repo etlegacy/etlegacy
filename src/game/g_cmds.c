@@ -402,9 +402,9 @@ void G_SendScore(gentity_t *ent)
 #endif
 
 	Q_strncpyz(startbuffer, va(
-				   "sc0 %i %i",
-				   level.teamScores[TEAM_AXIS],
-				   level.teamScores[TEAM_ALLIES]),
+	               "sc0 %i %i",
+	               level.teamScores[TEAM_AXIS],
+	               level.teamScores[TEAM_ALLIES]),
 	           sizeof(startbuffer));
 
 	// keep adding scores to the sc0 command until we fill
@@ -3160,10 +3160,10 @@ void Cmd_Where_f(gentity_t *ent)
  */
 qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCommand)
 {
-	int      i;
-	char     arg1[MAX_STRING_TOKENS];
-	char     arg2[MAX_STRING_TOKENS];
-	char     voteDesc[VOTE_MAXSTRING];
+	int  i;
+	char arg1[MAX_STRING_TOKENS];
+	char arg2[MAX_STRING_TOKENS];
+	char voteDesc[VOTE_MAXSTRING];
 
 	// Normal checks, if its not being issued as a referee command
 	if (!fRefCommand)
@@ -3353,7 +3353,7 @@ qboolean G_FindFreeComplainIP(gclient_t *cl, ipFilter_t *ip)
  */
 void Cmd_Vote_f(gentity_t *ent)
 {
-	char     msg[64];
+	char msg[64];
 
 	// Complaints supercede voting (and share command)
 	if (ent->client->pers.complaintEndTime > level.time && g_gamestate.integer == GS_PLAYING && g_complaintlimit.integer)

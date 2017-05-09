@@ -3268,6 +3268,7 @@ qboolean CG_LimboPanel_Draw(void)
 	CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
 
 	// initial camera update
+	// FIXME: !objRequested is always true and is never used
 	if (!objRequested)
 	{
 		CG_LimboPanel_RequestObjective();
@@ -3888,10 +3889,6 @@ qboolean CG_LimboPanel_WeaponIsDisabled(int index)
 
 	return CG_LimboPanel_RealWeaponIsDisabled(weapon);
 }
-
-//
-//
-//
 
 /**
  * @brief Convert a string to an integer

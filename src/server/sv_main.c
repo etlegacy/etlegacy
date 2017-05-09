@@ -279,9 +279,9 @@ MASTER SERVER FUNCTIONS
  * We will also have a heartbeat sent when a server changes from empty to
  * non-empty, and full to non-full, but not on every player enter or exit.
  *
- * @param[in] message
+ * @param[in] msg
  */
-void SV_MasterHeartbeat(const char *message)
+void SV_MasterHeartbeat(const char *msg)
 {
 	static netadr_t adr[MAX_MASTER_SERVERS][2]; // [2] for v4 and v6 address for the same address string.
 	int             i;
@@ -391,7 +391,7 @@ void SV_MasterHeartbeat(const char *message)
 
 		if ((netenabled & NET_ENABLEV4) && adr[i][0].type != NA_BAD)
 		{
-			NET_OutOfBandPrint(NS_SERVER, adr[i][0], "heartbeat %s\n", message);
+			NET_OutOfBandPrint(NS_SERVER, adr[i][0], "heartbeat %s\n", msg);
 		}
 
 #ifdef FEATURE_IPV6

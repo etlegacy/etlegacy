@@ -517,13 +517,6 @@ void *Sys_LoadDll(const char *name, qboolean useSystemLib)
 {
 	void *dllhandle;
 
-	// Don't load any DLLs that end with the pk3 extension or try to traverse directories
-	if (COM_CompareExtension(name, ".pk3") || strstr(name, "/") || strstr(name, "\\") || strstr(name, "..") || strstr(name, "::"))
-	{
-		Com_Printf("Rejecting DLL named '%s'\n", name);
-		return NULL;
-	}
-
 	if (useSystemLib)
 	{
 		Com_Printf("Trying to load \"%s\"...\n", name);
@@ -675,7 +668,7 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 		return NULL;
 	}
 
-    Com_Printf("succeeded\n");
+	Com_Printf("succeeded\n");
 
 #endif // __APPLE__
 

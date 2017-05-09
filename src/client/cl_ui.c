@@ -131,7 +131,7 @@ void LAN_SaveServersToFile(void)
  */
 static void LAN_ResetPings(int source)
 {
-	int          count = 0, i;
+	int          count    = 0, i;
 	serverInfo_t *servers = NULL;
 
 	switch (source)

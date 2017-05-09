@@ -2046,13 +2046,13 @@ qboolean CanDamage(gentity_t *targ, vec3_t origin)
  * @brief G_AdjustedDamageVec
  * @param[in] ent
  * @param[in] origin
- * @param[out] v
+ * @param[out] vec
  */
-void G_AdjustedDamageVec(gentity_t *ent, vec3_t origin, vec3_t v)
+void G_AdjustedDamageVec(gentity_t *ent, vec3_t origin, vec3_t vec)
 {
 	if (!ent->r.bmodel)
 	{
-		VectorSubtract(ent->r.currentOrigin, origin, v); // simpler centroid check that doesn't have box alignment weirdness
+		VectorSubtract(ent->r.currentOrigin, origin, vec); // simpler centroid check that doesn't have box alignment weirdness
 	}
 	else
 	{
@@ -2062,15 +2062,15 @@ void G_AdjustedDamageVec(gentity_t *ent, vec3_t origin, vec3_t v)
 		{
 			if (origin[i] < ent->r.absmin[i])
 			{
-				v[i] = ent->r.absmin[i] - origin[i];
+				vec[i] = ent->r.absmin[i] - origin[i];
 			}
 			else if (origin[i] > ent->r.absmax[i])
 			{
-				v[i] = origin[i] - ent->r.absmax[i];
+				vec[i] = origin[i] - ent->r.absmax[i];
 			}
 			else
 			{
-				v[i] = 0;
+				vec[i] = 0;
 			}
 		}
 	}

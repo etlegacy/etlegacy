@@ -1189,7 +1189,7 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
 
 	if (!dataBuffer)
 	{
-		const char *temp = NULL;
+		const char *temp;
 
 		temp = GetFallbackShader(fullname);
 		if (temp)
@@ -1255,7 +1255,7 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
  */
 static void GLSL_PreprocessShaderText(char *shaderBuffer, char *filetext, GLenum shadertype)
 {
-	GLchar       *ref   = NULL;
+	GLchar       *ref;
 	char         *token = NULL;
 	int          c      = 0;
 	unsigned int offset = 0;
@@ -2146,8 +2146,8 @@ static void GLSL_SetInitialUniformValues(programInfo_t *info, int permutation)
  */
 void GLSL_GenerateCheckSum(programInfo_t *info, const char *vertex, const char *fragment)
 {
-	char   *fullSource = NULL;
-	size_t size        = 0;
+	char   *fullSource;
+	size_t size = 0;
 
 	size += strlen(vertex);
 	size += strlen(fragment);
@@ -2225,7 +2225,7 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 	size_t numCompiled = 0, tics = 0;
 #endif
 	size_t numPermutations = 0;
-	int    i = 0, x = 0;
+	int    i               = 0, x = 0;
 
 	GLSL_GenerateCheckSum(info, info->vertexShaderText, info->fragmentShaderText);
 

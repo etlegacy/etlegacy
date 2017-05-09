@@ -5365,7 +5365,7 @@ static void RB_RenderDebugUtils()
 					// calculate top down view projection matrix
 					{
 						vec3_t forward = { 0, 0, -1 };
-						vec3_t up = { 1, 0, 0 };
+						vec3_t up      = { 1, 0, 0 };
 						mat4_t viewMatrix, projectionMatrix; // rotationMatrix, transformMatrix,
 
 						// Quake -> OpenGL view matrix from light perspective

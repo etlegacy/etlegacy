@@ -120,11 +120,11 @@ void MSG_BeginReadingOOB(msg_t *msg)
 	msg->oob       = qtrue;
 }
 
-void MSG_BeginReadingUncompressed(msg_t *buf)
+void MSG_BeginReadingUncompressed(msg_t *msg)
 {
 	// align to byte-boundary
-	buf->bit = (buf->bit + 7) & ~7;
-	buf->oob = qtrue;
+	msg->bit = (msg->bit + 7) & ~7;
+	msg->oob = qtrue;
 }
 
 void MSG_Copy(msg_t *buf, byte *data, int length, msg_t *src)
@@ -315,7 +315,7 @@ int MSG_ReadBits(msg_t *msg, int bits)
 
 // writing functions
 
-void MSG_WriteChar(msg_t *sb, int c)
+void MSG_WriteChar(msg_t *msg, int c)
 {
 #ifdef PARANOID
 	if (c < -128 || c > 127)
@@ -324,10 +324,10 @@ void MSG_WriteChar(msg_t *sb, int c)
 	}
 #endif
 
-	MSG_WriteBits(sb, c, 8);
+	MSG_WriteBits(msg, c, 8);
 }
 
-void MSG_WriteByte(msg_t *sb, int c)
+void MSG_WriteByte(msg_t *msg, int c)
 {
 #ifdef PARANOID
 	if (c < 0 || c > 255)
@@ -336,7 +336,7 @@ void MSG_WriteByte(msg_t *sb, int c)
 	}
 #endif
 
-	MSG_WriteBits(sb, c, 8);
+	MSG_WriteBits(msg, c, 8);
 }
 
 void MSG_WriteData(msg_t *buf, const void *data, int length)
@@ -349,7 +349,7 @@ void MSG_WriteData(msg_t *buf, const void *data, int length)
 	}
 }
 
-void MSG_WriteShort(msg_t *sb, int c)
+void MSG_WriteShort(msg_t *msg, int c)
 {
 #ifdef PARANOID
 	if (c < ((short)0x8000) || c > (short)0x7fff)
@@ -358,15 +358,15 @@ void MSG_WriteShort(msg_t *sb, int c)
 	}
 #endif
 
-	MSG_WriteBits(sb, c, 16);
+	MSG_WriteBits(msg, c, 16);
 }
 
-void MSG_WriteLong(msg_t *sb, int c)
+void MSG_WriteLong(msg_t *msg, int c)
 {
-	MSG_WriteBits(sb, c, 32);
+	MSG_WriteBits(msg, c, 32);
 }
 
-void MSG_WriteFloat(msg_t *sb, float f)
+void MSG_WriteFloat(msg_t *msg, float f)
 {
 	union
 	{
@@ -375,14 +375,14 @@ void MSG_WriteFloat(msg_t *sb, float f)
 	} dat;
 
 	dat.f = f;
-	MSG_WriteBits(sb, dat.l, 32);
+	MSG_WriteBits(msg, dat.l, 32);
 }
 
-void MSG_WriteString(msg_t *sb, const char *s)
+void MSG_WriteString(msg_t *msg, const char *s)
 {
 	if (!s)
 	{
-		MSG_WriteData(sb, "", 1);
+		MSG_WriteData(msg, "", 1);
 	}
 	else
 	{
@@ -393,7 +393,7 @@ void MSG_WriteString(msg_t *sb, const char *s)
 		if (l >= MAX_STRING_CHARS)
 		{
 			Com_Printf("MSG_WriteString: MAX_STRING_CHARS size reached\n");
-			MSG_WriteData(sb, "", 1);
+			MSG_WriteData(msg, "", 1);
 			return;
 		}
 		Q_strncpyz(string, s, sizeof(string));
@@ -412,15 +412,15 @@ void MSG_WriteString(msg_t *sb, const char *s)
 			}
 		}
 
-		MSG_WriteData(sb, string, l + 1);
+		MSG_WriteData(msg, string, l + 1);
 	}
 }
 
-void MSG_WriteBigString(msg_t *sb, const char *s)
+void MSG_WriteBigString(msg_t *msg, const char *s)
 {
 	if (!s)
 	{
-		MSG_WriteData(sb, "", 1);
+		MSG_WriteData(msg, "", 1);
 	}
 	else
 	{
@@ -431,7 +431,7 @@ void MSG_WriteBigString(msg_t *sb, const char *s)
 		if (l >= BIG_INFO_STRING)
 		{
 			Com_Printf("MSG_WriteString: BIG_INFO_STRING size reached\n");
-			MSG_WriteData(sb, "", 1);
+			MSG_WriteData(msg, "", 1);
 			return;
 		}
 		Q_strncpyz(string, s, sizeof(string));
@@ -450,18 +450,18 @@ void MSG_WriteBigString(msg_t *sb, const char *s)
 			}
 		}
 
-		MSG_WriteData(sb, string, l + 1);
+		MSG_WriteData(msg, string, l + 1);
 	}
 }
 
-void MSG_WriteAngle(msg_t *sb, float f)
+void MSG_WriteAngle(msg_t *msg, float f)
 {
-	MSG_WriteByte(sb, (int)(f * 256 / 360) & 255);
+	MSG_WriteByte(msg, (int)(f * 256 / 360) & 255);
 }
 
-void MSG_WriteAngle16(msg_t *sb, float f)
+void MSG_WriteAngle16(msg_t *msg, float f)
 {
-	MSG_WriteShort(sb, ANGLE2SHORT(f));
+	MSG_WriteShort(msg, ANGLE2SHORT(f));
 }
 
 //============================================================
@@ -630,11 +630,11 @@ float MSG_ReadAngle16(msg_t *msg)
 	return SHORT2ANGLE(MSG_ReadShort(msg));
 }
 
-void MSG_ReadData(msg_t *msg, void *data, int len)
+void MSG_ReadData(msg_t *msg, void *data, int size)
 {
 	int i;
 
-	for (i = 0 ; i < len ; i++)
+	for (i = 0 ; i < size ; i++)
 	{
 		((byte *)data)[i] = MSG_ReadByte(msg);
 	}
@@ -1402,7 +1402,7 @@ netField_t entitySharedFields[] =
 {
 	{ ESF(linked),           1               },
 	{ ESF(linkcount),        8               }, // enough to see whether the linkcount has changed
-	                                           // (assuming it doesn't change 256 times in 1 frame)
+	                                            // (assuming it doesn't change 256 times in 1 frame)
 	{ ESF(bmodel),           1               },
 	{ ESF(svFlags),          12              },
 	{ ESF(singleClient),     CLIENTNUM_BITS  },

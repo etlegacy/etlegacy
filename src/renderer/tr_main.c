@@ -324,26 +324,26 @@ int R_CullLocalBox(vec3_t bounds[2])
 
 /**
  * @brief R_CullLocalPointAndRadius
- * @param[in] pt
+ * @param[in] origin
  * @param[in] radius
  * @return
  */
-int R_CullLocalPointAndRadius(vec3_t pt, float radius)
+int R_CullLocalPointAndRadius(vec3_t origin, float radius)
 {
 	vec3_t transformed;
 
-	R_LocalPointToWorld(pt, transformed);
+	R_LocalPointToWorld(origin, transformed);
 
 	return R_CullPointAndRadius(transformed, radius);
 }
 
 /**
  * @brief R_CullPointAndRadius
- * @param[in] pt
+ * @param[in] origin
  * @param[in] radius
  * @return
  */
-int R_CullPointAndRadius(vec3_t pt, float radius)
+int R_CullPointAndRadius(vec3_t origin, float radius)
 {
 	int      i;
 	float    dist;
@@ -360,7 +360,7 @@ int R_CullPointAndRadius(vec3_t pt, float radius)
 	{
 		frust = &tr.viewParms.frustum[i];
 
-		dist = DotProduct(pt, frust->normal) - frust->dist;
+		dist = DotProduct(origin, frust->normal) - frust->dist;
 		if (dist < -radius)
 		{
 			return CULL_OUT;
@@ -1469,8 +1469,8 @@ static ID_INLINE void R_Radix(int byte, int size, drawSurf_t *source, drawSurf_t
 	int           count[256] = { 0 };
 	int           index[256];
 	int           i;
-	unsigned char *sortKey = NULL;
-	unsigned char *end     = NULL;
+	unsigned char *sortKey;
+	unsigned char *end;
 
 	sortKey = ((unsigned char *)&source[0].sort) + byte;
 	end     = sortKey + (size * sizeof(drawSurf_t));

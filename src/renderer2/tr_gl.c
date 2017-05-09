@@ -709,7 +709,7 @@ void GL_State(uint32_t stateBits)
 #endif
 
 
-    //if(diff & GLS_ATEST_BITS)
+	//if(diff & GLS_ATEST_BITS)
 	//{
 	//switch (stateBits & GLS_ATEST_BITS)
 	//{

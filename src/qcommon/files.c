@@ -835,7 +835,7 @@ qboolean FS_SV_FileExists(const char *file)
  * @param[in] filename
  * @return
  */
-fileHandle_t FS_SV_FOpenFileWrite(const char *filename)
+fileHandle_t FS_SV_FOpenFileWrite(const char *fileName)
 {
 	char         *ospath;
 	fileHandle_t f;
@@ -845,7 +845,7 @@ fileHandle_t FS_SV_FOpenFileWrite(const char *filename)
 		Com_Error(ERR_FATAL, "FS_SV_FOpenFileWrite: Filesystem call made without initialization");
 	}
 
-	ospath                     = FS_BuildOSPath(fs_homepath->string, filename, "");
+	ospath                     = FS_BuildOSPath(fs_homepath->string, fileName, "");
 	ospath[strlen(ospath) - 1] = '\0';
 
 	f              = FS_HandleForFile();
@@ -866,7 +866,7 @@ fileHandle_t FS_SV_FOpenFileWrite(const char *filename)
 	Com_DPrintf("writing to: %s\n", ospath);
 	fsh[f].handleFiles.file.o = Sys_FOpen(ospath, "wb");
 
-	Q_strncpyz(fsh[f].name, filename, sizeof(fsh[f].name));
+	Q_strncpyz(fsh[f].name, fileName, sizeof(fsh[f].name));
 
 	fsh[f].handleSync = qfalse;
 	if (!fsh[f].handleFiles.file.o)
@@ -884,7 +884,7 @@ fileHandle_t FS_SV_FOpenFileWrite(const char *filename)
  * @param[in] filename
  * @param[out] fp
  */
-long FS_SV_FOpenFileRead(const char *filename, fileHandle_t *fp)
+long FS_SV_FOpenFileRead(const char *fileName, fileHandle_t *fp)
 {
 	char         *ospath;
 	fileHandle_t f = 0;
@@ -897,10 +897,10 @@ long FS_SV_FOpenFileRead(const char *filename, fileHandle_t *fp)
 	f              = FS_HandleForFile();
 	fsh[f].zipFile = qfalse;
 
-	Q_strncpyz(fsh[f].name, filename, sizeof(fsh[f].name));
+	Q_strncpyz(fsh[f].name, fileName, sizeof(fsh[f].name));
 
 	// search homepath
-	ospath = FS_BuildOSPath(fs_homepath->string, filename, "");
+	ospath = FS_BuildOSPath(fs_homepath->string, fileName, "");
 	// remove trailing slash
 	ospath[strlen(ospath) - 1] = '\0';
 
@@ -918,7 +918,7 @@ long FS_SV_FOpenFileRead(const char *filename, fileHandle_t *fp)
 		if (Q_stricmp(fs_homepath->string, fs_basepath->string))
 		{
 			// search basepath
-			ospath                     = FS_BuildOSPath(fs_basepath->string, filename, "");
+			ospath                     = FS_BuildOSPath(fs_basepath->string, fileName, "");
 			ospath[strlen(ospath) - 1] = '\0';
 
 			if (fs_debug->integer)
@@ -1049,7 +1049,7 @@ void FS_FCloseFile(fileHandle_t f)
  * @param[in] filename
  * @return
  */
-fileHandle_t FS_FOpenFileWrite(const char *filename)
+fileHandle_t FS_FOpenFileWrite(const char *fileName)
 {
 	char         *ospath;
 	fileHandle_t f;
@@ -1062,7 +1062,7 @@ fileHandle_t FS_FOpenFileWrite(const char *filename)
 	f              = FS_HandleForFile();
 	fsh[f].zipFile = qfalse;
 
-	ospath = FS_BuildOSPath(fs_homepath->string, fs_gamedir, filename);
+	ospath = FS_BuildOSPath(fs_homepath->string, fs_gamedir, fileName);
 
 	if (fs_debug->integer)
 	{
@@ -1078,7 +1078,7 @@ fileHandle_t FS_FOpenFileWrite(const char *filename)
 
 	fsh[f].handleFiles.file.o = Sys_FOpen(ospath, "wb");
 
-	Q_strncpyz(fsh[f].name, filename, sizeof(fsh[f].name));
+	Q_strncpyz(fsh[f].name, fileName, sizeof(fsh[f].name));
 
 	fsh[f].handleSync = qfalse;
 	if (!fsh[f].handleFiles.file.o)
@@ -1584,21 +1584,15 @@ long FS_FOpenFileReadDir(const char *filename, searchpath_t *search, fileHandle_
  *
  * @returns filesize and an open FILE pointer.
  */
-long FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueFILE)
+long FS_FOpenFileRead(const char *fileName, fileHandle_t *file, qboolean uniqueFILE)
 {
 	searchpath_t *search;
 	long         len;
-	//qboolean     isLocalConfig;
-
-	// FIXME: activate ioq3 fix
-	//autoexec.cfg and q3config.cfg can only be loaded outside of pk3 files.
 
 	if (!fs_searchpaths)
 	{
 		Com_Error(ERR_FATAL, "FS_FOpenFileRead: Filesystem call made without initialization");
 	}
-
-	//isLocalConfig = !strcmp(filename, "autoexec.cfg") || !strcmp(filename, CONFIG_NAME);
 
 	for (search = fs_searchpaths; search; search = search->next)
 	{
@@ -1611,14 +1605,7 @@ long FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueF
 			continue;
 		}
 
-		// autoexec.cfg and q3config.cfg can only be loaded outside of pk3 files.
-		//if (isLocalConfig && search->pack)
-		//{
-		//	Com_Printf("Rejecting local config '%s'\n", filename);
-		//	continue;
-		//}
-
-		len = FS_FOpenFileReadDir(filename, search, file, uniqueFILE, ALLOW_RAW_FILE_ACCESS);
+		len = FS_FOpenFileReadDir(fileName, search, file, uniqueFILE, ALLOW_RAW_FILE_ACCESS);
 
 		if (file == NULL)
 		{
@@ -1645,7 +1632,7 @@ long FS_FOpenFileRead(const char *filename, fileHandle_t *file, qboolean uniqueF
 
 	if (file)
 	{
-		Com_DPrintf(S_COLOR_RED "ERROR: Can't find %s\n", filename);
+		Com_DPrintf(S_COLOR_RED "ERROR: Can't find %s\n", fileName);
 
 		*file = 0;
 		return -1;
@@ -3063,15 +3050,15 @@ static char **Sys_ConcatenateFileLists(char **list0, char **list1, char **list2)
  */
 int FS_GetModList(char *listbuf, int bufsize)
 {
-	int          nMods    = 0, i, j, nTotal = 0, nLen, nPaks, nPotential, nDescLen;
-	char         **pFiles = NULL;
-	char         **pPaks  = NULL;
+	int          nMods   = 0, i, j, nTotal = 0, nLen, nPaks, nPotential, nDescLen;
+	char         **pPaks = NULL;
 	char         *name, *path;
 	char         descPath[MAX_OSPATH];
 	fileHandle_t descHandle;
 	int          dummy;
-	char         **pFiles0 = NULL;
-	char         **pFiles1 = NULL;
+	char         **pFiles;
+	char         **pFiles0;
+	char         **pFiles1;
 	char         **pFiles2 = NULL;
 	qboolean     bDrop     = qfalse;
 
@@ -4713,7 +4700,7 @@ void FS_Restart(int checksumFeed)
 			if (cl_profileStr[0])
 			{
 				// check existing pid file and make sure it's ok
-				if (!Com_CheckPidFile())
+				if (!Com_CheckProfile())
 				{
 #ifndef LEGACY_DEBUG
 					Com_Printf(S_COLOR_YELLOW "WARNING: profile.pid found for profile '%s' - system settings will revert to defaults\n", cl_profileStr);

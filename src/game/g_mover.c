@@ -658,7 +658,7 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 				}
 			}
 			break;
-		case ET_CORPSE:	// always gib corpses ...
+		case ET_CORPSE: // always gib corpses ...
 			trap_LinkEntity(check);
 			GibEntity(check, ENTITYNUM_WORLD);
 			moveList[e] = ENTITYNUM_NONE; // prevent re-linking later on

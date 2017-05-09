@@ -775,7 +775,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 	{
 		vec3_t point, rr, ru, rotate_ang;
 		float  width, height;
-		float  time = cg.time - p->time;
+		float  time  = cg.time - p->time;
 		float  time2 = p->endtime - p->time;
 		float  ratio = time / time2;
 		int    i, j;

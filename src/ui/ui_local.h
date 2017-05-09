@@ -717,7 +717,7 @@ char *Binding_FromName(const char *cvar);
 void trap_Print(const char *string);
 void trap_Error(const char *string) __attribute__((noreturn));
 int trap_Milliseconds(void);
-void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
+void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *value, int flags);
 void trap_Cvar_Update(vmCvar_t *vmCvar);
 void trap_Cvar_Set(const char *var_name, const char *value);
 float trap_Cvar_VariableValue(const char *var_name);
@@ -795,7 +795,7 @@ int trap_LAN_ServerStatus(const char *serverAddress, char *serverStatus, int max
 void trap_LAN_LoadCachedServers(void);
 qboolean trap_LAN_ServerIsInFavoriteList(int source, int n);
 
-void trap_R_RegisterFont(const char *pFontname, int pointSize, void *font);
+void trap_R_RegisterFont(const char *fontName, int pointSize, void *font);
 void trap_S_StopBackgroundTrack(void);
 void trap_S_StartBackgroundTrack(const char *intro, const char *loop, int fadeupTime);
 void trap_S_FadeAllSound(float targetvol, int time, qboolean stopsound);

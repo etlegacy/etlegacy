@@ -479,7 +479,7 @@ void SV_DemoAutoDemoRecord(void);
 void SV_DemoRestartPlayback(void);
 void SV_DemoReadFrame(void);
 void SV_DemoWriteFrame(void);
-qboolean SV_DemoClientCommandCapture(client_t *cl, const char *s);
+qboolean SV_DemoClientCommandCapture(client_t *client, const char *msg);
 void SV_DemoWriteServerCommand(const char *cmd);
 void SV_DemoWriteGameCommand(int clientNum, const char *cmd);
 void SV_DemoWriteConfigString(int cs_index, const char *cs_string);
@@ -499,7 +499,7 @@ void SV_FinalCommand(const char *cmd, qboolean disconnect);   ///< added disconn
 void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) __attribute__ ((format(printf, 2, 3)));
 void SV_AddOperatorCommands(void);
 void SV_RemoveOperatorCommands(void);
-void SV_MasterHeartbeat(const char *hbname);
+void SV_MasterHeartbeat(const char *msg);
 void SV_MasterShutdown(void);
 void SV_MasterGameCompleteStatus(void);
 int SV_RateMsec(client_t *client);
@@ -621,11 +621,11 @@ int SV_PositionChanged(int cli);
 void SV_ClearWorld(void);
 // called after the world model has been loaded, before linking any entities
 
-void SV_UnlinkEntity(sharedEntity_t *ent);
+void SV_UnlinkEntity(sharedEntity_t *gEnt);
 // call before removing an entity, and before trying to move one,
 // so it doesn't clip against itself
 
-void SV_LinkEntity(sharedEntity_t *ent);
+void SV_LinkEntity(sharedEntity_t *gEnt);
 // Needs to be called any time an entity changes origin, mins, maxs,
 // or solid.  Automatically unlinks if needed.
 // sets ent->v.absmin and ent->v.absmax

@@ -253,7 +253,7 @@ void encodeWavelet(sfx_t *sfx, short *packets)
  * @param[in] chunk
  * @param[out] to
  */
-void decodeWavelet(sndBuffer *chunk, short *to)
+void decodeWavelet(sndBuffer *chunk, short *packets)
 {
 	float wksp[4097];
 	int   i;
@@ -267,14 +267,14 @@ void decodeWavelet(sndBuffer *chunk, short *to)
 
 	wt1(wksp, size, -1);
 
-	if (!to)
+	if (!packets)
 	{
 		return;
 	}
 
 	for (i = 0; i < size; i++)
 	{
-		to[i] = wksp[i];
+		packets[i] = wksp[i];
 	}
 }
 

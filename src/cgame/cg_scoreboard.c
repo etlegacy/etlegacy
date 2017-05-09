@@ -882,11 +882,11 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 	vec4_t     hcolor;
 	float      tempx, tempy;
 	int        i;
-	int        count = 0;
-	int        width = INFO_TOTAL_WIDTH;
+	int        count          = 0;
+	int        width          = INFO_TOTAL_WIDTH;
 	qboolean   use_mini_chars = qfalse, livesleft = qfalse;
-	const char *buffer = CG_ConfigString(CS_SERVERINFO);
-	const char *str    = Info_ValueForKey(buffer, "g_maxlives");
+	const char *buffer        = CG_ConfigString(CS_SERVERINFO);
+	const char *str           = Info_ValueForKey(buffer, "g_maxlives");
 
 	if (str && *str && atoi(str))
 	{

@@ -1841,25 +1841,25 @@ void G_verifyMatchState(team_t nTeam)
 
 /**
  * @brief Checks to see if a specified team is allowing players to join.
- * @param[in] team_num
+ * @param[in] nTeam
  * @param[in] ent
  * @return
  */
-qboolean G_teamJoinCheck(team_t team_num, gentity_t *ent)
+qboolean G_teamJoinCheck(team_t nTeam, gentity_t *ent)
 {
-	int cnt = TeamCount(-1, team_num);
+	int cnt = TeamCount(-1, nTeam);
 
 	// Sanity check
 	if (cnt == 0)
 	{
-		G_teamReset(team_num, qtrue);
-		teamInfo[team_num].team_lock = qfalse;
+		G_teamReset(nTeam, qtrue);
+		teamInfo[nTeam].team_lock = qfalse;
 	}
 
 	// Check for locked teams
-	if ((team_num == TEAM_AXIS || team_num == TEAM_ALLIES))
+	if ((nTeam == TEAM_AXIS || nTeam == TEAM_ALLIES))
 	{
-		if (ent->client->sess.sessionTeam == team_num)
+		if (ent->client->sess.sessionTeam == nTeam)
 		{
 			return qtrue;
 		}
@@ -1869,14 +1869,14 @@ qboolean G_teamJoinCheck(team_t team_num, gentity_t *ent)
 			// Check for full teams
 			if (team_maxplayers.integer > 0 && team_maxplayers.integer <= cnt)
 			{
-				G_printFull(va("The %s team is full!", aTeams[team_num]), ent);
+				G_printFull(va("The %s team is full!", aTeams[nTeam]), ent);
 				return qfalse;
 
 				// Check for locked teams
 			}
-			else if (teamInfo[team_num].team_lock && (!(ent->client->pers.invite & team_num)))
+			else if (teamInfo[nTeam].team_lock && (!(ent->client->pers.invite & nTeam)))
 			{
-				G_printFull(va("The %s team is LOCKED!", aTeams[team_num]), ent);
+				G_printFull(va("The %s team is LOCKED!", aTeams[nTeam]), ent);
 				return qfalse;
 			}
 		}
@@ -1884,12 +1884,12 @@ qboolean G_teamJoinCheck(team_t team_num, gentity_t *ent)
 		{
 			if (team_maxplayers.integer > 0 && team_maxplayers.integer <= cnt)
 			{
-				G_printFull(va("The %s team is full!", aTeams[team_num]), ent);
+				G_printFull(va("The %s team is full!", aTeams[nTeam]), ent);
 				return qfalse;
 			}
-			else if (g_gamestate.integer == GS_PLAYING && g_lms_lockTeams.integer && (!(ent->client->pers.invite & team_num)))
+			else if (g_gamestate.integer == GS_PLAYING && g_lms_lockTeams.integer && (!(ent->client->pers.invite & nTeam)))
 			{
-				G_printFull(va("The %s team is LOCKED!", aTeams[team_num]), ent);
+				G_printFull(va("The %s team is LOCKED!", aTeams[nTeam]), ent);
 				return qfalse;
 			}
 		}

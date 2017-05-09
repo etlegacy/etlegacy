@@ -252,13 +252,13 @@ void trap_Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, i
  * @param[in] gEnts
  * @param[in] numGEntities
  * @param[in] sizeofGEntity_t
- * @param[in] clients
+ * @param[in] gameClients
  * @param[in] sizeofGClient
  */
 void trap_LocateGameData(gentity_t *gEnts, int numGEntities, int sizeofGEntity_t,
-                         playerState_t *clients, int sizeofGClient)
+                         playerState_t *gameClients, int sizeofGClient)
 {
-	syscall(G_LOCATE_GAME_DATA, gEnts, numGEntities, sizeofGEntity_t, clients, sizeofGClient);
+	syscall(G_LOCATE_GAME_DATA, gEnts, numGEntities, sizeofGEntity_t, gameClients, sizeofGClient);
 }
 
 /**
@@ -492,9 +492,9 @@ void trap_UnlinkEntity(gentity_t *ent)
  * @param[in] maxcount
  * @return
  */
-int trap_EntitiesInBox(const vec3_t mins, const vec3_t maxs, int *list, int maxcount)
+int trap_EntitiesInBox(const vec3_t mins, const vec3_t maxs, int *list, int maxCount)
 {
-	return syscall(G_ENTITIES_IN_BOX, mins, maxs, list, maxcount);
+	return syscall(G_ENTITIES_IN_BOX, mins, maxs, list, maxCount);
 }
 
 /**
@@ -553,9 +553,9 @@ void trap_BotUserCommand(int clientNum, usercmd_t *ucmd)
  * @param[in] client
  * @param[in] command
  */
-void trap_EA_Command(int client, char *command)
+void trap_EA_Command(int clientNum, char *command)
 {
-	syscall(BOTLIB_EA_COMMAND, client, command);
+	syscall(BOTLIB_EA_COMMAND, clientNum, command);
 }
 // #endif
 
@@ -706,11 +706,11 @@ void trap_SnapVector(float *v)
  * @param[in] clientNum
  * @param[in] tagFileNumber
  * @param[out] tagName
- * @param[out] or
+ * @param[out] orientation
  */
-qboolean trap_GetTag(int clientNum, int tagFileNumber, char *tagName, orientation_t *or)
+qboolean trap_GetTag(int clientNum, int tagFileNumber, char *tagName, orientation_t *orientation)
 {
-	return (qboolean)(syscall(G_GETTAG, clientNum, tagFileNumber, tagName, or));
+	return (qboolean)(syscall(G_GETTAG, clientNum, tagFileNumber, tagName, orientation));
 }
 
 /**

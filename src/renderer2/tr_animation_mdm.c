@@ -2119,7 +2119,7 @@ void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surface)
 				{
 					vec3_t        diff;
 					mdxBoneInfo_t *mdxBoneInfo =
-						(mdxBoneInfo_t *) ((byte *) mdxHeader + mdxHeader->ofsBones + *boneRefs * sizeof(mdxBoneInfo_t));
+					    (mdxBoneInfo_t *) ((byte *) mdxHeader + mdxHeader->ofsBones + *boneRefs * sizeof(mdxBoneInfo_t));
 					bonePtr = &bones[*boneRefs];
 
 					VectorSet(vec, 0.f, 0.f, 32.f);

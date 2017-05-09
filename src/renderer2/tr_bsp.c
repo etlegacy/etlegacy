@@ -600,7 +600,7 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 			finalLuminance = (scaledLuminance * (scaledLuminance / maxLuminance + 1.0)) / (scaledLuminance + 1.0);
 #elif 0
 			finalLuminance =
-				(scaledLuminance * ((scaledLuminance / (maxLuminance * maxLuminance)) + 1.0)) / (scaledLuminance + 1.0);
+			    (scaledLuminance * ((scaledLuminance / (maxLuminance * maxLuminance)) + 1.0)) / (scaledLuminance + 1.0);
 #else
 			// exponential tone mapping
 			finalLuminance = 1.0 - exp(-scaledLuminance);
@@ -3404,8 +3404,8 @@ static void R_CreateWorldVBO()
 	if (c_redundantVertexes)
 	{
 		Ren_Developer(
-			"...removed %i redundant vertices from staticWorldMesh %i ( %s, %i verts %i tris )\n",
-			c_redundantVertexes, vboSurfaces.currentElements, shader->name, numVerts, numTriangles);
+		    "...removed %i redundant vertices from staticWorldMesh %i ( %s, %i verts %i tris )\n",
+		    c_redundantVertexes, vboSurfaces.currentElements, shader->name, numVerts, numTriangles);
 	}
 
 	s_worldData.vbo = R_CreateVBO2(va("bspModelMesh_vertices %i", 0), numVerts, optimizedVerts,
@@ -3838,25 +3838,25 @@ static void R_CreateSubModelVBOs()
 				if (c_redundantVertexes)
 				{
 					Ren_Developer(
-						"...removed %i redundant vertices from staticEntityMesh %i ( %s, %i verts %i tris )\n",
-						c_redundantVertexes, vboSurfaces.currentElements, shader->name, numVerts, numTriangles);
+					    "...removed %i redundant vertices from staticEntityMesh %i ( %s, %i verts %i tris )\n",
+					    c_redundantVertexes, vboSurfaces.currentElements, shader->name, numVerts, numTriangles);
 				}
 
 				vboSurf->vbo =
-					R_CreateVBO2(va("staticBspModel%i_VBO %i", m, vboSurfaces.currentElements), numVerts, optimizedVerts,
-					             ATTR_POSITION | ATTR_TEXCOORD | ATTR_LIGHTCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL
-					             | ATTR_COLOR | GLCS_LIGHTCOLOR | ATTR_LIGHTDIRECTION, VBO_USAGE_STATIC);
+				    R_CreateVBO2(va("staticBspModel%i_VBO %i", m, vboSurfaces.currentElements), numVerts, optimizedVerts,
+				                 ATTR_POSITION | ATTR_TEXCOORD | ATTR_LIGHTCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL
+				                 | ATTR_COLOR | GLCS_LIGHTCOLOR | ATTR_LIGHTDIRECTION, VBO_USAGE_STATIC);
 #else
 				vboSurf->vbo =
-					R_CreateVBO2(va("staticBspModel%i_VBO %i", m, vboSurfaces.currentElements), numVerts, verts,
-					             ATTR_POSITION | ATTR_TEXCOORD | ATTR_LIGHTCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL
-					             | ATTR_COLOR
-					             , VBO_USAGE_STATIC);
+				    R_CreateVBO2(va("staticBspModel%i_VBO %i", m, vboSurfaces.currentElements), numVerts, verts,
+				                 ATTR_POSITION | ATTR_TEXCOORD | ATTR_LIGHTCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL
+				                 | ATTR_COLOR
+				                 , VBO_USAGE_STATIC);
 #endif
 
 				vboSurf->ibo =
-					R_CreateIBO2(va("staticBspModel%i_IBO %i", m, vboSurfaces.currentElements), numTriangles, triangles,
-					             VBO_USAGE_STATIC);
+				    R_CreateIBO2(va("staticBspModel%i_IBO %i", m, vboSurfaces.currentElements), numTriangles, triangles,
+				                 VBO_USAGE_STATIC);
 
 				ri.Hunk_FreeTempMemory(triangles);
 				ri.Hunk_FreeTempMemory(optimizedVerts);
@@ -4111,7 +4111,7 @@ static void R_LoadNodesAndLeafs(lump_t *nodeLump, lump_t *leafLump)
 	dleaf_t       *inLeaf;
 	bspNode_t     *out;
 	int           numNodes, numLeafs;
-	srfVert_t     *verts = NULL;
+	srfVert_t     *verts     = NULL;
 	srfTriangle_t *triangles = NULL;
 	IBO_t         *volumeIBO = NULL;
 	vec3_t        mins, maxs;
@@ -6357,7 +6357,7 @@ static void R_CreateVBOLightMeshes(trRefLight_t *light)
 #endif
 			vboSurf->vbo = s_worldData.vbo;
 			vboSurf->ibo =
-				R_CreateIBO2(va("staticLightMesh_IBO %i", c_vboLightSurfaces), numTriangles, triangles, VBO_USAGE_STATIC);
+			    R_CreateIBO2(va("staticLightMesh_IBO %i", c_vboLightSurfaces), numTriangles, triangles, VBO_USAGE_STATIC);
 
 			ri.Hunk_FreeTempMemory(triangles);
 
@@ -6987,8 +6987,8 @@ static void R_CreateVBOShadowCubeMeshes(trRefLight_t *light)
 						if (srf->numTriangles)
 						{
 							numTriangles +=
-								UpdateLightTriangles(s_worldData.verts, srf->numTriangles,
-								                     s_worldData.triangles + srf->firstTriangle, surface->shader, light);
+							    UpdateLightTriangles(s_worldData.verts, srf->numTriangles,
+							                         s_worldData.triangles + srf->firstTriangle, surface->shader, light);
 						}
 
 						if (srf->numVerts)
@@ -7003,8 +7003,8 @@ static void R_CreateVBOShadowCubeMeshes(trRefLight_t *light)
 						if (srf->numTriangles)
 						{
 							numTriangles +=
-								UpdateLightTriangles(s_worldData.verts, srf->numTriangles,
-								                     s_worldData.triangles + srf->firstTriangle, surface->shader, light);
+							    UpdateLightTriangles(s_worldData.verts, srf->numTriangles,
+							                         s_worldData.triangles + srf->firstTriangle, surface->shader, light);
 						}
 
 						if (srf->numVerts)
@@ -7019,8 +7019,8 @@ static void R_CreateVBOShadowCubeMeshes(trRefLight_t *light)
 						if (srf->numTriangles)
 						{
 							numTriangles +=
-								UpdateLightTriangles(s_worldData.verts, srf->numTriangles,
-								                     s_worldData.triangles + srf->firstTriangle, surface->shader, light);
+							    UpdateLightTriangles(s_worldData.verts, srf->numTriangles,
+							                         s_worldData.triangles + srf->firstTriangle, surface->shader, light);
 						}
 
 						if (srf->numVerts)
@@ -7150,8 +7150,8 @@ static void R_CreateVBOShadowCubeMeshes(trRefLight_t *light)
 				if (c_redundantVertexes)
 				{
 					Ren_Developer(
-						"...removed %i redundant vertices from staticShadowPyramidMesh %i ( %s, %i verts %i tris )\n",
-						c_redundantVertexes, c_vboShadowSurfaces, shader->name, numVerts, numTriangles);
+					    "...removed %i redundant vertices from staticShadowPyramidMesh %i ( %s, %i verts %i tris )\n",
+					    c_redundantVertexes, c_vboShadowSurfaces, shader->name, numVerts, numTriangles);
 				}
 #endif
 				vboSurf->vbo = s_worldData.vbo;

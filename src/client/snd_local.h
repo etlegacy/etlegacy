@@ -321,7 +321,7 @@ void S_AdpcmGetSamples(sndBuffer *chunk, short *to);
 void S_FreeOldestSound(void);
 
 void encodeWavelet(sfx_t *sfx, short *packets);
-void decodeWavelet(sndBuffer *stream, short *packets);
+void decodeWavelet(sndBuffer *chunk, short *packets);
 
 void encodeMuLaw(sfx_t *sfx, short *packets);
 extern short mulawToShort[256];

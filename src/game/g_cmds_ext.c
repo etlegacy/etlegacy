@@ -163,15 +163,15 @@ qboolean G_commandHelp(gentity_t *ent, const char *pszCommand, unsigned int dwCo
 /**
  * @brief Debounces cmd request as necessary.
  * @param[in,out] ent
- * @param[in] pszCommandName
+ * @param[in] pszCommand
  * @return
  */
-qboolean G_cmdDebounce(gentity_t *ent, const char *pszCommandName)
+qboolean G_cmdDebounce(gentity_t *ent, const char *pszCommand)
 {
 	if (ent->client->pers.cmd_debounce > level.time)
 	{
 		CP(va("print \"Wait another %.1fs to issue ^3%s\n\"", (double)(1.0f * (float)(ent->client->pers.cmd_debounce - level.time) / 1000.0f),
-		      pszCommandName));
+		      pszCommand));
 		return qfalse;
 	}
 
@@ -366,9 +366,9 @@ void G_pause_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fPause)
  * @brief Show client info
  * @param[in] ent
  * @param dwCommand - unused
- * @param fValue - unused
+ * @param fDump - unused
  */
-void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
+void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 {
 	int       i, idnum, max_rate, cnt = 0;
 	int       user_rate, user_snaps;
@@ -542,9 +542,9 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
  * @brief Sets a player's "ready" status.
  * @param[in,out] ent
  * @param[in] dwCommand
- * @param[in] state
+ * @param[in] fDump
  */
-void G_ready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
+void G_ready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 {
 	char *status[2] = { " NOT", "" };
 
@@ -554,7 +554,7 @@ void G_ready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
 		return;
 	}
 
-	if (!state && g_gamestate.integer == GS_WARMUP_COUNTDOWN)
+	if (!fDump && g_gamestate.integer == GS_WARMUP_COUNTDOWN)
 	{
 		CP("cpm \"Countdown started.... ^3notready^7 ignored!\n\"");
 		return;
@@ -578,17 +578,17 @@ void G_ready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
 		return;
 	}
 
-	// Move them to correct ready state
-	if (ent->client->pers.ready == state)
+	// Move them to correct ready fDump
+	if (ent->client->pers.ready == fDump)
 	{
-		CP(va("print \"You are already%s ready!\n\"", status[state]));
+		CP(va("print \"You are already%s ready!\n\"", status[fDump]));
 	}
 	else
 	{
-		ent->client->pers.ready = state;
+		ent->client->pers.ready = fDump;
 		if (!level.intermissiontime)
 		{
-			if (state)
+			if (fDump)
 			{
 				G_MakeReady(ent);
 			}
@@ -597,8 +597,8 @@ void G_ready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
 				G_MakeUnready(ent);
 			}
 
-			AP(va("print \"%s^7 is%s ready!\n\"", ent->client->pers.netname, status[state]));
-			AP(va("cp \"\n%s\n^3is%s ready!\n\"", ent->client->pers.netname, status[state]));
+			AP(va("print \"%s^7 is%s ready!\n\"", ent->client->pers.netname, status[fDump]));
+			AP(va("cp \"\n%s\n^3is%s ready!\n\"", ent->client->pers.netname, status[fDump]));
 		}
 	}
 
@@ -772,9 +772,9 @@ void G_statsall_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
  * @brief Sets a player's team "ready" status.
  * @param[in] ent
  * @param[in] dwCommand
- * @param state - unused
+ * @param fDump - unused
  */
-void G_teamready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state)
+void G_teamready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump)
 {
 	int       i;
 	gclient_t *cl;

@@ -891,20 +891,20 @@ int G_EntitiesFree(void)
  *
  * @param[in,out] ed
  */
-void G_FreeEntity(gentity_t *ed)
+void G_FreeEntity(gentity_t *ent)
 {
 #ifdef FEATURE_OMNIBOT
-	Bot_Event_EntityDeleted(ed);
+	Bot_Event_EntityDeleted(ent);
 #endif
 
-	if (ed->free)
+	if (ent->free)
 	{
-		ed->free(ed);
+		ent->free(ent);
 	}
 
-	trap_UnlinkEntity(ed);       // unlink from world
+	trap_UnlinkEntity(ent);       // unlink from world
 
-	if (ed->neverFree)
+	if (ent->neverFree)
 	{
 		return;
 	}
@@ -916,7 +916,7 @@ void G_FreeEntity(gentity_t *ed)
 	// - optimization: if events are freed EVENT_VALID_MSEC has already passed (keep in mind these are broadcasted)
 	// - when enabled g_debugHitboxes, g_debugPlayerHitboxes or g_debugbullets 3 we want visible trace effects - don't free immediately
 	// FIXME: remove tmp var l_free if we are sure there are no issues caused by this change (especially on network games)
-	if ((ed->s.eType == ET_TEMPHEAD || ed->s.eType == ET_TEMPLEGS || ed->s.eType == ET_CORPSE || ed->s.eType >= ET_EVENTS) && trap_Cvar_VariableIntegerValue("l_free") == 0 && trap_Cvar_VariableIntegerValue("g_debugHitboxes") == 0 && trap_Cvar_VariableIntegerValue("g_debugPlayerHitboxes") == 0 && trap_Cvar_VariableIntegerValue("g_debugbullets") < 3)
+	if ((ent->s.eType == ET_TEMPHEAD || ent->s.eType == ET_TEMPLEGS || ent->s.eType == ET_CORPSE || ent->s.eType >= ET_EVENTS) && trap_Cvar_VariableIntegerValue("l_free") == 0 && trap_Cvar_VariableIntegerValue("g_debugHitboxes") == 0 && trap_Cvar_VariableIntegerValue("g_debugPlayerHitboxes") == 0 && trap_Cvar_VariableIntegerValue("g_debugbullets") < 3)
 	{
 		// debug
 		//if (ed->s.eType >= ET_EVENTS)
@@ -929,17 +929,17 @@ void G_FreeEntity(gentity_t *ed)
 		//}
 
 		// game entity is immediately available and a 'slot' will be reused
-		memset(ed, 0, sizeof(*ed));
-		ed->classname = "freed";
-		ed->freetime  = -9999;  // e->freetime is never greater than level.startTime + 2000 see G_Spawn()
-		ed->inuse     = qfalse;
+		memset(ent, 0, sizeof(*ent));
+		ent->classname = "freed";
+		ent->freetime  = -9999;  // e->freetime is never greater than level.startTime + 2000 see G_Spawn()
+		ent->inuse     = qfalse;
 	}
 	else // all other game entities relax
 	{
-		memset(ed, 0, sizeof(*ed));
-		ed->classname = "freed";
-		ed->freetime  = level.time;
-		ed->inuse     = qfalse;
+		memset(ent, 0, sizeof(*ent));
+		ent->classname = "freed";
+		ent->freetime  = level.time;
+		ent->inuse     = qfalse;
 	}
 }
 

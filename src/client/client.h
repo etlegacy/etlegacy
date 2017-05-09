@@ -483,7 +483,7 @@ void CL_Record(const char *name);
 
 // cl_avi
 
-qboolean CL_OpenAVIForWriting(const char *filename);
+qboolean CL_OpenAVIForWriting(const char *fileName);
 void CL_TakeVideoFrame(void);
 void CL_WriteAVIVideoFrame(const byte *imageBuffer, int size);
 void CL_WriteAVIAudioFrame(const byte *pcmBuffer, int size);
@@ -725,7 +725,7 @@ typedef struct
 void SCR_DrawCinematic(void);
 void SCR_RunCinematic(void);
 void SCR_StopCinematic(void);
-int CIN_PlayCinematic(const char *arg0, int xpos, int ypos, int width, int height, int bits);
+int CIN_PlayCinematic(const char *name, int x, int y, int w, int h, int flags);
 e_status CIN_StopCinematic(int handle);
 e_status CIN_RunCinematic(int handle);
 void CIN_DrawCinematic(int handle);

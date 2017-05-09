@@ -476,9 +476,9 @@ void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist,
  * @param[in] dist
  * @param[in] epsilon
  */
-void ChopWindingInPlace(winding_t **inout, vec3_t normal, vec_t dist, vec_t epsilon)
+void ChopWindingInPlace(winding_t **w, vec3_t normal, vec_t dist, vec_t epsilon)
 {
-	winding_t    *in = *inout;
+	winding_t    *in = *w;
 	vec_t        dists[MAX_POINTS_ON_WINDING + 4];
 	int          sides[MAX_POINTS_ON_WINDING + 4];
 	int          counts[3] = { 0, 0, 0 };
@@ -516,7 +516,7 @@ void ChopWindingInPlace(winding_t **inout, vec3_t normal, vec_t dist, vec_t epsi
 	if (!counts[0])
 	{
 		FreeWinding(in);
-		*inout = NULL;
+		*w = NULL;
 		return;
 	}
 	if (!counts[1])
@@ -585,7 +585,7 @@ void ChopWindingInPlace(winding_t **inout, vec3_t normal, vec_t dist, vec_t epsi
 	}
 
 	FreeWinding(in);
-	*inout = f;
+	*w = f;
 }
 
 /**

@@ -3972,12 +3972,12 @@ void R_SwapBuffers(int);
 
 void R_RenderView(viewParms_t *parms);
 
-void R_AddMDVSurfaces(trRefEntity_t *e);
-void R_AddMDVInteractions(trRefEntity_t *e, trRefLight_t *light);
-void R_AddNullModelSurfaces(trRefEntity_t *e);
-void R_AddBeamSurfaces(trRefEntity_t *e);
-void R_AddRailSurfaces(trRefEntity_t *e, qboolean isUnderwater);
-void R_AddLightningBoltSurfaces(trRefEntity_t *e);
+void R_AddMDVSurfaces(trRefEntity_t *ent);
+void R_AddMDVInteractions(trRefEntity_t *ent, trRefLight_t *light);
+void R_AddNullModelSurfaces(trRefEntity_t *ent);
+void R_AddBeamSurfaces(trRefEntity_t *ent);
+void R_AddRailSurfaces(trRefEntity_t *ent, qboolean isUnderwater);
+void R_AddLightningBoltSurfaces(trRefEntity_t *ent);
 
 void R_AddPolygonSurfaces(void);
 void R_AddPolygonBufferSurfaces(void);
@@ -3997,13 +3997,13 @@ int R_FogWorldBox(vec3_t bounds[2]);
 
 void R_SetupEntityWorldBounds(trRefEntity_t *ent);
 
-void R_RotateEntityForViewParms(const trRefEntity_t *ent, const viewParms_t *viewParms, orientationr_t *orien);
-void R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light, orientationr_t *orien);
-void R_RotateLightForViewParms(const trRefLight_t *ent, const viewParms_t *viewParms, orientationr_t *orien);
+void R_RotateEntityForViewParms(const trRefEntity_t *ent, const viewParms_t *viewParms, orientationr_t *orientation);
+void R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light, orientationr_t *orientation);
+void R_RotateLightForViewParms(const trRefLight_t *ent, const viewParms_t *viewParms, orientationr_t *orientation);
 
-void R_SetupFrustum2(frustum_t frustum, const mat4_t modelViewProjectionMatrix);
+void R_SetupFrustum2(frustum_t frustum, const mat4_t mvp);
 
-qboolean R_CompareVert(srfVert_t *v1, srfVert_t *v2, qboolean checkst);
+qboolean R_CompareVert(srfVert_t *v1, srfVert_t *v2, qboolean checkST);
 void R_CalcNormalForTriangle(vec3_t normal, const vec3_t v0, const vec3_t v1, const vec3_t v2);
 
 void R_CalcTangentsForTriangle(vec3_t tangent, vec3_t binormal,
@@ -4022,9 +4022,9 @@ void R_CalcTangentSpaceFast(vec3_t tangent, vec3_t binormal, vec3_t normal,
                             const vec3_t v0, const vec3_t v1, const vec3_t v2,
                             const vec2_t t0, const vec2_t t1, const vec2_t t2);
 
-void R_CalcTBN(vec3_t tangent, vec3_t binormal, vec3_t normal,
-               const vec3_t v0, const vec3_t v1, const vec3_t v2,
-               const vec2_t t0, const vec2_t t1, const vec2_t t2);
+void R_CalcTBN(vec3_t tangent, vec3_t bitangent, vec3_t normal,
+               const vec3_t v1, const vec3_t v2, const vec3_t v3,
+               const vec2_t w1, const vec2_t w2, const vec2_t w3);
 
 qboolean R_CalcTangentVectors(srfVert_t * dv[3]);
 
@@ -4080,10 +4080,10 @@ void GL_Viewport(GLint x, GLint y, GLsizei width, GLsizei height);
 void GL_PolygonOffset(float factor, float units);
 void GL_Clear(unsigned int bits);
 
-void GL_State(uint32_t stateVector);
+void GL_State(uint32_t stateBits);
 void GL_Cull(int cullType);
 
-void GL_CheckErrors_(const char *filename, int line);
+void GL_CheckErrors_(const char *fileName, int line);
 
 #define GL_CheckErrors() GL_CheckErrors_(__FILE__, __LINE__)
 
@@ -4109,8 +4109,8 @@ void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int 
 
 void RE_BeginFrame(void);
 void RE_EndFrame(int *frontEndMsec, int *backEndMsec);
-void RE_BeginRegistration(glconfig_t *glconfig);
-void RE_LoadWorldMap(const char *mapname);
+void RE_BeginRegistration(glconfig_t *glconfigOut);
+void RE_LoadWorldMap(const char *name);
 void RE_SetWorldVisData(const byte *vis);
 qhandle_t RE_RegisterModel(const char *name);
 qhandle_t RE_RegisterSkin(const char *name);
@@ -4154,8 +4154,8 @@ int R_SumOfUsedImages(void);
 void R_ImageCopyBack(image_t *image, int x, int y, int width, int height);
 #define ImageCopyBackBuffer(image) R_ImageCopyBack(image, 0, 0, image->uploadWidth, image->uploadHeight)
 
-image_t *R_FindImageFile(const char *name, int bits, filterType_t filterType, wrapType_t wrapType, const char *materialName);
-image_t *R_FindCubeImage(const char *name, int bits, filterType_t filterType, wrapType_t wrapType, const char *materialName);
+image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterType, wrapType_t wrapType, const char *materialName);
+image_t *R_FindCubeImage(const char *imageName, int bits, filterType_t filterType, wrapType_t wrapType, const char *materialName);
 
 image_t *R_CreateImage(const char *name, const byte *pic, int width, int height, int bits, filterType_t filterType,
                        wrapType_t wrapType);
@@ -4190,7 +4190,7 @@ shader_t *R_FindShaderByName(const char *name);
 void R_InitShaders(void);
 void R_ShaderList_f(void);
 void R_ShaderExp_f(void);
-void R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset);
+void R_RemapShader(const char *shaderName, const char *newShaderName, const char *timeOffset);
 
 /*
 ====================================================================
@@ -4325,7 +4325,7 @@ WORLD MAP, tr_world.c
 ============================================================
 */
 
-void R_AddBSPModelSurfaces(trRefEntity_t *e);
+void R_AddBSPModelSurfaces(trRefEntity_t *ent);
 void R_AddWorldSurfaces(void);
 qboolean R_inPVS(const vec3_t p1, const vec3_t p2);
 
@@ -4409,7 +4409,7 @@ SKIES
 ============================================================
 */
 
-void R_InitSkyTexCoords(float cloudLayerHeight);
+void R_InitSkyTexCoords(float heightCloud);
 void RB_DrawSun(void);
 
 /*
@@ -4445,9 +4445,9 @@ void R_CreateFBOColorBuffer(FBO_t *fbo, int format, int index);
 void R_CreateFBODepthBuffer(FBO_t *fbo, int format);
 void R_CreateFBOStencilBuffer(FBO_t *fbo, int format);
 
-void R_AttachFBOTexture1D(int texId, int attachmentIndex);
-void R_AttachFBOTexture2D(int target, int texId, int attachmentIndex);
-void R_AttachFBOTexture3D(int texId, int attachmentIndex, int zOffset);
+void R_AttachFBOTexture1D(int texId, int index);
+void R_AttachFBOTexture2D(int target, int texId, int index);
+void R_AttachFBOTexture3D(int texId, int index, int zOffset);
 void R_AttachFBOTextureDepth(int texId);
 
 void R_CopyToFBO(FBO_t *from, FBO_t *to, GLuint mask, GLuint filter);
@@ -4466,7 +4466,7 @@ VERTEX BUFFER OBJECTS, tr_vbo.c
 ============================================================
 */
 VBO_t *R_CreateVBO(const char *name, byte *vertexes, int vertexesSize, vboUsage_t usage);
-VBO_t *R_CreateVBO2(const char *name, int numVertexes, srfVert_t *vertexes, uint32_t stateBits, vboUsage_t usage);
+VBO_t *R_CreateVBO2(const char *name, int numVertexes, srfVert_t *verts, uint32_t stateBits, vboUsage_t usage);
 
 IBO_t *R_CreateIBO(const char *name, byte *indexes, int indexesSize, vboUsage_t usage);
 IBO_t *R_CreateIBO2(const char *name, int numTriangles, srfTriangle_t *triangles, vboUsage_t usage);
@@ -4548,7 +4548,7 @@ void R_AddMD5Interactions(trRefEntity_t *ent, trRefLight_t *light);
 
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
 int RE_CheckSkeleton(refSkeleton_t *skel, qhandle_t hModel, qhandle_t hAnim);
-int RE_BuildSkeleton(refSkeleton_t *skel, qhandle_t anim, int startFrame, int endFrame, float frac,
+int RE_BuildSkeleton(refSkeleton_t *skel, qhandle_t hAnim, int startFrame, int endFrame, float frac,
                      qboolean clearOrigin);
 int RE_BlendSkeleton(refSkeleton_t *skel, const refSkeleton_t *blend, float frac);
 int RE_AnimNumFrames(qhandle_t hAnim);
@@ -4576,13 +4576,13 @@ ANIMATED MODELS WOLF:ET  MDM/MDX
 */
 
 void R_MDM_AddAnimSurfaces(trRefEntity_t *ent);
-void R_AddMDMInteractions(trRefEntity_t *e, trRefLight_t *light);
+void R_AddMDMInteractions(trRefEntity_t *ent, trRefLight_t *light);
 
 int R_MDM_GetBoneTag(orientation_t *outTag, mdmModel_t *mdm, int startTagIndex, const refEntity_t *refent,
                      const char *tagName);
 
-void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surfType);
-void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surfType);
+void Tess_MDM_SurfaceAnim(mdmSurfaceIntern_t *surface);
+void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surface);
 
 /*
 =============================================================

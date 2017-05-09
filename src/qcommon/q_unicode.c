@@ -197,8 +197,8 @@ int Q_UTF8_ByteOffset(const char *str, int offset)
  */
 void Q_UTF8_Insert(char *dest, int size, int offset, int key, qboolean overstrike)
 {
-	int  len  = 0, i = 0, byteOffset = 0;
-	char *str = NULL;
+	int  len = 0, i = 0, byteOffset = 0;
+	char *str;
 
 	str        = Q_UTF8_Encode(key);
 	byteOffset = Q_UTF8_ByteOffset(dest, offset);

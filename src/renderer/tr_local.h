@@ -1255,8 +1255,8 @@ typedef struct model_s
 #define MAX_MOD_KNOWN   2048
 
 void R_ModelInit(void);
-model_t *R_GetModelByHandle(qhandle_t hModel);
-int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName, int startIndex);
+model_t *R_GetModelByHandle(qhandle_t handle);
+int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagNameIn, int startIndex);
 void R_ModelBounds(qhandle_t handle, vec3_t mins, vec3_t maxs);
 
 void R_Modellist_f(void);
@@ -1508,7 +1508,7 @@ void R_SwapBuffers(int);
 
 void R_RenderView(viewParms_t *parms);
 
-void R_AddMD3Surfaces(trRefEntity_t *e);
+void R_AddMD3Surfaces(trRefEntity_t *ent);
 
 void R_TagInfo_f(void);
 
@@ -1539,7 +1539,7 @@ void GL_SetDefaultState(void);
 void GL_SelectTexture(int unit);
 void GL_TextureMode(const char *string);
 void GL_CheckErrors(void);
-void GL_State(unsigned long stateVector);
+void GL_State(unsigned long stateBits);
 void GL_TexEnv(int env);
 void GL_Cull(int cullType);
 
@@ -1582,8 +1582,8 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty);
 
 void RE_BeginFrame(void);
-void RE_BeginRegistration(glconfig_t *glconfig);
-void RE_LoadWorldMap(const char *mapname);
+void RE_BeginRegistration(glconfig_t *glconfigOut);
+void RE_LoadWorldMap(const char *name);
 void RE_SetWorldVisData(const byte *vis);
 qhandle_t RE_RegisterModel(const char *name);
 qhandle_t RE_RegisterSkin(const char *name);
@@ -1635,7 +1635,7 @@ shader_t *R_GetShaderByHandle(qhandle_t hShader);
 shader_t *R_FindShaderByName(const char *name);
 void R_InitShaders(void);
 void R_ShaderList_f(void);
-void R_RemapShader(const char *oldShader, const char *newShader, const char *timeOffset);
+void R_RemapShader(const char *shaderName, const char *newShaderName, const char *timeOffset);
 
 qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext);
 
@@ -1730,7 +1730,7 @@ WORLD MAP
 ============================================================
 */
 
-void R_AddBrushModelSurfaces(trRefEntity_t *e);
+void R_AddBrushModelSurfaces(trRefEntity_t *ent);
 void R_AddWorldSurfaces(void);
 
 /*
@@ -1773,10 +1773,10 @@ SKIES
 ============================================================
 */
 
-void R_BuildCloudData(shaderCommands_t *shader);
-void R_InitSkyTexCoords(float cloudLayerHeight);
+void R_BuildCloudData(shaderCommands_t *input);
+void R_InitSkyTexCoords(float heightCloud);
 void RB_DrawSun(void);
-void RB_ClipSkyPolygons(shaderCommands_t *shader);
+void RB_ClipSkyPolygons(shaderCommands_t *input);
 
 /*
 ============================================================
@@ -1852,12 +1852,12 @@ ANIMATED MODELS
 */
 
 void R_AddAnimSurfaces(trRefEntity_t *ent);
-void RB_SurfaceAnim(mdsSurface_t *surfType);
+void RB_SurfaceAnim(mdsSurface_t *surface);
 int R_GetBoneTag(orientation_t *outTag, mdsHeader_t *mds, int startTagIndex, const refEntity_t *refent, const char *tagName);
 
 // MDM / MDX
 void R_MDM_AddAnimSurfaces(trRefEntity_t *ent);
-void RB_MDM_SurfaceAnim(mdmSurface_t *surfType);
+void RB_MDM_SurfaceAnim(mdmSurface_t *surface);
 int R_MDM_GetBoneTag(orientation_t *outTag, mdmHeader_t *mdm, int startTagIndex, const refEntity_t *refent, const char *tagName);
 
 /*
@@ -1882,25 +1882,25 @@ void R_TransformClipToWindow(const vec4_t clip, const viewParms_t *view, vec4_t 
 
 void RB_DeformTessGeometry(void);
 
-void RB_CalcEnvironmentTexCoords(float *dstTexCoords);
+void RB_CalcEnvironmentTexCoords(float *texCoords);
 void RB_CalcFireRiseEnvTexCoords(float *st);
-void RB_CalcFogTexCoords(float *dstTexCoords);
-void RB_CalcScrollTexCoords(const float scroll[2], float *dstTexCoords);
-void RB_CalcRotateTexCoords(float rotSpeed, float *dstTexCoords);
-void RB_CalcScaleTexCoords(const float scale[2], float *dstTexCoords);
-void RB_CalcSwapTexCoords(float *dstTexCoords);
-void RB_CalcTurbulentTexCoords(const waveForm_t *wf, float *dstTexCoords);
-void RB_CalcTransformTexCoords(const texModInfo_t *tmi, float *dstTexCoords);
-void RB_CalcModulateColorsByFog(unsigned char *dstColors);
-void RB_CalcModulateAlphasByFog(unsigned char *dstColors);
-void RB_CalcModulateRGBAsByFog(unsigned char *dstColors);
-void RB_CalcWaveAlpha(const waveForm_t *wf, unsigned char *dstColors);
-void RB_CalcWaveColor(const waveForm_t *wf, unsigned char *dstColors);
-void RB_CalcAlphaFromEntity(unsigned char *dstColors);
-void RB_CalcAlphaFromOneMinusEntity(unsigned char *dstColors);
+void RB_CalcFogTexCoords(float *texCoords);
+void RB_CalcScrollTexCoords(const float scrollSpeed[2], float *texCoords);
+void RB_CalcRotateTexCoords(float degsPerSecond, float *texCoords);
+void RB_CalcScaleTexCoords(const float scale[2], float *texCoords);
+void RB_CalcSwapTexCoords(float *texCoords);
+void RB_CalcTurbulentTexCoords(const waveForm_t *wf, float *texCoords);
+void RB_CalcTransformTexCoords(const texModInfo_t *tmi, float *texCoords);
+void RB_CalcModulateColorsByFog(unsigned char *colors);
+void RB_CalcModulateAlphasByFog(unsigned char *colors);
+void RB_CalcModulateRGBAsByFog(unsigned char *colors);
+void RB_CalcWaveAlpha(const waveForm_t *wf, unsigned char *colors);
+void RB_CalcWaveColor(const waveForm_t *wf, unsigned char *colors);
+void RB_CalcAlphaFromEntity(unsigned char *colors);
+void RB_CalcAlphaFromOneMinusEntity(unsigned char *colors);
 void RB_CalcStretchTexCoords(const waveForm_t *wf, float *texCoords);
-void RB_CalcColorFromEntity(unsigned char *dstColors);
-void RB_CalcColorFromOneMinusEntity(unsigned char *dstColors);
+void RB_CalcColorFromEntity(unsigned char *colors);
+void RB_CalcColorFromOneMinusEntity(unsigned char *colors);
 void RB_CalcSpecularAlpha(unsigned char *alphas);
 void RB_CalcDiffuseColor(unsigned char *colors);
 

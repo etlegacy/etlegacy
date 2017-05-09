@@ -87,31 +87,31 @@ struct playerState_s;
 
 void MSG_WriteBits(msg_t *msg, int value, int bits);
 
-void MSG_WriteChar(msg_t *sb, int c);
-void MSG_WriteByte(msg_t *sb, int c);
-void MSG_WriteShort(msg_t *sb, int c);
-void MSG_WriteLong(msg_t *sb, int c);
-void MSG_WriteFloat(msg_t *sb, float f);
-void MSG_WriteString(msg_t *sb, const char *s);
-void MSG_WriteBigString(msg_t *sb, const char *s);
-void MSG_WriteAngle16(msg_t *sb, float f);
+void MSG_WriteChar(msg_t *msg, int c);
+void MSG_WriteByte(msg_t *msg, int c);
+void MSG_WriteShort(msg_t *msg, int c);
+void MSG_WriteLong(msg_t *msg, int c);
+void MSG_WriteFloat(msg_t *msg, float f);
+void MSG_WriteString(msg_t *msg, const char *s);
+void MSG_WriteBigString(msg_t *msg, const char *s);
+void MSG_WriteAngle16(msg_t *msg, float f);
 
-void MSG_BeginReading(msg_t *sb);
-void MSG_BeginReadingOOB(msg_t *sb);
+void MSG_BeginReading(msg_t *msg);
+void MSG_BeginReadingOOB(msg_t *msg);
 void MSG_BeginReadingUncompressed(msg_t *msg);
 
 int MSG_ReadBits(msg_t *msg, int bits);
 
-int MSG_ReadChar(msg_t *sb);
-int MSG_ReadByte(msg_t *sb);
-int MSG_ReadShort(msg_t *sb);
-int MSG_ReadLong(msg_t *sb);
-float MSG_ReadFloat(msg_t *sb);
-char *MSG_ReadString(msg_t *sb);
-char *MSG_ReadBigString(msg_t *sb);
-char *MSG_ReadStringLine(msg_t *sb);
-float MSG_ReadAngle16(msg_t *sb);
-void MSG_ReadData(msg_t *sb, void *buffer, int size);
+int MSG_ReadChar(msg_t *msg);
+int MSG_ReadByte(msg_t *msg);
+int MSG_ReadShort(msg_t *msg);
+int MSG_ReadLong(msg_t *msg);
+float MSG_ReadFloat(msg_t *msg);
+char *MSG_ReadString(msg_t *msg);
+char *MSG_ReadBigString(msg_t *msg);
+char *MSG_ReadStringLine(msg_t *msg);
+float MSG_ReadAngle16(msg_t *msg);
+void MSG_ReadData(msg_t *msg, void *data, int size);
 
 void MSG_WriteDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *to);
 void MSG_ReadDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *to);
@@ -223,7 +223,7 @@ void NET_Restart_f(void);
 void NET_Config(qboolean enableNetworking);
 
 void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to);
-void QDECL NET_OutOfBandPrint(netsrc_t net_socket, netadr_t adr, const char *format, ...);
+void QDECL NET_OutOfBandPrint(netsrc_t sock, netadr_t adr, const char *format, ...);
 void QDECL NET_OutOfBandData(netsrc_t sock, netadr_t adr, const char *format, int len);
 
 void NET_FlushPacketQueue(void);
@@ -296,7 +296,7 @@ typedef struct
 	int lastSentSize;
 } netchan_t;
 
-void Netchan_Init(int qport);
+void Netchan_Init(int port);
 void Netchan_Setup(netsrc_t sock, netchan_t *chan, netadr_t adr, int qport);
 
 void Netchan_Transmit(netchan_t *chan, int length, const byte *data);
@@ -651,7 +651,7 @@ The are also occasionally used to communicated information between different
 modules of the program.
 */
 
-cvar_t *Cvar_Get(const char *var_name, const char *value, int flags);
+cvar_t *Cvar_Get(const char *varName, const char *value, int flags);
 // creates the variable if it doesn't exist, or returns the existing one
 // if it exists, the value will not be changed, but flags will be ORed in
 // that allows variables to be unarchived without needing bitflags
@@ -663,7 +663,7 @@ void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultVal
 void Cvar_Update(vmCvar_t *vmCvar);
 // updates an interpreted modules' version of a cvar
 
-void Cvar_Set(const char *var_name, const char *value);
+void Cvar_Set(const char *varName, const char *value);
 // will create the variable with no flags if it doesn't exist
 
 cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force);
@@ -799,7 +799,7 @@ qboolean FS_ConditionalRestart(int checksumFeed);
 void FS_Restart(int checksumFeed);
 // shutdown and restart the filesystem so changes to fs_gamedir can take effect
 
-char **FS_ListFiles(const char *directory, const char *extension, int *numfiles);
+char **FS_ListFiles(const char *path, const char *extension, int *numfiles);
 // directory should not have either a leading or trailing /
 // if extension is "/", only subdirectories will be returned
 // the returned files will not include any directories or /
@@ -820,14 +820,14 @@ int FS_LoadStack(void);
 int FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize);
 int FS_GetModList(char *listbuf, int bufsize);
 
-fileHandle_t FS_FOpenFileWrite(const char *qpath);
+fileHandle_t FS_FOpenFileWrite(const char *fileName);
 // will properly create any needed paths and deal with seperater character issues
 
 long FS_filelength(fileHandle_t f);
-fileHandle_t FS_SV_FOpenFileWrite(const char *filename);
-long FS_SV_FOpenFileRead(const char *filename, fileHandle_t *fp);
+fileHandle_t FS_SV_FOpenFileWrite(const char *fileName);
+long FS_SV_FOpenFileRead(const char *fileName, fileHandle_t *fp);
 void FS_SV_Rename(const char *from, const char *to);
-long FS_FOpenFileRead(const char *qpath, fileHandle_t *file, qboolean uniqueFILE);
+long FS_FOpenFileRead(const char *fileName, fileHandle_t *file, qboolean uniqueFILE);
 
 /*
 if uniqueFILE is true, then a new FILE will be fopened even if the file
@@ -849,7 +849,7 @@ int FS_FileIsInPAK(const char *filename, int *pChecksum);
 
 int FS_Delete(const char *filename);
 
-int FS_Write(const void *buffer, int len, fileHandle_t f);
+int FS_Write(const void *buffer, int len, fileHandle_t h);
 
 int FS_OSStatFile(const char *ospath);
 
@@ -884,7 +884,7 @@ int FS_FTell(fileHandle_t f);
 
 void FS_Flush(fileHandle_t f);
 
-void QDECL FS_Printf(fileHandle_t f, const char *fmt, ...);
+void QDECL FS_Printf(fileHandle_t h, const char *fmt, ...);
 // like fprintf
 
 int FS_FOpenFileByMode(const char *qpath, fileHandle_t *f, fsMode_t mode);
@@ -981,8 +981,8 @@ typedef struct
 
 void Console_RemoveHighlighted(field_t *field, int *completionOffset);
 void Console_AutoComplete(field_t *field, int *completionOffset);
-void Field_Clear(field_t *edit);
-void Field_AutoComplete(field_t *edit);
+void Field_Clear(field_t *field);
+void Field_AutoComplete(field_t *field);
 void Field_CompleteKeyname(void);
 void Field_CompleteFilenameMultiple(const char *dir, int numext, const char **ext, qboolean allowNonPureFilesOnDisk);
 void Field_CompleteFilename(const char *dir, const char *ext, qboolean stripExt, qboolean allowNonPureFilesOnDisk);
@@ -1025,7 +1025,7 @@ void Com_SetRecommended(void);
 
 // profile functions
 void Com_TrackProfile(const char *profile_path);
-qboolean Com_CheckPidFile(void);
+qboolean Com_CheckProfile(void);
 
 extern cvar_t *com_crashed;
 extern cvar_t *com_ignorecrash;
@@ -1180,7 +1180,7 @@ void CL_JoystickEvent(int axis, int value, int time);
 
 void CL_PacketEvent(netadr_t from, msg_t *msg);
 
-void CL_ConsolePrint(char *text);
+void CL_ConsolePrint(char *txt);
 
 void CL_MapLoading(void);
 // do a screen update before starting to load a map
@@ -1500,8 +1500,8 @@ typedef struct
 	huff_t decompressor;
 } huffman_t;
 
-void Huff_Compress(msg_t *buf, int offset);
-void Huff_Decompress(msg_t *buf, int offset);
+void Huff_Compress(msg_t *mbuf, int offset);
+void Huff_Decompress(msg_t *mbuf, int offset);
 void Huff_Init(huffman_t *huff);
 void Huff_addRef(huff_t *huff, byte ch);
 int Huff_Receive(node_t *node, int *ch, byte *fin);
@@ -1509,7 +1509,7 @@ void Huff_transmit(huff_t *huff, int ch, byte *fout);
 void Huff_offsetReceive(node_t *node, int *ch, byte *fin, int *offset);
 void Huff_offsetTransmit(huff_t *huff, int ch, byte *fout, int *offset);
 void Huff_putBit(int bit, byte *fout, int *offset);
-int Huff_getBit(byte *fout, int *offset);
+int Huff_getBit(byte *fin, int *offset);
 
 extern huffman_t clientHuffTables;
 

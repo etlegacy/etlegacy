@@ -3190,7 +3190,7 @@ void CG_GetBleedOrigin(vec3_t head_origin, vec3_t body_origin, int fleshEntityNu
  * @param[in,out] or
  * @return
  */
-qboolean CG_GetTag(int clientNum, const char *tagname, orientation_t *or)
+qboolean CG_GetTag(int clientNum, const char *tagname, orientation_t *orientation)
 {
 	clientInfo_t *ci = &cgs.clientinfo[clientNum];
 	centity_t *cent;
@@ -3214,7 +3214,7 @@ qboolean CG_GetTag(int clientNum, const char *tagname, orientation_t *or)
 
 	refent = &cent->pe.bodyRefEnt;
 
-	if (trap_R_LerpTag(or, refent, tagname, 0) < 0)
+	if (trap_R_LerpTag(orientation, refent, tagname, 0) < 0)
 	{
 		return qfalse;
 	}
@@ -3223,14 +3223,14 @@ qboolean CG_GetTag(int clientNum, const char *tagname, orientation_t *or)
 
 	for (i = 0 ; i < 3 ; i++)
 	{
-		VectorMA(org, or->origin[i], refent->axis[i], org);
+		VectorMA(org, orientation->origin[i], refent->axis[i], org);
 	}
 
-	VectorCopy(org, or->origin);
+	VectorCopy(org, orientation->origin);
 
 	// rotate with entity
-	MatrixMultiply(refent->axis, or->axis, tempAxis);
-	memcpy(or->axis, tempAxis, sizeof(vec3_t) * 3);
+	MatrixMultiply(refent->axis, orientation->axis, tempAxis);
+	memcpy(orientation->axis, tempAxis, sizeof(vec3_t) * 3);
 
 	return qtrue;
 }
@@ -3239,10 +3239,10 @@ qboolean CG_GetTag(int clientNum, const char *tagname, orientation_t *or)
  * @brief CG_GetWeaponTag
  * @param[in] clientNum
  * @param[in] tagname
- * @param[in,out] or
+ * @param[in,out] orientation
  * @return
  */
-qboolean CG_GetWeaponTag(int clientNum, const char *tagname, orientation_t *or)
+qboolean CG_GetWeaponTag(int clientNum, const char *tagname, orientation_t *orientation)
 {
 	clientInfo_t *ci = &cgs.clientinfo[clientNum];
 	centity_t *cent;
@@ -3271,7 +3271,7 @@ qboolean CG_GetWeaponTag(int clientNum, const char *tagname, orientation_t *or)
 
 	refent = &cent->pe.gunRefEnt;
 
-	if (trap_R_LerpTag(or, refent, tagname, 0) < 0)
+	if (trap_R_LerpTag(orientation, refent, tagname, 0) < 0)
 	{
 		return qfalse;
 	}
@@ -3280,14 +3280,14 @@ qboolean CG_GetWeaponTag(int clientNum, const char *tagname, orientation_t *or)
 
 	for (i = 0 ; i < 3 ; i++)
 	{
-		VectorMA(org, or->origin[i], refent->axis[i], org);
+		VectorMA(org, orientation->origin[i], refent->axis[i], org);
 	}
 
-	VectorCopy(org, or->origin);
+	VectorCopy(org, orientation->origin);
 
 	// rotate with entity
-	MatrixMultiply(refent->axis, or->axis, tempAxis);
-	memcpy(or->axis, tempAxis, sizeof(vec3_t) * 3);
+	MatrixMultiply(refent->axis, orientation->axis, tempAxis);
+	memcpy(orientation->axis, tempAxis, sizeof(vec3_t) * 3);
 
 	return qtrue;
 }

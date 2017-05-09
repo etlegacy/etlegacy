@@ -159,44 +159,44 @@ void GL_BindMultitexture(image_t *image0, GLuint env0, image_t *image1, GLuint e
  */
 void GL_Cull(int cullType)
 {
-    if (glState.faceCulling == cullType)
-    {
-        return;
-    }
+	if (glState.faceCulling == cullType)
+	{
+		return;
+	}
 
-    glState.faceCulling = cullType;
+	glState.faceCulling = cullType;
 
-    if (cullType == CT_TWO_SIDED)
-    {
-        qglDisable(GL_CULL_FACE);
-    }
-    else
-    {
-        qglEnable(GL_CULL_FACE);
+	if (cullType == CT_TWO_SIDED)
+	{
+		qglDisable(GL_CULL_FACE);
+	}
+	else
+	{
+		qglEnable(GL_CULL_FACE);
 
-        if (cullType == CT_BACK_SIDED)
-        {
-            if (backEnd.viewParms.isMirror)
-            {
-                qglCullFace(GL_FRONT);
-            }
-            else
-            {
-                qglCullFace(GL_BACK);
-            }
-        }
-        else
-        {
-            if (backEnd.viewParms.isMirror)
-            {
-                qglCullFace(GL_BACK);
-            }
-            else
-            {
-                qglCullFace(GL_FRONT);
-            }
-        }
-    }
+		if (cullType == CT_BACK_SIDED)
+		{
+			if (backEnd.viewParms.isMirror)
+			{
+				qglCullFace(GL_FRONT);
+			}
+			else
+			{
+				qglCullFace(GL_BACK);
+			}
+		}
+		else
+		{
+			if (backEnd.viewParms.isMirror)
+			{
+				qglCullFace(GL_BACK);
+			}
+			else
+			{
+				qglCullFace(GL_FRONT);
+			}
+		}
+	}
 }
 
 /**
@@ -1018,9 +1018,9 @@ const void *RB_StretchPic(const void *data)
 	tess.indexes[numIndexes + 5] = numVerts + 1;
 
 	*( int * ) tess.vertexColors[numVerts].v                 =
-		*( int * ) tess.vertexColors[numVerts + 1].v         =
-			*( int * ) tess.vertexColors[numVerts + 2].v     =
-				*( int * ) tess.vertexColors[numVerts + 3].v = *( int * ) backEnd.color2D;
+	    *( int * ) tess.vertexColors[numVerts + 1].v         =
+	        *( int * ) tess.vertexColors[numVerts + 2].v     =
+	            *( int * ) tess.vertexColors[numVerts + 3].v = *( int * ) backEnd.color2D;
 
 	tess.xyz[numVerts].v[0] = cmd->x;
 	tess.xyz[numVerts].v[1] = cmd->y;
@@ -1153,9 +1153,9 @@ const void *RB_RotatedPic(const void *data)
 	tess.indexes[numIndexes + 5] = numVerts + 1;
 
 	*( int * ) tess.vertexColors[numVerts].v                 =
-		*( int * ) tess.vertexColors[numVerts + 1].v         =
-			*( int * ) tess.vertexColors[numVerts + 2].v     =
-				*( int * ) tess.vertexColors[numVerts + 3].v = *( int * ) backEnd.color2D;
+	    *( int * ) tess.vertexColors[numVerts + 1].v         =
+	        *( int * ) tess.vertexColors[numVerts + 2].v     =
+	            *( int * ) tess.vertexColors[numVerts + 3].v = *( int * ) backEnd.color2D;
 
 	angle                   = cmd->angle * pi2;
 	tess.xyz[numVerts].v[0] = cmd->x + (cos(angle) * cmd->w);
@@ -1234,10 +1234,10 @@ const void *RB_StretchPicGradient(const void *data)
 	tess.indexes[numIndexes + 5] = numVerts + 1;
 
 	*( int * ) tess.vertexColors[numVerts].v         =
-		*( int * ) tess.vertexColors[numVerts + 1].v = *( int * ) backEnd.color2D;
+	    *( int * ) tess.vertexColors[numVerts + 1].v = *( int * ) backEnd.color2D;
 
 	*( int * ) tess.vertexColors[numVerts + 2].v     =
-		*( int * ) tess.vertexColors[numVerts + 3].v = *( int * ) cmd->gradientColor;
+	    *( int * ) tess.vertexColors[numVerts + 3].v = *( int * ) cmd->gradientColor;
 
 	tess.xyz[numVerts].v[0] = cmd->x;
 	tess.xyz[numVerts].v[1] = cmd->y;

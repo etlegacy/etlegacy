@@ -714,9 +714,9 @@ static void Cmd_TokenizeString2(const char *text_in, qboolean ignoreQuotes)
  * @brief Cmd_TokenizeString
  * @param[in] text_in
  */
-void Cmd_TokenizeString(const char *text_in)
+void Cmd_TokenizeString(const char *text)
 {
-	Cmd_TokenizeString2(text_in, qfalse);
+	Cmd_TokenizeString2(text, qfalse);
 }
 
 /**
@@ -1164,7 +1164,7 @@ void Cmd_CleanHomepath_f(void)
 
 	for (i++; i < Cmd_Argc(); i++)
 	{
-		char **pFiles = NULL;
+		char **pFiles;
 
 		pFiles = Sys_ListFiles(path, NULL, Cmd_Argv(i), &patternFiles, qtrue);
 

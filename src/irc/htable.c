@@ -452,7 +452,7 @@ void *HT_PutItem(
 		}
 		else
 		{
-			*(void **) data = item;
+			*(void **) data = item; // FIXME: never used
 		}
 	}
 

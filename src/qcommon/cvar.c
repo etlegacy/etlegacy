@@ -406,21 +406,21 @@ static const char *Cvar_Validate(cvar_t *cv, const char *value, qboolean warn)
  * @param[in] flags
  * @return
  */
-cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags)
+cvar_t *Cvar_Get(const char *varName, const char *value, int flags)
 {
 	cvar_t *var;
 	long   hash;
 	int    index;
 
-	if (!var_name || !var_value)
+	if (!varName || !value)
 	{
 		Com_Error(ERR_FATAL, "Cvar_Get: NULL parameter");
 	}
 
-	if (!Cvar_ValidateString(var_name))
+	if (!Cvar_ValidateString(varName))
 	{
-		Com_Printf("invalid cvar name string: %s\n", var_name);
-		var_name = "BADNAME";
+		Com_Printf("invalid cvar name string: %s\n", varName);
+		varName = "BADNAME";
 	}
 
 #if 0       // FIXME: values with backslash happen
@@ -431,10 +431,10 @@ cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags)
 	}
 #endif
 
-	var = Cvar_FindVar(var_name);
+	var = Cvar_FindVar(varName);
 	if (var)
 	{
-		var_value = Cvar_Validate(var, var_value, qfalse);
+		value = Cvar_Validate(var, value, qfalse);
 
 		// if the C code is now specifying a variable that the user already
 		// set a value for, take the new value as the reset value
@@ -442,7 +442,7 @@ cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags)
 		{
 			var->flags &= ~CVAR_USER_CREATED;
 			Z_Free(var->resetString);
-			var->resetString = CopyString(var_value);
+			var->resetString = CopyString(value);
 
 			if (flags & CVAR_ROM)
 			{
@@ -454,7 +454,7 @@ cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags)
 					Z_Free(var->latchedString);
 				}
 
-				var->latchedString = CopyString(var_value);
+				var->latchedString = CopyString(value);
 			}
 		}
 
@@ -497,12 +497,12 @@ cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags)
 		{
 			// we don't have a reset string yet
 			Z_Free(var->resetString);
-			var->resetString = CopyString(var_value);
+			var->resetString = CopyString(value);
 		}
-		else if (var_value[0] && strcmp(var->resetString, var_value))
+		else if (value[0] && strcmp(var->resetString, value))
 		{
 			Com_DPrintf("Warning: cvar \"%s\" given initial values: \"%s\" and \"%s\"\n",
-			            var_name, var->resetString, var_value);
+			            varName, var->resetString, value);
 		}
 		// if we have a latched string, take that value now
 		if (var->latchedString)
@@ -511,7 +511,7 @@ cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags)
 
 			s                  = var->latchedString;
 			var->latchedString = NULL;  // otherwise cvar_set2 would free it
-			Cvar_Set2(var_name, s, qtrue);
+			Cvar_Set2(varName, s, qtrue);
 			Z_Free(s);
 		}
 
@@ -564,13 +564,13 @@ cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags)
 		cvar_numIndexes = index + 1;
 	}
 
-	var->name              = CopyString(var_name);
-	var->string            = CopyString(var_value);
+	var->name              = CopyString(varName);
+	var->string            = CopyString(value);
 	var->modified          = qtrue;
 	var->modificationCount = 1;
 	var->value             = (float)(atof(var->string));
 	var->integer           = atoi(var->string);
-	var->resetString       = CopyString(var_value);
+	var->resetString       = CopyString(value);
 	var->validate          = qfalse;
 	var->description       = NULL;
 
@@ -588,7 +588,7 @@ cvar_t *Cvar_Get(const char *var_name, const char *var_value, int flags)
 	// note what types of cvars have been modified (userinfo, archive, serverinfo, systeminfo)
 	cvar_modifiedFlags |= var->flags;
 
-	hash           = generateHashValue(var_name);
+	hash           = generateHashValue(varName);
 	var->hashIndex = hash;
 
 	var->hashNext = hashTable[hash];
@@ -777,9 +777,9 @@ cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force)
  * @param[in] var_name
  * @param[in] value
  */
-void Cvar_Set(const char *var_name, const char *value)
+void Cvar_Set(const char *varName, const char *value)
 {
-	Cvar_Set2(var_name, value, qtrue);
+	Cvar_Set2(varName, value, qtrue);
 }
 
 /**

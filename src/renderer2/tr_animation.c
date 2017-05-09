@@ -844,20 +844,20 @@ qhandle_t RE_RegisterAnimation(const char *name)
 
 /**
  * @brief R_GetAnimationByHandle
- * @param[in] index
+ * @param[in] hAnim
  * @return
  */
-skelAnimation_t *R_GetAnimationByHandle(qhandle_t index)
+skelAnimation_t *R_GetAnimationByHandle(qhandle_t hAnim)
 {
 	skelAnimation_t *anim;
 
 	// out of range gets the default animation
-	if (index < 1 || index >= tr.numAnimations)
+	if (hAnim < 1 || hAnim >= tr.numAnimations)
 	{
 		return tr.animations[0];
 	}
 
-	anim = tr.animations[index];
+	anim = tr.animations[hAnim];
 
 	return anim;
 }
@@ -1389,9 +1389,9 @@ int RE_BuildSkeleton(refSkeleton_t *skel, qhandle_t hAnim, int startFrame, int e
 		for (i = 0; i < 3; i++)
 		{
 			skel->bounds[0][i] =
-				oldFrame->bounds[0][i] < newFrame->bounds[0][i] ? oldFrame->bounds[0][i] : newFrame->bounds[0][i];
+			    oldFrame->bounds[0][i] < newFrame->bounds[0][i] ? oldFrame->bounds[0][i] : newFrame->bounds[0][i];
 			skel->bounds[1][i] =
-				oldFrame->bounds[1][i] > newFrame->bounds[1][i] ? oldFrame->bounds[1][i] : newFrame->bounds[1][i];
+			    oldFrame->bounds[1][i] > newFrame->bounds[1][i] ? oldFrame->bounds[1][i] : newFrame->bounds[1][i];
 		}
 
 		for (i = 0, channel = anim->channels; i < anim->numChannels; i++, channel++)

@@ -211,93 +211,93 @@ int ParseHex(const char *text)
  */
 void VM_LoadSymbols(vm_t *vm)
 {
-    union
-    {
-        char *c;
-        void *v;
-    } mapfile;
-    char       *text_p, *token;
-    char       name[MAX_QPATH];
-    char       symbols[MAX_QPATH];
-    vmSymbol_t **prev, *sym;
-    int        count;
-    int        value;
-    size_t     chars;
-    int        segment;
-    int        numInstructions;
+	union
+	{
+		char *c;
+		void *v;
+	} mapfile;
+	char       *text_p, *token;
+	char       name[MAX_QPATH];
+	char       symbols[MAX_QPATH];
+	vmSymbol_t **prev, *sym;
+	int        count;
+	int        value;
+	size_t     chars;
+	int        segment;
+	int        numInstructions;
 
-    // don't load symbols if not developer
-    if (!com_developer->integer)
-    {
-        return;
-    }
+	// don't load symbols if not developer
+	if (!com_developer->integer)
+	{
+		return;
+	}
 
-    COM_StripExtension(vm->name, name, sizeof(name));
-    Com_sprintf(symbols, sizeof(symbols), "vm/%s.map", name);
-    FS_ReadFile(symbols, &mapfile.v);
-    if (!mapfile.c)
-    {
-        Com_Printf("Couldn't load symbol file: %s\n", symbols);
-        return;
-    }
+	COM_StripExtension(vm->name, name, sizeof(name));
+	Com_sprintf(symbols, sizeof(symbols), "vm/%s.map", name);
+	FS_ReadFile(symbols, &mapfile.v);
+	if (!mapfile.c)
+	{
+		Com_Printf("Couldn't load symbol file: %s\n", symbols);
+		return;
+	}
 
-    numInstructions = vm->instructionPointersLength >> 2;
+	numInstructions = vm->instructionPointersLength >> 2;
 
-    // parse the symbols
-    text_p = mapfile.c;
-    prev   = &vm->symbols;
-    count  = 0;
+	// parse the symbols
+	text_p = mapfile.c;
+	prev   = &vm->symbols;
+	count  = 0;
 
-    while (1)
-    {
-        token = COM_Parse(&text_p);
-        if (!token[0])
-        {
-            break;
-        }
-        segment = ParseHex(token);
-        if (segment)
-        {
-            COM_Parse(&text_p);
-            COM_Parse(&text_p);
-            continue;       // only load code segment values
-        }
+	while (1)
+	{
+		token = COM_Parse(&text_p);
+		if (!token[0])
+		{
+			break;
+		}
+		segment = ParseHex(token);
+		if (segment)
+		{
+			COM_Parse(&text_p);
+			COM_Parse(&text_p);
+			continue;       // only load code segment values
+		}
 
-        token = COM_Parse(&text_p);
-        if (!token[0])
-        {
-            Com_Printf("WARNING: incomplete line at end of file\n");
-            break;
-        }
-        value = ParseHex(token);
+		token = COM_Parse(&text_p);
+		if (!token[0])
+		{
+			Com_Printf("WARNING: incomplete line at end of file\n");
+			break;
+		}
+		value = ParseHex(token);
 
-        token = COM_Parse(&text_p);
-        if (!token[0])
-        {
-            Com_Printf("WARNING: incomplete line at end of file\n");
-            break;
-        }
-        chars     = strlen(token);
-        sym       = Hunk_Alloc(sizeof(*sym) + chars, h_high);
-        *prev     = sym;
-        prev      = &sym->next;
-        sym->next = NULL;
+		token = COM_Parse(&text_p);
+		if (!token[0])
+		{
+			Com_Printf("WARNING: incomplete line at end of file\n");
+			break;
+		}
+		chars     = strlen(token);
+		sym       = Hunk_Alloc(sizeof(*sym) + chars, h_high);
+		*prev     = sym;
+		prev      = &sym->next;
+		sym->next = NULL;
 
-        // convert value from an instruction number to a code offset
-        if (value >= 0 && value < numInstructions)
-        {
-            value = vm->instructionPointers[value];
-        }
+		// convert value from an instruction number to a code offset
+		if (value >= 0 && value < numInstructions)
+		{
+			value = vm->instructionPointers[value];
+		}
 
-        sym->symValue = value;
-        Q_strncpyz(sym->symName, token, chars + 1);
+		sym->symValue = value;
+		Q_strncpyz(sym->symName, token, chars + 1);
 
-        count++;
-    }
+		count++;
+	}
 
-    vm->numSymbols = count;
-    Com_Printf("%i symbols parsed from %s\n", count, symbols);
-    FS_FreeFile(mapfile.v);
+	vm->numSymbols = count;
+	Com_Printf("%i symbols parsed from %s\n", count, symbols);
+	FS_FreeFile(mapfile.v);
 }
 
 /**
@@ -399,6 +399,7 @@ vm_t *VM_Restart(vm_t *vm)
 	}
 
 	// byte swap the header
+	// FIXME: Division of result of sizeof() on pointer type. This seems suspect.
 	for (i = 0; i < sizeof(*header) / 4; i++)
 	{
 		((int *)header)[i] = LittleLong(((int *)header)[i]);
@@ -691,9 +692,6 @@ void *VM_ExplicitArgPtr(vm_t *vm, intptr_t intValue)
 	}
 }
 
-/*
-
- */
 /**
  * @brief VM_CallFunc
  * @details Upon a system call, the stack will look like:
@@ -716,7 +714,7 @@ void *VM_ExplicitArgPtr(vm_t *vm, intptr_t intValue)
  * @param[in] callnum
  * @return
  */
-intptr_t QDECL VM_CallFunc(vm_t *vm, int callnum, ...)
+intptr_t QDECL VM_CallFunc(vm_t *vm, int callNum, ...)
 {
 	vm_t     *oldVM;
 	intptr_t r;
@@ -732,7 +730,7 @@ intptr_t QDECL VM_CallFunc(vm_t *vm, int callnum, ...)
 
 	if (vm_debugLevel)
 	{
-		Com_Printf("VM_Call( %i )\n", callnum);
+		Com_Printf("VM_Call( %i )\n", callNum);
 	}
 
 	// if we have a dll loaded, call it directly
@@ -743,7 +741,7 @@ intptr_t QDECL VM_CallFunc(vm_t *vm, int callnum, ...)
 		va_list  ap;
 		size_t   i;
 
-		va_start(ap, callnum);
+		va_start(ap, callNum);
 		for (i = 0; i < ARRAY_LEN(args); i++)
 		{
 			// We add the end of args point since windows at least just returns random values if there are no args
@@ -757,7 +755,7 @@ intptr_t QDECL VM_CallFunc(vm_t *vm, int callnum, ...)
 		}
 		va_end(ap);
 
-		r = vm->entryPoint(callnum, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7],
+		r = vm->entryPoint(callNum, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7],
 		                   args[8], args[9], args[10], args[11], args[12], args[13], args[14], args[15]);
 	}
 #if 0

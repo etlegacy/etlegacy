@@ -3016,8 +3016,8 @@ image_t *R_CreateCubeRenderImage(const char *name, int color, int width, int hei
  */
 image_t *R_CreateRenderImageSize(const char *name, int width, int height, int bits, filterType_t filterType, wrapType_t wrapType)
 {
-	byte    *data = NULL;
-	image_t *ret  = NULL;
+	byte    *data;
+	image_t *ret;
 
 	data = (byte *)ri.Hunk_AllocateTempMemory(width * height * 4);
 	if (!data)

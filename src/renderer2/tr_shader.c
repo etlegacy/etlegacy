@@ -1617,9 +1617,9 @@ static qboolean LoadMap(shaderStage_t *stage, char *buffer)
 static qboolean ParseStage(shaderStage_t *stage, char **text)
 {
 	char *token;
-	int  colorMaskBits = 0;
-	int  depthMaskBits = GLS_DEPTHMASK_TRUE, blendSrcBits = 0, blendDstBits = 0, atestBits = 0, depthFuncBits =
-		0, polyModeBits            = 0;
+	int  colorMaskBits             = 0;
+	int  depthMaskBits             = GLS_DEPTHMASK_TRUE, blendSrcBits = 0, blendDstBits = 0, atestBits = 0, depthFuncBits =
+	    0, polyModeBits            = 0;
 	qboolean     depthMaskExplicit = qfalse;
 	int          imageBits         = 0;
 	filterType_t filterType;
@@ -6217,13 +6217,14 @@ void R_ShaderExp_f(void)
 		Q_strcat(buffer, sizeof(buffer), ri.Cmd_Argv(i));
 		strcat(buffer, " ");
 	}
-	len             = strlen(buffer);
-	
-	if (len == 0) {
+	len = strlen(buffer);
+
+	if (len == 0)
+	{
 		Ren_Print("Please enter an expression to evaluate\n");
 		return;
-	}	
-	
+	}
+
 	buffer[len - 1] = 0;        // replace last " " with tailing zero
 
 	ParseExpression(&buffer_p, &exp);

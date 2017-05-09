@@ -62,11 +62,9 @@ autoupdate_t autoupdate;
  */
 void Com_CheckAutoUpdate(void)
 {
-	char info[MAX_INFO_STRING];
+#ifdef FEATURE_AUTOUPDATE
 
-#ifndef FEATURE_AUTOUPDATE
-	return;
-#endif
+	char info[MAX_INFO_STRING];
 
 	// Resolve update server
 	Com_Printf("Updater: resolving %s... ", UPDATE_SERVER_NAME);
@@ -89,7 +87,7 @@ void Com_CheckAutoUpdate(void)
 
 #ifndef DEDICATED
 	Info_SetValueForKey(info, "lang", Cvar_VariableString("cl_lang"));
-#endif
+#endif  // DEDICATED
 
 	Info_SetValueForKey(info, va("etl_bin_%s.pk3", ETLEGACY_VERSION_SHORT),
 	                    Com_MD5File(va("legacy/etl_bin_%s.pk3", ETLEGACY_VERSION_SHORT), 0, NULL, 0));
@@ -98,13 +96,15 @@ void Com_CheckAutoUpdate(void)
 
 	NET_OutOfBandPrint(
 #ifdef DEDICATED
-		NS_SERVER
+	    NS_SERVER
 #else
-		NS_CLIENT
-#endif
-		, autoupdate.autoupdateServer, "getUpdateInfo \"%s\"", info);
+	    NS_CLIENT
+#endif  // DEDICATED
+	    , autoupdate.autoupdateServer, "getUpdateInfo \"%s\"", info);
 
 	autoupdate.updateChecked = qtrue;
+
+#endif  // FEATURE_AUTOUPDATE
 }
 
 /**

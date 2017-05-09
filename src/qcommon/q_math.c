@@ -265,22 +265,22 @@ signed short ClampShort(int i)
 
 /**
  * @brief ClampByte
- * @param[in] value
+ * @param[in] i
  * @return
  */
-byte ClampByte(int value)
+byte ClampByte(int i)
 {
-	if (value < 0)
+	if (i < 0)
 	{
-		value = 0;
+		i = 0;
 	}
 
-	if (value > 255)
+	if (i > 255)
 	{
-		value = 255;
+		i = 255;
 	}
 
-	return (byte)value;
+	return (byte)i;
 }
 
 /**
@@ -775,17 +775,17 @@ void vec3_rotate(const vec3_t in, vec3_t matrix[3], vec3_t out)
 
 /**
  * @brief Q_rsqrt
- * @param[in] number
+ * @param[in] f
  * @return
  */
-float Q_rsqrt(float number)
+float Q_rsqrt(float f)
 {
 	floatint_t  t;
 	float       x2, y;
 	const float threehalfs = 1.5F;
 
-	x2  = number * 0.5F;
-	t.f = number;
+	x2  = f * 0.5F;
+	t.f = f;
 	t.i = 0x5f3759df - (t.i >> 1);                  // what the fuck?
 	y   = t.f;
 	y   = y * (threehalfs - (x2 * y * y));      // 1st iteration
@@ -3047,124 +3047,124 @@ void MatrixToVectorsFRU(const mat4_t m, vec3_t forward, vec3_t right, vec3_t up)
  * @param[out] out
  * @return
  */
-qboolean mat4_inverse(const mat4_t m, mat4_t out)
+qboolean mat4_inverse(const mat4_t in, mat4_t out)
 {
 	vec_t inv[16], det;
 	int   i;
 
-	inv[0] = m[5] * m[10] * m[15] -
-	         m[5] * m[11] * m[14] -
-	         m[9] * m[6] * m[15] +
-	         m[9] * m[7] * m[14] +
-	         m[13] * m[6] * m[11] -
-	         m[13] * m[7] * m[10];
+	inv[0] = in[5] * in[10] * in[15] -
+	         in[5] * in[11] * in[14] -
+	         in[9] * in[6] * in[15] +
+	         in[9] * in[7] * in[14] +
+	         in[13] * in[6] * in[11] -
+	         in[13] * in[7] * in[10];
 
-	inv[4] = -m[4] * m[10] * m[15] +
-	         m[4] * m[11] * m[14] +
-	         m[8] * m[6] * m[15] -
-	         m[8] * m[7] * m[14] -
-	         m[12] * m[6] * m[11] +
-	         m[12] * m[7] * m[10];
+	inv[4] = -in[4] * in[10] * in[15] +
+	         in[4] * in[11] * in[14] +
+	         in[8] * in[6] * in[15] -
+	         in[8] * in[7] * in[14] -
+	         in[12] * in[6] * in[11] +
+	         in[12] * in[7] * in[10];
 
-	inv[8] = m[4] * m[9] * m[15] -
-	         m[4] * m[11] * m[13] -
-	         m[8] * m[5] * m[15] +
-	         m[8] * m[7] * m[13] +
-	         m[12] * m[5] * m[11] -
-	         m[12] * m[7] * m[9];
+	inv[8] = in[4] * in[9] * in[15] -
+	         in[4] * in[11] * in[13] -
+	         in[8] * in[5] * in[15] +
+	         in[8] * in[7] * in[13] +
+	         in[12] * in[5] * in[11] -
+	         in[12] * in[7] * in[9];
 
-	inv[12] = -m[4] * m[9] * m[14] +
-	          m[4] * m[10] * m[13] +
-	          m[8] * m[5] * m[14] -
-	          m[8] * m[6] * m[13] -
-	          m[12] * m[5] * m[10] +
-	          m[12] * m[6] * m[9];
+	inv[12] = -in[4] * in[9] * in[14] +
+	          in[4] * in[10] * in[13] +
+	          in[8] * in[5] * in[14] -
+	          in[8] * in[6] * in[13] -
+	          in[12] * in[5] * in[10] +
+	          in[12] * in[6] * in[9];
 
-	inv[1] = -m[1] * m[10] * m[15] +
-	         m[1] * m[11] * m[14] +
-	         m[9] * m[2] * m[15] -
-	         m[9] * m[3] * m[14] -
-	         m[13] * m[2] * m[11] +
-	         m[13] * m[3] * m[10];
+	inv[1] = -in[1] * in[10] * in[15] +
+	         in[1] * in[11] * in[14] +
+	         in[9] * in[2] * in[15] -
+	         in[9] * in[3] * in[14] -
+	         in[13] * in[2] * in[11] +
+	         in[13] * in[3] * in[10];
 
-	inv[5] = m[0] * m[10] * m[15] -
-	         m[0] * m[11] * m[14] -
-	         m[8] * m[2] * m[15] +
-	         m[8] * m[3] * m[14] +
-	         m[12] * m[2] * m[11] -
-	         m[12] * m[3] * m[10];
+	inv[5] = in[0] * in[10] * in[15] -
+	         in[0] * in[11] * in[14] -
+	         in[8] * in[2] * in[15] +
+	         in[8] * in[3] * in[14] +
+	         in[12] * in[2] * in[11] -
+	         in[12] * in[3] * in[10];
 
-	inv[9] = -m[0] * m[9] * m[15] +
-	         m[0] * m[11] * m[13] +
-	         m[8] * m[1] * m[15] -
-	         m[8] * m[3] * m[13] -
-	         m[12] * m[1] * m[11] +
-	         m[12] * m[3] * m[9];
+	inv[9] = -in[0] * in[9] * in[15] +
+	         in[0] * in[11] * in[13] +
+	         in[8] * in[1] * in[15] -
+	         in[8] * in[3] * in[13] -
+	         in[12] * in[1] * in[11] +
+	         in[12] * in[3] * in[9];
 
-	inv[13] = m[0] * m[9] * m[14] -
-	          m[0] * m[10] * m[13] -
-	          m[8] * m[1] * m[14] +
-	          m[8] * m[2] * m[13] +
-	          m[12] * m[1] * m[10] -
-	          m[12] * m[2] * m[9];
+	inv[13] = in[0] * in[9] * in[14] -
+	          in[0] * in[10] * in[13] -
+	          in[8] * in[1] * in[14] +
+	          in[8] * in[2] * in[13] +
+	          in[12] * in[1] * in[10] -
+	          in[12] * in[2] * in[9];
 
-	inv[2] = m[1] * m[6] * m[15] -
-	         m[1] * m[7] * m[14] -
-	         m[5] * m[2] * m[15] +
-	         m[5] * m[3] * m[14] +
-	         m[13] * m[2] * m[7] -
-	         m[13] * m[3] * m[6];
+	inv[2] = in[1] * in[6] * in[15] -
+	         in[1] * in[7] * in[14] -
+	         in[5] * in[2] * in[15] +
+	         in[5] * in[3] * in[14] +
+	         in[13] * in[2] * in[7] -
+	         in[13] * in[3] * in[6];
 
-	inv[6] = -m[0] * m[6] * m[15] +
-	         m[0] * m[7] * m[14] +
-	         m[4] * m[2] * m[15] -
-	         m[4] * m[3] * m[14] -
-	         m[12] * m[2] * m[7] +
-	         m[12] * m[3] * m[6];
+	inv[6] = -in[0] * in[6] * in[15] +
+	         in[0] * in[7] * in[14] +
+	         in[4] * in[2] * in[15] -
+	         in[4] * in[3] * in[14] -
+	         in[12] * in[2] * in[7] +
+	         in[12] * in[3] * in[6];
 
-	inv[10] = m[0] * m[5] * m[15] -
-	          m[0] * m[7] * m[13] -
-	          m[4] * m[1] * m[15] +
-	          m[4] * m[3] * m[13] +
-	          m[12] * m[1] * m[7] -
-	          m[12] * m[3] * m[5];
+	inv[10] = in[0] * in[5] * in[15] -
+	          in[0] * in[7] * in[13] -
+	          in[4] * in[1] * in[15] +
+	          in[4] * in[3] * in[13] +
+	          in[12] * in[1] * in[7] -
+	          in[12] * in[3] * in[5];
 
-	inv[14] = -m[0] * m[5] * m[14] +
-	          m[0] * m[6] * m[13] +
-	          m[4] * m[1] * m[14] -
-	          m[4] * m[2] * m[13] -
-	          m[12] * m[1] * m[6] +
-	          m[12] * m[2] * m[5];
+	inv[14] = -in[0] * in[5] * in[14] +
+	          in[0] * in[6] * in[13] +
+	          in[4] * in[1] * in[14] -
+	          in[4] * in[2] * in[13] -
+	          in[12] * in[1] * in[6] +
+	          in[12] * in[2] * in[5];
 
-	inv[3] = -m[1] * m[6] * m[11] +
-	         m[1] * m[7] * m[10] +
-	         m[5] * m[2] * m[11] -
-	         m[5] * m[3] * m[10] -
-	         m[9] * m[2] * m[7] +
-	         m[9] * m[3] * m[6];
+	inv[3] = -in[1] * in[6] * in[11] +
+	         in[1] * in[7] * in[10] +
+	         in[5] * in[2] * in[11] -
+	         in[5] * in[3] * in[10] -
+	         in[9] * in[2] * in[7] +
+	         in[9] * in[3] * in[6];
 
-	inv[7] = m[0] * m[6] * m[11] -
-	         m[0] * m[7] * m[10] -
-	         m[4] * m[2] * m[11] +
-	         m[4] * m[3] * m[10] +
-	         m[8] * m[2] * m[7] -
-	         m[8] * m[3] * m[6];
+	inv[7] = in[0] * in[6] * in[11] -
+	         in[0] * in[7] * in[10] -
+	         in[4] * in[2] * in[11] +
+	         in[4] * in[3] * in[10] +
+	         in[8] * in[2] * in[7] -
+	         in[8] * in[3] * in[6];
 
-	inv[11] = -m[0] * m[5] * m[11] +
-	          m[0] * m[7] * m[9] +
-	          m[4] * m[1] * m[11] -
-	          m[4] * m[3] * m[9] -
-	          m[8] * m[1] * m[7] +
-	          m[8] * m[3] * m[5];
+	inv[11] = -in[0] * in[5] * in[11] +
+	          in[0] * in[7] * in[9] +
+	          in[4] * in[1] * in[11] -
+	          in[4] * in[3] * in[9] -
+	          in[8] * in[1] * in[7] +
+	          in[8] * in[3] * in[5];
 
-	inv[15] = m[0] * m[5] * m[10] -
-	          m[0] * m[6] * m[9] -
-	          m[4] * m[1] * m[10] +
-	          m[4] * m[2] * m[9] +
-	          m[8] * m[1] * m[6] -
-	          m[8] * m[2] * m[5];
+	inv[15] = in[0] * in[5] * in[10] -
+	          in[0] * in[6] * in[9] -
+	          in[4] * in[1] * in[10] +
+	          in[4] * in[2] * in[9] +
+	          in[8] * in[1] * in[6] -
+	          in[8] * in[2] * in[5];
 
-	det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
+	det = in[0] * inv[0] + in[1] * inv[4] + in[2] * inv[8] + in[3] * inv[12];
 
 	if (det == 0.f)
 	{

@@ -49,20 +49,20 @@ model_t *loadmodel;
 
 /**
  * @brief R_GetModelByHandle
- * @param[in] index
+ * @param[in] hModel
  * @return
  */
-model_t *R_GetModelByHandle(qhandle_t index)
+model_t *R_GetModelByHandle(qhandle_t hModel)
 {
 	model_t *mod;
 
 	// out of range gets the defualt model
-	if (index < 1 || index >= tr.numModels)
+	if (hModel < 1 || hModel >= tr.numModels)
 	{
 		return tr.models[0];
 	}
 
-	mod = tr.models[index];
+	mod = tr.models[hModel];
 
 	return mod;
 }
@@ -331,10 +331,10 @@ fail:
  * @brief R_LoadMDX
  * @param[in,out] mod
  * @param[out] buffer
- * @param[in] mod_name
+ * @param[in] name
  * @return
  */
-static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
+static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *name)
 {
 	int           i, j;
 	mdxHeader_t   *pinmodel = (mdxHeader_t *) buffer, *mdx;
@@ -348,7 +348,7 @@ static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
 	version = LittleLong(pinmodel->version);
 	if (version != MDX_VERSION)
 	{
-		Ren_Warning("R_LoadMDX: %s has wrong version (%i should be %i)\n", mod_name, version, MDX_VERSION);
+		Ren_Warning("R_LoadMDX: %s has wrong version (%i should be %i)\n", name, version, MDX_VERSION);
 		return qfalse;
 	}
 
@@ -703,6 +703,7 @@ int RE_LerpTagQ3A(orientation_t *tag, qhandle_t handle, int startFrame, int endF
 
 	start = end = NULL;
 
+	// FIXME: retval is reassigned before used, does it was intended ?
 	retval = R_GetTag(model->mdv[0], startFrame, tagName, 0, &start);
 	retval = R_GetTag(model->mdv[0], endFrame, tagName, 0, &end);
 	if (!start || !end)
@@ -780,6 +781,7 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
 	if (model->type == MOD_MESH)
 	{
 		// old MD3 style
+		// FIXME: retval is reassigned before used, does it was intended ?
 		retval = R_GetTag(model->mdv[0], startFrame, tagName, startIndex, &start);
 		retval = R_GetTag(model->mdv[0], endFrame, tagName, startIndex, &end);
 

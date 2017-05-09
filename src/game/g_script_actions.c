@@ -1269,20 +1269,20 @@ qboolean G_ScriptAction_AddTankAmmo(gentity_t *ent, char *params)
 qboolean G_ScriptAction_DisableMessage(gentity_t *ent, char *params)
 {
 /*
-	char      *pString = params, *token;
-	gentity_t *target  = NULL;
+    char      *pString = params, *token;
+    gentity_t *target  = NULL;
 
-	token = COM_ParseExt(&pString, qfalse);
-	if (!token[0])
-	{
-		G_Error("G_ScriptAction_DisableMessage: disablemessage must have an targetname\n");
-	}
+    token = COM_ParseExt(&pString, qfalse);
+    if (!token[0])
+    {
+        G_Error("G_ScriptAction_DisableMessage: disablemessage must have an targetname\n");
+    }
 
-	// find the entity with the given "targetname"
-	while ((target = G_FindByTargetname(target, token)))
-	{
-		target->s.aiState = AISTATE_QUERY;
-	}
+    // find the entity with the given "targetname"
+    while ((target = G_FindByTargetname(target, token)))
+    {
+        target->s.aiState = AISTATE_QUERY;
+    }
 */
 
 	return qtrue;
@@ -3340,11 +3340,11 @@ qboolean G_ScriptAction_SetMainObjective(gentity_t *ent, char *params)
 	gentity_t *target;
 	char      *pString, *token;
 	char      cs[MAX_STRING_CHARS];
-	char*     parm;
+	char      *parm;
 	int       cs_obj;
 
 	pString = params;
-	token = COM_Parse(&pString);
+	token   = COM_Parse(&pString);
 	if (!token[0])
 	{
 		G_Error("G_ScriptAction_SetMainObjective: number parameter required\n");
@@ -3366,7 +3366,7 @@ qboolean G_ScriptAction_SetMainObjective(gentity_t *ent, char *params)
 		return qtrue; // important to set true!
 	}
 
-	parm = va("%i", (int)(target - g_entities));
+	parm  = va("%i", (int)(target - g_entities));
 	token = COM_Parse(&pString);
 	if (!token[0])
 	{
@@ -3376,7 +3376,7 @@ qboolean G_ScriptAction_SetMainObjective(gentity_t *ent, char *params)
 	cs_obj = !atoi(token) ? CS_MAIN_AXIS_OBJECTIVE : CS_MAIN_ALLIES_OBJECTIVE;
 	trap_GetConfigstring(cs_obj, cs, sizeof(cs));
 
-	if (Q_stricmp(cs , parm))
+	if (Q_stricmp(cs, parm))
 	{
 		trap_SetConfigstring(cs_obj, parm);
 	}

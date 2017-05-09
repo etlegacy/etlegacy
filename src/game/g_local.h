@@ -1422,7 +1422,7 @@ gentity_t *G_TempEntityNotLinked(entity_event_t event);
 gentity_t *G_PopupMessage(popupMessageType_t type);
 void G_Sound(gentity_t *ent, int soundIndex);
 void G_AnimScriptSound(int soundIndex, vec3_t org, int client);
-void G_FreeEntity(gentity_t *e);
+void G_FreeEntity(gentity_t *ent);
 int G_EntitiesFree(void);
 void G_ClientSound(gentity_t *ent, int soundIndex);
 
@@ -1509,7 +1509,7 @@ int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allow
 void G_RunFlamechunk(gentity_t *ent);
 
 gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir);
-gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t aimdir, int grenadeWPID);
+gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWPID);
 gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType);
 
 void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damage, vec3_t muzzle, vec3_t forward, vec3_t right, vec3_t up, meansOfDeath_t mod);
@@ -1549,7 +1549,7 @@ qboolean G_FlingClient(gentity_t *vic, int flingType);
 qboolean AccuracyHit(gentity_t *target, gentity_t *attacker);
 void CalcMuzzlePoint(gentity_t *ent, int weapon, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint);
 void SnapVectorTowards(vec3_t v, vec3_t to);
-gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenadeWPID);
+gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType);
 
 void G_FadeItems(gentity_t *ent, int modType);
 gentity_t *G_FindSatchel(gentity_t *ent);
@@ -1572,7 +1572,7 @@ void respawn(gentity_t *ent);
 void BeginIntermission(void);
 void InitBodyQue(void);
 void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean restoreHealth);
-void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t mod);
+void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t meansOfDeath);
 void AddKillScore(gentity_t *ent, int score);
 void CalculateRanks(void);
 qboolean SpotWouldTelefrag(gentity_t *spot);
@@ -1611,14 +1611,14 @@ void Svcmd_ShuffleTeamsSR_f(qboolean restart);
 void FireWeapon(gentity_t *ent);
 void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk);
 
-void MoveClientToIntermission(gentity_t *client);
-void G_SendScore(gentity_t *client);
+void MoveClientToIntermission(gentity_t *ent);
+void G_SendScore(gentity_t *ent);
 
 // g_cmds.c
 void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText);
 void G_SayTo(gentity_t *ent, gentity_t *other, int mode, int color, const char *name, const char *message, qboolean localize);   // removed static declaration so it would link
 void G_HQSay(gentity_t *other, int color, const char *name, const char *message);
-qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
+qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, qboolean fRefCommand);
 void Cmd_Follow_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
 void Cmd_Say_f(gentity_t *ent, int mode, qboolean arg0);
 void Cmd_Team_f(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
@@ -2099,7 +2099,7 @@ int trap_Cvar_VariableIntegerValue(const char *var_name);
 float trap_Cvar_VariableValue(const char *var_name);
 void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
 void trap_Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bufsize);
-void trap_LocateGameData(gentity_t *gEnts, int numGEntities, int sizeofGEntity_t, playerState_t *gameClients, int sizeofGameClient);
+void trap_LocateGameData(gentity_t *gEnts, int numGEntities, int sizeofGEntity_t, playerState_t *gameClients, int sizeofGClient);
 void trap_DropClient(int clientNum, const char *reason, int length);
 void trap_SendServerCommand(int clientNum, const char *text);
 void trap_SetConfigstring(int num, const char *string);
@@ -2119,15 +2119,15 @@ void trap_AdjustAreaPortalState(gentity_t *ent, qboolean open);
 qboolean trap_AreasConnected(int area1, int area2);
 void trap_LinkEntity(gentity_t *ent);
 void trap_UnlinkEntity(gentity_t *ent);
-int trap_EntitiesInBox(const vec3_t mins, const vec3_t maxs, int *entityList, int maxcount);
+int trap_EntitiesInBox(const vec3_t mins, const vec3_t maxs, int *list, int maxCount);
 qboolean trap_EntityContact(const vec3_t mins, const vec3_t maxs, const gentity_t *ent);
 qboolean trap_EntityContactCapsule(const vec3_t mins, const vec3_t maxs, const gentity_t *ent);
 
 int trap_BotAllocateClient(int clientNum);
 #ifdef FEATURE_OMNIBOT
 int trap_BotGetServerCommand(int clientNum, char *message, int size);
-void trap_BotUserCommand(int client, usercmd_t *ucmd);
-void trap_EA_Command(int client, char *command);
+void trap_BotUserCommand(int clientNum, usercmd_t *ucmd);
+void trap_EA_Command(int clientNum, char *command);
 #endif
 
 void trap_GetUsercmd(int clientNum, usercmd_t *cmd);
@@ -2141,8 +2141,6 @@ int trap_DebugPolygonCreate(int color, int numPoints, vec3_t *points);
 void trap_DebugPolygonDelete(int id);
 
 int trap_BotGetServerCommand(int clientNum, char *message, int size);
-
-void trap_BotUserCommand(int client, usercmd_t *ucmd);
 
 void trap_SnapVector(float *v);
 
@@ -2336,8 +2334,8 @@ qboolean G_commandCheck(gentity_t *ent, const char *cmd, qboolean fDoAnytime);
 qboolean G_commandHelp(gentity_t *ent, const char *pszCommand, unsigned int dwCommand);
 qboolean G_cmdDebounce(gentity_t *ent, const char *pszCommand);
 void G_commands_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
-void G_lock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state);
-void G_pause_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
+void G_lock_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fLock);
+void G_pause_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fPause);
 void G_players_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump);
 void G_ready_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fDump);
 void G_say_teamnl_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
@@ -2470,9 +2468,9 @@ void G_shuffleTeamsXP(void);
 void G_shuffleTeamsSR(void);
 void G_swapTeamLocks(void);
 void G_swapTeams(void);
-qboolean G_teamJoinCheck(team_t team_num, gentity_t *ent);
+qboolean G_teamJoinCheck(team_t nTeam, gentity_t *ent);
 void G_teamReset(int team_num, qboolean fClearSpecLock);
-void G_verifyMatchState(team_t team_id);
+void G_verifyMatchState(team_t nTeam);
 void G_updateSpecLock(int nTeam, qboolean fLock);
 
 int OtherTeam(int team);

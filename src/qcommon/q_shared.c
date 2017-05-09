@@ -1436,11 +1436,11 @@ int Q_isforfilename(int c)
  * @param[in] ap
  * @return
  */
-int Q_vsnprintf(char *str, size_t size, const char *format, va_list ap)
+int Q_vsnprintf(char *str, size_t size, const char *format, va_list args)
 {
 	int retval;
 
-	retval = _vsnprintf(str, size, format, ap);
+	retval = _vsnprintf(str, size, format, args);
 
 	if (retval < 0 || retval == size)
 	{
@@ -2461,10 +2461,10 @@ void Info_SetValueForKey_Big(char *s, const char *key, const char *value)
  * @brief Q_StrReplace
  * @param[in,out] haystack
  * @param[in] needle
- * @param[in] newp
+ * @param[in] newVal
  * @return
  */
-char *Q_StrReplace(char *haystack, char *needle, char *newp)
+char *Q_StrReplace(char *haystack, const char *needle, const char *newVal)
 {
 	static char final[MAX_STRING_CHARS] = { "" };
 	char        dest[MAX_STRING_CHARS]  = { "" };
@@ -2482,9 +2482,9 @@ char *Q_StrReplace(char *haystack, char *needle, char *newp)
 		Q_strncpyz(final, haystack, sizeof(final));
 		return final;
 	}
-	if (*newp)
+	if (*newVal)
 	{
-		Q_strncpyz(new, newp, sizeof(new));
+		Q_strncpyz(new, newVal, sizeof(new));
 	}
 
 	dest[0]    = '\0';

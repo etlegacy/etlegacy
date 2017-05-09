@@ -88,23 +88,23 @@ int trap_Milliseconds(void)
 
 /**
  * @brief trap_Cvar_Register
- * @param[in] cvar
- * @param[in] var_name
+ * @param[in] vmCvar
+ * @param[in] varName
  * @param[in] value
  * @param[in] flags
  */
-void trap_Cvar_Register(vmCvar_t *cvar, const char *var_name, const char *value, int flags)
+void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *value, int flags)
 {
-	syscall(UI_CVAR_REGISTER, cvar, var_name, value, flags);
+	syscall(UI_CVAR_REGISTER, vmCvar, varName, value, flags);
 }
 
 /**
  * @brief trap_Cvar_Update
- * @param[in] cvar
+ * @param[in] vmCvar
  */
-void trap_Cvar_Update(vmCvar_t *cvar)
+void trap_Cvar_Update(vmCvar_t *vmCvar)
 {
-	syscall(UI_CVAR_UPDATE, cvar);
+	syscall(UI_CVAR_UPDATE, vmCvar);
 }
 
 /**
@@ -1163,11 +1163,11 @@ void trap_GetAutoUpdate(void)
 
 /**
  * @brief trap_openURL
- * @param[in] s
+ * @param[in] url
  */
-void trap_openURL(const char *s)
+void trap_openURL(const char *url)
 {
-	syscall(UI_OPENURL, s);
+	syscall(UI_OPENURL, url);
 }
 
 /**

@@ -2066,7 +2066,7 @@ void ClientUserinfoChanged(int clientNum)
 	{
 		if (cs_cg_uinfo[0])
 		{
-			sscanf(cs_cg_uinfo, "%i %i %i",
+			sscanf(cs_cg_uinfo, "%u %u %u",
 			       &client->pers.clientFlags,
 			       &client->pers.clientTimeNudge,
 			       &client->pers.clientMaxPackets);
@@ -2234,7 +2234,7 @@ char *IsFakepConnection(int clientNum, char const *ip, char const *rate)
 	char      *theirIP;
 
 	// Default it to DEF_IP_MAX_CLIENTS as the minimum
-	if (!max || max <= 0)
+	if (max <= 0)
 	{
 		max = DEF_IP_MAX_CLIENTS;
 	}
@@ -2334,8 +2334,8 @@ extern const char *country_name[MAX_COUNTRY_NUM];
 char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 {
 	gclient_t  *client;
-	gentity_t  *ent          = &g_entities[clientNum];
-	const char *userinfo_ptr = NULL;
+	gentity_t  *ent = &g_entities[clientNum];
+	const char *userinfo_ptr;
 	char       userinfo[MAX_INFO_STRING];
 	char       cs_key[MAX_STRING_CHARS]      = "";
 	char       cs_value[MAX_STRING_CHARS]    = "";

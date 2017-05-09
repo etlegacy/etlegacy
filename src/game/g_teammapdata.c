@@ -611,19 +611,19 @@ void G_UpdateTeamMapData_Destruct(gentity_t *ent)
 		}
 		else if (ent->parent->target_ent && ent->parent->target_ent->s.eType == ET_EXPLOSIVE)
 		{
-				// do we have any spawn vars to check?
-				teamList = &mapEntityData[1];   // inverted
-				mEnt     = G_FindMapEntityData(teamList, num);
-				if (!mEnt)
-				{
-					mEnt         = G_AllocMapEntityData(teamList);
-					mEnt->entNum = num;
-				}
-				VectorCopy(ent->s.pos.trBase, mEnt->org);
-				mEnt->data      = mEnt->entNum; //ent->s.modelindex2;
-				mEnt->startTime = level.time;
-				mEnt->type      = ME_DESTRUCT; // or ME_DESTRUCT_2?
-				mEnt->yaw       = 0;
+			// do we have any spawn vars to check?
+			teamList = &mapEntityData[1];       // inverted
+			mEnt     = G_FindMapEntityData(teamList, num);
+			if (!mEnt)
+			{
+				mEnt         = G_AllocMapEntityData(teamList);
+				mEnt->entNum = num;
+			}
+			VectorCopy(ent->s.pos.trBase, mEnt->org);
+			mEnt->data      = mEnt->entNum;     //ent->s.modelindex2;
+			mEnt->startTime = level.time;
+			mEnt->type      = ME_DESTRUCT;     // or ME_DESTRUCT_2?
+			mEnt->yaw       = 0;
 		}
 	}
 
@@ -905,8 +905,8 @@ void G_UpdateTeamMapData_CommandmapMarker(gentity_t *ent)
 
 	if (ent->parent->spawnflags & (ALLIED_OBJECTIVE | AXIS_OBJECTIVE))
 	{
-		int                  num       = ent - g_entities;
-		mapEntityData_Team_t *teamList = NULL;
+		int                  num = ent - g_entities;
+		mapEntityData_Team_t *teamList;
 		mapEntityData_t      *mEnt;
 
 		// alies

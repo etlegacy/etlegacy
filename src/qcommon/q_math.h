@@ -197,7 +197,7 @@ extern void qsnapvectorsse(vec3_t vec);
 //#define Q_ftol qftolsse
 #define Q_SnapVector qsnapvectorsse
 
-extern int(*Q_VMftol)(void); // Unused.
+extern int (*Q_VMftol)(void); // Unused.
 #elif id386
 extern long QDECL qftolx87(float f);
 extern long QDECL qftolsse(float f);
@@ -207,8 +207,8 @@ extern void QDECL qsnapvectorx87(vec3_t vec);
 extern void QDECL qsnapvectorsse(vec3_t vec);
 
 //extern long (QDECL *Q_ftol)(float f);
-extern int (QDECL *Q_VMftol)(void);  // Unused.
-extern void (QDECL *Q_SnapVector)(vec3_t vec);
+extern int(QDECL * Q_VMftol)(void);  // Unused.
+extern void(QDECL * Q_SnapVector)(vec3_t vec);
 #else
 // Q_ftol must expand to a function name so the pluggable renderer can take
 // its address
@@ -260,7 +260,7 @@ static ID_INLINE float Q_rsqrt(float number)
 	float x = 0.5f * number;
 	float y;
 #ifdef __GNUC__
-	asm("frsqrte %0,%1" : "=f" (y) : "f" (number));
+	asm ("frsqrte %0,%1" : "=f" (y) : "f" (number));
 #else
 	y = __frsqrte(number);
 #endif
@@ -272,7 +272,7 @@ static ID_INLINE float Q_fabs(float x)
 {
 	float abs_x;
 
-	asm("fabs %0,%1" : "=f" (abs_x) : "f" (x));
+	asm ("fabs %0,%1" : "=f" (abs_x) : "f" (x));
 	return abs_x;
 }
 #else
@@ -291,7 +291,7 @@ signed char ClampChar(int i);
 byte ClampByte(int i);
 void ClampColor(vec4_t color);
 
-								// this isn't a real cheap function to call!
+// this isn't a real cheap function to call!
 int DirToByte(vec3_t dir);
 void ByteToDir(int b, vec3_t dir);
 
@@ -473,7 +473,7 @@ float Q_crandom(int *seed);
 #define crandom()   (2.0f * (random() - 0.5f))
 
 void SetPlaneSignbits(struct cplane_s *out);
-int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *plane);
+int BoxOnPlaneSide(vec3_t emins, vec3_t emaxs, struct cplane_s *p);
 
 qboolean PlaneFromPoints(vec4_t plane, const vec3_t a, const vec3_t b, const vec3_t c);
 void ProjectPointOnPlane(vec3_t dst, const vec3_t p, const vec3_t normal);
@@ -507,13 +507,13 @@ float DistanceFromVectorSquared(vec3_t p, vec3_t lp1, vec3_t lp2);
 
 #if 1
 
-#define DotProduct(x, y) vec3_dot(x,y)
-#define VectorSubtract(a, b, c) vec3_sub(a,b,c)
-#define VectorAdd(a, b, c) vec3_add(a,b,c)
-#define VectorCopy(a, b) vec3_copy(a,b)
-#define VectorScale(v, s, o) vec3_scale(v,s,o)
+#define DotProduct(x, y) vec3_dot(x, y)
+#define VectorSubtract(a, b, c) vec3_sub(a, b, c)
+#define VectorAdd(a, b, c) vec3_add(a, b, c)
+#define VectorCopy(a, b) vec3_copy(a, b)
+#define VectorScale(v, s, o) vec3_scale(v, s, o)
 // Vector multiply & add
-#define VectorMA(v, s, b, o) vec3_ma(v,s,b,o)
+#define VectorMA(v, s, b, o) vec3_ma(v, s, b, o)
 
 #define MatrixMultiply(in1, in2, o) mat3_mult(in1, in2, o)
 
@@ -539,7 +539,7 @@ void _VectorMA(const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc);
 void _MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3]);
 
 #define VectorClear(a) vec3_clear(a)
-#define VectorNegate(a, b) vec3_negate(a,b)
+#define VectorNegate(a, b) vec3_negate(a, b)
 #define VectorSet(v, x, y, z) vec3_set(v, x, y, z)
 
 #define Vector2Set(v, x, y) vec2_set(v, x, y)

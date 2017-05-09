@@ -1302,7 +1302,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 					if ((constructible = G_IsConstructible(ent->client->sess.sessionTeam, ent->client->touchingTOI)))
 					{
 						hintDist = CH_ACTIVATE_DIST;
-						hintType = ps->serverCursorHint    = HINT_CONSTRUCTIBLE;
+						hintType = ps->serverCursorHint = HINT_CONSTRUCTIBLE;
 						hintVal  = ps->serverCursorHintVal = (int)constructible->s.angles2[0];
 					}
 				}
@@ -1393,7 +1393,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 						if ((constructible = G_IsConstructible(ent->client->sess.sessionTeam, ent->client->touchingTOI)))
 						{
 							hintDist = CH_ACTIVATE_DIST;
-							hintType = ps->serverCursorHint    = HINT_CONSTRUCTIBLE;
+							hintType = ps->serverCursorHint = HINT_CONSTRUCTIBLE;
 							hintVal  = ps->serverCursorHintVal = (int)constructible->s.angles2[0];
 						}
 					}
@@ -1445,7 +1445,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 					if ((constructible = G_IsConstructible(ent->client->sess.sessionTeam, ent->client->touchingTOI)))
 					{
 						hintDist = CH_ACTIVATE_DIST;
-						hintType = ps->serverCursorHint    = HINT_CONSTRUCTIBLE;
+						hintType = ps->serverCursorHint = HINT_CONSTRUCTIBLE;
 						hintVal  = ps->serverCursorHintVal = (int)constructible->s.angles2[0];
 					}
 				}
@@ -2836,7 +2836,7 @@ int QDECL SortRanks(const void *a, const void *b)
 		}
 
 		if (!((g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
-		    (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0)))
+		      (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0)))
 		{
 			// current map XPs only
 			totalXP[0] -= ca->sess.startxptotal;
@@ -3076,7 +3076,7 @@ void SendScoreboardMessageToAllClients(void)
 /**
  * @brief When the intermission starts, this will be called for all players.
  * If a new client connects, this will be called after the spawn function.
- * @param ent
+ * @param[in,out] ent Client
  */
 void MoveClientToIntermission(gentity_t *ent)
 {

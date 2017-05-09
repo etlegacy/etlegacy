@@ -72,9 +72,9 @@ typedef enum
 static byte buf[0x400000];
 
 // Save maxclients and democlients and restore them after the demo
-static int savedMaxClients    = -1;
-static int savedFPS           = -1;
-static int savedGametype      = -1;
+static int savedMaxClients = -1;
+static int savedFPS        = -1;
+static int savedGametype   = -1;
 
 static int savedDoWarmup  = -1;
 static int savedAllowVote = -1;
@@ -181,7 +181,7 @@ qboolean SV_CheckServerCommand(const char *cmd)
 qboolean SV_CheckLastCmd(const char *cmd, qboolean onlyStore)
 {
 	static char prevcmddata[MAX_STRING_CHARS];
-	static char *prevcmd        = prevcmddata;
+	static char *prevcmd = prevcmddata;
 	char        cleanedprevcmd[MAX_STRING_CHARS];
 	char        cleanedcmd[MAX_STRING_CHARS];
 
@@ -477,7 +477,7 @@ void SV_DemoWriteConfigString(int cs_index, const char *cs_string)
 
 	MSG_Init(&msg, buf, sizeof(buf));
 	MSG_WriteByte(&msg, demo_configString);
-	Com_sprintf(cindex, sizeof(cindex) ,"%i", cs_index); // convert index to a string since we don't have any other way to store values that are greater than a byte (and max_configstrings is 1024 currently) - FIXME: try to replace by a WriteLong instead of WriteString? Or WriteData (with length! and it uses WriteByte)
+	Com_sprintf(cindex, sizeof(cindex), "%i", cs_index); // convert index to a string since we don't have any other way to store values that are greater than a byte (and max_configstrings is 1024 currently) - FIXME: try to replace by a WriteLong instead of WriteString? Or WriteData (with length! and it uses WriteByte)
 	MSG_WriteString(&msg, (const char *)cindex);
 	MSG_WriteString(&msg, cs_string);
 	SV_DemoWriteMessage(&msg);
@@ -1467,25 +1467,25 @@ static void SV_DemoReadClientConfigString(msg_t *msg)
 				// If the client changed team, we manually issue a team change (workaround by using a clientCommand team)
 
 /* FIXME: find the reason of crash/no need to execute this now
-				char *svdnewteamstr = malloc(10 * sizeof *svdnewteamstr);
+                char *svdnewteamstr = malloc(10 * sizeof *svdnewteamstr);
 
-				// random string, we just want the server to considerate the democlient in a team, whatever the team is. It will be automatically adjusted later with a clientCommand or userinfo string.
-				switch (svdnewteam)
-				{
-				case TEAM_ALLIES:
-					strcpy(svdnewteamstr, "allies");
-					break;
-				case TEAM_AXIS:
-					strcpy(svdnewteamstr, "axis");
-					break;
-				case TEAM_SPECTATOR:
-					strcpy(svdnewteamstr, "spectator");
-					break;
-				case TEAM_FREE:
-				default:
-					strcpy(svdnewteamstr, "free");
-					break;
-				}
+                // random string, we just want the server to considerate the democlient in a team, whatever the team is. It will be automatically adjusted later with a clientCommand or userinfo string.
+                switch (svdnewteam)
+                {
+                case TEAM_ALLIES:
+                    strcpy(svdnewteamstr, "allies");
+                    break;
+                case TEAM_AXIS:
+                    strcpy(svdnewteamstr, "axis");
+                    break;
+                case TEAM_SPECTATOR:
+                    strcpy(svdnewteamstr, "spectator");
+                    break;
+                case TEAM_FREE:
+                default:
+                    strcpy(svdnewteamstr, "free");
+                    break;
+                }
 */
 				// FIXME: This causes a crash
 				//SV_ExecuteClientCommand(&svs.clients[num], va("team %s", svdnewteamstr), qtrue,qfalse); // workaround to force the server's gamecode and clients to update the team for this client - note: in fact, setting any team (except spectator) will make the engine set the client to a random team, but it's only sessionTeam! so the democlients will still be shown in the right team on the scoreboard, but the engine will consider them in a random team (this has no concrete adverse effect to the demo to my knowledge)
@@ -1959,7 +1959,7 @@ static void SV_Demo_Record_f(void)
 
 	if (Cmd_Argc() == 2)
 	{
-		Com_sprintf(sv.demoName, sizeof(sv.demoName),"svdemos/%s.%s%d", Cmd_Argv(1), SVDEMOEXT, PROTOCOL_VERSION);
+		Com_sprintf(sv.demoName, sizeof(sv.demoName), "svdemos/%s.%s%d", Cmd_Argv(1), SVDEMOEXT, PROTOCOL_VERSION);
 	}
 	else
 	{

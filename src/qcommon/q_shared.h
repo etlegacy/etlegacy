@@ -605,11 +605,11 @@ void COM_RestoreParseSession(char **data_p);
 void COM_SetCurrentParseLine(int line);
 int COM_GetCurrentParseLine(void);
 char *COM_Parse(char **data_p);
-char *COM_ParseExt(char **data_p, qboolean allowLineBreak);
+char *COM_ParseExt(char **data_p, qboolean allowLineBreaks);
 
 /// added COM_Parse2 for having a Doom 3 style tokenizer.
 char *COM_Parse2(char **data_p);
-char *COM_ParseExt2(char **data_p, qboolean allowLineBreak);
+char *COM_ParseExt2(char **data_p, qboolean allowLineBreaks);
 
 int COM_Compress(char *data_p);
 void COM_ParseError(const char *format, ...) __attribute__ ((format(printf, 1, 2)));
@@ -735,7 +735,7 @@ int Q_CountChar(const char *string, char tocount);
 char *Q_CleanDirName(char *dirname);
 
 /// replace all occuraces in haystack if needle with new
-char *Q_StrReplace(char *haystack, char *needle, char *newVal);
+char *Q_StrReplace(char *haystack, const char *needle, const char *newVal);
 
 /// generate hashvalue from filename for set hashmap size
 long Q_GenerateHashValue(const char *fname, int size, qboolean fullPath, qboolean ignoreCase);
@@ -761,10 +761,10 @@ void Info_RemoveKey_big(char *s, const char *key);
 void Info_SetValueForKey(char *s, const char *key, const char *value);
 void Info_SetValueForKey_Big(char *s, const char *key, const char *value);
 qboolean Info_Validate(const char *s);
-qboolean Info_NextPair(const char **s, char *key, char *value);
+qboolean Info_NextPair(const char **head, char *key, char *value);
 
 // this is only here so the functions in q_shared.c and bg_*.c can link
-void QDECL Com_Error(int level, const char *error, ...) __attribute__ ((noreturn, format(printf, 2, 3)));
+void QDECL Com_Error(int code, const char *error, ...) __attribute__ ((noreturn, format(printf, 2, 3)));
 void QDECL Com_Printf(const char *msg, ...) __attribute__ ((format(printf, 1, 2)));
 
 /*
@@ -1742,9 +1742,9 @@ typedef struct demoPlayInfo_s
 #if defined(_MSC_VER)
 #define etl_assert(x) if (!(x)) __debugbreak()
 #elif defined(_WIN32)
-#define etl_assert(x) if (!(x)) __asm ("int {$}3":)
+#define etl_assert(x) if (!(x)) __asm("int {$}3" :)
 #else
-#define	etl_assert(cond) assert(cond)
+#define etl_assert(cond) assert(cond)
 #endif
 #else
 #define etl_assert(x) {}

@@ -427,21 +427,21 @@ static int BG_AnimationIndexForString(char *string, animModelInfo_t *animModelIn
  * @note Unused
 animation_t *BG_AnimationForString(char *string, animModelInfo_t *animModelInfo)
 {
-	int         i, hash = BG_StringHashValue(string);
-	animation_t *anim;
+    int         i, hash = BG_StringHashValue(string);
+    animation_t *anim;
 
-	for (i = 0; i < animModelInfo->numAnimations; i++)
-	{
-		anim = animModelInfo->animations[i];
-		if ((hash == anim->nameHash) && !Q_stricmp(string, anim->name))
-		{
-			// found a match
-			return anim;
-		}
-	}
-	// no match found
-	Com_Error(ERR_DROP, "BG_AnimationForString: unknown animation '%s' for animation group '%s'", string, animModelInfo->animationGroup);
-	return NULL;
+    for (i = 0; i < animModelInfo->numAnimations; i++)
+    {
+        anim = animModelInfo->animations[i];
+        if ((hash == anim->nameHash) && !Q_stricmp(string, anim->name))
+        {
+            // found a match
+            return anim;
+        }
+    }
+    // no match found
+    Com_Error(ERR_DROP, "BG_AnimationForString: unknown animation '%s' for animation group '%s'", string, animModelInfo->animationGroup);
+    return NULL;
 }
 */
 
@@ -937,7 +937,7 @@ static animStringItem_t animParseModesStr[] =
  */
 void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *scriptData, const char *filename, char *input)
 {
-	char                  *text_p = input, *token;
+	char                  *text_p        = input, *token;
 	animScriptParseMode_t parseMode      = PARSEMODE_DEFINES; // start at the defines
 	animScript_t          *currentScript = NULL;
 	animScriptItem_t      tempScriptItem;
@@ -1338,20 +1338,20 @@ animScriptItem_t *BG_FirstValidItem(int client, animScript_t *script)
  * @note Unused
 void BG_ClearAnimTimer(playerState_t *ps, animBodyPart_t bodyPart)
 {
-	switch (bodyPart)
-	{
-	case ANIM_BP_LEGS:
-		ps->legsTimer = 0;
-		break;
-	case ANIM_BP_TORSO:
-		ps->torsoTimer = 0;
-		break;
-	case ANIM_BP_BOTH:
-	default:
-		ps->legsTimer  = 0;
-		ps->torsoTimer = 0;
-		break;
-	}
+    switch (bodyPart)
+    {
+    case ANIM_BP_LEGS:
+        ps->legsTimer = 0;
+        break;
+    case ANIM_BP_TORSO:
+        ps->torsoTimer = 0;
+        break;
+    case ANIM_BP_BOTH:
+    default:
+        ps->legsTimer  = 0;
+        ps->torsoTimer = 0;
+        break;
+    }
 }
 */
 
@@ -1452,7 +1452,7 @@ int BG_PlayAnim(playerState_t *ps, animModelInfo_t *animModelInfo, int animNum, 
  *
 int BG_PlayAnimName(playerState_t *ps, animModelInfo_t *animModelInfo, char *animName, animBodyPart_t bodyPart, qboolean setTimer, qboolean isContinue, qboolean force)
 {
-	return BG_PlayAnim(ps, animModelInfo, BG_AnimationIndexForString(animName, animModelInfo), bodyPart, 0, setTimer, isContinue, force);
+    return BG_PlayAnim(ps, animModelInfo, BG_AnimationIndexForString(animName, animModelInfo), bodyPart, 0, setTimer, isContinue, force);
 }
 */
 
@@ -1592,37 +1592,37 @@ int BG_AnimScriptAnimation(playerState_t *ps, animModelInfo_t *animModelInfo, sc
  * @note Unused
 int BG_AnimScriptCannedAnimation(playerState_t *ps, animModelInfo_t *animModelInfo)
 {
-	animScript_t          *script;
-	animScriptItem_t      *scriptItem;
-	animScriptCommand_t   *scriptCommand;
-	scriptAnimMoveTypes_t movetype;
+    animScript_t          *script;
+    animScriptItem_t      *scriptItem;
+    animScriptCommand_t   *scriptCommand;
+    scriptAnimMoveTypes_t movetype;
 
-	if (ps->eFlags & EF_DEAD)
-	{
-		return -1;
-	}
+    if (ps->eFlags & EF_DEAD)
+    {
+        return -1;
+    }
 
-	movetype = (scriptAnimMoveTypes_t)globalScriptData->clientConditions[ps->clientNum][ANIM_COND_MOVETYPE][0];
-	if (!movetype)        // no valid movetype yet for this client
-	{
-		return -1;
-	}
+    movetype = (scriptAnimMoveTypes_t)globalScriptData->clientConditions[ps->clientNum][ANIM_COND_MOVETYPE][0];
+    if (!movetype)        // no valid movetype yet for this client
+    {
+        return -1;
+    }
 
-	script = &animModelInfo->scriptCannedAnims[movetype];
-	if (!script->numItems)
-	{
-		return -1;
-	}
-	// find the first script item, that passes all the conditions for this event
-	scriptItem = BG_FirstValidItem(ps->clientNum, script);
-	if (!scriptItem)
-	{
-		return -1;
-	}
-	// pick a random command
-	scriptCommand = &scriptItem->commands[rand() % scriptItem->numCommands];
-	// run it
-	return BG_ExecuteCommand(ps, animModelInfo, scriptCommand, qtrue, qfalse, qfalse);
+    script = &animModelInfo->scriptCannedAnims[movetype];
+    if (!script->numItems)
+    {
+        return -1;
+    }
+    // find the first script item, that passes all the conditions for this event
+    scriptItem = BG_FirstValidItem(ps->clientNum, script);
+    if (!scriptItem)
+    {
+        return -1;
+    }
+    // pick a random command
+    scriptCommand = &scriptItem->commands[rand() % scriptItem->numCommands];
+    // run it
+    return BG_ExecuteCommand(ps, animModelInfo, scriptCommand, qtrue, qfalse, qfalse);
 }
 */
 
@@ -1878,33 +1878,33 @@ int BG_GetAnimScriptAnimation(int client, animModelInfo_t *animModelInfo, aistat
  * @note Unused
 int BG_GetAnimScriptEvent(playerState_t *ps, scriptAnimEventTypes_t event)
 {
-	animModelInfo_t     *animModelInfo;
-	animScript_t        *script;
-	animScriptItem_t    *scriptItem;
-	animScriptCommand_t *scriptCommand;
+    animModelInfo_t     *animModelInfo;
+    animScript_t        *script;
+    animScriptItem_t    *scriptItem;
+    animScriptCommand_t *scriptCommand;
 
-	if (event != ANIM_ET_DEATH && (ps->eFlags & EF_DEAD))
-	{
-		return -1;
-	}
+    if (event != ANIM_ET_DEATH && (ps->eFlags & EF_DEAD))
+    {
+        return -1;
+    }
 
-	animModelInfo = BG_GetCharacterForPlayerstate(ps)->animModelInfo;
-	script        = &animModelInfo->scriptEvents[event];
-	if (!script->numItems)
-	{
-		return -1;
-	}
-	// find the first script item, that passes all the conditions for this event
-	scriptItem = BG_FirstValidItem(ps->clientNum, script);
-	if (!scriptItem)
-	{
-		return -1;
-	}
-	// pick a random command
-	scriptCommand = &scriptItem->commands[rand() % scriptItem->numCommands];
+    animModelInfo = BG_GetCharacterForPlayerstate(ps)->animModelInfo;
+    script        = &animModelInfo->scriptEvents[event];
+    if (!script->numItems)
+    {
+        return -1;
+    }
+    // find the first script item, that passes all the conditions for this event
+    scriptItem = BG_FirstValidItem(ps->clientNum, script);
+    if (!scriptItem)
+    {
+        return -1;
+    }
+    // pick a random command
+    scriptCommand = &scriptItem->commands[rand() % scriptItem->numCommands];
 
-	// return the animation
-	return scriptCommand->animIndex[0];
+    // return the animation
+    return scriptCommand->animIndex[0];
 }
 */
 

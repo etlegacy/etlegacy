@@ -406,7 +406,7 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, const char *mess
 	// do not write obituary popups into console - we'll get double kill-messages otherwise
 	if (type != PM_DEATH)
 	{
-	    trap_Print(va("%s\n", listItem->message)); // FIXME: translate this (does it makes sense?)
+		trap_Print(va("%s\n", listItem->message)); // FIXME: translate this (does it makes sense?)
 	}
 
 	// chop off the newline at the end if any
@@ -711,7 +711,7 @@ void CG_DrawPMItems(rectDef_t rect, int style)
  */
 void CG_DrawPMItemsBig(void)
 {
-	vec4_t colour = { 0.f, 0.f, 0.f, 1.f };
+	vec4_t colour     = { 0.f, 0.f, 0.f, 1.f };
 	vec4_t colourText = { 1.f, 1.f, 1.f, 1.f };
 	float  t, w;
 	float  y         = 270;

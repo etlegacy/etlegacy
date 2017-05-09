@@ -54,7 +54,7 @@ void Bot_Event_EntityCreated(gentity_t *pEnt);
 
 bool IsBot(gentity_t *e)
 {
-	return e->r.svFlags & SVF_BOT ? true : false;
+	return (e->r.svFlags & SVF_BOT) ? true : false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -289,11 +289,11 @@ void CheckForMG42(gentity_t *ent, const char *newname)
 	return;
 }
 
-void GetEntityCenter(gentity_t *ent, vec3_t _pos)
+void GetEntityCenter(gentity_t *ent, vec3_t pos)
 {
-	_pos[0] = ent->r.currentOrigin[0] + ((ent->r.maxs[0] + ent->r.mins[0]) * 0.5f);
-	_pos[1] = ent->r.currentOrigin[1] + ((ent->r.maxs[1] + ent->r.mins[1]) * 0.5f);
-	_pos[2] = ent->r.currentOrigin[2] + ((ent->r.maxs[2] + ent->r.mins[2]) * 0.5f);
+	pos[0] = ent->r.currentOrigin[0] + ((ent->r.maxs[0] + ent->r.mins[0]) * 0.5f);
+	pos[1] = ent->r.currentOrigin[1] + ((ent->r.maxs[1] + ent->r.mins[1]) * 0.5f);
+	pos[2] = ent->r.currentOrigin[2] + ((ent->r.maxs[2] + ent->r.mins[2]) * 0.5f);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1819,7 +1819,6 @@ static int _GetEntityClass(gentity_t *_ent)
 	case ET_FLAMETHROWER_CHUNK:
 	{
 		return ET_CLASSEX_FLAMECHUNK;
-		break;
 	}
 	case ET_MOVER:
 	{
@@ -6550,8 +6549,8 @@ const char *_GetEntityName(gentity_t *_ent)
 				                '^', '&', '<', '>', '+', '=','|',  '\'', '%',
 				                '.', ':', '/', '(', ')', (char)NULL };
 			char *curchar = NULL;
-			char *tmp     = NULL;
-			char *tmpdst  = NULL;
+			char *tmp;
+			char *tmpdst;
 			tmp    = name;
 			tmpdst = name;
 
@@ -6890,11 +6889,11 @@ void Bot_Event_Spectated(int _client, int _who)
 	}
 }
 
-void Bot_Event_ChatMessage(int _to, gentity_t *_source, int _type, const char *_message)
+void Bot_Event_ChatMessage(int _client, gentity_t *_source, int _type, const char *_message)
 {
 	if (IsOmnibotLoaded())
 	{
-		if (IsBot(&g_entities[_to]))
+		if (IsBot(&g_entities[_client]))
 		{
 			int iMsg = PERCEPT_HEAR_GLOBALCHATMSG;
 			switch (_type)
@@ -6915,7 +6914,7 @@ void Bot_Event_ChatMessage(int _to, gentity_t *_source, int _type, const char *_
 			d.m_WhoSaidIt = HandleFromEntity(_source);
 			Q_strncpyz(d.m_Message, _message ? _message : "<unknown>",
 			           sizeof(d.m_Message) / sizeof(d.m_Message[0]));
-			g_BotFunctions.pfnSendEvent(_to, MessageHelper(iMsg, &d, sizeof(d)));
+			g_BotFunctions.pfnSendEvent(_client, MessageHelper(iMsg, &d, sizeof(d)));
 		}
 	}
 }

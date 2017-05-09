@@ -2742,7 +2742,7 @@ void CG_RegisterItemVisuals(int itemNum);
 
 void CG_FireWeapon(centity_t *cent);
 
-void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int surfaceFlags);     // modified to send missilehitwall surface parameters
+void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int surfFlags);     // modified to send missilehitwall surface parameters
 
 void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir);
 void CG_DrawTracer(vec3_t start, vec3_t finish);
@@ -2791,7 +2791,7 @@ void CG_ParticleImpactSmokePuffExtended(qhandle_t pshader, vec3_t origin, int li
 void CG_Particle_Bleed(qhandle_t pshader, vec3_t start, vec3_t dir, int fleshEntityNum, int duration);
 #endif
 void CG_GetBleedOrigin(vec3_t head_origin, vec3_t body_origin, int fleshEntityNum);
-void CG_Particle_OilParticle(qhandle_t pshader, vec3_t origin, vec3_t origin2, int ptime, int snum);
+void CG_Particle_OilParticle(qhandle_t pshader, vec3_t origin, vec3_t dir, int ptime, int snum);
 void CG_Particle_OilSlick(qhandle_t pshader, centity_t *cent);
 void CG_OilSlickRemove(centity_t *cent);
 void CG_ParticleBloodCloud(centity_t *cent, vec3_t origin, vec3_t dir);
@@ -3097,7 +3097,7 @@ void trap_S_StartSound(vec3_t origin, int entityNum, int entchannel, sfxHandle_t
 void trap_S_StartSoundVControl(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int volume);
 void trap_S_StartSoundEx(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int flags);
 void trap_S_StartSoundExVControl(vec3_t origin, int entityNum, int entchannel, sfxHandle_t sfx, int flags, int volume);
-void trap_S_StopStreamingSound(int entnum);    // usually AI.  character is talking and needs to be shut up /now/
+void trap_S_StopStreamingSound(int entityNum);    // usually AI.  character is talking and needs to be shut up /now/
 int trap_S_GetSoundLength(sfxHandle_t sfx);
 int trap_S_GetCurrentSoundTime(void);
 
@@ -3450,8 +3450,8 @@ bg_playerclass_t *CG_LimboPanel_GetPlayerClass(void);
 weapon_t CG_LimboPanel_GetSelectedWeapon(void);
 weapon_t CG_LimboPanel_GetWeaponForNumber(int number, int slot, qboolean ignoreDisabled);
 extWeaponStats_t CG_LimboPanel_GetSelectedWeaponStat(void);
-qboolean CG_LimboPanel_WeaponIsDisabled(int weap);
-qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weap);
+qboolean CG_LimboPanel_WeaponIsDisabled(int index);
+qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon);
 qboolean CG_LimboPanel_ClassIsDisabled(team_t selectedTeam, int classIndex);
 qboolean CG_LimboPanel_TeamIsDisabled(team_t checkTeam);
 int CG_LimboPanel_FindFreeClass(team_t checkTeam);
