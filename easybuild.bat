@@ -3,6 +3,7 @@
 ::
 :: Change MSVS version to your own
 :: Install assets in fs_homepath/etmain
+::
 
 @echo off
 @setLocal EnableDelayedExpansion
