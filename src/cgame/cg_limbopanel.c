@@ -2341,8 +2341,6 @@ qboolean CG_LimboPanel_WeaponPanel_KeyDown(panel_button_t *button, int key)
  */
 qboolean CG_LimboPanel_WeaponPanel_KeyUp(panel_button_t *button, int key)
 {
-	rectDef_t rect;
-
 	if (CG_LimboPanel_GetTeam() == TEAM_SPECTATOR)
 	{
 		return qfalse;
@@ -2352,8 +2350,10 @@ qboolean CG_LimboPanel_WeaponPanel_KeyUp(panel_button_t *button, int key)
 	{
 		if (BG_PanelButtons_GetFocusButton() == button)
 		{
-			int i;
-			int cnt = CG_LimboPanel_WeaponCount();
+			rectDef_t rect;
+			int       i, cnt;
+
+			cnt = CG_LimboPanel_WeaponCount();
 
 			memcpy(&rect, &button->rect, sizeof(rect));
 			rect.y -= rect.h;
@@ -2407,9 +2407,12 @@ vec4_t clrDrawWeapon = { 1.f, 1.f, 1.f, 0.6f };
 void CG_LimboPanel_WeaponPanel_DrawWeapon(rectDef_t *rect, weapon_t weap, qboolean highlight, const char *ofTxt, qboolean disabled)
 {
 	qhandle_t shader = cgs.media.limboWeaponCard;
-	int       width  = CG_Text_Width_Ext(ofTxt, 0.2f, 0, &cgs.media.limboFont2);
-	float     x      = rect->x + rect->w - width - 4;
+	int       width;
+	float     x;
 	vec4_t    clr;
+
+	width  = CG_Text_Width_Ext(ofTxt, 0.2f, 0, &cgs.media.limboFont2);
+	x      = rect->x + rect->w - width - 4;
 
 	CG_DrawPic(rect->x, rect->y, rect->w, rect->h, shader);
 
@@ -2522,8 +2525,11 @@ vec4_t clrWeaponPanel2 = { 1.f, 1.f, 1.f, 0.4f };
  */
 void CG_LimboPanel_WeaponPanel(panel_button_t *button)
 {
-	weapon_t weap = CG_LimboPanel_GetSelectedWeapon();
-	int      cnt  = CG_LimboPanel_WeaponCount();
+	weapon_t weap;
+	int      cnt;
+
+	weap = CG_LimboPanel_GetSelectedWeapon();
+	cnt  = CG_LimboPanel_WeaponCount();
 
 	if (cgs.ccSelectedWeapon2 >= CG_LimboPanel_WeaponCount_ForSlot(0))
 	{
@@ -3015,9 +3021,12 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 	qhandle_t shaderBack;
 	qhandle_t shaderRoll;
 	int       numimages;
-	float     counter_rolltime = CG_LimboPanel_RenderCounter_RollTimeForButton(button);
-	int       num              = CG_LimboPanel_RenderCounter_NumRollers(button);
-	int       value            = CG_LimboPanel_RenderCounter_ValueForButton(button);
+	float     counter_rolltime;
+	int       num, value;
+
+	counter_rolltime = CG_LimboPanel_RenderCounter_RollTimeForButton(button);
+	num              = CG_LimboPanel_RenderCounter_NumRollers(button);
+	value            = CG_LimboPanel_RenderCounter_ValueForButton(button);
 
 	if (num > MAX_ROLLERS)
 	{
@@ -3181,7 +3190,9 @@ void CG_LimboPanel_Setup(void)
 
 	if (!cgs.limboLoadoutSelected)
 	{
-		bg_playerclass_t *classInfo = CG_LimboPanel_GetPlayerClass();
+		bg_playerclass_t *classInfo;
+
+		classInfo = CG_LimboPanel_GetPlayerClass();
 
 		for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 		{
@@ -3249,7 +3260,6 @@ qboolean CG_LimboPanel_Draw(void)
 {
 	static panel_button_t *lastHighlight;
 	panel_button_t        *hilight;
-	qboolean              objRequested = qfalse;
 
 	hilight = BG_PanelButtonsGetHighlightButton(limboPanelButtons);
 	if (hilight && hilight != lastHighlight)
@@ -3266,14 +3276,6 @@ qboolean CG_LimboPanel_Draw(void)
 
 	trap_R_SetColor(NULL);
 	CG_DrawPic(cgDC.cursorx, cgDC.cursory, 32, 32, cgs.media.cursorIcon);
-
-	// initial camera update
-	// FIXME: !objRequested is always true and is never used
-	if (!objRequested)
-	{
-		CG_LimboPanel_RequestObjective();
-		objRequested = qtrue;
-	}
 
 	if (cgs.ccRequestedObjective != -1)
 	{
@@ -3769,7 +3771,9 @@ int CG_LimboPanel_GetSelectedWeaponNum(void)
  */
 void CG_LimboPanel_RequestWeaponStats(void)
 {
-	extWeaponStats_t weapStat = CG_LimboPanel_GetSelectedWeaponStat();
+	extWeaponStats_t weapStat;
+
+	weapStat = CG_LimboPanel_GetSelectedWeaponStat();
 
 	if (weapStat == WS_MAX)
 	{
@@ -3785,7 +3789,9 @@ void CG_LimboPanel_RequestWeaponStats(void)
  */
 void CG_LimboPanel_RequestObjective(void)
 {
-	int max = CG_LimboPanel_GetMaxObjectives();
+	int max;
+
+	max = CG_LimboPanel_GetMaxObjectives();
 
 	if (cgs.ccSelectedObjective != max && CG_LimboPanel_GetTeam() != TEAM_SPECTATOR)
 	{
@@ -3885,7 +3891,9 @@ int CG_LimboPanel_TeamCount(int weap)
  */
 qboolean CG_LimboPanel_WeaponIsDisabled(int index)
 {
-	weapon_t weapon = CG_LimboPanel_GetPlayerClass()->classWeapons[index];
+	weapon_t weapon;
+
+	weapon = CG_LimboPanel_GetPlayerClass()->classWeapons[index];
 
 	return CG_LimboPanel_RealWeaponIsDisabled(weapon);
 }
