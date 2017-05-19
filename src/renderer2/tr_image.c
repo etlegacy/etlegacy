@@ -1301,8 +1301,11 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 		{
 			if (glConfig2.framebufferObjectAvailable)
 			{
-				glGenerateMipmapEXT(image->type);
-				glTexParameteri(image->type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);   // default to trilinear
+				if (image->type != GL_TEXTURE_CUBE_MAP_ARB) // FIXME: deal with frame buffer object? No mipmap for now ...
+				{
+					glGenerateMipmapEXT(image->type);
+					glTexParameteri(image->type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);   // default to trilinear
+				}
 			}
 			else if (glConfig2.generateMipmapAvailable)
 			{
