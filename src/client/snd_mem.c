@@ -249,9 +249,10 @@ qboolean S_LoadSound(sfx_t *sfx)
 		return qfalse;
 	}
 
-	if (!FS_FOpenFileRead(sfx->soundName, NULL, qfalse))
+	if (FS_FOpenFileRead(sfx->soundName, NULL, qfalse) <= 0)
 	{
-		Com_DPrintf(S_COLOR_RED "ERROR: sound file \"%s\" does not exist\n", sfx->soundName);
+		// changed from debug to common print - let admins know and fix such missing files ...
+		Com_Printf(S_COLOR_RED "ERROR: sound file \"%s\" does not exist or can't be read\n", sfx->soundName);
 		return qfalse;
 	}
 

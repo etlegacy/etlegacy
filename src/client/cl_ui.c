@@ -76,7 +76,7 @@ void LAN_LoadCachedServers(void)
 	}
 
 	// moved to mod/profiles dir
-	if (FS_FOpenFileRead(filename, &fileIn, qtrue))
+	if (FS_FOpenFileRead(filename, &fileIn, qtrue) > 0)
 	{
 		FS_Read(&cls.numfavoriteservers, sizeof(int32_t), fileIn);
 		FS_Read(&size, sizeof(int32_t), fileIn);
@@ -89,9 +89,13 @@ void LAN_LoadCachedServers(void)
 			cls.numfavoriteservers = 0;
 		}
 		FS_FCloseFile(fileIn);
+		
+		Com_Printf("Total favourite servers restored: %i\n", cls.numfavoriteservers);
 	}
-
-	Com_Printf("Total favourite servers restored: %i\n", cls.numfavoriteservers);
+	else
+	{
+		Com_Printf("Warning: can't read '%s' - no favourite servers restored.\n", filename);
+	}
 }
 
 /**
@@ -113,7 +117,7 @@ void LAN_SaveServersToFile(void)
 	}
 
 	// moved to mod/profiles dir
-	fileOut = FS_FOpenFileWrite(filename); // FIXME: catch error
+	fileOut = FS_FOpenFileWrite(filename);
 	(void) FS_Write(&cls.numfavoriteservers, sizeof(int32_t), fileOut);
 
 	size = sizeof(cls.favoriteServers);
