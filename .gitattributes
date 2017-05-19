@@ -1,0 +1,41 @@
+* text=auto
+
+# Windows CMD does not like LF in batch files
+*.bat text eol=crlf
+#*.cmd text eol=crlf
+
+
+# Custom for Visual Studio
+#*.cs     diff=csharp
+#*.sln    merge=union
+#*.csproj merge=union
+#*.vbproj merge=union
+#*.fsproj merge=union
+#*.dbproj merge=union
+
+# Custom for Xcode
+#*.pbxproj merge=union
+
+
+# Binaries
+*.ai binary
+*.bmp binary
+*.bsp binary
+*.dll binary
+*.ico binary
+*.icns binary
+*.jpg binary
+*.mdc binary
+*.md3 binary
+*.mdx binary
+*.mp3 binary
+*.ogg binary
+*.pdf binary
+*.png binary
+*.psd binary
+*.so binary
+*.svg binary
+*.tga binary
+*.ttf binary
+*.wav binary
+*.zip binary
