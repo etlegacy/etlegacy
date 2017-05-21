@@ -5,8 +5,12 @@ textures/radar/dirt_m03icmp_brown
 	bumpmap textures/radar/dirt_m03icmp_brown_n
 	specularmap textures/radar/dirt_m03icmp_brown_s
 	surfaceparm trans
-	implicitMap textures/temperate_sd/dirt_m03icmp_brown
-}
+	{
+	    Map textures/temperate_sd/dirt_m03icmp_brown
+		vertexcolor
+		blend blend
+	}
+}    
 
 textures/radar/dirt_m04cmp_brown
 {
@@ -15,7 +19,11 @@ textures/radar/dirt_m04cmp_brown
 	bumpmap textures/radar/dirt_m04cmp_brown_n
 	specularmap textures/radar/dirt_m04cmp_brown_s
 	surfaceparm trans
-	implicitMap textures/temperate_sd/dirt_m04cmp_brown
+	{
+	    Map textures/temperate_sd/dirt_m04cmp_brown
+		vertexcolor
+		blend blend
+	}
 }
 // could be fun to make this move... thoughts for later
 textures/radar/fog
@@ -801,7 +809,11 @@ textures/radar/road_wet
 //	q3map_foliage models/foliage/raincircle5.md3 0.5 64 0.1 2
 	qer_editorimage textures/temperate_sd/dirt_m03icmp_brown
 	surfaceparm trans
-	implicitMap textures/temperate_sd/dirt_m03icmp_brown
+	{
+	    Map textures/temperate_sd/dirt_m03icmp_brown
+		rgbGen identity
+		blend blend
+	}
 }
 
 textures/radar/road
@@ -812,7 +824,11 @@ textures/radar/road
 	bumpmap textures/temperate_sd/dirt_m03icmp_brown_n
 	specularmap textures/temperate_sd/dirt_m03icmp_brown_s
 	surfaceparm trans
-	implicitMap textures/temperate_sd/dirt_m03icmp_brown
+	{
+	    Map textures/temperate_sd/dirt_m03icmp_brown
+		rgbGen identity
+		blend blend
+	}
 }
 
 
@@ -834,24 +850,17 @@ textures/radar/road_puddle1
 	{
 		map textures/effects/envmap_radar
 		rgbGen identity
-		tcMod scale 0.5 0.5
 		tcGen environment
 	}
 	{
 		map textures/liquids_sd/puddle_specular
 		rgbGen identity
-		tcMod scale 2 2
 		blendFunc GL_SRC_ALPHA GL_ONE
 		tcGen environment
 	}
 	{
 		map textures/temperate_sd/road_puddle1
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		rgbGen identity
-	}
-	{
-		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
 		rgbGen identity
 	}
 }
@@ -874,24 +883,17 @@ textures/radar/road_bigpuddle
 	{
 		map textures/effects/envmap_radar
 		rgbGen identity
-		tcMod scale 0.5 0.5
 		tcGen environment
 	}
 	{
 		map textures/liquids_sd/puddle_specular
 		rgbGen identity
-		tcMod scale 2 2
-		blendFunc GL_SRC_ALPHA GL_ONE
+	    blendFunc GL_SRC_ALPHA GL_ONE
 		tcGen environment
 	}
 	{
 		map textures/temperate_sd/road_bigpuddle
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		rgbGen identity
-	}
-	{
-		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
 		rgbGen identity
 	}
 }
@@ -904,7 +906,11 @@ textures/radar/borderroad
 	bumpmap textures/temperate_sd/dirt_m04cmp_brown_n
 	specularmap textures/temperate_sd/dirt_m04cmp_brown_s
 	surfaceparm trans
-	
+	{
+	    Map textures/temperate_sd/dirt_m04cmp_brown
+		vertexcolor
+		blend blend
+	}
 }
 
 textures/radar/wood_m02_wet
@@ -919,7 +925,11 @@ textures/radar/wood_m02_wet
 	diffusemap textures/wood/wood_m02
 	bumpmap textures/wood/wood_m02_n
 	specularmap textures/wood/wood_m02_s
-	implicitMap -
+	{
+	    Map textures/wood/wood_m02
+		vertexcolor
+		blend blend
+	}
 }
 
 textures/radar/gy_ml03a_wet
@@ -934,7 +944,11 @@ textures/radar/gy_ml03a_wet
 	diffusemap textures/graveyard/gy_ml03a
 	bumpmap textures/graveyard/gy_ml03a_n
 	specularmap textures/graveyard/gy_ml03a_s
-	
+	{
+	    Map textures/graveyard/gy_ml03a
+		vertexcolor
+		blend blend
+	}
 }
 
 textures/radar/debri_m05_wet
@@ -949,7 +963,11 @@ textures/radar/debri_m05_wet
 	diffusemap textures/rubble/debri_m05
 	bumpmap textures/rubble/debri_m05_n
 	specularmap textures/rubble/debri_m05_s
-	
+	{
+	    Map textures/rubble/debri_m05
+		vertexcolor
+		blend blend
+	}
 }
 
 textures/radar/wood_m16_wet
@@ -964,7 +982,11 @@ textures/radar/wood_m16_wet
 	diffusemap textures/wood/wood_m16
 	bumpmap textures/wood/wood_m16_n
 	specularmap textures/wood/wood_m16_s
-	implicitMap -
+	{
+	    Map textures/wood/wood_m16
+		vertexcolor
+		blend blend
+	}
 }
 
 textures/radar/wall_c01_wet
@@ -979,9 +1001,13 @@ textures/radar/wall_c01_wet
 	diffusemap textures/sleepy/wall_c01
 	bumpmap textures/sleepy/wall_c01_n
 	specularmap textures/sleepy/wall_c01_s
-	
+	{
+	    Map textures/sleepy/wall_c01
+		vertexcolor
+		blend blend
+	}
 }
-/*
+
 textures/radar/metal_wet1
 {
 	qer_editorimage textures/metals_sd/metal_ref1
@@ -1005,11 +1031,7 @@ textures/radar/metal_wet1
 		
 		rgbGen identity
 	}
-	{
-		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
-		rgbGen identity
-	}
+	
 }
 
 
@@ -1033,18 +1055,13 @@ textures/radar/metal_wet2
 		map textures/liquids_sd/puddle_specular
 		rgbGen identity
 		tcMod scale 2 2
-		blendFunc GL_SRC_ALPHA GL_ONE
+		blendFunc  GL_SRC_ALPHA GL_SRC_COLOR
 		tcGen environment
 	}
 	{
 		map textures/metals_sd/metal_ref1
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendFunc GL_SRC_ALPHA GL_ONE
 		rgbGen identity
 	}
-	{
-		map $lightmap
-		blendFunc GL_DST_COLOR GL_ZERO
-		rgbGen identity
-	}
+	
 }
-*/
