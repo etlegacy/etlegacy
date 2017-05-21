@@ -731,16 +731,16 @@ struct
 
 /**
  * @brief Inits game controller input devices
+ * @note This doesn't deal with SDL_INIT_GAMECONTROLLER
  */
 static void IN_InitJoystick(void)
 {
-	int  i          = 0;
-	int  total      = 0;
-	char buf[16384] = "";
+	int  i     = 0;
+	int  total = 0;
+	//char buf[MAX_CVAR_VALUE_STRING] = "";
 
 	if (!in_joystick->integer)
 	{
-		Com_Printf("...game controller disabled by cvar setting\n");
 		return;
 	}
 
@@ -754,25 +754,23 @@ static void IN_InitJoystick(void)
 
 	if (!SDL_WasInit(SDL_INIT_JOYSTICK))
 	{
-		Com_Printf("Initializing game controller\n");
 		if (SDL_Init(SDL_INIT_JOYSTICK) < 0)
 		{
-			Com_Printf(S_COLOR_RED "SDL_Init(SDL_INIT_JOYSTICK) failed: %s\n", SDL_GetError());
+			Com_Printf(S_COLOR_RED "Joystick initialization failed: %s\n", SDL_GetError());
 			return;
 		}
 	}
 
 	total = SDL_NumJoysticks();
-	Com_Printf("...%d available game controller initialized\n", total);
 
-	// Print list and build cvar to allow ui to select joystick.
-	for (i = 0; i < total; i++)
-	{
-		Q_strcat(buf, sizeof(buf), SDL_JoystickNameForIndex(i));
-		Q_strcat(buf, sizeof(buf), "\n");
-	}
-
-	Cvar_Get("in_availableJoysticks", buf, CVAR_ROM);
+	// create list and build cvar to allow ui to select joystick
+	// FIXME: cvar availableJoysticks isn't used in our menus - add it? 
+	//for (i = 0; i < total; i++)
+	//{
+	//	Q_strcat(buf, sizeof(buf), SDL_JoystickNameForIndex(i));
+	//	Q_strcat(buf, sizeof(buf), " ");
+	//}
+	//Cvar_Get("in_availableJoysticks", buf, CVAR_ROM);
 
 	in_joystickNo = Cvar_Get("in_joystickNo", "0", CVAR_ARCHIVE);
 	if (in_joystickNo->integer < 0 || in_joystickNo->integer >= total)
@@ -786,18 +784,34 @@ static void IN_InitJoystick(void)
 
 	if (stick == NULL)
 	{
-		Com_Printf("...no game controller opened.\n");
+		Com_Printf(S_COLOR_RED "Joystick initialization failed: no device available.\n");
 		return;
 	}
 
-	Com_Printf("Game controller [%d] '%s' opened\n", in_joystickNo->integer, SDL_JoystickNameForIndex(in_joystickNo->integer));
-	Com_Printf("Axes:       %d\n", SDL_JoystickNumAxes(stick));
-	Com_Printf("Hats:       %d\n", SDL_JoystickNumHats(stick));
-	Com_Printf("Buttons:    %d\n", SDL_JoystickNumButtons(stick));
-	Com_Printf("Balls:      %d\n", SDL_JoystickNumBalls(stick));
-	Com_Printf("Use Analog: %s\n", in_joystickUseAnalog->integer ? "Yes" : "No");
-
 	SDL_JoystickEventState(SDL_QUERY);
+}
+
+void IN_PrintJoystickInfo_f()
+{
+	if (!in_joystick->integer)
+	{
+		Com_Printf("Joysticks disabled by cvar setting.\n");
+		return;
+	}
+
+	if (SDL_NumJoysticks() > 0)
+	{
+		Com_Printf("Joystick [%d] '%s' opened - %i devices available\n", in_joystickNo->integer, SDL_JoystickNameForIndex(in_joystickNo->integer), SDL_NumJoysticks());
+		Com_Printf("Axes:       %d\n", SDL_JoystickNumAxes(stick));
+		Com_Printf("Hats:       %d\n", SDL_JoystickNumHats(stick));
+		Com_Printf("Buttons:    %d\n", SDL_JoystickNumButtons(stick));
+		Com_Printf("Balls:      %d\n", SDL_JoystickNumBalls(stick));
+		Com_Printf("Use Analog: %s\n", in_joystickUseAnalog->integer ? "Yes" : "No");
+	}
+	else
+	{
+		Com_Printf("No joystick available.\n");
+	}
 }
 
 /**
@@ -1355,7 +1369,7 @@ void IN_Init(void)
 
 	mainScreen = (SDL_Window *)GLimp_MainWindow();
 
-	Com_Printf("\n------- Input Initialization -------\n");
+	//Com_Printf("\n------- Input Initialization -------\n");
 
 	in_keyboardDebug = Cvar_Get("in_keyboardDebug", "0", CVAR_TEMP);
 
@@ -1364,15 +1378,17 @@ void IN_Init(void)
 
 	if (in_mouse->integer == 2)
 	{
-		Com_Printf("...trying to emulate non raw mouse input\n");
 		if (!SDL_SetHintWithPriority(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "1", SDL_HINT_OVERRIDE))
 		{
-			Com_Printf(S_COLOR_RED "...failed to set the hint\n");
+			Com_Printf(S_COLOR_RED "Emulating non raw mouse input failed!\n");
 		}
 	}
 	else
 	{
-		SDL_SetHintWithPriority(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "0", SDL_HINT_OVERRIDE);
+		if (!SDL_SetHintWithPriority(SDL_HINT_MOUSE_RELATIVE_MODE_WARP, "0", SDL_HINT_OVERRIDE))
+		{
+			Com_Printf(S_COLOR_RED "Raw mouse input failed!\n");
+		}
 	}
 
 	in_nograb = Cvar_Get("in_nograb", "0", CVAR_ARCHIVE);
@@ -1393,7 +1409,8 @@ void IN_Init(void)
 
 	IN_InitJoystick();
 
-	Com_Printf("------------------------------------\n");
+	//Com_Printf("------------------------------------\n");
+	Cmd_AddCommand("joystickInfo", IN_PrintJoystickInfo_f);
 }
 
 /**
@@ -1407,6 +1424,7 @@ void IN_Shutdown(void)
 	IN_DeactivateMouse();
 	mouseAvailable = qfalse;
 
+	Cmd_RemoveCommand("joystickInfo");
 	IN_ShutdownJoystick();
 
 	mainScreen = NULL;
