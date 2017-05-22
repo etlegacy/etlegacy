@@ -533,7 +533,7 @@ typedef struct
 	trace_t trace;
 	int passEntityNum;
 	int contentmask;
-	int capsule;
+	qboolean capsule;
 } moveclip_t;
 
 /**
@@ -547,7 +547,7 @@ typedef struct
  * @param[in] contentmask
  * @param[in] capsule
  */
-void SV_ClipToEntity(trace_t *trace, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int entityNum, int contentmask, int capsule)
+void SV_ClipToEntity(trace_t *trace, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int entityNum, int contentmask, qboolean capsule)
 {
 	sharedEntity_t *touch;
 	clipHandle_t   clipHandle;
@@ -720,7 +720,7 @@ void SV_ClipMoveToEntities(moveclip_t *clip)
  * @param[in] contentmask
  * @param[in] capsule
  */
-void SV_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask, int capsule)
+void SV_Trace(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask, qboolean capsule)
 {
 	moveclip_t clip;
 	int        i;

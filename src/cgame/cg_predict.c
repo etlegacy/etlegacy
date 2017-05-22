@@ -165,7 +165,7 @@ float CG_ClientHitboxMaxZ(entityState_t *hitEnt, float def)
  * @param[in,out] tr
  */
 static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end,
-                                  int skipNumber, int mask, int capsule, trace_t *tr)
+                                  int skipNumber, int mask, qboolean capsule, trace_t *tr)
 {
 	int           i, x, zd, zu;
 	trace_t       trace;
@@ -260,7 +260,7 @@ static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const v
  * @param[in] capsule
  * @param[in,out] tr
  * @note Unused
-static void CG_ClipMoveToEntities_FT(const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask, int capsule, trace_t *tr)
+static void CG_ClipMoveToEntities_FT(const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int skipNumber, int mask, qboolean capsule, trace_t *tr)
 {
     int           i, x, zd, zu;
     trace_t       trace;

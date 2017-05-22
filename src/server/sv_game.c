@@ -280,7 +280,7 @@ void SV_AdjustAreaPortalState(sharedEntity_t *ent, qboolean open)
  * @param[in] capsule
  * @return
  */
-qboolean SV_EntityContact(const vec3_t mins, const vec3_t maxs, const sharedEntity_t *gEnt, const int capsule)
+qboolean SV_EntityContact(const vec3_t mins, const vec3_t maxs, const sharedEntity_t *gEnt, const qboolean capsule)
 {
 	const float  *origin = gEnt->r.currentOrigin;
 	const float  *angles = gEnt->r.currentAngles;
