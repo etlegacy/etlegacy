@@ -61,6 +61,10 @@
 	loadMenu { "ui/wm_ftquickmessage.menu" }
 	loadMenu { "ui/wm_ftquickmessageAlt.menu" }
 
+	// class menu
+	loadMenu { "ui/wm_class.menu" }
+	loadMenu { "ui/wm_classAlt.menu" }
+
 	// ingame
 	loadMenu { "ui/ingame_main.menu" }
 	loadMenu { "ui/ingame_vote.menu" }

@@ -1,0 +1,110 @@
+#include "ui/menudef.h"
+
+#define DEFAULT_TEXT_SCALE 0.25
+#define ORIGIN_QUICKMESSAGE		10 10
+#define QM_MENU_GRADIENT_START_OFFSET
+#define QM_MENU_START(WINDOWNAME)																			\
+																												\
+menuDef {																										\
+	name		WINDOWNAME																						\
+	visible		0																								\
+	fullscreen	0																								\
+	rect		0 100 640 380																					\
+	onOpen		{ setCvar cl_bypassMouseInput "1" }																\
+	onClose		{ setCvar cl_bypassMouseInput "0" }																\
+	onEsc		{ closeAll }																\
+																												\
+	itemDef {																									\
+		name		"window"																					\
+		rect		0 19 204 136																				\
+		origin		ORIGIN_QUICKMESSAGE																			\
+		style		WINDOW_STYLE_FILLED																			\
+		backcolor	0 0 0 .75																					\
+		border		WINDOW_BORDER_FULL																			\
+		bordercolor	.5 .5 .5 .5																					\
+		visible		1																							\
+		decoration																								\
+	}																											\
+																												\
+	itemDef {																									\
+		name		"windowtitle"																				\
+		rect		$evalfloat((0)+2) $evalfloat((19)+2) $evalfloat((204)-4) 12									\
+		origin		ORIGIN_QUICKMESSAGE																			\
+		text		"CHOOSE CLASS/WEAPON"																		\
+		textfont	UI_FONT_ARIBLK_16																			\
+		textscale	.19																							\
+		textalignx	3																							\
+		textaligny	10																							\
+		style		WINDOW_STYLE_FILLED																			\
+		backcolor	.16 .2 .17 .8																				\
+		forecolor	.6 .6 .6 1																					\
+		visible		1																							\
+		decoration																								\
+	}
+
+	#define QM_MENU_END }
+
+	#define QM_MENU_ITEM( WINDOWTEXT, ACTION, KEY, POS )				\
+    itemDef {															\
+		name			"menuitem"##WINDOWTEXT							\
+		rect			6 $evalfloat( 35 + ( 12 * POS )) 128 10			\
+		origin			ORIGIN_QUICKMESSAGE								\
+		type			ITEM_TYPE_TEXT									\
+		text			WINDOWTEXT										\
+		textfont		UI_FONT_COURBD_21								\
+		textstyle		ITEM_TEXTSTYLE_SHADOWED							\
+		textscale		.2												\
+		textaligny		8												\
+		forecolor		.6 .6 .6 1										\
+		visible			1												\
+		decoration														\
+    }																	\
+    execKey KEY { ACTION }
+
+	#define QM_MENU_ITEM_TEAM( WINDOWTEXT, ACTION, KEY, POS )			\
+    itemDef {															\
+		name			"menuitem"##WINDOWTEXT							\
+		rect			6 $evalfloat( 35 + ( 12 * POS )) 128 10			\
+		origin			ORIGIN_QUICKMESSAGE								\
+		type			ITEM_TYPE_TEXT									\
+		text			WINDOWTEXT										\
+		textfont		UI_FONT_COURBD_21								\
+		textstyle		ITEM_TEXTSTYLE_SHADOWED							\
+		textscale		.2												\
+		textaligny		8												\
+		forecolor		.6 .6 .6 1										\
+		visible			1												\
+		decoration														\
+    }																	\
+	execKey KEY { ACTION }
+
+QM_MENU_START( "wm_class" )
+	QM_MENU_ITEM_TEAM(	"S. Soldier",	close wm_class;	open wm_class_soldier,	"s", 0 )
+	QM_MENU_ITEM_TEAM(	"M. Medic",		exec "class m";	close wm_class,		"m", 1 )
+	QM_MENU_ITEM_TEAM(	"E. Engineer",	close wm_class;	open wm_class_engineer,	"e", 2 )
+	QM_MENU_ITEM_TEAM(	"F. Field Ops",	close wm_class;	open wm_class_fieldops,	"f", 3 )
+	QM_MENU_ITEM_TEAM(	"C. Covert Ops",	close wm_class;	open wm_class_covertops,"c", 4 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_soldier" )
+	QM_MENU_ITEM_TEAM(	"A. Automatic Rifle",	exec "class s 1";	close wm_class_soldier,	"a", 0 )
+	QM_MENU_ITEM_TEAM(	"G. Machinegun",		exec "class s 2";	close wm_class_soldier,	"g", 1 )
+	QM_MENU_ITEM_TEAM(	"F. Flamethrower",	exec "class s 3";	close wm_class_soldier,	"f", 2 )
+	QM_MENU_ITEM_TEAM(	"R. Rocket Launcher",	exec "class s 4";	close wm_class_soldier,	"R", 3 )
+	QM_MENU_ITEM_TEAM(	"M. Mortar",		exec "class s 5";	close wm_class_soldier,	"m", 4 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_engineer" )
+	QM_MENU_ITEM_TEAM(	"S. SMG",			exec "class e 1";	close wm_class_engineer,	"s", 0 )
+	QM_MENU_ITEM_TEAM(	"G. Rifle",			exec "class e 2";	close wm_class_engineer,	"g", 1 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_fieldops" )
+	QM_MENU_ITEM_TEAM(	"S. SMG",			exec "class f 1";	close wm_class_fieldops,	"s", 0 )
+QM_MENU_END
+
+QM_MENU_START( "wm_class_covertops" )
+	QM_MENU_ITEM_TEAM(	"S. SMG",			exec "class c 1";	close wm_class_covertops,	"s", 0 )
+	QM_MENU_ITEM_TEAM(	"A. Automatic Rifle",	exec "class c 2";	close wm_class_covertops,	"a", 1 )
+	QM_MENU_ITEM_TEAM(	"P. Sniper Rifle",	exec "class c 3";	close wm_class_covertops,	"p", 2 )
+QM_MENU_END

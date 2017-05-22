@@ -8566,9 +8566,24 @@ void _UI_SetActiveMenu(uiMenuCommand_t menu)
 			}
 			return;
 
+		case UIMENU_WM_CLASS:
+			uiInfo.uiDC.cursorx = 639;
+			uiInfo.uiDC.cursory = 479;
+			trap_Key_SetCatcher(KEYCATCH_UI);
+			Menus_CloseAll();
+			Menus_OpenByName("wm_class");
+			return;
+
+		case UIMENU_WM_CLASSALT:
+			uiInfo.uiDC.cursorx = 639;
+			uiInfo.uiDC.cursory = 479;
+			trap_Key_SetCatcher(KEYCATCH_UI);
+			Menus_CloseAll();
+			Menus_OpenByName("wm_classAlt");
+			return;
+
 		// say, team say, etc
 		case UIMENU_INGAME_MESSAGEMODE:
-			//trap_Cvar_Set( "cl_paused", "1" );
 			trap_Key_SetCatcher(KEYCATCH_UI);
 			Menus_OpenByName("ingame_messagemode");
 			return;

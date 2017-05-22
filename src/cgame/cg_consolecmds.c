@@ -326,7 +326,7 @@ void CG_QuickMessage_f(void)
  */
 void CG_QuickFireteamMessage_f(void)
 {
-	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
+	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].team == TEAM_FREE)
 	{
 		return;
 	}
@@ -1289,7 +1289,29 @@ akimbo_pistols:
 }
 
 /**
- * @brief Sends an class setup message. Enables etpro like classscripts
+ * @brief class change menu
+ */
+void CG_ClassMenu_f(void)
+{
+	if(cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
+	{
+		return;
+	}
+
+	CG_EventHandling(CGAME_EVENT_NONE, qfalse);
+
+	if(cg_quickMessageAlt.integer)
+	{
+		trap_UI_Popup(UIMENU_WM_CLASSALT);
+	}
+	else
+	{
+		trap_UI_Popup(UIMENU_WM_CLASS);
+	}
+}
+
+/**
+ * @brief Sends a class setup message. Enables etpro like class scripts
  */
 void CG_Class_f(void)
 {
@@ -1792,6 +1814,7 @@ static consoleCommand_t commands[] =
 	{ "timerReset",          CG_TimerReset_f           },
 	{ "resetTimer",          CG_TimerReset_f           }, // keep ETPro compatibility
 	{ "class",               CG_Class_f                },
+	{ "classmenu",           CG_ClassMenu_f            },
 	{ "readhuds",            CG_ReadHuds_f             },
 #ifdef FEATURE_EDV
 	{ "+freecam_turnleft",   CG_FreecamTurnLeftDown_f  },

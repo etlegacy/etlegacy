@@ -2614,7 +2614,7 @@ void Item_Text_Paint(itemDef_t *item)
 void Item_TextField_Paint(itemDef_t *item)
 {
 	char           buff[1024];
-	vec4_t         newColor, lowLight;
+	vec4_t         newColor;
 	int            offset;
 	int            text_len = 0; // screen length of the editfield text that will be printed
 	int            field_offset; // character offset in the editfield string
@@ -2640,6 +2640,8 @@ void Item_TextField_Paint(itemDef_t *item)
 
 	if ((item->window.flags & WINDOW_HASFOCUS) && (item->window.flags & WINDOW_FOCUSPULSE))
 	{
+		vec4_t lowLight;
+
 		lowLight[0] = 0.8f * parent->focusColor[0];
 		lowLight[1] = 0.8f * parent->focusColor[1];
 		lowLight[2] = 0.8f * parent->focusColor[2];
@@ -3162,8 +3164,12 @@ qboolean Item_Bind_HandleKey(itemDef_t *item, int key, qboolean down)
 
 	if (id != -1)
 	{
-		int binding1 = Binding_Get(id, qtrue);
-		int binding2 = Binding_Get(id, qfalse);
+		int binding1;
+		int binding2;
+
+		binding1 = Binding_Get(id, qtrue);
+		binding2 = Binding_Get(id, qfalse);
+
 		if (key == -1)
 		{
 			if (binding1 != -1)
