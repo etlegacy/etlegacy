@@ -620,14 +620,15 @@ void G_PlayerBan()
 	if (bannum != MAX_CLIENTS)
 	{
 		//if( level.clients[bannum].sess.referee != RL_RCON ) {
-		const char *value;
-		char       userinfo[MAX_INFO_STRING];
-
-		trap_GetUserinfo(bannum, userinfo, sizeof(userinfo));
-		value = Info_ValueForKey(userinfo, "ip");
 
 		if (!(g_entities[bannum].r.svFlags & SVF_BOT))
 		{
+			const char *value;
+			char       userinfo[MAX_INFO_STRING];
+
+			trap_GetUserinfo(bannum, userinfo, sizeof(userinfo));
+			value = Info_ValueForKey(userinfo, "ip");
+
 			AddIPBan(value);
 		}
 		else

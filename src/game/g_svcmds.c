@@ -1750,12 +1750,6 @@ static void Svcmd_Kick_f(void)
 
 				if (timeout != -1)
 				{
-					char *ip;
-					char userinfo[MAX_INFO_STRING];
-
-					trap_GetUserinfo(cl->ps.clientNum, userinfo, sizeof(userinfo));
-					ip = Info_ValueForKey(userinfo, "ip");
-
 					// use engine banning system, mods may choose to use their own banlist
 					if (USE_ENGINE_BANLIST)
 					{
@@ -1775,6 +1769,11 @@ static void Svcmd_Kick_f(void)
 						// kick but dont ban bots, they arent that lame
 						if (!(g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT))
 						{
+							char *ip;
+							char userinfo[MAX_INFO_STRING];
+
+							trap_GetUserinfo(cl->ps.clientNum, userinfo, sizeof(userinfo));
+							ip = Info_ValueForKey(userinfo, "ip");
 							AddIPBan(ip);
 						}
 					}
@@ -1799,12 +1798,6 @@ static void Svcmd_Kick_f(void)
 
 		if (timeout != -1)
 		{
-			char *ip;
-			char userinfo[MAX_INFO_STRING];
-
-			trap_GetUserinfo(cl->ps.clientNum, userinfo, sizeof(userinfo));
-			ip = Info_ValueForKey(userinfo, "ip");
-
 			// use engine banning system, mods may choose to use their own banlist
 			if (USE_ENGINE_BANLIST)
 			{
@@ -1822,6 +1815,11 @@ static void Svcmd_Kick_f(void)
 				// kick but dont ban bots, they arent that lame
 				if (!(g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT))
 				{
+					char *ip;
+					char userinfo[MAX_INFO_STRING];
+
+					trap_GetUserinfo(cl->ps.clientNum, userinfo, sizeof(userinfo));
+					ip = Info_ValueForKey(userinfo, "ip");
 					AddIPBan(ip);
 				}
 			}
@@ -1883,8 +1881,6 @@ static void Svcmd_KickNum_f(void)
 		return;
 	}
 
-	trap_GetUserinfo(cl->ps.clientNum, userinfo, sizeof(userinfo));
-	ip = Info_ValueForKey(userinfo, "ip");
 	// use engine banning system, mods may choose to use their own banlist
 	if (USE_ENGINE_BANLIST)
 	{
@@ -1902,6 +1898,8 @@ static void Svcmd_KickNum_f(void)
 		// kick but dont ban bots, they arent that lame
 		if (!(g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT))
 		{
+			trap_GetUserinfo(cl->ps.clientNum, userinfo, sizeof(userinfo));
+			ip = Info_ValueForKey(userinfo, "ip");
 			AddIPBan(ip);
 		}
 	}
