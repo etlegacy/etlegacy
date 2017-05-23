@@ -329,7 +329,7 @@ void R_AddMarkFragments(int numClipPoints, vec3_t clipPoints[2][MAX_VERTS_ON_POL
 
 /**
  * @brief R_MarkFragments
- * @param[in] orientation
+ * @param[in] numPoints
  * @param[in] points
  * @param[in] projection
  * @param[in] maxPoints
@@ -338,7 +338,7 @@ void R_AddMarkFragments(int numClipPoints, vec3_t clipPoints[2][MAX_VERTS_ON_POL
  * @param[in,out] fragmentBuffer
  * @return
  */
-int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projection,
+int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection,
                     int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer)
 {
 	int              numsurfaces, numPlanes;
@@ -594,7 +594,7 @@ int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projecti
 				// create the texture axis
 				VectorNormalize2(surfnormal, axis[0]);
 				PerpendicularVector(axis[1], axis[0]);
-				RotatePointAroundVector(axis[2], axis[0], axis[1], (float)orientation);
+				RotatePointAroundVector(axis[2], axis[0], axis[1], (float)numPoints);
 				CrossProduct(axis[0], axis[2], axis[1]);
 
 				texCoordScale = 0.5f * 1.0f / radius;

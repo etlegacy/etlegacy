@@ -889,7 +889,7 @@ int G_EntitiesFree(void)
 /**
  * @brief Marks the entity as free
  *
- * @param[in,out] ed
+ * @param[in,out] ent
  */
 void G_FreeEntity(gentity_t *ent)
 {

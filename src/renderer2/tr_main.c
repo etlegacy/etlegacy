@@ -640,7 +640,7 @@ float R_CalcFov(float fovX, float width, float height)
 
 /**
  * @brief R_CullLocalBox
- * @param[in] localBounds
+ * @param[in] bounds
  * @return CULL_IN, CULL_CLIP, or CULL_OUT
  */
 cullResult_t R_CullLocalBox(vec3_t bounds[2])
@@ -964,19 +964,19 @@ void R_TransformWorldToClip(const vec3_t src, const float *cameraViewMatrix, con
 /**
  * @brief R_TransformModelToClip
  * @param[in] src
- * @param[in] modelViewMatrix
+ * @param[in] modelMatrix
  * @param[in] projectionMatrix
  * @param[in] eye
  * @param[out] dst
  */
-void R_TransformModelToClip(const vec3_t src, const float *modelViewMatrix, const float *projectionMatrix, vec4_t eye, vec4_t dst)
+void R_TransformModelToClip(const vec3_t src, const float *modelMatrix, const float *projectionMatrix, vec4_t eye, vec4_t dst)
 {
 	vec4_t src2;
 
 	VectorCopy(src, src2);
 	src2[3] = 1;
 
-	mat4_transform_vec4(modelViewMatrix, src2, eye);
+	mat4_transform_vec4(modelMatrix, src2, eye);
 	mat4_transform_vec4(projectionMatrix, eye, dst);
 }
 
@@ -1082,7 +1082,7 @@ void R_SetupEntityWorldBounds(trRefEntity_t *ent)
  *
  * @param[in] ent
  * @param[in] viewParms
- * @param[out] _or
+ * @param[out] orientation
  */
 void R_RotateEntityForViewParms(const trRefEntity_t *ent, const viewParms_t *viewParms, orientationr_t *orientation)
 {
@@ -1139,7 +1139,7 @@ void R_RotateEntityForViewParms(const trRefEntity_t *ent, const viewParms_t *vie
  *
  * @param[in] ent
  * @param[in] light
- * @param[out] _or
+ * @param[out] orientation
  */
 void R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light, orientationr_t *orientation)
 {
@@ -1157,7 +1157,7 @@ void R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light,
 		VectorCopy(light->l.origin, orientation->viewOrigin);
 
 		mat4_ident(orientation->transformMatrix);
-		//MatrixAffineInverse(_or->transformMatrix, _or->viewMatrix);
+		//MatrixAffineInverse(orientation->transformMatrix, orientation->viewMatrix);
 		mat4_mult(light->viewMatrix, orientation->transformMatrix, orientation->viewMatrix);
 		mat4_copy(orientation->viewMatrix, orientation->modelViewMatrix);
 		return;
@@ -1203,9 +1203,9 @@ void R_RotateEntityForLight(const trRefEntity_t *ent, const trRefLight_t *light,
 
 /**
  * @brief R_RotateLightForViewParms
- * @param[in] light
+ * @param[in] ent
  * @param[in] viewParms
- * @param[out] _or
+ * @param[out] orientation
  */
 void R_RotateLightForViewParms(const trRefLight_t *ent, const viewParms_t *viewParms, orientationr_t *orientation)
 {
@@ -2013,7 +2013,7 @@ static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, orientation_t *sur
 
 		VectorScale(plane.normal, plane.dist, surface->origin);
 		VectorCopy(surface->origin, camera->origin);
-		VectorSubtract(vec3_origin, surface->axis[0], camera->axis[0]);
+		VectorSubtract(vec3orientationigin, surface->axis[0], camera->axis[0]);
 		VectorCopy(surface->axis[1], camera->axis[1]);
 		VectorCopy(surface->axis[2], camera->axis[2]);
 

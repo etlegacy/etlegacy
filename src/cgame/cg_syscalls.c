@@ -116,34 +116,34 @@ void trap_Cvar_Update(vmCvar_t *vmCvar)
 
 /**
  * @brief trap_Cvar_Set
- * @param[in] var_name
+ * @param[in] varName
  * @param[in] value
  */
-void trap_Cvar_Set(const char *var_name, const char *value)
+void trap_Cvar_Set(const char *varName, const char *value)
 {
-	syscall(CG_CVAR_SET, var_name, value);
+	syscall(CG_CVAR_SET, varName, value);
 }
 
 /**
  * @brief trap_Cvar_VariableStringBuffer
- * @param[in] var_name
+ * @param[in] varName
  * @param[out] buffer
  * @param[in] bufsize
  */
-void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize)
+void trap_Cvar_VariableStringBuffer(const char *varName, char *buffer, int bufsize)
 {
-	syscall(CG_CVAR_VARIABLESTRINGBUFFER, var_name, buffer, bufsize);
+	syscall(CG_CVAR_VARIABLESTRINGBUFFER, varName, buffer, bufsize);
 }
 
 /**
  * @brief trap_Cvar_LatchedVariableStringBuffer
- * @param[in] var_name
+ * @param[in] varName
  * @param[out] buffer
  * @param[in] bufsize
  */
-void trap_Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bufsize)
+void trap_Cvar_LatchedVariableStringBuffer(const char *varName, char *buffer, int bufsize)
 {
-	syscall(CG_CVAR_LATCHEDVARIABLESTRINGBUFFER, var_name, buffer, bufsize);
+	syscall(CG_CVAR_LATCHEDVARIABLESTRINGBUFFER, varName, buffer, bufsize);
 }
 
 /**

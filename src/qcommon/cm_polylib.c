@@ -471,7 +471,7 @@ void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist,
 
 /**
  * @brief ChopWindingInPlace
- * @param[in,out] inout
+ * @param[in,out] w
  * @param[in] normal
  * @param[in] dist
  * @param[in] epsilon

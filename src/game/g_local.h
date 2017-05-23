@@ -619,7 +619,7 @@ typedef struct
 /**
  * @struct playerTeamStateState_t
  * @brief Client data that stays across multiple levels or tournament restarts
- * this is achieved by writing all the data to cvar strings at game shutdown
+ * this is achieved by writing all the data to vmCvar strings at game shutdown
  * time and reading them back at connection time.  Anything added here
  * MUST be dealt with in G_InitSessionData() / G_ReadSessionData() / G_WriteSessionData()
  */
@@ -2092,13 +2092,13 @@ int trap_FS_Rename(const char *from, const char *to);
 void trap_FS_FCloseFile(fileHandle_t f);
 int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize);
 void trap_SendConsoleCommand(int exec_when, const char *text);
-void trap_Cvar_Register(vmCvar_t *cvar, const char *var_name, const char *value, int flags);
-void trap_Cvar_Update(vmCvar_t *cvar);
-void trap_Cvar_Set(const char *var_name, const char *value);
-int trap_Cvar_VariableIntegerValue(const char *var_name);
-float trap_Cvar_VariableValue(const char *var_name);
-void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
-void trap_Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bufsize);
+void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
+void trap_Cvar_Update(vmCvar_t *vmCvar);
+void trap_Cvar_Set(const char *varName, const char *value);
+int trap_Cvar_VariableIntegerValue(const char *varName);
+float trap_Cvar_VariableValue(const char *varName);
+void trap_Cvar_VariableStringBuffer(const char *varName, char *buffer, int bufsize);
+void trap_Cvar_LatchedVariableStringBuffer(const char *varName, char *buffer, int bufsize);
 void trap_LocateGameData(gentity_t *gEnts, int numGEntities, int sizeofGEntity_t, playerState_t *gameClients, int sizeofGClient);
 void trap_DropClient(int clientNum, const char *reason, int length);
 void trap_SendServerCommand(int clientNum, const char *text);

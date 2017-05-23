@@ -45,14 +45,14 @@ void S_Shutdown(void);
 void S_Reload(void);
 
 // if origin is NULL, the sound will be dynamically sourced from the entity
-void S_StartSound(vec3_t origin, int entnum, int entchannel, sfxHandle_t sfxHandle, int volume);
-void S_StartSoundEx(vec3_t origin, int entnum, int entchannel, sfxHandle_t sfxHandle, int flags, int volume);
+void S_StartSound(vec3_t origin, int entNum, int entchannel, sfxHandle_t sfxHandle, int volume);
+void S_StartSoundEx(vec3_t origin, int entNum, int entchannel, sfxHandle_t sfxHandle, int flags, int volume);
 void S_StartLocalSound(sfxHandle_t sfxHandle, int channelNum, int volume);
 
 void S_StartBackgroundTrack(const char *intro, const char *loop, int fadeUpTime);
 void S_StopBackgroundTrack(void);
 
-float S_StartStreamingSound(const char *intro, const char *loop, int entnum, int channel, int attenuation);
+float S_StartStreamingSound(const char *intro, const char *loop, int entNum, int channel, int attenuation);
 void S_StopEntStreamingSound(int entNum);
 void S_FadeStreamingSound(float targetvol, int time, int stream);
 
@@ -68,11 +68,11 @@ void S_FadeAllSounds(float targetVol, int time, qboolean stopSounds);
 
 // all continuous looping sounds must be added before calling S_Update
 void S_ClearLoopingSounds(void);
-void S_AddLoopingSound(const vec3_t origin, const vec3_t velocity, int range, sfxHandle_t sfx, int volume, int soundTime);
-void S_AddRealLoopingSound(const vec3_t origin, const vec3_t velocity, int range, sfxHandle_t sfx, int volume, int soundTime);
+void S_AddLoopingSound(const vec3_t origin, const vec3_t velocity, int range, sfxHandle_t sfxHandle, int volume, int soundTime);
+void S_AddRealLoopingSound(const vec3_t origin, const vec3_t velocity, int range, sfxHandle_t sfxHandle, int volume, int soundTime);
 
 // recompute the reletive volumes for all running sounds
-// reletive to the given entityNum / orientation
+// reletive to the given entNum / orientation
 void S_Respatialize(int entNum, const vec3_t origin, vec3_t axis[3], int inwater);
 
 // let the sound system know where an entity currently is

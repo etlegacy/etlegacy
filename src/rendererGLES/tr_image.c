@@ -914,11 +914,11 @@ static void Upload32(unsigned *data,
  * @param[in] height
  * @param[in] mipmap
  * @param[in] allowPicmip
- * @param[in] glWrapClampMode
+ * @param[in] wrapClampMode
  * @return
  */
 image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
-                       qboolean mipmap, qboolean allowPicmip, int glWrapClampMode)
+                       qboolean mipmap, qboolean allowPicmip, int wrapClampMode)
 {
 	image_t  *image;
 	qboolean isLightmap = qfalse;
@@ -976,7 +976,7 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 
 	image->width         = width;
 	image->height        = height;
-	image->wrapClampMode = glWrapClampMode;
+	image->wrapClampMode = wrapClampMode;
 
 	// lightmaps are always allocated on TMU 1
 	if (qglActiveTextureARB && isLightmap)
@@ -1004,8 +1004,8 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 	         &image->uploadHeight,
 	         noCompress);
 
-	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glWrapClampMode);
-	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glWrapClampMode);
+	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapClampMode);
+	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapClampMode);
 
 	qglBindTexture(GL_TEXTURE_2D, 0);
 

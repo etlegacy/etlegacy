@@ -186,65 +186,65 @@ void trap_SendConsoleCommand(int exec_when, const char *text)
 
 /**
  * @brief trap_Cvar_Register
- * @param[in] cvar
- * @param[in] var_name
- * @param[in] value
+ * @param[in] vmCvar
+ * @param[in] varName
+ * @param[in] defaultValue
  * @param[in] flags
  */
-void trap_Cvar_Register(vmCvar_t *cvar, const char *var_name, const char *value, int flags)
+void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags)
 {
-	syscall(G_CVAR_REGISTER, cvar, var_name, value, flags);
+	syscall(G_CVAR_REGISTER, vmCvar, varName, defaultValue, flags);
 }
 
 /**
  * @brief trap_Cvar_Update
- * @param[in] cvar
+ * @param[in] vmCvar
  */
-void trap_Cvar_Update(vmCvar_t *cvar)
+void trap_Cvar_Update(vmCvar_t *vmCvar)
 {
-	syscall(G_CVAR_UPDATE, cvar);
+	syscall(G_CVAR_UPDATE, vmCvar);
 }
 
 /**
  * @brief trap_Cvar_Set
- * @param[in] var_name
+ * @param[in] varName
  * @param[in] value
  */
-void trap_Cvar_Set(const char *var_name, const char *value)
+void trap_Cvar_Set(const char *varName, const char *value)
 {
-	syscall(G_CVAR_SET, var_name, value);
+	syscall(G_CVAR_SET, varName, value);
 }
 
 /**
  * @brief trap_Cvar_VariableIntegerValue
- * @param[in] var_name
+ * @param[in] varName
  * @return
  */
-int trap_Cvar_VariableIntegerValue(const char *var_name)
+int trap_Cvar_VariableIntegerValue(const char *varName)
 {
-	return syscall(G_CVAR_VARIABLE_INTEGER_VALUE, var_name);
+	return syscall(G_CVAR_VARIABLE_INTEGER_VALUE, varName);
 }
 
 /**
  * @brief trap_Cvar_VariableStringBuffer
- * @param[in] var_name
+ * @param[in] varName
  * @param[out] buffer
  * @param[in] bufsize
  */
-void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize)
+void trap_Cvar_VariableStringBuffer(const char *varName, char *buffer, int bufsize)
 {
-	syscall(G_CVAR_VARIABLE_STRING_BUFFER, var_name, buffer, bufsize);
+	syscall(G_CVAR_VARIABLE_STRING_BUFFER, varName, buffer, bufsize);
 }
 
 /**
  * @brief trap_Cvar_LatchedVariableStringBuffer
- * @param[in] var_name
+ * @param[in] varName
  * @param[out] buffer
  * @param[in] bufsize
  */
-void trap_Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bufsize)
+void trap_Cvar_LatchedVariableStringBuffer(const char *varName, char *buffer, int bufsize)
 {
-	syscall(G_CVAR_LATCHEDVARIABLESTRINGBUFFER, var_name, buffer, bufsize);
+	syscall(G_CVAR_LATCHEDVARIABLESTRINGBUFFER, varName, buffer, bufsize);
 }
 
 /**
@@ -489,7 +489,7 @@ void trap_UnlinkEntity(gentity_t *ent)
  * @param[in] mins
  * @param[in] maxs
  * @param[out] list
- * @param[in] maxcount
+ * @param[in] maxCount
  * @return
  */
 int trap_EntitiesInBox(const vec3_t mins, const vec3_t maxs, int *list, int maxCount)
@@ -550,7 +550,7 @@ void trap_BotUserCommand(int clientNum, usercmd_t *ucmd)
 
 /**
  * @brief trap_EA_Command
- * @param[in] client
+ * @param[in] clientNum
  * @param[in] command
  */
 void trap_EA_Command(int clientNum, char *command)

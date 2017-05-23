@@ -59,20 +59,20 @@ int PASSFLOAT(float x)
 
 /**
  * @brief trap_Print
- * @param[in] string
+ * @param[in] fmt
  */
-void trap_Print(const char *string)
+void trap_Print(const char *fmt)
 {
-	syscall(UI_PRINT, string);
+	syscall(UI_PRINT, fmt);
 }
 
 /**
  * @brief trap_Error
- * @param[in] string
+ * @param[in] fmt
  */
-void trap_Error(const char *string)
+void trap_Error(const char *fmt)
 {
-	syscall(UI_ERROR, string);
+	syscall(UI_ERROR, fmt);
 	// shut up GCC warning about returning functions, because we know better
 	exit(1);
 }
@@ -90,12 +90,12 @@ int trap_Milliseconds(void)
  * @brief trap_Cvar_Register
  * @param[in] vmCvar
  * @param[in] varName
- * @param[in] value
+ * @param[in] defaultValue
  * @param[in] flags
  */
-void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *value, int flags)
+void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags)
 {
-	syscall(UI_CVAR_REGISTER, vmCvar, varName, value, flags);
+	syscall(UI_CVAR_REGISTER, vmCvar, varName, defaultValue, flags);
 }
 
 /**
@@ -109,57 +109,57 @@ void trap_Cvar_Update(vmCvar_t *vmCvar)
 
 /**
  * @brief trap_Cvar_Set
- * @param[in] var_name
+ * @param[in] varName
  * @param[in] value
  */
-void trap_Cvar_Set(const char *var_name, const char *value)
+void trap_Cvar_Set(const char *varName, const char *value)
 {
-	syscall(UI_CVAR_SET, var_name, value);
+	syscall(UI_CVAR_SET, varName, value);
 }
 
 /**
  * @brief trap_Cvar_VariableValue
- * @param[in] var_name
+ * @param[in] varName
  * @return
  */
-float trap_Cvar_VariableValue(const char *var_name)
+float trap_Cvar_VariableValue(const char *varName)
 {
 	floatint_t fi;
 
-	fi.i = syscall(UI_CVAR_VARIABLEVALUE, var_name);
+	fi.i = syscall(UI_CVAR_VARIABLEVALUE, varName);
 	return fi.f;
 }
 
 /**
  * @brief trap_Cvar_VariableStringBuffer
- * @param[in] var_name
+ * @param[in] varName
  * @param[in] buffer
  * @param[in] bufsize
  */
-void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize)
+void trap_Cvar_VariableStringBuffer(const char *varName, char *buffer, int bufsize)
 {
-	syscall(UI_CVAR_VARIABLESTRINGBUFFER, var_name, buffer, bufsize);
+	syscall(UI_CVAR_VARIABLESTRINGBUFFER, varName, buffer, bufsize);
 }
 
 /**
  * @brief trap_Cvar_LatchedVariableStringBuffer
- * @param[in] var_name
+ * @param[in] varName
  * @param[in] buffer
  * @param[in] bufsize
  */
-void trap_Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bufsize)
+void trap_Cvar_LatchedVariableStringBuffer(const char *varName, char *buffer, int bufsize)
 {
-	syscall(UI_CVAR_LATCHEDVARIABLESTRINGBUFFER, var_name, buffer, bufsize);
+	syscall(UI_CVAR_LATCHEDVARIABLESTRINGBUFFER, varName, buffer, bufsize);
 }
 
 /**
  * @brief trap_Cvar_SetValue
- * @param[in] var_name
+ * @param[in] varName
  * @param[in] value
  */
-void trap_Cvar_SetValue(const char *var_name, float value)
+void trap_Cvar_SetValue(const char *varName, float value)
 {
-	syscall(UI_CVAR_SETVALUE, var_name, PASSFLOAT(value));
+	syscall(UI_CVAR_SETVALUE, varName, PASSFLOAT(value));
 }
 
 /**
@@ -173,13 +173,13 @@ void trap_Cvar_Reset(const char *name)
 
 /**
  * @brief trap_Cvar_Create
- * @param[in] var_name
+ * @param[in] varName
  * @param[in] var_value
  * @param[in] flags
  */
-void trap_Cvar_Create(const char *var_name, const char *var_value, int flags)
+void trap_Cvar_Create(const char *varName, const char *var_value, int flags)
 {
-	syscall(UI_CVAR_CREATE, var_name, var_value, flags);
+	syscall(UI_CVAR_CREATE, varName, var_value, flags);
 }
 
 /**
@@ -543,11 +543,11 @@ void trap_S_FadeBackgroundTrack(float targetvol, int time, int num)       // yes
  * @brief trap_S_FadeAllSound
  * @param[in] targetvol
  * @param[in] time
- * @param[in] stopsound
+ * @param[in] stopsounds
  */
-void trap_S_FadeAllSound(float targetvol, int time, qboolean stopsound)
+void trap_S_FadeAllSound(float targetvol, int time, qboolean stopsounds)
 {
-	syscall(UI_S_FADEALLSOUNDS, PASSFLOAT(targetvol), time, stopsound);
+	syscall(UI_S_FADEALLSOUNDS, PASSFLOAT(targetvol), time, stopsounds);
 }
 
 /**
@@ -1128,10 +1128,10 @@ qboolean trap_GetLimboString(int index, char *buf)
 
 /**
  * @brief trap_TranslateString
- * @param[in] string
+ * @param[in] fmt
  * @return
  */
-const char *trap_TranslateString(const char *string)
+const char *trap_TranslateString(const char *fmt)
 {
 	// Allows the fnc to be used twice in same context
 	static char staticbuf[2][MAX_VA_STRING];
@@ -1140,7 +1140,7 @@ const char *trap_TranslateString(const char *string)
 
 	buf = staticbuf[bufcount++ % 2];
 
-	syscall(UI_CL_TRANSLATE_STRING, string, buf);
+	syscall(UI_CL_TRANSLATE_STRING, fmt, buf);
 
 	return buf;
 }

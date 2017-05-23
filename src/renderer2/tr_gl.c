@@ -115,12 +115,10 @@ void BindAnimatedImage(textureBundle_t *bundle)
 	GL_Bind(bundle->image[index]);
 }
 
-/**
+/*
  * @brief GL_TextureFilter
  * @param[in,out] image
  * @param[in] filterType
- */
-/*
 void GL_TextureFilter(image_t *image, filterType_t filterType)
 {
     if (!image)

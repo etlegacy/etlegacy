@@ -198,41 +198,41 @@ static qboolean S_ValidSoundInterface(soundInterface_t *si)
 /**
  * @brief S_StartSound
  * @param[in] origin
- * @param[in] entnum
+ * @param[in] entNum
  * @param[in] entchannel
- * @param[in] sfx
+ * @param[in] sfxHandle
  * @param[in] volume
  */
-void S_StartSound(vec3_t origin, int entnum, int entchannel,
+void S_StartSound(vec3_t origin, int entNum, int entchannel,
                   sfxHandle_t sfxHandle, int volume)
 {
 	if (si.StartSound)
 	{
-		si.StartSound(origin, entnum, entchannel, sfxHandle, volume);
+		si.StartSound(origin, entNum, entchannel, sfxHandle, volume);
 	}
 }
 
 /**
  * @brief S_StartSoundEx
  * @param[in] origin
- * @param[in] entnum
+ * @param[in] entNum
  * @param[in] entchannel
- * @param[in] sfx
+ * @param[in] sfxHandle
  * @param[in] flags
  * @param[in] volume
  */
-void S_StartSoundEx(vec3_t origin, int entnum, int entchannel,
+void S_StartSoundEx(vec3_t origin, int entNum, int entchannel,
                     sfxHandle_t sfxHandle, int flags, int volume)
 {
 	if (si.StartSoundEx)
 	{
-		si.StartSoundEx(origin, entnum, entchannel, sfxHandle, flags, volume);
+		si.StartSoundEx(origin, entNum, entchannel, sfxHandle, flags, volume);
 	}
 }
 
 /**
  * @brief S_StartLocalSound
- * @param[in] sfx
+ * @param[in] sfxHandle
  * @param[in] channelNum
  * @param[in] volume
  */
@@ -274,17 +274,17 @@ void S_StopBackgroundTrack(void)
  * @brief S_StartStreamingSound
  * @param[in] intro
  * @param[in] loop
- * @param[in] entnum
+ * @param[in] entNum
  * @param[in] channel
  * @param[in] attenuation
  * @return
  */
 float S_StartStreamingSound(const char *intro, const char *loop,
-                            int entnum, int channel, int attenuation)
+                            int entNum, int channel, int attenuation)
 {
 	if (si.StartStreamingSound)
 	{
-		return si.StartStreamingSound(intro, loop, entnum, channel, attenuation);
+		return si.StartStreamingSound(intro, loop, entNum, channel, attenuation);
 	}
 	else
 	{
@@ -294,7 +294,7 @@ float S_StartStreamingSound(const char *intro, const char *loop,
 
 /**
  * @brief S_StopEntStreamingSound
- * @param[in] entnum
+ * @param[in] entNum
  */
 void S_StopEntStreamingSound(int entNum)
 {
@@ -392,17 +392,17 @@ void S_ClearLoopingSounds(void)
  * @param[in] origin
  * @param[in] velocity
  * @param[in] range
- * @param[in] sfx
+ * @param[in] sfxHandle
  * @param[in] volume
  * @param[in] soundTime
  */
 void S_AddLoopingSound(const vec3_t origin, const vec3_t velocity,
-                       int range, sfxHandle_t sfx,
+                       int range, sfxHandle_t sfxHandle,
                        int volume, int soundTime)
 {
 	if (si.AddLoopingSound)
 	{
-		si.AddLoopingSound(origin, velocity, range, sfx, volume, soundTime);
+		si.AddLoopingSound(origin, velocity, range, sfxHandle, volume, soundTime);
 	}
 }
 
@@ -411,23 +411,23 @@ void S_AddLoopingSound(const vec3_t origin, const vec3_t velocity,
  * @param[in] origin
  * @param[in] velocity
  * @param[in] range
- * @param[in] sfx
+ * @param[in] sfxHandle
  * @param[in] volume
  * @param[in] soundTime
  */
 void S_AddRealLoopingSound(const vec3_t origin, const vec3_t velocity,
-                           int range, sfxHandle_t sfx,
+                           int range, sfxHandle_t sfxHandle,
                            int volume, int soundTime)
 {
 	if (si.AddRealLoopingSound)
 	{
-		si.AddRealLoopingSound(origin, velocity, range, sfx, volume, soundTime);
+		si.AddRealLoopingSound(origin, velocity, range, sfxHandle, volume, soundTime);
 	}
 }
 
 /**
  * @brief S_Respatialize
- * @param[in] entityNum
+ * @param[in] entNum
  * @param[in] origin
  * @param[in] axis
  * @param[in] inwater
@@ -443,7 +443,7 @@ void S_Respatialize(int entNum, const vec3_t origin,
 
 /**
  * @brief S_UpdateEntityPosition
- * @param[in] entityNum
+ * @param[in] entNum
  * @param[in] origin
  */
 void S_UpdateEntityPosition(int entNum, const vec3_t origin)
@@ -560,7 +560,7 @@ void S_SoundList(void)
 
 /**
  * @brief S_GetVoiceAmplitude
- * @param[in] entityNum
+ * @param[in] entNum
  * @return
  */
 int S_GetVoiceAmplitude(int entNum)
@@ -786,7 +786,7 @@ void S_Stream_f(void)
 	}
 	else
 	{
-		Com_Printf("Usage: stream <streamfile> [loopfile] [entnum] [channel] [attenuation]\n");
+		Com_Printf("Usage: stream <streamfile> [loopfile] [entNum] [channel] [attenuation]\n");
 		return;
 	}
 }

@@ -1255,7 +1255,7 @@ typedef struct model_s
 #define MAX_MOD_KNOWN   2048
 
 void R_ModelInit(void);
-model_t *R_GetModelByHandle(qhandle_t handle);
+model_t *R_GetModelByHandle(qhandle_t hModel);
 int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagNameIn, int startIndex);
 void R_ModelBounds(qhandle_t handle, vec3_t mins, vec3_t maxs);
 
@@ -1798,7 +1798,7 @@ MARKERS, POLYGON PROJECTION ON WORLD POLYGONS
 ============================================================
 */
 
-int R_MarkFragments(int orientation, const vec3_t *points, const vec3_t projection,
+int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection,
                     int maxPoints, vec3_t pointBuffer, int maxFragments, markFragment_t *fragmentBuffer);
 
 /*

@@ -391,10 +391,10 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
  * @brief R_LoadMDM
  * @param[in,out] mod
  * @param[in,out] buffer
- * @param[in] modName
+ * @param[in] name
  * @return
  */
-qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
+qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 {
 	int         i, j, k;
 	mdmHeader_t *mdm = ( mdmHeader_t * ) buffer;
@@ -417,7 +417,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 
 	if (version != MDM_VERSION)
 	{
-		Ren_Warning("R_LoadMDM: %s has wrong version (%i should be %i)\n", modName, version, MDM_VERSION);
+		Ren_Warning("R_LoadMDM: %s has wrong version (%i should be %i)\n", name, version, MDM_VERSION);
 		return qfalse;
 	}
 
@@ -541,13 +541,13 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 		if (mdmSurf->numVerts > SHADER_MAX_VERTEXES)
 		{
 			Ren_Drop("R_LoadMDM: %s has more than %i verts on a surface (%i)",
-			         modName, SHADER_MAX_VERTEXES, mdmSurf->numVerts);
+			         name, SHADER_MAX_VERTEXES, mdmSurf->numVerts);
 		}
 
 		if (mdmSurf->numTriangles > SHADER_MAX_TRIANGLES)
 		{
 			Ren_Drop("R_LoadMDM: %s has more than %i triangles on a surface (%i)",
-			         modName, SHADER_MAX_TRIANGLES, mdmSurf->numTriangles);
+			         name, SHADER_MAX_TRIANGLES, mdmSurf->numTriangles);
 		}
 
 		// register the shaders
@@ -608,7 +608,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 				         j, v->numWeights, MAX_WEIGHTS, i, modName);
 #else
 				Ren_Warning("WARNING: R_LoadMDM: vertex %i requires %i instead of maximum %i weights on surface (%i) in model '%s'\n",
-				            j, v->numWeights, MAX_WEIGHTS, i, modName);
+				            j, v->numWeights, MAX_WEIGHTS, i, name);
 #endif
 			}
 
@@ -954,7 +954,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *modName)
 
 				if (!vboTriangles.currentElements)
 				{
-					Ren_Warning("R_LoadMDM: could not add triangles to a remaining VBO surface for model '%s'\n", modName);
+					Ren_Warning("R_LoadMDM: could not add triangles to a remaining VBO surface for model '%s'\n", name);
 					break;
 				}
 

@@ -48,7 +48,7 @@ int Com_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 int Com_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void Com_Error(int code, const char *fmt, ...) _attribute((format(printf, 2, 3)));       // watch out, we don't define ERR_FATAL and stuff
 void Cvar_SetValue(const char *var_name, float value);
-void Cvar_Set(const char *var_name, const char *value);
+void Cvar_Set(const char *varName, const char *value);
 char *va(char *format, ...) _attribute((format(printf, 1, 2)));
 
 #ifdef _WIN32

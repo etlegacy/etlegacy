@@ -712,7 +712,7 @@ static void Cmd_TokenizeString2(const char *text_in, qboolean ignoreQuotes)
 
 /**
  * @brief Cmd_TokenizeString
- * @param[in] text_in
+ * @param[in] text
  */
 void Cmd_TokenizeString(const char *text)
 {

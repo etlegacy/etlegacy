@@ -3021,9 +3021,9 @@ int trap_RealTime(qtime_t *qtime);
 // console variable interaction
 void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
 void trap_Cvar_Update(vmCvar_t *vmCvar);
-void trap_Cvar_Set(const char *var_name, const char *value);
-void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
-void trap_Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bufsize);
+void trap_Cvar_Set(const char *varName, const char *value);
+void trap_Cvar_VariableStringBuffer(const char *varName, char *buffer, int bufsize);
+void trap_Cvar_LatchedVariableStringBuffer(const char *varName, char *buffer, int bufsize);
 
 // ServerCommand and ConsoleCommand parameter access
 int trap_Argc(void);

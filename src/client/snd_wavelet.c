@@ -251,7 +251,7 @@ void encodeWavelet(sfx_t *sfx, short *packets)
 /**
  * @brief decodeWavelet
  * @param[in] chunk
- * @param[out] to
+ * @param[out] packets
  */
 void decodeWavelet(sndBuffer *chunk, short *packets)
 {

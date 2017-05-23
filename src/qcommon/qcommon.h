@@ -116,7 +116,7 @@ void MSG_ReadData(msg_t *msg, void *data, int size);
 void MSG_WriteDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *to);
 void MSG_ReadDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *to);
 
-void MSG_WriteDeltaEntity(msg_t *msg, struct entityState_s *from, struct entityState_s *to, qboolean force);
+void MSG_WriteDeltaEntity(msg_t *msg, entityState_t *from, entityState_t *to, qboolean force);
 void MSG_ReadDeltaEntity(msg_t *msg, entityState_t *from, entityState_t *to, int number);
 
 void MSG_WriteDeltaSharedEntity(msg_t *msg, void *from, void *to, qboolean force, int number);
@@ -718,7 +718,7 @@ char *Cvar_InfoString_Big(int bit);
 // in their flags ( CVAR_USERINFO, CVAR_SERVERINFO, CVAR_SYSTEMINFO, etc )
 void Cvar_InfoStringBuffer(int bit, char *buff, size_t buffsize);
 void Cvar_CheckRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral);
-void Cvar_SetDescription(cvar_t *cv, const char *var_description);
+void Cvar_SetDescription(cvar_t *cv, const char *varDescription);
 
 void Cvar_Restart(qboolean unsetVM);
 void Cvar_Restart_f(void);
@@ -844,10 +844,10 @@ but that's a C++ construct ..
 #define FS_EXCLUDE_PK3 0x2
 long FS_FOpenFileRead_Filtered(const char *qpath, fileHandle_t *file, qboolean uniqueFILE, int filter_flag);
 
-int FS_FileIsInPAK(const char *filename, int *pChecksum);
+int FS_FileIsInPAK(const char *fileName, int *pChecksum);
 // returns 1 if a file is in the PAK file, otherwise -1
 
-int FS_Delete(const char *filename);
+int FS_Delete(const char *fileName);
 
 int FS_Write(const void *buffer, int len, fileHandle_t h);
 
@@ -930,15 +930,15 @@ void FS_FilenameCompletion(const char *dir, int numext, const char **ext,
 
 #if !defined(DEDICATED)
 extern int cl_connectedToPureServer;
-qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const char *filename);
+qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const char *fileName);
 #endif
 
 void FS_CopyFile(const char *fromOSPath, const char *toOSPath);
 
 qboolean FS_VerifyPak(const char *pak);
 
-qboolean FS_UnzipTo(const char *filename, const char *outpath, qboolean quiet);
-qboolean FS_Unzip(const char *filename, qboolean quiet);
+qboolean FS_UnzipTo(const char *fileName, const char *outpath, qboolean quiet);
+qboolean FS_Unzip(const char *fileName, qboolean quiet);
 
 void FS_HomeRemove(const char *homePath);
 qboolean FS_FileInPathExists(const char *testpath);
@@ -1007,7 +1007,7 @@ void Com_Quit_f(void) __attribute__ ((noreturn));
 int Com_Milliseconds(void);     // will be journaled properly
 unsigned int Com_BlockChecksum(const void *buffer, size_t length);
 unsigned int Com_BlockChecksumKey(void *buffer, int length, int key);
-char *Com_MD5FileETCompat(const char *filename);
+char *Com_MD5FileETCompat(const char *fileName);
 int Com_HashKey(char *string, int maxlen);
 int Com_Filter(char *filter, char *name, int casesensitive);
 int Com_FilterPath(const char *filter, const char *name, int casesensitive);
@@ -1015,7 +1015,7 @@ int Com_RealTime(qtime_t *qtime);
 qboolean Com_SafeMode(void);
 void Com_RandomBytes(byte *string, int len);
 
-char *Com_MD5File(const char *filename, int length, const char *prefix, int prefix_len);
+char *Com_MD5File(const char *fileName, int length, const char *prefix, int prefix_len);
 
 void Com_StartupVariable(const char *match);
 void Com_SetRecommended(void);

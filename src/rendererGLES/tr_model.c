@@ -51,20 +51,20 @@ model_t *loadmodel;
 
 /**
  * @brief R_GetModelByHandle
- * @param[in] index
+ * @param[in] hModel
  * @return
  */
-model_t *R_GetModelByHandle(qhandle_t index)
+model_t *R_GetModelByHandle(qhandle_t hModel)
 {
 	model_t *mod;
 
 	// out of range gets the default model
-	if (index < 1 || index >= tr.numModels)
+	if (hModel < 1 || hModel >= tr.numModels)
 	{
 		return tr.models[0];
 	}
 
-	mod = tr.models[index];
+	mod = tr.models[hModel];
 
 	return mod;
 }
@@ -1542,10 +1542,10 @@ static qboolean R_LoadMDS(model_t *mod, void *buffer, const char *mod_name)
  * @brief R_LoadMDM
  * @param[in,out] mod
  * @param[in,out] buffer
- * @param[in] mod_name
+ * @param[in] name
  * @return
  */
-static qboolean R_LoadMDM(model_t *mod, void *buffer, const char *mod_name)
+static qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 {
 	int         i, j, k;
 	mdmHeader_t *pinmodel, *mdm;
@@ -1565,7 +1565,7 @@ static qboolean R_LoadMDM(model_t *mod, void *buffer, const char *mod_name)
 	if (version != MDM_VERSION)
 	{
 		ri.Printf(PRINT_WARNING, "R_LoadMDM: %s has wrong version (%i should be %i)\n",
-		          mod_name, version, MDM_VERSION);
+		          name, version, MDM_VERSION);
 		return qfalse;
 	}
 
@@ -1673,12 +1673,12 @@ static qboolean R_LoadMDM(model_t *mod, void *buffer, const char *mod_name)
 		if (surf->numVerts > tess.maxShaderVerts)
 		{
 			ri.Error(ERR_DROP, "R_LoadMDM: %s has more than %i verts on a surface (%i)",
-			         mod_name, tess.maxShaderVerts, surf->numVerts);
+			         name, tess.maxShaderVerts, surf->numVerts);
 		}
 		if (surf->numTriangles * 3 > tess.maxShaderIndicies)
 		{
 			ri.Error(ERR_DROP, "R_LoadMDM: %s has more than %i triangles on a surface (%i)",
-			         mod_name, tess.maxShaderIndicies / 3, surf->numTriangles);
+			         name, tess.maxShaderIndicies / 3, surf->numTriangles);
 		}
 
 		// register the shaders

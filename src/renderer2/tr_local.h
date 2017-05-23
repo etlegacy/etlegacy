@@ -4592,7 +4592,7 @@ void Tess_SurfaceVBOMDMMesh(srfVBOMDMMesh_t *surface);
 
 void R_TransformWorldToClip(const vec3_t src, const float *cameraViewMatrix,
                             const float *projectionMatrix, vec4_t eye, vec4_t dst);
-void R_TransformModelToClip(const vec3_t src, const float *modelViewMatrix,
+void R_TransformModelToClip(const vec3_t src, const float *modelMatrix,
                             const float *projectionMatrix, vec4_t eye, vec4_t dst);
 void R_TransformClipToWindow(const vec4_t clip, const viewParms_t *view, vec4_t normalized, vec4_t window);
 float R_ProjectRadius(float r, vec3_t location);

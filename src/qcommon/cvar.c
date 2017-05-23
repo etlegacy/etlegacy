@@ -401,8 +401,8 @@ static const char *Cvar_Validate(cvar_t *cv, const char *value, qboolean warn)
 /**
  * @brief If the variable already exists, the value will not be set unless CVAR_ROM
  * The flags will be or'ed in if the variable exists.
- * @param[in] var_name
- * @param[in] var_value
+ * @param[in] varName
+ * @param[in] value
  * @param[in] flags
  * @return
  */
@@ -774,7 +774,7 @@ cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force)
 
 /**
  * @brief Cvar_Set
- * @param[in] var_name
+ * @param[in] varName
  * @param[in] value
  */
 void Cvar_Set(const char *varName, const char *value)
@@ -1615,18 +1615,18 @@ void Cvar_CheckRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIn
 
 /**
  * @brief Cvar_SetDescription
- * @param[in,out] var
- * @param[in] var_description
+ * @param[in,out] cv
+ * @param[in] varDescription
  */
-void Cvar_SetDescription(cvar_t *cv, const char *var_description)
+void Cvar_SetDescription(cvar_t *cv, const char *varDescription)
 {
-	if (var_description && var_description[0] != '\0')
+	if (varDescription && varDescription[0] != '\0')
 	{
 		if (cv->description != NULL)
 		{
 			Z_Free(cv->description);
 		}
-		cv->description = CopyString(var_description);
+		cv->description = CopyString(varDescription);
 	}
 }
 

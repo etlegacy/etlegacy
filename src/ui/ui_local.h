@@ -261,7 +261,7 @@ typedef struct
 typedef struct
 {
 	menucommon_s generic;
-	char *string;
+	char *fmt;
 	int style;
 	float *color;
 } menutext_s;
@@ -700,7 +700,7 @@ extern void UI_PushMenu(menuframework_s *menu);
 extern void UI_PopMenu(void);
 extern void UI_ForceMenuOff(void);
 extern char *UI_Argv(int arg);
-extern char *UI_Cvar_VariableString(const char *var_name);
+extern char *UI_Cvar_VariableString(const char *varName);
 extern void UI_Refresh(int time);
 extern void UI_KeyEvent(int key);
 
@@ -714,18 +714,18 @@ int Binding_Count(void);
 char *Binding_FromName(const char *cvar);
 
 // ui_syscalls.c
-void trap_Print(const char *string);
-void trap_Error(const char *string) __attribute__((noreturn));
+void trap_Print(const char *fmt);
+void trap_Error(const char *fmt) __attribute__((noreturn));
 int trap_Milliseconds(void);
-void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *value, int flags);
+void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
 void trap_Cvar_Update(vmCvar_t *vmCvar);
-void trap_Cvar_Set(const char *var_name, const char *value);
-float trap_Cvar_VariableValue(const char *var_name);
-void trap_Cvar_VariableStringBuffer(const char *var_name, char *buffer, int bufsize);
-void trap_Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, int bufsize);
-void trap_Cvar_SetValue(const char *var_name, float value);
+void trap_Cvar_Set(const char *varName, const char *value);
+float trap_Cvar_VariableValue(const char *varName);
+void trap_Cvar_VariableStringBuffer(const char *varName, char *buffer, int bufsize);
+void trap_Cvar_LatchedVariableStringBuffer(const char *varName, char *buffer, int bufsize);
+void trap_Cvar_SetValue(const char *varName, float value);
 void trap_Cvar_Reset(const char *name);
-void trap_Cvar_Create(const char *var_name, const char *var_value, int flags);
+void trap_Cvar_Create(const char *varName, const char *var_value, int flags);
 void trap_Cvar_InfoStringBuffer(int bit, char *buffer, int bufsize);
 int trap_Argc(void);
 void trap_Argv(int n, char *buffer, int bufferLength);
@@ -798,7 +798,7 @@ qboolean trap_LAN_ServerIsInFavoriteList(int source, int n);
 void trap_R_RegisterFont(const char *fontName, int pointSize, void *font);
 void trap_S_StopBackgroundTrack(void);
 void trap_S_StartBackgroundTrack(const char *intro, const char *loop, int fadeupTime);
-void trap_S_FadeAllSound(float targetvol, int time, qboolean stopsound);
+void trap_S_FadeAllSound(float targetvol, int time, qboolean stopsounds);
 int trap_CIN_PlayCinematic(const char *arg0, int xpos, int ypos, int width, int height, int bits);
 e_status trap_CIN_StopCinematic(int handle);
 e_status trap_CIN_RunCinematic(int handle);
@@ -813,7 +813,7 @@ void trap_GetAutoUpdate(void);
 void trap_openURL(const char *url);
 void trap_GetHunkData(int *hunkused, int *hunkexpected);
 
-const char *trap_TranslateString(const char *string); // localization
+const char *trap_TranslateString(const char *fmt); // localization
 
 const char *UI_DescriptionForCampaign(void);
 const char *UI_NameForCampaign(void);

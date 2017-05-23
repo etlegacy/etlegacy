@@ -3542,7 +3542,7 @@ command line completion
 
 /**
  * @brief Field_Clear
- * @param[out] edit
+ * @param[out] field
  */
 void Field_Clear(field_t *field)
 {

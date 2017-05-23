@@ -711,7 +711,7 @@ void *VM_ExplicitArgPtr(vm_t *vm, intptr_t intValue)
  * which will subtract space for locals from sp
  *
  * @param[in] vm
- * @param[in] callnum
+ * @param[in] callNum
  * @return
  */
 intptr_t QDECL VM_CallFunc(vm_t *vm, int callNum, ...)

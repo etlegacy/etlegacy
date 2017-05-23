@@ -49,20 +49,20 @@ model_t *loadmodel;
 
 /**
  * @brief R_GetModelByHandle
- * @param[in] handle
+ * @param[in] hModel
  * @return
  */
-model_t *R_GetModelByHandle(qhandle_t handle)
+model_t *R_GetModelByHandle(qhandle_t hModel)
 {
 	model_t *mod;
 
 	// out of range gets the default model
-	if (handle < 1 || handle >= tr.numModels)
+	if (hModel < 1 || hModel >= tr.numModels)
 	{
 		return tr.models[0];
 	}
 
-	mod = tr.models[handle];
+	mod = tr.models[hModel];
 
 	return mod;
 }

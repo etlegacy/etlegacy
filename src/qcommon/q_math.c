@@ -3043,7 +3043,7 @@ void MatrixToVectorsFRU(const mat4_t m, vec3_t forward, vec3_t right, vec3_t up)
 
 /**
  * @brief Based on gluInvertMatrix
- * @param[in] m
+ * @param[in] in
  * @param[out] out
  * @return
  */

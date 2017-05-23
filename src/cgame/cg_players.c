@@ -3187,7 +3187,7 @@ void CG_GetBleedOrigin(vec3_t head_origin, vec3_t body_origin, int fleshEntityNu
  * @brief CG_GetTag
  * @param[in] clientNum
  * @param[in] tagname
- * @param[in,out] or
+ * @param[in,out] orientation
  * @return
  */
 qboolean CG_GetTag(int clientNum, const char *tagname, orientation_t *orientation)

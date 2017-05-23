@@ -118,7 +118,7 @@ void GL_SelectTexture(int unit)
 	glState.currenttmu = unit;
 }
 
-/**
+/*
  * @brief GL_BindMultitexture
  * @param image0
  * @param env0 - unused
@@ -1386,7 +1386,7 @@ void RB_ShowImages(void)
 	Ren_Print("%i msec to draw all images\n", end - start);
 }
 
-/**
+/*
  * @brief RB_DrawBounds
  * @param[in,out] mins
  * @param[in,out] maxs

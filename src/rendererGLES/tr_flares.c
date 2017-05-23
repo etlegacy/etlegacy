@@ -125,9 +125,9 @@ void R_ClearFlares(void)
  * @param[in] scale
  * @param[in] normal
  * @param[in] id
- * @param[in] cgvisible
+ * @param[in] visible
  */
-void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, float scale, vec3_t normal, int id, qboolean cgvisible) // added scale. added id.  added visible
+void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, float scale, vec3_t normal, int id, qboolean visible) // added scale. added id.  added visible
 {
 	int     i;
 	flare_t *f;
@@ -193,7 +193,7 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, float sc
 		f->id            = id;
 	}
 
-	f->cgvisible = cgvisible;
+	f->cgvisible = visible;
 
 	if (f->addedFrame != backEnd.viewParms.frameCount - 1)
 	{
