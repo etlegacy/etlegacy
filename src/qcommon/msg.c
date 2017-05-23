@@ -60,6 +60,12 @@ Handles byte ordering and avoids alignment errors
 
 void MSG_initHuffman(void);
 
+/**
+ * @brief MSG_Init
+ * @param[out] buf
+ * @param[in] data
+ * @param[in] length
+ */
 void MSG_Init(msg_t *buf, byte *data, int length)
 {
 	if (!msgInit)
@@ -73,6 +79,12 @@ void MSG_Init(msg_t *buf, byte *data, int length)
 	buf->maxsize = length;
 }
 
+/**
+ * @brief MSG_InitOOB
+ * @param[out] buf
+ * @param[in] data
+ * @param[in] length
+ */
 void MSG_InitOOB(msg_t *buf, byte *data, int length)
 {
 	if (!msgInit)
@@ -87,6 +99,10 @@ void MSG_InitOOB(msg_t *buf, byte *data, int length)
 	buf->oob     = qtrue;
 }
 
+/**
+ * @brief MSG_Clear
+ * @param[out] buf
+ */
 void MSG_Clear(msg_t *buf)
 {
 	buf->cursize    = 0;
@@ -94,11 +110,19 @@ void MSG_Clear(msg_t *buf)
 	buf->bit        = 0;            //<- in bits
 }
 
+/**
+ * @brief MSG_Bitstream
+ * @param[out] buf
+ */
 void MSG_Bitstream(msg_t *buf)
 {
 	buf->oob = qfalse;
 }
 
+/**
+ * @brief MSG_Uncompressed
+ * @param[out] buf
+ */
 void MSG_Uncompressed(msg_t *buf)
 {
 	// align to byte-boundary
@@ -106,6 +130,10 @@ void MSG_Uncompressed(msg_t *buf)
 	buf->oob = qtrue;
 }
 
+/**
+ * @brief MSG_BeginReading
+ * @param[out] msg
+ */
 void MSG_BeginReading(msg_t *msg)
 {
 	msg->readcount = 0;
@@ -120,6 +148,10 @@ void MSG_BeginReadingOOB(msg_t *msg)
 	msg->oob       = qtrue;
 }
 
+/**
+ * @brief MSG_BeginReadingUncompressed
+ * @param[out] msg
+ */
 void MSG_BeginReadingUncompressed(msg_t *msg)
 {
 	// align to byte-boundary
@@ -127,6 +159,13 @@ void MSG_BeginReadingUncompressed(msg_t *msg)
 	msg->oob = qtrue;
 }
 
+/**
+ * @brief MSG_Copy
+ * @param[out] buf
+ * @param[in] data
+ * @param[in] length
+ * @param[in] src
+ */
 void MSG_Copy(msg_t *buf, byte *data, int length, msg_t *src)
 {
 	if (length < src->cursize)
@@ -144,7 +183,14 @@ bit functions
 =============================================================================
 */
 
-// negative bit values include signs
+// Negative bit values include signs
+
+/**
+ * @brief MSG_WriteBits
+ * @param[in,out] msg
+ * @param[in] value
+ * @param[in] bits
+ */
 void MSG_WriteBits(msg_t *msg, int value, int bits)
 {
 	oldsize += bits;
@@ -228,6 +274,12 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 	}
 }
 
+/**
+ * @brief MSG_ReadBits
+ * @param[in,out] msg
+ * @param[in] bits
+ * @return
+ */
 int MSG_ReadBits(msg_t *msg, int bits)
 {
 	int      value = 0;
@@ -315,6 +367,11 @@ int MSG_ReadBits(msg_t *msg, int bits)
 
 // writing functions
 
+/**
+ * @brief MSG_WriteChar
+ * @param[in,out] msg
+ * @param[in] c
+ */
 void MSG_WriteChar(msg_t *msg, int c)
 {
 #ifdef PARANOID
@@ -327,6 +384,11 @@ void MSG_WriteChar(msg_t *msg, int c)
 	MSG_WriteBits(msg, c, 8);
 }
 
+/**
+ * @brief MSG_WriteByte
+ * @param[in,out] msg
+ * @param[in] c
+ */
 void MSG_WriteByte(msg_t *msg, int c)
 {
 #ifdef PARANOID
@@ -339,16 +401,27 @@ void MSG_WriteByte(msg_t *msg, int c)
 	MSG_WriteBits(msg, c, 8);
 }
 
+/**
+ * @brief MSG_WriteData
+ * @param[in,out] buf
+ * @param[in] data
+ * @param[in] length
+ */
 void MSG_WriteData(msg_t *buf, const void *data, int length)
 {
 	int i;
 
 	for (i = 0; i < length; i++)
 	{
-		MSG_WriteByte(buf, ((byte *)data)[i]);
+		MSG_WriteByte(buf, ((const byte *)data)[i]);
 	}
 }
 
+/**
+ * @brief MSG_WriteShort
+ * @param[in,out] msg
+ * @param[in] c
+ */
 void MSG_WriteShort(msg_t *msg, int c)
 {
 #ifdef PARANOID
@@ -361,11 +434,21 @@ void MSG_WriteShort(msg_t *msg, int c)
 	MSG_WriteBits(msg, c, 16);
 }
 
+/**
+ * @brief MSG_WriteLong
+ * @param[in,out] msg
+ * @param[in] c
+ */
 void MSG_WriteLong(msg_t *msg, int c)
 {
 	MSG_WriteBits(msg, c, 32);
 }
 
+/**
+ * @brief MSG_WriteFloat
+ * @param[in,out] msg
+ * @param[in] f
+ */
 void MSG_WriteFloat(msg_t *msg, float f)
 {
 	union
@@ -378,6 +461,11 @@ void MSG_WriteFloat(msg_t *msg, float f)
 	MSG_WriteBits(msg, dat.l, 32);
 }
 
+/**
+ * @brief MSG_WriteString
+ * @param[in,out] msg
+ * @param[in] s
+ */
 void MSG_WriteString(msg_t *msg, const char *s)
 {
 	if (!s)
@@ -416,6 +504,11 @@ void MSG_WriteString(msg_t *msg, const char *s)
 	}
 }
 
+/**
+ * @brief MSG_WriteBigString
+ * @param[in,out] msg
+ * @param[in] s
+ */
 void MSG_WriteBigString(msg_t *msg, const char *s)
 {
 	if (!s)
@@ -454,11 +547,21 @@ void MSG_WriteBigString(msg_t *msg, const char *s)
 	}
 }
 
+/**
+ * @brief MSG_WriteAngle
+ * @param[in,out] msg
+ * @param[in] f
+ */
 void MSG_WriteAngle(msg_t *msg, float f)
 {
 	MSG_WriteByte(msg, (int)(f * 256 / 360) & 255);
 }
 
+/**
+ * @brief MSG_WriteAngle16
+ * @param[in,out] msg
+ * @param[in] f
+ */
 void MSG_WriteAngle16(msg_t *msg, float f)
 {
 	MSG_WriteShort(msg, ANGLE2SHORT(f));
@@ -468,7 +571,11 @@ void MSG_WriteAngle16(msg_t *msg, float f)
 
 // reading functions
 
-// returns -1 if no more characters are available
+/**
+ * @brief MSG_ReadChar
+ * @param[in] msg
+ * @return -1 if no more characters are available
+ */
 int MSG_ReadChar(msg_t *msg)
 {
 	int c;
@@ -482,6 +589,11 @@ int MSG_ReadChar(msg_t *msg)
 	return c;
 }
 
+/**
+ * @brief MSG_ReadByte
+ * @param[in] msg
+ * @return -1 if no more characters are available
+ */
 int MSG_ReadByte(msg_t *msg)
 {
 	int c;
@@ -494,6 +606,11 @@ int MSG_ReadByte(msg_t *msg)
 	return c;
 }
 
+/**
+ * @brief MSG_ReadShort
+ * @param[in] msg
+ * @return -1 if no more characters are available
+ */
 int MSG_ReadShort(msg_t *msg)
 {
 	int c;
@@ -507,6 +624,11 @@ int MSG_ReadShort(msg_t *msg)
 	return c;
 }
 
+/**
+ * @brief MSG_ReadLong
+ * @param[in] msg
+ * @return -1 if no more characters are available
+ */
 int MSG_ReadLong(msg_t *msg)
 {
 	int c;
@@ -520,6 +642,11 @@ int MSG_ReadLong(msg_t *msg)
 	return c;
 }
 
+/**
+ * @brief MSG_ReadFloat
+ * @param[in] msg
+ * @return -1 if no more characters are available
+ */
 float MSG_ReadFloat(msg_t *msg)
 {
 	union
@@ -538,10 +665,16 @@ float MSG_ReadFloat(msg_t *msg)
 	return dat.f;
 }
 
+/**
+ * @brief MSG_ReadString
+ * @param[in] msg
+ * @return
+ */
 char *MSG_ReadString(msg_t *msg)
 {
-	static char string[MAX_STRING_CHARS];
-	int         l = 0, c;
+	static char  string[MAX_STRING_CHARS];
+	unsigned int l = 0;
+	int          c;
 
 	do
 	{
@@ -567,10 +700,16 @@ char *MSG_ReadString(msg_t *msg)
 	return string;
 }
 
+/**
+ * @brief MSG_ReadBigString
+ * @param[in] msg
+ * @return
+ */
 char *MSG_ReadBigString(msg_t *msg)
 {
-	static char string[BIG_INFO_STRING];
-	int         l = 0, c;
+	static char  string[BIG_INFO_STRING];
+	unsigned int l = 0;
+	int          c;
 
 	do
 	{
@@ -596,10 +735,16 @@ char *MSG_ReadBigString(msg_t *msg)
 	return string;
 }
 
+/**
+ * @brief MSG_ReadStringLine
+ * @param[in] msg
+ * @return
+ */
 char *MSG_ReadStringLine(msg_t *msg)
 {
-	static char string[MAX_STRING_CHARS];
-	int         l = 0, c;
+	static char  string[MAX_STRING_CHARS];
+	unsigned int l = 0;
+	int          c;
 
 	do
 	{
@@ -625,11 +770,22 @@ char *MSG_ReadStringLine(msg_t *msg)
 	return string;
 }
 
+/**
+ * @brief MSG_ReadAngle16
+ * @param[in] msg
+ * @return
+ */
 float MSG_ReadAngle16(msg_t *msg)
 {
 	return SHORT2ANGLE(MSG_ReadShort(msg));
 }
 
+/**
+ * @brief MSG_ReadData
+ * @param[in] msg
+ * @param[in] data
+ * @param[in] size
+ */
 void MSG_ReadData(msg_t *msg, void *data, int size)
 {
 	int i;
@@ -650,6 +806,13 @@ extern cvar_t *cl_shownet;
 
 #define LOG(x) if (cl_shownet && cl_shownet->integer == 4) { Com_Printf("%s ", x); };
 
+/**
+ * @brief MSG_WriteDelta
+ * @param[in,out] msg
+ * @param[in] oldV
+ * @param[in] newV
+ * @param[in] bits
+ */
 void MSG_WriteDelta(msg_t *msg, int oldV, int newV, int bits)
 {
 	if (oldV == newV)
@@ -661,6 +824,13 @@ void MSG_WriteDelta(msg_t *msg, int oldV, int newV, int bits)
 	MSG_WriteBits(msg, newV, bits);
 }
 
+/**
+ * @brief MSG_ReadDelta
+ * @param[in] msg
+ * @param[in] oldV
+ * @param[in] bits
+ * @return
+ */
 int MSG_ReadDelta(msg_t *msg, int oldV, int bits)
 {
 	if (MSG_ReadBits(msg, 1))
@@ -670,6 +840,12 @@ int MSG_ReadDelta(msg_t *msg, int oldV, int bits)
 	return oldV;
 }
 
+/**
+ * @brief MSG_WriteDeltaFloat
+ * @param[out] msg
+ * @param[in] oldV
+ * @param[in] newV
+ */
 void MSG_WriteDeltaFloat(msg_t *msg, float oldV, float newV)
 {
 	floatint_t fi;
@@ -684,6 +860,12 @@ void MSG_WriteDeltaFloat(msg_t *msg, float oldV, float newV)
 	MSG_WriteBits(msg, fi.i, 32);
 }
 
+/**
+ * @brief MSG_ReadDeltaFloat
+ * @param[in] msg
+ * @param[in] oldV
+ * @return
+ */
 float MSG_ReadDeltaFloat(msg_t *msg, float oldV)
 {
 	if (MSG_ReadBits(msg, 1))
@@ -714,6 +896,14 @@ int kbitmask[32] =
 	0x1FFFFFFF, 0x3FFFFFFF, 0x7FFFFFFF, 0xFFFFFFFF,
 };
 
+/**
+ * @brief MSG_WriteDeltaKey
+ * @param[out] msg
+ * @param[in] key
+ * @param[in] oldV
+ * @param[in] newV
+ * @param[in] bits
+ */
 void MSG_WriteDeltaKey(msg_t *msg, int key, int oldV, int newV, int bits)
 {
 	if (oldV == newV)
@@ -725,6 +915,14 @@ void MSG_WriteDeltaKey(msg_t *msg, int key, int oldV, int newV, int bits)
 	MSG_WriteBits(msg, newV ^ key, bits);
 }
 
+/**
+ * @brief MSG_ReadDeltaKey
+ * @param[in] msg
+ * @param[in] key
+ * @param[in] oldV
+ * @param[in] bits
+ * @return
+ */
 int MSG_ReadDeltaKey(msg_t *msg, int key, int oldV, int bits)
 {
 	if (MSG_ReadBits(msg, 1))
@@ -734,6 +932,13 @@ int MSG_ReadDeltaKey(msg_t *msg, int key, int oldV, int bits)
 	return oldV;
 }
 
+/**
+ * @brief MSG_WriteDeltaKeyFloat
+ * @param[out] msg
+ * @param[in] key
+ * @param[in] oldV
+ * @param[in] newV
+ */
 void MSG_WriteDeltaKeyFloat(msg_t *msg, int key, float oldV, float newV)
 {
 	floatint_t fi;
@@ -748,6 +953,13 @@ void MSG_WriteDeltaKeyFloat(msg_t *msg, int key, float oldV, float newV)
 	MSG_WriteBits(msg, fi.i ^ key, 32);
 }
 
+/**
+ * @brief MSG_ReadDeltaKeyFloat
+ * @param[in] msg
+ * @param[in] key
+ * @param[in] oldV
+ * @return
+ */
 float MSG_ReadDeltaKeyFloat(msg_t *msg, int key, float oldV)
 {
 	if (MSG_ReadBits(msg, 1))
@@ -766,11 +978,13 @@ usercmd_t communication
 ============================================================================
 */
 
-/*
-=====================
-MSG_WriteDeltaUsercmdKey
-=====================
-*/
+/**
+ * @brief MSG_WriteDeltaUsercmdKey
+ * @param[out] msg
+ * @param[in] key
+ * @param[in] from
+ * @param[in] to
+ */
 void MSG_WriteDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *to)
 {
 	if (to->serverTime - from->serverTime < 256)
@@ -816,11 +1030,13 @@ void MSG_WriteDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *t
 	MSG_WriteDeltaKey(msg, key, from->identClient, to->identClient, 8);
 }
 
-/*
-=====================
-MSG_ReadDeltaUsercmdKey
-=====================
-*/
+/**
+ * @brief MSG_ReadDeltaUsercmdKey
+ * @param[in] msg
+ * @param[in] key
+ * @param[in] from
+ * @param[out] to
+ */
 void MSG_ReadDeltaUsercmdKey(msg_t *msg, int key, usercmd_t *from, usercmd_t *to)
 {
 	if (MSG_ReadBits(msg, 1))
@@ -885,13 +1101,9 @@ entityState_t communication
 =============================================================================
 */
 
-/*
-=================
-MSG_ReportChangeVectors_f
-
-Prints out a table from the current statistics for copying to code
-=================
-*/
+/**
+ * @brief Prints out a table from the current statistics for copying to code
+ */
 void MSG_ReportChangeVectors_f(void)
 {
 	int i;
@@ -913,88 +1125,96 @@ typedef struct
 	int used;
 } netField_t;
 
-// using the stringizing operator to save typing...
+/**
+ * @brief Using the stringizing operator to save typing...
+ */
 #define NETF(x) # x, (size_t)&((entityState_t *)0)->x
 
 netField_t entityStateFields[] =
 {
-	{ NETF(eType),           8               },
-	{ NETF(eFlags),          24              },
-	{ NETF(pos.trType),      8               },
-	{ NETF(pos.trTime),      32              },
-	{ NETF(pos.trDuration),  32              },
-	{ NETF(pos.trBase[0]),   0               },
-	{ NETF(pos.trBase[1]),   0               },
-	{ NETF(pos.trBase[2]),   0               },
-	{ NETF(pos.trDelta[0]),  0               },
-	{ NETF(pos.trDelta[1]),  0               },
-	{ NETF(pos.trDelta[2]),  0               },
-	{ NETF(apos.trType),     8               },
-	{ NETF(apos.trTime),     32              },
-	{ NETF(apos.trDuration), 32              },
-	{ NETF(apos.trBase[0]),  0               },
-	{ NETF(apos.trBase[1]),  0               },
-	{ NETF(apos.trBase[2]),  0               },
-	{ NETF(apos.trDelta[0]), 0               },
-	{ NETF(apos.trDelta[1]), 0               },
-	{ NETF(apos.trDelta[2]), 0               },
-	{ NETF(time),            32              },
-	{ NETF(time2),           32              },
-	{ NETF(origin[0]),       0               },
-	{ NETF(origin[1]),       0               },
-	{ NETF(origin[2]),       0               },
-	{ NETF(origin2[0]),      0               },
-	{ NETF(origin2[1]),      0               },
-	{ NETF(origin2[2]),      0               },
-	{ NETF(angles[0]),       0               },
-	{ NETF(angles[1]),       0               },
-	{ NETF(angles[2]),       0               },
-	{ NETF(angles2[0]),      0               },
-	{ NETF(angles2[1]),      0               },
-	{ NETF(angles2[2]),      0               },
-	{ NETF(otherEntityNum),  GENTITYNUM_BITS },
-	{ NETF(otherEntityNum2), GENTITYNUM_BITS },
-	{ NETF(groundEntityNum), GENTITYNUM_BITS },
-	{ NETF(loopSound),       8               },
-	{ NETF(constantLight),   32              },
-	{ NETF(dl_intensity),    32              }, // longer now to carry the corona colors
-	{ NETF(modelindex),      9               },
-	{ NETF(modelindex2),     9               },
-	{ NETF(frame),           16              },
-	{ NETF(clientNum),       8               },
-	{ NETF(solid),           24              },
-	{ NETF(event),           10              },
-	{ NETF(eventParm),       8               },
-	{ NETF(eventSequence),   8               }, // warning: need to modify cg_event.c at "// check the sequencial list" if you change this
-	{ NETF(events[0]),       8               },
-	{ NETF(events[1]),       8               },
-	{ NETF(events[2]),       8               },
-	{ NETF(events[3]),       8               },
-	{ NETF(eventParms[0]),   8               },
-	{ NETF(eventParms[1]),   8               },
-	{ NETF(eventParms[2]),   8               },
-	{ NETF(eventParms[3]),   8               },
-	{ NETF(powerups),        16              },
-	{ NETF(weapon),          8               },
-	{ NETF(legsAnim),        ANIM_BITS       },
-	{ NETF(torsoAnim),       ANIM_BITS       },
-	{ NETF(density),         10              },
-	{ NETF(dmgFlags),        32              }, // additional info flags for damage
-	{ NETF(onFireStart),     32              },
-	{ NETF(onFireEnd),       32              },
-	{ NETF(nextWeapon),      8               },
-	{ NETF(teamNum),         8               },
-	{ NETF(effect1Time),     32              },
-	{ NETF(effect2Time),     32              },
-	{ NETF(effect3Time),     32              },
-	{ NETF(animMovetype),    4               },
-	{ NETF(aiState),         2               },
+	{ NETF(eType),           8,               0 },
+	{ NETF(eFlags),          24,              0 },
+	{ NETF(pos.trType),      8,               0 },
+	{ NETF(pos.trTime),      32,              0 },
+	{ NETF(pos.trDuration),  32,              0 },
+	{ NETF(pos.trBase[0]),   0,               0 },
+	{ NETF(pos.trBase[1]),   0,               0 },
+	{ NETF(pos.trBase[2]),   0,               0 },
+	{ NETF(pos.trDelta[0]),  0,               0 },
+	{ NETF(pos.trDelta[1]),  0,               0 },
+	{ NETF(pos.trDelta[2]),  0,               0 },
+	{ NETF(apos.trType),     8,               0 },
+	{ NETF(apos.trTime),     32,              0 },
+	{ NETF(apos.trDuration), 32,              0 },
+	{ NETF(apos.trBase[0]),  0,               0 },
+	{ NETF(apos.trBase[1]),  0,               0 },
+	{ NETF(apos.trBase[2]),  0,               0 },
+	{ NETF(apos.trDelta[0]), 0,               0 },
+	{ NETF(apos.trDelta[1]), 0,               0 },
+	{ NETF(apos.trDelta[2]), 0,               0 },
+	{ NETF(time),            32,              0 },
+	{ NETF(time2),           32,              0 },
+	{ NETF(origin[0]),       0,               0 },
+	{ NETF(origin[1]),       0,               0 },
+	{ NETF(origin[2]),       0,               0 },
+	{ NETF(origin2[0]),      0,               0 },
+	{ NETF(origin2[1]),      0,               0 },
+	{ NETF(origin2[2]),      0,               0 },
+	{ NETF(angles[0]),       0,               0 },
+	{ NETF(angles[1]),       0,               0 },
+	{ NETF(angles[2]),       0,               0 },
+	{ NETF(angles2[0]),      0,               0 },
+	{ NETF(angles2[1]),      0,               0 },
+	{ NETF(angles2[2]),      0,               0 },
+	{ NETF(otherEntityNum),  GENTITYNUM_BITS, 0 },
+	{ NETF(otherEntityNum2), GENTITYNUM_BITS, 0 },
+	{ NETF(groundEntityNum), GENTITYNUM_BITS, 0 },
+	{ NETF(loopSound),       8,               0 },
+	{ NETF(constantLight),   32,              0 },
+	{ NETF(dl_intensity),    32,              0 }, // longer now to carry the corona colors
+	{ NETF(modelindex),      9,               0 },
+	{ NETF(modelindex2),     9,               0 },
+	{ NETF(frame),           16,              0 },
+	{ NETF(clientNum),       8,               0 },
+	{ NETF(solid),           24,              0 },
+	{ NETF(event),           10,              0 },
+	{ NETF(eventParm),       8,               0 },
+	{ NETF(eventSequence),   8,               0 }, // warning: need to modify cg_event.c at "// check the sequencial list" if you change this
+	{ NETF(events[0]),       8,               0 },
+	{ NETF(events[1]),       8,               0 },
+	{ NETF(events[2]),       8,               0 },
+	{ NETF(events[3]),       8,               0 },
+	{ NETF(eventParms[0]),   8,               0 },
+	{ NETF(eventParms[1]),   8,               0 },
+	{ NETF(eventParms[2]),   8,               0 },
+	{ NETF(eventParms[3]),   8,               0 },
+	{ NETF(powerups),        16,              0 },
+	{ NETF(weapon),          8,               0 },
+	{ NETF(legsAnim),        ANIM_BITS,       0 },
+	{ NETF(torsoAnim),       ANIM_BITS,       0 },
+	{ NETF(density),         10,              0 },
+	{ NETF(dmgFlags),        32,              0 }, // additional info flags for damage
+	{ NETF(onFireStart),     32,              0 },
+	{ NETF(onFireEnd),       32,              0 },
+	{ NETF(nextWeapon),      8,               0 },
+	{ NETF(teamNum),         8,               0 },
+	{ NETF(effect1Time),     32,              0 },
+	{ NETF(effect2Time),     32,              0 },
+	{ NETF(effect3Time),     32,              0 },
+	{ NETF(animMovetype),    4,               0 },
+	{ NETF(aiState),         2,               0 },
 };
 
+/**
+ * @brief qsort_entitystatefields
+ * @param[in] a
+ * @param[in] b
+ * @return
+ */
 static int QDECL qsort_entitystatefields(const void *a, const void *b)
 {
-	int aa = *((int *)a);
-	int bb = *((int *)b);
+	const int aa = *((const int *)a);
+	const int bb = *((const int *)b);
 
 	if (entityStateFields[aa].used > entityStateFields[bb].used)
 	{
@@ -1007,6 +1227,9 @@ static int QDECL qsort_entitystatefields(const void *a, const void *b)
 	return 0;
 }
 
+/**
+ * @brief MSG_PrioritiseEntitystateFields
+ */
 void MSG_PrioritiseEntitystateFields(void)
 {
 	int fieldorders[sizeof(entityStateFields) / sizeof(entityStateFields[0])];
@@ -1034,18 +1257,18 @@ void MSG_PrioritiseEntitystateFields(void)
 #define FLOAT_INT_BITS  13
 #define FLOAT_INT_BIAS  (1 << (FLOAT_INT_BITS - 1))
 
-/*
-==================
-MSG_WriteDeltaEntity
-
-Writes part of a packetentities message, including the entity number.
-Can delta from either a baseline or a previous packet_entity
-If to is NULL, a remove entity update will be sent
-If force is not set, then nothing at all will be generated if the entity is
-identical, under the assumption that the in-order delta code will catch it.
-==================
-*/
-void MSG_WriteDeltaEntity(msg_t *msg, struct entityState_s *from, struct entityState_s *to, qboolean force)
+/**
+ * @brief Writes part of a packetentities message, including the entity number.
+ * Can delta from either a baseline or a previous packet_entity
+ * If to is NULL, a remove entity update will be sent
+ * If force is not set, then nothing at all will be generated if the entity is
+ * identical, under the assumption that the in-order delta code will catch it.
+ * @param[out] msg
+ * @param[in] from
+ * @param[in] to
+ * @param[in] force
+ */
+void MSG_WriteDeltaEntity(msg_t *msg, entityState_t *from, entityState_t *to, qboolean force)
 {
 	int        i, lc;
 	int        numFields = sizeof(entityStateFields) / sizeof(entityStateFields[0]);
@@ -1204,20 +1427,20 @@ void MSG_WriteDeltaEntity(msg_t *msg, struct entityState_s *from, struct entityS
 	*/
 }
 
-/*
-==================
-MSG_ReadDeltaEntity
-
-The entity number has already been read from the message, which
-is how the from state is identified.
-
-If the delta removes the entity, entityState_t->number will be set to MAX_GENTITIES-1
-
-Can go from either a baseline or a previous packet_entity
-==================
-*/
 extern cvar_t *cl_shownet;
 
+/**
+ * @brief The entity number has already been read from the message, which
+ * is how the from state is identified.
+ *
+ * If the delta removes the entity, entityState_t->number will be set to MAX_GENTITIES-1
+ *
+ * Can go from either a baseline or a previous packet_entity
+ * @param[in] msg
+ * @param[in] from
+ * @param[out] to
+ * @param[in] number
+ */
 void MSG_ReadDeltaEntity(msg_t *msg, entityState_t *from, entityState_t *to,
                          int number)
 {
@@ -1392,52 +1615,54 @@ entityShared_t communication
 	 + LOG2_32BIT((v) * 1L >> 16 * ((v) / 2L >> 31 > 0) \
 	              >> 16 * ((v) / 2L >> 31 > 0)))
 
-// Compute the number of clients bits at compile-time (this is necessary else the compiler will throw an error because this is not a constant)
+/// Compute the number of clients bits at compile-time (this is necessary else the compiler will throw an error because this is not a constant)
 #define CLIENTNUM_BITS  LOG2_8BIT(MAX_CLIENTS)
 
-// using the stringizing operator to save typing...
+/// Using the stringizing operator to save typing...
 #define ESF(x) # x, (size_t)&((entityShared_t *)0)->x
 
 netField_t entitySharedFields[] =
 {
-	{ ESF(linked),           1               },
-	{ ESF(linkcount),        8               }, // enough to see whether the linkcount has changed
-	                                            // (assuming it doesn't change 256 times in 1 frame)
-	{ ESF(bmodel),           1               },
-	{ ESF(svFlags),          12              },
-	{ ESF(singleClient),     CLIENTNUM_BITS  },
-	{ ESF(contents),         32              },
-	{ ESF(ownerNum),         GENTITYNUM_BITS },
-	{ ESF(mins[0]),          0               },
-	{ ESF(mins[1]),          0               },
-	{ ESF(mins[2]),          0               },
-	{ ESF(maxs[0]),          0               },
-	{ ESF(maxs[1]),          0               },
-	{ ESF(maxs[2]),          0               },
-	{ ESF(absmin[0]),        0               },
-	{ ESF(absmin[1]),        0               },
-	{ ESF(absmin[2]),        0               },
-	{ ESF(absmax[0]),        0               },
-	{ ESF(absmax[1]),        0               },
-	{ ESF(absmax[2]),        0               },
-	{ ESF(currentOrigin[0]), 0               },
-	{ ESF(currentOrigin[1]), 0               },
-	{ ESF(currentOrigin[2]), 0               },
-	{ ESF(currentAngles[0]), 0               },
-	{ ESF(currentAngles[1]), 0               },
-	{ ESF(currentAngles[2]), 0               },
-	{ ESF(ownerNum),         32              },
-	{ ESF(eventTime),        32              },
-	{ ESF(worldflags),       32              },
-	{ ESF(snapshotCallback), 1               }
+	{ ESF(linked),           1,               0 },
+	{ ESF(linkcount),        8,               0 }, ///< enough to see whether the linkcount has changed
+	                                               ///< (assuming it doesn't change 256 times in 1 frame)
+	{ ESF(bmodel),           1,               0 },
+	{ ESF(svFlags),          12,              0 },
+	{ ESF(singleClient),     CLIENTNUM_BITS,  0 },
+	{ ESF(contents),         32,              0 },
+	{ ESF(ownerNum),         GENTITYNUM_BITS, 0 },
+	{ ESF(mins[0]),          0,               0 },
+	{ ESF(mins[1]),          0,               0 },
+	{ ESF(mins[2]),          0,               0 },
+	{ ESF(maxs[0]),          0,               0 },
+	{ ESF(maxs[1]),          0,               0 },
+	{ ESF(maxs[2]),          0,               0 },
+	{ ESF(absmin[0]),        0,               0 },
+	{ ESF(absmin[1]),        0,               0 },
+	{ ESF(absmin[2]),        0,               0 },
+	{ ESF(absmax[0]),        0,               0 },
+	{ ESF(absmax[1]),        0,               0 },
+	{ ESF(absmax[2]),        0,               0 },
+	{ ESF(currentOrigin[0]), 0,               0 },
+	{ ESF(currentOrigin[1]), 0,               0 },
+	{ ESF(currentOrigin[2]), 0,               0 },
+	{ ESF(currentAngles[0]), 0,               0 },
+	{ ESF(currentAngles[1]), 0,               0 },
+	{ ESF(currentAngles[2]), 0,               0 },
+	{ ESF(ownerNum),         32,              0 },
+	{ ESF(eventTime),        32,              0 },
+	{ ESF(worldflags),       32,              0 },
+	{ ESF(snapshotCallback), 1,               0 }
 };
 
-
-/*
-==================
-MSG_WriteDeltaSharedEntity
-==================
-*/
+/**
+ * @brief MSG_WriteDeltaSharedEntity
+ * @param[out] msg
+ * @param[in] from
+ * @param[in] to
+ * @param[in] force
+ * @param[in] number
+ */
 void MSG_WriteDeltaSharedEntity(msg_t *msg, void *from, void *to, qboolean force, int number)
 {
 	int        i, lc;
@@ -1545,11 +1770,13 @@ void MSG_WriteDeltaSharedEntity(msg_t *msg, void *from, void *to, qboolean force
 	}
 }
 
-/*
-==================
-MSG_ReadDeltaSharedEntity
-==================
-*/
+/**
+ * @brief MSG_ReadDeltaSharedEntity
+ * @param[in] msg
+ * @param[in] from
+ * @param[in] to
+ * @param number - unused
+ */
 void MSG_ReadDeltaSharedEntity(msg_t *msg, void *from, void *to, int number)
 {
 	int        i, lc;
@@ -1639,94 +1866,100 @@ player_state_t communication
 ============================================================================
 */
 
-// using the stringizing operator to save typing...
+/// Using the stringizing operator to save typing...
 #define PSF(x) # x, (size_t)&((playerState_t *)0)->x
 
 netField_t playerStateFields[] =
 {
-	{ PSF(commandTime),          32              },
-	{ PSF(pm_type),              8               },
-	{ PSF(bobCycle),             8               },
-	{ PSF(pm_flags),             16              },
-	{ PSF(pm_time),              -16             },
-	{ PSF(origin[0]),            0               },
-	{ PSF(origin[1]),            0               },
-	{ PSF(origin[2]),            0               },
-	{ PSF(velocity[0]),          0               },
-	{ PSF(velocity[1]),          0               },
-	{ PSF(velocity[2]),          0               },
-	{ PSF(weaponTime),           -16             },
-	{ PSF(weaponDelay),          -16             },
-	{ PSF(grenadeTimeLeft),      -16             },
-	{ PSF(gravity),              16              },
-	{ PSF(leanf),                0               },
-	{ PSF(speed),                16              },
-	{ PSF(delta_angles[0]),      16              },
-	{ PSF(delta_angles[1]),      16              },
-	{ PSF(delta_angles[2]),      16              },
-	{ PSF(groundEntityNum),      GENTITYNUM_BITS },
-	{ PSF(legsTimer),            16              },
-	{ PSF(torsoTimer),           16              },
-	{ PSF(legsAnim),             ANIM_BITS       },
-	{ PSF(torsoAnim),            ANIM_BITS       },
-	{ PSF(movementDir),          8               },
-	{ PSF(eFlags),               24              },
-	{ PSF(eventSequence),        8               },
-	{ PSF(events[0]),            8               },
-	{ PSF(events[1]),            8               },
-	{ PSF(events[2]),            8               },
-	{ PSF(events[3]),            8               },
-	{ PSF(eventParms[0]),        8               },
-	{ PSF(eventParms[1]),        8               },
-	{ PSF(eventParms[2]),        8               },
-	{ PSF(eventParms[3]),        8               },
-	{ PSF(clientNum),            8               },
-	{ PSF(weapons[0]),           32              },
-	{ PSF(weapons[1]),           32              },
-	{ PSF(weapon),               7               },
-	{ PSF(weaponstate),          4               },
-	{ PSF(weapAnim),             10              },
-	{ PSF(viewangles[0]),        0               },
-	{ PSF(viewangles[1]),        0               },
-	{ PSF(viewangles[2]),        0               },
-	{ PSF(viewheight),           -8              },
-	{ PSF(damageEvent),          8               },
-	{ PSF(damageYaw),            8               },
-	{ PSF(damagePitch),          8               },
-	{ PSF(damageCount),          8               },
-	{ PSF(mins[0]),              0               },
-	{ PSF(mins[1]),              0               },
-	{ PSF(mins[2]),              0               },
-	{ PSF(maxs[0]),              0               },
-	{ PSF(maxs[1]),              0               },
-	{ PSF(maxs[2]),              0               },
-	{ PSF(crouchMaxZ),           0               },
-	{ PSF(crouchViewHeight),     0               },
-	{ PSF(standViewHeight),      0               },
-	{ PSF(deadViewHeight),       0               },
-	{ PSF(runSpeedScale),        0               },
-	{ PSF(sprintSpeedScale),     0               },
-	{ PSF(crouchSpeedScale),     0               },
-	{ PSF(friction),             0               },
-	{ PSF(viewlocked),           8               },
-	{ PSF(viewlocked_entNum),    16              },
-	{ PSF(nextWeapon),           8               },
-	{ PSF(teamNum),              8               },
-	{ PSF(onFireStart),          32              },
-	{ PSF(curWeapHeat),          8               },
-	{ PSF(aimSpreadScale),       8               },
-	{ PSF(serverCursorHint),     8               },
-	{ PSF(serverCursorHintVal),  8               },
-	{ PSF(classWeaponTime),      32              },
-	{ PSF(identifyClient),       8               },
-	{ PSF(identifyClientHealth), 8               },
-	{ PSF(aiState),              2               },
+	{ PSF(commandTime),          32,              0 },
+	{ PSF(pm_type),              8,               0 },
+	{ PSF(bobCycle),             8,               0 },
+	{ PSF(pm_flags),             16,              0 },
+	{ PSF(pm_time),              -16,             0 },
+	{ PSF(origin[0]),            0,               0 },
+	{ PSF(origin[1]),            0,               0 },
+	{ PSF(origin[2]),            0,               0 },
+	{ PSF(velocity[0]),          0,               0 },
+	{ PSF(velocity[1]),          0,               0 },
+	{ PSF(velocity[2]),          0,               0 },
+	{ PSF(weaponTime),           -16,             0 },
+	{ PSF(weaponDelay),          -16,             0 },
+	{ PSF(grenadeTimeLeft),      -16,             0 },
+	{ PSF(gravity),              16,              0 },
+	{ PSF(leanf),                0,               0 },
+	{ PSF(speed),                16,              0 },
+	{ PSF(delta_angles[0]),      16,              0 },
+	{ PSF(delta_angles[1]),      16,              0 },
+	{ PSF(delta_angles[2]),      16,              0 },
+	{ PSF(groundEntityNum),      GENTITYNUM_BITS, 0 },
+	{ PSF(legsTimer),            16,              0 },
+	{ PSF(torsoTimer),           16,              0 },
+	{ PSF(legsAnim),             ANIM_BITS,       0 },
+	{ PSF(torsoAnim),            ANIM_BITS,       0 },
+	{ PSF(movementDir),          8,               0 },
+	{ PSF(eFlags),               24,              0 },
+	{ PSF(eventSequence),        8,               0 },
+	{ PSF(events[0]),            8,               0 },
+	{ PSF(events[1]),            8,               0 },
+	{ PSF(events[2]),            8,               0 },
+	{ PSF(events[3]),            8,               0 },
+	{ PSF(eventParms[0]),        8,               0 },
+	{ PSF(eventParms[1]),        8,               0 },
+	{ PSF(eventParms[2]),        8,               0 },
+	{ PSF(eventParms[3]),        8,               0 },
+	{ PSF(clientNum),            8,               0 },
+	{ PSF(weapons[0]),           32,              0 },
+	{ PSF(weapons[1]),           32,              0 },
+	{ PSF(weapon),               7,               0 },
+	{ PSF(weaponstate),          4,               0 },
+	{ PSF(weapAnim),             10,              0 },
+	{ PSF(viewangles[0]),        0,               0 },
+	{ PSF(viewangles[1]),        0,               0 },
+	{ PSF(viewangles[2]),        0,               0 },
+	{ PSF(viewheight),           -8,              0 },
+	{ PSF(damageEvent),          8,               0 },
+	{ PSF(damageYaw),            8,               0 },
+	{ PSF(damagePitch),          8,               0 },
+	{ PSF(damageCount),          8,               0 },
+	{ PSF(mins[0]),              0,               0 },
+	{ PSF(mins[1]),              0,               0 },
+	{ PSF(mins[2]),              0,               0 },
+	{ PSF(maxs[0]),              0,               0 },
+	{ PSF(maxs[1]),              0,               0 },
+	{ PSF(maxs[2]),              0,               0 },
+	{ PSF(crouchMaxZ),           0,               0 },
+	{ PSF(crouchViewHeight),     0,               0 },
+	{ PSF(standViewHeight),      0,               0 },
+	{ PSF(deadViewHeight),       0,               0 },
+	{ PSF(runSpeedScale),        0,               0 },
+	{ PSF(sprintSpeedScale),     0,               0 },
+	{ PSF(crouchSpeedScale),     0,               0 },
+	{ PSF(friction),             0,               0 },
+	{ PSF(viewlocked),           8,               0 },
+	{ PSF(viewlocked_entNum),    16,              0 },
+	{ PSF(nextWeapon),           8,               0 },
+	{ PSF(teamNum),              8,               0 },
+	{ PSF(onFireStart),          32,              0 },
+	{ PSF(curWeapHeat),          8,               0 },
+	{ PSF(aimSpreadScale),       8,               0 },
+	{ PSF(serverCursorHint),     8,               0 },
+	{ PSF(serverCursorHintVal),  8,               0 },
+	{ PSF(classWeaponTime),      32,              0 },
+	{ PSF(identifyClient),       8,               0 },
+	{ PSF(identifyClientHealth), 8,               0 },
+	{ PSF(aiState),              2,               0 },
 };
 
+/**
+ * @brief qsort_playerstatefields
+ * @param[in] a
+ * @param[in] b
+ * @return
+ */
 static int QDECL qsort_playerstatefields(const void *a, const void *b)
 {
-	int aa = *((int *)a);
-	int bb = *((int *)b);
+	const int aa = *((const int *)a);
+	const int bb = *((const int *)b);
 
 	if (playerStateFields[aa].used > playerStateFields[bb].used)
 	{
@@ -1739,6 +1972,9 @@ static int QDECL qsort_playerstatefields(const void *a, const void *b)
 	return 0;
 }
 
+/**
+ * @brief MSG_PrioritisePlayerStateFields
+ */
 void MSG_PrioritisePlayerStateFields(void)
 {
 	int fieldorders[sizeof(playerStateFields) / sizeof(playerStateFields[0])];
@@ -1761,11 +1997,12 @@ void MSG_PrioritisePlayerStateFields(void)
 	Com_Printf("};\n");
 }
 
-/*
-=============
-MSG_WriteDeltaPlayerstate
-=============
-*/
+/**
+ * @brief MSG_WriteDeltaPlayerstate
+ * @param[out] msg
+ * @param[in] from
+ * @param[in] to
+ */
 void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct playerState_s *to)
 {
 	int           i, j, lc;
@@ -2092,11 +2329,12 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 	}
 }
 
-/*
-===================
-MSG_ReadDeltaPlayerstate
-===================
-*/
+/**
+ * @brief MSG_ReadDeltaPlayerstate
+ * @param[in] msg
+ * @param[in] from
+ * @param[out] to
+ */
 void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to)
 {
 	int           i, j, lc;
@@ -2323,7 +2561,10 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 	}
 }
 
-// Predefined set of nodes for Huffman compression
+/**
+ * @var msg_hData
+ * @brief Predefined set of nodes for Huffman compression
+ */
 int msg_hData[256] =
 {
 	250315,     // 0
@@ -2584,6 +2825,9 @@ int msg_hData[256] =
 	13504,      // 255
 };
 
+/**
+ * @brief MSG_initHuffman
+ */
 void MSG_initHuffman(void)
 {
 	int i, j;
