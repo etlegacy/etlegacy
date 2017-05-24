@@ -234,8 +234,8 @@ static void UI_LoadArenasFromFile(const char *filename)
  */
 int QDECL UI_SortArenas(const void *a, const void *b)
 {
-	mapInfo ca = *(mapInfo *)a;
-	mapInfo cb = *(mapInfo *)b;
+	const mapInfo ca = *(const mapInfo *)a;
+	const mapInfo cb = *(const mapInfo *)b;
 	char    cleanNameA[MAX_STRING_CHARS];
 	char    cleanNameB[MAX_STRING_CHARS];
 
@@ -602,8 +602,8 @@ int QDECL UI_SortCampaigns(const void *a, const void *b)
 	char cleanNameA[MAX_STRING_CHARS];
 	char cleanNameB[MAX_STRING_CHARS];
 
-	campaignInfo_t ca = *(campaignInfo_t *)a;
-	campaignInfo_t cb = *(campaignInfo_t *)b;
+	const campaignInfo_t ca = *(const campaignInfo_t *)a;
+	const campaignInfo_t cb = *(const campaignInfo_t *)b;
 	Q_strncpyz(cleanNameA, ca.campaignName, sizeof(cleanNameA));
 	Q_strncpyz(cleanNameB, cb.campaignName, sizeof(cleanNameB));
 	Q_CleanStr(cleanNameA);

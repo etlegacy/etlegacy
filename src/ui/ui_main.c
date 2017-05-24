@@ -4079,8 +4079,8 @@ void UI_ServersSort(int column, qboolean force)
  */
 int QDECL UI_SortMods(const void *a, const void *b)
 {
-	modInfo_t ca = *(modInfo_t *)a;
-	modInfo_t cb = *(modInfo_t *)b;
+	const modInfo_t ca = *(const modInfo_t *)a;
+	const modInfo_t cb = *(const modInfo_t *)b;
 
 	return strcmp(ca.modName, cb.modName);
 }
