@@ -550,14 +550,14 @@ static ID_INLINE void LocalAddScaledMatrixTransformVectorTranslate(vec3_t in, fl
 	out[2] += s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2] + tr[2]);
 }
 
-/**
+/*
  * @brief LocalAddScaledMatrixTransformVector
  * @param[in] in
  * @param[in] s
  * @param[in] mat
  * @param[out] out
- */
-/*
+ *
+ * @note Unused
 static ID_INLINE void LocalAddScaledMatrixTransformVector(vec3_t in, float s, vec3_t mat[3], vec3_t out)
 {
     out[0] += s * (in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2]);
@@ -628,15 +628,13 @@ static ID_INLINE void SLerp_Normal(vec3_t from, vec3_t to, float tt, vec3_t out)
 ===============================================================================
 */
 
-/**
+/*
  * @brief Matrix4Multiply
  * @param[in] a
  * @param[in] b
  * @param[out] dst
  *
  * @note Unused
- */
-/*
 static ID_INLINE void Matrix4Multiply(const vec4_t a[4], const vec4_t b[4], vec4_t dst[4])
 {
     dst[0][0] = a[0][0] * b[0][0] + a[0][1] * b[1][0] + a[0][2] * b[2][0] + a[0][3] * b[3][0];
@@ -709,12 +707,12 @@ static ID_INLINE void Matrix4Transpose(const vec4_t matrix[4], vec4_t transpose[
 }
 */
 
-/**
+/*
  * @brief Matrix4FromAxis
  * @param[in] axis
  * @param[out] dst
- */
-/*
+ *
+ * @note Unused
 static ID_INLINE void Matrix4FromAxis(const vec3_t axis[3], vec4_t dst[4])
 {
     int i, j;
@@ -732,13 +730,13 @@ static ID_INLINE void Matrix4FromAxis(const vec3_t axis[3], vec4_t dst[4])
 }
 */
 
-/**
+/*
  * @brief Matrix4FromScaledAxis
  * @param[in] axis
  * @param[in] scale
  * @param[out] dst
- */
-/*
+ *
+ * @note Unused
 static ID_INLINE void Matrix4FromScaledAxis(const vec3_t axis[3], const float scale, vec4_t dst[4])
 {
     int i, j;
@@ -760,12 +758,12 @@ static ID_INLINE void Matrix4FromScaledAxis(const vec3_t axis[3], const float sc
 }
 */
 
-/**
+/*
  * @brief Matrix4FromTranslation
  * @param[in] t
  * @param[out] dst
- */
-/*
+ *
+ * @note Unused
 static ID_INLINE void Matrix4FromTranslation(const vec3_t t, vec4_t dst[4])
 {
     int i, j;
