@@ -2717,10 +2717,10 @@ void G_ShutdownGame(int restart)
 
 /**
  * @brief Com_Error
- * @param level - unused
+ * @param code - unused
  * @param[in] error
  */
-void QDECL Com_Error(int level, const char *error, ...)
+void QDECL Com_Error(int code, const char *error, ...)
 {
 	va_list argptr;
 	char    text[1024];
@@ -2732,7 +2732,7 @@ void QDECL Com_Error(int level, const char *error, ...)
 	G_Error("%s", text);
 }
 
-void QDECL Com_Error(int level, const char *error, ...) _attribute((format(printf, 2, 3)));
+void QDECL Com_Error(int code, const char *error, ...) _attribute((format(printf, 2, 3)));
 
 /**
  * @brief Com_Printf
@@ -2768,8 +2768,8 @@ PLAYER COUNTING / SCORE SORTING
  */
 int QDECL SortRanks(const void *a, const void *b)
 {
-	gclient_t *ca = &level.clients[*(int *)a];
-	gclient_t *cb = &level.clients[*(int *)b];
+	gclient_t *ca = &level.clients[*(const int *)a];
+	gclient_t *cb = &level.clients[*(const int *)b];
 
 	// sort special clients last
 	if (ca->sess.spectatorClient < 0)
@@ -3208,8 +3208,8 @@ void FindIntermissionPoint(void)
  */
 int QDECL G_SortMapsByzOrder(const void *a, const void *b)
 {
-	int z1 = *(int *)a;
-	int z2 = *(int *)b;
+	int z1 = *(const int *)a;
+	int z2 = *(const int *)b;
 
 	if (z1 == -1 && z2 == -1)
 	{
