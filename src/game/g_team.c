@@ -1554,8 +1554,8 @@ void G_swapTeams(void)
  */
 int QDECL G_SortPlayersByXP(const void *a, const void *b)
 {
-	gclient_t *cla = &level.clients[*((int *)a)];
-	gclient_t *clb = &level.clients[*((int *)b)];
+	gclient_t *cla = &level.clients[*((const int *)a)];
+	gclient_t *clb = &level.clients[*((const int *)b)];
 
 	if (cla->ps.stats[STAT_XP] > clb->ps.stats[STAT_XP])
 	{
@@ -1577,8 +1577,8 @@ int QDECL G_SortPlayersByXP(const void *a, const void *b)
  */
 int QDECL G_SortPlayersBySR(const void *a, const void *b)
 {
-	gclient_t *cla = &level.clients[*((int *)a)];
-	gclient_t *clb = &level.clients[*((int *)b)];
+	gclient_t *cla = &level.clients[*((const int *)a)];
+	gclient_t *clb = &level.clients[*((const int *)b)];
 
 	if ((cla->sess.mu - 3 * cla->sess.sigma)  > (clb->sess.mu - 3 * clb->sess.sigma))
 	{

@@ -863,8 +863,8 @@ int QDECL SortStats(const void *a, const void *b)
 	gclient_t *ca, *cb;
 	float     accA, accB;
 
-	ca = &level.clients[*(int *)a];
-	cb = &level.clients[*(int *)b];
+	ca = &level.clients[*(const int *)a];
+	cb = &level.clients[*(const int *)b];
 
 	// then connecting clients
 	if (ca->pers.connected == CON_CONNECTING)
