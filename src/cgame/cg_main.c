@@ -894,11 +894,11 @@ void QDECL CG_Error(const char *msg, ...)
 
 /**
  * @brief Com_Error
- * @param[in] level - unused
+ * @param[in] code - unused
  * @param[in] error
  * @note FIXME: this is only here so the functions in q_shared.c and bg_*.c can link
  */
-void QDECL Com_Error(int level, const char *error, ...)
+void QDECL Com_Error(int code, const char *error, ...)
 {
 	va_list argptr;
 	char    text[1024];
