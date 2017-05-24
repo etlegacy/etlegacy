@@ -60,10 +60,10 @@ void QDECL Com_DPrintf(const char *fmt, ...)
 
 /**
  * @brief Com_Error
- * @param level - unused
+ * @param code - unused
  * @param[in] error
  */
-void QDECL Com_Error(int level, const char *error, ...)
+void QDECL Com_Error(int code, const char *error, ...)
 {
 	va_list argptr;
 	char    text[1024];
@@ -107,17 +107,17 @@ char *UI_Argv(int arg)
 
 /**
  * @brief UI_Cvar_VariableString
- * @param[in] var_name
+ * @param[in] varName
  * @return
  */
-char *UI_Cvar_VariableString(const char *var_name)
+char *UI_Cvar_VariableString(const char *varName)
 {
 	static char buffer[2][MAX_STRING_CHARS];
 	static int  toggle;
 
 	toggle ^= 1;        // flip-flop to allow two returns without clash
 
-	trap_Cvar_VariableStringBuffer(var_name, buffer[toggle], sizeof(buffer[0]));
+	trap_Cvar_VariableStringBuffer(varName, buffer[toggle], sizeof(buffer[0]));
 
 	return buffer[toggle];
 }
