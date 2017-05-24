@@ -56,10 +56,10 @@ static vec4_t FT_text = { 0.6f, 0.6f, 0.6f, 1.0f };
 int QDECL CG_SortFireTeam(const void *a, const void *b)
 {
 	clientInfo_t *ca, *cb;
-	int          cna, cnb;
+	int    cna, cnb;
 
-	cna = *(int *)a;
-	cnb = *(int *)b;
+	cna = *(const int *)a;
+	cnb = *(const int *)b;
 
 	ca = &cgs.clientinfo[cna];
 	cb = &cgs.clientinfo[cnb];

@@ -1958,8 +1958,8 @@ void CG_DebriefingPlayerList_Draw(panel_button_t *button)
  */
 int QDECL CG_SortPlayersByXP(const void *a, const void *b)
 {
-	int ca = *(int *)a;
-	int cb = *(int *)b;
+	const int ca = *(const int *)a;
+	const int cb = *(const int *)b;
 
 	if (!cgs.clientinfo[cb].infoValid)
 	{
