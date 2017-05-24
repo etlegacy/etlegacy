@@ -137,14 +137,12 @@ void SV_BotFreeClient(int clientNum)
 	}
 }
 
-/**
+/*
  * @brief BotDrawDebugPolygons
  * @param drawPoly - unused
  * @param value - unused
  *
  * @todo TODO: remove in cm_patch.c
- */
-/*
 void BotDrawDebugPolygons(BotPolyFunc drawPoly, int value)
 {
     return;

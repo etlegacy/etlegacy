@@ -337,6 +337,7 @@ static void SV_AddEntToSnapshot(sharedEntity_t *clientEnt, svEntity_t *svEnt, sh
 	eNums->numSnapshotEntities++;
 }
 
+#ifdef FEATURE_ANTICHEAT
 /**
  * @brief SV_AddEntitiesVisibleFromPoint
  * @param[in] origin
@@ -344,9 +345,14 @@ static void SV_AddEntToSnapshot(sharedEntity_t *clientEnt, svEntity_t *svEnt, sh
  * @param[in] eNums
  * @param[in] portal
  */
-#ifdef FEATURE_ANTICHEAT
 static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *frame, snapshotEntityNumbers_t *eNums, qboolean portal)
 #else
+/**
+ * @brief SV_AddEntitiesVisibleFromPoint
+ * @param[in] origin
+ * @param[in,out] frame
+ * @param[in] eNums
+ */
 static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *frame, snapshotEntityNumbers_t *eNums)
 #endif
 {
@@ -383,7 +389,7 @@ static void SV_AddEntitiesVisibleFromPoint(vec3_t origin, clientSnapshot_t *fram
 	if (playerEnt->r.svFlags & SVF_SELF_PORTAL)
 	{
 #ifdef FEATURE_ANTICHEAT
-		SV_AddEntitiesVisibleFromPoint(playerEnt->s.origin2, frame, eNums, qtrue); //  portal qtrue?!
+		SV_AddEntitiesVisibleFromPoint(playerEnt->s.origin2, frame, eNums, qtrue); // FIXME: portal qtrue?!
 #else
 		SV_AddEntitiesVisibleFromPoint(playerEnt->s.origin2, frame, eNums);
 #endif

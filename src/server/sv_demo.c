@@ -532,7 +532,7 @@ void SV_DemoWriteClientUserinfo(client_t *client, const char *userinfo)
 	SV_DemoWriteMessage(&msg); // commit this demo event in the demo file
 }
 
-/**
+/*
  * @brief Write a client usercmd_t for the current packet (called from sv_client.c SV_UserMove) which contains the movements commands for the player
  *
  * @param[in] cl
@@ -546,35 +546,34 @@ void SV_DemoWriteClientUserinfo(client_t *client, const char *userinfo)
  *
  * @note Enabling this feature will use a LOT more storage space, so enable it only if you will really use it.
  * Generally, you're probably better off leaving it disabled.
- */
-/*
 void SV_DemoWriteClientUsercmd( client_t *cl, qboolean delta, int cmdCount, usercmd_t *cmds, int key )
 {
-msg_t msg;
-usercmd_t nullcmd;
-usercmd_t *cmd, *oldcmd;
-int i;
+    msg_t msg;
+    usercmd_t nullcmd;
+    usercmd_t *cmd, *oldcmd;
+    int i;
 
-//Com_Printf("DebugGBOWriteusercmd: %i\n", cl - svs.clients);
+    //Com_Printf("DebugGBOWriteusercmd: %i\n", cl - svs.clients);
 
-MSG_Init(&msg, buf, sizeof(buf));
-MSG_WriteByte(&msg, demo_clientUsercmd);
-MSG_WriteByte(&msg, cl - svs.clients);
-if (delta)
-MSG_WriteByte(&msg, 1);
-else
-MSG_WriteByte(&msg, 0);
-MSG_WriteByte(&msg, cmdCount);
+    MSG_Init(&msg, buf, sizeof(buf));
+    MSG_WriteByte(&msg, demo_clientUsercmd);
+    MSG_WriteByte(&msg, cl - svs.clients);
+    if (delta)
+    MSG_WriteByte(&msg, 1);
+    else
+    MSG_WriteByte(&msg, 0);
+    MSG_WriteByte(&msg, cmdCount);
 
-Com_Memset( &nullcmd, 0, sizeof(nullcmd) );
-oldcmd = &nullcmd;
-for ( i = 0 ; i < cmdCount ; i++ ) {
-cmd = &cmds[i];
-MSG_WriteDeltaUsercmdKey( &msg, key, oldcmd, cmd );
-oldcmd = cmd;
-}
+    Com_Memset( &nullcmd, 0, sizeof(nullcmd) );
+    oldcmd = &nullcmd;
+    for ( i = 0 ; i < cmdCount ; i++ )
+    {
+        cmd = &cmds[i];
+        MSG_WriteDeltaUsercmdKey( &msg, key, oldcmd, cmd );
+        oldcmd = cmd;
+    }
 
-SV_DemoWriteMessage(&msg);
+    SV_DemoWriteMessage(&msg);
 }
 */
 
