@@ -45,7 +45,7 @@
  * @note Unused
 static int CompareBoneIndices(const void *a, const void *b)
 {
-        return *(int *)a - *(int *)b;
+        return *(const int *)a - *(const int *)b;
 }
 */
 

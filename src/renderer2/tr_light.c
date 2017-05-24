@@ -1215,11 +1215,11 @@ static int InteractionCompare(const void *a, const void *b)
 {
 #if 1
 	// shader first
-	if (((interaction_t *) a)->surfaceShader < ((interaction_t *) b)->surfaceShader)
+	if (((const interaction_t *) a)->surfaceShader < ((const interaction_t *) b)->surfaceShader)
 	{
 		return -1;
 	}
-	else if (((interaction_t *) a)->surfaceShader > ((interaction_t *) b)->surfaceShader)
+	else if (((const interaction_t *) a)->surfaceShader > ((const interaction_t *) b)->surfaceShader)
 	{
 		return 1;
 	}
@@ -1227,19 +1227,19 @@ static int InteractionCompare(const void *a, const void *b)
 
 #if 1
 	// then entity
-	if (((interaction_t *) a)->entity == &tr.worldEntity && ((interaction_t *) b)->entity != &tr.worldEntity)
+	if (((const interaction_t *) a)->entity == &tr.worldEntity && ((const interaction_t *) b)->entity != &tr.worldEntity)
 	{
 		return -1;
 	}
-	else if (((interaction_t *) a)->entity != &tr.worldEntity && ((interaction_t *) b)->entity == &tr.worldEntity)
+	else if (((const interaction_t *) a)->entity != &tr.worldEntity && ((const interaction_t *) b)->entity == &tr.worldEntity)
 	{
 		return 1;
 	}
-	else if (((interaction_t *) a)->entity < ((interaction_t *) b)->entity)
+	else if (((const interaction_t *) a)->entity < ((const interaction_t *) b)->entity)
 	{
 		return -1;
 	}
-	else if (((interaction_t *) a)->entity > ((interaction_t *) b)->entity)
+	else if (((const interaction_t *) a)->entity > ((const interaction_t *) b)->entity)
 	{
 		return 1;
 	}

@@ -2434,11 +2434,11 @@ static int DrawSurfCompare(const void *a, const void *b)
 {
 #if 1
 	// by shader
-	if (((drawSurf_t *) a)->shaderNum < ((drawSurf_t *) b)->shaderNum)
+	if (((const drawSurf_t *) a)->shaderNum < ((const drawSurf_t *) b)->shaderNum)
 	{
 		return -1;
 	}
-	else if (((drawSurf_t *) a)->shaderNum > ((drawSurf_t *) b)->shaderNum)
+	else if (((const drawSurf_t *) a)->shaderNum > ((const drawSurf_t *) b)->shaderNum)
 	{
 		return 1;
 	}
@@ -2446,11 +2446,11 @@ static int DrawSurfCompare(const void *a, const void *b)
 
 #if 1
 	// by lightmap
-	if (((drawSurf_t *) a)->lightmapNum < ((drawSurf_t *) b)->lightmapNum)
+	if (((const drawSurf_t *) a)->lightmapNum < ((const drawSurf_t *) b)->lightmapNum)
 	{
 		return -1;
 	}
-	else if (((drawSurf_t *) a)->lightmapNum > ((drawSurf_t *) b)->lightmapNum)
+	else if (((const drawSurf_t *) a)->lightmapNum > ((const drawSurf_t *) b)->lightmapNum)
 	{
 		return 1;
 	}
@@ -2458,19 +2458,19 @@ static int DrawSurfCompare(const void *a, const void *b)
 
 #if 1
 	// by entity
-	if (((drawSurf_t *) a)->entity == &tr.worldEntity && ((drawSurf_t *) b)->entity != &tr.worldEntity)
+	if (((const drawSurf_t *) a)->entity == &tr.worldEntity && ((const drawSurf_t *) b)->entity != &tr.worldEntity)
 	{
 		return -1;
 	}
-	else if (((drawSurf_t *) a)->entity != &tr.worldEntity && ((drawSurf_t *) b)->entity == &tr.worldEntity)
+	else if (((const drawSurf_t *) a)->entity != &tr.worldEntity && ((const drawSurf_t *) b)->entity == &tr.worldEntity)
 	{
 		return 1;
 	}
-	else if (((drawSurf_t *) a)->entity < ((drawSurf_t *) b)->entity)
+	else if (((const drawSurf_t *) a)->entity < ((const drawSurf_t *) b)->entity)
 	{
 		return -1;
 	}
-	else if (((drawSurf_t *) a)->entity > ((drawSurf_t *) b)->entity)
+	else if (((const drawSurf_t *) a)->entity > ((const drawSurf_t *) b)->entity)
 	{
 		return 1;
 	}
@@ -2478,11 +2478,11 @@ static int DrawSurfCompare(const void *a, const void *b)
 
 #if 1
 	// by fog
-	if (((drawSurf_t *) a)->fogNum < ((drawSurf_t *) b)->fogNum)
+	if (((const drawSurf_t *) a)->fogNum < ((const drawSurf_t *) b)->fogNum)
 	{
 		return -1;
 	}
-	else if (((drawSurf_t *) a)->fogNum > ((drawSurf_t *) b)->fogNum)
+	else if (((const drawSurf_t *) a)->fogNum > ((const drawSurf_t *) b)->fogNum)
 	{
 		return 1;
 	}

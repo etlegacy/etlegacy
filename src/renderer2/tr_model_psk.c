@@ -105,10 +105,10 @@ static void GetBone(memStream_t *s, axBone_t *bone)
  */
 static int CompareTrianglesByMaterialIndex(const void *a, const void *b)
 {
-	axTriangle_t *t1, *t2;
+	const axTriangle_t *t1, *t2;
 
-	t1 = ( axTriangle_t * ) a;
-	t2 = ( axTriangle_t * ) b;
+	t1 = ( const axTriangle_t * ) a;
+	t2 = ( const axTriangle_t * ) b;
 
 	if (t1->materialIndex < t2->materialIndex)
 	{
