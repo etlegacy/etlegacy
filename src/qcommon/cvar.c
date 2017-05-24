@@ -266,7 +266,7 @@ char *Cvar_ClearForeignCharacters(const char *value)
 
 /**
  * @brief Cvar_Validate
- * @param[in,out] var
+ * @param[in,out] cv
  * @param[in] value
  * @param[in] warn
  * @return
