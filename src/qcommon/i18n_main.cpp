@@ -91,7 +91,10 @@ public:
 
 		setg(end, end, end);
 
-		FS_FOpenFileRead(filename.c_str(), &fileHandle, qfalse);
+		if (FS_FOpenFileRead(filename.c_str(), &fileHandle, qfalse) <= 0)
+		{
+			Com_Printf("Warning: can't open or read file '%s' \n", filename.c_str());
+		}
 	}
 
 	~QInputbuf()
