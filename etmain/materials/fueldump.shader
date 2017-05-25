@@ -74,11 +74,11 @@ textures/fueldump/terrain_base
 //======================================================================
 textures/fueldump/terrain1_0
 {
-        qer_editorimage textures/stone/mxsnow2
+	qer_editorimage textures/stone/mxsnow2
 	q3map_baseshader textures/fueldump/terrain_base
-	diffusemap map textures/stone/mxsnow2
-	bumpmap map textures/stone/mxsnow2_n
-	specularmap map textures/stone/mxsnow2
+	diffusemap textures/stone/mxsnow2
+	bumpmap textures/stone/mxsnow2_n
+	specularmap textures/stone/mxsnow2
 	{
 	   map textures/stone/mxsnow2
 	   rgbgen identity
@@ -93,11 +93,11 @@ textures/fueldump/terrain1_0
 
 textures/fueldump/terrain1_1
 {
-        qer_editorimage textures/snow_sd/mxrock4b_snow
+    qer_editorimage textures/snow_sd/mxrock4b_snow
 	q3map_baseshader textures/fueldump/terrain_base
-	diffusemap map textures/snow_sd/mxrock4b_snow
-	bumpmap map textures/snow_sd/mxrock4b_snow_n
-	specularmap map textures/snow_sd/mxrock4b_snow_s
+	diffusemap textures/snow_sd/mxrock4b_snow
+	bumpmap textures/snow_sd/mxrock4b_snow_n
+	specularmap textures/snow_sd/mxrock4b_snow_s
 	
 	{
 		map textures/snow_sd/mxrock4b_snow
@@ -113,11 +113,11 @@ textures/fueldump/terrain1_1
 
 textures/fueldump/terrain1_2
 {
-        qer_editorimage textures/stone/mxsnow3
+    qer_editorimage textures/stone/mxsnow3
 	q3map_baseshader textures/fueldump/terrain_base
-	diffusemap map textures/stone/mxsnow3
-	bumpmap map textures/stone/mxsnow3_n
-	specularmap map textures/stone/mxsnow3_s
+	diffusemap textures/stone/mxsnow3
+	bumpmap textures/stone/mxsnow3_n
+	specularmap textures/stone/mxsnow3_s
 	{
 		map textures/stone/mxsnow3
 		rgbgen identity
@@ -134,9 +134,9 @@ textures/fueldump/terrain1_3
 {
     qer_editorimage textures/stone/mxrock3h_snow
 	q3map_baseshader textures/fueldump/terrain_base
-	diffusemap map textures/stone/mxrock3h_snow
-	bumpmap map textures/stone/mxrock3h_snow_n
-	specularmap map textures/stone/mxrock3h_snow_S
+	diffusemap textures/stone/mxrock3h_snow
+	bumpmap textures/stone/mxrock3h_snow_n
+	specularmap textures/stone/mxrock3h_snow_S
 	{   
 		map textures/stone/mxrock3h_snow
 		rgbgen identity
@@ -151,7 +151,7 @@ textures/fueldump/terrain1_3
 
 textures/fueldump/terrain1_0to1
 {
-     qer_editorimage textures/stone/mxsnow2
+	qer_editorimage textures/stone/mxsnow2
 	q3map_baseshader textures/fueldump/terrain_base
 	{
 	    stage diffusemap
@@ -237,7 +237,7 @@ textures/fueldump/terrain1_0to2
 
 textures/fueldump/terrain1_0to3
 {
-        qer_editorimage textures/stone/mxsnow2
+	qer_editorimage textures/stone/mxsnow2
 	q3map_baseshader textures/fueldump/terrain_base
 	{
 	    stage diffusemap
@@ -251,7 +251,7 @@ textures/fueldump/terrain1_0to3
 		blend blend
 	}
 	{
-	    stage speularmap
+	    stage specularmap
 		map textures/stone/mxsnow2_s
 		vertexcolor
 		blend blend
@@ -319,7 +319,7 @@ textures/fueldump/terrain1_1to2
 
 textures/fueldump/terrain1_1to3
 {
-        qer_editorimage textures/snow_sd/mxrock4b_snow
+	qer_editorimage textures/snow_sd/mxrock4b_snow
 	q3map_baseshader textures/fueldump/terrain_base
 	{
 	    stage diffusemap
@@ -360,7 +360,7 @@ textures/fueldump/terrain1_1to3
 
 textures/fueldump/terrain1_2to3
 {
-        qer_editorimage textures/stone/mxsnow3
+	qer_editorimage textures/stone/mxsnow3
 	q3map_baseshader textures/fueldump/terrain_base
 	{
 	    stage diffusemap
@@ -398,7 +398,6 @@ textures/fueldump/terrain1_2to3
 		vertexcolor
 		blend blend
 	}
-	
 }
 
 //===========================================================================
@@ -633,9 +632,9 @@ textures/fueldump/alphatree
 textures/fueldump/door_m01asml
 {
 	qer_editorimage textures/fueldump_sd/door_m01asml
-	diffusemap textures/fueldump/door_m01asml
-	bumpmap textures/fueldump/door_m01asml_n
-	specularmap textures/fueldump/door_m01asml
+//	diffusemap textures/fueldump/door_m01asml
+//	bumpmap textures/fueldump/door_m01asml_n
+//	specularmap textures/fueldump/door_m01asml
 	surfaceparm metalsteps
 	{
 		map $lightmap
