@@ -114,7 +114,7 @@ qboolean G_isValidConfig(gentity_t *ent, const char *configname)
 		return qfalse;
 	}
 
-	if (!trap_FS_FOpenFile(va("configs/%s.config", filename), &f, FS_READ))
+	if (trap_FS_FOpenFile(va("configs/%s.config", filename), &f, FS_READ) <= 0)
 	{
 		G_refPrintf(ent, "^3Warning: No config with filename '%s' found\n", filename);
 		return qfalse;
@@ -308,7 +308,7 @@ qboolean G_ParseMapSettings(int handle, config_t *config)
 			trap_Cvar_VariableStringBuffer("g_mapScriptDirectory", sdir, sizeof(sdir));
 
 			flen = trap_FS_FOpenFile(va("%s/%s.script", sdir, mapname), &f, FS_READ);
-			if (flen < 0)
+			if (flen <= 0)
 			{
 				// FIXME: handle this properly..
 				//return G_ConfigError(handle, "Cannot open mapscript file for hash verification: %s/%s.script", sdir, mapname);
@@ -480,7 +480,7 @@ qboolean G_configSet(const char *configname)
 	}
 
 	G_Printf("Will try to load config: \"configs/%s.config\"\n", filename);
-	if (!trap_FS_FOpenFile(va("configs/%s.config", filename), &f, FS_READ))
+	if (trap_FS_FOpenFile(va("configs/%s.config", filename), &f, FS_READ) <= 0)
 	{
 		G_Printf("^3Warning: No config with filename '%s' found\n", filename);
 		return qfalse;
