@@ -32,18 +32,12 @@
  */
 /**
  * @file renderer2/tr_bsp.c
+ * @brief Loads and prepares a map file for scene rendering.
+ *
+ * A single entry point: void RE_LoadWorldMap( const char *name );
  */
 
 #include "tr_local.h"
-
-/*
-========================================================
-Loads and prepares a map file for scene rendering.
-
-A single entry point:
-RE_LoadWorldMap(const char *name);
-========================================================
-*/
 
 static world_t    s_worldData;
 static int        s_lightCount;
@@ -58,6 +52,13 @@ static int c_vboShadowSurfaces;
 
 //===============================================================================
 
+/**
+ * @brief HSVtoRGB
+ * @param[in] h
+ * @param[in] s
+ * @param[in] v
+ * @param[out] rgb
+ */
 void HSVtoRGB(float h, float s, float v, float rgb[3])
 {
 	int   i;
@@ -1827,15 +1828,15 @@ int R_MergedWidthPoints(srfGridMesh_t *grid, int offset)
 	{
 		for (j = i + 1; j < grid->width - 1; j++)
 		{
-			if (fabs(grid->verts[i + offset].xyz[0] - grid->verts[j + offset].xyz[0]) > .1)
+			if (Q_fabs(grid->verts[i + offset].xyz[0] - grid->verts[j + offset].xyz[0]) > .1)
 			{
 				continue;
 			}
-			if (fabs(grid->verts[i + offset].xyz[1] - grid->verts[j + offset].xyz[1]) > .1)
+			if (Q_fabs(grid->verts[i + offset].xyz[1] - grid->verts[j + offset].xyz[1]) > .1)
 			{
 				continue;
 			}
-			if (fabs(grid->verts[i + offset].xyz[2] - grid->verts[j + offset].xyz[2]) > .1)
+			if (Q_fabs(grid->verts[i + offset].xyz[2] - grid->verts[j + offset].xyz[2]) > .1)
 			{
 				continue;
 			}
@@ -1859,15 +1860,15 @@ int R_MergedHeightPoints(srfGridMesh_t *grid, int offset)
 	{
 		for (j = i + 1; j < grid->height - 1; j++)
 		{
-			if (fabs(grid->verts[grid->width * i + offset].xyz[0] - grid->verts[grid->width * j + offset].xyz[0]) > .1)
+			if (Q_fabs(grid->verts[grid->width * i + offset].xyz[0] - grid->verts[grid->width * j + offset].xyz[0]) > .1)
 			{
 				continue;
 			}
-			if (fabs(grid->verts[grid->width * i + offset].xyz[1] - grid->verts[grid->width * j + offset].xyz[1]) > .1)
+			if (Q_fabs(grid->verts[grid->width * i + offset].xyz[1] - grid->verts[grid->width * j + offset].xyz[1]) > .1)
 			{
 				continue;
 			}
-			if (fabs(grid->verts[grid->width * i + offset].xyz[2] - grid->verts[grid->width * j + offset].xyz[2]) > .1)
+			if (Q_fabs(grid->verts[grid->width * i + offset].xyz[2] - grid->verts[grid->width * j + offset].xyz[2]) > .1)
 			{
 				continue;
 			}
@@ -1956,15 +1957,15 @@ void R_FixSharedVertexLodError_r(int start, srfGridMesh_t *grid1)
 					}
 					for (l = 1; l < grid2->width - 1; l++)
 					{
-						if (fabs(grid1->verts[k + offset1].xyz[0] - grid2->verts[l + offset2].xyz[0]) > .1)
+						if (Q_fabs(grid1->verts[k + offset1].xyz[0] - grid2->verts[l + offset2].xyz[0]) > .1)
 						{
 							continue;
 						}
-						if (fabs(grid1->verts[k + offset1].xyz[1] - grid2->verts[l + offset2].xyz[1]) > .1)
+						if (Q_fabs(grid1->verts[k + offset1].xyz[1] - grid2->verts[l + offset2].xyz[1]) > .1)
 						{
 							continue;
 						}
-						if (fabs(grid1->verts[k + offset1].xyz[2] - grid2->verts[l + offset2].xyz[2]) > .1)
+						if (Q_fabs(grid1->verts[k + offset1].xyz[2] - grid2->verts[l + offset2].xyz[2]) > .1)
 						{
 							continue;
 						}
@@ -1989,15 +1990,15 @@ void R_FixSharedVertexLodError_r(int start, srfGridMesh_t *grid1)
 					}
 					for (l = 1; l < grid2->height - 1; l++)
 					{
-						if (fabs(grid1->verts[k + offset1].xyz[0] - grid2->verts[grid2->width * l + offset2].xyz[0]) > .1)
+						if (Q_fabs(grid1->verts[k + offset1].xyz[0] - grid2->verts[grid2->width * l + offset2].xyz[0]) > .1)
 						{
 							continue;
 						}
-						if (fabs(grid1->verts[k + offset1].xyz[1] - grid2->verts[grid2->width * l + offset2].xyz[1]) > .1)
+						if (Q_fabs(grid1->verts[k + offset1].xyz[1] - grid2->verts[grid2->width * l + offset2].xyz[1]) > .1)
 						{
 							continue;
 						}
-						if (fabs(grid1->verts[k + offset1].xyz[2] - grid2->verts[grid2->width * l + offset2].xyz[2]) > .1)
+						if (Q_fabs(grid1->verts[k + offset1].xyz[2] - grid2->verts[grid2->width * l + offset2].xyz[2]) > .1)
 						{
 							continue;
 						}
@@ -2040,15 +2041,15 @@ void R_FixSharedVertexLodError_r(int start, srfGridMesh_t *grid1)
 					}
 					for (l = 1; l < grid2->width - 1; l++)
 					{
-						if (fabs(grid1->verts[grid1->width * k + offset1].xyz[0] - grid2->verts[l + offset2].xyz[0]) > .1)
+						if (Q_fabs(grid1->verts[grid1->width * k + offset1].xyz[0] - grid2->verts[l + offset2].xyz[0]) > .1)
 						{
 							continue;
 						}
-						if (fabs(grid1->verts[grid1->width * k + offset1].xyz[1] - grid2->verts[l + offset2].xyz[1]) > .1)
+						if (Q_fabs(grid1->verts[grid1->width * k + offset1].xyz[1] - grid2->verts[l + offset2].xyz[1]) > .1)
 						{
 							continue;
 						}
-						if (fabs(grid1->verts[grid1->width * k + offset1].xyz[2] - grid2->verts[l + offset2].xyz[2]) > .1)
+						if (Q_fabs(grid1->verts[grid1->width * k + offset1].xyz[2] - grid2->verts[l + offset2].xyz[2]) > .1)
 						{
 							continue;
 						}
@@ -2073,19 +2074,19 @@ void R_FixSharedVertexLodError_r(int start, srfGridMesh_t *grid1)
 					}
 					for (l = 1; l < grid2->height - 1; l++)
 					{
-						if (fabs
+						if (Q_fabs
 						        (grid1->verts[grid1->width * k + offset1].xyz[0] -
 						        grid2->verts[grid2->width * l + offset2].xyz[0]) > .1)
 						{
 							continue;
 						}
-						if (fabs
+						if (Q_fabs
 						        (grid1->verts[grid1->width * k + offset1].xyz[1] -
 						        grid2->verts[grid2->width * l + offset2].xyz[1]) > .1)
 						{
 							continue;
 						}
-						if (fabs
+						if (Q_fabs
 						        (grid1->verts[grid1->width * k + offset1].xyz[2] -
 						        grid2->verts[grid2->width * l + offset2].xyz[2]) > .1)
 						{
@@ -2185,37 +2186,37 @@ int R_StitchPatches(int grid1num, int grid2num)
 				{
 					v1 = grid1->verts[k + offset1].xyz;
 					v2 = grid2->verts[l + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) > .1)
+					if (Q_fabs(v1[0] - v2[0]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[1] - v2[1]) > .1)
+					if (Q_fabs(v1[1] - v2[1]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[2] - v2[2]) > .1)
+					if (Q_fabs(v1[2] - v2[2]) > .1)
 					{
 						continue;
 					}
 
 					v1 = grid1->verts[k + 2 + offset1].xyz;
 					v2 = grid2->verts[l + 1 + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) > .1)
+					if (Q_fabs(v1[0] - v2[0]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[1] - v2[1]) > .1)
+					if (Q_fabs(v1[1] - v2[1]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[2] - v2[2]) > .1)
+					if (Q_fabs(v1[2] - v2[2]) > .1)
 					{
 						continue;
 					}
 
 					v1 = grid2->verts[l + offset2].xyz;
 					v2 = grid2->verts[l + 1 + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) < .01 && fabs(v1[1] - v2[1]) < .01 && fabs(v1[2] - v2[2]) < .01)
+					if (Q_fabs(v1[0] - v2[0]) < .01 && Q_fabs(v1[1] - v2[1]) < .01 && Q_fabs(v1[2] - v2[2]) < .01)
 					{
 						continue;
 					}
@@ -2254,15 +2255,15 @@ int R_StitchPatches(int grid1num, int grid2num)
 				{
 					v1 = grid1->verts[k + offset1].xyz;
 					v2 = grid2->verts[grid2->width * l + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) > .1)
+					if (Q_fabs(v1[0] - v2[0]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[1] - v2[1]) > .1)
+					if (Q_fabs(v1[1] - v2[1]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[2] - v2[2]) > .1)
+					if (Q_fabs(v1[2] - v2[2]) > .1)
 					{
 						continue;
 					}
@@ -2273,18 +2274,18 @@ int R_StitchPatches(int grid1num, int grid2num)
 					{
 						continue;
 					}
-					if (fabs(v1[1] - v2[1]) > .1)
+					if (Q_fabs(v1[1] - v2[1]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[2] - v2[2]) > .1)
+					if (Q_fabs(v1[2] - v2[2]) > .1)
 					{
 						continue;
 					}
 
 					v1 = grid2->verts[grid2->width * l + offset2].xyz;
 					v2 = grid2->verts[grid2->width * (l + 1) + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) < .01 && fabs(v1[1] - v2[1]) < .01 && fabs(v1[2] - v2[2]) < .01)
+					if (Q_fabs(v1[0] - v2[0]) < .01 && Q_fabs(v1[1] - v2[1]) < .01 && Q_fabs(v1[2] - v2[2]) < .01)
 					{
 						continue;
 					}
@@ -2341,37 +2342,37 @@ int R_StitchPatches(int grid1num, int grid2num)
 				{
 					v1 = grid1->verts[grid1->width * k + offset1].xyz;
 					v2 = grid2->verts[l + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) > .1)
+					if (Q_fabs(v1[0] - v2[0]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[1] - v2[1]) > .1)
+					if (Q_fabs(v1[1] - v2[1]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[2] - v2[2]) > .1)
+					if (Q_fabs(v1[2] - v2[2]) > .1)
 					{
 						continue;
 					}
 
 					v1 = grid1->verts[grid1->width * (k + 2) + offset1].xyz;
 					v2 = grid2->verts[l + 1 + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) > .1)
+					if (Q_fabs(v1[0] - v2[0]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[1] - v2[1]) > .1)
+					if (Q_fabs(v1[1] - v2[1]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[2] - v2[2]) > .1)
+					if (Q_fabs(v1[2] - v2[2]) > .1)
 					{
 						continue;
 					}
 
 					v1 = grid2->verts[l + offset2].xyz;
 					v2 = grid2->verts[(l + 1) + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) < .01 && fabs(v1[1] - v2[1]) < .01 && fabs(v1[2] - v2[2]) < .01)
+					if (Q_fabs(v1[0] - v2[0]) < .01 && Q_fabs(v1[1] - v2[1]) < .01 && Q_fabs(v1[2] - v2[2]) < .01)
 					{
 						continue;
 					}
@@ -2411,15 +2412,15 @@ int R_StitchPatches(int grid1num, int grid2num)
 				{
 					v1 = grid1->verts[grid1->width * k + offset1].xyz;
 					v2 = grid2->verts[grid2->width * l + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) > .1)
+					if (Q_fabs(v1[0] - v2[0]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[1] - v2[1]) > .1)
+					if (Q_fabs(v1[1] - v2[1]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[2] - v2[2]) > .1)
+					if (Q_fabs(v1[2] - v2[2]) > .1)
 					{
 						continue;
 					}
@@ -2430,18 +2431,18 @@ int R_StitchPatches(int grid1num, int grid2num)
 					{
 						continue;
 					}
-					if (fabs(v1[1] - v2[1]) > .1)
+					if (Q_fabs(v1[1] - v2[1]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[2] - v2[2]) > .1)
+					if (Q_fabs(v1[2] - v2[2]) > .1)
 					{
 						continue;
 					}
 
 					v1 = grid2->verts[grid2->width * l + offset2].xyz;
 					v2 = grid2->verts[grid2->width * (l + 1) + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) < .01 && fabs(v1[1] - v2[1]) < .01 && fabs(v1[2] - v2[2]) < .01)
+					if (Q_fabs(v1[0] - v2[0]) < .01 && Q_fabs(v1[1] - v2[1]) < .01 && Q_fabs(v1[2] - v2[2]) < .01)
 					{
 						continue;
 					}
@@ -2499,37 +2500,37 @@ int R_StitchPatches(int grid1num, int grid2num)
 				{
 					v1 = grid1->verts[k + offset1].xyz;
 					v2 = grid2->verts[l + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) > .1)
+					if (Q_fabs(v1[0] - v2[0]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[1] - v2[1]) > .1)
+					if (Q_fabs(v1[1] - v2[1]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[2] - v2[2]) > .1)
+					if (Q_fabs(v1[2] - v2[2]) > .1)
 					{
 						continue;
 					}
 
 					v1 = grid1->verts[k - 2 + offset1].xyz;
 					v2 = grid2->verts[l + 1 + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) > .1)
+					if (Q_fabs(v1[0] - v2[0]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[1] - v2[1]) > .1)
+					if (Q_fabs(v1[1] - v2[1]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[2] - v2[2]) > .1)
+					if (Q_fabs(v1[2] - v2[2]) > .1)
 					{
 						continue;
 					}
 
 					v1 = grid2->verts[l + offset2].xyz;
 					v2 = grid2->verts[(l + 1) + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) < .01 && fabs(v1[1] - v2[1]) < .01 && fabs(v1[2] - v2[2]) < .01)
+					if (Q_fabs(v1[0] - v2[0]) < .01 && Q_fabs(v1[1] - v2[1]) < .01 && Q_fabs(v1[2] - v2[2]) < .01)
 					{
 						continue;
 					}
@@ -2568,37 +2569,37 @@ int R_StitchPatches(int grid1num, int grid2num)
 				{
 					v1 = grid1->verts[k + offset1].xyz;
 					v2 = grid2->verts[grid2->width * l + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) > .1)
+					if (Q_fabs(v1[0] - v2[0]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[1] - v2[1]) > .1)
+					if (Q_fabs(v1[1] - v2[1]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[2] - v2[2]) > .1)
+					if (Q_fabs(v1[2] - v2[2]) > .1)
 					{
 						continue;
 					}
 
 					v1 = grid1->verts[k - 2 + offset1].xyz;
 					v2 = grid2->verts[grid2->width * (l + 1) + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) > .1)
+					if (Q_fabs(v1[0] - v2[0]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[1] - v2[1]) > .1)
+					if (Q_fabs(v1[1] - v2[1]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[2] - v2[2]) > .1)
+					if (Q_fabs(v1[2] - v2[2]) > .1)
 					{
 						continue;
 					}
 
 					v1 = grid2->verts[grid2->width * l + offset2].xyz;
 					v2 = grid2->verts[grid2->width * (l + 1) + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) < .01 && fabs(v1[1] - v2[1]) < .01 && fabs(v1[2] - v2[2]) < .01)
+					if (Q_fabs(v1[0] - v2[0]) < .01 && Q_fabs(v1[1] - v2[1]) < .01 && Q_fabs(v1[2] - v2[2]) < .01)
 					{
 						continue;
 					}
@@ -2659,37 +2660,37 @@ int R_StitchPatches(int grid1num, int grid2num)
 				{
 					v1 = grid1->verts[grid1->width * k + offset1].xyz;
 					v2 = grid2->verts[l + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) > .1)
+					if (Q_fabs(v1[0] - v2[0]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[1] - v2[1]) > .1)
+					if (Q_fabs(v1[1] - v2[1]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[2] - v2[2]) > .1)
+					if (Q_fabs(v1[2] - v2[2]) > .1)
 					{
 						continue;
 					}
 
 					v1 = grid1->verts[grid1->width * (k - 2) + offset1].xyz;
 					v2 = grid2->verts[l + 1 + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) > .1)
+					if (Q_fabs(v1[0] - v2[0]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[1] - v2[1]) > .1)
+					if (Q_fabs(v1[1] - v2[1]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[2] - v2[2]) > .1)
+					if (Q_fabs(v1[2] - v2[2]) > .1)
 					{
 						continue;
 					}
 
 					v1 = grid2->verts[l + offset2].xyz;
 					v2 = grid2->verts[(l + 1) + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) < .01 && fabs(v1[1] - v2[1]) < .01 && fabs(v1[2] - v2[2]) < .01)
+					if (Q_fabs(v1[0] - v2[0]) < .01 && Q_fabs(v1[1] - v2[1]) < .01 && Q_fabs(v1[2] - v2[2]) < .01)
 					{
 						continue;
 					}
@@ -2729,37 +2730,37 @@ int R_StitchPatches(int grid1num, int grid2num)
 				{
 					v1 = grid1->verts[grid1->width * k + offset1].xyz;
 					v2 = grid2->verts[grid2->width * l + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) > .1)
+					if (Q_fabs(v1[0] - v2[0]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[1] - v2[1]) > .1)
+					if (Q_fabs(v1[1] - v2[1]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[2] - v2[2]) > .1)
+					if (Q_fabs(v1[2] - v2[2]) > .1)
 					{
 						continue;
 					}
 
 					v1 = grid1->verts[grid1->width * (k - 2) + offset1].xyz;
 					v2 = grid2->verts[grid2->width * (l + 1) + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) > .1)
+					if (Q_fabs(v1[0] - v2[0]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[1] - v2[1]) > .1)
+					if (Q_fabs(v1[1] - v2[1]) > .1)
 					{
 						continue;
 					}
-					if (fabs(v1[2] - v2[2]) > .1)
+					if (Q_fabs(v1[2] - v2[2]) > .1)
 					{
 						continue;
 					}
 
 					v1 = grid2->verts[grid2->width * l + offset2].xyz;
 					v2 = grid2->verts[grid2->width * (l + 1) + offset2].xyz;
-					if (fabs(v1[0] - v2[0]) < .01 && fabs(v1[1] - v2[1]) < .01 && fabs(v1[2] - v2[2]) < .01)
+					if (Q_fabs(v1[0] - v2[0]) < .01 && Q_fabs(v1[1] - v2[1]) < .01 && Q_fabs(v1[2] - v2[2]) < .01)
 					{
 						continue;
 					}
@@ -5529,52 +5530,16 @@ static int R_BuildShadowPlanes(int numTriangles, const srfTriangle_t * triangles
 */
 
 /**
- * @brief R_PrecacheFaceInteraction
- * @param[in] cv
+ * @brief R_PrecacheGenericSurfInteraction
+ * @param[in] surfT
  * @param shader - unused
  * @param[in] light
  * @return
  */
-static qboolean R_PrecacheFaceInteraction(srfSurfaceFace_t *cv, shader_t *shader, trRefLight_t *light)
+static qboolean R_PrecacheGenericSurfInteraction(srfGeneric_t *surf, shader_t *shader, trRefLight_t *light)
 {
 	// check if bounds intersect
-	if (!BoundsIntersect(light->worldBounds[0], light->worldBounds[1], cv->bounds[0], cv->bounds[1]))
-	{
-		return qfalse;
-	}
-
-	return qtrue;
-}
-
-/**
- * @brief R_PrecacheGridInteraction
- * @param[in] cv
- * @param shader - unused
- * @param[in] light
- * @return
- */
-static int R_PrecacheGridInteraction(srfGridMesh_t *cv, shader_t *shader, trRefLight_t *light)
-{
-	// check if bounds intersect
-	if (!BoundsIntersect(light->worldBounds[0], light->worldBounds[1], cv->bounds[0], cv->bounds[1]))
-	{
-		return qfalse;
-	}
-
-	return qtrue;
-}
-
-/**
- * @brief R_PrecacheTrisurfInteraction
- * @param[in] cv
- * @param shader - unused
- * @param[in] light
- * @return
- */
-static int R_PrecacheTrisurfInteraction(srfTriangles_t *cv, shader_t *shader, trRefLight_t *light)
-{
-	// check if bounds intersect
-	if (!BoundsIntersect(light->worldBounds[0], light->worldBounds[1], cv->bounds[0], cv->bounds[1]))
+	if (!BoundsIntersect(light->worldBounds[0], light->worldBounds[1], surf->bounds[0], surf->bounds[1]))
 	{
 		return qfalse;
 	}
@@ -5603,21 +5568,16 @@ static void R_PrecacheInteractionSurface(bspSurface_t *surf, trRefLight_t *light
 		return;
 	}
 
-	if (*surf->data == SF_FACE)
+	switch (*surf->data)
 	{
-		intersects = R_PrecacheFaceInteraction((srfSurfaceFace_t *) surf->data, surf->shader, light);
-	}
-	else if (*surf->data == SF_GRID)
-	{
-		intersects = R_PrecacheGridInteraction((srfGridMesh_t *) surf->data, surf->shader, light);
-	}
-	else if (*surf->data == SF_TRIANGLES)
-	{
-		intersects = R_PrecacheTrisurfInteraction((srfTriangles_t *) surf->data, surf->shader, light);
-	}
-	else
-	{
+	case SF_FACE:
+	case SF_GRID:
+	case SF_TRIANGLES:
+		intersects = R_PrecacheGenericSurfInteraction((srfGeneric_t *) surf->data, surf->shader, light );
+		break;
+	default:
 		intersects = qfalse;
+		break;
 	}
 
 	if (intersects)
@@ -7521,9 +7481,9 @@ vertexHash_t *FindVertexInHashTable(vertexHash_t **hashTable, const vec3_t xyz, 
 		}
 
 #else
-		if ((fabs(xyz[0] - vertexHash->vcd.xyz[0])) > HASH_XYZ_EPSILON ||
-		    (fabs(xyz[1] - vertexHash->vcd.xyz[1])) > HASH_XYZ_EPSILON ||
-		    (fabs(xyz[2] - vertexHash->vcd.xyz[2])) > HASH_XYZ_EPSILON)
+		if ((Q_fabs(xyz[0] - vertexHash->vcd.xyz[0])) > HASH_XYZ_EPSILON ||
+		    (Q_fabs(xyz[1] - vertexHash->vcd.xyz[1])) > HASH_XYZ_EPSILON ||
+		    (Q_fabs(xyz[2] - vertexHash->vcd.xyz[2])) > HASH_XYZ_EPSILON)
 		{
 			continue;
 		}
