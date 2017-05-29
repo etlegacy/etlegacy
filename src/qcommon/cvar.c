@@ -605,13 +605,15 @@ cvar_t *Cvar_Get(const char *varName, const char *value, int flags)
 
 #define FOREIGN_MSG "Foreign characters are not allowed in userinfo variables.\n"
 #ifndef DEDICATED
-/**
- * @brief CL_TranslateStringBuf
- * @param[in] string
- * @return
- */
 const char *CL_TranslateStringBuf(const char *string);
 #endif
+/**
+ * @brief Cvar_Set2
+ * @param[in] var_name
+ * @param[in] value
+ * @param[in] force
+ * @return
+ */
 cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force)
 {
 	cvar_t *var;
@@ -784,8 +786,8 @@ void Cvar_Set(const char *varName, const char *value)
 
 /**
  * @brief Cvar_SetSafe
- * @param var_name
- * @param value
+ * @param[in] var_name
+ * @param[in] value
  */
 void Cvar_SetSafe(const char *var_name, const char *value)
 {
