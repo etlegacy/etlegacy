@@ -55,7 +55,7 @@ static int gammaResetTime = 0;
 SDL_Window           *main_window   = NULL;
 static SDL_Renderer  *main_renderer = NULL;
 static SDL_GLContext SDL_glContext  = NULL;
-static float         displayAspect  = 0.0f;
+static double        displayAspect  = 0.0;
 
 cvar_t *r_allowSoftwareGL; // Don't abort out if a hardware visual can't be obtained
 cvar_t *r_allowResize; // make window resizable
@@ -90,11 +90,6 @@ typedef enum
 	RSERR_UNKNOWN
 } rserr_t;
 
-/*
-==================
-R_GetModeInfo
-==================
-*/
 typedef struct vidmode_s
 {
 	const char *description;
@@ -275,16 +270,16 @@ void GLimp_Shutdown(void)
  */
 static int GLimp_CompareModes(const void *a, const void *b)
 {
-	const float ASPECT_EPSILON  = 0.001f;
-	SDL_Rect    *modeA          = (SDL_Rect *)a;
-	SDL_Rect    *modeB          = (SDL_Rect *)b;
-	float       aspectA         = (float)modeA->w / (float)modeA->h;
-	float       aspectB         = (float)modeB->w / (float)modeB->h;
-	int         areaA           = modeA->w * modeA->h;
-	int         areaB           = modeB->w * modeB->h;
-	double      aspectDiffA     = fabs(aspectA - displayAspect);
-	double      aspectDiffB     = fabs(aspectB - displayAspect);
-	double      aspectDiffsDiff = aspectDiffA - aspectDiffB;
+	const double   ASPECT_EPSILON  = 0.001;
+	const SDL_Rect *modeA          = (const SDL_Rect *)a;
+	const SDL_Rect *modeB          = (const SDL_Rect *)b;
+	double         aspectA         = modeA->w / modeA->h;
+	double         aspectB         = modeB->w / modeB->h;
+	int            areaA           = modeA->w * modeA->h;
+	int            areaB           = modeB->w * modeB->h;
+	double         aspectDiffA     = fabs(aspectA - displayAspect);
+	double         aspectDiffB     = fabs(aspectB - displayAspect);
+	double         aspectDiffsDiff = aspectDiffA - aspectDiffB;
 
 	if (aspectDiffsDiff > ASPECT_EPSILON)
 	{
@@ -452,9 +447,9 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 
 	if (SDL_GetDesktopDisplayMode(display, &desktopMode) == 0)
 	{
-		displayAspect = (float)desktopMode.w / (float)desktopMode.h;
+		displayAspect = (double)desktopMode.w / (double)desktopMode.h;
 
-		Com_Printf("Estimated display aspect: %.3f\n", (double)displayAspect);
+		Com_Printf("Estimated display aspect: %.3f\n", displayAspect);
 	}
 	else
 	{
