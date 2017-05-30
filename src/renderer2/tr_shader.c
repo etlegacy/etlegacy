@@ -2730,6 +2730,14 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 		}
 	}
 
+	// if shader stage references a lightmap, but no lightmap is present
+	// (vertex-approximated surfaces), then set cgen to vertex
+	if (stage->tcGen_Lightmap && shader.index < 0 &&
+	    stage->bundle[0].image[0] == tr.whiteImage)
+	{
+		stage->rgbGen = CGEN_EXACT_VERTEX;
+	}
+
 	// implicitly assume that a GL_ONE GL_ZERO blend mask disables blending
 	if ((blendSrcBits == GLS_SRCBLEND_ONE) && (blendDstBits == GLS_DSTBLEND_ZERO))
 	{
@@ -2737,10 +2745,14 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 		depthMaskBits = GLS_DEPTHMASK_TRUE;
 	}
 
-	// tell shader if this stage has an alpha test
-	if (atestBits & GLS_ATEST_BITS)
+	// decide which agens we can skip
+	if (stage->alphaGen == AGEN_IDENTITY)
 	{
-		shader.alphaTest = qtrue;
+		if (stage->rgbGen == CGEN_IDENTITY
+		    || stage->rgbGen == CGEN_LIGHTING_DIFFUSE)
+		{
+			stage->alphaGen = AGEN_SKIP;
+		}
 	}
 
 	// compute state bits
