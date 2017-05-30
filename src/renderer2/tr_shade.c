@@ -824,6 +824,7 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	switch (pStage->rgbGen)
 	{
 	case CGEN_VERTEX:
+	case CGEN_EXACT_VERTEX:
 	case CGEN_ONE_MINUS_VERTEX:
 		rgbGen = pStage->rgbGen;
 		break;
@@ -1224,6 +1225,7 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	switch (diffuseStage->rgbGen)
 	{
 	case CGEN_VERTEX:
+	case CGEN_EXACT_VERTEX:
 	case CGEN_ONE_MINUS_VERTEX:
 		colorGen = diffuseStage->rgbGen;
 		break;

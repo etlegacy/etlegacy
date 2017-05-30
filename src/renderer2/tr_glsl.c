@@ -879,7 +879,7 @@ static void GLSL_BuildShaderExtraDef()
 	        DGEN_BULGE,
 	        DGEN_MOVE);
 
-	/*
+	
 	 BUFFEXT("#ifndef colorGen_t\n"
 	 "#define colorGen_t\n"
 	 "#define CGEN_VERTEX %i\n"
@@ -895,7 +895,7 @@ static void GLSL_BuildShaderExtraDef()
 	 "#endif\n",
 	 AGEN_VERTEX,
 	 AGEN_ONE_MINUS_VERTEX);
-	 */
+	 
 
 	BUFFEXT("#ifndef alphaTest_t\n"
 	        "#define alphaTest_t\n"
