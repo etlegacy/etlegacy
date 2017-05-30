@@ -474,7 +474,7 @@ void MSG_WriteString(msg_t *msg, const char *s)
 	}
 	else
 	{
-		int  l;
+		int  l, i;
 		char string[MAX_STRING_CHARS];
 
 		l = strlen(s);
@@ -486,17 +486,12 @@ void MSG_WriteString(msg_t *msg, const char *s)
 		}
 		Q_strncpyz(string, s, sizeof(string));
 
-		if (!IS_LEGACY_MOD)
+		// get rid of 0x80+ and '%' chars, because old clients don't like them
+		for (i = 0 ; i < l ; i++)
 		{
-			int i;
-
-			// only allow ascii and translate all '%' fmt spec to avoid crash bugs
-			for (i = 0 ; i < l ; i++)
+			if ((!IS_LEGACY_MOD && (byte)string[i] > 127) || string[i] == '%')
 			{
-				if ((byte)string[i] > 127 || string[i] == '%')
-				{
-					string[i] = '.';
-				}
+				string[i] = '.';
 			}
 		}
 
@@ -517,7 +512,7 @@ void MSG_WriteBigString(msg_t *msg, const char *s)
 	}
 	else
 	{
-		int  l;
+		int  l, i;
 		char string[BIG_INFO_STRING];
 
 		l = strlen(s);
@@ -529,17 +524,12 @@ void MSG_WriteBigString(msg_t *msg, const char *s)
 		}
 		Q_strncpyz(string, s, sizeof(string));
 
-		if (!IS_LEGACY_MOD)
+		// get rid of 0x80+ and '%' chars, because old clients don't like them
+		for (i = 0 ; i < l ; i++)
 		{
-			int i;
-
-			// only allow ascii and translate all '%' fmt spec to avoid crash bugs
-			for (i = 0 ; i < l ; i++)
+			if ((!IS_LEGACY_MOD && (byte)string[i] > 127) || string[i] == '%')
 			{
-				if ((byte)string[i] > 127 || string[i] == '%')
-				{
-					string[i] = '.';
-				}
+				string[i] = '.';
 			}
 		}
 
@@ -565,6 +555,21 @@ void MSG_WriteAngle(msg_t *msg, float f)
 void MSG_WriteAngle16(msg_t *msg, float f)
 {
 	MSG_WriteShort(msg, ANGLE2SHORT(f));
+}
+
+// a string hasher which gives the same hash value even if the
+// string is later modified via the legacy MSG read/write code
+int MSG_HashKey(const char *string, int maxlen) {
+	int hash, i;
+	hash = 0;
+	for (i = 0; i < maxlen && string[i] != '\0'; i++) {
+		if ((!IS_LEGACY_MOD && string[i] & 0x80) || string[i] == '%')
+			hash += '.' * (119 + i);
+		else
+			hash += string[i] * (119 + i);
+	}
+	hash = (hash ^ (hash >> 10) ^ (hash >> 20));
+	return hash;
 }
 
 //============================================================

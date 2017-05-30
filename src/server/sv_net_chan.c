@@ -83,8 +83,7 @@ static void SV_Netchan_Encode(client_t *client, msg_t *msg, char *commandString)
 		{
 			index = 0;
 		}
-
-		if ((IS_LEGACY_MOD && string[index] == '%') || ((byte)string[index] > 127 || string[index] == '%'))
+		if ((!IS_LEGACY_MOD && (byte)string[index] > 127) || string[index] == '%')
 		{
 			string[index] = '.';
 		}
@@ -137,7 +136,7 @@ static void SV_Netchan_Decode(client_t *client, msg_t *msg)
 			index = 0;
 		}
 
-		if ((IS_LEGACY_MOD && string[index] == '%') || ((byte)string[index] > 127 || string[index] == '%'))
+		if ((!IS_LEGACY_MOD && (byte)string[index] > 127) || string[index] == '%')
 		{
 			string[index] = '.';
 		}

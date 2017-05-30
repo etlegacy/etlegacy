@@ -95,6 +95,7 @@ void MSG_WriteFloat(msg_t *msg, float f);
 void MSG_WriteString(msg_t *msg, const char *s);
 void MSG_WriteBigString(msg_t *msg, const char *s);
 void MSG_WriteAngle16(msg_t *msg, float f);
+int MSG_HashKey(const char *string, int maxlen);
 
 void MSG_BeginReading(msg_t *msg);
 void MSG_BeginReadingOOB(msg_t *msg);
