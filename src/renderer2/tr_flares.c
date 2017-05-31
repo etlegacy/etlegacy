@@ -35,26 +35,27 @@
  *
  * A light flare is an effect that takes place inside the eye when bright light
  * sources are visible.  The size of the flare reletive to the screen is nearly
- * constant, irrespective of distance, but the intensity should be proportional to the
- * projected area of the light source.
+ * constant, irrespective of distance, but the intensity should be proportional
+ * to the projected area of the light source.
  *
- * A surface that has been flagged as having a light flare will calculate the depth
- * buffer value that it's midpoint should have when the surface is added.
+ * A surface that has been flagged as having a light flare will calculate the
+ * depth buffer value that it's midpoint should have when the surface is added.
  *
- * After all opaque surfaces have been rendered, the depth buffer is read back for
- * each flare in view.  If the point has not been obscured by a closer surface, the
- * flare should be drawn.
+ * After all opaque surfaces have been rendered, the depth buffer is read back
+ * for each flare in view.  If the point has not been obscured by a closer
+ * surface, the flare should be drawn.
  *
- * Surfaces that have a repeated texture should never be flagged as flaring, because
- * there will only be a single flare added at the midpoint of the polygon.
+ * Surfaces that have a repeated texture should never be flagged as flaring,
+ * because there will only be a single flare added at the midpoint of the
+ * polygon.
  *
  * To prevent abrupt popping, the intensity of the flare is interpolated up and
- * down as it changes visibility.  This involves scene to scene state, unlike almost
- * all other aspects of the renderer, and is complicated by the fact that a single
- * frame may have multiple scenes.
+ * down as it changes visibility.  This involves scene to scene state, unlike
+ * almost all other aspects of the renderer, and is complicated by the fact that
+ * a single frame may have multiple scenes.
  *
- * RB_RenderFlares() will be called once per view (twice in a mirrored scene, potentially
- * up to five or more times in a frame with 3D status bar icons).
+ * RB_RenderFlares() will be called once per view (twice in a mirrored scene,
+ * potentially up to five or more times in a frame with 3D status bar icons).
  */
 
 #include "tr_local.h"
@@ -127,7 +128,7 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 	vec4_t  eye, clip, normalized, window;
 	float   distBias = 512.0;
 	float   distLerp = 0.5;
-	float   d1 = 0.0f, d2 = 0.0f;
+	float   d1       = 0.0f, d2 = 0.0f;
 
 	backEnd.pc.c_flareAdds++;
 
@@ -149,9 +150,9 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 	if (window[0] < 0 || window[0] >= backEnd.viewParms.viewportWidth ||
 	    window[1] < 0 || window[1] >= backEnd.viewParms.viewportHeight)
 	{
-		return;                 // shouldn't happen, since we check the clip[] above, except for FP rounding
-
+		return; // shouldn't happen, since we check the clip[] above, except for FP rounding
 	}
+
 	// see if a flare with a matching surface, scene, and view exists
 	//oldest = r_flareStructs;
 	for (f = r_activeFlares; f; f = f->next)
@@ -244,7 +245,7 @@ void RB_AddLightFlares(void)
 		return;
 	}
 
-	l   = backEnd.refdef.lights;
+	l = backEnd.refdef.lights;
 	//fog = tr.world->fogs;
 
 	for (i = 0; i < backEnd.refdef.numLights; i++, l++)
