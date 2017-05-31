@@ -1534,7 +1534,7 @@ static void R_CalcBones(const refEntity_t *refent, int *boneList, int numBones)
 	if (!R_BonesStillValid(refent))
 	{
 		// different, cached bones are not valid
-		memset(validBones, 0, mdxFrameHeader->numBones);
+		Com_Memset(validBones, 0, mdxFrameHeader->numBones);
 		lastBoneEntity = *refent;
 
 		// also reset these counter statics
@@ -1547,7 +1547,7 @@ static void R_CalcBones(const refEntity_t *refent, int *boneList, int numBones)
 		totalrv = totalrt = totalv = totalt = 0;
 	}
 
-	memset(newBones, 0, mdxFrameHeader->numBones);
+	Com_Memset(newBones, 0, mdxFrameHeader->numBones);
 
 	if (refent->oldframe == refent->frame && refent->oldframeModel == refent->frameModel)
 	{
@@ -1690,7 +1690,7 @@ static void R_CalcBones(const refEntity_t *refent, int *boneList, int numBones)
 			   LocalScaledMatrixTransformVector( bonePtr->matrix[0], thisBoneInfo->torsoWeight, torsoAxis, tmpAxis[0] );
 			   LocalScaledMatrixTransformVector( bonePtr->matrix[1], thisBoneInfo->torsoWeight, torsoAxis, tmpAxis[1] );
 			   LocalScaledMatrixTransformVector( bonePtr->matrix[2], thisBoneInfo->torsoWeight, torsoAxis, tmpAxis[2] );
-			   memcpy( bonePtr->matrix, tmpAxis, sizeof(tmpAxis) );
+			   Com_Memcpy( bonePtr->matrix, tmpAxis, sizeof(tmpAxis) );
 
 			   // rotate the translation around the torsoParent
 			   VectorSubtract( bonePtr->translation, torsoParentOffset, t );
@@ -1703,7 +1703,7 @@ static void R_CalcBones(const refEntity_t *refent, int *boneList, int numBones)
 	}
 
 	// backup the final bones
-	memcpy(oldBones, bones, sizeof(bones[0]) * mdxFrameHeader->numBones);
+	Com_Memcpy(oldBones, bones, sizeof(bones[0]) * mdxFrameHeader->numBones);
 }
 
 #ifdef DBG_PROFILE_BONES
@@ -2188,7 +2188,7 @@ int R_MDM_GetBoneTag(orientation_t *outTag, mdmHeader_t *mdm, int startTagIndex,
 
 	if (startTagIndex > mdm->numTags)
 	{
-		memset(outTag, 0, sizeof(*outTag));
+		Com_Memset(outTag, 0, sizeof(*outTag));
 		return -1;
 	}
 
@@ -2214,7 +2214,7 @@ int R_MDM_GetBoneTag(orientation_t *outTag, mdmHeader_t *mdm, int startTagIndex,
 
 	if (i >= mdm->numTags)
 	{
-		memset(outTag, 0, sizeof(*outTag));
+		Com_Memset(outTag, 0, sizeof(*outTag));
 		return -1;
 	}
 
