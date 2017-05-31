@@ -86,7 +86,7 @@ static void AddSkyPolygon(int nump, vec3_t vecs)
 
 	// decide which face it maps to
 	VectorCopy(vec3_origin, v);
-	for (i = 0, vp = vecs ; i < nump ; i++, vp += 3)
+	for (i = 0, vp = vecs; i < nump; i++, vp += 3)
 	{
 		VectorAdd(vp, v, v);
 	}
@@ -128,7 +128,7 @@ static void AddSkyPolygon(int nump, vec3_t vecs)
 	}
 
 	// project new texture coords
-	for (i = 0 ; i < nump ; i++, vecs += 3)
+	for (i = 0; i < nump; i++, vecs += 3)
 	{
 		j = vec_to_st[axis][2];
 		if (j > 0)
@@ -181,7 +181,7 @@ static void AddSkyPolygon(int nump, vec3_t vecs)
 	}
 }
 
-#define ON_EPSILON      0.1f            // point on plane side epsilon
+#define ON_EPSILON      0.1f    ///< point on plane side epsilon
 #define MAX_CLIP_VERTS  64
 
 /**
@@ -214,7 +214,7 @@ static void ClipSkyPolygon(int nump, vec3_t vecs, int stage)
 
 	front = back = qfalse;
 	norm  = sky_clip[stage];
-	for (i = 0, v = vecs ; i < nump ; i++, v += 3)
+	for (i = 0, v = vecs; i < nump; i++, v += 3)
 	{
 		d = DotProduct(v, norm);
 		if (d > ON_EPSILON)
@@ -246,7 +246,7 @@ static void ClipSkyPolygon(int nump, vec3_t vecs, int stage)
 	VectorCopy(vecs, (vecs + (i * 3)));
 	newc[0] = newc[1] = 0;
 
-	for (i = 0, v = vecs ; i < nump ; i++, v += 3)
+	for (i = 0, v = vecs; i < nump; i++, v += 3)
 	{
 		switch (sides[i])
 		{
@@ -272,7 +272,7 @@ static void ClipSkyPolygon(int nump, vec3_t vecs, int stage)
 		}
 
 		d = dists[i] / (dists[i] - dists[i + 1]);
-		for (j = 0 ; j < 3 ; j++)
+		for (j = 0; j < 3; j++)
 		{
 			e                   = v[j] + d * (v[j + 3] - v[j]);
 			newv[0][newc[0]][j] = e;
@@ -294,7 +294,7 @@ static void ClearSkyBox(void)
 {
 	int i;
 
-	for (i = 0 ; i < 6 ; i++)
+	for (i = 0; i < 6; i++)
 	{
 		sky_mins[0][i] = sky_mins[1][i] = 9999;
 		sky_maxs[0][i] = sky_maxs[1][i] = -9999;
@@ -504,7 +504,7 @@ static void DrawSkyBox(shader_t *shader)
 	int sky_mins_subd[2], sky_maxs_subd[2];
 	int s, t;
 
-	memset(s_skyTexCoords, 0, sizeof(s_skyTexCoords));
+	Com_Memset(s_skyTexCoords, 0, sizeof(s_skyTexCoords));
 
 	sky_min = 0;
 	sky_max = 1;
@@ -566,11 +566,11 @@ static void DrawSkyBox(shader_t *shader)
 		{
 			for (s = sky_mins_subd[0] + HALF_SKY_SUBDIVISIONS; s <= sky_maxs_subd[0] + HALF_SKY_SUBDIVISIONS; s++)
 			{
-				MakeSkyVec((s - HALF_SKY_SUBDIVISIONS) / ( float ) HALF_SKY_SUBDIVISIONS,
-				           (t - HALF_SKY_SUBDIVISIONS) / ( float ) HALF_SKY_SUBDIVISIONS,
-				           i,
-				           s_skyTexCoords[t][s],
-				           s_skyPoints[t][s]);
+				MakeSkyVec((s - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
+				           (t - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
+				           i, 
+						   s_skyTexCoords[t][s], 
+						   s_skyPoints[t][s]);
 			}
 		}
 
@@ -590,7 +590,7 @@ static void DrawSkyBoxInner(shader_t *shader)
 	int sky_mins_subd[2], sky_maxs_subd[2];
 	int s, t;
 
-	memset(s_skyTexCoords, 0, sizeof(s_skyTexCoords));
+	Com_Memset(s_skyTexCoords, 0, sizeof(s_skyTexCoords));
 
 	for (i = 0 ; i < 6 ; i++)
 	{
@@ -728,10 +728,13 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
  */
 static void FillCloudBox(const shader_t *shader, int stage)
 {
-	int   i;
-	int   sky_mins_subd[2], sky_maxs_subd[2];
-	int   s, t;
-	float MIN_T;
+	int i;
+
+	for (i = 0; i < 6; i++)
+	{
+		int   sky_mins_subd[2], sky_maxs_subd[2];
+		int   s, t;
+		float MIN_T;
 
 	for (i = 0; i < 6; i++)
 	{
@@ -770,8 +773,7 @@ static void FillCloudBox(const shader_t *shader, int stage)
 		sky_maxs[0][i] = ceil(sky_maxs[0][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
 		sky_maxs[1][i] = ceil(sky_maxs[1][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
 
-		if ((sky_mins[0][i] >= sky_maxs[0][i]) ||
-		    (sky_mins[1][i] >= sky_maxs[1][i]))
+		if ((sky_mins[0][i] >= sky_maxs[0][i]) || (sky_mins[1][i] >= sky_maxs[1][i]))
 		{
 			continue;
 		}
@@ -820,8 +822,8 @@ static void FillCloudBox(const shader_t *shader, int stage)
 		{
 			for (s = sky_mins_subd[0] + HALF_SKY_SUBDIVISIONS; s <= sky_maxs_subd[0] + HALF_SKY_SUBDIVISIONS; s++)
 			{
-				MakeSkyVec((s - HALF_SKY_SUBDIVISIONS) / ( float ) HALF_SKY_SUBDIVISIONS,
-				           (t - HALF_SKY_SUBDIVISIONS) / ( float ) HALF_SKY_SUBDIVISIONS,
+				MakeSkyVec((s - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
+				           (t - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
 				           i,
 				           NULL,
 				           s_skyPoints[t][s]);
@@ -832,7 +834,7 @@ static void FillCloudBox(const shader_t *shader, int stage)
 		}
 
 		// only add indexes for first stage
-		FillCloudySkySide(sky_mins_subd, sky_maxs_subd, (stage == 0));
+		FillCloudySkySide(sky_mins_subd, sky_maxs_subd, (qboolean) (stage == 0));
 	}
 }
 
@@ -899,8 +901,8 @@ void R_InitSkyTexCoords(float heightCloud)
 			for (s = 0; s <= SKY_SUBDIVISIONS; s++)
 			{
 				// compute vector from view origin to sky side integral point
-				MakeSkyVec((s - HALF_SKY_SUBDIVISIONS) / ( float ) HALF_SKY_SUBDIVISIONS,
-				           (t - HALF_SKY_SUBDIVISIONS) / ( float ) HALF_SKY_SUBDIVISIONS,
+				MakeSkyVec((s - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
+				           (t - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
 				           i,
 				           NULL,
 				           skyVec);
