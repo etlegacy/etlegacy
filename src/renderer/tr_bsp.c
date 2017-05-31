@@ -222,7 +222,7 @@ static void R_LoadLightmaps(lump_t *l)
 
 	// clear lightmaps first
 	tr.numLightmaps = 0;
-	memset(tr.lightmaps, 0, sizeof(*tr.lightmaps) * MAX_LIGHTMAPS);
+	Com_Memset(tr.lightmaps, 0, sizeof(*tr.lightmaps) * MAX_LIGHTMAPS);
 
 	len = l->filelen;
 	if (!len)
@@ -282,7 +282,7 @@ static void R_LoadVisibility(lump_t *l)
 	byte *buf;
 
 	s_worldData.novis = ri.Hunk_Alloc(len, h_low);
-	memset(s_worldData.novis, 0xff, len);
+	Com_Memset(s_worldData.novis, 0xff, len);
 
 	len = l->filelen;
 	if (!len)
@@ -305,7 +305,7 @@ static void R_LoadVisibility(lump_t *l)
 		byte *dest;
 
 		dest = ri.Hunk_Alloc(len - 8, h_low);
-		memcpy(dest, buf + 8, len - 8);
+		Com_Memcpy(dest, buf + 8, len - 8);
 		s_worldData.vis = dest;
 	}
 }
@@ -2011,7 +2011,7 @@ static void R_LoadSubmodels(lump_t *l)
 			// allocate decal memory
 			j           = (i == 0 ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS);
 			out->decals = ri.Hunk_Alloc(j * sizeof(*out->decals), h_low);
-			memset(out->decals, 0, j * sizeof(*out->decals));
+			Com_Memset(out->decals, 0, j * sizeof(*out->decals));
 		}
 	}
 }
@@ -2187,7 +2187,7 @@ static void R_LoadShaders(lump_t *l)
 	s_worldData.shaders    = out;
 	s_worldData.numShaders = count;
 
-	memcpy(out, in, count * sizeof(*out));
+	Com_Memcpy(out, in, count * sizeof(*out));
 
 	for (i = 0 ; i < count ; i++)
 	{
@@ -2453,7 +2453,7 @@ void R_LoadLightGrid(lump_t *l)
 	}
 
 	w->lightGridData = ri.Hunk_Alloc(l->filelen, h_low);
-	memcpy(w->lightGridData, ( void * )(fileBase + l->fileofs), l->filelen);
+	Com_Memcpy(w->lightGridData, ( void * )(fileBase + l->fileofs), l->filelen);
 
 	// deal with overbright bits
 	for (i = 0 ; i < numGridPoints ; i++)
