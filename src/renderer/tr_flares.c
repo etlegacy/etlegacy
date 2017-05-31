@@ -30,9 +30,7 @@
  */
 /**
  * @file renderer/tr_flares.c
- *
- * LIGHT FLARES
- * ============
+ * @brief LIGHT FLARES
  *
  * A light flare is an effect that takes place inside the eye when bright light
  * sources are visible.  The size of the flare reletive to the screen is nearly
@@ -64,12 +62,11 @@
 /**
  * @struct flare_s
  * @typedef flare_t
- * @brief flare states maintain visibility over multiple frames for fading
- * layers: view, mirror, menu
+ * @brief Flare states maintain visibility over multiple frames for fading layers: view, mirror, menu
  */
 typedef struct flare_s
 {
-	struct      flare_s *next;      ///< for active chain
+	struct flare_s *next;      ///< for active chain
 
 	int addedFrame;
 
@@ -105,11 +102,11 @@ void R_ClearFlares(void)
 {
 	int i;
 
-	memset(r_flareStructs, 0, sizeof(r_flareStructs));
+	Com_Memset(r_flareStructs, 0, sizeof(r_flareStructs));
 	r_activeFlares   = NULL;
 	r_inactiveFlares = NULL;
 
-	for (i = 0 ; i < MAX_FLARES ; i++)
+	for (i = 0; i < MAX_FLARES; i++)
 	{
 		r_flareStructs[i].next = r_inactiveFlares;
 		r_inactiveFlares       = &r_flareStructs[i];
@@ -145,7 +142,7 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, float sc
 	//Ren_Print("eye:  %f  %f  %f  %f\n", eye[0], eye[1], eye[2], eye[3]);
 
 	// check to see if the point is completely off screen
-	for (i = 0 ; i < 3 ; i++)
+	for (i = 0; i < 3; i++)
 	{
 		if (clip[i] >= clip[3] || clip[i] <= -clip[3])
 		{
@@ -157,8 +154,8 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, float sc
 
 	//Ren_Print("window:  %f  %f  %f  \n", window[0], window[1], window[2]);
 
-	if (window[0] < 0 || window[0] >= backEnd.viewParms.viewportWidth
-	    || window[1] < 0 || window[1] >= backEnd.viewParms.viewportHeight)
+	if (window[0] < 0 || window[0] >= backEnd.viewParms.viewportWidth ||
+	    window[1] < 0 || window[1] >= backEnd.viewParms.viewportHeight)
 	{
 		return; // shouldn't happen, since we check the clip[] above, except for FP rounding
 	}
@@ -511,8 +508,7 @@ void RB_RenderFlares(void)
 
 		// don't draw any here that aren't from this scene / portal
 		f->drawIntensity = 0;
-		if (f->frameSceneNum == backEnd.viewParms.frameSceneNum
-		    && f->inPortal == backEnd.viewParms.isPortal)
+		if (f->frameSceneNum == backEnd.viewParms.frameSceneNum && f->inPortal == backEnd.viewParms.isPortal)
 		{
 			RB_TestFlare(f);
 			if (f->drawIntensity != 0.f)
@@ -534,7 +530,8 @@ void RB_RenderFlares(void)
 
 	if (!draw)
 	{
-		return;     // none visible
+		// none visible
+		return;
 	}
 
 	if (backEnd.viewParms.isPortal)
@@ -553,9 +550,7 @@ void RB_RenderFlares(void)
 
 	for (f = r_activeFlares ; f ; f = f->next)
 	{
-		if (f->frameSceneNum == backEnd.viewParms.frameSceneNum
-		    && f->inPortal == backEnd.viewParms.isPortal
-		    && f->drawIntensity != 0.f)
+		if (f->frameSceneNum == backEnd.viewParms.frameSceneNum && f->inPortal == backEnd.viewParms.isPortal && f->drawIntensity != 0.f)
 		{
 			RB_RenderFlare(f);
 		}
