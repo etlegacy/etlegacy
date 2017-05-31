@@ -1041,7 +1041,7 @@ void CG_MapVoteList_Draw(panel_button_t *button)
 			acolor[3] = (diff > 1000) ? 1.0f : (float)diff / 1000.f;
 			trap_R_SetColor(acolor);
 			// First check if the corresponding map is downloaded to prevent warning about missing levelshot
-			if (trap_FS_FOpenFile(va("maps/%s.bsp", cgs.dbMaps[i + cgs.dbMapVoteListOffset]), &f, FS_READ))
+			if (trap_FS_FOpenFile(va("maps/%s.bsp", cgs.dbMaps[i + cgs.dbMapVoteListOffset]), &f, FS_READ) > 0)
 			{
 				pic = trap_R_RegisterShaderNoMip(va("levelshots/%s.tga", cgs.dbMaps[i + cgs.dbMapVoteListOffset]));
 				trap_FS_FCloseFile(f);
