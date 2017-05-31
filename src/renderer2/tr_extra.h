@@ -325,7 +325,7 @@ static ID_INLINE void QuatCalcW(quat_t q)
 		q[3] = -sqrt(term);
 	}
 #else
-	q[3] = sqrt(fabs(1.0f - (q[0] * q[0] + q[1] * q[1] + q[2] * q[2])));
+	q[3] = sqrt(Q_fabs(1.0f - (q[0] * q[0] + q[1] * q[1] + q[2] * q[2])));
 #endif
 }
 
