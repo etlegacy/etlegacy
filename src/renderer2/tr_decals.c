@@ -75,7 +75,7 @@ static qboolean MakeTextureMatrix(vec4_t texMat[2], vec4_t projection, decalVert
 
 	// calculate barycentric basis for the triangle
 	bb = (b->st[0] - a->st[0]) * (c->st[1] - a->st[1]) - (c->st[0] - a->st[0]) * (b->st[1] - a->st[1]);
-	if (fabs(bb) < 0.00000001)
+	if (Q_fabs(bb) < 0.00000001)
 	{
 		return qfalse;
 	}
@@ -135,11 +135,13 @@ static qboolean MakeTextureMatrix(vec4_t texMat[2], vec4_t projection, decalVert
 }
 
 /**
- * @brief Creates a new decal projector from a triangle
- * projected polygons should be 3 or 4 points
- * if a single point is passed in (numPoints == 1) then the decal will be omnidirectional
+ * @brief Creates a new decal projector from a triangle.
+ *
+ * Projected polygons should be 3 or 4 points.
+ *
+ * If a single point is passed in (numPoints == 1) then the decal will be omnidirectional
  * omnidirectional decals use points[ 0 ] as center and projection[ 3 ] as radius
- * pass in lifeTime < 0 for a temporary mark
+ * pass in lifeTime < 0 for a temporary mark.
  *
  * @param[in] hShader
  * @param[in] numPoints
@@ -153,10 +155,9 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
                      int fadeTime)
 {
 	static int       totalProjectors = 0;
-	int              i;
-	float            radius, iDist;
 	vec3_t           xyz;
 	decalVert_t      dv[4];
+	int              i;
 	decalProjector_t *dp, temp;
 
 	if (r_numDecalProjectors >= MAX_DECAL_PROJECTORS)
@@ -168,17 +169,19 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	// dummy check
 	if (numPoints != 1 && numPoints != 3 && numPoints != 4)
 	{
-		Ren_Warning("WARNING: Invalid number of decal points (%d)\n", numPoints);
+		Ren_Print("WARNING: RE_ProjectDecal() Invalid number of decal points (%d)\n", numPoints);
 		return;
 	}
 
 	// early outs
 	if (lifeTime == 0)
 	{
+		Ren_Developer("WARNING: RE_ProjectDecal() lifeTime == 0\n"); // modders should have a look at this - vanilla does these calls
 		return;
 	}
 	if (projection[3] <= 0.0f)
 	{
+		Ren_Print("WARNING: RE_ProjectDecal() projection[3] <= 0.0f\n");
 		return;
 	}
 
@@ -213,6 +216,9 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	// omnidirectional?
 	if (numPoints == 1)
 	{
+		float radius;
+		float iDist;
+
 		// set up omnidirectional
 		numPoints            = 4;
 		temp.numPlanes       = 6;
@@ -263,6 +269,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 		// make texture matrix
 		if (!MakeTextureMatrix(temp.texMat[0], projection, &dv[0], &dv[1], &dv[2]))
 		{
+			Ren_Print("WARNING: RE_ProjectDecal() MakeTextureMatrix returns NULL\n");
 			return;
 		}
 	}
@@ -286,6 +293,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 	// make the front plane
 	if (!PlaneFromPoints(temp.planes[0], dv[0].xyz, dv[1].xyz, dv[2].xyz))
 	{
+		Ren_Developer("WARNING: RE_ProjectDecal() PlaneFromPoints is NULL\n"); // occurs on UJE_fueldump
 		return;
 	}
 
@@ -300,6 +308,7 @@ void RE_ProjectDecal(qhandle_t hShader, int numPoints, vec3_t *points, vec4_t pr
 		VectorMA(dv[i].xyz, projection[3], projection, xyz);
 		if (!PlaneFromPoints(temp.planes[i + 2], dv[(i + 1) % numPoints].xyz, dv[i].xyz, xyz))
 		{
+			Ren_Developer("WARNING: RE_ProjectDecal() a side plane is NULL\n"); // occurs on map venice
 			return;
 		}
 	}
@@ -328,22 +337,29 @@ void RE_ClearDecals(void)
 
 	// clear world decals
 	for (j = 0; j < MAX_WORLD_DECALS; j++)
+	{
 		tr.world->models[0].decals[j].shader = NULL;
+	}
 
 	// clear entity decals
 	for (i = 0; i < tr.world->numModels; i++)
+	{
 		for (j = 0; j < MAX_ENTITY_DECALS; j++)
+		{
 			tr.world->models[i].decals[j].shader = NULL;
+		}
+	}
 }
 
 /**
  * @brief Transforms a decal projector
+ *
  * @param[in] in
  * @param[in] axis
  * @param[in] origin
  * @param[out] out
  *
- * @note non-normalized axes will screw up the plane transform
+ * @note Non-normalized axes will screw up the plane transform
  */
 void R_TransformDecalProjector(decalProjector_t *in, vec3_t axis[3], vec3_t origin, decalProjector_t *out)
 {
@@ -559,7 +575,6 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 	int        i, pingPong, count, axis;
 	float      pd, d, d2, alpha = 1.f;
 	vec4_t     plane;
-	vec3_t     absNormal;
 	decal_t    *decal, *oldest;
 	polyVert_t *vert;
 
@@ -572,12 +587,14 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 	// omnidirectional projectors need plane type
 	if (dp->omnidirectional)
 	{
+		vec3_t absNormal;
+
 		// compiler warnings be gone
 		pd = 1.0f;
 
 		// fade by distance from plane
 		d     = DotProduct(dp->center, plane) - plane[3];
-		alpha = 1.0f - (fabs(d) / dp->radius);
+		alpha = 1.0f - (Q_fabs(d) / dp->radius);
 		if (alpha < 0.0f)
 		{
 			return;
@@ -588,9 +605,9 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 		}
 
 		// set projection axis
-		absNormal[0] = fabs(plane[0]);
-		absNormal[1] = fabs(plane[1]);
-		absNormal[2] = fabs(plane[2]);
+		absNormal[0] = Q_fabs(plane[0]);
+		absNormal[1] = Q_fabs(plane[1]);
+		absNormal[2] = Q_fabs(plane[2]);
 		if (absNormal[2] >= absNormal[0] && absNormal[2] >= absNormal[1])
 		{
 			axis = 2;
@@ -619,7 +636,7 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 
 	// chop the winding by all the projector planes
 	pingPong = 0;
-	for (i = 0; i < dp->numPlanes; i++)  //%    dp->numPlanes
+	for (i = 0; i < dp->numPlanes; i++)
 	{
 		ChopWindingBehindPlane(numPoints, points[pingPong], &numPoints, points[!pingPong], dp->planes[i], 0.0f);
 		pingPong ^= 1;
@@ -848,7 +865,7 @@ void R_ProjectDecalOntoSurface(decalProjector_t *dp, bspSurface_t *surf, bspMode
 	}
 
 	// planar surface
-	if (gen->plane.normal[0] || gen->plane.normal[1] || gen->plane.normal[2])
+	if (gen->plane.normal[0] != 0.f || gen->plane.normal[1] != 0.f || gen->plane.normal[2] != 0.f)
 	{
 		// backface check
 		d = DotProduct(dp->planes[0], gen->plane.normal);
@@ -857,9 +874,9 @@ void R_ProjectDecalOntoSurface(decalProjector_t *dp, bspSurface_t *surf, bspMode
 			return;
 		}
 
-		/* plane-sphere check */
+		// plane-sphere check
 		d = DotProduct(dp->center, gen->plane.normal) - gen->plane.dist;
-		if (fabs(d) >= dp->radius)
+		if (Q_fabs(d) >= dp->radius)
 		{
 			return;
 		}
@@ -911,9 +928,9 @@ void R_AddDecalSurface(decal_t *decal)
 	// fade colors
 	if (decal->fadeStartTime < tr.refdef.time && decal->fadeStartTime < decal->fadeEndTime)
 	{
-
-		float fade = (float)(decal->fadeEndTime - tr.refdef.time) / (float)(decal->fadeEndTime - decal->fadeStartTime);
 		int   i;
+		float fade = (float) (decal->fadeEndTime - tr.refdef.time) /
+		             (float) (decal->fadeEndTime - decal->fadeStartTime);
 
 		for (i = 0; i < decal->numVerts; i++)
 		{
@@ -955,11 +972,11 @@ void R_AddDecalSurface(decal_t *decal)
  */
 void R_AddDecalSurfaces(bspModel_t *bmodel)
 {
-	int     i, count = (bmodel == tr.world->models ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS); // get decal count
+	int     i;
+	int     count  = (bmodel == tr.world->models ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS); // get decal count
 	decal_t *decal = bmodel->decals;
 
 	// iterate through decals
-
 	for (i = 0; i < count; i++, decal++)
 	{
 		R_AddDecalSurface(decal);
