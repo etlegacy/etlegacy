@@ -1373,7 +1373,7 @@ void RB_CalcDiffuseColor(unsigned char *colors)
 
 		// enable this for twosided lighting
 		//if( tess.shader->cullType == CT_TWO_SIDED )
-		//	dp = fabs( dp );
+		//	dp = Q_fabs( dp );
 
 		if (dp <= 0)
 		{

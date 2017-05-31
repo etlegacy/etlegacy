@@ -411,7 +411,7 @@ static void DrawNormals(shaderCommands_t *input)
 		qglEnd();
 		qglPointSize(1);
 
-		if (fabs(VectorLengthSquared(ent->lightDir) - 1.0) > 0.2)
+		if (Q_fabs(VectorLengthSquared(ent->lightDir) - 1.0f) > 0.2f)
 		{
 			qglColor3f(1, 0, 0);
 		}
@@ -607,24 +607,24 @@ static void DynamicLightSinglePass(void)
 				modulate = intensity * DotProduct(dl->origin, tess.normal[i].v);
 				if (tess.shader->cullType == CT_TWO_SIDED)
 				{
-					modulate = fabs(modulate);
+					modulate = Q_fabs(modulate);
 				}
 				modulate += remainder;
 			}
 			// ball dlight
 			else
 			{
-				dir[0] = radius - fabs(origin[0] - tess.xyz[i].v[0]);
+				dir[0] = radius - Q_fabs(origin[0] - tess.xyz[i].v[0]);
 				if (dir[0] <= 0.0f)
 				{
 					continue;
 				}
-				dir[1] = radius - fabs(origin[1] - tess.xyz[i].v[1]);
+				dir[1] = radius - Q_fabs(origin[1] - tess.xyz[i].v[1]);
 				if (dir[1] <= 0.0f)
 				{
 					continue;
 				}
-				dir[2] = radius - fabs(origin[2] - tess.xyz[i].v[2]);
+				dir[2] = radius - Q_fabs(origin[2] - tess.xyz[i].v[2]);
 				if (dir[2] <= 0.0f)
 				{
 					continue;
@@ -784,24 +784,24 @@ static void DynamicLightPass_altivec(void)
 				modulate = intensity * DotProduct(dl->origin, tess.normal[i].v);
 				if (tess.shader->cullType == CT_TWO_SIDED)
 				{
-					modulate = fabs(modulate);
+					modulate = Q_fabs(modulate);
 				}
 				modulate += remainder;
 			}
 			// ball dlight
 			else
 			{
-				dir0 = radius - fabs(origin0 - tess.xyz[i].v[0]);
+				dir0 = radius - Q_fabs(origin0 - tess.xyz[i].v[0]);
 				if (dir0 <= 0.0f)
 				{
 					continue;
 				}
-				dir1 = radius - fabs(origin1 - tess.xyz[i].v[1]);
+				dir1 = radius - Q_fabs(origin1 - tess.xyz[i].v[1]);
 				if (dir1 <= 0.0f)
 				{
 					continue;
 				}
-				dir2 = radius - fabs(origin2 - tess.xyz[i].v[2]);
+				dir2 = radius - Q_fabs(origin2 - tess.xyz[i].v[2]);
 				if (dir2 <= 0.0f)
 				{
 					continue;
@@ -937,24 +937,24 @@ static void DynamicLightPass_scalar(void)
 				modulate = intensity * DotProduct(dl->origin, tess.normal[i].v);
 				if (tess.shader->cullType == CT_TWO_SIDED)
 				{
-					modulate = fabs(modulate);
+					modulate = Q_fabs(modulate);
 				}
 				modulate += remainder;
 			}
 			// ball dlight
 			else
 			{
-				dir[0] = radius - fabs(origin[0] - tess.xyz[i].v[0]);
+				dir[0] = radius - Q_fabs(origin[0] - tess.xyz[i].v[0]);
 				if (dir[0] <= 0.0f)
 				{
 					continue;
 				}
-				dir[1] = radius - fabs(origin[1] - tess.xyz[i].v[1]);
+				dir[1] = radius - Q_fabs(origin[1] - tess.xyz[i].v[1]);
 				if (dir[1] <= 0.0f)
 				{
 					continue;
 				}
-				dir[2] = radius - fabs(origin[2] - tess.xyz[i].v[2]);
+				dir[2] = radius - Q_fabs(origin[2] - tess.xyz[i].v[2]);
 				if (dir[2] <= 0.0f)
 				{
 					continue;
