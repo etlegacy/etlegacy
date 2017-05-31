@@ -152,8 +152,9 @@ void R_PerformanceCounters(void)
 	Com_Memset(&backEnd.pc, 0, sizeof(backEnd.pc));
 }
 
-int c_blockedOnRender;
-int c_blockedOnMain;
+// FIXME: Unused ?
+// int c_blockedOnRender;
+// int c_blockedOnMain;
 
 /**
  * @brief R_IssueRenderCommands
@@ -213,7 +214,7 @@ void *R_GetCommandBuffer(unsigned int bytes)
 	{
 		if (bytes > MAX_RENDER_COMMANDS - (sizeof(swapBuffersCommand_t) + sizeof(int)))
 		{
-			Ren_Fatal("R_GetCommandBuffer: bad size %i", bytes);
+			Ren_Fatal("R_GetCommandBuffer: bad size %u", bytes);
 		}
 		// if we run out of room, just start dropping commands
 		return NULL;
@@ -442,7 +443,7 @@ void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 	cmd->commandId = RC_2DPOLYS;
 	cmd->verts     = &backEndData->polyVerts[r_numPolyVerts];
 	cmd->numverts  = numverts;
-	memcpy(cmd->verts, verts, sizeof(polyVert_t) * numverts);
+	Com_Memcpy(cmd->verts, verts, sizeof(polyVert_t) * numverts);
 	cmd->shader = R_GetShaderByHandle(hShader);
 
 	r_numPolyVerts += numverts;
@@ -536,7 +537,7 @@ void RE_StretchPicGradient(float x, float y, float w, float h,
 }
 
 /**
- * @brief RE_BeginFrame
+ * @brief Will be called once for each RE_EndFrame
  */
 void RE_BeginFrame()
 {
@@ -615,28 +616,28 @@ void RE_BeginFrame()
 			switch (err)
 			{
 			case GL_INVALID_ENUM:
-				strcpy(s, "GL_INVALID_ENUM");
+				Q_strcpy(s, "GL_INVALID_ENUM");
 				break;
 			case GL_INVALID_VALUE:
-				strcpy(s, "GL_INVALID_VALUE");
+				Q_strcpy(s, "GL_INVALID_VALUE");
 				break;
 			case GL_INVALID_OPERATION:
-				strcpy(s, "GL_INVALID_OPERATION");
+				Q_strcpy(s, "GL_INVALID_OPERATION");
 				break;
 			case GL_STACK_OVERFLOW:
-				strcpy(s, "GL_STACK_OVERFLOW");
+				Q_strcpy(s, "GL_STACK_OVERFLOW");
 				break;
 			case GL_STACK_UNDERFLOW:
-				strcpy(s, "GL_STACK_UNDERFLOW");
+				Q_strcpy(s, "GL_STACK_UNDERFLOW");
 				break;
 			case GL_OUT_OF_MEMORY:
-				strcpy(s, "GL_OUT_OF_MEMORY");
+				Q_strcpy(s, "GL_OUT_OF_MEMORY");
 				break;
 			case GL_TABLE_TOO_LARGE:
-				strcpy(s, "GL_TABLE_TOO_LARGE");
+				Q_strcpy(s, "GL_TABLE_TOO_LARGE");
 				break;
 			case GL_INVALID_FRAMEBUFFER_OPERATION_EXT:
-				strcpy(s, "GL_INVALID_FRAMEBUFFER_OPERATION_EXT");
+				Q_strcpy(s, "GL_INVALID_FRAMEBUFFER_OPERATION_EXT");
 				break;
 			default:
 				Com_sprintf(s, sizeof(s), "0x%X", err);
