@@ -63,6 +63,9 @@ static void R_ChopPolyBehindPlane(int numInPoints, vec3_t inPoints[MAX_VERTS_ON_
 	float *p1, *p2, *clip;
 	float d;
 
+	Com_Memset(dists, 0, MAX_VERTS_ON_POLY + 4);
+	Com_Memset(sides, 0, MAX_VERTS_ON_POLY + 4);
+
 	// don't clip if it might overflow
 	if (numInPoints >= MAX_VERTS_ON_POLY - 2)
 	{
@@ -195,13 +198,13 @@ void R_BoxSurfaces_r(bspNode_t *node, vec3_t mins, vec3_t maxs, surfaceType_t **
 	c    = node->numMarkSurfaces;
 	while (c--)
 	{
-		//
 		if (*listlength >= listsize)
 		{
 			break;
 		}
-		//
+
 		surf = *mark;
+
 		// check if the surface has NOIMPACT or NOMARKS set
 		if ((surf->shader->surfaceFlags & (SURF_NOIMPACT | SURF_NOMARKS)) || (surf->shader->contentFlags & CONTENTS_FOG))
 		{
@@ -449,7 +452,8 @@ int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection
 						R_AddMarkFragments(numClipPoints, clipPoints,
 						                   numPlanes, normals, dists,
 						                   maxPoints, pointBuffer,
-						                   maxFragments, fragmentBuffer, &returnedPoints, &returnedFragments, mins, maxs);
+						                   maxFragments, fragmentBuffer,
+						                   &returnedPoints, &returnedFragments, mins, maxs);
 
 						if (returnedFragments == maxFragments)
 						{
@@ -474,7 +478,8 @@ int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection
 						R_AddMarkFragments(numClipPoints, clipPoints,
 						                   numPlanes, normals, dists,
 						                   maxPoints, pointBuffer,
-						                   maxFragments, fragmentBuffer, &returnedPoints, &returnedFragments, mins, maxs);
+						                   maxFragments, fragmentBuffer,
+						                   &returnedPoints, &returnedFragments, mins, maxs);
 
 						if (returnedFragments == maxFragments)
 						{
