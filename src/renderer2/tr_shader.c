@@ -2236,12 +2236,14 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			else if (!Q_stricmp(token, "exactVertex"))
 			{
 				stage->rgbGen = CGEN_VERTEX;
+				stage->rgbGen = CGEN_EXACT_VERTEX;
 			}
 			else if (!Q_stricmp(token, "lightingDiffuse"))
 			{
 				//Ren_Warning( "WARNING: obsolete rgbGen lightingDiffuse keyword not supported in shader '%s'\n", shader.name);
 				stage->type   = ST_DIFFUSEMAP;
 				stage->rgbGen = CGEN_IDENTITY_LIGHTING;
+				stage->rgbGen = CGEN_LIGHTING_DIFFUSE;
 			}
 			else if (!Q_stricmp(token, "oneMinusVertex"))
 			{
@@ -2732,10 +2734,11 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 
 	// if shader stage references a lightmap, but no lightmap is present
 	// (vertex-approximated surfaces), then set cgen to vertex
-	if (stage->tcGen_Lightmap && shader.index < 0 &&
-	    stage->bundle[0].image[0] == tr.whiteImage)
+	if (stage->tcGen_Lightmap && shader.index < 0 &&  
+	    stage->bundle[0].image[0] == tr.whiteImage)            // Dont think this is quite right just yet, but leave it and I'll get back to it, Thunder
+		
 	{
-		stage->rgbGen = CGEN_EXACT_VERTEX;
+		stage->rgbGen = CGEN_VERTEX;
 	}
 
 	// implicitly assume that a GL_ONE GL_ZERO blend mask disables blending
@@ -2745,7 +2748,12 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 		depthMaskBits = GLS_DEPTHMASK_TRUE;
 	}
 
-	// decide which agens we can skip
+	// tell shader if this stage has an alpha test
+	if (atestBits & GLS_ATEST_BITS)
+	{
+		shader.alphaTest = qtrue;
+	}
+// decide which agens we can skip
 	if (stage->alphaGen == AGEN_IDENTITY)
 	{
 		if (stage->rgbGen == CGEN_IDENTITY
@@ -2754,7 +2762,6 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			stage->alphaGen = AGEN_SKIP;
 		}
 	}
-
 	// compute state bits
 	stage->stateBits = colorMaskBits | depthMaskBits | blendSrcBits | blendDstBits | atestBits | depthFuncBits | polyModeBits;
 
