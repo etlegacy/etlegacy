@@ -30,6 +30,7 @@
  */
 /**
  * @file renderer/tr_curve.c
+ *
  * @brief This file does all of the processing necessary to turn a raw grid of
  * points read from the map file into a srfGridMesh_t ready for rendering.
  *
@@ -37,8 +38,7 @@
  * subdivided distance from the true curve.
  *
  * Only a single entry point:
- * srfGridMesh_t *R_SubdividePatchToGrid( int width, int height,
- *      drawVert_t points[MAX_PATCH_SIZE*MAX_PATCH_SIZE] ) {
+ * R_SubdividePatchToGrid(int width, int height, srfVert_t points[MAX_PATCH_SIZE*MAX_PATCH_SIZE])
  */
 
 #include "tr_local.h"
@@ -84,9 +84,9 @@ static void Transpose(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE][MAX_
 
 	if (width > height)
 	{
-		for (i = 0 ; i < height ; i++)
+		for (i = 0; i < height; i++)
 		{
-			for (j = i + 1 ; j < width ; j++)
+			for (j = i + 1; j < width; j++)
 			{
 				if (j < height)
 				{
@@ -105,9 +105,9 @@ static void Transpose(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE][MAX_
 	}
 	else
 	{
-		for (i = 0 ; i < width ; i++)
+		for (i = 0; i < width; i++)
 		{
-			for (j = i + 1 ; j < height ; j++)
+			for (j = i + 1; j < height; j++)
 			{
 				if (j < width)
 				{
@@ -130,7 +130,7 @@ static void Transpose(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE][MAX_
  * @brief Handles all the complicated wrapping and degenerate cases
  * @param[in] width
  * @param[in] height
- * @param[in] ctrl
+ * @param[in,out] ctrl
  */
 static void MakeMeshNormals(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE])
 {
@@ -143,14 +143,14 @@ static void MakeMeshNormals(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE
 	drawVert_t *dv;
 	vec3_t     around[8], temp;
 	qboolean   good[8];
-	qboolean   wrapWidth = qfalse, wrapHeight = qfalse;
+	qboolean   wrapWidth, wrapHeight;
 	float      len;
 	static int neighbors[8][2] =
 	{
 		{ 0, 1 }, { 1, 1 }, { 1, 0 }, { 1, -1 }, { 0, -1 }, { -1, -1 }, { -1, 0 }, { -1, 1 }
 	};
 
-	for (i = 0 ; i < height ; i++)
+	for (i = 0; i < height; i++)
 	{
 		VectorSubtract(ctrl[i][0].xyz, ctrl[i][width - 1].xyz, delta);
 		len = VectorLengthSquared(delta);
@@ -159,12 +159,10 @@ static void MakeMeshNormals(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE
 			break;
 		}
 	}
-	if (i == height)
-	{
-		wrapWidth = qtrue;
-	}
 
-	for (i = 0 ; i < width ; i++)
+	wrapWidth = (qboolean)(i == height);
+
+	for (i = 0; i < width; i++)
 	{
 		VectorSubtract(ctrl[0][i].xyz, ctrl[height - 1][i].xyz, delta);
 		len = VectorLengthSquared(delta);
@@ -173,23 +171,21 @@ static void MakeMeshNormals(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE
 			break;
 		}
 	}
-	if (i == width)
-	{
-		wrapHeight = qtrue;
-	}
 
-	for (i = 0 ; i < width ; i++)
+	wrapHeight = (qboolean)(i == width);
+
+	for (i = 0; i < width; i++)
 	{
-		for (j = 0 ; j < height ; j++)
+		for (j = 0; j < height; j++)
 		{
 			dv = &ctrl[j][i];
 			VectorCopy(dv->xyz, base);
-			for (k = 0 ; k < 8 ; k++)
+			for (k = 0; k < 8; k++)
 			{
 				VectorClear(around[k]);
 				good[k] = qfalse;
 
-				for (dist = 1 ; dist <= 3 ; dist++)
+				for (dist = 1; dist <= 3; dist++)
 				{
 					x = i + neighbors[k][0] * dist;
 					y = j + neighbors[k][1] * dist;
@@ -218,24 +214,24 @@ static void MakeMeshNormals(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE
 
 					if (x < 0 || x >= width || y < 0 || y >= height)
 					{
-						break;                  // edge of patch
+						break;  // edge of patch
 					}
 					VectorSubtract(ctrl[y][x].xyz, base, temp);
 					if (VectorNormalize2(temp, temp) == 0.f)
 					{
-						continue;               // degenerate edge, get more dist
+						continue;   // degenerate edge, get more dist
 					}
 					else
 					{
 						good[k] = qtrue;
 						VectorCopy(temp, around[k]);
-						break;                  // good edge
+						break;  // good edge
 					}
 				}
 			}
 
 			VectorClear(sum);
-			for (k = 0 ; k < 8 ; k++)
+			for (k = 0; k < 8; k++)
 			{
 				if (!good[k] || !good[(k + 1) & 7])
 				{
@@ -257,16 +253,16 @@ static void MakeMeshNormals(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE
  * @brief InvertCtrl
  * @param[in] width
  * @param[in] height
- * @param[out] ctrl
+ * @param[in,out] ctrl
  */
 static void InvertCtrl(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE])
 {
 	int        i, j;
 	drawVert_t temp;
 
-	for (i = 0 ; i < height ; i++)
+	for (i = 0; i < height; i++)
 	{
-		for (j = 0 ; j < width / 2 ; j++)
+		for (j = 0; j < width / 2; j++)
 		{
 			temp                   = ctrl[i][j];
 			ctrl[i][j]             = ctrl[i][width - 1 - j];
@@ -277,7 +273,7 @@ static void InvertCtrl(int width, int height, drawVert_t ctrl[MAX_GRID_SIZE][MAX
 
 /**
  * @brief InvertErrorTable
- * @param[in,out] errorTable
+ * @param[out] errorTable
  * @param[in] width
  * @param[in] height
  */
@@ -288,12 +284,12 @@ static void InvertErrorTable(float errorTable[2][MAX_GRID_SIZE], int width, int 
 
 	memcpy(copy, errorTable, sizeof(copy));
 
-	for (i = 0 ; i < width ; i++)
+	for (i = 0; i < width; i++)
 	{
 		errorTable[1][i] = copy[0][i];  //[width-1-i];
 	}
 
-	for (i = 0 ; i < height ; i++)
+	for (i = 0; i < height; i++)
 	{
 		errorTable[0][i] = copy[1][height - 1 - i];
 	}
@@ -376,9 +372,9 @@ srfGridMesh_t *R_CreateSurfaceGridMesh(int width, int height,
 	grid->height      = height;
 	grid->surfaceType = SF_GRID;
 	ClearBounds(grid->bounds[0], grid->bounds[1]);
-	for (i = 0 ; i < width ; i++)
+	for (i = 0; i < width; i++)
 	{
-		for (j = 0 ; j < height ; j++)
+		for (j = 0; j < height; j++)
 		{
 			vert  = &grid->verts[j * width + i];
 			*vert = ctrl[j][i];
@@ -417,7 +413,7 @@ void R_FreeSurfaceGridMesh(srfGridMesh_t *grid)
  * @return
  */
 srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
-                                      drawVert_t points[MAX_PATCH_SIZE *MAX_PATCH_SIZE])
+                                      drawVert_t points[MAX_PATCH_SIZE * MAX_PATCH_SIZE])
 {
 	int                   i, j, k, l;
 	drawVert_t            prev, next, mid;
@@ -427,23 +423,24 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
 	MAC_STATIC drawVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE];
 	float                 errorTable[2][MAX_GRID_SIZE];
 
-	for (i = 0 ; i < width ; i++)
+	for (i = 0; i < width; i++)
 	{
-		for (j = 0 ; j < height ; j++)
+		for (j = 0; j < height; j++)
 		{
 			ctrl[j][i] = points[j * width + i];
 		}
 	}
 
-	for (dir = 0 ; dir < 2 ; dir++)
+	for (dir = 0; dir < 2; dir++)
 	{
-		for (j = 0 ; j < MAX_GRID_SIZE ; j++)
+
+		for (j = 0; j < MAX_GRID_SIZE; j++)
 		{
 			errorTable[dir][j] = 0;
 		}
 
 		// horizontal subdivisions
-		for (j = 0 ; j + 2 < width ; j += 2)
+		for (j = 0; j + 2 < width; j += 2)
 		{
 			// check subdivided midpoints against control points
 
@@ -451,7 +448,7 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
 			// this would basically stitch all patches in the same LOD group together.
 
 			maxLen = 0;
-			for (i = 0 ; i < height ; i++)
+			for (i = 0; i < height; i++)
 			{
 				vec3_t midxyz;
 				vec3_t dir;
@@ -459,7 +456,7 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
 				float  d;
 
 				// calculate the point on the curve
-				for (l = 0 ; l < 3 ; l++)
+				for (l = 0; l < 3; l++)
 				{
 					midxyz[l] = (ctrl[i][j].xyz[l] + ctrl[i][j + 1].xyz[l] * 2
 					             + ctrl[i][j + 2].xyz[l]) * 0.25f;
@@ -485,6 +482,7 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
 			}
 
 			maxLen = sqrt(maxLen);
+
 			// if all the points are on the lines, remove the entire columns
 			if (maxLen < 0.1f)
 			{
@@ -509,13 +507,13 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
 
 			// insert two columns and replace the peak
 			width += 2;
-			for (i = 0 ; i < height ; i++)
+			for (i = 0; i < height; i++)
 			{
 				LerpDrawVert(&ctrl[i][j], &ctrl[i][j + 1], &prev);
 				LerpDrawVert(&ctrl[i][j + 1], &ctrl[i][j + 2], &next);
 				LerpDrawVert(&prev, &next, &mid);
 
-				for (k = width - 1 ; k > j + 3 ; k--)
+				for (k = width - 1; k > j + 3; k--)
 				{
 					ctrl[i][k] = ctrl[i][k - 2];
 				}
@@ -539,15 +537,15 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
 	PutPointsOnCurve(ctrl, width, height);
 
 	// cull out any rows or columns that are colinear
-	for (i = 1 ; i < width - 1 ; i++)
+	for (i = 1; i < width - 1; i++)
 	{
 		if (errorTable[0][i] != 999.f)
 		{
 			continue;
 		}
-		for (j = i + 1 ; j < width ; j++)
+		for (j = i + 1; j < width; j++)
 		{
-			for (k = 0 ; k < height ; k++)
+			for (k = 0; k < height; k++)
 			{
 				ctrl[k][j - 1] = ctrl[k][j];
 			}
@@ -556,15 +554,15 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
 		width--;
 	}
 
-	for (i = 1 ; i < height - 1 ; i++)
+	for (i = 1; i < height - 1; i++)
 	{
 		if (errorTable[1][i] != 999.f)
 		{
 			continue;
 		}
-		for (j = i + 1 ; j < height ; j++)
+		for (j = i + 1; j < height; j++)
 		{
-			for (k = 0 ; k < width ; k++)
+			for (k = 0; k < width; k++)
 			{
 				ctrl[j - 1][k] = ctrl[j][k];
 			}
