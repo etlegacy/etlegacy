@@ -146,7 +146,7 @@ static void AddSkyPolygon(int nump, vec3_t vecs)
 		}
 		if (dv < 0.001f)
 		{
-			continue;           // don't divide by zero
+			continue;   // don't divide by zero
 		}
 		j = vec_to_st[axis][0];
 		if (j < 0)
@@ -211,8 +211,8 @@ static void ClipSkyPolygon(int nump, vec3_t vecs, int stage)
 	{
 		Ren_Drop("ClipSkyPolygon: MAX_CLIP_VERTS");
 	}
-	if (stage == 6)
-	{                           // fully clipped, so draw it
+	if (stage == 6)     // fully clipped, so draw it
+	{
 		AddSkyPolygon(nump, vecs);
 		return;
 	}
@@ -239,8 +239,8 @@ static void ClipSkyPolygon(int nump, vec3_t vecs, int stage)
 		dists[i] = d;
 	}
 
-	if (!front || !back)
-	{                           // not clipped
+	if (!front || !back)     // not clipped
+	{
 		ClipSkyPolygon(nump, vecs, stage + 1);
 		return;
 	}
@@ -353,9 +353,8 @@ static void MakeSkyVec(float s, float t, int axis, vec4_t outSt, vec4_t outXYZ)
 		{ -1, -3, 2 },
 
 		{ -2, -1, 3 }, // 0 degrees yaw, look straight up
-		{ 2,  -1, -3}           // look straight down
+		{ 2,  -1, -3}   // look straight down
 	};
-
 	vec3_t b;
 	int    j, k;
 	float  boxSize;
@@ -588,7 +587,9 @@ static void DrawSkyBox(shader_t *shader)
 			{
 				MakeSkyVec((s - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
 				           (t - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
-				           i, s_skyTexCoords[t][s], s_skyPoints[t][s]);
+				           i, 
+						   s_skyTexCoords[t][s], 
+						   s_skyPoints[t][s]);
 			}
 		}
 
@@ -616,7 +617,9 @@ static void FillCloudBox(const shader_t *shader, int stage)
 		int   s, t;
 		float MIN_T;
 
-		if (1)                   // FIXME? shader->sky.fullClouds )
+	for (i = 0; i < 6; i++)
+	{
+		if (1)     // FIXME? shader->sky.fullClouds )
 		{
 			MIN_T = -HALF_SKY_SUBDIVISIONS;
 
@@ -639,7 +642,7 @@ static void FillCloudBox(const shader_t *shader, int stage)
 			case 5:
 				// don't draw clouds beneath you
 				continue;
-			case 4:         // top
+			case 4:     // top
 			default:
 				MIN_T = -HALF_SKY_SUBDIVISIONS;
 				break;
@@ -701,7 +704,10 @@ static void FillCloudBox(const shader_t *shader, int stage)
 			for (s = sky_mins_subd[0] + HALF_SKY_SUBDIVISIONS; s <= sky_maxs_subd[0] + HALF_SKY_SUBDIVISIONS; s++)
 			{
 				MakeSkyVec((s - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
-				           (t - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS, i, NULL, s_skyPoints[t][s]);
+				           (t - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
+				           i,
+				           NULL,
+				           s_skyPoints[t][s]);
 
 				s_skyTexCoords[t][s][0] = s_cloudTexCoords[i][t][s][0];
 				s_skyTexCoords[t][s][1] = s_cloudTexCoords[i][t][s][1];
@@ -751,7 +757,7 @@ static void BuildCloudData()
 
 /**
  * @brief Called when a sky shader is parsed
- * @param heightCloud
+ * @param[in] heightCloud
  */
 void R_InitSkyTexCoords(float heightCloud)
 {
@@ -774,7 +780,10 @@ void R_InitSkyTexCoords(float heightCloud)
 			{
 				// compute vector from view origin to sky side integral point
 				MakeSkyVec((s - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
-				           (t - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS, i, NULL, skyVec);
+				           (t - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
+				           i,
+				           NULL,
+				           skyVec);
 
 				// compute parametric value 'p' that intersects with cloud layer
 				p = (1.0f / (2 * DotProduct(skyVec, skyVec))) *
@@ -784,7 +793,8 @@ void R_InitSkyTexCoords(float heightCloud)
 				              Square(skyVec[0]) * Square(heightCloud) +
 				              2 * Square(skyVec[1]) * radiusWorld * heightCloud +
 				              Square(skyVec[1]) * Square(heightCloud) +
-				              2 * Square(skyVec[2]) * radiusWorld * heightCloud + Square(skyVec[2]) * Square(heightCloud)));
+				              2 * Square(skyVec[2]) * radiusWorld * heightCloud +
+				              Square(skyVec[2]) * Square(heightCloud)));
 
 				s_cloudTexP[i][t][s] = p;
 
