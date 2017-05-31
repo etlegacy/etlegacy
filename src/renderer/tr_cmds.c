@@ -42,8 +42,8 @@ void R_PerformanceCounters(void)
 	if (!r_speeds->integer)
 	{
 		// clear the counters even if we aren't printing
-		memset(&tr.pc, 0, sizeof(tr.pc));
-		memset(&backEnd.pc, 0, sizeof(backEnd.pc));
+		Com_Memset(&tr.pc, 0, sizeof(tr.pc));
+		Com_Memset(&backEnd.pc, 0, sizeof(backEnd.pc));
 		return;
 	}
 
@@ -88,8 +88,8 @@ void R_PerformanceCounters(void)
 		          tr.pc.c_decalProjectors, tr.pc.c_decalTestSurfaces, tr.pc.c_decalClipSurfaces, tr.pc.c_decalSurfaces, tr.pc.c_decalSurfacesCreated);
 	}
 
-	memset(&tr.pc, 0, sizeof(tr.pc));
-	memset(&backEnd.pc, 0, sizeof(backEnd.pc));
+	Com_Memset(&tr.pc, 0, sizeof(tr.pc));
+	Com_Memset(&backEnd.pc, 0, sizeof(backEnd.pc));
 }
 
 /**
@@ -274,7 +274,7 @@ void RE_2DPolyies(polyVert_t *verts, int numverts, qhandle_t hShader)
 	cmd->commandId = RC_2DPOLYS;
 	cmd->verts     = &backEndData->polyVerts[r_numpolyverts];
 	cmd->numverts  = numverts;
-	memcpy(cmd->verts, verts, sizeof(polyVert_t) * numverts);
+	Com_Memcpy(cmd->verts, verts, sizeof(polyVert_t) * numverts);
 	cmd->shader = R_GetShaderByHandle(hShader);
 
 	r_numpolyverts += numverts;
