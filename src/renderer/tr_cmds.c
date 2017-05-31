@@ -101,13 +101,14 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 	renderCommandList_t *cmdList = &backEndData->commands;
 
 	etl_assert(cmdList != NULL);
-
 	// add an end-of-list command
-	*( int * )(cmdList->cmds + cmdList->used) = RC_END_OF_LIST;
+	*(int *)(cmdList->cmds + cmdList->used) = RC_END_OF_LIST;
 
 	// clear it out, in case this is a sync and not a buffer flip
 	cmdList->used = 0;
 
+	// at this point, the back end thread is idle, so it is ok
+	// to look at it's performance counters
 	if (runPerformanceCounters)
 	{
 		R_PerformanceCounters();
@@ -137,7 +138,7 @@ void R_IssuePendingRenderCommands(void)
 }
 
 /**
- * @brief make sure there is enough command space, waiting on the
+ * @brief Make sure there is enough command space, waiting on the
  * render thread if needed.
  *
  * @param[in] bytes
