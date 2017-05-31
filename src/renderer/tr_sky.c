@@ -568,9 +568,9 @@ static void DrawSkyBox(shader_t *shader)
 			{
 				MakeSkyVec((s - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
 				           (t - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
-				           i, 
-						   s_skyTexCoords[t][s], 
-						   s_skyPoints[t][s]);
+				           i,
+				           s_skyTexCoords[t][s],
+				           s_skyPoints[t][s]);
 			}
 		}
 
@@ -736,8 +736,6 @@ static void FillCloudBox(const shader_t *shader, int stage)
 		int   s, t;
 		float MIN_T;
 
-	for (i = 0; i < 6; i++)
-	{
 		if (1)     // FIXME? shader->sky.fullClouds )
 		{
 			MIN_T = -HALF_SKY_SUBDIVISIONS;
