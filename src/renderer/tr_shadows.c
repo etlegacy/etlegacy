@@ -128,12 +128,12 @@ void R_RenderShadowEdges(void)
 				qglEnd();
 				//c_edges++;
 			}
-            /*
+			/*
 			else
 			{
-				c_rejected++;
+			    c_rejected++;
 			}
-            */
+			*/
 		}
 	}
 }
@@ -173,7 +173,7 @@ void RB_ShadowTessEnd(void)
 	}
 
 	// decide which triangles face the light
-	memset(numEdgeDefs, 0, 4 * tess.numVertexes);
+	Com_Memset(numEdgeDefs, 0, 4 * tess.numVertexes);
 
 	numTris = tess.numIndexes / 3;
 
@@ -304,14 +304,20 @@ void RB_ShadowFinish(void)
  */
 void RB_ProjectionShadowDeform(void)
 {
-	float  *xyz = ( float * ) tess.xyz;
+	float  *xyz = (float *)tess.xyz;
 	int    i;
 	float  h;
-	vec3_t ground = { backEnd.orientation.axis[0][2], backEnd.orientation.axis[1][2], backEnd.orientation.axis[2][2] };
+	vec3_t ground;
 	vec3_t light;
-	float  groundDist = backEnd.orientation.origin[2] - backEnd.currentEntity->e.shadowPlane;
+	float  groundDist;
 	float  d;
 	vec3_t lightDir;
+
+	ground[0] = backEnd.orientation.axis[0][2];
+	ground[1] = backEnd.orientation.axis[1][2];
+	ground[2] = backEnd.orientation.axis[2][2];
+
+	groundDist = backEnd.orientation.origin[2] - backEnd.currentEntity->e.shadowPlane;
 
 	VectorCopy(backEnd.currentEntity->lightDir, lightDir);
 	d = DotProduct(lightDir, ground);
