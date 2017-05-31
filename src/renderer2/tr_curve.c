@@ -32,11 +32,11 @@
 /**
  * @file renderer2/tr_curve.c
  *
- * @brief This file does all of the processing necessary to turn a raw grid of points
- * read from the map file into a srfGridMesh_t ready for rendering.
+ * @brief This file does all of the processing necessary to turn a raw grid of
+ * points read from the map file into a srfGridMesh_t ready for rendering.
  *
- * The level of detail solution is direction independent, based only on subdivided
- * distance from the true curve.
+ * The level of detail solution is direction independent, based only on
+ * subdivided distance from the true curve.
  *
  * Only a single entry point:
  * R_SubdividePatchToGrid(int width, int height, srfVert_t points[MAX_PATCH_SIZE*MAX_PATCH_SIZE])
@@ -168,7 +168,6 @@ static void MakeMeshNormals(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE]
 		{ 0, 1 }, { 1, 1 }, { 1, 0 }, { 1, -1 }, { 0, -1 }, { -1, -1 }, { -1, 0 }, { -1, 1 }
 	};
 
-	wrapWidth = qfalse;
 	for (i = 0; i < height; i++)
 	{
 		VectorSubtract(ctrl[i][0].xyz, ctrl[i][width - 1].xyz, delta);
@@ -178,12 +177,9 @@ static void MakeMeshNormals(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE]
 			break;
 		}
 	}
-	if (i == height)
-	{
-		wrapWidth = qtrue;
-	}
 
-	wrapHeight = qfalse;
+	wrapWidth = (qboolean)(i == height);
+
 	for (i = 0; i < width; i++)
 	{
 		VectorSubtract(ctrl[0][i].xyz, ctrl[height - 1][i].xyz, delta);
@@ -193,11 +189,8 @@ static void MakeMeshNormals(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE]
 			break;
 		}
 	}
-	if (i == width)
-	{
-		wrapHeight = qtrue;
-	}
 
+	wrapHeight = (qboolean)(i == width);
 
 	for (i = 0; i < width; i++)
 	{
@@ -373,7 +366,7 @@ static int MakeMeshTriangles(int width, int height, srfVert_t ctrl[MAX_GRID_SIZE
 {
 	int              i, j;
 	int              numTriangles = 0;
-	int              w = width - 1, h = height - 1;
+	int              w            = width - 1, h = height - 1;
 	srfVert_t        *dv;
 	static srfVert_t ctrl2[MAX_GRID_SIZE * MAX_GRID_SIZE];
 
@@ -721,7 +714,7 @@ void R_FreeSurfaceGridMesh(srfGridMesh_t *grid)
  * @param[in] points
  * @return
  */
-srfGridMesh_t *R_SubdividePatchToGrid(int width, int height, srfVert_t points[MAX_PATCH_SIZE *MAX_PATCH_SIZE])
+srfGridMesh_t *R_SubdividePatchToGrid(int width, int height, srfVert_t points[MAX_PATCH_SIZE * MAX_PATCH_SIZE])
 {
 	int                  i, j, k, l;
 	srfVert_t            prev, next, mid;
@@ -803,13 +796,13 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height, srfVert_t points[MA
 			if (width + 2 > MAX_GRID_SIZE)
 			{
 				errorTable[dir][j + 1] = 1.0f / maxLen;
-				continue;       // can't subdivide any more
+				continue;   // can't subdivide any more
 			}
 
 			if (maxLen <= r_subdivisions->value)
 			{
 				errorTable[dir][j + 1] = 1.0f / maxLen;
-				continue;       // didn't need subdivision
+				continue;   // didn't need subdivision
 			}
 
 			errorTable[dir][j + 2] = 1.0f / maxLen;
