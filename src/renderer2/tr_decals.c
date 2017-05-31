@@ -75,7 +75,7 @@ static qboolean MakeTextureMatrix(vec4_t texMat[2], vec4_t projection, decalVert
 
 	// calculate barycentric basis for the triangle
 	bb = (b->st[0] - a->st[0]) * (c->st[1] - a->st[1]) - (c->st[0] - a->st[0]) * (b->st[1] - a->st[1]);
-	if (Q_fabs(bb) < 0.00000001)
+	if (fabs(bb) < 0.00000001)
 	{
 		return qfalse;
 	}
