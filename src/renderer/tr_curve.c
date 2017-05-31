@@ -282,7 +282,7 @@ static void InvertErrorTable(float errorTable[2][MAX_GRID_SIZE], int width, int 
 	int   i;
 	float copy[2][MAX_GRID_SIZE];
 
-	memcpy(copy, errorTable, sizeof(copy));
+	Com_Memcpy(copy, errorTable, sizeof(copy));
 
 	for (i = 0; i < width; i++)
 	{
@@ -307,9 +307,9 @@ static void PutPointsOnCurve(drawVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE],
 	int        i, j;
 	drawVert_t prev, next;
 
-	for (i = 0 ; i < width ; i++)
+	for (i = 0; i < width; i++)
 	{
-		for (j = 1 ; j < height ; j += 2)
+		for (j = 1; j < height; j += 2)
 		{
 			LerpDrawVert(&ctrl[j][i], &ctrl[j + 1][i], &prev);
 			LerpDrawVert(&ctrl[j][i], &ctrl[j - 1][i], &next);
@@ -317,10 +317,9 @@ static void PutPointsOnCurve(drawVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE],
 		}
 	}
 
-
-	for (j = 0 ; j < height ; j++)
+	for (j = 0; j < height; j++)
 	{
-		for (i = 1 ; i < width ; i += 2)
+		for (i = 1; i < width; i += 2)
 		{
 			LerpDrawVert(&ctrl[j][i], &ctrl[j][i + 1], &prev);
 			LerpDrawVert(&ctrl[j][i], &ctrl[j][i - 1], &next);
@@ -353,19 +352,19 @@ srfGridMesh_t *R_CreateSurfaceGridMesh(int width, int height,
 	Com_Memset(grid, 0, size);
 
 	grid->widthLodError = /*ri.Hunk_Alloc*/ ri.Z_Malloc(width * 4);
-	memcpy(grid->widthLodError, errorTable[0], width * 4);
+	Com_Memcpy(grid->widthLodError, errorTable[0], width * 4);
 
 	grid->heightLodError = /*ri.Hunk_Alloc*/ ri.Z_Malloc(height * 4);
-	memcpy(grid->heightLodError, errorTable[1], height * 4);
+	Com_Memcpy(grid->heightLodError, errorTable[1], height * 4);
 #else
 	grid = ri.Hunk_Alloc(size, h_low);
-	memset(grid, 0, size);
+	Com_Memset(grid, 0, size);
 
 	grid->widthLodError = ri.Hunk_Alloc(width * 4, h_low);
-	memcpy(grid->widthLodError, errorTable[0], width * 4);
+	Com_Memcpy(grid->widthLodError, errorTable[0], width * 4);
 
 	grid->heightLodError = ri.Hunk_Alloc(height * 4, h_low);
-	memcpy(grid->heightLodError, errorTable[1], height * 4);
+	Com_Memcpy(grid->heightLodError, errorTable[1], height * 4);
 #endif
 
 	grid->width       = width;
