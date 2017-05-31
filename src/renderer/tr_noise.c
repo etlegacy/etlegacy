@@ -53,7 +53,7 @@ static int   s_noise_perm[NOISE_SIZE];
  */
 static float GetNoiseValue(int x, int y, int z, int t)
 {
-	int index = INDEX(( int ) x, ( int ) y, ( int ) z, ( int ) t);
+	int index = INDEX((int)x, (int)y, (int)z, (int)t);
 
 	return s_noise_table[index];
 }
@@ -69,8 +69,8 @@ void R_NoiseInit(void)
 
 	for (i = 0; i < NOISE_SIZE; i++)
 	{
-		s_noise_table[i] = (float) (((rand() / (float) RAND_MAX) * 2.0f - 1.0f));
-		s_noise_perm[i]  = (unsigned char)(rand() / (float) RAND_MAX * 255);
+		s_noise_table[i] = (float)(((rand() / (float)RAND_MAX) * 2.0f - 1.0f));
+		s_noise_perm[i]  = (unsigned char)(rand() / (float)RAND_MAX * 255);
 	}
 }
 
