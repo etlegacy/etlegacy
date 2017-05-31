@@ -4027,7 +4027,7 @@ static void R_LoadSubmodels(lump_t *l)
 		// allocate decal memory
 		j           = (i == 0 ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS);
 		out->decals = (decal_t *)ri.Hunk_Alloc(j * sizeof(*out->decals), h_low);
-		memset(out->decals, 0, j * sizeof(*out->decals));
+		Com_Memset(out->decals, 0, j * sizeof(*out->decals));
 	}
 }
 
@@ -5573,7 +5573,7 @@ static void R_PrecacheInteractionSurface(bspSurface_t *surf, trRefLight_t *light
 	case SF_FACE:
 	case SF_GRID:
 	case SF_TRIANGLES:
-		intersects = R_PrecacheGenericSurfInteraction((srfGeneric_t *) surf->data, surf->shader, light );
+		intersects = R_PrecacheGenericSurfInteraction((srfGeneric_t *) surf->data, surf->shader, light);
 		break;
 	default:
 		intersects = qfalse;
@@ -7682,7 +7682,7 @@ void R_BuildCubeMaps(void)
 
 	startTime = ri.Milliseconds();
 
-	memset(&rf, 0, sizeof(refdef_t));
+	Com_Memset(&rf, 0, sizeof(refdef_t));
 
 	for (i = 0; i < 6; i++)
 	{
@@ -7972,7 +7972,7 @@ void R_BuildCubeMaps(void)
 			}
 
 			tr.refdef.pixelTarget = tr.cubeTemp[i];
-			memset(tr.cubeTemp[i], 255, REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4);
+			Com_Memset(tr.cubeTemp[i], 255, REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4);
 			tr.refdef.pixelTargetWidth  = REF_CUBEMAP_SIZE;
 			tr.refdef.pixelTargetHeight = REF_CUBEMAP_SIZE;
 
@@ -7983,7 +7983,7 @@ void R_BuildCubeMaps(void)
 			if (flipx)
 			{
 				dest = tr.cubeTemp[i];
-				memcpy(temp, dest, REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4);
+				Com_Memcpy(temp, dest, REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4);
 
 				for (y = 0; y < REF_CUBEMAP_SIZE; y++)
 				{
@@ -8003,7 +8003,7 @@ void R_BuildCubeMaps(void)
 			if (flipy)
 			{
 				dest = tr.cubeTemp[i];
-				memcpy(temp, dest, REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4);
+				Com_Memcpy(temp, dest, REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4);
 
 				for (y = 0; y < REF_CUBEMAP_SIZE; y++)
 				{
@@ -8061,7 +8061,7 @@ void R_BuildCubeMaps(void)
 				// Initialize output buffer
 				if (fileBufX == 0 && fileBufY == 0)
 				{
-					memset(fileBuf, 255, REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4);
+					Com_Memset(fileBuf, 255, REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4);
 				}
 
 				// Copy this cube map into buffer
