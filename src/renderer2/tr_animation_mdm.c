@@ -111,16 +111,25 @@ static float RB_ProjectRadius(float r, vec3_t location)
 	p[2] = -dist;
 
 	projected[0] = p[0] * backEnd.viewParms.projectionMatrix[0] +
-	               p[1] * backEnd.viewParms.projectionMatrix[4] + p[2] * backEnd.viewParms.projectionMatrix[8] + backEnd.viewParms.projectionMatrix[12];
+	               p[1] * backEnd.viewParms.projectionMatrix[4] +
+	               p[2] * backEnd.viewParms.projectionMatrix[8] +
+	               backEnd.viewParms.projectionMatrix[12];
 
 	projected[1] = p[0] * backEnd.viewParms.projectionMatrix[1] +
-	               p[1] * backEnd.viewParms.projectionMatrix[5] + p[2] * backEnd.viewParms.projectionMatrix[9] + backEnd.viewParms.projectionMatrix[13];
+	               p[1] * backEnd.viewParms.projectionMatrix[5] +
+	               p[2] * backEnd.viewParms.projectionMatrix[9] +
+	               backEnd.viewParms.projectionMatrix[13];
 
 	projected[2] = p[0] * backEnd.viewParms.projectionMatrix[2] +
-	               p[1] * backEnd.viewParms.projectionMatrix[6] + p[2] * backEnd.viewParms.projectionMatrix[10] + backEnd.viewParms.projectionMatrix[14];
+	               p[1] * backEnd.viewParms.projectionMatrix[6] +
+	               p[2] * backEnd.viewParms.projectionMatrix[10] +
+	               backEnd.viewParms.projectionMatrix[14];
 
 	projected[3] = p[0] * backEnd.viewParms.projectionMatrix[3] +
-	               p[1] * backEnd.viewParms.projectionMatrix[7] + p[2] * backEnd.viewParms.projectionMatrix[11] + backEnd.viewParms.projectionMatrix[15];
+	               p[1] * backEnd.viewParms.projectionMatrix[7] +
+	               p[2] * backEnd.viewParms.projectionMatrix[11] +
+	               backEnd.viewParms.projectionMatrix[15];
+
 
 	pr = projected[1] / projected[3];
 
@@ -271,7 +280,7 @@ static float RB_CalcMDMLod(refEntity_t *refent, vec3_t origin, float radius, flo
 	projectedRadius = RB_ProjectRadius(radius, origin);
 	if (projectedRadius != 0.f)
 	{
-		//ri.Printf (PRINT_ALL, "projected radius: %f\n", projectedRadius);
+		// ri.Printf (PRINT_ALL, "projected radius: %f\n", projectedRadius);
 		flod = projectedRadius * r_lodScale->value * modelScale;
 	}
 	else
@@ -282,12 +291,12 @@ static float RB_CalcMDMLod(refEntity_t *refent, vec3_t origin, float radius, flo
 
 	if (refent->reFlags & REFLAG_FORCE_LOD)
 	{
-		flod *= 0.5;
+		flod *= 0.5f;
 	}
 	// like reflag_force_lod, but separate for the moment
 	if (refent->reFlags & REFLAG_DEAD_LOD)
 	{
-		flod *= 0.8;
+		flod *= 0.8f;
 	}
 
 	flod -= 0.25f * (r_lodBias->value) + modelBias;
@@ -327,11 +336,11 @@ static int RB_CalcMDMLodIndex(refEntity_t *ent, vec3_t origin, float radius, flo
 #if 0
 	if (ent->reFlags & REFLAG_DEAD_LOD)
 	{
-		if (flod < 0.35)
+		if (flod < 0.35f)
 		{
 			// allow dead to lod down to 35% (even if below surf->minLod) (%35 is arbitrary and probably not good generally.
 			// worked for the blackguard/infantry as a test though)
-			flod = 0.35;
+			flod = 0.35f;
 		}
 	}
 	else
@@ -723,40 +732,88 @@ static ID_INLINE void LocalMatrixTransformVector(vec3_t in, vec3_t mat[3], vec3_
 	out[2] = in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2];
 }
 
-//static ID_INLINE void LocalMatrixTransformVectorTranslate(vec3_t in, vec3_t mat[3], vec3_t tr, vec3_t out)
-//{
-//	out[0] = in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2] + tr[0];
-//	out[1] = in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2] + tr[1];
-//	out[2] = in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2] + tr[2];
-//}
+/*
+ * @brief LocalMatrixTransformVectorTranslate
+ * @param[in] in
+ * @param[in] mat
+ * @param[in] tr
+ * @param[out] out
+ *
+ * @note Unused
+static ID_INLINE void LocalMatrixTransformVectorTranslate(vec3_t in, vec3_t mat[3], vec3_t tr, vec3_t out)
+{
+    out[0] = in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2] + tr[0];
+    out[1] = in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2] + tr[1];
+    out[2] = in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2] + tr[2];
+}
+*/
 
-//static ID_INLINE void LocalScaledMatrixTransformVector(vec3_t in, float s, vec3_t mat[3], vec3_t out)
-//{
-//	out[0] = (1.0f - s) * in[0] + s * (in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2]);
-//	out[1] = (1.0f - s) * in[1] + s * (in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2]);
-//	out[2] = (1.0f - s) * in[2] + s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2]);
-//}
+/*
+ * @brief LocalScaledMatrixTransformVector
+ * @param[in] in
+ * @param[in] s
+ * @param[in] mat
+ * @param[out] out
+ *
+ * @note Unused
+static ID_INLINE void LocalScaledMatrixTransformVector(vec3_t in, float s, vec3_t mat[3], vec3_t out)
+{
+    out[0] = (1.0f - s) * in[0] + s * (in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2]);
+    out[1] = (1.0f - s) * in[1] + s * (in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2]);
+    out[2] = (1.0f - s) * in[2] + s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2]);
+}
+*/
 
-//static ID_INLINE void LocalScaledMatrixTransformVectorTranslate(vec3_t in, float s, vec3_t mat[3], vec3_t tr, vec3_t out)
-//{
-//	out[0] = (1.0f - s) * in[0] + s * (in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2] + tr[0]);
-//	out[1] = (1.0f - s) * in[1] + s * (in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2] + tr[1]);
-//	out[2] = (1.0f - s) * in[2] + s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2] + tr[2]);
-//}
+/*
+ * @brief LocalScaledMatrixTransformVectorTranslate
+ * @param[in] in
+ * @param[in] s
+ * @param[in] mat
+ * @param[in] tr
+ * @param[out] out
+ *
+ * @note Unused
+static ID_INLINE void LocalScaledMatrixTransformVectorTranslate(vec3_t in, float s, vec3_t mat[3], vec3_t tr, vec3_t out)
+{
+    out[0] = (1.0f - s) * in[0] + s * (in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2] + tr[0]);
+    out[1] = (1.0f - s) * in[1] + s * (in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2] + tr[1]);
+    out[2] = (1.0f - s) * in[2] + s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2] + tr[2]);
+}
+*/
 
-//static ID_INLINE void LocalScaledMatrixTransformVectorFullTranslate(vec3_t in, float s, vec3_t mat[3], vec3_t tr, vec3_t out)
-//{
-//	out[0] = (1.0f - s) * in[0] + s * (in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2]) + tr[0];
-//	out[1] = (1.0f - s) * in[1] + s * (in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2]) + tr[1];
-//	out[2] = (1.0f - s) * in[2] + s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2]) + tr[2];
-//}
+/*
+ * @brief LocalScaledMatrixTransformVectorFullTranslate
+ * @param[in] in
+ * @param[in] s
+ * @param[in] mat
+ * @param[in] tr
+ * @param[out] out
+ *
+ * @note Unused
+static ID_INLINE void LocalScaledMatrixTransformVectorFullTranslate(vec3_t in, float s, vec3_t mat[3], vec3_t tr, vec3_t out)
+{
+    out[0] = (1.0f - s) * in[0] + s * (in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2]) + tr[0];
+    out[1] = (1.0f - s) * in[1] + s * (in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2]) + tr[1];
+    out[2] = (1.0f - s) * in[2] + s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2]) + tr[2];
+}
+*/
 
-//static ID_INLINE void LocalAddScaledMatrixTransformVectorFullTranslate(vec3_t in, float s, vec3_t mat[3], vec3_t tr, vec3_t out)
-//{
-//	out[0] += s * (in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2]) + tr[0];
-//	out[1] += s * (in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2]) + tr[1];
-//	out[2] += s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2]) + tr[2];
-//}
+/*
+ * @brief LocalAddScaledMatrixTransformVectorFullTranslate
+ * @param[in] in
+ * @param[in] s
+ * @param[in] mat
+ * @param[in] tr
+ * @param[out] out
+ *
+ * @note Unused
+static ID_INLINE void LocalAddScaledMatrixTransformVectorFullTranslate(vec3_t in, float s, vec3_t mat[3], vec3_t tr, vec3_t out)
+{
+    out[0] += s * (in[0] * mat[0][0] + in[1] * mat[0][1] + in[2] * mat[0][2]) + tr[0];
+    out[1] += s * (in[0] * mat[1][0] + in[1] * mat[1][1] + in[2] * mat[1][2]) + tr[1];
+    out[2] += s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2]) + tr[2];
+}
+*/
 
 /**
  * @brief LocalAddScaledMatrixTransformVectorTranslate
@@ -787,6 +844,7 @@ static ID_INLINE void LocalAddScaledMatrixTransformVector(vec3_t in, float s, ve
 	out[2] += s * (in[0] * mat[2][0] + in[1] * mat[2][1] + in[2] * mat[2][2]);
 }
 
+// static float LAVangle;
 static float sp, sy, cp, cy, sr, cr;
 
 #ifndef YD_INGLES
@@ -794,8 +852,8 @@ static float LAVangle;
 
 /**
  * @brief LocalAngleVector
- * @param angles
- * @param forward
+ * @param[in] angles
+ * @param[out] forward
  */
 static ID_INLINE void LocalAngleVector(vec3_t angles, vec3_t forward)
 {
@@ -845,7 +903,7 @@ static ID_INLINE void SLerp_Normal(vec3_t from, vec3_t to, float tt, vec3_t out)
 	out[1] = from[1] * ft + to[1] * tt;
 	out[2] = from[2] * ft + to[2] * tt;
 
-	//VectorNormalize( out );
+	// VectorNormalize( out );
 	VectorNormalizeFast(out);
 }
 
@@ -865,10 +923,10 @@ static ID_INLINE void LocalIngleVector(int ingles[3], vec3_t forward)
 	sp = SIN_TABLE(ingles[PITCH] & 65535);
 	cp = COS_TABLE(ingles[PITCH] & 65535);
 
-	//sy = sin( SHORT2ANGLE( ingles[ YAW ] ) * (M_PI*2 / 360) );
-	//cy = cos( SHORT2ANGLE( ingles[ YAW ] ) * (M_PI*2 / 360) );
-	//sp = sin( SHORT2ANGLE( ingles[ PITCH ] ) * (M_PI*2 / 360) );
-	//cp = cos( SHORT2ANGLE( ingles[ PITCH ] ) *  (M_PI*2 / 360) );
+	// sy = sin( SHORT2ANGLE( ingles[ YAW ] ) * (M_PI*2 / 360) );
+	// cy = cos( SHORT2ANGLE( ingles[ YAW ] ) * (M_PI*2 / 360) );
+	// sp = sin( SHORT2ANGLE( ingles[ PITCH ] ) * (M_PI*2 / 360) );
+	// cp = cos( SHORT2ANGLE( ingles[ PITCH ] ) *  (M_PI*2 / 360) );
 
 	forward[0] = cp * cy;
 	forward[1] = cp * sy;
@@ -950,7 +1008,7 @@ static ID_INLINE void Matrix4Multiply(const vec4_t a[4], const vec4_t b[4], vec4
  *
  * @note const usage would require an explicit cast, non ANSI C - see unix/const-arg.c
  */
-static ID_INLINE void Matrix4MultiplyInto3x3AndTranslation(/*const */ vec4_t a[4], /*const */ vec4_t b[4], vec3_t dst[3], vec3_t t)
+static ID_INLINE void Matrix4MultiplyInto3x3AndTranslation(/*const*/ vec4_t a[4], /*const*/ vec4_t b[4], vec3_t dst[3], vec3_t t)
 {
 	dst[0][0] = a[0][0] * b[0][0] + a[0][1] * b[1][0] + a[0][2] * b[2][0] + a[0][3] * b[3][0];
 	dst[0][1] = a[0][0] * b[0][1] + a[0][1] * b[1][1] + a[0][2] * b[2][1] + a[0][3] * b[3][1];
@@ -968,77 +1026,106 @@ static ID_INLINE void Matrix4MultiplyInto3x3AndTranslation(/*const */ vec4_t a[4
 	t[2]      = a[2][0] * b[0][3] + a[2][1] * b[1][3] + a[2][2] * b[2][3] + a[2][3] * b[3][3];
 }
 
-//static ID_INLINE void Matrix4Transpose(const vec4_t matrix[4], vec4_t transpose[4])
-//{
-//	int i, j;
+/*
+ * @brief Matrix4Transpose
+ * @param[in] matrix
+ * @param[out] transpose
+ *
+ * @note Unused
+static ID_INLINE void Matrix4Transpose(const vec4_t matrix[4], vec4_t transpose[4])
+{
+    int i, j;
 
-//	for (i = 0; i < 4; i++)
-//	{
-//		for (j = 0; j < 4; j++)
-//		{
-//			transpose[i][j] = matrix[j][i];
-//		}
-//	}
-//}
+    for (i = 0; i < 4; i++)
+    {
+        for (j = 0; j < 4; j++)
+        {
+            transpose[i][j] = matrix[j][i];
+        }
+    }
+}
+*/
 
-//static ID_INLINE void Matrix4FromAxis(const vec3_t axis[3], vec4_t dst[4])
-//{
-//	int i, j;
+/*
+ * @brief Matrix4FromAxis
+ * @param[in] axis
+ * @param[out] dst
+ *
+ * @note Unused
+static ID_INLINE void Matrix4FromAxis(const vec3_t axis[3], vec4_t dst[4])
+{
+    int i, j;
 
-//	for (i = 0; i < 3; i++)
-//	{
-//		for (j = 0; j < 3; j++)
-//		{
-//			dst[i][j] = axis[i][j];
-//		}
-//		dst[3][i] = 0;
-//		dst[i][3] = 0;
-//	}
-//	dst[3][3] = 1;
-//}
+    for (i = 0; i < 3; i++)
+    {
+        for (j = 0; j < 3; j++)
+        {
+            dst[i][j] = axis[i][j];
+        }
+        dst[3][i] = 0;
+        dst[i][3] = 0;
+    }
+    dst[3][3] = 1;
+}
+*/
 
-//static ID_INLINE void Matrix4FromScaledAxis(const vec3_t axis[3], const float scale, vec4_t dst[4])
-//{
-//	int i, j;
+/*
+ * @brief Matrix4FromScaledAxis
+ * @param[in] axis
+ * @param[in] scale
+ * @param[out] dst
+ *
+ * @note Unused
+static ID_INLINE void Matrix4FromScaledAxis(const vec3_t axis[3], const float scale, vec4_t dst[4])
+{
+    int i, j;
 
-//	for (i = 0; i < 3; i++)
-//	{
-//		for (j = 0; j < 3; j++)
-//		{
-//			dst[i][j] = scale * axis[i][j];
-//			if (i == j)
-//			{
-//				dst[i][j] += 1.0f - scale;
-//			}
-//		}
-//		dst[3][i] = 0;
-//		dst[i][3] = 0;
-//	}
-//	dst[3][3] = 1;
-//}
+    for (i = 0; i < 3; i++)
+    {
+        for (j = 0; j < 3; j++)
+        {
+            dst[i][j] = scale * axis[i][j];
+            if (i == j)
+            {
+                dst[i][j] += 1.0f - scale;
+            }
+        }
+        dst[3][i] = 0;
+        dst[i][3] = 0;
+    }
+    dst[3][3] = 1;
+}
+*/
 
-//static ID_INLINE void Matrix4FromTranslation(const vec3_t t, vec4_t dst[4])
-//{
-//	int i, j;
+/*
+ * @brief Matrix4FromTranslation
+ * @param[in] t
+ * @param[out] dst
+ *
+ * @note Unused
+static ID_INLINE void Matrix4FromTranslation(const vec3_t t, vec4_t dst[4])
+{
+    int i, j;
 
-//	for (i = 0; i < 3; i++)
-//	{
-//		for (j = 0; j < 3; j++)
-//		{
-//			if (i == j)
-//			{
-//				dst[i][j] = 1;
-//			}
-//			else
-//			{
-//				dst[i][j] = 0;
-//			}
-//		}
-//		dst[i][3] = t[i];
-//		dst[3][i] = 0;
-//	}
-//	dst[3][3] = 1;
-//}
+    for (i = 0; i < 3; i++)
+    {
+        for (j = 0; j < 3; j++)
+        {
+            if (i == j)
+            {
+                dst[i][j] = 1;
+            }
+            else
+            {
+                dst[i][j] = 0;
+            }
+        }
+        dst[i][3] = t[i];
+        dst[3][i] = 0;
+    }
+    dst[3][3] = 1;
+}
+*/
 
 /**
  * @brief Can put an axis rotation followed by a translation directly into one matrix
@@ -1047,9 +1134,8 @@ static ID_INLINE void Matrix4MultiplyInto3x3AndTranslation(/*const */ vec4_t a[4
  * @param[out] dst
  *
  * @note const usage would require an explicit cast, non ANSI C - see unix/const-arg.c
- *
  */
-static ID_INLINE void Matrix4FromAxisPlusTranslation(/*const */ vec3_t axis[3], const vec3_t t, vec4_t dst[4])
+static ID_INLINE void Matrix4FromAxisPlusTranslation(/*const*/ vec3_t axis[3], const vec3_t t, vec4_t dst[4])
 {
 	int i, j;
 
@@ -1074,7 +1160,7 @@ static ID_INLINE void Matrix4FromAxisPlusTranslation(/*const */ vec3_t axis[3], 
  *
  * @note const usage would require an explicit cast, non ANSI C - see unix/const-arg.c
  */
-static ID_INLINE void Matrix4FromScaledAxisPlusTranslation(/*const */ vec3_t axis[3], const float scale, const vec3_t t, vec4_t dst[4])
+static ID_INLINE void Matrix4FromScaledAxisPlusTranslation(/*const*/ vec3_t axis[3], const float scale, const vec3_t t, vec4_t dst[4])
 {
 	int i, j;
 
@@ -1094,33 +1180,48 @@ static ID_INLINE void Matrix4FromScaledAxisPlusTranslation(/*const */ vec3_t axi
 	dst[3][3] = 1;
 }
 
-//static ID_INLINE void Matrix4FromScale(const float scale, vec4_t dst[4])
-//{
-//	int i, j;
+/*
+ * @brief Matrix4FromScale
+ * @param[in] scale
+ * @param[out] dst
+ *
+ * @note Unused
+static ID_INLINE void Matrix4FromScale(const float scale, vec4_t dst[4])
+{
+    int i, j;
 
-//	for (i = 0; i < 4; i++)
-//	{
-//		for (j = 0; j < 4; j++)
-//		{
-//			if (i == j)
-//			{
-//				dst[i][j] = scale;
-//			}
-//			else
-//			{
-//				dst[i][j] = 0;
-//			}
-//		}
-//	}
-//	dst[3][3] = 1;
-//}
+    for (i = 0; i < 4; i++)
+    {
+        for (j = 0; j < 4; j++)
+        {
+            if (i == j)
+            {
+                dst[i][j] = scale;
+            }
+            else
+            {
+                dst[i][j] = 0;
+            }
+        }
+    }
+    dst[3][3] = 1;
+}
+*/
 
-//static ID_INLINE void Matrix4TransformVector(const vec4_t m[4], const vec3_t src, vec3_t dst)
-//{
-//	dst[0] = m[0][0] * src[0] + m[0][1] * src[1] + m[0][2] * src[2] + m[0][3];
-//	dst[1] = m[1][0] * src[0] + m[1][1] * src[1] + m[1][2] * src[2] + m[1][3];
-//	dst[2] = m[2][0] * src[0] + m[2][1] * src[1] + m[2][2] * src[2] + m[2][3];
-//}
+/*
+ * @brief Matrix4TransformVector
+ * @param[in] m
+ * @param[in] src
+ * @param[out] dst
+ *
+ * @note Unused
+static ID_INLINE void Matrix4TransformVector(const vec4_t m[4], const vec3_t src, vec3_t dst)
+{
+    dst[0] = m[0][0] * src[0] + m[0][1] * src[1] + m[0][2] * src[2] + m[0][3];
+    dst[1] = m[1][0] * src[0] + m[1][1] * src[1] + m[1][2] * src[2] + m[1][3];
+    dst[2] = m[2][0] * src[0] + m[2][1] * src[1] + m[2][2] * src[2] + m[2][3];
+}
+*/
 
 /*
 ===============================================================================
@@ -1148,14 +1249,14 @@ static ID_INLINE void Matrix3Transpose(const vec3_t matrix[3], vec3_t transpose[
 
 /**
  * @brief R_CalcBone
- * @param torsoParent
+ * @param[in] torsoParent
  * @param refent - unused
- * @param boneNum
+ * @param[in] boneNum
  */
 static void R_CalcBone(const int torsoParent, const refEntity_t *refent, int boneNum)
 {
 	thisBoneInfo = &boneInfo[boneNum];
-	if (thisBoneInfo->torsoWeight)
+	if (thisBoneInfo->torsoWeight != 0.f)
 	{
 		cTBonePtr = &cBoneListTorso[boneNum];
 		isTorso   = qtrue;
@@ -1276,21 +1377,21 @@ static void R_CalcBone(const int torsoParent, const refEntity_t *refent, int bon
 				SLerp_Normal(vec, v2, thisBoneInfo->torsoWeight, vec);
 				VectorMA(parentBone->translation, thisBoneInfo->parentDist, vec, bonePtr->translation);
 			}
-			else
-			{                   // legs bone
+			else        // legs bone
+			{
 				VectorMA(parentBone->translation, thisBoneInfo->parentDist, vec, bonePtr->translation);
 			}
 		}
 	}
-	else
-	{                           // just use the frame position
+	else        // just use the frame position
+	{
 		bonePtr->translation[0] = frame->parentOffset[0];
 		bonePtr->translation[1] = frame->parentOffset[1];
 		bonePtr->translation[2] = frame->parentOffset[2];
 	}
 
-	if (boneNum == torsoParent)
-	{                           // this is the torsoParent
+	if (boneNum == torsoParent)     // this is the torsoParent
+	{
 		VectorCopy(bonePtr->translation, torsoParentOffset);
 	}
 
@@ -1846,7 +1947,8 @@ static void R_CalcBones(const refEntity_t *refent, int *boneList, int numBones)
 			// multiply matrices to create one matrix to do all calculations
 			Matrix4MultiplyInto3x3AndTranslation(m2, m1, bonePtr->matrix, bonePtr->translation);
 
-			/*} else {  // tag's require special handling
+			/*
+			} else {  // tag's require special handling
 
 			   // rotate each of the axis by the torsoAngles
 			   LocalScaledMatrixTransformVector( bonePtr->matrix[0], thisBoneInfo->torsoWeight, torsoAxis, tmpAxis[0] );
@@ -1859,7 +1961,8 @@ static void R_CalcBones(const refEntity_t *refent, int *boneList, int numBones)
 			   LocalScaledMatrixTransformVector( t, thisBoneInfo->torsoWeight, torsoAxis, bonePtr->translation );
 			   VectorAdd( bonePtr->translation, torsoParentOffset, bonePtr->translation );
 
-			   } */
+			}
+			*/
 		}
 	}
 
