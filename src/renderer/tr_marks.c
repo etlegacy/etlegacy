@@ -69,8 +69,8 @@ static void R_ChopPolyBehindPlane(int numInPoints, vec3_t inPoints[MAX_VERTS_ON_
 	float *p1, *p2, *clip;
 	float d;
 
-	memset(dists, 0, MAX_VERTS_ON_POLY + 4);
-	memset(sides, 0, MAX_VERTS_ON_POLY + 4);
+	Com_Memset(dists, 0, MAX_VERTS_ON_POLY + 4);
+	Com_Memset(sides, 0, MAX_VERTS_ON_POLY + 4);
 
 	// don't clip if it might overflow
 	if (numInPoints >= MAX_VERTS_ON_POLY - 2)
@@ -82,7 +82,7 @@ static void R_ChopPolyBehindPlane(int numInPoints, vec3_t inPoints[MAX_VERTS_ON_
 	counts[0] = counts[1] = counts[2] = 0;
 
 	// determine sides for each point
-	for (i = 0 ; i < numInPoints ; i++)
+	for (i = 0; i < numInPoints; i++)
 	{
 		dot      = DotProduct(inPoints[i], normal);
 		dot     -= dist;
@@ -113,11 +113,11 @@ static void R_ChopPolyBehindPlane(int numInPoints, vec3_t inPoints[MAX_VERTS_ON_
 	if (!counts[1])
 	{
 		*numOutPoints = numInPoints;
-		memcpy(outPoints, inPoints, numInPoints * sizeof(vec3_t));
+		Com_Memcpy(outPoints, inPoints, numInPoints * sizeof(vec3_t));
 		return;
 	}
 
-	for (i = 0 ; i < numInPoints ; i++)
+	for (i = 0; i < numInPoints; i++)
 	{
 		p1   = inPoints[i];
 		clip = outPoints[*numOutPoints];
@@ -155,7 +155,8 @@ static void R_ChopPolyBehindPlane(int numInPoints, vec3_t inPoints[MAX_VERTS_ON_
 		}
 
 		// clip xyz
-		for (j = 0 ; j < 3 ; j++)
+
+		for (j = 0; j < 3; j++)
 		{
 			clip[j] = p1[j] + dot * (p2[j] - p1[j]);
 		}
@@ -317,7 +318,7 @@ void R_AddMarkFragments(int numClipPoints, vec3_t clipPoints[2][MAX_VERTS_ON_POL
 	mf             = fragmentBuffer + (*returnedFragments);
 	mf->firstPoint = (*returnedPoints);
 	mf->numPoints  = numClipPoints;
-	//memcpy( pointBuffer + (*returnedPoints) * 3, clipPoints[pingPong], numClipPoints * sizeof(vec3_t) );
+	//Com_Memcpy( pointBuffer + (*returnedPoints) * 3, clipPoints[pingPong], numClipPoints * sizeof(vec3_t) );
 	for (i = 0; i < numClipPoints; i++)
 	{
 		VectorCopy(clipPoints[pingPong][i], (float *)pointBuffer + 5 * (*returnedPoints + i));
