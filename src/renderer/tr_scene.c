@@ -168,7 +168,7 @@ void RE_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts)
 	poly->numVerts    = numVerts;
 	poly->verts       = &backEndData->polyVerts[r_numpolyverts];
 
-	memcpy(poly->verts, verts, numVerts * sizeof(*verts));
+	Com_Memcpy(poly->verts, verts, numVerts * sizeof(*verts));
 
 	r_numpolys++;
 	r_numpolyverts += numVerts;
@@ -256,7 +256,7 @@ void RE_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts
 		poly->numVerts    = numVerts;
 		poly->verts       = &backEndData->polyVerts[r_numpolyverts];
 
-		memcpy(poly->verts, &verts[numVerts * j], numVerts * sizeof(*verts));
+		Com_Memcpy(poly->verts, &verts[numVerts * j], numVerts * sizeof(*verts));
 
 		r_numpolys++;
 		r_numpolyverts += numVerts;
@@ -493,7 +493,7 @@ void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scal
 	{
 		return;
 	}
-
+	
 	if (r_numcoronas >= MAX_CORONAS)
 	{
 		Ren_Developer("WARNING RE_AddCoronaToScene: Dropping corona, reached MAX_CORONAS\n"); // changed to developer print - occures on some maps (radar)
@@ -515,7 +515,7 @@ void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scal
  * to 2D drawing.
  *
  * Rendering a scene may require multiple views to be rendered
- * to handle mirrors,
+ * to handle mirrors.
  *
  * @param[in] fd
  */
@@ -542,7 +542,7 @@ void RE_RenderScene(const refdef_t *fd)
 		Ren_Drop("R_RenderScene: NULL worldmodel");
 	}
 
-	memcpy(tr.refdef.text, fd->text, sizeof(tr.refdef.text));
+	Com_Memcpy(tr.refdef.text, fd->text, sizeof(tr.refdef.text));
 
 	tr.refdef.x      = fd->x;
 	tr.refdef.y      = fd->y;
@@ -574,7 +574,7 @@ void RE_RenderScene(const refdef_t *fd)
 
 		// compare the area bits
 		areaDiff = 0;
-		for (i = 0 ; i < MAX_MAP_AREA_BYTES / 4 ; i++)
+		for (i = 0; i < MAX_MAP_AREA_BYTES / 4; i++)
 		{
 			areaDiff                      |= ((int *)tr.refdef.areamask)[i] ^ ((int *)fd->areamask)[i];
 			((int *)tr.refdef.areamask)[i] = ((int *)fd->areamask)[i];
@@ -628,7 +628,7 @@ void RE_RenderScene(const refdef_t *fd)
 	// set up viewport
 	// The refdef takes 0-at-the-top y coordinates, so
 	// convert to GL's 0-at-the-bottom space
-	memset(&parms, 0, sizeof(parms));
+	Com_Memset(&parms, 0, sizeof(parms));
 	parms.viewportX      = tr.refdef.x;
 	parms.viewportY      = glConfig.vidHeight - (tr.refdef.y + tr.refdef.height);
 	parms.viewportWidth  = tr.refdef.width;
