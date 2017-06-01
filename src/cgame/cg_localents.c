@@ -198,22 +198,24 @@ char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag)
 void CG_LoadLocations(void)
 {
 	fileHandle_t f;                     // handle of file on disk
-	int          fLen = trap_FS_FOpenFile(va("maps/%s_loc_override.dat", cgs.rawmapname), &f, FS_READ);     // length of the file
+	int          fLen;                  // length of the file
 	char         fBuffer[MAX_BUFFER];   // buffer to read the file into
-	char         message[128] = "\0";    // location description
-	char         temp[128]    = "\0";    // temporary buffer
+	char         message[128] = "\0";   // location description
+	char         temp[128]    = "\0";   // temporary buffer
 	int          x            = 0;      // x-coord of the location
 	int          y            = 0;      // y-coord of the location
 	int          z            = 0;      // z-coord of the location
 	int          p            = 0;      // current location in the file buffer
 	int          t            = 0;      // current location in the temp buffer
 
-	if (fLen < 0)
+	fLen = trap_FS_FOpenFile(va("maps/%s_loc_override.dat", cgs.rawmapname), &f, FS_READ);
+
+	if (fLen <= 0)
 	{
 		// open the location .dat file that matches the map's name
 		fLen = trap_FS_FOpenFile(va("maps/%s_loc.dat", cgs.rawmapname), &f, FS_READ);
 
-		if (fLen < 0)
+		if (fLen <= 0)
 		{
 			CG_Printf("^dLoadLocations: ^3Warning: ^9No location data found for map ^2%s^9.\n", cgs.rawmapname);
 			return;
