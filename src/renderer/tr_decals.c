@@ -45,8 +45,6 @@ typedef struct decalVert_s
 }
 decalVert_t;
 
-typedef double dvec3_t[3];
-
 /**
  * @brief Generates a texture projection matrix for a triangle
  * @param[out] texMat
@@ -58,11 +56,11 @@ typedef double dvec3_t[3];
  */
 static qboolean MakeTextureMatrix(vec4_t texMat[2], vec4_t projection, decalVert_t *a, decalVert_t *b, decalVert_t *c)
 {
-	int     i, j;
-	double  bb, s, t, d;
-	dvec3_t pa, pb, pc;
-	dvec3_t bary, origin, xyz;
-	vec3_t  vecs[3], axis[3], lengths;
+	int    i, j;
+	float  bb, s, t, d;
+	vec3_t pa, pb, pc;
+	vec3_t bary, origin, xyz;
+	vec3_t vecs[3], axis[3], lengths;
 
 	// project triangle onto plane of projection
 	d = DotProduct(a->xyz, projection) - projection[3];
@@ -74,7 +72,7 @@ static qboolean MakeTextureMatrix(vec4_t texMat[2], vec4_t projection, decalVert
 
 	// calculate barycentric basis for the triangle
 	bb = (b->st[0] - a->st[0]) * (c->st[1] - a->st[1]) - (c->st[0] - a->st[0]) * (b->st[1] - a->st[1]);
-	if (Q_fabs(bb) < 0.00000001)
+	if (Q_fabs(bb) < 0.00000001f)
 	{
 		return qfalse;
 	}
