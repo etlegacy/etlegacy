@@ -7066,7 +7066,7 @@ void Bot_Event_EntityCreated(gentity_t *pEnt)
 
 	//////////////////////////////////////////////////////////////////////////
 	// Cache smoke bombs
-	if ((pEnt->s.eType == ET_MISSILE && pEnt->s.weapon == WP_SMOKE_BOMB))
+	if (pEnt && pEnt->s.eType == ET_MISSILE && pEnt->s.weapon == WP_SMOKE_BOMB)
 	{
 		for (int i = 0; i < MAX_SMOKEGREN_CACHE; ++i)
 		{
