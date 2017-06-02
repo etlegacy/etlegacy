@@ -1878,7 +1878,6 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->timestamp = level.time + 16500;
 
 		bolt->accuracy            = 0;
-		bolt->s.teamNum           = self->client->sess.sessionTeam + 4;
 		bolt->classname           = "landmine";
 		bolt->damage              = 0;
 		bolt->methodOfDeath       = MOD_LANDMINE;
@@ -1895,9 +1894,12 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		VectorSet(bolt->r.maxs, 16, 16, 16);
 		VectorCopy(bolt->r.maxs, bolt->r.absmax);
 
-		if (self->client && self->client->sess.sessionTeam == TEAM_AXIS)     // store team so we can generate red or blue smoke
+		if (self->client)
 		{
-			bolt->s.otherEntityNum2 = 1;
+			bolt->s.teamNum = self->client->sess.sessionTeam + 4;   // overwrite
+
+			// store team so we can generate red or blue smoke
+			bolt->s.otherEntityNum2 = (self->client->sess.sessionTeam == TEAM_AXIS);
 		}
 		else
 		{
@@ -1935,7 +1937,10 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		bolt->accuracy = 0;     // sets to score below if dynamite is in trigger_objective_info & it's an objective
 		trap_SendServerCommand(self - g_entities, "cp \"Dynamite is set, but NOT armed!\"");
 		// differentiate non-armed dynamite with non-pulsing dlight
-		bolt->s.teamNum           = self->client->sess.sessionTeam + 4; // overwrite
+		if (self->client)
+		{
+			bolt->s.teamNum = self->client->sess.sessionTeam + 4;   // overwrite
+		}
 		bolt->classname           = "dynamite";
 		bolt->damage              = 0; // dynamite doesn't explode on contact
 		bolt->methodOfDeath       = MOD_DYNAMITE;
