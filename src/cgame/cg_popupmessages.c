@@ -711,7 +711,6 @@ void CG_DrawPMItems(rectDef_t rect, int style)
  */
 void CG_DrawPMItemsBig(void)
 {
-	vec4_t colour     = { 0.f, 0.f, 0.f, 1.f };
 	vec4_t colourText = { 1.f, 1.f, 1.f, 1.f };
 	float  t, w;
 	float  y         = 270;
@@ -725,7 +724,7 @@ void CG_DrawPMItemsBig(void)
 	t = cg_pmWaitingListBig->time + PM_BIGPOPUP_TIME + PM_WAITTIME_BIG;
 	if (cg.time > t)
 	{
-		colourText[3] = colour[3] = 1 - ((cg.time - t) / (float)PM_FADETIME_BIG);
+		colourText[3] = 1 - ((cg.time - t) / (float)PM_FADETIME_BIG);
 	}
 
 	trap_R_SetColor(colourText);
