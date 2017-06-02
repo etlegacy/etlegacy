@@ -3349,7 +3349,7 @@ void PM_AdjustAimSpreadScale(void)
 		{
 			for (i = 0; i < 2; i++)
 			{
-				viewchange += fabs(pm->ps->velocity[i]);
+				viewchange += Q_fabs(pm->ps->velocity[i]);
 			}
 		}
 		else
@@ -3357,7 +3357,7 @@ void PM_AdjustAimSpreadScale(void)
 			// take player view rotation into account
 			for (i = 0; i < 2; i++)
 			{
-				viewchange += fabs(SHORT2ANGLE(pm->cmd.angles[i]) - SHORT2ANGLE(pm->oldcmd.angles[i]));
+				viewchange += Q_fabs(SHORT2ANGLE(pm->cmd.angles[i]) - SHORT2ANGLE(pm->oldcmd.angles[i]));
 			}
 		}
 
@@ -6170,13 +6170,13 @@ void PmoveSingle(pmove_t *pmove)
 				fps = 60;
 			}
 
-			fac = (float)pml.msec / (1000.0f / fps);
+			fac = pml.msec / (1000.0f / fps);
 
 			// add some error...
 			for (i = 0; i < 3; ++i)
 			{
 				// ...if the velocity in this direction changed enough
-				if (fabs(pm->ps->velocity[i] - pml.previous_velocity[i]) > 0.5f / fac)
+				if (Q_fabs(pm->ps->velocity[i] - pml.previous_velocity[i]) > 0.5f / fac)
 				{
 					if (pm->ps->velocity[i] < 0)
 					{

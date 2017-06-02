@@ -1103,7 +1103,7 @@ void clamp_hweapontofirearc(gentity_t *self, vec3_t dang)
 
 	// sanity check the angles again to make sure we don't go passed the harc
 	diff = AngleDifference(self->s.angles[YAW], dang[YAW]);
-	if (fabs(diff) > self->harc)
+	if (Q_fabs(diff) > self->harc)
 	{
 		if (diff > 0)
 		{

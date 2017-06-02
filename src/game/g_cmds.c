@@ -4228,8 +4228,8 @@ qboolean G_PushPlayer(gentity_t *ent, gentity_t *victim)
 	VectorScale(dir, g_shove.integer * 5, push);
 
 	// no longer try to shove into ground
-	if ((push[2] > fabs(push[0])) &&
-	    (push[2] > fabs(push[1])))
+	if ((push[2] > Q_fabs(push[0])) &&
+	    (push[2] > Q_fabs(push[1])))
 	{
 		// player is being boosted
 		if (g_misc.integer & G_MISC_SHOVE_NOZ)

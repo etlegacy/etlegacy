@@ -1829,7 +1829,7 @@ static void mdx_SwingAngles(float destination, float swingTolerance, float clamp
 	// modify the speed depending on the delta
 	// so it doesn't seem so linear
 	swing  = AngleSubtract(destination, *angle);
-	scale  = fabs(swing);
+	scale  = Q_fabs(swing);
 	scale *= 0.05;
 	if (scale < 0.5f)
 	{
@@ -1986,7 +1986,7 @@ void mdx_PlayerAngles(gentity_t *ent, vec3_t legsAngles, vec3_t torsoAngles, vec
 		else        // must be firing
 		{
 			torsoAngles[YAW] = headAngles[YAW]; // always face firing direction
-			//if (fabs(ent->s.angles2[YAW]) > 30)
+			//if (Q_fabs(ent->s.angles2[YAW]) > 30)
 			//	legsAngles[YAW] = headAngles[YAW];
 			clampTolerance = 60;
 		}

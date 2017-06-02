@@ -351,7 +351,7 @@ void AimAtTarget(gentity_t *self)
 
 	height  = ent->s.origin[2] - origin[2];
 	gravity = g_gravity.value;
-	time    = (float)(sqrt(fabs(height / (0.5f * gravity))));
+	time    = (float)(sqrt(Q_fabs(height / (0.5f * gravity))));
 	if (time == 0.f)
 	{
 		G_FreeEntity(self);

@@ -73,7 +73,7 @@ void DropToFloor(gentity_t *ent)
 		return;
 	}
 
-	if (fabs((double)(ent->r.currentOrigin[2] - tr.endpos[2])) > 1.0)
+	if (Q_fabs((ent->r.currentOrigin[2] - tr.endpos[2])) > 1.0f)
 	{
 		tr.endpos[2] = (ent->r.currentOrigin[2] - 1.0f);
 	}
