@@ -220,7 +220,7 @@ void R_CalcTangentSpace(vec3_t tangent, vec3_t binormal, vec3_t normal,
 	VectorSet(v, v2[0] - v0[0], t2[0] - t0[0], t2[1] - t0[1]);
 
 	CrossProduct(u, v, cp);
-	if (fabs(cp[0]) > 10e-6)
+	if (Q_fabs(cp[0]) > 10e-6f)
 	{
 		tangent[0]  = -cp[1] / cp[0];
 		binormal[0] = -cp[2] / cp[0];
@@ -230,7 +230,7 @@ void R_CalcTangentSpace(vec3_t tangent, vec3_t binormal, vec3_t normal,
 	v[0] = v2[1] - v0[1];
 
 	CrossProduct(u, v, cp);
-	if (fabs(cp[0]) > 10e-6)
+	if (Q_fabs(cp[0]) > 10e-6f)
 	{
 		tangent[1]  = -cp[1] / cp[0];
 		binormal[1] = -cp[2] / cp[0];
@@ -240,7 +240,7 @@ void R_CalcTangentSpace(vec3_t tangent, vec3_t binormal, vec3_t normal,
 	v[0] = v2[2] - v0[2];
 
 	CrossProduct(u, v, cp);
-	if (fabs(cp[0]) > 10e-6)
+	if (Q_fabs(cp[0]) > 10e-6f)
 	{
 		tangent[2]  = -cp[1] / cp[0];
 		binormal[2] = -cp[2] / cp[0];
@@ -308,7 +308,7 @@ void R_CalcTangentSpaceFast(vec3_t tangent, vec3_t binormal, vec3_t normal,
 	VectorSet(v, v2[0] - v0[0], t2[0] - t0[0], t2[1] - t0[1]);
 
 	CrossProduct(u, v, cp);
-	if (fabs(cp[0]) > 10e-6)
+	if (Q_fabs(cp[0]) > 10e-6f)
 	{
 		tangent[0]  = -cp[1] / cp[0];
 		binormal[0] = -cp[2] / cp[0];
@@ -318,7 +318,7 @@ void R_CalcTangentSpaceFast(vec3_t tangent, vec3_t binormal, vec3_t normal,
 	v[0] = v2[1] - v0[1];
 
 	CrossProduct(u, v, cp);
-	if (fabs(cp[0]) > 10e-6)
+	if (Q_fabs(cp[0]) > 10e-6f)
 	{
 		tangent[1]  = -cp[1] / cp[0];
 		binormal[1] = -cp[2] / cp[0];
@@ -328,7 +328,7 @@ void R_CalcTangentSpaceFast(vec3_t tangent, vec3_t binormal, vec3_t normal,
 	v[0] = v2[2] - v0[2];
 
 	CrossProduct(u, v, cp);
-	if (fabs(cp[0]) > 10e-6)
+	if (Q_fabs(cp[0]) > 10e-6f)
 	{
 		tangent[2]  = -cp[1] / cp[0];
 		binormal[2] = -cp[2] / cp[0];
@@ -545,7 +545,7 @@ qboolean R_CalcTangentVectors(srfVert_t *dv[3])
 
 	// calculate barycentric basis for the triangle
 	bb = (dv[1]->st[0] - dv[0]->st[0]) * (dv[2]->st[1] - dv[0]->st[1]) - (dv[2]->st[0] - dv[0]->st[0]) * (dv[1]->st[1] - dv[0]->st[1]);
-	if (fabs(bb) < 0.00000001)
+	if (Q_fabs(bb) < 0.00000001f)
 	{
 		return qfalse;
 	}

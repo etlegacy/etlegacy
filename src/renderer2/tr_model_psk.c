@@ -873,7 +873,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 			bb = (dv[1]->texCoords[0] - dv[0]->texCoords[0]) * (dv[2]->texCoords[1] - dv[0]->texCoords[1]) - (dv[2]->texCoords[0] - dv[0]->texCoords[0]) * (dv[1]->texCoords[1] -
 			                                                                                                                                                dv[0]->texCoords[1]);
 
-			if (fabs(bb) < 0.00000001f)
+			if (Q_fabs(bb) < 0.00000001f)
 			{
 				continue;
 			}
