@@ -2554,12 +2554,12 @@ void Item_Text_Paint(itemDef_t *item)
 		if (seconds <= 2)
 		{
 			//Com_sprintf( text, 255, "^1%d", seconds );
-			Com_sprintf(text, 255, item->text, va("^1%d^*", seconds));
+			Com_sprintf(text, 255, textPtr, va("^1%d^*", seconds));
 		}
 		else
 		{
 			//Com_sprintf( text, 255, "%d", seconds );
-			Com_sprintf(text, 255, item->text, va("%d", seconds));
+			Com_sprintf(text, 255, textPtr, va("%d", seconds));
 		}
 
 		// set ptr
