@@ -396,7 +396,7 @@ static int player_in_fov(vec3_t viewangle, vec3_t ppos, vec3_t opos)
 	// and skip the test if not. We only want to eliminate info that
 	// would reveal the position of opponents behind the player on
 	// the same X/Y plane (e.g. on the same floor in a room).
-	if (vec3_length(los) < (float)(5. * fabs((double)(opos[2] - ppos[2]))))
+	if (vec3_length(los) < (5.f * Q_fabs((opos[2] - ppos[2]))))
 	{
 		return 1;
 	}
