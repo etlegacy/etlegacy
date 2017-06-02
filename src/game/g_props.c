@@ -2908,7 +2908,7 @@ void SP_Props_Crate32x64(gentity_t *ent)
 void flippy_table_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	// it would be odd to flip a table if your standing on it
-	if (other && other->s.groundEntityNum == ent->s.number)
+	if (!other || other->s.groundEntityNum == ent->s.number)
 	{
 		// G_Printf ("can't push table over while standing on it\n");
 		return;
