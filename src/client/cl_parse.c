@@ -309,7 +309,7 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 
 			oldindex++;
 
-			if (oldindex >= oldframe->numEntities)
+			if (!oldframe || oldindex >= oldframe->numEntities)
 			{
 				oldnum = 99999;
 			}
