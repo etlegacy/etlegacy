@@ -926,7 +926,7 @@ void R_AddDecalSurface(decal_t *decal)
 	srfGeneric_t *gen;
 
 	// early outs
-	if (decal->shader == NULL || decal->parent->viewCount != tr.viewCount || r_firstSceneDecal + tr.refdef.numDecals >= MAX_DECALS)
+	if (decal->shader == NULL || (decal->parent != NULL && decal->parent->viewCount != tr.viewCount) || r_firstSceneDecal + tr.refdef.numDecals >= MAX_DECALS)
 	{
 		return;
 	}
