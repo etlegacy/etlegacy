@@ -179,13 +179,17 @@ void VM_StackTrace(vm_t *vm, int programCounter, int programStack)
 }
 #endif
 
+
 /**
  * @brief VM_PrepareInterpreter
  * @param[in,out] vm
  * @param[in] header
+ *
+ * @note Unused : commented in VM_Create(), where it called.
  */
 void VM_PrepareInterpreter(vm_t *vm, vmHeader_t *header)
 {
+#if 0
 	int  op;
 	int  pc          = 0;
 	byte *code       = { 0 };
@@ -248,7 +252,6 @@ void VM_PrepareInterpreter(vm_t *vm, vmHeader_t *header)
 		default:
 			break;
 		}
-
 	}
 	pc          = 0;
 	instruction = 0;
@@ -315,6 +318,7 @@ void VM_PrepareInterpreter(vm_t *vm, vmHeader_t *header)
 			break;
 		}
 	}
+#endif
 }
 
 #define MAX_STACK   256
