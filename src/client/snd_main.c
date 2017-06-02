@@ -846,9 +846,9 @@ void S_Init(void)
 			started = S_AL_Init(&si);
 			Cvar_Set("s_backend", "OpenAL");
 		}
-#endif // FEATURE_OPENAL
 
 		if (!started)
+#endif // FEATURE_OPENAL
 		{
 			if (cv->integer == 2)
 			{
