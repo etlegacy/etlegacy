@@ -2520,10 +2520,7 @@ weapengineergoto3:
 							{
 								if (hit->s.teamNum == TEAM_ALLIES && (!scored))
 								{
-									if (ent->client)
-									{
-										G_LogPrintf("Dynamite_Diffuse: %d\n", (int)(ent - g_entities));
-									}
+									G_LogPrintf("Dynamite_Diffuse: %d\n", (int)(ent - g_entities));
 									G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f);
 									G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing enemy dynamite");
 									scored++;
