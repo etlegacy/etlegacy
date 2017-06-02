@@ -1500,7 +1500,7 @@ int G_Unreferee_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 	{
 		int pid;
 
-		if (!vote_allow_referee.integer && ent && !ent->client->sess.referee)
+		if (!vote_allow_referee.integer && !ent->client->sess.referee)
 		{
 			G_voteDisableMessage(ent, arg);
 			return G_INVALID;
