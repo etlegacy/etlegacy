@@ -454,14 +454,14 @@ void COM_ParseError(const char *format, ...)
  * @note Unused.
 void COM_ParseWarning(const char *format, ...)
 {
-	va_list     argptr;
-	static char string[4096];
+    va_list     argptr;
+    static char string[4096];
 
-	va_start(argptr, format);
-	Q_vsnprintf(string, sizeof(string), format, argptr);
-	va_end(argptr);
+    va_start(argptr, format);
+    Q_vsnprintf(string, sizeof(string), format, argptr);
+    va_end(argptr);
 
-	Com_Printf("WARNING COM_ParseWarning: %s, line %d: %s\n", com_parsename, com_lines, string);
+    Com_Printf("WARNING COM_ParseWarning: %s, line %d: %s\n", com_parsename, com_lines, string);
 }
 */
 
@@ -2367,6 +2367,11 @@ void Info_SetValueForKey(char *s, const char *key, const char *value)
 {
 	char newi[MAX_INFO_STRING];
 
+	if (!value || !strlen(value))
+	{
+		return;
+	}
+
 	if (strlen(s) >= MAX_INFO_STRING)
 	{
 		Com_Error(ERR_DROP, "Info_SetValueForKey: oversize infostring [%s] [%s] [%s]", s, key, value);
@@ -2391,10 +2396,6 @@ void Info_SetValueForKey(char *s, const char *key, const char *value)
 	}
 
 	Info_RemoveKey(s, key);
-	if (!value || !strlen(value))
-	{
-		return;
-	}
 
 	Com_sprintf(newi, sizeof(newi), "\\%s\\%s", key, value);
 
@@ -2416,6 +2417,11 @@ void Info_SetValueForKey(char *s, const char *key, const char *value)
 void Info_SetValueForKey_Big(char *s, const char *key, const char *value)
 {
 	char newi[BIG_INFO_STRING];
+
+	if (!value || !strlen(value))
+	{
+		return;
+	}
 
 	if (strlen(s) >= BIG_INFO_STRING)
 	{
@@ -2441,10 +2447,6 @@ void Info_SetValueForKey_Big(char *s, const char *key, const char *value)
 	}
 
 	Info_RemoveKey_Big(s, key);
-	if (!value || !strlen(value))
-	{
-		return;
-	}
 
 	Com_sprintf(newi, sizeof(newi), "\\%s\\%s", key, value);
 
