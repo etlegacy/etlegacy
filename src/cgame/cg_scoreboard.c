@@ -398,8 +398,8 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 
 	tempx = x;
 
-	VectorSet(hcolor, 1, 1, 1);
-	hcolor[3] = fade;
+	// VectorSet(hcolor, 1, 1, 1);
+	// hcolor[3] = fade;
 
 	y += 12;
 
@@ -634,8 +634,8 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 
 	tempx = x;
 
-	VectorSet(hcolor, 1, 1, 1);
-	hcolor[3] = fade;
+	// VectorSet(hcolor, 1, 1, 1);
+	// hcolor[3] = fade;
 
 	y += 10;
 
