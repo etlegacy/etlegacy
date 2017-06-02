@@ -2475,12 +2475,12 @@ void quat_slerp(const quat_t from, const quat_t to, float frac, quat_t out)
 	}
 
 	cosom    = from[0] * to[0] + from[1] * to[1] + from[2] * to[2] + from[3] * to[3];
-	absCosom = fabs(cosom);
+	absCosom = Q_fabs(cosom);
 
 	if ((1.0f - absCosom) > 1e-6f)
 	{
 		float sinSqr = 1.0f - absCosom * absCosom;
-		float sinom  = 1.0f / sqrt(sinSqr);
+		float sinom  = 1.0 / sqrt(sinSqr);
 		float omega  = atan2(sinSqr * sinom, absCosom);
 
 		scale0 = sin((1.0f - frac) * omega) * sinom;
