@@ -1558,8 +1558,8 @@ static void ReTransmitWeapons(const gentity_t *bot)
 	}
 }
 
-#define MAX_SMOKE_RADIUS 320.0
-#define MAX_SMOKE_RADIUS_TIME 10000.0
+#define MAX_SMOKE_RADIUS 320.0f
+#define MAX_SMOKE_RADIUS_TIME 10000.0f
 #define UNAFFECTED_BY_SMOKE_DIST Square(100)
 
 gentity_t *Bot_EntInvisibleBySmokeBomb(vec3_t start, vec3_t end)
