@@ -294,7 +294,7 @@ static void CG_EntityEffects(centity_t *cent)
 	if (CG_EntOnFire(cent))
 	{
 		// play a flame blow sound when moving
-		trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, cgs.media.flameBlowSound, (int)(DEFAULT_SPEAKER_VOLUME * (1.0 - fabs((double)cent->fireRiseDir[2]))), 0);
+		trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, cgs.media.flameBlowSound, (int)(DEFAULT_SPEAKER_VOLUME * (1.0f - Q_fabs(cent->fireRiseDir[2]))), 0);
 		// play a burning sound when not moving
 		trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, cgs.media.flameSound, (int)(0.3 * DEFAULT_SPEAKER_VOLUME * (pow((double)cent->fireRiseDir[2], 2))), 0);
 	}

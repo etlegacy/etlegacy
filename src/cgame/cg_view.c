@@ -448,7 +448,7 @@ void CG_KickAngles(void)
 			frametime = t;
 		}
 
-		ft = ((float)frametime / 1000);
+		ft = frametime / 1000.f;
 
 		// kickAngles is spring-centered
 		for (i = 0; i < 3; i++)
@@ -478,7 +478,7 @@ void CG_KickAngles(void)
 					{
 						cg.kickAVel[i] = 0;
 					}
-					else if (fabs(cg.kickAngles[i]) > maxKickAngles[i])
+					else if (Q_fabs(cg.kickAngles[i]) > maxKickAngles[i])
 					{
 						cg.kickAngles[i] = maxKickAngles[i] * ((2 * (cg.kickAngles[i] > 0)) - 1);
 						cg.kickAVel[i]   = 0; // force Avel to return us to center rather than keep going outside range
@@ -496,7 +496,7 @@ void CG_KickAngles(void)
 		if (cg.recoilPitch != 0.f)
 		{
 			// apply max recoil
-			if (fabs(cg.recoilPitch) > recoilMaxSpeed)
+			if (Q_fabs(cg.recoilPitch) > recoilMaxSpeed)
 			{
 				if (cg.recoilPitch > 0)
 				{
@@ -513,7 +513,7 @@ void CG_KickAngles(void)
 				idealCenterSpeed = -(2.0f * (cg.recoilPitch > 0) - 1.0f) * recoilCenterSpeed * ft;
 				if (idealCenterSpeed != 0.f)
 				{
-					if (fabs(idealCenterSpeed) < fabs(cg.recoilPitch))
+					if (Q_fabs(idealCenterSpeed) < Q_fabs(cg.recoilPitch))
 					{
 						cg.recoilPitch += idealCenterSpeed;
 					}
@@ -524,7 +524,7 @@ void CG_KickAngles(void)
 				}
 			}
 		}
-		if (fabs(cg.recoilPitch) > recoilIgnoreCutoff)
+		if (Q_fabs(cg.recoilPitch) > recoilIgnoreCutoff)
 		{
 			cg.recoilPitchAngle += cg.recoilPitch * ft;
 		}
@@ -559,7 +559,7 @@ static void CG_ZoomSway(void)
 		return;
 	}
 
-	spreadfrac = (float)cg.snap->ps.aimSpreadScale / 255.0f;
+	spreadfrac = cg.snap->ps.aimSpreadScale / 255.0f;
 
 	phase                       = cg.time / 1000.0 * ZOOM_PITCH_FREQUENCY * M_PI * 2;
 	cg.refdefViewAngles[PITCH] += ZOOM_PITCH_AMPLITUDE * sin(phase) * (spreadfrac + ZOOM_PITCH_MIN_AMPLITUDE);
@@ -1249,9 +1249,9 @@ static void CG_DamageBlendBlob(void)
 		VectorMA(ent.origin, vd->damageX * -8, cg.refdef_current->viewaxis[1], ent.origin);
 		VectorMA(ent.origin, vd->damageY * 8, cg.refdef_current->viewaxis[2], ent.origin);
 
-		ent.radius = vd->damageValue * 0.4f * (0.5f + 0.5f * (float)t / maxTime) * (0.75f + 0.5f * (float)fabs(sin(vd->damageTime)));
+		ent.radius = vd->damageValue * 0.4f * (0.5f + 0.5f * (float)t / maxTime) * (0.75f + 0.5f * Q_fabs((float)sin(vd->damageTime)));
 
-		ent.customShader  = cgs.media.viewBloodAni[(int)(floor(((float)t / maxTime) * 4.9))];      //cgs.media.viewBloodShader;
+		ent.customShader  = cgs.media.viewBloodAni[(int)(floor(((double)t / maxTime) * 4.9))];      //cgs.media.viewBloodShader;
 		ent.shaderRGBA[0] = 255;
 		ent.shaderRGBA[1] = 255;
 		ent.shaderRGBA[2] = 255;
@@ -2263,7 +2263,7 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 
 					if (!(rand() % 3))
 					{
-						float alpha = 1.0f - ((float)(cg.time - cg.predictedPlayerEntity.overheatTime) / 3000.0f);
+						float alpha = 1.0f - ((cg.time - cg.predictedPlayerEntity.overheatTime) / 3000.0f);
 
 						alpha *= 0.25f;     // .25 max alpha
 						CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, muzzle, 1000, 8, 20, 30, alpha, 8.f);

@@ -116,7 +116,7 @@ void AddLean(vec3_t viewAngle, vec3_t point, float ammount)
 		AngleVectors(viewAngle, up, right, NULL);
 		VectorMA(point, ammount, right, point);
 		// to match client's view
-		point[2] -= (float)fabs((double)ammount / 3.5);
+		point[2] -= Q_fabs(ammount / 3.5f);
 	}
 }
 
@@ -5937,7 +5937,7 @@ void CG_AddDebris(vec3_t origin, vec3_t dir, int speed, int duration, int count,
 		le = CG_AllocLocalEntity();
 		re = &le->refEntity;
 
-		VectorSet(unitvel, dir[0] + crandom() * 0.9f, dir[1] + crandom() * 0.9f, fabs((double)dir[2]) > 0.5 ? dir[2] * (0.2f + 0.8f * random()) : random() * 0.6f);
+		VectorSet(unitvel, dir[0] + crandom() * 0.9f, dir[1] + crandom() * 0.9f, Q_fabs(dir[2]) > 0.5f ? dir[2] * (0.2f + 0.8f * random()) : random() * 0.6f);
 		VectorScale(unitvel, (float)speed + (float)speed * 0.5f * crandom(), velocity);
 
 		le->leType    = LE_DEBRIS;

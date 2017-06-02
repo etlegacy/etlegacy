@@ -1327,7 +1327,7 @@ static void CG_SwingAngles(float destination, float swingTolerance, float clampT
 	// modify the speed depending on the delta
 	// so it doesn't seem so linear
 	swing  = AngleSubtract(destination, *angle);
-	scale  = (float)fabs((double)swing);
+	scale  = Q_fabs(swing);
 	scale *= 0.05;
 	if (scale < 0.5f)
 	{
@@ -1677,7 +1677,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 		else        // must be firing
 		{
 			torsoAngles[YAW] = headAngles[YAW]; // always face firing direction
-			//if (fabs(cent->currentState.angles2[YAW]) > 30)
+			//if (Q_fabs(cent->currentState.angles2[YAW]) > 30)
 			//  legsAngles[YAW] = headAngles[YAW];
 			clampTolerance = 60;
 		}

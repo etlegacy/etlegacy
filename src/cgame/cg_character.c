@@ -269,7 +269,7 @@ static void CG_CalcMoveSpeeds(bg_character_t *character)
 				{
 					low = 1;
 				}
-				totalSpeed += fabs(oldPos[low][2] - o[low].origin[2]);
+				totalSpeed += Q_fabs(oldPos[low][2] - o[low].origin[2]);
 			}
 			else
 			{
@@ -281,7 +281,7 @@ static void CG_CalcMoveSpeeds(bg_character_t *character)
 				{
 					low = 1;
 				}
-				totalSpeed += fabs(oldPos[low][0] - o[low].origin[0]);
+				totalSpeed += Q_fabs(oldPos[low][0] - o[low].origin[0]);
 			}
 
 			numSpeed++;
