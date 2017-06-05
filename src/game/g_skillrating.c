@@ -1101,6 +1101,11 @@ void G_UpdateSkillRating(int winner)
 	int   numPlayersX  = 0;
 	int   numPlayersL  = 0;
 
+	mapProb  = 0.f;
+	mapMu    = 0.f;
+	mapSigma = 0.f;
+	mapBeta  = 0.f;
+
 	// total play time
 	int totalTime = level.intermissionQueued - level.startTime - level.timeDelta;
 
@@ -1297,6 +1302,11 @@ float G_CalculateWinProbability(int team)
 	float teamSigmaSqL = 0;
 	int   numPlayersX  = 0;
 	int   numPlayersL  = 0;
+
+	mapProb  = 0.f;
+	mapMu    = 0.f;
+	mapSigma = 0.f;
+	mapBeta  = 0.f;
 
 	// current play time
 	int currentTime = level.timeCurrent - level.startTime - level.timeDelta;
