@@ -1644,7 +1644,7 @@ void Bot_Util_AddGoal(const char *_type, gentity_t *_ent, int _team, const char 
 
 static int _GetEntityTeam(gentity_t *_ent)
 {
-	// hack, when the game joins clients again after warmup, they are temporarily ET_GENERAL entities(LAME)
+	// FIXME: hack, when the game joins clients again after warmup, they are temporarily ET_GENERAL entities(LAME)
 	if (_ent->client && (_ent - g_entities) < MAX_CLIENTS)
 	{
 		//t = ET_PLAYER;
@@ -1656,7 +1656,11 @@ static int _GetEntityTeam(gentity_t *_ent)
 	switch (t)
 	{
 	case ET_PLAYER:
-		return Bot_TeamGameToBot(_ent->client->sess.sessionTeam);
+		if (_ent->client)
+		{
+			return Bot_TeamGameToBot(_ent->client->sess.sessionTeam);
+		}
+		break;
 	case ET_CORPSE:
 		return Bot_TeamGameToBot(BODY_TEAM(_ent));
 	case ET_MISSILE:
