@@ -1583,13 +1583,13 @@ void CG_SpeakerEditor_WaitEditFinish(panel_button_t *button)
 		if (editSpeaker->wait < 0)
 		{
 			editSpeaker->wait = 0;
-			Com_sprintf(button->text, sizeof(button->text), "%i", editSpeaker->range);
+			Com_sprintf(button->text, strlen(button->text), "%i", editSpeaker->range);
 		}
 	}
 	else
 	{
 		editSpeaker->wait = 0;
-		Com_sprintf(button->text, sizeof(button->text), "%i", editSpeaker->wait);
+		Com_sprintf(button->text, strlen(button->text), "%i", editSpeaker->wait);
 	}
 }
 
@@ -1605,13 +1605,13 @@ void CG_SpeakerEditor_RandomEditFinish(panel_button_t *button)
 		if (editSpeaker->random < 0)
 		{
 			editSpeaker->random = 0;
-			Com_sprintf(button->text, sizeof(button->text), "%i", editSpeaker->random);
+			Com_sprintf(button->text, strlen(button->text), "%i", editSpeaker->random);
 		}
 	}
 	else
 	{
 		editSpeaker->random = 0;
-		Com_sprintf(button->text, sizeof(button->text), "%i", editSpeaker->random);
+		Com_sprintf(button->text, strlen(button->text), "%i", editSpeaker->random);
 	}
 }
 
@@ -1627,18 +1627,18 @@ void CG_SpeakerEditor_VolumeEditFinish(panel_button_t *button)
 		if (editSpeaker->volume < 0)
 		{
 			editSpeaker->volume = 0;
-			Com_sprintf(button->text, sizeof(button->text), "%i", editSpeaker->volume);
+			Com_sprintf(button->text, strlen(button->text), "%i", editSpeaker->volume);
 		}
 		else if (editSpeaker->volume > 65535)
 		{
 			editSpeaker->volume = 65535;
-			Com_sprintf(button->text, sizeof(button->text), "%i", editSpeaker->volume);
+			Com_sprintf(button->text, strlen(button->text), "%i", editSpeaker->volume);
 		}
 	}
 	else
 	{
 		editSpeaker->volume = 127;
-		Com_sprintf(button->text, sizeof(button->text), "%i", editSpeaker->volume);
+		Com_sprintf(button->text, strlen(button->text), "%i", editSpeaker->volume);
 	}
 }
 
@@ -1654,13 +1654,13 @@ void CG_SpeakerEditor_RangeEditFinish(panel_button_t *button)
 		if (editSpeaker->range < 0)
 		{
 			editSpeaker->range = 0;
-			Com_sprintf(button->text, sizeof(button->text), "%i", editSpeaker->range);
+			Com_sprintf(button->text, strlen(button->text), "%i", editSpeaker->range);
 		}
 	}
 	else
 	{
 		editSpeaker->range = 1250;
-		Com_sprintf(button->text, sizeof(button->text), "%i", editSpeaker->range);
+		Com_sprintf(button->text, strlen(button->text), "%i", editSpeaker->range);
 	}
 }
 
