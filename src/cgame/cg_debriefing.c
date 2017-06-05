@@ -1923,7 +1923,7 @@ void CG_DebriefingPlayerList_Draw(panel_button_t *button)
 
 		CG_Text_Paint_Ext(DB_NAME_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, colorWhite, ci->name, 0, 28, 0, button->font->font);
 
-		CG_Text_Paint_Ext(DB_TIME_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", score->time), 0, 0, 0, button->font->font);
+		CG_Text_Paint_Ext(DB_TIME_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", score ? score->time : 0), 0, 0, 0, button->font->font);
 
 		CG_Text_Paint_Ext(DB_XP_X + cgs.wideXoffset, y, button->font->scalex, button->font->scaley, button->font->colour, va("%i", ci->score), 0, 0, 0, button->font->font);
 
