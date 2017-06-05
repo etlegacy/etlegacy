@@ -436,7 +436,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	}
 
 	// if we got killed by a landmine, update our map
-	if (self->client && meansOfDeath == MOD_LANDMINE)
+	if (meansOfDeath == MOD_LANDMINE)
 	{
 		// if it's an enemy mine, update both teamlists
 		mapEntityData_t *mEnt;
@@ -506,7 +506,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 	if (g_gamestate.integer == GS_PLAYING)
 	{
-		char *obit;
+		const char *obit;
 
 		if (meansOfDeath >= sizeof(modNames) / sizeof(modNames[0]))
 		{
