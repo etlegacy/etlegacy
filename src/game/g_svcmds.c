@@ -936,13 +936,13 @@ void Svcmd_Campaign_f(void)
 	{
 		campaign = &g_campaigns[i];
 
-		if (!Q_stricmp(campaign->shortname, str))
+		if (campaign && !Q_stricmp(campaign->shortname, str))
 		{
 			break;
 		}
 	}
 
-	if (i == level.campaignCount || !(campaign->typeBits & (1 << GT_WOLF)))
+	if (i == level.campaignCount || !campaign || !(campaign->typeBits & (1 << GT_WOLF)))
 	{
 		G_Printf("Can't find campaign '%s'\n", str);
 		return;
