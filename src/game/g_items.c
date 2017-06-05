@@ -765,13 +765,10 @@ int Pickup_Health(gentity_t *ent, gentity_t *other)
 	}
 
 	// if medic isn't giving ammo to self or the enemy, give him some props
-	if (ent->parent && (ent->parent->client != other->client))
+	if (ent->parent && ent->parent->client && ent->parent->client != other->client && other->client->sess.sessionTeam == ent->parent->client->sess.sessionTeam)
 	{
-		if (ent->parent && ent->parent->client && other->client->sess.sessionTeam == ent->parent->client->sess.sessionTeam)
-		{
-			G_AddSkillPoints(ent->parent, SK_FIRST_AID, 1.f);
-			G_DebugAddSkillPoints(ent->parent, SK_FIRST_AID, 1.f, "health pack picked up");
-		}
+        G_AddSkillPoints(ent->parent, SK_FIRST_AID, 1.f);
+        G_DebugAddSkillPoints(ent->parent, SK_FIRST_AID, 1.f, "health pack picked up");
 	}
 
 	max = other->client->ps.stats[STAT_MAX_HEALTH];
