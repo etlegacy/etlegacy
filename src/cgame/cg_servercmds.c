@@ -1658,7 +1658,7 @@ void CG_VoiceChat(int mode)
 	const char *cmd;
 	int        clientNum, color;
 	qboolean   voiceOnly;
-	vec3_t     origin;
+	vec3_t     origin = { 0 };
 
 	voiceOnly = (qboolean)(atoi(CG_Argv(1)));
 	clientNum = atoi(CG_Argv(2));
@@ -1709,7 +1709,7 @@ const char *CG_LocalizeServerCommand(const char *buf)
 	static char token[MAX_TOKEN_CHARS];
 	char        temp[MAX_TOKEN_CHARS];
 	qboolean    togloc = qtrue;
-	const char  *s = buf;
+	const char  *s     = buf;
 	int         i, prev = 0;
 
 	memset(token, 0, sizeof(token));
@@ -1801,7 +1801,7 @@ void CG_wstatsParse_cmd(void)
  */
 void CG_topshotsParse_cmd(qboolean doBest)
 {
-	int            iArg = 1;
+	int            iArg  = 1;
 	int            iWeap = atoi(CG_Argv(iArg++));
 	int            cnum, hits, atts, kills;
 	topshotStats_t *ts = &cgs.topshots;
@@ -1877,8 +1877,8 @@ void CG_parseWeaponStatsGS_cmd(void)
 	clientInfo_t *ci;
 	gameStats_t  *gs = &cgs.gamestats;
 	int          i, iArg = 1;
-	int          nClientID = atoi(CG_Argv(iArg++));
-	int          nRounds = atoi(CG_Argv(iArg++));
+	int          nClientID  = atoi(CG_Argv(iArg++));
+	int          nRounds    = atoi(CG_Argv(iArg++));
 	int          weaponMask = atoi(CG_Argv(iArg++));
 	int          skillMask, xp = 0;
 	int          totHits      = 0;
