@@ -243,7 +243,7 @@ localEntity_t *CG_MakeExplosion(vec3_t origin, vec3_t dir,
 	ex->pos.trTime = cg.time;
 	VectorCopy(newOrigin, ex->pos.trBase);
 
-    if (!dir)
+    if (dir)
     {
         VectorScale(dir, 48, ex->pos.trDelta);
     }
