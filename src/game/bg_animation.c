@@ -57,7 +57,7 @@ static animScriptData_t *globalScriptData = NULL;
 
 #define MAX_ANIM_DEFINES    16
 
-static char *globalFilename;    // to prevent redundant params
+static const char *globalFilename;    // to prevent redundant params
 
 // these are used globally during script parsing
 static int              numDefines[NUM_ANIM_CONDITIONS];
@@ -374,7 +374,7 @@ long BG_StringHashValue_Lwr(const char *fname)
  * @brief BG_AnimParseError
  * @param[in] msg
  */
-void QDECL BG_AnimParseError(const char *msg, ...)
+void __attribute__ ((noreturn)) QDECL BG_AnimParseError(const char *msg, ...)
 {
 	va_list argptr;
 	char    text[1024];
@@ -516,7 +516,7 @@ void BG_InitWeaponStrings(void)
 	int     i;
 	gitem_t *item;
 
-	memset(weaponStrings, 0, sizeof(weaponStrings));
+	Com_Memset(weaponStrings, 0, sizeof(weaponStrings));
 
 	for (i = 0; i < WP_NUM_WEAPONS; i++)
 	{
@@ -558,8 +558,8 @@ void BG_ParseConditionBits(char **text_pp, animStringItem_t *stringTable, int co
 	char     *token;
 
 	currentString[0] = '\0';
-	memset(result, 0, sizeof(result[0]) * RESULT_SIZE);
-	memset(tempBits, 0, sizeof(tempBits));
+	Com_Memset(result, 0, sizeof(result[0]) * RESULT_SIZE);
+	Com_Memset(tempBits, 0, sizeof(tempBits));
 
 	while (!endFlag)
 	{
@@ -807,7 +807,7 @@ static void BG_ParseCommands(char **input, animScriptItem_t *scriptItem, animMod
 				BG_AnimParseError("BG_ParseCommands: exceeded maximum number of animations (%i)", MAX_ANIMSCRIPT_ANIMCOMMANDS);
 			}
 			command = &scriptItem->commands[scriptItem->numCommands++];
-			memset(command, 0, sizeof(*command));
+			Com_Memset(command, 0, sizeof(*command));
 		}
 
 		command->bodyPart[partIndex] = BG_IndexForString(token, animBodyPartsStr, qtrue);
@@ -948,10 +948,10 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 	globalScriptData = scriptData;
 
 	// init the global defines
-	globalFilename = (char *)filename;
-	memset(defineStr, 0, sizeof(defineStr));
-	memset(defineStrings, 0, sizeof(defineStrings));
-	memset(numDefines, 0, sizeof(numDefines));
+	globalFilename = filename;
+	Com_Memset(defineStr, 0, sizeof(defineStr));
+	Com_Memset(defineStrings, 0, sizeof(defineStrings));
+	Com_Memset(numDefines, 0, sizeof(numDefines));
 	defineStringsOffset = 0;
 
 	for (i = 0; i < MAX_INDENT_LEVELS; i++)
@@ -1028,8 +1028,9 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 				numDefines[defineType]++;
 
 				// copy the weapon defines over to the enemy_weapon defines
-				memcpy(&defineStr[ANIM_COND_ENEMY_WEAPON][0], &defineStr[ANIM_COND_WEAPON][0], sizeof(animStringItem_t) * MAX_ANIM_DEFINES);
-				memcpy(&defineBits[ANIM_COND_ENEMY_WEAPON][0], &defineBits[ANIM_COND_WEAPON][0], sizeof(defineBits[ANIM_COND_ENEMY_WEAPON][0]) * MAX_ANIM_DEFINES);
+				Com_Memcpy(defineStr[ANIM_COND_ENEMY_WEAPON], defineStr[ANIM_COND_WEAPON], sizeof(animStringItem_t) * MAX_ANIM_DEFINES);
+				Com_Memcpy(defineBits[ANIM_COND_ENEMY_WEAPON], defineBits[ANIM_COND_WEAPON], sizeof(int[2]) * MAX_ANIM_DEFINES);
+
 				numDefines[ANIM_COND_ENEMY_WEAPON] = numDefines[ANIM_COND_WEAPON];
 			}
 			break;
@@ -1100,7 +1101,7 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 				{
 					currentScript = &animModelInfo->scriptCannedAnims[indexes[1]];
 				}
-				memset(currentScript, 0, sizeof(*currentScript));
+				Com_Memset(currentScript, 0, sizeof(*currentScript));
 			}
 			else if ((indentLevel == 2) && (indexes[indentLevel] < 0))
 			{
@@ -1114,7 +1115,7 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 					BG_AnimParseError("BG_AnimParseAnimScript: internal error");
 				}
 
-				memset(&tempScriptItem, 0, sizeof(tempScriptItem));
+				Com_Memset(&tempScriptItem, 0, sizeof(tempScriptItem));
 				indexes[indentLevel] = BG_ParseConditions(&text_p, &tempScriptItem);
 				// do we have enough room in this script for another item?
 				if (currentScript->numItems >= MAX_ANIMSCRIPT_ITEMS)
@@ -1191,7 +1192,7 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 
 				parseEvent = indexes[indentLevel];
 
-				memset(currentScript, 0, sizeof(*currentScript));
+				Com_Memset(currentScript, 0, sizeof(*currentScript));
 			}
 			else if ((indentLevel == 1) && (indexes[indentLevel] < 0))
 			{
@@ -1205,7 +1206,7 @@ void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *sc
 					BG_AnimParseError("BG_AnimParseAnimScript: internal error");
 				}
 
-				memset(&tempScriptItem, 0, sizeof(tempScriptItem));
+				Com_Memset(&tempScriptItem, 0, sizeof(tempScriptItem));
 				indexes[indentLevel] = BG_ParseConditions(&text_p, &tempScriptItem);
 				// do we have enough room in this script for another item?
 				if (currentScript->numItems >= MAX_ANIMSCRIPT_ITEMS)
