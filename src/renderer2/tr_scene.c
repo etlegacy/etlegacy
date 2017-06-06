@@ -73,6 +73,9 @@ void R_InitNextFrame(void)
 	r_numLights       = 0;
 	r_firstSceneLight = 0;
 
+	r_numcoronas      = 0;
+	r_firstSceneCorona = 0;
+
 	r_numEntities      = 0;
 	r_firstSceneEntity = 0;
 
@@ -96,6 +99,7 @@ void R_InitNextFrame(void)
 void RE_ClearScene(void)
 {
 	r_firstSceneLight  = r_numLights;
+	r_firstSceneCorona = r_numcoronas;
 	r_firstSceneEntity = r_numEntities;
 	r_firstScenePoly   = r_numPolys;
 }
@@ -560,7 +564,7 @@ void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scal
 	{
 		return;
 	}
-	
+
 	if (r_numcoronas >= MAX_CORONAS)
 	{
 		Ren_Developer("WARNING RE_AddCoronaToScene: Dropping corona, reached MAX_CORONAS\n"); // changed to developer print - occures on some maps (radar)
