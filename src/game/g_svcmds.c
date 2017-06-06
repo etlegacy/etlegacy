@@ -2339,7 +2339,11 @@ void Svcmd_CSInfo_f(void)
 
 		if (arg1)
 		{
-			if ((arg1numeric && value == i) || (!arg1numeric && !Q_stricmp(valuestr, str)))
+			if (valuestr[0] == '*')
+			{
+				G_Printf("%-4i %-8i %-22s %s\n", i, size, str, cs); // note: this might not print the full content see CS 1 or 2
+			}
+			else if ((arg1numeric && value == i) || (!arg1numeric && !Q_stricmp(valuestr, str)))
 			{
 				G_Printf("%-4i %-8i %s\n", i, size, str);
 				// value 239 is taken from SBP()
