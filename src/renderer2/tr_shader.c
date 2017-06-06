@@ -2236,14 +2236,12 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			else if (!Q_stricmp(token, "exactVertex"))
 			{
 				stage->rgbGen = CGEN_VERTEX;
-				stage->rgbGen = CGEN_EXACT_VERTEX;
 			}
 			else if (!Q_stricmp(token, "lightingDiffuse"))
 			{
 				//Ren_Warning( "WARNING: obsolete rgbGen lightingDiffuse keyword not supported in shader '%s'\n", shader.name);
 				stage->type   = ST_DIFFUSEMAP;
 				stage->rgbGen = CGEN_IDENTITY_LIGHTING;
-				stage->rgbGen = CGEN_LIGHTING_DIFFUSE;
 			}
 			else if (!Q_stricmp(token, "oneMinusVertex"))
 			{
@@ -2731,7 +2729,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			stage->rgbGen = CGEN_IDENTITY;
 		}
 	}
-
+/* FIXME
 	// if shader stage references a lightmap, but no lightmap is present
 	// (vertex-approximated surfaces), then set cgen to vertex
 	if (stage->tcGen_Lightmap && shader.index < 0 &&  
@@ -2740,7 +2738,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 	{
 		stage->rgbGen = CGEN_VERTEX;
 	}
-
+*/
 	// implicitly assume that a GL_ONE GL_ZERO blend mask disables blending
 	if ((blendSrcBits == GLS_SRCBLEND_ONE) && (blendDstBits == GLS_DSTBLEND_ZERO))
 	{
@@ -2753,15 +2751,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 	{
 		shader.alphaTest = qtrue;
 	}
-// decide which agens we can skip
-	if (stage->alphaGen == AGEN_IDENTITY)
-	{
-		if (stage->rgbGen == CGEN_IDENTITY
-		    || stage->rgbGen == CGEN_LIGHTING_DIFFUSE)
-		{
-			stage->alphaGen = AGEN_SKIP;
-		}
-	}
+
 	// compute state bits
 	stage->stateBits = colorMaskBits | depthMaskBits | blendSrcBits | blendDstBits | atestBits | depthFuncBits | polyModeBits;
 
@@ -5101,7 +5091,7 @@ static shader_t *FinishShader(void)
 			stages[0].overrideWrapType = qtrue;
 			stages[0].wrapType         = WT_EDGE_CLAMP;
 
-			LoadMap(&stages[0], "lights/squarelight1a.tga");
+			LoadMap(&stages[0], "lights/squarelight1a.tga"); // we have png in path
 		}
 
 		// force following shader stages to be xy attenuation stages
@@ -5721,15 +5711,16 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 	                        mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
 	if (!image)
 	{
-		Ren_Developer("Warning: Couldn't find image [%s] file for shader '%s' - returning default shader\n", fileName, strippedName);
+		Ren_Developer("Warning: Couldn't find image [%s] file for shader '%s' - returning default shader\n", fileName, shader.name);
 		shader.defaultShader = qtrue;
 		return FinishShader();
 	}
 
 	{
-		image_t *tmpImage   = R_FindImageFile(va("%s_norm", fileName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
+		image_t *tmpImage;
 		int     stageOffset = 1;
 
+		tmpImage = R_FindImageFile(va("%s_norm", fileName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
 		if (tmpImage)
 		{
 			stages[stageOffset].active             = qtrue;
@@ -5837,6 +5828,12 @@ qhandle_t RE_RegisterShaderFromImage(const char *name, image_t *image, qboolean 
 	char     strippedName[MAX_QPATH];
 	int      i, hash;
 	shader_t *sh;
+
+	if (strlen(name) >= MAX_QPATH)
+	{
+		Ren_Warning("RE_RegisterShaderFromImage WARNING: shader name exceeds MAX_QPATH\n");
+		return 0;
+	}
 
 	COM_StripExtension(name, strippedName, sizeof(strippedName));
 	COM_FixPath(strippedName);
@@ -6531,7 +6528,7 @@ static void ScanAndLoadShaderFiles(void)
 	{
 		Ren_Drop("MAX_SHADER_FILES limit is reached!");
 	}
-
+/*
 	// build single large buffer
 	for (i = 0; i < numShaderFiles; i++)
 	{
@@ -6548,7 +6545,7 @@ static void ScanAndLoadShaderFiles(void)
 		}
 	}
 	s_shaderText = (char *)ri.Hunk_Alloc(sum + numShaderFiles * 2, h_low);
-
+*/
 	// load and parse shader files
 	for (i = 0; i < numShaderFiles; i++)
 	{
@@ -6560,7 +6557,7 @@ static void ScanAndLoadShaderFiles(void)
 
 		if (!buffers[i])
 		{
-			Ren_Drop("Couldn't load %s", filename); // in theory this shouldn't occure anymore - see build single large buffer
+			Ren_Drop("Couldn't load %s", filename); // in this case shader file is cought/listed but the file can't be read - drop!
 		}
 
 		p = buffers[i];
