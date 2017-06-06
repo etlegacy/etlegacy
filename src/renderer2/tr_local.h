@@ -881,13 +881,13 @@ typedef enum
 typedef enum
 {
 	AGEN_IDENTITY,
-	AGEN_SKIP,
+	//AGEN_SKIP,
 	AGEN_ENTITY,
 	AGEN_ONE_MINUS_ENTITY,
 	AGEN_NORMALZFADE,
 	AGEN_VERTEX,
 	AGEN_ONE_MINUS_VERTEX,
-	AGEN_LIGHTING_SPECULAR,
+	//AGEN_LIGHTING_SPECULAR,
 	AGEN_WAVEFORM,
 	AGEN_CONST,
 	AGEN_CUSTOM
@@ -904,12 +904,12 @@ typedef enum
 	CGEN_IDENTITY,              ///< always (1,1,1,1)
 	CGEN_ENTITY,                ///< grabbed from entity's modulate field
 	CGEN_ONE_MINUS_ENTITY,      ///< grabbed from 1 - entity.modulate
-	CGEN_EXACT_VERTEX,      ///< tess.vertexColors
-	CGEN_VERTEX,            ///< tess.vertexColors * tr.identityLight
+	//CGEN_EXACT_VERTEX,        ///< tess.vertexColors
+	CGEN_VERTEX,                ///< tess.vertexColors * tr.identityLight
 	CGEN_ONE_MINUS_VERTEX,
 	CGEN_WAVEFORM,              ///< programmatically generated
-	CGEN_LIGHTING_DIFFUSE,
-	CGEN_FOG,               ///< standard fog
+	//CGEN_LIGHTING_DIFFUSE,
+	CGEN_FOG,                   ///< standard fog
     CGEN_CONST,                 ///< fixed color
 	CGEN_CUSTOM_RGB,            ///< like fixed color but generated dynamically, single arithmetic expression
 	CGEN_CUSTOM_RGBs,           ///< multiple expressions
@@ -4346,7 +4346,7 @@ FLARES, tr_flares.c
 
 void R_ClearFlares(void);
 
-void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t normal);
+void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t normal, qboolean visible);
 void RB_AddLightFlares(void);
 void RB_RenderFlares(void);
 
