@@ -63,23 +63,25 @@
 /**
  * @struct flare_s
  * @typedef flare_t
- * @brief Flare states maintain visibility over multiple frames for fading layers: view, mirror, menu
+ * @brief Flare states maintain visibility over multiple frames for fading
+ * layers: view, mirror, menu
  */
 typedef struct flare_s
 {
-	struct flare_s *next;       ///< for active chain
+	struct flare_s *next;           ///< for active chain
 
 	int addedFrame;
 
-	qboolean inPortal;          ///< true if in a portal view of the scene
+	qboolean inPortal;              ///< true if in a portal view of the scene
 	int frameSceneNum;
 	void *surface;
 	int fogNum;
 
 	int fadeTime;
 
-	qboolean visible;           ///< state of last test
-	float drawIntensity;        ///< may be non 0 even if !visible due to fading
+	qboolean cgvisible;             ///< for coronas, the client determines current visibility, but it's still inserted so it will fade out properly
+	qboolean visible;               ///< state of last test
+	float drawIntensity;            ///< may be non 0 even if !visible due to fading
 
 	int windowX, windowY;
 	float eyeZ;
@@ -119,8 +121,9 @@ void R_ClearFlares(void)
  * @param[in] point
  * @param[in] color
  * @param[in] normal
+ * @param[in] visible
  */
-void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t normal)
+void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t normal, qboolean visible)
 {
 	int     i;
 	flare_t *f; // *oldest;
@@ -183,6 +186,8 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 		f->inPortal      = backEnd.viewParms.isPortal;
 		f->addedFrame    = -1;
 	}
+
+	f->cgvisible = visible;
 
 	if (f->addedFrame != backEnd.viewParms.frameCount - 1)
 	{
@@ -277,7 +282,55 @@ void RB_AddLightFlares(void)
 			j = 0;
 		}
 
-		RB_AddFlare((void *)l, j, l->l.origin, l->l.color, NULL);
+		RB_AddFlare((void *)l, j, l->l.origin, l->l.color, NULL, qtrue);
+	}
+}
+
+/**
+ * @brief RB_AddCoronaFlares
+ */
+void RB_AddCoronaFlares(void)
+{
+	corona_t *cor;
+	int      i, j, k;
+	fog_t    *fog;
+
+	if (r_flares->integer != 1 && r_flares->integer != 3)
+	{
+		return;
+	}
+
+	if (!tr.world) // possible currently at the player model selection menu
+	{
+		return;
+	}
+
+	cor = backEnd.refdef.coronas;
+
+	for (i = 0 ; i < backEnd.refdef.num_coronas ; i++, cor++)
+	{
+		// find which fog volume the corona is in
+		for (j = 1 ; j < tr.world->numFogs ; j++)
+		{
+			fog = &tr.world->fogs[j];
+			for (k = 0 ; k < 3 ; k++)
+			{
+				if (cor->origin[k] < fog->bounds[0][k] || cor->origin[k] > fog->bounds[1][k])
+				{
+					break;
+				}
+			}
+			if (k == 3)
+			{
+				break;
+			}
+		}
+		if (j == tr.world->numFogs)
+		{
+			j = 0;
+		}
+		//RB_AddFlare((void *)cor, j, cor->origin, cor->color, cor->scale, NULL, cor->id, cor->visible);
+		RB_AddFlare((void *)cor, j, cor->origin, cor->color, NULL, cor->visible); // cor->scale -> eye
 	}
 }
 
@@ -299,6 +352,8 @@ void RB_TestFlare(flare_t *f)
 	float    screenZ;
 
 	backEnd.pc.c_flareTests++;
+
+	visible = f->cgvisible;
 
 	// doing a readpixels is as good as doing a glFinish(), so
 	// don't bother with another sync
@@ -496,6 +551,7 @@ void RB_RenderFlares(void)
 	if (tr.world != NULL)
 	{
 		RB_AddLightFlares();
+		RB_AddCoronaFlares();
 	}
 
 	// perform z buffer readback on each flare in this view
