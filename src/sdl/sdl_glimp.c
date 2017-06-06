@@ -55,7 +55,7 @@ static int gammaResetTime = 0;
 SDL_Window           *main_window   = NULL;
 static SDL_Renderer  *main_renderer = NULL;
 static SDL_GLContext SDL_glContext  = NULL;
-static double        displayAspect  = 0.0;
+static float         displayAspect  = 0.f;
 
 cvar_t *r_allowSoftwareGL; // Don't abort out if a hardware visual can't be obtained
 cvar_t *r_allowResize; // make window resizable
@@ -270,16 +270,16 @@ void GLimp_Shutdown(void)
  */
 static int GLimp_CompareModes(const void *a, const void *b)
 {
-	const double   ASPECT_EPSILON  = 0.001;
+	const float    ASPECT_EPSILON  = 0.001f;
 	const SDL_Rect *modeA          = (const SDL_Rect *)a;
 	const SDL_Rect *modeB          = (const SDL_Rect *)b;
-	double         aspectA         = modeA->w / modeA->h;
-	double         aspectB         = modeB->w / modeB->h;
+	float          aspectA         = modeA->w / (float)modeA->h;
+	float          aspectB         = modeB->w / (float)modeB->h;
 	int            areaA           = modeA->w * modeA->h;
 	int            areaB           = modeB->w * modeB->h;
-	double         aspectDiffA     = fabs(aspectA - displayAspect);
-	double         aspectDiffB     = fabs(aspectB - displayAspect);
-	double         aspectDiffsDiff = aspectDiffA - aspectDiffB;
+	float          aspectDiffA     = Q_fabs(aspectA - displayAspect);
+	float          aspectDiffB     = Q_fabs(aspectB - displayAspect);
+	float          aspectDiffsDiff = aspectDiffA - aspectDiffB;
 
 	if (aspectDiffsDiff > ASPECT_EPSILON)
 	{
