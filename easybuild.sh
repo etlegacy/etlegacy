@@ -14,6 +14,9 @@ LEGACYETMAIN="${HOME}/.etlegacy/etmain"
 LEGACY_MIRROR="http://mirror.etlegacy.com/etmain/"
 LEGACY_VERSION=`git describe 2>/dev/null`
 
+# Set this to false to disable colors
+color=true
+
 # Command that can be run
 # first array has the cmd names which can be given
 # second array holds the functions which match the cmd names
@@ -33,12 +36,31 @@ check_exit() {
 	fi
 }
 
+if $color; then
+    # For color codes, see e.g. http://www.cplusplus.com/forum/unices/36461/
+    boldgreen='\033[1;32m'
+    boldlightblue='\033[1;36m'
+    boldwhite='\033[1;37m'
+    boldyellow='\033[1;33m'
+    boldred='\033[1;31m'
+    darkgreen='\033[0;32m'
+    reset='\033[0m'
+else
+    boldgreen=
+    boldlightblue=
+    boldwhite=
+    boldyellow=
+    boldred=
+    darkgreen=
+    reset=
+fi
+
 einfo() {
-	echo -e "\n\033[1;32m~~>\033[0m \033[1;37m${1}\033[0m"
+    echo -e "\n$boldgreen~~>$reset $boldwhite${1}$reset"
 }
 
 ehead() {
-	echo -e "\033[1;36m * \033[1;37m${1}\033[0m"
+    echo -e "$boldlightblue * $boldwhite${1}$reset"
 }
 
 app_exists() {
@@ -62,12 +84,12 @@ checkapp() {
 	app_exists APP_FOUND $1
 
 	if [ $APP_FOUND == 1 ]; then
-		printf "  %-8s \033[1;32m%s\033[0m: %s\n" "${1}" "found" "${BINPATH}"
+		printf "  %-8s $boldgreen%s$reset: %s\n" "${1}" "found" "${BINPATH}"
 	else
 		if [ ${ISPROBLEM} == 0 ]; then
-			printf "  %-8s \033[1;33m%s\033[0m\n" "${1}" "not found but no problem"
+			printf "  %-8s $boldyellow%s$reset\n" "${1}" "not found but no problem"
 		else
-			printf "  %-8s \033[1;31m%s\033[0m\n" "${1}" "not found"
+			printf "  %-8s $boldred%s$reset\n" "${1}" "not found"
 		fi
 	fi
 }
@@ -108,7 +130,7 @@ detectos() {
 	else
 		DISTRO="Unknown"
 	fi
-	echo -e "  running on: \033[1;32m${PLATFORMSYS}\033[0m \033[0;32m${PLATFORMARCH}\033[0m - \033[1;36m${DISTRO}\033[0m"
+	echo -e "  running on: $boldgreen${PLATFORMSYS}$reset $darkgreen${PLATFORMARCH}$reset - $boldlightblue${DISTRO}$reset"
 }
 
 check_compiler() {
@@ -409,7 +431,7 @@ generate_configuration() {
 	fi
 	fi
 
-	echo -e "\033[1;33musing: \033[1;37m${_CFGSTRING}\033[0m"
+	echo -e "$boldyellowusing: $boldwhite${_CFGSTRING}$reset"
 }
 
 # Check if the bundled libs repo has been loaded
