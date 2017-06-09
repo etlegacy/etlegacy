@@ -6404,7 +6404,7 @@ static void ScanAndLoadGuideFiles(void)
 
 	size += MAX_GUIDETEXT_HASH;
 
-	hashMem = (char *)ri.Hunk_Alloc(size * sizeof(char *), h_low);
+	hashMem = (char *)ri.Hunk_Alloc(size * sizeof(char), h_low);
 
 	for (i = 0; i < MAX_GUIDETEXT_HASH; i++)
 	{
@@ -6701,7 +6701,7 @@ static void ScanAndLoadShaderFiles(void)
 
 	size += MAX_SHADERTEXT_HASH;
 
-	hashMem = (char *)ri.Hunk_Alloc(size * sizeof(char *), h_low);
+	hashMem = (char *)ri.Hunk_Alloc(size * sizeof(char), h_low);
 
 	for (i = 0; i < MAX_SHADERTEXT_HASH; i++)
 	{
