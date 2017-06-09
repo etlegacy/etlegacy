@@ -56,7 +56,7 @@ static vec4_t FT_text = { 0.6f, 0.6f, 0.6f, 1.0f };
 int QDECL CG_SortFireTeam(const void *a, const void *b)
 {
 	clientInfo_t *ca, *cb;
-	int    cna, cnb;
+	int          cna, cnb;
 
 	cna = *(const int *)a;
 	cnb = *(const int *)b;
@@ -400,7 +400,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		return;
 	}
 
-	memset(locStr, 0, sizeof(char *) * MAX_FIRETEAM_MEMBERS);
+	Com_Memset(locStr, 0, sizeof(char) * MAX_FIRETEAM_MEMBERS);
 
 	// First get name and location width, also store location names
 	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
