@@ -5612,6 +5612,7 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 	char     *shaderText;
 	image_t  *image;
 	shader_t *sh;
+	qboolean isR2Shader = qfalse;
 
 	if (name[0] == 0)
 	{
@@ -5682,40 +5683,45 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 			sh = FinishShader();
 			return sh;
 		}
+
+		isR2Shader = qtrue;
 	}
 
-	// In case there is no external material/shader found in r2 path	
-	// we try to return the r1 stuff
-	shaderText = FindShaderInShaderTextR1(strippedName);
-	if (shaderText)
+	if (!isR2Shader) // don't overwrite r2 shader
 	{
-		// enable this when building a pak file to get a global list
-		// of all explicit shaders
-		if (r_printShaders->integer)
+		// In case there is no external material/shader found in r2 path
+		// we try to return the r1 stuff
+		shaderText = FindShaderInShaderTextR1(strippedName);
+		if (shaderText)
 		{
-			Ren_Print("^3...loading explicit shader '%s' from scripts folder\n", strippedName);
-		}
-/* FIXME
-		if (!ParseShaderR1(shaderText))
-		{
-			// had errors, so use default shader
-			// there are some shaders (textures/common/clipweap and others ..) which are ignored (see ParseShader())
-			// - this might report false positives but since FindShader is always returning the default shader
-			//   and we've had no real warnings about buggy shaders here nobody did notice that ...
-			//Ren_Print("Warning: Couldn't parse shader %s (%s)- returning default shader\n", strippedName, name);
+			// enable this when building a pak file to get a global list
+			// of all explicit shaders
+			if (r_printShaders->integer)
+			{
+				Ren_Print("^3...loading explicit shader '%s' from scripts folder'\n", strippedName);
+			}
+	/* FIXME
+			if (!ParseShaderR1(shaderText))
+			{
+				// had errors, so use default shader
+				// there are some shaders (textures/common/clipweap and others ..) which are ignored (see ParseShader())
+				// - this might report false positives but since FindShader is always returning the default shader
+				//   and we've had no real warnings about buggy shaders here nobody did notice that ...
+				//Ren_Print("Warning: Couldn't parse shader %s (%s)- returning default shader\n", strippedName, name);
 
-			shader.defaultShader = qtrue;
-			sh                   = FinishShaderR1();
-			return sh;
-		}
+				shader.defaultShader = qtrue;
+				sh                   = FinishShaderR1();
+				return sh;
+			}
 
-		// allow implicit mappings
-		if (implicitMap[0] == '\0')
-		{
-			sh = FinishShaderR1();
-			return sh;
+			// allow implicit mappings
+			if (implicitMap[0] == '\0')
+			{
+				sh = FinishShaderR1();
+				return sh;
+			}
+	*/
 		}
-*/
 	}
 
 	// allow implicit mapping ('-' = use shader name)
