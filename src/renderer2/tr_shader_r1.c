@@ -979,8 +979,9 @@ char *FindShaderInShaderTextR1(const char *shaderName)
 /**
  * @brief Finds and loads all .shader files, combining them into
  * a single large text block that can be scanned for shader names
+ * @param numMaterialFiles
  */
-void ScanAndLoadShaderFilesR1(void)
+void ScanAndLoadShaderFilesR1(const int numMaterialFiles)
 {
 	char **shaderFiles;
 	char *buffers[MAX_SHADER_FILES];
@@ -997,12 +998,17 @@ void ScanAndLoadShaderFilesR1(void)
 	// scan for shader files
 	shaderFiles = ri.FS_ListFiles("scripts", ".shader", &numShaderFiles);
 
-	Ren_Print("----- ScanAndLoadShaderFilesR1 (%i files)-----\n", numShaderFiles);
-
 	if (!shaderFiles || !numShaderFiles)
 	{
-		Ren_Drop("No r1 shader files found!"); // FIXME: ?  segfaults - do we ever have the case w/o shaders? (with proper installs :)
+		Ren_Print("----- ScanAndLoadShaderFilesR1 (no files)-----\n");
 	}
+
+	if (numMaterialFiles + numShaderFiles == 0)
+	{
+		Ren_Drop("No shader/material files found!");
+	}
+
+	Ren_Print("----- ScanAndLoadShaderFilesR1 (%i files)-----\n", numShaderFiles);
 
 	if (numShaderFiles >= MAX_SHADER_FILES)
 	{

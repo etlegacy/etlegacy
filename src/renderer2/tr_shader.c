@@ -6520,8 +6520,9 @@ static void ScanAndLoadGuideFiles(void)
 /**
  * @brief Finds and loads all .shader files, combining them into
  * a single large text block that can be scanned for shader names
+ * @return numShaderFiles/numMaterialFiles
  */
-static void ScanAndLoadShaderFiles(void)
+static int ScanAndLoadShaderFiles(void)
 {
 	char **shaderFiles;
 	char *buffers[MAX_SHADER_FILES];
@@ -6538,12 +6539,14 @@ static void ScanAndLoadShaderFiles(void)
 	// scan for shader files
 	shaderFiles = ri.FS_ListFiles("materials", ".shader", &numShaderFiles);
 
-	Ren_Print("----- ScanAndLoadShaderFiles (%i files)-----\n", numShaderFiles);
-
 	if (!shaderFiles || !numShaderFiles)
 	{
+		Ren_Print("----- ScanAndLoadShaderFiles (no files)-----\n");
 		//Ren_Drop("No shader files found!"); // FIXME: ?  segfaults - do we ever have the case w/o shaders? (with proper installs :)
+		return 0; // FIXME: it's time to build our own pak files ... because we currently don't ship an extra pk3 with material definitions this may happen when mods are loaded
 	}
+
+	Ren_Print("----- ScanAndLoadShaderFiles (%i files)-----\n", numShaderFiles);
 
 	if (numShaderFiles >= MAX_SHADER_FILES)
 	{
@@ -6854,6 +6857,8 @@ static void ScanAndLoadShaderFiles(void)
 			SkipBracedSection(&p);
 		}
 	}
+
+	return numShaderFiles;
 }
 
 /**
@@ -6914,6 +6919,8 @@ static void CreateExternalShaders(void)
  */
 void R_InitShaders(void)
 {
+	int numMaterialFiles;
+
 	Com_Memset(shaderTableHashTable, 0, sizeof(shaderTableHashTable));
 	Com_Memset(shaderHashTable, 0, sizeof(shaderHashTable));
 
@@ -6921,9 +6928,9 @@ void R_InitShaders(void)
 
 	ScanAndLoadGuideFiles();
 
-	ScanAndLoadShaderFiles();
+	numMaterialFiles = ScanAndLoadShaderFiles();
 
-	ScanAndLoadShaderFilesR1();
+	ScanAndLoadShaderFilesR1(numMaterialFiles);
 
 	CreateExternalShaders();
 }
