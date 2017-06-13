@@ -2794,7 +2794,7 @@ static shader_t *FinishShader(void)
 		// ditch this stage if it's detail and detail textures are disabled
 		if (pStage->isDetail && !r_detailTextures->integer)
 		{
-			if (stage < (MAX_SHADER_STAGES - 1))
+			if (stage < (MAX_SHADER_STAGES - 1) && pStage + 1)
 			{
 				memmove(pStage, pStage + 1, sizeof(*pStage) * (MAX_SHADER_STAGES - stage - 1));
 				// kill the last stage, since it's now a duplicate
