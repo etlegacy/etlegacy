@@ -535,7 +535,7 @@ static void S_PaintChannelFrom16_scalar(channel_t *ch, const sfx_t *sc, int coun
 		{
 			data          = samples[sampleOffset++];
 			samp[i].left += (data * leftvol) >> 8;
-			if (sc->soundChannels == 2)
+			if (sc->soundChannels == 2 && sampleOffset < SND_CHUNK_SIZE)
 			{
 				data = samples[sampleOffset++];
 			}
