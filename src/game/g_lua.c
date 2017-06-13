@@ -1751,7 +1751,7 @@ static int _et_gentity_set(lua_State *L)
 		else
 		{
 			free(*(char **)addr);
-			*(char **)addr = malloc(strlen(buffer));
+			*(char **)addr = malloc(strlen(buffer) + 1);
 			Q_strncpyz(*(char **)addr, buffer, strlen(buffer));
 		}
 		break;
