@@ -38,10 +38,15 @@
 
 #include "tr_local.h"
 
-#define MAX_GUIDETEXT_HASH      2048
 #define MAX_SHADERTABLE_HASH    1024
-#define FILE_HASH_SIZE          1024
+static shaderTable_t *shaderTableHashTable[MAX_SHADERTABLE_HASH];
+
+#define MAX_GUIDETEXT_HASH      2048
 #define MAX_SHADERTEXT_HASH     2048
+
+
+#define FILE_HASH_SIZE          1024
+static shader_t *shaderHashTable[FILE_HASH_SIZE];
 
 #define MAX_SHADER_FILES        4096
 #define MAX_GUIDE_FILES         1024
@@ -52,9 +57,44 @@
 
 static shader_t shader;
 
-void R_InitShadersR1(void);
+// the shader is parsed into these global variables, then copied into
+// dynamically allocated memory if it is valid.
+static shaderTable_t table;
+static shaderStage_t stages[MAX_SHADER_STAGES];
+
+static texModInfo_t  texMods[MAX_SHADER_STAGES][TR_MAX_TEXMODS];
+
+// these are only referenced while parsing a shader
+static char implicitMap[MAX_QPATH];
+static unsigned   implicitStateBits;
+static cullType_t implicitCullType;
+
+void ScanAndLoadShaderFilesR1(void);
 char *FindShaderInShaderTextR1(const char *shaderName);
 qboolean ParseShaderR1(char *_text);
 shader_t *FinishShaderR1(void);
+
+void GeneratePermanentShaderTable(float *values, int numValues);
+
+
+
+
+void ParseStencil(char **text, stencil_t *stencil);
+void ParseWaveForm(char **text, waveForm_t *wave);
+qboolean ParseTexMod(char **text, shaderStage_t *stage);
+qboolean LoadMap(shaderStage_t *stage, char *buffer);
+qboolean ParseStage(shaderStage_t *stage, char **text);
+void ParseDeform(char **text);
+void ParseSkyParms(char **text);
+void ParseSort(char **text);
+qboolean SurfaceParm(const char *token);
+void ParseSurfaceParm(char **text);
+void ParseDiffuseMap(shaderStage_t *stage, char **text);
+void ParseNormalMap(shaderStage_t *stage, char **text);
+void ParseSpecularMap(shaderStage_t *stage, char **text);
+void ParseGlowMap(shaderStage_t *stage, char **text);
+void ParseReflectionMap(shaderStage_t *stage, char **text);
+void ParseReflectionMapBlended(shaderStage_t *stage, char **text);
+void ParseLightFalloffImage(shaderStage_t *stage, char **text);
 
 #endif

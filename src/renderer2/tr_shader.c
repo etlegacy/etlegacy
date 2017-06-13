@@ -37,29 +37,12 @@
 
 #include "tr_shader.h"
 
+
 static char **guideTextHashTable[MAX_GUIDETEXT_HASH];
-
-static shaderTable_t *shaderTableHashTable[MAX_SHADERTABLE_HASH];
-
-static shader_t *shaderHashTable[FILE_HASH_SIZE];
-
 static char **shaderTextHashTable[MAX_SHADERTEXT_HASH];
 
 static char *s_guideText;
 static char *s_shaderText;
-
-// the shader is parsed into these global variables, then copied into
-// dynamically allocated memory if it is valid.
-static shaderTable_t table;
-static shaderStage_t stages[MAX_SHADER_STAGES];
-
-static texModInfo_t  texMods[MAX_SHADER_STAGES][TR_MAX_TEXMODS];
-static qboolean      deferLoad;
-
-// these are here because they are only referenced while parsing a shader
-static char       implicitMap[MAX_QPATH];
-static unsigned   implicitStateBits;
-static cullType_t implicitCullType;
 
 /**
  * @brief R_RemapShader
@@ -1032,7 +1015,7 @@ static int NameToStencilOp(const char *name)
  * @param[in,out] text
  * @param[in,out] stencil
  */
-static void ParseStencil(char **text, stencil_t *stencil)
+void ParseStencil(char **text, stencil_t *stencil)
 {
 	char *token;
 
@@ -1172,7 +1155,7 @@ static void ParseStencil(char **text, stencil_t *stencil)
  * @param[in,out] text
  * @param[out] wave
  */
-static void ParseWaveForm(char **text, waveForm_t *wave)
+void ParseWaveForm(char **text, waveForm_t *wave)
 {
 	char *token;
 
@@ -1224,7 +1207,7 @@ static void ParseWaveForm(char **text, waveForm_t *wave)
  * @param[in,out] stage
  * @return
  */
-static qboolean ParseTexMod(char **text, shaderStage_t *stage)
+qboolean ParseTexMod(char **text, shaderStage_t *stage)
 {
 	const char   *token;
 	texModInfo_t *tmi;
@@ -1504,7 +1487,7 @@ static qboolean ParseMap(shaderStage_t *stage, char **text, char *buffer, size_t
  * @param[in] buffer
  * @return
  */
-static qboolean LoadMap(shaderStage_t *stage, char *buffer)
+qboolean LoadMap(shaderStage_t *stage, char *buffer)
 {
 	char         *token;
 	int          imageBits = 0;
@@ -1613,7 +1596,7 @@ static qboolean LoadMap(shaderStage_t *stage, char *buffer)
  * @param[in,out] text
  * @return
  */
-static qboolean ParseStage(shaderStage_t *stage, char **text)
+qboolean ParseStage(shaderStage_t *stage, char **text)
 {
 	char *token;
 	int  colorMaskBits             = 0;
@@ -2775,7 +2758,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
  * deformVertexes autoSprite2
  * deformVertexes text[0-7]
  */
-static void ParseDeform(char **text)
+void ParseDeform(char **text)
 {
 	char          *token;
 	deformStage_t *ds;
@@ -2941,7 +2924,7 @@ static void ParseDeform(char **text)
  *
  * @note skyParms \<outerbox\> \<cloudheight\> \<innerbox\>
  */
-static void ParseSkyParms(char **text)
+void ParseSkyParms(char **text)
 {
 	char *token;
 	char prefix[MAX_QPATH];
@@ -3006,7 +2989,7 @@ static void ParseSkyParms(char **text)
  * @brief ParseSort
  * @param[in,out] text
  */
-static void ParseSort(char **text)
+void ParseSort(char **text)
 {
 	char *token;
 
@@ -3211,7 +3194,7 @@ infoParm_t infoParms[] =
  *
  * @note surfaceparm \<name\>
  */
-static qboolean SurfaceParm(const char *token)
+qboolean SurfaceParm(const char *token)
 {
 	int numInfoParms = ARRAY_LEN(infoParms);
 	int i;
@@ -3239,7 +3222,7 @@ static qboolean SurfaceParm(const char *token)
  * @brief ParseSurfaceParm
  * @param[in,out] text
  */
-static void ParseSurfaceParm(char **text)
+void ParseSurfaceParm(char **text)
 {
 	char *token;
 
@@ -3252,7 +3235,7 @@ static void ParseSurfaceParm(char **text)
  * @param[in,out] stage
  * @param[in,out] text
  */
-static void ParseDiffuseMap(shaderStage_t *stage, char **text)
+void ParseDiffuseMap(shaderStage_t *stage, char **text)
 {
 	char buffer[1024] = "";
 
@@ -3276,7 +3259,7 @@ static void ParseDiffuseMap(shaderStage_t *stage, char **text)
  * @param[in,out] stage
  * @param[in,out] text
  */
-static void ParseNormalMap(shaderStage_t *stage, char **text)
+void ParseNormalMap(shaderStage_t *stage, char **text)
 {
 	char buffer[1024] = "";
 
@@ -3307,7 +3290,7 @@ static void ParseNormalMap(shaderStage_t *stage, char **text)
  * @param[in,out] stage
  * @param[in,out] text
  */
-static void ParseSpecularMap(shaderStage_t *stage, char **text)
+void ParseSpecularMap(shaderStage_t *stage, char **text)
 {
 	char buffer[1024] = "";
 
@@ -3331,7 +3314,7 @@ static void ParseSpecularMap(shaderStage_t *stage, char **text)
  * @param[in,out] stage
  * @param[in,out] text
  */
-static void ParseGlowMap(shaderStage_t *stage, char **text)
+void ParseGlowMap(shaderStage_t *stage, char **text)
 {
 	char buffer[1024] = "";
 
@@ -3351,7 +3334,7 @@ static void ParseGlowMap(shaderStage_t *stage, char **text)
  * @param[in,out] stage
  * @param[in,out] text
  */
-static void ParseReflectionMap(shaderStage_t *stage, char **text)
+void ParseReflectionMap(shaderStage_t *stage, char **text)
 {
 	char buffer[1024] = "";
 
@@ -3373,7 +3356,7 @@ static void ParseReflectionMap(shaderStage_t *stage, char **text)
  * @param[in,out] stage
  * @param[in,out] text
  */
-static void ParseReflectionMapBlended(shaderStage_t *stage, char **text)
+void ParseReflectionMapBlended(shaderStage_t *stage, char **text)
 {
 	char buffer[1024] = "";
 
@@ -3395,7 +3378,7 @@ static void ParseReflectionMapBlended(shaderStage_t *stage, char **text)
  * @param[in,out] stage
  * @param[in,out] text
  */
-static void ParseLightFalloffImage(shaderStage_t *stage, char **text)
+void ParseLightFalloffImage(shaderStage_t *stage, char **text)
 {
 	char buffer[1024] = "";
 
@@ -4998,7 +4981,7 @@ static shader_t *GeneratePermanentShader(void)
  * @param[in] values
  * @param[in] numValues
  */
-static void GeneratePermanentShaderTable(float *values, int numValues)
+void GeneratePermanentShaderTable(float *values, int numValues)
 {
 	shaderTable_t *newTable;
 	int           i;
@@ -5700,7 +5683,7 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 			{
 				Ren_Print("^3...loading explicit shader '%s' from scripts folder'\n", strippedName);
 			}
-	/* FIXME
+
 			if (!ParseShaderR1(shaderText))
 			{
 				// had errors, so use default shader
@@ -5710,17 +5693,17 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 				//Ren_Print("Warning: Couldn't parse shader %s (%s)- returning default shader\n", strippedName, name);
 
 				shader.defaultShader = qtrue;
-				sh                   = FinishShaderR1();
+				sh                   = FinishShader();
 				return sh;
 			}
 
 			// allow implicit mappings
 			if (implicitMap[0] == '\0')
 			{
-				sh = FinishShaderR1();
+				sh = FinishShader();
 				return sh;
 			}
-	*/
+
 		}
 	}
 
@@ -6717,7 +6700,7 @@ static void ScanAndLoadShaderFiles(void)
 	//Ren_Print("Shader hash table size %i\n", size);
 
 	size += MAX_SHADERTEXT_HASH;
-
+Com_Printf("############ R1 %i\n", size);
 	hashMem = (char *)ri.Hunk_Alloc(size * sizeof(char *), h_low);
 
 	for (i = 0; i < MAX_SHADERTEXT_HASH; i++)
@@ -6928,15 +6911,13 @@ void R_InitShaders(void)
 	Com_Memset(shaderTableHashTable, 0, sizeof(shaderTableHashTable));
 	Com_Memset(shaderHashTable, 0, sizeof(shaderHashTable));
 
-	deferLoad = qfalse;
-
 	CreateInternalShaders();
 
 	ScanAndLoadGuideFiles();
 
 	ScanAndLoadShaderFiles();
 
-	R_InitShadersR1();
+	ScanAndLoadShaderFilesR1();
 
 	CreateExternalShaders();
 }
