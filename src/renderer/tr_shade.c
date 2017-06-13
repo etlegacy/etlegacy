@@ -56,7 +56,7 @@ static void GLAPIENTRY R_ArrayElementDiscrete(GLint index)
 	{
 		qglTexCoord2fv(tess.svars.texcoords[0][index]);
 	}
-	qglVertex3fv(tess.xyz[index].v);
+	qglVertex3fv(tess.xyz[index]);
 }
 
 /**
@@ -435,8 +435,8 @@ static void DrawNormals(shaderCommands_t *input)
 		qglBegin(GL_LINES);
 		for (i = 0 ; i < input->numVertexes ; i++)
 		{
-			qglVertex3fv(input->xyz[i].v);
-			VectorMA(input->xyz[i].v, r_normallength->value, input->normal[i].v, temp);
+			qglVertex3fv(input->xyz[i]);
+			VectorMA(input->xyz[i], r_normallength->value, input->normal[i], temp);
 			qglVertex3fv(temp);
 		}
 		qglEnd();
@@ -604,7 +604,7 @@ static void DynamicLightSinglePass(void)
 			if (dl->flags & REF_DIRECTED_DLIGHT)
 			{
 				// twosided surfaces use absolute value of the calculated lighting
-				modulate = intensity * DotProduct(dl->origin, tess.normal[i].v);
+				modulate = intensity * DotProduct(dl->origin, tess.normal[i]);
 				if (tess.shader->cullType == CT_TWO_SIDED)
 				{
 					modulate = Q_fabs(modulate);
@@ -614,17 +614,17 @@ static void DynamicLightSinglePass(void)
 			// ball dlight
 			else
 			{
-				dir[0] = radius - Q_fabs(origin[0] - tess.xyz[i].v[0]);
+				dir[0] = radius - Q_fabs(origin[0] - tess.xyz[i][0]);
 				if (dir[0] <= 0.0f)
 				{
 					continue;
 				}
-				dir[1] = radius - Q_fabs(origin[1] - tess.xyz[i].v[1]);
+				dir[1] = radius - Q_fabs(origin[1] - tess.xyz[i][1]);
 				if (dir[1] <= 0.0f)
 				{
 					continue;
 				}
-				dir[2] = radius - Q_fabs(origin[2] - tess.xyz[i].v[2]);
+				dir[2] = radius - Q_fabs(origin[2] - tess.xyz[i][2]);
 				if (dir[2] <= 0.0f)
 				{
 					continue;
@@ -781,7 +781,7 @@ static void DynamicLightPass_altivec(void)
 			if (dl->flags & REF_DIRECTED_DLIGHT)
 			{
 				// twosided surfaces use absolute value of the calculated lighting
-				modulate = intensity * DotProduct(dl->origin, tess.normal[i].v);
+				modulate = intensity * DotProduct(dl->origin, tess.normal[i]);
 				if (tess.shader->cullType == CT_TWO_SIDED)
 				{
 					modulate = Q_fabs(modulate);
@@ -791,17 +791,17 @@ static void DynamicLightPass_altivec(void)
 			// ball dlight
 			else
 			{
-				dir0 = radius - Q_fabs(origin0 - tess.xyz[i].v[0]);
+				dir0 = radius - Q_fabs(origin0 - tess.xyz[i][0]);
 				if (dir0 <= 0.0f)
 				{
 					continue;
 				}
-				dir1 = radius - Q_fabs(origin1 - tess.xyz[i].v[1]);
+				dir1 = radius - Q_fabs(origin1 - tess.xyz[i][1]);
 				if (dir1 <= 0.0f)
 				{
 					continue;
 				}
-				dir2 = radius - Q_fabs(origin2 - tess.xyz[i].v[2]);
+				dir2 = radius - Q_fabs(origin2 - tess.xyz[i][2]);
 				if (dir2 <= 0.0f)
 				{
 					continue;
@@ -934,7 +934,7 @@ static void DynamicLightPass_scalar(void)
 			if (dl->flags & REF_DIRECTED_DLIGHT)
 			{
 				// twosided surfaces use absolute value of the calculated lighting
-				modulate = intensity * DotProduct(dl->origin, tess.normal[i].v);
+				modulate = intensity * DotProduct(dl->origin, tess.normal[i]);
 				if (tess.shader->cullType == CT_TWO_SIDED)
 				{
 					modulate = Q_fabs(modulate);
@@ -944,17 +944,17 @@ static void DynamicLightPass_scalar(void)
 			// ball dlight
 			else
 			{
-				dir[0] = radius - Q_fabs(origin[0] - tess.xyz[i].v[0]);
+				dir[0] = radius - Q_fabs(origin[0] - tess.xyz[i][0]);
 				if (dir[0] <= 0.0f)
 				{
 					continue;
 				}
-				dir[1] = radius - Q_fabs(origin[1] - tess.xyz[i].v[1]);
+				dir[1] = radius - Q_fabs(origin[1] - tess.xyz[i][1]);
 				if (dir[1] <= 0.0f)
 				{
 					continue;
 				}
-				dir[2] = radius - Q_fabs(origin[2] - tess.xyz[i].v[2]);
+				dir[2] = radius - Q_fabs(origin[2] - tess.xyz[i][2]);
 				if (dir[2] <= 0.0f)
 				{
 					continue;
@@ -1106,7 +1106,7 @@ static void ComputeColors(shaderStage_t *pStage)
 		RB_CalcDiffuseColor(( unsigned char * ) tess.svars.colors);
 		break;
 	case CGEN_EXACT_VERTEX:
-		memcpy(tess.svars.colors, tess.vertexColors, tess.numVertexes * sizeof(tess.vertexColors[0].v));
+		memcpy(tess.svars.colors, tess.vertexColors, tess.numVertexes * sizeof(tess.vertexColors[0]));
 		break;
 	case CGEN_CONST:
 	{
@@ -1121,7 +1121,7 @@ static void ComputeColors(shaderStage_t *pStage)
 	case CGEN_VERTEX:
 		if (tr.identityLight == 1)
 		{
-			memcpy(tess.svars.colors, tess.vertexColors, tess.numVertexes * sizeof(tess.vertexColors[0].v));
+			memcpy(tess.svars.colors, tess.vertexColors, tess.numVertexes * sizeof(tess.vertexColors[0]));
 		}
 		else
 		{
@@ -1129,10 +1129,10 @@ static void ComputeColors(shaderStage_t *pStage)
 
 			for (i = 0; i < tess.numVertexes; i++)
 			{
-				tess.svars.colors[i][0] = tess.vertexColors[i].v[0] * tr.identityLight;
-				tess.svars.colors[i][1] = tess.vertexColors[i].v[1] * tr.identityLight;
-				tess.svars.colors[i][2] = tess.vertexColors[i].v[2] * tr.identityLight;
-				tess.svars.colors[i][3] = tess.vertexColors[i].v[3];
+				tess.svars.colors[i][0] = tess.vertexColors[i][0] * tr.identityLight;
+				tess.svars.colors[i][1] = tess.vertexColors[i][1] * tr.identityLight;
+				tess.svars.colors[i][2] = tess.vertexColors[i][2] * tr.identityLight;
+				tess.svars.colors[i][3] = tess.vertexColors[i][3];
 			}
 		}
 		break;
@@ -1144,18 +1144,18 @@ static void ComputeColors(shaderStage_t *pStage)
 		{
 			for (i = 0; i < tess.numVertexes; i++)
 			{
-				tess.svars.colors[i][0] = 255 - tess.vertexColors[i].v[0];
-				tess.svars.colors[i][1] = 255 - tess.vertexColors[i].v[1];
-				tess.svars.colors[i][2] = 255 - tess.vertexColors[i].v[2];
+				tess.svars.colors[i][0] = 255 - tess.vertexColors[i][0];
+				tess.svars.colors[i][1] = 255 - tess.vertexColors[i][1];
+				tess.svars.colors[i][2] = 255 - tess.vertexColors[i][2];
 			}
 		}
 		else
 		{
 			for (i = 0; i < tess.numVertexes; i++)
 			{
-				tess.svars.colors[i][0] = (255 - tess.vertexColors[i].v[0]) * tr.identityLight;
-				tess.svars.colors[i][1] = (255 - tess.vertexColors[i].v[1]) * tr.identityLight;
-				tess.svars.colors[i][2] = (255 - tess.vertexColors[i].v[2]) * tr.identityLight;
+				tess.svars.colors[i][0] = (255 - tess.vertexColors[i][0]) * tr.identityLight;
+				tess.svars.colors[i][1] = (255 - tess.vertexColors[i][1]) * tr.identityLight;
+				tess.svars.colors[i][2] = (255 - tess.vertexColors[i][2]) * tr.identityLight;
 			}
 		}
 	}
@@ -1261,7 +1261,7 @@ static void ComputeColors(shaderStage_t *pStage)
 		range = highest - lowest;
 		for (i = 0; i < tess.numVertexes; i++)
 		{
-			dot = DotProduct(tess.normal[i].v, worldUp);
+			dot = DotProduct(tess.normal[i], worldUp);
 
 			// special handling for Zombie fade effect
 			if (zombieEffect)
@@ -1328,7 +1328,7 @@ static void ComputeColors(shaderStage_t *pStage)
 
 			for (i = 0; i < tess.numVertexes; i++)
 			{
-				tess.svars.colors[i][3] = tess.vertexColors[i].v[3];
+				tess.svars.colors[i][3] = tess.vertexColors[i][3];
 			}
 		}
 		break;
@@ -1338,7 +1338,7 @@ static void ComputeColors(shaderStage_t *pStage)
 
 		for (i = 0; i < tess.numVertexes; i++)
 		{
-			tess.svars.colors[i][3] = 255 - tess.vertexColors[i].v[3];
+			tess.svars.colors[i][3] = 255 - tess.vertexColors[i][3];
 		}
 	}
 	break;
@@ -1351,7 +1351,7 @@ static void ComputeColors(shaderStage_t *pStage)
 
 		for (i = 0; i < tess.numVertexes; i++)
 		{
-			VectorSubtract(tess.xyz[i].v, backEnd.viewParms.orientation.origin, v);
+			VectorSubtract(tess.xyz[i], backEnd.viewParms.orientation.origin, v);
 			len = VectorLength(v);
 
 			len /= tess.shader->portalRange;
@@ -1416,22 +1416,22 @@ static void ComputeTexCoords(shaderStage_t *pStage)
 		case TCGEN_TEXTURE:
 			for (i = 0 ; i < tess.numVertexes ; i++)
 			{
-				tess.svars.texcoords[b][i][0] = tess.texCoords0[i].v[0];
-				tess.svars.texcoords[b][i][1] = tess.texCoords0[i].v[1];
+				tess.svars.texcoords[b][i][0] = tess.texCoords0[i][0];
+				tess.svars.texcoords[b][i][1] = tess.texCoords0[i][1];
 			}
 			break;
 		case TCGEN_LIGHTMAP:
 			for (i = 0 ; i < tess.numVertexes ; i++)
 			{
-				tess.svars.texcoords[b][i][0] = tess.texCoords1[i].v[0];
-				tess.svars.texcoords[b][i][1] = tess.texCoords1[i].v[1];
+				tess.svars.texcoords[b][i][0] = tess.texCoords1[i][0];
+				tess.svars.texcoords[b][i][1] = tess.texCoords1[i][1];
 			}
 			break;
 		case TCGEN_VECTOR:
 			for (i = 0 ; i < tess.numVertexes ; i++)
 			{
-				tess.svars.texcoords[b][i][0] = DotProduct(tess.xyz[i].v, pStage->bundle[b].tcGenVectors[0]);
-				tess.svars.texcoords[b][i][1] = DotProduct(tess.xyz[i].v, pStage->bundle[b].tcGenVectors[1]);
+				tess.svars.texcoords[b][i][0] = DotProduct(tess.xyz[i], pStage->bundle[b].tcGenVectors[0]);
+				tess.svars.texcoords[b][i][1] = DotProduct(tess.xyz[i], pStage->bundle[b].tcGenVectors[1]);
 			}
 			break;
 		case TCGEN_FOG:
@@ -1973,7 +1973,7 @@ void RB_EndSurface(void)
 	{
 		Ren_Drop("RB_EndSurface() - input->maxShaderIndicies(%i) hit", input->maxShaderIndicies);
 	}
-	if (input->xyz[input->maxShaderVerts - 1].v[0] != 0.f)
+	if (input->xyz[input->maxShaderVerts - 1][0] != 0.f)
 	{
 		Ren_Drop("RB_EndSurface() - input->maxShaderVerts(%i) hit", input->maxShaderVerts);
 	}

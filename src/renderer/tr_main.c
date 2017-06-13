@@ -1284,7 +1284,7 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 	{
 		pointFlags = 0;
 
-		R_TransformModelToClip(tess.xyz[i].v, tr.orientation.modelMatrix, tr.viewParms.projectionMatrix, eye, clip);
+		R_TransformModelToClip(tess.xyz[i], tr.orientation.modelMatrix, tr.viewParms.projectionMatrix, eye, clip);
 
 		for (j = 0; j < 3; j++)
 		{
@@ -1318,7 +1318,7 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 		vec3_t normal;
 		float  len;
 
-		VectorSubtract(tess.xyz[tess.indexes[i]].v, tr.viewParms.orientation.origin, normal);
+		VectorSubtract(tess.xyz[tess.indexes[i]], tr.viewParms.orientation.origin, normal);
 
 		len = VectorLengthSquared(normal);              // lose the sqrt
 		if (len < shortest)
@@ -1326,7 +1326,7 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 			shortest = len;
 		}
 
-		if (DotProduct(normal, tess.normal[tess.indexes[i]].v) >= 0)
+		if (DotProduct(normal, tess.normal[tess.indexes[i]]) >= 0)
 		{
 			numTriangles--;
 		}
