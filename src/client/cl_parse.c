@@ -253,12 +253,17 @@ void CL_DeltaEntity(msg_t *msg, clSnapshot_t *frame, int newnum, entityState_t *
  * @param[in] msg
  * @param[in] oldframe
  * @param[out] newframe
+ *
+ * @note oldnum is setted to INT_MAX to ensure than newnum
+ * will be never greater than oldnum in case the oldframe/oldindex are invalids.
  */
 void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *newframe)
 {
-	int           newnum;
-	entityState_t *oldstate = NULL;
-	int           oldindex  = 0, oldnum;
+	entityState_t *oldstate;
+	int           oldindex, newnum, oldnum;
+
+	oldstate = NULL;
+	oldindex = 0;
 
 	newframe->parseEntitiesNum = cl.parseEntitiesNum;
 	newframe->numEntities      = 0;
@@ -267,13 +272,13 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 
 	if (!oldframe)
 	{
-		oldnum = 99999;
+		oldnum = INT_MAX;
 	}
 	else
 	{
 		if (oldindex >= oldframe->numEntities)
 		{
-			oldnum = 99999;
+			oldnum = INT_MAX;
 		}
 		else
 		{
@@ -311,7 +316,7 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 
 			if (!oldframe || oldindex >= oldframe->numEntities)
 			{
-				oldnum = 99999;
+				oldnum = INT_MAX;
 			}
 			else
 			{
@@ -320,6 +325,7 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 				oldnum = oldstate->number;
 			}
 		}
+
 		if (oldnum == newnum)
 		{
 			// delta from previous state
@@ -333,7 +339,7 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 
 			if (oldindex >= oldframe->numEntities)
 			{
-				oldnum = 99999;
+				oldnum = INT_MAX;
 			}
 			else
 			{
@@ -341,10 +347,8 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 				    (oldframe->parseEntitiesNum + oldindex) & (MAX_PARSE_ENTITIES - 1)];
 				oldnum = oldstate->number;
 			}
-			continue;
 		}
-
-		if (oldnum > newnum)
+		else if (oldnum > newnum)
 		{
 			// delta from baseline
 			if (cl_shownet->integer == 3)
@@ -352,13 +356,11 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 				Com_Printf("%3i:  baseline: %i\n", msg->readcount, newnum);
 			}
 			CL_DeltaEntity(msg, newframe, newnum, &cl.entityBaselines[newnum], qfalse);
-			continue;
 		}
-
 	}
 
 	// any remaining entities in the old frame are copied over
-	while (oldnum != 99999)
+	while (oldnum != INT_MAX)
 	{
 		// one or more entities from the old packet are unchanged
 		if (cl_shownet->integer == 3)
@@ -371,7 +373,7 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 
 		if (oldindex >= oldframe->numEntities)
 		{
-			oldnum = 99999;
+			oldnum = INT_MAX;
 		}
 		else
 		{
