@@ -2625,6 +2625,8 @@ float rint(float v)
  * @param[in] size
  * @param[in] cmp
  * @return
+ *
+ * @note Unused
  */
 void *Q_LinearSearch(const void *key, const void *ptr, size_t count, size_t size, cmpFunc_t cmp)
 {
