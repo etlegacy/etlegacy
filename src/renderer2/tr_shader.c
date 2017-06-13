@@ -4809,7 +4809,6 @@ static void CollapseStages()
 	Com_Memcpy(&stages[0], &tmpStages[0], sizeof(stages));
 	Com_Memcpy(&shader, &tmpShader, sizeof(shader));
 }
-// *INDENT-ON*
 
 /**
  * @brief FixRenderCommandList
@@ -4854,6 +4853,13 @@ static void FixRenderCommandList(int newShader)
 				drawSurf_t              *drawSurf;
 				const drawViewCommand_t *dv_cmd = (const drawViewCommand_t *)curCmd;
 
+				for (i = 0, drawSurf = dv_cmd->viewParms.drawSurfs; i < dv_cmd->viewParms.numDrawSurfs; i++, drawSurf++)
+				{
+					if (drawSurf->shaderNum >= newShader)
+					{
+						drawSurf->shaderNum++;
+					}
+				}
 				curCmd = (const void *)(dv_cmd + 1);
 				break;
 			}
@@ -4906,7 +4912,7 @@ static void SortNewShader(void)
 	}
 
 	// fix rendercommandlist
-	//FixRenderCommandList(i + 1);
+	FixRenderCommandList(i + 1);
 
 	newShader->sortedIndex  = i + 1;
 	tr.sortedShaders[i + 1] = newShader;
@@ -6522,7 +6528,7 @@ static void ScanAndLoadShaderFiles(void)
 	char *p;
 	int  numShaderFiles, i;
 	char *oldp, *token, *hashMem, *textEnd;
-	int  shaderTextHashTableSizes[MAX_SHADERTEXT_HASH], hash, size, fileSum;
+	int  shaderTextHashTableSizes[MAX_SHADERTEXT_HASH], hash, size;
 	char filename[MAX_QPATH];
 	long sum = 0, summand;
 
@@ -6700,7 +6706,7 @@ static void ScanAndLoadShaderFiles(void)
 	//Ren_Print("Shader hash table size %i\n", size);
 
 	size += MAX_SHADERTEXT_HASH;
-Com_Printf("############ R1 %i\n", size);
+
 	hashMem = (char *)ri.Hunk_Alloc(size * sizeof(char *), h_low);
 
 	for (i = 0; i < MAX_SHADERTEXT_HASH; i++)
