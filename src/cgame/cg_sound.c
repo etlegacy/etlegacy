@@ -120,8 +120,6 @@ int CG_SoundPickOldestRandomSound(soundScript_t *sound, vec3_t org, int entnum)
 		scriptSound = scriptSound->next;
 	}
 
-	oldestTime = 0;
-
 	if (oldestSound)
 	{
 		int pos = rand() % oldestSound->numsounds;
