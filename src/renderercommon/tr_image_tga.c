@@ -222,11 +222,6 @@ void R_LoadTGA(const char *name, byte **pic, int *width, int *height, byte alpha
 	{
 		unsigned char red, green, blue, alpha, packetHeader, packetSize, j;
 
-		red   = 0;
-		green = 0;
-		blue  = 0;
-		alpha = alphaByte;
-
 		for (row = rows - 1; row != UINT_MAX; row--)
 		{
 			pixbuf = targa_rgba + row * columns * 4;
