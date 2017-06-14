@@ -1713,7 +1713,7 @@ static qboolean ParseAddNormals(char **text, byte **pic, int *width, int *height
 	}
 
 	R_LoadImage(text, pic, width, height, bits, materialName);
-	if (!pic)
+	if (!*pic)
 	{
 		Ren_Warning("WARNING: failed loading of first image for addNormals\n");
 		return qfalse;
@@ -1780,7 +1780,7 @@ static qboolean ParseInvertAlpha(char **text, byte **pic, int *width, int *heigh
 	}
 
 	R_LoadImage(text, pic, width, height, bits, materialName);
-	if (!pic)
+	if (!*pic)
 	{
 		Ren_Warning("WARNING: failed loading of image for invertAlpha\n");
 		return qfalse;
@@ -1820,7 +1820,7 @@ static qboolean ParseInvertColor(char **text, byte **pic, int *width, int *heigh
 	}
 
 	R_LoadImage(text, pic, width, height, bits, materialName);
-	if (!pic)
+	if (!*pic)
 	{
 		Ren_Warning("WARNING: failed loading of image for invertColor\n");
 		return qfalse;
@@ -1860,7 +1860,7 @@ static qboolean ParseMakeIntensity(char **text, byte **pic, int *width, int *hei
 	}
 
 	R_LoadImage(text, pic, width, height, bits, materialName);
-	if (!pic)
+	if (!*pic)
 	{
 		Ren_Warning("WARNING: failed loading of image for makeIntensity\n");
 		return qfalse;
@@ -1903,7 +1903,7 @@ static qboolean ParseMakeAlpha(char **text, byte **pic, int *width, int *height,
 	}
 
 	R_LoadImage(text, pic, width, height, bits, materialName);
-	if (!pic)
+	if (!*pic)
 	{
 		Ren_Warning("WARNING: failed loading of image for makeAlpha\n");
 		return qfalse;
@@ -2135,7 +2135,7 @@ static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int 
 		    // a loader was found
 		    if (i < numImageLoaders)
 		    {
-		        if (*pic == NULL)
+		        if (!*pic)
 		        {
 		            // loader failed, most likely because the file isn't there;
 		            // try again without the extension
@@ -2191,7 +2191,7 @@ static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int 
 			}
 		}
 
-		if (*pic == NULL)
+		if (!*pic)
 		{
 			// Loader failed, most likely because the file isn't there
 			Ren_Developer("WARNING: %s not present in any supported image format\n", filename);
