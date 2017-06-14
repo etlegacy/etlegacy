@@ -365,7 +365,7 @@ void RB_TestFlare(flare_t *f)
 	screenZ = backEnd.viewParms.projectionMatrix[14] /
 	          ((2 * depth - 1) * backEnd.viewParms.projectionMatrix[11] - backEnd.viewParms.projectionMatrix[10]);
 
-	visible = (-f->eyeZ - -screenZ) < 24;
+	//visible = (-f->eyeZ - -screenZ) < 24;
 
 	if (visible)
 	{
