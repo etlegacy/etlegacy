@@ -735,7 +735,7 @@ struct
  */
 static void IN_InitJoystick(void)
 {
-	int  i     = 0;
+	//int  i     = 0;
 	int  total = 0;
 	//char buf[MAX_CVAR_VALUE_STRING] = "";
 
