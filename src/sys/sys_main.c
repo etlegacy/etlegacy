@@ -945,7 +945,7 @@ void Sys_GameLoop(void)
 {
 #ifdef LEGACY_DEBUG
 	int startTime, endTime, totalMsec, countMsec;
-	startTime = endTime = totalMsec = countMsec = 0;
+	totalMsec = countMsec = 0;
 #endif
 
 	while (qtrue)
