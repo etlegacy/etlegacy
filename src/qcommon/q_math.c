@@ -484,7 +484,7 @@ void RotatePointAroundVector(vec3_t dst, const vec3_t dir, const vec3_t point,
 	float  rot[3][3];
 	int    i;
 	vec3_t vr, vup, vf;
-	float  rad;
+	double rad;
 
 	vf[0] = dir[0];
 	vf[1] = dir[1];
