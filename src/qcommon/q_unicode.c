@@ -285,7 +285,7 @@ static qboolean getbit(const unsigned char *p, int pos)
 	p   += pos / 8;
 	pos %= 8;
 
-	return (*p & (1 << (7 - pos))) != 0;
+	return (p && (*p & (1 << (7 - pos)))) != 0;
 }
 
 /**
