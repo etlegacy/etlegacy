@@ -353,7 +353,7 @@ void RB_TestFlare(flare_t *f)
 
 	backEnd.pc.c_flareTests++;
 
-	visible = f->cgvisible;
+	//visible = f->cgvisible;
 
 	// doing a readpixels is as good as doing a glFinish(), so
 	// don't bother with another sync
@@ -365,7 +365,7 @@ void RB_TestFlare(flare_t *f)
 	screenZ = backEnd.viewParms.projectionMatrix[14] /
 	          ((2 * depth - 1) * backEnd.viewParms.projectionMatrix[11] - backEnd.viewParms.projectionMatrix[10]);
 
-	//visible = (-f->eyeZ - -screenZ) < 24;
+	visible = (-f->eyeZ - -screenZ) < 24;
 
 	if (visible)
 	{
