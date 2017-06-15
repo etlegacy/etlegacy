@@ -2630,7 +2630,6 @@ void CG_GetColorForHealth(int health, vec4_t hcolor);
 
 // new hud stuff
 void CG_DrawRect(float x, float y, float width, float height, float size, const float *color);
-void CG_DrawHollowCircle(float x, float y, float radius, const float * color);
 void CG_DrawRect_FixedBorder(float x, float y, float width, float height, int border, const float *color);
 void CG_DrawSides(float x, float y, float w, float h, float size);
 void CG_DrawTopBottom(float x, float y, float w, float h, float size);
@@ -3156,7 +3155,6 @@ void trap_R_DrawStretchPic(float x, float y, float w, float h,
 void trap_R_DrawRotatedPic(float x, float y, float w, float h,
                            float s1, float t1, float s2, float t2, qhandle_t hShader, float angle);
 void trap_R_DrawStretchPicGradient(float x, float y, float w, float h, float s1, float t1, float s2, float t2, qhandle_t hShader, const float *gradientColor, int gradientType);
-void trap_HollowCircle(float x, float y, float radius);
 void trap_R_Add2dPolys(polyVert_t *verts, int numverts, qhandle_t hShader);
 void trap_R_ModelBounds(clipHandle_t model, vec3_t mins, vec3_t maxs);
 int trap_R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName, int startIndex);
