@@ -1055,15 +1055,28 @@ void G_CheckForCursorHints(gentity_t *ent)
 
 	if (tr->entityNum == ENTITYNUM_WORLD)
 	{
-		if ((tr->contents & CONTENTS_WATER))
+//		if ((tr->contents & CONTENTS_WATER))
+//		{
+//			hintDist = CH_WATER_DIST;
+//			hintType = HINT_WATER;
+//		}
+//		else if ((tr->surfaceFlags & SURF_LADDER) && !(ps->pm_flags & PMF_LADDER))           // ladder
+//		{
+//			hintDist = CH_LADDER_DIST;
+//			hintType = HINT_LADDER;
+//		}
+
+		// building something - add this here because we don't have anything solid to trace to - quite ugly-ish
+		if (ent->client->touchingTOI && ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
 		{
-			hintDist = CH_WATER_DIST;
-			hintType = HINT_WATER;
-		}
-		else if ((tr->surfaceFlags & SURF_LADDER) && !(ps->pm_flags & PMF_LADDER))           // ladder
-		{
-			hintDist = CH_LADDER_DIST;
-			hintType = HINT_LADDER;
+			gentity_t *constructible;
+
+			if ((constructible = G_IsConstructible(ent->client->sess.sessionTeam, ent->client->touchingTOI)))
+			{
+				ps->serverCursorHint    = HINT_CONSTRUCTIBLE;
+				ps->serverCursorHintVal = (int)constructible->s.angles2[0];
+				return;
+			}
 		}
 	}
 	else if (tr->entityNum < MAX_CLIENTS)
@@ -1135,7 +1148,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 					{
 						if (ent->client->ps.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
 						{
-							hintDist = 48;
+							hintDist = CH_CORPSE_DIST;
 							hintType = HINT_UNIFORM;
 							hintVal  = BODY_VALUE(traceEnt);
 							if (hintVal > 255)
@@ -1375,7 +1388,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 				default:
 					break;
 				}
-
 				break;
 			}
 			case ET_MOVER:
@@ -1479,50 +1491,37 @@ void G_CheckForCursorHints(gentity_t *ent)
 			default:
 				break;
 			}
+		}
+	}
 
-			if (zooming)
-			{
-				hintDist = CH_MAX_DIST_ZOOM;
+	if (zooming)
+	{
+		hintDist = CH_MAX_DIST_ZOOM;
 
-				// zooming can eat a lot of potential hints
-				switch (hintType)
-				{
-				// allow while zooming
-				case HINT_PLAYER:
-				case HINT_TREASURE:
-				case HINT_LADDER:
-				case HINT_EXIT:
-				case HINT_NOEXIT:
-				case HINT_PLYR_FRIEND:
-				case HINT_PLYR_NEUTRAL:
-				case HINT_PLYR_ENEMY:
-				case HINT_PLYR_UNKNOWN:
-					break;
-				default:
-					return;
-				}
-			}
-
-			// set hint distance
-			if (dist <= Square(hintDist))
-			{
-				ps->serverCursorHint    = hintType;
-				ps->serverCursorHintVal = hintVal;
-			}
+		// zooming can eat a lot of potential hints
+		switch (hintType)
+		{
+		// allow while zooming
+		case HINT_PLAYER:
+		case HINT_TREASURE:
+		case HINT_LADDER:
+		case HINT_EXIT:
+		case HINT_NOEXIT:
+		case HINT_PLYR_FRIEND:
+		case HINT_PLYR_NEUTRAL:
+		case HINT_PLYR_ENEMY:
+		case HINT_PLYR_UNKNOWN:
+			break;
+		default:
 			return;
 		}
 	}
 
-	// building something - add this here because we don't have anything solid to trace to - quite ugly-ish
-	if (ent->client->touchingTOI && ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
+	// set hint distance
+	if (dist <= Square(hintDist))
 	{
-		gentity_t *constructible;
-
-		if ((constructible = G_IsConstructible(ent->client->sess.sessionTeam, ent->client->touchingTOI)))
-		{
-			ps->serverCursorHint    = HINT_CONSTRUCTIBLE;
-			ps->serverCursorHintVal = (int)constructible->s.angles2[0];
-		}
+		ps->serverCursorHint    = hintType;
+		ps->serverCursorHintVal = hintVal;
 	}
 }
 

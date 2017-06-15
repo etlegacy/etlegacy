@@ -2770,6 +2770,7 @@ typedef enum
 #define CH_ACTIVATE_DIST    96
 #define CH_REVIVE_DIST      64
 #define CH_KNIFE_DIST       48
+#define CH_CORPSE_DIST      48
 #define CH_DIST             100///<128      ///< use the largest value from above
 #define CH_MAX_DIST         1024   ///< use the largest value from above
 #define CH_MAX_DIST_ZOOM    8192   ///< max dist for zooming hints
