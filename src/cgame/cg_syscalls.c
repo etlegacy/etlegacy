@@ -955,33 +955,6 @@ void trap_R_DrawStretchPicGradient(float x, float y, float w, float h,
 }
 
 /**
-* @brief trap_HollowCircle
-* @param[in] x
-* @param[in] y
-* @param[in] radius
-*/
-void trap_HollowCircle(float x, float y, float radius)
-{
-#if defined(/*VANILLA RENDERER*/) && defined(FEATURE_RENDERER_GLES)
-		int i;
-		int lineAmount = 100; //# of triangles used to draw circle
-
-		float twicePi = 2.0f * M_PI;
-
-		glBegin(GL_LINE_LOOP);
-		for (i = 0; i <= lineAmount; i++) {
-			glVertex2f(
-				x + (radius * cos(i *  twicePi / lineAmount)),
-				y + (radius* sin(i * twicePi / lineAmount))
-			);
-		}
-		glEnd();
-#elif defined(FEATURE_RENDERER2)
-	//TODO: IMPLEMENT IT FOR REND2 too
-#endif
-}
-
-/**
  * @brief trap_R_Add2dPolys
  * @param[in] verts
  * @param[in] numverts
