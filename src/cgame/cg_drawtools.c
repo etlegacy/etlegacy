@@ -373,7 +373,6 @@ void CG_DrawRect(float x, float y, float width, float height, float size, const 
 * @brief CG_DrawRect
 * @param[in] x
 * @param[in] y
-* @param[in,out] radius
 * @param[in,out] color
 */
 void CG_DrawHollowCircle(float x, float y, float radius, const float *color)
