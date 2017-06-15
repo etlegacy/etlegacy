@@ -370,6 +370,19 @@ void CG_DrawRect(float x, float y, float width, float height, float size, const 
 }
 
 /**
+* @brief CG_DrawRect
+* @param[in] x
+* @param[in] y
+* @param[in,out] color
+*/
+void CG_DrawHollowCircle(float x, float y, float radius, const float *color)
+{
+	trap_R_SetColor(color);
+	trap_HollowCircle(x, y, radius);
+	trap_R_SetColor(NULL);
+}
+
+/**
  * @brief CG_DrawRect_FixedBorder
  * @param[in] x
  * @param[in] y
