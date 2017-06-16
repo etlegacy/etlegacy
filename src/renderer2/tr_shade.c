@@ -2887,7 +2887,7 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	case AGEN_NORMALZFADE:
 	{
 #if 0
-		// FIX ME
+		// FIXME
 		float    alpha, range, lowest, highest, dot;
 		vec3_t   worldUp;
 		qboolean zombieEffect = qfalse;

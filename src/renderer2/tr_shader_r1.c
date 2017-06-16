@@ -981,7 +981,7 @@ char *FindShaderInShaderTextR1(const char *shaderName)
  * a single large text block that can be scanned for shader names
  * @param numMaterialFiles
  */
-void ScanAndLoadShaderFilesR1(const int numMaterialFiles)
+int ScanAndLoadShaderFilesR1(const int numMaterialFiles)
 {
 	char **shaderFiles;
 	char *buffers[MAX_SHADER_FILES];
@@ -1319,4 +1319,6 @@ void ScanAndLoadShaderFilesR1(const int numMaterialFiles)
 			SkipBracedSection(&p);
 		}
 	}
+
+	return numShaderFiles;
 }

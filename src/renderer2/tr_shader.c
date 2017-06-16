@@ -44,6 +44,9 @@ static char **shaderTextHashTable[MAX_SHADERTEXT_HASH];
 static char *s_guideText;
 static char *s_shaderText;
 
+static int numMaterialFiles; // R2 files
+static int numShaderFiles;   // R1 files
+
 /**
  * @brief R_RemapShader
  * @param[in] shaderName
@@ -5642,41 +5645,44 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 	implicitStateBits = GLS_DEFAULT;
 	implicitCullType  = CT_FRONT_SIDED;
 
-	// attempt to define shader from an explicit parameter file
-	shaderText = FindShaderInShaderText(strippedName);
-	if (shaderText)
+	if (numMaterialFiles > 0)
 	{
-		// enable this when building a pak file to get a global list
-		// of all explicit shaders
-		if (r_printShaders->integer)
+		// attempt to define shader from an explicit parameter file
+		shaderText = FindShaderInShaderText(strippedName);
+		if (shaderText)
 		{
-			Ren_Print("...loading explicit shader '%s' from material folder\n", strippedName);
+			// enable this when building a pak file to get a global list
+			// of all explicit shaders
+			if (r_printShaders->integer)
+			{
+				Ren_Print("...loading explicit shader '%s' from material folder\n", strippedName);
+			}
+
+			if (!ParseShader(shaderText))
+			{
+				// had errors, so use default shader
+				// there are some shaders (textures/common/clipweap and others ..) which are ignored (see ParseShader())
+				// - this might report false positives but since FindShader is always returning the default shader
+				//   and we've had no real warnings about buggy shaders here nobody did notice that ...
+				//Ren_Print("Warning: Couldn't parse shader %s (%s)- returning default shader\n", strippedName, name);
+
+				shader.defaultShader = qtrue;
+				sh                   = FinishShader();
+				return sh;
+			}
+
+			// allow implicit mappings
+			if (implicitMap[0] == '\0')
+			{
+				sh = FinishShader();
+				return sh;
+			}
+
+			isR2Shader = qtrue;
 		}
-
-		if (!ParseShader(shaderText))
-		{
-			// had errors, so use default shader
-			// there are some shaders (textures/common/clipweap and others ..) which are ignored (see ParseShader())
-			// - this might report false positives but since FindShader is always returning the default shader
-			//   and we've had no real warnings about buggy shaders here nobody did notice that ...
-			//Ren_Print("Warning: Couldn't parse shader %s (%s)- returning default shader\n", strippedName, name);
-
-			shader.defaultShader = qtrue;
-			sh                   = FinishShader();
-			return sh;
-		}
-
-		// allow implicit mappings
-		if (implicitMap[0] == '\0')
-		{
-			sh = FinishShader();
-			return sh;
-		}
-
-		isR2Shader = qtrue;
 	}
 
-	if (!isR2Shader) // don't overwrite r2 shader
+	if (numShaderFiles > 0 && !isR2Shader) // don't overwrite r2 shader
 	{
 		// In case there is no external material/shader found in r2 path
 		// we try to return the r1 stuff
@@ -6919,8 +6925,6 @@ static void CreateExternalShaders(void)
  */
 void R_InitShaders(void)
 {
-	int numMaterialFiles;
-
 	Com_Memset(shaderTableHashTable, 0, sizeof(shaderTableHashTable));
 	Com_Memset(shaderHashTable, 0, sizeof(shaderHashTable));
 
@@ -6929,8 +6933,7 @@ void R_InitShaders(void)
 	ScanAndLoadGuideFiles();
 
 	numMaterialFiles = ScanAndLoadShaderFiles();
-
-	ScanAndLoadShaderFilesR1(numMaterialFiles);
+	numShaderFiles   = ScanAndLoadShaderFilesR1(numMaterialFiles);
 
 	CreateExternalShaders();
 }
