@@ -127,7 +127,7 @@ void Fill_Clip(playerState_t *ps, int weapon)
  * @param fillClip
  * @return whether any ammo was added
  */
-int Add_Ammo(gentity_t *ent, int weapon, int count, qboolean fillClip)
+int Add_Ammo(gentity_t *ent, weapon_t weapon, int count, qboolean fillClip)
 {
 	weapon_t ammoweap      = BG_FindAmmoForWeapon(weapon);
 	int      maxammo       = BG_MaxAmmoForWeapon(ammoweap, ent->client->sess.skill);

@@ -618,7 +618,7 @@ int ClientNumberFromString(gentity_t *to, char *s)
  * @param[in] skill
  * @return
  */
-int GetSkillPointUntilLevelUp(gentity_t *ent, int skill)
+int GetSkillPointUntilLevelUp(gentity_t *ent, skillType_t skill)
 {
 	if (ent->client->sess.skill[skill] < NUM_SKILL_LEVELS - 1)
 	{
@@ -644,7 +644,7 @@ void Cmd_Give_f(gentity_t *ent)
 {
 	char *name, *amt;
 	//gitem_t     *it;
-	int      i;
+	weapon_t weapon;
 	qboolean give_all;
 	//gentity_t       *it_ent;
 	//trace_t     trace;
@@ -677,9 +677,11 @@ void Cmd_Give_f(gentity_t *ent)
 
 	if (Q_stricmpn(name, "skill", 5) == 0)
 	{
+		skillType_t skill;
+
 		if (hasAmount)
 		{
-			skillType_t skill = (skillType_t)amount; // Change amount to skill, so that we can use amount properly
+			skill = (skillType_t)amount; // Change amount to skill, so that we can use amount properly
 
 			if (skill >= SK_BATTLE_SENSE && skill < SK_NUM_SKILLS)
 			{
@@ -697,17 +699,17 @@ void Cmd_Give_f(gentity_t *ent)
 		else
 		{
 			// bumps all skills with 1 level
-			for (i = 0; i < SK_NUM_SKILLS; i++)
+			for (skill = 0; skill < SK_NUM_SKILLS; skill++)
 			{
 				// Detecting the correct amount to move to the next skill level
-				amount = GetSkillPointUntilLevelUp(ent, i);
+				amount = GetSkillPointUntilLevelUp(ent, skill);
 				if (amount < 0)
 				{
 					amount = 20;
 				}
 
-				G_AddSkillPoints(ent, i, amount);
-				G_DebugAddSkillPoints(ent, i, amount, "give skill");
+				G_AddSkillPoints(ent, skill, amount);
+				G_DebugAddSkillPoints(ent, skill, amount, "give skill");
 			}
 		}
 		return;
@@ -715,11 +717,11 @@ void Cmd_Give_f(gentity_t *ent)
 
 	if (Q_stricmpn(name, "medal", 5) == 0)
 	{
-		for (i = 0; i < SK_NUM_SKILLS; i++)
+		for (weapon = 0; weapon < SK_NUM_SKILLS; weapon++)
 		{
-			if (!ent->client->sess.medals[i])
+			if (!ent->client->sess.medals[weapon])
 			{
-				ent->client->sess.medals[i] = 1;
+				ent->client->sess.medals[weapon] = 1;
 			}
 		}
 		ClientUserinfoChanged(ent - g_entities);
@@ -763,9 +765,9 @@ void Cmd_Give_f(gentity_t *ent)
 
 	if (give_all || Q_stricmp(name, "weapons") == 0)
 	{
-		for (i = 0; i < WP_NUM_WEAPONS; i++)
+		for (weapon = 0; weapon < WP_NUM_WEAPONS; weapon++)
 		{
-			COM_BitSet(ent->client->ps.weapons, i);
+			COM_BitSet(ent->client->ps.weapons, weapon);
 		}
 
 		if (!give_all)
@@ -782,16 +784,16 @@ void Cmd_Give_f(gentity_t *ent)
 			    && ent->client->ps.weapon != WP_SATCHEL && ent->client->ps.weapon != WP_SATCHEL_DET
 			    )
 			{
-				Add_Ammo(ent, ent->client->ps.weapon, amount, qtrue);
+				Add_Ammo(ent, (weapon_t)ent->client->ps.weapon, amount, qtrue);
 			}
 		}
 		else
 		{
-			for (i = WP_KNIFE ; i < WP_NUM_WEAPONS ; i++)
+			for (weapon = WP_KNIFE ; weapon < WP_NUM_WEAPONS ; weapon++)
 			{
-				if (COM_BitCheck(ent->client->ps.weapons, i) && i != WP_SATCHEL && i != WP_SATCHEL_DET)
+				if (COM_BitCheck(ent->client->ps.weapons, weapon) && weapon != WP_SATCHEL && weapon != WP_SATCHEL_DET)
 				{
-					Add_Ammo(ent, i, 9999, qtrue);
+					Add_Ammo(ent, weapon, 9999, qtrue);
 				}
 			}
 		}
@@ -806,8 +808,8 @@ void Cmd_Give_f(gentity_t *ent)
 	// allowing "give ammo <n>" to only give to the selected weap.
 	if (Q_stricmpn(name, "allammo", 7) == 0 && amount)
 	{
-		for (i = WP_KNIFE ; i < WP_NUM_WEAPONS; i++)
-			Add_Ammo(ent, i, amount, qtrue);
+		for (weapon = WP_KNIFE ; weapon < WP_NUM_WEAPONS; weapon++)
+			Add_Ammo(ent, weapon, amount, qtrue);
 
 		if (!give_all)
 		{

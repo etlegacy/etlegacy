@@ -938,7 +938,7 @@ extern ammotable_t *GetAmmoTableData(int ammoIndex);
 typedef struct weapontable_s
 {
 	int weapon;                     ///< reference
-	int weapAlts;                   ///< bg
+	weapon_t weapAlts;              ///< bg
 	weapon_t akimboSideArm;         ///< bg
 
 	weapon_t ammoIndex;             ///< bg type of weapon ammo this uses.  (ex. WP_MP40 and WP_LUGER share 9mm ammo, so they both have WP_LUGER for giAmmoIndex)
@@ -1731,7 +1731,7 @@ typedef struct gitem_s
 	int quantity;               ///< for ammo how much, or duration of powerup (value not necessary for ammo/health.  that value set in gameskillnumber[] below)
 	itemType_t giType;          ///< IT_* flags
 
-	int giTag;
+	weapon_t giTag;
 
 #ifdef CGAMEDLL
 	itemInfo_t itemInfo;///< FIXME: fix default value in bg_itemlist
