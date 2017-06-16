@@ -272,6 +272,17 @@ void UI_LoadArenas(void)
 		UI_LoadArenasFromFile(filename);
 	}
 
+	// Print a warning!
+	// Too many pk3s in path cause trouble ...
+	// All pk3 file names are stored in configstring 1 (execute /csinfo 1)
+	// The size of configstring 1 is limited and because configstring 1 is also a part of total
+	// configstrings MAX_GAMESTATE error is more achievable
+	// Unfortunately the game  isn't designed to keep tons of pk3s in paths (game & mod)
+	if (uiInfo.mapCount >= 30) // 30 should be fail safe
+	{
+		trap_Print(va(S_COLOR_YELLOW "Warning: Too many pk3 files in path - %i files found.\nWe strongly do recommend to reduce the number of map/pk3 files to max. 30 in path\nif you want to start a listen server with connected players.\n", uiInfo.mapCount));
+	}
+
 	// sorting the maplist
 	qsort(uiInfo.mapList, uiInfo.mapCount, sizeof(uiInfo.mapList[0]), UI_SortArenas);
 }

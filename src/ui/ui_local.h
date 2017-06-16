@@ -363,7 +363,7 @@ extern void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack);
 #define MAX_ALIASES 64
 #define MAX_TEAMS 64
 
-#define MAX_MAPS 256
+#define MAX_MAPS 512
 #define MAX_PINGREQUESTS        16
 #define MAX_ADDRESSLENGTH       64
 #define MAX_DISPLAY_SERVERS     4096
