@@ -2340,7 +2340,7 @@ weapengineergoto3:
 					qboolean defusedObj = qfalse;
 
 					traceEnt->health = 255;
-					// Need some kind of event/announcement here
+					// TODO: Need some kind of event/announcement here
 
 					//Add_Ammo( ent, WP_DYNAMITE, 1, qtrue );
 

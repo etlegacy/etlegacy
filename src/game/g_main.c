@@ -952,7 +952,7 @@ qboolean G_EmplacedGunIsRepairable(gentity_t *ent, gentity_t *other)
  * traceEnt is the ent hit by the trace, checkEnt is the ent that is being
  * checked against (in case the traceent was an invisible_user or something)
  *
- * @param ent
+ * @param[in,out] ent
  */
 void G_CheckForCursorHints(gentity_t *ent)
 {
@@ -1055,16 +1055,17 @@ void G_CheckForCursorHints(gentity_t *ent)
 
 	if (tr->entityNum == ENTITYNUM_WORLD)
 	{
-//		if ((tr->contents & CONTENTS_WATER))
-//		{
-//			hintDist = CH_WATER_DIST;
-//			hintType = HINT_WATER;
-//		}
-//		else if ((tr->surfaceFlags & SURF_LADDER) && !(ps->pm_flags & PMF_LADDER))           // ladder
-//		{
-//			hintDist = CH_LADDER_DIST;
-//			hintType = HINT_LADDER;
-//		}
+		// NOTE: these hint are managed client side !
+		// if ((tr->contents & CONTENTS_WATER))
+		// {
+		//  hintDist = CH_WATER_DIST;
+		//  hintType = HINT_WATER;
+		// }
+		// else if ((tr->surfaceFlags & SURF_LADDER) && !(ps->pm_flags & PMF_LADDER))           // ladder
+		// {
+		//  hintDist = CH_LADDER_DIST;
+		//  hintType = HINT_LADDER;
+		// }
 
 		// building something - add this here because we don't have anything solid to trace to - quite ugly-ish
 		if (ent->client->touchingTOI && ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
