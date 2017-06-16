@@ -587,7 +587,7 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				Q_CleanStr(ui_profileCleanedStr);
 				Q_CleanDirName(ui_profileCleanedStr);
 
-				if (trap_FS_FOpenFile(va("profiles/%s/profile.dat", ui_profileCleanedStr), &f, FS_READ) >= 0)
+				if (trap_FS_FOpenFile(va("profiles/%s/profile.dat", ui_profileCleanedStr), &f, FS_READ) > 0)
 				{
 					alreadyExists = qtrue;
 					trap_FS_FCloseFile(f);
@@ -1096,7 +1096,7 @@ qboolean Script_CheckProfile(const char *profile_path)
 	char         com_pid[256];
 	int          pid;
 
-	if (trap_FS_FOpenFile(profile_path, &f, FS_READ) < 0)
+	if (trap_FS_FOpenFile(profile_path, &f, FS_READ) <= 0)
 	{
 		// no profile found, we're ok
 		return qtrue;
