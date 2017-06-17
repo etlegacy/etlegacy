@@ -6307,7 +6307,7 @@ static void ScanAndLoadGuideFiles(void)
 
 	if (!guideFiles || !numGuides)
 	{
-		Ren_Warning("WARNING: no shader guide files found\n");
+		Ren_Developer("WARNING: no shader guide files found\n");
 		return;
 	}
 

@@ -254,8 +254,8 @@ void CL_DeltaEntity(msg_t *msg, clSnapshot_t *frame, int newnum, entityState_t *
  * @param[in] oldframe
  * @param[out] newframe
  *
- * @note oldnum is setted to INT_MAX to ensure than newnum
- * will be never greater than oldnum in case the oldframe/oldindex are invalids.
+ * @note oldnum is set to INT_MAX to ensure newnum
+ * will never be greater than oldnum in case of invalid oldframe or oldindex
  */
 void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *newframe)
 {
