@@ -41,6 +41,10 @@
 #include "htable.h"
 #include "irc_client.h"
 
+#ifdef DEDICATED
+#include "../server/server.h"
+#endif
+
 #ifdef WIN32
 # include <winsock.h>
 # include <process.h>
