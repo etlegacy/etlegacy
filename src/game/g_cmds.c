@@ -717,11 +717,14 @@ void Cmd_Give_f(gentity_t *ent)
 
 	if (Q_stricmpn(name, "medal", 5) == 0)
 	{
-		for (weapon = 0; weapon < SK_NUM_SKILLS; weapon++)
+		int i;
+
+		for (i = SK_BATTLE_SENSE; i < SK_NUM_SKILLS; i++)
 		{
-			if (!ent->client->sess.medals[weapon])
+			if (!ent->client->sess.medals[i])
 			{
-				ent->client->sess.medals[weapon] = 1;
+				ent->client->sess.medals[i] = 1;
+				break; // add 1 medal, not all at once..
 			}
 		}
 		ClientUserinfoChanged(ent - g_entities);
