@@ -1205,7 +1205,10 @@ void Cmd_CleanHomepath_f(void)
 
 				if (force)
 				{
-					remove(va("%s%c%s", path, PATH_SEP, pFiles[j])); // enable *.so & *.dll lib deletion
+					if (remove(va("%s%c%s", path, PATH_SEP, pFiles[j])) != 0)
+					{
+						Com_Printf("WARNING: Cmd_CleanHomepath_f - cannot remove file '%s'\n", va("%s%c%s", path, PATH_SEP, pFiles[j]));
+					}
 				}
 				else
 				{
