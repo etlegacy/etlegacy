@@ -65,10 +65,10 @@
  * @param[in] outOfReserve amount to be added out of reserve
  * @return qboolean whether ammo was added to the clip.
  */
-int AddToClip(playerState_t *ps, int weapon, int ammomove, int outOfReserve)
+int AddToClip(playerState_t *ps, weapon_t weapon, int ammomove, int outOfReserve)
 {
 	int inclip, maxclip;
-	int ammoweap = BG_FindAmmoForWeapon(weapon);
+	weapon_t ammoweap = BG_FindAmmoForWeapon(weapon);
 
 	if (weapon < WP_LUGER || weapon >= WP_NUM_WEAPONS)
 	{
@@ -114,7 +114,7 @@ int AddToClip(playerState_t *ps, int weapon, int ammomove, int outOfReserve)
  * @param[in] ps
  * @param[in] weapon
  */
-void Fill_Clip(playerState_t *ps, int weapon)
+void Fill_Clip(playerState_t *ps, weapon_t weapon)
 {
 	AddToClip(ps, weapon, 0, qtrue);
 }
@@ -592,7 +592,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 	qboolean alreadyHave = qfalse;
 
 	// magic ammo for any two-handed weapon
-	if (ent->item->giTag == WP_AMMO)
+	if (ent->item->giWeapon == WP_AMMO)
 	{
 		AddMagicAmmo(other, ent->count);
 		if (ent->parent && ent->parent->client)
@@ -625,17 +625,17 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 	quantity = ent->count;
 
 	// check if player already had the weapon
-	alreadyHave = COM_BitCheck(other->client->ps.weapons, ent->item->giTag);
+	alreadyHave = COM_BitCheck(other->client->ps.weapons, ent->item->giWeapon);
 
 	// prevents drop/pickup weapon "quick reload" exploit
 	if (alreadyHave)
 	{
-		Add_Ammo(other, ent->item->giTag, quantity, qfalse);
+		Add_Ammo(other, ent->item->giWeapon, quantity, qfalse);
 
 		// secondary weapon ammo
 		if (ent->delay != 0.f)
 		{
-			Add_Ammo(other, weaponTable[ent->item->giTag].weapAlts, ent->delay, qfalse);
+			Add_Ammo(other, weaponTable[ent->item->giWeapon].weapAlts, ent->delay, qfalse);
 		}
 	}
 	else
@@ -652,13 +652,13 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 		}
 
 		// see if we can pick it up
-		if (G_CanPickupWeapon(ent->item->giTag, other))
+		if (G_CanPickupWeapon(ent->item->giWeapon, other))
 		{
 			weapon_t primaryWeapon;
 
 			if (other->client->sess.playerType == PC_SOLDIER && other->client->sess.skill[SK_HEAVY_WEAPONS] >= 4)
 			{
-				primaryWeapon = G_GetPrimaryWeaponForClientSoldier(ent->item->giTag, other->client);
+				primaryWeapon = G_GetPrimaryWeaponForClientSoldier(ent->item->giWeapon, other->client);
 			}
 			else
 			{
@@ -675,10 +675,10 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				other->client->dropWeaponTime = level.time;
 
 				// add the weapon
-				COM_BitSet(other->client->ps.weapons, ent->item->giTag);
+				COM_BitSet(other->client->ps.weapons, ent->item->giWeapon);
 
 				// fixup mauser/sniper issues
-				switch (ent->item->giTag)
+				switch (ent->item->giWeapon)
 				{
 				case WP_FG42:
 					COM_BitSet(other->client->ps.weapons, WP_FG42SCOPE);
@@ -711,27 +711,27 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 					break;
 				}
 
-				other->client->ps.ammoclip[BG_FindClipForWeapon(ent->item->giTag)] = 0;
-				other->client->ps.ammo[BG_FindAmmoForWeapon(ent->item->giTag)]     = 0;
+				other->client->ps.ammoclip[BG_FindClipForWeapon(ent->item->giWeapon)] = 0;
+				other->client->ps.ammo[BG_FindAmmoForWeapon(ent->item->giWeapon)]     = 0;
 
-				if (ent->item->giTag == WP_MORTAR || ent->item->giTag == WP_MORTAR2)
+				if (ent->item->giWeapon == WP_MORTAR || ent->item->giWeapon == WP_MORTAR2)
 				{
-					other->client->ps.ammo[BG_FindClipForWeapon(ent->item->giTag)] = quantity;
+					other->client->ps.ammo[BG_FindClipForWeapon(ent->item->giWeapon)] = quantity;
 
 					// secondary weapon ammo
 					if (ent->delay != 0.f)
 					{
-						Add_Ammo(other, weaponTable[ent->item->giTag].weapAlts, ent->delay, qfalse);
+						Add_Ammo(other, weaponTable[ent->item->giWeapon].weapAlts, ent->delay, qfalse);
 					}
 				}
 				else
 				{
-					other->client->ps.ammoclip[BG_FindClipForWeapon(ent->item->giTag)] = quantity;
+					other->client->ps.ammoclip[BG_FindClipForWeapon(ent->item->giWeapon)] = quantity;
 
 					// secondary weapon ammo
 					if (ent->delay != 0.f)
 					{
-						other->client->ps.ammo[weaponTable[ent->item->giTag].weapAlts] = ent->delay;
+						other->client->ps.ammo[weaponTable[ent->item->giWeapon].weapAlts] = ent->delay;
 					}
 				}
 			}
@@ -743,7 +743,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 	}
 
 #ifdef FEATURE_OMNIBOT
-	Bot_Event_AddWeapon(other->client->ps.clientNum, Bot_WeaponGameToBot(ent->item->giTag));
+	Bot_Event_AddWeapon(other->client->ps.clientNum, Bot_WeaponGameToBot(ent->item->giWeapon));
 #endif
 
 	return RESPAWN_NEVER;
@@ -853,9 +853,9 @@ void Touch_Item_Auto(gentity_t *ent, gentity_t *other, trace_t *trace)
 
 	if (!ent->active && ent->item->giType == IT_WEAPON)
 	{
-		if (ent->item->giTag != WP_AMMO)
+		if (ent->item->giWeapon != WP_AMMO)
 		{
-			if (!COM_BitCheck(other->client->ps.weapons, ent->item->giTag))
+			if (!COM_BitCheck(other->client->ps.weapons, ent->item->giWeapon))
 			{
 				return; // force activate only
 			}
@@ -1078,7 +1078,7 @@ gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNu
 
 		if (level.gameManager)
 		{
-			G_Script_ScriptEvent(level.gameManager, "trigger", flag->item->giTag == PW_REDFLAG ? "allied_object_dropped" : "axis_object_dropped");
+			G_Script_ScriptEvent(level.gameManager, "trigger", flag->item->giPowerUp == PW_REDFLAG ? "allied_object_dropped" : "axis_object_dropped");
 		}
 		G_Script_ScriptEvent(flag, "trigger", "dropped");
 	}

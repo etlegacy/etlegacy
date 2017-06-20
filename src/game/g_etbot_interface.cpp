@@ -1768,7 +1768,7 @@ static int _GetEntityClass(gentity_t *_ent)
 		}
 		else if (_ent->item && _ent->item->giType == IT_WEAPON)
 		{
-			return ET_CLASSEX_WEAPON + Bot_WeaponGameToBot(_ent->item->giTag);
+			return ET_CLASSEX_WEAPON + Bot_WeaponGameToBot(_ent->item->giWeapon);
 		}
 		break;
 	}

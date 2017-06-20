@@ -523,7 +523,7 @@ void BG_InitWeaponStrings(void)
 		// find this weapon in the itemslist, and extract the name
 		for (item = bg_itemlist + 1; item->classname; item++)
 		{
-			if (item->giType == IT_WEAPON && item->giTag == i)
+			if (item->giType == IT_WEAPON && item->giWeapon == i)
 			{
 				// found a match
 				weaponStrings[i].string = item->pickup_name;

@@ -678,7 +678,7 @@ static void CG_Item(centity_t *cent)
 		}
 		else
 		{
-			ent.customShader = cg_weapons[item->giTag].weaponIcon[1];
+			ent.customShader = cg_weapons[item->giWeapon].weaponIcon[1];
 		}
 		ent.shaderRGBA[0] = 255;
 		ent.shaderRGBA[1] = 255;
@@ -694,7 +694,7 @@ static void CG_Item(centity_t *cent)
 
 	if (item->giType == IT_WEAPON)
 	{
-		weaponInfo_t *weaponInfo = &cg_weapons[item->giTag];
+		weaponInfo_t *weaponInfo = &cg_weapons[item->giWeapon];
 
 		if (weaponInfo->standModel)                              // first try to put the weapon on it's 'stand'
 		{
@@ -789,13 +789,13 @@ static void CG_Item(centity_t *cent)
 	{
 		if (item->giType == IT_WEAPON)
 		{
-			ent.hModel = cg_weapons[item->giTag].weaponModel[W_PU_MODEL].model;
+			ent.hModel = cg_weapons[item->giWeapon].weaponModel[W_PU_MODEL].model;
 
-			if (item->giTag == WP_AMMO)
+			if (item->giWeapon == WP_AMMO)
 			{
 				if (cent->currentState.density == 2)
 				{
-					ent.customShader = cg_weapons[item->giTag].modModels[0];
+					ent.customShader = cg_weapons[item->giWeapon].modModels[0];
 				}
 			}
 		}

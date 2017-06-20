@@ -1731,10 +1731,11 @@ typedef struct gitem_s
 	int quantity;               ///< for ammo how much, or duration of powerup (value not necessary for ammo/health.  that value set in gameskillnumber[] below)
 	itemType_t giType;          ///< IT_* flags
 
-	weapon_t giTag;
+	weapon_t giWeapon;
+    powerup_t giPowerUp;
 
 #ifdef CGAMEDLL
-	itemInfo_t itemInfo;///< FIXME: fix default value in bg_itemlist
+	itemInfo_t itemInfo;        ///< FIXME: fix default value in bg_itemlist
 #endif
 
 } gitem_t;

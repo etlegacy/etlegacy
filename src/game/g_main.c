@@ -1342,11 +1342,11 @@ void G_CheckForCursorHints(gentity_t *ent)
 					hintType = HINT_TREASURE;
 					break;
 				case IT_WEAPON: {
-					qboolean canPickup = COM_BitCheck(ent->client->ps.weapons, it->giTag);
+					qboolean canPickup = COM_BitCheck(ent->client->ps.weapons, it->giWeapon);
 
 					if (!canPickup)
 					{
-						if (it->giTag == WP_AMMO)
+						if (it->giWeapon == WP_AMMO)
 						{
 							canPickup = qtrue;
 						}
@@ -1354,7 +1354,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 
 					if (!canPickup)
 					{
-						canPickup = G_CanPickupWeapon(it->giTag, ent);
+						canPickup = G_CanPickupWeapon(it->giWeapon, ent);
 					}
 
 					if (canPickup)

@@ -642,7 +642,7 @@ extern int CG_WeaponIndex(int weapnum, int *bank, int *cycle);
  */
 static void CG_ItemPickup(int itemNum)
 {
-	int                itemid = bg_itemlist[itemNum].giTag;
+	int                itemid = bg_itemlist[itemNum].giWeapon;
 	int                wpbank_cur, wpbank_pickup;
 	popupMessageType_t giType;
 

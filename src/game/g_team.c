@@ -228,7 +228,7 @@ void Team_ReturnFlagSound(gentity_t *ent, int team)
  */
 void Team_ReturnFlag(gentity_t *ent)
 {
-	int team = ent->item->giTag == PW_REDFLAG ? TEAM_AXIS : TEAM_ALLIES;
+	int team = ent->item->giPowerUp == PW_REDFLAG ? TEAM_AXIS : TEAM_ALLIES;
 
 	Team_ReturnFlagSound(ent, team);
 	Team_ResetFlag(ent);
@@ -244,7 +244,7 @@ void Team_ReturnFlag(gentity_t *ent)
  */
 void Team_DroppedFlagThink(gentity_t *ent)
 {
-	if (ent->item->giTag == PW_REDFLAG)
+	if (ent->item->giPowerUp == PW_REDFLAG)
 	{
 		G_Script_ScriptEvent(&g_entities[ent->s.otherEntityNum], "trigger", "returned");
 
@@ -256,7 +256,7 @@ void Team_DroppedFlagThink(gentity_t *ent)
 			G_Script_ScriptEvent(level.gameManager, "trigger", "axis_object_returned");
 		}
 	}
-	else if (ent->item->giTag == PW_BLUEFLAG)
+	else if (ent->item->giPowerUp == PW_BLUEFLAG)
 	{
 		G_Script_ScriptEvent(&g_entities[ent->s.otherEntityNum], "trigger", "returned");
 
