@@ -159,7 +159,8 @@ void main()
 	//color.rgb *= diffuse.rgb;
 	//color.rgb = L * 0.5 + 0.5;
 	color.rgb += specular * lightColorNoNdotL * pow(clamp(dot(N, H), 0.0, 1.0), r_SpecularExponent) * r_SpecularScale;
-	color.a    = var_Color.a; // for terrain blending
+	// for smooth terrain blending
+	color.a   *= var_Color.a; 
 
 
 #else // USE_NORMAL_MAPPING
@@ -205,7 +206,8 @@ void main()
 
 	vec4 color = diffuse;
 	color.rgb *= lightColor;
-	color.a    = var_Color.a; // for terrain blending
+	// for smooth terrain blending
+	color.a   *= var_Color.a; 
 #endif
 
 	// convert normal to [0,1] color space
