@@ -64,9 +64,9 @@
 
 // Used to determine where to store user-specific files
 static char    homePath[MAX_OSPATH] = { 0 };
-static jmp_buf sys_exitframe;
-static int     sys_retcode;
-static char    sys_exitstr[MAX_STRING_CHARS];
+//static jmp_buf sys_exitframe;
+//static int     sys_retcode;
+//static char    sys_exitstr[MAX_STRING_CHARS];
 
 /**
  * @return homepath pointing to "My Documents\\ETLegacy"
