@@ -335,6 +335,26 @@ static ID_INLINE float idSqrt(float x)
 
 #endif // __FreeBSD__
 
+//======================= NETBSD DEFINES =================================
+
+// the mac compiler can't handle >32k of locals, so we
+// just waste space and make big arrays static...
+#ifdef __NetBSD__
+
+#define MAC_STATIC
+
+#ifdef __i386__
+#define CPUSTRING   "netbsd-i386"
+#elif defined __x86_64__
+#define CPUSTRING   "netbsd-x86_64"
+#else
+#define CPUSTRING   "netbsd-other"
+#endif
+
+#define PATH_SEP '/'
+
+#endif //  __NetBSD__
+
 //=============================================================
 
 typedef unsigned char byte;
