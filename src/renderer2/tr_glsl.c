@@ -100,6 +100,7 @@ typedef struct GLShaderHeader_s
 	GLint binaryLength;                 ///< argument to glProgramBinary
 }GLShaderHeader_t;
 
+/*
 enum GLShaderTypeEnum
 {
 	LEGACY_VERTEX,
@@ -123,10 +124,11 @@ const GLShaderType_t shaderTypes[] =
 	{ LEGACY_FRAGMENT,     GL_FRAGMENT_SHADER,        "frag",     "_fp.glsl"  },
 	{ LEGACY_GEOMETRY,     GL_GEOMETRY_SHADER,        "geom",     "_gm.glsl"  },
 	{ LEGACY_TESS_CONTROL, GL_TESS_CONTROL_SHADER,    "tesscont", "_tsc.glsl" },
-	{ LEGACY_TESS_EVAL,    GL_TESS_EVALUATION_SHADER, "tesseval" "_tse.glsl" },
+	{ LEGACY_TESS_EVAL,    GL_TESS_EVALUATION_SHADER, "tesseval", "_tse.glsl" },
 };
 
 const int numberofshaderTypes = ARRAY_LEN(shaderTypes);
+*/
 
 trPrograms_t trProg;
 
