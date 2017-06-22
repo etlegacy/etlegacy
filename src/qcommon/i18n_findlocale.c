@@ -143,6 +143,7 @@ static int accumulate_locstring(const char *str, FL_Locale *l)
 	return 0;
 }
 
+#ifndef WIN32
 /**
  * @brief accumulate_env
  * @param[in] name
@@ -166,6 +167,7 @@ static int accumulate_env(const char *name, FL_Locale *l)
 	free(variant);
 	return 0;
 }
+#endif
 
 /**
  * @brief canonise_fl
