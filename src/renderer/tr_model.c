@@ -403,10 +403,14 @@ float r_anormals[NUMMDCVERTEXNORMALS][3] =
 #include "../renderercommon/anorms256.h"
 };
 
+// rain - unused
+#if 0
 /**
  * @brief R_MDC_GetVec
  * @param[in] anorm
  * @param[out] dir
+ *
+ * @note Unused
  */
 void R_MDC_GetVec(unsigned char anorm, vec3_t dir)
 {
@@ -417,6 +421,8 @@ void R_MDC_GetVec(unsigned char anorm, vec3_t dir)
  * @brief R_MDC_GetAnorm
  * @param[in] dir
  * @return
+ *
+ * @note Unused
  */
 unsigned char R_MDC_GetAnorm(const vec3_t dir)
 {
@@ -505,6 +511,8 @@ unsigned char R_MDC_GetAnorm(const vec3_t dir)
  * @param[in] normal
  * @param[out] out
  * @return
+ *
+ * @note Unused
  */
 qboolean R_MDC_EncodeXyzCompressed(const vec3_t vec, const vec3_t normal, mdcXyzCompressed_t *out)
 {
@@ -521,17 +529,15 @@ qboolean R_MDC_EncodeXyzCompressed(const vec3_t vec, const vec3_t normal, mdcXyz
 		{
 			return qfalse;
 		}
-		retval.ofsVec += (((int)Q_fabs((vec[i] + MDC_DIST_SCALE * 0.5) * (1.0 / MDC_DIST_SCALE) + MDC_MAX_OFS)) << (i * MDC_BITS_PER_AXIS));
+		retval.ofsVec += (((unsigned int)(Q_fabs((vec[i] + MDC_DIST_SCALE * 0.5f) * (1.0f / MDC_DIST_SCALE) + MDC_MAX_OFS)) << (i * MDC_BITS_PER_AXIS)));
 	}
 	anorm          = R_MDC_GetAnorm(normal);
-	retval.ofsVec |= ((int)anorm) << 24;
+	retval.ofsVec |= ((unsigned int)anorm) << 24;
 
 	*out = retval;
 	return qtrue;
 }
 
-// rain - unused
-#if 0
 /**
  * @brief R_MDC_GetXyzCompressed
  * @param md3 - unused
