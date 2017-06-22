@@ -2193,7 +2193,7 @@ extern float r_anormals[NUMMDCVERTEXNORMALS][3];
  * @def MDC_MAX_ERROR
  * @brief Lower for more accuracy, but less range
  */
-#define MDC_DIST_SCALE      0.05
+#define MDC_DIST_SCALE      0.05f
 
 /**
  * @def MDC_BITS_PER_AXIS
@@ -2201,15 +2201,15 @@ extern float r_anormals[NUMMDCVERTEXNORMALS][3];
  * @note We are locked in at 8 or less bits since changing to byte-encoded normals
  */
 #define MDC_BITS_PER_AXIS   8
-#define MDC_MAX_OFS         127.0   ///< to be safe
+#define MDC_MAX_OFS         127.0f   ///< to be safe
 
 #define MDC_MAX_DIST        (MDC_MAX_OFS * MDC_DIST_SCALE)
 
 // optimized version
 #define R_MDC_DecodeXyzCompressed(ofsVec, out, normal) \
-	(out)[0] = ((float)((ofsVec) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
-	(out)[1] = ((float)((ofsVec >> 8) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
-	(out)[2] = ((float)((ofsVec >> 16) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+	(out)[0] = (((ofsVec) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+	(out)[1] = (((ofsVec >> 8) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
+	(out)[2] = (((ofsVec >> 16) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE; \
 	VectorCopy((r_anormals)[(ofsVec >> 24)], normal);
 
 void R_AddMDCSurfaces(trRefEntity_t *ent);
