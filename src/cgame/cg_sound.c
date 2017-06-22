@@ -2001,6 +2001,7 @@ panel_button_t speakerEditorRandomEdit =
 	NULL,                             // keyUp
 	CG_SpeakerEditor_RenderEdit,
 	CG_SpeakerEditor_RandomEditFinish,
+    0,
 };
 
 panel_button_t speakerEditorVolumeLabel =
@@ -2088,6 +2089,7 @@ panel_button_t speakerEditorCancelButton =
 	CG_SpeakerEditor_Cancel_KeyUp,// keyUp
 	CG_SpeakerEditor_RenderButton,
 	NULL,
+    0,
 };
 
 panel_button_t speakerEditorDeleteButton =

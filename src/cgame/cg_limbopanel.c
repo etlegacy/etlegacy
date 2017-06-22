@@ -280,9 +280,9 @@ panel_button_t classBar =
 	NULL,
 	{ 470,                    320,140, 20 },
 	{ 0,                      0,  0,   0, 0, 0, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
+	NULL,                     // font
+	NULL,                     // keyDown
+	NULL,                     // keyUp
 	BG_PanelButtonsRender_Img,
 	NULL,
 	0
@@ -294,9 +294,9 @@ panel_button_t classBarText =
 	NULL,
 	{ 460,                      334,   160, 16 },
 	{ 0,                        0,     0,   0, 0, 0, 0, 0},
-	&classBarFont,              /* font     */
-	NULL,                       /* keyDown  */
-	NULL,                       /* keyUp    */
+	&classBarFont,              // font
+	NULL,                       // keyDown
+	NULL,                       // keyUp
 	CG_LimboPanel_ClassBar_Draw,
 	NULL,
 	0
@@ -338,9 +338,9 @@ panel_button_t filterTitleText =
 	"FILTERS",
 	{ 8,                       36, 0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
-	&weaponPanelFilterFont,    /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&weaponPanelFilterFont,    // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -394,9 +394,9 @@ panel_button_t playerLimboHead =
 	NULL,
 	{ 456,                   30,   68, 84 },
 	{ 0,                     0,    0,  0, 0, 0, 0, 0},
-	NULL,                    /* font     */
-	NULL,                    /* keyDown  */
-	NULL,                    /* keyUp    */
+	NULL,                    // font
+	NULL,                    // keyDown
+	NULL,                    // keyUp
 	CG_LimboPanel_RenderHead,
 	NULL,
 	0
@@ -408,9 +408,9 @@ panel_button_t playerXPCounterText =
 	"XP",
 	{ 566,                        108,   60, 16 },
 	{ 2,                          0,     0,  0, 0, 0, 0, 0},
-	&spawnLimboFont,              /* font     */
-	NULL,                         /* keyDown  */
-	NULL,                         /* keyUp    */
+	&spawnLimboFont,              // font
+	NULL,                         // keyDown
+	NULL,                         // keyUp
 	CG_LimboPanelRenderText_NoLMS,
 	NULL,
 	0
@@ -422,9 +422,9 @@ panel_button_t playerXPCounter =
 	NULL,
 	{ 584,                      96,   40, 16 },
 	{ 2,                        0,    0,  0, 0, 0, 0, 0},
-	NULL,                       /* font     */
-	NULL,                       /* keyDown  */
-	NULL,                       /* keyUp    */
+	NULL,                       // font
+	NULL,                       // keyDown
+	NULL,                       // keyUp
 	CG_LimboPanel_RenderCounter,
 	NULL,
 	0
@@ -436,9 +436,9 @@ panel_button_t playerSkillCounter0 =
 	NULL,
 	{ 552,                      36,   60, 16 },
 	{ 4,                        0,    0,  0, 0, 0, 4, 0},
-	NULL,                       /* font     */
-	NULL,                       /* keyDown  */
-	NULL,                       /* keyUp    */
+	NULL,                       // font
+	NULL,                       // keyDown
+	NULL,                       // keyUp
 	CG_LimboPanel_RenderCounter,
 	NULL,
 	0
@@ -450,9 +450,9 @@ panel_button_t playerSkillCounter1 =
 	NULL,
 	{ 552,                      56,   60, 16 },
 	{ 4,                        1,    0,  0, 0, 0, 4, 0},
-	NULL,                       /* font     */
-	NULL,                       /* keyDown  */
-	NULL,                       /* keyUp    */
+	NULL,                       // font
+	NULL,                       // keyDown
+	NULL,                       // keyUp
 	CG_LimboPanel_RenderCounter,
 	NULL,
 	0
@@ -464,9 +464,9 @@ panel_button_t playerSkillCounter2 =
 	NULL,
 	{ 552,                      76,   60, 16 },
 	{ 4,                        2,    0,  0, 0, 0, 4, 0},
-	NULL,                       /* font     */
-	NULL,                       /* keyDown  */
-	NULL,                       /* keyUp    */
+	NULL,                       // font
+	NULL,                       // keyDown
+	NULL,                       // keyUp
 	CG_LimboPanel_RenderCounter,
 	NULL,
 	0
@@ -478,11 +478,12 @@ panel_button_t playerSkillIcon0 =
 	NULL,
 	{ 532,                        36,   16, 16 },
 	{ 0,                          0,    0,  0, 0, 0, 0, 0},
-	NULL,                         /* font     */
-	NULL,                         /* keyDown  */
-	NULL,                         /* keyUp    */
+	NULL,                         // font
+	NULL,                         // keyDown
+	NULL,                         // keyUp
 	CG_LimboPanel_RenderSkillIcon,
 	NULL,
+    0
 };
 
 panel_button_t playerSkillIcon1 =
@@ -491,9 +492,9 @@ panel_button_t playerSkillIcon1 =
 	NULL,
 	{ 532,                        56,   16, 16 },
 	{ 1,                          0,    0,  0, 0, 0, 0, 0},
-	NULL,                         /* font     */
-	NULL,                         /* keyDown  */
-	NULL,                         /* keyUp    */
+	NULL,                         // font
+	NULL,                         // keyDown
+	NULL,                         // keyUp
 	CG_LimboPanel_RenderSkillIcon,
 	NULL,
 	0
@@ -505,9 +506,9 @@ panel_button_t playerSkillIcon2 =
 	NULL,
 	{ 532,                        76,   16, 16 },
 	{ 2,                          0,    0,  0, 0, 0, 0, 0},
-	NULL,                         /* font     */
-	NULL,                         /* keyDown  */
-	NULL,                         /* keyUp    */
+	NULL,                         // font
+	NULL,                         // keyDown
+	NULL,                         // keyUp
 	CG_LimboPanel_RenderSkillIcon,
 	NULL,
 	0
@@ -522,10 +523,11 @@ panel_button_t spawnPointText =
 	{ 150,                     392,0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
 	&spawnLimboFont,           /* font        */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
+    0
 };
 
 panel_button_t spawnPointButton =
@@ -534,9 +536,9 @@ panel_button_t spawnPointButton =
 	NULL,
 	{ 132,                              381,   15, 15 },
 	{ 0,                                0,     0,  0, 0, 0, 0, 0},
-	NULL,                               /* font     */
-	CG_LimboPanel_SpawnPointButton_KeyDown,/* keyDown  */
-	NULL,                               /* keyUp    */
+	NULL,                               // font
+	CG_LimboPanel_SpawnPointButton_KeyDown,// keyDown
+	NULL,                               // keyUp
 	CG_LimboPanel_SpawnPointButton_Draw,
 	NULL,
 	0
@@ -548,11 +550,12 @@ panel_button_t mapTimeCounter =
 	NULL,
 	{ 276,                      5,   20, 14 },
 	{ 5,                        0,   0,  0, 0, 0, 0, 0},
-	NULL,                       /* font     */
-	NULL,                       /* keyDown  */
-	NULL,                       /* keyUp    */
+	NULL,                       // font
+	NULL,                       // keyDown
+	NULL,                       // keyUp
 	CG_LimboPanel_RenderCounter,
 	NULL,
+    0
 };
 
 panel_button_t mapTimeCounter2 =
@@ -561,9 +564,9 @@ panel_button_t mapTimeCounter2 =
 	NULL,
 	{ 252,                      5,   20, 14 },
 	{ 5,                        1,   0,  0, 0, 0, 0, 0},
-	NULL,                       /* font     */
-	NULL,                       /* keyDown  */
-	NULL,                       /* keyUp    */
+	NULL,                       // font
+	NULL,                       // keyDown
+	NULL,                       // keyUp
 	CG_LimboPanel_RenderCounter,
 	NULL,
 	0
@@ -576,8 +579,8 @@ panel_button_t mapTimeCounterText =
 	{ 176,                     16, 0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
 	&spawnLimboFont,           /* font        */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -591,9 +594,9 @@ panel_button_t respawnCounter =
 	NULL,
 	{ 400,                      5,   20, 14 },
 	{ 3,                        0,   0,  0, 0, 0, 0, 0},
-	NULL,                       /* font     */
-	NULL,                       /* keyDown  */
-	NULL,                       /* keyUp    */
+	NULL,                       // font
+	NULL,                       // keyDown
+	NULL,                       // keyUp
 	CG_LimboPanel_RenderCounter,
 	NULL,
 	0
@@ -606,8 +609,8 @@ panel_button_t respawnCounterText =
 	{ 300,                     16, 0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
 	&spawnLimboFont,           /* font        */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -622,8 +625,8 @@ panel_button_t limboTitleText =
 	{ 8,                       16, 0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
 	&titleLimboFont,           /* font        */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -636,8 +639,8 @@ panel_button_t playerSetupText =
 	{ 448,                     16, 0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
 	&titleLimboFont,           /* font        */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -649,9 +652,9 @@ panel_button_t skillsText =
 	"SKILLS",
 	{ 532,                             32, 0, 0 },
 	{ 0,                               0,  0, 0, 0, 0, 0, 0},
-	&weaponPanelStatsFont,             /* font     */
-	NULL,                              /* keyDown  */
-	NULL,                              /* keyUp    */
+	&weaponPanelStatsFont,             // font
+	NULL,                              // keyDown
+	NULL,                              // keyUp
 	CG_LimboPanelRenderText_SkillsText,
 	NULL,
 	0
@@ -665,9 +668,9 @@ panel_button_t weaponPanel =
 	NULL,
 	{ 455,                    353,   140, 56 },
 	{ 0,                      0,     0,   0, 0, 0, 0, 0},
-	NULL,                     /* font     */
-	CG_LimboPanel_WeaponPanel_KeyDown,/* keyDown  */
-	CG_LimboPanel_WeaponPanel_KeyUp,/* keyUp    */
+	NULL,                     // font
+	CG_LimboPanel_WeaponPanel_KeyDown,// keyDown
+	CG_LimboPanel_WeaponPanel_KeyUp,// keyUp
 	CG_LimboPanel_WeaponPanel,
 	NULL,
 	0
@@ -679,9 +682,9 @@ panel_button_t weaponLight1 =
 	NULL,
 	{ 605,                     362,   20, 20 },
 	{ 0,                       0,     0,  0, 0, 0, 0, 0},
-	NULL,                      /* font     */
-	CG_LimboPanel_WeaponLights_KeyDown,/* keyDown  */
-	NULL,                      /* keyUp    */
+	NULL,                      // font
+	CG_LimboPanel_WeaponLights_KeyDown,// keyDown
+	NULL,                      // keyUp
 	CG_LimboPanel_WeaponLights,
 	NULL,
 	0
@@ -693,9 +696,9 @@ panel_button_t weaponLight1Text =
 	"1",
 	{ 609,                     378,   0, 0 },
 	{ 0,                       0,     0, 0, 0, 0, 0, 0},
-	&weaponButtonFont,         /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&weaponButtonFont,         // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -707,9 +710,9 @@ panel_button_t weaponLight2 =
 	NULL,
 	{ 605,                     386,   20, 20 },
 	{ 1,                       0,     0,  0, 0, 0, 0, 0},
-	NULL,                      /* font     */
-	CG_LimboPanel_WeaponLights_KeyDown,/* keyDown  */
-	NULL,                      /* keyUp    */
+	NULL,                      // font
+	CG_LimboPanel_WeaponLights_KeyDown,// keyDown
+	NULL,                      // keyUp
 	CG_LimboPanel_WeaponLights,
 	NULL,
 	0
@@ -721,9 +724,9 @@ panel_button_t weaponLight2Text =
 	"2",
 	{ 609,                     402,   0, 0 },
 	{ 0,                       0,     0, 0, 0, 0, 0, 0},
-	&weaponButtonFont,         /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&weaponButtonFont,         // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -735,9 +738,9 @@ panel_button_t weaponStatsShotsText =
 	"SHOTS",
 	{ 460,                     422,0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
-	&weaponPanelStatsFont,     /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&weaponPanelStatsFont,     // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -749,9 +752,9 @@ panel_button_t weaponStatsShotsCounter =
 	NULL,
 	{ 460,                      426,   40, 14 },
 	{ 6,                        0,     0,  0, 0, 0, 0, 0},
-	NULL,                       /* font     */
-	NULL,                       /* keyDown  */
-	NULL,                       /* keyUp    */
+	NULL,                       // font
+	NULL,                       // keyDown
+	NULL,                       // keyUp
 	CG_LimboPanel_RenderCounter,
 	NULL,
 	0
@@ -763,9 +766,9 @@ panel_button_t weaponStatsHitsText =
 	"HITS",
 	{ 516,                     422, 0, 0 },
 	{ 0,                       0,   0, 0, 0, 0, 0, 0},
-	&weaponPanelStatsFont,     /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&weaponPanelStatsFont,     // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -777,9 +780,9 @@ panel_button_t weaponStatsHitsCounter =
 	NULL,
 	{ 516,                      426,   40, 14 },
 	{ 6,                        1,     0,  0, 0, 0, 0, 0},
-	NULL,                       /* font     */
-	NULL,                       /* keyDown  */
-	NULL,                       /* keyUp    */
+	NULL,                       // font
+	NULL,                       // keyDown
+	NULL,                       // keyUp
 	CG_LimboPanel_RenderCounter,
 	NULL,
 	0
@@ -792,9 +795,9 @@ panel_button_t weaponStatsAccText =
 	"ACC",
 	{ 570,                     422,  0, 0 },
 	{ 0,                       0,    0, 0, 0, 0, 0, 0},
-	&weaponPanelStatsFont,     /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&weaponPanelStatsFont,     // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -806,9 +809,9 @@ panel_button_t weaponStatsAccCounter =
 	NULL,
 	{ 570,                      426,   30, 14 },
 	{ 6,                        2,     0,  0, 0, 0, 0, 0},
-	NULL,                       /* font     */
-	NULL,                       /* keyDown  */
-	NULL,                       /* keyUp    */
+	NULL,                       // font
+	NULL,                       // keyDown
+	NULL,                       // keyUp
 	CG_LimboPanel_RenderCounter,
 	NULL,
 	0
@@ -820,9 +823,9 @@ panel_button_t weaponStatsAccPercentage =
 	"%",
 	{ 600,                     436,   0, 0 },
 	{ 0,                       0,     0, 0, 0, 0, 0, 0},
-	&weaponPanelStatsPercFont, /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&weaponPanelStatsPercFont, // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -836,9 +839,9 @@ panel_button_t commandmapPanel =
 	NULL,
 	{ CC_2D_X,                     CC_2D_Y,       CC_2D_W, CC_2D_H },
 	{ 0,                           0,             0,       0, 0, 0, 0, 0},
-	NULL,                          /* font     */
-	NULL,                          /* keyDown  */
-	NULL,                          /* keyUp    */
+	NULL,                          // font
+	NULL,                          // keyDown
+	NULL,                          // keyUp
 	CG_LimboPanel_RenderCommandMap,
 	NULL,
 	0
@@ -852,9 +855,9 @@ panel_button_t objectivePanel =
 	NULL,
 	{ 8,                              398, 240, 74 },
 	{ 0,                              0,   0,   0, 0, 0, 0, 0},
-	NULL,                             /* font     */
-	NULL,                             /* keyDown  */
-	NULL,                             /* keyUp    */
+	NULL,                             // font
+	NULL,                             // keyDown
+	NULL,                             // keyUp
 	CG_LimboPanel_RenderObjectiveBack,
 	NULL,
 	0
@@ -866,9 +869,9 @@ panel_button_t objectivePanelText =
 	NULL,
 	{ 8,                              398, 240, 74 },
 	{ 0,                              0,   0,   0, 0, 0, 0, 0},
-	&objectivePanelTxt,               /* font     */
-	NULL,                             /* keyDown  */
-	NULL,                             /* keyUp    */
+	&objectivePanelTxt,               // font
+	NULL,                             // keyDown
+	NULL,                             // keyUp
 	CG_LimboPanel_RenderObjectiveText,
 	NULL,
 	0
@@ -880,9 +883,9 @@ panel_button_t objectivePanelTitle =
 	"OBJECTIVES",
 	{ 8,                       392,0, 0 },
 	{ 0,                       0,  0, 0, 0, 0, 0, 0},
-	&titleLimboFont,           /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&titleLimboFont,           // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -894,9 +897,9 @@ panel_button_t objectivePanelButtonUp =
 	NULL,
 	{ 252,                       416,24, 24 },
 	{ 0,                         0,  0,  0, 0, 0, 0, 1},
-	NULL,                        /* font     */
-	CG_LimboPanel_ObjectiveText_KeyDown,/* keyDown  */
-	NULL,                        /* keyUp    */
+	NULL,                        // font
+	CG_LimboPanel_ObjectiveText_KeyDown,// keyDown
+	NULL,                        // keyUp
 	BG_PanelButtonsRender_Img,
 	NULL,
 	0
@@ -908,9 +911,9 @@ panel_button_t briefingButton =
 	NULL,
 	{ 252,                            388,   24, 24 },
 	{ 0,                              0,     0,  0, 0, 0, 0, 0},
-	NULL,                             /* font     */
-	CG_LimboPanel_BriefingButton_KeyDown,/* keyDown  */
-	NULL,                             /* keyUp    */
+	NULL,                             // font
+	CG_LimboPanel_BriefingButton_KeyDown,// keyDown
+	NULL,                             // keyUp
 	CG_LimboPanel_BriefingButton_Draw,
 	NULL,
 	0
@@ -922,9 +925,9 @@ panel_button_t objectivePanelButtonDown =
 	NULL,
 	{ 252,                       444,24, 24 },
 	{ 0,                         0,  0,  0, 0, 0, 0, 0},
-	NULL,                        /* font     */
-	CG_LimboPanel_ObjectiveText_KeyDown,/* keyDown  */
-	NULL,                        /* keyUp    */
+	NULL,                        // font
+	CG_LimboPanel_ObjectiveText_KeyDown,// keyDown
+	NULL,                        // keyUp
 	BG_PanelButtonsRender_Img,
 	NULL,
 	0
@@ -938,9 +941,9 @@ panel_button_t okButtonText =
 	"OK",
 	{ 484,                     469,   100, 40 },
 	{ 0,                       0,     0,   0, 0, 0, 0, 0},
-	&titleLimboFont,           /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&titleLimboFont,           // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -952,9 +955,9 @@ panel_button_t okButton =
 	NULL,
 	{ 454 + 2,                454 + 2,       82 - 4, 18 - 4 },
 	{ 0,                      0,             0,      0, 0, 0, 0, 0},
-	NULL,                     /* font     */
-	CG_LimboPanel_OkButton_KeyDown,/* keyDown  */
-	NULL,                     /* keyUp    */
+	NULL,                     // font
+	CG_LimboPanel_OkButton_KeyDown,// keyDown
+	NULL,                     // keyUp
 	CG_LimboPanel_Border_Draw,
 	NULL,
 	0
@@ -966,9 +969,9 @@ panel_button_t cancelButtonText =
 	"CANCEL",
 	{ 556,                     469,100, 40 },
 	{ 0,                       0,  0,   0, 0, 0, 0, 0},
-	&titleLimboFont,           /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&titleLimboFont,           // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -980,9 +983,9 @@ panel_button_t cancelButton =
 	NULL,
 	{ 543 + 2,                454 + 2,       82 - 4, 18 - 4 },
 	{ 0,                      0,             0,      0, 0, 0, 0, 0},
-	NULL,                     /* font     */
-	CG_LimboPanel_CancelButton_KeyDown,/* keyDown  */
-	NULL,                     /* keyUp    */
+	NULL,                     // font
+	CG_LimboPanel_CancelButton_KeyDown,// keyDown
+	NULL,                     // keyUp
 	CG_LimboPanel_Border_Draw,
 	NULL,
 	0
@@ -996,9 +999,9 @@ panel_button_t nameEdit =
 	"limboname",
 	{ SCREEN_HEIGHT,             150,      120, 20 },
 	{ 0,                         0,        0,   0, 0, 0, 0, 0},
-	&nameEditFont,               /* font     */
-	BG_PanelButton_EditClick,    /* keyDown  */
-	NULL,                        /* keyUp    */
+	&nameEditFont,               // font
+	BG_PanelButton_EditClick,    // keyDown
+	NULL,                        // keyUp
 	BG_PanelButton_RenderEdit,
 	CG_LimboPanel_NameEditFinish,
 	0
@@ -1010,9 +1013,9 @@ panel_button_t plusButton =
 	NULL,
 	{ 18,                     325,  18, 12 },
 	{ 12,                     0,    0,  0, 0, 0, 0, 0},
-	NULL,                     /* font     */
-	CG_LimboPanel_PlusButton_KeyDown,/* keyDown  */
-	NULL,                     /* keyUp    */
+	NULL,                     // font
+	CG_LimboPanel_PlusButton_KeyDown,// keyDown
+	NULL,                     // keyUp
 	CG_LimboPanel_Border_Draw,
 	NULL,
 	0
@@ -1024,9 +1027,9 @@ panel_button_t plusButtonText =
 	"+",
 	{ 18,                      323,  18, 12 },
 	{ 12,                      0,    0,  0, 0, 0, 0, 0},
-	&titleLimboFontBigCenter,  /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&titleLimboFontBigCenter,  // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -1038,9 +1041,9 @@ panel_button_t minusButton =
 	NULL,
 	{ 18,                     348,  18, 12 },
 	{ 12,                     0,    0,  0, 0, 0, 0, 0},
-	NULL,                     /* font     */
-	CG_LimboPanel_MinusButton_KeyDown,/* keyDown  */
-	NULL,                     /* keyUp    */
+	NULL,                     // font
+	CG_LimboPanel_MinusButton_KeyDown,// keyDown
+	NULL,                     // keyUp
 	CG_LimboPanel_Border_Draw,
 	NULL,
 	0
@@ -1052,9 +1055,9 @@ panel_button_t minusButtonText =
 	"-",
 	{ 18,                      346,  18, 12 },
 	{ 12,                      0,    0,  0, 0, 0, 0, 0},
-	&titleLimboFontBigCenter,  /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&titleLimboFontBigCenter,  // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
