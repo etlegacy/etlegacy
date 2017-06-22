@@ -89,7 +89,7 @@ void LAN_LoadCachedServers(void)
 			cls.numfavoriteservers = 0;
 		}
 		FS_FCloseFile(fileIn);
-		
+
 		Com_Printf("Total favourite servers restored: %i\n", cls.numfavoriteservers);
 	}
 	else
@@ -226,9 +226,9 @@ static int LAN_AddServer(int source, const char *name, const char *address)
 
 /**
  * @brief Removes server(s) from the 'cache'
- * @param source Positive values AS_LOCAL, AS_GLOBAL, AS_FAVORITES
+ * @param[in] source Positive values AS_LOCAL, AS_GLOBAL, AS_FAVORITES
  *               or negative values AS_LOCAL_ALL, AS_GLOBAL_ALL, AS_FAVORITES_ALL to remove all
- * @param addr   Server address - in case of negative source param addr is not required
+ * @param[in] addr   Server address - in case of negative source param addr is not required
  *
  */
 static void LAN_RemoveServer(int source, const char *addr)
@@ -255,7 +255,7 @@ static void LAN_RemoveServer(int source, const char *addr)
 		break;
 	}
 
-	if (servers && count > 0)
+	if (servers && count && *count > 0)
 	{
 		if (source >= AS_LOCAL) // single server removal
 		{
