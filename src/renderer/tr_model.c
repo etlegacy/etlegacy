@@ -45,8 +45,6 @@ static qboolean R_LoadMDS(model_t *mod, void *buffer, const char *name);
 static qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name);
 static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *name);
 
-model_t *loadmodel;
-
 /**
  * @brief R_GetModelByHandle
  * @param[in] hModel
@@ -245,8 +243,6 @@ qhandle_t RE_RegisterModel(const char *name)
 		ri.FS_ReadFile(name, (void **)&buf);
 		if (buf)
 		{
-			loadmodel = mod;
-
 			ident = LittleLong(*(unsigned *)buf);
 			if (ident == MDS_IDENT)
 			{
@@ -309,8 +305,6 @@ qhandle_t RE_RegisterModel(const char *name)
 				continue;
 			}
 		}
-
-		loadmodel = mod;
 
 		ident = LittleLong(*(unsigned *)buf);
 		// mesh compression

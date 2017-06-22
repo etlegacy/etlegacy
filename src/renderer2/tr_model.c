@@ -45,8 +45,6 @@ static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *name);
 qboolean R_LoadMD5(model_t *mod, byte *buffer, int bufferSize, const char *name);
 qboolean R_LoadPSK(model_t *mod, byte *buffer, int bufferSize, const char *name);
 
-model_t *loadmodel;
-
 /**
  * @brief R_GetModelByHandle
  * @param[in] hModel
@@ -166,8 +164,6 @@ qhandle_t RE_RegisterModel(const char *name)
 		bufferLen = ri.FS_ReadFile(name, (void **)&buffer);
 		if (buffer)
 		{
-			loadmodel = mod;
-
 			ident = LittleLong(*(unsigned *)buffer);
 #if 0
 			if (ident == MDS_IDENT)
@@ -243,8 +239,6 @@ qhandle_t RE_RegisterModel(const char *name)
 				continue;
 			}
 		}
-
-		loadmodel = mod;
 
 		ident = LittleLong(*(unsigned *)buffer);
 		if (ident != MD3_IDENT && ident != MDC_IDENT)
