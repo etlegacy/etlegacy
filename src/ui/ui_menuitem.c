@@ -1205,7 +1205,7 @@ qboolean Item_CheckBox_HandleKey(itemDef_t *item, int key)
 				}
 				else
 				{
-					DC->setCVar(item->cvar, va("%i", DC->getCVarValue(item->cvar) != 0.f));
+					DC->setCVar(item->cvar, va("%i", DC->getCVarValue(item->cvar) == 0.f));
 				}
 			}
 
