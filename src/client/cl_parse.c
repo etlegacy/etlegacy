@@ -254,7 +254,7 @@ void CL_DeltaEntity(msg_t *msg, clSnapshot_t *frame, int newnum, entityState_t *
  * @param[in] oldframe
  * @param[out] newframe
  *
- * @note oldnum is set to INT_MAX to ensure newnum
+ * @note oldnum is set to MAX_GENTITIES to ensure newnum
  * will never be greater than oldnum in case of invalid oldframe or oldindex
  */
 void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *newframe)
@@ -272,13 +272,13 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 
 	if (!oldframe)
 	{
-		oldnum = INT_MAX;
+		oldnum = MAX_GENTITIES;
 	}
 	else
 	{
 		if (oldindex >= oldframe->numEntities)
 		{
-			oldnum = INT_MAX;
+			oldnum = MAX_GENTITIES;
 		}
 		else
 		{
@@ -293,7 +293,7 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 		// read the entity index number
 		newnum = MSG_ReadBits(msg, GENTITYNUM_BITS);
 
-		if (newnum == (MAX_GENTITIES - 1))
+		if (newnum >= (MAX_GENTITIES - 1))
 		{
 			break;
 		}
@@ -316,7 +316,7 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 
 			if (!oldframe || oldindex >= oldframe->numEntities)
 			{
-				oldnum = INT_MAX;
+				oldnum = MAX_GENTITIES;
 			}
 			else
 			{
@@ -339,7 +339,7 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 
 			if (oldindex >= oldframe->numEntities)
 			{
-				oldnum = INT_MAX;
+				oldnum = MAX_GENTITIES;
 			}
 			else
 			{
@@ -360,7 +360,7 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 	}
 
 	// any remaining entities in the old frame are copied over
-	while (oldnum != INT_MAX)
+	while (oldnum != MAX_GENTITIES)
 	{
 		// one or more entities from the old packet are unchanged
 		if (cl_shownet->integer == 3)
@@ -373,7 +373,7 @@ void CL_ParsePacketEntities(msg_t *msg, clSnapshot_t *oldframe, clSnapshot_t *ne
 
 		if (oldindex >= oldframe->numEntities)
 		{
-			oldnum = INT_MAX;
+			oldnum = MAX_GENTITIES;
 		}
 		else
 		{
