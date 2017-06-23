@@ -6291,8 +6291,10 @@ static void ScanAndLoadGuideFiles(void)
 	char *buffers[MAX_GUIDE_FILES];
 	char *p;
 	int  numGuides, i;
-	char *oldp, *token, *hashMem;
-	int  guideTextHashTableSizes[MAX_GUIDETEXT_HASH], hash, size, fileSum;
+	char *oldp, *token;
+    char **hashMem;
+	int  guideTextHashTableSizes[MAX_GUIDETEXT_HASH], hash, fileSum;
+    unsigned int size;
 	char filename[MAX_QPATH];
 	long sum = 0;
 
@@ -6433,12 +6435,12 @@ static void ScanAndLoadGuideFiles(void)
 
 	size += MAX_GUIDETEXT_HASH;
 
-	hashMem = (char *)ri.Hunk_Alloc(size * sizeof(char *), h_low);
+	hashMem = (char **)ri.Hunk_Alloc(size * sizeof(char*), h_low);
 
 	for (i = 0; i < MAX_GUIDETEXT_HASH; i++)
 	{
-		guideTextHashTable[i] = (char **)hashMem;
-		hashMem               = ((char *)hashMem) + ((guideTextHashTableSizes[i] + 1) * sizeof(char *));
+		guideTextHashTable[i] = hashMem;
+		hashMem               += guideTextHashTableSizes[i] + 1;
 	}
 
 	Com_Memset(guideTextHashTableSizes, 0, sizeof(guideTextHashTableSizes));
@@ -6534,8 +6536,10 @@ static int ScanAndLoadShaderFiles(void)
 	char *buffers[MAX_SHADER_FILES];
 	char *p;
 	int  numShaderFiles, i;
-	char *oldp, *token, *hashMem, *textEnd;
-	int  shaderTextHashTableSizes[MAX_SHADERTEXT_HASH], hash, size;
+	char *oldp, *token, *textEnd;
+    char **hashMem;
+	int  shaderTextHashTableSizes[MAX_SHADERTEXT_HASH], hash;
+    unsigned int size;
 	char filename[MAX_QPATH];
 	long sum = 0, summand;
 
@@ -6716,12 +6720,12 @@ static int ScanAndLoadShaderFiles(void)
 
 	size += MAX_SHADERTEXT_HASH;
 
-	hashMem = (char *)ri.Hunk_Alloc(size * sizeof(char *), h_low);
+	hashMem = (char **)ri.Hunk_Alloc(size * sizeof(char*), h_low);
 
 	for (i = 0; i < MAX_SHADERTEXT_HASH; i++)
 	{
-		shaderTextHashTable[i] = (char **)hashMem;
-		hashMem                = ((char *)hashMem) + ((shaderTextHashTableSizes[i] + 1) * sizeof(char *));
+		shaderTextHashTable[i] = hashMem;
+		hashMem                += shaderTextHashTableSizes[i] + 1;
 	}
 
 	Com_Memset(shaderTextHashTableSizes, 0, sizeof(shaderTextHashTableSizes));

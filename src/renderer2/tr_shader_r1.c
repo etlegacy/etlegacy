@@ -983,14 +983,16 @@ char *FindShaderInShaderTextR1(const char *shaderName)
  */
 int ScanAndLoadShaderFilesR1(const int numMaterialFiles)
 {
-	char **shaderFiles;
-	char *buffers[MAX_SHADER_FILES];
-	char *p;
-	int  numShaderFiles, i;
-	char *oldp, *token, *hashMem, *textEnd;
-	int  shaderTextHashTableSizes[MAX_SHADERTEXT_HASH], hash, size;
-	char filename[MAX_QPATH];
-	long sum = 0, summand;
+	char         **shaderFiles;
+	char         *buffers[MAX_SHADER_FILES];
+	char         *p;
+	int          numShaderFiles, i;
+	char         *oldp, *token, *textEnd;
+	char         **hashMem;
+	int          shaderTextHashTableSizes[MAX_SHADERTEXT_HASH], hash;
+	unsigned int size;
+	char         filename[MAX_QPATH];
+	long         sum = 0, summand;
 
 	memset(buffers, 0, MAX_SHADER_FILES);
 	memset(shaderTextHashTableSizes, 0, MAX_SHADER_FILES);
@@ -1074,7 +1076,7 @@ int ScanAndLoadShaderFilesR1(const int numMaterialFiles)
 	// build single large buffer
 	s_shaderTextR1    = (char *)ri.Hunk_Alloc(sum + numShaderFiles * 2, h_low);
 	s_shaderTextR1[0] = '\0';
-	textEnd         = s_shaderTextR1;
+	textEnd           = s_shaderTextR1;
 
 	// free in reverse order, so the temp files are all dumped
 	for (i = numShaderFiles - 1; i >= 0 ; i--)
@@ -1172,12 +1174,12 @@ int ScanAndLoadShaderFilesR1(const int numMaterialFiles)
 
 	size += MAX_SHADERTEXT_HASH;
 
-	hashMem = (char *)ri.Hunk_Alloc(size * sizeof(char *), h_low);
+	hashMem = (char **)ri.Hunk_Alloc(size * sizeof(char *), h_low);
 
 	for (i = 0; i < MAX_SHADERTEXT_HASH; i++)
 	{
-		shaderTextHashTableR1[i] = (char **)hashMem;
-		hashMem                = ((char *)hashMem) + ((shaderTextHashTableSizes[i] + 1) * sizeof(char *));
+		shaderTextHashTableR1[i] = hashMem;
+		hashMem                 += shaderTextHashTableSizes[i] + 1;
 	}
 
 	Com_Memset(shaderTextHashTableSizes, 0, sizeof(shaderTextHashTableSizes));
@@ -1276,7 +1278,7 @@ int ScanAndLoadShaderFilesR1(const int numMaterialFiles)
 
 			//Ren_Print("...guided '%s'\n", token);
 
-			hash                                                        = generateHashValue(token, MAX_SHADERTEXT_HASH);
+			hash                                                          = generateHashValue(token, MAX_SHADERTEXT_HASH);
 			shaderTextHashTableR1[hash][shaderTextHashTableSizes[hash]++] = oldp;
 
 			// skip guide name
@@ -1313,7 +1315,7 @@ int ScanAndLoadShaderFilesR1(const int numMaterialFiles)
 		}
 		else
 		{
-			hash                                                        = generateHashValue(token, MAX_SHADERTEXT_HASH);
+			hash                                                          = generateHashValue(token, MAX_SHADERTEXT_HASH);
 			shaderTextHashTableR1[hash][shaderTextHashTableSizes[hash]++] = oldp;
 
 			SkipBracedSection(&p);
