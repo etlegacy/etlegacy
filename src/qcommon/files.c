@@ -1582,7 +1582,7 @@ long FS_FOpenFileReadDir(const char *fileName, searchpath_t *search, fileHandle_
  * @param[in,out] file
  * @param[in] uniqueFILE
  *
- * @returns filesize and an open FILE pointer.
+ * @returns filesize and an open FILE pointer -  0 or -1 for invalid files
  */
 long FS_FOpenFileRead(const char *fileName, fileHandle_t *file, qboolean uniqueFILE)
 {
@@ -4757,7 +4757,7 @@ int FS_FOpenFileByMode(const char *qpath, fileHandle_t *f, fsMode_t mode)
 
 	switch (mode)
 	{
-	case FS_READ:
+	case FS_READ: // returns 0 or -1 for invalid files
 		r = FS_FOpenFileRead(qpath, f, qtrue);
 		break;
 	case FS_WRITE:
@@ -4964,8 +4964,17 @@ qboolean FS_UnzipTo(const char *fileName, const char *outpath, qboolean quiet)
 		char          newFilePath[MAX_OSPATH];
 		FILE          *newFile;
 
-		// FIXME: err is never read
 		err = unzGetCurrentFileInfo(zipFile, &file_info, newFileName, sizeof(newFileName), NULL, 0, NULL, 0);
+
+		if (err != UNZ_OK)
+		{
+			if (!quiet || fs_debug->integer)
+			{
+				Com_Printf(S_COLOR_RED "FS_UnzipTo: unable to read zip info element [%i] of file (%s). ERROR %i\n", i, zipPath, err);
+			}
+			(void) unzClose(zipFile);
+			return qfalse;
+		}
 
 		Com_sprintf(newFilePath, sizeof(newFilePath), "%s%c%s", outpath, PATH_SEP, newFileName);
 
