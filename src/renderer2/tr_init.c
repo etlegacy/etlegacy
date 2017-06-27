@@ -1335,16 +1335,19 @@ void R_Register(void)
 	r_offsetFactor       = ri.Cvar_Get("r_offsetFactor", "-1", CVAR_CHEAT);
 	r_offsetUnits        = ri.Cvar_Get("r_offsetUnits", "-2", CVAR_CHEAT);
 	r_forceSpecular      = ri.Cvar_Get("r_forceSpecular", "0", CVAR_CHEAT);
+	//These makes the spec spot bigger or smaller, the higher the number the smaller the dot
 	r_specularExponent   = ri.Cvar_Get("r_specularExponent", "16", CVAR_CHEAT | CVAR_LATCH);
 	r_specularExponent2  = ri.Cvar_Get("r_specularExponent2", "3", CVAR_CHEAT | CVAR_LATCH);
-	r_specularScale      = ri.Cvar_Get("r_specularScale", "1.4", CVAR_CHEAT);
+	//this one sets the power of specular, the higher the brighter
+	r_specularScale      = ri.Cvar_Get("r_specularScale", "1.0", CVAR_CHEAT);
 	r_normalScale        = ri.Cvar_Get("r_normalScale", "1.1", CVAR_CHEAT);
 	r_normalMapping      = ri.Cvar_Get("r_normalMapping", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_parallaxDepthScale = ri.Cvar_Get("r_parallaxDepthScale", "0.03", CVAR_CHEAT);
-
-	r_wrapAroundLighting  = ri.Cvar_Get("r_wrapAroundLighting", "0.7", CVAR_CHEAT | CVAR_LATCH);
+	// toon lightning
+	r_wrapAroundLighting  = ri.Cvar_Get("r_wrapAroundLighting", "0", CVAR_CHEAT | CVAR_LATCH);
 	r_halfLambertLighting = ri.Cvar_Get("r_halfLambertLighting", "1", CVAR_CHEAT | CVAR_LATCH);
-	r_rimLighting         = ri.Cvar_Get("r_rimLighting", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	//rim light gives your shading a nice volumentric effect which can greatly enhance the contrast with the background
+	r_rimLighting         = ri.Cvar_Get("r_rimLighting", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_rimExponent         = ri.Cvar_Get("r_rimExponent", "3", CVAR_CHEAT);
 	ri.Cvar_CheckRange(r_rimExponent, 0.5, 8.0, qfalse);
 
