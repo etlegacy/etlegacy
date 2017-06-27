@@ -1417,27 +1417,48 @@ static void SV_CheckTimeouts(void)
 			continue;
 		}
 
-		if (cl->state == CS_ACTIVE && cl->lastPacketTime < droppoint)
+		if (cl->state >= CS_CONNECTED)
 		{
-			// wait several frames so a debugger session doesn't cause a timeout
-			if (++cl->timeoutCount > 5)
+			if (*cl->downloadName) // download in progress
 			{
-				SV_DropClient(cl, va("game timed out %i\n", cl->state));
-				cl->state = CS_FREE;    // don't bother with zombie state
+				// this should deal with all download types (http & netchannel)
+				// but we may add a check for lastPacketTime additionally in case of netchannel DL before we drop
+				if (cl->downloadAckTime < droppoint_dl)
+				{
+					// wait several frames so a debugger session doesn't
+					// cause a timeout
+					if (++cl->timeoutCount > 5)
+					{
+						SV_DropClient(cl, va("download timed out %i\n", cl->state));
+						cl->state = CS_FREE;    // don't bother with zombie state
+					}
+				}
+				else
+				{
+					cl->timeoutCount = 0;
+				}
 			}
-		}
-		else if ((cl->state == CS_CONNECTED || cl->state == CS_PRIMED) && (cl->lastPacketTime < droppoint_dl || cl->lastValidGamestate < droppoint_dl))
-		{
-			// wait several frames so a debugger session doesn't cause a timeout
-			if (++cl->timeoutCount > 5)
+			else
 			{
-				SV_DropClient(cl, va("preparation timed out %i\n", cl->state));
-				cl->state = CS_FREE;    // don't bother with zombie state
+				if (cl->lastPacketTime < droppoint)
+				{
+					// wait several frames so a debugger session doesn't
+					// cause a timeout
+					if (++cl->timeoutCount > 5)
+					{
+						SV_DropClient(cl, va("game timed out %i\n", cl->state));
+						cl->state = CS_FREE;    // don't bother with zombie state
+					}
+				}
+				else
+				{
+					cl->timeoutCount = 0;
+				}
 			}
 		}
 		else
 		{
-			cl->timeoutCount = 0; // CS_FREE
+			cl->timeoutCount = 0;
 		}
 	}
 }

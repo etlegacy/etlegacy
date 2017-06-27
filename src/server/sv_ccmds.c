@@ -519,7 +519,7 @@ static void SV_Status_f(void)
 			Com_Printf(" ");
 		}
 
-		Com_Printf("%7i ", svs.time - cl->lastPacketTime);
+		Com_Printf("%7i ", svs.time - cl->lastPacketTime); // FIXME: print lastConnectTime ?
 
 		s = NET_AdrToString(cl->netchan.remoteAddress);
 		Com_Printf("%s", s);
