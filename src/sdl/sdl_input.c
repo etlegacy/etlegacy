@@ -739,6 +739,8 @@ static void IN_InitJoystick(void)
 	int  total = 0;
 	//char buf[MAX_CVAR_VALUE_STRING] = "";
 
+	Cmd_AddCommand("joystickInfo", IN_PrintJoystickInfo_f); // command is valid when in_joystick 0 is set
+
 	if (!in_joystick->integer)
 	{
 		return;
@@ -819,6 +821,8 @@ void IN_PrintJoystickInfo_f()
  */
 static void IN_ShutdownJoystick(void)
 {
+	Cmd_RemoveCommand("joystickInfo");
+
 	// in_joystick cvar is latched
 	if (!SDL_WasInit(SDL_INIT_JOYSTICK) || !in_joystick->integer)
 	{
@@ -1410,7 +1414,6 @@ void IN_Init(void)
 	IN_InitJoystick();
 
 	//Com_Printf("------------------------------------\n");
-	Cmd_AddCommand("joystickInfo", IN_PrintJoystickInfo_f);
 }
 
 /**
@@ -1424,7 +1427,6 @@ void IN_Shutdown(void)
 	IN_DeactivateMouse();
 	mouseAvailable = qfalse;
 
-	Cmd_RemoveCommand("joystickInfo");
 	IN_ShutdownJoystick();
 
 	mainScreen = NULL;
