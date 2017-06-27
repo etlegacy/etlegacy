@@ -129,7 +129,8 @@ void main()
 	vec3 light = var_LightColor.rgb * NL;
 
 	// compute the specular term
-	vec3 specular = texture2D(u_SpecularMap, texSpecular).rgb * var_LightColor.rgb * pow(clamp(dot(N, H), 0.0, 1.0), r_SpecularExponent) * r_SpecularScale;
+	//you were right again Irata.. it was a Lightvec missing
+	vec3 specular = texture2D(u_SpecularMap, texSpecular).rgb * pow(clamp(dot(L, N), 0.0, 1.0), r_SpecularExponent) * r_SpecularScale;
 
 	// compute final color
 	vec4 color = vec4(diffuse.rgb, var_LightColor.a);
