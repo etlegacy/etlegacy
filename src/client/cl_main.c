@@ -1803,7 +1803,11 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	// echo request from server
 	if (!Q_stricmp(c, "echo"))
 	{
-		NET_OutOfBandPrint(NS_CLIENT, from, "%s", Cmd_Argv(1));
+		// FIXME: || NET_CompareAdr(from, clc.authorizeServer)
+		if (NET_CompareAdr(from, clc.serverAddress) || NET_CompareAdr(from, rcon_address) || NET_CompareAdr(from, autoupdate.autoupdateServer))
+		{
+			NET_OutOfBandPrint(NS_CLIENT, from, "%s", Cmd_Argv(1));
+		}
 		return;
 	}
 
@@ -1824,8 +1828,8 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	// echo request from server
 	if (!Q_stricmp(c, "print"))
 	{
-		// NOTE: we may have to add exceptions for auth and update servers
-		if (NET_CompareAdr(from, clc.serverAddress) || NET_CompareAdr(from, rcon_address))
+		// FIXME: || NET_CompareAdr(from, clc.authorizeServer)
+		if (NET_CompareAdr(from, clc.serverAddress) || NET_CompareAdr(from, rcon_address) || NET_CompareAdr(from, autoupdate.autoupdateServer))
 		{
 			CL_PrintPacket(msg);
 		}
