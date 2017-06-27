@@ -730,6 +730,32 @@ struct
 } stick_state;
 
 /**
+ * @brief Prints joystick info to console
+ */
+void IN_PrintJoystickInfo_f()
+{
+	if (!in_joystick->integer)
+	{
+		Com_Printf("Joysticks disabled by cvar setting.\n");
+		return;
+	}
+
+	if (SDL_NumJoysticks() > 0)
+	{
+		Com_Printf("Joystick [%d] '%s' opened - %i devices available\n", in_joystickNo->integer, SDL_JoystickNameForIndex(in_joystickNo->integer), SDL_NumJoysticks());
+		Com_Printf("Axes:       %d\n", SDL_JoystickNumAxes(stick));
+		Com_Printf("Hats:       %d\n", SDL_JoystickNumHats(stick));
+		Com_Printf("Buttons:    %d\n", SDL_JoystickNumButtons(stick));
+		Com_Printf("Balls:      %d\n", SDL_JoystickNumBalls(stick));
+		Com_Printf("Use Analog: %s\n", in_joystickUseAnalog->integer ? "Yes" : "No");
+	}
+	else
+	{
+		Com_Printf("No joystick available.\n");
+	}
+}
+
+/**
  * @brief Inits game controller input devices
  * @note This doesn't deal with SDL_INIT_GAMECONTROLLER
  */
@@ -791,29 +817,6 @@ static void IN_InitJoystick(void)
 	}
 
 	SDL_JoystickEventState(SDL_QUERY);
-}
-
-void IN_PrintJoystickInfo_f()
-{
-	if (!in_joystick->integer)
-	{
-		Com_Printf("Joysticks disabled by cvar setting.\n");
-		return;
-	}
-
-	if (SDL_NumJoysticks() > 0)
-	{
-		Com_Printf("Joystick [%d] '%s' opened - %i devices available\n", in_joystickNo->integer, SDL_JoystickNameForIndex(in_joystickNo->integer), SDL_NumJoysticks());
-		Com_Printf("Axes:       %d\n", SDL_JoystickNumAxes(stick));
-		Com_Printf("Hats:       %d\n", SDL_JoystickNumHats(stick));
-		Com_Printf("Buttons:    %d\n", SDL_JoystickNumButtons(stick));
-		Com_Printf("Balls:      %d\n", SDL_JoystickNumBalls(stick));
-		Com_Printf("Use Analog: %s\n", in_joystickUseAnalog->integer ? "Yes" : "No");
-	}
-	else
-	{
-		Com_Printf("No joystick available.\n");
-	}
 }
 
 /**
