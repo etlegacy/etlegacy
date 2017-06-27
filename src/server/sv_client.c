@@ -673,6 +673,13 @@ static void SV_CloseDownload(client_t *cl)
 	cl->download      = 0;
 	*cl->downloadName = 0;
 
+	// don't timeout after download for valid clients
+	// so SV_CheckTimeouts doesn't drop when we switch related timeout cvar
+	if (cl->state > CS_ZOMBIE)
+	{
+		cl->lastPacketTime = svs.time;
+	}
+	
 	// Free the temporary buffer space
 	for (i = 0; i < MAX_DOWNLOAD_WINDOW; i++)
 	{
@@ -710,6 +717,13 @@ static void SV_DoneDownload_f(client_t *cl)
 	}
 
 	Com_DPrintf("clientDownload: %s Done\n", rc(cl->name));
+
+	// don't timeout after download for valid clients
+	// so SV_CheckTimeouts doesn't drop when we switch related timeout cvar
+	if (cl->state > CS_ZOMBIE)
+	{
+		cl->lastPacketTime = svs.time;
+	}
 
 	// resend the game state to update any clients that entered during the download
 	SV_SendClientGameState(cl);

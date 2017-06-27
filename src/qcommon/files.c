@@ -1681,12 +1681,12 @@ long FS_FOpenFileRead_Filtered(const char *qpath, fileHandle_t *file, qboolean u
  */
 qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const char *fileName)
 {
-	int           srcLength;
-	unsigned char *srcData;
-	unsigned char *destData;
-	qboolean      needToCopy = qtrue;
-	FILE          *destHandle;
-	char          outputFile[MAX_OSPATH];
+	int      srcLength;
+	byte     *srcData;
+	byte     *destData;
+	qboolean needToCopy = qtrue;
+	FILE     *destHandle;
+	char     outputFile[MAX_OSPATH];
 
 	Q_strncpyz(outputFile, FS_BuildOSPath(base, gamedir, fileName), MAX_OSPATH * sizeof(char));
 
@@ -1716,7 +1716,7 @@ qboolean FS_CL_ExtractFromPakFile(const char *base, const char *gamedir, const c
 
 		if (destLength > 0)
 		{
-			destData = (unsigned char *)Z_Malloc(destLength);
+			destData = (byte *)Z_Malloc(destLength);
 
 			if (fread(destData, destLength, 1, destHandle) != 1 && (!feof(destHandle) || ferror(destHandle)))
 			{
