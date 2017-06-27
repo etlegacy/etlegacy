@@ -752,6 +752,13 @@ void CG_RunLerpFrameRate(clientInfo_t *ci, lerpFrame_t *lf, int newAnimation, ce
 	if (newAnimation != lf->animationNumber || !lf->animation)
 	{
 		CG_SetLerpFrameAnimationRate(cent, ci, lf, newAnimation);
+
+		// make sure the animation is valid from CG_SetLerpFrameAnimationRate due to character absent
+		if (!lf->animation)
+		{
+			CG_Printf("Warning: CG_RunLerpFrameRate w/o animation.\n");
+			return;     // shouldn't happen
+		}
 	}
 
 	// make sure the animation speed is updated when possible
@@ -1123,6 +1130,13 @@ void CG_RunLerpFrameRateCorpse(clientInfo_t *ci, lerpFrame_t *lf, int newAnimati
 	if (newAnimation != lf->animationNumber || !lf->animation)
 	{
 		CG_SetLerpFrameAnimationRateCorpse(cent, lf, newAnimation);
+
+		// make sure the animation is valid from CG_SetLerpFrameAnimationRateCorpse due to character absent
+		if (!lf->animation)
+		{
+			CG_Printf("Warning: CG_RunLerpFrameRateCorpse w/o animation.\n");
+			return;     // shouldn't happen
+		}
 	}
 
 	// make sure the animation speed is updated when possible
