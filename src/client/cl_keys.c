@@ -791,13 +791,6 @@ qboolean Key_IsDown(int keynum)
 	return keys[keynum].down;
 }
 
-/*
-===================
-Key_StringToKeynum
-
-
-===================
-*/
 /**
  * @brief Returns a key number to be used to index keys[] by looking at
  * the given string.  Single ascii characters return themselves, while
