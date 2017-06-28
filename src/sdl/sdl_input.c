@@ -329,7 +329,7 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 	if (keysym->sym >= SDLK_SPACE && keysym->sym < SDLK_DELETE)
 	{
 		// These happen to match the ASCII chars
-		key = (int)keysym->sym;
+		key = (keyNum_t)keysym->sym;
 	}
 	else
 	{
@@ -1023,7 +1023,7 @@ static void IN_JoyMove(void)
 
 			if (in_joystickUseAnalog->integer)
 			{
-				float f = ((float) abs(axis)) / 32767.0f;
+				float f = abs(axis) / 32767.0f;
 
 				if (f < in_joystickThreshold->value)
 				{
@@ -1038,7 +1038,7 @@ static void IN_JoyMove(void)
 			}
 			else
 			{
-				float f = ((float) axis) / 32767.0f;
+				float f = axis / 32767.0f;
 
 				if (f < -in_joystickThreshold->value)
 				{
