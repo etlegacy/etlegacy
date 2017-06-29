@@ -61,7 +61,7 @@
 int demo_protocols[] =
 { 83, 0 };
 
-#define MAX_NUM_ARGVS   50
+// #define MAX_NUM_ARGVS   50
 
 #define MIN_DEDICATED_COMHUNKMEGS   1
 #define MIN_COMHUNKMEGS             64
