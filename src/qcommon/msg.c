@@ -559,14 +559,20 @@ void MSG_WriteAngle16(msg_t *msg, float f)
 
 // a string hasher which gives the same hash value even if the
 // string is later modified via the legacy MSG read/write code
-int MSG_HashKey(const char *string, int maxlen) {
-	int hash, i;
-	hash = 0;
-	for (i = 0; i < maxlen && string[i] != '\0'; i++) {
-		if ((!IS_LEGACY_MOD && string[i] & 0x80) || string[i] == '%')
+int MSG_HashKey(const char *string, int maxlen)
+{
+	int hash = 0, i;
+
+	for (i = 0; i < maxlen && string[i] != '\0'; i++)
+	{
+		if ((!IS_LEGACY_MOD && (string[i] & 0x80)) || string[i] == '%')
+		{
 			hash += '.' * (119 + i);
+		}
 		else
+		{
 			hash += string[i] * (119 + i);
+		}
 	}
 	hash = (hash ^ (hash >> 10) ^ (hash >> 20));
 	return hash;
@@ -690,7 +696,8 @@ char *MSG_ReadString(msg_t *msg)
 		}
 
 		// translate all '%' fmt spec to avoid crash bugs
-		if (c == '%')
+		// don't allow higher ascii values
+		if (c == '%' || c > 127)
 		{
 			c = '.';
 		}
@@ -725,7 +732,8 @@ char *MSG_ReadBigString(msg_t *msg)
 		}
 
 		// translate all '%' fmt spec to avoid crash bugs
-		if (c == '%')
+		// don't allow higher ascii values
+		if (c == '%' || c > 127)
 		{
 			c = '.';
 		}
@@ -760,7 +768,8 @@ char *MSG_ReadStringLine(msg_t *msg)
 		}
 
 		// translate all '%' fmt spec to avoid crash bugs
-		if (c == '%')
+		// don't allow higher ascii values
+		if (c == '%' || c > 127)
 		{
 			c = '.';
 		}
