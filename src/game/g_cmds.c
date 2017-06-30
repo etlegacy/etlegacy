@@ -699,7 +699,7 @@ void Cmd_Give_f(gentity_t *ent)
 		else
 		{
 			// bumps all skills with 1 level
-			for (skill = 0; skill < SK_NUM_SKILLS; skill++)
+			for (skill = SK_BATTLE_SENSE; skill < SK_NUM_SKILLS; skill++)
 			{
 				// Detecting the correct amount to move to the next skill level
 				amount = GetSkillPointUntilLevelUp(ent, skill);
