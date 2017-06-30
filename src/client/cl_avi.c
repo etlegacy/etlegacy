@@ -107,6 +107,11 @@ static ID_INLINE void SafeFS_Write(const void *buffer, int len, fileHandle_t f)
  */
 static ID_INLINE void WRITE_STRING(const char *s)
 {
+	if (bufIndex + strlen(s) >= MAX_AVI_BUFFER)
+	{
+		Com_Error(ERR_DROP, "Failed to write string : Buffer overflow");
+	}
+
 	Com_Memcpy(&buffer[bufIndex], s, strlen(s));
 	bufIndex += strlen(s);
 }
@@ -117,6 +122,11 @@ static ID_INLINE void WRITE_STRING(const char *s)
  */
 static ID_INLINE void WRITE_4BYTES(int x)
 {
+	if (bufIndex + 4 >= MAX_AVI_BUFFER)
+	{
+		Com_Error(ERR_DROP, "Failed to write 4 bytes : Buffer overflow");
+	}
+
 	buffer[bufIndex + 0] = (byte) ((x >> 0) & 0xFF);
 	buffer[bufIndex + 1] = (byte) ((x >> 8) & 0xFF);
 	buffer[bufIndex + 2] = (byte) ((x >> 16) & 0xFF);
@@ -130,6 +140,11 @@ static ID_INLINE void WRITE_4BYTES(int x)
  */
 static ID_INLINE void WRITE_2BYTES(int x)
 {
+	if (bufIndex + 2 >= MAX_AVI_BUFFER)
+	{
+		Com_Error(ERR_DROP, "Failed to write 2 bytes : Buffer overflow");
+	}
+
 	buffer[bufIndex + 0] = (byte) ((x >> 0) & 0xFF);
 	buffer[bufIndex + 1] = (byte) ((x >> 8) & 0xFF);
 	bufIndex            += 2;
@@ -142,6 +157,11 @@ static ID_INLINE void WRITE_2BYTES(int x)
  * @note Unused
 static ID_INLINE void WRITE_1BYTES(int x)
 {
+    if (bufIndex + 1 >= MAX_AVI_BUFFER)
+    {
+        Com_Error(ERR_DROP, "Failed to write 1 bytes : Buffer overflow");
+    }
+
     buffer[bufIndex] = x;
     bufIndex        += 1;
 }
