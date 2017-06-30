@@ -248,7 +248,7 @@ void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int da
  * @var modNames
  * @brief These are just for logging, the client prints its own messages
   */
-char *modNames[] =
+const char *modNames[] =
 {
 	"MOD_UNKNOWN",
 	"MOD_MACHINEGUN",
