@@ -105,7 +105,11 @@ else()
 	set(ETL_CMAKE_VERSION_INT "${ETLEGACY_VERSION_MAJOR}${ETLEGACY_VERSION_MINOR}")
 endif()
 
-string(TIMESTAMP ETL_CMAKE_BUILD_TIME "%Y-%m-%dT%H:%M:%S" UTC)
+if(NOT CMAKE_VERSION VERSION_LESS 3.0.2)
+	string(TIMESTAMP ETL_CMAKE_BUILD_TIME "%Y-%m-%dT%H:%M:%S" UTC)
+else()
+	set(ETL_CMAKE_BUILD_TIME "1999-01-01T00:00:00") # Yes this is a joke, for the systems running ancient cmake versions
+endif()
 
 # Mod version
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_version.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/etmain/ui/git_version.h" @ONLY)
