@@ -4074,7 +4074,7 @@ void RB_CollectBspOcclusionQueries()
 
 	if (glConfig2.occlusionQueryBits && r_dynamicBspOcclusionCulling->integer)
 	{
-		int       j = 0;
+		// int       j = 0;
 		bspNode_t *node;
 		link_t    *l, *sentinel;
 		int       ocCount = 0;
@@ -4102,7 +4102,11 @@ void RB_CollectBspOcclusionQueries()
 			{
 				node = (bspNode_t *) l->data;
 
-				if (node->issueOcclusionQuery)  // FIXME: Always true, what is intend ? Checking node->issueOcclusionQuery[j] bool value ?
+				// FIXME: don't know if it should done like this,
+				// but this statement was always true.
+				// if (node->issueOcclusionQuery)
+				// TODO: issueOcclusionQuery is never used
+				if (node->issueOcclusionQuery[backEnd.viewParms.viewCount])
 				{
 					available = 0;
 					if (glIsQuery(node->occlusionQueryObjects[backEnd.viewParms.viewCount]))
@@ -4113,7 +4117,10 @@ void RB_CollectBspOcclusionQueries()
 
 					if (available)
 					{
-						node->issueOcclusionQuery[j] = qfalse;
+						// FIXME: j is neither incremented not used,
+						// node->issueOcclusionQuery[j] = qfalse;
+						// TODO: issueOcclusionQuery is never used
+						node->issueOcclusionQuery[backEnd.viewParms.viewCount] = qfalse;
 						avCount++;
 
 						//if(//avCount % oc)
@@ -4122,7 +4129,6 @@ void RB_CollectBspOcclusionQueries()
 					}
 				}
 			}
-
 		}
 		while (avCount < ocCount);
 
