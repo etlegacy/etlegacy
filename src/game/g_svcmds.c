@@ -227,13 +227,10 @@ void PrintMaxLivesGUID(void)
  */
 qboolean G_FilterPacket(ipFilterList_t *ipFilterList, char *from)
 {
-	int      i;
+	int      i = 0;
 	unsigned in;
 	byte     m[4] = { 0 };
-	char     *p;
-
-	i = 0;
-	p = from;
+	char     *p   = from;
 
 	while (*p && i < 4)
 	{
