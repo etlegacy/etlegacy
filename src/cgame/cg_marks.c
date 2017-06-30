@@ -104,10 +104,13 @@ void CG_FreeMarkPoly(markPoly_t *le)
 void CG_ImpactMark(qhandle_t markShader, vec3_t origin, vec4_t projection, float radius, float orientation, float r, float g, float b, float a, int lifeTime)
 {
 	int    i;
-	vec3_t pushedOrigin, axis[3];
+	vec3_t pushedOrigin;
+	vec3_t axis[3];
 	vec4_t color;
 	int    fadeTime;
 	vec3_t points[4];
+
+	Com_Memset(axis, 0, sizeof(vec3_t) * 3);
 
 	// early out
 	if (lifeTime == 0)
