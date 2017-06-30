@@ -105,10 +105,12 @@ else()
 	set(ETL_CMAKE_VERSION_INT "${ETLEGACY_VERSION_MAJOR}${ETLEGACY_VERSION_MINOR}")
 endif()
 
+string(TIMESTAMP ETL_CMAKE_BUILD_TIME "%Y-%m-%dT%H:%M:%S" UTC)
+
 # Mod version
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_version.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/etmain/ui/git_version.h" @ONLY)
 # This is for NSIS
 string(REPLACE "," "." ETL_CMAKE_PROD_VERSIONDOT ${ETL_CMAKE_PROD_VERSION})
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/git_version.h.in" "${CMAKE_CURRENT_BINARY_DIR}/include/git_version.h" @ONLY)
 list(APPEND COMMON_SRC "${CMAKE_CURRENT_BINARY_DIR}/include/git_version.h")
-include_directories(${PROJECT_BINARY_DIR}/include) # git_version.h
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/include) # git_version.h

@@ -5,8 +5,6 @@
 /project
 /obj
 /doc
-!easybuild.sh
-!easybuild.bat
 /Makefile
 /*.make
 CMakeLists.txt.user
@@ -51,10 +49,15 @@ win_resource.aps
 
 # Clion
 .idea/
+/cmake-build-*
 
 # Visual Studio 2017
-.vs/
+/.vs/
 CMakeSettings.json
 
 # Visual Studio Code
 /.vscode/
+
+# Do not under any circumstances ignore these
+!/easybuild.sh
+!/easybuild.bat

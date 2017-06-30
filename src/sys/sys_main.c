@@ -822,6 +822,7 @@ void Sys_ParseArgs(int argc, char **argv)
 			fprintf(stdout, "Client: " ET_VERSION "\n");
 			fprintf(stdout, "Masked as: " FAKE_VERSION "\n");
 #endif
+			fprintf(stdout, "Built: " PRODUCT_BUILD_TIME "\n");
 			Sys_Exit(0);
 		}
 	}
@@ -948,6 +949,8 @@ void Sys_GameLoop(void)
 	totalMsec = countMsec = 0;
 #endif
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
 	while (qtrue)
 	{
 #if defined(_MSC_VER) && defined(LEGACY_DEBUG) && !defined(_WIN64)
@@ -977,6 +980,7 @@ void Sys_GameLoop(void)
 		}
 #endif
 	}
+#pragma clang diagnostic pop
 }
 
 /**
