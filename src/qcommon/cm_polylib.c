@@ -347,13 +347,15 @@ winding_t *ReverseWinding(winding_t *w)
  * @param[in] epsilon
  * @param[out] front
  * @param[out] back
+ *
+ * @note Unused (called by ChopWinding() which is unused)
  */
 void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist,
                         vec_t epsilon, winding_t **front, winding_t **back)
 {
-	vec_t        dists[MAX_POINTS_ON_WINDING + 4];
-	int          sides[MAX_POINTS_ON_WINDING + 4];
-	int          counts[3] = { 0, 0, 0 };
+	vec_t        dists[MAX_POINTS_ON_WINDING + 4] = { 0 };
+	int          sides[MAX_POINTS_ON_WINDING + 4] = { 0 };
+	int          counts[3]                        = { 0, 0, 0 };
 	static vec_t dot;           // VC 4.2 optimizer bug if not static
 	int          i, j;
 	vec_t        *p1, *p2;
