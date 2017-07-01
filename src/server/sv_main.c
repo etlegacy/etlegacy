@@ -1183,7 +1183,11 @@ static void SV_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	Cmd_TokenizeString(s);
 
 	c = Cmd_Argv(0);
-	Com_DPrintf("SV packet %s : %s\n", NET_AdrToString(from), c);
+
+	if (com_developer->integer)
+	{
+		Com_Printf("SV packet %s : %s\n", NET_AdrToString(from), c);
+	}
 
 	if (!Q_stricmp(c, "getstatus"))
 	{
