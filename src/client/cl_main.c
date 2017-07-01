@@ -1716,7 +1716,10 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 
 	c = Cmd_Argv(0);
 
-	Com_DPrintf("CL packet %s: %s\n", NET_AdrToString(from), c);
+	if (com_developer->integer)
+	{
+		Com_Printf("CL packet %s: %s\n", NET_AdrToString(from), c);
+	}
 
 	// challenge from the server we are connecting to
 	if (!Q_stricmp(c, "challengeResponse"))
@@ -1897,7 +1900,10 @@ void CL_PacketEvent(netadr_t from, msg_t *msg)
 	// packet from server
 	if (!NET_CompareAdr(from, clc.netchan.remoteAddress))
 	{
-		Com_DPrintf("%s:sequenced packet without connection\n", NET_AdrToString(from));
+		if (com_developer->integer)
+		{
+			Com_Printf("%s:sequenced packet without connection\n", NET_AdrToString(from));
+		}
 		// client isn't connected - don't send disconnect
 		return;
 	}
@@ -3092,7 +3098,11 @@ void CL_ServerInfoPacket(netadr_t from, msg_t *msg)
 		{
 			// calc ping time
 			cl_pinglist[i].time = cls.realtime - cl_pinglist[i].start + 1;
-			Com_DPrintf("ping time %dms from %s\n", cl_pinglist[i].time, NET_AdrToString(from));
+
+			if (com_developer->integer)
+			{
+				Com_Printf("ping time %dms from %s\n", cl_pinglist[i].time, NET_AdrToString(from));
+			}
 
 			// save of info
 			Q_strncpyz(cl_pinglist[i].info, infoString, sizeof(cl_pinglist[i].info));
