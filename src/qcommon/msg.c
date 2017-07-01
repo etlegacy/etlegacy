@@ -697,7 +697,7 @@ char *MSG_ReadString(msg_t *msg)
 
 		// translate all '%' fmt spec to avoid crash bugs
 		// don't allow higher ascii values
-		if (c == '%' || c > 127)
+		if ((!IS_LEGACY_MOD && (c & 0x80)) || c == '%')
 		{
 			c = '.';
 		}
@@ -733,7 +733,7 @@ char *MSG_ReadBigString(msg_t *msg)
 
 		// translate all '%' fmt spec to avoid crash bugs
 		// don't allow higher ascii values
-		if (c == '%' || c > 127)
+		if ((!IS_LEGACY_MOD && (c & 0x80)) || c == '%')
 		{
 			c = '.';
 		}
@@ -769,7 +769,7 @@ char *MSG_ReadStringLine(msg_t *msg)
 
 		// translate all '%' fmt spec to avoid crash bugs
 		// don't allow higher ascii values
-		if (c == '%' || c > 127)
+		if ((!IS_LEGACY_MOD && (c & 0x80)) || c == '%')
 		{
 			c = '.';
 		}
