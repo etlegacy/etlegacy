@@ -1,14 +1,12 @@
-os:
-  - linux
+# default in trusty is GCC 4.8, Clang 3.5, cmake 3.2
+# https://github.com/travis-ci/apt-source-whitelist
 
 language: cpp
-
-compiler:
-  - gcc
-  - clang
+dist: trusty
+sudo: false
 
 env:
-  native:
+  global:
     - CROSS_COMPILE32=0
     - BUNDLED_LIBS=1
     - BUNDLED_SDL=1
@@ -19,8 +17,44 @@ env:
     - BUNDLED_OGG=1
     - INSTALL_EXTRA=0
 
+matrix:
+  include:
+    - os: linux
+      compiler: gcc
+      addons:
+        sources:
+        - ubuntu-toolchain-r-test
+        apt:
+          packages:
+          - nasm
+          - libasound2-dev
+          - pulseaudio
+    - os: linux
+      compiler: clang
+      addons:
+        sources:
+        - llvm-toolchain-trusty
+        apt:
+          packages:
+          - nasm
+          - libasound2-dev
+          - pulseaudio
+    #- os: osx
+    #  osx_image: xcode8.3
+    #  before_install:
+    #    - brew update
+    #    - brew install gnu-sed nasm
+    #    - brew outdated automake || brew upgrade automake
+    #    - brew outdated autoconf || brew upgrade autoconf
+    #  env:
+    #    - CXX=clang++ CC=clang
+    #    - CXXFLAGS="-g -lstdc++"
+
 before_script:
-  - ./misc/travis-setup.sh
+  # workaround for missing automake 1.15
+  - cd libs/jpegturbo
+  - autoreconf -fvi
+  - cd ../..
 
 script:
   - ./easybuild.sh
