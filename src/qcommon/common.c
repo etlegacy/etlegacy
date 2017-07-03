@@ -1982,7 +1982,7 @@ static void Hunk_SwapBanks(void)
 void *Hunk_AllocDebug(unsigned int size, ha_pref preference, char *label, char *file, int line)
 {
 #else
-void *Hunk_Alloc(size_t size, ha_pref preference)
+void *Hunk_Alloc(unsigned int size, ha_pref preference)
 {
 #endif
 	void *buf;
