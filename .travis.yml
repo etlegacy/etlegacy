@@ -63,6 +63,7 @@ install:
       export PATH=${DEPS_DIR}/cmake/bin:${PATH}
     fi
   - cmake --version
+  - cd ${TRAVIS_BUILD_DIR}
 
 before_script:
   # workaround for missing automake 1.15
