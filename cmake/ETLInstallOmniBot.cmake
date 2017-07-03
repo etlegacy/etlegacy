@@ -6,10 +6,10 @@ message(STATUS "Installing Omni-Bot")
 # Note: used archive (20MB) doesn't contain incomplete nav- and other unwanted files
 if(UNIX)
 	set(ETLEGACY_OMNIBOT_ARCHIVE "omnibot-linux-latest.tar.gz")
-	set(ETLEGACY_OMNIBOT_ARCHIVE_URL "http://mirror.etlegacy.com/omnibot/omnibot-linux-latest.tar.gz")
-elseif(WIN32 AND UNZIP_EXECUTABLE)
+	set(ETLEGACY_OMNIBOT_ARCHIVE_URL "https://mirror.etlegacy.com/omnibot/omnibot-linux-latest.tar.gz")
+elseif(WIN32)
 	set(ETLEGACY_OMNIBOT_ARCHIVE "omnibot-windows-latest.zip")
-	set(ETLEGACY_OMNIBOT_ARCHIVE_URL "http://mirror.etlegacy.com/omnibot/omnibot-windows-latest.zip")
+	set(ETLEGACY_OMNIBOT_ARCHIVE_URL "https://mirror.etlegacy.com/omnibot/omnibot-windows-latest.zip")
 endif()
 
 set(ETLEGACY_OMNIBOT_DL_URL "${ETLEGACY_OMNIBOT_ARCHIVE_URL}")
@@ -27,17 +27,10 @@ if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}")
 endif()
 
 message(STATUS "Extracting Omni-Bot to ${CMAKE_CURRENT_BINARY_DIR}/legacy/omni-bot")
-if(UNIX)
-	execute_process(
-		COMMAND tar -xf ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}
-		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/legacy
-	)
-elseif(WIN32)
-	execute_process(
-		COMMAND ${UNZIP_EXECUTABLE} -u ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}
-		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/legacy
-	)
-endif()
+execute_process(
+	COMMAND ${CMAKE_COMMAND} -E tar -xzf ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/legacy
+)
 
 message(STATUS "Adding Omni-Bot to installer scripts")
 install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/legacy/omni-bot/"
