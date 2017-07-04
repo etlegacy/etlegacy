@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -1133,10 +1133,11 @@ static int GLSL_CompileGPUShader(GLhandleARB program, GLhandleARB *prevShader, c
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
 	if (!compiled)
 	{
-		ri.FS_WriteFile(va("debug/%s_%s.debug", name, (shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment")), buffer, size);
-		GLSL_PrintShaderSource(shader);
+		const char *outPath = va("debug/%s_%s.debug", name, (shaderType == GL_VERTEX_SHADER ? "vertex" : "fragment"));
+		ri.FS_WriteFile(outPath, buffer, size);
+		//GLSL_PrintShaderSource(shader);
 		GLSL_PrintInfoLog(shader, qfalse, qfalse);
-		Ren_Fatal("Couldn't compile shader \"%s\"", name);
+		Ren_Fatal("Couldn't compile shader \"%s\" wrote debug output to: %s", name, outPath);
 		//return 0;
 	}
 

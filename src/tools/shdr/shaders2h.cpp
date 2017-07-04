@@ -191,6 +191,12 @@ static void make_c_string(string &in)
 
 	}
 
+	// Make sure the output ends with a new line char
+	if(out.size() > 0 && out[out.size() - 1] != '\n')
+	{
+		out += "\\n";
+	}
+
 	in = "\"" + out + "\"";
 }
 
