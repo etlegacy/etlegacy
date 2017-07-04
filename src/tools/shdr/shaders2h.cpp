@@ -1,4 +1,4 @@
-/*
+﻿/*
 * Wolfenstein: Enemy Territory GPL Source Code
 * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
 *
@@ -79,6 +79,8 @@ static void make_c_string(string &in)
 
 	for (size_t i = 0; i < in.size(); ++i)
 	{
+	LOOP_HEAD:
+
 		char c = in[i];
 		char c2 = (i + 1 < in.size() ? in[i + 1] : 0);
 		if ('"' == c)
@@ -96,14 +98,9 @@ static void make_c_string(string &in)
 			{
 				if (in[i] == '\n')
 				{
-					break;
+					goto LOOP_HEAD;
 				}
 				i++;
-			}
-			i++;
-			if (out.size() > 0)
-			{
-				out += "\\n";
 			}
 		}
 		else if ('/' == c && '*' == c2)
@@ -124,6 +121,32 @@ static void make_c_string(string &in)
 			while (i + 1 < in.size() && in[i + 1] == '\n')
 			{
 				i++;
+			}
+
+			for(size_t x = i + 1;x < in.size(); x++)
+			{
+				if (in[x] == '\n')
+				{
+					i = x;
+					goto LOOP_HEAD;
+				}
+
+				if(in[x] == '/' && x + 1 < in.size() && (in[x + 1] == '/' || in[x + 1] == '*'))
+				{
+					i = x;
+					goto LOOP_HEAD;
+				}
+
+				// yeah theres something available
+				if(in[x] > 32)
+				{
+					break;
+				}
+
+				if(x + 1 == in.size())
+				{
+					i = x + 1;
+				}
 			}
 
 			if (out.size() > 0)
@@ -153,7 +176,13 @@ static void make_c_string(string &in)
 		}
 		else if (c == '\t')
 		{
-			out += "\\t";
+			if (out.size() > 0)
+			{
+				if (i + 1 < in.size() && in[i + 1] != '\n')
+				{
+					out += "\\t";
+				}
+			}
 		}
 		else
 		{
