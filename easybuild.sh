@@ -11,7 +11,7 @@ BUILDDIR="${_SRC}/build"
 SOURCEDIR="${_SRC}/src"
 PROJECTDIR="${_SRC}/project"
 LEGACYETMAIN="${HOME}/.etlegacy/etmain"
-LEGACY_MIRROR="http://mirror.etlegacy.com/etmain/"
+LEGACY_MIRROR="https://mirror.etlegacy.com/etmain/"
 LEGACY_VERSION=`git describe 2>/dev/null`
 
 # Set this to false to disable colors
@@ -108,6 +108,9 @@ _detectlinuxdistro() {
 
 	# archlinux has empty file...
 	[ -e "/etc/arch-release" ] && echo "Arch Linux" && exit
+
+	# Alpine Linux only has a version number
+	[ -e "/etc/alpine-release" ] && echo "Alpine Linux $(</etc/alpine-release)" && exit
 
 	# oh, maybe we have /etc/lsb-release?
 	if [ -e "/etc/lsb-release" ]; then
@@ -277,6 +280,32 @@ parse_commandline() {
 
 			BUNDLED_SDL=0
 			# FIXME: this needs to be fixed in cmake, we do not want zlib or minizip if we are not building the client or server
+			BUNDLED_ZLIB=1
+			BUNDLED_MINIZIP=1
+			BUNDLED_JPEG=0
+			BUNDLED_OGG_VORBIS=0
+			BUNDLED_THEORA=0
+			BUNDLED_GLEW=0
+			BUNDLED_FREETYPE=0
+			BUNDLED_JANSSON=0
+			BUNDLED_CURL=0
+			BUNDLED_OPENAL=0
+		elif [ "$var" = "-server" ]; then
+			einfo "Will only build server requirements"
+			BUILD_CLIENT=0
+			BUILD_SERVER=1
+			FEATURE_RENDERER2=0
+			FEATURE_RENDERER_GLES=0
+			RENDERER_DYNAMIC=0
+
+			FEATURE_CURL=0
+			FEATURE_OGG_VORBIS=0
+			FEATURE_THEORA=0
+			FEATURE_OPENAL=0
+			FEATURE_FREETYPE=0
+			FEATURE_JANSSON=0
+
+			BUNDLED_SDL=0
 			BUNDLED_ZLIB=1
 			BUNDLED_MINIZIP=1
 			BUNDLED_JPEG=0
