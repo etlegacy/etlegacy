@@ -75,7 +75,7 @@ const char * headerValue =
 
 static void make_c_string(string &in)
 {
-	string	out = "\"";
+	string	out = "";
 
 	for (size_t i = 0; i < in.size(); ++i)
 	{
@@ -101,7 +101,10 @@ static void make_c_string(string &in)
 				i++;
 			}
 			i++;
-			out += "\\n";
+			if (out.size() > 0)
+			{
+				out += "\\n";
+			}
 		}
 		else if ('/' == c && '*' == c2)
 		{
@@ -122,13 +125,17 @@ static void make_c_string(string &in)
 			{
 				i++;
 			}
-			if (i + 1 < in.size())
+
+			if (out.size() > 0)
 			{
-				out += "\\n\"\n\t\"";
-			}
-			else
-			{
-				out += "\\n";
+				if (i + 1 < in.size())
+				{
+					out += "\\n\"\n\t\"";
+				}
+				else
+				{
+					out += "\\n";
+				}
 			}
 		}
 		else if (c == ' ')
@@ -138,7 +145,11 @@ static void make_c_string(string &in)
 			{
 				i++;
 			}
-			out += ' ';
+			// Don't add white spaces before newline
+			if (i + 1 < in.size() && in[i + 1] != '\n')
+			{
+				out += ' ';
+			}
 		}
 		else if (c == '\t')
 		{
@@ -151,9 +162,7 @@ static void make_c_string(string &in)
 
 	}
 
-	out += "\"";
-
-	in = out;
+	in = "\"" + out + "\"";
 }
 
 static bool read_file_to_c_string(const string &path, string &output)
