@@ -4907,10 +4907,6 @@ void RE_Finish(void);
 void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qboolean doGamma, qboolean toneMap, qboolean compensate);
 void LoadRGBEToHalfs(const char *name, unsigned short **halfImage, int *width, int *height);
 
-// fallback shaders
-extern const char *defaultShaderDefinitions;
-const char *GetFallbackShader(const char *name);
-
 //tr_growlist.c
 // you don't need to init the growlist if you don't mind it growing and moving the list as it expands
 void Com_InitGrowList(growList_t *list, int maxElements);

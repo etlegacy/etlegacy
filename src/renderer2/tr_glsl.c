@@ -37,6 +37,8 @@
 
 #include "tr_local.h"
 
+#include <shaders.h>
+
 static char *complieMacroNames[] =
 {
 #define MACRO_NAME

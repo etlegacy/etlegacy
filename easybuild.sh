@@ -699,7 +699,7 @@ print_help() {
 	ehead "help - print this help"
 	echo
 	einfo "Properties"
-	ehead "-64, -debug, -clang, -nodb -nor2, -nodynamic, -systemlib, -noextra, -noupdate, -mod"
+	ehead "-64, -debug, -clang, -nodb -nor2, -nodynamic, -systemlib, -noextra, -noupdate, -mod, -server"
 	echo
 }
 
