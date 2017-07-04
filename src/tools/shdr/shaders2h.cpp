@@ -122,7 +122,14 @@ static void make_c_string(string &in)
 			{
 				i++;
 			}
-			out += "\\n\"\n\t\"";
+			if (i + 1 < in.size())
+			{
+				out += "\\n\"\n\t\"";
+			}
+			else
+			{
+				out += "\\n";
+			}
 		}
 		else if (c == ' ')
 		{
