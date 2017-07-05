@@ -979,9 +979,8 @@ char *FindShaderInShaderTextR1(const char *shaderName)
 /**
  * @brief Finds and loads all .shader files, combining them into
  * a single large text block that can be scanned for shader names
- * @param numMaterialFiles
  */
-int ScanAndLoadShaderFilesR1(const int numMaterialFiles)
+int ScanAndLoadShaderFilesR1()
 {
 	char         **shaderFiles;
 	char         *buffers[MAX_SHADER_FILES];
@@ -1003,11 +1002,7 @@ int ScanAndLoadShaderFilesR1(const int numMaterialFiles)
 	if (!shaderFiles || !numShaderFiles)
 	{
 		Ren_Print("----- ScanAndLoadShaderFilesR1 (no files)-----\n");
-	}
-
-	if (numMaterialFiles + numShaderFiles == 0)
-	{
-		Ren_Drop("No shader/material files found!");
+		return 0;
 	}
 
 	Ren_Print("----- ScanAndLoadShaderFilesR1 (%i files)-----\n", numShaderFiles);
