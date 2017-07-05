@@ -416,8 +416,8 @@ void RB_RenderFlare(flare_t *f)
 	// FIXME: use quadstamp?
 	tess.xyz[tess.numVertexes][0]          = f->windowX - size;
 	tess.xyz[tess.numVertexes][1]          = f->windowY - size;
-	tess.texCoords0[tess.numVertexes][0]   = 0;
-	tess.texCoords0[tess.numVertexes][1]   = 0;
+	tess.texCoords[tess.numVertexes][0][0] = 0;
+	tess.texCoords[tess.numVertexes][0][1] = 0;
 	tess.vertexColors[tess.numVertexes][0] = (byte)(iColor[0]);
 	tess.vertexColors[tess.numVertexes][1] = (byte)(iColor[1]);
 	tess.vertexColors[tess.numVertexes][2] = (byte)(iColor[2]);
@@ -426,8 +426,8 @@ void RB_RenderFlare(flare_t *f)
 
 	tess.xyz[tess.numVertexes][0]          = f->windowX - size;
 	tess.xyz[tess.numVertexes][1]          = f->windowY + size;
-	tess.texCoords0[tess.numVertexes][0]   = 0;
-	tess.texCoords0[tess.numVertexes][1]   = 1;
+	tess.texCoords[tess.numVertexes][0][0] = 0;
+	tess.texCoords[tess.numVertexes][0][1] = 1;
 	tess.vertexColors[tess.numVertexes][0] = (byte)(iColor[0]);
 	tess.vertexColors[tess.numVertexes][1] = (byte)(iColor[1]);
 	tess.vertexColors[tess.numVertexes][2] = (byte)(iColor[2]);
@@ -436,8 +436,8 @@ void RB_RenderFlare(flare_t *f)
 
 	tess.xyz[tess.numVertexes][0]          = f->windowX + size;
 	tess.xyz[tess.numVertexes][1]          = f->windowY + size;
-	tess.texCoords0[tess.numVertexes][0]   = 1;
-	tess.texCoords0[tess.numVertexes][1]   = 1;
+	tess.texCoords[tess.numVertexes][0][0] = 1;
+	tess.texCoords[tess.numVertexes][0][1] = 1;
 	tess.vertexColors[tess.numVertexes][0] = (byte)(iColor[0]);
 	tess.vertexColors[tess.numVertexes][1] = (byte)(iColor[1]);
 	tess.vertexColors[tess.numVertexes][2] = (byte)(iColor[2]);
@@ -446,8 +446,8 @@ void RB_RenderFlare(flare_t *f)
 
 	tess.xyz[tess.numVertexes][0]          = f->windowX + size;
 	tess.xyz[tess.numVertexes][1]          = f->windowY - size;
-	tess.texCoords0[tess.numVertexes][0]   = 1;
-	tess.texCoords0[tess.numVertexes][1]   = 0;
+	tess.texCoords[tess.numVertexes][0][0] = 1;
+	tess.texCoords[tess.numVertexes][0][1] = 0;
 	tess.vertexColors[tess.numVertexes][0] = (byte)(iColor[0]);
 	tess.vertexColors[tess.numVertexes][1] = (byte)(iColor[1]);
 	tess.vertexColors[tess.numVertexes][2] = (byte)(iColor[2]);
