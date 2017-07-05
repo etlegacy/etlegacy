@@ -17,6 +17,9 @@ LEGACY_VERSION=`git describe 2>/dev/null`
 # Set this to false to disable colors
 color=true
 
+# Do 32bit build
+x86_build=true
+
 # Command that can be run
 # first array has the cmd names which can be given
 # second array holds the functions which match the cmd names
@@ -136,6 +139,19 @@ detectos() {
 	echo -e "  running on: $boldgreen${PLATFORMSYS}$reset $darkgreen${PLATFORMARCH}$reset - $boldlightblue${DISTRO}$reset"
 }
 
+# This is in reference to https://cmake.org/pipermail/cmake/2016-April/063312.html
+# Long story short, setting the cross compile state in cmake does not work on all platforms
+# so lets set the -m32 flag before we run cmake
+set_compiler() {
+	if [ ${3} == true ]; then
+		export CC=${1} -m32
+		export CXX=${2} -m32
+	else
+		export CC=${1}
+		export CXX=${2}
+	fi
+}
+
 check_compiler() {
 	if [ -z "$CC" ] && [ -z "$CXX" ]; then
 		app_exists GCCFOUND "gcc"
@@ -143,11 +159,9 @@ check_compiler() {
 		app_exists CLANGFOUND "clang"
 		app_exists CLANGPLUSFOUND "clang++"
 		if [ $GCCFOUND == 1 ] && [ $GPLUSFOUND == 1 ]; then
-			export CC=gcc
-			export CXX=g++
+			set_compiler gcc g++ $x86_build
 		elif [ $CLANGFOUND == 1 ] && [ $CLANGPLUSFOUND == 1 ]; then
-			export CC=clang
-			export CXX=clang++
+			set_compiler clang clang++ $x86_build
 		else
 			einfo "Missing compiler. Exiting."
 			exit 1
@@ -194,10 +208,10 @@ parse_commandline() {
 		if [ "$var" = "-64" ]; then
 			einfo "Will disable crosscompile"
 			CROSS_COMPILE32=0
+			x86_build=false
 		elif [ "$var" = "-clang" ]; then
 			einfo "Will use clang"
-			export CC=clang
-			export CXX=clang++
+			set_compiler clang clang++ $x86_build
 		elif [ "$var" = "-debug" ]; then
 			einfo "Will enable debug build"
 			RELEASE_TYPE="Debug"
