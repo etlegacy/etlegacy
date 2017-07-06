@@ -181,8 +181,8 @@ struct PNG_Chunk_IHDR
  * @note Unused
 struct PNG_ZlibHeader
 {
-	uint8_t CompressionMethod;
-	uint8_t Flags;
+    uint8_t CompressionMethod;
+    uint8_t Flags;
 };
 */
 
@@ -445,8 +445,7 @@ static qboolean FindChunk(struct BufferedFile *BF, uint32_t ChunkType)
  */
 static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 {
-	uint8_t  *DecompressedData;
-	uint32_t DecompressedDataLength;
+	uint8_t *DecompressedData;
 
 	uint8_t  *CompressedData;
 	uint8_t  *CompressedDataPtr;
@@ -468,13 +467,12 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 	//  input verification
 	if (!(BF && Buffer))
 	{
-		return(-1);
+		return 0;
 	}
 
 	// some zeroing
-	DecompressedData       = NULL;
-	DecompressedDataLength = 0;
-	*Buffer                = DecompressedData;
+	DecompressedData = NULL;
+	*Buffer          = DecompressedData;
 
 	CompressedData       = NULL;
 	CompressedDataLength = 0;
@@ -484,7 +482,7 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 	// Find the first IDAT chunk.
 	if (!FindChunk(BF, PNG_ChunkType_IDAT))
 	{
-		return(-1);
+		return 0;
 	}
 
 	// Count the size of the uncompressed data
@@ -498,7 +496,7 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 			// and return unsuccessfull
 			BufferedFileRewind(BF, BytesToRewind);
 
-			return(-1);
+			return 0;
 		}
 
 		// Length and Type of chunk
@@ -523,7 +521,7 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 			{
 				BufferedFileRewind(BF, BytesToRewind);
 
-				return(-1);
+				return 0;
 			}
 
 			BytesToRewind        += Length + PNG_ChunkCRC_Size;
@@ -536,7 +534,7 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 	CompressedData = ri.Z_Malloc(CompressedDataLength);
 	if (!CompressedData)
 	{
-		return(-1);
+		return 0;
 	}
 
 	CompressedDataPtr = CompressedData;
@@ -550,7 +548,7 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 		{
 			ri.Free(CompressedData);
 
-			return(-1);
+			return 0;
 		}
 
 		// Length and Type of chunk
@@ -575,14 +573,14 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 			{
 				ri.Free(CompressedData);
 
-				return(-1);
+				return 0;
 			}
 
 			if (!BufferedFileSkip(BF, PNG_ChunkCRC_Size))
 			{
 				ri.Free(CompressedData);
 
-				return(-1);
+				return 0;
 			}
 
 			memcpy(CompressedDataPtr, OrigCompressedData, Length);
@@ -604,7 +602,7 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 	{
 		ri.Free(CompressedData);
 
-		return(-1);
+		return 0;
 	}
 
 	// Allocate the buffer for the uncompressed data.
@@ -613,7 +611,7 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 	{
 		ri.Free(CompressedData);
 
-		return(-1);
+		return 0;
 	}
 
 	// Set the input again in case something was changed by the last puff() .
@@ -632,14 +630,13 @@ static uint32_t DecompressIDATs(struct BufferedFile *BF, uint8_t **Buffer)
 	{
 		ri.Free(DecompressedData);
 
-		return(-1);
+		return 0;
 	}
 
 	// Set the output of this function.
-	DecompressedDataLength = puffDestLen;
-	*Buffer                = DecompressedData;
+	*Buffer = DecompressedData;
 
-	return(DecompressedDataLength);
+	return(puffDestLen);
 }
 
 /**
