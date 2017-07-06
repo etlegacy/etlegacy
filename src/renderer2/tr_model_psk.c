@@ -978,7 +978,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	// split the surfaces into VBO surfaces by the maximum number of GPU vertex skinning bones
 	Com_InitGrowList(&vboSurfaces, 10);
 
-	materialIndex = oldMaterialIndex = -1;
+	oldMaterialIndex = -1;
 
 	for (i = 0; i < numTriangles; i++)
 	{
