@@ -10,22 +10,13 @@ function(LEG_BUNDLE _NAME _DESC)
 	list(LENGTH extra_macro_args num_extra_args)
 	if (${num_extra_args} GREATER 0)
 		foreach(argument ${extra_macro_args})
-			message(STATUS "Testing rule ${argument} for ${_DESC}")
+			# message(STATUS "Testing rule ${argument} for ${_DESC}")
 			separate_arguments(argument)
-			if(${argument})
-				message(STATUS "${_DESC} passed")
-			else()
-				message(STATUS "${_DESC} failed")
+			if(NOT (${argument}))
+				# message(STATUS "${_DESC} failed")
 				set(LEG_BUNDLE_${_NAME}_VALID FALSE)
-				#return()
 			endif()
 		endforeach()
-		#list(GET extra_macro_args 0 optional_arg)
-		#message ("Got an optional arg: ${optional_arg}")
-		#if(${optional_arg})
-		#	return()
-		#	message("Is true")
-		#endif()
 	endif ()
 
 	list(APPEND ALLOPTIONS "BUNDLED_${_NAME}")
@@ -35,6 +26,14 @@ function(LEG_BUNDLE _NAME _DESC)
 		cmake_dependent_option("BUNDLED_${_NAME}" "Use bundled ${_DESC} library instead of the system one." OFF "BUNDLED_LIBS" OFF)
 	endif ()
 endfunction()
+
+macro(LEG_EXTRACT _MSG _PATH _EXTRACT _EXTRACT_RES)
+	message(STATUS "Extracting ${_MSG} to ${_EXTRACT_RES}")
+	execute_process(
+		COMMAND ${CMAKE_COMMAND} -E tar -xzf ${_PATH}
+		WORKING_DIRECTORY ${_EXTRACT}
+	)
+endmacro()
 
 # We use a function here as we dont wont to contaminate the parent context with variables
 # as you cannot send values outside a function without set(<variable> <value> PARENT_SCOPE)
@@ -47,7 +46,7 @@ function(LEG_DOWNLOAD _MSG _URL _PATH _HASH _EXTRACT _EXTRACT_RES)
 		message(STATUS "Downloading ${_MSG} to ${_PATH}")
 		set(ETLEGACY_DO_DOWNLOAD TRUE)
 	elseif(DO_HASH)
-		if(DO_HASH EQUAL TRUE)
+		if(DO_HASH STREQUAL TRUE)
 			message(STATUS "Downloading ${_MSG} to ${_PATH}")
 			set(ETLEGACY_DO_DOWNLOAD TRUE)
 		else()
@@ -68,19 +67,11 @@ function(LEG_DOWNLOAD _MSG _URL _PATH _HASH _EXTRACT _EXTRACT_RES)
 		)
 
 		if(_EXTRACT AND _EXTRACT_RES)
-			message(STATUS "Extracting ${_MSG} to ${_EXTRACT_RES")
-			execute_process(
-				COMMAND ${CMAKE_COMMAND} -E tar -xzf ${_PATH}
-				WORKING_DIRECTORY ${_EXTRACT}
-			)
+			LEG_EXTRACT("${_MSG}" "${_PATH}" "${_EXTRACT}" "${_EXTRACT_RES}")
 		endif()
-	endif()
-
-	if(_EXTRACT AND _EXTRACT_RES AND NOT EXISTS "${_EXTRACT_RES}")
-		message(STATUS "Extracting ${_MSG} to ${_EXTRACT_RES")
-		execute_process(
-			COMMAND ${CMAKE_COMMAND} -E tar -xzf ${_PATH}
-			WORKING_DIRECTORY ${_EXTRACT}
-		)
+	else()
+		if(_EXTRACT AND _EXTRACT_RES AND NOT EXISTS "${_EXTRACT_RES}")
+			LEG_EXTRACT("${_MSG}" "${_PATH}" "${_EXTRACT}" "${_EXTRACT_RES}")
+		endif()
 	endif()
 endfunction()
