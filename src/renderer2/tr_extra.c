@@ -786,20 +786,17 @@ void FreeMemStream(memStream_t *s)
  * @param[in] len
  * @return
  */
-int MemStreamRead(memStream_t *s, void *buffer, int len)
+qboolean MemStreamRead(memStream_t *s, void *buffer, int len)
 {
-	int ret = 1;
-
 	if (s == NULL || buffer == NULL)
 	{
-		return 0;
+		return qfalse;
 	}
 
 	if (s->curPos + len > s->buffer + s->bufSize)
 	{
 		s->flags |= MEMSTREAM_FLAGS_EOF;
 		len       = s->buffer + s->bufSize - s->curPos;
-		ret       = 0;
 
 		Ren_Fatal("MemStreamRead: EOF reached");
 	}
@@ -807,7 +804,7 @@ int MemStreamRead(memStream_t *s, void *buffer, int len)
 	Com_Memcpy(buffer, s->curPos, len);
 	s->curPos += len;
 
-	return ret;
+	return qtrue;
 }
 
 /**
@@ -824,7 +821,7 @@ int MemStreamGetC(memStream_t *s)
 		return -1;
 	}
 
-	if (MemStreamRead(s, &c, 1) == 0)
+	if (MemStreamRead(s, &c, 1) == qfalse)
 	{
 		return -1;
 	}
