@@ -300,7 +300,7 @@ static int QDECL LightmapNameCompare(const void *a, const void *b)
 	return 0;
 }
 
-/**
+/*
  * @brief Standard conversion from rgbe to float pixels
  * @param[out] red
  * @param[out] green
@@ -311,7 +311,6 @@ static int QDECL LightmapNameCompare(const void *a, const void *b)
  * in the range [0,1] to map back into the range [0,1].
  *
  * @note Unused
- */
 static ID_INLINE void rgbe2float(float *red, float *green, float *blue, unsigned char rgbe[4])
 {
 	float e;
@@ -337,6 +336,7 @@ static ID_INLINE void rgbe2float(float *red, float *green, float *blue, unsigned
 		*red = *green = *blue = 0.0;
 	}
 }
+*/
 
 /**
  * @brief LoadRGBEToFloats
@@ -3462,10 +3462,11 @@ static void R_CreateWorldVBO()
 		}
 	}
 
-	startTime = ri.Milliseconds();
-
 	// FIXME move this to somewhere else?
 #if CALC_REDUNDANT_SHADOWVERTS
+
+    startTime = ri.Milliseconds();
+
 	s_worldData.redundantVertsCalculationNeeded = 0;
 	for (i = 0; i < s_worldData.numLights; i++)
 	{
@@ -3588,8 +3589,8 @@ static void R_CreateSubModelVBOs()
 		qsort(surfacesSorted, numSurfaces, sizeof(*surfacesSorted), BSPSurfaceCompare);
 
 		// create a VBO for each shader
-		shader      = oldShader = NULL;
-		lightmapNum = oldLightmapNum = -1;
+		oldShader = NULL;
+		oldLightmapNum = -1;
 
 		for (k = 0; k < numSurfaces; k++)
 		{
