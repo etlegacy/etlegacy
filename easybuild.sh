@@ -537,7 +537,15 @@ run_build() {
 	einfo "Build..."
 	mkdir -p ${BUILDDIR}
 	cd ${BUILDDIR}
-	cmake ${_CFGSTRING} ..
+
+	# https://cmake.org/pipermail/cmake/2016-April/063312.html
+	# FIXME: make this more generic and add clang
+	if [ $x86_build == true ] && [ "${PLATFORMSYS}" == "Linux" ] && [ $GCCFOUND == 1 ]; then
+		CC="gcc -m32" CXX="g++ -m32" cmake ${_CFGSTRING} ..
+	else
+		cmake ${_CFGSTRING} ..
+	fi
+
 	check_exit
 	make ${CMD_ARGS}
 	check_exit
