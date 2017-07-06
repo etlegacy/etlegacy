@@ -7,20 +7,13 @@ message(STATUS "Installing WolfAdmin")
 set(ETLEGACY_WOLFADMIN_ARCHIVE "wolfadmin.tar.gz")
 set(ETLEGACY_WOLFADMIN_ARCHIVE_URL "https://mirror.etlegacy.com/wolfadmin/wolfadmin.tar.gz")
 
-message(STATUS "Downloading WolfAdmin archive to ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_WOLFADMIN_ARCHIVE}")
-
-if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_WOLFADMIN_ARCHIVE}")
-	file(DOWNLOAD
-		${ETLEGACY_WOLFADMIN_ARCHIVE_URL}
-		"${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_WOLFADMIN_ARCHIVE}"
-		SHOW_PROGRESS TIMEOUT 30
-	)
-endif()
-
-message(STATUS "Extracting WolfAdmin to ${CMAKE_CURRENT_BINARY_DIR}/legacy")
-execute_process(
-	COMMAND ${CMAKE_COMMAND} -E tar -xzf ${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_WOLFADMIN_ARCHIVE}
-	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/legacy
+LEG_DOWNLOAD(
+	"WolfAdmin archive"
+	"${ETLEGACY_WOLFADMIN_ARCHIVE_URL}"
+	"${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_WOLFADMIN_ARCHIVE}"
+	"a322a5b8bf478643785362f35143847c"
+	"${CMAKE_CURRENT_BINARY_DIR}/legacy"
+	"${CMAKE_CURRENT_BINARY_DIR}/legacy/wolfadmin"
 )
 
 file(COPY "${CMAKE_CURRENT_BINARY_DIR}/legacy/wolfadmin/luamods"

@@ -212,6 +212,9 @@ parse_commandline() {
 		elif [ "$var" = "-clang" ]; then
 			einfo "Will use clang"
 			set_compiler clang clang++ $x86_build
+		elif [ "$var" = "-gcc" ]; then
+			einfo "Will use gcc"
+			set_compiler gcc g++ $x86_build
 		elif [ "$var" = "-debug" ]; then
 			einfo "Will enable debug build"
 			RELEASE_TYPE="Debug"

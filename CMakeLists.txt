@@ -13,41 +13,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 include(GetGitRevisionDescription)
 include(CMakeDependentOption)
 
-macro(LEG_BUNDLE _NAME _DESC)
-	# Cannot use ARGN directly with list() command.
-	# Copy to a variable first.
-	set (extra_macro_args ${ARGN})
-	set(LEG_BUNDLE_${_NAME}_VALID TRUE)
-
-	# Did we get any optional args?
-	list(LENGTH extra_macro_args num_extra_args)
-	if (${num_extra_args} GREATER 0)
-		foreach(argument ${extra_macro_args})
-			message(STATUS "Testing rule ${argument} for ${_DESC}")
-			separate_arguments(argument)
-			if(${argument})
-				message(STATUS "${_DESC} passed")
-			else()
-				message(STATUS "${_DESC} failed")
-				set(LEG_BUNDLE_${_NAME}_VALID FALSE)
-				#return()
-			endif()
-		endforeach()
-		#list(GET extra_macro_args 0 optional_arg)
-		#message ("Got an optional arg: ${optional_arg}")
-		#if(${optional_arg})
-		#	return()
-		#	message("Is true")
-		#endif()
-	endif ()
-
-	list(APPEND ALLOPTIONS "BUNDLED_${_NAME}")
-	if (${LEG_BUNDLE_${_NAME}_VALID})
-		cmake_dependent_option("BUNDLED_${_NAME}" "Use bundled ${_DESC} library instead of the system one." ON "BUNDLED_LIBS" OFF)
-	else()
-		cmake_dependent_option("BUNDLED_${_NAME}" "Use bundled ${_DESC} library instead of the system one." OFF "BUNDLED_LIBS" OFF)
-	endif ()
-endmacro()
+# We need to add the macros & Functions before any other includes
+include(cmake/ETLFunctions.cmake)
 
 #-----------------------------------------------------------------
 # Options
