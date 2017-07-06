@@ -970,14 +970,14 @@ static void Render_depthFill(int stage)
 {
 	shaderStage_t *pStage;
 	vec4_t        ambientColor;
-	uint32_t      stateBits;        // FIXME: never read & used
+	// uint32_t      stateBits;        // FIXME: never read & used
 
 	Ren_LogComment("--- Render_depthFill ---\n");
 
 	pStage     = tess.surfaceStages[stage];
-	stateBits  = pStage->stateBits;
-	stateBits &= ~(GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS | GLS_ATEST_BITS);
-	stateBits |= GLS_DEPTHMASK_TRUE;
+	// stateBits  = pStage->stateBits;
+	// stateBits &= ~(GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS | GLS_ATEST_BITS);
+	// stateBits |= GLS_DEPTHMASK_TRUE;
 
 	GL_State(pStage->stateBits);
 
