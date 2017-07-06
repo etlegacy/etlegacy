@@ -154,7 +154,7 @@ void RB_ShadowTessEnd(void)
 	vec3_t lightDir;
 
 	// we can only do this if we have enough space in the vertex buffers
-	if (tess.numVertexes >= tess.maxShaderVerts / 2)
+	if (tess.numVertexes >= SHADER_MAX_VERTEXES / 2)
 	{
 		return;
 	}

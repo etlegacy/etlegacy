@@ -6552,8 +6552,7 @@ static int ScanAndLoadShaderFiles(void)
 	if (!shaderFiles || !numShaderFiles)
 	{
 		Ren_Print("----- ScanAndLoadShaderFiles (no files)-----\n");
-		//Ren_Drop("No shader files found!"); // FIXME: ?  segfaults - do we ever have the case w/o shaders? (with proper installs :)
-		return 0; // FIXME: it's time to build our own pak files ... because we currently don't ship an extra pk3 with material definitions this may happen when mods are loaded
+		return 0;
 	}
 
 	Ren_Print("----- ScanAndLoadShaderFiles (%i files)-----\n", numShaderFiles);
@@ -6937,7 +6936,12 @@ void R_InitShaders(void)
 	ScanAndLoadGuideFiles();
 
 	numMaterialFiles = ScanAndLoadShaderFiles();
-	numShaderFiles   = ScanAndLoadShaderFilesR1(numMaterialFiles);
+	numShaderFiles   = ScanAndLoadShaderFilesR1();
+
+	if (numMaterialFiles + numShaderFiles == 0)
+	{
+		Ren_Drop("No shader/material files found!");
+	}
 
 	CreateExternalShaders();
 }

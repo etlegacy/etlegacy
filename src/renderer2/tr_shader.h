@@ -69,10 +69,9 @@ unsigned   implicitStateBits;
 cullType_t implicitCullType;
 
 // tr_shader_r1.c
-int ScanAndLoadShaderFilesR1(const int numMaterialFiles);
+int ScanAndLoadShaderFilesR1();
 char *FindShaderInShaderTextR1(const char *shaderName);
 qboolean ParseShaderR1(char *_text);
-shader_t *FinishShaderR1(void);
 
 // tr_shader.c
 void GeneratePermanentShaderTable(float *values, int numValues);

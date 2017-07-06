@@ -165,14 +165,6 @@ cvar_t *r_maxpolyverts;
 
 cvar_t *r_gfxInfo;
 
-// TODO: check if this crazy stuff is needed
-vec4_t     tess_xyz[SHADER_MAX_VERTEXES] QALIGN(16);
-vec4_t     tess_normal[SHADER_MAX_VERTEXES] QALIGN(16);
-vec2_t     tess_texCoords0[SHADER_MAX_VERTEXES] QALIGN(16);
-vec2_t     tess_texCoords1[SHADER_MAX_VERTEXES] QALIGN(16);
-glIndex_t  tess_indexes[SHADER_MAX_INDEXES] QALIGN(16);
-color4ub_t tess_vertexColors[SHADER_MAX_VERTEXES] QALIGN(16);
-
 /**
  * @brief This function is responsible for initializing a valid OpenGL subsystem
  *
@@ -1227,16 +1219,6 @@ void R_Init(void)
 	Com_Memset(&tr, 0, sizeof(tr));
 	Com_Memset(&backEnd, 0, sizeof(backEnd));
 	Com_Memset(&tess, 0, sizeof(tess));
-
-	tess.xyz          = tess_xyz;
-	tess.texCoords0   = tess_texCoords0;
-	tess.texCoords1   = tess_texCoords1;
-	tess.indexes      = tess_indexes;
-	tess.normal       = tess_normal;
-	tess.vertexColors = tess_vertexColors;
-
-	tess.maxShaderVerts    = SHADER_MAX_VERTEXES;
-	tess.maxShaderIndicies = SHADER_MAX_INDEXES;
 
 	if ((intptr_t) tess.xyz & 15)
 	{

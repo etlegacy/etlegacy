@@ -980,15 +980,15 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *name)
 		LL(surf->ofsFrameCompFrames);
 		LL(surf->ofsEnd);
 
-		if (surf->numVerts > tess.maxShaderVerts)
+		if (surf->numVerts > SHADER_MAX_VERTEXES)
 		{
 			Ren_Drop("R_LoadMDC: %s has more than %i verts on a surface (%i)",
-			         name, tess.maxShaderVerts, surf->numVerts);
+			         name, SHADER_MAX_VERTEXES, surf->numVerts);
 		}
-		if (surf->numTriangles * 3 > tess.maxShaderIndicies)
+		if (surf->numTriangles * 3 > SHADER_MAX_INDEXES)
 		{
 			Ren_Drop("R_LoadMDC: %s has more than %i triangles on a surface (%i)",
-			         name, tess.maxShaderIndicies / 3, surf->numTriangles);
+			         name, SHADER_MAX_INDEXES / 3, surf->numTriangles);
 		}
 
 		// change to surface identifier
@@ -1212,15 +1212,15 @@ static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *name)
 		LL(surf->ofsXyzNormals);
 		LL(surf->ofsEnd);
 
-		if (surf->numVerts > tess.maxShaderVerts)
+		if (surf->numVerts > SHADER_MAX_VERTEXES)
 		{
 			Ren_Drop("R_LoadMD3: %s has more than %i verts on a surface (%i)",
-			         name, tess.maxShaderVerts, surf->numVerts);
+			         name, SHADER_MAX_VERTEXES, surf->numVerts);
 		}
-		if (surf->numTriangles * 3 > tess.maxShaderIndicies)
+		if (surf->numTriangles * 3 > SHADER_MAX_INDEXES)
 		{
 			Ren_Drop("R_LoadMD3: %s has more than %i triangles on a surface (%i)",
-			         name, tess.maxShaderIndicies / 3, surf->numTriangles);
+			         name, SHADER_MAX_INDEXES / 3, surf->numTriangles);
 		}
 
 		// change to surface identifier
@@ -1421,15 +1421,15 @@ static qboolean R_LoadMDS(model_t *mod, void *buffer, const char *name)
 		// change to surface identifier
 		surf->ident = SF_MDS;
 
-		if (surf->numVerts > tess.maxShaderVerts)
+		if (surf->numVerts > SHADER_MAX_VERTEXES)
 		{
 			Ren_Drop("R_LoadMDS: %s has more than %i verts on a surface (%i)",
-			         name, tess.maxShaderVerts, surf->numVerts);
+			         name, SHADER_MAX_VERTEXES, surf->numVerts);
 		}
-		if (surf->numTriangles * 3 > tess.maxShaderIndicies)
+		if (surf->numTriangles * 3 > SHADER_MAX_INDEXES)
 		{
 			Ren_Drop("R_LoadMDS: %s has more than %i triangles on a surface (%i)",
-			         name, tess.maxShaderIndicies / 3, surf->numTriangles);
+			         name, SHADER_MAX_INDEXES / 3, surf->numTriangles);
 		}
 
 		// register the shaders
@@ -1656,15 +1656,15 @@ static qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 		// change to surface identifier
 		surf->ident = SF_MDM;
 
-		if (surf->numVerts > tess.maxShaderVerts)
+		if (surf->numVerts > SHADER_MAX_VERTEXES)
 		{
 			Ren_Drop("R_LoadMDM: %s has more than %i verts on a surface (%i)",
-			         name, tess.maxShaderVerts, surf->numVerts);
+			         name, SHADER_MAX_VERTEXES, surf->numVerts);
 		}
-		if (surf->numTriangles * 3 > tess.maxShaderIndicies)
+		if (surf->numTriangles * 3 > SHADER_MAX_INDEXES)
 		{
 			Ren_Drop("R_LoadMDM: %s has more than %i triangles on a surface (%i)",
-			         name, tess.maxShaderIndicies / 3, surf->numTriangles);
+			         name, SHADER_MAX_INDEXES / 3, surf->numTriangles);
 		}
 
 		// register the shaders

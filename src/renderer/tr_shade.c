@@ -1416,15 +1416,15 @@ static void ComputeTexCoords(shaderStage_t *pStage)
 		case TCGEN_TEXTURE:
 			for (i = 0 ; i < tess.numVertexes ; i++)
 			{
-				tess.svars.texcoords[b][i][0] = tess.texCoords0[i][0];
-				tess.svars.texcoords[b][i][1] = tess.texCoords0[i][1];
+				tess.svars.texcoords[b][i][0] = tess.texCoords[i][0][0];
+				tess.svars.texcoords[b][i][1] = tess.texCoords[i][0][1];
 			}
 			break;
 		case TCGEN_LIGHTMAP:
 			for (i = 0 ; i < tess.numVertexes ; i++)
 			{
-				tess.svars.texcoords[b][i][0] = tess.texCoords1[i][0];
-				tess.svars.texcoords[b][i][1] = tess.texCoords1[i][1];
+				tess.svars.texcoords[b][i][0] = tess.texCoords[i][1][0];
+				tess.svars.texcoords[b][i][1] = tess.texCoords[i][1][1];
 			}
 			break;
 		case TCGEN_VECTOR:
@@ -1803,7 +1803,7 @@ void RB_StageIteratorVertexLitTexture(void)
 	qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	qglColorPointer(4, GL_UNSIGNED_BYTE, 0, tess.svars.colors);
-	qglTexCoordPointer(2, GL_FLOAT, 8, tess.texCoords0);
+	qglTexCoordPointer(2, GL_FLOAT, 16, tess.texCoords[0][0]);
 	qglVertexPointer(3, GL_FLOAT, 16, input->xyz);
 
 	if (qglLockArraysEXT)
@@ -1882,7 +1882,7 @@ void RB_StageIteratorLightmappedMultitexture(void)
 
 	qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	R_BindAnimatedImage(&tess.xstages[0]->bundle[0]);
-	qglTexCoordPointer(2, GL_FLOAT, 8, tess.texCoords0);
+	qglTexCoordPointer(2, GL_FLOAT, 16, tess.texCoords[0][0]);
 
 	// configure second stage
 	GL_SelectTexture(1);
@@ -1907,7 +1907,7 @@ void RB_StageIteratorLightmappedMultitexture(void)
 	}
 
 	qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	qglTexCoordPointer(2, GL_FLOAT, 8, tess.texCoords1);
+	qglTexCoordPointer(2, GL_FLOAT, 16, tess.texCoords[0][1]);
 
 	// lock arrays
 	if (qglLockArraysEXT)
@@ -1969,13 +1969,13 @@ void RB_EndSurface(void)
 		return;
 	}
 
-	if (input->indexes[input->maxShaderIndicies - 1] != 0)
+	if (input->indexes[SHADER_MAX_INDEXES - 1] != 0)
 	{
-		Ren_Drop("RB_EndSurface() - input->maxShaderIndicies(%i) hit", input->maxShaderIndicies);
+		Ren_Drop("RB_EndSurface() - input->maxShaderIndicies(%i) hit", SHADER_MAX_INDEXES);
 	}
-	if (input->xyz[input->maxShaderVerts - 1][0] != 0.f)
+	if (input->xyz[SHADER_MAX_VERTEXES - 1][0] != 0.f)
 	{
-		Ren_Drop("RB_EndSurface() - input->maxShaderVerts(%i) hit", input->maxShaderVerts);
+		Ren_Drop("RB_EndSurface() - input->maxShaderVerts(%i) hit", SHADER_MAX_VERTEXES);
 	}
 
 	if (tess.shader == tr.shadowShader)
@@ -2010,7 +2010,8 @@ void RB_EndSurface(void)
 	}
 
 	// clear shader so we can tell we don't have any unclosed surfaces
-	tess.numIndexes = 0;
+	tess.numIndexes  = 0;
+	tess.numVertexes = 0;
 
 	Ren_LogComment("----------\n");
 }
