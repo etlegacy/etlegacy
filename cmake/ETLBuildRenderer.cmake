@@ -100,12 +100,16 @@ if(FEATURE_RENDERER2)
 	add_executable(shdr2c ${SHDR2C_SRC})
 
 	#This is where we generate the fallback shaders source file.
-	add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/shaders.h
+	add_custom_command(
+		OUTPUT
+			${CMAKE_CURRENT_BINARY_DIR}/include/__shaders.h # This is a fake output so we can force the process to run every time
+			${CMAKE_CURRENT_BINARY_DIR}/include/shaders.h
 		COMMAND shdr2c LEGACY ${CMAKE_SOURCE_DIR}/src/renderer2/glsl ${CMAKE_SOURCE_DIR}/src/renderer2/gldef/default.gldef ${CMAKE_CURRENT_BINARY_DIR}/include/shaders.h
 		DEPENDS shdr2c
+		COMMENT "Generating shaders include file include/shaders.h"
 		VERBATIM
 	)
-	add_custom_target(r2_shader_compile ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/include/shaders.h)
+	add_custom_target(r2_shader_compile ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/include/__shaders.h)
 
 	set_target_properties(shdr2c PROPERTIES FOLDER Tools)
 	set_target_properties(r2_shader_compile PROPERTIES FOLDER Tools)

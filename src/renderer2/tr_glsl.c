@@ -440,10 +440,13 @@ programInfo_t *GLSL_FindShader(const char *name)
 void GLSL_LoadDefinitions(void)
 {
 	// FIXME: Also load from external files in the future...
-	// For no just copy the existing data to our searchable string
-	definitionText = (char *)Com_Allocate(strlen(defaultShaderDefinitions) * sizeof(char) + 1);
-	Com_Memset(definitionText, '\0', strlen(defaultShaderDefinitions) + 1);
-	Q_strncpyz(definitionText, defaultShaderDefinitions, strlen(defaultShaderDefinitions));
+	// For no just copy the existing data to our search able string
+	const char *defaultShaderDef = GetFallbackShaderDef();
+	int size = strlen(defaultShaderDef) * sizeof(char);
+
+	definitionText = (char *)Com_Allocate(size + 1);
+	Com_Memset(definitionText, '\0', size + 1);
+	Q_strncpyz(definitionText, defaultShaderDef, size);
 }
 
 /**

@@ -164,14 +164,17 @@ static void make_c_string(string &in)
 		else if (c == ' ')
 		{
 			// Skip extra white spaces
-			while (i + 1 < in.size() && in[i + 1] == ' ')
+			while (i + 1 < in.size() && (in[i + 1] == ' ' || in[i + 1] == '\t'))
 			{
 				i++;
 			}
 			// Don't add white spaces before newline
 			if (i + 1 < in.size() && in[i + 1] != '\n')
 			{
-				out += ' ';
+				if (i + 2 < in.size() && in[i + 1] != '/' && (in[i + 2] != '/' || in[i + 2] != '*'))
+				{
+					out += ' ';
+				}
 			}
 		}
 		else if (c == '\t')
@@ -307,6 +310,7 @@ static int write_output(string &out_file, string &array_name, vector<shader_out>
 		{
 			fprintf(outputFile, "//GLSL Shader default definitions found in renderer2/gldef folder\n");
 			fprintf(outputFile, "const char *defaultShaderDefinitions =\n\t%s;\n\n", shader_def.c_str());
+			fprintf(outputFile, "#define GetFallbackShaderDef() defaultShaderDefinitions\n\n");
 		}
 
 		fprintf(outputFile, "static const char* GetFallbackShader(const char *name)\n{\n");
