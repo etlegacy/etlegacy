@@ -985,10 +985,9 @@ void R_AddMD5Surfaces(trRefEntity_t *ent)
 				// match the surface name to something in the skin file
 				shader = tr.defaultShader;
 
-				// FIXME: replace MD3_MAX_SURFACES for skin_t::surfaces
-				if (i >= 0 && i < skin->numSurfaces && skin->surfaces[i])
+				if (i >= 0 && i < skin->numSurfaces && skin->surfaces)
 				{
-					shader = skin->surfaces[i]->shader;
+					shader = skin->surfaces[i].shader;
 				}
 				if (shader == tr.defaultShader)
 				{
@@ -1036,11 +1035,10 @@ void R_AddMD5Surfaces(trRefEntity_t *ent)
 				// match the surface name to something in the skin file
 				shader = tr.defaultShader;
 
-				// FIXME: replace MD3_MAX_SURFACES for skin_t::surfaces
 				//if(i >= 0 && i < skin->numSurfaces && skin->surfaces[i])
-				if (vboSurface->skinIndex >= 0 && vboSurface->skinIndex < skin->numSurfaces && skin->surfaces[vboSurface->skinIndex])
+				if (vboSurface->skinIndex >= 0 && vboSurface->skinIndex < skin->numSurfaces && skin->surfaces)
 				{
-					shader = skin->surfaces[vboSurface->skinIndex]->shader;
+					shader = skin->surfaces[vboSurface->skinIndex].shader;
 				}
 
 				if (shader == tr.defaultShader)
@@ -1156,10 +1154,9 @@ void R_AddMD5Interactions(trRefEntity_t *ent, trRefLight_t *light)
 				// match the surface name to something in the skin file
 				shader = tr.defaultShader;
 
-				// FIXME: replace MD3_MAX_SURFACES for skin_t::surfaces
-				if (i >= 0 && i < skin->numSurfaces && skin->surfaces[i])
+				if (i >= 0 && i < skin->numSurfaces && skin->surfaces)
 				{
-					shader = skin->surfaces[i]->shader;
+					shader = skin->surfaces[i].shader;
 				}
 				if (shader == tr.defaultShader)
 				{
@@ -1214,10 +1211,9 @@ void R_AddMD5Interactions(trRefEntity_t *ent, trRefLight_t *light)
 				// match the surface name to something in the skin file
 				shader = tr.defaultShader;
 
-				// FIXME: replace MD3_MAX_SURFACES for skin_t::surfaces
-				if (i >= 0 && i < skin->numSurfaces && skin->surfaces[i])
+				if (i >= 0 && i < skin->numSurfaces && skin->surfaces)
 				{
-					shader = skin->surfaces[i]->shader;
+					shader = skin->surfaces[i].shader;
 				}
 				if (shader == tr.defaultShader)
 				{

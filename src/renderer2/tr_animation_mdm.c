@@ -459,9 +459,9 @@ static shader_t *GetMDMSurfaceShader(const trRefEntity_t *ent, mdmSurfaceIntern_
 		for (j = 0; j < skin->numSurfaces; j++)
 		{
 			// the names have both been lowercased
-			if (!strcmp(skin->surfaces[j]->name, mdmSurface->name))
+			if (!strcmp(skin->surfaces[j].name, mdmSurface->name))
 			{
-				shader = skin->surfaces[j]->shader;
+				shader = skin->surfaces[j].shader;
 				break;
 			}
 		}
@@ -473,13 +473,13 @@ static shader_t *GetMDMSurfaceShader(const trRefEntity_t *ent, mdmSurfaceIntern_
 			hash = Com_HashKey(s, strlen(s));
 			for (j = 0; j < skin->numSurfaces; j++)
 			{
-				if (hash != skin->surfaces[j]->hash)
+				if (hash != skin->surfaces[j].hash)
 				{
 					continue;
 				}
-				if (!strcmp(skin->surfaces[j]->name, s))
+				if (!strcmp(skin->surfaces[j].name, s))
 				{
-					shader = skin->surfaces[j]->shader;
+					shader = skin->surfaces[j].shader;
 					break;
 				}
 			}
@@ -492,13 +492,13 @@ static shader_t *GetMDMSurfaceShader(const trRefEntity_t *ent, mdmSurfaceIntern_
 			for (j = 0; j < skin->numSurfaces; j++)
 			{
 				// the names have both been lowercased
-				if (hash != skin->surfaces[j]->hash)
+				if (hash != skin->surfaces[j].hash)
 				{
 					continue;
 				}
-				if (!strcmp(skin->surfaces[j]->name, surface->name))
+				if (!strcmp(skin->surfaces[j].name, surface->name))
 				{
-					shader = skin->surfaces[j]->shader;
+					shader = skin->surfaces[j].shader;
 					break;
 				}
 			}

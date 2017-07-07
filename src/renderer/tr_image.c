@@ -1502,7 +1502,7 @@ SKINS
 /**
  * @brief This is unfortunate, but the skin files aren't
  * compatable with our normal parsing rules.
- * @param data_p
+ * @param[out] data_p
  * @return
  */
 static char *CommaParse(char **data_p)
@@ -1722,6 +1722,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
  */
 qhandle_t RE_RegisterSkin(const char *name)
 {
+    skinSurface_t parseSurfaces[MAX_SKIN_SURFACES];
 	qhandle_t     hSkin;
 	skin_t        *skin;
 	skinModel_t   *model;
@@ -1734,6 +1735,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 	char *text_p;
 	char *token;
 	char surfName[MAX_QPATH];
+	int  totalSurfaces = 0;
 
 	if (!name || !name[0])
 	{
@@ -1777,13 +1779,13 @@ qhandle_t RE_RegisterSkin(const char *name)
 	R_IssuePendingRenderCommands();
 
 	// If not a .skin file, load as a single shader
-	// HACK: ET evilly has filenames slightly longer than MAX_QPATH
+	// WARNING: HACK: ET evilly has filenames slightly longer than MAX_QPATH
 	// this check breaks the loading of such skins
 	/*
 	if ( strcmp( name + strlen( name ) - 5, ".skin" ) ) {
 	    skin->numSurfaces = 1;
-	    skin->surfaces[0] = ri.Hunk_Alloc( sizeof(skin->surfaces[0]), h_low );
-	    skin->surfaces[0]->shader = R_FindShader( name, LIGHTMAP_NONE, qtrue );
+	    skin->surfaces = ri.Hunk_Alloc( sizeof( skinSurface_t ), h_low );
+	    skin->surfaces[0].shader = R_FindShader( name, LIGHTMAP_NONE, qtrue );
 	    return hSkin;
 	}
 	*/
@@ -1834,7 +1836,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 			}
 
 			// this is specifying a model
-			model = skin->models[skin->numModels] = ri.Hunk_Alloc(sizeof(*skin->models[0]), h_low);
+			model = skin->models[skin->numModels] = ri.Hunk_Alloc(sizeof(skinModel_t), h_low);
 			Q_strncpyz(model->type, token, sizeof(model->type));
 			model->hash = Com_HashKey(model->type, sizeof(model->type));
 
@@ -1850,26 +1852,35 @@ qhandle_t RE_RegisterSkin(const char *name)
 		// parse the shader name
 		token = CommaParse(&text_p);
 
-		if (skin->numSurfaces >= MD3_MAX_SURFACES)
+		if (skin->numSurfaces < MAX_SKIN_SURFACES)
 		{
-			Ren_Warning("WARNING: Ignoring surfaces in '%s', the max is %d surfaces!\n", name, MD3_MAX_SURFACES);
-			break;
+			surf = &parseSurfaces[skin->numSurfaces];
+			Q_strncpyz(surf->name, surfName, sizeof(surf->name));
+            surf->hash   = Com_HashKey(surf->name, sizeof(surf->name));
+			surf->shader = R_FindShader(token, LIGHTMAP_NONE, qtrue);
+			skin->numSurfaces++;
 		}
 
-		surf = skin->surfaces[skin->numSurfaces] = ri.Hunk_Alloc(sizeof(*skin->surfaces[0]), h_low);
-		Q_strncpyz(surf->name, surfName, sizeof(surf->name));
-		surf->hash   = Com_HashKey(surf->name, sizeof(surf->name));
-		surf->shader = R_FindShader(token, LIGHTMAP_NONE, qtrue);
-		skin->numSurfaces++;
+		totalSurfaces++;
 	}
 
 	ri.FS_FreeFile(text.v);
+
+	if (totalSurfaces > MAX_SKIN_SURFACES)
+	{
+		ri.Printf(PRINT_WARNING, "WARNING: Ignoring excess surfaces (found %d, max is %d) in skin '%s'!\n",
+		          totalSurfaces, MAX_SKIN_SURFACES, name);
+	}
 
 	// never let a skin have 0 shaders
 	if (skin->numSurfaces == 0)
 	{
 		return 0;       // use default skin
 	}
+
+    // copy surfaces to skin
+    skin->surfaces = ri.Hunk_Alloc(skin->numSurfaces * sizeof( skinSurface_t ), h_low );
+    Com_Memcpy( skin->surfaces, parseSurfaces, skin->numSurfaces * sizeof( skinSurface_t ) );
 
 	return hSkin;
 }
@@ -1887,8 +1898,8 @@ void R_InitSkins(void)
 	skin = tr.skins[0] = ri.Hunk_Alloc(sizeof(skin_t), h_low);
 	Q_strncpyz(skin->name, "<default skin>", sizeof(skin->name));
 	skin->numSurfaces         = 1;
-	skin->surfaces[0]         = ri.Hunk_Alloc(sizeof(*skin->surfaces[0]), h_low);
-	skin->surfaces[0]->shader = tr.defaultShader;
+	skin->surfaces         = ri.Hunk_Alloc(sizeof(skinSurface_t), h_low);
+	skin->surfaces[0].shader = tr.defaultShader;
 }
 
 /**
@@ -1919,10 +1930,10 @@ void R_SkinList_f(void)
 	{
 		skin = tr.skins[i];
 
-		Ren_Print("%3i:%s\n", i, skin->name);
+		Ren_Print("%3i:%s (%d surfaces)\n", i, skin->name, skin->numSurfaces);
 		for (j = 0 ; j < skin->numSurfaces ; j++)
 		{
-			Ren_Print("       %s = %s\n", skin->surfaces[j]->name, skin->surfaces[j]->shader->name);
+			Ren_Print("       %s = %s\n", skin->surfaces[j].name, skin->surfaces[j].shader->name);
 		}
 	}
 	Ren_Print("------------------\n");

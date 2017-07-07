@@ -1704,6 +1704,8 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 		// animMap <frequency> <image1> .... <imageN>
 		else if (!Q_stricmp(token, "animMap"))
 		{
+			int totalImages = 0;
+
 			token = COM_ParseExt2(text, qfalse);
 			if (!token[0])
 			{
@@ -1749,6 +1751,14 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 					}
 					stage->bundle[0].numImages++;
 				}
+
+				totalImages++;
+			}
+
+			if (totalImages > MAX_IMAGE_ANIMATIONS)
+			{
+				ri.Printf(PRINT_WARNING, "WARNING: ignoring excess images for 'animMap' (found %d, max is %d) in shader '%s'\n",
+				          totalImages, MAX_IMAGE_ANIMATIONS, shader.name);
 			}
 		}
 		else if (!Q_stricmp(token, "videoMap"))
@@ -1764,6 +1774,10 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 			{
 				stage->bundle[0].isVideoMap = qtrue;
 				stage->bundle[0].image[0]   = tr.scratchImage[stage->bundle[0].videoMapHandle];
+			}
+			else
+			{
+				ri.Printf(PRINT_WARNING, "WARNING: could not load '%s' for 'videoMap' keyword in shader '%s'\n", token, shader.name);
 			}
 		}
 		// soundmap [waveform]

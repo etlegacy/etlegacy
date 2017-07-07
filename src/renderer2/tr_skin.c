@@ -264,6 +264,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
  */
 qhandle_t RE_RegisterSkin(const char *name)
 {
+	skinSurface_t parseSurfaces[MAX_SKIN_SURFACES];
 	qhandle_t     hSkin;
 	skin_t        *skin;
 	skinSurface_t *surf;
@@ -271,6 +272,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 	char          *text, *text_p;
 	char          *token;
 	char          surfName[MAX_QPATH];
+	int           totalSurfaces = 0;
 
 	if (!name || !name[0])
 	{
@@ -316,9 +318,9 @@ qhandle_t RE_RegisterSkin(const char *name)
 	// If not a .skin file, load as a single shader
 	if (strcmp(name + strlen(name) - 5, ".skin"))
 	{
-		skin->numSurfaces         = 1;
-		skin->surfaces[0]         = ri.Hunk_Alloc(sizeof(skin->surfaces[0]), h_low);
-		skin->surfaces[0]->shader = R_FindShader(name, SHADER_3D_DYNAMIC, qtrue);
+		skin->numSurfaces        = 1;
+		skin->surfaces           = ri.Hunk_Alloc(sizeof(skinSurface_t), h_low);
+		skin->surfaces[0].shader = R_FindShader(name, LIGHTMAP_NONE, qtrue);
 		return hSkin;
 	}
 #endif
@@ -386,13 +388,16 @@ qhandle_t RE_RegisterSkin(const char *name)
 		// parse the shader name
 		token = CommaParse(&text_p);
 
-		if (skin->numSurfaces >= MD3_MAX_SURFACES)
+		if (skin->numSurfaces < MAX_SKIN_SURFACES)
 		{
-			Ren_Warning("WARNING: Ignoring surfaces in '%s', the max is %d surfaces!\n", name, MD3_MAX_SURFACES);
-			break;
+			surf = &parseSurfaces[skin->numSurfaces];
+			Q_strncpyz(surf->name, surfName, sizeof(surf->name));
+			surf->shader = R_FindShader(token, -1, qtrue);
+			skin->numSurfaces++;
 		}
+		totalSurfaces++;
 
-		surf = skin->surfaces[skin->numSurfaces] = (skinSurface_t *)ri.Hunk_Alloc(sizeof(*skin->surfaces[0]), h_low);
+		surf = &parseSurfaces[skin->numSurfaces];
 		Q_strncpyz(surf->name, surfName, sizeof(surf->name));
 
 		// FIXME: bspSurface not not have ::hash yet
@@ -403,11 +408,21 @@ qhandle_t RE_RegisterSkin(const char *name)
 
 	ri.FS_FreeFile(text);
 
+	if (totalSurfaces > MAX_SKIN_SURFACES)
+	{
+		ri.Printf(PRINT_WARNING, "WARNING: Ignoring excess surfaces (found %d, max is %d) in skin '%s'!\n",
+		          totalSurfaces, MAX_SKIN_SURFACES, name);
+	}
+
 	// never let a skin have 0 shaders
 	if (skin->numSurfaces == 0)
 	{
 		return 0;               // use default skin
 	}
+
+	// copy surfaces to skin
+	skin->surfaces = ri.Hunk_Alloc(skin->numSurfaces * sizeof(skinSurface_t), h_low);
+	memcpy(skin->surfaces, parseSurfaces, skin->numSurfaces * sizeof(skinSurface_t));
 
 	return hSkin;
 }
@@ -424,9 +439,9 @@ void R_InitSkins(void)
 	// make the default skin have all default shaders
 	skin = tr.skins[0] = (skin_t *)ri.Hunk_Alloc(sizeof(skin_t), h_low);
 	Q_strncpyz(skin->name, "<default skin>", sizeof(skin->name));
-	skin->numSurfaces         = 1;
-	skin->surfaces[0]         = (skinSurface_t *)ri.Hunk_Alloc(sizeof(*skin->surfaces[0]), h_low);
-	skin->surfaces[0]->shader = tr.defaultShader;
+	skin->numSurfaces        = 1;
+	skin->surfaces           = ri.Hunk_Alloc(sizeof(skinSurface_t), h_low);
+	skin->surfaces[0].shader = tr.defaultShader;
 }
 
 /**
@@ -457,10 +472,10 @@ void R_SkinList_f(void)
 	{
 		skin = tr.skins[i];
 
-		Ren_Print("%3i:%s\n", i, skin->name);
+		Ren_Print("%3i:%s (%d surfaces)\n", i, skin->name, skin->numSurfaces);
 		for (j = 0; j < skin->numSurfaces; j++)
 		{
-			Ren_Print("       %s = %s\n", skin->surfaces[j]->name, skin->surfaces[j]->shader->name);
+			Ren_Print("       %s = %s\n", skin->surfaces[j].name, skin->surfaces[j].shader->name);
 		}
 	}
 	Ren_Print("------------------\n");

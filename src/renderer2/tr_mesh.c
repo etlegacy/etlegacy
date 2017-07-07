@@ -244,9 +244,9 @@ static shader_t *GetMDVSurfaceShader(const trRefEntity_t *ent, mdvSurface_t *mdv
 		for (j = 0; j < skin->numSurfaces; j++)
 		{
 			// the names have both been lowercased
-			if (!strcmp(skin->surfaces[j]->name, mdvSurface->name))
+			if (!strcmp(skin->surfaces[j].name, mdvSurface->name))
 			{
-				shader = skin->surfaces[j]->shader;
+				shader = skin->surfaces[j].shader;
 				break;
 			}
 		}

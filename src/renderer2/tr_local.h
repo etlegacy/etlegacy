@@ -910,7 +910,7 @@ typedef enum
 	CGEN_WAVEFORM,              ///< programmatically generated
 	//CGEN_LIGHTING_DIFFUSE,
 	CGEN_FOG,                   ///< standard fog
-    CGEN_CONST,                 ///< fixed color
+	CGEN_CONST,                 ///< fixed color
 	CGEN_CUSTOM_RGB,            ///< like fixed color but generated dynamically, single arithmetic expression
 	CGEN_CUSTOM_RGBs,           ///< multiple expressions
 } colorGen_t;
@@ -1928,6 +1928,15 @@ typedef struct
 //=================================================================================
 
 /**
+ * @def MAX_SKIN_SURFACES
+ * @brief Max surfaces per-skin
+ * @details This is an arbitry limit. Vanilla Q3 only supported 32 surfaces in skins but failed to
+ * enforce the maximum limit when reading skin files. It was possile to use more than 32
+ * surfaces which accessed out of bounds memory past end of skin->surfaces hunk block.
+ */
+#define MAX_SKIN_SURFACES   256
+
+/**
  * @struct skinSurface_t
  * @brief skins allow models to be retextured without modifying the model file
  */
@@ -1960,7 +1969,7 @@ typedef struct skin_s
 	char name[MAX_QPATH];               ///< game path, including extension
 	int numSurfaces;
 	int numModels;
-	skinSurface_t *surfaces[MD3_MAX_SURFACES];
+	skinSurface_t *surfaces;            ///< dynamically allocated array of surfaces
 	skinModel_t *models[MAX_PART_MODELS];
 } skin_t;
 
