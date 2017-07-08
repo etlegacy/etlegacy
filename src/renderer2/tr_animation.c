@@ -530,7 +530,7 @@ static qboolean R_LoadPSA(skelAnimation_t *skelAnim, byte *buffer, int bufferSiz
 	refBones = (axReferenceBone_t *)ri.Hunk_Alloc(numReferenceBones * sizeof(axReferenceBone_t), h_low);
 	for (i = 0, refBone = refBones; i < numReferenceBones; i++, refBone++)
 	{
-		MemStreamRead(stream, refBone->name, sizeof(refBone->name));
+		(void) MemStreamRead(stream, refBone->name, sizeof(refBone->name));
 
 		refBone->flags       = MemStreamGetLong(stream);
 		refBone->numChildren = MemStreamGetLong(stream);
@@ -619,8 +619,8 @@ static qboolean R_LoadPSA(skelAnimation_t *skelAnim, byte *buffer, int bufferSiz
 
 		animInfo = &psa->info;
 
-		MemStreamRead(stream, animInfo->name, sizeof(animInfo->name));
-		MemStreamRead(stream, animInfo->group, sizeof(animInfo->group));
+		(void) MemStreamRead(stream, animInfo->name, sizeof(animInfo->name));
+		(void) MemStreamRead(stream, animInfo->group, sizeof(animInfo->group));
 
 		animInfo->numBones = MemStreamGetLong(stream);
 
