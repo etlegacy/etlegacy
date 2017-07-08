@@ -3748,8 +3748,6 @@ extern int      maxAnisotropy;
 
 extern cvar_t *r_railCoreWidth;
 
-extern cvar_t *r_measureOverdraw;   ///< enables stencil buffer overdraw measurement
-
 extern cvar_t *r_lodBias;           ///< push/pull LOD transitions
 extern cvar_t *r_lodScale;
 extern cvar_t *r_lodTest;
@@ -3785,8 +3783,6 @@ extern cvar_t *r_novis;             ///< disable/enable usage of PVS
 extern cvar_t *r_noLightScissors;
 extern cvar_t *r_noLightVisCull;
 extern cvar_t *r_noInteractionSort;
-
-extern cvar_t *r_gamma;
 
 extern cvar_t *r_ext_compressed_textures;   ///< these control use of specific extensions
 extern cvar_t *r_ext_occlusion_query;
@@ -3825,12 +3821,6 @@ extern cvar_t *r_wrapAroundLighting;
 extern cvar_t *r_halfLambertLighting;
 extern cvar_t *r_rimLighting;
 extern cvar_t *r_rimExponent;
-
-extern cvar_t *r_uiFullScreen;  ///< ui is running fullscreen
-
-extern cvar_t *r_clear;         ///< force screen clear every frame
-
-extern cvar_t *r_shadows;       ///< controls shadows: 0 = none, 1 = blur, 2 = black planar projection,
 
 // 3 = stencil shadow volumes
 // 4 = shadow mapping
