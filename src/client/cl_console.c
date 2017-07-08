@@ -592,8 +592,17 @@ void Con_DrawSolidConsole(float frac)
 	}
 	else
 	{
-		// FIXME: custom resolution displays wrong location
-		SCR_DrawPic(0, 0, SCREEN_WIDTH, y, cls.consoleShader);
+		// adjust console background shader for widescreens
+		if (cls.glconfig.windowAspect > RATIO43)
+		{
+			int z = 0.25 * (cls.glconfig.vidWidth - (cls.glconfig.vidHeight * RATIO43));
+
+			SCR_DrawPic(-z, 0, SCREEN_WIDTH + z, y, cls.consoleShader);
+		}
+		else
+		{
+			SCR_DrawPic(0, 0, SCREEN_WIDTH, y, cls.consoleShader);
+		}
 
 		/*
 		// draw the logo

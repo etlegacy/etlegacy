@@ -2606,9 +2606,6 @@ void CG_Letterbox(float xsize, float ysize, qboolean center);
 
 // cg_drawtools.c
 
-// widescreen monitor support
-#define RATIO43     (4.0f / 3.0f)   ///< 4:3 aspectratio is the default for this game engine ...
-#define RPRATIO43   (1 / RATIO43)   ///<
 qboolean Ccg_Is43Screen(void);      // does this game-window have a 4:3 aspectratio. note: this is also true for a 800x600 windowed game on a widescreen monitor
 float Ccg_WideX(float x);           // convert an x-coordinate to a widescreen x-coordinate. (only if the game-window is non 4:3 aspectratio)
 float Ccg_WideXoffset(void);        // the horizontal center of screen pixel-difference of a 4:3 ratio vs. the current aspectratio
