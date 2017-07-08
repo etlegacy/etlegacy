@@ -141,7 +141,7 @@ void SV_DirectConnect(netadr_t from)
 	char                userinfo[MAX_INFO_STRING];
 	int                 i, count = 0;
 	client_t            *cl, *newcl;
-	MAC_STATIC client_t temp;
+	client_t            temp;
 	int                 clientNum;
 	int                 version;
 	int                 qport;
@@ -181,13 +181,14 @@ void SV_DirectConnect(netadr_t from)
 		//}
 
 		if (NET_CompareBaseAdr(from, cl->netchan.remoteAddress)
-		    && (cl->netchan.qport == qport
-		        || from.port == cl->netchan.remoteAddress.port))
+		    && (cl->netchan.qport == qport || from.port == cl->netchan.remoteAddress.port))
 		{
-			if ((svs.time - cl->lastConnectTime)
-			    < (sv_reconnectlimit->integer * 1000))
+			if ((svs.time - cl->lastConnectTime) < sv_reconnectlimit->integer * 1000)
 			{
-				Com_DPrintf("%s:reconnect rejected : too soon\n", NET_AdrToString(from));
+				if (com_developer->integer)
+				{
+					Com_Printf("%s:reconnect rejected : too soon\n", NET_AdrToString(from));
+				}
 				return;
 			}
 			break;
