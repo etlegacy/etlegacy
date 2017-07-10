@@ -463,15 +463,14 @@ static void Render_vertexLighting_DBS_entity(int stage)
 
 	stateBits = pStage->stateBits;
 	GL_State(stateBits);
-	if (r_normalMapping->integer == qtrue)
+
+	// if there's no image tr.flatImage is used
+	//if (r_normalMapping->integer && (pStage->bundle[TB_NORMALMAP].image[0] != NULL))
+	if (r_normalMapping->integer)
 	{
 		normalMapping = qtrue;
 	}
 
-	else if (r_normalMapping->integer == qfalse)
-	{
-		normalMapping = qfalse;
-	}
 	SetMacrosAndSelectProgram(trProg.gl_vertexLightingShader_DBS_entity,
 	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
 	                          USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
@@ -679,14 +678,11 @@ static void Render_vertexLighting_DBS_world(int stage)
 
 	stateBits = pStage->stateBits;
 
-	if (r_normalMapping->integer == qtrue)
+	// if there's no image tr.flatImage is used
+	//if (r_normalMapping->integer && (pStage->bundle[TB_NORMALMAP].image[0] != NULL))
+	if (r_normalMapping->integer)
 	{
 		normalMapping = qtrue;
-	}
-
-	else if (r_normalMapping->integer == qfalse)
-	{
-		normalMapping = qfalse;
 	}
 
 	SetMacrosAndSelectProgram(trProg.gl_vertexLightingShader_DBS_world,
@@ -859,12 +855,9 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 
 	GL_State(stateBits);
 
-	if (r_normalMapping->integer == qtrue)
-	{
-		normalMapping = qtrue;
-	}
-
-	else if (r_normalMapping->integer == qfalse)
+	// disable by cvar - if there's no image tr.flatImage is used
+	//if (pStage->bundle[TB_NORMALMAP].image[0] == NULL)
+	if (!r_normalMapping->integer)
 	{
 		normalMapping = qfalse;
 	}
