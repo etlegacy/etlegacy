@@ -226,7 +226,7 @@ extern void(QDECL * Q_SnapVector)(vec3_t vec);
 
 static ID_INLINE long Q_ftol(float f)
 {
-#if id386_sse && defined(_MSC_VER)
+#if defined(id386_sse) && defined(_MSC_VER)
 	static int tmp;
 	__asm fld f
 	__asm fistp tmp
