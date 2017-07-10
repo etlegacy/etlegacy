@@ -463,7 +463,11 @@ static void Render_vertexLighting_DBS_entity(int stage)
 
 	stateBits = pStage->stateBits;
 	GL_State(stateBits);
-	if (r_normalMapping->integer && (pStage->bundle[TB_NORMALMAP].image[0] != NULL))
+	if (pStage->bundle[TB_NORMALMAP].image[0] == NULL)
+	{
+		normalMapping = qfalse;
+	}
+	else
 	{
 		normalMapping = qtrue;
 	}
@@ -675,7 +679,11 @@ static void Render_vertexLighting_DBS_world(int stage)
 
 	stateBits = pStage->stateBits;
 
-	if (r_normalMapping->integer && (pStage->bundle[TB_NORMALMAP].image[0] != NULL))
+	if (pStage->bundle[TB_NORMALMAP].image[0] == NULL)
+	{
+		normalMapping = qfalse;
+	}
+	else
 	{
 		normalMapping = qtrue;
 	}
@@ -853,6 +861,10 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	if (pStage->bundle[TB_NORMALMAP].image[0] == NULL)
 	{
 		normalMapping = qfalse;
+	}
+	else
+	{
+		normalMapping = qtrue;
 	}
 
 	// choose right shader program ----------------------------------
