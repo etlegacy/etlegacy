@@ -463,7 +463,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 
 	stateBits = pStage->stateBits;
 	GL_State(stateBits);
-	if (pStage->bundle[TB_NORMALMAP].image[0] == NULL)
+	if (r_normalMapping->integer && (pStage->bundle[TB_NORMALMAP].image[0] != NULL))
 	{
 		normalMapping = qfalse;
 	}
@@ -679,7 +679,7 @@ static void Render_vertexLighting_DBS_world(int stage)
 
 	stateBits = pStage->stateBits;
 
-	if (pStage->bundle[TB_NORMALMAP].image[0] == NULL)
+	if (r_normalMapping->integer && (pStage->bundle[TB_NORMALMAP].image[0] != NULL))
 	{
 		normalMapping = qfalse;
 	}
@@ -858,7 +858,7 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 
 	GL_State(stateBits);
 
-	if (pStage->bundle[TB_NORMALMAP].image[0] == NULL)
+	if (r_normalMapping->integer && (pStage->bundle[TB_NORMALMAP].image[0] != NULL))
 	{
 		normalMapping = qfalse;
 	}
