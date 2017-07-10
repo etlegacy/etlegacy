@@ -453,9 +453,6 @@ static shader_t *GetMDMSurfaceShader(const trRefEntity_t *ent, mdmSurfaceIntern_
 
 #if 1
 		// Q3A way
-
-		// match the surface name to something in the skin file
-		shader = tr.defaultShader;
 		for (j = 0; j < skin->numSurfaces; j++)
 		{
 			// the names have both been lowercased
