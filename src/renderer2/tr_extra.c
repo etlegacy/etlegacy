@@ -786,7 +786,7 @@ void FreeMemStream(memStream_t *s)
  * @param[in] len
  * @return
  */
-qboolean MemStreamRead(memStream_t *s, void *buffer, int len)
+qboolean MemStreamRead(memStream_t *s, void *buffer, unsigned int len)
 {
 	if (s == NULL || buffer == NULL)
 	{
@@ -796,7 +796,7 @@ qboolean MemStreamRead(memStream_t *s, void *buffer, int len)
 	if (s->curPos + len > s->buffer + s->bufSize)
 	{
 		s->flags |= MEMSTREAM_FLAGS_EOF;
-		len       = s->buffer + s->bufSize - s->curPos;
+		// len       = s->buffer + s->bufSize - s->curPos;
 
 		Ren_Fatal("MemStreamRead: EOF reached");
 	}

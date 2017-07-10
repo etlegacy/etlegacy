@@ -359,7 +359,7 @@ typedef struct memStream_s
 
 memStream_t *AllocMemStream(byte *buffer, int bufSize);
 void            FreeMemStream(memStream_t *s);
-qboolean MemStreamRead(memStream_t *s, void *buffer, int len);
+qboolean MemStreamRead(memStream_t *s, void *buffer, unsigned int len);
 int             MemStreamGetC(memStream_t *s);
 int             MemStreamGetLong(memStream_t *s);
 int             MemStreamGetShort(memStream_t *s);
