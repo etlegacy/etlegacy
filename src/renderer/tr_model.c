@@ -947,9 +947,10 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *name)
 	}
 
 	// swap all the tags
-	tag = ( mdcTag_t * )((byte *)mod->model.mdc[lod] + mod->model.mdc[lod]->ofsTags);
 	if (LittleLong(1) != 1)
 	{
+        tag = ( mdcTag_t * )((byte *)mod->model.mdc[lod] + mod->model.mdc[lod]->ofsTags);
+
 		for (i = 0 ; i < mod->model.mdc[lod]->numTags * mod->model.mdc[lod]->numFrames ; i++, tag++)
 		{
 			for (j = 0 ; j < 3 ; j++)
@@ -1897,10 +1898,11 @@ void R_Modellist_f(void)
 	Ren_Print("%8i : Total models\n", total);
 
 	// not working right with new hunk
-	//if (tr.world)
-	//{
-	//	Ren_Print("\n%8i : %s\n", tr.world->dataSize, tr.world->name);
-	//}
+	// if (tr.world)
+	// {
+	// 	ri.Printf(PRINT_ALL, "\n%8i : %s\n", tr.world->dataSize, tr.world->name);
+	// }
+
 }
 
 //=============================================================================
