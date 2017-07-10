@@ -92,7 +92,7 @@ typedef struct
 
 /**
  * @struct image_s
- * @struct image_t
+ * @typedef image_t
  * @brief
  */
 typedef struct image_s

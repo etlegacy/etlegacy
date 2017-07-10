@@ -452,7 +452,7 @@ void RB_BeginDrawingView(void)
 	GL_State(GLS_DEFAULT);
 
 
-	////////// (SA) modified to ensure one glclear() per frame at most
+	////////// modified to ensure one glclear() per frame at most
 
 	// clear relevant buffers
 	clearBits = 0;
@@ -601,8 +601,8 @@ void RB_BeginDrawingView(void)
 	// clip to the plane of the portal
 	if (backEnd.viewParms.isPortal)
 	{
-		float  plane[4];
-		double plane2[4];
+		float plane[4];
+		float plane2[4];
 
 		plane[0] = backEnd.viewParms.portalPlane.normal[0];
 		plane[1] = backEnd.viewParms.portalPlane.normal[1];

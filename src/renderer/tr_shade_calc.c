@@ -451,7 +451,6 @@ static void AutospriteDeform(void)
 	for (i = 0 ; i < oldVerts ; i += 4)
 	{
 		// find the midpoint
-		//Vector4Copy(xyz, tess.xyz[i]);
 		xyz = tess.xyz[i];
 
 		mid[0] = 0.25f * (xyz[0] + xyz[4] + xyz[8] + xyz[12]);

@@ -864,7 +864,6 @@ done:
 	}
 	if (resampledBuffer != 0)
 	{
-		//free(resampledBuffer);
 		ri.Hunk_FreeTempMemory(resampledBuffer);
 	}
 }
@@ -1631,7 +1630,7 @@ qboolean RE_GetSkinModel(qhandle_t skinid, const char *type, char *name)
 		}
 		if (!Q_stricmp(skin->models[i]->type, type))
 		{
-			// (SA) whoops, should've been this way
+			// whoops, should've been this way
 			Q_strncpyz(name, skin->models[i]->model, sizeof(skin->models[i]->model));
 			return qtrue;
 		}
