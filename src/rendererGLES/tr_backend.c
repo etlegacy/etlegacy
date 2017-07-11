@@ -37,10 +37,13 @@
 backEndData_t  *backEndData;
 backEndState_t backEnd;
 
+/**
+ * @var s_flipMatrix
+ * @brief Convert from our coordinate system (looking down X)
+ * to OpenGL's coordinate system (looking down -Z)
+ */
 static float s_flipMatrix[16] =
 {
-	// convert from our coordinate system (looking down X)
-	// to OpenGL's coordinate system (looking down -Z)
 	0,  0, -1, 0,
 	-1, 0, 0,  0,
 	0,  1, 0,  0,
@@ -57,7 +60,7 @@ void GL_Bind(image_t *image)
 
 	if (!image)
 	{
-		ri.Printf(PRINT_WARNING, "GL_Bind: NULL image\n");
+		Ren_Warning("GL_Bind: NULL image\n");
 		texnum = tr.defaultImage->texnum;
 	}
 	else
@@ -109,7 +112,7 @@ void GL_SelectTexture(int unit)
 	}
 	else
 	{
-		ri.Error(ERR_DROP, "GL_SelectTexture: unit = %i", unit);
+		Ren_Drop("GL_SelectTexture: unit = %i", unit);
 	}
 
 	glState.currenttmu = unit;
@@ -156,44 +159,30 @@ void GL_BindMultitexture(image_t *image0, GLuint env0, image_t *image1, GLuint e
  */
 void GL_Cull(int cullType)
 {
-    if (glState.faceCulling == cullType)
-    {
-        return;
-    }
+	if (glState.faceCulling == cullType)
+	{
+		return;
+	}
 
-    glState.faceCulling = cullType;
+	glState.faceCulling = cullType;
 
-    if (cullType == CT_TWO_SIDED)
-    {
-        qglDisable(GL_CULL_FACE);
-    }
-    else
-    {
-        qglEnable(GL_CULL_FACE);
+	if (cullType == CT_TWO_SIDED)
+	{
+		qglDisable(GL_CULL_FACE);
+	}
+	else
+	{
+		qboolean cullFront;
+		qglEnable(GL_CULL_FACE);
 
-        if (cullType == CT_BACK_SIDED)
-        {
-            if (backEnd.viewParms.isMirror)
-            {
-                qglCullFace(GL_FRONT);
-            }
-            else
-            {
-                qglCullFace(GL_BACK);
-            }
-        }
-        else
-        {
-            if (backEnd.viewParms.isMirror)
-            {
-                qglCullFace(GL_BACK);
-            }
-            else
-            {
-                qglCullFace(GL_FRONT);
-            }
-        }
-    }
+		cullFront = (cullType == CT_FRONT_SIDED);
+		if (backEnd.viewParms.isMirror)
+		{
+			cullFront = !cullFront;
+		}
+
+		qglCullFace(cullFront ? GL_FRONT : GL_BACK);
+	}
 }
 
 /**
@@ -225,8 +214,7 @@ void GL_TexEnv(int env)
 		qglTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD);
 		break;
 	default:
-		ri.Error(ERR_DROP, "GL_TexEnv: invalid env '%d' passed", env);
-		break;
+		Ren_Drop("GL_TexEnv: invalid env '%d' passed\n", env);
 	}
 }
 
@@ -294,8 +282,7 @@ void GL_State(unsigned long stateBits)
 				break;
 			default:
 				srcFactor = GL_ONE;     // to get warning to shut up
-				ri.Error(ERR_DROP, "GL_State: invalid src blend state bits");
-				break;
+				Ren_Drop("GL_State: invalid src blend state bits\n");
 			}
 
 			switch (stateBits & GLS_DSTBLEND_BITS)
@@ -326,8 +313,7 @@ void GL_State(unsigned long stateBits)
 				break;
 			default:
 				dstFactor = GL_ONE;     // to get warning to shut up
-				ri.Error(ERR_DROP, "GL_State: invalid dst blend state bits");
-				break;
+				Ren_Drop("GL_State: invalid dst blend state bits\n");
 			}
 
 			qglEnable(GL_BLEND);
@@ -349,6 +335,19 @@ void GL_State(unsigned long stateBits)
 		else
 		{
 			qglDepthMask(GL_FALSE);
+		}
+	}
+
+	// fill/line mode
+	if (diff & GLS_POLYMODE_LINE)
+	{
+		if (stateBits & GLS_POLYMODE_LINE)
+		{
+			qglPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+		else
+		{
+			qglPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 	}
 
@@ -386,7 +385,7 @@ void GL_State(unsigned long stateBits)
 			qglAlphaFunc(GL_GEQUAL, 0.5f);
 			break;
 		default:
-			assert(0);
+			etl_assert(0);
 			break;
 		}
 	}
@@ -848,16 +847,19 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 		start = ri.Milliseconds();
 	}
 
-	// make sure rows and cols are powers of 2
-	for (i = 0 ; (1 << i) < cols ; i++)
+	if (!GL_ARB_texture_non_power_of_two)
 	{
-	}
-	for (j = 0 ; (1 << j) < rows ; j++)
-	{
-	}
-	if ((1 << i) != cols || (1 << j) != rows)
-	{
-		ri.Error(ERR_DROP, "Draw_StretchRaw: size not a power of 2: %i by %i", cols, rows);
+		// make sure rows and cols are powers of 2
+		for (i = 0; (1 << i) < cols; i++)
+		{
+		}
+		for (j = 0; (1 << j) < rows; j++)
+		{
+		}
+		if ((1 << i) != cols || (1 << j) != rows)
+		{
+			Ren_Drop("Draw_StretchRaw: size not a power of 2: %i by %i", cols, rows);
+		}
 	}
 
 	GL_Bind(tr.scratchImage[client]);
@@ -867,7 +869,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	{
 		tr.scratchImage[client]->width  = tr.scratchImage[client]->uploadWidth = cols;
 		tr.scratchImage[client]->height = tr.scratchImage[client]->uploadHeight = rows;
-		qglTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, cols, rows, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		qglTexImage2D(GL_TEXTURE_2D, 0, 3, cols, rows, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -887,13 +889,14 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	{
 		int end = ri.Milliseconds();
 
-		ri.Printf(PRINT_ALL, "qglTexSubImage2D %i, %i: %i msec\n", cols, rows, end - start);
+		Ren_Print("qglTexSubImage2D %i, %i: %i msec\n", cols, rows, end - start);
 	}
 
 	RB_SetGL2D();
 
 	qglColor3f(tr.identityLight, tr.identityLight, tr.identityLight);
 
+	// OpenGLES implementation
 	GLfloat tex[] =
 	{
 		0.5f / cols,          0.5f / rows,
@@ -942,7 +945,7 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
  * @param[in] data
  * @param[in] client
  * @param[in] dirty
-  */
+ */
 void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty)
 {
 	GL_Bind(tr.scratchImage[client]);
@@ -952,7 +955,7 @@ void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int 
 	{
 		tr.scratchImage[client]->width  = tr.scratchImage[client]->uploadWidth = cols;
 		tr.scratchImage[client]->height = tr.scratchImage[client]->uploadHeight = rows;
-		qglTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, cols, rows, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		qglTexImage2D(GL_TEXTURE_2D, 0, 3, cols, rows, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -1027,38 +1030,38 @@ const void *RB_StretchPic(const void *data)
 	tess.indexes[numIndexes + 4] = numVerts + 0;
 	tess.indexes[numIndexes + 5] = numVerts + 1;
 
-	*( int * ) tess.vertexColors[numVerts].v                 =
-		*( int * ) tess.vertexColors[numVerts + 1].v         =
-			*( int * ) tess.vertexColors[numVerts + 2].v     =
-				*( int * ) tess.vertexColors[numVerts + 3].v = *( int * ) backEnd.color2D;
+	*( int * ) tess.vertexColors[numVerts]                 =
+	    *( int * ) tess.vertexColors[numVerts + 1]         =
+	        *( int * ) tess.vertexColors[numVerts + 2]     =
+	            *( int * ) tess.vertexColors[numVerts + 3] = *( int * ) backEnd.color2D;
 
-	tess.xyz[numVerts].v[0] = cmd->x;
-	tess.xyz[numVerts].v[1] = cmd->y;
-	tess.xyz[numVerts].v[2] = 0;
+	tess.xyz[numVerts][0] = cmd->x;
+	tess.xyz[numVerts][1] = cmd->y;
+	tess.xyz[numVerts][2] = 0;
 
-	tess.texCoords0[numVerts].v[0] = cmd->s1;
-	tess.texCoords0[numVerts].v[1] = cmd->t1;
+	tess.texCoords[numVerts][0][0] = cmd->s1;
+	tess.texCoords[numVerts][0][1] = cmd->t1;
 
-	tess.xyz[numVerts + 1].v[0] = cmd->x + cmd->w;
-	tess.xyz[numVerts + 1].v[1] = cmd->y;
-	tess.xyz[numVerts + 1].v[2] = 0;
+	tess.xyz[numVerts + 1][0] = cmd->x + cmd->w;
+	tess.xyz[numVerts + 1][1] = cmd->y;
+	tess.xyz[numVerts + 1][2] = 0;
 
-	tess.texCoords0[numVerts + 1].v[0] = cmd->s2;
-	tess.texCoords0[numVerts + 1].v[1] = cmd->t1;
+	tess.texCoords[numVerts + 1][0][0] = cmd->s2;
+	tess.texCoords[numVerts + 1][0][1] = cmd->t1;
 
-	tess.xyz[numVerts + 2].v[0] = cmd->x + cmd->w;
-	tess.xyz[numVerts + 2].v[1] = cmd->y + cmd->h;
-	tess.xyz[numVerts + 2].v[2] = 0;
+	tess.xyz[numVerts + 2][0] = cmd->x + cmd->w;
+	tess.xyz[numVerts + 2][1] = cmd->y + cmd->h;
+	tess.xyz[numVerts + 2][2] = 0;
 
-	tess.texCoords0[numVerts + 2].v[0] = cmd->s2;
-	tess.texCoords0[numVerts + 2].v[1] = cmd->t2;
+	tess.texCoords[numVerts + 2][0][0] = cmd->s2;
+	tess.texCoords[numVerts + 2][0][1] = cmd->t2;
 
-	tess.xyz[numVerts + 3].v[0] = cmd->x;
-	tess.xyz[numVerts + 3].v[1] = cmd->y + cmd->h;
-	tess.xyz[numVerts + 3].v[2] = 0;
+	tess.xyz[numVerts + 3][0] = cmd->x;
+	tess.xyz[numVerts + 3][1] = cmd->y + cmd->h;
+	tess.xyz[numVerts + 3][2] = 0;
 
-	tess.texCoords0[numVerts + 3].v[0] = cmd->s1;
-	tess.texCoords0[numVerts + 3].v[1] = cmd->t2;
+	tess.texCoords[numVerts + 3][0][0] = cmd->s1;
+	tess.texCoords[numVerts + 3][0][1] = cmd->t2;
 
 	return ( const void * ) (cmd + 1);
 }
@@ -1102,17 +1105,17 @@ const void *RB_Draw2dPolys(const void *data)
 
 	for (i = 0; i < cmd->numverts; i++)
 	{
-		tess.xyz[tess.numVertexes].v[0] = cmd->verts[i].xyz[0];
-		tess.xyz[tess.numVertexes].v[1] = cmd->verts[i].xyz[1];
-		tess.xyz[tess.numVertexes].v[2] = 0;
+		tess.xyz[tess.numVertexes][0] = cmd->verts[i].xyz[0];
+		tess.xyz[tess.numVertexes][1] = cmd->verts[i].xyz[1];
+		tess.xyz[tess.numVertexes][2] = 0;
 
-		tess.texCoords0[tess.numVertexes].v[0] = cmd->verts[i].st[0];
-		tess.texCoords0[tess.numVertexes].v[1] = cmd->verts[i].st[1];
+		tess.texCoords[tess.numVertexes][0][0] = cmd->verts[i].st[0];
+		tess.texCoords[tess.numVertexes][0][1] = cmd->verts[i].st[1];
 
-		tess.vertexColors[tess.numVertexes].v[0] = cmd->verts[i].modulate[0];
-		tess.vertexColors[tess.numVertexes].v[1] = cmd->verts[i].modulate[1];
-		tess.vertexColors[tess.numVertexes].v[2] = cmd->verts[i].modulate[2];
-		tess.vertexColors[tess.numVertexes].v[3] = cmd->verts[i].modulate[3];
+		tess.vertexColors[tess.numVertexes][0] = cmd->verts[i].modulate[0];
+		tess.vertexColors[tess.numVertexes][1] = cmd->verts[i].modulate[1];
+		tess.vertexColors[tess.numVertexes][2] = cmd->verts[i].modulate[2];
+		tess.vertexColors[tess.numVertexes][3] = cmd->verts[i].modulate[3];
 		tess.numVertexes++;
 	}
 
@@ -1162,42 +1165,42 @@ const void *RB_RotatedPic(const void *data)
 	tess.indexes[numIndexes + 4] = numVerts + 0;
 	tess.indexes[numIndexes + 5] = numVerts + 1;
 
-	*( int * ) tess.vertexColors[numVerts].v                 =
-		*( int * ) tess.vertexColors[numVerts + 1].v         =
-			*( int * ) tess.vertexColors[numVerts + 2].v     =
-				*( int * ) tess.vertexColors[numVerts + 3].v = *( int * ) backEnd.color2D;
+	*( int * ) tess.vertexColors[numVerts]                 =
+	    *( int * ) tess.vertexColors[numVerts + 1]         =
+	        *( int * ) tess.vertexColors[numVerts + 2]     =
+	            *( int * ) tess.vertexColors[numVerts + 3] = *( int * ) backEnd.color2D;
 
-	angle                   = cmd->angle * pi2;
-	tess.xyz[numVerts].v[0] = cmd->x + (cos(angle) * cmd->w);
-	tess.xyz[numVerts].v[1] = cmd->y + (sin(angle) * cmd->h);
-	tess.xyz[numVerts].v[2] = 0;
+	angle                 = cmd->angle * pi2;
+	tess.xyz[numVerts][0] = cmd->x + (cos(angle) * cmd->w);
+	tess.xyz[numVerts][1] = cmd->y + (sin(angle) * cmd->h);
+	tess.xyz[numVerts][2] = 0;
 
-	tess.texCoords0[numVerts].v[0] = cmd->s1;
-	tess.texCoords0[numVerts].v[1] = cmd->t1;
+	tess.texCoords[numVerts][0][0] = cmd->s1;
+	tess.texCoords[numVerts][0][1] = cmd->t1;
 
-	angle                       = cmd->angle * pi2 + 0.25 * pi2;
-	tess.xyz[numVerts + 1].v[0] = cmd->x + (cos(angle) * cmd->w);
-	tess.xyz[numVerts + 1].v[1] = cmd->y + (sin(angle) * cmd->h);
-	tess.xyz[numVerts + 1].v[2] = 0;
+	angle                     = cmd->angle * pi2 + 0.25 * pi2;
+	tess.xyz[numVerts + 1][0] = cmd->x + (cos(angle) * cmd->w);
+	tess.xyz[numVerts + 1][1] = cmd->y + (sin(angle) * cmd->h);
+	tess.xyz[numVerts + 1][2] = 0;
 
-	tess.texCoords0[numVerts + 1].v[0] = cmd->s2;
-	tess.texCoords0[numVerts + 1].v[1] = cmd->t1;
+	tess.texCoords[numVerts + 1][0][0] = cmd->s2;
+	tess.texCoords[numVerts + 1][0][1] = cmd->t1;
 
-	angle                       = cmd->angle * pi2 + 0.50 * pi2;
-	tess.xyz[numVerts + 2].v[0] = cmd->x + (cos(angle) * cmd->w);
-	tess.xyz[numVerts + 2].v[1] = cmd->y + (sin(angle) * cmd->h);
-	tess.xyz[numVerts + 2].v[2] = 0;
+	angle                     = cmd->angle * pi2 + 0.50 * pi2;
+	tess.xyz[numVerts + 2][0] = cmd->x + (cos(angle) * cmd->w);
+	tess.xyz[numVerts + 2][1] = cmd->y + (sin(angle) * cmd->h);
+	tess.xyz[numVerts + 2][2] = 0;
 
-	tess.texCoords0[numVerts + 2].v[0] = cmd->s2;
-	tess.texCoords0[numVerts + 2].v[1] = cmd->t2;
+	tess.texCoords[numVerts + 2][0][0] = cmd->s2;
+	tess.texCoords[numVerts + 2][0][1] = cmd->t2;
 
-	angle                       = cmd->angle * pi2 + 0.75 * pi2;
-	tess.xyz[numVerts + 3].v[0] = cmd->x + (cos(angle) * cmd->w);
-	tess.xyz[numVerts + 3].v[1] = cmd->y + (sin(angle) * cmd->h);
-	tess.xyz[numVerts + 3].v[2] = 0;
+	angle                     = cmd->angle * pi2 + 0.75 * pi2;
+	tess.xyz[numVerts + 3][0] = cmd->x + (cos(angle) * cmd->w);
+	tess.xyz[numVerts + 3][1] = cmd->y + (sin(angle) * cmd->h);
+	tess.xyz[numVerts + 3][2] = 0;
 
-	tess.texCoords0[numVerts + 3].v[0] = cmd->s1;
-	tess.texCoords0[numVerts + 3].v[1] = cmd->t2;
+	tess.texCoords[numVerts + 3][0][0] = cmd->s1;
+	tess.texCoords[numVerts + 3][0][1] = cmd->t2;
 
 	return ( const void * ) (cmd + 1);
 }
@@ -1243,39 +1246,39 @@ const void *RB_StretchPicGradient(const void *data)
 	tess.indexes[numIndexes + 4] = numVerts + 0;
 	tess.indexes[numIndexes + 5] = numVerts + 1;
 
-	*( int * ) tess.vertexColors[numVerts].v         =
-		*( int * ) tess.vertexColors[numVerts + 1].v = *( int * ) backEnd.color2D;
+	*( int * ) tess.vertexColors[numVerts]         =
+	    *( int * ) tess.vertexColors[numVerts + 1] = *( int * ) backEnd.color2D;
 
-	*( int * ) tess.vertexColors[numVerts + 2].v     =
-		*( int * ) tess.vertexColors[numVerts + 3].v = *( int * ) cmd->gradientColor;
+	*( int * ) tess.vertexColors[numVerts + 2]     =
+	    *( int * ) tess.vertexColors[numVerts + 3] = *( int * ) cmd->gradientColor;
 
-	tess.xyz[numVerts].v[0] = cmd->x;
-	tess.xyz[numVerts].v[1] = cmd->y;
-	tess.xyz[numVerts].v[2] = 0;
+	tess.xyz[numVerts][0] = cmd->x;
+	tess.xyz[numVerts][1] = cmd->y;
+	tess.xyz[numVerts][2] = 0;
 
-	tess.texCoords0[numVerts].v[0] = cmd->s1;
-	tess.texCoords0[numVerts].v[1] = cmd->t1;
+	tess.texCoords[numVerts][0][0] = cmd->s1;
+	tess.texCoords[numVerts][0][1] = cmd->t1;
 
-	tess.xyz[numVerts + 1].v[0] = cmd->x + cmd->w;
-	tess.xyz[numVerts + 1].v[1] = cmd->y;
-	tess.xyz[numVerts + 1].v[2] = 0;
+	tess.xyz[numVerts + 1][0] = cmd->x + cmd->w;
+	tess.xyz[numVerts + 1][1] = cmd->y;
+	tess.xyz[numVerts + 1][2] = 0;
 
-	tess.texCoords0[numVerts + 1].v[0] = cmd->s2;
-	tess.texCoords0[numVerts + 1].v[1] = cmd->t1;
+	tess.texCoords[numVerts + 1][0][0] = cmd->s2;
+	tess.texCoords[numVerts + 1][0][1] = cmd->t1;
 
-	tess.xyz[numVerts + 2].v[0] = cmd->x + cmd->w;
-	tess.xyz[numVerts + 2].v[1] = cmd->y + cmd->h;
-	tess.xyz[numVerts + 2].v[2] = 0;
+	tess.xyz[numVerts + 2][0] = cmd->x + cmd->w;
+	tess.xyz[numVerts + 2][1] = cmd->y + cmd->h;
+	tess.xyz[numVerts + 2][2] = 0;
 
-	tess.texCoords0[numVerts + 2].v[0] = cmd->s2;
-	tess.texCoords0[numVerts + 2].v[1] = cmd->t2;
+	tess.texCoords[numVerts + 2][0][0] = cmd->s2;
+	tess.texCoords[numVerts + 2][0][1] = cmd->t2;
 
-	tess.xyz[numVerts + 3].v[0] = cmd->x;
-	tess.xyz[numVerts + 3].v[1] = cmd->y + cmd->h;
-	tess.xyz[numVerts + 3].v[2] = 0;
+	tess.xyz[numVerts + 3][0] = cmd->x;
+	tess.xyz[numVerts + 3][1] = cmd->y + cmd->h;
+	tess.xyz[numVerts + 3][2] = 0;
 
-	tess.texCoords0[numVerts + 3].v[0] = cmd->s1;
-	tess.texCoords0[numVerts + 3].v[1] = cmd->t2;
+	tess.texCoords[numVerts + 3][0][0] = cmd->s1;
+	tess.texCoords[numVerts + 3][0][1] = cmd->t2;
 
 	return ( const void * ) (cmd + 1);
 }
@@ -1314,6 +1317,8 @@ const void *RB_DrawBuffer(const void *data)
 {
 	const drawBufferCommand_t *cmd = ( const drawBufferCommand_t * ) data;
 
+	qglDrawBuffer(cmd->buffer);
+
 	// clear screen for debugging
 	if (r_clear->integer)
 	{
@@ -1323,6 +1328,7 @@ const void *RB_DrawBuffer(const void *data)
 
 	return ( const void * ) (cmd + 1);
 }
+
 
 
 /**
@@ -1348,6 +1354,7 @@ void RB_ShowImages(void)
 	qglFinish();
 
 	start = ri.Milliseconds();
+	// OpenGLES Implementation
 	GLboolean text  = qglIsEnabled(GL_TEXTURE_COORD_ARRAY);
 	GLboolean glcol = qglIsEnabled(GL_COLOR_ARRAY);
 	if (glcol)
@@ -1376,6 +1383,7 @@ void RB_ShowImages(void)
 			h *= image->uploadHeight / 512.0f;
 		}
 
+		// OpenGLES Implementation
 		GLfloat tex[] =
 		{
 			0, 0,
@@ -1393,6 +1401,7 @@ void RB_ShowImages(void)
 		qglTexCoordPointer(2, GL_FLOAT, 0, tex);
 		qglVertexPointer(2, GL_FLOAT, 0, vtx);
 		qglDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
 	}
 
 	if (glcol)
@@ -1402,11 +1411,13 @@ void RB_ShowImages(void)
 	if (!text)
 	{
 		qglDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
 	}
+
 	qglFinish();
 
 	end = ri.Milliseconds();
-	ri.Printf(PRINT_ALL, "%i msec to draw all images\n", end - start);
+	Ren_Print("%i msec to draw all images\n", end - start);
 }
 
 /*
@@ -1422,61 +1433,62 @@ void RB_DrawBounds(vec3_t mins, vec3_t maxs)
     GL_Bind(tr.whiteImage);
     GL_State(GLS_POLYMODE_LINE);
 
-	// box corners
-	GLboolean text  = qglIsEnabled(GL_TEXTURE_COORD_ARRAY);
-	GLboolean glcol = qglIsEnabled(GL_COLOR_ARRAY);
-	if (glcol)
-	{
-		qglDisableClientState(GL_COLOR_ARRAY);
-	}
-	if (text)
-	{
-		qglDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	}
-	GLfloat vtx1[] =
-	{
-		mins[0], mins[1], mins[2],
-		maxs[0], mins[1], mins[2],
-		mins[0], mins[1], mins[2],
-		mins[0], maxs[1], mins[2],
-		mins[0], mins[1], mins[2],
-		mins[0], mins[1], maxs[2],
-		maxs[0], maxs[1], maxs[2],
-		mins[0], maxs[1], maxs[2],
-		maxs[0], maxs[1], maxs[2],
-		maxs[0], mins[1], maxs[2],
-		maxs[0], maxs[1], maxs[2],
-		maxs[0], maxs[1], mins[2]
-	};
-	qglColor3f(1, 1, 1);
-	qglVertexPointer(3, GL_FLOAT, 0, vtx1);
-	qglDrawArrays(GL_LINES, 0, 12);
-
+    // OpenGLES Implementation
+    // box corners
+    GLboolean text  = qglIsEnabled(GL_TEXTURE_COORD_ARRAY);
+    GLboolean glcol = qglIsEnabled(GL_COLOR_ARRAY);
+    if (glcol)
+    {
+        qglDisableClientState(GL_COLOR_ARRAY);
+    }
+    if (text)
+    {
+        qglDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    }
+    GLfloat vtx1[] =
+    {
+        mins[0], mins[1], mins[2],
+        maxs[0], mins[1], mins[2],
+        mins[0], mins[1], mins[2],
+        mins[0], maxs[1], mins[2],
+        mins[0], mins[1], mins[2],
+        mins[0], mins[1], maxs[2],
+        maxs[0], maxs[1], maxs[2],
+        mins[0], maxs[1], maxs[2],
+        maxs[0], maxs[1], maxs[2],
+        maxs[0], mins[1], maxs[2],
+        maxs[0], maxs[1], maxs[2],
+        maxs[0], maxs[1], mins[2]
+    };
+    qglColor3f(1, 1, 1);
+    qglVertexPointer(3, GL_FLOAT, 0, vtx1);
+    qglDrawArrays(GL_LINES, 0, 12);
     center[0] = (mins[0] + maxs[0]) * 0.5f;
     center[1] = (mins[1] + maxs[1]) * 0.5f;
     center[2] = (mins[2] + maxs[2]) * 0.5f;
 
-	// center axis
-	GLfloat vtx2[] =
-	{
-		mins[0], center[1], center[2],
-		maxs[0], center[1], center[2],
-		center[0], mins[1], center[2],
-		center[0], maxs[1], center[2],
-		center[0], center[1], mins[2],
-		center[0], center[1], maxs[2]
-	};
-	qglColor3f(1, 0.85, 0);
-	qglVertexPointer(3, GL_FLOAT, 0, vtx2);
-	qglDrawArrays(GL_LINES, 0, 6);
-	if (glcol)
-	{
-		qglEnableClientState(GL_COLOR_ARRAY);
-	}
-	if (text)
-	{
-		qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	}
+    // OpenGLES Implementation
+    // center axis
+    GLfloat vtx2[] =
+    {
+        mins[0], center[1], center[2],
+        maxs[0], center[1], center[2],
+        center[0], mins[1], center[2],
+        center[0], maxs[1], center[2],
+        center[0], center[1], mins[2],
+        center[0], center[1], maxs[2]
+    };
+    qglColor3f(1, 0.85, 0);
+    qglVertexPointer(3, GL_FLOAT, 0, vtx2);
+    qglDrawArrays(GL_LINES, 0, 6);
+    if (glcol)
+    {
+        qglEnableClientState(GL_COLOR_ARRAY);
+    }
+    if (text)
+    {
+        qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    }
 }
 */
 
@@ -1502,6 +1514,26 @@ const void *RB_SwapBuffers(const void *data)
 	}
 
 	cmd = ( const swapBuffersCommand_t * ) data;
+
+	// we measure overdraw by reading back the stencil buffer and
+	// counting up the number of increments that have happened
+	if (r_measureOverdraw->integer)
+	{
+		int           i;
+		long          sum = 0;
+		unsigned char *stencilReadback;
+
+		stencilReadback = ri.Hunk_AllocateTempMemory(glConfig.vidWidth * glConfig.vidHeight);
+		qglReadPixels(0, 0, glConfig.vidWidth, glConfig.vidHeight, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, stencilReadback);
+
+		for (i = 0; i < glConfig.vidWidth * glConfig.vidHeight; i++)
+		{
+			sum += stencilReadback[i];
+		}
+
+		backEnd.pc.c_overDraw += sum;
+		ri.Hunk_FreeTempMemory(stencilReadback);
+	}
 
 	if (!glState.finishCalled)
 	{
@@ -1531,7 +1563,7 @@ const void *RB_RenderToTexture(const void *data)
 	GL_Bind(cmd->image);
 	qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR);
 	qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR);
-	qglTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+	qglTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
 	qglCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, cmd->x, cmd->y, cmd->w, cmd->h, 0);
 	//qglCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, cmd->x, cmd->y, cmd->w, cmd->h );
 

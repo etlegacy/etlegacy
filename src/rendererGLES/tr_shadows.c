@@ -87,7 +87,7 @@ void R_RenderShadowEdges(void)
 	int c, c2;
 	int j, k;
 	int i2;
-	int c_edges = 0, c_rejected = 0;
+	// int c_edges = 0, c_rejected = 0;  // TODO: remove ?
 	int hit[2];
 
 	// an edge is NOT a silhouette edge if its face doesn't face the light,
@@ -122,6 +122,7 @@ void R_RenderShadowEdges(void)
 			// triangle, it is a sil edge
 			if (hit[1] == 0)
 			{
+				// OpenGLES implementation 
 				// A single drawing call is better than many. So I prefer a singe TRIANGLES call than many TRAINGLE_STRIP call
 				// even if it seems less efficiant, it's faster on the PANDORA
 				indexes[idx++] = i;
@@ -130,12 +131,14 @@ void R_RenderShadowEdges(void)
 				indexes[idx++] = i2;
 				indexes[idx++] = i + tess.numVertexes;
 				indexes[idx++] = i2 + tess.numVertexes;
-				c_edges++;
+				// c_edges++;
 			}
+			/*
 			else
 			{
-				c_rejected++;
+			    c_rejected++;
 			}
+			*/
 		}
 	}
 	qglDrawElements(GL_TRIANGLES, idx, GL_UNSIGNED_SHORT, indexes);
@@ -157,7 +160,7 @@ void RB_ShadowTessEnd(void)
 	vec3_t lightDir;
 
 	// we can only do this if we have enough space in the vertex buffers
-	if (tess.numVertexes >= tess.maxShaderVerts / 2)
+	if (tess.numVertexes >= SHADER_MAX_VERTEXES / 2)
 	{
 		return;
 	}
@@ -172,11 +175,11 @@ void RB_ShadowTessEnd(void)
 	// project vertexes away from light direction
 	for (i = 0 ; i < tess.numVertexes ; i++)
 	{
-		VectorMA(tess.xyz[i].v, -512, lightDir, tess.xyz[i + tess.numVertexes].v);
+		VectorMA(tess.xyz[i], -512, lightDir, tess.xyz[i + tess.numVertexes]);
 	}
 
 	// decide which triangles face the light
-	memset(numEdgeDefs, 0, 4 * tess.numVertexes);
+	Com_Memset(numEdgeDefs, 0, 4 * tess.numVertexes);
 
 	numTris = tess.numIndexes / 3;
 
@@ -192,9 +195,9 @@ void RB_ShadowTessEnd(void)
 			i2 = tess.indexes[i * 3 + 1];
 			i3 = tess.indexes[i * 3 + 2];
 
-			v1 = tess.xyz[i1].v;
-			v2 = tess.xyz[i2].v;
-			v3 = tess.xyz[i3].v;
+			v1 = tess.xyz[i1];
+			v2 = tess.xyz[i2];
+			v3 = tess.xyz[i3];
 
 			VectorSubtract(v2, v1, d1);
 			VectorSubtract(v3, v1, d2);
@@ -231,17 +234,6 @@ void RB_ShadowTessEnd(void)
 	qglEnable(GL_STENCIL_TEST);
 	qglStencilFunc(GL_ALWAYS, 1, 255);
 
-	qglVertexPointer(3, GL_FLOAT, 16, tess.xyz);
-	GLboolean text  = qglIsEnabled(GL_TEXTURE_COORD_ARRAY);
-	GLboolean glcol = qglIsEnabled(GL_COLOR_ARRAY);
-	if (text)
-	{
-		qglDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	}
-	if (glcol)
-	{
-		qglDisableClientState(GL_COLOR_ARRAY);
-	}
 	// mirrors have the culling order reversed
 	if (backEnd.viewParms.isMirror)
 	{
@@ -253,7 +245,7 @@ void RB_ShadowTessEnd(void)
 		qglCullFace(GL_BACK);
 		qglStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
 
-		qglDrawElements(GL_TRIANGLES, idx, GL_UNSIGNED_SHORT, indexes);
+		R_RenderShadowEdges();
 	}
 	else
 	{
@@ -265,17 +257,9 @@ void RB_ShadowTessEnd(void)
 		qglCullFace(GL_FRONT);
 		qglStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
 
-		qglDrawElements(GL_TRIANGLES, idx, GL_UNSIGNED_SHORT, indexes);
+		R_RenderShadowEdges();
 	}
 
-	if (text)
-	{
-		qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	}
-	if (glcol)
-	{
-		qglEnableClientState(GL_COLOR_ARRAY);
-	}
 	// reenable writing to the color buffer
 	qglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 }
@@ -310,6 +294,7 @@ void RB_ShadowFinish(void)
 	qglColor3f(0.6f, 0.6f, 0.6f);
 	GL_State(GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO);
 
+	// OpenGLES implementation 
 	GLboolean text  = qglIsEnabled(GL_TEXTURE_COORD_ARRAY);
 	GLboolean glcol = qglIsEnabled(GL_COLOR_ARRAY);
 	if (text)
@@ -347,7 +332,7 @@ void RB_ShadowFinish(void)
  */
 void RB_ProjectionShadowDeform(void)
 {
-	float  *xyz;
+	float  *xyz = (float *)tess.xyz;
 	int    i;
 	float  h;
 	vec3_t ground;
@@ -355,8 +340,6 @@ void RB_ProjectionShadowDeform(void)
 	float  groundDist;
 	float  d;
 	vec3_t lightDir;
-
-	xyz = ( float * ) tess.xyz;
 
 	ground[0] = backEnd.orientation.axis[0][2];
 	ground[1] = backEnd.orientation.axis[1][2];
@@ -367,12 +350,12 @@ void RB_ProjectionShadowDeform(void)
 	VectorCopy(backEnd.currentEntity->lightDir, lightDir);
 	d = DotProduct(lightDir, ground);
 	// don't let the shadows get too long or go negative
-	if (d < 0.5)
+	if (d < 0.5f)
 	{
-		VectorMA(lightDir, (0.5 - d), ground, lightDir);
+		VectorMA(lightDir, (0.5f - d), ground, lightDir);
 		d = DotProduct(lightDir, ground);
 	}
-	d = 1.0 / d;
+	d = 1.0f / d;
 
 	light[0] = lightDir[0] * d;
 	light[1] = lightDir[1] * d;

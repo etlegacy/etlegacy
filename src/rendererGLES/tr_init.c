@@ -47,9 +47,6 @@ static void GfxInfo_f(void);
 cvar_t *com_altivec;
 #endif
 
-void ( *glLockArraysEXT )(GLint, GLint);
-void ( *glUnlockArraysEXT )(void);
-
 cvar_t *r_flareSize;
 cvar_t *r_flareFade;
 
@@ -166,13 +163,7 @@ cvar_t *r_screenshotJpegQuality;
 cvar_t *r_maxpolys;
 cvar_t *r_maxpolyverts;
 
-// TODO: check if this crazy stuff is needed
-vec4hack_t     tess_xyz[SHADER_MAX_VERTEXES] QALIGN(16);
-vec4hack_t     tess_normal[SHADER_MAX_VERTEXES] QALIGN(16);
-vec2hack_t     tess_texCoords0[SHADER_MAX_VERTEXES] QALIGN(16);
-vec2hack_t     tess_texCoords1[SHADER_MAX_VERTEXES] QALIGN(16);
-glIndex_t      tess_indexes[SHADER_MAX_INDEXES] QALIGN(16);
-color4ubhack_t tess_vertexColors[SHADER_MAX_VERTEXES] QALIGN(16);
+cvar_t *r_gfxInfo;
 
 /**
  * @brief This function is responsible for initializing a valid OpenGL subsystem
@@ -318,21 +309,8 @@ byte *RB_ReadPixels(int x, int y, int width, int height, size_t *offset, int *pa
 	// Allocate a few more bytes so that we can choose an alignment we like
 	buffer = ri.Hunk_AllocateTempMemory(padwidth * height + *offset + packAlign - 1);
 
-	bufstart = buffer;
-	padwidth = linelen;
-	int p2width = 1, p2height = 1;
-	int xx, yy, aa;
-	while (p2width < glConfig.vidWidth)
-		p2width *= 2;
-	while (p2height < glConfig.vidHeight)
-		p2height *= 2;
-	byte *source = (byte *) ri.Hunk_AllocateTempMemory(p2width * p2height * 4);
-	qglReadPixels(0, 0, p2width, p2height, GL_RGBA, GL_UNSIGNED_BYTE, source);
-	for (yy = y; yy < height; yy++)
-		for (xx = x; xx < width; xx++)
-			for (aa = 0; aa < 3; aa++)
-				buffer[yy * width * 3 + xx * 3 + aa] = source[(yy + y) * p2width * 4 + (xx + x) * 4 + aa];
-	ri.Hunk_FreeTempMemory(source);
+	bufstart = PADP(( intptr_t ) buffer + *offset, packAlign);
+	qglReadPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE, bufstart);
 
 	*offset = bufstart - buffer;
 	*padlen = padwidth - linelen;
@@ -367,7 +345,7 @@ byte *RB_ReadZBuffer(int x, int y, int width, int height, int *padlen)
 
 	bufstart = PADP(( intptr_t ) buffer, packAlign);
 	qglDepthRange(0.0f, 1.0f);
-	memset(buffer, 0, padwidth * height + packAlign - 1);   //*TODO* find something to read DepthBuffer ?!
+	qglReadPixels(x, y, width, height, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, bufstart);
 
 	*padlen = padwidth - linelen;
 
@@ -637,37 +615,79 @@ void R_ScreenshotFilenameJPEG(int lastNumber, char *fileName)
  */
 const void *RB_TakeVideoFrameCmd(const void *data)
 {
-	const videoFrameCommand_t *cmd = (const videoFrameCommand_t *)data;
-	int                       frameSize;
-	int                       i;
+	const videoFrameCommand_t *cmd;
+	byte                      *cBuf;
+	size_t                    memcount, linelen;
+	int                       padwidth, avipadwidth, padlen, avipadlen;
+	GLint                     packAlign;
 
-	// check if the recording is still going on, the buffer might have cmds eventho the recording has stopped
-	if (ri.CL_VideoRecording())
+	// finish any 2D drawing if needed
+	if (tess.numIndexes)
 	{
-		glReadPixels(0, 0, cmd->width, cmd->height, GL_RGBA, GL_UNSIGNED_BYTE, cmd->captureBuffer);
-		// gamma correct
-		if ((tr.overbrightBits > 0) && glConfig.deviceSupportsGamma)
+		RB_EndSurface();
+	}
+
+	cmd = (const videoFrameCommand_t *)data;
+
+	qglGetIntegerv(GL_PACK_ALIGNMENT, &packAlign);
+
+	linelen = cmd->width * 3;
+
+	// Alignment stuff for glReadPixels
+	padwidth = PAD(linelen, packAlign);
+	padlen   = padwidth - linelen;
+	// AVI line padding
+	avipadwidth = PAD(linelen, AVI_LINE_PADDING);
+	avipadlen   = avipadwidth - linelen;
+
+	cBuf = PADP(cmd->captureBuffer, packAlign);
+
+	qglReadPixels(0, 0, cmd->width, cmd->height, GL_RGB,
+	              GL_UNSIGNED_BYTE, cBuf);
+
+	memcount = padwidth * cmd->height;
+
+	// gamma correct
+	if (glConfig.deviceSupportsGamma)
+	{
+		R_GammaCorrect(cBuf, memcount);
+	}
+
+	if (cmd->motionJpeg)
+	{
+		memcount = RE_SaveJPGToBuffer(cmd->encodeBuffer, linelen * cmd->height,
+		                              r_screenshotJpegQuality->integer,
+		                              cmd->width, cmd->height, cBuf, padlen);
+		ri.CL_WriteAVIVideoFrame(cmd->encodeBuffer, memcount);
+	}
+	else
+	{
+		byte *lineend, *memend;
+		byte *srcptr, *destptr;
+
+		srcptr  = cBuf;
+		destptr = cmd->encodeBuffer;
+		memend  = srcptr + memcount;
+
+		// swap R and B and remove line paddings
+		while (srcptr < memend)
 		{
-			R_GammaCorrect(cmd->captureBuffer, cmd->width * cmd->height * 4);
-		}
-		if (cmd->motionJpeg)
-		{
-			/* This should be fixed
-			frameSize = RE_SaveJPGToBuffer(cmd->encodeBuffer, 90, cmd->width, cmd->height, cmd->captureBuffer);
-			ri.CL_WriteAVIVideoFrame(cmd->encodeBuffer, frameSize);
-			*/
-		}
-		else
-		{
-			frameSize = cmd->width * cmd->height;
-			for (i = 0; i < frameSize; i++)  // Pack to 24bpp and swap R and B
+			lineend = srcptr + linelen;
+			while (srcptr < lineend)
 			{
-				cmd->encodeBuffer[i * 3]     = cmd->captureBuffer[i * 4 + 2];
-				cmd->encodeBuffer[i * 3 + 1] = cmd->captureBuffer[i * 4 + 1];
-				cmd->encodeBuffer[i * 3 + 2] = cmd->captureBuffer[i * 4];
+				*destptr++ = srcptr[2];
+				*destptr++ = srcptr[1];
+				*destptr++ = srcptr[0];
+				srcptr    += 3;
 			}
-			ri.CL_WriteAVIVideoFrame(cmd->encodeBuffer, frameSize * 3);
+
+			Com_Memset(destptr, '\0', avipadlen);
+			destptr += avipadlen;
+
+			srcptr += padlen;
 		}
+
+		ri.CL_WriteAVIVideoFrame(cmd->encodeBuffer, avipadwidth * cmd->height);
 	}
 
 	return (const void *)(cmd + 1);
@@ -739,7 +759,7 @@ void R_LevelShot(void)
 	ri.Hunk_FreeTempMemory(buffer);
 	ri.Hunk_FreeTempMemory(allsource);
 
-	ri.Printf(PRINT_ALL, "Wrote %s\n", checkname);
+	Ren_Print("Wrote %s\n", checkname);
 }
 
 /**
@@ -802,7 +822,7 @@ void R_ScreenShot_f(void)
 
 		if (lastNumber >= 99999)
 		{
-			ri.Printf(PRINT_ALL, "ScreenShot: Couldn't create a file\n");
+			Ren_Print("ScreenShot: Couldn't create a file\n");
 			return;
 		}
 
@@ -813,7 +833,7 @@ void R_ScreenShot_f(void)
 
 	if (!silent)
 	{
-		ri.Printf(PRINT_ALL, "Wrote %s\n", checkname);
+		Ren_Print("Wrote %s\n", checkname);
 	}
 }
 
@@ -870,7 +890,7 @@ void R_ScreenShotJPEG_f(void)
 
 		if (lastNumber == 100000)
 		{
-			ri.Printf(PRINT_ALL, "ScreenShot: Couldn't create a file\n");
+			Ren_Print("ScreenShot: Couldn't create a file\n");
 			return;
 		}
 
@@ -881,7 +901,7 @@ void R_ScreenShotJPEG_f(void)
 
 	if (!silent)
 	{
-		ri.Printf(PRINT_ALL, "Wrote %s\n", checkname);
+		Ren_Print("Wrote %s\n", checkname);
 	}
 }
 
@@ -892,7 +912,7 @@ void R_ScreenShotJPEG_f(void)
  */
 void GL_SetDefaultState(void)
 {
-	qglClearDepth(1.0f);
+	qglClearDepth(1.0);
 
 	qglCullFace(GL_FRONT);
 
@@ -923,12 +943,7 @@ void GL_SetDefaultState(void)
 	// make sure our GL state vector is set correctly
 	glState.glStateBits = GLS_DEPTHTEST_DISABLE | GLS_DEPTHMASK_TRUE;
 
-	glPixelStorei(GL_PACK_ALIGNMENT, 1);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	//*SEB* ? not the best place !
-	glLockArraysEXT   = NULL;
-	glUnlockArraysEXT = NULL;
-
+	qglPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	qglDepthMask(GL_TRUE);
 	qglDisable(GL_DEPTH_TEST);
 	qglEnable(GL_SCISSOR_TEST);
@@ -955,34 +970,33 @@ void GfxInfo_f(void)
 	// FIXME: implicit declaration
 	//Ren_Print("SDL using driver \"%s\"\n", SDL_GetCurrentVideoDriver());
 
-	ri.Printf(PRINT_ALL, "\nGL_VENDOR: %s\n", glConfig.vendor_string);
-	ri.Printf(PRINT_ALL, "GL_RENDERER: %s\n", glConfig.renderer_string);
-	ri.Printf(PRINT_ALL, "GL_VERSION: %s\n", glConfig.version_string);
+	if (r_gfxInfo->integer > 0)
+	{
+		Ren_Print("GL_EXTENSIONS: ");
+		R_PrintLongString((const char *)qglGetString(GL_EXTENSIONS));
+	}
 
-	ri.Printf(PRINT_ALL, "GL_EXTENSIONS: ");
-	R_PrintLongString((char *)qglGetString(GL_EXTENSIONS));
-
-	ri.Printf(PRINT_ALL, "\nGL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
-	ri.Printf(PRINT_ALL, "GL_MAX_ACTIVE_TEXTURES_ARB: %d\n", glConfig.maxActiveTextures);
-	ri.Printf(PRINT_ALL, "PIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits);
-	ri.Printf(PRINT_ALL, "MODE: %d, %d x %d %s hz:", ri.Cvar_VariableIntegerValue("r_mode"), glConfig.vidWidth, glConfig.vidHeight, fsstrings[ri.Cvar_VariableIntegerValue("r_fullscreen") == 1]);
+	Ren_Print("GL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
+	Ren_Print("GL_MAX_ACTIVE_TEXTURES_ARB: %d\n", glConfig.maxActiveTextures);
+	Ren_Print("PIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits);
+	Ren_Print("MODE: %d, SCREEN: %d x %d %s (ratio %.4f) Hz:", ri.Cvar_VariableIntegerValue("r_mode"), glConfig.vidWidth, glConfig.vidHeight, fsstrings[ri.Cvar_VariableIntegerValue("r_fullscreen") == 1], glConfig.windowAspect);
 
 	if (glConfig.displayFrequency)
 	{
-		ri.Printf(PRINT_ALL, "%d\n", glConfig.displayFrequency);
+		Ren_Print("%d\n", glConfig.displayFrequency);
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "N/A\n");
+		Ren_Print("N/A\n");
 	}
 
 	if (glConfig.deviceSupportsGamma)
 	{
-		ri.Printf(PRINT_ALL, "GAMMA: hardware w/ %d overbright bits\n", tr.overbrightBits);
+		Ren_Print("GAMMA: hardware w/ %d overbright bits\n", tr.overbrightBits);
 	}
 	else
 	{
-		ri.Printf(PRINT_ALL, "GAMMA: software w/ %d overbright bits\n", tr.overbrightBits);
+		Ren_Print("GAMMA: software w/ %d overbright bits\n", tr.overbrightBits);
 	}
 
 	// rendering primitives
@@ -990,40 +1004,49 @@ void GfxInfo_f(void)
 		int primitives;
 
 		// default is to use triangles if compiled vertex arrays are present
-		ri.Printf(PRINT_ALL, "rendering primitives: ");
+		Ren_Print("rendering primitives: ");
 		primitives = r_primitives->integer;
-		primitives = 2;
+		if (primitives == 0)
+		{
+			if (qglLockArraysEXT)
+			{
+				primitives = 2;
+			}
+			else
+			{
+				primitives = 1;
+			}
+		}
 		if (primitives == -1)
 		{
-			ri.Printf(PRINT_ALL, "none\n");
+			Ren_Print("none\n");
 		}
 		else if (primitives == 2)
 		{
-			ri.Printf(PRINT_ALL, "single glDrawElements\n");
+			Ren_Print("single glDrawElements\n");
 		}
 		else if (primitives == 1)
 		{
-			ri.Printf(PRINT_ALL, "multiple glArrayElement\n");
+			Ren_Print("multiple glArrayElement\n");
 		}
 		else if (primitives == 3)
 		{
-			ri.Printf(PRINT_ALL, "multiple glColor4ubv + glTexCoord2fv + glVertex3fv\n");
+			Ren_Print("multiple glColor4ubv + glTexCoord2fv + glVertex3fv\n");
 		}
 	}
 
-	ri.Printf(PRINT_ALL, "texturemode: %s\n", r_textureMode->string);
-	ri.Printf(PRINT_ALL, "picmip: %d\n", r_picmip->integer);
-	ri.Printf(PRINT_ALL, "texture bits: %d\n", r_texturebits->integer);
-	ri.Printf(PRINT_ALL, "multitexture: %s\n", enablestrings[qglActiveTextureARB != 0]);
-	ri.Printf(PRINT_ALL, "compiled vertex arrays: %s\n", enablestrings[0]);
-	ri.Printf(PRINT_ALL, "texenv add: %s\n", enablestrings[glConfig.textureEnvAddAvailable != 0]);
-	ri.Printf(PRINT_ALL, "compressed textures: %s\n", enablestrings[glConfig.textureCompression != TC_NONE]);
+	Ren_Print("texturemode: %s\n", r_textureMode->string);
+	Ren_Print("picmip: %d\n", r_picmip->integer);
+	Ren_Print("texture bits: %d\n", r_texturebits->integer);
+	Ren_Print("multitexture: %s\n", enablestrings[qglActiveTextureARB != 0]);
+	Ren_Print("compiled vertex arrays: %s\n", enablestrings[qglLockArraysEXT != 0]);
+	Ren_Print("texenv add: %s\n", enablestrings[glConfig.textureEnvAddAvailable != 0]);
+	Ren_Print("compressed textures: %s\n", enablestrings[glConfig.textureCompression != TC_NONE]);
 
 	if (r_finish->integer)
 	{
-		ri.Printf(PRINT_ALL, "Forcing glFinish\n");
+		Ren_Print("Forcing glFinish\n");
 	}
-	ri.Printf(PRINT_ALL, "Renderer: vanilla GLES\n");
 }
 
 /**
@@ -1044,11 +1067,11 @@ void R_Register(void)
 	r_ext_texture_filter_anisotropic = ri.Cvar_Get("r_ext_texture_filter_anisotropic", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 	r_ext_max_anisotropy             = ri.Cvar_Get("r_ext_max_anisotropy", "2", CVAR_ARCHIVE | CVAR_LATCH);
 
-	r_picmip          = ri.Cvar_Get("r_picmip", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	r_picmip = ri.Cvar_Get("r_picmip", "1", CVAR_ARCHIVE | CVAR_LATCH);          // mod for DM and DK for id build.  was "1" - pushed back to 1
+	ri.Cvar_CheckRange(r_picmip, 0, 3, qtrue);
 	r_roundImagesDown = ri.Cvar_Get("r_roundImagesDown", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
 	r_colorMipLevels = ri.Cvar_Get("r_colorMipLevels", "0", CVAR_LATCH);
-	ri.Cvar_CheckRange(r_picmip, 0, 3, qtrue);
 	r_detailTextures = ri.Cvar_Get("r_detailtextures", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_texturebits    = ri.Cvar_Get("r_texturebits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 
@@ -1162,10 +1185,12 @@ void R_Register(void)
 	// note: MAX_POLYS and MAX_POLYVERTS are heavily increased in ET compared to q3
 	//       - but run 20 bots on oasis and you'll see limits reached (developer 1)
 	//       - modern computers can deal with more than our old default values -> users can increase this now to MAX_POLYS/MAX_POLYVERTS
-	r_maxpolys = ri.Cvar_Get("r_maxpolys", va("%d", MIN_POLYS), CVAR_LATCH);     // now latched to check against used r_maxpolys and not MAX_POLYS
-	ri.Cvar_CheckRange(r_maxpolys, MIN_POLYS, MAX_POLYS, qtrue); // MIN_POLYS was old static value
-	r_maxpolyverts = ri.Cvar_Get("r_maxpolyverts", va("%d", MIN_POLYVERTS), CVAR_LATCH); // now latched to check against used r_maxpolyverts and not MAX_POLYVERTS
-	ri.Cvar_CheckRange(r_maxpolyverts, MIN_POLYVERTS, MAX_POLYVERTS, qtrue); // MIN_POLYVERTS was old static value
+	r_maxpolys = ri.Cvar_Get("r_maxpolys", va("%d", DEFAULT_POLYS), CVAR_LATCH);             // now latched to check against used r_maxpolys and not MAX_POLYS
+	ri.Cvar_CheckRange(r_maxpolys, MIN_POLYS, MAX_POLYS, qtrue);                        // MIN_POLYS was old static value
+	r_maxpolyverts = ri.Cvar_Get("r_maxpolyverts", va("%d", DEFAULT_POLYVERTS), CVAR_LATCH); // now latched to check against used r_maxpolyverts and not MAX_POLYVERTS
+	ri.Cvar_CheckRange(r_maxpolyverts, MIN_POLYVERTS, MAX_POLYVERTS, qtrue);            // MIN_POLYVERTS was old static value
+
+	r_gfxInfo = ri.Cvar_Get("r_gfxinfo", "0", 0); // less spammy gfx output at start - enable to print full GL_EXTENSION string
 
 	// make sure all the commands added here are also
 	// removed in R_Shutdown
@@ -1188,26 +1213,16 @@ void R_Init(void)
 	int  i;
 	byte *ptr;
 
-	ri.Printf(PRINT_ALL, "----- R_Init -----\n");
+	Ren_Print("----- R_Init -----\n");
 
 	// clear all our internal state
 	Com_Memset(&tr, 0, sizeof(tr));
 	Com_Memset(&backEnd, 0, sizeof(backEnd));
 	Com_Memset(&tess, 0, sizeof(tess));
 
-	tess.xyz          = tess_xyz;
-	tess.texCoords0   = tess_texCoords0;
-	tess.texCoords1   = tess_texCoords1;
-	tess.indexes      = tess_indexes;
-	tess.normal       = tess_normal;
-	tess.vertexColors = tess_vertexColors;
-
-	tess.maxShaderVerts    = SHADER_MAX_VERTEXES;
-	tess.maxShaderIndicies = SHADER_MAX_INDEXES;
-
 	if ((intptr_t) tess.xyz & 15)
 	{
-		ri.Printf(PRINT_WARNING, "tess.xyz not 16 byte aligned\n");
+		Ren_Warning("tess.xyz not 16 byte aligned\n");
 	}
 	Com_Memset(tess.constantColor255, 255, sizeof(tess.constantColor255));
 
@@ -1266,10 +1281,10 @@ void R_Init(void)
 	err = qglGetError();
 	if (err != GL_NO_ERROR)
 	{
-		ri.Printf(PRINT_ALL, "glGetError() = 0x%x\n", err);
+		Ren_Print("R_Init: glGetError() = 0x%x\n", err);
 	}
 
-	ri.Printf(PRINT_ALL, "----- finished R_Init -----\n");
+	Ren_Print("----- finished R_Init -----\n");
 }
 
 void R_PurgeCache(void)
@@ -1285,7 +1300,7 @@ void R_PurgeCache(void)
  */
 void RE_Shutdown(qboolean destroyWindow)
 {
-	ri.Printf(PRINT_ALL, "RE_Shutdown( %i )\n", destroyWindow);
+	Ren_Print("RE_Shutdown( %i )\n", destroyWindow);
 
 	ri.Cmd_RemoveSystemCommand("imagelist");
 	ri.Cmd_RemoveSystemCommand("shaderlist");
@@ -1379,8 +1394,7 @@ refexport_t * GetRefAPI(int apiVersion, refimport_t * rimp)
 
 	if (apiVersion != REF_API_VERSION)
 	{
-		ri.Printf(PRINT_ALL, "Mismatched REF_API_VERSION: expected %i, got %i\n",
-		          REF_API_VERSION, apiVersion);
+		Ren_Print("Mismatched REF_API_VERSION: expected %i, got %i\n", REF_API_VERSION, apiVersion);
 		return NULL;
 	}
 

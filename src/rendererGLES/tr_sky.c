@@ -86,7 +86,7 @@ static void AddSkyPolygon(int nump, vec3_t vecs)
 
 	// decide which face it maps to
 	VectorCopy(vec3_origin, v);
-	for (i = 0, vp = vecs ; i < nump ; i++, vp += 3)
+	for (i = 0, vp = vecs; i < nump; i++, vp += 3)
 	{
 		VectorAdd(vp, v, v);
 	}
@@ -128,7 +128,7 @@ static void AddSkyPolygon(int nump, vec3_t vecs)
 	}
 
 	// project new texture coords
-	for (i = 0 ; i < nump ; i++, vecs += 3)
+	for (i = 0; i < nump; i++, vecs += 3)
 	{
 		j = vec_to_st[axis][2];
 		if (j > 0)
@@ -181,7 +181,7 @@ static void AddSkyPolygon(int nump, vec3_t vecs)
 	}
 }
 
-#define ON_EPSILON      0.1f            // point on plane side epsilon
+#define ON_EPSILON      0.1f    ///< point on plane side epsilon
 #define MAX_CLIP_VERTS  64
 
 /**
@@ -204,7 +204,7 @@ static void ClipSkyPolygon(int nump, vec3_t vecs, int stage)
 
 	if (nump > MAX_CLIP_VERTS - 2)
 	{
-		ri.Error(ERR_DROP, "ClipSkyPolygon: MAX_CLIP_VERTS");
+		Ren_Drop("ClipSkyPolygon: MAX_CLIP_VERTS");
 	}
 	if (stage == 6)     // fully clipped, so draw it
 	{
@@ -214,7 +214,7 @@ static void ClipSkyPolygon(int nump, vec3_t vecs, int stage)
 
 	front = back = qfalse;
 	norm  = sky_clip[stage];
-	for (i = 0, v = vecs ; i < nump ; i++, v += 3)
+	for (i = 0, v = vecs; i < nump; i++, v += 3)
 	{
 		d = DotProduct(v, norm);
 		if (d > ON_EPSILON)
@@ -246,7 +246,7 @@ static void ClipSkyPolygon(int nump, vec3_t vecs, int stage)
 	VectorCopy(vecs, (vecs + (i * 3)));
 	newc[0] = newc[1] = 0;
 
-	for (i = 0, v = vecs ; i < nump ; i++, v += 3)
+	for (i = 0, v = vecs; i < nump; i++, v += 3)
 	{
 		switch (sides[i])
 		{
@@ -272,7 +272,7 @@ static void ClipSkyPolygon(int nump, vec3_t vecs, int stage)
 		}
 
 		d = dists[i] / (dists[i] - dists[i + 1]);
-		for (j = 0 ; j < 3 ; j++)
+		for (j = 0; j < 3; j++)
 		{
 			e                   = v[j] + d * (v[j + 3] - v[j]);
 			newv[0][newc[0]][j] = e;
@@ -294,7 +294,7 @@ static void ClearSkyBox(void)
 {
 	int i;
 
-	for (i = 0 ; i < 6 ; i++)
+	for (i = 0; i < 6; i++)
 	{
 		sky_mins[0][i] = sky_mins[1][i] = 9999;
 		sky_maxs[0][i] = sky_maxs[1][i] = -9999;
@@ -316,7 +316,7 @@ void RB_ClipSkyPolygons(shaderCommands_t *input)
 	{
 		for (j = 0 ; j < 3 ; j++)
 		{
-			VectorSubtract(input->xyz[input->indexes[i + j]].v,
+			VectorSubtract(input->xyz[input->indexes[i + j]],
 			               backEnd.viewParms.orientation.origin,
 			               p[j]);
 		}
@@ -439,6 +439,7 @@ static void DrawSkySide(struct image_s *image, const int mins[2], const int maxs
 {
 	int s, t;
 
+	// OpenGLES implementation 
 	GL_Bind(image);
 	GLfloat vtx[3 * 1024];    // arbitrary sized
 	GLfloat tex[2 * 1024];
@@ -485,6 +486,7 @@ static void DrawSkySideInner(struct image_s *image, const int mins[2], const int
 {
 	int s, t;
 
+	// OpenGLES implementation 
 	GL_Bind(image);
 	GLfloat vtx[3 * 1024];    // arbitrary sized
 	GLfloat tex[2 * 1024];
@@ -538,7 +540,7 @@ static void DrawSkyBox(shader_t *shader)
 	int sky_mins_subd[2], sky_maxs_subd[2];
 	int s, t;
 
-	memset(s_skyTexCoords, 0, sizeof(s_skyTexCoords));
+	Com_Memset(s_skyTexCoords, 0, sizeof(s_skyTexCoords));
 
 	sky_min = 0;
 	sky_max = 1;
@@ -600,8 +602,8 @@ static void DrawSkyBox(shader_t *shader)
 		{
 			for (s = sky_mins_subd[0] + HALF_SKY_SUBDIVISIONS; s <= sky_maxs_subd[0] + HALF_SKY_SUBDIVISIONS; s++)
 			{
-				MakeSkyVec((s - HALF_SKY_SUBDIVISIONS) / ( float ) HALF_SKY_SUBDIVISIONS,
-				           (t - HALF_SKY_SUBDIVISIONS) / ( float ) HALF_SKY_SUBDIVISIONS,
+				MakeSkyVec((s - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
+				           (t - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
 				           i,
 				           s_skyTexCoords[t][s],
 				           s_skyPoints[t][s]);
@@ -624,7 +626,7 @@ static void DrawSkyBoxInner(shader_t *shader)
 	int sky_mins_subd[2], sky_maxs_subd[2];
 	int s, t;
 
-	memset(s_skyTexCoords, 0, sizeof(s_skyTexCoords));
+	Com_Memset(s_skyTexCoords, 0, sizeof(s_skyTexCoords));
 
 	for (i = 0 ; i < 6 ; i++)
 	{
@@ -717,15 +719,15 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
 	{
 		for (s = mins[0] + HALF_SKY_SUBDIVISIONS; s <= maxs[0] + HALF_SKY_SUBDIVISIONS; s++)
 		{
-			VectorAdd(s_skyPoints[t][s], backEnd.viewParms.orientation.origin, tess.xyz[tess.numVertexes].v);
-			tess.texCoords0[tess.numVertexes].v[0] = s_skyTexCoords[t][s][0];
-			tess.texCoords0[tess.numVertexes].v[1] = s_skyTexCoords[t][s][1];
+			VectorAdd(s_skyPoints[t][s], backEnd.viewParms.orientation.origin, tess.xyz[tess.numVertexes]);
+			tess.texCoords[tess.numVertexes][0][0] = s_skyTexCoords[t][s][0];
+			tess.texCoords[tess.numVertexes][0][1] = s_skyTexCoords[t][s][1];
 
 			tess.numVertexes++;
 
-			if (tess.numVertexes >= tess.maxShaderVerts)
+			if (tess.numVertexes >= SHADER_MAX_VERTEXES)
 			{
-				ri.Error(ERR_DROP, "tess.maxShaderVerts(%i) hit in FillCloudySkySide()", tess.maxShaderVerts);
+				Ren_Drop("SHADER_MAX_VERTEXES(%i) hit in FillCloudySkySide()\n", SHADER_MAX_VERTEXES);
 			}
 		}
 	}
@@ -762,13 +764,14 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
  */
 static void FillCloudBox(const shader_t *shader, int stage)
 {
-	int   i;
-	int   sky_mins_subd[2], sky_maxs_subd[2];
-	int   s, t;
-	float MIN_T;
+	int i;
 
 	for (i = 0; i < 6; i++)
 	{
+		int   sky_mins_subd[2], sky_maxs_subd[2];
+		int   s, t;
+		float MIN_T;
+
 		if (1)     // FIXME? shader->sky.fullClouds )
 		{
 			MIN_T = -HALF_SKY_SUBDIVISIONS;
@@ -804,8 +807,7 @@ static void FillCloudBox(const shader_t *shader, int stage)
 		sky_maxs[0][i] = ceil(sky_maxs[0][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
 		sky_maxs[1][i] = ceil(sky_maxs[1][i] * HALF_SKY_SUBDIVISIONS) / HALF_SKY_SUBDIVISIONS;
 
-		if ((sky_mins[0][i] >= sky_maxs[0][i]) ||
-		    (sky_mins[1][i] >= sky_maxs[1][i]))
+		if ((sky_mins[0][i] >= sky_maxs[0][i]) || (sky_mins[1][i] >= sky_maxs[1][i]))
 		{
 			continue;
 		}
@@ -854,8 +856,8 @@ static void FillCloudBox(const shader_t *shader, int stage)
 		{
 			for (s = sky_mins_subd[0] + HALF_SKY_SUBDIVISIONS; s <= sky_maxs_subd[0] + HALF_SKY_SUBDIVISIONS; s++)
 			{
-				MakeSkyVec((s - HALF_SKY_SUBDIVISIONS) / ( float ) HALF_SKY_SUBDIVISIONS,
-				           (t - HALF_SKY_SUBDIVISIONS) / ( float ) HALF_SKY_SUBDIVISIONS,
+				MakeSkyVec((s - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
+				           (t - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
 				           i,
 				           NULL,
 				           s_skyPoints[t][s]);
@@ -866,7 +868,7 @@ static void FillCloudBox(const shader_t *shader, int stage)
 		}
 
 		// only add indexes for first stage
-		FillCloudySkySide(sky_mins_subd, sky_maxs_subd, (stage == 0));
+		FillCloudySkySide(sky_mins_subd, sky_maxs_subd, (qboolean) (stage == 0));
 	}
 }
 
@@ -878,7 +880,7 @@ void R_BuildCloudData(shaderCommands_t *input)
 {
 	shader_t *shader = input->shader;
 
-	assert(shader->isSky);
+	etl_assert(shader->isSky);
 
 	sky_min = 1.0f / 256.0f;     // FIXME: not correct?
 	sky_max = 255.0f / 256.0f;
@@ -933,8 +935,8 @@ void R_InitSkyTexCoords(float heightCloud)
 			for (s = 0; s <= SKY_SUBDIVISIONS; s++)
 			{
 				// compute vector from view origin to sky side integral point
-				MakeSkyVec((s - HALF_SKY_SUBDIVISIONS) / ( float ) HALF_SKY_SUBDIVISIONS,
-				           (t - HALF_SKY_SUBDIVISIONS) / ( float ) HALF_SKY_SUBDIVISIONS,
+				MakeSkyVec((s - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
+				           (t - HALF_SKY_SUBDIVISIONS) / (float)HALF_SKY_SUBDIVISIONS,
 				           i,
 				           NULL,
 				           skyVec);
@@ -1026,45 +1028,45 @@ void RB_DrawSun(void)
 	        VectorCopy( origin, temp );
 	        VectorSubtract( temp, vec1, temp );
 	        VectorSubtract( temp, vec2, temp );
-	        VectorCopy( temp, tess.xyz[tess.numVertexes].v );
-	        tess.texCoords0[tess.numVertexes].v[0] = 0;
-	        tess.texCoords0[tess.numVertexes].v[1] = 0;
-	        tess.vertexColors[tess.numVertexes].v[0] = 255;
-	        tess.vertexColors[tess.numVertexes].v[1] = 255;
-	        tess.vertexColors[tess.numVertexes].v[2] = 255;
+	        VectorCopy( temp, tess.xyz[tess.numVertexes] );
+	        tess.texCoords0[tess.numVertexes][0] = 0;
+	        tess.texCoords0[tess.numVertexes][1] = 0;
+	        tess.vertexColors[tess.numVertexes][0] = 255;
+	        tess.vertexColors[tess.numVertexes][1] = 255;
+	        tess.vertexColors[tess.numVertexes][2] = 255;
 	        tess.numVertexes++;
 
 	        VectorCopy( origin, temp );
 	        VectorAdd( temp, vec1, temp );
 	        VectorSubtract( temp, vec2, temp );
-	        VectorCopy( temp, tess.xyz[tess.numVertexes].v );
-	        tess.texCoords0[tess.numVertexes].v[0] = 0;
-	        tess.texCoords0[tess.numVertexes].v[1] = 1;
-	        tess.vertexColors[tess.numVertexes].v[0] = 255;
-	        tess.vertexColors[tess.numVertexes].v[1] = 255;
-	        tess.vertexColors[tess.numVertexes].v[2] = 255;
+	        VectorCopy( temp, tess.xyz[tess.numVertexes] );
+	        tess.texCoords0[tess.numVertexes][0] = 0;
+	        tess.texCoords0[tess.numVertexes][1] = 1;
+	        tess.vertexColors[tess.numVertexes][0] = 255;
+	        tess.vertexColors[tess.numVertexes][1] = 255;
+	        tess.vertexColors[tess.numVertexes][2] = 255;
 	        tess.numVertexes++;
 
 	        VectorCopy( origin, temp );
 	        VectorAdd( temp, vec1, temp );
 	        VectorAdd( temp, vec2, temp );
-	        VectorCopy( temp, tess.xyz[tess.numVertexes].v );
-	        tess.texCoords0[tess.numVertexes].v[0] = 1;
-	        tess.texCoords0[tess.numVertexes].v[1] = 1;
-	        tess.vertexColors[tess.numVertexes].v[0] = 255;
-	        tess.vertexColors[tess.numVertexes].v[1] = 255;
-	        tess.vertexColors[tess.numVertexes].v[2] = 255;
+	        VectorCopy( temp, tess.xyz[tess.numVertexes] );
+	        tess.texCoords0[tess.numVertexes][0] = 1;
+	        tess.texCoords0[tess.numVertexes][1] = 1;
+	        tess.vertexColors[tess.numVertexes][0] = 255;
+	        tess.vertexColors[tess.numVertexes][1] = 255;
+	        tess.vertexColors[tess.numVertexes][2] = 255;
 	        tess.numVertexes++;
 
 	        VectorCopy( origin, temp );
 	        VectorSubtract( temp, vec1, temp );
 	        VectorAdd( temp, vec2, temp );
-	        VectorCopy( temp, tess.xyz[tess.numVertexes].v );
-	        tess.texCoords0[tess.numVertexes].v[0] = 1;
-	        tess.texCoords0[tess.numVertexes].v[1] = 0;
-	        tess.vertexColors[tess.numVertexes].v[0] = 255;
-	        tess.vertexColors[tess.numVertexes].v[1] = 255;
-	        tess.vertexColors[tess.numVertexes].v[2] = 255;
+	        VectorCopy( temp, tess.xyz[tess.numVertexes] );
+	        tess.texCoords0[tess.numVertexes][0] = 1;
+	        tess.texCoords0[tess.numVertexes][1] = 0;
+	        tess.vertexColors[tess.numVertexes][0] = 255;
+	        tess.vertexColors[tess.numVertexes][1] = 255;
+	        tess.vertexColors[tess.numVertexes][2] = 255;
 	        tess.numVertexes++;
 
 	        tess.indexes[tess.numIndexes++] = 0;

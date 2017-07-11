@@ -230,7 +230,7 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent)
 	VectorClear(ent->directedLight);
 	VectorClear(direction);
 
-	assert(tr.world->lightGridData);   // bk010103 - NULL with -nolight maps
+	etl_assert(tr.world->lightGridData);   // bk010103 - NULL with -nolight maps
 
 	// trilerp the light value
 	gridStep[0] = 8;
@@ -351,7 +351,7 @@ static void LogLight(trRefEntity_t *ent)
 		max2 = (int)ent->directedLight[2];
 	}
 
-	ri.Printf(PRINT_ALL, "amb:%i  dir:%i\n", max1, max2);
+	Ren_Print("amb:%i  dir:%i\n", max1, max2);
 }
 
 /**

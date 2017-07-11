@@ -157,7 +157,7 @@ void GL_TextureMode(const char *string)
 
 	if (i == 6)
 	{
-		ri.Printf(PRINT_ALL, "bad filter name\n");
+		Ren_Print("bad filter name\n");
 		return;
 	}
 
@@ -206,64 +206,80 @@ void R_ImageList_f(void)
 {
 	int        i;
 	image_t    *image;
-	int        texels = 0;
+	int        texels   = 0;
 	const char *yesno[] =
 	{
 		"no ", "yes"
 	};
 
-	ri.Printf(PRINT_ALL, "\n      -w-- -h-- -mm- -TMU- -if-- wrap --name-------\n");
+	Ren_Print("\n      -w-- -h-- -mm- -TMU- -if-- wrap --name-------\n");
 
 	for (i = 0 ; i < tr.numImages ; i++)
 	{
 		image = tr.images[i];
 
 		texels += image->uploadWidth * image->uploadHeight;
-		ri.Printf(PRINT_ALL, "%4i: %4i %4i  %s   %d   ",
+		Ren_Print("%4i: %4i %4i  %s   %d   ",
 		          i, image->uploadWidth, image->uploadHeight, yesno[image->mipmap], image->TMU);
 		switch (image->internalFormat)
 		{
 		case 1:
-			ri.Printf(PRINT_ALL, "I    ");
+			Ren_Print("I    ");
 			break;
 		case 2:
-			ri.Printf(PRINT_ALL, "IA   ");
+			Ren_Print("IA   ");
 			break;
 		case 3:
-			ri.Printf(PRINT_ALL, "RGB  ");
+			Ren_Print("RGB  ");
 			break;
 		case 4:
-			ri.Printf(PRINT_ALL, "RGBA ");
+			Ren_Print("RGBA ");
+			break;
+		case GL_RGBA8:
+			Ren_Print("RGBA8");
+			break;
+		case GL_RGB8:
+			Ren_Print("RGB8");
+			break;
+		case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
+			Ren_Print("DXT3 ");
+			break;
+		case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
+			Ren_Print("DXT5 ");
+			break;
+		case GL_RGB4_S3TC:
+		case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
+			Ren_Print("S3TC ");
 			break;
 		case GL_RGBA4:
-			ri.Printf(PRINT_ALL, "RGBA4");
+			Ren_Print("RGBA4");
 			break;
 		case GL_RGB5:
-			ri.Printf(PRINT_ALL, "RGB5 ");
+			Ren_Print("RGB5 ");
 			break;
 		default:
-			ri.Printf(PRINT_ALL, "???? ");
+			Ren_Print("???? ");
 			break;
 		}
 
 		switch (image->wrapClampMode)
 		{
 		case GL_REPEAT:
-			ri.Printf(PRINT_ALL, "rept ");
+			Ren_Print("rept ");
 			break;
 		case GL_CLAMP_TO_EDGE:
-			ri.Printf(PRINT_ALL, "clmp ");
+			Ren_Print("clmp ");
 			break;
 		default:
-			ri.Printf(PRINT_ALL, "%4i ", image->wrapClampMode);
+			Ren_Print("%4i ", image->wrapClampMode);
 			break;
 		}
 
-		ri.Printf(PRINT_ALL, " %s\n", image->imgName);
+		Ren_Print(" %s\n", image->imgName);
 	}
-	ri.Printf(PRINT_ALL, " ---------\n");
-	ri.Printf(PRINT_ALL, " %i total texels (not including mipmaps)\n", texels);
-	ri.Printf(PRINT_ALL, " %i total images\n\n", tr.numImages);
+	Ren_Print(" ---------\n");
+	Ren_Print(" %i total texels (not including mipmaps)\n", texels);
+	Ren_Print(" %i total images\n\n", tr.numImages);
 }
 
 //=======================================================================
@@ -295,7 +311,7 @@ static void ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned *o
 
 	if (outwidth > 2048)
 	{
-		ri.Error(ERR_DROP, "ResampleTexture: max width");
+		Ren_Drop("ResampleTexture: max width");
 	}
 
 	if (outwidth < 1)
@@ -322,7 +338,7 @@ static void ResampleTexture(unsigned *in, int inwidth, int inheight, unsigned *o
 	{
 		inrow  = in + inwidth * (int)((i + 0.25) * inheight / outheight);
 		inrow2 = in + inwidth * (int)((i + 0.75) * inheight / outheight);
-		frac   = fracstep >> 1;
+		//frac   = fracstep >> 1;   // FIXME: never read
 		for (j = 0 ; j < outwidth ; j++)
 		{
 			pix1                   = (byte *)inrow + p1[j];
@@ -507,7 +523,6 @@ static void R_MipMap(byte *in, int width, int height)
  * @param pixelCount
  * @param blend
  */
- /*
 static void R_BlendOverTexture(byte *data, int pixelCount, byte blend[4])
 {
 	int i;
@@ -521,7 +536,6 @@ static void R_BlendOverTexture(byte *data, int pixelCount, byte blend[4])
 		data[2] = (data[2] * inverseAlpha + premult[2]) >> 9;
 	}
 }
-*/
 
 byte mipBlendColors[16][4] =
 {
@@ -927,7 +941,7 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		ri.Error(ERR_DROP, "R_CreateImage: \"%s\" is too long", name);
+		Ren_Drop("R_CreateImage: \"%s\" is too long\n", name);
 	}
 	if (!strncmp(name, "*lightmap", 9))
 	{
@@ -959,7 +973,7 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 
 	if (tr.numImages == MAX_DRAWIMAGES)
 	{
-		ri.Error(ERR_DROP, "R_CreateImage: MAX_DRAWIMAGES hit");
+		Ren_Drop("R_CreateImage: MAX_DRAWIMAGES hit\n");
 	}
 
 	image = tr.images[tr.numImages] = R_CacheImageAlloc(sizeof(image_t));
@@ -1092,7 +1106,7 @@ void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 	if (*pic == NULL)
 	{
 		// Loader failed, most likely because the file isn't there
-		ri.Printf(PRINT_DEVELOPER, "WARNING: %s not present in any supported image format\n", localName);
+		Ren_Developer("WARNING: %s not present in any supported image format\n", localName);
 	}
 }
 
@@ -1138,15 +1152,15 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 			{
 				if (image->mipmap != mipmap)
 				{
-					ri.Printf(PRINT_DEVELOPER, "WARNING: reused image %s with mixed mipmap parm\n", name);
+					Ren_Developer("WARNING: reused image %s with mixed mipmap parm\n", name);
 				}
 				if (image->allowPicmip != allowPicmip)
 				{
-					ri.Printf(PRINT_DEVELOPER, "WARNING: reused image %s with mixed allowPicmip parm\n", name);
+					Ren_Developer("WARNING: reused image %s with mixed allowPicmip parm\n", name);
 				}
 				if (image->wrapClampMode != glWrapClampMode)
 				{
-					ri.Printf(PRINT_ALL, "WARNING: reused image %s with mixed glWrapClampMode parm\n", name);
+					Ren_Developer("WARNING: reused image %s with mixed glWrapClampMode parm\n", name);
 				}
 			}
 			return image;
@@ -1169,6 +1183,7 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 	R_LoadImage(name, &pic, &width, &height);
 	if (pic == NULL)
 	{
+		Ren_Developer("WARNING: Image '%s' not found. Note: This might be false positive for shaders w/o image.\n", name);
 		return NULL;
 	}
 
@@ -1187,11 +1202,11 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 
 	if (((width - 1) & width) || ((height - 1) & height))
 	{
-		Com_Printf("^1Image not power of 2 scaled: %s\n", name);
+		Ren_Developer("WARNING: Image not power of 2 scaled: %s\n", name);
 		return NULL;
 	}
 
-	image = R_CreateImage(( char * ) name, pic, width, height, mipmap, allowPicmip, glWrapClampMode);
+	image = R_CreateImage(name, pic, width, height, mipmap, allowPicmip, glWrapClampMode);
 
 	// no texture compression
 	if (lightmap)
@@ -1299,6 +1314,7 @@ static void R_CreateFogImage(void)
 	borderColor[2] = 1.0;
 	borderColor[3] = 1;
 
+	qglTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 }
 
 #define DEFAULT_SIZE    16
@@ -1476,12 +1492,11 @@ void R_SetColorMappings(void)
 		}
 		s_intensitytable[i] = j;
 	}
-/*
-	if (glConfig.deviceSupportsGamma)
+
+	if (glConfig.deviceSupportsGamma && !GLEW_ARB_fragment_program)
 	{
-		re.GLimp_SetGamma(s_gammatable, s_gammatable, s_gammatable);
+		ri.GLimp_SetGamma(s_gammatable, s_gammatable, s_gammatable);
 	}
-*/
 }
 
 /**
@@ -1538,7 +1553,7 @@ SKINS
 /**
  * @brief This is unfortunate, but the skin files aren't
  * compatable with our normal parsing rules.
- * @param data_p
+ * @param[out] data_p
  * @return
  */
 static char *CommaParse(char **data_p)
@@ -1635,7 +1650,7 @@ static char *CommaParse(char **data_p)
 
 	if (len == MAX_TOKEN_CHARS)
 	{
-		//Com_Printf ("Token exceeded %i chars, discarded.\n", MAX_TOKEN_CHARS);
+		//Ren_Print("Token exceeded %i chars, discarded.\n", MAX_TOKEN_CHARS);
 		len = 0;
 	}
 	com_token[len] = 0;
@@ -1758,6 +1773,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
  */
 qhandle_t RE_RegisterSkin(const char *name)
 {
+    skinSurface_t parseSurfaces[MAX_SKIN_SURFACES];
 	qhandle_t     hSkin;
 	skin_t        *skin;
 	skinModel_t   *model;
@@ -1770,16 +1786,17 @@ qhandle_t RE_RegisterSkin(const char *name)
 	char *text_p;
 	char *token;
 	char surfName[MAX_QPATH];
+	int  totalSurfaces = 0;
 
 	if (!name || !name[0])
 	{
-		Com_Printf("Empty name passed to RE_RegisterSkin\n");
+		Ren_Warning("RE_RegisterSkin WARNING: empty name passed to RE_RegisterSkin\n");
 		return 0;
 	}
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		Com_Printf("Skin name exceeds MAX_QPATH\n");
+		Ren_Warning("RE_RegisterSkin WARNING: skin name exceeds MAX_QPATH in RE_RegisterSkin\n");
 		return 0;
 	}
 
@@ -1800,7 +1817,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 	// allocate a new skin
 	if (tr.numSkins == MAX_SKINS)
 	{
-		ri.Printf(PRINT_WARNING, "WARNING: RE_RegisterSkin( '%s' ) MAX_SKINS hit\n", name);
+		Ren_Warning("WARNING: RE_RegisterSkin '%s' - MAX_SKINS hit\n", name);
 		return 0;
 	}
 	tr.numSkins++;
@@ -1813,13 +1830,13 @@ qhandle_t RE_RegisterSkin(const char *name)
 	R_IssuePendingRenderCommands();
 
 	// If not a .skin file, load as a single shader
-	// HACK: ET evilly has filenames slightly longer than MAX_QPATH
+	// WARNING: HACK: ET evilly has filenames slightly longer than MAX_QPATH
 	// this check breaks the loading of such skins
 	/*
 	if ( strcmp( name + strlen( name ) - 5, ".skin" ) ) {
 	    skin->numSurfaces = 1;
-	    skin->surfaces[0] = ri.Hunk_Alloc( sizeof(skin->surfaces[0]), h_low );
-	    skin->surfaces[0]->shader = R_FindShader( name, LIGHTMAP_NONE, qtrue );
+	    skin->surfaces = ri.Hunk_Alloc( sizeof( skinSurface_t ), h_low );
+	    skin->surfaces[0].shader = R_FindShader( name, LIGHTMAP_NONE, qtrue );
 	    return hSkin;
 	}
 	*/
@@ -1833,6 +1850,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 
 	if (!text.c)
 	{
+		Ren_Developer("WARNING: RE_RegisterSkin '%s' - empty skin or file not in path\n", name);
 		return 0;
 	}
 
@@ -1864,12 +1882,12 @@ qhandle_t RE_RegisterSkin(const char *name)
 		{
 			if (skin->numModels >= MAX_PART_MODELS)
 			{
-				ri.Printf(PRINT_WARNING, "WARNING: Ignoring models in '%s', the max is %d!\n", name, MAX_PART_MODELS);
+				Ren_Warning("WARNING: Ignoring models in '%s', the max is %d!\n", name, MAX_PART_MODELS);
 				break;
 			}
 
 			// this is specifying a model
-			model = skin->models[skin->numModels] = ri.Hunk_Alloc(sizeof(*skin->models[0]), h_low);
+			model = skin->models[skin->numModels] = ri.Hunk_Alloc(sizeof(skinModel_t), h_low);
 			Q_strncpyz(model->type, token, sizeof(model->type));
 			model->hash = Com_HashKey(model->type, sizeof(model->type));
 
@@ -1885,26 +1903,35 @@ qhandle_t RE_RegisterSkin(const char *name)
 		// parse the shader name
 		token = CommaParse(&text_p);
 
-		if (skin->numSurfaces >= MD3_MAX_SURFACES)
+		if (skin->numSurfaces < MAX_SKIN_SURFACES)
 		{
-			ri.Printf(PRINT_WARNING, "WARNING: Ignoring surfaces in '%s', the max is %d surfaces!\n", name, MD3_MAX_SURFACES);
-			break;
+			surf = &parseSurfaces[skin->numSurfaces];
+			Q_strncpyz(surf->name, surfName, sizeof(surf->name));
+            surf->hash   = Com_HashKey(surf->name, sizeof(surf->name));
+			surf->shader = R_FindShader(token, LIGHTMAP_NONE, qtrue);
+			skin->numSurfaces++;
 		}
 
-		surf = skin->surfaces[skin->numSurfaces] = ri.Hunk_Alloc(sizeof(*skin->surfaces[0]), h_low);
-		Q_strncpyz(surf->name, surfName, sizeof(surf->name));
-		surf->hash   = Com_HashKey(surf->name, sizeof(surf->name));
-		surf->shader = R_FindShader(token, LIGHTMAP_NONE, qtrue);
-		skin->numSurfaces++;
+		totalSurfaces++;
 	}
 
 	ri.FS_FreeFile(text.v);
+
+	if (totalSurfaces > MAX_SKIN_SURFACES)
+	{
+		ri.Printf(PRINT_WARNING, "WARNING: Ignoring excess surfaces (found %d, max is %d) in skin '%s'!\n",
+		          totalSurfaces, MAX_SKIN_SURFACES, name);
+	}
 
 	// never let a skin have 0 shaders
 	if (skin->numSurfaces == 0)
 	{
 		return 0;       // use default skin
 	}
+
+    // copy surfaces to skin
+    skin->surfaces = ri.Hunk_Alloc(skin->numSurfaces * sizeof( skinSurface_t ), h_low );
+    Com_Memcpy( skin->surfaces, parseSurfaces, skin->numSurfaces * sizeof( skinSurface_t ) );
 
 	return hSkin;
 }
@@ -1922,8 +1949,8 @@ void R_InitSkins(void)
 	skin = tr.skins[0] = ri.Hunk_Alloc(sizeof(skin_t), h_low);
 	Q_strncpyz(skin->name, "<default skin>", sizeof(skin->name));
 	skin->numSurfaces         = 1;
-	skin->surfaces[0]         = ri.Hunk_Alloc(sizeof(*skin->surfaces[0]), h_low);
-	skin->surfaces[0]->shader = tr.defaultShader;
+	skin->surfaces         = ri.Hunk_Alloc(sizeof(skinSurface_t), h_low);
+	skin->surfaces[0].shader = tr.defaultShader;
 }
 
 /**
@@ -1948,20 +1975,19 @@ void R_SkinList_f(void)
 	int    i, j;
 	skin_t *skin;
 
-	ri.Printf(PRINT_ALL, "------------------\n");
+	Ren_Print("------------------\n");
 
 	for (i = 0 ; i < tr.numSkins ; i++)
 	{
 		skin = tr.skins[i];
 
-		ri.Printf(PRINT_ALL, "%3i:%s\n", i, skin->name);
+		Ren_Print("%3i:%s (%d surfaces)\n", i, skin->name, skin->numSurfaces);
 		for (j = 0 ; j < skin->numSurfaces ; j++)
 		{
-			ri.Printf(PRINT_ALL, "       %s = %s\n",
-			          skin->surfaces[j]->name, skin->surfaces[j]->shader->name);
+			Ren_Print("       %s = %s\n", skin->surfaces[j].name, skin->surfaces[j].shader->name);
 		}
 	}
-	ri.Printf(PRINT_ALL, "------------------\n");
+	Ren_Print("------------------\n");
 }
 
 //==========================================================================================
@@ -1980,9 +2006,10 @@ void *R_CacheImageAlloc(int size)
 	if (r_cache->integer && r_cacheShaders->integer)
 	{
 		void *buf = malloc(size);    // ri.Z_Malloc causes load times about twice as long?
+
 		if (!buf)
 		{
-			ri.Error(ERR_DROP, "R_CacheImageAlloc: unable to allocate buffer");
+			Ren_Drop("R_CacheImageAlloc: unable to allocate buffer\n ");
 		}
 		return buf;
 	}
@@ -1992,6 +2019,26 @@ void *R_CacheImageAlloc(int size)
 	}
 }
 
+/**
+ * @brief R_CacheImageFreeAll
+ *
+ * @note Unused
+ */
+void R_CacheImageFreeAll()
+{
+	if (r_cache->integer && r_cacheShaders->integer)
+	{
+		int i = 0;
+
+		for (i = 0; i < FILE_HASH_SIZE; i++)
+		{
+			if (backupHashTable[i])
+			{
+				R_CacheImageFree(backupHashTable[i]);
+			}
+		}
+	}
+}
 
 /**
  * @brief R_CacheImageFree
@@ -2034,7 +2081,7 @@ qboolean R_TouchImage(image_t *inImage)
 			// add it to the current images
 			if (tr.numImages == MAX_DRAWIMAGES)
 			{
-				ri.Error(ERR_DROP, "R_CreateImage: MAX_DRAWIMAGES hit");
+				Ren_Drop("R_CreateImage: MAX_DRAWIMAGES hit\n");
 			}
 
 			tr.images[tr.numImages] = bImage;
@@ -2201,7 +2248,7 @@ image_t *R_FindCachedImage(const char *name, int hash)
 			// add it to the current images
 			if (tr.numImages == MAX_DRAWIMAGES)
 			{
-				ri.Error(ERR_DROP, "R_CreateImage: MAX_DRAWIMAGES hit");
+				Ren_Drop("R_CreateImage: MAX_DRAWIMAGES hit\n");
 			}
 
 			R_TouchImage(bImage);

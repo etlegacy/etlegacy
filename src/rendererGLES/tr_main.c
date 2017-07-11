@@ -660,7 +660,7 @@ void R_SetFrameFog(void)
 	{
 		if (!glfogsettings[FOG_TARGET].registered)
 		{
-			ri.Printf(PRINT_ALL, "no fog - calc zFar: %0.1f\n", tr.viewParms.zFar);
+			Ren_Print("no fog - calc zFar: %0.1f\n", tr.viewParms.zFar);
 			return;
 		}
 	}
@@ -741,11 +741,11 @@ void R_SetFrameFog(void)
 	{
 		if (glfogsettings[FOG_CURRENT].mode == GL_LINEAR)
 		{
-			ri.Printf(PRINT_ALL, "farclip fog - den: %0.1f  calc zFar: %0.1f  fog zfar: %0.1f\n", glfogsettings[FOG_CURRENT].density, tr.viewParms.zFar, glfogsettings[FOG_CURRENT].end);
+			Ren_Print("farclip fog - den: %0.1f  calc zFar: %0.1f  fog zfar: %0.1f\n", glfogsettings[FOG_CURRENT].density, tr.viewParms.zFar, glfogsettings[FOG_CURRENT].end);
 		}
 		else
 		{
-			ri.Printf(PRINT_ALL, "density fog - den: %0.4f  calc zFar: %0.1f  fog zFar: %0.1f\n", glfogsettings[FOG_CURRENT].density, tr.viewParms.zFar, glfogsettings[FOG_CURRENT].end);
+			Ren_Print("density fog - den: %0.4f  calc zFar: %0.1f  fog zFar: %0.1f\n", glfogsettings[FOG_CURRENT].density, tr.viewParms.zFar, glfogsettings[FOG_CURRENT].end);
 		}
 	}
 }
@@ -755,7 +755,7 @@ void R_SetFrameFog(void)
  */
 static void SetFarClip(void)
 {
-	float farthestCornerDistance = 0;
+	float farthestCornerDistance;
 	int   i;
 
 	// if not rendering the world (icons, menus, etc)
@@ -775,7 +775,7 @@ static void SetFarClip(void)
 
 		if (r_speeds->integer == 5)
 		{
-			ri.Printf(PRINT_ALL, "r_zfar value forcing farclip at: %f\n", tr.viewParms.zFar);
+			Ren_Print("r_zfar value forcing farclip at: %f\n", tr.viewParms.zFar);
 		}
 
 		return;
@@ -1211,14 +1211,14 @@ static qboolean IsMirror(const drawSurf_t *drawSurf, int entityNum)
 		// rotate the plane, but keep the non-rotated version for matching
 		// against the portalSurface entities
 		R_LocalNormalToWorld(originalPlane.normal, plane.normal);
-		plane.dist = originalPlane.dist + DotProduct(plane.normal, tr.orientation.origin);
+		plane.dist = originalPlane.dist + DotProduct(plane.normal, tr.orientation.origin);  // FIXME: plane is never read
 
 		// translate the original plane
 		originalPlane.dist = originalPlane.dist + DotProduct(originalPlane.normal, tr.orientation.origin);
 	}
 	else
 	{
-		plane = originalPlane;
+		plane = originalPlane;  // FIXME: never read
 	}
 
 	// locate the portal entity closest to this plane.
@@ -1278,13 +1278,13 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 	RB_BeginSurface(shader, fogNum);
 	rb_surfaceTable[*drawSurf->surface](drawSurf->surface);
 
-	assert(tess.numVertexes < 128);
+	etl_assert(tess.numVertexes < 128);
 
 	for (i = 0; i < tess.numVertexes; i++)
 	{
 		pointFlags = 0;
 
-		R_TransformModelToClip(tess.xyz[i].v, tr.orientation.modelMatrix, tr.viewParms.projectionMatrix, eye, clip);
+		R_TransformModelToClip(tess.xyz[i], tr.orientation.modelMatrix, tr.viewParms.projectionMatrix, eye, clip);
 
 		for (j = 0; j < 3; j++)
 		{
@@ -1318,7 +1318,7 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 		vec3_t normal;
 		float  len;
 
-		VectorSubtract(tess.xyz[tess.indexes[i]].v, tr.viewParms.orientation.origin, normal);
+		VectorSubtract(tess.xyz[tess.indexes[i]], tr.viewParms.orientation.origin, normal);
 
 		len = VectorLengthSquared(normal);              // lose the sqrt
 		if (len < shortest)
@@ -1326,7 +1326,7 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 			shortest = len;
 		}
 
-		if (DotProduct(normal, tess.normal[tess.indexes[i]].v) >= 0)
+		if (DotProduct(normal, tess.normal[tess.indexes[i]]) >= 0)
 		{
 			numTriangles--;
 		}
@@ -1368,7 +1368,7 @@ qboolean R_MirrorViewBySurface(drawSurf_t *drawSurf, int entityNum)
 	// don't recursively mirror
 	if (tr.viewParms.isPortal)
 	{
-		ri.Printf(PRINT_DEVELOPER, "WARNING: recursive mirror/portal found\n");
+		Ren_Developer("WARNING: recursive mirror/portal found\n");
 		return qfalse;
 	}
 
@@ -1469,8 +1469,8 @@ static ID_INLINE void R_Radix(int byte, int size, drawSurf_t *source, drawSurf_t
 	int           count[256] = { 0 };
 	int           index[256];
 	int           i;
-	unsigned char *sortKey = NULL;
-	unsigned char *end     = NULL;
+	unsigned char *sortKey;
+	unsigned char *end;
 
 	sortKey = ((unsigned char *)&source[0].sort) + byte;
 	end     = sortKey + (size * sizeof(drawSurf_t));
@@ -1525,6 +1525,12 @@ void R_AddDrawSurf(surfaceType_t *surface, shader_t *shader, int fogNum, int fro
 	// off.  Check for overflow, and drop new surfaces on overflow.
 	if (tr.refdef.numDrawSurfs >= MAX_DRAWSURFS)
 	{
+		return;
+	}
+
+	if (*surface >= SF_NUM_SURFACE_TYPES)
+	{
+		Ren_Print("Warning R_AddDrawSurf: invalid surface type [%i] skipped (shader [%s] - fogNum [%i] - fontFace [%i] - dlightMap [%i])\n", *surface, shader->name, fogNum, frontFace, dlightMap);
 		return;
 	}
 
@@ -1602,7 +1608,7 @@ void R_SortDrawSurfs(drawSurf_t *drawSurfs, int numDrawSurfs)
 		// no shader should ever have this sort type
 		if (shader->sort == SS_BAD)
 		{
-			ri.Error(ERR_DROP, "Shader '%s'with sort == SS_BAD", shader->name);
+			Ren_Drop("Shader '%s'with sort == SS_BAD", shader->name);
 		}
 
 		// if the mirror was completely clipped away, we may need to check another surface
@@ -1707,18 +1713,15 @@ void R_AddEntitySurfaces(void)
 					{
 						break;
 					}
-					shader = R_GetShaderByHandle(ent->e.customShader);
 					R_AddDrawSurf(&entitySurface, tr.defaultShader, 0, 0, 0);
 					break;
 				default:
-					ri.Error(ERR_DROP, "R_AddEntitySurfaces: Bad modeltype");
-					break;
+					Ren_Drop("R_AddEntitySurfaces: Bad modeltype");
 				}
 			}
 			break;
 		default:
-			ri.Error(ERR_DROP, "R_AddEntitySurfaces: Bad reType");
-			break;
+			Ren_Drop("R_AddEntitySurfaces: Bad reType");
 		}
 	}
 }
@@ -1777,15 +1780,23 @@ void R_DebugPolygon(int color, int numPoints, float *points)
 
 	// draw solid shade
 	qglColor3f(color & 1, (color >> 1) & 1, (color >> 2) & 1);
-	qglColor4f(color & 1, (color >> 1) & 1, (color >> 2) & 1, 1.0f);
-	qglVertexPointer(3, GL_FLOAT, 0, points);
-	qglDrawArrays(GL_TRIANGLE_FAN, 0, numPoints);
+	qglBegin(GL_POLYGON);
+	for (i = 0 ; i < numPoints ; i++)
+	{
+		qglVertex3fv(points + i * 3);
+	}
+	qglEnd();
 
 	// draw wireframe outline
+	GL_State(GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 	qglDepthRange(0, 0);
 	qglColor3f(1, 1, 1);
-	qglVertexPointer(3, GL_FLOAT, 0, points);
-	qglDrawArrays(GL_LINE_STRIP, 0, numPoints);
+	qglBegin(GL_POLYGON);
+	for (i = 0 ; i < numPoints ; i++)
+	{
+		qglVertex3fv(points + i * 3);
+	}
+	qglEnd();
 	qglDepthRange(0, 1);
 }
 
@@ -1802,7 +1813,7 @@ void R_DebugPolygon(int color, int numPoints, float *points)
  */
 void R_DebugText(const vec3_t org, float r, float g, float b, const char *text, qboolean neverOcclude)
 {
-	Com_Printf("TODO: R_DebugText Unimplemented!\n");
+	Ren_Print("TODO: R_DebugText Unimplemented!\n");
 	/*
 	if ( neverOcclude ) {
 	    qglDepthRange( 0, 0 );  // never occluded

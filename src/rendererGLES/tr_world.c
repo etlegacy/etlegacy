@@ -217,7 +217,7 @@ static int R_DlightSurface(msurface_t *surface, int dlightBits)
 		}
 	}
 
-	// Com_Printf( "Surf: 0x%08X dlightBits: 0x%08X\n", srf, dlightBits );
+	// Ren_Print("Surf: 0x%08X dlightBits: 0x%08X\n", srf, dlightBits );
 
 	// set counters
 	if (dlightBits == 0)
@@ -655,7 +655,7 @@ static mnode_t *R_PointInLeaf(const vec3_t p)
 
 	if (!tr.world)
 	{
-		ri.Error(ERR_DROP, "R_PointInLeaf: bad model");
+		Ren_Drop("R_PointInLeaf: bad model");
 	}
 
 	node = tr.world->nodes;
@@ -759,7 +759,7 @@ static void R_MarkLeaves(void)
 		r_showcluster->modified = qfalse;
 		if (r_showcluster->integer)
 		{
-			ri.Printf(PRINT_ALL, "cluster:%i  area:%i\n", cluster, leaf->area);
+			Ren_Print("cluster:%i  area:%i\n", cluster, leaf->area);
 		}
 	}
 

@@ -387,13 +387,13 @@ void R_AddAnimSurfaces(trRefEntity_t *ent)
 				hash = Com_HashKey(s, strlen(s));
 				for (j = 0 ; j < skin->numSurfaces ; j++)
 				{
-					if (hash != skin->surfaces[j]->hash)
+					if (hash != skin->surfaces[j].hash)
 					{
 						continue;
 					}
-					if (!strcmp(skin->surfaces[j]->name, s))
+					if (!strcmp(skin->surfaces[j].name, s))
 					{
-						shader = skin->surfaces[j]->shader;
+						shader = skin->surfaces[j].shader;
 						break;
 					}
 				}
@@ -405,13 +405,13 @@ void R_AddAnimSurfaces(trRefEntity_t *ent)
 				for (j = 0 ; j < skin->numSurfaces ; j++)
 				{
 					// the names have both been lowercased
-					if (hash != skin->surfaces[j]->hash)
+					if (hash != skin->surfaces[j].hash)
 					{
 						continue;
 					}
-					if (!strcmp(skin->surfaces[j]->name, surface->name))
+					if (!strcmp(skin->surfaces[j].name, surface->name))
 					{
-						shader = skin->surfaces[j]->shader;
+						shader = skin->surfaces[j].shader;
 						break;
 					}
 				}
@@ -1633,8 +1633,8 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 
 		LocalMatrixTransformVector(v->normal, bones[v->weights[0].boneIndex].matrix, tempNormal);
 
-		tess.texCoords0[baseVertex + j].v[0] = v->texCoords[0];
-		tess.texCoords0[baseVertex + j].v[1] = v->texCoords[1];
+		tess.texCoords[baseVertex + j][0][0] = v->texCoords[0];
+		tess.texCoords[baseVertex + j][0][1] = v->texCoords[1];
 
 		v = (mdsVertex_t *)&v->weights[v->numWeights];
 	}

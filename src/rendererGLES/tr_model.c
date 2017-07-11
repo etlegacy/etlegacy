@@ -39,9 +39,7 @@
 #   include <windows.h>
 #endif
 
-#define LL(x) x = LittleLong(x)
-
-static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_name);
+static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *name);
 static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *name);
 static qboolean R_LoadMDS(model_t *mod, void *buffer, const char *name);
 static qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name);
@@ -126,7 +124,7 @@ void R_LoadModelShadow(model_t *mod)
 
 			if (strlen((char *) buf) >= MAX_QPATH)
 			{
-				Com_Printf("R_LoadModelShadow: Shader name exceeds MAX_QPATH\n");
+				Ren_Print("R_LoadModelShadow: Shader name exceeds MAX_QPATH\n");
 				mod->shadowShader = 0;
 			}
 			else
@@ -174,13 +172,17 @@ qhandle_t RE_RegisterModel(const char *name)
 
 	if (!name || !name[0])
 	{
-		ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel: NULL name\n");
+		Ren_Developer("RE_RegisterModel: NULL name\n");
 		return 0;
+	}
+	else
+	{
+		Ren_Developer("RE_RegisterModel model: %s\n", name);
 	}
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		Com_Printf("Model name exceeds MAX_QPATH\n");
+		Ren_Print("Model name exceeds MAX_QPATH\n");
 		return 0;
 	}
 
@@ -198,11 +200,11 @@ qhandle_t RE_RegisterModel(const char *name)
 		{
 			if (mod->type == MOD_BAD)
 			{
-				ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel: bad model '%s' - already registered but in bad condition - returning 0\n", name);
+				Ren_Developer("RE_RegisterModel: bad model '%s' - already registered but in bad condition - returning 0\n", name);
 				return 0;
 			}
 
-			// ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel: model already loaded '%s'\n", name);
+			// Ren_Developer( "RE_RegisterModel: model already loaded '%s'\n", name);
 			return hModel;
 		}
 	}
@@ -210,7 +212,7 @@ qhandle_t RE_RegisterModel(const char *name)
 	// allocate a new model_t
 	if ((mod = R_AllocModel()) == NULL)
 	{
-		ri.Printf(PRINT_WARNING, "RE_RegisterModel: R_AllocModel() failed for '%s'\n", name);
+		Ren_Warning("RE_RegisterModel: R_AllocModel() failed for '%s'\n", name);
 		return 0;
 	}
 
@@ -308,7 +310,7 @@ qhandle_t RE_RegisterModel(const char *name)
 		// mesh compression
 		if (ident != MD3_IDENT && ident != MDC_IDENT)
 		{
-			ri.Printf(PRINT_WARNING, "RE_RegisterModel: unknown fileid for %s\n", name);
+			Ren_Warning("RE_RegisterModel: unknown fileid for %s\n", name);
 			ri.FS_FreeFile(buf);
 			goto fail;
 		}
@@ -377,11 +379,11 @@ fail:
 		// - does this function add anything which is required for the shaders? see cacheGathering etc (on top)
 		// -- an early return for shader case shows it does ...
 		// - check mod->type = MOD_BAD for this case (see below)
-		ri.Printf(PRINT_DEVELOPER, "^6RE_RegisterModel: model not loaded %s - this is probably a shader\n", name);
+		Ren_Developer("^6RE_RegisterModel: model not loaded %s - this is probably a shader\n", name);
 	}
 	else
 	{
-		ri.Printf(PRINT_DEVELOPER, "RE_RegisterModel: model not loaded %s\n", name);
+		Ren_Developer("RE_RegisterModel: model not loaded %s\n", name);
 	}
 
 	mod->type = MOD_BAD;
@@ -395,10 +397,14 @@ float r_anormals[NUMMDCVERTEXNORMALS][3] =
 #include "../renderercommon/anorms256.h"
 };
 
+// rain - unused
+#if 0
 /**
  * @brief R_MDC_GetVec
  * @param[in] anorm
  * @param[out] dir
+ *
+ * @note Unused
  */
 void R_MDC_GetVec(unsigned char anorm, vec3_t dir)
 {
@@ -409,6 +415,8 @@ void R_MDC_GetVec(unsigned char anorm, vec3_t dir)
  * @brief R_MDC_GetAnorm
  * @param[in] dir
  * @return
+ *
+ * @note Unused
  */
 unsigned char R_MDC_GetAnorm(const vec3_t dir)
 {
@@ -497,6 +505,8 @@ unsigned char R_MDC_GetAnorm(const vec3_t dir)
  * @param[in] normal
  * @param[out] out
  * @return
+ *
+ * @note Unused
  */
 qboolean R_MDC_EncodeXyzCompressed(const vec3_t vec, const vec3_t normal, mdcXyzCompressed_t *out)
 {
@@ -504,7 +514,7 @@ qboolean R_MDC_EncodeXyzCompressed(const vec3_t vec, const vec3_t normal, mdcXyz
 	int                i;
 	unsigned char      anorm;
 
-	i = sizeof(mdcXyzCompressed_t);
+	i = sizeof(mdcXyzCompressed_t); // FIXME: never read
 
 	retval.ofsVec = 0;
 	for (i = 0; i < 3; i++)
@@ -513,35 +523,15 @@ qboolean R_MDC_EncodeXyzCompressed(const vec3_t vec, const vec3_t normal, mdcXyz
 		{
 			return qfalse;
 		}
-		retval.ofsVec += (((int)Q_fabs((vec[i] + MDC_DIST_SCALE * 0.5) * (1.0 / MDC_DIST_SCALE) + MDC_MAX_OFS)) << (i * MDC_BITS_PER_AXIS));
+		retval.ofsVec += (((unsigned int)(Q_fabs((vec[i] + MDC_DIST_SCALE * 0.5f) * (1.0f / MDC_DIST_SCALE) + MDC_MAX_OFS)) << (i * MDC_BITS_PER_AXIS)));
 	}
 	anorm          = R_MDC_GetAnorm(normal);
-	retval.ofsVec |= ((int)anorm) << 24;
+	retval.ofsVec |= ((unsigned int)anorm) << 24;
 
 	*out = retval;
 	return qtrue;
 }
 
-/*
-=================
-R_MDC_DecodeXyzCompressed
-=================
-*/
-#if 0   // unoptimized version, used for finding right settings
-void R_MDC_DecodeXyzCompressed(mdcXyzCompressed_t *xyzComp, vec3_t out, vec3_t normal)
-{
-	int i;
-
-	for (i = 0; i < 3; i++)
-	{
-		out[i] = ((float)((xyzComp->ofsVec >> (i * MDC_BITS_PER_AXIS)) & ((1 << MDC_BITS_PER_AXIS) - 1)) - MDC_MAX_OFS) * MDC_DIST_SCALE;
-	}
-	R_MDC_GetVec(( unsigned char )(xyzComp->ofsVec >> 24), normal);
-}
-#endif
-
-// rain - unused
-#if 0
 /**
  * @brief R_MDC_GetXyzCompressed
  * @param md3 - unused
@@ -662,12 +652,12 @@ static qboolean R_MDC_CanCompressSurfaceFrame(md3Header_t *md3, md3Surface_t *su
  * @brief Converts a model_t from md3 to mdc format
  * @param[in] mod
  * @param[in] lod
- * @param[in] mod_name
+ * @param[in] name
  * @return
  *
  * @note Unused
  */
-static qboolean R_MDC_ConvertMD3(model_t *mod, int lod, const char *mod_name)
+static qboolean R_MDC_ConvertMD3(model_t *mod, int lod, const char *name)
 {
 	int          i, j, f, c, k;
 	md3Surface_t *surf;
@@ -753,7 +743,7 @@ static qboolean R_MDC_ConvertMD3(model_t *mod, int lod, const char *mod_name)
 	}
 
 	// report the memory differences
-	Com_Printf("Compressed %s. Old = %i, New = %i\n", mod_name, md3->ofsEnd, mdcHeader.ofsEnd);
+	Ren_Print("Compressed %s. Old = %i, New = %i\n", name, md3->ofsEnd, mdcHeader.ofsEnd);
 
 	mdc                 = ri.Hunk_Alloc(mdcHeader.ofsEnd, h_low);
 	mod->model.mdc[lod] = mdc;
@@ -842,7 +832,7 @@ static qboolean R_MDC_ConvertMD3(model_t *mod, int lod, const char *mod_name)
 			{
 				if (!R_MDC_CompressSurfaceFrame(md3, surf, f, baseFrames[i - 1], ( mdcXyzCompressed_t * )((byte *)cSurf + cSurf->ofsXyzCompressed + sizeof(mdcXyzCompressed_t) * cSurf->numVerts * c)))
 				{
-					ri.Error(ERR_DROP, "R_MDC_ConvertMD3: tried to compress an unsuitable frame");
+					Ren_Drop("R_MDC_ConvertMD3: tried to compress an unsuitable frame\n");
 				}
 				frameCompFrames[f] = c;
 				frameBaseFrames[f] = i - 1;
@@ -874,10 +864,10 @@ static qboolean R_MDC_ConvertMD3(model_t *mod, int lod, const char *mod_name)
  * @param[in,out] mod
  * @param[in] lod
  * @param[in,out] buffer
- * @param[in] mod_name
+ * @param[in] name
  * @return
  */
-static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_name)
+static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *name)
 {
 	int                i, j;
 	mdcHeader_t        *pinmodel;
@@ -898,8 +888,8 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_n
 	version = LittleLong(pinmodel->version);
 	if (version != MDC_VERSION)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMDC: %s has wrong version (%i should be %i)\n",
-		          mod_name, version, MDC_VERSION);
+		Ren_Warning("R_LoadMDC: %s has wrong version (%i should be %i)\n",
+		            name, version, MDC_VERSION);
 		return qfalse;
 	}
 
@@ -926,7 +916,7 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_n
 
 	if (mod->model.mdc[lod]->numFrames < 1)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMDC: %s has no frames\n", mod_name);
+		Ren_Warning("R_LoadMDC: %s has no frames\n", name);
 		return qfalse;
 	}
 
@@ -957,9 +947,10 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_n
 	}
 
 	// swap all the tags
-	tag = ( mdcTag_t * )((byte *)mod->model.mdc[lod] + mod->model.mdc[lod]->ofsTags);
 	if (LittleLong(1) != 1)
 	{
+        tag = ( mdcTag_t * )((byte *)mod->model.mdc[lod] + mod->model.mdc[lod]->ofsTags);
+
 		for (i = 0 ; i < mod->model.mdc[lod]->numTags * mod->model.mdc[lod]->numFrames ; i++, tag++)
 		{
 			for (j = 0 ; j < 3 ; j++)
@@ -990,15 +981,15 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_n
 		LL(surf->ofsFrameCompFrames);
 		LL(surf->ofsEnd);
 
-		if (surf->numVerts > tess.maxShaderVerts)
+		if (surf->numVerts > SHADER_MAX_VERTEXES)
 		{
-			ri.Error(ERR_DROP, "R_LoadMDC: %s has more than %i verts on a surface (%i)",
-			         mod_name, tess.maxShaderVerts, surf->numVerts);
+			Ren_Drop("R_LoadMDC: %s has more than %i verts on a surface (%i)",
+			         name, SHADER_MAX_VERTEXES, surf->numVerts);
 		}
-		if (surf->numTriangles * 3 > tess.maxShaderIndicies)
+		if (surf->numTriangles * 3 > SHADER_MAX_INDEXES)
 		{
-			ri.Error(ERR_DROP, "R_LoadMDC: %s has more than %i triangles on a surface (%i)",
-			         mod_name, tess.maxShaderIndicies / 3, surf->numTriangles);
+			Ren_Drop("R_LoadMDC: %s has more than %i triangles on a surface (%i)",
+			         name, SHADER_MAX_INDEXES / 3, surf->numTriangles);
 		}
 
 		// change to surface identifier
@@ -1025,6 +1016,7 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_n
 			if (sh->defaultShader)
 			{
 				shader->shaderIndex = 0;
+				Ren_Print("Warning R_LoadMDC: model %s surf num %i is using default shader\n", name, j);
 			}
 			else
 			{
@@ -1099,10 +1091,10 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *mod_n
  * @param[in,out] mod
  * @param[in] lod
  * @param[in,out] buffer
- * @param[in] mod_name
+ * @param[in] name
  * @return
  */
-static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *mod_name)
+static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *name)
 {
 	int            i, j;
 	md3Header_t    *pinmodel;
@@ -1122,8 +1114,8 @@ static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *mod_n
 	version = LittleLong(pinmodel->version);
 	if (version != MD3_VERSION)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMD3: %s has wrong version (%i should be %i)\n",
-		          mod_name, version, MD3_VERSION);
+		Ren_Warning("R_LoadMD3: %s has wrong version (%i should be %i)\n",
+		            name, version, MD3_VERSION);
 		return qfalse;
 	}
 
@@ -1146,7 +1138,7 @@ static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *mod_n
 
 	if (mod->model.md3[lod]->numFrames < 1)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMD3: %s has no frames\n", mod_name);
+		Ren_Warning("R_LoadMD3: %s has no frames\n", name);
 		return qfalse;
 	}
 
@@ -1221,15 +1213,15 @@ static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *mod_n
 		LL(surf->ofsXyzNormals);
 		LL(surf->ofsEnd);
 
-		if (surf->numVerts > tess.maxShaderVerts)
+		if (surf->numVerts > SHADER_MAX_VERTEXES)
 		{
-			ri.Error(ERR_DROP, "R_LoadMD3: %s has more than %i verts on a surface (%i)",
-			         mod_name, tess.maxShaderVerts, surf->numVerts);
+			Ren_Drop("R_LoadMD3: %s has more than %i verts on a surface (%i)",
+			         name, SHADER_MAX_VERTEXES, surf->numVerts);
 		}
-		if (surf->numTriangles * 3 > tess.maxShaderIndicies)
+		if (surf->numTriangles * 3 > SHADER_MAX_INDEXES)
 		{
-			ri.Error(ERR_DROP, "R_LoadMD3: %s has more than %i triangles on a surface (%i)",
-			         mod_name, tess.maxShaderIndicies / 3, surf->numTriangles);
+			Ren_Drop("R_LoadMD3: %s has more than %i triangles on a surface (%i)",
+			         name, SHADER_MAX_INDEXES / 3, surf->numTriangles);
 		}
 
 		// change to surface identifier
@@ -1256,6 +1248,7 @@ static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *mod_n
 			if (sh->defaultShader)
 			{
 				shader->shaderIndex = 0;
+				Ren_Print("Warning R_LoadMD3: model %s surf num [%i] is using default shader\n", name, j);
 			}
 			else
 			{
@@ -1308,10 +1301,10 @@ static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *mod_n
  * @brief R_LoadMDS
  * @param[in,out] mod
  * @param[in,out] buffer
- * @param[in] mod_name
+ * @param[in] name
  * @return
  */
-static qboolean R_LoadMDS(model_t *mod, void *buffer, const char *mod_name)
+static qboolean R_LoadMDS(model_t *mod, void *buffer, const char *name)
 {
 	int           i, j, k;
 	mdsHeader_t   *pinmodel, *mds;
@@ -1332,8 +1325,8 @@ static qboolean R_LoadMDS(model_t *mod, void *buffer, const char *mod_name)
 	version = LittleLong(pinmodel->version);
 	if (version != MDS_VERSION)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMDS: %s has wrong version (%i should be %i)\n",
-		          mod_name, version, MDS_VERSION);
+		Ren_Warning("R_LoadMDS: %s has wrong version (%i should be %i)\n",
+		            name, version, MDS_VERSION);
 		return qfalse;
 	}
 
@@ -1361,7 +1354,7 @@ static qboolean R_LoadMDS(model_t *mod, void *buffer, const char *mod_name)
 
 	if (mds->numFrames < 1)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMDS: %s has no frames\n", mod_name);
+		Ren_Warning("R_LoadMDS: %s has no frames\n", name);
 		return qfalse;
 	}
 
@@ -1429,15 +1422,15 @@ static qboolean R_LoadMDS(model_t *mod, void *buffer, const char *mod_name)
 		// change to surface identifier
 		surf->ident = SF_MDS;
 
-		if (surf->numVerts > tess.maxShaderVerts)
+		if (surf->numVerts > SHADER_MAX_VERTEXES)
 		{
-			ri.Error(ERR_DROP, "R_LoadMDS: %s has more than %i verts on a surface (%i)",
-			         mod_name, tess.maxShaderVerts, surf->numVerts);
+			Ren_Drop("R_LoadMDS: %s has more than %i verts on a surface (%i)",
+			         name, SHADER_MAX_VERTEXES, surf->numVerts);
 		}
-		if (surf->numTriangles * 3 > tess.maxShaderIndicies)
+		if (surf->numTriangles * 3 > SHADER_MAX_INDEXES)
 		{
-			ri.Error(ERR_DROP, "R_LoadMDS: %s has more than %i triangles on a surface (%i)",
-			         mod_name, tess.maxShaderIndicies / 3, surf->numTriangles);
+			Ren_Drop("R_LoadMDS: %s has more than %i triangles on a surface (%i)",
+			         name, SHADER_MAX_INDEXES / 3, surf->numTriangles);
 		}
 
 		// register the shaders
@@ -1558,8 +1551,8 @@ static qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 	version = LittleLong(pinmodel->version);
 	if (version != MDM_VERSION)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMDM: %s has wrong version (%i should be %i)\n",
-		          name, version, MDM_VERSION);
+		Ren_Warning("R_LoadMDM: %s has wrong version (%i should be %i)\n",
+		            name, version, MDM_VERSION);
 		return qfalse;
 	}
 
@@ -1588,7 +1581,7 @@ static qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 	    }
 
 	    if ( mdm->numFrames < 1 ) {
-	        ri.Printf( PRINT_WARNING, "R_LoadMDM: %s has no frames\n", mod_name );
+	        ri.Printf( PRINT_WARNING, "R_LoadMDM: %s has no frames\n", name );
 	        return qfalse;
 	    }*/
 
@@ -1664,15 +1657,15 @@ static qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 		// change to surface identifier
 		surf->ident = SF_MDM;
 
-		if (surf->numVerts > tess.maxShaderVerts)
+		if (surf->numVerts > SHADER_MAX_VERTEXES)
 		{
-			ri.Error(ERR_DROP, "R_LoadMDM: %s has more than %i verts on a surface (%i)",
-			         name, tess.maxShaderVerts, surf->numVerts);
+			Ren_Drop("R_LoadMDM: %s has more than %i verts on a surface (%i)",
+			         name, SHADER_MAX_VERTEXES, surf->numVerts);
 		}
-		if (surf->numTriangles * 3 > tess.maxShaderIndicies)
+		if (surf->numTriangles * 3 > SHADER_MAX_INDEXES)
 		{
-			ri.Error(ERR_DROP, "R_LoadMDM: %s has more than %i triangles on a surface (%i)",
-			         name, tess.maxShaderIndicies / 3, surf->numTriangles);
+			Ren_Drop("R_LoadMDM: %s has more than %i triangles on a surface (%i)",
+			         name, SHADER_MAX_INDEXES / 3, surf->numTriangles);
 		}
 
 		// register the shaders
@@ -1755,10 +1748,10 @@ static qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
  * @brief R_LoadMDX
  * @param[in,out] mod
  * @param[in,out] buffer
- * @param[in] mod_name
+ * @param[in] name
  * @return
  */
-static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
+static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *name)
 {
 	mdxHeader_t   *pinmodel, *mdx;
 	mdxFrame_t    *frame;
@@ -1772,8 +1765,8 @@ static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *mod_name)
 	version = LittleLong(pinmodel->version);
 	if (version != MDX_VERSION)
 	{
-		ri.Printf(PRINT_WARNING, "R_LoadMDX: %s has wrong version (%i should be %i)\n",
-		          mod_name, version, MDX_VERSION);
+		Ren_Warning("R_LoadMDX: %s has wrong version (%i should be %i)\n",
+		            name, version, MDX_VERSION);
 		return qfalse;
 	}
 
@@ -1842,9 +1835,9 @@ void RE_BeginRegistration(glconfig_t *glconfigOut)
 {
 	ri.Hunk_Clear();    // (SA) MEM NOTE: not in missionpack
 
-	*glconfigOut = glConfig;
-
 	R_Init();
+
+	*glconfigOut = glConfig;
 
 	R_IssuePendingRenderCommands();
 
@@ -1899,17 +1892,17 @@ void R_Modellist_f(void)
 				lods++;
 			}
 		}
-		ri.Printf(PRINT_ALL, "%8i : (%i) %s   %s\n", mod->dataSize, lods, mod->name, (mod->type == MOD_BAD ? "BAD" : "OK")); // "^1BAD":"^2OK"));
+		Ren_Print("%8i : (%i) %s   %s\n", mod->dataSize, lods, mod->name, (mod->type == MOD_BAD ? "BAD" : "OK"));  // "^1BAD":"^2OK"));
 		total += mod->dataSize;
 	}
-	ri.Printf(PRINT_ALL, "%8i : Total models\n", total);
+	Ren_Print("%8i : Total models\n", total);
 
-#if 0       // not working right with new hunk
-	if (tr.world)
-	{
-		ri.Printf(PRINT_ALL, "\n%8i : %s\n", tr.world->dataSize, tr.world->name);
-	}
-#endif
+	// not working right with new hunk
+	// if (tr.world)
+	// {
+	// 	ri.Printf(PRINT_ALL, "\n%8i : %s\n", tr.world->dataSize, tr.world->name);
+	// }
+
 }
 
 //=============================================================================
@@ -2050,6 +2043,7 @@ int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName
 	if (model->type == MOD_MESH)
 	{
 		// old MD3 style
+		// FIXME: retval is reassigned before used, does it was intended ?
 		retval = R_GetTag((byte *)model->model.md3[0], startFrame, tagName, startIndex, &start);
 		retval = R_GetTag((byte *)model->model.md3[0], endFrame, tagName, startIndex, &end);
 
@@ -2085,6 +2079,7 @@ int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName
 		// psuedo-compressed MDC tags
 		mdcTag_t *cstart, *cend;
 
+		// FIXME: retval is reassigned before used, does it was intended ?
 		retval = R_GetMDCTag((byte *)model->model.mdc[0], startFrame, tagName, startIndex, &cstart);
 		retval = R_GetMDCTag((byte *)model->model.mdc[0], endFrame, tagName, startIndex, &cend);
 
@@ -2142,23 +2137,23 @@ int R_LerpTag(orientation_t *tag, const refEntity_t *refent, const char *tagName
  */
 void R_TagInfo_f(void)
 {
-	Com_Printf("command not functional\n");
+	Ren_Print("command not functional\n");
 	/*
 	    int handle;
 	    orientation_t tag;
 	    int frame = -1;
 
 	    if (ri.Cmd_Argc() < 3) {
-	        Com_Printf("usage: taginfo <model> <tag>\n");
+	        Ren_Print("usage: taginfo <model> <tag>\n");
 	        return;
 	    }
 
 	    handle = RE_RegisterModel( ri.Cmd_Argv(1) );
 
 	    if (handle) {
-	        Com_Printf("found model %s..\n", ri.Cmd_Argv(1));
+	        Ren_Print("found model %s..\n", ri.Cmd_Argv(1));
 	    } else {
-	        Com_Printf("cannot find model %s\n", ri.Cmd_Argv(1));
+	        Ren_Print("cannot find model %s\n", ri.Cmd_Argv(1));
 	        return;
 	    }
 
@@ -2168,11 +2163,11 @@ void R_TagInfo_f(void)
 	        frame = atoi(ri.Cmd_Argv(3));
 	    }
 
-	    Com_Printf("using frame %i..\n", frame);
+	    Ren_Print("using frame %i..\n", frame);
 
 	    R_LerpTag( &tag, handle, frame, frame, 0.0, (const char *)ri.Cmd_Argv(2) );
 
-	    Com_Printf("%s at position: %.1f %.1f %.1f\n", ri.Cmd_Argv(2), tag.origin[0], tag.origin[1], tag.origin[2] );
+	    Ren_Print("%s at position: %.1f %.1f %.1f\n", ri.Cmd_Argv(2), tag.origin[0], tag.origin[1], tag.origin[2] );
 	*/
 }
 
@@ -2246,7 +2241,7 @@ void *R_Hunk_Begin(void)
 {
 	int maxsize = R_HUNK_SIZE;
 
-	//Com_Printf("R_Hunk_Begin\n");
+	//Ren_Print("R_Hunk_Begin\n");
 
 	// reserve a huge chunk of memory, but don't commit any yet
 	cursize     = 0;
@@ -2273,7 +2268,7 @@ void *R_Hunk_Begin(void)
 
 	if (!membase)
 	{
-		ri.Error(ERR_DROP, "R_Hunk_Begin: reserve failed");
+		Ren_Drop("R_Hunk_Begin: reserve failed");
 	}
 
 	return (void *)membase;
@@ -2290,7 +2285,7 @@ void *R_Hunk_Alloc(int size)
 	void *buf;
 #endif
 
-	//Com_Printf("R_Hunk_Alloc(%d)\n", size);
+	//Ren_Print("R_Hunk_Alloc(%d)\n", size);
 
 	// round to cacheline
 	size = (size + 31) & ~31;
@@ -2303,7 +2298,7 @@ void *R_Hunk_Alloc(int size)
 	if (!buf)
 	{
 		FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR) &buf, 0, NULL);
-		ri.Error(ERR_DROP, "VirtualAlloc commit failed: %s", buf);
+		Ren_Drop("VirtualAlloc commit failed.\n%s", buf);
 	}
 
 #endif
@@ -2311,7 +2306,7 @@ void *R_Hunk_Alloc(int size)
 	cursize += size;
 	if (cursize > hunkmaxsize)
 	{
-		ri.Error(ERR_DROP, "R_Hunk_Alloc overflow");
+		Ren_Drop("R_Hunk_Alloc overflow");
 	}
 
 	return ( void * )(membase + cursize - size);
@@ -2322,7 +2317,7 @@ void *R_Hunk_Alloc(int size)
  */
 void R_Hunk_End(void)
 {
-	//Com_Printf("R_Hunk_End\n");
+	//Ren_Print("R_Hunk_End\n");
 
 	if (membase)
 	{
@@ -2341,11 +2336,11 @@ void R_Hunk_End(void)
  */
 void R_Hunk_Reset(void)
 {
-	//Com_Printf("R_Hunk_Reset\n");
+	//Ren_Print("R_Hunk_Reset\n");
 
 	if (!membase)
 	{
-		ri.Error(ERR_DROP, "R_Hunk_Reset called without a membase!");
+		Ren_Drop("R_Hunk_Reset called without a membase!");
 	}
 
 #ifdef _WIN32
@@ -2397,7 +2392,7 @@ void R_CacheModelFree(void *ptr)
 	else
 	{
 		// if r_cache 0, this is never supposed to get called anyway
-		Com_Printf("FIXME: unexpected R_CacheModelFree call (r_cache 0)\n");
+		Ren_Print("FIXME: unexpected R_CacheModelFree call (r_cache 0)\n");
 	}
 }
 

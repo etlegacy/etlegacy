@@ -69,8 +69,8 @@ static void R_ChopPolyBehindPlane(int numInPoints, vec3_t inPoints[MAX_VERTS_ON_
 	float *p1, *p2, *clip;
 	float d;
 
-	memset(dists, 0, MAX_VERTS_ON_POLY + 4);
-	memset(sides, 0, MAX_VERTS_ON_POLY + 4);
+	Com_Memset(dists, 0, MAX_VERTS_ON_POLY + 4);
+	Com_Memset(sides, 0, MAX_VERTS_ON_POLY + 4);
 
 	// don't clip if it might overflow
 	if (numInPoints >= MAX_VERTS_ON_POLY - 2)
@@ -82,7 +82,7 @@ static void R_ChopPolyBehindPlane(int numInPoints, vec3_t inPoints[MAX_VERTS_ON_
 	counts[0] = counts[1] = counts[2] = 0;
 
 	// determine sides for each point
-	for (i = 0 ; i < numInPoints ; i++)
+	for (i = 0; i < numInPoints; i++)
 	{
 		dot      = DotProduct(inPoints[i], normal);
 		dot     -= dist;
@@ -113,11 +113,11 @@ static void R_ChopPolyBehindPlane(int numInPoints, vec3_t inPoints[MAX_VERTS_ON_
 	if (!counts[1])
 	{
 		*numOutPoints = numInPoints;
-		memcpy(outPoints, inPoints, numInPoints * sizeof(vec3_t));
+		Com_Memcpy(outPoints, inPoints, numInPoints * sizeof(vec3_t));
 		return;
 	}
 
-	for (i = 0 ; i < numInPoints ; i++)
+	for (i = 0; i < numInPoints; i++)
 	{
 		p1   = inPoints[i];
 		clip = outPoints[*numOutPoints];
@@ -155,7 +155,8 @@ static void R_ChopPolyBehindPlane(int numInPoints, vec3_t inPoints[MAX_VERTS_ON_
 		}
 
 		// clip xyz
-		for (j = 0 ; j < 3 ; j++)
+
+		for (j = 0; j < 3; j++)
 		{
 			clip[j] = p1[j] + dot * (p2[j] - p1[j]);
 		}
@@ -317,7 +318,7 @@ void R_AddMarkFragments(int numClipPoints, vec3_t clipPoints[2][MAX_VERTS_ON_POL
 	mf             = fragmentBuffer + (*returnedFragments);
 	mf->firstPoint = (*returnedPoints);
 	mf->numPoints  = numClipPoints;
-	//memcpy( pointBuffer + (*returnedPoints) * 3, clipPoints[pingPong], numClipPoints * sizeof(vec3_t) );
+	//Com_Memcpy( pointBuffer + (*returnedPoints) * 3, clipPoints[pingPong], numClipPoints * sizeof(vec3_t) );
 	for (i = 0; i < numClipPoints; i++)
 	{
 		VectorCopy(clipPoints[pingPong][i], (float *)pointBuffer + 5 * (*returnedPoints + i));
@@ -364,7 +365,7 @@ int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection
 	//vec3_t            bestCenter; // center point projected onto the closest surface
 	//float texCoordScale;
 	//float         dot;
-	int      numPoints  = 4;        // we were only ever passing in 4, so I made this local and used the parameter for the orientation
+	int      numberPoints  = 4;        // we were only ever passing in 4, so I made this local and used the parameter for the orientation
 	qboolean oldMapping = qfalse;
 
 	//increment view count for double check prevention
@@ -378,18 +379,18 @@ int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection
 	}
 
 	VectorClear(center);
-	for (i = 0 ; i < numPoints ; i++)
+	for (i = 0 ; i < numberPoints ; i++)
 	{
 		VectorAdd(points[i], center, center);
 	}
-	VectorScale(center, 1.0f / numPoints, center);
+	VectorScale(center, 1.0f / numberPoints, center);
 
 	radius   = VectorNormalize2(projection, projectionDir) / 2.0f;
 	bestdist = 0;
 	VectorNegate(projectionDir, bestnormal);
 	// find all the brushes that are to be considered
 	ClearBounds(mins, maxs);
-	for (i = 0 ; i < numPoints ; i++)
+	for (i = 0 ; i < numberPoints ; i++)
 	{
 		vec3_t temp;
 
@@ -408,9 +409,9 @@ int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection
 	//}
 
 	// create the bounding planes for the to be projected polygon
-	for (i = 0 ; i < numPoints ; i++)
+	for (i = 0 ; i < numberPoints ; i++)
 	{
-		VectorSubtract(points[(i + 1) % numPoints], points[i], v1);
+		VectorSubtract(points[(i + 1) % numberPoints], points[i], v1);
 		VectorAdd(points[i], projection, v2);
 		VectorSubtract(points[i], v2, v2);
 		CrossProduct(v1, v2, normals[i]);
@@ -418,12 +419,12 @@ int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection
 		dists[i] = DotProduct(normals[i], points[i]);
 	}
 	// add near and far clipping planes for projection
-	VectorCopy(projectionDir, normals[numPoints]);
-	dists[numPoints] = DotProduct(normals[numPoints], points[0]) - radius * (1 + oldMapping * 10);
-	VectorCopy(projectionDir, normals[numPoints + 1]);
-	VectorInverse(normals[numPoints + 1]);
-	dists[numPoints + 1] = DotProduct(normals[numPoints + 1], points[0]) - radius * (1 + oldMapping * 10);
-	numPlanes            = numPoints + 2;
+	VectorCopy(projectionDir, normals[numberPoints]);
+	dists[numberPoints] = DotProduct(normals[numberPoints], points[0]) - radius * (1 + oldMapping * 10);
+	VectorCopy(projectionDir, normals[numberPoints + 1]);
+	VectorInverse(normals[numberPoints + 1]);
+	dists[numberPoints + 1] = DotProduct(normals[numberPoints + 1], points[0]) - radius * (1 + oldMapping * 10);
+	numPlanes            = numberPoints + 2;
 
 	numsurfaces = 0;
 	R_BoxSurfaces_r(tr.world->nodes, mins, maxs, surfaces, 4096, &numsurfaces, projectionDir);
@@ -615,14 +616,14 @@ int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection
 				{
 					AddPointToBounds(originalPoints[j], lmins, lmaxs);
 
-					VectorSubtract(originalPoints[(j + 1) % numPoints], originalPoints[j], v1);
+					VectorSubtract(originalPoints[(j + 1) % numberPoints], originalPoints[j], v1);
 					VectorSubtract(originalPoints[j], surfnormal, v2);
 					VectorSubtract(originalPoints[j], v2, v2);
 					CrossProduct(v1, v2, lnormals[j]);
 					VectorNormalize(lnormals[j]);
 					ldists[j] = DotProduct(lnormals[j], originalPoints[j]);
 				}
-				numPlanes = numPoints;
+				numPlanes = numberPoints;
 
 
 				indexes = ( int * )((byte *)surf + surf->ofsIndices);
@@ -702,15 +703,15 @@ int R_MarkFragments(int numPoints, const vec3_t *points, const vec3_t projection
 
 			if (!oldMapping)
 			{
-				for (k = 0 ; k < numPoints ; k++)
+				for (k = 0 ; k < numberPoints ; k++)
 				{
 					VectorNegate(normals[k], lnormals[k]);
 					ldists[k] = -dists[k];
 				}
-				VectorNegate(normals[numPoints], lnormals[numPoints]);
-				ldists[numPoints] = dists[numPoints + 1];
-				VectorNegate(normals[numPoints + 1], lnormals[numPoints + 1]);
-				ldists[numPoints + 1] = dists[numPoints];
+				VectorNegate(normals[numberPoints], lnormals[numberPoints]);
+				ldists[numberPoints] = dists[numberPoints + 1];
+				VectorNegate(normals[numberPoints + 1], lnormals[numberPoints + 1]);
+				ldists[numberPoints + 1] = dists[numberPoints];
 
 				indexes = cts->indexes;
 				for (k = 0 ; k < cts->numIndexes ; k += 3)

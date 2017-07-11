@@ -347,9 +347,9 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 	    || (ent->e.oldframe >= tr.currentModel->model.mdc[0]->numFrames)
 	    || (ent->e.oldframe < 0))
 	{
-		ri.Printf(PRINT_DEVELOPER, "R_AddMDCSurfaces: no such frame %d to %d for '%s'\n",
-		          ent->e.oldframe, ent->e.frame,
-		          tr.currentModel->name);
+		Ren_Developer("R_AddMDCSurfaces: no such frame %d to %d for '%s'\n",
+		              ent->e.oldframe, ent->e.frame,
+		              tr.currentModel->name);
 		ent->e.frame    = 0;
 		ent->e.oldframe = 0;
 	}
@@ -409,13 +409,13 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 				hash = Com_HashKey(s, strlen(s));
 				for (j = 0 ; j < skin->numSurfaces ; j++)
 				{
-					if (hash != skin->surfaces[j]->hash)
+					if (hash != skin->surfaces[j].hash)
 					{
 						continue;
 					}
-					if (!strcmp(skin->surfaces[j]->name, s))
+					if (!strcmp(skin->surfaces[j].name, s))
 					{
-						shader = skin->surfaces[j]->shader;
+						shader = skin->surfaces[j].shader;
 						break;
 					}
 				}
@@ -427,13 +427,13 @@ void R_AddMDCSurfaces(trRefEntity_t *ent)
 				for (j = 0 ; j < skin->numSurfaces ; j++)
 				{
 					// the names have both been lowercased
-					if (hash != skin->surfaces[j]->hash)
+					if (hash != skin->surfaces[j].hash)
 					{
 						continue;
 					}
-					if (!strcmp(skin->surfaces[j]->name, surface->name))
+					if (!strcmp(skin->surfaces[j].name, surface->name))
 					{
-						shader = skin->surfaces[j]->shader;
+						shader = skin->surfaces[j].shader;
 						break;
 					}
 				}
