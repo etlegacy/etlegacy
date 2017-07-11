@@ -818,10 +818,6 @@ const char *trap_TranslateString(const char *fmt); // localization
 const char *UI_DescriptionForCampaign(void);
 const char *UI_NameForCampaign(void);
 
-/// 4:3 aspectratio is the default for this game engine..
-#define RATIO43     (4.0f / 3.0f)
-#define RPRATIO43   (1 / RATIO43)
-
 #define EDITFIELD_TEMP_CVAR         "ui_textfield_temp"
 
 #endif

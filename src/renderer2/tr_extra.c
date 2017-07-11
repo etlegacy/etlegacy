@@ -843,7 +843,7 @@ int MemStreamGetLong(memStream_t *s)
 		return -1;
 	}
 
-	if (MemStreamRead(s, &c, 4) == 0)
+	if (MemStreamRead(s, &c, 4) == qfalse)
 	{
 		return -1;
 	}
@@ -865,7 +865,7 @@ int MemStreamGetShort(memStream_t *s)
 		return -1;
 	}
 
-	if (MemStreamRead(s, &c, 2) == 0)
+	if (MemStreamRead(s, &c, 2) == qfalse)
 	{
 		return -1;
 	}
@@ -887,7 +887,7 @@ float MemStreamGetFloat(memStream_t *s)
 		return -1;
 	}
 
-	if (MemStreamRead(s, &c.i, 4) == 0)
+	if (MemStreamRead(s, &c.i, 4) == qfalse)
 	{
 		return -1;
 	}

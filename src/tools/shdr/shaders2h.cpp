@@ -241,7 +241,7 @@ static void make_c_string(string &in)
 static bool read_file_to_c_string(const string &path, string &output)
 {
 	FILE* in_file = NULL;
-	if (in_file = fopen(path.c_str(), "rt"))
+	if ((in_file = fopen(path.c_str(), "rt")))
 	{
 		char buff[1024];
 		while (fgets(buff, sizeof(buff), in_file))
@@ -385,7 +385,7 @@ static void write_const_char(FILE *outputFile, const string& name, const string&
 static int write_output(string &out_file, string &array_name, vector<shader_out> &shaders, const string &shader_def)
 {
 	FILE *outputFile;
-	if (outputFile = fopen(out_file.c_str(), "wt"))
+	if ((outputFile = fopen(out_file.c_str(), "wt")))
 	{
 		fprintf(outputFile, "%s\n", headerValue);
 

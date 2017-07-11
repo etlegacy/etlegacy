@@ -446,7 +446,7 @@ byte *RB_ReadPixels(int x, int y, int width, int height, size_t *offset, int *pa
 	int   padwidth, linelen;
 	GLint packAlign;
 
-	qglGetIntegerv(GL_PACK_ALIGNMENT, &packAlign);
+	glGetIntegerv(GL_PACK_ALIGNMENT, &packAlign);
 
 	linelen  = width * 3;
 	padwidth = PAD(linelen, packAlign);
@@ -455,7 +455,7 @@ byte *RB_ReadPixels(int x, int y, int width, int height, size_t *offset, int *pa
 	buffer = (byte *)ri.Hunk_AllocateTempMemory(padwidth * height + *offset + packAlign - 1);
 
 	bufstart = (byte *)PADP(( intptr_t ) buffer + *offset, packAlign);
-	qglReadPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE, bufstart);
+	glReadPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE, bufstart);
 
 	*offset = bufstart - buffer;
 	*padlen = padwidth - linelen;
@@ -1010,7 +1010,7 @@ void GfxInfo_f(void)
 	//Lets not do this on gl3.2 context as the functionality is not supported.
 	/*
 	Ren_Print("GL_EXTENSIONS: ");
-	R_PrintLongString((char *)qglGetString(GL_EXTENSIONS));
+	R_PrintLongString((char *)glGetString(GL_EXTENSIONS));
 	*/
 
 	Ren_Print("GL_MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);

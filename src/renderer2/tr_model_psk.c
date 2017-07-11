@@ -424,7 +424,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 	for (i = 0, material = materials; i < numMaterials; i++, material++)
 	{
-		MemStreamRead(stream, material->name, sizeof(material->name));
+		(void) MemStreamRead(stream, material->name, sizeof(material->name));
 
 		Ren_Print("R_LoadPSK: material name: '%s'\n", material->name);
 
@@ -480,7 +480,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 
 	for (i = 0, refBone = refBones; i < numReferenceBones; i++, refBone++)
 	{
-		MemStreamRead(stream, refBone->name, sizeof(refBone->name));
+		(void) MemStreamRead(stream, refBone->name, sizeof(refBone->name));
 
 		//Ren_Print("R_LoadPSK: reference bone name: '%s'\n", refBone->name);
 
