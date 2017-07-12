@@ -602,7 +602,7 @@ void RB_BeginDrawingView(void)
 	if (backEnd.viewParms.isPortal)
 	{
 		float plane[4];
-		float plane2[4];
+		double plane2[4]; // keep this, glew expects double
 
 		plane[0] = backEnd.viewParms.portalPlane.normal[0];
 		plane[1] = backEnd.viewParms.portalPlane.normal[1];
