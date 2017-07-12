@@ -30,6 +30,7 @@
  */
 /**
  * @file qgl.h
+ * @brief Used for vanilla and GLES renderer. Renderer2 doesn't include qgl.h anymore.
  */
 
 #ifndef INCLUDE_QGL_H

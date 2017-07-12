@@ -38,7 +38,15 @@
 #include "../qcommon/q_shared.h"
 #include "tr_public.h"
 #include "iqm.h"
-#include "qgl.h"
+#ifndef FEATURE_RENDERER2 // vanilla or GLES
+#   include "qgl.h"
+#else // include GLEW for r2 (only!) - see qgl.h for r1 and rGLES
+#   ifdef BUNDLED_GLEW
+#       include "GL/glew.h"
+#   else
+#       include <GL/glew.h>
+#   endif
+#endif
 
 extern refimport_t ri;
 
@@ -97,13 +105,12 @@ void RE_RegisterFont(const char *fontName, int pointSize, void *output, qboolean
 extern qboolean textureFilterAnisotropic;
 extern int      maxAnisotropy;
 
-// cvars
+// cvars used by both renderers - FIXME: sort out!
 
 extern cvar_t *r_flareSize;
 extern cvar_t *r_flareFade;
 
 extern cvar_t *r_railWidth;
-//extern cvar_t *r_railCoreWidth;       ///< renderer2 only
 extern cvar_t *r_railSegmentLength;
 
 extern cvar_t *r_ignore;                ///< used for debugging anything
@@ -174,7 +181,7 @@ extern cvar_t *r_uiFullScreen;                  ///< ui is running fullscreen
 
 extern cvar_t *r_logFile;                       ///< number of frames to emit GL logs
 extern cvar_t *r_showtris;                      ///< enables wireframe rendering of the world
-extern cvar_t *r_trisColor;                     ///< enables modifying of the wireframe colour (in 0xRRGGBB[AA] format, alpha defaults to FF)
+extern cvar_t *r_trisColor;                     ///< FIXME: R1 only - enables modifying of the wireframe colour (in 0xRRGGBB[AA] format, alpha defaults to FF)
 extern cvar_t *r_showsky;                       ///< forces sky in front of all surfaces
 extern cvar_t *r_shownormals;                   ///< draws wireframe normals
 extern cvar_t *r_normallength;                  ///< length of the normals
@@ -222,7 +229,7 @@ extern cvar_t *r_bonesDebug;      ///< FIXME: move out -> renderer1 only
 
 extern cvar_t *r_wolffog;
 
-//extern cvar_t *r_screenshotJpegQuality;
+//extern cvar_t *r_screenshotJpegQuality; ///< FIXME: both!
 
 extern cvar_t *r_maxpolys;
 extern cvar_t *r_maxpolyverts;

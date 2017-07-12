@@ -51,6 +51,7 @@ qboolean GL_CheckForExtension(const char *ext)
 {
 #ifdef FEATURE_RENDERER2
 	int i = 0, exts = 0;
+	
 	glGetIntegerv(GL_NUM_EXTENSIONS, &exts);
 	for (i = 0; i < exts; i++)
 	{
@@ -62,6 +63,7 @@ qboolean GL_CheckForExtension(const char *ext)
 	return qfalse;
 #else
 	const char *ptr = Q_stristr(glConfig.extensions_string, ext);
+	
 	if (ptr == NULL)
 	{
 		return qfalse;
@@ -83,11 +85,7 @@ qboolean GL_CheckForExtension(const char *ext)
  */
 static qboolean GLimp_InitOpenGLContext()
 {
-
-#ifdef FEATURE_RENDERER2
-	int GLmajor, GLminor;
-#endif
-
+#ifndef FEATURE_RENDERER2 // vanilla or GLES
 	// get vendor
 	Q_strncpyz(glConfig.vendor_string, (const char *) qglGetString(GL_VENDOR), sizeof(glConfig.vendor_string));
 
@@ -105,9 +103,27 @@ static qboolean GLimp_InitOpenGLContext()
 	Com_Printf("GL_RENDERER: %s\n", glConfig.renderer_string);
 	Com_Printf("GL_VERSION: %s\n", glConfig.version_string);
 
-#ifndef FEATURE_RENDERER2
 	Com_Printf("Using vanilla renderer\n");
-#else
+#else // FEATURE_RENDERER2
+	int GLmajor, GLminor;
+
+	// get vendor
+	Q_strncpyz(glConfig.vendor_string, (const char *) glGetString(GL_VENDOR), sizeof(glConfig.vendor_string));
+
+	// get renderer
+	Q_strncpyz(glConfig.renderer_string, (const char *) glGetString(GL_RENDERER), sizeof(glConfig.renderer_string));
+	if (*glConfig.renderer_string && glConfig.renderer_string[strlen(glConfig.renderer_string) - 1] == '\n')
+	{
+		glConfig.renderer_string[strlen(glConfig.renderer_string) - 1] = 0;
+	}
+
+	// get GL version
+	Q_strncpyz(glConfig.version_string, (const char *) glGetString(GL_VERSION), sizeof(glConfig.version_string));
+
+	Com_Printf("GL_VENDOR: %s\n", glConfig.vendor_string);
+	Com_Printf("GL_RENDERER: %s\n", glConfig.renderer_string);
+	Com_Printf("GL_VERSION: %s\n", glConfig.version_string);
+
 	// get shading language version
 	Q_strncpyz(glConfig2.shadingLanguageVersion, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION), sizeof(glConfig2.shadingLanguageVersion));
 	sscanf(glConfig2.shadingLanguageVersion, "%d.%d", &glConfig2.glslMajorVersion, &glConfig2.glslMinorVersion);
@@ -530,8 +546,13 @@ static void GLimp_InitExtensions(void)
  */
 void Glimp_ClearScreen(void)
 {
+#ifndef FEATURE_RENDERER2 // vanilla or GLES
 	qglClearColor(0, 0, 0, 1);
 	qglClear(GL_COLOR_BUFFER_BIT);
+#else
+	glClearColor(0, 0, 0, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
+#endif
 	ri.GLimp_SwapFrame();
 }
 
@@ -589,6 +610,7 @@ void RE_InitOpenGl(void)
 #else
 	{
 		int i = 0, exts = 0;
+		
 		glGetIntegerv(GL_NUM_EXTENSIONS, &exts);
 		glConfig.extensions_string[0] = 0;
 		for (i = 0; i < exts; i++)
@@ -608,7 +630,7 @@ void RE_InitOpenGl(void)
 #ifdef FEATURE_RENDERER2
 	GLimp_InitExtensionsR2(); // renderer2
 #else
-	GLimp_InitExtensions(); // vanilla renderer
+	GLimp_InitExtensions(); // vanilla and GLES renderer
 #endif
 }
 
