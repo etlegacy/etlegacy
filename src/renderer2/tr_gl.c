@@ -55,7 +55,7 @@ void GL_Bind(image_t *image)
 
 	texnum = image->texnum;
 
-	if (r_nobind->integer && tr.blackImage)
+	if (r_noBind->integer && tr.blackImage)
 	{
 		// performance evaluation option
 		texnum = tr.blackImage->texnum;

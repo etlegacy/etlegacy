@@ -713,8 +713,8 @@ static void Upload32(unsigned *data,
 	// perform optional picmip operation
 	if (picmip)
 	{
-		scaled_width  >>= r_picmip->integer;
-		scaled_height >>= r_picmip->integer;
+		scaled_width  >>= r_picMip->integer;
+		scaled_height >>= r_picMip->integer;
 	}
 
 	// clamp to minimum size
@@ -747,7 +747,7 @@ static void Upload32(unsigned *data,
 
 	if (lightMap)
 	{
-		if (r_greyscale->integer)
+		if (r_greyScale->integer)
 		{
 			internalFormat = GL_LUMINANCE;
 		}
@@ -784,11 +784,11 @@ static void Upload32(unsigned *data,
 		// select proper internal format
 		if (samples == 3)
 		{
-			if (r_greyscale->integer)
+			if (r_greyScale->integer)
 			{
 				internalFormat = GL_LUMINANCE;
 			}
-			else if (r_texturebits->integer == 16)
+			else if (r_textureBits->integer == 16)
 			{
 				internalFormat = GL_RGB5;
 			}
@@ -799,11 +799,11 @@ static void Upload32(unsigned *data,
 		}
 		else if (samples == 4)
 		{
-			if (r_greyscale->integer)
+			if (r_greyScale->integer)
 			{
 				internalFormat = GL_LUMINANCE_ALPHA;
 			}
-			else if (r_texturebits->integer == 16)
+			else if (r_textureBits->integer == 16)
 			{
 				internalFormat = GL_RGBA4;
 			}
@@ -957,11 +957,11 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 		noCompress = qtrue;
 	}
 	// if the shader hasn't specifically asked for it, don't allow compression
-	if (r_ext_compressed_textures->integer == 2 && (tr.allowCompress != qtrue))
+	if (r_extCompressedTextures->integer == 2 && (tr.allowCompress != qtrue))
 	{
 		noCompress = qtrue;
 	}
-	else if (r_ext_compressed_textures->integer == 1 && (tr.allowCompress < 0))
+	else if (r_extCompressedTextures->integer == 1 && (tr.allowCompress < 0))
 	{
 		noCompress = qtrue;
 	}

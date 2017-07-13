@@ -53,7 +53,7 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 	*frontFace = 0;
 
 	// allow culling to be disabled
-	if (r_nocull->integer)
+	if (r_noCull->integer)
 	{
 		return qfalse;
 	}
@@ -65,13 +65,13 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 	case SF_TRIANGLES:
 		break;
 	case SF_GRID:
-		if (r_nocurves->integer)
+		if (r_noCurves->integer)
 		{
 			return qtrue;
 		}
 		break;
 	case SF_FOLIAGE:
-		if (r_drawfoliage->value == 0.f)
+		if (r_drawFoliage->value == 0.f)
 		{
 			return qtrue;
 		}
@@ -506,7 +506,7 @@ static void R_RecursiveWorldNode(mnode_t *node, int planeBits, int dlightBits, i
 		// if the bounding volume is outside the frustum, nothing
 		// inside can be visible OPTIMIZE: don't do this all the way to leafs?
 
-		if (!r_nocull->integer)
+		if (!r_noCull->integer)
 		{
 			if (planeBits & 1)
 			{
@@ -735,7 +735,7 @@ static void R_MarkLeaves(void)
 
 	// lockpvs lets designers walk around to determine the
 	// extent of the current pvs
-	if (r_lockpvs->integer)
+	if (r_lockPvs->integer)
 	{
 		return;
 	}
@@ -749,15 +749,15 @@ static void R_MarkLeaves(void)
 
 	// if r_showcluster was just turned on, remark everything
 	if (tr.viewCluster == cluster && !tr.refdef.areamaskModified
-	    && !r_showcluster->modified)
+	    && !r_showCluster->modified)
 	{
 		return;
 	}
 
-	if (r_showcluster->modified || r_showcluster->integer)
+	if (r_showCluster->modified || r_showCluster->integer)
 	{
-		r_showcluster->modified = qfalse;
-		if (r_showcluster->integer)
+		r_showCluster->modified = qfalse;
+		if (r_showCluster->integer)
 		{
 			Ren_Print("cluster:%i  area:%i\n", cluster, leaf->area);
 		}
@@ -766,7 +766,7 @@ static void R_MarkLeaves(void)
 	tr.visCount++;
 	tr.viewCluster = cluster;
 
-	if (r_novis->integer || tr.viewCluster == -1)
+	if (r_noVis->integer || tr.viewCluster == -1)
 	{
 		for (i = 0 ; i < tr.world->numnodes ; i++)
 		{
@@ -832,7 +832,7 @@ static void R_MarkLeaves(void)
  */
 void R_AddWorldSurfaces(void)
 {
-	if (!r_drawworld->integer)
+	if (!r_drawWorld->integer)
 	{
 		return;
 	}

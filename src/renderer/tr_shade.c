@@ -327,7 +327,7 @@ static void DrawTris(shaderCommands_t *input)
 
 	qglColor4fv(trisColor);
 
-	if (r_showtris->integer == 2)
+	if (r_showTris->integer == 2)
 	{
 		stateBits |= (GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE);
 		GL_State(stateBits);
@@ -387,7 +387,7 @@ static void DrawNormals(shaderCommands_t *input)
 	GL_State(GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE);
 
 	// light direction
-	if (r_shownormals->integer == 2)
+	if (r_showNormals->integer == 2)
 	{
 		trRefEntity_t *ent = backEnd.currentEntity;
 		vec3_t        temp2;
@@ -436,7 +436,7 @@ static void DrawNormals(shaderCommands_t *input)
 		for (i = 0 ; i < input->numVertexes ; i++)
 		{
 			qglVertex3fv(input->xyz[i]);
-			VectorMA(input->xyz[i], r_normallength->value, input->normal[i], temp);
+			VectorMA(input->xyz[i], r_normalLength->value, input->normal[i], temp);
 			qglVertex3fv(temp);
 		}
 		qglEnd();
@@ -519,7 +519,7 @@ static void DrawMultitextured(shaderCommands_t *input, int stage)
 	qglEnable(GL_TEXTURE_2D);
 	qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	if (r_lightmap->integer)
+	if (r_lightMap->integer)
 	{
 		GL_TexEnv(GL_REPLACE);
 	}
@@ -1046,7 +1046,7 @@ static void RB_FogPass(void)
 	int   i;
 
 	// no fog pass in snooper
-	if ((tr.refdef.rdflags & RDF_SNOOPERVIEW) || tess.shader->noFog || !r_wolffog->integer)
+	if ((tr.refdef.rdflags & RDF_SNOOPERVIEW) || tess.shader->noFog || !r_wolfFog->integer)
 	{
 		return;
 	}
@@ -1655,7 +1655,7 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 				}
 			}
 			// lightmap stages should be GL_ONE GL_ZERO so they can be seen
-			else if (r_lightmap->integer && (pStage->bundle[0].isLightmap || pStage->bundle[1].isLightmap))
+			else if (r_lightMap->integer && (pStage->bundle[0].isLightmap || pStage->bundle[1].isLightmap))
 			{
 				unsigned int stateBits = (pStage->stateBits & ~(GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS)) |
 				                         (GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
@@ -1672,7 +1672,7 @@ static void RB_IterateStagesGeneric(shaderCommands_t *input)
 		}
 
 		// allow skipping out to show just lightmaps during development
-		if (r_lightmap->integer && (pStage->bundle[0].isLightmap || pStage->bundle[1].isLightmap))
+		if (r_lightMap->integer && (pStage->bundle[0].isLightmap || pStage->bundle[1].isLightmap))
 		{
 			break;
 		}
@@ -1749,7 +1749,7 @@ void RB_StageIteratorGeneric(void)
 	if (tess.dlightBits && tess.shader->fogPass &&
 	    !(tess.shader->surfaceFlags & (SURF_NODLIGHT | SURF_SKY)))
 	{
-		if (r_dynamiclight->integer == 2)
+		if (r_dynamicLight->integer == 2)
 		{
 			DynamicLightPass();
 		}
@@ -1822,7 +1822,7 @@ void RB_StageIteratorVertexLitTexture(void)
 	if (tess.dlightBits && tess.shader->fogPass &&
 	    !(tess.shader->surfaceFlags & (SURF_NODLIGHT | SURF_SKY)))
 	{
-		if (r_dynamiclight->integer == 2)
+		if (r_dynamicLight->integer == 2)
 		{
 			DynamicLightPass();
 		}
@@ -1887,7 +1887,7 @@ void RB_StageIteratorLightmappedMultitexture(void)
 	// configure second stage
 	GL_SelectTexture(1);
 	qglEnable(GL_TEXTURE_2D);
-	if (r_lightmap->integer)
+	if (r_lightMap->integer)
 	{
 		GL_TexEnv(GL_REPLACE);
 	}
@@ -1933,7 +1933,7 @@ void RB_StageIteratorLightmappedMultitexture(void)
 	if (tess.dlightBits && tess.shader->fogPass &&
 	    !(tess.shader->surfaceFlags & (SURF_NODLIGHT | SURF_SKY)))
 	{
-		if (r_dynamiclight->integer == 2)
+		if (r_dynamicLight->integer == 2)
 		{
 			DynamicLightPass();
 		}
@@ -2000,11 +2000,11 @@ void RB_EndSurface(void)
 	tess.currentStageIteratorFunc();
 
 	// draw debugging stuff
-	if (r_showtris->integer)
+	if (r_showTris->integer)
 	{
 		DrawTris(input);
 	}
-	if (r_shownormals->integer)
+	if (r_showNormals->integer)
 	{
 		DrawNormals(input);
 	}

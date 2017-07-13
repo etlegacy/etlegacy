@@ -330,7 +330,7 @@ void R_AddModelShadow(const refEntity_t *ent)
 	vec3_t  pushedOrigin, points[4];
 
 	// shadows?
-	if (!r_drawentities->integer || r_shadows->integer != 1 || (ent->renderfx & RF_NOSHADOW))
+	if (!r_drawEntities->integer || r_shadows->integer != 1 || (ent->renderfx & RF_NOSHADOW))
 	{
 		return;
 	}

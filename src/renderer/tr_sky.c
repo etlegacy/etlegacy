@@ -372,9 +372,9 @@ static void MakeSkyVec(float s, float t, int axis, float outSt[2], vec3_t outXYZ
 	}
 	// JPW NERVE swiped from Sherman
 	// make sure the sky is not near clipped
-	if (boxSize < r_znear->value * 2.0f)
+	if (boxSize < r_zNear->value * 2.0f)
 	{
-		boxSize = r_znear->value * 2.0f;
+		boxSize = r_zNear->value * 2.0f;
 	}
 
 	b[0] = s * boxSize;
@@ -1085,7 +1085,7 @@ void RB_DrawSun(void)
  */
 void RB_StageIteratorSky(void)
 {
-	if (r_fastsky->integer)
+	if (r_fastSky->integer)
 	{
 		return;
 	}
@@ -1122,7 +1122,7 @@ void RB_StageIteratorSky(void)
 	// r_showsky will let all the sky blocks be drawn in
 	// front of everything to allow developers to see how
 	// much sky is getting sucked in
-	if (r_showsky->integer)
+	if (r_showSky->integer)
 	{
 		qglDepthRange(0.0, 0.0);
 	}

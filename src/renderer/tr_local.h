@@ -2239,4 +2239,48 @@ void R_FreeImageBuffer(void);
 
 qboolean R_inPVS(const vec3_t p1, const vec3_t p2);
 
+//------------------------------------------------------------------------------
+
+// cvars
+
+extern cvar_t *r_ignoreFastPath;        ///< allows us to ignore our Tess fast paths
+
+extern cvar_t *r_textureBits;           ///< number of desired texture bits
+                                        ///< 0 = use framebuffer depth
+                                        ///< 16 = use 16-bit textures
+                                        ///< 32 = use 32-bit textures
+                                        ///< all else = error
+extern cvar_t *r_primitives;            ///< "0" = based on compiled vertex array existance
+                                        ///< "1" = glDrawElemet tristrips
+                                        ///< "2" = glDrawElements triangles
+                                        ///< "-1" = no drawing
+
+extern cvar_t *r_extMaxAnisotropy;      ///< FIXME: not used in GLES ! move it ?
+                                        ///< FIXME: "extern int      maxAnisotropy" founded
+
+extern cvar_t *r_lightMap;              ///< render lightmaps only
+
+extern cvar_t *r_trisColor;             ///< enables modifying of the wireframe colour (in 0xRRGGBB[AA] format, alpha defaults to FF)
+extern cvar_t *r_showNormals;           ///< draws wireframe normals
+extern cvar_t *r_normalLength;          ///< length of the normals
+//extern cvar_t *r_showmodelbounds;		///< see RB_MDM_SurfaceAnim()
+
+extern cvar_t *r_lodCurveError;
+
+extern cvar_t *r_greyScale;
+
+extern cvar_t *r_directedScale;
+
+extern cvar_t *r_cache;
+extern cvar_t *r_cacheShaders;
+extern cvar_t *r_cacheModels;
+
+extern cvar_t *r_cacheGathering;
+
+extern cvar_t *r_bonesDebug;
+
+extern cvar_t *r_wolfFog;
+
+extern cvar_t *r_gfxInfo;
+
 #endif //TR_LOCAL_H

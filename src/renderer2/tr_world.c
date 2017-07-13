@@ -138,7 +138,7 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 	*frontFace = 0;
 
 	// allow culling to be disabled
-	if (r_nocull->integer)
+	if (r_noCull->integer)
 	{
 		return qfalse;
 	}
@@ -150,13 +150,13 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 	case SF_TRIANGLES:
 		break;
 	case SF_GRID:
-		if (r_nocurves->integer)
+		if (r_noCurves->integer)
 		{
 			return qtrue;
 		}
 		break;
 	case SF_FOLIAGE:
-		if (r_drawfoliage->value == 0.f)
+		if (r_drawFoliage->value == 0.f)
 		{
 			return qtrue;
 		}
@@ -587,7 +587,7 @@ static void R_RecursiveWorldNode(bspNode_t *node, int planeBits, int decalBits)
 
 		// if the bounding volume is outside the frustum, nothing
 		// inside can be visible OPTIMIZE: don't do this all the way to leafs?
-		if (!r_nocull->integer)
+		if (!r_noCull->integer)
 		{
 			int i;
 			int r;
@@ -682,7 +682,7 @@ static void R_RecursiveInteractionNode(bspNode_t *node, trRefLight_t *light, int
 
 		// even surfaces that belong to nodes that are outside of the view frustum
 		// can cast shadows into the view frustum
-		if (!r_nocull->integer && r_shadows->integer <= SHADOWING_BLOB)
+		if (!r_noCull->integer && r_shadows->integer <= SHADOWING_BLOB)
 		{
 			for (i = 0; i < FRUSTUM_PLANES; i++)
 			{
@@ -1241,7 +1241,7 @@ static void R_MarkLeaves(void)
 
 	// lockpvs lets designers walk around to determine the
 	// extent of the current pvs
-	if (r_lockpvs->integer) // || r_dynamicBspOcclusionCulling->integer)
+	if (r_lockPvs->integer) // || r_dynamicBspOcclusionCulling->integer)
 	{
 		return;
 	}
@@ -1258,9 +1258,9 @@ static void R_MarkLeaves(void)
 		if (tr.visClusters[i] == cluster)
 		{
 			// if r_showcluster was just turned on, remark everything
-			if (!tr.refdef.areamaskModified && !r_showcluster->modified) // && !r_dynamicBspOcclusionCulling->modified)
+			if (!tr.refdef.areamaskModified && !r_showCluster->modified) // && !r_dynamicBspOcclusionCulling->modified)
 			{
-				if (tr.visClusters[i] != tr.visClusters[tr.visIndex] && r_showcluster->integer)
+				if (tr.visClusters[i] != tr.visClusters[tr.visIndex] && r_showCluster->integer)
 				{
 					Ren_Print("found cluster:%i  area:%i  index:%i\n", cluster, leaf->area, i);
 				}
@@ -1280,10 +1280,10 @@ static void R_MarkLeaves(void)
 	tr.visCounts[tr.visIndex]++;
 	tr.visClusters[tr.visIndex] = cluster;
 
-	if (r_showcluster->modified || r_showcluster->integer)
+	if (r_showCluster->modified || r_showCluster->integer)
 	{
-		r_showcluster->modified = qfalse;
-		if (r_showcluster->integer)
+		r_showCluster->modified = qfalse;
+		if (r_showCluster->integer)
 		{
 			Ren_Print("update cluster:%i  area:%i  index:%i\n", cluster, leaf->area, tr.visIndex);
 		}
@@ -1303,7 +1303,7 @@ static void R_MarkLeaves(void)
 	}
 #endif
 
-	if (r_novis->integer || tr.visClusters[tr.visIndex] == -1)
+	if (r_noVis->integer || tr.visClusters[tr.visIndex] == -1)
 	{
 		for (i = 0; i < tr.world->numnodes; i++)
 		{
@@ -1432,7 +1432,7 @@ static void DrawLeaf(bspNode_t *node, int decalBits)
  */
 static qboolean InsideViewFrustum(bspNode_t *node, int planeBits)
 {
-	if (!r_nocull->integer)
+	if (!r_noCull->integer)
 	{
 		int i;
 		int r;
@@ -2396,7 +2396,7 @@ static void R_CoherentHierachicalCulling()
  */
 void R_AddWorldSurfaces(void)
 {
-	if (!r_drawworld->integer)
+	if (!r_drawWorld->integer)
 	{
 		return;
 	}
@@ -2485,7 +2485,7 @@ void R_AddWorldSurfaces(void)
  */
 void R_AddWorldInteractions(trRefLight_t *light)
 {
-	if (!r_drawworld->integer)
+	if (!r_drawWorld->integer)
 	{
 		return;
 	}
@@ -2510,7 +2510,7 @@ void R_AddPrecachedWorldInteractions(trRefLight_t *light)
 {
 	interactionType_t iaType = IA_DEFAULT;
 
-	if (!r_drawworld->integer)
+	if (!r_drawWorld->integer)
 	{
 		return;
 	}

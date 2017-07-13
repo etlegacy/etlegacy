@@ -648,7 +648,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 		}
 		else if (!Q_stricmp(token, "mapcomp"))            // only use this texture if compression is enabled
 		{
-			if (glConfig.textureCompression && r_ext_compressed_textures->integer)
+			if (glConfig.textureCompression && r_extCompressedTextures->integer)
 			{
 				token = "map";   // use this map
 			}
@@ -672,7 +672,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 		}
 		else if (!Q_stricmp(token, "animmapcomp"))            // only use this texture if compression is enabled
 		{
-			if (glConfig.textureCompression && r_ext_compressed_textures->integer)
+			if (glConfig.textureCompression && r_extCompressedTextures->integer)
 			{
 				token = "animmap";   // use this map
 			}
@@ -2932,7 +2932,7 @@ static shader_t *FinishShader(void)
 	ComputeStageIteratorFunc();
 
 	// default back to no compression for next shader
-	if (r_ext_compressed_textures->integer == 2)
+	if (r_extCompressedTextures->integer == 2)
 	{
 		tr.allowCompress = qfalse;
 	}

@@ -59,65 +59,65 @@ cvar_t *r_ignore;
 
 cvar_t *r_detailTextures;
 
-cvar_t *r_znear;
-cvar_t *r_zfar;
+cvar_t *r_zNear;
+cvar_t *r_zFar;
 
 cvar_t *r_skipBackEnd;
 
-cvar_t *r_greyscale;
+cvar_t *r_greyScale;
 
 cvar_t *r_measureOverdraw;
 
-cvar_t *r_fastsky;
+cvar_t *r_fastSky;
 cvar_t *r_drawSun;
-cvar_t *r_dynamiclight;
+cvar_t *r_dynamicLight;
 
-cvar_t *r_lodbias;
-cvar_t *r_lodscale;
+cvar_t *r_lodBias;
+cvar_t *r_lodScale;
 
-cvar_t *r_norefresh;
-cvar_t *r_drawentities;
-cvar_t *r_drawworld;
-cvar_t *r_drawfoliage;
+cvar_t *r_noreFresh;
+cvar_t *r_drawEntities;
+cvar_t *r_drawWorld;
+cvar_t *r_drawFoliage;
 cvar_t *r_speeds;
 
-cvar_t *r_novis;
-cvar_t *r_nocull;
+cvar_t *r_noVis;
+cvar_t *r_noCull;
 cvar_t *r_facePlaneCull;
-cvar_t *r_showcluster;
-cvar_t *r_nocurves;
+cvar_t *r_showCluster;
+cvar_t *r_noCurves;
 
 cvar_t *r_allowExtensions;
 
-cvar_t *r_ext_compressed_textures;
-cvar_t *r_ext_multitexture;
-cvar_t *r_ext_texture_env_add;
+cvar_t *r_extCompressedTextures;
+cvar_t *r_extMultitexture;
+cvar_t *r_extTextureEnvAdd;
 
-cvar_t *r_ext_texture_filter_anisotropic;
-cvar_t *r_ext_max_anisotropy;
+cvar_t *r_extTextureFilterAnisotropic;
+cvar_t *r_extMaxAnisotropy;
 
 cvar_t *r_ignoreGLErrors;
 cvar_t *r_logFile;
 
 cvar_t *r_primitives;
-cvar_t *r_texturebits;
+cvar_t *r_textureBits;
 
 cvar_t *r_drawBuffer;
-cvar_t *r_lightmap;
+cvar_t *r_lightMap;
 cvar_t *r_uiFullScreen;
 cvar_t *r_shadows;
-cvar_t *r_portalsky;
+cvar_t *r_portalSky;
 cvar_t *r_flares;
-cvar_t *r_nobind;
+cvar_t *r_noBind;
 cvar_t *r_singleShader;
 cvar_t *r_roundImagesDown;
 cvar_t *r_colorMipLevels;
-cvar_t *r_picmip;
-cvar_t *r_showtris;
+cvar_t *r_picMip;
+cvar_t *r_showTris;
 cvar_t *r_trisColor;
-cvar_t *r_showsky;
-cvar_t *r_shownormals;
-cvar_t *r_normallength;
+cvar_t *r_showSky;
+cvar_t *r_showNormals;
+cvar_t *r_normalLength;
 //cvar_t *r_showmodelbounds; // see RB_MDM_SurfaceAnim()
 cvar_t *r_finish;
 cvar_t *r_clear;
@@ -126,11 +126,11 @@ cvar_t *r_offsetFactor;
 cvar_t *r_offsetUnits;
 cvar_t *r_gamma;
 cvar_t *r_intensity;
-cvar_t *r_lockpvs;
+cvar_t *r_lockPvs;
 cvar_t *r_noportals;
 cvar_t *r_portalOnly;
 
-cvar_t *r_subdivisions;
+cvar_t *r_subDivisions;
 cvar_t *r_lodCurveError;
 
 cvar_t *r_overBrightBits;
@@ -156,12 +156,12 @@ cvar_t *r_cacheGathering;
 
 cvar_t *r_bonesDebug;
 
-cvar_t *r_wolffog;
+cvar_t *r_wolfFog;
 
 cvar_t *r_screenshotJpegQuality;
 
-cvar_t *r_maxpolys;
-cvar_t *r_maxpolyverts;
+cvar_t *r_maxPolys;
+cvar_t *r_maxPolyVerts;
 
 cvar_t *r_gfxInfo;
 
@@ -1036,8 +1036,8 @@ void GfxInfo_f(void)
 	}
 
 	Ren_Print("texturemode: %s\n", r_textureMode->string);
-	Ren_Print("picmip: %d\n", r_picmip->integer);
-	Ren_Print("texture bits: %d\n", r_texturebits->integer);
+	Ren_Print("picmip: %d\n", r_picMip->integer);
+	Ren_Print("texture bits: %d\n", r_textureBits->integer);
 	Ren_Print("multitexture: %s\n", enablestrings[qglActiveTextureARB != 0]);
 	Ren_Print("compiled vertex arrays: %s\n", enablestrings[qglLockArraysEXT != 0]);
 	Ren_Print("texenv add: %s\n", enablestrings[glConfig.textureEnvAddAvailable != 0]);
@@ -1059,31 +1059,31 @@ void R_Register(void)
 #endif
 
 	// latched and archived variables
-	r_allowExtensions         = ri.Cvar_Get("r_allowExtensions", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_ext_compressed_textures = ri.Cvar_Get("r_ext_compressed_textures", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_ext_multitexture        = ri.Cvar_Get("r_ext_multitexture", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_ext_texture_env_add     = ri.Cvar_Get("r_ext_texture_env_add", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	r_allowExtensions       = ri.Cvar_Get("r_allowExtensions", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
+	r_extCompressedTextures = ri.Cvar_Get("r_ext_compressed_textures", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
+	r_extMultitexture       = ri.Cvar_Get("r_ext_multitexture", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
+	r_extTextureEnvAdd      = ri.Cvar_Get("r_ext_texture_env_add", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
-	r_ext_texture_filter_anisotropic = ri.Cvar_Get("r_ext_texture_filter_anisotropic", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
-	r_ext_max_anisotropy             = ri.Cvar_Get("r_ext_max_anisotropy", "2", CVAR_ARCHIVE | CVAR_LATCH);
+	r_extTextureFilterAnisotropic = ri.Cvar_Get("r_ext_texture_filter_anisotropic", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
+	r_extMaxAnisotropy            = ri.Cvar_Get("r_ext_max_anisotropy", "2", CVAR_ARCHIVE | CVAR_LATCH);
 
-	r_picmip = ri.Cvar_Get("r_picmip", "1", CVAR_ARCHIVE | CVAR_LATCH);          // mod for DM and DK for id build.  was "1" - pushed back to 1
-	ri.Cvar_CheckRange(r_picmip, 0, 3, qtrue);
+	r_picMip = ri.Cvar_Get("r_picmip", "1", CVAR_ARCHIVE | CVAR_LATCH);          // mod for DM and DK for id build.  was "1" - pushed back to 1
+	ri.Cvar_CheckRange(r_picMip, 0, 3, qtrue);
 	r_roundImagesDown = ri.Cvar_Get("r_roundImagesDown", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
 	r_colorMipLevels = ri.Cvar_Get("r_colorMipLevels", "0", CVAR_LATCH);
 	r_detailTextures = ri.Cvar_Get("r_detailtextures", "1", CVAR_ARCHIVE | CVAR_LATCH);
-	r_texturebits    = ri.Cvar_Get("r_texturebits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
+	r_textureBits    = ri.Cvar_Get("r_texturebits", "0", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 
 	r_overBrightBits = ri.Cvar_Get("r_overBrightBits", "0", CVAR_ARCHIVE | CVAR_LATCH);        // disable overbrightbits by default
 	ri.Cvar_CheckRange(r_overBrightBits, 0, 1, qtrue);                                    // limit to overbrightbits 1 (sorry 1337 players)
 	r_simpleMipMaps = ri.Cvar_Get("r_simpleMipMaps", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_uiFullScreen  = ri.Cvar_Get("r_uifullscreen", "0", 0);
 
-	r_subdivisions = ri.Cvar_Get("r_subdivisions", "4", CVAR_ARCHIVE | CVAR_LATCH);
+	r_subDivisions = ri.Cvar_Get("r_subdivisions", "4", CVAR_ARCHIVE | CVAR_LATCH);
 
 	r_ignoreFastPath = ri.Cvar_Get("r_ignoreFastPath", "0", CVAR_ARCHIVE | CVAR_LATCH);    // use fast path by default
-	r_greyscale      = ri.Cvar_Get("r_greyscale", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_greyScale      = ri.Cvar_Get("r_greyscale", "0", CVAR_ARCHIVE | CVAR_LATCH);
 
 	// temporary latched variables that can only change over a restart
 	r_mapOverBrightBits = ri.Cvar_Get("r_mapOverBrightBits", "2", CVAR_LATCH);
@@ -1094,17 +1094,17 @@ void R_Register(void)
 
 	// archived variables that can change at any time
 	r_lodCurveError = ri.Cvar_Get("r_lodCurveError", "250", CVAR_ARCHIVE);
-	r_lodbias       = ri.Cvar_Get("r_lodbias", "0", CVAR_ARCHIVE);
+	r_lodBias       = ri.Cvar_Get("r_lodbias", "0", CVAR_ARCHIVE);
 	r_flares        = ri.Cvar_Get("r_flares", "1", CVAR_ARCHIVE);
-	r_znear         = ri.Cvar_Get("r_znear", "3", CVAR_CHEAT); // changed it to 3 (from 4) because of lean/fov cheats
-	ri.Cvar_CheckRange(r_znear, 0.001f, 200, qfalse);
-	r_zfar = ri.Cvar_Get("r_zfar", "0", CVAR_CHEAT);
+	r_zNear         = ri.Cvar_Get("r_znear", "3", CVAR_CHEAT); // changed it to 3 (from 4) because of lean/fov cheats
+	ri.Cvar_CheckRange(r_zNear, 0.001f, 200, qfalse);
+	r_zFar = ri.Cvar_Get("r_zfar", "0", CVAR_CHEAT);
 
 	r_ignoreGLErrors = ri.Cvar_Get("r_ignoreGLErrors", "1", CVAR_ARCHIVE);
-	r_fastsky        = ri.Cvar_Get("r_fastsky", "0", CVAR_ARCHIVE);
+	r_fastSky        = ri.Cvar_Get("r_fastsky", "0", CVAR_ARCHIVE);
 
 	r_drawSun      = ri.Cvar_Get("r_drawSun", "1", CVAR_ARCHIVE);
-	r_dynamiclight = ri.Cvar_Get("r_dynamiclight", "1", CVAR_ARCHIVE);
+	r_dynamicLight = ri.Cvar_Get("r_dynamiclight", "1", CVAR_ARCHIVE);
 	r_finish       = ri.Cvar_Get("r_finish", "0", CVAR_ARCHIVE);
 	r_textureMode  = ri.Cvar_Get("r_textureMode", "GL_LINEAR_MIPMAP_NEAREST", CVAR_ARCHIVE);
 	r_gamma        = ri.Cvar_Get("r_gamma", "1.3", CVAR_ARCHIVE);
@@ -1137,12 +1137,12 @@ void R_Register(void)
 	r_cacheGathering = ri.Cvar_Get("cl_cacheGathering", "0", 0);
 	r_bonesDebug     = ri.Cvar_Get("r_bonesDebug", "0", CVAR_CHEAT);
 
-	r_wolffog = ri.Cvar_Get("r_wolffog", "1", CVAR_ARCHIVE);
+	r_wolfFog = ri.Cvar_Get("r_wolffog", "1", CVAR_ARCHIVE);
 
-	r_nocurves    = ri.Cvar_Get("r_nocurves", "0", CVAR_CHEAT);
-	r_drawworld   = ri.Cvar_Get("r_drawworld", "1", CVAR_CHEAT);
-	r_drawfoliage = ri.Cvar_Get("r_drawfoliage", "1", CVAR_CHEAT);
-	r_lightmap    = ri.Cvar_Get("r_lightmap", "0", CVAR_CHEAT);
+	r_noCurves    = ri.Cvar_Get("r_nocurves", "0", CVAR_CHEAT);
+	r_drawWorld   = ri.Cvar_Get("r_drawworld", "1", CVAR_CHEAT);
+	r_drawFoliage = ri.Cvar_Get("r_drawfoliage", "1", CVAR_CHEAT);
+	r_lightMap    = ri.Cvar_Get("r_lightmap", "0", CVAR_CHEAT);
 	r_portalOnly  = ri.Cvar_Get("r_portalOnly", "0", CVAR_CHEAT);
 
 	r_flareSize = ri.Cvar_Get("r_flareSize", "40", CVAR_CHEAT);
@@ -1152,43 +1152,43 @@ void R_Register(void)
 	r_skipBackEnd = ri.Cvar_Get("r_skipBackEnd", "0", CVAR_CHEAT);
 
 	r_measureOverdraw = ri.Cvar_Get("r_measureOverdraw", "0", CVAR_CHEAT);
-	r_lodscale        = ri.Cvar_Get("r_lodscale", "5", CVAR_CHEAT);
-	r_norefresh       = ri.Cvar_Get("r_norefresh", "0", CVAR_CHEAT);
-	r_drawentities    = ri.Cvar_Get("r_drawentities", "1", CVAR_CHEAT);
+	r_lodScale        = ri.Cvar_Get("r_lodscale", "5", CVAR_CHEAT);
+	r_noreFresh       = ri.Cvar_Get("r_norefresh", "0", CVAR_CHEAT);
+	r_drawEntities    = ri.Cvar_Get("r_drawentities", "1", CVAR_CHEAT);
 	r_ignore          = ri.Cvar_Get("r_ignore", "1", CVAR_CHEAT);
-	r_nocull          = ri.Cvar_Get("r_nocull", "0", CVAR_CHEAT);
-	r_novis           = ri.Cvar_Get("r_novis", "0", CVAR_CHEAT);
-	r_showcluster     = ri.Cvar_Get("r_showcluster", "0", CVAR_CHEAT);
+	r_noCull          = ri.Cvar_Get("r_nocull", "0", CVAR_CHEAT);
+	r_noVis           = ri.Cvar_Get("r_novis", "0", CVAR_CHEAT);
+	r_showCluster     = ri.Cvar_Get("r_showcluster", "0", CVAR_CHEAT);
 	r_speeds          = ri.Cvar_Get("r_speeds", "0", CVAR_CHEAT);
 
 	r_logFile      = ri.Cvar_Get("r_logFile", "0", CVAR_CHEAT);
 	r_debugSurface = ri.Cvar_Get("r_debugSurface", "0", CVAR_CHEAT);
-	r_nobind       = ri.Cvar_Get("r_nobind", "0", CVAR_CHEAT);
-	r_showtris     = ri.Cvar_Get("r_showtris", "0", CVAR_CHEAT);
+	r_noBind       = ri.Cvar_Get("r_nobind", "0", CVAR_CHEAT);
+	r_showTris     = ri.Cvar_Get("r_showtris", "0", CVAR_CHEAT);
 	r_trisColor    = ri.Cvar_Get("r_trisColor", "1.0 1.0 1.0 1.0", CVAR_ARCHIVE);
-	r_showsky      = ri.Cvar_Get("r_showsky", "0", CVAR_CHEAT);
-	r_shownormals  = ri.Cvar_Get("r_shownormals", "0", CVAR_CHEAT);
-	r_normallength = ri.Cvar_Get("r_normallength", "0.5", CVAR_ARCHIVE);
+	r_showSky      = ri.Cvar_Get("r_showsky", "0", CVAR_CHEAT);
+	r_showNormals  = ri.Cvar_Get("r_shownormals", "0", CVAR_CHEAT);
+	r_normalLength = ri.Cvar_Get("r_normallength", "0.5", CVAR_ARCHIVE);
 	//r_showmodelbounds = ri.Cvar_Get("r_showmodelbounds", "0", CVAR_CHEAT); // see RB_MDM_SurfaceAnim()
 	r_clear        = ri.Cvar_Get("r_clear", "0", CVAR_CHEAT);
 	r_offsetFactor = ri.Cvar_Get("r_offsetfactor", "-1", CVAR_CHEAT);
 	r_offsetUnits  = ri.Cvar_Get("r_offsetunits", "-2", CVAR_CHEAT);
 	r_drawBuffer   = ri.Cvar_Get("r_drawBuffer", "GL_BACK", CVAR_CHEAT);
-	r_lockpvs      = ri.Cvar_Get("r_lockpvs", "0", CVAR_CHEAT);
+	r_lockPvs      = ri.Cvar_Get("r_lockpvs", "0", CVAR_CHEAT);
 	r_noportals    = ri.Cvar_Get("r_noportals", "0", CVAR_CHEAT);
 	r_shadows      = ri.Cvar_Get("cg_shadows", "1", 0);
 
 	r_screenshotJpegQuality = ri.Cvar_Get("r_screenshotJpegQuality", "90", CVAR_ARCHIVE);
 
-	r_portalsky = ri.Cvar_Get("cg_skybox", "1", 0);
+	r_portalSky = ri.Cvar_Get("cg_skybox", "1", 0);
 
 	// note: MAX_POLYS and MAX_POLYVERTS are heavily increased in ET compared to q3
 	//       - but run 20 bots on oasis and you'll see limits reached (developer 1)
 	//       - modern computers can deal with more than our old default values -> users can increase this now to MAX_POLYS/MAX_POLYVERTS
-	r_maxpolys = ri.Cvar_Get("r_maxpolys", va("%d", DEFAULT_POLYS), CVAR_LATCH);             // now latched to check against used r_maxpolys and not MAX_POLYS
-	ri.Cvar_CheckRange(r_maxpolys, MIN_POLYS, MAX_POLYS, qtrue);                        // MIN_POLYS was old static value
-	r_maxpolyverts = ri.Cvar_Get("r_maxpolyverts", va("%d", DEFAULT_POLYVERTS), CVAR_LATCH); // now latched to check against used r_maxpolyverts and not MAX_POLYVERTS
-	ri.Cvar_CheckRange(r_maxpolyverts, MIN_POLYVERTS, MAX_POLYVERTS, qtrue);            // MIN_POLYVERTS was old static value
+	r_maxPolys = ri.Cvar_Get("r_maxpolys", va("%d", DEFAULT_POLYS), CVAR_LATCH);             // now latched to check against used r_maxpolys and not MAX_POLYS
+	ri.Cvar_CheckRange(r_maxPolys, MIN_POLYS, MAX_POLYS, qtrue);                        // MIN_POLYS was old static value
+	r_maxPolyVerts = ri.Cvar_Get("r_maxpolyverts", va("%d", DEFAULT_POLYVERTS), CVAR_LATCH); // now latched to check against used r_maxpolyverts and not MAX_POLYVERTS
+	ri.Cvar_CheckRange(r_maxPolyVerts, MIN_POLYVERTS, MAX_POLYVERTS, qtrue);            // MIN_POLYVERTS was old static value
 
 	r_gfxInfo = ri.Cvar_Get("r_gfxinfo", "0", 0); // less spammy gfx output at start - enable to print full GL_EXTENSION string
 
@@ -1258,11 +1258,11 @@ void R_Init(void)
 
 	R_Register();
 
-	ptr = ri.Hunk_Alloc(sizeof(*backEndData) + sizeof(srfPoly_t) * r_maxpolys->integer + sizeof(polyVert_t) * r_maxpolyverts->integer, h_low);
+	ptr = ri.Hunk_Alloc(sizeof(*backEndData) + sizeof(srfPoly_t) * r_maxPolys->integer + sizeof(polyVert_t) * r_maxPolyVerts->integer, h_low);
 
 	backEndData            = (backEndData_t *) ptr;
 	backEndData->polys     = (srfPoly_t *) ((char *) ptr + sizeof(*backEndData));
-	backEndData->polyVerts = (polyVert_t *) ((char *) ptr + sizeof(*backEndData) + sizeof(srfPoly_t) * r_maxpolys->integer);
+	backEndData->polyVerts = (polyVert_t *) ((char *) ptr + sizeof(*backEndData) + sizeof(srfPoly_t) * r_maxPolys->integer);
 
 	R_InitNextFrame();
 

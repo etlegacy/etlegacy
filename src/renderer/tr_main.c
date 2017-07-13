@@ -67,7 +67,7 @@ qboolean    fogIsOn  = qfalse;
  */
 void R_Fog(glfog_t *curfog)
 {
-	if (!r_wolffog->integer)
+	if (!r_wolfFog->integer)
 	{
 		R_FogOff();
 		return;
@@ -105,9 +105,9 @@ void R_Fog(glfog_t *curfog)
 
 	qglFogf(GL_FOG_START, curfog->start);
 
-	if (r_zfar->value != 0.f)                 // allow override for helping level designers test fog distances
+	if (r_zFar->value != 0.f)                 // allow override for helping level designers test fog distances
 	{
-		qglFogf(GL_FOG_END, r_zfar->value);
+		qglFogf(GL_FOG_END, r_zFar->value);
 	}
 	else
 	{
@@ -140,7 +140,7 @@ void R_FogOn(void)
 		return;
 	}
 
-	if (!r_wolffog->integer)
+	if (!r_wolfFog->integer)
 	{
 		return;
 	}
@@ -265,7 +265,7 @@ int R_CullLocalBox(vec3_t bounds[2])
 	int      anyBack;
 	int      front, back;
 
-	if (r_nocull->integer)
+	if (r_noCull->integer)
 	{
 		return CULL_CLIP;
 	}
@@ -350,7 +350,7 @@ int R_CullPointAndRadius(vec3_t origin, float radius)
 	cplane_t *frust;
 	qboolean mightBeClipped = qfalse;
 
-	if (r_nocull->integer)
+	if (r_noCull->integer)
 	{
 		return CULL_CLIP;
 	}
@@ -768,9 +768,9 @@ static void SetFarClip(void)
 
 	// this lets you use r_zfar from the command line to experiment with different
 	// distances, but setting it back to 0 uses the map (or procedurally generated) default
-	if (r_zfar->value != 0.f)
+	if (r_zFar->value != 0.f)
 	{
-		tr.viewParms.zFar = r_zfar->integer;
+		tr.viewParms.zFar = r_zFar->integer;
 		R_SetFrameFog();
 
 		if (r_speeds->integer == 5)
@@ -893,7 +893,7 @@ void R_SetupProjection(void)
 	R_SetupFrustum();
 
 	// set up projection matrix
-	zNear = r_znear->value;
+	zNear = r_zNear->value;
 
 	// high fov values let players see through walls
 	// solution is to move z near plane inward, which decreases zbuffer precision
@@ -904,9 +904,9 @@ void R_SetupProjection(void)
 		zNear /= ((tr.refdef.fov_x - 90.0f) * 0.09f + 1.0f);
 	}
 
-	if (r_zfar->value != 0.f)
+	if (r_zFar->value != 0.f)
 	{
-		zFar = r_zfar->value;   // allow override for helping level designers test fog distances
+		zFar = r_zFar->value;   // allow override for helping level designers test fog distances
 	}
 	else
 	{
@@ -1372,7 +1372,7 @@ qboolean R_MirrorViewBySurface(drawSurf_t *drawSurf, int entityNum)
 		return qfalse;
 	}
 
-	if (r_noportals->integer || r_fastsky->integer)
+	if (r_noportals->integer || r_fastSky->integer)
 	{
 		return qfalse;
 	}
@@ -1634,7 +1634,7 @@ void R_AddEntitySurfaces(void)
 	trRefEntity_t *ent;
 	shader_t      *shader;
 
-	if (!r_drawentities->integer)
+	if (!r_drawEntities->integer)
 	{
 		return;
 	}

@@ -231,7 +231,7 @@ static int R_ComputeLOD(trRefEntity_t *ent)
 
 		if ((projectedRadius = ProjectRadius(radius, ent->e.origin)) != 0.f)
 		{
-			float lodscale = r_lodscale->value;
+			float lodscale = r_lodScale->value;
 
 			if (lodscale > 20)
 			{
@@ -258,7 +258,7 @@ static int R_ComputeLOD(trRefEntity_t *ent)
 		}
 	}
 
-	lod += r_lodbias->integer;
+	lod += r_lodBias->integer;
 
 	if (lod >= tr.currentModel->numLods)
 	{

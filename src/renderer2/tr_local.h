@@ -3737,18 +3737,10 @@ extern glconfig2_t    glConfig2;
 
 extern glstate_t glState;           ///< outside of TR since it shouldn't be cleared during ref re-init
 
-// These three variables should live inside glConfig but can't because of compatibility issues to the original ID vms.
-// If you release a stand-alone game and your mod uses tr_types.h from this build you can safely move them to
-// the glconfig_t struct.
-extern qboolean textureFilterAnisotropic;
-extern int      maxAnisotropy;
-
 // cvars
 
 extern cvar_t *r_railCoreWidth;
 
-extern cvar_t *r_lodBias;           ///< push/pull LOD transitions
-extern cvar_t *r_lodScale;
 extern cvar_t *r_lodTest;
 
 extern cvar_t *r_wolfFog;
@@ -3759,11 +3751,8 @@ extern cvar_t *r_ambientScale;
 extern cvar_t *r_lightScale;
 extern cvar_t *r_debugLight;
 
-extern cvar_t *r_fastsky;           ///< controls whether sky should be cleared or drawn
-extern cvar_t *r_drawSun;           ///< controls drawing of sun quad
-extern cvar_t *r_dynamicLight;      ///< dynamic lights enabled/disabled
-extern cvar_t *r_staticLight;       ///< static lights enabled/disabled
-extern cvar_t *r_dynamicLightShadows;
+extern cvar_t *r_staticLight;               ///< static lights enabled/disabled
+//extern cvar_t *r_dynamicLightShadows;     ///< FIXME: Unused
 extern cvar_t *r_precomputedLighting;
 extern cvar_t *r_vertexLighting;
 extern cvar_t *r_compressDiffuseMaps;
@@ -3772,44 +3761,28 @@ extern cvar_t *r_compressNormalMaps;
 extern cvar_t *r_heatHazeFix;
 extern cvar_t *r_noMarksOnTrisurfs;
 
-extern cvar_t *r_norefresh;         ///< bypasses the ref rendering
-extern cvar_t *r_drawentities;      ///< disable/enable entity rendering
-extern cvar_t *r_drawworld;         ///< disable/enable world rendering
-extern cvar_t *r_drawpolies;        ///< disable/enable world rendering
-extern cvar_t *r_speeds;            ///< various levels of information display
+extern cvar_t *r_drawpolies;                ///< disable/enable world rendering
 
-extern cvar_t *r_novis;             ///< disable/enable usage of PVS
 extern cvar_t *r_noLightScissors;
 extern cvar_t *r_noLightVisCull;
 extern cvar_t *r_noInteractionSort;
 
-extern cvar_t *r_ext_compressed_textures;   ///< these control use of specific extensions
-extern cvar_t *r_ext_occlusion_query;
-extern cvar_t *r_ext_texture_non_power_of_two;
-extern cvar_t *r_ext_draw_buffers;
-extern cvar_t *r_ext_vertex_array_object;
-extern cvar_t *r_ext_half_float_pixel;
-extern cvar_t *r_ext_texture_float;
-extern cvar_t *r_ext_stencil_wrap;
-extern cvar_t *r_ext_texture_filter_anisotropic;
-extern cvar_t *r_ext_stencil_two_side;
-extern cvar_t *r_ext_depth_bounds_test;
-extern cvar_t *r_ext_framebuffer_object;
-extern cvar_t *r_ext_packed_depth_stencil;
-extern cvar_t *r_ext_framebuffer_blit;
-extern cvar_t *r_ext_generate_mipmap;
+extern cvar_t *r_extOcclusionQuery;
+extern cvar_t *r_extTextureNonPowerOfTwo;
+extern cvar_t *r_extDrawBuffers;
+extern cvar_t *r_extVertexArrayObject;
+extern cvar_t *r_extHalfFloatPixel;
+extern cvar_t *r_extTextureFloat;
+extern cvar_t *r_extStencilWrap;
+extern cvar_t *r_extStencilTwoSide;
+extern cvar_t *r_extDepthBoundsTest;
+extern cvar_t *r_extFramebufferObject;
+extern cvar_t *r_extPackedDepthStencil;
+extern cvar_t *r_extFramebufferBlit;
+extern cvar_t *r_extGenerateMipmap;
 
-extern cvar_t *r_nobind;            ///< turns off binding to appropriate textures
 extern cvar_t *r_collapseStages;
 
-extern cvar_t *r_roundImagesDown;
-extern cvar_t *r_colorMipLevels;    ///< development aid to see texture mip usage
-extern cvar_t *r_picmip;            ///< controls picmip values
-extern cvar_t *r_finish;
-extern cvar_t *r_drawBuffer;
-extern cvar_t *r_textureMode;
-extern cvar_t *r_offsetFactor;
-extern cvar_t *r_offsetUnits;
 extern cvar_t *r_forceSpecular;
 extern cvar_t *r_specularExponent;
 extern cvar_t *r_specularExponent2;
@@ -3859,31 +3832,10 @@ extern cvar_t *r_parallelShadowSplits;
 extern cvar_t *r_parallelShadowSplitWeight;
 extern cvar_t *r_lightSpacePerspectiveWarping;
 
-extern cvar_t *r_intensity;
-
-extern cvar_t *r_lockpvs;
-extern cvar_t *r_noportals;
-extern cvar_t *r_portalOnly;
-extern cvar_t *r_portalSky;
-
-extern cvar_t *r_subdivisions;
 extern cvar_t *r_stitchCurves;
 
 extern cvar_t *r_skipLightBuffer;
 
-extern cvar_t *r_overBrightBits;
-extern cvar_t *r_mapOverBrightBits;
-
-extern cvar_t *r_debugSurface;
-extern cvar_t *r_simpleMipMaps;
-
-extern cvar_t *r_showImages;
-extern cvar_t *r_debugSort;
-
-extern cvar_t *r_printShaders;
-
-extern cvar_t *r_showTris;              ///< enables wireframe rendering of the world
-extern cvar_t *r_showSky;               ///< forces sky in front of all surfaces
 extern cvar_t *r_showShadowVolumes;
 extern cvar_t *r_showShadowLod;
 extern cvar_t *r_showShadowMaps;
@@ -3896,7 +3848,7 @@ extern cvar_t *r_showLightBatches;
 extern cvar_t *r_showLightGrid;
 extern cvar_t *r_showOcclusionQueries;
 extern cvar_t *r_showBatches;
-extern cvar_t *r_showLightMaps;         ///< render lightmaps only
+extern cvar_t *r_showLightMaps;                 ///< render lightmaps only
 extern cvar_t *r_showDeluxeMaps;
 extern cvar_t *r_showAreaPortals;
 extern cvar_t *r_showCubeProbes;

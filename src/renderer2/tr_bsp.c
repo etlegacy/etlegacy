@@ -1705,7 +1705,7 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 	surf->data = (surfaceType_t *)foliage;
 
 	// get foliage drawscale
-	scale = r_drawfoliage->value;
+	scale = r_drawFoliage->value;
 	if (scale < 0.0f)
 	{
 		scale = 1.0f;

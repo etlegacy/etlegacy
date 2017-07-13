@@ -1218,7 +1218,7 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 		// set texture anisotropy
 		if (glConfig2.textureAnisotropyAvailable)
 		{
-			glTexParameterf(ret->type, GL_TEXTURE_MAX_ANISOTROPY_EXT, r_ext_texture_filter_anisotropic->value);
+			glTexParameterf(ret->type, GL_TEXTURE_MAX_ANISOTROPY_EXT, r_extTextureFilterAnisotropic->value);
 		}
 
 		glTexParameterf(ret->type, GL_TEXTURE_MIN_FILTER, gl_filter_min);

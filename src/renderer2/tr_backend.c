@@ -5786,7 +5786,7 @@ static void RB_RenderViewFront(void)
 			// portal scene, clear whatever is necessary
 			clearBits |= GL_DEPTH_BUFFER_BIT;
 
-			if (r_fastsky->integer || (backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
+			if (r_fastSky->integer || (backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
 			{
 				// fastsky: clear color
 
@@ -5865,7 +5865,7 @@ static void RB_RenderViewFront(void)
 		{
 			clearBits &= ~GL_COLOR_BUFFER_BIT;
 		}
-		else if (r_fastsky->integer || (backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
+		else if (r_fastSky->integer || (backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
 		{
 			clearBits |= GL_COLOR_BUFFER_BIT;
 

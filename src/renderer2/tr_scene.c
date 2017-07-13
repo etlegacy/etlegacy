@@ -186,7 +186,7 @@ static void R_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t 
 
 	for (j = 0; j < numPolys; j++)
 	{
-		if (r_numPolyVerts + numVerts >= r_maxpolyverts->integer || r_numPolys >= r_maxpolys->integer)
+		if (r_numPolyVerts + numVerts >= r_maxPolyVerts->integer || r_numPolys >= r_maxPolys->integer)
 		{
 			/*
 			   NOTE TTimo this was initially a PRINT_WARNING
@@ -601,7 +601,7 @@ void RE_RenderScene(const refdef_t *fd)
 	}
 	Ren_LogComment("====== RE_RenderScene =====\n");
 
-	if (r_norefresh->integer)
+	if (r_noreFresh->integer)
 	{
 		return;
 	}

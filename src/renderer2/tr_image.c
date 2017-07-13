@@ -111,11 +111,11 @@ void GL_TextureMode(const char *string)
 	// bound texture anisotropy
 	if (glConfig2.textureAnisotropyAvailable)
 	{
-		if (r_ext_texture_filter_anisotropic->value > glConfig2.maxTextureAnisotropy)
+		if (r_extTextureFilterAnisotropic->value > glConfig2.maxTextureAnisotropy)
 		{
 			ri.Cvar_Set("r_ext_texture_filter_anisotropic", va("%f", glConfig2.maxTextureAnisotropy));
 		}
-		else if (r_ext_texture_filter_anisotropic->value < 1.0f)
+		else if (r_extTextureFilterAnisotropic->value < 1.0f)
 		{
 			ri.Cvar_Set("r_ext_texture_filter_anisotropic", "1.0");
 		}
@@ -137,7 +137,7 @@ void GL_TextureMode(const char *string)
 			// set texture anisotropy
 			if (glConfig2.textureAnisotropyAvailable)
 			{
-				glTexParameterf(image->type, GL_TEXTURE_MAX_ANISOTROPY_EXT, r_ext_texture_filter_anisotropic->value);
+				glTexParameterf(image->type, GL_TEXTURE_MAX_ANISOTROPY_EXT, r_extTextureFilterAnisotropic->value);
 			}
 		}
 	}
@@ -1058,8 +1058,8 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 	// perform optional picmip operation
 	if (!(image->bits & IF_NOPICMIP))
 	{
-		scaledWidth  >>= r_picmip->integer;
-		scaledHeight >>= r_picmip->integer;
+		scaledWidth  >>= r_picMip->integer;
+		scaledHeight >>= r_picMip->integer;
 	}
 
 	// clamp to minimum size
@@ -1379,7 +1379,7 @@ void R_UploadImage(const byte **dataArray, int numData, image_t *image)
 		// set texture anisotropy
 		if (glConfig2.textureAnisotropyAvailable)
 		{
-			glTexParameterf(image->type, GL_TEXTURE_MAX_ANISOTROPY_EXT, r_ext_texture_filter_anisotropic->value);
+			glTexParameterf(image->type, GL_TEXTURE_MAX_ANISOTROPY_EXT, r_extTextureFilterAnisotropic->value);
 		}
 
 		glTexParameterf(image->type, GL_TEXTURE_MIN_FILTER, gl_filter_min);

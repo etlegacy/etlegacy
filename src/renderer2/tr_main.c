@@ -715,7 +715,7 @@ cullResult_t R_CullLocalBox(vec3_t bounds[2])
 	int      r;
 	vec3_t   worldBounds[2];
 
-	if (r_nocull->integer)
+	if (r_noCull->integer)
 	{
 		return CULL_CLIP;
 	}
@@ -792,7 +792,7 @@ int R_CullPointAndRadius(vec3_t origin, float radius)
 	cplane_t *frust;
 	qboolean mightBeClipped = qfalse;
 
-	if (r_nocull->integer)
+	if (r_noCull->integer)
 	{
 		return CULL_CLIP;
 	}
@@ -1582,11 +1582,11 @@ static void R_SetupProjection(qboolean infiniteFarClip)
 	// dynamically compute far clip plane distance
 	SetFarClip();
 
-	zNear = tr.viewParms.zNear = r_znear->value;
+	zNear = tr.viewParms.zNear = r_zNear->value;
 
-	if (r_zfar->value != 0.f)
+	if (r_zFar->value != 0.f)
 	{
-		zFar = tr.viewParms.zFar = Q_max(tr.viewParms.zFar, r_zfar->value);
+		zFar = tr.viewParms.zFar = Q_max(tr.viewParms.zFar, r_zFar->value);
 	}
 	else if (infiniteFarClip)
 	{
@@ -1723,7 +1723,7 @@ static void R_SetupFrustum(void)
 	tr.viewParms.frustums[0][FRUSTUM_NEAR].type = PLANE_NON_AXIAL;
 	VectorCopy(tr.viewParms.orientation.axis[0], tr.viewParms.frustums[0][FRUSTUM_NEAR].normal);
 
-	VectorMA(tr.viewParms.orientation.origin, r_znear->value, tr.viewParms.frustums[0][FRUSTUM_NEAR].normal, planeOrigin);
+	VectorMA(tr.viewParms.orientation.origin, r_zNear->value, tr.viewParms.frustums[0][FRUSTUM_NEAR].normal, planeOrigin);
 	tr.viewParms.frustums[0][FRUSTUM_NEAR].dist = DotProduct(planeOrigin, tr.viewParms.frustums[0][FRUSTUM_NEAR].normal);
 	SetPlaneSignbits(&tr.viewParms.frustums[0][FRUSTUM_NEAR]);
 }
@@ -2585,7 +2585,7 @@ void R_AddEntitySurfaces(void)
 	trRefEntity_t *ent;
 	shader_t      *shader;
 
-	if (!r_drawentities->integer)
+	if (!r_drawEntities->integer)
 	{
 		return;
 	}
@@ -2689,7 +2689,7 @@ void R_AddEntityInteractions(trRefLight_t *light)
 	int           i;
 	trRefEntity_t *ent;
 
-	if (!r_drawentities->integer)
+	if (!r_drawEntities->integer)
 	{
 		return;
 	}

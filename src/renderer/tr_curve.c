@@ -496,7 +496,7 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
 				continue;   // can't subdivide any more
 			}
 
-			if (maxLen <= r_subdivisions->value)
+			if (maxLen <= r_subDivisions->value)
 			{
 				errorTable[dir][j + 1] = 1.0f / maxLen;
 				continue;   // didn't need subdivision

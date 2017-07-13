@@ -109,11 +109,11 @@ void RB_Fog(glfog_t *curfog)
 //      setfog.start = curfog->start;
 //  }
 
-	if (r_zfar->value != 0.f)
+	if (r_zFar->value != 0.f)
 	{                           // allow override for helping level designers test fog distances
 //      if(setfog.end != r_zfar->value || !setfog.registered) {
 
-		glFogf(GL_FOG_END, r_zfar->value);
+		glFogf(GL_FOG_END, r_zFar->value);
 
 //          setfog.end = r_zfar->value;
 //      }

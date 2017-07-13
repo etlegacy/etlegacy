@@ -62,7 +62,7 @@ cvar_t *r_allowResize; // make window resizable
 
 // Window cvars
 cvar_t *r_fullscreen = 0;
-cvar_t *r_noborder;
+cvar_t *r_noBorder;
 cvar_t *r_centerWindow;
 cvar_t *r_customwidth;
 cvar_t *r_customheight;
@@ -214,7 +214,7 @@ static void GLimp_InitCvars(void)
 
 	// Window cvars
 	r_fullscreen     = Cvar_Get("r_fullscreen", "1", CVAR_ARCHIVE | CVAR_LATCH);
-	r_noborder       = Cvar_Get("r_noborder", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_noBorder       = Cvar_Get("r_noborder", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_centerWindow   = Cvar_Get("r_centerWindow", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_customwidth    = Cvar_Get("r_customwidth", "1600", CVAR_ARCHIVE | CVAR_LATCH);
 	r_customheight   = Cvar_Get("r_customheight", "1024", CVAR_ARCHIVE | CVAR_LATCH);
@@ -853,7 +853,7 @@ void GLimp_Init(glconfig_t *glConfig, windowContext_t *context)
 	Sys_GLimpInit();
 
 	// Create the window and set up the context
-	if (GLimp_StartDriverAndSetMode(glConfig, r_mode->integer, (qboolean) !!r_fullscreen->integer, (qboolean) !!r_noborder->integer, context))
+	if (GLimp_StartDriverAndSetMode(glConfig, r_mode->integer, (qboolean) !!r_fullscreen->integer, (qboolean) !!r_noBorder->integer, context))
 	{
 		goto success;
 	}

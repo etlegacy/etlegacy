@@ -239,7 +239,7 @@ static void GLimp_InitExtensionsR2(void)
 	// GL_ARB_occlusion_query
 	glConfig2.occlusionQueryAvailable = qfalse;
 	glConfig2.occlusionQueryBits      = 0;
-	if (GLimp_CheckForVersionExtension("GL_ARB_occlusion_query", 150, qfalse, r_ext_occlusion_query))
+	if (GLimp_CheckForVersionExtension("GL_ARB_occlusion_query", 150, qfalse, r_extOcclusionQuery))
 	{
 		glConfig2.occlusionQueryAvailable = qtrue;
 		glGetQueryivARB(GL_SAMPLES_PASSED, GL_QUERY_COUNTER_BITS, &glConfig2.occlusionQueryBits);
@@ -275,45 +275,45 @@ static void GLimp_InitExtensionsR2(void)
 	GL_CheckErrors();
 
 	glConfig2.textureNPOTAvailable = qfalse;
-	if (GLimp_CheckForVersionExtension("GL_ARB_texture_non_power_of_two", 300, qfalse, r_ext_texture_non_power_of_two))
+	if (GLimp_CheckForVersionExtension("GL_ARB_texture_non_power_of_two", 300, qfalse, r_extTextureNonPowerOfTwo))
 	{
 		glConfig2.textureNPOTAvailable = qtrue;
 	}
 
 	glConfig2.drawBuffersAvailable = qfalse;
-	if (GLimp_CheckForVersionExtension("GL_ARB_draw_buffers", /* -1 */ 300, qfalse, r_ext_draw_buffers))
+	if (GLimp_CheckForVersionExtension("GL_ARB_draw_buffers", /* -1 */ 300, qfalse, r_extDrawBuffers))
 	{
 		glGetIntegerv(GL_MAX_DRAW_BUFFERS_ARB, &glConfig2.maxDrawBuffers);
 		glConfig2.drawBuffersAvailable = qtrue;
 	}
 
 	glConfig2.textureHalfFloatAvailable = qfalse;
-	if (GLimp_CheckForVersionExtension("GL_ARB_half_float_pixel", 300, qfalse, r_ext_half_float_pixel))
+	if (GLimp_CheckForVersionExtension("GL_ARB_half_float_pixel", 300, qfalse, r_extHalfFloatPixel))
 	{
 		glConfig2.textureHalfFloatAvailable = qtrue;
 	}
 
 	glConfig2.textureFloatAvailable = qfalse;
-	if (GLimp_CheckForVersionExtension("GL_ARB_texture_float", 300, qfalse, r_ext_texture_float))
+	if (GLimp_CheckForVersionExtension("GL_ARB_texture_float", 300, qfalse, r_extTextureFloat))
 	{
 		glConfig2.textureFloatAvailable = qtrue;
 	}
 
 	glConfig2.ARBTextureCompressionAvailable = qfalse;
-	if (GLimp_CheckForVersionExtension("GL_ARB_texture_compression", 300, qfalse, r_ext_compressed_textures))
+	if (GLimp_CheckForVersionExtension("GL_ARB_texture_compression", 300, qfalse, r_extCompressedTextures))
 	{
 		glConfig2.ARBTextureCompressionAvailable = qtrue;
 		glConfig.textureCompression              = TC_NONE;
 	}
 
 	glConfig2.vertexArrayObjectAvailable = qfalse;
-	if (GLimp_CheckForVersionExtension("GL_ARB_vertex_array_object", 300, qfalse, r_ext_vertex_array_object))
+	if (GLimp_CheckForVersionExtension("GL_ARB_vertex_array_object", 300, qfalse, r_extVertexArrayObject))
 	{
 		glConfig2.vertexArrayObjectAvailable = qtrue;
 	}
 
 	// GL_EXT_texture_compression_s3tc
-	if (GLimp_CheckForVersionExtension("GL_EXT_texture_compression_s3tc", -1, qfalse, r_ext_compressed_textures))
+	if (GLimp_CheckForVersionExtension("GL_EXT_texture_compression_s3tc", -1, qfalse, r_extCompressedTextures))
 	{
 		glConfig.textureCompression = TC_S3TC_ARB;
 	}
@@ -325,24 +325,24 @@ static void GLimp_InitExtensionsR2(void)
 	}
 
 	glConfig2.stencilWrapAvailable = qfalse;
-	if (GLimp_CheckForVersionExtension("GL_EXT_stencil_wrap", 210, qfalse, r_ext_stencil_wrap))
+	if (GLimp_CheckForVersionExtension("GL_EXT_stencil_wrap", 210, qfalse, r_extStencilWrap))
 	{
 		glConfig2.stencilWrapAvailable = qtrue;
 	}
 
 	glConfig2.textureAnisotropyAvailable = qfalse;
-	if (GLimp_CheckForVersionExtension("GL_EXT_texture_filter_anisotropic", -1, qfalse, r_ext_texture_filter_anisotropic))
+	if (GLimp_CheckForVersionExtension("GL_EXT_texture_filter_anisotropic", -1, qfalse, r_extTextureFilterAnisotropic))
 	{
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &glConfig2.maxTextureAnisotropy);
 		glConfig2.textureAnisotropyAvailable = qtrue;
 	}
 	GL_CheckErrors();
 
-	GLimp_CheckForVersionExtension("GL_EXT_stencil_two_side", 210, qfalse, r_ext_stencil_two_side);
-	GLimp_CheckForVersionExtension("GL_EXT_depth_bounds_test", 170, qfalse, r_ext_depth_bounds_test);
+	GLimp_CheckForVersionExtension("GL_EXT_stencil_two_side", 210, qfalse, r_extStencilTwoSide);
+	GLimp_CheckForVersionExtension("GL_EXT_depth_bounds_test", 170, qfalse, r_extDepthBoundsTest);
 
 	glConfig2.framebufferObjectAvailable = qfalse;
-	if (GLimp_CheckForVersionExtension("GL_EXT_framebuffer_object", 300, qfalse, r_ext_packed_depth_stencil))
+	if (GLimp_CheckForVersionExtension("GL_EXT_framebuffer_object", 300, qfalse, r_extPackedDepthStencil))
 	{
 		glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE_EXT, &glConfig2.maxRenderbufferSize);
 		glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS_EXT, &glConfig2.maxColorAttachments);
@@ -352,13 +352,13 @@ static void GLimp_InitExtensionsR2(void)
 	GL_CheckErrors();
 
 	glConfig2.framebufferPackedDepthStencilAvailable = qfalse;
-	if (GLimp_CheckForVersionExtension("GL_EXT_packed_depth_stencil", 300, qfalse, r_ext_packed_depth_stencil))
+	if (GLimp_CheckForVersionExtension("GL_EXT_packed_depth_stencil", 300, qfalse, r_extPackedDepthStencil))
 	{
 		glConfig2.framebufferPackedDepthStencilAvailable = qtrue;
 	}
 
 	glConfig2.framebufferBlitAvailable = qfalse;
-	if (GLimp_CheckForVersionExtension("GL_EXT_framebuffer_blit", 300, qfalse, r_ext_framebuffer_blit))
+	if (GLimp_CheckForVersionExtension("GL_EXT_framebuffer_blit", 300, qfalse, r_extFramebufferBlit))
 	{
 		glConfig2.framebufferBlitAvailable = qtrue;
 	}
@@ -366,7 +366,7 @@ static void GLimp_InitExtensionsR2(void)
 	// GL_EXTX_framebuffer_mixed_formats not used
 
 	glConfig2.generateMipmapAvailable = qfalse;
-	if (GLimp_CheckForVersionExtension("GL_SGIS_generate_mipmap", 140, qfalse, r_ext_generate_mipmap))
+	if (GLimp_CheckForVersionExtension("GL_SGIS_generate_mipmap", 140, qfalse, r_extGenerateMipmap))
 	{
 		glConfig2.generateMipmapAvailable = qtrue;
 	}
@@ -427,7 +427,7 @@ static void GLimp_InitExtensions(void)
 	if (GLEW_ARB_texture_compression &&
 	    GLEW_EXT_texture_compression_s3tc)
 	{
-		if (r_ext_compressed_textures->value != 0.f)
+		if (r_extCompressedTextures->value != 0.f)
 		{
 			glConfig.textureCompression = TC_S3TC_ARB;
 			Com_Printf("...found OpenGL extension - GL_EXT_texture_compression_s3tc\n");
@@ -449,7 +449,7 @@ static void GLimp_InitExtensions(void)
 	{
 		if (GLEW_S3_s3tc)
 		{
-			if (r_ext_compressed_textures->value != 0.f)
+			if (r_extCompressedTextures->value != 0.f)
 			{
 				glConfig.textureCompression = TC_S3TC;
 				Com_Printf("...found OpenGL extension - GL_S3_s3tc\n");
@@ -474,7 +474,7 @@ static void GLimp_InitExtensions(void)
 	glConfig.textureEnvAddAvailable = qfalse;
 	if (GLEW_EXT_texture_env_add)
 	{
-		if (r_ext_texture_env_add->integer)
+		if (r_extTextureEnvAdd->integer)
 		{
 			glConfig.textureEnvAddAvailable = qtrue;
 			Com_Printf("...found OpenGL extension - GL_EXT_texture_env_add\n");
@@ -511,7 +511,7 @@ static void GLimp_InitExtensions(void)
 #else
 	if (GLEW_ARB_multitexture)
 	{
-		if (r_ext_multitexture->value != 0.f)
+		if (r_extMultitexture->value != 0.f)
 		{
 			GLint glint = 0;
 

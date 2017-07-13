@@ -874,7 +874,7 @@ void Tess_StageIteratorSky(void)
 	Ren_LogComment("--- Tess_StageIteratorSky( %s, %i vertices, %i triangles ) ---\n", tess.surfaceShader->name,
 	               tess.numVertexes, tess.numIndexes / 3);
 
-	if (r_fastsky->integer)
+	if (r_fastSky->integer)
 	{
 		return;
 	}

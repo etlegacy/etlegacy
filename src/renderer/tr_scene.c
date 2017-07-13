@@ -156,7 +156,7 @@ void RE_AddPolyToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts)
 		return;
 	}
 
-	if (((r_numpolyverts + numVerts) >= r_maxpolyverts->integer) || (r_numpolys >= r_maxpolys->integer))
+	if (((r_numpolyverts + numVerts) >= r_maxPolyVerts->integer) || (r_numpolys >= r_maxPolys->integer))
 	{
 		Ren_Developer("WARNING RE_AddPolyToScene: r_maxpolyverts or r_maxpolys reached\n");
 		return;
@@ -239,14 +239,14 @@ void RE_AddPolysToScene(qhandle_t hShader, int numVerts, const polyVert_t *verts
 
 	for (j = 0; j < numPolys; j++)
 	{
-		if (r_numpolyverts + numVerts >= r_maxpolyverts->integer)
+		if (r_numpolyverts + numVerts >= r_maxPolyVerts->integer)
 		{
-			Ren_Developer("WARNING RE_AddPolysToScene: r_maxpolyverts[%i] reached. r_numpolyverts: %i - numVerts: %i - numPolys %i - shader %i\n", r_maxpolyverts->integer, r_numpolyverts, numVerts, numPolys, hShader);
+			Ren_Developer("WARNING RE_AddPolysToScene: r_maxpolyverts[%i] reached. r_numpolyverts: %i - numVerts: %i - numPolys %i - shader %i\n", r_maxPolyVerts->integer, r_numpolyverts, numVerts, numPolys, hShader);
 			return;
 		}
-		if (r_numpolys >= r_maxpolys->integer)
+		if (r_numpolys >= r_maxPolys->integer)
 		{
-			Ren_Developer("WARNING RE_AddPolysToScene: r_maxpolys[%i] reached. r_numpolys: %i\n", r_maxpolys->integer, r_numpolys);
+			Ren_Developer("WARNING RE_AddPolysToScene: r_maxpolys[%i] reached. r_numpolys: %i\n", r_maxPolys->integer, r_numpolys);
 			return;
 		}
 
@@ -450,7 +450,7 @@ void RE_AddLightToScene(const vec3_t org, float radius, float intensity, float r
 	// allow us to force some dlights under all circumstances
 	if (!(flags & REF_FORCE_DLIGHT))
 	{
-		if (r_dynamiclight->integer == 0)
+		if (r_dynamicLight->integer == 0)
 		{
 			return;
 		}
@@ -530,7 +530,7 @@ void RE_RenderScene(const refdef_t *fd)
 	}
 	Ren_LogComment("====== RE_RenderScene =====\n");
 
-	if (r_norefresh->integer)
+	if (r_noreFresh->integer)
 	{
 		return;
 	}

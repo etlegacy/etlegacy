@@ -270,7 +270,7 @@ static float RB_CalcMDMLod(refEntity_t *refent, vec3_t origin, float radius, flo
 	{
 		// ri.Printf (PRINT_ALL, "projected radius: %f\n", projectedRadius);
 
-		float lodScale = r_lodscale->value;   // fudge factor since MDS uses a much smoother method of LOD
+		float lodScale = r_lodScale->value;   // fudge factor since MDS uses a much smoother method of LOD
 
 		flod = projectedRadius * lodScale * modelScale;
 	}
@@ -290,7 +290,7 @@ static float RB_CalcMDMLod(refEntity_t *refent, vec3_t origin, float radius, flo
 		flod *= 0.8f;
 	}
 
-	flod -= 0.25f * r_lodbias->value + modelBias;
+	flod -= 0.25f * r_lodBias->value + modelBias;
 
 	if (flod < 0.0f)
 	{

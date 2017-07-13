@@ -613,8 +613,8 @@ static void Upload32(unsigned *data,
 	// perform optional picmip operation
 	if (picmip)
 	{
-		scaled_width  >>= r_picmip->integer;
-		scaled_height >>= r_picmip->integer;
+		scaled_width  >>= r_picMip->integer;
+		scaled_height >>= r_picMip->integer;
 	}
 
 	// clamp to minimum size
@@ -647,7 +647,7 @@ static void Upload32(unsigned *data,
 
 	if (lightMap)
 	{
-		if (r_greyscale->integer)
+		if (r_greyScale->integer)
 		{
 			internalFormat = GL_LUMINANCE;
 		}
@@ -684,13 +684,13 @@ static void Upload32(unsigned *data,
 		// select proper internal format
 		if (samples == 3)
 		{
-			if (r_greyscale->integer)
+			if (r_greyScale->integer)
 			{
-				if (r_texturebits->integer == 16)
+				if (r_textureBits->integer == 16)
 				{
 					internalFormat = GL_LUMINANCE8;
 				}
-				else if (r_texturebits->integer == 32)
+				else if (r_textureBits->integer == 32)
 				{
 					internalFormat = GL_LUMINANCE16;
 				}
@@ -709,11 +709,11 @@ static void Upload32(unsigned *data,
 				{
 					internalFormat = GL_RGB4_S3TC;
 				}
-				else if (r_texturebits->integer == 16)
+				else if (r_textureBits->integer == 16)
 				{
 					internalFormat = GL_RGB5;
 				}
-				else if (r_texturebits->integer == 32)
+				else if (r_textureBits->integer == 32)
 				{
 					internalFormat = GL_RGB8;
 				}
@@ -725,13 +725,13 @@ static void Upload32(unsigned *data,
 		}
 		else if (samples == 4)
 		{
-			if (r_greyscale->integer)
+			if (r_greyScale->integer)
 			{
-				if (r_texturebits->integer == 16)
+				if (r_textureBits->integer == 16)
 				{
 					internalFormat = GL_LUMINANCE8_ALPHA8;
 				}
-				else if (r_texturebits->integer == 32)
+				else if (r_textureBits->integer == 32)
 				{
 					internalFormat = GL_LUMINANCE16_ALPHA16;
 				}
@@ -746,11 +746,11 @@ static void Upload32(unsigned *data,
 				{
 					internalFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 				}
-				else if (r_texturebits->integer == 16)
+				else if (r_textureBits->integer == 16)
 				{
 					internalFormat = GL_RGBA4;
 				}
-				else if (r_texturebits->integer == 32)
+				else if (r_textureBits->integer == 32)
 				{
 					internalFormat = GL_RGBA8;
 				}
@@ -839,7 +839,7 @@ done:
 		if (textureFilterAnisotropic)
 		{
 			qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
-			                 (GLint)Com_Clamp(1, maxAnisotropy, r_ext_max_anisotropy->integer));
+			                 (GLint)Com_Clamp(1, maxAnisotropy, r_extMaxAnisotropy->integer));
 		}
 
 		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
@@ -905,11 +905,11 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 		noCompress = qtrue;
 	}
 	// if the shader hasn't specifically asked for it, don't allow compression
-	if (r_ext_compressed_textures->integer == 2 && (tr.allowCompress != qtrue))
+	if (r_extCompressedTextures->integer == 2 && (tr.allowCompress != qtrue))
 	{
 		noCompress = qtrue;
 	}
-	else if (r_ext_compressed_textures->integer == 1 && (tr.allowCompress < 0))
+	else if (r_extCompressedTextures->integer == 1 && (tr.allowCompress < 0))
 	{
 		noCompress = qtrue;
 	}

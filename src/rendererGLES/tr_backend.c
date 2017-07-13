@@ -68,7 +68,7 @@ void GL_Bind(image_t *image)
 		texnum = image->texnum;
 	}
 
-	if (r_nobind->integer && tr.dlightImage)            // performance evaluation option
+	if (r_noBind->integer && tr.dlightImage)            // performance evaluation option
 	{
 		texnum = tr.dlightImage->texnum;
 	}
@@ -477,7 +477,7 @@ void RB_BeginDrawingView(void)
 		{
 			clearBits |= GL_DEPTH_BUFFER_BIT;
 
-			if (r_fastsky->integer || (backEnd.refdef.rdflags & RDF_NOWORLDMODEL))      // fastsky: clear color
+			if (r_fastSky->integer || (backEnd.refdef.rdflags & RDF_NOWORLDMODEL))      // fastsky: clear color
 			{   // try clearing first with the portal sky fog color, then the world fog color, then finally a default
 				clearBits |= GL_COLOR_BUFFER_BIT;
 				if (glfogsettings[FOG_PORTALVIEW].registered)
@@ -521,14 +521,14 @@ void RB_BeginDrawingView(void)
 					}
 
 				}
-				else if (!(r_portalsky->integer)) // portal skies have been manually turned off, clear bg color
+				else if (!(r_portalSky->integer)) // portal skies have been manually turned off, clear bg color
 				{
 					clearBits |= GL_COLOR_BUFFER_BIT;
 				}
 
 				qglClearColor(glfogsettings[FOG_CURRENT].color[0], glfogsettings[FOG_CURRENT].color[1], glfogsettings[FOG_CURRENT].color[2], glfogsettings[FOG_CURRENT].color[3]);
 			}
-			else if (!(r_portalsky->integer)) // portal skies have been manually turned off, clear bg color
+			else if (!(r_portalSky->integer)) // portal skies have been manually turned off, clear bg color
 			{
 				clearBits |= GL_COLOR_BUFFER_BIT;
 				qglClearColor(0.5, 0.5, 0.5, 1.0);
@@ -544,7 +544,7 @@ void RB_BeginDrawingView(void)
 		{
 			clearBits &= ~GL_COLOR_BUFFER_BIT;
 		}
-		else if (r_fastsky->integer || (backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
+		else if (r_fastSky->integer || (backEnd.refdef.rdflags & RDF_NOWORLDMODEL))
 		{
 
 			clearBits |= GL_COLOR_BUFFER_BIT;
@@ -602,7 +602,7 @@ void RB_BeginDrawingView(void)
 	if (backEnd.viewParms.isPortal)
 	{
 		float plane[4];
-		float plane2[4];
+		double plane2[4]; // keep this, glew expects double
 
 		plane[0] = backEnd.viewParms.portalPlane.normal[0];
 		plane[1] = backEnd.viewParms.portalPlane.normal[1];

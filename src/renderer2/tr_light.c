@@ -1985,7 +1985,7 @@ int R_CullLightTriangle(trRefLight_t *light, vec3_t verts[3])
 	int    i;
 	vec3_t worldBounds[2];
 
-	if (r_nocull->integer)
+	if (r_noCull->integer)
 	{
 		return CULL_CLIP;
 	}
@@ -2013,7 +2013,7 @@ int R_CullLightWorldBounds(trRefLight_t *light, vec3_t worldBounds[2])
 	qboolean anyClip;
 	int      r;
 
-	if (r_nocull->integer)
+	if (r_noCull->integer)
 	{
 		return CULL_CLIP;
 	}
