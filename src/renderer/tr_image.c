@@ -1721,7 +1721,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
  */
 qhandle_t RE_RegisterSkin(const char *name)
 {
-    skinSurface_t parseSurfaces[MAX_SKIN_SURFACES];
+	skinSurface_t parseSurfaces[MAX_SKIN_SURFACES];
 	qhandle_t     hSkin;
 	skin_t        *skin;
 	skinModel_t   *model;
@@ -1781,7 +1781,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 	// WARNING: HACK: ET evilly has filenames slightly longer than MAX_QPATH
 	// this check breaks the loading of such skins
 	/*
-	if ( strcmp( name + strlen( name ) - 5, ".skin" ) ) {
+	if (strcmp( name + strlen( name ) - 5, ".skin")) {
 	    skin->numSurfaces = 1;
 	    skin->surfaces = ri.Hunk_Alloc( sizeof( skinSurface_t ), h_low );
 	    skin->surfaces[0].shader = R_FindShader( name, LIGHTMAP_NONE, qtrue );
@@ -1855,7 +1855,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 		{
 			surf = &parseSurfaces[skin->numSurfaces];
 			Q_strncpyz(surf->name, surfName, sizeof(surf->name));
-            surf->hash   = Com_HashKey(surf->name, sizeof(surf->name));
+			surf->hash   = Com_HashKey(surf->name, sizeof(surf->name));
 			surf->shader = R_FindShader(token, LIGHTMAP_NONE, qtrue);
 			skin->numSurfaces++;
 		}
@@ -1877,9 +1877,9 @@ qhandle_t RE_RegisterSkin(const char *name)
 		return 0;       // use default skin
 	}
 
-    // copy surfaces to skin
-    skin->surfaces = ri.Hunk_Alloc(skin->numSurfaces * sizeof( skinSurface_t ), h_low );
-    Com_Memcpy( skin->surfaces, parseSurfaces, skin->numSurfaces * sizeof( skinSurface_t ) );
+	// copy surfaces to skin
+	skin->surfaces = ri.Hunk_Alloc(skin->numSurfaces * sizeof(skinSurface_t), h_low);
+	Com_Memcpy(skin->surfaces, parseSurfaces, skin->numSurfaces * sizeof(skinSurface_t));
 
 	return hSkin;
 }
@@ -1896,8 +1896,8 @@ void R_InitSkins(void)
 	// make the default skin have all default shaders
 	skin = tr.skins[0] = ri.Hunk_Alloc(sizeof(skin_t), h_low);
 	Q_strncpyz(skin->name, "<default skin>", sizeof(skin->name));
-	skin->numSurfaces         = 1;
-	skin->surfaces         = ri.Hunk_Alloc(sizeof(skinSurface_t), h_low);
+	skin->numSurfaces        = 1;
+	skin->surfaces           = ri.Hunk_Alloc(sizeof(skinSurface_t), h_low);
 	skin->surfaces[0].shader = tr.defaultShader;
 }
 
