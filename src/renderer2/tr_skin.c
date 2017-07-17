@@ -372,7 +372,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 			}
 
 			// this is specifying a model
-			model = skin->models[skin->numModels] = (skinModel_t *)ri.Hunk_Alloc(sizeof(*skin->models[0]), h_low);
+			model = skin->models[skin->numModels] = ri.Hunk_Alloc(sizeof(skinModel_t), h_low);
 			Q_strncpyz(model->type, token, sizeof(model->type));
 			model->hash = Com_HashKey(model->type, sizeof(model->type));
 
@@ -392,18 +392,12 @@ qhandle_t RE_RegisterSkin(const char *name)
 		{
 			surf = &parseSurfaces[skin->numSurfaces];
 			Q_strncpyz(surf->name, surfName, sizeof(surf->name));
-			surf->shader = R_FindShader(token, -1, qtrue);
+			// FIXME: bspSurface not not have ::hash yet
+			//surf->hash = Com_HashKey(surf->name, sizeof(surf->name));
+			surf->shader = R_FindShader(token, SHADER_3D_DYNAMIC, qtrue);
 			skin->numSurfaces++;
 		}
 		totalSurfaces++;
-
-		surf = &parseSurfaces[skin->numSurfaces];
-		Q_strncpyz(surf->name, surfName, sizeof(surf->name));
-
-		// FIXME: bspSurface not not have ::hash yet
-		//surf->hash = Com_HashKey(surf->name, sizeof(surf->name));
-		surf->shader = R_FindShader(token, SHADER_3D_DYNAMIC, qtrue);
-		skin->numSurfaces++;
 	}
 
 	ri.FS_FreeFile(text);
@@ -422,7 +416,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 
 	// copy surfaces to skin
 	skin->surfaces = ri.Hunk_Alloc(skin->numSurfaces * sizeof(skinSurface_t), h_low);
-	memcpy(skin->surfaces, parseSurfaces, skin->numSurfaces * sizeof(skinSurface_t));
+	Com_Memcpy(skin->surfaces, parseSurfaces, skin->numSurfaces * sizeof(skinSurface_t));
 
 	return hSkin;
 }
@@ -437,7 +431,7 @@ void R_InitSkins(void)
 	tr.numSkins = 1;
 
 	// make the default skin have all default shaders
-	skin = tr.skins[0] = (skin_t *)ri.Hunk_Alloc(sizeof(skin_t), h_low);
+	skin = tr.skins[0] = ri.Hunk_Alloc(sizeof(skin_t), h_low);
 	Q_strncpyz(skin->name, "<default skin>", sizeof(skin->name));
 	skin->numSurfaces        = 1;
 	skin->surfaces           = ri.Hunk_Alloc(sizeof(skinSurface_t), h_low);
