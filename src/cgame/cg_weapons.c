@@ -4193,6 +4193,65 @@ void CG_AltWeapon_f(void)
 		return;
 	}
 
+	// some alt vsays
+	// FIXME: add a cvar for this
+	// 0 - disabled
+	// 1 - team
+	// 2 - fireteam
+	switch (cg.weaponSelect)
+	{
+		case WP_DYNAMITE:
+			trap_SendConsoleCommand(va("cmd vsay_team %s\n", "FTExploreArea"));
+			//trap_SendConsoleCommand(va("cmd vsay_buddy %s\n", "FTExploreArea")); // fireteam
+			break; //return;
+		case WP_SMOKE_BOMB:
+			switch((rand() % 2))
+			{
+				case 0:
+					trap_SendConsoleCommand(va("cmd vsay_team %s\n", "FTGoUndercover"));
+					break;
+				case 1:
+					trap_SendConsoleCommand(va("cmd vsay_team %s\n", "FTInfiltrate"));
+					break;
+			}
+			break; //return;
+		case WP_SMOKE_MARKER:
+		case WP_GRENADE_LAUNCHER:
+		case WP_GRENADE_PINEAPPLE:
+			trap_SendConsoleCommand(va("cmd vsay_team %s\n", "FireInTheHole"));
+			break; //return;
+		case WP_PLIERS:
+			switch((rand() % 3))
+			{
+				case 0:
+					trap_SendConsoleCommand(va("cmd vsay_team %s\n", "CoverMe"));
+					break;
+				case 1:
+					trap_SendConsoleCommand(va("cmd vsay_team %s\n", "NeedBackup"));
+					break;
+				case 2:
+					trap_SendConsoleCommand(va("cmd vsay_team %s\n", "ClearPath"));
+					break;
+			}
+			break; //return;
+		case WP_SATCHEL:
+			trap_SendConsoleCommand(va("cmd vsay_team %s\n", "LetsGo"));
+			break; //return;
+		case WP_MEDKIT:
+		case WP_MEDIC_SYRINGE:
+			trap_SendConsoleCommand(va("cmd vsay_team %s\n", "IamMedic"));
+			break; //return;
+		case WP_AMMO:
+			trap_SendConsoleCommand(va("cmd vsay_team %s\n", "IamFieldOps"));
+			break; // return;
+			// add others ...
+			//case WP_POISON_SYRINGE:
+			//trap_SendConsoleCommand(va("cmd vsay_team %s\n", "EnemyWeak"));
+			//return;
+		default:
+			break;
+	}
+
 	// Need ground for this
 	if (cg.weaponSelect == WP_MORTAR || cg.weaponSelect == WP_MORTAR2)
 	{
