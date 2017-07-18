@@ -320,7 +320,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 	{
 		skin->numSurfaces        = 1;
 		skin->surfaces           = ri.Hunk_Alloc(sizeof(skinSurface_t), h_low);
-		skin->surfaces[0].shader = R_FindShader(name, LIGHTMAP_NONE, qtrue);
+		skin->surfaces[0].shader = R_FindShader(name, SHADER_3D_DYNAMIC, qtrue);
 		return hSkin;
 	}
 #endif
