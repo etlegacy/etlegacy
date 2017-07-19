@@ -1501,6 +1501,10 @@ static void CG_RegisterSounds(void)
 
 	cgs.media.shoveSound = trap_S_RegisterSound("sound/weapons/impact/flesh1.wav", qfalse);
 
+	cgs.media.gibLeg       = trap_R_RegisterModel("models/gibs/leg.md3");
+	cgs.media.gibIntestine = trap_R_RegisterModel("models/gibs/intestine.md3");
+	cgs.media.gibChest     = trap_R_RegisterModel("models/gibs/skull.md3");
+
 	CG_RegisterGameSounds();
 
 	CG_PrecacheFXSounds();
