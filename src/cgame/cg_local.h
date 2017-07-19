@@ -2528,6 +2528,8 @@ extern vmCvar_t cg_scoreboard;
 #define SCOREBOARD_SR    1
 #endif
 
+extern vmCvar_t cg_quickchat;
+
 // local clock flags
 #define LOCALTIME_ON                0x01
 #define LOCALTIME_SECOND            0x02

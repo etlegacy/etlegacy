@@ -342,6 +342,8 @@ vmCvar_t cg_debugPlayerHitboxes;
 vmCvar_t cg_scoreboard;
 #endif
 
+vmCvar_t cg_quickchat;
+
 typedef struct
 {
 	vmCvar_t *vmCvar;
@@ -579,6 +581,8 @@ cvarTable_t cvarTable[] =
 #ifdef FEATURE_RATING
 	{ &cg_scoreboard,             "cg_scoreboard",             "0",           CVAR_ARCHIVE,                 0 },
 #endif
+
+	{ &cg_quickchat,              "cg_quickchat",              "0",           CVAR_ARCHIVE,                 0 },
 };
 
 const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
