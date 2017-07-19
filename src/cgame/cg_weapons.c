@@ -6183,12 +6183,12 @@ void CG_WaterRipple(qhandle_t shader, vec3_t loc, vec3_t dir, int size, int life
 /**
  * @brief Caused by an EV_MISSILE_MISS event, or directly by local bullet tracing
  * @param[in] weapon
- * @param[in] clientNum is a dummy field used to define what sort of effect to spawn
+ * @param[in] missileEffect used to define what sort of effect to spawn
  * @param[in] origin
  * @param[in] dir
  * @param[in] surfFlags
  */
-void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int surfFlags)     // modified to send missilehitwall surface parameters
+void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags)     // modified to send missilehitwall surface parameters
 {
 	qhandle_t   mod      = 0, mark = 0, shader = 0;
 	sfxHandle_t sfx      = 0, sfx2 = 0;
@@ -6251,12 +6251,12 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 		volume = 64;
 
 		// clientNum is a dummy field used to define what sort of effect to spawn
-		if (!clientNum)
+		if (!missileEffect)
 		{
 			// RF, why is this here? we need sparks if clientNum = 0, used for warzombie
 			CG_AddSparks(origin, dir, 350, 200, 15 + rand() % 7, 0.2f);
 		}
-		else if (clientNum == 1)       // just do a little smoke puff
+		else if (missileEffect == 1)       // just do a little smoke puff
 		{
 			vec3_t d, o;
 			VectorMA(origin, 12, dir, o);
@@ -6290,7 +6290,7 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 				//}
 			}
 		}
-		else if (clientNum == 2)
+		else if (missileEffect == 2)
 		{
 			sfx  = 0;
 			mark = 0;
@@ -6664,12 +6664,10 @@ void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int
 
 /**
  * @brief CG_MissileHitWallSmall
- * @param weapon - unused
- * @param clientNum - unused
  * @param[in] origin
  * @param[in] dir
  */
-void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir)
+void CG_MissileHitWallSmall(vec3_t origin, vec3_t dir)
 {
 	vec3_t        sprOrg, sprVel;
 	static vec4_t projection = { 0, 0, -1.0f, 80.0f };     // {x,y,x,radius}
@@ -6715,11 +6713,11 @@ void CG_MissileHitPlayer(centity_t *cent, int weapon, vec3_t origin, vec3_t dir,
 	case WP_GRENADE_PINEAPPLE:
 	case WP_PANZERFAUST:
 	case WP_BAZOOKA:
-		CG_MissileHitWall(weapon, 0, origin, dir, 0);   // like the old one
+		CG_MissileHitWall(weapon, PS_FX_NONE, origin, dir, 0);   // like the old one
 		break;
 	case WP_KNIFE:
 	case WP_KNIFE_KABAR:
-		CG_MissileHitWall(weapon, 0, origin, dir, 1);    // this one makes the hitting fleshy sound. whee
+		CG_MissileHitWall(weapon, PS_FX_NONE, origin, dir, 1);    // this one makes the hitting fleshy sound. whee
 		break;
 	default:
 		break;
@@ -7357,8 +7355,8 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 
 				trap_S_StartSound(end, -1, CHAN_AUTO, cgs.media.sfx_bullet_waterhit[rand() % 5]);
 
-				CG_MissileHitWall(fromweap, 2, end2, dir, 0);
-				CG_MissileHitWall(fromweap, 1, end, trace.plane.normal, 0);
+				CG_MissileHitWall(fromweap, PS_FX_WATER, end2, dir, 0);
+				CG_MissileHitWall(fromweap, PS_FX_COMMON, end, trace.plane.normal, 0);
 			}
 			else
 			{
@@ -7385,13 +7383,13 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 					CG_Trace(&trace2, start, NULL, NULL, end, -1, MASK_WATER);
 					cg.bulletTrace = qfalse;
 
-					CG_MissileHitWall(fromweap, 2, trace2.endpos, trace2.plane.normal, trace2.surfaceFlags);
+					CG_MissileHitWall(fromweap, PS_FX_WATER, trace2.endpos, trace2.plane.normal, trace2.surfaceFlags);
 					return;
 				}
 
 				// better bullet marks
 				VectorSubtract(vec3_origin, dir, dir);
-				CG_MissileHitWall(fromweap, 1, trace.endpos, dir, trace.surfaceFlags);
+				CG_MissileHitWall(fromweap, PS_FX_COMMON, trace.endpos, dir, trace.surfaceFlags);
 			}
 		}
 	}

@@ -2539,6 +2539,11 @@ extern vmCvar_t cg_quickchat;
 #define CROSSHAIR_CLASS             0x01
 #define CROSSHAIR_RANK              0x02
 
+// projectile spawn effects at destination
+#define PS_FX_NONE   0
+#define PS_FX_COMMON 1
+#define PS_FX_WATER  2
+
 // cg_atmospheric.c
 void CG_EffectParse(const char *effectstr);
 void CG_AddAtmosphericEffects(void);
@@ -2743,7 +2748,7 @@ void CG_FireWeapon(centity_t *cent);
 
 void CG_MissileHitWall(int weapon, int clientNum, vec3_t origin, vec3_t dir, int surfFlags);     // modified to send missilehitwall surface parameters
 
-void CG_MissileHitWallSmall(int weapon, int clientNum, vec3_t origin, vec3_t dir);
+void CG_MissileHitWallSmall(vec3_t origin, vec3_t dir);
 void CG_DrawTracer(vec3_t start, vec3_t finish);
 
 void CG_MG42EFX(centity_t *cent);

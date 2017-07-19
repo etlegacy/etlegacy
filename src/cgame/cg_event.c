@@ -1759,7 +1759,7 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 
 	if (cent->currentState.eventParm & 1)      // fire
 	{
-		CG_MissileHitWall(WP_DYNAMITE, 0, origin, dir, 0);
+		CG_MissileHitWall(WP_DYNAMITE, PS_FX_NONE, origin, dir, 0);
 		return;
 	}
 
@@ -2786,7 +2786,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 			ByteToDir(es->eventParm, dir);
 
-			CG_MissileHitWallSmall(es->weapon, 0, position, dir);
+			CG_MissileHitWallSmall(position, dir);
 		}
 		break;
 	case EV_MISSILE_MISS:
@@ -2795,7 +2795,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			vec3_t dir;
 
 			ByteToDir(es->eventParm, dir);
-			CG_MissileHitWall(es->weapon, 0, position, dir, 0);     // modified to send missilehitwall surface parameters
+			CG_MissileHitWall(es->weapon, PS_FX_NONE, position, dir, 0);     // modified to send missilehitwall surface parameters
 			if (IS_MORTAR_WEAPON_SET(es->weapon))
 			{
 				if (!es->legsAnim)
@@ -2817,11 +2817,11 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			ByteToDir(es->eventParm, dir);
 			if (es->weapon == WP_ARTY || es->weapon == WP_SMOKE_MARKER)
 			{
-				CG_MissileHitWall(es->weapon, 0, position, dir, 0);      // modified to send missilehitwall surface parameters
+				CG_MissileHitWall(es->weapon, PS_FX_NONE, position, dir, 0);       // modified to send missilehitwall surface parameters
 			}
 			else
 			{
-				CG_MissileHitWall(VERYBIGEXPLOSION, 0, position, dir, 0);     // modified to send missilehitwall surface parameters
+				CG_MissileHitWall(VERYBIGEXPLOSION, PS_FX_NONE, position, dir, 0); // modified to send missilehitwall surface parameters
 			}
 		}
 		break;
