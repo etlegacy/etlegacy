@@ -417,35 +417,6 @@ static void CG_PanzerFaustEjectBrass(centity_t *cent)
 	le->leMarkType = LEMT_NONE;
 }
 
-/*
- * @brief Simple bubble trail behind a missile
- * @param[in] ent
- * @param[in] wi
- * @todo TODO: Unused
- */
-/*void CG_SpearTrail(centity_t *ent, const weaponInfo_t *wi )
-{
-    int     contents, lastContents;
-    vec3_t  origin, lastPos;
-    entityState_t   *es;
-
-    es = &ent->currentState;
-    BG_EvaluateTrajectory( &es->pos, cg.time, origin );
-    contents = CG_PointContents( origin, -1 );
-
-    BG_EvaluateTrajectory( &es->pos, ent->trailTime, lastPos );
-    lastContents = CG_PointContents( lastPos, -1 );
-
-    ent->trailTime = cg.time;
-
-    if ( contents & ( CONTENTS_WATER | CONTENTS_SLIME | CONTENTS_LAVA ) ) {
-        if ( contents & lastContents & CONTENTS_WATER ) {
-            CG_BubbleTrail( lastPos, origin, 1, 8 );
-        }
-    }
-}
-*/
-
 /**
  * @brief Compute random wind vector for smoke puff
  * @param[out] dir
@@ -2014,7 +1985,7 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
 	case WP_SMOKE_BOMB:
 		filename = "smokegrenade.weap";
 		break;
-	case WP_MOBILE_MG42_SET:     // TODO: do we need a seperate file for this?
+	case WP_MOBILE_MG42_SET:
 	case WP_MOBILE_MG42:
 		filename = "mg42.weap";
 		break;
@@ -6312,7 +6283,7 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 		// - small modification.  only do this for non-rifles (so you can see your shots hitting when you're zooming with a rifle scope)
 		if (weapon == WP_FG42SCOPE || weapon == WP_GARAND_SCOPE || weapon == WP_K43_SCOPE || (Distance(cg.refdef_current->vieworg, origin) < 384))
 		{
-			if (clientNum)
+			if (missileEffect)
 			{
 				// mark and sound can potentially use the surface for override values
 				//mark   = cgs.media.bulletMarkShader;    // default
@@ -7333,15 +7304,7 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 
 	}
 	else        // (not flesh)
-	{   // all bullet weapons have the same fx, and this stops pvs issues causing grenade explosions
-		int fromweap = WP_MP40; // cg_entities[sourceEntityNum].currentState.weapon;
-		// FIXME: remove fromweap (use WP_MP40) or DO different fx for different weapons
-
-		if (!fromweap || (cg_entities[sourceEntityNum].currentState.eFlags & (EF_MG42_ACTIVE | EF_AAGUN_ACTIVE | EF_MOUNTEDTANK))) // mounted
-		{
-			fromweap = WP_MP40;
-		}
-
+	{
 		if (CG_CalcMuzzlePoint(sourceEntityNum, start) || cg.snap->ps.persistant[PERS_HWEAPON_USE])
 		{
 			if (waterfraction != 0.f)
@@ -7355,8 +7318,9 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 
 				trap_S_StartSound(end, -1, CHAN_AUTO, cgs.media.sfx_bullet_waterhit[rand() % 5]);
 
-				CG_MissileHitWall(fromweap, PS_FX_WATER, end2, dir, 0);
-				CG_MissileHitWall(fromweap, PS_FX_COMMON, end, trace.plane.normal, 0);
+				// WP_MP40: all bullet weapons have the same fx, and this stops pvs issues causing grenade explosions
+				CG_MissileHitWall(WP_MP40, PS_FX_WATER, end2, dir, 0);
+				CG_MissileHitWall(WP_MP40, PS_FX_COMMON, end, trace.plane.normal, 0);
 			}
 			else
 			{
@@ -7383,13 +7347,15 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 					CG_Trace(&trace2, start, NULL, NULL, end, -1, MASK_WATER);
 					cg.bulletTrace = qfalse;
 
-					CG_MissileHitWall(fromweap, PS_FX_WATER, trace2.endpos, trace2.plane.normal, trace2.surfaceFlags);
+					// WP_MP40: all bullet weapons have the same fx
+					CG_MissileHitWall(WP_MP40, PS_FX_WATER, trace2.endpos, trace2.plane.normal, trace2.surfaceFlags);
 					return;
 				}
 
 				// better bullet marks
 				VectorSubtract(vec3_origin, dir, dir);
-				CG_MissileHitWall(fromweap, PS_FX_COMMON, trace.endpos, dir, trace.surfaceFlags);
+				// WP_MP40: all bullet weapons have the same fx
+				CG_MissileHitWall(WP_MP40, PS_FX_COMMON, trace.endpos, dir, trace.surfaceFlags);
 			}
 		}
 	}
