@@ -323,8 +323,8 @@ extern qboolean debugMode;
 void UI_Report(void);
 void UI_Load(void);
 void UI_LoadMenus(const char *menuFile, qboolean reset);
-void  _UI_SetActiveMenu(uiMenuCommand_t menu);
-uiMenuCommand_t _UI_GetActiveMenu(void);
+void  UI_SetActiveMenu(uiMenuCommand_t menu);
+uiMenuCommand_t UI_GetActiveMenu(void);
 int UI_AdjustTimeByGame(int time);
 void UI_ShowPostGame(qboolean newHigh);
 void UI_LoadArenas(void);
@@ -684,25 +684,14 @@ extern uiInfo_t uiInfo;
 
 extern displayContextDef_t *DC;
 
-//FIXME: are these all removed? Can we remove these?
-extern void UI_Init(void);
-extern void UI_KeyEvent(int key);
-extern void UI_MouseEvent(int dx, int dy);
-extern void UI_Refresh(int realtime);
+// ui_atoms.c
 extern qboolean UI_ConsoleCommand(int realTime);
 extern void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShader);
 extern void UI_FillRect(float x, float y, float width, float height, const float *color);
 extern void UI_DrawTopBottom(float x, float y, float w, float h);
 extern void UI_AdjustFrom640(float *x, float *y, float *w, float *h);
-extern qboolean UI_IsFullscreen(void);
-extern void UI_SetActiveMenu(uiMenuCommand_t menu);
-extern void UI_PushMenu(menuframework_s *menu);
-extern void UI_PopMenu(void);
-extern void UI_ForceMenuOff(void);
 extern char *UI_Argv(int arg);
 extern char *UI_Cvar_VariableString(const char *varName);
-extern void UI_Refresh(int time);
-extern void UI_KeyEvent(int key);
 
 // ui_shared.c
 int Binding_IDFromName(const char *name);

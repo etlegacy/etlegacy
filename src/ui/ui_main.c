@@ -85,11 +85,11 @@ void Menu_ShowItemByName(menuDef_t *menu, const char *p, qboolean bShow);
 
 static char translated_yes[4], translated_no[4];
 
-void _UI_Init(int legacyClient, int clientVersion);
-void _UI_Shutdown(void);
-void _UI_KeyEvent(int key, qboolean down);
-void _UI_MouseEvent(int dx, int dy);
-void _UI_Refresh(int realtime);
+void UI_Init(int legacyClient, int clientVersion);
+void UI_Shutdown(void);
+void UI_KeyEvent(int key, qboolean down);
+void UI_MouseEvent(int dx, int dy);
+void UI_Refresh(int realtime);
 qboolean _UI_IsFullscreen(void);
 
 /**
@@ -116,21 +116,21 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	switch (command)
 	{
 	case UI_KEY_EVENT:
-		_UI_KeyEvent(arg0, (qboolean) arg1);
+		UI_KeyEvent(arg0, (qboolean) arg1);
 		return 0;
 	case UI_MOUSE_EVENT:
-		_UI_MouseEvent(arg0, arg1);
+		UI_MouseEvent(arg0, arg1);
 		return 0;
 	case UI_REFRESH:
-		_UI_Refresh(arg0);
+		UI_Refresh(arg0);
 		return 0;
 	case UI_IS_FULLSCREEN:
 		return _UI_IsFullscreen();
 	case UI_SET_ACTIVE_MENU:
-		_UI_SetActiveMenu((uiMenuCommand_t)arg0);
+		UI_SetActiveMenu((uiMenuCommand_t)arg0);
 		return 0;
 	case UI_GET_ACTIVE_MENU:
-		return _UI_GetActiveMenu();
+		return UI_GetActiveMenu();
 	case UI_CONSOLE_COMMAND:
 		return UI_ConsoleCommand(arg0);
 	case UI_DRAW_CONNECT_SCREEN:
@@ -143,10 +143,10 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case UI_GETAPIVERSION:
 		return UI_API_VERSION;
 	case UI_INIT:
-		_UI_Init(arg1, arg2);
+		UI_Init(arg1, arg2);
 		return 0;
 	case UI_SHUTDOWN:
-		_UI_Shutdown();
+		UI_Shutdown();
 		return 0;
 	case UI_HASUNIQUECDKEY: // obsolete - keep this to avoid 'Bad ui export type' for vanilla clients
 		return 0;
@@ -861,7 +861,7 @@ void UI_ShowPostGame(qboolean newHigh)
 	trap_Cvar_Set("cg_thirdPerson", "0");
 	trap_Cvar_Set("sv_killserver", "1");
 	uiInfo.soundHighScore = newHigh;
-	_UI_SetActiveMenu(UIMENU_POSTGAME);
+	UI_SetActiveMenu(UIMENU_POSTGAME);
 }
 
 #define UI_FPS_FRAMES   4
@@ -870,7 +870,7 @@ void UI_ShowPostGame(qboolean newHigh)
  * @brief _UI_Refresh
  * @param[in] realtime
  */
-void _UI_Refresh(int realtime)
+void UI_Refresh(int realtime)
 {
 	static int index;
 	static int previousTimes[UI_FPS_FRAMES];
@@ -943,7 +943,7 @@ void _UI_Refresh(int realtime)
 /**
  * @brief _UI_Shutdown
  */
-void _UI_Shutdown(void)
+void UI_Shutdown(void)
 {
 	int i = 0;
 	for (; i < UI_FONT_COUNT; i++)
@@ -8136,7 +8136,7 @@ static void UI_RunCinematicFrame(int handle)
  * @param[in] legacyClient
  * @param[in] clientVersion
  */
-void _UI_Init(int legacyClient, int clientVersion)
+void UI_Init(int legacyClient, int clientVersion)
 {
 	int x;
 	Com_Printf("Initializing Legacy ui " ETLEGACY_VERSION "\n");
@@ -8314,7 +8314,7 @@ void _UI_Init(int legacyClient, int clientVersion)
  * @param[in] key
  * @param[in] down
  */
-void _UI_KeyEvent(int key, qboolean down)
+void UI_KeyEvent(int key, qboolean down)
 {
 	static qboolean bypassKeyClear = qfalse;
 
@@ -8361,7 +8361,7 @@ void _UI_KeyEvent(int key, qboolean down)
  * @param[in] dx
  * @param[in] dy
  */
-void _UI_MouseEvent(int dx, int dy)
+void UI_MouseEvent(int dx, int dy)
 {
 	// update mouse screen position
 	uiInfo.uiDC.cursorx += dx;
@@ -8396,7 +8396,7 @@ static uiMenuCommand_t menutype = UIMENU_NONE;
  * @brief _UI_GetActiveMenu
  * @return
  */
-uiMenuCommand_t _UI_GetActiveMenu(void)
+uiMenuCommand_t UI_GetActiveMenu(void)
 {
 	return menutype;
 }
@@ -8407,7 +8407,7 @@ uiMenuCommand_t _UI_GetActiveMenu(void)
  * @brief _UI_SetActiveMenu
  * @param[in] menu
  */
-void _UI_SetActiveMenu(uiMenuCommand_t menu)
+void UI_SetActiveMenu(uiMenuCommand_t menu)
 {
 	char buf[4096]; // com_errorMessage can go up to 4096
 	char *missing_files;
