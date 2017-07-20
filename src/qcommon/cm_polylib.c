@@ -363,9 +363,6 @@ void ClipWindingEpsilon(winding_t *in, vec3_t normal, vec_t dist,
 	winding_t    *f, *b;
 	int          maxpts;
 
-	Com_Memset(dists, 0, MAX_POINTS_ON_WINDING + 4);
-	Com_Memset(dists, 0, MAX_POINTS_ON_WINDING + 4);
-
 	// determine sides for each point
 	for (i = 0 ; i < in->numpoints ; i++)
 	{
