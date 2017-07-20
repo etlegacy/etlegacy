@@ -787,8 +787,8 @@ qboolean Info_Validate(const char *s);
 qboolean Info_NextPair(const char **head, char *key, char *value);
 
 // this is only here so the functions in q_shared.c and bg_*.c can link
-void QDECL Com_Error(int code, const char *error, ...) __attribute__ ((noreturn, format(printf, 2, 3)));
-void QDECL Com_Printf(const char *msg, ...) __attribute__ ((format(printf, 1, 2)));
+void QDECL Com_Error(int code, const char *fmt, ...) __attribute__ ((noreturn, format(printf, 2, 3)));
+void QDECL Com_Printf(const char *fmt, ...) __attribute__ ((format(printf, 1, 2)));
 
 /*
 ==========================================================
