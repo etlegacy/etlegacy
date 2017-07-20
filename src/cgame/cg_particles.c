@@ -142,7 +142,6 @@ static float shaderAnimSTRatio[MAX_SHADER_ANIMS] =
 
 cparticle_t *active_particles, *free_particles;
 cparticle_t particles[MAX_PARTICLES];
-int         cl_numparticles = MAX_PARTICLES;
 
 qboolean initparticles = qfalse;
 vec3_t   vforward, vright, vup;
@@ -162,12 +161,12 @@ void CG_ClearParticles(void)
 	free_particles   = &particles[0];
 	active_particles = NULL;
 
-	for (i = 0 ; i < cl_numparticles ; i++)
+	for (i = 0 ; i < MAX_PARTICLES ; i++)
 	{
 		particles[i].next = &particles[i + 1];
 		particles[i].type = 0;
 	}
-	particles[cl_numparticles - 1].next = NULL;
+	particles[MAX_PARTICLES - 1].next = NULL;
 
 	oldtime = cg.time;
 
@@ -1659,7 +1658,7 @@ int CG_NewParticleArea(int num)
 		}
 	}
 
-	return (1);
+	return 1;
 }
 
 /**
