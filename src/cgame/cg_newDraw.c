@@ -52,7 +52,7 @@ int CG_TrimLeftPixels(char *instr, float scale, float w, int size)
 	int  i;
 
 	Q_strncpyz(buffer, instr, 1024);
-	memset(instr, 0, size);
+	Com_Memset(instr, 0, size);
 
 	for (i = 0, p = buffer; *p; p++, i++)
 	{
@@ -60,7 +60,7 @@ int CG_TrimLeftPixels(char *instr, float scale, float w, int size)
 		tw       = CG_Text_Width(instr, scale, 0);
 		if (tw >= w)
 		{
-			memset(instr, 0, size);
+			Com_Memset(instr, 0, size);
 			for (s = instr, p = &buffer[i + 1]; *p && ((s - instr) < size); p++, s++)
 			{
 				*s = *p;
@@ -86,7 +86,7 @@ void CG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontHelp
 	char *s, *p, *c, *ls = NULL;
 
 	Q_strncpyz(buffer, instr, 1024);
-	memset(instr, 0, size);
+	Com_Memset(instr, 0, size);
 
 	c = s = instr;
 	p = buffer;
@@ -147,7 +147,7 @@ void CG_FitTextToWidth2(char *instr, float scale, float w, int size)
 	char *s, *p, *c, *ls = NULL;
 
 	Q_strncpyz(buffer, instr, 1024);
-	memset(instr, 0, size);
+	Com_Memset(instr, 0, size);
 
 	c = s = instr;
 	p = buffer;
@@ -208,7 +208,7 @@ void CG_FitTextToWidth_SingleLine(char *instr, float scale, float w, int size)
 	char buffer[1024];
 
 	Q_strncpyz(buffer, instr, 1024);
-	memset(instr, 0, size);
+	Com_Memset(instr, 0, size);
 	p = instr;
 
 	for (s = buffer; *s; s++, p++)
