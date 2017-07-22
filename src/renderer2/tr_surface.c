@@ -2318,7 +2318,7 @@ static void Tess_SurfaceVBOMD5Mesh(srfVBOMD5Mesh_t *srf)
 
 /**
  * @brief Tess_SurfaceSkip
- * @param surf - unused
+ * @param surf - dummy function for SF_SKIP
  */
 static void Tess_SurfaceSkip(void *surf)
 {

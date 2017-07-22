@@ -1936,7 +1936,7 @@ void RB_SurfaceDecal(srfDecal_t *srf)
 
 /**
  * @brief RB_SurfaceSkip
- * @param surf - unused
+ * @param surf - dummy function for SF_SKIP
  */
 void RB_SurfaceSkip(void *surf)
 {
