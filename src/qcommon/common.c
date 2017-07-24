@@ -42,8 +42,8 @@
 #endif
 
 #if defined (_WIN32)
+#   include <winsock2.h>
 #   include "../sys/sys_win32.h"
-#   include <winsock.h>
 #   define Win_ShowConsole(x, y) Sys_ShowConsoleWindow(x, y)
 #else
 #   include <netinet/in.h>

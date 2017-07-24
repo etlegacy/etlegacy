@@ -323,9 +323,9 @@ static struct addrinfo *SearchAddrInfo(struct addrinfo *hints, sa_family_t famil
  */
 static qboolean Sys_StringToSockaddr(const char *s, struct sockaddr *sadr, int sadr_len, sa_family_t family)
 {
+	struct addrinfo hints;              // provides hints about the type of socket the caller supports
+	struct addrinfo *res = NULL;        // contains response information about the host
 #ifdef FEATURE_IPV6
-	struct addrinfo hints;
-	struct addrinfo *res    = NULL;
 	struct addrinfo *search = NULL;
 	struct addrinfo *hintsp;
 	int             retval;
@@ -403,9 +403,13 @@ static qboolean Sys_StringToSockaddr(const char *s, struct sockaddr *sadr, int s
 
 	return qfalse;
 #else // IPV4
-	struct hostent *h;
 
 	memset(sadr, 0, sizeof(*sadr));
+	memset(&hints, '\0', sizeof(hints));
+
+	hints.ai_family   = family;
+	hints.ai_socktype = SOCK_DGRAM;
+
 	((struct sockaddr_in *)sadr)->sin_family = AF_INET;
 
 	((struct sockaddr_in *)sadr)->sin_port = 0;
@@ -416,11 +420,16 @@ static qboolean Sys_StringToSockaddr(const char *s, struct sockaddr *sadr, int s
 	}
 	else
 	{
-		if (!(h = gethostbyname(s)))
+		if (!getaddrinfo(s, NULL, &hints, &res))
 		{
 			return qfalse;
 		}
-		*(int *)&((struct sockaddr_in *)sadr)->sin_addr = *(int *)h->h_addr_list[0];
+		*(int *)&((struct sockaddr_in *)sadr)->sin_addr = *(int *)res->ai_addr;
+	}
+
+	if (res)
+	{
+		freeaddrinfo(res);
 	}
 
 	return qtrue;
@@ -1390,11 +1399,18 @@ void NET_LeaveMulticast6(void)
 void NET_OpenSocks(int port)
 {
 	struct sockaddr_in address;
-	struct hostent     *h;
+	struct addrinfo    hints;           // provides hints about the type of socket the caller supports
+	struct addrinfo    *res = NULL;     // contains response information about the host
+	int                retval;          // success returns zero. Failure returns a nonzero Windows Sockets error code
 	int                len;
 	qboolean           rfc1929;
 	unsigned char      buf[64];
 	int                i = 1;
+
+	memset(&hints, '\0', sizeof(hints));
+
+	hints.ai_family   = AF_INET;
+	hints.ai_socktype = SOCK_DGRAM;
 
 	usingSocks = qfalse;
 	Com_Memset(&address.sin_zero, 0, sizeof(address.sin_zero));
@@ -1414,20 +1430,31 @@ void NET_OpenSocks(int port)
 		return;
 	}
 
-	h = gethostbyname(net_socksServer->string);
-	if (h == NULL)
+	retval = getaddrinfo(net_socksServer->string, NULL, &hints, &res);
+	if (retval != 0)
 	{
-		Com_Printf("WARNING: NET_OpenSocks: gethostbyname: %s\n", NET_ErrorString());
+		Com_Printf("WARNING: NET_OpenSocks: getaddrinfo: %i\n", retval);
 		return;
 	}
-	if (h->h_addrtype != AF_INET)
+
+	if (res->ai_addr->sa_family != AF_INET)
 	{
-		Com_Printf("WARNING: NET_OpenSocks: gethostbyname: address type was not AF_INET\n");
+        if (res)
+        {
+            freeaddrinfo(res);
+        }
+
+		Com_Printf("WARNING: NET_OpenSocks: getaddrinfo: address type was not AF_INET\n");
 		return;
 	}
 	address.sin_family      = AF_INET;
-	address.sin_addr.s_addr = *(int *)h->h_addr_list[0];
+	address.sin_addr.s_addr = *(int *)res->ai_addr;
 	address.sin_port        = htons((short)net_socksPort->integer);
+
+    if (res)
+    {
+        freeaddrinfo(res);
+    }
 
 	if (connect(socks_socket, (struct sockaddr *)&address, sizeof(address)) == SOCKET_ERROR)
 	{
