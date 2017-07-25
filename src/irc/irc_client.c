@@ -2101,7 +2101,7 @@ static int IRC_AttemptConnection()
 	Com_Memset(&address.sin_zero, 0, sizeof(address.sin_zero));
 	Com_Printf("IRC: connecting to server %s:%i\n", irc_server->string, irc_port->integer);
 
-    memset(&hint, 0, sizeof(hint));
+	memset(&hint, 0, sizeof(hint));
 
 	hint.ai_family   = AF_UNSPEC;
 	hint.ai_socktype = SOCK_DGRAM;
@@ -2131,7 +2131,7 @@ static int IRC_AttemptConnection()
 	if ((retval = getaddrinfo(hostName, NULL, &hint, &res)) != 0)
 	{
 		Com_Printf("...IRC: unknown server\n");
-        Com_DPrintf("...IRC: getaddrinfo failed with error: %d\n", retval);
+		Com_DPrintf("...IRC: getaddrinfo failed with error: %d\n", retval);
 		return IRC_CMD_FATAL;
 	}
 
@@ -2139,10 +2139,10 @@ static int IRC_AttemptConnection()
 	CHECK_SHUTDOWN;
 	if ((IRC_Socket = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
 	{
-        if (res)
-        {
-            freeaddrinfo(res);
-        }
+		if (res)
+		{
+			freeaddrinfo(res);
+		}
 
 		IRC_HandleError();
 		return IRC_CMD_FATAL;
@@ -2159,10 +2159,10 @@ static int IRC_AttemptConnection()
 	address.sin_port        = htons(port);
 	address.sin_addr.s_addr = *((unsigned long *) res->ai_addr);
 
-    if(res)
-    {
-        freeaddrinfo(res);
-    }
+	if (res)
+	{
+		freeaddrinfo(res);
+	}
 
 	// Attempt connection
 	if ((connect(IRC_Socket, (struct sockaddr *) &address, sizeof(address))) != 0)

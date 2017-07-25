@@ -420,7 +420,7 @@ static qboolean Sys_StringToSockaddr(const char *s, struct sockaddr *sadr, int s
 	}
 	else
 	{
-		if (!getaddrinfo(s, NULL, &hints, &res))
+		if (getaddrinfo(s, NULL, &hints, &res) != 0)
 		{
 			return qfalse;
 		}
@@ -1439,10 +1439,10 @@ void NET_OpenSocks(int port)
 
 	if (res->ai_addr->sa_family != AF_INET)
 	{
-        if (res)
-        {
-            freeaddrinfo(res);
-        }
+		if (res)
+		{
+			freeaddrinfo(res);
+		}
 
 		Com_Printf("WARNING: NET_OpenSocks: getaddrinfo: address type was not AF_INET\n");
 		return;
@@ -1451,10 +1451,10 @@ void NET_OpenSocks(int port)
 	address.sin_addr.s_addr = *(int *)res->ai_addr;
 	address.sin_port        = htons((short)net_socksPort->integer);
 
-    if (res)
-    {
-        freeaddrinfo(res);
-    }
+	if (res)
+	{
+		freeaddrinfo(res);
+	}
 
 	if (connect(socks_socket, (struct sockaddr *)&address, sizeof(address)) == SOCKET_ERROR)
 	{
