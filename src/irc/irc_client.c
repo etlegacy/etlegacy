@@ -46,8 +46,7 @@
 #endif
 
 #ifdef WIN32
-# include <winsock2.h>
-# include <ws2tcpip.h>
+# include <winsock.h>
 # include <process.h>
 typedef SOCKET irc_socket_t;
 #else
@@ -2089,10 +2088,8 @@ static qboolean IRC_InitialiseUser(const char *name)
 static int IRC_AttemptConnection()
 {
 	struct sockaddr_in address;               // socket address
-	struct addrinfo    hint;                  // provides hints about the type of socket the caller supports
-	struct addrinfo    *res = NULL;           // contains response information about the host
-	int                retval;                // success returns zero. Failure returns a nonzero Windows Sockets error code
-	char               hostName[128];         // host name
+	struct hostent     *host;                 // host lookup
+	char               host_name[128];        // host name
 	char               name[MAX_NAME_LENGTH]; // player's name
 	int                err_code;
 	int                port;
@@ -2100,11 +2097,6 @@ static int IRC_AttemptConnection()
 	CHECK_SHUTDOWN;
 	Com_Memset(&address.sin_zero, 0, sizeof(address.sin_zero));
 	Com_Printf("IRC: connecting to server %s:%i\n", irc_server->string, irc_port->integer);
-
-    memset(&hint, 0, sizeof(hint));
-
-	hint.ai_family   = AF_UNSPEC;
-	hint.ai_socktype = SOCK_DGRAM;
 
 #ifdef DEDICATED
 	Q_strncpyz(name, Cvar_VariableString("sv_hostname"), sizeof(name));
@@ -2127,11 +2119,10 @@ static int IRC_AttemptConnection()
 	}
 
 	// Find server address
-	Q_strncpyz(hostName, irc_server->string, sizeof(hostName));
-	if ((retval = getaddrinfo(hostName, NULL, &hint, &res)) != 0)
+	Q_strncpyz(host_name, irc_server->string, sizeof(host_name));
+	if ((host = gethostbyname(host_name)) == NULL)
 	{
 		Com_Printf("...IRC: unknown server\n");
-        Com_DPrintf("...IRC: getaddrinfo failed with error: %d\n", retval);
 		return IRC_CMD_FATAL;
 	}
 
@@ -2139,11 +2130,6 @@ static int IRC_AttemptConnection()
 	CHECK_SHUTDOWN;
 	if ((IRC_Socket = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
 	{
-        if (res)
-        {
-            freeaddrinfo(res);
-        }
-
 		IRC_HandleError();
 		return IRC_CMD_FATAL;
 	}
@@ -2157,12 +2143,7 @@ static int IRC_AttemptConnection()
 	}
 	address.sin_family      = AF_INET;
 	address.sin_port        = htons(port);
-	address.sin_addr.s_addr = *((unsigned long *) res->ai_addr);
-
-    if(res)
-    {
-        freeaddrinfo(res);
-    }
+	address.sin_addr.s_addr = *((unsigned long *) host->h_addr);
 
 	// Attempt connection
 	if ((connect(IRC_Socket, (struct sockaddr *) &address, sizeof(address))) != 0)
@@ -2174,7 +2155,7 @@ static int IRC_AttemptConnection()
 
 	// Send username and nick name
 	CHECK_SHUTDOWN_CLOSE;
-	err_code = IRC_Send("USER %s %s %s :%s", IRC_User.username, IRC_User.email, hostName, IRC_User.nick);
+	err_code = IRC_Send("USER %s %s %s :%s", IRC_User.username, IRC_User.email, host_name, IRC_User.nick);
 	if (err_code == IRC_CMD_SUCCESS)
 	{
 		err_code = IRC_SendNickname();
