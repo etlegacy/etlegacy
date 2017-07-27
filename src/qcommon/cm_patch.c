@@ -488,8 +488,8 @@ static patchPlane_t planes[MAX_PATCH_PLANES];
 static unsigned int numFacets;
 static facet_t      facets[MAX_FACETS];
 
-#define NORMAL_EPSILON  0.00015f
-#define DIST_EPSILON    0.0235f
+#define NORMAL_EPSILON  0.00020f
+#define DIST_EPSILON    0.0335f
 
 /**
  * @brief CM_PlaneEqual
