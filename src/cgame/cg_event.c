@@ -45,7 +45,7 @@ static vec3_t OB_RED = { 1.f, 0.f, 0.f };
 /**
  * @brief CG_Obituary
  * @param[in] ent
- * @todo FIXME: ... some MODs are not catched - check all!
+ * @todo FIXME: ... some MODs are not caught - check all!
  *      - MOD_CRUSH_X is selfkill only
  */
 static void CG_Obituary(entityState_t *ent)
@@ -120,6 +120,9 @@ static void CG_Obituary(entityState_t *ent)
 		case MOD_EXPLOSIVE:
 			message = "was pulverized by an explosion";
 			break;
+		case MOD_GRENADE:
+			message = "has been blasted away by an explosion";
+			break;
 		default:
 			message = NULL;
 			break;
@@ -152,6 +155,9 @@ static void CG_Obituary(entityState_t *ent)
 			break;
 		case MOD_EXPLOSIVE:
 			message = "died in his own explosion";
+			break;
+		case MOD_GRENADE: // might have an inflicor
+			message = "knew how to initiate an explosion";
 			break;
 		// everything from this point on is sorted by MOD, didn't
 		// resort existing messages to avoid differences between pre
@@ -209,6 +215,7 @@ static void CG_Obituary(entityState_t *ent)
 			//case MOD_MAPMORTAR:
 			//case MOD_MAPMORTAR_SPLASH:
 			//case MOD_EXPLOSIVE:
+			//case MOD_GRENADE:
 			case MOD_ARTY:
 				if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_BINOCULARS].weaponIcon[0])
 				{
@@ -508,6 +515,10 @@ static void CG_Obituary(entityState_t *ent)
 		case MOD_SHOVE:
 			message  = "was thrown to his doom by";
 			message2 = "";
+			break;
+		case MOD_GRENADE: // might have an inflictor ...
+			message  = "was blasted by";
+			message2 = "'s explosion";
 			break;
 		default:
 			message  = "was killed by";
