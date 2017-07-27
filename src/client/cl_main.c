@@ -1564,7 +1564,7 @@ void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extende
 	byte         *buffptr;
 	byte         *buffend;
 
-	Com_Printf("CL_ServersResponsePacket\n");
+	//Com_Printf("CL_ServersResponsePacket\n");
 
 	if (cls.numglobalservers == -1)
 	{
@@ -1691,7 +1691,7 @@ void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extende
 	cls.numglobalservers = count;
 	total                = count + cls.numGlobalServerAddresses;
 
-	Com_Printf("%d servers parsed (total %d)\n", numservers, total);
+	Com_Printf("CL_ServersResponsePacket - server %s: %d game servers parsed (total %d)\n", NET_AdrToString(*from), numservers, total);
 }
 
 /**
