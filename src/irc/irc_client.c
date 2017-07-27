@@ -46,7 +46,8 @@
 #endif
 
 #ifdef WIN32
-# include <winsock.h>
+# include <winsock2.h>
+# include <ws2tcpip.h>
 # include <process.h>
 typedef SOCKET irc_socket_t;
 #else
@@ -104,12 +105,12 @@ typedef int irc_socket_t;
 #define IRC_THREAD_INITIALISING 1   ///< Thread is being initialised
 #define IRC_THREAD_CONNECTING   2   ///< Thread is attempting to connect
 #define IRC_THREAD_SETNICK  3       ///< Thread is trying to set the player's
-                                    ///< nick
+///< nick
 #define IRC_THREAD_CONNECTED    4   ///< Thread established a connection to
-                                    ///< the server and will attempt to join
-                                    ///< the channel
+///< the server and will attempt to join
+///< the channel
 #define IRC_THREAD_JOINED   5       ///< Channel joined, ready to send or
-                                    ///< receive messages
+///< receive messages
 #define IRC_THREAD_QUITTING 6       ///< The thread is being killed
 
 /* Function that sets the thread status when the thread dies. Since that is
@@ -1997,7 +1998,7 @@ static int IRC_ProcessData(void)
  */
 char *IRC_GetName(const char *name)
 {
-	int  i       = 0, j = 0, k = 0;
+	int  i = 0, j = 0, k = 0;
 	int  namelen = strlen(name);
 	char c;
 	char *retName;
@@ -2088,11 +2089,17 @@ static qboolean IRC_InitialiseUser(const char *name)
 static int IRC_AttemptConnection()
 {
 	struct sockaddr_in address;               // socket address
-	struct hostent     *host;                 // host lookup
-	char               host_name[128];        // host name
+	struct addrinfo    hint;                  // provides hints about the type of socket the caller supports
+	struct addrinfo    *res = NULL;           // contains response information about the host
+	char               hostName[128];        // host name
 	char               name[MAX_NAME_LENGTH]; // player's name
 	int                err_code;
-	int                port;
+	char               port[5] = "6667";
+
+	memset(&hint, 0, sizeof(hint));
+
+	hint.ai_family   = AF_UNSPEC;
+	hint.ai_socktype = SOCK_STREAM;
 
 	CHECK_SHUTDOWN;
 	Com_Memset(&address.sin_zero, 0, sizeof(address.sin_zero));
@@ -2118,9 +2125,19 @@ static int IRC_AttemptConnection()
 		return IRC_CMD_FATAL;
 	}
 
+	// Check socket address
+	if (irc_port->integer <= 0 || irc_port->integer >= 65536)
+	{
+		Com_Printf("...IRC: invalid port number, defaulting to 6667\n");
+	}
+	else
+	{
+		Q_strcpy(port, irc_port->string);
+	}
+
 	// Find server address
-	Q_strncpyz(host_name, irc_server->string, sizeof(host_name));
-	if ((host = gethostbyname(host_name)) == NULL)
+	Q_strncpyz(hostName, irc_server->string, sizeof(hostName));
+	if (getaddrinfo(hostName, port, &hint, &res) != 0)
 	{
 		Com_Printf("...IRC: unknown server\n");
 		return IRC_CMD_FATAL;
@@ -2128,34 +2145,38 @@ static int IRC_AttemptConnection()
 
 	// Create socket
 	CHECK_SHUTDOWN;
-	if ((IRC_Socket = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
+	if ((IRC_Socket = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == INVALID_SOCKET)
 	{
+		if (res)
+		{
+			freeaddrinfo(res);
+		}
+
 		IRC_HandleError();
 		return IRC_CMD_FATAL;
 	}
 
-	// Initialise socket address
-	port = irc_port->integer;
-	if (port <= 0 || port >= 65536)
-	{
-		Com_Printf("...IRC: invalid port number, defaulting to 6667\n");
-		port = 6667;
-	}
-	address.sin_family      = AF_INET;
-	address.sin_port        = htons(port);
-	address.sin_addr.s_addr = *((unsigned long *) host->h_addr);
-
 	// Attempt connection
-	if ((connect(IRC_Socket, (struct sockaddr *) &address, sizeof(address))) != 0)
+	if ((connect(IRC_Socket, res->ai_addr, res->ai_addrlen)) != 0)
 	{
+		if (res)
+		{
+			freeaddrinfo(res);
+		}
+
 		closesocket(IRC_Socket);
 		Com_Printf("...IRC connection refused.\n");
 		return IRC_CMD_RETRY;
 	}
 
+	if (res)
+	{
+		freeaddrinfo(res);
+	}
+
 	// Send username and nick name
 	CHECK_SHUTDOWN_CLOSE;
-	err_code = IRC_Send("USER %s %s %s :%s", IRC_User.username, IRC_User.email, host_name, IRC_User.nick);
+	err_code = IRC_Send("USER %s %s %s :%s", IRC_User.username, IRC_User.email, hostName, IRC_User.nick);
 	if (err_code == IRC_CMD_SUCCESS)
 	{
 		err_code = IRC_SendNickname();

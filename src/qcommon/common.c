@@ -42,8 +42,8 @@
 #endif
 
 #if defined (_WIN32)
+#   include <winsock2.h>
 #   include "../sys/sys_win32.h"
-#   include <winsock.h>
 #   define Win_ShowConsole(x, y) Sys_ShowConsoleWindow(x, y)
 #else
 #   include <netinet/in.h>
@@ -972,7 +972,7 @@ void Z_ClearZone(memzone_t *zone, int size)
 	// set the entire zone to one free block
 
 	zone->blocklist.next = zone->blocklist.prev = block =
-	                                                  ( memblock_t * )((byte *)zone + sizeof(memzone_t));
+													  ( memblock_t * )((byte *)zone + sizeof(memzone_t));
 	zone->blocklist.tag  = 1;   // in use block
 	zone->blocklist.id   = 0;
 	zone->blocklist.size = 0;
@@ -3898,7 +3898,7 @@ void Com_GetHunkInfo(int *hunkused, int *hunkexpected)
  */
 static int Field_LastWhiteSpace(field_t *field)
 {
-	int      i            = 0, lastSpace = 0;
+	int      i = 0, lastSpace = 0;
 	qboolean insideQuotes = qfalse;
 
 	for (; i < strlen(field->buffer); i++)
