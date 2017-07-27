@@ -5511,9 +5511,6 @@ static void RB_RenderDebugUtils()
 							continue;
 						}
 
-						//if(node->shrinkedAABB)
-						//	gl_genericShader->SetUniform_Color(colorBlue);
-						//else
 						if (node->visCounts[tr.visIndex] == tr.visCounts[tr.visIndex])
 						{
 							SetUniformVec4(UNIFORM_COLOR, colorGreen);

@@ -4045,14 +4045,6 @@ static void R_SetParent(bspNode_t *node, bspNode_t *parent)
 
 	if (node->contents != CONTENTS_NODE)
 	{
-
-		//node->sameAABBAsParent = VectorCompare(node->mins, parent->mins) && VectorCompare(node->maxs, parent->maxs);
-		//if(node->sameAABBAsParent)
-		//{
-		//    Ren_Print("node %i has same AABB as their parent\n", node - s_worldData.nodes);
-		//}
-
-
 		// add node surfaces to bounds
 		if (node->numMarkSurfaces > 0)
 		{
