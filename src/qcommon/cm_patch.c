@@ -114,9 +114,9 @@ typedef struct {
 
 #define ADDBEVELS
 
-int c_totalPatchBlocks;
-int c_totalPatchSurfaces;
-int c_totalPatchEdges;
+//int c_totalPatchBlocks;
+//int c_totalPatchSurfaces;
+//int c_totalPatchEdges;
 
 static const patchCollide_t *debugPatchCollide;
 static const facet_t        *debugFacet;
@@ -1466,7 +1466,7 @@ struct patchCollide_s *CM_GeneratePatchCollide(int width, int height, vec3_t *po
 		}
 	}
 
-	c_totalPatchBlocks += (grid.width - 1) * (grid.height - 1);
+	// c_totalPatchBlocks += (grid.width - 1) * (grid.height - 1);
 
 	// generate a bsp tree for the surface
 	CM_PatchCollideFromGrid(&grid, pf, addBevels);
