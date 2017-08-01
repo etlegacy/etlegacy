@@ -49,15 +49,10 @@
 #include "g_mdx.h"
 #endif
 
-qboolean CompareIPNoPort(char const *ip1, char const *ip2);
-
 // new bounding box
 vec3_t playerMins = { -18, -18, -24 };
 vec3_t playerMaxs = { 18, 18, 48 };
 
-/*
-
-*/
 /**
  * @brief QUAKED info_player_deathmatch (1 0 1) (-18 -18 -24) (18 18 48)
  * potential spawning position for deathmatch games.
@@ -2171,145 +2166,6 @@ void ClientUserinfoChanged(int clientNum)
 	G_DPrintf("ClientUserinfoChanged: %i :: %s\n", clientNum, s);
 }
 
-/** This defines the default value and also the minimum value we will allow the client to set...*/
-#define DEF_IP_MAX_CLIENTS  3
-
-/**
- * @brief GetIPLength
- * @param ip
- * @return The length of the IP address if it has a port, or INT_MAX otherwise
- *
- * @todo FIXME: IPv6
- */
-int GetIPLength(char const *ip)
-{
-	char *start = strchr(ip, ':');
-
-	return (start == NULL ? INT_MAX : start - ip);
-}
-
-/**
- * @brief CompareIPNoPort
- * @param[in] ip1
- * @param[in] ip2
- * @return
- */
-qboolean CompareIPNoPort(char const *ip1, char const *ip2)
-{
-	int checkLength = MIN(GetIPLength(ip1), GetIPLength(ip2));
-
-	// Don't compare the port - just the IP
-	if (checkLength < INT_MAX && !Q_strncmp(ip1, ip2, checkLength))
-	{
-		return qtrue;
-	}
-	else if (checkLength == INT_MAX && !strcmp(ip1, ip2))
-	{
-		return qtrue;
-	}
-	else
-	{
-		return qfalse;
-	}
-}
-
-/**
- * @brief Ported from the etpro lua module
- * @param clientNum
- * @param ip
- * @param rate
- * @return
- *
- * @todo  FIXME: nice to have in engine too - implement this server side !!!
- */
-char *IsFakepConnection(int clientNum, char const *ip, char const *rate)
-{
-	gentity_t *ent;
-	int       theirIPLength;
-	int       checkLength;
-	int       count      = 1; // we count as the first one
-	int       max        = g_ip_max_clients.integer;
-	int       myIPLength = GetIPLength(ip);
-	int       i;
-	char      *theirIP;
-
-	// Default it to DEF_IP_MAX_CLIENTS as the minimum
-	if (max <= 0)
-	{
-		max = DEF_IP_MAX_CLIENTS;
-	}
-
-	// validate userinfo to filter out the people blindly using hack code
-	if (rate[0] == 0)
-	{
-		return "Invalid connection!";
-	}
-
-	// let localhost ( mostly bots and host player ) be
-	// FIXME: move to loop and check for bots ... default of 3 connections should be enough
-	// for localhost
-	if (!strcmp(ip, "localhost"))
-	{
-		return NULL;
-	}
-
-	// Iterate over each connected client and check the IP, keeping a count of connections
-	// from the same IP as this connecting client
-	// FIXME: use connected clients
-	for (i = 0; i < level.maxclients; ++i)
-	{
-		// Skip our own slot
-		if (i == clientNum)
-		{
-			continue;
-		}
-
-		ent = &g_entities[i];
-		if (ent->client == NULL)
-		{
-			continue;
-		}
-
-		theirIP       = ent->client->pers.client_ip;
-		theirIPLength = GetIPLength(theirIP);
-		checkLength   = MIN(theirIPLength, myIPLength);
-
-		// pers.connected is set correctly for fake players can't rely on userinfo being empty
-		if (ent->client->pers.connected != CON_DISCONNECTED)
-		{
-			qboolean ipMatch = qfalse;
-
-			// Don't compare the port - just the IP
-			if (checkLength < INT_MAX && !Q_strncmp(ip, theirIP, checkLength))
-			{
-				ipMatch = qtrue;
-			}
-			else if (checkLength == INT_MAX && !strcmp(ip, theirIP))
-			{
-				ipMatch = qtrue;
-			}
-
-			if (ipMatch == qtrue)
-			{
-				++count;
-				if (count > max)
-				{
-					G_Printf("IsFakepConnection: too many connections from %s\n", ip);
-					G_LogPrintf("IsFakepConnection: too many connections from %s\n", ip);
-					// TODO: should we drop / ban all connections from this IP?
-					return va("Only %d connection%s per IP %s allowed on this server!",
-					          max,
-					          max == 1 ? "" : "s",
-					          max == 1 ? "is" : "are");
-				}
-			}
-		}
-	}
-
-	// Ok let them connect
-	return NULL;
-}
-
 extern const char *country_name[MAX_COUNTRY_NUM];
 
 /**
@@ -2344,7 +2200,6 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	char       cs_name[MAX_NETNAME]          = "";
 	char       cs_guid[MAX_GUID_LENGTH + 1]  = "";
 	char       cs_rate[MAX_STRING_CHARS]     = "";
-	char       *value;
 #ifdef FEATURE_LUA
 	char reason[MAX_STRING_CHARS] = "";
 #endif
@@ -2441,14 +2296,6 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 
 	if (!isBot)
 	{
-		// Check for fakep connections
-		value = IsFakepConnection(clientNum, cs_ip, cs_rate);
-		if (value != NULL)
-		{
-			// Too many connections from the same IP - don't permit the connection
-			return value;
-		}
-
 		// we don't check password for bots and local client
 		// NOTE: local client <-> "ip" "localhost"
 		//   this means this client is not running in our current process

@@ -2643,3 +2643,42 @@ void *Q_LinearSearch(const void *key, const void *ptr, size_t count, size_t size
 	}
 	return NULL;
 }
+
+/**
+ * @brief Q_GetIPLength
+ * @param ip
+ * @return The length of the IP address if it has a port, or INT_MAX otherwise
+ *
+ * @todo FIXME: IPv6
+ */
+int GetIPLength(char const *ip)
+{
+	char *start = strchr(ip, ':');
+
+	return (start == NULL ? INT_MAX : start - ip);
+}
+
+/**
+ * @brief CompareIPNoPort
+ * @param[in] ip1
+ * @param[in] ip2
+ * @return
+ */
+qboolean CompareIPNoPort(char const *ip1, char const *ip2)
+{
+	int checkLength = MIN(GetIPLength(ip1), GetIPLength(ip2));
+
+	// Don't compare the port - just the IP
+	if (checkLength < INT_MAX && !Q_strncmp(ip1, ip2, checkLength))
+	{
+		return qtrue;
+	}
+	else if (checkLength == INT_MAX && !strcmp(ip1, ip2))
+	{
+		return qtrue;
+	}
+	else
+	{
+		return qfalse;
+	}
+}
