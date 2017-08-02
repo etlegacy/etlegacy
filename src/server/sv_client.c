@@ -2174,13 +2174,13 @@ char *SV_IsFakepConnection(int clientNum, const char *ip, const char *rate)
 			++count;
 			if (count > max)
 			{
-                Com_Printf("SV_IsFakepConnection: too many connections from %s\n", ip);
+				Com_Printf("SV_IsFakepConnection: too many connections from %s\n", ip);
 
-                // TODO: should we drop / ban all connections from this IP?
+				// TODO: should we drop / ban all connections from this IP?
 				return va("Only %d connection%s per IP %s allowed on this server!",
-						  max,
-						  max == 1 ? "" : "s",
-						  max == 1 ? "is" : "are");
+				          max,
+				          max == 1 ? "" : "s",
+				          max == 1 ? "is" : "are");
 			}
 		}
 	}
