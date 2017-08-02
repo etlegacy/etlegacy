@@ -2160,29 +2160,27 @@ char *SV_IsFakepConnection(int clientNum, char const *ip, int rate)
 		}
 
 		client = &svs.clients[i];
-		if (client == NULL)
+
+		if (svs.clients[i].state < CS_CONNECTED) // only active clients
 		{
 			continue;
 		}
 
 		theirIP = NET_AdrToString(client->netchan.remoteAddress);
 
-		if (client->state == CS_CONNECTED)
+		// Don't compare the port - just the IP
+		if (CompareIPNoPort(ip, theirIP))
 		{
-			// Don't compare the port - just the IP
-			if (CompareIPNoPort(ip, theirIP))
+			++count;
+			if (count > max)
 			{
-				++count;
-				if (count > max)
-				{
-					Com_Printf("IsFakepConnection: too many connections from %s\n", ip);
-					//G_LogPrintf("IsFakepConnection: too many connections from %s\n", ip);
-					// TODO: should we drop / ban all connections from this IP?
-					return va("Only %d connection%s per IP %s allowed on this server!",
-					          max,
-					          max == 1 ? "" : "s",
-					          max == 1 ? "is" : "are");
-				}
+				Com_Printf("IsFakepConnection: too many connections from %s\n", ip);
+				//G_LogPrintf("IsFakepConnection: too many connections from %s\n", ip);
+				// TODO: should we drop / ban all connections from this IP?
+				return va("Only %d connection%s per IP %s allowed on this server!",
+						  max,
+						  max == 1 ? "" : "s",
+						  max == 1 ? "is" : "are");
 			}
 		}
 	}
