@@ -472,7 +472,7 @@ extern cvar_t *sv_autoDemo;
 extern cvar_t *cl_freezeDemo;
 extern cvar_t *sv_demoTolerant;
 
-extern cvar_t *sv_ip_max_clients;
+extern cvar_t *sv_ipMaxClients; ///< limit client connection
 
 //===========================================================
 
@@ -568,7 +568,7 @@ void SV_ExecuteClientCommand(client_t *cl, const char *s, qboolean clientOK, qbo
 void SV_ClientThink(client_t *cl, usercmd_t *cmd);
 int SV_SendDownloadMessages(void);
 int SV_SendQueuedMessages(void);
-char *SV_IsFakepConnection(int clientNum, char const *ip, int rate);
+char *SV_IsFakepConnection(int clientNum, const char *ip, const char *rate);
 
 // sv_ccmds.c
 void SV_Heartbeat_f(void);

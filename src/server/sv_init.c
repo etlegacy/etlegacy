@@ -1156,7 +1156,7 @@ void SV_Init(void)
 
 	svs.serverLoad = -1;
 
-	sv_ip_max_clients = Cvar_Get("sv_ip_max_clients", "0", CVAR_ARCHIVE);
+	sv_ipMaxClients = Cvar_Get("sv_ip_max_clients", "0", CVAR_ARCHIVE);
 
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
 	IRC_Init();

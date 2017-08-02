@@ -2172,7 +2172,7 @@ extern const char *country_name[MAX_COUNTRY_NUM];
  * @brief Called when a player begins connecting to the server.
  * Called again for every map change or tournement restart.
  *
- * @details  The session information will be valid after exit.
+ * @details The session information will be valid after exit.
  *
  * Return NULL if the client should be allowed, otherwise return
  * a string with the reason for denial.
@@ -2199,7 +2199,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	char       cs_password[MAX_STRING_CHARS] = "";
 	char       cs_name[MAX_NETNAME]          = "";
 	char       cs_guid[MAX_GUID_LENGTH + 1]  = "";
-	char       cs_rate[MAX_STRING_CHARS]     = "";
+	//char       cs_rate[MAX_STRING_CHARS]     = "";
 #ifdef FEATURE_LUA
 	char reason[MAX_STRING_CHARS] = "";
 #endif
@@ -2234,9 +2234,9 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		case TOK_password:
 			Q_strncpyz(cs_password, cs_value, MAX_STRING_CHARS);
 			break;
-		case TOK_rate:
-			Q_strncpyz(cs_rate, cs_value, MAX_STRING_CHARS);
-			break;
+		//case TOK_rate:
+		//	Q_strncpyz(cs_rate, cs_value, MAX_STRING_CHARS);
+		//	break;
 		default:
 			continue;
 		}

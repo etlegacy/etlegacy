@@ -330,9 +330,9 @@ void SV_DirectConnect(netadr_t from)
 			}
 		}
 	}
+
 	// note: keep consistency - at this point bots might be still connected to private slots when a human player w/o password connects
 	// but if we use a private slot for players w/o password the slot is no longer available for reserved players (see startIndex)
-
 	if (!newcl)
 	{
 		if (NET_IsLocalAddress(from))
@@ -374,7 +374,7 @@ gotnewcl:
 
 	// Check for fakeip connections
 	// TODO: should this be done earlier ?
-	denied = SV_IsFakepConnection(clientNum, NET_AdrToString(newcl->netchan.remoteAddress), newcl->rate);
+	denied = SV_IsFakepConnection(clientNum, Info_ValueForKey(userinfo, "ip"), Info_ValueForKey(userinfo, "rate"));
 	if (denied)
 	{
 		// we can't just use VM_ArgPtr, because that is only valid inside a VM_Call
@@ -2118,12 +2118,16 @@ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg)
  * @param[in] ip
  * @param[in] rate
  * @return
+ *
+ * @note maybe we want to have more control over localhost clients in future.
+ * So we let localhost connect since bots don't connect from SV_DirectConnect
+ * where SV_IsFakepConnection is done.
  */
-char *SV_IsFakepConnection(int clientNum, char const *ip, int rate)
+char *SV_IsFakepConnection(int clientNum, const char *ip, const char *rate)
 {
 	client_t   *client;
 	int        count = 1;     // we count as the first one
-	int        max   = sv_ip_max_clients->integer;
+	int        max   = sv_ipMaxClients->integer;
 	int        i;
 	const char *theirIP;
 
@@ -2134,16 +2138,12 @@ char *SV_IsFakepConnection(int clientNum, char const *ip, int rate)
 	}
 
 	// validate userinfo to filter out the people blindly using hack code
-	// FIXME: rate is always equal to 0 with the new implemntation
-	// ... find a better way to retrieve the rate from client
-	// if (rate == 0)
-	// {
-	//  return "Invalid connection!";
-	// }
+	if (rate[0] == 0)
+	{
+		return "Invalid connection!";
+	}
 
-	// let localhost ( mostly bots and host player ) be
-	// FIXME: move to loop and check for bots ... default of 3 connections should be enough
-	// for localhost.
+	// let localhost connect
 	if (!strcmp(ip, "localhost"))
 	{
 		return NULL;
@@ -2174,9 +2174,9 @@ char *SV_IsFakepConnection(int clientNum, char const *ip, int rate)
 			++count;
 			if (count > max)
 			{
-				Com_Printf("IsFakepConnection: too many connections from %s\n", ip);
-				//G_LogPrintf("IsFakepConnection: too many connections from %s\n", ip);
-				// TODO: should we drop / ban all connections from this IP?
+                Com_Printf("SV_IsFakepConnection: too many connections from %s\n", ip);
+
+                // TODO: should we drop / ban all connections from this IP?
 				return va("Only %d connection%s per IP %s allowed on this server!",
 						  max,
 						  max == 1 ? "" : "s",

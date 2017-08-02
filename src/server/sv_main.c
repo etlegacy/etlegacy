@@ -117,7 +117,7 @@ cvar_t *sv_autoDemo;
 cvar_t *cl_freezeDemo;  // to freeze server-side demos
 cvar_t *sv_demoTolerant;
 
-cvar_t *sv_ip_max_clients;
+cvar_t *sv_ipMaxClients;
 
 static void SVC_Status(netadr_t from, qboolean force);
 
