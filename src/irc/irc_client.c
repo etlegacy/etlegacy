@@ -1998,7 +1998,7 @@ static int IRC_ProcessData(void)
  */
 char *IRC_GetName(const char *name)
 {
-	int  i = 0, j = 0, k = 0;
+	int  i       = 0, j = 0, k = 0;
 	int  namelen = strlen(name);
 	char c;
 	char *retName;
@@ -2132,7 +2132,7 @@ static int IRC_AttemptConnection()
 	}
 	else
 	{
-		Q_strcpy(port, irc_port->string);
+		Q_strncpyz(port, irc_port->string, sizeof(port));
 	}
 
 	// Find server address
@@ -2147,11 +2147,7 @@ static int IRC_AttemptConnection()
 	CHECK_SHUTDOWN;
 	if ((IRC_Socket = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == INVALID_SOCKET)
 	{
-		if (res)
-		{
-			freeaddrinfo(res);
-		}
-
+		freeaddrinfo(res);
 		IRC_HandleError();
 		return IRC_CMD_FATAL;
 	}
@@ -2159,20 +2155,13 @@ static int IRC_AttemptConnection()
 	// Attempt connection
 	if ((connect(IRC_Socket, res->ai_addr, res->ai_addrlen)) != 0)
 	{
-		if (res)
-		{
-			freeaddrinfo(res);
-		}
-
+		freeaddrinfo(res);
 		closesocket(IRC_Socket);
 		Com_Printf("...IRC connection refused.\n");
 		return IRC_CMD_RETRY;
 	}
 
-	if (res)
-	{
-		freeaddrinfo(res);
-	}
+	freeaddrinfo(res);
 
 	// Send username and nick name
 	CHECK_SHUTDOWN_CLOSE;

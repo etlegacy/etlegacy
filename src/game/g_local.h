@@ -1982,7 +1982,6 @@ extern vmCvar_t lua_allowedModules;
 #endif
 
 extern vmCvar_t g_protect;
-extern vmCvar_t g_ip_max_clients;
 
 extern vmCvar_t g_dropHealth;
 extern vmCvar_t g_dropAmmo;

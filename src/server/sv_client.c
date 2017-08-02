@@ -138,17 +138,17 @@ void SV_GetChallenge(netadr_t from)
  */
 void SV_DirectConnect(netadr_t from)
 {
-	char                userinfo[MAX_INFO_STRING];
-	int                 i, count = 0;
-	client_t            *cl, *newcl;
-	client_t            temp;
-	int                 clientNum;
-	int                 version;
-	int                 qport;
-	int                 challenge;
-	char                *password;
-	int                 startIndex;
-	char                *denied;
+	char     userinfo[MAX_INFO_STRING];
+	int      i, count = 0;
+	client_t *cl, *newcl;
+	client_t temp;
+	int      clientNum;
+	int      version;
+	int      qport;
+	int      challenge;
+	char     *password;
+	int      startIndex;
+	char     *denied;
 
 	Com_DPrintf("SVC_DirectConnect ()\n");
 
@@ -371,6 +371,20 @@ gotnewcl:
 
 	// save the userinfo
 	Q_strncpyz(newcl->userinfo, userinfo, sizeof(newcl->userinfo));
+
+	// Check for fakeip connections
+	// TODO: should this be done earlier ?
+	denied = SV_IsFakepConnection(clientNum, NET_AdrToString(newcl->netchan.remoteAddress), newcl->rate);
+	if (denied)
+	{
+		// we can't just use VM_ArgPtr, because that is only valid inside a VM_Call
+		denied = VM_ExplicitArgPtr(gvm, (intptr_t)denied);
+
+		// Too many connections from the same IP - don't permit the connection
+		NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]%s\n", denied);
+		Com_DPrintf("Server rejected a connection: %s.\n", denied);
+		return;
+	}
 
 	// get the game a chance to reject this connection or modify the userinfo
 	denied = (char *)(VM_Call(gvm, GAME_CLIENT_CONNECT, clientNum, qtrue, qfalse)); // firstTime = qtrue
@@ -680,7 +694,7 @@ static void SV_CloseDownload(client_t *cl)
 	{
 		cl->lastPacketTime = svs.time;
 	}
-	
+
 	// Free the temporary buffer space
 	for (i = 0; i < MAX_DOWNLOAD_WINDOW; i++)
 	{
@@ -2090,4 +2104,89 @@ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg)
 	//if ( msg->readcount != msg->cursize ) {
 	//    Com_Printf( "WARNING: Junk at end of packet for client %i\n", cl - svs.clients );
 	//}
+}
+
+/**
+ * @def DEF_IP_MAX_CLIENTS
+ * @brief This defines the default value and also the minimum value we will allow the client to set...
+ */
+#define DEF_IP_MAX_CLIENTS  3
+
+/**
+ * @brief Ported from the etpro lua module
+ * @param[in] clientNum
+ * @param[in] ip
+ * @param[in] rate
+ * @return
+ */
+char *SV_IsFakepConnection(int clientNum, char const *ip, int rate)
+{
+	client_t   *client;
+	int        count = 1;     // we count as the first one
+	int        max   = sv_ip_max_clients->integer;
+	int        i;
+	const char *theirIP;
+
+	// Default it to DEF_IP_MAX_CLIENTS as the minimum
+	if (max <= 0)
+	{
+		max = DEF_IP_MAX_CLIENTS;
+	}
+
+	// validate userinfo to filter out the people blindly using hack code
+	// FIXME: rate is always equal to 0 with the new implemntation
+	// ... find a better way to retrieve the rate from client
+	// if (rate == 0)
+	// {
+	//  return "Invalid connection!";
+	// }
+
+	// let localhost ( mostly bots and host player ) be
+	// FIXME: move to loop and check for bots ... default of 3 connections should be enough
+	// for localhost.
+	if (!strcmp(ip, "localhost"))
+	{
+		return NULL;
+	}
+
+	// Iterate over each connected client and check the IP, keeping a count of connections
+	// from the same IP as this connecting client
+	for (i = 0; i < sv_maxclients->integer; ++i)
+	{
+		// Skip our own slot
+		if (i == clientNum)
+		{
+			continue;
+		}
+
+		client = &svs.clients[i];
+		if (client == NULL)
+		{
+			continue;
+		}
+
+		theirIP = NET_AdrToString(client->netchan.remoteAddress);
+
+		if (client->state == CS_CONNECTED)
+		{
+			// Don't compare the port - just the IP
+			if (CompareIPNoPort(ip, theirIP))
+			{
+				++count;
+				if (count > max)
+				{
+					Com_Printf("IsFakepConnection: too many connections from %s\n", ip);
+					//G_LogPrintf("IsFakepConnection: too many connections from %s\n", ip);
+					// TODO: should we drop / ban all connections from this IP?
+					return va("Only %d connection%s per IP %s allowed on this server!",
+					          max,
+					          max == 1 ? "" : "s",
+					          max == 1 ? "is" : "are");
+				}
+			}
+		}
+	}
+
+	// Ok let them connect
+	return NULL;
 }

@@ -400,7 +400,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		return;
 	}
 
-	Com_Memset(locStr, 0, sizeof(char) * MAX_FIRETEAM_MEMBERS);
+	Com_Memset(locStr, 0, sizeof(char *) * MAX_FIRETEAM_MEMBERS);
 
 	// First get name and location width, also store location names
 	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)

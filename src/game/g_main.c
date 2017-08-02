@@ -252,8 +252,6 @@ vmCvar_t g_protect; // similar to sv_protect game cvar
                     // 0 - no protection - default to have ref for localhost clients on listen servers
                     // 1 - disabled auto ref for localhost clients
 
-vmCvar_t g_ip_max_clients; // limit connection
-
 vmCvar_t g_dropHealth;
 vmCvar_t g_dropAmmo;
 
@@ -562,7 +560,6 @@ cvarTable_t gameCvarTable[] =
 #endif
 
 	{ &g_protect,                           "g_protect",                           "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
-	{ &g_ip_max_clients,                    "g_ip_max_clients",                    "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_dropHealth,                        "g_dropHealth",                        "0",                          0,                                               0, qfalse, qfalse },
 	{ &g_dropAmmo,                          "g_dropAmmo",                          "0",                          0,                                               0, qfalse, qfalse },
 	{ &g_shove,                             "g_shove",                             "80",                         0,                                               0, qfalse, qfalse },

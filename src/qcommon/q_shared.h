@@ -1777,4 +1777,7 @@ typedef int (*cmpFunc_t)(const void *a, const void *b);
 
 void *Q_LinearSearch(const void *key, const void *ptr, size_t count, size_t size, cmpFunc_t cmp);
 
+int GetIPLength(char const *ip);
+qboolean CompareIPNoPort(char const *ip1, char const *ip2);
+
 #endif  // #ifndef INCLUDE_Q_SHARED_H

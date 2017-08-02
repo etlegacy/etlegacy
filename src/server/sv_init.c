@@ -1156,6 +1156,8 @@ void SV_Init(void)
 
 	svs.serverLoad = -1;
 
+	sv_ip_max_clients = Cvar_Get("sv_ip_max_clients", "0", CVAR_ARCHIVE);
+
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
 	IRC_Init();
 #endif
@@ -1242,10 +1244,10 @@ void SV_Shutdown(const char *finalmsg)
 	SV_RemoveOperatorCommands();
 	SV_MasterShutdown();
 	SV_ShutdownGameProgs();
-	
+
 	// SV_ShutdownGameProgs calls SV_DemoStopAll();
 	SV_DemoShutdown();
-	
+
 	// free current level
 	SV_ClearServer();
 

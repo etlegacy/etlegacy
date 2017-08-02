@@ -1398,12 +1398,12 @@ void NET_OpenSocks(int port)
 	qboolean        rfc1929;
 	unsigned char   buf[64];
 	int             i = 1;
-    
-    memset(&hints, '\0', sizeof(hints));
+
+	memset(&hints, '\0', sizeof(hints));
 
 	hints.ai_family   = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
-    hints.ai_protocol = IPPROTO_TCP;
+	hints.ai_protocol = IPPROTO_TCP;
 
 	usingSocks = qfalse;
 
@@ -1430,30 +1430,19 @@ void NET_OpenSocks(int port)
 
 	if (res->ai_addr->sa_family != AF_INET)
 	{
-		if (res)
-		{
-			freeaddrinfo(res);
-		}
-
+		freeaddrinfo(res);
 		Com_Printf("WARNING: NET_OpenSocks: getaddrinfo: address type was not AF_INET\n");
 		return;
 	}
 
 	if (connect(socks_socket, res->ai_addr, res->ai_addrlen) != 0)
 	{
-		if (res)
-		{
-			freeaddrinfo(res);
-		}
-
+		freeaddrinfo(res);
 		Com_Printf("NET_OpenSocks: connect: %s\n", NET_ErrorString());
 		return;
 	}
 
-	if (res)
-	{
-		freeaddrinfo(res);
-	}
+	freeaddrinfo(res);
 
 	// send socks authentication handshake
 	if (*net_socksUsername->string || *net_socksPassword->string)
