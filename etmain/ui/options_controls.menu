@@ -81,15 +81,17 @@ menuDef {
 
 // Chat //
 #define CHAT_Y 174
-	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, CHAT_Y, (SUBWINDOW_WIDTH), 76, _("CHAT") )
+	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, CHAT_Y, (SUBWINDOW_WIDTH), 88, _("CHAT") )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, CHAT_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Chat:"), .2, 8, "messagemode", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, CHAT_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Team Chat:"), .2, 8, "messagemode2", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, CHAT_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Fireteam Chat:"), .2, 8, "messagemode3", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, CHAT_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Quick Chat:"), .2, 8, "mp_QuickMessage", "" )
-	BIND( 6+(SUBWINDOW_WIDTH)+6+2, CHAT_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Fireteam Quick Chat:"), .2, 8, "mp_fireteammsg", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, CHAT_Y+64, (SUBWINDOW_WIDTH)-4, 10, _("Alternative Quick Chat:"), .2, 8, "cg_quickchat", "" )
+	BIND( 6+(SUBWINDOW_WIDTH)+6+2, CHAT_Y+76, (SUBWINDOW_WIDTH)-4, 10, _("Fireteam Quick Chat:"), .2, 8, "mp_fireteammsg", "" )
+	
 
 // Input //
-#define INPUT_Y 256
+#define INPUT_Y 266
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, INPUT_Y, (SUBWINDOW_WIDTH), 52, _("INPUT") )
 	CHECKBOXALIGNXACTION(  6+(SUBWINDOW_WIDTH)+6+2, INPUT_Y+16, .5*((SUBWINDOW_WIDTH)-6), 10,_("Invert Mouse:"), .2, 24, 8, "ui_mousePitch", uiScript update ui_mousePitch, _("Inverts mouse pitch") )
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, INPUT_Y+16, .5*((SUBWINDOW_WIDTH)-6), 10, _("Smooth Mouse:"), .2, 24, 8, "m_filter", _("Smooths out the mouse using interpolation") )
@@ -98,7 +100,7 @@ menuDef {
 	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, INPUT_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Mouse Pitch:"), .2, 8, "m_pitch", cvarFloatList { _("0.015 (lowest allowed)") 0.0151 "0.016" 0.016 "0.017" 0.017 "0.018" 0.018 "0.019" 0.019 "0.020" 0.020 "0.021" 0.021 _("0.022 (default)") 0.022 }, _("Up-Down Motion Of The Crosshair While Moving.") )
 
 // Miscellaneous //
-#define MISC_Y 314
+#define MISC_Y 322
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH)+6, MISC_Y, (SUBWINDOW_WIDTH), 88, _("MISCELLANEOUS") )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, MISC_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Vote Yes:"), .2, 8, "vote yes", "" )
 	BIND( 6+(SUBWINDOW_WIDTH)+6+2, MISC_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Vote No:"), .2, 8, "vote no", "" )
