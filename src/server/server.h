@@ -568,7 +568,7 @@ void SV_ExecuteClientCommand(client_t *cl, const char *s, qboolean clientOK, qbo
 void SV_ClientThink(client_t *cl, usercmd_t *cmd);
 int SV_SendDownloadMessages(void);
 int SV_SendQueuedMessages(void);
-char *SV_IsFakepConnection(int clientNum, const char *ip, const char *rate);
+char *SV_IsFakeIpConnection(int clientNum, const char *ip, const char *rate);
 
 // sv_ccmds.c
 void SV_Heartbeat_f(void);

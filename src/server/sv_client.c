@@ -374,7 +374,7 @@ gotnewcl:
 
 	// Check for fakeip connections
 	// TODO: should this be done earlier ?
-	denied = SV_IsFakepConnection(clientNum, Info_ValueForKey(userinfo, "ip"), Info_ValueForKey(userinfo, "rate"));
+	denied = SV_IsFakeIpConnection(clientNum, Info_ValueForKey(userinfo, "ip"), Info_ValueForKey(userinfo, "rate"));
 	if (denied)
 	{
 		// we can't just use VM_ArgPtr, because that is only valid inside a VM_Call
@@ -2121,9 +2121,9 @@ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg)
  *
  * @note maybe we want to have more control over localhost clients in future.
  * So we let localhost connect since bots don't connect from SV_DirectConnect
- * where SV_IsFakepConnection is done.
+ * where SV_IsFakeIpConnection is done.
  */
-char *SV_IsFakepConnection(int clientNum, const char *ip, const char *rate)
+char *SV_IsFakeIpConnection(int clientNum, const char *ip, const char *rate)
 {
 	client_t   *client;
 	int        count = 1;     // we count as the first one
@@ -2161,7 +2161,7 @@ char *SV_IsFakepConnection(int clientNum, const char *ip, const char *rate)
 
 		client = &svs.clients[i];
 
-		if (svs.clients[i].state < CS_CONNECTED) // only active clients
+		if (client->state < CS_CONNECTED) // only active clients
 		{
 			continue;
 		}
@@ -2174,7 +2174,7 @@ char *SV_IsFakepConnection(int clientNum, const char *ip, const char *rate)
 			++count;
 			if (count > max)
 			{
-				Com_Printf("SV_IsFakepConnection: too many connections from %s\n", ip);
+				Com_Printf("SV_IsFakeIpConnection: too many connections from %s\n", ip);
 
 				// TODO: should we drop / ban all connections from this IP?
 				return va("Only %d connection%s per IP %s allowed on this server!",
