@@ -775,7 +775,7 @@ void Cmd_AddSystemCommand(const char *cmd_name, xcommand_t function, const char 
 		return;
 	}
 
-	// use a small malloc to avoid zone fragmentation
+	// use a small Com_Allocate to avoid zone fragmentation
 	cmd           = S_Malloc(sizeof(cmd_function_t));
 	cmd->name     = CopyString(cmd_name);
 	cmd->function = function;

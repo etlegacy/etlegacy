@@ -2021,7 +2021,7 @@ char *QDECL va(const char *format, ...)
 	}
 
 	buf = &string[index];
-	memcpy(buf, temp_buffer, len + 1);
+	Com_Memcpy(buf, temp_buffer, len + 1);
 
 	index += len + 1;
 

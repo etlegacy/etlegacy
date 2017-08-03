@@ -180,7 +180,7 @@ void Com_GetAutoUpdate(void)
 
 #ifndef DEDICATED
 	// Copy auto-update server address to Server connect address
-	memcpy(&clc.serverAddress, &autoupdate.autoupdateServer, sizeof(netadr_t));
+	Com_Memcpy(&clc.serverAddress, &autoupdate.autoupdateServer, sizeof(netadr_t));
 
 	Com_DPrintf("%s resolved to %s\n", cls.servername,
 	            NET_AdrToString(clc.serverAddress));

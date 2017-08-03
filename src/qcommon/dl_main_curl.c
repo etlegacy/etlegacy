@@ -116,7 +116,7 @@ size_t DL_write_function(void *ptr, size_t size, size_t nmemb, void *stream)
 		return 0;
 	}
 
-	memcpy(result->data + result->pos, ptr, size * nmemb);
+	Com_Memcpy(result->data + result->pos, ptr, size * nmemb);
 	result->pos += size * nmemb;
 
 	return size * nmemb;
@@ -247,7 +247,7 @@ char *DL_GetString(const char *url)
 
 	curl = curl_easy_init();
 
-	data = (char *)malloc(GET_BUFFER_SIZE);
+	data = (char *)Com_Allocate(GET_BUFFER_SIZE);
 	if (!data)
 	{
 		goto error_get;
@@ -293,7 +293,7 @@ error_get:
 
 	if (data)
 	{
-		free(data);
+		Com_Dealloc(data);
 	}
 
 	return NULL;

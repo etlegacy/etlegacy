@@ -191,10 +191,10 @@ static void MD5Update(struct MD5Context *ctx, unsigned char const *buf,
 		t = 64 - t;
 		if (len < t)
 		{
-			memcpy(p, buf, len);
+			Com_Memcpy(p, buf, len);
 			return;
 		}
-		memcpy(p, buf, t);
+		Com_Memcpy(p, buf, t);
 		byteReverse(ctx->in, 16);
 		MD5Transform(ctx->buf, ( uint32_t * ) ctx->in);
 		buf += t;
@@ -204,7 +204,7 @@ static void MD5Update(struct MD5Context *ctx, unsigned char const *buf,
 
 	while (len >= 64)
 	{
-		memcpy(ctx->in, buf, 64);
+		Com_Memcpy(ctx->in, buf, 64);
 		byteReverse(ctx->in, 16);
 		MD5Transform(ctx->buf, ( uint32_t * ) ctx->in);
 		buf += 64;
@@ -213,7 +213,7 @@ static void MD5Update(struct MD5Context *ctx, unsigned char const *buf,
 
 	/* Handle any remaining bytes of data. */
 
-	memcpy(ctx->in, buf, len);
+	Com_Memcpy(ctx->in, buf, len);
 }
 
 
@@ -241,17 +241,17 @@ static void MD5Final(struct MD5Context *ctx, unsigned char *digest)
 	if (count < 8)
 	{
 		/* Two lots of padding:  Pad the first block to 64 bytes */
-		memset(p, 0, count);
+		Com_Memset(p, 0, count);
 		byteReverse(ctx->in, 16);
 		MD5Transform(ctx->buf, ( uint32_t * ) ctx->in);
 
 		/* Now fill the next block with 56 bytes */
-		memset(ctx->in, 0, 56);
+		Com_Memset(ctx->in, 0, 56);
 	}
 	else
 	{
 		/* Pad block to 56 bytes */
-		memset(p, 0, count - 8);
+		Com_Memset(p, 0, count - 8);
 	}
 	byteReverse(ctx->in, 14);
 
@@ -264,9 +264,9 @@ static void MD5Final(struct MD5Context *ctx, unsigned char *digest)
 
 	if (digest != NULL)
 	{
-		memcpy(digest, ctx->buf, 16);
+		Com_Memcpy(digest, ctx->buf, 16);
 	}
-	memset(ctx, 0, sizeof(*ctx));          /* In case it's sensitive */
+	Com_Memset(ctx, 0, sizeof(*ctx));          /* In case it's sensitive */
 }
 
 /**

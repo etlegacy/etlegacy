@@ -289,7 +289,7 @@ static void SockadrToNetadr(struct sockaddr *s, netadr_t *a)
 	else if (s->sa_family == AF_INET6)
 	{
 		a->type = NA_IP6;
-		memcpy(a->ip6, &((struct sockaddr_in6 *)s)->sin6_addr, sizeof(a->ip6));
+		Com_Memcpy(a->ip6, &((struct sockaddr_in6 *)s)->sin6_addr, sizeof(a->ip6));
 		a->port     = ((struct sockaddr_in6 *)s)->sin6_port;
 		a->scope_id = ((struct sockaddr_in6 *)s)->sin6_scope_id;
 	}
@@ -330,8 +330,8 @@ static qboolean Sys_StringToSockaddr(const char *s, struct sockaddr *sadr, int s
 	struct addrinfo *hintsp;
 	int             retval;
 
-	memset(sadr, '\0', sizeof(*sadr));
-	memset(&hints, '\0', sizeof(hints));
+	Com_Memset(sadr, '\0', sizeof(*sadr));
+	Com_Memset(&hints, '\0', sizeof(hints));
 
 	hintsp              = &hints;
 	hintsp->ai_family   = family;
@@ -381,7 +381,7 @@ static qboolean Sys_StringToSockaddr(const char *s, struct sockaddr *sadr, int s
 				res->ai_addrlen = sadr_len;
 			}
 
-			memcpy(sadr, res->ai_addr, res->ai_addrlen);
+			Com_Memcpy(sadr, res->ai_addr, res->ai_addrlen);
 			freeaddrinfo(res);
 
 			return qtrue;
@@ -404,11 +404,11 @@ static qboolean Sys_StringToSockaddr(const char *s, struct sockaddr *sadr, int s
 	return qfalse;
 #else // IPV4
 
-	memset(sadr, 0, sizeof(*sadr));
+	Com_Memset(sadr, 0, sizeof(*sadr));
 	((struct sockaddr_in *)sadr)->sin_family = AF_INET;
 	((struct sockaddr_in *)sadr)->sin_port   = 0;
 
-	memset(&hints, '\0', sizeof(hints));
+	Com_Memset(&hints, '\0', sizeof(hints));
 	hints.ai_family   = family;
 	hints.ai_socktype = SOCK_DGRAM;
 
@@ -422,7 +422,7 @@ static qboolean Sys_StringToSockaddr(const char *s, struct sockaddr *sadr, int s
 		{
 			return qfalse;
 		}
-		memcpy(sadr, res->ai_addr, res->ai_addrlen);
+		Com_Memcpy(sadr, res->ai_addr, res->ai_addrlen);
 		freeaddrinfo(res);
 	}
 
@@ -619,7 +619,7 @@ const char *NET_AdrToStringNoPort(netadr_t a)
 	{
 		struct sockaddr_storage sadr;
 
-		memset(&sadr, 0, sizeof(sadr));
+		Com_Memset(&sadr, 0, sizeof(sadr));
 		NetadrToSockadr(&a, (struct sockaddr *) &sadr);
 		Sys_SockaddrToString(s, sizeof(s), (struct sockaddr *) &sadr);
 		break;
@@ -751,7 +751,7 @@ qboolean NET_GetPacket(netadr_t *net_from, msg_t *net_message, fd_set *fdr)
 		}
 		else
 		{
-			memset(((struct sockaddr_in *)&from)->sin_zero, 0, 8);
+			Com_Memset(((struct sockaddr_in *)&from)->sin_zero, 0, 8);
 
 			if (usingSocks && memcmp(&from, &socksRelayAddr, fromlen) == 0)
 			{
@@ -892,7 +892,7 @@ void Sys_SendPacket(int length, const void *data, netadr_t to)
 	}
 #endif
 
-	memset(&addr, 0, sizeof(addr));
+	Com_Memset(&addr, 0, sizeof(addr));
 	NetadrToSockadr(&to, (struct sockaddr *) &addr);
 
 	if (usingSocks && to.type == NA_IP)
@@ -903,7 +903,7 @@ void Sys_SendPacket(int length, const void *data, netadr_t to)
 		socksBuf[3]            = 1; // address type: IPV4
 		*(int *)&socksBuf[4]   = ((struct sockaddr_in *)&addr)->sin_addr.s_addr;
 		*(short *)&socksBuf[8] = ((struct sockaddr_in *)&addr)->sin_port;
-		memcpy(&socksBuf[10], data, length);
+		Com_Memcpy(&socksBuf[10], data, length);
 		ret = sendto(ip_socket, socksBuf, length + 10, 0, &socksRelayAddr, sizeof(socksRelayAddr));
 	}
 	else
@@ -1294,7 +1294,7 @@ void NET_SetMulticast6(void)
 		return;
 	}
 
-	memcpy(&curgroup.ipv6mr_multiaddr, &addr.sin6_addr, sizeof(curgroup.ipv6mr_multiaddr));
+	Com_Memcpy(&curgroup.ipv6mr_multiaddr, &addr.sin6_addr, sizeof(curgroup.ipv6mr_multiaddr));
 
 	if (*net_mcast6iface->string)
 	{
@@ -1399,7 +1399,7 @@ void NET_OpenSocks(int port)
 	unsigned char   buf[64];
 	int             i = 1;
 
-	memset(&hints, '\0', sizeof(hints));
+	Com_Memset(&hints, '\0', sizeof(hints));
 
 	hints.ai_family   = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
@@ -1514,12 +1514,12 @@ void NET_OpenSocks(int port)
 		buf[1] = ulen;
 		if (ulen)
 		{
-			memcpy(&buf[2], net_socksUsername->string, ulen);
+			Com_Memcpy(&buf[2], net_socksUsername->string, ulen);
 		}
 		buf[2 + ulen] = plen;
 		if (plen)
 		{
-			memcpy(&buf[3 + ulen], net_socksPassword->string, plen);
+			Com_Memcpy(&buf[3 + ulen], net_socksPassword->string, plen);
 		}
 
 		// send it
@@ -1587,7 +1587,7 @@ void NET_OpenSocks(int port)
 	((struct sockaddr_in *)&socksRelayAddr)->sin_family      = AF_INET;
 	((struct sockaddr_in *)&socksRelayAddr)->sin_addr.s_addr = *(int *)&buf[4];
 	((struct sockaddr_in *)&socksRelayAddr)->sin_port        = *(short *)&buf[8];
-	memset(((struct sockaddr_in *)&socksRelayAddr)->sin_zero, 0, 8);
+	Com_Memset(((struct sockaddr_in *)&socksRelayAddr)->sin_zero, 0, 8);
 
 	usingSocks = qtrue;
 }
@@ -1635,8 +1635,8 @@ static void NET_AddLocalAddress(const char *ifname, struct sockaddr *addr, struc
 
 		localIP[numIP].family = family;
 
-		memcpy(&localIP[numIP].addr, addr, addrlen);
-		memcpy(&localIP[numIP].netmask, netmask, addrlen);
+		Com_Memcpy(&localIP[numIP].addr, addr, addrlen);
+		Com_Memcpy(&localIP[numIP].netmask, netmask, addrlen);
 
 		numIP++;
 	}
@@ -1693,7 +1693,7 @@ static void NET_GetLocalAddress(void)
 
 	Com_Printf("Hostname: %s\n", hostname);
 
-	memset(&hint, 0, sizeof(hint));
+	Com_Memset(&hint, 0, sizeof(hint));
 
 	hint.ai_family   = AF_UNSPEC;
 	hint.ai_socktype = SOCK_DGRAM;
@@ -1709,15 +1709,15 @@ static void NET_GetLocalAddress(void)
 		// On operating systems where it's more difficult to find out the configured interfaces,
 		// we'll just assume a netmask with all bits set.
 
-		memset(&mask4, 0, sizeof(mask4));
+		Com_Memset(&mask4, 0, sizeof(mask4));
 #ifdef FEATURE_IPV6
-		memset(&mask6, 0, sizeof(mask6));
+		Com_Memset(&mask6, 0, sizeof(mask6));
 #endif
 		mask4.sin_family = AF_INET;
-		memset(&mask4.sin_addr.s_addr, 0xFF, sizeof(mask4.sin_addr.s_addr));
+		Com_Memset(&mask4.sin_addr.s_addr, 0xFF, sizeof(mask4.sin_addr.s_addr));
 #ifdef FEATURE_IPV6
 		mask6.sin6_family = AF_INET6;
-		memset(&mask6.sin6_addr, 0xFF, sizeof(mask6.sin6_addr));
+		Com_Memset(&mask6.sin6_addr, 0xFF, sizeof(mask6.sin6_addr));
 #endif
 		// add all IPs from returned list.
 		for (search = res; search; search = search->ai_next)

@@ -1414,7 +1414,7 @@ static void CM_Trace(trace_t *results, const vec3_t start, const vec3_t end,
 	c_traces++;             // for statistics, may be zeroed
 
 	// fill in a default trace
-	memset(&tw, 0, sizeof(tw));
+	Com_Memset(&tw, 0, sizeof(tw));
 	tw.trace.fraction = 1.0f;   // assume it goes the entire distance until shown otherwise
 	VectorCopy(origin, tw.modelOrigin);
 

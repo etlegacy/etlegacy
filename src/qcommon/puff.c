@@ -416,7 +416,7 @@ local int32_t construct(struct huffman *h, int16_t *length, int32_t n)
  *   simply copies the last byte 258 times.  A distance of four and a length of
  *   twelve copies the last four bytes three times.  A simple forward copy
  *   ignoring whether the length is greater than the distance or not implements
- *   this correctly.  You should not use memcpy() since its behavior is not
+ *   this correctly.  You should not use Com_Memcpy() since its behavior is not
  *   defined for overlapped arrays.  You should not use memmove() or bcopy()
  *   since though their behavior -is- defined for overlapping arrays, it is
  *   defined to do the wrong thing in this case.

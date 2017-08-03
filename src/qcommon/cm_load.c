@@ -463,7 +463,7 @@ void CMod_LoadEntityString(lump_t *l)
 {
 	cm.entityString = Hunk_Alloc(l->filelen, h_high);
 	//cm.numEntityChars = l->filelen;
-	memcpy(cm.entityString, cmod_base + l->fileofs, l->filelen);
+	Com_Memcpy(cm.entityString, cmod_base + l->fileofs, l->filelen);
 }
 
 #define VIS_HEADER  8
@@ -481,7 +481,7 @@ void CMod_LoadVisibility(lump_t *l)
 	{
 		cm.clusterBytes = (cm.numClusters + 31) & ~31;
 		cm.visibility   = Hunk_Alloc(cm.clusterBytes, h_high);
-		memset(cm.visibility, 255, cm.clusterBytes);
+		Com_Memset(cm.visibility, 255, cm.clusterBytes);
 		return;
 	}
 
@@ -491,7 +491,7 @@ void CMod_LoadVisibility(lump_t *l)
 	cm.visibility   = Hunk_Alloc(len, h_high);
 	cm.numClusters  = LittleLong(((int *)buf)[0]);
 	cm.clusterBytes = LittleLong(((int *)buf)[1]);
-	memcpy(cm.visibility, buf + VIS_HEADER, len - VIS_HEADER);
+	Com_Memcpy(cm.visibility, buf + VIS_HEADER, len - VIS_HEADER);
 }
 
 //==================================================================

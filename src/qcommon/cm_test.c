@@ -538,7 +538,7 @@ int CM_WriteAreaBits(byte *buffer, int area)
 
 	if (cm_noAreas->integer || area == -1) // for debugging, send everything
 	{
-		memset(buffer, 255, bytes);
+		Com_Memset(buffer, 255, bytes);
 	}
 	else
 	{

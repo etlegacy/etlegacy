@@ -686,7 +686,7 @@ void FS_CopyFile(const char *fromOSPath, const char *toOSPath)
 	}
 	fseek(f, 0, SEEK_SET);
 
-	buf = malloc(len);
+	buf = Com_Allocate(len);
 	if (!buf)
 	{
 		Com_Error(ERR_FATAL, "FS_CopyFile: unable to allocate buffer");
@@ -699,14 +699,14 @@ void FS_CopyFile(const char *fromOSPath, const char *toOSPath)
 
 	if (FS_CreatePath(toOSPath))
 	{
-		free(buf);
+		Com_Dealloc(buf);
 		return;
 	}
 
 	f = Sys_FOpen(toOSPath, "wb");
 	if (!f)
 	{
-		free(buf);
+		Com_Dealloc(buf);
 		return;
 	}
 	if (fwrite(buf, 1, len, f) != len)
@@ -714,7 +714,7 @@ void FS_CopyFile(const char *fromOSPath, const char *toOSPath)
 		Com_Error(ERR_FATAL, "FS_CopyFile: short write");
 	}
 	fclose(f);
-	free(buf);
+	Com_Dealloc(buf);
 }
 
 /**
@@ -3297,13 +3297,13 @@ qboolean FS_IsSamePath(const char *s1, const char *s2)
 	// so the function returns true (only) if there are no errors and paths are equal
 	if (res1 && res2 && !Q_stricmp(res1, res2))
 	{
-		free(res1);
-		free(res2);
+		Com_Dealloc(res1);
+		Com_Dealloc(res2);
 		return qtrue;
 	}
 
-	free(res1);
-	free(res2);
+	Com_Dealloc(res1);
+	Com_Dealloc(res2);
 	return qfalse;
 }
 
@@ -5009,10 +5009,10 @@ qboolean FS_UnzipTo(const char *fileName, const char *outpath, qboolean quiet)
 
 			if (buf)
 			{
-				free(buf);
+				Com_Dealloc(buf);
 			}
 
-			buf = malloc(file_info.uncompressed_size);
+			buf = Com_Allocate(file_info.uncompressed_size);
 
 			if (!buf)
 			{
@@ -5103,7 +5103,7 @@ qboolean FS_UnzipTo(const char *fileName, const char *outpath, qboolean quiet)
 
 	if (buf)
 	{
-		free(buf);
+		Com_Dealloc(buf);
 	}
 
 	return isUnZipOK;

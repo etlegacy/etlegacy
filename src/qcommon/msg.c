@@ -72,9 +72,9 @@ void MSG_Init(msg_t *buf, byte *data, int length)
 	{
 		MSG_initHuffman();
 	}
-	memset(buf, 0, sizeof(*buf));
+	Com_Memset(buf, 0, sizeof(*buf));
 	// optimization
-	//memset (data, 0, length);
+	//Com_Memset (data, 0, length);
 	buf->data    = data;
 	buf->maxsize = length;
 }
@@ -91,9 +91,9 @@ void MSG_InitOOB(msg_t *buf, byte *data, int length)
 	{
 		MSG_initHuffman();
 	}
-	memset(buf, 0, sizeof(*buf));
+	Com_Memset(buf, 0, sizeof(*buf));
 	// optimization
-	//memset (data, 0, length);
+	//Com_Memset (data, 0, length);
 	buf->data    = data;
 	buf->maxsize = length;
 	buf->oob     = qtrue;
@@ -1483,7 +1483,7 @@ void MSG_ReadDeltaEntity(msg_t *msg, entityState_t *from, entityState_t *to,
 	// check for a remove
 	if (MSG_ReadBits(msg, 1) == 1)
 	{
-		memset(to, 0, sizeof(*to));
+		Com_Memset(to, 0, sizeof(*to));
 		to->number = MAX_GENTITIES - 1;
 		if (cl_shownet && (cl_shownet->integer >= 2 || cl_shownet->integer == -1))
 		{
@@ -2038,7 +2038,7 @@ void MSG_WriteDeltaPlayerstate(msg_t *msg, struct playerState_s *from, struct pl
 	if (!from)
 	{
 		from = &dummy;
-		memset(&dummy, 0, sizeof(dummy));
+		Com_Memset(&dummy, 0, sizeof(dummy));
 	}
 
 	if (msg->bit == 0)
@@ -2364,7 +2364,7 @@ void MSG_ReadDeltaPlayerstate(msg_t *msg, playerState_t *from, playerState_t *to
 	if (!from)
 	{
 		from = &dummy;
-		memset(&dummy, 0, sizeof(dummy));
+		Com_Memset(&dummy, 0, sizeof(dummy));
 	}
 	*to = *from;
 
