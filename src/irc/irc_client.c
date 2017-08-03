@@ -420,7 +420,7 @@ static void IRC_SetTimeout(irc_handler_func_t function, int time)
 	etl_assert(time > 0);
 
 	// Create entry
-	qe            = (struct irc_delayed_t *) malloc(sizeof(struct irc_delayed_t));
+	qe            = (struct irc_delayed_t *) Com_Allocate(sizeof(struct irc_delayed_t));
 	qe->handler   = function;
 	qe->time_left = time * IRC_TIMEOUTS_PER_SEC;
 
@@ -465,7 +465,7 @@ static qboolean IRC_DequeueDelayed()
 
 	found       = IRC_DEQueue;
 	IRC_DEQueue = found->next;
-	free(found);
+	Com_Dealloc(found);
 	return qtrue;
 }
 
@@ -521,7 +521,7 @@ static int IRC_ProcessDEQueue()
 #define P_INIT_MESSAGE(S) { \
 		P_SET_STATE(S); \
 		IRC_ParserInMessage = qtrue; \
-		memset(&IRC_ReceivedMessage, 0, sizeof(struct irc_message_t)); \
+		Com_Memset(&IRC_ReceivedMessage, 0, sizeof(struct irc_message_t)); \
 }
 #if defined DEBUG_DUMP_IRC
 #define P_ERROR(S) { \
@@ -1850,7 +1850,7 @@ static struct irc_sendqueue_t IRC_SendQueue[IRC_SENDQUEUE_SIZE];
  */
 static ID_INLINE void IRC_InitSendQueue()
 {
-	memset(&IRC_SendQueue, 0, sizeof(IRC_SendQueue));
+	Com_Memset(&IRC_SendQueue, 0, sizeof(IRC_SendQueue));
 }
 
 /**
@@ -1893,7 +1893,7 @@ void IRC_Say()
 		return;
 	}
 
-	memset(m_sendstring, 0, sizeof(m_sendstring));
+	Com_Memset(m_sendstring, 0, sizeof(m_sendstring));
 	strncpy(m_sendstring, Cmd_Args(), 479);
 	if (m_sendstring[0] == 0)
 	{
@@ -2003,8 +2003,8 @@ char *IRC_GetName(const char *name)
 	char c;
 	char *retName;
 
-	retName = (char *) malloc((sizeof(char) * namelen) + 1);
-	memset(retName, 0, (sizeof(char) * namelen) + 1);
+	retName = (char *) Com_Allocate((sizeof(char) * namelen) + 1);
+	Com_Memset(retName, 0, (sizeof(char) * namelen) + 1);
 
 	for (; j < namelen; j++)
 	{
@@ -2074,7 +2074,7 @@ static qboolean IRC_InitialiseUser(const char *name)
 
 	Com_DPrintf("IRC nick: %s username %s\n", IRC_User.nick, IRC_User.username);
 
-	free(source);
+	Com_Dealloc(source);
 
 	return (strlen(IRC_User.nick) > 0);
 }
@@ -2096,7 +2096,7 @@ static int IRC_AttemptConnection()
 	int                err_code;
 	char               port[5] = "6667";
 
-	memset(&hint, 0, sizeof(hint));
+	Com_Memset(&hint, 0, sizeof(hint));
 
 	hint.ai_family   = AF_UNSPEC;
 	hint.ai_socktype = SOCK_STREAM;

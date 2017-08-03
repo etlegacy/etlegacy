@@ -320,7 +320,7 @@ void *HT_GetItem(
 		*(void **) data = Z_Malloc(table->item_size);
 		data            = *(void **) data;
 	}
-	memset(data, 0, table->item_size);
+	Com_Memset(data, 0, table->item_size);
 
 	// Copy key
 	if (table->key_length == 0)
@@ -426,7 +426,7 @@ void *HT_PutItem(
 		if ((table->flags & HT_FLAG_INTABLE) != 0)
 		{
 			// Copy item data
-			memcpy(prev_entry, item, table->item_size);
+			Com_Memcpy(prev_entry, item, table->item_size);
 			ret_val = NULL;
 		}
 		else
@@ -448,7 +448,7 @@ void *HT_PutItem(
 		data    = (void *)(((char *)t_entry) + sizeof(struct tentry_t));
 		if ((table->flags & HT_FLAG_INTABLE) != 0)
 		{
-			memcpy(data, item, table->item_size);
+			Com_Memcpy(data, item, table->item_size);
 		}
 		else
 		{
