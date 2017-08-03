@@ -91,7 +91,7 @@ qboolean ParseShaderR1(char *_text)
 	char **text = &_text;
 	char *token;
 	int  s = 0;
-//return qfalse;
+
 	shader.explicitlyDefined = qtrue;
 
 	token = COM_ParseExt2(text, qtrue);
@@ -580,10 +580,8 @@ qboolean ParseShaderR1(char *_text)
 				continue;
 			}
 
-			/*
-			RB: don't call tr.sunShader = R_FindShader(token, SHADER_3D_STATIC, qtrue);
-			    because it breaks the computation of the current shader
-			*/
+			// Don't call tr.sunShader = R_FindShader(token, SHADER_3D_STATIC, qtrue);
+			// because it breaks the computation of the current shader
 			tokenLen         = strlen(token) + 1;
 			tr.sunShaderName = (char *)ri.Hunk_Alloc(sizeof(char) * tokenLen, h_low);
 			Q_strncpyz(tr.sunShaderName, token, tokenLen);
