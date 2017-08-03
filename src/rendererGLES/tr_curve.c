@@ -414,13 +414,13 @@ void R_FreeSurfaceGridMesh(srfGridMesh_t *grid)
 srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
                                       drawVert_t points[MAX_PATCH_SIZE * MAX_PATCH_SIZE])
 {
-	int                   i, j, k, l;
-	drawVert_t            prev, next, mid;
-	float                 len, maxLen;
-	int                   dir;
-	int                   t;
-	MAC_STATIC drawVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE];
-	float                 errorTable[2][MAX_GRID_SIZE];
+	int        i, j, k, l;
+	drawVert_t prev, next, mid;
+	float      len, maxLen;
+	int        dir;
+	int        t;
+	drawVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE];
+	float      errorTable[2][MAX_GRID_SIZE];
 
 	for (i = 0; i < width; i++)
 	{
@@ -600,12 +600,12 @@ srfGridMesh_t *R_SubdividePatchToGrid(int width, int height,
  */
 srfGridMesh_t *R_GridInsertColumn(srfGridMesh_t *grid, int column, int row, vec3_t point, float loderror)
 {
-	int                   i, j;
-	int                   width = grid->width + 1, height, oldwidth = 0;
-	MAC_STATIC drawVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE];
-	float                 errorTable[2][MAX_GRID_SIZE];
-	float                 lodRadius;
-	vec3_t                lodOrigin;
+	int        i, j;
+	int        width = grid->width + 1, height, oldwidth = 0;
+	drawVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE];
+	float      errorTable[2][MAX_GRID_SIZE];
+	float      lodRadius;
+	vec3_t     lodOrigin;
 
 	if (width > MAX_GRID_SIZE)
 	{
@@ -616,7 +616,7 @@ srfGridMesh_t *R_GridInsertColumn(srfGridMesh_t *grid, int column, int row, vec3
 	{
 		if (i == column)
 		{
-			//insert new column
+			// insert new column
 			for (j = 0; j < grid->height; j++)
 			{
 				LerpDrawVert(&grid->verts[j * grid->width + i - 1], &grid->verts[j * grid->width + i], &ctrl[j][i]);
@@ -666,12 +666,12 @@ srfGridMesh_t *R_GridInsertColumn(srfGridMesh_t *grid, int column, int row, vec3
  */
 srfGridMesh_t *R_GridInsertRow(srfGridMesh_t *grid, int row, int column, vec3_t point, float loderror)
 {
-	int                   i, j;
-	int                   width = grid->width, height = grid->height + 1, oldheight = 0;
-	MAC_STATIC drawVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE];
-	float                 errorTable[2][MAX_GRID_SIZE];
-	float                 lodRadius;
-	vec3_t                lodOrigin;
+	int        i, j;
+	int        width = grid->width, height = grid->height + 1, oldheight = 0;
+	drawVert_t ctrl[MAX_GRID_SIZE][MAX_GRID_SIZE];
+	float      errorTable[2][MAX_GRID_SIZE];
+	float      lodRadius;
+	vec3_t     lodOrigin;
 
 	if (height > MAX_GRID_SIZE)
 	{
@@ -681,7 +681,7 @@ srfGridMesh_t *R_GridInsertRow(srfGridMesh_t *grid, int row, int column, vec3_t 
 	{
 		if (i == row)
 		{
-			//insert new row
+			// insert new row
 			for (j = 0; j < grid->width; j++)
 			{
 				LerpDrawVert(&grid->verts[(i - 1) * grid->width + j], &grid->verts[i * grid->width + j], &ctrl[i][j]);
