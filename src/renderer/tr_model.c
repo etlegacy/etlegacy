@@ -683,7 +683,7 @@ static qboolean R_MDC_ConvertMD3(model_t *mod, int lod, const char *name)
 
 	// the first frame is always a base frame
 	numBaseFrames = 0;
-	memset(baseFrames, 0, sizeof(*baseFrames) * md3->numFrames);
+	Com_Memset(baseFrames, 0, sizeof(*baseFrames) * md3->numFrames);
 	baseFrames[numBaseFrames++] = 0;
 
 	// first calculate how many baseframes we need, and which frames they are on
@@ -753,11 +753,11 @@ static qboolean R_MDC_ConvertMD3(model_t *mod, int lod, const char *name)
 	// header info
 	*mdc = mdcHeader;
 	// frames
-	memcpy(( md3Frame_t * )((byte *)mdc + mdc->ofsFrames), ( md3Frame_t * )((byte *)md3 + md3->ofsFrames), mdcHeader.numFrames * sizeof(md3Frame_t));
+	Com_Memcpy(( md3Frame_t * )((byte *)mdc + mdc->ofsFrames), ( md3Frame_t * )((byte *)md3 + md3->ofsFrames), mdcHeader.numFrames * sizeof(md3Frame_t));
 	// tag names
 	for (j = 0; j < md3->numTags; j++)
 	{
-		memcpy(( mdcTagName_t * )((byte *)mdc + mdc->ofsTagNames) + j, (( md3Tag_t * )((byte *)md3 + md3->ofsTags) + j)->name, sizeof(mdcTagName_t));
+		Com_Memcpy(( mdcTagName_t * )((byte *)mdc + mdc->ofsTagNames) + j, (( md3Tag_t * )((byte *)md3 + md3->ofsTags) + j)->name, sizeof(mdcTagName_t));
 	}
 	// tags
 	mdcTag = (( mdcTag_t * )((byte *)mdc + mdc->ofsTags));
@@ -807,11 +807,11 @@ static qboolean R_MDC_ConvertMD3(model_t *mod, int lod, const char *name)
 		cSurf->ofsEnd             = cSurf->ofsFrameCompFrames + mdc->numFrames * sizeof(short);
 
 		// triangles
-		memcpy((byte *)cSurf + cSurf->ofsTriangles, (byte *)surf + surf->ofsTriangles, cSurf->numTriangles * sizeof(md3Triangle_t));
+		Com_Memcpy((byte *)cSurf + cSurf->ofsTriangles, (byte *)surf + surf->ofsTriangles, cSurf->numTriangles * sizeof(md3Triangle_t));
 		// shaders
-		memcpy((byte *)cSurf + cSurf->ofsShaders, (byte *)surf + surf->ofsShaders, cSurf->numShaders * sizeof(md3Shader_t));
+		Com_Memcpy((byte *)cSurf + cSurf->ofsShaders, (byte *)surf + surf->ofsShaders, cSurf->numShaders * sizeof(md3Shader_t));
 		// st
-		memcpy((byte *)cSurf + cSurf->ofsSt, (byte *)surf + surf->ofsSt, cSurf->numVerts * sizeof(md3St_t));
+		Com_Memcpy((byte *)cSurf + cSurf->ofsSt, (byte *)surf + surf->ofsSt, cSurf->numVerts * sizeof(md3St_t));
 
 		// rest
 		frameBaseFrames = ( short * )((byte *)cSurf + cSurf->ofsFrameBaseFrames);
@@ -821,7 +821,7 @@ static qboolean R_MDC_ConvertMD3(model_t *mod, int lod, const char *name)
 			if (i < numBaseFrames && f == baseFrames[i])
 			{
 				// copy this baseFrame from the md3
-				memcpy((byte *)cSurf + cSurf->ofsXyzNormals + (sizeof(md3XyzNormal_t) * cSurf->numVerts * i),
+				Com_Memcpy((byte *)cSurf + cSurf->ofsXyzNormals + (sizeof(md3XyzNormal_t) * cSurf->numVerts * i),
 				       (byte *)surf + surf->ofsXyzNormals + (sizeof(md3XyzNormal_t) * cSurf->numVerts * f),
 				       sizeof(md3XyzNormal_t) * cSurf->numVerts);
 				i++;
@@ -898,7 +898,7 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *name)
 	mod->dataSize      += size;
 	mod->model.mdc[lod] = ri.Hunk_Alloc(size, h_low);
 
-	memcpy(mod->model.mdc[lod], buffer, LittleLong(pinmodel->ofsEnd));
+	Com_Memcpy(mod->model.mdc[lod], buffer, LittleLong(pinmodel->ofsEnd));
 
 	LL(mod->model.mdc[lod]->ident);
 	LL(mod->model.mdc[lod]->version);
@@ -1124,7 +1124,7 @@ static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *name)
 	mod->dataSize      += size;
 	mod->model.md3[lod] = ri.Hunk_Alloc(size, h_low);
 
-	memcpy(mod->model.md3[lod], buffer, LittleLong(pinmodel->ofsEnd));
+	Com_Memcpy(mod->model.md3[lod], buffer, LittleLong(pinmodel->ofsEnd));
 
 	LL(mod->model.md3[lod]->ident);
 	LL(mod->model.md3[lod]->version);
@@ -1335,7 +1335,7 @@ static qboolean R_LoadMDS(model_t *mod, void *buffer, const char *name)
 	mod->dataSize += size;
 	mds            = mod->model.mds = ri.Hunk_Alloc(size, h_low);
 
-	memcpy(mds, buffer, LittleLong(pinmodel->ofsEnd));
+	Com_Memcpy(mds, buffer, LittleLong(pinmodel->ofsEnd));
 
 	LL(mds->ident);
 	LL(mds->version);
@@ -1561,7 +1561,7 @@ static qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 	mod->dataSize += size;
 	mdm            = mod->model.mdm = ri.Hunk_Alloc(size, h_low);
 
-	memcpy(mdm, buffer, LittleLong(pinmodel->ofsEnd));
+	Com_Memcpy(mdm, buffer, LittleLong(pinmodel->ofsEnd));
 
 	LL(mdm->ident);
 	LL(mdm->version);
@@ -1775,7 +1775,7 @@ static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *name)
 	mod->dataSize += size;
 	mdx            = mod->model.mdx = ri.Hunk_Alloc(size, h_low);
 
-	memcpy(mdx, buffer, LittleLong(pinmodel->ofsEnd));
+	Com_Memcpy(mdx, buffer, LittleLong(pinmodel->ofsEnd));
 
 	LL(mdx->ident);
 	LL(mdx->version);
@@ -2257,12 +2257,12 @@ void *R_Hunk_Begin(void)
 #else
 		// if not win32, then just allocate it now
 		// it is possible that we have been allocated already, in case we don't do anything
-		membase = malloc(maxsize);
-		// NOTE: initially, I was doing the memset even if we had an existing membase
+		membase = Com_Allocate(maxsize);
+		// NOTE: initially, I was doing the Com_Memset even if we had an existing membase
 		// but this breaks some shaders (i.e. /map mp_beach, then go back to the main menu .. some shaders are missing)
 		// I assume the shader missing is because we don't clear memory either on win32
 		// meaning even on win32 we are using memory that is still reserved but was uncommited .. it works out of pure luck
-		memset(membase, 0, maxsize);
+		Com_Memset(membase, 0, maxsize);
 #endif
 	}
 
@@ -2324,7 +2324,7 @@ void R_Hunk_End(void)
 #ifdef _WIN32
 		VirtualFree(membase, 0, MEM_RELEASE);
 #else
-		free(membase);
+		Com_Dealloc(membase);
 #endif
 	}
 
@@ -2356,7 +2356,7 @@ void R_Hunk_Reset(void)
 //=============================================================================
 // model caching
 
-// TODO: convert the Hunk_Alloc's in the model loading to malloc's, so we don't have
+// TODO: convert the Hunk_Alloc's in the model loading to Com_Allocate's, so we don't have
 // to move so much memory around during transitions
 
 static model_t backupModels[MAX_MOD_KNOWN];
@@ -2446,7 +2446,7 @@ void R_BackupModels(void)
 
 		if (mod->type && mod->type != MOD_BRUSH && mod->type != MOD_MDS)
 		{
-			memcpy(modBack, mod, sizeof(*mod));
+			Com_Memcpy(modBack, mod, sizeof(*mod));
 			switch (mod->type)
 			{
 			case MOD_MESH:
@@ -2457,7 +2457,7 @@ void R_BackupModels(void)
 						if ((j == MD3_MAX_LODS - 1) || (mod->model.md3[j] != mod->model.md3[j + 1]))
 						{
 							modBack->model.md3[j] = R_CacheModelAlloc(mod->model.md3[j]->ofsEnd);
-							memcpy(modBack->model.md3[j], mod->model.md3[j], mod->model.md3[j]->ofsEnd);
+							Com_Memcpy(modBack->model.md3[j], mod->model.md3[j], mod->model.md3[j]->ofsEnd);
 						}
 						else
 						{
@@ -2474,7 +2474,7 @@ void R_BackupModels(void)
 						if ((j == MD3_MAX_LODS - 1) || (mod->model.mdc[j] != mod->model.mdc[j + 1]))
 						{
 							modBack->model.mdc[j] = R_CacheModelAlloc(mod->model.mdc[j]->ofsEnd);
-							memcpy(modBack->model.mdc[j], mod->model.mdc[j], mod->model.mdc[j]->ofsEnd);
+							Com_Memcpy(modBack->model.mdc[j], mod->model.mdc[j], mod->model.mdc[j]->ofsEnd);
 						}
 						else
 						{
@@ -2594,7 +2594,7 @@ qboolean R_FindCachedModel(const char *name, model_t *newmod)
 		{
 			// copy it to a new slot
 			index = newmod->index;
-			memcpy(newmod, mod, sizeof(model_t));
+			Com_Memcpy(newmod, mod, sizeof(model_t));
 			newmod->index = index;
 			switch (mod->type)
 			{
@@ -2612,7 +2612,7 @@ qboolean R_FindCachedModel(const char *name, model_t *newmod)
 						if ((j == MD3_MAX_LODS - 1) || (mod->model.md3[j] != mod->model.md3[j + 1]))
 						{
 							newmod->model.md3[j] = ri.Hunk_Alloc(mod->model.md3[j]->ofsEnd, h_low);
-							memcpy(newmod->model.md3[j], mod->model.md3[j], mod->model.md3[j]->ofsEnd);
+							Com_Memcpy(newmod->model.md3[j], mod->model.md3[j], mod->model.md3[j]->ofsEnd);
 							R_RegisterMD3Shaders(newmod, j);
 							R_CacheModelFree(mod->model.md3[j]);
 						}
@@ -2631,7 +2631,7 @@ qboolean R_FindCachedModel(const char *name, model_t *newmod)
 						if ((j == MD3_MAX_LODS - 1) || (mod->model.mdc[j] != mod->model.mdc[j + 1]))
 						{
 							newmod->model.mdc[j] = ri.Hunk_Alloc(mod->model.mdc[j]->ofsEnd, h_low);
-							memcpy(newmod->model.mdc[j], mod->model.mdc[j], mod->model.mdc[j]->ofsEnd);
+							Com_Memcpy(newmod->model.mdc[j], mod->model.mdc[j], mod->model.mdc[j]->ofsEnd);
 							R_RegisterMDCShaders(newmod, j);
 							R_CacheModelFree(mod->model.mdc[j]);
 						}

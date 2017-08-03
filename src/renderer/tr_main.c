@@ -234,16 +234,16 @@ void R_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float d
 
 	if (glfogsettings[FOG_CURRENT].registered)
 	{
-		memcpy(&glfogsettings[FOG_LAST], &glfogsettings[FOG_CURRENT], sizeof(glfog_t));
+		Com_Memcpy(&glfogsettings[FOG_LAST], &glfogsettings[FOG_CURRENT], sizeof(glfog_t));
 	}
 	else
 	{
 		// if no current fog fall back to world fog
 		// FIXME: handle transition if there is no FOG_MAP fog
-		memcpy(&glfogsettings[FOG_LAST], &glfogsettings[FOG_MAP], sizeof(glfog_t));
+		Com_Memcpy(&glfogsettings[FOG_LAST], &glfogsettings[FOG_MAP], sizeof(glfog_t));
 	}
 
-	memcpy(&glfogsettings[FOG_TARGET], &glfogsettings[glfogNum], sizeof(glfog_t));
+	Com_Memcpy(&glfogsettings[FOG_TARGET], &glfogsettings[glfogNum], sizeof(glfog_t));
 
 	// setup transition times
 	glfogsettings[FOG_TARGET].startTime  = tr.refdef.time;
@@ -577,7 +577,7 @@ void R_RotateForViewer(void)
 	float  viewerMatrix[16];
 	vec3_t origin;
 
-	memset(&tr.orientation, 0, sizeof(tr.orientation));
+	Com_Memset(&tr.orientation, 0, sizeof(tr.orientation));
 	tr.orientation.axis[0][0] = 1;
 	tr.orientation.axis[1][1] = 1;
 	tr.orientation.axis[2][2] = 1;
@@ -678,13 +678,13 @@ void R_SetFrameFog(void)
 		if (glfogsettings[FOG_LAST].mode == GL_EXP && glfogsettings[FOG_TARGET].mode == GL_LINEAR)
 		{
 			// for now just fast transition to the target when dissimilar fogs are
-			memcpy(&glfogsettings[FOG_CURRENT], &glfogsettings[FOG_TARGET], sizeof(glfog_t));
+			Com_Memcpy(&glfogsettings[FOG_CURRENT], &glfogsettings[FOG_TARGET], sizeof(glfog_t));
 			glfogsettings[FOG_TARGET].finishTime = 0;
 		}
 		// transitioning from distance to density
 		else if (glfogsettings[FOG_LAST].mode == GL_LINEAR && glfogsettings[FOG_TARGET].mode == GL_EXP)
 		{
-			memcpy(&glfogsettings[FOG_CURRENT], &glfogsettings[FOG_TARGET], sizeof(glfog_t));
+			Com_Memcpy(&glfogsettings[FOG_CURRENT], &glfogsettings[FOG_TARGET], sizeof(glfog_t));
 			glfogsettings[FOG_TARGET].finishTime = 0;
 		}
 		// transitioning like fog modes
@@ -724,7 +724,7 @@ void R_SetFrameFog(void)
 	{
 		// probably usually not necessary to copy the whole thing.
 		// potential FIXME: since this is the most common occurance, diff first and only set changes
-		memcpy(&glfogsettings[FOG_CURRENT], &glfogsettings[FOG_TARGET], sizeof(glfog_t));
+		Com_Memcpy(&glfogsettings[FOG_CURRENT], &glfogsettings[FOG_TARGET], sizeof(glfog_t));
 	}
 
 	// shorten the far clip if the fog opaque distance is closer than the procedural farcip dist
@@ -999,7 +999,7 @@ void R_PlaneForSurface(surfaceType_t *surfType, cplane_t *plane)
 {
 	if (!surfType)
 	{
-		memset(plane, 0, sizeof(*plane));
+		Com_Memset(plane, 0, sizeof(*plane));
 		plane->normal[0] = 1;
 		return;
 	}
@@ -1033,7 +1033,7 @@ void R_PlaneForSurface(surfaceType_t *surfType, cplane_t *plane)
 	}
 		return;
 	default:
-		memset(plane, 0, sizeof(*plane));
+		Com_Memset(plane, 0, sizeof(*plane));
 		plane->normal[0] = 1;
 		return;
 	}

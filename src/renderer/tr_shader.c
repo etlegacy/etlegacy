@@ -2384,7 +2384,7 @@ static qboolean CollapseMultitexture(void)
 
 	// move down subsequent shaders
 	memmove(&stages[1], &stages[2], sizeof(stages[0]) * (MAX_SHADER_STAGES - 2));
-	memset(&stages[MAX_SHADER_STAGES - 1], 0, sizeof(stages[0]));
+	Com_Memset(&stages[MAX_SHADER_STAGES - 1], 0, sizeof(stages[0]));
 
 	return qtrue;
 }
@@ -2571,7 +2571,7 @@ static shader_t *GeneratePermanentShader(void)
 			// caching system
 			newShader->stages[i]->bundle[b].texMods = R_CacheShaderAlloc(NULL, size);
 
-			memcpy(newShader->stages[i]->bundle[b].texMods, stages[i].bundle[b].texMods, size);
+			Com_Memcpy(newShader->stages[i]->bundle[b].texMods, stages[i].bundle[b].texMods, size);
 		}
 	}
 
@@ -2685,7 +2685,7 @@ static void VertexLightingCollapse(void)
 			break;
 		}
 
-		memset(pStage, 0, sizeof(*pStage));
+		Com_Memset(pStage, 0, sizeof(*pStage));
 	}
 }
 #endif // 0
@@ -2815,7 +2815,7 @@ static shader_t *FinishShader(void)
 				{
 					if (stages[i].active)
 					{
-						memset(&stages[i], 0, sizeof(*pStage));
+						Com_Memset(&stages[i], 0, sizeof(*pStage));
 						break;
 					}
 				}
@@ -2823,7 +2823,7 @@ static shader_t *FinishShader(void)
 			}
 			else
 			{
-				memset(pStage, 0, sizeof(*pStage));
+				Com_Memset(pStage, 0, sizeof(*pStage));
 			}
 			continue;
 		}
@@ -3379,8 +3379,8 @@ shader_t *R_FindShader(const char *name, int lightmapIndex, qboolean mipRawImage
 	}
 
 	// clear the global shader
-	memset(&shader, 0, sizeof(shader));
-	memset(&stages, 0, sizeof(stages));
+	Com_Memset(&shader, 0, sizeof(shader));
+	Com_Memset(&stages, 0, sizeof(stages));
 	Q_strncpyz(shader.name, strippedName, sizeof(shader.name));
 	shader.lightmapIndex = lightmapIndex;
 	for (i = 0 ; i < MAX_SHADER_STAGES ; i++)
@@ -3752,7 +3752,7 @@ static void BuildShaderChecksumLookup(void)
 	int                numShaderStringPointers = 0;
 
 	// initialize the checksums
-	memset(shaderChecksumLookup, 0, sizeof(shaderChecksumLookup));
+	Com_Memset(shaderChecksumLookup, 0, sizeof(shaderChecksumLookup));
 
 	if (!p)
 	{
@@ -3817,8 +3817,8 @@ static void ScanAndLoadShaderFiles(void)
 	int  i;
 	long sum = 0;
 
-	memset(buffers, 0, MAX_SHADER_FILES);
-	memset(buffersize, 0, sizeof(int) * MAX_SHADER_FILES);
+	Com_Memset(buffers, 0, MAX_SHADER_FILES);
+	Com_Memset(buffersize, 0, sizeof(int) * MAX_SHADER_FILES);
 
 	// scan for shader files
 	shaderFiles = ri.FS_ListFiles("scripts", ".shader", &numShaders);
@@ -3884,8 +3884,8 @@ static void CreateInternalShaders(void)
 	tr.numShaders = 0;
 
 	// init the default shader
-	memset(&shader, 0, sizeof(shader));
-	memset(&stages, 0, sizeof(stages));
+	Com_Memset(&shader, 0, sizeof(shader));
+	Com_Memset(&stages, 0, sizeof(stages));
 
 	Q_strncpyz(shader.name, "<default>", sizeof(shader.name));
 
@@ -4089,9 +4089,9 @@ void R_BackupShaders(void)
 	}
 
 	// copy each model in memory across to the backupModels
-	memcpy(backupShaders, tr.shaders, sizeof(backupShaders));
+	Com_Memcpy(backupShaders, tr.shaders, sizeof(backupShaders));
 	// now backup the hashTable
-	memcpy(backupHashTable, hashTable, sizeof(hashTable));
+	Com_Memcpy(backupHashTable, hashTable, sizeof(hashTable));
 
 	numBackupShaders = tr.numShaders;
 
@@ -4281,7 +4281,7 @@ void R_InitShaders(void)
 
 	Ren_Print("Initializing Shaders\n");
 
-	memset(hashTable, 0, sizeof(hashTable));
+	Com_Memset(hashTable, 0, sizeof(hashTable));
 	CreateInternalShaders();
 	ScanAndLoadShaderFiles();
 	CreateExternalShaders();

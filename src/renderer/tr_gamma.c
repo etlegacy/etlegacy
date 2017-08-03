@@ -88,7 +88,7 @@ static void R_BuildGammaProgram(void)
 		{
 			GLchar *compiler_log;
 
-			compiler_log = (GLchar *) malloc(blen);
+			compiler_log = (GLchar *) Com_Allocate(blen);
 
 			glGetInfoLogARB(gammaProgram.vertexShader, blen, &slen, compiler_log);
 			Ren_Fatal("Failed to compile the gamma vertex shader reason: %s\n", compiler_log);

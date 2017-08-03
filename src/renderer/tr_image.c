@@ -66,17 +66,17 @@ void *R_GetImageBuffer(int size, bufferMemType_t bufferType, const char *filenam
 	if (imageBufferSize[bufferType] < R_IMAGE_BUFFER_SIZE && size <= imageBufferSize[bufferType])
 	{
 		imageBufferSize[bufferType] = R_IMAGE_BUFFER_SIZE;
-		imageBufferPtr[bufferType]  = malloc(imageBufferSize[bufferType]);
+		imageBufferPtr[bufferType]  = Com_Allocate(imageBufferSize[bufferType]);
 	}
 	if (size > imageBufferSize[bufferType])       // it needs to grow
 	{
 		if (imageBufferPtr[bufferType])
 		{
-			free(imageBufferPtr[bufferType]);
+			Com_Dealloc(imageBufferPtr[bufferType]);
 		}
 
 		imageBufferSize[bufferType] = size;
-		imageBufferPtr[bufferType]  = malloc(imageBufferSize[bufferType]);
+		imageBufferPtr[bufferType]  = Com_Allocate(imageBufferSize[bufferType]);
 	}
 
 	if (!imageBufferPtr[bufferType])
@@ -100,7 +100,7 @@ void R_FreeImageBuffer(void)
 		{
 			continue;
 		}
-		free(imageBufferPtr[bufferType]);
+		Com_Dealloc(imageBufferPtr[bufferType]);
 
 		imageBufferSize[bufferType] = 0;
 		imageBufferPtr[bufferType]  = NULL;
@@ -1953,7 +1953,7 @@ void *R_CacheImageAlloc(int size)
 {
 	if (r_cache->integer && r_cacheShaders->integer)
 	{
-		void *buf = malloc(size);    // ri.Z_Malloc causes load times about twice as long?
+		void *buf = Com_Allocate(size);    // ri.Z_Malloc causes load times about twice as long?
 
 		if (!buf)
 		{
@@ -1996,7 +1996,7 @@ void R_CacheImageFree(void *ptr)
 {
 	if (r_cache->integer && r_cacheShaders->integer)
 	{
-		free(ptr);
+		Com_Dealloc(ptr);
 	}
 }
 
