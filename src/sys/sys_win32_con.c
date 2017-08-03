@@ -547,7 +547,7 @@ static void Win_CompleteCommand(qboolean showMatches)
 	// run through again, printing matches
 	if (showMatches && win_matchCount > 0)
 	{
-		memcpy(&temp, edit, sizeof(*edit));
+		Com_Memcpy(&temp, edit, sizeof(*edit));
 		temp.buffer[win_acLength] = '\0';
 		Sys_Print(va("] %s\n", temp.buffer));
 		Cmd_CommandCompletion(Win_PrintMatches);
@@ -700,7 +700,7 @@ void Sys_CreateConsole(void)
 	int swidth, sheight;
 	int DEDSTYLE = WS_POPUPWINDOW | WS_CAPTION | WS_MINIMIZEBOX | WS_SIZEBOX;
 
-	memset(&wc, 0, sizeof(wc));
+	Com_Memset(&wc, 0, sizeof(wc));
 
 	wc.style         = 0;
 	wc.lpfnWndProc   = (WNDPROC)ConWndProc;

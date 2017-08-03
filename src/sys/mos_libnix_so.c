@@ -130,7 +130,7 @@ int morphos_so_init(void)
 		if (ctdt >= last_ctdt)
 		{
 			/* Preinit memory-system */
-			malloc(0);
+			Com_Allocate(0);
 
 			/* Call ANSI constructors */
 			CallFuncArray(__ctrslist);

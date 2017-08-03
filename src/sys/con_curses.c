@@ -300,7 +300,7 @@ void CON_Clear_f(void)
 	}
 
 	// Clear the log and the window
-	memset(logbuf, 0, sizeof(logbuf));
+	Com_Memset(logbuf, 0, sizeof(logbuf));
 	werase(logwin);
 	pnoutrefresh(logwin, scrollline, 0, 2, 1, LOG_LINES + 1, LOG_COLS + 1);
 
@@ -701,7 +701,7 @@ void CON_Print(const char *msg)
 	if (insert + strlen(msg) >= logbuf + sizeof(logbuf))
 	{
 		memmove(logbuf, logbuf + sizeof(logbuf) / 2, sizeof(logbuf) / 2);
-		memset(logbuf + sizeof(logbuf) / 2, 0, sizeof(logbuf) / 2);
+		Com_Memset(logbuf + sizeof(logbuf) / 2, 0, sizeof(logbuf) / 2);
 		insert -= sizeof(logbuf) / 2;
 	}
 

@@ -208,7 +208,7 @@ static void CustomApplicationMain( int argc, char **argv )
 
 	temparg = [argc UTF8String];
 	arglen  = strlen( temparg ) + 1;
-	arg     = (char *) malloc( arglen );
+	arg     = (char *) Com_Allocate( arglen );
 
 	if (arg == NULL)
 	{
@@ -219,7 +219,7 @@ static void CustomApplicationMain( int argc, char **argv )
 
 	if (newargv == NULL)
 	{
-		free(arg);
+		Com_Dealloc(arg);
 		return;
 	}
 
