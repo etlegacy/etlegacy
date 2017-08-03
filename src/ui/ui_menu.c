@@ -90,8 +90,8 @@ void Menu_TransitionItemByName(menuDef_t *menu, const char *p, rectDef_t rectFro
 		{
 			item->window.flags     |= (WINDOW_INTRANSITION | WINDOW_VISIBLE);
 			item->window.offsetTime = time;
-			memcpy(&item->window.rectClient, &rectFrom, sizeof(rectDef_t));
-			memcpy(&item->window.rectEffects, &rectTo, sizeof(rectDef_t));
+			Com_Memcpy(&item->window.rectClient, &rectFrom, sizeof(rectDef_t));
+			Com_Memcpy(&item->window.rectEffects, &rectTo, sizeof(rectDef_t));
 			item->window.rectEffects2.x = fabsf(rectTo.x - rectFrom.x) / amt;
 			item->window.rectEffects2.y = fabsf(rectTo.y - rectFrom.y) / amt;
 			item->window.rectEffects2.w = fabsf(rectTo.w - rectFrom.w) / amt;
@@ -139,7 +139,7 @@ void Menu_OrbitItemByName(menuDef_t *menu, const char *p, float x, float y, floa
  */
 void Menu_Init(menuDef_t *menu)
 {
-	memset(menu, 0, sizeof(menuDef_t));
+	Com_Memset(menu, 0, sizeof(menuDef_t));
 	menu->cursorItem = -1;
 	menu->fadeAmount = DC->Assets.fadeAmount;
 	menu->fadeClamp  = DC->Assets.fadeClamp;

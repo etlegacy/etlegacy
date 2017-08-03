@@ -1268,7 +1268,7 @@ void Script_GetClipboard(itemDef_t *item, qboolean *bAbort, char **args)
 
 #define CLIPFAIL *bAbort = qtrue; return;
 
-	memset(clipbuff, 0, sizeof(clipbuff));
+	Com_Memset(clipbuff, 0, sizeof(clipbuff));
 	DC->getClipboardData(clipbuff, sizeof(clipbuff));
 	if (!strlen(clipbuff))
 	{
@@ -1410,7 +1410,7 @@ void Item_RunScript(itemDef_t *item, qboolean *bAbort, const char *s)
 
 	Item_HandleSaveValue();
 
-	memset(script, 0, sizeof(script));
+	Com_Memset(script, 0, sizeof(script));
 
 	if (item && s && s[0])
 	{

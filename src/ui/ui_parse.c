@@ -77,12 +77,12 @@ void Item_ValidateTypeData(itemDef_t *item)
 	if (item->type == ITEM_TYPE_LISTBOX)
 	{
 		item->typeData = UI_Alloc(sizeof(listBoxDef_t));
-		memset(item->typeData, 0, sizeof(listBoxDef_t));
+		Com_Memset(item->typeData, 0, sizeof(listBoxDef_t));
 	}
 	else if (TEXTFIELD(item->type) || item->type == ITEM_TYPE_YESNO || item->type == ITEM_TYPE_BIND || item->type == ITEM_TYPE_SLIDER || item->type == ITEM_TYPE_TEXT)
 	{
 		item->typeData = UI_Alloc(sizeof(editFieldDef_t));
-		memset(item->typeData, 0, sizeof(editFieldDef_t));
+		Com_Memset(item->typeData, 0, sizeof(editFieldDef_t));
 		if (item->type == ITEM_TYPE_EDITFIELD)
 		{
 			if (!((editFieldDef_t *)item->typeData)->maxPaintChars)
@@ -294,7 +294,7 @@ qboolean PC_Script_Parse(int handle, const char **out)
 	char       script[4096];
 	pc_token_t token;
 
-	memset(script, 0, sizeof(script));
+	Com_Memset(script, 0, sizeof(script));
 	// scripts start with { and have ; separated command lists.. commands are command, arg..
 	// basically we want everything between the { } as it will be interpreted at run time
 
@@ -1884,7 +1884,7 @@ qboolean ParseColorRange(itemDef_t *item, int handle, int type)
 		return qfalse;
 	}
 
-	memset(&color, 0, sizeof(color));
+	Com_Memset(&color, 0, sizeof(color));
 
 	item->colorRangeType = type;
 
@@ -1894,7 +1894,7 @@ qboolean ParseColorRange(itemDef_t *item, int handle, int type)
 	{
 		if (item->numColors < MAX_COLOR_RANGES)
 		{
-			memcpy(&item->colorRanges[item->numColors], &color, sizeof(color));
+			Com_Memcpy(&item->colorRanges[item->numColors], &color, sizeof(color));
 			item->numColors++;
 		}
 
@@ -2231,7 +2231,7 @@ void Item_SetupKeywordHash(void)
 {
 	int i;
 
-	memset(itemParseKeywordHash, 0, sizeof(keywordHash_t *) * KEYWORDHASH_SIZE);
+	Com_Memset(itemParseKeywordHash, 0, sizeof(keywordHash_t *) * KEYWORDHASH_SIZE);
 	for (i = 0; itemParseKeywords[i].keyword; i++)
 	{
 		KeywordHash_Add(itemParseKeywordHash, &itemParseKeywords[i]);
@@ -3081,7 +3081,7 @@ void Menu_SetupKeywordHash(void)
 {
 	int i;
 
-	memset(menuParseKeywordHash, 0, sizeof(keywordHash_t *) * KEYWORDHASH_SIZE);
+	Com_Memset(menuParseKeywordHash, 0, sizeof(keywordHash_t *) * KEYWORDHASH_SIZE);
 	for (i = 0; menuParseKeywords[i].keyword; i++)
 	{
 		KeywordHash_Add(menuParseKeywordHash, &menuParseKeywords[i]);
@@ -3111,7 +3111,7 @@ qboolean Menu_Parse(int handle, menuDef_t *menu)
 
 	while (1)
 	{
-		memset(&token, 0, sizeof(pc_token_t));
+		Com_Memset(&token, 0, sizeof(pc_token_t));
 		if (!trap_PC_ReadToken(handle, &token))
 		{
 			PC_SourceError(handle, "end of file inside menu\n");

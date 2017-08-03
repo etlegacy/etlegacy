@@ -589,7 +589,7 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 		int        count = 0;
 
 		trap_R_SetColor(color);
-		memcpy(&newColor[0], &color[0], sizeof(vec4_t));
+		Com_Memcpy(&newColor[0], &color[0], sizeof(vec4_t));
 
 		if (limit > 0 && len > limit)
 		{
@@ -612,11 +612,11 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 			{
 				if (*(s + 1) == COLOR_NULL)
 				{
-					memcpy(&newColor[0], &color[0], sizeof(vec4_t));
+					Com_Memcpy(&newColor[0], &color[0], sizeof(vec4_t));
 				}
 				else
 				{
-					memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
+					Com_Memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
 					newColor[3] = color[3];
 				}
 				trap_R_SetColor(newColor);
@@ -695,7 +695,7 @@ void Text_PaintWithCursor(float x, float y, float scale, vec4_t color, const cha
 		const char *s    = text;
 
 		trap_R_SetColor(color);
-		memcpy(&newColor[0], &color[0], sizeof(vec4_t));
+		Com_Memcpy(&newColor[0], &color[0], sizeof(vec4_t));
 
 		if (limit > 0 && len > limit)
 		{
@@ -813,11 +813,11 @@ static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t 
 			{
 				if (*(s + 1) == COLOR_NULL)
 				{
-					memcpy(&newColor[0], &color[0], sizeof(vec4_t));
+					Com_Memcpy(&newColor[0], &color[0], sizeof(vec4_t));
 				}
 				else
 				{
-					memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
+					Com_Memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
 					newColor[3] = color[3];
 				}
 				trap_R_SetColor(newColor);
@@ -1011,7 +1011,7 @@ qboolean Asset_Parse(int handle)
 
 	while (1)
 	{
-		memset(&token, 0, sizeof(pc_token_t));
+		Com_Memset(&token, 0, sizeof(pc_token_t));
 
 		if (!trap_PC_ReadToken(handle, &token))
 		{
@@ -1191,7 +1191,7 @@ qboolean UI_ParseMenu(const char *menuFile)
 
 	while (1)
 	{
-		memset(&token, 0, sizeof(pc_token_t));
+		Com_Memset(&token, 0, sizeof(pc_token_t));
 		if (!trap_PC_ReadToken(handle, &token))
 		{
 			break;
@@ -6583,7 +6583,7 @@ static int UI_GetServerStatusInfo(const char *serverAddress, serverStatusInfo_t 
 		trap_LAN_ServerStatus(serverAddress, NULL, 0);
 		return qfalse;
 	}
-	memset(info, 0, sizeof(*info));
+	Com_Memset(info, 0, sizeof(*info));
 	if (trap_LAN_ServerStatus(serverAddress, info->text, sizeof(info->text)))
 	{
 		int    i;
@@ -6778,7 +6778,7 @@ static void UI_BuildFindPlayerList(qboolean force)
 	}
 	else
 	{
-		memset(&uiInfo.pendingServerStatus, 0, sizeof(uiInfo.pendingServerStatus));
+		Com_Memset(&uiInfo.pendingServerStatus, 0, sizeof(uiInfo.pendingServerStatus));
 		uiInfo.numFoundPlayerServers    = 0;
 		uiInfo.currentFoundPlayerServer = 0;
 		trap_Cvar_VariableStringBuffer("ui_findPlayer", uiInfo.findPlayerName, sizeof(uiInfo.findPlayerName));

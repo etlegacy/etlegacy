@@ -358,7 +358,7 @@ void GradientBar_Paint(rectDef_t *rect, vec4_t color)
  */
 void Window_Init(Window *w)
 {
-	memset(w, 0, sizeof(windowDef_t));
+	Com_Memset(w, 0, sizeof(windowDef_t));
 	w->borderSize   = 1;
 	w->foreColor[0] = w->foreColor[1] = w->foreColor[2] = w->foreColor[3] = 1.0;
 	w->cinematic    = -1;
@@ -1783,7 +1783,7 @@ void BG_FitTextToWidth_Ext(char *instr, float scale, float w, size_t size, fontH
 	char *s, *p, *c, *ls = NULL;
 
 	Q_strncpyz(buffer, instr, 1024);
-	memset(instr, 0, size);
+	Com_Memset(instr, 0, size);
 
 	c = s = instr;
 	p = buffer;

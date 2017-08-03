@@ -638,7 +638,7 @@ void UI_LoadCampaigns(void)
 	const char *ch;
 
 	uiInfo.campaignCount = 0;
-	memset(&uiInfo.campaignList, 0, sizeof(uiInfo.campaignList));
+	Com_Memset(&uiInfo.campaignList, 0, sizeof(uiInfo.campaignList));
 
 	// get all campaigns from .campaign files
 	numdirs = trap_FS_GetFileList("scripts", ".campaign", dirlist, 2048);

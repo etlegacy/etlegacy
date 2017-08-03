@@ -140,7 +140,7 @@ qboolean Item_EnableShowViaCvar(itemDef_t *item, int flag)
 {
 	char script[1024], *p;
 
-	memset(script, 0, sizeof(script));
+	Com_Memset(script, 0, sizeof(script));
 	if (item && item->enableCvar && *item->enableCvar && item->cvarTest && *item->cvarTest)
 	{
 		char       buff[1024];
@@ -1454,7 +1454,7 @@ void Item_CalcTextFieldCursor(itemDef_t *item)
 		int            len;
 		editFieldDef_t *editPtr = (editFieldDef_t *)item->typeData;
 
-		memset(buff, 0, sizeof(buff));
+		Com_Memset(buff, 0, sizeof(buff));
 		DC->getCVarString(item->cvar, buff, sizeof(buff));
 		len = Q_UTF8_Strlen(buff);
 
@@ -1604,7 +1604,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 		return qfalse;
 	}
 
-	memset(buff, 0, sizeof(buff));
+	Com_Memset(buff, 0, sizeof(buff));
 	DC->getCVarString(EDITFIELD_TEMP_CVAR, buff, sizeof(buff));
 
 	valueLen = Q_UTF8_Strlen(buff);
@@ -1670,8 +1670,8 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 				char clipbuff[1024];
 				int  clipbuff32[256];
 
-				memset(clipbuff, 0, sizeof(clipbuff));
-				memset(clipbuff32, 0, sizeof(int) * 256);
+				Com_Memset(clipbuff, 0, sizeof(clipbuff));
+				Com_Memset(clipbuff32, 0, sizeof(int) * 256);
 
 				DC->getClipboardData(clipbuff, sizeof(clipbuff));
 				if (strlen(clipbuff))
@@ -2095,7 +2095,7 @@ rectDef_t *Item_CorrectedTextRect(itemDef_t *item)
 {
 	static rectDef_t rect;
 
-	memset(&rect, 0, sizeof(rectDef_t));
+	Com_Memset(&rect, 0, sizeof(rectDef_t));
 	if (item)
 	{
 		rect = item->textRect;
@@ -2205,7 +2205,7 @@ void Item_TextColor(itemDef_t *item, vec4_t *newColor)
 	}
 	else
 	{
-		memcpy(newColor, &item->window.foreColor, sizeof(vec4_t));
+		Com_Memcpy(newColor, &item->window.foreColor, sizeof(vec4_t));
 		// items can be enabled and disabled based on cvars
 	}
 
@@ -2213,7 +2213,7 @@ void Item_TextColor(itemDef_t *item, vec4_t *newColor)
 	{
 		if ((item->cvarFlags & (CVAR_ENABLE | CVAR_DISABLE)) && !Item_EnableShowViaCvar(item, CVAR_ENABLE))
 		{
-			memcpy(newColor, &parent->disableColor, sizeof(vec4_t));
+			Com_Memcpy(newColor, &parent->disableColor, sizeof(vec4_t));
 		}
 	}
 }
@@ -2650,7 +2650,7 @@ void Item_TextField_Paint(itemDef_t *item)
 	}
 	else
 	{
-		memcpy(&newColor, &item->window.foreColor, sizeof(vec4_t));
+		Com_Memcpy(&newColor, &item->window.foreColor, sizeof(vec4_t));
 	}
 
 	// NOTE: offset from the editfield prefix (like "Say: " in limbo menu)
@@ -2719,7 +2719,7 @@ void Item_CheckBox_Paint(itemDef_t *item)
 	}
 	else
 	{
-		memcpy(&newColor, &item->window.foreColor, sizeof(vec4_t));
+		Com_Memcpy(&newColor, &item->window.foreColor, sizeof(vec4_t));
 	}
 
 	if (multiPtr && multiPtr->count)
@@ -2800,7 +2800,7 @@ void Item_YesNo_Paint(itemDef_t *item)
 	}
 	else
 	{
-		memcpy(&newColor, &item->window.foreColor, sizeof(vec4_t));
+		Com_Memcpy(&newColor, &item->window.foreColor, sizeof(vec4_t));
 	}
 
 	if (item->text)
@@ -2837,7 +2837,7 @@ void Item_Multi_Paint(itemDef_t *item)
 	}
 	else
 	{
-		memcpy(&newColor, &item->window.foreColor, sizeof(vec4_t));
+		Com_Memcpy(&newColor, &item->window.foreColor, sizeof(vec4_t));
 	}
 
 	text = Item_Multi_Setting(item);
@@ -2870,8 +2870,8 @@ void Item_Combo_Paint(itemDef_t *item)
 	int          i;
 	static float borderOffset = 4.f;
 
-	memcpy(&backColor, &item->window.backColor, sizeof(vec4_t));
-	memcpy(&itemColor, &item->window.foreColor, sizeof(vec4_t));
+	Com_Memcpy(&backColor, &item->window.backColor, sizeof(vec4_t));
+	Com_Memcpy(&itemColor, &item->window.foreColor, sizeof(vec4_t));
 	backColor[3] *= 0.8f;
 
 	if (item->text)
@@ -2945,7 +2945,7 @@ void Item_Combo_Paint(itemDef_t *item)
 		lowColor[2] = 0.8f * itemColor[2];
 		lowColor[3] = 0.8f * itemColor[3];
 
-		memcpy(&redishColor, &lowColor, sizeof(vec4_t));
+		Com_Memcpy(&redishColor, &lowColor, sizeof(vec4_t));
 		redishColor[0] = 1.f;
 
 		textRect.w = widestText;
@@ -3003,7 +3003,7 @@ void Item_Slider_Paint(itemDef_t *item)
 	}
 	else
 	{
-		memcpy(&newColor, &item->window.foreColor, sizeof(vec4_t));
+		Com_Memcpy(&newColor, &item->window.foreColor, sizeof(vec4_t));
 	}
 
 	y = item->window.rect.y;
@@ -3071,7 +3071,7 @@ void Item_Bind_Paint(itemDef_t *item)
 		}
 		else
 		{
-			memcpy(&newColor, &item->window.foreColor, sizeof(vec4_t));
+			Com_Memcpy(&newColor, &item->window.foreColor, sizeof(vec4_t));
 		}
 	}
 
@@ -3234,7 +3234,7 @@ void Item_Model_Paint(itemDef_t *item)
 	hModel = item->asset;
 
 	// setup the refdef
-	memset(&refdef, 0, sizeof(refdef));
+	Com_Memset(&refdef, 0, sizeof(refdef));
 	refdef.rdflags = RDF_NOWORLDMODEL;
 	AxisClear(refdef.viewaxis);
 	x = item->window.rect.x + 1;
@@ -3283,7 +3283,7 @@ void Item_Model_Paint(itemDef_t *item)
 
 	// add the model
 
-	memset(&ent, 0, sizeof(ent));
+	Com_Memset(&ent, 0, sizeof(ent));
 
 	//adjust = 5.0 * sin( (float)uis.realtime / 500 );
 	//adjust = 360 % (int)((float)uis.realtime / 1000);
@@ -3573,7 +3573,7 @@ void Item_OwnerDraw_Paint(itemDef_t *item)
 		menuDef_t *parent = (menuDef_t *)item->parent;
 
 		Fade(&item->window.flags, &item->window.foreColor[3], parent->fadeClamp, &item->window.nextTime, parent->fadeCycle, qtrue, parent->fadeAmount);
-		memcpy(&color, &item->window.foreColor, sizeof(color));
+		Com_Memcpy(&color, &item->window.foreColor, sizeof(color));
 		if (item->numColors > 0 && DC->getValue)
 		{
 			// if the value is within one of the ranges then set color to that, otherwise leave at default
@@ -3584,7 +3584,7 @@ void Item_OwnerDraw_Paint(itemDef_t *item)
 			{
 				if (f >= item->colorRanges[i].low && f <= item->colorRanges[i].high)
 				{
-					memcpy(&color, &item->colorRanges[i].color, sizeof(color));
+					Com_Memcpy(&color, &item->colorRanges[i].color, sizeof(color));
 					break;
 				}
 			}
@@ -3609,7 +3609,7 @@ void Item_OwnerDraw_Paint(itemDef_t *item)
 
 		if ((item->cvarFlags & (CVAR_ENABLE | CVAR_DISABLE)) && !Item_EnableShowViaCvar(item, CVAR_ENABLE))
 		{
-			memcpy(color, parent->disableColor, sizeof(vec4_t));
+			Com_Memcpy(color, parent->disableColor, sizeof(vec4_t));
 		}
 
 		// gah wtf indentation!
@@ -3989,7 +3989,7 @@ void Item_MouseActivate(itemDef_t *item)
  */
 void Item_Init(itemDef_t *item)
 {
-	memset(item, 0, sizeof(itemDef_t));
+	Com_Memset(item, 0, sizeof(itemDef_t));
 	item->textscale = 0.55f;
 
 	// default hotkey to -1
