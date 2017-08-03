@@ -386,7 +386,7 @@ static void CG_General(centity_t *cent)
 		return;
 	}
 
-	memset(&ent, 0, sizeof(ent));
+	Com_Memset(&ent, 0, sizeof(ent));
 
 	// set frame
 	ent.frame    = s1->frame;
@@ -559,7 +559,7 @@ static void CG_General(centity_t *cent)
 	// add to refresh list
 	trap_R_AddRefEntityToScene(&ent);
 
-	memcpy(&cent->refEnt, &ent, sizeof(refEntity_t));
+	Com_Memcpy(&cent->refEnt, &ent, sizeof(refEntity_t));
 }
 
 /**
@@ -660,7 +660,7 @@ static void CG_Item(centity_t *cent)
 
 	if (cg_simpleItems.integer && (item->giType == IT_WEAPON || item->giType == IT_HEALTH || item->giType == IT_AMMO))
 	{
-		memset(&ent, 0, sizeof(ent));
+		Com_Memset(&ent, 0, sizeof(ent));
 		ent.reType = RT_SPRITE;
 		VectorCopy(cent->lerpOrigin, ent.origin);
 		ent.radius = 14;
@@ -688,7 +688,7 @@ static void CG_Item(centity_t *cent)
 		return;
 	}
 
-	memset(&ent, 0, sizeof(ent));
+	Com_Memset(&ent, 0, sizeof(ent));
 
 	ent.nonNormalizedAxes = qfalse;
 
@@ -700,7 +700,7 @@ static void CG_Item(centity_t *cent)
 		{
 			refEntity_t stand;
 
-			memset(&stand, 0, sizeof(stand));
+			Com_Memset(&stand, 0, sizeof(stand));
 			stand.hModel = weaponInfo->standModel;
 
 			if (es->eFlags & EF_SPINNING)
@@ -1091,7 +1091,7 @@ static void CG_Missile(centity_t *cent)
 	}
 
 	// create the render entity
-	memset(&ent, 0, sizeof(ent));
+	Com_Memset(&ent, 0, sizeof(ent));
 	VectorCopy(cent->lerpOrigin, ent.origin);
 	VectorCopy(cent->lerpOrigin, ent.oldorigin);
 
@@ -1339,7 +1339,7 @@ static void CG_Trap(centity_t *cent)
 	entityState_t *cs     = &cent->currentState;
 	lerpFrame_t   *traplf = &cent->lerpFrame;
 
-	memset(&ent, 0, sizeof(ent));
+	Com_Memset(&ent, 0, sizeof(ent));
 
 	// initial setup
 	if (!traplf->oldFrameTime)
@@ -1374,7 +1374,7 @@ static void CG_Trap(centity_t *cent)
 
 	trap_R_AddRefEntityToScene(&ent);
 
-	memcpy(&cent->refEnt, &ent, sizeof(refEntity_t));
+	Com_Memcpy(&cent->refEnt, &ent, sizeof(refEntity_t));
 }
 
 /**
@@ -1454,7 +1454,7 @@ static void CG_Explosive(centity_t *cent)
 	entityState_t *s1 = &cent->currentState;
 
 	// create the render entity
-	memset(&ent, 0, sizeof(ent));
+	Com_Memset(&ent, 0, sizeof(ent));
 	VectorCopy(cent->lerpOrigin, ent.origin);
 
 	AnglesToAxis(cent->lerpAngles, ent.axis);
@@ -1495,7 +1495,7 @@ static void CG_Constructible(centity_t *cent)
 	entityState_t *s1 = &cent->currentState;
 
 	// create the render entity
-	memset(&ent, 0, sizeof(ent));
+	Com_Memset(&ent, 0, sizeof(ent));
 	VectorCopy(cent->lerpOrigin, ent.origin);
 	VectorCopy(cent->lerpOrigin, ent.oldorigin);
 	//VectorCopy( ent.origin, cent->lerpOrigin);
@@ -1536,7 +1536,7 @@ static void CG_Mover(centity_t *cent)
 	entityState_t *s1 = &cent->currentState;
 
 	// create the render entity
-	memset(&ent, 0, sizeof(ent));
+	Com_Memset(&ent, 0, sizeof(ent));
 
 	VectorCopy(cent->lerpOrigin, ent.origin);
 	VectorCopy(cent->lerpOrigin, ent.oldorigin);
@@ -1648,7 +1648,7 @@ static void CG_Mover(centity_t *cent)
 		}
 
 		trap_R_AddRefEntityToScene(&ent);
-		memcpy(&cent->refEnt, &ent, sizeof(refEntity_t));
+		Com_Memcpy(&cent->refEnt, &ent, sizeof(refEntity_t));
 	}
 	else
 	{
@@ -1756,7 +1756,7 @@ void CG_Beam_2(centity_t *cent)
 	BG_EvaluateTrajectory(&s1->apos, cg.time, origin2, qfalse, s1->effect2Time);
 
 	// create the render entity
-	memset(&ent, 0, sizeof(ent));
+	Com_Memset(&ent, 0, sizeof(ent));
 
 	VectorCopy(origin, ent.origin);
 	VectorCopy(origin2, ent.oldorigin);
@@ -1785,7 +1785,7 @@ void CG_Beam(centity_t *cent)
 	entityState_t *s1 = &cent->currentState;
 
 	// create the render entity
-	memset(&ent, 0, sizeof(ent));
+	Com_Memset(&ent, 0, sizeof(ent));
 	VectorCopy(s1->pos.trBase, ent.origin);
 	VectorCopy(s1->origin2, ent.oldorigin);
 
@@ -1823,7 +1823,7 @@ static void CG_Portal(centity_t *cent)
 	entityState_t *s1 = &cent->currentState;
 
 	// create the render entity
-	memset(&ent, 0, sizeof(ent));
+	Com_Memset(&ent, 0, sizeof(ent));
 	VectorCopy(cent->lerpOrigin, ent.origin);
 	VectorCopy(s1->origin2, ent.oldorigin);
 	ByteToDir(s1->eventParm, ent.axis[0]);
@@ -1852,7 +1852,7 @@ static void CG_Prop(centity_t *cent)
 	entityState_t *s1 = &cent->currentState;
 
 	// create the render entity
-	memset(&ent, 0, sizeof(ent));
+	Com_Memset(&ent, 0, sizeof(ent));
 
 	if (cg.renderingThirdPerson)
 	{
@@ -1941,7 +1941,7 @@ static void CG_Prop(centity_t *cent)
 		ent.hModel  = cgs.gameModels[s1->modelindex2];
 		ent.frame   = s1->frame;
 		trap_R_AddRefEntityToScene(&ent);
-		memcpy(&cent->refEnt, &ent, sizeof(refEntity_t));
+		Com_Memcpy(&cent->refEnt, &ent, sizeof(refEntity_t));
 	}
 	else
 	{
@@ -2034,8 +2034,8 @@ void CG_Cabinet(centity_t *cent, cabinetType_t type)
 		return;
 	}
 
-	memset(&cabinet, 0, sizeof(cabinet));
-	memset(&mini_me, 0, sizeof(mini_me));
+	Com_Memset(&cabinet, 0, sizeof(cabinet));
+	Com_Memset(&mini_me, 0, sizeof(mini_me));
 
 	cabinet.hModel   = cabinetInfo[type].model;
 	cabinet.frame    = 0;
@@ -2650,7 +2650,7 @@ qboolean CG_AddEntityToTag(centity_t *cent)
 		{   // fixed to rotate about the object's axis, not the world
 			vec3_t mat[3], mat2[3];
 
-			memcpy(mat2, ent.axis, sizeof(mat2));
+			Com_Memcpy(mat2, ent.axis, sizeof(mat2));
 			CreateRotationMatrix(cent->lerpAngles, mat);
 			MatrixMultiply(mat, mat2, ent.axis);
 			AxisToAngles(ent.axis, cent->lerpAngles);
@@ -2818,11 +2818,11 @@ void CGTagToRefEntity(refEntity_t *ent, tag_t *tag)
  */
 void CG_AttachBitsToTank(centity_t *tank, refEntity_t *mg42base, refEntity_t *mg42upper, refEntity_t *mg42gun, refEntity_t *player, refEntity_t *flash, vec_t *playerangles, const char *tagName, qboolean browning)
 {
-	memset(mg42base, 0, sizeof(refEntity_t));
-	memset(mg42gun, 0, sizeof(refEntity_t));
-	memset(mg42upper, 0, sizeof(refEntity_t));
-	memset(player, 0, sizeof(refEntity_t));
-	memset(flash, 0, sizeof(refEntity_t));
+	Com_Memset(mg42base, 0, sizeof(refEntity_t));
+	Com_Memset(mg42gun, 0, sizeof(refEntity_t));
+	Com_Memset(mg42upper, 0, sizeof(refEntity_t));
+	Com_Memset(player, 0, sizeof(refEntity_t));
+	Com_Memset(flash, 0, sizeof(refEntity_t));
 
 	mg42base->hModel  = cgs.media.hMountedMG42Base;
 	mg42upper->hModel = cgs.media.hMountedMG42Nest;
@@ -2848,7 +2848,7 @@ void CG_AttachBitsToTank(centity_t *tank, refEntity_t *mg42base, refEntity_t *mg
 
 		tank->tankframe = cg.clientFrame;
 
-		memset(&ent, 0, sizeof(refEntity_t));
+		Com_Memset(&ent, 0, sizeof(refEntity_t));
 
 		if (tank->currentState.solid == SOLID_BMODEL)
 		{

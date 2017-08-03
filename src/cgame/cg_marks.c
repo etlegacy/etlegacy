@@ -53,7 +53,7 @@ void CG_InitMarkPolys(void)
 	int        i;
 	markPoly_t *trav, *lasttrav;
 
-	memset(cg_markPolys, 0, sizeof(cg_markPolys));
+	Com_Memset(cg_markPolys, 0, sizeof(cg_markPolys));
 
 	cg_activeMarkPolys.nextMark = &cg_activeMarkPolys;
 	cg_activeMarkPolys.prevMark = &cg_activeMarkPolys;

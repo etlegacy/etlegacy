@@ -968,7 +968,7 @@ void CG_ClearTrails(void)
 {
 	int i;
 
-	memset(trailJuncs, 0, sizeof(trailJunc_t) * MAX_TRAILJUNCS);
+	Com_Memset(trailJuncs, 0, sizeof(trailJunc_t) * MAX_TRAILJUNCS);
 
 	freeTrails   = trailJuncs;
 	activeTrails = NULL;

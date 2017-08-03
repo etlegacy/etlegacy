@@ -125,8 +125,8 @@ void CG_InitPMGraphics(void)
  */
 void CG_InitPM(void)
 {
-	memset(&cg_pmStack, 0, sizeof(cg_pmStack));
-	memset(&cg_pmStackBig, 0, sizeof(cg_pmStackBig));
+	Com_Memset(&cg_pmStack, 0, sizeof(cg_pmStack));
+	Com_Memset(&cg_pmStackBig, 0, sizeof(cg_pmStackBig));
 
 	cg_pmOldList        = NULL;
 	cg_pmWaitingList    = NULL;

@@ -269,7 +269,7 @@ void CG_LoadLocations(void)
 			temp[t] = '\0';
 			x       = atoi(temp);
 			t       = 0;
-			memset(&temp, 0, sizeof(temp));
+			Com_Memset(&temp, 0, sizeof(temp));
 
 			if (p > fLen)
 			{
@@ -286,7 +286,7 @@ void CG_LoadLocations(void)
 			temp[t] = '\0';
 			y       = atoi(temp);
 			t       = 0;
-			memset(&temp, 0, sizeof(temp));
+			Com_Memset(&temp, 0, sizeof(temp));
 
 			if (p > fLen)
 			{
@@ -304,7 +304,7 @@ void CG_LoadLocations(void)
 			z       = atoi(temp);
 			t       = 0;
 
-			memset(&temp, 0, sizeof(temp));
+			Com_Memset(&temp, 0, sizeof(temp));
 			if (p > fLen)
 			{
 				break;
@@ -370,7 +370,7 @@ void CG_InitLocalEntities(void)
 {
 	int i;
 
-	memset(cg_localEntities, 0, sizeof(cg_localEntities));
+	Com_Memset(cg_localEntities, 0, sizeof(cg_localEntities));
 	cg_activeLocalEntities.next = &cg_activeLocalEntities;
 	cg_activeLocalEntities.prev = &cg_activeLocalEntities;
 	cg_freeLocalEntities        = cg_localEntities;
@@ -454,7 +454,7 @@ localEntity_t *CG_AllocLocalEntity(void)
 	le                   = cg_freeLocalEntities;
 	cg_freeLocalEntities = cg_freeLocalEntities->next;
 
-	memset(le, 0, sizeof(*le));
+	Com_Memset(le, 0, sizeof(*le));
 
 	// link into the active list
 	le->next                          = cg_activeLocalEntities.next;
@@ -779,7 +779,7 @@ void CG_AddFragment(localEntity_t *le)
 			float       alpha = 1.0f - ((float)(cg.time - le->startTime) / (float)(le->endTime - le->startTime));
 
 			alpha *= 0.25f;
-			memset(&flash, 0, sizeof(flash));
+			Com_Memset(&flash, 0, sizeof(flash));
 			CG_PositionEntityOnTag(&flash, &le->refEntity, "tag_flash", 0, NULL);
 			CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, flash.origin, 1000, 8, 20, 20, alpha, 8.f);
 		}
@@ -999,7 +999,7 @@ void CG_AddFragment(localEntity_t *le)
 			for (i = 0; i <= le->breakCount; i++)
 			{
 				nle = CG_AllocLocalEntity();
-				memcpy(&(nle->leType), &(le->leType), sizeof(localEntity_t) - 2 * sizeof(localEntity_t *));
+				Com_Memcpy(&(nle->leType), &(le->leType), sizeof(localEntity_t) - 2 * sizeof(localEntity_t *));
 				if (nle->breakCount-- < 2)
 				{
 					nle->refEntity.hModel = character->gibModels[rand() % 2];

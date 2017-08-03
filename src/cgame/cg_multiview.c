@@ -576,8 +576,8 @@ void CG_mvDraw(cg_window_t *sw)
 	float     s     = 1.0f;
 	centity_t *cent = &cg_entities[pID];
 
-	memset(&refdef, 0, sizeof(refdef_t));
-	memcpy(refdef.areamask, cg.snap->areamask, sizeof(refdef.areamask));
+	Com_Memset(&refdef, 0, sizeof(refdef_t));
+	Com_Memcpy(refdef.areamask, cg.snap->areamask, sizeof(refdef.areamask));
 
 	CG_mvUpdateClientInfo(pID);
 	cg.snap->ps.clientNum = pID;
@@ -749,7 +749,7 @@ void CG_mvDraw(cg_window_t *sw)
 		return;
 	}
 
-	memcpy(refdef.areamask, cg.snap->areamask, sizeof(refdef.areamask));
+	Com_Memcpy(refdef.areamask, cg.snap->areamask, sizeof(refdef.areamask));
 	refdef.time = cg.time;
 	trap_SetClientLerpOrigin(refdef.vieworg[0], refdef.vieworg[1], refdef.vieworg[2]);
 
@@ -901,7 +901,7 @@ void CG_mvWindowOverlay(int pID, float b_x, float b_y, float b_w, float b_h, flo
 		{
 			t = 2047 - t;
 		}
-		memcpy(&borderColor, *noSelectBorder, sizeof(vec4_t));
+		Com_Memcpy(&borderColor, *noSelectBorder, sizeof(vec4_t));
 		scale = ((float)t / 1137.38f) + 0.5f;
 		if (scale <= 1.0f)
 		{

@@ -1112,7 +1112,7 @@ static qboolean CG_RW_ParseWeaponLinkPart(int handle, weaponInfo_t *weaponInfo, 
 
 	partModel = &weaponInfo->partModels[viewType][part];
 
-	memset(partModel, 0, sizeof(*partModel));
+	Com_Memset(partModel, 0, sizeof(*partModel));
 
 	if (!trap_PC_ReadToken(handle, &token) || Q_stricmp(token.string, "{"))
 	{
@@ -1877,7 +1877,7 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
 		return;
 	}
 
-	memset(weaponInfo, 0, sizeof(*weaponInfo));
+	Com_Memset(weaponInfo, 0, sizeof(*weaponInfo));
 	weaponInfo->registered = qtrue;
 
 	/*for( item = bg_itemlist + 1 ; item->classname ; item++ ) {
@@ -2078,7 +2078,7 @@ void CG_RegisterItemVisuals(int itemNum)
 		return;
 	}
 
-	memset(itemInfo, 0, sizeof(*itemInfo));
+	Com_Memset(itemInfo, 0, sizeof(*itemInfo));
 
 	for (i = 0; i < MAX_ITEM_MODELS; i++)
 	{
@@ -2582,7 +2582,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 		if (cg.time - cent->muzzleFlashTime < MUZZLE_FLASH_TIME)
 		{
-			memset(&flash, 0, sizeof(flash));
+			Com_Memset(&flash, 0, sizeof(flash));
 			flash.renderfx = RF_LIGHTING_ORIGIN;
 			flash.hModel   = cgs.media.mg42muzzleflash;
 
@@ -2628,7 +2628,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	}
 
 	// add the weapon
-	memset(&gun, 0, sizeof(gun));
+	Com_Memset(&gun, 0, sizeof(gun));
 	VectorCopy(parent->lightingOrigin, gun.lightingOrigin);
 	gun.shadowPlane = parent->shadowPlane;
 	gun.renderfx    = parent->renderfx;
@@ -2802,7 +2802,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	{
 		refEntity_t brass;
 
-		memset(&brass, 0, sizeof(brass));
+		Com_Memset(&brass, 0, sizeof(brass));
 
 		if (IS_AKIMBO_WEAPON(weaponNum) && akimboFire)
 		{
@@ -2815,7 +2815,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		VectorCopy(brass.origin, ejectBrassCasingOrigin);
 	}
 
-	memset(&barrel, 0, sizeof(barrel));
+	Com_Memset(&barrel, 0, sizeof(barrel));
 	VectorCopy(parent->lightingOrigin, barrel.lightingOrigin);
 	barrel.shadowPlane = parent->shadowPlane;
 	barrel.renderfx    = parent->renderfx;
@@ -2947,7 +2947,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 							inRange = qfalse;
 						}
 
-						memset(&satchelDetPart, 0, sizeof(satchelDetPart));
+						Com_Memset(&satchelDetPart, 0, sizeof(satchelDetPart));
 						VectorCopy(parent->lightingOrigin, satchelDetPart.lightingOrigin);
 						satchelDetPart.shadowPlane = parent->shadowPlane;
 						satchelDetPart.renderfx    = parent->renderfx;
@@ -2982,7 +2982,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 						{
 							refEntity_t bipodLeg;
 
-							memset(&bipodLeg, 0, sizeof(bipodLeg));
+							Com_Memset(&bipodLeg, 0, sizeof(bipodLeg));
 							VectorCopy(parent->lightingOrigin, bipodLeg.lightingOrigin);
 							bipodLeg.shadowPlane = parent->shadowPlane;
 							bipodLeg.renderfx    = parent->renderfx;
@@ -3118,7 +3118,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	}
 
 	// add the flash
-	memset(&flash, 0, sizeof(flash));
+	Com_Memset(&flash, 0, sizeof(flash));
 	VectorCopy(parent->lightingOrigin, flash.lightingOrigin);
 	flash.shadowPlane = parent->shadowPlane;
 	flash.renderfx    = parent->renderfx;
@@ -3414,7 +3414,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 	// mounted gun drawing
 	if (ps->eFlags & EF_MOUNTEDTANK)
 	{
-		memset(&hand, 0, sizeof(hand));
+		Com_Memset(&hand, 0, sizeof(hand));
 		CG_CalculateWeaponPosition(hand.origin, angles);
 		AnglesToAxis(angles, hand.axis);
 		hand.renderfx = RF_DEPTHHACK | RF_FIRST_PERSON | RF_MINLIGHT;
@@ -3458,7 +3458,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 			// FIXME: HACK dummy model to just draw _something_
 			refEntity_t flash;
 
-			memset(&flash, 0, sizeof(flash));
+			Com_Memset(&flash, 0, sizeof(flash));
 			flash.renderfx = (RF_LIGHTING_ORIGIN | RF_DEPTHHACK);
 			flash.hModel   = cgs.media.mg42muzzleflash;
 
@@ -3485,7 +3485,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 	{
 		weapon = &cg_weapons[ps->weapon];
 
-		memset(&hand, 0, sizeof(hand));
+		Com_Memset(&hand, 0, sizeof(hand));
 
 		// set up gun position
 		CG_CalculateWeaponPosition(hand.origin, angles);
@@ -5478,7 +5478,7 @@ void CG_MG42EFX(centity_t *cent)
 			AngleVectors(cent->lerpAngles, forward, NULL, NULL);
 			VectorMA(point, 40, forward, point);
 
-			memset(&flash, 0, sizeof(flash));
+			Com_Memset(&flash, 0, sizeof(flash));
 			flash.renderfx = RF_LIGHTING_ORIGIN;
 			flash.hModel   = cgs.media.mg42muzzleflash;
 
@@ -5515,7 +5515,7 @@ void CG_MortarEFX(centity_t *cent)
 		trap_R_AddLightToScene(cent->currentState.origin, 256, 0.75 + 8.0 / (rand() & 31), 1.0f, 1.0f, 1.0f, 0, 0);
 
 		// muzzle flash
-		memset(&flash, 0, sizeof(flash));
+		Com_Memset(&flash, 0, sizeof(flash));
 		flash.renderfx = RF_LIGHTING_ORIGIN;
 		flash.hModel   = cgs.media.mg42muzzleflash;
 		VectorCopy(cent->currentState.origin, flash.origin);

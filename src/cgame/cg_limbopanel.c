@@ -2033,7 +2033,7 @@ void CG_DrawPlayerHead(rectDef_t *rect, bg_character_t *character, bg_character_
 
 	CG_AdjustFrom640(&x, &y, &w, &h);
 
-	memset(&refdef, 0, sizeof(refdef));
+	Com_Memset(&refdef, 0, sizeof(refdef));
 
 	refdef.rdflags = RDF_NOWORLDMODEL;
 	AxisClear(refdef.viewaxis);
@@ -2065,7 +2065,7 @@ void CG_DrawPlayerHead(rectDef_t *rect, bg_character_t *character, bg_character_
 	angles[YAW]   = yaw;
 	angles[ROLL]  = 0;
 
-	memset(&head, 0, sizeof(head));
+	Com_Memset(&head, 0, sizeof(head));
 	AnglesToAxis(angles, head.axis);
 	VectorCopy(origin, head.origin);
 	head.hModel     = headcharacter->hudhead;
@@ -2083,7 +2083,7 @@ void CG_DrawPlayerHead(rectDef_t *rect, bg_character_t *character, bg_character_
 
 	if (drawHat)
 	{
-		memset(&hat, 0, sizeof(hat));
+		Com_Memset(&hat, 0, sizeof(hat));
 		hat.hModel     = character->accModels[ACC_HAT];
 		hat.customSkin = character->accSkins[ACC_HAT];
 		hat.renderfx   = RF_NOSHADOW | RF_FORCENOLOD;   // no stencil shadows
@@ -2099,7 +2099,7 @@ void CG_DrawPlayerHead(rectDef_t *rect, bg_character_t *character, bg_character_
 
 		if (rank)
 		{
-			memset(&mrank, 0, sizeof(mrank));
+			Com_Memset(&mrank, 0, sizeof(mrank));
 
 			mrank.hModel       = character->accModels[ACC_RANK];
 			mrank.customShader = rankicons[rank][team == TEAM_AXIS ? 1 : 0][1].shader;
@@ -2358,7 +2358,7 @@ qboolean CG_LimboPanel_WeaponPanel_KeyUp(panel_button_t *button, int key)
 
 			cnt = CG_LimboPanel_WeaponCount();
 
-			memcpy(&rect, &button->rect, sizeof(rect));
+			Com_Memcpy(&rect, &button->rect, sizeof(rect));
 			rect.y -= rect.h;
 
 			for (i = 1; i < cnt; i++, rect.y -= rect.h)
@@ -2557,7 +2557,7 @@ void CG_LimboPanel_WeaponPanel(panel_button_t *button)
 		int       i, x;
 		rectDef_t rect;
 
-		memcpy(&rect, &button->rect, sizeof(rect));
+		Com_Memcpy(&rect, &button->rect, sizeof(rect));
 
 		CG_LimboPanel_WeaponPanel_DrawWeapon(&rect, weap, qtrue, va(CG_TranslateString("%iof%i"), CG_LimboPanel_GetSelectedWeaponNum() + 1, cnt), CG_LimboPanel_RealWeaponIsDisabled(weap));
 		if (BG_CursorInRect(&rect))
@@ -3918,7 +3918,7 @@ int ExtractInt(char *src)
 	unsigned int i;
 	unsigned int srclen = strlen(src) + 1;
 	int          destIx = 0;
-	char         *tmp   = malloc(srclen);
+	char         *tmp   = Com_Allocate(srclen);
 	int          result = 0;
 
 	// Go through all the characters in the source string
@@ -3942,7 +3942,7 @@ int ExtractInt(char *src)
 		result = sign * atoi(tmp);
 	}
 
-	free(tmp);
+	Com_Dealloc(tmp);
 
 	return result;
 }

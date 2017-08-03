@@ -52,7 +52,7 @@ static qboolean CG_ParseGibModels(char *modelPath, bg_character_t *character)
 	char         *token;
 	fileHandle_t f;
 
-	memset(character->gibModels, 0, sizeof(character->gibModels));
+	Com_Memset(character->gibModels, 0, sizeof(character->gibModels));
 
 	// load the file
 	len = trap_FS_FOpenFile(va("%s.gibs", modelPath), &f, FS_READ);
@@ -226,7 +226,7 @@ static void CG_CalcMoveSpeeds(bg_character_t *character)
 	int           low;
 	orientation_t o[2];
 
-	memset(&refent, 0, sizeof(refent));
+	Com_Memset(&refent, 0, sizeof(refent));
 
 	refent.hModel = character->mesh;
 
@@ -385,7 +385,7 @@ static qboolean CG_CheckForExistingAnimModelInfo(const char *animationGroup, con
 	{
 		*animModelInfo = firstFree;
 		// clear the structure out ready for use
-		memset(*animModelInfo, 0, sizeof(**animModelInfo));
+		Com_Memset(*animModelInfo, 0, sizeof(**animModelInfo));
 	}
 
 	// we need to parse the information from the script files
@@ -460,7 +460,7 @@ qboolean CG_RegisterCharacter(const char *characterFile, bg_character_t *charact
 	char              *filename;
 	char              buf[MAX_QPATH];
 
-	memset(&characterDef, 0, sizeof(characterDef));
+	Com_Memset(&characterDef, 0, sizeof(characterDef));
 
 	if (!BG_ParseCharacterFile(characterFile, &characterDef))
 	{

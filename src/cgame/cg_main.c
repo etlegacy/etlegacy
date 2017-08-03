@@ -1903,7 +1903,7 @@ static void CG_RegisterGraphics(void)
 	CG_LoadingString(" - heads-up display -");
 	CG_Hud_Setup();
 
-	memset(cg_weapons, 0, sizeof(cg_weapons));
+	Com_Memset(cg_weapons, 0, sizeof(cg_weapons));
 
 	CG_LoadingString(" - weapons -");
 	for (i = WP_KNIFE; i < WP_NUM_WEAPONS; i++)
@@ -2439,7 +2439,7 @@ float CG_Cvar_Get(const char *cvar)
 {
 	char buff[128];
 
-	memset(buff, 0, sizeof(buff));
+	Com_Memset(buff, 0, sizeof(buff));
 	trap_Cvar_VariableStringBuffer(cvar, buff, sizeof(buff));
 	return (float)atof(buff);
 }
@@ -2657,10 +2657,10 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	CG_RestoreProfile();
 
 	// clear everything
-	memset(&cgs, 0, sizeof(cgs));
-	memset(&cg, 0, sizeof(cg));
-	memset(cg_entities, 0, sizeof(cg_entities));
-	memset(cg_weapons, 0, sizeof(cg_weapons));
+	Com_Memset(&cgs, 0, sizeof(cgs));
+	Com_Memset(&cg, 0, sizeof(cg));
+	Com_Memset(cg_entities, 0, sizeof(cg_entities));
+	Com_Memset(cg_weapons, 0, sizeof(cg_weapons));
 
 	cgs.initing = qtrue;
 
@@ -2884,7 +2884,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	cgs.dumpStatsTime = 0;
 
 	CG_LoadLocations();
-	memset(cgs.clientLocation, 0, sizeof(cgs.clientLocation));
+	Com_Memset(cgs.clientLocation, 0, sizeof(cgs.clientLocation));
 
 	CG_UpdateSvCvars();
 

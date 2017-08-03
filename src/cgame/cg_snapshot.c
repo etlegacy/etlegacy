@@ -161,7 +161,7 @@ void CG_SetInitialSnapshot(snapshot_t *snap)
 		state = &cg.snap->entities[i];
 		cent  = &cg_entities[state->number];
 
-		memcpy(&cent->currentState, state, sizeof(entityState_t));
+		Com_Memcpy(&cent->currentState, state, sizeof(entityState_t));
 		//cent->currentState = *state;
 		cent->interpolate  = qfalse;
 		cent->currentValid = qtrue;
@@ -259,7 +259,7 @@ static void CG_TransitionSnapshot(void)
 	}
 
 	// I hate doing things like this for enums.  Oh well.
-	memset(&oldValid, 0, sizeof(oldValid));
+	Com_Memset(&oldValid, 0, sizeof(oldValid));
 
 	// clear the currentValid flag for all entities in the existing snapshot
 	for (i = 0 ; i < cg.snap->numEntities ; i++)
@@ -370,7 +370,7 @@ static void CG_SetNextSnap(snapshot_t *snap)
 		es   = &snap->entities[num];
 		cent = &cg_entities[es->number];
 
-		memcpy(&cent->nextState, es, sizeof(entityState_t));
+		Com_Memcpy(&cent->nextState, es, sizeof(entityState_t));
 		//cent->nextState = *es;
 
 		// if this frame is a teleport, or the entity wasn't in the

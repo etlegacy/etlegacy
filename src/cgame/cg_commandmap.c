@@ -1483,7 +1483,7 @@ void CG_DrawAutoMap(float x, float y, float w, float h)
 	mapScissor_t mapScissor;
 	vec2_t       automapTransformed;
 
-	memset(&mapScissor, 0, sizeof(mapScissor));
+	Com_Memset(&mapScissor, 0, sizeof(mapScissor));
 
 	if (cgs.ccLayers)
 	{

@@ -181,13 +181,13 @@ void CG_NewClientInfo(int clientNum)
 	configstring = CG_ConfigString(clientNum + CS_PLAYERS);
 	if (!*configstring)
 	{
-		memset(ci, 0, sizeof(*ci));
+		Com_Memset(ci, 0, sizeof(*ci));
 		return;     // player just left
 	}
 
 	// build into a temp buffer so the defer checks can use
 	// the old value
-	memset(&newInfo, 0, sizeof(newInfo));
+	Com_Memset(&newInfo, 0, sizeof(newInfo));
 
 	// grabbing some older stuff, if it's a new client, tinfo will update within one second anyway, otherwise you get the health thing flashing red
 	// NOTE: why are we bothering to do all this setting up of a new clientInfo_t anyway? it was all for deffered clients iirc, which we dont have
@@ -375,8 +375,8 @@ void CG_NewClientInfo(int clientNum)
 		if (newInfo.team != cgs.clientinfo[cg.clientNum].team)
 		{
 			// clear these
-			memset(cg.artilleryRequestPos, 0, sizeof(cg.artilleryRequestPos));
-			memset(cg.artilleryRequestTime, 0, sizeof(cg.artilleryRequestTime));
+			Com_Memset(cg.artilleryRequestPos, 0, sizeof(cg.artilleryRequestPos));
+			Com_Memset(cg.artilleryRequestTime, 0, sizeof(cg.artilleryRequestTime));
 		}
 
 		trap_Cvar_Set("authLevel", va("%i", newInfo.refStatus));
@@ -1788,7 +1788,7 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 
 	if (cgsnap == cent && (cg.snap->ps.pm_flags & PMF_LADDER))
 	{
-		memcpy(torso, legs, sizeof(*torso));
+		Com_Memcpy(torso, legs, sizeof(*torso));
 	}
 }
 
@@ -1874,7 +1874,7 @@ static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader, int height, 
 		rf = 0;
 	}
 
-	memset(&ent, 0, sizeof(ent));
+	Com_Memset(&ent, 0, sizeof(ent));
 	VectorCopy(cent->lerpOrigin, ent.origin);
 	ent.origin[2] += height;
 
@@ -2011,7 +2011,7 @@ void CG_AddOnScreenText(const char *text, vec3_t origin, int clientNum)
 	}
 	else
 	{
-		memset(&cg.specOnScreenNames[clientNum], 0, sizeof(cg.specOnScreenNames[clientNum]));
+		Com_Memset(&cg.specOnScreenNames[clientNum], 0, sizeof(cg.specOnScreenNames[clientNum]));
 	}
 }
 
@@ -2692,9 +2692,9 @@ void CG_Player(centity_t *cent)
 		VectorCopy(cent->lerpOrigin, playerOrigin);
 	}
 
-	memset(&body, 0, sizeof(body));
-	memset(&head, 0, sizeof(head));
-	memset(&acc, 0, sizeof(acc));
+	Com_Memset(&body, 0, sizeof(body));
+	Com_Memset(&head, 0, sizeof(head));
+	Com_Memset(&acc, 0, sizeof(acc));
 
 	// get the rotation information
 	CG_PlayerAngles(cent, body.axis, body.torsoAxis, head.axis);
@@ -3113,13 +3113,13 @@ void CG_ResetPlayerEntity(centity_t *cent)
 		CG_ClearLerpFrameRate(cent, &cgs.clientinfo[cent->currentState.clientNum], &cent->pe.legs, cent->currentState.legsAnim);
 		CG_ClearLerpFrame(cent, &cgs.clientinfo[cent->currentState.clientNum], &cent->pe.torso, cent->currentState.torsoAnim);
 
-		memset(&cent->pe.legs, 0, sizeof(cent->pe.legs));
+		Com_Memset(&cent->pe.legs, 0, sizeof(cent->pe.legs));
 		cent->pe.legs.yawAngle   = cent->rawAngles[YAW];
 		cent->pe.legs.yawing     = qfalse;
 		cent->pe.legs.pitchAngle = 0;
 		cent->pe.legs.pitching   = qfalse;
 
-		memset(&cent->pe.torso, 0, sizeof(cent->pe.torso));
+		Com_Memset(&cent->pe.torso, 0, sizeof(cent->pe.torso));
 		cent->pe.torso.yawAngle   = cent->rawAngles[YAW];
 		cent->pe.torso.yawing     = qfalse;
 		cent->pe.torso.pitchAngle = cent->rawAngles[PITCH];
@@ -3166,8 +3166,8 @@ void CG_GetBleedOrigin(vec3_t head_origin, vec3_t body_origin, int fleshEntityNu
 	cent       = &cg_entities[fleshEntityNum];
 	backupCent = *cent;
 
-	memset(&body, 0, sizeof(body));
-	memset(&head, 0, sizeof(head));
+	Com_Memset(&body, 0, sizeof(body));
+	Com_Memset(&head, 0, sizeof(head));
 
 	CG_PlayerAngles(cent, body.axis, body.torsoAxis, head.axis);
 	CG_PlayerAnimation(cent, &body);
@@ -3244,7 +3244,7 @@ qboolean CG_GetTag(int clientNum, const char *tagname, orientation_t *orientatio
 
 	// rotate with entity
 	MatrixMultiply(refent->axis, orientation->axis, tempAxis);
-	memcpy(orientation->axis, tempAxis, sizeof(vec3_t) * 3);
+	Com_Memcpy(orientation->axis, tempAxis, sizeof(vec3_t) * 3);
 
 	return qtrue;
 }
@@ -3301,7 +3301,7 @@ qboolean CG_GetWeaponTag(int clientNum, const char *tagname, orientation_t *orie
 
 	// rotate with entity
 	MatrixMultiply(refent->axis, orientation->axis, tempAxis);
-	memcpy(orientation->axis, tempAxis, sizeof(vec3_t) * 3);
+	Com_Memcpy(orientation->axis, tempAxis, sizeof(vec3_t) * 3);
 
 	return qtrue;
 }

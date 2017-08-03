@@ -429,7 +429,7 @@ char *CG_AddSpawnVarToken(const char *string)
 	}
 
 	dest = cg.spawnVarChars + cg.numSpawnVarChars;
-	memcpy(dest, string, l + 1);
+	Com_Memcpy(dest, string, l + 1);
 
 	cg.numSpawnVarChars += l + 1;
 

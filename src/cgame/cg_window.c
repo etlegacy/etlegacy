@@ -83,7 +83,7 @@ void CG_createTopShotsWindow(void)
 	sw->x             = (cg.snap->ps.pm_type == PM_INTERMISSION) ? -10 : -20;
 	sw->y             = (cg.snap->ps.pm_type == PM_INTERMISSION) ? -20 : -60; // Align from bottom minus offset and height
 	sw->flashMidpoint = sw->flashPeriod * 0.8f;
-	memcpy(&sw->colorBackground2, &colorGreen2, sizeof(vec4_t));
+	Com_Memcpy(&sw->colorBackground2, &colorGreen2, sizeof(vec4_t));
 }
 
 /**
@@ -113,7 +113,7 @@ void CG_createMOTDWindow(void)
 		sw->x             = 10;
 		sw->y             = -36;
 		sw->flashMidpoint = sw->flashPeriod * 0.8f;
-		memcpy(&sw->colorBackground2, &colorGreen2, sizeof(vec4_t));
+		Com_Memcpy(&sw->colorBackground2, &colorGreen2, sizeof(vec4_t));
 
 		// Copy all MOTD info into the window
 		cg.windowCurrent = sw;
@@ -185,8 +185,8 @@ void CG_windowReset(cg_window_t *w, int fx, int startupLength)
 	w->x             = 0;
 	w->y             = 0;
 
-	memcpy(&w->colorBorder, &colorGeneralBorder, sizeof(vec4_t));
-	memcpy(&w->colorBackground, &colorGeneralFill, sizeof(vec4_t));
+	Com_Memcpy(&w->colorBorder, &colorGeneralBorder, sizeof(vec4_t));
+	Com_Memcpy(&w->colorBackground, &colorGeneralFill, sizeof(vec4_t));
 }
 
 /**
@@ -344,7 +344,7 @@ void CG_windowDraw(void)
 	}
 
 	milli = trap_Milliseconds();
-	memcpy(textColor, colorWhite, sizeof(vec4_t));
+	Com_Memcpy(textColor, colorWhite, sizeof(vec4_t));
 
 #ifdef FEATURE_MULTIVIEW
 	// Mouse cursor position for MV highlighting (offset for cursor pointer position)
@@ -390,8 +390,8 @@ void CG_windowDraw(void)
 		y            = (int)w->y;
 		t_offset     = milli - w->time;
 		textColor[3] = 1.0f;
-		memcpy(&borderColor, w->colorBorder, sizeof(vec4_t));
-		memcpy(&bgColor, bg, sizeof(vec4_t));
+		Com_Memcpy(&borderColor, w->colorBorder, sizeof(vec4_t));
+		Com_Memcpy(&bgColor, bg, sizeof(vec4_t));
 
 		// TODO: Add in support for ALL scrolling effects
 		if (w->state == WSTATE_START)

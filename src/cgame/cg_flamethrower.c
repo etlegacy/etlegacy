@@ -390,8 +390,8 @@ void CG_ClearFlameChunks(void)
 {
 	int i;
 
-	memset(flameChunks, 0, sizeof(flameChunks));
-	memset(centFlameInfo, 0, sizeof(centFlameInfo));
+	Com_Memset(flameChunks, 0, sizeof(flameChunks));
+	Com_Memset(centFlameInfo, 0, sizeof(centFlameInfo));
 
 	freeFlameChunks   = flameChunks;
 	activeFlameChunks = NULL;
@@ -763,9 +763,9 @@ void CG_AddFlameSpriteToScene(flameChunk_t *f, float lifeFrac, float alpha)
 	pPolyBuffer->color[pPolyBuffer->numVerts + 0][2] = alphaChar;
 	pPolyBuffer->color[pPolyBuffer->numVerts + 0][3] = alphaChar;
 
-	memcpy(pPolyBuffer->color[pPolyBuffer->numVerts + 1], pPolyBuffer->color[pPolyBuffer->numVerts + 0], sizeof(pPolyBuffer->color[0]));
-	memcpy(pPolyBuffer->color[pPolyBuffer->numVerts + 2], pPolyBuffer->color[pPolyBuffer->numVerts + 0], sizeof(pPolyBuffer->color[0]));
-	memcpy(pPolyBuffer->color[pPolyBuffer->numVerts + 3], pPolyBuffer->color[pPolyBuffer->numVerts + 0], sizeof(pPolyBuffer->color[0]));
+	Com_Memcpy(pPolyBuffer->color[pPolyBuffer->numVerts + 1], pPolyBuffer->color[pPolyBuffer->numVerts + 0], sizeof(pPolyBuffer->color[0]));
+	Com_Memcpy(pPolyBuffer->color[pPolyBuffer->numVerts + 2], pPolyBuffer->color[pPolyBuffer->numVerts + 0], sizeof(pPolyBuffer->color[0]));
+	Com_Memcpy(pPolyBuffer->color[pPolyBuffer->numVerts + 3], pPolyBuffer->color[pPolyBuffer->numVerts + 0], sizeof(pPolyBuffer->color[0]));
 
 	// find the projected distance from the eye to the projection of the flame origin
 	// onto the view direction vector
@@ -1281,7 +1281,7 @@ void CG_AddFlameChunks(void)
 	VectorCopy(cg.refdef_current->viewaxis[2], vup);
 
 	// clear out the volumes so we can rebuild them
-	memset(centFlameStatus, 0, sizeof(centFlameStatus));
+	Com_Memset(centFlameStatus, 0, sizeof(centFlameStatus));
 
 	//numClippedFlames = 0;
 

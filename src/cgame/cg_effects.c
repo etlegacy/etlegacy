@@ -919,7 +919,7 @@ void InitSmokeSprites(void)
 {
 	int i;
 
-	memset(&SmokeSprites, 0, sizeof(SmokeSprites));
+	Com_Memset(&SmokeSprites, 0, sizeof(SmokeSprites));
 	for (i = 0; i < MAX_SMOKESPRITES - 1; i++)
 	{
 		SmokeSprites[i].next = &SmokeSprites[i + 1];
@@ -989,7 +989,7 @@ static smokesprite_t *DeAllocSmokeSprite(smokesprite_t *dealloc)
 
 	ret_smokesprite = dealloc->prev;
 
-	memset(dealloc, 0, sizeof(smokesprite_t));
+	Com_Memset(dealloc, 0, sizeof(smokesprite_t));
 	dealloc->next        = firstfreesmokesprite;
 	firstfreesmokesprite = dealloc;
 
@@ -1303,22 +1303,22 @@ void CG_AddSmokeSprites(void)
 		VectorMA(top, halfSmokeSpriteWidth, right, verts[0].xyz);
 		verts[0].st[0] = 1;
 		verts[0].st[1] = 0;
-		memcpy(verts[0].modulate, color, 4);
+		Com_Memcpy(verts[0].modulate, color, 4);
 
 		VectorMA(top, -halfSmokeSpriteWidth, right, verts[1].xyz);
 		verts[1].st[0] = 0;
 		verts[1].st[1] = 0;
-		memcpy(verts[1].modulate, color, 4);
+		Com_Memcpy(verts[1].modulate, color, 4);
 
 		VectorMA(bottom, -halfSmokeSpriteWidth, right, verts[2].xyz);
 		verts[2].st[0] = 0;
 		verts[2].st[1] = 1;
-		memcpy(verts[2].modulate, color, 4);
+		Com_Memcpy(verts[2].modulate, color, 4);
 
 		VectorMA(bottom, halfSmokeSpriteWidth, right, verts[3].xyz);
 		verts[3].st[0] = 1;
 		verts[3].st[1] = 1;
-		memcpy(verts[3].modulate, color, 4);
+		Com_Memcpy(verts[3].modulate, color, 4);
 
 		trap_R_AddPolyToScene(cgs.media.smokePuffShader, 4, verts);
 

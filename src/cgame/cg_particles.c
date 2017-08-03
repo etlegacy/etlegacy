@@ -156,7 +156,7 @@ void CG_ClearParticles(void)
 {
 	int i;
 
-	memset(particles, 0, sizeof(particles));
+	Com_Memset(particles, 0, sizeof(particles));
 
 	free_particles   = &particles[0];
 	active_particles = NULL;

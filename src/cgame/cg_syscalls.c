@@ -1103,7 +1103,7 @@ qboolean trap_GetSnapshot(int snapshotNumber, snapshot_t *snapshot)
 
 			// store our newest usercmd
 			curSnapshotNumber++;
-			memcpy(&snaps[curSnapshotNumber & MAX_SNAPSHOT_MASK], snapshot, sizeof(snapshot_t));
+			Com_Memcpy(&snaps[curSnapshotNumber & MAX_SNAPSHOT_MASK], snapshot, sizeof(snapshot_t));
 
 			// find a usercmd that is fakeLag msec behind
 			i            = curSnapshotNumber & MAX_SNAPSHOT_MASK;

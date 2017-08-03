@@ -267,7 +267,7 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 		scaley *= Q_UTF8_GlyphScale(font);
 
 		trap_R_SetColor(color);
-		memcpy(&newColor[0], &color[0], sizeof(vec4_t));
+		Com_Memcpy(&newColor[0], &color[0], sizeof(vec4_t));
 		len = Q_UTF8_Strlen(text);
 		if (limit > 0 && len > limit)
 		{
@@ -282,11 +282,11 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 			{
 				if (*(s + 1) == COLOR_NULL)
 				{
-					memcpy(newColor, color, sizeof(newColor));
+					Com_Memcpy(newColor, color, sizeof(newColor));
 				}
 				else
 				{
-					memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
+					Com_Memcpy(newColor, g_color_table[ColorIndex(*(s + 1))], sizeof(newColor));
 					newColor[3] = color[3];
 				}
 				trap_R_SetColor(newColor);
@@ -3714,7 +3714,7 @@ void CG_DrawMiscGamemodels(void)
 	int         i, j;
 	refEntity_t ent;
 
-	memset(&ent, 0, sizeof(ent));
+	Com_Memset(&ent, 0, sizeof(ent));
 
 	ent.reType            = RT_MODEL;
 	ent.nonNormalizedAxes = qtrue;

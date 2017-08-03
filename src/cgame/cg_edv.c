@@ -199,11 +199,11 @@ void CG_DrawLine(vec3_t start, vec3_t end, vec4_t color, qhandle_t shader)
 
 	VectorAdd(start, up, pb->xyz[vert + 0]);
 	Vector2Set(pb->st[vert + 0], 0.0, 0.0);
-	memcpy(pb->color[vert + 0], bcolor, sizeof(*pb->color));
+	Com_Memcpy(pb->color[vert + 0], bcolor, sizeof(*pb->color));
 
 	VectorSubtract(start, up, pb->xyz[vert + 1]);
 	Vector2Set(pb->st[vert + 1], 0.0, 1.0);
-	memcpy(pb->color[vert + 1], bcolor, sizeof(*pb->color));
+	Com_Memcpy(pb->color[vert + 1], bcolor, sizeof(*pb->color));
 
 	// end points
 	VectorSubtract(end, cg.refdef_current->vieworg, diff);
@@ -213,11 +213,11 @@ void CG_DrawLine(vec3_t start, vec3_t end, vec4_t color, qhandle_t shader)
 
 	VectorAdd(end, up, pb->xyz[vert + 2]);
 	Vector2Set(pb->st[vert + 2], 1.0, 0.0);
-	memcpy(pb->color[vert + 2], bcolor, sizeof(*pb->color));
+	Com_Memcpy(pb->color[vert + 2], bcolor, sizeof(*pb->color));
 
 	VectorSubtract(end, up, pb->xyz[vert + 3]);
 	Vector2Set(pb->st[vert + 3], 1.0, 1.0);
-	memcpy(pb->color[vert + 3], bcolor, sizeof(*pb->color));
+	Com_Memcpy(pb->color[vert + 3], bcolor, sizeof(*pb->color));
 
 	pb->numVerts = vert + 4;
 
@@ -468,7 +468,7 @@ void CG_EDV_RunInput(void)
 	cg_pmove.cmd.buttons &= ~BUTTON_TALK; // FIXME: Why is the engine talking?
 
 	// Create a playerState for cam movement
-	memset(&edv_ps, 0, sizeof(edv_ps));
+	Com_Memset(&edv_ps, 0, sizeof(edv_ps));
 	edv_ps.commandTime = cgs.demoCamera.commandTime;
 	if (cgs.demoCamera.noclip)
 	{
@@ -501,7 +501,7 @@ void CG_EDV_RunInput(void)
 	edv_ps.crouchMaxZ = edv_ps.maxs[2] - (edv_ps.standViewHeight - edv_ps.crouchViewHeight);
 
 	// Create pmext for cam movement
-	memset(&edv_pmext, 0, sizeof(edv_pmext));
+	Com_Memset(&edv_pmext, 0, sizeof(edv_pmext));
 	edv_pmext.sprintTime = SPRINTTIME;
 
 	// Fill in pmove stuff

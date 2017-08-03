@@ -342,7 +342,7 @@ void CG_ParseOIDInfo(int num)
 	const char *cs;
 	int        index = num - CS_OID_DATA;
 
-	memset(&cgs.oidInfo[index], 0, sizeof(cgs.oidInfo[0]));
+	Com_Memset(&cgs.oidInfo[index], 0, sizeof(cgs.oidInfo[0]));
 
 	if (!info || !*info)
 	{
@@ -1125,7 +1125,7 @@ static void CG_MapRestart(void)
 		CG_Printf("CG_MapRestart\n");
 	}
 
-	memset(&cg.lastWeapSelInBank[0], 0, MAX_WEAP_BANKS_MP * sizeof(int)); // clear weapon bank selections
+	Com_Memset(&cg.lastWeapSelInBank[0], 0, MAX_WEAP_BANKS_MP * sizeof(int)); // clear weapon bank selections
 
 	cg.numbufferedSoundScripts = 0;
 
@@ -1159,7 +1159,7 @@ static void CG_MapRestart(void)
 	trap_R_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 20, 0, 0, 0, 0);
 
 	// clear pmext
-	memset(&cg.pmext, 0, sizeof(cg.pmext));
+	Com_Memset(&cg.pmext, 0, sizeof(cg.pmext));
 
 	cg.pmext.bAutoReload = (qboolean)(cg_autoReload.integer > 0);
 
@@ -1558,7 +1558,7 @@ void CG_PlayBufferedVoiceChats(void)
 void CG_AddBufferedVoiceChat(bufferedVoiceChat_t *vchat)
 {
 	// new system doesn't buffer but overwrites vchats FIXME put this on a cvar to choose which to use
-	memcpy(&voiceChatBuffer[0], vchat, sizeof(bufferedVoiceChat_t));
+	Com_Memcpy(&voiceChatBuffer[0], vchat, sizeof(bufferedVoiceChat_t));
 	cg.voiceChatBufferIn = 0;
 	CG_PlayVoiceChat(&voiceChatBuffer[0]);
 }
@@ -1712,7 +1712,7 @@ const char *CG_LocalizeServerCommand(const char *buf)
 	const char  *s     = buf;
 	int         i, prev = 0;
 
-	memset(token, 0, sizeof(token));
+	Com_Memset(token, 0, sizeof(token));
 
 	for (i = 0; *s; i++, s++)
 	{
@@ -1723,7 +1723,7 @@ const char *CG_LocalizeServerCommand(const char *buf)
 		{
 			if (togloc)
 			{
-				memset(temp, 0, sizeof(temp));
+				Com_Memset(temp, 0, sizeof(temp));
 				strncpy(temp, buf + prev, i - prev);
 				Q_strcat(token, MAX_TOKEN_CHARS, CG_TranslateString(temp));
 			}
@@ -1749,7 +1749,7 @@ const char *CG_LocalizeServerCommand(const char *buf)
 
 	if (togloc)
 	{
-		memset(temp, 0, sizeof(temp));
+		Com_Memset(temp, 0, sizeof(temp));
 		strncpy(temp, buf + prev, i - prev);
 		Q_strcat(token, MAX_TOKEN_CHARS, CG_TranslateString(temp));
 	}

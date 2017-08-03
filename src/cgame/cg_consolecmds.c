@@ -1067,7 +1067,7 @@ static void CG_DumpSpeaker_f(void)
 		return;
 	}
 
-	memset(&speaker, 0, sizeof(speaker));
+	Com_Memset(&speaker, 0, sizeof(speaker));
 
 	speaker.volume = 127;
 	speaker.range  = 1250;

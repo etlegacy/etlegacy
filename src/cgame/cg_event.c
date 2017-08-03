@@ -1021,7 +1021,7 @@ void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, sfxHandle_t soun
 	float               scale;
 	int                 endtime;
 
-	memset(&pieces, 0, sizeof(pieces));
+	Com_Memset(&pieces, 0, sizeof(pieces));
 
 	pieces[5] = (int)(mass / 250.0f);
 	pieces[4] = (int)(mass / 76.0f);
@@ -1397,7 +1397,7 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 	float               scale;
 	int                 endtime;
 
-	memset(&pieces, 0, sizeof(pieces));
+	Com_Memset(&pieces, 0, sizeof(pieces));
 
 	pieces[5] = (int)(mass / 250.0f);
 	pieces[4] = (int)(mass / 76.0f);
@@ -2282,7 +2282,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	case EV_BODY_DP:
 		if (&cg_entities[es->otherEntityNum2])
 		{
-			memset(&cg_entities[es->otherEntityNum2].pe, 0, sizeof(playerEntity_t));
+			Com_Memset(&cg_entities[es->otherEntityNum2].pe, 0, sizeof(playerEntity_t));
 		}
 		break;
 	case EV_FALL_DMG_10:

@@ -358,7 +358,7 @@ static void CG_SoundParseSounds(const char *filename, char *buffer)
 			{
 				CG_Error(S_COLOR_RED "CG_SoundParseSounds: '%s' unexpected after sound %s, file %s\n", token, sound.name, filename);
 			}
-			memset(&sound, 0, sizeof(sound));
+			Com_Memset(&sound, 0, sizeof(sound));
 			Q_strncpyz(sound.name, token, sizeof(sound.name));
 			wantSoundName = qfalse;
 			sound.index   = numSoundScripts;
@@ -521,7 +521,7 @@ static void CG_SoundLoadSoundFiles(void)
 				sfalse++;
 				continue;
 			}
-			memset(bigTextBuffer, 0, sizeof(bigTextBuffer));
+			Com_Memset(bigTextBuffer, 0, sizeof(bigTextBuffer));
 			trap_FS_Read(bigTextBuffer, len, f);
 			trap_FS_FCloseFile(f);
 			CG_SoundParseSounds(filename, bigTextBuffer);
@@ -695,7 +695,7 @@ void CG_AddLineToScene(vec3_t start, vec3_t end, vec4_t colour)
 {
 	refEntity_t re;
 
-	memset(&re, 0, sizeof(re));
+	Com_Memset(&re, 0, sizeof(re));
 	re.reType       = RT_RAIL_CORE;
 	re.customShader = cgs.media.railCoreShader;
 	VectorCopy(start, re.origin);
@@ -797,7 +797,7 @@ static void CG_RenderScriptSpeakers(void)
 				VectorMA(editSpeakerHandle.origin, 32, vec, vec);
 				CG_AddLineToScene(editSpeakerHandle.origin, vec, colour);
 
-				memset(&re, 0, sizeof(re));
+				Com_Memset(&re, 0, sizeof(re));
 				re.reType = RT_SPRITE;
 				VectorCopy(vec, re.origin);
 				VectorCopy(vec, re.oldorigin);
@@ -824,7 +824,7 @@ static void CG_RenderScriptSpeakers(void)
 			numSpeakersInPvs++;
 		}
 
-		memset(&re, 0, sizeof(re));
+		Com_Memset(&re, 0, sizeof(re));
 		re.reType = RT_SPRITE;
 		VectorCopy(speaker->origin, re.origin);
 		VectorCopy(speaker->origin, re.oldorigin);
@@ -1167,7 +1167,7 @@ void CG_SpeakerEditor_RenderDropdown(panel_button_t *button)
 	rectDef_t rect;
 	char      *s;
 
-	memcpy(&rect, &button->rect, sizeof(rect));
+	Com_Memcpy(&rect, &button->rect, sizeof(rect));
 
 	textboxW = button->rect.w - button->rect.h;
 	rect.x  += textboxW;
@@ -1236,7 +1236,7 @@ void CG_SpeakerEditor_RenderDropdown(panel_button_t *button)
 	{
 		int i;
 
-		memcpy(&rect, &button->rect, sizeof(rect));
+		Com_Memcpy(&rect, &button->rect, sizeof(rect));
 
 		for (i = 0; i < button->data[0]; i++)
 		{
@@ -1491,7 +1491,7 @@ qboolean CG_SpeakerEditor_Looped_KeyUp(panel_button_t *button, int key)
 			rectDef_t rect;
 			int       i;
 
-			memcpy(&rect, &button->rect, sizeof(rect));
+			Com_Memcpy(&rect, &button->rect, sizeof(rect));
 
 			for (i = 0; i < 3; i++)
 			{
@@ -1542,7 +1542,7 @@ qboolean CG_SpeakerEditor_Broadcast_KeyUp(panel_button_t *button, int key)
 			rectDef_t rect;
 			int       i;
 
-			memcpy(&rect, &button->rect, sizeof(rect));
+			Com_Memcpy(&rect, &button->rect, sizeof(rect));
 
 			for (i = 0; i < 3; i++)
 			{
@@ -1740,7 +1740,7 @@ qboolean CG_SpeakerEditor_Cancel_KeyUp(panel_button_t *button, int key)
 
 			if (BG_CursorInRect(&button->rect))
 			{
-				memcpy(editSpeaker, &undoSpeaker, sizeof(*editSpeaker));
+				Com_Memcpy(editSpeaker, &undoSpeaker, sizeof(*editSpeaker));
 				undoSpeakerIndex  = -2;
 				editSpeaker       = NULL;
 				editSpeakerActive = qfalse;
@@ -2427,7 +2427,7 @@ void CG_ModifyEditSpeaker(void)
 	CG_EventHandling(CGAME_EVENT_SPEAKEREDITOR, qfalse);
 
 	editSpeakerActive = qtrue;
-	memcpy(&undoSpeaker, editSpeaker, sizeof(undoSpeaker));
+	Com_Memcpy(&undoSpeaker, editSpeaker, sizeof(undoSpeaker));
 	undoSpeakerIndex = BG_GetIndexForSpeaker(editSpeaker);
 
 	VectorCopy(editSpeaker->origin, editSpeakerHandle.origin);
@@ -2468,7 +2468,7 @@ void CG_UndoEditSpeaker(void)
 	{
 		bg_speaker_t *speaker = BG_GetScriptSpeaker(undoSpeakerIndex);
 
-		memcpy(speaker, &undoSpeaker, sizeof(*speaker));
+		Com_Memcpy(speaker, &undoSpeaker, sizeof(*speaker));
 		CG_Printf("UNDO: restoring modified settings of speaker at %.2f %.2f %.2f.\n", (double)undoSpeaker.origin[0], (double)undoSpeaker.origin[1], (double)undoSpeaker.origin[2]);
 	}
 

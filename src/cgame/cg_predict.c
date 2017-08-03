@@ -1094,7 +1094,7 @@ void CG_PredictPlayerState(void)
 
 	// fill in the current cmd with the latest prediction from
 	// cg.pmext (#166)
-	memcpy(&oldpmext[current & CMD_MASK], &cg.pmext, sizeof(pmoveExt_t));
+	Com_Memcpy(&oldpmext[current & CMD_MASK], &cg.pmext, sizeof(pmoveExt_t));
 
 	// if we don't have the commands right after the snapshot, we
 	// can't accurately predict a current position, so just freeze at
@@ -1367,11 +1367,11 @@ void CG_PredictPlayerState(void)
 			cg_pmove.covertopsChargeTime = cg.covertopsChargeTime[cg.snap->ps.persistant[PERS_TEAM] - 1];
 		}
 
-		//memcpy( &pmext, &cg.pmext, sizeof(pmoveExt_t) );    // grab data, we only want the final result
+		//Com_Memcpy( &pmext, &cg.pmext, sizeof(pmoveExt_t) );    // grab data, we only want the final result
 		// copy the pmext as it was just before we
 		// previously ran this cmd (or, this will be the
 		// current predicted data if this is the current cmd)  (#166)
-		memcpy(&pmext, &oldpmext[cmdNum & CMD_MASK], sizeof(pmoveExt_t));
+		Com_Memcpy(&pmext, &oldpmext[cmdNum & CMD_MASK], sizeof(pmoveExt_t));
 
 		fflush(stdout);
 
@@ -1460,7 +1460,7 @@ void CG_PredictPlayerState(void)
 	}
 
 	// restore pmext
-	memcpy(&cg.pmext, &pmext, sizeof(pmoveExt_t));
+	Com_Memcpy(&cg.pmext, &pmext, sizeof(pmoveExt_t));
 
 	if (!cg.showGameView)
 	{

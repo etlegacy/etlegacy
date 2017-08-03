@@ -188,7 +188,7 @@ static hudStucture_t *CG_getNextFreeHud()
     {
         temp = &hudlist[hudCount];
         hudCount++;
-        memset(temp, 0, sizeof(hudStucture_t));
+        Com_Memset(temp, 0, sizeof(hudStucture_t));
         CG_setDefaultHudValues(temp);
         return temp;
     }
@@ -1519,8 +1519,8 @@ static int  statsDebugPos;
  */
 void CG_InitStatsDebug(void)
 {
-	memset(&statsDebugStrings, 0, sizeof(statsDebugStrings));
-	memset(&statsDebugTime, 0, sizeof(statsDebugTime));
+	Com_Memset(&statsDebugStrings, 0, sizeof(statsDebugStrings));
+	Com_Memset(&statsDebugTime, 0, sizeof(statsDebugTime));
 	statsDebugPos = -1;
 }
 

@@ -225,7 +225,7 @@ void CG_Respawn(qboolean revived)
 	}
 
 	// clear pmext
-	memset(&cg.pmext, 0, sizeof(cg.pmext));
+	Com_Memset(&cg.pmext, 0, sizeof(cg.pmext));
 
 	cg.pmext.bAutoReload = (qboolean)(cg_autoReload.integer > 0);
 

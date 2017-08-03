@@ -104,7 +104,7 @@ polyBuffer_t *CG_PB_FindFreePolyBuffer(qhandle_t shader, int numVerts, int numIn
 void CG_PB_ClearPolyBuffers(void)
 {
 	// changed numIndicies and numVerts to be reset in CG_PB_FindFreePolyBuffer, not here (should save the cache misses we were prolly getting)
-	memset(cg_polyBuffersInuse, 0, sizeof(cg_polyBuffersInuse));
+	Com_Memset(cg_polyBuffersInuse, 0, sizeof(cg_polyBuffersInuse));
 }
 
 /**

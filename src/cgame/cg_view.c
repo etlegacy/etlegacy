@@ -78,7 +78,7 @@ void CG_TestModel_f(void)
 {
 	vec3_t angles;
 
-	memset(&cg.testModelEntity, 0, sizeof(cg.testModelEntity));
+	Com_Memset(&cg.testModelEntity, 0, sizeof(cg.testModelEntity));
 	if (trap_Argc() < 2)
 	{
 		return;
@@ -1241,7 +1241,7 @@ static void CG_DamageBlendBlob(void)
 			continue;
 		}
 
-		memset(&ent, 0, sizeof(ent));
+		Com_Memset(&ent, 0, sizeof(ent));
 		ent.reType   = RT_SPRITE;
 		ent.renderfx = RF_FIRST_PERSON;
 
@@ -1270,7 +1270,7 @@ int CG_CalcViewValues(void)
 {
 	playerState_t *ps;
 
-	memset(cg.refdef_current, 0, sizeof(cg.refdef));
+	Com_Memset(cg.refdef_current, 0, sizeof(cg.refdef));
 
 	// calculate size of 3D view
 	CG_CalcVrect();
@@ -1635,7 +1635,7 @@ void CG_DrawSkyBoxPortal(qboolean fLocalView)
 		return;
 	}
 
-	memcpy(&rd, cg.refdef_current, sizeof(refdef_t));
+	Com_Memcpy(&rd, cg.refdef_current, sizeof(refdef_t));
 	VectorCopy(cg.skyboxViewOrg, rd.vieworg);
 
 	// Updates for window views...
@@ -1851,7 +1851,7 @@ static void CG_RenderLocations(void)
 			continue;
 		}
 
-		memset(&re, 0, sizeof(re));
+		Com_Memset(&re, 0, sizeof(re));
 		re.reType = RT_SPRITE;
 		VectorCopy(location->origin, re.origin);
 		VectorCopy(location->origin, re.oldorigin);
@@ -2294,7 +2294,7 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 		}
 
 		cg.refdef.time = cg.time;
-		memcpy(cg.refdef.areamask, cg.snap->areamask, sizeof(cg.refdef.areamask));
+		Com_Memcpy(cg.refdef.areamask, cg.snap->areamask, sizeof(cg.refdef.areamask));
 
 		DEBUGTIME
 
