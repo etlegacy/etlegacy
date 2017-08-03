@@ -94,7 +94,7 @@ qboolean BG_SS_DeleteSpeaker(int index)
 		return qfalse;
 	}
 
-	memcpy(&scriptSpeakers[index], &scriptSpeakers[index + 1], sizeof(bg_speaker_t) * (numScriptSpeakers - index - 1));
+	Com_Memcpy(&scriptSpeakers[index], &scriptSpeakers[index + 1], sizeof(bg_speaker_t) * (numScriptSpeakers - index - 1));
 
 	numScriptSpeakers--;
 
@@ -114,7 +114,7 @@ qboolean BG_SS_StoreSpeaker(bg_speaker_t *speaker)
 		return qfalse;
 	}
 
-	memcpy(&scriptSpeakers[numScriptSpeakers++], speaker, sizeof(bg_speaker_t));
+	Com_Memcpy(&scriptSpeakers[numScriptSpeakers++], speaker, sizeof(bg_speaker_t));
 
 	return qtrue;
 }
@@ -157,7 +157,7 @@ static qboolean BG_SS_ParseSpeaker(int handle)
 	pc_token_t   token;
 	bg_speaker_t speaker;
 
-	memset(&speaker, 0, sizeof(speaker));
+	Com_Memset(&speaker, 0, sizeof(speaker));
 
 	speaker.volume = 127;
 	speaker.range  = 1250;

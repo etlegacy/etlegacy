@@ -5942,7 +5942,7 @@ void PmoveSingle(pmove_t *pmove)
 	}
 
 	// clear all pmove local vars
-	memset(&pml, 0, sizeof(pml));
+	Com_Memset(&pml, 0, sizeof(pml));
 
 	// determine the time
 	pml.msec = pmove->cmd.serverTime - pm->ps->commandTime;
@@ -6314,7 +6314,7 @@ int Pmove(pmove_t *pmove)
 void PmovePredict(pmove_t *pmove, float frametime)
 {
 	pm = pmove;
-	memset(&pml, 0, sizeof(pml));
+	Com_Memset(&pml, 0, sizeof(pml));
 	pml.frametime = frametime;
 	PM_GroundTrace();
 

@@ -3877,7 +3877,7 @@ splinePath_t *BG_AddSplinePath(const char *name, const char *target, vec3_t orig
 
 	spline = &splinePaths[numSplinePaths];
 
-	memset(spline, 0, sizeof(splinePath_t));
+	Com_Memset(spline, 0, sizeof(splinePath_t));
 
 	VectorCopy(origin, spline->point.origin);
 

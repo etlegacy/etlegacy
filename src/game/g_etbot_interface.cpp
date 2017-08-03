@@ -2541,7 +2541,7 @@ public:
 		// only causes problems
 		bot->client->ps.pm_flags &= ~PMF_RESPAWNED;
 
-		memset(&cmd, 0, sizeof(cmd));
+		Com_Memset(&cmd, 0, sizeof(cmd));
 
 		cmd.identClient = _client;
 		cmd.serverTime  = level.time;
@@ -6098,7 +6098,7 @@ public:
 		}
 		else
 		{
-			memset(&_aabb, 0, sizeof(AABB));
+			Com_Memset(&_aabb, 0, sizeof(AABB));
 		}
 	}
 

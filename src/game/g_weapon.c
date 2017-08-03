@@ -389,9 +389,9 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	// keep class special weapon time to keep them from exploiting revives
 	oldclasstime = traceEnt->client->ps.classWeaponTime;
 
-	memcpy(ammo, traceEnt->client->ps.ammo, sizeof(int) * MAX_WEAPONS);
-	memcpy(ammoclip, traceEnt->client->ps.ammoclip, sizeof(int) * MAX_WEAPONS);
-	memcpy(weapons, traceEnt->client->ps.weapons, sizeof(int) * (MAX_WEAPONS / (sizeof(int) * 8)));
+	Com_Memcpy(ammo, traceEnt->client->ps.ammo, sizeof(int) * MAX_WEAPONS);
+	Com_Memcpy(ammoclip, traceEnt->client->ps.ammoclip, sizeof(int) * MAX_WEAPONS);
+	Com_Memcpy(weapons, traceEnt->client->ps.weapons, sizeof(int) * (MAX_WEAPONS / (sizeof(int) * 8)));
 
 	ClientSpawn(traceEnt, qtrue, qfalse, qtrue);
 
@@ -400,9 +400,9 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 #endif
 
 	traceEnt->client->ps.stats[STAT_PLAYER_CLASS] = traceEnt->client->sess.playerType;
-	memcpy(traceEnt->client->ps.ammo, ammo, sizeof(int) * MAX_WEAPONS);
-	memcpy(traceEnt->client->ps.ammoclip, ammoclip, sizeof(int) * MAX_WEAPONS);
-	memcpy(traceEnt->client->ps.weapons, weapons, sizeof(int) * (MAX_WEAPONS / (sizeof(int) * 8)));
+	Com_Memcpy(traceEnt->client->ps.ammo, ammo, sizeof(int) * MAX_WEAPONS);
+	Com_Memcpy(traceEnt->client->ps.ammoclip, ammoclip, sizeof(int) * MAX_WEAPONS);
+	Com_Memcpy(traceEnt->client->ps.weapons, weapons, sizeof(int) * (MAX_WEAPONS / (sizeof(int) * 8)));
 
 	if (headshot)
 	{

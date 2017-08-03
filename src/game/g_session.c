@@ -413,13 +413,13 @@ void G_InitSessionData(gclient_t *client, const char *userinfo)
 
     sess->spawnObjectiveIndex = 0;
 
-    memset(sess->ignoreClients, 0, sizeof(sess->ignoreClients));
+    Com_Memset(sess->ignoreClients, 0, sizeof(sess->ignoreClients));
 
     sess->muted = qfalse;
-    memset(sess->skill, 0, sizeof(sess->skill));
-    memset(sess->skillpoints, 0, sizeof(sess->skillpoints));
-    memset(sess->startskillpoints, 0, sizeof(sess->startskillpoints));
-    memset(sess->medals, 0, sizeof(sess->medals));
+    Com_Memset(sess->skill, 0, sizeof(sess->skill));
+    Com_Memset(sess->skillpoints, 0, sizeof(sess->skillpoints));
+    Com_Memset(sess->startskillpoints, 0, sizeof(sess->startskillpoints));
+    Com_Memset(sess->medals, 0, sizeof(sess->medals));
     sess->rank = 0;
     sess->startxptotal = 0;
 

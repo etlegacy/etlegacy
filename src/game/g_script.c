@@ -392,7 +392,7 @@ void G_Script_ScriptParse(gentity_t *ent)
 	bracketLevel  = 0;
 	numEventItems = 0;
 
-	memset(events, 0, sizeof(events));
+	Com_Memset(events, 0, sizeof(events));
 
 	while (1)
 	{
@@ -457,7 +457,7 @@ void G_Script_ScriptParse(gentity_t *ent)
 
 			curEvent           = &events[numEventItems];
 			curEvent->eventNum = eventNum;
-			memset(params, 0, sizeof(params));
+			Com_Memset(params, 0, sizeof(params));
 
 			// parse any event params before the start of this event's actions
 			while ((token = COM_Parse(&pScript)) != NULL && (token[0] != '{'))
@@ -498,7 +498,7 @@ void G_Script_ScriptParse(gentity_t *ent)
 
 				curEvent->stack.items[curEvent->stack.numItems].action = action;
 
-				memset(params, 0, sizeof(params));
+				Com_Memset(params, 0, sizeof(params));
 
 				// Parse for {}'s if this is a set command
 				if (action->hash == SET_HASH || action->hash == DELETE_HASH || action->hash == CREATE_HASH)
@@ -626,7 +626,7 @@ void G_Script_ScriptParse(gentity_t *ent)
 	if (numEventItems > 0)
 	{
 		ent->scriptEvents = G_Alloc(sizeof(g_script_event_t) * numEventItems);
-		memcpy(ent->scriptEvents, events, sizeof(g_script_event_t) * numEventItems);
+		Com_Memcpy(ent->scriptEvents, events, sizeof(g_script_event_t) * numEventItems);
 		ent->numScriptEvents = numEventItems;
 	}
 }
@@ -643,7 +643,7 @@ void G_Script_ScriptChange(gentity_t *ent, int newScriptNum)
 	g_script_status_t scriptStatusBackup;
 
 	// backup the current scripting
-	memcpy(&scriptStatusBackup, &ent->scriptStatus, sizeof(g_script_status_t));
+	Com_Memcpy(&scriptStatusBackup, &ent->scriptStatus, sizeof(g_script_status_t));
 
 	// set the new script to this cast, and reset script status
 	ent->scriptStatus.scriptEventIndex      = newScriptNum;
@@ -656,7 +656,7 @@ void G_Script_ScriptChange(gentity_t *ent, int newScriptNum)
 	if (G_Script_ScriptRun(ent)
 	    &&  (ent->scriptStatus.scriptId == scriptStatusBackup.scriptId + 1))          // make sure we didnt change our script via a third party
 	{   // completed successfully
-		memcpy(&ent->scriptStatus, &scriptStatusBackup, sizeof(g_script_status_t));
+		Com_Memcpy(&ent->scriptStatus, &scriptStatusBackup, sizeof(g_script_status_t));
 		ent->scriptStatus.scriptFlags &= ~SCFL_FIRST_CALL;
 	}
 }

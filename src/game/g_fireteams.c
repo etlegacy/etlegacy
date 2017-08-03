@@ -298,7 +298,7 @@ int G_FindFreeFireteamIdent(team_t team)
 	qboolean freeIdent[MAX_FIRETEAMS / 2];
 	int      i;
 
-	memset(freeIdent, qtrue, sizeof(freeIdent));
+	Com_Memset(freeIdent, qtrue, sizeof(freeIdent));
 
 	for (i = 0; i < MAX_FIRETEAMS; i++)
 	{
@@ -379,7 +379,7 @@ void G_RegisterFireteam(int entityNum)
 
 	// good to go now
 	ft->inuse = qtrue;
-	memset(ft->joinOrder, -1, sizeof(level.fireTeams[0].joinOrder));
+	Com_Memset(ft->joinOrder, -1, sizeof(level.fireTeams[0].joinOrder));
 	ft->joinOrder[0] = leader - g_entities;
 	ft->ident        = ident;
 

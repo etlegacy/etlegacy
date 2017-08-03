@@ -585,7 +585,7 @@ void Svcmd_EntityList_f(void)
 			continue;
 		}
 
-		memset(line, 0, sizeof(line));
+		Com_Memset(line, 0, sizeof(line));
 
 		// print the ents which are in use
 		//Q_strcat(line, sizeof(line), va("^7%4i: ", e));
@@ -2063,7 +2063,7 @@ void CC_loadconfig(void)
 	trap_Argv(1, scriptName, sizeof(scriptName));
 
 	trap_SetConfigstring(CS_CONFIGNAME, "");
-	memset(&level.config, 0, sizeof(config_t));
+	Com_Memset(&level.config, 0, sizeof(config_t));
 	G_configSet(scriptName);
 }
 
@@ -2539,7 +2539,7 @@ qboolean ConsoleCommand(void)
 	else if (!Q_stricmp(cmd, "reloadConfig"))
 	{
 		trap_SetConfigstring(CS_CONFIGNAME, "");
-		memset(&level.config, 0, sizeof(config_t));
+		Com_Memset(&level.config, 0, sizeof(config_t));
 		G_configSet(g_customConfig.string);
 
 		return qtrue;
@@ -2551,7 +2551,7 @@ qboolean ConsoleCommand(void)
 	}
 	else if (!Q_stricmp(cmd, "sv_cvarempty"))
 	{
-		memset(level.svCvars, 0, sizeof(level.svCvars));
+		Com_Memset(level.svCvars, 0, sizeof(level.svCvars));
 		level.svCvarsCount = 0;
 		G_UpdateSvCvars();
 		return qtrue;

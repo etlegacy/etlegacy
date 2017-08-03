@@ -163,8 +163,8 @@ void G_CheckForNeededClasses(void)
     gentity_t  *ent;
     static int lastcheck;
 
-    memset(playerClasses, 0, sizeof(playerClasses));
-    memset(teamCounts, 0, sizeof(teamCounts));
+    Com_Memset(playerClasses, 0, sizeof(playerClasses));
+    Com_Memset(teamCounts, 0, sizeof(teamCounts));
 
     if (lastcheck && (level.time - lastcheck) < 60000)
     {
@@ -277,8 +277,8 @@ void G_CheckMenDown(void)
     gentity_t *ent;
     int       i, team;
 
-    memset(dead, 0, sizeof(dead));
-    memset(alive, 0, sizeof(alive));
+    Com_Memset(dead, 0, sizeof(dead));
+    Com_Memset(alive, 0, sizeof(alive));
 
     for (i = 0, ent = g_entities; i < level.maxclients; i++, ent++)
     {

@@ -79,7 +79,7 @@ void G_InitMapEntityData(mapEntityData_Team_t *teamList)
 	int             i;
 	mapEntityData_t *trav, *lasttrav;
 
-	memset(teamList, 0, sizeof(mapEntityData_Team_t));
+	Com_Memset(teamList, 0, sizeof(mapEntityData_Team_t));
 
 	teamList->activeMapEntityData.next = &teamList->activeMapEntityData;
 	teamList->activeMapEntityData.prev = &teamList->activeMapEntityData;
@@ -136,7 +136,7 @@ mapEntityData_t *G_AllocMapEntityData(mapEntityData_Team_t *teamList)
 	mEnt                        = teamList->freeMapEntityData;
 	teamList->freeMapEntityData = teamList->freeMapEntityData->next;
 
-	memset(mEnt, 0, sizeof(*mEnt));
+	Com_Memset(mEnt, 0, sizeof(*mEnt));
 
 	mEnt->singleClient = -1;
 

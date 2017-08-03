@@ -1020,7 +1020,7 @@ void G_weaponRankings_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state
 		return;
 	}
 
-	memcpy(&level.sortedStats, &level.sortedClients, sizeof(level.sortedStats));
+	Com_Memcpy(&level.sortedStats, &level.sortedClients, sizeof(level.sortedStats));
 	qsort(level.sortedStats, level.numConnectedClients, sizeof(level.sortedStats[0]), SortStats);
 
 	z[0] = 0;

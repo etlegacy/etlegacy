@@ -520,7 +520,7 @@ static int _et_trap_FS_Read(lua_State *L)
 	fileHandle_t fd        = (int)luaL_checkinteger(L, 1);
 	int          count     = (int)luaL_checkinteger(L, 2);
 
-	filedata = malloc(count + 1);
+	filedata = Com_Allocate(count + 1);
 
 	if (filedata == NULL)
 	{
@@ -531,7 +531,7 @@ static int _et_trap_FS_Read(lua_State *L)
 	trap_FS_Read(filedata, count, fd);
 	*(filedata + count) = '\0';
 	lua_pushstring(L, filedata);
-	free(filedata);
+	Com_Dealloc(filedata);
 	return 1;
 }
 
@@ -1586,8 +1586,8 @@ static int _et_G_SetSpawnVar(lua_State *L)
 		}
 		else
 		{
-			free(*(char **)((byte *)ent + ofs));
-			*(char **)((byte *)ent + ofs) = malloc(strlen(buffer));
+			Com_Dealloc(*(char **)((byte *)ent + ofs));
+			*(char **)((byte *)ent + ofs) = Com_Allocate(strlen(buffer));
 			Q_strncpyz(*(char **)((byte *)ent + ofs), buffer, strlen(buffer));
 		}
 		return 1;
@@ -1750,8 +1750,8 @@ static int _et_gentity_set(lua_State *L)
 		}
 		else
 		{
-			free(*(char **)addr);
-			*(char **)addr = malloc(strlen(buffer) + 1);
+			Com_Dealloc(*(char **)addr);
+			*(char **)addr = Com_Allocate(strlen(buffer) + 1);
 			Q_strncpyz(*(char **)addr, buffer, strlen(buffer));
 		}
 		break;
@@ -1971,7 +1971,7 @@ qboolean G_LuaInit(void)
 			}
 			else
 			{
-				code = malloc(flen + 1);
+				code = Com_Allocate(flen + 1);
 
 				if (code == NULL)
 				{
@@ -1986,13 +1986,13 @@ qboolean G_LuaInit(void)
 				if (Q_stricmp(lua_allowedModules.string, "") && !strstr(allowedModules, signature))
 				{
 					// don't load disallowed lua modules into vm
-					free(code); // fixed memory leaking in Lua API - thx ETPub/goesa
+					Com_Dealloc(code); // fixed memory leaking in Lua API - thx ETPub/goesa
 					G_Printf("Lua API: Lua module [%s] [%s] disallowed by ACL\n", crt, signature);
 				}
 				else
 				{
 					// Init lua_vm_t struct
-					vm = (lua_vm_t *) malloc(sizeof(lua_vm_t));
+					vm = (lua_vm_t *) Com_Allocate(sizeof(lua_vm_t));
 
 					if (vm == NULL)
 					{
@@ -2098,7 +2098,7 @@ qboolean G_LuaGetNamedFunction(lua_vm_t *vm, const char *name)
  */
 void G_LuaStackDump()
 {
-	lua_vm_t *vm = (lua_vm_t *) malloc(sizeof(lua_vm_t));
+	lua_vm_t *vm = (lua_vm_t *) Com_Allocate(sizeof(lua_vm_t));
 
 	if (vm == NULL)
 	{
@@ -2158,7 +2158,7 @@ void G_LuaStackDump()
 	}
 	lua_close(vm->L);
 	vm->L = NULL;
-	free(vm);
+	Com_Dealloc(vm);
 }
 
 static void registerConfigstringConstants(lua_vm_t *vm)
@@ -2573,7 +2573,7 @@ void G_LuaStopVM(lua_vm_t *vm)
 	}
 	if (vm->code != NULL)
 	{
-		free(vm->code);
+		Com_Dealloc(vm->code);
 		vm->code = NULL;
 	}
 	if (vm->L)
@@ -2596,7 +2596,7 @@ void G_LuaStopVM(lua_vm_t *vm)
 			G_Printf("%s API: Lua module [%s] [%s] unloaded.\n", LUA_VERSION, vm->file_name, vm->mod_signature);
 		}
 	}
-	free(vm);
+	Com_Dealloc(vm);
 }
 
 /*

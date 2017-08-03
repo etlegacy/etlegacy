@@ -503,7 +503,7 @@ char *ConcatArgs(int start)
 		{
 			break;
 		}
-		memcpy(line + len, arg, tlen);
+		Com_Memcpy(line + len, arg, tlen);
 		len += tlen;
 		if (i != c - 1)
 		{
@@ -842,7 +842,7 @@ void Cmd_Give_f(gentity_t *ent)
 	    it_ent->classname = it->classname;
 	    G_SpawnItem (it_ent, it);
 	    FinishSpawningItem(it_ent );
-	    memset( &trace, 0, sizeof( trace ) );
+	    Com_Memset( &trace, 0, sizeof( trace ) );
 	    it_ent->active = qtrue;
 	    Touch_Item (it_ent, ent, &trace);
 	    it_ent->active = qfalse;
@@ -3048,7 +3048,7 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, qboole
 		int      cls, i, cnt, num;
 		qboolean allowclients[MAX_CLIENTS];
 
-		memset(allowclients, 0, sizeof(allowclients));
+		Com_Memset(allowclients, 0, sizeof(allowclients));
 
 		trap_Argv(1, buffer, 32);
 
@@ -3871,7 +3871,7 @@ qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 				return qfalse;
 			}
 
-			memset(&trace, 0, sizeof(trace));
+			Com_Memset(&trace, 0, sizeof(trace));
 
 			if (traceEnt->use)
 			{
@@ -3888,7 +3888,7 @@ qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 				return qfalse;
 			}
 
-			memset(&trace, 0, sizeof(trace));
+			Com_Memset(&trace, 0, sizeof(trace));
 
 			if (traceEnt->touch)
 			{
@@ -4887,7 +4887,7 @@ void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum)
 	// save items
 	saved = client->pers;
 	sess  = client->sess;
-	memcpy(persistant, ent->client->ps.persistant, sizeof(persistant));
+	Com_Memcpy(persistant, ent->client->ps.persistant, sizeof(persistant));
 	// give them the right weapons/etc
 	*client                    = cl;
 	client->sess               = sess;
@@ -4898,7 +4898,7 @@ void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum)
 	ClientSpawn(ent, qfalse, qtrue, qtrue);
 	// restore items
 	client->pers = saved;
-	memcpy(ent->client->ps.persistant, persistant, sizeof(persistant));
+	Com_Memcpy(ent->client->ps.persistant, persistant, sizeof(persistant));
 	client->ps           = cl.ps;
 	client->ps.clientNum = ent->s.number;
 	ent->health          = client->ps.stats[STAT_HEALTH];

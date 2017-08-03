@@ -867,7 +867,7 @@ char *G_AddSpawnVarToken(const char *string)
 	}
 
 	dest = level.spawnVarChars + level.numSpawnVarChars;
-	memcpy(dest, string, l + 1);
+	Com_Memcpy(dest, string, l + 1);
 
 	level.numSpawnVarChars += l + 1;
 

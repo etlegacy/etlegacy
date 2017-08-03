@@ -366,7 +366,7 @@ void ClientImpacts(gentity_t *ent, pmove_t *pm)
 	gentity_t *other;
 	trace_t   trace;
 
-	memset(&trace, 0, sizeof(trace));
+	Com_Memset(&trace, 0, sizeof(trace));
 	for (i = 0 ; i < pm->numtouch ; i++)
 	{
 		for (j = 0 ; j < i ; j++)
@@ -493,7 +493,7 @@ void G_TouchTriggers(gentity_t *ent)
 			}
 		}
 
-		memset(&trace, 0, sizeof(trace));
+		Com_Memset(&trace, 0, sizeof(trace));
 
 		if (hit->touch)
 		{
@@ -594,7 +594,7 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 		}
 
 		// set up for pmove
-		memset(&pm, 0, sizeof(pm));
+		Com_Memset(&pm, 0, sizeof(pm));
 		pm.ps            = &client->ps;
 		pm.pmext         = &client->pmext;
 		pm.character     = client->pers.character;
@@ -1406,7 +1406,7 @@ void ClientThink_real(gentity_t *ent)
 
 	client->currentAimSpreadScale = client->ps.aimSpreadScale / 255.0f;
 
-	memset(&pm, 0, sizeof(pm));
+	Com_Memset(&pm, 0, sizeof(pm));
 
 	pm.ps        = &client->ps;
 	pm.pmext     = &client->pmext;

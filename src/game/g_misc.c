@@ -2476,7 +2476,7 @@ void SP_misc_commandmap_marker(gentity_t *ent)
  */
 void G_InitTempTraceIgnoreEnts(void)
 {
-	memset(level.tempTraceIgnoreEnts, 0, sizeof(level.tempTraceIgnoreEnts));
+	Com_Memset(level.tempTraceIgnoreEnts, 0, sizeof(level.tempTraceIgnoreEnts));
 }
 
 /**

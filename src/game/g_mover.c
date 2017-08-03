@@ -4738,7 +4738,7 @@ void SP_func_explosive(gentity_t *ent)
 		ent->duration = 1;
 	}
 
-	memset(&ent->constructibleStats, 0, sizeof(ent->constructibleStats));
+	Com_Memset(&ent->constructibleStats, 0, sizeof(ent->constructibleStats));
 	G_SpawnInt("constructible_class", "0", &i);
 	i--;    // non-coder friendlyness. Aren't we nice?
 	if (i > 0 && i < NUM_CONSTRUCTIBLE_CLASSES)
@@ -5698,7 +5698,7 @@ void SP_func_constructible(gentity_t *ent)
 		G_Error("'func_constructible' does not have a team that can build it\n");
 	}
 
-	memset(&ent->constructibleStats, 0, sizeof(ent->constructibleStats));
+	Com_Memset(&ent->constructibleStats, 0, sizeof(ent->constructibleStats));
 	G_SpawnInt("constructible_class", "0", &i);
 	i--;
 	if (i > 0 && i < NUM_CONSTRUCTIBLE_CLASSES)

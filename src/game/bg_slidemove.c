@@ -384,7 +384,7 @@ void PM_StepSlideMove(qboolean gravity)
 	// check legs&head separately
 	if (pm->ps->eFlags & EF_PRONE)
 	{
-		memset(&trace, 0, sizeof(trace));
+		Com_Memset(&trace, 0, sizeof(trace));
 		PM_TraceLegs(&trace, NULL, pm->ps->origin, down, NULL, pm->ps->viewangles, pm->trace, pm->ps->clientNum, pm->tracemask);
 		if (trace.fraction < 1.0f)
 		{
@@ -397,7 +397,7 @@ void PM_StepSlideMove(qboolean gravity)
 			}
 			return;
 		}
-		memset(&trace, 0, sizeof(trace));
+		Com_Memset(&trace, 0, sizeof(trace));
 		PM_TraceHead(&trace, pm->ps->origin, down, NULL, pm->ps->viewangles, pm->trace, pm->ps->clientNum, pm->tracemask);
 		if (trace.fraction < 1.0f)
 		{
@@ -411,7 +411,7 @@ void PM_StepSlideMove(qboolean gravity)
 		}
 	}
 
-	memset(&trace, 0, sizeof(trace));
+	Com_Memset(&trace, 0, sizeof(trace));
 	pm->trace(&trace, pm->ps->origin, pm->mins, pm->maxs, down, pm->ps->clientNum, pm->tracemask);
 	if (!trace.allsolid)
 	{

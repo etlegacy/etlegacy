@@ -103,7 +103,7 @@ void CG_GenerateTracemap(void)
 	// Topdown tracing
 	CG_Printf("Generating level heightmap and level mask...\n");
 
-	memset(&tracemap, 0, sizeof(tracemap));
+	Com_Memset(&tracemap, 0, sizeof(tracemap));
 
 	topdownmax = MIN_WORLD_HEIGHT;
 	topdownmin = MAX_WORLD_HEIGHT;

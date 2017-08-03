@@ -229,8 +229,8 @@ qboolean       bg_characterPoolInuse[MAX_CHARACTERS];
  */
 void BG_ClearCharacterPool(void)
 {
-	memset(&bg_characterPool, 0, sizeof(bg_characterPool));
-	memset(&bg_characterPoolInuse, 0, sizeof(bg_characterPoolInuse));
+	Com_Memset(&bg_characterPool, 0, sizeof(bg_characterPool));
+	Com_Memset(&bg_characterPoolInuse, 0, sizeof(bg_characterPoolInuse));
 }
 
 /**

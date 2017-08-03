@@ -58,7 +58,7 @@ void Use_Target_Give(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		return;
 	}
 
-	memset(&trace, 0, sizeof(trace));
+	Com_Memset(&trace, 0, sizeof(trace));
 	t = NULL;
 	while ((t = G_FindByTargetname(t, ent->target)) != NULL)
 	{
@@ -104,7 +104,7 @@ void Use_target_remove_powerups(gentity_t *ent, gentity_t *other, gentity_t *act
 		Team_ReturnFlag(&g_entities[activator->client->flagParent]);
 	}
 
-	memset(activator->client->ps.powerups, 0, sizeof(activator->client->ps.powerups));
+	Com_Memset(activator->client->ps.powerups, 0, sizeof(activator->client->ps.powerups));
 }
 
 /**

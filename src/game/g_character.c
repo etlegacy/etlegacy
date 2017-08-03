@@ -60,7 +60,7 @@ static void G_CalcMoveSpeeds(bg_character_t *character)
 	int           low;
 	orientation_t o[2];
 
-	memset(&refent, 0, sizeof(refent));
+	Com_Memset(&refent, 0, sizeof(refent));
 
 	refent.hModel = character->mesh;
 
@@ -218,7 +218,7 @@ static qboolean G_CheckForExistingAnimModelInfo(const char *animationGroup, cons
 	{
 		*animModelInfo = firstFree;
 		// clear the structure out ready for use
-		memset(*animModelInfo, 0, sizeof(animModelInfo_t));
+		Com_Memset(*animModelInfo, 0, sizeof(animModelInfo_t));
 	}
 
 	// qfalse signifies that we need to parse the information from the script files
@@ -235,7 +235,7 @@ qboolean G_RegisterCharacter(const char *characterFile, bg_character_t *characte
 {
 	bg_characterDef_t characterDef;
 
-	memset(&characterDef, 0, sizeof(characterDef));
+	Com_Memset(&characterDef, 0, sizeof(characterDef));
 
 	if (!BG_ParseCharacterFile(characterFile, &characterDef))
 	{

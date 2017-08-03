@@ -309,7 +309,7 @@ void BodyUnlink(gentity_t *ent)
 {
 	gentity_t *tent;
 
-	tent = G_TempEntity(ent->r.currentOrigin, EV_BODY_DP);     // so clients will memset them off
+	tent = G_TempEntity(ent->r.currentOrigin, EV_BODY_DP);     // so clients will Com_Memset them off
 
 	tent->s.otherEntityNum2 = ent->s.number;
 	tent->r.svFlags         = SVF_BROADCAST; // send to everyone
@@ -326,7 +326,7 @@ void G_BodyDP(gentity_t *ent)
 {
 	gentity_t *tent;
 
-	tent = G_TempEntity(ent->r.currentOrigin, EV_BODY_DP);     // so clients will memset them off
+	tent = G_TempEntity(ent->r.currentOrigin, EV_BODY_DP);     // so clients will Com_Memset them off
 
 	tent->s.otherEntityNum2 = ent->s.number;
 	tent->r.svFlags         = SVF_BROADCAST; // send to everyone
@@ -479,7 +479,7 @@ static void G_StepSlideCorpse(gentity_t *ent, vec3_t newOrigin)
 	VectorCopy(ent->s.pos.trBase, down);
 	down[2] -= 18;
 
-	memset(&trace, 0, sizeof(trace));
+	Com_Memset(&trace, 0, sizeof(trace));
 
 	trap_TraceCapsule(&trace, ent->s.pos.trBase, ent->r.mins, ent->r.maxs, down, ent->s.number, MASK_PLAYERSOLID);
 
@@ -1129,7 +1129,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	client->ps.teamNum = pc;
 
 	// zero out all ammo counts
-	memset(client->ps.ammo, 0, MAX_WEAPONS * sizeof(int));
+	Com_Memset(client->ps.ammo, 0, MAX_WEAPONS * sizeof(int));
 
 	// All players start with a knife (not OR-ing so that it clears previous weapons)
 	client->ps.weapons[0] = 0;
@@ -2326,7 +2326,7 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	ent->client = level.clients + clientNum;
 	client      = ent->client;
 
-	memset(client, 0, sizeof(*client));
+	Com_Memset(client, 0, sizeof(*client));
 
 	client->pers.connected   = CON_CONNECTING;
 	client->pers.connectTime = level.time;
@@ -2591,7 +2591,7 @@ void ClientBegin(int clientNum)
 	stat_xp = ent->client->ps.stats[STAT_XP];
 	score   = ent->client->ps.persistant[PERS_SCORE];
 
-	memset(&client->ps, 0, sizeof(client->ps));
+	Com_Memset(&client->ps, 0, sizeof(client->ps));
 
 	ent->client->ps.persistant[PERS_SCORE] = score;
 
@@ -2798,7 +2798,7 @@ gentity_t *SelectSpawnPointFromList(char *list, vec3_t spawn_origin, vec3_t spaw
 	int       valid[MAX_SPAWNPOINTFROMLIST_POINTS];
 	int       numValid = 0;
 
-	memset(valid, 0, sizeof(valid));
+	Com_Memset(valid, 0, sizeof(valid));
 
 	while ((token = COM_Parse(&pStr)) != NULL && token[0])
 	{
@@ -2956,7 +2956,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	{
 		qboolean set = client->maxlivescalced;
 
-		memset(client, 0, sizeof(*client));
+		Com_Memset(client, 0, sizeof(*client));
 
 		client->maxlivescalced = set;
 	}

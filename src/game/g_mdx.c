@@ -107,41 +107,41 @@ void mdx_cleanup(void)
 	int i;
 
 	mdx_bones_max = 0;
-	free(mdx_bones);
+	Com_Dealloc(mdx_bones);
 	mdx_bones = NULL;
 
 #ifdef BONE_HITTESTS
 	cachetag_count = 0;
-	free(cachetag_names);
+	Com_Dealloc(cachetag_names);
 	cachetag_names = NULL;
 #endif // BONE_HITTESTS
 
 	for (i = 0; i < mdm_model_count; i++)
 	{
-		free(mdm_models[i].tags);
+		Com_Dealloc(mdm_models[i].tags);
 #ifdef BONE_HITTESTS
-		free(mdm_models[i].cachetags);
+		Com_Dealloc(mdm_models[i].cachetags);
 #endif // BONE_HITTESTS
 	}
 	mdm_model_count = 0;
-	free(mdm_models);
+	Com_Dealloc(mdm_models);
 	mdm_models = NULL;
 
 	for (i = 0; i < mdx_model_count; i++)
 	{
-		free(mdx_models[i].bones);
-		free(mdx_models[i].frames);
+		Com_Dealloc(mdx_models[i].bones);
+		Com_Dealloc(mdx_models[i].frames);
 	}
 	mdx_model_count = 0;
-	free(mdx_models);
+	Com_Dealloc(mdx_models);
 	mdx_models = NULL;
 
 	for (i = 0; i < hit_count; i++)
 	{
-		free(hits[i].hits);
+		Com_Dealloc(hits[i].hits);
 	}
 	hit_count = 0;
-	free(hits);
+	Com_Dealloc(hits);
 	hits = NULL;
 }
 
@@ -298,7 +298,7 @@ void mdx_gentity_to_grefEntity(gentity_t *ent, grefEntity_t *refent, int lerpTim
 	bg_character_t *character;
 	vec3_t         legsAngles, torsoAngles, headAngles;
 
-	memset(refent, 0, sizeof(*refent));
+	Com_Memset(refent, 0, sizeof(*refent));
 
 	if (ent->s.eType == ET_PLAYER)
 	{
@@ -557,16 +557,16 @@ static void mdx_load(mdx_t *mdxModel, char *mem)
 
 	if (bone_count > mdx_bones_max)
 	{
-		free(mdx_bones);
+		Com_Dealloc(mdx_bones);
 		mdx_bones_max = bone_count;
-		mdx_bones     = malloc(mdx_bones_max * sizeof(*mdx_bones));
+		mdx_bones     = Com_Allocate(mdx_bones_max * sizeof(*mdx_bones));
 	}
 
 	// Load bones
 	mdxModel->bone_count = bone_count;
 
-	free(mdxModel->bones);
-	mdxModel->bones = malloc(mdxModel->bone_count * sizeof(struct bone));
+	Com_Dealloc(mdxModel->bones);
+	mdxModel->bones = Com_Allocate(mdxModel->bone_count * sizeof(struct bone));
 
 	for (i = 0; i < mdxModel->bone_count; i++)
 	{
@@ -587,8 +587,8 @@ static void mdx_load(mdx_t *mdxModel, char *mem)
 	// Load frames
 	mdxModel->frame_count = frame_count;
 
-	free(mdxModel->frames);
-	ptr              = malloc(mdxModel->frame_count * (sizeof(struct frame) + mdxModel->bone_count * sizeof(struct frame_bone)));
+	Com_Dealloc(mdxModel->frames);
+	ptr              = Com_Allocate(mdxModel->frame_count * (sizeof(struct frame) + mdxModel->bone_count * sizeof(struct frame_bone)));
 	mdxModel->frames = (void *)ptr;
 	ptr             += mdxModel->frame_count * sizeof(struct frame);
 
@@ -638,9 +638,9 @@ static void mdm_load(mdm_t *mdmModel, char *mem)
 	tags = mdx_read_int(hdr->tag_count);
 	tag  = (void *)(mem + mdx_read_int(hdr->tag_offset));
 
-	free(mdmModel->tags);
+	Com_Dealloc(mdmModel->tags);
 	mdmModel->tag_count = tags;
-	mdmModel->tags      = malloc(mdmModel->tag_count * sizeof(struct tag));
+	mdmModel->tags      = Com_Allocate(mdmModel->tag_count * sizeof(struct tag));
 
 	mdmModel->tag_head = mdmModel->tag_footleft = mdmModel->tag_footright = -1;
 
@@ -1153,12 +1153,12 @@ static qboolean hit_load(hit_t *hitModel, const animModelInfo_t *animModelInfo, 
 		return qfalse;
 	}
 
-	ptr = pScript = malloc(len + 1);
+	ptr = pScript = Com_Allocate(len + 1);
 	trap_FS_Read(pScript, len, fh);
 	pScript[len] = '\0';
 	trap_FS_FCloseFile(fh);
 
-	free(hitModel->hits);
+	Com_Dealloc(hitModel->hits);
 	hitModel->hits = NULL;
 
 	COM_SetCurrentParseLine(1);
@@ -1193,14 +1193,14 @@ static qboolean hit_load(hit_t *hitModel, const animModelInfo_t *animModelInfo, 
 	}
 
 	cachetag_resize(cachetag_oldcount);
-	free(pScript);
+	Com_Dealloc(pScript);
 	return qtrue;
 
 err:
 	cachetag_resize(cachetag_oldcount);
-	free(pScript);
+	Com_Dealloc(pScript);
 
-	free(hitModel->hits);
+	Com_Dealloc(hitModel->hits);
 	hitModel->hit_count = 0;
 	hitModel->hits      = NULL;
 	return qfalse;
@@ -1241,7 +1241,7 @@ qhandle_t trap_R_RegisterModel(const char *filename)
 	{
 		G_Error(GAME_VERSION " MDX: File not found: %s\n", filename);
 	}
-	mem = malloc(len);
+	mem = Com_Allocate(len);
 	trap_FS_Read(mem, len, fh);
 	trap_FS_FCloseFile(fh);
 
@@ -1251,11 +1251,11 @@ qhandle_t trap_R_RegisterModel(const char *filename)
 		mdx_models = realloc(mdx_models, mdx_model_count * sizeof(*mdx_models));
 		if (!mdx_models)
 		{
-			free(mdx_models);
+			Com_Dealloc(mdx_models);
 			G_Error(GAME_VERSION " MDX: mdx_models memory realocation error\n");
 		}
 
-		memset(&mdx_models[ret], 0, sizeof(mdx_models[ret]));
+		Com_Memset(&mdx_models[ret], 0, sizeof(mdx_models[ret]));
 		Q_strncpyz(mdx_models[ret].path, filename, sizeof(mdx_models[ret].path));
 		mdx_load(&mdx_models[ret], mem);
 	}
@@ -1265,21 +1265,21 @@ qhandle_t trap_R_RegisterModel(const char *filename)
 		mdm_models = realloc(mdm_models, mdm_model_count * sizeof(*mdm_models));
 		if (!mdm_models)
 		{
-			free(mdm_models);
+			Com_Dealloc(mdm_models);
 			G_Error(GAME_VERSION " MDX: mdm_models memory realocation error\n");
 		}
-		memset(&mdm_models[ret], 0, sizeof(mdm_models[ret]));
+		Com_Memset(&mdm_models[ret], 0, sizeof(mdm_models[ret]));
 		Q_strncpyz(mdm_models[ret].path, filename, sizeof(mdm_models[ret].path));
 		mdm_load(&mdm_models[ret], mem);
 	}
 	else
 	{
 		ret = -1;
-		free(mem);
+		Com_Dealloc(mem);
 		G_Error(GAME_VERSION " MDX: Not a model: %s\n", filename);
 	}
 
-	free(mem);
+	Com_Dealloc(mem);
 	return INDEXTOQHANDLE(ret);
 }
 
@@ -1327,7 +1327,7 @@ qhandle_t mdx_RegisterHits(animModelInfo_t *animModelInfo, const char *filename)
 
 	i    = hit_count++;
 	hits = realloc(hits, hit_count * sizeof(*hits));
-	memset(&hits[i], 0, sizeof(hits[i]));
+	Com_Memset(&hits[i], 0, sizeof(hits[i]));
 
 	if (hit_load(&hits[i], animModelInfo, filename) < 0)
 	{
@@ -2895,7 +2895,7 @@ void mdx_head_position(/*const*/ gentity_t *ent, /*const*/ grefEntity_t *refent,
 	orientation_t orientation;
 	vec3_t        axis[3];
 
-	memset(&orientation, 0, sizeof(orientation));
+	Com_Memset(&orientation, 0, sizeof(orientation));
 
 	model = &mdm_models[QHANDLETOINDEX(refent->hModel)];
 
@@ -2929,7 +2929,7 @@ void mdx_tag_position(gentity_t *ent, grefEntity_t *refent, vec3_t org, const ch
 {
 	orientation_t orientation;
 
-	memset(&orientation, 0, sizeof(orientation));
+	Com_Memset(&orientation, 0, sizeof(orientation));
 
 	trap_R_LerpTag(&orientation, refent, tagName, 0);
 
@@ -2955,7 +2955,7 @@ void mdx_legs_position(/*const*/ gentity_t *ent, /*const*/ grefEntity_t *refent,
 	orientation_t orientation;
 	vec3_t        org1, org2;
 
-	memset(&orientation, 0, sizeof(orientation));
+	Com_Memset(&orientation, 0, sizeof(orientation));
 
 	model = &mdm_models[QHANDLETOINDEX(refent->hModel)];
 

@@ -560,7 +560,7 @@ void G_deleteStats(int nClient)
 	cl->sess.startskillpoints[SK_HEAVY_WEAPONS]                            = 0;
 	cl->sess.startskillpoints[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] = 0;
 
-	memset(&cl->sess.aWeaponStats, 0, sizeof(cl->sess.aWeaponStats));
+	Com_Memset(&cl->sess.aWeaponStats, 0, sizeof(cl->sess.aWeaponStats));
 	trap_Cvar_Set(va("wstats%i", nClient), va("%d", nClient));
 }
 

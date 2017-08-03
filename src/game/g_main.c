@@ -2305,11 +2305,11 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 		qboolean   oldspawning = level.spawning;
 		voteInfo_t votedata;
 
-		memcpy(&votedata, &level.voteInfo, sizeof(voteInfo_t));
+		Com_Memcpy(&votedata, &level.voteInfo, sizeof(voteInfo_t));
 
-		memset(&level, 0, sizeof(level));
+		Com_Memset(&level, 0, sizeof(level));
 
-		memcpy(&level.voteInfo, &votedata, sizeof(voteInfo_t));
+		Com_Memcpy(&level.voteInfo, &votedata, sizeof(voteInfo_t));
 
 		level.spawning = oldspawning;
 	}
@@ -2518,12 +2518,12 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 	G_ResetTeamMapData();
 
 	// initialize all entities for this game
-	memset(g_entities, 0, MAX_GENTITIES * sizeof(g_entities[0]));
+	Com_Memset(g_entities, 0, MAX_GENTITIES * sizeof(g_entities[0]));
 	level.gentities = g_entities;
 
 	// initialize all clients for this game
 	level.maxclients = g_maxclients.integer;
-	memset(g_clients, 0, MAX_CLIENTS * sizeof(g_clients[0]));
+	Com_Memset(g_clients, 0, MAX_CLIENTS * sizeof(g_clients[0]));
 	level.clients = g_clients;
 
 	// set client fields on player ents
@@ -2865,7 +2865,7 @@ void etpro_PlayerInfo(void)
 	int       i;
 	int       lastclient = -1;
 
-	memset(playerinfo, 0, sizeof(playerinfo));
+	Com_Memset(playerinfo, 0, sizeof(playerinfo));
 
 	for (i = 0; i < MAX_CLIENTS; i++, e++)
 	{
@@ -3096,7 +3096,7 @@ void MoveClientToIntermission(gentity_t *ent)
 	ent->client->ps.pm_type = PM_INTERMISSION;
 
 	// clean up powerup info
-	// memset( ent->client->ps.powerups, 0, sizeof(ent->client->ps.powerups) );
+	// Com_Memset( ent->client->ps.powerups, 0, sizeof(ent->client->ps.powerups) );
 
 	// Player view is distorted in intermission if you have ridden a vehicle,
 	// mounted a tank
@@ -3303,7 +3303,7 @@ void BeginIntermission(void)
 			// rebuild the bspNames[] array..
 			// I know, perhaps this is a silly way of shuffling the list,
 			// but at least the rest of code stays the same.
-			memset(bspNames, 0, sizeof(bspNames));
+			Com_Memset(bspNames, 0, sizeof(bspNames));
 			bspptrTmp = bspptr;
 			for (i = 0; i < maxMaps; ++i)
 			{
@@ -4652,8 +4652,8 @@ void G_TagLinkEntity(gentity_t *ent, int msec)
 	}
 	else
 	{
-		memset(&ent->s.pos, 0, sizeof(ent->s.pos));
-		memset(&ent->s.apos, 0, sizeof(ent->s.apos));
+		Com_Memset(&ent->s.pos, 0, sizeof(ent->s.pos));
+		Com_Memset(&ent->s.apos, 0, sizeof(ent->s.apos));
 
 		VectorCopy(ent->r.currentOrigin, ent->s.pos.trBase);
 		VectorCopy(ent->r.currentAngles, ent->s.apos.trBase);
@@ -5274,7 +5274,7 @@ void G_MapVoteInfoRead()
 		return;
 	}
 
-	cnf = malloc(len + 1);
+	cnf = Com_Allocate(len + 1);
 
 	if (cnf == NULL)
 	{
@@ -5340,7 +5340,7 @@ void G_MapVoteInfoRead()
 		t = COM_Parse(&cnf);
 	}
 
-	free(cnf2);
+	Com_Dealloc(cnf2);
 
 	return;
 }

@@ -619,7 +619,7 @@ void trap_GetUsercmd(int clientNum, usercmd_t *cmd)
 
 			// store our newest usercmd
 			cmdNumber[clientNum]++;
-			memcpy(&cmds[clientNum][cmdNumber[clientNum] & MAX_USERCMD_MASK], cmd, sizeof(usercmd_t));
+			Com_Memcpy(&cmds[clientNum][cmdNumber[clientNum] & MAX_USERCMD_MASK], cmd, sizeof(usercmd_t));
 
 			// find a usercmd that is fakeLag msec behind
 			i           = cmdNumber[clientNum] & MAX_USERCMD_MASK;

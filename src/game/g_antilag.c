@@ -704,7 +704,7 @@ void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, con
 	vec3_t dir;
 	int    res, clientNum, i;
 
-	memset(&maxsBackup, 0, sizeof(maxsBackup));
+	Com_Memset(&maxsBackup, 0, sizeof(maxsBackup));
 
 	if (!g_antilag.integer || !ent->client)
 	{
@@ -798,7 +798,7 @@ void G_Trace(gentity_t *ent, trace_t *results, const vec3_t start, const vec3_t 
 	vec3_t dir;
 	int    res, clientNum, i;
 
-	memset(&maxsBackup, 0, sizeof(maxsBackup));
+	Com_Memset(&maxsBackup, 0, sizeof(maxsBackup));
 
 	G_AttachBodyParts(ent);
 
@@ -975,7 +975,7 @@ void G_PredictPmove(gentity_t *ent, float frametime)
 	pm_time         = client->ps.pm_time;
 	eFlags          = client->ps.eFlags;
 
-	memset(&pm, 0, sizeof(pm));
+	Com_Memset(&pm, 0, sizeof(pm));
 	pm.ps            = &client->ps;
 	pm.pmext         = &client->pmext;
 	pm.character     = client->pers.character;

@@ -169,16 +169,16 @@ void G_ref_cmd(gentity_t *ent, unsigned int dwCommand, qboolean fValue)
 
 		trap_Argv(1, arg, sizeof(arg));
 
-		memcpy(&votedata, &level.voteInfo, sizeof(voteInfo_t));
+		Com_Memcpy(&votedata, &level.voteInfo, sizeof(voteInfo_t));
 
 		if (Cmd_CallVote_f(ent, 0, qtrue))
 		{
-			memcpy(&level.voteInfo, &votedata, sizeof(voteInfo_t));
+			Com_Memcpy(&level.voteInfo, &votedata, sizeof(voteInfo_t));
 			return;
 		}
 		else
 		{
-			memcpy(&level.voteInfo, &votedata, sizeof(voteInfo_t));
+			Com_Memcpy(&level.voteInfo, &votedata, sizeof(voteInfo_t));
 
 			if (G_refCommandCheck(ent, arg))
 			{

@@ -45,7 +45,7 @@ static animation_t animationPool[MAX_ANIMPOOL_SIZE];
  */
 void BG_ClearAnimationPool(void)
 {
-	memset(animationPool, 0, sizeof(animationPool));
+	Com_Memset(animationPool, 0, sizeof(animationPool));
 }
 
 #ifdef USE_MDXFILE

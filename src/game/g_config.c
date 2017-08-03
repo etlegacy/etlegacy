@@ -316,13 +316,13 @@ qboolean G_ParseMapSettings(int handle, config_t *config)
 				return res;
 			}
 
-			code = malloc(flen + 1);
+			code = Com_Allocate(flen + 1);
 			trap_FS_Read(code, flen, f);
 			*(code + flen) = '\0';
 			trap_FS_FCloseFile(f);
 			signature = G_SHA1(code);
 
-			free(code);
+			Com_Dealloc(code);
 
 			if (Q_stricmp(config->mapscripthash, signature))
 			{
@@ -360,7 +360,7 @@ void G_configLoadAndSet(const char *name)
 		return;
 	}
 
-	memset(&level.config, 0, sizeof(config_t));
+	Com_Memset(&level.config, 0, sizeof(config_t));
 
 	G_wipeCvars();
 
@@ -541,7 +541,7 @@ void G_ConfigCheckLocked()
 			G_Printf("Config cvar \"%s\" value: %s does not match the currently set value %s\n", config->setl[i].name, config->setl[i].value, temp);
 			trap_SetConfigstring(CS_CONFIGNAME, "");
 			trap_SendServerCommand(-1, va("cp \"^7Config '%s^7' ^1WAS UNLOADED DUE TO EXTERNAL MANIPULATION\"", config->name));
-			memset(&level.config, 0, sizeof(config_t));
+			Com_Memset(&level.config, 0, sizeof(config_t));
 			break;
 		}
 	}

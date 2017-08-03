@@ -115,7 +115,7 @@ const char *BuildShaderStateConfig()
 	int         i;
 	int         i1, i2;
 
-	memset(buff, 0, MAX_STRING_CHARS);
+	Com_Memset(buff, 0, MAX_STRING_CHARS);
 	for (i = 0; i < remapCount; i++)
 	{
 		i1 = G_ShaderIndex(remappedShaders[i].oldShader);
@@ -899,7 +899,7 @@ void G_FreeEntity(gentity_t *ent)
 
 	if (ent->free)
 	{
-		ent->free(ent);
+		ent->Com_Dealloc(ent);
 	}
 
 	trap_UnlinkEntity(ent);       // unlink from world
@@ -929,14 +929,14 @@ void G_FreeEntity(gentity_t *ent)
 		//}
 
 		// game entity is immediately available and a 'slot' will be reused
-		memset(ent, 0, sizeof(*ent));
+		Com_Memset(ent, 0, sizeof(*ent));
 		ent->classname = "freed";
 		ent->freetime  = -9999;  // e->freetime is never greater than level.startTime + 2000 see G_Spawn()
 		ent->inuse     = qfalse;
 	}
 	else // all other game entities relax
 	{
-		memset(ent, 0, sizeof(*ent));
+		Com_Memset(ent, 0, sizeof(*ent));
 		ent->classname = "freed";
 		ent->freetime  = level.time;
 		ent->inuse     = qfalse;
@@ -1681,7 +1681,7 @@ static qboolean G_LoadCampaignsFromFile(const char *filename)
 					// again, so this one will be overwritten
 					// clear out this campaign so that everything's
 					// okay when when we add the next
-					memset(&g_campaigns[level.campaignCount], 0, sizeof(g_campaigns[0]));
+					Com_Memset(&g_campaigns[level.campaignCount], 0, sizeof(g_campaigns[0]));
 					level.campaignCount--;
 
 					break;
@@ -1725,7 +1725,7 @@ void G_ParseCampaigns(void)
 
 	level.campaignCount   = 0;
 	level.currentCampaign = -1;
-	memset(&g_campaigns, 0, sizeof(g_campaignInfo_t) * MAX_CAMPAIGNS);
+	Com_Memset(&g_campaigns, 0, sizeof(g_campaignInfo_t) * MAX_CAMPAIGNS);
 
 	if (g_gametype.integer != GT_WOLF_CAMPAIGN)
 	{

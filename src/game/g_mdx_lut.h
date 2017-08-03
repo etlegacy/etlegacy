@@ -33,7 +33,7 @@
 
 #if 0
 {
-	memset(&refent, 0, sizeof(refent));
+	Com_Memset(&refent, 0, sizeof(refent));
 	refent.hModel   = trap_R_RegisterModel("evil.mdm");
 	refent.frame    = 0;
 	refent.oldframe = refent.frame;

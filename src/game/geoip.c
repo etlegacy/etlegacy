@@ -175,7 +175,7 @@ void GeoIP_open(void)
 		return;
 	}
 
-	gidb = (GeoIP *)malloc(sizeof(GeoIP));
+	gidb = (GeoIP *)Com_Allocate(sizeof(GeoIP));
 
 	if (gidb == NULL)
 	{
@@ -188,7 +188,7 @@ void GeoIP_open(void)
 	if ((int)gidb->memsize < 0)
 	{
 		G_Printf("GeoIP: Error opening database GeoIP.dat\n");
-		free(gidb);
+		Com_Dealloc(gidb);
 		gidb = NULL;
 		return;
 
@@ -197,7 +197,7 @@ void GeoIP_open(void)
 	{
 		G_Printf("GeoIP: Error zero-sized database file\n");
 		trap_FS_FCloseFile(gidb->GeoIPDatabase);
-		free(gidb);
+		Com_Dealloc(gidb);
 		gidb = NULL;
 		return;
 	}
@@ -214,7 +214,7 @@ void GeoIP_open(void)
 
 		G_Printf("GeoIP: Memory allocation error for GeoIP cache\n");
 		trap_FS_FCloseFile(gidb->GeoIPDatabase);
-		free(gidb);
+		Com_Dealloc(gidb);
 		gidb = NULL;
 		return;
 	}
@@ -227,9 +227,9 @@ void GeoIP_close(void)
 {
 	if (gidb != NULL)
 	{
-		free(gidb->cache);
+		Com_Dealloc(gidb->cache);
 		gidb->cache = NULL;
-		free(gidb);
+		Com_Dealloc(gidb);
 		gidb = NULL;
 	}
 }

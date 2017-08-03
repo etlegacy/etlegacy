@@ -362,8 +362,8 @@ void G_ResetXP(gentity_t *ent)
 
 	// zero out all weapons and grab the default weapons for a player of this XP level.
 	// backup..
-	memcpy(ammo, ent->client->ps.ammo, sizeof(ammo));
-	memcpy(ammoclip, ent->client->ps.ammoclip, sizeof(ammoclip));
+	Com_Memcpy(ammo, ent->client->ps.ammo, sizeof(ammo));
+	Com_Memcpy(ammoclip, ent->client->ps.ammoclip, sizeof(ammoclip));
 	oldWeapon = ent->client->ps.weapon;
 	// Check weapon validity, maybe dump some weapons for this (now) unskilled player..
 	// It also sets the (possibly new) amounts of ammo for weapons.
