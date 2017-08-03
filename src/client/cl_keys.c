@@ -282,7 +282,7 @@ void Field_VariableSizeDraw(field_t *edit, int x, int y, int width, int size, qb
 		return;
 	}
 
-	memcpy(str, edit->buffer + prestep, drawLen);
+	Com_Memcpy(str, edit->buffer + prestep, drawLen);
 	str[drawLen] = 0;
 
 	// draw it
@@ -1355,7 +1355,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 			{
 				con.highlightOffset   = 0;
 				g_consoleField.cursor = 0;
-				memset(g_consoleField.buffer, 0, sizeof(char) * MAX_EDIT_LINE);
+				Com_Memset(g_consoleField.buffer, 0, sizeof(char) * MAX_EDIT_LINE);
 			}
 			else
 			{

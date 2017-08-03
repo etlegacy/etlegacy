@@ -161,8 +161,8 @@ static qboolean OGV_LoadAudio(cinematic_t *cin)
 	ogg_packet   op;
 	vorbis_block vb;
 
-	memset(&op, 0, sizeof(op));
-	memset(&vb, 0, sizeof(vb));
+	Com_Memset(&op, 0, sizeof(op));
+	Com_Memset(&vb, 0, sizeof(vb));
 	vorbis_block_init(&g_ogm->vd, &vb);
 
 	while (anyDataTransferred && g_ogm->currentTime + MAX_AUDIO_PRELOAD > (int)(g_ogm->vd.granulepos * 1000 / g_ogm->vi.rate))
@@ -343,7 +343,7 @@ static int OGV_LoadVideoFrame(cinematic_t *cin)
 	int        r = 0;
 	ogg_packet op;
 
-	memset(&op, 0, sizeof(op));
+	Com_Memset(&op, 0, sizeof(op));
 
 	while (!r && (ogg_stream_packetout(&g_ogm->os_video, &op)))
 	{

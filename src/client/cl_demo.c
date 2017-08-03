@@ -214,7 +214,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 	for (j = 0; j < snapshotNumber - currentSnapNum; j++)
 	{
 		// get the sequence number
-		memset(buffer, 0, sizeof(buffer));
+		Com_Memset(buffer, 0, sizeof(buffer));
 		r = FS_Read(&buffer, 4, clc.demofile);
 		if (r != 4)
 		{
@@ -227,7 +227,7 @@ qboolean CL_PeekSnapshot(int snapshotNumber, snapshot_t *snapshot)
 		//serverMessageSequence = LittleLong(*((int *)buffer));
 
 		// init the message
-		memset(&buf, 0, sizeof(msg_t));
+		Com_Memset(&buf, 0, sizeof(msg_t));
 		MSG_Init(&buf, bufData, sizeof(bufData));
 
 		// get the length
@@ -506,9 +506,9 @@ static void CL_RewindDemo(double wantedTime)
 	di.numSnaps  = rb->numSnaps;
 	di.snapCount = i + 1;
 
-	memcpy(&cl, &rb->cl, sizeof(clientActive_t));
-	memcpy(&clc, &rb->clc, sizeof(clientConnection_t));
-	memcpy(&cls, &rb->cls, sizeof(clientStatic_t));
+	Com_Memcpy(&cl, &rb->cl, sizeof(clientActive_t));
+	Com_Memcpy(&clc, &rb->clc, sizeof(clientConnection_t));
+	Com_Memcpy(&cls, &rb->cls, sizeof(clientStatic_t));
 	di.Overf = 0;
 
 	// TODO: this is a hack to set the state to something valid
@@ -564,7 +564,7 @@ static void CL_ParseDemoSnapShotSimple(msg_t *msg)
 	int          oldMessageNum;
 	int          i, packetNum;
 
-	memset(&newSnap, 0, sizeof(newSnap));
+	Com_Memset(&newSnap, 0, sizeof(newSnap));
 	newSnap.serverCommandNum = clc.serverCommandSequence;
 	newSnap.serverTime       = MSG_ReadLong(msg);
 	newSnap.messageNum       = clc.serverMessageSequence;
@@ -679,7 +679,7 @@ static void CL_ParseDemo(void)
 	int demofile = 0;
 
 	// Reset our demo data
-	memset(&di, 0, sizeof(di));
+	Com_Memset(&di, 0, sizeof(di));
 
 	// Parse start
 	di.gameStartTime = -1;
@@ -797,8 +797,8 @@ static void CL_ParseDemo(void)
 					else if (cmd2 == svc_baseline)
 					{
 						entityState_t s1, s2;
-						memset(&s1, 0, sizeof(s1));
-						memset(&s2, 0, sizeof(s2));
+						Com_Memset(&s1, 0, sizeof(s1));
+						Com_Memset(&s2, 0, sizeof(s2));
 						MSG_ReadBits(msg, GENTITYNUM_BITS);
 						MSG_ReadDeltaEntity(msg, &s1, &s2, 0);
 					}
@@ -1092,7 +1092,7 @@ void CL_Record(const char *name)
 	}
 
 	// baselines
-	memset(&nullstate, 0, sizeof(nullstate));
+	Com_Memset(&nullstate, 0, sizeof(nullstate));
 	for (i = 0; i < MAX_GENTITIES; i++)
 	{
 		ent = &cl.entityBaselines[i];
@@ -1305,9 +1305,9 @@ void CL_ReadDemoMessage(void)
 			rb->numSnaps  = di.numSnaps;
 			rb->seekPoint = FS_FTell(clc.demofile);
 
-			memcpy(&rb->cl, &cl, sizeof(clientActive_t));
-			memcpy(&rb->clc, &clc, sizeof(clientConnection_t));
-			memcpy(&rb->cls, &cls, sizeof(clientStatic_t));
+			Com_Memcpy(&rb->cl, &cl, sizeof(clientActive_t));
+			Com_Memcpy(&rb->clc, &clc, sizeof(clientConnection_t));
+			Com_Memcpy(&rb->cls, &cls, sizeof(clientStatic_t));
 		}
 		di.snapCount++;
 	}

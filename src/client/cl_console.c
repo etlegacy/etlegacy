@@ -251,8 +251,8 @@ void Con_CheckResize(void)
 			numchars = con.linewidth;
 		}
 
-		memcpy(tbuf, con.text, CON_TEXTSIZE * sizeof(int));
-		memcpy(tbuff, con.textColor, CON_TEXTSIZE * sizeof(byte));
+		Com_Memcpy(tbuf, con.text, CON_TEXTSIZE * sizeof(int));
+		Com_Memcpy(tbuff, con.textColor, CON_TEXTSIZE * sizeof(byte));
 		for (i = 0; i < CON_TEXTSIZE; i++)
 		{
 			con.text[i]      = ' ';

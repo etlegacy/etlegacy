@@ -2250,7 +2250,7 @@ void S_FreeOldestSound(void)
 	while (buffer != NULL)
 	{
 		nbuffer = buffer->next;
-		SND_free(buffer);
+		SND_Com_Dealloc(buffer);
 		buffer = nbuffer;
 	}
 	sfx->inMemory  = qfalse;

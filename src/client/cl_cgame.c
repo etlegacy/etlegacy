@@ -268,7 +268,7 @@ void CL_ConfigstringModified(void)
 	// build the new gameState_t
 	oldGs = cl.gameState;
 
-	memset(&cl.gameState, 0, sizeof(cl.gameState));
+	Com_Memset(&cl.gameState, 0, sizeof(cl.gameState));
 
 	// leave the first 0 for uninitialized strings
 	cl.gameState.dataCount = 1;
@@ -462,7 +462,7 @@ void CL_SetExpectedHunkUsage(const char *mapname)
 		char *buftrav;
 		char *buf = (char *)Z_Malloc(len + 1);
 
-		memset(buf, 0, len + 1);
+		Com_Memset(buf, 0, len + 1);
 
 		FS_Read((void *)buf, len, handle);
 		FS_FCloseFile(handle);
@@ -878,9 +878,9 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		return 0;
 
 	case CG_MEMSET:
-		return (intptr_t)memset(VMA(1), args[2], args[3]);
+		return (intptr_t)Com_Memset(VMA(1), args[2], args[3]);
 	case CG_MEMCPY:
-		return (intptr_t)memcpy(VMA(1), VMA(2), args[3]);
+		return (intptr_t)Com_Memcpy(VMA(1), VMA(2), args[3]);
 	case CG_STRNCPY:
 		return (intptr_t)strncpy(VMA(1), VMA(2), args[3]);
 	case CG_SIN:
@@ -1057,9 +1057,9 @@ void CL_UpdateLevelHunkUsage(void)
 		char *buf;
 
 		buf = (char *)Z_Malloc(len + 1);
-		memset(buf, 0, len + 1);
+		Com_Memset(buf, 0, len + 1);
 		outbuf = (char *)Z_Malloc(len + 1);
-		memset(outbuf, 0, len + 1);
+		Com_Memset(outbuf, 0, len + 1);
 
 		(void) FS_Read((void *)buf, len, handle);
 		FS_FCloseFile(handle);

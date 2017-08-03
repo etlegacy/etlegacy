@@ -292,7 +292,7 @@ static sfxHandle_t S_AL_BufferFind(const char *filename)
 
 		// Clear and copy the filename over
 		ptr = &knownSfx[sfx];
-		memset(ptr, 0, sizeof(*ptr));
+		Com_Memset(ptr, 0, sizeof(*ptr));
 		ptr->masterLoopSrc = -1;
 		strcpy(ptr->filename, filename);
 	}
@@ -570,7 +570,7 @@ static qboolean S_AL_BufferInit(void)
 	}
 
 	// Clear the hash table, and SFX table
-	memset(knownSfx, 0, sizeof(knownSfx));
+	Com_Memset(knownSfx, 0, sizeof(knownSfx));
 	numSfx = 0;
 
 	// Load the default sound, and lock it
@@ -605,7 +605,7 @@ static void S_AL_BufferShutdown(void)
 	}
 
 	// Clear the tables
-	memset(knownSfx, 0, sizeof(knownSfx));
+	Com_Memset(knownSfx, 0, sizeof(knownSfx));
 
 	// All undone
 	alBuffersInitialised = qfalse;
@@ -849,7 +849,7 @@ static qboolean S_AL_SrcInit(void)
 	ALenum error;
 
 	// Clear the sources data structure
-	memset(srcList, 0, sizeof(srcList));
+	Com_Memset(srcList, 0, sizeof(srcList));
 	srcCount     = 0;
 	srcActiveCnt = 0;
 
@@ -914,7 +914,7 @@ static void S_AL_SrcShutdown(void)
 		qalDeleteSources(1, &srcList[i].alSource);
 	}
 
-	memset(srcList, 0, sizeof(srcList));
+	Com_Memset(srcList, 0, sizeof(srcList));
 
 	alSourcesInitialised = qfalse;
 }

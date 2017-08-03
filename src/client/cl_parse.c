@@ -410,7 +410,7 @@ void CL_ParseSnapshot(msg_t *msg)
 
 	// read in the new snapshot to a temporary buffer
 	// we will only copy to cl.snap if it is valid
-	memset(&newSnap, 0, sizeof(newSnap));
+	Com_Memset(&newSnap, 0, sizeof(newSnap));
 
 	// we will have read any new server commands in this
 	// message before we got to svc_snapshot
@@ -605,7 +605,7 @@ void CL_SystemInfoChanged(void)
 	// in some cases, outdated cp commands might get sent with this news serverId
 	cl.serverId = atoi(Info_ValueForKey(systemInfo, "sv_serverid"));
 
-	memset(&entLastVisible, 0, sizeof(entLastVisible));
+	Com_Memset(&entLastVisible, 0, sizeof(entLastVisible));
 
 	// don't set any vars when playing a demo
 	if (clc.demoplaying)
@@ -754,7 +754,7 @@ void CL_ParseGamestate(msg_t *msg)
 
 			// append it to the gameState string buffer
 			cl.gameState.stringOffsets[i] = cl.gameState.dataCount;
-			memcpy(cl.gameState.stringData + cl.gameState.dataCount, s, len + 1);
+			Com_Memcpy(cl.gameState.stringData + cl.gameState.dataCount, s, len + 1);
 			cl.gameState.dataCount += len + 1;
 		}
 		else if (cmd == svc_baseline)
@@ -764,7 +764,7 @@ void CL_ParseGamestate(msg_t *msg)
 			{
 				Com_Error(ERR_DROP, "Baseline number out of range: %i", newnum);
 			}
-			memset(&nullstate, 0, sizeof(nullstate));
+			Com_Memset(&nullstate, 0, sizeof(nullstate));
 			es = &cl.entityBaselines[newnum];
 			MSG_ReadDeltaEntity(msg, &nullstate, es, newnum);
 		}

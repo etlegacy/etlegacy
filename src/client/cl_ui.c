@@ -1181,9 +1181,9 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		re.RegisterFont(VMA(1), args[2], VMA(3), (args[4] == qtrue));
 		return 0;
 	case UI_MEMSET:
-		return (intptr_t)memset(VMA(1), args[2], args[3]);
+		return (intptr_t)Com_Memset(VMA(1), args[2], args[3]);
 	case UI_MEMCPY:
-		return (intptr_t)memcpy(VMA(1), VMA(2), args[3]);
+		return (intptr_t)Com_Memcpy(VMA(1), VMA(2), args[3]);
 	case UI_STRNCPY:
 		return (intptr_t)strncpy(VMA(1), VMA(2), args[3]);
 	case UI_SIN:

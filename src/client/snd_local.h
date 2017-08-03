@@ -299,7 +299,7 @@ extern float s_volCurrent;
 
 qboolean S_LoadSound(sfx_t *sfx);
 
-void SND_free(sndBuffer *v);
+void SND_Com_Dealloc(sndBuffer *v);
 sndBuffer *SND_malloc(void);
 void SND_setup(void);
 void SND_shutdown(void);

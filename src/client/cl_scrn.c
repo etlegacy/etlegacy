@@ -236,11 +236,11 @@ void SCR_DrawStringExt(int x, int y, float w, float h, const char *string, float
 			{
 				if (*(s + 1) == COLOR_NULL)
 				{
-					memcpy(color, setColor, sizeof(color));
+					Com_Memcpy(color, setColor, sizeof(color));
 				}
 				else
 				{
-					memcpy(color, g_color_table[ColorIndex(*(s + 1))], sizeof(color));
+					Com_Memcpy(color, g_color_table[ColorIndex(*(s + 1))], sizeof(color));
 					color[3] = setColor[3];
 				}
 				color[3] = setColor[3];

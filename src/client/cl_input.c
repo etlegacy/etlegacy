@@ -1071,7 +1071,7 @@ usercmd_t CL_CreateCmd(void)
 	// keyboard angle adjustment
 	CL_AdjustAngles();
 
-	memset(&cmd, 0, sizeof(cmd));
+	Com_Memset(&cmd, 0, sizeof(cmd));
 
 	CL_CmdButtons(&cmd);
 
@@ -1262,7 +1262,7 @@ void CL_WritePacket(void)
 		return;
 	}
 
-	memset(&nullcmd, 0, sizeof(nullcmd));
+	Com_Memset(&nullcmd, 0, sizeof(nullcmd));
 	oldcmd = &nullcmd;
 
 	MSG_Init(&buf, data, sizeof(data));
@@ -1487,5 +1487,5 @@ void CL_InitInput(void)
  */
 void CL_ClearKeys(void)
 {
-	memset(kb, 0, sizeof(kb));
+	Com_Memset(kb, 0, sizeof(kb));
 }

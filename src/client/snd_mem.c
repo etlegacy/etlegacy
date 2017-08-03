@@ -53,7 +53,7 @@ short *sfxScratchBuffer  = NULL;
 sfx_t *sfxScratchPointer = NULL;
 int   sfxScratchIndex    = 0;
 
-void SND_free(sndBuffer *v)
+void SND_Com_Dealloc(sndBuffer *v)
 {
 	*(sndBuffer **)v = freelist;
 	freelist         = (sndBuffer *)v;
@@ -95,14 +95,14 @@ void SND_setup(void)
 	cv  = Cvar_Get("com_soundMegs", DEF_COMSOUNDMEGS, CVAR_LATCH | CVAR_ARCHIVE);
 	scs = (cv->integer * 512); // q3 uses a value of 1536 - reverted to genuine ET value
 
-	buffer = malloc(scs * sizeof(sndBuffer));
+	buffer = Com_Allocate(scs * sizeof(sndBuffer));
 	if (!buffer)
 	{
 		Com_Error(ERR_FATAL, "Sound buffer failed to allocate %1.1f megs", (double)(scs / (1024.f * 1024.f)));
 	}
 
 	// allocate the stack based hunk allocator
-	sfxScratchBuffer = malloc(SND_CHUNK_SIZE * sizeof(short) * 4);      //Hunk_Alloc(SND_CHUNK_SIZE * sizeof(short) * 4);
+	sfxScratchBuffer = Com_Allocate(SND_CHUNK_SIZE * sizeof(short) * 4);      //Hunk_Alloc(SND_CHUNK_SIZE * sizeof(short) * 4);
 	if (!sfxScratchBuffer)
 	{
 		Com_Error(ERR_FATAL, "Unable to allocate sound scratch buffer");
@@ -128,8 +128,8 @@ void SND_setup(void)
  */
 void SND_shutdown(void)
 {
-	free(sfxScratchBuffer);
-	free(buffer);
+	Com_Dealloc(sfxScratchBuffer);
+	Com_Dealloc(buffer);
 }
 
 /**

@@ -263,7 +263,7 @@ wav_hdr_t hdr;
  */
 static void CL_WriteWaveHeader(void)
 {
-	memset(&hdr, 0, sizeof(hdr));
+	Com_Memset(&hdr, 0, sizeof(hdr));
 
 	hdr.ChunkID   = 0x46464952;     // "RIFF"
 	hdr.ChunkSize = 0;              // total filesize - 8 bytes
@@ -483,9 +483,9 @@ void CL_MapLoading(void)
 	if (cls.state >= CA_CONNECTED && !Q_stricmp(cls.servername, "localhost"))
 	{
 		cls.state = CA_CONNECTED;       // so the connect screen is drawn
-		memset(cls.updateInfoString, 0, sizeof(cls.updateInfoString));
-		memset(clc.serverMessage, 0, sizeof(clc.serverMessage));
-		memset(&cl.gameState, 0, sizeof(cl.gameState));
+		Com_Memset(cls.updateInfoString, 0, sizeof(cls.updateInfoString));
+		Com_Memset(clc.serverMessage, 0, sizeof(clc.serverMessage));
+		Com_Memset(&cl.gameState, 0, sizeof(cl.gameState));
 		clc.lastPacketSentTime = -9999; // send first packet immediately
 		SCR_UpdateScreen();
 	}
@@ -2242,7 +2242,7 @@ static cacheItem_t cacheItems[CACHE_NUMGROUPS][MAX_CACHE_ITEMS];
 static void CL_Cache_StartGather_f(void)
 {
 	cacheIndex = 0;
-	memset(cacheItems, 0, sizeof(cacheItems));
+	Com_Memset(cacheItems, 0, sizeof(cacheItems));
 
 	Cvar_Set("cl_cacheGathering", "1");
 }
@@ -2423,7 +2423,7 @@ void CL_ShutdownRef(void)
 		return;
 	}
 	re.Shutdown(qtrue);
-	memset(&re, 0, sizeof(re));
+	Com_Memset(&re, 0, sizeof(re));
 
 #ifdef USE_RENDERER_DLOPEN
 	//Unload the library
@@ -2982,7 +2982,7 @@ void CL_Shutdown(void)
 
 	recursive = qfalse;
 
-	memset(&cls, 0, sizeof(cls));
+	Com_Memset(&cls, 0, sizeof(cls));
 	//Key_SetCatcher( 0 );
 
 	Com_Printf("-----------------------\n");
@@ -3733,7 +3733,7 @@ void CL_Ping_f(void)
 
 	pingptr = CL_GetFreePing();
 
-	memcpy(&pingptr->adr, &to, sizeof(netadr_t));
+	Com_Memcpy(&pingptr->adr, &to, sizeof(netadr_t));
 	pingptr->start = cls.realtime;
 	pingptr->time  = 0;
 
@@ -3821,7 +3821,7 @@ qboolean CL_UpdateVisiblePings_f(int source)
 								break;
 							}
 						}
-						memcpy(&cl_pinglist[j].adr, &server[i].adr, sizeof(netadr_t));
+						Com_Memcpy(&cl_pinglist[j].adr, &server[i].adr, sizeof(netadr_t));
 						cl_pinglist[j].start = cls.realtime;
 						cl_pinglist[j].time  = 0;
 						NET_OutOfBandPrint(NS_CLIENT, cl_pinglist[j].adr, "getinfo xxx");
