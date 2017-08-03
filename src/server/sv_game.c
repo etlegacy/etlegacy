@@ -366,7 +366,7 @@ static int SV_SendBinaryMessage(int cno, char *buf, int buflen)
 	}
 
 	svs.clients[cno].binaryMessageLength = buflen;
-	memcpy(svs.clients[cno].binaryMessage, buf, buflen);
+	Com_Memcpy(svs.clients[cno].binaryMessage, buf, buflen);
 	return 1;
 }
 
@@ -644,11 +644,11 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 		return 0;
 
 	case TRAP_MEMSET:
-		memset(VMA(1), args[2], args[3]);
+		Com_Memset(VMA(1), args[2], args[3]);
 		return 0;
 
 	case TRAP_MEMCPY:
-		memcpy(VMA(1), VMA(2), args[3]);
+		Com_Memcpy(VMA(1), VMA(2), args[3]);
 		return 0;
 
 	case TRAP_STRNCPY:

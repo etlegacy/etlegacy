@@ -661,7 +661,7 @@ static void SV_BuildClientSnapshot(client_t *client)
 
 	// clear everything in this snapshot
 	entityNumbers.numSnapshotEntities = 0;
-	memset(frame->areabits, 0, sizeof(frame->areabits));
+	Com_Memset(frame->areabits, 0, sizeof(frame->areabits));
 
 	frame->num_entities = 0;
 

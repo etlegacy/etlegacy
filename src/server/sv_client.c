@@ -255,7 +255,7 @@ void SV_DirectConnect(netadr_t from)
 	}
 
 	newcl = &temp;
-	memset(newcl, 0, sizeof(client_t));
+	Com_Memset(newcl, 0, sizeof(client_t));
 
 	// if there is already a slot for this ip, reuse it
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
@@ -594,7 +594,7 @@ void SV_SendClientGameState(client_t *client)
 	}
 
 	// write the baselines
-	memset(&nullstate, 0, sizeof(nullstate));
+	Com_Memset(&nullstate, 0, sizeof(nullstate));
 	for (start = 0 ; start < MAX_GENTITIES; start++)
 	{
 		base = &sv.svEntities[start].baseline;
@@ -1851,7 +1851,7 @@ static void SV_UserMove(client_t *cl, msg_t *msg, qboolean delta)
 	// also use the last acknowledged server command in the key
 	key ^= MSG_HashKey(cl->reliableCommands[cl->reliableAcknowledge & (MAX_RELIABLE_COMMANDS - 1)], 32);
 
-	memset(&nullcmd, 0, sizeof(nullcmd));
+	Com_Memset(&nullcmd, 0, sizeof(nullcmd));
 	oldcmd = &nullcmd;
 	for (i = 0 ; i < cmdCount ; i++)
 	{

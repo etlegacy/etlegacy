@@ -418,7 +418,7 @@ void SV_ChangeMaxClients(void)
 
 	// free old clients arrays
 	//Z_Free( svs.clients );
-	free(svs.clients);      // avoid trying to allocate large chunk on a fragmented zone
+	Com_Dealloc(svs.clients);      // avoid trying to allocate large chunk on a fragmented zone
 
 	// allocate new clients
 	// avoid trying to allocate large chunk on a fragmented zone
@@ -462,7 +462,7 @@ void SV_SetExpectedHunkUsage(const char *mapname)
 	if (len >= 0)     // the file exists, so read it in, strip out the current entry for this map, and save it out, so we can append the new value
 	{
 		buf = (char *)Z_Malloc(len + 1);
-		memset(buf, 0, len + 1);
+		Com_Memset(buf, 0, len + 1);
 
 		FS_Read((void *)buf, len, handle);
 		FS_FCloseFile(handle);
@@ -1255,9 +1255,9 @@ void SV_Shutdown(const char *finalmsg)
 		}
 
 		//Z_Free( svs.clients );
-		free(svs.clients);      // avoid trying to allocate large chunk on a fragmented zone
+		Com_Dealloc(svs.clients);      // avoid trying to allocate large chunk on a fragmented zone
 	}
-	memset(&svs, 0, sizeof(svs));
+	Com_Memset(&svs, 0, sizeof(svs));
 	svs.serverLoad = -1;
 
 	Cvar_Set("sv_running", "0");
