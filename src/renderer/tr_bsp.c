@@ -214,11 +214,11 @@ float R_ProcessLightmap(byte *pic, int in_padding, int width, int height, byte *
  */
 static void R_LoadLightmaps(lump_t *l)
 {
-	byte            *buf;
-	unsigned int    len;
-	MAC_STATIC byte image[LIGHTMAP_SIZE * LIGHTMAP_SIZE * 4];
-	int             i /*, j*/;
-	float           intensity, maxIntensity = 0;
+	byte         *buf;
+	unsigned int len;
+	byte         image[LIGHTMAP_SIZE * LIGHTMAP_SIZE * 4];
+	int          i //, j;
+	float        intensity, maxIntensity = 0;
 
 	// clear lightmaps first
 	tr.numLightmaps = 0;
@@ -238,8 +238,8 @@ static void R_LoadLightmaps(lump_t *l)
 	tr.numLightmaps = len / (LIGHTMAP_SIZE * LIGHTMAP_SIZE * 3);
 	if (tr.numLightmaps == 1)
 	{
-		//FIXME: HACK: maps with only one lightmap turn up fullbright for some reason.
-		//this avoids this, but isn't the correct solution.
+		// FIXME: HACK: maps with only one lightmap turn up fullbright for some reason.
+		// this avoids this, but isn't the correct solution.
 		tr.numLightmaps++;
 	}
 
@@ -430,13 +430,13 @@ static void FinishGenericSurface(dsurface_t *ds, srfGeneric_t *gen, vec3_t pt)
  */
 static void ParseMesh(dsurface_t *ds, drawVert_t *verts, msurface_t *surf)
 {
-	srfGridMesh_t         *grid;
-	int                   i, j;
-	int                   width, height, numPoints;
-	MAC_STATIC drawVert_t points[MAX_PATCH_SIZE * MAX_PATCH_SIZE];
-	int                   lightmapNum;
-	vec3_t                bounds[2];
-	vec3_t                tmpVec;
+	srfGridMesh_t *grid;
+	int           i, j;
+	int           width, height, numPoints;
+	drawVert_t    points[MAX_PATCH_SIZE * MAX_PATCH_SIZE];
+	int           lightmapNum;
+	vec3_t        bounds[2];
+	vec3_t        tmpVec;
 
 	lightmapNum = LittleLong(ds->lightmapNum);
 
