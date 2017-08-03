@@ -323,6 +323,22 @@ void SV_BoundMaxClients(int minimum)
 }
 
 /**
+ * @brief Allocates new snapshot entities
+ */
+static void SV_SetNumSnapshotEntities(void)
+{
+	if (com_dedicated->integer)
+	{
+		svs.numSnapshotEntities = sv_maxclients->integer * PACKET_BACKUP * 64;
+	}
+	else
+	{
+		// we don't need nearly as many when playing locally
+		svs.numSnapshotEntities = sv_maxclients->integer * 4 * 64;
+	}
+}
+
+/**
  * @brief Called when a host starts a map when it wasn't running
  * one before.  Successive map or map_restart commands will
  * NOT cause this to be called, unless the game is exited to
@@ -343,15 +359,8 @@ void SV_Startup(void)
 		Com_Error(ERR_FATAL, "SV_Startup: unable to allocate svs.clients");
 	}
 
-	if (com_dedicated->integer)
-	{
-		svs.numSnapshotEntities = sv_maxclients->integer * PACKET_BACKUP * 64;
-	}
-	else
-	{
-		// we don't need nearly as many when playing locally
-		svs.numSnapshotEntities = sv_maxclients->integer * 4 * 64;
-	}
+	// allocate new snapshot entities
+	SV_SetNumSnapshotEntities();
 	svs.initialized = qtrue;
 
 	Cvar_Set("sv_running", "1");
@@ -434,15 +443,7 @@ void SV_ChangeMaxClients(void)
 	Hunk_FreeTempMemory(oldClients);
 
 	// allocate new snapshot entities
-	if (com_dedicated->integer)
-	{
-		svs.numSnapshotEntities = sv_maxclients->integer * PACKET_BACKUP * 64;
-	}
-	else
-	{
-		// we don't need nearly as many when playing locally
-		svs.numSnapshotEntities = sv_maxclients->integer * 4 * 64;
-	}
+	SV_SetNumSnapshotEntities();
 }
 
 /**
@@ -594,15 +595,7 @@ void SV_DemoChangeMaxClients(void)
 	// == Allocating snapshot entities
 
 	// allocate new snapshot entities
-	if (com_dedicated->integer)
-	{
-		svs.numSnapshotEntities = sv_maxclients->integer * PACKET_BACKUP * 64;
-	}
-	else
-	{
-		// we don't need nearly as many when playing locally
-		svs.numSnapshotEntities = sv_maxclients->integer * 4 * 64;
-	}
+	SV_SetNumSnapshotEntities();
 
 	// == Server-side demos management
 
@@ -1156,7 +1149,7 @@ void SV_Init(void)
 
 	svs.serverLoad = -1;
 
-	sv_ipMaxClients = Cvar_Get("sv_ip_max_clients", "0", CVAR_ARCHIVE);
+	sv_ipMaxClients = Cvar_Get("sv_ipMaxClients", "0", CVAR_ARCHIVE);
 
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
 	IRC_Init();
