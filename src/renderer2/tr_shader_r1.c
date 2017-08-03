@@ -991,8 +991,8 @@ int ScanAndLoadShaderFilesR1()
 	char         filename[MAX_QPATH];
 	long         sum = 0, summand;
 
-	memset(buffers, 0, MAX_SHADER_FILES);
-	memset(shaderTextHashTableSizes, 0, MAX_SHADER_FILES);
+	Com_Memset(buffers, 0, MAX_SHADER_FILES);
+	Com_Memset(shaderTextHashTableSizes, 0, MAX_SHADER_FILES);
 
 	// scan for shader files
 	shaderFiles = ri.FS_ListFiles("scripts", ".shader", &numShaderFiles);

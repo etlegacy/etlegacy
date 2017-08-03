@@ -41,7 +41,7 @@ GROWLISTS
 ============================================================================
 */
 
-// malloc / free all in one place for debugging
+// Com_Allocate / free all in one place for debugging
 
 /**
  * @brief Com_InitGrowList
@@ -63,7 +63,7 @@ void Com_DestroyGrowList(growList_t *list)
 {
 	Com_Dealloc(list->elements);
 
-	memset(list, 0, sizeof(*list));
+	Com_Memset(list, 0, sizeof(*list));
 }
 
 /**

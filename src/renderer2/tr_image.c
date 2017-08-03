@@ -2443,7 +2443,7 @@ static void R_Rotate(byte *in, int width, int height, int degrees)
 	byte *out, *tmp;
 
 	tmp = (byte *)Com_Allocate(width * height * 4);
-	memset(tmp, 0, width * height * 4);
+	Com_Memset(tmp, 0, width * height * 4);
 
 	// rotate into tmp buffer
 	for (y = 0; y < height; y++)
@@ -2518,12 +2518,12 @@ static void R_Rotate(byte *in, int width, int height, int degrees)
  * @param[in] in
  *
  * @note e.g.
- * dest = malloc(4*4*channels);
+ * dest = Com_Allocate(4*4*channels);
  * [________]
  * [________]
  * [________]
  * [________]
- * src = malloc(2*2*channels);
+ * src = Com_Allocate(2*2*channels);
  * [____]
  * [____]
  * R_SubImageCpy(dest, 0, 0, 4, 4, src, 2, 2, channels, qtrue);
@@ -2546,11 +2546,11 @@ void R_SubImageCpy(byte *dest, size_t destx, size_t desty, size_t destw, size_t 
 	{
 		if (in)
 		{
-			memcpy(d, s, s_rowBytes);
+			Com_Memcpy(d, s, s_rowBytes);
 		}
 		else
 		{
-			memcpy(s, d, s_rowBytes);
+			Com_Memcpy(s, d, s_rowBytes);
 		}
 		d += d_rowBytes;
 		s += s_rowBytes;

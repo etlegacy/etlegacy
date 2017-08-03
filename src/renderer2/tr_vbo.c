@@ -386,7 +386,7 @@ IBO_t *R_CreateIBO2(const char *name, int numTriangles, srfTriangle_t *triangles
 		for (j = 0; j < 3; j++)
 		{
 			index = tri->indexes[j];
-			memcpy(indexes + indexesOfs, &index, sizeof(glIndex_t));
+			Com_Memcpy(indexes + indexesOfs, &index, sizeof(glIndex_t));
 			indexesOfs += sizeof(glIndex_t);
 		}
 	}
@@ -559,7 +559,7 @@ void R_InitVBOs(void)
 
 	dataSize = sizeof(vec4_t) * SHADER_MAX_VERTEXES * 11;
 	data     = (byte *)Com_Allocate(dataSize);
-	memset(data, 0, dataSize);
+	Com_Memset(data, 0, dataSize);
 
 	tess.vbo                 = R_CreateVBO("tessVertexArray_VBO", data, dataSize, VBO_USAGE_DYNAMIC);
 	tess.vbo->ofsXYZ         = 0;
@@ -578,7 +578,7 @@ void R_InitVBOs(void)
 
 	dataSize = sizeof(tess.indexes);
 	data     = (byte *)Com_Allocate(dataSize);
-	memset(data, 0, dataSize);
+	Com_Memset(data, 0, dataSize);
 
 	tess.ibo = R_CreateIBO("tessVertexArray_IBO", data, dataSize, VBO_USAGE_DYNAMIC);
 

@@ -351,7 +351,7 @@ static qboolean R_LoadMDX(model_t *mod, void *buffer, const char *name)
 	mod->dataSize += size;
 	mdx            = mod->mdx = (mdxHeader_t *)ri.Hunk_Alloc(size, h_low);
 
-	memcpy(mdx, buffer, LittleLong(pinmodel->ofsEnd));
+	Com_Memcpy(mdx, buffer, LittleLong(pinmodel->ofsEnd));
 
 	LL(mdx->ident);
 	LL(mdx->version);

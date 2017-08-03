@@ -1330,7 +1330,7 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 		//tess.dlightBits |= dlightBits;
 
 		// copy indexes
-		memcpy(&tess.indexes[tess.numIndexes], srf->indexes, numIndexes * sizeof(srf->indexes[0]));
+		Com_Memcpy(&tess.indexes[tess.numIndexes], srf->indexes, numIndexes * sizeof(srf->indexes[0]));
 		for (i = 0; i < numIndexes; i++)
 		{
 			tess.indexes[tess.numIndexes + i] += tess.numVertexes;
@@ -1338,10 +1338,10 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 
 		// copy xyz, normal and st
 		xyz = tess.xyz[tess.numVertexes];
-		memcpy(xyz, srf->xyz, numVerts * sizeof(srf->xyz[0]));
-		memcpy(&tess.normals[tess.numVertexes], srf->normal, numVerts * sizeof(srf->xyz[0]));
-		memcpy(&tess.texCoords[tess.numVertexes], srf->texCoords, numVerts * sizeof(srf->texCoords[0]));
-		memcpy(&tess.lightCoords[tess.numVertexes], srf->lmTexCoords, numVerts * sizeof(srf->lmTexCoords[0]));
+		Com_Memcpy(xyz, srf->xyz, numVerts * sizeof(srf->xyz[0]));
+		Com_Memcpy(&tess.normals[tess.numVertexes], srf->normal, numVerts * sizeof(srf->xyz[0]));
+		Com_Memcpy(&tess.texCoords[tess.numVertexes], srf->texCoords, numVerts * sizeof(srf->texCoords[0]));
+		Com_Memcpy(&tess.lightCoords[tess.numVertexes], srf->lmTexCoords, numVerts * sizeof(srf->lmTexCoords[0]));
 
 		// offset xyz
 		for (i = 0; i < numVerts; i++, xyz += 4)

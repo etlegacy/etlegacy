@@ -583,7 +583,7 @@ qboolean GLSL_LoadShaderBinary(programInfo_t *info, size_t programNum)
 	binaryptr = ( byte * )binary;
 
 	// get the shader header from the file
-	memcpy(&shaderHeader, binaryptr, sizeof(shaderHeader));
+	Com_Memcpy(&shaderHeader, binaryptr, sizeof(shaderHeader));
 	binaryptr += sizeof(shaderHeader);
 
 	// check if this shader binary is the correct format
@@ -657,7 +657,7 @@ void GLSL_SaveShaderBinary(programInfo_t *info, size_t programNum)
 
 	shaderProgram = &info->list->programs[programNum];
 
-	memset(&shaderHeader, 0, sizeof(shaderHeader));
+	Com_Memset(&shaderHeader, 0, sizeof(shaderHeader));
 
 	// find output size
 	binarySize += sizeof(shaderHeader);
@@ -685,7 +685,7 @@ void GLSL_SaveShaderBinary(programInfo_t *info, size_t programNum)
 	shaderHeader.checkSum     = info->checkSum;
 
 	// write the header to the buffer
-	memcpy(( void * )binary, &shaderHeader, sizeof(shaderHeader));
+	Com_Memcpy(( void * )binary, &shaderHeader, sizeof(shaderHeader));
 
 	ri.FS_WriteFile(va("glsl/%s/%s_%u.bin", info->name, info->name, ( unsigned int ) programNum), binary, binarySize);
 

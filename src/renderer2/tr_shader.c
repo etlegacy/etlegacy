@@ -578,7 +578,7 @@ static char *ParseExpressionElement(char **data_p)
 		if (j == l)
 		{
 			// a valid multi-character punctuation
-			memcpy(token, *punc, l);
+			Com_Memcpy(token, *punc, l);
 			token[l] = 0;
 			data    += l;
 			*data_p  = (char *)data;
@@ -5209,7 +5209,7 @@ static shader_t *FinishShader(void)
 				{
 					if (stages[i].active)
 					{
-						memset(&stages[i], 0, sizeof(*pStage));
+						Com_Memset(&stages[i], 0, sizeof(*pStage));
 						break;
 					}
 				}
@@ -5217,7 +5217,7 @@ static shader_t *FinishShader(void)
 			}
 			else
 			{
-				memset(pStage, 0, sizeof(*pStage));
+				Com_Memset(pStage, 0, sizeof(*pStage));
 			}
 			continue;
 		}
@@ -6557,8 +6557,8 @@ static int ScanAndLoadShaderFiles(void)
 	char filename[MAX_QPATH];
 	long sum = 0, summand;
 
-	memset(buffers, 0, MAX_SHADER_FILES);
-	memset(shaderTextHashTableSizes, 0, MAX_SHADER_FILES);
+	Com_Memset(buffers, 0, MAX_SHADER_FILES);
+	Com_Memset(shaderTextHashTableSizes, 0, MAX_SHADER_FILES);
 
 	// scan for shader files
 	shaderFiles = ri.FS_ListFiles("materials", ".shader", &numShaderFiles);

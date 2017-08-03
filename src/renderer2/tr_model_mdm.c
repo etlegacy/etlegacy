@@ -426,7 +426,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 	mod->dataSize += sizeof(mdmModel_t);
 
 	//mdm = mod->mdm = ri.Hunk_Alloc(size, h_low);
-	//memcpy(mdm, buffer, LittleLong(pinmodel->ofsEnd));
+	//Com_Memcpy(mdm, buffer, LittleLong(pinmodel->ofsEnd));
 
 	mdmModel = mod->mdm = ri.Hunk_Alloc(sizeof(mdmModel_t), h_low);
 
