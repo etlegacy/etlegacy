@@ -754,17 +754,17 @@ static void ComputeColors(shaderStage_t *pStage)
 	switch (pStage->rgbGen)
 	{
 	case CGEN_IDENTITY:
-		memset(tess.svars.colors, 0xff, tess.numVertexes * 4);
+		Com_Memset(tess.svars.colors, 0xff, tess.numVertexes * 4);
 		break;
 	default:
 	case CGEN_IDENTITY_LIGHTING:
-		memset(tess.svars.colors, tr.identityLightByte, tess.numVertexes * 4);
+		Com_Memset(tess.svars.colors, tr.identityLightByte, tess.numVertexes * 4);
 		break;
 	case CGEN_LIGHTING_DIFFUSE:
 		RB_CalcDiffuseColor(( unsigned char * ) tess.svars.colors);
 		break;
 	case CGEN_EXACT_VERTEX:
-		memcpy(tess.svars.colors, tess.vertexColors, tess.numVertexes * sizeof(tess.vertexColors[0]));
+		Com_Memcpy(tess.svars.colors, tess.vertexColors, tess.numVertexes * sizeof(tess.vertexColors[0]));
 		break;
 	case CGEN_CONST:
 	{
@@ -779,7 +779,7 @@ static void ComputeColors(shaderStage_t *pStage)
 	case CGEN_VERTEX:
 		if (tr.identityLight == 1)
 		{
-			memcpy(tess.svars.colors, tess.vertexColors, tess.numVertexes * sizeof(tess.vertexColors[0]));
+			Com_Memcpy(tess.svars.colors, tess.vertexColors, tess.numVertexes * sizeof(tess.vertexColors[0]));
 		}
 		else
 		{
@@ -1069,7 +1069,7 @@ static void ComputeTexCoords(shaderStage_t *pStage)
 		switch (pStage->bundle[b].tcGen)
 		{
 		case TCGEN_IDENTITY:
-			memset(tess.svars.texcoords[b], 0, sizeof(float) * 2 * tess.numVertexes);
+			Com_Memset(tess.svars.texcoords[b], 0, sizeof(float) * 2 * tess.numVertexes);
 			break;
 		case TCGEN_TEXTURE:
 			for (i = 0 ; i < tess.numVertexes ; i++)

@@ -462,11 +462,11 @@ static void DrawSkySide(struct image_s *image, const int mins[2], const int maxs
 
 		for (s = mins[0] + HALF_SKY_SUBDIVISIONS; s <= maxs[0] + HALF_SKY_SUBDIVISIONS; s++)
 		{
-			memcpy(tex + idx * 2, s_skyTexCoords[t][s], sizeof(GLfloat) * 2);
-			memcpy(vtx + idx * 3, s_skyPoints[t][s], sizeof(GLfloat) * 3);
+			Com_Memcpy(tex + idx * 2, s_skyTexCoords[t][s], sizeof(GLfloat) * 2);
+			Com_Memcpy(vtx + idx * 3, s_skyPoints[t][s], sizeof(GLfloat) * 3);
 			idx++;
-			memcpy(tex + idx * 2, s_skyTexCoords[t + 1][s], sizeof(GLfloat) * 2);
-			memcpy(vtx + idx * 3, s_skyPoints[t + 1][s], sizeof(GLfloat) * 3);
+			Com_Memcpy(tex + idx * 2, s_skyTexCoords[t + 1][s], sizeof(GLfloat) * 2);
+			Com_Memcpy(vtx + idx * 3, s_skyPoints[t + 1][s], sizeof(GLfloat) * 3);
 			idx++;
 		}
 
@@ -514,11 +514,11 @@ static void DrawSkySideInner(struct image_s *image, const int mins[2], const int
 
 		for (s = mins[0] + HALF_SKY_SUBDIVISIONS; s <= maxs[0] + HALF_SKY_SUBDIVISIONS; s++)
 		{
-			memcpy(tex + idx * 2, s_skyTexCoords[t][s], sizeof(GLfloat) * 2);
-			memcpy(vtx + idx * 3, s_skyPoints[t][s], sizeof(GLfloat) * 3);
+			Com_Memcpy(tex + idx * 2, s_skyTexCoords[t][s], sizeof(GLfloat) * 2);
+			Com_Memcpy(vtx + idx * 3, s_skyPoints[t][s], sizeof(GLfloat) * 3);
 			idx++;
-			memcpy(tex + idx * 2, s_skyTexCoords[t + 1][s], sizeof(GLfloat) * 2);
-			memcpy(vtx + idx * 3, s_skyPoints[t + 1][s], sizeof(GLfloat) * 3);
+			Com_Memcpy(tex + idx * 2, s_skyTexCoords[t + 1][s], sizeof(GLfloat) * 2);
+			Com_Memcpy(vtx + idx * 3, s_skyPoints[t + 1][s], sizeof(GLfloat) * 3);
 			idx++;
 		}
 

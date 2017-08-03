@@ -1308,7 +1308,7 @@ void R_CalcBones(mdsHeader_t *header, const refEntity_t *refent, int *boneList, 
 	if (memcmp(&lastBoneEntity, refent, sizeof(refEntity_t)))
 	{
 		// different, cached bones are not valid
-		memset(validBones, 0, header->numBones);
+		Com_Memset(validBones, 0, header->numBones);
 		lastBoneEntity = *refent;
 
 		// (SA) also reset these counter statics
@@ -1326,7 +1326,7 @@ void R_CalcBones(mdsHeader_t *header, const refEntity_t *refent, int *boneList, 
 		totalrv = totalrt = totalv = totalt = 0;
 	}
 
-	memset(newBones, 0, header->numBones);
+	Com_Memset(newBones, 0, header->numBones);
 
 	if (refent->oldframe == refent->frame)
 	{
@@ -1459,7 +1459,7 @@ void R_CalcBones(mdsHeader_t *header, const refEntity_t *refent, int *boneList, 
 				LocalScaledMatrixTransformVector(bonePtr->matrix[0], thisBoneInfo->torsoWeight, torsoAxis, tmpAxis[0]);
 				LocalScaledMatrixTransformVector(bonePtr->matrix[1], thisBoneInfo->torsoWeight, torsoAxis, tmpAxis[1]);
 				LocalScaledMatrixTransformVector(bonePtr->matrix[2], thisBoneInfo->torsoWeight, torsoAxis, tmpAxis[2]);
-				memcpy(bonePtr->matrix, tmpAxis, sizeof(tmpAxis));
+				Com_Memcpy(bonePtr->matrix, tmpAxis, sizeof(tmpAxis));
 
 				// rotate the translation around the torsoParent
 				VectorSubtract(bonePtr->translation, torsoParentOffset, t);
@@ -1470,7 +1470,7 @@ void R_CalcBones(mdsHeader_t *header, const refEntity_t *refent, int *boneList, 
 	}
 
 	// backup the final bones
-	memcpy(oldBones, bones, sizeof(bones[0]) * header->numBones);
+	Com_Memcpy(oldBones, bones, sizeof(bones[0]) * header->numBones);
 }
 
 #ifdef DBG_PROFILE_BONES
@@ -1786,7 +1786,7 @@ int R_GetBoneTag(orientation_t *outTag, mdsHeader_t *mds, int startTagIndex, con
 
 	if (startTagIndex > mds->numTags)
 	{
-		memset(outTag, 0, sizeof(*outTag));
+		Com_Memset(outTag, 0, sizeof(*outTag));
 		return -1;
 	}
 
@@ -1806,7 +1806,7 @@ int R_GetBoneTag(orientation_t *outTag, mdsHeader_t *mds, int startTagIndex, con
 
 	if (i >= mds->numTags)
 	{
-		memset(outTag, 0, sizeof(*outTag));
+		Com_Memset(outTag, 0, sizeof(*outTag));
 		return -1;
 	}
 
@@ -1823,7 +1823,7 @@ int R_GetBoneTag(orientation_t *outTag, mdsHeader_t *mds, int startTagIndex, con
 
 	// now extract the orientation for the bone that represents our tag
 
-	memcpy(outTag->axis, bones[pTag->boneIndex].matrix, sizeof(outTag->axis));
+	Com_Memcpy(outTag->axis, bones[pTag->boneIndex].matrix, sizeof(outTag->axis));
 	VectorCopy(bones[pTag->boneIndex].translation, outTag->origin);
 
 /* code not functional, not in backend
