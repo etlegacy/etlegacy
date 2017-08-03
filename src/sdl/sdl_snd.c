@@ -72,7 +72,7 @@ static void SNDDMA_AudioCallback(void *userdata, Uint8 *stream, int len)
 
 	if (!snd_inited)  /* shouldn't happen, but just in case... */
 	{
-		memset(stream, '\0', len);
+		Com_Memset(stream, '\0', len);
 		return;
 	}
 	else
@@ -86,14 +86,14 @@ static void SNDDMA_AudioCallback(void *userdata, Uint8 *stream, int len)
 			len1 = tobufend;
 			len2 = len - len1;
 		}
-		memcpy(stream, dma.buffer + pos, len1);
+		Com_Memcpy(stream, dma.buffer + pos, len1);
 		if (len2 <= 0)
 		{
 			dmapos += (len1 / (dma.samplebits / 8));
 		}
 		else  /* wraparound? */
 		{
-			memcpy(stream + len1, dma.buffer, len2);
+			Com_Memcpy(stream + len1, dma.buffer, len2);
 			dmapos = (len2 / (dma.samplebits / 8));
 		}
 	}
@@ -228,8 +228,8 @@ qboolean SNDDMA_Init(void)
 		Com_Printf("SDL audio driver isn't initialized.\n");
 	}
 
-	memset(&desired, '\0', sizeof(desired));
-	memset(&obtained, '\0', sizeof(obtained));
+	Com_Memset(&desired, '\0', sizeof(desired));
+	Com_Memset(&obtained, '\0', sizeof(obtained));
 
 	tmp = ((int) s_bits->value);
 	if ((tmp != 16) && (tmp != 8))
@@ -384,7 +384,7 @@ void SNDDMA_Shutdown(void)
 	SDL_PauseAudioDevice(device_id, 1);
 	SDL_CloseAudioDevice(device_id);
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
-	free(dma.buffer);
+	Com_Dealloc(dma.buffer);
 	dma.buffer = NULL;
 	dmapos     = dmasize = 0;
 	snd_inited = qfalse;

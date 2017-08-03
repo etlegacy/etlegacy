@@ -778,7 +778,7 @@ static void IN_InitJoystick(void)
 	}
 
 	stick = NULL;
-	memset(&stick_state, '\0', sizeof(stick_state));
+	Com_Memset(&stick_state, '\0', sizeof(stick_state));
 
 	if (!SDL_WasInit(SDL_INIT_JOYSTICK))
 	{
