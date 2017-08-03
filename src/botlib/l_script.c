@@ -138,7 +138,7 @@ void PS_CreatePunctuationTable(script_t *script, punctuation_t *punctuations)
 		script->punctuationtable = (punctuation_t **)
 		                           GetMemory(256 * sizeof(punctuation_t *));
 	}
-	memset(script->punctuationtable, 0, 256 * sizeof(punctuation_t *));
+	Com_Memset(script->punctuationtable, 0, 256 * sizeof(punctuation_t *));
 	// add the punctuations in the list to the punctuation table
 	for (i = 0; punctuations[i].p; i++)
 	{
@@ -928,7 +928,7 @@ int PS_ReadPrimitive(script_t *script, token_t *token)
 	}
 	token->string[len] = 0;
 	// copy the token into the script structure
-	memcpy(&script->token, token, sizeof(token_t));
+	Com_Memcpy(&script->token, token, sizeof(token_t));
 	// primitive reading successfull
 	return 1;
 }
@@ -945,7 +945,7 @@ int PS_ReadToken(script_t *script, token_t *token)
 	if (script->tokenavailable)
 	{
 		script->tokenavailable = 0;
-		memcpy(token, &script->token, sizeof(token_t));
+		Com_Memcpy(token, &script->token, sizeof(token_t));
 		return 1;
 	}
 	//save script pointer
@@ -953,7 +953,7 @@ int PS_ReadToken(script_t *script, token_t *token)
 	// save line counter
 	script->lastline = script->line;
 	// clear the token stuff
-	memset(token, 0, sizeof(token_t));
+	Com_Memset(token, 0, sizeof(token_t));
 	// start of the white space
 	script->whitespace_p = script->script_p;
 	token->whitespace_p  = script->script_p;
@@ -1018,7 +1018,7 @@ int PS_ReadToken(script_t *script, token_t *token)
 		return 0;
 	}
 	// copy the token into the script structure
-	memcpy(&script->token, token, sizeof(token_t));
+	Com_Memcpy(&script->token, token, sizeof(token_t));
 	// succesfully read a token
 	return 1;
 }
@@ -1223,7 +1223,7 @@ int PS_CheckTokenType(script_t *script, int type, int subtype, token_t *token)
     if (tok.type == type &&
         (tok.subtype & subtype) == subtype)
     {
-        memcpy(token, &tok, sizeof(token_t));
+        Com_Memcpy(token, &tok, sizeof(token_t));
         return 1;
     }
     // token is not available
@@ -1273,7 +1273,7 @@ void PS_UnreadLastToken(script_t *script)
  * @note Unused
 void PS_UnreadToken(script_t *script, token_t *token)
 {
-    memcpy(&script->token, token, sizeof(token_t));
+    Com_Memcpy(&script->token, token, sizeof(token_t));
     script->tokenavailable = 1;
 }
 */
@@ -1426,7 +1426,7 @@ void ResetScript(script_t *script)
 	script->line     = 1;
 	script->lastline = 1;
 	// clear the saved token
-	memset(&script->token, 0, sizeof(token_t));
+	Com_Memset(&script->token, 0, sizeof(token_t));
 }
 */
 
@@ -1516,7 +1516,7 @@ script_t *LoadScriptFile(const char *filename)
 
 	buffer = GetClearedMemory(sizeof(script_t) + length + 1);
 	script = (script_t *) buffer;
-	memset(script, 0, sizeof(script_t));
+	Com_Memset(script, 0, sizeof(script_t));
 	Q_strncpyz(script->filename, filename, sizeof(script->filename));
 	script->buffer         = (char *) buffer + sizeof(script_t);
 	script->buffer[length] = 0;
@@ -1555,7 +1555,7 @@ script_t *LoadScriptMemory(const char *ptr, int length, const char *name)
 
 	buffer = GetClearedMemory(sizeof(script_t) + length + 1);
 	script = (script_t *) buffer;
-	memset(script, 0, sizeof(script_t));
+	Com_Memset(script, 0, sizeof(script_t));
 	Q_strncpyz(script->filename, name, sizeof(script->filename));
 	script->buffer         = (char *) buffer + sizeof(script_t);
 	script->buffer[length] = 0;
@@ -1574,7 +1574,7 @@ script_t *LoadScriptMemory(const char *ptr, int length, const char *name)
 
 	SetScriptPunctuations(script, NULL);
 
-	memcpy(script->buffer, ptr, length);
+	Com_Memcpy(script->buffer, ptr, length);
 
 	return script;
 }

@@ -125,7 +125,7 @@ botlib_export_t *GetBotLibAPI(int apiVersion, botlib_import_t *import)
 {
 	botimport = *import;
 
-	memset(&be_botlib_export, 0, sizeof(be_botlib_export));
+	Com_Memset(&be_botlib_export, 0, sizeof(be_botlib_export));
 
 	if (apiVersion != BOTLIB_API_VERSION)
 	{
