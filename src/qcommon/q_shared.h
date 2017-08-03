@@ -191,8 +191,6 @@ int Q_vsnprintf(char *str, size_t size, const char *format, va_list args);
 
 #ifdef _WIN32
 
-#define MAC_STATIC
-
 #undef QDECL
 #define QDECL   __cdecl
 
@@ -220,8 +218,6 @@ int Q_vsnprintf(char *str, size_t size, const char *format, va_list args);
 //======================= MAC OS X DEFINES =====================
 
 #if defined(__APPLE__)
-
-#define MAC_STATIC
 
 #define CPUSTRING   "MacOS_X" // TODO: check if some mods depend on the old Mac CPUSTRING
 // #define CPUSTRING   "OSX-universal" // old
@@ -280,8 +276,6 @@ static ID_INLINE float idSqrt(float x)
 // just waste space and make big arrays static...
 #ifdef __linux__
 
-#define MAC_STATIC
-
 #ifdef __i386__
 #define CPUSTRING   "linux-i386"
 #elif defined __x86_64__
@@ -304,8 +298,6 @@ static ID_INLINE float idSqrt(float x)
 // just waste space and make big arrays static...
 #ifdef __OpenBSD__
 
-#define MAC_STATIC
-
 #ifdef __i386__
 #define CPUSTRING   "openbsd-i386"
 #elif defined __x86_64__
@@ -324,8 +316,6 @@ static ID_INLINE float idSqrt(float x)
 // just waste space and make big arrays static...
 #ifdef __FreeBSD__
 
-#define MAC_STATIC
-
 #ifdef __i386__
 #define CPUSTRING   "freebsd-i386"
 #elif defined __x86_64__
@@ -343,8 +333,6 @@ static ID_INLINE float idSqrt(float x)
 // the mac compiler can't handle >32k of locals, so we
 // just waste space and make big arrays static...
 #ifdef __NetBSD__
-
-#define MAC_STATIC
 
 #ifdef __i386__
 #define CPUSTRING   "netbsd-i386"
