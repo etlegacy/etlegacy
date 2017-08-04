@@ -132,6 +132,167 @@ void SV_GetChallenge(netadr_t from)
 }
 
 /**
+ * @brief Determines if a client is allowed to connect when sv_ipMaxClients is set
+ * @param[in] from
+ * @return    qtrue for valid clients
+ *
+ * @note maybe we want to have more control over localhost clients in future.
+ * So we let localhost connect since bots don't connect from SV_DirectConnect
+ * where SV_IsFakeIpConnection is done.
+ */
+static qboolean SV_isClientIPValidToConnect(netadr_t from)
+{
+	client_t   *clientTmp;
+	int        count = 1;     // we count as the first one
+	int        max   = sv_ipMaxClients->integer;
+	int        i;
+	const char *theirIP;
+	const char *clientIP;
+
+	// disabled
+	if (max <= 0)
+	{
+		return qtrue;
+	}
+
+	clientIP =  NET_AdrToString(from);
+
+	// let localhost connect
+	// FIXME: see above note: We might use a free flag of sv_protect cvar to include local addresses
+	if (NET_IsLocalAddress(from))
+	{
+		return qtrue;
+	}
+
+	// Iterate over each connected client and check the IP, keeping a count of connections
+	// from the same IP as this connecting client
+	for (i = 0; i < sv_maxclients->integer; ++i)
+	{
+		clientTmp = &svs.clients[i];
+
+		if (clientTmp->state < CS_CONNECTED) // only active clients
+		{
+			continue;
+		}
+
+		theirIP = NET_AdrToString(clientTmp->netchan.remoteAddress);
+
+		// Don't compare the port - just the IP
+		if (CompareIPNoPort(clientIP, theirIP))
+		{
+			++count;
+			if (count > max)
+			{
+				// no dev print - let admins see this
+				Com_Printf("SV_IsFakeIpConnection: too many connections from %s\n", clientIP);
+
+				return qfalse;
+			}
+		}
+	}
+
+	// Ok let them connect
+	return qtrue;
+}
+
+/**
+ * @brief Screening of userinfo keys and values
+ *
+ * @param[in] from
+ * @param[in] userinfo
+ */
+static qboolean SV_IsValidUserinfo(netadr_t from,const char *userinfo)
+{
+	// FIXME: add some logging in for admins? we only do developer prints when a client is filtered
+
+	int version;
+
+	// NOTE: but we might need to store the protocol around for potential non http/ftp clients
+	version = atoi(Info_ValueForKey(userinfo, "protocol"));
+	if (version != PROTOCOL_VERSION)
+	{
+		NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_update]" PROTOCOL_MISMATCH_ERROR_LONG);
+		Com_DPrintf("    rejected connect from version %i\n", version);
+
+		return qfalse;
+	}
+
+	// validate userinfo to filter out the people blindly using hack code
+	// FIXME: check existence of all keys and do some sanity checks
+	//'\g_password\none\cl_guid\5XXXB6723XXXB\cl_wwwDownload\1\name\ETL player\rate\25000\snaps\20\protocol\84\qport\26708\challenge\1579001347'
+	if (Info_ValueForKey(userinfo, "rate")[0] == 0)
+	{
+		NET_OutOfBandPrint(NS_SERVER, from, "print\n%s\n", sv_tempbanmessage->string); // Invalid connection! ... using temp ban msg :)
+		Com_DPrintf("    rejected connect with wrong rate\n");
+
+		return qfalse;
+	}
+	//else
+	//{
+	// FIXME: check rate in between 0 and sv_maxrate?
+	//}
+
+	// FIXME:
+	//if (Info_ValueForKey(userinfo, "cl_wwwDownload")[0] == 0)
+	// varify this value with server setting
+	// we can send a proper message to clients when server has set up wwwdDownload and client
+	// uses poor server download. Worst case: clients run into missing file issues later on and can't connect
+
+	// FIXME: auth service?
+	//if (Info_ValueForKey(userinfo, "g_password")[0] == 0)
+	//if (Info_ValueForKey(userinfo, "name")[0] == 0)
+
+	return qtrue;
+}
+
+/**
+ * @brief Screening of user before 'real connection' and the client enters the world (using a slot)
+ *
+ * @param[in] from
+ * @param[in] userinfo
+ */
+static qboolean SV_isValidClient(netadr_t from, const char *userinfo)
+{
+	// FIXME: add some logging in for admins? we only do developer prints when a client is filtered
+
+	// inspect what we get as userinfo
+	if (!SV_IsValidUserinfo(from, userinfo))
+	{
+		return qfalse;
+	}
+
+	if (SV_TempBanIsBanned(from))
+	{
+		NET_OutOfBandPrint(NS_SERVER, from, "print\n%s\n", sv_tempbanmessage->string);
+		Com_DPrintf("    rejected connect with banned client\n");
+
+		return qfalse;
+	}
+
+	// Too many connections from the same IP - don't permit the connection (if set)
+	if (!SV_isClientIPValidToConnect(from))
+	{
+		if (sv_ipMaxClients->integer  == 1)
+		{
+			NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Only 1 connection per IP is allowed on this server!\n");
+		}
+		else
+		{
+			NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]Only %i connections per IP are allowed on this server!\n", sv_ipMaxClients->integer);
+		}
+
+		if (com_developer->integer)
+		{
+			Com_DPrintf("    rejected connect with max IP connection limit reached [%s]\n", NET_AdrToString(from));
+		}
+
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+/**
  * @brief A "connect" OOB command has been received
  *
  * @param[in] from
@@ -143,7 +304,6 @@ void SV_DirectConnect(netadr_t from)
 	client_t *cl, *newcl;
 	client_t temp;
 	int      clientNum;
-	int      version;
 	int      qport;
 	int      challenge;
 	char     *password;
@@ -154,23 +314,14 @@ void SV_DirectConnect(netadr_t from)
 
 	Q_strncpyz(userinfo, Cmd_Argv(1), sizeof(userinfo));
 
-	// NOTE: but we might need to store the protocol around for potential non http/ftp clients
-	version = atoi(Info_ValueForKey(userinfo, "protocol"));
-	if (version != PROTOCOL_VERSION)
+	// sort out clients we don't want to have in game
+	if (!SV_isValidClient(from, userinfo))
 	{
-		NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_update]" PROTOCOL_MISMATCH_ERROR_LONG);
-		Com_DPrintf("    rejected connect from version %i\n", version);
 		return;
 	}
 
 	challenge = atoi(Info_ValueForKey(userinfo, "challenge"));
 	qport     = atoi(Info_ValueForKey(userinfo, "qport"));
-
-	if (SV_TempBanIsBanned(from))
-	{
-		NET_OutOfBandPrint(NS_SERVER, from, "print\n%s\n", sv_tempbanmessage->string);
-		return;
-	}
 
 	// quick reject
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
@@ -372,20 +523,6 @@ gotnewcl:
 	// save the userinfo
 	Q_strncpyz(newcl->userinfo, userinfo, sizeof(newcl->userinfo));
 
-	// Check for fakeip connections
-	// TODO: should this be done earlier ?
-	denied = SV_IsFakeIpConnection(clientNum, Info_ValueForKey(userinfo, "ip"), Info_ValueForKey(userinfo, "rate"));
-	if (denied)
-	{
-		// we can't just use VM_ArgPtr, because that is only valid inside a VM_Call
-		denied = VM_ExplicitArgPtr(gvm, (intptr_t)denied);
-
-		// Too many connections from the same IP - don't permit the connection
-		NET_OutOfBandPrint(NS_SERVER, from, "print\n[err_dialog]%s\n", denied);
-		Com_DPrintf("Server rejected a connection: %s.\n", denied);
-		return;
-	}
-
 	// get the game a chance to reject this connection or modify the userinfo
 	denied = (char *)(VM_Call(gvm, GAME_CLIENT_CONNECT, clientNum, qtrue, qfalse)); // firstTime = qtrue
 	if (denied)
@@ -433,6 +570,7 @@ gotnewcl:
 		SV_Heartbeat_f();
 	}
 
+	// newcl->protocol = PROTOCOL_VERSION;
 	newcl->protocol = atoi(Info_ValueForKey(userinfo, "protocol"));
 
 #ifdef FEATURE_TRACKER
@@ -1517,7 +1655,7 @@ void SV_UserinfoChanged(client_t *cl)
 			cl->rate = 5000;
 		}
 	}
-	val = Info_ValueForKey(cl->userinfo, "handicap");
+	val = Info_ValueForKey(cl->userinfo, "handicap"); // FIXME: unused?
 	if (strlen(val))
 	{
 		i = atoi(val);
@@ -2104,87 +2242,4 @@ void SV_ExecuteClientMessage(client_t *cl, msg_t *msg)
 	//if ( msg->readcount != msg->cursize ) {
 	//    Com_Printf( "WARNING: Junk at end of packet for client %i\n", cl - svs.clients );
 	//}
-}
-
-/**
- * @def DEF_IP_MAX_CLIENTS
- * @brief This defines the default value and also the minimum value we will allow the client to set...
- */
-#define DEF_IP_MAX_CLIENTS  3
-
-/**
- * @brief Ported from the etpro lua module
- * @param[in] clientNum
- * @param[in] ip
- * @param[in] rate
- * @return
- *
- * @note maybe we want to have more control over localhost clients in future.
- * So we let localhost connect since bots don't connect from SV_DirectConnect
- * where SV_IsFakeIpConnection is done.
- */
-char *SV_IsFakeIpConnection(int clientNum, const char *ip, const char *rate)
-{
-	client_t   *client;
-	int        count = 1;     // we count as the first one
-	int        max   = sv_ipMaxClients->integer;
-	int        i;
-	const char *theirIP;
-
-	// Default it to DEF_IP_MAX_CLIENTS as the minimum
-	if (max <= 0)
-	{
-		max = DEF_IP_MAX_CLIENTS;
-	}
-
-	// validate userinfo to filter out the people blindly using hack code
-	if (rate[0] == 0)
-	{
-		return "Invalid connection!";
-	}
-
-	// let localhost connect
-	if (!strcmp(ip, "localhost"))
-	{
-		return NULL;
-	}
-
-	// Iterate over each connected client and check the IP, keeping a count of connections
-	// from the same IP as this connecting client
-	for (i = 0; i < sv_maxclients->integer; ++i)
-	{
-		// Skip our own slot
-		if (i == clientNum)
-		{
-			continue;
-		}
-
-		client = &svs.clients[i];
-
-		if (client->state < CS_CONNECTED) // only active clients
-		{
-			continue;
-		}
-
-		theirIP = NET_AdrToString(client->netchan.remoteAddress);
-
-		// Don't compare the port - just the IP
-		if (CompareIPNoPort(ip, theirIP))
-		{
-			++count;
-			if (count > max)
-			{
-				Com_Printf("SV_IsFakeIpConnection: too many connections from %s\n", ip);
-
-				// TODO: should we drop / ban all connections from this IP?
-				return va("Only %d connection%s per IP %s allowed on this server!",
-				          max,
-				          max == 1 ? "" : "s",
-				          max == 1 ? "is" : "are");
-			}
-		}
-	}
-
-	// Ok let them connect
-	return NULL;
 }
