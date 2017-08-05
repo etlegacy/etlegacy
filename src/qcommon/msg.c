@@ -197,10 +197,8 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 
 	msg->uncompsize += bits; // net debugging
 
-	// this isn't an exact overflow check, but close enough
-	if (msg->maxsize - msg->cursize < 32)
+	if (msg->overflowed)
 	{
-		msg->overflowed = qtrue;
 		return;
 	}
 
@@ -216,6 +214,12 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 
 	if (msg->oob)
 	{
+		if (msg->cursize + (bits >> 3) > msg->maxsize)
+		{
+			msg->overflowed = qtrue;
+			return;
+		}
+
 		switch (bits)
 		{
 		case 8:
@@ -255,6 +259,12 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 		{
 			int nbits = bits & 7;
 
+			if (msg->bit + nbits > msg->maxsize << 3)
+			{
+				msg->overflowed = qtrue;
+				return;
+			}
+
 			for (i = 0; i < nbits; i++)
 			{
 				Huff_putBit((value & 1), msg->data, &msg->bit);
@@ -266,8 +276,14 @@ void MSG_WriteBits(msg_t *msg, int value, int bits)
 		{
 			for (i = 0; i < bits; i += 8)
 			{
-				Huff_offsetTransmit(&msgHuff.compressor, (value & 0xff), msg->data, &msg->bit);
+				Huff_offsetTransmit(&msgHuff.compressor, (value & 0xff), msg->data, &msg->bit, msg->maxsize << 3);
 				value = (value >> 8);
+
+				if (msg->bit > msg->maxsize << 3)
+				{
+					msg->overflowed = qtrue;
+					return;
+				}
 			}
 		}
 		msg->cursize = (msg->bit >> 3) + 1;
@@ -285,6 +301,11 @@ int MSG_ReadBits(msg_t *msg, int bits)
 	int      value = 0;
 	qboolean sgn;
 
+	if (msg->readcount > msg->cursize)
+	{
+		return 0;
+	}
+
 	if (bits < 0)
 	{
 		bits = -bits;
@@ -297,6 +318,12 @@ int MSG_ReadBits(msg_t *msg, int bits)
 
 	if (msg->oob)
 	{
+		if (msg->readcount + (bits >> 3) > msg->cursize)
+		{
+			msg->readcount = msg->cursize + 1;
+			return 0;
+		}
+
 		switch (bits)
 		{
 		case 8:
@@ -334,6 +361,13 @@ int MSG_ReadBits(msg_t *msg, int bits)
 		if (bits & 7)
 		{
 			nbits = bits & 7;
+
+			if (msg->bit + nbits > msg->cursize << 3)
+			{
+				msg->readcount = msg->cursize + 1;
+				return 0;
+			}
+
 			for (i = 0; i < nbits; i++)
 			{
 				value |= (Huff_getBit(msg->data, &msg->bit) << i);
@@ -346,8 +380,14 @@ int MSG_ReadBits(msg_t *msg, int bits)
 
 			for (i = 0; i < bits; i += 8)
 			{
-				Huff_offsetReceive(msgHuff.decompressor.tree, &get, msg->data, &msg->bit);
+				Huff_offsetReceive(msgHuff.decompressor.tree, &get, msg->data, &msg->bit, msg->cursize << 3);
 				value |= (get << (i + nbits));
+
+				if (msg->bit > msg->cursize << 3)
+				{
+					msg->readcount = msg->cursize + 1;
+					return 0;
+				}
 			}
 		}
 		msg->readcount = (msg->bit >> 3) + 1;
