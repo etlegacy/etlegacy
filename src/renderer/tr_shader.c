@@ -1444,11 +1444,12 @@ static void ParseSkyParms(char **text)
 	{
 		for (i = 0 ; i < 6 ; i++)
 		{
-			Com_sprintf(pathname, sizeof(pathname), "%s_%s.tga"
-			            , token, suf[i]);
+			Com_sprintf(pathname, sizeof(pathname), "%s_%s.tga", token, suf[i]);
+
 			shader.sky.outerbox[i] = R_FindImageFile(( char * ) pathname, qtrue, qtrue, GL_CLAMP_TO_EDGE, qfalse);
 			if (!shader.sky.outerbox[i])
 			{
+				Ren_Warning("WARNING: could not find image '%s' for outer skybox in shader '%s'\n", pathname, shader.name);
 				shader.sky.outerbox[i] = tr.defaultImage;
 			}
 		}
@@ -1479,11 +1480,12 @@ static void ParseSkyParms(char **text)
 	{
 		for (i = 0 ; i < 6 ; i++)
 		{
-			Com_sprintf(pathname, sizeof(pathname), "%s_%s.tga"
-			            , token, suf[i]);
+			Com_sprintf(pathname, sizeof(pathname), "%s_%s.tga", token, suf[i]);
+
 			shader.sky.innerbox[i] = R_FindImageFile(( char * ) pathname, qtrue, qtrue, GL_REPEAT, qfalse);
 			if (!shader.sky.innerbox[i])
 			{
+				Ren_Warning("WARNING: could not find image '%s' for inner skybox in shader '%s'\n", pathname, shader.name);
 				shader.sky.innerbox[i] = tr.defaultImage;
 			}
 		}
@@ -2052,6 +2054,10 @@ static qboolean ParseShader(char **text)
 			else if (!Q_stricmp(token, "back") || !Q_stricmp(token, "backside") || !Q_stricmp(token, "backsided"))
 			{
 				shader.cullType = CT_BACK_SIDED;
+			}
+			else if (!Q_stricmp(token, "front"))
+			{
+				// CT_FRONT_SIDED is set per default see R_FindShader - nothing to do just don't throw a warning
 			}
 			else
 			{

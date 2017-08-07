@@ -3068,6 +3068,7 @@ static void SetIteratorFog()
 		return;
 	}
 
+	// FIXME: tr.world->hasSkyboxPortal is never set
 	if (tr.world && tr.world->hasSkyboxPortal && (backEnd.refdef.rdflags & RDF_SKYBOXPORTAL))
 	{
 		if (tr.glfogsettings[FOG_PORTALVIEW].registered)

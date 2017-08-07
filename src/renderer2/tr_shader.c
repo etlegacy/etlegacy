@@ -2428,12 +2428,13 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 
 			if (!Q_stricmp(token, "environment"))
 			{
-				//Ren_Warning( "WARNING: texGen environment keyword not supported in shader '%s'\n", shader.name);
 				stage->tcGen_Environment = qtrue;
+				stage->tcGen_Lightmap    = qfalse;
 			}
 			else if (!Q_stricmp(token, "lightmap"))
 			{
-				stage->tcGen_Lightmap = qtrue;
+				stage->tcGen_Lightmap    = qtrue;
+				stage->tcGen_Environment = qfalse;
 			}
 			else if (!Q_stricmp(token, "texture") || !Q_stricmp(token, "base"))
 			{
@@ -2943,8 +2944,10 @@ void ParseDeform(char **text)
  */
 void ParseSkyParms(char **text)
 {
-	char *token;
-	char prefix[MAX_QPATH];
+	char        *token;
+	static char *suf[6] = { "rt", "bk", "lf", "ft", "up", "dn" };
+	char        pathname[MAX_QPATH];
+	int         i;
 
 	// outerbox
 	token = COM_ParseExt2(text, qfalse);
@@ -2955,13 +2958,17 @@ void ParseSkyParms(char **text)
 	}
 	if (strcmp(token, "-"))
 	{
-		Q_strncpyz(prefix, token, sizeof(prefix));
-
-		shader.sky.outerbox = R_FindCubeImage(prefix, IF_NONE, FT_DEFAULT, WT_EDGE_CLAMP, shader.name);
-		if (!shader.sky.outerbox)
+		for (i = 0 ; i < 6 ; i++)
 		{
-			Ren_Warning("WARNING: could not find cubemap '%s' for outer skybox in shader '%s'\n", prefix, shader.name);
-			shader.sky.outerbox = tr.blackCubeImage;
+			Q_strncpyz(pathname, va("%s_%s.tga", token, suf[i]), sizeof(pathname));
+
+			shader.sky.outerbox[i] = R_FindImageFile(( char * ) pathname, IF_NONE, FT_DEFAULT, WT_EDGE_CLAMP, shader.name);
+
+			if (!shader.sky.outerbox[i])
+			{
+				Ren_Warning("WARNING: could not find image '%s' for outer skybox in shader '%s'\n", pathname, shader.name);
+				shader.sky.outerbox[i] = tr.defaultImage;
+			}
 		}
 	}
 
@@ -2987,18 +2994,21 @@ void ParseSkyParms(char **text)
 		Ren_Warning("WARNING: 'skyParms' missing parameter in shader '%s'\n", shader.name);
 		return;
 	}
+
 	if (strcmp(token, "-"))
 	{
-		Q_strncpyz(prefix, token, sizeof(prefix));
-
-		shader.sky.innerbox = R_FindCubeImage(prefix, IF_NONE, FT_DEFAULT, WT_EDGE_CLAMP, shader.name);
-		if (!shader.sky.innerbox)
+		for (i = 0 ; i < 6 ; i++)
 		{
-			Ren_Warning("WARNING: could not find cubemap '%s' for inner skybox in shader '%s'\n", prefix, shader.name);
-			shader.sky.innerbox = tr.blackCubeImage;
+			Q_strncpyz(pathname, va("%s_%s.tga", token, suf[i]), sizeof(pathname));
+			shader.sky.innerbox[i] = R_FindImageFile(( char * ) pathname, IF_NONE, FT_DEFAULT, WT_REPEAT, shader.name); // GL_REPEAT?!
+
+			if (!shader.sky.innerbox[i])
+			{
+				Ren_Warning("WARNING: could not find image '%s' for inner skybox in shader '%s'\n", pathname, shader.name);
+				shader.sky.innerbox[i] = tr.defaultImage;
+			}
 		}
 	}
-
 	shader.isSky = qtrue;
 }
 
@@ -4296,6 +4306,10 @@ static qboolean ParseShader(char *_text)
 			else if (!Q_stricmp(token, "back") || !Q_stricmp(token, "backside") || !Q_stricmp(token, "backsided"))
 			{
 				shader.cullType = CT_BACK_SIDED;
+			}
+			else if (!Q_stricmp(token, "front"))
+			{
+				// CT_FRONT_SIDED is set per default see R_FindShader - nothing to do just don't throw a warning
 			}
 			else
 			{

@@ -5776,7 +5776,7 @@ static void RB_RenderViewFront(void)
 			              tr.world->fogs[tr.world->globalFog].color[2], 1.0);
 		}
 	}
-	else if (tr.world && tr.world->hasSkyboxPortal)
+	else if (tr.world && tr.world->hasSkyboxPortal) // FIXME: tr.world->hasSkyboxPortal is never set
 	{
 		if (backEnd.refdef.rdflags & RDF_SKYBOXPORTAL)
 		{

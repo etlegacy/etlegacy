@@ -638,6 +638,10 @@ qboolean ParseShaderR1(char *_text)
 			{
 				shader.cullType = CT_BACK_SIDED;
 			}
+			else if (!Q_stricmp(token, "front"))
+			{
+				// CT_FRONT_SIDED is set per default see R_FindShader - nothing to do just don't throw a warning
+			}
 			else
 			{
 				Ren_Warning("WARNING: invalid cull parm '%s' in shader '%s'\n", token, shader.name);
