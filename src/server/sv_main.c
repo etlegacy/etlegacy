@@ -1309,10 +1309,6 @@ void SV_PacketEvent(netadr_t from, msg_t *msg)
 
 		return;
 	}
-
-	// if we received a sequenced packet from an address we don't recognize,
-	// send an out of band disconnect packet to it
-	NET_OutOfBandPrint(NS_SERVER, from, "disconnect");
 }
 
 /**
