@@ -38,7 +38,8 @@
 #include "g_mdx.h"
 #endif
 
-static char text[100000];           // <- was causing callstacks >64k
+#define MAX_TEXT_CHAR 100000
+static char text[MAX_TEXT_CHAR];           // <- was causing callstacks >64k
 
 #ifdef FEATURE_SERVERMDX
 
@@ -163,7 +164,7 @@ static qboolean G_ParseAnimationFiles(bg_character_t *character, const char *ani
 	{
 		return qfalse;
 	}
-	if (len >= sizeof(text) - 1)
+	if (len >= MAX_TEXT_CHAR - 1)
 	{
 		G_Printf("File %s is too long\n", animationScript);
 		trap_FS_FCloseFile(f);
