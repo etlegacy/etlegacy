@@ -461,7 +461,7 @@ static void FillCloudySkySide(struct image_s *image , const int mins[2], const i
 	int tHeight     = maxs[1] - mins[1] + 1;
 	int sWidth      = maxs[0] - mins[0] + 1;
 
-	SelectTexture(0);
+	GL_SelectTexture(0);
 	GL_Bind(image);
 
 	for (t = mins[1] + HALF_SKY_SUBDIVISIONS; t <= maxs[1] + HALF_SKY_SUBDIVISIONS; t++)
