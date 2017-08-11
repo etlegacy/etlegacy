@@ -40,11 +40,11 @@ char bigTextBuffer[100000];
 /**
  * @brief Parse gib models
  * @details Read a configuration file containing gib models for use with this character.
- * @param modelPath
- * @param character
+ * @param[in] modelPath
+ * @param[out] character
  * @return
  */
-static qboolean CG_ParseGibModels(char *modelPath, bg_character_t *character)
+static qboolean CG_ParseGibModels(const char *modelPath, bg_character_t *character)
 {
 	char         *text_p;
 	int          len;
