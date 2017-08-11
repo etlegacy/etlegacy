@@ -1366,7 +1366,7 @@ static void ParseDeform(char **text)
 		}
 		else
 		{
-			ds->deformationSpread = 100.0f;
+			ds->deformationSpread = 100.0;
 			Ren_Warning("WARNING: illegal div value of 0 in deformVertexes command for shader '%s'\n", shader.name);
 		}
 

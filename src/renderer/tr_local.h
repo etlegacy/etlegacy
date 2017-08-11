@@ -1479,9 +1479,6 @@ extern glstate_t      glState;      ///< outside of TR since it shouldn't be cle
 
 //====================================================================
 
-double R_NoiseGet4f(double x, double y, double z, double t);
-void R_NoiseInit(void);
-
 void R_SwapBuffers(int);
 
 void R_RenderView(viewParms_t *parms);

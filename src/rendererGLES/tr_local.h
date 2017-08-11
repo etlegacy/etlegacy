@@ -641,7 +641,7 @@ typedef struct
  * enforce the maximum limit when reading skin files. It was possile to use more than 32
  * surfaces which accessed out of bounds memory past end of skin->surfaces hunk block.
  */
-#define MAX_SKIN_SURFACES	256
+#define MAX_SKIN_SURFACES   256
 
 /**
  * @struct trRefdef_t
@@ -1485,9 +1485,6 @@ extern glconfig_t     glConfig;     ///< outside of TR since it shouldn't be cle
 extern glstate_t      glState;      ///< outside of TR since it shouldn't be cleared during ref re-init
 
 //====================================================================
-
-double R_NoiseGet4f(double x, double y, double z, double t);
-void R_NoiseInit(void);
 
 void R_SwapBuffers(int);
 

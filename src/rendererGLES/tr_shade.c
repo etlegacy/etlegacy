@@ -68,7 +68,6 @@ static qboolean  setArraysOnce;
 static void R_BindAnimatedImage(textureBundle_t *bundle)
 {
 	int64_t index;
-	double  v;
 
 	if (bundle->isVideoMap)
 	{
@@ -93,8 +92,7 @@ static void R_BindAnimatedImage(textureBundle_t *bundle)
 	// it is necessary to do this messy calc to make sure animations line up
 	// exactly with waveforms of the same frequency
 	//index   = (int)(tess.shaderTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
-	v       = tess.shaderTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE;
-	index   = v;
+	index   = (int64_t)(tess.shaderTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
 	index >>= FUNCTABLE_SIZE2;
 
 	if (index < 0)

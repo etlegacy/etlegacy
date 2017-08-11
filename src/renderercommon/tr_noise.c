@@ -1,7 +1,6 @@
 /*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
- * Copyright (C) 2010-2011 Robert Beckebans <trebor_7@users.sourceforge.net>
  *
  * ET: Legacy
  * Copyright (C) 2012-2017 ET:Legacy team <mail@etlegacy.com>
@@ -30,10 +29,10 @@
  * id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
  */
 /**
- * @file renderer2/tr_noise.c
+ * @file renderercommon/tr_noise.c
  */
 
-#include "tr_local.h"
+#include "tr_common.h"
 
 #define NOISE_SIZE 256
 #define NOISE_MASK (NOISE_SIZE - 1)
@@ -41,7 +40,7 @@
 #define VAL(a) s_noise_perm[(a) & (NOISE_MASK)]
 #define INDEX(x, y, z, t) VAL(x + VAL(y + VAL(z + VAL(t))))
 
-static float s_noise_table[NOISE_SIZE];
+static double s_noise_table[NOISE_SIZE];
 static int   s_noise_perm[NOISE_SIZE];
 
 /**
@@ -52,7 +51,7 @@ static int   s_noise_perm[NOISE_SIZE];
  * @param[in] t
  * @return
  */
-static float GetNoiseValue(int x, int y, int z, int t)
+static double GetNoiseValue(int x, int y, int z, int t)
 {
 	int index = INDEX((int)x, (int)y, (int)z, (int)t);
 
@@ -70,8 +69,8 @@ void R_NoiseInit(void)
 
 	for (i = 0; i < NOISE_SIZE; i++)
 	{
-		s_noise_table[i] = (float)(((rand() / (float)RAND_MAX) * 2.0f - 1.0f));
-		s_noise_perm[i]  = (unsigned char)(rand() / (float)RAND_MAX * 255);
+		s_noise_table[i] = (rand() / (double)RAND_MAX) * 2.0 - 1.0;
+		s_noise_perm[i]  = (unsigned char)(rand() / (double)RAND_MAX * 255);
 	}
 }
 
@@ -83,14 +82,14 @@ void R_NoiseInit(void)
  * @param[in] t
  * @return
  */
-float R_NoiseGet4f(float x, float y, float z, float t)
+double R_NoiseGet4f(double x, double y, double z, double t)
 {
-	int   i;
-	int   ix, iy, iz, it;
-	float fx, fy, fz, ft;
-	float front[4];
-	float back[4];
-	float fvalue, bvalue, value[2], finalvalue;
+	int    i;
+	int    ix, iy, iz, it;
+	double fx, fy, fz, ft;
+	double front[4];
+	double back[4];
+	double fvalue, bvalue, value[2], finalvalue;
 
 	ix = (int)(floor(x));
 	fx = x - ix;

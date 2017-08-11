@@ -1057,10 +1057,10 @@ typedef struct
 {
 	genFunc_t func;
 
-	float base;
-	float amplitude;
-	float phase;
-	float frequency;
+	double base;
+	double amplitude;
+	double phase;
+	double frequency;
 } waveForm_t;
 
 #define TR_MAX_TEXMODS 4
@@ -1161,7 +1161,7 @@ enum
 typedef struct
 {
 	uint8_t numImages;
-	float imageAnimationSpeed;
+	double imageAnimationSpeed;
 	image_t *image[MAX_IMAGE_ANIMATIONS];
 
 	qboolean isTcGen;
@@ -1884,7 +1884,7 @@ typedef struct
 	byte areamask[MAX_MAP_AREA_BYTES];
 	qboolean areamaskModified;          ///< qtrue if areamask changed since last scene
 
-	float floatTime;                    ///< tr.refdef.time / 1000.0
+	double floatTime;                    ///< tr.refdef.time / 1000.0
 
 	/// text messages for deform text shaders
 	char text[MAX_RENDER_STRINGS][MAX_RENDER_STRING_LENGTH];
@@ -3917,9 +3917,6 @@ extern cvar_t *r_recompileShaders;
 extern cvar_t *r_rotoscopeBlur;
 
 //====================================================================
-
-float R_NoiseGet4f(float x, float y, float z, float t);
-void R_NoiseInit(void);
 
 void R_SwapBuffers(int);
 

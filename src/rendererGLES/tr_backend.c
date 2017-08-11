@@ -601,7 +601,7 @@ void RB_BeginDrawingView(void)
 	// clip to the plane of the portal
 	if (backEnd.viewParms.isPortal)
 	{
-		float plane[4];
+		float  plane[4];
 		double plane2[4]; // keep this, glew expects double
 
 		plane[0] = backEnd.viewParms.portalPlane.normal[0];
@@ -691,7 +691,9 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 
 			if (entityNum != ENTITYNUM_WORLD)
 			{
-				backEnd.currentEntity    = &backEnd.refdef.entities[entityNum];
+				backEnd.currentEntity = &backEnd.refdef.entities[entityNum];
+
+				// FIXME: e.shaderTime must be passed as int to avoid fp-precision loss issues
 				backEnd.refdef.floatTime = originalTime; // - backEnd.currentEntity->e.shaderTime; // JPW NERVE pulled this to match q3ta
 
 				// we have to reset the shaderTime as well otherwise image animations start

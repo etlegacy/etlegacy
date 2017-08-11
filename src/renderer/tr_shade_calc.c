@@ -34,7 +34,7 @@
 
 #include "tr_local.h"
 
-#define WAVEVALUE(table, base, amplitude, phase, freq)  ((base) + table[(int)((((phase) + tess.shaderTime * (freq)) *FUNCTABLE_SIZE)) & FUNCTABLE_MASK] * (amplitude))
+#define WAVEVALUE(table, base, amplitude, phase, freq)  ((base) + table[(int64_t)((((phase) + tess.shaderTime * (freq)) *FUNCTABLE_SIZE)) & FUNCTABLE_MASK] * (amplitude))
 
 /**
  * @brief TableForFunc
@@ -247,7 +247,7 @@ void RB_CalcDeformNormals(deformStage_t *ds)
 {
 	int    i;
 	double scale;
-	double *xyz    = ( double * ) tess.xyz;
+	float  *xyz    = ( float * ) tess.xyz;
 	float  *normal = ( float * ) tess.normal;
 
 	for (i = 0; i < tess.numVertexes; i++, xyz += 4, normal += 4)
@@ -281,13 +281,13 @@ void RB_CalcBulgeVertexes(deformStage_t *ds)
 	const float *st     = ( const float * ) tess.texCoords[0];
 	float       *xyz    = ( float * ) tess.xyz;
 	float       *normal = ( float * ) tess.normal;
-	float       now     = backEnd.refdef.time * ds->bulgeSpeed * 0.001f;
-	int         off;
+	double      now     = backEnd.refdef.time * ds->bulgeSpeed * 0.001;
+	int64_t     off;
 	float       scale;
 
 	for (i = 0; i < tess.numVertexes; i++, xyz += 4, st += 4, normal += 4)
 	{
-		off   = (float)(FUNCTABLE_SIZE / (M_PI * 2)) * (st[0] * ds->bulgeWidth + now);
+		off   = (FUNCTABLE_SIZE / (M_PI * 2)) * (st[0] * ds->bulgeWidth + now);
 		scale = tr.sinTable[off & FUNCTABLE_MASK] * ds->bulgeHeight;
 
 		xyz[0] += normal[0] * scale;
@@ -305,7 +305,7 @@ void RB_CalcMoveVertexes(deformStage_t *ds)
 	int    i;
 	float  *xyz;
 	float  *table;
-	double scale;
+	float  scale;
 	vec3_t offset;
 
 	table = TableForFunc(ds->deformationWave.func);
@@ -1201,8 +1201,8 @@ void RB_CalcTurbulentTexCoords(const waveForm_t *wf, float *texCoords)
 		s = texCoords[0];
 		t = texCoords[1];
 
-		texCoords[0] = s + tr.sinTable[(( int ) (((tess.xyz[i][0] + tess.xyz[i][2]) * 1.0 / 128 * 0.125 + now) * FUNCTABLE_SIZE)) & (FUNCTABLE_MASK)] * wf->amplitude;
-		texCoords[1] = t + tr.sinTable[(( int ) ((tess.xyz[i][1] * 1.0 / 128 * 0.125 + now) * FUNCTABLE_SIZE)) & (FUNCTABLE_MASK)] * wf->amplitude;
+		texCoords[0] = s + tr.sinTable[(( int64_t ) (((tess.xyz[i][0] + tess.xyz[i][2]) * 1.0 / 128 * 0.125 + now) * FUNCTABLE_SIZE)) & (FUNCTABLE_MASK)] * wf->amplitude;
+		texCoords[1] = t + tr.sinTable[(( int64_t ) ((tess.xyz[i][1] * 1.0 / 128 * 0.125 + now) * FUNCTABLE_SIZE)) & (FUNCTABLE_MASK)] * wf->amplitude;
 	}
 }
 

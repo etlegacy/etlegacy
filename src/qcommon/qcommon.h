@@ -1256,9 +1256,6 @@ void SCR_DebugGraph(float value);     // FIXME: move logging to common?
 // AVI files have the start of pixel lines 4 byte-aligned
 #define AVI_LINE_PADDING 4
 
-#define LERP(a, b, w) ((a) * (1.0f - (w)) + (b) * (w))
-#define LUMA(red, green, blue) (0.2126f * (red) + 0.7152f * (green) + 0.0722f * (blue))
-
 // server interface
 
 void SV_Init(void);

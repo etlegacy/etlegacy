@@ -99,6 +99,10 @@ void R_InitFreeType(void);
 void R_DoneFreeType(void);
 void RE_RegisterFont(const char *fontName, int pointSize, void *output, qboolean extended);
 
+// noise stuff
+double R_NoiseGet4f(double x, double y, double z, double t);
+void R_NoiseInit(void);
+
 // NOTE: These two variables should live inside glConfig but can't because of compatibility issues to the original ID vms.
 // If you release a stand-alone game and your mod uses tr_types.h from this build you can safely move them to
 // the glconfig_t struct.

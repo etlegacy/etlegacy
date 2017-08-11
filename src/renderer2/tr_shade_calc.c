@@ -35,7 +35,7 @@
 
 #include "tr_local.h"
 
-#define WAVEVALUE(table, base, amplitude, phase, freq)  ((base) + table[Q_ftol((((phase) + backEnd.refdef.floatTime * (freq)) *FUNCTABLE_SIZE)) & FUNCTABLE_MASK] * (amplitude))
+#define WAVEVALUE(table, base, amplitude, phase, freq)  ((base) + table[(int64_t)((((phase) + backEnd.refdef.floatTime * (freq)) *FUNCTABLE_SIZE)) & FUNCTABLE_MASK] * (amplitude))
 
 /**
  * @brief TableForFunc
@@ -577,23 +577,23 @@ void RB_CalcDeformVertexes(deformStage_t *ds)
 void RB_CalcDeformNormals(deformStage_t *ds)
 {
 	unsigned int i;
-	float        scale;
+	double       scale;
 	float        *xyz    = (float *)tess.xyz;
 	float        *normal = (float *)tess.normals;
 
 	for (i = 0; i < tess.numVertexes; i++, xyz += 4, normal += 4)
 	{
-		scale = 0.98f;
+		scale = 0.98;
 		scale = R_NoiseGet4f(xyz[0] * scale, xyz[1] * scale, xyz[2] * scale,
 		                     backEnd.refdef.floatTime * ds->deformationWave.frequency);
 		normal[0] += ds->deformationWave.amplitude * scale;
 
-		scale = 0.98f;
+		scale = 0.98;
 		scale = R_NoiseGet4f(100 + xyz[0] * scale, xyz[1] * scale, xyz[2] * scale,
 		                     backEnd.refdef.floatTime * ds->deformationWave.frequency);
 		normal[1] += ds->deformationWave.amplitude * scale;
 
-		scale = 0.98f;
+		scale = 0.98;
 		scale = R_NoiseGet4f(200 + xyz[0] * scale, xyz[1] * scale, xyz[2] * scale,
 		                     backEnd.refdef.floatTime * ds->deformationWave.frequency);
 		normal[2] += ds->deformationWave.amplitude * scale;
@@ -608,16 +608,17 @@ void RB_CalcDeformNormals(deformStage_t *ds)
  */
 void RB_CalcBulgeVertexes(deformStage_t *ds)
 {
-	int         i, off;
-	const float *st     = (const float *)tess.texCoords[0];
-	float       *xyz    = (float *)tess.xyz;
-	float       *normal = (float *)tess.normals;
-	float       now     = backEnd.refdef.time * ds->bulgeSpeed * 0.001f;
-	float       scale;
+	unsigned int i;
+	const float  *st     = (const float *)tess.texCoords[0];
+	float        *xyz    = (float *)tess.xyz;
+	float        *normal = (float *)tess.normals;
+	double       now     = backEnd.refdef.time * ds->bulgeSpeed * 0.001;
+	int64_t      off;
+	float        scale;
 
 	for (i = 0; i < tess.numVertexes; i++, xyz += 4, st += 4, normal += 4)
 	{
-		off = (float)(FUNCTABLE_SIZE / (M_PI * 2)) * (st[0] * ds->bulgeWidth + now);
+		off = (FUNCTABLE_SIZE / (M_PI * 2)) * (st[0] * ds->bulgeWidth + now);
 
 		scale = tr.sinTable[off & FUNCTABLE_MASK] * ds->bulgeHeight;
 
@@ -633,11 +634,11 @@ void RB_CalcBulgeVertexes(deformStage_t *ds)
  */
 void RB_CalcMoveVertexes(deformStage_t *ds)
 {
-	int    i;
-	float  *xyz;
-	float  *table;
-	float  scale;
-	vec3_t offset;
+	unsigned int i;
+	float        *xyz;
+	float        *table;
+	float        scale;
+	vec3_t       offset;
 
 	table = TableForFunc(ds->deformationWave.func);
 
@@ -961,8 +962,7 @@ qboolean ShaderRequiresCPUDeforms(const shader_t *shader)
 {
 	if (shader->numDeforms)
 	{
-		int      i;
-		qboolean cpuDeforms = qfalse;
+		int i;
 
 		for (i = 0; i < shader->numDeforms; i++)
 		{
@@ -972,15 +972,14 @@ qboolean ShaderRequiresCPUDeforms(const shader_t *shader)
 			{
 			case DEFORM_WAVE:
 			case DEFORM_BULGE:
+				// need CPU deforms at high level-times to avoid floating point percision loss
+				return (backEnd.refdef.floatTime != (float)backEnd.refdef.floatTime);
 			case DEFORM_MOVE:
 				break;
 			default:
-				cpuDeforms = qtrue;
-				break;
+				return qtrue;
 			}
 		}
-
-		return cpuDeforms;
 	}
 
 	return qfalse;
