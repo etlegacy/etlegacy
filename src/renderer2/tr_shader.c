@@ -2936,6 +2936,8 @@ void ParseDeform(char **text)
 	Ren_Warning("WARNING: unknown deformVertexes subtype '%s' found in shader '%s'\n", token, shader.name);
 }
 
+const char *suf[6] = { "rt", "bk", "lf", "ft", "up", "dn" };
+
 /**
  * @brief ParseSkyParms
  * @param[in,out] text
@@ -2944,10 +2946,10 @@ void ParseDeform(char **text)
  */
 void ParseSkyParms(char **text)
 {
-	char        *token;
-	static char *suf[6] = { "rt", "bk", "lf", "ft", "up", "dn" };
-	char        pathname[MAX_QPATH];
-	int         i;
+	char *token;
+	int  i;
+	char buffer[MAX_QPATH];
+	char *pathname;
 
 	// outerbox
 	token = COM_ParseExt2(text, qfalse);
@@ -2958,11 +2960,12 @@ void ParseSkyParms(char **text)
 	}
 	if (strcmp(token, "-"))
 	{
+		Q_strncpyz(buffer, token, sizeof(buffer));
+		pathname = va("%s_%s.tga", buffer, suf[i]);
+
 		for (i = 0 ; i < 6 ; i++)
 		{
-			Q_strncpyz(pathname, va("%s_%s.tga", token, suf[i]), sizeof(pathname));
-
-			shader.sky.outerbox[i] = R_FindImageFile(( char * ) pathname, IF_NONE, FT_DEFAULT, WT_EDGE_CLAMP, shader.name);
+			shader.sky.outerbox[i] = R_FindImageFile(pathname, IF_NONE, FT_DEFAULT, WT_EDGE_CLAMP, shader.name);
 
 			if (!shader.sky.outerbox[i])
 			{
@@ -2999,8 +3002,10 @@ void ParseSkyParms(char **text)
 	{
 		for (i = 0 ; i < 6 ; i++)
 		{
-			Q_strncpyz(pathname, va("%s_%s.tga", token, suf[i]), sizeof(pathname));
-			shader.sky.innerbox[i] = R_FindImageFile(( char * ) pathname, IF_NONE, FT_DEFAULT, WT_REPEAT, shader.name); // GL_REPEAT?!
+			Q_strncpyz(buffer, token, sizeof(buffer));
+			pathname = va("%s_%s.tga", buffer, suf[i]);
+			
+			shader.sky.innerbox[i] = R_FindImageFile(pathname, IF_NONE, FT_DEFAULT, WT_REPEAT, shader.name); // GL_REPEAT?!
 
 			if (!shader.sky.innerbox[i])
 			{

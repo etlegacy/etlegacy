@@ -38,7 +38,6 @@
 #define SKY_SUBDIVISIONS        8
 #define HALF_SKY_SUBDIVISIONS   (SKY_SUBDIVISIONS / 2)
 
-static int   sky_texorder[6] = { 0, 2, 1, 3, 4, 5 };
 static float s_cloudTexCoords[6][SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1][2];
 static float s_cloudTexP[6][SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1];
 
@@ -412,7 +411,7 @@ static void MakeSkyVec(float s, float t, int axis, vec4_t outSt, vec4_t outXYZ)
 	}
 }
 
-//static int      sky_texorder[6] = { 0, 2, 1, 3, 4, 5 };
+static int    sky_texorder[6] = { 0, 2, 1, 3, 4, 5 };
 static vec4_t s_skyPoints[SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1];
 static float  s_skyTexCoords[SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1][4];
 
@@ -462,7 +461,7 @@ static void FillCloudySkySide(struct image_s *image , const int mins[2], const i
 	int tHeight     = maxs[1] - mins[1] + 1;
 	int sWidth      = maxs[0] - mins[0] + 1;
 
-	SelectTexture(TEX_COLOR);
+	SelectTexture(0);
 	GL_Bind(image);
 
 	for (t = mins[1] + HALF_SKY_SUBDIVISIONS; t <= maxs[1] + HALF_SKY_SUBDIVISIONS; t++)
@@ -513,9 +512,9 @@ static void FillCloudySkySide(struct image_s *image , const int mins[2], const i
 
 /**
  * @brief DrawSkyBox
- * @param shader - unused
+ * @param shader
  */
-static void DrawSkyBox(shader_t *shader)
+static void DrawSkyBox(shader_t *shader, qboolean outerbox) // FIXME: this down't paint the textures
 {
 	int i;
 
@@ -600,9 +599,18 @@ static void DrawSkyBox(shader_t *shader)
 
 		//DrawSkySide(shader->sky.outerbox[sky_texorder[i]], sky_mins_subd, sky_maxs_subd);
 
-		// only add indexes for first stage
-		FillCloudySkySide(shader->sky.outerbox[sky_texorder[i]], sky_mins_subd, sky_maxs_subd, qtrue);
+		if (outerbox)
+		{
+			FillCloudySkySide(shader->sky.outerbox[sky_texorder[i]], sky_mins_subd, sky_maxs_subd, qtrue);
+		}
+		else
+		{
+			FillCloudySkySide(shader->sky.innerbox[sky_texorder[i]], sky_mins_subd, sky_maxs_subd, qtrue);
+		}
 	}
+
+	// FIXME analyze required vertex attribs by the current material
+	Tess_UpdateVBOs(0);
 
 	Tess_DrawElements();
 }
@@ -717,9 +725,7 @@ static void FillCloudBox(const shader_t *shader, int stage)
 			}
 		}
 
-		// only add indexes for first stage
-		// FIXME: DRAW the box!
-		FillCloudySkySide(shader->sky.outerbox[sky_texorder[i]], sky_mins_subd, sky_maxs_subd, qtrue); //(qboolean) (stage == 0)
+		FillCloudySkySide(shader->sky.outerbox[sky_texorder[i]], sky_mins_subd, sky_maxs_subd, qtrue); // clouds
 	}
 }
 
@@ -742,6 +748,10 @@ static void BuildCloudData()
 
 	if (tess.surfaceShader->sky.cloudHeight != 0.f)
 	{
+		// FIXME: ok, this is really wierd. it's iterating through shader stages here,
+		// which is unecessary for a multi-stage sky shader, as far as i can tell
+		// nuking this
+#if 0
 		int i;
 
 		for (i = 0; i < MAX_SHADER_STAGES; i++)
@@ -753,6 +763,9 @@ static void BuildCloudData()
 
 			FillCloudBox(tess.surfaceShader, i);
 		}
+#else
+		FillCloudBox(tess.surfaceShader, 0);
+#endif
 	}
 
 	// FIXME analyze required vertex attribs by the current material
@@ -891,13 +904,13 @@ void Tess_StageIteratorSky(void)
 
 	GL_Cull(CT_TWO_SIDED);
 
+	// go through all the polygons and project them onto
+	// the sky box to see which blocks on each side need
+	// to be drawn
+	Tess_ClipSkyPolygons();
+
 	if (tess.stageIteratorFunc2 == &Tess_StageIteratorDepthFill)
 	{
-		// go through all the polygons and project them onto
-		// the sky box to see which blocks on each side need
-		// to be drawn
-		Tess_ClipSkyPolygons();
-
 		// generate the vertexes for all the clouds, which will be drawn
 		// by the generic shader routine
 		BuildCloudData();
@@ -909,11 +922,6 @@ void Tess_StageIteratorSky(void)
 	}
 	else
 	{
-		// go through all the polygons and project them onto
-		// the sky box to see which blocks on each side need
-		// to be drawn
-		Tess_ClipSkyPolygons();
-
 		// r_showSky will let all the sky blocks be drawn in
 		// front of everything to allow developers to see how
 		// much sky is getting sucked in
@@ -955,11 +963,7 @@ void Tess_StageIteratorSky(void)
 
 			GLSL_SetRequiredVertexPointers(trProg.gl_skyboxShader);
 
-			// bind u_ColorMap
-			//SelectTexture(TEX_COLOR);
-			//GL_Bind(tess.surfaceShader->sky.outerbox);
-
-			DrawSkyBox(tess.surfaceShader);
+			DrawSkyBox(tess.surfaceShader, qtrue);
 		}
 
 		// generate the vertexes for all the clouds, which will be drawn
@@ -999,12 +1003,7 @@ void Tess_StageIteratorSky(void)
 
 			GLSL_SetRequiredVertexPointers(trProg.gl_skyboxShader);
 
-			// bind u_ColorMap
-			//SelectTexture(TEX_COLOR);
-			//GL_Bind(tess.surfaceShader->sky.innerbox);
-
-			// FIXME
-			//DrawSkyBoxInner(tess.surfaceShader);
+			DrawSkyBox(tess.surfaceShader, qfalse);
 		}
 
 		if (tess.stageIteratorFunc2 != Tess_StageIteratorDepthFill)
