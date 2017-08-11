@@ -1100,8 +1100,9 @@ void SkipRestOfLine(char **data)
 	char *p = *data;
 	int  c;
 
-	while ((c = *p++) != 0)
+	while ((c = *p) != '\0')
 	{
+		p++;
 		if (c == '\n')
 		{
 			com_lines++;
@@ -1111,6 +1112,7 @@ void SkipRestOfLine(char **data)
 
 	*data = p;
 }
+
 
 /**
  * @brief Parse1DMatrix
