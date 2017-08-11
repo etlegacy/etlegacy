@@ -78,9 +78,9 @@ extern pml_t   pml;
 extern float pm_stopspeed;
 
 extern float pm_waterSwimScale;
-extern float pm_waterWadeScale;
+//extern float pm_waterWadeScale;
 extern float pm_slagSwimScale;
-extern float pm_slagWadeScale;
+//extern float pm_slagWadeScale;
 
 extern float pm_accelerate;
 extern float pm_airaccelerate;
@@ -91,7 +91,7 @@ extern float pm_flyaccelerate;
 extern float pm_friction;
 extern float pm_waterfriction;
 extern float pm_slagfriction;
-extern float pm_flightfriction;
+//extern float pm_flightfriction;
 
 extern int c_pmove;
 
@@ -100,7 +100,5 @@ void PM_AddEvent(int newEvent);
 
 qboolean PM_SlideMove(qboolean gravity);
 void PM_StepSlideMove(qboolean gravity);
-
-void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload);
 
 #endif // #ifndef INCLUDE_BG_LOCAL_H

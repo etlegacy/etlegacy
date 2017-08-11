@@ -70,9 +70,9 @@ pml_t   pml;
 float pm_stopspeed = 100;
 
 float pm_waterSwimScale = 0.5;
-float pm_waterWadeScale = 0.70f;
-float pm_slagSwimScale  = 0.30f;
-float pm_slagWadeScale  = 0.70f;
+//float pm_waterWadeScale = 0.70f;
+float pm_slagSwimScale = 0.30f;
+//float pm_slagWadeScale  = 0.70f;
 
 float pm_proneSpeedScale = 0.21f;    // was: 0.18 (too slow) then: 0.24 (too fast)
 
@@ -82,10 +82,10 @@ float pm_wateraccelerate = 4;
 float pm_slagaccelerate  = 2;
 float pm_flyaccelerate   = 8;
 
-float pm_friction          = 6;
-float pm_waterfriction     = 1;
-float pm_slagfriction      = 1;
-float pm_flightfriction    = 3;
+float pm_friction      = 6;
+float pm_waterfriction = 1;
+float pm_slagfriction  = 1;
+//float pm_flightfriction    = 3;
 float pm_ladderfriction    = 14;
 float pm_spectatorfriction = 5.0f;
 
@@ -98,6 +98,8 @@ int c_pmove = 0;
 void ClientStoreSurfaceFlags(int clientNum, int surfaceFlags);
 
 #endif
+
+static void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload);
 
 /**
  * @brief PM_AddEvent
@@ -2526,7 +2528,7 @@ static void PM_ReloadClip(int weapon);
  * @param[in] newweapon
  * @param[in] reload
  */
-void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        // modified to play 1st person alt-mode transition animations.
+static void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        // modified to play 1st person alt-mode transition animations.
 {
 	int      switchtime;
 	qboolean altSwitchAnim = qfalse;
@@ -6206,9 +6208,6 @@ void PmoveSingle(pmove_t *pmove)
 	pm->ps->stats[STAT_SPRINTTIME] = pm->pmext->sprintTime;
 }
 
-/**
-
- */
 /**
  * @brief Can be called by either the server or the client
  * @param[in] pmove
