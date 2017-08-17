@@ -661,6 +661,8 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
 			}
 		}
 	}
+
+	tess.attribsSet |= ATTR_POSITION | ATTR_TEXCOORD;
 }
 
 /**
@@ -759,8 +761,7 @@ static void DrawSkyBox(shader_t *shader, qboolean outerbox)
 		}
 	}
 
-	// FIXME analyze required vertex attribs by the current material
-	Tess_UpdateVBOs(0);
+	Tess_UpdateVBOs(tess.attribsSet);
 
 	Tess_DrawElements();
 }

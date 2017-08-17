@@ -185,6 +185,8 @@ void Tess_AddQuadStampExt(vec3_t origin, vec3_t left, vec3_t up, const vec4_t co
 
 	tess.numVertexes += 4;
 	tess.numIndexes  += 6;
+
+	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD; // ATTR_NORMAL?
 }
 
 /**
@@ -280,6 +282,8 @@ void Tess_AddQuadStampExt2(vec4_t quadVerts[4], const vec4_t color, float s1, fl
 
 	tess.numVertexes += 4;
 	tess.numIndexes  += 6;
+
+	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD | ATTR_NORMAL;
 }
 
 /**
@@ -340,6 +344,8 @@ void Tess_AddTetrahedron(vec4_t tetraVerts[4], const vec4_t color)
 		tess.indexes[tess.numIndexes++] = tess.numVertexes;
 		tess.numVertexes++;
 	}
+
+	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR;
 }
 
 /**
@@ -553,9 +559,10 @@ void Tess_InstantQuad(vec4_t quadVerts[4])
 {
 	Ren_LogComment("--- Tess_InstantQuad ---\n");
 
-	tess.multiDrawPrimitives = 0;
 	tess.numVertexes         = 0;
 	tess.numIndexes          = 0;
+	tess.attribsSet          = 0;
+	tess.multiDrawPrimitives = 0;
 
 	Vector4Copy(quadVerts[0], tess.xyz[tess.numVertexes]);
 	tess.texCoords[tess.numVertexes][0] = 0;
@@ -612,9 +619,10 @@ void Tess_InstantQuad(vec4_t quadVerts[4])
 
 	Tess_DrawElements();
 
-	tess.multiDrawPrimitives = 0;
 	tess.numVertexes         = 0;
 	tess.numIndexes          = 0;
+	tess.attribsSet          = 0;
+	tess.multiDrawPrimitives = 0;
 
 	GL_CheckErrors();
 }
@@ -843,6 +851,7 @@ static void Tess_SurfacePolychain(srfPoly_t *p)
 		VectorArrayNormalize((vec4_t *) tess.normals[tess.numVertexes], numVertexes);
 	}
 #endif
+	tess.attribsSet |= ATTR_POSITION | ATTR_TEXCOORD | ATTR_COLOR;
 
 	tess.numIndexes  += numIndexes;
 	tess.numVertexes += numVertexes;
@@ -893,6 +902,9 @@ void Tess_SurfacePolybuffer(srfPolyBuffer_t *surf)
 		tess.colors[tess.numVertexes + i][2] = color[2] * (1.0f / 255.0f);
 		tess.colors[tess.numVertexes + i][3] = color[3] * (1.0f / 255.0f);
 	}
+
+	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD;
+
 	tess.numVertexes += numVertexes;
 }
 
@@ -933,6 +945,8 @@ void Tess_SurfaceDecal(srfDecal_t *srf)
 		tess.indexes[tess.numIndexes + 2] = tess.numVertexes + i + 2;
 		tess.numIndexes                  += 3;
 	}
+
+	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD;
 
 	tess.numVertexes += srf->numVerts;
 }
@@ -1044,6 +1058,8 @@ static void Tess_SurfaceFace(srfSurfaceFace_t *srf)
 		color[3] = dv->lightColor[3];
 	}
 
+	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL | ATTR_LIGHTCOORD;
+
 	tess.numVertexes += srf->numVerts;
 }
 
@@ -1133,6 +1149,8 @@ static void Tess_SurfaceGrid(srfGridMesh_t *srf)
 		color[3] = dv->lightColor[3];
 	}
 
+	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL | ATTR_LIGHTCOORD;
+
 	tess.numVertexes += srf->numVerts;
 }
 
@@ -1220,6 +1238,8 @@ static void Tess_SurfaceTriangles(srfTriangles_t *srf)
 		color[2] = dv->lightColor[2];
 		color[3] = dv->lightColor[3];
 	}
+
+	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL | ATTR_LIGHTCOORD;
 
 	tess.numVertexes += srf->numVerts;
 }
@@ -1360,6 +1380,7 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 		tess.numIndexes  += numIndexes;
 		tess.numVertexes += numVerts;
 	}
+	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD; // FIXME: add all
 #endif
 }
 
@@ -1510,6 +1531,8 @@ static void Tess_DoRailCore(const vec3_t start, const vec3_t end, const vec3_t u
 	tess.indexes[tess.numIndexes++] = vbase + 2;
 	tess.indexes[tess.numIndexes++] = vbase + 1;
 	tess.indexes[tess.numIndexes++] = vbase + 3;
+
+	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD;
 }
 
 /**
@@ -1585,6 +1608,8 @@ static void Tess_DoRailDiscs(int numSegs, const vec3_t start, const vec3_t dir, 
 		tess.indexes[tess.numIndexes++] = tess.numVertexes - 4 + 1;
 		tess.indexes[tess.numIndexes++] = tess.numVertexes - 4 + 2;
 	}
+
+	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD;
 }
 
 /**
@@ -1838,6 +1863,8 @@ static void Tess_SurfaceMDV(mdvSurface_t *srf)
 
 	tess.numIndexes  += numIndexes;
 	tess.numVertexes += numVertexes;
+
+	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL;
 }
 
 /**
@@ -1922,6 +1949,8 @@ static void Tess_SurfaceMD5(md5Surface_t *srf)
 			tess.texCoords[tess.numVertexes + j][2] = 0;
 			tess.texCoords[tess.numVertexes + j][3] = 1;
 		}
+
+		tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD | ATTR_BONE_INDEXES | ATTR_BONE_WEIGHTS;
 	}
 	else
 	{
@@ -2015,6 +2044,8 @@ static void Tess_SurfaceMD5(md5Surface_t *srf)
 			tess.normals[tess.numVertexes + j][2] = tmpNormal[2];
 			tess.normals[tess.numVertexes + j][3] = 1;
 		}
+
+		tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD | ATTR_BONE_INDEXES | ATTR_BONE_WEIGHTS | ATTR_TANGENT | ATTR_BINORMAL;
 	}
 
 	tess.numIndexes  += numIndexes;
@@ -2076,6 +2107,7 @@ static void Tess_SurfaceAxis(void)
 		tess.indexes[tess.numIndexes++] = tess.numVertexes;
 		tess.numVertexes++;
 	}
+	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR;
 #endif
 }
 
@@ -2238,6 +2270,7 @@ void Tess_SurfaceVBOMDVMesh(srfVBOMDVMesh_t *surface)
 
 	//glState.vertexAttribPointersSet = 0;
 	//GL_VertexAttribPointers(ATTR_BITS | ATTR_POSITION2 | ATTR_TANGENT2 | ATTR_BINORMAL2 | ATTR_NORMAL2);
+	//tess.attribsSet |= ATTR_BITS | ATTR_POSITION2 | ATTR_TANGENT2 | ATTR_BINORMAL2 | ATTR_NORMAL2;
 
 	Tess_End();
 }
@@ -2312,6 +2345,7 @@ static void Tess_SurfaceVBOMD5Mesh(srfVBOMD5Mesh_t *srf)
 	}
 
 	//GL_VertexAttribPointers(ATTR_BITS | ATTR_BONE_INDEXES | ATTR_BONE_WEIGHTS);
+	//tess.attribsSet |= ATTR_BITS | ATTR_BONE_INDEXES | ATTR_BONE_WEIGHTS;
 
 	Tess_End();
 }

@@ -266,9 +266,9 @@ void Tess_Begin(void (*stageIteratorFunc)(),
 	shader_t *state;
 	qboolean isSky;
 
-	tess.numIndexes  = 0;
-	tess.numVertexes = 0;
-
+	tess.numIndexes          = 0;
+	tess.numVertexes         = 0;
+	tess.attribsSet          = 0;
 	tess.multiDrawPrimitives = 0;
 
 	// materials are optional
@@ -371,7 +371,6 @@ static void Render_generic(int stage)
 
 	// u_AlphaTest
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
-
 
 	// u_ColorGen
 	switch (pStage->rgbGen)
@@ -3068,7 +3067,6 @@ static void SetIteratorFog()
 		return;
 	}
 
-	// FIXME: tr.world->hasSkyboxPortal is never set
 	if (tr.world && tr.world->hasSkyboxPortal && (backEnd.refdef.rdflags & RDF_SKYBOXPORTAL))
 	{
 		if (tr.glfogsettings[FOG_PORTALVIEW].registered)
@@ -3104,8 +3102,7 @@ void Tess_StageIteratorDebug()
 
 	if (!glState.currentVBO || !glState.currentIBO || glState.currentVBO == tess.vbo || glState.currentIBO == tess.ibo)
 	{
-		// FIXME analyze required vertex attribs by the current material
-		Tess_UpdateVBOs(0);
+		Tess_UpdateVBOs(tess.attribsSet);
 	}
 
 	Tess_DrawElements();
@@ -3209,8 +3206,7 @@ void Tess_StageIteratorGeneric()
 
 	if (!glState.currentVBO || !glState.currentIBO || glState.currentVBO == tess.vbo || glState.currentIBO == tess.ibo)
 	{
-		// FIXME analyze required vertex attribs by the current material
-		Tess_UpdateVBOs(0);
+		Tess_UpdateVBOs(tess.attribsSet);
 	}
 
 	if (tess.surfaceShader->fogVolume)
@@ -3415,7 +3411,7 @@ void Tess_StageIteratorDepthFill()
 
 	if (!glState.currentVBO || !glState.currentIBO || glState.currentVBO == tess.vbo || glState.currentIBO == tess.ibo)
 	{
-		Tess_UpdateVBOs(ATTR_POSITION | ATTR_TEXCOORD);
+		Tess_UpdateVBOs(tess.attribsSet);
 	}
 
 	// set face culling appropriately
@@ -3492,7 +3488,7 @@ void Tess_StageIteratorShadowFill()
 
 	if (!glState.currentVBO || !glState.currentIBO || glState.currentVBO == tess.vbo || glState.currentIBO == tess.ibo)
 	{
-		Tess_UpdateVBOs(ATTR_POSITION | ATTR_TEXCOORD);
+		Tess_UpdateVBOs(tess.attribsSet);
 	}
 
 	// set face culling appropriately
@@ -3572,8 +3568,7 @@ void Tess_StageIteratorLighting()
 
 	if (!glState.currentVBO || !glState.currentIBO || glState.currentVBO == tess.vbo || glState.currentIBO == tess.ibo)
 	{
-		// FIXME analyze required vertex attribs by the current material
-		Tess_UpdateVBOs(0);
+		Tess_UpdateVBOs(tess.attribsSet);
 	}
 
 	// set OpenGL state for lighting
@@ -3728,9 +3723,10 @@ void Tess_End()
 	tess.vboVertexSkinning = qfalse;
 
 	// clear shader so we can tell we don't have any unclosed surfaces
-	tess.multiDrawPrimitives = 0;
 	tess.numIndexes          = 0;
 	tess.numVertexes         = 0;
+	tess.attribsSet          = 0;
+	tess.multiDrawPrimitives = 0;
 
 	Ren_LogComment("--- Tess_End ---\n");
 

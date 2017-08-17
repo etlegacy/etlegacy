@@ -1732,7 +1732,7 @@ static void RB_RenderInteractionsShadowMapped()
 								Vector4Set(quadVerts[3], nearCorners[3][0], nearCorners[3][1], nearCorners[3][2], 1);
 								Tess_AddQuadStamp2(quadVerts, colorGreen);
 
-								Tess_UpdateVBOs(ATTR_POSITION | ATTR_COLOR);
+								Tess_UpdateVBOs(tess.attribsSet); // set by Tess_AddQuadStamp2
 								Tess_DrawElements();
 
 								// draw light volume
@@ -2783,7 +2783,7 @@ static void RenderLightOcclusionVolume(trRefLight_t *light)
 		{
 			Tess_AddCube(vec3_origin, light->localBounds[0], light->localBounds[1], colorWhite);
 
-			Tess_UpdateVBOs(ATTR_POSITION | ATTR_COLOR);
+			Tess_UpdateVBOs(tess.attribsSet); // set by Tess_AddCube
 			Tess_DrawElements();
 			break;
 		}
@@ -2868,7 +2868,7 @@ static void RenderLightOcclusionVolume(trRefLight_t *light)
 				Tess_AddQuadStamp2(quadVerts, colorRed);
 			}
 
-			Tess_UpdateVBOs(ATTR_POSITION | ATTR_COLOR);
+			Tess_UpdateVBOs(tess.attribsSet); // set by Tess_AddQuadStamp2
 			Tess_DrawElements();
 			break;
 		}
@@ -4342,7 +4342,7 @@ static void RB_RenderDebugUtils()
 							Tess_AddCube(light->l.center, minSize, maxSize, colorYellow);
 						}
 
-						Tess_UpdateVBOs(ATTR_POSITION | ATTR_COLOR);
+						Tess_UpdateVBOs(tess.attribsSet); // set by Tess_AddCube
 						Tess_DrawElements();
 #else
 						mat4_t transform, scale, rot;
@@ -4504,7 +4504,7 @@ static void RB_RenderDebugUtils()
 							Tess_AddCube(light->l.projEnd, minSize, maxSize, colorMagenta);
 						}
 
-						Tess_UpdateVBOs(ATTR_POSITION | ATTR_COLOR);
+						Tess_UpdateVBOs(tess.attribsSet); // set by Tess_AddCube
 						Tess_DrawElements();
 						break;
 					}
@@ -4690,7 +4690,7 @@ static void RB_RenderDebugUtils()
 				Tess_AddCube(vec3_origin, entity->localBounds[0], entity->localBounds[1], lightColor);
 			}
 
-			Tess_UpdateVBOs(ATTR_POSITION | ATTR_COLOR);
+			Tess_UpdateVBOs(tess.attribsSet); // set by Tess_AddCube
 			Tess_DrawElements();
 
 			tess.multiDrawPrimitives = 0;
@@ -4790,7 +4790,7 @@ static void RB_RenderDebugUtils()
 
 			Tess_AddCube(vec3_origin, mins, maxs, colorWhite);
 
-			Tess_UpdateVBOs(ATTR_POSITION | ATTR_COLOR);
+			Tess_UpdateVBOs(tess.attribsSet); // set by Tess_AddCube
 			Tess_DrawElements();
 
 			tess.multiDrawPrimitives = 0;
@@ -5471,7 +5471,7 @@ static void RB_RenderDebugUtils()
 					Vector4Set(quadVerts[3], nearCorners[3][0], nearCorners[3][1], nearCorners[3][2], 1);
 					Tess_AddQuadStamp2(quadVerts, colorGreen);
 
-					Tess_UpdateVBOs(ATTR_POSITION | ATTR_COLOR);
+					Tess_UpdateVBOs(tess.attribsSet); // set by Tess_AddQuadStamp2
 					Tess_DrawElements();
 
 					GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_CUSTOM_RGB, AGEN_CUSTOM);
@@ -6334,6 +6334,7 @@ const void *RB_SetColor(const void *data)
 	backEnd.color2D[2] = cmd->color[2];
 	backEnd.color2D[3] = cmd->color[3];
 
+	tess.attribsSet |= ATTR_COLOR;
 	return (const void *)(cmd + 1);
 }
 
@@ -6430,6 +6431,7 @@ const void *RB_StretchPic(const void *data)
 	tess.texCoords[numVerts + 3][2] = 0;
 	tess.texCoords[numVerts + 3][3] = 1;
 
+	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD;
 	return (const void *)(cmd + 1);
 }
 
@@ -6487,6 +6489,7 @@ const void *RB_Draw2dPolys(const void *data)
 		tess.numVertexes++;
 	}
 
+	tess.attribsSet |= ATTR_POSITION | ATTR_TEXCOORD | ATTR_COLOR;
 	return (const void *)(cmd + 1);
 }
 
@@ -6585,6 +6588,7 @@ const void *RB_RotatedPic(const void *data)
 	tess.texCoords[numVerts + 3][0] = cmd->s1;
 	tess.texCoords[numVerts + 3][1] = cmd->t2;
 
+	tess.attribsSet |= ATTR_POSITION | ATTR_TEXCOORD | ATTR_COLOR;
 	return (const void *)(cmd + 1);
 }
 
@@ -6674,6 +6678,7 @@ const void *RB_StretchPicGradient(const void *data)
 	tess.texCoords[numVerts + 3][0] = cmd->s1;
 	tess.texCoords[numVerts + 3][1] = cmd->t2;
 
+	tess.attribsSet |= ATTR_POSITION | ATTR_TEXCOORD | ATTR_COLOR;
 	return (const void *)(cmd + 1);
 }
 
