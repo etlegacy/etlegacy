@@ -630,13 +630,11 @@ void RE_RenderScene(const refdef_t *fd)
 	tr.refdef.time    = fd->time;
 	tr.refdef.rdflags = fd->rdflags;
 
-	/*
 	if(fd->rdflags & RDF_SKYBOXPORTAL)
 	{
-	    Com_Printf("^3skyboxportal = 1\n");
+	    //Com_Printf("^3skyboxportal = 1\n");
 	    tr.world->hasSkyboxPortal = qtrue; // see int skyboxportal var tr_scene.c/r1
 	}
-	*/
 
 	// copy the areamask data over and note if it has changed, which
 	// will force a reset of the visible leafs even if the view hasn't moved
