@@ -77,7 +77,9 @@ keyname_t keynames[] =
 
 	{ "ALT",             K_ALT            },
 	{ "CTRL",            K_CTRL           },
-	{ "SHIFT",           K_SHIFT          },
+	{ "SHIFT",           K_LSHIFT         },
+	{ "LEFTSHIFT",       K_LSHIFT         },
+	{ "RIGHTSHIFT",      K_RSHIFT         },
 
 	{ "COMMAND",         K_COMMAND        },
 
@@ -404,7 +406,7 @@ void Field_KeyDownEvent(field_t *edit, int key)
 	int len;
 
 	// shift-insert is paste
-	if (((key == K_INS) || (key == K_KP_INS)) && keys[K_SHIFT].down)
+	if (((key == K_INS) || (key == K_KP_INS)) && (keys[K_RSHIFT].down || keys[K_LSHIFT].down))
 	{
 		Field_Paste(edit);
 		return;
@@ -672,7 +674,7 @@ void Console_Key(int key)
 	// command history (ctrl-p ctrl-n for unix style)
 
 	// added some mousewheel functionality to the console
-	if ((key == K_MWHEELUP && keys[K_SHIFT].down) || (key == K_UPARROW) || (key == K_KP_UPARROW) ||
+	if ((key == K_MWHEELUP && (keys[K_RSHIFT].down || keys[K_LSHIFT].down)) || (key == K_UPARROW) || (key == K_KP_UPARROW) ||
 	    ((tolower(key) == 'p') && keys[K_CTRL].down))
 	{
 		if (nextHistoryLine - historyLine < COMMAND_HISTORY
@@ -686,7 +688,7 @@ void Console_Key(int key)
 	}
 
 	// added some mousewheel functionality to the console
-	if ((key == K_MWHEELDOWN && keys[K_SHIFT].down) || (key == K_DOWNARROW) || (key == K_KP_DOWNARROW) ||
+	if ((key == K_MWHEELDOWN && (keys[K_RSHIFT].down || keys[K_LSHIFT].down)) || (key == K_DOWNARROW) || (key == K_KP_DOWNARROW) ||
 	    ((tolower(key) == 'n') && keys[K_CTRL].down))
 	{
 		if (historyLine == nextHistoryLine)
@@ -1316,7 +1318,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 #endif
 
 	// console key is hardcoded, so the user can never unbind it
-	if (key == CONSOLE_KEY || (keys[K_SHIFT].down && key == K_ESCAPE))
+	if (key == CONSOLE_KEY || ((keys[K_RSHIFT].down || keys[K_LSHIFT].down) && key == K_ESCAPE))
 	{
 		if (!down)
 		{
