@@ -442,8 +442,9 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 		case SDLK_LSHIFT:
 		case SDLK_RSHIFT:       key = K_SHIFT;
 			break;
-		case SDLK_LCTRL:
-		case SDLK_RCTRL:        key = K_CTRL;
+		case SDLK_LCTRL:        key = K_LCTRL;
+			break;
+		case SDLK_RCTRL:        key = K_RCTRL;
 			break;
 
 #ifdef __APPLE__
@@ -1143,7 +1144,7 @@ static void IN_ProcessEvents(void)
 					// 8 == CTRL('h') == BS aka Backspace from ascii table
 					Com_QueueEvent(lasttime, SE_CHAR, CTRL('h'), 0, 0, NULL);
 				}
-				else if (keys[K_CTRL].down && key >= 'a' && key <= 'z')
+				else if ((keys[K_LCTRL].down || keys[K_RCTRL].down) && key >= 'a' && key <= 'z')
 				{
 					Com_QueueEvent(lasttime, SE_CHAR, CTRL(key), 0, 0, NULL);
 				}

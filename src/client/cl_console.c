@@ -75,7 +75,7 @@ void Con_ToggleConsole_f(void)
 		cls.keyCatchers |= KEYCATCH_CONSOLE;
 
 		// short console
-		if (keys[K_CTRL].down)
+		if (keys[K_LCTRL].down || keys[K_RCTRL].down)
 		{
 			con.desiredFrac = (4.0f * SMALLCHAR_HEIGHT) / cls.glconfig.vidHeight;
 		}
