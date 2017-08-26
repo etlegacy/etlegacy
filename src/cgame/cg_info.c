@@ -478,7 +478,8 @@ void CG_DemoClick(int key, qboolean down)
 			trap_Cvar_Set("demo_teamonlymissilecam", ((demo_teamonlymissilecam.integer == 0) ? "1" : "0"));
 		}
 		return;
-	case K_CTRL:
+	case K_LCTRL:
+	case K_RCTRL:
 		if (!down)
 		{
 			trap_Cvar_Set("demo_pvshint", ((demo_pvshint.integer == 0) ? "1" : "0"));
@@ -623,7 +624,7 @@ void CG_DemoClick(int key, qboolean down)
 	// Window controls
 	case K_LSHIFT:
 	case K_RSHIFT:
-	//case K_CTRL:
+  //case K_CTRL:
 	case K_MOUSE4:
 		cgs.fResize = down;
 		return;

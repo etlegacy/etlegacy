@@ -356,7 +356,7 @@ extern void UI_DrawConnectScreen(qboolean overlay);
 extern void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack);
 
 // Is this diffevent in other systems? OSX?
-#define K_CLIPBOARD(x) (tolower(x) == 'v' && DC->keyIsDown(K_CTRL))
+#define K_CLIPBOARD(x) (tolower(x) == 'v' && (DC->keyIsDown(K_LCTRL) || DC->keyIsDown(K_RCTRL)))
 
 // new ui stuff
 #define MAX_HEADS 64

@@ -76,7 +76,11 @@ keyname_t keynames[] =
 	{ "RIGHTARROW",      K_RIGHTARROW     },
 
 	{ "ALT",             K_ALT            },
-	{ "CTRL",            K_CTRL           },
+
+	{ "CTRL",            K_LCTRL          },
+	{ "LEFTCTRL",        K_LCTRL          },
+	{ "RIGHTCTRL",       K_RCTRL          },
+  
 	{ "SHIFT",           K_LSHIFT         },
 	{ "LEFTSHIFT",       K_LSHIFT         },
 	{ "RIGHTSHIFT",      K_RSHIFT         },
@@ -444,7 +448,7 @@ void Field_KeyDownEvent(field_t *edit, int key)
 		edit->cursor = 0;
 		break;
 	case 'a':
-		if (keys[K_CTRL].down)
+		if (keys[K_LCTRL].down || keys[K_RCTRL].down)
 		{
 			edit->cursor = 0;
 		}
@@ -454,7 +458,7 @@ void Field_KeyDownEvent(field_t *edit, int key)
 		edit->cursor = len;
 		break;
 	case 'e':
-		if (keys[K_CTRL].down)
+		if (keys[K_LCTRL].down || keys[K_RCTRL].down)
 		{
 			edit->cursor = len;
 		}
@@ -575,7 +579,7 @@ CONSOLE LINE EDITING
 void Console_Key(int key)
 {
 	// ctrl-L clears screen
-	if (key == 'l' && keys[K_CTRL].down)
+	if (key == 'l' && (keys[K_LCTRL].down || keys[K_RCTRL].down))
 	{
 		Cbuf_AddText("clear\n");
 		return;
@@ -675,7 +679,7 @@ void Console_Key(int key)
 
 	// added some mousewheel functionality to the console
 	if ((key == K_MWHEELUP && (keys[K_RSHIFT].down || keys[K_LSHIFT].down)) || (key == K_UPARROW) || (key == K_KP_UPARROW) ||
-	    ((tolower(key) == 'p') && keys[K_CTRL].down))
+	    ((tolower(key) == 'p') && (keys[K_LCTRL].down || keys[K_RCTRL].down)))
 	{
 		if (nextHistoryLine - historyLine < COMMAND_HISTORY
 		    && historyLine > 0)
@@ -688,8 +692,9 @@ void Console_Key(int key)
 	}
 
 	// added some mousewheel functionality to the console
+
 	if ((key == K_MWHEELDOWN && (keys[K_RSHIFT].down || keys[K_LSHIFT].down)) || (key == K_DOWNARROW) || (key == K_KP_DOWNARROW) ||
-	    ((tolower(key) == 'n') && keys[K_CTRL].down))
+	    ((tolower(key) == 'n') && (keys[K_LCTRL].down || keys[K_RCTRL].down)))
 	{
 		if (historyLine == nextHistoryLine)
 		{
@@ -716,7 +721,7 @@ void Console_Key(int key)
 
 	if (key == K_MWHEELUP)           // added some mousewheel functionality to the console
 	{
-		if (keys[K_CTRL].down)       // hold <ctrl> to accelerate scrolling
+		if (keys[K_LCTRL].down || keys[K_RCTRL].down) // hold <ctrl> to accelerate scrolling
 		{
 			Con_ScrollUp(con.visibleLines);
 		}
@@ -729,7 +734,7 @@ void Console_Key(int key)
 
 	if (key == K_MWHEELDOWN)         // added some mousewheel functionality to the console
 	{
-		if (keys[K_CTRL].down)       // hold <ctrl> to accelerate scrolling
+		if (keys[K_LCTRL].down || keys[K_RCTRL].down) // hold <ctrl> to accelerate scrolling
 		{
 			Con_ScrollDown(con.visibleLines);
 		}
@@ -741,14 +746,14 @@ void Console_Key(int key)
 	}
 
 	// ctrl-home = top of console
-	if ((key == K_HOME || key == K_KP_HOME) && keys[K_CTRL].down)
+	if ((key == K_HOME || key == K_KP_HOME) && (keys[K_LCTRL].down || keys[K_RCTRL].down))
 	{
 		Con_ScrollTop();
 		return;
 	}
 
 	// ctrl-end = bottom of console
-	if ((key == K_END || key == K_KP_END) && keys[K_CTRL].down)
+	if ((key == K_END || key == K_KP_END) && (keys[K_LCTRL].down || keys[K_RCTRL].down))
 	{
 		Con_ScrollBottom();
 		return;
