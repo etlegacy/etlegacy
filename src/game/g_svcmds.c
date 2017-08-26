@@ -894,6 +894,7 @@ void Svcmd_ShuffleTeamsXP_f(qboolean restart)
 	}
 }
 
+#ifdef FEATURE_RATING
 /**
  * @brief randomly places players on teams
  * @param[in] restart
@@ -919,6 +920,7 @@ void Svcmd_ShuffleTeamsSR_f(qboolean restart)
 		Svcmd_ResetMatch_f(qfalse, qtrue);
 	}
 }
+#endif
 
 /**
  * @brief Svcmd_Campaign_f
@@ -2462,6 +2464,7 @@ qboolean ConsoleCommand(void)
 		Svcmd_ShuffleTeamsXP_f(qfalse);
 		return qtrue;
 	}
+#ifdef FEATURE_RATING
 	else if (Q_stricmp(cmd, "shuffle_teams_sr") == 0)
 	{
 		Svcmd_ShuffleTeamsSR_f(qtrue);
@@ -2472,6 +2475,7 @@ qboolean ConsoleCommand(void)
 		Svcmd_ShuffleTeamsSR_f(qfalse);
 		return qtrue;
 	}
+#endif
 	else if (Q_stricmp(cmd, "makeReferee") == 0)
 	{
 		G_MakeReferee();
