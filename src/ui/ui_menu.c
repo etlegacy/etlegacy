@@ -1171,7 +1171,7 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 		Item_KeyboardActivate(item);
 		break;
 	case K_TAB:
-		if (DC->keyIsDown(K_SHIFT))
+		if (DC->keyIsDown(K_LSHIFT) || DC->keyIsDown(K_RSHIFT))
 		{
 			Menu_SetPrevCursorItem(menu);
 		}

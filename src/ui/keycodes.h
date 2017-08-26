@@ -60,7 +60,8 @@ typedef enum
 
 	K_ALT,
 	K_CTRL,
-	K_SHIFT,
+	K_LSHIFT,
+	K_RSHIFT,
 	K_INS,
 	K_DEL,
 	K_PGDN,
