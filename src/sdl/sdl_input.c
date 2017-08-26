@@ -458,8 +458,9 @@ static keyNum_t IN_TranslateSDLToQ3Key(SDL_Keysym *keysym, qboolean down)
 			break;
 #endif
 
-		case SDLK_RALT:
-		case SDLK_LALT:         key = K_ALT;
+		case SDLK_RALT:         key = K_RALT;
+			break;
+		case SDLK_LALT:         key = K_LALT;
 			break;
 
 		case SDLK_INSERT:       key = K_INS;

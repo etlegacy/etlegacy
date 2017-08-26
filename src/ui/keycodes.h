@@ -58,15 +58,10 @@ typedef enum
 	K_LEFTARROW,
 	K_RIGHTARROW,
 
-	K_ALT,
-  
-	K_LCTRL,
-	K_RCTRL,
-	//K_SHIFT,
-	//K_CTRL,
-	K_LSHIFT,
-	K_RSHIFT,
-  
+	K_LALT,   // K_ALT
+	K_LCTRL,  // K_CTRL
+	K_LSHIFT, // K_SHIFT
+
 	K_INS,
 	K_DEL,
 	K_PGDN,
@@ -206,6 +201,10 @@ typedef enum
 
 	// Pseudo-key that brings the console down
 	K_CONSOLE,
+
+	K_RALT,
+	K_RCTRL,
+	K_RSHIFT,
 
 	MAX_KEYS
 } keyNum_t;
