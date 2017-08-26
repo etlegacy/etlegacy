@@ -622,9 +622,9 @@ void CG_DemoClick(int key, qboolean down)
 		}
 		return;
 	// Window controls
-	case K_SHIFT:
-	//case K_LCTRL:
-	//case K_RCTRL:
+	case K_LSHIFT:
+	case K_RSHIFT:
+  //case K_CTRL:
 	case K_MOUSE4:
 		cgs.fResize = down;
 		return;
@@ -652,7 +652,7 @@ void CG_DemoClick(int key, qboolean down)
 		}
 		return;
 	case K_MWHEELDOWN:
-		if (!cgs.fKeyPressed[K_SHIFT])
+		if (!(cgs.fKeyPressed[K_RSHIFT] || cgs.fKeyPressed[K_LSHIFT]))
 		{
 			if (!down)
 			{
@@ -675,7 +675,7 @@ void CG_DemoClick(int key, qboolean down)
 		}
 		return;
 	case K_MWHEELUP:
-		if (!cgs.fKeyPressed[K_SHIFT])
+		if (!(cgs.fKeyPressed[K_RSHIFT] || cgs.fKeyPressed[K_LSHIFT]))
 		{
 			if (!down)
 			{

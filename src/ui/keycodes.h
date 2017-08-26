@@ -59,9 +59,14 @@ typedef enum
 	K_RIGHTARROW,
 
 	K_ALT,
+  
 	K_LCTRL,
 	K_RCTRL,
-	K_SHIFT,
+	//K_SHIFT,
+	//K_CTRL,
+	K_LSHIFT,
+	K_RSHIFT,
+  
 	K_INS,
 	K_DEL,
 	K_PGDN,

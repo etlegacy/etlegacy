@@ -1210,9 +1210,12 @@ void CG_mv_KeyHandling(int key, qboolean down)
 		}
 		return;
 	// Window controls
-	case K_SHIFT:
+	//case K_SHIFT:
 	case K_LCTRL:
 	case K_RCTRL:
+	case K_LSHIFT:
+	case K_RSHIFT:
+	//case K_CTRL:
 	case K_MOUSE4:
 		cgs.fResize = down;
 		return;
