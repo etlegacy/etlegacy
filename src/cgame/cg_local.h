@@ -2187,7 +2187,7 @@ typedef struct cgs_s
 	objectives_t objectives;
 	qboolean fResize;                                   ///< MV window "resize" status
 	qboolean fSelect;                                   ///< MV window "select" status
-	qboolean fKeyPressed[256];                          ///< Key status to get around console issues
+	qboolean fKeyPressed[MAX_KEYS];                     ///< Key status to get around console issues
 	int timescaleUpdate;                                ///< Timescale display for demo playback
 	int thirdpersonUpdate;
 
