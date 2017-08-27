@@ -1569,6 +1569,7 @@ int QDECL G_SortPlayersByXP(const void *a, const void *b)
 	return 0;
 }
 
+#ifdef FEATURE_RATING
 /**
  * @brief G_SortPlayersBySR
  * @param[in] a
@@ -1591,6 +1592,7 @@ int QDECL G_SortPlayersBySR(const void *a, const void *b)
 
 	return 0;
 }
+#endif
 
 /**
  * @brief Shuffle active players onto teams
@@ -1649,6 +1651,7 @@ void G_shuffleTeamsXP(void)
 }
 
 
+#ifdef FEATURE_RATING
 /**
  * @brief Shuffle active players onto teams by skill rating
  */
@@ -1718,6 +1721,7 @@ void G_shuffleTeamsSR(void)
 
 	AP("cp \"^1Teams have been shuffled by Skill Rating!\n\"");
 }
+#endif
 
 /**
  * @brief Determine if the "ready" player threshold has been reached.
