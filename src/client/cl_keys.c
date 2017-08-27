@@ -75,15 +75,17 @@ keyname_t keynames[] =
 	{ "LEFTARROW",       K_LEFTARROW      },
 	{ "RIGHTARROW",      K_RIGHTARROW     },
 
-	{ "ALT",             K_ALT            },
+	{ "RIGHTALT",        K_RALT           },
+	{ "LEFTALT",         K_LALT           },
+	{ "ALT",             K_LALT           },
 
-	{ "CTRL",            K_LCTRL          },
-	{ "LEFTCTRL",        K_LCTRL          },
 	{ "RIGHTCTRL",       K_RCTRL          },
-  
-	{ "SHIFT",           K_LSHIFT         },
-	{ "LEFTSHIFT",       K_LSHIFT         },
+	{ "LEFTCTRL",        K_LCTRL          },
+	{ "CTRL",            K_LCTRL          },
+
 	{ "RIGHTSHIFT",      K_RSHIFT         },
+	{ "LEFTSHIFT",       K_LSHIFT         },
+	{ "SHIFT",           K_LSHIFT         },
 
 	{ "COMMAND",         K_COMMAND        },
 
@@ -1279,7 +1281,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 	{
 		if (down)
 		{
-			if (keys[K_ALT].down)
+			if (keys[K_LALT].down || keys[K_RALT].down)
 			{
 				Key_ClearStates();
 				if (Cvar_VariableIntegerValue("r_fullscreen"))
@@ -1312,7 +1314,7 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 	{
 		if (down)
 		{
-			if (keys[K_ALT].down)
+			if (keys[K_LALT].down || keys[K_RALT].down)
 			{
 				Key_ClearStates();
 				Cbuf_ExecuteText(EXEC_NOW, "minimize");

@@ -341,7 +341,7 @@ void CG_DemoClick(int key, qboolean down)
 	if (cg.demohelpWindow == SHOW_ON)
 	{
 		// pull up extended helpmenu
-		if (cgs.currentMenuLevel == ML_MAIN && key == K_ALT)
+		if (cgs.currentMenuLevel == ML_MAIN && (key == K_LALT || key == K_RALT))
 		{
 			cgs.currentMenuLevel = ML_EDV;
 			return;

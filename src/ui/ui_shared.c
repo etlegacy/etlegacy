@@ -765,7 +765,7 @@ static bind_t g_bindings[] =
 	{ "+reload",          'r',             -1,  K_END,           -1,  -1, -1, -1 },
 	{ "kill",             'k',             -1,  'k',             -1,  -1, -1, -1 },
 	{ "+scores",          K_TAB,           -1,  K_TAB,           -1,  -1, -1, -1 },
-	{ "+stats",           K_ALT,           -1,  K_F9,            -1,  -1, -1, -1 },
+	{ "+stats",           K_LALT,          -1,  K_F9,            -1,  -1, -1, -1 },
 	{ "+topshots",        K_LCTRL,         -1,  K_F10,           -1,  -1, -1, -1 },
 	{ "+objectives",      'o',             -1,  'o',             -1,  -1, -1, -1 },
 	{ "toggleconsole",    '`',             '~', '`',             '~', -1, -1, -1 },
