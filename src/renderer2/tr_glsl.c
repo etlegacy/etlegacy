@@ -518,6 +518,7 @@ static void GLSL_PrintInfoLog(GLhandleARB object, qboolean developerOnly, qboole
 	}
 }
 
+#if 0
 /**
  * @brief GLSL_PrintShaderSource
  * @param[in] object
@@ -543,6 +544,7 @@ static void GLSL_PrintShaderSource(GLhandleARB object)
 
 	ri.Hunk_FreeTempMemory(msg);
 }
+#endif
 
 /**
  * @brief GLSL_LoadShaderBinary
@@ -3175,11 +3177,13 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 {
 	if (!glState.currentVBO)
 	{
-		Ren_Fatal("GL_VertexAttribPointers: no VBO bound");
+		// FIXME: this occures on maps with portal skies (uje_marketgarden) and r_wolffog 0 
+		// beside the general fog issue with portal skies it seems there is no valid portal sky VBO 
+		Ren_Fatal("GLSL_VertexAttribPointers: no current VBO bound");
 		//return;
 	}
 
-	Ren_LogComment("--- GL_VertexAttribPointers( %s ) ---\n", glState.currentVBO->name);
+	Ren_LogComment("--- GLSL_VertexAttribPointers( %s ) ---\n", glState.currentVBO->name);
 
 	if (glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning)
 	{
