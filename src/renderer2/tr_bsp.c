@@ -3953,7 +3953,7 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 		}
 	}
 
-	Ren_Developer("...loaded %d faces, %i meshes, %i trisurfs, %i flares %i foliages\n", numFaces, numMeshes, numTriSurfs,
+	Ren_Print("...loaded %d faces, %i meshes, %i trisurfs, %i flares %i foliages\n", numFaces, numMeshes, numTriSurfs,
 	              numFlares, numFoliages);
 
 	if (r_stitchCurves->integer)
