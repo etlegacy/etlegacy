@@ -186,7 +186,7 @@ void Tess_AddQuadStampExt(vec3_t origin, vec3_t left, vec3_t up, const vec4_t co
 	tess.numVertexes += 4;
 	tess.numIndexes  += 6;
 
-	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD; // ATTR_NORMAL?
+	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD | ATTR_NORMAL;
 }
 
 /**
@@ -849,6 +849,8 @@ static void Tess_SurfacePolychain(srfPoly_t *p)
 		VectorArrayNormalize((vec4_t *) tess.tangents[tess.numVertexes], numVertexes);
 		VectorArrayNormalize((vec4_t *) tess.binormals[tess.numVertexes], numVertexes);
 		VectorArrayNormalize((vec4_t *) tess.normals[tess.numVertexes], numVertexes);
+
+		tess.attribsSet |= ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL;
 	}
 #endif
 	tess.attribsSet |= ATTR_POSITION | ATTR_TEXCOORD | ATTR_COLOR;
@@ -1380,7 +1382,7 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 		tess.numIndexes  += numIndexes;
 		tess.numVertexes += numVerts;
 	}
-	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD; // FIXME: add all
+	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD | ATTR_NORMAL | ATTR_LIGHTCOORD;
 #endif
 }
 

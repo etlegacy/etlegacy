@@ -6334,7 +6334,6 @@ const void *RB_SetColor(const void *data)
 	backEnd.color2D[2] = cmd->color[2];
 	backEnd.color2D[3] = cmd->color[3];
 
-	tess.attribsSet |= ATTR_COLOR;
 	return (const void *)(cmd + 1);
 }
 
@@ -6431,7 +6430,7 @@ const void *RB_StretchPic(const void *data)
 	tess.texCoords[numVerts + 3][2] = 0;
 	tess.texCoords[numVerts + 3][3] = 1;
 
-	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD;
+	tess.attribsSet |= ATTR_POSITION | ATTR_TEXCOORD | ATTR_COLOR;
 	return (const void *)(cmd + 1);
 }
 
