@@ -252,11 +252,9 @@ static void CG_TransitionSnapshot(void)
 	CG_ExecuteNewServerCommands(cg.nextSnap->serverCommandSequence);
 
 	// if we had a map_restart, set everthing with initial
-
-	if (!(cg.snap) || !(cg.nextSnap))
-	{
-		return;
-	}
+	//if (cg.mapRestart)
+	//{
+	//}
 
 	// I hate doing things like this for enums.  Oh well.
 	Com_Memset(&oldValid, 0, sizeof(oldValid));
