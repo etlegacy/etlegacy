@@ -1771,7 +1771,7 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
  */
 void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, mapScissor_t *scissor, int expand)
 {
-	if (IS_MORTAR_WEAPON_SET(cg.lastFiredWeapon) && cg.mortarImpactTime >= 0)
+	if (GetWeaponTableData(cg.lastFiredWeapon)->isMortarSet && cg.mortarImpactTime >= 0)
 	{
 		if (cg.snap->ps.weapon != WP_MORTAR_SET && cg.snap->ps.weapon != WP_MORTAR2_SET)
 		{

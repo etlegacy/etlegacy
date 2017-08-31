@@ -2390,7 +2390,7 @@ void landmine_setup(gentity_t *ent)
 	ent->r.ownerNum = ENTITYNUM_WORLD;
 
 	ent->damage       = GetWeaponTableData(WP_LANDMINE)->damage;     // overridden for dynamite
-	ent->splashDamage = GetWeaponTableData(WP_LANDMINE)->damage;
+	ent->splashDamage = GetWeaponTableData(WP_LANDMINE)->splashDamage;
 
 	ent->accuracy            = 0;
 	ent->classname           = "landmine";

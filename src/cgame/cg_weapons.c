@@ -2368,7 +2368,7 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 		angles[PITCH] = cg.refdefViewAngles[PITCH] / 1.2f;
 	}
 
-	if (!cg.renderingThirdPerson && (IS_MORTAR_WEAPON_SET(cg.predictedPlayerState.weapon) || IS_MG_WEAPON_SET(cg.predictedPlayerState.weapon)) &&
+	if (!cg.renderingThirdPerson && GetWeaponTableData(cg.predictedPlayerState.weapon)->isSetWeapon &&
 	    cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 	{
 		angles[PITCH] = cg.pmext.mountedWeaponAngles[PITCH];
@@ -2614,7 +2614,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 	weapon = &cg_weapons[weaponNum];
 
-	if (IS_AKIMBO_WEAPON(weaponNum))
+	if (GetWeaponTableData(weaponNum)->isAkimbo)
 	{
 		if (isPlayer)
 		{
@@ -2716,7 +2716,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 	firing = ((cent->currentState.eFlags & EF_FIRING) != 0);
 
-	if (ps && !cg.renderingThirdPerson && IS_MORTAR_WEAPON_SET(cg.predictedPlayerState.weapon) && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
+	if (ps && !cg.renderingThirdPerson && GetWeaponTableData(cg.predictedPlayerState.weapon)->isMortarSet && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 	{
 		vec3_t angles;
 
@@ -2727,7 +2727,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 		CG_PositionRotatedEntityOnTag(&gun, parent, "tag_weapon");
 	}
-	else if ((!ps || cg.renderingThirdPerson) && IS_MORTAR_WEAPON(weaponNum))
+	else if ((!ps || cg.renderingThirdPerson) && GetWeaponTableData(weaponNum)->isMortar)
 	{
 		CG_PositionEntityOnTag(&gun, parent, "tag_weapon2", 0, NULL);
 	}
@@ -2804,7 +2804,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 		Com_Memset(&brass, 0, sizeof(brass));
 
-		if (IS_AKIMBO_WEAPON(weaponNum) && akimboFire)
+		if (GetWeaponTableData(weaponNum)->isAkimbo && akimboFire)
 		{
 			CG_PositionRotatedEntityOnTag(&brass, parent, "tag_brass2");
 		}
@@ -2832,7 +2832,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 		for (i = W_PART_1; i < W_MAX_PARTS; i++)
 		{
-			if (IS_MORTAR_WEAPON_SET(weaponNum) && (i == W_PART_4 || i == W_PART_5))
+			if (GetWeaponTableData(weaponNum)->isMortarSet && (i == W_PART_4 || i == W_PART_5))
 			{
 				if (ps && !cg.renderingThirdPerson && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 				{
@@ -2843,7 +2843,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			spunpart      = qfalse;
 			barrel.hModel = weapon->partModels[W_FP_MODEL][i].model;
 
-			if (IS_MORTAR_WEAPON_SET(weaponNum))
+			if (GetWeaponTableData(weaponNum)->isMortarSet)
 			{
 				if (i == W_PART_3)
 				{
@@ -2886,7 +2886,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 				drawpart = CG_GetPartFramesFromWeap(cent, &barrel, parent, i, weapon);
 
-				if (IS_MORTAR_WEAPON_SET(weaponNum) && (i == W_PART_1 || i == W_PART_2))
+				if (GetWeaponTableData(weaponNum)->isMortarSet && (i == W_PART_1 || i == W_PART_2))
 				{
 					if (ps && !cg.renderingThirdPerson && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 					{
@@ -2976,7 +2976,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 						satchelDetPart.customShader = weapon->modModels[2];
 						CG_AddWeaponWithPowerups(&satchelDetPart, cent->currentState.powerups, ps, cent);
 					}
-					else if (IS_MORTAR_WEAPON_SET(weaponNum) && i == W_PART_3)
+					else if (GetWeaponTableData(weaponNum)->isMortarSet && i == W_PART_3)
 					{
 						if (ps && !cg.renderingThirdPerson && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 						{
@@ -3137,7 +3137,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	angles[ROLL]  = crandom() * 10;
 	AnglesToAxis(angles, flash.axis);
 
-	if (/*isPlayer &&*/ IS_AKIMBO_WEAPON(weaponNum))
+	if (/*isPlayer &&*/ GetWeaponTableData(weaponNum)->isAkimbo)
 	{
 		if (!ps || cg.renderingThirdPerson)
 		{
@@ -3182,7 +3182,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		// continuous smoke after firing
 		if (ps || cg.renderingThirdPerson || !isPlayer)
 		{
-			if (weaponNum == WP_STEN || IS_MG_WEAPON(weaponNum) || IS_MG_WEAPON_SET(weaponNum))
+			if (weaponNum == WP_STEN || GetWeaponTableData(weaponNum)->isMG || GetWeaponTableData(weaponNum)->isMGSet)
 			{
 				// hot smoking gun
 				if ((cg.time - cent->overheatTime < 3000) && !(cent->currentState.powerups & (1 << PW_INVULNERABLE)))
@@ -3196,7 +3196,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 					}
 				}
 			}
-			else if (IS_PANZER_WEAPON(weaponNum))
+			else if (GetWeaponTableData(weaponNum)->isPanzer)
 			{
 				if (cg.time - cent->muzzleFlashTime < BARREL_SMOKE_TIME)
 				{
@@ -3211,7 +3211,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			}
 		}
 
-		if (IS_MORTAR_WEAPON_SET(weaponNum))
+		if (GetWeaponTableData(weaponNum)->isMortarSet)
 		{
 			if (ps && !cg.renderingThirdPerson && cg.time - cent->muzzleFlashTime < 800)
 			{
@@ -3231,25 +3231,9 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	}
 
 	// weapons that don't need to go any further as they have no flash or light
-	// FIXME: weapon table
-	switch (weaponNum)
+	if (GetWeaponTableData(weaponNum)->noMuzzleFlash)
 	{
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_KNIFE:
-	case WP_KNIFE_KABAR:
-	case WP_DYNAMITE:
-	case WP_GPG40:
-	case WP_M7:
-	case WP_LANDMINE:
-	case WP_SATCHEL:
-	case WP_SATCHEL_DET:
-	case WP_SMOKE_BOMB:
-	case WP_MEDIC_SYRINGE:
-	case WP_MEDIC_ADRENALINE:
 		return;
-	default:
-		break;
 	}
 
 	// weaps with barrel smoke
@@ -4183,55 +4167,55 @@ void CG_AltWeapon_f(void)
 
 		switch (cg.weaponSelect)
 		{
-			case WP_DYNAMITE:
-				trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "FTExploreArea"));
-				break; //return;
-			case WP_SMOKE_BOMB:
-				switch((rand() % 2))
-				{
-					case 0:
-						trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "FTGoUndercover"));
-						break;
-					case 1:
-						trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "FTInfiltrate"));
-						break;
-				}
-				break; //return;
-			case WP_SMOKE_MARKER:
-			case WP_GRENADE_LAUNCHER:
-			case WP_GRENADE_PINEAPPLE:
-				trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "FireInTheHole"));
-				break; //return;
-			case WP_PLIERS:
-				switch((rand() % 3))
-				{
-					case 0:
-						trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "CoverMe"));
-						break;
-					case 1:
-						trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "NeedBackup"));
-						break;
-					case 2:
-						trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "ClearPath"));
-						break;
-				}
-				break; //return;
-			case WP_SATCHEL:
-				trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "LetsGo"));
-				break; //return;
-			case WP_MEDKIT:
-			case WP_MEDIC_SYRINGE:
-				trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "IamMedic"));
-				break; //return;
-			case WP_AMMO:
-				trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "IamFieldOps"));
-				break; // return;
-				// add others ...
-				//case WP_POISON_SYRINGE:
-				//trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "EnemyWeak"));
-				//return;
-			default:
+		case WP_DYNAMITE:
+			trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "FTExploreArea"));
+			break;     //return;
+		case WP_SMOKE_BOMB:
+			switch ((rand() % 2))
+			{
+			case 0:
+				trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "FTGoUndercover"));
 				break;
+			case 1:
+				trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "FTInfiltrate"));
+				break;
+			}
+			break;     //return;
+		case WP_SMOKE_MARKER:
+		case WP_GRENADE_LAUNCHER:
+		case WP_GRENADE_PINEAPPLE:
+			trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "FireInTheHole"));
+			break;     //return;
+		case WP_PLIERS:
+			switch ((rand() % 3))
+			{
+			case 0:
+				trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "CoverMe"));
+				break;
+			case 1:
+				trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "NeedBackup"));
+				break;
+			case 2:
+				trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "ClearPath"));
+				break;
+			}
+			break;     //return;
+		case WP_SATCHEL:
+			trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "LetsGo"));
+			break;     //return;
+		case WP_MEDKIT:
+		case WP_MEDIC_SYRINGE:
+			trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "IamMedic"));
+			break;     //return;
+		case WP_AMMO:
+			trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "IamFieldOps"));
+			break;     // return;
+		// add others ...
+		//case WP_POISON_SYRINGE:
+		//trap_SendConsoleCommand(va("cmd %s %s\n", cmd, "EnemyWeak"));
+		//return;
+		default:
+			break;
 		}
 	}
 
@@ -4282,7 +4266,7 @@ void CG_AltWeapon_f(void)
 			return;
 		}
 	}
-	else if (IS_MG_WEAPON(cg.weaponSelect))
+	else if (GetWeaponTableData(cg.weaponSelect)->isMG)
 	{
 		if (!(cg.predictedPlayerState.eFlags & EF_PRONE))
 		{
@@ -4397,7 +4381,7 @@ void CG_NextWeap(qboolean switchBanks)
 	qboolean nextbank = qfalse;     // need to switch to the next bank of weapons?
 	int      i;
 
-	if (IS_MORTAR_WEAPON_SET(curweap) || IS_MG_WEAPON_SET(curweap))
+	if (GetWeaponTableData(curweap)->isSetWeapon)
 	{
 		return;
 	}
@@ -4624,7 +4608,7 @@ void CG_PrevWeap(qboolean switchBanks)
 	qboolean prevbank = qfalse;     // need to switch to the next bank of weapons?
 	int      i;
 
-	if (IS_MORTAR_WEAPON_SET(curweap) || IS_MG_WEAPON_SET(curweap))
+	if (GetWeaponTableData(curweap)->isSetWeapon)
 	{
 		return;
 	}
@@ -4847,7 +4831,7 @@ void CG_LastWeaponUsed_f(void)
 
 	}
 
-	if (IS_MORTAR_WEAPON_SET(cg.weaponSelect) || IS_MG_WEAPON_SET(cg.weaponSelect))
+	if (GetWeaponTableData(cg.weaponSelect)->isSetWeapon)
 	{
 		return;
 	}
@@ -5112,7 +5096,7 @@ void CG_WeaponBank_f(void)
 
 	}
 
-	if (IS_MORTAR_WEAPON_SET(cg.weaponSelect) || IS_MG_WEAPON_SET(cg.weaponSelect))
+	if (GetWeaponTableData(cg.weaponSelect)->isSetWeapon)
 	{
 		return;
 	}
@@ -5253,7 +5237,7 @@ void CG_Weapon_f(void)
 		return;
 	}
 
-	if (IS_MORTAR_WEAPON_SET(cg.weaponSelect) || IS_MG_WEAPON_SET(cg.weaponSelect))
+	if (GetWeaponTableData(cg.weaponSelect)->isSetWeapon)
 	{
 		return;
 	}
@@ -5689,7 +5673,7 @@ void CG_FireWeapon(centity_t *cent)
 		CG_WeaponFireRecoil(ent->weapon);
 	}
 
-	if (IS_MORTAR_WEAPON_SET(ent->weapon))
+	if (GetWeaponTableData(ent->weapon)->isMortarSet)
 	{
 		if (ent->clientNum == cg.snap->ps.clientNum)
 		{
@@ -6919,7 +6903,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 			VectorCopy(cg.snap->ps.origin, muzzle);
 			muzzle[2] += cg.snap->ps.viewheight;
 			AngleVectors(cg.snap->ps.viewangles, forward, NULL, NULL);
-			if (IS_MG_WEAPON_SET(cg.snap->ps.weapon))
+			if (GetWeaponTableData(cg.snap->ps.weapon)->isMGSet)
 			{
 				VectorMA(muzzle, 36, forward, muzzle);
 			}
@@ -6982,7 +6966,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 		if (cent->currentState.eFlags & EF_PRONE)
 		{
 			muzzle[2] += PRONE_VIEWHEIGHT;
-			if (IS_MG_WEAPON_SET(cent->currentState.weapon))
+			if (GetWeaponTableData(cent->currentState.weapon)->isMGSet)
 			{
 				VectorMA(muzzle, 36, forward, muzzle);
 			}

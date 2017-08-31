@@ -254,7 +254,7 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 	temp->s.weapon    = ent->s.weapon;
 	temp->s.clientNum = ent->r.ownerNum;
 
-	if (IS_MORTAR_WEAPON_SET(ent->s.weapon))
+	if (GetWeaponTableData(ent->s.weapon))
 	{
 		temp->s.legsAnim = ent->s.legsAnim; // need this one as well
 		temp->r.svFlags |= SVF_BROADCAST;
@@ -425,19 +425,7 @@ void G_ExplodeMissile(gentity_t *ent)
 		}
 
 		// give big weapons the shakey shakey
-		// FIXME: weapon table
-		switch (ent->s.weapon)
-		{
-		case WP_DYNAMITE:
-		case WP_PANZERFAUST:
-		case WP_BAZOOKA:
-		case WP_GRENADE_LAUNCHER:
-		case WP_GRENADE_PINEAPPLE:
-		case WP_MAPMORTAR:
-		case WP_ARTY:
-		case WP_SMOKE_MARKER:
-		case WP_LANDMINE:
-		case WP_SATCHEL:
+		if (GetWeaponTableData(ent->s.weapon)->shakeEffect)
 		{
 			gentity_t *tent;
 
@@ -445,10 +433,6 @@ void G_ExplodeMissile(gentity_t *ent)
 
 			tent->s.onFireStart = ent->splashDamage * 4;
 			tent->r.svFlags    |= SVF_BROADCAST;
-		}
-		break;
-		default:
-			break;
 		}
 	}
 }
@@ -517,7 +501,7 @@ void G_RunMissile(gentity_t *ent)
 	}
 
 	if (level.tracemapLoaded &&
-	    (IS_MORTAR_WEAPON_SET(ent->s.weapon) ||
+	    (GetWeaponTableData(ent->s.weapon) ||
 	     ent->s.weapon == WP_GPG40 ||
 	     ent->s.weapon == WP_M7 ||
 	     ent->s.weapon == WP_GRENADE_LAUNCHER ||
@@ -596,7 +580,7 @@ void G_RunMissile(gentity_t *ent)
 	// ignoring interactions with the missile owner
 	trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin, ent->r.ownerNum, ent->clipmask);
 
-	if (IS_MORTAR_WEAPON_SET(ent->s.weapon) && ent->count2 == 1)
+	if (GetWeaponTableData(ent->s.weapon) && ent->count2 == 1)
 	{
 		if (ent->r.currentOrigin[2] > origin[2] && origin[2] - BG_GetGroundHeightAtPoint(origin) < 512)
 		{
@@ -650,7 +634,7 @@ void G_RunMissile(gentity_t *ent)
 		int impactDamage;
 
 		if (level.tracemapLoaded &&
-		    (IS_MORTAR_WEAPON_SET(ent->s.weapon) ||
+		    (GetWeaponTableData(ent->s.weapon) ||
 		     ent->s.weapon == WP_GPG40 ||
 		     ent->s.weapon == WP_M7 ||
 		     ent->s.weapon == WP_GRENADE_LAUNCHER ||
@@ -671,7 +655,7 @@ void G_RunMissile(gentity_t *ent)
 
 		//      G_SetOrigin( ent, tr.endpos );
 
-		if (IS_PANZER_WEAPON(ent->s.weapon) || IS_MORTAR_WEAPON_SET(ent->s.weapon))
+		if (GetWeaponTableData(ent->s.weapon)->isPanzer || GetWeaponTableData(ent->s.weapon))
 		{
 			impactDamage = 999; // goes through pretty much any func_explosives
 		}
@@ -1783,7 +1767,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 	// commented out bolt->damage and bolt->splashdamage, override with GetWeaponTableData(WP_X)->damage()
 	// so it works with different netgame balance.  didn't uncomment bolt->damage on dynamite 'cause its so *special*
 	bolt->damage       = GetWeaponTableData(grenadeWPID)->damage; // overridden for dynamite, satchel, landmine
-	bolt->splashDamage = GetWeaponTableData(grenadeWPID)->damage;
+	bolt->splashDamage = GetWeaponTableData(grenadeWPID)->splashDamage;
 
 	switch (grenadeWPID)
 	{
@@ -1970,7 +1954,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 
 	// blast radius proportional to damage for ALL weapons
 	// note: damage and splashDamage are set before above switch (and might be overwritten)
-	bolt->splashRadius = GetWeaponTableData(grenadeWPID)->damage;
+	bolt->splashRadius = GetWeaponTableData(grenadeWPID)->splashRadius;
 
 	bolt->clipmask = MASK_MISSILESHOT;
 
@@ -2023,8 +2007,8 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType
 	bolt->r.ownerNum          = self->s.number;
 	bolt->parent              = self;
 	bolt->damage              = GetWeaponTableData((rocketType == WP_BAZOOKA) ? WP_BAZOOKA : WP_PANZERFAUST)->damage;
-	bolt->splashDamage        = GetWeaponTableData((rocketType == WP_BAZOOKA) ? WP_BAZOOKA : WP_PANZERFAUST)->damage;
-	bolt->splashRadius        = 300; //G_GetWeaponDamage(WP_PANZERFAUST);  // hardcoded bleh hack FIXME: weapon table
+	bolt->splashDamage        = GetWeaponTableData((rocketType == WP_BAZOOKA) ? WP_BAZOOKA : WP_PANZERFAUST)->splashDamage;
+	bolt->splashRadius        = GetWeaponTableData((rocketType == WP_BAZOOKA) ? WP_BAZOOKA : WP_PANZERFAUST)->splashRadius;
 	bolt->methodOfDeath       = ((rocketType == WP_BAZOOKA) ? MOD_BAZOOKA : MOD_PANZERFAUST);
 	bolt->splashMethodOfDeath = bolt->methodOfDeath; // (rocketType == WP_BAZOOKA) ? MOD_BAZOOKA: MOD_PANZERFAUST;
 	bolt->clipmask            = MASK_MISSILESHOT;
@@ -2072,9 +2056,9 @@ gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->s.weapon     = WP_PANZERFAUST;
 	bolt->r.ownerNum   = self->s.number;
 	bolt->parent       = self;
-	bolt->damage       = 100;
-	bolt->splashDamage = 20;
-	bolt->splashRadius = 60;
+	bolt->damage       = GetWeaponTableData(WP_PANZERFAUST)->damage; // was 100
+	bolt->splashDamage = GetWeaponTableData(WP_PANZERFAUST)->splashDamage; // was 20
+	bolt->splashRadius = GetWeaponTableData(WP_PANZERFAUST)->splashRadius; // was 60
 
 	bolt->methodOfDeath       = MOD_EXPLOSIVE;
 	bolt->splashMethodOfDeath = MOD_EXPLOSIVE;
@@ -2130,8 +2114,8 @@ gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->r.ownerNum          = self->s.number;
 	bolt->parent              = self;
 	bolt->damage              = GetWeaponTableData(WP_MAPMORTAR)->damage;
-	bolt->splashDamage        = GetWeaponTableData(WP_MAPMORTAR)->damage;
-	bolt->splashRadius        = 120;
+	bolt->splashDamage        = GetWeaponTableData(WP_MAPMORTAR)->splashDamage;
+	bolt->splashRadius        = GetWeaponTableData(WP_MAPMORTAR)->splashRadius;
 	bolt->methodOfDeath       = MOD_MAPMORTAR;
 	bolt->splashMethodOfDeath = MOD_MAPMORTAR_SPLASH;
 	bolt->clipmask            = MASK_MISSILESHOT;

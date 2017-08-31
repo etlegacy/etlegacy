@@ -1498,7 +1498,7 @@ void CG_PredictLean(centity_t *cent, vec3_t torsoAngles, vec3_t headAngles, int 
 	{
 		leaning = 0;    // not allowed to lean while dead
 	}
-	if ((cent->currentState.eFlags & EF_PRONE) || IS_MORTAR_WEAPON_SET(cent->currentState.weapon))
+	if ((cent->currentState.eFlags & EF_PRONE) || GetWeaponTableData(cent->currentState.weapon)->isMortarSet)
 	{
 		leaning = 0;    // not allowed to lean while prone
 	}

@@ -995,12 +995,12 @@ static qboolean PM_CheckProne(void)
 			return qfalse;
 		}
 
-		if (pm->ps->weaponDelay && IS_PANZER_WEAPON(pm->ps->weapon))
+		if (pm->ps->weaponDelay && GetWeaponTableData(pm->ps->weapon)->isPanzer)
 		{
 			return qfalse;
 		}
 
-		if (IS_MORTAR_WEAPON_SET(pm->ps->weapon))
+		if (GetWeaponTableData(pm->ps->weapon)->isMortarSet)
 		{
 			return qfalse;
 		}
@@ -2057,7 +2057,7 @@ static void PM_CheckDuck(void)
 		return;
 	}
 
-	if ((pm->cmd.upmove < 0 && !(pm->ps->eFlags & EF_MOUNTEDTANK) && !(pm->ps->pm_flags & PMF_LADDER)) || IS_MORTAR_WEAPON_SET(pm->ps->weapon)) // duck
+	if ((pm->cmd.upmove < 0 && !(pm->ps->eFlags & EF_MOUNTEDTANK) && !(pm->ps->pm_flags & PMF_LADDER)) || GetWeaponTableData(pm->ps->weapon)->isMortarSet) // duck
 	{
 		pm->ps->pm_flags |= PMF_DUCKED;
 	}
@@ -2494,7 +2494,7 @@ static void PM_BeginWeaponReload(int weapon)
 		break;
 	}
 
-	if (!IS_MORTAR_WEAPON(weapon))
+	if (!GetWeaponTableData(weapon)->isMortar)
 	{
 		PM_ContinueWeaponAnim(PM_ReloadAnimForWeapon(pm->ps->weapon));
 	}
@@ -2935,7 +2935,7 @@ static void PM_ReloadClip(int weapon)
 	}
 
 	// reload akimbo stuff
-	if (IS_AKIMBO_WEAPON(weapon))
+	if (GetWeaponTableData(weapon)->isAkimbo)
 	{
 		PM_ReloadClip(weaponTable[weapon].akimboSideArm);
 	}
@@ -2994,7 +2994,7 @@ void PM_CheckForReload(int weapon)
 	// user is forcing a reload (manual reload)
 	reloadRequested = (qboolean)(pm->cmd.wbuttons & WBUTTON_RELOAD);
 
-	autoreload = pm->pmext->bAutoReload || !IS_AUTORELOAD_WEAPON(weapon);
+	autoreload = pm->pmext->bAutoReload || !GetWeaponTableData(weapon)->isAutoReload;
 	clipWeap   = BG_FindClipForWeapon(weapon);
 	ammoWeap   = BG_FindAmmoForWeapon(weapon);
 
@@ -3026,7 +3026,7 @@ void PM_CheckForReload(int weapon)
 				}
 
 				// akimbo should also check other weapon status
-				if (IS_AKIMBO_WEAPON(weapon))
+				if (GetWeaponTableData(weapon)->isAkimbo)
 				{
 					if (pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[weapon].akimboSideArm)] < GetAmmoTableData(BG_FindClipForWeapon(weaponTable[weapon].akimboSideArm))->maxclip)
 					{
@@ -3039,7 +3039,7 @@ void PM_CheckForReload(int weapon)
 		{
 			if (!pm->ps->ammoclip[clipWeap] && pm->ps->ammo[ammoWeap])
 			{
-				if (IS_AKIMBO_WEAPON(weapon))
+				if (GetWeaponTableData(weapon)->isAkimbo)
 				{
 					if (!pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[weapon].akimboSideArm)])
 					{
@@ -3126,7 +3126,7 @@ void PM_WeaponUseAmmo(int wp, int amount)
 
 		takeweapon = BG_FindClipForWeapon(wp);
 
-		if (IS_AKIMBO_WEAPON(wp))
+		if (GetWeaponTableData(wp)->isAkimbo)
 		{
 			if (!BG_AkimboFireSequence(wp, pm->ps->ammoclip[BG_FindClipForWeapon(wp)], pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[wp].akimboSideArm)]))
 			{
@@ -3138,12 +3138,6 @@ void PM_WeaponUseAmmo(int wp, int amount)
 	}
 }
 
-/*
-==============
-PM_WeaponAmmoAvailable
-
-==============
-*/
 /**
  * @brief Accounts for clips being used/not used
  * @param[in] wp
@@ -3161,7 +3155,7 @@ int PM_WeaponAmmoAvailable(int wp)
 
 		takeweapon = BG_FindClipForWeapon(wp);
 
-		if (IS_AKIMBO_WEAPON(wp))
+		if (GetWeaponTableData(wp)->isAkimbo)
 		{
 			if (!BG_AkimboFireSequence(wp, pm->ps->ammoclip[BG_FindClipForWeapon(wp)], pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[wp].akimboSideArm)]))
 			{
@@ -3175,7 +3169,7 @@ int PM_WeaponAmmoAvailable(int wp)
 
 /**
  * @brief Accounts for clips being used/not used
- * @param wp
+ * @param[in] wp
  * @return
  */
 int PM_WeaponClipEmpty(int wp)
@@ -3205,11 +3199,11 @@ void PM_CoolWeapons(void)
 {
 	int wp, maxHeat;
 
-	// FIXME: weapon table? - non bullet weapons don't have to be cooled - this loop is a waste
+	// FIXME: non bullet weapons don't have to be cooled - this loop is a waste
 	for (wp = WP_KNIFE; wp < WP_NUM_WEAPONS; wp++)
 	{
-		// if you have the weapon
-		if (COM_BitCheck(pm->ps->weapons, wp))
+		// if the weapon can heat and you have the weapon
+		if (GetWeaponTableData(wp)->canHeat && COM_BitCheck(pm->ps->weapons, wp))
 		{
 			// and it's hot
 			if (pm->ps->weapHeat[wp])
@@ -3227,14 +3221,13 @@ void PM_CoolWeapons(void)
 				{
 					pm->ps->weapHeat[wp] = 0;
 				}
-
 			}
 		}
 	}
 
-	// a weapon is currently selected, convert current heat value to 0-255 range for client transmission
+	// a weapon is currently selected and can heat, convert current heat value to 0-255 range for client transmission
 	// note: we are still cooling WP_NONE and other non bullet weapons
-	if (pm->ps->weapon)
+	if (pm->ps->weapon && GetWeaponTableData(pm->ps->weapon)->canHeat)
 	{
 		if (pm->ps->persistant[PERS_HWEAPON_USE] || (pm->ps->eFlags & EF_MOUNTEDTANK))
 		{
@@ -3256,9 +3249,12 @@ void PM_CoolWeapons(void)
 				pm->ps->curWeapHeat = 0;
 			}
 		}
-
 		//if(pm->ps->weapHeat[pm->ps->weapon])
 		//  Com_Printf("pm heat: %d, %d\n", pm->ps->weapHeat[pm->ps->weapon], pm->ps->curWeapHeat);
+	}
+	else
+	{
+		pm->ps->curWeapHeat = 0;
 	}
 }
 
@@ -3728,7 +3724,7 @@ static void PM_Weapon(void)
 	// if we have issues with water we know why ....
 	//pm->watertype = 0;
 
-	if (IS_AKIMBO_WEAPON(pm->ps->weapon))
+	if (GetWeaponTableData(pm->ps->weapon)->isAkimbo)
 	{
 		akimboFire = BG_AkimboFireSequence(pm->ps->weapon, pm->ps->ammoclip[BG_FindClipForWeapon(pm->ps->weapon)], pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[pm->ps->weapon].akimboSideArm)]);
 	}
@@ -3844,7 +3840,7 @@ static void PM_Weapon(void)
 				{
 					// akimbo weapons only have a 200ms delay, so
 					// use a shorter time for quickfire (#255)
-					if (IS_AKIMBO_WEAPON(pm->ps->weapon))
+					if (GetWeaponTableData(pm->ps->weapon)->isAkimbo)
 					{
 						if (pm->ps->weaponTime <= 50)
 						{
@@ -3886,7 +3882,7 @@ static void PM_Weapon(void)
 		if (pm->ps->weapon != pm->cmd.weapon)
 		{
 			// don't change weapon while unmounting alt weapon
-			if ((IS_MG_WEAPON(pm->ps->weapon) || IS_MORTAR_WEAPON(pm->ps->weapon) || IS_RIFLE_WEAPON(pm->ps->weapon) || IS_SILENCED_PISTOL(pm->ps->weapon)) && pm->ps->weaponTime > 250)
+			if ((GetWeaponTableData(pm->ps->weapon)->isMG || GetWeaponTableData(pm->ps->weapon)->isMortar || GetWeaponTableData(pm->ps->weapon)->isRifle || GetWeaponTableData(pm->ps->weapon)->isSilencedPistol) && pm->ps->weaponTime > 250)
 			{
 				return;
 			}
@@ -4126,30 +4122,14 @@ static void PM_Weapon(void)
 		return;
 	}
 
-	// player is underwater - no fire FIXME: weapon table nounderwaterfire
-	if (pm->waterlevel == 3)
+	// player is underwater and weapon can't fire under water
+	if (pm->waterlevel == 3 && GetWeaponTableData(pm->ps->weapon)->isUnderWaterFire == qfalse)
 	{
-		switch (pm->ps->weapon)
-		{
-		case WP_KNIFE:
-		case WP_KNIFE_KABAR:
-		case WP_GRENADE_LAUNCHER:
-		case WP_GRENADE_PINEAPPLE:
-		case WP_MEDIC_SYRINGE:
-		case WP_DYNAMITE:
-		case WP_PLIERS:
-		case WP_LANDMINE:
-		case WP_MEDIC_ADRENALINE:
-		case WP_SMOKE_BOMB:
-		case WP_BINOCULARS:
-			break;
-		default:
-			PM_AddEvent(EV_NOFIRE_UNDERWATER);      // event for underwater 'click' for nofire
-			PM_ContinueWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon));
-			pm->ps->weaponTime  = 500;
-			pm->ps->weaponDelay = 0;                // avoid insta-fire after water exit on delayed weapon attacks
-			return;
-		}
+		PM_AddEvent(EV_NOFIRE_UNDERWATER);      // event for underwater 'click' for nofire
+		PM_ContinueWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon));
+		pm->ps->weaponTime  = 500;
+		pm->ps->weaponDelay = 0;                // avoid insta-fire after water exit on delayed weapon attacks
+		return;
 	}
 
 	// start the animation even if out of ammo
@@ -4385,7 +4365,7 @@ static void PM_Weapon(void)
 			qboolean reloading = (qboolean)(ammoNeeded <= pm->ps->ammo[BG_FindAmmoForWeapon(pm->ps->weapon)]);
 
 			// if not in auto-reload mode, and reload was not explicitely requested, just play the 'out of ammo' sound
-			if (!pm->pmext->bAutoReload && IS_AUTORELOAD_WEAPON(pm->ps->weapon) && !(pm->cmd.wbuttons & WBUTTON_RELOAD))
+			if (!pm->pmext->bAutoReload && GetWeaponTableData(pm->ps->weapon)->isAutoReload && !(pm->cmd.wbuttons & WBUTTON_RELOAD))
 			{
 				reloading = qfalse;
 			}
@@ -4499,7 +4479,7 @@ static void PM_Weapon(void)
 
 	// if this was the last round in the clip, play the 'lastshot' animation
 	// this animation has the weapon in a "ready to reload" state
-	if (IS_AKIMBO_WEAPON(pm->ps->weapon))
+	if (GetWeaponTableData(pm->ps->weapon)->isAkimbo)
 	{
 		if (akimboFire)
 		{
@@ -4603,7 +4583,7 @@ static void PM_Weapon(void)
 		break;
 	}
 
-	if (IS_AKIMBO_WEAPON(pm->ps->weapon))
+	if (GetWeaponTableData(pm->ps->weapon)->isAkimbo)
 	{
 		if (akimboFire)
 		{
@@ -4988,7 +4968,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 
 	}
 
-	if ((ps->eFlags & EF_PRONE) || IS_MORTAR_WEAPON_SET(ps->weapon))
+	if ((ps->eFlags & EF_PRONE) || GetWeaponTableData(ps->weapon)->isMortarSet)
 	{
 		leaning = 0;    // not allowed to lean while prone
 
@@ -5252,7 +5232,7 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 			}
 		}
 	}
-	else if (IS_MORTAR_WEAPON_SET(ps->weapon))
+	else if (GetWeaponTableData(ps->weapon)->isMortarSet)
 	{
 		float degsSec = 60.f;
 		float pitch, oldPitch;
@@ -5865,7 +5845,7 @@ void PmoveSingle(pmove_t *pmove)
 			if (!weaponTable[pm->ps->weapon].isScoped &&          // don't allow binocs if using the sniper scope
 			    !BG_PlayerMounted(pm->ps->eFlags) &&           // or if mounted on a weapon
 			    // don't allow binocs w/ mounted mob. MG42 or mortar either.
-			    !IS_SET_WEAPON(pm->ps->weapon))
+			    !GetWeaponTableData(pm->ps->weapon)->isSetWeapon)
 			{
 				pm->ps->eFlags |= EF_ZOOMING;
 			}
@@ -6017,7 +5997,7 @@ void PmoveSingle(pmove_t *pmove)
 	case PM_INTERMISSION: // no movement at all
 		return;
 	case PM_NORMAL:
-		if (IS_MORTAR_WEAPON_SET(pm->ps->weapon))
+		if (GetWeaponTableData(pm->ps->weapon)->isMortarSet)
 		{
 			pm->cmd.forwardmove = 0;
 			pm->cmd.rightmove   = 0;

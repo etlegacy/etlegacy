@@ -872,7 +872,7 @@ static void CG_DrawMortarReticle(void)
 
 	// last fire pos
 	fadeTime = 0;
-	if (IS_MORTAR_WEAPON_SET(cg.lastFiredWeapon) && cg.mortarImpactTime >= -1)
+	if (GetWeaponTableData(cg.lastFiredWeapon)->isMortarSet && cg.mortarImpactTime >= -1)
 	{
 		fadeTime = cg.time - (cg.predictedPlayerEntity.muzzleFlashTime + 5000);
 
@@ -1053,7 +1053,7 @@ static void CG_DrawMortarReticle(void)
 	}
 
 	// last fire pos
-	if (IS_MORTAR_WEAPON_SET(cg.lastFiredWeapon) && cg.mortarImpactTime >= -1)
+	if (GetWeaponTableData(cg.lastFiredWeapon)->isMortarSet && cg.mortarImpactTime >= -1)
 	{
 		if (fadeTime < 3000)
 		{
@@ -1199,7 +1199,7 @@ static void CG_DrawCrosshair(void)
 	}
 
 	// FIXME: spectators/chasing?
-	if (IS_MORTAR_WEAPON_SET(cg.predictedPlayerState.weapon) && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
+	if (GetWeaponTableData(cg.predictedPlayerState.weapon)->isMortarSet && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 	{
 		CG_DrawMortarReticle();
 		return;
@@ -1274,7 +1274,7 @@ static void CG_DrawNoShootIcon(void)
 {
 	float x, y, w, h;
 
-	if ((cg.predictedPlayerState.eFlags & EF_PRONE) && IS_PANZER_WEAPON(cg.snap->ps.weapon))
+	if ((cg.predictedPlayerState.eFlags & EF_PRONE) && GetWeaponTableData(cg.snap->ps.weapon)->isPanzer)
 	{
 		trap_R_SetColor(colorRed);
 	}

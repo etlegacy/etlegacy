@@ -479,7 +479,7 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 		client->ps.weapon = 0;
 	}
 
-	if (IS_MORTAR_WEAPON_SET(weapon))
+	if (GetWeaponTableData(weapon)->isMortarSet)
 	{
 		ent2->count = client->ps.ammo[BG_FindAmmoForWeapon(weapon)] + client->ps.ammoclip[BG_FindClipForWeapon(weapon)];
 	}
@@ -646,7 +646,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 		}
 
 		// don't pick up when MG or mortar is set
-		if (IS_MORTAR_WEAPON_SET(other->client->ps.weapon) || IS_MG_WEAPON_SET(other->client->ps.weapon))
+		if (GetWeaponTableData(other->client->ps.weapon)->isSetWeapon)
 		{
 			return 0;
 		}

@@ -1434,7 +1434,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	}
 
 	// set weapons means less knockback
-	if (targ->client && IS_SET_WEAPON(targ->client->ps.weapon))
+	if (targ->client && GetWeaponTableData(targ->client->ps.weapon)->isSetWeapon)
 	{
 		knockback *= 0.5;
 	}

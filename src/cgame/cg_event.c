@@ -2777,7 +2777,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 			ByteToDir(es->eventParm, dir);
 			CG_MissileHitPlayer(cent, es->weapon, position, dir, es->otherEntityNum);
-			if (IS_MORTAR_WEAPON_SET(es->weapon))
+			if (GetWeaponTableData(es->weapon)->isMortarSet)
 			{
 				if (!es->legsAnim)
 				{
@@ -2807,7 +2807,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 			ByteToDir(es->eventParm, dir);
 			CG_MissileHitWall(es->weapon, PS_FX_NONE, position, dir, 0);     // modified to send missilehitwall surface parameters
-			if (IS_MORTAR_WEAPON_SET(es->weapon))
+			if (GetWeaponTableData(es->weapon)->isMortarSet)
 			{
 				if (!es->legsAnim)
 				{

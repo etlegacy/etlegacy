@@ -1660,7 +1660,7 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 		return qtrue;
 	}
 
-	if (!(IS_HEAVY_WEAPON(weapon) || IS_RIFLE_WEAPON(weapon)))
+	if (!(GetWeaponTableData(weapon)->isHeavyWeapon || GetWeaponTableData(weapon)->isRifle))
 	{
 		return qfalse;
 	}
@@ -1669,7 +1669,7 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 	weaponCount = G_TeamCount(ent, weapon);
 
 	// total percentage restriction
-	if (IS_HEAVY_WEAPON(weapon) && weaponCount >= ceil(playerCount * g_heavyWeaponRestriction.integer * 0.01))
+	if (GetWeaponTableData(weapon)->isHeavyWeapon && weaponCount >= ceil(playerCount * g_heavyWeaponRestriction.integer * 0.01))
 	{
 		return qtrue;
 	}
@@ -4089,7 +4089,7 @@ void Cmd_Activate_f(gentity_t *ent)
 		return;
 	}
 
-	if (IS_MORTAR_WEAPON_SET(ent->s.weapon) || ent->s.weapon == WP_MOBILE_MG42_SET || ent->s.weapon == WP_MOBILE_BROWNING_SET)
+	if (GetWeaponTableData(ent->s.weapon)->isSetWeapon)
 	{
 		return;
 	}
@@ -4286,7 +4286,7 @@ void Cmd_Activate2_f(gentity_t *ent)
 		return;
 	}
 
-	if (IS_MORTAR_WEAPON_SET(ent->s.weapon) || ent->s.weapon == WP_MOBILE_MG42_SET || ent->s.weapon == WP_MOBILE_BROWNING_SET)
+	if (GetWeaponTableData(ent->s.weapon)->isSetWeapon)
 	{
 		return;
 	}

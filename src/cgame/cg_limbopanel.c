@@ -3993,7 +3993,7 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 	}
 
 	// never restrict normal weapons
-	if (!(IS_HEAVY_WEAPON(weapon) || IS_RIFLE_WEAPON(weapon)))
+	if (!(GetWeaponTableData(weapon)->isHeavyWeapon || GetWeaponTableData(weapon)->isRifle))
 	{
 		return qfalse;
 	}
@@ -4002,7 +4002,7 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 	wcount = CG_LimboPanel_TeamCount(weapon);
 
 	// heavy weapon restriction
-	if (IS_HEAVY_WEAPON(weapon))
+	if (GetWeaponTableData(weapon)->isHeavyWeapon)
 	{
 		if (wcount >= ceil(count * cgs.weaponRestrictions))
 		{

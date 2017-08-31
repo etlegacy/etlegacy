@@ -953,31 +953,37 @@ typedef struct weapontable_s
 	qboolean isReload;              ///< g
 
 	float spread;                   ///< g
-	//int splashDamage;               ///< g
-	//int splashRadius;               ///< g
+	int splashDamage;               ///< g
+	int splashRadius;               ///< g
 
-	//qboolean keepDisguise;          ///< g
+	qboolean keepDisguise;          ///< g
 
-	//qboolean isAutoReload;          ///< bg
+	qboolean isAutoReload;          ///< bg
 
-	//qboolean isAkimbo;              ///< bg
-	//qboolean isPanzer;              ///< bg
-	//qboolean isRiflenade;           ///< bg
-	//qboolean isMortar;              ///< bg
-	//qboolean isMortarSet;           ///< bg
+	qboolean isAkimbo;              ///< bg
+	qboolean isPanzer;              ///< bg
+	qboolean isRiflenade;           ///< bg
+    qboolean isRifle;               ///< bg
+	qboolean isMortar;              ///< bg
+	qboolean isMortarSet;           ///< bg
 
-	//qboolean isHeavyWeapon;         ///< bg
-	//qboolean isSetWeapon;           ///< bg
+    qboolean isMG;                  ///< bg
+    qboolean isMGSet;               ///< bg
 
-	//qboolean isUnderWaterFire;      ///< bg
+	qboolean isSetWeapon;           ///< bg
+    qboolean isHeavyWeapon;         ///< bg
+    qboolean isSilencedPistol;      ///< bg
 
-	//qboolean isValidStatWeapon;     ///< bg (just check)
+	qboolean isUnderWaterFire;      ///< bg
+	qboolean noMuzzleFlash;         ///< cg
+	qboolean shakeEffect;           ///< g
+    qboolean canHeat;               ///< bg
 
 	// client
 	// icons
 	const char *desc;               ///< c - description for spawn weapons
 
-	unsigned int iWS;
+	unsigned int indexWeaponStat;               ///< bg - index for weapon stat info
 
 } weaponTable_t;
 
@@ -999,68 +1005,13 @@ typedef struct modtable_s
 	qboolean isExplosive;         ///< g
 
 	int weaponClassForMOD;        ///< g
-	unsigned int iWS;             ///< g
+	unsigned int indexWeaponStat; ///< g
 
 } modTable_t;
 
 extern weaponTable_t *GetWeaponTableData(int weaponIndex);
 
 extern int weapAlts[]; ///< defined in bg_misc.c
-
-// FIXME: weapon table - put following macros in
-#define IS_RIFLENADE_WEAPON(w) \
-	(w == WP_CARBINE             || w == WP_KAR98)
-
-#define IS_RIFLE_AND_NADE_WEAPON(w) \
-	(w == WP_GPG40               || w ==  WP_M7)
-
-#define IS_RIFLE_WEAPON(w) \
-	IS_RIFLENADE_WEAPON(w) || IS_RIFLE_AND_NADE_WEAPON(w)
-
-#define IS_PANZER_WEAPON(w) \
-	(w == WP_PANZERFAUST         || w == WP_BAZOOKA)
-
-#define IS_SILENCED_PISTOL(w) \
-	(w == WP_SILENCER            || w == WP_SILENCED_COLT)
-
-#define IS_AKIMBO_WEAPON(w) \
-	(w == WP_AKIMBO_COLT         || w == WP_AKIMBO_LUGER         || \
-	 w == WP_AKIMBO_SILENCEDCOLT || w == WP_AKIMBO_SILENCEDLUGER)
-
-#define IS_MORTAR_WEAPON(w) \
-	(w == WP_MORTAR              || w == WP_MORTAR2              || \
-	 w == WP_MORTAR_SET          || w == WP_MORTAR2_SET)
-
-#define IS_MORTAR_WEAPON_SET(w) \
-	(w == WP_MORTAR_SET          || w == WP_MORTAR2_SET)
-
-#define IS_SET_WEAPON(w)    \
-	(w == WP_MORTAR_SET      || w == WP_MORTAR2_SET             || \
-	 w == WP_MOBILE_MG42_SET  || w == WP_MOBILE_BROWNING_SET)
-
-#define IS_HEAVY_WEAPON(w) \
-	(w == WP_FLAMETHROWER  || \
-	 w == WP_MOBILE_MG42 || w == WP_MOBILE_MG42_SET || \
-	 w == WP_PANZERFAUST || w == WP_BAZOOKA || \
-	 w == WP_MORTAR          || w == WP_MORTAR_SET  || \
-	 w == WP_MOBILE_BROWNING || w == WP_MOBILE_BROWNING_SET || \
-	 w == WP_MORTAR2         || w == WP_MORTAR2_SET)
-
-#define IS_MG_WEAPON(w) \
-	(w == WP_MOBILE_MG42          || w == WP_MOBILE_BROWNING)
-
-#define IS_MG_WEAPON_SET(w) \
-	(w == WP_MOBILE_MG42_SET          || w == WP_MOBILE_BROWNING_SET)
-
-#define IS_AUTORELOAD_WEAPON(w) \
-	(w == WP_LUGER    || w == WP_COLT          || w == WP_MP40          || \
-	 w == WP_THOMPSON || w == WP_STEN          || \
-	 w == WP_KAR98    || w == WP_CARBINE       || w == WP_GARAND_SCOPE  || \
-	 w == WP_FG42     || w == WP_K43           || w == WP_MOBILE_MG42   || \
-	 w == WP_MOBILE_BROWNING || w == WP_SILENCED_COLT    || w == WP_SILENCER      || \
-	 w == WP_GARAND   || w == WP_K43_SCOPE     || w == WP_FG42SCOPE     || \
-	 IS_AKIMBO_WEAPON(w) || w == WP_MOBILE_MG42_SET || w == WP_MOBILE_BROWNING_SET \
-	)
 
 #define IS_VALID_WEAPON(w) (w > WP_NONE && w < WP_NUM_WEAPONS)
 
@@ -1732,7 +1683,7 @@ typedef struct gitem_s
 	itemType_t giType;          ///< IT_* flags
 
 	weapon_t giWeapon;
-    powerup_t giPowerUp;
+	powerup_t giPowerUp;
 
 #ifdef CGAMEDLL
 	itemInfo_t itemInfo;        ///< FIXME: fix default value in bg_itemlist

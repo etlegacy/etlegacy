@@ -2872,14 +2872,14 @@ void weapon_callAirStrike(gentity_t *ent)
 			bomb->r.ownerNum   = ent->s.number;
 			bomb->parent       = ent->parent;
 			bomb->s.teamNum    = ent->s.teamNum;
-			bomb->damage       = 400;  // maybe should un-hard-code these?
-			bomb->splashDamage = 400;
+			bomb->damage       = GetWeaponTableData(WP_SMOKE_MARKER)->damage;       // was 400
+			bomb->splashDamage = GetWeaponTableData(WP_SMOKE_MARKER)->splashDamage; // was 400
 			bomb->s.eFlags     = EF_SMOKINGBLACK; // add some client side smoke
 
 			// for explosion type
 			bomb->accuracy            = 2;
 			bomb->classname           = "air strike";
-			bomb->splashRadius        = 400;
+			bomb->splashRadius        = GetWeaponTableData(WP_SMOKE_MARKER)->splashRadius; // was 400
 			bomb->methodOfDeath       = MOD_AIRSTRIKE;
 			bomb->splashMethodOfDeath = MOD_AIRSTRIKE;
 			bomb->clipmask            = MASK_MISSILESHOT;
@@ -3162,7 +3162,6 @@ void Weapon_Artillery(gentity_t *ent)
 			// spotter round is always dead on (OK, unrealistic but more fun)
 			bomboffset[0] = crandom() * 50; // was 0; changed per id request to prevent spotter round assassinations
 			bomboffset[1] = crandom() * 50; // was 0;
-			bomboffset[2] = 0;
 		}
 		else
 		{

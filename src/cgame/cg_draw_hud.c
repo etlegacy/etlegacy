@@ -828,7 +828,7 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 	// current clip
 	*ammo = ps->ammoclip[BG_FindClipForWeapon(weap)];
 
-	if (IS_AKIMBO_WEAPON(weap))
+	if (GetWeaponTableData(weap)->isAkimbo)
 	{
 		*akimboammo = ps->ammoclip[BG_FindClipForWeapon(weaponTable[weap].akimboSideArm)];
 	}
@@ -855,7 +855,7 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 			}
 		}
 	}
-	else if (IS_MORTAR_WEAPON(weap) || IS_PANZER_WEAPON(weap))
+	else if (GetWeaponTableData(weap)->isMortar || GetWeaponTableData(weap)->isPanzer)
 	{
 		*ammo += *clips;
 	}
@@ -1296,7 +1296,7 @@ skillType_t CG_ClassSkillForPosition(clientInfo_t *ci, int pos)
 		return SK_BATTLE_SENSE;
 	case 2:
 		// draw soldier level if using a heavy weapon instead of light weapons icon
-		if ((pm && (pm->ps->persistant[PERS_HWEAPON_USE] || (pm->ps->eFlags & EF_MOUNTEDTANK) || IS_HEAVY_WEAPON(pm->ps->weapon))) && ci->cls != PC_SOLDIER)
+		if ((pm && (pm->ps->persistant[PERS_HWEAPON_USE] || (pm->ps->eFlags & EF_MOUNTEDTANK) || GetWeaponTableData(pm->ps->weapon)->isHeavyWeapon)) && ci->cls != PC_SOLDIER)
 		{
 			return SK_HEAVY_WEAPONS;
 		}

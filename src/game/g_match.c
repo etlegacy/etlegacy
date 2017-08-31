@@ -418,7 +418,7 @@ extWeaponStats_t G_weapStatIndex_MOD(unsigned int iWeaponMOD)
 		return WS_MAX;
 	}
 
-	return modTable[iWeaponMOD].iWS;
+	return modTable[iWeaponMOD].indexWeaponStat;
 }
 
 /**
