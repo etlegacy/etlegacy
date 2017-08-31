@@ -205,9 +205,6 @@ ammotable_t ammoTableMP[WP_NUM_WEAPONS] =
 // FIXME: fill me & use!
 // ... we might merge it later on with ammoTableMP
 
-// damage - returns 1 for no damage ... FIXME: some weapons are handled differently f.e. VERYBIGEXPLOSION
-// spread - bullet weapons only
-
 // [0]  = weapon         -
 // [1]  = weapAlts       -
 // [2]  = akimboSideArm
@@ -215,83 +212,104 @@ ammotable_t ammoTableMP[WP_NUM_WEAPONS] =
 // [4]  = clipIndex
 // [5]  = isScoped
 // [6]  = LightWeaponSupportingFastReload (isLWSF)
-// [7]  = damage         -
+// [7]  = damage         - returns 1 for no damage ... FIXME: some weapons are handled differently f.e. VERYBIGEXPLOSION
 // [8]  = canGib
 // [9]  = isReload       - some weapons don't reload
 // [10] = spread         -
-// [11] = desc
+// [11] = splashDamage
+// [12] = splashRadius
+// [13] = keepDisguise
+// [14] = isAutoReaload
+// [15] = isAkimbo
+// [16] = isPanzer
+// [17] = isRiflenade
+// [18] = isRifle
+// [18] = isMortar
+// [19] = isMortarSet
+// [20] = isMG
+// [20] = isMGSet
+// [21] = isSetWeapon
+// [22] = isHeavyWeapon
+// [23] = isSilencedPistol
+// [24] = underWaterFire
+// [25] = noMuzzleFlash
+// [26] = shakeEffect
+// [27] = heatWeapon
+// [28] = desc
+// [29] = indexWeaponStat
 weaponTable_t weaponTable[WP_NUM_WEAPONS] =
 {
-	// weapon                  weapAlts          akimboSidearm   ammoIndex             clipIndex           isScoped isLWSF damage canGib isRealod spread desc                  iWS
-	{ WP_NONE,                 WP_NONE,                WP_NONE,  WP_NONE,              WP_NONE,              qfalse, qfalse, 1,   qfalse, qfalse, 0,    "WP_NONE",             WS_MAX             }, // 0
-	{ WP_KNIFE,                WP_NONE,                WP_NONE,  WP_KNIFE,             WP_KNIFE,             qfalse, qfalse, 10,  qtrue,  qfalse, 0,    "KNIFE",               WS_KNIFE           }, // 1
-	{ WP_LUGER,                WP_SILENCER,            WP_NONE,  WP_LUGER,             WP_LUGER,             qfalse, qtrue,  18,  qfalse, qtrue,  600,  "LUGER",               WS_LUGER           }, // 2
-	{ WP_MP40,                 WP_NONE,                WP_NONE,  WP_MP40,              WP_MP40,              qfalse, qtrue,  18,  qfalse, qtrue,  400,  "MP 40",               WS_MP40            }, // 3
-	{ WP_GRENADE_LAUNCHER,     WP_NONE,                WP_NONE,  WP_GRENADE_LAUNCHER,  WP_GRENADE_LAUNCHER,  qfalse, qfalse, 250, qtrue,  qfalse, 0,    "",                    WS_GRENADE         }, // 4
-	{ WP_PANZERFAUST,          WP_NONE,                WP_NONE,  WP_PANZERFAUST,       WP_PANZERFAUST,       qfalse, qfalse, 400, qtrue,  qfalse, 0,    "PANZERFAUST",         WS_PANZERFAUST     }, // 5
-	{ WP_FLAMETHROWER,         WP_NONE,                WP_NONE,  WP_FLAMETHROWER,      WP_FLAMETHROWER,      qfalse, qfalse, 5,   qfalse, qfalse, 0,    "FLAMETHROWER",        WS_FLAMETHROWER    }, // 6
-	{ WP_COLT,                 WP_SILENCED_COLT,       WP_NONE,  WP_COLT,              WP_COLT,              qfalse, qtrue,  18,  qfalse, qtrue,  600,  "COLT",                WS_COLT            }, // 7	// equivalent american weapon to german luger
-	{ WP_THOMPSON,             WP_NONE,                WP_NONE,  WP_THOMPSON,          WP_THOMPSON,          qfalse, qtrue,  18,  qfalse, qtrue,  400,  "THOMPSON",            WS_THOMPSON        }, // 8	// equivalent american weapon to german mp40
-	{ WP_GRENADE_PINEAPPLE,    WP_NONE,                WP_NONE,  WP_GRENADE_PINEAPPLE, WP_GRENADE_PINEAPPLE, qfalse, qfalse, 250, qtrue,  qfalse, 0,    "",                    WS_GRENADE         }, // 9
+	// weapon                  weapAlts          akimboSidearm   ammoIndex             clipIndex           isScoped isLWSF damage canGib isRealod spread splashDamage splashRadius keepDisguise isAutoReaload isAkimbo isPanzer isRiflenade isRifle isMortar isMortarSet isMG    isMGSet isSetWeapon isHeavyWeapon isSilencedPistol underWaterFire   noMuzzleFlash shakeEffect canHeat desc                   indexWeaponStat
+	{ WP_NONE,                 WP_NONE,                WP_NONE,  WP_NONE,              WP_NONE,              qfalse, qfalse, 1,   qfalse, qfalse, 0,     1,           1,           qtrue,       qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qtrue,        qfalse,     qfalse, "WP_NONE",             WS_MAX             }, // 0
+    { WP_KNIFE,                WP_NONE,                WP_NONE,  WP_KNIFE,             WP_KNIFE,             qfalse, qfalse, 10,  qtrue,  qfalse, 0,     10,          10,          qtrue,       qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qtrue,           qtrue,        qfalse,     qfalse, "KNIFE",               WS_KNIFE           }, // 1
+	{ WP_LUGER,                WP_SILENCER,            WP_NONE,  WP_LUGER,             WP_LUGER,             qfalse, qtrue,  18,  qfalse, qtrue,  600,   18,          18,          qfalse,      qtrue,        qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "LUGER",               WS_LUGER           }, // 2
+	{ WP_MP40,                 WP_NONE,                WP_NONE,  WP_MP40,              WP_MP40,              qfalse, qtrue,  18,  qfalse, qtrue,  400,   18,          18,          qfalse,      qtrue,        qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "MP 40",               WS_MP40            }, // 3
+	{ WP_GRENADE_LAUNCHER,     WP_NONE,                WP_NONE,  WP_GRENADE_LAUNCHER,  WP_GRENADE_LAUNCHER,  qfalse, qfalse, 250, qtrue,  qfalse, 0,     250,         250,         qfalse,      qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qtrue,           qtrue,        qtrue,      qfalse, "",                    WS_GRENADE         }, // 4
+	{ WP_PANZERFAUST,          WP_NONE,                WP_NONE,  WP_PANZERFAUST,       WP_PANZERFAUST,       qfalse, qfalse, 400, qtrue,  qfalse, 0,     400,         300,         qfalse,      qfalse,       qfalse,  qtrue,   qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qtrue,        qfalse,          qfalse,          qfalse,       qtrue,      qfalse, "PANZERFAUST",         WS_PANZERFAUST     }, // 5
+	{ WP_FLAMETHROWER,         WP_NONE,                WP_NONE,  WP_FLAMETHROWER,      WP_FLAMETHROWER,      qfalse, qfalse, 5,   qfalse, qfalse, 0,     5,           5,           qfalse,      qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qtrue,        qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "FLAMETHROWER",        WS_FLAMETHROWER    }, // 6
+	{ WP_COLT,                 WP_SILENCED_COLT,       WP_NONE,  WP_COLT,              WP_COLT,              qfalse, qtrue,  18,  qfalse, qtrue,  600,   18,          18,          qfalse,      qtrue,        qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "COLT",                WS_COLT            }, // 7	// equivalent american weapon to german luger
+	{ WP_THOMPSON,             WP_NONE,                WP_NONE,  WP_THOMPSON,          WP_THOMPSON,          qfalse, qtrue,  18,  qfalse, qtrue,  400,   18,          8,           qfalse,      qtrue,        qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "THOMPSON",            WS_THOMPSON        }, // 8	// equivalent american weapon to german mp40
+	{ WP_GRENADE_PINEAPPLE,    WP_NONE,                WP_NONE,  WP_GRENADE_PINEAPPLE, WP_GRENADE_PINEAPPLE, qfalse, qfalse, 250, qtrue,  qfalse, 0,     250,         250,         qfalse,      qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qtrue,           qtrue,        qtrue,      qfalse, "",                    WS_GRENADE         }, // 9
 
-	{ WP_STEN,                 WP_NONE,                WP_NONE,  WP_STEN,              WP_STEN,              qfalse, qtrue,  14,  qfalse, qtrue,  200,  "STEN",                WS_STEN            }, // 10	// silenced sten sub-machinegun
-	{ WP_MEDIC_SYRINGE,        WP_NONE,                WP_NONE,  WP_MEDIC_SYRINGE,     WP_MEDIC_SYRINGE,     qfalse, qfalse, 1,   qfalse, qfalse, 0,    "MEDIC",               WS_MAX             }, // 11	// broken out from CLASS_SPECIAL per Id request
-	{ WP_AMMO,                 WP_NONE,                WP_NONE,  WP_AMMO,              WP_AMMO,              qfalse, qfalse, 1,   qfalse, qfalse, 0,    "AMMO",                WS_MAX             }, // 12	// likewise
-	{ WP_ARTY,                 WP_NONE,                WP_NONE,  WP_ARTY,              WP_ARTY,              qfalse, qfalse, 1,   qtrue,  qfalse, 0,    "ARTY",                WS_ARTILLERY       }, // 13
-	{ WP_SILENCER,             WP_LUGER,               WP_NONE,  WP_LUGER,             WP_LUGER,             qfalse, qtrue,  18,  qfalse, qtrue,  600,  "SILENCED LUGER",      WS_LUGER           }, // 14	// used to be sp5
-	{ WP_DYNAMITE,             WP_NONE,                WP_NONE,  WP_DYNAMITE,          WP_DYNAMITE,          qfalse, qfalse, 400, qtrue,  qfalse, 0,    "DYNAMITE",            WS_DYNAMITE        }, // 15
-	{ WP_SMOKETRAIL,           WP_NONE,                WP_NONE,  WP_SMOKETRAIL,        WP_SMOKETRAIL,        qfalse, qfalse, 1,   qfalse, qfalse, 0,    "",                    WS_ARTILLERY       }, // 16
-	{ WP_MAPMORTAR,            WP_NONE,                WP_NONE,  WP_MAPMORTAR,         WP_MAPMORTAR,         qfalse, qfalse, 250, qtrue,  qfalse, 0,    "",                    WS_MORTAR          }, // 17
-	{ VERYBIGEXPLOSION,        WP_NONE,                WP_NONE,  WP_NONE,              WP_NONE,              qfalse, qfalse, 1,   qtrue,  qfalse, 0,    "",                    WS_MAX             }, // 18	// explosion effect for airplanes
-	{ WP_MEDKIT,               WP_NONE,                WP_NONE,  WP_MEDKIT,            WP_MEDKIT,            qfalse, qfalse, 1,   qfalse, qfalse, 0,    "",                    WS_MAX             }, // 19
+	{ WP_STEN,                 WP_NONE,                WP_NONE,  WP_STEN,              WP_STEN,              qfalse, qtrue,  14,  qfalse, qtrue,  200,   14,          14,          qtrue,       qtrue,        qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qtrue,  "STEN",                WS_STEN            }, // 10	// silenced sten sub-machinegun
+	{ WP_MEDIC_SYRINGE,        WP_NONE,                WP_NONE,  WP_MEDIC_SYRINGE,     WP_MEDIC_SYRINGE,     qfalse, qfalse, 1,   qfalse, qfalse, 0,     1,           1,           qfalse,      qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qtrue,           qtrue,        qfalse,     qfalse, "MEDIC",               WS_MAX             }, // 11	// broken out from CLASS_SPECIAL per Id request
+	{ WP_AMMO,                 WP_NONE,                WP_NONE,  WP_AMMO,              WP_AMMO,              qfalse, qfalse, 1,   qfalse, qfalse, 0,     1,           1,           qfalse,      qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "AMMO",                WS_MAX             }, // 12	// likewise
+	{ WP_ARTY,                 WP_NONE,                WP_NONE,  WP_ARTY,              WP_ARTY,              qfalse, qfalse, 1,   qtrue,  qfalse, 0,     1,           1,           qfalse,      qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qtrue,      qfalse, "ARTY",                WS_ARTILLERY       }, // 13
+	{ WP_SILENCER,             WP_LUGER,               WP_NONE,  WP_LUGER,             WP_LUGER,             qfalse, qtrue,  18,  qfalse, qtrue,  600,   18,          18,          qfalse,      qtrue,        qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qtrue,           qfalse,          qfalse,       qfalse,     qfalse, "SILENCED LUGER",      WS_LUGER           }, // 14	// used to be sp5
+	{ WP_DYNAMITE,             WP_NONE,                WP_NONE,  WP_DYNAMITE,          WP_DYNAMITE,          qfalse, qfalse, 400, qtrue,  qfalse, 0,     400,         400,         qfalse,      qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qtrue,           qtrue,        qtrue ,     qfalse, "DYNAMITE",            WS_DYNAMITE        }, // 15
+	{ WP_SMOKETRAIL,           WP_NONE,                WP_NONE,  WP_SMOKETRAIL,        WP_SMOKETRAIL,        qfalse, qfalse, 1,   qfalse, qfalse, 0,     1,           1,           qfalse,      qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "",                    WS_ARTILLERY       }, // 16
+	{ WP_MAPMORTAR,            WP_NONE,                WP_NONE,  WP_MAPMORTAR,         WP_MAPMORTAR,         qfalse, qfalse, 250, qtrue,  qfalse, 0,     250,         120,         qfalse,      qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qtrue,      qfalse, "",                    WS_MORTAR          }, // 17
+	{ VERYBIGEXPLOSION,        WP_NONE,                WP_NONE,  WP_NONE,              WP_NONE,              qfalse, qfalse, 1,   qtrue,  qfalse, 0,     1,           1,           qfalse,      qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "",                    WS_MAX             }, // 18	// explosion effect for airplanes
+	{ WP_MEDKIT,               WP_NONE,                WP_NONE,  WP_MEDKIT,            WP_MEDKIT,            qfalse, qfalse, 1,   qfalse, qfalse, 0,     1,           1,           qfalse,      qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "",                    WS_MAX             }, // 19
 
-	{ WP_BINOCULARS,           WP_NONE,                WP_NONE,  WP_BINOCULARS,        WP_BINOCULARS,        qfalse, qfalse, 1,   qfalse, qfalse, 0,    "",                    WS_MAX             }, // 20
-	{ WP_PLIERS,               WP_NONE,                WP_NONE,  WP_PLIERS,            WP_PLIERS,            qfalse, qfalse, 1,   qfalse, qfalse, 0,    "PLIERS",              WS_MAX             }, // 21
-	{ WP_SMOKE_MARKER,         WP_NONE,                WP_NONE,  WP_SMOKE_MARKER,      WP_SMOKE_MARKER,      qfalse, qfalse, 140, qtrue,  qfalse, 0,    "",                    WS_AIRSTRIKE       }, // 22	// changed name to cause less confusion
-	{ WP_KAR98,                WP_GPG40,               WP_NONE,  WP_KAR98,             WP_KAR98,             qfalse, qfalse, 34,  qfalse, qtrue,  250,  "K43",                 WS_KAR98           }, // 23	// WolfXP weapons
-	{ WP_CARBINE,              WP_M7,                  WP_NONE,  WP_CARBINE,           WP_CARBINE,           qfalse, qfalse, 34,  qfalse, qtrue,  250,  "M1 GARAND",           WS_CARBINE         }, // 24
-	{ WP_GARAND,               WP_GARAND_SCOPE,        WP_NONE,  WP_GARAND,            WP_GARAND,            qfalse, qfalse, 34,  qfalse, qtrue,  250,  "SCOPED M1 GARAND",    WS_GARAND          }, // 25
-	{ WP_LANDMINE,             WP_NONE,                WP_NONE,  WP_LANDMINE,          WP_LANDMINE,          qfalse, qfalse, 250, qtrue,  qfalse, 0,    "",                    WS_LANDMINE        }, // 26
-	{ WP_SATCHEL,              WP_NONE,                WP_NONE,  WP_SATCHEL,           WP_SATCHEL,           qfalse, qfalse, 250, qtrue,  qfalse, 0,    "SATCHEL",             WS_MAX             }, // 27
-	{ WP_SATCHEL_DET,          WP_NONE,                WP_NONE,  WP_SATCHEL_DET,       WP_SATCHEL_DET,       qfalse, qfalse, 1,   qtrue,  qfalse, 0,    "SATCHEL",             WS_SATCHEL         }, // 28
-	{ WP_SMOKE_BOMB,           WP_NONE,                WP_NONE,  WP_SMOKE_BOMB,        WP_SMOKE_BOMB,        qfalse, qfalse, 1,   qfalse, qfalse, 0,    "",                    WS_MAX             }, // 29
+	{ WP_BINOCULARS,           WP_NONE,                WP_NONE,  WP_BINOCULARS,        WP_BINOCULARS,        qfalse, qfalse, 1,   qfalse, qfalse, 0,     1,           1,           qtrue,       qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qtrue,           qfalse,       qfalse,     qfalse, "",                    WS_MAX             }, // 20
+	{ WP_PLIERS,               WP_NONE,                WP_NONE,  WP_PLIERS,            WP_PLIERS,            qfalse, qfalse, 1,   qfalse, qfalse, 0,     1,           1,           qfalse,      qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qtrue,           qtrue,        qfalse,     qfalse, "PLIERS",              WS_MAX             }, // 21
+	{ WP_SMOKE_MARKER,         WP_NONE,                WP_NONE,  WP_SMOKE_MARKER,      WP_SMOKE_MARKER,      qfalse, qfalse, 140, qtrue,  qfalse, 0,     140,         140,         qfalse,      qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qtrue,      qfalse, "",                    WS_AIRSTRIKE       }, // 22	// changed name to cause less confusion
+	{ WP_KAR98,                WP_GPG40,               WP_NONE,  WP_KAR98,             WP_KAR98,             qfalse, qfalse, 34,  qfalse, qtrue,  250,   34,          34,          qfalse,      qtrue,        qfalse,  qfalse,  qfalse,     qtrue,  qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "K43",                 WS_KAR98           }, // 23	// WolfXP weapons
+	{ WP_CARBINE,              WP_M7,                  WP_NONE,  WP_CARBINE,           WP_CARBINE,           qfalse, qfalse, 34,  qfalse, qtrue,  250,   34,          34,          qfalse,      qtrue,        qfalse,  qfalse,  qfalse,     qtrue,  qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "M1 GARAND",           WS_CARBINE         }, // 24
+	{ WP_GARAND,               WP_GARAND_SCOPE,        WP_NONE,  WP_GARAND,            WP_GARAND,            qfalse, qfalse, 34,  qfalse, qtrue,  250,   34,          34,          qtrue,       qtrue,        qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "SCOPED M1 GARAND",    WS_GARAND          }, // 25
+	{ WP_LANDMINE,             WP_NONE,                WP_NONE,  WP_LANDMINE,          WP_LANDMINE,          qfalse, qfalse, 250, qtrue,  qfalse, 0,     250,         250,         qfalse,      qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qtrue,           qtrue,        qtrue,      qfalse, "",                    WS_LANDMINE        }, // 26
+	{ WP_SATCHEL,              WP_NONE,                WP_NONE,  WP_SATCHEL,           WP_SATCHEL,           qfalse, qfalse, 250, qtrue,  qfalse, 0,     250,         250,         qfalse,      qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qtrue,        qfalse,     qfalse, "SATCHEL",             WS_MAX             }, // 27
+	{ WP_SATCHEL_DET,          WP_NONE,                WP_NONE,  WP_SATCHEL_DET,       WP_SATCHEL_DET,       qfalse, qfalse, 1,   qtrue,  qfalse, 0,     1,           1,           qtrue,       qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qtrue,        qtrue,      qfalse, "SATCHEL",             WS_SATCHEL         }, // 28
+	{ WP_SMOKE_BOMB,           WP_NONE,                WP_NONE,  WP_SMOKE_BOMB,        WP_SMOKE_BOMB,        qfalse, qfalse, 1,   qfalse, qfalse, 0,     1,           1,           qtrue,       qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qtrue,           qtrue,        qfalse,     qfalse, "",                    WS_MAX             }, // 29
 
-	{ WP_MOBILE_MG42,          WP_MOBILE_MG42_SET,     WP_NONE,  WP_MOBILE_MG42,       WP_MOBILE_MG42,       qfalse, qfalse, 18,  qfalse, qtrue,  2500, "MOBILE MG 42",        WS_MG42            }, // 30
-	{ WP_K43,                  WP_K43_SCOPE,           WP_NONE,  WP_K43,               WP_K43,               qfalse, qfalse, 34,  qfalse, qtrue,  250,  "SCOPED K43",          WS_K43             }, // 31
-	{ WP_FG42,                 WP_FG42SCOPE,           WP_NONE,  WP_FG42,              WP_FG42,              qfalse, qtrue,  16,  qfalse, qtrue,  500,  "FG 42",               WS_FG42            }, // 32
-	{ WP_DUMMY_MG42,           WP_NONE,                WP_NONE,  WP_DUMMY_MG42,        WP_DUMMY_MG42,        qfalse, qfalse, 1,   qfalse, qfalse, 0,    "",                    WS_MG42            }, // 33   // for storing heat on mounted mg42s...
-	{ WP_MORTAR,               WP_MORTAR_SET,          WP_NONE,  WP_MORTAR,            WP_MORTAR,            qfalse, qfalse, 1,   qtrue,  qtrue,  0,    "MORTAR",              WS_MORTAR          }, // 34
-	{ WP_AKIMBO_COLT,          WP_NONE,                WP_COLT,  WP_COLT,              WP_AKIMBO_COLT,       qfalse, qfalse, 18,  qfalse, qtrue,  600,  "AKIMBO COLTS",        WS_COLT            }, // 35
-	{ WP_AKIMBO_LUGER,         WP_NONE,                WP_LUGER, WP_LUGER,             WP_AKIMBO_LUGER,      qfalse, qfalse, 18,  qfalse, qtrue,  600,  "AKIMBO LUGERS",       WS_LUGER           }, // 36
+	{ WP_MOBILE_MG42,          WP_MOBILE_MG42_SET,     WP_NONE,  WP_MOBILE_MG42,       WP_MOBILE_MG42,       qfalse, qfalse, 18,  qfalse, qtrue,  2500,  18,          18,          qfalse,      qtrue,        qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qtrue,  qfalse, qfalse,     qtrue,        qfalse,          qfalse,          qfalse,       qfalse,     qtrue,  "MOBILE MG 42",        WS_MG42            }, // 30
+	{ WP_K43,                  WP_K43_SCOPE,           WP_NONE,  WP_K43,               WP_K43,               qfalse, qfalse, 34,  qfalse, qtrue,  250,   34,          34,          qtrue,       qtrue,        qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "SCOPED K43",          WS_K43             }, // 31
+	{ WP_FG42,                 WP_FG42SCOPE,           WP_NONE,  WP_FG42,              WP_FG42,              qfalse, qtrue,  16,  qfalse, qtrue,  500,   16,          16,          qfalse,      qtrue,        qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "FG 42",               WS_FG42            }, // 32
+	{ WP_DUMMY_MG42,           WP_NONE,                WP_NONE,  WP_DUMMY_MG42,        WP_DUMMY_MG42,        qfalse, qfalse, 1,   qfalse, qfalse, 0,     1,           1,           qfalse,      qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qtrue,  qfalse,     qtrue,        qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "",                    WS_MG42            }, // 33   // for storing heat on mounted mg42s...
+	{ WP_MORTAR,               WP_MORTAR_SET,          WP_NONE,  WP_MORTAR,            WP_MORTAR,            qfalse, qfalse, 1,   qtrue,  qtrue,  0,     1,           1,           qfalse,      qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qtrue,   qfalse,     qfalse, qfalse, qfalse,     qtrue,        qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "MORTAR",              WS_MORTAR          }, // 34
+	{ WP_AKIMBO_COLT,          WP_NONE,                WP_COLT,  WP_COLT,              WP_AKIMBO_COLT,       qfalse, qfalse, 18,  qfalse, qtrue,  600,   18,          18,          qfalse,      qtrue,        qtrue,   qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "AKIMBO COLTS",        WS_COLT            }, // 35
+	{ WP_AKIMBO_LUGER,         WP_NONE,                WP_LUGER, WP_LUGER,             WP_AKIMBO_LUGER,      qfalse, qfalse, 18,  qfalse, qtrue,  600,   18,          18,          qfalse,      qtrue,        qtrue,   qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "AKIMBO LUGERS",       WS_LUGER           }, // 36
 
-	{ WP_GPG40,                WP_KAR98,               WP_NONE,  WP_GPG40,             WP_GPG40,             qfalse, qfalse, 250, qtrue,  qfalse, 0,    "",                    WS_GRENADELAUNCHER }, // 37
-	{ WP_M7,                   WP_CARBINE,             WP_NONE,  WP_M7,                WP_M7,                qfalse, qfalse, 250, qtrue,  qfalse, 0,    "",                    WS_GRENADELAUNCHER }, // 38
-	{ WP_SILENCED_COLT,        WP_COLT,                WP_NONE,  WP_COLT,              WP_COLT,              qfalse, qfalse, 18,  qfalse, qtrue,  600,  "SILENCED COLT",       WS_COLT            }, // 39
+	{ WP_GPG40,                WP_KAR98,               WP_NONE,  WP_GPG40,             WP_GPG40,             qfalse, qfalse, 250, qtrue,  qfalse, 0,     250,         250,         qfalse,      qtrue,        qfalse,  qfalse,  qtrue,      qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qtrue,        qfalse,     qfalse, "",                    WS_GRENADELAUNCHER }, // 37
+	{ WP_M7,                   WP_CARBINE,             WP_NONE,  WP_M7,                WP_M7,                qfalse, qfalse, 250, qtrue,  qfalse, 0,     250,         250,         qfalse,      qtrue,        qfalse,  qfalse,  qtrue,      qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qtrue,        qfalse,     qfalse, "",                    WS_GRENADELAUNCHER }, // 38
+	{ WP_SILENCED_COLT,        WP_COLT,                WP_NONE,  WP_COLT,              WP_COLT,              qfalse, qfalse, 18,  qfalse, qtrue,  600,   18,          18,          qtrue,       qtrue,        qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "SILENCED COLT",       WS_COLT            }, // 39
 
-	{ WP_GARAND_SCOPE,         WP_GARAND,              WP_NONE,  WP_GARAND,            WP_GARAND,            qtrue,  qfalse, 50,  qfalse, qtrue,  700,  "",                    WS_GARAND          }, // 40
-	{ WP_K43_SCOPE,            WP_K43,                 WP_NONE,  WP_K43,               WP_K43,               qtrue,  qfalse, 50,  qfalse, qtrue,  700,  "",                    WS_K43             }, // 41
-	{ WP_FG42SCOPE,            WP_FG42,                WP_NONE,  WP_FG42,              WP_FG42,              qtrue,  qfalse, 30,  qfalse, qtrue,  200,  "FG 42",               WS_FG42            }, // 42
-	{ WP_MORTAR_SET,           WP_MORTAR,              WP_NONE,  WP_MORTAR,            WP_MORTAR,            qfalse, qfalse, 400, qtrue,  qtrue,  0,    "MORTAR",              WS_MORTAR          }, // 43
-	{ WP_MEDIC_ADRENALINE,     WP_NONE,                WP_NONE,  WP_MEDIC_SYRINGE,     WP_MEDIC_SYRINGE,     qfalse, qfalse, 1,   qfalse, qfalse, 0,    "ADRENALINE",          WS_MAX             }, // 44
-	{ WP_AKIMBO_SILENCEDCOLT,  WP_NONE,                WP_COLT,  WP_COLT,              WP_AKIMBO_COLT,       qfalse, qfalse, 18,  qfalse, qtrue,  600,  "SLNCD AKIMBO COLTS",  WS_COLT            }, // 45
-	{ WP_AKIMBO_SILENCEDLUGER, WP_NONE,                WP_LUGER, WP_LUGER,             WP_AKIMBO_LUGER,      qfalse, qfalse, 18,  qfalse, qtrue,  600,  "SLNCD AKIMBO LUGERS", WS_LUGER           }, // 46
-	{ WP_MOBILE_MG42_SET,      WP_MOBILE_MG42,         WP_NONE,  WP_MOBILE_MG42,       WP_MOBILE_MG42,       qfalse, qfalse, 18,  qfalse, qtrue,  2500, "MOBILE MG 42",        WS_MG42            }, // 47
-
+	{ WP_GARAND_SCOPE,         WP_GARAND,              WP_NONE,  WP_GARAND,            WP_GARAND,            qtrue,  qfalse, 50,  qfalse, qtrue,  700,   50,          50,          qtrue,       qtrue,        qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "",                    WS_GARAND          }, // 40
+    { WP_K43_SCOPE,            WP_K43,                 WP_NONE,  WP_K43,               WP_K43,               qtrue,  qfalse, 50,  qfalse, qtrue,  700,   50,          50,          qtrue,       qtrue,        qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "",                    WS_K43             }, // 41
+	{ WP_FG42SCOPE,            WP_FG42,                WP_NONE,  WP_FG42,              WP_FG42,              qtrue,  qfalse, 30,  qfalse, qtrue,  200,   30,          30,          qfalse,      qtrue,        qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "FG 42",               WS_FG42            }, // 42
+	{ WP_MORTAR_SET,           WP_MORTAR,              WP_NONE,  WP_MORTAR,            WP_MORTAR,            qfalse, qfalse, 400, qtrue,  qtrue,  0,     400,         400,         qfalse,      qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qtrue,   qtrue,      qfalse, qfalse, qtrue,      qtrue,        qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "MORTAR",              WS_MORTAR          }, // 43
+	{ WP_MEDIC_ADRENALINE,     WP_NONE,                WP_NONE,  WP_MEDIC_SYRINGE,     WP_MEDIC_SYRINGE,     qfalse, qfalse, 1,   qfalse, qfalse, 0,     1,           1,           qtrue,       qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qtrue,           qtrue,        qfalse,     qfalse, "ADRENALINE",          WS_MAX             }, // 44
+	{ WP_AKIMBO_SILENCEDCOLT,  WP_NONE,                WP_COLT,  WP_COLT,              WP_AKIMBO_COLT,       qfalse, qfalse, 18,  qfalse, qtrue,  600,   18,          18,          qtrue,       qtrue,        qtrue,   qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "SLNCD AKIMBO COLTS",  WS_COLT            }, // 45
+	{ WP_AKIMBO_SILENCEDLUGER, WP_NONE,                WP_LUGER, WP_LUGER,             WP_AKIMBO_LUGER,      qfalse, qfalse, 18,  qfalse, qtrue,  600,   18,          18,          qtrue,       qtrue,        qtrue,   qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "SLNCD AKIMBO LUGERS", WS_LUGER           }, // 46
+	{ WP_MOBILE_MG42_SET,      WP_MOBILE_MG42,         WP_NONE,  WP_MOBILE_MG42,       WP_MOBILE_MG42,       qfalse, qfalse, 18,  qfalse, qtrue,  2500,  18,          18,          qfalse,      qtrue,        qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qtrue,  qtrue,      qtrue,        qfalse,          qfalse,          qfalse,       qfalse,     qtrue,  "MOBILE MG 42",        WS_MG42            }, // 47
 	// legacy weapons
-	{ WP_KNIFE_KABAR,          WP_NONE,                WP_NONE,  WP_KNIFE_KABAR,       WP_KNIFE_KABAR,       qfalse, qfalse, 10,  qtrue,  qfalse, 0,    "KABAR",               WS_KNIFE_KBAR      }, // 48
-	{ WP_MOBILE_BROWNING,      WP_MOBILE_BROWNING_SET, WP_NONE,  WP_MOBILE_BROWNING,   WP_MOBILE_BROWNING,   qfalse, qfalse, 18,  qfalse, qtrue,  2500, "MOBILE BROWNING",     WS_BROWNING        }, // 49
-	{ WP_MOBILE_BROWNING_SET,  WP_MOBILE_BROWNING,     WP_NONE,  WP_MOBILE_BROWNING,   WP_MOBILE_BROWNING,   qfalse, qfalse, 18,  qfalse, qtrue,  2500, "MOBILE BROWNING",     WS_BROWNING        }, // 50
-	{ WP_MORTAR2,              WP_MORTAR2_SET,         WP_NONE,  WP_MORTAR2,           WP_MORTAR2,           qfalse, qfalse, 1,   qtrue,  qtrue,  0,    "GRANATWERFER",        WS_MORTAR2         }, // 51
-	{ WP_MORTAR2_SET,          WP_MORTAR2,             WP_NONE,  WP_MORTAR2,           WP_MORTAR2,           qfalse, qfalse, 400, qtrue,  qtrue,  0,    "GRANATWERFER",        WS_MORTAR2         }, // 52
-	{ WP_BAZOOKA,              WP_NONE,                WP_NONE,  WP_BAZOOKA,           WP_BAZOOKA,           qfalse, qfalse, 400, qtrue,  qfalse, 0,    "BAZOOKA",             WS_BAZOOKA         }, // 53
+	{ WP_KNIFE_KABAR,          WP_NONE,                WP_NONE,  WP_KNIFE_KABAR,       WP_KNIFE_KABAR,       qfalse, qfalse, 10,  qtrue,  qfalse, 0,     10,          10,          qtrue,       qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,          qtrue,           qtrue,        qfalse,     qfalse, "KABAR",               WS_KNIFE_KBAR      }, // 48
+	{ WP_MOBILE_BROWNING,      WP_MOBILE_BROWNING_SET, WP_NONE,  WP_MOBILE_BROWNING,   WP_MOBILE_BROWNING,   qfalse, qfalse, 18,  qfalse, qtrue,  2500,  18,          18,          qfalse,      qtrue,        qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qtrue,  qfalse, qfalse,     qtrue,        qfalse,          qfalse,          qfalse,       qfalse,     qtrue,  "MOBILE BROWNING",     WS_BROWNING        }, // 49
+	{ WP_MOBILE_BROWNING_SET,  WP_MOBILE_BROWNING,     WP_NONE,  WP_MOBILE_BROWNING,   WP_MOBILE_BROWNING,   qfalse, qfalse, 18,  qfalse, qtrue,  2500,  18,          18,          qfalse,      qtrue,        qfalse,  qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qtrue,  qtrue,      qtrue,        qfalse,          qfalse,          qfalse,       qfalse,     qtrue,  "MOBILE BROWNING",     WS_BROWNING        }, // 50
+	{ WP_MORTAR2,              WP_MORTAR2_SET,         WP_NONE,  WP_MORTAR2,           WP_MORTAR2,           qfalse, qfalse, 1,   qtrue,  qtrue,  0,     1,           1,           qfalse,      qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qtrue,   qfalse,     qfalse, qfalse, qfalse,     qtrue,        qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "GRANATWERFER",        WS_MORTAR2         }, // 51
+	{ WP_MORTAR2_SET,          WP_MORTAR2,             WP_NONE,  WP_MORTAR2,           WP_MORTAR2,           qfalse, qfalse, 400, qtrue,  qtrue,  0,     400,         400,         qfalse,      qfalse,       qfalse,  qfalse,  qfalse,     qfalse, qtrue,   qtrue,      qfalse, qfalse, qtrue,      qtrue,        qfalse,          qfalse,          qfalse,       qfalse,     qfalse, "GRANATWERFER",        WS_MORTAR2         }, // 52
+	{ WP_BAZOOKA,              WP_NONE,                WP_NONE,  WP_BAZOOKA,           WP_BAZOOKA,           qfalse, qfalse, 400, qtrue,  qfalse, 0,     400,         300,         qfalse,      qfalse,       qtrue,   qfalse,  qfalse,     qfalse, qfalse,  qfalse,     qfalse, qfalse, qfalse,     qtrue,        qfalse,          qfalse,          qfalse,       qtrue,      qfalse, "BAZOOKA",             WS_BAZOOKA         }, // 53
 };
 
 // WIP: New weapon table for mod properties
 // FIXME: add client side properties
 
-// [0]  = mod         -
-// [1]  = isHeadshot
-// [2]  = isExplosive
+// [0] = mod               -
+// [1] = isHeadshot        -
+// [2] = isExplosive       -
+// [3] = weaponClassForMOD -
+// [4] = indexWeaponStat   -
 modTable_t modTable[MOD_NUM_MODS] =
 {
 	{ MOD_UNKNOWN,                            qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
@@ -2177,7 +2195,7 @@ extWeaponStats_t BG_WeapStatForWeapon(weapon_t iWeaponID)
 {
 	if (iWeaponID < WP_NUM_WEAPONS)
 	{
-		return weaponTable[iWeaponID].iWS;
+		return weaponTable[iWeaponID].indexWeaponStat;
 	}
 
 	return WS_MAX;
@@ -2237,7 +2255,7 @@ weapon_t BG_FindAmmoForWeapon(weapon_t weapon)
  */
 qboolean BG_AkimboFireSequence(int weapon, int akimboClip, int mainClip)
 {
-	if (!IS_AKIMBO_WEAPON(weapon))
+	if (!GetWeaponTableData(weapon)->isAkimbo)
 	{
 		return qfalse;
 	}
@@ -2516,7 +2534,7 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfCl
 					}
 					ammoAdded = qtrue;
 
-					if (IS_AKIMBO_WEAPON(weapon))
+					if (GetWeaponTableData(weapon)->isAkimbo)
 					{
 						weapNumOfClips = numOfClips * 2;     // double clips babeh!
 					}
