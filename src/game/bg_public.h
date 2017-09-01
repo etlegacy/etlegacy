@@ -963,21 +963,21 @@ typedef struct weapontable_s
 	qboolean isAkimbo;              ///< bg
 	qboolean isPanzer;              ///< bg
 	qboolean isRiflenade;           ///< bg
-    qboolean isRifle;               ///< bg
+	qboolean isRifle;               ///< bg
 	qboolean isMortar;              ///< bg
 	qboolean isMortarSet;           ///< bg
 
-    qboolean isMG;                  ///< bg
-    qboolean isMGSet;               ///< bg
+	qboolean isMG;                  ///< bg
+	qboolean isMGSet;               ///< bg
 
 	qboolean isSetWeapon;           ///< bg
-    qboolean isHeavyWeapon;         ///< bg
-    qboolean isSilencedPistol;      ///< bg
+	qboolean isHeavyWeapon;         ///< bg
+	qboolean isSilencedPistol;      ///< bg
 
 	qboolean isUnderWaterFire;      ///< bg
 	qboolean noMuzzleFlash;         ///< cg
 	qboolean shakeEffect;           ///< g
-    qboolean canHeat;               ///< bg
+	qboolean canHeat;               ///< bg
 
 	// client
 	// icons

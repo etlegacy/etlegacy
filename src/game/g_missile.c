@@ -254,7 +254,7 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 	temp->s.weapon    = ent->s.weapon;
 	temp->s.clientNum = ent->r.ownerNum;
 
-	if (GetWeaponTableData(ent->s.weapon))
+	if (GetWeaponTableData(ent->s.weapon)->isMortarSet)
 	{
 		temp->s.legsAnim = ent->s.legsAnim; // need this one as well
 		temp->r.svFlags |= SVF_BROADCAST;
@@ -501,7 +501,7 @@ void G_RunMissile(gentity_t *ent)
 	}
 
 	if (level.tracemapLoaded &&
-	    (GetWeaponTableData(ent->s.weapon) ||
+	    (GetWeaponTableData(ent->s.weapon)->isMortarSet ||
 	     ent->s.weapon == WP_GPG40 ||
 	     ent->s.weapon == WP_M7 ||
 	     ent->s.weapon == WP_GRENADE_LAUNCHER ||
@@ -580,7 +580,7 @@ void G_RunMissile(gentity_t *ent)
 	// ignoring interactions with the missile owner
 	trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin, ent->r.ownerNum, ent->clipmask);
 
-	if (GetWeaponTableData(ent->s.weapon) && ent->count2 == 1)
+	if (GetWeaponTableData(ent->s.weapon)->isMortarSet && ent->count2 == 1)
 	{
 		if (ent->r.currentOrigin[2] > origin[2] && origin[2] - BG_GetGroundHeightAtPoint(origin) < 512)
 		{
@@ -634,7 +634,7 @@ void G_RunMissile(gentity_t *ent)
 		int impactDamage;
 
 		if (level.tracemapLoaded &&
-		    (GetWeaponTableData(ent->s.weapon) ||
+		    (GetWeaponTableData(ent->s.weapon)->isMortarSet ||
 		     ent->s.weapon == WP_GPG40 ||
 		     ent->s.weapon == WP_M7 ||
 		     ent->s.weapon == WP_GRENADE_LAUNCHER ||
@@ -655,7 +655,7 @@ void G_RunMissile(gentity_t *ent)
 
 		//      G_SetOrigin( ent, tr.endpos );
 
-		if (GetWeaponTableData(ent->s.weapon)->isPanzer || GetWeaponTableData(ent->s.weapon))
+		if (GetWeaponTableData(ent->s.weapon)->isPanzer || GetWeaponTableData(ent->s.weapon)->isMortarSet)
 		{
 			impactDamage = 999; // goes through pretty much any func_explosives
 		}
