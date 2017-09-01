@@ -2426,14 +2426,14 @@ weapon_t BG_GrenadeTypeForTeam(team_t team)
  * @param[in] numOfClips
  * @return
  */
-qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfClips)
+qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numOfClips)
 {
 	qboolean ammoAdded = qfalse;
 	int      maxammo;
 	int      weapNumOfClips;
 	int      i      = BG_GrenadesForClass(ps->stats[STAT_PLAYER_CLASS], skill); // handle grenades first
-	weapon_t weapon = BG_GrenadeTypeForTeam((team_t)teamNum);
-	weapon_t clip   = BG_FindClipForWeapon((weapon_t)weapon);
+	weapon_t weapon = BG_GrenadeTypeForTeam(teamNum);
+	weapon_t clip   = BG_FindClipForWeapon(weapon);
 
 	if (ps->ammoclip[clip] < i)
 	{
@@ -2564,7 +2564,7 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfCl
  * @param[in] teamNum
  * @return false if the item should not be picked up.
  */
-qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, int *skill, int teamNum)
+qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, int *skill, team_t teamNum)
 {
 	gitem_t *item;
 

@@ -1716,7 +1716,7 @@ weapon_t BG_FindClipForWeapon(weapon_t weapon);
 
 qboolean BG_AkimboFireSequence(int weapon, int akimboClip, int mainClip);
 
-qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, int *skill, int teamNum);
+qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, int *skill, team_t teamNum);
 
 // content masks
 #define MASK_ALL                (-1)
@@ -1806,7 +1806,7 @@ weapon_t BG_WeaponForMOD(int MOD);
 
 qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime);
 qboolean BG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime);
-qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, int teamNum, int numOfClips);
+qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numOfClips);
 
 #define OVERCLIP        1.001f
 
