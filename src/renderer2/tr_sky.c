@@ -919,8 +919,7 @@ static void BuildCloudData()
 #endif
 	}
 
-	// FIXME analyze required vertex attribs by the current material
-	Tess_UpdateVBOs(0);
+	Tess_UpdateVBOs(tess.attribsSet);
 }
 
 /**
