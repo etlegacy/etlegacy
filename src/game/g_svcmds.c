@@ -476,7 +476,7 @@ void ClearMaxLivesBans()
 /**
  * @var names of enum entityType_t for Svcmd_EntityList_f
  */
-char *enttypenames[] =
+const char *enttypenames[] =
 {
 	"ET_GENERAL",
 	"ET_PLAYER",

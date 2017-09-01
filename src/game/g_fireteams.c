@@ -112,7 +112,7 @@ team_t G_GetFireteamTeam(fireteamData_t *ft)
 {
 	if (!ft->inuse)
 	{
-		return -1;
+		return TEAM_FREE;
 	}
 
 	if (ft->joinOrder[0] == -1 || !g_entities[(int)ft->joinOrder[0]].client)

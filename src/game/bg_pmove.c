@@ -99,7 +99,7 @@ void ClientStoreSurfaceFlags(int clientNum, int surfaceFlags);
 
 #endif
 
-static void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload);
+static void PM_BeginWeaponChange(weapon_t oldweapon, weapon_t newweapon, qboolean reload);
 
 /**
  * @brief PM_AddEvent
@@ -2430,7 +2430,7 @@ static void PM_WaterEvents(void)
  * @brief PM_BeginWeaponReload
  * @param weapon
  */
-static void PM_BeginWeaponReload(int weapon)
+static void PM_BeginWeaponReload(weapon_t weapon)
 {
 	int reloadTime;
 
@@ -2520,7 +2520,7 @@ static void PM_BeginWeaponReload(int weapon)
 	PM_AddEvent(EV_FILL_CLIP);      // play reload sound
 }
 
-static void PM_ReloadClip(int weapon);
+static void PM_ReloadClip(weapon_t weapon);
 
 /**
  * @brief PM_BeginWeaponChange
@@ -2528,7 +2528,7 @@ static void PM_ReloadClip(int weapon);
  * @param[in] newweapon
  * @param[in] reload
  */
-static void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload)        // modified to play 1st person alt-mode transition animations.
+static void PM_BeginWeaponChange(weapon_t oldweapon, weapon_t newweapon, qboolean reload)        // modified to play 1st person alt-mode transition animations.
 {
 	int      switchtime;
 	qboolean altSwitchAnim = qfalse;
@@ -2711,7 +2711,8 @@ static void PM_BeginWeaponChange(int oldweapon, int newweapon, qboolean reload) 
  */
 static void PM_FinishWeaponChange(void)
 {
-	int      oldweapon, newweapon = pm->ps->nextWeapon, switchtime;
+	weapon_t oldweapon, newweapon = (weapon_t)pm->ps->nextWeapon;
+	int      switchtime;
 	qboolean altSwitchAnim = qfalse;
 	qboolean doSwitchAnim  = qtrue;
 
@@ -2917,7 +2918,7 @@ static void PM_FinishWeaponChange(void)
  * @brief PM_ReloadClip
  * @param[in] weapon
  */
-static void PM_ReloadClip(int weapon)
+static void PM_ReloadClip(weapon_t weapon)
 {
 	int ammoreserve = pm->ps->ammo[BG_FindAmmoForWeapon(weapon)];
 	int ammoclip    = pm->ps->ammoclip[BG_FindClipForWeapon(weapon)];
@@ -2955,7 +2956,7 @@ static void PM_FinishWeaponReload(void)
  * @brief PM_CheckForReload
  * @param[in] weapon
  */
-void PM_CheckForReload(int weapon)
+void PM_CheckForReload(weapon_t weapon)
 {
 	qboolean autoreload;
 	qboolean reloadRequested;
@@ -3114,7 +3115,7 @@ static void PM_SwitchIfEmpty(void)
  * @param[in] wp
  * @param[in] amount
  */
-void PM_WeaponUseAmmo(int wp, int amount)
+void PM_WeaponUseAmmo(weapon_t wp, int amount)
 {
 	if (pm->noWeapClips)
 	{
@@ -3143,7 +3144,7 @@ void PM_WeaponUseAmmo(int wp, int amount)
  * @param[in] wp
  * @return
  */
-int PM_WeaponAmmoAvailable(int wp)
+int PM_WeaponAmmoAvailable(weapon_t wp)
 {
 	if (pm->noWeapClips)
 	{
@@ -3172,7 +3173,7 @@ int PM_WeaponAmmoAvailable(int wp)
  * @param[in] wp
  * @return
  */
-int PM_WeaponClipEmpty(int wp)
+int PM_WeaponClipEmpty(weapon_t wp)
 {
 	if (pm->noWeapClips)
 	{

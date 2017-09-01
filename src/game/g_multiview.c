@@ -213,7 +213,7 @@ void G_smvAddView(gentity_t *ent, int pID)
 	if (ent->client->sess.sessionTeam == TEAM_SPECTATOR &&  /*ent->client->sess.sessionTeam != TEAM_SPECTATOR ||*/
 	    ent->client->sess.spectatorState == SPECTATOR_FOLLOW)
 	{
-		SetTeam(ent, "s", qtrue, -1, -1, qfalse);
+		SetTeam(ent, "s", qtrue, WP_NONE, WP_NONE, qfalse);
 	}
 	else if (ent->client->sess.sessionTeam != TEAM_SPECTATOR && !(ent->client->ps.pm_flags & PMF_LIMBO))
 	{

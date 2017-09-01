@@ -1952,7 +1952,7 @@ void G_updateSpecLock(int nTeam, qboolean fLock)
 		if (ent->client->pers.mvCount < 1)
 		{
 #endif
-		SetTeam(ent, "s", qtrue, -1, -1, qfalse);
+		SetTeam(ent, "s", qtrue, WP_NONE, WP_NONE, qfalse);
 #ifdef FEATURE_MULTIVIEW
 	}
 #endif

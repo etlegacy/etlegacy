@@ -1317,7 +1317,8 @@ void SP_target_script_trigger(gentity_t *ent)
 	ent->use       = target_script_trigger_use;
 }
 
-int rumble_snd;
+// note: Unused
+//int rumble_snd;
 
 /**
  * @brief target_rumble_think

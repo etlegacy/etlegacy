@@ -110,7 +110,7 @@ void G_PrintAccuracyLog(gentity_t *ent)
 
 	for (i = WP_KNIFE; i < WP_NUM_WEAPONS; i++)
 	{
-		if (BG_WeapStatForWeapon(i) == WS_MAX)
+		if (BG_WeapStatForWeapon((weapon_t)i) == WS_MAX)
 		{
 			continue;
 		}
@@ -230,33 +230,33 @@ void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 	else
 	{
 #endif
-		if (i == SK_NUM_SKILLS)
-		{
-			// increase rank
-			ent->client->sess.rank++;
-		}
-
-		if (ent->client->sess.rank >= 4)
-		{
-			int cnt = 0;
-
-			// count the number of maxed out skills
-			for (i = 0; i < SK_NUM_SKILLS; i++)
-			{
-				if (ent->client->sess.skill[i] >= 4)
-				{
-					cnt++;
-				}
-			}
-
-			ent->client->sess.rank = cnt + 3;
-			if (ent->client->sess.rank > 10)
-			{
-				ent->client->sess.rank = 10;
-			}
-		}
-#ifdef FEATURE_RATING
+	if (i == SK_NUM_SKILLS)
+	{
+		// increase rank
+		ent->client->sess.rank++;
 	}
+
+	if (ent->client->sess.rank >= 4)
+	{
+		int cnt = 0;
+
+		// count the number of maxed out skills
+		for (i = 0; i < SK_NUM_SKILLS; i++)
+		{
+			if (ent->client->sess.skill[i] >= 4)
+			{
+				cnt++;
+			}
+		}
+
+		ent->client->sess.rank = cnt + 3;
+		if (ent->client->sess.rank > 10)
+		{
+			ent->client->sess.rank = 10;
+		}
+	}
+#ifdef FEATURE_RATING
+}
 #endif
 
 	ClientUserinfoChanged(ent - g_entities);
@@ -1181,7 +1181,7 @@ void G_BuildEndgameStats(void)
 	if (best)
 	{
 		best->hasaward = qtrue;
-		Q_strcat(buffer, 1024, va("%i %.2f %i ", bestClientNum, best->acc < 100.f ? (double)best->acc : 100.f, best->sess.sessionTeam));
+		Q_strcat(buffer, 1024, va("%i %.2f %i ", bestClientNum, best->acc < 100.f ? (double)best->acc : 100., best->sess.sessionTeam));
 	}
 	else
 	{
@@ -1215,7 +1215,7 @@ void G_BuildEndgameStats(void)
 	if (best)
 	{
 		best->hasaward = qtrue;
-		Q_strcat(buffer, 1024, va("%i %.2f %i ", bestClientNum, best->hspct < 100.f ? (double)best->hspct : 100.f, best->sess.sessionTeam));
+		Q_strcat(buffer, 1024, va("%i %.2f %i ", bestClientNum, best->hspct < 100.f ? (double)best->hspct : 100., best->sess.sessionTeam));
 	}
 	else
 	{
@@ -1249,7 +1249,7 @@ void G_BuildEndgameStats(void)
 	if (best)
 	{
 		best->hasaward = qtrue;
-		Q_strcat(buffer, 1024, va("%i %.2f %i ", bestClientNum, MIN(100.f * best->sess.time_played / (double)(level.time - best->pers.enterTime), 100.f), best->sess.sessionTeam));
+		Q_strcat(buffer, 1024, va("%i %.2f %i ", bestClientNum, MIN(100. * best->sess.time_played / (double)(level.time - best->pers.enterTime), 100.), best->sess.sessionTeam));
 	}
 	else
 	{

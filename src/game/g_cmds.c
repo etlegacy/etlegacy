@@ -1519,7 +1519,7 @@ void StopFollowing(gentity_t *ent)
 		//pos[2] += 16; // removing for now
 		VectorCopy(client->ps.viewangles, angle);
 		// Need this as it gets spec mode reset properly
-		SetTeam(ent, "s", qtrue, -1, -1, qfalse);
+		SetTeam(ent, "s", qtrue, WP_NONE, WP_NONE, qfalse);
 		VectorCopy(pos, client->ps.origin);
 		SetClientViewAngle(ent, angle);
 	}
@@ -2530,7 +2530,7 @@ void Cmd_FollowCycle_f(gentity_t *ent, int dir, qboolean skipBots)
 	// first set them to spectator
 	if ((ent->client->sess.spectatorState == SPECTATOR_NOT) && (!(ent->client->ps.pm_flags & PMF_LIMBO))) // for limbo state
 	{
-		SetTeam(ent, "s", qfalse, -1, -1, qfalse);
+		SetTeam(ent, "s", qfalse, WP_NONE, WP_NONE, qfalse);
 	}
 
 	if (dir != 1 && dir != -1)
