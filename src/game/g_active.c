@@ -788,7 +788,7 @@ qboolean ClientInactivityTimer(gclient_t *client)
 		{
 			if (inTeam)
 			{
-				SetTeam(&g_entities[client - level.clients], "s", qtrue, -1, -1, qfalse);
+				SetTeam(&g_entities[client - level.clients], "s", qtrue, WP_NONE, WP_NONE, qfalse);
 				client->inactivityWarning     = qfalse;
 				client->inactivityTime        = level.time + 1000 * inactivityspec;
 				client->inactivitySecondsLeft = inactivityspec;

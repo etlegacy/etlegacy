@@ -2320,7 +2320,7 @@ public:
 
 		// if SetTeam() fails, be sure to at least send a note to the bot about the current team
 		// (else this won't be neccessary because on respawn messages will be sent automatically)
-		if (!SetTeam(bot, teamName, qtrue, (weapon_t)-1, (weapon_t)-1, qfalse))
+		if (!SetTeam(bot, teamName, qtrue, WP_NONE, WP_NONE, qfalse))
 		{
 			// also retransmit weapons stuff
 			//ReTransmitWeapons(bot);
