@@ -399,8 +399,8 @@ struct gentity_s
 	int damage;
 	int splashDamage;               ///< quad will increase this without increasing radius
 	int splashRadius;
-	int methodOfDeath;
-	int splashMethodOfDeath;
+	meansOfDeath_t methodOfDeath;
+	meansOfDeath_t splashMethodOfDeath;
 
 	int count;
 
