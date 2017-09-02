@@ -68,6 +68,10 @@ char implicitMap[MAX_QPATH];
 unsigned   implicitStateBits;
 cullType_t implicitCullType;
 
+// scan and load shader files behaviour
+#define R_SCAN_SCRIPTS_FOLDER   0x0001      ///< 1  - scan material in scripts folder
+#define R_SCAN_MATERIAL_FOLDER  0x0002      ///< 2  - scan material in material folder
+
 // tr_shader_r1.c
 int ScanAndLoadShaderFilesR1();
 char *FindShaderInShaderTextR1(const char *shaderName);

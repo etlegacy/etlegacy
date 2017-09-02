@@ -3916,6 +3916,8 @@ extern cvar_t *r_dynamicLightCastShadows;
 extern cvar_t *r_recompileShaders;
 extern cvar_t *r_rotoscopeBlur;
 
+extern cvar_t *r_materialScan;
+
 //====================================================================
 
 void R_SwapBuffers(int);

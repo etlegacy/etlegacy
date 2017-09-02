@@ -6338,7 +6338,7 @@ static void ScanAndLoadGuideFiles(void)
 	// scan for guide files
 	guideFiles = ri.FS_ListFiles("guides", ".guide", &numGuides);
 
-	Ren_Print("----- ScanAndLoadGuideFiles (%i files)-----\n", numGuides);
+	Ren_Print("----- ScanAndLoadGuideFiles (%i files) -----\n", numGuides);
 
 	if (!guideFiles || !numGuides)
 	{
@@ -6584,11 +6584,11 @@ static int ScanAndLoadShaderFiles(void)
 
 	if (!shaderFiles || !numShaderFiles)
 	{
-		Ren_Print("----- ScanAndLoadShaderFiles (no files)-----\n");
+		Ren_Print("----- ScanAndLoadShaderFiles (no files) -----\n");
 		return 0;
 	}
 
-	Ren_Print("----- ScanAndLoadShaderFiles (%i files)-----\n", numShaderFiles);
+	Ren_Print("----- ScanAndLoadShaderFiles (%i files) -----\n", numShaderFiles);
 
 	if (numShaderFiles >= MAX_SHADER_FILES)
 	{
@@ -6968,9 +6968,24 @@ void R_InitShaders(void)
 
 	ScanAndLoadGuideFiles();
 
-	numMaterialFiles = ScanAndLoadShaderFiles();
-	numShaderFiles   = ScanAndLoadShaderFilesR1();
-
+	if(r_materialScan->integer & R_SCAN_MATERIAL_FOLDER)
+	{
+		numMaterialFiles = ScanAndLoadShaderFiles();
+	}
+	else
+	{
+		Ren_Print("----- ScanAndLoadShaderFiles (disabled) -----\n");
+	}
+	
+	if(r_materialScan->integer & R_SCAN_SCRIPTS_FOLDER)
+	{	
+		numShaderFiles   = ScanAndLoadShaderFilesR1();
+	}
+	else
+	{
+		Ren_Print("----- ScanAndLoadShaderFilesR1 (disabled) -----\n");
+	}
+	
 	if (numMaterialFiles + numShaderFiles == 0)
 	{
 		Ren_Drop("No shader/material files found!");
