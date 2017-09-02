@@ -597,13 +597,12 @@ static void SV_Serverinfo_f(void)
 }
 
 /**
- * @brief
-Examine or change the serverinfo string
+ * @brief Examine the serverinfo string
  */
 static void SV_Systeminfo_f(void)
 {
 	Com_Printf("System info settings:\n");
-	Info_Print(Cvar_InfoString(CVAR_SERVERINFO | CVAR_SERVERINFO_NOUPDATE));
+	Info_Print(Cvar_InfoString_Big(CVAR_SYSTEMINFO | CVAR_SERVERINFO_NOUPDATE));
 }
 
 /**
