@@ -610,13 +610,13 @@ qboolean Com_AddStartupCommands(void)
 //============================================================================
 
 /**
- * @brief Info_Print
+ * @brief Info_Print - prints key and values of a given String to console
  * @param[in] s
  */
 void Info_Print(const char *s)
 {
-	char key[512];
-	char value[512];
+	char key[BIG_INFO_KEY];
+	char value[BIG_INFO_STRING];
 	char *o;
 
 	if (*s == '\\')
