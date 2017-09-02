@@ -264,7 +264,7 @@ void Tess_Begin(void (*stageIteratorFunc)(),
                 int fogNum)
 {
 	shader_t *state;
-	qboolean isSky;
+	qboolean isSky = qfalse;
 
 	tess.numIndexes          = 0;
 	tess.numVertexes         = 0;
@@ -279,6 +279,11 @@ void Tess_Begin(void (*stageIteratorFunc)(),
 		tess.surfaceShader    = state;
 		tess.surfaceStages    = state->stages;
 		tess.numSurfaceStages = state->numStages;
+
+		if (state->isSky)
+		{
+			isSky = qtrue;
+		}
 	}
 	else
 	{
@@ -287,15 +292,6 @@ void Tess_Begin(void (*stageIteratorFunc)(),
 		tess.numSurfaceStages = 0;
 		tess.surfaceShader    = NULL;
 		tess.surfaceStages    = NULL;
-	}
-
-	if (state != NULL && state->isSky != qfalse)
-	{
-		isSky = qtrue;
-	}
-	else
-	{
-		isSky = qfalse;
 	}
 
 	tess.lightShader = lightShader;
