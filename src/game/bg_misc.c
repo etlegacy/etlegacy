@@ -106,15 +106,18 @@ int          numPathCorners;
 pathCorner_t pathCorners[MAX_PATH_CORNERS];
 
 // these defines are matched with the character torso animations
-#define DELAY_LOW       100 // machineguns, tesla, spear, flame
-#define DELAY_HIGH      100 // mauser, garand
-#define DELAY_PISTOL    100 // colt, luger, sp5, cross
-#define DELAY_SHOULDER  50  // rl
-#define DELAY_THROW     250 // grenades, dynamite
-#define DELAY_HW        750
+#define DELAY_LOW       100 ///< machineguns, tesla, spear, flame
+#define DELAY_HIGH      100 ///< mauser, garand
+#define DELAY_PISTOL    100 ///< colt, luger, sp5, cross
+#define DELAY_SHOULDER  50  ///< rl
+#define DELAY_THROW     250 ///< grenades, dynamite
+#define DELAY_HW        750 ///< heavy weapon
 
-// Using one unified list for which weapons can received ammo
-// This is used both by the ammo pack code and by the bot code to determine if reloads are needed
+/**
+ * @var reloadableWeapons
+ * @brief Using one unified list for which weapons can received ammo
+ * This is used both by the ammo pack code and by the bot code to determine if reloads are needed
+ */
 const weapon_t reloadableWeapons[] =
 {
 	WP_MP40,                WP_THOMPSON,             WP_STEN,            WP_GARAND,       WP_PANZERFAUST, WP_FLAMETHROWER,
@@ -309,92 +312,94 @@ weaponTable_t weaponTable[WP_NUM_WEAPONS] =
 // [1] = isHeadshot        -
 // [2] = isExplosive       -
 // [3] = weaponClassForMOD -
-// [4] = indexWeaponStat   -
+// [4] = noYellMedic       - don't yell medic
+// [5] = indexWeaponStat   -
 modTable_t modTable[MOD_NUM_MODS] =
 {
-	{ MOD_UNKNOWN,                            qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
-	{ MOD_MACHINEGUN,                         qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MG42            },
-	{ MOD_BROWNING,                           qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_BROWNING        },
-	{ MOD_MG42,                               qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MG42            },
-	{ MOD_GRENADE,                            qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_EXPLOSIVE, WS_GRENADE         },
+    // mod                                    isHeadshot isExplosive weaponClassForMOD               noYellMedic  indexWeaponStat
+	{ MOD_UNKNOWN,                            qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qtrue,       WS_MAX             },
+	{ MOD_MACHINEGUN,                         qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_MG42            },
+	{ MOD_BROWNING,                           qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_BROWNING        },
+	{ MOD_MG42,                               qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_MG42            },
+	{ MOD_GRENADE,                            qfalse,    qtrue,      WEAPON_CLASS_FOR_MOD_EXPLOSIVE, qfalse,      WS_GRENADE         },
 
-	{ MOD_KNIFE,                              qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_KNIFE           },
-	{ MOD_LUGER,                              qtrue,  qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_LUGER           },
-	{ MOD_COLT,                               qtrue,  qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_COLT            },
-	{ MOD_MP40,                               qtrue,  qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MP40            },
-	{ MOD_THOMPSON,                           qtrue,  qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_THOMPSON        },
-	{ MOD_STEN,                               qtrue,  qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_STEN            },
-	{ MOD_GARAND,                             qtrue,  qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_GARAND          },
+	{ MOD_KNIFE,                              qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_KNIFE           },
+	{ MOD_LUGER,                              qtrue,     qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_LUGER           },
+	{ MOD_COLT,                               qtrue,     qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_COLT            },
+	{ MOD_MP40,                               qtrue,     qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_MP40            },
+	{ MOD_THOMPSON,                           qtrue,     qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_THOMPSON        },
+	{ MOD_STEN,                               qtrue,     qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_STEN            },
+	{ MOD_GARAND,                             qtrue,     qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_GARAND          },
 
-	{ MOD_SILENCER,                           qtrue,  qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_LUGER           },
-	{ MOD_FG42,                               qtrue,  qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_FG42            },
-	{ MOD_FG42SCOPE,                          qtrue,  qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_FG42            },
-	{ MOD_PANZERFAUST,                        qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_EXPLOSIVE, WS_PANZERFAUST     },
-	{ MOD_GRENADE_LAUNCHER,                   qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_EXPLOSIVE, WS_GRENADE         },
-	{ MOD_FLAMETHROWER,                       qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_FLAMETHROWER    },
-	{ MOD_GRENADE_PINEAPPLE,                  qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_EXPLOSIVE, WS_GRENADE         },
+	{ MOD_SILENCER,                           qtrue,     qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_LUGER           },
+	{ MOD_FG42,                               qtrue,     qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_FG42            },
+	{ MOD_FG42SCOPE,                          qtrue,     qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_FG42            },
+	{ MOD_PANZERFAUST,                        qfalse,    qtrue,      WEAPON_CLASS_FOR_MOD_EXPLOSIVE, qfalse,      WS_PANZERFAUST     },
+	{ MOD_GRENADE_LAUNCHER,                   qfalse,    qtrue,      WEAPON_CLASS_FOR_MOD_EXPLOSIVE, qfalse,      WS_GRENADE         },
+	{ MOD_FLAMETHROWER,                       qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qtrue,       WS_FLAMETHROWER    },
+	{ MOD_GRENADE_PINEAPPLE,                  qfalse,    qtrue,      WEAPON_CLASS_FOR_MOD_EXPLOSIVE, qfalse,      WS_GRENADE         },
 
-	{ MOD_MAPMORTAR,                          qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_EXPLOSIVE, WS_MORTAR          },
-	{ MOD_MAPMORTAR_SPLASH,                   qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_EXPLOSIVE, WS_MORTAR          },
+	{ MOD_MAPMORTAR,                          qfalse,    qtrue,      WEAPON_CLASS_FOR_MOD_EXPLOSIVE, qfalse,      WS_MORTAR          },
+	{ MOD_MAPMORTAR_SPLASH,                   qfalse,    qtrue,      WEAPON_CLASS_FOR_MOD_EXPLOSIVE, qfalse,      WS_MORTAR          },
 
-	{ MOD_KICKED,                             qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
+	{ MOD_KICKED,                             qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_MAX             },
 
-	{ MOD_DYNAMITE,                           qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_DYNAMITE,  WS_DYNAMITE        },
-	{ MOD_AIRSTRIKE,                          qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_EXPLOSIVE, WS_AIRSTRIKE       },
-	{ MOD_SYRINGE,                            qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
-	{ MOD_AMMO,                               qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
-	{ MOD_ARTY,                               qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_EXPLOSIVE, WS_ARTILLERY       },
+	{ MOD_DYNAMITE,                           qfalse,    qtrue,      WEAPON_CLASS_FOR_MOD_DYNAMITE,  qfalse,      WS_DYNAMITE        },
+	{ MOD_AIRSTRIKE,                          qfalse,    qtrue,      WEAPON_CLASS_FOR_MOD_EXPLOSIVE, qfalse,      WS_AIRSTRIKE       },
+	{ MOD_SYRINGE,                            qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_MAX             },
+	{ MOD_AMMO,                               qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_MAX             },
+	{ MOD_ARTY,                               qfalse,    qtrue,      WEAPON_CLASS_FOR_MOD_EXPLOSIVE, qfalse,      WS_ARTILLERY       },
 
-	{ MOD_WATER,                              qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
-	{ MOD_SLIME,                              qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
-	{ MOD_LAVA,                               qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
-	{ MOD_CRUSH,                              qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
-	{ MOD_TELEFRAG,                           qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
-	{ MOD_FALLING,                            qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
-	{ MOD_SUICIDE,                            qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
-	{ MOD_TARGET_LASER,                       qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
-	{ MOD_TRIGGER_HURT,                       qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
-	{ MOD_EXPLOSIVE,                          qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_EXPLOSIVE, WS_MAX             },
+	{ MOD_WATER,                              qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_MAX             },
+	{ MOD_SLIME,                              qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_MAX             },
+	{ MOD_LAVA,                               qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_MAX             },
+	{ MOD_CRUSH,                              qfalse,    qtrue,      WEAPON_CLASS_FOR_MOD_NO,        qtrue,       WS_MAX             },
+	{ MOD_TELEFRAG,                           qfalse,    qtrue,      WEAPON_CLASS_FOR_MOD_NO,        qtrue,       WS_MAX             },
+	{ MOD_FALLING,                            qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_MAX             },
+	{ MOD_SUICIDE,                            qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qtrue,       WS_MAX             },
+	{ MOD_TARGET_LASER,                       qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_MAX             },
+	{ MOD_TRIGGER_HURT,                       qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_MAX             },
+	{ MOD_EXPLOSIVE,                          qfalse,    qtrue,      WEAPON_CLASS_FOR_MOD_EXPLOSIVE, qfalse,      WS_MAX             },
 
-	{ MOD_CARBINE,                            qtrue,  qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_CARBINE         },
-	{ MOD_KAR98,                              qtrue,  qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_KAR98           },
-	{ MOD_GPG40,                              qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_EXPLOSIVE, WS_GRENADELAUNCHER },
-	{ MOD_M7,                                 qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_EXPLOSIVE, WS_GRENADELAUNCHER },
-	{ MOD_LANDMINE,                           qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_EXPLOSIVE, WS_LANDMINE        },
-	{ MOD_SATCHEL,                            qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_SATCHEL,   WS_SATCHEL         },
+	{ MOD_CARBINE,                            qtrue,     qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_CARBINE         },
+	{ MOD_KAR98,                              qtrue,     qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_KAR98           },
+	{ MOD_GPG40,                              qfalse,    qtrue,      WEAPON_CLASS_FOR_MOD_EXPLOSIVE, qfalse,      WS_GRENADELAUNCHER },
+	{ MOD_M7,                                 qfalse,    qtrue,      WEAPON_CLASS_FOR_MOD_EXPLOSIVE, qfalse,      WS_GRENADELAUNCHER },
+	{ MOD_LANDMINE,                           qfalse,    qtrue,      WEAPON_CLASS_FOR_MOD_EXPLOSIVE, qfalse,      WS_LANDMINE        },
+	{ MOD_SATCHEL,                            qfalse,    qtrue,      WEAPON_CLASS_FOR_MOD_SATCHEL,   qfalse,      WS_SATCHEL         },
 
-	{ MOD_SMOKEBOMB,                          qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
-	{ MOD_MOBILE_MG42,                        qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MG42            },
-	{ MOD_SILENCED_COLT,                      qtrue,  qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_COLT            },
-	{ MOD_GARAND_SCOPE,                       qtrue,  qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_GARAND          },
+	{ MOD_SMOKEBOMB,                          qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_MAX             },
+	{ MOD_MOBILE_MG42,                        qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_MG42            },
+	{ MOD_SILENCED_COLT,                      qtrue,     qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_COLT            },
+	{ MOD_GARAND_SCOPE,                       qtrue,     qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_GARAND          },
 
-	{ MOD_CRUSH_CONSTRUCTION,                 qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
-	{ MOD_CRUSH_CONSTRUCTIONDEATH,            qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
-	{ MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER, qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
+	{ MOD_CRUSH_CONSTRUCTION,                 qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qtrue,       WS_MAX             },
+	{ MOD_CRUSH_CONSTRUCTIONDEATH,            qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qtrue,       WS_MAX             },
+	{ MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER, qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qtrue,       WS_MAX             },
 
-	{ MOD_K43,                                qtrue,  qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_K43             },
-	{ MOD_K43_SCOPE,                          qtrue,  qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_K43             },
+	{ MOD_K43,                                qtrue,     qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_K43             },
+	{ MOD_K43_SCOPE,                          qtrue,     qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_K43             },
 
-	{ MOD_MORTAR,                             qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_EXPLOSIVE, WS_MORTAR          },
+	{ MOD_MORTAR,                             qfalse,    qtrue,      WEAPON_CLASS_FOR_MOD_EXPLOSIVE, qfalse,      WS_MORTAR          },
 
-	{ MOD_AKIMBO_COLT,                        qtrue,  qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_COLT            },
-	{ MOD_AKIMBO_LUGER,                       qtrue,  qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_LUGER           },
-	{ MOD_AKIMBO_SILENCEDCOLT,                qtrue,  qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_COLT            },
-	{ MOD_AKIMBO_SILENCEDLUGER,               qtrue,  qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_LUGER           },
+	{ MOD_AKIMBO_COLT,                        qtrue,     qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_COLT            },
+	{ MOD_AKIMBO_LUGER,                       qtrue,     qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_LUGER           },
+	{ MOD_AKIMBO_SILENCEDCOLT,                qtrue,     qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_COLT            },
+	{ MOD_AKIMBO_SILENCEDLUGER,               qtrue,     qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_LUGER           },
 
-	{ MOD_SMOKEGRENADE,                       qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_AIRSTRIKE       },
+	{ MOD_SMOKEGRENADE,                       qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_AIRSTRIKE       },
 
-	{ MOD_SWAP_PLACES,                        qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
+	{ MOD_SWAP_PLACES,                        qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_MAX             },
 
-	{ MOD_SWITCHTEAM,                         qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
+	{ MOD_SWITCHTEAM,                         qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qtrue,       WS_MAX             },
 
-	{ MOD_SHOVE,                              qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_MAX             },
+	{ MOD_SHOVE,                              qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_MAX             },
 
-	{ MOD_KNIFE_KABAR,                        qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_KNIFE_KBAR      },
-	{ MOD_MOBILE_BROWNING,                    qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_BROWNING        },
-	{ MOD_MORTAR2,                            qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_EXPLOSIVE, WS_MORTAR2         },
-	{ MOD_BAZOOKA,                            qfalse, qtrue,  WEAPON_CLASS_FOR_MOD_EXPLOSIVE, WS_BAZOOKA         },
-	{ MOD_BACKSTAB,                           qfalse, qfalse, WEAPON_CLASS_FOR_MOD_NO,        WS_KNIFE           },
+	{ MOD_KNIFE_KABAR,                        qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_KNIFE_KBAR      },
+	{ MOD_MOBILE_BROWNING,                    qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qfalse,      WS_BROWNING        },
+	{ MOD_MORTAR2,                            qfalse,    qtrue,      WEAPON_CLASS_FOR_MOD_EXPLOSIVE, qfalse,      WS_MORTAR2         },
+	{ MOD_BAZOOKA,                            qfalse,    qtrue,      WEAPON_CLASS_FOR_MOD_EXPLOSIVE, qfalse,      WS_BAZOOKA         },
+	{ MOD_BACKSTAB,                           qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qtrue,       WS_KNIFE           },
 };
 
 const char *animStrings[] =

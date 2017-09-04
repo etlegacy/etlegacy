@@ -1005,6 +1005,7 @@ typedef struct modtable_s
 	qboolean isExplosive;         ///< g
 
 	int weaponClassForMOD;        ///< g
+	int noYellMedic;              ///< g
 	unsigned int indexWeaponStat; ///< g
 
 } modTable_t;

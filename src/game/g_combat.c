@@ -652,17 +652,8 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	G_DropItems(self);
 
 	// send a fancy "MEDIC!" scream.  Sissies, ain' they?
-	// FIXME: mod table
 	if (self->health > GIB_HEALTH &&
-	    meansOfDeath != MOD_SUICIDE &&
-	    meansOfDeath != MOD_SWITCHTEAM &&
-	    meansOfDeath != MOD_FLAMETHROWER && // these mods gib -> no fancy scream
-	    meansOfDeath != MOD_CRUSH &&
-	    meansOfDeath != MOD_CRUSH_CONSTRUCTION &&
-	    meansOfDeath != MOD_CRUSH_CONSTRUCTIONDEATH &&
-	    meansOfDeath != MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER &&
-	    meansOfDeath != MOD_TELEFRAG &&
-	    meansOfDeath != MOD_BACKSTAB &&
+	    !modTable[meansOfDeath].noYellMedic && // these mods gib -> no fancy scream
 	    !killedintank &&
 	    self->waterlevel < 3)
 	{
