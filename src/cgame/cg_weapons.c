@@ -3888,8 +3888,6 @@ int getEquivWeapon(int weapnum)
  */
 void CG_SetSniperZoom(int lastweap, int newweap)
 {
-	int zoomindex;
-
 	if (lastweap == newweap)
 	{
 		return;
@@ -3900,34 +3898,25 @@ void CG_SetSniperZoom(int lastweap, int newweap)
 	{
 		cg.zoomval = 0;
 	}
-	cg.zoomedScope = 0;
 
-	switch (newweap)
+	cg.zoomedScope = GetWeaponTableData(newweap)->zoomedScope;
+
+	// no sniper zoom, get out.
+	if (!GetWeaponTableData(newweap)->isScoped)
 	{
-	default:
-		return;     // no sniper zoom, get out.
-	case WP_FG42SCOPE:
-		cg.zoomval     = cg_zoomDefaultSniper.value; // changed from defaultFG per atvi req
-		cg.zoomedScope = 1;         // TODO: add to zoomTable
-		zoomindex      = ZOOM_SNIPER; //  was FG42SCOPE
-		break;
-	case WP_GARAND_SCOPE:
-	// fall through
-	case WP_K43_SCOPE:
-		cg.zoomval     = cg_zoomDefaultSniper.value;
-		cg.zoomedScope = 900;       // TODO: add to zoomTable
-		zoomindex      = ZOOM_SNIPER;
-		break;
+		return;
 	}
+
+	cg.zoomval = cg_zoomDefaultSniper.value;
 
 	// constrain user preferred fov to weapon limitations
-	if (cg.zoomval > zoomTable[zoomindex][ZOOM_OUT])
+	if (cg.zoomval > GetWeaponTableData(newweap)->zoomOut)
 	{
-		cg.zoomval = zoomTable[zoomindex][ZOOM_OUT];
+		cg.zoomval = GetWeaponTableData(newweap)->zoomOut;
 	}
-	if (cg.zoomval < zoomTable[zoomindex][ZOOM_IN])
+	if (cg.zoomval < GetWeaponTableData(newweap)->zoomIn)
 	{
-		cg.zoomval = zoomTable[zoomindex][ZOOM_IN];
+		cg.zoomval = GetWeaponTableData(newweap)->zoomIn;
 	}
 
 	cg.zoomTime = cg.time;

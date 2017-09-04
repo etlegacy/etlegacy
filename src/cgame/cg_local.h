@@ -441,34 +441,6 @@ typedef struct markPoly_s
 } markPoly_t;
 
 /**
- * @enum EZoom_t
- * @brief
- * @note Moved in from cg_view.c
- */
-typedef enum
-{
-	ZOOM_NONE = 0,
-	ZOOM_BINOC,
-	ZOOM_SNIPER,
-	ZOOM_SNOOPER,
-	ZOOM_FG42SCOPE,
-	ZOOM_MG42,
-	ZOOM_MAX_ZOOMS
-} EZoom_t;
-
-/**
- * @enum EZoomInOut_t
- * @brief
- */
-typedef enum
-{
-	ZOOM_OUT = 0,   ///< widest angle
-	ZOOM_IN         ///< tightest angle (approaching 0)
-} EZoomInOut_t;
-
-extern float zoomTable[ZOOM_MAX_ZOOMS][2];
-
-/**
  * @enum leType_t
  * @brief
  */

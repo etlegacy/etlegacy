@@ -590,10 +590,7 @@ static void CG_OffsetFirstPersonView(void)
 	origin = cg.refdef_current->vieworg;
 	angles = cg.refdefViewAngles;
 
-	switch (cg.snap->ps.weapon)
-	{
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING_SET:
+	if (GetWeaponTableData(cg.snap->ps.weapon)->isMGSet)
 	{
 		vec3_t forward, point;
 		float  oldZ = origin[2];
@@ -606,9 +603,7 @@ static void CG_OffsetFirstPersonView(void)
 
 		origin[2] = oldZ;
 	}
-	break;
-	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET:
+	else if (GetWeaponTableData(cg.snap->ps.weapon)->isMortarSet)
 	{
 		vec3_t forward, point;
 		float  oldZ = origin[2];
@@ -620,10 +615,6 @@ static void CG_OffsetFirstPersonView(void)
 		VectorMA(point, -32, forward, origin);
 
 		origin[2] = oldZ;
-	}
-	break;
-	default:
-		break;
 	}
 
 	// if dead, fix the angle and don't add any kick
@@ -827,34 +818,21 @@ static void CG_OffsetFirstPersonView(void)
 
 // Zoom controls
 
-// NOTE: probably move to server variables
-float zoomTable[ZOOM_MAX_ZOOMS][2] =
-{
-	// max {out,in}
-	{ 0,  0  },
-
-	{ 36, 8  }, //  binoc
-	{ 20, 4  }, //  sniper
-	{ 60, 20 }, //  snooper
-	{ 55, 55 }, //  fg42
-	{ 55, 55 }  //  mg42
-};
-
 /**
  * @brief CG_AdjustZoomVal
  * @param[in] val
  * @param[in] type
  */
-void CG_AdjustZoomVal(float val, int type)
+void CG_AdjustZoomVal(float val, int zoomOut, int zoomIn)
 {
 	cg.zoomval += val;
-	if (cg.zoomval > zoomTable[type][ZOOM_OUT])
+	if (cg.zoomval > zoomOut)
 	{
-		cg.zoomval = zoomTable[type][ZOOM_OUT];
+		cg.zoomval = zoomOut;
 	}
-	if (cg.zoomval < zoomTable[type][ZOOM_IN])
+	if (cg.zoomval < zoomIn)
 	{
-		cg.zoomval = zoomTable[type][ZOOM_IN];
+		cg.zoomval = zoomIn;
 	}
 }
 
@@ -865,17 +843,18 @@ void CG_ZoomIn_f(void)
 {
 	// fixed being able to "latch" your zoom by weaponcheck + quick zoomin
 	// - change for zoom view in demos
-	if (cg_entities[cg.snap->ps.clientNum].currentState.weapon == WP_GARAND_SCOPE)
+	// zoom if weapon is scoped or if binoc is scoped
+	if (GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->isScoped)
 	{
-		CG_AdjustZoomVal(-(cg_zoomStepSniper.value), ZOOM_SNIPER);
+		CG_AdjustZoomVal(-(cg_zoomStepSniper.value)
+		                 , GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->zoomOut
+		                 , GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->zoomIn);
 	}
-	else if (cg_entities[cg.snap->ps.clientNum].currentState.weapon == WP_K43_SCOPE)
+	else if (cg.zoomedBinoc)    // case where the binocular is used but not holded (equipped)
 	{
-		CG_AdjustZoomVal(-(cg_zoomStepSniper.value), ZOOM_SNIPER);
-	}
-	else if (cg.zoomedBinoc)
-	{
-		CG_AdjustZoomVal(-(cg_zoomStepSniper.value), ZOOM_SNIPER);     // per atvi request all use same vals to match menu (was zoomStepBinoc, ZOOM_BINOC);
+		CG_AdjustZoomVal(-(cg_zoomStepSniper.value)
+		                 , GetWeaponTableData(WP_BINOCULARS)->zoomOut
+		                 , GetWeaponTableData(WP_BINOCULARS)->zoomIn);
 	}
 }
 
@@ -884,17 +863,18 @@ void CG_ZoomIn_f(void)
  */
 void CG_ZoomOut_f(void)
 {
-	if (cg_entities[cg.snap->ps.clientNum].currentState.weapon == WP_GARAND_SCOPE)
+	// zoom if weapon is scoped or if binoc is scoped
+	if (GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->isScoped)
 	{
-		CG_AdjustZoomVal(cg_zoomStepSniper.value, ZOOM_SNIPER);
+		CG_AdjustZoomVal(cg_zoomStepSniper.value
+		                 , GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->zoomOut
+		                 , GetWeaponTableData(cg_entities[cg.snap->ps.clientNum].currentState.weapon)->zoomIn);
 	}
-	else if (cg_entities[cg.snap->ps.clientNum].currentState.weapon == WP_K43_SCOPE)
+	else if (cg.zoomedBinoc)    // case where the binocular is used but not holded (equipped)
 	{
-		CG_AdjustZoomVal(cg_zoomStepSniper.value, ZOOM_SNIPER);
-	}
-	else if (cg.zoomedBinoc)
-	{
-		CG_AdjustZoomVal(cg_zoomStepSniper.value, ZOOM_SNIPER);   // per atvi request BINOC);
+		CG_AdjustZoomVal(cg_zoomStepSniper.value
+		                 , GetWeaponTableData(WP_BINOCULARS)->zoomOut
+		                 , GetWeaponTableData(WP_BINOCULARS)->zoomIn);
 	}
 }
 
@@ -909,16 +889,13 @@ void CG_Zoom(void)
 		cg.predictedPlayerState.eFlags = cg.snap->ps.eFlags;
 		cg.predictedPlayerState.weapon = cg.snap->ps.weapon;
 
-		// check for scope wepon in use, and switch to if necessary
-		// - spec/demo scaling allowances
-		switch (cg.predictedPlayerState.weapon)
+		// check for scope wepon in use, and change if necessary - spec/demo scaling allowances
+		if (GetWeaponTableData(cg.predictedPlayerState.weapon)->isScoped)
 		{
-		case WP_FG42SCOPE:
-		case WP_GARAND_SCOPE:
-		case WP_K43_SCOPE:
 			cg.zoomval = (cg.zoomval == 0.f) ? cg_zoomDefaultSniper.value : cg.zoomval;     // was DefaultFG, changed per atvi req
-			break;
-		default:
+		}
+		else
+		{
 			// show a zoomed binoculars view for spectators.. (still not actively zooming in/out)
 			if (cg.predictedPlayerState.eFlags & EF_ZOOMING)
 			{
@@ -928,7 +905,6 @@ void CG_Zoom(void)
 			{
 				cg.zoomval = 0;
 			}
-			break;
 		}
 	}
 
@@ -949,17 +925,14 @@ void CG_Zoom(void)
 			cg.zoomedBinoc = qfalse;
 			cg.zoomTime    = cg.time;
 
-			// check for scope weapon in use, and switch to if necessary
-			switch (cg.weaponSelect)
+			// check for scope weapon in use, and change to if necessary
+			if (GetWeaponTableData(cg.weaponSelect)->isScoped)
 			{
-			case WP_FG42SCOPE:
-			case WP_GARAND_SCOPE:
-			case WP_K43_SCOPE:
 				cg.zoomval = cg_zoomDefaultSniper.value;     // was DefaultFG, changed per atvi req
-				break;
-			default:
+			}
+			else
+			{
 				cg.zoomval = 0;
-				break;
 			}
 		}
 		else
@@ -968,15 +941,9 @@ void CG_Zoom(void)
 			// but don't sanity check while following
 			if (!((cg.snap->ps.pm_flags & PMF_FOLLOW) || cg.demoPlayback))
 			{
-				switch (cg.weaponSelect)
+				if (!GetWeaponTableData(cg.weaponSelect)->isScoped)
 				{
-				case WP_FG42SCOPE:
-				case WP_GARAND_SCOPE:
-				case WP_K43_SCOPE:
-					break;
-				default:
 					cg.zoomval = 0;
-					break;
 				}
 			}
 		}

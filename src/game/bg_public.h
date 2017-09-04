@@ -979,6 +979,10 @@ typedef struct weapontable_s
 	qboolean shakeEffect;           ///< g
 	qboolean canHeat;               ///< bg
 
+    int zoomOut;                    ///< cg
+    int zoomIn;                     ///< cg
+    int zoomedScope;                ///< cg
+
 	// client
 	// icons
 	const char *desc;               ///< c - description for spawn weapons
