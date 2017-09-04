@@ -606,6 +606,9 @@ gitem_t bg_itemlist[] =
 		IT_BAD,                 // giType
 		WP_NONE,                // giWeapon
 		PW_NONE,                // giPowerUp
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},  // leave index 0 alone
 	/*QUAKED item_treasure (1 1 0) (-8 -8 -8) (8 8 8) suspended
 	Items the player picks up that are just used to tally a score at end-level
@@ -633,7 +636,9 @@ gitem_t bg_itemlist[] =
 		IT_TREASURE,
 		WP_NONE,
 		PW_NONE,
-
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 
 	// ARMOR/HEALTH/STAMINA
@@ -657,6 +662,9 @@ gitem_t bg_itemlist[] =
 		IT_HEALTH,
 		WP_NONE,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED item_health (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -677,6 +685,9 @@ gitem_t bg_itemlist[] =
 		IT_HEALTH,
 		WP_NONE,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED item_health_large (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -697,6 +708,9 @@ gitem_t bg_itemlist[] =
 		IT_HEALTH,
 		WP_NONE,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 
 	{
@@ -714,6 +728,9 @@ gitem_t bg_itemlist[] =
 		IT_HEALTH,
 		WP_NONE,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED item_health_turkey (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	multi-stage health item.
@@ -738,6 +755,9 @@ gitem_t bg_itemlist[] =
 		IT_HEALTH,
 		WP_NONE,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED item_health_breadandmeat (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	multi-stage health item.
@@ -760,6 +780,9 @@ gitem_t bg_itemlist[] =
 		IT_HEALTH,
 		WP_NONE,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED item_health_wall (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	defaults to 50 pts health
@@ -782,8 +805,10 @@ gitem_t bg_itemlist[] =
 		IT_HEALTH,
 		WP_NONE,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
-
 	// STAMINA
 
 	// WEAPONS - wolf weapons
@@ -807,8 +832,10 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_KNIFE,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
-
 	{
 		"weapon_knife_kabar",
 		"sound/misc/w_pkup.wav",
@@ -824,8 +851,10 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_KNIFE_KABAR,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
-
 	/*QUAKED weapon_luger (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/luger/luger.md3"
@@ -845,6 +874,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_LUGER,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_akimboluger (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -865,6 +897,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_AKIMBO_LUGER,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_akimbosilencedluger (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -885,6 +920,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_AKIMBO_SILENCEDLUGER,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_thompson (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -905,8 +943,10 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_THOMPSON,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
-
 	{
 		"weapon_dummy",
 		"",
@@ -922,6 +962,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,              // item type
 		WP_DUMMY_MG42,          // giTag
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_sten (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -942,6 +985,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_STEN,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_colt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -962,6 +1008,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_COLT,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_akimbocolt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -982,6 +1031,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_AKIMBO_COLT,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_akimbosilencedcolt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1002,6 +1054,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_AKIMBO_SILENCEDCOLT,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_mp40 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	"stand" values:
@@ -1025,6 +1080,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_MP40,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_panzerfaust (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1045,6 +1103,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_PANZERFAUST,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_bazooka (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1065,8 +1126,10 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_BAZOOKA,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
-
 	// removed the quaked for this.  we don't actually have a grenade launcher as such.  It's given implicitly
 	//         by virtue of getting grenade ammo.  So we don't need to have them in maps
 
@@ -1086,6 +1149,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_GRENADE_LAUNCHER,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	// weapon_grenadePineapple
 	{
@@ -1103,6 +1169,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_GRENADE_PINEAPPLE,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	// weapon_grenadesmoke
 	{
@@ -1120,6 +1189,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_SMOKE_MARKER,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	// weapon_smoketrail -- only used as a special effects emitter for smoke trails (artillery spotter etc)
 	{
@@ -1137,6 +1209,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_SMOKETRAIL,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	// weapon_medic_heal
 	{
@@ -1154,6 +1229,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_MEDKIT,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	// weapon_dynamite
 	{
@@ -1171,6 +1249,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_DYNAMITE,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_flamethrower (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1191,6 +1272,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_FLAMETHROWER,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	// weapon_mortar (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
@@ -1208,6 +1292,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_MAPMORTAR,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	// weapon_class_special (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
@@ -1225,6 +1312,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_PLIERS,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	// weapon_arty (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
@@ -1242,6 +1332,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_ARTY,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	// weapon_medic_syringe (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
@@ -1259,6 +1352,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_MEDIC_SYRINGE,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	// weapon_medic_adrenaline (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
@@ -1276,6 +1372,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_MEDIC_ADRENALINE,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	// weapon_magicammo (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
@@ -1293,6 +1392,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_AMMO,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	{
 		"weapon_magicammo2",
@@ -1312,6 +1414,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_AMMO,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	// weapon_binoculars (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
@@ -1329,6 +1434,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_BINOCULARS,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_k43 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1349,6 +1457,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_K43,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_kar43_scope (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1369,6 +1480,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_K43_SCOPE,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_kar98Rifle (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1389,6 +1503,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_KAR98,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_gpg40 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1409,6 +1526,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_GPG40,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_gpg40_allied (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1429,6 +1549,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_M7,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_M1CarbineRifle (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1449,6 +1572,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_CARBINE,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*
 	weapon_garandRifle (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN
@@ -1470,6 +1596,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_GARAND,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*
 	weapon_garandRifleScope (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN
@@ -1491,6 +1620,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_GARAND_SCOPE,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_fg42 (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1511,6 +1643,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_FG42,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_fg42scope (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1531,6 +1666,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_FG42SCOPE,   // this weap
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*
 	weapon_mortar (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN
@@ -1552,6 +1690,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_MORTAR,  // this weap
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	{
 		"weapon_mortar_set",
@@ -1568,8 +1709,10 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_MORTAR_SET,  // this weap
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
-
 	{
 		"weapon_mortar2",
 		"sound/misc/w_pkup.wav",
@@ -1585,6 +1728,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_MORTAR2,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	{
 		"weapon_mortar2_set",
@@ -1601,6 +1747,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_MORTAR2_SET,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	// weapon_landmine
 	{
@@ -1618,6 +1767,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_LANDMINE,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	// weapon_satchel (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
@@ -1635,8 +1787,10 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_SATCHEL,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
-
 	{
 		"weapon_satchelDetonator",
 		"",
@@ -1652,8 +1806,10 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_SATCHEL_DET,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
-
 	{
 		"weapon_smokebomb",
 		"",
@@ -1669,6 +1825,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_SMOKE_BOMB,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_mobile_mg42 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended spin - respawn
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1689,8 +1848,10 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_MOBILE_MG42,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
-
 	{
 		"weapon_mobile_mg42_set",
 		"sound/misc/w_pkup.wav",
@@ -1706,8 +1867,10 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_MOBILE_MG42_SET,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
-
 	{
 		"weapon_mobile_browning_set",
 		"sound/misc/w_pkup.wav",
@@ -1723,8 +1886,10 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_MOBILE_BROWNING_SET,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
-
 	{
 		"weapon_mobile_browning",
 		"sound/misc/w_pkup.wav",
@@ -1740,8 +1905,10 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_MOBILE_BROWNING,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
-
 	{
 		"weapon_silencer",
 		"sound/misc/w_pkup.wav",
@@ -1757,6 +1924,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_SILENCER,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED weapon_colt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
@@ -1777,6 +1947,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_SILENCED_COLT,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	// weapon_medic_heal
 	{
@@ -1794,6 +1967,9 @@ gitem_t bg_itemlist[] =
 		IT_WEAPON,
 		WP_MEDKIT,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED ammo_syringe (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: medic
@@ -1815,6 +1991,9 @@ gitem_t bg_itemlist[] =
 		IT_AMMO,
 		WP_MEDIC_SYRINGE,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED ammo_smoke_grenade (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: engineer
@@ -1836,6 +2015,9 @@ gitem_t bg_itemlist[] =
 		IT_AMMO,
 		WP_SMOKE_BOMB,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED ammo_dynamite (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: engineer
@@ -1857,6 +2039,9 @@ gitem_t bg_itemlist[] =
 		IT_AMMO,
 		WP_DYNAMITE,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED ammo_disguise (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: covertops
@@ -1878,6 +2063,9 @@ gitem_t bg_itemlist[] =
 		IT_AMMO,
 		WP_NONE,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED ammo_airstrike (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: LT
@@ -1899,6 +2087,9 @@ gitem_t bg_itemlist[] =
 		IT_AMMO,
 		WP_SMOKE_MARKER,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED ammo_landmine (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: LT
@@ -1920,6 +2111,9 @@ gitem_t bg_itemlist[] =
 		IT_AMMO,
 		WP_LANDMINE,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED ammo_satchel_charge (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: LT
@@ -1941,8 +2135,10 @@ gitem_t bg_itemlist[] =
 		IT_AMMO,
 		WP_SATCHEL,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
-
 	// AMMO ITEMS
 
 	/*QUAKED ammo_9mm_small (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
@@ -1965,6 +2161,9 @@ gitem_t bg_itemlist[] =
 		IT_AMMO,
 		WP_LUGER,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED ammo_9mm (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Luger pistol, MP40 machinegun
@@ -1986,6 +2185,9 @@ gitem_t bg_itemlist[] =
 		IT_AMMO,
 		WP_LUGER,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED ammo_9mm_large (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Luger pistol, MP40 machinegun
@@ -2007,6 +2209,9 @@ gitem_t bg_itemlist[] =
 		IT_AMMO,
 		WP_LUGER,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED ammo_45cal_small (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Thompson, Colt
@@ -2028,6 +2233,9 @@ gitem_t bg_itemlist[] =
 		IT_AMMO,
 		WP_COLT,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED ammo_45cal (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Thompson, Colt
@@ -2049,6 +2257,9 @@ gitem_t bg_itemlist[] =
 		IT_AMMO,
 		WP_COLT,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED ammo_45cal_large (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Thompson, Colt
@@ -2070,6 +2281,9 @@ gitem_t bg_itemlist[] =
 		IT_AMMO,
 		WP_COLT,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED ammo_30cal_small (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Garand rifle
@@ -2091,6 +2305,9 @@ gitem_t bg_itemlist[] =
 		IT_AMMO,
 		WP_GARAND,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED ammo_30cal (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Garand rifle
@@ -2112,6 +2329,9 @@ gitem_t bg_itemlist[] =
 		IT_AMMO,
 		WP_GARAND,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED ammo_30cal_large (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Garand rifle
@@ -2133,8 +2353,10 @@ gitem_t bg_itemlist[] =
 		IT_AMMO,
 		WP_GARAND,
 		PW_NONE,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
-
 	// POWERUP ITEMS
 
 	/*QUAKED team_CTF_redflag (1 0 0) (-16 -16 -16) (16 16 16)
@@ -2157,6 +2379,9 @@ gitem_t bg_itemlist[] =
 		IT_TEAM,
 		WP_NONE,
 		PW_REDFLAG,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
 	/*QUAKED team_CTF_blueflag (0 0 1) (-16 -16 -16) (16 16 16)
 	Only in CTF games
@@ -2178,8 +2403,10 @@ gitem_t bg_itemlist[] =
 		IT_TEAM,
 		WP_NONE,
 		PW_BLUEFLAG,
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	},
-
 	// end of list marker
 	{
 		NULL,                   // classname
@@ -2196,6 +2423,9 @@ gitem_t bg_itemlist[] =
 		IT_BAD,                 // giType
 		WP_NONE,                // giWeapon
 		PW_NONE,                // goPowerUp
+#ifdef CGAMEDLL
+		{ 0, { 0 }, { 0 } },
+#endif
 	}
 };
 

@@ -979,9 +979,9 @@ typedef struct weapontable_s
 	qboolean shakeEffect;           ///< g
 	qboolean canHeat;               ///< bg
 
-    int zoomOut;                    ///< cg
-    int zoomIn;                     ///< cg
-    int zoomedScope;                ///< cg
+	int zoomOut;                    ///< cg
+	int zoomIn;                     ///< cg
+	int zoomedScope;                ///< cg
 
 	// client
 	// icons
@@ -1693,7 +1693,7 @@ typedef struct gitem_s
 	powerup_t giPowerUp;
 
 #ifdef CGAMEDLL
-	itemInfo_t itemInfo;        ///< FIXME: fix default value in bg_itemlist
+	itemInfo_t itemInfo;
 #endif
 
 } gitem_t;
