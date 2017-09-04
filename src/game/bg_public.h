@@ -1006,6 +1006,7 @@ typedef struct modtable_s
 
 	int weaponClassForMOD;        ///< g
 	int noYellMedic;              ///< g
+	const char *modName;          ///< g - These are just for logging, the client prints its own messages
 	unsigned int indexWeaponStat; ///< g
 
 } modTable_t;
@@ -1015,6 +1016,7 @@ extern weaponTable_t *GetWeaponTableData(int weaponIndex);
 extern int weapAlts[]; ///< defined in bg_misc.c
 
 #define IS_VALID_WEAPON(w) (w > WP_NONE && w < WP_NUM_WEAPONS)
+#define IS_VALID_MOD(mod) (mod > MOD_UNKNOWN && mod < MOD_NUM_MODS)
 
 // entityState_t->event values
 // entity events are for effects that take place reletive

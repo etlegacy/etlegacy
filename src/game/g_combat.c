@@ -245,100 +245,6 @@ void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int da
 }
 
 /**
- * @var modNames
- * @brief These are just for logging, the client prints its own messages
-  */
-const char *modNames[] =
-{
-	"MOD_UNKNOWN",
-	"MOD_MACHINEGUN",
-	"MOD_BROWNING",
-	"MOD_MG42",
-	"MOD_GRENADE",
-
-	// modified wolf weap mods
-	"MOD_KNIFE",
-	"MOD_LUGER",
-	"MOD_COLT",
-	"MOD_MP40",
-	"MOD_THOMPSON",
-	"MOD_STEN",
-	"MOD_GARAND",
-	"MOD_SILENCER",
-	"MOD_FG42",
-	"MOD_FG42SCOPE",
-	"MOD_PANZERFAUST",
-	"MOD_GRENADE_LAUNCHER",
-	"MOD_FLAMETHROWER",
-	"MOD_GRENADE_PINEAPPLE",
-
-	"MOD_MAPMORTAR",
-	"MOD_MAPMORTAR_SPLASH",
-
-	"MOD_KICKED",
-
-	"MOD_DYNAMITE",
-	"MOD_AIRSTRIKE",
-	"MOD_SYRINGE",
-	"MOD_AMMO",
-	"MOD_ARTY",
-
-	"MOD_WATER",
-	"MOD_SLIME",
-	"MOD_LAVA",
-	"MOD_CRUSH",
-	"MOD_TELEFRAG",
-	"MOD_FALLING",
-	"MOD_SUICIDE",
-	"MOD_TARGET_LASER",
-	"MOD_TRIGGER_HURT",
-	"MOD_EXPLOSIVE",
-
-	"MOD_CARBINE",
-	"MOD_KAR98",
-	"MOD_GPG40",
-	"MOD_M7",
-	"MOD_LANDMINE",
-	"MOD_SATCHEL",
-
-	"MOD_SMOKEBOMB",
-	"MOD_MOBILE_MG42",
-	"MOD_SILENCED_COLT",
-	"MOD_GARAND_SCOPE",
-
-	"MOD_CRUSH_CONSTRUCTION",
-	"MOD_CRUSH_CONSTRUCTIONDEATH",
-	"MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER",
-
-	"MOD_K43",
-	"MOD_K43_SCOPE",
-
-	"MOD_MORTAR",
-
-	"MOD_AKIMBO_COLT",
-	"MOD_AKIMBO_LUGER",
-	"MOD_AKIMBO_SILENCEDCOLT",
-	"MOD_AKIMBO_SILENCEDLUGER",
-
-	"MOD_SMOKEGRENADE",
-
-	"MOD_SWAP_PLACES",
-
-	// keep these 2 entries last
-	"MOD_SWITCHTEAM",
-
-	"MOD_SHOVE",
-
-	"MOD_KNIFE_KABAR",
-	"MOD_MOBILE_BROWNING",
-	"MOD_MORTAR2",
-	"MOD_BAZOOKA",
-	"MOD_BACKSTAB",
-
-	"MOD_NUM_MODS",
-};
-
-/**
  * @brief player_die
  * @param[in,out] self
  * @param[in] inflictor
@@ -508,13 +414,13 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	{
 		const char *obit;
 
-		if (meansOfDeath >= sizeof(modNames) / sizeof(modNames[0]))
+		if (IS_VALID_MOD(meansOfDeath))
 		{
 			obit = "<bad obituary>";
 		}
 		else
 		{
-			obit = modNames[meansOfDeath];
+			obit = modTable[meansOfDeath].modName;
 		}
 
 #ifdef FEATURE_OMNIBOT
@@ -1662,7 +1568,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	if (g_debugDamage.integer)
 #endif
 	{
-		G_Printf("client:%i health:%i damage:%i mod:%s\n", targ->s.number, targ->health, take, modNames[mod]);
+		G_Printf("client:%i health:%i damage:%i mod:%s\n", targ->s.number, targ->health, take, modTable[mod].modName);
 	}
 
 #ifdef FEATURE_LUA
