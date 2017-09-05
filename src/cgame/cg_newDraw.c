@@ -597,7 +597,7 @@ void CG_DrawWeapStability(rectDef_t *rect)
 		return;
 	}
 
-	if (cg_drawSpreadScale.integer == 1 && !weaponTable[cg.predictedPlayerState.weapon].isScoped)
+	if (cg_drawSpreadScale.integer == 1 && !GetWeaponTableData(cg.predictedPlayerState.weapon)->isScoped)
 	{
 		// cg_drawSpreadScale of '1' means only draw for scoped weapons, '2' means draw all the time (for debugging)
 		return;

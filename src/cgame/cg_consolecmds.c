@@ -70,9 +70,9 @@ static void CG_StatsDown_f(void)
 	{
 		if (
 #ifdef FEATURE_MULTIVIEW
-			cg.mvTotalClients < 1 &&
+		    cg.mvTotalClients < 1 &&
 #endif
-			cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+		    cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 		{
 			Pri("You must be a player or following a player to use +stats\n");
 			return;
@@ -93,9 +93,9 @@ static void CG_StatsDown_f(void)
 		{
 			int i =
 #ifdef FEATURE_MULTIVIEW
-				(cg.mvTotalClients > 0) ? (cg.mvCurrentActive->mvInfo & MV_PID) :
+			    (cg.mvTotalClients > 0) ? (cg.mvCurrentActive->mvInfo & MV_PID) :
 #endif
-				cg.snap->ps.clientNum;
+			    cg.snap->ps.clientNum;
 
 			cgs.gamestats.requestTime = cg.time + 2000;
 			trap_SendClientCommand(va("sgstats %d", i));
@@ -886,13 +886,13 @@ void CG_dumpStats_f(void)
 		cgs.dumpStatsTime = cg.time + 2000;
 		trap_SendClientCommand(
 #ifdef FEATURE_MULTIVIEW
-			(cg.mvTotalClients < 1) ?
+		    (cg.mvTotalClients < 1) ?
 #endif
-			"weaponstats"
+		    "weaponstats"
 #ifdef FEATURE_MULTIVIEW
 			: "statsall"
 #endif
-			);
+		    );
 	}
 }
 
@@ -1293,14 +1293,14 @@ akimbo_pistols:
  */
 void CG_ClassMenu_f(void)
 {
-	if(cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
+	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
 	{
 		return;
 	}
 
 	CG_EventHandling(CGAME_EVENT_NONE, qfalse);
 
-	if(cg_quickMessageAlt.integer)
+	if (cg_quickMessageAlt.integer)
 	{
 		trap_UI_Popup(UIMENU_WM_CLASSALT);
 	}
@@ -1420,9 +1420,9 @@ void CG_Class_f(void)
 	}
 
 	// Print out the selected class and weapon info
-	if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 && playerclass == PC_SOLDIER && !Q_stricmp(weaponTable[weapon1].desc, weaponTable[weapon2].desc))
+	if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 && playerclass == PC_SOLDIER && !Q_stricmp(GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc))
 	{
-		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s."), teamstring, BG_ClassnameForNumber(playerclass), weaponTable[weapon1].desc), 400, cg_fontScaleCP.value, -1);
+		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc), 400, cg_fontScaleCP.value, -1);
 	}
 	else
 	{
@@ -1432,10 +1432,10 @@ void CG_Class_f(void)
 		case WP_AKIMBO_LUGER:
 		case WP_AKIMBO_SILENCEDCOLT:
 		case WP_AKIMBO_SILENCEDLUGER:
-			CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and %s."), teamstring, BG_ClassnameForNumber(playerclass), weaponTable[weapon1].desc, weaponTable[weapon2].desc), 400, cg_fontScaleCP.value, -1);
+			CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc), 400, cg_fontScaleCP.value, -1);
 			break;
 		default:
-			CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and a %s."), teamstring, BG_ClassnameForNumber(playerclass), weaponTable[weapon1].desc, weaponTable[weapon2].desc), 400, cg_fontScaleCP.value, -1);
+			CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and a %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc), 400, cg_fontScaleCP.value, -1);
 			break;
 		}
 	}
@@ -1718,7 +1718,7 @@ void CG_PrintObjectiveInfo()
 
 	for (i = 0; i < MAX_OID_TRIGGERS; i++)
 	{
-		CG_Printf("[%2i] %-26s -> num: %3i - spawnflags: %3i - objflags: %3i\n", i , cgs.oidInfo[i].name, cgs.oidInfo[i].entityNum, cgs.oidInfo[i].spawnflags, cgs.oidInfo[i].objflags);
+		CG_Printf("[%2i] %-26s -> num: %3i - spawnflags: %3i - objflags: %3i\n", i, cgs.oidInfo[i].name, cgs.oidInfo[i].entityNum, cgs.oidInfo[i].spawnflags, cgs.oidInfo[i].objflags);
 	}
 }
 

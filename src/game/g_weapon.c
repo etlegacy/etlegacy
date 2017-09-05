@@ -3377,7 +3377,7 @@ void EmitterCheck(gentity_t *ent, gentity_t *attacker, trace_t *tr)
  */
 void Bullet_Endpos(gentity_t *ent, float spread, vec3_t *end)
 {
-	if (weaponTable[ent->s.weapon].isScoped)
+	if (GetWeaponTableData(ent->s.weapon)->isScoped)
 	{
 		// aim dir already accounted for sway of scoped weapons in CalcMuzzlePoints()
 		VectorMA(muzzleTrace, 2 * MAX_TRACE, forward, *end);
@@ -4106,7 +4106,7 @@ void CalcMuzzlePoints(gentity_t *ent, int weapon)
 
 	// non ai's take into account scoped weapon 'sway' (just another way aimspread is visualized/utilized)
 
-	if (weaponTable[weapon].isScoped)
+	if (GetWeaponTableData(weapon)->isScoped)
 	{
 		float pitchMinAmp, yawMinAmp, phase;
 

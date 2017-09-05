@@ -67,7 +67,7 @@
  */
 int AddToClip(playerState_t *ps, weapon_t weapon, int ammomove, int outOfReserve)
 {
-	int inclip, maxclip;
+	int      inclip, maxclip;
 	weapon_t ammoweap = BG_FindAmmoForWeapon(weapon);
 
 	if (weapon < WP_LUGER || weapon >= WP_NUM_WEAPONS)
@@ -490,7 +490,7 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 
 	if (weapon == WP_KAR98 || weapon == WP_CARBINE)
 	{
-		ent2->delay = client->ps.ammo[BG_FindAmmoForWeapon(weaponTable[weapon].weapAlts)];
+		ent2->delay = client->ps.ammo[BG_FindAmmoForWeapon(GetWeaponTableData(weapon)->weapAlts)];
 	}
 	else
 	{
@@ -635,7 +635,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 		// secondary weapon ammo
 		if (ent->delay != 0.f)
 		{
-			Add_Ammo(other, weaponTable[ent->item->giWeapon].weapAlts, ent->delay, qfalse);
+			Add_Ammo(other, GetWeaponTableData(ent->item->giWeapon)->weapAlts, ent->delay, qfalse);
 		}
 	}
 	else
@@ -721,7 +721,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 					// secondary weapon ammo
 					if (ent->delay != 0.f)
 					{
-						Add_Ammo(other, weaponTable[ent->item->giWeapon].weapAlts, ent->delay, qfalse);
+						Add_Ammo(other, GetWeaponTableData(ent->item->giWeapon)->weapAlts, ent->delay, qfalse);
 					}
 				}
 				else
@@ -731,7 +731,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 					// secondary weapon ammo
 					if (ent->delay != 0.f)
 					{
-						other->client->ps.ammo[weaponTable[ent->item->giWeapon].weapAlts] = ent->delay;
+						other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->weapAlts] = ent->delay;
 					}
 				}
 			}
@@ -767,8 +767,8 @@ int Pickup_Health(gentity_t *ent, gentity_t *other)
 	// if medic isn't giving ammo to self or the enemy, give him some props
 	if (ent->parent && ent->parent->client && ent->parent->client != other->client && other->client->sess.sessionTeam == ent->parent->client->sess.sessionTeam)
 	{
-        G_AddSkillPoints(ent->parent, SK_FIRST_AID, 1.f);
-        G_DebugAddSkillPoints(ent->parent, SK_FIRST_AID, 1.f, "health pack picked up");
+		G_AddSkillPoints(ent->parent, SK_FIRST_AID, 1.f);
+		G_DebugAddSkillPoints(ent->parent, SK_FIRST_AID, 1.f, "health pack picked up");
 	}
 
 	max = other->client->ps.stats[STAT_MAX_HEALTH];

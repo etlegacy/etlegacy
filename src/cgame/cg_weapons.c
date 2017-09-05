@@ -2618,11 +2618,11 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	{
 		if (isPlayer)
 		{
-			akimboFire = BG_AkimboFireSequence(weaponNum, cg.predictedPlayerState.ammoclip[BG_FindClipForWeapon(weaponNum)], cg.predictedPlayerState.ammoclip[BG_FindClipForWeapon(weaponTable[weaponNum].akimboSideArm)]);
+			akimboFire = BG_AkimboFireSequence(weaponNum, cg.predictedPlayerState.ammoclip[BG_FindClipForWeapon(weaponNum)], cg.predictedPlayerState.ammoclip[BG_FindClipForWeapon(GetWeaponTableData(weaponNum)->akimboSideArm)]);
 		}
 		else if (ps)
 		{
-			akimboFire = BG_AkimboFireSequence(weaponNum, ps->ammoclip[BG_FindClipForWeapon(weaponNum)], ps->ammoclip[BG_FindClipForWeapon(weaponTable[weaponNum].akimboSideArm)]);
+			akimboFire = BG_AkimboFireSequence(weaponNum, ps->ammoclip[BG_FindClipForWeapon(weaponNum)], ps->ammoclip[BG_FindClipForWeapon(GetWeaponTableData(weaponNum)->akimboSideArm)]);
 		}
 		// alternate for other clients, store flip-flop on cent or smuffin
 	}
@@ -3822,9 +3822,9 @@ static int getPrevBankWeap(int bank, int cycle, qboolean sameBankPosition)
  */
 static int getAltWeapon(int weapnum)
 {
-	if (weaponTable[weapnum].weapAlts)
+	if (GetWeaponTableData(weapnum)->weapAlts)
 	{
-		return weaponTable[weapnum].weapAlts;
+		return GetWeaponTableData(weapnum)->weapAlts;
 	}
 
 	return weapnum;

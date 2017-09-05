@@ -210,7 +210,7 @@ void P_WorldEffects(gentity_t *ent)
 			{
 				gentity_t *attacker = g_entities + ent->flameBurnEnt;
 
-				G_Damage(ent, attacker, attacker, NULL, NULL, weaponTable[WP_FLAMETHROWER].damage, DAMAGE_NO_KNOCKBACK, MOD_FLAMETHROWER);
+				G_Damage(ent, attacker, attacker, NULL, NULL, GetWeaponTableData(WP_FLAMETHROWER)->damage, DAMAGE_NO_KNOCKBACK, MOD_FLAMETHROWER);
 			}
 		}
 	}

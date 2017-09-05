@@ -1383,7 +1383,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 			}
 			else if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && client->sess.playerWeapon2 == WP_AKIMBO_LUGER)
 			{
-				client->ps.ammoclip[BG_FindClipForWeapon(weaponTable[WP_AKIMBO_LUGER].akimboSideArm)] = GetWeaponTableData(WP_AKIMBO_LUGER)->defaultStartingClip;
+				client->ps.ammoclip[BG_FindClipForWeapon(GetWeaponTableData(WP_AKIMBO_LUGER)->akimboSideArm)] = GetWeaponTableData(WP_AKIMBO_LUGER)->defaultStartingClip;
 				AddWeaponToPlayer(client, WP_AKIMBO_LUGER, GetWeaponTableData(WP_AKIMBO_LUGER)->defaultStartingAmmo, GetWeaponTableData(WP_AKIMBO_LUGER)->defaultStartingClip, qfalse);
 			}
 			else
@@ -1395,7 +1395,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 		case PC_COVERTOPS:
 			if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && (client->sess.playerWeapon2 == WP_AKIMBO_SILENCEDLUGER || client->sess.playerWeapon2 == WP_AKIMBO_LUGER))
 			{
-				client->ps.ammoclip[BG_FindClipForWeapon(weaponTable[WP_AKIMBO_SILENCEDLUGER].akimboSideArm)] = GetWeaponTableData(WP_AKIMBO_SILENCEDLUGER)->defaultStartingClip;
+				client->ps.ammoclip[BG_FindClipForWeapon(GetWeaponTableData(WP_AKIMBO_SILENCEDLUGER)->akimboSideArm)] = GetWeaponTableData(WP_AKIMBO_SILENCEDLUGER)->defaultStartingClip;
 				AddWeaponToPlayer(client, WP_AKIMBO_SILENCEDLUGER, GetWeaponTableData(WP_AKIMBO_SILENCEDLUGER)->defaultStartingAmmo, GetWeaponTableData(WP_AKIMBO_SILENCEDLUGER)->defaultStartingClip, qfalse);
 			}
 			else
@@ -1409,7 +1409,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 		default:
 			if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && client->sess.playerWeapon2 == WP_AKIMBO_LUGER)
 			{
-				client->ps.ammoclip[BG_FindClipForWeapon(weaponTable[WP_AKIMBO_LUGER].akimboSideArm)] = GetWeaponTableData(WP_AKIMBO_LUGER)->defaultStartingClip;
+				client->ps.ammoclip[BG_FindClipForWeapon(GetWeaponTableData(WP_AKIMBO_LUGER)->akimboSideArm)] = GetWeaponTableData(WP_AKIMBO_LUGER)->defaultStartingClip;
 				AddWeaponToPlayer(client, WP_AKIMBO_LUGER, GetWeaponTableData(WP_AKIMBO_LUGER)->defaultStartingAmmo, GetWeaponTableData(WP_AKIMBO_LUGER)->defaultStartingClip, qfalse);
 			}
 			else
@@ -1429,7 +1429,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 			}
 			else if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && client->sess.playerWeapon2 == WP_AKIMBO_COLT)
 			{
-				client->ps.ammoclip[BG_FindClipForWeapon(weaponTable[WP_AKIMBO_COLT].akimboSideArm)] = GetWeaponTableData(WP_AKIMBO_COLT)->defaultStartingClip;
+				client->ps.ammoclip[BG_FindClipForWeapon(GetWeaponTableData(WP_AKIMBO_COLT)->akimboSideArm)] = GetWeaponTableData(WP_AKIMBO_COLT)->defaultStartingClip;
 				AddWeaponToPlayer(client, WP_AKIMBO_COLT, GetWeaponTableData(WP_AKIMBO_COLT)->defaultStartingAmmo, GetWeaponTableData(WP_AKIMBO_COLT)->defaultStartingClip, qfalse);
 			}
 			else
@@ -1441,7 +1441,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 		case PC_COVERTOPS:
 			if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && (client->sess.playerWeapon2 == WP_AKIMBO_SILENCEDCOLT || client->sess.playerWeapon2 == WP_AKIMBO_COLT))
 			{
-				client->ps.ammoclip[BG_FindClipForWeapon(weaponTable[WP_AKIMBO_SILENCEDCOLT].akimboSideArm)] = GetWeaponTableData(WP_AKIMBO_SILENCEDCOLT)->defaultStartingClip;
+				client->ps.ammoclip[BG_FindClipForWeapon(GetWeaponTableData(WP_AKIMBO_SILENCEDCOLT)->akimboSideArm)] = GetWeaponTableData(WP_AKIMBO_SILENCEDCOLT)->defaultStartingClip;
 				AddWeaponToPlayer(client, WP_AKIMBO_SILENCEDCOLT, GetWeaponTableData(WP_AKIMBO_SILENCEDCOLT)->defaultStartingAmmo, GetWeaponTableData(WP_AKIMBO_SILENCEDCOLT)->defaultStartingClip, qfalse);
 			}
 			else
@@ -1455,7 +1455,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 		default:
 			if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && client->sess.playerWeapon2 == WP_AKIMBO_COLT)
 			{
-				client->ps.ammoclip[BG_FindClipForWeapon(weaponTable[WP_AKIMBO_COLT].akimboSideArm)] = GetWeaponTableData(WP_AKIMBO_COLT)->defaultStartingClip;
+				client->ps.ammoclip[BG_FindClipForWeapon(GetWeaponTableData(WP_AKIMBO_COLT)->akimboSideArm)] = GetWeaponTableData(WP_AKIMBO_COLT)->defaultStartingClip;
 				AddWeaponToPlayer(client, WP_AKIMBO_COLT, GetWeaponTableData(WP_AKIMBO_COLT)->defaultStartingAmmo, GetWeaponTableData(WP_AKIMBO_COLT)->defaultStartingClip, qfalse);
 			}
 			else

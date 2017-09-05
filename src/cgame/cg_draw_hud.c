@@ -830,7 +830,7 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 
 	if (GetWeaponTableData(weap)->isAkimbo)
 	{
-		*akimboammo = ps->ammoclip[BG_FindClipForWeapon(weaponTable[weap].akimboSideArm)];
+		*akimboammo = ps->ammoclip[BG_FindClipForWeapon(GetWeaponTableData(weap)->akimboSideArm)];
 	}
 	else
 	{

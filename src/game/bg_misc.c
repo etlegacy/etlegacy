@@ -2377,7 +2377,7 @@ extWeaponStats_t BG_WeapStatForWeapon(weapon_t iWeaponID)
 {
 	if (iWeaponID < WP_NUM_WEAPONS)
 	{
-		return weaponTable[iWeaponID].indexWeaponStat;
+		return GetWeaponTableData(iWeaponID)->indexWeaponStat;
 	}
 
 	return WS_MAX;
@@ -2414,7 +2414,7 @@ gitem_t *BG_FindItemForWeapon(weapon_t weapon)
 weapon_t BG_FindClipForWeapon(weapon_t weapon)
 {
 	// FIXME: check valid weapon?
-	return weaponTable[weapon].clipIndex;
+	return GetWeaponTableData(weapon)->clipIndex;
 }
 
 /**
@@ -2425,7 +2425,7 @@ weapon_t BG_FindClipForWeapon(weapon_t weapon)
 weapon_t BG_FindAmmoForWeapon(weapon_t weapon)
 {
 	// FIXME: check valid weapon?
-	return weaponTable[weapon].ammoIndex;
+	return GetWeaponTableData(weapon)->ammoIndex;
 }
 
 /**

@@ -234,7 +234,7 @@ int PM_ReloadAnimForWeapon(int weapon)
 		return WEAP_RELOAD3;
 	default:
 		// IS_VALID_WEAPON(weapon) ?
-		if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && weaponTable[weapon].isLightWeaponSupportingFastReload)
+		if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && GetWeaponTableData(weapon)->isLightWeaponSupportingFastReload)
 		{
 			return WEAP_RELOAD2;        // faster reload
 		}
@@ -2502,7 +2502,7 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 	// okay to reload while overheating without tacking the reload time onto the end of the
 	// current weaponTime (the reload time is partially absorbed into the overheat time)
 	reloadTime = GetWeaponTableData(weapon)->reloadTime;
-	if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && weaponTable[weapon].isLightWeaponSupportingFastReload)
+	if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && GetWeaponTableData(weapon)->isLightWeaponSupportingFastReload)
 	{
 		reloadTime *= .65f;
 	}
@@ -2572,7 +2572,7 @@ static void PM_BeginWeaponChange(weapon_t oldweapon, weapon_t newweapon, qboolea
 	{
 	case WP_CARBINE:
 	case WP_KAR98:
-		if (newweapon != weaponTable[oldweapon].weapAlts)
+		if (newweapon != GetWeaponTableData(oldweapon)->weapAlts)
 		{
 			PM_AddEvent(EV_CHANGE_WEAPON);
 		}
@@ -2605,7 +2605,7 @@ static void PM_BeginWeaponChange(weapon_t oldweapon, weapon_t newweapon, qboolea
 	}
 
 	// it's an alt mode, play different anim
-	if (newweapon == weaponTable[oldweapon].weapAlts)
+	if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 	{
 		PM_StartWeaponAnim(PM_AltSwitchFromForWeapon(oldweapon));
 	}
@@ -2620,7 +2620,7 @@ static void PM_BeginWeaponChange(weapon_t oldweapon, weapon_t newweapon, qboolea
 	{
 	case WP_CARBINE:
 	case WP_KAR98:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
+		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 		{
 			switchtime = 0;
 			if (!pm->ps->ammoclip[newweapon] && pm->ps->ammo[newweapon])
@@ -2637,14 +2637,14 @@ static void PM_BeginWeaponChange(weapon_t oldweapon, weapon_t newweapon, qboolea
 	case WP_MOBILE_BROWNING_SET:
 	case WP_MORTAR_SET:
 	case WP_MORTAR2_SET:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
+		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 		{
 			switchtime = 0;
 		}
 		break;
 	case WP_SILENCER:
 	case WP_SILENCED_COLT:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
+		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 		{
 			switchtime    = 1000;
 			altSwitchAnim = qtrue;
@@ -2652,7 +2652,7 @@ static void PM_BeginWeaponChange(weapon_t oldweapon, weapon_t newweapon, qboolea
 		break;
 	case WP_FG42:
 	case WP_FG42SCOPE:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
+		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 		{
 			switchtime = 50;        // fast
 		}
@@ -2661,7 +2661,7 @@ static void PM_BeginWeaponChange(weapon_t oldweapon, weapon_t newweapon, qboolea
 	case WP_MOBILE_BROWNING:
 	case WP_MORTAR:
 	case WP_MORTAR2:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
+		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 		{
 			vec3_t axis[3];
 
@@ -2793,7 +2793,7 @@ static void PM_FinishWeaponChange(void)
 	{
 	case WP_LUGER:
 	case WP_COLT:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
+		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 		{
 			switchtime    = 0;
 			altSwitchAnim = qtrue;
@@ -2801,7 +2801,7 @@ static void PM_FinishWeaponChange(void)
 		break;
 	case WP_SILENCER:
 	case WP_SILENCED_COLT:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
+		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 		{
 			switchtime    = 1190;
 			altSwitchAnim = qtrue;
@@ -2809,7 +2809,7 @@ static void PM_FinishWeaponChange(void)
 		break;
 	case WP_CARBINE:
 	case WP_KAR98:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
+		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 		{
 			if (pm->ps->ammoclip[BG_FindAmmoForWeapon(oldweapon)])
 			{
@@ -2825,7 +2825,7 @@ static void PM_FinishWeaponChange(void)
 		break;
 	case WP_M7:
 	case WP_GPG40:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
+		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 		{
 			switchtime    = 2350;
 			altSwitchAnim = qtrue;
@@ -2833,28 +2833,28 @@ static void PM_FinishWeaponChange(void)
 		break;
 	case WP_FG42:
 	case WP_FG42SCOPE:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
+		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 		{
 			switchtime = 50;        // fast
 		}
 		break;
 	case WP_MOBILE_MG42:
 	case WP_MOBILE_BROWNING:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
+		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 		{
 			switchtime = 1722;
 		}
 		break;
 	case WP_MOBILE_MG42_SET:
 	case WP_MOBILE_BROWNING_SET:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
+		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 		{
 			switchtime = 1250;
 		}
 		break;
 	case WP_MORTAR:
 	case WP_MORTAR2:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
+		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 		{
 			switchtime    = 1000;
 			altSwitchAnim = qtrue;
@@ -2862,7 +2862,7 @@ static void PM_FinishWeaponChange(void)
 		break;
 	case WP_MORTAR_SET:
 	case WP_MORTAR2_SET:
-		if (newweapon == weaponTable[oldweapon].weapAlts)
+		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 		{
 			switchtime    = 1667;
 			altSwitchAnim = qtrue;
@@ -2903,7 +2903,7 @@ static void PM_FinishWeaponChange(void)
 		}
 
 		// alt weapon switch was played when switching away, just go into idle
-		if (weaponTable[oldweapon].weapAlts == newweapon)
+		if (GetWeaponTableData(oldweapon)->weapAlts == newweapon)
 		{
 			PM_StartWeaponAnim(PM_AltSwitchToForWeapon(newweapon));
 		}
@@ -2938,7 +2938,7 @@ static void PM_ReloadClip(weapon_t weapon)
 	// reload akimbo stuff
 	if (GetWeaponTableData(weapon)->isAkimbo)
 	{
-		PM_ReloadClip(weaponTable[weapon].akimboSideArm);
+		PM_ReloadClip(GetWeaponTableData(weapon)->akimboSideArm);
 	}
 }
 
@@ -2968,7 +2968,7 @@ void PM_CheckForReload(weapon_t weapon)
 	}
 
 	// some weapons don't reload
-	if (!weaponTable[weapon].isReload)
+	if (!GetWeaponTableData(weapon)->isReload)
 	{
 		return;
 	}
@@ -3006,7 +3006,7 @@ void PM_CheckForReload(weapon_t weapon)
 	case WP_K43_SCOPE:
 		if (reloadRequested && pm->ps->ammo[ammoWeap] && pm->ps->ammoclip[clipWeap] < GetWeaponTableData(weapon)->maxClip)
 		{
-			PM_BeginWeaponChange(weapon, weaponTable[weapon].weapAlts, !(pm->ps->ammo[ammoWeap]) ? qfalse : qtrue);
+			PM_BeginWeaponChange(weapon, GetWeaponTableData(weapon)->weapAlts, !(pm->ps->ammo[ammoWeap]) ? qfalse : qtrue);
 		}
 		return;
 	default:
@@ -3029,7 +3029,7 @@ void PM_CheckForReload(weapon_t weapon)
 				// akimbo should also check other weapon status
 				if (GetWeaponTableData(weapon)->isAkimbo)
 				{
-					if (pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[weapon].akimboSideArm)] < GetWeaponTableData(BG_FindClipForWeapon(weaponTable[weapon].akimboSideArm))->maxClip)
+					if (pm->ps->ammoclip[BG_FindClipForWeapon(GetWeaponTableData(weapon)->akimboSideArm)] < GetWeaponTableData(BG_FindClipForWeapon(GetWeaponTableData(weapon)->akimboSideArm))->maxClip)
 					{
 						doReload = qtrue;
 					}
@@ -3042,7 +3042,7 @@ void PM_CheckForReload(weapon_t weapon)
 			{
 				if (GetWeaponTableData(weapon)->isAkimbo)
 				{
-					if (!pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[weapon].akimboSideArm)])
+					if (!pm->ps->ammoclip[BG_FindClipForWeapon(GetWeaponTableData(weapon)->akimboSideArm)])
 					{
 						doReload = qtrue;
 					}
@@ -3129,9 +3129,9 @@ void PM_WeaponUseAmmo(weapon_t wp, int amount)
 
 		if (GetWeaponTableData(wp)->isAkimbo)
 		{
-			if (!BG_AkimboFireSequence(wp, pm->ps->ammoclip[BG_FindClipForWeapon(wp)], pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[wp].akimboSideArm)]))
+			if (!BG_AkimboFireSequence(wp, pm->ps->ammoclip[BG_FindClipForWeapon(wp)], pm->ps->ammoclip[BG_FindClipForWeapon(GetWeaponTableData(wp)->akimboSideArm)]))
 			{
-				takeweapon = weaponTable[wp].akimboSideArm;
+				takeweapon = GetWeaponTableData(wp)->akimboSideArm;
 			}
 		}
 
@@ -3158,9 +3158,9 @@ int PM_WeaponAmmoAvailable(weapon_t wp)
 
 		if (GetWeaponTableData(wp)->isAkimbo)
 		{
-			if (!BG_AkimboFireSequence(wp, pm->ps->ammoclip[BG_FindClipForWeapon(wp)], pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[wp].akimboSideArm)]))
+			if (!BG_AkimboFireSequence(wp, pm->ps->ammoclip[BG_FindClipForWeapon(wp)], pm->ps->ammoclip[BG_FindClipForWeapon(GetWeaponTableData(wp)->akimboSideArm)]))
 			{
-				takeweapon = weaponTable[wp].akimboSideArm;
+				takeweapon = GetWeaponTableData(wp)->akimboSideArm;
 			}
 		}
 
@@ -3344,7 +3344,7 @@ void PM_AdjustAimSpreadScale(void)
 
 		// take player movement into account (even if only for the scoped weapons)
 		// TODO: also check for jump/crouch and adjust accordingly
-		if (weaponTable[pm->ps->weapon].isScoped)
+		if (GetWeaponTableData(pm->ps->weapon)->isScoped)
 		{
 			for (i = 0; i < 2; i++)
 			{
@@ -3727,7 +3727,7 @@ static void PM_Weapon(void)
 
 	if (GetWeaponTableData(pm->ps->weapon)->isAkimbo)
 	{
-		akimboFire = BG_AkimboFireSequence(pm->ps->weapon, pm->ps->ammoclip[BG_FindClipForWeapon(pm->ps->weapon)], pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[pm->ps->weapon].akimboSideArm)]);
+		akimboFire = BG_AkimboFireSequence(pm->ps->weapon, pm->ps->ammoclip[BG_FindClipForWeapon(pm->ps->weapon)], pm->ps->ammoclip[BG_FindClipForWeapon(GetWeaponTableData(pm->ps->weapon)->akimboSideArm)]);
 	}
 	else
 	{
@@ -4656,7 +4656,7 @@ static void PM_Weapon(void)
 				addTime = 2 * GetWeaponTableData(pm->ps->weapon)->nextShotTime;
 			}
 		}
-		else if (!pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[pm->ps->weapon].akimboSideArm)])
+		else if (!pm->ps->ammoclip[BG_FindClipForWeapon(GetWeaponTableData(pm->ps->weapon)->akimboSideArm)])
 		{
 			if (akimboFire)
 			{
@@ -5843,7 +5843,7 @@ void PmoveSingle(pmove_t *pmove)
 	{
 		if (pm->ps->stats[STAT_KEYS] & (1 << INV_BINOCS))          // binoculars are an inventory item (inventory==keys)
 		{
-			if (!weaponTable[pm->ps->weapon].isScoped &&          // don't allow binocs if using the sniper scope
+			if (!GetWeaponTableData(pm->ps->weapon)->isScoped &&          // don't allow binocs if using the sniper scope
 			    !BG_PlayerMounted(pm->ps->eFlags) &&           // or if mounted on a weapon
 			    // don't allow binocs w/ mounted mob. MG42 or mortar either.
 			    !GetWeaponTableData(pm->ps->weapon)->isSetWeapon)

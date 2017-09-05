@@ -483,7 +483,7 @@ panel_button_t playerSkillIcon0 =
 	NULL,                         // keyUp
 	CG_LimboPanel_RenderSkillIcon,
 	NULL,
-    0
+	0
 };
 
 panel_button_t playerSkillIcon1 =
@@ -527,7 +527,7 @@ panel_button_t spawnPointText =
 	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
-    0
+	0
 };
 
 panel_button_t spawnPointButton =
@@ -555,7 +555,7 @@ panel_button_t mapTimeCounter =
 	NULL,                       // keyUp
 	CG_LimboPanel_RenderCounter,
 	NULL,
-    0
+	0
 };
 
 panel_button_t mapTimeCounter2 =
@@ -1381,9 +1381,9 @@ void CG_LimboPanel_SendSetupMsg(qboolean forceteam)
 		break;
 	}
 
-	if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 && cgs.clientinfo[cg.clientNum].cls == PC_SOLDIER && !Q_stricmp(weaponTable[weap1].desc, weaponTable[weap2].desc))
+	if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 && cgs.clientinfo[cg.clientNum].cls == PC_SOLDIER && !Q_stricmp(GetWeaponTableData(weap1)->desc, GetWeaponTableData(weap2)->desc))
 	{
-		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s."), str, BG_ClassnameForNumber(CG_LimboPanel_GetClass()), weaponTable[weap1].desc), 400, cg_fontScaleCP.value, -1);
+		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s."), str, BG_ClassnameForNumber(CG_LimboPanel_GetClass()), GetWeaponTableData(weap1)->desc), 400, cg_fontScaleCP.value, -1);
 	}
 	else
 	{
@@ -1393,10 +1393,10 @@ void CG_LimboPanel_SendSetupMsg(qboolean forceteam)
 		case WP_AKIMBO_LUGER:
 		case WP_AKIMBO_SILENCEDCOLT:
 		case WP_AKIMBO_SILENCEDLUGER:
-			CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and %s."), str, BG_ClassnameForNumber(CG_LimboPanel_GetClass()), weaponTable[weap1].desc, weaponTable[weap2].desc), 400, cg_fontScaleCP.value, -1);
+			CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and %s."), str, BG_ClassnameForNumber(CG_LimboPanel_GetClass()), GetWeaponTableData(weap1)->desc, GetWeaponTableData(weap2)->desc), 400, cg_fontScaleCP.value, -1);
 			break;
 		default:
-			CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and a %s."), str, BG_ClassnameForNumber(CG_LimboPanel_GetClass()), weaponTable[weap1].desc, weaponTable[weap2].desc), 400, cg_fontScaleCP.value, -1);
+			CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and a %s."), str, BG_ClassnameForNumber(CG_LimboPanel_GetClass()), GetWeaponTableData(weap1)->desc, GetWeaponTableData(weap2)->desc), 400, cg_fontScaleCP.value, -1);
 			break;
 		}
 	}
@@ -2414,8 +2414,8 @@ void CG_LimboPanel_WeaponPanel_DrawWeapon(rectDef_t *rect, weapon_t weap, qboole
 	float     x;
 	vec4_t    clr;
 
-	width  = CG_Text_Width_Ext(ofTxt, 0.2f, 0, &cgs.media.limboFont2);
-	x      = rect->x + rect->w - width - 4;
+	width = CG_Text_Width_Ext(ofTxt, 0.2f, 0, &cgs.media.limboFont2);
+	x     = rect->x + rect->w - width - 4;
 
 	CG_DrawPic(rect->x, rect->y, rect->w, rect->h, shader);
 
@@ -2423,11 +2423,11 @@ void CG_LimboPanel_WeaponPanel_DrawWeapon(rectDef_t *rect, weapon_t weap, qboole
 	{
 		Vector4Copy(weaponPanelNameFont.colour, clr);
 		clr[3] *= 1.5;
-		CG_Text_Paint_Ext(rect->x + 4, rect->y + 12, weaponPanelNameFont.scalex, weaponPanelNameFont.scaley, clr, weaponTable[weap].desc, 0, 0, weaponPanelNameFont.style, weaponPanelNameFont.font);
+		CG_Text_Paint_Ext(rect->x + 4, rect->y + 12, weaponPanelNameFont.scalex, weaponPanelNameFont.scaley, clr, GetWeaponTableData(weap)->desc, 0, 0, weaponPanelNameFont.style, weaponPanelNameFont.font);
 	}
 	else
 	{
-		CG_Text_Paint_Ext(rect->x + 4, rect->y + 12, weaponPanelNameFont.scalex, weaponPanelNameFont.scaley, weaponPanelNameFont.colour, weaponTable[weap].desc, 0, 0, weaponPanelNameFont.style, weaponPanelNameFont.font);
+		CG_Text_Paint_Ext(rect->x + 4, rect->y + 12, weaponPanelNameFont.scalex, weaponPanelNameFont.scaley, weaponPanelNameFont.colour, GetWeaponTableData(weap)->desc, 0, 0, weaponPanelNameFont.style, weaponPanelNameFont.font);
 	}
 
 	{
