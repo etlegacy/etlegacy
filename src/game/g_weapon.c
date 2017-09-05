@@ -4238,36 +4238,27 @@ void FireWeapon(gentity_t *ent)
 	// covert ops disguise handling
 	if (ent->client->ps.powerups[PW_OPS_DISGUISED])
 	{
-		switch (ent->s.weapon)
+		if (GetWeaponTableData(ent->s.weapon)->keepDisguise)
 		{
-		case WP_SMOKE_BOMB:     // never loose disguise
-		case WP_SATCHEL:
-		case WP_SATCHEL_DET:
-		case WP_BINOCULARS:
-			break;
-		case WP_KNIFE:           // in case of covert ops weapon disguise is lost when seen by others AND 'low noise' weapon is used
-		case WP_KNIFE_KABAR:
-		case WP_STEN:
-		case WP_SILENCER:
-		case WP_SILENCED_COLT:
-		case WP_AKIMBO_SILENCEDCOLT:
-		case WP_AKIMBO_SILENCEDLUGER:
-		case WP_K43:
-		case WP_K43_SCOPE:
-		case WP_GARAND:
-		case WP_GARAND_SCOPE:
-		case WP_GRENADE_LAUNCHER:
-		case WP_GRENADE_PINEAPPLE:
-			if (G_PlayerCanBeSeenByOthers(ent))
+			switch (ent->s.weapon)
 			{
-				ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
-				ent->client->disguiseClientNum             = -1;
+			case WP_SMOKE_BOMB:     // never loose disguise
+			case WP_SATCHEL:
+			case WP_SATCHEL_DET:
+			case WP_BINOCULARS:
+				break;
+			default:                // in case of covert ops weapon disguise is lost when seen by others AND 'low noise' weapon is used
+				if (G_PlayerCanBeSeenByOthers(ent))
+				{
+					ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
+					ent->client->disguiseClientNum             = -1;
+				}
 			}
-			break;
-		default:     // luger, akimbo luger, colt, akimbo colt, fg42, fg42_scoped
+		}
+		else                        // luger, akimbo luger, colt, akimbo colt, fg42, fg42_scoped
+		{
 			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
 			ent->client->disguiseClientNum             = -1;
-			break;
 		}
 	}
 
