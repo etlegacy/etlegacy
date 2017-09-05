@@ -906,31 +906,6 @@ typedef struct
 } playerStats_t;
 
 /**
- * @struct ammotable_s
- * @typedef ammotable_t
- * @brief
- */
-typedef struct ammotable_s
-{
-	int maxammo;           ///<
-	int uses;              ///<
-	int maxclip;           ///<
-	int defaultStartingAmmo;
-	int defaultStartingClip;
-	int reloadTime;        ///<
-	int fireDelayTime;     ///<
-	int nextShotTime;      ///<
-
-	int maxHeat;           ///< max active firing time before weapon 'overheats' (at which point the weapon will fail)
-	int coolRate;          ///< how fast the weapon cools down. (per second)
-
-	int mod;               ///< means of death
-} ammotable_t;
-
-/// Lookup table to find ammo table entry
-extern ammotable_t *GetAmmoTableData(int ammoIndex);
-
-/**
  * @struct weaponTable_s
  * @typedef weaponTable_t
  * @brief
@@ -988,6 +963,20 @@ typedef struct weapontable_s
 	const char *desc;               ///< c - description for spawn weapons
 
 	unsigned int indexWeaponStat;               ///< bg - index for weapon stat info
+
+	int maxAmmo;           ///<
+	int uses;              ///<
+	int maxClip;           ///<
+	int defaultStartingAmmo;
+	int defaultStartingClip;
+	int reloadTime;        ///<
+	int fireDelayTime;     ///<
+	int nextShotTime;      ///<
+
+	int maxHeat;           ///< max active firing time before weapon 'overheats' (at which point the weapon will fail)
+	int coolRate;          ///< how fast the weapon cools down. (per second)
+
+	int mod;               ///< means of death
 
 } weaponTable_t;
 
@@ -2620,10 +2609,6 @@ bg_speaker_t *BG_GetScriptSpeaker(int index);
 qboolean BG_SS_DeleteSpeaker(int index);
 qboolean BG_SS_StoreSpeaker(bg_speaker_t *speaker);
 qboolean BG_LoadSpeakerScript(const char *filename);
-
-// Lookup table to find ammo table entry
-extern ammotable_t ammoTableMP[WP_NUM_WEAPONS];
-#define GetAmmoTableData(ammoIndex) ((ammotable_t *)(&ammoTableMP[ammoIndex]))
 
 // Lookup table to find weapon table entry
 extern weaponTable_t weaponTable[WP_NUM_WEAPONS];

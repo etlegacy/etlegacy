@@ -3600,7 +3600,7 @@ qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t sta
 
 	if (traceEnt->takedamage)
 	{
-		G_Damage(traceEnt, attacker, attacker, forward, tr.endpos, damage, (distance_falloff ? DAMAGE_DISTANCEFALLOFF : 0), GetAmmoTableData(attacker->s.weapon)->mod);
+		G_Damage(traceEnt, attacker, attacker, forward, tr.endpos, damage, (distance_falloff ? DAMAGE_DISTANCEFALLOFF : 0), GetWeaponTableData(attacker->s.weapon)->mod);
 
 		// allow bullets to "pass through" func_explosives if they break by taking another simultanious shot
 		if (traceEnt->s.eType == ET_EXPLOSIVE)

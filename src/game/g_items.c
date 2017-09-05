@@ -76,7 +76,7 @@ int AddToClip(playerState_t *ps, weapon_t weapon, int ammomove, int outOfReserve
 	}
 
 	inclip  = ps->ammoclip[BG_FindClipForWeapon(weapon)];
-	maxclip = GetAmmoTableData(weapon)->maxclip;
+	maxclip = GetWeaponTableData(weapon)->maxClip;
 
 	if (!ammomove)     // amount to add to the clip not specified
 	{

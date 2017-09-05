@@ -4260,7 +4260,7 @@ public:
 #ifdef NOQUARTER
 				_maxclip = GetWeaponTableData(iWeapon)->maxclip;
 #else
-				_maxclip = GetAmmoTableData(iWeapon)->maxclip;
+				_maxclip = GetWeaponTableData(iWeapon)->maxClip;
 #endif
 			}
 			return Success;
@@ -4358,7 +4358,7 @@ public:
 #ifdef NOQUARTER
 				maxclip = GetWeaponTableData(ammoIndex)->maxclip;
 #else
-				maxclip = GetAmmoTableData(ammoIndex)->maxclip;
+				maxclip = GetWeaponTableData(ammoIndex)->maxClip;
 #endif
 			}
 #ifdef NOQUARTER
@@ -5479,7 +5479,7 @@ public:
 #ifdef NOQUARTER
 						int iMaxHeat = GetWeaponTableData(_weaponBotToGame(pMsg->m_Weapon))->maxHeat;
 #else
-						int iMaxHeat = GetAmmoTableData(_weaponBotToGame(pMsg->m_Weapon))->maxHeat;
+						int iMaxHeat = GetWeaponTableData(_weaponBotToGame(pMsg->m_Weapon))->maxHeat;
 #endif
 						pMsg->m_IsOverheated = iMaxHeat ? ((iCurHeat >= iMaxHeat) ? True : False) : False;
 					}

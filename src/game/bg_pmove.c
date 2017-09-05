@@ -2462,7 +2462,7 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 	}
 
 	// fixing reloading with a full clip
-	if (pm->ps->ammoclip[BG_FindAmmoForWeapon(weapon)] >= GetAmmoTableData(weapon)->maxclip)
+	if (pm->ps->ammoclip[BG_FindAmmoForWeapon(weapon)] >= GetWeaponTableData(weapon)->maxClip)
 	{
 		return;
 	}
@@ -2501,7 +2501,7 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 
 	// okay to reload while overheating without tacking the reload time onto the end of the
 	// current weaponTime (the reload time is partially absorbed into the overheat time)
-	reloadTime = GetAmmoTableData(weapon)->reloadTime;
+	reloadTime = GetWeaponTableData(weapon)->reloadTime;
 	if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && weaponTable[weapon].isLightWeaponSupportingFastReload)
 	{
 		reloadTime *= .65f;
@@ -2922,7 +2922,7 @@ static void PM_ReloadClip(weapon_t weapon)
 {
 	int ammoreserve = pm->ps->ammo[BG_FindAmmoForWeapon(weapon)];
 	int ammoclip    = pm->ps->ammoclip[BG_FindClipForWeapon(weapon)];
-	int ammomove    = GetAmmoTableData(weapon)->maxclip - ammoclip;
+	int ammomove    = GetWeaponTableData(weapon)->maxClip - ammoclip;
 
 	if (ammoreserve < ammomove)
 	{
@@ -3004,7 +3004,7 @@ void PM_CheckForReload(weapon_t weapon)
 	case WP_FG42SCOPE:
 	case WP_GARAND_SCOPE:
 	case WP_K43_SCOPE:
-		if (reloadRequested && pm->ps->ammo[ammoWeap] && pm->ps->ammoclip[clipWeap] < GetAmmoTableData(weapon)->maxclip)
+		if (reloadRequested && pm->ps->ammo[ammoWeap] && pm->ps->ammoclip[clipWeap] < GetWeaponTableData(weapon)->maxClip)
 		{
 			PM_BeginWeaponChange(weapon, weaponTable[weapon].weapAlts, !(pm->ps->ammo[ammoWeap]) ? qfalse : qtrue);
 		}
@@ -3021,7 +3021,7 @@ void PM_CheckForReload(weapon_t weapon)
 		{
 			if (pm->ps->ammo[ammoWeap])
 			{
-				if (pm->ps->ammoclip[clipWeap] < GetAmmoTableData(weapon)->maxclip)
+				if (pm->ps->ammoclip[clipWeap] < GetWeaponTableData(weapon)->maxClip)
 				{
 					doReload = qtrue;
 				}
@@ -3029,7 +3029,7 @@ void PM_CheckForReload(weapon_t weapon)
 				// akimbo should also check other weapon status
 				if (GetWeaponTableData(weapon)->isAkimbo)
 				{
-					if (pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[weapon].akimboSideArm)] < GetAmmoTableData(BG_FindClipForWeapon(weaponTable[weapon].akimboSideArm))->maxclip)
+					if (pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[weapon].akimboSideArm)] < GetWeaponTableData(BG_FindClipForWeapon(weaponTable[weapon].akimboSideArm))->maxClip)
 					{
 						doReload = qtrue;
 					}
@@ -3211,11 +3211,11 @@ void PM_CoolWeapons(void)
 			{
 				if (pm->skill[SK_HEAVY_WEAPONS] >= 2 && pm->ps->stats[STAT_PLAYER_CLASS] == PC_SOLDIER)
 				{
-					pm->ps->weapHeat[wp] -= ((float)GetAmmoTableData(wp)->coolRate * 2.f * pml.frametime);
+					pm->ps->weapHeat[wp] -= ((float)GetWeaponTableData(wp)->coolRate * 2.f * pml.frametime);
 				}
 				else
 				{
-					pm->ps->weapHeat[wp] -= ((float)GetAmmoTableData(wp)->coolRate * pml.frametime);
+					pm->ps->weapHeat[wp] -= ((float)GetWeaponTableData(wp)->coolRate * pml.frametime);
 				}
 
 				if (pm->ps->weapHeat[wp] < 0)
@@ -3238,7 +3238,7 @@ void PM_CoolWeapons(void)
 		else
 		{
 			// don't divide by 0
-			maxHeat = GetAmmoTableData(pm->ps->weapon)->maxHeat;
+			maxHeat = GetWeaponTableData(pm->ps->weapon)->maxHeat;
 
 			// floor to prevent 8-bit wrap
 			if (maxHeat != 0)
@@ -3594,7 +3594,7 @@ static qboolean PM_CheckGrenade()
 
 		if (!(pm->cmd.buttons & BUTTON_ATTACK) || forcethrow || (pm->ps->eFlags & EF_PRONE_MOVING))
 		{
-			if (pm->ps->weaponDelay == GetAmmoTableData(pm->ps->weapon)->fireDelayTime || forcethrow)
+			if (pm->ps->weaponDelay == GetWeaponTableData(pm->ps->weapon)->fireDelayTime || forcethrow)
 			{
 				// released fire button.  Fire!!!
 				if (pm->ps->eFlags & EF_PRONE)
@@ -4140,7 +4140,7 @@ static void PM_Weapon(void)
 		if (!weaponstateFiring)
 		{
 			// delay so the weapon can get up into position before firing (and showing the flash)
-			pm->ps->weaponDelay = GetAmmoTableData(pm->ps->weapon)->fireDelayTime;
+			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
 		}
 		else
 		{
@@ -4169,7 +4169,7 @@ static void PM_Weapon(void)
 	case WP_MOBILE_BROWNING_SET:
 		if (!weaponstateFiring)
 		{
-			pm->ps->weaponDelay = GetAmmoTableData(pm->ps->weapon)->fireDelayTime;
+			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
 		}
 		else
 		{
@@ -4209,7 +4209,7 @@ static void PM_Weapon(void)
 				PM_AddEvent(EV_SPINUP);
 			}
 
-			pm->ps->weaponDelay = GetAmmoTableData(pm->ps->weapon)->fireDelayTime;
+			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
 		}
 		else
 		{
@@ -4243,7 +4243,7 @@ static void PM_Weapon(void)
 		{
 			PM_AddEvent(EV_SPINUP);
 			PM_StartWeaponAnim(PM_AttackAnimForWeapon(WP_MORTAR_SET)); // FIXME: PM_AttackAnimForWeapon() returns WEAP_ATTACK1 anyway
-			pm->ps->weaponDelay = GetAmmoTableData(pm->ps->weapon)->fireDelayTime;
+			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
 		}
 		else
 		{
@@ -4293,7 +4293,7 @@ static void PM_Weapon(void)
 				PM_StartWeaponAnim(PM_AttackAnimForWeapon(pm->ps->weapon));
 			}
 
-			pm->ps->weaponDelay = GetAmmoTableData(pm->ps->weapon)->fireDelayTime;
+			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
 		}
 		break;
 	case WP_LANDMINE:
@@ -4311,7 +4311,7 @@ static void PM_Weapon(void)
 				}
 			}
 
-			pm->ps->weaponDelay = GetAmmoTableData(pm->ps->weapon)->fireDelayTime;
+			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
 		}
 		break;
 	case WP_SATCHEL:
@@ -4322,14 +4322,14 @@ static void PM_Weapon(void)
 				PM_StartWeaponAnim(PM_AttackAnimForWeapon(pm->ps->weapon));
 			}
 
-			pm->ps->weaponDelay = GetAmmoTableData(pm->ps->weapon)->fireDelayTime;
+			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
 		}
 		break;
 	case WP_SATCHEL_DET:
 		if (!weaponstateFiring)
 		{
 			PM_AddEvent(EV_SPINUP);
-			pm->ps->weaponDelay = GetAmmoTableData(pm->ps->weapon)->fireDelayTime;
+			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
 			PM_ContinueWeaponAnim(PM_AttackAnimForWeapon(WP_SATCHEL_DET));
 		}
 		else
@@ -4351,7 +4351,7 @@ static void PM_Weapon(void)
 
 	// check for out of ammo
 
-	ammoNeeded = GetAmmoTableData(pm->ps->weapon)->uses;
+	ammoNeeded = GetWeaponTableData(pm->ps->weapon)->uses;
 
 	if (pm->ps->weapon)
 	{
@@ -4471,9 +4471,9 @@ static void PM_Weapon(void)
 	// fire weapon
 
 	// add weapon heat
-	if (GetAmmoTableData(pm->ps->weapon)->maxHeat)
+	if (GetWeaponTableData(pm->ps->weapon)->maxHeat)
 	{
-		pm->ps->weapHeat[pm->ps->weapon] += GetAmmoTableData(pm->ps->weapon)->nextShotTime;
+		pm->ps->weapHeat[pm->ps->weapon] += GetWeaponTableData(pm->ps->weapon)->nextShotTime;
 	}
 
 	// first person weapon animations
@@ -4629,13 +4629,13 @@ static void PM_Weapon(void)
 	case WP_SMOKE_BOMB:
 	case WP_MORTAR_SET:
 	case WP_MORTAR2_SET:
-		addTime = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
+		addTime = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
 		break;
 	case WP_LUGER:
 	case WP_SILENCER:
 	case WP_COLT:
 	case WP_SILENCED_COLT:
-		addTime = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
+		addTime = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
 		// colt and luger are supposed to be balanced
 		aimSpreadScaleAdd = 20;
 		break;
@@ -4645,7 +4645,7 @@ static void PM_Weapon(void)
 	case WP_AKIMBO_SILENCEDLUGER:
 		// if you're firing an akimbo weapon, and your other gun is dry,
 		// nextshot needs to take 2x time
-		addTime = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
+		addTime = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
 
 		// fixed the swapped usage of akimboFire vs. the colt
 		// so that the last shot isn't delayed
@@ -4653,14 +4653,14 @@ static void PM_Weapon(void)
 		{
 			if (!akimboFire)
 			{
-				addTime = 2 * GetAmmoTableData(pm->ps->weapon)->nextShotTime;
+				addTime = 2 * GetWeaponTableData(pm->ps->weapon)->nextShotTime;
 			}
 		}
 		else if (!pm->ps->ammoclip[BG_FindClipForWeapon(weaponTable[pm->ps->weapon].akimboSideArm)])
 		{
 			if (akimboFire)
 			{
-				addTime = 2 * GetAmmoTableData(pm->ps->weapon)->nextShotTime;
+				addTime = 2 * GetWeaponTableData(pm->ps->weapon)->nextShotTime;
 			}
 		}
 
@@ -4671,23 +4671,23 @@ static void PM_Weapon(void)
 	case WP_K43:
 	case WP_KAR98:
 	case WP_CARBINE:
-		addTime           = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
+		addTime           = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
 		aimSpreadScaleAdd = 50;
 		break;
 	case WP_GARAND_SCOPE:
 	case WP_K43_SCOPE:
-		addTime           = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
+		addTime           = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
 		aimSpreadScaleAdd = 200;
 		break;
 	case WP_FG42:
 	case WP_FG42SCOPE:
-		addTime           = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
+		addTime           = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
 		aimSpreadScaleAdd = 200 / 2;
 		break;
 	case WP_MP40:
 	case WP_THOMPSON:
 	case WP_STEN:
-		addTime           = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
+		addTime           = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
 		aimSpreadScaleAdd = 15 + rand() % 10;
 		break;
 	case WP_MOBILE_MG42:
@@ -4696,14 +4696,14 @@ static void PM_Weapon(void)
 	case WP_MOBILE_BROWNING_SET:
 		if (weapattackanim != WEAP_ATTACK_LASTSHOT)
 		{
-			addTime = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
+			addTime = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
 		}
 		aimSpreadScaleAdd = 20;
 		break;
 	case WP_MEDIC_SYRINGE:
 	case WP_MEDIC_ADRENALINE:
 	case WP_AMMO:
-		addTime = GetAmmoTableData(pm->ps->weapon)->nextShotTime;
+		addTime = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
 		break;
 	// engineers disarm bomb "on the fly" (high sample rate) but medics & LTs throw out health pack/smoke grenades slow
 	case WP_PLIERS:
@@ -4816,12 +4816,12 @@ static void PM_Weapon(void)
 	// check for overheat
 
 	// the weapon can overheat, and it's hot
-	if (GetAmmoTableData(pm->ps->weapon)->maxHeat && pm->ps->weapHeat[pm->ps->weapon])
+	if (GetWeaponTableData(pm->ps->weapon)->maxHeat && pm->ps->weapHeat[pm->ps->weapon])
 	{
 		// it is overheating
-		if (pm->ps->weapHeat[pm->ps->weapon] >= GetAmmoTableData(pm->ps->weapon)->maxHeat)
+		if (pm->ps->weapHeat[pm->ps->weapon] >= GetWeaponTableData(pm->ps->weapon)->maxHeat)
 		{
-			pm->ps->weapHeat[pm->ps->weapon] = GetAmmoTableData(pm->ps->weapon)->maxHeat;     // cap heat to max
+			pm->ps->weapHeat[pm->ps->weapon] = GetWeaponTableData(pm->ps->weapon)->maxHeat;     // cap heat to max
 			PM_AddEvent(EV_WEAP_OVERHEAT);
 			//PM_StartWeaponAnim(WEAP_IDLE1); // removed.  client handles anim in overheat event
 			addTime = 2000;     // force "heat recovery minimum" to 2 sec right now
