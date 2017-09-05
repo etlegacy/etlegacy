@@ -2614,54 +2614,45 @@ static void PM_BeginWeaponChange(weapon_t oldweapon, weapon_t newweapon, qboolea
 		PM_StartWeaponAnim(PM_DropAnimForWeapon(oldweapon));
 	}
 
+	// TODO: table weapon ?
 	switchtime = 250;   // dropping/raising usually takes 1/4 sec.
+
 	// sometimes different switch times for alt weapons
-	switch (oldweapon)
+	if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 	{
-	case WP_CARBINE:
-	case WP_KAR98:
-		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
+		switch (oldweapon)
 		{
+		case WP_CARBINE:
+		case WP_KAR98:
 			switchtime = 0;
 			if (!pm->ps->ammoclip[newweapon] && pm->ps->ammo[newweapon])
 			{
 				PM_ReloadClip(newweapon);
 			}
-		}
-		break;
-	case WP_M7:
-	case WP_GPG40:
-	case WP_LUGER:
-	case WP_COLT:
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING_SET:
-	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET:
-		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
-		{
+			break;
+		case WP_M7:
+		case WP_GPG40:
+		case WP_LUGER:
+		case WP_COLT:
+		case WP_MOBILE_MG42_SET:
+		case WP_MOBILE_BROWNING_SET:
+		case WP_MORTAR_SET:
+		case WP_MORTAR2_SET:
 			switchtime = 0;
-		}
-		break;
-	case WP_SILENCER:
-	case WP_SILENCED_COLT:
-		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
-		{
+			break;
+		case WP_SILENCER:
+		case WP_SILENCED_COLT:
 			switchtime    = 1000;
 			altSwitchAnim = qtrue;
-		}
-		break;
-	case WP_FG42:
-	case WP_FG42SCOPE:
-		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
-		{
+			break;
+		case WP_FG42:
+		case WP_FG42SCOPE:
 			switchtime = 50;        // fast
-		}
-		break;
-	case WP_MOBILE_MG42:
-	case WP_MOBILE_BROWNING:
-	case WP_MORTAR:
-	case WP_MORTAR2:
-		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
+			break;
+		case WP_MOBILE_MG42:
+		case WP_MOBILE_BROWNING:
+		case WP_MORTAR:
+		case WP_MORTAR2:
 		{
 			vec3_t axis[3];
 
@@ -2673,8 +2664,9 @@ static void PM_BeginWeaponChange(weapon_t oldweapon, weapon_t newweapon, qboolea
 			AxisToAngles(axis, pm->pmext->mountedWeaponAngles);
 		}
 		break;
-	default:
-		break;
+		default:
+			break;
+		}
 	}
 
 	// play an animation
