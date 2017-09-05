@@ -469,84 +469,9 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
 		return;
 	}
 
-	switch (mod)
+	if (GetMODTableData(mod)->skillType < SK_NUM_SKILLS)
 	{
-	// light weapons
-	case MOD_KNIFE:
-	case MOD_KNIFE_KABAR:
-	case MOD_LUGER:
-	case MOD_COLT:
-	case MOD_MP40:
-	case MOD_THOMPSON:
-	case MOD_STEN:
-	case MOD_GARAND:
-	case MOD_SILENCER:
-	case MOD_FG42:
-	case MOD_CARBINE:
-	case MOD_KAR98:
-	case MOD_SILENCED_COLT:
-	case MOD_K43:
-	// akimbo weapons lose score now as well
-	case MOD_AKIMBO_COLT:
-	case MOD_AKIMBO_LUGER:
-	case MOD_AKIMBO_SILENCEDCOLT:
-	case MOD_AKIMBO_SILENCEDLUGER:
-	case MOD_GRENADE_LAUNCHER:
-	case MOD_GRENADE_PINEAPPLE:
-	// airstrike marker kills
-	case MOD_SMOKEGRENADE:
-		G_LoseSkillPoints(tker, SK_LIGHT_WEAPONS, 3.f);
-		//G_DebugAddSkillPoints( attacker, SK_LIGHT_WEAPONS, 2.f, "kill" );
-		break;
-
-	case MOD_BACKSTAB:
-		G_LoseSkillPoints(tker, SK_LIGHT_WEAPONS, 5.f);
-		break;
-
-	// scoped weapons
-	case MOD_GARAND_SCOPE:
-	case MOD_K43_SCOPE:
-	case MOD_FG42SCOPE:
-	case MOD_SATCHEL:
-		G_LoseSkillPoints(tker, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f);
-		//G_DebugAddSkillPoints( attacker, SK_LIGHT_WEAPONS, 2.f, "legshot kill" );
-		break;
-
-	case MOD_MOBILE_MG42:
-	case MOD_MOBILE_BROWNING:
-	case MOD_MACHINEGUN:
-	case MOD_BROWNING:
-	case MOD_MG42:
-	case MOD_PANZERFAUST:
-	case MOD_BAZOOKA:
-	case MOD_FLAMETHROWER:
-	case MOD_MORTAR:
-	case MOD_MORTAR2:
-		G_LoseSkillPoints(tker, SK_HEAVY_WEAPONS, 3.f);
-		//G_DebugAddSkillPoints( attacker, SK_HEAVY_WEAPONS, 3.f, "emplaced mg42 kill" );
-		break;
-
-	case MOD_DYNAMITE:
-	case MOD_LANDMINE:
-	case MOD_GPG40:
-	case MOD_M7:
-		G_LoseSkillPoints(tker, SK_EXPLOSIVES_AND_CONSTRUCTION, 3.f);
-		//G_DebugAddSkillPoints( attacker, SK_EXPLOSIVES_AND_CONSTRUCTION, 4.f, "dynamite or landmine kill" );
-		break;
-
-	case MOD_ARTY:
-	case MOD_AIRSTRIKE:
-		G_LoseSkillPoints(tker, SK_SIGNALS, 3.f);
-		//G_DebugAddSkillPoints( attacker, SK_SIGNALS, 4.f, "artillery kill" );
-		break;
-
-	case MOD_SHOVE:
-		G_LoseSkillPoints(tker, SK_BATTLE_SENSE, 5.f);
-		break;
-
-	// no skills for anything else
-	default:
-		break;
+		G_LoseSkillPoints(tker, GetMODTableData(mod)->skillType, GetMODTableData(mod)->defaultKillPoints);
 	}
 
 	// prepare scoreboard
@@ -562,149 +487,52 @@ void G_LoseKillSkillPoints(gentity_t *tker, meansOfDeath_t mod, hitRegion_t hr, 
  */
 void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t hr, qboolean splash)
 {
+	float       points;
+	skillType_t skillType;
+	const char  *reason;
+
 	if (!attacker->client)
 	{
 		return;
 	}
 
-	switch (mod)
+	if (GetMODTableData(mod)->hasHitRegion)
 	{
-	// light weapons
-	case MOD_KNIFE:
-	case MOD_KNIFE_KABAR:
-		G_AddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f); G_DebugAddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f, "knife kill");
-		break;
+		points = GetMODTableData(mod)->hitRegionKillPoints[hr];
 
-	case MOD_LUGER:
-	case MOD_COLT:
-	case MOD_MP40:
-	case MOD_THOMPSON:
-	case MOD_STEN:
-	case MOD_GARAND:
-	case MOD_SILENCER:
-	case MOD_FG42:
-	case MOD_CARBINE:
-	case MOD_KAR98:
-	case MOD_SILENCED_COLT:
-	case MOD_K43:
-	case MOD_AKIMBO_COLT:
-	case MOD_AKIMBO_LUGER:
-	case MOD_AKIMBO_SILENCEDCOLT:
-	case MOD_AKIMBO_SILENCEDLUGER:
 		switch (hr)
 		{
-		case HR_HEAD:   G_AddSkillPoints(attacker, SK_LIGHT_WEAPONS, 5.f); G_DebugAddSkillPoints(attacker, SK_LIGHT_WEAPONS, 5.f, "headshot kill"); break;
-		case HR_ARMS:   G_AddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f); G_DebugAddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f, "armshot kill"); break;
-		case HR_BODY:   G_AddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f); G_DebugAddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f, "bodyshot kill"); break;
-		case HR_LEGS:   G_AddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f); G_DebugAddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f, "legshot kill");  break;
-		default:        G_AddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f); G_DebugAddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f, "kill"); break;               // for weapons that don't have localized damage
+		case HR_HEAD: reason = va("%s headshot kill", GetMODTableData(mod)->debugReasonMsg); break;
+		case HR_ARMS: reason = va("%s armshot kill", GetMODTableData(mod)->debugReasonMsg); break;
+		case HR_BODY: reason = va("%s bodyshot kill", GetMODTableData(mod)->debugReasonMsg); break;
+		case HR_LEGS: reason = va("%s legshot kill", GetMODTableData(mod)->debugReasonMsg); break;
+		default:      reason = va("%s kill", GetMODTableData(mod)->debugReasonMsg); break; // for weapons that don't have localized damage, should not happen
 		}
-		break;
-
-	case MOD_BACKSTAB:
-		G_AddSkillPoints(attacker, SK_LIGHT_WEAPONS, 5.f);
-		G_DebugAddSkillPoints(attacker, SK_LIGHT_WEAPONS, 5.f, "backstab kill");
-		break;
-
-	// heavy weapons
-	case MOD_MOBILE_MG42:
-	case MOD_MOBILE_BROWNING:
-		G_AddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f);
-		G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "mobile machinegun kill");
-		break;
-
-	// scoped weapons
-	case MOD_GARAND_SCOPE:
-	case MOD_K43_SCOPE:
-	case MOD_FG42SCOPE:
-		switch (hr)
-		{
-		case HR_HEAD:   G_AddSkillPoints(attacker, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 5.f); G_DebugAddSkillPoints(attacker, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 5.f, "headshot kill"); break;
-		case HR_ARMS:   G_AddSkillPoints(attacker, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f); G_DebugAddSkillPoints(attacker, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 2.f, "armshot kill"); break;
-		case HR_BODY:   G_AddSkillPoints(attacker, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f); G_DebugAddSkillPoints(attacker, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f, "bodyshot kill"); break;
-		case HR_LEGS:   G_AddSkillPoints(attacker, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f); G_DebugAddSkillPoints(attacker, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 2.f, "legshot kill"); break;
-		default:        G_AddSkillPoints(attacker, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f); G_DebugAddSkillPoints(attacker, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 3.f, "kill"); break;             // for weapons that don't have localized damage
-		}
-		break;
-
-	// misc weapons (individual handling)
-	case MOD_SATCHEL:
-		G_AddSkillPoints(attacker, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 5.f);
-		G_DebugAddSkillPoints(attacker, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 5.f, "satchel charge kill");
-		break;
-
-	case MOD_MACHINEGUN:
-	case MOD_BROWNING:
-	case MOD_MG42:
-		G_AddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f);
-		G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "emplaced machinegun kill");
-		break;
-
-	case MOD_PANZERFAUST:
-	case MOD_BAZOOKA:
-		if (splash)
-		{
-			G_AddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f);
-			G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "rocket launcher splash damage kill");
-		}
-		else
-		{
-			G_AddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f);
-			G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "rocket launcher direct hit kill");
-		}
-		break;
-	case MOD_FLAMETHROWER:
-		G_AddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f);
-		G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "flamethrower kill");
-		break;
-	case MOD_MORTAR:
-	case MOD_MORTAR2:
-		if (splash)
-		{
-			G_AddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f);
-			G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "mortar splash damage kill");
-		}
-		else
-		{
-			G_AddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f);
-			G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, 3.f, "mortar direct hit kill");
-		}
-		break;
-	case MOD_GRENADE_LAUNCHER:
-	case MOD_GRENADE_PINEAPPLE:
-	// airstrike marker kills
-	case MOD_SMOKEGRENADE:
-		G_AddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f);
-		G_DebugAddSkillPoints(attacker, SK_LIGHT_WEAPONS, 3.f, "hand grenade kill");
-		break;
-	case MOD_DYNAMITE:
-	case MOD_LANDMINE:
-		G_AddSkillPoints(attacker, SK_EXPLOSIVES_AND_CONSTRUCTION, 4.f);
-		G_DebugAddSkillPoints(attacker, SK_EXPLOSIVES_AND_CONSTRUCTION, 4.f, "dynamite or landmine kill");
-		break;
-	case MOD_ARTY:
-		G_AddSkillPoints(attacker, SK_SIGNALS, 4.f);
-		G_DebugAddSkillPoints(attacker, SK_SIGNALS, 4.f, "artillery kill");
-		break;
-	case MOD_AIRSTRIKE:
-		G_AddSkillPoints(attacker, SK_SIGNALS, 3.f);
-		G_DebugAddSkillPoints(attacker, SK_SIGNALS, 3.f, "airstrike kill");
-		break;
-	case MOD_GPG40:
-	case MOD_M7:
-		G_AddSkillPoints(attacker, SK_EXPLOSIVES_AND_CONSTRUCTION, 3.f);
-		G_DebugAddSkillPoints(attacker, SK_EXPLOSIVES_AND_CONSTRUCTION, 3.f, "rifle grenade kill");
-		break;
-
-	case MOD_SHOVE:
-		G_AddSkillPoints(attacker, SK_BATTLE_SENSE, 5.f);
-		G_DebugAddSkillPoints(attacker, SK_BATTLE_SENSE, 5.f, "shove kill");
-		break;
-
-	// no skills for anything else
-	default:
-		break;
 	}
+	else if (splash)
+	{
+		points = GetMODTableData(mod)->splashKillPoints;
+
+		reason = va("%s splash damage kill", GetMODTableData(mod)->debugReasonMsg);
+	}
+	else
+	{
+		points = GetMODTableData(mod)->defaultKillPoints;
+
+		if (GetMODTableData(mod)->isExplosive)
+		{
+			reason = va("%s direct damage kill", GetMODTableData(mod)->debugReasonMsg);
+		}
+		else
+		{
+			reason = va("%s kill", GetMODTableData(mod)->debugReasonMsg);
+		}
+	}
+
+	skillType = GetMODTableData(mod)->skillType;
+
+	G_AddSkillPoints(attacker, skillType, points);
+	G_DebugAddSkillPoints(attacker, skillType, points, reason);
 
 	// prepare scoreboard
 	CalculateRanks();
@@ -718,38 +546,10 @@ void G_AddKillSkillPoints(gentity_t *attacker, meansOfDeath_t mod, hitRegion_t h
  */
 void G_AddKillSkillPointsForDestruction(gentity_t *attacker, meansOfDeath_t mod, g_constructible_stats_t *constructibleStats)
 {
-	switch (mod)
+	if (GetMODTableData(mod)->skillType < SK_NUM_SKILLS)
 	{
-	case MOD_GRENADE_LAUNCHER:
-	case MOD_GRENADE_PINEAPPLE:
-		G_AddSkillPoints(attacker, SK_LIGHT_WEAPONS, constructibleStats->destructxpbonus);
-		G_DebugAddSkillPoints(attacker, SK_LIGHT_WEAPONS, constructibleStats->destructxpbonus, "destroying a constructible/explosive");
-		break;
-	case MOD_GPG40:
-	case MOD_M7:
-	case MOD_DYNAMITE:
-	case MOD_LANDMINE:
-		G_AddSkillPoints(attacker, SK_EXPLOSIVES_AND_CONSTRUCTION, constructibleStats->destructxpbonus);
-		G_DebugAddSkillPoints(attacker, SK_EXPLOSIVES_AND_CONSTRUCTION, constructibleStats->destructxpbonus, "destroying a constructible/explosive");
-		break;
-	case MOD_PANZERFAUST:
-	case MOD_BAZOOKA:
-	case MOD_MORTAR:
-	case MOD_MORTAR2:
-		G_AddSkillPoints(attacker, SK_HEAVY_WEAPONS, constructibleStats->destructxpbonus);
-		G_DebugAddSkillPoints(attacker, SK_HEAVY_WEAPONS, constructibleStats->destructxpbonus, "destroying a constructible/explosive");
-		break;
-	case MOD_ARTY:
-	case MOD_AIRSTRIKE:
-		G_AddSkillPoints(attacker, SK_SIGNALS, constructibleStats->destructxpbonus);
-		G_DebugAddSkillPoints(attacker, SK_SIGNALS, constructibleStats->destructxpbonus, "destroying a constructible/explosive");
-		break;
-	case MOD_SATCHEL:
-		G_AddSkillPoints(attacker, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, constructibleStats->destructxpbonus);
-		G_DebugAddSkillPoints(attacker, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, constructibleStats->destructxpbonus, "destroying a constructible/explosive");
-		break;
-	default:
-		break;
+		G_AddSkillPoints(attacker, GetMODTableData(mod)->skillType, constructibleStats->destructxpbonus);
+		G_DebugAddSkillPoints(attacker, GetMODTableData(mod)->skillType, constructibleStats->destructxpbonus, "destroying a constructible/explosive");
 	}
 
 	// prepare scoreboard

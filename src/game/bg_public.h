@@ -993,15 +993,21 @@ typedef struct weapontable_s
  */
 typedef struct modtable_s
 {
-	int mod;                      ///< reference
+	int mod;                                        ///< reference
 
-	qboolean isHeadshot;          ///< g
-	qboolean isExplosive;         ///< g
+	qboolean isHeadshot;                            ///< g
+	qboolean isExplosive;                           ///< g
 
-	int weaponClassForMOD;        ///< g
-	int noYellMedic;              ///< g
-	const char *modName;          ///< g - These are just for logging, the client prints its own messages
-	unsigned int indexWeaponStat; ///< g
+	int weaponClassForMOD;                          ///< g
+	int noYellMedic;                                ///< g
+	const char *modName;                            ///< g - These are just for logging, the client prints its own messages
+	skillType_t skillType;                          ///< g
+	float defaultKillPoints;                        ///< g
+	float splashKillPoints;                         ///< g
+	float hitRegionKillPoints[HR_NUM_HITREGIONS];   ///< g
+	qboolean hasHitRegion;                          ///< g
+	const char *debugReasonMsg;                     ///< g
+	unsigned int indexWeaponStat;                   ///< g
 
 } modTable_t;
 
@@ -2617,6 +2623,7 @@ extern weaponTable_t weaponTable[WP_NUM_WEAPONS];
 
 // Lookup table to find mod properties
 extern modTable_t modTable[MOD_NUM_MODS];
+#define GetMODTableData(modIndex) ((modTable_t *)(&modTable[modIndex]))
 
 #define MAX_MAP_SIZE 65536
 
