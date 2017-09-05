@@ -946,7 +946,8 @@ typedef struct weapontable_s
 	qboolean isMGSet;               ///< bg
 
 	qboolean isSetWeapon;           ///< bg
-	qboolean isHeavyWeapon;         ///< bg
+	qboolean isLightWeapon;         ///< g
+	qboolean isHeavyWeapon;         ///< bg/g
 	qboolean isSilencedPistol;      ///< bg
 
 	qboolean isUnderWaterFire;      ///< bg

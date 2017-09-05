@@ -3403,28 +3403,13 @@ void Bullet_Fire(gentity_t *ent, float spread, int damage, qboolean distance_fal
 {
 	vec3_t end;
 
-	switch (ent->s.weapon)
+	if (GetWeaponTableData(ent->s.weapon)->isLightWeapon)
 	{
-	// light weapons
-	case WP_LUGER:
-	case WP_COLT:
-	case WP_MP40:
-	case WP_THOMPSON:
-	case WP_STEN:
-	case WP_SILENCER:
-	case WP_SILENCED_COLT:
-	case WP_AKIMBO_LUGER:
-	case WP_AKIMBO_COLT:
-	case WP_AKIMBO_SILENCEDLUGER:
-	case WP_AKIMBO_SILENCEDCOLT:
 		// increase in accuracy (spread reduction) at level 3
 		if (ent->client->sess.skill[SK_LIGHT_WEAPONS] >= 3)
 		{
 			spread *= .65f;
 		}
-		break;
-	default:
-		break;
 	}
 
 	Bullet_Endpos(ent, spread, &end);
