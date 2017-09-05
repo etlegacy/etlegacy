@@ -2612,7 +2612,6 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numO
 {
 	qboolean ammoAdded = qfalse;
 	int      maxammo;
-	int      weapNumOfClips;
 	int      i      = BG_GrenadesForClass(ps->stats[STAT_PLAYER_CLASS], skill); // handle grenades first
 	weapon_t weapon = BG_GrenadeTypeForTeam(teamNum);
 	weapon_t clip   = BG_FindClipForWeapon(weapon);
@@ -2668,69 +2667,43 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numO
 		if (COM_BitCheck(ps->weapons, weapon))
 		{
 			maxammo = BG_MaxAmmoForWeapon(weapon, skill);
+			clip    = BG_FindAmmoForWeapon(weapon);
 
-			// Handle weapons that just use clip, and not ammo
-			if (weapon == WP_FLAMETHROWER)
+			if (ps->ammoclip[clip] < maxammo)
 			{
-				clip = BG_FindAmmoForWeapon(weapon);
-				if (ps->ammoclip[clip] < maxammo)
+				// early out
+				if (!numOfClips)
 				{
-					// early out
-					if (!numOfClips)
-					{
-						return qtrue;
-					}
+					return qtrue;
+				}
+				ammoAdded = qtrue;
 
-					ammoAdded          = qtrue;
+				// Handle weapons that just use clip, and not ammo
+				if (weapon == WP_FLAMETHROWER)
+				{
 					ps->ammoclip[clip] = maxammo;
+					continue;       // don't heck for limit
 				}
-			}
-			else if (weapon == WP_PANZERFAUST || weapon == WP_BAZOOKA)       //%    || weapon == WP_MORTAR ) {
-			{
-				clip = BG_FindAmmoForWeapon(weapon);
-				if (ps->ammoclip[clip] < maxammo)
+				else if (weapon == WP_PANZERFAUST || weapon == WP_BAZOOKA)   //%    || weapon == WP_MORTAR ) {
 				{
-					// early out
-					if (!numOfClips)
-					{
-						return qtrue;
-					}
-
-					ammoAdded           = qtrue;
 					ps->ammoclip[clip] += numOfClips;
-					if (ps->ammoclip[clip] >= maxammo)
-					{
-						ps->ammoclip[clip] = maxammo;
-					}
 				}
-			}
-			else
-			{
-				clip = BG_FindAmmoForWeapon(weapon);
-				if (ps->ammo[clip] < maxammo)
+				else
 				{
-					// early out
-					if (!numOfClips)
-					{
-						return qtrue;
-					}
-					ammoAdded = qtrue;
-
 					if (GetWeaponTableData(weapon)->isAkimbo)
 					{
-						weapNumOfClips = numOfClips * 2;     // double clips babeh!
+						ps->ammo[clip] += numOfClips * 2 * GetWeaponTableData(weapon)->maxClip;      // double clips babeh!
 					}
 					else
 					{
-						weapNumOfClips = numOfClips;
+						ps->ammo[clip] += numOfClips * GetWeaponTableData(weapon)->maxClip;
 					}
+				}
 
-					// add and limit check
-					ps->ammo[clip] += weapNumOfClips * GetWeaponTableData(weapon)->maxClip;
-					if (ps->ammo[clip] > maxammo)
-					{
-						ps->ammo[clip] = maxammo;
-					}
+				// limit check
+				if (ps->ammoclip[clip] >= maxammo)
+				{
+					ps->ammoclip[clip] = maxammo;
 				}
 			}
 		}
