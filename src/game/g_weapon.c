@@ -2872,14 +2872,14 @@ void weapon_callAirStrike(gentity_t *ent)
 			bomb->r.ownerNum   = ent->s.number;
 			bomb->parent       = ent->parent;
 			bomb->s.teamNum    = ent->s.teamNum;
-			bomb->damage       = GetWeaponTableData(WP_SMOKE_MARKER)->damage;       // was 400
-			bomb->splashDamage = GetWeaponTableData(WP_SMOKE_MARKER)->splashDamage; // was 400
+			bomb->damage       = GetWeaponTableData(WP_SMOKE_MARKER)->damage;
+			bomb->splashDamage = GetWeaponTableData(WP_SMOKE_MARKER)->splashDamage;
 			bomb->s.eFlags     = EF_SMOKINGBLACK; // add some client side smoke
 
 			// for explosion type
 			bomb->accuracy            = 2;
 			bomb->classname           = "air strike";
-			bomb->splashRadius        = GetWeaponTableData(WP_SMOKE_MARKER)->splashRadius; // was 400
+			bomb->splashRadius        = GetWeaponTableData(WP_SMOKE_MARKER)->splashRadius;
 			bomb->methodOfDeath       = MOD_AIRSTRIKE;
 			bomb->splashMethodOfDeath = MOD_AIRSTRIKE;
 			bomb->clipmask            = MASK_MISSILESHOT;
@@ -2998,9 +2998,9 @@ void artillerySpotterThink(gentity_t *ent)
 		bomb->s.teamNum         = ent->s.teamNum;
 		bomb->nextthink         = (int)(level.time + 1000 + random() * 300);
 		bomb->classname         = "WP";         // WP == White Phosphorous, so we can check for bounce noise in grenade bounce routine
-		bomb->damage            = 0;          // maybe should un-hard-code these?
-		bomb->splashDamage      = 0;
-		bomb->splashRadius      = 0;
+		bomb->damage            = GetWeaponTableData(WP_SMOKETRAIL)->damage;
+		bomb->splashDamage      = GetWeaponTableData(WP_SMOKETRAIL)->splashDamage;
+		bomb->splashRadius      = GetWeaponTableData(WP_SMOKETRAIL)->splashRadius;
 		bomb->s.weapon          = WP_SMOKETRAIL;
 		bomb->think             = artilleryGoAway;
 		bomb->s.eFlags         |= EF_BOUNCE;
@@ -3139,7 +3139,7 @@ void Weapon_Artillery(gentity_t *ent)
 		bomb->s.clientNum         = ent->s.number;
 		bomb->parent              = ent;
 		bomb->s.teamNum           = ent->client->sess.sessionTeam;
-		bomb->damage              = 0; // arty itself has no damage
+		bomb->damage              = GetWeaponTableData(WP_ARTY)->damage; // arty itself has no damage
 		bomb->methodOfDeath       = MOD_ARTY;
 		bomb->splashMethodOfDeath = MOD_ARTY;
 		bomb->clipmask            = MASK_MISSILESHOT;
@@ -3152,8 +3152,8 @@ void Weapon_Artillery(gentity_t *ent)
 			bomb->nextthink         = level.time + 5000;
 			bomb->r.svFlags         = SVF_BROADCAST;
 			bomb->classname         = "props_explosion"; // was "air strike"
-			bomb->splashDamage      = 90;
-			bomb->splashRadius      = 50;
+			bomb->splashDamage      = GetWeaponTableData(WP_ARTY)->splashDamage;
+			bomb->splashRadius      = GetWeaponTableData(WP_ARTY)->splashRadius;
 			bomb->count             = 7;
 			bomb->count2            = 1000;
 			bomb->delay             = 300;
@@ -3171,8 +3171,8 @@ void Weapon_Artillery(gentity_t *ent)
 			// for explosion type
 			bomb->accuracy     = 2;
 			bomb->classname    = "air strike";
-			bomb->splashDamage = 400;
-			bomb->splashRadius = 400;
+			bomb->splashDamage = GetWeaponTableData(WP_SMOKE_MARKER)->splashDamage;
+			bomb->splashRadius = GetWeaponTableData(WP_SMOKE_MARKER)->splashRadius;
 
 			bomboffset[0] = crandom() * 250;
 			bomboffset[1] = crandom() * 250;
@@ -3209,7 +3209,7 @@ void Weapon_Artillery(gentity_t *ent)
 		bomb2->r.ownerNum   = ent->s.number;
 		bomb2->parent       = ent;
 		bomb2->s.teamNum    = ent->s.teamNum;
-		bomb2->damage       = 0;
+		bomb2->damage       = GetWeaponTableData(WP_SMOKE_BOMB)->damage;
 		bomb2->nextthink    = bomb->nextthink - 600;
 		bomb2->classname    = "air strike";
 		bomb2->clipmask     = MASK_MISSILESHOT;
