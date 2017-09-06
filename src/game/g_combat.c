@@ -414,7 +414,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	{
 		const char *obit;
 
-		if (IS_VALID_MOD(meansOfDeath))
+		if (!IS_VALID_MOD(meansOfDeath))
 		{
 			obit = "<bad obituary>";
 		}
