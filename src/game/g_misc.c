@@ -2394,8 +2394,8 @@ void landmine_setup(gentity_t *ent)
 
 	ent->accuracy            = 0;
 	ent->classname           = "landmine";
-	ent->damage              = 0;
-	ent->splashRadius        = 225; // was: 400
+	ent->damage              = GetWeaponTableData(WP_LANDMINE)->damage;
+	ent->splashRadius        = GetWeaponTableData(WP_LANDMINE)->splashRadius;
 	ent->methodOfDeath       = MOD_LANDMINE;
 	ent->splashMethodOfDeath = MOD_LANDMINE;
 	ent->s.eFlags            = (EF_BOUNCE | EF_BOUNCE_HALF);
