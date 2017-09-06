@@ -2880,8 +2880,8 @@ void weapon_callAirStrike(gentity_t *ent)
 			bomb->accuracy            = 2;
 			bomb->classname           = "air strike";
 			bomb->splashRadius        = GetWeaponTableData(WP_SMOKE_MARKER)->splashRadius;
-			bomb->methodOfDeath       = MOD_AIRSTRIKE;
-			bomb->splashMethodOfDeath = MOD_AIRSTRIKE;
+			bomb->methodOfDeath       = GetWeaponTableData(WP_SMOKE_MARKER)->mod;
+			bomb->splashMethodOfDeath = GetWeaponTableData(WP_SMOKE_MARKER)->splashMod;
 			bomb->clipmask            = MASK_MISSILESHOT;
 			bomb->s.pos.trType        = TR_STATIONARY; // was TR_GRAVITY,  might wanna go back to this and drop from height
 			//bomb->s.pos.trTime = level.time;      // move a bit on the very first frame
@@ -2997,7 +2997,7 @@ void artillerySpotterThink(gentity_t *ent)
 		bomb->parent            = ent;
 		bomb->s.teamNum         = ent->s.teamNum;
 		bomb->nextthink         = (int)(level.time + 1000 + random() * 300);
-		bomb->classname         = "WP";         // WP == White Phosphorous, so we can check for bounce noise in grenade bounce routine
+		bomb->classname         = GetWeaponTableData(WP_SMOKETRAIL)->className;
 		bomb->damage            = GetWeaponTableData(WP_SMOKETRAIL)->damage;
 		bomb->splashDamage      = GetWeaponTableData(WP_SMOKETRAIL)->splashDamage;
 		bomb->splashRadius      = GetWeaponTableData(WP_SMOKETRAIL)->splashRadius;
@@ -3140,8 +3140,8 @@ void Weapon_Artillery(gentity_t *ent)
 		bomb->parent              = ent;
 		bomb->s.teamNum           = ent->client->sess.sessionTeam;
 		bomb->damage              = GetWeaponTableData(WP_ARTY)->damage; // arty itself has no damage
-		bomb->methodOfDeath       = MOD_ARTY;
-		bomb->splashMethodOfDeath = MOD_ARTY;
+		bomb->methodOfDeath       = GetWeaponTableData(WP_ARTY)->mod;
+		bomb->splashMethodOfDeath = GetWeaponTableData(WP_ARTY)->splashMod;
 		bomb->clipmask            = MASK_MISSILESHOT;
 		bomb->s.pos.trType        = TR_STATIONARY;   // was TR_GRAVITY,  might wanna go back to this and drop from height
 		bomb->s.pos.trTime        = level.time;      // move a bit on the very first frame

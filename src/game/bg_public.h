@@ -885,6 +885,102 @@ typedef enum
 	SK_NUM_SKILLS
 } skillType_t;
 
+/**
+ * @enum meansOfDeath_t
+ * @brief Means of death
+ */
+typedef enum
+{
+	MOD_UNKNOWN = 0,
+	MOD_MACHINEGUN,
+	MOD_BROWNING,
+	MOD_MG42,
+	MOD_GRENADE,
+
+	// modified wolf weap mods
+	MOD_KNIFE,
+	MOD_LUGER,
+	MOD_COLT,
+	MOD_MP40,
+	MOD_THOMPSON,
+	MOD_STEN,
+	MOD_GARAND,
+
+	MOD_SILENCER,
+	MOD_FG42,
+	MOD_FG42SCOPE,
+	MOD_PANZERFAUST,
+	MOD_GRENADE_LAUNCHER,
+	MOD_FLAMETHROWER,
+	MOD_GRENADE_PINEAPPLE,
+
+	MOD_MAPMORTAR,
+	MOD_MAPMORTAR_SPLASH,
+
+	MOD_KICKED,
+
+	MOD_DYNAMITE,
+	MOD_AIRSTRIKE,
+	MOD_SYRINGE,
+	MOD_AMMO,
+	MOD_ARTY,
+
+	MOD_WATER,
+	MOD_SLIME,
+	MOD_LAVA,
+	MOD_CRUSH,
+	MOD_TELEFRAG,
+	MOD_FALLING,
+	MOD_SUICIDE,
+	MOD_TARGET_LASER,
+	MOD_TRIGGER_HURT,
+	MOD_EXPLOSIVE,
+
+	MOD_CARBINE,
+	MOD_KAR98,
+	MOD_GPG40,
+	MOD_M7,
+	MOD_LANDMINE,
+	MOD_SATCHEL,
+
+	MOD_SMOKEBOMB,
+	MOD_MOBILE_MG42,
+	MOD_SILENCED_COLT,
+	MOD_GARAND_SCOPE,
+
+	MOD_CRUSH_CONSTRUCTION,
+	MOD_CRUSH_CONSTRUCTIONDEATH,
+	MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER,
+
+	MOD_K43,
+	MOD_K43_SCOPE,
+
+	MOD_MORTAR,
+
+	MOD_AKIMBO_COLT,
+	MOD_AKIMBO_LUGER,
+	MOD_AKIMBO_SILENCEDCOLT,
+	MOD_AKIMBO_SILENCEDLUGER,
+
+	MOD_SMOKEGRENADE,
+
+	MOD_SWAP_PLACES,
+
+	// keep these 2 entries last
+	MOD_SWITCHTEAM,
+
+	MOD_SHOVE,
+
+	MOD_KNIFE_KABAR,
+	MOD_MOBILE_BROWNING,
+	MOD_MORTAR2,
+	MOD_BAZOOKA,
+	MOD_BACKSTAB,
+
+	MOD_NUM_MODS
+
+} meansOfDeath_t;
+
 extern const char *skillNames[SK_NUM_SKILLS];
 extern const char *skillNamesLine1[SK_NUM_SKILLS];
 extern const char *skillNamesLine2[SK_NUM_SKILLS];
@@ -965,19 +1061,21 @@ typedef struct weapontable_s
 
 	unsigned int indexWeaponStat;               ///< bg - index for weapon stat info
 
-	int maxAmmo;           ///<
-	int uses;              ///<
-	int maxClip;           ///<
+	int maxAmmo;              ///<
+	int uses;                 ///<
+	int maxClip;              ///<
 	int defaultStartingAmmo;
 	int defaultStartingClip;
-	int reloadTime;        ///<
-	int fireDelayTime;     ///<
-	int nextShotTime;      ///<
+	int reloadTime;           ///<
+	int fireDelayTime;        ///<
+	int nextShotTime;         ///<
 
-	int maxHeat;           ///< max active firing time before weapon 'overheats' (at which point the weapon will fail)
-	int coolRate;          ///< how fast the weapon cools down. (per second)
+	int maxHeat;              ///< max active firing time before weapon 'overheats' (at which point the weapon will fail)
+	int coolRate;             ///< how fast the weapon cools down. (per second)
 
-	int mod;               ///< means of death
+	const char *className;    ///<
+	meansOfDeath_t mod;       ///< means of death
+    meansOfDeath_t splashMod; ///< means of death
 
 } weaponTable_t;
 
@@ -993,7 +1091,7 @@ typedef struct weapontable_s
  */
 typedef struct modtable_s
 {
-	int mod;                                        ///< reference
+	meansOfDeath_t mod;                             ///< reference
 
 	qboolean isHeadshot;                            ///< g
 	qboolean isExplosive;                           ///< g
@@ -1530,102 +1628,6 @@ typedef struct
 } weap_ws_t;
 
 extern const weap_ws_t aWeaponInfo[WS_MAX];
-
-/**
- * @enum meansOfDeath_t
- * @brief Means of death
- */
-typedef enum
-{
-	MOD_UNKNOWN = 0,
-	MOD_MACHINEGUN,
-	MOD_BROWNING,
-	MOD_MG42,
-	MOD_GRENADE,
-
-	// modified wolf weap mods
-	MOD_KNIFE,
-	MOD_LUGER,
-	MOD_COLT,
-	MOD_MP40,
-	MOD_THOMPSON,
-	MOD_STEN,
-	MOD_GARAND,
-
-	MOD_SILENCER,
-	MOD_FG42,
-	MOD_FG42SCOPE,
-	MOD_PANZERFAUST,
-	MOD_GRENADE_LAUNCHER,
-	MOD_FLAMETHROWER,
-	MOD_GRENADE_PINEAPPLE,
-
-	MOD_MAPMORTAR,
-	MOD_MAPMORTAR_SPLASH,
-
-	MOD_KICKED,
-
-	MOD_DYNAMITE,
-	MOD_AIRSTRIKE,
-	MOD_SYRINGE,
-	MOD_AMMO,
-	MOD_ARTY,
-
-	MOD_WATER,
-	MOD_SLIME,
-	MOD_LAVA,
-	MOD_CRUSH,
-	MOD_TELEFRAG,
-	MOD_FALLING,
-	MOD_SUICIDE,
-	MOD_TARGET_LASER,
-	MOD_TRIGGER_HURT,
-	MOD_EXPLOSIVE,
-
-	MOD_CARBINE,
-	MOD_KAR98,
-	MOD_GPG40,
-	MOD_M7,
-	MOD_LANDMINE,
-	MOD_SATCHEL,
-
-	MOD_SMOKEBOMB,
-	MOD_MOBILE_MG42,
-	MOD_SILENCED_COLT,
-	MOD_GARAND_SCOPE,
-
-	MOD_CRUSH_CONSTRUCTION,
-	MOD_CRUSH_CONSTRUCTIONDEATH,
-	MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER,
-
-	MOD_K43,
-	MOD_K43_SCOPE,
-
-	MOD_MORTAR,
-
-	MOD_AKIMBO_COLT,
-	MOD_AKIMBO_LUGER,
-	MOD_AKIMBO_SILENCEDCOLT,
-	MOD_AKIMBO_SILENCEDLUGER,
-
-	MOD_SMOKEGRENADE,
-
-	MOD_SWAP_PLACES,
-
-	// keep these 2 entries last
-	MOD_SWITCHTEAM,
-
-	MOD_SHOVE,
-
-	MOD_KNIFE_KABAR,
-	MOD_MOBILE_BROWNING,
-	MOD_MORTAR2,
-	MOD_BAZOOKA,
-	MOD_BACKSTAB,
-
-	MOD_NUM_MODS
-
-} meansOfDeath_t;
 
 //---------------------------------------------------------
 

@@ -2389,29 +2389,23 @@ void landmine_setup(gentity_t *ent)
 	ent->s.weapon   = WP_LANDMINE;
 	ent->r.ownerNum = ENTITYNUM_WORLD;
 
-	ent->damage       = GetWeaponTableData(WP_LANDMINE)->damage;     // overridden for dynamite
-	ent->splashDamage = GetWeaponTableData(WP_LANDMINE)->splashDamage;
-
 	ent->accuracy            = 0;
-	ent->classname           = "landmine";
+	ent->classname           = GetWeaponTableData(WP_LANDMINE)->className;
 	ent->damage              = GetWeaponTableData(WP_LANDMINE)->damage;
+	ent->splashDamage        = GetWeaponTableData(WP_LANDMINE)->splashDamage;
 	ent->splashRadius        = GetWeaponTableData(WP_LANDMINE)->splashRadius;
-	ent->methodOfDeath       = MOD_LANDMINE;
-	ent->splashMethodOfDeath = MOD_LANDMINE;
+	ent->methodOfDeath       = GetWeaponTableData(WP_LANDMINE)->mod;
+	ent->splashMethodOfDeath = GetWeaponTableData(WP_LANDMINE)->splashMod;
 	ent->s.eFlags            = (EF_BOUNCE | EF_BOUNCE_HALF);
 	ent->health              = 5;
 	ent->takedamage          = qtrue;
 	ent->r.contents          = CONTENTS_CORPSE; // (player can walk through)
-
-	ent->splashRadius = GetWeaponTableData(WP_LANDMINE)->damage;
 
 	ent->health        = 0;
 	ent->s.modelindex2 = 0;
 
 	ent->nextthink = level.time + FRAMETIME;
 	ent->think     = G_LandmineThink;
-
-	ent->damage = 0;
 
 	// map mines crosshair id
 	ent->s.otherEntityNum = MAX_CLIENTS + 1;
