@@ -4234,25 +4234,14 @@ qboolean CG_LimboPanel_TeamIsDisabled(team_t checkTeam)
  */
 int CG_LimboPanel_FindFreeClass(team_t checkTeam)
 {
-	if (!CG_LimboPanel_ClassIsDisabled(checkTeam, PC_SOLDIER))
+	int i;
+
+	for (i = PC_SOLDIER; i < NUM_PLAYER_CLASSES; i++)
 	{
-		return PC_SOLDIER;
-	}
-	else if (!CG_LimboPanel_ClassIsDisabled(checkTeam, PC_MEDIC))
-	{
-		return PC_MEDIC;
-	}
-	else if (!CG_LimboPanel_ClassIsDisabled(checkTeam, PC_ENGINEER))
-	{
-		return PC_ENGINEER;
-	}
-	else if (!CG_LimboPanel_ClassIsDisabled(checkTeam, PC_FIELDOPS))
-	{
-		return PC_FIELDOPS;
-	}
-	else if (!CG_LimboPanel_ClassIsDisabled(checkTeam, PC_COVERTOPS))
-	{
-		return PC_COVERTOPS;
+		if (!CG_LimboPanel_ClassIsDisabled(checkTeam, i))
+		{
+			return i;
+		}
 	}
 
 	return -1;
