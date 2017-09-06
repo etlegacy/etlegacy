@@ -1641,18 +1641,19 @@ int G_TeamCount(gentity_t *ent, int weap)
 }
 
 /**
- * @brief Checks for heavy- and rifle weapons
+ * @brief Checks for heavy and rifle weapons restriction
  *
  * @param[in] ent
  * @param[in] weapon
  * @return
  *
- * @todo  This function needs some rework: count picked up opposite team weapons too
- *        see CG_LimboPanel_RealWeaponIsDisabled
+ * @todo This function needs some rework: count picked up opposite team weapons too
+ *       see CG_LimboPanel_RealWeaponIsDisabled
  */
 qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 {
-	int playerCount, weaponCount, maxCount;
+	int        playerCount, weaponCount, maxCount;
+	const char *weaponString;
 
 	// allow selecting weapons as spectator for bots (to avoid endless loops in pfnChangeTeam())
 	if (ent->client->sess.sessionTeam == TEAM_SPECTATOR && !(ent->r.svFlags & SVF_BOT))
@@ -1679,365 +1680,65 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 	{
 	case WP_PANZERFAUST:
 	case WP_BAZOOKA:
-		maxCount = team_maxPanzers.integer;
-		if (maxCount == -1)
-		{
-			return qfalse;
-		}
-		if (strstr(team_maxPanzers.string, "%-"))
-		{
-			maxCount = floor(maxCount * playerCount * 0.01);
-		}
-		else if (strstr(team_maxPanzers.string, "%"))
-		{
-			maxCount = ceil(maxCount * playerCount * 0.01);
-		}
-		if (weaponCount >= maxCount)
-		{
-			if (ent->client->ps.pm_flags & PMF_LIMBO)
-			{
-				CP("cp \"^1*^3 ROCKET LAUNCHER not available!^1 *\" 1");
-			}
-			return qtrue;
-		}
+		maxCount     = team_maxPanzers.integer;
+		weaponString = team_maxPanzers.string;
 		break;
 	case WP_MOBILE_MG42:
-		maxCount = team_maxMg42s.integer;
-		if (maxCount == -1)
-		{
-			return qfalse;
-		}
-		if (strstr(team_maxMg42s.string, "%-"))
-		{
-			maxCount = floor(maxCount * playerCount * 0.01);
-		}
-		else if (strstr(team_maxMg42s.string, "%"))
-		{
-			maxCount = ceil(maxCount * playerCount * 0.01);
-		}
-
-		// add alt weapons
-		weaponCount = weaponCount + G_TeamCount(ent, WP_MOBILE_MG42_SET);
-		if (weaponCount >= maxCount)
-		{
-			if (ent->client->ps.pm_flags & PMF_LIMBO)
-			{
-				CP("cp \"^1*^3 MACHINE GUN not available!^1 *\" 1");
-			}
-			return qtrue;
-		}
-		break;
 	case WP_MOBILE_BROWNING:
-		maxCount = team_maxMg42s.integer;
-		if (maxCount == -1)
-		{
-			return qfalse;
-		}
-		if (strstr(team_maxMg42s.string, "%-"))
-		{
-			maxCount = floor(maxCount * playerCount * 0.01);
-		}
-		else if (strstr(team_maxMg42s.string, "%"))
-		{
-			maxCount = ceil(maxCount * playerCount * 0.01);
-		}
-
-		// add alt weapons
-		weaponCount = weaponCount + G_TeamCount(ent, WP_MOBILE_BROWNING_SET);
-		if (weaponCount >= maxCount)
-		{
-			if (ent->client->ps.pm_flags & PMF_LIMBO)
-			{
-				CP("cp \"^1*^3 MACHINE GUN not available!^1 *\" 1");
-			}
-			return qtrue;
-		}
-		break;
 	case WP_MOBILE_MG42_SET:
-		maxCount = team_maxMg42s.integer;
-		if (maxCount == -1)
-		{
-			return qfalse;
-		}
-		if (strstr(team_maxMg42s.string, "%-"))
-		{
-			maxCount = floor(maxCount * playerCount * 0.01);
-		}
-		else if (strstr(team_maxMg42s.string, "%"))
-		{
-			maxCount = ceil(maxCount * playerCount * 0.01);
-		}
-
-		// add basic weapons
-		weaponCount = weaponCount + G_TeamCount(ent, WP_MOBILE_MG42);
-		if (weaponCount >= maxCount)
-		{
-			if (ent->client->ps.pm_flags & PMF_LIMBO)
-			{
-				CP("cp \"^1*^3 MACHINE GUN not available!^1 *\" 1");
-			}
-			return qtrue;
-		}
-		break;
 	case WP_MOBILE_BROWNING_SET:
-		maxCount = team_maxMg42s.integer;
-		if (maxCount == -1)
-		{
-			return qfalse;
-		}
-		if (strstr(team_maxMg42s.string, "%-"))
-		{
-			maxCount = floor(maxCount * playerCount * 0.01);
-		}
-		else if (strstr(team_maxMg42s.string, "%"))
-		{
-			maxCount = ceil(maxCount * playerCount * 0.01);
-		}
-
-		// add basic weapons
-		weaponCount = weaponCount + G_TeamCount(ent, WP_MOBILE_BROWNING);
-		if (weaponCount >= maxCount)
-		{
-			if (ent->client->ps.pm_flags & PMF_LIMBO)
-			{
-				CP("cp \"^1*^3 MACHINE GUN not available!^1 *\" 1");
-			}
-			return qtrue;
-		}
+		maxCount     = team_maxMg42s.integer;
+		weaponString = team_maxMg42s.string;
 		break;
 	case WP_FLAMETHROWER:
-		maxCount = team_maxFlamers.integer;
-		if (maxCount == -1)
-		{
-			return qfalse;
-		}
-		if (strstr(team_maxFlamers.string, "%-"))
-		{
-			maxCount = floor(maxCount * playerCount * 0.01);
-		}
-		else if (strstr(team_maxFlamers.string, "%"))
-		{
-			maxCount = ceil(maxCount * playerCount * 0.01);
-		}
-		if (weaponCount >= maxCount)
-		{
-			if (ent->client->ps.pm_flags & PMF_LIMBO)
-			{
-				CP("cp \"^1*^3 FLAMETHROWER not available!^1 *\" 1");
-			}
-			return qtrue;
-		}
+		maxCount     = team_maxFlamers.integer;
+		weaponString = team_maxFlamers.string;
 		break;
 	case WP_MORTAR:
-		maxCount = team_maxMortars.integer;
-		if (maxCount == -1)
-		{
-			return qfalse;
-		}
-		if (strstr(team_maxMortars.string, "%-"))
-		{
-			maxCount = floor(maxCount * playerCount * 0.01);
-		}
-		else if (strstr(team_maxMortars.string, "%"))
-		{
-			maxCount = ceil(maxCount * playerCount * 0.01);
-		}
-
-		// add alt weapons
-		weaponCount = weaponCount + G_TeamCount(ent, WP_MORTAR_SET);
-		if (weaponCount >= maxCount)
-		{
-			if (ent->client->ps.pm_flags & PMF_LIMBO)
-			{
-				CP("cp \"^1*^3 MORTAR/GRANATWERFER not available!^1 *\" 1");
-			}
-			return qtrue;
-		}
-		break;
 	case WP_MORTAR2:
-		maxCount = team_maxMortars.integer;
-		if (maxCount == -1)
-		{
-			return qfalse;
-		}
-		if (strstr(team_maxMortars.string, "%-"))
-		{
-			maxCount = floor(maxCount * playerCount * 0.01);
-		}
-		else if (strstr(team_maxMortars.string, "%"))
-		{
-			maxCount = ceil(maxCount * playerCount * 0.01);
-		}
-
-		// add alt weapons
-		weaponCount = weaponCount + G_TeamCount(ent, WP_MORTAR2_SET);
-		if (weaponCount >= maxCount)
-		{
-			if (ent->client->ps.pm_flags & PMF_LIMBO)
-			{
-				CP("cp \"^1*^3 MORTAR/GRANATWERFER not available!^1 *\" 1");
-			}
-			return qtrue;
-		}
-		break;
 	case WP_MORTAR_SET:
-		maxCount = team_maxMortars.integer;
-		if (maxCount == -1)
-		{
-			return qfalse;
-		}
-		if (strstr(team_maxMortars.string, "%-"))
-		{
-			maxCount = floor(maxCount * playerCount * 0.01);
-		}
-		else if (strstr(team_maxMortars.string, "%"))
-		{
-			maxCount = ceil(maxCount * playerCount * 0.01);
-		}
-
-		// add basic weapons
-		weaponCount = weaponCount + G_TeamCount(ent, WP_MORTAR);
-		if (weaponCount >= maxCount)
-		{
-			if (ent->client->ps.pm_flags & PMF_LIMBO)
-			{
-				CP("cp \"^1*^3 MORTAR/GRANATWERFER not available!^1 *\" 1");
-			}
-			return qtrue;
-		}
-		break;
 	case WP_MORTAR2_SET:
-		maxCount = team_maxMortars.integer;
-		if (maxCount == -1)
-		{
-			return qfalse;
-		}
-		if (strstr(team_maxMortars.string, "%-"))
-		{
-			maxCount = floor(maxCount * playerCount * 0.01);
-		}
-		else if (strstr(team_maxMortars.string, "%"))
-		{
-			maxCount = ceil(maxCount * playerCount * 0.01);
-		}
-
-		// add basic weapons
-		weaponCount = weaponCount + G_TeamCount(ent, WP_MORTAR2);
-		if (weaponCount >= maxCount)
-		{
-			if (ent->client->ps.pm_flags & PMF_LIMBO)
-			{
-				CP("cp \"^1*^3 MORTAR/GRANATWERFER not available!^1 *\" 1");
-			}
-			return qtrue;
-		}
+		maxCount     = team_maxMortars.integer;
+		weaponString = team_maxMortars.string;
 		break;
 	case WP_KAR98:
-		maxCount = team_maxRiflegrenades.integer;
-		if (maxCount == -1)
-		{
-			return qfalse;
-		}
-		if (strstr(team_maxRiflegrenades.string, "%-"))
-		{
-			maxCount = floor(maxCount * playerCount * 0.01);
-		}
-		else if (strstr(team_maxRiflegrenades.string, "%"))
-		{
-			maxCount = ceil(maxCount * playerCount * 0.01);
-		}
-
-		// add alt weapons
-		weaponCount = weaponCount + G_TeamCount(ent, WP_GPG40);
-		if (weaponCount >= maxCount)
-		{
-			if (ent->client->ps.pm_flags & PMF_LIMBO)
-			{
-				CP("cp \"^1*^3 GRENADE LAUNCHER not available!^1 *\" 1");
-			}
-			return qtrue;
-		}
-		break;
 	case WP_CARBINE:
-		maxCount = team_maxRiflegrenades.integer;
-		if (maxCount == -1)
-		{
-			return qfalse;
-		}
-		if (strstr(team_maxRiflegrenades.string, "%-"))
-		{
-			maxCount = floor(maxCount * playerCount * 0.01);
-		}
-		else if (strstr(team_maxRiflegrenades.string, "%"))
-		{
-			maxCount = ceil(maxCount * playerCount * 0.01);
-		}
-
-		// add alt weapons
-		weaponCount = weaponCount + G_TeamCount(ent, WP_M7);
-		if (weaponCount >= maxCount)
-		{
-			if (ent->client->ps.pm_flags & PMF_LIMBO)
-			{
-				CP("cp \"^1*^3 GRENADE LAUNCHER not available!^1 *\" 1");
-			}
-			return qtrue;
-		}
-		break;
 	case WP_GPG40:
-		maxCount = team_maxRiflegrenades.integer;
-		if (maxCount == -1)
-		{
-			return qfalse;
-		}
-		if (strstr(team_maxRiflegrenades.string, "%-"))
-		{
-			maxCount = floor(maxCount * playerCount * 0.01);
-		}
-		else if (strstr(team_maxRiflegrenades.string, "%"))
-		{
-			maxCount = ceil(maxCount * playerCount * 0.01);
-		}
-
-		// add basic weapons
-		weaponCount = weaponCount + G_TeamCount(ent, WP_KAR98);
-		if (weaponCount >= maxCount)
-		{
-			if (ent->client->ps.pm_flags & PMF_LIMBO)
-			{
-				CP("cp \"^1*^3 GRENADE LAUNCHER not available!^1 *\" 1");
-			}
-			return qtrue;
-		}
-		break;
 	case WP_M7:
-		maxCount = team_maxRiflegrenades.integer;
-		if (maxCount == -1)
-		{
-			return qfalse;
-		}
-		if (strstr(team_maxRiflegrenades.string, "%-"))
-		{
-			maxCount = floor(maxCount * playerCount * 0.01);
-		}
-		else if (strstr(team_maxRiflegrenades.string, "%"))
-		{
-			maxCount = ceil(maxCount * playerCount * 0.01);
-		}
-
-		// add basic weapons
-		weaponCount = weaponCount + G_TeamCount(ent, WP_CARBINE);
-		if (weaponCount >= maxCount)
-		{
-			if (ent->client->ps.pm_flags & PMF_LIMBO)
-			{
-				CP("cp \"^1*^3 GRENADE LAUNCHER not available!^1 *\" 1");
-			}
-			return qtrue;
-		}
+		maxCount     = team_maxRiflegrenades.integer;
+		weaponString = team_maxRiflegrenades.string;
 		break;
 	default:
-		break;
+		return qfalse;
+	}
+
+	if (maxCount == -1)
+	{
+		return qfalse;
+	}
+
+	if (strstr(weaponString, "%-"))
+	{
+		maxCount = floor(maxCount * playerCount * 0.01);
+	}
+	else if (strstr(weaponString, "%"))
+	{
+		maxCount = ceil(maxCount * playerCount * 0.01);
+	}
+
+	if (GetWeaponTableData(weapon)->weapAlts != WP_NONE)
+	{
+		// add basic weapons
+		weaponCount += G_TeamCount(ent, GetWeaponTableData(weapon)->weapAlts);
+	}
+
+	if (weaponCount >= maxCount)
+	{
+		if (ent->client->ps.pm_flags & PMF_LIMBO)
+		{
+			CP(va("cp \"^1*^3 %s not available!^1 *\" 1", GetWeaponTableData(weapon)->desc));
+		}
+		return qtrue;
 	}
 
 	return qfalse;
