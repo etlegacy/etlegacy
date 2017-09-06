@@ -342,7 +342,7 @@ cinHandle_t CIN_PlayCinematic(const char *name, int x, int y, int w, int h, int 
 
 	if (size <= 0)
 	{
-		Com_Printf("Cinematic '%s' file not found or can't be read\n", name);
+		Com_Printf("Warning: Cinematic '%s' file not found or can't be read\n", name);
 		return 0;
 	}
 
@@ -351,7 +351,7 @@ cinHandle_t CIN_PlayCinematic(const char *name, int x, int y, int w, int h, int 
 	{
 		if (flags & CIN_system)
 		{
-			Com_Printf("Cinematic %s file not found\n", name);
+			Com_Printf("Warning: Cinematic %s file not found\n", name);
 		}
 
 		return 0;
@@ -394,7 +394,7 @@ cinHandle_t CIN_PlayCinematic(const char *name, int x, int y, int w, int h, int 
 		{
 			if (!videoDecoders[i].Start)
 			{
-				Com_Error(ERR_FATAL, "Cinematic %s cannot be run, there is no start method defined\n", name);
+				Com_Error(ERR_FATAL, "Cinematic %s cannot be run, there is no start method defined", name);
 			}
 
 			cin->videoType = i;
@@ -403,7 +403,7 @@ cinHandle_t CIN_PlayCinematic(const char *name, int x, int y, int w, int h, int 
 			{
 				if (flags & CIN_system)
 				{
-					Com_Printf("Cinematic %s is not a valid %s file\n", name, videoDecoders[i].fileExt);
+					Com_Printf("Warning: Cinematic %s is not a valid %s file\n", name, videoDecoders[i].fileExt);
 				}
 
 				goto video_playback_failed;
@@ -449,6 +449,11 @@ void CIN_ResetCinematic(cinHandle_t handle)
 {
 	cinematic_t *cin;
 
+	if (!CIN_HandleValid(handle))
+	{
+		return;
+	}
+
 	cin = CIN_GetCinematicByHandle(handle);
 
 	// Reset the cinematic
@@ -458,7 +463,7 @@ void CIN_ResetCinematic(cinHandle_t handle)
 	}
 	else
 	{
-		Com_DPrintf("Cinematic decoder %s missing reset functionality\n", videoDecoders[cin->videoType].fileExt);
+		Com_Printf("Warning: Cinematic decoder %s missing reset functionality\n", videoDecoders[cin->videoType].fileExt);
 	}
 
 	cin->startTime  = 0;
@@ -473,6 +478,11 @@ void CIN_ResetCinematic(cinHandle_t handle)
 e_status CIN_StopCinematic(cinHandle_t handle)
 {
 	cinematic_t *cin;
+
+	if (!CIN_HandleValid(handle))
+	{
+		return FMV_EOF;
+	}
 
 	cin = CIN_GetCinematicByHandle(handle);
 
@@ -584,7 +594,7 @@ e_status CIN_RunCinematic(int handle)
 	}
 	else
 	{
-		Com_Error(ERR_FATAL, "Cinematic decoder %s is missing the update function\n",
+		Com_Error(ERR_FATAL, "Cinematic decoder %s is missing the update function",
 		          videoDecoders[data->videoType].fileExt);
 	}
 
@@ -610,7 +620,9 @@ void CIN_SetExtents(int handle, int x, int y, int w, int h)
 {
 	if (CIN_HandleValid(cls.cinematicHandle))
 	{
-		cinematic_t *cin = CIN_GetCinematicByHandle(handle);
+		cinematic_t *cin;
+
+		cin = CIN_GetCinematicByHandle(handle);
 		cin->rectangle.x = x;
 		cin->rectangle.y = y;
 		cin->rectangle.w = w;
