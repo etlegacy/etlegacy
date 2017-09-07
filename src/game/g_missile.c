@@ -1925,7 +1925,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
  * @param[in] self
  * @param[in] start
  * @param[in] dir
- * @param[in] rocketType
+ * @param[in] rocketType weapon id
  * @return
  */
 gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType)
@@ -1936,7 +1936,7 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType
 
 	VectorNormalize(dir);
 
-	bolt->classname           = GetWeaponTableData((rocketType == WP_BAZOOKA) ? WP_BAZOOKA : WP_PANZERFAUST)->className;
+	bolt->classname           = GetWeaponTableData(rocketType)->className;
 	bolt->nextthink           = level.time + 20000;   // push it out a little
 	bolt->think               = G_ExplodeMissile;
 	bolt->accuracy            = 4;
@@ -1945,11 +1945,11 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType
 	bolt->s.weapon            = self->s.weapon; // Use the correct weapon in multiplayer
 	bolt->r.ownerNum          = self->s.number;
 	bolt->parent              = self;
-	bolt->damage              = GetWeaponTableData((rocketType == WP_BAZOOKA) ? WP_BAZOOKA : WP_PANZERFAUST)->damage;
-	bolt->splashDamage        = GetWeaponTableData((rocketType == WP_BAZOOKA) ? WP_BAZOOKA : WP_PANZERFAUST)->splashDamage;
-	bolt->splashRadius        = GetWeaponTableData((rocketType == WP_BAZOOKA) ? WP_BAZOOKA : WP_PANZERFAUST)->splashRadius;
-	bolt->methodOfDeath       = GetWeaponTableData((rocketType == WP_BAZOOKA) ? WP_BAZOOKA : WP_PANZERFAUST)->mod;
-	bolt->splashMethodOfDeath = GetWeaponTableData((rocketType == WP_BAZOOKA) ? WP_BAZOOKA : WP_PANZERFAUST)->splashMod;
+	bolt->damage              = GetWeaponTableData(rocketType)->damage;
+	bolt->splashDamage        = GetWeaponTableData(rocketType)->splashDamage;
+	bolt->splashRadius        = GetWeaponTableData(rocketType)->splashRadius;
+	bolt->methodOfDeath       = GetWeaponTableData(rocketType)->mod;
+	bolt->splashMethodOfDeath = GetWeaponTableData(rocketType)->splashMod;
 	bolt->clipmask            = MASK_MISSILESHOT;
 	bolt->s.pos.trType        = TR_LINEAR;
 	bolt->s.pos.trTime        = level.time - MISSILE_PRESTEP_TIME;     // move a bit on the very first frame
@@ -1995,9 +1995,9 @@ gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->s.weapon     = WP_PANZERFAUST;
 	bolt->r.ownerNum   = self->s.number;
 	bolt->parent       = self;
-	bolt->damage       = GetWeaponTableData(WP_PANZERFAUST)->damage; // was 100
-	bolt->splashDamage = GetWeaponTableData(WP_PANZERFAUST)->splashDamage; // was 20
-	bolt->splashRadius = GetWeaponTableData(WP_PANZERFAUST)->splashRadius; // was 60
+	bolt->damage       = 100
+	bolt->splashDamage = 20
+	bolt->splashRadius = 60
 
 	bolt->methodOfDeath       = MOD_EXPLOSIVE;
 	bolt->splashMethodOfDeath = MOD_EXPLOSIVE;
