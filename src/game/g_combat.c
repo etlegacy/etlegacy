@@ -269,6 +269,13 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		return;
 	}
 
+	// don't broadcast invalid MODs (this shouldn't occure ...)
+	if (!IS_VALID_MOD(meansOfDeath))
+	{
+		G_Printf("Warning: invalid meansOfDeath [%i] in player_die\n", meansOfDeath);
+		return;
+	}
+
 	switch (meansOfDeath)
 	{
 	case MOD_FALLING:
@@ -412,24 +419,13 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 	if (g_gamestate.integer == GS_PLAYING)
 	{
-		const char *obit;
-
-		if (!IS_VALID_MOD(meansOfDeath))
-		{
-			obit = "<bad obituary>";
-		}
-		else
-		{
-			obit = modTable[meansOfDeath].modName;
-		}
-
 #ifdef FEATURE_OMNIBOT
 		// send the events
-		Bot_Event_Death(self - g_entities, &g_entities[attacker - g_entities], obit);
-		Bot_Event_KilledSomeone(attacker - g_entities, &g_entities[self - g_entities], obit);
+		Bot_Event_Death(self - g_entities, &g_entities[attacker - g_entities], modTable[meansOfDeath].modName);
+		Bot_Event_KilledSomeone(attacker - g_entities, &g_entities[self - g_entities], modTable[meansOfDeath].modName);
 #endif
 
-		G_LogPrintf("Kill: %i %i %i: ^7%s^7 killed %s^7 by %s\n", killer, self->s.number, meansOfDeath, killerName, self->client->pers.netname, obit);
+		G_LogPrintf("Kill: %i %i %i: ^7%s^7 killed %s^7 by %s\n", killer, self->s.number, meansOfDeath, killerName, self->client->pers.netname, modTable[meansOfDeath].modName);
 	}
 
 #ifdef FEATURE_LUA
