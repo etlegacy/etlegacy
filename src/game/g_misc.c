@@ -637,10 +637,12 @@ void SP_shooter_mortar(gentity_t *ent)
 	// FIXME/TODO: must have a self->target.  Do a check/print if this is not the case.
 	InitShooter(ent, WP_MAPMORTAR);
 
-	if (ent->spawnflags & 1)        // smoke at source (use/addjust flakPuff in Use_Shooter?)
+	// skip ent->spawnflags & 1 - don't do team based map mortars - see damage properties
+	
+	if (ent->spawnflags & 2)        // smoke at source (use/addjust flakPuff in Use_Shooter?)
 	{
 	}
-	if (ent->spawnflags & 2)       // muzzle flash at source
+	if (ent->spawnflags & 4)       // muzzle flash at source
 	{
 	}
 }
