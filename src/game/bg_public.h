@@ -1114,7 +1114,7 @@ extern weaponTable_t *GetWeaponTableData(int weaponIndex);
 extern int weapAlts[]; ///< defined in bg_misc.c
 
 #define IS_VALID_WEAPON(w) (w > WP_NONE && w < WP_NUM_WEAPONS)
-#define IS_VALID_MOD(mod) (mod > MOD_UNKNOWN && mod < MOD_NUM_MODS)
+#define IS_VALID_MOD(mod) (mod >= MOD_UNKNOWN && mod < MOD_NUM_MODS)
 
 // entityState_t->event values
 // entity events are for effects that take place reletive
