@@ -520,6 +520,8 @@ void SP_misc_portal_camera(gentity_t *ent)
  * @param[in] ent
  * @param other - unused
  * @param activator - unused
+ *
+ * FIXME: enhance this one day so shooter can deal with more weapons
  */
 void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
@@ -564,19 +566,17 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		                                              // FIXME: why we do normalize the vector before this switch?
 		fire_grenade(ent, ent->s.origin, dir, WP_GRENADE_LAUNCHER);
 		break;
-	//case WP_BAZOOKA:
+	case WP_BAZOOKA:
 	case WP_PANZERFAUST:
 		fire_rocket(ent, ent->s.origin, dir, ent->s.weapon);
 		VectorScale(ent->s.pos.trDelta, 2, ent->s.pos.trDelta);
 		SnapVector(ent->s.pos.trDelta);             // save net bandwidth
 		break;
-
 	case WP_MAPMORTAR:
 		AimAtTarget(ent);     // store in ent->s.origin2 the direction/force needed to pass through the target
 		VectorScale(dir, VectorLength(ent->s.origin2), dir);
 		fire_mortar(ent, ent->s.origin, dir);
 		break;
-
 	default:
 		break;
 	}
