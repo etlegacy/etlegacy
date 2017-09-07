@@ -1995,9 +1995,9 @@ gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->s.weapon     = WP_PANZERFAUST;
 	bolt->r.ownerNum   = self->s.number;
 	bolt->parent       = self;
-	bolt->damage       = 100
-	bolt->splashDamage = 20
-	bolt->splashRadius = 60
+	bolt->damage       = 100;
+	bolt->splashDamage = 20;
+	bolt->splashRadius = 60;
 
 	bolt->methodOfDeath       = MOD_EXPLOSIVE;
 	bolt->splashMethodOfDeath = MOD_EXPLOSIVE;

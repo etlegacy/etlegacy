@@ -516,12 +516,12 @@ void SP_misc_portal_camera(gentity_t *ent)
 */
 
 /**
- * @brief SHOOTERS weapons WP_MAPMORTAR, WP_GRENADE_LAUNCHER and WP_PANZERFAUST
+ * @brief SHOOTERS weapons WP_MAPMORTAR, WP_GRENADE_LAUNCHER/WP_GRENADE_PINEAPPLE and WP_PANZERFAUST/WP_BAZOOKA
  * @param[in] ent
  * @param other - unused
  * @param activator - unused
  *
- * FIXME: enhance this one day so shooter can deal with more weapons
+ * FIXME: enhance this one day so shooter can deal with more weapons (bullets -> map sniper fire)
  */
 void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
@@ -560,10 +560,10 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 	switch (ent->s.weapon)
 	{
-	//case WP_GRENADE_PINEAPPLE:
+	case WP_GRENADE_PINEAPPLE:
 	case WP_GRENADE_LAUNCHER:
 		VectorScale(dir, 700, dir);                   // had to add this as fire_grenade now expects a non-normalized direction vector
-		                                              // FIXME: why we do normalize the vector before this switch?
+		                                              // FIXME: why we do normalize the vector before this switch? See comment of fire_grenade
 		fire_grenade(ent, ent->s.origin, dir, WP_GRENADE_LAUNCHER);
 		break;
 	case WP_BAZOOKA:
@@ -637,7 +637,7 @@ void SP_shooter_mortar(gentity_t *ent)
 	// FIXME/TODO: must have a self->target.  Do a check/print if this is not the case.
 	InitShooter(ent, WP_MAPMORTAR);
 
-	if (ent->spawnflags & 1)       // smoke at source
+	if (ent->spawnflags & 1)        // smoke at source (use/addjust flakPuff in Use_Shooter?)
 	{
 	}
 	if (ent->spawnflags & 2)       // muzzle flash at source
@@ -653,7 +653,22 @@ void SP_shooter_mortar(gentity_t *ent)
  */
 void SP_shooter_rocket(gentity_t *ent)
 {
-	InitShooter(ent, WP_PANZERFAUST);
+	if (ent->spawnflags & 1)       // greetings from the allies
+	{
+		InitShooter(ent, WP_BAZOOKA);
+	}
+	else
+	{
+		InitShooter(ent, WP_PANZERFAUST);
+	}
+
+	// FIXME:
+	if (ent->spawnflags & 2)       // smoke at source (use/addjust flakPuff in Use_Shooter?)
+	{
+	}
+	if (ent->spawnflags & 4)       // muzzle flash at source
+	{
+	}
 }
 
 /**
@@ -665,7 +680,22 @@ void SP_shooter_rocket(gentity_t *ent)
  */
 void SP_shooter_grenade(gentity_t *ent)
 {
-	InitShooter(ent, WP_GRENADE_LAUNCHER);
+	if (ent->spawnflags & 1)       // greetings from the allies
+	{
+		InitShooter(ent, WP_GRENADE_PINEAPPLE);
+	}
+	else
+	{
+		InitShooter(ent, WP_GRENADE_LAUNCHER);
+	}
+
+	// FIXME:
+	if (ent->spawnflags & 2)       // smoke at source (use/addjust flakPuff in Use_Shooter?)
+	{
+	}
+	if (ent->spawnflags & 4)       // muzzle flash at source
+	{
+	}
 }
 
 /**
