@@ -1074,25 +1074,9 @@ static qboolean PM_CheckProne(void)
 				// don't let them keep scope out when
 				// standing from prone or they will
 				// look right through a wall
-				switch (pm->ps->weapon)
+				if (GetWeaponTableData(pm->ps->weapon)->isScoped || GetWeaponTableData(pm->ps->weapon)->isMGSet)
 				{
-				case WP_FG42SCOPE:
-					PM_BeginWeaponChange(WP_FG42SCOPE, WP_FG42, qfalse);
-					break;
-				case WP_GARAND_SCOPE:
-					PM_BeginWeaponChange(WP_GARAND_SCOPE, WP_GARAND, qfalse);
-					break;
-				case WP_K43_SCOPE:
-					PM_BeginWeaponChange(WP_K43_SCOPE, WP_K43, qfalse);
-					break;
-				case WP_MOBILE_MG42_SET:
-					PM_BeginWeaponChange(WP_MOBILE_MG42_SET, WP_MOBILE_MG42, qfalse);
-					break;
-				case WP_MOBILE_BROWNING_SET:
-					PM_BeginWeaponChange(WP_MOBILE_BROWNING_SET, WP_MOBILE_BROWNING, qfalse);
-					break;
-				default:
-					break;
+					PM_BeginWeaponChange((weapon_t)pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
 				}
 
 				// don't jump for a bit
@@ -1113,19 +1097,9 @@ static qboolean PM_CheckProne(void)
 			pm->ps->eFlags |= EF_PRONE_MOVING;
 
 			// Lose the scope view if moving too fast while prone
-			switch (pm->ps->weapon)
+			if (GetWeaponTableData(pm->ps->weapon)->isScoped)
 			{
-			case WP_FG42SCOPE:
-				PM_BeginWeaponChange(WP_FG42SCOPE, WP_FG42, qfalse);
-				break;
-			case WP_GARAND_SCOPE:
-				PM_BeginWeaponChange(WP_GARAND_SCOPE, WP_GARAND, qfalse);
-				break;
-			case WP_K43_SCOPE:
-				PM_BeginWeaponChange(WP_K43_SCOPE, WP_K43, qfalse);
-				break;
-			default:
-				break;
+				PM_BeginWeaponChange((weapon_t)pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
 			}
 		}
 		else if (!userinput && spd < 20.0f && (pm->ps->eFlags & EF_PRONE_MOVING))
@@ -2771,31 +2745,26 @@ static void PM_FinishWeaponChange(void)
 	}
 
 	// dropping/raising usually takes 1/4 sec.
+	// TODO: table weapon ?
 	switchtime = 250;
 
 	// sometimes different switch times for alt weapons
-	switch (newweapon)
+	if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 	{
-	case WP_LUGER:
-	case WP_COLT:
-		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
+		altSwitchAnim = qtrue;
+
+		switch (newweapon)
 		{
-			switchtime    = 0;
-			altSwitchAnim = qtrue;
-		}
-		break;
-	case WP_SILENCER:
-	case WP_SILENCED_COLT:
-		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
-		{
-			switchtime    = 1190;
-			altSwitchAnim = qtrue;
-		}
-		break;
-	case WP_CARBINE:
-	case WP_KAR98:
-		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
-		{
+		case WP_LUGER:
+		case WP_COLT:
+			switchtime = 0;
+			break;
+		case WP_SILENCER:
+		case WP_SILENCED_COLT:
+			switchtime = 1190;
+			break;
+		case WP_CARBINE:
+		case WP_KAR98:
 			if (pm->ps->ammoclip[BG_FindAmmoForWeapon(oldweapon)])
 			{
 				switchtime = 1347;
@@ -2805,56 +2774,34 @@ static void PM_FinishWeaponChange(void)
 				switchtime   = 0;
 				doSwitchAnim = qfalse;
 			}
-			altSwitchAnim = qtrue;
-		}
-		break;
-	case WP_M7:
-	case WP_GPG40:
-		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
-		{
-			switchtime    = 2350;
-			altSwitchAnim = qtrue;
-		}
-		break;
-	case WP_FG42:
-	case WP_FG42SCOPE:
-		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
-		{
-			switchtime = 50;        // fast
-		}
-		break;
-	case WP_MOBILE_MG42:
-	case WP_MOBILE_BROWNING:
-		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
-		{
+			break;
+		case WP_M7:
+		case WP_GPG40:
+			switchtime = 2350;
+			break;
+		case WP_FG42:
+		case WP_FG42SCOPE:
+			switchtime = 50;    // fast
+			break;
+		case WP_MOBILE_MG42:
+		case WP_MOBILE_BROWNING:
 			switchtime = 1722;
-		}
-		break;
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING_SET:
-		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
-		{
+			break;
+		case WP_MOBILE_MG42_SET:
+		case WP_MOBILE_BROWNING_SET:
 			switchtime = 1250;
+			break;
+		case WP_MORTAR:
+		case WP_MORTAR2:
+			switchtime = 1000;
+			break;
+		case WP_MORTAR_SET:
+		case WP_MORTAR2_SET:
+			switchtime = 1667;
+			break;
+		default:
+			break;
 		}
-		break;
-	case WP_MORTAR:
-	case WP_MORTAR2:
-		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
-		{
-			switchtime    = 1000;
-			altSwitchAnim = qtrue;
-		}
-		break;
-	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET:
-		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
-		{
-			switchtime    = 1667;
-			altSwitchAnim = qtrue;
-		}
-		break;
-	default:
-		break;
 	}
 
 	pm->ps->weaponTime += switchtime;
@@ -2984,18 +2931,12 @@ void PM_CheckForReload(weapon_t weapon)
 	clipWeap   = BG_FindClipForWeapon(weapon);
 	ammoWeap   = BG_FindAmmoForWeapon(weapon);
 
-	switch (weapon)
+	if (GetWeaponTableData(weapon)->isScoped)
 	{
-	case WP_FG42SCOPE:
-	case WP_GARAND_SCOPE:
-	case WP_K43_SCOPE:
 		if (reloadRequested && pm->ps->ammo[ammoWeap] && pm->ps->ammoclip[clipWeap] < GetWeaponTableData(weapon)->maxClip)
 		{
 			PM_BeginWeaponChange(weapon, GetWeaponTableData(weapon)->weapAlts, !(pm->ps->ammo[ammoWeap]) ? qfalse : qtrue);
 		}
-		return;
-	default:
-		break;
 	}
 
 	if (pm->ps->weaponTime <= 0)
@@ -3052,6 +2993,7 @@ void PM_CheckForReload(weapon_t weapon)
 static void PM_SwitchIfEmpty(void)
 {
 	// weapon here are thrown explosives or syringe/adrenaline
+	// TODO: table weapon throwable ?
 	switch (pm->ps->weapon)
 	{
 	case WP_GRENADE_LAUNCHER:
@@ -3803,22 +3745,8 @@ static void PM_Weapon(void)
 
 		// aha, THIS is the kewl quick fire mode :)
 		// added back for multiplayer pistol balancing
-		switch (pm->ps->weapon)
+		if (GetWeaponTableData(pm->ps->weapon)->isLightWeaponSupportingFastReload)
 		{
-		case WP_LUGER:
-		case WP_COLT:
-		case WP_SILENCER:
-		case WP_SILENCED_COLT:
-		case WP_KAR98:
-		case WP_K43:
-		case WP_CARBINE:
-		case WP_GARAND:
-		case WP_GARAND_SCOPE:
-		case WP_K43_SCOPE:
-		case WP_AKIMBO_COLT:
-		case WP_AKIMBO_LUGER:
-		case WP_AKIMBO_SILENCEDCOLT:
-		case WP_AKIMBO_SILENCEDLUGER:
 			// moved releasedFire into pmext instead of ps
 			if (pm->pmext->releasedFire)
 			{
@@ -3847,9 +3775,6 @@ static void PM_Weapon(void)
 				// moved releasedFire into pmext instead of ps
 				pm->pmext->releasedFire = qtrue;
 			}
-			break;
-		default:
-			break;
 		}
 	}
 
@@ -4408,6 +4333,7 @@ static void PM_Weapon(void)
 
 	if (!(pm->ps->eFlags & EF_PRONE) && (pml.groundTrace.surfaceFlags & SURF_SLICK))
 	{
+		// TODO: weapon Table ?
 		float fwdmove_knockback = 0.f;
 
 		switch (pm->ps->weapon)
