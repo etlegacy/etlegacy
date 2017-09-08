@@ -568,7 +568,7 @@ static int _et_trap_FS_Rename(lua_State *L)
 extern char bigTextBuffer[100000];
 static int _et_trap_FS_GetFileList(lua_State *L)
 {
-	const char *dirname = luaL_checkstring(L, 1);
+	const char *dirname            = luaL_checkstring(L, 1);
 	const char *filename_extension = luaL_checkstring(L, 2);
 	int        newTable, index = 1, i, filelen, numfiles;
 	char       filename[MAX_QPATH];
@@ -864,37 +864,14 @@ static int _et_RemoveWeaponFromPlayer(lua_State *L)
 
 	COM_BitClear(ent->client->ps.weapons, weapon);
 
-	switch (weapon)
+	if (GetWeaponTableData(weapon)->weapAlts != WP_NONE)
 	{
-	case WP_KAR98:
-		COM_BitClear(client->ps.weapons, WP_GPG40);
-		break;
-	case WP_CARBINE:
-		COM_BitClear(client->ps.weapons, WP_M7);
-		break;
-	case WP_FG42:
-		COM_BitClear(client->ps.weapons, WP_FG42SCOPE);
-		break;
-	case WP_K43:
-		COM_BitClear(client->ps.weapons, WP_K43_SCOPE);
-		break;
-	case WP_GARAND:
-		COM_BitClear(client->ps.weapons, WP_GARAND_SCOPE);
-		break;
-	case WP_MORTAR:
-		COM_BitClear(client->ps.weapons, WP_MORTAR_SET);
-		break;
-	case WP_MORTAR2:
-		COM_BitClear(client->ps.weapons, WP_MORTAR2_SET);
-		break;
-	case WP_MOBILE_MG42:
-		COM_BitClear(client->ps.weapons, WP_MOBILE_MG42_SET);
-		break;
-	case WP_MOBILE_BROWNING:
-		COM_BitClear(client->ps.weapons, WP_MOBILE_BROWNING_SET);
-		break;
-	default:
-		break;
+		weapon_t weapAlts = GetWeaponTableData(weapon)->weapAlts;
+
+		if (GetWeaponTableData(weapAlts)->isRiflenade || GetWeaponTableData(weapAlts)->isScoped || GetWeaponTableData(weapAlts)->isSetWeapon)
+		{
+			COM_BitClear(client->ps.weapons, weapAlts);
+		}
 	}
 
 	// Clear out empty weapon, change to next best weapon

@@ -438,37 +438,14 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 	ent2 = LaunchItem(item, org, velocity, client->ps.clientNum);
 	COM_BitClear(client->ps.weapons, weapon);
 
-	switch (weapon)
+	if (GetWeaponTableData(weapon)->weapAlts != WP_NONE)
 	{
-	case WP_KAR98:
-		COM_BitClear(client->ps.weapons, WP_GPG40);
-		break;
-	case WP_CARBINE:
-		COM_BitClear(client->ps.weapons, WP_M7);
-		break;
-	case WP_FG42:
-		COM_BitClear(client->ps.weapons, WP_FG42SCOPE);
-		break;
-	case WP_K43:
-		COM_BitClear(client->ps.weapons, WP_K43_SCOPE);
-		break;
-	case WP_GARAND:
-		COM_BitClear(client->ps.weapons, WP_GARAND_SCOPE);
-		break;
-	case WP_MORTAR:
-		COM_BitClear(client->ps.weapons, WP_MORTAR_SET);
-		break;
-	case WP_MORTAR2:
-		COM_BitClear(client->ps.weapons, WP_MORTAR2_SET);
-		break;
-	case WP_MOBILE_MG42:
-		COM_BitClear(client->ps.weapons, WP_MOBILE_MG42_SET);
-		break;
-	case WP_MOBILE_BROWNING:
-		COM_BitClear(client->ps.weapons, WP_MOBILE_BROWNING_SET);
-		break;
-	default:
-		break;
+		weapon_t weapAlts = GetWeaponTableData(weapon)->weapAlts;
+
+		if (GetWeaponTableData(weapAlts)->isRiflenade || GetWeaponTableData(weapAlts)->isScoped || GetWeaponTableData(weapAlts)->isSetWeapon)
+		{
+			COM_BitClear(client->ps.weapons, weapAlts);
+		}
 	}
 
 	// Clear out empty weapon, change to next best weapon
@@ -678,37 +655,14 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				COM_BitSet(other->client->ps.weapons, ent->item->giWeapon);
 
 				// fixup mauser/sniper issues
-				switch (ent->item->giWeapon)
+				if (GetWeaponTableData(ent->item->giWeapon)->weapAlts != WP_NONE)
 				{
-				case WP_FG42:
-					COM_BitSet(other->client->ps.weapons, WP_FG42SCOPE);
-					break;
-				case  WP_GARAND:
-					COM_BitSet(other->client->ps.weapons, WP_GARAND_SCOPE);
-					break;
-				case  WP_K43:
-					COM_BitSet(other->client->ps.weapons, WP_K43_SCOPE);
-					break;
-				case  WP_MORTAR:
-					COM_BitSet(other->client->ps.weapons, WP_MORTAR_SET);
-					break;
-				case  WP_MORTAR2:
-					COM_BitSet(other->client->ps.weapons, WP_MORTAR2_SET);
-					break;
-				case  WP_MOBILE_MG42:
-					COM_BitSet(other->client->ps.weapons, WP_MOBILE_MG42_SET);
-					break;
-				case WP_MOBILE_BROWNING:
-					COM_BitSet(other->client->ps.weapons, WP_MOBILE_BROWNING_SET);
-					break;
-				case  WP_CARBINE:
-					COM_BitSet(other->client->ps.weapons, WP_M7);
-					break;
-				case WP_KAR98:
-					COM_BitSet(other->client->ps.weapons, WP_GPG40);
-					break;
-				default:
-					break;
+					weapon_t weapAlts = GetWeaponTableData(ent->item->giWeapon)->weapAlts;
+
+					if (GetWeaponTableData(weapAlts)->isRiflenade || GetWeaponTableData(weapAlts)->isScoped || GetWeaponTableData(weapAlts)->isSetWeapon)
+					{
+						COM_BitClear(other->client->ps.weapons, weapAlts);
+					}
 				}
 
 				other->client->ps.ammoclip[BG_FindClipForWeapon(ent->item->giWeapon)] = 0;

@@ -1145,38 +1145,22 @@ static void CG_DrawCrosshair(void)
 		weapnum = cg.weaponSelect;
 	}
 
-	switch (weapnum)
+	// no weapon, no crosshair
+	if (weapnum == WP_NONE && cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
 	{
-	// weapons that get no reticle
-	case WP_NONE:       // no weapon, no crosshair
-		if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR)
-		{
-			return;
-		}
-		break;
-	// special reticle for weapon
-	case WP_FG42SCOPE:
-	case WP_GARAND_SCOPE:
-	case WP_K43_SCOPE:
+		return;
+	}
+
+	// special reticle for scoped weapon
+	if (GetWeaponTableData(weapnum)->isScoped)
+	{
 		if (!BG_PlayerMounted(cg.snap->ps.eFlags))
 		{
 			// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run
 			if (VectorLengthSquared(cg.snap->ps.velocity) > Square(160))
 			{
-				if (cg.snap->ps.weapon == WP_FG42SCOPE)
-				{
-					CG_FinishWeaponChange(WP_FG42SCOPE, WP_FG42);
-				}
-				if (cg.snap->ps.weapon == WP_GARAND_SCOPE)
-				{
-					CG_FinishWeaponChange(WP_GARAND_SCOPE, WP_GARAND);
-				}
-				if (cg.snap->ps.weapon == WP_K43_SCOPE)
-				{
-					CG_FinishWeaponChange(WP_K43_SCOPE, WP_K43);
-				}
+				CG_FinishWeaponChange(cg.snap->ps.weapon, GetWeaponTableData(cg.snap->ps.weapon)->weapAlts);
 			}
-
 			if (
 #ifdef FEATURE_MULTIVIEW
 			    cg.mvTotalClients < 1 ||
@@ -1188,9 +1172,6 @@ static void CG_DrawCrosshair(void)
 
 			return;
 		}
-		break;
-	default:
-		break;
 	}
 
 	if (cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)

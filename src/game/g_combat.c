@@ -1432,29 +1432,9 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	// save some from flak jacket
 	if (targ->client && targ->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 4 && targ->client->sess.playerType == PC_ENGINEER)
 	{
-		switch (mod)
+		if (GetMODTableData(mod)->isExplosive)
 		{
-		case MOD_GRENADE:
-		case MOD_GRENADE_LAUNCHER:
-		case MOD_GRENADE_PINEAPPLE:
-		case MOD_MAPMORTAR:
-		case MOD_MAPMORTAR_SPLASH:
-		case MOD_EXPLOSIVE:
-		case MOD_LANDMINE:
-		case MOD_GPG40:
-		case MOD_M7:
-		case MOD_SATCHEL:
-		case MOD_ARTY:
-		case MOD_AIRSTRIKE:
-		case MOD_DYNAMITE:
-		case MOD_MORTAR:
-		case MOD_MORTAR2:
-		case MOD_PANZERFAUST:
-		case MOD_BAZOOKA:
 			take -= take * .5f;
-			break;
-		default:
-			break;
 		}
 	}
 
