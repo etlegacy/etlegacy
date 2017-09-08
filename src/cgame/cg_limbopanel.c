@@ -3913,7 +3913,7 @@ qboolean CG_LimboPanel_WeaponIsDisabled(int index)
  * @return Result of converted string to an integer
  * @note Originates from q_shared.c
  */
-int ExtractInt(char *src)
+int ExtractInt(const char *src)
 {
 	unsigned int i;
 	unsigned int srclen = strlen(src) + 1;
