@@ -703,34 +703,35 @@ CROSSHAIRS
  */
 static void CG_DrawWeapReticle(void)
 {
-	qboolean fg, garand, k43;
+	int weapon;
 
 	// So that we will draw reticle
 	if ((cg.snap->ps.pm_flags & PMF_FOLLOW) || cg.demoPlayback)
 	{
-		garand = (qboolean)(cg.snap->ps.weapon == WP_GARAND_SCOPE);
-		k43    = (qboolean)(cg.snap->ps.weapon == WP_K43_SCOPE);
-		fg     = (qboolean)(cg.snap->ps.weapon == WP_FG42SCOPE);
+		weapon = cg.snap->ps.weapon;
 	}
 	else
 	{
-		fg     = (qboolean)(cg.weaponSelect == WP_FG42SCOPE);
-		garand = (qboolean)(cg.weaponSelect == WP_GARAND_SCOPE);
-		k43    = (qboolean)(cg.weaponSelect == WP_K43_SCOPE);
+		weapon = cg.weaponSelect;
 	}
 
-	if (fg)
+	if (!GetWeaponTableData(weapon)->isScoped)
 	{
-		// sides
-		CG_FillRect(0, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
-		CG_FillRect(560 + cgs.wideXoffset, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
+		return;
+	}
 
-		// center
-		if (cgs.media.reticleShaderSimple)
-		{
-			CG_DrawPic(80 + cgs.wideXoffset, 0, SCREEN_HEIGHT, SCREEN_HEIGHT, cgs.media.reticleShaderSimple);
-		}
+	// sides
+	CG_FillRect(0, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
+	CG_FillRect(560 + cgs.wideXoffset, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
 
+	// center
+	if (cgs.media.reticleShaderSimple)
+	{
+		CG_DrawPic(80 + cgs.wideXoffset, 0, SCREEN_HEIGHT, SCREEN_HEIGHT, cgs.media.reticleShaderSimple);
+	}
+
+	if (weapon == WP_FG42SCOPE)
+	{
 		// hairs
 		CG_FillRect(84 + cgs.wideXoffset, 239, 150, 3, colorBlack);     // left
 		CG_FillRect(234 + cgs.wideXoffset, 240, 173, 1, colorBlack);    // horiz center
@@ -743,36 +744,16 @@ static void CG_DrawWeapReticle(void)
 		CG_FillRect(320 + cgs.wideXoffset, 241, 1, 87, colorBlack);     // bot center top
 		CG_FillRect(319 + cgs.wideXoffset, 327, 3, 151, colorBlack);    // bot center bot
 	}
-	else if (garand)
+	else if (weapon == WP_GARAND_SCOPE)
 	{
-		// sides
-		CG_FillRect(0, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
-		CG_FillRect(560 + cgs.wideXoffset, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
-
-		// center
-		if (cgs.media.reticleShaderSimple)
-		{
-			CG_DrawPic(80 + cgs.wideXoffset, 0, SCREEN_HEIGHT, SCREEN_HEIGHT, cgs.media.reticleShaderSimple);
-		}
-
 		// hairs
 		CG_FillRect(84 + cgs.wideXoffset, 239, 177, 2, colorBlack);     // left
 		CG_FillRect(320 + cgs.wideXoffset, 242, 1, 58, colorBlack);     // center top
 		CG_FillRect(319 + cgs.wideXoffset, 300, 2, 178, colorBlack);    // center bot
 		CG_FillRect(380 + cgs.wideXoffset, 239, 177, 2, colorBlack);    // right
 	}
-	else if (k43)
+	else if (weapon == WP_K43_SCOPE)
 	{
-		// sides
-		CG_FillRect(0, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
-		CG_FillRect(560 + cgs.wideXoffset, 0, 80 + cgs.wideXoffset, SCREEN_HEIGHT, colorBlack);
-
-		// center
-		if (cgs.media.reticleShaderSimple)
-		{
-			CG_DrawPic(80 + cgs.wideXoffset, 0, SCREEN_HEIGHT, SCREEN_HEIGHT, cgs.media.reticleShaderSimple);
-		}
-
 		// hairs
 		CG_FillRect(84 + cgs.wideXoffset, 239, 177, 2, colorBlack);     // left
 		CG_FillRect(320 + cgs.wideXoffset, 242, 1, 58, colorBlack);     // center top
@@ -786,10 +767,10 @@ static void CG_DrawWeapReticle(void)
  */
 static void CG_DrawMortarReticle(void)
 {
-	vec4_t   color             = { 1.f, 1.f, 1.f, .5f };
-	vec4_t   color_back        = { 0.f, 0.f, 0.f, .25f };
-	vec4_t   color_extends     = { .77f, .73f, .1f, 1.f };
-	vec4_t   color_lastfire    = { .77f, .1f, .1f, 1.f };
+	vec4_t   color = { 1.f, 1.f, 1.f, .5f };
+	vec4_t   color_back = { 0.f, 0.f, 0.f, .25f };
+	vec4_t   color_extends = { .77f, .73f, .1f, 1.f };
+	vec4_t   color_lastfire = { .77f, .1f, .1f, 1.f };
 	vec4_t   color_firerequest = { 1.f, 1.f, 1.f, 1.f };
 	float    offset, localOffset;
 	int      i, min, majorOffset, val, printval, fadeTime, requestFadeTime;
@@ -1163,9 +1144,9 @@ static void CG_DrawCrosshair(void)
 			}
 			if (
 #ifdef FEATURE_MULTIVIEW
-			    cg.mvTotalClients < 1 ||
+				cg.mvTotalClients < 1 ||
 #endif
-			    cg.snap->ps.stats[STAT_HEALTH] > 0)
+				cg.snap->ps.stats[STAT_HEALTH] > 0)
 			{
 				CG_DrawWeapReticle();
 			}
@@ -2312,7 +2293,7 @@ static void CG_DrawSpectatorMessage(void)
 {
 	const char *str, *str2;
 	static int lastconfigGet = 0;
-	float      fontScale     = cg_fontScaleSP.value;
+	float      fontScale = cg_fontScaleSP.value;
 	int        y, charHeight;
 
 	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
@@ -2860,9 +2841,9 @@ static void CG_DrawFlashFade(void)
 	{
 		if (
 #ifdef FEATURE_MULTIVIEW
-		    cg.mvTotalClients < 1 &&
+			cg.mvTotalClients < 1 &&
 #endif
-		    cg.snap->ps.powerups[PW_BLACKOUT] > 0)
+			cg.snap->ps.powerups[PW_BLACKOUT] > 0)
 		{
 			trap_Cvar_Set("ui_blackout", va("%d", cg.snap->ps.powerups[PW_BLACKOUT]));
 		}

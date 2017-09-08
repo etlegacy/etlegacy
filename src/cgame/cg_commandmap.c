@@ -1773,7 +1773,7 @@ void CG_DrawMortarMarker(float px, float py, float pw, float ph, qboolean draw, 
 {
 	if (GetWeaponTableData(cg.lastFiredWeapon)->isMortarSet && cg.mortarImpactTime >= 0)
 	{
-		if (cg.snap->ps.weapon != WP_MORTAR_SET && cg.snap->ps.weapon != WP_MORTAR2_SET)
+		if (!GetWeaponTableData(cg.snap->ps.weapon)->isMortarSet)
 		{
 			cg.mortarImpactTime = 0;
 		}

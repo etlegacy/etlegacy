@@ -210,17 +210,9 @@ void CG_Respawn(qboolean revived)
 	// ensure scoped weapons are reset after revive
 	if (revived)
 	{
-		if (cg.snap->ps.weapon == WP_FG42SCOPE)
+		if (GetWeaponTableData(cg.snap->ps.weapon)->isScoped)
 		{
-			CG_FinishWeaponChange(WP_FG42SCOPE, WP_FG42);
-		}
-		if (cg.snap->ps.weapon == WP_GARAND_SCOPE)
-		{
-			CG_FinishWeaponChange(WP_GARAND_SCOPE, WP_GARAND);
-		}
-		if (cg.snap->ps.weapon == WP_K43_SCOPE)
-		{
-			CG_FinishWeaponChange(WP_K43_SCOPE, WP_K43);
+			CG_FinishWeaponChange(cg.snap->ps.weapon, GetWeaponTableData(cg.snap->ps.weapon)->weapAlts);
 		}
 	}
 
@@ -243,7 +235,7 @@ void CG_Respawn(qboolean revived)
 	{
 		cg.pmext.silencedSideArm = 1;
 	}
-	else if (cg.predictedPlayerState.weapon == WP_GPG40 || cg.predictedPlayerState.weapon == WP_M7)
+	else if (GetWeaponTableData(cg.predictedPlayerState.weapon)->isRiflenade)
 	{
 		cg.pmext.silencedSideArm = 2;
 	}

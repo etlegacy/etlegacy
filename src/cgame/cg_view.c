@@ -423,11 +423,11 @@ static void CG_StepOffset(void)
  */
 void CG_KickAngles(void)
 {
-	const vec3_t centerSpeed        = { 2400, 2400, 2400 };
-	const float  recoilCenterSpeed  = 200;
+	const vec3_t centerSpeed = { 2400, 2400, 2400 };
+	const float  recoilCenterSpeed = 200;
 	const float  recoilIgnoreCutoff = 15;
-	const float  recoilMaxSpeed     = 50;
-	const vec3_t maxKickAngles      = { 10, 10, 10 };
+	const float  recoilMaxSpeed = 50;
+	const vec3_t maxKickAngles = { 10, 10, 10 };
 	float        idealCenterSpeed, kickChange;
 	int          i, frametime, t;
 	float        ft;
@@ -890,21 +890,14 @@ void CG_Zoom(void)
 		cg.predictedPlayerState.weapon = cg.snap->ps.weapon;
 
 		// check for scope wepon in use, and change if necessary - spec/demo scaling allowances
-		if (GetWeaponTableData(cg.predictedPlayerState.weapon)->isScoped)
+		// or show a zoomed binoculars view for spectators.. (still not actively zooming in/out)
+		if (GetWeaponTableData(cg.predictedPlayerState.weapon)->isScoped || cg.predictedPlayerState.eFlags & EF_ZOOMING)
 		{
 			cg.zoomval = (cg.zoomval == 0.f) ? cg_zoomDefaultSniper.value : cg.zoomval;     // was DefaultFG, changed per atvi req
 		}
 		else
 		{
-			// show a zoomed binoculars view for spectators.. (still not actively zooming in/out)
-			if (cg.predictedPlayerState.eFlags & EF_ZOOMING)
-			{
-				cg.zoomval = (cg.zoomval == 0.f) ? cg_zoomDefaultSniper.value : cg.zoomval;
-			}
-			else
-			{
-				cg.zoomval = 0;
-			}
+			cg.zoomval = 0;
 		}
 	}
 
@@ -1071,7 +1064,7 @@ static int CG_CalcFov(void)
 	{
 		fov_x = 55;
 	}
-	else if (cg.snap->ps.weapon == WP_MOBILE_MG42_SET || cg.snap->ps.weapon == WP_MOBILE_BROWNING_SET)
+	else if (GetWeaponTableData(cg.snap->ps.weapon)->isMGSet)
 	{
 		fov_x = 55;
 	}
@@ -1672,8 +1665,7 @@ void CG_DrawSkyBoxPortal(qboolean fLocalView)
 
 		rd.rdflags &= ~RDF_SNOOPERVIEW;
 
-		if (BG_PlayerMounted(cg.snap->ps.eFlags)
-		    || cg.predictedPlayerState.weapon == WP_MOBILE_MG42_SET || cg.predictedPlayerState.weapon == WP_MOBILE_BROWNING_SET)
+		if (BG_PlayerMounted(cg.snap->ps.eFlags) || GetWeaponTableData(cg.predictedPlayerState.weapon)->isMGSet)
 		{
 			fov_x = 55;
 		}
@@ -1996,7 +1988,7 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 {
 #ifdef DEBUGTIME_ENABLED
 	int dbgTime = trap_Milliseconds(), elapsed;
-	int dbgCnt  = 0;
+	int dbgCnt = 0;
 #endif
 
 	cg.time         = serverTime;

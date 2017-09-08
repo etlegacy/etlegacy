@@ -402,7 +402,7 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
  * @param[in] ignoreent
  * @param[in] tracemask
  */
-void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
 {
 	vec3_t ofs, org, point;
 	vec3_t flatforward;
@@ -483,7 +483,7 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
  * @param[in] tracemask
  */
 void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles,
-                  void(tracefunc) (trace_t * results,
+                  void(tracefunc) (trace_t *results,
                                    const vec3_t start,
                                    const vec3_t mins,
                                    const vec3_t maxs,
@@ -3210,6 +3210,7 @@ void PM_AdjustAimSpreadScale(void)
 
 	cmdTime = (pm->cmd.serverTime - pm->oldcmd.serverTime) / 1000.0f;
 
+	// TODO: weapon table ?
 	wpnScale = 0.0f;
 	switch (pm->ps->weapon)
 	{
@@ -4014,7 +4015,7 @@ static void PM_Weapon(void)
 	}
 
 	// a not mounted mortar can't fire
-	if (pm->ps->weapon == WP_MORTAR || pm->ps->weapon == WP_MORTAR2)
+	if (GetWeaponTableData(pm->ps->weapon)->isMortar)
 	{
 		return;
 	}
@@ -4114,7 +4115,7 @@ static void PM_Weapon(void)
 		if (!weaponstateFiring)
 		{
 			// pfaust has spinup time in MP
-			if (pm->ps->weapon == WP_PANZERFAUST || pm->ps->weapon == WP_BAZOOKA)
+			if (GetWeaponTableData(pm->ps->weapon)->isPanzer)
 			{
 				PM_AddEvent(EV_SPINUP);
 			}
@@ -4992,7 +4993,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
  *
  * @note Tnused trace parameter
  */
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)        //   modified
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)         //   modified
 {
 	short  temp;
 	int    i;
@@ -5306,7 +5307,7 @@ void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, v
 		}*/
 
 		// Check if we are allowed to rotate to there
-		if (ps->weapon == WP_MOBILE_MG42_SET || ps->weapon == WP_MOBILE_BROWNING_SET)
+		if (GetWeaponTableData(ps->weapon)->isMGSet)
 		{
 			float yawDiff;
 
@@ -5937,36 +5938,20 @@ void PmoveSingle(pmove_t *pmove)
 	{
 		PM_DeadMove();
 
-		if (pm->ps->weapon == WP_MORTAR_SET)
+		if (GetWeaponTableData(pm->ps->weapon)->isMortarSet)
 		{
-			pm->ps->weapon = WP_MORTAR;
-		}
-
-		if (pm->ps->weapon == WP_MORTAR2_SET)
-		{
-			pm->ps->weapon = WP_MORTAR2;
+			pm->ps->weapon = GetWeaponTableData(pm->ps->weapon)->weapAlts;
 		}
 	}
 	else
 	{
-		if (pm->ps->weapon == WP_MOBILE_MG42_SET)
+		if (GetWeaponTableData(pm->ps->weapon)->isMGSet)
 		{
 			if (!(pm->ps->eFlags & EF_PRONE))
 			{
-				PM_BeginWeaponChange(WP_MOBILE_MG42_SET, WP_MOBILE_MG42, qfalse);
+				PM_BeginWeaponChange(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
 #ifdef CGAMEDLL
-				cg.weaponSelect = WP_MOBILE_MG42;
-#endif // CGAMEDLL
-			}
-		}
-
-		if (pm->ps->weapon == WP_MOBILE_BROWNING_SET)
-		{
-			if (!(pm->ps->eFlags & EF_PRONE))
-			{
-				PM_BeginWeaponChange(WP_MOBILE_BROWNING_SET, WP_MOBILE_BROWNING, qfalse);
-#ifdef CGAMEDLL
-				cg.weaponSelect = WP_MOBILE_BROWNING;
+				cg.weaponSelect = GetWeaponTableData(pm->ps->weapon)->weapAlts;
 #endif // CGAMEDLL
 			}
 		}

@@ -2400,6 +2400,7 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	}
 
 	// adjust 'lean' into weapon
+    // TODO: weapon table ?
 	if (cg.predictedPlayerState.leanf != 0.f)
 	{
 		vec3_t right, up;
@@ -2465,9 +2466,7 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	}
 
 	// idle drift
-	if ((!(cg.predictedPlayerState.eFlags & EF_MOUNTEDTANK))
-	    && (cg.predictedPlayerState.weapon != WP_MORTAR_SET && cg.predictedPlayerState.weapon != WP_MORTAR2_SET)
-	    && (cg.predictedPlayerState.weapon != WP_MOBILE_MG42_SET && cg.predictedPlayerState.weapon != WP_MOBILE_BROWNING_SET))
+	if ((!(cg.predictedPlayerState.eFlags & EF_MOUNTEDTANK) && !GetWeaponTableData(cg.predictedPlayerState.weapon)->isSetWeapon))
 	{
 		float fracsin = (float)sin(cg.time * 0.001);
 
