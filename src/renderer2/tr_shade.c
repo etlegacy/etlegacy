@@ -2518,7 +2518,7 @@ static void Render_fog()
 
 	if (backEnd.viewParms.isPortal)
 	{
-		vec4_t plane;
+		float plane[4];
 
 		// clipping plane in world space
 		plane[0] = backEnd.viewParms.portalPlane.normal[0];
