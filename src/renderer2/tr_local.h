@@ -1398,6 +1398,7 @@ typedef struct
 	float depthForOpaque;
 	unsigned colorInt;      ///< in packed byte format
 	float density;
+	float tcScale;                      ///< texture coordinate vector scales
 } fogParms_t;
 
 /**
