@@ -1031,6 +1031,7 @@ typedef struct weapontable_s
 
 	qboolean isAutoReload;          ///< bg
 
+	qboolean isPistol;              ///<
 	qboolean isAkimbo;              ///< bg
 	qboolean isPanzer;              ///< bg
 	qboolean isRiflenade;           ///< bg
@@ -1045,6 +1046,8 @@ typedef struct weapontable_s
 	qboolean isLightWeapon;         ///< g
 	qboolean isHeavyWeapon;         ///< bg/g
 	qboolean isSilencedPistol;      ///< bg
+	qboolean isMeleeWeapon;         ///<
+	qboolean isGrenade;             ///<
 
 	qboolean isUnderWaterFire;      ///< bg
 	qboolean noMuzzleFlash;         ///< cg
@@ -1075,7 +1078,7 @@ typedef struct weapontable_s
 
 	const char *className;    ///<
 	meansOfDeath_t mod;       ///< means of death
-    meansOfDeath_t splashMod; ///< means of death
+	meansOfDeath_t splashMod; ///< means of death
 
 } weaponTable_t;
 

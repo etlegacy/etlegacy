@@ -1424,20 +1424,13 @@ void CG_Class_f(void)
 	{
 		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc), 400, cg_fontScaleCP.value, -1);
 	}
+	else if (GetWeaponTableData(weapon2)->isAkimbo)
+	{
+		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc), 400, cg_fontScaleCP.value, -1);
+	}
 	else
 	{
-		switch (weapon2)
-		{
-		case WP_AKIMBO_COLT:
-		case WP_AKIMBO_LUGER:
-		case WP_AKIMBO_SILENCEDCOLT:
-		case WP_AKIMBO_SILENCEDLUGER:
-			CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc), 400, cg_fontScaleCP.value, -1);
-			break;
-		default:
-			CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and a %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc), 400, cg_fontScaleCP.value, -1);
-			break;
-		}
+		CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and a %s."), teamstring, BG_ClassnameForNumber(playerclass), GetWeaponTableData(weapon1)->desc, GetWeaponTableData(weapon2)->desc), 400, cg_fontScaleCP.value, -1);
 	}
 	// Send the switch command to the server
 	trap_SendClientCommand(va("team %s %i %i %i\n", classtype, playerclass, weapon1, weapon2));

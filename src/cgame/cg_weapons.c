@@ -1891,6 +1891,7 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
 	    CG_Error( "Couldn't find weapon %i", weaponNum );
 	}*/
 
+	// TODO: table weapon weapFile ?
 	switch (weaponNum)
 	{
 	case WP_KNIFE:
@@ -2400,7 +2401,7 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	}
 
 	// adjust 'lean' into weapon
-    // TODO: weapon table ?
+	// TODO: weapon table ?
 	if (cg.predictedPlayerState.leanf != 0.f)
 	{
 		vec3_t right, up;
@@ -2549,26 +2550,20 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		return;
 	}
 
-	switch (weaponNum)
-	{
 	// don't draw weapon stuff when looking through a scope
-	case WP_FG42SCOPE:
-	case WP_GARAND_SCOPE:
-	case WP_K43_SCOPE:
+	if (GetWeaponTableData(weaponNum)->isScoped)
+	{
 		if (isPlayer && !cg.renderingThirdPerson)
 		{
 			return;
 		}
-		break;
-	case WP_GRENADE_PINEAPPLE:
-	case WP_GRENADE_LAUNCHER:
+	}
+	else if (GetWeaponTableData(weaponNum)->isGrenade)
+	{
 		if (ps && !ps->ammoclip[weaponNum])
 		{
 			return;
 		}
-		break;
-	default:
-		break;
 	}
 
 	// no weapon when on mg_42
@@ -2642,13 +2637,12 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		}
 
 		gun.hModel = weapon->weaponModel[W_FP_MODEL].model;
-		if ((team == TEAM_AXIS) &&
-		    weapon->weaponModel[W_FP_MODEL].skin[TEAM_AXIS])
+
+		if ((team == TEAM_AXIS) && weapon->weaponModel[W_FP_MODEL].skin[TEAM_AXIS])
 		{
 			gun.customSkin = weapon->weaponModel[W_FP_MODEL].skin[TEAM_AXIS];
 		}
-		else if ((team == TEAM_ALLIES) &&
-		         weapon->weaponModel[W_FP_MODEL].skin[TEAM_ALLIES])
+		else if ((team == TEAM_ALLIES) && weapon->weaponModel[W_FP_MODEL].skin[TEAM_ALLIES])
 		{
 			gun.customSkin = weapon->weaponModel[W_FP_MODEL].skin[TEAM_ALLIES];
 		}
@@ -2667,6 +2661,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		}
 
 		gun.hModel = weapon->weaponModel[W_TP_MODEL].model;
+
 		if (team == TEAM_AXIS && weapon->weaponModel[W_TP_MODEL].skin[TEAM_AXIS])
 		{
 			gun.customSkin = weapon->weaponModel[W_FP_MODEL].skin[TEAM_AXIS];
@@ -3003,12 +2998,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// add the scope model to the rifle if you've got it
 	if (isPlayer && !cg.renderingThirdPerson)  // for now just do it on the first person weapons
 	{
-		switch (weaponNum)
+		if (GetWeaponTableData(weaponNum)->isRifle || GetWeaponTableData(weaponNum)->isRiflenade)
 		{
-		case WP_CARBINE:
-		case WP_KAR98:
-		case WP_GPG40:
-		case WP_M7:
 			if ((cg.snap->ps.ammo[BG_FindAmmoForWeapon(WP_GPG40)] || cg.snap->ps.ammo[BG_FindAmmoForWeapon(WP_M7)] || cg.snap->ps.ammoclip[BG_FindAmmoForWeapon(WP_GPG40)] || cg.snap->ps.ammoclip[BG_FindAmmoForWeapon(WP_M7)]))
 			{
 				int anim = cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT;
@@ -3023,12 +3014,13 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 					}
 				}
 			}
-			break;
-		case WP_GARAND:
+		}
+		else if (weaponNum == WP_GARAND || weaponNum == WP_K43)
+		{
 			barrel.hModel = weapon->modModels[0];
 			if (barrel.hModel)
 			{
-				CG_PositionEntityOnTag(&barrel, &gun, "tag_scope2", 0, NULL);
+				CG_PositionEntityOnTag(&barrel, &gun, (weaponNum == WP_GARAND) ? "tag_scope2" : "tag_scope", 0, NULL);
 				CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
 			}
 
@@ -3037,32 +3029,13 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
 			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
 			//}
-			break;
-		case WP_K43:
-			barrel.hModel = weapon->modModels[0];
-			if (barrel.hModel)
-			{
-				CG_PositionEntityOnTag(&barrel, &gun, "tag_scope", 0, NULL);
-				CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-			}
-
-			barrel.hModel = weapon->modModels[1];
-			//if(barrel.hModel) {
-			CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
-			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-			//}
-			break;
-		default:
-			break;
 		}
 	}
 	// 3rd person attachements
 	else
 	{
-		switch (weaponNum)
+		if (GetWeaponTableData(weaponNum)->isRiflenade)
 		{
-		case WP_M7:
-		case WP_GPG40:
 			// the holder
 			barrel.hModel = weapon->modModels[1];
 			CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
@@ -3076,32 +3049,23 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				CG_PositionEntityOnTag(&barrel, &barrel, "tag_prj", 0, NULL);
 				CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
 			}
-			break;
-		case WP_GARAND:
-		case WP_GARAND_SCOPE:
-		case WP_K43:
-		case WP_K43_SCOPE:
-			// the holder
-			barrel.hModel = weapon->modModels[2];
-			CG_PositionEntityOnTag(&barrel, &gun, "tag_scope", 0, NULL);
-			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-			break;
-		case WP_MOBILE_MG42:
-		case WP_MOBILE_BROWNING:
+		}
+		else if (GetWeaponTableData(weaponNum)->isScoped || GetWeaponTableData(GetWeaponTableData(weaponNum)->weapAlts)->isScoped)
+		{
+			if (weaponNum != WP_FG42 && weaponNum != WP_FG42SCOPE)
+			{
+				// the holder
+				barrel.hModel = weapon->modModels[2];
+				CG_PositionEntityOnTag(&barrel, &gun, "tag_scope", 0, NULL);
+				CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+			}
+		}
+		else if (GetWeaponTableData(weaponNum)->isMG || GetWeaponTableData(weaponNum)->isMGSet)
+		{
 			barrel.hModel = weapon->modModels[0];
-			barrel.frame  = 1;
+			barrel.frame  = GetWeaponTableData(weaponNum)->isMG ? 1 : 0;
 			CG_PositionEntityOnTag(&barrel, &gun, "tag_bipod", 0, NULL);
 			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-			break;
-		case WP_MOBILE_MG42_SET:
-		case WP_MOBILE_BROWNING_SET:
-			barrel.hModel = weapon->modModels[0];
-			barrel.frame  = 0;
-			CG_PositionEntityOnTag(&barrel, &gun, "tag_bipod", 0, NULL);
-			CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
-			break;
-		default:
-			break;
 		}
 	}
 
@@ -3366,6 +3330,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 				}
 				else
 				{
+					// TODO: ?
 				}
 			}
 		}
@@ -3558,6 +3523,7 @@ WEAPON SELECTION
 static qboolean CG_WeaponHasAmmo(weapon_t i)
 {
 	// certain weapons don't have ammo
+	// TODO: weapon table ?
 	switch (i)
 	{
 	case WP_KNIFE:
@@ -3842,6 +3808,7 @@ int getEquivWeapon(int weapnum)
 {
 	int num = weapnum;
 
+	// TODO: table weapon ?
 	switch (weapnum)
 	{
 	// going from german to american
@@ -3932,6 +3899,7 @@ void CG_PlaySwitchSound(int lastweap, int newweap)
 
 	if (getAltWeapon(lastweap) == newweap)       // alt switch
 	{
+		// TODO: weapon table ?
 		switch (newweap)
 		{
 		case WP_SILENCER:
@@ -3985,66 +3953,24 @@ void CG_FinishWeaponChange(int lastweap, int newweap)
 
 	cg.mortarImpactTime = -2;
 
-	switch (newweap)
+	if (lastweap != GetWeaponTableData(newweap)->weapAlts)
 	{
-	case WP_LUGER:
-		if ((cg.pmext.silencedSideArm & 1) && lastweap != WP_SILENCER)
+		if (GetWeaponTableData(newweap)->isPistol && !GetWeaponTableData(newweap)->isAkimbo)
 		{
-			newweap         = WP_SILENCER;
-			cg.weaponSelect = newweap;
+			if (cg.pmext.silencedSideArm & 1)
+			{
+				newweap         = GetWeaponTableData(newweap)->weapAlts;
+				cg.weaponSelect = newweap;
+			}
 		}
-		break;
-	case WP_SILENCER:
-		if (!(cg.pmext.silencedSideArm & 1) && lastweap != WP_LUGER)
+		else if (GetWeaponTableData(newweap)->isRifle && GetWeaponTableData(newweap)->isRiflenade)
 		{
-			newweap         = WP_LUGER;
-			cg.weaponSelect = newweap;
+			if (cg.pmext.silencedSideArm & 2)
+			{
+				newweap         = GetWeaponTableData(newweap)->weapAlts;
+				cg.weaponSelect = newweap;
+			}
 		}
-		break;
-	case WP_COLT:
-		if ((cg.pmext.silencedSideArm & 1) && lastweap != WP_SILENCED_COLT)
-		{
-			newweap         = WP_SILENCED_COLT;
-			cg.weaponSelect = newweap;
-		}
-		break;
-	case WP_SILENCED_COLT:
-		if (!(cg.pmext.silencedSideArm & 1) && lastweap != WP_COLT)
-		{
-			newweap         = WP_COLT;
-			cg.weaponSelect = newweap;
-		}
-		break;
-	case WP_CARBINE:
-		if ((cg.pmext.silencedSideArm & 2) && lastweap != WP_M7)
-		{
-			newweap         = WP_M7;
-			cg.weaponSelect = newweap;
-		}
-		break;
-	case WP_M7:
-		if (!(cg.pmext.silencedSideArm & 2) && lastweap != WP_CARBINE)
-		{
-			newweap         = WP_CARBINE;
-			cg.weaponSelect = newweap;
-		}
-		break;
-	case WP_KAR98:
-		if ((cg.pmext.silencedSideArm & 2) && lastweap != WP_GPG40)
-		{
-			newweap         = WP_GPG40;
-			cg.weaponSelect = newweap;
-		}
-		break;
-	case WP_GPG40:
-		if (!(cg.pmext.silencedSideArm & 2) && lastweap != WP_KAR98)
-		{
-			newweap         = WP_KAR98;
-			cg.weaponSelect = newweap;
-		}
-		break;
-	default:
-		break;
 	}
 
 	if (lastweap == WP_BINOCULARS && (cg.snap->ps.eFlags & EF_ZOOMING))
@@ -4080,15 +4006,9 @@ void CG_FinishWeaponChange(int lastweap, int newweap)
 	if (lastweap == cg.lastFiredWeapon)
 	{
 		// don't set switchback for some weaps...
-		switch (lastweap)
+		if (!GetWeaponTableData(lastweap)->isScoped)
 		{
-		case WP_FG42SCOPE:
-		case WP_GARAND_SCOPE:
-		case WP_K43_SCOPE:
-			break;
-		default:
 			cg.switchbackWeapon = lastweap;
-			break;
 		}
 	}
 	else
@@ -4153,6 +4073,7 @@ void CG_AltWeapon_f(void)
 			cmd = "vsay_team";
 		}
 
+		// TODO: weapon table ?
 		switch (cg.weaponSelect)
 		{
 		case WP_DYNAMITE:
@@ -4208,7 +4129,7 @@ void CG_AltWeapon_f(void)
 	}
 
 	// Need ground for this
-	if (cg.weaponSelect == WP_MORTAR || cg.weaponSelect == WP_MORTAR2)
+	if (GetWeaponTableData(cg.weaponSelect)->isMortar)
 	{
 		int    contents;
 		vec3_t point;
@@ -4218,12 +4139,7 @@ void CG_AltWeapon_f(void)
 			return;
 		}
 
-		if (cg.weaponSelect == WP_MORTAR && !cg.predictedPlayerState.ammoclip[WP_MORTAR])
-		{
-			return;
-		}
-
-		if (cg.weaponSelect == WP_MORTAR2 && !cg.predictedPlayerState.ammoclip[WP_MORTAR2])
+		if (!cg.predictedPlayerState.ammoclip[cg.weaponSelect])
 		{
 			return;
 		}
@@ -4301,38 +4217,14 @@ void CG_AltWeapon_f(void)
 	// don't allow another weapon switch when we're still swapping the gpg40, to prevent animation breaking
 	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
 	{
-		switch (original)
+		if (GetWeaponTableData(original)->isRiflenade || GetWeaponTableData(original)->isSilencedPistol || GetWeaponTableData(original)->isAkimbo || GetWeaponTableData(original)->isSetWeapon)
 		{
-		case WP_GPG40:
-		case WP_M7:
-		case WP_SILENCER:
-		case WP_SILENCED_COLT:
-		case WP_AKIMBO_SILENCEDCOLT:
-		case WP_AKIMBO_SILENCEDLUGER:
-		case WP_MORTAR_SET:
-		case WP_MORTAR2_SET:
-		case WP_MOBILE_MG42_SET:
-		case WP_MOBILE_BROWNING_SET:
 			return;
-		default:
-			break;
 		}
 
-		switch (num)
+		if (GetWeaponTableData(num)->isRiflenade || GetWeaponTableData(num)->isSilencedPistol || GetWeaponTableData(num)->isAkimbo || GetWeaponTableData(num)->isSetWeapon)
 		{
-		case WP_GPG40:
-		case WP_M7:
-		case WP_SILENCER:
-		case WP_SILENCED_COLT:
-		case WP_AKIMBO_SILENCEDCOLT:
-		case WP_AKIMBO_SILENCEDLUGER:
-		case WP_MORTAR_SET:
-		case WP_MORTAR2_SET:
-		case WP_MOBILE_MG42_SET:
-		case WP_MOBILE_BROWNING_SET:
 			return;
-		default:
-			break;
 		}
 	}
 
@@ -4374,35 +4266,16 @@ void CG_NextWeap(qboolean switchBanks)
 		return;
 	}
 
-	switch (curweap)
+	if (GetWeaponTableData(curweap)->isPistol || GetWeaponTableData(curweap)->isRifle)
 	{
-	case WP_LUGER:
-		num = WP_SILENCER;
-		break;
-	case WP_COLT:
-		num = WP_SILENCED_COLT;
-		break;
-	case WP_KAR98:
-		num = WP_GPG40;
-		break;
-	case WP_CARBINE:
-		num = WP_M7;
-		break;
-	default:
-		break;
+		num = GetWeaponTableData(curweap)->weapAlts;
 	}
 
 	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
 	{
-		switch (curweap)
+		if (GetWeaponTableData(curweap)->isSilencedPistol || GetWeaponTableData(curweap)->isRifle)
 		{
-		case WP_KAR98:
-		case WP_CARBINE:
-		case WP_SILENCER:
-		case WP_SILENCED_COLT:
 			return;
-		default:
-			break;
 		}
 	}
 
@@ -4436,28 +4309,11 @@ void CG_NextWeap(qboolean switchBanks)
 			{
 				break;
 			}
-			else
+			else if (GetWeaponTableData(num)->isRifle)
 			{
-				qboolean found = qfalse;
-
-				switch (num)
+				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
 				{
-				case WP_CARBINE:
-					if ((found = CG_WeaponSelectable(WP_M7)))
-					{
-						num = WP_M7;
-					}
-					break;
-				case WP_KAR98:
-					if ((found = CG_WeaponSelectable(WP_GPG40)))
-					{
-						num = WP_GPG40;
-					}
-					break;
-				}
-
-				if (found)
-				{
+					num = GetWeaponTableData(num)->weapAlts;
 					break;
 				}
 			}
@@ -4503,28 +4359,11 @@ void CG_NextWeap(qboolean switchBanks)
 			{
 				break;
 			}
-			else
+			else if (GetWeaponTableData(num)->isRifle)
 			{
-				qboolean found = qfalse;
-
-				switch (num)
+				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
 				{
-				case WP_CARBINE:
-					if ((found = CG_WeaponSelectable(WP_M7)))
-					{
-						num = WP_M7;
-					}
-					break;
-				case WP_KAR98:
-					if ((found = CG_WeaponSelectable(WP_GPG40)))
-					{
-						num = WP_GPG40;
-					}
-					break;
-				}
-
-				if (found)
-				{
+					num = GetWeaponTableData(num)->weapAlts;
 					break;
 				}
 			}
@@ -4543,28 +4382,11 @@ void CG_NextWeap(qboolean switchBanks)
 				{
 					break;
 				}
-				else
+				else if (GetWeaponTableData(num)->isRifle)
 				{
-					qboolean found = qfalse;
-
-					switch (num)
+					if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
 					{
-					case WP_CARBINE:
-						if ((found = CG_WeaponSelectable(WP_M7)))
-						{
-							num = WP_M7;
-						}
-						break;
-					case WP_KAR98:
-						if ((found = CG_WeaponSelectable(WP_GPG40)))
-						{
-							num = WP_GPG40;
-						}
-						break;
-					}
-
-					if (found)
-					{
+						num = GetWeaponTableData(num)->weapAlts;
 						break;
 					}
 				}
@@ -4601,35 +4423,16 @@ void CG_PrevWeap(qboolean switchBanks)
 		return;
 	}
 
-	switch (curweap)
+	if (GetWeaponTableData(curweap)->isSilencedPistol || GetWeaponTableData(curweap)->isRiflenade)
 	{
-	case WP_SILENCER:
-		num = WP_LUGER;
-		break;
-	case WP_SILENCED_COLT:
-		num = WP_COLT;
-		break;
-	case WP_GPG40:
-		num = WP_KAR98;
-		break;
-	case WP_M7:
-		num = WP_CARBINE;
-		break;
-	default:
-		break;
+		num = GetWeaponTableData(curweap)->weapAlts;
 	}
 
 	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
 	{
-		switch (curweap)
+		if (GetWeaponTableData(curweap)->isPistol || GetWeaponTableData(curweap)->isRiflenade)
 		{
-		case WP_GPG40:
-		case WP_M7:
-		case WP_LUGER:
-		case WP_COLT:
 			return;
-		default:
-			break;
 		}
 	}
 
@@ -4668,27 +4471,11 @@ void CG_PrevWeap(qboolean switchBanks)
 			{
 				break;
 			}
-			else
+			else if (GetWeaponTableData(num)->isRifle)
 			{
-				qboolean found = qfalse;
-				switch (num)
+				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
 				{
-				case WP_CARBINE:
-					if ((found = CG_WeaponSelectable(WP_M7)))
-					{
-						num = WP_M7;
-					}
-					break;
-				case WP_KAR98:
-					if ((found = CG_WeaponSelectable(WP_GPG40)))
-					{
-						num = WP_GPG40;
-					}
-					break;
-				}
-
-				if (found)
-				{
+					num = GetWeaponTableData(num)->weapAlts;
 					break;
 				}
 			}
@@ -4728,28 +4515,11 @@ void CG_PrevWeap(qboolean switchBanks)
 			{
 				break;
 			}
-			else
+			else if (GetWeaponTableData(num)->isRifle)
 			{
-				qboolean found = qfalse;
-
-				switch (num)
+				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
 				{
-				case WP_CARBINE:
-					if ((found = CG_WeaponSelectable(WP_M7)))
-					{
-						num = WP_M7;
-					}
-					break;
-				case WP_KAR98:
-					if ((found = CG_WeaponSelectable(WP_GPG40)))
-					{
-						num = WP_GPG40;
-					}
-					break;
-				}
-
-				if (found)
-				{
+					num = GetWeaponTableData(num)->weapAlts;
 					break;
 				}
 			}
@@ -4764,27 +4534,11 @@ void CG_PrevWeap(qboolean switchBanks)
 				{
 					break;
 				}
-				else
+				else if (GetWeaponTableData(num)->isRifle)
 				{
-					qboolean found = qfalse;
-					switch (num)
+					if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
 					{
-					case WP_CARBINE:
-						if ((found = CG_WeaponSelectable(WP_M7)))
-						{
-							num = WP_M7;
-						}
-						break;
-					case WP_KAR98:
-						if ((found = CG_WeaponSelectable(WP_GPG40)))
-						{
-							num = WP_GPG40;
-						}
-						break;
-					}
-
-					if (found)
-					{
+						num = GetWeaponTableData(num)->weapAlts;
 						break;
 					}
 				}
@@ -5130,27 +4884,11 @@ void CG_WeaponBank_f(void)
 		{
 			break;
 		}
-		else
+		else if (GetWeaponTableData(num)->isRifle)
 		{
-			qboolean found = qfalse;
-			switch (num)
+			if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
 			{
-			case WP_CARBINE:
-				if ((found = CG_WeaponSelectable(WP_M7)))
-				{
-					num = WP_M7;
-				}
-				break;
-			case WP_KAR98:
-				if ((found = CG_WeaponSelectable(WP_GPG40)))
-				{
-					num = WP_GPG40;
-				}
-				break;
-			}
-
-			if (found)
-			{
+				num = GetWeaponTableData(num)->weapAlts;
 				break;
 			}
 		}
@@ -5164,38 +4902,14 @@ void CG_WeaponBank_f(void)
 	// don't allow another weapon switch when we're still swapping the gpg40, to prevent animation breaking
 	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
 	{
-		switch (curweap)
+		if (GetWeaponTableData(curweap)->isRiflenade || GetWeaponTableData(curweap)->isSilencedPistol || GetWeaponTableData(curweap)->isAkimbo || GetWeaponTableData(curweap)->isSetWeapon)
 		{
-		case WP_GPG40:
-		case WP_M7:
-		case WP_SILENCER:
-		case WP_SILENCED_COLT:
-		case WP_AKIMBO_SILENCEDCOLT:
-		case WP_AKIMBO_SILENCEDLUGER:
-		case WP_MORTAR_SET:
-		case WP_MORTAR2_SET:
-		case WP_MOBILE_MG42_SET:
-		case WP_MOBILE_BROWNING_SET:
 			return;
-		default:
-			break;
 		}
 
-		switch (num)
+		if (GetWeaponTableData(num)->isRiflenade || GetWeaponTableData(num)->isSilencedPistol || GetWeaponTableData(num)->isAkimbo || GetWeaponTableData(num)->isSetWeapon)
 		{
-		case WP_GPG40:
-		case WP_M7:
-		case WP_SILENCER:
-		case WP_SILENCED_COLT:
-		case WP_AKIMBO_SILENCEDCOLT:
-		case WP_AKIMBO_SILENCEDLUGER:
-		case WP_MORTAR_SET:
-		case WP_MORTAR2_SET:
-		case WP_MOBILE_MG42_SET:
-		case WP_MOBILE_BROWNING_SET:
 			return;
-		default:
-			break;
 		}
 	}
 
@@ -5259,6 +4973,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 	{
 		int equiv;
 
+		// TODO: weapon table ?
 		switch (cg.weaponSelect)
 		{
 		case WP_LANDMINE:
@@ -5506,6 +5221,7 @@ void CG_WeaponFireRecoil(int weapon)
 	float  yawRandom = 0;
 	vec3_t recoil;
 
+	// TODO: weapon table ?
 	switch (weapon)
 	{
 	case WP_LUGER:
@@ -5635,7 +5351,6 @@ void CG_FireWeapon(centity_t *cent)
 	if (ent->weapon >= WP_NUM_WEAPONS)
 	{
 		CG_Error("CG_FireWeapon: ent->weapon >= WP_NUM_WEAPONS\n");
-		return;
 	}
 	weap = &cg_weapons[ent->weapon];
 
@@ -5672,6 +5387,7 @@ void CG_FireWeapon(centity_t *cent)
 	}
 
 	// lightning gun only does this on initial press
+	// TODO: weapon table ?
 	switch (ent->weapon)
 	{
 	case WP_FLAMETHROWER:
@@ -6147,10 +5863,8 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 		return;
 	}
 
-	switch (weapon)
+	if (GetWeaponTableData(weapon)->isMeleeWeapon)
 	{
-	case WP_KNIFE:
-	case WP_KNIFE_KABAR:
 		i = rand() % 4;
 		if (!surfFlags)
 		{
@@ -6167,30 +5881,9 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 
 		// set mark duration
 		markDuration = cg_markTime.integer;
-		break;
-	case WP_LUGER:
-	case WP_SILENCER:
-	case WP_AKIMBO_LUGER:
-	case WP_AKIMBO_SILENCEDLUGER:
-	case WP_COLT:
-	case WP_SILENCED_COLT:
-	case WP_AKIMBO_COLT:
-	case WP_AKIMBO_SILENCEDCOLT:
-	case WP_MP40:
-	case WP_THOMPSON:
-	case WP_STEN:
-	case WP_GARAND:
-	case WP_FG42:
-	case WP_FG42SCOPE:
-	case WP_KAR98:
-	case WP_CARBINE:
-	case WP_MOBILE_MG42:
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING:
-	case WP_MOBILE_BROWNING_SET:
-	case WP_K43:
-	case WP_GARAND_SCOPE:
-	case WP_K43_SCOPE:
+	}
+	else if (GetWeaponTableData(weapon)->isLightWeapon || GetWeaponTableData(weapon)->isMG || GetWeaponTableData(weapon)->isMGSet || GetWeaponTableData(weapon)->isScoped)
+	{
 		volume = 64;
 
 		// clientNum is a dummy field used to define what sort of effect to spawn
@@ -6246,14 +5939,13 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 			mod      = cgs.media.waterSplashModel;
 			shader   = cgs.media.waterSplashShader;
 			duration = 250;
-			break;
 		}
 
 		// optimization, only spawn the bullet hole if we are close
 		// enough to see it, this way we can leave other marks around a lot
 		// longer, since most of the time we can't actually see the bullet holes
 		// - small modification.  only do this for non-rifles (so you can see your shots hitting when you're zooming with a rifle scope)
-		if (weapon == WP_FG42SCOPE || weapon == WP_GARAND_SCOPE || weapon == WP_K43_SCOPE || (Distance(cg.refdef_current->vieworg, origin) < 384))
+		if (missileEffect != 2 && (GetWeaponTableData(weapon)->isScoped || (Distance(cg.refdef_current->vieworg, origin) < 384)))
 		{
 			if (missileEffect)
 			{
@@ -6287,8 +5979,9 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 				markDuration = cg_markTime.integer;
 			}
 		}
-		break;
-	case WP_MAPMORTAR:
+	}
+	else if (weapon == WP_MAPMORTAR)
+	{
 		sfx           = cgs.media.sfx_rockexp;
 		sfx2          = cgs.media.sfx_rockexpDist;
 		sfx2range     = 1200;
@@ -6337,8 +6030,9 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 			VectorScale(dir, 64, sprVel);
 			CG_ParticleExplosion("explode1", sprOrg, sprVel, 1000, 20, 300, qtrue);
 		}
-		break;
-	case WP_DYNAMITE:
+	}
+	else if (weapon == WP_DYNAMITE)
+	{
 		shader        = cgs.media.rocketExplosionShader;
 		sfx           = cgs.media.sfx_dynamiteexp;
 		sfx2          = cgs.media.sfx_dynamiteexpDist;
@@ -6399,15 +6093,9 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 			}
 			CG_AddDebris(origin, dir, (int)(400 + random() * 200), rand() % 2000 + 1400, 12 + rand() % 12, &trace);
 		}
-		break;
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_GPG40:
-	case WP_M7:
-	case WP_SATCHEL:
-	case WP_LANDMINE:
-	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET:
+	}
+	else if (GetWeaponTableData(weapon)->isRiflenade || GetWeaponTableData(weapon)->isMortarSet || GetWeaponTableData(weapon)->isGrenade || weapon == WP_SATCHEL || weapon == WP_LANDMINE)
+	{
 		if (weapon == WP_SATCHEL)
 		{
 			sfx  = cgs.media.sfx_satchelexp;
@@ -6418,7 +6106,7 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 			sfx  = cgs.media.sfx_landmineexp;
 			sfx2 = cgs.media.sfx_landmineexpDist;
 		}
-		else if (weapon == WP_MORTAR_SET || weapon == WP_MORTAR2_SET)
+		else if (GetWeaponTableData(weapon)->isMortarSet)
 		{
 			sfx = sfx2 = 0;
 		}
@@ -6469,12 +6157,9 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 			CG_ParticleExplosion("explode1", sprOrg, sprVel, 700, 60, 240, qtrue);
 			CG_AddDebris(origin, dir, 280, 1400, 7 + rand() % 2, &trace);
 		}
-		break;
-	case WP_PANZERFAUST:
-	case WP_BAZOOKA:
-	case VERYBIGEXPLOSION:
-	case WP_ARTY:
-	case WP_SMOKE_MARKER:
+	}
+	else if (GetWeaponTableData(weapon)->isPanzer || weapon == VERYBIGEXPLOSION || weapon == WP_ARTY || weapon == WP_SMOKE_MARKER)
+	{
 		sfx  = cgs.media.sfx_rockexp;
 		sfx2 = cgs.media.sfx_rockexpDist;
 		if (weapon == VERYBIGEXPLOSION || weapon == WP_ARTY)
@@ -6541,9 +6226,9 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 			}
 			CG_AddDebris(origin, dir, (int)(400 + random() * 200), rand() % 2000 + 1000, 5 + rand() % 5, &trace);
 		}
-		break;
-	default:
-	case WP_FLAMETHROWER:
+	}
+	else    // WP_FLAMETHROWER, ...
+	{
 		return;
 	}
 
@@ -6650,20 +6335,14 @@ void CG_MissileHitPlayer(centity_t *cent, int weapon, vec3_t origin, vec3_t dir,
 
 	// some weapons will make an explosion with the blood, while
 	// others will just make the blood
-	switch (weapon)
+
+	if (GetWeaponTableData(weapon)->isGrenade || GetWeaponTableData(weapon)->isPanzer)
 	{
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_PANZERFAUST:
-	case WP_BAZOOKA:
 		CG_MissileHitWall(weapon, PS_FX_NONE, origin, dir, 0);   // like the old one
-		break;
-	case WP_KNIFE:
-	case WP_KNIFE_KABAR:
+	}
+	else if (GetWeaponTableData(weapon)->isMeleeWeapon)
+	{
 		CG_MissileHitWall(weapon, PS_FX_NONE, origin, dir, 1);    // this one makes the hitting fleshy sound. whee
-		break;
-	default:
-		break;
 	}
 }
 

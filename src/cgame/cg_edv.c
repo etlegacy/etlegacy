@@ -255,7 +255,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 		return;
 	}
 
-	if ((demo_weaponcam.integer & DWC_PANZER) && (cent->currentState.weapon == WP_PANZERFAUST || cent->currentState.weapon == WP_BAZOOKA))
+	if ((demo_weaponcam.integer & DWC_PANZER) && GetWeaponTableData(cent->currentState.weapon)->isPanzer)
 	{
 		vec3_t delta;
 
@@ -271,7 +271,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 			trap_Cvar_Set("timescale", demo_autotimescale.string);
 		}
 	}
-	else if ((demo_weaponcam.integer & DWC_MORTAR) && (cent->currentState.weapon == WP_MORTAR_SET || cent->currentState.weapon == WP_MORTAR2_SET))
+	else if ((demo_weaponcam.integer & DWC_MORTAR) && GetWeaponTableData(cent->currentState.weapon)->isMortarSet)
 	{
 		cgs.demoCamera.renderingWeaponCam = qtrue;
 
@@ -284,7 +284,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 		}
 
 	}
-	else if ((demo_weaponcam.integer & DWC_GRENADE) && (cent->currentState.weapon == WP_GRENADE_LAUNCHER || cent->currentState.weapon == WP_GRENADE_PINEAPPLE || cent->currentState.weapon == WP_M7 || cent->currentState.weapon == WP_GPG40))
+	else if ((demo_weaponcam.integer & DWC_GRENADE) && (GetWeaponTableData(cent->currentState.weapon)->isGrenade || GetWeaponTableData(cent->currentState.weapon)->isRiflenade))
 	{
 		cgs.demoCamera.renderingWeaponCam = qtrue;
 		// point camera in direction of travel (saved from cg_ents)
@@ -319,7 +319,7 @@ void CG_EDV_WeaponCam(centity_t *cent, refEntity_t *ent)
 	{
 		char distance[MAX_CVAR_VALUE_STRING];
 		char *disValue;
-		int  dis[3] = {-99999, -99999, -99999};
+		int  dis[3] = { -99999, -99999, -99999 };
 		int  count;
 
 		VectorCopy(ent->origin, cg.refdef.vieworg);
@@ -382,7 +382,7 @@ void CG_EDV_RunInput(void)
 	vec_t         frametime;
 	char          speedValues[MAX_CVAR_VALUE_STRING];
 	char          *speedValue;
-	float         speed[3] = {-99999, -99999, -99999};
+	float         speed[3] = { -99999, -99999, -99999 };
 
 	static vec3_t mins = { -6, -6, -6 };
 	static vec3_t maxs = { 6, 6, 6 };

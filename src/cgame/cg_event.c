@@ -82,6 +82,7 @@ static void CG_Obituary(entityState_t *ent)
 	strcat(targetName, S_COLOR_WHITE);
 
 	// check for single client messages
+	// TODO: mod table ?
 	if (!ca)
 	{
 		switch (mod)
@@ -539,6 +540,7 @@ static void CG_Obituary(entityState_t *ent)
 			{
 				int scaleShader = 1;
 
+				// TODO: mod table ?
 				switch (mod) // deal with icon specials
 				{
 				// FIXME:
@@ -2578,6 +2580,8 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	case EV_NOAMMO:
 	case EV_WEAPONSWITCHED:
 		DEBUGNAME("EV_NOAMMO");
+
+		// TODO: weapon table nosoundswitch ?
 		switch (es->weapon)
 		{
 		case WP_GRENADE_LAUNCHER:
@@ -2605,6 +2609,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			}
 			else
 			{
+				// TODO: weapon table autoswitch ?
 				switch (es->weapon)
 				{
 				case WP_MORTAR_SET:
@@ -2646,19 +2651,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		{
 			// client will get this message if reloading while using an alternate weapon
 			// client should voluntarily switch back to primary at that point
-			switch (es->weapon)
+			if (GetWeaponTableData(es->weapon)->isScoped)
 			{
-			case WP_FG42SCOPE:
-				CG_FinishWeaponChange(es->weapon, WP_FG42);
-				break;
-			case WP_GARAND_SCOPE:
-				CG_FinishWeaponChange(es->weapon, WP_GARAND);
-				break;
-			case WP_K43_SCOPE:
-				CG_FinishWeaponChange(es->weapon, WP_K43);
-				break;
-			default:
-				break;
+				CG_FinishWeaponChange(es->weapon, GetWeaponTableData(es->weapon)->weapAlts);
 			}
 		}
 		break;
