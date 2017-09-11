@@ -99,7 +99,7 @@ void ClientStoreSurfaceFlags(int clientNum, int surfaceFlags);
 
 #endif
 
-static void PM_BeginWeaponChange(weapon_t oldweapon, weapon_t newweapon, qboolean reload);
+static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolean reload);
 
 /**
  * @brief PM_AddEvent
@@ -402,7 +402,7 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
  * @param[in] ignoreent
  * @param[in] tracemask
  */
-void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
 {
 	vec3_t ofs, org, point;
 	vec3_t flatforward;
@@ -483,7 +483,7 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
  * @param[in] tracemask
  */
 void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles,
-                  void(tracefunc) (trace_t * results,
+                  void(tracefunc) (trace_t *results,
                                    const vec3_t start,
                                    const vec3_t mins,
                                    const vec3_t maxs,
@@ -2412,6 +2412,7 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 		return;
 	}
 
+	// TODO: weapon table ?
 	switch (weapon)
 	{
 	// if ((weapon <= WP_NONE || weapon > WP_DYNAMITE) && !(weapon >= WP_KAR98 && weapon < WP_NUM_WEAPONS))
@@ -2441,6 +2442,7 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 	}
 
 	// easier check now that the animation system handles the specifics
+	// TODO: weapon table ?
 	switch (weapon)
 	{
 	case WP_DYNAMITE:
@@ -2495,22 +2497,19 @@ static void PM_ReloadClip(weapon_t weapon);
  * @param[in] newweapon
  * @param[in] reload
  */
-static void PM_BeginWeaponChange(weapon_t oldweapon, weapon_t newweapon, qboolean reload)        // modified to play 1st person alt-mode transition animations.
+static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolean reload)        // modified to play 1st person alt-mode transition animations.
 {
-	int      switchtime;
-	qboolean altSwitchAnim = qfalse;
-
 	if (pm->ps->pm_flags & PMF_RESPAWNED)
 	{
 		return;     // don't allow weapon switch until all buttons are up
 	}
 
-	if (newweapon <= WP_NONE || newweapon >= WP_NUM_WEAPONS)
+	if (IS_VALID_WEAPON(newWeapon))
 	{
 		return;
 	}
 
-	if (!(COM_BitCheck(pm->ps->weapons, newweapon)))
+	if (!(COM_BitCheck(pm->ps->weapons, newWeapon)))
 	{
 		return;
 	}
@@ -2533,27 +2532,23 @@ static void PM_BeginWeaponChange(weapon_t oldweapon, weapon_t newweapon, qboolea
 		return;
 	}
 
-	pm->ps->nextWeapon = newweapon;
+	pm->ps->nextWeapon = newWeapon;
 
-	switch (newweapon)
+	if (GetWeaponTableData(newWeapon)->isRifle)
 	{
-	case WP_CARBINE:
-	case WP_KAR98:
-		if (newweapon != GetWeaponTableData(oldweapon)->weapAlts)
+		if (newWeapon != GetWeaponTableData(oldWeapon)->weapAlts)
 		{
 			PM_AddEvent(EV_CHANGE_WEAPON);
 		}
-		break;
-	case WP_DYNAMITE:
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_SMOKE_BOMB:
+	}
+	else if (GetWeaponTableData(newWeapon)->isGrenade || newWeapon == WP_DYNAMITE || newWeapon == WP_SMOKE_BOMB)
+	{
 		// initialize the timer on the potato you're switching to
 		pm->ps->grenadeTimeLeft = 0;
 		PM_AddEvent(EV_CHANGE_WEAPON);
-		break;
-	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET:
+	}
+	else if (GetWeaponTableData(newWeapon)->isMortarSet)
+	{
 		if (pm->ps->eFlags & EF_PRONE)
 		{
 			return;
@@ -2564,80 +2559,42 @@ static void PM_BeginWeaponChange(weapon_t oldweapon, weapon_t newweapon, qboolea
 			return;
 		}
 		PM_AddEvent(EV_CHANGE_WEAPON);
-		break;
-	default:
-		// only play the weapon switch sound for the player
-		PM_AddEvent(reload ? EV_CHANGE_WEAPON_2 : EV_CHANGE_WEAPON);
-		break;
-	}
-
-	// it's an alt mode, play different anim
-	if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
-	{
-		PM_StartWeaponAnim(PM_AltSwitchFromForWeapon(oldweapon));
 	}
 	else
 	{
-		PM_StartWeaponAnim(PM_DropAnimForWeapon(oldweapon));
+		// only play the weapon switch sound for the player
+		PM_AddEvent(reload ? EV_CHANGE_WEAPON_2 : EV_CHANGE_WEAPON);
 	}
 
-	// TODO: table weapon ?
-	switchtime = 250;   // dropping/raising usually takes 1/4 sec.
-
-	// sometimes different switch times for alt weapons
-	if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
+	// it's an alt mode, play different anim
+	if (newWeapon == GetWeaponTableData(oldWeapon)->weapAlts)
 	{
-		switch (oldweapon)
+		PM_StartWeaponAnim(PM_AltSwitchFromForWeapon(oldWeapon));
+
+		if (GetWeaponTableData(oldWeapon)->isRifle)
 		{
-		case WP_CARBINE:
-		case WP_KAR98:
-			switchtime = 0;
-			if (!pm->ps->ammoclip[newweapon] && pm->ps->ammo[newweapon])
+			if (!pm->ps->ammoclip[newWeapon] && pm->ps->ammo[newWeapon])
 			{
-				PM_ReloadClip(newweapon);
+				PM_ReloadClip(newWeapon);
 			}
-			break;
-		case WP_M7:
-		case WP_GPG40:
-		case WP_LUGER:
-		case WP_COLT:
-		case WP_MOBILE_MG42_SET:
-		case WP_MOBILE_BROWNING_SET:
-		case WP_MORTAR_SET:
-		case WP_MORTAR2_SET:
-			switchtime = 0;
-			break;
-		case WP_SILENCER:
-		case WP_SILENCED_COLT:
-			switchtime    = 1000;
-			altSwitchAnim = qtrue;
-			break;
-		case WP_FG42:
-		case WP_FG42SCOPE:
-			switchtime = 50;        // fast
-			break;
-		case WP_MOBILE_MG42:
-		case WP_MOBILE_BROWNING:
-		case WP_MORTAR:
-		case WP_MORTAR2:
+		}
+		else if (GetWeaponTableData(oldWeapon)->isMG || GetWeaponTableData(oldWeapon)->isMortar)
 		{
 			vec3_t axis[3];
-
-			switchtime = 0;
 
 			VectorCopy(pml.forward, axis[0]);
 			VectorCopy(pml.right, axis[2]);
 			CrossProduct(axis[0], axis[2], axis[1]);
 			AxisToAngles(axis, pm->pmext->mountedWeaponAngles);
 		}
-		break;
-		default:
-			break;
-		}
+	}
+	else
+	{
+		PM_StartWeaponAnim(PM_DropAnimForWeapon(oldWeapon));
 	}
 
 	// play an animation
-	if (altSwitchAnim)
+	if (GetWeaponTableData(oldWeapon)->isSilencedPistol)
 	{
 		if (pm->ps->eFlags & EF_PRONE)
 		{
@@ -2662,7 +2619,7 @@ static void PM_BeginWeaponChange(weapon_t oldweapon, weapon_t newweapon, qboolea
 		pm->ps->weaponstate = WEAPON_DROPPING;
 	}
 
-	pm->ps->weaponTime += switchtime;
+	pm->ps->weaponTime += GetWeaponTableData(oldWeapon)->switchTimeBegin;    // dropping/raising usually takes 1/4 sec.
 }
 
 /**
@@ -2671,7 +2628,6 @@ static void PM_BeginWeaponChange(weapon_t oldweapon, weapon_t newweapon, qboolea
 static void PM_FinishWeaponChange(void)
 {
 	weapon_t oldweapon, newweapon = (weapon_t)pm->ps->nextWeapon;
-	int      switchtime;
 	qboolean altSwitchAnim = qfalse;
 	qboolean doSwitchAnim  = qtrue;
 
@@ -2700,42 +2656,28 @@ static void PM_FinishWeaponChange(void)
 		pm->ps->weaponstate = WEAPON_RAISING;
 	}
 
-	switch (newweapon)
-	{
 	// don't really care about anim since these weapons don't show in view.
 	// However, need to set the animspreadscale so they are initally at worst accuracy
-	case WP_K43_SCOPE:
-	case WP_GARAND_SCOPE:
-	case WP_FG42SCOPE:
-		pm->ps->aimSpreadScale      = AIMSPREAD_MAXSPREAD;          // initially at lowest accuracy
+	if (GetWeaponTableData(newweapon)->isScoped)
+	{
+		pm->ps->aimSpreadScale      = AIMSPREAD_MAXSPREAD;       // initially at lowest accuracy
 		pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;       // initially at lowest accuracy
-		break;
-	case WP_SILENCER:
-		pm->pmext->silencedSideArm |= 1;
-		break;
-	case WP_LUGER:
+	}
+	else if (GetWeaponTableData(newweapon)->isPistol)
+	{
 		pm->pmext->silencedSideArm &= ~1;
-		break;
-	case WP_SILENCED_COLT:
+	}
+	else if (GetWeaponTableData(newweapon)->isSilencedPistol)
+	{
 		pm->pmext->silencedSideArm |= 1;
-		break;
-	case WP_COLT:
-		pm->pmext->silencedSideArm &= ~1;
-		break;
-	case WP_CARBINE:
+	}
+	else if (GetWeaponTableData(newweapon)->isRifle)
+	{
 		pm->pmext->silencedSideArm &= ~2;
-		break;
-	case WP_M7:
+	}
+	else if (GetWeaponTableData(newweapon)->isRiflenade)
+	{
 		pm->pmext->silencedSideArm |= 2;
-		break;
-	case WP_KAR98:
-		pm->pmext->silencedSideArm &= ~2;
-		break;
-	case WP_GPG40:
-		pm->pmext->silencedSideArm |= 2;
-		break;
-	default:
-		break;
 	}
 
 	// doesn't happen too often (player switched weapons away then back very quickly)
@@ -2744,67 +2686,21 @@ static void PM_FinishWeaponChange(void)
 		return;
 	}
 
-	// dropping/raising usually takes 1/4 sec.
-	// TODO: table weapon ?
-	switchtime = 250;
-
 	// sometimes different switch times for alt weapons
 	if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 	{
 		altSwitchAnim = qtrue;
-
-		switch (newweapon)
-		{
-		case WP_LUGER:
-		case WP_COLT:
-			switchtime = 0;
-			break;
-		case WP_SILENCER:
-		case WP_SILENCED_COLT:
-			switchtime = 1190;
-			break;
-		case WP_CARBINE:
-		case WP_KAR98:
-			if (pm->ps->ammoclip[BG_FindAmmoForWeapon(oldweapon)])
-			{
-				switchtime = 1347;
-			}
-			else
-			{
-				switchtime   = 0;
-				doSwitchAnim = qfalse;
-			}
-			break;
-		case WP_M7:
-		case WP_GPG40:
-			switchtime = 2350;
-			break;
-		case WP_FG42:
-		case WP_FG42SCOPE:
-			switchtime = 50;    // fast
-			break;
-		case WP_MOBILE_MG42:
-		case WP_MOBILE_BROWNING:
-			switchtime = 1722;
-			break;
-		case WP_MOBILE_MG42_SET:
-		case WP_MOBILE_BROWNING_SET:
-			switchtime = 1250;
-			break;
-		case WP_MORTAR:
-		case WP_MORTAR2:
-			switchtime = 1000;
-			break;
-		case WP_MORTAR_SET:
-		case WP_MORTAR2_SET:
-			switchtime = 1667;
-			break;
-		default:
-			break;
-		}
 	}
 
-	pm->ps->weaponTime += switchtime;
+	if (GetWeaponTableData(newweapon)->isRifle && !pm->ps->ammoclip[BG_FindAmmoForWeapon(oldweapon)])
+	{
+		doSwitchAnim = qfalse;
+	}
+	else
+	{
+		// dropping/raising usually takes 1/4 sec.
+		pm->ps->weaponTime += GetWeaponTableData(newweapon)->switchTimeFinish;
+	}
 
 	BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_WEAPON, newweapon, qtrue);
 
@@ -3210,57 +3106,16 @@ void PM_AdjustAimSpreadScale(void)
 
 	cmdTime = (pm->cmd.serverTime - pm->oldcmd.serverTime) / 1000.0f;
 
-	// TODO: weapon table ?
-	wpnScale = 0.0f;
-	switch (pm->ps->weapon)
-	{
-	case WP_LUGER:
-	case WP_SILENCER:
-	case WP_AKIMBO_LUGER:
-	case WP_AKIMBO_SILENCEDLUGER:
-	case WP_COLT:
-	case WP_SILENCED_COLT:
-	case WP_AKIMBO_COLT:
-	case WP_AKIMBO_SILENCEDCOLT:
-		wpnScale = 0.4f;        // doesn't fire as fast, but easier to handle than luger
-		break;
-	case WP_MP40:
-	case WP_THOMPSON:
-	case WP_FG42:
-	case WP_STEN:
-		wpnScale = 0.6f;        // 2 handed, but not as long as mauser, so harder to keep aim
-		break;
-	case WP_K43_SCOPE:
-	case WP_GARAND_SCOPE:
-	case WP_FG42SCOPE:
-		if (pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3)
-		{
-			wpnScale = 5.f;
-		}
-		else
-		{
-			wpnScale = 10.f;
-		}
-		break;
-	case WP_MOBILE_MG42:
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING:
-	case WP_MOBILE_BROWNING_SET:
-		wpnScale = 0.9f;
-		break;
-	case WP_KAR98:
-	case WP_CARBINE:
-	case WP_GARAND:
-	case WP_K43:
-		wpnScale = 0.5f;
-		break;
-	default:
-		break;
-	}
+	wpnScale = GetWeaponTableData(pm->ps->weapon)->spreadScale;
 
 	if (wpnScale != 0.f)
 	{
 		float viewchange = 0;
+
+		if (GetWeaponTableData(pm->ps->weapon)->isScoped && pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3)
+		{
+			wpnScale *= 0.5;
+		}
 
 		// crouched players recover faster (mostly useful for snipers)
 		if ((pm->ps->eFlags & EF_CROUCHING) || (pm->ps->eFlags & EF_PRONE))
@@ -4066,6 +3921,7 @@ static void PM_Weapon(void)
 		}
 		break;
 	// machineguns should continue the anim, rather than start each fire
+    // TODO: weapon table ? 
 	case WP_MP40:
 	case WP_THOMPSON:
 	case WP_STEN:
@@ -4993,7 +4849,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
  *
  * @note Tnused trace parameter
  */
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)         //   modified
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)          //   modified
 {
 	short  temp;
 	int    i;

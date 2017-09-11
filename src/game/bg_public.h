@@ -1024,6 +1024,7 @@ typedef struct weapontable_s
 	qboolean isReload;              ///< g
 
 	float spread;                   ///< g
+    float spreadScale;              ///< bg
 	int splashDamage;               ///< g
 	int splashRadius;               ///< g
 
@@ -1075,6 +1076,9 @@ typedef struct weapontable_s
 
 	int maxHeat;              ///< max active firing time before weapon 'overheats' (at which point the weapon will fail)
 	int coolRate;             ///< how fast the weapon cools down. (per second)
+    
+    int switchTimeBegin;      ///<
+    int switchTimeFinish;     ///<
 
 	const char *className;    ///<
 	meansOfDeath_t mod;       ///< means of death
