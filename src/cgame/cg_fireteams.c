@@ -56,9 +56,9 @@ panel_button_t fireteamTopBorder =
 	NULL,
 	{ 10,                     129,      204,     136 },
 	{ 1,                      255 / 2,  255 / 2, 255 / 2, 255 / 2, 1, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
+	NULL,                     // font
+	NULL,                     // keyDown
+	NULL,                     // keyUp
 	BG_PanelButtonsRender_Img,
 	NULL,
 	0
@@ -70,9 +70,9 @@ panel_button_t fireteamTopBorderBack =
 	NULL,
 	{ 11,                     130,202, 134 },
 	{ 1,                      0,  0,   0, (int)(255 * 0.75), 0, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
+	NULL,                     // font
+	NULL,                     // keyDown
+	NULL,                     // keyUp
 	BG_PanelButtonsRender_Img,
 	NULL,
 	0
@@ -84,9 +84,9 @@ panel_button_t fireteamTopBorderInner =
 	NULL,
 	{ 12,                     131, 200, 12 },
 	{ 1,                      41,  51,  43, 204, 0, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
+	NULL,                     // font
+	NULL,                     // keyDown
+	NULL,                     // keyUp
 	BG_PanelButtonsRender_Img,
 	NULL,
 	0
@@ -98,9 +98,9 @@ panel_button_t fireteamTopBorderInnerText =
 	NULL,
 	{ 15,                           141,  200, 12 },
 	{ 0,                            0,    0,   0, 0, 0, 0, 0},
-	&fireteamTitleFont,             /* font     */
-	NULL,                           /* keyDown  */
-	NULL,                           /* keyUp    */
+	&fireteamTitleFont,             // font
+	NULL,                           // keyDown
+	NULL,                           // keyUp
 	CG_Fireteams_MenuTitleText_Draw,
 	NULL,
 	0
@@ -112,9 +112,9 @@ panel_button_t fireteamMenuItemText =
 	NULL,
 	{ 16,                      153,  128, 12 },
 	{ 0,                       0,    0,   0, 0, 0, 0, 0},
-	&fireteamFont,             /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&fireteamFont,             // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	CG_Fireteams_MenuText_Draw,
 	NULL,
 	0

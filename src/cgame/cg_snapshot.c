@@ -491,14 +491,6 @@ static snapshot_t *CG_ReadNextSnapshot(void)
 	return NULL;
 }
 
-/*
-============
-CG_ProcessSnapshots
-
-
-
-============
-*/
 /**
  * @brief CG_ProcessSnapshots
  * @details

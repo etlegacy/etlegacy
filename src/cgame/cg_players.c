@@ -2171,13 +2171,6 @@ static void CG_PlayerSprites(centity_t *cent)
 	}
 }
 
-/*
-===============
-CG_PlayerShadow
-
-
-===============
-*/
 #define SHADOW_DISTANCE     64
 #define ZOFS    6.0f
 #define SHADOW_MIN_DIST 250.0f

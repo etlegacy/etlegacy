@@ -776,6 +776,7 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 		return weap;
 	}
 
+	// FIXME: table weapon ?
 	switch (weap)          // some weapons don't draw ammo count text
 	{
 	case WP_AMMO:

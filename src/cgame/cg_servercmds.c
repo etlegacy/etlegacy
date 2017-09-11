@@ -549,12 +549,6 @@ static void CG_ParseScreenFade(void)
 	}
 }
 
-/*
-==============
-CG_ParseFog
-
-==============
-*/
 /**
  * @brief CG_ParseFog
  * @note :

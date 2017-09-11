@@ -790,9 +790,9 @@ panel_button_t chatPanelWindow =
 	"CHAT",
 	{ 10,                        SCREEN_HEIGHT - 120,620, 110 },
 	{ 0,                         0,                  0,   0, 0, 0, 0, 0},
-	NULL,                        /* font     */
-	NULL,                        /* keyDown  */
-	NULL,                        /* keyUp    */
+	NULL,                        // font
+	NULL,                        // keyDown
+	NULL,                        // keyUp
 	CG_PanelButtonsRender_Window,
 	NULL,
 	0
@@ -804,9 +804,9 @@ panel_button_t chatPanelText =
 	NULL,
 	{ 18,                      SCREEN_HEIGHT - 34,  SCREEN_WIDTH - 36, TEAMCHAT_HEIGHT },
 	{ 0,                       0,                   0,                 0, 0, 0, 0, 0   },
-	NULL,                      /* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	NULL,                      // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	CG_Debriefing_ChatBox_Draw,
 	NULL,
 	0
@@ -818,9 +818,9 @@ panel_button_t chatPanelNextButton =
 	"MORE",
 	{ SCREEN_WIDTH - 10 - 60 - 4, SCREEN_HEIGHT - 30,                        60, 16 },
 	{ 0,                          0,                                         0,  0, 0, 0, 0, 0},
-	NULL,                         /* font     */
-	CG_Debriefing_NextButton_KeyDown,/* keyDown  */
-	NULL,                         /* keyUp    */
+	NULL,                         // font
+	CG_Debriefing_NextButton_KeyDown,// keyDown
+	NULL,                         // keyUp
 	CG_Debriefing_NextButton_Draw,
 	NULL,
 	0
@@ -832,9 +832,9 @@ panel_button_t chatPanelQCButton =
 	"QUICK CHAT",
 	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4 - 80 - 4,SCREEN_HEIGHT - 30,                                    80, 16 },
 	{ 0,                         0,                                                     0,  0, 0, 0, 0, 0},
-	NULL,                        /* font     */
-	CG_Debriefing_QCButton_KeyDown,/* keyDown  */
-	NULL,                        /* keyUp    */
+	NULL,                        // font
+	CG_Debriefing_QCButton_KeyDown,// keyDown
+	NULL,                        // keyUp
 	CG_PanelButtonsRender_Button,
 	NULL,
 	0
@@ -846,9 +846,9 @@ panel_button_t chatPanelReadyButton =
 	"READY",
 	{ SCREEN_WIDTH - 10 - 60 - 4 - 60 - 4 - 80 - 4 - 60 - 4,SCREEN_HEIGHT - 30,                                                  60, 16 },
 	{ 0,                           0,                                                                   0,  0, 0, 0, 0, 0},
-	NULL,                          /* font     */
-	CG_Debriefing_ReadyButton_KeyDown,/* keyDown  */
-	NULL,                          /* keyUp    */
+	NULL,                          // font
+	CG_Debriefing_ReadyButton_KeyDown,// keyDown
+	NULL,                          // keyUp
 	CG_Debriefing_ReadyButton_Draw,
 	NULL,
 	0
@@ -860,9 +860,9 @@ panel_button_t chatTypeButton =
 	NULL,
 	{ 10 + 4,                     SCREEN_HEIGHT - 30,      80, 16 },
 	{ 0,                          0,                       0,  0, 0, 0, 0, 0},
-	NULL,                         /* font     */
-	CG_Debriefing_ChatButton_KeyDown,/* keyDown  */
-	NULL,                         /* keyUp    */
+	NULL,                         // font
+	CG_Debriefing_ChatButton_KeyDown,// keyDown
+	NULL,                         // keyUp
 	CG_Debriefing_ChatButton_Draw,
 	NULL,
 	0
@@ -874,9 +874,9 @@ panel_button_t charPanelEditSurround =
 	NULL,
 	{ 10 + 4 + 80 + 4,           SCREEN_HEIGHT - 30,               252, 16 },
 	{ 0,                         0,                                0,   0, 0, 0, 0, 0},
-	NULL,                        /* font     */
-	NULL,                        /* keyDown  */
-	NULL,                        /* keyUp    */
+	NULL,                        // font
+	NULL,                        // keyDown
+	NULL,                        // keyUp
 	CG_PanelButtonsRender_Button,
 	NULL,
 	0
@@ -888,9 +888,9 @@ panel_button_t charPanelEdit =
 	"chattext",
 	{ 10 + 4 + 80 + 4 + 8,       SCREEN_HEIGHT - 34,             236, 16 },
 	{ 0,                         0,                              0,   0, 0, 0, 0, 0},
-	&chatPanelButtonFont,        /* font     */
-	NULL,                        /*BG_PanelButton_EditClick,*/         /* keyDown  */
-	NULL,                        /* keyUp    */
+	&chatPanelButtonFont,        // font
+	NULL,                        /*BG_PanelButton_EditClick,*/ // keyDown
+	NULL,                        // keyUp
 	CG_Debriefing_ChatEdit_Draw,
 	CG_Debriefing_ChatEditFinish,
 	0
@@ -1172,9 +1172,9 @@ panel_button_t mapVoteWindow =
 	"MAP VOTE",
 	{ 10,                        30, 620, 326 },
 	{ 0,                         0,  0,   0, 0, 0, 0, 0},
-	NULL,                        /* font        */
-	NULL,                        /* keyDown */
-	NULL,                        /* keyUp   */
+	NULL,                        // font
+	NULL,                        // keyDown
+	NULL,                        // keyUp
 	CG_PanelButtonsRender_Window,
 	NULL,
 	0
@@ -1194,9 +1194,9 @@ panel_button_t mapVoteHeadingName =
 	"Name",
 	{ DB_MAPNAME_X + 10,       DB_MAPVOTE_Y,               0, 0 },
 	{ 0,                       0,                          0, 0, 0, 0, 0, 0},
-	&mapVoteFont,              /* font      */
-	NULL,                      /* keyDown   */
-	NULL,                      /* keyUp */
+	&mapVoteFont,              // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -1208,9 +1208,9 @@ panel_button_t mapVoteHeadingVotes =
 	"Votes",
 	{ DB_MAPVOTE_X + 10,       DB_MAPVOTE_Y,              0, 0 },
 	{ 0,                       0,                         0, 0, 0, 0, 0, 0},
-	&mapVoteFont,              /* font      */
-	NULL,                      /* keyDown   */
-	NULL,                      /* keyUp */
+	&mapVoteFont,              // font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -1222,9 +1222,9 @@ panel_button_t mapVoteNamesList =
 	NULL,
 	{ DB_MAPNAME_X + 10,DB_MAPVOTE_Y,                 250, 17 * 12 },
 	{ 0,                0,                            0,   0, 0, 0, 0, 0},
-	&mapVoteFont,       /* font     */
-	CG_MapVoteList_KeyDown,/* keyDown   */
-	NULL,               /* keyUp    */
+	&mapVoteFont,       // font
+	CG_MapVoteList_KeyDown,// keyDown
+	NULL,               // keyUp
 	CG_MapVoteList_Draw,
 	NULL,
 	0
@@ -1236,9 +1236,9 @@ panel_button_t mapVoteNamesListScroll =
 	NULL,
 	{ DB_MAPVOTE_X + 10 + 48,    DB_MAPVOTE_Y + 2,                      16, 17 * 12 },
 	{ 3,                         0,                                     0,  0, 0, 0, 0, 0},
-	NULL,                        /* font        */
-	CG_Debriefing_Scrollbar_KeyDown,/* keyDown  */
-	CG_Debriefing_Scrollbar_KeyUp,/* keyUp  */
+	NULL,                        // font
+	CG_Debriefing_Scrollbar_KeyDown,// keyDown
+	CG_Debriefing_Scrollbar_KeyUp,// keyUp
 	CG_Debriefing_Scrollbar_Draw,
 	NULL,
 	0
@@ -1250,9 +1250,9 @@ panel_button_t mapVoteButton =
 	"^3VOTE",
 	{ DB_MAPNAME_X + 10,       296 - 10 + 2,             64, 16 },
 	{ 0,                       0,                        0,  0, 0, 0, 0, 0},
-	NULL,                      /* font      */
-	CG_MapVote_VoteButton_KeyDown,/* keyDown    */
-	NULL,                      /* keyUp */
+	NULL,                      // font
+	CG_MapVote_VoteButton_KeyDown,// keyDown
+	NULL,                      // keyUp
 	CG_MapVote_VoteButton_Draw,
 	NULL,
 	0
@@ -1264,9 +1264,9 @@ panel_button_t mapVoteButton1 =
 	"^3VOTE #1",
 	{ DB_MAPNAME_X + 10,            296 - 10 + 2,          64, 16 },
 	{ 0,                            0,                     0,  0, 0, 0, 0, 3},
-	NULL,                           /* font     */
-	CG_MapVote_MultiVoteButton_KeyDown,/* keyDown   */
-	NULL,                           /* keyUp    */
+	NULL,                           // font
+	CG_MapVote_MultiVoteButton_KeyDown,// keyDown
+	NULL,                           // keyUp
 	CG_MapVote_MultiVoteButton_Draw,
 	NULL,
 	0
@@ -1278,9 +1278,9 @@ panel_button_t mapVoteButton2 =
 	"^3VOTE #2",
 	{ DB_MAPNAME_X + 10,            296 + 10 + 2,          64, 16 },
 	{ 0,                            0,                     0,  0, 0, 0, 0, 2},
-	NULL,                           /* font     */
-	CG_MapVote_MultiVoteButton_KeyDown,/* keyDown   */
-	NULL,                           /* keyUp    */
+	NULL,                           // font
+	CG_MapVote_MultiVoteButton_KeyDown,// keyDown
+	NULL,                           // keyUp
 	CG_MapVote_MultiVoteButton_Draw,
 	NULL,
 	0
@@ -1292,9 +1292,9 @@ panel_button_t mapVoteButton3 =
 	"^3VOTE #3",
 	{ DB_MAPNAME_X + 10,            296 + 30 + 2,          64, 16 },
 	{ 0,                            0,                     0,  0, 0, 0, 0, 1},
-	NULL,                           /* font     */
-	CG_MapVote_MultiVoteButton_KeyDown,/* keyDown   */
-	NULL,                           /* keyUp    */
+	NULL,                           // font
+	CG_MapVote_MultiVoteButton_KeyDown,// keyDown
+	NULL,                           // keyUp
 	CG_MapVote_MultiVoteButton_Draw,
 	NULL,
 	0
@@ -1306,9 +1306,9 @@ panel_button_t mapVoteBorder1 =
 	NULL,
 	{ DB_MAPVOTE_X2 - 10,     DB_MAPVOTE_Y - 12,                  620 - DB_MAPVOTE_X2 + 10, DB_MAPVOTE_Y2 - DB_MAPVOTE_Y - 4 },
 	{ 1,                      255,                                255,                      255, 40, 1, 0, 0                 },
-	NULL,                     /* font       */
-	NULL,                     /* keyDown    */
-	NULL,                     /* keyUp  */
+	NULL,                     // font
+	NULL,                     // keyDown
+	NULL,                     // keyUp
 	BG_PanelButtonsRender_Img,
 	NULL,
 	0
@@ -1320,9 +1320,9 @@ panel_button_t mapVoteBorder2 =
 	NULL,
 	{ DB_MAPVOTE_X2 - 10,     DB_MAPVOTE_Y2 - 10 + 2,                  620 - DB_MAPVOTE_X2 + 10, 370 - DB_MAPVOTE_Y2 - 2 - 10 },
 	{ 1,                      255,                                     255,                      255, 40, 1, 0, 0             },
-	NULL,                     /* font       */
-	NULL,                     /* keyDown    */
-	NULL,                     /* keyUp  */
+	NULL,                     // font
+	NULL,                     // keyDown
+	NULL,                     // keyUp
 	BG_PanelButtonsRender_Img,
 	NULL,
 	0
@@ -1334,9 +1334,9 @@ panel_button_t mapVoteBorder3 =
 	NULL,
 	{ 20,                     DB_MAPVOTE_Y - 12,  DB_MAPVOTE_X2 - 40 + 2, 370 - DB_MAPVOTE_Y - 10 + 2 },
 	{ 1,                      255,                255,                    255, 40, 1, 0, 0            },
-	NULL,                     /* font       */
-	NULL,                     /* keyDown    */
-	NULL,                     /* keyUp  */
+	NULL,                     // font
+	NULL,                     // keyDown
+	NULL,                     // keyUp
 	BG_PanelButtonsRender_Img,
 	NULL,
 	0

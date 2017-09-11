@@ -3350,6 +3350,8 @@ void CG_LimboPanel_KeyHandling(int key, qboolean down)
  * @param[out] t0
  * @param[out] s1
  * @param[out] t1
+ *
+ * @todo TODO: weapon table ?
  */
 void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float *w, float *h, float *s0, float *t0, float *s1, float *t1)
 {

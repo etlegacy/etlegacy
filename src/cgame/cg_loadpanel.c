@@ -99,9 +99,9 @@ panel_button_t loadScreenMap =
 	NULL,
 	{ 0,                      0,  440, 480 }, // shouldn't this be square?? // no, the map is actually WIDER that tall, which makes it even worse...
 	{ 0,                      0,  0,   0, 0, 0, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
+	NULL,                     // font
+	NULL,                     // keyDown
+	NULL,                     // keyUp
 	BG_PanelButtonsRender_Img,
 	NULL,
 	0
@@ -113,9 +113,9 @@ panel_button_t loadScreenBack =
 	NULL,
 	{ 440,                    0,  200, 480 },
 	{ 0,                      0,  0,   0, 0, 0, 0, 0},
-	NULL,                     /* font     */
-	NULL,                     /* keyDown  */
-	NULL,                     /* keyUp    */
+	NULL,                     // font
+	NULL,                     // keyDown
+	NULL,                     // keyUp
 	BG_PanelButtonsRender_Img,
 	NULL,
 	0
@@ -127,9 +127,9 @@ panel_button_t loadScreenPins =
 	NULL,
 	{ 0,                            0,  SCREEN_WIDTH, SCREEN_HEIGHT },
 	{ 0,                            0,  0,            0, 0, 0, 0, 0 },
-	NULL,                           /* font     */
-	NULL,                           /* keyDown  */
-	NULL,                           /* keyUp    */
+	NULL,                           // font
+	NULL,                           // keyDown
+	NULL,                           // keyUp
 	CG_LoadPanel_RenderCampaignPins,
 	NULL,
 	0
@@ -141,9 +141,9 @@ panel_button_t missiondescriptionPanelHeaderText =
 	"***TOP SECRET***",
 	{ 440,                     72, 200, 32 },
 	{ 0,                       0,  0,   0, 0, 0, 0, 0},
-	&missiondescriptionHeaderTxt,/* font     */
-	NULL,                      /* keyDown  */
-	NULL,                      /* keyUp    */
+	&missiondescriptionHeaderTxt,// font
+	NULL,                      // keyDown
+	NULL,                      // keyUp
 	BG_PanelButtonsRender_Text,
 	NULL,
 	0
@@ -155,9 +155,9 @@ panel_button_t missiondescriptionPanelText =
 	NULL,
 	{ 460,                                    84,   160, 232 },
 	{ 0,                                      0,    0,   0, 0, 0, 0, 0},
-	&missiondescriptionTxt,                   /* font     */
-	NULL,                                     /* keyDown  */
-	NULL,                                     /* keyUp    */
+	&missiondescriptionTxt,                   // font
+	NULL,                                     // keyDown
+	NULL,                                     // keyUp
 	CG_LoadPanel_RenderMissionDescriptionText,
 	NULL,
 	0
@@ -169,9 +169,9 @@ panel_button_t campaignheaderPanelText =
 	NULL,
 	{ 456,                              24,   152, 232 },
 	{ 0,                                0,    0,   0, 0, 0, 0, 0},
-	&campaignpheaderTxt,                /* font     */
-	NULL,                               /* keyDown  */
-	NULL,                               /* keyUp    */
+	&campaignpheaderTxt,                // font
+	NULL,                               // keyDown
+	NULL,                               // keyUp
 	CG_LoadPanel_RenderCampaignTypeText,
 	NULL,
 	0
@@ -183,9 +183,9 @@ panel_button_t campaignPanelText =
 	NULL,
 	{ 464,                              40,   152, 232 },
 	{ 0,                                0,    0,   0, 0, 0, 0, 0},
-	&campaignpTxt,                      /* font     */
-	NULL,                               /* keyDown  */
-	NULL,                               /* keyUp    */
+	&campaignpTxt,                      // font
+	NULL,                               // keyDown
+	NULL,                               // keyUp
 	CG_LoadPanel_RenderCampaignNameText,
 	NULL,
 	0
@@ -197,9 +197,9 @@ panel_button_t loadScreenMeterBack =
 	NULL,
 	{ 440 + 26,                    480 - 30 + 1,200 - 56, 20 },
 	{ 0,                           0,  0,        0, 0, 0, 0, 0},
-	NULL,                          /* font     */
-	NULL,                          /* keyDown  */
-	NULL,                          /* keyUp    */
+	NULL,                          // font
+	NULL,                          // keyDown
+	NULL,                          // keyUp
 	BG_PanelButtonsRender_Img,
 	NULL,
 	0
@@ -211,9 +211,9 @@ panel_button_t loadScreenMeterBack2 =
 	NULL,
 	{ 440 + 26,                   480 - 30 + 1,200 - 56, 20 },
 	{ 1,                          255,  0,        0, 255, 0, 0, 0},
-	NULL,                         /* font     */
-	NULL,                         /* keyDown  */
-	NULL,                         /* keyUp    */
+	NULL,                         // font
+	NULL,                         // keyDown
+	NULL,                         // keyUp
 	CG_LoadPanel_RenderLoadingBar,
 	NULL,
 	0
@@ -225,9 +225,9 @@ panel_button_t loadScreenMeterBackText =
 	"LOADING",
 	{ 440 + 28,                 480 - 28 + 12 + 1,   200 - 56 - 2, 16 },
 	{ 0,                        0,                   0,            0, 0, 0, 0, 0},
-	&loadScreenMeterBackTxt,    /* font     */
-	NULL,                       /* keyDown  */
-	NULL,                       /* keyUp    */
+	&loadScreenMeterBackTxt,    // font
+	NULL,                       // keyDown
+	NULL,                       // keyUp
 	CG_LoadPanel_LoadingBarText,
 	NULL,
 	0

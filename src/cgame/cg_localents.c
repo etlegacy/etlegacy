@@ -584,11 +584,6 @@ void CG_FragmentBounceMark(localEntity_t *le, trace_t *trace)
 	le->leMarkType = LEMT_NONE;
 }
 
-/*
-================
-CG_FragmentBounceSound
-================
-*/
 /**
  * @brief CG_FragmentBounceSound
  * @param[in] le
