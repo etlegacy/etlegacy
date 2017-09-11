@@ -1683,7 +1683,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.dynamiteHintShader = trap_R_RegisterShader("gfx/2d/dynamiteHint");
 
 	cgs.media.tankHintShader          = trap_R_RegisterShaderNoMip("gfx/2d/tankHint");
-	cgs.media.satchelchargeHintShader = trap_R_RegisterShaderNoMip("gfx/2d/satchelchargeHint"),
+	cgs.media.satchelchargeHintShader = trap_R_RegisterShaderNoMip("gfx/2d/satchelchargeHint");
 	cgs.media.landmineHintShader      = trap_R_RegisterShaderNoMip("gfx/2d/landmineHint");
 	cgs.media.uniformHintShader       = trap_R_RegisterShaderNoMip("gfx/2d/uniformHint");
 
@@ -2161,8 +2161,8 @@ static void CG_RegisterGraphics(void)
 	cgs.media.alliedFlag     = trap_R_RegisterShaderNoMip("gfx/limbo/flag_allied");
 	cgs.media.disconnectIcon = trap_R_RegisterShaderNoMip("gfx/2d/net");
 
-    cgs.media.cm_spec_icon  = trap_R_RegisterShaderNoMip("ui/assets/mp_spec");
-    cgs.media.cm_arrow_spec = trap_R_RegisterShaderNoMip("ui/assets/mp_arrow_spec");
+	cgs.media.cm_spec_icon  = trap_R_RegisterShaderNoMip("ui/assets/mp_spec");
+	cgs.media.cm_arrow_spec = trap_R_RegisterShaderNoMip("ui/assets/mp_arrow_spec");
 
 	for (i = 0; i < 6; i++)
 	{
