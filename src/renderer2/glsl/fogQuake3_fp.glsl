@@ -1,7 +1,7 @@
 /* fogQuake3_fp.glsl */
 
 uniform sampler2D u_ColorMap;
-uniform vec4      u_PortalPlane;
+uniform float      u_PortalPlane;
 
 varying vec3 var_Position;
 varying vec2 var_Tex;

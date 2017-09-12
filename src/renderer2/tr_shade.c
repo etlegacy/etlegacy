@@ -2526,7 +2526,7 @@ static void Render_fog()
 		plane[2] = backEnd.viewParms.portalPlane.normal[2];
 		plane[3] = backEnd.viewParms.portalPlane.dist;
 
-		SetUniformVec4(UNIFORM_PORTALPLANE, plane);
+		SetUniformFloat(UNIFORM_PORTALPLANE, plane[4]);
 	}
 
 	// bind u_ColorMap
@@ -2548,7 +2548,7 @@ static void Render_fog()
 static void Render_volumetricFog()
 {
 	vec3_t viewOrigin;
-	vec3_t fogColor;
+	//vec3_t fogColor; not used anymore
 
 	Ren_LogComment("--- Render_volumetricFog---\n");
 
@@ -2609,21 +2609,22 @@ static void Render_volumetricFog()
 		GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_ONE_MINUS_SRC_ALPHA | GLS_DSTBLEND_SRC_ALPHA);
 		GL_Cull(CT_TWO_SIDED);
 
-		glVertexAttrib4fv(ATTR_INDEX_COLOR, colorWhite);
+		glVertexAttrib4fv(ATTR_INDEX_COLOR, tr.fogColor);
 
 		// set uniforms
 		VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin);   // in world space
 
 		{
-			fogDensity = tess.surfaceShader->fogParms.density;
-			VectorCopy(tess.surfaceShader->fogParms.color, fogColor);
+			//get in from shaders and bsp
+			fogDensity = tess.surfaceShader->fogParms.tcScale;
+			VectorCopy(tess.surfaceShader->fogParms.color, tr.fogColor);
 		}
 
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 		SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 		SetUniformVec3(UNIFORM_VIEWORIGIN, viewOrigin);
 		SetUniformFloat(UNIFORM_FOGDENSITY, fogDensity);
-		SetUniformVec3(UNIFORM_FOGCOLOR, fogColor);
+		SetUniformVec3(UNIFORM_FOGCOLOR, tr.fogColor);
 
 		// bind u_DepthMap
 		SelectTexture(TEX_DEPTH);
