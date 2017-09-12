@@ -2635,7 +2635,14 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 		pm->ps->weaponstate = WEAPON_DROPPING;
 	}
 
-	pm->ps->weaponTime += GetWeaponTableData(oldWeapon)->switchTimeBegin;    // dropping/raising usually takes 1/4 sec.
+	if (newWeapon == weaponTable[oldWeapon].weapAlts)
+	{
+		pm->ps->weaponTime += GetWeaponTableData(oldWeapon)->switchTimeBegin;
+	}
+	else
+	{
+		pm->ps->weaponTime += 250;    // dropping/raising usually takes 1/4 sec.
+	}
 }
 
 /**
@@ -2644,8 +2651,7 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 static void PM_FinishWeaponChange(void)
 {
 	weapon_t oldweapon, newweapon = (weapon_t)pm->ps->nextWeapon;
-	qboolean altSwitchAnim = qfalse;
-	qboolean doSwitchAnim  = qtrue;
+	qboolean doSwitchAnim = qtrue;
 
 	// Cannot switch to an invalid weapon
 	if (!IS_VALID_WEAPON(newweapon))
@@ -2702,20 +2708,20 @@ static void PM_FinishWeaponChange(void)
 		return;
 	}
 
-	// sometimes different switch times for alt weapons
 	if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 	{
-		altSwitchAnim = qtrue;
-	}
-
-	if (GetWeaponTableData(newweapon)->isRifle && !pm->ps->ammoclip[BG_FindAmmoForWeapon(oldweapon)])
-	{
-		doSwitchAnim = qfalse;
+		if (GetWeaponTableData(newweapon)->isRifle && !pm->ps->ammoclip[BG_FindAmmoForWeapon(oldweapon)])
+		{
+			doSwitchAnim = qfalse;
+		}
+		else
+		{
+			pm->ps->weaponTime += GetWeaponTableData(newweapon)->switchTimeFinish;
+		}
 	}
 	else
 	{
-		// dropping/raising usually takes 1/4 sec.
-		pm->ps->weaponTime += GetWeaponTableData(newweapon)->switchTimeFinish;
+		pm->ps->weaponTime += 250;              // dropping/raising usually takes 1/4 sec.
 	}
 
 	BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_WEAPON, newweapon, qtrue);
@@ -2723,7 +2729,7 @@ static void PM_FinishWeaponChange(void)
 	// play an animation
 	if (doSwitchAnim)
 	{
-		if (altSwitchAnim)
+		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 		{
 			if (pm->ps->eFlags & EF_PRONE)
 			{
