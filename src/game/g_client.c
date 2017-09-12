@@ -999,6 +999,7 @@ team_t PickTeam(int ignoreClientNum)
  */
 static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 {
+	// TODO: weapon table ?
 	switch (weaponNum)
 	{
 	//case WP_KNIFE:

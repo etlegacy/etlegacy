@@ -558,27 +558,23 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 
 	VectorNormalize(dir);
 
-	switch (ent->s.weapon)
+	if (GetWeaponTableData(ent->s.weapon)->isGrenade)
 	{
-	case WP_GRENADE_PINEAPPLE:
-	case WP_GRENADE_LAUNCHER:
 		VectorScale(dir, 700, dir);                   // had to add this as fire_grenade now expects a non-normalized direction vector
 		                                              // FIXME: why we do normalize the vector before this switch? See comment of fire_grenade
 		fire_grenade(ent, ent->s.origin, dir, WP_GRENADE_LAUNCHER);
-		break;
-	case WP_BAZOOKA:
-	case WP_PANZERFAUST:
+	}
+	else if (GetWeaponTableData(ent->s.weapon)->isPanzer)
+	{
 		fire_rocket(ent, ent->s.origin, dir, ent->s.weapon);
 		VectorScale(ent->s.pos.trDelta, 2, ent->s.pos.trDelta);
 		SnapVector(ent->s.pos.trDelta);             // save net bandwidth
-		break;
-	case WP_MAPMORTAR:
+	}
+	else if (ent->s.weapon == WP_MAPMORTAR)
+	{
 		AimAtTarget(ent);     // store in ent->s.origin2 the direction/force needed to pass through the target
 		VectorScale(dir, VectorLength(ent->s.origin2), dir);
 		fire_mortar(ent, ent->s.origin, dir);
-		break;
-	default:
-		break;
 	}
 
 	G_AddEvent(ent, EV_FIRE_WEAPON, 0);
@@ -638,7 +634,7 @@ void SP_shooter_mortar(gentity_t *ent)
 	InitShooter(ent, WP_MAPMORTAR);
 
 	// skip ent->spawnflags & 1 - don't do team based map mortars - see damage properties
-	
+
 	if (ent->spawnflags & 2)        // smoke at source (use/addjust flakPuff in Use_Shooter?)
 	{
 	}

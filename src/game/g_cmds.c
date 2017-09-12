@@ -1652,7 +1652,7 @@ int G_TeamCount(gentity_t *ent, int weap)
  */
 qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 {
-	int        playerCount, weaponCount, maxCount;
+	int        playerCount, weaponCount, maxCount = -1;
 	const char *weaponString;
 
 	// allow selecting weapons as spectator for bots (to avoid endless loops in pfnChangeTeam())
@@ -1676,40 +1676,30 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 	}
 
 	// single weapon restrictions
-	switch (weapon)
+	if (GetWeaponTableData(weapon)->isPanzer)
 	{
-	case WP_PANZERFAUST:
-	case WP_BAZOOKA:
 		maxCount     = team_maxPanzers.integer;
 		weaponString = team_maxPanzers.string;
-		break;
-	case WP_MOBILE_MG42:
-	case WP_MOBILE_BROWNING:
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING_SET:
+	}
+	else if (GetWeaponTableData(weapon)->isMG || GetWeaponTableData(weapon)->isMGSet)
+	{
 		maxCount     = team_maxMg42s.integer;
 		weaponString = team_maxMg42s.string;
-		break;
-	case WP_FLAMETHROWER:
-		maxCount     = team_maxFlamers.integer;
-		weaponString = team_maxFlamers.string;
-		break;
-	case WP_MORTAR:
-	case WP_MORTAR2:
-	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET:
+	}
+	else if (GetWeaponTableData(weapon)->isMortar || GetWeaponTableData(weapon)->isMortarSet)
+	{
 		maxCount     = team_maxMortars.integer;
 		weaponString = team_maxMortars.string;
-		break;
-	case WP_KAR98:
-	case WP_CARBINE:
-	case WP_GPG40:
-	case WP_M7:
+	}
+	else if (GetWeaponTableData(weapon)->isRifle || GetWeaponTableData(weapon)->isRiflenade)
+	{
 		maxCount     = team_maxRiflegrenades.integer;
 		weaponString = team_maxRiflegrenades.string;
-		break;
-	default:
-		return qfalse;
+	}
+	else if (weapon == WP_FLAMETHROWER)
+	{
+		maxCount     = team_maxFlamers.integer;
+		weaponString = team_maxFlamers.string;
 	}
 
 	if (maxCount == -1)

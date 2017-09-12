@@ -124,6 +124,8 @@ void PM_AddEventExt(int newEvent, int eventParm)
  * @brief PM_IdleAnimForWeapon
  * @param[in] weapon
  * @return
+ *
+ * @todo TODO: weapon table ?
  */
 int PM_IdleAnimForWeapon(int weapon)
 {
@@ -147,6 +149,8 @@ int PM_IdleAnimForWeapon(int weapon)
  * @brief PM_AltSwitchFromForWeapon
  * @param weapon - unused
  * @return
+ *
+ * @todo TODO: weapon table ?
  */
 int PM_AltSwitchFromForWeapon(int weapon)
 {
@@ -157,6 +161,8 @@ int PM_AltSwitchFromForWeapon(int weapon)
  * @brief PM_AltSwitchToForWeapon
  * @param[in] weapon
  * @return
+ *
+ * @todo TODO: weapon table ?
  */
 int PM_AltSwitchToForWeapon(int weapon)
 {
@@ -178,6 +184,8 @@ int PM_AltSwitchToForWeapon(int weapon)
  * @brief PM_AttackAnimForWeapon
  * @param[in] weapon
  * @return
+ *
+ * @todo TODO: weapon table ?
  */
 int PM_AttackAnimForWeapon(int weapon)
 {
@@ -199,6 +207,8 @@ int PM_AttackAnimForWeapon(int weapon)
  * @brief PM_LastAttackAnimForWeapon
  * @param[in] weapon
  * @return
+ *
+ * @todo TODO: weapon table ?
  */
 int PM_LastAttackAnimForWeapon(int weapon)
 {
@@ -221,6 +231,8 @@ int PM_LastAttackAnimForWeapon(int weapon)
  * @brief PM_ReloadAnimForWeapon
  * @param[in] weapon
  * @return
+ *
+ * @todo TODO: weapon table ?
  */
 int PM_ReloadAnimForWeapon(int weapon)
 {
@@ -249,6 +261,8 @@ int PM_ReloadAnimForWeapon(int weapon)
  * @brief PM_RaiseAnimForWeapon
  * @param[in] weapon
  * @return
+ *
+ * @todo TODO: weapon table ?
  */
 int PM_RaiseAnimForWeapon(int weapon)
 {
@@ -271,6 +285,8 @@ int PM_RaiseAnimForWeapon(int weapon)
  * @brief PM_DropAnimForWeapon
  * @param[in] weapon
  * @return
+ *
+ * @todo TODO: weapon table ?
  */
 int PM_DropAnimForWeapon(int weapon)
 {
@@ -402,7 +418,7 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
  * @param[in] ignoreent
  * @param[in] tracemask
  */
-void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
 {
 	vec3_t ofs, org, point;
 	vec3_t flatforward;
@@ -483,7 +499,7 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
  * @param[in] tracemask
  */
 void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles,
-                  void(tracefunc) (trace_t *results,
+                  void(tracefunc) (trace_t * results,
                                    const vec3_t start,
                                    const vec3_t mins,
                                    const vec3_t maxs,
@@ -2504,7 +2520,7 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 		return;     // don't allow weapon switch until all buttons are up
 	}
 
-	if (IS_VALID_WEAPON(newWeapon))
+	if (!IS_VALID_WEAPON(newWeapon))
 	{
 		return;
 	}
@@ -2632,7 +2648,7 @@ static void PM_FinishWeaponChange(void)
 	qboolean doSwitchAnim  = qtrue;
 
 	// Cannot switch to an invalid weapon
-	if (newweapon < WP_NONE || newweapon >= WP_NUM_WEAPONS)
+	if (!IS_VALID_WEAPON(newweapon))
 	{
 		newweapon = WP_NONE;
 	}
@@ -2919,15 +2935,9 @@ static void PM_SwitchIfEmpty(void)
 	// If this was the last one, remove the weapon and switch away before the player tries to fire next
 
 	// NOTE: giving grenade ammo to a player will re-give him the weapon (if you do it through add_ammo())
-	switch (pm->ps->weapon)
+	if (GetWeaponTableData(pm->ps->weapon)->isGrenade || pm->ps->weapon == WP_DYNAMITE)
 	{
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_DYNAMITE:
 		COM_BitClear(pm->ps->weapons, pm->ps->weapon);
-		break;
-	default:
-		break;
 	}
 
 	PM_AddEvent(EV_NOAMMO);
@@ -3855,7 +3865,7 @@ static void PM_Weapon(void)
 	// if not on fire button and there's not a delayed shot this frame...
 	// consider also leaning, with delayed attack reset
 	if ((!(pm->cmd.buttons & BUTTON_ATTACK) && !(pm->cmd.wbuttons & WBUTTON_ATTACK2) && !delayedFire) ||
-	    (pm->ps->leanf != 0.f && pm->ps->weapon != WP_GRENADE_LAUNCHER && pm->ps->weapon != WP_GRENADE_PINEAPPLE && pm->ps->weapon != WP_SMOKE_BOMB))
+	    (pm->ps->leanf != 0.f && !GetWeaponTableData(pm->ps->weapon)->isGrenade && pm->ps->weapon != WP_SMOKE_BOMB))
 	{
 		pm->ps->weaponTime  = 0;
 		pm->ps->weaponDelay = 0;
@@ -3921,7 +3931,7 @@ static void PM_Weapon(void)
 		}
 		break;
 	// machineguns should continue the anim, rather than start each fire
-    // TODO: weapon table ? 
+	// TODO: weapon table ?
 	case WP_MP40:
 	case WP_THOMPSON:
 	case WP_STEN:
@@ -4849,7 +4859,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
  *
  * @note Tnused trace parameter
  */
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)          //   modified
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)          //   modified
 {
 	short  temp;
 	int    i;
@@ -5621,7 +5631,7 @@ void PmoveSingle(pmove_t *pmove)
 		}
 
 		// don't allow binocs if in the middle of throwing grenade
-		if ((pm->ps->weapon == WP_GRENADE_LAUNCHER || pm->ps->weapon == WP_GRENADE_PINEAPPLE || pm->ps->weapon == WP_DYNAMITE) && pm->ps->grenadeTimeLeft > 0)
+		if ((GetWeaponTableData(pm->ps->weapon)->isGrenade || pm->ps->weapon == WP_DYNAMITE) && pm->ps->grenadeTimeLeft > 0)
 		{
 			pm->ps->eFlags &= ~EF_ZOOMING;
 		}

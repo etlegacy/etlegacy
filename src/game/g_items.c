@@ -70,7 +70,7 @@ int AddToClip(playerState_t *ps, weapon_t weapon, int ammomove, int outOfReserve
 	int      inclip, maxclip;
 	weapon_t ammoweap = BG_FindAmmoForWeapon(weapon);
 
-	if (weapon < WP_LUGER || weapon >= WP_NUM_WEAPONS)
+	if (!IS_VALID_WEAPON(weapon))
 	{
 		return qfalse;
 	}
@@ -133,25 +133,10 @@ int Add_Ammo(gentity_t *ent, weapon_t weapon, int count, qboolean fillClip)
 	int      maxammo       = BG_MaxAmmoForWeapon(ammoweap, ent->client->sess.skill);
 	int      originalCount = ent->client->ps.ammo[ammoweap];
 
-	if (ammoweap == WP_GRENADE_LAUNCHER)             // make sure if he picks up a grenade that he get's the "launcher" too
+	if (GetWeaponTableData(ammoweap)->isGrenade || ammoweap == WP_DYNAMITE || ammoweap == WP_SATCHEL_DET) // make sure if he picks it up that he get's the "launcher" too
 	{
-		COM_BitSet(ent->client->ps.weapons, WP_GRENADE_LAUNCHER);
-		fillClip = qtrue;   // grenades always filter into the "clip"
-	}
-	else if (ammoweap == WP_GRENADE_PINEAPPLE)
-	{
-		COM_BitSet(ent->client->ps.weapons, WP_GRENADE_PINEAPPLE);
-		fillClip = qtrue;   // grenades always filter into the "clip"
-	}
-	else if (ammoweap == WP_DYNAMITE)
-	{
-		COM_BitSet(ent->client->ps.weapons, WP_DYNAMITE);
-		fillClip = qtrue;
-	}
-	else if (ammoweap == WP_SATCHEL_DET)
-	{
-		COM_BitSet(ent->client->ps.weapons, WP_SATCHEL_DET);
-		fillClip = qtrue;
+		COM_BitSet(ent->client->ps.weapons, ammoweap);
+		fillClip = qtrue;   // always filter into the "clip"
 	}
 
 	if (fillClip)
@@ -159,7 +144,7 @@ int Add_Ammo(gentity_t *ent, weapon_t weapon, int count, qboolean fillClip)
 		Fill_Clip(&ent->client->ps, weapon);
 	}
 
-	if (ammoweap == WP_PANZERFAUST || ammoweap == WP_BAZOOKA || ammoweap == WP_FLAMETHROWER)
+	if (GetWeaponTableData(ammoweap)->isPanzer || ammoweap == WP_FLAMETHROWER)
 	{
 		ent->client->ps.ammoclip[ammoweap] += count;
 
@@ -490,6 +475,19 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
  */
 qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
 {
+	// prevent picking up while reloading
+	if (ent->client->ps.weaponstate == WEAPON_RELOADING)
+	{
+		return qfalse;
+	}
+
+	// prevent picking up when overheating
+	if (ent->client->ps.weaponTime > 0)
+	{
+		return qfalse;
+	}
+
+	// TODO: weapon table ?
 	if (ent->client->sess.sessionTeam == TEAM_AXIS)
 	{
 		switch (weapon)
@@ -541,18 +539,6 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
 		default:
 			break;
 		}
-	}
-
-	// prevent picking up while reloading
-	if (ent->client->ps.weaponstate == WEAPON_RELOADING)
-	{
-		return qfalse;
-	}
-
-	// prevent picking up when overheating
-	if (ent->client->ps.weaponTime > 0)
-	{
-		return qfalse;
 	}
 
 	return BG_WeaponIsPrimaryForClassAndTeam(ent->client->sess.playerType, ent->client->sess.sessionTeam, weapon);
@@ -668,7 +654,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				other->client->ps.ammoclip[BG_FindClipForWeapon(ent->item->giWeapon)] = 0;
 				other->client->ps.ammo[BG_FindAmmoForWeapon(ent->item->giWeapon)]     = 0;
 
-				if (ent->item->giWeapon == WP_MORTAR || ent->item->giWeapon == WP_MORTAR2)
+				if (GetWeaponTableData(ent->item->giWeapon)->isMortar)
 				{
 					other->client->ps.ammo[BG_FindClipForWeapon(ent->item->giWeapon)] = quantity;
 

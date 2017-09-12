@@ -3299,16 +3299,6 @@ MACHINEGUN
 ======================================================================
 */
 
-/*
-======================
-SnapVectorTowards
-
-
-======================
-*/
-
-
-
 /**
  * @brief Round a vector to integers for more efficient network
  * transmission, but make sure that it rounds towards a given point
@@ -3739,6 +3729,7 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 		upangle = .1f;
 	}
 
+	// TODO: weapon table ?
 	switch (grenType)
 	{
 	case WP_GRENADE_LAUNCHER:
@@ -4023,30 +4014,24 @@ void CalcMuzzlePoint(gentity_t *ent, int weapon, vec3_t forward, vec3_t right, v
 	//VectorMA( muzzlePoint, 14, forward, muzzlePoint );
 
 	// offset for more realistic firing from actual gun position
-	switch (weapon)    // changed this so I can predict weapons
+	// changed this so I can predict weapons
+	if (GetWeaponTableData(weapon)->isPanzer)
 	{
-	case WP_PANZERFAUST:
-	case WP_BAZOOKA:
 		VectorMA(muzzlePoint, 10, right, muzzlePoint);
-		break;
-	case WP_DYNAMITE:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_GRENADE_LAUNCHER:
-	case WP_SATCHEL:
-	case WP_SMOKE_BOMB:
-		VectorMA(muzzlePoint, 20, right, muzzlePoint);
-		break;
-	case WP_AKIMBO_COLT:
-	case WP_AKIMBO_SILENCEDCOLT:
-	case WP_AKIMBO_LUGER:
-	case WP_AKIMBO_SILENCEDLUGER:
+	}
+	else if (GetWeaponTableData(weapon)->isAkimbo)
+	{
 		VectorMA(muzzlePoint, -6, right, muzzlePoint);
 		VectorMA(muzzlePoint, -4, up, muzzlePoint);
-		break;
-	default:
+	}
+	else if (GetWeaponTableData(weapon)->isGrenade || weapon == WP_DYNAMITE || weapon == WP_SATCHEL || weapon == WP_SMOKE_BOMB)
+	{
+		VectorMA(muzzlePoint, 20, right, muzzlePoint);
+	}
+	else
+	{
 		VectorMA(muzzlePoint, 6, right, muzzlePoint);
 		VectorMA(muzzlePoint, -4, up, muzzlePoint);
-		break;
 	}
 
 	// actually, this is sort of moot right now since

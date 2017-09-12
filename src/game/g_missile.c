@@ -55,7 +55,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 	gentity_t *ground;
 
 	// boom after 750 msecs
-	if (ent->s.weapon == WP_M7 || ent->s.weapon == WP_GPG40)
+	if (GetWeaponTableData(ent->s.weapon)->isRiflenade)
 	{
 		ent->s.effect1Time = qtrue; // has bounced
 
@@ -136,7 +136,7 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 
 			G_SetOrigin(ent, trace->endpos);
 			ent->s.time = level.time; // final rotation value
-			if (ent->s.weapon == WP_M7 || ent->s.weapon == WP_GPG40)
+			if (GetWeaponTableData(ent->s.weapon)->isRiflenade)
 			{
 				// explode one 750msecs after launchtime
 				ent->nextthink = level.time + (750 - (level.time + 4000 - ent->nextthink));
@@ -491,7 +491,7 @@ void G_RunMissile(gentity_t *ent)
 	BG_EvaluateTrajectory(&ent->s.pos, level.time, origin, qfalse, ent->s.effect2Time);
 
 	if ((ent->clipmask & CONTENTS_BODY) && (ent->s.weapon == WP_DYNAMITE || ent->s.weapon == WP_ARTY || ent->s.weapon == WP_SMOKE_MARKER
-	                                        || ent->s.weapon == WP_GRENADE_LAUNCHER || ent->s.weapon == WP_GRENADE_PINEAPPLE
+	                                        || GetWeaponTableData(ent->s.weapon)->isGrenade
 	                                        || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL || ent->s.weapon == WP_SMOKE_BOMB
 	                                        ))
 	{
@@ -502,11 +502,9 @@ void G_RunMissile(gentity_t *ent)
 	}
 
 	if (level.tracemapLoaded &&
-	    (GetWeaponTableData(ent->s.weapon)->isMortarSet ||
-	     ent->s.weapon == WP_GPG40 ||
-	     ent->s.weapon == WP_M7 ||
-	     ent->s.weapon == WP_GRENADE_LAUNCHER ||
-	     ent->s.weapon == WP_GRENADE_PINEAPPLE))
+	    (GetWeaponTableData(ent->s.weapon)->isMortarSet
+	     || GetWeaponTableData(ent->s.weapon)->isRiflenade
+	     || GetWeaponTableData(ent->s.weapon)->isGrenade))
 	{
 		if (ent->count)
 		{
@@ -635,11 +633,9 @@ void G_RunMissile(gentity_t *ent)
 		int impactDamage;
 
 		if (level.tracemapLoaded &&
-		    (GetWeaponTableData(ent->s.weapon)->isMortarSet ||
-		     ent->s.weapon == WP_GPG40 ||
-		     ent->s.weapon == WP_M7 ||
-		     ent->s.weapon == WP_GRENADE_LAUNCHER ||
-		     ent->s.weapon == WP_GRENADE_PINEAPPLE)
+		    (GetWeaponTableData(ent->s.weapon)->isMortarSet
+		     || GetWeaponTableData(ent->s.weapon)->isRiflenade
+		     || GetWeaponTableData(ent->s.weapon)->isGrenade)
 		    && (tr.surfaceFlags & SURF_SKY))
 		{
 			// goes through sky
@@ -1772,6 +1768,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 	bolt->s.pos.trType        = TR_GRAVITY;
 	bolt->s.pos.trTime        = level.time - MISSILE_PRESTEP_TIME;              // move a bit on the very first frame
 
+	// TODO: weapon table isExplosive ?
 	switch (grenadeWPID)
 	{
 	case WP_GPG40:
