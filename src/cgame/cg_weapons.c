@@ -253,6 +253,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	}
 	else
 	{
+		// TODO: weapon table offset ?
 		switch (cent->currentState.weapon)
 		{
 		case WP_LUGER:
@@ -2780,8 +2781,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		CG_AddWeaponWithPowerups(&gun, cent->currentState.powerups, ps, cent);
 	}
 
-	if ((!ps || cg.renderingThirdPerson) &&
-	    (weaponNum == WP_AKIMBO_COLT || weaponNum == WP_AKIMBO_SILENCEDCOLT || weaponNum == WP_AKIMBO_LUGER || weaponNum == WP_AKIMBO_SILENCEDLUGER))
+	if ((!ps || cg.renderingThirdPerson) && GetWeaponTableData(weaponNum)->isAkimbo)
 	{
 		// add to other hand as well
 		CG_PositionEntityOnTag(&gun, parent, "tag_weapon2", 0, NULL);
@@ -5011,8 +5011,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 			for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
 			{
 				// make sure we don't reselect the panzer or bazooka
-				if (weapBanksMultiPlayer[3][i] != WP_PANZERFAUST && weapBanksMultiPlayer[3][i] != WP_BAZOOKA
-				    && CG_WeaponSelectable(weapBanksMultiPlayer[3][i]))     // find a rifle
+				if (!GetWeaponTableData(weapBanksMultiPlayer[3][i])->isPanzer && CG_WeaponSelectable(weapBanksMultiPlayer[3][i]))     // find a rifle
 				{
 					cg.weaponSelect = weapBanksMultiPlayer[3][i];
 					CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);

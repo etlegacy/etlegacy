@@ -1047,7 +1047,7 @@ static void CG_Missile(centity_t *cent)
 	// add missile sound
 	if (weapon->missileSound)
 	{
-		if (cent->currentState.weapon == WP_GPG40 || cent->currentState.weapon == WP_M7)
+		if (GetWeaponTableData(cent->currentState.weapon)->isRiflenade)
 		{
 			if (!cent->currentState.effect1Time)
 			{
@@ -1196,22 +1196,23 @@ static void CG_Missile(centity_t *cent)
 	}
 
 	// convert direction of travel into axis
+	// TODO: weapon table isExplosive ?
 	switch (cent->currentState.weapon)
 	{
 	case WP_MORTAR_SET:
 	case WP_MORTAR2_SET:
 	case WP_MAPMORTAR:
-	// reverted to vanilla behaviour
-	// FIXME: check FEATURE_EDV weapon cam (see default case of switch)
-	//case WP_PANZERFAUST:
-	//case WP_BAZOOKA:
-	//case WP_GPG40:
-	//case WP_M7:
-	//case WP_SMOKE_MARKER:
-	//case WP_SMOKE_BOMB:
-	//case WP_DYNAMITE:
-	//case WP_GRENADE_LAUNCHER:
-	//case WP_GRENADE_PINEAPPLE:
+		// reverted to vanilla behaviour
+		// FIXME: check FEATURE_EDV weapon cam (see default case of switch)
+		//case WP_PANZERFAUST:
+		//case WP_BAZOOKA:
+		//case WP_GPG40:
+		//case WP_M7:
+		//case WP_SMOKE_MARKER:
+		//case WP_SMOKE_BOMB:
+		//case WP_DYNAMITE:
+		//case WP_GRENADE_LAUNCHER:
+		//case WP_GRENADE_PINEAPPLE:
 	{
 		vec3_t delta;
 

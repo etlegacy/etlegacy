@@ -588,7 +588,7 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 
 	if (!(ps->eFlags & EF_PRONE) && (ops->eFlags & EF_PRONE))
 	{
-		if (cg.weaponSelect == WP_MOBILE_MG42_SET || cg.weaponSelect == WP_MOBILE_BROWNING_SET)
+		if (GetWeaponTableData(cg.weaponSelect)->isMGSet)
 		{
 			CG_FinishWeaponChange(cg.weaponSelect, ps->nextWeapon);
 		}

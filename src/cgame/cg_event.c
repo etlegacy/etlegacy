@@ -712,7 +712,7 @@ static void CG_ItemPickup(int itemNum)
 
 			// don't ever autoswitch to secondary fire weapons
 			// Leave autoswitch to secondary kar/carbine as they use alt ammo and arent zoomed: Note, not that it would do this anyway as it isnt in a bank....
-			if (itemid != WP_FG42SCOPE && itemid != WP_GARAND_SCOPE && itemid != WP_K43_SCOPE && itemid != WP_AMMO)
+			if (!GetWeaponTableData(itemid)->isScoped && itemid != WP_AMMO)
 			{
 				// no weap currently selected, always just select the new one
 				if (!cg.weaponSelect)

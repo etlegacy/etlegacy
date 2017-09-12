@@ -1387,17 +1387,13 @@ void CG_LimboPanel_SendSetupMsg(qboolean forceteam)
 	}
 	else
 	{
-		switch (weap2)
+		if (GetWeaponTableData(weap2)->isAkimbo)
 		{
-		case WP_AKIMBO_COLT:
-		case WP_AKIMBO_LUGER:
-		case WP_AKIMBO_SILENCEDCOLT:
-		case WP_AKIMBO_SILENCEDLUGER:
 			CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and %s."), str, BG_ClassnameForNumber(CG_LimboPanel_GetClass()), GetWeaponTableData(weap1)->desc, GetWeaponTableData(weap2)->desc), 400, cg_fontScaleCP.value, -1);
-			break;
-		default:
+		}
+		else
+		{
 			CG_PriorityCenterPrint(va(CG_TranslateString("You will spawn as an %s %s with a %s and a %s."), str, BG_ClassnameForNumber(CG_LimboPanel_GetClass()), GetWeaponTableData(weap1)->desc, GetWeaponTableData(weap2)->desc), 400, cg_fontScaleCP.value, -1);
-			break;
 		}
 	}
 
@@ -4013,33 +4009,28 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 		}
 	}
 
-	// single weapon restrictions
-	switch (weapon)
+	if (GetWeaponTableData(weapon)->isPanzer)
 	{
-	case WP_PANZERFAUST:
-	case WP_BAZOOKA:
 		maxCount = cg.maxPanzers;
-		break;
-	case WP_MORTAR:
-	case WP_MORTAR2:
+	}
+	else if (GetWeaponTableData(weapon)->isMortar)
+	{
 		maxCount = cg.maxMortars;
-		break;
-	case WP_MOBILE_MG42:
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING:
-	case WP_MOBILE_BROWNING_SET:
+	}
+	else if (GetWeaponTableData(weapon)->isMG || GetWeaponTableData(weapon)->isMGSet)
+	{
 		maxCount = cg.maxMg42s;
-		break;
-	case WP_FLAMETHROWER:
-		maxCount = cg.maxFlamers;
-		break;
-	case WP_KAR98:
-	case WP_CARBINE:
-	case WP_GPG40:
-	case WP_M7:
+	}
+	else if (GetWeaponTableData(weapon)->isRifle || GetWeaponTableData(weapon)->isRiflenade)
+	{
 		maxCount = cg.maxRiflegrenades;
-		break;
-	default:
+	}
+	else if (weapon == WP_FLAMETHROWER)
+	{
+		maxCount = cg.maxFlamers;
+	}
+	else
+	{
 		return qfalse;
 	}
 
