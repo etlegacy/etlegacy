@@ -4013,7 +4013,7 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 	{
 		maxCount = cg.maxPanzers;
 	}
-	else if (GetWeaponTableData(weapon)->isMortar)
+	else if (GetWeaponTableData(weapon)->isMortar || GetWeaponTableData(weapon)->isMortarSet)
 	{
 		maxCount = cg.maxMortars;
 	}
