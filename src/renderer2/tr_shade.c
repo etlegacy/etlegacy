@@ -332,6 +332,20 @@ void Tess_Begin(void (*stageIteratorFunc)(),
 // *INDENT-ON*
 
 /**
+ * @brief clipping portal plane in world space
+ */
+static void clipPortalPlane() // static for now - might be used in tr_main.c and tr_sky.c
+{
+	vec4_t plane;
+
+	plane[0] = backEnd.viewParms.portalPlane.normal[0];
+	plane[1] = backEnd.viewParms.portalPlane.normal[1];
+	plane[2] = backEnd.viewParms.portalPlane.normal[2];
+	plane[3] = backEnd.viewParms.portalPlane.dist;
+	SetUniformVec4(UNIFORM_PORTALPLANE, plane);
+}
+
+/**
  * @brief Render_generic
  * @param[in] stage
  */
@@ -417,15 +431,7 @@ static void Render_generic(int stage)
 
 	if (backEnd.viewParms.isPortal)
 	{
-		vec4_t plane;
-
-		// clipping plane in world space
-		plane[0] = backEnd.viewParms.portalPlane.normal[0];
-		plane[1] = backEnd.viewParms.portalPlane.normal[1];
-		plane[2] = backEnd.viewParms.portalPlane.normal[2];
-		plane[3] = backEnd.viewParms.portalPlane.dist;
-
-		SetUniformVec4(UNIFORM_PORTALPLANE, plane);
+		clipPortalPlane();
 	}
 
 	// bind u_ColorMap
@@ -517,14 +523,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 
 	if (backEnd.viewParms.isPortal)
 	{
-		vec4_t plane;
-
-		// clipping plane in world space
-		plane[0] = backEnd.viewParms.portalPlane.normal[0];
-		plane[1] = backEnd.viewParms.portalPlane.normal[1];
-		plane[2] = backEnd.viewParms.portalPlane.normal[2];
-		plane[3] = backEnd.viewParms.portalPlane.dist;
-		SetUniformVec4(UNIFORM_PORTALPLANE, plane);
+		clipPortalPlane();
 	}
 
 	// bind u_DiffuseMap
@@ -750,14 +749,7 @@ static void Render_vertexLighting_DBS_world(int stage)
 
 	if (backEnd.viewParms.isPortal)
 	{
-		float plane[4];
-
-		// clipping plane in world space
-		plane[0] = backEnd.viewParms.portalPlane.normal[0];
-		plane[1] = backEnd.viewParms.portalPlane.normal[1];
-		plane[2] = backEnd.viewParms.portalPlane.normal[2];
-		plane[3] = backEnd.viewParms.portalPlane.dist;
-		SetUniformVec4(UNIFORM_PORTALPLANE, plane);
+		clipPortalPlane();
 	}
 
 	// bind u_DiffuseMap
@@ -888,15 +880,7 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 
 	if (backEnd.viewParms.isPortal)
 	{
-		vec4_t plane;
-
-		// clipping plane in world space
-		plane[0] = backEnd.viewParms.portalPlane.normal[0];
-		plane[1] = backEnd.viewParms.portalPlane.normal[1];
-		plane[2] = backEnd.viewParms.portalPlane.normal[2];
-		plane[3] = backEnd.viewParms.portalPlane.dist;
-
-		SetUniformVec4(UNIFORM_PORTALPLANE, plane);
+		clipPortalPlane();
 	}
 
 	// bind u_DiffuseMap
@@ -1038,15 +1022,7 @@ static void Render_depthFill(int stage)
 
 	if (backEnd.viewParms.isPortal)
 	{
-		vec4_t plane;
-
-		// clipping plane in world space
-		plane[0] = backEnd.viewParms.portalPlane.normal[0];
-		plane[1] = backEnd.viewParms.portalPlane.normal[1];
-		plane[2] = backEnd.viewParms.portalPlane.normal[2];
-		plane[3] = backEnd.viewParms.portalPlane.dist;
-
-		SetUniformVec4(UNIFORM_PORTALPLANE, plane);
+		clipPortalPlane();
 	}
 
 	// bind u_ColorMap
@@ -1139,15 +1115,7 @@ static void Render_shadowFill(int stage)
 
 	if (backEnd.viewParms.isPortal)
 	{
-		vec4_t plane;
-
-		// clipping plane in world space
-		plane[0] = backEnd.viewParms.portalPlane.normal[0];
-		plane[1] = backEnd.viewParms.portalPlane.normal[1];
-		plane[2] = backEnd.viewParms.portalPlane.normal[2];
-		plane[3] = backEnd.viewParms.portalPlane.dist;
-
-		SetUniformVec4(UNIFORM_PORTALPLANE, plane);
+		clipPortalPlane();
 	}
 
 	// bind u_ColorMap
@@ -1312,15 +1280,7 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 
 	if (backEnd.viewParms.isPortal)
 	{
-		vec4_t plane;
-
-		// clipping plane in world space
-		plane[0] = backEnd.viewParms.portalPlane.normal[0];
-		plane[1] = backEnd.viewParms.portalPlane.normal[1];
-		plane[2] = backEnd.viewParms.portalPlane.normal[2];
-		plane[3] = backEnd.viewParms.portalPlane.dist;
-
-		SetUniformVec4(UNIFORM_PORTALPLANE, plane);
+		clipPortalPlane();
 	}
 
 	GL_CheckErrors();
@@ -1535,15 +1495,7 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 
 	if (backEnd.viewParms.isPortal)
 	{
-		vec4_t plane;
-
-		// clipping plane in world space
-		plane[0] = backEnd.viewParms.portalPlane.normal[0];
-		plane[1] = backEnd.viewParms.portalPlane.normal[1];
-		plane[2] = backEnd.viewParms.portalPlane.normal[2];
-		plane[3] = backEnd.viewParms.portalPlane.dist;
-
-		SetUniformVec4(UNIFORM_PORTALPLANE, plane);
+		clipPortalPlane();
 	}
 
 	GL_CheckErrors();
@@ -1759,15 +1711,7 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 
 	if (backEnd.viewParms.isPortal)
 	{
-		vec4_t plane;
-
-		// clipping plane in world space
-		plane[0] = backEnd.viewParms.portalPlane.normal[0];
-		plane[1] = backEnd.viewParms.portalPlane.normal[1];
-		plane[2] = backEnd.viewParms.portalPlane.normal[2];
-		plane[3] = backEnd.viewParms.portalPlane.dist;
-
-		SetUniformVec4(UNIFORM_PORTALPLANE, plane);
+		clipPortalPlane();
 	}
 
 	GL_CheckErrors();
@@ -2039,15 +1983,7 @@ static void Render_skybox(int stage)
 	// u_PortalPlane
 	if (backEnd.viewParms.isPortal)
 	{
-		vec4_t plane;
-
-		// clipping plane in world space
-		plane[0] = backEnd.viewParms.portalPlane.normal[0];
-		plane[1] = backEnd.viewParms.portalPlane.normal[1];
-		plane[2] = backEnd.viewParms.portalPlane.normal[2];
-		plane[3] = backEnd.viewParms.portalPlane.dist;
-
-		SetUniformVec4(UNIFORM_PORTALPLANE, plane);
+		clipPortalPlane();
 	}
 
 	// bind u_ColorMap
@@ -2233,15 +2169,7 @@ static void Render_heatHaze(int stage)
 
 		if (backEnd.viewParms.isPortal)
 		{
-			vec4_t plane;
-
-			// clipping plane in world space
-			plane[0] = backEnd.viewParms.portalPlane.normal[0];
-			plane[1] = backEnd.viewParms.portalPlane.normal[1];
-			plane[2] = backEnd.viewParms.portalPlane.normal[2];
-			plane[3] = backEnd.viewParms.portalPlane.dist;
-
-			SetUniformVec4(UNIFORM_PORTALPLANE, plane);
+			clipPortalPlane();
 		}
 
 		// bind u_ColorMap
@@ -2518,15 +2446,7 @@ static void Render_fog()
 
 	if (backEnd.viewParms.isPortal)
 	{
-		float plane[4];
-
-		// clipping plane in world space
-		plane[0] = backEnd.viewParms.portalPlane.normal[0];
-		plane[1] = backEnd.viewParms.portalPlane.normal[1];
-		plane[2] = backEnd.viewParms.portalPlane.normal[2];
-		plane[3] = backEnd.viewParms.portalPlane.dist;
-
-		SetUniformFloat(UNIFORM_PORTALPLANE, plane[4]);
+		clipPortalPlane();
 	}
 
 	// bind u_ColorMap
