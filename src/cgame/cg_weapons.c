@@ -3955,21 +3955,13 @@ void CG_FinishWeaponChange(int lastweap, int newweap)
 
 	if (lastweap != GetWeaponTableData(newweap)->weapAlts)
 	{
-		if (GetWeaponTableData(newweap)->isPistol && !GetWeaponTableData(newweap)->isAkimbo)
+		if ((GetWeaponTableData(newweap)->isPistol            && cg.pmext.silencedSideArm & 1)
+		    || (GetWeaponTableData(newweap)->isSilencedPistol && !(cg.pmext.silencedSideArm & 1))
+		    || (GetWeaponTableData(newweap)->isRifle          && cg.pmext.silencedSideArm & 2)
+		    || (GetWeaponTableData(newweap)->isRiflenade      && !(cg.pmext.silencedSideArm & 2)))
 		{
-			if (cg.pmext.silencedSideArm & 1)
-			{
-				newweap         = GetWeaponTableData(newweap)->weapAlts;
-				cg.weaponSelect = newweap;
-			}
-		}
-		else if (GetWeaponTableData(newweap)->isRifle && GetWeaponTableData(newweap)->isRiflenade)
-		{
-			if (cg.pmext.silencedSideArm & 2)
-			{
-				newweap         = GetWeaponTableData(newweap)->weapAlts;
-				cg.weaponSelect = newweap;
-			}
+			newweap         = GetWeaponTableData(newweap)->weapAlts;
+			cg.weaponSelect = newweap;
 		}
 	}
 
