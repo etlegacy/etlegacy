@@ -2665,7 +2665,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 		if (team == TEAM_AXIS && weapon->weaponModel[W_TP_MODEL].skin[TEAM_AXIS])
 		{
-			gun.customSkin = weapon->weaponModel[W_FP_MODEL].skin[TEAM_AXIS];
+			gun.customSkin = weapon->weaponModel[W_TP_MODEL].skin[TEAM_AXIS];
 		}
 		else if (team == TEAM_ALLIES && weapon->weaponModel[W_TP_MODEL].skin[TEAM_ALLIES])
 		{
