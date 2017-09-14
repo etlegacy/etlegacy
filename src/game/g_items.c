@@ -487,58 +487,10 @@ qboolean G_CanPickupWeapon(weapon_t weapon, gentity_t *ent)
 		return qfalse;
 	}
 
-	// TODO: weapon table ?
-	if (ent->client->sess.sessionTeam == TEAM_AXIS)
+	// get an equivalent weapon if the cleint team is different of the weapon team, if not keep the current
+	if (ent->client->sess.sessionTeam != GetWeaponTableData(weapon)->team && GetWeaponTableData(weapon)->weapEquiv)
 	{
-		switch (weapon)
-		{
-		case WP_THOMPSON:
-			weapon = WP_MP40;
-			break;
-		case WP_CARBINE:
-			weapon = WP_KAR98;
-			break;
-		case WP_GARAND:
-			weapon = WP_K43;
-			break;
-		case WP_MOBILE_BROWNING:
-			weapon = WP_MOBILE_MG42;
-			break;
-		case WP_MORTAR:
-			weapon = WP_MORTAR2;
-			break;
-		case WP_BAZOOKA:
-			weapon = WP_PANZERFAUST;
-			break;
-		default:
-			break;
-		}
-	}
-	else if (ent->client->sess.sessionTeam == TEAM_ALLIES)
-	{
-		switch (weapon)
-		{
-		case WP_MP40:
-			weapon = WP_THOMPSON;
-			break;
-		case WP_KAR98:
-			weapon = WP_CARBINE;
-			break;
-		case WP_K43:
-			weapon = WP_GARAND;
-			break;
-		case WP_MOBILE_MG42:
-			weapon = WP_MOBILE_BROWNING;
-			break;
-		case WP_MORTAR2:
-			weapon = WP_MORTAR;
-			break;
-		case WP_PANZERFAUST:
-			weapon = WP_BAZOOKA;
-			break;
-		default:
-			break;
-		}
+		weapon = GetWeaponTableData(weapon)->weapEquiv;
 	}
 
 	return BG_WeaponIsPrimaryForClassAndTeam(ent->client->sess.playerType, ent->client->sess.sessionTeam, weapon);

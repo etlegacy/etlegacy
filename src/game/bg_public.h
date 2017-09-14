@@ -1009,7 +1009,9 @@ typedef struct
 typedef struct weapontable_s
 {
 	int weapon;                     ///< reference
+    int team;                       ///<
 	weapon_t weapAlts;              ///< bg
+    weapon_t weapEquiv;             ///< the id of the opposite team's weapon (but not for WP_GPG40 <-> WP_M7 - see CG_OutOfAmmoChange).
 	weapon_t akimboSideArm;         ///< bg
 
 	weapon_t ammoIndex;             ///< bg type of weapon ammo this uses.  (ex. WP_MP40 and WP_LUGER share 9mm ammo, so they both have WP_LUGER for giAmmoIndex)

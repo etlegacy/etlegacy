@@ -3781,58 +3781,6 @@ static int getPrevBankWeap(int bank, int cycle, qboolean sameBankPosition)
 }
 
 /**
- * @brief Passing the weapnum of the mp40 returns the id of the thompson, and likewise
- * passing the weapnum of the thompson returns the id of the mp40.
- * No equivalent available will return the weapnum passed in.
- *
- * @param[in] weapnum
- *
- * @return the id of the opposite team's weapon (but not for WP_GPG40 <-> WP_M7 - see CG_OutOfAmmoChange).
- */
-int getEquivWeapon(int weapnum)
-{
-	int num = weapnum;
-
-	// TODO: table weapon ?
-	switch (weapnum)
-	{
-	// going from german to american
-	case WP_LUGER:
-		num = WP_COLT;
-		break;
-	case WP_MP40:
-		num = WP_THOMPSON;
-		break;
-	case WP_GRENADE_LAUNCHER:
-		num = WP_GRENADE_PINEAPPLE;
-		break;
-	case WP_KAR98:
-		num = WP_CARBINE;
-		break;
-	case WP_SILENCER:
-		num = WP_SILENCED_COLT;
-		break;
-	// going from american to german
-	case WP_COLT:
-		num = WP_LUGER;
-		break;
-	case WP_THOMPSON:
-		num = WP_MP40;
-		break;
-	case WP_GRENADE_PINEAPPLE:
-		num = WP_GRENADE_LAUNCHER;
-		break;
-	case WP_CARBINE:
-		num = WP_KAR98;
-		break;
-	case WP_SILENCED_COLT:
-		num = WP_SILENCER;
-		break;
-	}
-	return num;
-}
-
-/**
  * @brief CG_SetSniperZoom
  * @param[in] lastweap
  * @param[in] newweap
@@ -5038,9 +4986,9 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 		}
 
 		// now try the opposite team's equivalent weap
-		equiv = getEquivWeapon(cg.weaponSelect);
+		equiv = GetWeaponTableData(cg.weaponSelect)->weapEquiv;
 
-		if (equiv != cg.weaponSelect && CG_WeaponSelectable(equiv))
+		if (equiv && CG_WeaponSelectable(equiv))
 		{
 			cg.weaponSelect = equiv;
 			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
