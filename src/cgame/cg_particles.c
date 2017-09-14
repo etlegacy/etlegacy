@@ -1678,7 +1678,7 @@ void CG_ParticleImpactSmokePuffExtended(qhandle_t pshader, vec3_t origin, int li
 
 	if (!pshader)
 	{
-		CG_Printf("CG_ParticleImpactSmokePuff pshader == ZERO!\n");
+		CG_Printf("CG_ParticleImpactSmokePuffExtended pshader == ZERO!\n");
 	}
 
 	if (!free_particles)
@@ -1962,7 +1962,7 @@ void CG_OilSlickRemove(centity_t *cent)
 
 	if (!id)
 	{
-		CG_Printf("CG_OilSlickRevove NULL id\n");
+		CG_Printf("CG_OilSlickRemove NULL id\n");
 	}
 
 	for (p = active_particles ; p ; p = next)
