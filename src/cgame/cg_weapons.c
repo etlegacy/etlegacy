@@ -3781,21 +3781,6 @@ static int getPrevBankWeap(int bank, int cycle, qboolean sameBankPosition)
 }
 
 /**
- * @brief getAltWeapon
- * @param[in] weapnum
- * @return
- */
-static int getAltWeapon(int weapnum)
-{
-	if (GetWeaponTableData(weapnum)->weapAlts)
-	{
-		return GetWeaponTableData(weapnum)->weapAlts;
-	}
-
-	return weapnum;
-}
-
-/**
  * @brief Passing the weapnum of the mp40 returns the id of the thompson, and likewise
  * passing the weapnum of the thompson returns the id of the mp40.
  * No equivalent available will return the weapnum passed in.
@@ -3897,7 +3882,7 @@ void CG_PlaySwitchSound(int lastweap, int newweap)
 {
 	sfxHandle_t switchsound = cgs.media.selectSound;
 
-	if (getAltWeapon(lastweap) == newweap)       // alt switch
+	if (GetWeaponTableData(lastweap)->weapAlts == newweap)       // alt switch
 	{
 		// TODO: weapon table ?
 		switch (newweap)
@@ -4182,8 +4167,7 @@ void CG_AltWeapon_f(void)
 	}
 
 	original = cg.weaponSelect;
-
-	num = getAltWeapon(original);
+	num      = GetWeaponTableData(original)->weapAlts;
 
 	if (original == WP_BINOCULARS)
 	{
@@ -4214,13 +4198,13 @@ void CG_AltWeapon_f(void)
 			return;
 		}
 
-		if (GetWeaponTableData(num)->isRiflenade || GetWeaponTableData(num)->isSilencedPistol || GetWeaponTableData(num)->isAkimbo || GetWeaponTableData(num)->isSetWeapon)
+		if (num && (GetWeaponTableData(num)->isRiflenade || GetWeaponTableData(num)->isSilencedPistol || GetWeaponTableData(num)->isAkimbo || GetWeaponTableData(num)->isSetWeapon))
 		{
 			return;
 		}
 	}
 
-	if (CG_WeaponSelectable(num))        // new weapon is valid
+	if (num && CG_WeaponSelectable(num))        // new weapon is valid
 	{
 		CG_FinishWeaponChange(original, num);
 		if (original == num)
@@ -5042,7 +5026,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 		case WP_M7:
 			// if you're using an alt mode weapon, try switching back to the parent
 			// otherwise, switch to the equivalent if you've got it
-			cg.weaponSelect = equiv = getAltWeapon(cg.weaponSelect);      // base any further changes on the parent
+			cg.weaponSelect = equiv = GetWeaponTableData(cg.weaponSelect)->weapAlts;      // base any further changes on the parent
 			if (CG_WeaponSelectable(equiv))          // the parent was selectable, drop back to that
 			{
 				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
