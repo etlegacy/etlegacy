@@ -5082,7 +5082,6 @@ void CG_MG42EFX(centity_t *cent)
 		    mg42->currentState.otherEntityNum == cent->currentState.number)
 		{
 			// found it, clamp behind gun
-
 			VectorCopy(mg42->currentState.pos.trBase, point);
 			//AngleVectors (mg42->s.apos.trBase, forward, NULL, NULL);
 			AngleVectors(cent->lerpAngles, forward, NULL, NULL);
@@ -5098,8 +5097,7 @@ void CG_MG42EFX(centity_t *cent)
 			trap_R_AddRefEntityToScene(&flash);
 
 			// add dynamic light
-			trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31) / 128.0f,
-			                       1.0f, 0.6f, 0.23f, 0, 0);
+			trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31) / 128.0f, 1.0f, 0.6f, 0.23f, 0, 0);
 			return;
 		}
 	}
@@ -5111,26 +5109,28 @@ void CG_MG42EFX(centity_t *cent)
  */
 void CG_MortarEFX(centity_t *cent)
 {
-	if (cent->currentState.density & 1)
+	if (cent->currentState.density & 1) // map mortar spawn flag
 	{
 		// smoke
 		CG_ParticleImpactSmokePuff(cgs.media.smokePuffShader, cent->currentState.origin);
 	}
 
-	if (cent->currentState.density & 2)
+	if (cent->currentState.density & 2) // map mortar spawn flag
 	{
 		refEntity_t flash;
-
-		// light
-		trap_R_AddLightToScene(cent->currentState.origin, 256, 0.75 + 8.0 / (rand() & 31), 1.0f, 1.0f, 1.0f, 0, 0);
 
 		// muzzle flash
 		Com_Memset(&flash, 0, sizeof(flash));
 		flash.renderfx = RF_LIGHTING_ORIGIN;
 		flash.hModel   = cgs.media.mg42muzzleflash;
+
 		VectorCopy(cent->currentState.origin, flash.origin);
 		AnglesToAxis(cg.refdefViewAngles, flash.axis);
+		
 		trap_R_AddRefEntityToScene(&flash);
+
+		// add dynamic light
+		trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31)/128.0f, 1.0f, 1.0f, 1.0f, 0, 0);
 	}
 }
 
@@ -5206,13 +5206,11 @@ void CG_WeaponFireRecoil(int weapon)
  */
 void CG_FireWeapon(centity_t *cent)
 {
-	entityState_t *ent;
+	entityState_t *ent = &cent->currentState;
 	int           c;
 	weaponInfo_t  *weap;
 	sfxHandle_t   *firesound;
 	sfxHandle_t   *fireEchosound;
-
-	ent = &cent->currentState;
 
 	// quick hack for EF_MOUNTEDTANK, need to change this - likely it needs to use viewlocked as well
 	if (cent->currentState.eFlags & EF_MOUNTEDTANK)
