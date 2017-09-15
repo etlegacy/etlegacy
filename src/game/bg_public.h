@@ -1082,6 +1082,8 @@ typedef struct weapontable_s
     int switchTimeBegin;      ///<
     int switchTimeFinish;     ///<
 
+    float knockback;          ///<
+
 	const char *className;    ///<
 	meansOfDeath_t mod;       ///< means of death
 	meansOfDeath_t splashMod; ///< means of death

@@ -4206,32 +4206,12 @@ static void PM_Weapon(void)
 
 	if (!(pm->ps->eFlags & EF_PRONE) && (pml.groundTrace.surfaceFlags & SURF_SLICK))
 	{
-		// TODO: weapon Table ?
-		float fwdmove_knockback = 0.f;
-
-		switch (pm->ps->weapon)
-		{
-		case WP_MOBILE_MG42:
-		case WP_MOBILE_BROWNING:
-			fwdmove_knockback = 4000.f;
-			break;
-		case WP_PANZERFAUST:
-		case WP_BAZOOKA:
-			fwdmove_knockback = 32000.f;
-			break;
-		case WP_FLAMETHROWER:
-			fwdmove_knockback = 2000.f;
-			break;
-		default:
-			break;
-		}
-
-		if (fwdmove_knockback > 0.f)
+		if (GetWeaponTableData(pm->ps->weapon)->knockback > 0.f)
 		{
 			// Add some knockback on slick
 			vec3_t kvel;
 
-			VectorScale(pml.forward, -1.f * (fwdmove_knockback / 200), kvel);        // -1 as we get knocked backwards
+			VectorScale(pml.forward, -1.f * (GetWeaponTableData(pm->ps->weapon)->knockback / 200), kvel);        // -1 as we get knocked backwards
 			VectorAdd(pm->ps->velocity, kvel, pm->ps->velocity);
 
 			if (!pm->ps->pm_time)
