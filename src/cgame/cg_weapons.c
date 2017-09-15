@@ -3687,46 +3687,25 @@ void CG_SetSniperZoom(int lastweap, int newweap)
  */
 void CG_PlaySwitchSound(int lastweap, int newweap)
 {
-	sfxHandle_t switchsound = cgs.media.selectSound;
-
-	if (GetWeaponTableData(lastweap)->weapAlts == newweap)       // alt switch
-	{
-		// TODO: weapon table ?
-		switch (newweap)
-		{
-		case WP_SILENCER:
-		case WP_LUGER:
-		case WP_SILENCED_COLT:
-		case WP_COLT:
-		case WP_GPG40:
-		case WP_M7:
-		case WP_MORTAR:
-		case WP_MORTAR_SET:
-		case WP_MORTAR2:
-		case WP_MORTAR2_SET:
-		case WP_MOBILE_MG42:
-		case WP_MOBILE_MG42_SET:
-		case WP_MOBILE_BROWNING:
-		case WP_MOBILE_BROWNING_SET:
-			switchsound = cg_weapons[newweap].switchSound;
-			break;
-		case WP_CARBINE:
-		case WP_KAR98:
-			if (cg.predictedPlayerState.ammoclip[lastweap])
-			{
-				switchsound = cg_weapons[newweap].switchSound;
-			}
-			break;
-		default:
-			return;
-		}
-	}
-	else
+	// no special switching sound for non alt weapon
+	if (GetWeaponTableData(lastweap)->weapAlts != newweap)
 	{
 		return;
 	}
 
-	trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_WEAPON, switchsound);
+	// no special switching sound when scope/unscope weapon
+	if (GetWeaponTableData(lastweap)->isScoped && GetWeaponTableData(newweap)->isScoped)
+	{
+		return;
+	}
+
+	// don't play special switching sound after firing with riflenade
+	if (GetWeaponTableData(newweap)->isRifle && !cg.predictedPlayerState.ammoclip[lastweap])
+	{
+		return;
+	}
+
+	trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_WEAPON, cg_weapons[newweap].switchSound);
 }
 
 /**
