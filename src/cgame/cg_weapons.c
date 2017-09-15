@@ -3694,7 +3694,7 @@ void CG_PlaySwitchSound(int lastweap, int newweap)
 	}
 
 	// no special switching sound when scope/unscope weapon
-	if (GetWeaponTableData(lastweap)->isScoped && GetWeaponTableData(newweap)->isScoped)
+	if (GetWeaponTableData(lastweap)->isScoped || GetWeaponTableData(newweap)->isScoped)
 	{
 		return;
 	}
