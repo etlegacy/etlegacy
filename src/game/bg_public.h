@@ -1009,9 +1009,9 @@ typedef struct
 typedef struct weapontable_s
 {
 	int weapon;                     ///< reference
-    int team;                       ///<
+	int team;                       ///<
 	weapon_t weapAlts;              ///< bg
-    weapon_t weapEquiv;             ///< the id of the opposite team's weapon (but not for WP_GPG40 <-> WP_M7 - see CG_OutOfAmmoChange).
+	weapon_t weapEquiv;             ///< the id of the opposite team's weapon (but not for WP_GPG40 <-> WP_M7 - see CG_OutOfAmmoChange).
 	weapon_t akimboSideArm;         ///< bg
 
 	weapon_t ammoIndex;             ///< bg type of weapon ammo this uses.  (ex. WP_MP40 and WP_LUGER share 9mm ammo, so they both have WP_LUGER for giAmmoIndex)
@@ -1026,7 +1026,7 @@ typedef struct weapontable_s
 	qboolean isReload;              ///< g
 
 	float spread;                   ///< g
-    float spreadScale;              ///< bg
+	float spreadScale;              ///< bg
 	int splashDamage;               ///< g
 	int splashRadius;               ///< g
 
@@ -1078,13 +1078,14 @@ typedef struct weapontable_s
 
 	int maxHeat;              ///< max active firing time before weapon 'overheats' (at which point the weapon will fail)
 	int coolRate;             ///< how fast the weapon cools down. (per second)
-    
-    int switchTimeBegin;      ///<
-    int switchTimeFinish;     ///<
 
-    float knockback;          ///<
+	int switchTimeBegin;      ///<
+	int switchTimeFinish;     ///<
+
+	float knockback;          ///<
 
 	const char *className;    ///<
+	const char *weapFile;     ///<
 	meansOfDeath_t mod;       ///< means of death
 	meansOfDeath_t splashMod; ///< means of death
 

@@ -1864,9 +1864,8 @@ static qboolean CG_RegisterWeaponFromWeaponFile(const char *filename, weaponInfo
 void CG_RegisterWeapon(int weaponNum, qboolean force)
 {
 	weaponInfo_t *weaponInfo;
-	const char   *filename;
 
-	if (weaponNum <= 0 || weaponNum >= WP_NUM_WEAPONS)
+	if (!IS_VALID_WEAPON(weaponNum))
 	{
 		return;
 	}
@@ -1892,165 +1891,25 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
 	    CG_Error( "Couldn't find weapon %i", weaponNum );
 	}*/
 
-	// TODO: table weapon weapFile ?
-	switch (weaponNum)
+	if (GetWeaponTableData(weaponNum)->weapFile)
 	{
-	case WP_KNIFE:
-		filename = "knife.weap";
-		break;
-	case WP_LUGER:
-		filename = "luger.weap";
-		break;
-	case WP_COLT:
-		filename = "colt.weap";
-		break;
-	case WP_MP40:
-		filename = "mp40.weap";
-		break;
-	case WP_THOMPSON:
-		filename = "thompson.weap";
-		break;
-	case WP_STEN:
-		filename = "sten.weap";
-		break;
-	case WP_GRENADE_LAUNCHER:
-		filename = "grenade.weap";
-		break;
-	case WP_GRENADE_PINEAPPLE:
-		filename = "pineapple.weap";
-		break;
-	case WP_PANZERFAUST:
-		filename = "panzerfaust.weap";
-		break;
-	case WP_BAZOOKA:
-		filename = "bazooka.weap";
-		break;
-	case WP_FLAMETHROWER:
-		filename = "flamethrower.weap";
-		break;
-	case WP_AMMO:
-		filename = "ammopack.weap";
-		break;
-	case WP_SMOKETRAIL:
-		filename = "smoketrail.weap";
-		break;
-	case WP_MEDKIT:
-		filename = "medpack.weap";
-		break;
-	case WP_PLIERS:
-		filename = "pliers.weap";
-		break;
-	case WP_SMOKE_MARKER:
-		filename = "smokemarker.weap";
-		break;
-	case WP_DYNAMITE:
-		filename = "dynamite.weap";
-		break;
-	case WP_MEDIC_ADRENALINE:
-		filename = "adrenaline.weap";
-		break;
-	case WP_MEDIC_SYRINGE:
-		filename = "syringe.weap";
-		break;
-	case WP_BINOCULARS:
-		filename = "binocs.weap";
-		break;
-	case WP_KAR98:
-		filename = "kar98.weap";
-		break;
-	case WP_GPG40:
-		filename = "gpg40.weap";
-		break;
-	case WP_CARBINE:
-		filename = "m1_garand.weap";
-		break;
-	case WP_M7:
-		filename = "m7.weap";
-		break;
-	case WP_GARAND:
-	case WP_GARAND_SCOPE:
-		filename = "m1_garand_s.weap";
-		break;
-	case WP_FG42:
-	case WP_FG42SCOPE:
-		filename = "fg42.weap";
-		break;
-	case WP_LANDMINE:
-		filename = "landmine.weap";
-		break;
-	case WP_SATCHEL:
-		filename = "satchel.weap";
-		break;
-	case WP_SATCHEL_DET:
-		filename = "satchel_det.weap";
-		break;
-	case WP_SMOKE_BOMB:
-		filename = "smokegrenade.weap";
-		break;
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_MG42:
-		filename = "mg42.weap";
-		break;
-	case WP_MOBILE_BROWNING:
-	case WP_MOBILE_BROWNING_SET:
-		filename = "browning.weap";
-		break;
-	case WP_SILENCER:
-		filename = "silenced_luger.weap";
-		break;
-	case WP_SILENCED_COLT:
-		filename = "silenced_colt.weap";
-		break;
-	case WP_K43:
-	case WP_K43_SCOPE:
-		filename = "k43.weap";
-		break;
-	case WP_MORTAR:
-		filename = "mortar.weap";
-		break;
-	case WP_MORTAR_SET:
-		filename = "mortar_set.weap";
-		break;
-	case WP_MORTAR2:
-		filename = "axis_mortar.weap";
-		break;
-	case WP_MORTAR2_SET:
-		filename = "axis_mortar_set.weap";
-		break;
-	case WP_AKIMBO_LUGER:
-		filename = "akimbo_luger.weap";
-		break;
-	case WP_AKIMBO_SILENCEDLUGER:
-		filename = "akimbo_silenced_luger.weap";
-		break;
-	case WP_AKIMBO_COLT:
-		filename = "akimbo_colt.weap";
-		break;
-	case WP_AKIMBO_SILENCEDCOLT:
-		filename = "akimbo_silenced_colt.weap";
-		break;
-	case WP_MAPMORTAR:
-		filename = "mapmortar.weap";
-		break;     // TODO: do we really need this?
-	case WP_KNIFE_KABAR:
-		filename = "knife_kbar.weap";
-		break;
-	case WP_ARTY:
-		filename = "arty.weap";
-		break;
-	case VERYBIGEXPLOSION:
-	case WP_DUMMY_MG42:
-		//CG_Printf(S_COLOR_YELLOW "WARNING: skipping weapon %i to register.\n", weaponNum);
-		weaponInfo->weaponIconScale = 1;
-		return;     // to shut the game up
-	default:
-		CG_Printf(S_COLOR_RED "WARNING: trying to register weapon %i but there is no weapon file entry for it.\n", weaponNum);
-		return;
+		if (!CG_RegisterWeaponFromWeaponFile(va("weapons/%s.weap", GetWeaponTableData(weaponNum)->weapFile), weaponInfo))
+		{
+			CG_Printf(S_COLOR_RED "WARNING: failed to register media for weapon %i from %s.weap\n", weaponNum, GetWeaponTableData(weaponNum)->weapFile);
+		}
 	}
-
-	if (!CG_RegisterWeaponFromWeaponFile(va("weapons/%s", filename), weaponInfo))
+	else
 	{
-		CG_Printf(S_COLOR_RED "WARNING: failed to register media for weapon %i from %s\n", weaponNum, filename);
+		// no weapon file for theses weapons
+		if (weaponNum == VERYBIGEXPLOSION || weaponNum == WP_DUMMY_MG42)
+		{
+			//CG_Printf(S_COLOR_YELLOW "WARNING: skipping weapon %i to register.\n", weaponNum);
+			weaponInfo->weaponIconScale = 1;
+		}
+		else
+		{
+			CG_Printf(S_COLOR_RED "WARNING: trying to register weapon %i but there is no weapon file entry for it.\n", weaponNum);
+		}
 	}
 }
 
@@ -5126,11 +4985,11 @@ void CG_MortarEFX(centity_t *cent)
 
 		VectorCopy(cent->currentState.origin, flash.origin);
 		AnglesToAxis(cg.refdefViewAngles, flash.axis);
-		
+
 		trap_R_AddRefEntityToScene(&flash);
 
 		// add dynamic light
-		trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31)/128.0f, 1.0f, 1.0f, 1.0f, 0, 0);
+		trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31) / 128.0f, 1.0f, 1.0f, 1.0f, 0, 0);
 	}
 }
 
