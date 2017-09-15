@@ -1981,9 +1981,10 @@ typedef struct skin_s
  */
 typedef struct
 {
+	int modelNum;                   ///< bsp model the fog belongs to
 	int originalBrushNumber;
 	vec3_t bounds[2];
-
+   	shader_t *shader;               ///< fog shader to get colorInt and tcScale from
 	vec4_t color;               ///< in packed byte format
 	float tcScale;              ///< texture coordinate vector scales
 	fogParms_t fogParms;
@@ -2027,10 +2028,10 @@ typedef struct
 	vec3_t visBounds[2];
 	float zNear;
 	float zFar;
-
+	glfog_t glFog; //for tr_fog
 	int numDrawSurfs;
 	struct drawSurf_s *drawSurfs;
-
+	qboolean isGLFogged; //for tr_fog
 	int numInteractions;
 	struct interaction_s *interactions;
 } viewParms_t;
@@ -2735,7 +2736,7 @@ typedef struct
 
 	int numShaders;
 	dshader_t *shaders;
-
+	
 	int numModels;
 	bspModel_t *models;
 
@@ -3479,7 +3480,7 @@ typedef struct
 typedef struct
 {
 	qboolean registered;                    ///< cleared at shutdown, set at beginRegistration
-
+	qboolean setfog;
 	int visIndex;
 	int visClusters[MAX_VISCOUNTS];
 	int visCounts[MAX_VISCOUNTS];           ///< incremented every time a new vis cluster is entered

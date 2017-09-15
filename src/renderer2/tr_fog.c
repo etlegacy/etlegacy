@@ -43,11 +43,11 @@ static qboolean fogIsOn = qfalse;
  */
 void RB_Fog(glfog_t *curfog)
 {
-	//static glfog_t setfog;
+	static glfog_t setfog;
 
 	Ren_LogComment("--- RB_Fog() ---\n");
 
-#if 1
+
 	if (!r_wolfFog->integer)
 	{
 		RB_FogOff();
@@ -78,54 +78,54 @@ void RB_Fog(glfog_t *curfog)
 
 	// only send changes if necessary
 
-//  if(curfog->mode != setfog.mode || !setfog.registered) {
+  if(curfog->mode != setfog.mode || !setfog.registered) {
 
 	glFogi(GL_FOG_MODE, curfog->mode);
 
-//      setfog.mode = curfog->mode;
-//  }
-//  if(curfog->color[0] != setfog.color[0] || curfog->color[1] != setfog.color[1] || curfog->color[2] != setfog.color[2] || !setfog.registered) {
+      setfog.mode = curfog->mode;
+  }
+  if(curfog->color[0] != setfog.color[0] || curfog->color[1] != setfog.color[1] || curfog->color[2] != setfog.color[2] || !setfog.registered) {
 
 	glFogfv(GL_FOG_COLOR, curfog->color);
 
-//      VectorCopy(setfog.color, curfog->color);
-//  }
-//  if(curfog->density != setfog.density || !setfog.registered) {
+     VectorCopy(setfog.color, curfog->color);
+  }
+ if(curfog->density != setfog.density || !setfog.registered) {
 
 	glFogf(GL_FOG_DENSITY, curfog->density);
 
-//      setfog.density = curfog->density;
-//  }
-//  if(curfog->hint != setfog.hint || !setfog.registered) {
+     setfog.density = curfog->density;
+ }
+  if(curfog->hint != setfog.hint || !setfog.registered) {
 
 	glHint(GL_FOG_HINT, curfog->hint);
 
-//      setfog.hint = curfog->hint;
-//  }
-//  if(curfog->start != setfog.start || !setfog.registered) {
+      setfog.hint = curfog->hint;
+  }
+  if(curfog->start != setfog.start || !setfog.registered) {
 
 	glFogf(GL_FOG_START, curfog->start);
 
-//      setfog.start = curfog->start;
-//  }
+      setfog.start = curfog->start;
+  }
 
 	if (r_zFar->value != 0.f)
 	{                           // allow override for helping level designers test fog distances
-//      if(setfog.end != r_zfar->value || !setfog.registered) {
+      if(setfog.end != r_zFar->value || !setfog.registered) {
 
 		glFogf(GL_FOG_END, r_zFar->value);
 
-//          setfog.end = r_zfar->value;
-//      }
+          setfog.end = r_zFar->value;
+     }
 	}
 	else
 	{
-//      if(curfog->end != setfog.end || !setfog.registered) {
+      if(curfog->end != setfog.end || !setfog.registered) {
 
 		glFogf(GL_FOG_END, curfog->end);
 
-//          setfog.end = curfog->end;
-//      }
+          setfog.end = curfog->end;
+      }
 	}
 
 	// from SP NV fog code
@@ -135,21 +135,20 @@ void RB_Fog(glfog_t *curfog)
 		glFogi(GL_FOG_DISTANCE_MODE_NV, glConfig.NVFogMode);
 	}
 
-	//setfog.registered = qtrue;
+	setfog.registered = qtrue;
 
 	GL_ClearColor(curfog->color[0], curfog->color[1], curfog->color[2], curfog->color[3]);
 
-#endif
 }
 
 /**
- * @brief RB_FogOff
+ *  @brief Allow disabling fog temporarily
  */
-void RB_FogOff()
+void RB_FogOff(void)
 {
 	Ren_LogComment("--- RB_FogOff() ---\n");
 
-#if 1
+
 	if (!fogIsOn)
 	{
 		return;
@@ -158,36 +157,36 @@ void RB_FogOff()
 	glDisable(GL_FOG);
 
 	fogIsOn = qfalse;
-#endif
+
 }
 
 /**
  * @brief RB_FogOn
  */
-void RB_FogOn()
+void RB_FogOn(void)
 {
 	Ren_LogComment("--- RB_FogOn() ---\n");
 
-#if 1
+
 	if (fogIsOn)
 	{
 		return;
 	}
 
-//  if(r_uiFullScreen->integer) {   // don't fog in the menu
-//      R_FogOff();
-//      return;
-//  }
+  if(r_uiFullScreen->integer) {   // don't fog in the menu
+      RB_FogOff();
+      return;
+ }
 
 	if (!r_wolfFog->integer)
 	{
 		return;
 	}
 
-//  if(backEnd.viewParms.isGLFogged) {
-//      if(!(backEnd.viewParms.glFog.registered))
-//          return;
-//  }
+  if(backEnd.viewParms.isGLFogged) {
+      if(!(backEnd.viewParms.glFog.registered))
+          return;
+  }
 
 	if (backEnd.refdef.rdflags & RDF_SKYBOXPORTAL)
 	{
@@ -206,7 +205,7 @@ void RB_FogOn()
 	glEnable(GL_FOG);
 
 	fogIsOn = qtrue;
-#endif
+
 }
 
 /**
@@ -254,7 +253,7 @@ void RE_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float 
 		tr.glfogsettings[fogvar].color[3] = 1;
 		tr.glfogsettings[fogvar].start    = var1;
 		tr.glfogsettings[fogvar].end      = var2;
-		if (density > 1)
+		if (density >= 1)
 		{
 			tr.glfogsettings[fogvar].mode        = GL_LINEAR;
 			tr.glfogsettings[fogvar].drawsky     = qfalse;
@@ -282,7 +281,7 @@ void RE_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float 
 		return;
 	}
 
-	tr.glfogNum = (glfogType_t)var1;
+	tr.glfogNum = var1;
 
 	// transitioning to new fog, store the current values as the 'from'
 
@@ -307,67 +306,47 @@ void RE_SetFog(int fogvar, int var1, int var2, float r, float g, float b, float 
 /**
  * @brief R_SetFrameFog
  */
-void R_SetFrameFog()
+void R_SetFrameFog(void)
 {
-	if (!tr.world)
-	{
-		return;
-	}
-
 	// new style global fog transitions
 	if (tr.world->globalFogTransEndTime)
 	{
 		if (tr.world->globalFogTransEndTime >= tr.refdef.time)
 		{
-			float lerpPos;
-			int   fadeTime;
+			int   fadeTime = tr.world->globalFogTransEndTime - tr.world->globalFogTransStartTime;
+			float lerpPos  = (float)(tr.refdef.time - tr.world->globalFogTransStartTime) / (float)fadeTime;
 
-			fadeTime = tr.world->globalFogTransEndTime - tr.world->globalFogTransStartTime;
-			lerpPos  = (float)(tr.refdef.time - tr.world->globalFogTransStartTime) / (float)fadeTime;
 			if (lerpPos > 1)
 			{
 				lerpPos = 1;
 			}
 
-			tr.world->fogs[tr.world->globalFog].fogParms.color[0] =
-				tr.world->globalTransStartFog[0] +
-				((tr.world->globalTransEndFog[0] - tr.world->globalTransStartFog[0]) * lerpPos);
-			tr.world->fogs[tr.world->globalFog].fogParms.color[1] =
-				tr.world->globalTransStartFog[1] +
-				((tr.world->globalTransEndFog[1] - tr.world->globalTransStartFog[1]) * lerpPos);
-			tr.world->fogs[tr.world->globalFog].fogParms.color[2] =
-				tr.world->globalTransStartFog[2] +
-				((tr.world->globalTransEndFog[2] - tr.world->globalTransStartFog[2]) * lerpPos);
+			tr.world->fogs[tr.world->globalFog].shader->fogParms.color[0] = tr.world->globalTransStartFog[0] + ((tr.world->globalTransEndFog[0] - tr.world->globalTransStartFog[0]) * lerpPos);
+			tr.world->fogs[tr.world->globalFog].shader->fogParms.color[1] = tr.world->globalTransStartFog[1] + ((tr.world->globalTransEndFog[1] - tr.world->globalTransStartFog[1]) * lerpPos);
+			tr.world->fogs[tr.world->globalFog].shader->fogParms.color[2] = tr.world->globalTransStartFog[2] + ((tr.world->globalTransEndFog[2] - tr.world->globalTransStartFog[2]) * lerpPos);
 
-			tr.world->fogs[tr.world->globalFog].fogParms.colorInt =
-				ColorBytes4(tr.world->fogs[tr.world->globalFog].fogParms.color[0] * tr.identityLight,
-				            tr.world->fogs[tr.world->globalFog].fogParms.color[1] * tr.identityLight,
-				            tr.world->fogs[tr.world->globalFog].fogParms.color[2] * tr.identityLight, 1.0);
+			tr.world->fogs[tr.world->globalFog].shader->fogParms.colorInt = ColorBytes4(tr.world->fogs[tr.world->globalFog].shader->fogParms.color[0] * tr.identityLight,
+			                                                                            tr.world->fogs[tr.world->globalFog].shader->fogParms.color[1] * tr.identityLight,
+			                                                                            tr.world->fogs[tr.world->globalFog].shader->fogParms.color[2] * tr.identityLight, 1.0);
 
-			tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque =
-				tr.world->globalTransStartFog[3] +
-				((tr.world->globalTransEndFog[3] - tr.world->globalTransStartFog[3]) * lerpPos);
-			tr.world->fogs[tr.world->globalFog].tcScale =
-				1.0f / (tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque * 8);
+			tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque = tr.world->globalTransStartFog[3] + ((tr.world->globalTransEndFog[3] - tr.world->globalTransStartFog[3]) * lerpPos);
+			tr.world->fogs[tr.world->globalFog].shader->fogParms.tcScale        = 1.0f / (tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque * 8);
 		}
 		else
 		{
 			// transition complete
-			VectorCopy(tr.world->globalTransEndFog, tr.world->fogs[tr.world->globalFog].fogParms.color);
-
-			tr.world->fogs[tr.world->globalFog].fogParms.colorInt =
-				ColorBytes4(tr.world->globalTransEndFog[0] * tr.identityLight, tr.world->globalTransEndFog[1] * tr.identityLight,
+			VectorCopy(tr.world->globalTransEndFog, tr.world->fogs[tr.world->globalFog].shader->fogParms.color);
+			tr.world->fogs[tr.world->globalFog].shader->fogParms.colorInt = ColorBytes4(tr.world->globalTransEndFog[0] * tr.identityLight,
+			                                                                            tr.world->globalTransEndFog[1] * tr.identityLight,
 				            tr.world->globalTransEndFog[2] * tr.identityLight, 1.0);
-
-			tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque = tr.world->globalTransEndFog[3];
-			tr.world->fogs[tr.world->globalFog].tcScale                 =
-				1.0f / (tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque * 8);
+			tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque = tr.world->globalTransEndFog[3];
+			tr.world->fogs[tr.world->globalFog].shader->fogParms.tcScale        = 1.0f / (tr.world->fogs[tr.world->globalFog].shader->fogParms.depthForOpaque * 8);
 
 			tr.world->globalFogTransEndTime = 0;
 		}
 	}
 
-	if (r_speeds->integer == RSPEEDS_FOG)
+	if (r_speeds->integer == 5)
 	{
 		if (!tr.glfogsettings[FOG_TARGET].registered)
 		{
@@ -439,8 +418,7 @@ void R_SetFrameFog()
 			tr.glfogsettings[FOG_CURRENT].registered = qtrue;
 
 			// if either fog in the transition clears the screen, clear the background this frame to avoid hall of mirrors
-			tr.glfogsettings[FOG_CURRENT].clearscreen = (qboolean)(tr.glfogsettings[FOG_TARGET].clearscreen ||
-			                                                       tr.glfogsettings[FOG_LAST].clearscreen);
+			tr.glfogsettings[FOG_CURRENT].clearscreen = (tr.glfogsettings[FOG_TARGET].clearscreen || tr.glfogsettings[FOG_LAST].clearscreen);
 		}
 	}
 	else
@@ -452,6 +430,7 @@ void R_SetFrameFog()
 
 
 	// shorten the far clip if the fog opaque distance is closer than the procedural farcip dist
+
 	if (tr.glfogsettings[FOG_CURRENT].mode == GL_LINEAR)
 	{
 		if (tr.glfogsettings[FOG_CURRENT].end < tr.viewParms.zFar)
@@ -459,15 +438,12 @@ void R_SetFrameFog()
 			tr.viewParms.zFar = tr.glfogsettings[FOG_CURRENT].end;
 		}
 	}
-	//else
-	//tr.glfogsettings[FOG_CURRENT].end = 5;
 
-	if (r_speeds->integer == RSPEEDS_FOG)
+	if (r_speeds->integer == 5)
 	{
 		if (tr.glfogsettings[FOG_CURRENT].mode == GL_LINEAR)
 		{
-			Ren_Print("farclip fog - den: %0.1f  calc zFar: %0.1f  fog zfar: %0.1f\n",
-			          tr.glfogsettings[FOG_CURRENT].density, tr.viewParms.zFar, tr.glfogsettings[FOG_CURRENT].end);
+			Ren_Print("farclip fog - den: %0.1f  calc zFar: %0.1f  fog zfar: %0.1f\n", tr.glfogsettings[FOG_CURRENT].density, tr.viewParms.zFar, tr.glfogsettings[FOG_CURRENT].end);
 		}
 		else
 		{
@@ -524,7 +500,7 @@ void RE_SetGlobalFog(qboolean restore, int duration, float r, float g, float b, 
 			tr.world->globalTransStartFog[3] = tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque;
 
 			VectorSet(tr.world->globalTransEndFog, r, g, b);
-			tr.world->globalTransEndFog[3] = depthForOpaque < 1 ? 1 : depthForOpaque;
+			tr.world->globalTransEndFog[3] = depthForOpaque ;
 
 			tr.world->globalFogTransStartTime = tr.refdef.time;
 			tr.world->globalFogTransEndTime   = tr.refdef.time + duration;
