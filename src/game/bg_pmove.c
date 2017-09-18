@@ -2479,7 +2479,7 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 		break;
 	}
 
-	if (!GetWeaponTableData(weapon)->isMortar)
+	if (!(GetWeaponTableData(weapon)->isMortar || GetWeaponTableData(weapon)->isMortarSet))
 	{
 		PM_ContinueWeaponAnim(PM_ReloadAnimForWeapon(pm->ps->weapon));
 	}
@@ -3665,7 +3665,7 @@ static void PM_Weapon(void)
 		if (pm->ps->weapon != pm->cmd.weapon)
 		{
 			// don't change weapon while unmounting alt weapon
-			if ((GetWeaponTableData(pm->ps->weapon)->isMG || GetWeaponTableData(pm->ps->weapon)->isMortar || GetWeaponTableData(pm->ps->weapon)->isRifle || GetWeaponTableData(pm->ps->weapon)->isSilencedPistol) && pm->ps->weaponTime > 250)
+			if ((GetWeaponTableData(pm->ps->weapon)->isMG || GetWeaponTableData(pm->ps->weapon)->isMortar || GetWeaponTableData(pm->ps->weapon)->isMortarSet || GetWeaponTableData(pm->ps->weapon)->isRifle || GetWeaponTableData(pm->ps->weapon)->isSilencedPistol) && pm->ps->weaponTime > 250)
 			{
 				return;
 			}

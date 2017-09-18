@@ -856,7 +856,7 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 			}
 		}
 	}
-	else if (GetWeaponTableData(weap)->isMortar || GetWeaponTableData(weap)->isPanzer)
+	else if (GetWeaponTableData(weap)->isMortar || GetWeaponTableData(weap)->isMortarSet || GetWeaponTableData(weap)->isPanzer)
 	{
 		*ammo += *clips;
 	}
