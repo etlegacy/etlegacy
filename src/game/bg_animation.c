@@ -750,7 +750,8 @@ qboolean BG_ParseConditions(char **text_pp, animScriptItem_t *scriptItem)
 				conditionValue[0] = 1;      // not used, just check for a positive condition
 			}
 			break;
-		default:     // TODO: gcc: NUM_ANIM_CONDTYPES not handled in switch
+		default:
+			BG_AnimParseError("BG_AnimParseAnimScript: unknown condition type");
 			break;
 		}
 
@@ -1288,8 +1289,9 @@ qboolean BG_EvaluateConditions(int client, animScriptItem_t *scriptItem)
 				passed = qfalse;
 			}
 			break;
-		default:     // TODO: NUM_ANIM_CONDTYPES not handled
-			break;
+		default:
+			Com_Printf("BG_EvaluateConditions: unknown condition type\n");
+			return qfalse;
 		}
 
 		if (cond->negative)
@@ -1581,7 +1583,7 @@ int BG_AnimScriptAnimation(playerState_t *ps, animModelInfo_t *animModelInfo, sc
 #endif
 
 	// run it
-	return(BG_ExecuteCommand(ps, animModelInfo, scriptCommand, qfalse, isContinue, qfalse) != -1);
+	return (BG_ExecuteCommand(ps, animModelInfo, scriptCommand, qfalse, isContinue, qfalse) != -1);
 }
 
 /*
