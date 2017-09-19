@@ -784,7 +784,7 @@ static float PM_CmdScale(usercmd_t *cmd)
 	// full speed.  not completely realistic (well, sure, you can run faster with the weapon strapped to your
 	// back than in carry position) but more fun to play.  If it doesn't play well this way we'll bog down the
 	// player if the own the weapon at all.
-	if (GetWeaponTableData(pm->ps->weapon)->isHeavyWeapon)
+	if (GetWeaponTableData(pm->ps->weapon)->isHeavyWeapon && !GetWeaponTableData(pm->ps->weapon)->isMortarSet)
 	{
 		if (pm->ps->weapon == WP_FLAMETHROWER) // trying some different balance for the FT
 		{
