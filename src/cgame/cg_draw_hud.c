@@ -776,39 +776,11 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 		return weap;
 	}
 
-	// FIXME: table weapon ?
-	switch (weap)          // some weapons don't draw ammo count text
+	// it uses ammo ?
+	// some weapons don't draw ammo count
+	if (!GetWeaponTableData(weap)->uses)
 	{
-	case WP_AMMO:
-	case WP_MEDKIT:
-	case WP_KNIFE:
-	case WP_KNIFE_KABAR:
-	case WP_PLIERS:
-	case WP_SMOKE_MARKER:
-	case WP_DYNAMITE:
-	case WP_SATCHEL:
-	case WP_SATCHEL_DET:
-	case WP_SMOKE_BOMB:
-	case WP_BINOCULARS:
 		return weap;
-
-	case WP_LANDMINE:
-	case WP_MEDIC_SYRINGE:
-	case WP_MEDIC_ADRENALINE:
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_FLAMETHROWER:
-	case WP_MORTAR:
-	case WP_MORTAR2:
-	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET:
-	case WP_PANZERFAUST:
-	case WP_BAZOOKA:
-		skipammo = qtrue;
-		break;
-
-	default:
-		break;
 	}
 
 	if ((cg.snap->ps.eFlags & EF_MG42_ACTIVE) || (cg.snap->ps.eFlags & EF_MOUNTEDTANK) || (cg.snap->ps.eFlags & EF_AAGUN_ACTIVE))
@@ -861,7 +833,8 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 		*ammo += *clips;
 	}
 
-	if (skipammo)
+	// some weapons don't draw ammo clip count text (1 -> 1 ammo/clip -> no clip)
+	if (GetWeaponTableData(weap)->maxClip == 1)
 	{
 		*clips = -1;
 	}
