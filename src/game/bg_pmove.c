@@ -2635,7 +2635,7 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 		pm->ps->weaponstate = WEAPON_DROPPING;
 	}
 
-	if (newWeapon == weaponTable[oldWeapon].weapAlts)
+	if (newWeapon == GetWeaponTableData(oldWeapon)->weapAlts)
 	{
 		pm->ps->weaponTime += GetWeaponTableData(oldWeapon)->switchTimeBegin;
 	}
@@ -2651,7 +2651,6 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 static void PM_FinishWeaponChange(void)
 {
 	weapon_t oldweapon, newweapon = (weapon_t)pm->ps->nextWeapon;
-	qboolean doSwitchAnim = qtrue;
 
 	// Cannot switch to an invalid weapon
 	if (!IS_VALID_WEAPON(newweapon))
@@ -2708,59 +2707,44 @@ static void PM_FinishWeaponChange(void)
 		return;
 	}
 
+	// play an animation
 	if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
 	{
 		if (GetWeaponTableData(newweapon)->isRifle && !pm->ps->ammoclip[BG_FindAmmoForWeapon(oldweapon)])
 		{
-			doSwitchAnim = qfalse;
+			return;
+		}
+
+		pm->ps->weaponTime += GetWeaponTableData(newweapon)->switchTimeFinish;
+		BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_WEAPON, newweapon, qtrue);
+
+		if (pm->ps->eFlags & EF_PRONE)
+		{
+			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_DO_ALT_WEAPON_MODE_PRONE, qfalse, qfalse);
 		}
 		else
 		{
-			pm->ps->weaponTime += GetWeaponTableData(newweapon)->switchTimeFinish;
+			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_DO_ALT_WEAPON_MODE, qfalse, qfalse);
 		}
+
+		// alt weapon switch was played when switching away, just go into idle
+		PM_StartWeaponAnim(PM_AltSwitchToForWeapon(newweapon));
 	}
 	else
 	{
 		pm->ps->weaponTime += 250;              // dropping/raising usually takes 1/4 sec.
-	}
+		BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_WEAPON, newweapon, qtrue);
 
-	BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_WEAPON, newweapon, qtrue);
-
-	// play an animation
-	if (doSwitchAnim)
-	{
-		if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
+		if (pm->ps->eFlags & EF_PRONE)
 		{
-			if (pm->ps->eFlags & EF_PRONE)
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_DO_ALT_WEAPON_MODE_PRONE, qfalse, qfalse);
-			}
-			else
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_DO_ALT_WEAPON_MODE, qfalse, qfalse);
-			}
+			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_RAISEWEAPONPRONE, qfalse, qfalse);
 		}
 		else
 		{
-			if (pm->ps->eFlags & EF_PRONE)
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_RAISEWEAPONPRONE, qfalse, qfalse);
-			}
-			else
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_RAISEWEAPON, qfalse, qfalse);
-			}
+			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_RAISEWEAPON, qfalse, qfalse);
 		}
 
-		// alt weapon switch was played when switching away, just go into idle
-		if (GetWeaponTableData(oldweapon)->weapAlts == newweapon)
-		{
-			PM_StartWeaponAnim(PM_AltSwitchToForWeapon(newweapon));
-		}
-		else
-		{
-			PM_StartWeaponAnim(PM_RaiseAnimForWeapon(newweapon));
-		}
+		PM_StartWeaponAnim(PM_RaiseAnimForWeapon(newweapon));
 	}
 }
 
