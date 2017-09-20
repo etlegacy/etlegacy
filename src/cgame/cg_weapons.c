@@ -2581,7 +2581,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 		CG_PositionRotatedEntityOnTag(&gun, parent, "tag_weapon");
 	}
-	else if ((!ps || cg.renderingThirdPerson) && GetWeaponTableData(weaponNum)->isMortar)
+	else if ((!ps || cg.renderingThirdPerson) && (GetWeaponTableData(weaponNum)->isMortar && GetWeaponTableData(weaponNum)->isMortarSet))
 	{
 		CG_PositionEntityOnTag(&gun, parent, "tag_weapon2", 0, NULL);
 	}
