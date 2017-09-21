@@ -367,9 +367,9 @@ textures/snow_sd/xmetal_m02t_snow
 textures/snow_sd/snow_track03 
 { 
 	qer_editorimage textures/snow_sd/snow_track03
-	diffusemap textures/snow_sd/snow_track03
-	specularmap textures/snow_sd/snow_track03_s
-	bumpmap textures/snow_sd/snow_track03_n
+	//diffusemap textures/snow_sd/snow_track03
+	//specularmap textures/snow_sd/snow_track03_s
+	//bumpmap textures/snow_sd/snow_track03_n
 	q3map_nonplanar 
 	q3map_shadeangle 120 
 	surfaceparm trans 
@@ -390,9 +390,9 @@ textures/snow_sd/snow_track03
 textures/snow_sd/snow_track03_faint
 { 
 	qer_editorimage textures/snow_sd/snow_track03
-	diffusemap textures/snow_sd/snow_track03
-	specularmap textures/snow_sd/snow_track03_s
-	bumpmap textures/snow_sd/snow_track03_n
+	//diffusemap textures/snow_sd/snow_track03
+	//specularmap textures/snow_sd/snow_track03_s
+	//bumpmap textures/snow_sd/snow_track03_n
 	q3map_nonplanar 
 	q3map_shadeangle 120 
 	surfaceparm trans 
@@ -413,9 +413,9 @@ textures/snow_sd/snow_track03_faint
 textures/snow_sd/snow_track03_end 
 { 
 	qer_editorimage textures/snow_sd/snow_track03_end
-	diffusemap textures/snow_sd/snow_track03_end
-	specularmap textures/snow_sd/snow_track03_end_s
-	bumpmap textures/snow_sd/snow_track03_end_n
+	//diffusemap textures/snow_sd/snow_track03_end
+	//specularmap textures/snow_sd/snow_track03_end_s
+	//bumpmap textures/snow_sd/snow_track03_end_n
 	q3map_nonplanar 
 	q3map_shadeangle 120 
 	surfaceparm trans 
@@ -436,9 +436,9 @@ textures/snow_sd/snow_track03_end
 textures/snow_sd/snow_track03_end_faint 
 { 
 	qer_editorimage textures/snow_sd/snow_track03_end
-	diffusemap textures/snow_sd/snow_track03_end
-	specularmap textures/snow_sd/snow_track03_end_s
-	bumpmap textures/snow_sd/snow_track03_end_n
+	//diffusemap textures/snow_sd/snow_track03_end
+	//specularmap textures/snow_sd/snow_track03_end_s
+	//bumpmap textures/snow_sd/snow_track03_end_n
 	q3map_nonplanar 
 	q3map_shadeangle 120 
 	surfaceparm trans 
@@ -459,9 +459,9 @@ textures/snow_sd/snow_track03_end_faint
 textures/snow_sd/river_edge_snowy 
 { 
 	qer_editorimage textures/snow_sd/river_edge_snowy
-	diffusemap textures/snow_sd/river_edge_snowy
-	specularmap textures/snow_sd/river_edge_snowy_s
-	bumpmap textures/snow_sd/river_edge_snowy_n
+	//diffusemap textures/snow_sd/river_edge_snowy
+	//specularmap textures/snow_sd/river_edge_snowy_s
+	//bumpmap textures/snow_sd/river_edge_snowy_n
 	q3map_nonplanar 
 	q3map_shadeangle 120 
 	surfaceparm trans 
