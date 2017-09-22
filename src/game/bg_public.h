@@ -1067,27 +1067,30 @@ typedef struct weapontable_s
 
 	unsigned int indexWeaponStat;               ///< bg - index for weapon stat info
 
-	int maxAmmo;              ///<
-	int uses;                 ///<
-	int maxClip;              ///<
+	qboolean useAmmo;               ///<
+	qboolean useClip;               ///<
+
+	int maxAmmo;                    ///<
+	int uses;                       ///<
+	int maxClip;                    ///<
 	int defaultStartingAmmo;
 	int defaultStartingClip;
-	int reloadTime;           ///<
-	int fireDelayTime;        ///<
-	int nextShotTime;         ///<
+	int reloadTime;                 ///<
+	int fireDelayTime;              ///<
+	int nextShotTime;               ///<
 
-	int maxHeat;              ///< max active firing time before weapon 'overheats' (at which point the weapon will fail)
-	int coolRate;             ///< how fast the weapon cools down. (per second)
+	int maxHeat;                    ///< max active firing time before weapon 'overheats' (at which point the weapon will fail)
+	int coolRate;                   ///< how fast the weapon cools down. (per second)
 
-	int switchTimeBegin;      ///<
-	int switchTimeFinish;     ///<
+	int switchTimeBegin;            ///<
+	int switchTimeFinish;           ///<
 
-	float knockback;          ///<
+	float knockback;                ///<
 
-	const char *className;    ///<
-	const char *weapFile;     ///<
-	meansOfDeath_t mod;       ///< means of death
-	meansOfDeath_t splashMod; ///< means of death
+	const char *className;          ///<
+	const char *weapFile;           ///<
+	meansOfDeath_t mod;             ///< means of death
+	meansOfDeath_t splashMod;       ///< means of death
 
 } weaponTable_t;
 

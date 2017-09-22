@@ -755,7 +755,6 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 	centity_t     *cent;
 	playerState_t *ps;
 	weapon_t      weap;
-	qboolean      skipammo = qfalse;
 
 	*ammo = *clips = *akimboammo = -1;
 
@@ -776,9 +775,8 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 		return weap;
 	}
 
-	// it uses ammo ?
 	// some weapons don't draw ammo count
-	if (!GetWeaponTableData(weap)->uses)
+	if (!GetWeaponTableData(weap)->useAmmo)
 	{
 		return weap;
 	}
@@ -833,8 +831,8 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 		*ammo += *clips;
 	}
 
-	// some weapons don't draw ammo clip count text (1 -> 1 ammo/clip -> no clip)
-	if (GetWeaponTableData(weap)->maxClip == 1)
+	// some weapons don't draw ammo clip count text
+	if (!GetWeaponTableData(weap)->useClip)
 	{
 		*clips = -1;
 	}
