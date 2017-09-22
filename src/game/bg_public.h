@@ -1033,6 +1033,9 @@ typedef struct weapontable_s
 	qboolean keepDisguise;          ///< g
 
 	qboolean isAutoReload;          ///< bg
+    qboolean noAmmoSound;
+    qboolean noAmmoAutoSwitch;
+
 
 	qboolean isPistol;              ///<
 	qboolean isAkimbo;              ///< bg
@@ -1065,7 +1068,7 @@ typedef struct weapontable_s
 	// icons
 	const char *desc;               ///< c - description for spawn weapons
 
-	unsigned int indexWeaponStat;               ///< bg - index for weapon stat info
+	unsigned int indexWeaponStat;   ///< bg - index for weapon stat info
 
 	qboolean useAmmo;               ///<
 	qboolean useClip;               ///<

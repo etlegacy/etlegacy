@@ -2581,61 +2581,16 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	case EV_WEAPONSWITCHED:
 		DEBUGNAME("EV_NOAMMO");
 
-		// TODO: weapon table nosoundswitch ?
-		switch (es->weapon)
+		if (GetWeaponTableData(es->weapon)->noAmmoSound)
 		{
-		case WP_GRENADE_LAUNCHER:
-		case WP_GRENADE_PINEAPPLE:
-		case WP_DYNAMITE:
-		case WP_LANDMINE:
-		case WP_SATCHEL:
-		case WP_SATCHEL_DET:
-		case WP_SMOKE_BOMB:
-		case WP_AMMO:
-		case WP_MEDKIT:
-		case WP_MEDIC_SYRINGE:
-		case WP_MEDIC_ADRENALINE:
-			break;
-		default:
 			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound);     // FIXME: CHAN_LOCAL_SOUND ?
-			break;
 		}
 
 		if (es->number == cg.snap->ps.clientNum)
 		{
-			if (cg_noAmmoAutoSwitch.integer > 0 && !CG_WeaponSelectable(cg.weaponSelect))
+			if ((cg_noAmmoAutoSwitch.integer > 0 && !CG_WeaponSelectable(cg.weaponSelect)) || GetWeaponTableData(es->weapon)->noAmmoAutoSwitch)
 			{
 				CG_OutOfAmmoChange(event == EV_WEAPONSWITCHED ? qfalse : qtrue);
-			}
-			else
-			{
-				// TODO: weapon table autoswitch ?
-				switch (es->weapon)
-				{
-				case WP_MORTAR_SET:
-				case WP_MORTAR2_SET:
-				case WP_MOBILE_MG42_SET:
-				case WP_MOBILE_BROWNING_SET:
-				case WP_GRENADE_LAUNCHER:
-				case WP_GRENADE_PINEAPPLE:
-				case WP_DYNAMITE:
-				case WP_SMOKE_MARKER:
-				case WP_PANZERFAUST:
-				case WP_BAZOOKA:
-				case WP_ARTY:
-				case WP_LANDMINE:
-				case WP_SATCHEL:
-				case WP_SATCHEL_DET:
-				case WP_SMOKE_BOMB:
-				case WP_AMMO:
-				case WP_MEDKIT:
-				case WP_MEDIC_SYRINGE:
-				case WP_MEDIC_ADRENALINE:
-					CG_OutOfAmmoChange(event == EV_WEAPONSWITCHED ? qfalse : qtrue);
-					break;
-				default:
-					break;
-				}
 			}
 		}
 		break;
