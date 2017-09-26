@@ -253,46 +253,18 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	}
 	else
 	{
-		// TODO: weapon table offset ?
-		switch (cent->currentState.weapon)
+		if (GetWeaponTableData(cent->currentState.weapon)->isMG || GetWeaponTableData(cent->currentState.weapon)->isMGSet
+		    || GetWeaponTableData(cent->currentState.weapon)->isRifle || cent->currentState.weapon == WP_K43 || cent->currentState.weapon == WP_GARAND)
 		{
-		case WP_LUGER:
-		case WP_COLT:
-		case WP_SILENCER:
-		case WP_SILENCED_COLT:
-			offset[0]  = 24;
-			offset[1]  = -4;
-			offset[2]  = 36;
-			re->hModel = cgs.media.smallgunBrassModel;
-			break;
-		case WP_MOBILE_MG42:
-		case WP_MOBILE_MG42_SET:
-		case WP_MOBILE_BROWNING:
-		case WP_MOBILE_BROWNING_SET:
-			offset[0]  = 12;
-			offset[1]  = -4;
-			offset[2]  = 24;
 			re->hModel = cgs.media.machinegunBrassModel;
-			break;
-		case WP_KAR98:
-		case WP_CARBINE:
-		case WP_K43:
-		case WP_GARAND:
-			offset[0]  = 16;
-			offset[1]  = -4;
-			offset[2]  = 24;
-			re->hModel = cgs.media.machinegunBrassModel;
-			break;
-		case WP_MP40:
-		case WP_THOMPSON:
-		case WP_STEN:
-		default:
-			offset[0]  = 16;
-			offset[1]  = -4;
-			offset[2]  = 24;
-			re->hModel = cgs.media.smallgunBrassModel;
-			break;
 		}
+		else
+		{
+			re->hModel = cgs.media.smallgunBrassModel;
+		}
+
+		vec3_copy(GetWeaponTableData(cent->currentState.weapon)->ejectBrassOffset, offset);
+
 		velocity[0] = -50 + 25 * crandom();
 		velocity[1] = -100 + 40 * crandom();
 		velocity[2] = 200 + 50 * random();
@@ -356,13 +328,15 @@ void CG_MachineGunEjectBrass(centity_t *cent)
  */
 static void CG_PanzerFaustEjectBrass(centity_t *cent)
 {
-	localEntity_t *le = CG_AllocLocalEntity();
-	refEntity_t   *re = &le->refEntity;
+	localEntity_t *le      = CG_AllocLocalEntity();
+	refEntity_t   *re      = &le->refEntity;
 	vec3_t        velocity = { 16, -200, 0 };
-	vec3_t        offset = { -24, -4, 24 };   // forward, left, up
+	vec3_t        offset;
 	vec3_t        xoffset, xvelocity;
 	float         waterScale = 1.0f;
 	vec3_t        v[3];
+
+	VectorCopy(GetWeaponTableData(cent->currentState.weapon)->ejectBrassOffset, offset);
 
 	le->leType    = LE_FRAGMENT;
 	le->startTime = cg.time;
@@ -4017,7 +3991,7 @@ void CG_AltWeapon_f(void)
  */
 void CG_NextWeap(qboolean switchBanks)
 {
-	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean nextbank = qfalse;     // need to switch to the next bank of weapons?
@@ -4174,7 +4148,7 @@ void CG_NextWeap(qboolean switchBanks)
  */
 void CG_PrevWeap(qboolean switchBanks)
 {
-	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean prevbank = qfalse;     // need to switch to the next bank of weapons?
@@ -5608,13 +5582,13 @@ void CG_WaterRipple(qhandle_t shader, vec3_t loc, vec3_t dir, int size, int life
  */
 void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags)     // modified to send missilehitwall surface parameters
 {
-	qhandle_t   mod = 0, mark = 0, shader = 0;
-	sfxHandle_t sfx = 0, sfx2 = 0;
+	qhandle_t   mod      = 0, mark = 0, shader = 0;
+	sfxHandle_t sfx      = 0, sfx2 = 0;
 	qboolean    isSprite = qfalse;
 	int         duration = 600, i, j, markDuration = -1, volume = 127; // keep -1 markDuration for temporary marks
 	trace_t     trace;
 	vec3_t      lightColor = { 1, 1, 0 }, tmpv, tmpv2, sprOrg, sprVel;
-	float       radius = 32, light = 0, sfx2range = 0;
+	float       radius     = 32, light = 0, sfx2range = 0;
 	vec4_t      projection;
 
 	if (surfFlags & SURF_SKY)

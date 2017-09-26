@@ -1033,8 +1033,8 @@ typedef struct weapontable_s
 	qboolean keepDisguise;          ///< g
 
 	qboolean isAutoReload;          ///< bg
-    qboolean noAmmoSound;
-    qboolean noAmmoAutoSwitch;
+	qboolean noAmmoSound;
+	qboolean noAmmoAutoSwitch;
 
 
 	qboolean isPistol;              ///<
@@ -1089,6 +1089,7 @@ typedef struct weapontable_s
 	int switchTimeFinish;           ///<
 
 	float knockback;                ///<
+	int ejectBrassOffset[3];        ///< forward, left, up
 
 	const char *className;          ///<
 	const char *weapFile;           ///<
