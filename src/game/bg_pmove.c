@@ -3460,10 +3460,10 @@ static void PM_HandleRecoil(void)
  */
 static void PM_Weapon(void)
 {
-	int      addTime = 0;    // init
+	int      addTime           = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
+	int      aimSpreadScaleAdd = GetWeaponTableData(pm->ps->weapon)->aimSpreadScaleAdd;
 	int      ammoNeeded;
 	qboolean delayedFire;       // true if the delay time has just expired and this is the frame to send the fire event
-	int      aimSpreadScaleAdd;
 	int      weapattackanim;
 	qboolean akimboFire;
 #ifdef DO_WEAPON_DBG
@@ -4359,41 +4359,21 @@ static void PM_Weapon(void)
 	pm->pmext->releasedFire = qfalse;
 	pm->ps->lastFireTime    = pm->cmd.serverTime;
 
-	aimSpreadScaleAdd = 0;
-
-	switch (pm->ps->weapon)
+	if (pm->ps->weapon == WP_MP40 || pm->ps->weapon == WP_THOMPSON || pm->ps->weapon == WP_STEN)
 	{
-	case WP_KNIFE:
-	case WP_KNIFE_KABAR:
-	case WP_PANZERFAUST:
-	case WP_BAZOOKA:
-	case WP_DYNAMITE:
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_FLAMETHROWER:
-	case WP_GPG40:
-	case WP_M7:
-	case WP_LANDMINE:
-	case WP_SMOKE_BOMB:
-	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET:
-		addTime = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
-		break;
-	case WP_LUGER:
-	case WP_SILENCER:
-	case WP_COLT:
-	case WP_SILENCED_COLT:
-		addTime = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
-		// colt and luger are supposed to be balanced
-		aimSpreadScaleAdd = 20;
-		break;
-	case WP_AKIMBO_COLT:
-	case WP_AKIMBO_SILENCEDCOLT:
-	case WP_AKIMBO_LUGER:
-	case WP_AKIMBO_SILENCEDLUGER:
+		aimSpreadScaleAdd += rand() % 10;
+	}
+	else if (GetWeaponTableData(pm->ps->weapon)->isMG || GetWeaponTableData(pm->ps->weapon)->isMGSet)
+	{
+		if (weapattackanim == WEAP_ATTACK_LASTSHOT)
+		{
+			addTime = 0;
+		}
+	}
+	else if (GetWeaponTableData(pm->ps->weapon)->isAkimbo)
+	{
 		// if you're firing an akimbo weapon, and your other gun is dry,
 		// nextshot needs to take 2x time
-		addTime = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
 
 		// fixed the swapped usage of akimboFire vs. the colt
 		// so that the last shot isn't delayed
@@ -4401,70 +4381,16 @@ static void PM_Weapon(void)
 		{
 			if (!akimboFire)
 			{
-				addTime = 2 * GetWeaponTableData(pm->ps->weapon)->nextShotTime;
+				addTime *= 2;
 			}
 		}
 		else if (!pm->ps->ammoclip[BG_FindClipForWeapon(GetWeaponTableData(pm->ps->weapon)->akimboSideArm)])
 		{
 			if (akimboFire)
 			{
-				addTime = 2 * GetWeaponTableData(pm->ps->weapon)->nextShotTime;
+				addTime *= 2;
 			}
 		}
-
-		// colt and luger are supposed to be balanced
-		aimSpreadScaleAdd = 20;
-		break;
-	case WP_GARAND:
-	case WP_K43:
-	case WP_KAR98:
-	case WP_CARBINE:
-		addTime           = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
-		aimSpreadScaleAdd = 50;
-		break;
-	case WP_GARAND_SCOPE:
-	case WP_K43_SCOPE:
-		addTime           = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
-		aimSpreadScaleAdd = 200;
-		break;
-	case WP_FG42:
-	case WP_FG42SCOPE:
-		addTime           = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
-		aimSpreadScaleAdd = 200 / 2;
-		break;
-	case WP_MP40:
-	case WP_THOMPSON:
-	case WP_STEN:
-		addTime           = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
-		aimSpreadScaleAdd = 15 + rand() % 10;
-		break;
-	case WP_MOBILE_MG42:
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING:
-	case WP_MOBILE_BROWNING_SET:
-		if (weapattackanim != WEAP_ATTACK_LASTSHOT)
-		{
-			addTime = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
-		}
-		aimSpreadScaleAdd = 20;
-		break;
-	case WP_MEDIC_SYRINGE:
-	case WP_MEDIC_ADRENALINE:
-	case WP_AMMO:
-		addTime = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
-		break;
-	// engineers disarm bomb "on the fly" (high sample rate) but medics & LTs throw out health pack/smoke grenades slow
-	case WP_PLIERS:
-		addTime = 50;
-		break;
-	case WP_MEDKIT:
-		addTime = 1000;
-		break;
-	case WP_SMOKE_MARKER:
-		addTime = 1000;
-		break;
-	default:
-		break;
 	}
 
 	// set weapon recoil

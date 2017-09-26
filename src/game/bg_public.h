@@ -1081,6 +1081,7 @@ typedef struct weapontable_s
 	int reloadTime;                 ///<
 	int fireDelayTime;              ///<
 	int nextShotTime;               ///<
+    int aimSpreadScaleAdd;          ///<
 
 	int maxHeat;                    ///< max active firing time before weapon 'overheats' (at which point the weapon will fail)
 	int coolRate;                   ///< how fast the weapon cools down. (per second)
