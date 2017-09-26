@@ -3349,26 +3349,21 @@ WEAPON SELECTION
 */
 
 /**
- * @brief Check for ammo
- * @param i
- * @return
+ * @brief Check weapon for ammo
+ * @param weapon - the weapon to check for ammo
+ * @return qtrue if the weapon has ammo or don't need ammo, else qfalse if weapon has no ammo left
  */
-static qboolean CG_WeaponHasAmmo(weapon_t i)
+static qboolean CG_WeaponHasAmmo(weapon_t weapon)
 {
 	// certain weapons don't have ammo
-	// TODO: weapon table ?
-	switch (i)
+	if (!GetWeaponTableData(weapon)->useAmmo)
 	{
-	case WP_KNIFE:
-	case WP_KNIFE_KABAR:
-	case WP_PLIERS:
 		return qtrue;
-	default:
-		break;
 	}
 
-	if (!(cg.predictedPlayerState.ammo[BG_FindAmmoForWeapon(i)]) &&
-	    !(cg.predictedPlayerState.ammoclip[BG_FindClipForWeapon(i)]))
+	// check if the weapon still have ammo
+	if (!(cg.predictedPlayerState.ammo[BG_FindAmmoForWeapon(weapon)]) &&
+	    !(cg.predictedPlayerState.ammoclip[BG_FindClipForWeapon(weapon)]))
 	{
 		return qfalse;
 	}
@@ -3377,29 +3372,29 @@ static qboolean CG_WeaponHasAmmo(weapon_t i)
 }
 
 /**
- * @brief CG_WeaponSelectable
- * @param i
- * @return
+ * @brief Check weapon is selectable
+ * @param weapon - the weapon to check if selectable
+ * @return qtrue if the weapon is selectable, else qfalse if not
  */
-qboolean CG_WeaponSelectable(int i)
+qboolean CG_WeaponSelectable(int weapon)
 {
-
 	// allow the player to unselect all weapons
 	//if(i == WP_NONE)
 	//  return qtrue;
 
+	// if the player use a mounted weapon, don't allow weapon selection
 	if (BG_PlayerMounted(cg.predictedPlayerState.eFlags))
 	{
 		return qfalse;
 	}
 
-	// check for weapon
-	if (!(COM_BitCheck(cg.predictedPlayerState.weapons, i)))
+	// check if the selected weapon is available
+	if (!(COM_BitCheck(cg.predictedPlayerState.weapons, weapon)))
 	{
 		return qfalse;
 	}
 
-	if (!CG_WeaponHasAmmo((weapon_t)i))
+	if (!CG_WeaponHasAmmo((weapon_t)weapon))
 	{
 		return qfalse;
 	}
