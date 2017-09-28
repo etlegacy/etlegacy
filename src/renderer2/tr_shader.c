@@ -4075,24 +4075,29 @@ static qboolean ParseShader(char *_text)
 		// fogParms
 		else if (!Q_stricmp(token, "fogParms"))
 		{
-			/*
-			Ren_Warning( "WARNING: fogParms keyword not supported in shader '%s'\n", shader.name);
-			SkipRestOfLine(text);
-
-			*/
-
 			if (!ParseVector(text, 3, shader.fogParms.color))
 			{
 				return qfalse;
 			}
 
+			// FIXME: inspect - this and tcScale (see below) are set in R_SetFrameFog
+			//
+			//shader.fogParms.colorInt = ColorBytes4(shader.fogParms.color[0] * tr.identityLight,
+			//                                       shader.fogParms.color[1] * tr.identityLight,
+			//                                       shader.fogParms.color[2] * tr.identityLight, 1.0);
+
 			token = COM_ParseExt2(text, qfalse);
 			if (!token[0])
 			{
-				Ren_Warning("WARNING: missing parm for 'fogParms' keyword in shader '%s'\n", shader.name);
-				continue;
+				Ren_Warning("WARNING: 'fogParms' incomplete - missing opacity value in shader '%s' set to 1\n", shader.name);
+				shader.fogParms.depthForOpaque = 1;
 			}
-			shader.fogParms.depthForOpaque = atof(token);
+			else
+			{
+				shader.fogParms.depthForOpaque = atof(token);
+				shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1 ? 1 : shader.fogParms.depthForOpaque;
+			}
+			//shader.fogParms.tcScale        = 1.0f / shader.fogParms.depthForOpaque;
 
 			shader.fogVolume = qtrue;
 			shader.sort      = SS_FOG;

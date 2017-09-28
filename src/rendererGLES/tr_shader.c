@@ -1848,12 +1848,15 @@ static qboolean ParseShader(char **text)
 			token = COM_ParseExt(text, qfalse);
 			if (!token[0])
 			{
-				Ren_Warning("WARNING: missing parm for 'fogParms' keyword in shader '%s'\n", shader.name);
-				continue;
+				Ren_Warning("WARNING: 'fogParms' incomplete - missing opacity value in shader '%s' set to 1\n", shader.name); // tcScale is 1.0f
+				shader.fogParms.depthForOpaque = 1;
 			}
-			shader.fogParms.depthForOpaque = atof(token);
-			shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1 ? 1 : shader.fogParms.depthForOpaque;
-			shader.fogParms.tcScale        = 1.0f / shader.fogParms.depthForOpaque;
+			else
+			{
+				shader.fogParms.depthForOpaque = atof(token);
+				shader.fogParms.depthForOpaque = shader.fogParms.depthForOpaque < 1 ? 1 : shader.fogParms.depthForOpaque;
+			}
+			shader.fogParms.tcScale = 1.0f / shader.fogParms.depthForOpaque;
 
 			// skip any old gradient directions
 			SkipRestOfLine(text);
