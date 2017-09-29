@@ -334,7 +334,7 @@ void Tess_Begin(void (*stageIteratorFunc)(),
 /**
  * @brief clipping portal plane in world space
  */
-static void clipPortalPlane() // static for now - might be used in tr_main.c and tr_sky.c
+void clipPortalPlane() // static for now - might be used in tr_main.c and tr_sky.c
 {
 	vec4_t plane;
 

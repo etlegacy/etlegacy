@@ -1111,15 +1111,8 @@ void Tess_StageIteratorSky(void)
 			// u_PortalPlane
 			if (backEnd.viewParms.isPortal)
 			{
-				vec4_t plane;
-
 				// clipping plane in world space
-				plane[0] = backEnd.viewParms.portalPlane.normal[0];
-				plane[1] = backEnd.viewParms.portalPlane.normal[1];
-				plane[2] = backEnd.viewParms.portalPlane.normal[2];
-				plane[3] = backEnd.viewParms.portalPlane.dist;
-
-				SetUniformVec4(UNIFORM_PORTALPLANE, plane);
+				clipPortalPlane();
 			}
 
 			GLSL_SetRequiredVertexPointers(trProg.gl_skyboxShader);
@@ -1151,15 +1144,9 @@ void Tess_StageIteratorSky(void)
 			// u_PortalPlane
 			if (backEnd.viewParms.isPortal)
 			{
-				vec4_t plane;
-
 				// clipping plane in world space
-				plane[0] = backEnd.viewParms.portalPlane.normal[0];
-				plane[1] = backEnd.viewParms.portalPlane.normal[1];
-				plane[2] = backEnd.viewParms.portalPlane.normal[2];
-				plane[3] = backEnd.viewParms.portalPlane.dist;
+				clipPortalPlane();
 
-				SetUniformVec4(UNIFORM_PORTALPLANE, plane);
 			}
 
 			GLSL_SetRequiredVertexPointers(trProg.gl_skyboxShader);
