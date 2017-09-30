@@ -2384,8 +2384,6 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 		// get information from the shader for fog parameters
 		shader = R_FindShader(fogs->shader, LIGHTMAP_NONE, qtrue);
 
-		out->parms = shader->fogParms;
-
 		// colorInt is now set in the shader so we can modify it
 		out->shader = shader;
 

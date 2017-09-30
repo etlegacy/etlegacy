@@ -686,7 +686,6 @@ typedef struct
 	vec3_t bounds[2];
 
 	shader_t *shader;               ///< fog shader to get colorInt and tcScale from
-	fogParms_t parms;
 
 	// for clipping distance in fog when outside
 	qboolean hasSurface;
