@@ -31,10 +31,8 @@
 /**
  * @file bg_public.h
  * @brief Definitions shared by both the server game and client game modules. (server.h includes this)
- */
-
-/*
- * because games can change separately from the main system version, we need a
+ *
+ * @note Because games can change separately from the main system version, we need a
  * second version that must match between game and cgame
  */
 
@@ -121,6 +119,39 @@ extern vec3_t playerlegsProneMaxs;
 #define SVC_OUTSIDE         6
 #define SVC_INCLUDE         7
 #define SVC_EXCLUDE         8
+
+/**
+ * entity->svFlags
+ * the server does not know how to interpret most of the values
+ * in entityStates (level eType), so the game must explicitly flag
+ * special server behaviors
+ */
+
+#define SVF_NOCLIENT            0x00000001  ///< don't send entity to clients, even if it has effects
+#define SVF_VISDUMMY            0x00000004  ///< this ent is a "visibility dummy" and needs it's master to be sent to clients that can see it even if they can't see the master ent
+#define SVF_BOT                 0x00000008
+//#define SVF_POW                 0x00000010  ///< Unused
+
+#define SVF_BROADCAST           0x00000020  ///< send to all connected clients
+#define SVF_PORTAL              0x00000040  ///< merge a second pvs at origin2 into snapshots
+#define SVF_BLANK               0x00000080  ///< removed SVF_USE_CURRENT_ORIGIN as it plain doesnt do anything
+#define SVF_NOFOOTSTEPS         0x00000100  ///< Unused
+
+#define SVF_CAPSULE             0x00000200  ///< use capsule for collision detection
+
+#define SVF_VISDUMMY_MULTIPLE   0x00000400  ///< so that one vis dummy can add to snapshot multiple speakers
+
+// recent id changes
+#define SVF_SINGLECLIENT        0x00000800  ///< only send to a single client (entityShared_t->singleClient)
+#define SVF_NOSERVERINFO        0x00001000  ///< don't send CS_SERVERINFO updates to this client
+// so that it can be updated for ping tools without
+// lagging clients
+#define SVF_NOTSINGLECLIENT     0x00002000  ///< send entity to everyone but one client
+// (entityShared_t->singleClient)
+
+#define SVF_IGNOREBMODELEXTENTS     0x00004000  ///< just use origin for in pvs check for snapshots, ignore the bmodel extents
+#define SVF_SELF_PORTAL             0x00008000  ///< use self->origin2 as portal
+#define SVF_SELF_PORTAL_EXCLUSIVE   0x00010000  ///< use self->origin2 as portal and DONT add self->origin PVS ents
 
 /**
  * @struct svCvar_s
@@ -655,6 +686,7 @@ typedef enum
 } persEnum_t;
 
 // entityState_t->eFlags
+#define EF_NONE             0x00000000                         ///< none
 #define EF_DEAD             0x00000001                         ///< don't draw a foe marker over players with EF_DEAD
 #define EF_NONSOLID_BMODEL  0x00000002                         ///< bmodel is visible, but not solid
 #define EF_TELEPORT_BIT     0x00000004                         ///< toggled every time the origin abruptly changes
@@ -1017,6 +1049,13 @@ typedef struct weapontable_s
 	weapon_t ammoIndex;             ///< bg type of weapon ammo this uses.  (ex. WP_MP40 and WP_LUGER share 9mm ammo, so they both have WP_LUGER for giAmmoIndex)
 	weapon_t clipIndex;             ///< bg which clip this weapon uses.  this allows the sniper rifle to use the same clip as the garand, etc.
 
+	int eType;
+	int eFlags;                     ///< bg
+	int svFlags;
+	int trType;
+	int trTime;
+	int clipMask;
+
 	qboolean isScoped;              ///< bg
 
 	qboolean isLightWeaponSupportingFastReload; ///< bg
@@ -1033,9 +1072,9 @@ typedef struct weapontable_s
 	qboolean keepDisguise;          ///< g
 
 	qboolean isAutoReload;          ///< bg
-	qboolean noAmmoSound;
-	qboolean noAmmoAutoSwitch;
-
+	qboolean noAmmoSound;           ///<
+	qboolean noAmmoAutoSwitch;      ///<
+	qboolean isExplosive;           ///<
 
 	qboolean isPistol;              ///<
 	qboolean isAkimbo;              ///< bg
@@ -1081,7 +1120,7 @@ typedef struct weapontable_s
 	int reloadTime;                 ///<
 	int fireDelayTime;              ///<
 	int nextShotTime;               ///<
-    int aimSpreadScaleAdd;          ///<
+	int aimSpreadScaleAdd;          ///<
 
 	int maxHeat;                    ///< max active firing time before weapon 'overheats' (at which point the weapon will fail)
 	int coolRate;                   ///< how fast the weapon cools down. (per second)
@@ -1091,6 +1130,9 @@ typedef struct weapontable_s
 
 	float knockback;                ///<
 	int ejectBrassOffset[3];        ///< forward, left, up
+
+	int nextThink;                  ///<
+	int accuracy;                   ///<
 
 	const char *className;          ///<
 	const char *weapFile;           ///<
