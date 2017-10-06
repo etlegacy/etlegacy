@@ -43,40 +43,6 @@
 void G_ExplodeMissile(gentity_t *ent);
 
 /**
- * @brief G_CreatePreFilledMissileEntity
- * @param[in] self
- * @param[in] weapon
- * @param[in] realWeapon
- * @return missile ent
- */
-gentity_t *G_CreatePreFilledMissileEntity(int weaponNum, int realWeapon, int ownerNum, gentity_t *parent)
-{
-	gentity_t *bolt;
-
-	bolt = G_Spawn();
-
-	bolt->s.weapon            = realWeapon;
-	bolt->r.ownerNum          = ownerNum;
-	bolt->parent              = parent;
-	bolt->classname           = GetWeaponTableData(weaponNum)->className;
-	bolt->s.eType             = GetWeaponTableData(weaponNum)->eType;
-	bolt->r.svFlags           = GetWeaponTableData(weaponNum)->svFlags;
-	bolt->nextthink           = GetWeaponTableData(weaponNum)->nextThink ? level.time + GetWeaponTableData(weaponNum)->nextThink : 0;
-	bolt->s.eFlags            = GetWeaponTableData(weaponNum)->eFlags;
-	bolt->classname           = GetWeaponTableData(weaponNum)->className;
-	bolt->damage              = GetWeaponTableData(weaponNum)->damage;
-	bolt->splashDamage        = GetWeaponTableData(weaponNum)->splashDamage;
-	bolt->methodOfDeath       = GetWeaponTableData(weaponNum)->mod;
-	bolt->splashMethodOfDeath = GetWeaponTableData(weaponNum)->splashMod;
-	bolt->splashRadius        = GetWeaponTableData(weaponNum)->splashRadius;  // blast radius proportional to damage for ALL weapons
-	bolt->clipmask            = GetWeaponTableData(weaponNum)->clipMask;
-	bolt->s.pos.trType        = GetWeaponTableData(weaponNum)->trType;
-	bolt->s.pos.trTime        = GetWeaponTableData(weaponNum)->trTime ? level.time - GetWeaponTableData(weaponNum)->trTime : 0;   // move a bit on the very first frame
-
-	return bolt;
-}
-
-/**
  * @brief G_BounceMissile
  * @param[in,out] ent
  * @param[in] trace
@@ -1809,11 +1775,6 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 
 		bolt->r.snapshotCallback = qtrue;
 
-		VectorSet(bolt->r.mins, -16, -16, 0);
-		VectorCopy(bolt->r.mins, bolt->r.absmin);
-		VectorSet(bolt->r.maxs, 16, 16, 16);
-		VectorCopy(bolt->r.maxs, bolt->r.absmax);
-
 		if (self->client)
 		{
 			bolt->s.teamNum = self->client->sess.sessionTeam + 4;   // overwrite
@@ -1825,18 +1786,17 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		{
 			bolt->s.otherEntityNum2 = 0;
 		}
+
+		VectorSet(bolt->r.mins, -16, -16, 0);
+		VectorCopy(bolt->r.mins, bolt->r.absmin);
+		VectorSet(bolt->r.maxs, 16, 16, 16);
+		VectorCopy(bolt->r.maxs, bolt->r.absmax);
 	}
 	else if (grenadeWPID == WP_SATCHEL || grenadeWPID == WP_DYNAMITE)
 	{
 		bolt->health     = 5;
 		bolt->takedamage = qfalse;
 		bolt->r.contents = CONTENTS_CORPSE;                 // (player can walk through)
-
-		// small target cube
-		VectorSet(bolt->r.mins, -12, -12, 0);
-		VectorCopy(bolt->r.mins, bolt->r.absmin);
-		VectorSet(bolt->r.maxs, 12, 12, 20);
-		VectorCopy(bolt->r.maxs, bolt->r.absmax);
 
 		if (grenadeWPID == WP_DYNAMITE)
 		{
@@ -1861,6 +1821,12 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 			bolt->free        = G_FreeSatchel;
 			// is there think set for satchel?
 		}
+
+		// small target cube
+		VectorSet(bolt->r.mins, -12, -12, 0);
+		VectorCopy(bolt->r.mins, bolt->r.absmin);
+		VectorSet(bolt->r.maxs, 12, 12, 20);
+		VectorCopy(bolt->r.maxs, bolt->r.absmax);
 	}
 
 	VectorCopy(start, bolt->s.pos.trBase);

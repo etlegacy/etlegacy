@@ -1545,6 +1545,8 @@ void aagun_stopusing(gentity_t *self);
 float AngleDifference(float ang1, float ang2);
 qboolean G_FlingClient(gentity_t *vic, int flingType);
 
+gentity_t *G_CreatePreFilledMissileEntity(int weaponNum, int realWeapon, int ownerNum, gentity_t *parent);
+
 // g_weapon.c
 qboolean AccuracyHit(gentity_t *target, gentity_t *attacker);
 void CalcMuzzlePoint(gentity_t *ent, int weapon, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint);

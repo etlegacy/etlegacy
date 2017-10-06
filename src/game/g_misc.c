@@ -2823,3 +2823,37 @@ qboolean G_FlingClient(gentity_t *vic, int flingType)
 
 	return qtrue;
 }
+
+/**
+ * @brief G_CreatePreFilledMissileEntity
+ * @param[in] self
+ * @param[in] weapon
+ * @param[in] realWeapon
+ * @return missile ent
+ */
+gentity_t *G_CreatePreFilledMissileEntity(int weaponNum, int realWeapon, int ownerNum, gentity_t *parent)
+{
+	gentity_t *bolt;
+
+	bolt = G_Spawn();
+
+	bolt->s.weapon            = realWeapon;
+	bolt->r.ownerNum          = ownerNum;
+	bolt->parent              = parent;
+	bolt->classname           = GetWeaponTableData(weaponNum)->className;
+	bolt->s.eType             = GetWeaponTableData(weaponNum)->eType;
+	bolt->r.svFlags           = GetWeaponTableData(weaponNum)->svFlags;
+	bolt->nextthink           = GetWeaponTableData(weaponNum)->nextThink ? level.time + GetWeaponTableData(weaponNum)->nextThink : 0;
+	bolt->s.eFlags            = GetWeaponTableData(weaponNum)->eFlags;
+	bolt->classname           = GetWeaponTableData(weaponNum)->className;
+	bolt->damage              = GetWeaponTableData(weaponNum)->damage;
+	bolt->splashDamage        = GetWeaponTableData(weaponNum)->splashDamage;
+	bolt->methodOfDeath       = GetWeaponTableData(weaponNum)->mod;
+	bolt->splashMethodOfDeath = GetWeaponTableData(weaponNum)->splashMod;
+	bolt->splashRadius        = GetWeaponTableData(weaponNum)->splashRadius;  // blast radius proportional to damage for ALL weapons
+	bolt->clipmask            = GetWeaponTableData(weaponNum)->clipMask;
+	bolt->s.pos.trType        = GetWeaponTableData(weaponNum)->trType;
+	bolt->s.pos.trTime        = GetWeaponTableData(weaponNum)->trTime ? level.time - GetWeaponTableData(weaponNum)->trTime : 0;   // move a bit on the very first frame
+
+	return bolt;
+}
