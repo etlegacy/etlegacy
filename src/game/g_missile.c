@@ -1124,7 +1124,8 @@ gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir)
 	self->count2 = 1;
 	VectorNormalize(dir);
 
-	bolt = G_CreatePreFilledMissileEntity(WP_FLAMETHROWER, self->s.weapon, self->s.number, self);
+	bolt = G_Spawn();
+	G_PreFilledMissileEntity(bolt, WP_FLAMETHROWER, self->s.weapon, self->s.number, self);
 
 	bolt->timestamp        = level.time;
 	bolt->flameQuotaTime   = level.time + 50;
@@ -1721,7 +1722,8 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 {
 	gentity_t *bolt;
 
-	bolt = G_CreatePreFilledMissileEntity(grenadeWPID, grenadeWPID, self->s.number, self);
+	bolt = G_Spawn();
+	G_PreFilledMissileEntity(bolt, grenadeWPID, grenadeWPID, self->s.number, self);
 
 	// no self->client for shooter_grenade's
 	if (self->client)
@@ -1862,7 +1864,8 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType
 {
 	gentity_t *bolt;
 
-	bolt = G_CreatePreFilledMissileEntity(rocketType, self->s.weapon, self->s.number, self);
+	bolt = G_Spawn();
+	G_PreFilledMissileEntity(bolt, rocketType, self->s.weapon, self->s.number, self);
 
 	bolt->think = G_ExplodeMissile;
 
@@ -1938,7 +1941,8 @@ gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir)
 {
 	gentity_t *bolt;
 
-	bolt = G_CreatePreFilledMissileEntity(WP_MAPMORTAR, WP_MAPMORTAR, self->s.number, self);
+	bolt = G_Spawn();
+	G_PreFilledMissileEntity(bolt, WP_MAPMORTAR, WP_MAPMORTAR, self->s.number, self);
 
 	bolt->think = G_ExplodeMissile;
 

@@ -127,6 +127,7 @@ extern vec3_t playerlegsProneMaxs;
  * special server behaviors
  */
 
+#define SVF_NONE                0x00000000  ///< none
 #define SVF_NOCLIENT            0x00000001  ///< don't send entity to clients, even if it has effects
 #define SVF_VISDUMMY            0x00000004  ///< this ent is a "visibility dummy" and needs it's master to be sent to clients that can see it even if they can't see the master ent
 #define SVF_BOT                 0x00000008
