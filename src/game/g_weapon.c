@@ -3141,7 +3141,7 @@ void Weapon_Artillery(gentity_t *ent)
 		}
 		else
 		{
-			G_PreFilledMissileEntity(ent, WP_ARTY, WP_ARTY, ent->s.number, ent);
+			G_PreFilledMissileEntity(bomb, WP_ARTY, WP_ARTY, ent->s.number, ent);
 
 			bomb->think      = G_AirStrikeExplode;
 			bomb->nextthink += 2000 * i + crandom() * 800;
