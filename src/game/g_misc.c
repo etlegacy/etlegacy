@@ -2824,5 +2824,5 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 	ent->splashRadius        = GetWeaponTableData(weaponNum)->splashRadius;  // blast radius proportional to damage for ALL weapons
 	ent->clipmask            = GetWeaponTableData(weaponNum)->clipMask;
 	ent->s.pos.trType        = GetWeaponTableData(weaponNum)->trType;
-	ent->s.pos.trTime        = GetWeaponTableData(weaponNum)->trTime ? level.time - GetWeaponTableData(weaponNum)->trTime : 0;   // move a bit on the very first frame
+	ent->s.pos.trTime        = GetWeaponTableData(weaponNum)->trTime ? level.time + GetWeaponTableData(weaponNum)->trTime : 0;   // move a bit on the very first frame
 }

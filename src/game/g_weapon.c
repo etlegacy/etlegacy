@@ -2869,7 +2869,7 @@ void weapon_callAirStrike(gentity_t *ent)
 			bomb->nextthink    = (int)(level.time + i * 100 + crandom() * 50 + 1000 + (j * 2000));    // overwrite, 1000 for aircraft flyby, other term for tumble stagger
 			bomb->think        = G_AirStrikeExplode;
 			bomb->s.teamNum    = ent->s.teamNum;
-            bomb->s.pos.trTime = 0; // overwrite due to previous impl : //bomb->s.pos.trTime = level.time;      // move a bit on the very first frame
+			bomb->s.pos.trTime = 0; // overwrite due to previous impl : //bomb->s.pos.trTime = level.time;      // move a bit on the very first frame
 
 			bomboffset[0] = crandom() * .5f * BOMBSPREAD;
 			bomboffset[1] = crandom() * .5f * BOMBSPREAD;
@@ -3110,21 +3110,21 @@ void Weapon_Artillery(gentity_t *ent)
 	{
 		bomb              = G_Spawn();
 		bomb->s.clientNum = ent->s.number;
+		bomb->s.teamNum   = ent->client->sess.sessionTeam;
 
 		if (i == 0)
 		{
-			bomb->think               = artillerySpotterThink;
 			bomb->s.eType             = ET_MISSILE;
 			bomb->s.weapon            = WP_ARTY;   // might wanna change this
 			bomb->r.ownerNum          = ent->s.number;
 			bomb->parent              = ent;
-			bomb->s.teamNum           = ent->client->sess.sessionTeam;
 			bomb->damage              = 0; // arty itself has no damage
-			bomb->methodOfDeath       = MOD_AIRSTRIKE;
-			bomb->splashMethodOfDeath = MOD_AIRSTRIKE;
+			bomb->methodOfDeath       = MOD_ARTY;
+			bomb->splashMethodOfDeath = MOD_ARTY;
 			bomb->clipmask            = MASK_MISSILESHOT;
 			bomb->s.pos.trType        = TR_STATIONARY;   // was TR_GRAVITY,  might wanna go back to this and drop from height
 			bomb->s.pos.trTime        = level.time;      // move a bit on the very first frame
+			bomb->think               = artillerySpotterThink;
 			bomb->nextthink           = level.time + 5000;
 			bomb->r.svFlags           = SVF_BROADCAST;
 			bomb->classname           = "props_explosion"; // was "air strike"
@@ -3165,7 +3165,9 @@ void Weapon_Artillery(gentity_t *ent)
 			VectorCopy(trace.endpos, bomb->s.pos.trBase);
 		}
 
-        Com_Memset(bomb->s.pos.trDelta, 0, sizeof(vec3_t)); // might need to change this
+		bomb->s.pos.trDelta[0] = 0; // might need to change this
+		bomb->s.pos.trDelta[1] = 0;
+		bomb->s.pos.trDelta[2] = 0;
 		SnapVector(bomb->s.pos.trDelta);            // save net bandwidth
 		VectorCopy(bomb->s.pos.trBase, bomb->r.currentOrigin);
 
