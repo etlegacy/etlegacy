@@ -1584,7 +1584,9 @@ void ClientThink_real(gentity_t *ent)
 		ent->client->pmext.sprintTime = SPRINTTIME;
 	}
 
-	if (g_entities[ent->client->ps.identifyClient].team == ent->team && g_entities[ent->client->ps.identifyClient].client)
+	if (g_entities[ent->client->ps.identifyClient].inuse && g_entities[ent->client->ps.identifyClient].client &&
+			(ent->client->sess.sessionTeam == g_entities[ent->client->ps.identifyClient].client->sess.sessionTeam ||
+			 g_entities[ent->client->ps.identifyClient].client->ps.powerups[PW_OPS_DISGUISED]))
 	{
 		ent->client->ps.identifyClientHealth = g_entities[ent->client->ps.identifyClient].health;
 	}
