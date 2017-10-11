@@ -990,6 +990,11 @@ void SV_SendClientMessages(void)
 			continue;
 		}
 
+		if (svs.time - c->lastSnapshotTime < c->snapshotMsec * com_timescale->value )
+		{
+			continue;       // It's not time yet
+		}
+
 		if (*c->downloadName)
 		{
 			// If the client is downloading via netchan and has not acknowledged a package in 4secs drop it
@@ -1015,11 +1020,6 @@ void SV_SendClientMessages(void)
 		      (sv_lanForceRate->integer && Sys_IsLANAddress(c->netchan.remoteAddress))))
 		{
 			// rate control for clients not on LAN
-			if (svs.time - c->lastSnapshotTime < c->snapshotMsec * com_timescale->value)
-			{
-				continue;       // It's not time yet
-			}
-
 			if (SV_RateMsec(c) > 0)
 			{
 				// Not enough time since last packet passed through the line
