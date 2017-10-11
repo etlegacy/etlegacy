@@ -2235,31 +2235,12 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	}
 
 	// adjust 'lean' into weapon
-	// TODO: weapon table ?
 	if (cg.predictedPlayerState.leanf != 0.f)
 	{
 		vec3_t right, up;
-		float  myfrac = 1.0f;
-
-		switch (cg.predictedPlayerState.weapon)
-		{
-		case WP_FLAMETHROWER:
-		case WP_KAR98:
-		case WP_CARBINE:
-		case WP_GPG40:
-		case WP_M7:
-		case WP_K43:
-			myfrac = 2.0f;
-			break;
-		case WP_GARAND:
-			myfrac = 3.0f;
-			break;
-		default:
-			break;
-		}
 
 		// reverse the roll on the weapon so it stays relatively level
-		angles[ROLL] -= cg.predictedPlayerState.leanf / (myfrac * 2.0f);
+		angles[ROLL] -= cg.predictedPlayerState.leanf / (GetWeaponTableData(cg.predictedPlayerState.weapon)->lean * 2.0f);
 		AngleVectors(angles, NULL, right, up);
 		VectorMA(origin, angles[ROLL], right, origin);
 

@@ -1136,6 +1136,8 @@ typedef struct weapontable_s
 	int nextThink;                  ///<
 	int accuracy;                   ///<
 
+	float lean;                     ///<
+
 	const char *className;          ///<
 	const char *weapFile;           ///<
 	meansOfDeath_t mod;             ///< means of death
