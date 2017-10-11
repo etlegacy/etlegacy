@@ -836,14 +836,8 @@ void G_RunMover(gentity_t *ent)
 	// the captain will handle everything
 	if (ent->flags & FL_TEAMSLAVE)
 	{
-		// hack to fix problem of tram car slaves being linked
-		// after being unlinked in G_FindTeams
-		if (ent->r.linked && !Q_stricmp(ent->classname, "func_tramcar"))
-		{
-			trap_UnlinkEntity(ent);
-		}
 		// Sigh... need to figure out why re links in
-		else if (ent->r.linked && !Q_stricmp(ent->classname, "func_rotating"))
+		if (ent->r.linked && !Q_stricmp(ent->classname, "func_rotating"))
 		{
 			trap_UnlinkEntity(ent);
 		}
