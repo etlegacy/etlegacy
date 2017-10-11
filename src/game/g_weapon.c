@@ -2864,11 +2864,10 @@ void weapon_callAirStrike(gentity_t *ent)
 		for (i = 0; i < NUMBOMBS; i++)
 		{
 			bomb = G_Spawn();
-			G_PreFilledMissileEntity(bomb, WP_ARTY, WP_SMOKE_MARKER, ent->s.number, ent->parent);     // might wanna change this
+			G_PreFilledMissileEntity(bomb, WP_ARTY, WP_SMOKE_MARKER, ent->s.number, ent->s.teamNum, -1, ent->parent);     // might wanna change this
 
 			bomb->nextthink    = (int)(level.time + i * 100 + crandom() * 50 + 1000 + (j * 2000));    // overwrite, 1000 for aircraft flyby, other term for tumble stagger
 			bomb->think        = G_AirStrikeExplode;
-			bomb->s.teamNum    = ent->s.teamNum;
 			bomb->s.pos.trTime = 0; // overwrite due to previous impl : //bomb->s.pos.trTime = level.time;      // move a bit on the very first frame
 
 			bomboffset[0] = crandom() * .5f * BOMBSPREAD;
@@ -2978,8 +2977,7 @@ void artillerySpotterThink(gentity_t *ent)
 	{
 		// TODO: trType was TR_GRAVITY,  might wanna go back to this and drop from height
 		bomb = G_Spawn();
-		G_PreFilledMissileEntity(bomb, WP_SMOKETRAIL, WP_SMOKETRAIL, ent->s.number, ent);
-		bomb->s.teamNum         = ent->s.teamNum;
+		G_PreFilledMissileEntity(bomb, WP_SMOKETRAIL, WP_SMOKETRAIL, ent->s.number, ent->s.teamNum, -1, ent);
 		bomb->nextthink        += random() * 300;
 		bomb->think             = artilleryGoAway;
 		bomb->s.otherEntityNum2 = ent->s.otherEntityNum2;
@@ -3108,32 +3106,22 @@ void Weapon_Artillery(gentity_t *ent)
 
 	for (i = 0; i < count; i++)
 	{
-		bomb              = G_Spawn();
-		bomb->s.clientNum = ent->s.number;
-		bomb->s.teamNum   = ent->client->sess.sessionTeam;
+		bomb = G_Spawn();
+		G_PreFilledMissileEntity(bomb, WP_ARTY, WP_ARTY, ent->s.number, ent->client->sess.sessionTeam, ent->client->sess.sessionTeam, ent);
 
 		if (i == 0)
 		{
-			bomb->s.eType             = ET_MISSILE;
-			bomb->s.weapon            = WP_ARTY;   // might wanna change this
-			bomb->r.ownerNum          = ent->s.number;
-			bomb->parent              = ent;
-			bomb->damage              = 0; // arty itself has no damage
-			bomb->methodOfDeath       = MOD_ARTY;
-			bomb->splashMethodOfDeath = MOD_ARTY;
-			bomb->clipmask            = MASK_MISSILESHOT;
-			bomb->s.pos.trType        = TR_STATIONARY;   // was TR_GRAVITY,  might wanna go back to this and drop from height
-			bomb->s.pos.trTime        = level.time;      // move a bit on the very first frame
-			bomb->think               = artillerySpotterThink;
-			bomb->nextthink           = level.time + 5000;
-			bomb->r.svFlags           = SVF_BROADCAST;
-			bomb->classname           = "props_explosion"; // was "air strike"
-			bomb->splashDamage        = 90;
-			bomb->splashRadius        = 50;
-			bomb->count               = 7;
-			bomb->count2              = 1000;
-			bomb->delay               = 300;
-			bomb->s.otherEntityNum2   = 1; // first bomb
+			bomb->think             = artillerySpotterThink;
+			bomb->clipmask          = EF_NONE;                  // overwrite
+			bomb->nextthink         = level.time + 5000;        // overwrite
+			bomb->r.svFlags         = SVF_BROADCAST;            // overwrite
+			bomb->classname         = "props_explosion";        // overwrite, was "air strike"
+			bomb->splashDamage      = 90;                       // overwrite
+			bomb->splashRadius      = 50;                       // overwrite
+			bomb->count             = 7;
+			bomb->count2            = 1000;
+			bomb->delay             = 300;
+			bomb->s.otherEntityNum2 = 1;                        // first bomb
 
 			// spotter round is always dead on (OK, unrealistic but more fun)
 			bomboffset[0] = crandom() * 50; // was 0; changed per id request to prevent spotter round assassinations
@@ -3141,8 +3129,6 @@ void Weapon_Artillery(gentity_t *ent)
 		}
 		else
 		{
-			G_PreFilledMissileEntity(bomb, WP_ARTY, WP_ARTY, ent->s.number, ent);
-
 			bomb->think      = G_AirStrikeExplode;
 			bomb->nextthink += 2000 * i + crandom() * 800;
 

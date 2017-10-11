@@ -2406,7 +2406,7 @@ void landmine_setup(gentity_t *ent)
 	ent->s.pos.trDelta[2] = 1.f;
 	ent->s.time           = ent->s.angles[1] + 90;
 
-	G_PreFilledMissileEntity(ent, WP_LANDMINE, WP_LANDMINE, ENTITYNUM_WORLD, ent->parent);
+	G_PreFilledMissileEntity(ent, WP_LANDMINE, WP_LANDMINE, ENTITYNUM_WORLD, ent->s.teamNum, ent->s.clientNum, ent->parent);
 
 	// all fine
 	ent->takedamage    = qtrue;
@@ -2801,16 +2801,21 @@ qboolean G_FlingClient(gentity_t *vic, int flingType)
 
 /**
  * @brief G_PreFilledMissileEntity
- * @param[in] self
- * @param[in] weapon
+ * @param[in] ent
+ * @param[in] weaponNum
  * @param[in] realWeapon
- * @return missile ent
+ * @param[in] ownerNum
+ * @param[in] teamNum
+ * @param[in] clientNum
+ * @param[in] parent
  */
-void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int ownerNum, gentity_t *parent)
+void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int ownerNum, int teamNum, int clientNum, gentity_t *parent)
 {
 	ent->s.weapon            = realWeapon;
 	ent->r.ownerNum          = ownerNum;
 	ent->parent              = parent;
+	ent->s.teamNum           = teamNum;
+	ent->s.clientNum         = clientNum;
 	ent->classname           = GetWeaponTableData(weaponNum)->className;
 	ent->s.eType             = GetWeaponTableData(weaponNum)->eType;
 	ent->r.svFlags           = GetWeaponTableData(weaponNum)->svFlags;

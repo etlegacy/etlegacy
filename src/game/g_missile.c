@@ -1125,7 +1125,7 @@ gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir)
 	VectorNormalize(dir);
 
 	bolt = G_Spawn();
-	G_PreFilledMissileEntity(bolt, WP_FLAMETHROWER, self->s.weapon, self->s.number, self);
+	G_PreFilledMissileEntity(bolt, WP_FLAMETHROWER, self->s.weapon, self->s.number, TEAM_FREE, -1, self);
 
 	bolt->timestamp        = level.time;
 	bolt->flameQuotaTime   = level.time + 50;
@@ -1723,20 +1723,14 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 	gentity_t *bolt;
 
 	bolt = G_Spawn();
-	G_PreFilledMissileEntity(bolt, grenadeWPID, grenadeWPID, self->s.number, self);
+	G_PreFilledMissileEntity(bolt, grenadeWPID, grenadeWPID, self->s.number, self->client ? self->client->sess.sessionTeam : TEAM_FREE, -1, self);  // store team so we can generate red or blue smoke
 
 	// no self->client for shooter_grenade's
-	if (self->client)
+	// if grenade time left, add it to next think and reset it, else add default value
+	if (self->client && self->client->ps.grenadeTimeLeft)
 	{
-		// if grenade time left, add it to next think and reset it, else add default value
-		if (self->client->ps.grenadeTimeLeft)
-		{
-			bolt->nextthink                  = level.time + self->client->ps.grenadeTimeLeft;
-			self->client->ps.grenadeTimeLeft = 0;   // reset grenade timer
-		}
-
-		// store team so we can generate red or blue smoke
-		bolt->s.teamNum = self->client->sess.sessionTeam;
+		bolt->nextthink                  = level.time + self->client->ps.grenadeTimeLeft;
+		self->client->ps.grenadeTimeLeft = 0;   // reset grenade timer
 	}
 
 	if (!GetWeaponTableData(grenadeWPID)->isExplosive)
@@ -1779,7 +1773,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 
 		if (self->client)
 		{
-			bolt->s.teamNum = self->client->sess.sessionTeam + 4;   // overwrite
+			bolt->s.teamNum += 4;   // overwrite
 
 			// store team so we can generate red or blue smoke
 			bolt->s.otherEntityNum2 = (self->client->sess.sessionTeam == TEAM_AXIS);
@@ -1810,7 +1804,7 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 			// differentiate non-armed dynamite with non-pulsing dlight
 			if (self->client)
 			{
-				bolt->s.teamNum = self->client->sess.sessionTeam + 4;   // overwrite
+				bolt->s.teamNum += 4;   // overwrite
 			}
 
 			// nope - this causes the dynamite to impact on the players bb when he throws it.
@@ -1865,14 +1859,9 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType
 	gentity_t *bolt;
 
 	bolt = G_Spawn();
-	G_PreFilledMissileEntity(bolt, rocketType, self->s.weapon, self->s.number, self);
+	G_PreFilledMissileEntity(bolt, rocketType, self->s.weapon, self->s.number, self->client ? self->client->sess.sessionTeam : TEAM_FREE, -1, self);
 
 	bolt->think = G_ExplodeMissile;
-
-	if (self->client)
-	{
-		bolt->s.teamNum = self->client->sess.sessionTeam;
-	}
 
 	VectorNormalize(dir);
 
@@ -1942,18 +1931,9 @@ gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir)
 	gentity_t *bolt;
 
 	bolt = G_Spawn();
-	G_PreFilledMissileEntity(bolt, WP_MAPMORTAR, WP_MAPMORTAR, self->s.number, self);
+	G_PreFilledMissileEntity(bolt, WP_MAPMORTAR, WP_MAPMORTAR, self->s.number, TEAM_FREE, self->client ? self->client->ps.clientNum : -1, self);
 
 	bolt->think = G_ExplodeMissile;
-
-	if (self->client)
-	{
-		bolt->s.clientNum = self->client->ps.clientNum;
-	}
-	else
-	{
-		bolt->s.clientNum = -1;
-	}
 
 	//  VectorNormalize (dir);
 
