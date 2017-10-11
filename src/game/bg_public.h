@@ -1073,6 +1073,7 @@ typedef struct weapontable_s
 	qboolean keepDisguise;          ///< g
 
 	qboolean isAutoReload;          ///< bg
+	qboolean isThrowable;           ///<
 	qboolean noAmmoSound;           ///<
 	qboolean noAmmoAutoSwitch;      ///<
 	qboolean isExplosive;           ///<

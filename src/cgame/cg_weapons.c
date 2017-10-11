@@ -5115,43 +5115,17 @@ void CG_FireWeapon(centity_t *cent)
 	}
 
 	// lightning gun only does this on initial press
-	// TODO: weapon table ?
-	switch (ent->weapon)
+	if (ent->weapon == WP_FLAMETHROWER && cent->pe.lightningFiring)
 	{
-	case WP_FLAMETHROWER:
-		if (cent->pe.lightningFiring)
-		{
-			return;
-		}
-		break;
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_DYNAMITE:
-	case WP_SMOKE_MARKER:
-	case WP_LANDMINE:
-	case WP_SATCHEL:
-	case WP_SMOKE_BOMB:
-		if (ent->apos.trBase[0] > 0)     // underhand
-		{
-			return;
-		}
-		break;
-	case WP_GPG40:
-
-		if (ent->clientNum == cg.snap->ps.clientNum)
-		{
-			cg.weaponSelect = WP_KAR98;
-		}
-		break;
-	case WP_M7:
-
-		if (ent->clientNum == cg.snap->ps.clientNum)
-		{
-			cg.weaponSelect = WP_CARBINE;
-		}
-		break;
-	default:
-		break;
+		return;
+	}
+	else if (GetWeaponTableData(ent->weapon)->isThrowable && ent->apos.trBase[0] > 0)
+	{
+		return;
+	}
+	else if (GetWeaponTableData(ent->weapon)->isRiflenade && ent->clientNum == cg.snap->ps.clientNum)
+	{
+		cg.weaponSelect = GetWeaponTableData(ent->weapon)->weapAlts;
 	}
 
 	if ((cent->currentState.event & ~EV_EVENT_BITS) == EV_FIRE_WEAPON_LASTSHOT)
