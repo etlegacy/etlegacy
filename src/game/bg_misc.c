@@ -4262,111 +4262,78 @@ splinePath_t *BG_GetSplineData(int number, qboolean *backwards)
  */
 int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill)
 {
-	// TODO: weapon table for type weapon ?
-	switch (weaponNum)
+	int maxAmmo = GetWeaponTableData(weaponNum)->maxAmmo;
+
+	if (GetWeaponTableData(weaponNum)->isPistol || GetWeaponTableData(weaponNum)->isSilencedPistol || GetWeaponTableData(weaponNum)->isRifle || weaponNum == WP_STEN)
 	{
-	//case WP_KNIFE:
-	case WP_LUGER:
-	case WP_COLT:
-	case WP_STEN:
-	case WP_SILENCER:
-	case WP_CARBINE:
-	case WP_KAR98:
-	case WP_SILENCED_COLT:
 		if (skill[SK_LIGHT_WEAPONS] >= 1)
 		{
-			return(GetWeaponTableData(weaponNum)->maxAmmo + GetWeaponTableData(weaponNum)->maxClip);
+			maxAmmo += GetWeaponTableData(weaponNum)->maxClip;
 		}
-		else
-		{
-			return(GetWeaponTableData(weaponNum)->maxAmmo);
-		}
-	case WP_MP40:
-	case WP_THOMPSON:
+	}
+	else if (weaponNum == WP_MP40 || weaponNum == WP_THOMPSON)
+	{
 		if (skill[SK_FIRST_AID] >= 1 || skill[SK_LIGHT_WEAPONS] >= 1)
 		{
-			return(GetWeaponTableData(weaponNum)->maxAmmo + GetWeaponTableData(weaponNum)->maxClip);
+			maxAmmo += GetWeaponTableData(weaponNum)->maxClip;
 		}
-		else
-		{
-			return(GetWeaponTableData(weaponNum)->maxAmmo);
-		}
-	case WP_M7:
-	case WP_GPG40:
+	}
+	else if (GetWeaponTableData(weaponNum)->isRiflenade)
+	{
 		if (skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 1)
 		{
-			return(GetWeaponTableData(weaponNum)->maxAmmo + 4);
+			maxAmmo += 4;
 		}
-		else
-		{
-			return(GetWeaponTableData(weaponNum)->maxAmmo);
-		}
-	case WP_GRENADE_PINEAPPLE:
-	case WP_GRENADE_LAUNCHER:
+	}
+	else if (GetWeaponTableData(weaponNum)->isGrenade)
+	{
 		// FIXME: this is class dependant, not ammo table
 		if (skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 1)
 		{
-			return(GetWeaponTableData(weaponNum)->maxAmmo + 4);
+			maxAmmo += 4;
 		}
 		else if (skill[SK_FIRST_AID] >= 1)
 		{
-			return(GetWeaponTableData(weaponNum)->maxAmmo + 1);
+			maxAmmo += 1;
 		}
-		else
-		{
-			return(GetWeaponTableData(weaponNum)->maxAmmo);
-		}
-	/*case WP_MOBILE_MG42:
-	case WP_MOBILE_BROWNING
-	case WP_PANZERFAUST:
-	case WP_BAZOOKA:
-	case WP_FLAMETHROWER:
-	    if( skill[SK_HEAVY_WEAPONS] >= 1 )
-	        return( GetWeaponTableData(weaponNum)->maxammo + GetWeaponTableData(weaponNum)->maxclip );
-	    else
-	        return( GetWeaponTableData(weaponNum)->maxammo );
-	case WP_MORTAR:
-	case WP_MORTAR_SET:
-	case WP_MORTAR2:
-	case WP_MORTAR2_SET:
-	    if( skill[SK_HEAVY_WEAPONS] >= 1 )
-	        return( GetWeaponTableData(weaponNum)->maxammo + 2 );
-	    else
-	        return( GetWeaponTableData(weaponNum)->maxammo );*/
-	case WP_MEDIC_SYRINGE:
+	}
+	// else if (GetWeaponTableData(weaponNum)->isPanzer || GetWeaponTableData(weaponNum)->isMG || GetWeaponTableData(weaponNum)->isMGSet || weaponNum == WP_FLAMETHROWER)
+	// {
+	//     if( skill[SK_HEAVY_WEAPONS] >= 1 )
+	//     {
+	//         maxAmmo += GetWeaponTableData(weaponNum)->maxclip;
+	//     }
+	// }
+	// else if (GetWeaponTableData(weaponNum)->isMortar || GetWeaponTableData(weaponNum)->isMortarSet)
+	// {
+	//     if( skill[SK_HEAVY_WEAPONS] >= 1 )
+	//     {
+	//         maxAmmo += 2;
+	//     }
+	// }
+	else if (weaponNum == WP_MEDIC_SYRINGE /*|| weaponNum == WP_MEDIC_ADRENALINE*/) // FIXME: why adrenaline is not take in count for max ammo?
+	{
 		if (skill[SK_FIRST_AID] >= 2)
 		{
-			return(GetWeaponTableData(weaponNum)->maxAmmo + 2);
+			maxAmmo += 2;
 		}
-		else
-		{
-			return(GetWeaponTableData(weaponNum)->maxAmmo);
-		}
-	case WP_GARAND:
-	case WP_K43:
-	case WP_FG42:
+	}
+	else if (GetWeaponTableData(GetWeaponTableData(weaponNum)->weapAlts)->isScoped)
+	{
 		if (skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 1 || skill[SK_LIGHT_WEAPONS] >= 1)
 		{
-			return(GetWeaponTableData(weaponNum)->maxAmmo + GetWeaponTableData(weaponNum)->maxClip);
+			maxAmmo += GetWeaponTableData(weaponNum)->maxClip;
 		}
-		else
-		{
-			return(GetWeaponTableData(weaponNum)->maxAmmo);
-		}
-	case WP_GARAND_SCOPE:
-	case WP_K43_SCOPE:
-	case WP_FG42SCOPE:
+	}
+	else if (GetWeaponTableData(weaponNum)->isScoped)
+	{
 		if (skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 1)
 		{
-			return(GetWeaponTableData(weaponNum)->maxAmmo + GetWeaponTableData(weaponNum)->maxClip);
+			maxAmmo += GetWeaponTableData(weaponNum)->maxClip;
 		}
-		else
-		{
-			return(GetWeaponTableData(weaponNum)->maxAmmo);
-		}
-	default:
-		return(GetWeaponTableData(weaponNum)->maxAmmo);
 	}
+
+	return maxAmmo;
 }
 
 /**

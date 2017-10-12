@@ -999,38 +999,29 @@ team_t PickTeam(int ignoreClientNum)
  */
 static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 {
-	// TODO: weapon table ?
-	switch (weaponNum)
+	if (GetWeaponTableData(weaponNum)->isPistol || GetWeaponTableData(weaponNum)->isSilencedPistol || GetWeaponTableData(weaponNum)->isRifle || weaponNum == WP_STEN)
 	{
-	//case WP_KNIFE:
-	case WP_LUGER:
-	case WP_COLT:
-	case WP_STEN:
-	case WP_SILENCER:
-	case WP_CARBINE:
-	case WP_KAR98:
-	case WP_SILENCED_COLT:
 		if (client->sess.skill[SK_LIGHT_WEAPONS] >= 1)
 		{
 			client->ps.ammo[BG_FindAmmoForWeapon(weaponNum)] += GetWeaponTableData(weaponNum)->maxClip;
 		}
-		break;
-	case WP_MP40:
-	case WP_THOMPSON:
+	}
+	else if (weaponNum == WP_MP40 || weaponNum == WP_THOMPSON)
+	{
 		if ((client->sess.skill[SK_FIRST_AID] >= 1 && client->sess.playerType == PC_MEDIC) || client->sess.skill[SK_LIGHT_WEAPONS] >= 1)
 		{
 			client->ps.ammo[BG_FindAmmoForWeapon(weaponNum)] += GetWeaponTableData(weaponNum)->maxClip;
 		}
-		break;
-	case WP_M7:
-	case WP_GPG40:
+	}
+	else if (GetWeaponTableData(weaponNum)->isRiflenade)
+	{
 		if (client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 1)
 		{
 			client->ps.ammo[BG_FindAmmoForWeapon(weaponNum)] += 4;
 		}
-		break;
-	case WP_GRENADE_PINEAPPLE:
-	case WP_GRENADE_LAUNCHER:
+	}
+	else if (GetWeaponTableData(weaponNum)->isGrenade)
+	{
 		if (client->sess.playerType == PC_ENGINEER)
 		{
 			if (client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 1)
@@ -1045,32 +1036,27 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 				client->ps.ammoclip[BG_FindAmmoForWeapon(weaponNum)] += 1;
 			}
 		}
-		break;
-	case WP_MEDIC_SYRINGE:
-	case WP_MEDIC_ADRENALINE:
+	}
+	else if (weaponNum == WP_MEDIC_SYRINGE || weaponNum == WP_MEDIC_ADRENALINE)
+	{
 		if (client->sess.skill[SK_FIRST_AID] >= 2)
 		{
 			client->ps.ammoclip[BG_FindAmmoForWeapon(weaponNum)] += 2;
 		}
-		break;
-	case WP_GARAND:
-	case WP_K43:
-	case WP_FG42:
+	}
+	else if (GetWeaponTableData(GetWeaponTableData(weaponNum)->weapAlts)->isScoped)
+	{
 		if (client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 1 || client->sess.skill[SK_LIGHT_WEAPONS] >= 1)
 		{
 			client->ps.ammo[BG_FindAmmoForWeapon(weaponNum)] += GetWeaponTableData(weaponNum)->maxClip;
 		}
-		break;
-	case WP_GARAND_SCOPE:
-	case WP_K43_SCOPE:
-	case WP_FG42SCOPE:
+	}
+	else if (GetWeaponTableData(weaponNum)->isScoped)
+	{
 		if (client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 1)
 		{
 			client->ps.ammo[BG_FindAmmoForWeapon(weaponNum)] += GetWeaponTableData(weaponNum)->maxClip;
 		}
-		break;
-	default:
-		break;
 	}
 }
 
