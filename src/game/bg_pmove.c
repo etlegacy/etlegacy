@@ -2428,21 +2428,11 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 		return;
 	}
 
-	// TODO: weapon table ?
-	switch (weapon)
+	// weapon which don't use ammo don't have reload anim
+	// TODO: this check seem useless ! weapon which don't use ammo don't enter in this function
+	if (!GetWeaponTableData(weapon)->useAmmo)
 	{
-	// if ((weapon <= WP_NONE || weapon > WP_DYNAMITE) && !(weapon >= WP_KAR98 && weapon < WP_NUM_WEAPONS))
-	case WP_AMMO:
-	case WP_SMOKETRAIL:
-	case WP_MAPMORTAR:
-	case VERYBIGEXPLOSION:
-	case WP_MEDKIT:
-	case WP_BINOCULARS:
-	case WP_PLIERS:
-	case WP_SMOKE_MARKER:
 		return;
-	default:
-		break;
 	}
 
 	// fixing reloading with a full clip
@@ -2458,15 +2448,9 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 	}
 
 	// easier check now that the animation system handles the specifics
-	// TODO: weapon table ?
-	switch (weapon)
+	// TODO: this check seem useless ! throwable weapon don't enter in this function
+	if (!GetWeaponTableData(weapon)->isThrowable)
 	{
-	case WP_DYNAMITE:
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_SMOKE_BOMB:
-		break;
-	default:
 		// override current animation (so reloading after firing will work)
 		if (pm->ps->eFlags & EF_PRONE)
 		{
@@ -2476,7 +2460,6 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 		{
 			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_RELOAD, qfalse, qtrue);
 		}
-		break;
 	}
 
 	if (!(GetWeaponTableData(weapon)->isMortar || GetWeaponTableData(weapon)->isMortarSet))
