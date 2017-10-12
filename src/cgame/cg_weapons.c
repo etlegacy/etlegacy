@@ -4928,54 +4928,22 @@ void CG_MortarEFX(centity_t *cent)
  */
 void CG_WeaponFireRecoil(int weapon)
 {
-	float  pitchAdd  = 0;
-	float  yawRandom = 0;
+	float  pitchAdd  = GetWeaponTableData(weapon)->pitchRecoil;
+	float  yawRandom = GetWeaponTableData(weapon)->yawRecoil;
 	vec3_t recoil;
 
-	// TODO: weapon table ?
-	switch (weapon)
+	// FIXME: add recoil for secondary weapons?
+	// if (GetWeaponTableData(weapon)->isPistol || GetWeaponTableData(weapon)->isSilencedPistol || GetWeaponTableData(weapon)->isAkimbo)
+	// {
+	//      pitchAdd = 2 + rand() % 3;
+	// }
+
+	if (weapon == WP_MP40 || weapon == WP_THOMPSON || weapon == WP_STEN || weapon == WP_FG42SCOPE || weapon == WP_FG42
+	    || GetWeaponTableData(weapon)->isMG || GetWeaponTableData(weapon)->isMGSet)
 	{
-	case WP_LUGER:
-	case WP_SILENCER:
-	case WP_AKIMBO_LUGER:
-	case WP_AKIMBO_SILENCEDLUGER:
-	case WP_COLT:
-	case WP_SILENCED_COLT:
-	case WP_AKIMBO_COLT:
-	case WP_AKIMBO_SILENCEDCOLT:
-		// FIXME: add recoil for secondary weapons?
-		//pitchAdd = 2 + rand() % 3;
-		//yawRandom = 2;
-		break;
-	case WP_PANZERFAUST: // push the player back instead
-	case WP_BAZOOKA:
-		break;
-	case WP_GARAND:
-	case WP_KAR98:
-	case WP_CARBINE:
-	case WP_K43:
-		pitchAdd  = 2;
-		yawRandom = 1;
-		break;
-	case WP_GARAND_SCOPE:
-	case WP_K43_SCOPE:
-		pitchAdd = 0.3f;
-		break;
-	case WP_FG42SCOPE:
-	case WP_FG42:
-	case WP_MOBILE_MG42:
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING:
-	case WP_MOBILE_BROWNING_SET:
-	case WP_MP40:
-	case WP_THOMPSON:
-	case WP_STEN:
-		pitchAdd  = (1 + rand() % 3) * 0.3f;
-		yawRandom = 0.6f;
-		break;
-	default:
-		return;
+		pitchAdd *= (1 + rand() % 3);
 	}
+
 	// calc the recoil
 	recoil[YAW]   = crandom() * yawRandom;
 	recoil[ROLL]  = -recoil[YAW];   // why not
