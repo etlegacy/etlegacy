@@ -1035,6 +1035,35 @@ typedef struct
 } playerStats_t;
 
 /**
+ * @enum weaponCardIconId_t
+ * @brief
+ */
+typedef enum
+{
+	WEAPON_CARD_NONE,
+	WEAPON_CARD_1,
+	WEAPON_CARD_2,
+	WEAPON_CARD_3,
+
+} weaponCardIconId_t;
+
+/**
+ * @enum weaponCardIconCoord_t
+ * @brief
+ */
+typedef enum
+{
+	WEAPON_CARD_COORD_W,
+	WEAPON_CARD_COORD_H,
+	WEAPON_CARD_COORD_S0,
+	WEAPON_CARD_COORD_S1,
+	WEAPON_CARD_COORD_T0,
+	WEAPON_CARD_COORD_T1,
+	WEAPON_CARD_CORRD_NUM
+
+} weaponCardIconCoord_t;
+
+/**
  * @struct weaponTable_s
  * @typedef weaponTable_t
  * @brief
@@ -1136,10 +1165,14 @@ typedef struct weapontable_s
 	int nextThink;                  ///<
 	int accuracy;                   ///<
 
-	float lean;                     ///<
+	float adjustLean;               ///<
 
 	const char *className;          ///<
 	const char *weapFile;           ///<
+
+	weaponCardIconId_t weaponCardIcon;            ///<
+	float weaponCardCoord[WEAPON_CARD_CORRD_NUM]; ///<
+
 	meansOfDeath_t mod;             ///< means of death
 	meansOfDeath_t splashMod;       ///< means of death
 

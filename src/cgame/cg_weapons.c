@@ -2240,7 +2240,7 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 		vec3_t right, up;
 
 		// reverse the roll on the weapon so it stays relatively level
-		angles[ROLL] -= cg.predictedPlayerState.leanf / (GetWeaponTableData(cg.predictedPlayerState.weapon)->lean * 2.0f);
+		angles[ROLL] -= cg.predictedPlayerState.leanf / (GetWeaponTableData(cg.predictedPlayerState.weapon)->adjustLean * 2.0f);
 		AngleVectors(angles, NULL, right, up);
 		VectorMA(origin, angles[ROLL], right, origin);
 
