@@ -4669,6 +4669,8 @@ void CG_Weapon_f(void)
 /**
  * @brief The current weapon has just run out of ammo
  * @param[in] allowforceswitch
+ *
+ * @todo TODO: try a better way to handle theses "for" loop (factorization, ...)
  */
 void CG_OutOfAmmoChange(qboolean allowforceswitch)
 {
@@ -4685,41 +4687,24 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 	{
 		int equiv;
 
-		// TODO: weapon table ?
-		switch (cg.weaponSelect)
+		if ((cg.weaponSelect == WP_LANDMINE || cg.weaponSelect == WP_DYNAMITE) && CG_WeaponSelectable(WP_PLIERS))
 		{
-		case WP_LANDMINE:
-		case WP_DYNAMITE:
-			if (CG_WeaponSelectable(WP_PLIERS))
-			{
-				cg.weaponSelect = WP_PLIERS;
-				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, WP_PLIERS);
-				return;
-			}
-			break;
-		case WP_SATCHEL:
-			if (CG_WeaponSelectable(WP_SATCHEL_DET))
-			{
-				cg.weaponSelect = WP_SATCHEL_DET;
-				return;
-			}
-			break;
-		case WP_MORTAR_SET:
-			cg.weaponSelect = WP_MORTAR;
+			cg.weaponSelect = WP_PLIERS;
+			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, WP_PLIERS);
 			return;
-		case WP_MORTAR2_SET:
-			cg.weaponSelect = WP_MORTAR2;
+		}
+		else if (cg.weaponSelect == WP_SATCHEL && CG_WeaponSelectable(WP_SATCHEL_DET))
+		{
+			cg.weaponSelect = WP_SATCHEL_DET;
 			return;
-		case WP_MOBILE_MG42_SET:
-			cg.weaponSelect = WP_MOBILE_MG42;
+		}
+		else if (GetWeaponTableData(cg.weaponSelect)->isSetWeapon)
+		{
+			cg.weaponSelect = GetWeaponTableData(cg.weaponSelect)->weapAlts;
 			return;
-		case WP_MOBILE_BROWNING_SET:
-			cg.weaponSelect = WP_MOBILE_BROWNING;
-			return;
-		case WP_PANZERFAUST:
-		case WP_BAZOOKA:
-		case WP_SMOKE_BOMB:
-		case WP_MEDIC_ADRENALINE:
+		}
+		else if (GetWeaponTableData(cg.weaponSelect)->isPanzer || cg.weaponSelect == WP_SMOKE_BOMB || cg.weaponSelect == WP_MEDIC_ADRENALINE)
+		{
 			for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
 			{
 				// make sure we don't reselect the panzer or bazooka
@@ -4757,9 +4742,9 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 					return;
 				}
 			}
-			break;
-		case WP_GPG40:
-		case WP_M7:
+		}
+		else if (GetWeaponTableData(cg.weaponSelect)->isRiflenade)
+		{
 			// if you're using an alt mode weapon, try switching back to the parent
 			// otherwise, switch to the equivalent if you've got it
 			cg.weaponSelect = equiv = GetWeaponTableData(cg.weaponSelect)->weapAlts;      // base any further changes on the parent
@@ -4768,9 +4753,6 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
 				return;
 			}
-			break;
-		default:
-			break;
 		}
 
 		// now try the opposite team's equivalent weap
