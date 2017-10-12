@@ -110,9 +110,6 @@ extern vmCvar_t cl_bypassMouseInput;
 #define SLIDER_RANGE            10
 #define MAX_EDIT_LINE           256
 
-#define MAX_MENUDEPTH           8
-#define MAX_MENUITEMS           128
-
 /**
  * @struct _tag_menuframework
  * @typedef menuframework_s

@@ -42,12 +42,13 @@
 
 #include "../../etmain/ui/menudef.h"
 
-#define MAX_MENUDEFFILE 4096
-#define MAX_MENUFILE 32768
-#define MAX_MENUS 128
-#define MAX_MENUITEMS 128       ///< ioquake3 has 96
-#define MAX_COLOR_RANGES 10
-#define MAX_MODAL_MENUS 16
+#define MAX_MENUDEFFILE   4096
+#define MAX_MENUFILE     32768
+#define MAX_MENUS          128
+#define MAX_MENUDEPTH        8
+#define MAX_MENUITEMS      128       ///< ioquake3 has 96
+#define MAX_COLOR_RANGES    10
+#define MAX_MODAL_MENUS     16
 
 #define WINDOW_MOUSEOVER        0x00000001  ///< mouse is over it, non exclusive
 #define WINDOW_HASFOCUS         0x00000002  ///< has cursor focus, exclusive
