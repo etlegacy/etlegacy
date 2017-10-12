@@ -1692,18 +1692,6 @@ void G_FindTeams(void)
 			continue;
 		}
 
-		if (!Q_stricmp(e->classname, "func_tramcar"))
-		{
-			if (e->spawnflags & 8)     // leader
-			{
-				e->teammaster = e;
-			}
-			else
-			{
-				continue;
-			}
-		}
-
 		c++;
 		c2++;
 		for (j = i + 1, e2 = e + 1 ; j < level.num_entities ; j++, e2++)
@@ -1728,11 +1716,6 @@ void G_FindTeams(void)
 				e2->teammaster = e;
 				//e2->key = e->key;	// I can't set the key here since the master door hasn't finished spawning yet and therefore has a key of -1
 				e2->flags |= FL_TEAMSLAVE;
-
-				if (!Q_stricmp(e2->classname, "func_tramcar"))
-				{
-					trap_UnlinkEntity(e2);
-				}
 
 				// make sure that targets only point at the master
 				if (e2->targetname)
