@@ -844,6 +844,7 @@ void CL_ParseDownload(msg_t *msg)
 				Cbuf_ExecuteText(EXEC_APPEND, "quit\n");
 				CL_AddReliableCommand("wwwdl bbl8r");   // not sure if that's the right msg
 				cls.download.bWWWDlAborting = qtrue;
+				Com_Printf("Disconnecting from game to download file '%s' (fallback URL)\n", cls.download.downloadName);
 				return;
 			}
 			Cvar_SetValue("cl_downloadSize", cls.download.downloadSize);
@@ -853,7 +854,7 @@ void CL_ParseDownload(msg_t *msg)
 			// make sure the server is not trying to redirect us again on a bad checksum
 			if (strstr(cls.download.badChecksumList, va("@%s", cls.download.originalDownloadName)))
 			{
-				Com_Printf("refusing redirect to %s by server (bad checksum)\n", cls.download.downloadName);
+				Com_Printf("Refusing redirect to %s by server (bad checksum)\n", cls.download.downloadName);
 				CL_AddReliableCommand("wwwdl fail");
 				cls.download.bWWWDlAborting = qtrue;
 				return;
@@ -877,6 +878,7 @@ void CL_ParseDownload(msg_t *msg)
 			{
 				CL_AddReliableCommand("wwwdl bbl8r");
 				cls.download.bWWWDlDisconnected = qtrue;
+				Com_Printf("Disconnecting from game to download file '%s'\n", cls.download.downloadName);
 			}
 			return;
 		}
