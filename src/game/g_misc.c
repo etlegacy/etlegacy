@@ -515,6 +515,11 @@ void SP_misc_portal_camera(gentity_t *ent)
 ======================================================================
 */
 
+// shooter spawnflags FIXME: make these available for bg (mortar effects are client side only)
+//#define SF_SHOOTER_SMOKE_FX 1 // mortar only
+//#define SF_SHOOTER_FLASH_FX 2
+#define SF_SHOOTER_TEAM_WP  4 // grenade & rocket
+
 /**
  * @brief SHOOTERS weapons WP_MAPMORTAR, WP_GRENADE_LAUNCHER/WP_GRENADE_PINEAPPLE and WP_PANZERFAUST/WP_BAZOOKA
  * @param[in] ent
@@ -616,6 +621,10 @@ void InitShooter(gentity_t *ent, int weapon)
 		ent->think     = InitShooter_Finish;
 		ent->nextthink = level.time + 500;
 	}
+	else
+	{
+		G_Printf("^3WARNING: InitShooter has no target\n");
+	}
 	trap_LinkEntity(ent);
 }
 
@@ -630,17 +639,10 @@ void InitShooter(gentity_t *ent, int weapon)
  */
 void SP_shooter_mortar(gentity_t *ent)
 {
-	// FIXME/TODO: must have a self->target.  Do a check/print if this is not the case.
 	InitShooter(ent, WP_MAPMORTAR);
 
-	// skip ent->spawnflags & 1 - don't do team based map mortars - see damage properties
-
-	if (ent->spawnflags & 2)        // smoke at source (use/addjust flakPuff in Use_Shooter?)
-	{
-	}
-	if (ent->spawnflags & 4)       // muzzle flash at source
-	{
-	}
+	// spawnflags 2/4 are passed via density var see fire_mortar & CG_MortarEFX
+	// these effects are client side only
 }
 
 /**
@@ -651,21 +653,13 @@ void SP_shooter_mortar(gentity_t *ent)
  */
 void SP_shooter_rocket(gentity_t *ent)
 {
-	if (ent->spawnflags & 1)       // greetings from the allies
+	if (ent->spawnflags & SF_SHOOTER_TEAM_WP)       // greetings from the allies
 	{
 		InitShooter(ent, WP_BAZOOKA);
 	}
 	else
 	{
 		InitShooter(ent, WP_PANZERFAUST);
-	}
-
-	// FIXME:
-	if (ent->spawnflags & 2)       // smoke at source (use/addjust flakPuff in Use_Shooter?)
-	{
-	}
-	if (ent->spawnflags & 4)       // muzzle flash at source
-	{
 	}
 }
 
@@ -678,21 +672,15 @@ void SP_shooter_rocket(gentity_t *ent)
  */
 void SP_shooter_grenade(gentity_t *ent)
 {
-	if (ent->spawnflags & 1)       // greetings from the allies
+	if (ent->spawnflags & SF_SHOOTER_TEAM_WP)       // greetings from the allies
 	{
 		InitShooter(ent, WP_GRENADE_PINEAPPLE);
+		//ent->s.teamNum = TEAM_ALLIES;
 	}
 	else
 	{
 		InitShooter(ent, WP_GRENADE_LAUNCHER);
-	}
-
-	// FIXME:
-	if (ent->spawnflags & 2)       // smoke at source (use/addjust flakPuff in Use_Shooter?)
-	{
-	}
-	if (ent->spawnflags & 4)       // muzzle flash at source
-	{
+		//ent->s.teamNum = TEAM_AXIS;
 	}
 }
 
