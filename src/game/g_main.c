@@ -1675,7 +1675,7 @@ void G_FindTeams(void)
 	int       i, j;
 	int       c = 0, c2 = 0;
 
-	for (i = 1, e = g_entities + i ; i < level.num_entities ; i++, e++)
+	for (i = MAX_CLIENTS, e = g_entities + i ; i < level.num_entities ; i++, e++)
 	{
 		if (!e->inuse)
 		{
@@ -1790,15 +1790,18 @@ void G_RegisterCvars(void)
 	if (match_readypercent.integer < 1)
 	{
 		trap_Cvar_Set("match_readypercent", "1");
+		trap_Cvar_Update(&match_readypercent);
 	}
 
 	if (pmove_msec.integer < 8)
 	{
 		trap_Cvar_Set("pmove_msec", "8");
+		trap_Cvar_Update(&pmove_msec);
 	}
 	else if (pmove_msec.integer > 33)
 	{
 		trap_Cvar_Set("pmove_msec", "33");
+		trap_Cvar_Update(&pmove_msec);
 	}
 }
 
