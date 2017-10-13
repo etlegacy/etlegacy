@@ -3973,37 +3973,19 @@ static void PM_Weapon(void)
 
 		if (ammoNeeded > ammoAvailable)
 		{
-			qboolean playswitchsound = qtrue;
 			// you have ammo for this, just not in the clip
 			qboolean reloading = (qboolean)(ammoNeeded <= pm->ps->ammo[BG_FindAmmoForWeapon(pm->ps->weapon)]);
 
 			// if not in auto-reload mode, and reload was not explicitely requested, just play the 'out of ammo' sound
-			if (!pm->pmext->bAutoReload && GetWeaponTableData(pm->ps->weapon)->isAutoReload && !(pm->cmd.wbuttons & WBUTTON_RELOAD))
+			// scoped weapons not allowed to reload.  must switch back to primary first
+			if ((!pm->pmext->bAutoReload && GetWeaponTableData(pm->ps->weapon)->isAutoReload && !(pm->cmd.wbuttons & WBUTTON_RELOAD))
+			    || GetWeaponTableData(pm->ps->weapon)->isScoped)
 			{
 				reloading = qfalse;
 			}
 
-			switch (pm->ps->weapon)
-			{
-			// only play if using a triggered weapon
-			case WP_DYNAMITE:
-			case WP_GRENADE_LAUNCHER:
-			case WP_GRENADE_PINEAPPLE:
-			case WP_LANDMINE:
-			case WP_SMOKE_BOMB:
-				playswitchsound = qfalse;
-				break;
-			// some weapons not allowed to reload.  must switch back to primary first
-			case WP_FG42SCOPE:
-			case WP_GARAND_SCOPE:
-			case WP_K43_SCOPE:
-				reloading = qfalse;
-				break;
-			default:
-				break;
-			}
-
-			if (playswitchsound)
+			// only play the switch sound if using a triggered weapon
+			if (!GetWeaponTableData(pm->ps->weapon)->isGrenade && pm->ps->weapon != WP_LANDMINE)
 			{
 				if (!reloading)
 				{
