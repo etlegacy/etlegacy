@@ -1099,6 +1099,8 @@ typedef struct weapontable_s
 	int splashDamage;               ///< g
 	int splashRadius;               ///< g
 
+	qboolean firingAuto;            ///<
+
 	qboolean keepDisguise;          ///< g
 
 	qboolean isAutoReload;          ///< bg

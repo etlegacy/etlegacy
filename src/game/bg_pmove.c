@@ -3883,150 +3883,29 @@ static void PM_Weapon(void)
 	}
 
 	// start the animation even if out of ammo
-	switch (pm->ps->weapon)
+	if (GetWeaponTableData(pm->ps->weapon)->isMeleeWeapon || pm->ps->weapon == WP_LANDMINE)
 	{
-	default:
-		if (!weaponstateFiring)
-		{
-			// delay so the weapon can get up into position before firing (and showing the flash)
-			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
-		}
-		else
-		{
-			if (pm->ps->eFlags & EF_PRONE)
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPONPRONE, qfalse, qtrue);
-			}
-			else
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
-			}
-		}
-		break;
-	// machineguns should continue the anim, rather than start each fire
-	// TODO: weapon table ?
-	case WP_MP40:
-	case WP_THOMPSON:
-	case WP_STEN:
-	case WP_MEDKIT:
-	case WP_PLIERS:
-	case WP_SMOKE_MARKER:
-	case WP_FG42:
-	case WP_FG42SCOPE:
-	case WP_MOBILE_MG42:
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING:
-	case WP_MOBILE_BROWNING_SET:
-		if (!weaponstateFiring)
-		{
-			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
-		}
-		else
-		{
-			if (pm->ps->eFlags & EF_PRONE)
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPONPRONE, qtrue, qtrue);
-			}
-			else
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qtrue, qtrue);
-			}
-		}
-		break;
-	case WP_PANZERFAUST:
-	case WP_BAZOOKA:
-	case WP_LUGER:
-	case WP_COLT:
-	case WP_GARAND:
-	case WP_K43:
-	case WP_KAR98:
-	case WP_CARBINE:
-	case WP_GPG40:
-	case WP_M7:
-	case WP_SILENCER:
-	case WP_SILENCED_COLT:
-	case WP_GARAND_SCOPE:
-	case WP_K43_SCOPE:
-	case WP_AKIMBO_COLT:
-	case WP_AKIMBO_SILENCEDCOLT:
-	case WP_AKIMBO_LUGER:
-	case WP_AKIMBO_SILENCEDLUGER:
-		if (!weaponstateFiring)
-		{
-			// pfaust has spinup time in MP
-			if (GetWeaponTableData(pm->ps->weapon)->isPanzer)
-			{
-				PM_AddEvent(EV_SPINUP);
-			}
-
-			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
-		}
-		else
-		{
-			if (pm->ps->eFlags & EF_PRONE)
-			{
-				if (akimboFire)
-				{
-					BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON2PRONE, qfalse, qtrue);
-				}
-				else
-				{
-					BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPONPRONE, qfalse, qtrue);
-				}
-			}
-			else
-			{
-				if (akimboFire)
-				{
-					BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON2, qfalse, qtrue);
-				}
-				else
-				{
-					BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
-				}
-			}
-		}
-		break;
-	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET:
-		if (!weaponstateFiring)
-		{
-			PM_AddEvent(EV_SPINUP);
-			PM_StartWeaponAnim(PM_AttackAnimForWeapon(WP_MORTAR_SET)); // FIXME: PM_AttackAnimForWeapon() returns WEAP_ATTACK1 anyway
-			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
-		}
-		else
-		{
-			if (pm->ps->eFlags & EF_PRONE)
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPONPRONE, qfalse, qtrue);
-			}
-			else
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
-			}
-		}
-		break;
-	// melee
-	case WP_KNIFE:
-	case WP_KNIFE_KABAR:
 		if (!delayedFire)
 		{
+			qboolean isLandmine = pm->ps->weapon == WP_LANDMINE;
+
 			if (pm->ps->eFlags & EF_PRONE)
 			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPONPRONE, qfalse, qfalse);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPONPRONE, qfalse, isLandmine);
 			}
 			else
 			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qfalse);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, isLandmine);
+			}
+
+			if (isLandmine)
+			{
+				pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
 			}
 		}
-		break;
-	// throw
-	case WP_DYNAMITE:
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_SMOKE_BOMB:
+	}
+	else if (GetWeaponTableData(pm->ps->weapon)->isGrenade || pm->ps->weapon == WP_DYNAMITE || pm->ps->weapon == WP_SMOKE_BOMB || pm->ps->weapon == WP_SATCHEL)
+	{
 		if (!delayedFire)
 		{
 			if (PM_WeaponAmmoAvailable(pm->ps->weapon))
@@ -4035,9 +3914,9 @@ static void PM_Weapon(void)
 				{
 					pm->ps->grenadeTimeLeft = 50;
 				}
-				else
+				else if (pm->ps->weapon != WP_SATCHEL)      // satchel don't have counter
 				{
-					pm->ps->grenadeTimeLeft = 4000;     // start at four seconds and count down
+					pm->ps->grenadeTimeLeft = 4000;         // start at four seconds and count down
 				}
 
 				PM_StartWeaponAnim(PM_AttackAnimForWeapon(pm->ps->weapon));
@@ -4045,56 +3924,39 @@ static void PM_Weapon(void)
 
 			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
 		}
-		break;
-	case WP_LANDMINE:
-		if (!delayedFire)
-		{
-			if (PM_WeaponAmmoAvailable(pm->ps->weapon))
-			{
-				if (pm->ps->eFlags & EF_PRONE)
-				{
-					BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON2PRONE, qfalse, qtrue);
-				}
-				else
-				{
-					BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
-				}
-			}
-
-			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
-		}
-		break;
-	case WP_SATCHEL:
-		if (!delayedFire)
-		{
-			if (PM_WeaponAmmoAvailable(pm->ps->weapon))
-			{
-				PM_StartWeaponAnim(PM_AttackAnimForWeapon(pm->ps->weapon));
-			}
-
-			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
-		}
-		break;
-	case WP_SATCHEL_DET:
+	}
+	else
+	{
 		if (!weaponstateFiring)
 		{
-			PM_AddEvent(EV_SPINUP);
+			// pfaust has spinup time in MP
+			if (GetWeaponTableData(pm->ps->weapon)->isPanzer)
+			{
+				PM_AddEvent(EV_SPINUP);
+			}
+			else if (GetWeaponTableData(pm->ps->weapon)->isMortarSet)
+			{
+				PM_AddEvent(EV_SPINUP);
+				PM_StartWeaponAnim(PM_AttackAnimForWeapon(WP_MORTAR_SET));     // FIXME: PM_AttackAnimForWeapon() returns WEAP_ATTACK1 anyway
+			}
+			else if (pm->ps->weapon == WP_SATCHEL_DET)
+			{
+				PM_AddEvent(EV_SPINUP);
+				PM_ContinueWeaponAnim(PM_AttackAnimForWeapon(WP_SATCHEL_DET));
+			}
+
 			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
-			PM_ContinueWeaponAnim(PM_AttackAnimForWeapon(WP_SATCHEL_DET));
+		}
+		else if (pm->ps->eFlags & EF_PRONE)
+		{
+			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, akimboFire ? ANIM_ET_FIREWEAPON2PRONE : ANIM_ET_FIREWEAPONPRONE,
+			                   GetWeaponTableData(pm->ps->weapon)->firingAuto, qtrue);
 		}
 		else
 		{
-			if (pm->ps->eFlags & EF_PRONE)
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPONPRONE, qfalse, qtrue);
-			}
-			else
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
-			}
+			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, akimboFire ? ANIM_ET_FIREWEAPON2 : ANIM_ET_FIREWEAPON,
+			                   GetWeaponTableData(pm->ps->weapon)->firingAuto, qtrue);
 		}
-
-		break;
 	}
 
 	pm->ps->weaponstate = WEAPON_FIRING;
