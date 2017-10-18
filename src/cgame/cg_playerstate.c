@@ -187,7 +187,7 @@ void CG_Respawn(qboolean revived)
 	cg.thisFrameTeleport = qtrue;
 
 	// need to reset client-side weapon animations
-	cg.predictedPlayerState.weapAnim    = ((cg.predictedPlayerState.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | PM_IdleAnimForWeapon(cg.snap->ps.weapon);      // reset weapon animations
+	cg.predictedPlayerState.weapAnim    = ((cg.predictedPlayerState.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | GetWeaponTableData(cg.snap->ps.weapon)->idleAnim;      // reset weapon animations
 	cg.predictedPlayerState.weaponstate = WEAPON_READY; // hmm, set this?  what to?
 
 	// display weapons available

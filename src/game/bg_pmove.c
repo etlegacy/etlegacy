@@ -121,185 +121,18 @@ void PM_AddEventExt(int newEvent, int eventParm)
 }
 
 /**
- * @brief PM_IdleAnimForWeapon
- * @param[in] weapon
- * @return
- *
- * @todo TODO: weapon table ?
- */
-int PM_IdleAnimForWeapon(int weapon)
-{
-	switch (weapon)
-	{
-	case WP_GPG40:
-	case WP_M7:
-	case WP_SATCHEL_DET:
-	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET:
-	case WP_MEDIC_ADRENALINE:
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING_SET:
-		return WEAP_IDLE2;
-	default:
-		return WEAP_IDLE1;
-	}
-}
-
-/**
- * @brief PM_AltSwitchFromForWeapon
- * @param weapon - unused
- * @return
- *
- * @todo TODO: weapon table ?
- */
-int PM_AltSwitchFromForWeapon(int weapon)
-{
-	return WEAP_ALTSWITCHFROM;
-}
-
-/**
- * @brief PM_AltSwitchToForWeapon
- * @param[in] weapon
- * @return
- *
- * @todo TODO: weapon table ?
- */
-int PM_AltSwitchToForWeapon(int weapon)
-{
-	switch (weapon)
-	{
-	case WP_GPG40:
-	case WP_M7:
-	case WP_MORTAR:
-	case WP_MORTAR2:
-	case WP_MOBILE_MG42:
-	case WP_MOBILE_BROWNING:
-		return WEAP_ALTSWITCHFROM;
-	default:
-		return WEAP_ALTSWITCHTO;
-	}
-}
-
-/**
- * @brief PM_AttackAnimForWeapon
- * @param[in] weapon
- * @return
- *
- * @todo TODO: weapon table ?
- */
-int PM_AttackAnimForWeapon(int weapon)
-{
-	switch (weapon)
-	{
-	case WP_GPG40:
-	case WP_M7:
-	case WP_SATCHEL_DET:
-	case WP_MEDIC_ADRENALINE:
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING_SET:
-		return WEAP_ATTACK2;
-	default:
-		return WEAP_ATTACK1;
-	}
-}
-
-/**
- * @brief PM_LastAttackAnimForWeapon
- * @param[in] weapon
- * @return
- *
- * @todo TODO: weapon table ?
- */
-int PM_LastAttackAnimForWeapon(int weapon)
-{
-	switch (weapon)
-	{
-	case WP_GPG40:
-	case WP_M7:
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING_SET:
-		return WEAP_ATTACK2;
-	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET:
-		return WEAP_ATTACK1;
-	default:
-		return WEAP_ATTACK_LASTSHOT;
-	}
-}
-
-/**
  * @brief PM_ReloadAnimForWeapon
  * @param[in] weapon
  * @return
- *
- * @todo TODO: weapon table ?
  */
 int PM_ReloadAnimForWeapon(int weapon)
 {
-	switch (weapon)
+	if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && GetWeaponTableData(weapon)->isLightWeaponSupportingFastReload)
 	{
-	case WP_GPG40:
-	case WP_M7:
-		return WEAP_RELOAD2;
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING_SET:
-		return WEAP_RELOAD3;
-	default:
-		// IS_VALID_WEAPON(weapon) ?
-		if (pm->skill[SK_LIGHT_WEAPONS] >= 2 && GetWeaponTableData(weapon)->isLightWeaponSupportingFastReload)
-		{
-			return WEAP_RELOAD2;        // faster reload
-		}
-		else
-		{
-			return WEAP_RELOAD1;
-		}
+		return WEAP_RELOAD2;        // faster reload
 	}
-}
 
-/**
- * @brief PM_RaiseAnimForWeapon
- * @param[in] weapon
- * @return
- *
- * @todo TODO: weapon table ?
- */
-int PM_RaiseAnimForWeapon(int weapon)
-{
-	switch (weapon)
-	{
-	case WP_GPG40:
-	case WP_M7:
-		return WEAP_RELOAD3;
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING_SET:
-		return WEAP_DROP2;
-	case WP_SATCHEL_DET:
-		return WEAP_RELOAD2;
-	default:
-		return WEAP_RAISE;
-	}
-}
-
-/**
- * @brief PM_DropAnimForWeapon
- * @param[in] weapon
- * @return
- *
- * @todo TODO: weapon table ?
- */
-int PM_DropAnimForWeapon(int weapon)
-{
-	switch (weapon)
-	{
-	case WP_GPG40:
-	case WP_M7:
-		return WEAP_DROP2;
-	case WP_SATCHEL_DET:
-		return WEAP_RELOAD1;
-	default:
-		return WEAP_DROP;
-	}
+	return GetWeaponTableData(weapon)->reloadAnim;
 }
 
 /**
@@ -2568,7 +2401,7 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 	// it's an alt mode, play different anim
 	if (newWeapon == GetWeaponTableData(oldWeapon)->weapAlts)
 	{
-		PM_StartWeaponAnim(PM_AltSwitchFromForWeapon(oldWeapon));
+		PM_StartWeaponAnim(GetWeaponTableData(oldWeapon)->altSwitchFrom);
 
 		if (GetWeaponTableData(oldWeapon)->isRifle)
 		{
@@ -2589,7 +2422,7 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 	}
 	else
 	{
-		PM_StartWeaponAnim(PM_DropAnimForWeapon(oldWeapon));
+		PM_StartWeaponAnim(GetWeaponTableData(oldWeapon)->dropAnim);
 	}
 
 	// play an animation
@@ -2711,7 +2544,7 @@ static void PM_FinishWeaponChange(void)
 		}
 
 		// alt weapon switch was played when switching away, just go into idle
-		PM_StartWeaponAnim(PM_AltSwitchToForWeapon(newweapon));
+		PM_StartWeaponAnim(GetWeaponTableData(newweapon)->altSwitchTo);
 	}
 	else
 	{
@@ -2727,7 +2560,7 @@ static void PM_FinishWeaponChange(void)
 			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_RAISEWEAPON, qfalse, qfalse);
 		}
 
-		PM_StartWeaponAnim(PM_RaiseAnimForWeapon(newweapon));
+		PM_StartWeaponAnim(GetWeaponTableData(newweapon)->raiseAnim);
 	}
 }
 
@@ -2766,7 +2599,7 @@ static void PM_FinishWeaponReload(void)
 {
 	PM_ReloadClip(pm->ps->weapon);            // move ammo into clip
 	pm->ps->weaponstate = WEAPON_READY;     // ready to fire
-	PM_StartWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon));
+	PM_StartWeaponAnim(GetWeaponTableData(pm->ps->weapon)->idleAnim);
 }
 
 /**
@@ -3620,7 +3453,7 @@ static void PM_Weapon(void)
 	// can't shoot while prone and moving
 	if ((pm->ps->eFlags & EF_PRONE_MOVING) && !delayedFire)
 	{
-		PM_ContinueWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon));
+		PM_ContinueWeaponAnim(GetWeaponTableData(pm->ps->weapon)->idleAnim);
 		return;
 	}
 
@@ -3667,7 +3500,7 @@ static void PM_Weapon(void)
 		return;
 	case WEAPON_RAISING:
 		pm->ps->weaponstate = WEAPON_READY;
-		PM_StartWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon));
+		PM_StartWeaponAnim(GetWeaponTableData(pm->ps->weapon)->idleAnim);
 		return;
 	case WEAPON_RAISING_TORELOAD:
 		pm->ps->weaponstate = WEAPON_READY;
@@ -3845,7 +3678,7 @@ static void PM_Weapon(void)
 
 		if (weaponstateFiring)     // you were just firing, time to relax
 		{
-			PM_ContinueWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon));
+			PM_ContinueWeaponAnim(GetWeaponTableData(pm->ps->weapon)->idleAnim);
 		}
 
 		pm->ps->weaponstate = WEAPON_READY;
@@ -3876,7 +3709,7 @@ static void PM_Weapon(void)
 	if (pm->waterlevel == 3 && GetWeaponTableData(pm->ps->weapon)->isUnderWaterFire == qfalse)
 	{
 		PM_AddEvent(EV_NOFIRE_UNDERWATER);      // event for underwater 'click' for nofire
-		PM_ContinueWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon));
+		PM_ContinueWeaponAnim(GetWeaponTableData(pm->ps->weapon)->idleAnim);
 		pm->ps->weaponTime  = 500;
 		pm->ps->weaponDelay = 0;                // avoid insta-fire after water exit on delayed weapon attacks
 		return;
@@ -3919,7 +3752,7 @@ static void PM_Weapon(void)
 					pm->ps->grenadeTimeLeft = 4000;         // start at four seconds and count down
 				}
 
-				PM_StartWeaponAnim(PM_AttackAnimForWeapon(pm->ps->weapon));
+				PM_StartWeaponAnim(GetWeaponTableData(pm->ps->weapon)->attackAnim);
 			}
 
 			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
@@ -3937,12 +3770,12 @@ static void PM_Weapon(void)
 			else if (GetWeaponTableData(pm->ps->weapon)->isMortarSet)
 			{
 				PM_AddEvent(EV_SPINUP);
-				PM_StartWeaponAnim(PM_AttackAnimForWeapon(WP_MORTAR_SET));     // FIXME: PM_AttackAnimForWeapon() returns WEAP_ATTACK1 anyway
+				PM_StartWeaponAnim(GetWeaponTableData(pm->ps->weapon)->attackAnim);     // FIXME: returns WEAP_ATTACK1 anyway
 			}
 			else if (pm->ps->weapon == WP_SATCHEL_DET)
 			{
 				PM_AddEvent(EV_SPINUP);
-				PM_ContinueWeaponAnim(PM_AttackAnimForWeapon(WP_SATCHEL_DET));
+				PM_ContinueWeaponAnim(GetWeaponTableData(WP_SATCHEL_DET)->attackAnim);
 			}
 
 			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
@@ -3999,7 +3832,7 @@ static void PM_Weapon(void)
 			}
 			else
 			{
-				PM_ContinueWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon));
+				PM_ContinueWeaponAnim(GetWeaponTableData(pm->ps->weapon)->idleAnim);
 				pm->ps->weaponTime += 500;
 			}
 
@@ -4070,11 +3903,11 @@ static void PM_Weapon(void)
 	{
 		if (PM_WeaponClipEmpty(pm->ps->weapon))
 		{
-			weapattackanim = PM_LastAttackAnimForWeapon(pm->ps->weapon);
+			weapattackanim = GetWeaponTableData(pm->ps->weapon)->lastAttackAnim;
 		}
 		else
 		{
-			weapattackanim = PM_AttackAnimForWeapon(pm->ps->weapon);
+			weapattackanim = GetWeaponTableData(pm->ps->weapon)->attackAnim;
 		}
 	}
 

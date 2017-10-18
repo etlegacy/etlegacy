@@ -1177,6 +1177,15 @@ typedef struct weapontable_s
 	weaponCardIconId_t weaponCardIcon;            ///<
 	float weaponCardCoord[WEAPON_CARD_CORRD_NUM]; ///<
 
+	int idleAnim;
+	int attackAnim;
+	int lastAttackAnim;
+	int altSwitchFrom;
+	int altSwitchTo;
+	int reloadAnim;
+	int raiseAnim;
+	int dropAnim;
+
 	meansOfDeath_t mod;             ///< means of death
 	meansOfDeath_t splashMod;       ///< means of death
 
@@ -2391,8 +2400,6 @@ void BG_AnimUpdatePlayerStateConditions(pmove_t *pmove);
 animation_t *BG_AnimationForString(char *string, animModelInfo_t *animModelInfo);
 animation_t *BG_GetAnimationForIndex(animModelInfo_t *animModelInfo, int index);
 int BG_GetAnimScriptEvent(playerState_t *ps, scriptAnimEventTypes_t event);
-int PM_IdleAnimForWeapon(int weapon);
-int PM_RaiseAnimForWeapon(int weapon);
 void PM_ContinueWeaponAnim(int anim);
 
 extern animStringItem_t animStateStr[];
@@ -2770,9 +2777,6 @@ typedef enum popupMessageBigType_e
 	PM_DISGUISE,
 	PM_BIG_NUM_TYPES
 } popupMessageBigType_t;
-
-int PM_AltSwitchFromForWeapon(int weapon);
-int PM_AltSwitchToForWeapon(int weapon);
 
 #define HITBOXBIT_HEAD   1024
 #define HITBOXBIT_LEGS   2048

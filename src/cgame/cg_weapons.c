@@ -2067,7 +2067,7 @@ static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t 
 	}
 	else if (newAnimation != lf->animationNumber)
 	{
-		if ((newAnimation & ~ANIM_TOGGLEBIT) == PM_RaiseAnimForWeapon(cg.snap->ps.nextWeapon))
+		if ((newAnimation & ~ANIM_TOGGLEBIT) == GetWeaponTableData(cg.snap->ps.nextWeapon)->raiseAnim)
 		{
 			CG_ClearWeapLerpFrame(wi, lf, newAnimation);     // clear when switching to raise (since it should be out of view anyway)
 		}
@@ -2818,7 +2818,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			{
 				int anim = cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT;
 
-				if (anim == PM_AltSwitchFromForWeapon(weaponNum) || anim == PM_AltSwitchToForWeapon(weaponNum) || anim == PM_IdleAnimForWeapon(weaponNum))
+				if (anim == GetWeaponTableData(weaponNum)->altSwitchFrom || anim == GetWeaponTableData(weaponNum)->altSwitchTo || anim == GetWeaponTableData(weaponNum)->idleAnim)
 				{
 					barrel.hModel = weapon->modModels[0];
 					if (barrel.hModel)

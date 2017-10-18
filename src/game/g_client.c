@@ -3192,7 +3192,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	ClientEndFrame(ent);
 
 	// set idle animation on weapon
-	ent->client->ps.weapAnim = ((ent->client->ps.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | PM_IdleAnimForWeapon(ent->client->ps.weapon);
+	ent->client->ps.weapAnim = ((ent->client->ps.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | GetWeaponTableData(ent->client->ps.weapon)->idleAnim;
 
 	// clear entity state values
 	BG_PlayerStateToEntityState(&client->ps, &ent->s, level.time, qtrue);
