@@ -3786,7 +3786,6 @@ void CG_AltWeapon_f(void)
 			cmd = "vsay_team";
 		}
 
-		// TODO: weapon table ?
 		switch (cg.weaponSelect)
 		{
 		case WP_DYNAMITE:
