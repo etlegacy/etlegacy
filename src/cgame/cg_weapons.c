@@ -3058,6 +3058,11 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 	if (ps || cg.renderingThirdPerson || !isPlayer)
 	{
+		int muzzleContents;
+
+		// get contents to avoid lights in water etc - FIXME: this might be useful for other weapons too (move up?)
+		muzzleContents = CG_PointContents(flash.origin, -1);
+
 		// no flamethrower flame on prone moving or dead players
 		if (firing && !(cent->currentState.eFlags & (EF_PRONE_MOVING | EF_DEAD)))
 		{
@@ -3065,15 +3070,18 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			CG_FlamethrowerFlame(cent, flash.origin);
 
 			// make a dlight for the flash
-			if (weapon->flashDlightColor[0] != 0.f || weapon->flashDlightColor[1] != 0.f || weapon->flashDlightColor[2] != 0.f)
+			if(!(muzzleContents & MASK_WATER))
 			{
-				trap_R_AddLightToScene(flash.origin, 320, 1.25f + (rand() & 31) / 128.0f, weapon->flashDlightColor[0],
-				                       weapon->flashDlightColor[1], weapon->flashDlightColor[2], 0, 0);
+				if (weapon->flashDlightColor[0] != 0.f || weapon->flashDlightColor[1] != 0.f || weapon->flashDlightColor[2] != 0.f)
+				{
+					trap_R_AddLightToScene(flash.origin, 320, 1.25 + (rand() & 31) / 128.0f, weapon->flashDlightColor[0],
+                                           weapon->flashDlightColor[1], weapon->flashDlightColor[2], 0, 0);
+				}
 			}
 		}
 		else
 		{
-			if (weaponNum == WP_FLAMETHROWER)
+			if (weaponNum == WP_FLAMETHROWER && !(muzzleContents & MASK_WATER))
 			{
 				vec3_t angles;
 				AxisToAngles(flash.axis, angles);
