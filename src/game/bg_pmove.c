@@ -2710,21 +2710,10 @@ void PM_CheckForReload(weapon_t weapon)
  */
 static void PM_SwitchIfEmpty(void)
 {
-	// weapon here are thrown explosives or syringe/adrenaline
-	// TODO: table weapon throwable ?
-	switch (pm->ps->weapon)
+	// weapon here are thrown explosives or syringe/adrenaline, if they are not return
+	if (!(GetWeaponTableData(pm->ps->weapon)->isThrowable && GetWeaponTableData(pm->ps->weapon)->isExplosive)
+	    && !GetWeaponTableData(pm->ps->weapon)->isSyringe)  // WP_KNIFE WP_SATCHEL_DET
 	{
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_DYNAMITE:
-	case WP_SMOKE_BOMB:
-	case WP_LANDMINE:
-	case WP_MEDIC_SYRINGE:
-	case WP_MEDIC_ADRENALINE:
-		//case WP_KNIFE:
-		//case WP_SATCHEL_DET:
-		break;
-	default:
 		return;
 	}
 

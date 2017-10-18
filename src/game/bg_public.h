@@ -1108,6 +1108,7 @@ typedef struct weapontable_s
 	qboolean noAmmoSound;           ///<
 	qboolean noAmmoAutoSwitch;      ///<
 	qboolean isExplosive;           ///<
+	qboolean isSyringe;             ///<
 
 	qboolean isPistol;              ///<
 	qboolean isAkimbo;              ///< bg

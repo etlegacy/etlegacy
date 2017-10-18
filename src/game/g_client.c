@@ -1037,7 +1037,7 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 			}
 		}
 	}
-	else if (weaponNum == WP_MEDIC_SYRINGE || weaponNum == WP_MEDIC_ADRENALINE)
+	else if (GetWeaponTableData(weaponNum)->isSyringe)
 	{
 		if (client->sess.skill[SK_FIRST_AID] >= 2)
 		{
