@@ -3726,7 +3726,7 @@ void CG_LimboPanel_SetSelectedWeaponNum(int number)
  */
 extWeaponStats_t CG_LimboPanel_GetSelectedWeaponStat(void)
 {
-	return BG_WeapStatForWeapon(CG_LimboPanel_GetSelectedWeapon());
+	return GetWeaponTableData(CG_LimboPanel_GetSelectedWeapon())->indexWeaponStat;
 }
 
 /**

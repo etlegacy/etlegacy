@@ -2744,8 +2744,6 @@ qboolean BG_BBoxCollision(vec3_t min1, vec3_t max1, vec3_t min2, vec3_t max2);
 
 //#define VISIBLE_TRIGGERS
 
-extWeaponStats_t BG_WeapStatForWeapon(weapon_t iWeaponID);
-
 /**
  * @enum popupMessageType_e
  * @typedef popupMessageType_t

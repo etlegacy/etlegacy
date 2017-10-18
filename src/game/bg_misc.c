@@ -2387,21 +2387,6 @@ gitem_t bg_itemlist[] =
 	}
 };
 
-/**
- * @brief Get right stats index based on weapon id
- * @param[in] iWeaponID
- * @return
- */
-extWeaponStats_t BG_WeapStatForWeapon(weapon_t iWeaponID)
-{
-	if (iWeaponID < WP_NUM_WEAPONS)
-	{
-		return GetWeaponTableData(iWeaponID)->indexWeaponStat;
-	}
-
-	return WS_MAX;
-}
-
 int bg_numItems = ARRAY_LEN(bg_itemlist) - 1;     // keep in sync with ITEM_MAX_ITEMS!
 
 /**
