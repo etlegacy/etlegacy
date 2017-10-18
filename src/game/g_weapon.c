@@ -488,7 +488,7 @@ void Weapon_Syringe(gentity_t *ent)
 	if (tr.fraction == 1.0f) // no hit
 	{
 		// give back ammo
-		ent->client->ps.ammoclip[BG_FindClipForWeapon(WP_MEDIC_SYRINGE)] += 1;
+		ent->client->ps.ammoclip[GetWeaponTableData(WP_MEDIC_SYRINGE)->clipIndex] += 1;
 		return;
 	}
 
@@ -497,7 +497,7 @@ void Weapon_Syringe(gentity_t *ent)
 	if (!traceEnt->client)
 	{
 		// give back ammo
-		ent->client->ps.ammoclip[BG_FindClipForWeapon(WP_MEDIC_SYRINGE)] += 1;
+		ent->client->ps.ammoclip[GetWeaponTableData(WP_MEDIC_SYRINGE)->clipIndex] += 1;
 		return;
 	}
 
@@ -538,7 +538,7 @@ void Weapon_Syringe(gentity_t *ent)
 		// If the medicine wasn't used, give back the ammo
 		if (!usedSyringe)
 		{
-			ent->client->ps.ammoclip[BG_FindClipForWeapon(WP_MEDIC_SYRINGE)] += 1;
+			ent->client->ps.ammoclip[GetWeaponTableData(WP_MEDIC_SYRINGE)->clipIndex] += 1;
 		}
 	}
 	else if (g_misc.integer & G_MISC_MEDIC_SYRINGE_HEAL) //  FIXME: clarify ammo restore

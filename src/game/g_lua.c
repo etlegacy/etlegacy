@@ -833,8 +833,8 @@ static int _et_AddWeaponToPlayer(lua_State *L)
 	}
 
 	COM_BitSet(ent->client->ps.weapons, weapon);
-	ent->client->ps.ammoclip[BG_FindClipForWeapon(weapon)] = ammoclip;
-	ent->client->ps.ammo[BG_FindAmmoForWeapon(weapon)]     = ammo;
+	ent->client->ps.ammoclip[GetWeaponTableData(weapon)->clipIndex] = ammoclip;
+	ent->client->ps.ammo[GetWeaponTableData(weapon)->ammoIndex]     = ammo;
 
 	if (setcurrent == 1)
 	{

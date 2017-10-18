@@ -2427,11 +2427,11 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	{
 		if (isPlayer)
 		{
-			akimboFire = BG_AkimboFireSequence(weaponNum, cg.predictedPlayerState.ammoclip[BG_FindClipForWeapon(weaponNum)], cg.predictedPlayerState.ammoclip[BG_FindClipForWeapon(GetWeaponTableData(weaponNum)->akimboSideArm)]);
+			akimboFire = BG_AkimboFireSequence(weaponNum, cg.predictedPlayerState.ammoclip[GetWeaponTableData(weaponNum)->clipIndex], cg.predictedPlayerState.ammoclip[GetWeaponTableData(GetWeaponTableData(weaponNum)->akimboSideArm)->clipIndex]);
 		}
 		else if (ps)
 		{
-			akimboFire = BG_AkimboFireSequence(weaponNum, ps->ammoclip[BG_FindClipForWeapon(weaponNum)], ps->ammoclip[BG_FindClipForWeapon(GetWeaponTableData(weaponNum)->akimboSideArm)]);
+			akimboFire = BG_AkimboFireSequence(weaponNum, ps->ammoclip[GetWeaponTableData(weaponNum)->clipIndex], ps->ammoclip[GetWeaponTableData(GetWeaponTableData(weaponNum)->akimboSideArm)->clipIndex]);
 		}
 		// alternate for other clients, store flip-flop on cent or smuffin
 	}
@@ -2814,7 +2814,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	{
 		if (GetWeaponTableData(weaponNum)->isRifle || GetWeaponTableData(weaponNum)->isRiflenade)
 		{
-			if ((cg.snap->ps.ammo[BG_FindAmmoForWeapon(WP_GPG40)] || cg.snap->ps.ammo[BG_FindAmmoForWeapon(WP_M7)] || cg.snap->ps.ammoclip[BG_FindAmmoForWeapon(WP_GPG40)] || cg.snap->ps.ammoclip[BG_FindAmmoForWeapon(WP_M7)]))
+			if ((cg.snap->ps.ammo[GetWeaponTableData(WP_GPG40)->ammoIndex] || cg.snap->ps.ammo[GetWeaponTableData(WP_M7)->ammoIndex] || cg.snap->ps.ammoclip[GetWeaponTableData(WP_GPG40)->ammoIndex] || cg.snap->ps.ammoclip[GetWeaponTableData(WP_M7)->ammoIndex]))
 			{
 				int anim = cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT;
 
@@ -3061,7 +3061,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 				if (ps)
 				{
-					if (ps->ammoclip[BG_FindAmmoForWeapon(WP_FLAMETHROWER)])
+					if (ps->ammoclip[GetWeaponTableData(WP_FLAMETHROWER)->ammoIndex])
 					{
 						CG_FireFlameChunks(cent, flash.origin, angles, 1.0, qfalse);
 					}
@@ -3343,8 +3343,8 @@ static qboolean CG_WeaponHasAmmo(weapon_t weapon)
 	}
 
 	// check if the weapon still have ammo
-	if (!(cg.predictedPlayerState.ammo[BG_FindAmmoForWeapon(weapon)]) &&
-	    !(cg.predictedPlayerState.ammoclip[BG_FindClipForWeapon(weapon)]))
+	if (!(cg.predictedPlayerState.ammo[GetWeaponTableData(weapon)->ammoIndex]) &&
+	    !(cg.predictedPlayerState.ammoclip[GetWeaponTableData(weapon)->clipIndex]))
 	{
 		return qfalse;
 	}

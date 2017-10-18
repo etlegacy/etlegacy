@@ -2411,28 +2411,6 @@ gitem_t *BG_FindItemForWeapon(weapon_t weapon)
 }
 
 /**
- * @brief BG_FindClipForWeapon
- * @param[in] weapon
- * @return
- */
-weapon_t BG_FindClipForWeapon(weapon_t weapon)
-{
-	// FIXME: check valid weapon?
-	return GetWeaponTableData(weapon)->clipIndex;
-}
-
-/**
- * @brief BG_FindAmmoForWeapon
- * @param[in] weapon
- * @return
- */
-weapon_t BG_FindAmmoForWeapon(weapon_t weapon)
-{
-	// FIXME: check valid weapon?
-	return GetWeaponTableData(weapon)->ammoIndex;
-}
-
-/**
  * @brief BG_AkimboFireSequence
  * @param[in] weapon
  * @param[in] akimboClip
@@ -2619,7 +2597,7 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numO
 	int      weapNumOfClips;
 	int      i      = BG_GrenadesForClass(ps->stats[STAT_PLAYER_CLASS], skill); // handle grenades first
 	weapon_t weapon = BG_GrenadeTypeForTeam(teamNum);
-	weapon_t clip   = BG_FindClipForWeapon(weapon);
+	weapon_t clip   = GetWeaponTableData(weapon)->clipIndex;
 
 	if (ps->ammoclip[clip] < i)
 	{
@@ -2645,7 +2623,7 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numO
 	{
 		i = skill[SK_FIRST_AID] >= 2 ? 12 : 10;
 
-		clip = BG_FindClipForWeapon(WP_MEDIC_SYRINGE);
+		clip = GetWeaponTableData(WP_MEDIC_SYRINGE)->clipIndex;
 
 		if (ps->ammoclip[clip] < i)
 		{
@@ -2676,7 +2654,7 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numO
 			// Handle weapons that just use clip, and not ammo
 			if (weapon == WP_FLAMETHROWER)
 			{
-				clip = BG_FindAmmoForWeapon(weapon);
+				clip = GetWeaponTableData(weapon)->ammoIndex;
 				if (ps->ammoclip[clip] < maxammo)
 				{
 					// early out
@@ -2691,7 +2669,7 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numO
 			}
 			else if (GetWeaponTableData(weapon)->isPanzer)           //%    || weapon == WP_MORTAR ) {
 			{
-				clip = BG_FindAmmoForWeapon(weapon);
+				clip = GetWeaponTableData(weapon)->ammoIndex;
 				if (ps->ammoclip[clip] < maxammo)
 				{
 					// early out
@@ -2710,7 +2688,7 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numO
 			}
 			else
 			{
-				clip = BG_FindAmmoForWeapon(weapon);
+				clip = GetWeaponTableData(weapon)->ammoIndex;
 				if (ps->ammo[clip] < maxammo)
 				{
 					// early out

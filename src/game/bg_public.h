@@ -1829,9 +1829,6 @@ gitem_t *BG_FindItemForClassName(const char *className);
 gitem_t *BG_FindItemForWeapon(weapon_t weapon);
 gitem_t *BG_GetItem(int index);
 
-weapon_t BG_FindAmmoForWeapon(weapon_t weapon);
-weapon_t BG_FindClipForWeapon(weapon_t weapon);
-
 qboolean BG_AkimboFireSequence(int weapon, int akimboClip, int mainClip);
 
 qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, int *skill, team_t teamNum);

@@ -794,14 +794,14 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 	}
 
 	// total ammo in clips
-	*clips = cg.snap->ps.ammo[BG_FindAmmoForWeapon(weap)];
+	*clips = cg.snap->ps.ammo[GetWeaponTableData(weap)->ammoIndex];
 
 	// current clip
-	*ammo = ps->ammoclip[BG_FindClipForWeapon(weap)];
+	*ammo = ps->ammoclip[GetWeaponTableData(weap)->clipIndex];
 
 	if (GetWeaponTableData(weap)->isAkimbo)
 	{
-		*akimboammo = ps->ammoclip[BG_FindClipForWeapon(GetWeaponTableData(weap)->akimboSideArm)];
+		*akimboammo = ps->ammoclip[GetWeaponTableData(GetWeaponTableData(weap)->akimboSideArm)->clipIndex];
 	}
 	else
 	{

@@ -271,7 +271,7 @@ void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 	}
 	else if (skill == SK_FIRST_AID && ent->client->sess.playerType == PC_MEDIC && ent->client->sess.skill[skill] == 4)
 	{
-		AddWeaponToPlayer(ent->client, WP_MEDIC_ADRENALINE, ent->client->ps.ammo[BG_FindAmmoForWeapon(WP_MEDIC_ADRENALINE)], ent->client->ps.ammoclip[BG_FindClipForWeapon(WP_MEDIC_ADRENALINE)], qfalse);
+		AddWeaponToPlayer(ent->client, WP_MEDIC_ADRENALINE, ent->client->ps.ammo[GetWeaponTableData(WP_MEDIC_ADRENALINE)->ammoIndex], ent->client->ps.ammoclip[GetWeaponTableData(WP_MEDIC_ADRENALINE)->clipIndex], qfalse);
 	}
 }
 

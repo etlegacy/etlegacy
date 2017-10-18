@@ -68,14 +68,14 @@
 int AddToClip(playerState_t *ps, weapon_t weapon, int ammomove, int outOfReserve)
 {
 	int      inclip, maxclip;
-	weapon_t ammoweap = BG_FindAmmoForWeapon(weapon);
+	weapon_t ammoweap = GetWeaponTableData(weapon)->ammoIndex;
 
 	if (!IS_VALID_WEAPON(weapon))
 	{
 		return qfalse;
 	}
 
-	inclip  = ps->ammoclip[BG_FindClipForWeapon(weapon)];
+	inclip  = ps->ammoclip[GetWeaponTableData(weapon)->clipIndex];
 	maxclip = GetWeaponTableData(weapon)->maxClip;
 
 	if (!ammomove)     // amount to add to the clip not specified
@@ -102,7 +102,7 @@ int AddToClip(playerState_t *ps, weapon_t weapon, int ammomove, int outOfReserve
 		{
 			ps->ammo[ammoweap] -= ammomove;
 		}
-		ps->ammoclip[BG_FindClipForWeapon(weapon)] += ammomove;
+		ps->ammoclip[GetWeaponTableData(weapon)->clipIndex] += ammomove;
 		return qtrue;
 	}
 	return qfalse;
@@ -129,7 +129,7 @@ void Fill_Clip(playerState_t *ps, weapon_t weapon)
  */
 int Add_Ammo(gentity_t *ent, weapon_t weapon, int count, qboolean fillClip)
 {
-	weapon_t ammoweap      = BG_FindAmmoForWeapon(weapon);
+	weapon_t ammoweap      = GetWeaponTableData(weapon)->ammoIndex;
 	int      maxammo       = BG_MaxAmmoForWeapon(ammoweap, ent->client->sess.skill);
 	int      originalCount = ent->client->ps.ammo[ammoweap];
 
@@ -443,16 +443,16 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 
 	if (GetWeaponTableData(weapon)->isMortarSet)
 	{
-		ent2->count = client->ps.ammo[BG_FindAmmoForWeapon(weapon)] + client->ps.ammoclip[BG_FindClipForWeapon(weapon)];
+		ent2->count = client->ps.ammo[GetWeaponTableData(weapon)->ammoIndex] + client->ps.ammoclip[GetWeaponTableData(weapon)->clipIndex];
 	}
 	else
 	{
-		ent2->count = client->ps.ammoclip[BG_FindClipForWeapon(weapon)];
+		ent2->count = client->ps.ammoclip[GetWeaponTableData(weapon)->clipIndex];
 	}
 
 	if (weapon == WP_KAR98 || weapon == WP_CARBINE)
 	{
-		ent2->delay = client->ps.ammo[BG_FindAmmoForWeapon(GetWeaponTableData(weapon)->weapAlts)];
+		ent2->delay = client->ps.ammo[GetWeaponTableData(GetWeaponTableData(weapon)->weapAlts)->ammoIndex];
 	}
 	else
 	{
@@ -460,7 +460,7 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 	}
 
 	//  ent2->item->quantity = client->ps.ammoclip[BG_FindClipForWeapon(weapon)]; // um, modifying an item is not a good idea
-	client->ps.ammoclip[BG_FindClipForWeapon(weapon)] = 0;
+	client->ps.ammoclip[GetWeaponTableData(weapon)->clipIndex] = 0;
 
 #ifdef FEATURE_OMNIBOT
 	Bot_Event_RemoveWeapon(client->ps.clientNum, Bot_WeaponGameToBot(weapon));
@@ -603,12 +603,12 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 					}
 				}
 
-				other->client->ps.ammoclip[BG_FindClipForWeapon(ent->item->giWeapon)] = 0;
-				other->client->ps.ammo[BG_FindAmmoForWeapon(ent->item->giWeapon)]     = 0;
+				other->client->ps.ammoclip[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = 0;
+				other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->ammoIndex]     = 0;
 
 				if (GetWeaponTableData(ent->item->giWeapon)->isMortar)
 				{
-					other->client->ps.ammo[BG_FindClipForWeapon(ent->item->giWeapon)] = quantity;
+					other->client->ps.ammo[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = quantity;
 
 					// secondary weapon ammo
 					if (ent->delay != 0.f)
@@ -618,7 +618,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				}
 				else
 				{
-					other->client->ps.ammoclip[BG_FindClipForWeapon(ent->item->giWeapon)] = quantity;
+					other->client->ps.ammoclip[GetWeaponTableData(ent->item->giWeapon)->clipIndex] = quantity;
 
 					// secondary weapon ammo
 					if (ent->delay != 0.f)
