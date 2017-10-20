@@ -1612,7 +1612,7 @@ void Com_TouchMemory(void)
 {
 	int        start, end;
 	int        i, j;
-	int        sum = 0;
+	unsigned   sum = 0;
 	memblock_t *block;
 
 	Z_CheckHeap();
