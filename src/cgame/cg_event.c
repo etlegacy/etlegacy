@@ -43,6 +43,76 @@ static vec3_t OB_YELLOW = { 1.f, 1.f, 0.f };
 static vec3_t OB_RED = { 1.f, 0.f, 0.f };
 
 /**
+ * @brief CG_GetObituaryIcon
+ * @param[in] mod
+ * @param[in] weapon
+ * @param[out] weaponShader
+ * @param[out] scaleShader
+ */
+void CG_GetObituaryIcon(meansOfDeath_t mod, weapon_t weapon, qhandle_t *weaponShader, int *scaleShader)
+{
+	// Get the related weapon from kill
+	weapon_t weap = IS_VALID_WEAPON(weapon) ? weapon : GetMODTableData(mod)->weaponIcon;
+
+	// if weapon is still valid
+	if (IS_VALID_WEAPON(weap))
+	{
+		if (cg_drawSmallPopupIcons.integer && cg_weapons[weapon].weaponIcon[0])
+		{
+			*weaponShader = cg_weapons[weapon].weaponIcon[0];
+			*scaleShader  = cg_weapons[weapon].weaponIconScale;
+		}
+		else if (cg_weapons[weapon].weaponIcon[1])
+		{
+			*weaponShader = cg_weapons[weapon].weaponIcon[1];
+			*scaleShader  = cg_weapons[weapon].weaponIconScale;
+		}
+		else
+		{
+			*weaponShader = cgs.media.pmImages[PM_DEATH];
+			*scaleShader  = 1;
+		}
+	}
+	else
+	{
+		*scaleShader = 1;
+
+		// FIXME:
+		//case MOD_UNKNOWN:
+		//case MOD_FALLING:
+		//case MOD_TRIGGER_HURT:
+		//case MOD_TELEFRAG:
+		//case MOD_TARGET_LASER:
+		//case MOD_AIRSTRIKE:
+		//case MOD_MAPMORTAR:
+		//case MOD_MAPMORTAR_SPLASH:
+		//case MOD_EXPLOSIVE:
+		//case MOD_GRENADE:
+		switch (mod) // deal with icon specials
+		{
+		case MOD_WATER:
+			*weaponShader = cgs.media.waterHintShader;
+			break;
+		case MOD_SLIME:
+			*weaponShader = cgs.media.pmImageSlime;
+			break;
+		case MOD_LAVA:
+			*weaponShader = cgs.media.pmImageLava;
+			break;
+		case MOD_CRUSH:
+			*weaponShader = cgs.media.pmImageCrush;
+			break;
+		case MOD_SHOVE:
+			*weaponShader = cgs.media.pmImageShove;
+			break;
+		default:
+			*weaponShader = cgs.media.pmImages[PM_DEATH];
+			break;
+		}
+	}
+}
+
+/**
  * @brief CG_Obituary
  * @param[in] ent
  * @todo FIXME: ... some MODs are not caught - check all!
@@ -50,17 +120,16 @@ static vec3_t OB_RED = { 1.f, 0.f, 0.f };
  */
 static void CG_Obituary(entityState_t *ent)
 {
-	qhandle_t    shader       = cgs.media.pmImages[PM_DEATH];
-	qhandle_t    weaponShader = cgs.media.pmImages[PM_DEATH];
-	int          mod          = ent->eventParm;
-	int          target       = ent->otherEntityNum;
-	int          attacker     = ent->otherEntityNum2;
-	weapon_t     weapon       = (weapon_t)ent->weapon;
-	const char   *message     = NULL;
-	const char   *message2    = NULL;
-	char         targetName[MAX_NAME_LENGTH];
-	char         attackerName[MAX_NAME_LENGTH];
-	clientInfo_t *ci, *ca;    // ca = attacker
+	qhandle_t      shader    = cgs.media.pmImages[PM_DEATH];
+	meansOfDeath_t mod       = (meansOfDeath_t)ent->eventParm;
+	int            target    = ent->otherEntityNum;
+	int            attacker  = ent->otherEntityNum2;
+	weapon_t       weapon    = (weapon_t)ent->weapon;
+	const char     *message  = NULL;
+	const char     *message2 = NULL;
+	char           targetName[MAX_NAME_LENGTH];
+	char           attackerName[MAX_NAME_LENGTH];
+	clientInfo_t   *ci, *ca;  // ca = attacker
 
 	if (target < 0 || target >= MAX_CLIENTS)
 	{
@@ -82,197 +151,31 @@ static void CG_Obituary(entityState_t *ent)
 	strcat(targetName, S_COLOR_WHITE);
 
 	// check for single client messages
-	// TODO: mod table ?
 	if (!ca)
 	{
-		switch (mod)
-		{
-		case MOD_FALLING:
-			message = "rediscovered gravity";
-			break;
-		case MOD_CRUSH:
-			message = "was crushed";
-			break;
-		case MOD_WATER:
-			message = "drowned";
-			break;
-		case MOD_SLIME:
-			message = "slagged";
-			break;
-		case MOD_TRIGGER_HURT:
-			message = "was mortally wounded";
-			break;
-		case MOD_TELEFRAG: // added TELEFRAG and TARGET_LASER, just in case
-		case MOD_TARGET_LASER:
-			message = "was killed";
-			break;
-		case MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER:
-			message = "got buried under a pile of rubble";
-			break;
-		case MOD_LAVA:
-			message = "was incinerated";
-			break;
-		case MOD_MAPMORTAR: // direct hit
-			message = "had an appointment with the map mortar";
-			break;
-		case MOD_MAPMORTAR_SPLASH:
-			message = "took a map mortar shell shower";
-			break;
-		case MOD_EXPLOSIVE:
-			message = "was pulverized by an explosion";
-			break;
-		case MOD_GRENADE:
-			message = "has been blasted away by an explosion";
-			break;
-		default:
-			message = NULL;
-			break;
-		}
+		message = GetMODTableData(mod)->obituaryNoAttackerMessage;
 	}
 	// check for self kill messages
 	else if (attacker == target)
 	{
-		switch (mod)
-		{
-		case MOD_DYNAMITE:
-			message = "dynamited himself to pieces";
-			break;
-		case MOD_GRENADE_LAUNCHER:
-		case MOD_GRENADE_PINEAPPLE:
-			message = "dove on his own grenade";
-			break;
-		case MOD_PANZERFAUST:
-		case MOD_BAZOOKA:
-			message = "vaporized himself";
-			break;
-		case MOD_FLAMETHROWER:
-			message = "played with fire";
-			break;
-		case MOD_AIRSTRIKE:
-			message = "obliterated himself";
-			break;
-		case MOD_ARTY:
-			message = "fired-for-effect on himself";
-			break;
-		case MOD_EXPLOSIVE:
-			message = "died in his own explosion";
-			break;
-		case MOD_GRENADE: // might have an inflicor
-			message = "knew how to initiate an explosion";
-			break;
-		// everything from this point on is sorted by MOD, didn't
-		// resort existing messages to avoid differences between pre
-		// and post-patch code (for source patching)
-		case MOD_GPG40:
-		case MOD_M7:
-			message = "ate his own rifle grenade";
-			break;
-		case MOD_LANDMINE:
-			message = "failed to spot his own landmine";
-			break;
-		case MOD_SATCHEL:
-			message = "embraced his own satchel explosion";
-			break;
-		case MOD_CRUSH_CONSTRUCTION:
-			message = "engineered himself into oblivion";
-			break;
-		case MOD_CRUSH_CONSTRUCTIONDEATH:
-			message = "buried himself alive";
-			break;
-		case MOD_MORTAR:
-		case MOD_MORTAR2:
-			message = "never saw his own mortar round coming";
-			break;
-		case MOD_SMOKEGRENADE:
-			message = "danced on his airstrike marker";
-			break;
-		case MOD_SUICIDE:
-			message = "committed suicide";
-			break;
 		// no obituary message if changing teams
-		case MOD_SWITCHTEAM:
+		if (mod == MOD_SWITCHTEAM)
+		{
 			return;
-		default:
-			message = "killed himself";
-			break;
 		}
+
+		message = GetMODTableData(mod)->obituarySelfKillMessage;
 	}
 
 	if (message)
 	{
 		if (cg_graphicObituaries.integer)
 		{
-			int scaleShader = 1;
+			qhandle_t weaponShader;
+			int       scaleShader;
 
-			switch (mod) // deal with icon specials
-			{
-			// FIXME:
-			//case MOD_UNKNOWN:
-			//case MOD_FALLING:
-			//case MOD_TRIGGER_HURT:
-			//case MOD_TELEFRAG:
-			//case MOD_TARGET_LASER:
-			//case MOD_AIRSTRIKE:
-			//case MOD_MAPMORTAR:
-			//case MOD_MAPMORTAR_SPLASH:
-			//case MOD_EXPLOSIVE:
-			//case MOD_GRENADE:
-			case MOD_ARTY:
-				if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_BINOCULARS].weaponIcon[0])
-				{
-					weaponShader = cg_weapons[WP_BINOCULARS].weaponIcon[0];
-					scaleShader  = cg_weapons[WP_BINOCULARS].weaponIconScale;
-				}
-				else if (cg_weapons[WP_BINOCULARS].weaponIcon[1])
-				{
-					weaponShader = cg_weapons[WP_BINOCULARS].weaponIcon[1];
-					scaleShader  = cg_weapons[WP_BINOCULARS].weaponIconScale;
-				}
+			CG_GetObituaryIcon(mod, weapon, &weaponShader, &scaleShader);
 
-				break;
-			case MOD_CRUSH_CONSTRUCTION:
-			case MOD_CRUSH_CONSTRUCTIONDEATH:
-			case MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER:
-				if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_PLIERS].weaponIcon[0])
-				{
-					weaponShader = cg_weapons[WP_PLIERS].weaponIcon[0];
-					scaleShader  = cg_weapons[WP_PLIERS].weaponIconScale;
-				}
-				else if (cg_weapons[WP_PLIERS].weaponIcon[1])
-				{
-					weaponShader = cg_weapons[WP_PLIERS].weaponIcon[1];
-					scaleShader  = cg_weapons[WP_PLIERS].weaponIconScale;
-				}
-				break;
-			case MOD_WATER:
-				weaponShader = cgs.media.waterHintShader;
-				scaleShader  = 1;
-				break;
-			case MOD_SLIME:
-				weaponShader = cgs.media.pmImageSlime;
-				scaleShader  = 1;
-				break;
-			case MOD_LAVA:
-				weaponShader = cgs.media.pmImageLava;
-				scaleShader  = 1;
-				break;
-			case MOD_CRUSH:
-				weaponShader = cgs.media.pmImageCrush;
-				scaleShader  = 1;
-				break;
-			default:
-				if (IS_VALID_WEAPON(weapon) && cg_drawSmallPopupIcons.integer && cg_weapons[weapon].weaponIcon[0])
-				{
-					weaponShader = cg_weapons[weapon].weaponIcon[0];
-					scaleShader  = cg_weapons[weapon].weaponIconScale;
-				}
-				else if (IS_VALID_WEAPON(weapon) && cg_weapons[weapon].weaponIcon[1])
-				{
-					weaponShader = cg_weapons[weapon].weaponIcon[1];
-					scaleShader  = cg_weapons[weapon].weaponIconScale;
-				}
-				break;
-			}
 			CG_AddPMItem(PM_DEATH, targetName, " ", 0, weaponShader, scaleShader, OB_YELLOW);
 		}
 		else
@@ -348,21 +251,11 @@ static void CG_Obituary(entityState_t *ent)
 	// check for double client messages
 	if (ca)
 	{
-		switch (mod)
+		message  = GetMODTableData(mod)->obituaryKillMessage1;
+		message2 = GetMODTableData(mod)->obituaryKillMessage2;
+
+		if (mod == MOD_BACKSTAB)    // NOTE: we might add a sound for MOD_KNIFE and MOD_KABAR
 		{
-		case MOD_KNIFE:
-			message  = "was stabbed by";
-			message2 = "'s knife";
-			// we might add a sound here again
-			break;
-		case MOD_KNIFE_KABAR:
-			message  = "was stabbed by";
-			message2 = "'s KA-BAR";
-			// we might add a sound here again
-			break;
-		case MOD_BACKSTAB:
-			message  = "was backstabbed by";
-			message2 = "'s knife arts";
 			// goat luvin
 			if (attacker == cg.snap->ps.clientNum || target == cg.snap->ps.clientNum)
 			{
@@ -371,160 +264,6 @@ static void CG_Obituary(entityState_t *ent)
 					trap_S_StartSound(cg.snap->ps.origin, cg.snap->ps.clientNum, CHAN_AUTO, cgs.media.goatAxis);
 				}
 			}
-			break;
-		case MOD_AKIMBO_COLT:
-		case MOD_AKIMBO_SILENCEDCOLT:
-			message  = "was killed by";
-			message2 = "'s Akimbo .45ACP 1911s";
-			break;
-		case MOD_AKIMBO_LUGER:
-		case MOD_AKIMBO_SILENCEDLUGER:
-			message  = "was killed by";
-			message2 = "'s Akimbo Luger 9mms";
-			break;
-		case MOD_SILENCER:
-		case MOD_LUGER:
-			message  = "was killed by";
-			message2 = "'s Luger 9mm";
-			break;
-		case MOD_SILENCED_COLT:
-		case MOD_COLT:
-			message  = "was killed by";
-			message2 = "'s .45ACP 1911";
-			break;
-		case MOD_MP40:
-			message  = "was killed by";
-			message2 = "'s MP 40";
-			break;
-		case MOD_THOMPSON:
-			message  = "was killed by";
-			message2 = "'s Thompson";
-			break;
-		case MOD_STEN:
-			message  = "was killed by";
-			message2 = "'s Sten";
-			break;
-		case MOD_DYNAMITE:
-			message  = "was blasted by";
-			message2 = "'s dynamite";
-			break;
-		case MOD_PANZERFAUST:
-			message  = "was blasted by";
-			message2 = "'s Panzerfaust";
-			break;
-		case MOD_BAZOOKA:
-			message  = "was blasted by";
-			message2 = "'s Bazooka";
-			break;
-		case MOD_GRENADE_LAUNCHER:
-		case MOD_GRENADE_PINEAPPLE:
-			message  = "was exploded by";
-			message2 = "'s grenade";
-			break;
-		case MOD_FLAMETHROWER:
-			message  = "was cooked by";
-			message2 = "'s flamethrower";
-			break;
-		case MOD_MORTAR:
-		case MOD_MORTAR2:
-			message  = "never saw";
-			message2 = "'s mortar round coming";
-			break;
-		case MOD_MACHINEGUN:
-			message  = "was perforated by";
-			message2 = "'s crew-served MG";
-			break;
-		case MOD_BROWNING:
-			message  = "was perforated by";
-			message2 = "'s tank-mounted browning 30cal";
-			break;
-		case MOD_MG42:
-			message  = "was perforated by";
-			message2 = "'s tank-mounted MG 42";
-			break;
-		case MOD_AIRSTRIKE:
-			message  = "was blasted by";
-			message2 = "'s support fire";
-			break;
-		case MOD_ARTY:
-			message  = "was shelled by";
-			message2 = "'s artillery support";
-			break;
-		case MOD_SWAP_PLACES:
-			message  = "^2swapped places with^7";
-			message2 = "";
-			break;
-		case MOD_KAR98: // same weapon really
-		case MOD_K43:
-			message  = "was killed by";
-			message2 = "'s K43";
-			break;
-		case MOD_CARBINE: // same weapon really
-		case MOD_GARAND:
-			message  = "was killed by";
-			message2 = "'s Garand";
-			break;
-		case MOD_GPG40:
-		case MOD_M7:
-			message  = "was killed by";
-			message2 = "'s rifle grenade";
-			break;
-		case MOD_LANDMINE:
-			message  = "failed to spot";
-			message2 = "'s Landmine";
-			break;
-		case MOD_CRUSH_CONSTRUCTION:
-			message  = "got caught in";
-			message2 = "'s construction madness";
-			break;
-		case MOD_CRUSH_CONSTRUCTIONDEATH:
-			message  = "got burried under";
-			message2 = "'s rubble";
-			break;
-		case MOD_MOBILE_MG42:
-			message  = "was mown down by";
-			message2 = "'s Mobile MG 42";
-			break;
-		case MOD_MOBILE_BROWNING:
-			message  = "was mown down by";
-			message2 = "'s Mobile Browning";
-			break;
-		case MOD_GARAND_SCOPE:
-			message  = "was silenced by";
-			message2 = "'s Garand";
-			break;
-		case MOD_K43_SCOPE:
-			message  = "was silenced by";
-			message2 = "'s K43";
-			break;
-		case MOD_FG42:
-			message  = "was killed by";
-			message2 = "'s FG 42";
-			break;
-		case MOD_FG42SCOPE:
-			message  = "was sniped by";
-			message2 = "'s FG 42";
-			break;
-		case MOD_SATCHEL:
-			message  = "was blasted by";
-			message2 = "'s Satchel Charge";
-			break;
-		case MOD_SMOKEGRENADE:
-			message  = "stood on";
-			message2 = "'s airstrike marker";
-			break;
-		case MOD_SHOVE:
-			message  = "was thrown to his doom by";
-			message2 = "";
-			break;
-		case MOD_GRENADE: // might have an inflictor ...
-			message  = "was blasted by";
-			message2 = "'s explosion";
-			break;
-		default:
-			message  = "was killed by";
-			message2 = "";
-			break;
 		}
 
 		// vanilla style
@@ -538,81 +277,10 @@ static void CG_Obituary(entityState_t *ent)
 		{
 			if (cg_graphicObituaries.integer)
 			{
-				int scaleShader = 1;
+				qhandle_t weaponShader;
+				int       scaleShader;
 
-				// TODO: mod table ?
-				switch (mod) // deal with icon specials
-				{
-				// FIXME:
-				//case MOD_AIRSTRIKE:
-				case MOD_ARTY:
-					if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_BINOCULARS].weaponIcon[0])
-					{
-						weaponShader = cg_weapons[WP_BINOCULARS].weaponIcon[0];
-						scaleShader  = cg_weapons[WP_BINOCULARS].weaponIconScale;
-					}
-					else if (cg_weapons[WP_BINOCULARS].weaponIcon[1])
-					{
-						weaponShader = cg_weapons[WP_BINOCULARS].weaponIcon[1];
-						scaleShader  = cg_weapons[WP_BINOCULARS].weaponIconScale;
-					}
-
-					break;
-				case MOD_MACHINEGUN:
-				case MOD_MG42:
-					if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_MOBILE_MG42].weaponIcon[0])
-					{
-						weaponShader = cg_weapons[WP_MOBILE_MG42].weaponIcon[0];
-						scaleShader  = cg_weapons[WP_MOBILE_MG42].weaponIconScale;
-					}
-					else if (cg_weapons[WP_MOBILE_MG42].weaponIcon[1])
-					{
-						weaponShader = cg_weapons[WP_MOBILE_MG42].weaponIcon[1];
-						scaleShader  = cg_weapons[WP_MOBILE_MG42].weaponIconScale;
-					}
-					break;
-				case MOD_BROWNING:
-					if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_MOBILE_BROWNING].weaponIcon[0])
-					{
-						weaponShader = cg_weapons[WP_MOBILE_BROWNING].weaponIcon[0];
-						scaleShader  = cg_weapons[WP_MOBILE_BROWNING].weaponIconScale;
-					}
-					else if (cg_weapons[WP_MOBILE_BROWNING].weaponIcon[1])
-					{
-						weaponShader = cg_weapons[WP_MOBILE_BROWNING].weaponIcon[1];
-						scaleShader  = cg_weapons[WP_MOBILE_BROWNING].weaponIconScale;
-					}
-					break;
-				case MOD_CRUSH_CONSTRUCTION:
-				case MOD_CRUSH_CONSTRUCTIONDEATH:
-					if (cg_drawSmallPopupIcons.integer && cg_weapons[WP_PLIERS].weaponIcon[0])
-					{
-						weaponShader = cg_weapons[WP_PLIERS].weaponIcon[0];
-						scaleShader  = cg_weapons[WP_PLIERS].weaponIconScale;
-					}
-					else if (cg_weapons[WP_PLIERS].weaponIcon[1])
-					{
-						weaponShader = cg_weapons[WP_PLIERS].weaponIcon[1];
-						scaleShader  = cg_weapons[WP_PLIERS].weaponIconScale;
-					}
-					break;
-				case MOD_SHOVE:
-					weaponShader = cgs.media.pmImageShove;
-					scaleShader  = 1;
-					break;
-				default:
-					if (IS_VALID_WEAPON(weapon) && cg_drawSmallPopupIcons.integer && cg_weapons[weapon].weaponIcon[0])
-					{
-						weaponShader = cg_weapons[weapon].weaponIcon[0];
-						scaleShader  = cg_weapons[weapon].weaponIconScale;
-					}
-					else if (IS_VALID_WEAPON(weapon) && cg_weapons[weapon].weaponIcon[1])
-					{
-						weaponShader = cg_weapons[weapon].weaponIcon[1];
-						scaleShader  = cg_weapons[weapon].weaponIconScale;
-					}
-					break;
-				}
+				CG_GetObituaryIcon(mod, weapon, &weaponShader, &scaleShader);
 
 				if (cg_graphicObituaries.integer == 1)
 				{

@@ -1215,12 +1215,17 @@ typedef struct weapontable_s
 typedef struct modtable_s
 {
 	meansOfDeath_t mod;                             ///< reference
+	weapon_t weaponIcon;                            ///< g
 
 	qboolean isHeadshot;                            ///< g
 	qboolean isExplosive;                           ///< g
 
 	int weaponClassForMOD;                          ///< g
 	int noYellMedic;                                ///< g
+	const char *obituaryKillMessage1;               ///< g
+	const char *obituaryKillMessage2;               ///< g
+	const char *obituarySelfKillMessage;            ///< g
+	const char *obituaryNoAttackerMessage;          ///< g
 	const char *modName;                            ///< g - These are just for logging, the client prints its own messages
 	skillType_t skillType;                          ///< g
 	float defaultKillPoints;                        ///< g
