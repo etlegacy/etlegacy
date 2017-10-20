@@ -518,9 +518,9 @@ void *Sys_LoadDll(const char *name, qboolean useSystemLib)
 	void *dllhandle;
 
 	// Don't load any DLLs that end with the pk3 extension or try to traverse directories
-	if (COM_CompareExtension(name, ".pk3") || strstr(name, "/") || strstr(name, "\\") || strstr(name, "..") || strstr(name, "::"))
+	if(!Sys_DllExtension(name))
 	{
-		Com_Printf("Rejecting DLL named '%s'\n", name);
+		Com_Printf("Refusing to attempt to load library \"%s\": Extension not allowed.\n", name);
 		return NULL;
 	}
 
@@ -546,7 +546,9 @@ void *Sys_LoadDll(const char *name, qboolean useSystemLib)
 
 		if (!(dllhandle = Sys_LoadLibrary(libPath)))
 		{
-			const char *basePath = Cvar_VariableString("fs_basepath");
+			const char *basePath;
+			
+			basePath = Cvar_VariableString("fs_basepath");
 
 			if (!basePath || !*basePath)
 			{

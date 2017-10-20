@@ -733,6 +733,21 @@ static void FS_CheckFilenameIsNotExecutable(const char *fileName, const char *fu
 }
 
 /**
+ * @brief ERR_FATAL if trying to maniuplate a file with the platform library or pk3 extension
+ * @param filename
+ * @param function
+ */
+static void FS_CheckFilenameIsMutable(const char *filename, const char *function)
+{
+	// Check if the filename ends with the library or pk3 extension
+	if(Sys_DllExtension(filename) || COM_CompareExtension(filename, ".pk3"))
+	{
+		Com_Error(ERR_FATAL, "%s: Denied to manipulate '%s' due "
+			"to %s extension", function, filename, COM_GetExtension(filename));
+	}
+}
+
+/**
  * @brief FS_Remove
  * @param[in] osPath
  */
@@ -740,7 +755,7 @@ void FS_Remove(const char *osPath)
 {
 	int ret;
 
-	FS_CheckFilenameIsNotExecutable(osPath, __func__);
+	FS_CheckFilenameIsMutable(osPath, __func__);
 
 	ret = remove(osPath);
 
@@ -758,7 +773,7 @@ void FS_HomeRemove(const char *homePath)
 {
 	int ret;
 
-	FS_CheckFilenameIsNotExecutable(homePath, __func__);
+	FS_CheckFilenameIsNotExecutable(homePath, __func__); // keep in mind we want to delete pk3s in homepath
 
 	ret = remove(FS_BuildOSPath(fs_homepath->string, fs_gamedir, homePath));
 
@@ -856,7 +871,7 @@ fileHandle_t FS_SV_FOpenFileWrite(const char *fileName)
 		Com_Printf("FS_SV_FOpenFileWrite: %s\n", ospath);
 	}
 
-	FS_CheckFilenameIsNotExecutable(ospath, __func__);
+	FS_CheckFilenameIsMutable(ospath, __func__);
 
 	if (FS_CreatePath(ospath))
 	{
@@ -969,7 +984,7 @@ void FS_SV_Rename(const char *from, const char *to)
 	{
 		Com_Printf("FS_SV_Rename: %s --> %s\n", from_ospath, to_ospath);
 	}
-	FS_CheckFilenameIsNotExecutable(to_ospath, __func__);
+	FS_CheckFilenameIsMutable(to_ospath, __func__);
 
 	if (rename(from_ospath, to_ospath))
 	{
@@ -1000,7 +1015,7 @@ void FS_Rename(const char *from, const char *to)
 	{
 		Com_Printf("FS_Rename: %s --> %s\n", from_ospath, to_ospath);
 	}
-	FS_CheckFilenameIsNotExecutable(to_ospath, __func__);
+	FS_CheckFilenameIsMutable(to_ospath, __func__);
 
 	if (rename(from_ospath, to_ospath))
 	{
@@ -1069,7 +1084,7 @@ fileHandle_t FS_FOpenFileWrite(const char *fileName)
 		Com_Printf("FS_FOpenFileWrite: %s\n", ospath);
 	}
 
-	FS_CheckFilenameIsNotExecutable(ospath, __func__);
+	FS_CheckFilenameIsMutable(ospath, __func__);
 
 	if (FS_CreatePath(ospath))
 	{
@@ -1157,7 +1172,7 @@ fileHandle_t FS_FOpenFileAppend(const char *fileName)
 		Com_Printf("FS_FOpenFileAppend: %s\n", ospath);
 	}
 
-	FS_CheckFilenameIsNotExecutable(ospath, __func__);
+	FS_CheckFilenameIsMutable(ospath, __func__);
 
 	if (FS_CreatePath(ospath))
 	{

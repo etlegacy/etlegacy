@@ -1061,3 +1061,18 @@ void Sys_PlatformInit(void)
 	}
 #endif
 }
+
+/**
+ * @brief Check if filename should be allowed to be loaded as a DLL.
+ * @param name
+ */
+qboolean Sys_DllExtension(const char *name)
+{
+// % ~ * \
+	if(strstr(name, "/") || strstr(name, "\\") || strstr(name, "..") || strstr(name, "::"))
+	{
+			
+	}
+
+	return COM_CompareExtension(name, DLL_EXT);
+}

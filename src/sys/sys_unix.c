@@ -1128,3 +1128,54 @@ qboolean Sys_PIDIsRunning(unsigned int pid)
 {
 	return kill(pid, 0) == 0;
 }
+
+/**
+ * @brief Check if filename should be allowed to be loaded as a DLL.
+ * @param name
+ */
+qboolean Sys_DllExtension(const char *name)
+{
+	const char *p;
+	char       c = 0;
+
+	if(strstr(name, "/") || strstr(name, "\\") || strstr(name, "..") || strstr(name, "::"))
+	{
+
+	}
+	Com_Printf("^2*** '%s' ***\n", name);
+
+
+	if (COM_CompareExtension(name, DLL_EXT))
+	{
+		return qtrue;
+	}
+
+	// Check for format of filename.so.1.2.3
+	p = strstr(name, DLL_EXT "." );
+
+	if (p)
+	{
+		p += strlen(DLL_EXT);
+
+		// Check if .so is only followed for periods and numbers.
+		while (*p)
+		{
+			c = *p;
+
+			if (!isdigit(c) && c != '.')
+			{
+				return qfalse;
+			}
+
+			p++;
+		}
+
+		// Don't allow filename to end in a period. file.so., file.so.0., etc
+		if (c != '.')
+		{
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
