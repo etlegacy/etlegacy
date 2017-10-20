@@ -1055,7 +1055,7 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 		}
 		break;
 	case WP_MEDKIT:
-		if (cgs.clientinfo[cg.clientNum].skill[SK_SIGNALS] >= 2)
+		if (cgs.clientinfo[cg.clientNum].skill[SK_FIRST_AID] >= 2)
 		{
 			if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * 0.15f)
 			{
@@ -1071,7 +1071,7 @@ static void CG_DrawWeapRecharge(rectDef_t *rect)
 	case WP_BINOCULARS:
 		if (cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS) // only fieldops binocs
 		{
-			if (cgs.clientinfo[cg.clientNum].skill[SK_FIRST_AID] >= 2)
+			if (cgs.clientinfo[cg.clientNum].skill[SK_SIGNALS] >= 2)
 			{
 				if (cg.time - cg.snap->ps.classWeaponTime < chargeTime * 0.66f)
 				{
