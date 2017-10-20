@@ -78,14 +78,13 @@ int CG_SoundScriptPrecache(const char *name)
 			// found a match, precache these sounds
 			scriptSound = sound->soundList;
 
-			// FIXME: do we have case !sound->streaming here ?
-			if (!sound->streaming)
+			for ( ; scriptSound; scriptSound = scriptSound->next)
 			{
-				for ( ; scriptSound; scriptSound = scriptSound->next)
+				for (i = 0; i < scriptSound->numsounds; i++)
 				{
-					for (i = 0; i < scriptSound->numsounds; i++)
+					if (!scriptSound->sounds[i].sfxHandle)
 					{
-						scriptSound->sounds[i].sfxHandle = 0;
+						scriptSound->sounds[i].sfxHandle = trap_S_RegisterSound(scriptSound->sounds[i].filename, qfalse);
 					}
 				}
 			}
@@ -127,7 +126,7 @@ int CG_SoundPickOldestRandomSound(soundScript_t *sound, vec3_t org, int entnum)
 		// play this sound
 		if (!sound->streaming)
 		{
-			if (!oldestSound->sounds[pos].sfxHandle)
+			if (!oldestSound->sounds[pos].sfxHandle) // this shouldn't occure anymore
 			{
 				oldestSound->sounds[pos].sfxHandle = trap_S_RegisterSound(oldestSound->sounds[pos].filename, qfalse);   // FIXME: make compressed settable through the soundscript
 			}
