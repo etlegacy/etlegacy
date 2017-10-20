@@ -66,7 +66,7 @@
 #define RANK_TIED_FLAG      0x4000
 
 #define ITEM_RADIUS         10     ///< item sizes are needed for client side pickup detection
-                                   ///< - changed the radius so that the items would fit in the 3 new containers
+///< - changed the radius so that the items would fit in the 3 new containers
 
 #define MAX_TRACE           8192.0f///< whenever you change this make sure bullet_Endpos for scope weapons is in sync!
 
@@ -621,7 +621,7 @@ typedef struct
 } pmove_t;
 
 // if a full pmove isn't done on the client, you can just update the angles
-void PM_UpdateViewAngles(playerState_t * ps, pmoveExt_t * pmext, usercmd_t * cmd, void(trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask);
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask);
 int Pmove(pmove_t *pmove);
 void PmovePredict(pmove_t *pmove, float frametime);
 
@@ -1113,8 +1113,8 @@ typedef struct weapontable_s
 
 	qboolean keepDisguise;          ///< g
 
-	qboolean isAutoReload;          ///< bg
 	qboolean isThrowable;           ///<
+	qboolean isAutoReload;          ///< bg
 	qboolean noAmmoSound;           ///<
 	qboolean noAmmoAutoSwitch;      ///<
 	qboolean isExplosive;           ///<
@@ -2797,8 +2797,8 @@ typedef enum popupMessageBigType_e
 #define HITBOXBIT_LEGS   2048
 #define HITBOXBIT_CLIENT 4096
 
-void PM_TraceLegs(trace_t * trace, float *legsOffset, vec3_t start, vec3_t end, trace_t * bodytrace, vec3_t viewangles, void(tracefunc)(trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
-void PM_TraceHead(trace_t * trace, vec3_t start, vec3_t end, trace_t * bodytrace, vec3_t viewangles, void(tracefunc)(trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
+void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
 void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end);
 void PM_TraceAll(trace_t *trace, vec3_t start, vec3_t end);
 
