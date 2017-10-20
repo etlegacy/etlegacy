@@ -627,9 +627,9 @@ int GetSkillPointUntilLevelUp(gentity_t *ent, skillType_t skill)
 
 		for (; i < NUM_SKILL_LEVELS; i++, x++)
 		{
-			if (skillLevels[skill][ent->client->sess.skill[skill] + x] >= 0)
+			if (GetSkillTableData(skill)->skillLevels[ent->client->sess.skill[skill] + x] >= 0)
 			{
-				return (int)(skillLevels[skill][ent->client->sess.skill[skill] + x] - ent->client->sess.skillpoints[skill]);
+				return (int)(GetSkillTableData(skill)->skillLevels[ent->client->sess.skill[skill] + x] - ent->client->sess.skillpoints[skill]);
 			}
 		}
 	}

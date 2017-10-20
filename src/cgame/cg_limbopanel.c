@@ -1586,31 +1586,31 @@ void CG_LimboPanel_ClassBar_Draw(panel_button_t *button)
 
 	if (BG_CursorInRect(&medalPic0.rect))
 	{
-		text = skillNames[0];
+		text = GetSkillTableData(SK_BATTLE_SENSE)->skillNames;
 	}
 	else if (BG_CursorInRect(&medalPic1.rect))
 	{
-		text = skillNames[1];
+		text = GetSkillTableData(SK_EXPLOSIVES_AND_CONSTRUCTION)->skillNames;
 	}
 	else if (BG_CursorInRect(&medalPic2.rect))
 	{
-		text = skillNames[2];
+		text = GetSkillTableData(SK_FIRST_AID)->skillNames;
 	}
 	else if (BG_CursorInRect(&medalPic3.rect))
 	{
-		text = skillNames[3];
+		text = GetSkillTableData(SK_SIGNALS)->skillNames;
 	}
 	else if (BG_CursorInRect(&medalPic4.rect))
 	{
-		text = skillNames[4];
+		text = GetSkillTableData(SK_LIGHT_WEAPONS)->skillNames;
 	}
 	else if (BG_CursorInRect(&medalPic5.rect))
 	{
-		text = skillNames[5];
+		text = GetSkillTableData(SK_HEAVY_WEAPONS)->skillNames;
 	}
 	else if (BG_CursorInRect(&medalPic6.rect))
 	{
-		text = skillNames[6];
+		text = GetSkillTableData(SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS)->skillNames;
 	}
 	else if (CG_LimboPanel_GetTeam() == TEAM_SPECTATOR)
 	{

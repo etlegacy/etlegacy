@@ -2578,7 +2578,7 @@ void CG_Debriefing_PlayerSkills_Draw(panel_button_t *button)
 
 	ci = CG_Debriefing_GetSelectedClientInfo();
 
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y - 2, button->font->scalex, button->font->scaley, button->font->colour, skillNames[button->data[0]], 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
+	CG_Text_Paint_Ext(button->rect.x, button->rect.y - 2, button->font->scalex, button->font->scaley, button->font->colour, GetSkillTableData(button->data[0])->skillNames, 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 
 	x = button->rect.x;
 	CG_DrawPic(x, button->rect.y, button->rect.w, button->rect.h, cgs.media.skillPics[button->data[0]]);

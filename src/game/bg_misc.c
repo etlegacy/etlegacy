@@ -41,60 +41,29 @@
 extern vmCvar_t g_developer;
 #endif
 
-const char *skillNames[SK_NUM_SKILLS] =
+// *INDENT-OFF*
+/**
+ * @var skillTable
+ * @brief New skill table
+ * [0]  = skill           -
+ * [1]  = skillNames      -
+ * [2]  = skillNamesLine1 - NOTE: Unused
+ * [3]  = skillNamesLine2 - NOTE: Unused
+ * [4]  = medalNames      - NOTE: Unused
+ * [5]  = skillLevels     -
+ */
+skilltable_t skillTable[SK_NUM_SKILLS] =
 {
-	"Battle Sense",
-	"Engineering",
-	"First Aid",
-	"Signals",
-	"Light Weapons",
-	"Heavy Weapons",
-	"Covert Ops"
+    // skill                                       skillNames       skillNamesLine1 skillNamesLine2 medalNames                     skillLevels
+    { SK_BATTLE_SENSE,                             "Battle Sense",  "Battle",       "Sense",        "Distinguished Service Medal", { 0, 20, 50, 90, 140 }, },  // 0 SK_BATTLE_SENSE
+    { SK_EXPLOSIVES_AND_CONSTRUCTION,              "Engineering",   "Engineering",  "",             "Steel Star",                  { 0, 20, 50, 90, 140 }, },  // 1 SK_EXPLOSIVES_AND_CONSTRUCTION
+    { SK_FIRST_AID,                                "First Aid",     "First",        "Aid",          "Silver Cross",                { 0, 20, 50, 90, 140 }, },  // 2 SK_FIRST_AID
+    { SK_SIGNALS,                                  "Signals",       "Signals",      "",             "Signals Medal",               { 0, 20, 50, 90, 140 }, },  // 3 SK_SIGNALS
+    { SK_LIGHT_WEAPONS,                            "Light Weapons", "Light",        "Weapons",      "Infantry Medal",              { 0, 20, 50, 90, 140 }, },  // 4 SK_LIGHT_WEAPONS
+    { SK_HEAVY_WEAPONS,                            "Heavy Weapons", "Heavy",        "Weapons",      "Bombardment Medal",           { 0, 20, 50, 90, 140 }, },  // 5 SK_HEAVY_WEAPONS
+    { SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, "Covert Ops",    "Covert",       "Ops",          "Silver Snake",                { 0, 20, 50, 90, 140 }, },  // 6 SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS
 };
-
-const char *skillNamesLine1[SK_NUM_SKILLS] =
-{
-	"Battle",
-	"Engineering",
-	"First",
-	"Signals",
-	"Light",
-	"Heavy",
-	"Covert"
-};
-
-const char *skillNamesLine2[SK_NUM_SKILLS] =
-{
-	"Sense",
-	"",
-	"Aid",
-	"",
-	"Weapons",
-	"Weapons",
-	"Ops"
-};
-
-const char *medalNames[SK_NUM_SKILLS] =
-{
-	"Distinguished Service Medal",
-	"Steel Star",
-	"Silver Cross",
-	"Signals Medal",
-	"Infantry Medal",
-	"Bombardment Medal",
-	"Silver Snake"
-};
-
-int skillLevels[SK_NUM_SKILLS][NUM_SKILL_LEVELS] =
-{
-	{ 0, 20, 50, 90, 140 },
-	{ 0, 20, 50, 90, 140 },
-	{ 0, 20, 50, 90, 140 },
-	{ 0, 20, 50, 90, 140 },
-	{ 0, 20, 50, 90, 140 },
-	{ 0, 20, 50, 90, 140 },
-	{ 0, 20, 50, 90, 140 },
-};
+// *INDENT-ON*
 
 vec3_t playerlegsProneMins = { -13.5f, -13.5f, -24.f };
 vec3_t playerlegsProneMaxs = { 13.5f, 13.5f, -14.4f };

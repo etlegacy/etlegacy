@@ -1014,13 +1014,23 @@ typedef enum
 
 } meansOfDeath_t;
 
-extern const char *skillNames[SK_NUM_SKILLS];
-extern const char *skillNamesLine1[SK_NUM_SKILLS];
-extern const char *skillNamesLine2[SK_NUM_SKILLS];
-extern const char *medalNames[SK_NUM_SKILLS];
-
 #define NUM_SKILL_LEVELS 5
-extern int skillLevels[SK_NUM_SKILLS][NUM_SKILL_LEVELS];
+
+/**
+ * @struct skilltable_s
+ * @typedef skilltable_t
+ * @brief
+ */
+typedef struct skilltable_s
+{
+	int skill;
+	const char *skillNames;
+	const char *skillNamesLine1;
+	const char *skillNamesLine2;
+	const char *medalNames;
+	int skillLevels[NUM_SKILL_LEVELS];
+
+} skilltable_t;
 
 /**
  * @struct playerStats_t
@@ -2734,6 +2744,10 @@ extern weaponTable_t weaponTable[WP_NUM_WEAPONS];
 // Lookup table to find mod properties
 extern modTable_t modTable[MOD_NUM_MODS];
 #define GetMODTableData(modIndex) ((modTable_t *)(&modTable[modIndex]))
+
+// Lookup table to find skill properties
+extern skilltable_t skillTable[SK_NUM_SKILLS];
+#define GetSkillTableData(skillIndex) ((skilltable_t *)(&skillTable[skillIndex]))
 
 #define MAX_MAP_SIZE 65536
 
