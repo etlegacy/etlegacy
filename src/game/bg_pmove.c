@@ -3271,6 +3271,7 @@ static void PM_Weapon(void)
 	qboolean delayedFire;       // true if the delay time has just expired and this is the frame to send the fire event
 	int      weapattackanim;
 	qboolean akimboFire;
+	float    chargeTime = -1.f;
 #ifdef DO_WEAPON_DBG
 	static int weaponstate_last = -1;
 #endif
@@ -3501,159 +3502,72 @@ static void PM_Weapon(void)
 
 	// don't allow some weapons to fire if charge bar isn't full
 	// FIXME: put chargeTime factor in weapon table? See CG_DrawWeapRecharge()
-	switch (pm->ps->weapon)
+	if (pm->ps->weapon == WP_NONE)  // this is possible since the player starts with nothing
 	{
-	case WP_NONE: // this is possible since the player starts with nothing
 		return;
-	case WP_PANZERFAUST:
-	case WP_BAZOOKA:
+	}
+	else if (GetWeaponTableData(pm->ps->weapon)->isPanzer)
+	{
 		if (pm->ps->eFlags & EF_PRONE)
 		{
 			return;
 		}
 
-		if (pm->skill[SK_HEAVY_WEAPONS] >= 1)
-		{
-			if (pm->cmd.serverTime - pm->ps->classWeaponTime < pm->soldierChargeTime * 0.66f)
-			{
-				return;
-			}
-		}
-		else if (pm->cmd.serverTime - pm->ps->classWeaponTime < pm->soldierChargeTime)
-		{
-			return;
-		}
+		chargeTime = pm->soldierChargeTime * pm->skill[SK_HEAVY_WEAPONS] >= 1 ? 0.66f : 1.f;
+	}
+	else if (GetWeaponTableData(pm->ps->weapon)->isRiflenade)
+	{
+		chargeTime = pm->soldierChargeTime * 0.5f;
+	}
+	else if (GetWeaponTableData(pm->ps->weapon)->isMortarSet)
+	{
+		chargeTime = pm->soldierChargeTime * pm->skill[SK_HEAVY_WEAPONS] >= 1 ? 0.33f : 0.5f;
+	}
+	else if (pm->ps->weapon == WP_SMOKE_BOMB || pm->ps->weapon == WP_SATCHEL)
+	{
+		chargeTime = pm->covertopsChargeTime * pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 2 ? 0.66f : 1;
+	}
+	else if (pm->ps->weapon == WP_LANDMINE)
+	{
+		chargeTime = pm->engineerChargeTime * pm->skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 2 ? 0.33f : 0.5f;
+	}
+	else if (pm->ps->weapon == WP_DYNAMITE)
+	{
+		chargeTime = pm->engineerChargeTime * pm->skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3 ? 0.66f : 1;
+	}
+	else if (pm->ps->weapon == WP_AMMO)
+	{
+		chargeTime = pm->ltChargeTime * pm->skill[SK_SIGNALS] >= 1 ? 0.15f : 0.25f;
+	}
+	else if (pm->ps->weapon == WP_MEDKIT)
+	{
+		chargeTime = pm->medicChargeTime * pm->skill[SK_FIRST_AID] >= 2 ? 0.15f : 0.25f;
+	}
+	else if (pm->ps->weapon == WP_SMOKE_MARKER)
+	{
+		chargeTime = pm->ltChargeTime * pm->skill[SK_SIGNALS] >= 2 ? 0.66f : 1;
+	}
+	else if (pm->ps->weapon == WP_MEDIC_ADRENALINE)
+	{
+		chargeTime = pm->medicChargeTime;
+	}
 
-		break;
-	case WP_GPG40:
-	case WP_M7:
-		if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->engineerChargeTime * 0.5f))
+	if (chargeTime != -1.f)
+	{
+		if (pm->cmd.serverTime - pm->ps->classWeaponTime < chargeTime)
 		{
-			return;
-		}
-		break;
-	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET:
-		if (pm->skill[SK_HEAVY_WEAPONS] >= 1)
-		{
-			if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->soldierChargeTime * 0.33f))
-			{
-				return;
-			}
-		}
-		else if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->soldierChargeTime * 0.5f))
-		{
-			return;
-		}
-
-		if (!delayedFire)
-		{
-			pm->ps->weaponstate = WEAPON_READY;
-		}
-		break;
-	case WP_SMOKE_BOMB:
-	case WP_SATCHEL:
-		if (pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 2)
-		{
-			if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->covertopsChargeTime * 0.66f))
-			{
-				return;
-			}
-		}
-		else if (pm->cmd.serverTime - pm->ps->classWeaponTime < pm->covertopsChargeTime)
-		{
-			return;
-		}
-		break;
-	case WP_LANDMINE:
-		if (pm->skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 2)
-		{
-			if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->engineerChargeTime * 0.33f))
-			{
-				return;
-			}
-		}
-		else if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->engineerChargeTime * 0.5f))
-		{
-			return;
-		}
-		break;
-	case WP_DYNAMITE:
-		if (pm->skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
-		{
-			if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->engineerChargeTime * 0.66f))
-			{
-				return;
-			}
-		}
-		else if (pm->cmd.serverTime - pm->ps->classWeaponTime < pm->engineerChargeTime)
-		{
-			return;
-		}
-		break;
-	case WP_AMMO:
-		if (pm->skill[SK_SIGNALS] >= 1)
-		{
-			if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->ltChargeTime * 0.15f))
-			{
-				if (pm->cmd.buttons & BUTTON_ATTACK)
-				{
-					BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_NOPOWER, qtrue, qfalse);
-				}
-				return;
-			}
-		}
-		else if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->ltChargeTime * 0.25f))
-		{
-			if (pm->cmd.buttons & BUTTON_ATTACK)
+			if ((pm->ps->weapon == WP_MEDKIT || pm->ps->weapon == WP_AMMO) && pm->cmd.buttons & BUTTON_ATTACK)
 			{
 				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_NOPOWER, qtrue, qfalse);
 			}
+
 			return;
 		}
-		break;
-	case WP_MEDKIT:
-		if (pm->skill[SK_FIRST_AID] >= 2)
-		{
-			if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->medicChargeTime * 0.15f))
-			{
-				if (pm->cmd.buttons & BUTTON_ATTACK)
-				{
-					BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_NOPOWER, qtrue, qfalse);
-				}
-				return;
-			}
-		}
-		else if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->medicChargeTime * 0.25f))
-		{
-			if (pm->cmd.buttons & BUTTON_ATTACK)
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_NOPOWER, qtrue, qfalse);
-			}
-			return;
-		}
-		break;
-	case WP_SMOKE_MARKER:
-		if (pm->skill[SK_SIGNALS] >= 2)
-		{
-			if (pm->cmd.serverTime - pm->ps->classWeaponTime < (pm->ltChargeTime * 0.66f))
-			{
-				return;
-			}
-		}
-		else if (pm->cmd.serverTime - pm->ps->classWeaponTime < pm->ltChargeTime)
-		{
-			return;
-		}
-		break;
-	case WP_MEDIC_ADRENALINE:
-		if (pm->cmd.serverTime - pm->ps->classWeaponTime < pm->medicChargeTime)
-		{
-			return;
-		}
-		break;
-	default:
-		break;
+	}
+
+	if (GetWeaponTableData(pm->ps->weapon)->isMortarSet && !delayedFire)
+	{
+		pm->ps->weaponstate = WEAPON_READY;
 	}
 
 	// check for fire
