@@ -1470,6 +1470,7 @@ void G_FreeSatchel(gentity_t *ent)
 
 	other->client->ps.ammo[WP_SATCHEL_DET]     = 0;
 	other->client->ps.ammoclip[WP_SATCHEL_DET] = 0;
+	other->client->ps.ammo[WP_SATCHEL]         = 1;
 	other->client->ps.ammoclip[WP_SATCHEL]     = 1;
 	if (other->client->ps.weapon == WP_SATCHEL_DET)
 	{

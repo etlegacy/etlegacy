@@ -4277,6 +4277,7 @@ void FireWeapon(gentity_t *ent)
 			ent->client->ps.ammo[WP_SATCHEL_DET]     = 0;
 			ent->client->ps.ammoclip[WP_SATCHEL_DET] = 0;
 			ent->client->ps.ammoclip[WP_SATCHEL]     = 1;
+			ent->client->ps.ammoclip[WP_SATCHEL]     = 1;
 			G_AddEvent(ent, EV_NOAMMO, 0);
 		}
 		break;
