@@ -3904,6 +3904,12 @@ void CG_AltWeapon_f(void)
 	original = cg.weaponSelect;
 	num      = GetWeaponTableData(original)->weapAlts;
 
+	// if no alternative weapon, keep the original
+	if (!num)
+	{
+		num = original;
+	}
+
 	if (original == WP_BINOCULARS)
 	{
 		/*if(cg.snap->ps.eFlags & EF_ZOOMING) {
@@ -3933,13 +3939,13 @@ void CG_AltWeapon_f(void)
 			return;
 		}
 
-		if (num && (GetWeaponTableData(num)->isRiflenade || GetWeaponTableData(num)->isSilencedPistol || GetWeaponTableData(num)->isAkimbo || GetWeaponTableData(num)->isSetWeapon))
+		if (GetWeaponTableData(num)->isRiflenade || GetWeaponTableData(num)->isSilencedPistol || GetWeaponTableData(num)->isAkimbo || GetWeaponTableData(num)->isSetWeapon)
 		{
 			return;
 		}
 	}
 
-	if (num && CG_WeaponSelectable(num))        // new weapon is valid
+	if (CG_WeaponSelectable(num))        // new weapon is valid
 	{
 		CG_FinishWeaponChange(original, num);
 		if (original == num)
