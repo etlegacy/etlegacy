@@ -3933,13 +3933,13 @@ void CG_AltWeapon_f(void)
 			return;
 		}
 
-		if ((GetWeaponTableData(num)->isRiflenade || GetWeaponTableData(num)->isSilencedPistol || GetWeaponTableData(num)->isAkimbo || GetWeaponTableData(num)->isSetWeapon))
+		if (num && (GetWeaponTableData(num)->isRiflenade || GetWeaponTableData(num)->isSilencedPistol || GetWeaponTableData(num)->isAkimbo || GetWeaponTableData(num)->isSetWeapon))
 		{
 			return;
 		}
 	}
 
-	if (CG_WeaponSelectable(num))        // new weapon is valid
+	if (num && CG_WeaponSelectable(num))        // new weapon is valid
 	{
 		CG_FinishWeaponChange(original, num);
 		if (original == num)
