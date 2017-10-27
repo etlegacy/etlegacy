@@ -3337,7 +3337,7 @@ WEAPON SELECTION
 static qboolean CG_WeaponHasAmmo(weapon_t weapon)
 {
 	// certain weapons don't have ammo
-	if (!GetWeaponTableData(weapon)->useAmmo)
+	if (/*!GetWeaponTableData(weapon)->useAmmo*/ GetWeaponTableData(weapon)->isMeleeWeapon || weapon == WP_PLIERS)
 	{
 		return qtrue;
 	}
