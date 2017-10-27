@@ -599,7 +599,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 
 					if (GetWeaponTableData(weapAlts)->isRiflenade || GetWeaponTableData(weapAlts)->isScoped || GetWeaponTableData(weapAlts)->isSetWeapon)
 					{
-						COM_BitClear(other->client->ps.weapons, weapAlts);
+						COM_BitSet(other->client->ps.weapons, weapAlts);
 					}
 				}
 
