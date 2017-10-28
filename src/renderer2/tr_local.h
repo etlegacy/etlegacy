@@ -152,7 +152,7 @@ typedef enum
 	FRUSTUM_CLIPALL = 1 | 2 | 4 | 8 | 16    //| 32
 } frustumBits_t;
 
-typedef cplane_t frustum_t[5];
+typedef cplane_t frustum_t[6];
 
 enum
 {
