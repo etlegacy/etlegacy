@@ -5748,6 +5748,17 @@ static void RB_RenderViewFront(void)
 	// we will need to change the projection matrix before drawing
 	// 2D images again
 	backEnd.projection2D = qfalse;
+	/*  fixme if we need this, check ioquakes source
+	FBO_t *fbo;
+	
+     if (tr.renderCubeFbo && fbo == tr.renderCubeFbo)
+		{
+			cubemap_t *cubemap = &tr.cubemaps;
+			R_AttachFBOTexture2D(fbo, cubemap->image, GL_COLOR_ATTACHMENT0_EXT);
+		}
+
+	    R_BindFBO(fbo);*/
+	
 
 	// set the modelview matrix for the viewer
 	SetViewportAndScissor();

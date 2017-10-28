@@ -1372,6 +1372,21 @@ static void SetFarClip(void)
 		return;
 	}
 
+	//	this lets you use r_zfar from the command line to experiment with different
+	//			distances, but setting it back to 0 uses the map (or procedurally generated) default
+	if ( r_zFar->value ) {
+
+		tr.viewParms.zFar = r_zFar->integer;
+		R_SetFrameFog();
+
+		if ( r_speeds->integer == 5 ) {
+			ri.Printf( PRINT_ALL, "r_zfar value forcing farclip at: %f\n", tr.viewParms.zFar );
+		}
+
+		return;
+	}
+
+	//
 	// set far clipping planes dynamically
 
 /// Berserker: setup the more precision zFar - convert corners from world to eye coordinates, and take the farthest X local coordinate
@@ -1561,6 +1576,8 @@ static void SetFarClip(void)
 	{
 		tr.viewParms.zFar = tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque;
 	}
+	 
+     R_SetFrameFog();
 }
 
 // *INDENT-OFF*
@@ -1578,6 +1595,9 @@ static void R_SetupProjection(qboolean infiniteFarClip)
 
 	// dynamically compute far clip plane distance
 	SetFarClip();
+				   
+    //set frustum planes (this happens here because of zfar manipulation)
+	//R_SetupFrustum();
 
 	zNear = tr.viewParms.zNear = r_zNear->value;
 
@@ -3473,5 +3493,8 @@ void R_RenderView(viewParms_t *parms)
 	R_SortDrawSurfs();
 
 	// draw main system development information (surface outlines, etc)
+	RB_FogOff();
 	R_DebugGraphics();
+	RB_FogOn();
+
 }

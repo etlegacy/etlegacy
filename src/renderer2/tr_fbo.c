@@ -582,12 +582,12 @@ void R_InitFBOs(void)
 		// forward shading
 		if (glConfig2.textureNPOTAvailable)
 		{
-			width  = glConfig.vidWidth;
+			width = glConfig.vidWidth;
 			height = glConfig.vidHeight;
 		}
 		else
 		{
-			width  = NearestPowerOfTwo(glConfig.vidWidth);
+			width = NearestPowerOfTwo(glConfig.vidWidth);
 			height = NearestPowerOfTwo(glConfig.vidHeight);
 		}
 
@@ -615,12 +615,12 @@ void R_InitFBOs(void)
 	{
 		if (glConfig2.textureNPOTAvailable)
 		{
-			width  = glConfig.vidWidth;
+			width = glConfig.vidWidth;
 			height = glConfig.vidHeight;
 		}
 		else
 		{
-			width  = NearestPowerOfTwo(glConfig.vidWidth);
+			width = NearestPowerOfTwo(glConfig.vidWidth);
 			height = NearestPowerOfTwo(glConfig.vidHeight);
 		}
 
@@ -738,12 +738,12 @@ void R_InitFBOs(void)
 	{
 		if (glConfig2.textureNPOTAvailable)
 		{
-			width  = glConfig.vidWidth;
+			width = glConfig.vidWidth;
 			height = glConfig.vidHeight;
 		}
 		else
 		{
-			width  = NearestPowerOfTwo(glConfig.vidWidth);
+			width = NearestPowerOfTwo(glConfig.vidWidth);
 			height = NearestPowerOfTwo(glConfig.vidHeight);
 		}
 
@@ -768,12 +768,12 @@ void R_InitFBOs(void)
 	{
 		if (glConfig2.textureNPOTAvailable)
 		{
-			width  = glConfig.vidWidth * 0.25f;
+			width = glConfig.vidWidth * 0.25f;
 			height = glConfig.vidHeight * 0.25f;
 		}
 		else
 		{
-			width  = NearestPowerOfTwo(glConfig.vidWidth * 0.25f);
+			width = NearestPowerOfTwo(glConfig.vidWidth * 0.25f);
 			height = NearestPowerOfTwo(glConfig.vidHeight * 0.25f);
 		}
 
@@ -849,12 +849,12 @@ void R_InitFBOs(void)
 
 		if (glConfig2.textureNPOTAvailable)
 		{
-			width  = glConfig.vidWidth * 0.25f;
+			width = glConfig.vidWidth * 0.25f;
 			height = glConfig.vidHeight * 0.25f;
 		}
 		else
 		{
-			width  = NearestPowerOfTwo(glConfig.vidWidth * 0.25f);
+			width = NearestPowerOfTwo(glConfig.vidWidth * 0.25f);
 			height = NearestPowerOfTwo(glConfig.vidHeight * 0.25f);
 		}
 
@@ -891,11 +891,19 @@ void R_InitFBOs(void)
 
 			R_CheckFBO(tr.bloomRenderFBO[i]);
 		}
+		if (tr.renderCubeImage)
+		{
+			tr.renderCubeFbo = R_CreateFBO("_renderCubeFbo", tr.renderCubeImage->width, tr.renderCubeImage->height);
+			R_AttachFBOTexture2D(tr.renderCubeFbo, tr.renderCubeImage, GL_COLOR_ATTACHMENT0, 0);
+			R_CreateFBOColorBuffer(tr.renderCubeFbo, GL_DEPTH_COMPONENT24_ARB, 0, 0);
+			R_CheckFBO(tr.renderCubeFbo);
+		}
+
+		GL_CheckErrors();
+
+		R_BindNullFBO();
 	}
 
-	GL_CheckErrors();
-
-	R_BindNullFBO();
 }
 
 /**
