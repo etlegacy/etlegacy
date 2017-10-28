@@ -75,7 +75,6 @@ typedef unsigned short glIndex_t;
 
 //#define USE_BSP_CLUSTERSURFACE_MERGING 1
 
-
 /**
  * @enum deferredShading_t
  * @brief
@@ -3471,14 +3470,6 @@ typedef struct
 	image_t *cubemap;
 } cubemapProbe_t;
 
-typedef struct cubemap_s
-{
-	char name[MAX_QPATH];
-	vec3_t origin;
-	float parallaxRadius;
-	image_t *image;
-} cubemap_t;
-
 /**
  * @struct trGlobals_t
  * @brief Most renderer globals are defined here.
@@ -3536,7 +3527,7 @@ typedef struct
 	image_t *currentRenderImage;
 	image_t *depthRenderImage;
 	image_t *portalRenderImage;
-	image_t *renderCubeImage;	 //for cubemaps
+
 	image_t *deferredDiffuseFBOImage;
 	image_t *deferredNormalFBOImage;
 	image_t *deferredSpecularFBOImage;
@@ -3574,7 +3565,7 @@ typedef struct
 	FBO_t *bloomRenderFBO[2];
 	FBO_t *shadowMapFBO[MAX_SHADOWMAPS];
 	FBO_t *sunShadowMapFBO[MAX_SHADOWMAPS];
-	FBO_t *renderCubeFbo;	//for cubemaps
+
 	// vertex buffer objects
 	VBO_t *unitCubeVBO;
 	IBO_t *unitCubeIBO;
@@ -3597,9 +3588,6 @@ typedef struct
 	image_t *fatLightmap;
 	int fatLightmapSize;
 	int fatLightmapStep;
-    
-    int numCubemaps;
-	cubemap_t *cubemaps;
 
 	// render entities
 	trRefEntity_t *currentEntity;
