@@ -58,12 +58,12 @@ KNIFE
  * @param[in] ent
  * @param[in] modnum
  */
-void Weapon_Knife(gentity_t *ent, meansOfDeath_t modnum)
+void Weapon_Knife(gentity_t *ent)
 {
 	trace_t        tr;
 	gentity_t      *traceEnt, *tent;
 	int            damage;
-	meansOfDeath_t mod = modnum;
+	meansOfDeath_t mod = GetWeaponTableData(ent->s.weapon)->mod;
 	vec3_t         pforward, end;
 
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
@@ -3644,13 +3644,14 @@ gentity_t *weapon_mortar_fire(gentity_t *ent, int grenType)
  * @param[in] grenType
  * @return
  */
-gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
+gentity_t *weapon_grenadelauncher_fire(gentity_t *ent)
 {
 	trace_t  tr;
 	vec3_t   viewpos;
 	float    upangle = 0, pitch = ent->s.apos.trBase[0];   // start with level throwing and adjust based on angle
 	vec3_t   tosspos;
 	qboolean underhand = qtrue;
+	weapon_t grenType  = (weapon_t)ent->s.weapon;
 
 	// smoke grenades always overhand
 	if (pitch >= 0)
@@ -4199,79 +4200,58 @@ void FireWeapon(gentity_t *ent)
 	}
 
 	// fire the specific weapon
-	switch (ent->s.weapon)
+	if (GetWeaponTableData(ent->s.weapon)->isMeleeWeapon)
 	{
-	case WP_KNIFE:
-		Weapon_Knife(ent, MOD_KNIFE);
-		break;
-	case WP_KNIFE_KABAR:
-		Weapon_Knife(ent, MOD_KNIFE_KABAR);
-		break;
-	case WP_MEDKIT:
+		Weapon_Knife(ent);
+	}
+	else if (ent->s.weapon == WP_MEDKIT)
+	{
 #ifdef FEATURE_OMNIBOT
 		callEvent = qfalse;
 #endif
 		Weapon_Medic(ent);
-		break;
-	case WP_PLIERS:
+	}
+	else if (ent->s.weapon == WP_PLIERS)
+	{
 		Weapon_Engineer(ent);
-		break;
-	case WP_SMOKE_MARKER:
-		if (level.time - ent->client->ps.classWeaponTime > level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1])
-		{
-			ent->client->ps.classWeaponTime = level.time - level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1];
-		}
-
-		if (ent->client->sess.skill[SK_SIGNALS] >= 2)
-		{
-			ent->client->ps.classWeaponTime += .66f * level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1];
-		}
-		else
-		{
-			ent->client->ps.classWeaponTime = level.time;
-		}
-		pFiredShot = weapon_grenadelauncher_fire(ent, WP_SMOKE_MARKER);
-		break;
-	case WP_MEDIC_SYRINGE:
+	}
+	else if (ent->s.weapon == WP_MEDIC_SYRINGE)
+	{
 		Weapon_Syringe(ent);
-		break;
-	case WP_MEDIC_ADRENALINE:
+	}
+	else if (ent->s.weapon == WP_MEDIC_ADRENALINE)
+	{
 		ent->client->ps.classWeaponTime = level.time;
 		Weapon_AdrenalineSyringe(ent);
-		break;
-	case WP_AMMO:
+	}
+	else if (ent->s.weapon == WP_AMMO)
+	{
 #ifdef FEATURE_OMNIBOT
 		callEvent = qfalse;
 #endif
 		Weapon_MagicAmmo(ent);
-		break;
-	case WP_LUGER:
-	case WP_SILENCER:
-	case WP_AKIMBO_LUGER:
-	case WP_AKIMBO_SILENCEDLUGER:
-	case WP_COLT:
-	case WP_SILENCED_COLT:
-	case WP_AKIMBO_COLT:
-	case WP_AKIMBO_SILENCEDCOLT:
-	case WP_FG42:
-	case WP_STEN:
-	case WP_MP40:
-	case WP_THOMPSON:
-		Bullet_Fire(ent, GetWeaponTableData(ent->s.weapon)->spread * aimSpreadScale, GetWeaponTableData(ent->s.weapon)->damage, qtrue);
-		break;
-	case WP_KAR98:
-	case WP_CARBINE:
-	case WP_GARAND:
-	case WP_K43:
-		aimSpreadScale = 1.0f;
-		Bullet_Fire(ent, GetWeaponTableData(ent->s.weapon)->spread * aimSpreadScale, GetWeaponTableData(ent->s.weapon)->damage, qfalse);
-		break;
-	case WP_FG42SCOPE:
-	case WP_GARAND_SCOPE:
-	case WP_K43_SCOPE:
-		Bullet_Fire(ent, GetWeaponTableData(ent->s.weapon)->spread * aimSpreadScale, GetWeaponTableData(ent->s.weapon)->damage, qfalse);
-		break;
-	case WP_SATCHEL_DET:
+	}
+	else if (GetWeaponTableData(ent->s.weapon)->useBullet)
+	{
+		float coeff = 1.f;
+
+		if (GetWeaponTableData(ent->s.weapon)->isRifle || GetWeaponTableData(ent->s.weapon)->isRifleWithScope)
+		{
+			aimSpreadScale = 1.0f;
+		}
+		else if (GetWeaponTableData(ent->s.weapon)->isMGSet)
+		{
+			coeff = 0.05f;
+		}
+		else if (GetWeaponTableData(ent->s.weapon)->isMG && ((ent->client->ps.pm_flags & PMF_DUCKED) || (ent->client->ps.eFlags & EF_PRONE)))
+		{
+			coeff = 0.6f;
+		}
+
+		Bullet_Fire(ent, GetWeaponTableData(ent->s.weapon)->spread * coeff * aimSpreadScale, GetWeaponTableData(ent->s.weapon)->damage, GetWeaponTableData(ent->s.weapon)->fallOff);
+	}
+	else if (ent->s.weapon == WP_SATCHEL_DET)
+	{
 		if (G_ExplodeSatchels(ent))
 		{
 			ent->client->ps.ammo[WP_SATCHEL_DET]     = 0;
@@ -4280,31 +4260,16 @@ void FireWeapon(gentity_t *ent)
 			ent->client->ps.ammoclip[WP_SATCHEL]     = 1;
 			G_AddEvent(ent, EV_NOAMMO, 0);
 		}
-		break;
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING_SET:
-		Bullet_Fire(ent, GetWeaponTableData(ent->s.weapon)->spread * 0.05f * aimSpreadScale, GetWeaponTableData(ent->s.weapon)->damage, qfalse);
-		break;
-	case WP_MOBILE_MG42:
-	case WP_MOBILE_BROWNING:
-		if ((ent->client->ps.pm_flags & PMF_DUCKED) || (ent->client->ps.eFlags & EF_PRONE))
-		{
-			Bullet_Fire(ent, GetWeaponTableData(ent->s.weapon)->spread * 0.6f * aimSpreadScale, GetWeaponTableData(ent->s.weapon)->damage, qfalse);
-		}
-		else
-		{
-			Bullet_Fire(ent, GetWeaponTableData(ent->s.weapon)->spread * aimSpreadScale, GetWeaponTableData(ent->s.weapon)->damage, qfalse);
-		}
-		break;
-	case WP_PANZERFAUST:
-	case WP_BAZOOKA:
-		if (level.time - ent->client->ps.classWeaponTime > level.soldierChargeTime[ent->client->sess.sessionTeam - 1])
-		{
-			ent->client->ps.classWeaponTime = level.time - level.soldierChargeTime[ent->client->sess.sessionTeam - 1];
-		}
-
+	}
+	else if (GetWeaponTableData(ent->s.weapon)->isPanzer)
+	{
 		if (ent->client->sess.skill[SK_HEAVY_WEAPONS] >= 1)
 		{
+			if (level.time - ent->client->ps.classWeaponTime > level.soldierChargeTime[ent->client->sess.sessionTeam - 1])
+			{
+				ent->client->ps.classWeaponTime = level.time - level.soldierChargeTime[ent->client->sess.sessionTeam - 1];
+			}
+
 			ent->client->ps.classWeaponTime += .66f * level.soldierChargeTime[ent->client->sess.sessionTeam - 1];
 		}
 		else
@@ -4320,9 +4285,9 @@ void FireWeapon(gentity_t *ent)
 			AngleVectors(ent->client->ps.viewangles, forward, NULL, NULL);
 			VectorMA(ent->client->ps.velocity, -64, forward, ent->client->ps.velocity);
 		}
-		break;
-	case WP_GPG40:
-	case WP_M7:
+	}
+	else if (GetWeaponTableData(ent->s.weapon)->isRiflenade)
+	{
 		if (level.time - ent->client->ps.classWeaponTime > level.engineerChargeTime[ent->client->sess.sessionTeam - 1])
 		{
 			ent->client->ps.classWeaponTime = level.time - level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
@@ -4330,9 +4295,9 @@ void FireWeapon(gentity_t *ent)
 
 		ent->client->ps.classWeaponTime += .5f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
 		pFiredShot                       = weapon_gpg40_fire(ent, ent->s.weapon);
-		break;
-	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET:
+	}
+	else if (GetWeaponTableData(ent->s.weapon)->isMortarSet)
+	{
 		if (level.time - ent->client->ps.classWeaponTime > level.soldierChargeTime[ent->client->sess.sessionTeam - 1])
 		{
 			ent->client->ps.classWeaponTime = level.time - level.soldierChargeTime[ent->client->sess.sessionTeam - 1];
@@ -4347,71 +4312,73 @@ void FireWeapon(gentity_t *ent)
 			ent->client->ps.classWeaponTime += .5f * level.soldierChargeTime[ent->client->sess.sessionTeam - 1];
 		}
 		pFiredShot = weapon_mortar_fire(ent, ent->s.weapon);
-		break;
-	case WP_SATCHEL:
-	case WP_SMOKE_BOMB:
-		if (level.time - ent->client->ps.classWeaponTime > level.covertopsChargeTime[ent->client->sess.sessionTeam - 1])
+	}
+	else if (GetWeaponTableData(ent->s.weapon)->isExplosive && GetWeaponTableData(ent->s.weapon)->isThrowable)
+	{
+		int   chargeTime = -1;
+		float coeff      = -1.f;
+
+		if (ent->s.weapon == WP_SMOKE_MARKER)
 		{
-			ent->client->ps.classWeaponTime = level.time - level.covertopsChargeTime[ent->client->sess.sessionTeam - 1];
+			if (ent->client->sess.skill[SK_SIGNALS] >= 2)
+			{
+				chargeTime = level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1];
+				coeff      = .66f;
+			}
+		}
+		else if (ent->s.weapon == WP_SATCHEL || ent->s.weapon == WP_SMOKE_BOMB)
+		{
+			if (ent->client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 2)
+			{
+				chargeTime = level.covertopsChargeTime[ent->client->sess.sessionTeam - 1];
+				coeff      = .66f;
+			}
+		}
+		else if (ent->s.weapon == WP_LANDMINE)
+		{
+			chargeTime = level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
+
+			if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
+			{
+				// use 33%, not 66%, when upgraded.
+				// do not penalize the happy fun engineer.
+				coeff = .33f;
+			}
+			else
+			{
+				coeff = .5f;
+			}
+		}
+		else if (ent->s.weapon == WP_DYNAMITE)
+		{
+			if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
+			{
+				chargeTime = level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
+				coeff      = .66f;
+			}
 		}
 
-		if (ent->client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 2)
+		if (chargeTime != -1)
 		{
-			ent->client->ps.classWeaponTime += .66f * level.covertopsChargeTime[ent->client->sess.sessionTeam - 1];
+			if (level.time - ent->client->ps.classWeaponTime > chargeTime)
+			{
+				ent->client->ps.classWeaponTime = level.time - chargeTime;
+			}
+
+			ent->client->ps.classWeaponTime += coeff * chargeTime;
 		}
 		else
 		{
 			ent->client->ps.classWeaponTime = level.time;
 		}
-		pFiredShot = weapon_grenadelauncher_fire(ent, ent->s.weapon);
-		break;
-	case WP_LANDMINE:
-		if (level.time - ent->client->ps.classWeaponTime > level.engineerChargeTime[ent->client->sess.sessionTeam - 1])
-		{
-			ent->client->ps.classWeaponTime = level.time - level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
-		}
 
-		if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
-		{
-			// use 33%, not 66%, when upgraded.
-			// do not penalize the happy fun engineer.
-			ent->client->ps.classWeaponTime += .33f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
-		}
-		else
-		{
-			ent->client->ps.classWeaponTime += .5f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
-		}
-		pFiredShot = weapon_grenadelauncher_fire(ent, ent->s.weapon);
-		break;
-	case WP_DYNAMITE:
-		if (level.time - ent->client->ps.classWeaponTime > level.engineerChargeTime[ent->client->sess.sessionTeam - 1])
-		{
-			ent->client->ps.classWeaponTime = level.time - level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
-		}
-
-		if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3)
-		{
-			ent->client->ps.classWeaponTime += .66f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
-		}
-		else
-		{
-			ent->client->ps.classWeaponTime = level.time;
-		}
-		pFiredShot = weapon_grenadelauncher_fire(ent, ent->s.weapon);
-		break;
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
-		pFiredShot = weapon_grenadelauncher_fire(ent, ent->s.weapon);
-		break;
-	case WP_FLAMETHROWER:
+		pFiredShot = weapon_grenadelauncher_fire(ent);
+	}
+	else if (ent->s.weapon == WP_FLAMETHROWER)
+	{
 		// this is done client-side only now
 		// - um, no it isnt? FIXME
 		pFiredShot = Weapon_FlamethrowerFire(ent);
-		break;
-	case WP_MAPMORTAR:
-		break;
-	default:
-		break;
 	}
 
 #ifdef FEATURE_OMNIBOT

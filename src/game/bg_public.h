@@ -1126,6 +1126,7 @@ typedef struct weapontable_s
 	qboolean isPanzer;              ///< bg
 	qboolean isRiflenade;           ///< bg
 	qboolean isRifle;               ///< bg
+	qboolean isRifleWithScope;      ///<
 	qboolean isMortar;              ///< bg
 	qboolean isMortarSet;           ///< bg
 
@@ -1154,8 +1155,11 @@ typedef struct weapontable_s
 
 	unsigned int indexWeaponStat;   ///< bg - index for weapon stat info
 
+	qboolean fallOff;               ///<
+
 	qboolean useAmmo;               ///<
 	qboolean useClip;               ///<
+	qboolean useBullet;             ///<
 
 	int maxAmmo;                    ///<
 	int uses;                       ///<

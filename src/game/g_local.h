@@ -1195,7 +1195,6 @@ typedef struct level_locals_s
 	int medicChargeTime[2];
 	int engineerChargeTime[2];
 	int fieldopsChargeTime[2];
-
 	int covertopsChargeTime[2];
 
 	int lastMapEntityUpdate;
@@ -1551,7 +1550,7 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 qboolean AccuracyHit(gentity_t *target, gentity_t *attacker);
 void CalcMuzzlePoint(gentity_t *ent, int weapon, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint);
 void SnapVectorTowards(vec3_t v, vec3_t to);
-gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType);
+gentity_t *weapon_grenadelauncher_fire(gentity_t *ent);
 
 void G_FadeItems(gentity_t *ent, int modType);
 gentity_t *G_FindSatchel(gentity_t *ent);
