@@ -1172,6 +1172,8 @@ typedef struct weapontable_s
 
 	int switchTimeBegin;            ///<
 	int switchTimeFinish;           ///<
+	int altSwitchTimeBegin;         ///<
+	int altSwitchTimeFinish;        ///<
 
 	float knockback;                ///<
 	int ejectBrassOffset[3];        ///< forward, left, up

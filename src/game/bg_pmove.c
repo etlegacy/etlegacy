@@ -2453,11 +2453,11 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 
 	if (newWeapon == GetWeaponTableData(oldWeapon)->weapAlts)
 	{
-		pm->ps->weaponTime += GetWeaponTableData(oldWeapon)->switchTimeBegin;
+		pm->ps->weaponTime += GetWeaponTableData(oldWeapon)->altSwitchTimeBegin;
 	}
 	else
 	{
-		pm->ps->weaponTime += 250;    // dropping/raising usually takes 1/4 sec.
+		pm->ps->weaponTime += GetWeaponTableData(oldWeapon)->switchTimeBegin;    // dropping/raising usually takes 1/4 sec.
 	}
 }
 
@@ -2531,7 +2531,7 @@ static void PM_FinishWeaponChange(void)
 			return;
 		}
 
-		pm->ps->weaponTime += GetWeaponTableData(newweapon)->switchTimeFinish;
+		pm->ps->weaponTime += GetWeaponTableData(newweapon)->altSwitchTimeFinish;
 		BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_WEAPON, newweapon, qtrue);
 
 		if (pm->ps->eFlags & EF_PRONE)
@@ -2548,7 +2548,7 @@ static void PM_FinishWeaponChange(void)
 	}
 	else
 	{
-		pm->ps->weaponTime += 250;              // dropping/raising usually takes 1/4 sec.
+		pm->ps->weaponTime += GetWeaponTableData(newweapon)->switchTimeFinish;              // dropping/raising usually takes 1/4 sec.
 		BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_WEAPON, newweapon, qtrue);
 
 		if (pm->ps->eFlags & EF_PRONE)
