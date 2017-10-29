@@ -109,8 +109,8 @@ typedef enum
 
 #define HDR_ENABLED() ((r_hdrRendering->integer && glConfig2.textureFloatAvailable && glConfig2.framebufferObjectAvailable && glConfig2.framebufferBlitAvailable))
 
-#define REF_CUBEMAP_SIZE    32
-#define REF_CUBEMAP_STORE_SIZE  1024
+#define REF_CUBEMAP_SIZE    32  //verts??
+#define REF_CUBEMAP_STORE_SIZE  1024 //size of image?
 #define REF_CUBEMAP_STORE_SIDE  (REF_CUBEMAP_STORE_SIZE / REF_CUBEMAP_SIZE)
 
 /**
@@ -2758,7 +2758,7 @@ typedef struct
 	int *redundantShadowAlphaTestVerts;
 	VBO_t *vbo;
 	IBO_t *ibo;
-
+	FBO_t *fbo;
 	int numTriangles;
 	srfTriangle_t *triangles;
 
@@ -3544,7 +3544,7 @@ typedef struct
 	image_t *shadowMapFBOImage[MAX_SHADOWMAPS];
 	image_t *shadowCubeFBOImage[MAX_SHADOWMAPS];
 	image_t *sunShadowMapFBOImage[MAX_SHADOWMAPS];
-
+	image_t *skyboxFBOImage; //for the skybox
 	// external images
 	image_t *charsetImage;
 	image_t *grainImage;
@@ -3565,7 +3565,8 @@ typedef struct
 	FBO_t *bloomRenderFBO[2];
 	FBO_t *shadowMapFBO[MAX_SHADOWMAPS];
 	FBO_t *sunShadowMapFBO[MAX_SHADOWMAPS];
-
+	//ok, its time for one to skybox too
+	FBO_t *skyboxFBO;
 	// vertex buffer objects
 	VBO_t *unitCubeVBO;
 	IBO_t *unitCubeIBO;
@@ -4197,7 +4198,8 @@ typedef struct shaderCommands_s
 
 	VBO_t *vbo;
 	IBO_t *ibo;
-
+	FBO_t *fbo;
+	
 	stageVars_t svars;
 
 	shader_t *surfaceShader;

@@ -160,7 +160,7 @@ void R_CreateFBOColorBuffer(FBO_t *fbo, int format, int index)
 		return;
 	}
 
-#if 0
+
 	if (format != GL_RGB &&
 	    format != GL_RGBA &&
 	    format != GL_RGB16F_ARB && format != GL_RGBA16F_ARB && format != GL_RGB32F_ARB && format != GL_RGBA32F_ARB)
@@ -168,7 +168,7 @@ void R_CreateFBOColorBuffer(FBO_t *fbo, int format, int index)
 		Ren_Warning("R_CreateFBOColorBuffer: format %i is not color-renderable\n", format);
 		//return;
 	}
-#endif
+
 	bufferImage = &fbo->colorBuffers[index];
 
 	bufferImage->format = format;
@@ -438,20 +438,20 @@ void R_BindFBO(FBO_t *fbo)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo->frameBuffer);
 
-		/*
-		   if(fbo->colorBuffers[0])
+		
+		   if(fbo->colorBuffers[0].buffer)
 		   {
-		   glBindRenderbuffer(GL_RENDERBUFFER, fbo->colorBuffers[0]);
+		   glBindRenderbuffer(GL_RENDERBUFFER, fbo->colorBuffers[0].buffer);
 		   }
-		 */
+		 
 
-		/*
-		   if(fbo->depthBuffer)
+		
+		   if(fbo->depthBuffer.buffer)
 		   {
-		   glBindRenderbuffer(GL_RENDERBUFFER, fbo->depthBuffer);
-		   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fbo->depthBuffer);
+		   glBindRenderbuffer(GL_RENDERBUFFER, fbo->depthBuffer.buffer);
+		   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fbo->depthBuffer.buffer);
 		   }
-		 */
+		 
 
 		glState.currentFBO = fbo;
 	}
@@ -857,7 +857,23 @@ void R_InitFBOs(void)
 			width  = NearestPowerOfTwo(glConfig.vidWidth * 0.25f);
 			height = NearestPowerOfTwo(glConfig.vidHeight * 0.25f);
 		}
+		// skyboxFBO for skybox and outerbox
+		tr.skyboxFBO = R_CreateFBO("_skyboxFBO", width, height);
+		R_BindFBO(tr.skyboxFBO);
 
+		if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
+		{
+			R_CreateFBOColorBuffer(tr.skyboxFBO, GL_RGBA16F_ARB, 0);
+		}
+		else
+		{
+			R_CreateFBOColorBuffer(tr.skyboxFBO, GL_RGBA, 0);
+		}
+		R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.skyboxFBOImage->texnum, 0);
+
+		R_CheckFBO(tr.skyboxFBO);
+	}
+	// contrastFBO
 		tr.contrastRenderFBO = R_CreateFBO("_contrastRender", width, height);
 		R_BindFBO(tr.contrastRenderFBO);
 
@@ -891,7 +907,7 @@ void R_InitFBOs(void)
 
 			R_CheckFBO(tr.bloomRenderFBO[i]);
 		}
-	}
+	
 
 	GL_CheckErrors();
 
