@@ -1196,12 +1196,9 @@ static void CG_Missile(centity_t *cent)
 	}
 
 	// convert direction of travel into axis
-	// TODO: weapon table isExplosive ?
-	switch (cent->currentState.weapon)
-	{
-	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET:
-	case WP_MAPMORTAR:
+    if (GetWeaponTableData(cent->currentState.weapon)->isExplosive
+            && (GetWeaponTableData(cent->currentState.weapon)->isMortarSet  // TODO: once the the below FIXME solved, remove this
+            || cent->currentState.weapon == WP_MAPMORTAR))                  // TODO: once the the below FIXME solved, remove this
 		// reverted to vanilla behaviour
 		// FIXME: check FEATURE_EDV weapon cam (see default case of switch)
 		//case WP_PANZERFAUST:
@@ -1255,14 +1252,13 @@ static void CG_Missile(centity_t *cent)
 			ent.axis[0][2] = 1;
 		}
 	}
-	break;
-	default:
+    else
+    {
 		// FIXME: anything to do/save for edv?
 		if (VectorNormalize2(s1->pos.trDelta, ent.axis[0]) == 0.f)
 		{
 			ent.axis[0][2] = 1;
 		}
-		break;
 	}
 
 	AxisToAngles(ent.axis, cent->lerpAngles);

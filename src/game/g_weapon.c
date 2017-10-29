@@ -412,7 +412,7 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	traceEnt->client->ps.weaponstate = oldweaponstate;
 
 	// set idle animation on weapon
-	traceEnt->client->ps.weapAnim = ((traceEnt->client->ps.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | PM_IdleAnimForWeapon(traceEnt->client->ps.weapon);
+	traceEnt->client->ps.weapAnim = ((traceEnt->client->ps.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | GetWeaponTableData(traceEnt->client->ps.weapon)->idleAnim;
 
 	traceEnt->client->ps.classWeaponTime = oldclasstime;
 
@@ -488,7 +488,7 @@ void Weapon_Syringe(gentity_t *ent)
 	if (tr.fraction == 1.0f) // no hit
 	{
 		// give back ammo
-		ent->client->ps.ammoclip[BG_FindClipForWeapon(WP_MEDIC_SYRINGE)] += 1;
+		ent->client->ps.ammoclip[GetWeaponTableData(WP_MEDIC_SYRINGE)->clipIndex] += 1;
 		return;
 	}
 
@@ -497,7 +497,7 @@ void Weapon_Syringe(gentity_t *ent)
 	if (!traceEnt->client)
 	{
 		// give back ammo
-		ent->client->ps.ammoclip[BG_FindClipForWeapon(WP_MEDIC_SYRINGE)] += 1;
+		ent->client->ps.ammoclip[GetWeaponTableData(WP_MEDIC_SYRINGE)->clipIndex] += 1;
 		return;
 	}
 
@@ -538,7 +538,7 @@ void Weapon_Syringe(gentity_t *ent)
 		// If the medicine wasn't used, give back the ammo
 		if (!usedSyringe)
 		{
-			ent->client->ps.ammoclip[BG_FindClipForWeapon(WP_MEDIC_SYRINGE)] += 1;
+			ent->client->ps.ammoclip[GetWeaponTableData(WP_MEDIC_SYRINGE)->clipIndex] += 1;
 		}
 	}
 	else if (g_misc.integer & G_MISC_MEDIC_SYRINGE_HEAL) //  FIXME: clarify ammo restore
@@ -2863,28 +2863,13 @@ void weapon_callAirStrike(gentity_t *ent)
 
 		for (i = 0; i < NUMBOMBS; i++)
 		{
-			bomb               = G_Spawn();
-			bomb->nextthink    = (int)(level.time + i * 100 + crandom() * 50 + 1000 + (j * 2000));    // 1000 for aircraft flyby, other term for tumble stagger
-			bomb->think        = G_AirStrikeExplode;
-			bomb->s.eType      = ET_MISSILE;
-			bomb->r.svFlags    = SVF_NOCLIENT;
-			bomb->s.weapon     = WP_SMOKE_MARKER;  // might wanna change this
-			bomb->r.ownerNum   = ent->s.number;
-			bomb->parent       = ent->parent;
-			bomb->s.teamNum    = ent->s.teamNum;
-			bomb->damage       = GetWeaponTableData(WP_SMOKE_MARKER)->damage;
-			bomb->splashDamage = GetWeaponTableData(WP_SMOKE_MARKER)->splashDamage;
-			bomb->s.eFlags     = EF_SMOKINGBLACK; // add some client side smoke
+			bomb = G_Spawn();
+			G_PreFilledMissileEntity(bomb, WP_ARTY, WP_SMOKE_MARKER, ent->s.number, ent->s.teamNum, -1, ent->parent);     // might wanna change this
 
-			// for explosion type
-			bomb->accuracy            = 2;
-			bomb->classname           = "air strike";
-			bomb->splashRadius        = GetWeaponTableData(WP_SMOKE_MARKER)->splashRadius;
-			bomb->methodOfDeath       = GetWeaponTableData(WP_SMOKE_MARKER)->mod;
-			bomb->splashMethodOfDeath = GetWeaponTableData(WP_SMOKE_MARKER)->splashMod;
-			bomb->clipmask            = MASK_MISSILESHOT;
-			bomb->s.pos.trType        = TR_STATIONARY; // was TR_GRAVITY,  might wanna go back to this and drop from height
-			//bomb->s.pos.trTime = level.time;      // move a bit on the very first frame
+			bomb->nextthink    = (int)(level.time + i * 100 + crandom() * 50 + 1000 + (j * 2000));    // overwrite, 1000 for aircraft flyby, other term for tumble stagger
+			bomb->think        = G_AirStrikeExplode;
+			bomb->s.pos.trTime = 0; // overwrite due to previous impl : //bomb->s.pos.trTime = level.time;      // move a bit on the very first frame
+
 			bomboffset[0] = crandom() * .5f * BOMBSPREAD;
 			bomboffset[1] = crandom() * .5f * BOMBSPREAD;
 			bomboffset[2] = 0.f;
@@ -2990,24 +2975,13 @@ void artillerySpotterThink(gentity_t *ent)
 
 	for (i = 0; i < 7; i++)
 	{
-		bomb                    = G_Spawn();
-		bomb->s.eType           = ET_MISSILE;
-		bomb->r.svFlags         = 0;
-		bomb->r.ownerNum        = ent->s.number;
-		bomb->parent            = ent;
-		bomb->s.teamNum         = ent->s.teamNum;
-		bomb->nextthink         = (int)(level.time + 1000 + random() * 300);
-		bomb->classname         = GetWeaponTableData(WP_SMOKETRAIL)->className;
-		bomb->damage            = GetWeaponTableData(WP_SMOKETRAIL)->damage;
-		bomb->splashDamage      = GetWeaponTableData(WP_SMOKETRAIL)->splashDamage;
-		bomb->splashRadius      = GetWeaponTableData(WP_SMOKETRAIL)->splashRadius;
-		bomb->s.weapon          = WP_SMOKETRAIL;
+		// TODO: trType was TR_GRAVITY,  might wanna go back to this and drop from height
+		bomb = G_Spawn();
+		G_PreFilledMissileEntity(bomb, WP_SMOKETRAIL, WP_SMOKETRAIL, ent->s.number, ent->s.teamNum, -1, ent);
+		bomb->nextthink        += random() * 300;
 		bomb->think             = artilleryGoAway;
-		bomb->s.eFlags         |= EF_BOUNCE;
-		bomb->clipmask          = MASK_MISSILESHOT;
-		bomb->s.pos.trType      = TR_GRAVITY;   // was TR_GRAVITY,  might wanna go back to this and drop from height
-		bomb->s.pos.trTime      = level.time;   // move a bit on the very first frame
 		bomb->s.otherEntityNum2 = ent->s.otherEntityNum2;
+
 		VectorCopy(ent->s.pos.trBase, bomb->s.pos.trBase);
 		tmpdir[0] = crandom();
 		tmpdir[1] = crandom();
@@ -3132,32 +3106,22 @@ void Weapon_Artillery(gentity_t *ent)
 
 	for (i = 0; i < count; i++)
 	{
-		bomb                      = G_Spawn();
-		bomb->s.eType             = ET_MISSILE;
-		bomb->s.weapon            = WP_ARTY;   // might wanna change this
-		bomb->r.ownerNum          = ent->s.number;
-		bomb->s.clientNum         = ent->s.number;
-		bomb->parent              = ent;
-		bomb->s.teamNum           = ent->client->sess.sessionTeam;
-		bomb->damage              = GetWeaponTableData(WP_ARTY)->damage; // arty itself has no damage
-		bomb->methodOfDeath       = GetWeaponTableData(WP_ARTY)->mod;
-		bomb->splashMethodOfDeath = GetWeaponTableData(WP_ARTY)->splashMod;
-		bomb->clipmask            = MASK_MISSILESHOT;
-		bomb->s.pos.trType        = TR_STATIONARY;   // was TR_GRAVITY,  might wanna go back to this and drop from height
-		bomb->s.pos.trTime        = level.time;      // move a bit on the very first frame
+		bomb = G_Spawn();
+		G_PreFilledMissileEntity(bomb, WP_ARTY, WP_ARTY, ent->s.number, ent->client->sess.sessionTeam, ent->client->sess.sessionTeam, ent);
 
 		if (i == 0)
 		{
 			bomb->think             = artillerySpotterThink;
-			bomb->nextthink         = level.time + 5000;
-			bomb->r.svFlags         = SVF_BROADCAST;
-			bomb->classname         = "props_explosion"; // was "air strike"
-			bomb->splashDamage      = GetWeaponTableData(WP_ARTY)->splashDamage;
-			bomb->splashRadius      = GetWeaponTableData(WP_ARTY)->splashRadius;
+			bomb->clipmask          = EF_NONE;                  // overwrite
+			bomb->nextthink         = level.time + 5000;        // overwrite
+			bomb->r.svFlags         = SVF_BROADCAST;            // overwrite
+			bomb->classname         = "props_explosion";        // overwrite, was "air strike"
+			bomb->splashDamage      = 90;                       // overwrite
+			bomb->splashRadius      = 50;                       // overwrite
 			bomb->count             = 7;
 			bomb->count2            = 1000;
 			bomb->delay             = 300;
-			bomb->s.otherEntityNum2 = 1; // first bomb
+			bomb->s.otherEntityNum2 = 1;                        // first bomb
 
 			// spotter round is always dead on (OK, unrealistic but more fun)
 			bomboffset[0] = crandom() * 50; // was 0; changed per id request to prevent spotter round assassinations
@@ -3165,19 +3129,11 @@ void Weapon_Artillery(gentity_t *ent)
 		}
 		else
 		{
-			bomb->think     = G_AirStrikeExplode;
-			bomb->nextthink = (int)(level.time + 8950 + 2000 * i + crandom() * 800);
-			bomb->r.svFlags = SVF_NOCLIENT;
-			// for explosion type
-			bomb->accuracy     = 2;
-			bomb->classname    = "air strike";
-			bomb->splashDamage = GetWeaponTableData(WP_SMOKE_MARKER)->splashDamage;
-			bomb->splashRadius = GetWeaponTableData(WP_SMOKE_MARKER)->splashRadius;
+			bomb->think      = G_AirStrikeExplode;
+			bomb->nextthink += 2000 * i + crandom() * 800;
 
 			bomboffset[0] = crandom() * 250;
 			bomboffset[1] = crandom() * 250;
-
-			bomb->s.eFlags = EF_SMOKINGBLACK; // add some client side smoke, don't do this for bomb 0 (no all time smoke for spotter)
 		}
 		bomboffset[2] = 0;
 
@@ -3209,7 +3165,7 @@ void Weapon_Artillery(gentity_t *ent)
 		bomb2->r.ownerNum   = ent->s.number;
 		bomb2->parent       = ent;
 		bomb2->s.teamNum    = ent->s.teamNum;
-		bomb2->damage       = GetWeaponTableData(WP_SMOKE_BOMB)->damage;
+		bomb2->damage       = 0;
 		bomb2->nextthink    = bomb->nextthink - 600;
 		bomb2->classname    = "air strike";
 		bomb2->clipmask     = MASK_MISSILESHOT;
@@ -3729,18 +3685,13 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent, int grenType)
 		upangle = .1f;
 	}
 
-	// TODO: weapon table ?
-	switch (grenType)
+	if (GetWeaponTableData(grenType)->isGrenade || grenType == WP_SMOKE_MARKER || grenType == WP_SMOKE_BOMB)
 	{
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_SMOKE_MARKER:
-	case WP_SMOKE_BOMB:
 		upangle *= 900;
-		break;
-	default:  // WP_DYNAMITE / WP_LANDMINE / WP_SATCHEL
+	}
+	else    // WP_DYNAMITE / WP_LANDMINE / WP_SATCHEL
+	{
 		upangle *= 400;
-		break;
 	}
 
 	VectorCopy(muzzleEffect, tosspos);
@@ -4326,6 +4277,7 @@ void FireWeapon(gentity_t *ent)
 			ent->client->ps.ammo[WP_SATCHEL_DET]     = 0;
 			ent->client->ps.ammoclip[WP_SATCHEL_DET] = 0;
 			ent->client->ps.ammoclip[WP_SATCHEL]     = 1;
+			ent->client->ps.ammoclip[WP_SATCHEL]     = 1;
 			G_AddEvent(ent, EV_NOAMMO, 0);
 		}
 		break;
@@ -4473,5 +4425,5 @@ void FireWeapon(gentity_t *ent)
 #ifndef DEBUG_STATS
 	if (g_gamestate.integer == GS_PLAYING)
 #endif
-	ent->client->sess.aWeaponStats[BG_WeapStatForWeapon(ent->s.weapon)].atts++;
+	ent->client->sess.aWeaponStats[GetWeaponTableData(ent->s.weapon)->indexWeaponStat].atts++;
 }

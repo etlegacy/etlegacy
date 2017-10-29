@@ -487,14 +487,14 @@ qboolean G_smvRunCamera(gentity_t *ent)
 		ps->ammo[id] |= (hintTime & 0x0F) << 8;   // 4 bits for work on current item (dynamite, weapon repair, etc.)
 		ps->ammo[id] |= (weapHeat & 0x0F) << 12;   // 4 bits for weapon heat info
 
-		ps->ammo[id - 1]  = tps->ammo[BG_FindAmmoForWeapon(tps->weapon)] & 0x3FF;     // 11 bits needed to cover 1500 Venom ammo
+		ps->ammo[id - 1]  = tps->ammo[GetWeaponTableData(tps->weapon)->ammoIndex] & 0x3FF;     // 11 bits needed to cover 1500 Venom ammo
 		ps->ammo[id - 1] |= (BG_simpleWeaponState(tps->weaponstate) & 0x03) << 11;      // 2 bits for current weapon state
 		ps->ammo[id - 1] |= ((tps->persistant[PERS_HWEAPON_USE]) ? 1 : 0) << 13;        // 1 bit for mg42 use
 		ps->ammo[id - 1] |= (BG_simpleHintsCollapse(tps->serverCursorHint, hintTime) & 0x03) << 14;     // 2 bits for cursor hints
 
 		//G_Printf("tps->hint: %d, dr: %d, collapse: %d\n", tps->serverCursorHint, HINT_DOOR_ROTATING, G_simpleHintsCollapse(tps->serverCursorHint, hintTime));
 
-		ps->ammoclip[id - 1]  = tps->ammoclip[BG_FindClipForWeapon(tps->weapon)] & 0x1FF;     // 9 bits to cover 500 Venom ammo clip
+		ps->ammoclip[id - 1]  = tps->ammoclip[GetWeaponTableData(tps->weapon)->clipIndex] & 0x1FF;     // 9 bits to cover 500 Venom ammo clip
 		ps->ammoclip[id - 1] |= (chargeTime & 0x0F) << 9;     // 4 bits for weapon charge time
 		ps->ammoclip[id - 1] |= (sprintTime & 0x07) << 13;    // 3 bits for fatigue
 	}

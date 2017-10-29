@@ -790,7 +790,7 @@ void CG_TeamRestrictionsChanged(void)
 	cg.maxPlayers = atoi(Info_ValueForKey(info, "m"));
 }
 
-#define SETSKILL(skill, string) sscanf(string, "%i,%i,%i,%i", &skillLevels[skill][1], &skillLevels[skill][2], &skillLevels[skill][3], &skillLevels[skill][4])
+#define SETSKILL(skill, string) sscanf(string, "%i,%i,%i,%i", &GetSkillTableData(skill)->skillLevels[1], &GetSkillTableData(skill)->skillLevels[2], &GetSkillTableData(skill)->skillLevels[3], &GetSkillTableData(skill)->skillLevels[4])
 
 /**
  * @brief CG_SkillLevelsChanged
@@ -2000,7 +2000,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 
 			if (ci->skill[i] < NUM_SKILL_LEVELS - 1)
 			{
-				str = va("%10d/%-10d", ci->skillpoints[i], skillLevels[i][ci->skill[i] + 1]);
+				str = va("%10d/%-10d", ci->skillpoints[i], GetSkillTableData(i)->skillLevels[ci->skill[i] + 1]);
 			}
 			else
 			{
@@ -2009,11 +2009,11 @@ void CG_parseWeaponStatsGS_cmd(void)
 
 			if (cgs.gametype == GT_WOLF_CAMPAIGN)
 			{
-				Q_strncpyz(gs->strSkillz[gs->cSkills++], va("%-15s %3d %-24s %6d", skillNames[i], ci->skill[i], str, ci->medals[i]), sizeof(gs->strSkillz[0]));
+				Q_strncpyz(gs->strSkillz[gs->cSkills++], va("%-15s %3d %-24s %6d", GetSkillTableData(i)->skillNames, ci->skill[i], str, ci->medals[i]), sizeof(gs->strSkillz[0]));
 			}
 			else
 			{
-				Q_strncpyz(gs->strSkillz[gs->cSkills++], va("%-15s %3d %-24s", skillNames[i], ci->skill[i], str), sizeof(gs->strSkillz[0]));
+				Q_strncpyz(gs->strSkillz[gs->cSkills++], va("%-15s %3d %-24s", GetSkillTableData(i)->skillNames, ci->skill[i], str), sizeof(gs->strSkillz[0]));
 			}
 		}
 	}
@@ -2225,7 +2225,7 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 
 			if (ci->skill[i] < NUM_SKILL_LEVELS - 1)
 			{
-				str = va("%d (%d/%d)", ci->skill[i], ci->skillpoints[i], skillLevels[i][ci->skill[i] + 1]);
+				str = va("%d (%d/%d)", ci->skill[i], ci->skillpoints[i], GetSkillTableData(i)->skillLevels[ci->skill[i] + 1]);
 			}
 			else
 			{
@@ -2234,11 +2234,11 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 
 			if (cgs.gametype == GT_WOLF_CAMPAIGN)
 			{
-				txt_dump(va("%-14s ^3%-12s  ^2%6d\n", skillNames[i], str, ci->medals[i]));
+				txt_dump(va("%-14s ^3%-12s  ^2%6d\n", GetSkillTableData(i)->skillNames, str, ci->medals[i]));
 			}
 			else
 			{
-				txt_dump(va("%-14s ^3%-12s\n", skillNames[i], str));
+				txt_dump(va("%-14s ^3%-12s\n", GetSkillTableData(i)->skillNames, str));
 			}
 		}
 	}
@@ -2492,7 +2492,7 @@ static void CG_ServerCommand(void)
 
 		for (i = WP_KNIFE; i < WP_NUM_WEAPONS; i++)
 		{
-			if (BG_WeapStatForWeapon((weapon_t)i) == WS_MAX)
+			if (GetWeaponTableData(i)->indexWeaponStat == WS_MAX)
 			{
 				continue;
 			}

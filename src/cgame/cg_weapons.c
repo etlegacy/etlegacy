@@ -2067,7 +2067,7 @@ static void CG_RunWeapLerpFrame(clientInfo_t *ci, weaponInfo_t *wi, lerpFrame_t 
 	}
 	else if (newAnimation != lf->animationNumber)
 	{
-		if ((newAnimation & ~ANIM_TOGGLEBIT) == PM_RaiseAnimForWeapon(cg.snap->ps.nextWeapon))
+		if ((newAnimation & ~ANIM_TOGGLEBIT) == GetWeaponTableData(cg.snap->ps.nextWeapon)->raiseAnim)
 		{
 			CG_ClearWeapLerpFrame(wi, lf, newAnimation);     // clear when switching to raise (since it should be out of view anyway)
 		}
@@ -2235,31 +2235,12 @@ static void CG_CalculateWeaponPosition(vec3_t origin, vec3_t angles)
 	}
 
 	// adjust 'lean' into weapon
-	// TODO: weapon table ?
 	if (cg.predictedPlayerState.leanf != 0.f)
 	{
 		vec3_t right, up;
-		float  myfrac = 1.0f;
-
-		switch (cg.predictedPlayerState.weapon)
-		{
-		case WP_FLAMETHROWER:
-		case WP_KAR98:
-		case WP_CARBINE:
-		case WP_GPG40:
-		case WP_M7:
-		case WP_K43:
-			myfrac = 2.0f;
-			break;
-		case WP_GARAND:
-			myfrac = 3.0f;
-			break;
-		default:
-			break;
-		}
 
 		// reverse the roll on the weapon so it stays relatively level
-		angles[ROLL] -= cg.predictedPlayerState.leanf / (myfrac * 2.0f);
+		angles[ROLL] -= cg.predictedPlayerState.leanf / (GetWeaponTableData(cg.predictedPlayerState.weapon)->adjustLean * 2.0f);
 		AngleVectors(angles, NULL, right, up);
 		VectorMA(origin, angles[ROLL], right, origin);
 
@@ -2446,11 +2427,11 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	{
 		if (isPlayer)
 		{
-			akimboFire = BG_AkimboFireSequence(weaponNum, cg.predictedPlayerState.ammoclip[BG_FindClipForWeapon(weaponNum)], cg.predictedPlayerState.ammoclip[BG_FindClipForWeapon(GetWeaponTableData(weaponNum)->akimboSideArm)]);
+			akimboFire = BG_AkimboFireSequence(weaponNum, cg.predictedPlayerState.ammoclip[GetWeaponTableData(weaponNum)->clipIndex], cg.predictedPlayerState.ammoclip[GetWeaponTableData(GetWeaponTableData(weaponNum)->akimboSideArm)->clipIndex]);
 		}
 		else if (ps)
 		{
-			akimboFire = BG_AkimboFireSequence(weaponNum, ps->ammoclip[BG_FindClipForWeapon(weaponNum)], ps->ammoclip[BG_FindClipForWeapon(GetWeaponTableData(weaponNum)->akimboSideArm)]);
+			akimboFire = BG_AkimboFireSequence(weaponNum, ps->ammoclip[GetWeaponTableData(weaponNum)->clipIndex], ps->ammoclip[GetWeaponTableData(GetWeaponTableData(weaponNum)->akimboSideArm)->clipIndex]);
 		}
 		// alternate for other clients, store flip-flop on cent or smuffin
 	}
@@ -2833,11 +2814,11 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	{
 		if (GetWeaponTableData(weaponNum)->isRifle || GetWeaponTableData(weaponNum)->isRiflenade)
 		{
-			if ((cg.snap->ps.ammo[BG_FindAmmoForWeapon(WP_GPG40)] || cg.snap->ps.ammo[BG_FindAmmoForWeapon(WP_M7)] || cg.snap->ps.ammoclip[BG_FindAmmoForWeapon(WP_GPG40)] || cg.snap->ps.ammoclip[BG_FindAmmoForWeapon(WP_M7)]))
+			if ((cg.snap->ps.ammo[GetWeaponTableData(WP_GPG40)->ammoIndex] || cg.snap->ps.ammo[GetWeaponTableData(WP_M7)->ammoIndex] || cg.snap->ps.ammoclip[GetWeaponTableData(WP_GPG40)->ammoIndex] || cg.snap->ps.ammoclip[GetWeaponTableData(WP_M7)->ammoIndex]))
 			{
 				int anim = cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT;
 
-				if (anim == PM_AltSwitchFromForWeapon(weaponNum) || anim == PM_AltSwitchToForWeapon(weaponNum) || anim == PM_IdleAnimForWeapon(weaponNum))
+				if (anim == GetWeaponTableData(weaponNum)->altSwitchFrom || anim == GetWeaponTableData(weaponNum)->altSwitchTo || anim == GetWeaponTableData(weaponNum)->idleAnim)
 				{
 					barrel.hModel = weapon->modModels[0];
 					if (barrel.hModel)
@@ -3088,7 +3069,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 				if (ps)
 				{
-					if (ps->ammoclip[BG_FindAmmoForWeapon(WP_FLAMETHROWER)])
+					if (ps->ammoclip[GetWeaponTableData(WP_FLAMETHROWER)->ammoIndex])
 					{
 						CG_FireFlameChunks(cent, flash.origin, angles, 1.0, qfalse);
 					}
@@ -3364,14 +3345,14 @@ WEAPON SELECTION
 static qboolean CG_WeaponHasAmmo(weapon_t weapon)
 {
 	// certain weapons don't have ammo
-	if (!GetWeaponTableData(weapon)->useAmmo)
+	if (/*!GetWeaponTableData(weapon)->useAmmo*/ GetWeaponTableData(weapon)->isMeleeWeapon || weapon == WP_PLIERS)
 	{
 		return qtrue;
 	}
 
 	// check if the weapon still have ammo
-	if (!(cg.predictedPlayerState.ammo[BG_FindAmmoForWeapon(weapon)]) &&
-	    !(cg.predictedPlayerState.ammoclip[BG_FindClipForWeapon(weapon)]))
+	if (!(cg.predictedPlayerState.ammo[GetWeaponTableData(weapon)->ammoIndex]) &&
+	    !(cg.predictedPlayerState.ammoclip[GetWeaponTableData(weapon)->clipIndex]))
 	{
 		return qfalse;
 	}
@@ -3813,7 +3794,6 @@ void CG_AltWeapon_f(void)
 			cmd = "vsay_team";
 		}
 
-		// TODO: weapon table ?
 		switch (cg.weaponSelect)
 		{
 		case WP_DYNAMITE:
@@ -3932,6 +3912,12 @@ void CG_AltWeapon_f(void)
 	original = cg.weaponSelect;
 	num      = GetWeaponTableData(original)->weapAlts;
 
+	// if no alternative weapon, keep the original
+	if (!num)
+	{
+		num = original;
+	}
+
 	if (original == WP_BINOCULARS)
 	{
 		/*if(cg.snap->ps.eFlags & EF_ZOOMING) {
@@ -3961,13 +3947,13 @@ void CG_AltWeapon_f(void)
 			return;
 		}
 
-		if (num && (GetWeaponTableData(num)->isRiflenade || GetWeaponTableData(num)->isSilencedPistol || GetWeaponTableData(num)->isAkimbo || GetWeaponTableData(num)->isSetWeapon))
+		if (GetWeaponTableData(num)->isRiflenade || GetWeaponTableData(num)->isSilencedPistol || GetWeaponTableData(num)->isAkimbo || GetWeaponTableData(num)->isSetWeapon)
 		{
 			return;
 		}
 	}
 
-	if (num && CG_WeaponSelectable(num))        // new weapon is valid
+	if (CG_WeaponSelectable(num))        // new weapon is valid
 	{
 		CG_FinishWeaponChange(original, num);
 		if (original == num)
@@ -4696,6 +4682,8 @@ void CG_Weapon_f(void)
 /**
  * @brief The current weapon has just run out of ammo
  * @param[in] allowforceswitch
+ *
+ * @todo TODO: try a better way to handle theses "for" loop (factorization, ...)
  */
 void CG_OutOfAmmoChange(qboolean allowforceswitch)
 {
@@ -4712,41 +4700,24 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 	{
 		int equiv;
 
-		// TODO: weapon table ?
-		switch (cg.weaponSelect)
+		if ((cg.weaponSelect == WP_LANDMINE || cg.weaponSelect == WP_DYNAMITE) && CG_WeaponSelectable(WP_PLIERS))
 		{
-		case WP_LANDMINE:
-		case WP_DYNAMITE:
-			if (CG_WeaponSelectable(WP_PLIERS))
-			{
-				cg.weaponSelect = WP_PLIERS;
-				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, WP_PLIERS);
-				return;
-			}
-			break;
-		case WP_SATCHEL:
-			if (CG_WeaponSelectable(WP_SATCHEL_DET))
-			{
-				cg.weaponSelect = WP_SATCHEL_DET;
-				return;
-			}
-			break;
-		case WP_MORTAR_SET:
-			cg.weaponSelect = WP_MORTAR;
+			cg.weaponSelect = WP_PLIERS;
+			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, WP_PLIERS);
 			return;
-		case WP_MORTAR2_SET:
-			cg.weaponSelect = WP_MORTAR2;
+		}
+		else if (cg.weaponSelect == WP_SATCHEL && CG_WeaponSelectable(WP_SATCHEL_DET))
+		{
+			cg.weaponSelect = WP_SATCHEL_DET;
 			return;
-		case WP_MOBILE_MG42_SET:
-			cg.weaponSelect = WP_MOBILE_MG42;
+		}
+		else if (GetWeaponTableData(cg.weaponSelect)->isSetWeapon)
+		{
+			cg.weaponSelect = GetWeaponTableData(cg.weaponSelect)->weapAlts;
 			return;
-		case WP_MOBILE_BROWNING_SET:
-			cg.weaponSelect = WP_MOBILE_BROWNING;
-			return;
-		case WP_PANZERFAUST:
-		case WP_BAZOOKA:
-		case WP_SMOKE_BOMB:
-		case WP_MEDIC_ADRENALINE:
+		}
+		else if (GetWeaponTableData(cg.weaponSelect)->isPanzer || cg.weaponSelect == WP_SMOKE_BOMB || cg.weaponSelect == WP_MEDIC_ADRENALINE)
+		{
 			for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
 			{
 				// make sure we don't reselect the panzer or bazooka
@@ -4784,9 +4755,9 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 					return;
 				}
 			}
-			break;
-		case WP_GPG40:
-		case WP_M7:
+		}
+		else if (GetWeaponTableData(cg.weaponSelect)->isRiflenade)
+		{
 			// if you're using an alt mode weapon, try switching back to the parent
 			// otherwise, switch to the equivalent if you've got it
 			cg.weaponSelect = equiv = GetWeaponTableData(cg.weaponSelect)->weapAlts;      // base any further changes on the parent
@@ -4795,9 +4766,6 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 				CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
 				return;
 			}
-			break;
-		default:
-			break;
 		}
 
 		// now try the opposite team's equivalent weap
@@ -4955,54 +4923,22 @@ void CG_MortarEFX(centity_t *cent)
  */
 void CG_WeaponFireRecoil(int weapon)
 {
-	float  pitchAdd  = 0;
-	float  yawRandom = 0;
+	float  pitchAdd  = GetWeaponTableData(weapon)->pitchRecoil;
+	float  yawRandom = GetWeaponTableData(weapon)->yawRecoil;
 	vec3_t recoil;
 
-	// TODO: weapon table ?
-	switch (weapon)
+	// FIXME: add recoil for secondary weapons?
+	// if (GetWeaponTableData(weapon)->isPistol || GetWeaponTableData(weapon)->isSilencedPistol || GetWeaponTableData(weapon)->isAkimbo)
+	// {
+	//      pitchAdd = 2 + rand() % 3;
+	// }
+
+	if (weapon == WP_MP40 || weapon == WP_THOMPSON || weapon == WP_STEN || weapon == WP_FG42SCOPE || weapon == WP_FG42
+	    || GetWeaponTableData(weapon)->isMG || GetWeaponTableData(weapon)->isMGSet)
 	{
-	case WP_LUGER:
-	case WP_SILENCER:
-	case WP_AKIMBO_LUGER:
-	case WP_AKIMBO_SILENCEDLUGER:
-	case WP_COLT:
-	case WP_SILENCED_COLT:
-	case WP_AKIMBO_COLT:
-	case WP_AKIMBO_SILENCEDCOLT:
-		// FIXME: add recoil for secondary weapons?
-		//pitchAdd = 2 + rand() % 3;
-		//yawRandom = 2;
-		break;
-	case WP_PANZERFAUST: // push the player back instead
-	case WP_BAZOOKA:
-		break;
-	case WP_GARAND:
-	case WP_KAR98:
-	case WP_CARBINE:
-	case WP_K43:
-		pitchAdd  = 2;
-		yawRandom = 1;
-		break;
-	case WP_GARAND_SCOPE:
-	case WP_K43_SCOPE:
-		pitchAdd = 0.3f;
-		break;
-	case WP_FG42SCOPE:
-	case WP_FG42:
-	case WP_MOBILE_MG42:
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING:
-	case WP_MOBILE_BROWNING_SET:
-	case WP_MP40:
-	case WP_THOMPSON:
-	case WP_STEN:
-		pitchAdd  = (1 + rand() % 3) * 0.3f;
-		yawRandom = 0.6f;
-		break;
-	default:
-		return;
+		pitchAdd *= (1 + rand() % 3);
 	}
+
 	// calc the recoil
 	recoil[YAW]   = crandom() * yawRandom;
 	recoil[ROLL]  = -recoil[YAW];   // why not
@@ -5123,43 +5059,17 @@ void CG_FireWeapon(centity_t *cent)
 	}
 
 	// lightning gun only does this on initial press
-	// TODO: weapon table ?
-	switch (ent->weapon)
+	if (ent->weapon == WP_FLAMETHROWER && cent->pe.lightningFiring)
 	{
-	case WP_FLAMETHROWER:
-		if (cent->pe.lightningFiring)
-		{
-			return;
-		}
-		break;
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_DYNAMITE:
-	case WP_SMOKE_MARKER:
-	case WP_LANDMINE:
-	case WP_SATCHEL:
-	case WP_SMOKE_BOMB:
-		if (ent->apos.trBase[0] > 0)     // underhand
-		{
-			return;
-		}
-		break;
-	case WP_GPG40:
-
-		if (ent->clientNum == cg.snap->ps.clientNum)
-		{
-			cg.weaponSelect = WP_KAR98;
-		}
-		break;
-	case WP_M7:
-
-		if (ent->clientNum == cg.snap->ps.clientNum)
-		{
-			cg.weaponSelect = WP_CARBINE;
-		}
-		break;
-	default:
-		break;
+		return;
+	}
+	else if (GetWeaponTableData(ent->weapon)->isThrowable && ent->apos.trBase[0] > 0)
+	{
+		return;
+	}
+	else if (GetWeaponTableData(ent->weapon)->isRiflenade && ent->clientNum == cg.snap->ps.clientNum)
+	{
+		cg.weaponSelect = GetWeaponTableData(ent->weapon)->weapAlts;
 	}
 
 	if ((cent->currentState.event & ~EV_EVENT_BITS) == EV_FIRE_WEAPON_LASTSHOT)

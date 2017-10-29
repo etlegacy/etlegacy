@@ -81,9 +81,6 @@ void SP_info_notnull(gentity_t *self)
 	G_SetOrigin(self, self->s.origin);
 }
 
-/*
-
-*/
 /**
  * @brief QUAKED light (0 1 0) (-8 -8 -8) (8 8 8) nonlinear angle negative_spot negative_point q3map_non-dynamic
  * Non-displayed light.
@@ -2380,12 +2377,10 @@ void landmine_setup(gentity_t *ent)
 	VectorSet(ent->r.maxs, 16, 16, 16);
 	VectorCopy(ent->r.maxs, ent->r.absmax);
 
-	ent->clipmask = MASK_MISSILESHOT;
-
 	// drop to floor
 	VectorCopy(ent->s.origin, end);
 	end[2] -= 64;
-	trap_Trace(&tr, ent->s.origin, NULL, NULL, end, ent->s.number, ent->clipmask);
+	trap_Trace(&tr, ent->s.origin, NULL, NULL, end, ent->s.number, GetWeaponTableData(WP_LANDMINE)->clipMask);
 
 	if (tr.startsolid || tr.fraction == 1.f || !(tr.surfaceFlags & (SURF_GRASS | SURF_SNOW | SURF_GRAVEL | SURF_LANDMINE)) ||
 	    (tr.entityNum != ENTITYNUM_WORLD && (!g_entities[tr.entityNum].inuse || g_entities[tr.entityNum].s.eType != ET_CONSTRUCTIBLE)))
@@ -2399,41 +2394,21 @@ void landmine_setup(gentity_t *ent)
 	ent->s.pos.trDelta[2] = 1.f;
 	ent->s.time           = ent->s.angles[1] + 90;
 
+	G_PreFilledMissileEntity(ent, WP_LANDMINE, WP_LANDMINE, ENTITYNUM_WORLD, ent->s.teamNum, ent->s.clientNum, ent->parent);
+
 	// all fine
-	ent->s.eType    = ET_MISSILE;
-	ent->r.svFlags  = SVF_BROADCAST;
-	ent->s.weapon   = WP_LANDMINE;
-	ent->r.ownerNum = ENTITYNUM_WORLD;
-
-	ent->accuracy            = 0;
-	ent->classname           = GetWeaponTableData(WP_LANDMINE)->className;
-	ent->damage              = GetWeaponTableData(WP_LANDMINE)->damage;
-	ent->splashDamage        = GetWeaponTableData(WP_LANDMINE)->splashDamage;
-	ent->splashRadius        = GetWeaponTableData(WP_LANDMINE)->splashRadius;
-	ent->methodOfDeath       = GetWeaponTableData(WP_LANDMINE)->mod;
-	ent->splashMethodOfDeath = GetWeaponTableData(WP_LANDMINE)->splashMod;
-	ent->s.eFlags            = (EF_BOUNCE | EF_BOUNCE_HALF);
-	ent->health              = 5;
-	ent->takedamage          = qtrue;
-	ent->r.contents          = CONTENTS_CORPSE; // (player can walk through)
-
+	ent->takedamage    = qtrue;
+	ent->r.contents    = CONTENTS_CORPSE;       // (player can walk through)
 	ent->health        = 0;
 	ent->s.modelindex2 = 0;
-
-	ent->nextthink = level.time + FRAMETIME;
-	ent->think     = G_LandmineThink;
+	ent->nextthink     = level.time + FRAMETIME; // overwrite nextthink
+	ent->think         = G_LandmineThink;
 
 	// map mines crosshair id
 	ent->s.otherEntityNum = MAX_CLIENTS + 1;
 
-	if (ent->s.teamNum == TEAM_AXIS)     // store team so we can generate red or blue smoke
-	{
-		ent->s.otherEntityNum2 = 1;
-	}
-	else
-	{
-		ent->s.otherEntityNum2 = 0;
-	}
+	// store team so we can generate red or blue smoke
+	ent->s.otherEntityNum2 = (ent->s.teamNum == TEAM_AXIS);
 
 	trap_LinkEntity(ent);
 }
@@ -2810,4 +2785,37 @@ qboolean G_FlingClient(gentity_t *vic, int flingType)
 	VectorAdd(vic->client->ps.velocity, flingvec, vic->client->ps.velocity);
 
 	return qtrue;
+}
+
+/**
+ * @brief G_PreFilledMissileEntity
+ * @param[in] ent
+ * @param[in] weaponNum
+ * @param[in] realWeapon
+ * @param[in] ownerNum
+ * @param[in] teamNum
+ * @param[in] clientNum
+ * @param[in] parent
+ */
+void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int ownerNum, int teamNum, int clientNum, gentity_t *parent)
+{
+	ent->s.weapon            = realWeapon;
+	ent->r.ownerNum          = ownerNum;
+	ent->parent              = parent;
+	ent->s.teamNum           = teamNum;
+	ent->s.clientNum         = clientNum;
+	ent->classname           = GetWeaponTableData(weaponNum)->className;
+	ent->s.eType             = GetWeaponTableData(weaponNum)->eType;
+	ent->r.svFlags           = GetWeaponTableData(weaponNum)->svFlags;
+	ent->nextthink           = GetWeaponTableData(weaponNum)->nextThink ? level.time + GetWeaponTableData(weaponNum)->nextThink : 0;
+	ent->s.eFlags            = GetWeaponTableData(weaponNum)->eFlags;
+	ent->classname           = GetWeaponTableData(weaponNum)->className;
+	ent->damage              = GetWeaponTableData(weaponNum)->damage;
+	ent->splashDamage        = GetWeaponTableData(weaponNum)->splashDamage;
+	ent->methodOfDeath       = GetWeaponTableData(weaponNum)->mod;
+	ent->splashMethodOfDeath = GetWeaponTableData(weaponNum)->splashMod;
+	ent->splashRadius        = GetWeaponTableData(weaponNum)->splashRadius;  // blast radius proportional to damage for ALL weapons
+	ent->clipmask            = GetWeaponTableData(weaponNum)->clipMask;
+	ent->s.pos.trType        = GetWeaponTableData(weaponNum)->trType;
+	ent->s.pos.trTime        = GetWeaponTableData(weaponNum)->trTime ? level.time + GetWeaponTableData(weaponNum)->trTime : 0;   // move a bit on the very first frame
 }

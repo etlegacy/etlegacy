@@ -473,7 +473,7 @@ static void WM_DrawClientScore(int x, int y, score_t *score, float *color, float
 	{
 		for (j = 0; j < ci->medals[i]; j++)
 		{
-			Q_strcat(buf, sizeof(buf), va("^%c%c", COLOR_RED + i, skillNames[i][0]));
+			Q_strcat(buf, sizeof(buf), va("^%c%c", COLOR_RED + i, GetSkillTableData(i)->skillNames[0]));
 		}
 	}
 	maxchars--;
@@ -696,7 +696,7 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float *color,
 	{
 		for (j = 0; j < ci->medals[i]; j++)
 		{
-			Q_strcat(buf, sizeof(buf), va("^%c%c", COLOR_RED + i, skillNames[i][0]));
+			Q_strcat(buf, sizeof(buf), va("^%c%c", COLOR_RED + i,GetSkillTableData(i)->skillNames[0]));
 		}
 		maxchars--;
 	}

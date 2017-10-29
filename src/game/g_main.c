@@ -1572,7 +1572,7 @@ void G_SetSkillLevels(int skill, const char *string)
 
 	for (count = 1; count < NUM_SKILL_LEVELS; count++)
 	{
-		skillLevels[skill][count] = levels[count - 1];
+		GetSkillTableData(skill)->skillLevels[count] = levels[count - 1];
 	}
 }
 
@@ -1627,7 +1627,7 @@ void G_SetSkillLevelsByCvar(vmCvar_t *cvar)
 	}
 }
 
-#define SKILLSTRING(skill) va("%i,%i,%i,%i", skillLevels[skill][1], skillLevels[skill][2], skillLevels[skill][3], skillLevels[skill][4])
+#define SKILLSTRING(skill) va("%i,%i,%i,%i", GetSkillTableData(skill)->skillLevels[1], GetSkillTableData(skill)->skillLevels[2], GetSkillTableData(skill)->skillLevels[3], GetSkillTableData(skill)->skillLevels[4])
 
 /**
  * @brief G_UpdateSkillsToClients

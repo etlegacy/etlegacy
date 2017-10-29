@@ -1586,31 +1586,31 @@ void CG_LimboPanel_ClassBar_Draw(panel_button_t *button)
 
 	if (BG_CursorInRect(&medalPic0.rect))
 	{
-		text = skillNames[0];
+		text = GetSkillTableData(SK_BATTLE_SENSE)->skillNames;
 	}
 	else if (BG_CursorInRect(&medalPic1.rect))
 	{
-		text = skillNames[1];
+		text = GetSkillTableData(SK_EXPLOSIVES_AND_CONSTRUCTION)->skillNames;
 	}
 	else if (BG_CursorInRect(&medalPic2.rect))
 	{
-		text = skillNames[2];
+		text = GetSkillTableData(SK_FIRST_AID)->skillNames;
 	}
 	else if (BG_CursorInRect(&medalPic3.rect))
 	{
-		text = skillNames[3];
+		text = GetSkillTableData(SK_SIGNALS)->skillNames;
 	}
 	else if (BG_CursorInRect(&medalPic4.rect))
 	{
-		text = skillNames[4];
+		text = GetSkillTableData(SK_LIGHT_WEAPONS)->skillNames;
 	}
 	else if (BG_CursorInRect(&medalPic5.rect))
 	{
-		text = skillNames[5];
+		text = GetSkillTableData(SK_HEAVY_WEAPONS)->skillNames;
 	}
 	else if (BG_CursorInRect(&medalPic6.rect))
 	{
-		text = skillNames[6];
+		text = GetSkillTableData(SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS)->skillNames;
 	}
 	else if (CG_LimboPanel_GetTeam() == TEAM_SPECTATOR)
 	{
@@ -3346,133 +3346,26 @@ void CG_LimboPanel_KeyHandling(int key, qboolean down)
  * @param[out] t0
  * @param[out] s1
  * @param[out] t1
- *
- * @todo TODO: weapon table ?
  */
 void CG_LimboPanel_GetWeaponCardIconData(weapon_t weap, qhandle_t *shader, float *w, float *h, float *s0, float *t0, float *s1, float *t1)
 {
 	// setup the shader
-	switch (weap)
+	// FIXME: weapon card MORTAR 2
+	switch (GetWeaponTableData(weap)->weaponCardIcon)
 	{
-	case WP_MORTAR:
-	case WP_MORTAR2: // FIXME: weapon card
-	case WP_PANZERFAUST:
-	case WP_FLAMETHROWER:
-	case WP_FG42:
-	case WP_MOBILE_MG42:
-	case WP_MP40:
-	case WP_STEN:
-	case WP_THOMPSON:
-		*shader = cgs.media.limboWeaponCard1;
-		break;
-	case WP_COLT:
-	case WP_LUGER:
-	case WP_AKIMBO_COLT:
-	case WP_AKIMBO_LUGER:
-	case WP_AKIMBO_SILENCEDCOLT:
-	case WP_AKIMBO_SILENCEDLUGER:
-	case WP_SILENCED_COLT:
-	case WP_SILENCER:
-	case WP_CARBINE:
-	case WP_GARAND:
-	case WP_KAR98:
-	case WP_K43:
-		*shader = cgs.media.limboWeaponCard2;
-		break;
-	case WP_MOBILE_BROWNING:
-	case WP_BAZOOKA:
-		*shader = cgs.media.limboWeaponCard3;
-		break;
-	default:     // shouldn't happen
-		*shader = 0;
-		break;
+	case WEAPON_CARD_1: *shader = cgs.media.limboWeaponCard1; break;
+	case WEAPON_CARD_2: *shader = cgs.media.limboWeaponCard2; break;
+	case WEAPON_CARD_3: *shader = cgs.media.limboWeaponCard3; break;
+	case WEAPON_CARD_NONE:
+	default: *shader = 0; break; // shouldn't happen
 	}
 
-	// setup s co-ords
-	switch (weap)
-	{
-	case WP_SILENCED_COLT:
-	case WP_SILENCER:
-	case WP_LUGER:
-	case WP_COLT:
-		*s0 = 0;
-		*s1 = 0.5f;
-		break;
-	default:
-		*s0 = 0;
-		*s1 = 1;
-		break;
-	}
-
-	// setup t co-ords
-	switch (weap)
-	{
-	case WP_AKIMBO_SILENCEDLUGER:
-	case WP_SILENCER:
-	case WP_MORTAR:
-	case WP_MORTAR2: // FIXME
-	case WP_MOBILE_BROWNING:
-		*t0 = 0 / 8.f;
-		*t1 = 1 / 8.f;
-		break;
-	case WP_AKIMBO_SILENCEDCOLT:
-	case WP_SILENCED_COLT:
-	case WP_PANZERFAUST:
-	case WP_BAZOOKA:
-		*t0 = 1 / 8.f;
-		*t1 = 2 / 8.f;
-		break;
-	case WP_LUGER:
-	case WP_AKIMBO_LUGER:
-	case WP_FLAMETHROWER:
-		*t0 = 2 / 8.f;
-		*t1 = 3 / 8.f;
-		break;
-	case WP_AKIMBO_COLT:
-	case WP_COLT:
-	case WP_FG42:
-		*t0 = 3 / 8.f;
-		*t1 = 4 / 8.f;
-		break;
-	case WP_CARBINE:
-	case WP_MOBILE_MG42:
-		*t0 = 4 / 8.f;
-		*t1 = 5 / 8.f;
-		break;
-	case WP_KAR98:
-	case WP_MP40:
-		*t0 = 5 / 8.f;
-		*t1 = 6 / 8.f;
-		break;
-	case WP_K43:
-	case WP_STEN:
-		*t0 = 6 / 8.f;
-		*t1 = 7 / 8.f;
-		break;
-	case WP_GARAND:
-	case WP_THOMPSON:
-		*t0 = 7 / 8.f;
-		*t1 = 8 / 8.f;
-		break;
-	default:     // shouldn't happen
-		*t0 = 0.0;
-		*t1 = 1.0;
-		break;
-	}
-
-	*h = 1.f;
-	switch (weap)
-	{
-	case WP_SILENCED_COLT:
-	case WP_SILENCER:
-	case WP_COLT:
-	case WP_LUGER:
-		*w = 0.5f;
-		break;
-	default:
-		*w = 1.f;
-		break;
-	}
+	*w  = GetWeaponTableData(weap)->weaponCardCoord[WEAPON_CARD_COORD_W];
+	*h  = GetWeaponTableData(weap)->weaponCardCoord[WEAPON_CARD_COORD_H];
+	*s0 = GetWeaponTableData(weap)->weaponCardCoord[WEAPON_CARD_COORD_S0];
+	*s1 = GetWeaponTableData(weap)->weaponCardCoord[WEAPON_CARD_COORD_S1];
+	*t0 = GetWeaponTableData(weap)->weaponCardCoord[WEAPON_CARD_COORD_T0];  // FIXME WP_MORTAR2
+	*t1 = GetWeaponTableData(weap)->weaponCardCoord[WEAPON_CARD_COORD_T1];  // FIXME WP_MORTAR2
 }
 
 // Utility funcs
@@ -3833,7 +3726,7 @@ void CG_LimboPanel_SetSelectedWeaponNum(int number)
  */
 extWeaponStats_t CG_LimboPanel_GetSelectedWeaponStat(void)
 {
-	return BG_WeapStatForWeapon(CG_LimboPanel_GetSelectedWeapon());
+	return GetWeaponTableData(CG_LimboPanel_GetSelectedWeapon())->indexWeaponStat;
 }
 
 /**

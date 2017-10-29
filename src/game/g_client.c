@@ -999,78 +999,64 @@ team_t PickTeam(int ignoreClientNum)
  */
 static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 {
-	// TODO: weapon table ?
-	switch (weaponNum)
+	if (GetWeaponTableData(weaponNum)->isPistol || GetWeaponTableData(weaponNum)->isSilencedPistol || GetWeaponTableData(weaponNum)->isRifle || weaponNum == WP_STEN)
 	{
-	//case WP_KNIFE:
-	case WP_LUGER:
-	case WP_COLT:
-	case WP_STEN:
-	case WP_SILENCER:
-	case WP_CARBINE:
-	case WP_KAR98:
-	case WP_SILENCED_COLT:
 		if (client->sess.skill[SK_LIGHT_WEAPONS] >= 1)
 		{
-			client->ps.ammo[BG_FindAmmoForWeapon(weaponNum)] += GetWeaponTableData(weaponNum)->maxClip;
+			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
 		}
-		break;
-	case WP_MP40:
-	case WP_THOMPSON:
+	}
+	else if (weaponNum == WP_MP40 || weaponNum == WP_THOMPSON)
+	{
 		if ((client->sess.skill[SK_FIRST_AID] >= 1 && client->sess.playerType == PC_MEDIC) || client->sess.skill[SK_LIGHT_WEAPONS] >= 1)
 		{
-			client->ps.ammo[BG_FindAmmoForWeapon(weaponNum)] += GetWeaponTableData(weaponNum)->maxClip;
+			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
 		}
-		break;
-	case WP_M7:
-	case WP_GPG40:
+	}
+	else if (GetWeaponTableData(weaponNum)->isRiflenade)
+	{
 		if (client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 1)
 		{
-			client->ps.ammo[BG_FindAmmoForWeapon(weaponNum)] += 4;
+			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += 4;
 		}
-		break;
-	case WP_GRENADE_PINEAPPLE:
-	case WP_GRENADE_LAUNCHER:
+	}
+	else if (GetWeaponTableData(weaponNum)->isGrenade)
+	{
 		if (client->sess.playerType == PC_ENGINEER)
 		{
 			if (client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 1)
 			{
-				client->ps.ammoclip[BG_FindAmmoForWeapon(weaponNum)] += 4;
+				client->ps.ammoclip[GetWeaponTableData(weaponNum)->ammoIndex] += 4;
 			}
 		}
 		if (client->sess.playerType == PC_MEDIC)
 		{
 			if (client->sess.skill[SK_FIRST_AID] >= 1)
 			{
-				client->ps.ammoclip[BG_FindAmmoForWeapon(weaponNum)] += 1;
+				client->ps.ammoclip[GetWeaponTableData(weaponNum)->ammoIndex] += 1;
 			}
 		}
-		break;
-	case WP_MEDIC_SYRINGE:
-	case WP_MEDIC_ADRENALINE:
+	}
+	else if (GetWeaponTableData(weaponNum)->isSyringe)
+	{
 		if (client->sess.skill[SK_FIRST_AID] >= 2)
 		{
-			client->ps.ammoclip[BG_FindAmmoForWeapon(weaponNum)] += 2;
+			client->ps.ammoclip[GetWeaponTableData(weaponNum)->ammoIndex] += 2;
 		}
-		break;
-	case WP_GARAND:
-	case WP_K43:
-	case WP_FG42:
+	}
+	else if (GetWeaponTableData(GetWeaponTableData(weaponNum)->weapAlts)->isScoped)
+	{
 		if (client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 1 || client->sess.skill[SK_LIGHT_WEAPONS] >= 1)
 		{
-			client->ps.ammo[BG_FindAmmoForWeapon(weaponNum)] += GetWeaponTableData(weaponNum)->maxClip;
+			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
 		}
-		break;
-	case WP_GARAND_SCOPE:
-	case WP_K43_SCOPE:
-	case WP_FG42SCOPE:
+	}
+	else if (GetWeaponTableData(weaponNum)->isScoped)
+	{
 		if (client->sess.skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 1)
 		{
-			client->ps.ammo[BG_FindAmmoForWeapon(weaponNum)] += GetWeaponTableData(weaponNum)->maxClip;
+			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
 		}
-		break;
-	default:
-		break;
 	}
 }
 
@@ -1086,8 +1072,8 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 qboolean AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammoclip, qboolean setcurrent)
 {
 	COM_BitSet(client->ps.weapons, weapon);
-	client->ps.ammoclip[BG_FindClipForWeapon(weapon)] = ammoclip;
-	client->ps.ammo[BG_FindAmmoForWeapon(weapon)]     = ammo;
+	client->ps.ammoclip[GetWeaponTableData(weapon)->clipIndex] = ammoclip;
+	client->ps.ammo[GetWeaponTableData(weapon)->ammoIndex]     = ammo;
 	if (setcurrent)
 	{
 		client->ps.weapon = weapon;
@@ -1384,7 +1370,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 			}
 			else if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && client->sess.playerWeapon2 == WP_AKIMBO_LUGER)
 			{
-				client->ps.ammoclip[BG_FindClipForWeapon(GetWeaponTableData(WP_AKIMBO_LUGER)->akimboSideArm)] = GetWeaponTableData(WP_AKIMBO_LUGER)->defaultStartingClip;
+				client->ps.ammoclip[GetWeaponTableData(GetWeaponTableData(WP_AKIMBO_LUGER)->akimboSideArm)->clipIndex] = GetWeaponTableData(WP_AKIMBO_LUGER)->defaultStartingClip;
 				AddWeaponToPlayer(client, WP_AKIMBO_LUGER, GetWeaponTableData(WP_AKIMBO_LUGER)->defaultStartingAmmo, GetWeaponTableData(WP_AKIMBO_LUGER)->defaultStartingClip, qfalse);
 			}
 			else
@@ -1396,7 +1382,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 		case PC_COVERTOPS:
 			if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && (client->sess.playerWeapon2 == WP_AKIMBO_SILENCEDLUGER || client->sess.playerWeapon2 == WP_AKIMBO_LUGER))
 			{
-				client->ps.ammoclip[BG_FindClipForWeapon(GetWeaponTableData(WP_AKIMBO_SILENCEDLUGER)->akimboSideArm)] = GetWeaponTableData(WP_AKIMBO_SILENCEDLUGER)->defaultStartingClip;
+				client->ps.ammoclip[GetWeaponTableData(GetWeaponTableData(WP_AKIMBO_SILENCEDLUGER)->akimboSideArm)->clipIndex] = GetWeaponTableData(WP_AKIMBO_SILENCEDLUGER)->defaultStartingClip;
 				AddWeaponToPlayer(client, WP_AKIMBO_SILENCEDLUGER, GetWeaponTableData(WP_AKIMBO_SILENCEDLUGER)->defaultStartingAmmo, GetWeaponTableData(WP_AKIMBO_SILENCEDLUGER)->defaultStartingClip, qfalse);
 			}
 			else
@@ -1410,7 +1396,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 		default:
 			if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && client->sess.playerWeapon2 == WP_AKIMBO_LUGER)
 			{
-				client->ps.ammoclip[BG_FindClipForWeapon(GetWeaponTableData(WP_AKIMBO_LUGER)->akimboSideArm)] = GetWeaponTableData(WP_AKIMBO_LUGER)->defaultStartingClip;
+				client->ps.ammoclip[GetWeaponTableData(GetWeaponTableData(WP_AKIMBO_LUGER)->akimboSideArm)->clipIndex] = GetWeaponTableData(WP_AKIMBO_LUGER)->defaultStartingClip;
 				AddWeaponToPlayer(client, WP_AKIMBO_LUGER, GetWeaponTableData(WP_AKIMBO_LUGER)->defaultStartingAmmo, GetWeaponTableData(WP_AKIMBO_LUGER)->defaultStartingClip, qfalse);
 			}
 			else
@@ -1430,7 +1416,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 			}
 			else if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && client->sess.playerWeapon2 == WP_AKIMBO_COLT)
 			{
-				client->ps.ammoclip[BG_FindClipForWeapon(GetWeaponTableData(WP_AKIMBO_COLT)->akimboSideArm)] = GetWeaponTableData(WP_AKIMBO_COLT)->defaultStartingClip;
+				client->ps.ammoclip[GetWeaponTableData(GetWeaponTableData(WP_AKIMBO_COLT)->akimboSideArm)->clipIndex] = GetWeaponTableData(WP_AKIMBO_COLT)->defaultStartingClip;
 				AddWeaponToPlayer(client, WP_AKIMBO_COLT, GetWeaponTableData(WP_AKIMBO_COLT)->defaultStartingAmmo, GetWeaponTableData(WP_AKIMBO_COLT)->defaultStartingClip, qfalse);
 			}
 			else
@@ -1442,7 +1428,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 		case PC_COVERTOPS:
 			if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && (client->sess.playerWeapon2 == WP_AKIMBO_SILENCEDCOLT || client->sess.playerWeapon2 == WP_AKIMBO_COLT))
 			{
-				client->ps.ammoclip[BG_FindClipForWeapon(GetWeaponTableData(WP_AKIMBO_SILENCEDCOLT)->akimboSideArm)] = GetWeaponTableData(WP_AKIMBO_SILENCEDCOLT)->defaultStartingClip;
+				client->ps.ammoclip[GetWeaponTableData(GetWeaponTableData(WP_AKIMBO_SILENCEDCOLT)->akimboSideArm)->clipIndex] = GetWeaponTableData(WP_AKIMBO_SILENCEDCOLT)->defaultStartingClip;
 				AddWeaponToPlayer(client, WP_AKIMBO_SILENCEDCOLT, GetWeaponTableData(WP_AKIMBO_SILENCEDCOLT)->defaultStartingAmmo, GetWeaponTableData(WP_AKIMBO_SILENCEDCOLT)->defaultStartingClip, qfalse);
 			}
 			else
@@ -1456,7 +1442,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 		default:
 			if (client->sess.skill[SK_LIGHT_WEAPONS] >= 4 && client->sess.playerWeapon2 == WP_AKIMBO_COLT)
 			{
-				client->ps.ammoclip[BG_FindClipForWeapon(GetWeaponTableData(WP_AKIMBO_COLT)->akimboSideArm)] = GetWeaponTableData(WP_AKIMBO_COLT)->defaultStartingClip;
+				client->ps.ammoclip[GetWeaponTableData(GetWeaponTableData(WP_AKIMBO_COLT)->akimboSideArm)->clipIndex] = GetWeaponTableData(WP_AKIMBO_COLT)->defaultStartingClip;
 				AddWeaponToPlayer(client, WP_AKIMBO_COLT, GetWeaponTableData(WP_AKIMBO_COLT)->defaultStartingAmmo, GetWeaponTableData(WP_AKIMBO_COLT)->defaultStartingClip, qfalse);
 			}
 			else
@@ -3206,7 +3192,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	ClientEndFrame(ent);
 
 	// set idle animation on weapon
-	ent->client->ps.weapAnim = ((ent->client->ps.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | PM_IdleAnimForWeapon(ent->client->ps.weapon);
+	ent->client->ps.weapAnim = ((ent->client->ps.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | GetWeaponTableData(ent->client->ps.weapon)->idleAnim;
 
 	// clear entity state values
 	BG_PlayerStateToEntityState(&client->ps, &ent->s, level.time, qtrue);

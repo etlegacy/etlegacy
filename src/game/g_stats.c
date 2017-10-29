@@ -110,7 +110,7 @@ void G_PrintAccuracyLog(gentity_t *ent)
 
 	for (i = WP_KNIFE; i < WP_NUM_WEAPONS; i++)
 	{
-		if (BG_WeapStatForWeapon((weapon_t)i) == WS_MAX)
+		if (GetWeaponTableData(i)->indexWeaponStat == WS_MAX)
 		{
 			continue;
 		}
@@ -172,7 +172,7 @@ void G_SetPlayerSkill(gclient_t *client, skillType_t skill)
 
 	for (i = NUM_SKILL_LEVELS - 1; i >= 0; i--)
 	{
-		if (skillLevels[skill][i] != -1 && client->sess.skillpoints[skill] >= skillLevels[skill][i])
+		if (GetSkillTableData(skill)->skillLevels[i] != -1 && client->sess.skillpoints[skill] >= GetSkillTableData(skill)->skillLevels[i])
 		{
 			client->sess.skill[skill] = i;
 			break;
@@ -271,7 +271,7 @@ void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 	}
 	else if (skill == SK_FIRST_AID && ent->client->sess.playerType == PC_MEDIC && ent->client->sess.skill[skill] == 4)
 	{
-		AddWeaponToPlayer(ent->client, WP_MEDIC_ADRENALINE, ent->client->ps.ammo[BG_FindAmmoForWeapon(WP_MEDIC_ADRENALINE)], ent->client->ps.ammoclip[BG_FindClipForWeapon(WP_MEDIC_ADRENALINE)], qfalse);
+		AddWeaponToPlayer(ent->client, WP_MEDIC_ADRENALINE, ent->client->ps.ammo[GetWeaponTableData(WP_MEDIC_ADRENALINE)->ammoIndex], ent->client->ps.ammoclip[GetWeaponTableData(WP_MEDIC_ADRENALINE)->clipIndex], qfalse);
 	}
 }
 
@@ -316,10 +316,10 @@ void G_LoseSkillPoints(gentity_t *ent, skillType_t skill, float points)
 	if (oldskill != ent->client->sess.skill[skill])
 	{
 		ent->client->sess.skill[skill]       = oldskill;
-		ent->client->sess.skillpoints[skill] = skillLevels[skill][oldskill];
+		ent->client->sess.skillpoints[skill] = GetSkillTableData(skill)->skillLevels[oldskill];
 	}
 
-	G_Printf("%s ^7just lost %.0f skill points for skill %s\n", ent->client->pers.netname, (double)(oldskillpoints - ent->client->sess.skillpoints[skill]), skillNames[skill]);
+	G_Printf("%s ^7just lost %.0f skill points for skill %s\n", ent->client->pers.netname, (double)(oldskillpoints - ent->client->sess.skillpoints[skill]), GetSkillTableData(skill)->skillNames);
 
 	level.teamScores[ent->client->ps.persistant[PERS_TEAM]]        -= oldskillpoints - ent->client->sess.skillpoints[skill];
 	level.teamXP[skill][ent->client->sess.sessionTeam - TEAM_AXIS] -= oldskillpoints - ent->client->sess.skillpoints[skill];
@@ -628,7 +628,7 @@ void G_DebugAddSkillLevel(gentity_t *ent, skillType_t skill)
 	}
 
 	trap_SendServerCommand(ent - g_entities, va("sdbg \"^%c(SK: %2i XP: %.0f) %s: You raised your skill level to %i.\"\n",
-	                                            COLOR_RED + skill, ent->client->sess.skill[skill], ent->client->sess.skillpoints[skill], skillNames[skill], ent->client->sess.skill[skill]));
+	                                            COLOR_RED + skill, ent->client->sess.skill[skill], ent->client->sess.skillpoints[skill], GetSkillTableData(skill)->skillNames, ent->client->sess.skill[skill]));
 
 	trap_RealTime(&ct);
 
@@ -636,7 +636,7 @@ void G_DebugAddSkillLevel(gentity_t *ent, skillType_t skill)
 	{
 		char *s = va("%02d:%02d:%02d : ^%c(SK: %2i XP: %.0f) %s: %s raised in skill level to %i.\n",
 		             ct.tm_hour, ct.tm_min, ct.tm_sec,
-		             COLOR_RED + skill, ent->client->sess.skill[skill], ent->client->sess.skillpoints[skill], skillNames[skill], ent->client->pers.netname, ent->client->sess.skill[skill]);
+		             COLOR_RED + skill, ent->client->sess.skill[skill], ent->client->sess.skillpoints[skill], GetSkillTableData(skill)->skillNames, ent->client->pers.netname, ent->client->sess.skill[skill]);
 		trap_FS_Write(s, strlen(s), skillDebugLog);
 	}
 }
@@ -658,7 +658,7 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 	}
 
 	trap_SendServerCommand(ent - g_entities, va("sdbg \"^%c(SK: %2i XP: %.0f) %s: You gained %.0fXP, reason: %s.\"\n",
-	                                            COLOR_RED + skill, ent->client->sess.skill[skill], ent->client->sess.skillpoints[skill], skillNames[skill], points, reason));
+	                                            COLOR_RED + skill, ent->client->sess.skill[skill], ent->client->sess.skillpoints[skill], GetSkillTableData(skill)->skillNames, points, reason));
 
 	trap_RealTime(&ct);
 
@@ -666,7 +666,7 @@ void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, cons
 	{
 		char *s = va("%02d:%02d:%02d : ^%c(SK: %2i XP: %.0f) %s: %s gained %.0fXP, reason: %s.\n",
 		             ct.tm_hour, ct.tm_min, ct.tm_sec,
-		             COLOR_RED + skill, ent->client->sess.skill[skill], ent->client->sess.skillpoints[skill], skillNames[skill], ent->client->pers.netname, points, reason);
+		             COLOR_RED + skill, ent->client->sess.skill[skill], ent->client->sess.skillpoints[skill], GetSkillTableData(skill)->skillNames, ent->client->pers.netname, points, reason);
 		trap_FS_Write(s, strlen(s), skillDebugLog);
 	}
 }

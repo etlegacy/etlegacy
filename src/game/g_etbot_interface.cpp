@@ -2630,7 +2630,7 @@ public:
 #else
 		if (cmd.weapon == WP_GPG40 && bot->client->ps.weapon == WP_GPG40 /*&& bot->client->ps.weapon != WP_KAR98*/)
 		{
-			const int ammo = bot->client->ps.ammoclip[BG_FindClipForWeapon(WP_GPG40)];
+			const int ammo = bot->client->ps.ammoclip[GetWeaponTableData(WP_GPG40)->clipIndex];
 			if (ammo == 0 && bot->client->ps.weaponstate == WEAPON_READY)
 			{
 				cmd.weapon = WP_KAR98;
@@ -2638,7 +2638,7 @@ public:
 		}
 		else if (cmd.weapon == WP_M7 && bot->client->ps.weapon == WP_M7 /*&& bot->client->ps.weapon != WP_CARBINE*/)
 		{
-			const int ammo = bot->client->ps.ammoclip[BG_FindClipForWeapon(WP_M7)];
+			const int ammo = bot->client->ps.ammoclip[GetWeaponTableData(WP_M7)->clipIndex];
 			if (ammo == 0 && bot->client->ps.weaponstate == WEAPON_READY)
 			{
 				cmd.weapon = WP_CARBINE;
@@ -4224,7 +4224,7 @@ public:
 #ifdef NOQUARTER
 			_curclip = bot->client->ps.ammoclip[WeaponTable[(weapon_t)iWeapon].clipindex];
 #else
-			_curclip = bot->client->ps.ammoclip[BG_FindClipForWeapon((weapon_t)iWeapon)];
+			_curclip = bot->client->ps.ammoclip[GetWeaponTableData(iWeapon)->clipIndex];
 #endif
 
 			// sanity check for non-clipped weapons
@@ -4315,13 +4315,13 @@ public:
 			}
 #endif
 
-			ammoIndex = BG_FindAmmoForWeapon((weapon_t)_weaponId);
+			ammoIndex = GetWeaponTableData(_weaponId)->ammoIndex;
 
 #ifdef NOQUARTER
 			_cur = bot->client->ps.ammoclip[WeaponTable[(weapon_t)_weaponId].clipindex] +
 			       bot->client->ps.ammo[WeaponTable[(weapon_t)_weaponId].ammoindex];
 #else
-			_cur = bot->client->ps.ammoclip[BG_FindClipForWeapon((weapon_t)_weaponId)] +
+			_cur = bot->client->ps.ammoclip[GetWeaponTableData(_weaponId)->clipIndex] +
 			       bot->client->ps.ammo[ammoIndex];
 #endif
 

@@ -31,10 +31,8 @@
 /**
  * @file bg_public.h
  * @brief Definitions shared by both the server game and client game modules. (server.h includes this)
- */
-
-/*
- * because games can change separately from the main system version, we need a
+ *
+ * @note Because games can change separately from the main system version, we need a
  * second version that must match between game and cgame
  */
 
@@ -68,7 +66,7 @@
 #define RANK_TIED_FLAG      0x4000
 
 #define ITEM_RADIUS         10     ///< item sizes are needed for client side pickup detection
-                                   ///< - changed the radius so that the items would fit in the 3 new containers
+///< - changed the radius so that the items would fit in the 3 new containers
 
 #define MAX_TRACE           8192.0f///< whenever you change this make sure bullet_Endpos for scope weapons is in sync!
 
@@ -121,6 +119,40 @@ extern vec3_t playerlegsProneMaxs;
 #define SVC_OUTSIDE         6
 #define SVC_INCLUDE         7
 #define SVC_EXCLUDE         8
+
+/**
+ * entity->svFlags
+ * the server does not know how to interpret most of the values
+ * in entityStates (level eType), so the game must explicitly flag
+ * special server behaviors
+ */
+
+#define SVF_NONE                0x00000000  ///< none
+#define SVF_NOCLIENT            0x00000001  ///< don't send entity to clients, even if it has effects
+#define SVF_VISDUMMY            0x00000004  ///< this ent is a "visibility dummy" and needs it's master to be sent to clients that can see it even if they can't see the master ent
+#define SVF_BOT                 0x00000008
+//#define SVF_POW                 0x00000010  ///< Unused
+
+#define SVF_BROADCAST           0x00000020  ///< send to all connected clients
+#define SVF_PORTAL              0x00000040  ///< merge a second pvs at origin2 into snapshots
+#define SVF_BLANK               0x00000080  ///< removed SVF_USE_CURRENT_ORIGIN as it plain doesnt do anything
+#define SVF_NOFOOTSTEPS         0x00000100  ///< Unused
+
+#define SVF_CAPSULE             0x00000200  ///< use capsule for collision detection
+
+#define SVF_VISDUMMY_MULTIPLE   0x00000400  ///< so that one vis dummy can add to snapshot multiple speakers
+
+// recent id changes
+#define SVF_SINGLECLIENT        0x00000800  ///< only send to a single client (entityShared_t->singleClient)
+#define SVF_NOSERVERINFO        0x00001000  ///< don't send CS_SERVERINFO updates to this client
+// so that it can be updated for ping tools without
+// lagging clients
+#define SVF_NOTSINGLECLIENT     0x00002000  ///< send entity to everyone but one client
+// (entityShared_t->singleClient)
+
+#define SVF_IGNOREBMODELEXTENTS     0x00004000  ///< just use origin for in pvs check for snapshots, ignore the bmodel extents
+#define SVF_SELF_PORTAL             0x00008000  ///< use self->origin2 as portal
+#define SVF_SELF_PORTAL_EXCLUSIVE   0x00010000  ///< use self->origin2 as portal and DONT add self->origin PVS ents
 
 /**
  * @struct svCvar_s
@@ -589,7 +621,7 @@ typedef struct
 } pmove_t;
 
 // if a full pmove isn't done on the client, you can just update the angles
-void PM_UpdateViewAngles(playerState_t * ps, pmoveExt_t * pmext, usercmd_t * cmd, void(trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask);
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask);
 int Pmove(pmove_t *pmove);
 void PmovePredict(pmove_t *pmove, float frametime);
 
@@ -655,6 +687,7 @@ typedef enum
 } persEnum_t;
 
 // entityState_t->eFlags
+#define EF_NONE             0x00000000                         ///< none
 #define EF_DEAD             0x00000001                         ///< don't draw a foe marker over players with EF_DEAD
 #define EF_NONSOLID_BMODEL  0x00000002                         ///< bmodel is visible, but not solid
 #define EF_TELEPORT_BIT     0x00000004                         ///< toggled every time the origin abruptly changes
@@ -981,13 +1014,23 @@ typedef enum
 
 } meansOfDeath_t;
 
-extern const char *skillNames[SK_NUM_SKILLS];
-extern const char *skillNamesLine1[SK_NUM_SKILLS];
-extern const char *skillNamesLine2[SK_NUM_SKILLS];
-extern const char *medalNames[SK_NUM_SKILLS];
-
 #define NUM_SKILL_LEVELS 5
-extern int skillLevels[SK_NUM_SKILLS][NUM_SKILL_LEVELS];
+
+/**
+ * @struct skilltable_s
+ * @typedef skilltable_t
+ * @brief
+ */
+typedef struct skilltable_s
+{
+	int skill;
+	const char *skillNames;
+	const char *skillNamesLine1;
+	const char *skillNamesLine2;
+	const char *medalNames;
+	int skillLevels[NUM_SKILL_LEVELS];
+
+} skilltable_t;
 
 /**
  * @struct playerStats_t
@@ -1000,6 +1043,35 @@ typedef struct
 	int hitRegions[HR_NUM_HITREGIONS];
 	int objectiveStats[MAX_OBJECTIVES];
 } playerStats_t;
+
+/**
+ * @enum weaponCardIconId_t
+ * @brief
+ */
+typedef enum
+{
+	WEAPON_CARD_NONE,
+	WEAPON_CARD_1,
+	WEAPON_CARD_2,
+	WEAPON_CARD_3,
+
+} weaponCardIconId_t;
+
+/**
+ * @enum weaponCardIconCoord_t
+ * @brief
+ */
+typedef enum
+{
+	WEAPON_CARD_COORD_W,
+	WEAPON_CARD_COORD_H,
+	WEAPON_CARD_COORD_S0,
+	WEAPON_CARD_COORD_S1,
+	WEAPON_CARD_COORD_T0,
+	WEAPON_CARD_COORD_T1,
+	WEAPON_CARD_CORRD_NUM
+
+} weaponCardIconCoord_t;
 
 /**
  * @struct weaponTable_s
@@ -1017,6 +1089,13 @@ typedef struct weapontable_s
 	weapon_t ammoIndex;             ///< bg type of weapon ammo this uses.  (ex. WP_MP40 and WP_LUGER share 9mm ammo, so they both have WP_LUGER for giAmmoIndex)
 	weapon_t clipIndex;             ///< bg which clip this weapon uses.  this allows the sniper rifle to use the same clip as the garand, etc.
 
+	int eType;
+	int eFlags;                     ///< bg
+	int svFlags;
+	int trType;
+	int trTime;
+	int clipMask;
+
 	qboolean isScoped;              ///< bg
 
 	qboolean isLightWeaponSupportingFastReload; ///< bg
@@ -1030,12 +1109,17 @@ typedef struct weapontable_s
 	int splashDamage;               ///< g
 	int splashRadius;               ///< g
 
+	qboolean quickFireMode;         ///<
+	qboolean firingAuto;            ///<
+
 	qboolean keepDisguise;          ///< g
 
+	qboolean isThrowable;           ///<
 	qboolean isAutoReload;          ///< bg
-	qboolean noAmmoSound;
-	qboolean noAmmoAutoSwitch;
-
+	qboolean noAmmoSound;           ///<
+	qboolean noAmmoAutoSwitch;      ///<
+	qboolean isExplosive;           ///<
+	qboolean isSyringe;             ///<
 
 	qboolean isPistol;              ///<
 	qboolean isAkimbo;              ///< bg
@@ -1081,7 +1165,7 @@ typedef struct weapontable_s
 	int reloadTime;                 ///<
 	int fireDelayTime;              ///<
 	int nextShotTime;               ///<
-    int aimSpreadScaleAdd;          ///<
+	int aimSpreadScaleAdd;          ///<
 
 	int maxHeat;                    ///< max active firing time before weapon 'overheats' (at which point the weapon will fail)
 	int coolRate;                   ///< how fast the weapon cools down. (per second)
@@ -1092,8 +1176,28 @@ typedef struct weapontable_s
 	float knockback;                ///<
 	int ejectBrassOffset[3];        ///< forward, left, up
 
+	int nextThink;                  ///<
+	int accuracy;                   ///<
+
+	float adjustLean;               ///<
+	float pitchRecoil;              ///<
+	float yawRecoil;                ///<
+
 	const char *className;          ///<
 	const char *weapFile;           ///<
+
+	weaponCardIconId_t weaponCardIcon;            ///<
+	float weaponCardCoord[WEAPON_CARD_CORRD_NUM]; ///<
+
+	int idleAnim;
+	int attackAnim;
+	int lastAttackAnim;
+	int altSwitchFrom;
+	int altSwitchTo;
+	int reloadAnim;
+	int raiseAnim;
+	int dropAnim;
+
 	meansOfDeath_t mod;             ///< means of death
 	meansOfDeath_t splashMod;       ///< means of death
 
@@ -1112,12 +1216,17 @@ typedef struct weapontable_s
 typedef struct modtable_s
 {
 	meansOfDeath_t mod;                             ///< reference
+	weapon_t weaponIcon;                            ///< g
 
 	qboolean isHeadshot;                            ///< g
 	qboolean isExplosive;                           ///< g
 
 	int weaponClassForMOD;                          ///< g
 	int noYellMedic;                                ///< g
+	const char *obituaryKillMessage1;               ///< g
+	const char *obituaryKillMessage2;               ///< g
+	const char *obituarySelfKillMessage;            ///< g
+	const char *obituaryNoAttackerMessage;          ///< g
 	const char *modName;                            ///< g - These are just for logging, the client prints its own messages
 	skillType_t skillType;                          ///< g
 	float defaultKillPoints;                        ///< g
@@ -1736,9 +1845,6 @@ gitem_t *BG_FindItemForClassName(const char *className);
 gitem_t *BG_FindItemForWeapon(weapon_t weapon);
 gitem_t *BG_GetItem(int index);
 
-weapon_t BG_FindAmmoForWeapon(weapon_t weapon);
-weapon_t BG_FindClipForWeapon(weapon_t weapon);
-
 qboolean BG_AkimboFireSequence(int weapon, int akimboClip, int mainClip);
 
 qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, int *skill, team_t teamNum);
@@ -2308,8 +2414,6 @@ void BG_AnimUpdatePlayerStateConditions(pmove_t *pmove);
 animation_t *BG_AnimationForString(char *string, animModelInfo_t *animModelInfo);
 animation_t *BG_GetAnimationForIndex(animModelInfo_t *animModelInfo, int index);
 int BG_GetAnimScriptEvent(playerState_t *ps, scriptAnimEventTypes_t event);
-int PM_IdleAnimForWeapon(int weapon);
-int PM_RaiseAnimForWeapon(int weapon);
 void PM_ContinueWeaponAnim(int anim);
 
 extern animStringItem_t animStateStr[];
@@ -2647,13 +2751,15 @@ extern weaponTable_t weaponTable[WP_NUM_WEAPONS];
 extern modTable_t modTable[MOD_NUM_MODS];
 #define GetMODTableData(modIndex) ((modTable_t *)(&modTable[modIndex]))
 
+// Lookup table to find skill properties
+extern skilltable_t skillTable[SK_NUM_SKILLS];
+#define GetSkillTableData(skillIndex) ((skilltable_t *)(&skillTable[skillIndex]))
+
 #define MAX_MAP_SIZE 65536
 
 qboolean BG_BBoxCollision(vec3_t min1, vec3_t max1, vec3_t min2, vec3_t max2);
 
 //#define VISIBLE_TRIGGERS
-
-extWeaponStats_t BG_WeapStatForWeapon(weapon_t iWeaponID);
 
 /**
  * @enum popupMessageType_e
@@ -2688,15 +2794,12 @@ typedef enum popupMessageBigType_e
 	PM_BIG_NUM_TYPES
 } popupMessageBigType_t;
 
-int PM_AltSwitchFromForWeapon(int weapon);
-int PM_AltSwitchToForWeapon(int weapon);
-
 #define HITBOXBIT_HEAD   1024
 #define HITBOXBIT_LEGS   2048
 #define HITBOXBIT_CLIENT 4096
 
-void PM_TraceLegs(trace_t * trace, float *legsOffset, vec3_t start, vec3_t end, trace_t * bodytrace, vec3_t viewangles, void(tracefunc)(trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
-void PM_TraceHead(trace_t * trace, vec3_t start, vec3_t end, trace_t * bodytrace, vec3_t viewangles, void(tracefunc)(trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
+void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
 void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end);
 void PM_TraceAll(trace_t *trace, vec3_t start, vec3_t end);
 
