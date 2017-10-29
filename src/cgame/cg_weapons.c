@@ -2829,7 +2829,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				}
 			}
 		}
-		else if (weaponNum == WP_GARAND || weaponNum == WP_K43)
+		else if (GetWeaponTableData(weaponNum)->isRifleWithScope)
 		{
 			barrel.hModel = weapon->modModels[0];
 			if (barrel.hModel)
@@ -2864,9 +2864,9 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
 			}
 		}
-		else if (GetWeaponTableData(weaponNum)->isScoped || GetWeaponTableData(GetWeaponTableData(weaponNum)->weapAlts)->isScoped)
+		else if (GetWeaponTableData(weaponNum)->isScoped || GetWeaponTableData(weaponNum)->isRifleWithScope)
 		{
-			if (weaponNum != WP_FG42 && weaponNum != WP_FG42SCOPE)
+			if (weaponNum != WP_FG42SCOPE)
 			{
 				// the holder
 				barrel.hModel = weapon->modModels[2];
