@@ -1113,6 +1113,7 @@ typedef struct weapontable_s
 	qboolean quickFireMode;         ///<
 	qboolean firingAuto;            ///<
 
+	qboolean neverLoseDisguise;    ///< g
 	qboolean keepDisguise;          ///< g
 
 	qboolean isThrowable;           ///<

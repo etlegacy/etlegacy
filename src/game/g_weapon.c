@@ -4273,27 +4273,13 @@ void FireWeapon(gentity_t *ent)
 	// covert ops disguise handling
 	if (ent->client->ps.powerups[PW_OPS_DISGUISED])
 	{
-		if (GetWeaponTableData(ent->s.weapon)->keepDisguise)
+		if (!GetWeaponTableData(ent->s.weapon)->neverLoseDisguise)
 		{
-			switch (ent->s.weapon)
+			if (!GetWeaponTableData(ent->s.weapon)->keepDisguise || G_PlayerCanBeSeenByOthers(ent))
 			{
-			case WP_SMOKE_BOMB:     // never loose disguise
-			case WP_SATCHEL:
-			case WP_SATCHEL_DET:
-			case WP_BINOCULARS:
-				break;
-			default:                // in case of covert ops weapon disguise is lost when seen by others AND 'low noise' weapon is used
-				if (G_PlayerCanBeSeenByOthers(ent))
-				{
-					ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
-					ent->client->disguiseClientNum             = -1;
-				}
+				ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
+				ent->client->disguiseClientNum             = -1;
 			}
-		}
-		else                        // luger, akimbo luger, colt, akimbo colt, fg42, fg42_scoped
-		{
-			ent->client->ps.powerups[PW_OPS_DISGUISED] = 0;
-			ent->client->disguiseClientNum             = -1;
 		}
 	}
 
