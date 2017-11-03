@@ -2730,4 +2730,18 @@ void G_MapVoteInfoRead(void);
 void G_RailTrail(vec_t *start, vec_t *end, vec_t *color);
 void G_RailBox(vec_t *origin, vec_t *mins, vec_t *maxs, vec_t *color, int index);
 
+/**
+ * @struct weapFireFunction_s
+ * @typedef weapFireFunction_t
+ * @brief
+ */
+typedef struct weapFireFunction_s
+{
+	weapon_t weapon;
+	gentity_t *(*fire)(gentity_t * ent);
+
+} weapFireFunction_t;
+
+extern weapFireFunction_t weapFireTable[WP_NUM_WEAPONS];
+
 #endif // #ifndef INCLUDE_G_LOCAL_H

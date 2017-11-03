@@ -251,7 +251,7 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
  * @param[in] ignoreent
  * @param[in] tracemask
  */
-void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
 {
 	vec3_t ofs, org, point;
 	vec3_t flatforward;
@@ -332,7 +332,7 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
  * @param[in] tracemask
  */
 void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles,
-                  void(tracefunc) (trace_t *results,
+                  void(tracefunc) (trace_t * results,
                                    const vec3_t start,
                                    const vec3_t mins,
                                    const vec3_t maxs,
@@ -3271,7 +3271,6 @@ static void PM_Weapon(void)
 	qboolean delayedFire;       // true if the delay time has just expired and this is the frame to send the fire event
 	int      weapattackanim;
 	qboolean akimboFire;
-	float    chargeTime = -1.f;
 #ifdef DO_WEAPON_DBG
 	static int weaponstate_last = -1;
 #endif
@@ -3500,68 +3499,51 @@ static void PM_Weapon(void)
 		break;
 	}
 
-	// don't allow some weapons to fire if charge bar isn't full
-	// FIXME: put chargeTime factor in weapon table? See CG_DrawWeapRecharge()
-	if (pm->ps->weapon == WP_NONE)  // this is possible since the player starts with nothing
+	// this is possible since the player starts with nothing
+	if (pm->ps->weapon == WP_NONE)
 	{
 		return;
 	}
-	else if (GetWeaponTableData(pm->ps->weapon)->isPanzer)
+
+	if (GetWeaponTableData(pm->ps->weapon)->isPanzer)
 	{
 		if (pm->ps->eFlags & EF_PRONE)
 		{
 			return;
 		}
-
-		chargeTime = pm->soldierChargeTime * pm->skill[SK_HEAVY_WEAPONS] >= 1 ? 0.66f : 1.f;
-	}
-	else if (GetWeaponTableData(pm->ps->weapon)->isRiflenade)
-	{
-		chargeTime = pm->soldierChargeTime * 0.5f;
-	}
-	else if (GetWeaponTableData(pm->ps->weapon)->isMortarSet)
-	{
-		chargeTime = pm->soldierChargeTime * pm->skill[SK_HEAVY_WEAPONS] >= 1 ? 0.33f : 0.5f;
-	}
-	else if (pm->ps->weapon == WP_SMOKE_BOMB || pm->ps->weapon == WP_SATCHEL)
-	{
-		chargeTime = pm->covertopsChargeTime * pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 2 ? 0.66f : 1;
-	}
-	else if (pm->ps->weapon == WP_LANDMINE)
-	{
-		chargeTime = pm->engineerChargeTime * pm->skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 2 ? 0.33f : 0.5f;
-	}
-	else if (pm->ps->weapon == WP_DYNAMITE)
-	{
-		chargeTime = pm->engineerChargeTime * pm->skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 3 ? 0.66f : 1;
-	}
-	else if (pm->ps->weapon == WP_AMMO)
-	{
-		chargeTime = pm->ltChargeTime * pm->skill[SK_SIGNALS] >= 1 ? 0.15f : 0.25f;
-	}
-	else if (pm->ps->weapon == WP_MEDKIT)
-	{
-		chargeTime = pm->medicChargeTime * pm->skill[SK_FIRST_AID] >= 2 ? 0.15f : 0.25f;
-	}
-	else if (pm->ps->weapon == WP_SMOKE_MARKER)
-	{
-		chargeTime = pm->ltChargeTime * pm->skill[SK_SIGNALS] >= 2 ? 0.66f : 1;
-	}
-	else if (pm->ps->weapon == WP_MEDIC_ADRENALINE)
-	{
-		chargeTime = pm->medicChargeTime;
 	}
 
-	if (chargeTime != -1.f)
+	// don't allow some weapons to fire if charge bar isn't full
+	if (GetWeaponTableData(pm->ps->weapon)->useChargeTime)
 	{
-		if (pm->cmd.serverTime - pm->ps->classWeaponTime < chargeTime)
+		skillType_t skill = GetWeaponTableData(pm->ps->weapon)->skillBased;
+		float       coeff = GetWeaponTableData(pm->ps->weapon)->chargeTimeCoeff[pm->skill[skill]];
+		int         chargeTime;
+
+		switch (skill)
 		{
-			if ((pm->ps->weapon == WP_MEDKIT || pm->ps->weapon == WP_AMMO) && pm->cmd.buttons & BUTTON_ATTACK)
-			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_NOPOWER, qtrue, qfalse);
-			}
+		case SK_EXPLOSIVES_AND_CONSTRUCTION:              chargeTime = pm->engineerChargeTime;  break;
+		case SK_FIRST_AID:                                chargeTime = pm->medicChargeTime;     break;
+		case SK_SIGNALS:                                  chargeTime = pm->ltChargeTime;        break;
+		case SK_HEAVY_WEAPONS:                            chargeTime = pm->soldierChargeTime;   break;
+		case SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS: chargeTime = pm->covertopsChargeTime; break;
+		case SK_BATTLE_SENSE:
+		case SK_LIGHT_WEAPONS:
+		case SK_NUM_SKILLS:
+		default:                                          chargeTime = -1; break;
+		}
 
-			return;
+		if (chargeTime != -1)
+		{
+			if (pm->cmd.serverTime - pm->ps->classWeaponTime < chargeTime * coeff)
+			{
+				if ((pm->ps->weapon == WP_MEDKIT || pm->ps->weapon == WP_AMMO) && pm->cmd.buttons & BUTTON_ATTACK)
+				{
+					BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_NOPOWER, qtrue, qfalse);
+				}
+
+				return;
+			}
 		}
 	}
 
@@ -3698,7 +3680,6 @@ static void PM_Weapon(void)
 	pm->ps->weaponstate = WEAPON_FIRING;
 
 	// check for out of ammo
-
 	ammoNeeded = GetWeaponTableData(pm->ps->weapon)->uses;
 
 	if (pm->ps->weapon)
@@ -4319,7 +4300,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
  *
  * @note Tnused trace parameter
  */
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)           //   modified
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)           //   modified
 {
 	short  temp;
 	int    i;
