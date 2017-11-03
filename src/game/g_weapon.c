@@ -4170,7 +4170,7 @@ qboolean G_PlayerCanBeSeenByOthers(gentity_t *ent)
 	return qfalse;
 }
 
-fireFunction_t weapFireTable[] =
+weapFireFunction_t weapFireTable[] =
 {
 	{ WP_NONE,                 NULL,                        },
 	{ WP_KNIFE,                Weapon_Knife,                },
