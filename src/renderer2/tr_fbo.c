@@ -438,20 +438,20 @@ void R_BindFBO(FBO_t *fbo)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo->frameBuffer);
 
-		/*
-		   if(fbo->colorBuffers[0])
+		
+		   if(fbo->colorBuffers[0].buffer)
 		   {
-		   glBindRenderbuffer(GL_RENDERBUFFER, fbo->colorBuffers[0]);
+		   glBindRenderbuffer(GL_RENDERBUFFER, fbo->colorBuffers[0].buffer);
 		   }
-		 */
+		 
 
-		/*
-		   if(fbo->depthBuffer)
+		
+		   if(fbo->depthBuffer.buffer)
 		   {
-		   glBindRenderbuffer(GL_RENDERBUFFER, fbo->depthBuffer);
-		   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fbo->depthBuffer);
+		   glBindRenderbuffer(GL_RENDERBUFFER, fbo->depthBuffer.buffer);
+		   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fbo->depthBuffer.buffer);
 		   }
-		 */
+		 
 
 		glState.currentFBO = fbo;
 	}
