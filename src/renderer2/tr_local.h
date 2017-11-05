@@ -147,8 +147,8 @@ typedef enum
 	FRUSTUM_TOP,
 	FRUSTUM_NEAR,
 	FRUSTUM_FAR,
-	FRUSTUM_PLANES  = 5,
-	FRUSTUM_CLIPALL = 1 | 2 | 4 | 8 | 16    //| 32
+	FRUSTUM_PLANES  = 6,//cplane_t frustum_t[6];
+	FRUSTUM_CLIPALL = 0 | 1 | 2 | 4 | 8 | 16    //| 32
 } frustumBits_t;
 
 typedef cplane_t frustum_t[6];
