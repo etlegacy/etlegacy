@@ -2510,6 +2510,7 @@ static void R_SortDrawSurfs(void)
 	// the first surfaces, not the last ones
 	if (tr.viewParms.numDrawSurfs > MAX_DRAWSURFS)
 	{
+		Ren_Print("R_SortDrawSurfs Warning: MAX_DRAWSURFS limit reached\n");
 		tr.viewParms.numDrawSurfs = MAX_DRAWSURFS;
 	}
 

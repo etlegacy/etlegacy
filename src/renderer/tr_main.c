@@ -1588,6 +1588,7 @@ void R_SortDrawSurfs(drawSurf_t *drawSurfs, int numDrawSurfs)
 	// the first surfaces, not the last ones
 	if (numDrawSurfs > MAX_DRAWSURFS)
 	{
+		Ren_Print("R_SortDrawSurfs Warning: MAX_DRAWSURFS limit reached\n");
 		numDrawSurfs = MAX_DRAWSURFS;
 	}
 
