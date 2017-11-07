@@ -43,10 +43,7 @@ static qboolean fogIsOn = qfalse;
  */
 void RB_Fog(glfog_t *curfog)
 {
-	static glfog_t setfog;
-
 	Ren_LogComment("--- RB_Fog() ---\n");
-
 
 	if (!r_wolfFog->integer)
 	{
@@ -76,56 +73,19 @@ void RB_Fog(glfog_t *curfog)
 
 	RB_FogOn();
 
-	// only send changes if necessary
-
-  if(curfog->mode != setfog.mode || !setfog.registered) {
-
 	glFogi(GL_FOG_MODE, curfog->mode);
-
-      setfog.mode = curfog->mode;
-  }
-  if(curfog->color[0] != setfog.color[0] || curfog->color[1] != setfog.color[1] || curfog->color[2] != setfog.color[2] || !setfog.registered) {
-
 	glFogfv(GL_FOG_COLOR, curfog->color);
-
-     VectorCopy(setfog.color, curfog->color);
-  }
- if(curfog->density != setfog.density || !setfog.registered) {
-
 	glFogf(GL_FOG_DENSITY, curfog->density);
-
-     setfog.density = curfog->density;
- }
-  if(curfog->hint != setfog.hint || !setfog.registered) {
-
 	glHint(GL_FOG_HINT, curfog->hint);
-
-      setfog.hint = curfog->hint;
-  }
-  if(curfog->start != setfog.start || !setfog.registered) {
-
 	glFogf(GL_FOG_START, curfog->start);
-
-      setfog.start = curfog->start;
-  }
 
 	if (r_zFar->value != 0.f)
 	{                           // allow override for helping level designers test fog distances
-      if(setfog.end != r_zFar->value || !setfog.registered) {
-
 		glFogf(GL_FOG_END, r_zFar->value);
-
-          setfog.end = r_zFar->value;
-     }
 	}
 	else
 	{
-      if(curfog->end != setfog.end || !setfog.registered) {
-
 		glFogf(GL_FOG_END, curfog->end);
-
-          setfog.end = curfog->end;
-      }
 	}
 
 	// from SP NV fog code
@@ -135,10 +95,7 @@ void RB_Fog(glfog_t *curfog)
 		glFogi(GL_FOG_DISTANCE_MODE_NV, glConfig.NVFogMode);
 	}
 
-	setfog.registered = qtrue;
-
 	GL_ClearColor(curfog->color[0], curfog->color[1], curfog->color[2], curfog->color[3]);
-
 }
 
 /**
@@ -147,7 +104,6 @@ void RB_Fog(glfog_t *curfog)
 void RB_FogOff(void)
 {
 	Ren_LogComment("--- RB_FogOff() ---\n");
-
 
 	if (!fogIsOn)
 	{
@@ -167,31 +123,32 @@ void RB_FogOn(void)
 {
 	Ren_LogComment("--- RB_FogOn() ---\n");
 
-
 	if (fogIsOn)
 	{
 		return;
 	}
 
-  if(r_uiFullScreen->integer) {   // don't fog in the menu
-      RB_FogOff();
-      return;
- }
+	if(r_uiFullScreen->integer)
+	{   // don't fog in the menu
+		RB_FogOff();
+		return;
+	}
 
 	if (!r_wolfFog->integer)
 	{
 		return;
 	}
 
-  if(backEnd.viewParms.isGLFogged) {
-      if(!(backEnd.viewParms.glFog.registered))
-          return;
-  }
-
-	if (backEnd.refdef.rdflags & RDF_SKYBOXPORTAL)
+	if(backEnd.viewParms.isGLFogged)
 	{
-		// don't force world fog on portal sky
+		if(!(backEnd.viewParms.glFog.registered))
+		{
+			return;
+		}
+	}
 
+	if (backEnd.refdef.rdflags & RDF_SKYBOXPORTAL)     // don't force world fog on portal sky
+	{
 		if (!(tr.glfogsettings[FOG_PORTALVIEW].registered))
 		{
 			return;
@@ -205,7 +162,6 @@ void RB_FogOn(void)
 	glEnable(GL_FOG);
 
 	fogIsOn = qtrue;
-
 }
 
 /**
