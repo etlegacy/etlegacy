@@ -6148,6 +6148,10 @@ void R_ShaderList_f(void)
 		{
 			Ren_Print("reflection_CB  ");
 		}
+		else if (shader->collapseType == COLLAPSE_color_lightmap)
+		{
+			Ren_Print("color_lightmap ");
+		}
 		else
 		{
 			Ren_Print("               ");
