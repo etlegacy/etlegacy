@@ -69,7 +69,6 @@ static void UI_FeederSelection(int feederID, int index);
 static qboolean UI_FeederSelectionClick(itemDef_t *item);
 static void UI_BuildServerDisplayList(int force);
 static void UI_BuildServerStatus(qboolean force);
-static void UI_BuildFindPlayerList(qboolean force);
 static int QDECL UI_ServersQsortCompare(const void *arg1, const void *arg2);
 static int UI_MapCountByGameType(qboolean singlePlayer);
 static const char *UI_SelectedMap(qboolean singlePlayer, int index, int *actual);
@@ -854,13 +853,11 @@ static void Text_Paint_Limit(float *maxX, float x, float y, float scale, vec4_t 
 
 /**
  * @brief UI_ShowPostGame
- * @param[in] newHigh
  */
-void UI_ShowPostGame(qboolean newHigh)
+void UI_ShowPostGame()
 {
 	trap_Cvar_Set("cg_thirdPerson", "0");
 	trap_Cvar_Set("sv_killserver", "1");
-	uiInfo.soundHighScore = newHigh;
 	UI_SetActiveMenu(UIMENU_POSTGAME);
 }
 
@@ -922,8 +919,6 @@ void UI_Refresh(int realtime)
 		UI_DoServerRefresh();
 		// refresh server status
 		UI_BuildServerStatus(qfalse);
-		// refresh find player list
-		UI_BuildFindPlayerList(qfalse);
 	}
 
 	// draw cursor
@@ -3416,33 +3411,6 @@ qboolean UI_OwnerDrawVisible(int flags)
 			vis    = qfalse;
 			flags &= ~UI_SHOW_NETANYNONTEAMGAME;
 		}
-		if (flags & UI_SHOW_NEWHIGHSCORE)
-		{
-			if (uiInfo.newHighScoreTime < uiInfo.uiDC.realTime)
-			{
-				vis = qfalse;
-			}
-			else
-			{
-				if (uiInfo.soundHighScore)
-				{
-					if (trap_Cvar_VariableValue("sv_killserver") == 0.f)
-					{
-						// wait on server to go down before playing sound
-						uiInfo.soundHighScore = qfalse;
-					}
-				}
-			}
-			flags &= ~UI_SHOW_NEWHIGHSCORE;
-		}
-		if (flags & UI_SHOW_NEWBESTTIME)
-		{
-			if (uiInfo.newBestTime < uiInfo.uiDC.realTime)
-			{
-				vis = qfalse;
-			}
-			flags &= ~UI_SHOW_NEWBESTTIME;
-		}
 
 		if (flags & UI_SHOW_CAMPAIGNMAP1EXISTS)
 		{
@@ -3545,15 +3513,6 @@ qboolean UI_OwnerDrawVisible(int flags)
 				vis = qfalse;
 			}
 			flags &= ~UI_SHOW_PLAYERREFEREE;
-		}
-
-		if (flags & UI_SHOW_DEMOAVAILABLE)
-		{
-			if (!uiInfo.demoAvailable)
-			{
-				vis = qfalse;
-			}
-			flags &= ~UI_SHOW_DEMOAVAILABLE;
 		}
 		else
 		{
@@ -4559,10 +4518,6 @@ void UI_RunMenuScript(char **args)
 			// loadGameInfo is unused
 			UI_ParseGameInfo("gameinfo.txt");
 		}
-		else if (Q_stricmp(name, "resetScores") == 0)
-		{
-			// UI_ClearScores();
-		}
 		else if (Q_stricmp(name, "RefreshServers") == 0)
 		{
 			UI_StartServerRefresh(qtrue);
@@ -4572,13 +4527,6 @@ void UI_RunMenuScript(char **args)
 		{
 			UI_StartServerRefresh(uiInfo.serverStatus.numDisplayServers ? qfalse : qtrue);      // if we don't have any valid servers, it's kinda safe to assume we would like to get a full new list
 			UI_BuildServerDisplayList(1);
-		}
-		else if (Q_stricmp(name, "RunSPDemo") == 0)
-		{
-			if (uiInfo.demoAvailable)
-			{
-				trap_Cmd_ExecuteText(EXEC_APPEND, va("demo %s_%i", uiInfo.mapList[ui_currentMap.integer].mapLoadName, uiInfo.gameTypes[ui_gameType.integer].gtEnum));
-			}
 		}
 		else if (Q_stricmp(name, "LoadDemos") == 0)
 		{
@@ -4626,7 +4574,6 @@ void UI_RunMenuScript(char **args)
 				UI_StopServerRefresh();
 				uiInfo.serverStatus.nextDisplayRefresh = 0;
 				uiInfo.nextServerStatusRefresh         = 0;
-				uiInfo.nextFindPlayerRefresh           = 0;
 				UI_BuildServerDisplayList(1);
 			}
 			else
@@ -4640,7 +4587,6 @@ void UI_RunMenuScript(char **args)
 			UI_StopServerRefresh();
 			uiInfo.serverStatus.nextDisplayRefresh = 0;
 			uiInfo.nextServerStatusRefresh         = 0;
-			uiInfo.nextFindPlayerRefresh           = 0;
 		}
 		else if (Q_stricmp(name, "UpdateFilter") == 0)
 		{
@@ -4730,19 +4676,6 @@ void UI_RunMenuScript(char **args)
 				}
 			}
 		}
-		else if (Q_stricmp(name, "FoundPlayerServerStatus") == 0)
-		{
-			Q_strncpyz(uiInfo.serverStatusAddress, uiInfo.foundPlayerServerAddresses[uiInfo.currentFoundPlayerServer], sizeof(uiInfo.serverStatusAddress));
-			UI_BuildServerStatus(qtrue);
-			Menu_SetFeederSelection(NULL, FEEDER_FINDPLAYER, 0, NULL);
-		}
-		else if (Q_stricmp(name, "FindPlayer") == 0)
-		{
-			UI_BuildFindPlayerList(qtrue);
-			// clear the displayed server status info
-			uiInfo.serverStatusInfo.numLines = 0;
-			Menu_SetFeederSelection(NULL, FEEDER_FINDPLAYER, 0, NULL);
-		}
 		else if (Q_stricmp(name, "JoinServer") == 0)
 		{
 			if (uiInfo.serverStatus.currentServer >= 0 && uiInfo.serverStatus.currentServer < uiInfo.serverStatus.numDisplayServers)
@@ -4760,13 +4693,6 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_connecting", "1");
 			trap_Cvar_Set("cg_thirdPerson", "0");
 			trap_Cmd_ExecuteText(EXEC_APPEND, va("connect %s\n", UI_Cvar_VariableString("ui_connectToIPAddress")));
-		}
-		else if (Q_stricmp(name, "FoundPlayerJoinServer") == 0)
-		{
-			if (uiInfo.currentFoundPlayerServer >= 0 && uiInfo.currentFoundPlayerServer < uiInfo.numFoundPlayerServers)
-			{
-				trap_Cmd_ExecuteText(EXEC_APPEND, va("connect %s\n", uiInfo.foundPlayerServerAddresses[uiInfo.currentFoundPlayerServer]));
-			}
 		}
 		else if (Q_stricmp(name, "Quit") == 0)
 		{
@@ -6730,190 +6656,6 @@ static int UI_GetServerStatusInfo(const char *serverAddress, serverStatusInfo_t 
 }
 
 /**
- * @brief stristr
- * @param[in,out] str
- * @param[in] charset
- * @return
- */
-static char *stristr(char *str, const char *charset)
-{
-	int i;
-
-	while (*str)
-	{
-		for (i = 0; charset[i] && str[i]; i++)
-		{
-			if (toupper(charset[i]) != toupper(str[i]))
-			{
-				break;
-			}
-		}
-		if (!charset[i])
-		{
-			return str;
-		}
-		str++;
-	}
-	return NULL;
-}
-
-/**
- * @brief UI_BuildFindPlayerList
- * @param[in] force
- */
-static void UI_BuildFindPlayerList(qboolean force)
-{
-	static int         numFound, numTimeOuts;
-	int                i, j, resend;
-	serverStatusInfo_t info;
-	char               name[MAX_NAME_LENGTH + 2];
-	char               infoString[MAX_STRING_CHARS];
-
-	if (!force)
-	{
-		if (!uiInfo.nextFindPlayerRefresh || uiInfo.nextFindPlayerRefresh > uiInfo.uiDC.realTime)
-		{
-			return;
-		}
-	}
-	else
-	{
-		Com_Memset(&uiInfo.pendingServerStatus, 0, sizeof(uiInfo.pendingServerStatus));
-		uiInfo.numFoundPlayerServers    = 0;
-		uiInfo.currentFoundPlayerServer = 0;
-		trap_Cvar_VariableStringBuffer("ui_findPlayer", uiInfo.findPlayerName, sizeof(uiInfo.findPlayerName));
-		Q_CleanStr(uiInfo.findPlayerName);
-		// should have a string of some length
-		if (!strlen(uiInfo.findPlayerName))
-		{
-			uiInfo.nextFindPlayerRefresh = 0;
-			return;
-		}
-		// set resend time
-		resend = ui_serverStatusTimeOut.integer / 2 - 10;
-		if (resend < 50)
-		{
-			resend = 50;
-		}
-		trap_Cvar_Set("cl_serverStatusResendTime", va("%d", resend));
-		// reset all server status requests
-		trap_LAN_ServerStatus(NULL, NULL, 0);
-
-		uiInfo.numFoundPlayerServers = 1;
-		Com_sprintf(uiInfo.foundPlayerServerNames[uiInfo.numFoundPlayerServers - 1],
-		            sizeof(uiInfo.foundPlayerServerNames[uiInfo.numFoundPlayerServers - 1]),
-		            "searching %d...", uiInfo.pendingServerStatus.num);
-		numFound = 0;
-		numTimeOuts++;
-	}
-	for (i = 0; i < MAX_SERVERSTATUSREQUESTS; i++)
-	{
-		// if this pending server is valid
-		if (uiInfo.pendingServerStatus.server[i].valid)
-		{
-			// try to get the server status for this server
-			if (UI_GetServerStatusInfo(uiInfo.pendingServerStatus.server[i].adrstr, &info))
-			{
-				numFound++;
-				// parse through the server status lines
-				for (j = 0; j < info.numLines; j++)
-				{
-					// should have ping info
-					if (!info.lines[j][2] || !info.lines[j][2][0])
-					{
-						continue;
-					}
-					// clean string first
-					Q_strncpyz(name, info.lines[j][3], sizeof(name));
-					Q_CleanStr(name);
-					// if the player name is a substring
-					if (stristr(name, uiInfo.findPlayerName))
-					{
-						// add to found server list if we have space (always leave space for a line with the number found)
-						if (uiInfo.numFoundPlayerServers < MAX_FOUNDPLAYER_SERVERS - 1)
-						{
-							Q_strncpyz(uiInfo.foundPlayerServerAddresses[uiInfo.numFoundPlayerServers - 1],
-							           uiInfo.pendingServerStatus.server[i].adrstr,
-							           sizeof(uiInfo.foundPlayerServerAddresses[0]));
-							Q_strncpyz(uiInfo.foundPlayerServerNames[uiInfo.numFoundPlayerServers - 1],
-							           uiInfo.pendingServerStatus.server[i].name,
-							           sizeof(uiInfo.foundPlayerServerNames[0]));
-							uiInfo.numFoundPlayerServers++;
-						}
-						else
-						{
-							// can't add any more so we're done
-							uiInfo.pendingServerStatus.num = uiInfo.serverStatus.numDisplayServers;
-						}
-					}
-				}
-				Com_sprintf(uiInfo.foundPlayerServerNames[uiInfo.numFoundPlayerServers - 1],
-				            sizeof(uiInfo.foundPlayerServerNames[uiInfo.numFoundPlayerServers - 1]),
-				            "searching %d/%d...", uiInfo.pendingServerStatus.num, numFound);
-				// retrieved the server status so reuse this spot
-				uiInfo.pendingServerStatus.server[i].valid = qfalse;
-			}
-		}
-		// if empty pending slot or timed out
-		if (!uiInfo.pendingServerStatus.server[i].valid ||
-		    uiInfo.pendingServerStatus.server[i].startTime < uiInfo.uiDC.realTime - ui_serverStatusTimeOut.integer)
-		{
-			if (uiInfo.pendingServerStatus.server[i].valid)
-			{
-				numTimeOuts++;
-			}
-			// reset server status request for this address
-			UI_GetServerStatusInfo(uiInfo.pendingServerStatus.server[i].adrstr, NULL);
-			// reuse pending slot
-			uiInfo.pendingServerStatus.server[i].valid = qfalse;
-			// if we didn't try to get the status of all servers in the main browser yet
-			if (uiInfo.pendingServerStatus.num < uiInfo.serverStatus.numDisplayServers)
-			{
-				uiInfo.pendingServerStatus.server[i].startTime = uiInfo.uiDC.realTime;
-				trap_LAN_GetServerAddressString(ui_netSource.integer, uiInfo.serverStatus.displayServers[uiInfo.pendingServerStatus.num],
-				                                uiInfo.pendingServerStatus.server[i].adrstr, sizeof(uiInfo.pendingServerStatus.server[i].adrstr));
-				trap_LAN_GetServerInfo(ui_netSource.integer, uiInfo.serverStatus.displayServers[uiInfo.pendingServerStatus.num], infoString, sizeof(infoString));
-				Q_strncpyz(uiInfo.pendingServerStatus.server[i].name, Info_ValueForKey(infoString, "hostname"), sizeof(uiInfo.pendingServerStatus.server[0].name));
-				uiInfo.pendingServerStatus.server[i].valid = qtrue;
-				uiInfo.pendingServerStatus.num++;
-				Com_sprintf(uiInfo.foundPlayerServerNames[uiInfo.numFoundPlayerServers - 1],
-				            sizeof(uiInfo.foundPlayerServerNames[uiInfo.numFoundPlayerServers - 1]),
-				            "searching %d/%d...", uiInfo.pendingServerStatus.num, numFound);
-			}
-		}
-	}
-	for (i = 0; i < MAX_SERVERSTATUSREQUESTS; i++)
-	{
-		if (uiInfo.pendingServerStatus.server[i].valid)
-		{
-			break;
-		}
-	}
-	// if still trying to retrieve server status info
-	if (i < MAX_SERVERSTATUSREQUESTS)
-	{
-		uiInfo.nextFindPlayerRefresh = uiInfo.uiDC.realTime + 25;
-	}
-	else
-	{
-		// add a line that shows the number of servers found
-		if (!uiInfo.numFoundPlayerServers)
-		{
-			Com_sprintf(uiInfo.foundPlayerServerNames[0], sizeof(uiInfo.foundPlayerServerNames[0]), "no servers found");
-		}
-		else
-		{
-			Com_sprintf(uiInfo.foundPlayerServerNames[uiInfo.numFoundPlayerServers - 1], sizeof(uiInfo.foundPlayerServerNames[0]),
-			            "%d server%s found with player %s", uiInfo.numFoundPlayerServers - 1,
-			            uiInfo.numFoundPlayerServers == 2 ? "" : "s", uiInfo.findPlayerName);
-		}
-		uiInfo.nextFindPlayerRefresh = 0;
-		// show the server status info for the selected server
-		UI_FeederSelection(FEEDER_FINDPLAYER, uiInfo.currentFoundPlayerServer);
-	}
-}
-
-/**
  * @brief UI_BuildServerStatus
  * @param[in] force
  */
@@ -6923,10 +6665,6 @@ static void UI_BuildServerStatus(qboolean force)
 	uiClientState_t cstate;
 	trap_GetClientState(&cstate);
 
-	if (uiInfo.nextFindPlayerRefresh)
-	{
-		return;
-	}
 	if (!force)
 	{
 		if (!uiInfo.nextServerStatusRefresh || uiInfo.nextServerStatusRefresh > uiInfo.uiDC.realTime)
@@ -7002,8 +6740,6 @@ static int UI_FeederCount(int feederID)
 		return uiInfo.serverStatus.numDisplayServers;
 	case FEEDER_SERVERSTATUS:
 		return uiInfo.serverStatusInfo.numLines;
-	case FEEDER_FINDPLAYER:
-		return uiInfo.numFoundPlayerServers;
 	case FEEDER_PLAYER_LIST:
 		if (uiInfo.uiDC.realTime > uiInfo.playerRefresh)
 		{
@@ -7474,13 +7210,6 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 			}
 		}
 		break;
-	case FEEDER_FINDPLAYER:
-		if (index >= 0 && index < uiInfo.numFoundPlayerServers)
-		{
-			//return uiInfo.foundPlayerServerAddresses[index];  // TODO: cleanup ?
-			return uiInfo.foundPlayerServerNames[index];
-		}
-		break;
 	case FEEDER_PLAYER_LIST:
 		if (index >= 0 && index < uiInfo.playerCount)
 		{
@@ -7774,16 +7503,6 @@ static void UI_FeederSelection(int feederID, int index)
 		break;
 	}
 	case FEEDER_SERVERSTATUS:
-		break;
-	case FEEDER_FINDPLAYER:
-		uiInfo.currentFoundPlayerServer = index;
-		if (index < uiInfo.numFoundPlayerServers - 1)
-		{
-			// build a new server status for this server
-			Q_strncpyz(uiInfo.serverStatusAddress, uiInfo.foundPlayerServerAddresses[uiInfo.currentFoundPlayerServer], sizeof(uiInfo.serverStatusAddress));
-			Menu_SetFeederSelection(NULL, FEEDER_SERVERSTATUS, 0, NULL);
-			UI_BuildServerStatus(qtrue);
-		}
 		break;
 	case FEEDER_PLAYER_LIST:
 		uiInfo.playerIndex = index;

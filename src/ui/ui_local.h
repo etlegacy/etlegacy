@@ -323,7 +323,7 @@ void UI_LoadMenus(const char *menuFile, qboolean reset);
 void  UI_SetActiveMenu(uiMenuCommand_t menu);
 uiMenuCommand_t UI_GetActiveMenu(void);
 int UI_AdjustTimeByGame(int time);
-void UI_ShowPostGame(qboolean newHigh);
+void UI_ShowPostGame();
 void UI_LoadArenas(void);
 void UI_LoadCampaigns(void);
 mapInfo *UI_FindMapInfoByMapname(const char *name);
@@ -361,13 +361,10 @@ extern void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack);
 #define MAX_TEAMS 64
 
 #define MAX_MAPS 512
-#define MAX_PINGREQUESTS        16
 #define MAX_ADDRESSLENGTH       64
 #define MAX_DISPLAY_SERVERS     4096
 #define MAX_SERVERSTATUS_LINES  128
 #define MAX_SERVERSTATUS_TEXT   2048
-#define MAX_FOUNDPLAYER_SERVERS 16
-#define TEAM_MEMBERS 5
 
 #define MAX_MODS 64
 #define MAX_DEMOS 256
@@ -433,7 +430,6 @@ typedef struct
 {
 	const char *teamName;
 	const char *imageName;
-	const char *teamMembers[TEAM_MEMBERS];
 	qhandle_t teamIcon;
 	qhandle_t teamIcon_Metal;
 	qhandle_t teamIcon_Name;
@@ -501,29 +497,6 @@ typedef struct serverStatus_s
 } serverStatus_t;
 
 /**
- * @struct pendingServer_s
- * @brief
- */
-typedef struct
-{
-	char adrstr[MAX_ADDRESSLENGTH];
-	char name[MAX_ADDRESSLENGTH];
-	int startTime;
-	int serverNum;
-	qboolean valid;
-} pendingServer_t;
-
-/**
- * @struct pendingServerStatus_s
- * @brief
- */
-typedef struct
-{
-	int num;
-	pendingServer_t server[MAX_SERVERSTATUSREQUESTS];
-} pendingServerStatus_t;
-
-/**
  * @struct serverStatusInfo_s
  * @brief
  */
@@ -555,11 +528,6 @@ typedef struct
 typedef struct
 {
 	displayContextDef_t uiDC;
-	int newHighScoreTime;       ///< FIXME: remove
-	int newBestTime;            ///< FIXME: remove
-	qboolean newHighScore;      ///< FIXME: remove
-	qboolean demoAvailable;     ///< FIXME: remove?
-	qboolean soundHighScore;    ///< FIXME: remove
 
 	int legacyClient;
 
@@ -623,15 +591,6 @@ typedef struct
 	char serverStatusAddress[MAX_ADDRESSLENGTH];
 	serverStatusInfo_t serverStatusInfo;
 	int nextServerStatusRefresh;
-
-	// to retrieve the status of server to find a player
-	pendingServerStatus_t pendingServerStatus;
-	char findPlayerName[MAX_STRING_CHARS];
-	char foundPlayerServerAddresses[MAX_FOUNDPLAYER_SERVERS][MAX_ADDRESSLENGTH];
-	char foundPlayerServerNames[MAX_FOUNDPLAYER_SERVERS][MAX_ADDRESSLENGTH];
-	int currentFoundPlayerServer;
-	int numFoundPlayerServers;
-	int nextFindPlayerRefresh;
 
 	int currentCrosshair;
 	int startPostGameTime;
