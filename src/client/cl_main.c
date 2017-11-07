@@ -1558,11 +1558,11 @@ void CL_InitServerInfo(serverInfo_t *server, netadr_t *address)
  */
 void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extended)
 {
-	unsigned int i, numservers;
+	unsigned int i, numservers = 0;
 	int          j, count, total;
 	netadr_t     addresses[MAX_SERVERSPERPACKET];
-	byte         *buffptr;
-	byte         *buffend;
+	byte         *buffptr = msg->data; 	// parse through server response string
+	byte         *buffend = buffptr + msg->cursize;
 
 	//Com_Printf("CL_ServersResponsePacket\n");
 
@@ -1572,11 +1572,6 @@ void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extende
 		cls.numglobalservers         = 0;
 		cls.numGlobalServerAddresses = 0;
 	}
-
-	// parse through server response string
-	numservers = 0;
-	buffptr    = msg->data;
-	buffend    = buffptr + msg->cursize;
 
 	// advance to initial token
 	do
@@ -1603,7 +1598,9 @@ void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extende
 			}
 
 			for (i = 0; i < sizeof(addresses[numservers].ip); i++)
+			{
 				addresses[numservers].ip[i] = *buffptr++;
+			}
 
 			addresses[numservers].type = NA_IP;
 		}
@@ -1628,6 +1625,7 @@ void CL_ServersResponsePacket(const netadr_t *from, msg_t *msg, qboolean extende
 		else
 		{
 			// syntax error!
+			Com_Printf("CL_ServersResponsePacket Warning: invalid data received\n");
 			break;
 		}
 
@@ -3150,7 +3148,7 @@ void CL_ServerInfoPacket(netadr_t from, msg_t *msg)
 		}
 	}
 
-	if (i == MAX_OTHER_SERVERS)
+	if (cls.numlocalservers == MAX_OTHER_SERVERS)
 	{
 		Com_DPrintf("MAX_OTHER_SERVERS hit, dropping infoResponse\n");
 		return;

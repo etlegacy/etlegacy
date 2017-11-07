@@ -63,7 +63,8 @@ void LAN_LoadCachedServers(void)
 	fileHandle_t fileIn;
 	char         filename[MAX_QPATH];
 
-	cls.numglobalservers         = cls.numfavoriteservers = 0;
+	cls.numglobalservers         = 0;
+	cls.numfavoriteservers       = 0;
 	cls.numGlobalServerAddresses = 0;
 
 	if (cl_profile->string[0])
