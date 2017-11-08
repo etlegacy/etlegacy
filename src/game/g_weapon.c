@@ -44,7 +44,7 @@ vec3_t muzzleEffect;
 vec3_t muzzleTrace;
 
 // forward dec
-gentity_t *Bullet_Fire(gentity_t *ent);
+void Bullet_Fire(gentity_t *ent, gentity_t *firedShot);
 qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, int damage, qboolean distance_falloff);
 
 /**
@@ -56,9 +56,9 @@ KNIFE
 /**
  * @brief Weapon_Knife
  * @param[in] ent
- * @param[in] modnum
+ * @param[out] firedShot - unused
  */
-gentity_t *Weapon_Knife(gentity_t *ent)
+void Weapon_Knife(gentity_t *ent, gentity_t *firedShot)
 {
 	trace_t        tr;
 	gentity_t      *traceEnt, *tent;
@@ -74,7 +74,7 @@ gentity_t *Weapon_Knife(gentity_t *ent)
 	// ignore hits on NOIMPACT surfaces or no contact
 	if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.fraction == 1.0f)
 	{
-		return NULL;
+		return;
 	}
 
 	if (tr.entityNum >= MAX_CLIENTS)       // world brush or non-player entity (no blood)
@@ -93,14 +93,14 @@ gentity_t *Weapon_Knife(gentity_t *ent)
 
 	if (tr.entityNum == ENTITYNUM_WORLD)     // don't worry about doing any damage
 	{
-		return NULL;
+		return;
 	}
 
 	traceEnt = &g_entities[tr.entityNum];
 
 	if (!(traceEnt->takedamage))
 	{
-		return NULL;
+		return;
 	}
 
 	damage = GetWeaponTableData(ent->s.weapon)->damage;   // default knife damage for frontal attacks (10)
@@ -108,7 +108,7 @@ gentity_t *Weapon_Knife(gentity_t *ent)
 	// no damage
 	if (!damage)
 	{
-		return NULL;
+		return;
 	}
 
 	// Covert ops deal double damage with a knife
@@ -139,7 +139,7 @@ gentity_t *Weapon_Knife(gentity_t *ent)
 
 	G_Damage(traceEnt, ent, ent, vec3_origin, tr.endpos, (damage + rand() % 5), 0, mod);
 
-	return NULL;
+	return;
 }
 
 /**
@@ -163,8 +163,9 @@ void MagicSink(gentity_t *self)
 /**
  * @brief Class-specific in multiplayer
  * @param[in] ent
+ * @param[out] firedShot - unused
  */
-gentity_t *Weapon_Medic(gentity_t *ent)
+void Weapon_Medic(gentity_t *ent, gentity_t *firedShot)
 {
 	vec3_t velocity, offset, angles, tosspos, viewpos;
 
@@ -191,8 +192,6 @@ gentity_t *Weapon_Medic(gentity_t *ent)
 	VectorCopy(ent->client->ps.origin, viewpos);
 
 	Weapon_Medic_Ext(ent, viewpos, tosspos, velocity);
-
-	return NULL;
 }
 
 /**
@@ -243,8 +242,9 @@ void Weapon_Medic_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t vel
 /**
  * @brief Weapon_MagicAmmo
  * @param[in] ent
+ * @param[out] firedShot - unused
  */
-gentity_t *Weapon_MagicAmmo(gentity_t *ent)
+void Weapon_MagicAmmo(gentity_t *ent, gentity_t *firedShot)
 {
 	vec3_t velocity, offset, tosspos, viewpos, angles;
 
@@ -271,8 +271,6 @@ gentity_t *Weapon_MagicAmmo(gentity_t *ent)
 	VectorCopy(ent->client->ps.origin, viewpos);
 
 	Weapon_MagicAmmo_Ext(ent, viewpos, tosspos, velocity);
-
-	return NULL;
 }
 
 /**
@@ -442,10 +440,11 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 * @brief Shoot the syringe, do the old lazarus bit
 *
 * @param[in,out] ent
+* @param[out] firedShot - unused
 *
 * @note Currently medic player can get out of syringe ammo when G_MISC_MEDIC_SYRINGE_HEAL is set
 */
-gentity_t *Weapon_Syringe(gentity_t *ent)
+void Weapon_Syringe(gentity_t *ent, gentity_t *firedShot)
 {
 	vec3_t    end;
 	trace_t   tr;
@@ -467,7 +466,7 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 	{
 		// give back ammo
 		ent->client->ps.ammoclip[GetWeaponTableData(WP_MEDIC_SYRINGE)->clipIndex] += 1;
-		return NULL;
+		return;
 	}
 
 	traceEnt = &g_entities[tr.entityNum];
@@ -476,7 +475,7 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 	{
 		// give back ammo
 		ent->client->ps.ammoclip[GetWeaponTableData(WP_MEDIC_SYRINGE)->clipIndex] += 1;
-		return NULL;
+		return;
 	}
 
 	if (traceEnt->client->ps.pm_type == PM_DEAD)
@@ -485,7 +484,7 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 
 		if (traceEnt->client->sess.sessionTeam != ent->client->sess.sessionTeam)
 		{
-			return NULL;
+			return;
 		}
 
 		// moved all the revive stuff into its own function
@@ -524,13 +523,13 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 		if (traceEnt->client->sess.sessionTeam != ent->client->sess.sessionTeam)
 		{
 			// this doesn't heal enemy but ammo is gone :D FIXME?
-			return NULL;
+			return;
 		}
 
 		if (traceEnt->health > (traceEnt->client->ps.stats[STAT_MAX_HEALTH] * 0.25f))
 		{
 			// this doesn't heal enemy but ammo is gone :D FIXME?
-			return NULL;
+			return;
 		}
 
 		{
@@ -562,18 +561,17 @@ gentity_t *Weapon_Syringe(gentity_t *ent)
 		}
 	}
 
-	return NULL;
+	return;
 }
 
 /**
  * @brief Hmmmm. Needles. With stuff in it. Woooo.
- * @param ent
+ * @param[in,out] ent
+ * @param[out] firedShot - unused
  */
-gentity_t *Weapon_AdrenalineSyringe(gentity_t *ent)
+void Weapon_AdrenalineSyringe(gentity_t *ent, gentity_t *firedShot)
 {
 	ent->client->ps.powerups[PW_ADRENALINE] = level.time + 10000;
-
-	return NULL;
 }
 
 void G_ExplodeMissile(gentity_t *ent);
@@ -1614,8 +1612,9 @@ void trap_EngineerTrace(trace_t *results, const vec3_t start, const vec3_t mins,
 /**
  * @brief Weapon_Engineer
  * @param[in,out] ent
+ * @param[out] firedShot - unused
  */
-gentity_t *Weapon_Engineer(gentity_t *ent)
+void Weapon_Engineer(gentity_t *ent, gentity_t *firedShot)
 {
 	trace_t   tr;
 	gentity_t *traceEnt;
@@ -1625,7 +1624,7 @@ gentity_t *Weapon_Engineer(gentity_t *ent)
 	// Can't heal an MG42 if you're using one!
 	if (ent->client->ps.persistant[PERS_HWEAPON_USE])
 	{
-		return NULL;
+		return;
 	}
 
 	AngleVectors(ent->client->ps.viewangles, forward, right, up);
@@ -1646,10 +1645,10 @@ gentity_t *Weapon_Engineer(gentity_t *ent)
 		{
 			if (TryConstructing(ent))
 			{
-				return NULL;
+				return;
 			}
 		}
-		return NULL;
+		return;
 	}
 
 weapengineergoto1:
@@ -1676,7 +1675,7 @@ weapengineergoto1:
 		if (ent->client->ps.classWeaponTime > level.time)
 		{
 			ent->client->ps.classWeaponTime = level.time;
-			return NULL;     // Out of "ammo"
+			return;     // Out of "ammo"
 		}
 
 		if (traceEnt->health >= 255)
@@ -1738,10 +1737,10 @@ weapengineergoto1:
 			{
 				if (TryConstructing(ent))
 				{
-					return NULL;
+					return;
 				}
 			}
-			return NULL;
+			return;
 		}
 
 weapengineergoto2:
@@ -1776,7 +1775,7 @@ weapengineergoto2:
 					ent->client->ps.classWeaponTime -= .5f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
 				}
 				ent->client->sess.aWeaponStats[WS_LANDMINE].atts--;
-				return NULL;
+				return;
 
 				// check landmine team so that enemy mines can be disarmed
 				// even if you're using all of yours :x
@@ -1805,7 +1804,7 @@ weapengineergoto2:
 					}
 
 					ent->client->sess.aWeaponStats[WS_LANDMINE].atts--;
-					return NULL;
+					return;
 				}
 				else
 				{
@@ -1819,7 +1818,7 @@ weapengineergoto2:
 					// opposing team cannot accidentally arm it
 					if (G_LandmineTeam(traceEnt) != ent->client->sess.sessionTeam)
 					{
-						return NULL;
+						return;
 					}
 
 					G_PrintClientSpammyCenterPrint(ent - g_entities, "Arming landmine...");
@@ -1841,7 +1840,7 @@ weapengineergoto2:
 					}
 					else
 					{
-						return NULL;
+						return;
 					}
 
 					// crosshair mine owner id
@@ -1872,11 +1871,11 @@ weapengineergoto2:
 weapengineergoto3:
 					if (traceEnt->timestamp > level.time)
 					{
-						return NULL;
+						return;
 					}
 					if (traceEnt->health >= 250)     // have to do this so we don't score multiple times
 					{
-						return NULL;
+						return;
 					}
 
 					if (ent->client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 2)
@@ -1923,7 +1922,7 @@ weapengineergoto3:
 					}
 					else
 					{
-						return NULL;
+						return;
 					}
 				}
 			}
@@ -1932,7 +1931,7 @@ weapengineergoto3:
 		{
 			if (traceEnt->health >= 250)     // have to do this so we don't score multiple times
 			{
-				return NULL;
+				return;
 			}
 
 			// give health until it is full, don't continue
@@ -1954,7 +1953,7 @@ weapengineergoto3:
 			}
 			else
 			{
-				return NULL;
+				return;
 			}
 		}
 		else if (traceEnt->methodOfDeath == MOD_DYNAMITE)
@@ -1972,7 +1971,7 @@ weapengineergoto3:
 				// Opposing team cannot accidentally arm it
 				if ((traceEnt->s.teamNum - 4) != ent->client->sess.sessionTeam)
 				{
-					return NULL;
+					return;
 				}
 
 				G_PrintClientSpammyCenterPrint(ent - g_entities, "Arming dynamite...");
@@ -2082,7 +2081,7 @@ weapengineergoto3:
 				{
 					G_FreeEntity(traceEnt);
 					trap_SendServerCommand(ent - g_entities, "cp \"You cannot arm dynamite near a friendly objective!\" 1");
-					return NULL;
+					return;
 				}
 
 				if (traceEnt->health >= 250)
@@ -2091,7 +2090,7 @@ weapengineergoto3:
 				}
 				else
 				{
-					return NULL;
+					return;
 				}
 
 				// don't allow disarming for sec (so guy that WAS arming doesn't start disarming it!
@@ -2199,7 +2198,7 @@ weapengineergoto3:
 							traceEnt->etpro_misc_2  = hit->s.number;
 						}
 						// i = num;
-						return NULL;     // bail out here because primary obj's take precendence over constructibles
+						return;     // bail out here because primary obj's take precendence over constructibles
 					}
 				}
 
@@ -2286,7 +2285,7 @@ weapengineergoto3:
 							}
 							traceEnt->etpro_misc_1 |= 1;
 						}
-						return NULL;
+						return;
 					}
 				}
 			}
@@ -2296,11 +2295,11 @@ weapengineergoto3:
 
 				if (traceEnt->timestamp > level.time)
 				{
-					return NULL;
+					return;
 				}
 				if (traceEnt->health >= 248)         // have to do this so we don't score multiple times
 				{
-					return NULL;
+					return;
 				}
 
 				dynamiteDropTeam = traceEnt->s.teamNum;     // set this here since we wack traceent later but want teamnum for scoring
@@ -2342,7 +2341,7 @@ weapengineergoto3:
 					// eh, why was this commented out? it makes sense, and prevents a sploit.
 					if (dynamiteDropTeam == ent->client->sess.sessionTeam)
 					{
-						return NULL;
+						return;
 					}
 
 					for (i = 0 ; i < num ; i++)
@@ -2432,7 +2431,7 @@ weapengineergoto3:
 					// prevent multiple messages here
 					if (defusedObj)
 					{
-						return NULL;
+						return;
 					}
 
 					// reordered this check so its AFTER the primary obj check
@@ -2521,7 +2520,7 @@ weapengineergoto3:
 								//trap_SendServerCommand(-1, "cp \"Allied engineer disarmed the Dynamite!\" 2");
 							}
 
-							return NULL;
+							return;
 						}
 					}
 				}
@@ -2531,12 +2530,12 @@ weapengineergoto3:
 		{
 			if (TryConstructing(ent))
 			{
-				return NULL;
+				return;
 			}
 		}
 	}
 
-	return NULL;
+	return;
 }
 
 /**
@@ -3325,11 +3324,9 @@ void Bullet_Endpos(gentity_t *ent, float spread, vec3_t *end)
 /**
  * @brief Bullet_Fire
  * @param[in] ent
- * @param[in] spread
- * @param[in] damage
- * @param[in] distance_falloff
+ * @param[in] firedShot - unused
  */
-gentity_t *Bullet_Fire(gentity_t *ent)
+void Bullet_Fire(gentity_t *ent, gentity_t *firedShot)
 {
 	vec3_t end;
 	float  spread = GetWeaponTableData(ent->s.weapon)->spread;
@@ -3386,8 +3383,6 @@ gentity_t *Bullet_Fire(gentity_t *ent)
 	Bullet_Fire_Extended(ent, ent, muzzleTrace, end, GetWeaponTableData(ent->s.weapon)->damage, GetWeaponTableData(ent->s.weapon)->fallOff);
 
 	G_HistoricalTraceEnd(ent);
-
-	return NULL;    // no entity created for bullet
 }
 
 /**
@@ -3580,10 +3575,10 @@ GRENADE LAUNCHER
 /**
  * @brief weapon_gpg40_fire
  * @param[in] ent
- * @param[in] grenType
+ * @param[out] firedShot
  * @return
  */
-gentity_t *weapon_gpg40_fire(gentity_t *ent)
+void weapon_gpg40_fire(gentity_t *ent, gentity_t *firedShot)
 {
 	trace_t tr;
 	vec3_t  viewpos;
@@ -3620,16 +3615,16 @@ gentity_t *weapon_gpg40_fire(gentity_t *ent)
 	VectorScale(forward, 2000, forward);
 
 	// return the grenade so we can do some prediction before deciding if we really want to throw it or not
-	return fire_grenade(ent, tosspos, forward, ent->s.weapon);
+	firedShot = fire_grenade(ent, tosspos, forward, ent->s.weapon);
 }
 
 /**
  * @brief weapon_mortar_fire
  * @param[in] ent
- * @param[in] grenType
+ * @param[in] firedShot
  * @return
  */
-gentity_t *weapon_mortar_fire(gentity_t *ent)
+void weapon_mortar_fire(gentity_t *ent, gentity_t *firedShot)
 {
 	trace_t tr;
 	vec3_t  launchPos, testPos;
@@ -3658,16 +3653,16 @@ gentity_t *weapon_mortar_fire(gentity_t *ent)
 		SnapVectorTowards(launchPos, testPos);
 	}
 
-	return fire_grenade(ent, launchPos, forward, ent->s.weapon);
+	firedShot = fire_grenade(ent, launchPos, forward, ent->s.weapon);
 }
 
 /**
  * @brief weapon_grenadelauncher_fire
  * @param[in] ent
- * @param[in] grenType
+ * @param[out] firedShot
  * @return
  */
-gentity_t *weapon_grenadelauncher_fire(gentity_t *ent)
+void weapon_grenadelauncher_fire(gentity_t *ent, gentity_t *firedShot)
 {
 	trace_t  tr;
 	vec3_t   viewpos;
@@ -3777,15 +3772,16 @@ gentity_t *weapon_grenadelauncher_fire(gentity_t *ent)
 	}
 
 	// return the grenade so we can do some prediction before deciding if we really want to throw it or not
-	return fire_grenade(ent, tosspos, forward, grenType);
+	firedShot = fire_grenade(ent, tosspos, forward, grenType);
 }
 
 /**
  * @brief weapon_satcheldet_fire
  * @param[in] ent
+ * @param[out] firedShot - unused
  * @return
  */
-gentity_t *weapon_satcheldet_fire(gentity_t *ent)
+void weapon_satcheldet_fire(gentity_t *ent, gentity_t *firedShot)
 {
 	if (G_ExplodeSatchels(ent))
 	{
@@ -3798,8 +3794,6 @@ gentity_t *weapon_satcheldet_fire(gentity_t *ent)
 			G_AddEvent(ent, EV_NOAMMO, 0);
 		}
 	}
-
-	return NULL;
 }
 
 /**
@@ -3809,16 +3803,14 @@ ANTI TANK ROCKETS
 */
 
 /**
- * @brief fires a rocket of type WP_BAZOOKA or WP_PANZERFAUST
- * @param[in] ent
- * @return
+ * @brief weapon_antitank_fire
+ * @param[in,out] ent
+ * @param[out] firedShot
  */
-gentity_t *weapon_antitank_fire(gentity_t *ent)
+void weapon_antitank_fire(gentity_t *ent, gentity_t *firedShot)
 {
-	gentity_t *rocket;
-
 	//VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );  // "real" physics
-	rocket = fire_rocket(ent, muzzleEffect, forward, ent->s.weapon);
+	firedShot = fire_rocket(ent, muzzleEffect, forward, ent->s.weapon);
 
 	if (ent->client)
 	{
@@ -3827,8 +3819,6 @@ gentity_t *weapon_antitank_fire(gentity_t *ent)
 		AngleVectors(ent->client->ps.viewangles, forward, NULL, NULL);
 		VectorMA(ent->client->ps.velocity, -64, forward, ent->client->ps.velocity);
 	}
-
-	return rocket;
 }
 
 /**
@@ -3893,15 +3883,15 @@ static vec3_t flameChunkMaxs = { 4, 4, 4 };
 /**
  * @brief Weapon_FlamethrowerFire
  * @param[in,out] ent
+ * @param[out] firedShot
  * @return
  */
-gentity_t *Weapon_FlamethrowerFire(gentity_t *ent)
+void Weapon_FlamethrowerFire(gentity_t *ent, gentity_t *firedShot)
 {
 	vec3_t    start;
 	vec3_t    trace_start;
 	vec3_t    trace_end;
 	trace_t   trace;
-	gentity_t *traceEnt;
 
 	VectorCopy(ent->r.currentOrigin, start);
 	start[2] += ent->client->ps.viewheight;
@@ -3931,12 +3921,11 @@ gentity_t *Weapon_FlamethrowerFire(gentity_t *ent)
 		}
 	}
 
-	traceEnt = fire_flamechunk(ent, start, forward);
+	firedShot = fire_flamechunk(ent, start, forward);
 
 	// flamethrower exploit fix
 	ent->r.svFlags        |= SVF_BROADCAST;
 	ent->client->flametime = level.time + 2500;
-	return traceEnt;
 }
 
 //======================================================================
@@ -4321,7 +4310,7 @@ void FireWeapon(gentity_t *ent)
 	// fire the specific weapon
 	if (weapFireTable[ent->s.weapon].fire)
 	{
-		pFiredShot = weapFireTable[ent->s.weapon].fire(ent);
+		weapFireTable[ent->s.weapon].fire(ent, pFiredShot);
 	}
 
 #ifdef FEATURE_OMNIBOT
