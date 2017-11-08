@@ -564,7 +564,7 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	{
 		VectorScale(dir, 700, dir);                   // had to add this as fire_grenade now expects a non-normalized direction vector
 		                                              // FIXME: why we do normalize the vector before this switch? See comment of fire_grenade
-		fire_grenade(ent, ent->s.origin, dir, WP_GRENADE_LAUNCHER);
+		fire_grenade(ent, ent->s.origin, dir, ent->s.weapon);
 	}
 	else if (GetWeaponTableData(ent->s.weapon)->isPanzer)
 	{
