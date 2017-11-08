@@ -1217,18 +1217,18 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	//
 	// primary weapon
 	//
-	weapon = classInfo->classWeapons[0]; // default primary weapon
+	weapon = classInfo->classPrimaryWeapons[0]; // default primary weapon
 
 	// parse available primary weapons and check is valid for current class
-	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classWeapons[i] != 0; i++)
+	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classPrimaryWeapons[i] != 0; i++)
 	{
-		if (classInfo->classWeapons[i] == client->sess.playerWeapon)
+		if (classInfo->classPrimaryWeapons[i] == client->sess.playerWeapon)
 		{
 			weapon = client->sess.playerWeapon;
 			break;
 		}
 		// check for an equivalent if the team are not correct following the weapon
-		else if (classInfo->classWeapons[i] == GetWeaponTableData(client->sess.playerWeapon)->weapEquiv)
+		else if (classInfo->classPrimaryWeapons[i] == GetWeaponTableData(client->sess.playerWeapon)->weapEquiv)
 		{
 			weapon = GetWeaponTableData(client->sess.playerWeapon)->weapEquiv;
 			break;
@@ -2877,7 +2877,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 			classInfo = BG_PlayerClassForPlayerState(&ent->client->ps);
 
-			client->sess.latchPlayerWeapon = classInfo->classWeapons[0];
+			client->sess.latchPlayerWeapon = classInfo->classPrimaryWeapons[0];
 			update                         = qtrue;
 		}
 
@@ -2893,7 +2893,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 			classInfo = BG_PlayerClassForPlayerState(&ent->client->ps);
 
-			client->sess.playerWeapon = classInfo->classWeapons[0];
+			client->sess.playerWeapon = classInfo->classPrimaryWeapons[0];
 			update                    = qtrue;
 		}
 

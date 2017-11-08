@@ -1391,21 +1391,21 @@ void CG_Class_f(void)
 		weapon1 = atoi(cls);
 		if (weapon1 <= 0 || weapon1 > MAX_WEAPS_PER_CLASS)
 		{
-			weapon1 = classinfo->classWeapons[0];
+			weapon1 = classinfo->classPrimaryWeapons[0];
 		}
-		else if (!classinfo->classWeapons[weapon1 - 1])
+		else if (!classinfo->classPrimaryWeapons[weapon1 - 1])
 		{
 			CG_Printf("Invalid command format for weapon.\n");
 			return;
 		}
 		else
 		{
-			weapon1 = classinfo->classWeapons[weapon1 - 1];
+			weapon1 = classinfo->classPrimaryWeapons[weapon1 - 1];
 		}
 	}
 	else
 	{
-		weapon1 = classinfo->classWeapons[0];
+		weapon1 = classinfo->classPrimaryWeapons[0];
 	}
 
 	if (trap_Argc() > 3)

@@ -209,28 +209,28 @@ weapon_t G_GetPrimaryWeaponForClient(gclient_t *client)
 	classInfo = &bg_allies_playerclasses[client->sess.playerType];
 	for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 	{
-		if (classInfo->classWeapons[i] == WP_MP40 || classInfo->classWeapons[i] == WP_THOMPSON)
+		if (classInfo->classPrimaryWeapons[i] == WP_MP40 || classInfo->classPrimaryWeapons[i] == WP_THOMPSON)
 		{
 			continue;
 		}
 
-		if (COM_BitCheck(client->ps.weapons, classInfo->classWeapons[i]))
+		if (COM_BitCheck(client->ps.weapons, classInfo->classPrimaryWeapons[i]))
 		{
-			return classInfo->classWeapons[i];
+			return classInfo->classPrimaryWeapons[i];
 		}
 	}
 
 	classInfo = &bg_axis_playerclasses[client->sess.playerType];
 	for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 	{
-		if (classInfo->classWeapons[i] == WP_MP40 || classInfo->classWeapons[i] == WP_THOMPSON)
+		if (classInfo->classPrimaryWeapons[i] == WP_MP40 || classInfo->classPrimaryWeapons[i] == WP_THOMPSON)
 		{
 			continue;
 		}
 
-		if (COM_BitCheck(client->ps.weapons, classInfo->classWeapons[i]))
+		if (COM_BitCheck(client->ps.weapons, classInfo->classPrimaryWeapons[i]))
 		{
-			return classInfo->classWeapons[i];
+			return classInfo->classPrimaryWeapons[i];
 		}
 	}
 
@@ -333,28 +333,28 @@ weapon_t G_GetPrimaryWeaponForClientSoldier(weapon_t weapon, gclient_t *client)
 			classInfo = &bg_allies_playerclasses[client->sess.playerType];
 			for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 			{
-				if (classInfo->classWeapons[i] == WP_MP40 || classInfo->classWeapons[i] == WP_THOMPSON)
+				if (classInfo->classPrimaryWeapons[i] == WP_MP40 || classInfo->classPrimaryWeapons[i] == WP_THOMPSON)
 				{
 					continue;
 				}
 
-				if (COM_BitCheck(client->ps.weapons, classInfo->classWeapons[i]))
+				if (COM_BitCheck(client->ps.weapons, classInfo->classPrimaryWeapons[i]))
 				{
-					return classInfo->classWeapons[i];
+					return classInfo->classPrimaryWeapons[i];
 				}
 			}
 
 			classInfo = &bg_axis_playerclasses[client->sess.playerType];
 			for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 			{
-				if (classInfo->classWeapons[i] == WP_MP40 || classInfo->classWeapons[i] == WP_THOMPSON)
+				if (classInfo->classPrimaryWeapons[i] == WP_MP40 || classInfo->classPrimaryWeapons[i] == WP_THOMPSON)
 				{
 					continue;
 				}
 
-				if (COM_BitCheck(client->ps.weapons, classInfo->classWeapons[i]))
+				if (COM_BitCheck(client->ps.weapons, classInfo->classPrimaryWeapons[i]))
 				{
-					return classInfo->classWeapons[i];
+					return classInfo->classPrimaryWeapons[i];
 				}
 			}
 		}

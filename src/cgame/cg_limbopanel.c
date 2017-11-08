@@ -3195,13 +3195,13 @@ void CG_LimboPanel_Setup(void)
 
 		for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 		{
-			if (!classInfo->classWeapons[i])
+			if (!classInfo->classPrimaryWeapons[i])
 			{
 				cgs.ccSelectedWeapon = 0;
 				break;
 			}
 
-			if (classInfo->classWeapons[i] == cgs.clientinfo[cg.clientNum].latchedweapon)
+			if (classInfo->classPrimaryWeapons[i] == cgs.clientinfo[cg.clientNum].latchedweapon)
 			{
 				cgs.ccSelectedWeapon = i;
 				break;
@@ -3447,7 +3447,7 @@ int CG_LimboPanel_WeaponCount_ForSlot(int number)
 
 		for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 		{
-			if (!classInfo->classWeapons[i])
+			if (!classInfo->classPrimaryWeapons[i])
 			{
 				break;
 			}
@@ -3548,11 +3548,11 @@ weapon_t CG_LimboPanel_GetWeaponForNumber(int number, int slot, qboolean ignoreD
 			}
 			else
 			{
-				return classInfo->classWeapons[0];
+				return classInfo->classPrimaryWeapons[0];
 			}
 		}
 
-		return classInfo->classWeapons[number];
+		return classInfo->classPrimaryWeapons[number];
 	}
 	else
 	{
@@ -3787,7 +3787,7 @@ qboolean CG_LimboPanel_WeaponIsDisabled(int index)
 {
 	weapon_t weapon;
 
-	weapon = CG_LimboPanel_GetPlayerClass()->classWeapons[index];
+	weapon = CG_LimboPanel_GetPlayerClass()->classPrimaryWeapons[index];
 
 	return CG_LimboPanel_RealWeaponIsDisabled(weapon);
 }
