@@ -2364,6 +2364,7 @@ typedef struct
 	const char *iconArrow;
 
 	weapon_t classWeapons[MAX_WEAPS_PER_CLASS];
+	weapon_t classSecondaryWeapons[MAX_WEAPS_PER_CLASS];
 
 	qhandle_t icon;
 	qhandle_t arrow;

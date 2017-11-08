@@ -49,6 +49,11 @@ bg_playerclass_t bg_allies_playerclasses[NUM_PLAYER_CLASSES] =
 			WP_BAZOOKA,
 			WP_MORTAR
 		},
+		{
+			WP_COLT,
+			WP_AKIMBO_COLT,
+			WP_THOMPSON,
+		},
 		0,
 		0,
 	},
@@ -60,6 +65,10 @@ bg_playerclass_t bg_allies_playerclasses[NUM_PLAYER_CLASSES] =
 		"ui/assets/mp_arrow_blue.tga",
 		{
 			WP_THOMPSON,
+		},
+		{
+			WP_COLT,
+			WP_AKIMBO_COLT,
 		},
 		0,
 		0,
@@ -74,6 +83,10 @@ bg_playerclass_t bg_allies_playerclasses[NUM_PLAYER_CLASSES] =
 			WP_THOMPSON,
 			WP_CARBINE,
 		},
+		{
+			WP_COLT,
+			WP_AKIMBO_COLT,
+		},
 		0,
 		0,
 	},
@@ -85,6 +98,10 @@ bg_playerclass_t bg_allies_playerclasses[NUM_PLAYER_CLASSES] =
 		"ui/assets/mp_arrow_blue.tga",
 		{
 			WP_THOMPSON,
+		},
+		{
+			WP_COLT,
+			WP_AKIMBO_COLT,
 		},
 		0,
 		0,
@@ -99,6 +116,10 @@ bg_playerclass_t bg_allies_playerclasses[NUM_PLAYER_CLASSES] =
 			WP_STEN,
 			WP_FG42,
 			WP_GARAND,
+		},
+		{
+			WP_SILENCED_COLT,
+			WP_AKIMBO_SILENCEDCOLT,
 		},
 		0,
 		0,
@@ -119,6 +140,11 @@ bg_playerclass_t bg_axis_playerclasses[NUM_PLAYER_CLASSES] =
 			WP_PANZERFAUST,
 			WP_MORTAR2
 		},
+		{
+			WP_LUGER,
+			WP_AKIMBO_LUGER,
+			WP_MP40,
+		},
 		0,
 		0,
 	},
@@ -130,6 +156,10 @@ bg_playerclass_t bg_axis_playerclasses[NUM_PLAYER_CLASSES] =
 		"ui/assets/mp_arrow_red.tga",
 		{
 			WP_MP40,
+		},
+		{
+			WP_LUGER,
+			WP_AKIMBO_LUGER,
 		},
 		0,
 		0,
@@ -144,6 +174,10 @@ bg_playerclass_t bg_axis_playerclasses[NUM_PLAYER_CLASSES] =
 			WP_MP40,
 			WP_KAR98,
 		},
+		{
+			WP_LUGER,
+			WP_AKIMBO_LUGER,
+		},
 		0,
 		0,
 	},
@@ -155,6 +189,10 @@ bg_playerclass_t bg_axis_playerclasses[NUM_PLAYER_CLASSES] =
 		"ui/assets/mp_arrow_red.tga",
 		{
 			WP_MP40,
+		},
+		{
+			WP_LUGER,
+			WP_AKIMBO_LUGER,
 		},
 		0,
 		0,
@@ -169,6 +207,10 @@ bg_playerclass_t bg_axis_playerclasses[NUM_PLAYER_CLASSES] =
 			WP_STEN,
 			WP_FG42,
 			WP_K43,
+		},
+		{
+			WP_SILENCER,
+			WP_AKIMBO_SILENCEDLUGER,
 		},
 		0,
 		0,
@@ -280,21 +322,21 @@ qboolean BG_WeaponIsPrimaryForClassAndTeam(int classnum, team_t team, weapon_t w
  * @note Unused
 const char *BG_ShortClassnameForNumber(int classNum)
 {
-	switch (classNum)
-	{
-	case PC_SOLDIER:
-		return "Soldr";
-	case PC_MEDIC:
-		return "Medic";
-	case PC_ENGINEER:
-		return "Engr";
-	case PC_FIELDOPS:
-		return "FdOps";
-	case PC_COVERTOPS:
-		return "CvOps";
-	default:
-		return "^1ERROR";
-	}
+    switch (classNum)
+    {
+    case PC_SOLDIER:
+        return "Soldr";
+    case PC_MEDIC:
+        return "Medic";
+    case PC_ENGINEER:
+        return "Engr";
+    case PC_FIELDOPS:
+        return "FdOps";
+    case PC_COVERTOPS:
+        return "CvOps";
+    default:
+        return "^1ERROR";
+    }
 }
 */
 
@@ -354,21 +396,21 @@ const char *BG_ClassnameForNumberFilename(int classNum)
  * @note Unused
 const char *BG_ClassLetterForNumber(int classNum)
 {
-	switch (classNum)
-	{
-	case PC_SOLDIER:
-		return "S";
-	case PC_MEDIC:
-		return "M";
-	case PC_ENGINEER:
-		return "E";
-	case PC_FIELDOPS:
-		return "F";
-	case PC_COVERTOPS:
-		return "C";
-	default:
-		return "^1E";
-	}
+    switch (classNum)
+    {
+    case PC_SOLDIER:
+        return "S";
+    case PC_MEDIC:
+        return "M";
+    case PC_ENGINEER:
+        return "E";
+    case PC_FIELDOPS:
+        return "F";
+    case PC_COVERTOPS:
+        return "C";
+    default:
+        return "^1E";
+    }
 }
 */
 
@@ -380,28 +422,28 @@ const char *BG_ClassLetterForNumber(int classNum)
  * @note Unused
 int BG_ClassTextToClass(const char *token)
 {
-	if (!Q_stricmp(token, "soldier"))
-	{
-		return PC_SOLDIER;
-	}
-	else if (!Q_stricmp(token, "medic"))
-	{
-		return PC_MEDIC;
-	}
-	else if (!Q_stricmp(token, "fieldops"))
-	{
-		return PC_FIELDOPS;
-	}
-	else if (!Q_stricmp(token, "engineer"))
-	{
-		return PC_ENGINEER;
-	}
-	else if (!Q_stricmp(token, "covertops"))
-	{
-		return PC_COVERTOPS;
-	}
+    if (!Q_stricmp(token, "soldier"))
+    {
+        return PC_SOLDIER;
+    }
+    else if (!Q_stricmp(token, "medic"))
+    {
+        return PC_MEDIC;
+    }
+    else if (!Q_stricmp(token, "fieldops"))
+    {
+        return PC_FIELDOPS;
+    }
+    else if (!Q_stricmp(token, "engineer"))
+    {
+        return PC_ENGINEER;
+    }
+    else if (!Q_stricmp(token, "covertops"))
+    {
+        return PC_COVERTOPS;
+    }
 
-	return -1;
+    return -1;
 }
 */
 
