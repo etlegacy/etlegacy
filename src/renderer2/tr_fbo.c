@@ -393,6 +393,7 @@ void R_CopyToFBO(FBO_t *from, FBO_t *to, GLuint mask, GLuint filter)
 	if (glConfig2.framebufferBlitAvailable)
 	{
 		vec2_t size;
+
 		if (from)
 		{
 			glBindFramebuffer(GL_READ_FRAMEBUFFER, from->frameBuffer);
@@ -438,20 +439,16 @@ void R_BindFBO(FBO_t *fbo)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo->frameBuffer);
 
+		if(fbo->colorBuffers[0].buffer)
+		{
+			glBindRenderbuffer(GL_RENDERBUFFER, fbo->colorBuffers[0].buffer);
+		}
 		
-		   if(fbo->colorBuffers[0].buffer)
-		   {
-		   glBindRenderbuffer(GL_RENDERBUFFER, fbo->colorBuffers[0].buffer);
-		   }
-		 
-
-		
-		   if(fbo->depthBuffer.buffer)
-		   {
-		   glBindRenderbuffer(GL_RENDERBUFFER, fbo->depthBuffer.buffer);
-		   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fbo->depthBuffer.buffer);
-		   }
-		 
+		if(fbo->depthBuffer.buffer)
+		{
+			glBindRenderbuffer(GL_RENDERBUFFER, fbo->depthBuffer.buffer);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fbo->depthBuffer.buffer);
+		}
 
 		glState.currentFBO = fbo;
 	}
@@ -490,22 +487,23 @@ void R_SetDefaultFBO(void)
  */
 static void R_CheckDefaultBuffer()
 {
+	unsigned int fbostatus;
+	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glState.currentFBO = NULL;
 
+	fbostatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
+
+	if (fbostatus != GL_FRAMEBUFFER_COMPLETE)
 	{
-		unsigned int fbostatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
-		if (fbostatus != GL_FRAMEBUFFER_COMPLETE)
+		if (fbostatus == GL_FRAMEBUFFER_UNDEFINED)
 		{
-			if (fbostatus == GL_FRAMEBUFFER_UNDEFINED)
-			{
-				Ren_Fatal("Default framebuffer is undefined!");
-			}
-			else
-			{
-				Ren_Fatal("There is an issue with the opengl context:s default framebuffer...%i", fbostatus);
-			}
+			Ren_Fatal("Default framebuffer is undefined!");
+		}
+		else
+		{
+			Ren_Fatal("There is an issue with the opengl context:s default framebuffer...%i", fbostatus);
 		}
 	}
 }
