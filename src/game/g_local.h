@@ -1550,7 +1550,6 @@ void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int
 qboolean AccuracyHit(gentity_t *target, gentity_t *attacker);
 void CalcMuzzlePoint(gentity_t *ent, int weapon, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint);
 void SnapVectorTowards(vec3_t v, vec3_t to);
-void weapon_grenadelauncher_fire(gentity_t *ent, gentity_t *firedShot);
 
 void G_FadeItems(gentity_t *ent, int modType);
 gentity_t *G_FindSatchel(gentity_t *ent);
@@ -2593,7 +2592,7 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum);
 #define OBJECTIVE_INFO_IS_OBJECTIVE         16  ///<(see cg_commandmap - TODO: make these available to client)
 #define OBJECTIVE_INFO_IS_HEALTHAMMOCABINET 32  ///<(see cg_commandmap)
 #define OBJECTIVE_INFO_IS_COMMANDPOST       64  ///<(see cg_commandmap)
-                                                ///< 128 is disabled
+///< 128 is disabled
 
 // script_mover spawnflags
 #define MOVER_TRIGGERSPAWN              1
@@ -2738,7 +2737,7 @@ void G_RailBox(vec_t *origin, vec_t *mins, vec_t *maxs, vec_t *color, int index)
 typedef struct weapFireFunction_s
 {
 	weapon_t weapon;
-	void (*fire)(gentity_t *ent, gentity_t *firedShot);
+	void (*fire)(gentity_t *ent, gentity_t **firedShot);
 
 } weapFireFunction_t;
 

@@ -44,7 +44,7 @@ vec3_t muzzleEffect;
 vec3_t muzzleTrace;
 
 // forward dec
-void Bullet_Fire(gentity_t *ent, gentity_t *firedShot);
+void Bullet_Fire(gentity_t *ent, gentity_t **firedShot);
 qboolean Bullet_Fire_Extended(gentity_t *source, gentity_t *attacker, vec3_t start, vec3_t end, int damage, qboolean distance_falloff);
 
 /**
@@ -58,7 +58,7 @@ KNIFE
  * @param[in] ent
  * @param[out] firedShot - unused
  */
-void Weapon_Knife(gentity_t *ent, gentity_t *firedShot)
+void Weapon_Knife(gentity_t *ent, gentity_t **firedShot)
 {
 	trace_t        tr;
 	gentity_t      *traceEnt, *tent;
@@ -165,7 +165,7 @@ void MagicSink(gentity_t *self)
  * @param[in] ent
  * @param[out] firedShot - unused
  */
-void Weapon_Medic(gentity_t *ent, gentity_t *firedShot)
+void Weapon_Medic(gentity_t *ent, gentity_t **firedShot)
 {
 	vec3_t velocity, offset, angles, tosspos, viewpos;
 
@@ -244,7 +244,7 @@ void Weapon_Medic_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t vel
  * @param[in] ent
  * @param[out] firedShot - unused
  */
-void Weapon_MagicAmmo(gentity_t *ent, gentity_t *firedShot)
+void Weapon_MagicAmmo(gentity_t *ent, gentity_t **firedShot)
 {
 	vec3_t velocity, offset, tosspos, viewpos, angles;
 
@@ -444,7 +444,7 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 *
 * @note Currently medic player can get out of syringe ammo when G_MISC_MEDIC_SYRINGE_HEAL is set
 */
-void Weapon_Syringe(gentity_t *ent, gentity_t *firedShot)
+void Weapon_Syringe(gentity_t *ent, gentity_t **firedShot)
 {
 	vec3_t    end;
 	trace_t   tr;
@@ -569,7 +569,7 @@ void Weapon_Syringe(gentity_t *ent, gentity_t *firedShot)
  * @param[in,out] ent
  * @param[out] firedShot - unused
  */
-void Weapon_AdrenalineSyringe(gentity_t *ent, gentity_t *firedShot)
+void Weapon_AdrenalineSyringe(gentity_t *ent, gentity_t **firedShot)
 {
 	ent->client->ps.powerups[PW_ADRENALINE] = level.time + 10000;
 }
@@ -1614,7 +1614,7 @@ void trap_EngineerTrace(trace_t *results, const vec3_t start, const vec3_t mins,
  * @param[in,out] ent
  * @param[out] firedShot - unused
  */
-void Weapon_Engineer(gentity_t *ent, gentity_t *firedShot)
+void Weapon_Engineer(gentity_t *ent, gentity_t **firedShot)
 {
 	trace_t   tr;
 	gentity_t *traceEnt;
@@ -3326,7 +3326,7 @@ void Bullet_Endpos(gentity_t *ent, float spread, vec3_t *end)
  * @param[in] ent
  * @param[in] firedShot - unused
  */
-void Bullet_Fire(gentity_t *ent, gentity_t *firedShot)
+void Bullet_Fire(gentity_t *ent, gentity_t **firedShot)
 {
 	vec3_t end;
 	float  spread = GetWeaponTableData(ent->s.weapon)->spread;
@@ -3578,7 +3578,7 @@ GRENADE LAUNCHER
  * @param[out] firedShot
  * @return
  */
-void weapon_gpg40_fire(gentity_t *ent, gentity_t *firedShot)
+void weapon_gpg40_fire(gentity_t *ent, gentity_t **firedShot)
 {
 	trace_t tr;
 	vec3_t  viewpos;
@@ -3615,7 +3615,7 @@ void weapon_gpg40_fire(gentity_t *ent, gentity_t *firedShot)
 	VectorScale(forward, 2000, forward);
 
 	// return the grenade so we can do some prediction before deciding if we really want to throw it or not
-	firedShot = fire_grenade(ent, tosspos, forward, ent->s.weapon);
+	*firedShot = fire_grenade(ent, tosspos, forward, ent->s.weapon);
 }
 
 /**
@@ -3624,7 +3624,7 @@ void weapon_gpg40_fire(gentity_t *ent, gentity_t *firedShot)
  * @param[in] firedShot
  * @return
  */
-void weapon_mortar_fire(gentity_t *ent, gentity_t *firedShot)
+void weapon_mortar_fire(gentity_t *ent, gentity_t **firedShot)
 {
 	trace_t tr;
 	vec3_t  launchPos, testPos;
@@ -3653,7 +3653,7 @@ void weapon_mortar_fire(gentity_t *ent, gentity_t *firedShot)
 		SnapVectorTowards(launchPos, testPos);
 	}
 
-	firedShot = fire_grenade(ent, launchPos, forward, ent->s.weapon);
+	*firedShot = fire_grenade(ent, launchPos, forward, ent->s.weapon);
 }
 
 /**
@@ -3662,7 +3662,7 @@ void weapon_mortar_fire(gentity_t *ent, gentity_t *firedShot)
  * @param[out] firedShot
  * @return
  */
-void weapon_grenadelauncher_fire(gentity_t *ent, gentity_t *firedShot)
+void weapon_grenadelauncher_fire(gentity_t *ent, gentity_t **firedShot)
 {
 	trace_t  tr;
 	vec3_t   viewpos;
@@ -3772,7 +3772,7 @@ void weapon_grenadelauncher_fire(gentity_t *ent, gentity_t *firedShot)
 	}
 
 	// return the grenade so we can do some prediction before deciding if we really want to throw it or not
-	firedShot = fire_grenade(ent, tosspos, forward, grenType);
+	*firedShot = fire_grenade(ent, tosspos, forward, grenType);
 }
 
 /**
@@ -3781,7 +3781,7 @@ void weapon_grenadelauncher_fire(gentity_t *ent, gentity_t *firedShot)
  * @param[out] firedShot - unused
  * @return
  */
-void weapon_satcheldet_fire(gentity_t *ent, gentity_t *firedShot)
+void weapon_satcheldet_fire(gentity_t *ent, gentity_t **firedShot)
 {
 	if (G_ExplodeSatchels(ent))
 	{
@@ -3807,10 +3807,10 @@ ANTI TANK ROCKETS
  * @param[in,out] ent
  * @param[out] firedShot
  */
-void weapon_antitank_fire(gentity_t *ent, gentity_t *firedShot)
+void weapon_antitank_fire(gentity_t *ent, gentity_t **firedShot)
 {
 	//VectorAdd( m->s.pos.trDelta, ent->client->ps.velocity, m->s.pos.trDelta );  // "real" physics
-	firedShot = fire_rocket(ent, muzzleEffect, forward, ent->s.weapon);
+	*firedShot = fire_rocket(ent, muzzleEffect, forward, ent->s.weapon);
 
 	if (ent->client)
 	{
@@ -3886,12 +3886,12 @@ static vec3_t flameChunkMaxs = { 4, 4, 4 };
  * @param[out] firedShot
  * @return
  */
-void Weapon_FlamethrowerFire(gentity_t *ent, gentity_t *firedShot)
+void Weapon_FlamethrowerFire(gentity_t *ent, gentity_t **firedShot)
 {
-	vec3_t    start;
-	vec3_t    trace_start;
-	vec3_t    trace_end;
-	trace_t   trace;
+	vec3_t  start;
+	vec3_t  trace_start;
+	vec3_t  trace_end;
+	trace_t trace;
 
 	VectorCopy(ent->r.currentOrigin, start);
 	start[2] += ent->client->ps.viewheight;
@@ -3921,7 +3921,7 @@ void Weapon_FlamethrowerFire(gentity_t *ent, gentity_t *firedShot)
 		}
 	}
 
-	firedShot = fire_flamechunk(ent, start, forward);
+	*firedShot = fire_flamechunk(ent, start, forward);
 
 	// flamethrower exploit fix
 	ent->r.svFlags        |= SVF_BROADCAST;
@@ -4310,7 +4310,7 @@ void FireWeapon(gentity_t *ent)
 	// fire the specific weapon
 	if (weapFireTable[ent->s.weapon].fire)
 	{
-		weapFireTable[ent->s.weapon].fire(ent, pFiredShot);
+		weapFireTable[ent->s.weapon].fire(ent, &pFiredShot);
 	}
 
 #ifdef FEATURE_OMNIBOT
