@@ -516,7 +516,7 @@ static void R_InitUnitCubeVBO()
 	tess.numIndexes          = 0;
 	tess.numVertexes         = 0;
 
-	Tess_AddCube(vec3_origin, mins, maxs, colorWhite);
+	Tess_AddCube(vec3_origin, mins, maxs, colorMdBlue);
 
 	verts     = (srfVert_t *)ri.Hunk_AllocateTempMemory(tess.numVertexes * sizeof(srfVert_t));
 	triangles = (srfTriangle_t *)ri.Hunk_AllocateTempMemory((tess.numIndexes / 3) * sizeof(srfTriangle_t));
@@ -543,6 +543,56 @@ static void R_InitUnitCubeVBO()
 	tess.numIndexes          = 0;
 	tess.numVertexes         = 0;
 }
+
+/**
+* @brief R_InitUnitCubeVBO
+*/
+static void R_InitSkyVBO()
+{
+	
+	vec3_t        mins = { -1, -1, -1 };
+	vec3_t        maxs = { 1, 1, 1 };
+	int           i;
+	srfVert_t     *verts;
+	srfTriangle_t *triangles;
+
+	if (glConfig.smpActive)
+	{
+		Ren_Fatal("R_InitSkyVBO: FIXME SMP");
+	}
+
+	tess.multiDrawPrimitives = 0;
+	tess.numIndexes = 0;
+	tess.numVertexes = 0;
+
+	Tess_AddCube(vec3_origin, mins, maxs, colorMdBlue);
+
+	verts = (srfVert_t *)ri.Hunk_AllocateTempMemory(tess.numVertexes * sizeof(srfVert_t));
+	triangles = (srfTriangle_t *)ri.Hunk_AllocateTempMemory((tess.numIndexes / 3) * sizeof(srfTriangle_t));
+
+	for (i = 0; i < tess.numVertexes; i++)
+	{
+		VectorCopy(tess.xyz[i], verts[i].xyz);
+	}
+
+	for (i = 0; i < (tess.numIndexes / 3); i++)
+	{
+		triangles[i].indexes[0] = tess.indexes[i * 3 + 0];
+		triangles[i].indexes[1] = tess.indexes[i * 3 + 1];
+		triangles[i].indexes[2] = tess.indexes[i * 3 + 2];
+	}
+
+	tr.SkyVBO = R_CreateVBO2("SkyVBO", tess.numVertexes, verts, ATTR_POSITION, VBO_USAGE_STATIC);
+	tr.SkyIBO = R_CreateIBO2("SkyIBO", tess.numIndexes / 3, triangles, VBO_USAGE_STATIC);
+
+	ri.Hunk_FreeTempMemory(triangles);
+	ri.Hunk_FreeTempMemory(verts);
+
+	tess.multiDrawPrimitives = 0;
+	tess.numIndexes = 0;
+	tess.numVertexes = 0;
+}
+
 
 /**
  * @brief R_InitVBOs
@@ -585,6 +635,7 @@ void R_InitVBOs(void)
 	Com_Dealloc(data);
 
 	R_InitUnitCubeVBO();
+	R_InitSkyVBO();//for sky
 
 	R_BindNullVBO();
 	R_BindNullIBO();

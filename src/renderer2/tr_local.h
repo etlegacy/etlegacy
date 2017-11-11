@@ -3521,7 +3521,7 @@ typedef struct
 	image_t *blackCubeImage;
 	image_t *whiteCubeImage;
 	image_t *autoCubeImage;                 ///< special pointer to the nearest cubemap probe
-
+	image_t *SkyRenderFBOImage[6]; //for sky
 	image_t *contrastRenderFBOImage;
 	image_t *bloomRenderFBOImage[2];
 	image_t *currentRenderImage;
@@ -3565,11 +3565,12 @@ typedef struct
 	FBO_t *bloomRenderFBO[2];
 	FBO_t *shadowMapFBO[MAX_SHADOWMAPS];
 	FBO_t *sunShadowMapFBO[MAX_SHADOWMAPS];
-
+	FBO_t *SkyRenderFBO; //for sky SHOULD THIS BE [6]?
 	// vertex buffer objects
 	VBO_t *unitCubeVBO;
 	IBO_t *unitCubeIBO;
-
+	VBO_t *SkyVBO; //for sky
+	IBO_t *SkyIBO;// for sky
 	// internal shaders
 	shader_t *defaultShader;
 	shader_t *defaultPointLightShader;

@@ -318,7 +318,7 @@ static void RB_RenderDrawSurfaces(qboolean opaque, int drawSurfFilter)
 
 /*
  * @brief RB_RenderOpaqueSurfacesIntoDepth
- * @note Unused
+ * @note Unused*/
 static void RB_RenderOpaqueSurfacesIntoDepth(qboolean onlyWorld)
 {
     trRefEntity_t *entity, *oldEntity;
@@ -455,7 +455,7 @@ static void RB_RenderOpaqueSurfacesIntoDepth(qboolean onlyWorld)
 
     GL_CheckErrors();
 }
-*/
+
 
 // *INDENT-OFF*
 /**
@@ -5892,6 +5892,8 @@ static void RB_RenderViewFront(void)
 					// world fog requests a screen clear (distance fog rather than quake sky)
 					clearBits |= GL_COLOR_BUFFER_BIT;
 				}
+				//put it on
+				R_CopyToFBO(NULL, tr.SkyRenderFBO, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 			}
 		}
 
@@ -5929,7 +5931,7 @@ static void RB_RenderViewFront(void)
 	if (r_dynamicEntityOcclusionCulling->integer)
 	{
 		// draw everything from world that is opaque into black so we can benefit from early-z rejections later
-		//RB_RenderOpaqueSurfacesIntoDepth(true);
+		RB_RenderOpaqueSurfacesIntoDepth(qtrue);
 		RB_RenderDrawSurfaces(qtrue, DRAWSURFACES_WORLD_ONLY);
 
 		// try to cull entities using hardware occlusion queries

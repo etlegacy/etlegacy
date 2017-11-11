@@ -445,6 +445,7 @@ static void DrawSkySide(struct image_s *image, const int mins[2], const int maxs
 	int sWidth      = maxs[0] - mins[0] + 1;
 
 	GL_SelectTexture(0);
+	
 	GL_Bind(image);
 
 	for (t = mins[1] + HALF_SKY_SUBDIVISIONS; t <= maxs[1] + HALF_SKY_SUBDIVISIONS; t++)
@@ -675,8 +676,8 @@ static void DrawSkyBox(shader_t *shader, qboolean outerbox)
 	int sky_mins_subd[2], sky_maxs_subd[2];
 	int s, t;
 
-	sky_min = 0;
-	sky_max = 1;
+	sky_min = 1.0 / 256.0;     // FIXME: not correct?
+	sky_max = 255.0 / 256.0;
 
 	Com_Memset(s_skyTexCoords, 0, sizeof(s_skyTexCoords));
 
@@ -762,8 +763,11 @@ static void DrawSkyBox(shader_t *shader, qboolean outerbox)
 	}
 
 	Tess_UpdateVBOs(tess.attribsSet);
-
+	
+	//GL_Cull(CT_TWO_SIDED);
+	glDepthRange(1.0, 1.0);
 	Tess_DrawElements();
+	glDepthRange(0.0, 1.0);
 }
 
 /**
@@ -1099,25 +1103,33 @@ void Tess_StageIteratorSky(void)
 		// draw the outer skybox
 		if (tess.surfaceShader->sky.outerbox[0] && tess.surfaceShader->sky.outerbox[0] != tr.defaultImage)
 		{
-			R_BindVBO(tess.vbo);
-			R_BindIBO(tess.ibo);
+			R_BindVBO(tr.SkyVBO);
+			R_BindIBO(tr.SkyIBO);
 
 			SetMacrosAndSelectProgram(trProg.gl_skyboxShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
 
 			SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);   // in world space
 			SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
-
+			SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
+			//SetUniformMatrix16(UNIFORM_VIEWMATRIX, backEnd.viewParms.world.viewMatrix);
+			SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, tess.svars.texMatrices[TB_COLORMAP]);
+			
 			// u_PortalPlane
 			if (backEnd.viewParms.isPortal)
 			{
 				// clipping plane in world space
 				clipPortalPlane();
 			}
+			SelectTexture(TEX_COLOR);
+			
+			GL_Bind(tess.surfaceShader->sky.outerbox[0]);
 
 			GLSL_SetRequiredVertexPointers(trProg.gl_skyboxShader);
 
 			DrawSkyBox(tess.surfaceShader, qtrue);
+
+			GL_CheckErrors();
 		}
 
 		// generate the vertexes for all the clouds, which will be drawn
@@ -1132,8 +1144,8 @@ void Tess_StageIteratorSky(void)
 		// draw the inner skybox
 		if (tess.surfaceShader->sky.innerbox[0] && tess.surfaceShader->sky.innerbox[0] != tr.defaultImage)
 		{
-			R_BindVBO(tess.vbo);
-			R_BindIBO(tess.ibo);
+			R_BindVBO(tr.SkyVBO);
+			R_BindIBO(tr.SkyIBO);
 
 			SetMacrosAndSelectProgram(trProg.gl_skyboxShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
 
