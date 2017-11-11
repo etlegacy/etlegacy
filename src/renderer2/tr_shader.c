@@ -2936,7 +2936,7 @@ void ParseDeform(char **text)
 	Ren_Warning("WARNING: unknown deformVertexes subtype '%s' found in shader '%s'\n", token, shader.name);
 }
 
-const char *suf[6] = { "rt", "lf", "bk", "ft", "up", "dn" };
+const char *suf[6] = { "rt", "bk", "lf", "ft", "up", "dn" };
 
 /**
  * @brief ParseSkyParms
@@ -2966,7 +2966,7 @@ void ParseSkyParms(char **text)
 		{
 			pathname = va("%s_%s.tga", buffer, suf[i]);
 			shader.sky.outerbox[i] = R_FindImageFile(pathname, IF_NONE, FT_DEFAULT, WT_EDGE_CLAMP, shader.name);
-			//tr.SkyRenderFBOImage = shader.sky.outerbox[i];
+
 			if (!shader.sky.outerbox[i])
 			{
 				Ren_Warning("WARNING: could not find image '%s' for outer skybox in shader '%s'\n", pathname, shader.name);

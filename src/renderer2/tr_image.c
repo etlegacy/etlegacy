@@ -3135,25 +3135,6 @@ static void R_CreatePortalRenderImage(void)
 }
 
 /**
-* @brief R_CreateSkyRenderFBOImage
-*/
-static void R_CreateSkyRenderFBOImage(void)
-{
-	int          i = 0;
-	for (i = 0; i < 6; i++)
-	if (r_hdrRendering->integer && glConfig2.textureFloatAvailable)
-	{
-
-		tr.SkyRenderFBOImage[i] = R_CreateRenderImageSize(va("_SkyRenderFBOImage", i), 2048, 2048,IF_RGBA16F, FT_NEAREST, WT_CLAMP);
-	}
-	else
-		
-		{
-			tr.SkyRenderFBOImage[i] = R_CreateRenderImageSize(va("_SkyRenderFBOImage", i), 2048, 2048, IF_NOCOMPRESSION, FT_NEAREST, WT_CLAMP);
-		}
-}
-
-/**
  * @brief R_CreateOcclusionRenderFBOImage
  */
 static void R_CreateOcclusionRenderFBOImage(void)
@@ -3504,7 +3485,6 @@ void R_CreateBuiltinImages(void)
 
 	R_CreateRandomNormalsImage();
 	R_CreateFogImage();
-	R_CreateSkyRenderFBOImage();
 	R_CreateNoFalloffImage();
 	R_CreateAttenuationXYImage();
 	R_CreateContrastRenderFBOImage();

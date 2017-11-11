@@ -1,12 +1,10 @@
 /* skybox_fp.glsl */
-//uniform samplerCube u_ColorMap;
-uniform sampler2D u_ColorMap;
+
+uniform samplerCube u_ColorMap;
 uniform vec3        u_ViewOrigin;
 uniform vec4        u_PortalPlane;
-varying vec2 var_Tex;
-varying vec3 var_Position;
-//varying vec4 var_Color;
 
+varying vec3 var_Position;
 
 void main()
 {
@@ -23,9 +21,8 @@ void main()
 
 	// compute incident ray
 	vec3 I = normalize(var_Position - u_ViewOrigin);
-	vec4 color = texture2D(u_ColorMap, var_Tex);
-	//vec4 color = textureCube(u_ColorMap, I).rgba;
-	//vec4 color = textureCube(u_ColorMap, var_Tex);
-	//color *= var_Color;
+
+	vec4 color = textureCube(u_ColorMap, I).rgba;
+
 	gl_FragColor = color;
 }

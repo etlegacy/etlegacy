@@ -576,39 +576,7 @@ void R_InitFBOs(void)
 	// make sure the render thread is stopped
 	R_IssuePendingRenderCommands();
 
-		if(glConfig2.textureNPOTAvailable)
-		{
-			width = glConfig.vidWidth;
-			height = glConfig.vidHeight;
-		}
-		else
-		{
-			width = NearestPowerOfTwo(glConfig.vidWidth);
-			height = NearestPowerOfTwo(glConfig.vidHeight);
-		}
-
-		for (i = 0; i < 6; i++)
-		
-			tr.SkyRenderFBO = R_CreateFBO(va("_SkyRenderFBO"), width, height);
-		R_BindFBO(tr.SkyRenderFBO);
-		
-	
-	
-		
-		{
-			R_CreateFBODepthBuffer(tr.SkyRenderFBO, GL_DEPTH_COMPONENT24_ARB);
-			R_AttachFBOTextureDepth(tr.depthRenderImage->texnum);
-		}
-		
-		for (i = 0; i < 6; i++)
-		R_CreateFBOColorBuffer(tr.SkyRenderFBO, GL_RGBA, 0);
-		R_AttachFBOTexture2D(GL_TEXTURE_2D, tr.SkyRenderFBOImage[i]->texnum, 0);
-		
-		
-
-		R_CheckFBO(tr.SkyRenderFBO);
-	
-	
+	{
 		// forward shading
 		if (glConfig2.textureNPOTAvailable)
 		{
@@ -639,7 +607,7 @@ void R_InitFBOs(void)
 		R_AttachFBOTextureDepth(tr.depthRenderImage->texnum);
 
 		R_CheckFBO(tr.deferredRenderFBO);
-	
+	}
 
 	if (glConfig2.framebufferBlitAvailable)
 	{
