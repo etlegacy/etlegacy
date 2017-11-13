@@ -3051,12 +3051,12 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			CG_FlamethrowerFlame(cent, flash.origin);
 
 			// make a dlight for the flash
-			if(!(muzzleContents & MASK_WATER))
+			if (!(muzzleContents & MASK_WATER))
 			{
 				if (weapon->flashDlightColor[0] != 0.f || weapon->flashDlightColor[1] != 0.f || weapon->flashDlightColor[2] != 0.f)
 				{
 					trap_R_AddLightToScene(flash.origin, 320, 1.25 + (rand() & 31) / 128.0f, weapon->flashDlightColor[0],
-                                           weapon->flashDlightColor[1], weapon->flashDlightColor[2], 0, 0);
+					                       weapon->flashDlightColor[1], weapon->flashDlightColor[2], 0, 0);
 				}
 			}
 		}
@@ -3901,10 +3901,10 @@ void CG_AltWeapon_f(void)
 	if (cg.time - cg.weaponSelectTime < cg_weaponCycleDelay.integer)
 	{
 		return; // force pause so holding it down won't go too fast
-
 	}
-	// Don't try to switch when in the middle of reloading.
-	if (cg.snap->ps.weaponstate == WEAPON_RELOADING)
+
+	// Don't try to switch when in the middle of reloading or firing.
+	if (cg.snap->ps.weaponstate == WEAPON_RELOADING || cg.snap->ps.weaponstate == WEAPON_FIRING)
 	{
 		return;
 	}
