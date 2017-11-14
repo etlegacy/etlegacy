@@ -342,7 +342,7 @@ static void write_const_char(FILE *outputFile, const string& name, const string&
 	}
 	else
 	{
-		fprintf(outputFile, "const char %s[%i] =\n{\n", name.c_str(), text.size() + 1); // We need extra char for the ending 0x00
+		fprintf(outputFile, "const char %s[%i] =\n{\n", name.c_str(), int(text.size() + 1)); // We need extra char for the ending 0x00
 		for (size_t i = 0; i < text.size();)
 		{
 			size_t x = 0;

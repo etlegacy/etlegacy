@@ -35,20 +35,11 @@
 #ifndef INCLUDE_SDLDEF_H
 #define INCLUDE_SDLDEF_H
 
-#if !defined(BUNDLED_SDL) && __APPLE__
-#include "SDL.h"
-#include "SDL_cpuinfo.h"
-#include "SDL_syswm.h"
-#include "SDL_video.h"
-#include "SDL_loadso.h"
-#include "SDL_cpuinfo.h"
-#else
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_cpuinfo.h>
 #include <SDL2/SDL_syswm.h>
 #include <SDL2/SDL_video.h>
 #include <SDL2/SDL_loadso.h>
 #include <SDL2/SDL_cpuinfo.h>
-#endif
 
 #endif // #ifndef INCLUDE_SDLDEF_H

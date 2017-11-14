@@ -105,6 +105,10 @@ elseif(WIN32)
 	endif(WIN64)
 
 	set(OS_LIBRARIES wsock32 ws2_32 psapi winmm)
+	if(BUNDLED_SDL)
+		# Libraries for Win32 native and MinGW required by static SDL2 build
+		list(APPEND OS_LIBRARIES user32 gdi32 winmm imm32 ole32 oleaut32 version uuid)
+	endif()
 	set(LIB_SUFFIX "_mp_")
 	if(MSVC)
 		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHsc /O2")

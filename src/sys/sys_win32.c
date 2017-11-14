@@ -34,11 +34,7 @@
  */
 
 #ifndef DEDICATED
-#    ifdef BUNDLED_SDL
-#        include "SDL_video.h"
-#    else
-#        include <SDL2/SDL_video.h>
-#    endif
+#	include <SDL2/SDL_video.h>
 #endif
 
 #include "../qcommon/q_shared.h"
