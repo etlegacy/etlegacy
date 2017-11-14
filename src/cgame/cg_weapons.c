@@ -3572,8 +3572,8 @@ static int getPrevBankWeap(int bank, int cycle, qboolean sameBankPosition)
 	if (bank < 0)          // don't go below 0, cycle up to top
 	{
 		bank += MAX_WEAP_BANKS_MP;
-
 	}
+
 	bank = bank % MAX_WEAP_BANKS_MP;
 
 	if (sameBankPosition && weapBanksMultiPlayer[bank][cycle])
@@ -3766,6 +3766,11 @@ void CG_AltWeapon_f(void)
 		return;
 	}
 
+	if (cg.snap->ps.pm_type == PM_FREEZE)
+	{
+		return;
+	}
+
 	// Overload for spec mode when following
 	if (((cg.snap->ps.pm_flags & PMF_FOLLOW) || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 #ifdef FEATURE_MULTIVIEW
@@ -3909,6 +3914,16 @@ void CG_AltWeapon_f(void)
 		return;
 	}
 
+	if (cg.predictedPlayerState.pm_type == PM_DEAD)
+	{
+		return;
+	}
+
+	if (cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
+	{
+		return;
+	}
+
 	original = cg.weaponSelect;
 	num      = GetWeaponTableData(original)->weapAlts;
 
@@ -3937,6 +3952,11 @@ void CG_AltWeapon_f(void)
 				cg.binocZoomTime = cg.time;
 			}
 		}
+	}
+
+	if (original != WP_BINOCULARS && cg.predictedPlayerState.eFlags & EF_ZOOMING)
+	{
+		return;
 	}
 
 	// don't allow another weapon switch when we're still swapping the gpg40, to prevent animation breaking
@@ -4303,7 +4323,6 @@ void CG_LastWeaponUsed_f(void)
 	if (cg.time - cg.weaponSelectTime < cg_weaponCycleDelay.integer)
 	{
 		return; // force pause so holding it down won't go too fast
-
 	}
 
 	if (GetWeaponTableData(cg.weaponSelect)->isSetWeapon)
@@ -4315,6 +4334,11 @@ void CG_LastWeaponUsed_f(void)
 
 	// don't switchback if reloading (it nullifies the reload)
 	if (cg.snap->ps.weaponstate == WEAPON_RELOADING)
+	{
+		return;
+	}
+
+	if (cg.predictedPlayerState.eFlags & EF_ZOOMING)
 	{
 		return;
 	}
@@ -4579,6 +4603,26 @@ void CG_WeaponBank_f(void)
 
 	// Don't try to switch when in the middle of reloading.
 	if (cg.snap->ps.weaponstate == WEAPON_RELOADING)
+	{
+		return;
+	}
+
+	if (cg.predictedPlayerState.pm_type == PM_DEAD)
+	{
+		return;
+	}
+
+	if (cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.weaponDelay > 0)
+	{
+		return;
+	}
+
+	if (cg.predictedPlayerState.eFlags & EF_ZOOMING)
 	{
 		return;
 	}
@@ -6258,7 +6302,6 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 			VectorMA(muzzle, 40, forward, muzzle);
 			muzzle[2] += DEFAULT_VIEWHEIGHT;
 		}
-
 	}
 	else if (cent->currentState.eFlags & EF_MOUNTEDTANK)
 	{
