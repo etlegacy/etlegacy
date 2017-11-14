@@ -7,7 +7,8 @@
 
 # Mandatory variables
 _SRC=`pwd`
-BUILDDIR="${_SRC}/build"
+#BUILDDIR="${_SRC}/build"
+BUILDDIR="${BUILD_DIR:-${_SRC}/build}"
 SOURCEDIR="${_SRC}/src"
 PROJECTDIR="${_SRC}/project"
 LEGACYETMAIN="${HOME}/.etlegacy/etmain"

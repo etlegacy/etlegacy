@@ -10,8 +10,7 @@
 #import <Cocoa/Cocoa.h>
 #import <sys/param.h>
 
-#import "SDL.h"
-#import "SDLMain.h"
+#import "SDL2/SDL.h"
 
 #define SDL_USE_CPS 1
 

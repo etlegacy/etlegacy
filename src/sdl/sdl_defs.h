@@ -35,7 +35,7 @@
 #ifndef INCLUDE_SDLDEF_H
 #define INCLUDE_SDLDEF_H
 
-#if defined(BUNDLED_SDL) || __APPLE__
+#if !defined(BUNDLED_SDL) && __APPLE__
 #include "SDL.h"
 #include "SDL_cpuinfo.h"
 #include "SDL_syswm.h"

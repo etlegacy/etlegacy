@@ -101,7 +101,7 @@ if(BUILD_MOD_PK3)
 	add_custom_target(mod_pk3 ALL DEPENDS legacy/etl_bin_${ETL_CMAKE_VERSION_SHORT}.pk3)
 
 	if(APPLE)
-		set(ZIP_FILE_LIST cgame${LIB_SUFFIX}${ARCH}* ui${LIB_SUFFIX}${ARCH}*)
+		set(ZIP_FILE_LIST cgame${LIB_SUFFIX}${ARCH} ui${LIB_SUFFIX}${ARCH})
 	else()
 		set(ZIP_FILE_LIST cgame${LIB_SUFFIX}${ARCH}${CMAKE_SHARED_LIBRARY_SUFFIX} ui${LIB_SUFFIX}${ARCH}${CMAKE_SHARED_LIBRARY_SUFFIX})
 	endif()

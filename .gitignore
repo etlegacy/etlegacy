@@ -1,7 +1,7 @@
 #
 # Project specific
 #
-/build
+/build*/
 /project
 /obj
 /doc
