@@ -5962,7 +5962,7 @@ qhandle_t RE_RegisterShader(const char *name)
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		Ren_Print("RE_RegisterShader: Shader name exceeds MAX_QPATH\n");
+		Ren_Warning("RE_RegisterShader: Shader name exceeds MAX_QPATH\n");
 		return 0;
 	}
 
@@ -5975,7 +5975,7 @@ qhandle_t RE_RegisterShader(const char *name)
 	// the same name, we don't try looking for it again
 	if (sh->defaultShader)
 	{
-		Ren_Print("RE_RegisterShader WARNING: shader '%s' not found - using default shader\n", name);
+		Ren_Warning("RE_RegisterShader WARNING: shader '%s' not found - using default shader\n", name);
 		return 0;
 	}
 
@@ -5993,7 +5993,7 @@ qhandle_t RE_RegisterShaderNoMip(const char *name)
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		Ren_Print("Shader name exceeds MAX_QPATH\n");
+		Ren_Warning("RE_RegisterShaderNoMip WARNING: shader name exceeds MAX_QPATH\n");
 		return 0;
 	}
 
@@ -6004,10 +6004,9 @@ qhandle_t RE_RegisterShaderNoMip(const char *name)
 	// still keep a name allocated for it, so if
 	// something calls RE_RegisterShaderNoMip again with
 	// the same name, we don't try looking for it again
-
 	if (sh->defaultShader)
 	{
-		Ren_Print("RE_RegisterShaderNoMip WARNING: shader '%s' not found - using default shader\n", name);
+		Ren_Warning("RE_RegisterShaderNoMip WARNING: shader '%s' not found - using default shader\n", name);
 		return 0;
 	}
 
@@ -6025,7 +6024,7 @@ qhandle_t RE_RegisterShaderLightAttenuation(const char *name)
 
 	if (strlen(name) >= MAX_QPATH)
 	{
-		Ren_Print("Shader name exceeds MAX_QPATH\n");
+		Ren_Warning("Shader name exceeds MAX_QPATH\n");
 		return 0;
 	}
 
@@ -6038,7 +6037,7 @@ qhandle_t RE_RegisterShaderLightAttenuation(const char *name)
 	// the same name, we don't try looking for it again
 	if (sh->defaultShader)
 	{
-		Ren_Print("RE_RegisterShaderLightAttenuation WARNING: shader '%s' not found - using default shader\n", name);
+		Ren_Warning("RE_RegisterShaderLightAttenuation WARNING: shader '%s' not found - using default shader\n", name);
 		return 0;
 	}
 
