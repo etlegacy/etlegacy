@@ -82,18 +82,22 @@ void CG_LoadingString(const char *s)
  */
 void CG_DrawInformation(qboolean forcerefresh)
 {
-	static int lastcalled = 0;
-
-	if (lastcalled && (trap_Milliseconds() - lastcalled < 500))
-	{
-		return;
-	}
-	lastcalled = trap_Milliseconds();
+	static int nextcall = 0;
+	int        ms;
 
 	if (cg.snap)
 	{
 		return;     // we are in the world, no need to draw information
 	}
+
+	ms = trap_Milliseconds();
+
+	if (ms < nextcall)
+	{
+		return;
+	}
+
+	nextcall = ms + 250;
 
 	// loadpanel: erase the screen now, because otherwise the "awaiting challenge"-UI-screen is still visible behind the client-version of it (the one with the progressbar),..
 	// ..and we do not want a flickering screen (on widescreens).
