@@ -1319,18 +1319,17 @@ static void R_MarkLeaves(void)
 
 	for (i = 0, leaf = tr.world->nodes; i < tr.world->numnodes; i++, leaf++)
 	{
-		if (tr.world->vis)
-		{
-			cluster = leaf->cluster;
+		cluster = leaf->cluster;
 
-			if (cluster >= 0 && cluster < tr.world->numClusters)
-			{
-				// check general pvs
-				if (!(vis[cluster >> 3] & (1 << (cluster & 7))))
-				{
-					continue;
-				}
-			}
+		if (cluster < 0 || cluster >= tr.world->numClusters)
+		{
+			continue;
+		}
+
+		// check general pvs
+		if (!(vis[cluster >> 3] & (1 << (cluster & 7))))
+		{
+			continue;
 		}
 
 		// check for door connection

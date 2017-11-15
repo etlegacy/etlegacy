@@ -632,7 +632,6 @@ void RE_RenderScene(const refdef_t *fd)
 
 	if(fd->rdflags & RDF_SKYBOXPORTAL)
 	{
-	    //Com_Printf("^3skyboxportal = 1\n");
 	    tr.world->hasSkyboxPortal = qtrue; // see int skyboxportal var tr_scene.c/r1
 	}
 
