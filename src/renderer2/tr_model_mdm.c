@@ -243,8 +243,8 @@ static void AddSurfaceToVBOSurfacesListMDM(growList_t *vboSurfaces, growList_t *
 	vboSurf->vbo->ofsBinormals       = ofsBinormals;
 	vboSurf->vbo->ofsNormals         = ofsNormals;
 	vboSurf->vbo->ofsColors          = ofsNormals;
-	vboSurf->vbo->ofsLightCoords     = 0; // not required anyway
-	vboSurf->vbo->ofsLightDirections = 0; // not required anyway
+	//vboSurf->vbo->ofsLightCoords     = 0; // not required anyway
+	//vboSurf->vbo->ofsLightDirections = 0; // not required anyway
 	vboSurf->vbo->ofsBoneIndexes     = ofsBoneIndexes;
 	vboSurf->vbo->ofsBoneWeights     = ofsBoneWeights;
 

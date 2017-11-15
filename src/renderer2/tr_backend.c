@@ -465,13 +465,11 @@ static void RB_RenderOpaqueSurfacesIntoDepth(qboolean onlyWorld)
 static void Render_lightVolume(interaction_t *ia)
 {
 	int           j;
-	trRefLight_t  *light;
+	trRefLight_t  *light = ia->light;
 	shader_t      *lightShader;
 	shaderStage_t *attenuationXYStage;
 	shaderStage_t *attenuationZStage;
 	vec4_t        quadVerts[4];
-
-	light = ia->light;
 
 	// set the window clipping
 	GL_Viewport(backEnd.viewParms.viewportX, backEnd.viewParms.viewportY,

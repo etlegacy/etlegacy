@@ -704,8 +704,8 @@ typedef struct VBO_s
 	uint32_t ofsBinormals;
 	uint32_t ofsNormals;
 	uint32_t ofsColors;
-	uint32_t ofsPaintColors;        ///< for advanced terrain blending
-	uint32_t ofsLightDirections;
+	//uint32_t ofsPaintColors;        ///< for advanced terrain blending
+	//uint32_t ofsLightDirections;
 	uint32_t ofsBoneIndexes;
 	uint32_t ofsBoneWeights;
 
