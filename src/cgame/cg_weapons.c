@@ -2959,7 +2959,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		// continuous smoke after firing
 		if (ps || cg.renderingThirdPerson || !isPlayer)
 		{
-			if (weaponNum == WP_STEN || GetWeaponTableData(weaponNum)->isMG || GetWeaponTableData(weaponNum)->isMGSet)
+			if (GetWeaponTableData(weaponNum)->canHeat)
 			{
 				// hot smoking gun
 				if ((cg.time - cent->overheatTime < 3000) && !(cent->currentState.powerups & (1 << PW_INVULNERABLE)))
@@ -4560,7 +4560,6 @@ void CG_WeaponBank_f(void)
 	if (cg.time - cg.weaponSelectTime < cg_weaponCycleDelay.integer)
 	{
 		return; // force pause so holding it down won't go too fast
-
 	}
 
 	if (GetWeaponTableData(cg.weaponSelect)->isSetWeapon)
