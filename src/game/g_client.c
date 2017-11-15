@@ -1007,6 +1007,11 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 
 	if (GetWeaponTableData(weaponNum)->isPistol || GetWeaponTableData(weaponNum)->isSilencedPistol || GetWeaponTableData(weaponNum)->isRifle || weaponNum == WP_STEN)
 	{
+		if (client->sess.playerType == PC_COVERTOPS && weaponNum == WP_STEN)
+		{
+			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] *= 2;
+		}
+
 		if (client->sess.skill[SK_LIGHT_WEAPONS] >= 1)
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
@@ -1022,13 +1027,6 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 		if ((client->sess.skill[SK_FIRST_AID] >= 1 && client->sess.playerType == PC_MEDIC) || client->sess.skill[SK_LIGHT_WEAPONS] >= 1)
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
-		}
-	}
-	else if (weaponNum == WP_STEN)
-	{
-		if (client->sess.playerType == PC_COVERTOPS)
-		{
-			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] *= 2;
 		}
 	}
 	else if (GetWeaponTableData(weaponNum)->isRiflenade)
