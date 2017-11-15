@@ -293,7 +293,7 @@ int CG_AddTrailJunc(int headJuncIndex, void *usedby, qhandle_t shader, int spawn
 		return 0;
 	}
 
-	// rain - zinx's trail fix - mark who's using this trail so that
+	// trail fix - mark who's using this trail so that
 	// we can handle the someone-else-stole-our-trail case
 	j->usedby = usedby;
 
@@ -334,6 +334,11 @@ int CG_AddTrailJunc(int headJuncIndex, void *usedby, qhandle_t shader, int spawn
 
 	if (sType == STYPE_REPEAT)
 	{
+		if (sRatio == 0) // fix potential div 0
+		{
+			sRatio = 1;
+		}
+
 		if (headJunc)
 		{
 			j->sTex = headJunc->sTex + ((Distance(headJunc->pos, pos) / sRatio) / j->widthEnd);
