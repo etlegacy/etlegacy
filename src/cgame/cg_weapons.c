@@ -3819,7 +3819,7 @@ void CG_AltWeapon_f(void)
 		return;
 	}
 
-	// Overload for spec mode when following
+	// overload for spec mode when following
 	if (((cg.snap->ps.pm_flags & PMF_FOLLOW) || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 #ifdef FEATURE_MULTIVIEW
 	    || cg.mvTotalClients > 0
@@ -3901,7 +3901,7 @@ void CG_AltWeapon_f(void)
 		}
 	}
 
-	// Need ground for this
+	// need ground for this
 	if (GetWeaponTableData(cg.weaponSelect)->isMortar)
 	{
 		int    contents;
@@ -3938,6 +3938,7 @@ void CG_AltWeapon_f(void)
 		point[1] = cg.snap->ps.origin[1];
 		point[2] = cg.snap->ps.origin[2] + cg.snap->ps.crouchViewHeight;
 		contents = CG_PointContents(point, cg.snap->ps.clientNum);
+
 		if (contents & MASK_WATER)
 		{
 			return;
@@ -4369,6 +4370,21 @@ void CG_LastWeaponUsed_f(void)
 		return;
 	}
 
+	if (cg.snap->ps.pm_flags & PMF_FOLLOW)
+	{
+		return;
+	}
+
+	if (cg.predictedPlayerState.pm_type == PM_DEAD)
+	{
+		return;
+	}
+
+	if (cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
+	{
+		return;
+	}
+
 	if (cg.time - cg.weaponSelectTime < cg_weaponCycleDelay.integer)
 	{
 		return; // force pause so holding it down won't go too fast
@@ -4418,7 +4434,12 @@ void CG_NextWeaponInBank_f(void)
 	{
 		return;
 	}
-	
+
+	if (cg.snap->ps.pm_flags & PMF_FOLLOW)
+	{
+		return;
+	}
+
 	if (cg.predictedPlayerState.pm_type == PM_DEAD)
 	{
 		return;
@@ -4471,7 +4492,12 @@ void CG_PrevWeaponInBank_f(void)
 	{
 		return;
 	}
-	
+
+	if (cg.snap->ps.pm_flags & PMF_FOLLOW)
+	{
+		return;
+	}
+
 	if (cg.predictedPlayerState.pm_type == PM_DEAD)
 	{
 		return;
@@ -4594,7 +4620,7 @@ void CG_PrevWeapon_f(void)
 	}
 
 #ifdef FEATURE_MULTIVIEW
-	// Overload for MV clients
+	// overload for MV clients
 	if (cg.mvTotalClients > 0)
 	{
 		CG_mvSwapViews_f();
@@ -4727,6 +4753,7 @@ void CG_WeaponBank_f(void)
 	{
 		num = cg.lastWeapSelInBank[bank];
 		CG_WeaponIndex(num, &bank, &cycle);
+
 		if (bank != curbank)
 		{
 			cycle -= 1;
@@ -4868,6 +4895,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 					return;
 				}
 			}
+
 			for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
 			{
 				if (CG_WeaponSelectable(weapBanksMultiPlayer[2][i]))       // find a pistol
@@ -4877,6 +4905,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 					return;
 				}
 			}
+
 			for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
 			{
 				if (CG_WeaponSelectable(weapBanksMultiPlayer[4][i]))       // find a grenade
@@ -4886,6 +4915,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 					return;
 				}
 			}
+
 			for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
 			{
 				if (CG_WeaponSelectable(weapBanksMultiPlayer[1][i]))       // find a knife
@@ -4933,6 +4963,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 			return;
 		}
 	}
+
 	for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
 	{
 		if (CG_WeaponSelectable(weapBanksMultiPlayer[2][i]))       // find a pistol
@@ -4942,6 +4973,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 			return;
 		}
 	}
+
 	for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
 	{
 		if (CG_WeaponSelectable(weapBanksMultiPlayer[4][i]))       // find a grenade
@@ -4951,6 +4983,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 			return;
 		}
 	}
+
 	for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
 	{
 		if (CG_WeaponSelectable(weapBanksMultiPlayer[1][i]))       // find a knife
