@@ -7,7 +7,7 @@ textures/wood/wood_c01
 {
     qer_editorimage textures/wood/wood_c01
 	diffusemap textures/wood/wood_c01
-	specularmap textures/wood/wood_c01_s
+	//specularmap textures/wood/wood_c01_s
 	bumpmap textures/wood/wood_c01_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -17,7 +17,7 @@ textures/wood/wood_m01_usat
 {
     qer_editorimage textures/wood/wood_m01_usat
 	diffusemap textures/wood/wood_m01_usat
-	specularmap textures/wood/wood_m01_usat_s
+	//specularmap textures/wood/wood_m01_usat_s
 	bumpmap textures/wood/wood_m01_usat_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -27,7 +27,7 @@ textures/wood/wood_m02
 {
     qer_editorimage textures/wood/wood_m02
 	diffusemap textures/wood/wood_m02
-	specularmap textures/wood/wood_m02_s
+	//specularmap textures/wood/wood_m02_s
 	bumpmap textures/wood/wood_m02_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -37,7 +37,7 @@ textures/wood/wood_m02a
 {
     qer_editorimage textures/wood/wood_m02a
 	diffusemap textures/wood/wood_m02a
-	specularmap textures/wood/wood_m02a_s
+	//specularmap textures/wood/wood_m02a_s
 	bumpmap textures/wood/wood_m02a_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -47,7 +47,7 @@ textures/wood/wood_m05
 {
     qer_editorimage textures/wood/wood_m05
 	diffusemap textures/wood/wood_m05
-	specularmap textures/wood/wood_m05_s
+	//specularmap textures/wood/wood_m05_s
 	bumpmap textures/wood/wood_m05_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -57,7 +57,7 @@ textures/wood/wood_m05_usata
 {
     qer_editorimage textures/wood/wood_m05_usata
 	diffusemap textures/wood/wood_m05_usata
-	specularmap textures/wood/wood_m05_usata_s
+	//specularmap textures/wood/wood_m05_usata_s
 	bumpmap textures/wood/wood_m05_usata_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -67,7 +67,7 @@ textures/wood/wood_m05a_usat
 {
     qer_editorimage textures/wood/wood_m05a_usat
 	diffusemap textures/wood/wood_m05a_usat
-	specularmap textures/wood/wood_m05a_usat_s
+	//specularmap textures/wood/wood_m05a_usat_s
 	bumpmap textures/wood/wood_m05a_usat_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -77,7 +77,7 @@ textures/wood/wood_m05a_usat_snow
 {
     qer_editorimage textures/wood/wood_m05a_usat_snow
 	diffusemap textures/wood/wood_m05a_usat_snow
-	specularmap textures/wood/wood_m05a_usat_snow_s
+	//specularmap textures/wood/wood_m05a_usat_snow_s
 	bumpmap textures/wood/wood_m05a_usat_snow_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -87,7 +87,7 @@ textures/wood/wood_m05a_usata
 {
     qer_editorimage textures/wood/wood_m05a_usata
     diffusemap textures/wood/wood_m05a_usata
-	specularmap textures/wood/wood_m05a_usata_s
+	//specularmap textures/wood/wood_m05a_usata_s
 	bumpmap textures/wood/wood_m05a_usata_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -97,7 +97,7 @@ textures/wood/wood_m05a_usata_dm
 {
     qer_editorimage textures/wood/wood_m05a_usata_dm
 	diffusemap textures/wood/wood_m05a_usata_dm
-	specularmap textures/wood/wood_m05a_usata_dm_s
+	//specularmap textures/wood/wood_m05a_usata_dm_s
 	bumpmap textures/wood/wood_m05a_usata_dm_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -107,7 +107,7 @@ textures/wood/wood_m06
 {
     qer_editorimage textures/wood/wood_m06
 	diffusemap textures/wood/wood_m06
-	specularmap textures/wood/wood_m06_s
+	//specularmap textures/wood/wood_m06_s
 	bumpmap textures/wood/wood_m06_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -117,7 +117,7 @@ textures/wood/wood_m06_usat
 {
     qer_editorimage textures/wood/wood_m06_usat
 	diffusemap textures/wood/wood_m06_usat
-	specularmap textures/wood/wood_m06_usat_s
+	//specularmap textures/wood/wood_m06_usat_s
 	bumpmap textures/wood/wood_m06_usat_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -127,7 +127,7 @@ textures/wood/wood_m06a
 {
     qer_editorimage textures/wood/wood_m06a
 	diffusemap textures/wood/wood_m06a
-	specularmap textures/wood/wood_m06a_s
+	//specularmap textures/wood/wood_m06a_s
 	bumpmap textures/wood/wood_m06a_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -137,7 +137,7 @@ textures/wood/wood_m06b
 {
     qer_editorimage textures/wood/wood_m06b
 	diffusemap textures/wood/wood_m06b
-	specularmap textures/wood/wood_m06b_s
+	//specularmap textures/wood/wood_m06b_s
 	bumpmap textures/wood/wood_m06b_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -147,7 +147,7 @@ textures/wood/wood_m08
 {
     qer_editorimage textures/wood/wood_m08
 	diffusemap textures/wood/wood_m08
-	specularmap textures/wood/wood_m08_s
+	//specularmap textures/wood/wood_m08_s
 	bumpmap textures/wood/wood_m08_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -156,7 +156,8 @@ textures/wood/wood_m08
 textures/wood/wood_m08_usat
 {
     qer_editorimage textures/wood/wood_m08_usat
-	specularmap textures/wood/wood_m08_usat_s
+	diffusemap textures/wood/wood_m08_usat
+	//specularmap textures/wood/wood_m08_usat_s
 	bumpmap textures/wood/wood_m08_usat_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -166,7 +167,7 @@ textures/wood/wood_m09
 {
     qer_editorimage textures/wood/wood_m09
 	diffusemap textures/wood/wood_m09
-	specularmap textures/wood/wood_m09_s
+	//specularmap textures/wood/wood_m09_s
 	bumpmap textures/wood/wood_m09_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -176,7 +177,7 @@ textures/wood/wood_m09_usat
 {
     qer_editorimage textures/wood/wood_m09_usat
 	diffusemap textures/wood/wood_m09_usat
-	specularmap textures/wood/wood_m09_usat_s
+	//specularmap textures/wood/wood_m09_usat_s
 	bumpmap textures/wood/wood_m09_usat_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -186,7 +187,7 @@ textures/wood/wood_m11
 {
     qer_editorimage textures/wood/wood_m11
 	diffusemap textures/wood/wood_m11
-	specularmap textures/wood/wood_m11_s
+	//specularmap textures/wood/wood_m11_s
 	bumpmap textures/wood/wood_m11_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -196,7 +197,7 @@ textures/wood/wood_m12
 {
     qer_editorimage textures/wood/wood_m12
 	diffusemap textures/wood/wood_m12
-	specularmap textures/wood/wood_m12_s
+	//specularmap textures/wood/wood_m12_s
 	bumpmap textures/wood/wood_m12_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -206,7 +207,7 @@ textures/wood/wood_m12_usat
 {
     qer_editorimage textures/wood/wood_m12_usat
 	diffusemap textures/wood/wood_m12_usat
-	specularmap textures/wood/wood_m12_usat_s
+	//specularmap textures/wood/wood_m12_usat_s
 	bumpmap textures/wood/wood_m12_usat_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -216,7 +217,7 @@ textures/wood/wood_m12a
 {
 	qer_editorimage textures/wood/wood_m12
 	diffusemap textures/wood/wood_m12a
-	specularmap textures/wood/wood_m12a_s
+	//specularmap textures/wood/wood_m12a_s
 	bumpmap textures/wood/wood_m12a_n
 	surfaceparm woodsteps
 	implicitMap textures/wood/wood_m12
@@ -226,7 +227,7 @@ textures/wood/wood_m13
 {
     qer_editorimage textures/wood/wood_m13
 	diffusemap textures/wood/wood_m13
-	specularmap textures/wood/wood_m13_s
+	//specularmap textures/wood/wood_m13_s
 	bumpmap textures/wood/wood_m13_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -236,7 +237,7 @@ textures/wood/wood_m13_usat
 {
     qer_editorimage textures/wood/wood_m13_usat
 	diffusemap textures/wood/wood_m13_usat
-	specularmap textures/wood/wood_m13_usat_s
+	//specularmap textures/wood/wood_m13_usat_s
 	bumpmap textures/wood/wood_m13_usat_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -246,7 +247,7 @@ textures/wood/wood_m16
 {
     qer_editorimage textures/wood/wood_m16
 	diffusemap textures/wood/wood_m16
-	specularmap textures/wood/wood_m16_s
+	//specularmap textures/wood/wood_m16_s
 	bumpmap textures/wood/wood_m16_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -256,7 +257,7 @@ textures/wood/wood_m16cm
 {
     qer_editorimage textures/wood/wood_m16cm
 	diffusemap textures/wood/wood_m16cm
-	specularmap textures/wood/wood_m16cm_s
+	//specularmap textures/wood/wood_m16cm_s
 	bumpmap textures/wood/wood_m16cm_n
 	surfaceparm woodsteps
 	implicitMap -
@@ -266,7 +267,7 @@ textures/wood/wood_m18
 {
     qer_editorimage textures/wood/wood_m18
 	diffusemap textures/wood/wood_m18
-	specularmap textures/wood/wood_m18_s
+	//specularmap textures/wood/wood_m18_s
 	bumpmap textures/wood/wood_m18_n
 	surfaceparm woodsteps
 	implicitMap -
