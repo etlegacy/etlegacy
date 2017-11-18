@@ -468,28 +468,23 @@ static void DrawSkySide(struct image_s *image, const int mins[2], const int maxs
 		}
 	}
 
-	// only add indexes for one pass, otherwise it would draw multiple times for each pass
-	if (1)
-	//if (addIndexes)
+	for (t = 0; t < tHeight - 1; t++)
 	{
-		for (t = 0; t < tHeight - 1; t++)
+		for (s = 0; s < sWidth - 1; s++)
 		{
-			for (s = 0; s < sWidth - 1; s++)
-			{
-				tess.indexes[tess.numIndexes] = vertexStart + s + t * (sWidth);
-				tess.numIndexes++;
-				tess.indexes[tess.numIndexes] = vertexStart + s + (t + 1) * (sWidth);
-				tess.numIndexes++;
-				tess.indexes[tess.numIndexes] = vertexStart + s + 1 + t * (sWidth);
-				tess.numIndexes++;
+			tess.indexes[tess.numIndexes] = vertexStart + s + t * (sWidth);
+			tess.numIndexes++;
+			tess.indexes[tess.numIndexes] = vertexStart + s + (t + 1) * (sWidth);
+			tess.numIndexes++;
+			tess.indexes[tess.numIndexes] = vertexStart + s + 1 + t * (sWidth);
+			tess.numIndexes++;
 
-				tess.indexes[tess.numIndexes] = vertexStart + s + (t + 1) * (sWidth);
-				tess.numIndexes++;
-				tess.indexes[tess.numIndexes] = vertexStart + s + 1 + (t + 1) * (sWidth);
-				tess.numIndexes++;
-				tess.indexes[tess.numIndexes] = vertexStart + s + 1 + t * (sWidth);
-				tess.numIndexes++;
-			}
+			tess.indexes[tess.numIndexes] = vertexStart + s + (t + 1) * (sWidth);
+			tess.numIndexes++;
+			tess.indexes[tess.numIndexes] = vertexStart + s + 1 + (t + 1) * (sWidth);
+			tess.numIndexes++;
+			tess.indexes[tess.numIndexes] = vertexStart + s + 1 + t * (sWidth);
+			tess.numIndexes++;
 		}
 	}
 
@@ -533,28 +528,23 @@ static void DrawSkySideInner(struct image_s *image, const int mins[2], const int
 		}
 	}
 
-	// only add indexes for one pass, otherwise it would draw multiple times for each pass
-	if (1)
-	//if (addIndexes)
+	for (t = 0; t < tHeight - 1; t++)
 	{
-		for (t = 0; t < tHeight - 1; t++)
+		for (s = 0; s < sWidth - 1; s++)
 		{
-			for (s = 0; s < sWidth - 1; s++)
-			{
-				tess.indexes[tess.numIndexes] = vertexStart + s + t * (sWidth);
-				tess.numIndexes++;
-				tess.indexes[tess.numIndexes] = vertexStart + s + (t + 1) * (sWidth);
-				tess.numIndexes++;
-				tess.indexes[tess.numIndexes] = vertexStart + s + 1 + t * (sWidth);
-				tess.numIndexes++;
+			tess.indexes[tess.numIndexes] = vertexStart + s + t * (sWidth);
+			tess.numIndexes++;
+			tess.indexes[tess.numIndexes] = vertexStart + s + (t + 1) * (sWidth);
+			tess.numIndexes++;
+			tess.indexes[tess.numIndexes] = vertexStart + s + 1 + t * (sWidth);
+			tess.numIndexes++;
 
-				tess.indexes[tess.numIndexes] = vertexStart + s + (t + 1) * (sWidth);
-				tess.numIndexes++;
-				tess.indexes[tess.numIndexes] = vertexStart + s + 1 + (t + 1) * (sWidth);
-				tess.numIndexes++;
-				tess.indexes[tess.numIndexes] = vertexStart + s + 1 + t * (sWidth);
-				tess.numIndexes++;
-			}
+			tess.indexes[tess.numIndexes] = vertexStart + s + (t + 1) * (sWidth);
+			tess.numIndexes++;
+			tess.indexes[tess.numIndexes] = vertexStart + s + 1 + (t + 1) * (sWidth);
+			tess.numIndexes++;
+			tess.indexes[tess.numIndexes] = vertexStart + s + 1 + t * (sWidth);
+			tess.numIndexes++;
 		}
 	}
 
@@ -595,27 +585,23 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
 		}
 	}
 
-	// only add indexes for one pass, otherwise it would draw multiple times for each pass
-	if (addIndexes)
+	for (t = 0; t < tHeight - 1; t++)
 	{
-		for (t = 0; t < tHeight - 1; t++)
+		for (s = 0; s < sWidth - 1; s++)
 		{
-			for (s = 0; s < sWidth - 1; s++)
-			{
-				tess.indexes[tess.numIndexes] = vertexStart + s + t * (sWidth);
-				tess.numIndexes++;
-				tess.indexes[tess.numIndexes] = vertexStart + s + (t + 1) * (sWidth);
-				tess.numIndexes++;
-				tess.indexes[tess.numIndexes] = vertexStart + s + 1 + t * (sWidth);
-				tess.numIndexes++;
+			tess.indexes[tess.numIndexes] = vertexStart + s + t * (sWidth);
+			tess.numIndexes++;
+			tess.indexes[tess.numIndexes] = vertexStart + s + (t + 1) * (sWidth);
+			tess.numIndexes++;
+			tess.indexes[tess.numIndexes] = vertexStart + s + 1 + t * (sWidth);
+			tess.numIndexes++;
 
-				tess.indexes[tess.numIndexes] = vertexStart + s + (t + 1) * (sWidth);
-				tess.numIndexes++;
-				tess.indexes[tess.numIndexes] = vertexStart + s + 1 + (t + 1) * (sWidth);
-				tess.numIndexes++;
-				tess.indexes[tess.numIndexes] = vertexStart + s + 1 + t * (sWidth);
-				tess.numIndexes++;
-			}
+			tess.indexes[tess.numIndexes] = vertexStart + s + (t + 1) * (sWidth);
+			tess.numIndexes++;
+			tess.indexes[tess.numIndexes] = vertexStart + s + 1 + (t + 1) * (sWidth);
+			tess.numIndexes++;
+			tess.indexes[tess.numIndexes] = vertexStart + s + 1 + t * (sWidth);
+			tess.numIndexes++;
 		}
 	}
 
@@ -719,10 +705,7 @@ static void DrawSkyBox(shader_t *shader, qboolean outerbox)
 	}
 
 	Tess_UpdateVBOs(tess.attribsSet);
-
-	glDepthRange(1.0, 1.0);
 	Tess_DrawElements();
-	glDepthRange(0.0, 1.0);
 }
 
 /**
@@ -1103,12 +1086,12 @@ void Tess_StageIteratorSky(void)
 
 		if (tess.stageIteratorFunc2 != Tess_StageIteratorDepthFill)
 		{
-		// back to normal depth range
+			// back to normal depth range
 			glDepthRange(0.0, 1.0);
 
-		// note that sky was drawn so we will draw a sun later
-		backEnd.skyRenderedThisView = qtrue;
-		backEnd.refdef.rdflags &= ~RDF_DRAWINGSKY;
+			// note that sky was drawn so we will draw a sun later
+			backEnd.skyRenderedThisView = qtrue;
+			backEnd.refdef.rdflags &= ~RDF_DRAWINGSKY;
 		}
 	}
 }
