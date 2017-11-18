@@ -996,9 +996,21 @@ void Tess_StageIteratorSky(void)
 		return;
 	}
 
-	Ren_Assert(tess.stageIteratorFunc2 == NULL);
-
-	GL_Cull(CT_FRONT_SIDED);
+	// does the current fog require fastsky?
+	if (backEnd.viewParms.glFog.registered)
+	{
+		if (!backEnd.viewParms.glFog.drawsky)
+		{
+			return;
+		}
+	}
+	else if (tr.glfogNum > FOG_NONE)
+	{
+		if (!tr.glfogsettings[FOG_CURRENT].drawsky)
+		{
+			return;
+		}
+	}
 
 	backEnd.refdef.rdflags |= RDF_DRAWINGSKY;
 
@@ -1007,23 +1019,8 @@ void Tess_StageIteratorSky(void)
 	// to be drawn
 	Tess_ClipSkyPolygons();
 
-	// FIXME: stageIteratorFunc2 is never set to Tess_StageIteratorDepthFill
-	// because Tess_StageIteratorDepthFill is never assigned to tess.stageIteratorFunc (see tr_shade.c - Tess_Begin)
-	// this was only set by RB_RenderOpaqueSurfacesIntoDepth which is commented out and not used
-	// -> ditch/comment Tess_StageIteratorDepthFill code
-	if (tess.stageIteratorFunc2 == &Tess_StageIteratorDepthFill)
-	{
-		// generate the vertexes for all the clouds, which will be drawn
-		// by the generic shader routine
-		BuildCloudData();
 
-		if (tess.numVertexes || tess.multiDrawPrimitives)
-		{
-			tess.stageIteratorFunc2();
-		}
-	}
-	else
-	{
+
 		// r_showSky will let all the sky blocks be drawn in
 		// front of everything to allow developers to see how
 		// much sky is getting sucked in
@@ -1060,6 +1057,12 @@ void Tess_StageIteratorSky(void)
 			DrawSkyBox(tess.surfaceShader, qtrue);
 		}
 
+	   // generate the vertexes for all the clouds, which will be drawn
+	   // by the generic shader routine
+		 BuildCloudData();	   
+
+         Tess_StageIteratorGeneric();
+
 		// draw the inner skybox
 		if (tess.surfaceShader->sky.innerbox && tess.surfaceShader->sky.innerbox != tr.blackCubeImage)
 		{
@@ -1084,8 +1087,7 @@ void Tess_StageIteratorSky(void)
 			DrawSkyBox(tess.surfaceShader, qfalse);
 		}
 
-		if (tess.stageIteratorFunc2 != Tess_StageIteratorDepthFill)
-		{
+	
 			// back to normal depth range
 			glDepthRange(0.0, 1.0);
 
@@ -1093,5 +1095,5 @@ void Tess_StageIteratorSky(void)
 			backEnd.skyRenderedThisView = qtrue;
 			backEnd.refdef.rdflags &= ~RDF_DRAWINGSKY;
 		}
-	}
-}
+	
+
