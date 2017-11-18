@@ -2994,8 +2994,7 @@ void ParseSkyParms(char **text)
 	{
 		Q_strncpyz(prefix, token, sizeof(prefix));
 
-		//shader.sky.innerbox = R_FindCubeImage(prefix, IF_NONE, FT_LINEAR, WT_EDGE_CLAMP, shader.name);
-		shader.sky.innerbox = R_FindImageFile(prefix, IF_NONE, FT_DEFAULT, WT_REPEAT, shader.name); // GL_REPEAT?!
+		shader.sky.innerbox = R_FindCubeImage(prefix, IF_NONE, FT_DEFAULT, WT_REPEAT, shader.name); // GL_REPEAT?! /  FT_LINEAR?!
 		if (!shader.sky.innerbox)
 		{
 			Ren_Warning("WARNING: could not find cubemap '%s' for inner skybox in shader '%s'\n", prefix, shader.name);
