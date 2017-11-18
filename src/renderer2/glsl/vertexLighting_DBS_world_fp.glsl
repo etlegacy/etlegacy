@@ -134,7 +134,9 @@ void main()
 	// compute final color
 	vec4 color = vec4(diffuse.rgb, var_LightColor.a);
 	color.rgb *= light;
-	color.rgb += specular;
+	//HACK! just to break spec for now
+	//16 seems to remove spec
+	color.rgb += specular/10;
 
 	gl_FragColor = color;
 
