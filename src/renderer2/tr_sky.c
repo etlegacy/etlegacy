@@ -493,25 +493,7 @@ static void DrawSkySide(struct image_s *image, const int mins[2], const int maxs
 		}
 	}
 
-/* FIXME: add GL_TRIANGLE_STRIP to Tess_DrawElements?
-	GL_Bind(image);
-
-    for(t = mins[1] + HALF_SKY_SUBDIVISIONS; t < maxs[1] + HALF_SKY_SUBDIVISIONS; t++)
-    {
-        glBegin(GL_TRIANGLE_STRIP);
-
-        for(s = mins[0] + HALF_SKY_SUBDIVISIONS; s <= maxs[0] + HALF_SKY_SUBDIVISIONS; s++)
-        {
-			qglTexCoord2fv(s_skyTexCoords[t][s]);
-			qglVertex3fv(s_skyPoints[t][s]);
-
-			qglTexCoord2fv(s_skyTexCoords[t + 1][s]);
-			qglVertex3fv(s_skyPoints[t + 1][s]);
-        }
-
-        glEnd();
-    }
-*/
+	tess.attribsSet |= ATTR_POSITION | ATTR_TEXCOORD;
 }
 
 /**
@@ -539,8 +521,8 @@ static void DrawSkySideInner(struct image_s *image, const int mins[2], const int
 
 			tess.texCoords[tess.numVertexes][0] = s_skyTexCoords[t][s][0];
 			tess.texCoords[tess.numVertexes][1] = s_skyTexCoords[t][s][1];
-			tess.texCoords[tess.numVertexes][2] = 0;
-			tess.texCoords[tess.numVertexes][3] = 1;
+			tess.texCoords[tess.numVertexes][2] = s_skyTexCoords[t][s][2];
+			tess.texCoords[tess.numVertexes][3] = s_skyTexCoords[t][s][3];
 
 			tess.numVertexes++;
 
@@ -575,33 +557,8 @@ static void DrawSkySideInner(struct image_s *image, const int mins[2], const int
 			}
 		}
 	}
-    
-/* FIXME: add GL_TRIANGLE_STRIP to Tess_DrawElements?
-	GL_Bind(image);
 
-	//qglDisable (GL_BLEND);
-	qglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	qglEnable(GL_BLEND);
-	GL_TexEnv(GL_MODULATE);
-
-	for (t = mins[1] + HALF_SKY_SUBDIVISIONS; t < maxs[1] + HALF_SKY_SUBDIVISIONS; t++)
-	{
-		qglBegin(GL_TRIANGLE_STRIP);
-
-		for (s = mins[0] + HALF_SKY_SUBDIVISIONS; s <= maxs[0] + HALF_SKY_SUBDIVISIONS; s++)
-		{
-			qglTexCoord2fv(s_skyTexCoords[t][s]);
-			qglVertex3fv(s_skyPoints[t][s]);
-
-			qglTexCoord2fv(s_skyTexCoords[t + 1][s]);
-			qglVertex3fv(s_skyPoints[t + 1][s]);
-		}
-
-		qglEnd();
-	}
-
-	qglDisable(GL_BLEND);
-   */
+	tess.attribsSet |= ATTR_POSITION | ATTR_TEXCOORD;
 }
 
 /**
@@ -626,8 +583,8 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
 
 			tess.texCoords[tess.numVertexes][0] = s_skyTexCoords[t][s][0];
 			tess.texCoords[tess.numVertexes][1] = s_skyTexCoords[t][s][1];
-			tess.texCoords[tess.numVertexes][2] = 0;
-			tess.texCoords[tess.numVertexes][3] = 1;
+			tess.texCoords[tess.numVertexes][2] = s_skyTexCoords[t][s][2];
+			tess.texCoords[tess.numVertexes][3] = s_skyTexCoords[t][s][3];
 
 			tess.numVertexes++;
 
@@ -753,17 +710,19 @@ static void DrawSkyBox(shader_t *shader, qboolean outerbox)
 
 		if (outerbox)
 		{
-			DrawSkySide(shader->sky.outerbox[sky_texorder[i]], sky_mins_subd, sky_maxs_subd);
+			DrawSkySide(shader->sky.outerbox, sky_mins_subd, sky_maxs_subd);
 		}
 		else
 		{
-			DrawSkySideInner(shader->sky.innerbox[sky_texorder[i]], sky_mins_subd, sky_maxs_subd);
+			DrawSkySideInner(shader->sky.innerbox, sky_mins_subd, sky_maxs_subd);
 		}
 	}
 
 	Tess_UpdateVBOs(tess.attribsSet);
 
+	glDepthRange(1.0, 1.0);
 	Tess_DrawElements();
+	glDepthRange(0.0, 1.0);
 }
 
 /**
@@ -1054,13 +1013,11 @@ void Tess_StageIteratorSky(void)
 		return;
 	}
 
-	// trebor: HACK why does this happen with cg_draw2D 0 ?
-	//tess.stageIteratorFunc2 = Tess_StageIteratorGeneric;
 	Ren_Assert(tess.stageIteratorFunc2 == NULL);
 
-	GL_Cull(CT_TWO_SIDED);
+	GL_Cull(CT_FRONT_SIDED);
 
-	//backEnd.refdef.rdflags |= RDF_DRAWINGSKY;
+	backEnd.refdef.rdflags |= RDF_DRAWINGSKY;
 
 	// go through all the polygons and project them onto
 	// the sky box to see which blocks on each side need
@@ -1097,7 +1054,7 @@ void Tess_StageIteratorSky(void)
 		}
 
 		// draw the outer skybox
-		if (tess.surfaceShader->sky.outerbox[0] && tess.surfaceShader->sky.outerbox[0] != tr.defaultImage)
+		if (tess.surfaceShader->sky.outerbox && tess.surfaceShader->sky.outerbox != tr.blackCubeImage)
 		{
 			R_BindVBO(tess.vbo);
 			R_BindIBO(tess.ibo);
@@ -1120,17 +1077,8 @@ void Tess_StageIteratorSky(void)
 			DrawSkyBox(tess.surfaceShader, qtrue);
 		}
 
-		// generate the vertexes for all the clouds, which will be drawn
-		// by the generic shader routine
-		BuildCloudData();
-
-		if (tess.numVertexes || tess.multiDrawPrimitives)
-		{
-			tess.stageIteratorFunc2();
-		}
-
 		// draw the inner skybox
-		if (tess.surfaceShader->sky.innerbox[0] && tess.surfaceShader->sky.innerbox[0] != tr.defaultImage)
+		if (tess.surfaceShader->sky.innerbox && tess.surfaceShader->sky.innerbox != tr.blackCubeImage)
 		{
 			R_BindVBO(tess.vbo);
 			R_BindIBO(tess.ibo);
@@ -1146,7 +1094,6 @@ void Tess_StageIteratorSky(void)
 			{
 				// clipping plane in world space
 				clipPortalPlane();
-
 			}
 
 			GLSL_SetRequiredVertexPointers(trProg.gl_skyboxShader);
@@ -1156,12 +1103,12 @@ void Tess_StageIteratorSky(void)
 
 		if (tess.stageIteratorFunc2 != Tess_StageIteratorDepthFill)
 		{
-			// back to normal depth range
+		// back to normal depth range
 			glDepthRange(0.0, 1.0);
 
-			// note that sky was drawn so we will draw a sun later
-			backEnd.skyRenderedThisView = qtrue;
-			//backEnd.refdef.rdflags &= ~RDF_DRAWINGSKY;
+		// note that sky was drawn so we will draw a sun later
+		backEnd.skyRenderedThisView = qtrue;
+		backEnd.refdef.rdflags &= ~RDF_DRAWINGSKY;
 		}
 	}
 }

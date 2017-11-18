@@ -2375,7 +2375,6 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 			else if (!Q_stricmp(token, "portal"))
 			{
 				Ren_Warning("WARNING: alphaGen portal keyword not supported in shader '%s'\n", shader.name);
-				//stage->type = ST_PORTALMAP;
 				stage->alphaGen         = AGEN_CONST;
 				stage->constantColor[3] = 0;
 				SkipRestOfLine(text);
@@ -2947,9 +2946,7 @@ const char *suf[6] = { "rt", "bk", "lf", "ft", "up", "dn" };
 void ParseSkyParms(char **text)
 {
 	char *token;
-	int  i;
-	char buffer[MAX_QPATH];
-	char *pathname;
+	char prefix[MAX_QPATH];
 
 	// outerbox
 	token = COM_ParseExt2(text, qfalse);
@@ -2960,18 +2957,13 @@ void ParseSkyParms(char **text)
 	}
 	if (strcmp(token, "-"))
 	{
-		Q_strncpyz(buffer, token, sizeof(buffer));
+		Q_strncpyz(prefix, token, sizeof(prefix));
 
-		for (i = 0 ; i < 6 ; i++)
+		shader.sky.outerbox = R_FindCubeImage(prefix, IF_NONE, FT_LINEAR, WT_EDGE_CLAMP, shader.name);
+		if (!shader.sky.outerbox)
 		{
-			pathname = va("%s_%s.tga", buffer, suf[i]);
-			shader.sky.outerbox[i] = R_FindImageFile(pathname, IF_NONE, FT_DEFAULT, WT_EDGE_CLAMP, shader.name);
-
-			if (!shader.sky.outerbox[i])
-			{
-				Ren_Warning("WARNING: could not find image '%s' for outer skybox in shader '%s'\n", pathname, shader.name);
-				shader.sky.outerbox[i] = tr.defaultImage;
-			}
+			Ren_Warning("WARNING: could not find cubemap '%s' for outer skybox in shader '%s'\n", prefix, shader.name);
+			shader.sky.outerbox = tr.blackCubeImage;
 		}
 	}
 
@@ -3000,20 +2992,17 @@ void ParseSkyParms(char **text)
 
 	if (strcmp(token, "-"))
 	{
-		Q_strncpyz(buffer, token, sizeof(buffer));
+		Q_strncpyz(prefix, token, sizeof(prefix));
 
-		for (i = 0 ; i < 6 ; i++)
+		//shader.sky.innerbox = R_FindCubeImage(prefix, IF_NONE, FT_LINEAR, WT_EDGE_CLAMP, shader.name);
+		shader.sky.innerbox = R_FindImageFile(prefix, IF_NONE, FT_DEFAULT, WT_REPEAT, shader.name); // GL_REPEAT?!
+		if (!shader.sky.innerbox)
 		{
-			pathname = va("%s_%s.tga", buffer, suf[i]);
-			shader.sky.innerbox[i] = R_FindImageFile(pathname, IF_NONE, FT_DEFAULT, WT_REPEAT, shader.name); // GL_REPEAT?!
-
-			if (!shader.sky.innerbox[i])
-			{
-				Ren_Warning("WARNING: could not find image '%s' for inner skybox in shader '%s'\n", pathname, shader.name);
-				shader.sky.innerbox[i] = tr.defaultImage;
-			}
+			Ren_Warning("WARNING: could not find cubemap '%s' for inner skybox in shader '%s'\n", prefix, shader.name);
+			shader.sky.innerbox = tr.blackCubeImage;
 		}
 	}
+
 	shader.isSky = qtrue;
 }
 

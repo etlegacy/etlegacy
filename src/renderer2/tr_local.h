@@ -1385,8 +1385,8 @@ typedef enum
 typedef struct
 {
 	float cloudHeight;
-	image_t *outerbox[6], *innerbox[6];
-} skyParms_t; // FIXME: move to renderercommon
+	image_t *outerbox, *innerbox;
+} skyParms_t;
 
 /**
  * @struct fogParms_t
@@ -2815,7 +2815,7 @@ typedef struct
 	char *entityString;
 	char *entityParsePoint;
 
-	qboolean hasSkyboxPortal; // FIXME: remove? - not set!
+	qboolean hasSkyboxPortal;
 } world_t;
 
 /*

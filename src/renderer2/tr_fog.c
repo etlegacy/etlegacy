@@ -113,7 +113,6 @@ void RB_FogOff(void)
 	glDisable(GL_FOG);
 
 	fogIsOn = qfalse;
-
 }
 
 /**
