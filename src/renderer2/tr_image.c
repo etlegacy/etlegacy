@@ -101,7 +101,7 @@ void GL_TextureMode(const char *string)
 
 	if (i == 6)
 	{
-		Ren_Print("bad filter name\n");
+		Ren_Print("GL_TextureMode: Bad filter name\n");
 		return;
 	}
 
@@ -513,7 +513,7 @@ void R_LightScaleTexture(unsigned *in, int inwidth, int inheight, qboolean onlyG
  * Proper linear filter
  * @param[in] in
  * @param[in] inWidth
- * @param inHeight
+ * @param[in] inHeight
  */
 static void R_MipMap2(unsigned *in, int inWidth, int inHeight)
 {
@@ -2587,7 +2587,6 @@ image_t *R_FindCubeImage(const char *imageName, int bits, filterType_t filterTyp
 	    convert $1_up.tga -flip -rotate 90 $1_pz.png
 	    convert $1_down.tga -flop -rotate -90 $1_nz.png
 	 */
-
 	static char     *doom3Suffices[6] = { "forward", "back", "left", "right", "up", "down" };
 	static qboolean doom3FlipX[6]     = { qtrue, qtrue, qfalse, qtrue, qtrue, qfalse };
 	static qboolean doom3FlipY[6]     = { qfalse, qfalse, qtrue, qfalse, qfalse, qtrue };
@@ -2603,6 +2602,9 @@ image_t *R_FindCubeImage(const char *imageName, int bits, filterType_t filterTyp
 	    convert $1_up.tga -flip -rotate 90 $1_pz.tga
 	    convert $1_dn.tga -flop -rotate -90 $1_nz.tga
 	 */
+	int             firstImageWidth;  // some ET sky textures are not of same dimension (suffix dn/down/bottom in most cases to safe space)
+	int             firstImageHeight; // get dimensions from first image 'rt' and force this value for the cube map
+	char			fistFilename_p[1024]; // FIXME
 	static char     *quakeSuffices[6] = { "rt", "lf", "bk", "ft", "up", "dn" };
 	static qboolean quakeFlipX[6]     = { qtrue, qtrue, qfalse, qtrue, qtrue, qfalse };
 	static qboolean quakeFlipY[6]     = { qfalse, qfalse, qtrue, qfalse, qfalse, qtrue };
@@ -2669,6 +2671,55 @@ image_t *R_FindCubeImage(const char *imageName, int bits, filterType_t filterTyp
 		pic[i] = NULL;
 	}
 
+tryQuakeSuffices:
+	for (i = 0; i < 6; i++)
+	{
+		Com_sprintf(filename, sizeof(filename), "%s_%s", buffer, quakeSuffices[i]);
+
+		filename_p = &filename[0];
+		R_LoadImage(&filename_p, &pic[i], &width, &height, &bitsIgnore, materialName);
+
+		if (!pic[i] || width != height)
+		{
+			image = NULL;
+			Ren_Warning("Warning R_FindCubeImage: Invalid image %s for cube %s\n", filename, imageName);
+			goto skipCubeImage;
+		}
+
+		if (i == 0)
+		{
+			firstImageWidth  = width;
+			firstImageHeight = height;
+			Com_sprintf(fistFilename_p, sizeof(filename), "%s_%s", buffer, quakeSuffices[i]);
+		}
+		else
+		{
+			if (width != firstImageWidth || height != firstImageHeight)
+			{
+				Ren_Warning("Warning R_FindCubeImage: Image %s has different dimension [%i/%i] - [%i/%i] expected\n", filename, width, height, firstImageWidth, firstImageHeight);
+				Com_Dealloc(pic[i]);
+				// hack: load the first image instead
+				// FIXME: better fix - scale the image to proper dimension
+				filename_p = &fistFilename_p[0];
+				R_LoadImage(&filename_p, &pic[i], &width, &height, &bitsIgnore, materialName);
+			}
+		}
+
+		if (quakeFlipX[i])
+		{
+			R_Flip(pic[i], width, height);
+		}
+
+		if (quakeFlipY[i])
+		{
+			R_Flop(pic[i], width, height);
+		}
+
+		R_Rotate(pic[i], width, height, quakeRot[i]);
+	}
+	goto createCubeImage;
+
+tryOpenGLSuffices:
 	for (i = 0; i < 6; i++)
 	{
 		Com_sprintf(filename, sizeof(filename), "%s_%s", buffer, openglSuffices[i]);
@@ -2710,34 +2761,7 @@ tryDoom3Suffices:
 
 		R_Rotate(pic[i], width, height, doom3Rot[i]);
 	}
-	goto createCubeImage;
-
-tryQuakeSuffices:
-	for (i = 0; i < 6; i++)
-	{
-		Com_sprintf(filename, sizeof(filename), "%s_%s", buffer, quakeSuffices[i]);
-
-		filename_p = &filename[0];
-		R_LoadImage(&filename_p, &pic[i], &width, &height, &bitsIgnore, materialName);
-
-		if (!pic[i] || width != height)
-		{
-			image = NULL;
-			goto skipCubeImage;
-		}
-
-		if (quakeFlipX[i])
-		{
-			R_Flip(pic[i], width, height);
-		}
-
-		if (quakeFlipY[i])
-		{
-			R_Flop(pic[i], width, height);
-		}
-
-		R_Rotate(pic[i], width, height, quakeRot[i]);
-	}
+	//goto createCubeImage;
 
 createCubeImage:
 	image = R_CreateCubeImage((char *)buffer, (const byte **)pic, width, height, bits, filterType, wrapType);
