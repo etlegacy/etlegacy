@@ -547,7 +547,7 @@ void RB_SurfaceFoliage(srfFoliage_t *srf)
 		Com_Memcpy(xyz, srf->xyz, numVerts * sizeof(srf->xyz[0]));
 		if (tess.shader->needsNormal)
 		{
-			Com_Memcpy(&tess.normal[tess.numVertexes], srf->normal, numVerts * sizeof(srf->xyz[0]));
+			Com_Memcpy(&tess.normal[tess.numVertexes], srf->normal, numVerts * sizeof(srf->normal[0]));
 		}
 
 		for (i = 0; i < numVerts; i++)

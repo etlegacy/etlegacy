@@ -1019,81 +1019,76 @@ void Tess_StageIteratorSky(void)
 	// to be drawn
 	Tess_ClipSkyPolygons();
 
+	// r_showSky will let all the sky blocks be drawn in
+	// front of everything to allow developers to see how
+	// much sky is getting sucked in
+	if (r_showSky->integer)
+	{
+		glDepthRange(0.0, 0.0);
+	}
+	else
+	{
+		glDepthRange(1.0, 1.0);
+	}
 
+	// draw the outer skybox
+	if (tess.surfaceShader->sky.outerbox && tess.surfaceShader->sky.outerbox != tr.blackCubeImage)
+	{
+		R_BindVBO(tess.vbo);
+		R_BindIBO(tess.ibo);
 
-		// r_showSky will let all the sky blocks be drawn in
-		// front of everything to allow developers to see how
-		// much sky is getting sucked in
-		if (r_showSky->integer)
+		SetMacrosAndSelectProgram(trProg.gl_skyboxShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
+
+		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);   // in world space
+		SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
+
+		// u_PortalPlane
+		if (backEnd.viewParms.isPortal)
 		{
-			glDepthRange(0.0, 0.0);
-		}
-		else
-		{
-			glDepthRange(1.0, 1.0);
-		}
-
-		// draw the outer skybox
-		if (tess.surfaceShader->sky.outerbox && tess.surfaceShader->sky.outerbox != tr.blackCubeImage)
-		{
-			R_BindVBO(tess.vbo);
-			R_BindIBO(tess.ibo);
-
-			SetMacrosAndSelectProgram(trProg.gl_skyboxShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-
-			SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);   // in world space
-			SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
-
-			// u_PortalPlane
-			if (backEnd.viewParms.isPortal)
-			{
-				// clipping plane in world space
-				clipPortalPlane();
-			}
-
-			GLSL_SetRequiredVertexPointers(trProg.gl_skyboxShader);
-
-			DrawSkyBox(tess.surfaceShader, qtrue);
+			// clipping plane in world space
+			clipPortalPlane();
 		}
 
-	   // generate the vertexes for all the clouds, which will be drawn
-	   // by the generic shader routine
-		 BuildCloudData();	   
+		GLSL_SetRequiredVertexPointers(trProg.gl_skyboxShader);
 
-         Tess_StageIteratorGeneric();
+		DrawSkyBox(tess.surfaceShader, qtrue);
+	}
 
-		// draw the inner skybox
-		if (tess.surfaceShader->sky.innerbox && tess.surfaceShader->sky.innerbox != tr.blackCubeImage)
+	// generate the vertexes for all the clouds, which will be drawn
+	// by the generic shader routine
+	BuildCloudData();
+
+	Tess_StageIteratorGeneric();
+
+	// draw the inner skybox
+	if (tess.surfaceShader->sky.innerbox && tess.surfaceShader->sky.innerbox != tr.blackCubeImage)
+	{
+		R_BindVBO(tess.vbo);
+		R_BindIBO(tess.ibo);
+
+		SetMacrosAndSelectProgram(trProg.gl_skyboxShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
+
+		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);   // in world space
+		SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
+		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
+
+		// u_PortalPlane
+		if (backEnd.viewParms.isPortal)
 		{
-			R_BindVBO(tess.vbo);
-			R_BindIBO(tess.ibo);
-
-			SetMacrosAndSelectProgram(trProg.gl_skyboxShader, USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal);
-
-			SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);   // in world space
-			SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
-			SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
-
-			// u_PortalPlane
-			if (backEnd.viewParms.isPortal)
-			{
-				// clipping plane in world space
-				clipPortalPlane();
-			}
-
-			GLSL_SetRequiredVertexPointers(trProg.gl_skyboxShader);
-
-			DrawSkyBox(tess.surfaceShader, qfalse);
+			// clipping plane in world space
+			clipPortalPlane();
 		}
 
+		GLSL_SetRequiredVertexPointers(trProg.gl_skyboxShader);
+
+		DrawSkyBox(tess.surfaceShader, qfalse);
+	}
 	
-			// back to normal depth range
-			glDepthRange(0.0, 1.0);
+	// back to normal depth range
+	glDepthRange(0.0, 1.0);
 
-			// note that sky was drawn so we will draw a sun later
-			backEnd.skyRenderedThisView = qtrue;
-			backEnd.refdef.rdflags &= ~RDF_DRAWINGSKY;
-		}
-	
-
+	// note that sky was drawn so we will draw a sun later
+	backEnd.skyRenderedThisView = qtrue;
+	backEnd.refdef.rdflags &= ~RDF_DRAWINGSKY;
+}

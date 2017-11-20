@@ -662,13 +662,12 @@ static void Tess_SurfaceSplash(void)
 static void Tess_SurfaceSprite(void)
 {
 	vec3_t left, up;
-	float  radius;
+	float  radius = backEnd.currentEntity->e.radius;
 	vec4_t color;
 
 	Ren_LogComment("--- Tess_SurfaceSprite ---\n");
 
 	// calculate the xyz locations for the four corners
-	radius = backEnd.currentEntity->e.radius;
 	if (backEnd.currentEntity->e.rotation == 0.f)
 	{
 		VectorScale(backEnd.viewParms.orientation.axis[1], radius, left);
@@ -1252,7 +1251,6 @@ static void Tess_SurfaceTriangles(srfTriangles_t *srf)
  */
 static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 {
-#if 0
 	int               o, i, a;
 	int               numVerts = srf->numVerts, numIndexes = srf->numIndexes;   // basic setup
 	vec4_t            distanceCull, distanceVector;
@@ -1263,12 +1261,11 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 	int               dlightBits;
 	foliageInstance_t *instance;
 
-#if 0
 	// calculate distance vector
 	VectorSubtract(backEnd.orientation.origin, backEnd.viewParms.orientation.origin, local);
-	distanceVector[0] = -backEnd.orientation.transformMatrix[2];
-	distanceVector[1] = -backEnd.orientation.transformMatrix[6];
-	distanceVector[2] = -backEnd.orientation.transformMatrix[10];
+	distanceVector[0] = -backEnd.orientation.modelViewMatrix[2];
+	distanceVector[1] = -backEnd.orientation.modelViewMatrix[6];
+	distanceVector[2] = -backEnd.orientation.modelViewMatrix[10];
 	distanceVector[3] = DotProduct(local, backEnd.viewParms.orientation.axis[0]);
 
 	// attempt distance cull
@@ -1282,17 +1279,15 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 			return;
 		}
 	}
-#endif
 
 	// set dlight bits
 	dlightBits = srf->dlightBits;
-	//tess.dlightBits |= dlightBits;
+	//tess.dlightBits |= dlightBits; // FIXME: r1?
 
 	// iterate through origin list
 	instance = srf->instances;
 	for (o = 0; o < srf->numInstances; o++, instance++)
 	{
-#if 0
 		// fade alpha based on distance between inner and outer radii
 		if (distanceCull[1] > 0.0f)
 		{
@@ -1343,7 +1338,6 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 #endif
 		}
 		else
-#endif
 		{
 			srcColor = *((int *)instance->color);
 		}
@@ -1353,7 +1347,7 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 		Tess_CheckOverflow(numVerts, numIndexes);
 
 		// set after overflow check so dlights work properly
-		//tess.dlightBits |= dlightBits;
+		//tess.dlightBits |= dlightBits; // FIXME: r1?
 
 		// copy indexes
 		Com_Memcpy(&tess.indexes[tess.numIndexes], srf->indexes, numIndexes * sizeof(srf->indexes[0]));
@@ -1365,9 +1359,24 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 		// copy xyz, normal and st
 		xyz = tess.xyz[tess.numVertexes];
 		Com_Memcpy(xyz, srf->xyz, numVerts * sizeof(srf->xyz[0]));
-		Com_Memcpy(&tess.normals[tess.numVertexes], srf->normal, numVerts * sizeof(srf->xyz[0]));
-		Com_Memcpy(&tess.texCoords[tess.numVertexes], srf->texCoords, numVerts * sizeof(srf->texCoords[0]));
-		Com_Memcpy(&tess.lightCoords[tess.numVertexes], srf->lmTexCoords, numVerts * sizeof(srf->lmTexCoords[0]));
+		
+		//if (tess.surfaceShader->needsNormal)
+		{
+			Com_Memcpy(&tess.normals[tess.numVertexes], srf->normal, numVerts * sizeof(srf->normal[0]));
+		}
+
+		for (i = 0; i < numVerts; i++)
+		{
+			tess.texCoords[tess.numVertexes + i][0] = srf->texCoords[i][0];
+			tess.texCoords[tess.numVertexes + i][1] = srf->texCoords[i][1];
+			tess.texCoords[tess.numVertexes + i][2] = 0;
+			tess.texCoords[tess.numVertexes + i][3] = 1;
+
+			tess.lightCoords[tess.numVertexes + i][0] = srf->lmTexCoords[i][0];
+			tess.lightCoords[tess.numVertexes + i][1] = srf->lmTexCoords[i][1];
+			tess.lightCoords[tess.numVertexes + i][2] = 0;
+			tess.lightCoords[tess.numVertexes + i][3] = 1;
+		}
 
 		// offset xyz
 		for (i = 0; i < numVerts; i++, xyz += 4)
@@ -1387,7 +1396,6 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 		tess.numVertexes += numVerts;
 	}
 	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD | ATTR_NORMAL | ATTR_LIGHTCOORD;
-#endif
 }
 
 /**
@@ -1567,7 +1575,7 @@ static void Tess_DoRailDiscs(int numSegs, const vec3_t start, const vec3_t dir, 
 		return;
 	}
 
-	scale = 0.25;
+	scale = 0.25f;
 
 	for (i = 0; i < 4; i++)
 	{
