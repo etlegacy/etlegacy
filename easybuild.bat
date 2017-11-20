@@ -8,52 +8,6 @@
 @echo off
 @setLocal EnableDelayedExpansion
 
-:: The default VS version (minimal supported vs version is 12, max is 14)
-set vsversion=14
-set vsvarsbat=!VS%vsversion%0COMNTOOLS!\vsvars32.bat
-:: set vsvarsbat=
-:: Setup the NMake env or find the correct .bat this also finds msbuild
-
-SET build_64=0
-SET mod_only=0
-SET use_autoupdate=1
-SET use_extra=1
-SET build_r2=1
-
-CALL:SETUPMSBUILD
-
-if !errorlevel!==1 exit /b !errorlevel!
-
-REM ECHO Checking application status
-
-where /q msbuild >nul 2>&1 && (
-	REM ECHO MSBuild ok.
-) || (
-	ECHO Missing MSBuild cannot proceed.
-	GOTO:EOF
-)
-
-where /q cmake >nul 2>&1 && (
-	REM ECHO CMake ok.
-) || (
-	ECHO Missing CMake cannot proceed.
-	GOTO:EOF
-)
-
-IF !build_r2!==1 (
-	where /q sed >nul 2>&1 && (
-		REM ECHO SEd ok.
-	) || (
-		ECHO Missing the SED appliction. Build would fail as R2 requires sed.
-		GOTO:EOF
-	)
-)
-
-REM ECHO Applications ok. Proceeding.
-
-:: Init the submdule
-CALL:INITSUBMODULE
-
 :: variables
 SET game_homepath=%USERPROFILE%\Documents\ETLegacy
 SET game_basepath=%USERPROFILE%\Documents\ETLegacy-Build
@@ -62,28 +16,90 @@ SET batloc=%~dp0
 SET build_dir=!batloc!build
 SET project_dir=!batloc!project
 
+SET build_64=0
+SET mod_only=0
+SET use_autoupdate=1
+SET use_extra=1
+SET build_r2=1
+SET generator=
+REM SET generator=Visual Studio 14 2015
+REM SET platform_toolset=-T v141_xp
+
 :: pickup some parameters before proceeding
-FOR %%A IN (%*) DO (
-	IF /I "%%A"=="-64" @SET build_64=1
-	IF /I "%%A"=="-mod" @SET mod_only=1
-	IF /I "%%A"=="-noupdate" @SET use_autoupdate=0
-	IF /I "%%A"=="-noextra" @SET use_extra=0
-	IF /I "%%A"=="-debug" @SET build_type=Debug
-	IF /I "%%A"=="-nor2" @SET build_r2=0
+set i=0
+:loop
+IF NOT "%1"=="" (
+	IF /I "%1"=="--help" (
+		ECHO Write some help text here....
+		GOTO:EOF
+	) ELSE IF /I "%1"=="-64" (
+		SET build_64=1
+	) ELSE IF /I "%1"=="-mod" (
+		SET mod_only=1
+	) ELSE IF /I "%1"=="-noupdate" (
+		SET use_autoupdate=0
+	) ELSE IF /I "%1"=="-noextra" (
+		SET use_extra=0
+	) ELSE IF /I "%1"=="-debug" (
+		SET build_type=Debug
+	) ELSE IF /I "%1"=="-nor2" (
+		SET build_r2=0
+	) ELSE IF /I "%1"=="-generator" (
+		SET generator=%~2
+		SHIFT
+	) ELSE IF /I "%1"=="-toolset" (
+		SET platform_toolset=-T %~2
+		SHIFT
+	) ELSE IF /I "%1"=="-build_dir" (
+		SET build_dir=%~dpnx2
+		SHIFT
+	) ELSE (
+		SET /A i+=1
+		SET commands[!i!]=%~1
+	)
+	SHIFT
+	GOTO :loop
+)
+SET tasks=%i%
+
+IF NOT "%generator%"=="" (
+	SET generator=-G "%generator%
+	IF %build_64%==1 (
+		SET generator=!generator! Win64"
+	) ELSE (
+		SET generator=!generator!"
+	)
 )
 
-IF "%~1"=="" (
+REM for /L %%i in (1,1,%tasks%) do echo Task number %%i: "!commands[%%i]!"
+
+if !errorlevel!==1 exit /b !errorlevel!
+
+REM ECHO Checking application status
+where /q cmake >nul 2>&1 && (
+	REM ECHO CMake ok.
+) || (
+	ECHO Missing CMake cannot proceed.
+	GOTO:EOF
+)
+
+REM ECHO Applications ok. Proceeding.
+
+:: Init the submdule
+CALL:INITSUBMODULE
+
+IF "%tasks%"=="0" (
 	GOTO:DEFAULTPROCESS
 ) ELSE (
 	GOTO:PROCESSCOMMANDS
 )
 GOTO:EOF
 
-:: process command line commands if any
+:: process commands if any
 :PROCESSCOMMANDS
-	FOR %%A IN (%*) DO (
+	FOR /L %%i in (1,1,%tasks%) DO (
 		if !errorlevel!==1 exit /b !errorlevel!
-		CALL:FUNCTIONS %%A
+		CALL:FUNCTIONS "!commands[%%i]!"
 	)
 GOTO:EOF
 
@@ -96,7 +112,7 @@ GOTO:EOF
 	IF /I "!curvar!"=="crust" GOTO:UNCRUSTCODE
 	IF /I "!curvar!"=="project" CALL:OPENPROJECT
 	:: download pak0 - 2 to the homepath if they do not exist
-	IF /I "!curvar!"=="download" CALL:DOWNLOADPAKS "http://mirror.etlegacy.com/etmain/"
+	IF /I "!curvar!"=="download" CALL:DOWNLOADPAKS "https://mirror.etlegacy.com/etmain/"
 	IF /I "!curvar!"=="open" explorer !game_basepath!
 	IF /I "!curvar!"=="release" CALL:DORELEASE
 GOTO:EOF
@@ -105,42 +121,6 @@ GOTO:EOF
 	CALL:DOCLEAN
 	CALL:DOBUILD
 	CALL:DOPACKAGE
-GOTO:EOF
-
-:SETUPMSBUILD
-	where /q msbuild >nul 2>&1 && (
-		SET vsversion=%VisualStudioVersion:~0,-2%
-		ECHO BUILD SYSTEM OK!
-	) || (
-		SET errorlevel=0
-		IF EXIST "!vsvarsbat!" (
-			CALL "!vsvarsbat!" >nul
-		) ELSE (
-			CALL:FINDVSVARS
-			if !errorlevel!==1 (
-				ECHO Cannot find build environment
-				exit /b !errorlevel!
-				GOTO:EOF
-			) ELSE (
-				ECHO Setting up build environment
-				CALL "!vsvarsbat!" >nul
-			)
-		)
-	)
-	SET errorlevel=0
-GOTO:EOF
-
-:FINDVSVARS
-	ECHO Finding VSVARS
-	FOR /L %%G IN (20,-1,12) DO (
-		IF EXIST "!VS%%G0COMNTOOLS!\vsvars32.bat" (
-			@SET vsvarsbat=!VS%%G0COMNTOOLS!vsvars32.bat
-			@SET vsversion=%%G
-			GOTO:EOF
-		)
-	)
-	SET errorlevel=1
-	exit /b 1
 GOTO:EOF
 
 :INITSUBMODULE
@@ -222,11 +202,8 @@ GOTO:EOF
 
 	set build_string=
 	CALL:GENERATECMAKE build_string
-	IF !build_64!==1 (
-		cmake -G "Visual Studio !vsversion! Win64" -T v!vsversion!0_xp %build_string% "%~2"
-	) ELSE (
-		cmake -G "Visual Studio !vsversion!" -T v!vsversion!0_xp %build_string% "%~2"
-	)
+	cmake !generator! !platform_toolset! %build_string% "%~2"
+	ECHO cmake !generator! !platform_toolset! %build_string% "%~2"
 GOTO:EOF
 
 :OPENPROJECT
@@ -238,7 +215,8 @@ GOTO:EOF
 	:: build
 	CALL:GENERATEPROJECT !build_dir! "!batloc!"
 	ECHO Building...
-	msbuild ETLEGACY.sln /target:CMake\ALL_BUILD /p:Configuration=%build_type%
+	REM msbuild ETLEGACY.sln /target:CMake\ALL_BUILD /p:Configuration=%build_type%
+	cmake --build . --config %build_type%
 GOTO:EOF
 
 :DOINSTALL
