@@ -214,6 +214,15 @@ int DL_BeginDownload(char *localName, const char *remoteName)
 	curl_easy_setopt(dl_request, CURLOPT_FOLLOWLOCATION, 1);
 	curl_easy_setopt(dl_request, CURLOPT_MAXREDIRS, 5);
 
+#ifdef FEATURE_OPENSSL
+#if 0
+	curl_easy_setopt(dl_request, CURLOPT_CAINFO, "./cert.crt");
+#else
+	curl_easy_setopt(dl_request, CURLOPT_SSL_VERIFYHOST, 0);
+	curl_easy_setopt(dl_request, CURLOPT_SSL_VERIFYPEER, 0);
+#endif
+#endif
+
 	curl_multi_add_handle(dl_multi, dl_request);
 
 	Cvar_Set("cl_downloadName", remoteName);
@@ -260,9 +269,17 @@ char *DL_GetString(const char *url)
 	curl_easy_setopt(curl, CURLOPT_USERAGENT, va("%s %s", APP_NAME "/" APP_VERSION, curl_version()));
 	curl_easy_setopt(curl, CURLOPT_URL, url);
 	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, DL_write_function);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&write_result);
+
+#ifdef FEATURE_OPENSSL
+#if 0
+	curl_easy_setopt(dl_request, CURLOPT_CAINFO, "./cert.crt");
+#else
+	curl_easy_setopt(dl_request, CURLOPT_SSL_VERIFYHOST, 0);
+	curl_easy_setopt(dl_request, CURLOPT_SSL_VERIFYPEER, 0);
+#endif
+#endif
 
 	status = curl_easy_perform(curl);
 	if (status != 0)
