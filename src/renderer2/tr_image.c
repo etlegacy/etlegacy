@@ -2857,7 +2857,8 @@ static void R_CreateFogImage(void)
 	// standard openGL clamping doesn't really do what we want -- it includes
 	// the border color at the edges.  OpenGL 1.2 has clamp-to-edge, which does
 	// what we want.
-	tr.fogImage = R_CreateImage("_fog", (byte *) data, FOG_S, FOG_T, IF_NOPICMIP, FT_LINEAR, WT_CLAMP);
+	//And Open GL3 does it for real, was WT_CLAMP
+	tr.fogImage = R_CreateImage("_fog", (byte *) data, FOG_S, FOG_T, IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP);
 	ri.Hunk_FreeTempMemory(data);
 
 	borderColor[0] = 1.0;
