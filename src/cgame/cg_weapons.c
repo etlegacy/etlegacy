@@ -3942,12 +3942,20 @@ void CG_AltWeapon_f(void)
 	// don't allow another weapon switch when we're still swapping the gpg40, to prevent animation breaking
 	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
 	{
-		if (GetWeaponTableData(original)->isRiflenade || GetWeaponTableData(original)->isSilencedPistol || GetWeaponTableData(original)->isAkimbo || GetWeaponTableData(original)->isSetWeapon)
+		if (GetWeaponTableData(original)->isRiflenade
+		    || GetWeaponTableData(original)->isSilencedPistol
+		    || GetWeaponTableData(original)->isAkimbo
+		    || GetWeaponTableData(original)->isSetWeapon
+		    || GetWeaponTableData(original)->isScoped)
 		{
 			return;
 		}
 
-		if (GetWeaponTableData(num)->isRiflenade || GetWeaponTableData(num)->isSilencedPistol || GetWeaponTableData(num)->isAkimbo || GetWeaponTableData(num)->isSetWeapon)
+		if (GetWeaponTableData(num)->isRiflenade
+		    || GetWeaponTableData(num)->isSilencedPistol
+		    || GetWeaponTableData(num)->isAkimbo
+		    || GetWeaponTableData(num)->isSetWeapon
+		    || GetWeaponTableData(num)->isScoped)
 		{
 			return;
 		}
@@ -4626,12 +4634,20 @@ void CG_WeaponBank_f(void)
 	// don't allow another weapon switch when we're still swapping the gpg40, to prevent animation breaking
 	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
 	{
-		if (GetWeaponTableData(curweap)->isRiflenade || GetWeaponTableData(curweap)->isSilencedPistol || GetWeaponTableData(curweap)->isAkimbo || GetWeaponTableData(curweap)->isSetWeapon)
+		if (GetWeaponTableData(curweap)->isRiflenade
+		    || GetWeaponTableData(curweap)->isSilencedPistol
+		    || GetWeaponTableData(curweap)->isAkimbo
+		    || GetWeaponTableData(curweap)->isSetWeapon
+		    || GetWeaponTableData(curweap)->isScoped)
 		{
 			return;
 		}
 
-		if (GetWeaponTableData(num)->isRiflenade || GetWeaponTableData(num)->isSilencedPistol || GetWeaponTableData(num)->isAkimbo || GetWeaponTableData(num)->isSetWeapon)
+		if (GetWeaponTableData(num)->isRiflenade
+		    || GetWeaponTableData(num)->isSilencedPistol
+		    || GetWeaponTableData(num)->isAkimbo
+		    || GetWeaponTableData(num)->isSetWeapon
+		    || GetWeaponTableData(num)->isScoped)
 		{
 			return;
 		}
@@ -4720,7 +4736,7 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 			for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
 			{
 				// make sure we don't reselect the panzer or bazooka
-				if (!GetWeaponTableData(weapBanksMultiPlayer[3][i])->isPanzer && CG_WeaponSelectable(weapBanksMultiPlayer[3][i]))     // find a rifle
+				if (!GetWeaponTableData(weapBanksMultiPlayer[3][i])->isPanzer && CG_WeaponSelectable(weapBanksMultiPlayer[3][i]))// find a rifle
 				{
 					cg.weaponSelect = weapBanksMultiPlayer[3][i];
 					CG_FinishWeaponChange(cg.predictedPlayerState.weapon, cg.weaponSelect);
