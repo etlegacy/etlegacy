@@ -560,7 +560,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 
 		SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
 
-		//if(r_reflectionMapping->integer)
+		if(tr.cubeHashTable != NULL)
 		{
 			cubemapProbe_t *cubeProbeNearest;
 			cubemapProbe_t *cubeProbeSecondNearest;
@@ -1339,9 +1339,9 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 		GL_Bind(tr.shadowCubeFBOImage[light->shadowLOD]);
 	}
 
-	// bind u_RandomMap
-	SelectTexture(TEX_RANDOM);
-	GL_Bind(tr.randomNormalsImage);
+	// bind u_RandomMap (not used - see forwardLighting_fp)
+	//SelectTexture(TEX_RANDOM);
+	//GL_Bind(tr.randomNormalsImage);
 
 	GLSL_SetRequiredVertexPointers(trProg.gl_forwardLightingShader_omniXYZ);
 
@@ -1554,9 +1554,9 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 		GL_Bind(tr.shadowMapFBOImage[light->shadowLOD]);
 	}
 
-	// bind u_RandomMap
-	SelectTexture(TEX_RANDOM);
-	GL_Bind(tr.randomNormalsImage);
+	// bind u_RandomMap (not used - see forwardLighting_fp)
+	//SelectTexture(TEX_RANDOM);
+	//GL_Bind(tr.randomNormalsImage);
 
 	GLSL_SetRequiredVertexPointers(trProg.gl_forwardLightingShader_projXYZ);
 

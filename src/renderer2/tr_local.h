@@ -3515,7 +3515,7 @@ typedef struct
 	image_t *greenImage;
 	image_t *blueImage;
 	image_t *flatImage;                     ///< use this as default normalmap
-	image_t *randomNormalsImage;
+	//image_t *randomNormalsImage;
 	image_t *noFalloffImage;
 	image_t *attenuationXYImage;
 	image_t *blackCubeImage;

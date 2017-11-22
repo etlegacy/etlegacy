@@ -2912,7 +2912,7 @@ static void R_CreateDefaultImage(void)
 
 /**
  * @brief R_CreateRandomNormalsImage
- */
+ *        unused  - see randomNormalsImage
 static void R_CreateRandomNormalsImage(void)
 {
 	int  x, y;
@@ -2943,6 +2943,7 @@ static void R_CreateRandomNormalsImage(void)
 	}
 	tr.randomNormalsImage = R_CreateImage("_randomNormals", (byte *) data, DEFAULT_SIZE, DEFAULT_SIZE, IF_NOPICMIP, FT_DEFAULT, WT_REPEAT);
 }
+*/
 
 /**
  * @brief R_CreateNoFalloffImage
@@ -3508,7 +3509,7 @@ void R_CreateBuiltinImages(void)
 
 	tr.quadraticImage = R_CreateImage("_quadratic", (byte *) data, DEFAULT_SIZE, DEFAULT_SIZE, IF_NOPICMIP | IF_NOCOMPRESSION, FT_LINEAR, WT_CLAMP);
 
-	R_CreateRandomNormalsImage();
+	//R_CreateRandomNormalsImage();
 	R_CreateFogImage();
 	R_CreateNoFalloffImage();
 	R_CreateAttenuationXYImage();
