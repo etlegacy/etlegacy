@@ -2809,8 +2809,7 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	}
 	case AGEN_NORMALZFADE:
 	{
-#if 0
-		// FIXME
+		// FIXME: rework/move to GL
 		float    alpha, range, lowest, highest, dot;
 		vec3_t   worldUp;
 		qboolean zombieEffect = qfalse;
@@ -2904,7 +2903,6 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 				tess.svars.color[3] = 0;
 			}
 		}
-#endif
 	}
 	break;
 	case AGEN_WAVEFORM:
