@@ -704,12 +704,12 @@ static void CG_DynamiteTrail(centity_t *ent, const weaponInfo_t *wi)
 	if (ent->currentState.teamNum < 4)
 	{
 		mult = 0.004f * (cg.time - ent->currentState.effect1Time) / 30000.0f;
-		trap_R_AddLightToScene(origin, 320, (float)fabs(sin((cg.time - ent->currentState.effect1Time) * mult)), 0.3, 0, 0, 0, REF_FORCE_DLIGHT);
+		trap_R_AddLightToScene(origin, 320, (float)fabs(sin((cg.time - ent->currentState.effect1Time) * mult)), 1.0f, 0, 0, 0, REF_FORCE_DLIGHT);
 	}
 	else
 	{
 		mult = 1 - ((cg.time - ent->trailTime) / 15500.0f);
-		trap_R_AddLightToScene(origin, 320, mult, 0.3, 0.0, 0, 0, REF_FORCE_DLIGHT);
+		trap_R_AddLightToScene(origin, 320, mult, 1.0f, 1.0f, 0, 0, REF_FORCE_DLIGHT);
 	}
 }
 
