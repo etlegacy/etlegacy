@@ -323,9 +323,7 @@ static shader_t *ShaderForShaderNum(int shaderNum, int lightmapNum)
 	shader_t  *shader;
 	dshader_t *dsh;
 
-#ifdef Q3_BIG_ENDIAN
 	shaderNum = LittleLong(shaderNum);
-#endif // Q3_BIG_ENDIAN
 
 	if (shaderNum < 0 || shaderNum >= s_worldData.numShaders)
 	{
