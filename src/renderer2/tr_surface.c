@@ -1258,14 +1258,14 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 	vec3_t            local;
 	vec_t             *xyz;
 	int               srcColor, *color;
-	int               dlightBits;
+//	int               dlightBits;
 	foliageInstance_t *instance;
 
 	// calculate distance vector
 	VectorSubtract(backEnd.orientation.origin, backEnd.viewParms.orientation.origin, local);
-	distanceVector[0] = -backEnd.orientation.modelViewMatrix[2];
-	distanceVector[1] = -backEnd.orientation.modelViewMatrix[6];
-	distanceVector[2] = -backEnd.orientation.modelViewMatrix[10];
+	distanceVector[0] = -backEnd.orientation.transformMatrix[2];
+	distanceVector[1] = -backEnd.orientation.transformMatrix[6];
+	distanceVector[2] = -backEnd.orientation.transformMatrix[10];
 	distanceVector[3] = DotProduct(local, backEnd.viewParms.orientation.axis[0]);
 
 	// attempt distance cull
@@ -1281,7 +1281,7 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 	}
 
 	// set dlight bits
-	dlightBits = srf->dlightBits;
+//	dlightBits = srf->dlightBits;
 	//tess.dlightBits |= dlightBits; // FIXME: r1?
 
 	// iterate through origin list
