@@ -82,8 +82,8 @@ VBO_t *R_CreateVBO(const char *name, byte *vertexes, int vertexesSize, vboUsage_
 	vbo->ofsTangents        = 0;
 	vbo->ofsNormals         = 0;
 	vbo->ofsColors          = 0;
-	//vbo->ofsPaintColors     = 0;
-	//vbo->ofsLightDirections = 0;
+	vbo->ofsPaintColors     = 0;
+	vbo->ofsLightDirections = 0;
 	vbo->ofsBoneIndexes     = 0;
 	vbo->ofsBoneWeights     = 0;
 
@@ -164,8 +164,8 @@ VBO_t *R_CreateVBO2(const char *name, int numVertexes, srfVert_t *verts, unsigne
 	vbo->ofsTangents        = 0;
 	vbo->ofsNormals         = 0;
 	vbo->ofsColors          = 0;
-	//vbo->ofsPaintColors     = 0;
-	//vbo->ofsLightDirections = 0;
+	vbo->ofsPaintColors     = 0;
+	vbo->ofsLightDirections = 0;
 	vbo->ofsBoneIndexes     = 0;
 	vbo->ofsBoneWeights     = 0;
 
