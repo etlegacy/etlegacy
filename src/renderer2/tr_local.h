@@ -704,8 +704,8 @@ typedef struct VBO_s
 	uint32_t ofsBinormals;
 	uint32_t ofsNormals;
 	uint32_t ofsColors;
-	uint32_t ofsPaintColors;        ///< for advanced terrain blending
-	uint32_t ofsLightDirections;
+	//uint32_t ofsPaintColors;        ///< for advanced terrain blending
+	//uint32_t ofsLightDirections;
 	uint32_t ofsBoneIndexes;
 	uint32_t ofsBoneWeights;
 
@@ -1534,8 +1534,8 @@ enum
 	ATTR_INDEX_NORMAL,
 	ATTR_INDEX_COLOR,
 
-	ATTR_INDEX_PAINTCOLOR,
-	ATTR_INDEX_LIGHTDIRECTION,
+	//ATTR_INDEX_PAINTCOLOR,
+	//ATTR_INDEX_LIGHTDIRECTION,
 
 	// GPU vertex skinning
 	ATTR_INDEX_BONE_INDEXES,
@@ -4190,8 +4190,8 @@ typedef struct shaderCommands_s
 	vec4_t normals[SHADER_MAX_VERTEXES];
 	vec4_t colors[SHADER_MAX_VERTEXES];
 
-	vec4_t paintColors[SHADER_MAX_VERTEXES];                ///< for advanced terrain blending
-	vec4_t lightDirections[SHADER_MAX_VERTEXES];
+	//vec4_t paintColors[SHADER_MAX_VERTEXES];                ///< for advanced terrain blending
+	//vec4_t lightDirections[SHADER_MAX_VERTEXES];
 
 	glIndex_t indexes[SHADER_MAX_INDEXES];
 

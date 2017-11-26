@@ -1260,14 +1260,14 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 	int               srcColor, *color;
 	int               dlightBits;
 	foliageInstance_t *instance;
-	
+
 	// calculate distance vector
 	VectorSubtract(backEnd.orientation.origin, backEnd.viewParms.orientation.origin, local);
 	distanceVector[0] = -backEnd.orientation.modelViewMatrix[2];
 	distanceVector[1] = -backEnd.orientation.modelViewMatrix[6];
 	distanceVector[2] = -backEnd.orientation.modelViewMatrix[10];
 	distanceVector[3] = DotProduct(local, backEnd.viewParms.orientation.axis[0]);
-	
+
 	// attempt distance cull
 	Vector4Copy(tess.surfaceShader->distanceCull, distanceCull);
 	if (distanceCull[1] > 0)
