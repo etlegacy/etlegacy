@@ -3086,6 +3086,46 @@ void GLSL_VertexAttribsState(uint32_t stateBits)
 			glDisableVertexAttribArray(ATTR_INDEX_COLOR);
 		}
 	}
+
+	if (diff & ATTR_PAINTCOLOR)
+	{
+		if (stateBits & ATTR_PAINTCOLOR)
+		{
+			if (r_logFile->integer)
+			{
+				Ren_LogComment("glEnableVertexAttribArrayARB( ATTR_INDEX_PAINTCOLOR )\n");
+			}
+			glEnableVertexAttribArrayARB(ATTR_INDEX_PAINTCOLOR);
+		}
+		else
+		{
+			if (r_logFile->integer)
+			{
+				Ren_LogComment("glDisableVertexAttribArrayARB( ATTR_INDEX_PAINTCOLOR )\n");
+			}
+			glDisableVertexAttribArrayARB(ATTR_INDEX_PAINTCOLOR);
+		}
+	}
+
+	if(diff & ATTR_LIGHTDIRECTION)
+	{
+		if(stateBits & ATTR_LIGHTDIRECTION)
+		{
+			if(r_logFile->integer)
+			{
+				Ren_LogComment("glEnableVertexAttribArrayARB( ATTR_INDEX_LIGHTDIRECTION )\n");
+			}
+			glEnableVertexAttribArrayARB(ATTR_INDEX_LIGHTDIRECTION);
+		}
+		else
+		{
+			if(r_logFile->integer)
+			{
+				Ren_LogComment("glDisableVertexAttribArrayARB( ATTR_INDEX_LIGHTDIRECTION )\n");
+			}
+			glDisableVertexAttribArrayARB(ATTR_INDEX_LIGHTDIRECTION);
+		}
+	}
 	if (diff & ATTR_BONE_INDEXES)
 	{
 		if (stateBits & ATTR_BONE_INDEXES)
@@ -3245,6 +3285,27 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 		glState.vertexAttribPointersSet |= ATTR_COLOR;
 	}
 
+	if ((attribBits & ATTR_PAINTCOLOR) && !(glState.vertexAttribPointersSet & ATTR_PAINTCOLOR))
+	{
+		if (r_logFile->integer)
+		{
+			Ren_LogComment("glVertexAttribPointerARB( ATTR_INDEX_PAINTCOLOR )\n");
+		}
+
+		glVertexAttribPointerARB(ATTR_INDEX_PAINTCOLOR, 4, GL_FLOAT, 0, 0, BUFFER_OFFSET(glState.currentVBO->ofsPaintColors));
+		glState.vertexAttribPointersSet |= ATTR_PAINTCOLOR;
+	}
+
+	if ((attribBits & ATTR_LIGHTDIRECTION) && !(glState.vertexAttribPointersSet & ATTR_LIGHTDIRECTION))
+	{
+		if (r_logFile->integer)
+		{
+			Ren_LogComment("glVertexAttribPointerARB( ATTR_INDEX_LIGHTDIRECTION )\n");
+		}
+
+		glVertexAttribPointerARB(ATTR_INDEX_LIGHTDIRECTION, 3, GL_FLOAT, 0, 16, BUFFER_OFFSET(glState.currentVBO->ofsLightDirections));
+		glState.vertexAttribPointersSet |= ATTR_LIGHTDIRECTION;
+	}
 	if ((attribBits & ATTR_BONE_INDEXES))
 	{
 		Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_BONE_INDEXES )\n");
