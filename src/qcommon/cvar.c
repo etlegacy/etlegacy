@@ -1239,6 +1239,7 @@ void Cvar_List_f(void)
 {
 	cvar_t   *var;
 	int      i = 0;
+	int      selectedNum = 0;
 	char     *match;
 	qboolean raw = qfalse;
 
@@ -1263,6 +1264,8 @@ void Cvar_List_f(void)
 		{
 			continue;
 		}
+
+		selectedNum++;
 
 		if (var->flags & CVAR_SERVERINFO)
 		{
@@ -1342,7 +1345,7 @@ void Cvar_List_f(void)
 			char *index;
 			char *hat;
 
-			Com_Printf(" %s \"", var->name);
+			Com_Printf(" %-35s \"", var->name);
 
 			for (index = var->string; ; )
 			{
@@ -1361,11 +1364,11 @@ void Cvar_List_f(void)
 		}
 		else
 		{
-			Com_Printf(" %s \"%s\"\n", var->name, var->string);
+			Com_Printf(" %-35s \"%-s\" %s \"%-s\"\n", var->name, var->string, (strcmp(var->string, var->resetString)? "^3!":"-"),var->resetString);
 		}
 	}
 
-	Com_Printf("\n%i total cvars\n", i);
+	Com_Printf("\n%i total cvars, %i selected cvars\n", i, selectedNum);
 	Com_Printf("%i cvar indexes\n", cvar_numIndexes);
 }
 
