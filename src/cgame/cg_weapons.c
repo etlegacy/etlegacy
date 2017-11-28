@@ -3814,11 +3814,6 @@ void CG_AltWeapon_f(void)
 		return;
 	}
 
-	if (cg.snap->ps.pm_type == PM_FREEZE)
-	{
-		return;
-	}
-
 	// overload for spec mode when following
 	if (((cg.snap->ps.pm_flags & PMF_FOLLOW) || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 #ifdef FEATURE_MULTIVIEW
@@ -3830,11 +3825,21 @@ void CG_AltWeapon_f(void)
 		return;
 	}
 
-	// some alt vsays
+	if (cg.snap->ps.pm_type == PM_FREEZE)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.pm_type == PM_DEAD)
+	{
+		return;
+	}
+
+	// some alt vsays, don't check for weapon with alternative weapon
 	// 0 - disabled
 	// 1 - team
 	// 2 - fireteam
-	if (cg_quickchat.integer)
+	if (cg_quickchat.integer && !GetWeaponTableData(cg.weaponSelect)->weapAlts)
 	{
 		char *cmd;
 
@@ -3901,6 +3906,37 @@ void CG_AltWeapon_f(void)
 		}
 	}
 
+	if (cg.snap->ps.pm_flags & PMF_RESPAWNED)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.eFlags & EF_PRONE_MOVING)
+	{
+		return;
+	}
+
+	if (BG_PlayerMounted(cg.snap->ps.eFlags))
+	{
+		return;
+	}
+
+	if (cg.time - cg.weaponSelectTime < cg_weaponCycleDelay.integer)
+	{
+		return; // force pause so holding it down won't go too fast
+	}
+
+	// don't try to switch when in the middle of reloading or firing
+	if (cg.snap->ps.weaponstate == WEAPON_RELOADING || cg.snap->ps.weaponstate == WEAPON_FIRING)
+	{
+		return;
+	}
+
+	if (cg.snap->ps.weaponDelay)
+	{
+		return;
+	}
+
 	// need ground for this
 	if (GetWeaponTableData(cg.weaponSelect)->isMortar)
 	{
@@ -3952,27 +3988,6 @@ void CG_AltWeapon_f(void)
 		}
 	}
 
-	if (cg.time - cg.weaponSelectTime < cg_weaponCycleDelay.integer)
-	{
-		return; // force pause so holding it down won't go too fast
-	}
-
-	// don't try to switch when in the middle of reloading or firing
-	if (cg.snap->ps.weaponstate == WEAPON_RELOADING || cg.snap->ps.weaponstate == WEAPON_FIRING)
-	{
-		return;
-	}
-
-	if (cg.predictedPlayerState.pm_type == PM_DEAD)
-	{
-		return;
-	}
-
-	if (cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
-	{
-		return;
-	}
-
 	original = cg.weaponSelect;
 	num      = GetWeaponTableData(original)->weapAlts;
 
@@ -4001,11 +4016,6 @@ void CG_AltWeapon_f(void)
 				cg.binocZoomTime = cg.time;
 			}
 		}
-	}
-
-	if (original != WP_BINOCULARS && cg.predictedPlayerState.eFlags & EF_ZOOMING)
-	{
-		return;
 	}
 
 	// don't allow another weapon switch when we're still swapping the gpg40, to prevent animation breaking
@@ -4360,53 +4370,104 @@ void CG_PrevWeap(qboolean switchBanks)
 }
 
 /**
+ * @brief CG_CheckCanSwitch
+ * @return
+ */
+qboolean CG_CheckCanSwitch(void)
+{
+	if (!cg.snap)
+	{
+		return qfalse;
+	}
+
+	// pause bug
+	if (cg.snap->ps.pm_type == PM_FREEZE)
+	{
+		return qfalse;
+	}
+
+	if (cg.snap->ps.pm_type == PM_DEAD)
+	{
+		return qfalse;
+	}
+
+	if (cg.snap->ps.pm_flags & PMF_FOLLOW || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	{
+		return qfalse;
+	}
+
+	if (cg.snap->ps.eFlags & EF_PRONE_MOVING)
+	{
+		return qfalse;
+	}
+
+	// don't allow switch when zooming with binocular,
+	// due to the binocular mask which doesn't disappear when switching
+	if (cg.snap->ps.eFlags & EF_ZOOMING)
+	{
+		return qfalse;
+	}
+
+	if (BG_PlayerMounted(cg.snap->ps.eFlags))
+	{
+		return qfalse;
+	}
+
+	// force pause so holding it down won't go too fast
+	if (cg.time - cg.weaponSelectTime < cg_weaponCycleDelay.integer)
+	{
+		return qfalse;
+	}
+
+	if (GetWeaponTableData(cg.weaponSelect)->isSetWeapon)
+	{
+		return qfalse;
+	}
+
+	// don't try to switch when in the middle of reloading or firing
+	// cheatinfo:   The server actually would let you switch if this check were not
+	//              present, but would discard the reload.  So the when you switched
+	//              back you'd have to start the reload over.  This seems bad, however
+	//              the delay for the current reload is already in effect, so you'd lose
+	//              the reload time twice.  (the first pause for the current weapon reload,
+	//              and the pause when you have to reload again 'cause you canceled this one)
+	if (cg.snap->ps.weaponstate == WEAPON_RELOADING || cg.snap->ps.weaponstate == WEAPON_FIRING)
+	{
+		return qfalse;
+	}
+
+	// don't allow switch if you're holding a hot potato or dynamite
+	if (cg.snap->ps.grenadeTimeLeft)
+	{
+		return qfalse;
+	}
+
+	// don't allow change during spinup
+	if (cg.snap->ps.weaponDelay)
+	{
+		return qfalse;
+	}
+
+	// don't allow switch if weapon is overheating
+	if (cg.snap->ps.weaponTime && (cg.time - cg.predictedPlayerEntity.overheatTime) < 3000)
+	{
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+/**
  * @brief CG_LastWeaponUsed_f
  */
 void CG_LastWeaponUsed_f(void)
 {
-	// pause bug
-	if (cg.snap->ps.pm_type == PM_FREEZE)
-	{
-		return;
-	}
-
-	if (cg.snap->ps.pm_flags & PMF_FOLLOW)
-	{
-		return;
-	}
-
-	if (cg.predictedPlayerState.pm_type == PM_DEAD)
-	{
-		return;
-	}
-
-	if (cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
-	{
-		return;
-	}
-
-	if (cg.time - cg.weaponSelectTime < cg_weaponCycleDelay.integer)
-	{
-		return; // force pause so holding it down won't go too fast
-	}
-
-	if (GetWeaponTableData(cg.weaponSelect)->isSetWeapon)
+	if (!CG_CheckCanSwitch())
 	{
 		return;
 	}
 
 	cg.weaponSelectTime = cg.time;  // flash the current weapon icon
-
-	// don't switchback if reloading (it nullifies the reload)
-	if (cg.snap->ps.weaponstate == WEAPON_RELOADING)
-	{
-		return;
-	}
-
-	if (cg.predictedPlayerState.eFlags & EF_ZOOMING)
-	{
-		return;
-	}
 
 	if (!cg.switchbackWeapon)
 	{
@@ -4429,36 +4490,9 @@ void CG_LastWeaponUsed_f(void)
  */
 void CG_NextWeaponInBank_f(void)
 {
-	// pause bug
-	if (cg.snap->ps.pm_type == PM_FREEZE)
+	if (!CG_CheckCanSwitch())
 	{
 		return;
-	}
-
-	if (cg.snap->ps.pm_flags & PMF_FOLLOW)
-	{
-		return;
-	}
-
-	if (cg.predictedPlayerState.pm_type == PM_DEAD)
-	{
-		return;
-	}
-
-	// don't try to switch when in the middle of reloading or firing
-	if (cg.snap->ps.weaponstate == WEAPON_RELOADING || cg.snap->ps.weaponstate == WEAPON_FIRING)
-	{
-		return;
-	}
-
-	if (cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
-	{
-		return;
-	}
-
-	if (cg.time - cg.weaponSelectTime < cg_weaponCycleDelay.integer)
-	{
-		return; // force pause so holding it down won't go too fast
 	}
 
 	// this cvar is an option that lets the player use his weapon switching keys (probably the mousewheel)
@@ -4487,36 +4521,9 @@ void CG_NextWeaponInBank_f(void)
  */
 void CG_PrevWeaponInBank_f(void)
 {
-	// pause bug
-	if (cg.snap->ps.pm_type == PM_FREEZE)
+	if (!CG_CheckCanSwitch())
 	{
 		return;
-	}
-
-	if (cg.snap->ps.pm_flags & PMF_FOLLOW)
-	{
-		return;
-	}
-
-	if (cg.predictedPlayerState.pm_type == PM_DEAD)
-	{
-		return;
-	}
-
-	// don't try to switch when in the middle of reloading or firing
-	if (cg.snap->ps.weaponstate == WEAPON_RELOADING || cg.snap->ps.weaponstate == WEAPON_FIRING)
-	{
-		return;
-	}
-
-	if (cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
-	{
-		return;
-	}
-
-	if (cg.time - cg.weaponSelectTime < cg_weaponCycleDelay.integer)
-	{
-		return; // force pause so holding it down won't go too fast
 	}
 
 	// this cvar is an option that lets the player use his weapon switching keys (probably the mousewheel)
@@ -4559,13 +4566,7 @@ void CG_NextWeapon_f(void)
 	}
 #endif
 
-	// pause bug
-	if (cg.snap->ps.pm_type == PM_FREEZE)
-	{
-		return;
-	}
-
-	if (cg.snap->ps.pm_flags & PMF_FOLLOW)
+	if (!CG_CheckCanSwitch())
 	{
 		return;
 	}
@@ -4586,25 +4587,7 @@ void CG_NextWeapon_f(void)
 		}
 	}
 
-	if (cg.time - cg.weaponSelectTime < cg_weaponCycleDelay.integer)
-	{
-		return; // force pause so holding it down won't go too fast
-	}
-
 	cg.weaponSelectTime = cg.time;  // flash the current weapon icon
-
-	// don't try to switch when in the middle of reloading or firing
-	// cheatinfo:   The server actually would let you switch if this check were not
-	//              present, but would discard the reload.  So the when you switched
-	//              back you'd have to start the reload over.  This seems bad, however
-	//              the delay for the current reload is already in effect, so you'd lose
-	//              the reload time twice.  (the first pause for the current weapon reload,
-	//              and the pause when you have to reload again 'cause you canceled this one)
-
-	if (cg.snap->ps.weaponstate == WEAPON_RELOADING || cg.snap->ps.weaponstate == WEAPON_FIRING)
-	{
-		return;
-	}
 
 	CG_NextWeap(qtrue);
 }
@@ -4628,13 +4611,7 @@ void CG_PrevWeapon_f(void)
 	}
 #endif
 
-	// pause bug
-	if (cg.snap->ps.pm_type == PM_FREEZE)
-	{
-		return;
-	}
-
-	if (cg.snap->ps.pm_flags & PMF_FOLLOW)
+	if (!CG_CheckCanSwitch())
 	{
 		return;
 	}
@@ -4655,18 +4632,7 @@ void CG_PrevWeapon_f(void)
 		}
 	}
 
-	if (cg.time - cg.weaponSelectTime < cg_weaponCycleDelay.integer)
-	{
-		return; // force pause so holding it down won't go too fast
-	}
-
 	cg.weaponSelectTime = cg.time;  // flash the current weapon icon
-
-	// don't try to switch when in the middle of reloading or firing
-	if (cg.snap->ps.weaponstate == WEAPON_RELOADING || cg.snap->ps.weaponstate == WEAPON_FIRING)
-	{
-		return;
-	}
 
 	CG_PrevWeap(qtrue);
 }
@@ -4680,59 +4646,12 @@ void CG_WeaponBank_f(void)
 	int num, i, curweap;
 	int curbank = 0, curcycle = 0, bank = 0, cycle = 0;
 
-	if (!cg.snap)
-	{
-		return;
-	}
-
-	// pause bug
-	if (cg.snap->ps.pm_type == PM_FREEZE)
-	{
-		return;
-	}
-
-	if (cg.snap->ps.pm_flags & PMF_FOLLOW)
-	{
-		return;
-	}
-
-	if (cg.time - cg.weaponSelectTime < cg_weaponCycleDelay.integer)
-	{
-		return; // force pause so holding it down won't go too fast
-	}
-
-	if (GetWeaponTableData(cg.weaponSelect)->isSetWeapon)
+	if (!CG_CheckCanSwitch())
 	{
 		return;
 	}
 
 	cg.weaponSelectTime = cg.time;  // flash the current weapon icon
-
-	// don't try to switch when in the middle of reloading or firing
-	if (cg.snap->ps.weaponstate == WEAPON_RELOADING || cg.snap->ps.weaponstate == WEAPON_FIRING)
-	{
-		return;
-	}
-
-	if (cg.predictedPlayerState.pm_type == PM_DEAD)
-	{
-		return;
-	}
-
-	if (cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
-	{
-		return;
-	}
-
-	if (cg.snap->ps.weaponDelay > 0)
-	{
-		return;
-	}
-
-	if (cg.predictedPlayerState.eFlags & EF_ZOOMING)
-	{
-		return;
-	}
 
 	bank = atoi(CG_Argv(1));
 
@@ -4814,27 +4733,6 @@ void CG_WeaponBank_f(void)
 void CG_Weapon_f(void)
 {
 	int num;
-
-	if (!cg.snap)
-	{
-		return;
-	}
-
-	// pause bug
-	if (cg.snap->ps.pm_type == PM_FREEZE)
-	{
-		return;
-	}
-
-	if (cg.snap->ps.pm_flags & PMF_FOLLOW)
-	{
-		return;
-	}
-
-	if (GetWeaponTableData(cg.weaponSelect)->isSetWeapon)
-	{
-		return;
-	}
 
 	num = atoi(CG_Argv(1));
 
