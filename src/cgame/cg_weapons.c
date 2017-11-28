@@ -4380,6 +4380,12 @@ qboolean CG_CheckCanSwitch(void)
 		return qfalse;
 	}
 
+    // not the good way, we should be able to switch to another weapon than altweapon on respawning
+	if (cg.snap->ps.pm_flags & PMF_RESPAWNED)
+	{
+        return qfalse;
+	}
+
 	// pause bug
 	if (cg.snap->ps.pm_type == PM_FREEZE)
 	{
@@ -4490,11 +4496,6 @@ void CG_LastWeaponUsed_f(void)
  */
 void CG_NextWeaponInBank_f(void)
 {
-	if (!CG_CheckCanSwitch())
-	{
-		return;
-	}
-
 	// this cvar is an option that lets the player use his weapon switching keys (probably the mousewheel)
 	// for zooming (binocs/snooper/sniper/etc.)
 	if (cg.zoomval != 0.f)
@@ -4511,6 +4512,11 @@ void CG_NextWeaponInBank_f(void)
 		}
 	}
 
+	if (!CG_CheckCanSwitch())
+	{
+		return;
+	}
+
 	cg.weaponSelectTime = cg.time;  // flash the current weapon icon
 
 	CG_NextWeap(qfalse);
@@ -4521,11 +4527,6 @@ void CG_NextWeaponInBank_f(void)
  */
 void CG_PrevWeaponInBank_f(void)
 {
-	if (!CG_CheckCanSwitch())
-	{
-		return;
-	}
-
 	// this cvar is an option that lets the player use his weapon switching keys (probably the mousewheel)
 	// for zooming (binocs/snooper/sniper/etc.)
 	if (cg.zoomval != 0.f)
@@ -4540,6 +4541,11 @@ void CG_PrevWeaponInBank_f(void)
 			CG_ZoomOut_f();
 			return;
 		}
+	}
+
+	if (!CG_CheckCanSwitch())
+	{
+		return;
 	}
 
 	cg.weaponSelectTime = cg.time;  // flash the current weapon icon
