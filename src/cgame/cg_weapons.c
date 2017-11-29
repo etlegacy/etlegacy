@@ -4380,10 +4380,10 @@ qboolean CG_CheckCanSwitch(void)
 		return qfalse;
 	}
 
-    // not the good way, we should be able to switch to another weapon than altweapon on respawning
+	// not the good way, we should be able to switch to another weapon than altweapon on respawning
 	if (cg.snap->ps.pm_flags & PMF_RESPAWNED)
 	{
-        return qfalse;
+		return qfalse;
 	}
 
 	// pause bug
@@ -4407,9 +4407,9 @@ qboolean CG_CheckCanSwitch(void)
 		return qfalse;
 	}
 
-	// don't allow switch when zooming with binocular,
+	// don't allow switch when zooming with binocular not equipped,
 	// due to the binocular mask which doesn't disappear when switching
-	if (cg.snap->ps.eFlags & EF_ZOOMING)
+	if (cg.zoomedBinoc && cg.weaponSelect != WP_BINOCULARS)
 	{
 		return qfalse;
 	}
@@ -4464,6 +4464,31 @@ qboolean CG_CheckCanSwitch(void)
 }
 
 /**
+ * @brief CG_ZoomRequired
+ * @return
+ */
+qboolean CG_ZoomRequired(void)
+{
+	// this cvar is an option that lets the player use his weapon switching keys (probably the mousewheel)
+	// for zooming (binocs/snooper/sniper/etc.)
+	if (cg.zoomval != 0.f)
+	{
+		if (cg_useWeapsForZoom.integer == 1)
+		{
+			CG_ZoomIn_f();
+			return qtrue;
+		}
+		else if (cg_useWeapsForZoom.integer == 2)
+		{
+			CG_ZoomOut_f();
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+/**
  * @brief CG_LastWeaponUsed_f
  */
 void CG_LastWeaponUsed_f(void)
@@ -4496,20 +4521,9 @@ void CG_LastWeaponUsed_f(void)
  */
 void CG_NextWeaponInBank_f(void)
 {
-	// this cvar is an option that lets the player use his weapon switching keys (probably the mousewheel)
-	// for zooming (binocs/snooper/sniper/etc.)
-	if (cg.zoomval != 0.f)
+	if (CG_ZoomRequired())
 	{
-		if (cg_useWeapsForZoom.integer == 1)
-		{
-			CG_ZoomIn_f();
-			return;
-		}
-		else if (cg_useWeapsForZoom.integer == 2)
-		{
-			CG_ZoomOut_f();
-			return;
-		}
+		return;
 	}
 
 	if (!CG_CheckCanSwitch())
@@ -4527,20 +4541,9 @@ void CG_NextWeaponInBank_f(void)
  */
 void CG_PrevWeaponInBank_f(void)
 {
-	// this cvar is an option that lets the player use his weapon switching keys (probably the mousewheel)
-	// for zooming (binocs/snooper/sniper/etc.)
-	if (cg.zoomval != 0.f)
+	if (CG_ZoomRequired())
 	{
-		if (cg_useWeapsForZoom.integer == 2)
-		{
-			CG_ZoomIn_f();
-			return;
-		}
-		else if (cg_useWeapsForZoom.integer == 1)
-		{
-			CG_ZoomOut_f();
-			return;
-		}
+		return;
 	}
 
 	if (!CG_CheckCanSwitch())
@@ -4572,25 +4575,14 @@ void CG_NextWeapon_f(void)
 	}
 #endif
 
-	if (!CG_CheckCanSwitch())
+	if (CG_ZoomRequired())
 	{
 		return;
 	}
 
-	// this cvar is an option that lets the player use his weapon switching keys (probably the mousewheel)
-	// for zooming (binocs/snooper/sniper/etc.)
-	if (cg.zoomval != 0.f)
+	if (!CG_CheckCanSwitch())
 	{
-		if (cg_useWeapsForZoom.integer == 1)
-		{
-			CG_ZoomIn_f();
-			return;
-		}
-		else if (cg_useWeapsForZoom.integer == 2)
-		{
-			CG_ZoomOut_f();
-			return;
-		}
+		return;
 	}
 
 	cg.weaponSelectTime = cg.time;  // flash the current weapon icon
@@ -4617,25 +4609,14 @@ void CG_PrevWeapon_f(void)
 	}
 #endif
 
-	if (!CG_CheckCanSwitch())
+	if (CG_ZoomRequired())
 	{
 		return;
 	}
 
-	// this cvar is an option that lets the player use his weapon switching keys (probably the mousewheel)
-	// for zooming (binocs/snooper/sniper/etc.)
-	if (cg.zoomval != 0.f)
+	if (!CG_CheckCanSwitch())
 	{
-		if (cg_useWeapsForZoom.integer == 1)
-		{
-			CG_ZoomOut_f();
-			return;
-		}
-		else if (cg_useWeapsForZoom.integer == 2)
-		{
-			CG_ZoomIn_f();
-			return;
-		}
+		return;
 	}
 
 	cg.weaponSelectTime = cg.time;  // flash the current weapon icon
