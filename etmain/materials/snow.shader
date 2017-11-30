@@ -179,13 +179,10 @@ textures/snow/s_door_c10b_s
 
 textures/snow/s_metal_m04dg2
 {
-    qer_editorimage s_metal_m04dg2
-	
-	diffusemap s_metal_m04dg2
-	
-	specularmap s_metal_m04dg2_s
-	
-	bumpmap s_metal_m04dg2_n
+    qer_editorimage textures/snow/s_metal_m04dg2
+	diffusemap textures/snow/s_metal_m04dg2
+	specularmap textures/snow/s_metal_m04dg2_s
+	bumpmap textures/snow/s_metal_m04dg2_n
 	
 
 }
