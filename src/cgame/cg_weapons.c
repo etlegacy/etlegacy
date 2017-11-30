@@ -3835,6 +3835,13 @@ void CG_AltWeapon_f(void)
 		return;
 	}
 
+	// don't allow switch when zooming with binocular not equipped,
+	// due to the binocular mask which doesn't disappear when switching
+	if (cg.zoomedBinoc && cg.weaponSelect != WP_BINOCULARS)
+	{
+		return;
+	}
+
 	// some alt vsays, don't check for weapon with alternative weapon
 	// 0 - disabled
 	// 1 - team
@@ -4465,20 +4472,21 @@ qboolean CG_CheckCanSwitch(void)
 
 /**
  * @brief CG_ZoomRequired
+ * @param[in] isNextWeap
  * @return
  */
-qboolean CG_ZoomRequired(void)
+qboolean CG_ZoomRequired(qboolean isNextWeap)
 {
 	// this cvar is an option that lets the player use his weapon switching keys (probably the mousewheel)
 	// for zooming (binocs/snooper/sniper/etc.)
 	if (cg.zoomval != 0.f)
 	{
-		if (cg_useWeapsForZoom.integer == 1)
+		if (cg_useWeapsForZoom.integer == (isNextWeap ? 1 : 2))
 		{
 			CG_ZoomIn_f();
 			return qtrue;
 		}
-		else if (cg_useWeapsForZoom.integer == 2)
+		else if (cg_useWeapsForZoom.integer == (isNextWeap ? 2 : 1))
 		{
 			CG_ZoomOut_f();
 			return qtrue;
@@ -4521,7 +4529,7 @@ void CG_LastWeaponUsed_f(void)
  */
 void CG_NextWeaponInBank_f(void)
 {
-	if (CG_ZoomRequired())
+	if (CG_ZoomRequired(qtrue))
 	{
 		return;
 	}
@@ -4541,7 +4549,7 @@ void CG_NextWeaponInBank_f(void)
  */
 void CG_PrevWeaponInBank_f(void)
 {
-	if (CG_ZoomRequired())
+	if (CG_ZoomRequired(qfalse))
 	{
 		return;
 	}
@@ -4575,7 +4583,7 @@ void CG_NextWeapon_f(void)
 	}
 #endif
 
-	if (CG_ZoomRequired())
+	if (CG_ZoomRequired(qtrue))
 	{
 		return;
 	}
@@ -4609,7 +4617,7 @@ void CG_PrevWeapon_f(void)
 	}
 #endif
 
-	if (CG_ZoomRequired())
+	if (CG_ZoomRequired(qfalse))
 	{
 		return;
 	}
