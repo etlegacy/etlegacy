@@ -1211,7 +1211,6 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
 			{
 				*data = ( char * ) realloc(*data, *size + strl);
 				Com_Memset(*data + *size, 0, strl);
-
 			}
 			else
 			{
@@ -1265,12 +1264,11 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
  */
 static void GLSL_PreprocessShaderText(char *shaderBuffer, char *filetext, GLenum shadertype)
 {
-	GLchar       *ref;
+	GLchar       *ref   = filetext;
 	char         *token = NULL;
 	int          c      = 0;
 	unsigned int offset = 0;
 
-	ref = filetext;
 	while ((c = *ref))
 	{
 		// skip double slash comments
@@ -1435,11 +1433,13 @@ static qboolean GLSL_GenerateMacroString(shaderProgramList_t *program, const cha
 			{
 				if (GLSL_HasConflictingMacros(i, macroatrib))
 				{
+					Ren_Print("GLSL_GenerateMacroString Info: Conflicting macros found\n");
 					return qfalse;
 				}
 
 				if (GLSL_MissesRequiredMacros(i, macroatrib))
 				{
+					Ren_Print("GLSL_GenerateMacroString Info: Missing required macros\n");
 					return qfalse;
 				}
 
@@ -1535,7 +1535,7 @@ static void GLSL_ShowProgramUniforms(GLhandleARB program)
  */
 void GLSL_InitUniforms(shaderProgram_t *program)
 {
-	int   i, size = 0;
+	int   i, size   = 0;
 	GLint *uniforms = program->uniforms;
 
 	for (i = 0; i < UNIFORM_COUNT; i++)
@@ -1941,7 +1941,6 @@ void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, mat4_t
 	}
 
 	glUniformMatrix4fv(uniforms[uniformNum], arraysize, GL_FALSE, &matrixarray[0][0]);
-
 }
 
 /**
