@@ -22,8 +22,8 @@ textures/siwa_props_sd/siwa_carpet2
 textures/siwa_props_sd/siwa_carpet4
 {
 	qer_editorimage textures/siwa_props_sd/siwa_carpet4
-	diffusemap textures/siwa_props_sd/siwa_carpet4_n
-	bumpmap textures/siwa_props_sd/siwa_carpet4
+	diffusemap textures/siwa_props_sd/siwa_carpet4
+	bumpmap textures/siwa_props_sd/siwa_carpet4_n
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm nonsolid
