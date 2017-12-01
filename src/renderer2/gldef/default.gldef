@@ -103,7 +103,7 @@ skybox
 {
 	filename "skybox"
 	macros USE_PORTAL_CLIPPING
-	attribs ATTR_POSITION
+	attribs ATTR_POSITION ATTR_TEXCOORD
 }
 
 fogQuake3
