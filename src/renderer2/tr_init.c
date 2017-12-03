@@ -1174,7 +1174,7 @@ void R_Register(void)
 	r_vertexLighting          = ri.Cvar_Get("r_vertexLighting", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_compressDiffuseMaps     = ri.Cvar_Get("r_compressDiffuseMaps", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_compressSpecularMaps    = ri.Cvar_Get("r_compressSpecularMaps", "1", CVAR_ARCHIVE | CVAR_LATCH);
-	r_compressNormalMaps      = ri.Cvar_Get("r_compressNormalMaps", "0", CVAR_ARCHIVE | CVAR_LATCH);
+	r_compressNormalMaps      = ri.Cvar_Get("r_compressNormalMaps", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_heatHazeFix             = ri.Cvar_Get("r_heatHazeFix", "0", CVAR_CHEAT);
 	r_noMarksOnTrisurfs       = ri.Cvar_Get("r_noMarksOnTrisurfs", "1", CVAR_CHEAT);
 	r_recompileShaders        = ri.Cvar_Get("r_recompileShaders", "0", CVAR_ARCHIVE);
