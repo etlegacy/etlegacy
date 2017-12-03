@@ -327,7 +327,7 @@ textures/radar/lmterrain2_0to4
 		blend blend
 	}
 	{
-	    stage normalmap
+	    stage bumpmap
 		map textures/temperate_sd/dirt3_n
 		vertexcolor
 		blend blend
@@ -407,7 +407,7 @@ textures/radar/lmterrain2_1to2
 		blend blend
 	}
 	{
-	    stage normalmap
+	    stage bumpmap
 		map textures/temperate_sd/grass_dense1_n
 		vertexcolor
 		blend blend
@@ -447,7 +447,7 @@ textures/radar/lmterrain2_1to3
 		blend blend
 	}
 	{
-	    stage normalmap
+	    stage bumpmap
 		map textures/temperate_sd/rock_ugly_brown_n
 		vertexcolor
 		blend blend
@@ -487,7 +487,7 @@ textures/radar/lmterrain2_1to4
 		blend blend
 	}
 	{
-	    stage normalmap
+	    stage bumpmap
 		map textures/temperate_sd/dirt3_n
 		vertexcolor
 		blend blend
@@ -552,7 +552,7 @@ textures/radar/lmterrain2_2to3
 		
 	}
 	{
-	    stage normalmap
+	    stage bumpmap
 		map textures/temperate_sd/grass_dense1_n
 		vertexcolor
 		blend blend
@@ -570,7 +570,7 @@ textures/radar/lmterrain2_2to3
 		blend blend
 	}
 	{
-	    stage normalmap
+	    stage bumpmap
 		map textures/temperate_sd/rock_ugly_brown_n
 		vertexcolor
 		blend blend
@@ -594,7 +594,7 @@ textures/radar/lmterrain2_2to4
 		
 	}
 	{
-	    stage normalmap
+	    stage bumpmap
 		map textures/temperate_sd/grass_dense1_n
 		vertexcolor
 		blend blend
@@ -612,7 +612,7 @@ textures/radar/lmterrain2_2to4
 		blend blend
 	}
 	{
-	    stage normalmap
+	    stage bumpmap
 		map textures/temperate_sd/dirt3_n
 		vertexcolor
 		blend blend
@@ -636,7 +636,7 @@ textures/radar/lmterrain2_2to5
 		
 	}
 	{
-	    stage normalmap
+	    stage bumpmap
 		map textures/temperate_sd/grass_dense1_n
 		vertexcolor
 		blend blend
@@ -678,7 +678,7 @@ textures/radar/lmterrain2_3to4
 		vertexcolor
 	}
 	{
-	    stage normalmap
+	    stage bumpmap
 		map textures/temperate_sd/rock_ugly_brown_n
 		vertexcolor
 		blend blend
@@ -696,7 +696,7 @@ textures/radar/lmterrain2_3to4
 		blend blend
 	}
 	{
-	    stage normalmap
+	    stage bumpmap
 		map textures/temperate_sd/dirt3_n
 		vertexcolor
 		blend blend
@@ -719,7 +719,7 @@ textures/radar/lmterrain2_3to5
 		vertexcolor
 	}
 	{
-	    stage normalmap
+	    stage bumpmap
 		map textures/temperate_sd/rock_ugly_brown_n
 		vertexcolor
 		blend blend
@@ -760,7 +760,7 @@ textures/radar/lmterrain2_4to5
 		vertexcolor
 	}
 	{
-	    stage normalmap
+	    stage bumpmap
 		map textures/temperate_sd/dirt3_n
 		vertexcolor
 		blend blend
@@ -808,6 +808,9 @@ textures/radar/road_wet
 //	q3map_foliage models/foliage/raincircle4.md3 0.7 64 0.1 2
 //	q3map_foliage models/foliage/raincircle5.md3 0.5 64 0.1 2
 	qer_editorimage textures/temperate_sd/dirt_m03icmp_brown
+	diffusemap textures/temperate_sd/dirt_m03icmp_brown
+	bumpmap textures/temperate_sd/dirt_m03icmp_brown_n
+	specularmap textures/temperate_sd/dirt_m03icmp_brown_s
 	surfaceparm trans
 	{
 	    Map textures/temperate_sd/dirt_m03icmp_brown
