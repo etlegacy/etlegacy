@@ -5774,10 +5774,13 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 	}
 
 	{
+		// image loading of
 		image_t *tmpImage;
 		int     stageOffset = 1;
 
-		tmpImage = R_FindImageFile(va("%s_norm", fileName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
+		// Note/FIXME: image file name has to be including extension, we use tga - make this more generic one day
+		// ETL: suffix for normalmaps is '_n'
+		tmpImage = R_FindImageFile(va("%s_n.tga", strippedName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
 		if (tmpImage)
 		{
 			stages[stageOffset].active             = qtrue;
@@ -5788,7 +5791,9 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 			stageOffset++;
 		}
 
-		tmpImage = R_FindImageFile(va("%s_spec", fileName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
+		// Note/FIXME: image file name has to be including extension, we use tga - make this more generic one day
+		// ETL: suffix for specularmaps is '_s'
+		tmpImage = R_FindImageFile(va("%s_s.tga", strippedName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_EDGE_CLAMP, shader.name);
 		if (tmpImage)
 		{
 			stages[stageOffset].active             = qtrue;

@@ -5925,16 +5925,16 @@ static int InteractionCacheCompare(const void *a, const void *b)
 }
 
 /**
-* @brief UpdateLightTriangles
-* @param[in] verts
-* @param[in] numTriangles
-* @param[in] triangles
-* @param[in] surfaceShader
-* @param[in] light
-* @return
-*/
+ * @brief UpdateLightTriangles
+ * @param[in] verts
+ * @param[in] numTriangles
+ * @param[in] triangles
+ * @param[in] surfaceShader
+ * @param[in] light
+ * @return
+ */
 static int UpdateLightTriangles(const srfVert_t *verts, int numTriangles, srfTriangle_t *triangles, shader_t *surfaceShader,
-	trRefLight_t *light)
+                                trRefLight_t *light)
 {
 	int           i;
 	srfTriangle_t *tri;
@@ -5955,20 +5955,20 @@ static int UpdateLightTriangles(const srfVert_t *verts, int numTriangles, srfTri
 		{
 			if (light->l.rlType == RL_DIRECTIONAL)
 			{
-				//vec3_t lightDirection; Not needed, using global light instead
-				//comment says sunlight..
+				vec3_t lightDirection;
+
 				// light direction is from surface to light
 #if 1
-				VectorCopy(tr.sunDirection, light->direction);
+				VectorCopy(tr.sunDirection, lightDirection); // use sun light
 #else
-				VectorCopy(light->direction, lightDirection);
+				VectorCopy(light->direction, lightDirection); // use global light
 #endif
 
-				d = DotProduct(triPlane, light->direction);
+				d = DotProduct(triPlane, lightDirection);
 
 				if (surfaceShader->cullType == CT_TWO_SIDED || (d > 0 && surfaceShader->cullType != CT_BACK_SIDED))
 				{
-					tri->facingLight = qtrue;
+					tri->facingLight = qtrue; // surfaceShader->cullType == CT_TWO_SIDED || ( d > 0 && surfaceShader->cullType != CT_BACK_SIDED );
 				}
 				else
 				{
@@ -5990,7 +5990,10 @@ static int UpdateLightTriangles(const srfVert_t *verts, int numTriangles, srfTri
 				}
 			}
 		}
-
+		else
+		{
+			tri->facingLight = qtrue;   // FIXME ?
+		}
 
 		if (R_CullLightTriangle(light, pos) == CULL_OUT)
 		{
@@ -6009,6 +6012,7 @@ static int UpdateLightTriangles(const srfVert_t *verts, int numTriangles, srfTri
 
 	return numFacing;
 }
+
 /**
  * @brief R_CreateVBOLightMeshes
  * @param[in] light
