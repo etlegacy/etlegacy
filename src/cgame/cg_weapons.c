@@ -3825,6 +3825,16 @@ void CG_AltWeapon_f(void)
 		return;
 	}
 
+	if (cg.snap->ps.pm_flags & PMF_RESPAWNED)
+	{
+		return;
+	}
+
+	if (BG_PlayerMounted(cg.snap->ps.eFlags))
+	{
+		return;
+	}
+
 	if (cg.snap->ps.pm_type == PM_FREEZE)
 	{
 		return;
@@ -3913,17 +3923,7 @@ void CG_AltWeapon_f(void)
 		}
 	}
 
-	if (cg.snap->ps.pm_flags & PMF_RESPAWNED)
-	{
-		return;
-	}
-
 	if (cg.snap->ps.eFlags & EF_PRONE_MOVING)
-	{
-		return;
-	}
-
-	if (BG_PlayerMounted(cg.snap->ps.eFlags))
 	{
 		return;
 	}
@@ -3940,6 +3940,12 @@ void CG_AltWeapon_f(void)
 	}
 
 	if (cg.snap->ps.weaponDelay)
+	{
+		return;
+	}
+
+	// don't allow another weapon switch when we're still swapping to prevent animation breaking
+	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
 	{
 		return;
 	}
@@ -3994,17 +4000,7 @@ void CG_AltWeapon_f(void)
 			return;
 		}
 	}
-
-	original = cg.weaponSelect;
-	num      = GetWeaponTableData(original)->weapAlts;
-
-	// if no alternative weapon, keep the original
-	if (!num)
-	{
-		num = original;
-	}
-
-	if (original == WP_BINOCULARS)
+	else if (cg.weaponSelect == WP_BINOCULARS)
 	{
 		/*if(cg.snap->ps.eFlags & EF_ZOOMING) {
 		    trap_SendConsoleCommand( "-zoom\n" );
@@ -4023,49 +4019,13 @@ void CG_AltWeapon_f(void)
 				cg.binocZoomTime = cg.time;
 			}
 		}
+
+		return;
 	}
 
-	// don't allow another weapon switch when we're still swapping the gpg40, to prevent animation breaking
-	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
+	if (CG_WeaponSelectable(GetWeaponTableData(cg.weaponSelect)->weapAlts))        // new weapon is valid
 	{
-		if (GetWeaponTableData(original)->isRiflenade
-		    || GetWeaponTableData(original)->isSilencedPistol
-		    || GetWeaponTableData(original)->isAkimbo
-		    || GetWeaponTableData(original)->isSetWeapon
-		    || GetWeaponTableData(original)->isScoped)
-		{
-			return;
-		}
-
-		if (GetWeaponTableData(num)->isRiflenade
-		    || GetWeaponTableData(num)->isSilencedPistol
-		    || GetWeaponTableData(num)->isAkimbo
-		    || GetWeaponTableData(num)->isSetWeapon
-		    || GetWeaponTableData(num)->isScoped)
-		{
-			return;
-		}
-	}
-
-	if (CG_WeaponSelectable(num))        // new weapon is valid
-	{
-		CG_FinishWeaponChange(original, num);
-
-		if (original == num)
-		{
-			reload = qtrue;
-		}
-	}
-	else
-	{
-		reload = qtrue;
-	}
-
-	if (reload && cg_weapaltReloads.integer)
-	{
-		// FIXME: This is a horrible way of doing it but theres not other way atm.
-		trap_SendConsoleCommand("+reload\n");
-		trap_SendConsoleCommand("-reload\n");
+		CG_FinishWeaponChange(cg.weaponSelect, GetWeaponTableData(cg.weaponSelect)->weapAlts);
 	}
 }
 
@@ -4075,7 +4035,7 @@ void CG_AltWeapon_f(void)
  */
 void CG_NextWeap(qboolean switchBanks)
 {
-	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean nextbank = qfalse;     // need to switch to the next bank of weapons?
@@ -4232,7 +4192,7 @@ void CG_NextWeap(qboolean switchBanks)
  */
 void CG_PrevWeap(qboolean switchBanks)
 {
-	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean prevbank = qfalse;     // need to switch to the next bank of weapons?
@@ -4512,6 +4472,28 @@ void CG_LastWeaponUsed_f(void)
 	{
 		cg.switchbackWeapon = cg.weaponSelect;
 		return;
+	}
+
+	// don't allow another weapon switch when we're still swapping alt weap, to prevent animation breaking
+	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
+	{
+		if (GetWeaponTableData(cg.weaponSelect)->isRiflenade
+		    || GetWeaponTableData(cg.weaponSelect)->isSilencedPistol
+		    || GetWeaponTableData(cg.weaponSelect)->isAkimbo
+		    || GetWeaponTableData(cg.weaponSelect)->isSetWeapon
+		    || GetWeaponTableData(cg.weaponSelect)->isScoped)
+		{
+			return;
+		}
+
+		if (GetWeaponTableData(cg.switchbackWeapon)->isRiflenade
+		    || GetWeaponTableData(cg.switchbackWeapon)->isSilencedPistol
+		    || GetWeaponTableData(cg.switchbackWeapon)->isAkimbo
+		    || GetWeaponTableData(cg.switchbackWeapon)->isSetWeapon
+		    || GetWeaponTableData(cg.switchbackWeapon)->isScoped)
+		{
+			return;
+		}
 	}
 
 	if (CG_WeaponSelectable(cg.switchbackWeapon))
@@ -5570,13 +5552,13 @@ void CG_WaterRipple(qhandle_t shader, vec3_t loc, vec3_t dir, int size, int life
  */
 void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags)     // modified to send missilehitwall surface parameters
 {
-	qhandle_t   mod      = 0, mark = 0, shader = 0;
-	sfxHandle_t sfx      = 0, sfx2 = 0;
+	qhandle_t   mod = 0, mark = 0, shader = 0;
+	sfxHandle_t sfx = 0, sfx2 = 0;
 	qboolean    isSprite = qfalse;
 	int         duration = 600, i, j, markDuration = -1, volume = 127; // keep -1 markDuration for temporary marks
 	trace_t     trace;
 	vec3_t      lightColor = { 1, 1, 0 }, tmpv, tmpv2, sprOrg, sprVel;
-	float       radius     = 32, light = 0, sfx2range = 0;
+	float       radius = 32, light = 0, sfx2range = 0;
 	vec4_t      projection;
 
 	if (surfFlags & SURF_SKY)
