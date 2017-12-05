@@ -3779,6 +3779,10 @@ void CG_FinishWeaponChange(int lastweap, int newweap)
 		{
 			cg.switchbackWeapon = lastweap;
 		}
+		else
+		{
+			cg.switchbackWeapon = GetWeaponTableData(lastweap)->weapAlts;
+		}
 	}
 	else
 	{
@@ -3787,12 +3791,26 @@ void CG_FinishWeaponChange(int lastweap, int newweap)
 		// selected weapon will become the switchback
 		if (cg.switchbackWeapon == newweap)
 		{
-			cg.switchbackWeapon = lastweap;
+			if (!GetWeaponTableData(lastweap)->isScoped)
+			{
+				cg.switchbackWeapon = lastweap;
+			}
+			else
+			{
+				cg.switchbackWeapon = GetWeaponTableData(lastweap)->weapAlts;
+			}
 		}
 		// this fixes cg.switchbackWeapon=0 after very first spawn and switching weapon for the first time
 		else if (cg.switchbackWeapon == WP_NONE && CG_WeaponSelectable(lastweap)) // ensure last weapon is available
 		{
-			cg.switchbackWeapon = lastweap;
+			if (!GetWeaponTableData(lastweap)->isScoped)
+			{
+				cg.switchbackWeapon = lastweap;
+			}
+			else
+			{
+				cg.switchbackWeapon = GetWeaponTableData(lastweap)->weapAlts;
+			}
 		}
 	}
 
