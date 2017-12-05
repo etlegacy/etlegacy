@@ -251,7 +251,7 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
  * @param[in] ignoreent
  * @param[in] tracemask
  */
-void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
 {
 	vec3_t ofs, org, point;
 	vec3_t flatforward;
@@ -332,7 +332,7 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
  * @param[in] tracemask
  */
 void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles,
-                  void(tracefunc) (trace_t * results,
+                  void(tracefunc) (trace_t *results,
                                    const vec3_t start,
                                    const vec3_t mins,
                                    const vec3_t maxs,
@@ -4300,7 +4300,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
  *
  * @note Tnused trace parameter
  */
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)           //   modified
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)            //   modified
 {
 	short  temp;
 	int    i;
@@ -5110,13 +5110,18 @@ void PmoveSingle(pmove_t *pmove)
 		{
 			pm->pmext->silencedSideArm |= 1;
 		}
-	}
 
-	// clear the respawned flag if attack and use are cleared
-	if (pm->ps->stats[STAT_HEALTH] > 0 &&
-	    !(pm->cmd.buttons & (BUTTON_ATTACK /*| BUTTON_USE_HOLDABLE*/)))
-	{
-		pm->ps->pm_flags &= ~PMF_RESPAWNED;
+		// clear the respawned flag if attack button are cleared
+		// don't clear if a weapon change is needed to prevent early weapon change
+		if (pm->ps->stats[STAT_HEALTH] > 0 &&
+		    !(pm->cmd.buttons & BUTTON_ATTACK) &&  // & (BUTTON_ATTACK /*| BUTTON_USE_HOLDABLE
+		    !(pm->cmd.wbuttons & WBUTTON_ATTACK2) &&
+		    (pm->ps->weapon == pm->cmd.weapon))       // bit hacky, stop the slight lag from client -> server even on locahost, switching back to the weapon you were holding
+		                                              // and then back to what weapon you should have, became VERY noticible for the kar98/carbine + gpg40, esp now i've added the
+		                                              // animation locking
+		{
+			pm->ps->pm_flags &= ~PMF_RESPAWNED;
+		}
 	}
 
 	// if talk button is down, dissallow all other input
