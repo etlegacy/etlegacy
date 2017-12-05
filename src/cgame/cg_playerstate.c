@@ -198,6 +198,10 @@ void CG_Respawn(qboolean revived)
 
 	// select the weapon the server says we are using
 	cg.weaponSelect = cg.snap->ps.weapon;
+
+	// reset switch back weapon
+	cg.switchbackWeapon = WP_NONE;
+
 	// clear even more things on respawn
 	cg.zoomedBinoc = qfalse;
 	cg.zoomedScope = qfalse;
