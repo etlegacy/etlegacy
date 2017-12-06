@@ -3824,9 +3824,6 @@ extern pmove_t cg_pmove;
  */
 void CG_AltWeapon_f(void)
 {
-	int      original, num;
-	qboolean reload = qfalse;
-
 	if (!cg.snap)
 	{
 		return;
