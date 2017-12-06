@@ -1137,8 +1137,8 @@ static void CG_DrawCrosshair(void)
 	{
 		if (!BG_PlayerMounted(cg.snap->ps.eFlags))
 		{
-			// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run
-			if (VectorLengthSquared(cg.snap->ps.velocity) > Square(160))
+			// don't let players prone moving and run with rifles -- speed 80 == crouch, 128 == walk, 256 == run
+			if (VectorLengthSquared(cg.snap->ps.velocity) > Square(160) || cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
 			{
 				CG_FinishWeaponChange(cg.snap->ps.weapon, GetWeaponTableData(cg.snap->ps.weapon)->weapAlts);
 			}
