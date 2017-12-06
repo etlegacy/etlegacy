@@ -3938,11 +3938,6 @@ void CG_AltWeapon_f(void)
 		}
 	}
 
-	if (cg.snap->ps.eFlags & EF_PRONE_MOVING)
-	{
-		return;
-	}
-
 	if (cg.time - cg.weaponSelectTime < cg_weaponCycleDelay.integer)
 	{
 		return; // force pause so holding it down won't go too fast
@@ -4050,7 +4045,7 @@ void CG_AltWeapon_f(void)
  */
 void CG_NextWeap(qboolean switchBanks)
 {
-	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean nextbank = qfalse;     // need to switch to the next bank of weapons?
@@ -4207,7 +4202,7 @@ void CG_NextWeap(qboolean switchBanks)
  */
 void CG_PrevWeap(qboolean switchBanks)
 {
-	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean prevbank = qfalse;     // need to switch to the next bank of weapons?
@@ -4380,11 +4375,6 @@ qboolean CG_CheckCanSwitch(void)
 	}
 
 	if (cg.snap->ps.pm_flags & PMF_FOLLOW || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
-	{
-		return qfalse;
-	}
-
-	if (cg.snap->ps.eFlags & EF_PRONE_MOVING)
 	{
 		return qfalse;
 	}
@@ -5567,13 +5557,13 @@ void CG_WaterRipple(qhandle_t shader, vec3_t loc, vec3_t dir, int size, int life
  */
 void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags)     // modified to send missilehitwall surface parameters
 {
-	qhandle_t   mod = 0, mark = 0, shader = 0;
-	sfxHandle_t sfx = 0, sfx2 = 0;
+	qhandle_t   mod      = 0, mark = 0, shader = 0;
+	sfxHandle_t sfx      = 0, sfx2 = 0;
 	qboolean    isSprite = qfalse;
 	int         duration = 600, i, j, markDuration = -1, volume = 127; // keep -1 markDuration for temporary marks
 	trace_t     trace;
 	vec3_t      lightColor = { 1, 1, 0 }, tmpv, tmpv2, sprOrg, sprVel;
-	float       radius = 32, light = 0, sfx2range = 0;
+	float       radius     = 32, light = 0, sfx2range = 0;
 	vec4_t      projection;
 
 	if (surfFlags & SURF_SKY)
