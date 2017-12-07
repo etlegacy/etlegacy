@@ -5052,14 +5052,16 @@ void PmoveSingle(pmove_t *pmove)
 
 	pm->ps->eFlags &= ~(EF_FIRING | EF_ZOOMING);
 
-	if ((pm->cmd.wbuttons & WBUTTON_ZOOM) && pm->ps->stats[STAT_HEALTH] >= 0 && !(pm->ps->weaponDelay) && pm->ps->weaponstate != WEAPON_RELOADING)
+	if ((pm->cmd.wbuttons & WBUTTON_ZOOM) && pm->ps->stats[STAT_HEALTH] >= 0 && !(pm->ps->weaponDelay) && pm->ps->weaponstate != WEAPON_RELOADING &&
+	    pm->ps->weaponstate != WEAPON_RAISING && pm->ps->weaponstate != WEAPON_DROPPING)
 	{
-		if (pm->ps->stats[STAT_KEYS] & (1 << INV_BINOCS))          // binoculars are an inventory item (inventory==keys)
+		if (pm->ps->stats[STAT_KEYS] & (1 << INV_BINOCS))               // binoculars are an inventory item (inventory==keys)
 		{
-			if (!GetWeaponTableData(pm->ps->weapon)->isScoped &&          // don't allow binocs if using the sniper scope
-			    !BG_PlayerMounted(pm->ps->eFlags) &&           // or if mounted on a weapon
-			    // don't allow binocs w/ mounted mob. MG42 or mortar either.
-			    !GetWeaponTableData(pm->ps->weapon)->isSetWeapon)
+			// don't allow binocs:
+			if (!GetWeaponTableData(pm->ps->weapon)->isScoped &&        // if using the sniper scope
+			    !BG_PlayerMounted(pm->ps->eFlags) &&                    // or if mounted on a weapon
+			    !GetWeaponTableData(pm->ps->weapon)->isSetWeapon &&     // w/ mounted mob. MG42 or mortar either.
+			    !(pm->ps->eFlags & EF_PRONE_MOVING))                    // when prone moving
 			{
 				pm->ps->eFlags |= EF_ZOOMING;
 			}
