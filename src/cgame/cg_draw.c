@@ -1142,7 +1142,7 @@ static void CG_DrawCrosshair(void)
 			{
 				CG_FinishWeaponChange(cg.snap->ps.weapon, GetWeaponTableData(cg.snap->ps.weapon)->weapAlts);
 			}
-			if (
+			else if (
 #ifdef FEATURE_MULTIVIEW
 			    cg.mvTotalClients < 1 ||
 #endif

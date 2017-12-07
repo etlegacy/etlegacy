@@ -4018,6 +4018,12 @@ void CG_AltWeapon_f(void)
 		    trap_SendConsoleCommand( "+zoom\n" );
 		}*/
 
+		// don't allow zooming when prone moving (prevent fast zoom/unzoom)
+		if (cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
+		{
+			return;
+		}
+
 		if (cg.snap->ps.eFlags & EF_ZOOMING)
 		{
 			trap_SendConsoleCommand("-zoom\n");
@@ -4032,6 +4038,14 @@ void CG_AltWeapon_f(void)
 		}
 
 		return;
+	}
+	else if (GetWeaponTableData(GetWeaponTableData(cg.weaponSelect)->weapAlts)->isScoped)
+	{
+		// don't allow players switching to scoped weapon when prone moving and run -- speed 80 == crouch, 128 == walk, 256 == run
+		if (VectorLengthSquared(cg.snap->ps.velocity) > Square(160) || cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
+		{
+			return;
+		}
 	}
 
 	if (CG_WeaponSelectable(GetWeaponTableData(cg.weaponSelect)->weapAlts))        // new weapon is valid
