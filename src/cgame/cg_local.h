@@ -2710,10 +2710,7 @@ void CG_WeaponBank_f(void);
 qboolean CG_WeaponSelectable(int weapon);
 
 void CG_FinishWeaponChange(int lastweap, int newweap);
-
 void CG_PlaySwitchSound(int lastWeapon, int newWeapon);    // grabbed from SP
-
-void CG_SetSniperZoom(int lastWeapon, int newWeapon);
 
 void CG_RegisterWeapon(int weaponNum, qboolean force);
 void CG_RegisterItemVisuals(int itemNum);

@@ -3771,6 +3771,8 @@ void CG_FinishWeaponChange(int lastWeapon, int newWeapon)
 		return;
 	}
 
+	CG_SetSniperZoom(lastWeapon, newWeapon);
+
 	// setup for a user call to CG_LastWeaponUsed_f()
 	if (lastWeapon == cg.lastFiredWeapon)
 	{
@@ -3945,11 +3947,6 @@ void CG_AltWeapon_f(void)
 
 	// don't allow another weapon switch or reloading when we're still swapping to prevent animation breaking
 	if (cg.snap->ps.weaponstate == WEAPON_RELOADING || cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
-	{
-		return;
-	}
-
-	if (cg.snap->ps.weaponDelay)
 	{
 		return;
 	}
@@ -4419,24 +4416,6 @@ qboolean CG_CheckCanSwitch(void)
 	//              the reload time twice.  (the first pause for the current weapon reload,
 	//              and the pause when you have to reload again 'cause you canceled this one)
 	if (cg.snap->ps.weaponstate == WEAPON_RELOADING)
-	{
-		return qfalse;
-	}
-
-	// don't allow switch if you're holding a hot potato or dynamite
-	if (cg.snap->ps.grenadeTimeLeft)
-	{
-		return qfalse;
-	}
-
-	// don't allow change during spinup
-	if (cg.snap->ps.weaponDelay)
-	{
-		return qfalse;
-	}
-
-	// don't allow switch if weapon is overheating
-	if (cg.snap->ps.weaponTime && (cg.time - cg.predictedPlayerEntity.overheatTime) < 3000)
 	{
 		return qfalse;
 	}
