@@ -3650,6 +3650,8 @@ static int getPrevBankWeap(int bank, int cycle, qboolean sameBankPosition)
  */
 void CG_SetSniperZoom(int lastweap, int newweap)
 {
+	cg.zoomed = qfalse;
+
 	if (lastweap == newweap)
 	{
 		return;
@@ -3668,6 +3670,8 @@ void CG_SetSniperZoom(int lastweap, int newweap)
 	{
 		return;
 	}
+
+	cg.zoomed = qtrue;
 
 	cg.zoomval = cg_zoomDefaultSniper.value;
 
@@ -3766,10 +3770,6 @@ void CG_FinishWeaponChange(int lastWeapon, int newWeapon)
 	{
 		return;
 	}
-
-	CG_PlaySwitchSound(lastWeapon, newWeapon);    // grabbed from SP
-
-	CG_SetSniperZoom(lastWeapon, newWeapon);
 
 	// setup for a user call to CG_LastWeaponUsed_f()
 	if (lastWeapon == cg.lastFiredWeapon)
@@ -3943,19 +3943,13 @@ void CG_AltWeapon_f(void)
 		return; // force pause so holding it down won't go too fast
 	}
 
-	// don't try to switch when in the middle of reloading or firing
-	if (cg.snap->ps.weaponstate == WEAPON_RELOADING || cg.snap->ps.weaponstate == WEAPON_FIRING)
+	// don't allow another weapon switch or reloading when we're still swapping to prevent animation breaking
+	if (cg.snap->ps.weaponstate == WEAPON_RELOADING || cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
 	{
 		return;
 	}
 
 	if (cg.snap->ps.weaponDelay)
-	{
-		return;
-	}
-
-	// don't allow another weapon switch when we're still swapping to prevent animation breaking
-	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
 	{
 		return;
 	}
@@ -4060,7 +4054,7 @@ void CG_AltWeapon_f(void)
  */
 void CG_NextWeap(qboolean switchBanks)
 {
-	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean nextbank = qfalse;     // need to switch to the next bank of weapons?
@@ -4217,7 +4211,7 @@ void CG_NextWeap(qboolean switchBanks)
  */
 void CG_PrevWeap(qboolean switchBanks)
 {
-	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean prevbank = qfalse;     // need to switch to the next bank of weapons?
@@ -4417,14 +4411,14 @@ qboolean CG_CheckCanSwitch(void)
 		return qfalse;
 	}
 
-	// don't try to switch when in the middle of reloading or firing
+	// don't try to switch when in the middle of reloading
 	// cheatinfo:   The server actually would let you switch if this check were not
 	//              present, but would discard the reload.  So the when you switched
 	//              back you'd have to start the reload over.  This seems bad, however
 	//              the delay for the current reload is already in effect, so you'd lose
 	//              the reload time twice.  (the first pause for the current weapon reload,
 	//              and the pause when you have to reload again 'cause you canceled this one)
-	if (cg.snap->ps.weaponstate == WEAPON_RELOADING || cg.snap->ps.weaponstate == WEAPON_FIRING)
+	if (cg.snap->ps.weaponstate == WEAPON_RELOADING)
 	{
 		return qfalse;
 	}
@@ -5545,13 +5539,13 @@ void CG_WaterRipple(qhandle_t shader, vec3_t loc, vec3_t dir, int size, int life
  */
 void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags)     // modified to send missilehitwall surface parameters
 {
-	qhandle_t   mod      = 0, mark = 0, shader = 0;
-	sfxHandle_t sfx      = 0, sfx2 = 0;
+	qhandle_t   mod = 0, mark = 0, shader = 0;
+	sfxHandle_t sfx = 0, sfx2 = 0;
 	qboolean    isSprite = qfalse;
 	int         duration = 600, i, j, markDuration = -1, volume = 127; // keep -1 markDuration for temporary marks
 	trace_t     trace;
 	vec3_t      lightColor = { 1, 1, 0 }, tmpv, tmpv2, sprOrg, sprVel;
-	float       radius     = 32, light = 0, sfx2range = 0;
+	float       radius = 32, light = 0, sfx2range = 0;
 	vec4_t      projection;
 
 	if (surfFlags & SURF_SKY)

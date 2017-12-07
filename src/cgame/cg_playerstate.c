@@ -201,9 +201,10 @@ void CG_Respawn(qboolean revived)
 
 	// clear even more things on respawn
 	cg.zoomedBinoc = qfalse;
+	cg.zoomed      = qfalse;
 	// cg.zoomedScope = qfalse;
-	cg.zoomTime    = 0;
-	cg.zoomval     = 0;
+	cg.zoomTime = 0;
+	cg.zoomval  = 0;
 
 	trap_SendConsoleCommand("-zoom\n");
 	cg.binocZoomTime = 0;

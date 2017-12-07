@@ -767,10 +767,10 @@ static void CG_DrawWeapReticle(void)
  */
 static void CG_DrawMortarReticle(void)
 {
-	vec4_t   color             = { 1.f, 1.f, 1.f, .5f };
-	vec4_t   color_back        = { 0.f, 0.f, 0.f, .25f };
-	vec4_t   color_extends     = { .77f, .73f, .1f, 1.f };
-	vec4_t   color_lastfire    = { .77f, .1f, .1f, 1.f };
+	vec4_t   color = { 1.f, 1.f, 1.f, .5f };
+	vec4_t   color_back = { 0.f, 0.f, 0.f, .25f };
+	vec4_t   color_extends = { .77f, .73f, .1f, 1.f };
+	vec4_t   color_lastfire = { .77f, .1f, .1f, 1.f };
 	vec4_t   color_firerequest = { 1.f, 1.f, 1.f, 1.f };
 	float    offset, localOffset;
 	int      i, min, majorOffset, val, printval, fadeTime, requestFadeTime;
@@ -1133,20 +1133,21 @@ static void CG_DrawCrosshair(void)
 	}
 
 	// special reticle for scoped weapon
-	if (GetWeaponTableData(weapnum)->isScoped)
+	if (cg.zoomed && GetWeaponTableData(weapnum)->isScoped)
 	{
 		if (!BG_PlayerMounted(cg.snap->ps.eFlags))
 		{
 			// don't let players prone moving and run with rifles -- speed 80 == crouch, 128 == walk, 256 == run
 			if (VectorLengthSquared(cg.snap->ps.velocity) > Square(160) || cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
 			{
+                cg.zoomed = 0;
 				CG_FinishWeaponChange(cg.snap->ps.weapon, GetWeaponTableData(cg.snap->ps.weapon)->weapAlts);
 			}
 			else if (
 #ifdef FEATURE_MULTIVIEW
-			    cg.mvTotalClients < 1 ||
+				cg.mvTotalClients < 1 ||
 #endif
-			    cg.snap->ps.stats[STAT_HEALTH] > 0)
+				cg.snap->ps.stats[STAT_HEALTH] > 0)
 			{
 				CG_DrawWeapReticle();
 			}
@@ -2293,7 +2294,7 @@ static void CG_DrawSpectatorMessage(void)
 {
 	const char *str, *str2;
 	static int lastconfigGet = 0;
-	float      fontScale     = cg_fontScaleSP.value;
+	float      fontScale = cg_fontScaleSP.value;
 	int        y, charHeight;
 
 	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
@@ -2841,9 +2842,9 @@ static void CG_DrawFlashFade(void)
 	{
 		if (
 #ifdef FEATURE_MULTIVIEW
-		    cg.mvTotalClients < 1 &&
+			cg.mvTotalClients < 1 &&
 #endif
-		    cg.snap->ps.powerups[PW_BLACKOUT] > 0)
+			cg.snap->ps.powerups[PW_BLACKOUT] > 0)
 		{
 			trap_Cvar_Set("ui_blackout", va("%d", cg.snap->ps.powerups[PW_BLACKOUT]));
 		}
