@@ -957,9 +957,9 @@ typedef struct
 	vec3_t refdefViewAngles;                ///< will be converted to refdef.viewaxis
 
 	// zoom key
-	qboolean zoomed;
+	// qboolean zoomed;                     ///< TODO: unused
 	qboolean zoomedBinoc;
-	int zoomedScope;
+	// int zoomedScope;                     ///< TODO: unused
 	int zoomTime;
 	float zoomSensitivity;
 	float zoomval;
