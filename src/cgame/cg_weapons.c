@@ -3661,7 +3661,7 @@ void CG_SetSniperZoom(int lastweap, int newweap)
 		cg.zoomval = 0;
 	}
 
-	cg.zoomedScope = GetWeaponTableData(newweap)->zoomedScope;
+	// cg.zoomedScope = GetWeaponTableData(newweap)->zoomedScope;
 
 	// no sniper zoom, get out.
 	if (!GetWeaponTableData(newweap)->isScoped)
@@ -3718,7 +3718,7 @@ void CG_PlaySwitchSound(int lastweap, int newweap)
  * @param[in] lastweap
  * @param[in] newweap
  */
-void CG_FinishWeaponChange(int lastweap, int newweap)
+void CG_FinishWeaponChange(int lastWeapon, int newWeapon)
 {
 	int newbank;
 
@@ -3729,19 +3729,19 @@ void CG_FinishWeaponChange(int lastweap, int newweap)
 
 	cg.mortarImpactTime = -2;
 
-	if (lastweap != GetWeaponTableData(newweap)->weapAlts)
+	if (lastWeapon != GetWeaponTableData(newWeapon)->weapAlts)
 	{
-		if ((GetWeaponTableData(newweap)->isPistol            && cg.pmext.silencedSideArm & 1)
-		    || (GetWeaponTableData(newweap)->isSilencedPistol && !(cg.pmext.silencedSideArm & 1))
-		    || (GetWeaponTableData(newweap)->isRifle          && cg.pmext.silencedSideArm & 2)
-		    || (GetWeaponTableData(newweap)->isRiflenade      && !(cg.pmext.silencedSideArm & 2)))
+		if ((GetWeaponTableData(newWeapon)->isPistol            && cg.pmext.silencedSideArm & 1)
+		    || (GetWeaponTableData(newWeapon)->isSilencedPistol && !(cg.pmext.silencedSideArm & 1))
+		    || (GetWeaponTableData(newWeapon)->isRifle          && cg.pmext.silencedSideArm & 2)
+		    || (GetWeaponTableData(newWeapon)->isRiflenade      && !(cg.pmext.silencedSideArm & 2)))
 		{
-			newweap         = GetWeaponTableData(newweap)->weapAlts;
-			cg.weaponSelect = newweap;
+			newWeapon       = GetWeaponTableData(newWeapon)->weapAlts;
+			cg.weaponSelect = newWeapon;
 		}
 	}
 
-	if (lastweap == WP_BINOCULARS && (cg.snap->ps.eFlags & EF_ZOOMING))
+	if (lastWeapon == WP_BINOCULARS && (cg.snap->ps.eFlags & EF_ZOOMING))
 	{
 		trap_SendConsoleCommand("-zoom\n");
 	}
@@ -3757,31 +3757,31 @@ void CG_FinishWeaponChange(int lastweap, int newweap)
 
 	// remember which weapon in this bank was last selected so when cycling back
 	// to this bank, that weap will be highlighted first
-	if (CG_WeaponIndex(newweap, &newbank, NULL))
+	if (CG_WeaponIndex(newWeapon, &newbank, NULL))
 	{
-		cg.lastWeapSelInBank[newbank] = newweap;
+		cg.lastWeapSelInBank[newbank] = newWeapon;
 	}
 
-	if (lastweap == newweap)       // no need to do any more than flash the icon
+	if (lastWeapon == newWeapon)       // no need to do any more than flash the icon
 	{
 		return;
 	}
 
-	CG_PlaySwitchSound(lastweap, newweap);    // grabbed from SP
+	CG_PlaySwitchSound(lastWeapon, newWeapon);    // grabbed from SP
 
-	CG_SetSniperZoom(lastweap, newweap);
+	CG_SetSniperZoom(lastWeapon, newWeapon);
 
 	// setup for a user call to CG_LastWeaponUsed_f()
-	if (lastweap == cg.lastFiredWeapon)
+	if (lastWeapon == cg.lastFiredWeapon)
 	{
 		// don't set switchback for some weaps...
-		if (!GetWeaponTableData(lastweap)->isScoped)
+		if (!GetWeaponTableData(lastWeapon)->isScoped)
 		{
-			cg.switchbackWeapon = lastweap;
+			cg.switchbackWeapon = lastWeapon;
 		}
 		else
 		{
-			cg.switchbackWeapon = GetWeaponTableData(lastweap)->weapAlts;
+			cg.switchbackWeapon = GetWeaponTableData(lastWeapon)->weapAlts;
 		}
 	}
 	else
@@ -3789,32 +3789,32 @@ void CG_FinishWeaponChange(int lastweap, int newweap)
 		// if this ended up having the switchback be the same
 		// as the new weapon, set the switchback to the prev
 		// selected weapon will become the switchback
-		if (cg.switchbackWeapon == newweap)
+		if (cg.switchbackWeapon == newWeapon)
 		{
-			if (!GetWeaponTableData(lastweap)->isScoped)
+			if (!GetWeaponTableData(lastWeapon)->isScoped)
 			{
-				cg.switchbackWeapon = lastweap;
+				cg.switchbackWeapon = lastWeapon;
 			}
 			else
 			{
-				cg.switchbackWeapon = GetWeaponTableData(lastweap)->weapAlts;
+				cg.switchbackWeapon = GetWeaponTableData(lastWeapon)->weapAlts;
 			}
 		}
 		// this fixes cg.switchbackWeapon=0 after very first spawn and switching weapon for the first time
-		else if (cg.switchbackWeapon == WP_NONE && CG_WeaponSelectable(lastweap)) // ensure last weapon is available
+		else if (cg.switchbackWeapon == WP_NONE && CG_WeaponSelectable(lastWeapon)) // ensure last weapon is available
 		{
-			if (!GetWeaponTableData(lastweap)->isScoped)
+			if (!GetWeaponTableData(lastWeapon)->isScoped)
 			{
-				cg.switchbackWeapon = lastweap;
+				cg.switchbackWeapon = lastWeapon;
 			}
 			else
 			{
-				cg.switchbackWeapon = GetWeaponTableData(lastweap)->weapAlts;
+				cg.switchbackWeapon = GetWeaponTableData(lastWeapon)->weapAlts;
 			}
 		}
 	}
 
-	cg.weaponSelect = newweap;
+	cg.weaponSelect = newWeapon;
 }
 
 extern pmove_t cg_pmove;
@@ -4017,6 +4017,7 @@ void CG_AltWeapon_f(void)
 		} else {
 		    trap_SendConsoleCommand( "+zoom\n" );
 		}*/
+
 		if (cg.snap->ps.eFlags & EF_ZOOMING)
 		{
 			trap_SendConsoleCommand("-zoom\n");
@@ -4482,20 +4483,7 @@ void CG_LastWeaponUsed_f(void)
 	// don't allow another weapon switch when we're still swapping alt weap, to prevent animation breaking
 	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
 	{
-		if (GetWeaponTableData(cg.weaponSelect)->isRiflenade
-		    || GetWeaponTableData(cg.weaponSelect)->isSilencedPistol
-		    || GetWeaponTableData(cg.weaponSelect)->isAkimbo
-		    || GetWeaponTableData(cg.weaponSelect)->isSetWeapon
-		    || GetWeaponTableData(cg.weaponSelect)->isScoped)
-		{
-			return;
-		}
-
-		if (GetWeaponTableData(cg.switchbackWeapon)->isRiflenade
-		    || GetWeaponTableData(cg.switchbackWeapon)->isSilencedPistol
-		    || GetWeaponTableData(cg.switchbackWeapon)->isAkimbo
-		    || GetWeaponTableData(cg.switchbackWeapon)->isSetWeapon
-		    || GetWeaponTableData(cg.switchbackWeapon)->isScoped)
+		if (GetWeaponTableData(cg.weaponSelect)->weapAlts)
 		{
 			return;
 		}
@@ -4625,12 +4613,21 @@ void CG_PrevWeapon_f(void)
  */
 void CG_WeaponBank_f(void)
 {
-	int num, i, curweap;
+	int newWeapon, i;
 	int curbank = 0, curcycle = 0, bank = 0, cycle = 0;
 
 	if (!CG_CheckCanSwitch())
 	{
 		return;
+	}
+
+	// don't allow another weapon switch when we're still swapping alt weapon, to prevent animation breaking
+	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
+	{
+		if (GetWeaponTableData(cg.weaponSelect)->weapAlts)
+		{
+			return;
+		}
 	}
 
 	cg.weaponSelectTime = cg.time;  // flash the current weapon icon
@@ -4642,18 +4639,17 @@ void CG_WeaponBank_f(void)
 		return;
 	}
 
-	curweap = cg.weaponSelect;
-	CG_WeaponIndex(curweap, &curbank, &curcycle);         // get bank/cycle of current weapon
+	CG_WeaponIndex(cg.weaponSelect, &curbank, &curcycle);         // get bank/cycle of current weapon
 
 	if (!cg.lastWeapSelInBank[bank])
 	{
-		num    = weapBanksMultiPlayer[bank][0];
-		cycle -= 1; // cycle up to first weap
+		newWeapon = weapBanksMultiPlayer[bank][0];
+		cycle    -= 1; // cycle up to first weap
 	}
 	else
 	{
-		num = cg.lastWeapSelInBank[bank];
-		CG_WeaponIndex(num, &bank, &cycle);
+		newWeapon = cg.lastWeapSelInBank[bank];
+		CG_WeaponIndex(newWeapon, &bank, &cycle);
 
 		if (bank != curbank)
 		{
@@ -4663,17 +4659,17 @@ void CG_WeaponBank_f(void)
 
 	for (i = 0; i < MAX_WEAPS_IN_BANK_MP; i++)
 	{
-		num = getNextWeapInBank(bank, cycle + i);
+		newWeapon = getNextWeapInBank(bank, cycle + i);
 
-		if (CG_WeaponSelectable(num))
+		if (CG_WeaponSelectable(newWeapon))
 		{
 			break;
 		}
-		else if (GetWeaponTableData(num)->isRifle)
+		else if (GetWeaponTableData(newWeapon)->isRifle)
 		{
-			if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
+			if (CG_WeaponSelectable(GetWeaponTableData(newWeapon)->weapAlts))
 			{
-				num = GetWeaponTableData(num)->weapAlts;
+				newWeapon = GetWeaponTableData(newWeapon)->weapAlts;
 				break;
 			}
 		}
@@ -4684,29 +4680,7 @@ void CG_WeaponBank_f(void)
 		return;
 	}
 
-	// don't allow another weapon switch when we're still swapping the gpg40, to prevent animation breaking
-	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
-	{
-		if (GetWeaponTableData(curweap)->isRiflenade
-		    || GetWeaponTableData(curweap)->isSilencedPistol
-		    || GetWeaponTableData(curweap)->isAkimbo
-		    || GetWeaponTableData(curweap)->isSetWeapon
-		    || GetWeaponTableData(curweap)->isScoped)
-		{
-			return;
-		}
-
-		if (GetWeaponTableData(num)->isRiflenade
-		    || GetWeaponTableData(num)->isSilencedPistol
-		    || GetWeaponTableData(num)->isAkimbo
-		    || GetWeaponTableData(num)->isSetWeapon
-		    || GetWeaponTableData(num)->isScoped)
-		{
-			return;
-		}
-	}
-
-	CG_FinishWeaponChange(curweap, num);
+	CG_FinishWeaponChange(cg.weaponSelect, newWeapon);
 }
 
 /**
