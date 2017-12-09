@@ -130,13 +130,11 @@ void main()
 
 	// compute the specular term
 	vec3 specular = texture2D(u_SpecularMap, texSpecular).rgb * var_LightColor.rgb * pow(clamp(dot(N, H), 0.0, 1.0), r_SpecularExponent) * r_SpecularScale;
-
+	
 	// compute final color
 	vec4 color = vec4(diffuse.rgb, var_LightColor.a);
 	color.rgb *= light;
-	//HACK! just to break spec for now
-	//16 seems to remove spec
-	color.rgb += specular/10;
+	color.rgb += specular;
 
 	gl_FragColor = color;
 

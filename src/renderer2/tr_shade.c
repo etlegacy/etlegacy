@@ -688,7 +688,7 @@ static void Render_vertexLighting_DBS_world(int stage)
 	// now we are ready to set the shader program uniforms
 
 	// set uniforms
-	VectorCopy(backEnd.orientation.viewOrigin, viewOrigin);
+	VectorCopy(backEnd.orientation.origin, viewOrigin);
 
 	GL_CheckErrors();
 
