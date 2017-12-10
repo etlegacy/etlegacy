@@ -5,54 +5,30 @@
 
 
 models/multiplayer/satchel/radio
-{
-
-	{
-				map textures/effects/envmap_slate_90.tga
-				rgbGen lightingdiffuse
-				tcGen environment
-	}
-	{
-				map models/multiplayer/satchel/radio.tga
-				blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-				rgbGen lightingdiffuse
-	}
+{	
+	 diffusemap models/multiplayer/satchel/radio
+	 bumpmap models/multiplayer/satchel/radio_n
+	 specularmap models/multiplayer/satchel/radio_s
 }
 
 
 
 models/multiplayer/satchel/satchel_allied
 {
-
-	{
-				map textures/effects/envmap_slate.tga
-				rgbGen lightingdiffuse
-				tcGen environment
-	}
-	{
-				map models/multiplayer/satchel/satchel_allied.tga
-				blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-				rgbGen lightingdiffuse
-	}
+	 diffusemap models/multiplayer/satchel/satchel_allied
+	 bumpmap models/multiplayer/satchel/satchel_allied_n
+     specularmap models/multiplayer/satchel/satchel_allied_s	
 }
 
 models/multiplayer/satchel/satchel_axis
 {
-
-	{
-				map textures/effects/envmap_slate_90.tga
-				rgbGen lightingdiffuse
-				tcGen environment
-	}
-	{
-				map models/multiplayer/satchel/satchel_axis.tga
-				blendFunc blend
-				rgbGen lightingdiffuse
-	}
+	 diffusemap models/multiplayer/satchel/satchel_axis
+	 bumpmap models/multiplayer/satchel/satchel_axis_n
+	 specularmap models/multiplayer/satchel/satchel_axis_s
 }
 
 
-
+//fixme later, need to figure out how the light really works
 models/multiplayer/satchel/light_ref
 {
 
@@ -129,174 +105,94 @@ models/multiplayer/satchel/lightred_on
 
 models/multiplayer/supplies/healthbox
 {
-	{
-		map textures/effects/envmap_slate_90.tga
-		rgbGen lightingdiffuse
-		tcGen environment
-	}
-	{
-		map models/multiplayer/supplies/healthbox.tga
-		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-		rgbGen lightingdiffuse
-	}
+     diffusemap models/multiplayer/supplies/healthbox
+	 bumpmap diffusemap models/multiplayer/supplies/healthbox_n
+	 specularmap diffusemap models/multiplayer/supplies/healthbox_s
 }
 
 models/multiplayer/supplies/ammobox
 {
+	
 	{
-		map textures/effects/envmap_slate_90.tga
-		rgbGen lightingdiffuse
-		tcGen environment
-	}
-	{
-		map models/multiplayer/supplies/ammobox.tga
-		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-		rgbGen lightingdiffuse
+		diffusemap models/multiplayer/supplies/ammobox
+		bumpmap models/multiplayer/supplies/ammobox_n
+		specularmap models/multiplayer/supplies/ammobox_s
+       
 	}
 }
 
 models/multiplayer/supplies/ammobox_2
 {
-	{
-		map textures/effects/envmap_slate_90.tga
-		rgbGen lightingdiffuse
-		tcGen environment
-	}
-	{
-		map models/multiplayer/supplies/ammobox_2.tga
-		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-		rgbGen lightingdiffuse
-	}
+	 diffusemap models/multiplayer/supplies/ammobox_2
+	 bumpmap models/multiplayer/supplies/ammobox_2_n
+	 specularmap models/multiplayer/supplies/ammobox_2_s
 }
 
 models/multiplayer/smokebomb/smoke_bomb
 {
-	{
-		map textures/effects/envmap_slate_90.tga
-		rgbGen lightingdiffuse
-		tcGen environment
-	}
-	{
-		map models/multiplayer/smokebomb/smoke_bomb.tga
-		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-		rgbGen lightingdiffuse
-	}
+	 diffusemap models/multiplayer/smokebomb/smoke_bomb
+	 bumpmap models/multiplayer/smokebomb/smoke_bomb_n
+	 specularmap models/multiplayer/smokebomb/smoke_bomb_s
 }
 
 models/multiplayer/smokegrenade/smoke_grenade
 {
-	{
-		map textures/effects/envmap_slate_90.tga
-		rgbGen lightingdiffuse
-		tcGen environment
-	}
-	{
-		map models/multiplayer/smokegrenade/smoke_grenade.tga
-		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-		rgbGen lightingdiffuse
-	}
+	 diffusemap models/multiplayer/smokegrenade/smoke_grenade
+	 bumpmap models/multiplayer/smokegrenade/smoke_grenade_n
+	 specularmap models/multiplayer/smokegrenade/smoke_grenade_s
 }
 
 
 models/multiplayer/landmine/landmine
 {
-	{
-		map textures/effects/envmap_slate_90.tga
-		rgbGen lightingdiffuse
-		tcGen environment
-	}
-	{
-		map models/multiplayer/landmine/landmine.tga
-		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-		rgbGen lightingdiffuse
-	}
+	 diffusemap models/multiplayer/landmine/landmine
+	 bumpmap models/multiplayer/landmine/landmine_n
+	 specularmap models/multiplayer/landmine/landmine_s
 }
 
 models/multiplayer/pliers/pliers
 {
-	{
-		map textures/effects/envmap_slate_90.tga
-		rgbGen lightingdiffuse
-		tcGen environment
-	}
-	{
-		map models/multiplayer/pliers/pliers.tga
-		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-		rgbGen lightingdiffuse
-	}
+     diffusemap models/multiplayer/pliers/pliers
+	 bumpmap models/multiplayer/pliers/pliers_n
+	 specularmap models/multiplayer/pliers/pliers_s
 }
 
 models/multiplayer/binocs/binoculars
 {
-	{
-		map textures/effects/envmap_slate.tga
-		rgbGen lightingdiffuse
-		tcGen environment
-	}
-	{
-		map models/multiplayer/binocs/binoculars.tga
-		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-		rgbGen lightingdiffuse
-	}
+	 map models/multiplayer/binocs/binoculars
+	 bumpmap models/multiplayer/binocs/binoculars_n
+	 specularmap models/multiplayer/binocs/binoculars_s
 }
 
 models/multiplayer/mortar/mortar_sd
 {
-	{
-		map textures/effects/envmap_slate.tga
-		rgbGen lightingdiffuse
-		tcGen environment
-	}
-	{
-		map models/multiplayer/mortar/mortar_sd.tga
-		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-		rgbGen lightingdiffuse
-	}
+	 diffusemap models/multiplayer/mortar/mortar_sd
+	 bumpmap models/multiplayer/mortar/mortar_sd_n
+	 specularmap models/multiplayer/mortar/mortar_sd_s
 }
 
 
 models/multiplayer/mg42/s_mg42
 {
-	{
-		map textures/effects/envmap_slate.tga
-		rgbGen lightingdiffuse
-		tcGen environment
-	}
-	{
-		map models/multiplayer/mg42/s_mg42.tga
-		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-		rgbGen lightingdiffuse
-	}
+	 diffusemap models/multiplayer/mg42/s_mg42
+	 bumpmap models/multiplayer/mg42/s_mg42_n
+	 specularmap models/multiplayer/mg42/s_mg42_s
 }
 
 
 
 models/multiplayer/browning/handle
 {
-	{
-		map textures/effects/envmap_slate.tga
-		rgbGen lightingdiffuse
-		tcGen environment
-	}
-	{
-		map models/multiplayer/browning/handle.tga
-		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-		rgbGen lightingdiffuse
-	}
+     diffusemap models/multiplayer/browning/handle
+	 bumpmap models/multiplayer/browning/handle_n
+	 specularmap models/multiplayer/browning/handle_s
 }
 
 models/multiplayer/browning/browning
 {
-	{
-		map textures/effects/envmap_slate.tga
-		rgbGen lightingdiffuse
-		tcGen environment
-	}
-	{
-		map models/multiplayer/browning/browning.tga
-		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-		rgbGen lightingdiffuse
-	}
+		diffusemap models/multiplayer/browning/browning
+		bumpmap models/multiplayer/browning/browning_n
+		specularmap models/multiplayer/browning/browning_s
 }
 
 models/multiplayer/browning/barrel
@@ -315,7 +211,9 @@ models/multiplayer/browning/barrel
 		depthFunc equal
 	}
 	{
-		map models/multiplayer/browning/barrel.tga
+		diffusemap models/multiplayer/browning/barrel
+		bumpmap diffusemap models/multiplayer/browning/barrel_n
+		specularmap diffusemap models/multiplayer/browning/barrel_s
 		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
 		rgbGen lightingdiffuse
 		depthFunc equal
@@ -325,8 +223,9 @@ models/multiplayer/browning/barrel
 models/multiplayer/gold/gold
 {
 	{
-		map models/multiplayer/gold/gold.tga
-		rgbGen lightingdiffuse
+		diffusemap models/multiplayer/gold/gold
+		bumpmap models/multiplayer/gold/gold_n
+		specularmap models/multiplayer/gold/gold_s
 	}
 	{
 		map textures/effects/envmap_gold.tga
@@ -336,44 +235,49 @@ models/multiplayer/gold/gold
 		rgbGen lightingdiffuse
 	}
 }
-
-models/multiplayer/treasure/treasure
-{
-	cull disable
-	deformvertexes autosprite
-	sort nearest
-	surfaceparm trans
-	{
-		map models/multiplayer/treasure/treasure.tga
-		blendfunc gl_src_alpha gl_one_minus_src_alpha
-		tcmod stretch sin .8 .08 0 .8
-	}
-}
+//not in our source
+//models/multiplayer/treasure/treasure
+//{
+//	cull disable
+//	deformvertexes autosprite
+//	sort nearest
+//	surfaceparm trans
+//	{
+//		map models/multiplayer/treasure/treasure.tga
+//		blendfunc gl_src_alpha gl_one_minus_src_alpha
+//		tcmod stretch sin .8 .08 0 .8
+//	}
+//}
 
 models/multiplayer/flagpole/american
 {
 	cull disable
-//	deformVertexes wave 194 sin 0 3 0 .4
 	{
-		map models/multiplayer/flagpole/american.tga
-		rgbGen lightingDiffuse
+		diffusemap models/multiplayer/flagpole/american
+		bumpmap models/multiplayer/flagpole/american_n
+		specularmap models/multiplayer/flagpole/american_s
+		
 	}
 }
 
 models/multiplayer/flagpole/american_reinforce
 {
 	cull disable
-//	deformVertexes wave 194 sin 0 3 0 .4
+
 	{
-		map models/multiplayer/flagpole/american_reinforce.tga
-		rgbGen lightingDiffuse
+		diffusemap models/multiplayer/flagpole/american_reinforce
+		bumpmap models/multiplayer/flagpole/american_reinforce_n
+		specularmap models/multiplayer/flagpole/american_reinforce_s
 	}
 }
 
 models/multiplayer/flagpole/disc
 {
+        diffusemap models/multiplayer/flagpole/disc
+		bumpmap models/multiplayer/flagpole/disc_n
+		specularmap models/multiplayer/flagpole/disc_s
 	{
-		clampmap models/multiplayer/flagpole/disc.tga
+		clampmap models/multiplayer/flagpole/disc
 		rgbGen lightingDiffuse
 		tcMod rotate 30
 		blenfunc blend
@@ -382,82 +286,68 @@ models/multiplayer/flagpole/disc
 
 models/multiplayer/flagpole/flagpole
 {
-	{
-		map models/multiplayer/flagpole/flag_clouds.tga
-		rgbGen lightingDiffuse
-		tcgen environment
-	}
+	diffusemap models/multiplayer/flagpole/flag_clouds
+	bumpmap diffusemap models/multiplayer/flagpole/flag_clouds_n
+	specularmap diffusemap models/multiplayer/flagpole/flag_clouds_s
+		
 }
 
 models/multiplayer/flagpole/german
 {
 	cull disable
-//	deformVertexes wave 194 sin 0 3 0 .4
+
 	{
-		map models/multiplayer/flagpole/german.tga
-		rgbGen lightingDiffuse
+		diffusemap models/multiplayer/flagpole/german
+		bumpmap models/multiplayer/flagpole/german_n
+		specularmap models/multiplayer/flagpole/german_s
 	}
 }
 
 models/multiplayer/flagpole/german_reinforce
 {
 	cull disable
-//	deformVertexes wave 194 sin 0 3 0 .4
+
 	{
-		map models/multiplayer/flagpole/german_reinforce.tga
-		rgbGen lightingDiffuse
+		diffusemap models/multiplayer/flagpole/german_reinforce
+		bumpmap models/multiplayer/flagpole/german_reinforce_n
+		specularmap models/multiplayer/flagpole/german_reinforce_s
 	}
 }
 
-models/multiplayer/flagpole/waypoint
-{
-	cull disable
-	deformVertexes wave 194 sin 0 3 0 .4
-	{
-		map models/multiplayer/flagpole/waypoint.tga
-		rgbGen lightingDiffuse
-	}
-}
+//omnibot
+//models/multiplayer/flagpole/waypoint
+//{
+//	cull disable
+//	deformVertexes wave 194 sin 0 3 0 .4
+//	{
+//		map models/multiplayer/flagpole/waypoint.tga
+//		rgbGen lightingDiffuse
+//	}
+//}
 
 models/multiplayer/kar98/kar98silencer
 {
-	{
-		map textures/effects/envmap_slate.tga
-		rgbGen lightingdiffuse
-		tcGen environment
-	}
-	{
-		map models/multiplayer/m1_garand/m1garandsilencer_yd.tga
-		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-		rgbGen lightingdiffuse
-	}
+	diffusemap models/multiplayer/m1_garand/m1garandsilencer_yd
+	bumpmap models/multiplayer/m1_garand/m1garandsilencer_yd_n
+	specularmap models/multiplayer/m1_garand/m1garandsilencer_yd_s
 }
 
 models/multiplayer/kar98/mauser3 
 { 
-     { 
-          map textures/effects/envmap_slate.tga 
-          rgbGen lightingdiffuse 
-          tcGen environment 
-     } 
-     { 
-          map models/weapons2/mauser/mauser3_yd.tga 
-          blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA 
-          rgbGen lightingdiffuse 
-     } 
+         diffusemap models/weapons2/mauser/mauser3_yd
+		 bumpmap models/weapons2/mauser/mauser3_yd_n
+		 specularmap models/weapons2/mauser/mauser3_yd_s
+          
+     
 }
 
 models/multiplayer/mg42/bullet
 {
+	
 	{
-		map textures/effects/envmap_gold.tga
-		rgbGen identity
-		tcGen environment
-	}
-	{
-		map models/multiplayer/mg42/bullet_yd.tga
-		blendFunc GL_DST_COLOR GL_ZERO
-		rgbGen lightingdiffuse
+		 diffusemap models/multiplayer/mg42/bullet
+		 bumpmap models/multiplayer/mg42/bullet_n
+		 specularmap models/multiplayer/mg42/bullet_s
 	}
 }
 
@@ -467,8 +357,10 @@ models/multiplayer/mine_marker/allied_marker
 	nomipmaps
 	nopicmip
 	{
-		map models/multiplayer/mine_marker/allied_marker.tga
-		rgbGen lightingdiffuse
+		diffusemap models/multiplayer/mine_marker/allied_marker
+		bumpmap models/multiplayer/mine_marker/allied_marker_n
+		specularmap models/multiplayer/mine_marker/allied_marker_s
+		
 	}
 }
 
@@ -478,51 +370,31 @@ models/multiplayer/mine_marker/axis_marker
 	nomipmaps
 	nopicmip
 	{
-		map models/multiplayer/mine_marker/axis_marker.tga
-		rgbGen lightingdiffuse
+		diffusemap models/multiplayer/mine_marker/axis_marker
+		bumpmap models/multiplayer/mine_marker/axis_marker_n
+		specularmap models/multiplayer/mine_marker/axis_marker_s
 	}
 }
 
 models/multiplayer/m1_garand/m1_garand
 {
-	{
-		map textures/effects/envmap_slate.tga
-		rgbGen lightingdiffuse
-		tcGen environment
-	}
-	{
-		map models/multiplayer/m1_garand/m1_garand_yd.tga
-		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-		rgbGen lightingdiffuse
-	}
+		diffusemap models/multiplayer/m1_garand/m1_garand_yd
+		bumpmap models/multiplayer/m1_garand/m1_garand_yd_n
+		specularmap models/multiplayer/m1_garand/m1_garand_yd_s
 }
 
 models/multiplayer/m1_garand/m1garandscope
 {
-	{
-		map textures/effects/envmap_slate.tga
-		rgbGen lightingdiffuse
-		tcGen environment
-	}
-	{
-		map models/multiplayer/m1_garand/m1garandscope_yd.tga
-		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-		rgbGen lightingdiffuse
-	}
+		diffusemap models/multiplayer/m1_garand/m1garandscope_yd
+		bumpmap models/multiplayer/m1_garand/m1garandscope_yd_n
+		specularmap models/multiplayer/m1_garand/m1garandscope_yd_s
 }
 
 models/multiplayer/m1_garand/m1garandsilencer
 {
-	{
-		map textures/effects/envmap_slate.tga
-		rgbGen lightingdiffuse
-		tcGen environment
-	}
-	{
-		map models/multiplayer/m1_garand/m1garandsilencer_yd.tga
-		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-		rgbGen lightingdiffuse
-	}
+		diffusemap models/multiplayer/m1_garand/m1garandsilencer_yd
+		bumpmap models/multiplayer/m1_garand/m1garandsilencer_yd_n
+		specularmap models/multiplayer/m1_garand/m1garandsilencer_yd_s
 }
 
 models/multiplayer/syringe/adrenaline
@@ -599,42 +471,6 @@ models/multiplayer/syringe/100percent
 	}
 }
 
-models/multiplayer/test/alliedflag
-{
-	nocompress
-	nomipmaps
-	nopicmip
-	{
-		map ui/assets/portraits/alliedflag.tga
-	}
-	{
-		map ui/assets/portraits/stars.tga
-		blendfunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		tcMod scroll -.125 -.125
-	}
-	{
-		map ui/assets/portraits/medic.tga
-		blendfunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-}
 
-models/multiplayer/test/axisflag
-{
-	nocompress
-	nomipmaps
-	nopicmip
-	{
-		map ui/assets/portraits/axisflag.tga
-	}
-	{
-		map ui/assets/portraits/wolflogo.tga
-		blendfunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-		tcMod scroll 0.125 0
-	}
-	{
-		map ui/assets/portraits/medic_ger.tga
-		blendfunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
-	}
-}
 
 
