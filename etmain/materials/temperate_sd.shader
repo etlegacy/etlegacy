@@ -6,6 +6,6 @@ textures/temperate_sd/rock_worn_brown_moss
 	bumpmap textures/temperate_sd/rock_worn_brown_moss_n
 	q3map_nonplanar
 	q3map_shadeangle 179
-	implicitmap textures/temperate_sd/rock_worn_brown_moss
+	implicitMap textures/temperate_sd/rock_worn_brown_moss
 }
 

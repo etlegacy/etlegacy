@@ -613,7 +613,7 @@ models/mapobjects/raster/moto
 
 models/mapobjects/raster/moto_bag
 {
-	implicitmap -
+	implicitMap -
 }
 
 models/mapobjects/barrel_sd/barrel_side

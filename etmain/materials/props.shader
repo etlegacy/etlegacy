@@ -570,7 +570,7 @@ textures/props/rope_m01
 	bumpmap textures/props/rope_m01_n
 	specularmap textures/props/rope_m01_s
 	surfaceparm woodsteps
-	implicitmap -
+	implicitMap -
 }
 
 textures/props/sawblade

@@ -20,7 +20,7 @@ textures/seawall_wall/wall02_mid
 	diffusemap textures/seawall_wall/wall02_mid
 	bumpmap textures/seawall_wall/wall02_mid_n
 	specularmap textures/seawall_wall/wall02_mid_s
-	implicitmap -
+	implicitMap -
 }
 
 textures/seawall_wall/wall03_mid
@@ -29,7 +29,7 @@ textures/seawall_wall/wall03_mid
 	diffusemap textures/seawall_wall/wall03_mid
 	bumpmap textures/seawall_wall/wall03_mid_n
 	specularmap textures/seawall_wall/wall03_mid_s
-	implicitmap -
+	implicitMap -
 }
 
 textures/seawall_wall/wall03_top
@@ -38,5 +38,5 @@ textures/seawall_wall/wall03_top
 	diffusemap textures/seawall_wall/wall03_top
 	bumpmap textures/seawall_wall/wall03_top_n
 	specularmap textures/seawall_wall/wall03_top_s
-	implicitmap -
+	implicitMap -
 }

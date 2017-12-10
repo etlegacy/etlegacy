@@ -50,7 +50,7 @@ textures/snow/s_castle_c02
     diffusemap textures/snow/s_castle_c02
 	bumpmap textures/snow/s_castle_c02_n
 	specularmap textures/snow/s_castle_c02_s
-    implicitmap -
+    implicitMap -
 }
 
 textures/snow/s_castle_c16d
@@ -58,7 +58,7 @@ textures/snow/s_castle_c16d
     qer_editorimage textures/snow/s_castle_c16d
 	diffusemap textures/snow/s_castle_c16d
 	bumpmap textures/snow/s_castle_c16d_n
-	specularmap textures/snow/s_castle_c16d_s
+	specularMap textures/snow/s_castle_c16d_s
 }
 
 textures/snow/s_castle_c46_on_grid
@@ -174,7 +174,7 @@ textures/snow/s_door_c10b_s
 	bumpmap textures/snow/s_door_c10b_s_n
 	specularmap textures/snow/s_door_c10b_s_s
 	surfaceparm woodsteps
-	implicitmap -
+	implicitMap -
 }
 
 textures/snow/s_metal_m04dg2
@@ -194,7 +194,7 @@ textures/snow/s_roof_c04dm
    specularmap textures/snow/s_roof_c04dm_s
    bumpmap textures/snow/s_roof_c04dm_n
    surfaceparm woodsteps
-	implicitmap -
+	implicitMap -
 }
 
 textures/snow/s_town_c91
@@ -203,7 +203,7 @@ textures/snow/s_town_c91
 	diffusemap textures/snow/s_town_c91
 	specularmap textures/snow/s_town_c91_s
 	bumpmap textures/snow/s_town_c91_n
-	implicitmap -
+	implicitMap -
 }
 
 textures/snow/s_town_m_c01_trim
@@ -212,7 +212,7 @@ textures/snow/s_town_m_c01_trim
 	diffusemap textures/snow/s_town_m_c01_trim
 	specularmap textures/snow/s_town_m_c01_trim_s
 	bumpmap textures/snow/s_town_m_c01_trim_n
-	implicitmap -
+	implicitMap -
 }
 
 textures/snow/s_window_c05a
@@ -221,7 +221,7 @@ textures/snow/s_window_c05a
 	diffusemap textures/snow/s_window_c05a
 	specularmap textures/snow/s_window_c05a_s
 	bumpmap textures/snow/s_window_c05a_n
-	implicitmap -
+	implicitMap -
 }
 
 
@@ -232,5 +232,5 @@ textures/snow/s_wood_c13a
 	specularmap textures/snow/s_wood_c13a_s
 	bumpmap textures/snow/s_wood_c13a_n
 	surfaceparm woodsteps
-	implicitmap -
+	implicitMap -
 }

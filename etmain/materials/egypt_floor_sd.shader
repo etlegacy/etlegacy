@@ -131,7 +131,7 @@ textures/egypt_floor_sd/block-16sq
 	diffusemap textures/egypt_floor_sd/block-16sq
 	bumpmap textures/egypt_floor_sd/block-16sq_n
 	specularmap textures/egypt_floor_sd/block-16sq_s
-	implicitmap -
+	implicitMap -
 }
 
 textures/egypt_floor_sd/dirt_cracked_01
@@ -152,7 +152,7 @@ textures/egypt_floor_sd/marblefloor_c04
 	diffusemap textures/egypt_floor_sd/marblefloor_c04
 	bumpmap textures/egypt_floor_sd/marblefloor_c04_n
 	specularmap textures/egypt_floor_sd/marblefloor_c04_s
-	implicitmap -
+	implicitMap -
 }
 
 textures/egypt_floor_sd/sandygrass_b
@@ -174,5 +174,5 @@ textures/egypt_floor_sd/siwa_rubble_1
 	diffusemap textures/egypt_floor_sd/siwa_rubble_1
 	bumpmap textures/egypt_floor_sd/siwa_rubble_1_n
 	specularmap textures/egypt_floor_sd/siwa_rubble_1_s
-	implicitmap -
+	implicitMap -
 }
