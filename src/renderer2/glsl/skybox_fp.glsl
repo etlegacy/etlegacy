@@ -8,7 +8,7 @@ varying vec3 var_Position;
 
 void main()
 {
-#if defined(USE_PORTAL_CLIPPING)
+	#if defined(USE_PORTAL_CLIPPING)
 	{
 		float dist = dot(var_Position.xyz, u_PortalPlane.xyz) - u_PortalPlane.w;
 		if (dist < 0.0)
