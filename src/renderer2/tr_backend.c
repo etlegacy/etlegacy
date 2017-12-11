@@ -528,9 +528,6 @@ static void Render_lightVolume(interaction_t *ia)
 
 		if (light->l.rlType == RL_OMNI)
 		{
-			vec3_t   viewOrigin;
-			vec3_t   lightOrigin;
-			vec4_t   lightColor;
 			qboolean shadowCompare;
 
 			Ren_LogComment("--- Render_lightVolume_omni ---\n");
@@ -539,17 +536,11 @@ static void Render_lightVolume(interaction_t *ia)
 			GL_Cull(CT_TWO_SIDED);
 			GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 
-			// set uniforms
-			VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin);   // in world space
-			VectorCopy(light->origin, lightOrigin);
-			VectorCopy(tess.svars.color, lightColor);
-
 			shadowCompare = (r_shadows->integer >= SHADOWING_ESM16 && !light->l.noShadows && light->shadowLOD >= 0);
 
-
-			SetUniformVec3(UNIFORM_VIEWORIGIN, viewOrigin);
-			SetUniformVec3(UNIFORM_LIGHTORIGIN, lightOrigin);
-			SetUniformVec3(UNIFORM_LIGHTCOLOR, lightColor);
+			SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
+			SetUniformVec3(UNIFORM_LIGHTORIGIN, light->origin);
+			SetUniformVec3(UNIFORM_LIGHTCOLOR, tess.svars.color);
 			SetUniformFloat(UNIFORM_LIGHTRADIUS, light->sphereRadius);
 			SetUniformFloat(UNIFORM_LIGHTSCALE, light->l.scale);
 			SetUniformMatrix16(UNIFORM_LIGHTATTENUATIONMATRIX, light->attenuationMatrix2);

@@ -452,10 +452,6 @@ static void Render_generic(int stage)
  */
 static void Render_vertexLighting_DBS_entity(int stage)
 {
-	vec3_t        viewOrigin;
-	vec3_t        ambientColor;
-	vec3_t        lightDir;
-	vec4_t        lightColor;
 	uint32_t      stateBits;
 	shaderStage_t *pStage       = tess.surfaceStages[stage];
 	qboolean      normalMapping = qfalse;
@@ -489,21 +485,13 @@ static void Render_vertexLighting_DBS_entity(int stage)
 	}
 
 	// set uniforms
-	VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin);   // in world space
-	VectorCopy(backEnd.currentEntity->ambientLight, ambientColor);
 	//ClampColor(ambientColor);
-	VectorCopy(backEnd.currentEntity->directedLight, lightColor);
-	//ClampColor(directedLight);
-
-	// lightDir = L vector which means surface to light
-	VectorCopy(backEnd.currentEntity->lightDir, lightDir);
-
 	// u_AlphaTest
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
-	SetUniformVec3(UNIFORM_AMBIENTCOLOR, ambientColor);
-	SetUniformVec3(UNIFORM_VIEWORIGIN, viewOrigin);
-	SetUniformVec3(UNIFORM_LIGHTDIR, lightDir);
-	SetUniformVec3(UNIFORM_LIGHTCOLOR, lightColor);
+	SetUniformVec3(UNIFORM_AMBIENTCOLOR, backEnd.currentEntity->ambientLight);
+	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
+	SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir); // = L vector which means surface to light
+	SetUniformVec3(UNIFORM_LIGHTCOLOR, backEnd.currentEntity->directedLight);
 
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
@@ -661,7 +649,6 @@ static void Render_vertexLighting_DBS_entity(int stage)
  */
 static void Render_vertexLighting_DBS_world(int stage)
 {
-	vec3_t        viewOrigin;
 	uint32_t      stateBits;
 	colorGen_t    colorGen;
 	alphaGen_t    alphaGen;
@@ -688,8 +675,7 @@ static void Render_vertexLighting_DBS_world(int stage)
 	// now we are ready to set the shader program uniforms
 
 	// set uniforms
-	VectorCopy(backEnd.orientation.origin, viewOrigin);
-
+	
 	GL_CheckErrors();
 
 	// u_DeformGen
@@ -735,7 +721,7 @@ static void Render_vertexLighting_DBS_world(int stage)
 	GLSL_SetUniform_ColorModulate(trProg.gl_vertexLightingShader_DBS_world, colorGen, alphaGen);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 	SetUniformFloat(UNIFORM_LIGHTWRAPAROUND, RB_EvalExpression(&pStage->wrapAroundLightingExp, 0));
-	SetUniformVec3(UNIFORM_VIEWORIGIN, viewOrigin);
+	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.orientation.origin);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
 
@@ -802,16 +788,12 @@ static void Render_vertexLighting_DBS_world(int stage)
  */
 static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalMapping)
 {
-	shaderStage_t *pStage;
-	uint32_t      stateBits;
+	shaderStage_t *pStage   = tess.surfaceStages[stage];
+	uint32_t      stateBits = pStage->stateBits;
 	colorGen_t    rgbGen;
 	alphaGen_t    alphaGen;
 
 	Ren_LogComment("--- Render_lightMapping ---\n");
-
-	pStage = tess.surfaceStages[stage];
-
-	stateBits = pStage->stateBits;
 
 	switch (pStage->rgbGen)
 	{
@@ -976,6 +958,7 @@ static void Render_depthFill(int stage)
 	                          USE_TCGEN_ENVIRONMENT, pStage->tcGen_Environment);
 
 	// set uniforms
+
 	if (pStage->tcGen_Environment)
 	{
 		// calculate the environment texcoords in object space
@@ -1148,9 +1131,6 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
                                             shaderStage_t *attenuationXYStage,
                                             shaderStage_t *attenuationZStage, trRefLight_t *light)
 {
-	vec3_t     viewOrigin;
-	vec3_t     lightOrigin;
-	vec4_t     lightColor;
 	float      shadowTexelSize;
 	colorGen_t colorGen;
 	alphaGen_t alphaGen;
@@ -1226,9 +1206,6 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	}
 
 	// set uniforms
-	VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin);
-	VectorCopy(light->origin, lightOrigin);
-	VectorCopy(tess.svars.color, lightColor);
 
 	if (shadowCompare)
 	{
@@ -1239,9 +1216,9 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 		shadowTexelSize = 1.0f;
 	}
 
-	SetUniformVec3(UNIFORM_VIEWORIGIN, viewOrigin);
-	SetUniformVec3(UNIFORM_LIGHTORIGIN, lightOrigin);
-	SetUniformVec3(UNIFORM_LIGHTCOLOR, lightColor);
+	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);
+	SetUniformVec3(UNIFORM_LIGHTORIGIN, light->origin);
+	SetUniformVec3(UNIFORM_LIGHTCOLOR, tess.svars.color);
 	SetUniformFloat(UNIFORM_LIGHTRADIUS, light->sphereRadius);
 	SetUniformFloat(UNIFORM_LIGHTSCALE, light->l.scale);
 	SetUniformFloat(UNIFORM_LIGHTWRAPAROUND, RB_EvalExpression(&diffuseStage->wrapAroundLightingExp, 0));
@@ -1361,9 +1338,6 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
                                             shaderStage_t *attenuationXYStage,
                                             shaderStage_t *attenuationZStage, trRefLight_t *light)
 {
-	vec3_t     viewOrigin;
-	vec3_t     lightOrigin;
-	vec4_t     lightColor;
 	float      shadowTexelSize;
 	colorGen_t colorGen;
 	alphaGen_t alphaGen;
@@ -1440,9 +1414,6 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	}
 
 	// set uniforms
-	VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin);
-	VectorCopy(light->origin, lightOrigin);
-	VectorCopy(tess.svars.color, lightColor);
 
 	if (shadowCompare)
 	{
@@ -1453,9 +1424,9 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 		shadowTexelSize = 1.0f;
 	}
 
-	SetUniformVec3(UNIFORM_VIEWORIGIN, viewOrigin);
-	SetUniformVec3(UNIFORM_LIGHTORIGIN, lightOrigin);
-	SetUniformVec3(UNIFORM_LIGHTCOLOR, lightColor);
+	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);
+	SetUniformVec3(UNIFORM_LIGHTORIGIN, light->origin);
+	SetUniformVec3(UNIFORM_LIGHTCOLOR, tess.svars.color);
 	SetUniformFloat(UNIFORM_LIGHTRADIUS, light->sphereRadius);
 	SetUniformFloat(UNIFORM_LIGHTSCALE, light->l.scale);
 	SetUniformFloat(UNIFORM_LIGHTWRAPAROUND, RB_EvalExpression(&diffuseStage->wrapAroundLightingExp, 0));
@@ -1577,9 +1548,7 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
                                                    shaderStage_t *attenuationZStage, trRefLight_t *light)
 {
 #if 1
-	vec3_t     viewOrigin;
 	vec3_t     lightDirection;
-	vec4_t     lightColor;
 	float      shadowTexelSize;
 	colorGen_t colorGen;
 	alphaGen_t alphaGen;
@@ -1648,7 +1617,6 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	}
 
 	// set uniforms
-	VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin);
 
 #if 1
 	VectorCopy(tr.sunDirection, lightDirection);
@@ -1656,7 +1624,6 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	VectorCopy(light->direction, lightDirection);
 #endif
 
-	VectorCopy(tess.svars.color, lightColor);
 
 	if (shadowCompare)
 	{
@@ -1667,9 +1634,9 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 		shadowTexelSize = 1.0f;
 	}
 
-	SetUniformVec3(UNIFORM_VIEWORIGIN, viewOrigin);
+	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);
 	SetUniformVec3(UNIFORM_LIGHTDIR, lightDirection);
-	SetUniformVec3(UNIFORM_LIGHTCOLOR, lightColor);
+	SetUniformVec3(UNIFORM_LIGHTCOLOR, tess.svars.color);
 	SetUniformFloat(UNIFORM_LIGHTRADIUS, light->sphereRadius);
 	SetUniformFloat(UNIFORM_LIGHTSCALE, light->l.scale);
 	SetUniformFloat(UNIFORM_LIGHTWRAPAROUND, RB_EvalExpression(&diffuseStage->wrapAroundLightingExp, 0));
@@ -1874,7 +1841,6 @@ static void Render_reflection_CB(int stage)
  */
 static void Render_refraction_C(int stage)
 {
-	vec3_t        viewOrigin;
 	shaderStage_t *pStage = tess.surfaceStages[stage];
 
 	Ren_LogComment("--- Render_refraction_C ---\n");
@@ -1886,9 +1852,7 @@ static void Render_refraction_C(int stage)
 	GLSL_VertexAttribsState(ATTR_POSITION | ATTR_NORMAL);
 
 	// set uniforms
-	VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin); // in world space
-
-	SetUniformVec3(UNIFORM_VIEWORIGIN, viewOrigin);
+	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 	SetUniformFloat(UNIFORM_REFRACTIONINDEX, RB_EvalExpression(&pStage->refractionIndexExp, 1.0));
 	SetUniformFloat(UNIFORM_FRESNELPOWER, RB_EvalExpression(&pStage->fresnelPowerExp, 2.0));
 	SetUniformFloat(UNIFORM_FRESNELSCALE, RB_EvalExpression(&pStage->fresnelScaleExp, 2.0));
@@ -1917,7 +1881,6 @@ static void Render_refraction_C(int stage)
  */
 static void Render_dispersion_C(int stage)
 {
-	vec3_t        viewOrigin;
 	shaderStage_t *pStage = tess.surfaceStages[stage];
 	float         eta;
 	float         etaDelta;
@@ -1932,13 +1895,13 @@ static void Render_dispersion_C(int stage)
 	GLSL_VertexAttribsState(ATTR_POSITION | ATTR_NORMAL);
 
 	// set uniforms
-	VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin);   // in world space
 	eta      = RB_EvalExpression(&pStage->etaExp, (float)1.1);
 	etaDelta = RB_EvalExpression(&pStage->etaDeltaExp, (float)-0.02);
 
-	SetUniformVec3(UNIFORM_VIEWORIGIN, viewOrigin);
+	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);  // in world space
 	{
 		vec3_t temp = { eta, eta + etaDelta, eta + (etaDelta * 2) };
+		
 		SetUniformVec3(UNIFORM_ETARATIO, temp);
 	}
 	SetUniformFloat(UNIFORM_FRESNELPOWER, RB_EvalExpression(&pStage->fresnelPowerExp, 2.0f));
@@ -2266,7 +2229,6 @@ static void Render_heatHaze(int stage)
  */
 static void Render_liquid(int stage)
 {
-	vec3_t        viewOrigin;
 	float         fogDensity;
 	shaderStage_t *pStage = tess.surfaceStages[stage];
 
@@ -2280,11 +2242,9 @@ static void Render_liquid(int stage)
 	GLSL_VertexAttribsState(ATTR_POSITION | ATTR_TEXCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL | ATTR_COLOR);
 
 	// set uniforms
-	VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin);   // in world space
-
 	fogDensity = RB_EvalExpression(&pStage->fogDensityExp, 0.001f);
 
-	SetUniformVec3(UNIFORM_VIEWORIGIN, viewOrigin);
+	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 	SetUniformFloat(UNIFORM_REFRACTIONINDEX, RB_EvalExpression(&pStage->refractionIndexExp, 1.0f));
 	SetUniformFloat(UNIFORM_FRESNELPOWER, RB_EvalExpression(&pStage->fresnelPowerExp, 2.0f));
 	SetUniformFloat(UNIFORM_FRESNELSCALE, RB_EvalExpression(&pStage->fresnelScaleExp, 1.0f));
@@ -2467,7 +2427,6 @@ static void Render_fog()
  */
 static void Render_volumetricFog()
 {
-	vec3_t viewOrigin;
 	//vec3_t fogColor; not used anymore
 
 	Ren_LogComment("--- Render_volumetricFog---\n");
@@ -2532,8 +2491,7 @@ static void Render_volumetricFog()
 		glVertexAttrib4fv(ATTR_INDEX_COLOR, tr.fogColor);
 
 		// set uniforms
-		VectorCopy(backEnd.viewParms.orientation.origin, viewOrigin);   // in world space
-
+		
 		{
 			//get in from shaders and bsp
 			fogDensity = tess.surfaceShader->fogParms.tcScale;
@@ -2542,7 +2500,7 @@ static void Render_volumetricFog()
 
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 		SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
-		SetUniformVec3(UNIFORM_VIEWORIGIN, viewOrigin);
+		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 		SetUniformFloat(UNIFORM_FOGDENSITY, fogDensity);
 		SetUniformVec3(UNIFORM_FOGCOLOR, tr.fogColor);
 
