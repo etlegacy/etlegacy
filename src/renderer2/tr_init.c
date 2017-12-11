@@ -1511,6 +1511,7 @@ void R_Init(void)
 		tr.squareTable[i]          = (i < FUNCTABLE_SIZE / 2) ? 1.0f : -1.0f;
 		tr.sawToothTable[i]        = (float)i / FUNCTABLE_SIZE;
 		tr.inverseSawToothTable[i] = 1.0f - tr.sawToothTable[i];
+		tr.noiseTable[i]           = R_NoiseGet4f(0, 0, 0, i);
 
 		if (i < FUNCTABLE_SIZE / 2)
 		{
