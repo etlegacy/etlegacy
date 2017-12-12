@@ -3648,15 +3648,8 @@ static int getPrevBankWeap(int bank, int cycle, qboolean sameBankPosition)
  * @param[in] lastweap
  * @param[in] newweap
  */
-void CG_SetSniperZoom(int lastweap, int newweap)
+void CG_SetSniperZoom(int weapon)
 {
-	cg.zoomed = qfalse;
-
-	if (lastweap == newweap)
-	{
-		return;
-	}
-
 	// Keep binocs swaying
 	if (!(cg.predictedPlayerState.eFlags & EF_ZOOMING))
 	{
@@ -3665,25 +3658,25 @@ void CG_SetSniperZoom(int lastweap, int newweap)
 
 	// cg.zoomedScope = GetWeaponTableData(newweap)->zoomedScope;
 
+	cg.zoomed = GetWeaponTableData(weapon)->isScoped;
+
 	// no sniper zoom, get out.
-	if (!GetWeaponTableData(newweap)->isScoped)
+	if (!cg.zoomed)
 	{
 		return;
 	}
 
-	cg.zoomed = qtrue;
-
 	cg.zoomval = cg_zoomDefaultSniper.value;
 
 	// constrain user preferred fov to weapon limitations
-	if (cg.zoomval > GetWeaponTableData(newweap)->zoomOut)
+	if (cg.zoomval > GetWeaponTableData(weapon)->zoomOut)
 	{
-		cg.zoomval = GetWeaponTableData(newweap)->zoomOut;
+		cg.zoomval = GetWeaponTableData(weapon)->zoomOut;
 	}
 
-	if (cg.zoomval < GetWeaponTableData(newweap)->zoomIn)
+	if (cg.zoomval < GetWeaponTableData(weapon)->zoomIn)
 	{
-		cg.zoomval = GetWeaponTableData(newweap)->zoomIn;
+		cg.zoomval = GetWeaponTableData(weapon)->zoomIn;
 	}
 
 	cg.zoomTime = cg.time;
@@ -3770,8 +3763,6 @@ void CG_FinishWeaponChange(int lastWeapon, int newWeapon)
 	{
 		return;
 	}
-
-	CG_SetSniperZoom(lastWeapon, newWeapon);
 
 	// setup for a user call to CG_LastWeaponUsed_f()
 	if (lastWeapon == cg.lastFiredWeapon)
@@ -3938,6 +3929,8 @@ void CG_AltWeapon_f(void)
 		default:
 			break;
 		}
+
+		return;
 	}
 
 	if (cg.time - cg.weaponSelectTime < cg_weaponCycleDelay.integer)
@@ -4051,16 +4044,11 @@ void CG_AltWeapon_f(void)
  */
 void CG_NextWeap(qboolean switchBanks)
 {
-	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean nextbank = qfalse;     // need to switch to the next bank of weapons?
 	int      i;
-
-	if (GetWeaponTableData(curweap)->isSetWeapon)
-	{
-		return;
-	}
 
 	if (GetWeaponTableData(curweap)->isPistol || GetWeaponTableData(curweap)->isRifle)
 	{
@@ -4208,16 +4196,11 @@ void CG_NextWeap(qboolean switchBanks)
  */
 void CG_PrevWeap(qboolean switchBanks)
 {
-	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean prevbank = qfalse;     // need to switch to the next bank of weapons?
 	int      i;
-
-	if (GetWeaponTableData(curweap)->isSetWeapon)
-	{
-		return;
-	}
 
 	if (GetWeaponTableData(curweap)->isSilencedPistol || GetWeaponTableData(curweap)->isRiflenade)
 	{
@@ -4459,8 +4442,6 @@ void CG_LastWeaponUsed_f(void)
 		return;
 	}
 
-	cg.weaponSelectTime = cg.time;  // flash the current weapon icon
-
 	if (!cg.switchbackWeapon)
 	{
 		cg.switchbackWeapon = cg.weaponSelect;
@@ -4501,8 +4482,6 @@ void CG_NextWeaponInBank_f(void)
 		return;
 	}
 
-	cg.weaponSelectTime = cg.time;  // flash the current weapon icon
-
 	CG_NextWeap(qfalse);
 }
 
@@ -4520,8 +4499,6 @@ void CG_PrevWeaponInBank_f(void)
 	{
 		return;
 	}
-
-	cg.weaponSelectTime = cg.time;  // flash the current weapon icon
 
 	CG_PrevWeap(qfalse);
 }
@@ -4555,8 +4532,6 @@ void CG_NextWeapon_f(void)
 		return;
 	}
 
-	cg.weaponSelectTime = cg.time;  // flash the current weapon icon
-
 	CG_NextWeap(qtrue);
 }
 
@@ -4589,8 +4564,6 @@ void CG_PrevWeapon_f(void)
 		return;
 	}
 
-	cg.weaponSelectTime = cg.time;  // flash the current weapon icon
-
 	CG_PrevWeap(qtrue);
 }
 
@@ -4616,8 +4589,6 @@ void CG_WeaponBank_f(void)
 			return;
 		}
 	}
-
-	cg.weaponSelectTime = cg.time;  // flash the current weapon icon
 
 	bank = atoi(CG_Argv(1));
 
@@ -4697,6 +4668,8 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 {
 	int i;
 	int bank = 0, cycle = 0;
+
+	Com_Printf("CG_OutOfAmmoChange %d %d\n", cg.weaponSelect, cg.snap->ps.weapon);
 
 	// trivial switching
 	if (cg.weaponSelect == WP_PLIERS || (cg.weaponSelect == WP_SATCHEL_DET && cg.predictedPlayerState.ammo[WP_SATCHEL_DET]))
@@ -5518,13 +5491,13 @@ void CG_WaterRipple(qhandle_t shader, vec3_t loc, vec3_t dir, int size, int life
  */
 void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags)     // modified to send missilehitwall surface parameters
 {
-	qhandle_t   mod = 0, mark = 0, shader = 0;
-	sfxHandle_t sfx = 0, sfx2 = 0;
+	qhandle_t   mod      = 0, mark = 0, shader = 0;
+	sfxHandle_t sfx      = 0, sfx2 = 0;
 	qboolean    isSprite = qfalse;
 	int         duration = 600, i, j, markDuration = -1, volume = 127; // keep -1 markDuration for temporary marks
 	trace_t     trace;
 	vec3_t      lightColor = { 1, 1, 0 }, tmpv, tmpv2, sprOrg, sprVel;
-	float       radius = 32, light = 0, sfx2range = 0;
+	float       radius     = 32, light = 0, sfx2range = 0;
 	vec4_t      projection;
 
 	if (surfFlags & SURF_SKY)

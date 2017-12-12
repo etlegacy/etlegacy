@@ -2460,7 +2460,7 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
  */
 static void PM_FinishWeaponChange(void)
 {
-	weapon_t oldweapon, newweapon = (weapon_t)pm->ps->nextWeapon;
+	weapon_t oldweapon = (weapon_t)pm->ps->weapon, newweapon = (weapon_t)pm->ps->nextWeapon;
 
 	// Cannot switch to an invalid weapon
 	if (!IS_VALID_WEAPON(newweapon))
@@ -2473,8 +2473,6 @@ static void PM_FinishWeaponChange(void)
 	{
 		newweapon = WP_NONE;
 	}
-
-	oldweapon = pm->ps->weapon;
 
 	pm->ps->weapon = newweapon;
 
@@ -3440,12 +3438,6 @@ static void PM_Weapon(void)
 	{
 		if (pm->ps->weapon != pm->cmd.weapon)
 		{
-			// don't change weapon while mounting/unmounting alt weapon
-			if (GetWeaponTableData(pm->ps->weapon)->weapAlts && pm->ps->weaponTime > 250)
-			{
-				return;
-			}
-
 			PM_BeginWeaponChange(pm->ps->weapon, pm->cmd.weapon, qfalse);
 		}
 	}

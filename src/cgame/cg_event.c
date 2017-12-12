@@ -2265,6 +2265,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	case EV_CHANGE_WEAPON:
 		DEBUGNAME("EV_CHANGE_WEAPON");
 		CG_PlaySwitchSound(es->weapon, cg.weaponSelect);    // grabbed from SP
+		CG_SetSniperZoom(cg.weaponSelect);
 		trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.selectSound);
 		break;
 	case EV_CHANGE_WEAPON_2:
