@@ -1,6 +1,44 @@
 // models_players.shader
 
-models/players/temperate/allied/strap
+{
+	cull disable
+	diffusemap models/players/temperate/axis//medic/legs_medic
+	bumpmap models/players/temperate/axis//medic/legs_medic_n
+	specularmap models/players/temperate/axis//medic/legs_medic_s
+
+}
+
+{
+	cull disable
+	diffusemap models/players/temperate/axis/body01
+	bumpmap models/players/temperate/axis/body01_n
+	specularmap models/players/temperate/axis/body01_s
+
+}
+
+{
+	cull disable
+	diffusemap models/players/temperate/axis/legs01
+	bumpmap models/players/temperate/axis/legs01_n
+	specularmap models/players/temperate/axis/legs01_s
+
+}
+
+{
+	cull disable
+	diffusemap models/players/temperate/axis/inside
+	bumpmap models/players/temperate/axis/inside_n
+	specularmap models/players/temperate/axis/inside_s
+
+}
+
+{
+	cull disable
+	diffusemap models/players/temperate/allied/leg01
+	bumpmap models/players/temperate/allied/leg01_n
+	specularmap models/players/temperate/allied/leg01_s
+
+}
 {
 	cull disable
 	diffusemap models/players/temperate/allied/inside
@@ -191,7 +229,13 @@ models/players/temperate/allied/ranks/1stclass
 
 
 //start axis players
-
+models/players/hud/axis_engineer
+{
+	cull none
+	diffusemap models/players/hud/axis_engineer
+	bumpmap models/players/hud/axis_engineer_n
+	specularmap models/players/axis_engineer_s
+}
 models/players/temperate/axis/engineer/engineer_body
 {
 	cull none
@@ -199,7 +243,13 @@ models/players/temperate/axis/engineer/engineer_body
 	bumpmap models/players/temperate/axis/engineer/engineer_body_n
 	specularmap models/players/temperate/axis/engineer/engineer_body_s
 }
-
+models/players/hud/axis_cvops
+{
+	cull none
+	diffusemap models/players/hud/axis_cvops
+	bumpmap models/players/hud/axis_cvops_n
+	specularmap models/players/axis_cvops_s
+}
 models/players/temperate/axis/cvops/body_cvops
 {
 	cull none
@@ -207,7 +257,13 @@ models/players/temperate/axis/cvops/body_cvops
 	bumpmap models/players/temperate/axis/cvops/body_cvops_n
 	specularmap models/players/temperate/axis/cvops/body_cvops_s
 }
-
+models/players/hud/axis_field
+{
+	cull none
+	diffusemap models/players/hud/axis_field
+	bumpmap models/players/hud/axis_field_n
+	specularmap models/players/axis_field_s
+}
 models/players/temperate/axis/fieldops/body_fieldops
 {
 	cull none
@@ -215,7 +271,13 @@ models/players/temperate/axis/fieldops/body_fieldops
 	bumpmap models/players/temperate/axis/fieldops/body_fieldops_n
 	specularmap models/players/temperate/axis/fieldops/body_fieldops_s
 }
-
+models/players/hud/axis_medic
+{
+	cull none
+	diffusemap models/players/hud/axis_medic
+	bumpmap models/players/hud/axis_medic_n
+	specularmap models/players/axis_medic_s
+}
 models/players/temperate/axis/medic/axis_medic
 {
 	cull none
@@ -223,7 +285,13 @@ models/players/temperate/axis/medic/axis_medic
 	bumpmap models/players/temperate/axis/medic/axis_medic_n
 	specularmap models/players/temperate/axis/medic/axis_medic_s
 }
-
+models/players/hud/axis_soldier
+{
+	cull none
+	diffusemap models/players/hud/axis_soldier
+	bumpmap models/players/hud/axis_soldier_n
+	specularmap models/players/axis_soldier_s
+}
 models/players/temperate/axis/soldier/body_soldier
 {
 	cull none
@@ -235,6 +303,13 @@ models/players/temperate/axis/soldier/body_soldier
 
 
 //start allied
+models/players/hud/allied_soldier
+{
+	cull none
+	diffusemap models/players/hud/allied_soldier
+	bumpmap models/players/hud/allied_soldier_n
+	specularmap models/players/allied_soldier_s
+}
 models/players/temperate/allied/soldier/body
 {
 	cull none
@@ -242,7 +317,13 @@ models/players/temperate/allied/soldier/body
 	bumpmap models/players/temperate/allied/soldier/body_n
 	specularmap models/players/temperate/allied/soldier/body_s
 }
-
+models/players/hud/allied_medic
+{
+	cull none
+	diffusemap models/players/hud/allied_medic
+	bumpmap models/players/hud/allied_medic_n
+	specularmap models/players/allied_medic_s
+}
 models/players/temperate/allied/medic/body
 {
 	cull none
@@ -250,7 +331,13 @@ models/players/temperate/allied/medic/body
 	bumpmap models/players/temperate/allied/medic/body_n
 	specularmap models/players/temperate/allied/medic/body_s
 }
-
+models/players/hud/allied_engineer
+{
+	cull none
+	diffusemap models/players/hud/allied_engineer
+	bumpmap models/players/hud/allied_engineer_n
+	specularmap models/players/allied_engineer_s
+}
 models/players/temperate/allied/engineer/body
 {
 	cull none
@@ -273,7 +360,6 @@ models/players/temperate/allied/fieldops/body
 	specularmap models/players/temperate/allied/fieldops/body_s
 }
 
-//allied cvops head
 models/players/hud/allied_cvops
 {
     cull_none
@@ -281,7 +367,7 @@ models/players/hud/allied_cvops
 	 bumpmap models/players/hud/allied_cvops_n
 	 specularmap models/players/hud/allied_cvops_s
 }
-//allied cvops body
+
 models/players/temperate/allied/cvops/body
 {
 	cull none
