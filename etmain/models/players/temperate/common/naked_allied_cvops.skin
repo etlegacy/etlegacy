@@ -1,4 +1,4 @@
-l_legs,		"models/players/temperate/common/bare_legs_allied"
-u_body,		"models/players/temperate/allied/cvops/b_cvops"
-u_rthand,	"models/players/temperate/allied/cvops/b_cvops"
-u_lfthand,	"models/players/temperate/allied/cvops/b_cvops"
+l_legs,			"models/players/temperate/common/bare_legs"
+u_body,			"models/players/temperate/allied/cvops/body"
+u_rthand,		"models/players/temperate/allied/cvops/body"
+u_lfthand,		"models/players/temperate/allied/cvops/body"

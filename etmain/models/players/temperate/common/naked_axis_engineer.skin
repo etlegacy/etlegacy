@@ -1,4 +1,4 @@
-l_legs,		"models/players/temperate/common/bare_legs"
-u_body,		"models/players/temperate/axis/engineer/b_engineer"
-u_rthand,	"models/players/temperate/axis/glove"
-u_lfthand,	"models/players/temperate/axis/glove"
+l_legs,			"models/players/temperate/common/bare_legs"
+u_body,			"models/players/temperate/axis/body01"
+u_rthand,		"models/players/temperate/axis/body01"
+u_lfthand,		"models/players/temperate/axis/body01"
