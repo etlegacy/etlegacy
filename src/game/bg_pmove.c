@@ -1253,7 +1253,7 @@ static void PM_WalkMove(void)
 	{
 		if (wishspeed > pm->ps->speed * pm_proneSpeedScale)
 		{
-			// cap the max prone speed while reloading
+			// cap the max prone speed while reloading and mouting/unmouting alt weapon
 			if (pm->ps->weaponstate == WEAPON_RELOADING ||
 			    (pm->ps->weaponstate == WEAPON_DROPPING && ((pm->ps->weapAnim & ~ANIM_TOGGLEBIT) == GetWeaponTableData(pm->ps->weapon)->altSwitchFrom)) ||
 			    (pm->ps->weaponstate == WEAPON_RAISING && ((pm->ps->weapAnim & ~ANIM_TOGGLEBIT) == GetWeaponTableData(pm->ps->weapon)->altSwitchTo)))
