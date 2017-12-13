@@ -4055,14 +4055,6 @@ void CG_NextWeap(qboolean switchBanks)
 		num = GetWeaponTableData(curweap)->weapAlts;
 	}
 
-	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
-	{
-		if (GetWeaponTableData(curweap)->isSilencedPistol || GetWeaponTableData(curweap)->isRifle)
-		{
-			return;
-		}
-	}
-
 	CG_WeaponIndex(curweap, &bank, &cycle);       // get bank/cycle of current weapon
 
 	if (cg_cycleAllWeaps.integer || !switchBanks)
@@ -4207,14 +4199,6 @@ void CG_PrevWeap(qboolean switchBanks)
 		num = GetWeaponTableData(curweap)->weapAlts;
 	}
 
-	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
-	{
-		if (GetWeaponTableData(curweap)->isPistol || GetWeaponTableData(curweap)->isRiflenade)
-		{
-			return;
-		}
-	}
-
 	CG_WeaponIndex(curweap, &bank, &cycle);       // get bank/cycle of current weapon
 
 	// initially, just try to find a lower weapon in the current bank
@@ -4346,7 +4330,6 @@ qboolean CG_CheckCanSwitch(void)
 		return qfalse;
 	}
 
-	// not the good way, we should be able to switch to another weapon than altweapon on respawning
 	if (cg.snap->ps.pm_flags & PMF_RESPAWNED)
 	{
 		return qfalse;
@@ -4403,6 +4386,14 @@ qboolean CG_CheckCanSwitch(void)
 		return qfalse;
 	}
 
+	// don't allow another weapon switch when we're still swapping alt weap, to prevent animation breaking
+	// there we check the value of the animation to prevent any switch during raising and dropping alt weapon
+	if ((cg.snap->ps.weaponstate == WEAPON_DROPPING && ((cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == GetWeaponTableData(cg.weaponSelect)->altSwitchFrom)) ||
+	    (cg.snap->ps.weaponstate == WEAPON_RAISING && ((cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == GetWeaponTableData(cg.weaponSelect)->altSwitchTo)))
+	{
+		return qfalse;
+	}
+
 	return qtrue;
 }
 
@@ -4442,19 +4433,20 @@ void CG_LastWeaponUsed_f(void)
 		return;
 	}
 
+	// don't allow another weapon switch when we're still swapping alt weapon, to prevent animation breaking
+	// this is to prevent a too fast switching to alt weapon just after regular switch
+	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
+	{
+		if (GetWeaponTableData(cg.weaponSelect)->weapAlts == cg.switchbackWeapon)
+		{
+			return;
+		}
+	}
+
 	if (!cg.switchbackWeapon)
 	{
 		cg.switchbackWeapon = cg.weaponSelect;
 		return;
-	}
-
-	// don't allow another weapon switch when we're still swapping alt weap, to prevent animation breaking
-	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
-	{
-		if (GetWeaponTableData(cg.weaponSelect)->weapAlts)
-		{
-			return;
-		}
 	}
 
 	if (CG_WeaponSelectable(cg.switchbackWeapon))
@@ -4581,15 +4573,6 @@ void CG_WeaponBank_f(void)
 		return;
 	}
 
-	// don't allow another weapon switch when we're still swapping alt weapon, to prevent animation breaking
-	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
-	{
-		if (GetWeaponTableData(cg.weaponSelect)->weapAlts)
-		{
-			return;
-		}
-	}
-
 	bank = atoi(CG_Argv(1));
 
 	if (bank <= 0 || bank >= MAX_WEAP_BANKS_MP)
@@ -4636,6 +4619,16 @@ void CG_WeaponBank_f(void)
 	if (i == MAX_WEAPS_IN_BANK_MP)
 	{
 		return;
+	}
+
+	// don't allow another weapon switch when we're still swapping alt weapon, to prevent animation breaking
+	// this is to prevent a too fast switching to alt weapon just after regular switch
+	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
+	{
+		if (GetWeaponTableData(cg.weaponSelect)->weapAlts == newWeapon)
+		{
+			return;
+		}
 	}
 
 	CG_FinishWeaponChange(cg.weaponSelect, newWeapon);
