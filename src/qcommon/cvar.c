@@ -1331,6 +1331,22 @@ void Cvar_List_f(void)
 		{
 			Com_Printf(" ");
 		}
+		if (var->flags & CVAR_PROTECTED)
+		{
+			Com_Printf("P");
+		}
+		else
+		{
+			Com_Printf(" ");
+		}
+		if (var->flags & CVAR_TEMP)
+		{
+			Com_Printf("T");
+		}
+		else
+		{
+			Com_Printf(" ");
+		}
 		if (var->flags & CVAR_USER_CREATED)
 		{
 			Com_Printf("?");
