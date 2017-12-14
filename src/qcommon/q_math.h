@@ -344,6 +344,20 @@ void vec3_lerp(vec3_t start, vec3_t end, float frac, vec3_t out);
 // Perpendicular vector of source
 void vec3_per(const vec3_t src, vec3_t dst);
 
+inline void VectorMin(const vec3_t a, const vec3_t b, vec3_t out)
+{
+	out[0] = a[0] < b[0] ? a[0] : b[0];
+	out[1] = a[1] < b[1] ? a[1] : b[1];
+	out[2] = a[2] < b[2] ? a[2] : b[2];
+}
+
+inline void VectorMax(const vec3_t a, const vec3_t b, vec3_t out)
+{
+	out[0] = a[0] > b[0] ? a[0] : b[0];
+	out[1] = a[1] > b[1] ? a[1] : b[1];
+	out[2] = a[2] > b[2] ? a[2] : b[2];
+}
+
 /************************************************************************/
 /* Vector 4                                                             */
 /************************************************************************/

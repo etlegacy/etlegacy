@@ -513,8 +513,7 @@ typedef struct
 
 	cullResult_t cull;
 	vec3_t localBounds[2];
-	vec3_t worldBounds[2];              ///< only set when not completely culled. use them for light interactions
-	vec3_t worldCorners[8];
+	vec3_t worldBounds[2];
 
 	// GPU occlusion culling
 	qboolean noOcclusionQueries;
@@ -3942,6 +3941,7 @@ void R_AddDrawSurf(surfaceType_t *surface, shader_t *shader, int lightmapNum, in
 void R_LocalNormalToWorld(const vec3_t local, vec3_t world);
 void R_LocalPointToWorld(const vec3_t local, vec3_t world);
 
+cullResult_t R_CullBox(vec3_t worldBounds[2]);
 cullResult_t R_CullLocalBox(vec3_t bounds[2]);
 int R_CullLocalPointAndRadius(vec3_t origin, float radius);
 int R_CullPointAndRadius(vec3_t origin, float radius);
