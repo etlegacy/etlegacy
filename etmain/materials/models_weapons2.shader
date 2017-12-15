@@ -126,7 +126,7 @@ models/weapons2/rocketl/rocketl14
 
 models/weapons2/sten/sten1
 {
-	 diffusemmap models/weapons2/sten/sten1_yd
+	 diffusemap models/weapons2/sten/sten1_yd
 	 bumpmap models/weapons2/sten/sten1_yd_n
 	 specularmap models/weapons2/sten/sten1_yd_s	
 }

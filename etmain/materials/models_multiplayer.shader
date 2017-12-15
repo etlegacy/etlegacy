@@ -136,7 +136,7 @@ models/multiplayer/pliers/pliers
 
 models/multiplayer/binocs/binoculars
 {
-	map models/multiplayer/binocs/binoculars
+	diffusemap models/multiplayer/binocs/binoculars
 	bumpmap models/multiplayer/binocs/binoculars_n
 	specularmap models/multiplayer/binocs/binoculars_s
 }
@@ -172,22 +172,12 @@ models/multiplayer/browning/browning
 models/multiplayer/browning/barrel
 {
 	cull none
+	diffusemap models/multiplayer/browning/barrel
+	bumpmap models/multiplayer/browning/barrel_n
+	specularmap models/multiplayer/browning/barrel_s
+	
 	{
 		map models/multiplayer/browning/barrel.tga
-		rgbGen const ( 0 0 0 ) 
-		alphaFunc GE128
-		depthWrite
-	}
-	{
-		map textures/effects/envmap_slate.tga
-		rgbGen lightingdiffuse
-		tcGen environment
-		depthFunc equal
-	}
-	{
-		diffusemap models/multiplayer/browning/barrel
-		bumpmap models/multiplayer/browning/barrel_n
-		specularmap models/multiplayer/browning/barrel_s
 		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
 		rgbGen lightingdiffuse
 		depthFunc equal
@@ -196,11 +186,9 @@ models/multiplayer/browning/barrel
 
 models/multiplayer/gold/gold
 {
-	{
-		diffusemap models/multiplayer/gold/gold
-		bumpmap models/multiplayer/gold/gold_n
-		specularmap models/multiplayer/gold/gold_s
-	}
+	diffusemap models/multiplayer/gold/gold
+	bumpmap models/multiplayer/gold/gold_n
+	specularmap models/multiplayer/gold/gold_s
 	{
 		map textures/effects/envmap_gold.tga
 		blendFunc GL_ONE GL_ONE
@@ -226,22 +214,19 @@ models/multiplayer/gold/gold
 models/multiplayer/flagpole/american
 {
 	cull disable
-	{
-		diffusemap models/multiplayer/flagpole/american
-		bumpmap models/multiplayer/flagpole/american_n
-		specularmap models/multiplayer/flagpole/american_s
-	}
+
+	diffusemap models/multiplayer/flagpole/american
+	bumpmap models/multiplayer/flagpole/american_n
+	specularmap models/multiplayer/flagpole/american_s
 }
 
 models/multiplayer/flagpole/american_reinforce
 {
 	cull disable
-
-	{
-		diffusemap models/multiplayer/flagpole/american_reinforce
-		bumpmap models/multiplayer/flagpole/american_reinforce_n
-		specularmap models/multiplayer/flagpole/american_reinforce_s
-	}
+	
+	diffusemap models/multiplayer/flagpole/american_reinforce
+	bumpmap models/multiplayer/flagpole/american_reinforce_n
+	specularmap models/multiplayer/flagpole/american_reinforce_s
 }
 
 models/multiplayer/flagpole/disc
@@ -267,21 +252,19 @@ models/multiplayer/flagpole/flagpole
 models/multiplayer/flagpole/german
 {
 	cull disable
-	{
-		diffusemap models/multiplayer/flagpole/german
-		bumpmap models/multiplayer/flagpole/german_n
-		specularmap models/multiplayer/flagpole/german_s
-	}
+	
+	diffusemap models/multiplayer/flagpole/german
+	bumpmap models/multiplayer/flagpole/german_n
+	specularmap models/multiplayer/flagpole/german_s
 }
 
 models/multiplayer/flagpole/german_reinforce
 {
 	cull disable
-	{
-		diffusemap models/multiplayer/flagpole/german_reinforce
-		bumpmap models/multiplayer/flagpole/german_reinforce_n
-		specularmap models/multiplayer/flagpole/german_reinforce_s
-	}
+
+	diffusemap models/multiplayer/flagpole/german_reinforce
+	bumpmap models/multiplayer/flagpole/german_reinforce_n
+	specularmap models/multiplayer/flagpole/german_reinforce_s
 }
 
 // waypoint marker
@@ -309,11 +292,12 @@ models/multiplayer/kar98/mauser3
 	specularmap models/weapons2/mauser/mauser3_yd_s      
 }
 
+// FIXME: gold effect
 models/multiplayer/mg42/bullet
 {
-	diffusemap models/multiplayer/mg42/bullet
-	bumpmap models/multiplayer/mg42/bullet_n
-	specularmap models/multiplayer/mg42/bullet_s
+	diffusemap models/multiplayer/mg42/bullet_yd
+	bumpmap models/multiplayer/mg42/bullet_yd_n
+	specularmap models/multiplayer/mg42/bullet_yd_s
 }
 
 models/multiplayer/mine_marker/allied_marker
@@ -321,12 +305,10 @@ models/multiplayer/mine_marker/allied_marker
 	cull disable
 	nomipmaps
 	nopicmip
-	{
-		diffusemap models/multiplayer/mine_marker/allied_marker
-		bumpmap models/multiplayer/mine_marker/allied_marker_n
-		specularmap models/multiplayer/mine_marker/allied_marker_s
-		
-	}
+
+	diffusemap models/multiplayer/mine_marker/allied_marker
+	bumpmap models/multiplayer/mine_marker/allied_marker_n
+	specularmap models/multiplayer/mine_marker/allied_marker_s
 }
 
 models/multiplayer/mine_marker/axis_marker
@@ -334,11 +316,10 @@ models/multiplayer/mine_marker/axis_marker
 	cull disable
 	nomipmaps
 	nopicmip
-	{
-		diffusemap models/multiplayer/mine_marker/axis_marker
-		bumpmap models/multiplayer/mine_marker/axis_marker_n
-		specularmap models/multiplayer/mine_marker/axis_marker_s
-	}
+
+	diffusemap models/multiplayer/mine_marker/axis_marker
+	bumpmap models/multiplayer/mine_marker/axis_marker_n
+	specularmap models/multiplayer/mine_marker/axis_marker_s
 }
 
 models/multiplayer/m1_garand/m1_garand
