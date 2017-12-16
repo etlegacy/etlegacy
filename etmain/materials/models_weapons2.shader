@@ -83,7 +83,7 @@ models/weapons2/machinegun/f_machinegun
 
 models/weapons2/mauser/mauser3
 {
-	 diffusemap models/weapons2/mauser/mauser3_yd.tga
+	 diffusemap models/weapons2/mauser/mauser3_yd
 	 bumpmap models/weapons2/mauser/mauser3_yd_n
 	 specularmap models/weapons2/mauser/mauser3_yd_s
 	
