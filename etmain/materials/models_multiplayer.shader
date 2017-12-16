@@ -197,6 +197,7 @@ models/multiplayer/gold/gold
 		rgbGen lightingdiffuse
 	}
 }
+
 //not in our source
 //models/multiplayer/treasure/treasure
 //{
