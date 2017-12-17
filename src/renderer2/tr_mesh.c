@@ -44,8 +44,6 @@
 static void R_CullMDV(mdvModel_t *model, trRefEntity_t *ent)
 {
 	int    i;
-	vec3_t v;
-	vec3_t transformed;
 	// compute frame pointers
 	mdvFrame_t *newFrame = model->frames + ent->e.frame;
 	mdvFrame_t *oldFrame = model->frames + ent->e.oldframe;

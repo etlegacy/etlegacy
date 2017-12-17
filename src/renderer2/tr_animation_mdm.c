@@ -151,8 +151,6 @@ static int R_CullModel(trRefEntity_t *ent)
 	mdxHeader_t *oldFrameHeader, *newFrameHeader;
 	mdxFrame_t  *oldFrame, *newFrame;
 	int         i;
-	vec3_t      v;
-	vec3_t      transformed;
 
 	newFrameHeader = R_GetModelByHandle(ent->e.frameModel)->mdx;
 	oldFrameHeader = R_GetModelByHandle(ent->e.oldframeModel)->mdx;
