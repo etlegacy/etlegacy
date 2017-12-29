@@ -1590,6 +1590,57 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
 		return qfalse;
 	}
 
+/*
+	// try to load additional normal and specular images & create stages (r1 shader compatible mode/treat COLORMAPS as DIFFUSEMAPS)
+	// - if this stage isn't already a normal map or a specular map (FIXME & test)
+	// - also check the stageOffset stage and don't overwrite existing stages !!!
+	//if (stage->type == ST_DIFFUSEMAP && shader.type != SHADER_2D && shader.type != SHADER_LIGHT && r_normalMapping->integer > 0 && !(imageBits & IF_NORMALMAP))
+	//if (stage->type == ST_DIFFUSEMAP && shader.type != SHADER_2D && shader.type != SHADER_LIGHT && r_normalMapping->integer > 0)
+	if (shader.type != SHADER_2D && shader.type != SHADER_LIGHT && r_normalMapping->integer > 0 && !(imageBits & IF_NORMALMAP))
+	{
+		// image loading of
+		image_t *tmpImage;
+		int     stageOffset = 1;
+		char    strippedName[MAX_QPATH];
+
+		COM_StripExtension(buffer, strippedName, sizeof(strippedName));
+		COM_FixPath(strippedName);
+
+		// Note/FIXME: image file name has to be including extension, we use tga - make this more generic one day
+		// ETL: suffix for normalmaps is '_n'
+		tmpImage = R_FindImageFile(va("%s_n.tga", strippedName), imageBits, filterType, wrapType, shader.name);
+		if (tmpImage)
+		{
+			stages[stageOffset].active             = qtrue;
+			stages[stageOffset].bundle[0].image[0] = tmpImage;
+			stages[stageOffset].type               = ST_NORMALMAP;
+			stages[stageOffset].rgbGen             = CGEN_IDENTITY;
+			stages[stageOffset].stateBits          = GLS_DEFAULT;
+			stageOffset++;
+		}
+		else
+		{
+			Ren_Warning("LoadMap Warning: Normalmap image '%s' type %i not found.\n", va("%s_n.tga", strippedName), shader.type);
+		}
+
+		// Note/FIXME: image file name has to be including extension, we use tga - make this more generic one day
+		// ETL: suffix for specularmaps is '_s'
+		tmpImage = R_FindImageFile(va("%s_s.tga", strippedName), imageBits, filterType, wrapType, shader.name);
+		if (tmpImage)
+		{
+			stages[stageOffset].active             = qtrue;
+			stages[stageOffset].bundle[0].image[0] = tmpImage;
+			stages[stageOffset].type               = ST_SPECULARMAP;
+			stages[stageOffset].rgbGen             = CGEN_IDENTITY;
+			stages[stageOffset].stateBits          = GLS_DEFAULT;
+			stageOffset++;
+		}
+		else
+		{
+			Ren_Warning("LoadMap Warning: Specularmap image '%s' type %i not found.\n", va("%s_s.tga", strippedName), shader.type);
+		}
+	}
+*/
 	return qtrue;
 }
 
@@ -3100,110 +3151,73 @@ infoParm_t infoParms[] =
 {
 	// server relevant contents
 
-	{ "clipmissile",        1, 0,                 CONTENTS_MISSILECLIP      }, // impact only specific weapons (rl, gl)
+	{ "clipmissile",       1, 0,                 CONTENTS_MISSILECLIP      }, // impact only specific weapons (rl, gl)
 
-	{ "water",              1, 0,                 CONTENTS_WATER            },
-
-	{ "slag",               1, 0,                 CONTENTS_SLIME            }, // uses the CONTENTS_SLIME flag, but the shader reference is changed to 'slag'
+	{ "water",             1, 0,                 CONTENTS_WATER            },
+	{ "slag",              1, 0,                 CONTENTS_SLIME            }, // uses the CONTENTS_SLIME flag, but the shader reference is changed to 'slag'
 	// to idendify that this doesn't work the same as 'slime' did.
-
-	{ "lava",               1, 0,                 CONTENTS_LAVA             }, // very damaging
-	{ "playerclip",         1, 0,                 CONTENTS_PLAYERCLIP       },
-	{ "monsterclip",        1, 0,                 CONTENTS_MONSTERCLIP      },
-
-	{ "nodrop",             1, 0,                 CONTENTS_NODROP           }, // don't drop items or leave bodies (death fog, lava, etc)
-	{ "nonsolid",           1, SURF_NONSOLID,     0                         }, // clears the solid flag
-
-	{ "blood",              1, 0,                 CONTENTS_WATER            },
+	// (slime hurts instantly, slag doesn't)
+	//  {"slime",       1,  0,  CONTENTS_SLIME },       // mildly damaging
+	{ "lava",              1, 0,                 CONTENTS_LAVA             }, // very damaging
+	{ "playerclip",        1, 0,                 CONTENTS_PLAYERCLIP       },
+	{ "monsterclip",       1, 0,                 CONTENTS_MONSTERCLIP      },
+	{ "nodrop",            1, 0,                 CONTENTS_NODROP           }, // don't drop items or leave bodies (death fog, lava, etc)
+	{ "nonsolid",          1, SURF_NONSOLID,     0                         }, // clears the solid flag
 
 	// utility relevant attributes
-	{ "origin",             1, 0,                 CONTENTS_ORIGIN           }, // center of rotating brushes
+	{ "origin",            1, 0,                 CONTENTS_ORIGIN           }, // center of rotating brushes
+	{ "trans",             0, 0,                 CONTENTS_TRANSLUCENT      }, // don't eat contained surfaces
+	{ "detail",            0, 0,                 CONTENTS_DETAIL           }, // don't include in structural bsp
+	{ "structural",        0, 0,                 CONTENTS_STRUCTURAL       }, // force into structural bsp even if trnas
+	{ "areaportal",        1, 0,                 CONTENTS_AREAPORTAL       }, // divides areas
+	{ "clusterportal",     1, 0,                 CONTENTS_CLUSTERPORTAL    }, // for bots
+	{ "donotenter",        1, 0,                 CONTENTS_DONOTENTER       }, // for bots
 
-	{ "trans",              0, 0,                 CONTENTS_TRANSLUCENT      }, // don't eat contained surfaces
-	{ "translucent",        0, 0,                 CONTENTS_TRANSLUCENT      }, // don't eat contained surfaces
+	// nopass
+	{ "donotenterlarge",   1, 0,                 CONTENTS_DONOTENTER_LARGE }, // for larger bots
 
-	{ "detail",             0, 0,                 CONTENTS_DETAIL           }, // don't include in structural bsp
-	{ "structural",         0, 0,                 CONTENTS_STRUCTURAL       }, // force into structural bsp even if trnas
-	{ "areaportal",         1, 0,                 CONTENTS_AREAPORTAL       }, // divides areas
-	{ "clusterportal",      1, 0,                 CONTENTS_CLUSTERPORTAL    }, // for bots
-	{ "donotenter",         1, 0,                 CONTENTS_DONOTENTER       }, // for bots
-
-	{ "donotenterlarge",    1, 0,                 CONTENTS_DONOTENTER_LARGE }, // for larger bots
-
-	{ "fog",                1, 0,                 CONTENTS_FOG              }, // carves surfaces entering
-	{ "sky",                0, SURF_SKY,          0                         }, // emit light from an environment map
-	{ "lightfilter",        0, SURF_LIGHTFILTER,  0                         }, // filter light going through it
-	{ "alphashadow",        0, SURF_ALPHASHADOW,  0                         }, // test light on a per-pixel basis
-	{ "hint",               0, SURF_HINT,         0                         }, // use as a primary splitter
+	{ "fog",               1, 0,                 CONTENTS_FOG              }, // carves surfaces entering
+	{ "sky",               0, SURF_SKY,          0                         }, // emit light from an environment map
+	{ "lightfilter",       0, SURF_LIGHTFILTER,  0                         }, // filter light going through it
+	{ "alphashadow",       0, SURF_ALPHASHADOW,  0                         }, // test light on a per-pixel basis
+	{ "hint",              0, SURF_HINT,         0                         }, // use as a primary splitter
 
 	// server attributes
-	{ "slick",              0, SURF_SLICK,        0                         },
+	{ "slick",             0, SURF_SLICK,        0                         },
+	{ "noimpact",          0, SURF_NOIMPACT,     0                         }, // don't make impact explosions or marks
+	{ "nomarks",           0, SURF_NOMARKS,      0                         }, // don't make impact marks, but still explode
+	{ "ladder",            0, SURF_LADDER,       0                         },
+	{ "nodamage",          0, SURF_NODAMAGE,     0                         },
 
-	{ "noimpact",           0, SURF_NOIMPACT,     0                         }, // don't make impact explosions or marks
+	{ "monsterslick",      0, SURF_MONSTERSLICK, 0                         }, // surf only slick for monsters
 
-	{ "nomarks",            0, SURF_NOMARKS,      0                         }, // don't make impact marks, but still explode
-	{ "nooverlays",         0, SURF_NOMARKS,      0                         }, // don't make impact marks, but still explode
-
-	{ "ladder",             0, SURF_LADDER,       0                         },
-
-	{ "nodamage",           0, SURF_NODAMAGE,     0                         },
-
-	{ "monsterslick",       0, SURF_MONSTERSLICK, 0                         }, // surf only slick for monsters
-
-	{ "glass",              0, SURF_GLASS,        0                         },
-	{ "splash",             0, SURF_SPLASH,       0                         },
+	{ "glass",             0, SURF_GLASS,        0                         },
+	{ "splash",            0, SURF_SPLASH,       0                         },
 
 	// steps
-	{ "metal",              0, SURF_METAL,        0                         },
-	{ "metalsteps",         0, SURF_METAL,        0                         },
+	{ "metal",             0, SURF_METAL,        0                         },
+	{ "metalsteps",        0, SURF_METAL,        0                         }, // retain bw compatibility with Q3A metal shaders...
+	{ "nosteps",           0, SURF_NOSTEPS,      0                         },
+	{ "woodsteps",         0, SURF_WOOD,         0                         },
+	{ "grasssteps",        0, SURF_GRASS,        0                         },
+	{ "gravelsteps",       0, SURF_GRAVEL,       0                         },
+	{ "carpetsteps",       0, SURF_CARPET,       0                         },
+	{ "snowsteps",         0, SURF_SNOW,         0                         },
+	{ "roofsteps",         0, SURF_ROOF,         0                         }, // tile roof
 
-	{ "nosteps",            0, SURF_NOSTEPS,      0                         },
-	{ "woodsteps",          0, SURF_WOOD,         0                         },
-	{ "grasssteps",         0, SURF_GRASS,        0                         },
-	{ "gravelsteps",        0, SURF_GRAVEL,       0                         },
-	{ "carpetsteps",        0, SURF_CARPET,       0                         },
-	{ "snowsteps",          0, SURF_SNOW,         0                         },
-	{ "roofsteps",          0, SURF_ROOF,         0                         }, // tile roof
-
-	{ "rubble",             0, SURF_RUBBLE,       0                         },
+	{ "rubble",            0, SURF_RUBBLE,       0                         },
 
 	// drawsurf attributes
-	{ "nodraw",             0, SURF_NODRAW,       0                         }, // don't generate a drawsurface (or a lightmap)
-	{ "pointlight",         0, SURF_POINTLIGHT,   0                         }, // sample lighting at vertexes
-	{ "nolightmap",         0, SURF_NOLIGHTMAP,   0                         }, // don't generate a lightmap
-	{ "nodlight",           0, 0,                 0                         }, // OBSELETE: don't ever add dynamic lights
+	{ "nodraw",            0, SURF_NODRAW,       0                         }, // don't generate a drawsurface (or a lightmap)
+	{ "pointlight",        0, SURF_POINTLIGHT,   0                         }, // sample lighting at vertexes
+	{ "nolightmap",        0, SURF_NOLIGHTMAP,   0                         }, // don't generate a lightmap
+	{ "nodlight",          0, SURF_NODLIGHT,     0                         }, // don't ever add dynamic lights
 
-	// monster ai
-	{ "monsterslicknorth",  0, SURF_MONSLICK_N,   0                         },
-	{ "monsterslickeast",   0, SURF_MONSLICK_E,   0                         },
-	{ "monsterslicksouth",  0, SURF_MONSLICK_S,   0                         },
-	{ "monsterslickwest",   0, SURF_MONSLICK_W,   0                         },
-
-	// unsupported Doom3 surface types for sound effects and blood splats
-	{ "metal",              0, SURF_METAL,        0                         },
-
-	{ "stone",              0, 0,                 0                         },
-	{ "wood",               0, SURF_WOOD,         0                         },
-	{ "cardboard",          0, 0,                 0                         },
-	{ "liquid",             0, 0,                 0                         },
-	{ "glass",              0, 0,                 0                         },
-	{ "plastic",            0, 0,                 0                         },
-	{ "ricochet",           0, 0,                 0                         },
-	{ "surftype10",         0, 0,                 0                         },
-	{ "surftype11",         0, 0,                 0                         },
-	{ "surftype12",         0, 0,                 0                         },
-	{ "surftype13",         0, 0,                 0                         },
-	{ "surftype14",         0, 0,                 0                         },
-	{ "surftype15",         0, 0,                 0                         },
-
-	// other unsupported Doom3 surface types
-	{ "trigger",            0, 0,                 0                         },
-	{ "flashlight_trigger", 0, 0,                 0                         },
-	{ "aassolid",           0, 0,                 0                         },
-	{ "aasobstacle",        0, 0,                 0                         },
-	{ "nullNormal",         0, 0,                 0                         },
-	{ "discrete",           0, 0,                 0                         },
-
+	// these surface parms are unused but kept for mods
+	{ "monsterslicknorth", 0, SURF_MONSLICK_N,   0                         },
+	{ "monsterslickeast",  0, SURF_MONSLICK_E,   0                         },
+	{ "monsterslicksouth", 0, SURF_MONSLICK_S,   0                         },
+	{ "monsterslickwest",  0, SURF_MONSLICK_W,   0                         }
 };
 // *INDENT-ON*
 
@@ -4968,7 +4982,7 @@ static shader_t *GeneratePermanentShader(void)
 
 	*newShader = shader;
 
-	if (shader.sort <= SS_OPAQUE)
+	if (shader.sort <= SS_OPAQUE) // FIXME: SS_SEE_THROUGH sort order? enum has been changes inspect!
 	{
 		newShader->fogPass = FP_EQUAL;
 	}
@@ -5157,10 +5171,10 @@ static shader_t *FinishShader(void)
 				shader.interactLight = qtrue;
 			}
 
-			if (!pStage->bundle[0].image[0])
+			if (!pStage->bundle[TB_DIFFUSEMAP].image[0])
 			{
 				Ren_Warning("Shader %s has a diffusemap stage with no image\n", shader.name);
-				pStage->bundle[0].image[0] = tr.defaultImage;
+				pStage->bundle[TB_DIFFUSEMAP].image[0] = tr.defaultImage;
 			}
 			break;
 		}
@@ -5171,19 +5185,19 @@ static shader_t *FinishShader(void)
 				shader.interactLight = qtrue;
 			}
 
-			if (!pStage->bundle[0].image[0])
+			if (!pStage->bundle[TB_NORMALMAP].image[0])
 			{
 				Ren_Warning("Shader %s has a normalmap stage with no image\n", shader.name);
-				pStage->bundle[0].image[0] = tr.flatImage;
+				pStage->bundle[TB_NORMALMAP].image[0] = tr.flatImage;
 			}
 			break;
 		}
 		case ST_SPECULARMAP:
 		{
-			if (!pStage->bundle[0].image[0])
+			if (!pStage->bundle[TB_SPECULARMAP].image[0])
 			{
 				Ren_Warning("Shader %s has a specularmap stage with no image\n", shader.name);
-				pStage->bundle[0].image[0] = tr.blackImage;
+				pStage->bundle[TB_SPECULARMAP].image[0] = tr.blackImage;
 			}
 			break;
 		}
@@ -5688,9 +5702,12 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 			{
 				// had errors, so use default shader
 				// there are some shaders (textures/common/clipweap and others ..) which are ignored (see ParseShader())
-				// - this might report false positives but since FindShader is always returning the default shader
-				//   and we've had no real warnings about buggy shaders here nobody did notice that ...
-				//Ren_Print("Warning: Couldn't parse shader %s (%s)- returning default shader\n", strippedName, name);
+				// sothis might report false positives but since FindShader is always returning the default shader
+				// and we've had no real warnings about buggy shaders here nobody did notice that ...
+				
+				// ParseShader: ignore shaders that don't have any stages, unless it is a sky or fog
+				//if (s == 0 && !shader.forceOpaque && !shader.isSky && !(shader.contentFlags & CONTENTS_FOG) && implicitMap[0] == '\0')	
+				Ren_Developer("R_FindShader Warning: Couldn't parse shader %s (%s)- returning default shader - this might be a bug\n", strippedName, name);
 
 				shader.defaultShader = qtrue;
 				sh                   = FinishShader();
@@ -5773,7 +5790,7 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 		return FinishShader();
 	}
 
-	if (shader.type != SHADER_2D && shader.type != SHADER_LIGHT)
+	if (shader.type != SHADER_2D && shader.type != SHADER_LIGHT && r_normalMapping->integer)
 	{
 		// image loading of
 		image_t *tmpImage;
@@ -6153,9 +6170,13 @@ void R_ShaderList_f(void)
 		{
 			Ren_Print("color_lightmap ");
 		}
+		else if (shader->collapseType == COLLAPSE_genericMulti)
+		{
+			Ren_Print("genericMulti   ");
+		}
 		else
 		{
-			Ren_Print("               ");
+			Ren_Print("none           ");
 		}
 
 		if (shader->createdByGuide)
