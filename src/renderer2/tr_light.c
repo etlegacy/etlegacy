@@ -417,7 +417,7 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 		ent->ambientLight[1] = tr.identityLight * (64.0f / 255.0f);
 		ent->ambientLight[2] = tr.identityLight * (96.0f / 255.0f);
 
-		ent->directedLight[0] = tr.identityLight * (255.0f / 255.0f);
+		ent->directedLight[0] = tr.identityLight; // * (255.0f / 255.0f);
 		ent->directedLight[1] = tr.identityLight * (232.0f / 255.0f);
 		ent->directedLight[2] = tr.identityLight * (224.0f / 255.0f);
 
@@ -426,22 +426,20 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 #endif
 	}
 
-#if 1
 	if (ent->e.hilightIntensity != 0.f)
 	{
 		// level of intensity was set because the item was looked at
-		ent->ambientLight[0] += tr.identityLight * 0.5f * ent->e.hilightIntensity;
-		ent->ambientLight[1] += tr.identityLight * 0.5f * ent->e.hilightIntensity;
-		ent->ambientLight[2] += tr.identityLight * 0.5f * ent->e.hilightIntensity;
+		ent->ambientLight[0] += tr.identityLight * 128.0f / 255.0f * ent->e.hilightIntensity;
+		ent->ambientLight[1] += tr.identityLight * 128.0f / 255.0f * ent->e.hilightIntensity;
+		ent->ambientLight[2] += tr.identityLight * 128.0f / 255.0f * ent->e.hilightIntensity;
 	}
 	else if ((ent->e.renderfx & RF_MINLIGHT)) // && VectorLength(ent->ambientLight) <= 0)
 	{
 		// give everything a minimum light add
-		ent->ambientLight[0] += tr.identityLight * 0.125f;
-		ent->ambientLight[1] += tr.identityLight * 0.125f;
-		ent->ambientLight[2] += tr.identityLight * 0.125f;
+		ent->ambientLight[0] += tr.identityLight * 32 / 255.0f;
+		ent->ambientLight[1] += tr.identityLight * 32 / 255.0f;
+		ent->ambientLight[2] += tr.identityLight * 32 / 255.0f;
 	}
-#endif
 
 #if 0
 	// clamp ambient
