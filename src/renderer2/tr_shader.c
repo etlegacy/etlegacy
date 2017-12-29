@@ -4539,7 +4539,8 @@ static qboolean ParseShader(char *_text)
 		else
 		{
 			Ren_Warning("WARNING: unknown general shader parameter '%s' in '%s'\n", token, shader.name);
-			return qfalse;
+			SkipRestOfLine(text);
+			continue;
 		}
 	}
 
