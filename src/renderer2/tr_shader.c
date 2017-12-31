@@ -5172,10 +5172,10 @@ static shader_t *FinishShader(void)
 				shader.interactLight = qtrue;
 			}
 
-			if (!pStage->bundle[TB_DIFFUSEMAP].image[0])
+			if (!pStage->bundle[0].image[0])
 			{
 				Ren_Warning("Shader %s has a diffusemap stage with no image\n", shader.name);
-				pStage->bundle[TB_DIFFUSEMAP].image[0] = tr.defaultImage;
+				pStage->bundle[0].image[0] = tr.defaultImage;
 			}
 			break;
 		}
@@ -5186,19 +5186,19 @@ static shader_t *FinishShader(void)
 				shader.interactLight = qtrue;
 			}
 
-			if (!pStage->bundle[TB_NORMALMAP].image[0])
+			if (!pStage->bundle[0].image[0])
 			{
 				Ren_Warning("Shader %s has a normalmap stage with no image\n", shader.name);
-				pStage->bundle[TB_NORMALMAP].image[0] = tr.flatImage;
+				pStage->bundle[0].image[0] = tr.flatImage;
 			}
 			break;
 		}
 		case ST_SPECULARMAP:
 		{
-			if (!pStage->bundle[TB_SPECULARMAP].image[0])
+			if (!pStage->bundle[0].image[0])
 			{
 				Ren_Warning("Shader %s has a specularmap stage with no image\n", shader.name);
-				pStage->bundle[TB_SPECULARMAP].image[0] = tr.blackImage;
+				pStage->bundle[0].image[0] = tr.blackImage;
 			}
 			break;
 		}
@@ -5588,6 +5588,7 @@ shader_t *R_FindShaderByName(const char *name)
 
 	if (name == NULL || name[0] == 0)
 	{
+		Ren_Warning("R_FindShaderByName WARNING: Name is empty or NULL - returning default shader\n");
 		return tr.defaultShader;
 	}
 
@@ -5791,58 +5792,6 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 		return FinishShader();
 	}
 
-	if (shader.type != SHADER_2D && shader.type != SHADER_LIGHT && r_normalMapping->integer)
-	{
-		// image loading of
-		image_t *tmpImage;
-		int     stageOffset = 1;
-
-		// Note/FIXME: image file name has to be including extension, we use tga - make this more generic one day
-		// ETL: suffix for normalmaps is '_n'
-		tmpImage = R_FindImageFile(va("%s_n.tga", strippedName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
-		if (tmpImage)
-		{
-			stages[stageOffset].active             = qtrue;
-			stages[stageOffset].bundle[0].image[0] = tmpImage;
-			stages[stageOffset].type               = ST_NORMALMAP;
-			stages[stageOffset].rgbGen             = CGEN_IDENTITY;
-			stages[stageOffset].stateBits          = GLS_DEFAULT;
-			stageOffset++;
-		}
-		else
-		{
-			Ren_Warning("R_FindShader Warning: Normalmap image '%s' type %i not found.\n", va("%s_n.tga", strippedName), shader.type);
-		}
-
-		// Note/FIXME: image file name has to be including extension, we use tga - make this more generic one day
-		// ETL: suffix for specularmaps is '_s'
-		tmpImage = R_FindImageFile(va("%s_s.tga", strippedName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_EDGE_CLAMP, shader.name);
-		if (tmpImage)
-		{
-			stages[stageOffset].active             = qtrue;
-			stages[stageOffset].bundle[0].image[0] = tmpImage;
-			stages[stageOffset].type               = ST_SPECULARMAP;
-			stages[stageOffset].rgbGen             = CGEN_IDENTITY;
-			stages[stageOffset].stateBits          = GLS_DEFAULT;
-			stageOffset++;
-		}
-		else
-		{
-			Ren_Warning("R_FindShader Warning: Specularmap image '%s' type %i not found.\n", va("%s_s.tga", strippedName), shader.type);
-		}
-
-		//tmpImage = R_FindImageFile(va("%s_disp", fileName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
-		//if(tmpImage)
-		//{
-		//    stages[stageOffset].active = qtrue;
-		//    stages[stageOffset].bundle[0].image[0] = tmpImage;
-		//    stages[stageOffset].type = ST_;
-		//    stages[stageOffset].rgbGen = CGEN_IDENTITY;
-		//    stages[stageOffset].stateBits = GLS_DEFAULT;
-		//    stageOffset++;
-		//}
-	}
-
 	// set implicit cull type
 	if (implicitCullType && !shader.cullType)
 	{
@@ -5902,6 +5851,68 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 		break;
 	}
 
+	// add normal and specular image & stage for implicit shaders
+	// keep in mind: R_FindShader might be called for SHADER_2D (see RE_RegisterShader)
+	// and RE_RegisterShaderFromImage creates SHADER_2D and doesn't call R_FindShader
+	// although some of these shader are also used for 3D (AFAICS)
+	if (r_normalMapping->integer)
+	{
+		// image loading
+		image_t *tmpImage;
+		int     stageOffset = 1; // start stage
+
+		if (shader.type != SHADER_2D && shader.type != SHADER_LIGHT && (stages[0].type == ST_COLORMAP || stages[0].type == ST_DIFFUSEMAP) && mipRawImage)
+		{
+			// Note/FIXME: image file name has to be including extension, we use tga - make this more generic one day
+			// ETL: suffix for normalmaps is '_n'
+			tmpImage = R_FindImageFile(va("%s_n.tga", strippedName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
+			if (tmpImage)
+			{
+				stages[stageOffset].active             = qtrue;
+				stages[stageOffset].bundle[0].image[0] = tmpImage;
+				stages[stageOffset].type               = ST_NORMALMAP;
+				stages[stageOffset].rgbGen             = CGEN_IDENTITY;
+				stages[stageOffset].stateBits          = GLS_DEFAULT;
+				stageOffset++;
+			}
+			else
+			{
+				Ren_Warning("R_FindShader Warning: Normalmap image '%s' type %i not found.\n", va("%s_n.tga", strippedName), shader.type);
+			}
+
+			// Note/FIXME: image file name has to be including extension, we use tga - make this more generic one day
+			// ETL: suffix for specularmaps is '_s'
+			tmpImage = R_FindImageFile(va("%s_s.tga", strippedName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_EDGE_CLAMP, shader.name);
+			if (tmpImage)
+			{
+				stages[stageOffset].active             = qtrue;
+				stages[stageOffset].bundle[0].image[0] = tmpImage;
+				stages[stageOffset].type               = ST_SPECULARMAP;
+				stages[stageOffset].rgbGen             = CGEN_IDENTITY;
+				stages[stageOffset].stateBits          = GLS_DEFAULT;
+				stageOffset++;
+			}
+			else
+			{
+				Ren_Warning("R_FindShader Warning: Specularmap image '%s' type %i not found.\n", va("%s_s.tga", strippedName), shader.type);
+			}
+
+			//tmpImage = R_FindImageFile(va("%s_disp", fileName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
+			//if(tmpImage)
+			//{
+			//    stages[stageOffset].active = qtrue;
+			//    stages[stageOffset].bundle[0].image[0] = tmpImage;
+			//    stages[stageOffset].type = ST_;
+			//    stages[stageOffset].rgbGen = CGEN_IDENTITY;
+			//    stages[stageOffset].stateBits = GLS_DEFAULT;
+			//    stageOffset++;
+			//}
+		}
+		//else
+		//{
+		//	Com_Printf("Excluded: '%s'\n", shader.name);
+		//}
+	}
 	return FinishShader();
 }
 
