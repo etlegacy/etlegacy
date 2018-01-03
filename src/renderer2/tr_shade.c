@@ -720,10 +720,15 @@ static void Render_vertexLighting_DBS_world(int stage)
 
 	GLSL_SetUniform_ColorModulate(trProg.gl_vertexLightingShader_DBS_world, colorGen, alphaGen);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
-	SetUniformFloat(UNIFORM_LIGHTWRAPAROUND, RB_EvalExpression(&pStage->wrapAroundLightingExp, 0));
+	
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.orientation.origin);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
+
+	if (r_wrapAroundLighting->integer)
+	{
+		SetUniformFloat(UNIFORM_LIGHTWRAPAROUND, RB_EvalExpression(&pStage->wrapAroundLightingExp, 0));
+	}
 
 	if (r_parallaxMapping->integer)
 	{
