@@ -1063,9 +1063,9 @@ static void GLSL_BuildShaderExtraDef()
 
 	if (r_rimLighting->integer)
 	{
-		BUFFEXT("#ifndef r_RimLighting\n#define r_RimLighting 1\n#endif\n");
-		BUFFEXT("#ifndef r_RimColor\n#define r_RimColor vec4(0.26, 0.19, 0.16, 0.0)\n#endif\n");
-		BUFFEXT("#ifndef r_RimExponent\n#define r_RimExponent %f\n#endif\n", r_rimExponent->value);
+		BUFFEXT("#ifndef r_rimLighting\n#define r_rimLighting 1\n#endif\n");
+		BUFFEXT("#ifndef r_rimColor\n#define r_rimColor vec4(0.26, 0.19, 0.16, 0.0)\n#endif\n");
+		BUFFEXT("#ifndef r_rimExponent\n#define r_rimExponent %f\n#endif\n", r_rimExponent->value);
 	}
 
 	// OK we added a lot of stuff but if we do something bad in the GLSL shaders then we want the proper line

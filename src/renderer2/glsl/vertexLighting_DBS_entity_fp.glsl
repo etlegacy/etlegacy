@@ -182,9 +182,9 @@ void main()
 
 
 // add Rim Lighting to highlight the edges
-#if defined(r_RimLighting)
+#if defined(r_rimLighting)
 	float rim      = 1.0 - clamp(dot(N, V), 0, 1);
-	vec3  emission = r_RimColor.rgb * pow(rim, r_RimExponent);
+	vec3  emission = r_rimColor.rgb * pow(rim, r_rimExponent);
 
 	// gl_FragColor = vec4(emission, 1.0);
 	// return;
@@ -209,7 +209,7 @@ void main()
 	vec4 color = diffuse;
 	color.rgb *= light;
 	color.rgb += specular;
-#if defined(r_RimLighting)
+#if defined(r_rimLighting)
 	color.rgb += emission;
 #endif
 
