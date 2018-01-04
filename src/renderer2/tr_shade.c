@@ -1228,7 +1228,11 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	SetUniformVec3(UNIFORM_LIGHTCOLOR, tess.svars.color);
 	SetUniformFloat(UNIFORM_LIGHTRADIUS, light->sphereRadius);
 	SetUniformFloat(UNIFORM_LIGHTSCALE, light->l.scale);
-	SetUniformFloat(UNIFORM_LIGHTWRAPAROUND, RB_EvalExpression(&diffuseStage->wrapAroundLightingExp, 0));
+	if (r_wrapAroundLighting->integer)
+	{
+		SetUniformFloat(UNIFORM_LIGHTWRAPAROUND, RB_EvalExpression(&diffuseStage->wrapAroundLightingExp, 0));
+	}
+	
 	SetUniformMatrix16(UNIFORM_LIGHTATTENUATIONMATRIX, light->attenuationMatrix2);
 
 	GL_CheckErrors();
@@ -1428,7 +1432,10 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	SetUniformVec3(UNIFORM_LIGHTCOLOR, tess.svars.color);
 	SetUniformFloat(UNIFORM_LIGHTRADIUS, light->sphereRadius);
 	SetUniformFloat(UNIFORM_LIGHTSCALE, light->l.scale);
-	SetUniformFloat(UNIFORM_LIGHTWRAPAROUND, RB_EvalExpression(&diffuseStage->wrapAroundLightingExp, 0));
+	if (r_wrapAroundLighting->integer)
+	{
+		SetUniformFloat(UNIFORM_LIGHTWRAPAROUND, RB_EvalExpression(&diffuseStage->wrapAroundLightingExp, 0));
+	}
 	SetUniformMatrix16(UNIFORM_LIGHTATTENUATIONMATRIX, light->attenuationMatrix2);
 
 	GL_CheckErrors();
@@ -1638,7 +1645,10 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	SetUniformVec3(UNIFORM_LIGHTCOLOR, tess.svars.color);
 	SetUniformFloat(UNIFORM_LIGHTRADIUS, light->sphereRadius);
 	SetUniformFloat(UNIFORM_LIGHTSCALE, light->l.scale);
+	if (r_wrapAroundLighting->integer)
+	{
 	SetUniformFloat(UNIFORM_LIGHTWRAPAROUND, RB_EvalExpression(&diffuseStage->wrapAroundLightingExp, 0));
+	}
 	SetUniformMatrix16(UNIFORM_LIGHTATTENUATIONMATRIX, light->attenuationMatrix2);
 
 	GL_CheckErrors();
