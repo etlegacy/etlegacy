@@ -376,7 +376,7 @@ static void Render_generic(int stage)
 	if (pStage->tcGen_Environment)
 	{
 		// calculate the environment texcoords in object space
-		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.orientation.viewOrigin);
+		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.viewOrigin);
 	}
 
 	// u_AlphaTest
@@ -720,8 +720,8 @@ static void Render_vertexLighting_DBS_world(int stage)
 
 	GLSL_SetUniform_ColorModulate(trProg.gl_vertexLightingShader_DBS_world, colorGen, alphaGen);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
-	
-	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.orientation.origin);
+
+	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.viewOrigin);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
 
@@ -938,19 +938,21 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 /**
  * @brief Render_depthFill
  * @param[in] stage
+ *
+ * @note unused -  we don't use Tess_StageIteratorDepthFill/RB_RenderOpaqueSurfacesIntoDepth
  */
 static void Render_depthFill(int stage)
 {
 	shaderStage_t *pStage;
 	vec4_t        ambientColor;
-	// uint32_t      stateBits;        // FIXME: never read & used
+	//uint32_t      stateBits;        // FIXME: never read & used
 
 	Ren_LogComment("--- Render_depthFill ---\n");
 
 	pStage     = tess.surfaceStages[stage];
-	// stateBits  = pStage->stateBits;
-	// stateBits &= ~(GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS | GLS_ATEST_BITS);
-	// stateBits |= GLS_DEPTHMASK_TRUE;
+	//stateBits  = pStage->stateBits;
+	//stateBits &= ~(GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS | GLS_ATEST_BITS);
+	//stateBits |= GLS_DEPTHMASK_TRUE;
 
 	GL_State(pStage->stateBits);
 
@@ -967,7 +969,7 @@ static void Render_depthFill(int stage)
 	if (pStage->tcGen_Environment)
 	{
 		// calculate the environment texcoords in object space
-		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.orientation.viewOrigin);
+		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.viewOrigin);
 	}
 
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
@@ -1346,27 +1348,19 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	float      shadowTexelSize;
 	colorGen_t colorGen;
 	alphaGen_t alphaGen;
-	qboolean   normalMapping;
-	qboolean   shadowCompare;
+	qboolean   normalMapping = qfalse;
+	qboolean   shadowCompare = qfalse;
 
 	Ren_LogComment("--- Render_fowardLighting_DBS_proj ---\n");
 
-	if (r_normalMapping->integer && (diffuseStage->bundle[TB_NORMALMAP].image[0] != NULL))
+	if (r_normalMapping->integer && diffuseStage->bundle[TB_NORMALMAP].image[0] != NULL)
 	{
 		normalMapping = qtrue;
-	}
-	else
-	{
-		normalMapping = qfalse;
 	}
 
 	if (r_shadows->integer >= SHADOWING_ESM16 && !light->l.noShadows && light->shadowLOD >= 0)
 	{
 		shadowCompare = qtrue;
-	}
-	else
-	{
-		shadowCompare = qfalse;
 	}
 
 	// choose right shader program ----------------------------------
@@ -1779,7 +1773,7 @@ static void Render_reflection_CB(int stage)
 
 	GL_State(pStage->stateBits);
 
-	if (r_normalMapping->integer && (pStage->bundle[TB_NORMALMAP].image[0] != NULL))
+	if (r_normalMapping->integer && pStage->bundle[TB_NORMALMAP].image[0] != NULL)
 	{
 		normalMapping = qtrue;
 	}
@@ -3431,7 +3425,7 @@ void Tess_StageIteratorShadowFill()
 void Tess_StageIteratorLighting()
 {
 	int           i, j;
-	trRefLight_t  *light;
+	trRefLight_t  *light = backEnd.currentLight;
 	shaderStage_t *attenuationXYStage;
 	shaderStage_t *attenuationZStage;
 
@@ -3439,8 +3433,6 @@ void Tess_StageIteratorLighting()
 	               tess.lightShader->name, tess.numVertexes, tess.numIndexes / 3);
 
 	GL_CheckErrors();
-
-	light = backEnd.currentLight;
 
 	Tess_DeformGeometry();
 
