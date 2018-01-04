@@ -2688,7 +2688,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	vec3_t             spawn_origin, spawn_angles;
 	gclient_t          *client = ent->client;
 	int                i;
-	clientPersistant_t saved;
+	clientPersistant_t savedPers;
 	clientSession_t    savedSess;
 	int                persistant[MAX_PERSISTANT];
 	gentity_t          *spawnPoint;
@@ -2756,7 +2756,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 	ent->s.eFlags &= ~EF_MOUNTEDTANK;
 
-	saved     = client->pers;
+	savedPers = client->pers;
 	savedSess = client->sess;
 	savedPing = client->ps.ping;
 	savedTeam = client->ps.teamNum;
@@ -2774,7 +2774,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		client->maxlivescalced = set;
 	}
 
-	client->pers              = saved;
+	client->pers              = savedPers;
 	client->sess              = savedSess;
 	client->ps.ping           = savedPing;
 	client->ps.teamNum        = savedTeam;
