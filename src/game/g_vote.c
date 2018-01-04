@@ -107,7 +107,7 @@ static const vote_reference_t aVoteInfo[] =
 	{ 0x1ff, "antilag",                  G_AntiLag_v,                  "Anti-Lag",                         " <0|1>^7\n  Toggles Anit-Lag on the server"                          },
 	{ 0x1ff, "balancedteams",            G_BalancedTeams_v,            "Balanced Teams",                   " <0|1>^7\n  Toggles team balance forcing"                            },
 	{ 0x1ff, "surrender",                G_Surrender_v,                "Surrender",                        "  ^7\n  Ends the match."                                             },
-	{ 0x1ff, "restartcampaign",          G_RestartCampaign_v,          "Restart Campaign",                 " ^7\n  Restarts the current Camapaign"                               },
+	{ 0x1ff, "restartcampaign",          G_RestartCampaign_v,          "Restart Campaign",                 " ^7\n  Restarts the current Campaign"                               },
 	{ 0x1ff, "nextcampaign",             G_NextCampaign_v,             "Next Campaign",                    " ^7\n  Ends the current campaign and starts the next one."           },
 	{ 0x1ff, "poll",                     G_Poll_v,                     "[poll]",                           " <text>^7\n  Poll majority opinion."                                 },
 	{ 0x1ff, "config",                   G_Config_v,                   "Game config",                      " <configname>^7\n  Loads up the server game config"                  },
