@@ -1255,8 +1255,8 @@ static void PM_WalkMove(void)
 		{
 			// cap the max prone speed while reloading and mouting/unmouting alt weapon
 			if (pm->ps->weaponstate == WEAPON_RELOADING ||
-			    (pm->ps->weaponstate == WEAPON_DROPPING && ((pm->ps->weapAnim & ~ANIM_TOGGLEBIT) == GetWeaponTableData(pm->ps->weapon)->altSwitchFrom)) ||
-			    (pm->ps->weaponstate == WEAPON_RAISING && ((pm->ps->weapAnim & ~ANIM_TOGGLEBIT) == GetWeaponTableData(pm->ps->weapon)->altSwitchTo)))
+			    (pm->ps->weapAnim & ~ANIM_TOGGLEBIT) == GetWeaponTableData(pm->ps->weapon)->altSwitchFrom ||
+			    (pm->ps->weapAnim & ~ANIM_TOGGLEBIT) == GetWeaponTableData(pm->ps->weapon)->altSwitchTo)
 			{
 				wishspeed = (wishspeed < 40.f) ? pm->ps->speed * pm_proneSpeedScale : 40.f;
 			}
@@ -2348,6 +2348,15 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 		return;
 	}
 
+	// don't allow another weapon switch when we're still swapping alt weap, to prevent animation breaking
+	// there we check the value of the animation to prevent any switch during raising and dropping alt weapon
+	// until the animation is ended
+	if ((pm->ps->weapAnim & ~ANIM_TOGGLEBIT) == GetWeaponTableData(oldWeapon)->altSwitchFrom ||
+	    (pm->ps->weapAnim & ~ANIM_TOGGLEBIT) == GetWeaponTableData(oldWeapon)->altSwitchTo)
+	{
+		return;
+	}
+
 	// don't allow change during spinup
 	if (pm->ps->weaponDelay)
 	{
@@ -2462,21 +2471,21 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
  */
 static void PM_FinishWeaponChange(void)
 {
-	weapon_t oldweapon = (weapon_t)pm->ps->weapon, newweapon = (weapon_t)pm->ps->nextWeapon;
+	weapon_t oldWeapon = (weapon_t)pm->ps->weapon, newWeapon = (weapon_t)pm->ps->nextWeapon;
 
 	// Cannot switch to an invalid weapon
-	if (!IS_VALID_WEAPON(newweapon))
+	if (!IS_VALID_WEAPON(newWeapon))
 	{
-		newweapon = WP_NONE;
+		newWeapon = WP_NONE;
 	}
 
 	// Cannot switch to a weapon you don't have
-	if (!(COM_BitCheck(pm->ps->weapons, newweapon)))
+	if (!(COM_BitCheck(pm->ps->weapons, newWeapon)))
 	{
-		newweapon = WP_NONE;
+		newWeapon = WP_NONE;
 	}
 
-	pm->ps->weapon = newweapon;
+	pm->ps->weapon = newWeapon;
 
 	if (pm->ps->weaponstate == WEAPON_DROPPING_TORELOAD)
 	{
@@ -2489,44 +2498,44 @@ static void PM_FinishWeaponChange(void)
 
 	// don't really care about anim since these weapons don't show in view.
 	// However, need to set the animspreadscale so they are initally at worst accuracy
-	if (GetWeaponTableData(newweapon)->isScoped)
+	if (GetWeaponTableData(newWeapon)->isScoped)
 	{
 		pm->ps->aimSpreadScale      = AIMSPREAD_MAXSPREAD;       // initially at lowest accuracy
 		pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;       // initially at lowest accuracy
 	}
-	else if (GetWeaponTableData(newweapon)->isPistol)
+	else if (GetWeaponTableData(newWeapon)->isPistol)
 	{
 		pm->pmext->silencedSideArm &= ~1;
 	}
-	else if (GetWeaponTableData(newweapon)->isSilencedPistol)
+	else if (GetWeaponTableData(newWeapon)->isSilencedPistol)
 	{
 		pm->pmext->silencedSideArm |= 1;
 	}
-	else if (GetWeaponTableData(newweapon)->isRifle)
+	else if (GetWeaponTableData(newWeapon)->isRifle)
 	{
 		pm->pmext->silencedSideArm &= ~2;
 	}
-	else if (GetWeaponTableData(newweapon)->isRiflenade)
+	else if (GetWeaponTableData(newWeapon)->isRiflenade)
 	{
 		pm->pmext->silencedSideArm |= 2;
 	}
 
 	// doesn't happen too often (player switched weapons away then back very quickly)
-	if (oldweapon == newweapon)
+	if (oldWeapon == newWeapon)
 	{
 		return;
 	}
 
 	// play an animation
-	if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
+	if (GetWeaponTableData(oldWeapon)->weapAlts == newWeapon)
 	{
-		if (GetWeaponTableData(newweapon)->isRifle && !pm->ps->ammoclip[GetWeaponTableData(oldweapon)->ammoIndex])
+		if (GetWeaponTableData(newWeapon)->isRifle && !pm->ps->ammoclip[GetWeaponTableData(oldWeapon)->ammoIndex])
 		{
 			return;
 		}
 
-		pm->ps->weaponTime += GetWeaponTableData(newweapon)->altSwitchTimeFinish;
-		BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_WEAPON, newweapon, qtrue);
+		pm->ps->weaponTime += GetWeaponTableData(newWeapon)->altSwitchTimeFinish;
+		BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_WEAPON, newWeapon, qtrue);
 
 		if (pm->ps->eFlags & EF_PRONE)
 		{
@@ -2538,12 +2547,12 @@ static void PM_FinishWeaponChange(void)
 		}
 
 		// alt weapon switch was played when switching away, just go into idle
-		PM_StartWeaponAnim(GetWeaponTableData(newweapon)->altSwitchTo);
+		PM_StartWeaponAnim(GetWeaponTableData(newWeapon)->altSwitchTo);
 	}
 	else
 	{
-		pm->ps->weaponTime += GetWeaponTableData(newweapon)->switchTimeFinish;              // dropping/raising usually takes 1/4 sec.
-		BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_WEAPON, newweapon, qtrue);
+		pm->ps->weaponTime += GetWeaponTableData(newWeapon)->switchTimeFinish;              // dropping/raising usually takes 1/4 sec.
+		BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_WEAPON, newWeapon, qtrue);
 
 		if (pm->ps->eFlags & EF_PRONE)
 		{
@@ -2554,7 +2563,7 @@ static void PM_FinishWeaponChange(void)
 			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_RAISEWEAPON, qfalse, qfalse);
 		}
 
-		PM_StartWeaponAnim(GetWeaponTableData(newweapon)->raiseAnim);
+		PM_StartWeaponAnim(GetWeaponTableData(newWeapon)->raiseAnim);
 	}
 }
 

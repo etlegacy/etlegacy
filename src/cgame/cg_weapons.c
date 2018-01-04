@@ -2857,12 +2857,16 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 				if (anim == GetWeaponTableData(weaponNum)->altSwitchFrom || anim == GetWeaponTableData(weaponNum)->altSwitchTo || anim == GetWeaponTableData(weaponNum)->idleAnim)
 				{
-					barrel.hModel = weapon->modModels[0];
-
-					if (barrel.hModel)
+					// prevent the flying nade effect (much visible with M7 when swapping while raising)
+					if (weaponNum == cent->currentState.nextWeapon)
 					{
-						CG_PositionEntityOnTag(&barrel, parent, "tag_scope", 0, NULL);
-						CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+						barrel.hModel = weapon->modModels[0];
+
+						if (barrel.hModel)
+						{
+							CG_PositionEntityOnTag(&barrel, parent, "tag_scope", 0, NULL);
+							CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
+						}
 					}
 				}
 			}
@@ -3933,13 +3937,14 @@ void CG_AltWeapon_f(void)
 		return;
 	}
 
+	// force pause so holding it down won't go too fast
 	if (cg.time - cg.weaponSelectTime < cg_weaponCycleDelay.integer)
 	{
-		return; // force pause so holding it down won't go too fast
+		return;
 	}
 
-	// don't allow another weapon switch or reloading when we're still swapping to prevent animation breaking
-	if (cg.snap->ps.weaponstate == WEAPON_RELOADING || cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
+	// don't allow another reloading when we're still swapping to prevent animation breaking
+	if (cg.snap->ps.weaponstate == WEAPON_RELOADING)
 	{
 		return;
 	}
@@ -4386,14 +4391,6 @@ qboolean CG_CheckCanSwitch(void)
 		return qfalse;
 	}
 
-	// don't allow another weapon switch when we're still swapping alt weap, to prevent animation breaking
-	// there we check the value of the animation to prevent any switch during raising and dropping alt weapon
-	if ((cg.snap->ps.weaponstate == WEAPON_DROPPING && ((cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == GetWeaponTableData(cg.weaponSelect)->altSwitchFrom)) ||
-	    (cg.snap->ps.weaponstate == WEAPON_RAISING && ((cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT) == GetWeaponTableData(cg.weaponSelect)->altSwitchTo)))
-	{
-		return qfalse;
-	}
-
 	return qtrue;
 }
 
@@ -4431,16 +4428,6 @@ void CG_LastWeaponUsed_f(void)
 	if (!CG_CheckCanSwitch())
 	{
 		return;
-	}
-
-	// don't allow another weapon switch when we're still swapping alt weapon, to prevent animation breaking
-	// this is to prevent a too fast switching to alt weapon just after regular switch
-	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
-	{
-		if (GetWeaponTableData(cg.weaponSelect)->weapAlts == cg.switchbackWeapon)
-		{
-			return;
-		}
 	}
 
 	if (!cg.switchbackWeapon)
@@ -4619,16 +4606,6 @@ void CG_WeaponBank_f(void)
 	if (i == MAX_WEAPS_IN_BANK_MP)
 	{
 		return;
-	}
-
-	// don't allow another weapon switch when we're still swapping alt weapon, to prevent animation breaking
-	// this is to prevent a too fast switching to alt weapon just after regular switch
-	if (cg.snap->ps.weaponstate == WEAPON_RAISING || cg.snap->ps.weaponstate == WEAPON_DROPPING)
-	{
-		if (GetWeaponTableData(cg.weaponSelect)->weapAlts == newWeapon)
-		{
-			return;
-		}
 	}
 
 	CG_FinishWeaponChange(cg.weaponSelect, newWeapon);
