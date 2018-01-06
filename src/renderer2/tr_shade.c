@@ -912,9 +912,12 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 		}
 
 		SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
-	}
 
-	if (r_showDeluxeMaps->integer == 1)
+		// bind u_DeluxeMap
+		SelectTexture(TEX_DELUXE);
+		BindDeluxeMap();
+	}
+	else if (r_showDeluxeMaps->integer == 1)
 	{
 		SelectTexture(TEX_DELUXE);
 		BindDeluxeMap();
