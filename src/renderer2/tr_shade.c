@@ -829,11 +829,10 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 
 	GL_State(stateBits);
 
-	// disable by cvar - if there's no image tr.flatImage is used
-	//if (pStage->bundle[TB_NORMALMAP].image[0] == NULL)
-	if (!r_normalMapping->integer)
+	// enable by cvar - if there's no image tr.flatImage is used
+	if (r_normalMapping->integer)
 	{
-		normalMapping = qfalse;
+		normalMapping = qtrue;
 	}
 
 	// choose right shader program ----------------------------------
@@ -1145,8 +1144,8 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	qboolean   shadowCompare;
 
 	Ren_LogComment("--- Render_forwardLighting_DBS_omni ---\n");
-
-	if (r_normalMapping->integer && (diffuseStage->bundle[TB_NORMALMAP].image[0] != NULL))
+	//let cvar decide
+	if (r_normalMapping->integer)
 	{
 		normalMapping = qtrue;
 	}
@@ -1356,8 +1355,8 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	qboolean   shadowCompare = qfalse;
 
 	Ren_LogComment("--- Render_fowardLighting_DBS_proj ---\n");
-
-	if (r_normalMapping->integer && diffuseStage->bundle[TB_NORMALMAP].image[0] != NULL)
+	//let cvar decide
+	if (r_normalMapping->integer)
 	{
 		normalMapping = qtrue;
 	}
@@ -1562,8 +1561,8 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	qboolean   shadowCompare = qfalse;
 
 	Ren_LogComment("--- Render_forwardLighting_DBS_directional ---\n");
-
-	if (r_normalMapping->integer && (diffuseStage->bundle[TB_NORMALMAP].image[0] != NULL))
+	//let cvar decide
+	if (r_normalMapping->integer)
 	{
 		normalMapping = qtrue;
 	}
@@ -1783,7 +1782,7 @@ static void Render_reflection_CB(int stage)
 
 	GL_State(pStage->stateBits);
 
-	if (r_normalMapping->integer && pStage->bundle[TB_NORMALMAP].image[0] != NULL)
+	if (r_normalMapping->integer)
 	{
 		normalMapping = qtrue;
 	}
@@ -3180,8 +3179,9 @@ void Tess_StageIteratorGeneric()
 				if (r_precomputedLighting->integer || r_vertexLighting->integer)
 				{
 					if (!r_vertexLighting->integer && tess.lightmapNum >= 0 && tess.lightmapNum < tr.lightmaps.currentElements)
-					{
-						if (tr.worldDeluxeMapping && r_normalMapping->integer)
+					{    //we dont use worldDeluxemapping in ET
+						//if (tr.worldDeluxeMapping && r_normalMapping->integer)
+						if (r_normalMapping->integer)
 						{
 							Render_lightMapping(stage, qfalse, qtrue);
 						}
