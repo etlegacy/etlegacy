@@ -1170,7 +1170,6 @@ typedef struct
 	texModInfo_t *texMods;
 
 	int videoMapHandle;
-	qboolean isLightmap; //leave it, will use it soon -thunder
 	qboolean isVideoMap;
 } textureBundle_t;
 
@@ -1422,7 +1421,7 @@ typedef struct shader_s
 {
 	char name[MAX_QPATH];               ///< game path, including extension
 	shaderType_t type;
-	
+
 	int index;                          ///< this shader == tr.shaders[index]
 	int sortedIndex;                    ///< this shader == tr.sortedShaders[sortedIndex]
 
@@ -3502,7 +3501,6 @@ typedef struct
 	qboolean worldDeluxeMapping;
 	qboolean worldHDR_RGBE;
 	world_t *world;
-	char *worldDir;                             ///< for referencing external lightmaps
 
 	const byte *externalVisData;            ///< from RE_SetWorldVisData, shared with CM_Load
 
@@ -3585,8 +3583,7 @@ typedef struct
 	int numLightmaps;
 	growList_t lightmaps;
 	growList_t deluxemaps;
-	image_t *lightmap; //for ordinary lightmaps
-	image_t *deluxemap; //for bumped lightmaprendering
+
 	image_t *fatLightmap;
 	int fatLightmapSize;
 	int fatLightmapStep;

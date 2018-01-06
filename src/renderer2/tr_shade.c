@@ -126,58 +126,49 @@ shaderCommands_t tess;
  */
 static void BindLightMap()
 {
-	//dont use normal lightmaps if we have normalmapping
-	if (r_normalMapping->integer)
-	{
-		return;
-	}
+	image_t *lightmap;
+
 	if (tess.lightmapNum >= 0 && tess.lightmapNum < tr.lightmaps.currentElements)
 	{
-		tr.lightmap = (image_t *) Com_GrowListElement(&tr.lightmaps, tess.lightmapNum);
+		lightmap = (image_t *) Com_GrowListElement(&tr.lightmaps, tess.lightmapNum);
 	}
 	else
 	{
-		tr.lightmap = NULL;
+		lightmap = NULL;
 	}
 
-	if (!tr.lightmaps.currentElements || !tr.lightmap)
+	if (!tr.lightmaps.currentElements || !lightmap)
 	{
 		GL_Bind(tr.whiteImage);
 		return;
 	}
 
-	GL_Bind(tr.lightmap);
+	GL_Bind(lightmap);
 }
 
 /**
  * @brief BindDeluxeMap
- * These are for Normalmapping
  */
-
 static void BindDeluxeMap()
 {
-	//if we dont have normalmapping dont use this
-	if (r_normalMapping->integer = 0)
-	{
-		return;
-	}
+	image_t *deluxemap;
 
 	if (tess.lightmapNum >= 0 && tess.lightmapNum < tr.deluxemaps.currentElements)
 	{
-		tr.deluxemap = (image_t *) Com_GrowListElement(&tr.deluxemaps, tess.lightmapNum);
+		deluxemap = (image_t *) Com_GrowListElement(&tr.deluxemaps, tess.lightmapNum);
 	}
 	else
 	{
-		tr.deluxemap = NULL;
+		deluxemap = NULL;
 	}
 
-	if (!tr.deluxemaps.currentElements || !tr.deluxemap)
+	if (!tr.deluxemaps.currentElements || !deluxemap)
 	{
 		GL_Bind(tr.flatImage);
 		return;
 	}
 
-	GL_Bind(tr.deluxemap);
+	GL_Bind(deluxemap);
 }
 
 /**
