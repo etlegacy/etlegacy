@@ -830,9 +830,9 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	GL_State(stateBits);
 
 	// enable by cvar - if there's no image tr.flatImage is used
-	if (r_normalMapping->integer)
+	if (!r_normalMapping->integer)
 	{
-		normalMapping = qtrue;
+		normalMapping = qfalse;
 	}
 
 	// choose right shader program ----------------------------------
@@ -912,12 +912,9 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 		}
 
 		SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
-
-		// bind u_DeluxeMap
-		SelectTexture(TEX_DELUXE);
-		BindDeluxeMap();
 	}
-	else if (r_showDeluxeMaps->integer == 1)
+
+	if (r_showDeluxeMaps->integer == 1)
 	{
 		SelectTexture(TEX_DELUXE);
 		BindDeluxeMap();
@@ -3179,12 +3176,15 @@ void Tess_StageIteratorGeneric()
 				if (r_precomputedLighting->integer || r_vertexLighting->integer)
 				{
 					if (!r_vertexLighting->integer && tess.lightmapNum >= 0 && tess.lightmapNum < tr.lightmaps.currentElements)
-					{    //we dont use worldDeluxemapping in ET
-						//if (tr.worldDeluxeMapping && r_normalMapping->integer)
-						if (r_normalMapping->integer)
+					{
+						if (tr.worldDeluxeMapping && r_normalMapping->integer)
 						{
 							Render_lightMapping(stage, qfalse, qtrue);
 						}
+						//else if (r_normalMapping->integer)
+						//{
+						//	Render_lightMapping(stage, qfalse, qtrue);
+						//}
 						else
 						{
 							Render_lightMapping(stage, qfalse, qfalse);
