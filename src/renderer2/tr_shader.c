@@ -5851,29 +5851,38 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 		break;
 	}
 
-	// add normal and specular image & stage for implicit shaders
+	// FIXME: remove and add/merge r_genNormalMaps
+	// normal and specular image & stage for shaders of type color ST_COLORMAP or ST_DIFFUSEMAP
 	// keep in mind: R_FindShader might be called for SHADER_2D (see RE_RegisterShader)
-	// and RE_RegisterShaderFromImage creates SHADER_2D and doesn't call R_FindShader
+	// RE_RegisterShaderFromImage creates SHADER_2D and doesn't call R_FindShader
 	// although some of these shader are also used for 3D (AFAICS)
 	if (r_normalMapping->integer)
 	{
 		// image loading
 		image_t *tmpImage;
-		int     stageOffset = 1; // start stage
 
-		if (shader.type != SHADER_2D && shader.type != SHADER_LIGHT && (stages[0].type == ST_COLORMAP || stages[0].type == ST_DIFFUSEMAP) && mipRawImage)
+		// get number of stages/start stage
+		for (i = 0; i < MAX_SHADER_STAGES; i++)
+		{
+			if (!stages[i].active)
+			{
+				break;
+			}
+		}
+
+		if (i == 1 && shader.type != SHADER_2D && shader.type != SHADER_LIGHT && (stages[0].type == ST_COLORMAP || stages[0].type == ST_DIFFUSEMAP) && !shader.noPicMip)
 		{
 			// Note/FIXME: image file name has to be including extension, we use tga - make this more generic one day
 			// ETL: suffix for normalmaps is '_n'
-			tmpImage = R_FindImageFile(va("%s_n.tga", strippedName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
+			tmpImage = R_FindImageFile(va("%s_n.tga", strippedName), !shader.noPicMip ? IF_NONE : IF_NOPICMIP, !shader.noPicMip ? FT_DEFAULT : FT_LINEAR, !shader.noPicMip ? WT_REPEAT : WT_CLAMP, shader.name);
 			if (tmpImage)
 			{
-				stages[stageOffset].active             = qtrue;
-				stages[stageOffset].bundle[0].image[0] = tmpImage;
-				stages[stageOffset].type               = ST_NORMALMAP;
-				stages[stageOffset].rgbGen             = CGEN_IDENTITY;
-				stages[stageOffset].stateBits          = GLS_DEFAULT;
-				stageOffset++;
+				stages[i].active             = qtrue;
+				stages[i].bundle[0].image[0] = tmpImage;
+				stages[i].type               = ST_NORMALMAP;
+				stages[i].rgbGen             = CGEN_IDENTITY;
+				stages[i].stateBits          = GLS_DEFAULT;
+				i++;
 			}
 			else
 			{
@@ -5882,15 +5891,15 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 
 			// Note/FIXME: image file name has to be including extension, we use tga - make this more generic one day
 			// ETL: suffix for specularmaps is '_s'
-			tmpImage = R_FindImageFile(va("%s_s.tga", strippedName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_EDGE_CLAMP, shader.name);
+			tmpImage = R_FindImageFile(va("%s_s.tga", strippedName), !shader.noPicMip ? IF_NONE : IF_NOPICMIP, !shader.noPicMip ? FT_DEFAULT : FT_LINEAR, !shader.noPicMip ? WT_REPEAT : WT_EDGE_CLAMP, shader.name);
 			if (tmpImage)
 			{
-				stages[stageOffset].active             = qtrue;
-				stages[stageOffset].bundle[0].image[0] = tmpImage;
-				stages[stageOffset].type               = ST_SPECULARMAP;
-				stages[stageOffset].rgbGen             = CGEN_IDENTITY;
-				stages[stageOffset].stateBits          = GLS_DEFAULT;
-				stageOffset++;
+				stages[i].active             = qtrue;
+				stages[i].bundle[0].image[0] = tmpImage;
+				stages[i].type               = ST_SPECULARMAP;
+				stages[i].rgbGen             = CGEN_IDENTITY;
+				stages[i].stateBits          = GLS_DEFAULT;
+				i++;
 			}
 			else
 			{
@@ -5900,19 +5909,16 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 			//tmpImage = R_FindImageFile(va("%s_disp", fileName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
 			//if(tmpImage)
 			//{
-			//    stages[stageOffset].active = qtrue;
-			//    stages[stageOffset].bundle[0].image[0] = tmpImage;
-			//    stages[stageOffset].type = ST_;
-			//    stages[stageOffset].rgbGen = CGEN_IDENTITY;
-			//    stages[stageOffset].stateBits = GLS_DEFAULT;
-			//    stageOffset++;
+			//    stages[i].active = qtrue;
+			//    stages[i].bundle[0].image[0] = tmpImage;
+			//    stages[i].type = ST_;
+			//    stages[i].rgbGen = CGEN_IDENTITY;
+			//    stages[i].stateBits = GLS_DEFAULT;
+			//    i++;
 			//}
 		}
-		//else
-		//{
-		//	Com_Printf("Excluded: '%s'\n", shader.name);
-		//}
 	}
+
 	return FinishShader();
 }
 
