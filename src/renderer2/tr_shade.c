@@ -484,6 +484,11 @@ static void Render_vertexLighting_DBS_entity(int stage)
 		SetUniformMatrix16ARR(UNIFORM_BONEMATRIX, tess.boneMatrices, MAX_BONES);
 	}
 
+	if (r_wrapAroundLighting->integer)
+	{
+		SetUniformFloat(UNIFORM_LIGHTWRAPAROUND, RB_EvalExpression(&pStage->wrapAroundLightingExp, 0));
+	}
+
 	// set uniforms
 	//ClampColor(ambientColor);
 	// u_AlphaTest
@@ -1646,7 +1651,7 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	SetUniformFloat(UNIFORM_LIGHTSCALE, light->l.scale);
 	if (r_wrapAroundLighting->integer)
 	{
-	SetUniformFloat(UNIFORM_LIGHTWRAPAROUND, RB_EvalExpression(&diffuseStage->wrapAroundLightingExp, 0));
+		SetUniformFloat(UNIFORM_LIGHTWRAPAROUND, RB_EvalExpression(&diffuseStage->wrapAroundLightingExp, 0));
 	}
 	SetUniformMatrix16(UNIFORM_LIGHTATTENUATIONMATRIX, light->attenuationMatrix2);
 
