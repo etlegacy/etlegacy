@@ -902,11 +902,11 @@ void mountedmg42_fire(gentity_t *other)
 
 	if (self->s.density & 8)
 	{
-		Fire_Lead_Ext(other, other, MG42_SPREAD_MP, MG42_DAMAGE_MP, muzzle, forward, right, up, MOD_BROWNING);
+		Fire_Lead_Ext(other, other, GetWeaponTableData(WP_DUMMY_MG42)->spread, GetWeaponTableData(WP_DUMMY_MG42)->damage, muzzle, forward, right, up, MOD_BROWNING);
 	}
 	else
 	{
-		Fire_Lead_Ext(other, other, MG42_SPREAD_MP, MG42_DAMAGE_MP, muzzle, forward, right, up, MOD_MG42);
+		Fire_Lead_Ext(other, other, GetWeaponTableData(WP_DUMMY_MG42)->spread, GetWeaponTableData(WP_DUMMY_MG42)->damage, muzzle, forward, right, up, MOD_MG42);
 	}
 }
 

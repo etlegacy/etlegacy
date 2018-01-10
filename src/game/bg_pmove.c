@@ -3036,9 +3036,9 @@ static qboolean PM_MountedFire(void)
 
 		if (pm->cmd.buttons & BUTTON_ATTACK)
 		{
-			pm->ps->weapHeat[WP_DUMMY_MG42] += MG42_RATE_OF_FIRE_MP;
+			pm->ps->weapHeat[WP_DUMMY_MG42] += GetWeaponTableData(WP_DUMMY_MG42)->nextShotTime;
 			PM_AddEvent(EV_FIRE_WEAPON_MG42);
-			pm->ps->weaponTime += MG42_RATE_OF_FIRE_MP;
+			pm->ps->weaponTime += GetWeaponTableData(WP_DUMMY_MG42)->nextShotTime;
 
 			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
 			pm->ps->viewlocked = VIEWLOCK_JITTER;         // this enable screen jitter when firing
@@ -3116,9 +3116,9 @@ static qboolean PM_MountedFire(void)
 
 		if (pm->cmd.buttons & BUTTON_ATTACK)
 		{
-			pm->ps->weapHeat[WP_DUMMY_MG42] += MG42_RATE_OF_FIRE_MP;
+			pm->ps->weapHeat[WP_DUMMY_MG42] += GetWeaponTableData(WP_DUMMY_MG42)->nextShotTime;
 			PM_AddEvent(EV_FIRE_WEAPON_MOUNTEDMG42);
-			pm->ps->weaponTime += MG42_RATE_OF_FIRE_MP;
+			pm->ps->weaponTime += GetWeaponTableData(WP_DUMMY_MG42)->nextShotTime;
 
 			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
 			//pm->ps->viewlocked = VIEWLOCK_JITTER;       // this enable screen jitter when firing

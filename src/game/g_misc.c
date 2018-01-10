@@ -1482,7 +1482,7 @@ void mg42_fire(gentity_t *other)
 	// snap to integer coordinates for more efficient network bandwidth usage
 	SnapVector(muzzle);
 
-	Fire_Lead_Ext(self, other, MG42_SPREAD_MP, MG42_DAMAGE_MP, muzzle, forward, right, up, MOD_MACHINEGUN); // FIXME: browning?
+	Fire_Lead_Ext(self, other, GetWeaponTableData(WP_DUMMY_MG42)->spread, GetWeaponTableData(WP_DUMMY_MG42)->damage, muzzle, forward, right, up, MOD_MACHINEGUN); // FIXME: browning?
 }
 
 /**

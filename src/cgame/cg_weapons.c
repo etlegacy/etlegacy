@@ -6390,8 +6390,8 @@ void CG_Bullet(vec3_t end, int sourceEntityNum, qboolean flesh, int fleshEntityN
 			VectorMA(muzzle, 16, up, muzzle);
 		}
 
-		r = Q_crandom(&seed) * MG42_SPREAD_MP;
-		u = Q_crandom(&seed) * MG42_SPREAD_MP;
+		r = Q_crandom(&seed) * GetWeaponTableData(WP_DUMMY_MG42)->spread;
+		u = Q_crandom(&seed) * GetWeaponTableData(WP_DUMMY_MG42)->spread;
 
 		VectorMA(muzzle, MAX_TRACE, forward, end);
 		VectorMA(end, r, right, end);
