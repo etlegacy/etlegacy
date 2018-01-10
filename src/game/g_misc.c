@@ -1548,7 +1548,7 @@ void mg42_think(gentity_t *self)
 	}
 
 	// overheated mg42 smokes
-	if (self->mg42weapHeat >= MAX_MG42_HEAT)
+	if (self->mg42weapHeat >= GetWeaponTableData(WP_DUMMY_MG42)->maxHeat)
 	{
 		self->s.eFlags |= EF_OVERHEATING;
 		if (self->flameQuotaTime < level.time)

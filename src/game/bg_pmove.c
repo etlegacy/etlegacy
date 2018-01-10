@@ -2864,7 +2864,7 @@ void PM_CoolWeapons(void)
 		if (pm->ps->persistant[PERS_HWEAPON_USE] || (pm->ps->eFlags & EF_MOUNTEDTANK))
 		{
 			// floor to prevent 8-bit wrap
-			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT) * 255.0f);
+			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / (float)GetWeaponTableData(WP_DUMMY_MG42)->maxHeat) * 255.0f);
 		}
 		else
 		{
@@ -3014,7 +3014,7 @@ static qboolean PM_MountedFire(void)
 			}
 
 			// floor() to prevent 8-bit wrap
-			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT) * 255.0f);
+			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / (float)GetWeaponTableData(WP_DUMMY_MG42)->maxHeat) * 255.0f);
 		}
 
 		if (pm->ps->weaponTime > 0)
@@ -3043,9 +3043,9 @@ static qboolean PM_MountedFire(void)
 			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
 			pm->ps->viewlocked = VIEWLOCK_JITTER;         // this enable screen jitter when firing
 
-			if (pm->ps->weapHeat[WP_DUMMY_MG42] >= MAX_MG42_HEAT)
+			if (pm->ps->weapHeat[WP_DUMMY_MG42] >= GetWeaponTableData(WP_DUMMY_MG42)->maxHeat)
 			{
-				pm->ps->weapHeat[WP_DUMMY_MG42] = MAX_MG42_HEAT;    // cap heat to max
+				pm->ps->weapHeat[WP_DUMMY_MG42] = GetWeaponTableData(WP_DUMMY_MG42)->maxHeat;    // cap heat to max
 				PM_AddEvent(EV_WEAP_OVERHEAT);
 				pm->ps->weaponTime = 2000;          // force "heat recovery minimum" to 2 sec right now
 			}
@@ -3094,7 +3094,7 @@ static qboolean PM_MountedFire(void)
 			}
 
 			// floor() to prevent 8-bit wrap
-			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT) * 255.0f);
+			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / (float)GetWeaponTableData(WP_DUMMY_MG42)->maxHeat) * 255.0f);
 		}
 
 		if (pm->ps->weaponTime > 0)
@@ -3123,9 +3123,9 @@ static qboolean PM_MountedFire(void)
 			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
 			//pm->ps->viewlocked = VIEWLOCK_JITTER;       // this enable screen jitter when firing
 
-			if (pm->ps->weapHeat[WP_DUMMY_MG42] >= MAX_MG42_HEAT)
+			if (pm->ps->weapHeat[WP_DUMMY_MG42] >= GetWeaponTableData(WP_DUMMY_MG42)->maxHeat)
 			{
-				pm->ps->weaponTime = MAX_MG42_HEAT; // cap heat to max
+				pm->ps->weaponTime = GetWeaponTableData(WP_DUMMY_MG42)->maxHeat; // cap heat to max
 				PM_AddEvent(EV_WEAP_OVERHEAT);
 				pm->ps->weaponTime = 2000;      // force "heat recovery minimum" to 2 sec right now
 			}
