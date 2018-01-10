@@ -2329,6 +2329,12 @@ void R_AddDrawSurf(surfaceType_t *surface, shader_t *shader, int lightmapNum, in
 	// so it wraps around
 	index = tr.refdef.numDrawSurfs & DRAWSURF_MASK;
 
+	if (*surface >= SF_NUM_SURFACE_TYPES)
+	{
+		Ren_Print("Warning R_AddDrawSurf: invalid surface type [%i] - skipping shader [%s] (fogNum [%i] - lightmapNum [%i])\n", *surface, shader->name, fogNum, lightmapNum);
+		return;
+	}
+
 	drawSurf = &tr.refdef.drawSurfs[index];
 
 	drawSurf->entity      = tr.currentEntity;
