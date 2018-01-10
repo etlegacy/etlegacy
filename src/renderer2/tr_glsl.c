@@ -740,7 +740,7 @@ static qboolean GLSL_MissesRequiredMacros(int compilemacro, int usedmacros)
 		}
 		break;
 	case USE_REFLECTIVE_SPECULAR:
-		if (usedmacros & BIT(USE_NORMAL_MAPPING))
+		if (!(usedmacros & BIT(USE_NORMAL_MAPPING)))
 		{
 			return qtrue;
 		}
@@ -1439,7 +1439,7 @@ static qboolean GLSL_GenerateMacroString(shaderProgramList_t *program, const cha
 
 				if (GLSL_MissesRequiredMacros(i, macroatrib))
 				{
-					Ren_Print("GLSL_GenerateMacroString Info: Missing required macros\n");
+					Ren_Print("GLSL_GenerateMacroString Info: Missing required macros program '%s' macros: '%s' macroattrib: %i\n",  complieMacroNames[i], macros, macroatrib);
 					return qfalse;
 				}
 
@@ -2603,10 +2603,10 @@ void GLSL_DeleteShaderProgramList(shaderProgramList_t *programlist)
 }
 
 /**
- * @brief GLSL_DeleteShaderProramInfo
+ * @brief GLSL_DeleteShaderProgramInfo
  * @param[in] program
  */
-void GLSL_DeleteShaderProramInfo(programInfo_t *program)
+void GLSL_DeleteShaderProgramInfo(programInfo_t *program)
 {
 	int i;
 
@@ -2780,7 +2780,7 @@ void GLSL_ShutdownGPUShaders(void)
 		if (hashTable[i])
 		{
 			programInfo_t *prog = hashTable[i];
-			GLSL_DeleteShaderProramInfo(prog);
+			GLSL_DeleteShaderProgramInfo(prog);
 			Com_Dealloc(prog);
 			hashTable[i] = NULL;
 		}

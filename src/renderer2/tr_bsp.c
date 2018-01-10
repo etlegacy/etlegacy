@@ -7646,7 +7646,6 @@ void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbeN
  */
 void R_BuildCubeMaps(void)
 {
-#if 1
 	int            i, j; // k;
 	int            ii, jj;
 	refdef_t       rf;
@@ -7836,7 +7835,8 @@ void R_BuildCubeMaps(void)
 
 			do
 			{
-				Ren_Print("*");
+				Ren_Developer("*");
+				// FIXME: updating screen doesn't work properly, R_BuildCubeMaps during map load causes eye cancer
 				Ren_UpdateScreen();
 			}
 			while (++tics < ticsNeeded);
@@ -7846,9 +7846,9 @@ void R_BuildCubeMaps(void)
 			{
 				if (tics < 51)
 				{
-					Ren_Print("*");
+					Ren_Developer("*");
 				}
-				Ren_Print("\n");
+				Ren_Developer("\n");
 			}
 		}
 
@@ -8184,8 +8184,6 @@ void R_BuildCubeMaps(void)
 	endTime = ri.Milliseconds();
 	Ren_Developer("cubemap probes pre-rendering time of %i cubes = %5.2f seconds\n", tr.cubeProbes.currentElements,
 	              (endTime - startTime) / 1000.0);
-
-#endif
 }
 
 /**
@@ -8347,6 +8345,8 @@ void RE_LoadWorldMap(const char *name)
 	}
 
 	// build cubemaps after the necessary vbo stuff is done
+	// FIXME: causes missing vbo error on radar (maps with portal sky or foliage )
+	// devmap oasis; set developer 1; set r_showcubeprobs 1
 	//R_BuildCubeMaps();
 
 	// never move this to RE_BeginFrame because we need it to set it here for the first frame
