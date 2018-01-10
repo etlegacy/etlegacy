@@ -477,10 +477,10 @@ typedef enum
 	WEAPON_RAISING_TORELOAD,
 	WEAPON_DROPPING,
 	WEAPON_DROPPING_TORELOAD,
-	WEAPON_READYING,   ///< getting from 'ready' to 'firing'
-	WEAPON_RELAXING,   ///< weapon is ready, but since not firing, it's on it's way to a "relaxed" stance
+	WEAPON_READYING,            ///< unused - getting from 'ready' to 'firing'
+	WEAPON_RELAXING,            ///< unused - weapon is ready, but since not firing, it's on it's way to a "relaxed" stance
 	WEAPON_FIRING,
-	WEAPON_FIRINGALT,
+	WEAPON_FIRINGALT,           ///< unused -
 	WEAPON_RELOADING,
 } weaponstate_t;
 
