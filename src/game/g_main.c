@@ -861,6 +861,11 @@ qboolean G_EmplacedGunIsMountable(gentity_t *ent, gentity_t *other)
 		return qfalse;
 	}
 
+	if (GetWeaponTableData(other->client->ps.weapon)->isSetWeapon)
+	{
+		return qfalse;
+	}
+
 	if (other->client->ps.pm_flags & PMF_DUCKED)
 	{
 		return qfalse;

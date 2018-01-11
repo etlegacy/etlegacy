@@ -3458,6 +3458,11 @@ qboolean G_TankIsMountable(gentity_t *ent, gentity_t *other)
 		return qfalse;
 	}
 
+	if (GetWeaponTableData(other->client->ps.weapon)->isSetWeapon)
+	{
+		return qfalse;
+	}
+
 	return qtrue;
 }
 
