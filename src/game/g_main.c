@@ -896,6 +896,11 @@ qboolean G_EmplacedGunIsMountable(gentity_t *ent, gentity_t *other)
 		return qfalse;
 	}
 
+	if (other->client->ps.weaponDelay)
+	{
+		return qfalse;
+	}
+
 	if (other->client->ps.grenadeTimeLeft)
 	{
 		return qfalse;
