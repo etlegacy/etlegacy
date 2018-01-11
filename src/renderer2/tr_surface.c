@@ -1261,6 +1261,18 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 //	int               dlightBits;
 	foliageInstance_t *instance;
 
+	// FIXME: r_vboFoliage ?
+	if (srf->vbo && srf->ibo && !ShaderRequiresCPUDeforms(tess.surfaceShader))
+	{
+		Tess_DrawCurrent();
+
+		R_BindVBO(srf->vbo);
+		R_BindIBO(srf->ibo);
+
+		tess.multiDrawPrimitives++;
+		return;
+	}
+
 	// calculate distance vector
 	VectorSubtract(backEnd.orientation.origin, backEnd.viewParms.orientation.origin, local);
 	distanceVector[0] = -backEnd.orientation.transformMatrix[2];

@@ -1039,7 +1039,7 @@ static void R_LoadVisibility(lump_t *l)
 
 	Ren_Developer("...loading visibility\n");
 
-	len               = (s_worldData.numClusters + 63) & ~63;
+	len               = PAD(s_worldData.numClusters, 64);
 	s_worldData.novis = (byte *)ri.Hunk_Alloc(len, h_low);
 	Com_Memset(s_worldData.novis, 0xff, len);
 
@@ -3183,6 +3183,8 @@ static void R_CreateClusters()
 
 /**
  * @brief R_CreateWorldVBO
+ *
+ * @todo FIXME: adjust for foliage (consider foliage instances/triangles. adjust positions)
  */
 static void R_CreateWorldVBO()
 {
@@ -3241,6 +3243,15 @@ static void R_CreateWorldVBO()
 			if (tri->numTriangles)
 			{
 				numTriangles += tri->numTriangles;
+			}
+		}
+		else if (*surface->data == SF_FOLIAGE)
+		{
+			srfFoliage_t *fol = (srfFoliage_t *) surface->data;
+
+			if (fol->numVerts)
+			{
+				numVerts += fol->numVerts;
 			}
 		}
 	}
@@ -3398,6 +3409,24 @@ static void R_CreateWorldVBO()
 				numVerts += srf->numVerts;
 			}
 		}
+		else if (*surface->data == SF_FOLIAGE)
+		{
+			srfFoliage_t *srf = (srfFoliage_t *) surface->data;
+
+			//srf->firstVert = numVerts;
+
+			// FIXME: 'instances are just additional drawverts' see ParseFoliage
+
+			if (srf->numVerts)
+			{
+				//for (i = 0; i < srf->numVerts; i++)
+				//{
+				//	CopyVert(&srf->verts[i], &verts[numVerts + i]);
+				//}
+
+				numVerts += srf->numVerts;
+			}
+		}
 	}
 
 #if 0
@@ -3459,6 +3488,13 @@ static void R_CreateWorldVBO()
 				srf->ibo = s_worldData.ibo;
 				//srf->ibo = R_CreateIBO2(va("staticBspModel0_triangleSurface_IBO %i", k), srf->numTriangles, triangles + srf->firstTriangle, VBO_USAGE_STATIC);
 			}
+		}
+		else if (*surface->data == SF_FOLIAGE)
+		{
+			srfFoliage_t *srf = (srfFoliage_t *) surface->data;
+
+			srf->vbo = s_worldData.vbo;
+			srf->ibo = s_worldData.ibo;
 		}
 	}
 

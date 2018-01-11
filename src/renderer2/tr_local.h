@@ -2439,13 +2439,14 @@ typedef struct
 	cplane_t plane;
 
 	// dynamic lighting information
-	int dlightBits;
+	//int dlightBits;
 
 	// triangle definitions
 	int numIndexes;
 	glIndex_t *indexes;
 
 	int numVerts;
+//	srfVert_t *verts;
 	vec4_t *xyz;
 	vec4_t *normal;
 	vec2_t *texCoords;
@@ -2454,6 +2455,10 @@ typedef struct
 	// origins
 	int numInstances;
 	foliageInstance_t *instances;
+
+	// static render data
+	VBO_t *vbo;
+	IBO_t *ibo;
 } srfFoliage_t;
 
 /**
