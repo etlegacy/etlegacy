@@ -781,7 +781,7 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 		return weap;
 	}
 
-	if ((cg.snap->ps.eFlags & EF_MG42_ACTIVE) || (cg.snap->ps.eFlags & EF_MOUNTEDTANK) || (cg.snap->ps.eFlags & EF_AAGUN_ACTIVE))
+	if (BG_PlayerMounted(cg.snap->ps.eFlags))
 	{
 		if (cg_entities[cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent].tankparent].currentState.density & 8)
 		{
@@ -1149,7 +1149,7 @@ skillType_t CG_ClassSkillForPosition(clientInfo_t *ci, int pos)
 		return SK_BATTLE_SENSE;
 	case 2:
 		// draw soldier level if using a heavy weapon instead of light weapons icon
-		if ((pm && (pm->ps->persistant[PERS_HWEAPON_USE] || (pm->ps->eFlags & EF_MOUNTEDTANK) || GetWeaponTableData(pm->ps->weapon)->isHeavyWeapon)) && ci->cls != PC_SOLDIER)
+		if ((pm && (BG_PlayerMounted(pm->ps->eFlags) || GetWeaponTableData(pm->ps->weapon)->isHeavyWeapon)) && ci->cls != PC_SOLDIER)
 		{
 			return SK_HEAVY_WEAPONS;
 		}

@@ -732,7 +732,7 @@ qboolean ClientInactivityTimer(gclient_t *client)
 	if (client->pers.cmd.forwardmove || client->pers.cmd.rightmove || client->pers.cmd.upmove ||
 	    (client->pers.cmd.wbuttons & (WBUTTON_ATTACK2 | WBUTTON_LEANLEFT | WBUTTON_LEANRIGHT))  ||
 	    (client->pers.cmd.buttons & BUTTON_ATTACK) ||
-	    (client->ps.eFlags & (EF_MOUNTEDTANK | EF_MG42_ACTIVE | EF_AAGUN_ACTIVE)) ||
+	    BG_PlayerMounted(client->ps.eFlags) ||
 	    (client->ps.pm_type == PM_DEAD /*&& !(client->ps.eFlags & EF_PLAYDEAD)*/))     // playdead sets PM_DEAD, so check if playing dead ...
 	{
 		client->inactivityWarning = qfalse;
@@ -2053,7 +2053,7 @@ void WolfReviveBbox(gentity_t *self)
 	gentity_t *hit = G_TestEntityPosition(self);
 	vec3_t    mins, maxs;
 
-	if (hit && (hit->s.number == ENTITYNUM_WORLD || (hit->client && (hit->client->ps.persistant[PERS_HWEAPON_USE] || (hit->client->ps.eFlags & EF_MOUNTEDTANK)))))
+	if (hit && (hit->s.number == ENTITYNUM_WORLD || (hit->client && BG_PlayerMounted(hit->client->ps.eFlags))))
 	{
 		G_DPrintf("WolfReviveBbox: Player stuck in world or MG 42 using player\n");
 		// Move corpse directly to the person who revived them

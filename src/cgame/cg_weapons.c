@@ -3162,7 +3162,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 	// allow the gun to be completely removed
 	if ((!cg_drawGun.integer))
 	{
-		if ((cg.predictedPlayerState.eFlags & EF_FIRING) && !(cg.predictedPlayerState.eFlags & (EF_MG42_ACTIVE | EF_AAGUN_ACTIVE | EF_MOUNTEDTANK)))
+		if ((cg.predictedPlayerState.eFlags & EF_FIRING) && !BG_PlayerMounted(cg.predictedPlayerState.eFlags))
 		{
 			vec3_t origin;
 

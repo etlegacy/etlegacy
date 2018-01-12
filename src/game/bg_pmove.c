@@ -831,8 +831,8 @@ static qboolean PM_CheckProne(void)
 			return qfalse;
 		}
 
-		// no prone when using mg42's
-		if (pm->ps->persistant[PERS_HWEAPON_USE] || (pm->ps->eFlags & EF_MOUNTEDTANK))
+		// no prone when player is mounted
+		if (BG_PlayerMounted(pm->ps->eFlags))
 		{
 			return qfalse;
 		}
@@ -891,7 +891,7 @@ static qboolean PM_CheckProne(void)
 	{
 		if (pm->waterlevel > 1 ||
 		    pm->ps->pm_type == PM_DEAD ||
-		    (pm->ps->eFlags & EF_MOUNTEDTANK) ||
+		    BG_PlayerMounted(pm->ps->eFlags) ||
 		    ((pm->cmd.doubleTap == DT_BACK || pm->cmd.upmove > 10 || (pm->cmd.wbuttons & WBUTTON_PRONE)) && pm->cmd.serverTime - pm->pmext->proneTime > pronedelay))
 		{
 			trace_t trace;
@@ -2861,7 +2861,7 @@ void PM_CoolWeapons(void)
 	// note: we are still cooling WP_NONE and other non bullet weapons
 	if (pm->ps->weapon && GetWeaponTableData(pm->ps->weapon)->canHeat)
 	{
-		if (pm->ps->persistant[PERS_HWEAPON_USE] || (pm->ps->eFlags & EF_MOUNTEDTANK))
+		if (BG_PlayerMounted(pm->ps->eFlags))
 		{
 			// floor to prevent 8-bit wrap
 			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / (float)GetWeaponTableData(WP_DUMMY_MG42)->maxHeat) * 255.0f);
@@ -3001,6 +3001,8 @@ void PM_AdjustAimSpreadScale(void)
  */
 static qboolean PM_MountedFire(void)
 {
+	Com_Printf("Mounted Fire %d\n", pm->ps->persistant[PERS_HWEAPON_USE]);
+
 	switch (pm->ps->persistant[PERS_HWEAPON_USE])
 	{
 	case 1:
@@ -3750,8 +3752,8 @@ static void PM_Weapon(void)
 	// take an ammo away if not infinite
 	if (PM_WeaponAmmoAvailable(pm->ps->weapon) != -1)
 	{
-		// check for being mounted on mg42
-		if (!(pm->ps->persistant[PERS_HWEAPON_USE]) && !(pm->ps->eFlags & EF_MOUNTEDTANK))
+		// check for being mounted
+		if (!BG_PlayerMounted(pm->ps->eFlags))
 		{
 			PM_WeaponUseAmmo(pm->ps->weapon, ammoNeeded);
 		}
