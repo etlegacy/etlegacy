@@ -3855,7 +3855,6 @@ extern cvar_t *r_showOcclusionQueries;
 extern cvar_t *r_showBatches;
 extern cvar_t *r_showLightMaps;                 ///< render lightmaps only
 extern cvar_t *r_showDeluxeMaps;
-extern cvar_t *r_showAreaPortals;
 extern cvar_t *r_showCubeProbes;
 extern cvar_t *r_showBspNodes;
 extern cvar_t *r_showParallelShadowSplits;
