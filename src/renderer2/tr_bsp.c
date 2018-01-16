@@ -1695,7 +1695,7 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 	foliage->numVerts     = numVerts;
 	foliage->numIndexes   = numIndexes;
 	foliage->numInstances = numInstances;
-	foliage->xyz          = (vec4_t *)(foliage + 1);
+	foliage->xyz          = (vec3_t *)(foliage + 1);
 	foliage->normal       = (vec4_t *)(foliage->xyz + foliage->numVerts);
 	foliage->texCoords    = (vec2_t *)(foliage->normal + foliage->numVerts);
 	foliage->lmTexCoords  = (vec2_t *)(foliage->texCoords + foliage->numVerts);
@@ -3248,6 +3248,7 @@ static void R_CreateWorldVBO()
 		else if (*surface->data == SF_FOLIAGE)
 		{
 			srfFoliage_t *fol = (srfFoliage_t *) surface->data;
+			// FIXME: 'instances are just additional drawverts' see ParseFoliage
 
 			if (fol->numVerts)
 			{
@@ -3412,18 +3413,10 @@ static void R_CreateWorldVBO()
 		else if (*surface->data == SF_FOLIAGE)
 		{
 			srfFoliage_t *srf = (srfFoliage_t *) surface->data;
-
-			//srf->firstVert = numVerts;
-
 			// FIXME: 'instances are just additional drawverts' see ParseFoliage
 
 			if (srf->numVerts)
 			{
-				//for (i = 0; i < srf->numVerts; i++)
-				//{
-				//	CopyVert(&srf->verts[i], &verts[numVerts + i]);
-				//}
-
 				numVerts += srf->numVerts;
 			}
 		}
@@ -3989,7 +3982,7 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 		}
 	}
 
-	Ren_Print("...loaded %d faces, %i meshes, %i trisurfs, %i flares %i foliages\n", numFaces, numMeshes, numTriSurfs,
+	Ren_Print("...loaded %d faces, %i meshes, %i trisurfs, %i flares, %i foliages\n", numFaces, numMeshes, numTriSurfs,
 	              numFlares, numFoliages);
 
 	if (r_stitchCurves->integer)

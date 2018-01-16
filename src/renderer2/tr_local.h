@@ -2446,8 +2446,7 @@ typedef struct
 	glIndex_t *indexes;
 
 	int numVerts;
-//	srfVert_t *verts;
-	vec4_t *xyz;
+	vec3_t *xyz;
 	vec4_t *normal;
 	vec2_t *texCoords;
 	vec2_t *lmTexCoords;
@@ -2455,6 +2454,8 @@ typedef struct
 	// origins
 	int numInstances;
 	foliageInstance_t *instances;
+
+	int firstVert;
 
 	// static render data
 	VBO_t *vbo;
