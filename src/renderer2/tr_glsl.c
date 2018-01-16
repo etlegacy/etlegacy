@@ -440,7 +440,7 @@ programInfo_t *GLSL_FindShader(const char *name)
 void GLSL_LoadDefinitions(void)
 {
 	// FIXME: Also load from external files in the future...
-	// For no just copy the existing data to our search able string
+	// For now just copy the existing data to our search able string
 	const char *defaultShaderDef = GetFallbackShaderDef();
 	int size = strlen(defaultShaderDef) * sizeof(char);
 
@@ -802,8 +802,8 @@ static unsigned int GLSL_GetRequiredVertexAttributes(int compilemacro)
 	return attr;
 }
 
-static char shaderExtraDef[32000];
-static int  shaderExtraDefLen = 0;
+static char shaderExtraDef[8000];
+//static int  shaderExtraDefLen = 0;
 
 /**
  * @brief GLSL_BuildShaderExtraDef
@@ -1071,7 +1071,7 @@ static void GLSL_BuildShaderExtraDef()
 	// OK we added a lot of stuff but if we do something bad in the GLSL shaders then we want the proper line
 	// so we have to reset the line counting
 	BUFFEXT("#line 0\n");
-	shaderExtraDefLen = strlen(shaderExtraDef) + 1;
+	//shaderExtraDefLen = strlen(shaderExtraDef) + 1;
 }
 
 /**
@@ -1630,7 +1630,6 @@ void GLSL_SetUniformBoolean(shaderProgram_t *program, int uniformNum, GLboolean 
 	if (uniformsInfo[uniformNum].type != GLSL_BOOL)
 	{
 		Ren_Fatal("GLSL_SetUniformBoolean: wrong type for uniform %i in program %s\n", uniformNum, program->name);
-		//return;
 	}
 
 	if (value == *compare)
@@ -1662,7 +1661,6 @@ void GLSL_SetUniformInt(shaderProgram_t *program, int uniformNum, GLint value)
 	if (uniformsInfo[uniformNum].type != GLSL_INT)
 	{
 		Ren_Fatal("GLSL_SetUniformInt: wrong type for uniform %i in program %s\n", uniformNum, program->name);
-		//return;
 	}
 
 	if (value == *compare)
@@ -1694,7 +1692,6 @@ void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat valu
 	if (uniformsInfo[uniformNum].type != GLSL_FLOAT)
 	{
 		Ren_Fatal("GLSL_SetUniformFloat: wrong type for uniform %i in program %s\n", uniformNum, program->name);
-		//return;
 	}
 
 	if (value == *compare)
@@ -1726,7 +1723,6 @@ void GLSL_SetUniformVec2(shaderProgram_t *program, int uniformNum, const vec2_t 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC2)
 	{
 		Ren_Fatal("GLSL_SetUniformVec2: wrong type for uniform %i in program %s\n", uniformNum, program->name);
-		//return;
 	}
 
 	if (v[0] == compare[0] && v[1] == compare[1])
@@ -1759,7 +1755,6 @@ void GLSL_SetUniformVec3(shaderProgram_t *program, int uniformNum, const vec3_t 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC3)
 	{
 		Ren_Fatal("GLSL_SetUniformVec3: wrong type for uniform %i in program %s\n", uniformNum, program->name);
-		//return;
 	}
 
 	if (VectorCompare(v, compare))
@@ -1791,7 +1786,6 @@ void GLSL_SetUniformVec4(shaderProgram_t *program, int uniformNum, const vec4_t 
 	if (uniformsInfo[uniformNum].type != GLSL_VEC4)
 	{
 		Ren_Fatal("GLSL_SetUniformVec4: wrong type for uniform %i in program %s\n", uniformNum, program->name);
-		//return;
 	}
 
 	if (Vector4Compare(v, compare))
@@ -1823,7 +1817,6 @@ void GLSL_SetUniformFloat5(shaderProgram_t *program, int uniformNum, const vec5_
 	if (uniformsInfo[uniformNum].type != GLSL_FLOAT5)
 	{
 		Ren_Fatal("GLSL_SetUniformFloat5: wrong type for uniform %i in program %s\n", uniformNum, program->name);
-		//return;
 	}
 
 	if (Vector5Compare(v, compare))
@@ -1855,7 +1848,6 @@ void GLSL_SetUniformMatrix16(shaderProgram_t *program, int uniformNum, const mat
 	if (uniformsInfo[uniformNum].type != GLSL_MAT16)
 	{
 		Ren_Fatal("GLSL_SetUniformMatrix16: wrong type for uniform %i in program %s\n", uniformNum, program->name);
-		//return;
 	}
 
 	if (mat4_compare(matrix, compare))
@@ -1887,7 +1879,6 @@ void GLSL_SetUniformFloatARR(shaderProgram_t *program, int uniformNum, float *fl
 	if (uniformsInfo[uniformNum].type != GLSL_FLOATARR)
 	{
 		Ren_Fatal("GLSL_SetUniformFloatARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
-		//return;
 	}
 
 	glUniform1fv(uniforms[uniformNum], arraysize, floatarray);
@@ -1912,7 +1903,6 @@ void GLSL_SetUniformVec4ARR(shaderProgram_t *program, int uniformNum, vec4_t *ve
 	if (uniformsInfo[uniformNum].type != GLSL_VEC4ARR)
 	{
 		Ren_Fatal("GLSL_SetUniformVec4ARR: wrong type for uniform %i in program %s\n", uniformNum, program->name);
-		//return;
 	}
 
 	glUniform4fv(uniforms[uniformNum], arraysize, &vectorarray[0][0]);
@@ -1937,7 +1927,6 @@ void GLSL_SetUniformMatrix16ARR(shaderProgram_t *program, int uniformNum, mat4_t
 	if (uniformsInfo[uniformNum].type != GLSL_MAT16ARR)
 	{
 		Ren_Fatal("GLSL_SetUniformMatrix16ARR: wrong type for uniform %s in program %s\n", uniformsInfo[uniformNum].name, program->name);
-		//return;
 	}
 
 	glUniformMatrix4fv(uniforms[uniformNum], arraysize, GL_FALSE, &matrixarray[0][0]);
@@ -2058,10 +2047,8 @@ static qboolean GLSL_FinnishShaderTextAndCompile(programInfo_t *info, int permut
 		GLSL_SaveShaderBinary(info, permutation);
 		return qtrue;
 	}
-	else
-	{
-		return qfalse;
-	}
+
+	return qfalse;
 }
 
 /**
@@ -2166,7 +2153,6 @@ void GLSL_GenerateCheckSum(programInfo_t *info, const char *vertex, const char *
 	if (!fullSource)
 	{
 		Ren_Fatal("Failed to allocate memory for checksum string\n");
-		//return;
 	}
 
 	Com_Memset(fullSource, '\0', size);
@@ -2349,7 +2335,6 @@ void GLSL_SetMacroStatesByOffset(programInfo_t *programlist, int offset)
 	if (offset < 0)
 	{
 		Ren_Fatal("Trying to select an negative array cell\n");
-		//return;
 	}
 
 	programlist->list->currentPermutation = 0;
@@ -2452,7 +2437,6 @@ void GLSL_SetMacroStates(programInfo_t *programlist, int numMacros, ...)
 	if (numMacros % 2 != 0)
 	{
 		Ren_Fatal("GLSL_SetMacroStates: Trying to set macros with an array which has an invalid size %i\n", numMacros);
-		//return;
 	}
 
 	va_start(ap, numMacros);
@@ -3175,7 +3159,8 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 {
 	if (!glState.currentVBO)
 	{
-		// FIXME: this occures on maps with portal skies (uje_marketgarden) and r_wolffog 0 
+		// FIXME: this occures on maps with portal skies (uje_marketgarden) and r_wolffog 0
+		// and on radar when R_BuildCcubemaps is called at start
 		// beside the general fog issue with portal skies it seems there is no valid portal sky VBO 
 		Ren_Fatal("GLSL_VertexAttribPointers: no current VBO bound");
 		//return;
