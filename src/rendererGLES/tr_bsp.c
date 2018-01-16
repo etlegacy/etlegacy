@@ -278,9 +278,11 @@ void RE_SetWorldVisData(const byte *vis)
  */
 static void R_LoadVisibility(lump_t *l)
 {
-	int  len = (s_worldData.numClusters + 63) & ~63;
+	int  len;
 	byte *buf;
 
+	len = PAD(s_worldData.numClusters, 64);
+	
 	s_worldData.novis = ri.Hunk_Alloc(len, h_low);
 	Com_Memset(s_worldData.novis, 0xff, len);
 
@@ -368,7 +370,7 @@ void *R_GetSurfMemory(int size)
 	byte *retval;
 
 	// round to cacheline
-	size = (size + 31) & ~31;
+	size = PAD(size, 32);
 
 	surfHunkSize += size;
 	if (surfHunkSize >= SURF_HUNK_MAXSIZE)
@@ -1954,7 +1956,7 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 	R_MovePatchSurfacesToHunk();
 #endif
 
-	Ren_Print("...loaded %d faces, %i meshes, %i trisurfs, %i flares %i foliage\n",
+	Ren_Print("...loaded %d faces, %i meshes, %i trisurfs, %i flares, %i foliages\n",
 	          numFaces, numMeshes, numTriSurfs, numFlares, numFoliages);
 }
 
