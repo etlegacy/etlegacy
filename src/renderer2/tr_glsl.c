@@ -2755,7 +2755,11 @@ void GLSL_ShutdownGPUShaders(void)
 
 	Ren_LogComment("------- GLSL_ShutdownGPUShaders -------\n");
 
-	//GLSL_VertexAttribsState(0);
+	for (i = 0; i < ATTR_INDEX_COUNT; i++)
+	{
+		glDisableVertexAttribArray(i);
+	}
+
 	GLSL_BindNullProgram();
 
 	// Clean up programInfo_t:s
