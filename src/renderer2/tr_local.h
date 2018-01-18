@@ -2321,7 +2321,6 @@ typedef struct srfGridMesh_s
 	srfVert_t *verts;
 
 	// BSP VBO offsets
-	int firstVert;
 	int firstTriangle;
 
 	// static render data
@@ -2353,7 +2352,7 @@ typedef struct
 	srfVert_t *verts;
 
 	// BSP VBO offsets
-	int firstVert;
+	//int firstVert;
 	int firstTriangle;
 
 	// static render data
@@ -2385,7 +2384,7 @@ typedef struct
 	srfVert_t *verts;
 
 	// BSP VBO offsets
-	int firstVert;
+	//int firstVert;
 	int firstTriangle;
 
 	// static render data
@@ -2436,8 +2435,6 @@ typedef struct
 	// origins
 	int numInstances;
 	foliageInstance_t *instances;
-
-	int firstVert;
 
 	// static render data
 	VBO_t *vbo;

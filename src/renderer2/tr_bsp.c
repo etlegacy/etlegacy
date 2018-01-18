@@ -3366,7 +3366,7 @@ static void R_CreateWorldVBO()
 		{
 			srfSurfaceFace_t *srf = (srfSurfaceFace_t *) surface->data;
 
-			srf->firstVert = numVerts;
+			//srf->firstVert = numVerts;
 
 			if (srf->numVerts)
 			{
@@ -3382,7 +3382,7 @@ static void R_CreateWorldVBO()
 		{
 			srfGridMesh_t *srf = (srfGridMesh_t *) surface->data;
 
-			srf->firstVert = numVerts;
+			//srf->firstVert = numVerts;
 
 			if (srf->numVerts)
 			{
@@ -3398,7 +3398,7 @@ static void R_CreateWorldVBO()
 		{
 			srfTriangles_t *srf = (srfTriangles_t *) surface->data;
 
-			srf->firstVert = numVerts;
+			//srf->firstVert = numVerts;
 
 			if (srf->numVerts)
 			{
