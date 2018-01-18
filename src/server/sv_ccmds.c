@@ -558,13 +558,18 @@ static void SV_ConSay_f(void)
 		return;
 	}
 
-	strcpy(text, "console: ");
 	p = Cmd_Args();
+
+	if (strlen(p) > 1000) {
+		return;
+	}
+
+	strcpy(text, "console: ");
 
 	if (*p == '"')
 	{
 		p++;
-		p[strlen(p) - 1] = 0;
+		p[strlen(p) - 1] = '\0';
 	}
 
 	strcat(text, p);
