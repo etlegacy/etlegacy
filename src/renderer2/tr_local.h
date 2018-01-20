@@ -1620,6 +1620,7 @@ enum GLAttrDef
 #undef ATTR_DECL
 };
 
+/*
 enum
 {
 	GENERICDEF_USE_DEFORM_VERTEXES  = 0x0001,
@@ -1663,6 +1664,7 @@ enum
 	LIGHTDEF_ALL                 = 0x01FF,
 	LIGHTDEF_COUNT               = 0x0200
 };
+*/
 
 enum
 {
