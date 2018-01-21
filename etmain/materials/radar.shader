@@ -846,7 +846,7 @@ textures/radar/road_puddle1
 	qer_editorimage textures/temperate_sd/road_puddle1
 	diffusemap textures/temperate_sd/road_puddle1
 	bumpmap textures/temperate_sd/road_puddle1_n
-	specularmap textures/temperate_sd/road_puddle1
+	specularmap textures/temperate_sd/road_puddle1_s
 	surfaceparm trans
 	surfaceparm splash
 		
