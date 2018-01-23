@@ -743,7 +743,7 @@ void SV_SpawnServer(const char *server)
 
 	// get a new checksum feed and restart the file system
 	srand(Sys_Milliseconds());
-	sv.checksumFeed = ((rand() << 16) ^ rand()) ^ Sys_Milliseconds();
+	sv.checksumFeed = (((unsigned int)rand() << 16) ^ (unsigned int)rand()) ^ Sys_Milliseconds();
 
 	// only comment out when you need a new pure checksum string and it's associated random feed
 	// Com_DPrintf("SV_SpawnServer checksum feed: %p\n", sv.checksumFeed);
