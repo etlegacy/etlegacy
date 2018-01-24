@@ -4242,7 +4242,7 @@ void Tess_StageIteratorDebug();
 void Tess_StageIteratorGeneric();
 void Tess_StageIteratorGBuffer();
 void Tess_StageIteratorGBufferNormalsOnly();
-void Tess_StageIteratorDepthFill();
+//void Tess_StageIteratorDepthFill();
 void Tess_StageIteratorShadowFill();
 void Tess_StageIteratorLighting();
 void Tess_StageIteratorSky();

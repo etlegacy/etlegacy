@@ -2647,7 +2647,7 @@ void R_AddEntityInteractions(trRefLight_t *light)
 			tr.currentModel = R_GetModelByHandle(ent->e.hModel);
 			if (!tr.currentModel)
 			{
-				//R_AddDrawSurf(&entitySurface, tr.defaultShader, 0);
+				//R_AddDrawSurf(&entitySurface, tr.defaultShader, -1, 0);
 			}
 			else
 			{
@@ -2674,13 +2674,11 @@ void R_AddEntityInteractions(trRefLight_t *light)
 					break;
 				default:
 					Ren_Drop("R_AddEntityInteractions: Bad modeltype");
-					//break;
 				}
 			}
 			break;
 		default:
 			Ren_Drop("R_AddEntityInteractions: Bad reType");
-			//break;
 		}
 	}
 }

@@ -313,6 +313,7 @@ void Tess_Begin(void (*stageIteratorFunc)(),
 			tess.stageIteratorFunc2 = &Tess_StageIteratorGeneric;
 		}
 	}
+	/*
 	else if (tess.stageIteratorFunc == &Tess_StageIteratorDepthFill)
 	{
 		if (isSky)
@@ -321,6 +322,7 @@ void Tess_Begin(void (*stageIteratorFunc)(),
 			tess.stageIteratorFunc2 = &Tess_StageIteratorDepthFill;
 		}
 	}
+	*/
 
 	tess.skipTangentSpaces = skipTangentSpaces;
 	tess.skipVBO           = skipVBO;
@@ -943,7 +945,6 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
  * @brief Render_depthFill
  * @param[in] stage
  *
- * @note unused -  we don't use Tess_StageIteratorDepthFill/RB_RenderOpaqueSurfacesIntoDepth
  */
 static void Render_depthFill(int stage)
 {
@@ -2425,7 +2426,6 @@ static void Render_fog()
 	// bind u_ColorMap
 	SelectTexture(TEX_COLOR);
 	GL_Bind(tr.fogImage);
-	//gl_fogQuake3Shader->SetUniform_ColorTextureMatrix(tess.svars.texMatrices[TB_COLORMAP]);
 
 	GLSL_SetRequiredVertexPointers(trProg.gl_fogQuake3Shader);
 
@@ -3287,7 +3287,7 @@ void Tess_StageIteratorGeneric()
 
 /**
  * @brief Tess_StageIteratorDepthFill
- */
+ * @note Unused
 void Tess_StageIteratorDepthFill()
 {
 	int stage;
@@ -3361,6 +3361,7 @@ void Tess_StageIteratorDepthFill()
 	// reset polygon offset
 	glDisable(GL_POLYGON_OFFSET_FILL);
 }
+*/
 
 /**
  * @brief Tess_StageIteratorShadowFill
