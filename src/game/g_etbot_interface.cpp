@@ -5231,7 +5231,7 @@ public:
 			if (pMsg && pEnt && pEnt->inuse && pEnt->client)
 			{
 				pMsg->m_CurrentHeat = pEnt->client->ps.weapHeat[WP_DUMMY_MG42];
-				pMsg->m_MaxHeat     = MAX_MG42_HEAT;
+				pMsg->m_MaxHeat     = GetWeaponTableData(WP_DUMMY_MG42)->maxHeat;
 			}
 			break;
 		}
@@ -5394,7 +5394,7 @@ public:
 				if (pEnt && pEnt->client && pGunEntity)
 				{
 					pMsg->m_Current = pEnt->client->ps.weapHeat[WP_DUMMY_MG42];
-					pMsg->m_Max     = (int)MAX_MG42_HEAT;
+					pMsg->m_Max     = GetWeaponTableData(WP_DUMMY_MG42)->maxHeat;
 				}
 				else
 				{

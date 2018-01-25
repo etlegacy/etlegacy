@@ -42,8 +42,6 @@
 
 #define JUMP_VELOCITY   270
 
-#define MAX_MG42_HEAT   1500.f
-
 /**
  * @struct pml_s
  * @brief All of the locals will be zeroed before each

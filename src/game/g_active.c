@@ -732,7 +732,7 @@ qboolean ClientInactivityTimer(gclient_t *client)
 	if (client->pers.cmd.forwardmove || client->pers.cmd.rightmove || client->pers.cmd.upmove ||
 	    (client->pers.cmd.wbuttons & (WBUTTON_ATTACK2 | WBUTTON_LEANLEFT | WBUTTON_LEANRIGHT))  ||
 	    (client->pers.cmd.buttons & BUTTON_ATTACK) ||
-	    (client->ps.eFlags & (EF_MOUNTEDTANK | EF_MG42_ACTIVE | EF_AAGUN_ACTIVE)) ||
+	    BG_PlayerMounted(client->ps.eFlags) ||
 	    (client->ps.pm_type == PM_DEAD /*&& !(client->ps.eFlags & EF_PLAYDEAD)*/))     // playdead sets PM_DEAD, so check if playing dead ...
 	{
 		client->inactivityWarning = qfalse;
@@ -1479,14 +1479,6 @@ void ClientThink_real(gentity_t *ent)
 		client->combatState                   = COMBATSTATE_COLD; // cool down again
 	}
 
-	// bit hacky, stop the slight lag from client -> server even on locahost, switching back to the weapon you were holding
-	// and then back to what weapon you should have, became VERY noticible for the kar98/carbine + gpg40, esp now i've added the
-	// animation locking
-	if (level.time - client->pers.lastSpawnTime < 1000)
-	{
-		pm.cmd.weapon = client->ps.weapon;
-	}
-
 	Pmove(&pm); // monsterslick
 
 	// server cursor hints
@@ -1585,8 +1577,8 @@ void ClientThink_real(gentity_t *ent)
 	}
 
 	if (g_entities[ent->client->ps.identifyClient].inuse && g_entities[ent->client->ps.identifyClient].client &&
-			(ent->client->sess.sessionTeam == g_entities[ent->client->ps.identifyClient].client->sess.sessionTeam ||
-			 g_entities[ent->client->ps.identifyClient].client->ps.powerups[PW_OPS_DISGUISED]))
+	    (ent->client->sess.sessionTeam == g_entities[ent->client->ps.identifyClient].client->sess.sessionTeam ||
+	     g_entities[ent->client->ps.identifyClient].client->ps.powerups[PW_OPS_DISGUISED]))
 	{
 		ent->client->ps.identifyClientHealth = g_entities[ent->client->ps.identifyClient].health;
 	}
@@ -2061,7 +2053,7 @@ void WolfReviveBbox(gentity_t *self)
 	gentity_t *hit = G_TestEntityPosition(self);
 	vec3_t    mins, maxs;
 
-	if (hit && (hit->s.number == ENTITYNUM_WORLD || (hit->client && (hit->client->ps.persistant[PERS_HWEAPON_USE] || (hit->client->ps.eFlags & EF_MOUNTEDTANK)))))
+	if (hit && (hit->s.number == ENTITYNUM_WORLD || (hit->client && BG_PlayerMounted(hit->client->ps.eFlags))))
 	{
 		G_DPrintf("WolfReviveBbox: Player stuck in world or MG 42 using player\n");
 		// Move corpse directly to the person who revived them

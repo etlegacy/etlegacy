@@ -198,11 +198,13 @@ void CG_Respawn(qboolean revived)
 
 	// select the weapon the server says we are using
 	cg.weaponSelect = cg.snap->ps.weapon;
+
 	// clear even more things on respawn
 	cg.zoomedBinoc = qfalse;
-	cg.zoomedScope = qfalse;
-	cg.zoomTime    = 0;
-	cg.zoomval     = 0;
+	cg.zoomed      = qfalse;
+	// cg.zoomedScope = qfalse;
+	cg.zoomTime = 0;
+	cg.zoomval  = 0;
 
 	trap_SendConsoleCommand("-zoom\n");
 	cg.binocZoomTime = 0;
@@ -226,6 +228,9 @@ void CG_Respawn(qboolean revived)
 	if (!revived)
 	{
 		cgs.limboLoadoutSelected = qfalse;
+
+		// reset switch back weapon
+		cg.switchbackWeapon = WP_NONE;
 	}
 
 	// Saves the state of sidearm (riflenade weapon is considered as one too)

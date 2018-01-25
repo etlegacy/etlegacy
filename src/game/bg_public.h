@@ -92,11 +92,6 @@ extern vec3_t playerlegsProneMaxs;
 #define AAGUN_DAMAGE        25
 #define AAGUN_SPREAD        10
 
-#define MG42_SPREAD_MP      100
-
-#define MG42_DAMAGE_MP          20
-#define MG42_RATE_OF_FIRE_MP    66
-
 #define AAGUN_RATE_OF_FIRE  100
 #define MG42_YAWSPEED       300.f      ///< degrees per second
 
@@ -482,10 +477,10 @@ typedef enum
 	WEAPON_RAISING_TORELOAD,
 	WEAPON_DROPPING,
 	WEAPON_DROPPING_TORELOAD,
-	WEAPON_READYING,   ///< getting from 'ready' to 'firing'
-	WEAPON_RELAXING,   ///< weapon is ready, but since not firing, it's on it's way to a "relaxed" stance
+	WEAPON_READYING,            ///< unused - getting from 'ready' to 'firing'
+	WEAPON_RELAXING,            ///< unused - weapon is ready, but since not firing, it's on it's way to a "relaxed" stance
 	WEAPON_FIRING,
-	WEAPON_FIRINGALT,
+	WEAPON_FIRINGALT,           ///< unused -
 	WEAPON_RELOADING,
 } weaponstate_t;
 

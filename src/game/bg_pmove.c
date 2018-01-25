@@ -831,8 +831,8 @@ static qboolean PM_CheckProne(void)
 			return qfalse;
 		}
 
-		// no prone when using mg42's
-		if (pm->ps->persistant[PERS_HWEAPON_USE] || (pm->ps->eFlags & EF_MOUNTEDTANK))
+		// no prone when player is mounted
+		if (BG_PlayerMounted(pm->ps->eFlags))
 		{
 			return qfalse;
 		}
@@ -891,7 +891,7 @@ static qboolean PM_CheckProne(void)
 	{
 		if (pm->waterlevel > 1 ||
 		    pm->ps->pm_type == PM_DEAD ||
-		    (pm->ps->eFlags & EF_MOUNTEDTANK) ||
+		    BG_PlayerMounted(pm->ps->eFlags) ||
 		    ((pm->cmd.doubleTap == DT_BACK || pm->cmd.upmove > 10 || (pm->cmd.wbuttons & WBUTTON_PRONE)) && pm->cmd.serverTime - pm->pmext->proneTime > pronedelay))
 		{
 			trace_t trace;
@@ -944,12 +944,6 @@ static qboolean PM_CheckProne(void)
 		if (userinput && spd > 40.f && !(pm->ps->eFlags & EF_PRONE_MOVING))
 		{
 			pm->ps->eFlags |= EF_PRONE_MOVING;
-
-			// Lose the scope view if moving too fast while prone
-			if (GetWeaponTableData(pm->ps->weapon)->isScoped)
-			{
-				PM_BeginWeaponChange((weapon_t)pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->weapAlts, qfalse);
-			}
 		}
 		else if (!userinput && spd < 20.0f && (pm->ps->eFlags & EF_PRONE_MOVING))
 		{
@@ -1259,8 +1253,10 @@ static void PM_WalkMove(void)
 	{
 		if (wishspeed > pm->ps->speed * pm_proneSpeedScale)
 		{
-			// cap the max prone speed while reloading
-			if (pm->ps->weaponstate == WEAPON_RELOADING)
+			// cap the max prone speed while reloading and mouting/unmouting alt weapon
+			if (pm->ps->weaponstate == WEAPON_RELOADING ||
+			    (pm->ps->weapAnim & ~ANIM_TOGGLEBIT) == GetWeaponTableData(pm->ps->weapon)->altSwitchFrom ||
+			    (pm->ps->weapAnim & ~ANIM_TOGGLEBIT) == GetWeaponTableData(pm->ps->weapon)->altSwitchTo)
 			{
 				wishspeed = (wishspeed < 40.f) ? pm->ps->speed * pm_proneSpeedScale : 40.f;
 			}
@@ -2352,6 +2348,15 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 		return;
 	}
 
+	// don't allow another weapon switch when we're still swapping alt weap, to prevent animation breaking
+	// there we check the value of the animation to prevent any switch during raising and dropping alt weapon
+	// until the animation is ended
+	if ((pm->ps->weapAnim & ~ANIM_TOGGLEBIT) == GetWeaponTableData(oldWeapon)->altSwitchFrom ||
+	    (pm->ps->weapAnim & ~ANIM_TOGGLEBIT) == GetWeaponTableData(oldWeapon)->altSwitchTo)
+	{
+		return;
+	}
+
 	// don't allow change during spinup
 	if (pm->ps->weaponDelay)
 	{
@@ -2466,23 +2471,21 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
  */
 static void PM_FinishWeaponChange(void)
 {
-	weapon_t oldweapon, newweapon = (weapon_t)pm->ps->nextWeapon;
+	weapon_t oldWeapon = (weapon_t)pm->ps->weapon, newWeapon = (weapon_t)pm->ps->nextWeapon;
 
 	// Cannot switch to an invalid weapon
-	if (!IS_VALID_WEAPON(newweapon))
+	if (!IS_VALID_WEAPON(newWeapon))
 	{
-		newweapon = WP_NONE;
+		newWeapon = WP_NONE;
 	}
 
 	// Cannot switch to a weapon you don't have
-	if (!(COM_BitCheck(pm->ps->weapons, newweapon)))
+	if (!(COM_BitCheck(pm->ps->weapons, newWeapon)))
 	{
-		newweapon = WP_NONE;
+		newWeapon = WP_NONE;
 	}
 
-	oldweapon = pm->ps->weapon;
-
-	pm->ps->weapon = newweapon;
+	pm->ps->weapon = newWeapon;
 
 	if (pm->ps->weaponstate == WEAPON_DROPPING_TORELOAD)
 	{
@@ -2495,44 +2498,44 @@ static void PM_FinishWeaponChange(void)
 
 	// don't really care about anim since these weapons don't show in view.
 	// However, need to set the animspreadscale so they are initally at worst accuracy
-	if (GetWeaponTableData(newweapon)->isScoped)
+	if (GetWeaponTableData(newWeapon)->isScoped)
 	{
 		pm->ps->aimSpreadScale      = AIMSPREAD_MAXSPREAD;       // initially at lowest accuracy
 		pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;       // initially at lowest accuracy
 	}
-	else if (GetWeaponTableData(newweapon)->isPistol)
+	else if (GetWeaponTableData(newWeapon)->isPistol)
 	{
 		pm->pmext->silencedSideArm &= ~1;
 	}
-	else if (GetWeaponTableData(newweapon)->isSilencedPistol)
+	else if (GetWeaponTableData(newWeapon)->isSilencedPistol)
 	{
 		pm->pmext->silencedSideArm |= 1;
 	}
-	else if (GetWeaponTableData(newweapon)->isRifle)
+	else if (GetWeaponTableData(newWeapon)->isRifle)
 	{
 		pm->pmext->silencedSideArm &= ~2;
 	}
-	else if (GetWeaponTableData(newweapon)->isRiflenade)
+	else if (GetWeaponTableData(newWeapon)->isRiflenade)
 	{
 		pm->pmext->silencedSideArm |= 2;
 	}
 
 	// doesn't happen too often (player switched weapons away then back very quickly)
-	if (oldweapon == newweapon)
+	if (oldWeapon == newWeapon)
 	{
 		return;
 	}
 
 	// play an animation
-	if (newweapon == GetWeaponTableData(oldweapon)->weapAlts)
+	if (GetWeaponTableData(oldWeapon)->weapAlts == newWeapon)
 	{
-		if (GetWeaponTableData(newweapon)->isRifle && !pm->ps->ammoclip[GetWeaponTableData(oldweapon)->ammoIndex])
+		if (GetWeaponTableData(newWeapon)->isRifle && !pm->ps->ammoclip[GetWeaponTableData(oldWeapon)->ammoIndex])
 		{
 			return;
 		}
 
-		pm->ps->weaponTime += GetWeaponTableData(newweapon)->altSwitchTimeFinish;
-		BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_WEAPON, newweapon, qtrue);
+		pm->ps->weaponTime += GetWeaponTableData(newWeapon)->altSwitchTimeFinish;
+		BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_WEAPON, newWeapon, qtrue);
 
 		if (pm->ps->eFlags & EF_PRONE)
 		{
@@ -2544,12 +2547,12 @@ static void PM_FinishWeaponChange(void)
 		}
 
 		// alt weapon switch was played when switching away, just go into idle
-		PM_StartWeaponAnim(GetWeaponTableData(newweapon)->altSwitchTo);
+		PM_StartWeaponAnim(GetWeaponTableData(newWeapon)->altSwitchTo);
 	}
 	else
 	{
-		pm->ps->weaponTime += GetWeaponTableData(newweapon)->switchTimeFinish;              // dropping/raising usually takes 1/4 sec.
-		BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_WEAPON, newweapon, qtrue);
+		pm->ps->weaponTime += GetWeaponTableData(newWeapon)->switchTimeFinish;              // dropping/raising usually takes 1/4 sec.
+		BG_UpdateConditionValue(pm->ps->clientNum, ANIM_COND_WEAPON, newWeapon, qtrue);
 
 		if (pm->ps->eFlags & EF_PRONE)
 		{
@@ -2560,7 +2563,7 @@ static void PM_FinishWeaponChange(void)
 			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_RAISEWEAPON, qfalse, qfalse);
 		}
 
-		PM_StartWeaponAnim(GetWeaponTableData(newweapon)->raiseAnim);
+		PM_StartWeaponAnim(GetWeaponTableData(newWeapon)->raiseAnim);
 	}
 }
 
@@ -2858,10 +2861,10 @@ void PM_CoolWeapons(void)
 	// note: we are still cooling WP_NONE and other non bullet weapons
 	if (pm->ps->weapon && GetWeaponTableData(pm->ps->weapon)->canHeat)
 	{
-		if (pm->ps->persistant[PERS_HWEAPON_USE] || (pm->ps->eFlags & EF_MOUNTEDTANK))
+		if (BG_PlayerMounted(pm->ps->eFlags))
 		{
 			// floor to prevent 8-bit wrap
-			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT) * 255.0f);
+			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / (float)GetWeaponTableData(WP_DUMMY_MG42)->maxHeat) * 255.0f);
 		}
 		else
 		{
@@ -2998,6 +3001,8 @@ void PM_AdjustAimSpreadScale(void)
  */
 static qboolean PM_MountedFire(void)
 {
+	Com_Printf("Mounted Fire %d\n", pm->ps->persistant[PERS_HWEAPON_USE]);
+
 	switch (pm->ps->persistant[PERS_HWEAPON_USE])
 	{
 	case 1:
@@ -3011,7 +3016,7 @@ static qboolean PM_MountedFire(void)
 			}
 
 			// floor() to prevent 8-bit wrap
-			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT) * 255.0f);
+			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / (float)GetWeaponTableData(WP_DUMMY_MG42)->maxHeat) * 255.0f);
 		}
 
 		if (pm->ps->weaponTime > 0)
@@ -3033,16 +3038,16 @@ static qboolean PM_MountedFire(void)
 
 		if (pm->cmd.buttons & BUTTON_ATTACK)
 		{
-			pm->ps->weapHeat[WP_DUMMY_MG42] += MG42_RATE_OF_FIRE_MP;
+			pm->ps->weapHeat[WP_DUMMY_MG42] += GetWeaponTableData(WP_DUMMY_MG42)->nextShotTime;
 			PM_AddEvent(EV_FIRE_WEAPON_MG42);
-			pm->ps->weaponTime += MG42_RATE_OF_FIRE_MP;
+			pm->ps->weaponTime += GetWeaponTableData(WP_DUMMY_MG42)->nextShotTime;
 
 			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
 			pm->ps->viewlocked = VIEWLOCK_JITTER;         // this enable screen jitter when firing
 
-			if (pm->ps->weapHeat[WP_DUMMY_MG42] >= MAX_MG42_HEAT)
+			if (pm->ps->weapHeat[WP_DUMMY_MG42] >= GetWeaponTableData(WP_DUMMY_MG42)->maxHeat)
 			{
-				pm->ps->weapHeat[WP_DUMMY_MG42] = MAX_MG42_HEAT;    // cap heat to max
+				pm->ps->weapHeat[WP_DUMMY_MG42] = GetWeaponTableData(WP_DUMMY_MG42)->maxHeat;    // cap heat to max
 				PM_AddEvent(EV_WEAP_OVERHEAT);
 				pm->ps->weaponTime = 2000;          // force "heat recovery minimum" to 2 sec right now
 			}
@@ -3091,7 +3096,7 @@ static qboolean PM_MountedFire(void)
 			}
 
 			// floor() to prevent 8-bit wrap
-			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / MAX_MG42_HEAT) * 255.0f);
+			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / (float)GetWeaponTableData(WP_DUMMY_MG42)->maxHeat) * 255.0f);
 		}
 
 		if (pm->ps->weaponTime > 0)
@@ -3113,16 +3118,16 @@ static qboolean PM_MountedFire(void)
 
 		if (pm->cmd.buttons & BUTTON_ATTACK)
 		{
-			pm->ps->weapHeat[WP_DUMMY_MG42] += MG42_RATE_OF_FIRE_MP;
+			pm->ps->weapHeat[WP_DUMMY_MG42] += GetWeaponTableData(WP_DUMMY_MG42)->nextShotTime;
 			PM_AddEvent(EV_FIRE_WEAPON_MOUNTEDMG42);
-			pm->ps->weaponTime += MG42_RATE_OF_FIRE_MP;
+			pm->ps->weaponTime += GetWeaponTableData(WP_DUMMY_MG42)->nextShotTime;
 
 			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
 			//pm->ps->viewlocked = VIEWLOCK_JITTER;       // this enable screen jitter when firing
 
-			if (pm->ps->weapHeat[WP_DUMMY_MG42] >= MAX_MG42_HEAT)
+			if (pm->ps->weapHeat[WP_DUMMY_MG42] >= GetWeaponTableData(WP_DUMMY_MG42)->maxHeat)
 			{
-				pm->ps->weaponTime = MAX_MG42_HEAT; // cap heat to max
+				pm->ps->weaponTime = GetWeaponTableData(WP_DUMMY_MG42)->maxHeat; // cap heat to max
 				PM_AddEvent(EV_WEAP_OVERHEAT);
 				pm->ps->weaponTime = 2000;      // force "heat recovery minimum" to 2 sec right now
 			}
@@ -3439,13 +3444,6 @@ static void PM_Weapon(void)
 		}
 	}
 
-	// can't shoot while prone and moving
-	if ((pm->ps->eFlags & EF_PRONE_MOVING) && !delayedFire)
-	{
-		PM_ContinueWeaponAnim(GetWeaponTableData(pm->ps->weapon)->idleAnim);
-		return;
-	}
-
 	// check for weapon change
 	// can't change if weapon is firing, but can change
 	// again if lowering or raising
@@ -3453,12 +3451,6 @@ static void PM_Weapon(void)
 	{
 		if (pm->ps->weapon != pm->cmd.weapon)
 		{
-			// don't change weapon while unmounting alt weapon
-			if ((GetWeaponTableData(pm->ps->weapon)->isMG || GetWeaponTableData(pm->ps->weapon)->isMortar || GetWeaponTableData(pm->ps->weapon)->isMortarSet || GetWeaponTableData(pm->ps->weapon)->isRifle || GetWeaponTableData(pm->ps->weapon)->isSilencedPistol) && pm->ps->weaponTime > 250)
-			{
-				return;
-			}
-
 			PM_BeginWeaponChange(pm->ps->weapon, pm->cmd.weapon, qfalse);
 		}
 	}
@@ -3497,6 +3489,13 @@ static void PM_Weapon(void)
 		return;
 	default:
 		break;
+	}
+
+	// can't shoot while prone and moving
+	if ((pm->ps->eFlags & EF_PRONE_MOVING) && !delayedFire)
+	{
+		PM_ContinueWeaponAnim(GetWeaponTableData(pm->ps->weapon)->idleAnim);
+		return;
 	}
 
 	// this is possible since the player starts with nothing
@@ -3753,8 +3752,8 @@ static void PM_Weapon(void)
 	// take an ammo away if not infinite
 	if (PM_WeaponAmmoAvailable(pm->ps->weapon) != -1)
 	{
-		// check for being mounted on mg42
-		if (!(pm->ps->persistant[PERS_HWEAPON_USE]) && !(pm->ps->eFlags & EF_MOUNTEDTANK))
+		// check for being mounted
+		if (!BG_PlayerMounted(pm->ps->eFlags))
 		{
 			PM_WeaponUseAmmo(pm->ps->weapon, ammoNeeded);
 		}
@@ -4300,7 +4299,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
  *
  * @note Tnused trace parameter
  */
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)           //   modified
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)            //   modified
 {
 	short  temp;
 	int    i;
@@ -5058,14 +5057,16 @@ void PmoveSingle(pmove_t *pmove)
 
 	pm->ps->eFlags &= ~(EF_FIRING | EF_ZOOMING);
 
-	if ((pm->cmd.wbuttons & WBUTTON_ZOOM) && pm->ps->stats[STAT_HEALTH] >= 0 && !(pm->ps->weaponDelay) && pm->ps->weaponstate != WEAPON_RELOADING)
+	if ((pm->cmd.wbuttons & WBUTTON_ZOOM) && pm->ps->stats[STAT_HEALTH] >= 0 && !(pm->ps->weaponDelay) && pm->ps->weaponstate != WEAPON_RELOADING &&
+	    pm->ps->weaponstate != WEAPON_RAISING && pm->ps->weaponstate != WEAPON_DROPPING)
 	{
-		if (pm->ps->stats[STAT_KEYS] & (1 << INV_BINOCS))          // binoculars are an inventory item (inventory==keys)
+		if (pm->ps->stats[STAT_KEYS] & (1 << INV_BINOCS))               // binoculars are an inventory item (inventory==keys)
 		{
-			if (!GetWeaponTableData(pm->ps->weapon)->isScoped &&          // don't allow binocs if using the sniper scope
-			    !BG_PlayerMounted(pm->ps->eFlags) &&           // or if mounted on a weapon
-			    // don't allow binocs w/ mounted mob. MG42 or mortar either.
-			    !GetWeaponTableData(pm->ps->weapon)->isSetWeapon)
+			// don't allow binocs:
+			if (!GetWeaponTableData(pm->ps->weapon)->isScoped &&        // if using the sniper scope
+			    !BG_PlayerMounted(pm->ps->eFlags) &&                    // or if mounted on a weapon
+			    !GetWeaponTableData(pm->ps->weapon)->isSetWeapon &&     // w/ mounted mob. MG42 or mortar either.
+			    !(pm->ps->eFlags & EF_PRONE_MOVING))                    // when prone moving
 			{
 				pm->ps->eFlags |= EF_ZOOMING;
 			}
@@ -5110,13 +5111,18 @@ void PmoveSingle(pmove_t *pmove)
 		{
 			pm->pmext->silencedSideArm |= 1;
 		}
-	}
 
-	// clear the respawned flag if attack and use are cleared
-	if (pm->ps->stats[STAT_HEALTH] > 0 &&
-	    !(pm->cmd.buttons & (BUTTON_ATTACK /*| BUTTON_USE_HOLDABLE*/)))
-	{
-		pm->ps->pm_flags &= ~PMF_RESPAWNED;
+		// clear the respawned flag if attack button are cleared
+		// don't clear if a weapon change is needed to prevent early weapon change
+		if (pm->ps->stats[STAT_HEALTH] > 0 &&
+		    !(pm->cmd.buttons & BUTTON_ATTACK) &&  // & (BUTTON_ATTACK /*| BUTTON_USE_HOLDABLE
+		    !(pm->cmd.wbuttons & WBUTTON_ATTACK2) &&
+		    (pm->ps->weapon == pm->cmd.weapon))       // bit hacky, stop the slight lag from client -> server even on locahost, switching back to the weapon you were holding
+		                                              // and then back to what weapon you should have, became VERY noticible for the kar98/carbine + gpg40, esp now i've added the
+		                                              // animation locking
+		{
+			pm->ps->pm_flags &= ~PMF_RESPAWNED;
+		}
 	}
 
 	// if talk button is down, dissallow all other input
