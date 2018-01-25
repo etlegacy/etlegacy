@@ -3,13 +3,19 @@
 models/players/temperate/allied/strap
 {
 	cull disable
+	
 	implicitMap models/players/temperate/allied/inside.tga
-
+	
+	//diffusemap models/players/temperate/allied/inside
+	//bumpmap models/players/temperate/allied/inside_n
+	//specularmap models/players/temperate/allied/inside_s
 }
 
+// why is this shader here ?
 models/players/multi/acc/backpack/backpack_lieu
 {
-	cull disable //Rich - Why does this shader have cull disable??
+	cull disable //Rich - Why does this shader has cull disable??
+	
 	{
 		map models/players/multi/acc/backpack/backpack_lieu.tga
 		alphafunc ge128
@@ -17,12 +23,12 @@ models/players/multi/acc/backpack/backpack_lieu
 	}
 }
 
+// FIXME: inspect all ranks
 models/players/temperate/axis/ranks/major
 {
 	polygonoffset
-	
 	{
-		map models/players/temperate/allied/ranks/major.tga
+		map gfx/hud/ranks/major.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
@@ -31,9 +37,8 @@ models/players/temperate/axis/ranks/major
 models/players/temperate/axis/ranks/feldwebel
 {
 	polygonoffset
-	
 	{
-		map models/players/temperate/allied/ranks/sergeant.tga
+		map gfx/hud/ranks/sergeant.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
@@ -42,34 +47,27 @@ models/players/temperate/axis/ranks/feldwebel
 models/players/temperate/axis/ranks/leutnant
 {
 	polygonoffset
-	
 	{
-		map models/players/temperate/allied/ranks/lieutenant.tga
+		map gfx/hud/ranks/lieutenant.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
 }
-
-
 models/players/temperate/axis/ranks/gefreiter
 {
-	polygonoffset
-	
+	polygonoffset	
 	{
-		map models/players/temperate/allied/ranks/corporal.tga
+		map gfx/hud/ranks/corporal.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
 }
-
-
 
 models/players/temperate/axis/ranks/oberst
 {
 	polygonoffset
-	
 	{
-		map models/players/temperate/allied/ranks/colonel.tga
+		map gfx/hud/ranks/colonel.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
@@ -77,36 +75,31 @@ models/players/temperate/axis/ranks/oberst
 
 models/players/temperate/axis/ranks/hauptmann
 {
-	polygonoffset	
-	
+	polygonoffset		
 	{
-		map models/players/temperate/allied/ranks/captain.tga
+		map gfx/hud/ranks/captain.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
 }
 
-
-
+// FIXME: 1stclass.tga?
 models/players/temperate/axis/ranks/oberschutze
 {
-	polygonoffset	
-	
+	polygonoffset		
 	{
-		map models/players/temperate/allied/ranks/1stclass.tga
+		map gfx/hud/ranks/1stclass.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
 }
-
-
 
 models/players/temperate/allied/ranks/major
 {
 	polygonoffset
 	
 	{
-		map models/players/temperate/allied/ranks/major.tga
+		map gfx/hud/ranks/major.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
@@ -115,10 +108,9 @@ models/players/temperate/allied/ranks/major
 models/players/temperate/allied/ranks/sergeant
 {
 	qer_models/players/temperate/allied/ranks/sergeant.tga
-	polygonoffset
-	
+	polygonoffset	
 	{
-		map models/players/temperate/allied/ranks/sergeant.tga
+		map gfx/hud/ranks.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
@@ -127,63 +119,53 @@ models/players/temperate/allied/ranks/sergeant
 models/players/temperate/allied/ranks/lieutenant
 {
 	polygonoffset
-	
 	{
-		map models/players/temperate/allied/ranks/lieutenant.tga
+		map gfx/hud/ranks/lieutenant.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
 }
-
 
 models/players/temperate/allied/ranks/corporal
 {
 	polygonoffset
-	
 	{
-		map models/players/temperate/allied/ranks/corporal.tga
+		map gfx/hud/ranks/corporal.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
 }
-
-
 
 models/players/temperate/allied/ranks/colonel
 {
-	polygonoffset
-	
+	polygonoffset	
 	{
-		map models/players/temperate/allied/ranks/colonel.tga
+		map gfx/hud/ranks/colonel.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
 }
-
 
 models/players/temperate/allied/ranks/captain
 {
-	polygonoffset	
-	
+	polygonoffset		
 	{
-		map models/players/temperate/allied/ranks/captain.tga
+		map gfx/hud/ranks/captain.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
 }
-
-
 
 models/players/temperate/allied/ranks/1stclass
 {
-	polygonoffset	
-	
+	polygonoffset		
 	{
-		map models/players/temperate/allied/ranks/1stclass.tga
+		map gfx/hud/ranks/1stclass.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
 }
+
 
 models/players/temperate/axis/engineer/engineer_body
 {
@@ -214,9 +196,6 @@ models/players/temperate/axis/soldier/body_soldier
 	cull none
 	implicitMap -
 }
-
-
-
 
 models/players/temperate/allied/soldier/body
 {

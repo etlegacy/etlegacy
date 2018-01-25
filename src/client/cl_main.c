@@ -2955,6 +2955,18 @@ void CL_Shutdown(void)
 	Cmd_RemoveCommand("video");
 	Cmd_RemoveCommand("stopvideo");
 
+	Cmd_RemoveCommand("pausedemo");
+
+#if NEW_DEMOFUNC
+	Cmd_RemoveCommand("rewind");
+	Cmd_RemoveCommand("fastforward");
+	Cmd_RemoveCommand("seekservertime");
+	Cmd_RemoveCommand("seek");
+	Cmd_RemoveCommand("seekend");
+	Cmd_RemoveCommand("seeknext");
+	Cmd_RemoveCommand("seekprev");
+#endif
+
 	Con_Shutdown();
 
 	// startup-caching system

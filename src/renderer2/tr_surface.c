@@ -766,46 +766,44 @@ static void VectorArrayNormalize(vec4_t *normals, unsigned int count)
 static void Tess_SurfacePolychain(srfPoly_t *p)
 {
 	unsigned int i, j;
-	unsigned int numVertexes;
-	unsigned int numIndexes;
+	unsigned int numVertexes = p->numVerts;
+	unsigned int numIndexes  = 3 * (p->numVerts - 2);
 
 	Ren_LogComment("--- Tess_SurfacePolychain ---\n");
 
 	Tess_CheckOverflow(p->numVerts, 3 * (p->numVerts - 2));
 
-	// fan triangles into the tess array
-	numVertexes = 0;
-	for (i = 0; i < p->numVerts; i++)
+	if (!tess.surfaceShader->interactLight || tess.skipTangentSpaces)
 	{
-		VectorCopy(p->verts[i].xyz, tess.xyz[tess.numVertexes + i]);
-		tess.xyz[tess.numVertexes + i][3] = 1;
+		// fan triangles into the tess array
+		for (i = 0; i < p->numVerts; i++)
+		{
+			VectorCopy(p->verts[i].xyz, tess.xyz[tess.numVertexes + i]);
+			tess.xyz[tess.numVertexes + i][3] = 1;
 
-		tess.texCoords[tess.numVertexes + i][0] = p->verts[i].st[0];
-		tess.texCoords[tess.numVertexes + i][1] = p->verts[i].st[1];
-		tess.texCoords[tess.numVertexes + i][2] = 0;
-		tess.texCoords[tess.numVertexes + i][3] = 1;
+			tess.texCoords[tess.numVertexes + i][0] = p->verts[i].st[0];
+			tess.texCoords[tess.numVertexes + i][1] = p->verts[i].st[1];
+			tess.texCoords[tess.numVertexes + i][2] = 0;
+			tess.texCoords[tess.numVertexes + i][3] = 1;
 
-		tess.colors[tess.numVertexes + i][0] = p->verts[i].modulate[0] * (1.0f / 255.0f);
-		tess.colors[tess.numVertexes + i][1] = p->verts[i].modulate[1] * (1.0f / 255.0f);
-		tess.colors[tess.numVertexes + i][2] = p->verts[i].modulate[2] * (1.0f / 255.0f);
-		tess.colors[tess.numVertexes + i][3] = p->verts[i].modulate[3] * (1.0f / 255.0f);
+			tess.colors[tess.numVertexes + i][0] = p->verts[i].modulate[0] * (1.0f / 255.0f);
+			tess.colors[tess.numVertexes + i][1] = p->verts[i].modulate[1] * (1.0f / 255.0f);
+			tess.colors[tess.numVertexes + i][2] = p->verts[i].modulate[2] * (1.0f / 255.0f);
+			tess.colors[tess.numVertexes + i][3] = p->verts[i].modulate[3] * (1.0f / 255.0f);
+		}
 
-		numVertexes++;
+		// generate fan indexes into the tess array
+		for (i = 0; i < p->numVerts - 2; i++)
+		{
+			tess.indexes[tess.numIndexes + i * 3 + 0] = tess.numVertexes;
+			tess.indexes[tess.numIndexes + i * 3 + 1] = tess.numVertexes + i + 1;
+			tess.indexes[tess.numIndexes + i * 3 + 2] = tess.numVertexes + i + 2;
+		}
+
+		tess.attribsSet |= ATTR_POSITION | ATTR_TEXCOORD | ATTR_COLOR;
 	}
-
-	// generate fan indexes into the tess array
-	numIndexes = 0;
-	for (i = 0; i < p->numVerts - 2; i++)
-	{
-		tess.indexes[tess.numIndexes + i * 3 + 0] = tess.numVertexes;
-		tess.indexes[tess.numIndexes + i * 3 + 1] = tess.numVertexes + i + 1;
-		tess.indexes[tess.numIndexes + i * 3 + 2] = tess.numVertexes + i + 2;
-		numIndexes                               += 3;
-	}
-
-#if 1
 	// calc tangent spaces
-	if (tess.surfaceShader->interactLight && !tess.skipTangentSpaces)
+	else
 	{
 		float       *v;
 		const float *v0, *v1, *v2;
@@ -851,8 +849,6 @@ static void Tess_SurfacePolychain(srfPoly_t *p)
 
 		tess.attribsSet |= ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL;
 	}
-#endif
-	tess.attribsSet |= ATTR_POSITION | ATTR_TEXCOORD | ATTR_COLOR;
 
 	tess.numIndexes  += numIndexes;
 	tess.numVertexes += numVertexes;
@@ -1251,15 +1247,26 @@ static void Tess_SurfaceTriangles(srfTriangles_t *srf)
  */
 static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 {
-	int               o, i, a;
+	int               o, i, a, srcColor;
 	int               numVerts = srf->numVerts, numIndexes = srf->numIndexes;   // basic setup
 	vec4_t            distanceCull, distanceVector;
 	float             alpha, z, dist, fovScale = backEnd.viewParms.fovX * (1.0 / 90.0);
 	vec3_t            local;
-	vec_t             *xyz;
-	int               srcColor, *color;
-//	int               dlightBits;
+	float             *xyz, *color;
+	//int               dlightBits;
 	foliageInstance_t *instance;
+
+	// FIXME: r_vboFoliage ?
+	if (srf->vbo && srf->ibo && !ShaderRequiresCPUDeforms(tess.surfaceShader))
+	{
+		Tess_DrawCurrent();
+
+		R_BindVBO(srf->vbo);
+		R_BindIBO(srf->ibo);
+
+		tess.multiDrawPrimitives++;
+		return;
+	}
 
 	// calculate distance vector
 	VectorSubtract(backEnd.orientation.origin, backEnd.viewParms.orientation.origin, local);
@@ -1385,7 +1392,7 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 		}
 
 		// copy color
-		color = (int *)tess.colors[tess.numVertexes];
+		color = tess.colors[tess.numVertexes];
 		for (i = 0; i < numVerts; i++)
 		{
 			color[i] = srcColor;

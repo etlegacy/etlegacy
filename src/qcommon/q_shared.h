@@ -1665,7 +1665,8 @@ typedef enum
 } demoState_t;
 
 #define MAX_GLOBAL_SERVERS          4096
-#define MAX_OTHER_SERVERS           128
+#define MAX_OTHER_SERVERS           128 // local servers
+#define MAX_FAVOURITE_SERVERS       128
 #define MAX_PINGREQUESTS            16
 #define MAX_SERVERSTATUSREQUESTS    16
 

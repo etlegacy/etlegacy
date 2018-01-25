@@ -892,9 +892,6 @@ void R_AnimationList_f(void)
  */
 static void R_CullMD5(trRefEntity_t *ent)
 {
-	int   i;
-	float boundsRadius;
-
 	if (ent->e.skeleton.type == SK_INVALID)
 	{
 		// no properly set skeleton so use the bounding box by the model instead by the animations
@@ -905,17 +902,20 @@ static void R_CullMD5(trRefEntity_t *ent)
 	}
 	else
 	{
+		int i;
+
 		// copy a bounding box in the current coordinate system provided by skeleton
 		for (i = 0; i < 3; i++)
 		{
-			ent->localBounds[0][i] = ent->e.skeleton.bounds[0][i];
-			ent->localBounds[1][i] = ent->e.skeleton.bounds[1][i];
+			ent->localBounds[0][i] = ent->e.skeleton.bounds[0][i]; // FIXME: * ent->e.skeleton.scale
+			ent->localBounds[1][i] = ent->e.skeleton.bounds[1][i]; // FIXME: * ent->e.skeleton.scale
 		}
 	}
 
-	boundsRadius = RadiusFromBounds(ent->localBounds[0], ent->localBounds[1]);
+	// set up world bounds for light intersection tests
+	R_SetupEntityWorldBounds(ent);
 
-	switch (R_CullPointAndRadius(ent->e.origin, boundsRadius))
+	switch (R_CullBox(ent->worldBounds))
 	{
 	case CULL_IN:
 		tr.pc.c_box_cull_md5_in++;
@@ -949,13 +949,11 @@ void R_AddMD5Surfaces(trRefEntity_t *ent)
 	// cull the entire model if merged bounding box of both frames
 	// is outside the view frustum
 	R_CullMD5(ent);
+	
 	if (ent->cull == CULL_OUT)
 	{
 		return;
 	}
-
-	// set up world bounds for light intersection tests
-	R_SetupEntityWorldBounds(ent);
 
 	// set up lighting now that we know we aren't culled
 	if (!personalModel || r_shadows->integer > SHADOWING_BLOB)

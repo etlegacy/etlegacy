@@ -1631,17 +1631,11 @@ infoParm_t infoParms[] =
 	{ "nolightmap",        0, SURF_NOLIGHTMAP,   0                         }, // don't generate a lightmap
 	{ "nodlight",          0, SURF_NODLIGHT,     0                         }, // don't ever add dynamic lights
 
-	// these surface parms are relics, we'll keep the names to keep compatibility
-	{ "monsterslicknorth", 0, 0,                 0                         },
-	{ "monsterslickeast",  0, 0,                 0                         },
-	{ "monsterslicksouth", 0, 0,                 0                         },
-	{ "monsterslickwest",  0, 0,                 0                         } //,
-
-	// new surface parms:
-	//{ "1",                 0, SURF_MONSLICK_N,   0                         },
-	//{ "2",                 0, SURF_MONSLICK_E,   0                         },
-	//{ "3",                 0, SURF_MONSLICK_S,   0                         },
-	//{ "4",                 0, SURF_MONSLICK_W,   0                         }
+	// these surface parms are unused in ETL but kept for mods
+	{ "monsterslicknorth", 0, SURF_MONSLICK_N,   0                         },
+	{ "monsterslickeast",  0, SURF_MONSLICK_E,   0                         },
+	{ "monsterslicksouth", 0, SURF_MONSLICK_S,   0                         },
+	{ "monsterslickwest",  0, SURF_MONSLICK_W,   0                         }
 };
 
 /**

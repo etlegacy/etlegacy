@@ -3,36 +3,17 @@
 
 models/mapobjects/pump_sd/bottom
 {
-	{
-	         	map textures/effects/envmap_slate_90.tga
-	         	rgbGen lightingdiffuse
-	         	tcmod scale 1.5 1.5
-	         	tcGen environment
-	}
-	{
-	         	map models/mapobjects/pump_sd/bottom.tga
-	         	blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-	         	rgbGen lightingdiffuse
-	}
-		
+	 diffusemap models/mapobjects/pump_sd/bottom
+	 specularmap models/mapobjects/pump_sd/bottom_s
+	 bumpmap models/mapobjects/pump_sd/bottom_n		
 }
 
 models/mapobjects/pump_sd/top
 {
-	{
-			map textures/effects/envmap_slate_90.tga
-	         	rgbGen lightingdiffuse
-	         	tcmod scale 1.5 1.5
-	         	tcGen environment
-	}
-	{
-	         	map models/mapobjects/pump_sd/top.tga
-	         	blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
-	         	rgbGen lightingdiffuse
-	}
-		
+	 diffusemap models/mapobjects/pump_sd/top
+	 specularmap models/mapobjects/pump_sd/top_s
+	 bumpmap models/mapobjects/pump_sd/top_n		
 }
-
 
 models/mapobjects/tanks_sd/mg42turret
 {
@@ -45,11 +26,8 @@ models/mapobjects/tanks_sd/mg42turret
 	         	map models/mapobjects/tanks_sd/mg42turret.tga
 	         	blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
 	         	rgbGen lightingdiffuse
-	}
-		
+	}		
 }
-
-
 
 models/mapobjects/tanks_sd/churchill_flat
 {
@@ -613,7 +591,7 @@ models/mapobjects/raster/moto
 
 models/mapobjects/raster/moto_bag
 {
-	implicitmap -
+	implicitMap -
 }
 
 models/mapobjects/barrel_sd/barrel_side

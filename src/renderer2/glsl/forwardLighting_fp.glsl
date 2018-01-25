@@ -19,7 +19,7 @@ uniform sampler2D u_ShadowMap0;
 uniform samplerCube u_ShadowMap;
 #endif
 
-uniform sampler2D u_RandomMap;      // random normals
+//uniform sampler2D u_RandomMap;      // random normals
 
 uniform vec3 u_ViewOrigin;
 
@@ -102,7 +102,7 @@ vec3 RandomVec3(vec2 uv)
 	dir = normalize(vec3(cos(angle), sin(angle), r));
 #else
 	// dir = texture2D(u_NoiseMap, gl_FragCoord.st * r_FBufScale).rgb;
-	dir = normalize(2.0 * (texture2D(u_RandomMap, uv).xyz - 0.5));
+	//dir = normalize(2.0 * (texture2D(u_RandomMap, uv).xyz - 0.5));
 #endif
 
 	return dir;

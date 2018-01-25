@@ -86,7 +86,7 @@ void GL_Unbind()
  */
 void BindAnimatedImage(textureBundle_t *bundle)
 {
-	int index;
+	int64_t index;
 
 	if (bundle->isVideoMap)
 	{
@@ -97,13 +97,21 @@ void BindAnimatedImage(textureBundle_t *bundle)
 
 	if (bundle->numImages <= 1)
 	{
-		GL_Bind(bundle->image[0]);
+		//if (bundle->isLightmap && (backEnd.refdef.rdflags & RDF_SNOOPERVIEW))
+		//{
+		//	GL_Bind(tr.whiteImage);
+		//}
+		//else
+		//{
+			GL_Bind(bundle->image[0]);
+		//}
 		return;
 	}
 
 	// it is necessary to do this messy calc to make sure animations line up
 	// exactly with waveforms of the same frequency
-	index   = Q_ftol(backEnd.refdef.floatTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
+	//index   = Q_ftol(backEnd.refdef.floatTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
+	index = (int64_t)(backEnd.refdef.floatTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
 	index >>= FUNCTABLE_SIZE2;
 
 	if (index < 0)
@@ -112,7 +120,14 @@ void BindAnimatedImage(textureBundle_t *bundle)
 	}
 	index %= bundle->numImages;
 
-	GL_Bind(bundle->image[index]);
+	//if (bundle->isLightmap && (backEnd.refdef.rdflags & RDF_SNOOPERVIEW))
+	//{
+	//	GL_Bind(tr.whiteImage);
+	//}
+	//else
+	//{
+		GL_Bind(bundle->image[index]);
+	//}
 }
 
 /*

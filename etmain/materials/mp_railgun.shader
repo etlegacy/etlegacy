@@ -243,7 +243,7 @@ textures/mp_railgun/lmterrain_0to5
 		blend blend
 	}
 	{
-	    stage diffusemap
+	    stage bumpmap
 		map textures/snow_sd/snow_noisy_n
 		vertexcolor
 		blend blend
@@ -466,7 +466,7 @@ textures/mp_railgun/lmterrain_1to5
 		blend blend
 	}
 	{
-	    stage diffusemap
+	    stage bumpmap
 		map textures/snow_sd/snow_noisy_n
 		vertexcolor
 		blend blend
@@ -651,7 +651,7 @@ textures/mp_railgun/lmterrain_2to5
 		blend blend
 	}
 	{
-	    stage diffusemap
+	    stage bumpmap
 		map textures/snow_sd/snow_noisy_n
 		vertexcolor
 		blend blend
@@ -792,7 +792,7 @@ textures/mp_railgun/lmterrain_3to5
 		blend blend
 	}
 	{
-	    stage diffusemap
+	    stage bumpmap
 		map textures/snow_sd/snow_noisy_n
 		vertexcolor
 		blend blend

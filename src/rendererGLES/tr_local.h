@@ -2222,8 +2222,6 @@ void R_LatLongToNormal(vec3_t outNormal, short latLong);
 extern glfog_t     glfogsettings[NUM_FOGS];     ///< [0] never used (FOG_NONE)
 extern glfogType_t glfogNum;                    ///< fog type to use (from the fog_t enum list)
 
-extern qboolean fogIsOn;
-
 extern void R_FogOff(void);
 extern void R_FogOn(void);
 

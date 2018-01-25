@@ -56,6 +56,8 @@ static float *TableForFunc(genFunc_t func)
 		return tr.sawToothTable;
 	case GF_INVERSE_SAWTOOTH:
 		return tr.inverseSawToothTable;
+	case GF_NOISE:
+		return tr.noiseTable;
 	case GF_NONE:
 	default:
 		break;
@@ -66,7 +68,7 @@ static float *TableForFunc(genFunc_t func)
 	return NULL;
 #else
 	// FIXME
-	//Ren_Warning("TableForFunc called with invalid function '%d' in shader '%s'\n", func, tess.surfaceShader->name);
+	Ren_Warning("TableForFunc called with invalid function '%d' in shader '%s'\n", func, tess.surfaceShader->name);
 	return tr.sinTable;
 #endif
 }

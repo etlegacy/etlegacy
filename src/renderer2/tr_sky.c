@@ -446,6 +446,7 @@ static void DrawSkySide(struct image_s *image, const int mins[2], const int maxs
 
 	GL_SelectTexture(0);
 	GL_Bind(image);
+	GL_Cull(CT_TWO_SIDED);
 
 	for (t = mins[1] + HALF_SKY_SUBDIVISIONS; t <= maxs[1] + HALF_SKY_SUBDIVISIONS; t++)
 	{
@@ -1034,6 +1035,7 @@ void Tess_StageIteratorSky(void)
 	// draw the outer skybox
 	if (tess.surfaceShader->sky.outerbox && tess.surfaceShader->sky.outerbox != tr.blackCubeImage)
 	{
+		GL_Cull(CT_FRONT_SIDED);
 		R_BindVBO(tess.vbo);
 		R_BindIBO(tess.ibo);
 

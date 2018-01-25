@@ -17,6 +17,7 @@ uniform vec3  u_LightColor;
 uniform float u_SpecularExponent;
 uniform float u_DepthScale;
 uniform vec4  u_PortalPlane;
+uniform float u_LightWrapAround;
 
 varying vec3 var_Position;
 varying vec2 var_TexDiffuse;
@@ -182,9 +183,9 @@ void main()
 
 
 // add Rim Lighting to highlight the edges
-#if defined(r_RimLighting)
+#if defined(r_rimLighting)
 	float rim      = 1.0 - clamp(dot(N, V), 0, 1);
-	vec3  emission = r_RimColor.rgb * pow(rim, r_RimExponent);
+	vec3  emission = r_rimColor.rgb * pow(rim, r_rimExponent);
 
 	// gl_FragColor = vec4(emission, 1.0);
 	// return;
@@ -197,7 +198,7 @@ void main()
 	float NL = dot(N, L) * 0.5 + 0.5;
 	NL *= NL;
 #elif defined(r_WrapAroundLighting)
-	float NL = clamp(dot(N, L) + r_WrapAroundLighting, 0.0, 1.0) / clamp(1.0 + r_WrapAroundLighting, 0.0, 1.0);
+	float NL = clamp(dot(N, L) + u_LightWrapAround, 0.0, 1.0) / clamp(1.0 + u_LightWrapAround, 0.0, 1.0);
 #else
 	float NL = clamp(dot(N, L), 0.0, 1.0);
 #endif
@@ -209,7 +210,7 @@ void main()
 	vec4 color = diffuse;
 	color.rgb *= light;
 	color.rgb += specular;
-#if defined(r_RimLighting)
+#if defined(r_rimLighting)
 	color.rgb += emission;
 #endif
 

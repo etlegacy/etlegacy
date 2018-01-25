@@ -67,7 +67,7 @@ textures/bunker_sd/concrete_c07bcmp_sand
 	diffusemap textures/bunker_sd/concrete_c07bcmp_sand
 	bumpmap textures/bunker_sd/concrete_c07bcmp_sand_n
 	specularmap textures/bunker_sd/concrete_c07bcmp_sand_s
-	implicitmap -
+	implicitMap -
 }
 
 textures/bunker_sd/int_wall01
@@ -76,7 +76,7 @@ textures/bunker_sd/int_wall01
 	diffusemap textures/bunker_sd/int_wall01
 	bumpmap textures/bunker_sd/int_wall01_n
 	specularmap textures/bunker_sd/int_wall01_s
-	implicitmap -
+	implicitMap -
 }
 
 textures/bunker_sd/int_wall01_rusty
@@ -85,7 +85,7 @@ textures/bunker_sd/int_wall01_rusty
 	diffusemap textures/bunker_sd/int_wall01_rusty
 	bumpmap textures/bunker_sd/int_wall01_rusty_n
 	specularmap textures/bunker_sd/int_wall01_rusty_s
-	implicitmap -
+	implicitMap -
 }
 
 textures/bunker_sd/int_wall01_white
@@ -94,7 +94,7 @@ textures/bunker_sd/int_wall01_white
 	diffusemap textures/bunker_sd/int_wall01_white
 	bumpmap textures/bunker_sd/int_wall01_white_n
 	specularmap textures/bunker_sd/int_wall01_white_s
-	implicitmap -
+	implicitMap -
 }
 
 textures/bunker_sd/int_wall07
@@ -103,6 +103,6 @@ textures/bunker_sd/int_wall07
 	diffusemap textures/bunker_sd/int_wall07
 	bumpmap textures/bunker_sd/int_wall07_n
 	specularmap textures/bunker_sd/int_wall07_s
-	implicitmap -
+	implicitMap -
 }
 

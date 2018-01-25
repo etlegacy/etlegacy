@@ -513,8 +513,7 @@ typedef struct
 
 	cullResult_t cull;
 	vec3_t localBounds[2];
-	vec3_t worldBounds[2];              ///< only set when not completely culled. use them for light interactions
-	vec3_t worldCorners[8];
+	vec3_t worldBounds[2];
 
 	// GPU occlusion culling
 	qboolean noOcclusionQueries;
@@ -1506,48 +1505,30 @@ typedef struct
 	void **elements;
 } growList_t;
 
-#if 0
-enum
-{
-	ATTR_INDEX_POSITION  = 0,
-	ATTR_INDEX_TEXCOORD0 = 8,
-	ATTR_INDEX_TEXCOORD1 = 9,
-//  ATTR_INDEX_TEXCOORD2 = 10,
-//  ATTR_INDEX_TEXCOORD3 = 11,
-	ATTR_INDEX_TANGENT        = 12,
-	ATTR_INDEX_BINORMAL       = 13,
-	ATTR_INDEX_NORMAL         = 14,
-	ATTR_INDEX_COLOR          = 15,
-	ATTR_INDEX_LIGHTCOLOR     = 16,
-	ATTR_INDEX_LIGHTDIRECTION = 17,
-	ATTR_INDEX_BONE_INDEXES   = 10,
-	ATTR_INDEX_BONE_WEIGHTS   = 11,
-};
-#else
-enum
-{
-	ATTR_INDEX_POSITION,
-	ATTR_INDEX_TEXCOORD0,
-	ATTR_INDEX_TEXCOORD1,
-	ATTR_INDEX_TANGENT,
-	ATTR_INDEX_BINORMAL,
-	ATTR_INDEX_NORMAL,
-	ATTR_INDEX_COLOR,
 
-	//ATTR_INDEX_PAINTCOLOR,
+enum
+{
+	ATTR_INDEX_POSITION     = 0,
+	ATTR_INDEX_TEXCOORD0    = 1,
+	ATTR_INDEX_TEXCOORD1    = 2,
+	ATTR_INDEX_TANGENT      = 3,
+	ATTR_INDEX_BINORMAL     = 4,
+	ATTR_INDEX_NORMAL       = 5,
+	ATTR_INDEX_COLOR        = 6,
+	// GPU vertex skinning
+	ATTR_INDEX_BONE_INDEXES = 7,
+	ATTR_INDEX_BONE_WEIGHTS = 8,
+	// GPU vertex animations
+	ATTR_INDEX_POSITION2    = 9,
+	ATTR_INDEX_TANGENT2     = 10,
+	ATTR_INDEX_BINORMAL2    = 11,
+	ATTR_INDEX_NORMAL2      = 12,
+
+	//ATTR_INDEX_PAINTCOLOR,      ///< for advanced terrain blending
 	//ATTR_INDEX_LIGHTDIRECTION,
 
-	// GPU vertex skinning
-	ATTR_INDEX_BONE_INDEXES,
-	ATTR_INDEX_BONE_WEIGHTS,
-
-	// GPU vertex animations
-	ATTR_INDEX_POSITION2,
-	ATTR_INDEX_TANGENT2,
-	ATTR_INDEX_BINORMAL2,
-	ATTR_INDEX_NORMAL2,
+	ATTR_INDEX_COUNT        = 13
 };
-#endif
 
 // *INDENT-OFF*
 enum
@@ -1639,6 +1620,7 @@ enum GLAttrDef
 #undef ATTR_DECL
 };
 
+/*
 enum
 {
 	GENERICDEF_USE_DEFORM_VERTEXES  = 0x0001,
@@ -1682,6 +1664,7 @@ enum
 	LIGHTDEF_ALL                 = 0x01FF,
 	LIGHTDEF_COUNT               = 0x0200
 };
+*/
 
 enum
 {
@@ -2340,7 +2323,6 @@ typedef struct srfGridMesh_s
 	srfVert_t *verts;
 
 	// BSP VBO offsets
-	int firstVert;
 	int firstTriangle;
 
 	// static render data
@@ -2372,7 +2354,7 @@ typedef struct
 	srfVert_t *verts;
 
 	// BSP VBO offsets
-	int firstVert;
+	//int firstVert;
 	int firstTriangle;
 
 	// static render data
@@ -2404,7 +2386,7 @@ typedef struct
 	srfVert_t *verts;
 
 	// BSP VBO offsets
-	int firstVert;
+	//int firstVert;
 	int firstTriangle;
 
 	// static render data
@@ -2440,14 +2422,14 @@ typedef struct
 	cplane_t plane;
 
 	// dynamic lighting information
-	int dlightBits;
+	//int dlightBits;
 
 	// triangle definitions
 	int numIndexes;
 	glIndex_t *indexes;
 
 	int numVerts;
-	vec4_t *xyz;
+	vec3_t *xyz;
 	vec4_t *normal;
 	vec2_t *texCoords;
 	vec2_t *lmTexCoords;
@@ -2455,6 +2437,10 @@ typedef struct
 	// origins
 	int numInstances;
 	foliageInstance_t *instances;
+
+	// static render data
+	VBO_t *vbo;
+	IBO_t *ibo;
 } srfFoliage_t;
 
 /**
@@ -3666,6 +3652,7 @@ typedef struct
 	float triangleTable[FUNCTABLE_SIZE];
 	float sawToothTable[FUNCTABLE_SIZE];
 	float inverseSawToothTable[FUNCTABLE_SIZE];
+	float noiseTable[FUNCTABLE_SIZE];
 	float fogTable[FOG_TABLE_SIZE];
 
 	uint32_t occlusionQueryObjects[MAX_OCCLUSION_QUERIES];
@@ -3850,7 +3837,6 @@ extern cvar_t *r_showOcclusionQueries;
 extern cvar_t *r_showBatches;
 extern cvar_t *r_showLightMaps;                 ///< render lightmaps only
 extern cvar_t *r_showDeluxeMaps;
-extern cvar_t *r_showAreaPortals;
 extern cvar_t *r_showCubeProbes;
 extern cvar_t *r_showBspNodes;
 extern cvar_t *r_showParallelShadowSplits;
@@ -3941,6 +3927,7 @@ void R_AddDrawSurf(surfaceType_t *surface, shader_t *shader, int lightmapNum, in
 void R_LocalNormalToWorld(const vec3_t local, vec3_t world);
 void R_LocalPointToWorld(const vec3_t local, vec3_t world);
 
+cullResult_t R_CullBox(vec3_t worldBounds[2]);
 cullResult_t R_CullLocalBox(vec3_t bounds[2]);
 int R_CullLocalPointAndRadius(vec3_t origin, float radius);
 int R_CullPointAndRadius(vec3_t origin, float radius);
@@ -4255,7 +4242,7 @@ void Tess_StageIteratorDebug();
 void Tess_StageIteratorGeneric();
 void Tess_StageIteratorGBuffer();
 void Tess_StageIteratorGBufferNormalsOnly();
-void Tess_StageIteratorDepthFill();
+//void Tess_StageIteratorDepthFill();
 void Tess_StageIteratorShadowFill();
 void Tess_StageIteratorLighting();
 void Tess_StageIteratorSky();

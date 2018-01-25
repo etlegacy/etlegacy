@@ -151,8 +151,6 @@ static int R_CullModel(trRefEntity_t *ent)
 	mdxHeader_t *oldFrameHeader, *newFrameHeader;
 	mdxFrame_t  *oldFrame, *newFrame;
 	int         i;
-	vec3_t      v;
-	vec3_t      transformed;
 
 	newFrameHeader = R_GetModelByHandle(ent->e.frameModel)->mdx;
 	oldFrameHeader = R_GetModelByHandle(ent->e.oldframeModel)->mdx;
@@ -178,19 +176,7 @@ static int R_CullModel(trRefEntity_t *ent)
 	}
 
 	// setup world bounds for intersection tests
-	ClearBounds(ent->worldBounds[0], ent->worldBounds[1]);
-
-	for (i = 0; i < 8; i++)
-	{
-		v[0] = ent->localBounds[i & 1][0];
-		v[1] = ent->localBounds[(i >> 1) & 1][1];
-		v[2] = ent->localBounds[(i >> 2) & 1][2];
-
-		// transform local bounds vertices into world space
-		R_LocalPointToWorld(v, transformed);
-
-		AddPointToBounds(transformed, ent->worldBounds[0], ent->worldBounds[1]);
-	}
+	R_SetupEntityWorldBounds(ent);
 
 	// cull bounding sphere ONLY if this is not an upscaled entity
 	if (!ent->e.nonNormalizedAxes)

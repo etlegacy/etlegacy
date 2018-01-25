@@ -40,7 +40,7 @@ textures/egypt_windows_sd/siwa_windows6
 	diffusemap textures/egypt_windows_sd/siwa_windows6
 	bumpmap textures/egypt_windows_sd/siwa_windows6_n
 	specularmap textures/egypt_windows_sd/siwa_windows6_s
-	implicitmap -
+	implicitMap -
 }
 
 textures/egypt_windows_sd/siwa_windows7
@@ -49,7 +49,7 @@ textures/egypt_windows_sd/siwa_windows7
 	diffusemap textures/egypt_windows_sd/siwa_windows7
 	bumpmap textures/egypt_windows_sd/siwa_windows7_n
 	specularmap textures/egypt_windows_sd/siwa_windows7_s
-	implicitmap -
+	implicitMap -
 }
 
 textures/egypt_windows_sd/siwa_windows8
@@ -58,7 +58,7 @@ textures/egypt_windows_sd/siwa_windows8
 	diffusemap textures/egypt_windows_sd/siwa_windows8
 	bumpmap textures/egypt_windows_sd/siwa_windows8_n
 	specularmap textures/egypt_windows_sd/siwa_windows8_s
-	implicitmap -
+	implicitMap -
 }
 
 textures/egypt_windows_sd/window02a
@@ -67,5 +67,5 @@ textures/egypt_windows_sd/window02a
 	diffusemap textures/egypt_windows_sd/window02a
 	bumpmap textures/egypt_windows_sd/window02a_n
 	specularmap textures/egypt_windows_sd/window02a_s
-	implicitmap -
+	implicitMap -
 }
