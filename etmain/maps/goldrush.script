@@ -149,6 +149,10 @@ game_manager
 		wm_removeteamvoiceannounce 0 "goldrush_axis_tank_steal"
 		// *---------------------------------------------------------------------------------*
 	}
+
+	trigger axis_object_stolen
+	{
+	}
 }
 
 ceilingfan
@@ -188,7 +192,6 @@ tank_sound
 	}
 }
 
-// digibob: converting truck script from goldrush over...
 // ============================================================================
 // accum 0, track state
 // accum 1
@@ -226,6 +229,14 @@ tank
 
 		trigger tank sound_idle
 		trigger tank tracks_stop
+	}
+
+	mg42 mount
+	{
+	}
+	
+	mg42 unmount
+	{
 	}
 
 	// ========================================
@@ -343,7 +354,6 @@ tank
 		trigger self stopcheck
 		trigger self move
 	}
-
 
 // ===========================================================================================
 // movement
@@ -1637,10 +1647,14 @@ tank_trigger
 		trigger tank_trigger bot_goal_loop
 	}
 
+	// trigger always have an activate event
+	activate
+	{
+	}
+
 	trigger bot_goal_loop
 	{
 		wait 4000	// check every 4 seconds
-		trigger tank bot_active_check
 		trigger tank_trigger bot_goal_loop
 	}
 }
@@ -1667,6 +1681,11 @@ tank_construct
 		constructible_health 1200
 		constructible_constructxpbonus 10
 		constructible_destructxpbonus 10
+	}
+
+	// this is called at start of repairing
+	buildstart final
+	{
 	}
 
 	built final
@@ -2768,6 +2787,12 @@ truck_trigger
 
 		attachtotag truck tag_wback
 	}
+
+	// trigger always have an activate event
+	// this is permanently called when truck is moved by allies
+	activate
+	{
+	}
 }
 
 truck_disabler
@@ -2823,7 +2848,6 @@ rubble2_damaged
 	}
 }
 
-
 defense2_toi
 {
 	// First corner after crossing bridge - Barrel
@@ -2854,7 +2878,6 @@ defense1
 		setstate defense1_materials_clip default
 		setstate defense1_flag default
 
-
 		setstate defense1_teeth invisible
 	}
 
@@ -2864,7 +2887,6 @@ defense1
 		setstate defense1_materials_clip default
 		setstate defense1_flag default
 
-
 		setstate defense1_teeth underconstruction
 	}
 
@@ -2873,7 +2895,6 @@ defense1
 		setstate defense1_materials invisible
 		setstate defense1_materials_clip invisible
 		setstate defense1_flag invisible
-
 
 		setstate defense1_teeth default
 
@@ -2895,7 +2916,6 @@ defense1
 		setstate defense1_materials_clip default
 		setstate defense1_flag default
 
-
 		setstate defense1_teeth invisible
 	}
 
@@ -2904,7 +2924,6 @@ defense1
 		setstate defense1_materials default
 		setstate defense1_materials_clip default
 		setstate defense1_flag default
-
 
 		setstate defense1_teeth invisible
 
@@ -2949,7 +2968,6 @@ defense2
 		setstate defense2_materials_clip default
 		setstate defense2_flag default
 
-
 		setstate defense2_teeth invisible
 	}
 
@@ -2959,7 +2977,6 @@ defense2
 		setstate defense2_materials_clip default
 		setstate defense2_flag default
 
-
 		setstate defense2_teeth underconstruction
 	}
 
@@ -2968,7 +2985,6 @@ defense2
 		setstate defense2_materials invisible
 		setstate defense2_materials_clip invisible
 		setstate defense2_flag invisible
-
 
 		setstate defense2_teeth default
 
@@ -2990,7 +3006,6 @@ defense2
 		setstate defense2_materials_clip default
 		setstate defense2_flag default
 
-
 		setstate defense2_teeth invisible
 	}
 
@@ -2999,7 +3014,6 @@ defense2
 		setstate defense2_materials default
 		setstate defense2_materials_clip default
 		setstate defense2_flag default
-
 
 		setstate defense2_teeth invisible
 
@@ -3052,7 +3066,6 @@ defense3
 		setstate defense3_materials_clip default
 		setstate defense3_flag default
 
-
 		setstate defense3_wire invisible
 		setstate defense3_hurt invisible
 		setstate defense3_teeth1 invisible
@@ -3065,7 +3078,6 @@ defense3
 		setstate defense3_materials_clip default
 		setstate defense3_flag default
 
-
 		setstate defense3_wire underconstruction
 		setstate defense3_hurt underconstruction
 		setstate defense3_teeth1 underconstruction
@@ -3077,7 +3089,6 @@ defense3
 		setstate defense3_materials invisible
 		setstate defense3_materials_clip invisible
 		setstate defense3_flag invisible
-
 
 		setstate defense3_wire default
 		setstate defense3_hurt default
@@ -3102,7 +3113,6 @@ defense3
 		setstate defense3_materials_clip default
 		setstate defense3_flag default
 
-
 		setstate defense3_wire invisible
 		setstate defense3_hurt invisible
 		setstate defense3_teeth1 invisible
@@ -3114,7 +3124,6 @@ defense3
 		setstate defense3_materials default
 		setstate defense3_materials_clip default
 		setstate defense3_flag default
-
 
 		setstate defense3_wire invisible
 		setstate defense3_hurt invisible
@@ -3163,7 +3172,6 @@ defense4
 		setstate defense4_materials_clip default
 		setstate defense4_flag default
 
-
 		setstate defense4_wire invisible
 		setstate defense4_hurt invisible
 		setstate defense4_teeth1 invisible
@@ -3176,7 +3184,6 @@ defense4
 		setstate defense4_materials_clip default
 		setstate defense4_flag default
 
-
 		setstate defense4_wire underconstruction
 		setstate defense4_hurt underconstruction
 		setstate defense4_teeth1 underconstruction
@@ -3188,7 +3195,6 @@ defense4
 		setstate defense4_materials invisible
 		setstate defense4_materials_clip invisible
 		setstate defense4_flag invisible
-
 
 		setstate defense4_wire default
 		setstate defense4_hurt default
@@ -3213,7 +3219,6 @@ defense4
 		setstate defense4_materials_clip default
 		setstate defense4_flag default
 
-
 		setstate defense4_wire invisible
 		setstate defense4_hurt invisible
 		setstate defense4_teeth1 invisible
@@ -3225,7 +3230,6 @@ defense4
 		setstate defense4_materials default
 		setstate defense4_materials_clip default
 		setstate defense4_flag default
-
 
 		setstate defense4_wire invisible
 		setstate defense4_hurt invisible
@@ -3265,7 +3269,6 @@ defense4
 		// *---------------------------------------------------------------------------------*
 	}
 }
-
 
 // *********************************************
 // ****************** FLAG STUFF ***************
@@ -3405,6 +3408,10 @@ gold_crate
 
 		wm_teamvoiceannounce 1 "goldrush_allies_gold2_returned"
 		// *----------------------------------- vo ------------------------------------------*
+	}
+
+	trigger captured
+	{
 	}
 }
 
