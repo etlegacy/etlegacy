@@ -250,6 +250,7 @@ int G_Script_EventForString(const char *string)
 		}
 	}
 
+	// this occures on map start when map script isn't fully init
 	return -1;
 }
 
@@ -712,6 +713,12 @@ int G_Script_GetEventIndex(gentity_t *ent, const char *eventStr, const char *par
 		}
 	}
 
+	// show debugging info - this is missing in vanilla!
+	// it'll show mappers explicit events called by ET mods - see goldrush script
+	// note for scripters: ignore (n/a) GScript events and pain events for game objects f.e. "(tank) GScript event not found: pain 1199 1200"
+	if (g_scriptDebug.integer)
+		G_Printf("%i : (%s) GScript event not found: %s %s\n", level.time, ent->scriptName ? ent->scriptName : "n/a", eventStr, params ? params : "");
+	}
 	return -1;      // event not found/matched in this ent
 }
 
