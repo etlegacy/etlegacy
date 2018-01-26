@@ -3895,10 +3895,8 @@ static void PM_Weapon(void)
 	// set weapon recoil
 	pm->pmext->lastRecoilDeltaTime = 0;
 
-	switch (pm->ps->weapon)
+	if (GetWeaponTableData(pm->ps->weapon)->isRifleWithScope)
 	{
-	case WP_GARAND_SCOPE:
-	case WP_K43_SCOPE:
 		pm->pmext->weapRecoilTime     = pm->cmd.serverTime;
 		pm->pmext->weapRecoilDuration = 300;
 		pm->pmext->weapRecoilYaw      = crandom() * .5f;
@@ -3911,9 +3909,10 @@ static void PM_Weapon(void)
 		{
 			pm->pmext->weapRecoilPitch = .5f;
 		}
-		break;
-	case WP_MOBILE_MG42:
-		pm->ps->weapHeat[WP_MOBILE_MG42_SET] = pm->ps->weapHeat[WP_MOBILE_MG42]; // sync heat for overheat check
+	}
+	else if (GetWeaponTableData(pm->ps->weapon)->isMG)
+	{
+		pm->ps->weapHeat[GetWeaponTableData(pm->ps->weapon)->weapAlts] = pm->ps->weapHeat[pm->ps->weapon]; // sync heat for overheat check
 
 		pm->pmext->weapRecoilTime     = pm->cmd.serverTime;
 		pm->pmext->weapRecoilDuration = 200;
@@ -3927,36 +3926,15 @@ static void PM_Weapon(void)
 			pm->pmext->weapRecoilYaw   = crandom() * .25f;
 			pm->pmext->weapRecoilPitch = .75f * random() * .2f;
 		}
-		break;
-	case WP_MOBILE_BROWNING:
-		pm->ps->weapHeat[WP_MOBILE_BROWNING_SET] = pm->ps->weapHeat[WP_MOBILE_BROWNING]; // sync heat for overheat check
-
-		pm->pmext->weapRecoilTime     = pm->cmd.serverTime;
-		pm->pmext->weapRecoilDuration = 200;
-		if ((pm->ps->pm_flags & PMF_DUCKED) || (pm->ps->eFlags & EF_PRONE))
-		{
-			pm->pmext->weapRecoilYaw   = crandom() * .5f;
-			pm->pmext->weapRecoilPitch = .45f * random() * .15f;
-		}
-		else
-		{
-			pm->pmext->weapRecoilYaw   = crandom() * .25f;
-			pm->pmext->weapRecoilPitch = .75f * random() * .2f;
-		}
-		break;
-	case WP_MOBILE_MG42_SET:
-		pm->ps->weapHeat[WP_MOBILE_MG42] = pm->ps->weapHeat[WP_MOBILE_MG42_SET]; // sync heat for overheat check
-
-		pm->pmext->weapRecoilTime = 0;
-		pm->pmext->weapRecoilYaw  = 0.f;
-		break;
-	case WP_MOBILE_BROWNING_SET:
-		pm->ps->weapHeat[WP_MOBILE_BROWNING] = pm->ps->weapHeat[WP_MOBILE_BROWNING_SET]; // sync heat for overheat check
-
-		pm->pmext->weapRecoilTime = 0;
-		pm->pmext->weapRecoilYaw  = 0.f;
-		break;
-	case WP_FG42SCOPE:
+	}
+	else if (GetWeaponTableData(pm->ps->weapon)->isMGSet)
+	{
+		pm->ps->weapHeat[GetWeaponTableData(pm->ps->weapon)->weapAlts] = pm->ps->weapHeat[pm->ps->weapon]; // sync heat for overheat check
+		pm->pmext->weapRecoilTime                                      = 0;
+		pm->pmext->weapRecoilYaw                                       = 0.f;
+	}
+	else if (pm->ps->weapon == WP_FG42SCOPE)
+	{
 		pm->pmext->weapRecoilTime     = pm->cmd.serverTime;
 		pm->pmext->weapRecoilDuration = 100;
 		pm->pmext->weapRecoilYaw      = 0.f;
@@ -3966,24 +3944,18 @@ static void PM_Weapon(void)
 		{
 			pm->pmext->weapRecoilPitch *= .5f;
 		}
-		break;
-	case WP_LUGER:
-	case WP_SILENCER:
-	case WP_AKIMBO_LUGER:
-	case WP_AKIMBO_SILENCEDLUGER:
-	case WP_COLT:
-	case WP_SILENCED_COLT:
-	case WP_AKIMBO_COLT:
-	case WP_AKIMBO_SILENCEDCOLT:
+	}
+	else if (GetWeaponTableData(pm->ps->weapon)->isPistol || GetWeaponTableData(pm->ps->weapon)->isSilencedPistol || GetWeaponTableData(pm->ps->weapon)->isAkimbo)
+	{
 		pm->pmext->weapRecoilTime     = pm->cmd.serverTime;
 		pm->pmext->weapRecoilDuration = pm->skill[SK_LIGHT_WEAPONS] >= 3 ? 70 : 100;
 		pm->pmext->weapRecoilYaw      = 0.f; //crandom() * .1f;
 		pm->pmext->weapRecoilPitch    = pm->skill[SK_LIGHT_WEAPONS] >= 3 ? .25f * random() * .15f : .45f * random() * .15f;
-		break;
-	default:
+	}
+	else
+	{
 		pm->pmext->weapRecoilTime = 0;
 		pm->pmext->weapRecoilYaw  = 0.f;
-		break;
 	}
 
 	// check for overheat
