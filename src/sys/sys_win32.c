@@ -34,7 +34,7 @@
  */
 
 #ifndef DEDICATED
-#	include <SDL2/SDL_video.h>
+#   include <SDL2/SDL_video.h>
 #endif
 
 #include "../qcommon/q_shared.h"
@@ -59,7 +59,7 @@
 #include <setjmp.h>
 
 // Used to determine where to store user-specific files
-static char    homePath[MAX_OSPATH] = { 0 };
+static char homePath[MAX_OSPATH] = { 0 };
 //static jmp_buf sys_exitframe;
 //static int     sys_retcode;
 //static char    sys_exitstr[MAX_STRING_CHARS];
@@ -194,8 +194,8 @@ qboolean Sys_LowPhysicalMemory(void)
  */
 const char *Sys_Basename(char *path)
 {
-	static char  base[MAX_OSPATH] = { 0 };
-	size_t length;
+	static char base[MAX_OSPATH] = { 0 };
+	size_t      length;
 
 	length = strlen(path) - 1;
 
@@ -224,8 +224,8 @@ const char *Sys_Basename(char *path)
  */
 const char *Sys_Dirname(char *path)
 {
-	static char  dir[MAX_OSPATH] = { 0 };
-	size_t length;
+	static char dir[MAX_OSPATH] = { 0 };
+	size_t      length;
 
 	Q_strncpyz(dir, path, sizeof(dir));
 	length = strlen(dir) - 1;
@@ -410,7 +410,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, const char *f
 	intptr_t           findhandle;
 	int                flag;
 	int                i;
-	size_t       extLen;
+	size_t             extLen;
 #ifdef DEDICATED
 	qboolean invalid;
 #endif
@@ -623,8 +623,8 @@ void Sys_ErrorDialog(const char *error)
 
 		if (clipMemory)
 		{
-			char         *p = clipMemory;
-			char         buffer[1024];
+			char   *p = clipMemory;
+			char   buffer[1024];
 			size_t size;
 
 			while ((size = CON_LogRead(buffer, sizeof(buffer))) > 0)
@@ -1064,10 +1064,10 @@ void Sys_PlatformInit(void)
  */
 qboolean Sys_DllExtension(const char *name)
 {
-// % ~ * \
-	if(strstr(name, "/") || strstr(name, "\\") || strstr(name, "..") || strstr(name, "::"))
+// % ~ * '\'
+	if (strstr(name, "/") || strstr(name, "\\") || strstr(name, "..") || strstr(name, "::"))
 	{
-			
+
 	}
 
 	return COM_CompareExtension(name, DLL_EXT);
