@@ -3001,8 +3001,6 @@ void PM_AdjustAimSpreadScale(void)
  */
 static qboolean PM_MountedFire(void)
 {
-	Com_Printf("Mounted Fire %d\n", pm->ps->persistant[PERS_HWEAPON_USE]);
-
 	switch (pm->ps->persistant[PERS_HWEAPON_USE])
 	{
 	case 1:
