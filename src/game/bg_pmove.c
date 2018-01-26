@@ -2713,29 +2713,58 @@ void PM_CheckForReload(weapon_t weapon)
  */
 static void PM_SwitchIfEmpty(void)
 {
-	// weapon here are thrown explosives or syringe/adrenaline, if they are not return
-	if (!(GetWeaponTableData(pm->ps->weapon)->isThrowable && GetWeaponTableData(pm->ps->weapon)->isExplosive)
-	    && !GetWeaponTableData(pm->ps->weapon)->isSyringe)  // WP_KNIFE WP_SATCHEL_DET
+	// weapon here are explosives or syringe/adrenaline, if they are not --> return
+	if (!GetWeaponTableData(pm->ps->weapon)->isExplosive && !GetWeaponTableData(pm->ps->weapon)->isSyringe)  // WP_KNIFE WP_SATCHEL_DET
 	{
 		return;
 	}
 
-	if (pm->ps->ammoclip[GetWeaponTableData(pm->ps->weapon)->clipIndex])        // still got ammo in clip
+	// In multiplayer, pfaust fires once then switches to pistol since it's useless for a while
+	// after throwing landmine, let switch to pliers
+	if (GetWeaponTableData(pm->ps->weapon)->useAmmo && !GetWeaponTableData(pm->ps->weapon)->isPanzer && pm->ps->weapon != WP_LANDMINE)
 	{
-		return;
-	}
+		// WP_M7 and WP_GPG40 run out of ammo immediately after firing their last grenade
+		if (GetWeaponTableData(pm->ps->weapon)->isRiflenade)
+		{
+			if (pm->ps->ammoclip[GetWeaponTableData(pm->ps->weapon)->clipIndex])
+			{
+				return;
+			}
+		}
+		else if (GetWeaponTableData(pm->ps->weapon)->isMortarSet)                   // the ammo from mortar are stored in the mortar (not mortar set)
+		{
+			if (pm->ps->ammo[GetWeaponTableData(pm->ps->weapon)->weapAlts])
+			{
+				return;
+			}
+		}
+		else
+		{
+			if (pm->ps->ammoclip[GetWeaponTableData(pm->ps->weapon)->clipIndex])    // still got ammo in clip
+			{
+				return;
+			}
 
-	if (pm->ps->ammo[GetWeaponTableData(pm->ps->weapon)->ammoIndex])        // still got ammo in reserve
-	{
-		return;
+			if (pm->ps->ammo[GetWeaponTableData(pm->ps->weapon)->ammoIndex])        // still got ammo in reserve
+			{
+				return;
+			}
+		}
 	}
 
 	// If this was the last one, remove the weapon and switch away before the player tries to fire next
-
 	// NOTE: giving grenade ammo to a player will re-give him the weapon (if you do it through add_ammo())
-	if (GetWeaponTableData(pm->ps->weapon)->isGrenade || pm->ps->weapon == WP_DYNAMITE)
+	if (GetWeaponTableData(pm->ps->weapon)->isGrenade)
 	{
 		COM_BitClear(pm->ps->weapons, pm->ps->weapon);
+	}
+	else if (pm->ps->weapon == WP_SATCHEL)
+	{
+		pm->ps->ammoclip[WP_SATCHEL_DET] = 1;
+		pm->ps->ammo[WP_SATCHEL_DET]     = 1;
+		pm->ps->ammo[WP_SATCHEL]         = 0;
+		pm->ps->ammoclip[WP_SATCHEL]     = 0;
+		PM_BeginWeaponChange(WP_SATCHEL, WP_SATCHEL_DET, qfalse);
 	}
 
 	PM_AddEvent(EV_NOAMMO);
@@ -3792,86 +3821,14 @@ static void PM_Weapon(void)
 		}
 	}
 
-	switch (pm->ps->weapon) // weapon animation
+	// weapon firing animation
+	if (GetWeaponTableData(pm->ps->weapon)->firingAuto)
 	{
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_DYNAMITE:
-	case WP_K43:
-	case WP_KAR98:
-	case WP_GPG40:
-	case WP_CARBINE:
-	case WP_M7:
-	case WP_LANDMINE:
-	case WP_SMOKE_BOMB:
-		PM_StartWeaponAnim(weapattackanim);
-		break;
-	case WP_MP40:
-	case WP_THOMPSON:
-	case WP_STEN:
-	//case WP_MEDKIT: // commented out - fixes animation
-	case WP_PLIERS:
-	case WP_SMOKE_MARKER:
-	case WP_SATCHEL_DET:
-	case WP_MOBILE_MG42:
-	case WP_MOBILE_MG42_SET:
-	case WP_MOBILE_BROWNING:
-	case WP_MOBILE_BROWNING_SET:
 		PM_ContinueWeaponAnim(weapattackanim);
-		break;
-	case WP_MORTAR_SET:
-	case WP_MORTAR2_SET:
-		break;          // no animation
-	default:
-		// testing
-		//PM_ContinueWeaponAnim(weapattackanim);
-		PM_StartWeaponAnim(weapattackanim);
-		break;
 	}
-
-	// In multiplayer, pfaust fires once then switches to pistol since it's useless for a while
-	switch (pm->ps->weapon) // no ammo events
+	else if (!GetWeaponTableData(pm->ps->weapon)->isMortarSet)  // no animation for mortar set
 	{
-	case WP_PANZERFAUST:
-	case WP_BAZOOKA:
-	case WP_SMOKE_MARKER:
-	case WP_DYNAMITE:
-	case WP_SMOKE_BOMB:
-	case WP_LANDMINE:
-	case WP_SATCHEL:
-	case WP_MEDIC_ADRENALINE:
-		PM_AddEvent(EV_NOAMMO);
-		if (pm->ps->weapon == WP_SATCHEL)
-		{
-			pm->ps->ammoclip[WP_SATCHEL_DET] = 1;
-			pm->ps->ammo[WP_SATCHEL_DET]     = 1;
-			pm->ps->ammo[WP_SATCHEL]         = 0;
-			pm->ps->ammoclip[WP_SATCHEL]     = 0;
-			PM_BeginWeaponChange(WP_SATCHEL, WP_SATCHEL_DET, qfalse);
-		}
-		break;
-	// WP_M7 and WP_GPG40 run out of ammo immediately after firing their last grenade
-	case WP_M7:
-	case WP_GPG40:
-		if (!pm->ps->ammo[GetWeaponTableData(pm->ps->weapon)->ammoIndex])
-		{
-			PM_AddEvent(EV_NOAMMO);
-		}
-		break;
-	case WP_MORTAR_SET:
-		if (!pm->ps->ammo[WP_MORTAR])
-		{
-			PM_AddEvent(EV_NOAMMO);
-		}
-		break;
-	case WP_MORTAR2_SET:
-		if (!pm->ps->ammo[WP_MORTAR2])
-		{
-			PM_AddEvent(EV_NOAMMO);
-		}
-		break;
-	default:
-		break;
+		PM_StartWeaponAnim(weapattackanim);
 	}
 
 	if (GetWeaponTableData(pm->ps->weapon)->isAkimbo)
@@ -5091,7 +5048,6 @@ void PmoveSingle(pmove_t *pmove)
 				{
 					if (pm->ps->weaponstate == WEAPON_READY || pm->ps->weaponstate == WEAPON_FIRING)
 					{
-
 						// all clear, fire!
 						if ((pm->cmd.buttons & BUTTON_ATTACK) && !(pm->cmd.buttons & BUTTON_TALK))
 						{
