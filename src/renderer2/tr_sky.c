@@ -427,7 +427,7 @@ static void MakeSkyVec(float s, float t, int axis, vec4_t outSt, vec4_t outXYZ)
 	}
 }
 
-static int    sky_texorder[6] = { 0, 2, 1, 3, 4, 5 };
+//static int    sky_texorder[6] = { 0, 2, 1, 3, 4, 5 };
 static vec4_t s_skyPoints[SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1];
 static float  s_skyTexCoords[SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1][4];
 
