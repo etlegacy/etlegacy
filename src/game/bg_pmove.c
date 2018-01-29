@@ -3858,40 +3858,6 @@ static void PM_Weapon(void)
 	pm->pmext->releasedFire = qfalse;
 	pm->ps->lastFireTime    = pm->cmd.serverTime;
 
-	if (pm->ps->weapon == WP_MP40 || pm->ps->weapon == WP_THOMPSON || pm->ps->weapon == WP_STEN)
-	{
-		aimSpreadScaleAdd += rand() % 10;
-	}
-	if (GetWeaponTableData(pm->ps->weapon)->isMG || GetWeaponTableData(pm->ps->weapon)->isMGSet)
-	{
-		if (weapattackanim == WEAP_ATTACK_LASTSHOT)
-		{
-			addTime = 0;
-		}
-	}
-	else if (GetWeaponTableData(pm->ps->weapon)->isAkimbo)
-	{
-		// if you're firing an akimbo weapon, and your other gun is dry,
-		// nextshot needs to take 2x time
-
-		// fixed the swapped usage of akimboFire vs. the colt
-		// so that the last shot isn't delayed
-		if (!pm->ps->ammoclip[GetWeaponTableData(pm->ps->weapon)->clipIndex])
-		{
-			if (!akimboFire)
-			{
-				addTime *= 2;
-			}
-		}
-		else if (!pm->ps->ammoclip[GetWeaponTableData(GetWeaponTableData(pm->ps->weapon)->akimboSideArm)->clipIndex])
-		{
-			if (akimboFire)
-			{
-				addTime *= 2;
-			}
-		}
-	}
-
 	// set weapon recoil (kickback)
 	pm->pmext->lastRecoilDeltaTime = 0;
 	pm->pmext->weapRecoilTime      = GetWeaponTableData(pm->ps->weaponTime)->weapRecoilDuration ? pm->cmd.serverTime : 0;
@@ -3938,25 +3904,11 @@ static void PM_Weapon(void)
 		}
 	}
 
-	// check for overheat
-
-	// sync heat for overheat check
-	if (GetWeaponTableData(pm->ps->weapon)->isMG || GetWeaponTableData(pm->ps->weapon)->isMGSet)
+	// Aim Spread Scale handle
+	// add randomness
+	if (pm->ps->weapon == WP_MP40 || pm->ps->weapon == WP_THOMPSON || pm->ps->weapon == WP_STEN)
 	{
-		pm->ps->weapHeat[GetWeaponTableData(pm->ps->weapon)->weapAlts] = pm->ps->weapHeat[pm->ps->weapon];
-	}
-
-	// the weapon can overheat, and it's hot
-	if (GetWeaponTableData(pm->ps->weapon)->maxHeat && pm->ps->weapHeat[pm->ps->weapon])
-	{
-		// it is overheating
-		if (pm->ps->weapHeat[pm->ps->weapon] >= GetWeaponTableData(pm->ps->weapon)->maxHeat)
-		{
-			pm->ps->weapHeat[pm->ps->weapon] = GetWeaponTableData(pm->ps->weapon)->maxHeat;     // cap heat to max
-			PM_AddEvent(EV_WEAP_OVERHEAT);
-			//PM_StartWeaponAnim(WEAP_IDLE1); // removed.  client handles anim in overheat event
-			addTime = 2000;     // force "heat recovery minimum" to 2 sec right now
-		}
+		aimSpreadScaleAdd += rand() % 10;
 	}
 
 	// add the recoil amount to the aimSpreadScale
@@ -3966,10 +3918,6 @@ static void PM_Weapon(void)
 	{
 		pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;
 	}
-	//if (pm->ps->aimSpreadScaleFloat < 0)
-	//{
-	//	pm->ps->aimSpreadScaleFloat = 0;
-	//}
 
 	if (pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3 && pm->ps->stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
 	{
@@ -3977,6 +3925,49 @@ static void PM_Weapon(void)
 	}
 
 	pm->ps->aimSpreadScale = (int)(pm->ps->aimSpreadScaleFloat);
+
+	if (GetWeaponTableData(pm->ps->weapon)->isMG || GetWeaponTableData(pm->ps->weapon)->isMGSet)
+	{
+		// sync heat for overheat check
+		pm->ps->weapHeat[GetWeaponTableData(pm->ps->weapon)->weapAlts] = pm->ps->weapHeat[pm->ps->weapon];
+
+		if (weapattackanim == WEAP_ATTACK_LASTSHOT)
+		{
+			addTime = 0;
+		}
+	}
+	else if (GetWeaponTableData(pm->ps->weapon)->isAkimbo)
+	{
+		// if you're firing an akimbo weapon, and your other gun is dry,
+		// nextshot needs to take 2x time
+
+		// fixed the swapped usage of akimboFire vs. the colt
+		// so that the last shot isn't delayed
+		if (!pm->ps->ammoclip[GetWeaponTableData(pm->ps->weapon)->clipIndex])
+		{
+			if (!akimboFire)
+			{
+				addTime *= 2;
+			}
+		}
+		else if (!pm->ps->ammoclip[GetWeaponTableData(GetWeaponTableData(pm->ps->weapon)->akimboSideArm)->clipIndex])
+		{
+			if (akimboFire)
+			{
+				addTime *= 2;
+			}
+		}
+	}
+
+	// check for overheat
+	// the weapon can overheat, and it is overheating
+	if (GetWeaponTableData(pm->ps->weapon)->maxHeat && pm->ps->weapHeat[pm->ps->weapon] >= GetWeaponTableData(pm->ps->weapon)->maxHeat)
+	{
+		pm->ps->weapHeat[pm->ps->weapon] = GetWeaponTableData(pm->ps->weapon)->maxHeat;         // cap heat to max
+		PM_AddEvent(EV_WEAP_OVERHEAT);
+		//PM_StartWeaponAnim(WEAP_IDLE1); // removed.  client handles anim in overheat event
+		addTime = 2000;         // force "heat recovery minimum" to 2 sec right now
+	}
 
 	pm->ps->weaponTime += addTime;
 
