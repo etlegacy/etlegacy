@@ -2637,8 +2637,8 @@ void PM_CheckForReload(weapon_t weapon)
 	case WEAPON_RAISING_TORELOAD:
 	case WEAPON_DROPPING:
 	case WEAPON_DROPPING_TORELOAD:
-	case WEAPON_READYING:
-	case WEAPON_RELAXING:
+	//case WEAPON_READYING:
+	//case WEAPON_RELAXING:
 	case WEAPON_RELOADING:
 		return;
 	default:
@@ -3022,7 +3022,7 @@ void PM_AdjustAimSpreadScale(void)
 	pm->ps->aimSpreadScale = (int)pm->ps->aimSpreadScaleFloat;  // update the int for the client
 }
 
-#define weaponstateFiring (pm->ps->weaponstate == WEAPON_FIRING || pm->ps->weaponstate == WEAPON_FIRINGALT)
+#define weaponstateFiring (pm->ps->weaponstate == WEAPON_FIRING /*|| pm->ps->weaponstate == WEAPON_FIRINGALT*/)
 
 /**
  * @brief Special mounted mg42 handling
@@ -3421,11 +3421,11 @@ static void PM_Weapon(void)
 		}
 	}
 
-	if (pm->ps->weaponstate == WEAPON_RELAXING)
-	{
-		pm->ps->weaponstate = WEAPON_READY;
-		return;
-	}
+	//if (pm->ps->weaponstate == WEAPON_RELAXING)
+	//{
+	//	pm->ps->weaponstate = WEAPON_READY;
+	//	return;
+	//}
 
 	// make weapon function
 	if (pm->ps->weaponTime > 0)

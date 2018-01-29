@@ -4625,8 +4625,8 @@ int BG_simpleWeaponState(int ws)
 	switch (ws)
 	{
 	case WEAPON_READY:
-	case WEAPON_READYING:
-	case WEAPON_RELAXING:
+	//case WEAPON_READYING:
+	//case WEAPON_RELAXING:
 		return WSTATE_IDLE;
 	case WEAPON_RAISING:
 	case WEAPON_DROPPING:
