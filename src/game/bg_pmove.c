@@ -3862,7 +3862,7 @@ static void PM_Weapon(void)
 	{
 		aimSpreadScaleAdd += rand() % 10;
 	}
-	else if (GetWeaponTableData(pm->ps->weapon)->isMG || GetWeaponTableData(pm->ps->weapon)->isMGSet)
+	if (GetWeaponTableData(pm->ps->weapon)->isMG || GetWeaponTableData(pm->ps->weapon)->isMGSet)
 	{
 		if (weapattackanim == WEAP_ATTACK_LASTSHOT)
 		{
@@ -3892,73 +3892,59 @@ static void PM_Weapon(void)
 		}
 	}
 
-	// set weapon recoil
+	// set weapon recoil (kickback)
 	pm->pmext->lastRecoilDeltaTime = 0;
+	pm->pmext->weapRecoilTime      = GetWeaponTableData(pm->ps->weaponTime)->weapRecoilDuration ? pm->cmd.serverTime : 0;
+	pm->pmext->weapRecoilDuration  = GetWeaponTableData(pm->ps->weaponTime)->weapRecoilDuration;
+	pm->pmext->weapRecoilYaw       = GetWeaponTableData(pm->ps->weaponTime)->weapRecoilYaw[0] * crandom() * GetWeaponTableData(pm->ps->weaponTime)->weapRecoilYaw[1];
+	pm->pmext->weapRecoilPitch     = GetWeaponTableData(pm->ps->weaponTime)->weapRecoilPitch[0] * random() * GetWeaponTableData(pm->ps->weaponTime)->weapRecoilPitch[1];
 
-	if (GetWeaponTableData(pm->ps->weapon)->isRifleWithScope)
+	// handle case depending of player skill and position for weapon recoil
+	if (GetWeaponTableData(pm->ps->weapon)->isScoped)
 	{
-		pm->pmext->weapRecoilTime     = pm->cmd.serverTime;
-		pm->pmext->weapRecoilDuration = 300;
-		pm->pmext->weapRecoilYaw      = crandom() * .5f;
-
-		if (pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3)
+		if (pm->ps->weapon == WP_FG42SCOPE)
 		{
-			pm->pmext->weapRecoilPitch = .25f;
+			if (pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3)
+			{
+				pm->pmext->weapRecoilPitch *= .5f;
+			}
 		}
 		else
 		{
-			pm->pmext->weapRecoilPitch = .5f;
+			if (pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3)
+			{
+				pm->pmext->weapRecoilPitch = .25f;
+			}
+			else
+			{
+				pm->pmext->weapRecoilPitch = .5f;
+			}
 		}
 	}
 	else if (GetWeaponTableData(pm->ps->weapon)->isMG)
 	{
-		pm->ps->weapHeat[GetWeaponTableData(pm->ps->weapon)->weapAlts] = pm->ps->weapHeat[pm->ps->weapon]; // sync heat for overheat check
-
-		pm->pmext->weapRecoilTime     = pm->cmd.serverTime;
-		pm->pmext->weapRecoilDuration = 200;
 		if ((pm->ps->pm_flags & PMF_DUCKED) || (pm->ps->eFlags & EF_PRONE))
 		{
 			pm->pmext->weapRecoilYaw   = crandom() * .5f;
 			pm->pmext->weapRecoilPitch = .45f * random() * .15f;
 		}
-		else
-		{
-			pm->pmext->weapRecoilYaw   = crandom() * .25f;
-			pm->pmext->weapRecoilPitch = .75f * random() * .2f;
-		}
-	}
-	else if (GetWeaponTableData(pm->ps->weapon)->isMGSet)
-	{
-		pm->ps->weapHeat[GetWeaponTableData(pm->ps->weapon)->weapAlts] = pm->ps->weapHeat[pm->ps->weapon]; // sync heat for overheat check
-		pm->pmext->weapRecoilTime                                      = 0;
-		pm->pmext->weapRecoilYaw                                       = 0.f;
-	}
-	else if (pm->ps->weapon == WP_FG42SCOPE)
-	{
-		pm->pmext->weapRecoilTime     = pm->cmd.serverTime;
-		pm->pmext->weapRecoilDuration = 100;
-		pm->pmext->weapRecoilYaw      = 0.f;
-		pm->pmext->weapRecoilPitch    = .45f * random() * .15f;
-
-		if (pm->skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 3)
-		{
-			pm->pmext->weapRecoilPitch *= .5f;
-		}
 	}
 	else if (GetWeaponTableData(pm->ps->weapon)->isPistol || GetWeaponTableData(pm->ps->weapon)->isSilencedPistol || GetWeaponTableData(pm->ps->weapon)->isAkimbo)
 	{
-		pm->pmext->weapRecoilTime     = pm->cmd.serverTime;
-		pm->pmext->weapRecoilDuration = pm->skill[SK_LIGHT_WEAPONS] >= 3 ? 70 : 100;
-		pm->pmext->weapRecoilYaw      = 0.f; //crandom() * .1f;
-		pm->pmext->weapRecoilPitch    = pm->skill[SK_LIGHT_WEAPONS] >= 3 ? .25f * random() * .15f : .45f * random() * .15f;
-	}
-	else
-	{
-		pm->pmext->weapRecoilTime = 0;
-		pm->pmext->weapRecoilYaw  = 0.f;
+		if (pm->skill[SK_LIGHT_WEAPONS] >= 3)
+		{
+			pm->pmext->weapRecoilDuration = 70;
+			pm->pmext->weapRecoilPitch    = .25f * random() * .15f;
+		}
 	}
 
 	// check for overheat
+
+	// sync heat for overheat check
+	if (GetWeaponTableData(pm->ps->weapon)->isMG || GetWeaponTableData(pm->ps->weapon)->isMGSet)
+	{
+		pm->ps->weapHeat[GetWeaponTableData(pm->ps->weapon)->weapAlts] = pm->ps->weapHeat[pm->ps->weapon];
+	}
 
 	// the weapon can overheat, and it's hot
 	if (GetWeaponTableData(pm->ps->weapon)->maxHeat && pm->ps->weapHeat[pm->ps->weapon])

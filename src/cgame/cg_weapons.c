@@ -4880,8 +4880,8 @@ void CG_MortarEFX(centity_t *cent)
  */
 void CG_WeaponFireRecoil(int weapon)
 {
-	float  pitchAdd  = GetWeaponTableData(weapon)->pitchRecoil;
-	float  yawRandom = GetWeaponTableData(weapon)->yawRecoil;
+	float  pitchAdd  = GetWeaponTableData(weapon)->fireRecoilPitch;
+	float  yawRandom = GetWeaponTableData(weapon)->fireRecoilYaw;
 	vec3_t recoil;
 
 	// FIXME: add recoil for secondary weapons?

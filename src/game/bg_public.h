@@ -1183,8 +1183,13 @@ typedef struct weapontable_s
 	int accuracy;                   ///<
 
 	float adjustLean;               ///<
-	float pitchRecoil;              ///<
-	float yawRecoil;                ///<
+
+	float fireRecoilPitch;          ///< cg
+	float fireRecoilYaw;            ///< cg
+
+    int weapRecoilDuration;         ///< bg
+    float weapRecoilPitch[2];       ///< bg
+    float weapRecoilYaw[2];         ///< bg
 
 	const char *className;          ///<
 	const char *weapFile;           ///<
