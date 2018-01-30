@@ -123,14 +123,15 @@ void AddLean(vec3_t viewAngle, vec3_t point, float ammount)
 }
 
 /**
- * @brief CG_MachineGunEjectBrassNew
+ * @brief CG_MachineGunEjectBrass
  * @param[in] cent
  */
-void CG_MachineGunEjectBrassNew(centity_t *cent)
+void CG_MachineGunEjectBrass(centity_t *cent)
 {
 	localEntity_t *le;
 	refEntity_t   *re;
 	vec3_t        velocity, xvelocity;
+	vec3_t        offset, xoffset;
 	float         waterScale = 1.0f;
 	vec3_t        v[3], end;
 
@@ -142,10 +143,6 @@ void CG_MachineGunEjectBrassNew(centity_t *cent)
 	le = CG_AllocLocalEntity();
 	re = &le->refEntity;
 
-	velocity[0] = -50 + 25 * crandom();
-	velocity[1] = -100 + 40 * crandom();
-	velocity[2] = 200 + 50 * random();
-
 	le->leType    = LE_FRAGMENT;
 	le->startTime = cg.time;
 	le->endTime   = (int)(le->startTime + cg_brassTime.integer + (cg_brassTime.integer / 4) * random());
@@ -155,13 +152,59 @@ void CG_MachineGunEjectBrassNew(centity_t *cent)
 
 	AnglesToAxis(cent->lerpAngles, v);
 
-	VectorCopy(ejectBrassCasingOrigin, re->origin);
+	// new brass handling behavior because the SP stuff just doesn't cut it for MP
+	if (BG_PlayerMounted(cent->currentState.eFlags))
+	{
+		offset[0]            = 25;
+		offset[1]            = -4;
+		offset[2]            = 28;
+		velocity[0]          = -20 + 40 * crandom();  // more reasonable brass ballistics for a machinegun
+		velocity[1]          = -150 + 40 * crandom();
+		velocity[2]          = 100 + 50 * crandom();
+		re->hModel           = cgs.media.machinegunBrassModel;
+		le->angles.trBase[0] = 90;  //rand()&31; // belt-fed rounds should come out horizontal
+	}
+	else
+	{
+		if (GetWeaponTableData(cent->currentState.weapon)->isMG || GetWeaponTableData(cent->currentState.weapon)->isMGSet
+		    || GetWeaponTableData(cent->currentState.weapon)->isRifle || cent->currentState.weapon == WP_K43 || cent->currentState.weapon == WP_GARAND)
+		{
+			re->hModel = cgs.media.machinegunBrassModel;
+		}
+		else
+		{
+			re->hModel = cgs.media.smallgunBrassModel;
+		}
+
+		velocity[0] = -50 + 25 * crandom();
+		velocity[1] = -100 + 40 * crandom();
+		velocity[2] = 200 + 50 * random();
+
+		if (cent->currentState.clientNum == cg.snap->ps.clientNum)
+		{
+			VectorCopy(ejectBrassCasingOrigin, re->origin);
+			le->angles.trBase[0] = (rand() & 31) + 60;    // bullets should come out horizontal not vertical JPW NERVE
+		}
+		else
+		{
+			vec3_copy(GetWeaponTableData(cent->currentState.weapon)->ejectBrassOffset, offset);
+			le->angles.trBase[0] = (rand() & 15) + 82;   // bullets should come out horizontal not vertical JPW NERVE
+		}
+	}
+
+	if (BG_PlayerMounted(cent->currentState.eFlags) || cent->currentState.clientNum != cg.snap->ps.clientNum)
+	{
+		xoffset[0] = offset[0] * v[0][0] + offset[1] * v[1][0] + offset[2] * v[2][0];
+		xoffset[1] = offset[0] * v[0][1] + offset[1] * v[1][1] + offset[2] * v[2][1];
+		xoffset[2] = offset[0] * v[0][2] + offset[1] * v[1][2] + offset[2] * v[2][2];
+		VectorAdd(cent->lerpOrigin, xoffset, re->origin);
+	}
 
 	VectorCopy(re->origin, le->pos.trBase);
 
-	if (CG_PointContents(re->origin, -1) & (CONTENTS_WATER | CONTENTS_SLIME))         // modified since slime is no longer deadly
+	if (CG_PointContents(re->origin, -1) & (CONTENTS_WATER | CONTENTS_SLIME)) // modified since slime is no longer deadly
 	{
-		waterScale = 0.1f;
+		waterScale = 0.10f;
 	}
 
 	xvelocity[0] = velocity[0] * v[0][0] + velocity[1] * v[1][0] + velocity[2] * v[2][0];
@@ -170,13 +213,11 @@ void CG_MachineGunEjectBrassNew(centity_t *cent)
 	VectorScale(xvelocity, waterScale, le->pos.trDelta);
 
 	AxisCopy(axisDefault, re->axis);
-	re->hModel = cgs.media.smallgunBrassModel;
 
 	le->bounceFactor = 0.4f * waterScale;
 
 	le->angles.trType     = TR_LINEAR;
 	le->angles.trTime     = cg.time;
-	le->angles.trBase[0]  = (rand() & 31) + 60;  // bullets should come out horizontal not vertical JPW NERVE
 	le->angles.trBase[1]  = rand() & 255; // random spin from extractor
 	le->angles.trBase[2]  = rand() & 31;
 	le->angles.trDelta[0] = 2;
@@ -195,130 +236,6 @@ void CG_MachineGunEjectBrassNew(centity_t *cent)
 	else
 	{
 		le->leBounceSoundType = LEBS_BRASS;
-	}
-
-	le->leMarkType = LEMT_NONE;
-}
-
-/**
- * @brief CG_MachineGunEjectBrass
- * @param[in] cent
- */
-void CG_MachineGunEjectBrass(centity_t *cent)
-{
-	localEntity_t *le;
-	refEntity_t   *re;
-	vec3_t        velocity, xvelocity;
-	vec3_t        offset, xoffset;
-	float         waterScale = 1.0f;
-	vec3_t        v[3];
-
-	if (cg_brassTime.integer <= 0)
-	{
-		return;
-	}
-
-	if (!(cg.snap->ps.persistant[PERS_HWEAPON_USE]) && (cent->currentState.clientNum == cg.snap->ps.clientNum) && (!((cent->currentState.eFlags & EF_MG42_ACTIVE) || (cent->currentState.eFlags & EF_AAGUN_ACTIVE))))
-	{
-		CG_MachineGunEjectBrassNew(cent);
-		return;
-	}
-
-	le = CG_AllocLocalEntity();
-	re = &le->refEntity;
-
-	le->leType    = LE_FRAGMENT;
-	le->startTime = cg.time;
-	le->endTime   = (int)(le->startTime + cg_brassTime.integer + (cg_brassTime.integer / 4) * random());
-
-	le->pos.trType = TR_GRAVITY;
-	le->pos.trTime = cg.time - (rand() & 15);
-
-	AnglesToAxis(cent->lerpAngles, v);
-
-	// new brass handling behavior because the SP stuff just doesn't cut it for MP
-	if ((cent->currentState.eFlags & EF_MG42_ACTIVE) || (cent->currentState.eFlags & EF_AAGUN_ACTIVE))
-	{
-		offset[0]             = 25;
-		offset[1]             = -4;
-		offset[2]             = 28;
-		velocity[0]           = -20 + 40 * crandom(); // more reasonable brass ballistics for a machinegun
-		velocity[1]           = -150 + 40 * crandom();
-		velocity[2]           = 100 + 50 * crandom();
-		re->hModel            = cgs.media.machinegunBrassModel;
-		le->angles.trBase[0]  = 90; //rand()&31; // belt-fed rounds should come out horizontal
-		le->angles.trBase[1]  = rand() & 255;
-		le->angles.trBase[2]  = rand() & 31;
-		le->angles.trDelta[0] = 2;
-		le->angles.trDelta[1] = 1;
-		le->angles.trDelta[2] = 0;
-	}
-	else
-	{
-		if (GetWeaponTableData(cent->currentState.weapon)->isMG || GetWeaponTableData(cent->currentState.weapon)->isMGSet
-		    || GetWeaponTableData(cent->currentState.weapon)->isRifle || cent->currentState.weapon == WP_K43 || cent->currentState.weapon == WP_GARAND)
-		{
-			re->hModel = cgs.media.machinegunBrassModel;
-		}
-		else
-		{
-			re->hModel = cgs.media.smallgunBrassModel;
-		}
-
-		vec3_copy(GetWeaponTableData(cent->currentState.weapon)->ejectBrassOffset, offset);
-
-		velocity[0] = -50 + 25 * crandom();
-		velocity[1] = -100 + 40 * crandom();
-		velocity[2] = 200 + 50 * random();
-
-		le->angles.trBase[0]  = (rand() & 15) + 82;  // bullets should come out horizontal not vertical JPW NERVE
-		le->angles.trBase[1]  = rand() & 255; // random spin from extractor
-		le->angles.trBase[2]  = rand() & 31;
-		le->angles.trDelta[0] = 2;
-		le->angles.trDelta[1] = 1;
-		le->angles.trDelta[2] = 0;
-	}
-
-	xoffset[0] = offset[0] * v[0][0] + offset[1] * v[1][0] + offset[2] * v[2][0];
-	xoffset[1] = offset[0] * v[0][1] + offset[1] * v[1][1] + offset[2] * v[2][1];
-	xoffset[2] = offset[0] * v[0][2] + offset[1] * v[1][2] + offset[2] * v[2][2];
-	VectorAdd(cent->lerpOrigin, xoffset, re->origin);
-
-	VectorCopy(re->origin, le->pos.trBase);
-
-	if (CG_PointContents(re->origin, -1) & (CONTENTS_WATER | CONTENTS_SLIME)) // modified since slime is no longer deadly
-	{
-		waterScale = 0.10f;
-	}
-
-	xvelocity[0] = velocity[0] * v[0][0] + velocity[1] * v[1][0] + velocity[2] * v[2][0];
-	xvelocity[1] = velocity[0] * v[0][1] + velocity[1] * v[1][1] + velocity[2] * v[2][1];
-	xvelocity[2] = velocity[0] * v[0][2] + velocity[1] * v[1][2] + velocity[2] * v[2][2];
-	VectorScale(xvelocity, waterScale, le->pos.trDelta);
-
-	AxisCopy(axisDefault, re->axis);
-
-	le->bounceFactor = 0.4f * waterScale;
-
-	le->angles.trType = TR_LINEAR;
-	le->angles.trTime = cg.time;
-
-	le->leFlags = LEF_TUMBLE;
-
-	{
-		vec3_t end;
-
-		VectorCopy(cent->lerpOrigin, end);
-		end[2] -= 24;
-
-		if (CG_PointContents(end, 0) & (CONTENTS_WATER | CONTENTS_SLIME | CONTENTS_LAVA))
-		{
-			le->leBounceSoundType = LEBS_NONE;
-		}
-		else
-		{
-			le->leBounceSoundType = LEBS_BRASS;
-		}
 	}
 
 	le->leMarkType = LEMT_NONE;
