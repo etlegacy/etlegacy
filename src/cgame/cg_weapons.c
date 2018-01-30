@@ -155,10 +155,10 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	// new brass handling behavior because the SP stuff just doesn't cut it for MP
 	if (BG_PlayerMounted(cent->currentState.eFlags))
 	{
-        // adjust for the MG tank mounted
+		// adjust for the MG tank mounted
 		if ((cent->currentState.eFlags & EF_MOUNTEDTANK) && !(cg_entities[cg_entities[cg_entities[cent->currentState.number].tagParent].tankparent].currentState.density & 8))
 		{
-            offset[0] = 12;
+			offset[0] = 12;
 			offset[1] = -4;
 			offset[2] = 24;
 		}
@@ -5408,17 +5408,17 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 		// set mark duration
 		markDuration = cg_markTime.integer;
 	}
-	else if (GetWeaponTableData(weapon)->isLightWeapon || GetWeaponTableData(weapon)->isMG || GetWeaponTableData(weapon)->isMGSet || GetWeaponTableData(weapon)->isScoped)
+	else if (GetWeaponTableData(weapon)->useBullet)
 	{
 		volume = 64;
 
 		// clientNum is a dummy field used to define what sort of effect to spawn
-		if (!missileEffect)
+		if (missileEffect == PS_FX_NONE)
 		{
 			// RF, why is this here? we need sparks if clientNum = 0, used for warzombie
 			CG_AddSparks(origin, dir, 350, 200, 15 + rand() % 7, 0.2f);
 		}
-		else if (missileEffect == 1)       // just do a little smoke puff
+		else if (missileEffect == PS_FX_COMMON)       // just do a little smoke puff
 		{
 			vec3_t d, o;
 			VectorMA(origin, 12, dir, o);
@@ -5451,29 +5451,12 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 				//	CG_AddSparks(origin, dir, 450, 300, 3 + rand() % 3, 0.5);     // rand scale
 				//}
 			}
-		}
-		else if (missileEffect == 2)
-		{
-			sfx  = 0;
-			mark = 0;
 
-			// needed to do the CG_WaterRipple using a localent since I needed the timer reset on the shader for each shot
-			CG_WaterRipple(cgs.media.wakeMarkShaderAnim, origin, tv(0, 0, 1), 32, 1000);
-			CG_AddDirtBulletParticles(origin, dir, 190, 900, 5, 0.5f, 80, 16, 0.125f, cgs.media.dirtParticle2Shader);
-
-			// play a water splash
-			mod      = cgs.media.waterSplashModel;
-			shader   = cgs.media.waterSplashShader;
-			duration = 250;
-		}
-
-		// optimization, only spawn the bullet hole if we are close
-		// enough to see it, this way we can leave other marks around a lot
-		// longer, since most of the time we can't actually see the bullet holes
-		// - small modification.  only do this for non-rifles (so you can see your shots hitting when you're zooming with a rifle scope)
-		if (missileEffect != 2 && (GetWeaponTableData(weapon)->isScoped || (Distance(cg.refdef_current->vieworg, origin) < 384)))
-		{
-			if (missileEffect)
+			// optimization, only spawn the bullet hole if we are close
+			// enough to see it, this way we can leave other marks around a lot
+			// longer, since most of the time we can't actually see the bullet holes
+			// - small modification.  only do this for non-rifles (so you can see your shots hitting when you're zooming with a rifle scope)
+			if (GetWeaponTableData(weapon)->isScoped || (Distance(cg.refdef_current->vieworg, origin) < 384))
 			{
 				// mark and sound can potentially use the surface for override values
 				//mark   = cgs.media.bulletMarkShader;    // default
@@ -5488,7 +5471,7 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 				{
 					sfx     = cgs.media.sfx_bullet_woodhit[rand() % MAX_IMPACT_SOUNDS];
 					mark    = cgs.media.bulletMarkShaderWood;
-					radius += 0.4f;   // experimenting with different mark sizes per surface
+					radius += 0.4f;       // experimenting with different mark sizes per surface
 				}
 				else if (surfFlags & SURF_GLASS)
 				{
@@ -5504,6 +5487,20 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 				// set mark duration
 				markDuration = cg_markTime.integer;
 			}
+		}
+		else if (missileEffect == PS_FX_WATER)
+		{
+			sfx  = 0;
+			mark = 0;
+
+			// needed to do the CG_WaterRipple using a localent since I needed the timer reset on the shader for each shot
+			CG_WaterRipple(cgs.media.wakeMarkShaderAnim, origin, tv(0, 0, 1), 32, 1000);
+			CG_AddDirtBulletParticles(origin, dir, 190, 900, 5, 0.5f, 80, 16, 0.125f, cgs.media.dirtParticle2Shader);
+
+			// play a water splash
+			mod      = cgs.media.waterSplashModel;
+			shader   = cgs.media.waterSplashShader;
+			duration = 250;
 		}
 	}
 	else if (weapon == WP_MAPMORTAR)
