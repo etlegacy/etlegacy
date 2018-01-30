@@ -155,9 +155,20 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	// new brass handling behavior because the SP stuff just doesn't cut it for MP
 	if (BG_PlayerMounted(cent->currentState.eFlags))
 	{
-		offset[0]            = 25;
-		offset[1]            = -4;
-		offset[2]            = 28;
+        // adjust for the MG tank mounted
+		if ((cent->currentState.eFlags & EF_MOUNTEDTANK) && !(cg_entities[cg_entities[cg_entities[cent->currentState.number].tagParent].tankparent].currentState.density & 8))
+		{
+            offset[0] = 12;
+			offset[1] = -4;
+			offset[2] = 24;
+		}
+		else
+		{
+			offset[0] = 25;
+			offset[1] = -4;
+			offset[2] = 28;
+		}
+
 		velocity[0]          = -20 + 40 * crandom();  // more reasonable brass ballistics for a machinegun
 		velocity[1]          = -150 + 40 * crandom();
 		velocity[2]          = 100 + 50 * crandom();
@@ -180,19 +191,19 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 		velocity[1] = -100 + 40 * crandom();
 		velocity[2] = 200 + 50 * random();
 
-		if (cent->currentState.clientNum == cg.snap->ps.clientNum)
+		if (cent->currentState.clientNum == cg.snap->ps.clientNum && !cg.renderingThirdPerson)
 		{
 			VectorCopy(ejectBrassCasingOrigin, re->origin);
 			le->angles.trBase[0] = (rand() & 31) + 60;    // bullets should come out horizontal not vertical JPW NERVE
 		}
 		else
 		{
-			vec3_copy(GetWeaponTableData(cent->currentState.weapon)->ejectBrassOffset, offset);
+			VectorCopy(GetWeaponTableData(cent->currentState.weapon)->ejectBrassOffset, offset);
 			le->angles.trBase[0] = (rand() & 15) + 82;   // bullets should come out horizontal not vertical JPW NERVE
 		}
 	}
 
-	if (BG_PlayerMounted(cent->currentState.eFlags) || cent->currentState.clientNum != cg.snap->ps.clientNum)
+	if (BG_PlayerMounted(cent->currentState.eFlags) || cent->currentState.clientNum != cg.snap->ps.clientNum || cg.renderingThirdPerson)
 	{
 		xoffset[0] = offset[0] * v[0][0] + offset[1] * v[1][0] + offset[2] * v[2][0];
 		xoffset[1] = offset[0] * v[0][1] + offset[1] * v[1][1] + offset[2] * v[2][1];
@@ -4837,34 +4848,21 @@ void CG_FireWeapon(centity_t *cent)
 	sfxHandle_t   *firesound;
 	sfxHandle_t   *fireEchosound;
 
-	// quick hack for EF_MOUNTEDTANK, need to change this - likely it needs to use viewlocked as well
-	if (cent->currentState.eFlags & EF_MOUNTEDTANK)
-	{
-		if (cg_entities[cg_entities[cg_entities[cent->currentState.number].tagParent].tankparent].currentState.density & 8)       // should we use a browning?
-		{
-			trap_S_StartSound(NULL, cent->currentState.number, CHAN_WEAPON, cgs.media.hWeaponSnd_2);
-		}
-		else
-		{
-			trap_S_StartSound(NULL, cent->currentState.number, CHAN_WEAPON, cgs.media.hWeaponSnd);
-		}
-
-		if (cg_muzzleFlash.integer)
-		{
-			cent->muzzleFlashTime = cg.time;
-		}
-		else
-		{
-			cent->muzzleFlashTime = 0;
-		}
-
-		return;
-	}
-
-	// mg42
 	if (BG_PlayerMounted(cent->currentState.eFlags))
 	{
-		if (cent->currentState.eFlags & EF_AAGUN_ACTIVE)
+		// quick hack for EF_MOUNTEDTANK, need to change this - likely it needs to use viewlocked as well
+		if (cent->currentState.eFlags & EF_MOUNTEDTANK)
+		{
+			if (cg_entities[cg_entities[cg_entities[cent->currentState.number].tagParent].tankparent].currentState.density & 8)       // should we use a browning?
+			{
+				trap_S_StartSound(NULL, cent->currentState.number, CHAN_WEAPON, cgs.media.hWeaponSnd_2);
+			}
+			else
+			{
+				trap_S_StartSound(NULL, cent->currentState.number, CHAN_WEAPON, cgs.media.hWeaponSnd);
+			}
+		}
+		else if (cent->currentState.eFlags & EF_AAGUN_ACTIVE)
 		{
 			trap_S_StartSound(NULL, cent->currentState.number, CHAN_WEAPON, cgs.media.hflakWeaponSnd);
 		}
