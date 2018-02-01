@@ -246,6 +246,15 @@ const char *Sys_Dirname(char *path)
  */
 FILE *Sys_FOpen(const char *ospath, const char *mode)
 {
+	size_t length;
+
+	// Windows API ignores all trailing spaces and periods which can get around Quake 3 file system restrictions.
+	length = strlen(ospath);
+	if (length == 0 || ospath[length-1] == ' ' || ospath[length-1] == '.')
+	{
+		return NULL;
+	}
+
 	return fopen(ospath, mode);
 }
 
