@@ -36,14 +36,14 @@
 
 rankicon_t rankicons[NUM_EXPERIENCE_LEVELS][2][2] =
 {
-	{
+	{ // rankicons[0]... is never displayed/used
 		{
-			{ 0, "gfx/hud/ranks/rank1",                     128, 128 },
-			{ 0, "models/players/temperate/common/rank1",   128, 128 }
+			{ 0, "",                                        128, 128 }, // gfx/hud/ranks/rank1
+			{ 0, "",                                        128, 128 }  // models/players/temperate/common/rank1
 		},
 		{
-			{ 0, "gfx/hud/ranks/xrank1",                    128, 128 },
-			{ 0, "models/players/temperate/common/xrank1",  128, 128 }
+			{ 0, "",                                        128, 128 }, // gfx/hud/ranks/xrank1
+			{ 0, "",                                        128, 128 }  // models/players/temperate/common/xrank1
 		},
 	},
 	{
@@ -154,6 +154,11 @@ rankicon_t rankicons[NUM_EXPERIENCE_LEVELS][2][2] =
 void CG_LoadRankIcons(void)
 {
 	int i;
+
+	rankicons[0][0][0].shader = 0;
+	rankicons[0][1][0].shader = 0;
+	rankicons[0][0][1].shader = 0;
+	rankicons[0][1][1].shader = 0;
 
 	for (i = 1; i < NUM_EXPERIENCE_LEVELS; i++)
 	{
