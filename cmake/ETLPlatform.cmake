@@ -98,7 +98,7 @@ if(UNIX)
 		endif(SUPPORT_VISIBILITY)
 	endif(NOT MSYS)
 elseif(WIN32)
-	add_definitions(-DWINVER=0x501)
+	add_definitions(-DWINVER=0x601)
 
 	if(WIN64)
 		add_definitions(-DC_ONLY)
