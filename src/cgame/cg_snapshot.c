@@ -133,6 +133,7 @@ static void CG_TransitionEntity(centity_t *cent)
  * CG_TransitionSnapshot instead.
  * @param snap
  * @todo FIXME: Also called by map_restart?
+ *              No, isn't. Is this required?
  */
 void CG_SetInitialSnapshot(snapshot_t *snap)
 {
@@ -142,8 +143,6 @@ void CG_SetInitialSnapshot(snapshot_t *snap)
 	char          buff[16];
 
 	cg.snap = snap;
-
-	//  trap_S_ClearSounds( qtrue );
 
 	BG_PlayerStateToEntityState(&snap->ps, &cg_entities[snap->ps.clientNum].currentState, cg.time, qfalse);
 
@@ -162,7 +161,7 @@ void CG_SetInitialSnapshot(snapshot_t *snap)
 		cent  = &cg_entities[state->number];
 
 		Com_Memcpy(&cent->currentState, state, sizeof(entityState_t));
-		//cent->currentState = *state;
+
 		cent->interpolate  = qfalse;
 		cent->currentValid = qtrue;
 

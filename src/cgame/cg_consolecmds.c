@@ -125,7 +125,7 @@ static void CG_StatsUp_f(void)
 /**
  * @brief CG_topshotsDown_f
  */
-void CG_topshotsDown_f(void)
+static void CG_topshotsDown_f(void)
 {
 	if (!cg.demoPlayback)
 	{
@@ -151,7 +151,7 @@ void CG_topshotsDown_f(void)
 /**
  * @brief CG_topshotsUp_f
  */
-void CG_topshotsUp_f(void)
+static void CG_topshotsUp_f(void)
 {
 	if (cgs.topshots.show == SHOW_ON)
 	{
@@ -170,7 +170,7 @@ void CG_topshotsUp_f(void)
 /**
  * @brief CG_objectivesDown_f
  */
-void CG_objectivesDown_f(void)
+static void CG_objectivesDown_f(void)
 {
 	if (!cg.demoPlayback)
 	{
@@ -789,7 +789,7 @@ const char *aMonths[12] =
 /**
  * @brief CG_currentTime_f
  */
-void CG_currentTime_f(void)
+static void CG_currentTime_f(void)
 {
 	qtime_t ct;
 
@@ -816,7 +816,7 @@ void CG_autoScreenShot_f(void)
 /**
  * @brief CG_vstrDown_f
  */
-void CG_vstrDown_f(void)
+static void CG_vstrDown_f(void)
 {
 	// The engine also passes back the key code and time of the key press
 	if (trap_Argc() == 5)
@@ -832,7 +832,7 @@ void CG_vstrDown_f(void)
 /**
  * @brief CG_vstrUp_f
  */
-void CG_vstrUp_f(void)
+static void CG_vstrUp_f(void)
 {
 	// The engine also passes back the key code and time of the key press
 	if (trap_Argc() == 5)
@@ -1154,7 +1154,7 @@ static void CG_CPM_f(void)
 /**
  * @brief ETPro style enemy spawntimer
  */
-void CG_TimerSet_f(void)
+static void CG_TimerSet_f(void)
 {
 	if (cgs.gamestate != GS_PLAYING)
 	{
@@ -1199,7 +1199,7 @@ void CG_TimerSet_f(void)
 /**
  * @brief ETPro style timer resetting
  */
-void CG_TimerReset_f(void)
+static void CG_TimerReset_f(void)
 {
 	int msec;
 
@@ -1291,7 +1291,7 @@ akimbo_pistols:
 /**
  * @brief class change menu
  */
-void CG_ClassMenu_f(void)
+static void CG_ClassMenu_f(void)
 {
 	if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
 	{
@@ -1313,7 +1313,7 @@ void CG_ClassMenu_f(void)
 /**
  * @brief Sends a class setup message. Enables etpro like class scripts
  */
-void CG_Class_f(void)
+static void CG_Class_f(void)
 {
 	char             cls[64];
 	const char       *classtype, *teamstring;
@@ -1439,7 +1439,7 @@ void CG_Class_f(void)
 /**
  * @brief CG_ReadHuds_f
  */
-void CG_ReadHuds_f(void)
+static void CG_ReadHuds_f(void)
 {
 	CG_ReadHudScripts();
 }
@@ -1448,7 +1448,7 @@ void CG_ReadHuds_f(void)
 /**
  * @brief CG_FreecamTurnLeftDown_f
  */
-void CG_FreecamTurnLeftDown_f(void)
+static void CG_FreecamTurnLeftDown_f(void)
 {
 	cgs.demoCamera.turn |= 0x01;
 }
@@ -1456,7 +1456,7 @@ void CG_FreecamTurnLeftDown_f(void)
 /**
  * @brief CG_FreecamTurnLeftUp_f
  */
-void CG_FreecamTurnLeftUp_f(void)
+static void CG_FreecamTurnLeftUp_f(void)
 {
 	cgs.demoCamera.turn &= ~0x01;
 }
@@ -1464,7 +1464,7 @@ void CG_FreecamTurnLeftUp_f(void)
 /**
  * @brief CG_FreecamTurnRightDown_f
  */
-void CG_FreecamTurnRightDown_f(void)
+static void CG_FreecamTurnRightDown_f(void)
 {
 	cgs.demoCamera.turn |= 0x02;
 }
@@ -1472,7 +1472,7 @@ void CG_FreecamTurnRightDown_f(void)
 /**
  * @brief CG_FreecamTurnRightUp_f
  */
-void CG_FreecamTurnRightUp_f(void)
+static void CG_FreecamTurnRightUp_f(void)
 {
 	cgs.demoCamera.turn &= ~0x02;
 }
@@ -1480,7 +1480,7 @@ void CG_FreecamTurnRightUp_f(void)
 /**
  * @brief CG_FreecamTurnDownDown_f
  */
-void CG_FreecamTurnDownDown_f(void)
+static void CG_FreecamTurnDownDown_f(void)
 {
 	cgs.demoCamera.turn |= 0x04;
 }
@@ -1488,7 +1488,7 @@ void CG_FreecamTurnDownDown_f(void)
 /**
  * @brief CG_FreecamTurnDownUp_f
  */
-void CG_FreecamTurnDownUp_f(void)
+static void CG_FreecamTurnDownUp_f(void)
 {
 	cgs.demoCamera.turn &= ~0x04;
 }
@@ -1496,7 +1496,7 @@ void CG_FreecamTurnDownUp_f(void)
 /**
  * @brief CG_FreecamTurnUpDown_f
  */
-void CG_FreecamTurnUpDown_f(void)
+static void CG_FreecamTurnUpDown_f(void)
 {
 	cgs.demoCamera.turn |= 0x08;
 }
@@ -1504,7 +1504,7 @@ void CG_FreecamTurnUpDown_f(void)
 /**
  * @brief CG_FreecamTurnUpUp_f
  */
-void CG_FreecamTurnUpUp_f(void)
+static void CG_FreecamTurnUpUp_f(void)
 {
 	cgs.demoCamera.turn &= ~0x08;
 }
@@ -1512,7 +1512,7 @@ void CG_FreecamTurnUpUp_f(void)
 /**
  * @brief CG_FreecamRollLeftDown_f
  */
-void CG_FreecamRollLeftDown_f(void)
+static void CG_FreecamRollLeftDown_f(void)
 {
 	cgs.demoCamera.turn |= 0x20;
 }
@@ -1520,7 +1520,7 @@ void CG_FreecamRollLeftDown_f(void)
 /**
  * @brief CG_FreecamRollLeftUp_f
  */
-void CG_FreecamRollLeftUp_f(void)
+static void CG_FreecamRollLeftUp_f(void)
 {
 	cgs.demoCamera.turn &= ~0x20;
 }
@@ -1528,7 +1528,7 @@ void CG_FreecamRollLeftUp_f(void)
 /**
  * @brief CG_FreecamRollRightDown_f
  */
-void CG_FreecamRollRightDown_f(void)
+static void CG_FreecamRollRightDown_f(void)
 {
 	cgs.demoCamera.turn |= 0x10;
 }
@@ -1536,7 +1536,7 @@ void CG_FreecamRollRightDown_f(void)
 /**
  * @brief CG_FreecamRollRightUp_f
  */
-void CG_FreecamRollRightUp_f(void)
+static void CG_FreecamRollRightUp_f(void)
 {
 	cgs.demoCamera.turn &= ~0x10;
 }
@@ -1544,7 +1544,7 @@ void CG_FreecamRollRightUp_f(void)
 /**
  * @brief CG_Freecam_f
  */
-void CG_Freecam_f(void)
+static void CG_Freecam_f(void)
 {
 	char state[MAX_TOKEN_CHARS];
 
@@ -1594,7 +1594,7 @@ void CG_Freecam_f(void)
 /**
  * @brief CG_FreecamGetPos_f
  */
-void CG_FreecamGetPos_f(void)
+static void CG_FreecamGetPos_f(void)
 {
 	if (cg.demoPlayback)
 	{
@@ -1611,7 +1611,7 @@ void CG_FreecamGetPos_f(void)
  * @param[in] argnum
  * @return
  */
-float etpro_float_Argv(int argnum)
+static float etpro_float_Argv(int argnum)
 {
 	char buffer[MAX_TOKEN_CHARS];
 
@@ -1622,7 +1622,7 @@ float etpro_float_Argv(int argnum)
 /**
  * @brief CG_FreecamSetPos_f
  */
-void CG_FreecamSetPos_f(void)
+static void CG_FreecamSetPos_f(void)
 {
 	int n;
 
@@ -1665,7 +1665,7 @@ void CG_FreecamSetPos_f(void)
 /**
  * @brief noclip in demos
  */
-void CG_NoClip_f(void)
+static void CG_NoClip_f(void)
 {
 	char buffer[MAX_TOKEN_CHARS];
 	char state[MAX_TOKEN_CHARS];
@@ -1703,7 +1703,7 @@ void CG_NoClip_f(void)
 }
 #endif
 
-void CG_PrintObjectiveInfo()
+static void CG_PrintObjectiveInfo()
 {
 	int i;
 

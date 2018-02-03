@@ -65,6 +65,20 @@ skilltable_t skillTable[SK_NUM_SKILLS] =
 };
 // *INDENT-ON*
 
+sysMessage_t HQMessages[SM_NUM_SYS_MSGS] = {
+	{"SYS_NeedMedic",		 "_hq_need_medic",			"^7(HQ): ^3We need a Medic!"           },
+	{"SYS_NeedEngineer",	 "_hq_need_engineer",		"^7(HQ): ^3We need an Engineer!"       },
+	{"SYS_NeedFieldops",	 "_hq_need_fieldops",		"^7(HQ): ^3We need an Field Ops!"      },
+	{"SYS_NeedCovertOps",	 "_hq_need_covertops",		"^7(HQ): ^3We need an Covert Ops!"     },
+	{"SYS_MenDown",			 "_hq_men_down",			"^7(HQ): ^3We've lost most of our men!"},
+	{"SYS_ObjCaptured",		 "_hq_objective_captured",	"^7(HQ): ^3Objective captured!"        },
+	{"SYS_ObjLost",			 "_hq_objective_lost",		"^7(HQ): ^3Objective lost!"            },
+	{"SYS_ObjDestroyed",	 "_hq_objective_destroyed",	"^7(HQ): ^3Objective destroyed!"       },
+	{"SYS_ConstructComplete","_hq_const_completed",		"^7(HQ): ^3Construction complete!"     },
+	{"SYS_ConstructFailed",	 "_hq_const_failed",		"^7(HQ): ^3Construction failed!"       },
+	{"SYS_Destroyed",		 "_hq_const_destroyed",		"^7(HQ): ^3Construction destroyed!"    },
+};
+
 vec3_t playerlegsProneMins = { -13.5f, -13.5f, -24.f };
 vec3_t playerlegsProneMaxs = { 13.5f, 13.5f, -14.4f };
 

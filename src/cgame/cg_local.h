@@ -2902,7 +2902,7 @@ typedef enum
 
 void CG_ParseFireteams(void);
 void CG_ParseOIDInfos(void);
-oidInfo_t *CG_OIDInfoForEntityNum(int num);
+//oidInfo_t *CG_OIDInfoForEntityNum(int num);
 
 // cg_consolecmds.c
 extern const char *aMonths[12];
@@ -2915,27 +2915,12 @@ void CG_autoScreenShot_f(void);
 void CG_keyOn_f(void);
 void CG_keyOff_f(void);
 void CG_dumpStats_f(void);
+
+void CG_ForceTapOut_f(void);
+
 // MAPVOTE
 void CG_parseMapVoteListInfo(void);
 void CG_parseMapVoteTally(void);
-#ifdef FEATURE_EDV
-void CG_FreecamTurnLeftDown_f(void);
-void CG_FreecamTurnLeftUp_f(void);
-void CG_FreecamTurnRightDown_f(void);
-void CG_FreecamTurnRightUp_f(void);
-void CG_FreecamTurnUpDown_f(void);
-void CG_FreecamTurnUpUp_f(void);
-void CG_FreecamTurnDownDown_f(void);
-void CG_FreecamTurnDownUp_f(void);
-void CG_FreecamRollLeftDown_f(void);
-void CG_FreecamRollLeftUp_f(void);
-void CG_FreecamRollRightDown_f(void);
-void CG_FreecamRollRightUp_f(void);
-void CG_Freecam_f(void);
-void CG_FreecamSetPos_f(void);
-void CG_FreecamGetPos_f(void);
-#endif
-
 
 // cg_servercmds.c
 void CG_ExecuteNewServerCommands(int latestSequence);
@@ -2956,9 +2941,9 @@ const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
 
 void CG_parseWeaponStats_cmd(void(txt_dump) (const char *));
-void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
-void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
-void CG_scores_cmd(void);
+//void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
+//void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
+//void CG_scores_cmd(void);
 
 void CG_UpdateSvCvars(void);
 
@@ -3532,8 +3517,13 @@ const char *CG_Debriefing_RankNameForClientInfo(clientInfo_t *ci);
 const char *CG_Debriefing_FullRankNameForClientInfo(clientInfo_t *ci);
 void CG_Debriefing_Startup(void);
 void CG_Debriefing_Shutdown(void);
-qboolean CG_Debriefing_ServerCommand(const char *cmd);
 void CG_Debriefing_MouseEvent(int x, int y);
+
+void CG_Debriefing_ParseWeaponAccuracies(void);
+void CG_Debriefing_ParseWeaponStats(void);
+void CG_Debriefing_ParsePlayerKillsDeaths(void);
+void CG_Debriefing_ParsePlayerTime(void);
+void CG_Debriefing_ParseSkillRating(void);
 
 void CG_TeamDebriefingTeamSkillXP_Draw(panel_button_t *button);
 

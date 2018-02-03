@@ -1559,6 +1559,8 @@ void CG_Debriefing_Shutdown(void)
 
 /**
  * @brief CG_Debriefing_InfoRequests
+ *
+ * @note debriefing server commands are parsed in CG_ServerCommand() - CG_Debriefing_ServerCommand() has been removed 
  */
 void CG_Debriefing_InfoRequests(void)
 {
@@ -2153,58 +2155,6 @@ void CG_Debriefing_ParseAwards(void)
 	}
 
 	cgs.dbAwardsParsed = qtrue;
-}
-
-/**
- * @brief CG_Debriefing_ServerCommand
- * @param[in] cmd
- * @return
- */
-qboolean CG_Debriefing_ServerCommand(const char *cmd)
-{
-	if (!Q_stricmp(cmd, "imwa"))
-	{
-		CG_Debriefing_ParseWeaponAccuracies();
-		return qtrue;
-	}
-	else if (!Q_stricmp(cmd, "imws"))
-	{
-		CG_Debriefing_ParseWeaponStats();
-		return qtrue;
-	}
-	else if (!Q_stricmp(cmd, "impkd"))
-	{
-		CG_Debriefing_ParsePlayerKillsDeaths();
-		return qtrue;
-	}
-	else if (!Q_stricmp(cmd, "impt"))
-	{
-		CG_Debriefing_ParsePlayerTime();
-		return qtrue;
-	}
-#ifdef FEATURE_RATING
-	else if (!Q_stricmp(cmd, "imsr"))
-	{
-		if (cgs.skillRating)
-		{
-			CG_Debriefing_ParseSkillRating();
-		}
-		return qtrue;
-	}
-#endif
-	// MAPVOTE
-	else if (!Q_stricmp(cmd, "immaplist"))
-	{
-		CG_parseMapVoteListInfo();
-		return qtrue;
-	}
-	else if (!Q_stricmp(cmd, "imvotetally"))
-	{
-		CG_parseMapVoteTally();
-		return qtrue;
-	}
-
-	return qfalse;
 }
 
 /**

@@ -2816,6 +2816,35 @@ void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t en
 void PM_TraceAll(trace_t *trace, vec3_t start, vec3_t end);
 
 /**
+ * @enum sysMsg_t
+ * @brief
+ */
+typedef enum
+{
+	SM_NEED_MEDIC,
+	SM_NEED_ENGINEER,
+	SM_NEED_LT,
+	SM_NEED_COVERTOPS,
+	SM_LOST_MEN,
+	SM_OBJ_CAPTURED,
+	SM_OBJ_LOST,
+	SM_OBJ_DESTROYED,
+	SM_CON_COMPLETED,
+	SM_CON_FAILED,
+	SM_CON_DESTROYED,
+	SM_NUM_SYS_MSGS,
+} sysMsg_t;
+
+typedef struct sysMessage_s
+{
+	char *codeString;
+	char *voiceScript;
+	char *chatString;
+} sysMessage_t;
+
+extern sysMessage_t HQMessages[SM_NUM_SYS_MSGS];
+
+/**
  * @enum gameSounds
  * @brief Store all sounds used in server engine and send them to client in events only as Enums
  */
