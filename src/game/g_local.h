@@ -2237,26 +2237,6 @@ void G_DebugCloseSkillLog(void);
 void G_DebugAddSkillLevel(gentity_t *ent, skillType_t skill);
 void G_DebugAddSkillPoints(gentity_t *ent, skillType_t skill, float points, const char *reason);
 
-/**
- * @enum sysMsg_t
- * @brief
- */
-typedef enum
-{
-	SM_NEED_MEDIC = 0,
-	SM_NEED_ENGINEER,
-	SM_NEED_LT,
-	SM_NEED_COVERTOPS,
-	SM_LOST_MEN,
-	SM_OBJ_CAPTURED,
-	SM_OBJ_LOST,
-	SM_OBJ_DESTROYED,
-	SM_CON_COMPLETED,
-	SM_CON_FAILED,
-	SM_CON_DESTROYED,
-	SM_NUM_SYS_MSGS,
-} sysMsg_t;
-
 //void G_CheckForNeededClasses(void); // unused
 //void G_CheckMenDown(void);
 void G_SendMapEntityInfo(gentity_t *e);
