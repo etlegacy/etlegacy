@@ -52,20 +52,20 @@ static vec3_t OB_RED = { 1.f, 0.f, 0.f };
 void CG_GetObituaryIcon(meansOfDeath_t mod, weapon_t weapon, qhandle_t *weaponShader, int *scaleShader)
 {
 	// Get the related weapon from kill
-	weapon_t weap = IS_VALID_WEAPON(weapon) ? weapon : GetMODTableData(mod)->weaponIcon;
+	weapon_t weap = IS_VALID_WEAPON(GetMODTableData(mod)->weaponIcon) ? GetMODTableData(mod)->weaponIcon : weapon;
 
 	// if weapon is still valid
 	if (IS_VALID_WEAPON(weap))
 	{
-		if (cg_drawSmallPopupIcons.integer && cg_weapons[weapon].weaponIcon[0])
+		if (cg_drawSmallPopupIcons.integer && cg_weapons[weap].weaponIcon[0])
 		{
-			*weaponShader = cg_weapons[weapon].weaponIcon[0];
-			*scaleShader  = cg_weapons[weapon].weaponIconScale;
+			*weaponShader = cg_weapons[weap].weaponIcon[0];
+			*scaleShader  = cg_weapons[weap].weaponIconScale;
 		}
-		else if (cg_weapons[weapon].weaponIcon[1])
+		else if (cg_weapons[weap].weaponIcon[1])
 		{
-			*weaponShader = cg_weapons[weapon].weaponIcon[1];
-			*scaleShader  = cg_weapons[weapon].weaponIconScale;
+			*weaponShader = cg_weapons[weap].weaponIcon[1];
+			*scaleShader  = cg_weapons[weap].weaponIconScale;
 		}
 		else
 		{
