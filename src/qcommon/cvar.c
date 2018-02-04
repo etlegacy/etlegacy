@@ -791,22 +791,35 @@ void Cvar_Set(const char *varName, const char *value)
  */
 void Cvar_SetSafe(const char *var_name, const char *value)
 {
-	int flags = Cvar_Flags(var_name);
+	int      flags;
+	qboolean force = qtrue;
 
-	if ((flags != CVAR_NONEXISTENT) && (flags & CVAR_PROTECTED))
+	flags = Cvar_Flags(var_name);
+
+	if (flags != CVAR_NONEXISTENT)
 	{
-		if (value)
+
+		if (flags & CVAR_PROTECTED)
 		{
-			Com_Error(ERR_DROP, "Restricted source tried to set "
-			                    "\"%s\" to \"%s\"", var_name, value);
+			if (value)
+			{
+				Com_Error(ERR_DROP, "Restricted source tried to set "
+									"\"%s\" to \"%s\"", var_name, value);
+			}
+			else
+			{
+				Com_Error(ERR_DROP, "Restricted source tried to "
+									"modify \"%s\"", var_name);
+			}
 		}
-		else
+
+		// don't let VMs or server change engine latched cvars instantly
+		if ((flags & CVAR_LATCH) && !(flags & CVAR_VM_CREATED))
 		{
-			Com_Error(ERR_DROP, "Restricted source tried to "
-			                    "modify \"%s\"", var_name);
+			force = qfalse;
 		}
 	}
-	Cvar_Set(var_name, value);
+	Cvar_Set2(var_name, value, force);
 }
 
 /**
