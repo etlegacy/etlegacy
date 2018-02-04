@@ -40,6 +40,5 @@
 #include <SDL2/SDL_syswm.h>
 #include <SDL2/SDL_video.h>
 #include <SDL2/SDL_loadso.h>
-#include <SDL2/SDL_cpuinfo.h>
 
 #endif // #ifndef INCLUDE_SDLDEF_H
