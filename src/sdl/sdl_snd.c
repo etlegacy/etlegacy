@@ -116,9 +116,13 @@ formatToStringTable[] =
 	{ AUDIO_U8,     "AUDIO_U8"     },
 	{ AUDIO_S8,     "AUDIO_S8"     },
 	{ AUDIO_U16LSB, "AUDIO_U16LSB" },
-	{ AUDIO_S16LSB, "AUDIO_S16LSB" },
 	{ AUDIO_U16MSB, "AUDIO_U16MSB" },
-	{ AUDIO_S16MSB, "AUDIO_S16MSB" }
+	{ AUDIO_S16LSB, "AUDIO_S16LSB" },
+	{ AUDIO_S16MSB, "AUDIO_S16MSB" },
+	{ AUDIO_S32LSB, "AUDIO_S32LSB" },
+	{ AUDIO_S32MSB, "AUDIO_S32MSB" },
+	{ AUDIO_F32LSB, "AUDIO_F32LSB" },
+	{ AUDIO_F32MSB, "AUDIO_F32MSB" },
 };
 
 static int formatToStringTableSize = ARRAY_LEN(formatToStringTable);
@@ -311,7 +315,7 @@ qboolean SNDDMA_Init(void)
 		Cvar_Set("s_device", "-1");
 	}
 
-	device_id = SDL_OpenAudioDevice(device_name, qfalse, &desired, &obtained, SDL_AUDIO_ALLOW_FORMAT_CHANGE);
+	device_id = SDL_OpenAudioDevice(device_name, qfalse, &desired, &obtained, 0);
 	if (device_id == 0)
 	{
 		Com_Printf("SDL_OpenAudioDevice() failed: %s\n", SDL_GetError());
