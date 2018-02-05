@@ -243,9 +243,6 @@ void Com_InitDownloads(void)
 #else
 		if (cl_allowDownload->integer && FS_ComparePaks(dld.downloadList, sizeof(dld.downloadList), qtrue))
 		{
-			// this gets printed to UI, i18n
-			Com_Printf(CL_TranslateStringBuf("Need paks: %s\n"), dld.downloadList);
-
 			if (*dld.downloadList)
 			{
 				// if autodownloading is not enabled on the server
