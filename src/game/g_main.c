@@ -4036,6 +4036,13 @@ void CheckExitRules(void)
 		return;
 	}
 
+	if (g_timelimit.integer < 0 || g_timelimit.integer > INT_MAX / 60000)
+	{
+		G_Printf("timelimit %i is out of range, defaulting to 0\n", g_timelimit.integer);
+		trap_Cvar_Set( "timelimit", "0" );
+		trap_Cvar_Update( &g_timelimit );
+	}
+
 	if (g_timelimit.value != 0.f && !level.warmupTime)
 	{
 		if ((level.timeCurrent - level.startTime) >= (g_timelimit.value * 60000))
