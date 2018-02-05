@@ -3127,7 +3127,7 @@ static void CG_ServerCommand(void)
 		trap_S_FadeAllSound(1.0f, 1000, qfalse);      // fade sound up
 		return;
 	default:
-		CG_Printf("Unknown client game command: %s [%i]\n", cmd, BG_StringHashValue(cmd));
+		CG_Printf("Unknown client game command: %s [%lu]\n", cmd, BG_StringHashValue(cmd));
 		break;
 	}
 }
