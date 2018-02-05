@@ -44,7 +44,7 @@ if(BUILD_CLIENT)
 	endif()
 
 	if(NOT BUNDLED_SDL)
-		find_package(SDL2 2.0.5 REQUIRED) # FindSDL doesn't detect 32bit lib when crosscompiling
+		find_package(SDL2 2.0.7 REQUIRED) # FindSDL doesn't detect 32bit lib when crosscompiling
 		list(APPEND SDL_LIBRARIES ${SDL2_LIBRARY})
 		include_directories(SYSTEM ${SDL2_INCLUDE_DIR})
 	else() # BUNDLED_SDL
