@@ -1728,13 +1728,31 @@ void Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultVal
 		Com_Printf(S_COLOR_YELLOW "WARNING: VM tried to register protected cvar '%s' with value '%s'%s\n",
 		varName, defaultValue, (flags & ~cv->flags ) != 0 ? " and new flags" : "" );
 	}
+
+	// FIXME/inspect: this causes an endless loop while loading some maps (f.e. fueldump)
+ 	// CVAR_LATCH | CVAR_ARCHIVE and CVAR_LATCH | CVAR_SERVERINFO cvars from mod game are affected:
+	//WARNING: VM tried to register engine latch cvar to latched value: cvar 'g_gametype' with value '4'
+	//WARNING: VM tried to register engine latch cvar to latched value: cvar 'sv_maxclients' with value '20'
+	//WARNING: VM tried to register engine latch cvar to latched value: cvar 'g_maxGameClients' with value '0'
+	//WARNING: VM tried to register engine latch cvar to latched value: cvar 'dedicated' with value '0'
+	//WARNING: VM tried to register engine latch cvar to latched value: cvar 'g_maxlives' with value '0'
+	//WARNING: VM tried to register engine latch cvar to latched value: cvar 'g_maxlivesRespawnPenalty' with value '0'
+	//WARNING: VM tried to register engine latch cvar to latched value: cvar 'g_countryflags' with value '0'
+	//WARNING: VM tried to register engine latch cvar to latched value: cvar 'g_dynBQ' with value '0'
+	//WARNING: VM tried to register engine latch cvar to latched value: cvar 'g_skillRating' with value '2'
+	//WARNING: VM tried to register engine latch cvar to latched value: cvar 'g_multiview' with value '0'
+/*
 	// Don't set engine latch cvar to latched value.
 	else if (cv && (cv->flags & CVAR_LATCH) && !(cv->flags & CVAR_VM_CREATED))
 	{
+		Com_Printf(S_COLOR_YELLOW "WARNING: VM tried to register engine latch cvar to latched value: cvar '%s' with value '%s'%s\n",
+		varName, defaultValue, (flags & ~cv->flags ) != 0 ? " and new flags" : "" );
+
 		flags &= ~CVAR_VM_CREATED;
 		cv->flags |= flags;
 		cvar_modifiedFlags |= flags;
 	}
+*/
 	else
 	{
 		cv = Cvar_Get(varName, defaultValue, flags | CVAR_VM_CREATED);
