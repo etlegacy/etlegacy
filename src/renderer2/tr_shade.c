@@ -378,7 +378,8 @@ static void Render_generic(int stage)
 	if (pStage->tcGen_Environment)
 	{
 		// calculate the environment texcoords in object space
-		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.viewOrigin);
+		// origin for object, vieworigin for camera here we need to use object for reflections
+		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin);
 	}
 
 	// u_AlphaTest
