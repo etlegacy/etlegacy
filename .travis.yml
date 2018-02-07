@@ -65,12 +65,6 @@ install:
   - cmake --version
   - cd ${TRAVIS_BUILD_DIR}
 
-before_script:
-  # workaround for missing automake 1.15
-  - cd libs/jpegturbo
-  - autoreconf -fvi
-  - cd ../..
-
 script:
   - ./easybuild.sh
 
