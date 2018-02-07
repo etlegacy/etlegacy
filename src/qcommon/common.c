@@ -89,6 +89,8 @@ static fileHandle_t logfile;
 fileHandle_t        com_journalFile;        // events are written here
 fileHandle_t        com_journalDataFile;    // config files are written here
 
+cvar_t *com_ansiColor;				// set console color
+
 cvar_t *com_crashed = NULL;         // set in case of a crash, prevents CVAR_UNSAFE variables from being set from a cfg
                                     // explicit NULL to make win32 teh happy
 
@@ -114,7 +116,6 @@ cvar_t *com_showtrace;
 cvar_t *com_version;
 cvar_t *com_buildScript;    // for automated data building scripts
 cvar_t *com_introPlayed;
-cvar_t *com_ansiColor;
 cvar_t *com_unfocused;
 cvar_t *com_minimized;
 #if idppc
@@ -2798,6 +2799,9 @@ void Com_Init(char *commandLine)
 	// get the developer cvar set as early as possible
 	Com_StartupVariable("developer");
 
+	// get console color as early as possible
+	com_ansiColor = Cvar_Get("com_ansiColor", "1", CVAR_ARCHIVE);
+
 	// init this early
 	Com_StartupVariable("com_ignorecrash");
 	com_ignorecrash = Cvar_Get("com_ignorecrash", "0", 0);
@@ -2933,8 +2937,6 @@ void Com_Init(char *commandLine)
 	com_buildScript = Cvar_Get("com_buildScript", "0", 0);
 
 	com_introPlayed = Cvar_Get("com_introplayed", "0", CVAR_ARCHIVE);
-
-	com_ansiColor = Cvar_Get("com_ansiColor", "1", CVAR_ARCHIVE);
 
 #if idppc
 	com_altivec = Cvar_Get("com_altivec", "1", CVAR_ARCHIVE);
