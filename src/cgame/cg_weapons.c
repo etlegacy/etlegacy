@@ -153,14 +153,6 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 
 	AnglesToAxis(cent->lerpAngles, v);
 
-
-	Com_Printf("===================================\n");
-	Com_Printf("lerpangle %f %f %f\n", cent->lerpAngles[0], cent->lerpAngles[1], cent->lerpAngles[2]);
-	Com_Printf("apos %f %f %f\n", cent->currentState.apos.trBase[0], cent->currentState.apos.trBase[1], cent->currentState.apos.trBase[2]);
-	Com_Printf("centerangles %f %f %f\n", cg.pmext.centerangles[0], cg.pmext.centerangles[1], cg.pmext.centerangles[2]);
-	Com_Printf("view angle %f %f %f\n", cg.snap->ps.viewangles[0], cg.snap->ps.viewangles[1], cg.snap->ps.viewangles[2]);
-	Com_Printf("delta_angles %d %d %d\n", cg.snap->ps.delta_angles[0], cg.snap->ps.delta_angles[1], cg.snap->ps.delta_angles[2]);
-
 	// new brass handling behavior because the SP stuff just doesn't cut it for MP
 	if (BG_PlayerMounted(cent->currentState.eFlags))
 	{
@@ -229,8 +221,6 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 		{
 			centity_t *tank = &cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent];
 
-			Com_Printf("tank origin %f %f %f\n", tank->mountedMG42.origin[0], tank->mountedMG42.origin[1], tank->mountedMG42.origin[2]);
-
 			VectorAdd(tank->mountedMG42.origin, xoffset, re->origin);
 		}
 		else
@@ -238,9 +228,6 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 			VectorAdd(cent->lerpOrigin, xoffset, re->origin);
 		}
 	}
-
-	Com_Printf("Final origin %f %f %f\n", re->origin[0], re->origin[1], re->origin[2]);
-	Com_Printf("ejectBrassCasingOrigin %f %f %f\n", ejectBrassCasingOrigin[0], ejectBrassCasingOrigin[1], ejectBrassCasingOrigin[2]);
 
 	VectorCopy(re->origin, le->pos.trBase);
 
@@ -3969,7 +3956,7 @@ void CG_AltWeapon_f(void)
  */
 void CG_NextWeap(qboolean switchBanks)
 {
-	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean nextbank = qfalse;     // need to switch to the next bank of weapons?
@@ -4113,7 +4100,7 @@ void CG_NextWeap(qboolean switchBanks)
  */
 void CG_PrevWeap(qboolean switchBanks)
 {
-	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean prevbank = qfalse;     // need to switch to the next bank of weapons?
@@ -4708,12 +4695,12 @@ void CG_OutOfAmmoChange(qboolean allowforceswitch)
 	        return;
 	    }
 	}
-
 	// still nothing available, just go to the next
 	// available weap using the regular selection scheme
 	CG_NextWeap(qtrue);
 	*/
 }
+
 
 /*
 ===================================================================================================
@@ -5367,13 +5354,13 @@ void CG_WaterRipple(qhandle_t shader, vec3_t loc, vec3_t dir, int size, int life
  */
 void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags)     // modified to send missilehitwall surface parameters
 {
-	qhandle_t   mod = 0, mark = 0, shader = 0;
-	sfxHandle_t sfx = 0, sfx2 = 0;
+	qhandle_t   mod      = 0, mark = 0, shader = 0;
+	sfxHandle_t sfx      = 0, sfx2 = 0;
 	qboolean    isSprite = qfalse;
 	int         duration = 600, i, j, markDuration = -1, volume = 127; // keep -1 markDuration for temporary marks
 	trace_t     trace;
 	vec3_t      lightColor = { 1, 1, 0 }, tmpv, tmpv2, sprOrg, sprVel;
-	float       radius = 32, light = 0, sfx2range = 0;
+	float       radius     = 32, light = 0, sfx2range = 0;
 	vec4_t      projection;
 
 	if (surfFlags & SURF_SKY)
