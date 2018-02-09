@@ -2337,17 +2337,20 @@ static void CG_AddWeaponWithPowerups(refEntity_t *gun, int powerups, playerState
  */
 void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 {
-	refEntity_t  gun;
-	refEntity_t  barrel;
-	refEntity_t  flash;
-	vec3_t       angles;
-	weapon_t     weaponNum = (weapon_t)cent->currentState.weapon;
-	weaponInfo_t *weapon;
-	centity_t    *nonPredictedCent;
-	qboolean     firing;
-	qboolean     akimboFire = qfalse;
-	qboolean     drawpart;
-	qboolean     isPlayer = (qboolean)(cent->currentState.clientNum == cg.snap->ps.clientNum); // might as well have this check consistant throughout the routine
+	refEntity_t     gun;
+	refEntity_t     barrel;
+	refEntity_t     flash;
+	vec3_t          angles;
+	weapon_t        weaponNum = (weapon_t)cent->currentState.weapon;
+	weaponInfo_t    *weapon;
+	centity_t       *nonPredictedCent;
+	qboolean        akimboFire = qfalse;
+	qboolean        drawpart;
+	qboolean        isPlayer      = cent->currentState.clientNum == cg.snap->ps.clientNum; // might as well have this check consistant throughout the routine
+	qboolean        isFirstPerson = isPlayer && !cg.renderingThirdPerson;
+	int             clientNum     = ps ? ps->clientNum : cent->currentState.clientNum;
+	team_t          team;
+	modelViewType_t modelViewType = ps ? W_FP_MODEL : W_TP_MODEL;
 
 	// don't draw any weapons when the binocs are up
 	if (cent->currentState.eFlags & EF_ZOOMING)
@@ -2358,7 +2361,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// don't draw weapon stuff when looking through a scope
 	if (GetWeaponTableData(weaponNum)->isScoped)
 	{
-		if (isPlayer && !cg.renderingThirdPerson)
+		if (isFirstPerson)
 		{
 			return;
 		}
@@ -2374,7 +2377,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	// no weapon when on mg_42
 	if (cent->currentState.eFlags & EF_MOUNTEDTANK)
 	{
-		if (isPlayer && !cg.renderingThirdPerson)
+		if (isFirstPerson)
 		{
 			return;
 		}
@@ -2432,53 +2435,26 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	gun.shadowPlane = parent->shadowPlane;
 	gun.renderfx    = parent->renderfx;
 
-	if (ps)
+	team = ps ? (team_t)ps->persistant[PERS_TEAM] : cgs.clientinfo[cent->currentState.clientNum].team;
+
+	if ((weaponNum != WP_SATCHEL) && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))
 	{
-		team_t team = (team_t)ps->persistant[PERS_TEAM];
+		team = team == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS;
+	}
 
-		if ((weaponNum != WP_SATCHEL) && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))
-		{
-			team = team == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS;
-		}
+	gun.hModel = weapon->weaponModel[modelViewType].model;
 
-		gun.hModel = weapon->weaponModel[W_FP_MODEL].model;
-
-		if ((team == TEAM_AXIS) && weapon->weaponModel[W_FP_MODEL].skin[TEAM_AXIS])
-		{
-			gun.customSkin = weapon->weaponModel[W_FP_MODEL].skin[TEAM_AXIS];
-		}
-		else if ((team == TEAM_ALLIES) && weapon->weaponModel[W_FP_MODEL].skin[TEAM_ALLIES])
-		{
-			gun.customSkin = weapon->weaponModel[W_FP_MODEL].skin[TEAM_ALLIES];
-		}
-		else
-		{
-			gun.customSkin = weapon->weaponModel[W_FP_MODEL].skin[0];   // if not loaded it's 0 so doesn't do any harm
-		}
+	if ((team == TEAM_AXIS) && weapon->weaponModel[modelViewType].skin[TEAM_AXIS])
+	{
+		gun.customSkin = weapon->weaponModel[modelViewType].skin[TEAM_AXIS];
+	}
+	else if ((team == TEAM_ALLIES) && weapon->weaponModel[modelViewType].skin[TEAM_ALLIES])
+	{
+		gun.customSkin = weapon->weaponModel[modelViewType].skin[TEAM_ALLIES];
 	}
 	else
 	{
-		team_t team = cgs.clientinfo[cent->currentState.clientNum].team;
-
-		if ((weaponNum != WP_SATCHEL) && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))
-		{
-			team = team == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS;
-		}
-
-		gun.hModel = weapon->weaponModel[W_TP_MODEL].model;
-
-		if (team == TEAM_AXIS && weapon->weaponModel[W_TP_MODEL].skin[TEAM_AXIS])
-		{
-			gun.customSkin = weapon->weaponModel[W_TP_MODEL].skin[TEAM_AXIS];
-		}
-		else if (team == TEAM_ALLIES && weapon->weaponModel[W_TP_MODEL].skin[TEAM_ALLIES])
-		{
-			gun.customSkin = weapon->weaponModel[W_TP_MODEL].skin[TEAM_ALLIES];
-		}
-		else
-		{
-			gun.customSkin = weapon->weaponModel[W_TP_MODEL].skin[0];   // if not loaded it's 0 so doesn't do any harm
-		}
+		gun.customSkin = weapon->weaponModel[modelViewType].skin[0];   // if not loaded it's 0 so doesn't do any harm
 	}
 
 	if (!gun.hModel)
@@ -2513,8 +2489,6 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, weapon->readySound, 255, 0);
 		}
 	}
-
-	firing = ((cent->currentState.eFlags & EF_FIRING) != 0);
 
 	if (ps && !cg.renderingThirdPerson && GetWeaponTableData(cg.predictedPlayerState.weapon)->isMortarSet && cg.predictedPlayerState.weaponstate != WEAPON_RAISING)
 	{
@@ -2557,19 +2531,9 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	{
 		if (weaponNum == WP_AMMO)
 		{
-			if (ps)
+			if (cgs.clientinfo[clientNum].skill[SK_SIGNALS] >= 1)
 			{
-				if (cgs.clientinfo[ps->clientNum].skill[SK_SIGNALS] >= 1)
-				{
-					gun.customShader = weapon->modModels[0];
-				}
-			}
-			else
-			{
-				if (cgs.clientinfo[cent->currentState.clientNum].skill[SK_SIGNALS] >= 1)
-				{
-					gun.customShader = weapon->modModels[0];
-				}
+				gun.customShader = weapon->modModels[0];
 			}
 		}
 
@@ -2577,7 +2541,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		{
 			if (weaponNum == WP_MEDIC_SYRINGE)
 			{
-				if (cgs.clientinfo[cent->currentState.clientNum].skill[SK_FIRST_AID] >= 3)
+				if (cgs.clientinfo[clientNum].skill[SK_FIRST_AID] >= 3)
 				{
 					gun.customShader = weapon->modModels[0];
 				}
@@ -2642,7 +2606,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			}
 
 			spunpart      = qfalse;
-			barrel.hModel = weapon->partModels[W_FP_MODEL][i].model;
+			barrel.hModel = weapon->partModels[modelViewType][i].model;
 
 			if (GetWeaponTableData(weaponNum)->isMortarSet)
 			{
@@ -2678,11 +2642,11 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			{
 				if (spunpart)
 				{
-					CG_PositionRotatedEntityOnTag(&barrel, parent, weapon->partModels[W_FP_MODEL][i].tagName);
+					CG_PositionRotatedEntityOnTag(&barrel, parent, weapon->partModels[modelViewType][i].tagName);
 				}
 				else
 				{
-					CG_PositionEntityOnTag(&barrel, parent, weapon->partModels[W_FP_MODEL][i].tagName, 0, NULL);
+					CG_PositionEntityOnTag(&barrel, parent, weapon->partModels[modelViewType][i].tagName, 0, NULL);
 				}
 
 				drawpart = CG_GetPartFramesFromWeap(cent, &barrel, parent, i, weapon);
@@ -2699,19 +2663,19 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				{
 					if ((ps->persistant[PERS_TEAM] == TEAM_AXIS ||
 					     (ps->persistant[PERS_TEAM] == TEAM_ALLIES && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))) &&
-					    weapon->partModels[W_FP_MODEL][i].skin[TEAM_AXIS])
+					    weapon->partModels[modelViewType][i].skin[TEAM_AXIS])
 					{
-						barrel.customSkin = weapon->partModels[W_FP_MODEL][i].skin[TEAM_AXIS];
+						barrel.customSkin = weapon->partModels[modelViewType][i].skin[TEAM_AXIS];
 					}
 					else if ((ps->persistant[PERS_TEAM] == TEAM_ALLIES ||
 					          (ps->persistant[PERS_TEAM] == TEAM_AXIS && (cent->currentState.powerups & (1 << PW_OPS_DISGUISED)))) &&
-					         weapon->partModels[W_FP_MODEL][i].skin[TEAM_ALLIES])
+					         weapon->partModels[modelViewType][i].skin[TEAM_ALLIES])
 					{
-						barrel.customSkin = weapon->partModels[W_FP_MODEL][i].skin[TEAM_ALLIES];
+						barrel.customSkin = weapon->partModels[modelViewType][i].skin[TEAM_ALLIES];
 					}
 					else
 					{
-						barrel.customSkin = weapon->partModels[W_FP_MODEL][i].skin[0];  // if not loaded it's 0 so doesn't do any harm
+						barrel.customSkin = weapon->partModels[modelViewType][i].skin[0];  // if not loaded it's 0 so doesn't do any harm
 
 					}
 
@@ -2791,11 +2755,11 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 							bipodLeg.shadowPlane = parent->shadowPlane;
 							bipodLeg.renderfx    = parent->renderfx;
 
-							bipodLeg.hModel = weapon->partModels[W_FP_MODEL][3].model;
+							bipodLeg.hModel = weapon->partModels[modelViewType][3].model;
 							CG_PositionEntityOnTag(&bipodLeg, &barrel, "tag_barrel4", 0, NULL);
 							CG_AddWeaponWithPowerups(&bipodLeg, cent->currentState.powerups, ps, cent);
 
-							bipodLeg.hModel = weapon->partModels[W_FP_MODEL][4].model;
+							bipodLeg.hModel = weapon->partModels[modelViewType][4].model;
 							CG_PositionEntityOnTag(&bipodLeg, &barrel, "tag_barrel5", 0, NULL);
 							CG_AddWeaponWithPowerups(&bipodLeg, cent->currentState.powerups, ps, cent);
 						}
@@ -2806,7 +2770,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	}
 
 	// add the scope model to the rifle if you've got it
-	if (isPlayer && !cg.renderingThirdPerson)  // for now just do it on the first person weapons
+	if (isFirstPerson)  // for now just do it on the first person weapons
 	{
 		if (GetWeaponTableData(weaponNum)->isRifle || GetWeaponTableData(weaponNum)->isRiflenade)
 		{
@@ -2902,14 +2866,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	flash.shadowPlane = parent->shadowPlane;
 	flash.renderfx    = parent->renderfx;
 
-	if (ps)
-	{
-		flash.hModel = weapon->flashModel[W_FP_MODEL];
-	}
-	else
-	{
-		flash.hModel = weapon->flashModel[W_TP_MODEL];
-	}
+	flash.hModel = weapon->flashModel[modelViewType];
 
 	angles[YAW]   = 0;
 	angles[PITCH] = 0;
@@ -2959,7 +2916,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	else
 	{
 		// continuous smoke after firing
-		if (ps || cg.renderingThirdPerson || !isPlayer)
+		if (ps || !isFirstPerson)
 		{
 			if (GetWeaponTableData(weaponNum)->canHeat)
 			{
@@ -3016,7 +2973,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	}
 
 	// weaps with barrel smoke
-	if (ps || cg.renderingThirdPerson || !isPlayer)
+	if (ps || !isFirstPerson)
 	{
 		if (weaponNum == WP_STEN)
 		{
@@ -3039,7 +2996,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		}
 	}
 
-	if (ps || cg.renderingThirdPerson || !isPlayer)
+	if (ps || !isFirstPerson)
 	{
 		int muzzleContents;
 
@@ -3047,7 +3004,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		muzzleContents = CG_PointContents(flash.origin, -1);
 
 		// no flamethrower flame on prone moving or dead players
-		if (firing && !(cent->currentState.eFlags & (EF_PRONE_MOVING | EF_DEAD)))
+		if ((cent->currentState.eFlags & EF_FIRING) && !(cent->currentState.eFlags & (EF_PRONE_MOVING | EF_DEAD)))
 		{
 			// Flamethrower effect
 			CG_FlamethrowerFlame(cent, flash.origin);
