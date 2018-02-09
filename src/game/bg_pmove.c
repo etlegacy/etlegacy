@@ -179,7 +179,7 @@ static void PM_StartWeaponAnim(int anim)
 
 	if (pm->pmext->weapAnimTimer > 0)
 	{
-		return;
+		return;     // a high priority animation is running
 	}
 
 	if (pm->cmd.weapon == WP_NONE)
@@ -196,19 +196,11 @@ static void PM_StartWeaponAnim(int anim)
  */
 void PM_ContinueWeaponAnim(int anim)
 {
-	if (pm->cmd.weapon == WP_NONE)
-	{
-		return;
-	}
-
 	if ((pm->ps->weapAnim & ~ANIM_TOGGLEBIT) == anim)
 	{
 		return;
 	}
-	if (pm->pmext->weapAnimTimer > 0)
-	{
-		return;     // a high priority animation is running
-	}
+
 	PM_StartWeaponAnim(anim);
 }
 

@@ -68,7 +68,7 @@ static void CG_StartWeaponAnim(int anim)
 
 	if (cg.pmext.weapAnimTimer > 0)
 	{
-		return;
+		return;     // a high priority animation is running
 	}
 
 	if (cg.predictedPlayerState.weapon == WP_NONE)
@@ -85,19 +85,9 @@ static void CG_StartWeaponAnim(int anim)
  */
 static void CG_ContinueWeaponAnim(int anim)
 {
-	if (cg.predictedPlayerState.weapon == WP_NONE)
-	{
-		return;
-	}
-
 	if ((cg.predictedPlayerState.weapAnim & ~ANIM_TOGGLEBIT) == anim)
 	{
 		return;
-	}
-
-	if (cg.pmext.weapAnimTimer > 0)
-	{
-		return;     // a high priority animation is running
 	}
 
 	CG_StartWeaponAnim(anim);
@@ -4628,7 +4618,7 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 	}
 
 	// NOTE: never reached, as knife is always found
-    /*
+	/*
 	// didn't have available alternative or equivalent, try another weap in the bank
 	CG_WeaponIndex(cg.weaponSelect, &bank, &cycle);       // get bank/cycle of current weapon
 
