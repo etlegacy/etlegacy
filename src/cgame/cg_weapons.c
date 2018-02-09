@@ -2331,9 +2331,9 @@ static void CG_AddWeaponWithPowerups(refEntity_t *gun, int powerups, playerState
  * @brief Used for both the view weapon (ps is valid) and the world modelother character models (ps is NULL)
  * The main player will have this called for BOTH cases, so effects like light and
  * sound should only be done on the world model case.
- * @param parent
- * @param ps
- * @param cent
+ * @param[in] parent
+ * @param[in] ps
+ * @param[in,out] cent
  */
 void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 {
