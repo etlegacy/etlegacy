@@ -871,8 +871,9 @@ typedef enum
 
 void CG_ParseMapEntityInfo(int axis_number, int allied_number);
 
-#define MAX_WEAP_BANKS_MP       10
-#define MAX_WEAPS_IN_BANK_MP    17
+#define MAX_WEAP_BANKS_MP          10
+#define MAX_WEAPS_IN_BANK_MP       17
+#define MAX_WEAP_BANK_SWITCH_ORDER 4
 
 #define MAX_BACKUP_STATES (CMD_BACKUP + 2)
 
