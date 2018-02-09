@@ -134,6 +134,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	vec3_t        offset, xoffset;
 	float         waterScale = 1.0f;
 	vec3_t        v[3], end;
+	qboolean      isFirstPerson = ((cent->currentState.clientNum == cg.snap->ps.clientNum) && !cg.renderingThirdPerson);
 
 	if (cg_brassTime.integer <= 0)
 	{
@@ -152,15 +153,30 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 
 	AnglesToAxis(cent->lerpAngles, v);
 
+
+	Com_Printf("===================================\n");
+	Com_Printf("lerpangle %f %f %f\n", cent->lerpAngles[0], cent->lerpAngles[1], cent->lerpAngles[2]);
+	Com_Printf("apos %f %f %f\n", cent->currentState.apos.trBase[0], cent->currentState.apos.trBase[1], cent->currentState.apos.trBase[2]);
+	Com_Printf("centerangles %f %f %f\n", cg.pmext.centerangles[0], cg.pmext.centerangles[1], cg.pmext.centerangles[2]);
+	Com_Printf("view angle %f %f %f\n", cg.snap->ps.viewangles[0], cg.snap->ps.viewangles[1], cg.snap->ps.viewangles[2]);
+	Com_Printf("delta_angles %d %d %d\n", cg.snap->ps.delta_angles[0], cg.snap->ps.delta_angles[1], cg.snap->ps.delta_angles[2]);
+
 	// new brass handling behavior because the SP stuff just doesn't cut it for MP
 	if (BG_PlayerMounted(cent->currentState.eFlags))
 	{
 		// adjust for the MG tank mounted
-		if ((cent->currentState.eFlags & EF_MOUNTEDTANK) && !(cg_entities[cg_entities[cg_entities[cent->currentState.number].tagParent].tankparent].currentState.density & 8))
+		if ((cent->currentState.eFlags & EF_MOUNTEDTANK))
 		{
-			offset[0] = 12;
-			offset[1] = -4;
-			offset[2] = 24;
+			if (isFirstPerson)
+			{
+				VectorCopy(ejectBrassCasingOrigin, re->origin);
+			}
+			else
+			{
+				offset[0] = -11;
+				offset[1] = -4;
+				offset[2] = -1;
+			}
 		}
 		else
 		{
@@ -178,7 +194,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 	else
 	{
 		if (GetWeaponTableData(cent->currentState.weapon)->isMG || GetWeaponTableData(cent->currentState.weapon)->isMGSet
-		    || GetWeaponTableData(cent->currentState.weapon)->isRifle || cent->currentState.weapon == WP_K43 || cent->currentState.weapon == WP_GARAND)
+		    || GetWeaponTableData(cent->currentState.weapon)->isRifle || GetWeaponTableData(cent->currentState.weapon)->isRifleWithScope)
 		{
 			re->hModel = cgs.media.machinegunBrassModel;
 		}
@@ -191,7 +207,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 		velocity[1] = -100 + 40 * crandom();
 		velocity[2] = 200 + 50 * random();
 
-		if (cent->currentState.clientNum == cg.snap->ps.clientNum && !cg.renderingThirdPerson)
+		if (isFirstPerson)
 		{
 			VectorCopy(ejectBrassCasingOrigin, re->origin);
 			le->angles.trBase[0] = (rand() & 31) + 60;    // bullets should come out horizontal not vertical JPW NERVE
@@ -203,13 +219,28 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 		}
 	}
 
-	if (BG_PlayerMounted(cent->currentState.eFlags) || cent->currentState.clientNum != cg.snap->ps.clientNum || cg.renderingThirdPerson)
+	if ((cent->currentState.eFlags & EF_MG42_ACTIVE) || (cent->currentState.eFlags & EF_AAGUN_ACTIVE) || !isFirstPerson)
 	{
 		xoffset[0] = offset[0] * v[0][0] + offset[1] * v[1][0] + offset[2] * v[2][0];
 		xoffset[1] = offset[0] * v[0][1] + offset[1] * v[1][1] + offset[2] * v[2][1];
 		xoffset[2] = offset[0] * v[0][2] + offset[1] * v[1][2] + offset[2] * v[2][2];
-		VectorAdd(cent->lerpOrigin, xoffset, re->origin);
+
+		if ((cent->currentState.eFlags & EF_MOUNTEDTANK))
+		{
+			centity_t *tank = &cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent];
+
+			Com_Printf("tank origin %f %f %f\n", tank->mountedMG42.origin[0], tank->mountedMG42.origin[1], tank->mountedMG42.origin[2]);
+
+			VectorAdd(tank->mountedMG42.origin, xoffset, re->origin);
+		}
+		else
+		{
+			VectorAdd(cent->lerpOrigin, xoffset, re->origin);
+		}
 	}
+
+	Com_Printf("Final origin %f %f %f\n", re->origin[0], re->origin[1], re->origin[2]);
+	Com_Printf("ejectBrassCasingOrigin %f %f %f\n", ejectBrassCasingOrigin[0], ejectBrassCasingOrigin[1], ejectBrassCasingOrigin[2]);
 
 	VectorCopy(re->origin, le->pos.trBase);
 
@@ -3197,30 +3228,34 @@ void CG_AddViewWeapon(playerState_t *ps)
 			}
 		}
 
+		// FIXME: HACK dummy model to just draw _something_
+		refEntity_t flash;
+		refEntity_t brass;
+
+		Com_Memset(&flash, 0, sizeof(flash));
+		Com_Memset(&brass, 0, sizeof(brass));
+		flash.renderfx = (RF_LIGHTING_ORIGIN | RF_DEPTHHACK);
+		flash.hModel   = cgs.media.mg42muzzleflash;
+
+		angles[YAW]   = 0;
+		angles[PITCH] = 0;
+		angles[ROLL]  = crandom() * 10;
+		AnglesToAxis(angles, flash.axis);
+
+		CG_PositionRotatedEntityOnTag(&flash, &hand, "tag_flash");
+		CG_PositionRotatedEntityOnTag(&brass, &hand, "tag_brass");
+
+		VectorMA(flash.origin, 22, flash.axis[0], flash.origin);
+		VectorMA(brass.origin, 6, brass.axis[0], brass.origin);
+
+		VectorCopy(flash.origin, cg.tankflashorg);
+		VectorCopy(brass.origin, ejectBrassCasingOrigin);
+
+		if (cg.time - cg.predictedPlayerEntity.muzzleFlashTime < MUZZLE_FLASH_TIME)
 		{
-			// FIXME: HACK dummy model to just draw _something_
-			refEntity_t flash;
-
-			Com_Memset(&flash, 0, sizeof(flash));
-			flash.renderfx = (RF_LIGHTING_ORIGIN | RF_DEPTHHACK);
-			flash.hModel   = cgs.media.mg42muzzleflash;
-
-			angles[YAW]   = 0;
-			angles[PITCH] = 0;
-			angles[ROLL]  = crandom() * 10;
-			AnglesToAxis(angles, flash.axis);
-
-			CG_PositionRotatedEntityOnTag(&flash, &hand, "tag_flash");
-
-			VectorMA(flash.origin, 22, flash.axis[0], flash.origin);
-
-			VectorCopy(flash.origin, cg.tankflashorg);
-
-			if (cg.time - cg.predictedPlayerEntity.muzzleFlashTime < MUZZLE_FLASH_TIME)
-			{
-				trap_R_AddRefEntityToScene(&flash);
-			}
+			trap_R_AddRefEntityToScene(&flash);
 		}
+
 		return;
 	}
 
