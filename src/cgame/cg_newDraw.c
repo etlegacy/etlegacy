@@ -241,7 +241,7 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 
 	if (cg.predictedPlayerEntity.currentState.eFlags & EF_MOUNTEDTANK)
 	{
-		if (cg_entities[cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent].tankparent].currentState.density & 8)
+		if (IS_MOUNTED_TANK_BROWNING(cg.snap->ps.clientNum))
 		{
 			realweap = WP_MOBILE_BROWNING;
 		}

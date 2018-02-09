@@ -783,7 +783,7 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 
 	if (BG_PlayerMounted(cg.snap->ps.eFlags))
 	{
-		if (cg_entities[cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent].tankparent].currentState.density & 8)
+		if (IS_MOUNTED_TANK_BROWNING(cg.snap->ps.clientNum))
 		{
 			return WP_MOBILE_BROWNING;
 		}

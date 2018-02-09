@@ -3581,4 +3581,6 @@ typedef enum
 #define SCREEN_WIDTH_SAFE Ccg_WideX(SCREEN_WIDTH)
 #define SCREEN_HEIGHT_SAFE SCREEN_HEIGHT
 
+#define IS_MOUNTED_TANK_BROWNING(entNum) (cg_entities[cg_entities[cg_entities[entNum].tagParent].tankparent].currentState.density & 8)
+
 #endif // #ifndef INCLUDE_CG_LOCAL_H

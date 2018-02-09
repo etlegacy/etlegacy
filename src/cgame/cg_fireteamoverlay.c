@@ -569,7 +569,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 		// draw the player's weapon icon
 		if (cg.predictedPlayerEntity.currentState.eFlags & EF_MOUNTEDTANK)
 		{
-			if (cg_entities[cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent].tankparent].currentState.density & 8)
+			if (IS_MOUNTED_TANK_BROWNING(cg.snap->ps.clientNum))
 			{
 				curWeap = WP_MOBILE_BROWNING;
 			}

@@ -3125,7 +3125,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 		AnglesToAxis(angles, hand.axis);
 		hand.renderfx = RF_DEPTHHACK | RF_FIRST_PERSON | RF_MINLIGHT;
 
-		if (cg_entities[cg_entities[cg_entities[ps->clientNum].tagParent].tankparent].currentState.density & 8)       // should we use a browning?
+		if (IS_MOUNTED_TANK_BROWNING(ps->clientNum))
 		{
 			hand.hModel = cgs.media.hMountedFPBrowning;
 		}
@@ -4770,7 +4770,7 @@ void CG_FireWeapon(centity_t *cent)
 		// quick hack for EF_MOUNTEDTANK, need to change this - likely it needs to use viewlocked as well
 		if (cent->currentState.eFlags & EF_MOUNTEDTANK)
 		{
-			if (cg_entities[cg_entities[cg_entities[cent->currentState.number].tagParent].tankparent].currentState.density & 8)       // should we use a browning?
+			if (IS_MOUNTED_TANK_BROWNING(cent->currentState.number))
 			{
 				trap_S_StartSound(NULL, cent->currentState.number, CHAN_WEAPON, cgs.media.hWeaponSnd_2);
 			}

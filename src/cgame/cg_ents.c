@@ -1708,7 +1708,7 @@ void CG_Mover_PostProcess(centity_t *cent)
 	}
 
 	cg_entities[cent->currentState.effect3Time].tankparent = cent - cg_entities;
-	CG_AttachBitsToTank(&cg_entities[cent->currentState.effect3Time], &mg42base, &mg42upper, &mg42gun, &player, &flash, angles, "tag_player", (cent->currentState.density & 8) ? qtrue : qfalse);
+	CG_AttachBitsToTank(&cg_entities[cent->currentState.effect3Time], &mg42base, &mg42upper, &mg42gun, &player, &flash, angles, "tag_player", cent->currentState.density & 8);
 
 	// if we (or someone we're spectating) is on this tank, recalc our view values
 	if (cg.snap->ps.eFlags & EF_MOUNTEDTANK)

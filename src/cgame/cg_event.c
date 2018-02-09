@@ -2211,7 +2211,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 		if (BG_PlayerMounted(es->eFlags))
 		{
-			if ((es->eFlags & EF_MOUNTEDTANK) && (cg_entities[cg_entities[cg_entities[es->number].tagParent].tankparent].currentState.density & 8))
+			if ((es->eFlags & EF_MOUNTEDTANK) && IS_MOUNTED_TANK_BROWNING(es->number))
 			{
 				trap_S_StartSoundVControl(NULL, es->number, CHAN_AUTO, cgs.media.hWeaponHeatSnd_2, 255);
 			}
@@ -2300,7 +2300,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			if (gdist > 512 && gdist < 4096)
 			{
 				VectorMA(cg.refdef_current->vieworg, 64, norm, gorg);
-				if (cg_entities[cg_entities[cg_entities[cent->currentState.number].tagParent].tankparent].currentState.density & 8)       // should we use a browning?
+				if (IS_MOUNTED_TANK_BROWNING(cent->currentState.number))       // should we use a browning?
 				{
 					trap_S_StartSoundEx(gorg, cent->currentState.number, CHAN_WEAPON, cgs.media.hWeaponEchoSnd_2, SND_NOCUT);
 				}
