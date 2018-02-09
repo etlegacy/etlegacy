@@ -209,9 +209,7 @@ void CG_MachineGunEjectBrass(centity_t *cent)
 
 		if ((cent->currentState.eFlags & EF_MOUNTEDTANK))
 		{
-			centity_t *tank = &cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent];
-
-			VectorAdd(tank->mountedMG42.origin, xoffset, re->origin);
+			VectorAdd(cg_entities[cg_entities[cent->currentState.clientNum].tagParent].mountedMG42.origin, xoffset, re->origin);
 		}
 		else
 		{
