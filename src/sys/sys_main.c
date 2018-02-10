@@ -786,6 +786,7 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 	}
 #endif
 
+#ifndef __APPLE__
 	// HACK: sometimes a library is loaded from the mod dir when it shouldn't. Why?
 	if (!libHandle && strcmp(gamedir, DEFAULT_MODGAME))
 	{
@@ -800,6 +801,7 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 			libHandle = Sys_TryLibraryLoad(basepath, DEFAULT_MODGAME, fname);
 		}
 	}
+#endif
 
 	if (!libHandle)
 	{
