@@ -752,7 +752,6 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 #ifndef DEDICATED
 	if (LIB_DO_UNPACK && extract)
 	{
-
 		if (!FS_CL_ExtractFromPakFile(homepath, gamedir, fname))
 		{
 			// no drama, we still check SEARCHPATH2
@@ -773,32 +772,31 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 	}
 
 #ifndef DEDICATED
-	if (!libHandle && !LIB_DO_UNPACK && extract)
+	if (extract)
 	{
-		if (!FS_CL_ExtractFromPakFile(homepath, gamedir, fname))
+		if (!libHandle && !LIB_DO_UNPACK)
 		{
-			Com_Printf("Sys_LoadDll(%s/%s) failed to extract library\n", gamedir, name);
-			return NULL;
+			if (!FS_CL_ExtractFromPakFile(homepath, gamedir, fname))
+			{
+				Com_Printf("Sys_LoadDll(%s/%s) failed to extract library\n", gamedir, name);
+				return NULL;
+			}
+
+			Com_Printf("Sys_LoadGameDll -> FS_CL_ExtractFromPakFile(%s, %s, %s)\n", homepath, gamedir, fname);
+			libHandle = Sys_TryLibraryLoad(homepath, gamedir, fname);
 		}
 
-		Com_Printf("Sys_LoadGameDll -> FS_CL_ExtractFromPakFile(%s, %s, %s)\n", homepath, gamedir, fname);
-		libHandle = Sys_TryLibraryLoad(homepath, gamedir, fname);
-	}
-#endif
-
-#ifndef __APPLE__
-	// HACK: sometimes a library is loaded from the mod dir when it shouldn't. Why?
-	if (!libHandle && strcmp(gamedir, DEFAULT_MODGAME))
-	{
-		Com_Printf("Sys_LoadDll: failed to load the mod library. Trying to revert to the default one.\n");
-#ifndef DEDICATED
-		// Try to use the legacy mod
-		libHandle = Sys_TryLibraryLoad(homepath, DEFAULT_MODGAME, fname);
-
-		if (!libHandle)
-#endif
+		// use legacy ui for download process (mod binary pk3 isn't extracted)
+		if (!strcmp(name,  "ui") && !libHandle && strcmp(gamedir, DEFAULT_MODGAME))
 		{
-			libHandle = Sys_TryLibraryLoad(basepath, DEFAULT_MODGAME, fname);
+			Com_Printf("Sys_LoadDll: mod initialisation - ui fallback\n");
+
+			libHandle = Sys_TryLibraryLoad(homepath, DEFAULT_MODGAME, fname);
+
+			if (!libHandle)
+			{
+				libHandle = Sys_TryLibraryLoad(basepath, DEFAULT_MODGAME, fname);
+			}
 		}
 	}
 #endif
