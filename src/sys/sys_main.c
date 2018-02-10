@@ -786,6 +786,21 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 	}
 #endif
 
+	// HACK: sometimes a library is loaded from the mod dir when it shouldn't. Why?
+	if (!libHandle && strcmp(gamedir, DEFAULT_MODGAME))
+	{
+		Com_Printf("Sys_LoadDll: failed to load the mod library. Trying to revert to the default one.\n");
+#ifndef DEDICATED
+		// Try to use the legacy mod
+		libHandle = Sys_TryLibraryLoad(homepath, DEFAULT_MODGAME, fname);
+
+		if (!libHandle)
+#endif
+		{
+			libHandle = Sys_TryLibraryLoad(basepath, DEFAULT_MODGAME, fname);
+		}
+	}
+
 	if (!libHandle)
 	{
 		Com_Printf("Sys_LoadDll(%s/%s) failed to load library\n", gamedir, name);
