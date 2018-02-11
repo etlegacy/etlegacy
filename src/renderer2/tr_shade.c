@@ -356,10 +356,15 @@ static void Render_generic(int stage)
 	shaderStage_t *pStage;
 	colorGen_t    rgbGen;
 	alphaGen_t    alphaGen;
+	qboolean isVertexLit;
+	int finalRgbGen, finalAlphaGen;
 
 	Ren_LogComment("--- Render_generic ---\n");
 
 	pStage = tess.surfaceStages[stage];
+	isVertexLit = tess.lightmapNum == LIGHTMAP_BY_VERTEX;
+	finalRgbGen = (isVertexLit && pStage->rgbGen == CGEN_IDENTITY) ? CGEN_VERTEX : pStage->rgbGen;
+	finalAlphaGen = (isVertexLit && pStage->alphaGen == AGEN_IDENTITY) ? AGEN_VERTEX : pStage->alphaGen;
 
 	GL_State(pStage->stateBits);
 
@@ -385,11 +390,11 @@ static void Render_generic(int stage)
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
 
 	// u_ColorGen
-	switch (pStage->rgbGen)
+	switch (finalRgbGen)
 	{
 	case CGEN_VERTEX:
 	case CGEN_ONE_MINUS_VERTEX:
-		rgbGen = pStage->rgbGen;
+		rgbGen = finalRgbGen;
 		break;
 	default:
 		rgbGen = CGEN_CONST;
@@ -397,11 +402,11 @@ static void Render_generic(int stage)
 	}
 
 	// u_AlphaGen
-	switch (pStage->alphaGen)
+	switch (finalAlphaGen)
 	{
 	case AGEN_VERTEX:
 	case AGEN_ONE_MINUS_VERTEX:
-		alphaGen = pStage->alphaGen;
+		alphaGen = finalAlphaGen;
 		break;
 	default:
 		alphaGen = AGEN_CONST;
@@ -2554,11 +2559,16 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	float green;
 	float blue;
 	float alpha;
-
+	qboolean isVertexLit;
+	int finalRgbGen, finalAlphaGen;
 	Ren_LogComment("--- Tess_ComputeColor ---\n");
 
+	isVertexLit = tess.lightmapNum == LIGHTMAP_BY_VERTEX;
+	finalRgbGen = (isVertexLit && pStage->rgbGen == CGEN_IDENTITY) ? CGEN_VERTEX : pStage->rgbGen;
+	finalAlphaGen = (isVertexLit && pStage->alphaGen == AGEN_IDENTITY) ? AGEN_VERTEX : pStage->alphaGen;
+
 	// rgbGen
-	switch (pStage->rgbGen)
+	switch (finalRgbGen)
 	{
 	case CGEN_IDENTITY:
 	{
@@ -2718,7 +2728,7 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	}
 
 	// alphaGen
-	switch (pStage->alphaGen)
+	switch (finalAlphaGen)
 	{
 	default:
 	case AGEN_IDENTITY:

@@ -1658,19 +1658,19 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, int *indexes)
 {
 	srfFoliage_t *foliage;
-	int          i, j, numVerts, numIndexes, numInstances, size;
-	vec3_t       bounds[2], boundsTranslated[2];
-	float        scale;
-
-	// get fog volume
+	srfTriangle_t *tri;
+	srfVert_t *dv[3];
+	int i, j, numVerts, numInstances, numTriangles;
+	vec3_t bounds[2], boundsTranslated[2];
+	float foliageHeightScale = Com_Clamp(0.1f, 2.0f, r_drawFoliage->value);
+	
 	surf->fogIndex = LittleLong(ds->fogNum) + 1;
-
-	// get shader
 	surf->shader = ShaderForShaderNum(ds->shaderNum);
 	if (r_singleShader->integer && !surf->shader->isSky)
 	{
 		surf->shader = tr.defaultShader;
 	}
+	surf->lightmapNum = LIGHTMAP_BY_VERTEX;
 
 	// foliage surfaces have their actual vert count in patchHeight
 	// and the instance count in patchWidth
@@ -1678,87 +1678,69 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 
 	// get counts
 	numVerts     = LittleLong(ds->patchHeight);
-	numIndexes   = LittleLong(ds->numIndexes);
 	numInstances = LittleLong(ds->patchWidth);
-
-	// calculate size
-	size = sizeof(*foliage) +
-	       numVerts * (sizeof(foliage->xyz[0]) + sizeof(foliage->normal[0]) + sizeof(foliage->texCoords[0]) + sizeof(foliage->lmTexCoords[0])) +
-	       numIndexes * sizeof(foliage->indexes[0]) +
-	       numInstances * sizeof(foliage->instances[0]);
+	numTriangles = LittleLong(ds->numIndexes) / 3;
 
 	// get memory
-	foliage = ri.Hunk_Alloc(size, h_low);
-
+	foliage = (srfFoliage_t *)ri.Hunk_Alloc(sizeof(*foliage), h_low);
 	// set up surface
 	foliage->surfaceType  = SF_FOLIAGE;
-	foliage->numVerts     = numVerts;
-	foliage->numIndexes   = numIndexes;
+	// allocate space for tris
+	foliage->numTriangles = numTriangles;
+	foliage->triangles = (srfTriangle_t *)ri.Hunk_Alloc(numTriangles * sizeof(foliage->triangles[0]), h_low);
+	// allocate space for verts
+	foliage->numVerts = numVerts;
+	foliage->verts = (srfVert_t *)ri.Hunk_Alloc(numVerts * sizeof(foliage->verts[0]), h_low);
+	// allocate space for instances
 	foliage->numInstances = numInstances;
-	foliage->xyz          = (vec3_t *)(foliage + 1);
-	foliage->normal       = (vec4_t *)(foliage->xyz + foliage->numVerts);
-	foliage->texCoords    = (vec2_t *)(foliage->normal + foliage->numVerts);
-	foliage->lmTexCoords  = (vec2_t *)(foliage->texCoords + foliage->numVerts);
-	foliage->indexes      = (unsigned int *)(foliage->lmTexCoords + foliage->numVerts);
-	foliage->instances    = (foliageInstance_t *)(foliage->indexes + foliage->numIndexes);
+	foliage->instances = (foliageInstance_t *)ri.Hunk_Alloc(numInstances * sizeof(foliage->instances[0]), h_low);
 
 	surf->data = (surfaceType_t *)foliage;
-
-	// get foliage drawscale
-	scale = r_drawFoliage->value;
-	if (scale < 0.0f)
-	{
-		scale = 1.0f;
-	}
-	else if (scale > 2.0f)
-	{
-		scale = 2.0f;
-	}
 
 	// copy vertexes
 	ClearBounds(bounds[0], bounds[1]);
 	verts += LittleLong(ds->firstVert);
 	for (i = 0; i < numVerts; i++)
 	{
-		// copy xyz and normal
 		for (j = 0; j < 3; j++)
 		{
-			foliage->xyz[i][j]    = LittleFloat(verts[i].xyz[j]);
-			foliage->normal[i][j] = LittleFloat(verts[i].normal[j]);
+			foliage->verts[i].xyz[j]    = LittleFloat(verts[i].xyz[j]);
+			foliage->verts[i].normal[j] = LittleFloat(verts[i].normal[j]);
 		}
-
-		// scale height
-		foliage->xyz[i][2] *= scale;
+		foliage->verts[i].xyz[2] *= foliageHeightScale;
 
 		// finish
-		foliage->xyz[i][3] = foliage->normal[i][3] = 0;
-		AddPointToBounds(foliage->xyz[i], bounds[0], bounds[1]);
+		foliage->verts[i].xyz[3] = foliage->verts[i].normal[3] = 0;
+		AddPointToBounds(foliage->verts[i].xyz, bounds[0], bounds[1]);
 
 		// copy texture coordinates
 		for (j = 0; j < 2; j++)
 		{
-			foliage->texCoords[i][j]   = LittleFloat(verts[i].st[j]);
-			foliage->lmTexCoords[i][j] = LittleFloat(verts[i].lightmap[j]);
+			foliage->verts[i].st[j]   = LittleFloat(verts[i].st[j]);
+			foliage->verts[i].lightmap[j] = LittleFloat(verts[i].lightmap[j]);
 		}
 	}
 
 	// copy indexes
 	indexes += LittleLong(ds->firstIndex);
-	for (i = 0; i < numIndexes; i++)
+	for (i = 0, tri = foliage->triangles; i < numTriangles; i++, tri++)
 	{
-		foliage->indexes[i] = LittleLong(indexes[i]);
-		if (foliage->indexes[i] >= numVerts)
+		for (j = 0; j < 3; j++)
 		{
-			Ren_Drop("Bad index in triangle surface");
+			tri->indexes[j] = LittleLong(indexes[i * 3 + j]);
+			if (tri->indexes[j] < 0 || tri->indexes[j] >= numVerts)
+			{
+				Ren_Drop("Bad index in triangle surface");
+			}
 		}
 	}
 
-	// copy origins and colors
+	// copy instances
 	ClearBounds(foliage->bounds[0], foliage->bounds[1]);
 	verts += numVerts;
 	for (i = 0; i < numInstances; i++)
 	{
-		// copy xyz
+		// copy origin
 		for (j = 0; j < 3; j++)
 		{
 			foliage->instances[i].origin[j] = LittleFloat(verts[i].xyz[j]);
@@ -1772,8 +1754,10 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 		R_ColorShiftLightingBytes(verts[i].color, foliage->instances[i].color);
 	}
 
+	R_CalcSurfaceTrianglePlanes(numTriangles, foliage->triangles, foliage->verts);
+
 	// finish surface
-	FinishGenericSurface(ds, (srfGeneric_t *)foliage, foliage->xyz[0]);
+	FinishGenericSurface(ds, (srfGeneric_t *)foliage, foliage->verts[0].xyz);
 }
 
 /**
@@ -3188,7 +3172,7 @@ static void R_CreateClusters()
  */
 static void R_CreateWorldVBO()
 {
-	int       i, j, k;
+	int       s, i, j, k;
 	int       numVerts = 0;
 	srfVert_t *verts;
 	//srfVert_t      *optimizedVerts;
@@ -3201,7 +3185,7 @@ static void R_CreateWorldVBO()
 
 	startTime = ri.Milliseconds();
 
-	for (k = 0, surface = &s_worldData.surfaces[0]; k < s_worldData.numWorldSurfaces; k++, surface++)
+	for (s = 0, surface = &s_worldData.surfaces[0]; s < s_worldData.numWorldSurfaces; s++, surface++)
 	{
 		if (*surface->data == SF_FACE)
 		{
@@ -3247,12 +3231,16 @@ static void R_CreateWorldVBO()
 		}
 		else if (*surface->data == SF_FOLIAGE)
 		{
-			srfFoliage_t *fol = (srfFoliage_t *) surface->data;
-			// FIXME: 'instances are just additional drawverts' see ParseFoliage
+			srfFoliage_t *foliage = (srfFoliage_t *)surface->data;
 
-			if (fol->numVerts)
+			if (foliage->numVerts)
 			{
-				numVerts += fol->numVerts;
+				numVerts += foliage->numVerts * foliage->numInstances;
+			}
+
+			if (foliage->numTriangles)
+			{
+				numTriangles += foliage->numTriangles * foliage->numInstances;
 			}
 		}
 	}
@@ -3276,7 +3264,7 @@ static void R_CreateWorldVBO()
 	// set up triangle indices
 	numVerts     = 0;
 	numTriangles = 0;
-	for (k = 0, surface = &s_worldData.surfaces[0]; k < s_worldData.numWorldSurfaces; k++, surface++)
+	for (s = 0, surface = &s_worldData.surfaces[0]; s < s_worldData.numWorldSurfaces; s++, surface++)
 	{
 		if (*surface->data == SF_FACE)
 		{
@@ -3356,11 +3344,34 @@ static void R_CreateWorldVBO()
 				numVerts += srf->numVerts;
 			}
 		}
+		else if (*surface->data == SF_FOLIAGE)
+		{
+			srfFoliage_t *srf = (srfFoliage_t *)surface->data;
+
+			srf->firstTriangle = numTriangles;
+
+			if (srf->numTriangles)
+			{
+				srfTriangle_t *tri;
+				for (i = 0; i < srf->numInstances; i++) 
+				{
+					for (j = 0, tri = srf->triangles; j < srf->numTriangles; j++, tri++)
+					{
+						for (k = 0; k < 3; k++)
+						{
+							triangles[numTriangles + j].indexes[k] = numVerts + tri->indexes[k];
+						}
+					}
+					numTriangles += srf->numTriangles;
+					numVerts += srf->numVerts;
+				}
+			}
+		}
 	}
 
 	// build vertices
 	numVerts = 0;
-	for (k = 0, surface = &s_worldData.surfaces[0]; k < s_worldData.numWorldSurfaces; k++, surface++)
+	for (s = 0, surface = &s_worldData.surfaces[0]; s < s_worldData.numWorldSurfaces; s++, surface++)
 	{
 		if (*surface->data == SF_FACE)
 		{
@@ -3412,12 +3423,30 @@ static void R_CreateWorldVBO()
 		}
 		else if (*surface->data == SF_FOLIAGE)
 		{
-			srfFoliage_t *srf = (srfFoliage_t *) surface->data;
-			// FIXME: 'instances are just additional drawverts' see ParseFoliage
-
+			srfFoliage_t *srf = (srfFoliage_t *)surface->data;
+			
 			if (srf->numVerts)
 			{
-				numVerts += srf->numVerts;
+				srfVert_t vert;
+				foliageInstance_t *finstance;
+				for (i = 0; i < srf->numInstances; i++)
+				{
+					finstance = &srf->instances[i];
+					for (j = 0; j < srf->numVerts; j++)
+					{
+						Com_Memcpy(&vert, &srf->verts[j], sizeof(vert));
+						VectorAdd(vert.xyz, finstance->origin, vert.xyz);
+
+						vert.lightColor[0] = finstance->color[0] / 255.f;
+						vert.lightColor[1] = finstance->color[1] / 255.f;
+						vert.lightColor[2] = finstance->color[2] / 255.f;
+						vert.lightColor[3] = finstance->color[3] / 255.f;
+
+						CopyVert(&vert, &verts[numVerts + j]);
+					}
+
+					numVerts += srf->numVerts;
+				}
 			}
 		}
 	}
@@ -3447,7 +3476,7 @@ static void R_CreateWorldVBO()
 	Ren_Developer("world VBO calculation time = %5.2f seconds\n", (endTime - startTime) / 1000.0);
 
 	// point triangle surfaces to world VBO
-	for (k = 0, surface = &s_worldData.surfaces[0]; k < s_worldData.numWorldSurfaces; k++, surface++)
+	for (s = 0, surface = &s_worldData.surfaces[0]; s < s_worldData.numWorldSurfaces; s++, surface++)
 	{
 		if (*surface->data == SF_FACE)
 		{

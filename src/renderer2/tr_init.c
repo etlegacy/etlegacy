@@ -242,6 +242,7 @@ cvar_t *r_vboModels;
 cvar_t *r_vboOptimizeVertices;
 cvar_t *r_vboVertexSkinning;
 cvar_t *r_vboSmoothNormals;
+cvar_t *r_vboFoliage;
 
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
 cvar_t *r_mergeClusterSurfaces;
@@ -1250,6 +1251,7 @@ void R_Register(void)
 	r_vboOptimizeVertices = ri.Cvar_Get("r_vboOptimizeVertices", "1", CVAR_CHEAT | CVAR_LATCH);
 	r_vboVertexSkinning   = ri.Cvar_Get("r_vboVertexSkinning", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_vboSmoothNormals    = ri.Cvar_Get("r_vboSmoothNormals", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	r_vboFoliage = ri.Cvar_Get("r_vboFoliage", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
 	r_mergeClusterSurfaces  = ri.Cvar_Get("r_mergeClusterSurfaces", "0", CVAR_CHEAT);

@@ -2780,14 +2780,6 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 		}
 	}
 
-	// if shader stage references a lightmap, but no lightmap is present
-	// (vertex-approximated surfaces), then set cgen to vertex
-	//if (stage->bundle[0].isLightmap && shader.lightmapIndex < 0 && stage->bundle[0].image[0] == tr.whiteImage)
-	//if (stage->type == ST_LIGHTMAP) FIXME
-	//{
-	//	stage->rgbGen = CGEN_VERTEX;
-	//}
-
 	// implicitly assume that a GL_ONE GL_ZERO blend mask disables blending
 	if ((blendSrcBits == GLS_SRCBLEND_ONE) && (blendDstBits == GLS_DSTBLEND_ZERO))
 	{
