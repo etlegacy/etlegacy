@@ -1355,6 +1355,11 @@ typedef struct
 
 struct shaderCommands_s;
 
+#define LIGHTMAP_2D         -4      // shader is for 2D rendering
+#define LIGHTMAP_BY_VERTEX  -3      // pre-lit triangle models
+#define LIGHTMAP_WHITEIMAGE -2
+#define LIGHTMAP_NONE       -1
+
 /**
  * @enum cullType_t
  * @brief
@@ -2425,18 +2430,18 @@ typedef struct
 	//int dlightBits;
 
 	// triangle definitions
-	int numIndexes;
-	glIndex_t *indexes;
+	int numTriangles;
+	srfTriangle_t *triangles;
 
 	int numVerts;
-	vec3_t *xyz;
-	vec4_t *normal;
-	vec2_t *texCoords;
-	vec2_t *lmTexCoords;
+	srfVert_t *verts;
 
 	// origins
 	int numInstances;
 	foliageInstance_t *instances;
+ 
+	// BSP VBO offsets
+	int firstTriangle;
 
 	// static render data
 	VBO_t *vbo;
@@ -3851,6 +3856,7 @@ extern cvar_t *r_vboModels;
 extern cvar_t *r_vboOptimizeVertices;
 extern cvar_t *r_vboVertexSkinning;
 extern cvar_t *r_vboSmoothNormals;
+extern cvar_t *r_vboFoliage;
 
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
 extern cvar_t *r_mergeClusterSurfaces;

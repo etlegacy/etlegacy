@@ -1247,22 +1247,26 @@ static void Tess_SurfaceTriangles(srfTriangles_t *srf)
  */
 static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 {
-	int               o, i, a, srcColor;
-	int               numVerts = srf->numVerts, numIndexes = srf->numIndexes;   // basic setup
+	int               o, i;
+	int               numVerts = srf->numVerts;   // basic setup
 	vec4_t            distanceCull, distanceVector;
-	float             alpha, z, dist, fovScale = backEnd.viewParms.fovX * (1.0 / 90.0);
+	float             alpha = 1.0f, z, dist, fovScale = backEnd.viewParms.fovX * (1.0 / 90.0);
 	vec3_t            local;
-	float             *xyz, *color;
+	float *xyz, *normal, *texCoords, *lightCoords, *color;
 	//int               dlightBits;
 	foliageInstance_t *instance;
+	srfTriangle_t *tri;
+	srfVert_t     *dv;
 
-	// FIXME: r_vboFoliage ?
-	if (srf->vbo && srf->ibo && !ShaderRequiresCPUDeforms(tess.surfaceShader))
+	if (r_vboFoliage->integer && srf->vbo && srf->ibo && !ShaderRequiresCPUDeforms(tess.surfaceShader))
 	{
 		Tess_DrawCurrent();
 
 		R_BindVBO(srf->vbo);
 		R_BindIBO(srf->ibo);
+
+		tess.multiDrawIndexes[tess.multiDrawPrimitives] = (glIndex_t *)BUFFER_OFFSET(srf->firstTriangle * 3 * sizeof(glIndex_t));
+		tess.multiDrawCounts[tess.multiDrawPrimitives] = srf->numTriangles * 3 * srf->numInstances;
 
 		tess.multiDrawPrimitives++;
 		return;
@@ -1270,9 +1274,9 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 
 	// calculate distance vector
 	VectorSubtract(backEnd.orientation.origin, backEnd.viewParms.orientation.origin, local);
-	distanceVector[0] = -backEnd.orientation.transformMatrix[2];
-	distanceVector[1] = -backEnd.orientation.transformMatrix[6];
-	distanceVector[2] = -backEnd.orientation.transformMatrix[10];
+	distanceVector[0] = -backEnd.orientation.modelViewMatrix[2];
+	distanceVector[1] = -backEnd.orientation.modelViewMatrix[6];
+	distanceVector[2] = -backEnd.orientation.modelViewMatrix[10];
 	distanceVector[3] = DotProduct(local, backEnd.viewParms.orientation.axis[0]);
 
 	// attempt distance cull
@@ -1335,71 +1339,62 @@ static void Tess_SurfaceFoliage(srfFoliage_t *srf)
 			{
 				continue;
 			}
-
-			// set color
-			a        = alpha > 1.0f ? 255 : alpha * 255;
-#ifdef Q3_BIG_ENDIAN // LBO 3/15/05. Byte-swap fix for Mac - alpha is in the LSB.
-			srcColor = (*((int*)instance->color) & 0xFFFFFF00) | (a & 0xff);
-#else
-			srcColor = (*((int *)instance->color) & 0xFFFFFF) | (a << 24);
-#endif
-		}
-		else
-		{
-			srcColor = *((int *)instance->color);
 		}
 
 		//Ren_Print("Color: %d %d %d %d\n", srf->colors[ o ][ 0 ], srf->colors[ o ][ 1 ], srf->colors[ o ][ 2 ], alpha );
 
-		Tess_CheckOverflow(numVerts, numIndexes);
+		Tess_CheckOverflow(numVerts, srf->numTriangles * 3);
 
 		// set after overflow check so dlights work properly
 		//tess.dlightBits |= dlightBits; // FIXME: r1?
 
 		// copy indexes
-		Com_Memcpy(&tess.indexes[tess.numIndexes], srf->indexes, numIndexes * sizeof(srf->indexes[0]));
-		for (i = 0; i < numIndexes; i++)
+		for (i = 0, tri = srf->triangles; i < srf->numTriangles; i++, tri++)
 		{
-			tess.indexes[tess.numIndexes + i] += tess.numVertexes;
+			tess.indexes[tess.numIndexes + i * 3 + 0] = tess.numVertexes + tri->indexes[0];
+			tess.indexes[tess.numIndexes + i * 3 + 1] = tess.numVertexes + tri->indexes[1];
+			tess.indexes[tess.numIndexes + i * 3 + 2] = tess.numVertexes + tri->indexes[2];
 		}
 
-		// copy xyz, normal and st
+		dv = srf->verts;
 		xyz = tess.xyz[tess.numVertexes];
-		Com_Memcpy(xyz, srf->xyz, numVerts * sizeof(srf->xyz[0]));
-		
-		//if (tess.surfaceShader->needsNormal)
-		{
-			Com_Memcpy(&tess.normals[tess.numVertexes], srf->normal, numVerts * sizeof(srf->normal[0]));
-		}
-
-		for (i = 0; i < numVerts; i++)
-		{
-			tess.texCoords[tess.numVertexes + i][0] = srf->texCoords[i][0];
-			tess.texCoords[tess.numVertexes + i][1] = srf->texCoords[i][1];
-			tess.texCoords[tess.numVertexes + i][2] = 0;
-			tess.texCoords[tess.numVertexes + i][3] = 1;
-
-			tess.lightCoords[tess.numVertexes + i][0] = srf->lmTexCoords[i][0];
-			tess.lightCoords[tess.numVertexes + i][1] = srf->lmTexCoords[i][1];
-			tess.lightCoords[tess.numVertexes + i][2] = 0;
-			tess.lightCoords[tess.numVertexes + i][3] = 1;
-		}
-
-		// offset xyz
-		for (i = 0; i < numVerts; i++, xyz += 4)
-		{
-			VectorAdd(xyz, instance->origin, xyz);
-		}
-
-		// copy color
+		normal = tess.normals[tess.numVertexes];
+		texCoords = tess.texCoords[tess.numVertexes];
+		lightCoords = tess.lightCoords[tess.numVertexes];
 		color = tess.colors[tess.numVertexes];
-		for (i = 0; i < numVerts; i++)
+
+		for (i = 0; i < srf->numVerts; i++, dv++, xyz += 4, normal += 4, texCoords += 4, lightCoords += 4, color += 4)
 		{
-			color[i] = srcColor;
+			xyz[0] = dv->xyz[0] + instance->origin[0];
+			xyz[1] = dv->xyz[1] + instance->origin[1];
+			xyz[2] = dv->xyz[2] + instance->origin[2];
+			xyz[3] = 1;
+
+			//if(!tess.skipTangentSpaces)
+			{
+				normal[0] = dv->normal[0];
+				normal[1] = dv->normal[1];
+				normal[2] = dv->normal[2];
+			}
+
+			texCoords[0] = dv->st[0];
+			texCoords[1] = dv->st[1];
+			texCoords[2] = 0;
+			texCoords[3] = 1;
+
+			lightCoords[0] = dv->lightmap[0];
+			lightCoords[1] = dv->lightmap[1];
+			lightCoords[2] = 0;
+			lightCoords[3] = 1;
+
+			color[0] = instance->color[0] / 255.f;
+			color[1] = instance->color[1] / 255.f;
+			color[2] = instance->color[2] / 255.f;
+			color[3] = alpha;
 		}
 
-		// increment
-		tess.numIndexes  += numIndexes;
+		// increment offsets
+		tess.numIndexes += srf->numTriangles * 3;
 		tess.numVertexes += numVerts;
 	}
 	tess.attribsSet |= ATTR_POSITION | ATTR_COLOR | ATTR_TEXCOORD | ATTR_NORMAL | ATTR_LIGHTCOORD;
