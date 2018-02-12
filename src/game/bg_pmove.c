@@ -4012,69 +4012,35 @@ static void PM_DropTimers(void)
  */
 void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 {
-	vec3_t start;
-	int    leaning = 0;         // -1 left, 1 right
-	float  leanofs = 0;
+	vec3_t  start, tmins, tmaxs, right, end;
+	vec3_t  viewangles;
+	trace_t trace;
+	int     leaning = 0;        // -1 left, 1 right
+	float   leanofs = ps->leanf;
 
 	if (cmd->wbuttons & (WBUTTON_LEANLEFT | WBUTTON_LEANRIGHT))
 	{
-		// allow spectators to lean while moving
-		if (ps->pm_type == PM_SPECTATOR)
-		{
-			if (cmd->wbuttons & WBUTTON_LEANLEFT)
-			{
-				leaning -= 1;
-			}
-			if (cmd->wbuttons & WBUTTON_LEANRIGHT)
-			{
-				leaning += 1;
-			}
-		}
-		else if ((!cmd->forwardmove && cmd->upmove <= 0))
+		if (ps->pm_type == PM_SPECTATOR ||                      // allow spectators to lean while moving
+		    ((!cmd->forwardmove && cmd->upmove <= 0) &&         // not allow to lean while moving
+		     !BG_PlayerMounted(ps->eFlags) &&                   // not allow to lean while on mg42
+		     !(ps->eFlags & EF_FIRING) &&                       // not allow to lean while firing
+		     !(ps->eFlags & EF_DEAD) &&                         // not allow to lean while dead
+		     !(ps->eFlags & EF_PRONE) &&                        // not allow to lean while prone
+		     !(ps->weaponstate == WEAPON_FIRING && ps->weapon == WP_DYNAMITE) && // don't allow to lean while tossing dynamite. NOTE: ATVI Wolfenstein Misc #479 - initial fix to #270 would crash in g_synchronousClients 1 situation
+		     !GetWeaponTableData(ps->weapon)->isMortarSet))     // not allow to lean while mortar set
 		{
 			// if both are pressed, result is no lean
 			if (cmd->wbuttons & WBUTTON_LEANLEFT)
 			{
 				leaning -= 1;
 			}
+
 			if (cmd->wbuttons & WBUTTON_LEANRIGHT)
 			{
 				leaning += 1;
 			}
 		}
 	}
-
-	if (BG_PlayerMounted(ps->eFlags))
-	{
-		leaning = 0;    // leaning not allowed on mg42
-	}
-
-	if (ps->eFlags & EF_FIRING)
-	{
-		leaning = 0;    // not allowed to lean while firing
-
-	}
-
-	if (ps->eFlags & EF_DEAD)
-	{
-		leaning = 0;    // not allowed to lean while firing
-
-	}
-
-	// ATVI Wolfenstein Misc #479 - initial fix to #270 would crash in g_synchronousClients 1 situation
-	if (ps->weaponstate == WEAPON_FIRING && ps->weapon == WP_DYNAMITE)
-	{
-		leaning = 0; // not allowed while tossing dynamite
-
-	}
-
-	if ((ps->eFlags & EF_PRONE) || GetWeaponTableData(ps->weapon)->isMortarSet)
-	{
-		leaning = 0;    // not allowed to lean while prone
-
-	}
-	leanofs = ps->leanf;
-
 
 	if (!leaning)      // go back to center position
 	{
@@ -4085,6 +4051,8 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 			{
 				leanofs = 0;
 			}
+
+			ps->leanf = leanofs;
 		}
 		else if (leanofs < 0)         // left
 		{
@@ -4093,72 +4061,64 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
 			{
 				leanofs = 0;
 			}
+
+			ps->leanf = leanofs;
 		}
+
+		ps->stats[STAT_PS_FLAGS] &= ~(STAT_LEAN_LEFT | STAT_LEAN_RIGHT);
+
+		return; // also early return if already in center position
+	}
+	else if (leaning > 0)       // right
+	{
+		if (leanofs < LEAN_MAX)
+		{
+			leanofs += (((float)pml.msec / (float)LEAN_TIME_TO) * LEAN_MAX);
+		}
+
+		if (leanofs > LEAN_MAX)
+		{
+			leanofs = LEAN_MAX;
+		}
+
+		ps->stats[STAT_PS_FLAGS] |= STAT_LEAN_RIGHT;
+	}
+	else                  // left
+	{
+		if (leanofs > -LEAN_MAX)
+		{
+			leanofs -= (((float)pml.msec / (float)LEAN_TIME_TO) * LEAN_MAX);
+		}
+
+		if (leanofs < -LEAN_MAX)
+		{
+			leanofs = -LEAN_MAX;
+		}
+
+		ps->stats[STAT_PS_FLAGS] |= STAT_LEAN_LEFT;
 	}
 
-	if (leaning)
+	VectorCopy(ps->origin, start);
+	start[2] += ps->viewheight;
+
+	VectorCopy(ps->viewangles, viewangles);
+	viewangles[ROLL] += leanofs / 2.0f;
+	AngleVectors(viewangles, NULL, right, NULL);
+	VectorMA(start, leanofs, right, end);
+
+	VectorSet(tmins, -8, -8, -7);   // NOTE: ATVI Wolfenstein Misc #472, bumped from -4 to cover gun clipping issue
+	VectorSet(tmaxs, 8, 8, 4);
+
+	if (pm)
 	{
-		if (leaning > 0)       // right
-		{
-			if (leanofs < LEAN_MAX)
-			{
-				leanofs += (((float)pml.msec / (float)LEAN_TIME_TO) * LEAN_MAX);
-			}
-
-			if (leanofs > LEAN_MAX)
-			{
-				leanofs = LEAN_MAX;
-			}
-			ps->stats[STAT_PS_FLAGS] |= STAT_LEAN_RIGHT;
-		}
-		else                  // left
-		{
-			if (leanofs > -LEAN_MAX)
-			{
-				leanofs -= (((float)pml.msec / (float)LEAN_TIME_TO) * LEAN_MAX);
-			}
-
-			if (leanofs < -LEAN_MAX)
-			{
-				leanofs = -LEAN_MAX;
-			}
-			ps->stats[STAT_PS_FLAGS] |= STAT_LEAN_LEFT;
-		}
+		pm->trace(&trace, start, tmins, tmaxs, end, ps->clientNum, MASK_PLAYERSOLID);
 	}
 	else
 	{
-		ps->stats[STAT_PS_FLAGS] &= ~(STAT_LEAN_LEFT | STAT_LEAN_RIGHT);
+		tpm->trace(&trace, start, tmins, tmaxs, end, ps->clientNum, MASK_PLAYERSOLID);
 	}
-	ps->leanf = leanofs;
 
-	if (leaning)
-	{
-		vec3_t  tmins, tmaxs, right, end;
-		vec3_t  viewangles;
-		trace_t trace;
-
-		VectorCopy(ps->origin, start);
-		start[2] += ps->viewheight;
-
-		VectorCopy(ps->viewangles, viewangles);
-		viewangles[ROLL] += leanofs / 2.0f;
-		AngleVectors(viewangles, NULL, right, NULL);
-		VectorMA(start, leanofs, right, end);
-
-		VectorSet(tmins, -8, -8, -7);   // ATVI Wolfenstein Misc #472, bumped from -4 to cover gun clipping issue
-		VectorSet(tmaxs, 8, 8, 4);
-
-		if (pm)
-		{
-			pm->trace(&trace, start, tmins, tmaxs, end, ps->clientNum, MASK_PLAYERSOLID);
-		}
-		else
-		{
-			tpm->trace(&trace, start, tmins, tmaxs, end, ps->clientNum, MASK_PLAYERSOLID);
-		}
-
-		ps->leanf *= trace.fraction;
-	}
+	ps->leanf = leanofs * trace.fraction;
 
 	// Allow Spectators to lean while moving
 	if (ps->leanf != 0.f && ps->pm_type != PM_SPECTATOR)
