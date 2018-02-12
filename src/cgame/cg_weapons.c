@@ -66,11 +66,6 @@ static void CG_StartWeaponAnim(int anim)
 		return;
 	}
 
-	if (cg.pmext.weapAnimTimer > 0)
-	{
-		return;     // a high priority animation is running
-	}
-
 	if (cg.predictedPlayerState.weapon == WP_NONE)
 	{
 		return;

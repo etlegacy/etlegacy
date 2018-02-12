@@ -177,11 +177,6 @@ static void PM_StartWeaponAnim(int anim)
 		return;
 	}
 
-	if (pm->pmext->weapAnimTimer > 0)
-	{
-		return;     // a high priority animation is running
-	}
-
 	if (pm->cmd.weapon == WP_NONE)
 	{
 		return;
@@ -4001,16 +3996,6 @@ static void PM_DropTimers(void)
 		if (pm->ps->torsoTimer < 0)
 		{
 			pm->ps->torsoTimer = 0;
-		}
-	}
-
-	// first person weapon counter
-	if (pm->pmext->weapAnimTimer > 0)
-	{
-		pm->pmext->weapAnimTimer -= pml.msec;
-		if (pm->pmext->weapAnimTimer < 0)
-		{
-			pm->pmext->weapAnimTimer = 0;
 		}
 	}
 }
