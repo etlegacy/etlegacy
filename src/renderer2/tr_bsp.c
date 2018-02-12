@@ -1711,7 +1711,6 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 		foliage->verts[i].xyz[2] *= foliageHeightScale;
 
 		// finish
-		foliage->verts[i].xyz[3] = foliage->verts[i].normal[3] = 0;
 		AddPointToBounds(foliage->verts[i].xyz, bounds[0], bounds[1]);
 
 		// copy texture coordinates
