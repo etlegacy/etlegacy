@@ -1136,8 +1136,6 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
                                             shaderStage_t *attenuationZStage, trRefLight_t *light)
 {
 	float      shadowTexelSize;
-	colorGen_t colorGen;
-	alphaGen_t alphaGen;
 	qboolean   normalMapping;
 	qboolean   shadowCompare;
 
@@ -1327,8 +1325,6 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
                                             shaderStage_t *attenuationZStage, trRefLight_t *light)
 {
 	float      shadowTexelSize;
-	colorGen_t colorGen;
-	alphaGen_t alphaGen;
 	qboolean   normalMapping = qfalse;
 	qboolean   shadowCompare = qfalse;
 
@@ -1510,11 +1506,8 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
                                                    shaderStage_t *attenuationXYStage,
                                                    shaderStage_t *attenuationZStage, trRefLight_t *light)
 {
-#if 1
 	vec3_t     lightDirection;
 	float      shadowTexelSize;
-	colorGen_t colorGen;
-	alphaGen_t alphaGen;
 	qboolean   normalMapping = qfalse;
 	qboolean   shadowCompare = qfalse;
 
@@ -1704,7 +1697,6 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	Tess_DrawElements();
 
 	GL_CheckErrors();
-#endif
 }
 
 /**
