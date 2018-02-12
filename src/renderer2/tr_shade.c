@@ -347,6 +347,52 @@ void clipPortalPlane() // static for now - might be used in tr_main.c and tr_sky
 	SetUniformVec4(UNIFORM_PORTALPLANE, plane);
 }
 
+typedef struct rgbaGen_s {
+	colorGen_t color;
+	alphaGen_t alpha;
+} rgbaGen_t;
+
+static rgbaGen_t getRgbaGen(shaderStage_t *pStage, int lightmapNum)
+{
+	qboolean isVertexLit = lightmapNum == LIGHTMAP_BY_VERTEX;
+	qboolean shouldForceCgenVertex = (isVertexLit && pStage->rgbGen == CGEN_IDENTITY);
+	qboolean shouldForceAgenVertex = (isVertexLit && pStage->alphaGen == AGEN_IDENTITY);
+	int colorGen = shouldForceCgenVertex ? CGEN_VERTEX : pStage->rgbGen;
+	int alphaGen = shouldForceAgenVertex ? AGEN_VERTEX : pStage->alphaGen;
+	rgbaGen_t rgbaGen = { colorGen, alphaGen };
+
+	return rgbaGen;
+}
+
+static rgbaGen_t getRgbaGenForColorModulation(shaderStage_t *pStage, int lightmapNum)
+{
+	rgbaGen_t rgbaGen = getRgbaGen(pStage, lightmapNum);
+
+	// u_ColorGen
+	switch (rgbaGen.color)
+	{
+	case CGEN_VERTEX:
+	case CGEN_ONE_MINUS_VERTEX:
+		break;
+	default:
+		rgbaGen.color = CGEN_CONST;
+		break;
+	}
+
+	// u_AlphaGen
+	switch (rgbaGen.alpha)
+	{
+	case AGEN_VERTEX:
+	case AGEN_ONE_MINUS_VERTEX:
+		break;
+	default:
+		rgbaGen.alpha = AGEN_CONST;
+		break;
+	}
+
+	return rgbaGen;
+}
+
 /**
  * @brief Render_generic
  * @param[in] stage
@@ -354,17 +400,10 @@ void clipPortalPlane() // static for now - might be used in tr_main.c and tr_sky
 static void Render_generic(int stage)
 {
 	shaderStage_t *pStage;
-	colorGen_t    rgbGen;
-	alphaGen_t    alphaGen;
-	qboolean isVertexLit;
-	int finalRgbGen, finalAlphaGen;
 
 	Ren_LogComment("--- Render_generic ---\n");
 
 	pStage = tess.surfaceStages[stage];
-	isVertexLit = tess.lightmapNum == LIGHTMAP_BY_VERTEX;
-	finalRgbGen = (isVertexLit && pStage->rgbGen == CGEN_IDENTITY) ? CGEN_VERTEX : pStage->rgbGen;
-	finalAlphaGen = (isVertexLit && pStage->alphaGen == AGEN_IDENTITY) ? AGEN_VERTEX : pStage->alphaGen;
 
 	GL_State(pStage->stateBits);
 
@@ -390,31 +429,9 @@ static void Render_generic(int stage)
 	// u_AlphaTest
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
 
-	// u_ColorGen
-	switch (finalRgbGen)
-	{
-	case CGEN_VERTEX:
-	case CGEN_ONE_MINUS_VERTEX:
-		rgbGen = finalRgbGen;
-		break;
-	default:
-		rgbGen = CGEN_CONST;
-		break;
-	}
+	rgbaGen_t rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
 
-	// u_AlphaGen
-	switch (finalAlphaGen)
-	{
-	case AGEN_VERTEX:
-	case AGEN_ONE_MINUS_VERTEX:
-		alphaGen = finalAlphaGen;
-		break;
-	default:
-		alphaGen = AGEN_CONST;
-		break;
-	}
-
-	GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, rgbGen, alphaGen);
+	GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, rgbaGen.color, rgbaGen.alpha);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, MODEL_MATRIX);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
@@ -663,8 +680,6 @@ static void Render_vertexLighting_DBS_entity(int stage)
 static void Render_vertexLighting_DBS_world(int stage)
 {
 	uint32_t      stateBits;
-	colorGen_t    colorGen;
-	alphaGen_t    alphaGen;
 	shaderStage_t *pStage       = tess.surfaceStages[stage];
 	qboolean      normalMapping = qfalse;
 
@@ -698,40 +713,11 @@ static void Render_vertexLighting_DBS_world(int stage)
 		SetUniformFloat(UNIFORM_TIME, backEnd.refdef.floatTime);
 	}
 
-	// u_ColorModulate
-	switch (pStage->rgbGen)
-	{
-	case CGEN_VERTEX:
-	case CGEN_ONE_MINUS_VERTEX:
-		colorGen = pStage->rgbGen;
-		break;
-	default:
-		colorGen = CGEN_CONST;
-		break;
-	}
-
-	switch (pStage->alphaGen)
-	{
-	case AGEN_VERTEX:
-		alphaGen = pStage->alphaGen;
-		break;
-	case AGEN_ONE_MINUS_VERTEX:
-		alphaGen = pStage->alphaGen;
-
-		/*
-		alphaGen = AGEN_VERTEX;
-		stateBits &= ~(GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS);
-		stateBits |= (GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA);
-		*/
-		break;
-	default:
-		alphaGen = AGEN_CONST;
-		break;
-	}
-
 	GL_State(stateBits);
 
-	GLSL_SetUniform_ColorModulate(trProg.gl_vertexLightingShader_DBS_world, colorGen, alphaGen);
+	rgbaGen_t rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
+
+	GLSL_SetUniform_ColorModulate(trProg.gl_vertexLightingShader_DBS_world, rgbaGen.color, rgbaGen.alpha);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.viewOrigin);
@@ -1189,29 +1175,9 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	// now we are ready to set the shader program uniforms
 
 	// u_ColorModulate
-	switch (diffuseStage->rgbGen)
-	{
-	case CGEN_VERTEX:
-	case CGEN_ONE_MINUS_VERTEX:
-		colorGen = diffuseStage->rgbGen;
-		break;
-	default:
-		colorGen = CGEN_CONST;
-		break;
-	}
+	rgbaGen_t rgbaGen = getRgbaGenForColorModulation(diffuseStage, tess.lightmapNum);
 
-	switch (diffuseStage->alphaGen)
-	{
-	case AGEN_VERTEX:
-	case AGEN_ONE_MINUS_VERTEX:
-		alphaGen = diffuseStage->alphaGen;
-		break;
-	default:
-		alphaGen = AGEN_CONST;
-		break;
-	}
-
-	GLSL_SetUniform_ColorModulate(trProg.gl_forwardLightingShader_omniXYZ, colorGen, alphaGen);
+	GLSL_SetUniform_ColorModulate(trProg.gl_forwardLightingShader_omniXYZ, rgbaGen.color, rgbaGen.alpha);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 
 	if (r_parallaxMapping->integer)
@@ -1393,29 +1359,9 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	// now we are ready to set the shader program uniforms
 
 	// u_ColorModulate
-	switch (diffuseStage->rgbGen)
-	{
-	case CGEN_VERTEX:
-	case CGEN_ONE_MINUS_VERTEX:
-		colorGen = diffuseStage->rgbGen;
-		break;
-	default:
-		colorGen = CGEN_CONST;
-		break;
-	}
+	rgbaGen_t rgbaGen = getRgbaGenForColorModulation(diffuseStage, tess.lightmapNum);
 
-	switch (diffuseStage->alphaGen)
-	{
-	case AGEN_VERTEX:
-	case AGEN_ONE_MINUS_VERTEX:
-		alphaGen = diffuseStage->alphaGen;
-		break;
-	default:
-		alphaGen = AGEN_CONST;
-		break;
-	}
-
-	GLSL_SetUniform_ColorModulate(trProg.gl_forwardLightingShader_projXYZ, colorGen, alphaGen);
+	GLSL_SetUniform_ColorModulate(trProg.gl_forwardLightingShader_projXYZ, rgbaGen.color, rgbaGen.alpha);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 
 	if (r_parallaxMapping->integer)
@@ -1600,29 +1546,9 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	// now we are ready to set the shader program uniforms
 
 	// u_ColorModulate
-	switch (diffuseStage->rgbGen)
-	{
-	case CGEN_VERTEX:
-	case CGEN_ONE_MINUS_VERTEX:
-		colorGen = diffuseStage->rgbGen;
-		break;
-	default:
-		colorGen = CGEN_CONST;
-		break;
-	}
+	rgbaGen_t rgbaGen = getRgbaGenForColorModulation(diffuseStage, tess.lightmapNum);
 
-	switch (diffuseStage->alphaGen)
-	{
-	case AGEN_VERTEX:
-	case AGEN_ONE_MINUS_VERTEX:
-		alphaGen = diffuseStage->alphaGen;
-		break;
-	default:
-		alphaGen = AGEN_CONST;
-		break;
-	}
-
-	GLSL_SetUniform_ColorModulate(trProg.gl_forwardLightingShader_directionalSun, colorGen, alphaGen);
+	GLSL_SetUniform_ColorModulate(trProg.gl_forwardLightingShader_directionalSun, rgbaGen.color, rgbaGen.alpha);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 
 	if (r_parallaxMapping->integer)
@@ -2560,16 +2486,12 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	float green;
 	float blue;
 	float alpha;
-	qboolean isVertexLit;
-	int finalRgbGen, finalAlphaGen;
+	rgbaGen_t rgbaGen = getRgbaGen(pStage, tess.lightmapNum);
+
 	Ren_LogComment("--- Tess_ComputeColor ---\n");
 
-	isVertexLit = tess.lightmapNum == LIGHTMAP_BY_VERTEX;
-	finalRgbGen = (isVertexLit && pStage->rgbGen == CGEN_IDENTITY) ? CGEN_VERTEX : pStage->rgbGen;
-	finalAlphaGen = (isVertexLit && pStage->alphaGen == AGEN_IDENTITY) ? AGEN_VERTEX : pStage->alphaGen;
-
 	// rgbGen
-	switch (finalRgbGen)
+	switch (rgbaGen.color)
 	{
 	case CGEN_IDENTITY:
 	{
@@ -2729,7 +2651,7 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	}
 
 	// alphaGen
-	switch (finalAlphaGen)
+	switch (rgbaGen.alpha)
 	{
 	default:
 	case AGEN_IDENTITY:
