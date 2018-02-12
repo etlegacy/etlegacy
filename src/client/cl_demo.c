@@ -512,7 +512,8 @@ static void CL_RewindDemo(double wantedTime)
 	di.Overf = 0;
 
 	// TODO: this is a hack to set the state to something valid
-	cls.state = CA_ACTIVE;
+	cls.state        = CA_ACTIVE;
+	cls.keyCatchers |= KEYCATCH_CGAME;
 
 	CL_DemoFastForward(wantedTime);
 }
