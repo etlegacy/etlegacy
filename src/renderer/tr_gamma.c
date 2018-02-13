@@ -116,7 +116,8 @@ static void R_BuildGammaProgram(void)
 
 	glLinkProgramARB(gammaProgram.program);
 
-	glGetProgramivARB(gammaProgram.program, GL_LINK_STATUS, &compiled); // this throws glGetError() = 0x500
+	glGetObjectParameterivARB(gammaProgram.program, GL_OBJECT_LINK_STATUS_ARB, &compiled);
+
 	if (!compiled)
 	{
 		Ren_Fatal("Failed to link gamma shaders\n");
