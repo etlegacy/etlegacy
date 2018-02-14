@@ -1159,7 +1159,7 @@ static void ParseFace(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, int
 	realLightmapNum = LittleLong(ds->lightmapNum);
 	if (r_vertexLighting->integer || !r_precomputedLighting->integer)
 	{
-		surf->lightmapNum = -1;
+		surf->lightmapNum = LIGHTMAP_NONE;
 	}
 	else
 	{
@@ -1349,7 +1349,7 @@ static void ParseMesh(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf)
 	realLightmapNum = LittleLong(ds->lightmapNum);
 	if (r_vertexLighting->integer || !r_precomputedLighting->integer)
 	{
-		surf->lightmapNum = -1;
+		surf->lightmapNum = LIGHTMAP_NONE;
 	}
 	else
 	{
@@ -1451,7 +1451,7 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 	realLightmapNum = LittleLong(ds->lightmapNum);
 	if (r_vertexLighting->integer || !r_precomputedLighting->integer)
 	{
-		surf->lightmapNum = -1;
+		surf->lightmapNum = LIGHTMAP_NONE;
 	}
 	else
 	{
@@ -1773,7 +1773,7 @@ static void ParseFlare(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, in
 	int        i;
 
 	// set lightmap
-	surf->lightmapNum = -1;
+	surf->lightmapNum = LIGHTMAP_NONE;
 
 	// get fog volume
 	surf->fogIndex = LittleLong(ds->fogNum) + 1;
@@ -3650,7 +3650,7 @@ static void R_CreateSubModelVBOs()
 
 		// create a VBO for each shader
 		oldShader = NULL;
-		oldLightmapNum = -1;
+		oldLightmapNum = LIGHTMAP_NONE;
 
 		for (k = 0; k < numSurfaces; k++)
 		{
@@ -6272,7 +6272,7 @@ static void R_CreateVBOLightMeshes(trRefLight_t *light)
 			vboSurf->surfaceType = SF_VBO_MESH;
 			vboSurf->numIndexes  = numTriangles * 3;
 			vboSurf->numVerts    = numVerts;
-			vboSurf->lightmapNum = -1;
+			vboSurf->lightmapNum = LIGHTMAP_NONE;
 
 			VectorCopy(bounds[0], vboSurf->bounds[0]);
 			VectorCopy(bounds[1], vboSurf->bounds[1]);
@@ -6662,7 +6662,7 @@ static void R_CreateVBOShadowMeshes(trRefLight_t *light)
 			vboSurf->surfaceType = SF_VBO_MESH;
 			vboSurf->numIndexes  = numTriangles * 3;
 			vboSurf->numVerts    = numVerts;
-			vboSurf->lightmapNum = -1;
+			vboSurf->lightmapNum = LIGHTMAP_NONE;
 
 			VectorCopy(bounds[0], vboSurf->bounds[0]);
 			VectorCopy(bounds[1], vboSurf->bounds[1]);
@@ -7055,7 +7055,7 @@ static void R_CreateVBOShadowCubeMeshes(trRefLight_t *light)
 				vboSurf->surfaceType = SF_VBO_MESH;
 				vboSurf->numIndexes  = numTriangles * 3;
 				vboSurf->numVerts    = numVerts;
-				vboSurf->lightmapNum = -1;
+				vboSurf->lightmapNum = LIGHTMAP_NONE;
 				ZeroBounds(vboSurf->bounds[0], vboSurf->bounds[1]);
 
 				// create arrays

@@ -969,7 +969,7 @@ static void R_UpdateClusterSurfaces()
 	qsort(surfacesSorted, numSurfaces, sizeof(surfacesSorted), BSPSurfaceCompare);
 
 	shader      = oldShader = NULL;
-	lightmapNum = oldLightmapNum = -1;
+	lightmapNum = oldLightmapNum = LIGHTMAP_NONE;
 
 	for (k = 0; k < numSurfaces; k++)
 	{

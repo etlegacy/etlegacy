@@ -168,7 +168,7 @@ static void RB_RenderDrawSurfaces(qboolean opaque, int drawSurfFilter)
 {
 	trRefEntity_t *entity, *oldEntity = NULL;
 	shader_t      *shader, *oldShader = NULL;
-	int           lightmapNum, oldLightmapNum = -1;
+	int           lightmapNum, oldLightmapNum = LIGHTMAP_NONE;
 	int           fogNum, oldFogNum = -1;
 	qboolean      depthRange = qfalse, oldDepthRange = qfalse;
 	int           i;
