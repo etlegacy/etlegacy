@@ -36,7 +36,6 @@
 #ifdef FEATURE_MULTIVIEW
 
 #include "cg_local.h"
-#include "../ui/ui_shared.h"
 #include "../game/bg_local.h"
 
 void CG_CalcVrect(void);
