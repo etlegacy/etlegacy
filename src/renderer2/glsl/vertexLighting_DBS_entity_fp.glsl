@@ -14,7 +14,7 @@ uniform vec3  u_ViewOrigin;
 uniform vec3  u_AmbientColor;
 uniform vec3  u_LightDir;
 uniform vec3  u_LightColor;
-uniform float u_SpecularExponent;
+//uniform float u_SpecularExponent;
 uniform float u_DepthScale;
 uniform vec4  u_PortalPlane;
 uniform float u_LightWrapAround;
@@ -72,8 +72,7 @@ void main()
 
 	// ray intersect in view direction
 
-	mat3 worldToTangentMatrix;
-	worldToTangentMatrix = transpose(tangentToWorldMatrix);
+	mat3 worldToTangentMatrix = transpose(tangentToWorldMatrix);
 
 	// compute view direction in tangent space
 	vec3 Vts = worldToTangentMatrix * (u_ViewOrigin - var_Position.xyz);
@@ -100,7 +99,7 @@ void main()
 	texDiffuse.st  += texOffset;
 	texNormal.st   += texOffset;
 	texSpecular.st += texOffset;
-#endif // USE_PARALLAX_MAPPING
+#endif // end USE_PARALLAX_MAPPING
 
 	// compute normal in world space from normalmap
 	vec3 N = normalize(tangentToWorldMatrix * (2.0 * (texture2D(u_NormalMap, texNormal).xyz - 0.5)));
@@ -135,10 +134,10 @@ void main()
 	float NH       = clamp(dot(N, H), 0, 1);
 	vec3  specular = texture2D(u_SpecularMap, texSpecular).rgb * u_LightColor * pow(NH, r_SpecularExponent) * r_SpecularScale;
 
-#endif // USE_REFLECTIVE_SPECULAR
+#endif // end USE_REFLECTIVE_SPECULAR
 
 
-#else // USE_NORMAL_MAPPING
+#else // else USE_NORMAL_MAPPING
 
 	vec3 N;
 
@@ -157,7 +156,7 @@ void main()
 
 	vec3 specular = vec3(0.0);
 
-#endif // USE_NORMAL_MAPPING
+#endif // end USE_NORMAL_MAPPING
 
 
 	// compute the diffuse term
@@ -203,7 +202,8 @@ void main()
 	float NL = clamp(dot(N, L), 0.0, 1.0);
 #endif
 
-	vec3 light = u_AmbientColor + u_LightColor * NL;
+	vec3 light = normalize(u_AmbientColor + u_LightColor * NL);
+
 	clamp(light, 0.0, 1.0);
 
 	// compute final color
@@ -213,9 +213,6 @@ void main()
 #if defined(r_rimLighting)
 	color.rgb += emission;
 #endif
-
-	// convert normal to [0,1] color space
-	N = N * 0.5 + 0.5;
 
 	gl_FragColor = color;
 

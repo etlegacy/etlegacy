@@ -141,7 +141,7 @@ void main()
 	float NdotL = clamp(dot(N, L), 0.0, 1.0);
 
 	// compute light color from world space lightmap
-	vec3 lightColor = lightmapColor.rgb *NdotL;
+	vec3 lightColor = lightmapColor.rgb * NdotL;
 
 	float NdotLnobump = clamp(dot(normalize(var_Normal.xyz), L), 0.004, 1.0);
 	//vec3 lightColorNoNdotL = clamp(lightColor.rgb / NdotLnobump, 0.0, 1.0);
@@ -210,9 +210,6 @@ void main()
 	// for smooth terrain blending
 	color.a   *= var_Color.a; 
 #endif
-
-	// convert normal to [0,1] color space
-	N = N * 0.5 + 0.5;
 
 	gl_FragColor = color;
 
