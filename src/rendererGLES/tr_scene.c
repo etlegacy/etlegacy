@@ -501,7 +501,7 @@ void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scal
 
 	if (r_numcoronas >= MAX_CORONAS)
 	{
-		Ren_Developer("WARNING RE_AddCoronaToScene: Dropping corona, reached MAX_CORONAS\n"); // changed to developer print - occures on some maps (radar)
+		Ren_Developer("WARNING RE_AddCoronaToScene: Dropping corona, reached MAX_CORONAS\n");
 		return;
 	}
 
