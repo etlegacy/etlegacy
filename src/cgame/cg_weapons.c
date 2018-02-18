@@ -3754,6 +3754,36 @@ void CG_AltWeapon_f(void)
 		return;
 	}
 
+	if (cg.weaponSelect == WP_BINOCULARS)
+	{
+		/*if(cg.snap->ps.eFlags & EF_ZOOMING) {
+		    trap_SendConsoleCommand( "-zoom\n" );
+		} else {
+		    trap_SendConsoleCommand( "+zoom\n" );
+		}*/
+
+		// don't allow zooming when prone moving (prevent fast zoom/unzoom)
+		if (cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
+		{
+			return;
+		}
+
+		if (cg.snap->ps.eFlags & EF_ZOOMING)
+		{
+			trap_SendConsoleCommand("-zoom\n");
+			cg.binocZoomTime = -cg.time;
+		}
+		else
+		{
+			if (!cg.binocZoomTime)
+			{
+				cg.binocZoomTime = cg.time;
+			}
+		}
+
+		return;
+	}
+
 	// some alt vsays, don't check for weapon with alternative weapon
 	// 0 - disabled
 	// 1 - team
@@ -3889,35 +3919,6 @@ void CG_AltWeapon_f(void)
 			return;
 		}
 	}
-	else if (cg.weaponSelect == WP_BINOCULARS)
-	{
-		/*if(cg.snap->ps.eFlags & EF_ZOOMING) {
-		    trap_SendConsoleCommand( "-zoom\n" );
-		} else {
-		    trap_SendConsoleCommand( "+zoom\n" );
-		}*/
-
-		// don't allow zooming when prone moving (prevent fast zoom/unzoom)
-		if (cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
-		{
-			return;
-		}
-
-		if (cg.snap->ps.eFlags & EF_ZOOMING)
-		{
-			trap_SendConsoleCommand("-zoom\n");
-			cg.binocZoomTime = -cg.time;
-		}
-		else
-		{
-			if (!cg.binocZoomTime)
-			{
-				cg.binocZoomTime = cg.time;
-			}
-		}
-
-		return;
-	}
 	else if (GetWeaponTableData(GetWeaponTableData(cg.weaponSelect)->weapAlts)->isScoped)
 	{
 		// don't allow players switching to scoped weapon when prone moving and run -- speed 80 == crouch, 128 == walk, 256 == run
@@ -3939,7 +3940,7 @@ void CG_AltWeapon_f(void)
  */
 void CG_NextWeap(qboolean switchBanks)
 {
-	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean nextbank = qfalse;     // need to switch to the next bank of weapons?
@@ -4083,7 +4084,7 @@ void CG_NextWeap(qboolean switchBanks)
  */
 void CG_PrevWeap(qboolean switchBanks)
 {
-	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean prevbank = qfalse;     // need to switch to the next bank of weapons?
@@ -5285,13 +5286,13 @@ void CG_WaterRipple(qhandle_t shader, vec3_t loc, vec3_t dir, int size, int life
  */
 void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags)     // modified to send missilehitwall surface parameters
 {
-	qhandle_t   mod      = 0, mark = 0, shader = 0;
-	sfxHandle_t sfx      = 0, sfx2 = 0;
+	qhandle_t   mod = 0, mark = 0, shader = 0;
+	sfxHandle_t sfx = 0, sfx2 = 0;
 	qboolean    isSprite = qfalse;
 	int         duration = 600, i, j, markDuration = -1, volume = 127; // keep -1 markDuration for temporary marks
 	trace_t     trace;
 	vec3_t      lightColor = { 1, 1, 0 }, tmpv, tmpv2, sprOrg, sprVel;
-	float       radius     = 32, light = 0, sfx2range = 0;
+	float       radius = 32, light = 0, sfx2range = 0;
 	vec4_t      projection;
 
 	if (surfFlags & SURF_SKY)
