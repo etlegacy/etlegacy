@@ -2333,7 +2333,7 @@ void G_PrintConfigs(gentity_t *ent);
 qboolean G_isValidConfig(gentity_t *ent, const char *configname);
 
 // g_match.c
-void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, meansOfDeath_t mod);
+void G_addStats(gentity_t *targ, gentity_t *attacker, int damage, meansOfDeath_t mod);
 void G_addStatsHeadShot(gentity_t *attacker, meansOfDeath_t mod);
 int G_checkServerToggle(vmCvar_t *cv);
 char *G_createStats(gentity_t *refEnt);
@@ -2351,7 +2351,6 @@ void G_resetModeState(void);
 void G_resetRoundState(void);
 void G_spawnPrintf(int print_type, int print_time, gentity_t *owner);
 void G_statsPrint(gentity_t *ent, int nType);
-extWeaponStats_t G_weapStatIndex_MOD(unsigned int iWeaponMOD);
 
 #ifdef FEATURE_RATING
 // g_skillrating.c

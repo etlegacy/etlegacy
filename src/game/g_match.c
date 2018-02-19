@@ -266,13 +266,11 @@ void G_spawnPrintf(int print_type, int print_time, gentity_t *owner)
  * @brief G_addStats
  * @param[in,out] targ
  * @param[in,out] attacker
- * @param[in] dmg_ref
+ * @param[in] damage
  * @param[in] mod
  */
-void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, meansOfDeath_t mod)
+void G_addStats(gentity_t *targ, gentity_t *attacker, int damage, meansOfDeath_t mod)
 {
-	int dmg, ref;
-
 	if (!targ || !targ->client)
 	{
 		return;
@@ -295,12 +293,11 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, meansOfDeath_
 		{
 			int x;
 
-			ref = G_weapStatIndex_MOD(mod);
-			x   = attacker->client->sess.aWeaponStats[ref].atts--;
+			x = attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].atts--;
 
 			if (x < 1)
 			{
-				attacker->client->sess.aWeaponStats[ref].atts = 1;
+				attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].atts = 1;
 			}
 
 			if (targ->health <= FORCE_LIMBO_HEALTH)
@@ -334,21 +331,11 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, meansOfDeath_
 		return;
 	}
 
-	// Telefrags only add 100 points.. not 100k!!
-	if (mod == MOD_TELEFRAG)
-	{
-		dmg = 100;
-	}
-	else
-	{
-		dmg = dmg_ref;
-	}
-
 	// Player team stats
 	if (targ->client->sess.sessionTeam == attacker->client->sess.sessionTeam)
 	{
-		attacker->client->sess.team_damage_given += dmg;
-		targ->client->sess.team_damage_received  += dmg;
+		attacker->client->sess.team_damage_given += damage;
+		targ->client->sess.team_damage_received  += damage;
 
 		if (targ->health <= 0)
 		{
@@ -362,8 +349,8 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, meansOfDeath_
 	// General player stats
 	if (mod != MOD_SYRINGE)
 	{
-		attacker->client->sess.damage_given += dmg;
-		targ->client->sess.damage_received  += dmg;
+		attacker->client->sess.damage_given += damage;
+		targ->client->sess.damage_received  += damage;
 
 		if (targ->health <= 0)
 		{
@@ -373,15 +360,14 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int dmg_ref, meansOfDeath_
 	}
 
 	// Player weapon stats
-	ref = G_weapStatIndex_MOD(mod);
-	if (dmg > 0)
+	if (damage > 0)
 	{
-		attacker->client->sess.aWeaponStats[ref].hits++;
+		attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].hits++;
 	}
 	if (targ->health <= 0)
 	{
-		attacker->client->sess.aWeaponStats[ref].kills++;
-		targ->client->sess.aWeaponStats[ref].deaths++;
+		attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].kills++;
+		targ->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].deaths++;
 	}
 }
 
@@ -403,22 +389,7 @@ void G_addStatsHeadShot(gentity_t *attacker, meansOfDeath_t mod)
 		return;
 	}
 
-	attacker->client->sess.aWeaponStats[G_weapStatIndex_MOD(mod)].headshots++;
-}
-
-/**
- * @brief Get right stats index based on weapon mod
- * @param[in] iWeaponMOD
- * @return
- */
-extWeaponStats_t G_weapStatIndex_MOD(unsigned int iWeaponMOD)
-{
-	if (iWeaponMOD >= MOD_NUM_MODS)
-	{
-		return WS_MAX;
-	}
-
-	return modTable[iWeaponMOD].indexWeaponStat;
+	attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].headshots++;
 }
 
 /**
