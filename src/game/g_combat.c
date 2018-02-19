@@ -421,11 +421,11 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	{
 #ifdef FEATURE_OMNIBOT
 		// send the events
-		Bot_Event_Death(self - g_entities, &g_entities[attacker - g_entities], modTable[meansOfDeath].modName);
-		Bot_Event_KilledSomeone(attacker - g_entities, &g_entities[self - g_entities], modTable[meansOfDeath].modName);
+		Bot_Event_Death(self - g_entities, &g_entities[attacker - g_entities], GetMODTableData(meansOfDeath)->modName);
+		Bot_Event_KilledSomeone(attacker - g_entities, &g_entities[self - g_entities], GetMODTableData(meansOfDeath)->modName);
 #endif
 
-		G_LogPrintf("Kill: %i %i %i: ^7%s^7 killed %s^7 by %s\n", killer, self->s.number, meansOfDeath, killerName, self->client->pers.netname, modTable[meansOfDeath].modName);
+		G_LogPrintf("Kill: %i %i %i: ^7%s^7 killed %s^7 by %s\n", killer, self->s.number, meansOfDeath, killerName, self->client->pers.netname, GetMODTableData(meansOfDeath)->modName);
 	}
 
 #ifdef FEATURE_LUA
@@ -555,7 +555,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 	// send a fancy "MEDIC!" scream.  Sissies, ain' they?
 	if (self->health > GIB_HEALTH &&
-	    !modTable[meansOfDeath].noYellMedic && // these mods gib -> no fancy scream
+	    !GetMODTableData(meansOfDeath)->noYellMedic && // these mods gib -> no fancy scream
 	    !killedintank &&
 	    self->waterlevel < 3)
 	{
@@ -912,7 +912,7 @@ qboolean IsHeadShot(gentity_t *targ, vec3_t dir, vec3_t point, meansOfDeath_t mo
 		return qfalse;
 	}
 
-	if (!modTable[mod].isHeadshot)
+	if (!GetMODTableData(mod)->isHeadshot)
 	{
 		return qfalse;
 	}
@@ -983,7 +983,7 @@ qboolean IsLegShot(gentity_t *targ, vec3_t dir, vec3_t point, meansOfDeath_t mod
 		return qfalse;
 	}
 
-	if (!modTable[mod].isHeadshot)
+	if (!GetMODTableData(mod)->isHeadshot)
 	{
 		return qfalse;
 	}
@@ -1068,7 +1068,7 @@ qboolean IsArmShot(gentity_t *targ, gentity_t *ent, vec3_t point, meansOfDeath_t
 		return qfalse;
 	}
 
-	if (!modTable[mod].isHeadshot)
+	if (!GetMODTableData(mod)->isHeadshot)
 	{
 		return qfalse;
 	}
@@ -1194,7 +1194,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 
 		if ((targ->spawnflags & 4) && !targ->isProp)
 		{
-			if (!modTable[mod].isExplosive)
+			if (!GetMODTableData(mod)->isExplosive)
 			{
 				return;
 			}
@@ -1221,7 +1221,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		}
 		break;
 	case ET_EXPLOSIVE:
-		if (targ->parent && modTable[mod].weaponClassForMOD == 2)
+		if (targ->parent && GetMODTableData(mod)->weaponClassForMOD == WEAPON_CLASS_FOR_MOD_DYNAMITE)
 		{
 			return;
 		}
@@ -1232,7 +1232,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 			return;
 		}
 
-		if (modTable[mod].weaponClassForMOD < targ->constructibleStats.weaponclass)
+		if (GetMODTableData(mod)->weaponClassForMOD < targ->constructibleStats.weaponclass)
 		{
 			return;
 		}
@@ -1242,7 +1242,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		{
 			if (targ->s.modelindex2)
 			{
-				if (modTable[mod].isExplosive)
+				if (GetMODTableData(mod)->isExplosive)
 				{
 					mapEntityData_t *mEnt;
 
@@ -1268,7 +1268,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 			return;
 		}
 
-		if (modTable[mod].weaponClassForMOD < targ->constructibleStats.weaponclass)
+		if (GetMODTableData(mod)->weaponClassForMOD < targ->constructibleStats.weaponclass)
 		{
 			return;
 		}
@@ -1347,7 +1347,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		VectorAdd(targ->client->ps.velocity, kvel, targ->client->ps.velocity);
 
 		// are we pushed? Do not count when already flying ...
-		if (attacker && attacker->client && (targ->client->ps.groundEntityNum != ENTITYNUM_NONE || modTable[mod].isExplosive))
+		if (attacker && attacker->client && (targ->client->ps.groundEntityNum != ENTITYNUM_NONE || GetMODTableData(mod)->isExplosive))
 		{
 			targ->client->pmext.shoved = qtrue;
 			targ->client->pmext.pusher = attacker - g_entities;
@@ -1530,7 +1530,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 			trap_SendServerCommand(attacker - g_entities, "print \"Arm Shot\n\"");
 		}
 	}
-	else if (targ->client && targ->health > 0 && modTable[mod].isHeadshot)
+	else if (targ->client && targ->health > 0 && GetMODTableData(mod)->isHeadshot)
 	{
 		G_LogRegionHit(attacker, HR_BODY);
 		hr = HR_BODY;
@@ -1544,7 +1544,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 	if (g_debugDamage.integer)
 #endif
 	{
-		G_Printf("client:%i health:%i damage:%i mod:%s\n", targ->s.number, targ->health, take, modTable[mod].modName);
+		G_Printf("client:%i health:%i damage:%i mod:%s\n", targ->s.number, targ->health, take, GetMODTableData(mod)->modName);
 	}
 
 #ifdef FEATURE_LUA
@@ -1605,7 +1605,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		//if ( attacker == inflictor && targ->health <= GIB_HEALTH) {
 		if (targ->health <= GIB_HEALTH)
 		{
-			if (!modTable[mod].isExplosive)
+			if (!GetMODTableData(mod)->isExplosive)
 			{
 				targ->health = GIB_HEALTH + 1;
 			}

@@ -4420,7 +4420,7 @@ void func_explosive_explode(gentity_t *self, gentity_t *inflictor, gentity_t *at
 #endif
 
 	// Skills stuff
-	if (modTable[mod].weaponClassForMOD >= self->constructibleStats.weaponclass)
+	if (GetMODTableData(mod)->weaponClassForMOD >= self->constructibleStats.weaponclass)
 	{
 		G_AddKillSkillPointsForDestruction(attacker, mod, &self->constructibleStats);
 	}
@@ -5201,7 +5201,7 @@ void func_constructible_explode(gentity_t *self, gentity_t *inflictor, gentity_t
 			}
 
 			// Skills stuff
-			if (modTable[mod].weaponClassForMOD >= self->constructibleStats.weaponclass)
+			if (GetMODTableData(mod)->weaponClassForMOD >= self->constructibleStats.weaponclass)
 			{
 				G_AddKillSkillPointsForDestruction(attacker, mod, &self->constructibleStats);
 			}
@@ -5239,7 +5239,7 @@ void func_constructible_explode(gentity_t *self, gentity_t *inflictor, gentity_t
 			G_Script_ScriptEvent(self, "death", "");
 
 			// Skills stuff
-			if (modTable[mod].weaponClassForMOD >= self->constructibleStats.weaponclass)
+			if (GetMODTableData(mod)->weaponClassForMOD >= self->constructibleStats.weaponclass)
 			{
 				G_AddKillSkillPointsForDestruction(attacker, mod, &self->constructibleStats);
 			}
@@ -5279,7 +5279,7 @@ void func_constructible_explode(gentity_t *self, gentity_t *inflictor, gentity_t
 		}
 
 		// Skills stuff
-		if (modTable[mod].weaponClassForMOD >= self->constructibleStats.weaponclass)
+		if (GetMODTableData(mod)->weaponClassForMOD >= self->constructibleStats.weaponclass)
 		{
 			G_AddKillSkillPointsForDestruction(attacker, mod, &self->constructibleStats);
 		}
