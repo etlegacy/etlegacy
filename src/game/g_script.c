@@ -1089,7 +1089,7 @@ void script_mover_blocked(gentity_t *ent, gentity_t *other)
 	// start us on our way again (theoretically speaking).
 
 	// kill them
-	G_Damage(other, ent, ent, NULL, NULL, 9999, 0, MOD_CRUSH);
+	G_Damage(other, ent, ent, NULL, NULL, GIB_DAMAGE(other->health), 0, MOD_CRUSH);
 }
 
 /**

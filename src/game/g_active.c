@@ -966,7 +966,7 @@ void G_FallDamage(gentity_t *ent, int event)
 		// this damage is used for stats (pushing players to death) - ensure we gib
 		if (ent->health > 0)
 		{
-			damage = ent->health - GIB_HEALTH + 1;
+			damage = GIB_DAMAGE(ent->health);
 		}
 		else
 		{

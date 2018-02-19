@@ -1060,7 +1060,7 @@ static void Svcmd_Gib(void)
 			{
 				continue;
 			}
-			G_Damage(vic, NULL, NULL, NULL, NULL, 500, 0, MOD_UNKNOWN);
+			G_Damage(vic, NULL, NULL, NULL, NULL, GIB_DAMAGE(vic->health), 0, MOD_UNKNOWN);
 			count++;
 		}
 
@@ -1090,7 +1090,7 @@ static void Svcmd_Gib(void)
 		return;
 	}
 
-	G_Damage(vic, NULL, NULL, NULL, NULL, 500, 0, MOD_UNKNOWN);
+	G_Damage(vic, NULL, NULL, NULL, NULL, GIB_DAMAGE(vic->health), 0, MOD_UNKNOWN);
 
 	CPx(-1, va("cp \"^7%s^7 was gibbed.\"", vic->client->pers.netname));
 
@@ -1136,7 +1136,7 @@ static void Svcmd_Die(void)
 			{
 				continue;
 			}
-			G_Damage(vic, NULL, NULL, NULL, NULL, 140, 0, MOD_UNKNOWN);
+			G_Damage(vic, NULL, NULL, NULL, NULL, vic->health, 0, MOD_UNKNOWN);
 			count++;
 		}
 
@@ -1167,7 +1167,7 @@ static void Svcmd_Die(void)
 		return;
 	}
 
-	G_Damage(vic, NULL, NULL, NULL, NULL, 140, 0, MOD_UNKNOWN);
+	G_Damage(vic, NULL, NULL, NULL, NULL, vic->health, 0, MOD_UNKNOWN);
 
 	CPx(-1, va("cp \"^7%s^7 died.\"", vic->client->pers.netname));
 

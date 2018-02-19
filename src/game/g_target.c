@@ -819,9 +819,6 @@ void SP_target_relay(gentity_t *self)
 
 */
 
-#define TELEFRAG_DAMAGE_CLIENT 500 // FIXME: get exact value for limbo death (kill & send to limbo)
-#define TELEFRAG_DAMAGE_MOVER 100000
-
 /**
  * @brief Kills the activator. (default)
  * @details QUAKED target_kill (.5 .5 .5) (-8 -8 -8) (8 8 8) kill_user_too
@@ -850,7 +847,7 @@ void G_KillEnts(const char *target, gentity_t *ignore, gentity_t *killer, meansO
 		// script_movers should die!
 		if (targ->s.eType == ET_MOVER && !Q_stricmp(targ->classname, "script_mover") && targ->die)
 		{
-			G_Damage(targ, killer, killer, NULL, NULL, TELEFRAG_DAMAGE_MOVER, DAMAGE_NO_PROTECTION, MOD_TELEFRAG);
+			G_Damage(targ, killer, killer, NULL, NULL, GIB_DAMAGE(targ->health), DAMAGE_NO_PROTECTION, MOD_TELEFRAG);
 			continue;
 		}
 
@@ -883,7 +880,7 @@ void target_kill_use(gentity_t *self, gentity_t *other, gentity_t *activator)
 {
 	if (self->spawnflags & 1)      // kill usertoo
 	{
-		G_Damage(activator, NULL, NULL, NULL, NULL, TELEFRAG_DAMAGE_CLIENT, DAMAGE_NO_PROTECTION, MOD_TELEFRAG);
+		G_Damage(activator, NULL, NULL, NULL, NULL, GIB_DAMAGE(activator->health), DAMAGE_NO_PROTECTION, MOD_TELEFRAG);
 	}
 
 	G_KillEnts(self->target, activator, self, MOD_UNKNOWN);

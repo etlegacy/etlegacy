@@ -879,7 +879,7 @@ static void HandleEntsThatBlockConstructible(gentity_t *constructor, gentity_t *
 
 			if (block->client || block->s.eType == ET_CORPSE)
 			{
-				G_Damage(block, constructible, constructor, NULL, NULL, 9999, DAMAGE_NO_PROTECTION, MOD_CRUSH_CONSTRUCTION);
+				G_Damage(block, constructible, constructor, NULL, NULL, GIB_DAMAGE(block->health), DAMAGE_NO_PROTECTION, MOD_CRUSH_CONSTRUCTION);
 			}
 			else if (block->s.eType == ET_ITEM && block->item->giType == IT_TEAM)
 			{

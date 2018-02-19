@@ -2023,7 +2023,7 @@ void Use_DamageInflictor(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		}
 		else
 		{
-			G_Damage(daent, ent, ent, NULL, NULL, 9999, 0, MOD_CRUSH);
+			G_Damage(daent, ent, ent, NULL, NULL, GIB_DAMAGE(daent->health), 0, MOD_CRUSH);
 		}
 	}
 
@@ -3975,7 +3975,7 @@ void props_statue_blocked(gentity_t *ent)
 	}
 	else
 	{
-		G_Damage(traceEnt, ent, ent, NULL, trace.endpos, 9999, 0, MOD_CRUSH);
+		G_Damage(traceEnt, ent, ent, NULL, trace.endpos, GIB_DAMAGE(traceEnt->health), 0, MOD_CRUSH);
 	}
 }
 

@@ -1359,7 +1359,7 @@ void G_SetEntState(gentity_t *ent, entState_t state)
 				if (check->client || check->s.eType == ET_CORPSE)
 				{
 					// gibs anything player like
-					G_Damage(check, ent, ent, NULL, NULL, 9999, DAMAGE_NO_PROTECTION, MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER);
+					G_Damage(check, ent, ent, NULL, NULL, GIB_DAMAGE(check->health), DAMAGE_NO_PROTECTION, MOD_CRUSH_CONSTRUCTIONDEATH_NOATTACKER);
 				}
 				else if (check->s.eType == ET_ITEM && check->item->giType == IT_TEAM)
 				{

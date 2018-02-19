@@ -652,7 +652,7 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 				if (check->client->ps.eFlags & (EF_DEAD | EF_PRONE | EF_PRONE_MOVING))
 				{
 					trap_LinkEntity(check);
-					G_Damage(check, pusher, pusher, NULL, NULL, 9999, 0, MOD_CRUSH);
+					G_Damage(check, pusher, pusher, NULL, NULL, GIB_DAMAGE(check->health), 0, MOD_CRUSH);
 					moveList[e] = ENTITYNUM_NONE;   // prevent re-linking later on
 					continue;
 				}
@@ -694,7 +694,7 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 		// bobbing entities are instant-kill and never get blocked
 		if (pusher->s.pos.trType == TR_SINE || pusher->s.apos.trType == TR_SINE)
 		{
-			G_Damage(check, pusher, pusher, NULL, NULL, 99999, 0, MOD_CRUSH);
+			G_Damage(check, pusher, pusher, NULL, NULL, GIB_DAMAGE(check->health), 0, MOD_CRUSH);
 			continue;
 		}
 
@@ -2097,7 +2097,7 @@ void Blocked_DoorRotate(gentity_t *ent, gentity_t *other)
 
 		if (other->health <= 0)
 		{
-			G_Damage(other, ent, ent, NULL, NULL, 99999, 0, MOD_CRUSH);
+			G_Damage(other, ent, ent, NULL, NULL, GIB_DAMAGE(other->health), 0, MOD_CRUSH);
 		}
 
 		if (ent->damage)
@@ -5170,7 +5170,7 @@ void func_constructible_explode(gentity_t *self, gentity_t *inflictor, gentity_t
 				if (check->client || check->s.eType == ET_CORPSE)
 				{
 					// gibs anything player like
-					G_Damage(check, self, attacker, NULL, NULL, 9999, 0, MOD_CRUSH_CONSTRUCTIONDEATH);
+					G_Damage(check, self, attacker, NULL, NULL, GIB_DAMAGE(check->health), 0, MOD_CRUSH_CONSTRUCTIONDEATH);
 				}
 				else if (check->s.eType == ET_ITEM && check->item->giType == IT_TEAM)
 				{

@@ -60,6 +60,7 @@
 #define DEFAULT_GRAVITY     800
 #define FORCE_LIMBO_HEALTH  -75
 #define GIB_HEALTH          -175
+#define GIB_DAMAGE(health) health - GIB_HEALTH + 1
 
 #define HOLDBREATHTIME      12000
 
@@ -1186,9 +1187,9 @@ typedef struct weapontable_s
 	float fireRecoilPitch;          ///< cg
 	float fireRecoilYaw;            ///< cg
 
-    int weapRecoilDuration;         ///< bg
-    float weapRecoilPitch[2];       ///< bg
-    float weapRecoilYaw[2];         ///< bg
+	int weapRecoilDuration;         ///< bg
+	float weapRecoilPitch[2];       ///< bg
+	float weapRecoilYaw[2];         ///< bg
 
 	const char *className;          ///<
 	const char *weapFile;           ///<
