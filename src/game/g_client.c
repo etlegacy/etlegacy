@@ -1000,7 +1000,7 @@ team_t PickTeam(int ignoreClientNum)
 static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 {
 	// no extra ammo if it don't use ammo
-	if (GetWeaponTableData(weaponNum)->useAmmo)
+	if (!GetWeaponTableData(weaponNum)->useAmmo)
 	{
 		return;
 	}
