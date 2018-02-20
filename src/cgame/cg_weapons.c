@@ -3940,7 +3940,7 @@ void CG_AltWeapon_f(void)
  */
 void CG_NextWeap(qboolean switchBanks)
 {
-	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean nextbank = qfalse;     // need to switch to the next bank of weapons?
@@ -4084,7 +4084,7 @@ void CG_NextWeap(qboolean switchBanks)
  */
 void CG_PrevWeap(qboolean switchBanks)
 {
-	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean prevbank = qfalse;     // need to switch to the next bank of weapons?
@@ -4729,8 +4729,7 @@ void CG_WeaponFireRecoil(int weapon)
 	//      pitchAdd = 2 + rand() % 3;
 	// }
 
-	if (weapon == WP_MP40 || weapon == WP_THOMPSON || weapon == WP_STEN || weapon == WP_FG42SCOPE || weapon == WP_FG42
-	    || GetWeaponTableData(weapon)->isMG || GetWeaponTableData(weapon)->isMGSet)
+	if (GetWeaponTableData(weapon)->firingAuto)
 	{
 		pitchAdd *= (1 + rand() % 3);
 	}
@@ -5286,13 +5285,13 @@ void CG_WaterRipple(qhandle_t shader, vec3_t loc, vec3_t dir, int size, int life
  */
 void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags)     // modified to send missilehitwall surface parameters
 {
-	qhandle_t   mod = 0, mark = 0, shader = 0;
-	sfxHandle_t sfx = 0, sfx2 = 0;
+	qhandle_t   mod      = 0, mark = 0, shader = 0;
+	sfxHandle_t sfx      = 0, sfx2 = 0;
 	qboolean    isSprite = qfalse;
 	int         duration = 600, i, j, markDuration = -1, volume = 127; // keep -1 markDuration for temporary marks
 	trace_t     trace;
 	vec3_t      lightColor = { 1, 1, 0 }, tmpv, tmpv2, sprOrg, sprVel;
-	float       radius = 32, light = 0, sfx2range = 0;
+	float       radius     = 32, light = 0, sfx2range = 0;
 	vec4_t      projection;
 
 	if (surfFlags & SURF_SKY)
