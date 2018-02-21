@@ -3811,6 +3811,22 @@ qboolean FS_CheckDirTraversal(const char *checkdir)
 }
 
 /**
+ * @brief FS_InvalidGameDir
+ * @param
+ * @return qtrue if path is a reference to current directory or directory traversal or a sub-directory
+ */
+qboolean FS_InvalidGameDir(const char *gamedir)
+{
+	if (!strcmp(gamedir, ".") || !strcmp(gamedir, "..")
+		|| strchr(gamedir, '/') || strchr(gamedir, '\\'))
+	{
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/**
  * @brief FS_ComparePaks
  *
  * @details
@@ -4102,6 +4118,20 @@ static void FS_Startup(const char *gameName)
 	fs_homepath = Cvar_Get("fs_homepath", homePath, CVAR_INIT);
 
 	fs_gamedirvar = Cvar_Get("fs_game", "", CVAR_INIT | CVAR_SYSTEMINFO);
+
+
+	if (FS_InvalidGameDir(gameName))
+	{
+		Com_Error( ERR_DROP, "Invalid com_basegame '%s'", gameName );
+	}
+	if (FS_InvalidGameDir(fs_basegame->string))
+	{
+		Com_Error( ERR_DROP, "Invalid fs_basegame '%s'", fs_basegame->string );
+	}
+	if (FS_InvalidGameDir(fs_gamedirvar->string))
+	{
+		Com_Error( ERR_DROP, "Invalid fs_game '%s'", fs_gamedirvar->string );
+	}
 
 	// add search path elements in reverse priority order
 	FS_AddBothGameDirectories(gameName);

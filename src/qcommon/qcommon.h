@@ -925,6 +925,7 @@ qboolean FS_CheckDirTraversal(const char *checkdir);
 qboolean FS_VerifyOfficialPaks(void);
 qboolean FS_idPak(const char *pak, const char *base);
 qboolean FS_ComparePaks(char *neededpaks, size_t len, qboolean dlstring);
+qboolean FS_InvalidGameDir(const char *gamedir);
 
 void FS_Rename(const char *from, const char *to);
 
