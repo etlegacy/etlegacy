@@ -559,14 +559,11 @@ char **Sys_ListFiles(const char *directory, const char *extension, const char *f
 		{
 			remove(va("%s%c%s", directory, PATH_SEP, d->d_name));
 #ifdef DEDICATED
-			Sys_Error("Invalid character in file name '%s'. The file has been removed. Start the server again", d->d_name);
+			Sys_Error("Invalid character in file name '%s'. The file has been removed. Start the server again.", d->d_name);
 #else
-			Sys_Dialog(DT_INFO, va("File name \"%s\" contains an invalid character for ET: L file structure.\nSome admins take advantage of this to ensure their menu loads last.\nThe file has been removed.\n", d->d_name), "Invalid file name detected & removed");
+			Com_Error(ERR_DROP, va("Invalid file name detected & removed\nFile \"%s\" did contain an invalid character for ET: L file structure.\nSome admins take advantage of this to ensure their menu loads last.\nThe file has been removed.", d->d_name));
 #endif
-			// FIXME: this causes an infinite loop on connect
-			continue; // never add invalid files
 		}
-
 
 		if (nfiles == MAX_FOUND_FILES - 1)
 		{
