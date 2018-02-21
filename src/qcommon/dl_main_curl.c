@@ -223,7 +223,10 @@ int DL_BeginDownload(char *localName, const char *remoteName)
 #endif
 #endif
 
-	curl_multi_add_handle(dl_multi, dl_request);
+	if (curl_multi_add_handle(dl_multi, dl_request) != CURLM_OK)
+	{
+		Com_Printf(S_COLOR_RED  "DL_BeginDownload: Error - invalid handle.\n");
+	}
 
 	Cvar_Set("cl_downloadName", remoteName);
 
