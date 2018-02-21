@@ -812,6 +812,8 @@ qboolean FS_SV_FileExists(const char *file);
 
 qboolean FS_IsSamePath(const char *s1, const char *s2);
 qboolean FS_CreatePath(const char *OSPath);
+void FS_CheckFilenameIsNotExecutable(const char *fileName, const char *function);
+//void FS_CheckFilenameIsMutable(const char *filename, const char *function);
 void FS_Remove(const char *osPath);
 
 char *FS_BuildOSPath(const char *base, const char *game, const char *qpath);

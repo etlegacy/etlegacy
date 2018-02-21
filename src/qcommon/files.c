@@ -722,7 +722,7 @@ void FS_CopyFile(const char *fromOSPath, const char *toOSPath)
  * @param[in] fileName
  * @param[in] function
  */
-static void FS_CheckFilenameIsNotExecutable(const char *fileName, const char *function)
+void FS_CheckFilenameIsNotExecutable(const char *fileName, const char *function)
 {
 	// Check if the fileName ends with the library extension
 	if (COM_CompareExtension(fileName, DLL_EXT))
@@ -750,12 +750,13 @@ static void FS_CheckFilenameIsMutable(const char *filename, const char *function
 /**
  * @brief FS_Remove
  * @param[in] osPath
+ *
+ * @note Ensure file removals are save when initiated by user inputs - call FS_CheckFilenameIsMutable
+ *       or FS_CheckFilenameIsNotExecutable before to avoid unwanted binary or pk3 removals
  */
 void FS_Remove(const char *osPath)
 {
 	int ret;
-
-	FS_CheckFilenameIsMutable(osPath, __func__);
 
 	ret = remove(osPath);
 
@@ -990,6 +991,7 @@ void FS_SV_Rename(const char *from, const char *to)
 	{
 		// Failed, try copying it and deleting the original
 		FS_CopyFile(from_ospath, to_ospath);
+		// no need to check removal, this is our tmp file
 		FS_Remove(from_ospath);
 	}
 }
@@ -1021,6 +1023,7 @@ void FS_Rename(const char *from, const char *to)
 	{
 		// Failed, try copying it and deleting the original
 		FS_CopyFile(from_ospath, to_ospath);
+		FS_CheckFilenameIsMutable(from_ospath, __func__);
 		FS_Remove(from_ospath);
 	}
 }
@@ -3936,6 +3939,7 @@ qboolean FS_ComparePaks(char *neededpaks, size_t len, qboolean dlstring)
 						char *rmv = FS_BuildOSPath(fs_homepath->string, va("%s.pk3", fs_serverReferencedPakNames[i]), "");
 
 						rmv[strlen(rmv) - 1] = '\0';
+						// no need to check removal - this is a pk3
 						FS_Remove(rmv);
 					}
 #endif

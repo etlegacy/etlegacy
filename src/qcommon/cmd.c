@@ -1201,18 +1201,23 @@ void Cmd_CleanHomepath_f(void)
 
 			if (!pretend)
 			{
-				Com_Printf("- removing file[%i]: %s%c%s\n", j + 1, path, PATH_SEP, pFiles[j]);
+				const char *aFile = va("%s%c%s", path, PATH_SEP, pFiles[j]);
+
+				Com_Printf("- removing file[%i]: %s\n", j + 1, aFile);
+
+				// don't delete system binaries
+				FS_CheckFilenameIsNotExecutable(aFile, __func__);
 
 				if (force)
 				{
-					if (remove(va("%s%c%s", path, PATH_SEP, pFiles[j])) != 0)
+					if (remove(aFile) != 0)
 					{
-						Com_Printf("WARNING: Cmd_CleanHomepath_f - cannot remove file '%s'\n", va("%s%c%s", path, PATH_SEP, pFiles[j]));
+						Com_Printf("WARNING: Cmd_CleanHomepath_f - cannot remove file '%s'\n", aFile);
 					}
 				}
 				else
 				{
-					FS_Remove(va("%s%c%s", path, PATH_SEP, pFiles[j]));
+					FS_Remove(aFile);
 				}
 				delFiles++;
 			}
