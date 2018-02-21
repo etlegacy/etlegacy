@@ -962,7 +962,7 @@ long FS_SV_FOpenFileRead(const char *fileName, fileHandle_t *fp)
 }
 
 /**
- * @brief FS_SV_Rename
+ * @brief FS_SV_Rename - used to rename downloaded files from .tmp to .pk3
  * @param[in] from
  * @param[in] to
  */
@@ -984,7 +984,7 @@ void FS_SV_Rename(const char *from, const char *to)
 	{
 		Com_Printf("FS_SV_Rename: %s --> %s\n", from_ospath, to_ospath);
 	}
-	FS_CheckFilenameIsMutable(to_ospath, __func__);
+	FS_CheckFilenameIsNotExecutable(to_ospath, __func__);
 
 	if (rename(from_ospath, to_ospath))
 	{
