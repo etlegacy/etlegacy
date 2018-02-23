@@ -95,7 +95,7 @@ menuDef {
 	CHECKBOXALIGNX( 6+(SUBWINDOW_WIDTH)+6+2+(.5*((SUBWINDOW_WIDTH)-6))+2, INPUT_Y+16, .5*((SUBWINDOW_WIDTH)-6), 10, _("Smooth Mouse:"), .2, 24, 8, "m_filter", _("Smooths out the mouse using interpolation") )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH)+6+2, INPUT_Y+28, (SUBWINDOW_WIDTH)-4, 10, "sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH)-6), 8 )
 	SLIDER( 6+(SUBWINDOW_WIDTH)+6+2, INPUT_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Mouse Sensitivity:"), .2, 8, "sensitivity" 5 1 30, _("Use the slider to increase or decrease mouse sensitivity") )
-	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, INPUT_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Mouse Pitch:"), .2, 8, "m_pitch", cvarFloatList { _("0.015 (lowest allowed)") 0.0151 "0.016" 0.016 "0.017" 0.017 "0.018" 0.018 "0.019" 0.019 "0.020" 0.020 "0.021" 0.021 _("0.022 (default)") 0.022 }, _("Up-Down Motion Of The Crosshair While Moving.") )
+	MULTI( 6+(SUBWINDOW_WIDTH)+6+2, INPUT_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Mouse Pitch:"), .2, 8, "m_pitch", cvarFloatList { "0.015 (lowest allowed)" 0.0151 "0.016" 0.016 "0.017" 0.017 "0.018" 0.018 "0.019" 0.019 "0.020" 0.020 "0.021" 0.021 "0.022 (default)" 0.022 }, _("Up-Down Motion Of The Crosshair While Moving.") )
 
 // Miscellaneous //
 #define MISC_Y 314

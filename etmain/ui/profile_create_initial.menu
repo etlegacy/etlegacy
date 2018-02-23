@@ -100,7 +100,7 @@ menuDef {
 	// TODO: use FEEDER_LANGUAGES to automatically show available localizations
 	//MULTI( SUBWINDOW_X+4, SUBWINDOW_Y+112, (SUBWINDOW_WIDTH)-8, 10, _("Language:"), .2, 8, "cl_lang", LEGACY_LANGUAGES, _("Set your desired language") )
 	COMBO( SUBWINDOW_X+4, SUBWINDOW_Y+112, (SUBWINDOW_WIDTH)-8, 10, _("Language:"), .2, 8, "cl_lang", LEGACY_LANGUAGES, none, _("Set your desired language") )
-	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+136, (SUBWINDOW_WIDTH)-8, 10, _("Video Quality:"), .2, 8, "ui_glCustom", cvarFloatList { _("Fastest") 3 _("Fast") 2 _("Normal") 1 _("High") 0 }, uiScript update "ui_glCustom", _("Select your initial video settings, these can be changed later via the options menu") )
+	MULTIACTION( SUBWINDOW_X+4, SUBWINDOW_Y+136, (SUBWINDOW_WIDTH)-8, 10, _("Video Quality:"), .2, 8, "ui_glCustom", cvarFloatList { "Fastest" 3 "Fast" 2 "Normal" 1 "High" 0 }, uiScript update "ui_glCustom", _("Select your initial video settings, these can be changed later via the options menu") )
 #ifdef LEGACY
 	COMBO( SUBWINDOW_X+4, SUBWINDOW_Y+150, (SUBWINDOW_WIDTH)-8, 10, _("Resolution:"), .2, 8, "ui_r_mode", LEGACY_RESOLUTIONS, uiScript glCustom, _("Choose your preferred video resolution, if unsure leave it as the default") )
 	COMBO( SUBWINDOW_X+4, SUBWINDOW_Y+164, (SUBWINDOW_WIDTH)-8, 10, _("Window mode:"), .2, 8, "ui_r_windowmode", LEGACY_WINDOWMODES, uiScript glCustom, _("Toggle fullscreen") )
@@ -112,7 +112,7 @@ menuDef {
 	SLIDER( SUBWINDOW_X+4, SUBWINDOW_Y+202, (SUBWINDOW_WIDTH)-8, 10, _("Mouse Sensitivity:"), .2, 8, "ui_sensitivity" 5 1 30, _("Use this slider to set your mouse sensitivity") )
 	YESNO( SUBWINDOW_X+4, SUBWINDOW_Y+214, (SUBWINDOW_WIDTH)-8, 10, _("Invert Mouse:"), .2, 8, "ui_profile_mousePitch", _("Choose invert mouse if you prefer flight-simulator style mouse pitch controls") )
 
-	MULTI( SUBWINDOW_X+4, SUBWINDOW_Y+226, (SUBWINDOW_WIDTH)-8, 10, _("Handedness:"), .2, 8, "ui_handedness", cvarFloatList { _("Right") 0 _("Left") 1 }, _("Left or Right Handed? This sets your default controls\nwhich you can modify later via the options menu") )
+	MULTI( SUBWINDOW_X+4, SUBWINDOW_Y+226, (SUBWINDOW_WIDTH)-8, 10, _("Handedness:"), .2, 8, "ui_handedness", cvarFloatList { "Right" 0 "Left" 1 }, _("Left or Right Handed? This sets your default controls\nwhich you can modify later via the options menu") )
 
 	BUTTON( (SUBWINDOW_X+4)+.5*((SUBWINDOW_WIDTH)-164), SUBWINDOW_Y+250, 164, 14, _("DEFAULT SETTINGS"), .24, 11, DEFAULT_SETTINGS ;
 		conditionalscript com_recommendedSet 0

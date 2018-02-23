@@ -79,9 +79,9 @@ menuDef {
 
 	SUBWINDOW( 6, 64, (FILTERS_WIDTH), 94, _("FILTERS") )
 
-	MULTIACTIONLEFT( 12, 80, .33*((FILTERS_WIDTH)-6), 10, _("Source:"), .2, 8, "ui_netSource", cvarFloatList { _("Local") 0 _("Internet") 1 _("Favorites") 2 }, uiScript UpdateFilter, _("Choose the type of game servers to display from Internet, local and the favorites list") )
-	MULTIACTIONLEFT( 12, 92, .33*((FILTERS_WIDTH)-6), 10, _("Game Type:"), .2, 8, "ui_joinGameType", cvarFloatList { _("All") -1 _("Objective") 2 _("Stopwatch") 3 _("Campaign") 4 _("LMS") 5 _("Map Voting") 6 }, uiScript RefreshFilter, _("Displays only game servers offering this Game Type") )
-	MULTIACTIONLEFT( 12, 104, .33*((FILTERS_WIDTH)-6), 10, _("Mod:"), .2, 8, "ui_browserModFilter", cvarFloatList { _("All") 0 "Legacy" 1 "ETPub" 2 "Jaymod" 3 "NoQuarter" 4 "N!tmod" 5 "silEnT" 6 "True Combat" 7 "ETNam" 8 "ETrun" 9 "ETJump" 10 "TJMod" 11 "Original" 12 "Other" -1 }, uiScript UpdateFilter, _("Displays only game servers offering this Mod") )
+	MULTIACTIONLEFT( 12, 80, .33*((FILTERS_WIDTH)-6), 10, _("Source:"), .2, 8, "ui_netSource", cvarFloatList { "Local" 0 "Internet" 1 "Favorites" 2 }, uiScript UpdateFilter, _("Choose the type of game servers to display from Internet, local and the favorites list") )
+	MULTIACTIONLEFT( 12, 92, .33*((FILTERS_WIDTH)-6), 10, _("Game Type:"), .2, 8, "ui_joinGameType", cvarFloatList { "All" -1 "Objective" 2 "Stopwatch" 3 "Campaign" 4 "LMS" 5 "Map Voting" 6 }, uiScript RefreshFilter, _("Displays only game servers offering this Game Type") )
+	MULTIACTIONLEFT( 12, 104, .33*((FILTERS_WIDTH)-6), 10, _("Mod:"), .2, 8, "ui_browserModFilter", cvarFloatList { "All" 0 "Legacy" 1 "ETPub" 2 "Jaymod" 3 "NoQuarter" 4 "N!tmod" 5 "silEnT" 6 "True Combat" 7 "ETNam" 8 "ETrun" 9 "ETJump" 10 "TJMod" 11 "Original" 12 "Other" -1 }, uiScript UpdateFilter, _("Displays only game servers offering this Mod") )
 	EDITFIELDSIMPLE( 12+24, 116, .33*((FILTERS_WIDTH)-6)-28, 10, "", .2, 8, "ui_browserMapFilter", 25, 25, uiScript RefreshFilter, _("Includes or excludes servers with desired map name from the server list") )
 
 	itemDef {
@@ -111,7 +111,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.33*((FILTERS_WIDTH)-6)+2+2+12, 80, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowEmptyOrFull", cvarFloatList { _("Filter Disabled") 0 _("Only show...") 1 _("Don't show...") 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Empty and Full Servers", "Includes or excludes empty and full servers from the server list"  )
+	TRICHECKBOXACTIONMULTI( 8+.33*((FILTERS_WIDTH)-6)+2+2+12, 80, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowEmptyOrFull", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Empty and Full Servers", "Includes or excludes empty and full servers from the server list"  )
 
 	itemDef {
 		name		"filtericonPassword"
@@ -122,7 +122,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.33*((FILTERS_WIDTH)-6)+2+2+12, 92, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowPasswordProtected", cvarFloatList { _("Filter Disabled") 0 _("Only show...") 1 _("Don't show...") 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Password Protected Servers", "Includes or excludes password protected servers from the server list" )
+	TRICHECKBOXACTIONMULTI( 8+.33*((FILTERS_WIDTH)-6)+2+2+12, 92, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowPasswordProtected", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Password Protected Servers", "Includes or excludes password protected servers from the server list" )
 
 	itemDef {
 		name		"filtericonFriendlyFire"
@@ -133,7 +133,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.33*((FILTERS_WIDTH)-6)+2+2+12, 104, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowFriendlyFire", cvarFloatList { _("Filter Disabled") 0 _("Only show...") 1 _("Don't show...") 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Friendly Fire", "Includes or excludes servers where team mates can damage each other from the server list"  )
+	TRICHECKBOXACTIONMULTI( 8+.33*((FILTERS_WIDTH)-6)+2+2+12, 104, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowFriendlyFire", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Friendly Fire", "Includes or excludes servers where team mates can damage each other from the server list"  )
 
 	itemDef {
 		name		"filtericonMaxLives"
@@ -144,7 +144,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.33*((FILTERS_WIDTH)-6)+2+2+12, 116, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowMaxlives", cvarFloatList { _("Filter Disabled") 0 _("Only show...") 1 _("Don't show...") 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Max Lives", "Includes or excludes servers that limit the number of player lives per match from the server list" )
+	TRICHECKBOXACTIONMULTI( 8+.33*((FILTERS_WIDTH)-6)+2+2+12, 116, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowMaxlives", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Max Lives", "Includes or excludes servers that limit the number of player lives per match from the server list" )
 
 	itemDef {
 		name		"filtericonWeapRestrict"
@@ -155,7 +155,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.66*((FILTERS_WIDTH)-6)+2+2+12, 80, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowWeaponsRestricted", cvarFloatList { _("Filter Disabled") 0 _("Only show...") 1 _("Don't show...") 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Weapon Restrictions", "Includes or excludes servers that limit the number of\n available heavy weapons from the server list" )
+	TRICHECKBOXACTIONMULTI( 8+.66*((FILTERS_WIDTH)-6)+2+2+12, 80, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowWeaponsRestricted", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Weapon Restrictions", "Includes or excludes servers that limit the number of\n available heavy weapons from the server list" )
 
 	itemDef {
 		name		"filtericonAntilag"
@@ -166,7 +166,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.66*((FILTERS_WIDTH)-6)+2+2+12, 92, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowAntilag", cvarFloatList { _("Filter Disabled") 0 _("Only show...") 1 _("Don't show...") 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Anti-Lag Servers", "Includes or excludes servers with anti-lag support from the server list" )
+	TRICHECKBOXACTIONMULTI( 8+.66*((FILTERS_WIDTH)-6)+2+2+12, 92, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowAntilag", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Anti-Lag Servers", "Includes or excludes servers with anti-lag support from the server list" )
 
 	itemDef {
 		name		"filtericonTeamBalance"
@@ -177,7 +177,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.66*((FILTERS_WIDTH)-6)+2+2+12, 104, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowTeamBalanced", cvarFloatList { _("Filter Disabled") 0 _("Only show...") 1 _("Don't show...") 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Force Team Balance", "Includes or excludes servers that enforce balanced teams from the server list" )
+	TRICHECKBOXACTIONMULTI( 8+.66*((FILTERS_WIDTH)-6)+2+2+12, 104, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowTeamBalanced", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting Servers with Force Team Balance", "Includes or excludes servers that enforce balanced teams from the server list" )
 
 	itemDef {
 		name		"filtericonBots"
@@ -188,7 +188,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.66*((FILTERS_WIDTH)-6)+2+2+12, 116, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowHumans", cvarFloatList { _("Filter Disabled") 0 _("Only show...") 1 _("Don't show...") 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting ET:Legacy Servers with Humans players", "Includes or excludes ET:Legacy servers with humans from the server list" )
+	TRICHECKBOXACTIONMULTI( 8+.66*((FILTERS_WIDTH)-6)+2+2+12, 116, .33*((FILTERS_WIDTH)-6)-14, 10, .2, 8, "ui_browserShowHumans", cvarFloatList { "Filter Disabled" 0 "Only show..." 1 "Don't show..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting ET:Legacy Servers with Humans players", "Includes or excludes ET:Legacy servers with humans from the server list" )
 
 	// Buttons
 	BUTTONEXT( 10+2, 140, .5*((FILTERS_WIDTH)-6)-6, 14, _("REFRESH LIST"), .24, 11, uiScript RefreshServers, tooltip _("Refresh servers list"))

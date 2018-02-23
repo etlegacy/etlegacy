@@ -56,7 +56,7 @@ menuDef {
 #else
 	EDITFIELDLEFT( SUBWINDOW_X+4, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-12, 10, _("Say:"), .2, 8, "cg_messageText" onEsc { close ingame_messagemode ; } onEnter { close ingame_messagemode ; exec messageSend ; }, 128, 128, _("Enter text here - press ESCAPE twice to cancel") )
 #endif
-	MULTILEFT( SUBWINDOW_X+4, SUBWINDOW_Y+28, (SUBWINDOW_WIDTH)-12, 10, _("To:"), .2, 8, "cg_messageType", cvarFloatList { _("All") 1 _("Team") 2 _("Fireteam") 3 }, _("Select the destination of your message") )
+	MULTILEFT( SUBWINDOW_X+4, SUBWINDOW_Y+28, (SUBWINDOW_WIDTH)-12, 10, _("To:"), .2, 8, "cg_messageType", cvarFloatList { "All" 1 "Team" 2 "Fireteam" 3 }, _("Select the destination of your message") )
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("CANCEL"), .3, 14, close ingame_messagemode ; )
 	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("SEND"), .3, 14, close ingame_messagemode ; exec messageSend ; )
 }

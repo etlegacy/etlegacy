@@ -67,7 +67,7 @@ menuDef {
 	BUTTONEXT( 6, 158, WINDOW_WIDTH-12, 14, _("COMPETITION SETTINGS"), .24, 11, exec "cmd callvote config defaultcomp"; uiScript closeingame, voteFlag CV_SVF_CONFIG )
 	BUTTONEXT( 6, 176, WINDOW_WIDTH-12, 14, _("PUBLIC SETTINGS"), .24, 11, exec "cmd callvote config defaultpublic"; uiScript closeingame, voteFlag CV_SVF_CONFIG )
 
-	MULTILEFT( 8, 194+2, .66*(WINDOW_WIDTH-18), 10, _("Warmup Damage:"), .2, 8, "ui_voteWarmupDamage", cvarFloatList { _("None") 0 _("Enemies") 1 _("Everyone") 2 } voteFlag CV_SVF_WARMUPDAMAGE, _("Select the warm-up damage mode to vote on") )
+	MULTILEFT( 8, 194+2, .66*(WINDOW_WIDTH-18), 10, _("Warmup Damage:"), .2, 8, "ui_voteWarmupDamage", cvarFloatList { "None" 0 "Enemies" 1 "Everyone" 2 } voteFlag CV_SVF_WARMUPDAMAGE, _("Select the warm-up damage mode to vote on") )
 	NAMEDBUTTONEXT( "bttnextWarmupDamage", 6+.80*(WINDOW_WIDTH-18)+6, 194, .20*(WINDOW_WIDTH-18), 14, _("OK"), .24, 11, uiScript voteWarmupDamage; uiScript closeingame, voteFlag CV_SVF_WARMUPDAMAGE )
 
 //	itemDef {
@@ -98,7 +98,7 @@ menuDef {
 	NUMERICFIELDLEFTEXT( 8, 230+2, .66*(WINDOW_WIDTH-18), 10, _("Time Limit:"), .2, 8, "ui_voteTimelimit", 6, voteFlag CV_SVF_TIMELIMIT, _("Specify a time limit to vote on") )
 	NAMEDBUTTONEXT( "bttnextTimelimit", 6+.80*(WINDOW_WIDTH-18)+6, 230, .20*(WINDOW_WIDTH-18), 14, _("OK"), .24, 11, uiScript voteTimelimit; uiScript closeingame, voteFlag CV_SVF_TIMELIMIT )
 
-	MULTILEFT( 8, 248+2, .66*(WINDOW_WIDTH-18), 10, _("Game Type:"), .2, 8, "ui_voteGameType", cvarFloatList { _("Single-Map Objective") 2 _("Stopwatch") 3 _("Last Man Standing") 5 _("Map Voting") 6 } voteflag CV_SVF_GAMETYPE, _("Select the game type to vote on") )
+	MULTILEFT( 8, 248+2, .66*(WINDOW_WIDTH-18), 10, _("Game Type:"), .2, 8, "ui_voteGameType", cvarFloatList { "Single-Map Objective" 2 "Stopwatch" 3 "Last Man Standing" 5 "Map Voting" 6 } voteflag CV_SVF_GAMETYPE, _("Select the game type to vote on") )
 	NAMEDBUTTONEXT( "bttnextGameType", 6+.80*(WINDOW_WIDTH-18)+6, 248, .20*(WINDOW_WIDTH-18), 14, _("OK"), .24, 11, uiScript voteGame; uiScript closeingame, voteflag CV_SVF_GAMETYPE )
 
 	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close ingame_vote_misc ; open ingame_vote )

@@ -46,9 +46,9 @@ menuDef {
 // Joystick //
 #define JOYSTICK_Y 186
 	SUBWINDOW( 6, JOYSTICK_Y, (SUBWINDOW_WIDTH), 64, _("JOYSTICK") )
-	MULTI( 8, JOYSTICK_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Enable Joysticks:"), .2, 8, "in_joystick", cvarFloatList { _("No") 0 _("Yes") 1 }, _("General joystick initialization. Requires vid_restart.") )
+	MULTI( 8, JOYSTICK_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Enable Joysticks:"), .2, 8, "in_joystick", cvarFloatList { "No" 0 "Yes" 1 }, _("General joystick initialization. Requires vid_restart.") )
 	EDITFIELD( 8, JOYSTICK_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("Use Joystick#:"), .2, 8, "in_joystickNo", 64, 18, _("Specifies active joystick") )
-	MULTI( 8, JOYSTICK_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Analog Joystick:"), .2, 8, "in_joystickUseAnalog", cvarFloatList { _("No") 0 _("Yes") 1 }, _("Use analog joystick?") )
+	MULTI( 8, JOYSTICK_Y+40, (SUBWINDOW_WIDTH)-4, 10, _("Analog Joystick:"), .2, 8, "in_joystickUseAnalog", cvarFloatList { "No" 0 "Yes" 1 }, _("Use analog joystick?") )
 	EDITFIELD( 8, JOYSTICK_Y+52, (SUBWINDOW_WIDTH)-4, 10, _("Joystick Threshold:"), .2, 8, "in_joystickThreshold", 64, 18, _("Sets joystick threshold sensitivity") )
 
 // Buttons //

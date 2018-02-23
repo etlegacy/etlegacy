@@ -35,44 +35,44 @@ menuDef {
 	YESNO( 8, HUD_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Compass:"), .2, 8, "cg_drawCompass", _("Displays compass (with icons when near select events)") )
 	CVARFLOATLABEL( 8, HUD_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, "cg_automapZoom", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
 	SLIDER( 8, HUD_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Auto Map Zoom:"), .2, 8, "cg_automapZoom" 5.159 1 7.43, _("Sets Zoom Level Automatically When Map Loads") )
-	MULTI( 8, HUD_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Mission Timer:"), .2, 8, "cg_drawRoundTimer", cvarFloatList { _("Off") 0 _("On") 1 }, _("Displays remaining mission time") )
-	MULTI( 8, HUD_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Reinforcement Timer:"), .2, 8, "cg_drawReinforcementTime", cvarFloatList { _("Off") 0 _("On") 1 }, _("Displays your team's \"reinforcement\" time") )
-	MULTI( 8, HUD_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Cursor Hints:"), .2, 8, "cg_cursorHints", cvarFloatList { _("Off") 0 _("Size Pulse") 1 _("Strobe Pulse") 2 _("Alpha Pulse") 3 _("Solid") 4 }, _("Icon display format when near an action item") )
-	MULTI( 8, HUD_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Locations:"), .2, 8, "cg_locations", cvarFloatList { _("Cordinates Only") 0 _("Names Fireteam Only") 1 _("Names Team Chat Only") 2 _("Team & Fireteam Chat") 3 }, _("Displays locations in fireteam") )
+	MULTI( 8, HUD_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Mission Timer:"), .2, 8, "cg_drawRoundTimer", cvarFloatList { "Off" 0 "On" 1 }, _("Displays remaining mission time") )
+	MULTI( 8, HUD_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Reinforcement Timer:"), .2, 8, "cg_drawReinforcementTime", cvarFloatList { "Off" 0 "On" 1 }, _("Displays your team's \"reinforcement\" time") )
+	MULTI( 8, HUD_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Cursor Hints:"), .2, 8, "cg_cursorHints", cvarFloatList { "Off" 0 "Size Pulse" 1 "Strobe Pulse" 2 "Alpha Pulse" 3 "Solid" 4 }, _("Icon display format when near an action item") )
+	MULTI( 8, HUD_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Locations:"), .2, 8, "cg_locations", cvarFloatList { "Cordinates Only" 0 "Names Fireteam Only" 1 "Names Team Chat Only" 2 "Team & Fireteam Chat" 3 }, _("Displays locations in fireteam") )
 	YESNO( 8, HUD_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, _("Enable Flags:"), .2, 8, "cg_countryflags", _("Displays players country flags in score board") )
 	YESNO( 8, HUD_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Fireteam Latched Class:"), .2, 8, "cg_fireteamLatchedClass", _("Displays Fireteam latched class") )
-	MULTI( 8, HUD_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, _("Obituaries Icons:"), .2, 8, "cg_graphicObituaries", cvarFloatList { _("Off") 0 _("Victim Weapon Killer") 1 _("Killer Weapon Victim") 2 }, _("Displays graphical obituaries") )
+	MULTI( 8, HUD_Y+124, (SUBWINDOW_WIDTH_L)-4, 10, _("Obituaries Icons:"), .2, 8, "cg_graphicObituaries", cvarFloatList { "Off" 0 "Victim Weapon Killer" 1 "Killer Weapon Victim" 2 }, _("Displays graphical obituaries") )
 	YESNO( 8, HUD_Y+136, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Descriptive Text:"), .2, 8, "cg_descriptiveText", _("Displays limbo help text") )
-	MULTI( 8, HUD_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Clock:"), .2, 8, "cg_drawTime", cvarFloatList { _("Off") 0 _("24 hours") 1 _("24 hours + seconds") 3 _("12 hours") 5 _("12 hours + seconds") 7 }, _("Displays local time") )
+	MULTI( 8, HUD_Y+148, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Clock:"), .2, 8, "cg_drawTime", cvarFloatList { "Off" 0 "24 hours" 1 "24 hours + seconds" 3 "12 hours" 5 "12 hours + seconds" 7 }, _("Displays local time") )
 	YESNO( 8, HUD_Y+160, (SUBWINDOW_WIDTH_L)-4, 10, _("Show FPS:"), .2, 8, "cg_drawFPS", _("Displays Frames Per Second") )
 	YESNO( 8, HUD_Y+172, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Ping:"), .2, 8, "cg_drawPing", _("Displays ping") )
 	YESNO( 8, HUD_Y+184, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Lagometer:"), .2, 8, "cg_lagometer", _("Displays lagometer") )
-	MULTI( 8, HUD_Y+196, (SUBWINDOW_WIDTH_L)-4, 10, _("Switch HUD:"), .2, 8, "cg_altHud", cvarFloatList { _("Standard Hud") 0 _("Alternate Hud 1") 1 _("Alternate Hud 2") 2 }, _("Switches between different HUD") )
-	MULTI( 8, HUD_Y+208, (SUBWINDOW_WIDTH_L)-4, 10, _("Modify Selected HUD:"), .2, 8, "cg_altHudFlags", cvarFloatList { _("Normal") 0 _("Move Round Timer") 1 _("Remove Ranks") 2 _("Move Popups") 4 _("Ranks + Timer") 3 _("Timer + Popups") 5 _("Ranks + Popups") 6 _("Timer + Ranks + Popups") 7 }, _("Customises Selected HUD") )
+	MULTI( 8, HUD_Y+196, (SUBWINDOW_WIDTH_L)-4, 10, _("Switch HUD:"), .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, _("Switches between different HUD") )
+	MULTI( 8, HUD_Y+208, (SUBWINDOW_WIDTH_L)-4, 10, _("Modify Selected HUD:"), .2, 8, "cg_altHudFlags", cvarFloatList { "Normal" 0 "Move Round Timer" 1 "Remove Ranks" 2 "Move Popups" 4 "Ranks + Timer" 3 "Timer + Popups" 5 "Ranks + Popups" 6 "Timer + Ranks + Popups" 7 }, _("Customises Selected HUD") )
 
 
 // In-Game Display //
 #define DISPLAY_Y 258
 	SUBWINDOW( 6, DISPLAY_Y, (SUBWINDOW_WIDTH_L), 125, _("IN-GAME DISPLAY") )
-	MULTI( 8, DISPLAY_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Ejecting Brass:"), .2, 8, "cg_brassTime", cvarFloatList { _("High") 15000 _("Med") 2500 _("Off") 0 }, _("Sets the duration ejected bullet shells etc. last for") )
+	MULTI( 8, DISPLAY_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Ejecting Brass:"), .2, 8, "cg_brassTime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, _("Sets the duration ejected bullet shells etc. last for") )
 	CVARFLOATLABEL( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fov", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8 )
 	SLIDER( 8, DISPLAY_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Field Of View:"), .2, 8, "cg_fov" 90 90 120, _("Sets field of view") )
-	MULTI( 8, DISPLAY_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Corona Distance:"), .2, 8, "cg_coronafardist", cvarFloatList { _("Off") 0 _("Near") 800 _("Normal") 1536 _("Far") 4096 _("Extreme") 16000 }, _("Sets the maximum distance light corona is displayed") )
+	MULTI( 8, DISPLAY_Y+40, (SUBWINDOW_WIDTH_L)-4, 10, _("Corona Distance:"), .2, 8, "cg_coronafardist", cvarFloatList { "Off" 0 "Near" 800 "Normal" 1536 "Far" 4096 "Extreme" 16000 }, _("Sets the maximum distance light corona is displayed") )
 	YESNO( 8, DISPLAY_Y+52, (SUBWINDOW_WIDTH_L)-4, 10, _("Particles:"), .2, 8, "cg_wolfparticles", _("Toggles display of particle effects - e.g. explosions, some smoke effects") )
-	MULTI( 8, DISPLAY_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Wall Mark Lifetime:"), .2, 8, "cg_markTime", cvarFloatList { _("Off") 0 _("Short") 10000 _("Normal") 20000 _("Long") 30000 }, _("Duration of bullet marks on walls etc") )
-	MULTI( 8, DISPLAY_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Blood Flash:"), .2, 8, "cg_bloodFlash", cvarFloatList { _("None") 0.0 _("Light") 0.25 _("Medium") 0.5 _("Heavy") 0.75 _("Full") 1.0 }, _("Red blood \"flash\" scale when receiving damage") )
-	MULTI( 8, DISPLAY_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Blood Splatter:"), .2, 8, "cg_bloodDamageBlend", cvarFloatList { _("None") 0.0 _("Light") 0.25 _("Medium") 0.5 _("Heavy") 0.75 _("Full") 1.0 }, _("Blood \"splatter\" transparency when taking damage from other players") )
+	MULTI( 8, DISPLAY_Y+64, (SUBWINDOW_WIDTH_L)-4, 10, _("Wall Mark Lifetime:"), .2, 8, "cg_markTime", cvarFloatList { "Off" 0 "Short" 10000 "Normal" 20000 "Long" 30000 }, _("Duration of bullet marks on walls etc") )
+	MULTI( 8, DISPLAY_Y+76, (SUBWINDOW_WIDTH_L)-4, 10, _("Blood Flash:"), .2, 8, "cg_bloodFlash", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Red blood \"flash\" scale when receiving damage") )
+	MULTI( 8, DISPLAY_Y+88, (SUBWINDOW_WIDTH_L)-4, 10, _("Blood Splatter:"), .2, 8, "cg_bloodDamageBlend", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Blood \"splatter\" transparency when taking damage from other players") )
 	YESNO( 8, DISPLAY_Y+100, (SUBWINDOW_WIDTH_L)-4, 10, _("Show Blood:"), .2, 8, "cg_showblood", _("Toggles showing blood spurt effect when player's are shot") )
 	YESNO( 8, DISPLAY_Y+112, (SUBWINDOW_WIDTH_L)-4, 10, _("Atmospheric Effects:"), .2, 8, "cg_atmosphericEffects", _("Draws atmospheric effects (snow/rain) on-screen") )
 
 // Crosshair //
 #define CROSSHAIR_Y 32
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, CROSSHAIR_Y, (SUBWINDOW_WIDTH_R), 164, _("CROSSHAIR") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Crosshair Size:"), .2, 8, "cg_crosshairsize", cvarFloatList { _("Tiny") 24 _("Small") 32 _("Medium") 48 _("Large") 64 _("Huge") 96 }, _("Sets the size of the displayed crosshair") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Crosshair Size:"), .2, 8, "cg_crosshairsize", cvarFloatList { "Tiny" 24 "Small" 32 "Medium" 48 "Large" 64 "Huge" 96 }, _("Sets the size of the displayed crosshair") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Crosshair Pulsing:"), .2, 8, "cg_crosshairPulse", _("Toggles crosshair spread sizing while moving/firing") )
 	YESNO( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, _("Crosshair Health Info:"), .2, 8, "cg_crosshairHealth", _("Colors the crosshair based on current health (overrides crosshair color settings)") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, _("Crosshair Name:"), .2, 8, "cg_drawCrosshairNames", cvarFloatList { _("Off") 0 _("Name") 1 _("Coloured Name") 2 }, _("Displays player name when the crosshair is over a teammate") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+64, (SUBWINDOW_WIDTH_R)-4, 10, _("Crosshair Info:"), .2, 8, "cg_drawCrosshairInfo", cvarFloatList { _("Off") 0 _("Class") 1 _("Rank") 2 _("Class + Rank") 3 }, _("Displays player info when the crosshair is over a teammate") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+52, (SUBWINDOW_WIDTH_R)-4, 10, _("Crosshair Name:"), .2, 8, "cg_drawCrosshairNames", cvarFloatList { "Off" 0 "Name" 1 "Coloured Name" 2 }, _("Displays player name when the crosshair is over a teammate") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+64, (SUBWINDOW_WIDTH_R)-4, 10, _("Crosshair Info:"), .2, 8, "cg_drawCrosshairInfo", cvarFloatList { "Off" 0 "Class" 1 "Rank" 2 "Class + Rank" 3 }, _("Displays player info when the crosshair is over a teammate") )
 
 	itemDef {
 		name		"crosshair_select"
@@ -95,24 +95,24 @@ menuDef {
 		}
 	}
 
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+116, (SUBWINDOW_WIDTH_R)-4, 10, _("Primary Color:"), .2, 8, "cg_crosshairColor", cvarStrList { _("White"); "white"; _("Yellow"); "yellow"; _("Red"); "red"; _("Green"); "green"; _("Blue"); "blue"; _("Magenta"); "magenta"; _("Cyan"); "cyan"; _("Orange"); "orange"; _("Light Blue"); "0xa0c0ff"; _("Medium Blue"); "mdblue"; _("Light Red"); "0xffc0a0"; _("Medium Red"); "mdred"; _("Light Green"); "0xa0ffc0"; _("Medium Green"); "mdgreen"; _("Dark Green"); "dkgreen"; _("Medium Cyan"); "mdcyan"; _("Medium Yellow"); "mdyellow"; _("Medium Orange"); "mdorange"; _("Light Grey"); "ltgrey"; _("Medium Grey"); "mdgrey"; _("Dark Grey"); "dkgrey"; _("Black"); "black" }, _("Set the color for the primary crosshair") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+116, (SUBWINDOW_WIDTH_R)-4, 10, _("Primary Color:"), .2, 8, "cg_crosshairColor", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, _("Set the color for the primary crosshair") )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+128, (SUBWINDOW_WIDTH_L)-6, 10, "cg_crosshairAlpha", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+128, (SUBWINDOW_WIDTH_R)-4, 10, _("Primary Alpha:"), .2, 8, "cg_crosshairAlpha" 1 0 1, _("Set the transparency level for the primary crosshair") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+140, (SUBWINDOW_WIDTH_R)-4, 10, _("Secondary Color:"), .2, 8, "cg_crosshairColorAlt", cvarStrList { _("White"); "white"; _("Yellow"); "yellow"; _("Red"); "red"; _("Green"); "green"; _("Blue"); "blue"; _("Magenta"); "magenta"; _("Cyan"); "cyan"; _("Orange"); "orange"; _("Light Blue"); "0xa0c0ff"; _("Medium Blue"); "mdblue"; _("Light Red"); "0xffc0a0"; _("Medium Red"); "mdred"; _("Light Green"); "0xa0ffc0"; _("Medium Green"); "mdgreen"; _("Dark Green"); "dkgreen"; _("Medium Cyan"); "mdcyan"; _("Medium Yellow"); "mdyellow"; _("Medium Orange"); "mdorange"; _("Light Grey"); "ltgrey"; _("Medium Grey"); "mdgrey"; _("Dark Grey"); "dkgrey"; _("Black"); "black" }, _("Set the color for the secondary crosshair") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+140, (SUBWINDOW_WIDTH_R)-4, 10, _("Secondary Color:"), .2, 8, "cg_crosshairColorAlt", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, _("Set the color for the secondary crosshair") )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+152, (SUBWINDOW_WIDTH_L)-6, 10, "cg_crosshairAlphaAlt", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, CROSSHAIR_Y+152, (SUBWINDOW_WIDTH_R)-4, 10, _("Secondary Alpha:"), .2, 8, "cg_crosshairAlphaAlt" 1 0 1, _("Set the transparency level for the secondary crosshair") )
 
 // Movement //
   #define MOVEMENT_Y 202
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, MOVEMENT_Y, (SUBWINDOW_WIDTH_R), 52, _("MOVEMENT") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Bob up:"), .2, 8, "cg_bobup", cvarFloatList { _("Off") 0.00 _("On") 0.005 }, _("Enable/Disable the vertical bob effect when moving") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Bob pitch:"), .2, 8, "cg_bobpitch", cvarFloatList { _("Off") 0.00 _("On") 0.002 }, _("Enable/Disable the bob pitch (forwards/backwards) effect when moving") )
-	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, _("Bob roll:"), .2, 8, "cg_bobroll", cvarFloatList { _("Off") 0.000 _("On") 0.002 }, _("Enable/Disable the bob roll (left/right) effect when moving") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Bob up:"), .2, 8, "cg_bobup", cvarFloatList { "Off" 0.00 "On" 0.005 }, _("Enable/Disable the vertical bob effect when moving") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+28, (SUBWINDOW_WIDTH_R)-4, 10, _("Bob pitch:"), .2, 8, "cg_bobpitch", cvarFloatList { "Off" 0.00 "On" 0.002 }, _("Enable/Disable the bob pitch (forwards/backwards) effect when moving") )
+	MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, MOVEMENT_Y+40, (SUBWINDOW_WIDTH_R)-4, 10, _("Bob roll:"), .2, 8, "cg_bobroll", cvarFloatList { "Off" 0.000 "On" 0.002 }, _("Enable/Disable the bob roll (left/right) effect when moving") )
 
 // Fonts //
   #define FONTS_Y 260
 	SUBWINDOW( 6+(SUBWINDOW_WIDTH_L)+6, FONTS_Y, (SUBWINDOW_WIDTH_R), 76, _("FONTS") )
-	MULTIACTION( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Fonts Size:"), .2, 8, "cg_fontScale", cvarFloatList { _("Tiny") 2 _("Small") 1 _("Normal") 0 }, uiScript SetFontScale, _("Sets the size of the in-game fonts") )
+	MULTIACTION( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+16, (SUBWINDOW_WIDTH_R)-4, 10, _("Fonts Size:"), .2, 8, "cg_fontScale", cvarFloatList { "Tiny" 2 "Small" 1 "Normal" 0 }, uiScript SetFontScale, _("Sets the size of the in-game fonts") )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+28, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fontScaleTP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )
 	SLIDER( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Top Print:"), .2, 8, "cg_fontScaleTP" 0.15 0 0.5, _("Set font size for Warmup message and Spectator label") )
 	CVARFLOATLABEL( 6+(SUBWINDOW_WIDTH_L)+6+2, FONTS_Y+40, (SUBWINDOW_WIDTH_L)-6, 10, "cg_fontScaleSP", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-4), 8 )

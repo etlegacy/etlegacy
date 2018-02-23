@@ -36,11 +36,11 @@ menuDef {
 // Settings //
 	SUBWINDOW( 6, 32, (SUBWINDOW_WIDTH), 88, _("SETTINGS") )
 	EDITFIELD( 8, 48, (SUBWINDOW_WIDTH)-4, 10, _("Server Name:"), .2, 8, "sv_hostname", 32, 18, _("Specifies the name of your game server") )
-	MULTIACTION( 8, 60, (SUBWINDOW_WIDTH)-4, 10, _("Game Type:"), .2, 8, "ui_netGameType", cvarFloatList { _("Campaign") 4 _("Last Man Standing") 5 _("Map Voting") 6 _("Single-Map Objective") 2 _("Stopwatch") 3 }, show labelDetailsGametype ; hide labelDetailsCampaign ; uiScript updateGameType, _("Click to specify the type of game to load") )
+	MULTIACTION( 8, 60, (SUBWINDOW_WIDTH)-4, 10, _("Game Type:"), .2, 8, "ui_netGameType", cvarFloatList { "Campaign" 4 "Last Man Standing" 5 "Map Voting" 6 "Single-Map Objective" 2 "Stopwatch" 3 }, show labelDetailsGametype ; hide labelDetailsCampaign ; uiScript updateGameType, _("Click to specify the type of game to load") )
 	NUMERICFIELD( 8, 72, (SUBWINDOW_WIDTH)-4, 10, _("Maximum Players:"), .2, 8, "sv_maxclients", 3, _("Maximum # of players that can connect to the server") )
 	// TODO: use FEEDER to automatically show available configs
-	MULTI( 8, 84, (SUBWINDOW_WIDTH)-4, 10, _("Auto-Configure Server:"), .2, 8, "g_customConfig", cvarStrList { _("No") 0 _("Competition Settings") defaultcomp _("Public Settings") defaultpublic _("1on1") legacy1 _("3on3") legacy3 _("5on5") legacy5 _("6on6") legacy6 }, _("Server automatically configures it self to specified default settings") )
-	MULTI( 8, 96, (SUBWINDOW_WIDTH)-4, 10, _("Dedicated Server:"), .2, 8, "ui_dedicated", cvarFloatList { _("No") 0 _("Yes - LAN") 1 _("Yes - Internet") 2 }, _("Specifies if the server should be \"dedicated\" for LAN or Internet play (no client)") )
+	MULTI( 8, 84, (SUBWINDOW_WIDTH)-4, 10, _("Auto-Configure Server:"), .2, 8, "g_customConfig", cvarStrList { "No" 0 "Competition Settings" defaultcomp "Public Settings" defaultpublic "1on1" legacy1 "3on3" legacy3 "5on5" legacy5 "6on6" legacy6 }, _("Server automatically configures it self to specified default settings") )
+	MULTI( 8, 96, (SUBWINDOW_WIDTH)-4, 10, _("Dedicated Server:"), .2, 8, "ui_dedicated", cvarFloatList { "No" 0 "Yes - LAN" 1 "Yes - Internet" 2 }, _("Specifies if the server should be \"dedicated\" for LAN or Internet play (no client)") )
 	EDITFIELD( 8, 108, (SUBWINDOW_WIDTH)-4, 10, _("Password:"), .2, 8, "g_password", 25, 18, _("Password clients must set to join the server") )
 
 // Settings //

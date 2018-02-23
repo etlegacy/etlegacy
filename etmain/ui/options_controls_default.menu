@@ -51,7 +51,7 @@ menuDef
 
 	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, _("DEFAULT CONTROLS") )
 	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, _("Reset controls to default?"), .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
-	MULTI( SUBWINDOW_X+2, SUBWINDOW_Y+40, (SUBWINDOW_WIDTH)-8, 10, _("Handedness:"), .2, 8, "ui_handedness", cvarFloatList { _("Right") 0 _("Left") 1 }, _("Left or Right Handed? This sets your default controls\nwhich you can modify later via the options menu") )
+	MULTI( SUBWINDOW_X+2, SUBWINDOW_Y+40, (SUBWINDOW_WIDTH)-8, 10, _("Handedness:"), .2, 8, "ui_handedness", cvarFloatList { "Right" 0 "Left" 1 }, _("Left or Right Handed? This sets your default controls\nwhich you can modify later via the options menu") )
 
 	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("YES"), .3, 14, close options_controls_default ; open options_controls ; uiScript defaultControls )
 	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("NO"), .3, 14, close options_controls_default ; open options_controls )
