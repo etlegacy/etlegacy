@@ -597,7 +597,7 @@ void CG_DrawWeapStability(rectDef_t *rect)
 		return;
 	}
 
-	if (cg_drawSpreadScale.integer == 1 && !GetWeaponTableData(cg.predictedPlayerState.weapon)->isScoped)
+	if (cg_drawSpreadScale.integer == 1 && !cg.zoomed)
 	{
 		// cg_drawSpreadScale of '1' means only draw for scoped weapons, '2' means draw all the time (for debugging)
 		return;
@@ -709,7 +709,7 @@ void CG_MouseEvent(int x, int y)
 	{
 		// mousemovement *should* feel the same as ingame
 		char buffer[64];
-		int  mx = 0, my = 0;
+		int  mx          = 0, my = 0;
 		int  mouse_x_pos = 0, mouse_y_pos = 0;
 
 		float sensitivity, m_pitch, m_yaw;

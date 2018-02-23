@@ -3538,45 +3538,6 @@ static int getPrevBankWeap(int bank, int cycle, qboolean sameBankPosition)
 }
 
 /**
- * @brief CG_SetSniperZoom
- * @param[in] lastweap
- * @param[in] newweap
- */
-void CG_SetSniperZoom(int weapon)
-{
-	// Keep binocs swaying
-	if (!(cg.predictedPlayerState.eFlags & EF_ZOOMING))
-	{
-		cg.zoomval = 0;
-	}
-
-	// cg.zoomedScope = GetWeaponTableData(newweap)->zoomedScope;
-
-	cg.zoomed = GetWeaponTableData(weapon)->isScoped;
-
-	// no sniper zoom, get out.
-	if (!cg.zoomed)
-	{
-		return;
-	}
-
-	cg.zoomval = cg_zoomDefaultSniper.value;
-
-	// constrain user preferred fov to weapon limitations
-	if (cg.zoomval > GetWeaponTableData(weapon)->zoomOut)
-	{
-		cg.zoomval = GetWeaponTableData(weapon)->zoomOut;
-	}
-
-	if (cg.zoomval < GetWeaponTableData(weapon)->zoomIn)
-	{
-		cg.zoomval = GetWeaponTableData(weapon)->zoomIn;
-	}
-
-	cg.zoomTime = cg.time;
-}
-
-/**
  * @brief Get special switching sounds if they're there
  * @param[in] lastweap
  * @param[in] newweap
@@ -3921,8 +3882,8 @@ void CG_AltWeapon_f(void)
 	}
 	else if (GetWeaponTableData(GetWeaponTableData(cg.weaponSelect)->weapAlts)->isScoped)
 	{
-		// don't allow players switching to scoped weapon when prone moving and run -- speed 80 == crouch, 128 == walk, 256 == run
-		if (VectorLengthSquared(cg.snap->ps.velocity) > Square(160) || cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
+		// don't allow players switching to scoped weapon when prone moving
+		if (cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
 		{
 			return;
 		}

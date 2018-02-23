@@ -423,11 +423,11 @@ static void CG_StepOffset(void)
  */
 void CG_KickAngles(void)
 {
-	const vec3_t centerSpeed = { 2400, 2400, 2400 };
-	const float  recoilCenterSpeed = 200;
+	const vec3_t centerSpeed        = { 2400, 2400, 2400 };
+	const float  recoilCenterSpeed  = 200;
 	const float  recoilIgnoreCutoff = 15;
-	const float  recoilMaxSpeed = 50;
-	const vec3_t maxKickAngles = { 10, 10, 10 };
+	const float  recoilMaxSpeed     = 50;
+	const vec3_t maxKickAngles      = { 10, 10, 10 };
 	float        idealCenterSpeed, kickChange;
 	int          i, frametime, t;
 	float        ft;
@@ -879,7 +879,8 @@ void CG_ZoomOut_f(void)
 }
 
 /**
- * @brief CG_Zoom
+ * @brief Check for scope wepon in use, and change if necessary - spec/demo scaling allowances
+ * or show a zoomed binoculars view .. (still not actively zooming in/out)
  */
 void CG_Zoom(void)
 {
@@ -888,45 +889,49 @@ void CG_Zoom(void)
 	{
 		cg.predictedPlayerState.eFlags = cg.snap->ps.eFlags;
 		cg.predictedPlayerState.weapon = cg.snap->ps.weapon;
-
-		// check for scope wepon in use, and change if necessary - spec/demo scaling allowances
-		// or show a zoomed binoculars view for spectators.. (still not actively zooming in/out)
-		if (GetWeaponTableData(cg.predictedPlayerState.weapon)->isScoped || cg.predictedPlayerState.eFlags & EF_ZOOMING)
-		{
-			cg.zoomval = (cg.zoomval == 0.f) ? cg_zoomDefaultSniper.value : cg.zoomval;     // was DefaultFG, changed per atvi req
-		}
-		else
-		{
-			cg.zoomval = 0;
-		}
 	}
 
-	if (cg.predictedPlayerState.eFlags & EF_ZOOMING)
+	if ((cg.predictedPlayerState.stats[STAT_HEALTH] <= 0 && !(cg.snap->ps.pm_flags & PMF_FOLLOW))
+#ifdef FEATURE_EDV
+	    || cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam            //fix for edv
+#endif
+	    )
+	{
+		cg.zoomedBinoc = qfalse;
+		cg.zoomed      = qfalse;
+		cg.zoomTime    = 0;
+		cg.zoomval     = 0;
+	}
+	else if (cg.predictedPlayerState.eFlags & EF_ZOOMING)       // binoc
 	{
 		if (cg.zoomedBinoc)
 		{
 			return;
 		}
+
 		cg.zoomedBinoc = qtrue;
 		cg.zoomTime    = cg.time;
 		cg.zoomval     = cg_zoomDefaultSniper.value; // was DefaultBinoc, changed per atvi req
 	}
+	else if (GetWeaponTableData(cg.snap->ps.weapon)->isScoped) // check for scope weapon in use, and change to if necessary
+	{
+		if (cg.zoomed)
+		{
+			return;
+		}
+
+		cg.zoomed   = qtrue;
+		cg.zoomTime = cg.time;
+		cg.zoomval  = cg_zoomDefaultSniper.value;    // was DefaultFG, changed per atvi req
+	}
 	else
 	{
-		if (cg.zoomedBinoc)
+		if (cg.zoomedBinoc || cg.zoomed)
 		{
 			cg.zoomedBinoc = qfalse;
+			cg.zoomed      = qfalse;
 			cg.zoomTime    = cg.time;
-
-			// check for scope weapon in use, and change to if necessary
-			if (GetWeaponTableData(cg.weaponSelect)->isScoped)
-			{
-				cg.zoomval = cg_zoomDefaultSniper.value;     // was DefaultFG, changed per atvi req
-			}
-			else
-			{
-				cg.zoomval = 0;
-			}
+			cg.zoomval     = 0;
 		}
 		else
 		{
@@ -934,10 +939,7 @@ void CG_Zoom(void)
 			// but don't sanity check while following
 			if (!((cg.snap->ps.pm_flags & PMF_FOLLOW) || cg.demoPlayback))
 			{
-				if (!GetWeaponTableData(cg.weaponSelect)->isScoped)
-				{
-					cg.zoomval = 0;
-				}
+				cg.zoomval = 0;
 			}
 		}
 	}
@@ -959,23 +961,6 @@ static int CG_CalcFov(void)
 	int          inwater;
 
 	CG_Zoom();
-
-	if (cg.predictedPlayerState.stats[STAT_HEALTH] <= 0 && !(cg.snap->ps.pm_flags & PMF_FOLLOW))
-	{
-		cg.zoomedBinoc = qfalse;
-		cg.zoomTime    = 0;
-		cg.zoomval     = 0;
-	}
-
-#ifdef FEATURE_EDV
-	//fix for edv
-	if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)
-	{
-		cg.zoomedBinoc = qfalse;
-		cg.zoomTime    = 0;
-		cg.zoomval     = 0;
-	}
-#endif
 
 	if (cg.predictedPlayerState.pm_type != PM_INTERMISSION)
 	{
@@ -1030,7 +1015,7 @@ static int CG_CalcFov(void)
 				}
 				lastfov = fov_x;
 			}
-			else if (cg.zoomval != 0.f)        // zoomed by sniper/snooper
+			else if (cg.zoomed)        // zoomed by sniper/snooper
 			{
 				fov_x   = cg.zoomval;
 				lastfov = fov_x;
@@ -1988,7 +1973,7 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 {
 #ifdef DEBUGTIME_ENABLED
 	int dbgTime = trap_Milliseconds(), elapsed;
-	int dbgCnt = 0;
+	int dbgCnt  = 0;
 #endif
 
 	cg.time         = serverTime;
