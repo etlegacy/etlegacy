@@ -1352,7 +1352,7 @@ const char *Item_Multi_Setting(itemDef_t *item)
 		}
 		else
 		{
-			return((multiPtr->count == 0) ? "None Defined" : "Custom");
+			return((multiPtr->count == 0) ? trap_TranslateString("None Defined") : trap_TranslateString("Custom"));
 		}
 	}
 	return "";

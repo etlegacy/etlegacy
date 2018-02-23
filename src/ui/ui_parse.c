@@ -1757,12 +1757,12 @@ qboolean ItemParse_cvarStrList(itemDef_t *item, int handle)
 
 		if (pass == 0)
 		{
-			multiPtr->cvarList[multiPtr->count] = String_Alloc(token.string);
+			multiPtr->cvarList[multiPtr->count] = String_Alloc(trap_TranslateString(token.string));
 			pass                                = 1;
 		}
 		else
 		{
-			multiPtr->cvarStr[multiPtr->count] = String_Alloc(token.string);
+			multiPtr->cvarStr[multiPtr->count] = String_Alloc(trap_TranslateString(token.string));
 			pass                               = 0;
 			multiPtr->count++;
 			if (multiPtr->count >= MAX_MULTI_CVARS)
@@ -1822,7 +1822,7 @@ qboolean ItemParse_cvarFloatList(itemDef_t *item, int handle)
 			continue;
 		}
 
-		multiPtr->cvarList[multiPtr->count] = String_Alloc(token.string);
+		multiPtr->cvarList[multiPtr->count] = String_Alloc(trap_TranslateString(token.string));
 		if (!PC_Float_Parse(handle, &multiPtr->cvarValue[multiPtr->count]))
 		{
 			return qfalse;
