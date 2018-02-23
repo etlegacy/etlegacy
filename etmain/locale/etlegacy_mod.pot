@@ -1260,12 +1260,16 @@ msgstr ""
 msgid "VOTE"
 msgstr ""
 
-#: etmain/ui/ingame_main.menu:39 etmain/ui/ingame_vote.menu:53
+#: etmain/ui/ingame_main.menu:38 etmain/ui/ingame_vote.menu:53
 msgid "REFEREE"
 msgstr ""
 
-#: etmain/ui/ingame_main.menu:40 etmain/ui/ingame_vote.menu:71
+#: etmain/ui/ingame_main.menu:39 etmain/ui/ingame_vote.menu:71
 msgid "RCON"
+msgstr ""
+
+#: etmain/ui/ingame_main.menu:40
+msgid "LIMBO MENU"
 msgstr ""
 
 #: etmain/ui/ingame_main.menu:41 etmain/ui/ingame_serverinfo.menu:52
