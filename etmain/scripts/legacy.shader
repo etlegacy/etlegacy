@@ -1064,17 +1064,6 @@ models/multiplayer/mortar/mortar_sd
 }
 
 // Helmet Ranks
-models/players/temperate/common/rank1
-{
-	polygonoffset
-
-	{
-		map models/players/temperate/common/rank1.tga
-		alphaFunc GE128
-		rgbGen lightingDiffuse
-	}
-}
-
 models/players/temperate/common/rank2
 {
 	polygonoffset
@@ -1170,16 +1159,6 @@ models/players/temperate/common/rank11
 	polygonoffset
 	{
 		map models/players/temperate/common/rank11.tga
-		alphaFunc GE128
-		rgbGen lightingDiffuse
-	}
-}
-
-models/players/temperate/common/xrank1
-{
-	polygonoffset
-	{
-		map models/players/temperate/common/xrank1.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
@@ -1285,18 +1264,7 @@ models/players/temperate/common/xrank11
 	}
 }
 
-//HUD Ranks//
-gfx/hud/ranks/rank1
-{
-	nomipmaps
-	nopicmip
-	{
-		map gfx/hud/ranks/rank1.tga
-		blendfunc blend
-		rgbGen vertex
-	}
-}
-
+// HUD Ranks
 gfx/hud/ranks/rank2
 {
 	nomipmaps
@@ -1402,18 +1370,6 @@ gfx/hud/ranks/rank11
 	nopicmip
 	{
 		map gfx/hud/ranks/rank11.tga
-		blendfunc blend
-		rgbGen vertex
-	}
-}
-
-
-gfx/hud/ranks/xrank1
-{
-	nomipmaps
-	nopicmip
-	{
-		map gfx/hud/ranks/xrank1.tga
 		blendfunc blend
 		rgbGen vertex
 	}
