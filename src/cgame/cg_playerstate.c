@@ -603,8 +603,8 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 		}
 	}
 
-	// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run
-	if (GetWeaponTableData(ps->weapon)->isScoped && VectorLengthSquared(ps->velocity) > Square(160))
+	// don't let players run with rifles -- speed 80 == crouch, 128 == walk, 256 == run until player start to don't run
+	if (GetWeaponTableData(ps->weapon)->isScoped && VectorLength(ps->velocity) > 127)
 	{
 		CG_FinishWeaponChange(ps->weapon, GetWeaponTableData(ps->weapon)->weapAlts);
 	}

@@ -423,11 +423,11 @@ static void CG_StepOffset(void)
  */
 void CG_KickAngles(void)
 {
-	const vec3_t centerSpeed        = { 2400, 2400, 2400 };
-	const float  recoilCenterSpeed  = 200;
+	const vec3_t centerSpeed = { 2400, 2400, 2400 };
+	const float  recoilCenterSpeed = 200;
 	const float  recoilIgnoreCutoff = 15;
-	const float  recoilMaxSpeed     = 50;
-	const vec3_t maxKickAngles      = { 10, 10, 10 };
+	const float  recoilMaxSpeed = 50;
+	const vec3_t maxKickAngles = { 10, 10, 10 };
 	float        idealCenterSpeed, kickChange;
 	int          i, frametime, t;
 	float        ft;
@@ -884,11 +884,17 @@ void CG_ZoomOut_f(void)
  */
 void CG_Zoom(void)
 {
+	int weapon;
+
 	// fix for demo playback
 	if ((cg.snap->ps.pm_flags & PMF_FOLLOW) || cg.demoPlayback)
 	{
 		cg.predictedPlayerState.eFlags = cg.snap->ps.eFlags;
-		cg.predictedPlayerState.weapon = cg.snap->ps.weapon;
+		weapon                         = cg.predictedPlayerState.weapon = cg.snap->ps.weapon;
+	}
+	else
+	{
+		weapon = cg.weaponSelect;
 	}
 
 	if ((cg.predictedPlayerState.stats[STAT_HEALTH] <= 0 && !(cg.snap->ps.pm_flags & PMF_FOLLOW))
@@ -913,7 +919,7 @@ void CG_Zoom(void)
 		cg.zoomTime    = cg.time;
 		cg.zoomval     = cg_zoomDefaultSniper.value; // was DefaultBinoc, changed per atvi req
 	}
-	else if (GetWeaponTableData(cg.snap->ps.weapon)->isScoped) // check for scope weapon in use, and change to if necessary
+	else if (GetWeaponTableData(weapon)->isScoped) // check for scope weapon in use, and change to if necessary
 	{
 		if (cg.zoomed)
 		{
@@ -1973,7 +1979,7 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 {
 #ifdef DEBUGTIME_ENABLED
 	int dbgTime = trap_Milliseconds(), elapsed;
-	int dbgCnt  = 0;
+	int dbgCnt = 0;
 #endif
 
 	cg.time         = serverTime;
