@@ -294,7 +294,7 @@ OpenWolf GPL Source Code
 Copyright (C) 2011 Dusan Jocic
 
 ET: Legacy
-Copyright (C) 2012-2017 ET:Legacy Team <mail@etlegacy.com>
+Copyright (C) 2012-2018 ET:Legacy Team <mail@etlegacy.com>
 
   ET: Legacy is free software: you can redistribute it and/or modify it under
   the terms of the GNU General Public License as published by the Free Software
