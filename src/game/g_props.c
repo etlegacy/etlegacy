@@ -2023,7 +2023,7 @@ void Use_DamageInflictor(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		}
 		else
 		{
-			G_Damage(daent, ent, ent, NULL, NULL, GIB_DAMAGE(daent->health), 0, MOD_CRUSH);
+			G_Damage(daent, ent, ent, NULL, NULL, daent->client ? GIB_DAMAGE(daent->health) : GIB_ENT, 0, MOD_CRUSH);
 		}
 	}
 

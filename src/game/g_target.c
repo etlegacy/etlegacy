@@ -847,7 +847,7 @@ void G_KillEnts(const char *target, gentity_t *ignore, gentity_t *killer, meansO
 		// script_movers should die!
 		if (targ->s.eType == ET_MOVER && !Q_stricmp(targ->classname, "script_mover") && targ->die)
 		{
-			G_Damage(targ, killer, killer, NULL, NULL, GIB_DAMAGE(targ->health), DAMAGE_NO_PROTECTION, MOD_TELEFRAG);
+			G_Damage(targ, killer, killer, NULL, NULL, targ->client ? GIB_DAMAGE(targ->health) : GIB_ENT, DAMAGE_NO_PROTECTION, MOD_TELEFRAG);
 			continue;
 		}
 
