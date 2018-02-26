@@ -2269,7 +2269,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		if (es->number == cg.snap->ps.clientNum)
 		{
 			CG_PlaySwitchSound(es->weapon, cg.weaponSelect);    // grabbed from SP
-			CG_SetSniperZoom(cg.weaponSelect);
 		}
 		break;
 	case EV_CHANGE_WEAPON_2:

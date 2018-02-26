@@ -701,7 +701,7 @@ CROSSHAIRS
 /**
  * @brief CG_DrawWeapReticle
  */
-static void CG_DrawWeapReticle(void)
+static void CG_DrawScopedReticle(void)
 {
 	int weapon;
 
@@ -1133,29 +1133,29 @@ static void CG_DrawCrosshair(void)
 	}
 
 	// special reticle for scoped weapon
-	if (cg.zoomed && GetWeaponTableData(weapnum)->isScoped)
+	if (cg.zoomed)
 	{
 		if (!BG_PlayerMounted(cg.snap->ps.eFlags))
 		{
 			// don't let players prone moving and run with rifles -- speed 80 == crouch, 128 == walk, 256 == run
-			if (VectorLengthSquared(cg.snap->ps.velocity) > Square(160) || cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
-			{
-				CG_FinishWeaponChange(cg.snap->ps.weapon, GetWeaponTableData(cg.snap->ps.weapon)->weapAlts);
-			}
-			else if (
+/*			if (VectorLengthSquared(cg.snap->ps.velocity) > Square(160) || cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
+            {
+                CG_FinishWeaponChange(cg.snap->ps.weapon, GetWeaponTableData(cg.snap->ps.weapon)->weapAlts);
+            }
+            else */if (
 #ifdef FEATURE_MULTIVIEW
 			    cg.mvTotalClients < 1 ||
 #endif
 			    cg.snap->ps.stats[STAT_HEALTH] > 0)
 			{
-				CG_DrawWeapReticle();
+				CG_DrawScopedReticle();
 			}
 
 			return;
 		}
 	}
 
-	if (cg.predictedPlayerState.eFlags & EF_PRONE_MOVING)
+	if (cg.snap->ps.eFlags & EF_PRONE_MOVING)
 	{
 		return;
 	}
