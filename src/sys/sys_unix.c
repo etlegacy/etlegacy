@@ -547,7 +547,7 @@ char **Sys_ListFiles(const char *directory, const char *extension, const char *f
 
 		for (i = 0; i < strlen(d->d_name); i++)
 		{
-			if (d->d_name[i] <= 31 || d->d_name[i] == 127)
+			if (d->d_name[i] <= 31 || d->d_name[i] >= 123)
 			{
 				Com_Printf(S_COLOR_RED "ERROR: invalid char in name of file '%s'.\n", d->d_name);
 				invalid = qtrue;
