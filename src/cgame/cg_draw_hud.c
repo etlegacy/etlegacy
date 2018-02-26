@@ -1851,6 +1851,88 @@ static float CG_DrawSnapshot(float y)
 	return y + 36 + 4;
 }
 
+// speed constants
+#define SPEED_US_TO_KPH   15.58f
+#define SPEED_US_TO_MPH   23.44f
+
+static vec_t highestSpeed, speed;
+static int   lasttime;
+vec4_t       tclr = { 0.625f, 0.625f, 0.6f, 1.0f };
+
+/**
+ * @brief CG_DrawSpeed
+ * @param y
+ * @return
+ */
+static float CG_DrawSpeed(float y)
+{
+	char			*s;
+	int				w, w2;
+	int				thistime;
+	int				x;
+
+	if (resetmaxspeed)
+	{
+		highestSpeed = 0;
+		resetmaxspeed = qfalse;
+	}
+
+	thistime = trap_Milliseconds();
+
+	if (thistime > lasttime + 100)
+	{
+		speed = VectorLength(cg.predictedPlayerState.velocity);
+
+		if (speed > highestSpeed)
+		{
+			highestSpeed = speed;
+		}
+
+		lasttime = thistime;
+	}
+
+	switch(cg_drawspeed.integer)
+	{
+		case 1:
+			// Units per second
+			s = va("%.1f UPS", speed);
+			break;
+		case 2:
+			// Kilometers per hour
+			s = va("%.1f KPH", (speed / SPEED_US_TO_KPH));
+			break;
+		case 3:
+			// Miles per hour
+			s = va("%.1f MPH", (speed / SPEED_US_TO_MPH));
+			break;
+		case 4:
+			// Units per second + highestSpeed
+			s = va("%.1f UPS (%.1f MAX)", speed, highestSpeed);
+			break;
+		case 5:
+			// Kilometers per hour  + highestSpeed
+			s = va("%.1f KPH (%.1f MAX)", (speed / SPEED_US_TO_KPH), (highestSpeed / SPEED_US_TO_KPH));
+			break;
+		case 6:
+			// Miles per hour  + highestSpeed
+			s = va("%.1f MPH (%.1f MAX)", (speed / SPEED_US_TO_MPH), (highestSpeed / SPEED_US_TO_MPH));
+			break;
+		default:
+			s = "";
+			break;
+	}
+
+	w = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
+	w2 = (UPPERRIGHT_W > w)? UPPERRIGHT_W : w;
+
+	x = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
+	CG_FillRect(x, y, w2 + 5, 12 + 2, HUD_Background);
+	CG_DrawRect_FixedBorder( x, y, w2 + 5, 12 + 2, 1, HUD_Border);
+	CG_Text_Paint_Ext(x + ((w2-w)/2) + 2, y + 11, 0.19f, 0.19f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+
+	return y + 12 + 4;
+}
+
 #define MAX_FPS_FRAMES  500
 
 /**
@@ -1865,11 +1947,12 @@ static float CG_DrawFPS(float y)
 	static int index;
 	static int oldSamples;
 	const char *s;
-	int        t = trap_Milliseconds();      // don't use serverTime, because that will be drifting to correct for internet lag changes, timescales, timedemos, etc
+	int        t;
 	int        frameTime;
 	int        samples = cg_drawFPS.integer;
 	int        x, w, w2;
 
+	t = trap_Milliseconds(); // don't use serverTime, because that will be drifting to correct for internet lag changes, timescales, timedemos, etc
 
 	frameTime = t - previous;
 	previous  = t;
@@ -2820,6 +2903,11 @@ void CG_DrawUpperRight(void)
 		y = CG_DrawPing(y);
 	}
 
+	if (cg_drawspeed.integer)
+	{
+		y = CG_DrawSpeed(y);
+	}
+	
 	if (cg_lagometer.integer)
 	{
 		CG_DrawLagometer(y);
