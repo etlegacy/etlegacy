@@ -1955,108 +1955,12 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			Com_Memset(&cg_entities[es->otherEntityNum2].pe, 0, sizeof(playerEntity_t));
 		}
 		break;
-	case EV_FALL_DMG_10:
-		DEBUGNAME("EV_FALL_DMG_10");
-		if (es->eventParm != FOOTSTEP_TOTAL)
-		{
-			if (es->eventParm)
-			{
-				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landSound[es->eventParm]);
-			}
-			else
-			{
-				bg_character_t *character;
-				character = CG_CharacterForClientinfo(&cgs.clientinfo[clientNum], cent);
-
-				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landSound[character->animModelInfo->footsteps]);
-			}
-		}
-		trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landHurt);
-		cent->pe.painTime = cg.time;     // don't play a pain sound right after this
-		if (clientNum == cg.predictedPlayerState.clientNum)
-		{
-			// smooth landing z changes
-			cg.landChange = -16;
-			cg.landTime   = cg.time;
-		}
-		break;
-	case EV_FALL_DMG_15:
-		DEBUGNAME("EV_FALL_DMG_15");
-		if (es->eventParm != FOOTSTEP_TOTAL)
-		{
-			if (es->eventParm)
-			{
-				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landSound[es->eventParm]);
-			}
-			else
-			{
-				bg_character_t *character;
-
-				character = CG_CharacterForClientinfo(&cgs.clientinfo[clientNum], cent);
-				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landSound[character->animModelInfo->footsteps]);
-			}
-		}
-		trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landHurt);
-		cent->pe.painTime = cg.time;     // don't play a pain sound right after this
-		if (clientNum == cg.predictedPlayerState.clientNum)
-		{
-			// smooth landing z changes
-			cg.landChange = -16;
-			cg.landTime   = cg.time;
-		}
-		break;
-	case EV_FALL_DMG_25:
-		DEBUGNAME("EV_FALL_DMG_25");
-		if (es->eventParm != FOOTSTEP_TOTAL)
-		{
-			if (es->eventParm)
-			{
-				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landSound[es->eventParm]);
-			}
-			else
-			{
-				bg_character_t *character;
-
-				character = CG_CharacterForClientinfo(&cgs.clientinfo[clientNum], cent);
-				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landSound[character->animModelInfo->footsteps]);
-			}
-		}
-		trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landHurt);
-		cent->pe.painTime = cg.time;     // don't play a pain sound right after this
-		if (clientNum == cg.predictedPlayerState.clientNum)
-		{
-			// smooth landing z changes
-			cg.landChange = -24;
-			cg.landTime   = cg.time;
-		}
-		break;
-	case EV_FALL_DMG_50:
-		DEBUGNAME("EV_FALL_DMG_50");
-		if (es->eventParm != FOOTSTEP_TOTAL)
-		{
-			if (es->eventParm)
-			{
-				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landSound[es->eventParm]);
-			}
-			else
-			{
-				bg_character_t *character;
-
-				character = CG_CharacterForClientinfo(&cgs.clientinfo[clientNum], cent);
-				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landSound[character->animModelInfo->footsteps]);
-			}
-		}
-		trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landHurt);
-		cent->pe.painTime = cg.time;     // don't play a pain sound right after this
-		if (clientNum == cg.predictedPlayerState.clientNum)
-		{
-			// smooth landing z changes
-			cg.landChange = -24;
-			cg.landTime   = cg.time;
-		}
-		break;
 	case EV_FALL_NDIE:
-		DEBUGNAME("EV_FALL_NDIE");
+	case EV_FALL_DMG_10:
+	case EV_FALL_DMG_15:
+	case EV_FALL_DMG_25:
+	case EV_FALL_DMG_50:
+		DEBUGNAME("EV_FALL_DMG_X");
 		if (es->eventParm != FOOTSTEP_TOTAL)
 		{
 			if (es->eventParm)
@@ -2066,14 +1970,26 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 			else
 			{
 				bg_character_t *character;
-
 				character = CG_CharacterForClientinfo(&cgs.clientinfo[clientNum], cent);
+
 				trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landSound[character->animModelInfo->footsteps]);
 			}
 		}
 		trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landHurt);
 		cent->pe.painTime = cg.time;     // don't play a pain sound right after this
-		// splat
+		if (event != EV_FALL_NDIE && clientNum == cg.predictedPlayerState.clientNum)
+		{
+			// smooth landing z changes
+			if (event < EV_FALL_DMG_25)
+			{
+				cg.landChange = -16;
+			}
+			else
+			{
+				cg.landChange = -24;
+			}
+			cg.landTime = cg.time;
+		}
 		break;
 	case EV_STEP_4:
 	case EV_STEP_8:
