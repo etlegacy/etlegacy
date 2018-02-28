@@ -520,7 +520,7 @@ static qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo
 	while (i < formatCount)
 	{
 		Com_sprintf(name, sizeof(name), "fonts/%s.%s", fontName, supportedFormats[i]);
-		if (ri.FS_FOpenFileRead(name, NULL, qfalse))
+		if (ri.FS_FOpenFileRead(name, NULL, qfalse) > 0)
 		{
 			formatFound = qtrue;
 			break;

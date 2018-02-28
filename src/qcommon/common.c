@@ -2668,7 +2668,7 @@ qboolean Com_CheckProfile(void)
 		return qtrue;
 	}
 
-	if (FS_FOpenFileRead(com_pidfile->string, &f, qtrue) < 0)
+	if (FS_FOpenFileRead(com_pidfile->string, &f, qtrue) <= 0)
 	{
 		// no profile found, we're ok
 		return qtrue;

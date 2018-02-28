@@ -1188,7 +1188,7 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
 		Ren_Print("...loading vertex shader '%s'\n", fullname);
 	}
 
-	if (ri.FS_FOpenFileRead(va("glsl/%s.glsl", fullname), NULL, qfalse))
+	if (ri.FS_FOpenFileRead(va("glsl/%s.glsl", fullname), NULL, qfalse) > 0)
 	{
 		dataSize = ri.FS_ReadFile(va("glsl/%s.glsl", fullname), ( void ** ) &dataBuffer);
 	}

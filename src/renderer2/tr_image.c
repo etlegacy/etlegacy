@@ -2179,7 +2179,7 @@ static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int 
 			altName = va("%s.%s", filename, imageLoaders[i].ext);
 
 			// Check if file exists
-			if (ri.FS_FOpenFileRead(altName, NULL, qfalse))
+			if (ri.FS_FOpenFileRead(altName, NULL, qfalse) > 0)
 			{
 				// Load
 				imageLoaders[i].ImageLoader(altName, pic, width, height, alphaByte);

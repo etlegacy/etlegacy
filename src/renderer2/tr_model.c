@@ -223,14 +223,14 @@ qhandle_t RE_RegisterModel(const char *name)
 		}
 
 		filename[strlen(filename) - 1] = '3';   // try MD3 first (changed order for 2.76)
-		if (ri.FS_FOpenFileRead(filename, NULL, qfalse))
+		if (ri.FS_FOpenFileRead(filename, NULL, qfalse) > 0)
 		{
 			ri.FS_ReadFile(filename, (void **)&buffer);
 		}
 		if (!buffer)
 		{
 			filename[strlen(filename) - 1] = 'c';   // try MDC  second
-			if (ri.FS_FOpenFileRead(filename, NULL, qfalse))
+			if (ri.FS_FOpenFileRead(filename, NULL, qfalse) > 0)
 			{
 				ri.FS_ReadFile(filename, (void **)&buffer);
 			}
