@@ -2830,8 +2830,9 @@ int R_TryStitchingPatch(int grid1num)
  */
 void R_StitchAllPatches(void)
 {
-	int           i, stitched, numstitches = 0;
+	int           i, numstitches = 0;
 	srfGridMesh_t *grid1;
+	qboolean      stitched;
 
 	Ren_Developer("...stitching LoD cracks\n");
 
