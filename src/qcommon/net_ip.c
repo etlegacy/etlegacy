@@ -1908,7 +1908,7 @@ static qboolean NET_GetCvars(void)
  * @brief NET_Config
  * @param[in] enableNetworking
  */
-void NET_Config(qboolean enableNetworking)
+static void NET_Config(qboolean enableNetworking)
 {
 	qboolean modified;
 	qboolean stop;
@@ -1925,6 +1925,7 @@ void NET_Config(qboolean enableNetworking)
 	// if enable state is the same and no cvars were modified, we have nothing to do
 	if (enableNetworking == networkingEnabled && !modified)
 	{
+		Com_Printf("Network not modified.\n");
 		return;
 	}
 
@@ -1987,6 +1988,8 @@ void NET_Config(qboolean enableNetworking)
 			closesocket(socks_socket);
 			socks_socket = INVALID_SOCKET;
 		}
+
+		Com_Printf("Network shutdown.\n");
 	}
 
 	if (start)
@@ -1998,6 +2001,7 @@ void NET_Config(qboolean enableNetworking)
 			NET_SetMulticast6();
 #endif
 		}
+		Com_Printf("Network initialized.\n");
 	}
 }
 
@@ -2022,9 +2026,7 @@ void NET_Init(void)
 
 	NET_Config(qtrue);
 
-	Cmd_AddCommand("net_restart", NET_Restart_f);
-
-	Com_Printf("Network initialized.\n");
+	Cmd_AddCommand("net_restart", NET_Restart_f, "Restarts the network.");
 }
 
 /**
@@ -2043,7 +2045,6 @@ void NET_Shutdown(void)
 	WSACleanup();
 	winsockInitialized = qfalse;
 #endif
-	Com_Printf("Network shutdown.\n");
 }
 
 /**

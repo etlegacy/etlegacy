@@ -221,7 +221,7 @@ typedef struct
 void NET_Init(void);
 void NET_Shutdown(void);
 void NET_Restart_f(void);
-void NET_Config(qboolean enableNetworking);
+//void NET_Config(qboolean enableNetworking);
 
 void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to);
 void QDECL NET_OutOfBandPrint(netsrc_t sock, netadr_t adr, const char *format, ...);
