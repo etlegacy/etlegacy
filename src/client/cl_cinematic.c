@@ -316,7 +316,9 @@ cinHandle_t CIN_PlayCinematic(const char *name, int x, int y, int w, int h, int 
 	fileHandle_t file;
 	int          size;
 	int          i;
-	const char   *fileExt = COM_GetExtension(name);
+	const char   *fileExt;
+
+	fileExt = COM_GetExtension(name);
 
 	// See if already playing
 	for (i = 0, cin = cin_cinematics; i < MAX_CINEMATICS; i++, cin++)
@@ -343,7 +345,7 @@ cinHandle_t CIN_PlayCinematic(const char *name, int x, int y, int w, int h, int 
 	if (size <= 0)
 	{
 		Com_Printf("Warning: Cinematic '%s' file not found or can't be read\n", name);
-		return 0;
+		return -1;
 	}
 
 
@@ -354,7 +356,7 @@ cinHandle_t CIN_PlayCinematic(const char *name, int x, int y, int w, int h, int 
 			Com_Printf("Warning: Cinematic %s file not found\n", name);
 		}
 
-		return 0;
+		return -1;
 	}
 
 	if (flags & CIN_system)
@@ -414,7 +416,7 @@ cinHandle_t CIN_PlayCinematic(const char *name, int x, int y, int w, int h, int 
 	Com_Printf("Could not find a codec for the video: %s\n", name);
 video_playback_failed:
 	CIN_FreeCinematic(cin, qfalse);
-	return 0;
+	return -1;
 
 codec_found_valid:
 
@@ -561,7 +563,7 @@ void CIN_CloseAllVideos(void)
 	cinematic_t *cin;
 	int         i;
 
-	cls.cinematicHandle = 0;
+	cls.cinematicHandle = -1;
 
 	for (i = 0, cin = cin_cinematics; i < MAX_CINEMATICS; i++, cin++)
 	{
@@ -705,6 +707,7 @@ void CIN_UploadCinematic(int handle)
 
 	if (!CIN_HandleValid(handle))
 	{
+		Com_Printf("CIN_UploadCinematic Warning: invalid handle\n");
 		return;
 	}
 
