@@ -1238,14 +1238,12 @@ void Cmd_CleanHomepath_f(void)
  */
 void Cmd_Init(void)
 {
-	Cmd_AddCommand("cmdlist", Cmd_List_f);
-	Cmd_AddCommand("exec", Cmd_Exec_f);
-	Cmd_AddCommand("execq", Cmd_Exec_f);
-	Cmd_SetCommandCompletionFunc("exec", Cmd_CompleteCfgName);
-	Cmd_SetCommandCompletionFunc("execq", Cmd_CompleteCfgName);
-	Cmd_AddCommand("vstr", Cmd_Vstr_f);
-	Cmd_SetCommandCompletionFunc("vstr", Cvar_CompleteCvarName);
-	Cmd_AddCommand("echo", Cmd_Echo_f);
-	Cmd_AddCommand("wait", Cmd_Wait_f);
-	Cmd_AddCommand("clean", Cmd_CleanHomepath_f);
+	// 'cmdlist' should have alias commands like 'help' or '?' but these are already used in mods :/
+	Cmd_AddCommand("cmdlist", Cmd_List_f, "Prints a list of all available commands.");
+	Cmd_AddCommand("exec", Cmd_Exec_f ,"Executes a script file.", Cmd_CompleteCfgName);
+	Cmd_AddCommand("execq", Cmd_Exec_f, "Executes a script file quietly.", Cmd_CompleteCfgName);
+	Cmd_AddCommand("vstr", Cmd_Vstr_f, "Inserts the current value of a variable as command text.", Cvar_CompleteCvarName);
+	Cmd_AddCommand("echo", Cmd_Echo_f, "Prints quoted text to the console and shows a notification if connected to a server.");
+	Cmd_AddCommand("wait", Cmd_Wait_f, "Causes execution of the remainder of the command buffer to be delayed until next frame.");
+	Cmd_AddCommand("clean", Cmd_CleanHomepath_f, "Command to clean fs_homepath.");
 }

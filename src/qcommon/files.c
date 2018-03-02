@@ -4149,11 +4149,11 @@ static void FS_Startup(const char *gameName)
 	}
 
 	// add our commands
-	Cmd_AddCommand("path", FS_Path_f);
-	Cmd_AddCommand("dir", FS_Dir_f);
-	Cmd_AddCommand("fdir", FS_NewDir_f);
-	Cmd_AddCommand("touchFile", FS_TouchFile_f);
-	Cmd_AddCommand("which", FS_Which_f);
+	Cmd_AddCommand("path", FS_Path_f, "Prints current search path including files.");
+	Cmd_AddCommand("dir", FS_Dir_f, "Prints a given directory.");
+	Cmd_AddCommand("fdir", FS_NewDir_f, "Prints a filtered directory.");
+	Cmd_AddCommand("touchFile", FS_TouchFile_f, "Simulates the 'touch' unix command.");
+	Cmd_AddCommand("which", FS_Which_f, "Searches for a given file.");
 
 	// reorder the pure pk3 files according to server order
 	FS_ReorderPurePaks();
@@ -4712,7 +4712,7 @@ void FS_InitFilesystem(void)
 
 	if (fs_debug->integer)
 	{
-		Cmd_AddCommand("fileinfo", FS_Fileinfo_f);
+		Cmd_AddCommand("fileinfo", FS_Fileinfo_f, "Prints file system info.");
 	}
 }
 

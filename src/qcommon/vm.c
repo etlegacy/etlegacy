@@ -84,8 +84,8 @@ void VM_Debug(int level)
  */
 void VM_Init(void)
 {
-	Cmd_AddCommand("vmprofile", VM_VmProfile_f); // FIXME: doesn't print anything with +set developer 1
-	Cmd_AddCommand("vminfo", VM_VmInfo_f);
+	Cmd_AddCommand("vmprofile", VM_VmProfile_f, "Prints VM profile."); // FIXME: doesn't print anything with +set developer 1
+	Cmd_AddCommand("vminfo", VM_VmInfo_f, "Prints info about registered VM.");
 
 	Com_Memset(vmTable, 0, sizeof(vmTable));
 }

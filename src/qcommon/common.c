@@ -1851,13 +1851,13 @@ void Com_InitHunkMemory(void)
 	s_hunkData = ( byte * )(((intptr_t)s_hunkData + 31) & ~31);
 	Hunk_Clear();
 
-	Cmd_AddCommand("meminfo", Com_Meminfo_f);
+	Cmd_AddCommand("meminfo", Com_Meminfo_f, "Displays info about used memory.");
 #ifdef ZONE_DEBUG
-	Cmd_AddCommand("zonelog", Z_LogHeap);
+	Cmd_AddCommand("zonelog", Z_LogHeap, "Writes zone memory info into logfile.");
 #endif
 #ifdef HUNK_DEBUG
-	Cmd_AddCommand("hunklog", Hunk_Log);
-	Cmd_AddCommand("hunksmalllog", Hunk_SmallLog);
+	Cmd_AddCommand("hunklog", Hunk_Log, "Writes hunk memory info into logfile.");
+	Cmd_AddCommand("hunksmalllog", Hunk_SmallLog, "Writes small hunk memory info into logfile.");
 #endif
 }
 
@@ -2960,9 +2960,9 @@ void Com_Init(char *commandLine)
 
 	if (com_developer && com_developer->integer)
 	{
-		Cmd_AddCommand("error", Com_Error_f);
-		Cmd_AddCommand("crash", Com_Crash_f);
-		Cmd_AddCommand("freeze", Com_Freeze_f);
+		Cmd_AddCommand("error", Com_Error_f, "Just throw a fatal error to test error shutdown procedures.");
+		Cmd_AddCommand("crash", Com_Crash_f, "A way to force a bus error for development reasons.");
+		Cmd_AddCommand("freeze", Com_Freeze_f, "Just freeze in place for a given number of seconds to test error recovery.");
 		Win_ShowConsole(com_viewlog->integer, qtrue);
 	}
 	else
@@ -2970,11 +2970,11 @@ void Com_Init(char *commandLine)
 		Win_ShowConsole(com_viewlog->integer, qfalse);
 	}
 
-	Cmd_AddCommand("quit", Com_Quit_f);
-	Cmd_AddCommand("changeVectors", MSG_ReportChangeVectors_f);
-	Cmd_AddCommand("writeconfig", Com_WriteConfig_f);
-	Cmd_AddCommand("update", Com_Update_f);
-	Cmd_AddCommand("wget", Com_Download_f);
+	Cmd_AddCommand("quit", Com_Quit_f, "Quits the game.");
+	Cmd_AddCommand("changeVectors", MSG_ReportChangeVectors_f, "Prints out a table from the current statistics for copying to code.");
+	Cmd_AddCommand("writeconfig", Com_WriteConfig_f, "Write the config file to a specific name.");
+	Cmd_AddCommand("update", Com_Update_f, "Updates the game to latest version.");
+	Cmd_AddCommand("wget", Com_Download_f, "Downloads a map from etlegacy.com.");
 
 #ifdef FEATURE_DBMS
 	Cmd_AddCommand("saveDB", DB_SaveMemDB_f);
