@@ -647,7 +647,7 @@ typedef struct
 	shader_t *shader;
 } skinSurface_t;
 
-#define MAX_PART_MODELS 5
+#define MAX_PART_MODELS 7
 
 /**
  * @struct skinModel_t
