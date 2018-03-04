@@ -225,9 +225,8 @@ void SP_misc_gamemodel(gentity_t *ent)
 		return;
 	}
 
-	ent->s.eType      = ET_GAMEMODEL;
-	ent->s.modelindex = G_ModelIndex(ent->model);
-
+	ent->s.eType       = ET_GAMEMODEL;
+	ent->s.modelindex  = G_ModelIndex(ent->model);
 	ent->s.modelindex2 = G_SkinIndex(ent->aiSkin);
 
 	if (ent->spawnflags & 2)
@@ -240,7 +239,7 @@ void SP_misc_gamemodel(gentity_t *ent)
 
 		if (num_frames == 0)
 		{
-			G_Error("'misc_model' with ANIMATE spawnflag set has 'frames' set to 0\n");
+			G_Error("'misc_model' entity '%s' '%s' at %s with ANIMATE spawnflag set has 'frames' set to 0\n", ent->classname, ent->targetname, vtos(ent->r.currentOrigin));
 		}
 
 		ent->s.torsoAnim = num_frames;
@@ -265,7 +264,7 @@ void SP_misc_gamemodel(gentity_t *ent)
 	{
 		if (g_cheats.integer)
 		{
-			G_Printf("SP_misc_gamemodel: fps rate of entity %s %s must have a value > 0 - <fps> is set to 20\n", ent->classname, ent->targetname);
+			G_Printf("SP_misc_gamemodel: fps rate of entity %s %s at % s must have a value > 0 - <fps> is set to 20\n", ent->classname, ent->targetname, vtos(ent->r.currentOrigin));
 		}
 		ent->s.weapon = 50; // 1000.f / 20 fps
 	}
@@ -1482,7 +1481,7 @@ void mg42_fire(gentity_t *other)
 	// snap to integer coordinates for more efficient network bandwidth usage
 	SnapVector(muzzle);
 
-	Fire_Lead_Ext(self, other, GetWeaponTableData(WP_DUMMY_MG42)->spread, GetWeaponTableData(WP_DUMMY_MG42)->damage, muzzle, forward, right, up, MOD_MACHINEGUN); // FIXME: browning?
+	Fire_Lead_Ext(self, other, GetWeaponTableData(WP_DUMMY_MG42)->spread, GetWeaponTableData(WP_DUMMY_MG42)->damage, muzzle, forward, right, up, MOD_MACHINEGUN);
 }
 
 /**
