@@ -355,8 +355,9 @@ typedef struct rgbaGen_s {
 static rgbaGen_t getRgbaGen(shaderStage_t *pStage, int lightmapNum)
 {
 	qboolean isVertexLit = lightmapNum == LIGHTMAP_BY_VERTEX;
-	qboolean shouldForceCgenVertex = (isVertexLit && pStage->rgbGen == CGEN_IDENTITY);
-	qboolean shouldForceAgenVertex = (isVertexLit && pStage->alphaGen == AGEN_IDENTITY);
+	// always exclude the sky
+	qboolean shouldForceCgenVertex = (isVertexLit && !tess.surfaceShader->isSky && pStage->rgbGen == CGEN_IDENTITY);
+	qboolean shouldForceAgenVertex = (isVertexLit && !tess.surfaceShader->isSky && pStage->alphaGen == AGEN_IDENTITY);
 	int colorGen = shouldForceCgenVertex ? CGEN_VERTEX : pStage->rgbGen;
 	int alphaGen = shouldForceAgenVertex ? AGEN_VERTEX : pStage->alphaGen;
 	rgbaGen_t rgbaGen = { colorGen, alphaGen };
