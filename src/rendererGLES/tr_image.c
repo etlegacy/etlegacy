@@ -1091,7 +1091,7 @@ void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 		altName = va("%s.%s", localName, imageLoaders[i].ext);
 
 		// Check if file exists
-		if (ri.FS_FOpenFileRead(altName, NULL, qfalse))
+		if (ri.FS_FOpenFileRead(altName, NULL, qfalse) > 0)
 		{
 			// Load
 			imageLoaders[i].ImageLoader(altName, pic, width, height, 0xFF);
@@ -1843,7 +1843,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 
 	// load and parse the skin file
 	text.v = NULL;
-	if (ri.FS_FOpenFileRead(name, NULL, qfalse))
+	if (ri.FS_FOpenFileRead(name, NULL, qfalse) > 0)
 	{
 		ri.FS_ReadFile(name, &text.v);
 	}
