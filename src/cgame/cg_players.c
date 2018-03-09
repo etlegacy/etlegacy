@@ -1403,7 +1403,7 @@ static void CG_AddPainTwitch(centity_t *cent, vec3_t torsoAngles)
 	int duration;
 	//float direction;
 
-	if (cent->pe.animSpeed != 0.f)
+	if (cent->pe.animSpeed == 0.f)
 	{
 		// we need to inititialize this stuff
 		cent->pe.painAnimLegs  = -1;
