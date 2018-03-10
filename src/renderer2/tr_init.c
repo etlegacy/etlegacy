@@ -88,7 +88,7 @@ cvar_t *r_noLightVisCull;
 cvar_t *r_noInteractionSort;
 cvar_t *r_dynamicLight;
 cvar_t *r_staticLight;
-cvar_t *r_dynamicLightCastShadows;
+cvar_t *r_dynamicLightShadows;
 cvar_t *r_precomputedLighting;
 cvar_t *r_vertexLighting;
 cvar_t *r_compressDiffuseMaps;
@@ -239,7 +239,6 @@ cvar_t *r_vboTriangles;
 cvar_t *r_vboShadows;
 cvar_t *r_vboLighting;
 cvar_t *r_vboModels;
-cvar_t *r_vboOptimizeVertices;
 cvar_t *r_vboVertexSkinning;
 cvar_t *r_vboSmoothNormals;
 cvar_t *r_vboFoliage;
@@ -1170,7 +1169,7 @@ void R_Register(void)
 	r_uiFullScreen            = ri.Cvar_Get("r_uifullscreen", "0", 0);
 	r_subDivisions            = ri.Cvar_Get("r_subdivisions", "4", CVAR_ARCHIVE | CVAR_LATCH);
 	r_parallaxMapping         = ri.Cvar_Get("r_parallaxMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
-	r_dynamicLightCastShadows = ri.Cvar_Get("r_dynamicLightCastShadows", "1", CVAR_ARCHIVE);
+	r_dynamicLightShadows     = ri.Cvar_Get("r_dynamicLightShadows", "1", CVAR_ARCHIVE);
 	r_precomputedLighting     = ri.Cvar_Get("r_precomputedLighting", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_vertexLighting          = ri.Cvar_Get("r_vertexLighting", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_compressDiffuseMaps     = ri.Cvar_Get("r_compressDiffuseMaps", "1", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1248,7 +1247,6 @@ void R_Register(void)
 	r_vboShadows          = ri.Cvar_Get("r_vboShadows", "1", CVAR_CHEAT);
 	r_vboLighting         = ri.Cvar_Get("r_vboLighting", "1", CVAR_CHEAT);
 	r_vboModels           = ri.Cvar_Get("r_vboModels", "1", CVAR_CHEAT);
-	r_vboOptimizeVertices = ri.Cvar_Get("r_vboOptimizeVertices", "1", CVAR_CHEAT | CVAR_LATCH);
 	r_vboVertexSkinning   = ri.Cvar_Get("r_vboVertexSkinning", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_vboSmoothNormals    = ri.Cvar_Get("r_vboSmoothNormals", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_vboFoliage = ri.Cvar_Get("r_vboFoliage", "1", CVAR_ARCHIVE | CVAR_LATCH);
@@ -1351,8 +1349,11 @@ void R_Register(void)
 	r_wrapAroundLighting  = ri.Cvar_Get("r_wrapAroundLighting", "0", CVAR_CHEAT | CVAR_LATCH);
 	r_halfLambertLighting = ri.Cvar_Get("r_halfLambertLighting", "1", CVAR_CHEAT | CVAR_LATCH);
 	//rim light gives your shading a nice volumentric effect which can greatly enhance the contrast with the background
-	r_rimLighting = ri.Cvar_Get("r_rimLighting", "1", CVAR_ARCHIVE | CVAR_LATCH);
-	r_rimExponent = ri.Cvar_Get("r_rimExponent", "3", CVAR_CHEAT);
+	r_rimLighting = ri.Cvar_Get("r_rimLighting", "0", CVAR_CHEAT | CVAR_LATCH); // was CVAR_ARCHIVE | CVAR_LATCH
+	                                                                            // FIXME: make rim lighting work with diffuse maps/textures
+	                                                                            // see 
+	                                                                            // and set old flags again
+	r_rimExponent = ri.Cvar_Get("r_rimExponent", "3", CVAR_CHEAT | CVAR_LATCH);
 	ri.Cvar_CheckRange(r_rimExponent, 0.5, 8.0, qfalse);
 
 	r_drawBuffer = ri.Cvar_Get("r_drawBuffer", "GL_BACK", CVAR_CHEAT);

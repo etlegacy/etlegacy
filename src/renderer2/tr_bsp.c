@@ -44,8 +44,6 @@ static int        s_lightCount;
 static growList_t s_interactions;
 static byte       *fileBase;
 
-static int c_redundantInteractions;
-//static int c_redundantVertexes;
 static int c_vboWorldSurfaces;
 static int c_vboLightSurfaces;
 static int c_vboShadowSurfaces;
@@ -2969,10 +2967,6 @@ static void CopyVert(const srfVert_t *in, srfVert_t *out)
 		out->paintColor[j] = in->paintColor[j];
 		out->lightColor[j] = in->lightColor[j];
 	}
-
-#if DEBUG_OPTIMIZEVERTICES
-	out->id = in->id;
-#endif
 }
 
 #define EQUAL_EPSILON   0.001
@@ -3454,24 +3448,11 @@ static void R_CreateWorldVBO()
 		}
 	}
 
-#if 0
-	numVerts = OptimizeVertices(numVerts, verts, numTriangles, triangles, optimizedVerts, CompareWorldVert);
-	if (c_redundantVertexes)
-	{
-		Ren_Developer(
-		    "...removed %i redundant vertices from staticWorldMesh %i ( %s, %i verts %i tris )\n",
-		    c_redundantVertexes, vboSurfaces.currentElements, shader->name, numVerts, numTriangles);
-	}
 
-	s_worldData.vbo = R_CreateVBO2(va("bspModelMesh_vertices %i", 0), numVerts, optimizedVerts,
-	                               ATTR_POSITION | ATTR_TEXCOORD | ATTR_LIGHTCOORD | ATTR_TANGENT | ATTR_BINORMAL |
-	                               ATTR_NORMAL | ATTR_COLOR | GLCS_LIGHTCOLOR | ATTR_LIGHTDIRECTION);
-#else
 	s_worldData.vbo = R_CreateVBO2(va("staticBspModel0_VBO %i", 0), numVerts, verts,
 	                               ATTR_POSITION | ATTR_TEXCOORD | ATTR_LIGHTCOORD | ATTR_TANGENT | ATTR_BINORMAL |
 	                               ATTR_NORMAL | ATTR_COLOR
 	                               , VBO_USAGE_STATIC);
-#endif
 
 	s_worldData.ibo = R_CreateIBO2(va("staticBspModel0_IBO %i", 0), numTriangles, triangles, VBO_USAGE_STATIC);
 
@@ -3896,26 +3877,11 @@ static void R_CreateSubModelVBOs()
 					}
 				}
 
-#if 0
-				numVerts = OptimizeVertices(numVerts, verts, numTriangles, triangles, optimizedVerts, CompareWorldVert);
-				if (c_redundantVertexes)
-				{
-					Ren_Developer(
-					    "...removed %i redundant vertices from staticEntityMesh %i ( %s, %i verts %i tris )\n",
-					    c_redundantVertexes, vboSurfaces.currentElements, shader->name, numVerts, numTriangles);
-				}
-
-				vboSurf->vbo =
-				    R_CreateVBO2(va("staticBspModel%i_VBO %i", m, vboSurfaces.currentElements), numVerts, optimizedVerts,
-				                 ATTR_POSITION | ATTR_TEXCOORD | ATTR_LIGHTCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL
-				                 | ATTR_COLOR | GLCS_LIGHTCOLOR | ATTR_LIGHTDIRECTION, VBO_USAGE_STATIC);
-#else
 				vboSurf->vbo =
 				    R_CreateVBO2(va("staticBspModel%i_VBO %i", m, vboSurfaces.currentElements), numVerts, verts,
 				                 ATTR_POSITION | ATTR_TEXCOORD | ATTR_LIGHTCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL
 				                 | ATTR_COLOR
 				                 , VBO_USAGE_STATIC);
-#endif
 
 				vboSurf->ibo =
 				    R_CreateIBO2(va("staticBspModel%i_IBO %i", m, vboSurfaces.currentElements), numTriangles, triangles,
@@ -5825,104 +5791,6 @@ int R_ShadowFrustumCullWorldBounds(int numShadowPlanes, cplane_t *shadowPlanes, 
 	return CULL_CLIP;
 }
 
-/*
- * @brief R_KillRedundantInteractions
- * @param[in] light
- *
- * @note Unused
-static void R_KillRedundantInteractions(trRefLight_t * light)
-{
-    interactionCache_t *iaCache, *iaCache2;
-    bspSurface_t   *surface;
-    vec3_t          localBounds[2];
-
-    if(r_shadows->integer <= SHADOWING_BLOB)
-        return;
-
-    if(!light->firstInteractionCache)
-    {
-        // this light has no interactions precached
-        return;
-    }
-
-    if(light->l.noShadows)
-    {
-        // actually noShadows lights are quite bad concerning this optimization
-        return;
-    }
-
-    for(iaCache = light->firstInteractionCache; iaCache; iaCache = iaCache->next)
-    {
-        surface = iaCache->surface;
-
-        if(surface->shader->sort > SS_OPAQUE)
-            continue;
-
-        if(surface->shader->noShadows)
-            continue;
-
-        // HACK: allow fancy alphatest shadows with shadow mapping
-        if(r_shadows->integer >= SHADOWING_ESM16 && surface->shader->alphaTest)
-            continue;
-
-        for(iaCache2 = light->firstInteractionCache; iaCache2; iaCache2 = iaCache2->next)
-        {
-            if(iaCache == iaCache2)
-            {
-                // don't check the surface of the current interaction with its shadow frustum
-                continue;
-            }
-
-            surface = iaCache2->surface;
-
-            if(*surface->data == SF_FACE)
-            {
-                srfSurfaceFace_t *face;
-
-                face = (srfSurfaceFace_t *) surface->data;
-
-                VectorCopy(face->bounds[0], localBounds[0]);
-                VectorCopy(face->bounds[1], localBounds[1]);
-            }
-            else if(*surface->data == SF_GRID)
-            {
-                srfGridMesh_t  *grid;
-
-                grid = (srfGridMesh_t *) surface->data;
-
-                VectorCopy(grid->meshBounds[0], localBounds[0]);
-                VectorCopy(grid->meshBounds[1], localBounds[1]);
-            }
-            else if(*surface->data == SF_TRIANGLES)
-            {
-                srfTriangles_t *tri;
-
-                tri = (srfTriangles_t *) surface->data;
-
-                VectorCopy(tri->bounds[0], localBounds[0]);
-                VectorCopy(tri->bounds[1], localBounds[1]);
-            }
-            else
-            {
-                iaCache2->redundant = qfalse;
-                continue;
-            }
-
-            if(R_ShadowFrustumCullWorldBounds(iaCache->numShadowPlanes, iaCache->shadowPlanes, localBounds) == CULL_IN)
-            {
-                iaCache2->redundant = qtrue;
-                c_redundantInteractions++;
-            }
-        }
-
-        if(iaCache->redundant)
-        {
-            c_redundantInteractions++;
-        }
-    }
-}
-*/
-
 /**
  * @brief R_CreateInteractionVBO
  * @param[in,out] light
@@ -6347,20 +6215,6 @@ static void R_CreateVBOLightMeshes(trRefLight_t *light)
 				}
 			}
 
-			/*
-			   numVerts = OptimizeVertices(numVerts, verts, numTriangles, triangles, optimizedVerts, CompareLightVert);
-			   if(c_redundantVertexes)
-			   {
-			   Ren_Developer(
-			   "...removed %i redundant vertices from staticLightMesh %i ( %s, %i verts %i tris )\n",
-			   c_redundantVertexes, c_vboLightSurfaces, shader->name, numVerts, numTriangles);
-			   }
-
-			   vboSurf->vbo = R_CreateVBO2(va("staticLightMesh_vertices %i", c_vboLightSurfaces), numVerts, optimizedVerts,
-			   ATTR_POSITION | ATTR_TEXCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL |
-			   ATTR_COLOR, VBO_USAGE_STATIC);
-			 */
-
 #if CALC_REDUNDANT_SHADOWVERTS
 			OptimizeTrianglesLite(s_worldData.redundantLightVerts, numTriangles, triangles);
 			if (c_redundantVertexes)
@@ -6752,20 +6606,6 @@ static void R_CreateVBOShadowMeshes(trRefLight_t *light)
 					}
 				}
 			}
-
-			/*
-			   numVerts = OptimizeVertices(numVerts, verts, numTriangles, triangles, optimizedVerts, CompareLightVert);
-			   if(c_redundantVertexes)
-			   {
-			   Ren_Developer(
-			   "...removed %i redundant vertices from staticLightMesh %i ( %s, %i verts %i tris )\n",
-			   c_redundantVertexes, c_vboLightSurfaces, shader->name, numVerts, numTriangles);
-			   }
-
-			   vboSurf->vbo = R_CreateVBO2(va("staticLightMesh_vertices %i", c_vboLightSurfaces), numVerts, optimizedVerts,
-			   ATTR_POSITION | ATTR_TEXCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL |
-			   ATTR_COLOR, VBO_USAGE_STATIC);
-			 */
 
 #if CALC_REDUNDANT_SHADOWVERTS
 			OptimizeTrianglesLite(s_worldData.redundantShadowVerts, numTriangles, triangles);
@@ -7294,7 +7134,6 @@ void R_PrecacheInteractions()
 
 	Com_InitGrowList(&s_interactions, 100);
 
-	c_redundantInteractions = 0;
 	c_vboWorldSurfaces      = 0;
 	c_vboLightSurfaces      = 0;
 	c_vboShadowSurfaces     = 0;
@@ -7356,13 +7195,6 @@ void R_PrecacheInteractions()
 		R_RecursiveAddInteractionNode(s_worldData.nodes, light);
 		//Ren_Print("light %i touched %i leaves\n", i, QueueSize(&light->leafs));
 
-#if 0
-		// this can cause really bad shadow problems :/
-
-		// check if interactions are inside shadows of other interactions
-		R_KillRedundantInteractions(light);
-#endif
-
 		// create a static VBO surface for each light geometry batch
 		R_CreateVBOLightMeshes(light);
 
@@ -7389,7 +7221,6 @@ void R_PrecacheInteractions()
 
 
 	Ren_Developer("%i interactions precached\n", s_worldData.numInteractions);
-	Ren_Developer("%i interactions were hidden in shadows\n", c_redundantInteractions);
 
 	if (r_shadows->integer >= SHADOWING_ESM16)
 	{

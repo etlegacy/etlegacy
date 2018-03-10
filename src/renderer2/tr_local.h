@@ -70,7 +70,6 @@ typedef unsigned short glIndex_t;
 
 //#define VOLUMETRIC_LIGHTING 1
 
-#define DEBUG_OPTIMIZEVERTICES 0
 #define CALC_REDUNDANT_SHADOWVERTS 0
 
 //#define USE_BSP_CLUSTERSURFACE_MERGING 1
@@ -2253,10 +2252,6 @@ typedef struct
 	vec4_t paintColor;
 	vec4_t lightColor;
 	vec3_t lightDirection;
-
-#if DEBUG_OPTIMIZEVERTICES
-	unsigned int id;
-#endif
 } srfVert_t;
 
 /**
@@ -3744,7 +3739,7 @@ extern cvar_t *r_lightScale;
 extern cvar_t *r_debugLight;
 
 extern cvar_t *r_staticLight;               ///< static lights enabled/disabled
-//extern cvar_t *r_dynamicLightShadows;     ///< FIXME: Unused
+extern cvar_t *r_dynamicLightShadows;
 extern cvar_t *r_precomputedLighting;
 extern cvar_t *r_vertexLighting;
 extern cvar_t *r_compressDiffuseMaps;
@@ -3853,7 +3848,6 @@ extern cvar_t *r_vboTriangles;
 extern cvar_t *r_vboShadows;
 extern cvar_t *r_vboLighting;
 extern cvar_t *r_vboModels;
-extern cvar_t *r_vboOptimizeVertices;
 extern cvar_t *r_vboVertexSkinning;
 extern cvar_t *r_vboSmoothNormals;
 extern cvar_t *r_vboFoliage;
@@ -3906,7 +3900,6 @@ extern cvar_t *r_cameraFilmGrainScale;
 
 extern cvar_t *r_evsmPostProcess;
 
-extern cvar_t *r_dynamicLightCastShadows;
 extern cvar_t *r_recompileShaders;
 extern cvar_t *r_rotoscopeBlur;
 
@@ -4246,8 +4239,6 @@ void Tess_ComputeColor(shaderStage_t *pStage);
 
 void Tess_StageIteratorDebug();
 void Tess_StageIteratorGeneric();
-void Tess_StageIteratorGBuffer();
-void Tess_StageIteratorGBufferNormalsOnly();
 //void Tess_StageIteratorDepthFill();
 void Tess_StageIteratorShadowFill();
 void Tess_StageIteratorLighting();
