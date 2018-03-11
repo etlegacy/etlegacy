@@ -4974,8 +4974,7 @@ static shader_t *GeneratePermanentShader(void)
 	newShader = (shader_t *)ri.Hunk_Alloc(sizeof(shader_t), h_low);
 
 	*newShader = shader;
-
-	if (shader.sort <= SS_OPAQUE) // FIXME: SS_SEE_THROUGH sort order? enum has been changes inspect!
+	if (shader.sort <= SS_SEE_THROUGH && shader.sort != SS_ENVIRONMENT_NOFOG)
 	{
 		newShader->fogPass = FP_EQUAL;
 	}
