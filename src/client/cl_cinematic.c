@@ -583,7 +583,7 @@ e_status CIN_RunCinematic(int handle)
 {
 	cinematic_t *data;
 
-	if (!CIN_HandleValid(cls.cinematicHandle))
+	if (!CIN_HandleValid(handle))
 	{
 		return FMV_EOF;
 	}
