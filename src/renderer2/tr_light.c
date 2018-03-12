@@ -268,14 +268,12 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 		VectorMA(direction, factor, gridPoint2->direction, direction);
 	}
 
-#if 1
 	if (totalFactor > 0 && totalFactor < 0.99f)
 	{
 		totalFactor = 1.0f / totalFactor;
 		VectorScale(ent->ambientLight, totalFactor, ent->ambientLight);
 		VectorScale(ent->directedLight, totalFactor, ent->directedLight);
 	}
-#endif
 
 	VectorNormalize2(direction, ent->lightDir);
 
@@ -410,9 +408,6 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 			VectorCopy(tr.sunDirection, ent->lightDir);
 		}
 #else
-		//ent->ambientLight[0] = ent->ambientLight[1] = ent->ambientLight[2] = tr.identityLight * 150;
-		//ent->directedLight[0] = ent->directedLight[1] = ent->directedLight[2] = tr.identityLight * 150;
-		//VectorCopy( tr.sunDirection, ent->lightDir );
 		ent->ambientLight[0] = tr.identityLight * (64.0f / 255.0f);
 		ent->ambientLight[1] = tr.identityLight * (64.0f / 255.0f);
 		ent->ambientLight[2] = tr.identityLight * (96.0f / 255.0f);
@@ -421,6 +416,7 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 		ent->directedLight[1] = tr.identityLight * (232.0f / 255.0f);
 		ent->directedLight[2] = tr.identityLight * (224.0f / 255.0f);
 
+		//VectorCopy(tr.sunDirection, ent->lightDir);
 		VectorSet(ent->lightDir, -1, 1, 1.25);
 		VectorNormalize(ent->lightDir);
 #endif
@@ -476,7 +472,8 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
  * @param[out] directedLight
  * @param[out] lightDir
  * @return
- */
+ *
+ * @note Unused
 int R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir)
 {
 	trRefEntity_t ent;
@@ -496,6 +493,7 @@ int R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec
 
 	return qtrue;
 }
+*/
 
 /**
  * @brief R_SetupLightOrigin

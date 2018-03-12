@@ -54,7 +54,7 @@ model_t *R_GetModelByHandle(qhandle_t hModel)
 {
 	model_t *mod;
 
-	// out of range gets the defualt model
+	// out of range gets the default model
 	if (hModel < 1 || hModel >= tr.numModels)
 	{
 		return tr.models[0];
