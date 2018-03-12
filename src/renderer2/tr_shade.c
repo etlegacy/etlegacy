@@ -3144,7 +3144,19 @@ void Tess_StageIteratorGeneric()
 					}
 					else if (backEnd.currentEntity != &tr.worldEntity)
 					{
-						Render_vertexLighting_DBS_entity(stage);
+						// dont use entity shader/renderer for brushmodels
+						model_t *pModel
+
+						pModel = R_GetModelByHandle(backEnd.currentEntity->e.hModel);
+
+						if (pModel->bsp)
+						{
+							Render_vertexLighting_DBS_world(stage);
+						}
+						else
+						{
+							Render_vertexLighting_DBS_entity(stage);
+						}
 					}
 					else
 					{
