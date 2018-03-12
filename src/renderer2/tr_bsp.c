@@ -5159,7 +5159,7 @@ void R_LoadEntities(lump_t *l)
 			continue;
 		}
 		// check for ambient color
-		else if (!Q_stricmp(keyname, "_color") || !Q_stricmp(keyname, "ambientColor"))
+		else if (!Q_stricmp(keyname, "_color") || !Q_stricmp(keyname, "ambientColor") || !Q_stricmp(keyname, "ambient"))
 		{
 			if (r_forceAmbient->value <= 0)
 			{
