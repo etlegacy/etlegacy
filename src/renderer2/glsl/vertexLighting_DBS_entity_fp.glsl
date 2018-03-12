@@ -202,7 +202,7 @@ void main()
 	float NL = clamp(dot(N, L), 0.0, 1.0);
 #endif
 
-	vec3 light = normalize(u_AmbientColor + u_LightColor * NL);
+	vec3 light = u_AmbientColor + u_LightColor * NL;
 
 	clamp(light, 0.0, 1.0);
 

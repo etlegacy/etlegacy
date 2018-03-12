@@ -1189,7 +1189,7 @@ void R_Register(void)
 	r_reflectionMapping        = ri.Cvar_Get("r_reflectionMapping", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_highQualityNormalMapping = ri.Cvar_Get("r_highQualityNormalMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
 
-	r_forceAmbient = ri.Cvar_Get("r_forceAmbient", "0.125", CVAR_ARCHIVE | CVAR_LATCH);
+	r_forceAmbient = ri.Cvar_Get("r_forceAmbient", "0", CVAR_CHEAT | CVAR_LATCH);
 	ri.Cvar_CheckRange(r_forceAmbient, 0.0f, 0.3f, qfalse);
 
 	// temporary latched variables that can only change over a restart
@@ -1343,7 +1343,7 @@ void R_Register(void)
 	//this one sets the power of specular, the higher the brighter
 	r_specularScale      = ri.Cvar_Get("r_specularScale", "0.2", CVAR_CHEAT | CVAR_LATCH);
 	r_normalScale        = ri.Cvar_Get("r_normalScale", "1.1", CVAR_CHEAT | CVAR_LATCH);
-	r_normalMapping      = ri.Cvar_Get("r_normalMapping", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	r_normalMapping      = ri.Cvar_Get("r_normalMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_parallaxDepthScale = ri.Cvar_Get("r_parallaxDepthScale", "0.03", CVAR_CHEAT);
 	// toon lightning
 	r_wrapAroundLighting  = ri.Cvar_Get("r_wrapAroundLighting", "0", CVAR_CHEAT | CVAR_LATCH);
@@ -1460,7 +1460,7 @@ void R_Register(void)
 	r_extTextureEnvAdd = ri.Cvar_Get("r_ext_texture_env_add", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_allowExtensions  = ri.Cvar_Get("r_allowExtensions", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);
 
-	r_materialScan = ri.Cvar_Get("r_materialScan", "3", CVAR_ARCHIVE | CVAR_LATCH);
+	r_materialScan = ri.Cvar_Get("r_materialScan", "1", CVAR_ARCHIVE | CVAR_LATCH);
 
 	// make sure all the commands added here are also removed in R_Shutdown
 	ri.Cmd_AddSystemCommand("imagelist", R_ImageList_f, "Print out the list of images loaded", NULL);

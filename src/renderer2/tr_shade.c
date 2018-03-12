@@ -547,6 +547,10 @@ static void Render_vertexLighting_DBS_entity(int stage)
 	//ClampColor(ambientColor);
 	// u_AlphaTest
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
+	// FIXME: extend/inspect this
+	// - there is a need for unscaled player entity scenes (HUD,Limbo ... & ui?)
+	// - clarify if all ents are using same scale factor see refEntity_t (f.e. currentEntity.e.hilightIntensity) and r1 R_SetupEntityLightingGrid
+	VectorScale(backEnd.currentEntity->ambientLight, 0.25f, backEnd.currentEntity->ambientLight);
 	SetUniformVec3(UNIFORM_AMBIENTCOLOR, backEnd.currentEntity->ambientLight);
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 	SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir); // = L vector which means surface to light
