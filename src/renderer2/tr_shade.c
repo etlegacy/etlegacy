@@ -3145,7 +3145,7 @@ void Tess_StageIteratorGeneric()
 					else if (backEnd.currentEntity != &tr.worldEntity)
 					{
 						// dont use entity shader/renderer for brushmodels
-						model_t *pModel
+						model_t *pModel;
 
 						pModel = R_GetModelByHandle(backEnd.currentEntity->e.hModel);
 
