@@ -769,7 +769,7 @@ static void R_LoadLightmapsInternal(lump_t *l, const char *bspName)
 					R_ColorShiftLightingBytes(&buf_p[j * 3], &data[j * 4]);
 					data[j * 4 + 3] = 255;
 				}
-				image = R_CreateImage(va("_lightmap%d", i), data, LIGHTMAP_SIZE, LIGHTMAP_SIZE, IF_LIGHTMAP | IF_NOCOMPRESSION, FT_DEFAULT, WT_CLAMP);
+				image = R_CreateImage(va("_lightmap%d", i), data, LIGHTMAP_SIZE, LIGHTMAP_SIZE, IF_LIGHTMAP | IF_NOCOMPRESSION, FT_DEFAULT, WT_EDGE_CLAMP);
 				Com_AddToGrowList(&tr.lightmaps, image);
 			}
 			else
@@ -781,7 +781,7 @@ static void R_LoadLightmapsInternal(lump_t *l, const char *bspName)
 					data[j * 4 + 2] = buf_p[j * 3 + 2];
 					data[j * 4 + 3] = 255;
 				}
-				image = R_CreateImage(va("_lightmap%d", i), data, LIGHTMAP_SIZE, LIGHTMAP_SIZE, IF_NORMALMAP, FT_DEFAULT, WT_CLAMP);
+				image = R_CreateImage(va("_lightmap%d", i), data, LIGHTMAP_SIZE, LIGHTMAP_SIZE, IF_NORMALMAP, FT_DEFAULT, WT_EDGE_CLAMP);
 				Com_AddToGrowList(&tr.deluxemaps, image);
 			}
 		}
@@ -792,7 +792,7 @@ static void R_LoadLightmapsInternal(lump_t *l, const char *bspName)
 				R_ColorShiftLightingBytes(&buf_p[j * 3], &data[j * 4]);
 				data[j * 4 + 3] = 255;
 			}
-			image = R_CreateImage(va("_lightmap%d", i), data, LIGHTMAP_SIZE, LIGHTMAP_SIZE, IF_LIGHTMAP | IF_NOCOMPRESSION, FT_DEFAULT, WT_CLAMP);
+			image = R_CreateImage(va("_lightmap%d", i), data, LIGHTMAP_SIZE, LIGHTMAP_SIZE, IF_LIGHTMAP | IF_NOCOMPRESSION, FT_DEFAULT, WT_EDGE_CLAMP);
 			Com_AddToGrowList(&tr.lightmaps, image);
 		}
 	}
@@ -863,7 +863,7 @@ static void R_LoadLightmapsExternal(lump_t *l, const char *bspName)
 
 				image->bits       = IF_NOPICMIP | IF_RGBA16F;
 				image->filterType = FT_NEAREST;
-				image->wrapType   = WT_CLAMP;
+				image->wrapType   = WT_EDGE_CLAMP;
 
 				GL_Bind(image);
 
@@ -909,7 +909,7 @@ static void R_LoadLightmapsExternal(lump_t *l, const char *bspName)
 				LoadRGBEToBytes(va("%s/%s", mapName, lightmapFiles[i]), &ldrImage, &width, &height);
 
 				image = R_CreateImage(va("%s/%s", mapName, lightmapFiles[i]), (byte *)ldrImage, width, height,
-				                      IF_NOPICMIP | IF_LIGHTMAP | IF_NOCOMPRESSION, FT_DEFAULT, WT_CLAMP);
+				                      IF_NOPICMIP | IF_LIGHTMAP | IF_NOCOMPRESSION, FT_DEFAULT, WT_EDGE_CLAMP);
 
 				Com_AddToGrowList(&tr.lightmaps, image);
 
@@ -941,7 +941,7 @@ static void R_LoadLightmapsExternal(lump_t *l, const char *bspName)
 			{
 				Ren_Developer("...loading external lightmap '%s/%s'\n", mapName, lightmapFiles[i]);
 
-				image = R_FindImageFile(va("%s/%s", mapName, lightmapFiles[i]), IF_NORMALMAP | IF_NOCOMPRESSION | IF_NOPICMIP, FT_DEFAULT, WT_CLAMP, NULL);
+				image = R_FindImageFile(va("%s/%s", mapName, lightmapFiles[i]), IF_NORMALMAP | IF_NOCOMPRESSION | IF_NOPICMIP, FT_DEFAULT, WT_EDGE_CLAMP, NULL);
 				Com_AddToGrowList(&tr.deluxemaps, image);
 			}
 		}
@@ -977,20 +977,20 @@ static void R_LoadLightmapsExternal(lump_t *l, const char *bspName)
 				if (i % 2 == 0)
 				{
 					Ren_Developer("Loading lightmap\n");
-					image = R_FindImageFile(va("%s/%s", mapName, lightmapFiles[i]), IF_LIGHTMAP | IF_NOCOMPRESSION | IF_NOPICMIP, FT_LINEAR, WT_CLAMP, NULL);
+					image = R_FindImageFile(va("%s/%s", mapName, lightmapFiles[i]), IF_LIGHTMAP | IF_NOCOMPRESSION | IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP, NULL);
 					Com_AddToGrowList(&tr.lightmaps, image);
 				}
 				else
 				{
 					Ren_Developer("Loading deluxemap\n");
-					image = R_FindImageFile(va("%s/%s", mapName, lightmapFiles[i]), IF_NORMALMAP | IF_NOCOMPRESSION | IF_NOPICMIP, FT_LINEAR, WT_CLAMP, NULL);
+					image = R_FindImageFile(va("%s/%s", mapName, lightmapFiles[i]), IF_NORMALMAP | IF_NOCOMPRESSION | IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP, NULL);
 					Com_AddToGrowList(&tr.deluxemaps, image);
 				}
 			}
 			else
 			{
 				Ren_Developer("Loading lightmap\n");
-				image = R_FindImageFile(va("%s/%s", mapName, lightmapFiles[i]), IF_LIGHTMAP | IF_NOCOMPRESSION | IF_NOPICMIP, FT_LINEAR, WT_CLAMP, NULL);
+				image = R_FindImageFile(va("%s/%s", mapName, lightmapFiles[i]), IF_LIGHTMAP | IF_NOCOMPRESSION | IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP, NULL);
 				Com_AddToGrowList(&tr.lightmaps, image);
 			}
 		}

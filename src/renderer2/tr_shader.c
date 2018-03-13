@@ -5775,7 +5775,7 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 	// if not defined in the in-memory shader descriptions,
 	// look for a single supported image file
 	image = R_FindImageFile(fileName, mipRawImage ? IF_NONE : IF_NOPICMIP,
-	                        mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
+	                        mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_EDGE_CLAMP, shader.name);
 	if (!image)
 	{
 		Ren_Developer("Warning: Couldn't find image [%s] file for shader '%s' - returning default shader\n", fileName, shader.name);
@@ -5865,7 +5865,7 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 		{
 			// Note/FIXME: image file name has to be including extension, we use tga - make this more generic one day
 			// ETL: suffix for normalmaps is '_n'
-			tmpImage = R_FindImageFile(va("%s_n.tga", strippedName), !shader.noPicMip ? IF_NONE : IF_NOPICMIP, !shader.noPicMip ? FT_DEFAULT : FT_LINEAR, !shader.noPicMip ? WT_REPEAT : WT_CLAMP, shader.name);
+			tmpImage = R_FindImageFile(va("%s_n.tga", strippedName), !shader.noPicMip ? IF_NONE : IF_NOPICMIP, !shader.noPicMip ? FT_DEFAULT : FT_LINEAR, !shader.noPicMip ? WT_REPEAT : WT_EDGE_CLAMP, shader.name);
 			if (tmpImage)
 			{
 				stages[i].active             = qtrue;

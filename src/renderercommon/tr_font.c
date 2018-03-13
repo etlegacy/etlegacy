@@ -674,7 +674,7 @@ static qboolean R_LoadScalableFont(const char *fontName, int pointSize, fontInfo
 
 			//Com_sprintf (name, sizeof(name), "fonts/fontImage_%i_%i", imageNumber++, pointSize);
 #ifdef FEATURE_RENDERER2
-			image = R_CreateImage(name, imageBuff, imageSize, imageSize, IF_NOPICMIP, FT_LINEAR, WT_CLAMP);
+			image = R_CreateImage(name, imageBuff, imageSize, imageSize, IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP);
 			h     = RE_RegisterShaderFromImage(name, image, qfalse);
 #else
 			image = R_CreateImage(name, imageBuff, imageSize, imageSize, qfalse, qfalse, GL_CLAMP_TO_EDGE);
