@@ -5134,6 +5134,11 @@ void R_LoadEntities(lump_t *l)
 				break;
 			}
 			*s++ = 0;
+
+			//if (r_vertexLight->integer)
+			//{
+			//R_RemapShader(value, s, "0");
+			//}
 			continue;
 		}
 
@@ -5159,7 +5164,7 @@ void R_LoadEntities(lump_t *l)
 			continue;
 		}
 		// check for ambient color
-		else if (!Q_stricmp(keyname, "_color") || !Q_stricmp(keyname, "ambientColor") || !Q_stricmp(keyname, "ambient"))
+		else if (!Q_stricmp(keyname, "_color") || !Q_stricmp(keyname, "color"))
 		{
 			if (r_forceAmbient->value <= 0)
 			{
@@ -5169,6 +5174,14 @@ void R_LoadEntities(lump_t *l)
 				VectorCopy(tr.worldEntity.ambientLight, tr.worldEntity.ambientLight);
 				VectorScale(tr.worldEntity.ambientLight, r_ambientScale->value, tr.worldEntity.ambientLight);
 			}
+		}
+		// check for ambient scale constant
+		else if (!Q_stricmp(keyname, "ambientColor") || !Q_stricmp(keyname, "ambient") || !Q_stricmp(keyname, "_ambient"))
+		{
+			// FIXME:
+			// set cvar r_ambientScale?
+
+			// ? = atof(value);
 		}
 		// check for fog color
 		else if (!Q_stricmp(keyname, "fogColor"))
@@ -5217,7 +5230,7 @@ void R_LoadEntities(lump_t *l)
 
 		if (!Q_stricmp(keyname, "classname") && Q_stricmp(value, "worldspawn"))
 		{
-			Ren_Warning("WARNING: expected worldspawn found '%s'\n", value);
+			Ren_Warning("WARNING: unexpected worldspawn found '%s'\n", value);
 			continue;
 		}
 	}
