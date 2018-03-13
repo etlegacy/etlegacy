@@ -1745,7 +1745,7 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 				filterType = shader.filterType;
 			}
 
-			stage->bundle[0].image[0] = R_FindImageFile(token, imageBits, filterType, WT_CLAMP, shader.name);
+			stage->bundle[0].image[0] = R_FindImageFile(token, imageBits, filterType, WT_EDGE_CLAMP, shader.name);
 			if (!stage->bundle[0].image[0])
 			{
 				Ren_Warning("WARNING: R_FindImageFile could not find '%s' in shader '%s'\n", token, shader.name);
