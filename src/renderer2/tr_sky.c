@@ -574,8 +574,8 @@ static void FillCloudySkySide(const int mins[2], const int maxs[2], qboolean add
 
 			tess.texCoords[tess.numVertexes][0] = s_skyTexCoords[t][s][0];
 			tess.texCoords[tess.numVertexes][1] = s_skyTexCoords[t][s][1];
-			tess.texCoords[tess.numVertexes][2] = s_skyTexCoords[t][s][2];
-			tess.texCoords[tess.numVertexes][3] = s_skyTexCoords[t][s][3];
+			tess.texCoords[tess.numVertexes][2] = 0;
+			tess.texCoords[tess.numVertexes][3] = 1;
 
 			tess.numVertexes++;
 
