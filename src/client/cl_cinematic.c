@@ -620,7 +620,7 @@ e_status CIN_RunCinematic(int handle)
  */
 void CIN_SetExtents(int handle, int x, int y, int w, int h)
 {
-	if (CIN_HandleValid(cls.cinematicHandle))
+	if (CIN_HandleValid(handle))
 	{
 		cinematic_t *cin;
 
