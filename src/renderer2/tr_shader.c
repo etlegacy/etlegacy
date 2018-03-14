@@ -2978,8 +2978,6 @@ void ParseDeform(char **text)
 	Ren_Warning("WARNING: unknown deformVertexes subtype '%s' found in shader '%s'\n", token, shader.name);
 }
 
-const char *suf[6] = { "rt", "bk", "lf", "ft", "up", "dn" };
-
 /**
  * @brief ParseSkyParms
  * @param[in,out] text
