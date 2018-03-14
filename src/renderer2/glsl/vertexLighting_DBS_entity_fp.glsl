@@ -202,13 +202,11 @@ void main()
 	float NL = clamp(dot(N, L), 0.0, 1.0);
 #endif
 
-	vec3 light = u_AmbientColor + u_LightColor * NL;
+ 	vec3 light = u_LightColor * NL;
 
-	clamp(light, 0.0, 1.0);
-
-	// compute final color
-	vec4 color = diffuse;
-	color.rgb *= light;
+    // compute final color
+    vec4 color = diffuse;
+    color.rgb *= (u_AmbientColor + light); // clamp ambient + light?
 	color.rgb += specular;
 #if defined(r_rimLighting)
 	color.rgb += emission;

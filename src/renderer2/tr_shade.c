@@ -547,10 +547,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 	//ClampColor(ambientColor);
 	// u_AlphaTest
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
-	// FIXME: extend/inspect this
-	// - there is a need for unscaled player entity scenes (HUD,Limbo ... & ui?)
-	// - clarify if all ents are using same scale factor see refEntity_t (f.e. currentEntity.e.hilightIntensity) and r1 R_SetupEntityLightingGrid
-	VectorScale(backEnd.currentEntity->ambientLight, 0.25f, backEnd.currentEntity->ambientLight);
+	VectorScale(backEnd.currentEntity->ambientLight, 64.0f / 255.0f, backEnd.currentEntity->ambientLight);
 	SetUniformVec3(UNIFORM_AMBIENTCOLOR, backEnd.currentEntity->ambientLight);
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 	SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir); // = L vector which means surface to light
@@ -1012,7 +1009,9 @@ static void Render_depthFill(int stage)
 	}
 	ambientColor[3] = 1;
 
+	// FIXME? see u_AmbientColor in depthFill glsl
 	SetUniformVec4(UNIFORM_COLOR, ambientColor);
+	//SetUniformVec3(UNIFORM_AMBIENTCOLOR, backEnd.currentEntity->ambientLight);
 
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
@@ -3144,19 +3143,8 @@ void Tess_StageIteratorGeneric()
 					}
 					else if (backEnd.currentEntity != &tr.worldEntity)
 					{
-						// dont use entity shader/renderer for brushmodels
-						model_t *pModel;
+						Render_vertexLighting_DBS_entity(stage);
 
-						pModel = R_GetModelByHandle(backEnd.currentEntity->e.hModel);
-
-						if (pModel->bsp)
-						{
-							Render_vertexLighting_DBS_world(stage);
-						}
-						else
-						{
-							Render_vertexLighting_DBS_entity(stage);
-						}
 					}
 					else
 					{
