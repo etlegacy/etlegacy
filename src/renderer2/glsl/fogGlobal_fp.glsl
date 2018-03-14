@@ -25,7 +25,7 @@ void main()
 	// calculate the length in fog (t is always 0 if eye is in fog)
 	st.s = dot(P.xyz, u_FogDistanceVector.xyz) + u_FogDistanceVector.w;
 	// st.s = vertexDistanceToCamera;
-	st.t = 1.0;
+	st.t = 0.6;
 
 	gl_FragColor = u_Color * texture2D(u_ColorMap, st);
 }
