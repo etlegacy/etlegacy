@@ -184,7 +184,7 @@ static void RB_RenderDrawSurfaces(qboolean opaque, int drawSurfFilter)
 	{
 		// update locals
 		entity      = drawSurf->entity;
-		shader      = tr.sortedShaders[drawSurf->shaderNum];
+		shader      = drawSurf->shader;
 		lightmapNum = drawSurf->lightmapNum;
 		fogNum      = drawSurf->fogNum;
 
@@ -343,7 +343,7 @@ static void RB_RenderOpaqueSurfacesIntoDepth(qboolean onlyWorld)
     {
         // update locals
         entity    = drawSurf->entity;
-        shader    = tr.sortedShaders[drawSurf->shaderNum];
+        shader    = drawSurf->shader;
         alphaTest = shader->alphaTest;
 
 //#if 0

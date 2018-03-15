@@ -182,6 +182,7 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 	int            gridStep[3];
 	vec3_t         direction;
 	float          totalFactor;
+	float          v;
 
 	if (forcedOrigin)
 	{
@@ -205,8 +206,6 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 	VectorSubtract(lightOrigin, tr.world->lightGridOrigin, lightOrigin);
 	for (i = 0; i < 3; i++)
 	{
-		float v;
-
 		v       = lightOrigin[i] * tr.world->lightGridInverseSize[i];
 		pos[i]  = floor(v);
 		frac[i] = v - pos[i];
@@ -223,6 +222,8 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 	VectorClear(ent->ambientLight);
 	VectorClear(ent->directedLight);
 	VectorClear(direction);
+
+	etl_assert(tr.world->lightGridData);   // NULL with -nolight maps
 
 	// trilerp the light value
 	gridStep[0] = 1; //sizeof(bspGridPoint_t);
@@ -429,7 +430,7 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 		ent->ambientLight[1] += tr.identityLight * 128.0f / 255.0f * ent->e.hilightIntensity;
 		ent->ambientLight[2] += tr.identityLight * 128.0f / 255.0f * ent->e.hilightIntensity;
 	}
-	else if ((ent->e.renderfx & RF_MINLIGHT)) // && VectorLength(ent->ambientLight) <= 0)
+	else if (ent->e.renderfx & RF_MINLIGHT) // && VectorLength(ent->ambientLight) <= 0)
 	{
 		// give everything a minimum light add
 		ent->ambientLight[0] += tr.identityLight * 32 / 255.0f;

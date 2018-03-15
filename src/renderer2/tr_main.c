@@ -1922,7 +1922,7 @@ static qboolean R_GetPortalOrientations(drawSurf_t *drawSurf, orientation_t *sur
 
 #if 0
 	// Doom3 style mirror support
-	shader = tr.sortedShaders[drawSurf->shaderNum];
+	shader = drawSurf->shader;
 	if (shader->isMirror)
 	{
 		//Ren_Print("Portal surface with a mirror\n");
@@ -2105,7 +2105,6 @@ static qboolean IsMirror(const drawSurf_t *drawSurf)
 static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128])
 {
 	float        shortest = 100000000;
-	shader_t     *shader;
 	int          numTriangles;
 	vec4_t       clip, eye;
 	int          i;
@@ -2113,7 +2112,6 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 	unsigned int pointAnd = (unsigned int)~0;
 
 	tr.currentEntity = drawSurf->entity;
-	shader           = tr.sortedShaders[drawSurf->shaderNum];
 
 	// rotate if necessary
 	if (tr.currentEntity != &tr.worldEntity)
@@ -2127,7 +2125,7 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 		tr.orientation = tr.viewParms.world;
 	}
 
-	Tess_Begin(Tess_StageIteratorGeneric, NULL, shader, NULL, qtrue, qtrue, -1, 0);
+	Tess_Begin(Tess_StageIteratorGeneric, NULL, drawSurf->shader, NULL, qtrue, qtrue, -1, 0);
 	rb_surfaceTable[*drawSurf->surface] (drawSurf->surface);
 
 	// former assertion
@@ -2339,7 +2337,7 @@ void R_AddDrawSurf(surfaceType_t *surface, shader_t *shader, int lightmapNum, in
 
 	drawSurf->entity      = tr.currentEntity;
 	drawSurf->surface     = surface;
-	drawSurf->shaderNum   = shader->sortedIndex;
+	drawSurf->shader      = shader;
 	drawSurf->lightmapNum = lightmapNum;
 	drawSurf->fogNum      = fogNum;
 
@@ -2356,11 +2354,11 @@ static int DrawSurfCompare(const void *a, const void *b)
 {
 #if 1
 	// by shader
-	if (((const drawSurf_t *) a)->shaderNum < ((const drawSurf_t *) b)->shaderNum)
+	if (((const drawSurf_t *) a)->shader->sortedIndex < ((const drawSurf_t *) b)->shader->sortedIndex)
 	{
 		return -1;
 	}
-	else if (((const drawSurf_t *) a)->shaderNum > ((const drawSurf_t *) b)->shaderNum)
+	else if (((const drawSurf_t *) a)->shader->sortedIndex > ((const drawSurf_t *) b)->shader->sortedIndex)
 	{
 		return 1;
 	}
@@ -2461,7 +2459,7 @@ static void R_SortDrawSurfs(void)
 	// may cause another view to be rendered first
 	for (i = 0, drawSurf = tr.viewParms.drawSurfs; i < tr.viewParms.numDrawSurfs; i++, drawSurf++)
 	{
-		shader = tr.sortedShaders[drawSurf->shaderNum];
+		shader = drawSurf->shader;
 
 #if 1
 		if (shader->sort > SS_PORTAL)

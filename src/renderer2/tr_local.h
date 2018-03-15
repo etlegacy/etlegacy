@@ -2073,7 +2073,7 @@ typedef enum
 typedef struct drawSurf_s
 {
 	trRefEntity_t *entity;
-	uint32_t shaderNum;
+	shader_t *shader;
 	int16_t lightmapNum;
 	int16_t fogNum;
 
