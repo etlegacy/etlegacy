@@ -2770,9 +2770,7 @@ void PM_WeaponUseAmmo(weapon_t wp, int amount)
 	}
 	else
 	{
-		int takeweapon;
-
-		takeweapon = GetWeaponTableData(wp)->clipIndex;
+		int takeweapon = GetWeaponTableData(wp)->clipIndex;
 
 		if (GetWeaponTableData(wp)->isAkimbo)
 		{
@@ -2799,9 +2797,7 @@ int PM_WeaponAmmoAvailable(weapon_t wp)
 	}
 	else
 	{
-		int takeweapon;
-
-		takeweapon = GetWeaponTableData(wp)->clipIndex;
+		int takeweapon = GetWeaponTableData(wp)->clipIndex;
 
 		if (GetWeaponTableData(wp)->isAkimbo)
 		{
@@ -3286,8 +3282,7 @@ static void PM_Weapon(void)
 {
 	int      addTime           = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
 	int      aimSpreadScaleAdd = GetWeaponTableData(pm->ps->weapon)->aimSpreadScaleAdd;
-	int      ammoNeeded;
-	qboolean delayedFire = qfalse;       // true if the delay time has just expired and this is the frame to send the fire event
+	qboolean delayedFire       = qfalse; // true if the delay time has just expired and this is the frame to send the fire event
 	int      weapattackanim;
 	qboolean akimboFire;
 #ifdef DO_WEAPON_DBG
@@ -3570,7 +3565,7 @@ static void PM_Weapon(void)
 
 		if (chargeTime != -1)
 		{
-            // check if there is enough charge to fire
+			// check if there is enough charge to fire
 			if (pm->cmd.serverTime - pm->ps->classWeaponTime < chargeTime * coeff)
 			{
 				if ((pm->ps->weapon == WP_MEDKIT || pm->ps->weapon == WP_AMMO) && pm->cmd.buttons & BUTTON_ATTACK)
@@ -3581,8 +3576,8 @@ static void PM_Weapon(void)
 				return;
 			}
 
-            // ready to fire, handle the charge time
-            if (weaponstateFiring)
+			// ready to fire, handle the charge time
+			if (weaponstateFiring)
 			{
 				if (coeff != 1.f)
 				{
@@ -3705,48 +3700,13 @@ static void PM_Weapon(void)
 	pm->ps->weaponstate = WEAPON_FIRING;
 
 	// check for out of ammo
-	ammoNeeded = GetWeaponTableData(pm->ps->weapon)->uses;
-
-	if (pm->ps->weapon)
+	if (GetWeaponTableData(pm->ps->weapon)->uses > PM_WeaponAmmoAvailable(pm->ps->weapon))
 	{
-		int ammoAvailable;
+		PM_AddEvent(EV_NOAMMO);
+		PM_ContinueWeaponAnim(GetWeaponTableData(pm->ps->weapon)->idleAnim);
+		pm->ps->weaponTime += 500;
 
-		ammoAvailable = PM_WeaponAmmoAvailable(pm->ps->weapon);
-
-		if (ammoNeeded > ammoAvailable)
-		{
-			// you have ammo for this, just not in the clip
-			qboolean reloading = (qboolean)(ammoNeeded <= pm->ps->ammo[GetWeaponTableData(pm->ps->weapon)->ammoIndex]);
-
-			// if not in auto-reload mode, and reload was not explicitely requested, just play the 'out of ammo' sound
-			// scoped weapons not allowed to reload.  must switch back to primary first
-			if ((!pm->pmext->bAutoReload && GetWeaponTableData(pm->ps->weapon)->isAutoReload && !(pm->cmd.wbuttons & WBUTTON_RELOAD))
-			    || GetWeaponTableData(pm->ps->weapon)->isScoped)
-			{
-				reloading = qfalse;
-			}
-
-			// only play the switch sound if using a triggered weapon
-			if (!GetWeaponTableData(pm->ps->weapon)->isGrenade && pm->ps->weapon != WP_LANDMINE)
-			{
-				if (!reloading)
-				{
-					PM_AddEvent(EV_NOAMMO);
-				}
-			}
-
-			if (reloading)
-			{
-				PM_ContinueWeaponAnim(PM_ReloadAnimForWeapon(pm->ps->weapon));
-			}
-			else
-			{
-				PM_ContinueWeaponAnim(GetWeaponTableData(pm->ps->weapon)->idleAnim);
-				pm->ps->weaponTime += 500;
-			}
-
-			return;
-		}
+		return;
 	}
 
 	if (pm->ps->weaponDelay > 0)
@@ -3756,6 +3716,8 @@ static void PM_Weapon(void)
 		// checks for delayed weapons that have already been fired are return'ed above.
 		return;
 	}
+
+	// fire weapon
 
 	if (!(pm->ps->eFlags & EF_PRONE) && (pml.groundTrace.surfaceFlags & SURF_SLICK))
 	{
@@ -3781,11 +3743,9 @@ static void PM_Weapon(void)
 		// check for being mounted
 		if (!BG_PlayerMounted(pm->ps->eFlags))
 		{
-			PM_WeaponUseAmmo(pm->ps->weapon, ammoNeeded);
+			PM_WeaponUseAmmo(pm->ps->weapon, GetWeaponTableData(pm->ps->weapon)->uses);
 		}
 	}
-
-	// fire weapon
 
 	// add weapon heat
 	if (GetWeaponTableData(pm->ps->weapon)->maxHeat)
