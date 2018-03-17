@@ -4272,41 +4272,6 @@ void FireWeapon(gentity_t *ent)
 		}
 	}
 
-	// charge time handle
-	if (GetWeaponTableData(ent->s.weapon)->useChargeTime)
-	{
-		skillType_t skill = GetWeaponTableData(ent->s.weapon)->skillBased;
-		float       coeff = GetWeaponTableData(ent->s.weapon)->chargeTimeCoeff[ent->client->sess.skill[skill]];
-		int         chargeTime;
-
-		switch (skill)
-		{
-		case SK_EXPLOSIVES_AND_CONSTRUCTION:              chargeTime = level.engineerChargeTime[ent->client->sess.sessionTeam - 1];  break;
-		case SK_FIRST_AID:                                chargeTime = level.medicChargeTime[ent->client->sess.sessionTeam - 1];     break;
-		case SK_SIGNALS:                                  chargeTime = level.fieldopsChargeTime[ent->client->sess.sessionTeam - 1];  break;
-		case SK_HEAVY_WEAPONS:                            chargeTime = level.soldierChargeTime[ent->client->sess.sessionTeam - 1];   break;
-		case SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS: chargeTime = level.covertopsChargeTime[ent->client->sess.sessionTeam - 1]; break;
-		case SK_BATTLE_SENSE:
-		case SK_LIGHT_WEAPONS:
-		case SK_NUM_SKILLS:
-		default:                                          chargeTime = -1 /*ent->client->ps.classWeaponTime*/; break;
-		}
-
-		if (coeff != 1.f && chargeTime != -1)
-		{
-			if (level.time - ent->client->ps.classWeaponTime > chargeTime)
-			{
-				ent->client->ps.classWeaponTime = level.time - chargeTime;
-			}
-
-			ent->client->ps.classWeaponTime += coeff * chargeTime;
-		}
-		else
-		{
-			ent->client->ps.classWeaponTime = level.time;
-		}
-	}
-
 	// fire the specific weapon
 	if (weapFireTable[ent->s.weapon].fire)
 	{

@@ -238,7 +238,7 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
  * @param[in] ignoreent
  * @param[in] tracemask
  */
-void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
 {
 	vec3_t ofs, org, point;
 	vec3_t flatforward;
@@ -319,7 +319,7 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
  * @param[in] tracemask
  */
 void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles,
-                  void(tracefunc) (trace_t * results,
+                  void(tracefunc) (trace_t *results,
                                    const vec3_t start,
                                    const vec3_t mins,
                                    const vec3_t maxs,
@@ -3287,7 +3287,7 @@ static void PM_Weapon(void)
 	int      addTime           = GetWeaponTableData(pm->ps->weapon)->nextShotTime;
 	int      aimSpreadScaleAdd = GetWeaponTableData(pm->ps->weapon)->aimSpreadScaleAdd;
 	int      ammoNeeded;
-	qboolean delayedFire;       // true if the delay time has just expired and this is the frame to send the fire event
+	qboolean delayedFire = qfalse;       // true if the delay time has just expired and this is the frame to send the fire event
 	int      weapattackanim;
 	qboolean akimboFire;
 #ifdef DO_WEAPON_DBG
@@ -3389,8 +3389,6 @@ static void PM_Weapon(void)
 	// check for weapon recoil
 	// do the recoil before setting the values, that way it will be shown next frame and not this
 	PM_HandleRecoil();
-
-	delayedFire = qfalse;
 
 	if (PM_CheckGrenade())
 	{
@@ -3526,6 +3524,30 @@ static void PM_Weapon(void)
 		}
 	}
 
+	// a not mounted mortar can't fire
+	if (GetWeaponTableData(pm->ps->weapon)->isMortar)
+	{
+		return;
+	}
+
+	// check for fire
+	// if not on fire button and there's not a delayed shot this frame...
+	// consider also leaning, with delayed attack reset
+	if ((!(pm->cmd.buttons & BUTTON_ATTACK) && !(pm->cmd.wbuttons & WBUTTON_ATTACK2) && !delayedFire) ||
+	    (pm->ps->leanf != 0.f && !GetWeaponTableData(pm->ps->weapon)->isGrenade && pm->ps->weapon != WP_SMOKE_BOMB))
+	{
+		pm->ps->weaponTime  = 0;
+		pm->ps->weaponDelay = 0;
+
+		if (weaponstateFiring)     // you were just firing, time to relax
+		{
+			PM_ContinueWeaponAnim(GetWeaponTableData(pm->ps->weapon)->idleAnim);
+		}
+
+		pm->ps->weaponstate = WEAPON_READY;
+		return;
+	}
+
 	// don't allow some weapons to fire if charge bar isn't full
 	if (GetWeaponTableData(pm->ps->weapon)->useChargeTime)
 	{
@@ -3548,6 +3570,7 @@ static void PM_Weapon(void)
 
 		if (chargeTime != -1)
 		{
+            // check if there is enough charge to fire
 			if (pm->cmd.serverTime - pm->ps->classWeaponTime < chargeTime * coeff)
 			{
 				if ((pm->ps->weapon == WP_MEDKIT || pm->ps->weapon == WP_AMMO) && pm->cmd.buttons & BUTTON_ATTACK)
@@ -3557,36 +3580,25 @@ static void PM_Weapon(void)
 
 				return;
 			}
+
+            // ready to fire, handle the charge time
+            if (weaponstateFiring)
+			{
+				if (coeff != 1.f)
+				{
+					if (pm->cmd.serverTime - pm->ps->classWeaponTime > chargeTime)
+					{
+						pm->ps->classWeaponTime = pm->cmd.serverTime - chargeTime;
+					}
+
+					pm->ps->classWeaponTime += coeff * chargeTime;
+				}
+				else
+				{
+					pm->ps->classWeaponTime = pm->cmd.serverTime;
+				}
+			}
 		}
-	}
-
-	if (GetWeaponTableData(pm->ps->weapon)->isMortarSet && !delayedFire)
-	{
-		pm->ps->weaponstate = WEAPON_READY;
-	}
-
-	// check for fire
-	// if not on fire button and there's not a delayed shot this frame...
-	// consider also leaning, with delayed attack reset
-	if ((!(pm->cmd.buttons & BUTTON_ATTACK) && !(pm->cmd.wbuttons & WBUTTON_ATTACK2) && !delayedFire) ||
-	    (pm->ps->leanf != 0.f && !GetWeaponTableData(pm->ps->weapon)->isGrenade && pm->ps->weapon != WP_SMOKE_BOMB))
-	{
-		pm->ps->weaponTime  = 0;
-		pm->ps->weaponDelay = 0;
-
-		if (weaponstateFiring)     // you were just firing, time to relax
-		{
-			PM_ContinueWeaponAnim(GetWeaponTableData(pm->ps->weapon)->idleAnim);
-		}
-
-		pm->ps->weaponstate = WEAPON_READY;
-		return;
-	}
-
-	// a not mounted mortar can't fire
-	if (GetWeaponTableData(pm->ps->weapon)->isMortar)
-	{
-		return;
 	}
 
 	// player is zooming or using binocular - no fire
@@ -4141,7 +4153,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
  *
  * @note Tnused trace parameter
  */
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)             //   modified
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)              //   modified
 {
 	short  temp;
 	int    i;
