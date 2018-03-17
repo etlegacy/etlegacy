@@ -2018,7 +2018,7 @@ typedef struct
 	glfog_t glFog; //for tr_fog
 	int numDrawSurfs;
 	struct drawSurf_s *drawSurfs;
-	qboolean isGLFogged; //for tr_fog
+	qboolean isGLFogged; // for tr_fog - unused/not set
 	int numInteractions;
 	struct interaction_s *interactions;
 } viewParms_t;

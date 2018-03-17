@@ -2254,19 +2254,19 @@ static void Render_liquid(int stage)
 }
 
 /**
- * @brief Render_fog
+ * @brief Render_fog_brushes - used to render fog brushes (not the fog)
  */
-static void Render_fog()
+static void Render_fog_brushes()
 {
 	fog_t  *fog;
 	float  eyeT;
 	vec3_t local;
 	vec4_t fogDistanceVector, fogDepthVector;
 
-	Ren_LogComment("--- Render_fog ---\n");
+	Ren_LogComment("--- Render_fog_brushes ---\n");
 
 	// no fog pass in snooper
-	if ((tr.refdef.rdflags & RDF_SNOOPERVIEW) || tess.surfaceShader->noFog || !r_wolfFog->integer)
+	if ((tr.refdef.rdflags & RDF_SNOOPERVIEW) || tess.surfaceShader->noFog)
 	{
 		return;
 	}
@@ -2279,13 +2279,11 @@ static void Render_fog()
 
 	fog = tr.world->fogs + tess.fogNum;
 
-#if 1
-	// use this only to render fog brushes
+	// use this only to render fog brushes (global fog has a brush number of -1)
 	if (fog->originalBrushNumber < 0 && tess.surfaceShader->sort <= SS_OPAQUE)
 	{
 		return;
 	}
-#endif
 
 	Ren_LogComment("--- Render_fog( fogNum = %i, originalBrushNumber = %i ) ---\n", tess.fogNum, fog->originalBrushNumber);
 
@@ -3219,7 +3217,7 @@ void Tess_StageIteratorGeneric()
 
 	if (!r_noFog->integer && tess.fogNum >= 1 && tess.surfaceShader->fogPass)
 	{
-		Render_fog();
+		Render_fog_brushes();
 	}
 
 	// reset polygon offset

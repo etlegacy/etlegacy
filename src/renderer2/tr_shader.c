@@ -4855,11 +4855,10 @@ static void SortNewShader(void)
 {
 	int      i;
 	shader_t *newShader = tr.shaders[tr.numShaders - 1];
-	float    sort       = newShader->sort;
 
 	for (i = tr.numShaders - 2; i >= 0; i--)
 	{
-		if (tr.sortedShaders[i]->sort <= sort)
+		if (tr.sortedShaders[i]->sort <= newShader->sort)
 		{
 			break;
 		}
@@ -5008,7 +5007,7 @@ static shader_t *FinishShader(void)
 	}
 
 	// set polygon offset
-	if (shader.polygonOffset && shader.sort == 0.f)
+	if (shader.polygonOffset && shader.sort == SS_BAD)
 	{
 		shader.sort = SS_DECAL;
 	}
@@ -5203,7 +5202,7 @@ static shader_t *FinishShader(void)
 			}
 
 			// don't screw with sort order if this is a portal or environment
-			if (shader.sort == 0.f)
+			if (shader.sort == SS_BAD)
 			{
 				// see through item, like a grill or grate
 				if (pStage->stateBits & GLS_DEPTHMASK_TRUE)
@@ -5221,7 +5220,7 @@ static shader_t *FinishShader(void)
 
 	// there are times when you will need to manually apply a sort to
 	// opaque alpha tested shaders that have later blend passes
-	if (shader.sort == 0.f)
+	if (shader.sort == SS_BAD)
 	{
 		if (shader.translucent && !shader.forceOpaque)
 		{
