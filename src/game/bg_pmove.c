@@ -2639,14 +2639,6 @@ void PM_CheckForReload(weapon_t weapon)
 	clipWeap   = GetWeaponTableData(weapon)->clipIndex;
 	ammoWeap   = GetWeaponTableData(weapon)->ammoIndex;
 
-	if (GetWeaponTableData(weapon)->isScoped)
-	{
-		if (reloadRequested && pm->ps->ammo[ammoWeap] && pm->ps->ammoclip[clipWeap] < GetWeaponTableData(weapon)->maxClip)
-		{
-			PM_BeginWeaponChange(weapon, GetWeaponTableData(weapon)->weapAlts, !(pm->ps->ammo[ammoWeap]) ? qfalse : qtrue);
-		}
-	}
-
 	if (pm->ps->weaponTime <= 0)
 	{
 		qboolean doReload = qfalse;
@@ -2690,6 +2682,11 @@ void PM_CheckForReload(weapon_t weapon)
 
 		if (doReload)
 		{
+			if (GetWeaponTableData(weapon)->isScoped)
+			{
+				PM_BeginWeaponChange(weapon, GetWeaponTableData(weapon)->weapAlts, qtrue);
+			}
+
 			PM_BeginWeaponReload(weapon);
 		}
 	}
