@@ -2839,7 +2839,6 @@ static void R_CreateFogImage(void)
 	int   x, y;
 	byte  *data;
 	float d;
-	float borderColor[4];
 
 	data = (byte *)ri.Hunk_AllocateTempMemory(FOG_S * FOG_T * 4);
 
@@ -2860,13 +2859,6 @@ static void R_CreateFogImage(void)
 	//And Open GL3 does it for real, was WT_CLAMP
 	tr.fogImage = R_CreateImage("_fog", (byte *) data, FOG_S, FOG_T, IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP);
 	ri.Hunk_FreeTempMemory(data);
-
-	borderColor[0] = 1.0;
-	borderColor[1] = 1.0;
-	borderColor[2] = 1.0;
-	borderColor[3] = 1;
-
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 }
 
 #define DEFAULT_SIZE    128
