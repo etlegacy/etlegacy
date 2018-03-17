@@ -2849,9 +2849,11 @@ void weapon_callAirStrike(gentity_t *ent)
 			bomb = G_Spawn();
 			G_PreFilledMissileEntity(bomb, WP_ARTY, WP_SMOKE_MARKER, ent->s.number, ent->s.teamNum, -1, ent->parent);     // might wanna change this
 
-			bomb->nextthink    = (int)(level.time + i * 100 + crandom() * 50 + 1000 + (j * 2000));    // overwrite, 1000 for aircraft flyby, other term for tumble stagger
-			bomb->think        = G_AirStrikeExplode;
-			bomb->s.pos.trTime = 0; // overwrite due to previous impl : //bomb->s.pos.trTime = level.time;      // move a bit on the very first frame
+			bomb->nextthink           = (int)(level.time + i * 100 + crandom() * 50 + 1000 + (j * 2000)); // overwrite, 1000 for aircraft flyby, other term for tumble stagger
+			bomb->think               = G_AirStrikeExplode;
+			bomb->s.pos.trTime        = 0; // overwrite due to previous impl : //bomb->s.pos.trTime = level.time;      // move a bit on the very first frame
+			bomb->methodOfDeath       = GetWeaponTableData(WP_SMOKE_MARKER)->mod;        // overwrite
+			bomb->splashMethodOfDeath = GetWeaponTableData(WP_SMOKE_MARKER)->splashMod;  // overwrite
 
 			bomboffset[0] = crandom() * .5f * BOMBSPREAD;
 			bomboffset[1] = crandom() * .5f * BOMBSPREAD;
