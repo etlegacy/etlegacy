@@ -547,7 +547,6 @@ static void Render_vertexLighting_DBS_entity(int stage)
 	//ClampColor(ambientColor);
 	// u_AlphaTest
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
-	VectorScale(backEnd.currentEntity->ambientLight, 64.0f / 255.0f, backEnd.currentEntity->ambientLight);
 	SetUniformVec3(UNIFORM_AMBIENTCOLOR, backEnd.currentEntity->ambientLight);
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 	SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir); // = L vector which means surface to light

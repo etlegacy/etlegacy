@@ -234,9 +234,8 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 	totalFactor = 0;
 	for (i = 0; i < 8; i++)
 	{
-		float factor;
+		float factor = 1.0;
 
-		factor     = 1.0;
 		gridPoint2 = gridPoint;
 		for (j = 0; j < 3; j++)
 		{
@@ -277,13 +276,6 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 	}
 
 	VectorNormalize2(direction, ent->lightDir);
-
-	if (VectorLength(ent->ambientLight) < r_forceAmbient->value)
-	{
-		ent->ambientLight[0] = r_forceAmbient->value;
-		ent->ambientLight[1] = r_forceAmbient->value;
-		ent->ambientLight[2] = r_forceAmbient->value;
-	}
 
 	// cheats?  check for single player?
 	if (tr.lightGridMulDirected != 0.f)
@@ -449,6 +441,7 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 	}
 #endif
 
+	// FIXME: inspect trRefEntity entityNum is always 0
 	if (ent->e.entityNum < MAX_CLIENTS && (refdef->rdflags & RDF_SNOOPERVIEW))
 	{
 		VectorSet(ent->ambientLight, 0.96f, 0.96f, 0.96f);  // allow a little room for flicker from directed light
@@ -464,6 +457,19 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 	//ent->lightDir[0] = DotProduct(lightDir, ent->e.axis[0]);
 	//ent->lightDir[1] = DotProduct(lightDir, ent->e.axis[1]);
 	//ent->lightDir[2] = DotProduct(lightDir, ent->e.axis[2]);
+
+	// force an ambient light value or scale by given map/r_ambientscale
+	// note: this will also affect ambient light for hilightIntensity and RF_MINLIGHT
+	if (VectorLength(ent->ambientLight) < r_forceAmbient->value)
+	{
+		ent->ambientLight[0] = r_forceAmbient->value;
+		ent->ambientLight[1] = r_forceAmbient->value;
+		ent->ambientLight[2] = r_forceAmbient->value;
+	}
+	else
+	{
+		VectorScale(ent->ambientLight, 64.0f / 255.0f /*r_ambientScale->value*/, ent->ambientLight);
+	}
 }
 
 /**
@@ -487,7 +493,7 @@ int R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec
 
 	Com_Memset(&ent, 0, sizeof(ent));
 	VectorCopy(point, ent.e.origin);
-	R_SetupEntityLightingGrid(&ent, NULL);
+	R_SetupEntityLightingGrid(&ent, NULL); // does no longer set r_forceambient! see R_SetupEntityLighting
 	VectorCopy(ent.ambientLight, ambientLight);
 	VectorCopy(ent.directedLight, directedLight);
 	VectorCopy(ent.lightDir, lightDir);
