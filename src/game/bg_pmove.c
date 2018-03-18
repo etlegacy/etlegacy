@@ -2252,9 +2252,20 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 	}
 
 	// fixing reloading with a full clip
-	if (pm->ps->ammoclip[GetWeaponTableData(weapon)->ammoIndex] >= GetWeaponTableData(weapon)->maxClip)
+	if (pm->ps->ammoclip[GetWeaponTableData(weapon)->clipIndex] >= GetWeaponTableData(weapon)->maxClip)
 	{
-		return;
+		// akimbo should also check other weapon status
+		if (GetWeaponTableData(weapon)->isAkimbo)
+		{
+			if (pm->ps->ammoclip[GetWeaponTableData(GetWeaponTableData(weapon)->akimboSideArm)->clipIndex] >= GetWeaponTableData(GetWeaponTableData(GetWeaponTableData(weapon)->akimboSideArm)->clipIndex)->maxClip)
+			{
+				return;
+			}
+		}
+		else
+		{
+			return;
+		}
 	}
 
 	// no reload when leaning (this includes manual and auto reloads)
@@ -2598,10 +2609,6 @@ static void PM_FinishWeaponReload(void)
  */
 void PM_CheckForReload(weapon_t weapon)
 {
-	qboolean autoreload;
-	qboolean reloadRequested;
-	int      clipWeap, ammoWeap;
-
 	if (pm->noWeapClips)     // no need to reload
 	{
 		return;
@@ -2632,22 +2639,16 @@ void PM_CheckForReload(weapon_t weapon)
 		break;
 	}
 
-	// user is forcing a reload (manual reload)
-	reloadRequested = (qboolean)(pm->cmd.wbuttons & WBUTTON_RELOAD);
-
-	autoreload = pm->pmext->bAutoReload || !GetWeaponTableData(weapon)->isAutoReload;
-	clipWeap   = GetWeaponTableData(weapon)->clipIndex;
-	ammoWeap   = GetWeaponTableData(weapon)->ammoIndex;
-
 	if (pm->ps->weaponTime <= 0)
 	{
 		qboolean doReload = qfalse;
 
-		if (reloadRequested)
+		// user is forcing a reload (manual reload)
+		if (pm->cmd.wbuttons & WBUTTON_RELOAD)
 		{
-			if (pm->ps->ammo[ammoWeap])
+			if (pm->ps->ammo[GetWeaponTableData(weapon)->ammoIndex])
 			{
-				if (pm->ps->ammoclip[clipWeap] < GetWeaponTableData(weapon)->maxClip)
+				if (pm->ps->ammoclip[GetWeaponTableData(weapon)->clipIndex] < GetWeaponTableData(weapon)->maxClip)
 				{
 					doReload = qtrue;
 				}
@@ -2662,9 +2663,9 @@ void PM_CheckForReload(weapon_t weapon)
 				}
 			}
 		}
-		else if (autoreload)
+		else if (pm->pmext->bAutoReload || !GetWeaponTableData(weapon)->isAutoReload)   // auto reload
 		{
-			if (!pm->ps->ammoclip[clipWeap] && pm->ps->ammo[ammoWeap])
+			if (!pm->ps->ammoclip[GetWeaponTableData(weapon)->clipIndex] && pm->ps->ammo[GetWeaponTableData(weapon)->ammoIndex])
 			{
 				if (GetWeaponTableData(weapon)->isAkimbo)
 				{
