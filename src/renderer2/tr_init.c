@@ -1238,7 +1238,7 @@ void R_Register(void)
 	r_railCoreWidth     = ri.Cvar_Get("r_railCoreWidth", "16", CVAR_ARCHIVE);
 	r_railSegmentLength = ri.Cvar_Get("r_railSegmentLength", "32", CVAR_ARCHIVE);
 
-	r_ambientScale = ri.Cvar_Get("r_ambientScale", "0.6", CVAR_CHEAT);
+	r_ambientScale = ri.Cvar_Get("r_ambientScale", "0.5", CVAR_CHEAT);
 	r_lightScale   = ri.Cvar_Get("r_lightScale", "2", CVAR_CHEAT);
 
 	r_vboFaces            = ri.Cvar_Get("r_vboFaces", "1", CVAR_CHEAT);

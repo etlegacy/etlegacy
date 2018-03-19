@@ -458,8 +458,9 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 	//ent->lightDir[1] = DotProduct(lightDir, ent->e.axis[1]);
 	//ent->lightDir[2] = DotProduct(lightDir, ent->e.axis[2]);
 
-	// force an ambient light value or scale by given map/r_ambientscale
-	// note: this will also affect ambient light for hilightIntensity and RF_MINLIGHT
+
+	// force an ambient light value or scale by given r_ambientscale
+	// note: this will also affect ambient light for hilightIntensity and RF_MINLIGHT ...
 	if (VectorLength(ent->ambientLight) < r_forceAmbient->value)
 	{
 		ent->ambientLight[0] = r_forceAmbient->value;
@@ -468,39 +469,21 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 	}
 	else
 	{
-		VectorScale(ent->ambientLight, 64.0f / 255.0f /*r_ambientScale->value*/, ent->ambientLight);
+		model_t *pModel;
+
+		pModel = R_GetModelByHandle(ent->e.hModel);
+
+		// This has to be done so brushes use ET material ambient lighting and r_ambientScale has r1 behavior
+		if (!pModel->bsp)
+		{
+			VectorScale(ent->ambientLight, r_ambientScale->value, ent->ambientLight);
+		}
+		else
+		{
+			VectorScale(ent->ambientLight, 64.0f / 255.0f, ent->ambientLight);
+		}
 	}
 }
-
-/**
- * @brief R_LightForPoint
- * @param[in] point
- * @param[out] ambientLight
- * @param[out] directedLight
- * @param[out] lightDir
- * @return
- *
- * @note Unused
-int R_LightForPoint(vec3_t point, vec3_t ambientLight, vec3_t directedLight, vec3_t lightDir)
-{
-	trRefEntity_t ent;
-
-	// this segfaults with -nolight maps
-	if (tr.world->lightGridData == NULL)
-	{
-		return qfalse;
-	}
-
-	Com_Memset(&ent, 0, sizeof(ent));
-	VectorCopy(point, ent.e.origin);
-	R_SetupEntityLightingGrid(&ent, NULL); // does no longer set r_forceambient! see R_SetupEntityLighting
-	VectorCopy(ent.ambientLight, ambientLight);
-	VectorCopy(ent.directedLight, directedLight);
-	VectorCopy(ent.lightDir, lightDir);
-
-	return qtrue;
-}
-*/
 
 /**
  * @brief R_SetupLightOrigin

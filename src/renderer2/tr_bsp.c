@@ -5170,17 +5170,12 @@ void R_LoadEntities(lump_t *l)
 			{
 				sscanf(value, "%f %f %f", &tr.worldEntity.ambientLight[0], &tr.worldEntity.ambientLight[1],
 				       &tr.worldEntity.ambientLight[2]);
-
-				VectorCopy(tr.worldEntity.ambientLight, tr.worldEntity.ambientLight);
-				VectorScale(tr.worldEntity.ambientLight, r_ambientScale->value, tr.worldEntity.ambientLight);
 			}
 		}
 		// check for ambient scale constant
 		else if (!Q_stricmp(keyname, "ambientColor") || !Q_stricmp(keyname, "ambient") || !Q_stricmp(keyname, "_ambient"))
 		{
-			// FIXME:
-			// set cvar r_ambientScale?
-
+			// FIXME: bypass r_ambientScale in R_SetupEntityLighting so map maker can set ambient scale for entities?
 			// ? = atof(value);
 		}
 		// check for fog color
