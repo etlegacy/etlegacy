@@ -3867,6 +3867,9 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, 
 /**
  * @var rankTable
  * @brief New rank table
+ * [0]  = names      - rank name
+ * [1]  = miniNames  - mini rank name
+ * [2]  = soundNames - sound to play on rank promotion
  */
 ranktable_t rankTable[2][NUM_EXPERIENCE_LEVELS] =
 {
