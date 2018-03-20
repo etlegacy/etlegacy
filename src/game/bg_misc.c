@@ -3863,26 +3863,6 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, 
 	}
 }
 
-/**
- * @brief BG_WeaponForMOD
- * @param[in] MOD
- * @return
- */
-weapon_t BG_WeaponForMOD(int MOD)
-{
-	weapon_t i;
-
-	for (i = WP_KNIFE; i < WP_NUM_WEAPONS; i++)
-	{
-		if (GetWeaponTableData(i)->mod == MOD)
-		{
-			return i;
-		}
-	}
-
-	return WP_NONE;
-}
-
 const char *rankSoundNames_Allies[NUM_EXPERIENCE_LEVELS] =
 {
 	"",
