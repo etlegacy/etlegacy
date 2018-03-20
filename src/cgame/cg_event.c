@@ -499,6 +499,40 @@ void CG_Explodef(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound,
 void CG_RubbleFx(vec3_t origin, vec3_t dir, int mass, int type, qhandle_t sound, int forceLowGrav, qhandle_t shader, float speedscale, float sizescale);
 
 /**
+ * @brief CG_GetSfxSound
+ * @param[in] cent
+ * @return
+ */
+static sfxHandle_t CG_GetSoundFx(centity_t *cent)
+{
+	if (!cent->currentState.dl_intensity)
+	{
+		sfxHandle_t sound;
+		int         index = cent->currentState.frame;
+
+		if (index < FXTYPE_WOOD || index >= FXTYPE_MAX)
+		{
+			index = FXTYPE_WOOD;
+		}
+
+		sound = random() * fxSounds[index].max;
+
+		if (fxSounds[index].sound[sound] == -1)
+		{
+			fxSounds[index].sound[sound] = trap_S_RegisterSound(fxSounds[index].soundfile[sound], qfalse);
+		}
+
+		return fxSounds[index].sound[sound];
+	}
+	else if (cent->currentState.dl_intensity == -1)
+	{
+		return 0;
+	}
+
+	return CG_GetGameSound(cent->currentState.dl_intensity);
+}
+
+/**
  * @brief The old cent-based explode calls will still work with this pass-through
  *      if (cent->currentState.angles2[0] || cent->currentState.angles2[1] || cent->currentState.angles2[2])
  * @param[in] cent
@@ -524,59 +558,14 @@ void CG_Explode(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 		}
 	}
 
-	if (!cent->currentState.dl_intensity)
-	{
-		sfxHandle_t sound;
-		int         index = cent->currentState.frame;
-
-		if (index < FXTYPE_WOOD || index >= FXTYPE_MAX)
-		{
-			index = FXTYPE_WOOD;
-		}
-
-		sound = random() * fxSounds[index].max;
-
-		if (fxSounds[index].sound[sound] == -1)
-		{
-			fxSounds[index].sound[sound] = trap_S_RegisterSound(fxSounds[index].soundfile[sound], qfalse);
-		}
-
-		sound = fxSounds[index].sound[sound];
-
-		CG_Explodef(origin,
-		            dir,
-		            cent->currentState.density,             // mass
-		            cent->currentState.frame,               // type
-		            sound,                                  // sound
-		            cent->currentState.weapon,              // forceLowGrav
-		            shader
-		            );
-	}
-	else
-	{
-		if (cent->currentState.dl_intensity == -1)
-		{
-			CG_Explodef(origin,
-			            dir,
-			            cent->currentState.density,             // mass
-			            cent->currentState.frame,               // type
-			            0,                                      // sound
-			            cent->currentState.weapon,              // forceLowGrav
-			            shader
-			            );
-		}
-		else
-		{
-			CG_Explodef(origin,
-			            dir,
-			            cent->currentState.density,             // mass
-			            cent->currentState.frame,               // type
-			            CG_GetGameSound(cent->currentState.dl_intensity),     // sound
-			            cent->currentState.weapon,              // forceLowGrav
-			            shader
-			            );
-		}
-	}
+	CG_Explodef(origin,
+	            dir,
+	            cent->currentState.density,             // mass
+	            cent->currentState.frame,               // type
+	            CG_GetSoundFx(cent),                    // sound
+	            cent->currentState.weapon,              // forceLowGrav
+	            shader
+	            );
 }
 
 /**
@@ -604,65 +593,16 @@ void CG_Rubble(centity_t *cent, vec3_t origin, vec3_t dir, qhandle_t shader)
 		}
 	}
 
-	if (!cent->currentState.dl_intensity)
-	{
-		sfxHandle_t sound;
-		int         index = cent->currentState.frame;
-
-		if (index < FXTYPE_WOOD || index >= FXTYPE_MAX)
-		{
-			index = FXTYPE_WOOD;
-		}
-
-		sound = random() * fxSounds[index].max;
-
-		if (fxSounds[index].sound[sound] == -1)
-		{
-			fxSounds[index].sound[sound] = trap_S_RegisterSound(fxSounds[index].soundfile[sound], qfalse);
-		}
-
-		sound = fxSounds[index].sound[sound];
-
-		CG_RubbleFx(origin,
-		            dir,
-		            cent->currentState.density,             // mass
-		            cent->currentState.frame,               // type
-		            sound,                                  // sound
-		            cent->currentState.weapon,              // forceLowGrav
-		            shader,
-		            cent->currentState.angles2[0],
-		            cent->currentState.angles2[1]
-		            );
-	}
-	else
-	{
-		if (cent->currentState.dl_intensity == -1)
-		{
-			CG_RubbleFx(origin,
-			            dir,
-			            cent->currentState.density,             // mass
-			            cent->currentState.frame,               // type
-			            0,                                      // sound
-			            cent->currentState.weapon,              // forceLowGrav
-			            shader,
-			            cent->currentState.angles2[0],
-			            cent->currentState.angles2[1]
-			            );
-		}
-		else
-		{
-			CG_RubbleFx(origin,
-			            dir,
-			            cent->currentState.density,             // mass
-			            cent->currentState.frame,               // type
-			            CG_GetGameSound(cent->currentState.dl_intensity), // sound
-			            cent->currentState.weapon,              // forceLowGrav
-			            shader,
-			            cent->currentState.angles2[0],
-			            cent->currentState.angles2[1]
-			            );
-		}
-	}
+	CG_RubbleFx(origin,
+	            dir,
+	            cent->currentState.density,             // mass
+	            cent->currentState.frame,               // type
+	            CG_GetSoundFx(cent),                    // sound
+	            cent->currentState.weapon,              // forceLowGrav
+	            shader,
+	            cent->currentState.angles2[0],
+	            cent->currentState.angles2[1]
+	            );
 }
 
 /**
