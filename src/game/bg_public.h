@@ -2481,12 +2481,18 @@ typedef enum
 	ME_COMMANDMAP_MARKER,
 } mapEntityType_t;
 
-extern const char *rankNames_Axis[NUM_EXPERIENCE_LEVELS];
-extern const char *rankNames_Allies[NUM_EXPERIENCE_LEVELS];
-extern const char *miniRankNames_Axis[NUM_EXPERIENCE_LEVELS];
-extern const char *miniRankNames_Allies[NUM_EXPERIENCE_LEVELS];
-extern const char *rankSoundNames_Axis[NUM_EXPERIENCE_LEVELS];
-extern const char *rankSoundNames_Allies[NUM_EXPERIENCE_LEVELS];
+/**
+ * @struct ranktable_s
+ * @typedef ranktable_t
+ * @brief
+ */
+typedef struct ranktable_s
+{
+    const char *names;
+    const char *miniNames;
+    const char *soundNames;
+
+} ranktable_t;
 
 #define MAX_SPLINE_PATHS        512
 #define MAX_SPLINE_CONTROLS     4
@@ -2766,6 +2772,10 @@ extern modTable_t modTable[MOD_NUM_MODS];
 // Lookup table to find skill properties
 extern skilltable_t skillTable[SK_NUM_SKILLS];
 #define GetSkillTableData(skillIndex) ((skilltable_t *)(&skillTable[skillIndex]))
+
+// Lookup table to find rank table entry
+extern ranktable_t rankTable[2][NUM_EXPERIENCE_LEVELS];
+#define GetRankTableData(team, rankIndex) ((ranktable_t *)(&rankTable[team - 1][rankIndex]))
 
 #define MAX_MAP_SIZE 65536
 

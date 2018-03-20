@@ -1560,7 +1560,7 @@ void CG_Debriefing_Shutdown(void)
 /**
  * @brief CG_Debriefing_InfoRequests
  *
- * @note debriefing server commands are parsed in CG_ServerCommand() - CG_Debriefing_ServerCommand() has been removed 
+ * @note debriefing server commands are parsed in CG_ServerCommand() - CG_Debriefing_ServerCommand() has been removed
  */
 void CG_Debriefing_InfoRequests(void)
 {
@@ -1996,7 +1996,7 @@ const char *CG_Debriefing_FullRankNameForClientInfo(clientInfo_t *ci)
 		return "Spectator";
 	}
 
-	return ci->team == TEAM_AXIS ? rankNames_Axis[ci->rank] : rankNames_Allies[ci->rank];
+	return GetRankTableData(ci->team, ci->rank)->names;
 }
 
 /**
@@ -2011,7 +2011,7 @@ const char *CG_Debriefing_RankNameForClientInfo(clientInfo_t *ci)
 		return "Spc";
 	}
 
-	return ci->team == TEAM_AXIS ? miniRankNames_Axis[ci->rank] : miniRankNames_Allies[ci->rank];
+	return GetRankTableData(ci->team, ci->rank)->miniNames;
 }
 
 /**

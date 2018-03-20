@@ -407,7 +407,7 @@ qboolean ReviveEntity(gentity_t *ent, gentity_t *traceEnt)
 	trap_LinkEntity(ent);
 
 	// Let the person being revived know about it
-	trap_SendServerCommand(traceEnt - g_entities, va("cp \"You have been revived by [lof]%s[lon] [lof]%s^7!\"", ent->client->sess.sessionTeam == TEAM_ALLIES ? rankNames_Allies[ent->client->sess.rank] : rankNames_Axis[ent->client->sess.rank], ent->client->pers.netname));
+	trap_SendServerCommand(traceEnt - g_entities, va("cp \"You have been revived by [lof]%s[lon] [lof]%s^7!\"", GetRankTableData(ent->client->sess.sessionTeam, ent->client->sess.rank)->names, ent->client->pers.netname));
 
 	traceEnt->props_frame_state = ent->s.number;
 

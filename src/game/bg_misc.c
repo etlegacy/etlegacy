@@ -3863,95 +3863,45 @@ void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, 
 	}
 }
 
-const char *rankSoundNames_Allies[NUM_EXPERIENCE_LEVELS] =
+// *INDENT-OFF*
+/**
+ * @var rankTable
+ * @brief New rank table
+ */
+ranktable_t rankTable[2][NUM_EXPERIENCE_LEVELS] =
 {
-	"",
-	"allies_hq_promo_private",
-	"allies_hq_promo_corporal",
-	"allies_hq_promo_sergeant",
-	"allies_hq_promo_lieutenant",
-	"allies_hq_promo_captain",
-	"allies_hq_promo_major",
-	"allies_hq_promo_colonel",
-	"allies_hq_promo_general_brigadier",
-	"allies_hq_promo_general_lieutenant",
-	"allies_hq_promo_general",
+	// Axis
+	{
+		// names            miniNames soundNames
+		{"Schutze",         "Stz",    "",                                 },
+		{"Oberschutze",     "Otz",    "axis_hq_promo_private",            },
+		{"Gefreiter",       "Gfr",    "axis_hq_promo_corporal",           },
+		{"Feldwebel",       "Fwb",    "axis_hq_promo_sergeant",           },
+		{"Leutnant",        "Ltn",    "axis_hq_promo_lieutenant",         },
+		{"Hauptmann",       "Hpt",    "axis_hq_promo_captain",            },
+		{"Major",           "Mjr",    "axis_hq_promo_major",              },
+		{"Oberst",          "Obs",    "axis_hq_promo_colonel",            },
+		{"Generalmajor",    "GMj",    "axis_hq_promo_general_major",      },
+		{"Generalleutnant", "GLt",    "axis_hq_promo_general_lieutenant", },
+		{"General",         "Gen",    "axis_hq_promo_general",            },
+	},
+	// Allies
+	{
+		// names               miniNames soundNames
+		{"Private",            "Pvt",    "",                                   },
+		{"Private 1st Class",  "PFC",    "allies_hq_promo_private",            },
+		{"Corporal",           "Cpl",    "allies_hq_promo_corporal",           },
+		{"Sergeant",           "Sgt",    "allies_hq_promo_sergeant",           },
+		{"Lieutenant",         "Lt",     "allies_hq_promo_lieutenant",         },
+		{"Captain",            "Cpt",    "allies_hq_promo_captain",            },
+		{"Major",              "Maj",    "allies_hq_promo_major",              },
+		{"Colonel",            "Cnl",    "allies_hq_promo_colonel",            },
+		{"Brigadier General",  "BGn",    "allies_hq_promo_general_brigadier",  },
+		{"Lieutenant General", "LtG",    "allies_hq_promo_general_lieutenant", },
+		{"General",            "Gen",    "allies_hq_promo_general",            },
+	}
 };
-
-const char *rankSoundNames_Axis[NUM_EXPERIENCE_LEVELS] =
-{
-	"",
-	"axis_hq_promo_private",
-	"axis_hq_promo_corporal",
-	"axis_hq_promo_sergeant",
-	"axis_hq_promo_lieutenant",
-	"axis_hq_promo_captain",
-	"axis_hq_promo_major",
-	"axis_hq_promo_colonel",
-	"axis_hq_promo_general_major",
-	"axis_hq_promo_general_lieutenant",
-	"axis_hq_promo_general",
-};
-
-const char *rankNames_Axis[NUM_EXPERIENCE_LEVELS] =
-{
-	"Schutze",
-	"Oberschutze",
-	"Gefreiter",
-	"Feldwebel",
-	"Leutnant",
-	"Hauptmann",
-	"Major",
-	"Oberst",
-	"Generalmajor",
-	"Generalleutnant",
-	"General",
-};
-
-const char *rankNames_Allies[NUM_EXPERIENCE_LEVELS] =
-{
-	"Private",
-	"Private 1st Class",
-	"Corporal",
-	"Sergeant",
-	"Lieutenant",
-	"Captain",
-	"Major",
-	"Colonel",
-	"Brigadier General",
-	"Lieutenant General",
-	"General",
-};
-
-const char *miniRankNames_Axis[NUM_EXPERIENCE_LEVELS] =
-{
-	"Stz",
-	"Otz",
-	"Gfr",
-	"Fwb",
-	"Ltn",
-	"Hpt",
-	"Mjr",
-	"Obs",
-	"GMj",
-	"GLt",
-	"Gen",
-};
-
-const char *miniRankNames_Allies[NUM_EXPERIENCE_LEVELS] =
-{
-	"Pvt",
-	"PFC",
-	"Cpl",
-	"Sgt",
-	"Lt",
-	"Cpt",
-	"Maj",
-	"Cnl",
-	"BGn",
-	"LtG",
-	"Gen",
-};
+// *INDENT-ON*
 
 /**
  * @brief BG_Find_PathCorner

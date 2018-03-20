@@ -327,17 +327,17 @@ static void CG_ParseWarmup(void)
  * @note Unused
 oidInfo_t *CG_OIDInfoForEntityNum(int num)
 {
-	int i;
+    int i;
 
-	for (i = 0; i < MAX_OID_TRIGGERS; i++)
-	{
-		if (cgs.oidInfo[i].entityNum == num)
-		{
-			return &cgs.oidInfo[i];
-		}
-	}
+    for (i = 0; i < MAX_OID_TRIGGERS; i++)
+    {
+        if (cgs.oidInfo[i].entityNum == num)
+        {
+            return &cgs.oidInfo[i];
+        }
+    }
 
-	return NULL;
+    return NULL;
 }
 */
 
@@ -1732,7 +1732,7 @@ const char *CG_LocalizeServerCommand(const char *buf)
 	static char token[MAX_TOKEN_CHARS];
 	char        temp[MAX_TOKEN_CHARS];
 	qboolean    togloc = qtrue;
-	const char  *s = buf;
+	const char  *s     = buf;
 	int         i, prev = 0;
 
 	Com_Memset(token, 0, sizeof(token));
@@ -1989,7 +1989,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 			float ptRatio;
 			float htRatio;
 			float hsRatio;
-			
+
 			dmg_given      = atoi(CG_Argv(iArg++));
 			dmg_rcvd       = atoi(CG_Argv(iArg++));
 			team_dmg_given = atoi(CG_Argv(iArg++));
@@ -2030,11 +2030,11 @@ void CG_parseWeaponStatsGS_cmd(void)
 	if (cgs.skillRating)
 	{
 		ci->rating = (float)atof(CG_Argv(iArg++));
-		Q_strncpyz(gs->strRank, va("%-20s %-16d %4.2f", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp, (double)ci->rating), sizeof(gs->strRank));
+		Q_strncpyz(gs->strRank, va("%-20s %-16d %4.2f", GetRankTableData(ci->team, ci->rank)->names, xp, (double)ci->rating), sizeof(gs->strRank));
 	}
 	else
 	{
-		Q_strncpyz(gs->strRank, va("%-20s %-12d", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp), sizeof(gs->strRank));
+		Q_strncpyz(gs->strRank, va("%-20s %-12d", GetRankTableData(ci->team, ci->rank)->names, xp), sizeof(gs->strRank));
 	}
 #else
 	Q_strncpyz(gs->strRank, va("%-20s %d", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp), sizeof(gs->strRank));
@@ -2242,7 +2242,7 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 		}
 	}
 
-	txt_dump(va("^2Rank: ^7%s (%d XP)\n", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp));
+	txt_dump(va("^2Rank: ^7%s (%d XP)\n", GetRankTableData(ci->team, ci->rank)->names, xp));
 
 #ifdef FEATURE_RATING
 	if (cgs.skillRating)
@@ -2372,13 +2372,13 @@ static void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const cha
 			{
 				CG_cleanName(cgs.clientinfo[cnum].name, name, 30, qfalse);
 				txt_dump(va("^3%s ^7%5.1f ^5%4d/%-4d ^2%5d ^1%6d ^7%s\n",
-							aWeaponInfo[iWeap - 1].pszCode, (double)acc, hits, atts, kills, deaths, name));
+				            aWeaponInfo[iWeap - 1].pszCode, (double)acc, hits, atts, kills, deaths, name));
 			}
 			else
 			{
 				CG_cleanName(cgs.clientinfo[cnum].name, name, 12, qfalse);
 				txt_dump(va("^3%s ^7%5.1f ^5%4d/%-4d ^2%3d ^1%3d ^7%s\n",
-							aWeaponInfo[iWeap - 1].pszCode, (double)acc, hits, atts, kills, deaths, name));
+				            aWeaponInfo[iWeap - 1].pszCode, (double)acc, hits, atts, kills, deaths, name));
 			}
 
 			iWeap = atoi(CG_Argv(iArg++));
@@ -2431,7 +2431,7 @@ static void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (const char
 			kills  = atoi(CG_Argv(iArg++));
 			deaths = atoi(CG_Argv(iArg++));
 			acc    = (atts > 0) ? (float)(hits * 100) / (float)atts : 0.0f;
-			color = (((doTop) ? (double)acc : ((double)wBestAcc) + 0.999) >= ((doTop) ? wBestAcc : (double)acc)) ? "^3" : "^7";
+			color  = (((doTop) ? (double)acc : ((double)wBestAcc) + 0.999) >= ((doTop) ? wBestAcc : (double)acc)) ? "^3" : "^7";
 
 			// cap stats at 100%
 			acc = (acc > 100.0f) ? 100.0f : acc;
@@ -2545,46 +2545,46 @@ void CG_dumpStats(void)
 	}
 }
 
-#define ENTNFO_HASH			78985
-#define CS_HASH				25581
-#define TINFO_HASH			65811
-#define SC0_HASH			31373
-#define SC1_HASH			31494
-#define WEAPONSTATS_HASH	149968
-#define SC_HASH				25565
-#define CPM_HASH			38410
-#define CP_HASH				25221
-#define PRINT_HASH			67401
-#define CHAT_HASH			50150
-#define VCHAT_HASH			64608
-#define TCHAT_HASH			64370
-#define VTCHAT_HASH			78944
-#define VBCHAT_HASH			76784
-#define GAMECHAT_HASH		101222
-#define VSCHAT_HASH			78824
-#define WS_HASH				27961
-#define WWS_HASH			42356
-#define GSTATS_HASH			80455
-#define ASTATS_HASH			79741
-#define ASTATSB_HASH		91991
-#define BSTATS_HASH			79860
-#define BSTATSB_HASH		92110
-#define WBSTATS_HASH		94678
-#define RWS_HASH			41761
-#define MAP_RESTART_HASH	147165
-#define PORTALCAMPOS_HASH	161962
-#define REMAPSHADER_HASH	144301
-#define ADDTOBUILD_HASH		129971
-#define SPAWNSERVER_HASH	150779
-#define APPLICATION_HASH	145376
-#define INVITATION_HASH		134986
-#define PROPOSITION_HASH	151490
-#define AFT_HASH			37819
-#define AFTC_HASH			49897
-#define AFTJ_HASH			50751
-#define COMPLAINT_HASH		118983
-#define REQFORCESPAWN_HASH	176027
-#define SDBG_HASH			50109
+#define ENTNFO_HASH         78985
+#define CS_HASH             25581
+#define TINFO_HASH          65811
+#define SC0_HASH            31373
+#define SC1_HASH            31494
+#define WEAPONSTATS_HASH    149968
+#define SC_HASH             25565
+#define CPM_HASH            38410
+#define CP_HASH             25221
+#define PRINT_HASH          67401
+#define CHAT_HASH           50150
+#define VCHAT_HASH          64608
+#define TCHAT_HASH          64370
+#define VTCHAT_HASH         78944
+#define VBCHAT_HASH         76784
+#define GAMECHAT_HASH       101222
+#define VSCHAT_HASH         78824
+#define WS_HASH             27961
+#define WWS_HASH            42356
+#define GSTATS_HASH         80455
+#define ASTATS_HASH         79741
+#define ASTATSB_HASH        91991
+#define BSTATS_HASH         79860
+#define BSTATSB_HASH        92110
+#define WBSTATS_HASH        94678
+#define RWS_HASH            41761
+#define MAP_RESTART_HASH    147165
+#define PORTALCAMPOS_HASH   161962
+#define REMAPSHADER_HASH    144301
+#define ADDTOBUILD_HASH     129971
+#define SPAWNSERVER_HASH    150779
+#define APPLICATION_HASH    145376
+#define INVITATION_HASH     134986
+#define PROPOSITION_HASH    151490
+#define AFT_HASH            37819
+#define AFTC_HASH           49897
+#define AFTJ_HASH           50751
+#define COMPLAINT_HASH      118983
+#define REQFORCESPAWN_HASH  176027
+#define SDBG_HASH           50109
 #define IMMAPLIST_HASH      120113
 #define IMVOTETALLY_HASH    150058
 #define SETSPAWNPT_HASH     137482
@@ -2594,12 +2594,12 @@ void CG_dumpStats(void)
 #define IMPT_HASH           53279
 #define IMSR_HASH           53398
 #define SR_HASH             27365
-#define MU_START_HASH		107698
-#define MU_PLAY_HASH		92607
-#define MU_STOP_HASH		94568
-#define MU_FADE_HASH		87906
-#define SND_FADE_HASH		100375
-#define ROCKANDROLL_HASH	146207
+#define MU_START_HASH       107698
+#define MU_PLAY_HASH        92607
+#define MU_STOP_HASH        94568
+#define MU_FADE_HASH        87906
+#define SND_FADE_HASH       100375
+#define ROCKANDROLL_HASH    146207
 // -----------
 
 /**
@@ -2744,36 +2744,36 @@ static void CG_ServerCommand(void)
 		return;
 	case CHAT_HASH:                       // "chat"
 	{
-			char       text[MAX_SAY_TEXT];
-			const char *s;
-			int        clientNum = -1; // console
+		char       text[MAX_SAY_TEXT];
+		const char *s;
+		int        clientNum = -1;     // console
 
-			if (cg_teamChatsOnly.integer) // FIXME: skip for console?
-			{
-				return;
-			}
-
-			if (trap_Argc() >= 3)
-			{
-				clientNum = atoi(CG_Argv(2));
-			}
-
-			if (atoi(CG_Argv(3)))
-			{
-				s = CG_LocalizeServerCommand(CG_Argv(1));
-			}
-			else
-			{
-				s = CG_Argv(1);
-			}
-
-			Q_strncpyz(text, s, MAX_SAY_TEXT);
-			CG_RemoveChatEscapeChar(text);
-			CG_AddToTeamChat(text, clientNum);
-			CG_Printf("%s\n", text);
-			CG_WriteToLog("%s\n", text);
+		if (cg_teamChatsOnly.integer)     // FIXME: skip for console?
+		{
 			return;
 		}
+
+		if (trap_Argc() >= 3)
+		{
+			clientNum = atoi(CG_Argv(2));
+		}
+
+		if (atoi(CG_Argv(3)))
+		{
+			s = CG_LocalizeServerCommand(CG_Argv(1));
+		}
+		else
+		{
+			s = CG_Argv(1);
+		}
+
+		Q_strncpyz(text, s, MAX_SAY_TEXT);
+		CG_RemoveChatEscapeChar(text);
+		CG_AddToTeamChat(text, clientNum);
+		CG_Printf("%s\n", text);
+		CG_WriteToLog("%s\n", text);
+		return;
+	}
 	case VCHAT_HASH:                              // "vchat"
 		CG_VoiceChat(SAY_ALL);              // enabled support
 		return;
@@ -2843,16 +2843,16 @@ static void CG_ServerCommand(void)
 	}
 	case VSCHAT_HASH:                                // "vschat"
 	{
-		int clNum;
-		int	msgNum;
-		const char* wav;;
+		int        clNum;
+		int        msgNum;
+		const char *wav;;
 
 		clNum  = atoi(CG_Argv(1));
 		msgNum = atoi(CG_Argv(2));
-		wav    = va("%s%s", cgs.clientinfo[clNum].team == TEAM_AXIS ? "axis" : "allies" , HQMessages[msgNum].voiceScript);
+		wav    = va("%s%s", cgs.clientinfo[clNum].team == TEAM_AXIS ? "axis" : "allies", HQMessages[msgNum].voiceScript);
 
 		CG_SoundPlaySoundScript(wav, NULL, -1, qtrue);
-		CG_AddToTeamChat( HQMessages[msgNum].chatString, clNum); //  qfalse
+		CG_AddToTeamChat(HQMessages[msgNum].chatString, clNum);  //  qfalse
 		CG_Printf("%s\n", HQMessages[msgNum].chatString);
 		return;
 	}
@@ -2887,7 +2887,7 @@ static void CG_ServerCommand(void)
 	case BSTATSB_HASH:                               // "bstatsb"
 		CG_parseBestShotsStats_cmd(qfalse, CG_printConsoleString);
 		return;
-	case WBSTATS_HASH: 	                             // "wbstats"
+	case WBSTATS_HASH:                               // "wbstats"
 		CG_topshotsParse_cmd(qtrue);
 		return;
 	// single weapon stat (requested weapon stats)

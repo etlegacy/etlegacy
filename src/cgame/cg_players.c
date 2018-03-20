@@ -308,9 +308,9 @@ void CG_NewClientInfo(int clientNum)
 		if (newInfo.rank > cgs.clientinfo[cg.clientNum].rank)
 #endif
 		{
-			CG_SoundPlaySoundScript(cgs.clientinfo[cg.clientNum].team == TEAM_ALLIES ? rankSoundNames_Allies[newInfo.rank] : rankSoundNames_Axis[newInfo.rank], NULL, -1, qtrue);
+			CG_SoundPlaySoundScript(GetRankTableData(cgs.clientinfo[cg.clientNum].team, newInfo.rank)->soundNames, NULL, -1, qtrue);
 
-			CG_AddPMItemBig(PM_RANK, va(CG_TranslateString("Promoted to rank %s!"), cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? rankNames_Axis[newInfo.rank] : rankNames_Allies[newInfo.rank]), rankicons[newInfo.rank][cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+			CG_AddPMItemBig(PM_RANK, va(CG_TranslateString("Promoted to rank %s!"), GetRankTableData(cgs.clientinfo[cg.clientNum].team, newInfo.rank)->names), rankicons[newInfo.rank][cgs.clientinfo[cg.clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
 		}
 
 		// Make sure primary class and primary weapons are correct for
