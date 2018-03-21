@@ -6099,16 +6099,16 @@ static void UI_BuildServerDisplayList(int force)
 				maxClients = atoi(Info_ValueForKey(info, "sv_maxclients"));
 
 				if (clients < maxClients && (
-				        (!clients && ui_browserShowEmptyOrFull.integer == 2) ||
-				        (clients && ui_browserShowEmptyOrFull.integer == 1)))
+						(!clients && ui_browserShowEmptyOrFull.integer == 2) ||
+						(clients && ui_browserShowEmptyOrFull.integer == 1)))
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
 				}
 
 				if (clients && (
-				        (clients >= maxClients && ui_browserShowEmptyOrFull.integer == 2) ||
-				        (clients < maxClients && ui_browserShowEmptyOrFull.integer == 1)))
+						(clients >= maxClients && ui_browserShowEmptyOrFull.integer == 2) ||
+						(clients < maxClients && ui_browserShowEmptyOrFull.integer == 1)))
 				{
 					trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 					continue;
@@ -6974,43 +6974,42 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 					return Info_ValueForKey(info, "addr");
 				}
 
-                if (ui_netSource.integer == AS_LOCAL)
-                {   
-                    Com_sprintf(hostname, sizeof(hostname), "%s [%s]",
-                                Info_ValueForKey(info, "hostname"),
-                                netnames[atoi(Info_ValueForKey(info, "nettype"))]);
-                }
-                else
-                {
-                    Com_sprintf(hostname, sizeof(hostname), "%s", Info_ValueForKey(info, "hostname"));
-                }
-                    
-                if (Q_UTF8_PrintStrlen(hostname) > MAX_NAME_LENGTH)
-                {
-                    int lenght = 0;
-                    const char* pos = hostname;
-                    
-                    while (*pos && lenght < MAX_NAME_LENGTH)
-                    {
-                        if (Q_IsColorString(pos))
-                        {
-                            pos += 2;
-                            continue;
-                        }
-                        if (*pos == Q_COLOR_ESCAPE && pos[1] == Q_COLOR_ESCAPE)
-                        {
-                            ++pos;
-                        }
-                
-                        lenght++;
-                
-                        pos += Q_UTF8_Width(hostname);
-                    }
+				if (ui_netSource.integer == AS_LOCAL)
+				{
+					Com_sprintf(hostname, sizeof(hostname), "%s [%s]",
+					            Info_ValueForKey(info, "hostname"),
+					            netnames[atoi(Info_ValueForKey(info, "nettype"))]);
+				}
+				else
+				{
+					Com_sprintf(hostname, sizeof(hostname), "%s", Info_ValueForKey(info, "hostname"));
+				}
 
-                    hostname[pos - hostname] = 0;
-                }
-                
-                return hostname;
+				if (Q_PrintStrlen(hostname) > MAX_NAME_LENGTH)
+				{
+					int        lenght = 0;
+					const char *pos   = hostname;
+
+					while (*pos && lenght < MAX_NAME_LENGTH)
+					{
+						if (Q_IsColorString(pos))
+						{
+							pos += 2;
+							continue;
+						}
+						if (*pos == Q_COLOR_ESCAPE && pos[1] == Q_COLOR_ESCAPE)
+						{
+							++pos;
+						}
+
+						lenght++;
+						++pos;
+					}
+
+					hostname[pos - hostname] = 0;
+				}
+
+				return hostname;
 			case SORT_MAP:
 				return Info_ValueForKey(info, "mapname");
 			case SORT_CLIENTS:
