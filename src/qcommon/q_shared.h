@@ -454,7 +454,8 @@ typedef int clipHandle_t;
 
 // increased to 36 to match MAX_NETNAME
 // UI stuff breaks with very long names
-#define MAX_NAME_LENGTH     36      ///< max length of a client name
+#define MAX_NAME_LENGTH     36          ///< max length of a client name
+#define MAX_SERVER_NAME_LENGTH     76   ///< max length of a server name
 
 #define MAX_SAY_TEXT        150
 

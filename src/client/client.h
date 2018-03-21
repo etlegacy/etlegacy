@@ -287,7 +287,7 @@ typedef struct
 {
 	netadr_t adr;
 	char version[MAX_NAME_LENGTH];
-	char hostName[MAX_NAME_LENGTH];
+	char hostName[MAX_SERVER_NAME_LENGTH];
 	int32_t load;
 	char mapName[MAX_NAME_LENGTH];
 	char game[MAX_NAME_LENGTH];

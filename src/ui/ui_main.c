@@ -4864,12 +4864,12 @@ void UI_RunMenuScript(char **args)
 		{
 			if (ui_netSource.integer != AS_FAVORITES)
 			{
-				char name[MAX_NAME_LENGTH];
+				char name[MAX_SERVER_NAME_LENGTH];
 				char addr[MAX_NAME_LENGTH];
 
 				trap_LAN_GetServerInfo(ui_netSource.integer, uiInfo.serverStatus.displayServers[uiInfo.serverStatus.currentServer], buff, MAX_STRING_CHARS);
 				name[0] = addr[0] = '\0';
-				Q_strncpyz(name, Info_ValueForKey(buff, "hostname"), MAX_NAME_LENGTH);
+				Q_strncpyz(name, Info_ValueForKey(buff, "hostname"), MAX_SERVER_NAME_LENGTH);
 				Q_strncpyz(addr, Info_ValueForKey(buff, "addr"), MAX_NAME_LENGTH);
 				if (strlen(name) > 0 && strlen(addr) > 0)
 				{
@@ -4918,11 +4918,11 @@ void UI_RunMenuScript(char **args)
 		{
 			if (ui_netSource.integer == AS_FAVORITES)
 			{
-				char name[MAX_NAME_LENGTH];
+				char name[MAX_SERVER_NAME_LENGTH];
 				char addr[MAX_NAME_LENGTH];
 
 				name[0] = addr[0] = '\0';
-				Q_strncpyz(name, UI_Cvar_VariableString("ui_favoriteName"), MAX_NAME_LENGTH);
+				Q_strncpyz(name, UI_Cvar_VariableString("ui_favoriteName"), MAX_SERVER_NAME_LENGTH);
 				Q_strncpyz(addr, UI_Cvar_VariableString("ui_favoriteAddress"), MAX_NAME_LENGTH);
 				if (strlen(name) > 0 && strlen(addr) > 0)
 				{
@@ -4951,7 +4951,7 @@ void UI_RunMenuScript(char **args)
 		else if (Q_stricmp(name, "createFavoriteIngame") == 0)
 		{
 			uiClientState_t cstate;
-			char            name[MAX_NAME_LENGTH];
+			char            name[MAX_SERVER_NAME_LENGTH];
 			char            addr[MAX_NAME_LENGTH];
 
 			trap_GetClientState(&cstate);
@@ -4959,7 +4959,7 @@ void UI_RunMenuScript(char **args)
 			addr[0] = '\0';
 			name[0] = '\0';
 			Q_strncpyz(addr, cstate.servername, MAX_NAME_LENGTH);
-			Q_strncpyz(name, cstate.servername, MAX_NAME_LENGTH);
+			Q_strncpyz(name, cstate.servername, MAX_SERVER_NAME_LENGTH);
 			if (*name && *addr && Q_stricmp(addr, "localhost"))
 			{
 				int res;
@@ -6896,7 +6896,7 @@ static const char *UI_FileText(const char *fileName)
 const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *handles, int *numhandles)
 {
 	static char info[MAX_STRING_CHARS];
-	static char hostname[1024];
+	static char hostname[MAX_SERVER_NAME_LENGTH];
 	static char clientBuff[32];
 	static char pingstr[10];
 	static int  lastColumn = -1;
@@ -6973,20 +6973,44 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 				{
 					return Info_ValueForKey(info, "addr");
 				}
-				else
-				{
-					if (ui_netSource.integer == AS_LOCAL)
-					{
-						Com_sprintf(hostname, sizeof(hostname), "%s [%s]",
-						            Info_ValueForKey(info, "hostname"),
-						            netnames[atoi(Info_ValueForKey(info, "nettype"))]);
-						return hostname;
-					}
-					else
-					{
-						return Info_ValueForKey(info, "hostname");
-					}
-				}
+
+                if (ui_netSource.integer == AS_LOCAL)
+                {   
+                    Com_sprintf(hostname, sizeof(hostname), "%s [%s]",
+                                Info_ValueForKey(info, "hostname"),
+                                netnames[atoi(Info_ValueForKey(info, "nettype"))]);
+                }
+                else
+                {
+                    Com_sprintf(hostname, sizeof(hostname), "%s", Info_ValueForKey(info, "hostname"));
+                }
+                    
+                if (Q_UTF8_PrintStrlen(hostname) > MAX_NAME_LENGTH)
+                {
+                    int lenght = 0;
+                    const char* pos = hostname;
+                    
+                    while (*pos && lenght < MAX_NAME_LENGTH)
+                    {
+                        if (Q_IsColorString(pos))
+                        {
+                            pos += 2;
+                            continue;
+                        }
+                        if (*pos == Q_COLOR_ESCAPE && pos[1] == Q_COLOR_ESCAPE)
+                        {
+                            ++pos;
+                        }
+                
+                        lenght++;
+                
+                        pos += Q_UTF8_Width(hostname);
+                    }
+
+                    hostname[pos - hostname] = 0;
+                }
+                
+                return hostname;
 			case SORT_MAP:
 				return Info_ValueForKey(info, "mapname");
 			case SORT_CLIENTS:

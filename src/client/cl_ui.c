@@ -527,7 +527,7 @@ static int LAN_CompareServers(int source, int sortKey, int sortDir, int s1, int 
 {
 	int          res;
 	serverInfo_t *server1, *server2;
-	char         name1[MAX_NAME_LENGTH], name2[MAX_NAME_LENGTH];
+	char         name1[MAX_SERVER_NAME_LENGTH], name2[MAX_SERVER_NAME_LENGTH];
 
 	server1 = LAN_GetServerPtr(source, s1);
 	server2 = LAN_GetServerPtr(source, s2);

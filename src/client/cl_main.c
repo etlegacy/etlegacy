@@ -3013,7 +3013,7 @@ static void CL_SetServerInfo(serverInfo_t *server, const char *info, int ping)
 			Q_strncpyz(server->version, Info_ValueForKey(info, "version"), MAX_NAME_LENGTH);
 			server->clients = atoi(Info_ValueForKey(info, "clients"));
 			server->humans  = atoi(Info_ValueForKey(info, "humans"));
-			Q_strncpyz(server->hostName, Info_ValueForKey(info, "hostname"), MAX_NAME_LENGTH);
+			Q_strncpyz(server->hostName, Info_ValueForKey(info, "hostname"), MAX_SERVER_NAME_LENGTH);
 			server->load = atoi(Info_ValueForKey(info, "serverload"));
 			Q_strncpyz(server->mapName, Info_ValueForKey(info, "mapname"), MAX_NAME_LENGTH);
 			server->maxClients = atoi(Info_ValueForKey(info, "sv_maxclients"));
