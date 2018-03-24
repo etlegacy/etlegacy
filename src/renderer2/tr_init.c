@@ -1287,7 +1287,7 @@ void R_Register(void)
 	//r_saveFontData = ri.Cvar_Get("r_saveFontData", "0", 0);
 
 	r_bloom       = ri.Cvar_Get("r_bloom", "0", CVAR_ARCHIVE);
-	r_bloomBlur   = ri.Cvar_Get("r_bloomBlur", "5.0", CVAR_ARCHIVE);
+	r_bloomBlur   = ri.Cvar_Get("r_bloomBlur", "1.0", CVAR_ARCHIVE);
 	r_bloomPasses = ri.Cvar_Get("r_bloomPasses", "2", CVAR_CHEAT);
 
 	r_rotoscope     = ri.Cvar_Get("r_rotoscope", "0", CVAR_ARCHIVE);

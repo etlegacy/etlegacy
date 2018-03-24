@@ -29,11 +29,17 @@ void main()
 	vec4 color = texture2D(u_ColorMap, st);
 #endif
 
+	//float L = dot(LUMINANCE_VECTOR, color);
+	// adjust contrast
+	//L = pow(L, 1.32);
+	//float T = clamp(L - 0.71, 0.0, 1.0);
+	//color.rgb *= T;
+	//gl_FragColor = color;
+
+
     // adjust contrast
 	float L = dot(LUMINANCE_VECTOR, color);
 	L = max(L - 0.71, 0.0) * (1.0 / (1.0 - 0.71));
-	
-	return color * L;
 
-	gl_FragColor = color;
+	gl_FragColor = color * L;
 }
