@@ -76,7 +76,7 @@
 
 #define RDF_UNDERWATER      (1 << 4)    ///< so the renderer knows to use underwater fog when the player is underwater
 #define RDF_DRAWINGSKY      (1 << 5)
-#define RDF_SNOOPERVIEW     (1 << 6)
+#define RDF_SNOOPERVIEW     (1 << 6)	// night vision device
 
 // renderer2 BEGIN
 #define REFENTITYNUM_BITS   10          ///< can't be increased without changing drawsurf bit packing

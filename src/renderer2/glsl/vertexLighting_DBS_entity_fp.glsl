@@ -188,7 +188,6 @@ void main()
 
 	// gl_FragColor = vec4(emission, 1.0);
 	// return;
-
 #endif
 
 	// compute the light term
@@ -202,19 +201,22 @@ void main()
 	float NL = clamp(dot(N, L), 0.0, 1.0);
 #endif
 
- 	vec3 light = u_LightColor * NL;
+ 	vec3 light = (u_AmbientColor + u_LightColor) * NL;
+ 	// FIXME? specular? see https://learnopengl.com/Lighting/Basic-Lighting
+ 	//vec3 light = (u_AmbientColor + u_LightColor + specular) * NL;
+	//clamp(light, 0.0, 1.0);
 
     // compute final color
     vec4 color = diffuse;
-    color.rgb *= (u_AmbientColor + light); // clamp ambient + light?
-	color.rgb += specular;
+    color.rgb *= light;
+	color.rgb += specular; // FIXME?
 #if defined(r_rimLighting)
 	color.rgb += emission;
 #endif
 
 	gl_FragColor = color;
 
-	// gl_FragColor = vec4(vec3(NL, NL, NL), diffuse.a);
+	//gl_FragColor = vec4(vec3(NL, NL, NL), diffuse.a);
 
 #if 0
 #if defined(USE_PARALLAX_MAPPING)

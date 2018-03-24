@@ -288,11 +288,12 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 	}
 }
 
-/*
+/**
  * @brief LogLight
  * @param[in] ent
  *
- * @note Unused
+ * @fixme FIXME rework this
+ */
 static void LogLight(trRefEntity_t *ent)
 {
     int max1, max2;
@@ -324,49 +325,23 @@ static void LogLight(trRefEntity_t *ent)
 
     Ren_Print("amb:%i  dir:%i\n", max1, max2);
 }
-*/
 
 /**
- * @brief Calculates all the lighting values that will be used
- * by the Calc_* functions
+ * @brief Calculates all the lighting values that will be used by the Calc_* functions
  * @param[in] refdef
  * @param[in,out] ent
  * @param[in] forcedOrigin
+ *
+ * @note R_SetupEntityLightingGrid deals with forcedOrigin
  */
 void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t forcedOrigin)
 {
-	//vec3_t          lightDir;
-	//vec3_t          lightOrigin;
-	//float           d;
-
 	// lighting calculations
 	if (ent->lightingCalculated)
 	{
 		return;
 	}
 	ent->lightingCalculated = qtrue;
-
-	/*
-	if(forcedOrigin)
-	{
-	    VectorCopy(forcedOrigin, lightOrigin);
-	}
-	else
-	{
-	    // trace a sample point down to find ambient light
-	    if(ent->e.renderfx & RF_LIGHTING_ORIGIN)
-	    {
-	        // seperate lightOrigins are needed so an object that is
-	        // sinking into the ground can still be lit, and so
-	        // multi-part models can be lit identically
-	        VectorCopy(ent->e.lightingOrigin, lightOrigin);
-	    }
-	    else
-	    {
-	        VectorCopy(ent->e.origin, lightOrigin);
-	    }
-	}
-	*/
 
 	// if NOWORLDMODEL, only use dynamic lights (menu system, etc)
 	if (!(refdef->rdflags & RDF_NOWORLDMODEL) && tr.world && tr.world->lightGridData)
@@ -375,32 +350,6 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 	}
 	else
 	{
-#if 0
-		if (!(refdef->rdflags & RDF_NOWORLDMODEL))
-		{
-			ent->ambientLight[0] = tr.worldEntity.ambientLight[0];
-			ent->ambientLight[1] = tr.worldEntity.ambientLight[1];
-			ent->ambientLight[2] = tr.worldEntity.ambientLight[2];
-		}
-		else
-		{
-			ent->ambientLight[0] = r_forceAmbient->value;
-			ent->ambientLight[1] = r_forceAmbient->value;
-			ent->ambientLight[2] = r_forceAmbient->value;
-		}
-
-		ent->directedLight[0] = ent->directedLight[1] = ent->directedLight[2] = tr.identityLight * (150.0f / 255.0f);
-
-		if (ent->e.renderfx & RF_LIGHTING_ORIGIN)
-		{
-			VectorSubtract(ent->e.lightingOrigin, ent->e.origin, ent->lightDir);
-			VectorNormalize(ent->lightDir);
-		}
-		else
-		{
-			VectorCopy(tr.sunDirection, ent->lightDir);
-		}
-#else
 		ent->ambientLight[0] = tr.identityLight * (64.0f / 255.0f);
 		ent->ambientLight[1] = tr.identityLight * (64.0f / 255.0f);
 		ent->ambientLight[2] = tr.identityLight * (96.0f / 255.0f);
@@ -412,9 +361,9 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 		//VectorCopy(tr.sunDirection, ent->lightDir);
 		VectorSet(ent->lightDir, -1, 1, 1.25);
 		VectorNormalize(ent->lightDir);
-#endif
 	}
 
+	// ambient light adds
 	if (ent->e.hilightIntensity != 0.f)
 	{
 		// level of intensity was set because the item was looked at
@@ -422,7 +371,7 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 		ent->ambientLight[1] += tr.identityLight * 128.0f / 255.0f * ent->e.hilightIntensity;
 		ent->ambientLight[2] += tr.identityLight * 128.0f / 255.0f * ent->e.hilightIntensity;
 	}
-	else if (ent->e.renderfx & RF_MINLIGHT) // && VectorLength(ent->ambientLight) <= 0)
+	else if (ent->e.renderfx & RF_MINLIGHT)  // && VectorLength(ent->ambientLight) <= 0)
 	{
 		// give everything a minimum light add
 		ent->ambientLight[0] += tr.identityLight * 32 / 255.0f;
@@ -440,12 +389,6 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 		}
 	}
 #endif
-
-	// FIXME: inspect trRefEntity entityNum is always 0
-	if (ent->e.entityNum < MAX_CLIENTS && (refdef->rdflags & RDF_SNOOPERVIEW))
-	{
-		VectorSet(ent->ambientLight, 0.96f, 0.96f, 0.96f);  // allow a little room for flicker from directed light
-	}
 
 	// keep it in world space
 
@@ -474,14 +417,30 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 		pModel = R_GetModelByHandle(ent->e.hModel);
 
 		// This has to be done so brushes use ET material ambient lighting and r_ambientScale has r1 behavior
-		if (!pModel->bsp)
+		if (pModel->bsp)
 		{
-			VectorScale(ent->ambientLight, r_ambientScale->value, ent->ambientLight);
+			VectorScale(ent->ambientLight, 0.5f, ent->ambientLight); // default r_ambientscale
 		}
 		else
 		{
-			VectorScale(ent->ambientLight, 64.0f / 255.0f, ent->ambientLight);
+			if (refdef->rdflags & RDF_NOWORLDMODEL) // no scaling for no world models set world ambient light instead
+			{
+				VectorCopy(tr.worldEntity.ambientLight, ent->ambientLight);
+			}
+			if (refdef->rdflags & RDF_SNOOPERVIEW) // nightscope
+			{
+				VectorSet(ent->ambientLight, 0.96f, 0.96f, 0.96f);  // allow a little room for flicker from directed light
+			}
+			else
+			{
+				VectorScale(ent->ambientLight, r_ambientScale->value, ent->ambientLight);
+			}
 		}
+	}
+
+	if (r_debugLight->integer)
+	{
+		LogLight(ent);
 	}
 }
 
