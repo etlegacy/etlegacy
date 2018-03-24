@@ -768,7 +768,7 @@ static void IN_InitJoystick(void)
 	int  total = 0;
 	//char buf[MAX_CVAR_VALUE_STRING] = "";
 
-	Cmd_AddCommand("joystickInfo", IN_PrintJoystickInfo_f); // command is valid when in_joystick 0 is set
+	Cmd_AddCommand("joystickInfo", IN_PrintJoystickInfo_f, "Prints joystick info."); // command is valid when in_joystick 0 is set
 
 	if (!in_joystick->integer)
 	{

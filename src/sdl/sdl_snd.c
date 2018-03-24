@@ -195,7 +195,7 @@ qboolean SNDDMA_Init(void)
 		return qtrue;
 	}
 
-	Cmd_AddCommand("sndlist", SND_DeviceList);
+	Cmd_AddCommand("sndlist", SND_DeviceList, "Prints a list of available sound devices.");
 
 	// before rc 2 we have had own s_sdl_ cvars to set this
 	// changed back to use genuine cvar names
