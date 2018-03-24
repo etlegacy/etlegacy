@@ -2284,12 +2284,18 @@ void RB_RenderGlobalFog()
 
 	Ren_LogComment("--- RB_RenderGlobalFog ---\n");
 
-	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
+	if (r_noFog->integer)
 	{
 		return;
 	}
 
-	if (r_noFog->integer)
+	// no fog pass in snooper
+	if ((tr.refdef.rdflags & RDF_SNOOPERVIEW) || tess.surfaceShader->noFog)
+	{
+		return;
+	}
+
+	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
 		return;
 	}
