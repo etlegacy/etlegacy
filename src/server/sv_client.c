@@ -852,7 +852,7 @@ static void SV_StopDownload_f(client_t *cl)
 {
 	if (*cl->downloadName)
 	{
-		Com_DPrintf("clientDownload: %d : file \"%s\" aborted\n", (int) (cl - svs.clients), cl->downloadName);
+		Com_Printf("clientDownload: %d : file \"%s\" aborted\n", (int) (cl - svs.clients), cl->downloadName);
 	}
 
 	SV_CloseDownload(cl);
@@ -983,6 +983,7 @@ void SV_WWWDownload_f(client_t *cl)
 	}
 	else if (!Q_stricmp(subcmd, "fail"))
 	{
+		Com_Printf("Warning: Client dowbnload failed.\n");
 		SV_CloseDownload(cl);
 		cl->bWWWing   = qfalse;
 		cl->bFallback = qtrue;
