@@ -80,7 +80,7 @@ typedef unsigned short glIndex_t;
  */
 typedef enum
 {
-	DS_DISABLED,                ///< traditional Doom 3 style rendering
+	DS_DISABLED = 0,                ///< traditional Doom 3 style rendering
 	DS_STANDARD,                ///< deferred rendering like in Stalker
 } deferredShading_t;
 
@@ -118,7 +118,7 @@ typedef enum
  */
 typedef enum
 {
-	CULL_IN,                    ///< completely unclipped
+	CULL_IN = 0,                ///< completely unclipped
 	CULL_CLIP,                  ///< clipped by one or more planes
 	CULL_OUT,                   ///< completely outside the clipping planes
 } cullResult_t;
@@ -140,7 +140,7 @@ typedef struct screenRect_s
  */
 typedef enum
 {
-	FRUSTUM_LEFT,
+	FRUSTUM_LEFT = 0,
 	FRUSTUM_RIGHT,
 	FRUSTUM_BOTTOM,
 	FRUSTUM_TOP,
@@ -579,7 +579,7 @@ enum
  */
 typedef enum
 {
-	FT_DEFAULT,
+	FT_DEFAULT = 0,
 	FT_LINEAR,
 	FT_NEAREST
 } filterType_t;
@@ -590,7 +590,7 @@ typedef enum
  */
 typedef enum
 {
-	WT_REPEAT,
+	WT_REPEAT = 0,
 	WT_CLAMP,                   ///< don't repeat the texture for texture coords outside [0, 1]
 	WT_EDGE_CLAMP,
 	WT_ZERO_CLAMP,              ///< guarantee 0,0,0,255 edge for projected textures
@@ -679,7 +679,7 @@ typedef struct FBO_s
  */
 typedef enum
 {
-	VBO_USAGE_STATIC,
+	VBO_USAGE_STATIC = 0,
 	VBO_USAGE_DYNAMIC
 } vboUsage_t;
 
@@ -739,7 +739,7 @@ typedef struct IBO_s
  */
 typedef enum
 {
-	SS_BAD,
+	SS_BAD = 0,
 	SS_PORTAL,                  ///< mirrors, portals, viewscreens
 
 	SS_ENVIRONMENT_FOG,         ///< sky
@@ -801,7 +801,7 @@ typedef struct shaderTable_s
  */
 typedef enum
 {
-	GF_NONE,
+	GF_NONE = 0,
 
 	GF_SIN,
 	GF_SQUARE,
@@ -818,7 +818,7 @@ typedef enum
  */
 typedef enum
 {
-	DEFORM_NONE,
+	DEFORM_NONE = 0,
 	DEFORM_WAVE,
 	DEFORM_NORMALS,
 	DEFORM_BULGE,
@@ -846,7 +846,7 @@ typedef enum
 {
 	// do not edit: same as genFunc_t
 
-	DGEN_NONE,
+	DGEN_NONE = 0,
 	DGEN_WAVE_SIN,
 	DGEN_WAVE_SQUARE,
 	DGEN_WAVE_TRIANGLE,
@@ -866,7 +866,7 @@ typedef enum
  */
 typedef enum
 {
-	DEFORM_TYPE_NONE,
+	DEFORM_TYPE_NONE = 0,
 	DEFORM_TYPE_CPU,
 	DEFORM_TYPE_GPU,
 } deformType_t;
@@ -877,7 +877,7 @@ typedef enum
  */
 typedef enum
 {
-	AGEN_IDENTITY,
+	AGEN_IDENTITY = 0,
 	//AGEN_SKIP,
 	AGEN_ENTITY,
 	AGEN_ONE_MINUS_ENTITY,
@@ -896,7 +896,7 @@ typedef enum
  */
 typedef enum
 {
-	CGEN_BAD,
+	CGEN_BAD = 0,
 	CGEN_IDENTITY_LIGHTING,     ///< tr.identityLight
 	CGEN_IDENTITY,              ///< always (1,1,1,1)
 	CGEN_ENTITY,                ///< grabbed from entity's modulate field
@@ -920,7 +920,7 @@ typedef enum
  */
 typedef enum
 {
-	TCGEN_BAD,
+	TCGEN_BAD = 0,
 	TCGEN_IDENTITY,             ///< clear to 0,0
 	TCGEN_LIGHTMAP,
 	TCGEN_TEXTURE,
@@ -935,7 +935,7 @@ typedef enum
  */
 typedef enum
 {
-	ACFF_NONE,
+	ACFF_NONE = 0,
 	ACFF_MODULATE_RGB,
 	ACFF_MODULATE_RGBA,
 	ACFF_MODULATE_ALPHA
@@ -947,7 +947,7 @@ typedef enum
  */
 typedef enum
 {
-	ATEST_NONE,
+	ATEST_NONE = 0,
 	ATEST_GT_0,
 	ATEST_LT_128,
 	ATEST_GE_128
@@ -959,7 +959,7 @@ typedef enum
  */
 typedef enum
 {
-	OP_BAD,
+	OP_BAD = 0,
 	// logic operators
 	OP_LAND,
 	OP_LOR,
@@ -1069,7 +1069,7 @@ typedef struct
  */
 typedef enum
 {
-	TMOD_NONE,
+	TMOD_NONE = 0,
 	TMOD_TRANSFORM,
 	TMOD_TURBULENT,
 	TMOD_SCROLL,
@@ -1179,7 +1179,7 @@ typedef struct
 typedef enum
 {
 	// material shader stage types
-	ST_COLORMAP,                ///< vanilla Q3A style shader treatening
+	ST_COLORMAP = 0,            ///< vanilla Q3A style shader treatening
 	ST_DIFFUSEMAP,
 	ST_NORMALMAP,
 	ST_SPECULARMAP,
@@ -1209,7 +1209,7 @@ typedef enum
  */
 typedef enum
 {
-	COLLAPSE_none,
+	COLLAPSE_none = 0,
 	COLLAPSE_genericMulti,
 	COLLAPSE_lighting_DB,
 	COLLAPSE_lighting_DBS,
@@ -1365,7 +1365,7 @@ struct shaderCommands_s;
  */
 typedef enum
 {
-	CT_FRONT_SIDED,
+	CT_FRONT_SIDED = 0,
 	CT_BACK_SIDED,
 	CT_TWO_SIDED
 } cullType_t;
@@ -1376,7 +1376,7 @@ typedef enum
  */
 typedef enum
 {
-	FP_NONE,                    ///< surface is translucent and will just be adjusted properly
+	FP_NONE = 0,                ///< surface is translucent and will just be adjusted properly
 	FP_EQUAL,                   ///< surface is opaque but possibly alpha tested
 	FP_LE                       ///< surface is translucent, but still needs a fog pass (fog surface)
 } fogPass_t;
@@ -1410,7 +1410,7 @@ typedef struct
  */
 typedef enum
 {
-	SHADER_2D,                  ///< surface material: shader is for 2D rendering
+	SHADER_2D = 0 ,             ///< surface material: shader is for 2D rendering
 	SHADER_3D_DYNAMIC,          ///< surface material: shader is for cGen diffuseLighting lighting
 	SHADER_3D_STATIC,           ///< surface material: pre-lit triangle models
 	SHADER_LIGHT                ///< light material: attenuation
@@ -2037,7 +2037,7 @@ SURFACES
  */
 typedef enum
 {
-	SF_BAD,
+	SF_BAD = 0,
 	SF_SKIP,                    ///< ignore
 
 	SF_FACE,
@@ -2086,7 +2086,7 @@ typedef struct drawSurf_s
  */
 typedef enum
 {
-	IA_DEFAULT,                 ///< lighting and shadowing
+	IA_DEFAULT = 0,                 ///< lighting and shadowing
 	IA_SHADOWONLY,
 	IA_LIGHTONLY
 } interactionType_t;
@@ -3103,7 +3103,7 @@ extern const float mdmLODResolutions[MD3_MAX_LODS];
  */
 typedef enum
 {
-	AT_BAD,
+	AT_BAD = 0,
 	AT_MD5,
 	AT_PSA
 } animType_t;
@@ -3211,7 +3211,7 @@ typedef struct
  */
 typedef enum
 {
-	MOD_BAD,
+	MOD_BAD = 0,
 	MOD_BSP,
 	MOD_MESH,
 	MOD_MDM,
@@ -4706,7 +4706,7 @@ typedef struct
  */
 typedef enum
 {
-	SSF_TGA,
+	SSF_TGA = 0,
 	SSF_JPEG,
 	SSF_PNG
 } ssFormat_t;
@@ -4755,7 +4755,7 @@ typedef struct
  */
 typedef enum
 {
-	RC_END_OF_LIST,
+	RC_END_OF_LIST = 0,
 	RC_SET_COLOR,
 	RC_STRETCH_PIC,
 	RC_2DPOLYS,
