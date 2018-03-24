@@ -1475,8 +1475,8 @@ static void SetFarClip(void)
 #endif
 	tr.viewParms.zFar = sqrt(farthestCornerDistance);
 	
-	// add global q3/ET fog
-	if (tr.world != NULL && tr.world->globalFog >= 0 && tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque < tr.viewParms.zFar)
+	// add global q3/ET 'gl' fog 'wall'
+	if (r_wolfFog->integer && tr.world != NULL && tr.world->globalFog >= 0 && tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque < tr.viewParms.zFar)
 	{
 		tr.viewParms.zFar = tr.world->fogs[tr.world->globalFog].fogParms.depthForOpaque;
 	}

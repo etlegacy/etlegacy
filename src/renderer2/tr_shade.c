@@ -2254,6 +2254,24 @@ static void Render_liquid(int stage)
 
 /**
  * @brief Render_fog_brushes - used to render fog brushes (not the fog)
+ *
+ * @note This is required for any 'global' fog (see RB_RenderGlobalFog)
+ *       If the brush limit (see comment below) is deactivated it will also render
+ *       the 'volumetric' part of r_wolffog
+ *	     In other words:
+ *	     - gl_fogQuake3Shader does the r_wolffog fog 'wall' and fog brushes
+ *	     - gl_fogGlobalShader does the global volumetric fog (with static density see st.t = 0.6; in glsl)
+ *
+ *	     Why this mix is done?
+ *	     Currently it's the best solution until we've figured out which old fog code (and cvar r_wolffog) to drop
+ *	     The old transition between volumetric fog and fog 'wall' was always looking bad
+ *	     gl_fogGlobalShader has got a more fluent transition which is looking much better and there is no real need
+ *	     for the fog 'wall'.
+ *	     It's recommended to disable r_wolffog - it just doing the ugly wall
+ *
+ *	     side note: gl_volumetricFogShader might do the job for gl_fogGlobalShader
+ *
+ * @fixme Sort out the trouble
  */
 static void Render_fog_brushes()
 {
@@ -2263,6 +2281,16 @@ static void Render_fog_brushes()
 	vec4_t fogDistanceVector, fogDepthVector;
 
 	Ren_LogComment("--- Render_fog_brushes ---\n");
+
+	if (!r_wolfFog->integer && r_noFog->integer)
+	{
+		return;
+	}
+
+	//if (tr.world->fogs + tess.fogNum < 1 || !tess.surfaceShader->fogPass)
+	//{
+	//	return;
+	//}
 
 	// no fog pass in snooper
 	if ((tr.refdef.rdflags & RDF_SNOOPERVIEW) || tess.surfaceShader->noFog)
@@ -2279,6 +2307,8 @@ static void Render_fog_brushes()
 	fog = tr.world->fogs + tess.fogNum;
 
 	// use this only to render fog brushes (global fog has a brush number of -1)
+	// disable this to get r_wolffog 'volumetric' fog back but also
+	// disable RB_RenderGlobalFog which does 'volumetric' fog in r2 - we don't need fog twice
 	if (fog->originalBrushNumber < 0 && tess.surfaceShader->sort <= SS_OPAQUE)
 	{
 		return;
@@ -3214,7 +3244,7 @@ void Tess_StageIteratorGeneric()
 		}
 	}
 
-	if (!r_noFog->integer && tess.fogNum >= 1 && tess.surfaceShader->fogPass)
+	if (tess.fogNum >= 1 && tess.surfaceShader->fogPass)
 	{
 		Render_fog_brushes();
 	}
