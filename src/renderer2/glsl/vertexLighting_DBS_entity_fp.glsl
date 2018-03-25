@@ -107,6 +107,9 @@ void main()
 	// compute half angle in world space
 	vec3 H = normalize(L + V);
 
+	// compute specular reflection
+	vec3 R =  reflect(-L, N); 
+
 	// compute the specular term
 #if defined(USE_REFLECTIVE_SPECULAR)
 
@@ -120,6 +123,8 @@ void main()
 	// Blinn-Phong
 	float NH = clamp(dot(N, H), 0, 1);
 	specular *= u_LightColor * pow(NH, r_SpecularExponent2) * r_SpecularScale;
+	// FIXME?
+	//specular *= u_LightColor * pow(max(dot(V, R), 0.0), r_SpecularExponent) * r_SpecularScale;
 
 #if 0
 	gl_FragColor = vec4(specular, 1.0);
@@ -132,7 +137,8 @@ void main()
 
 	// simple Blinn-Phong
 	float NH       = clamp(dot(N, H), 0, 1);
-	vec3  specular = texture2D(u_SpecularMap, texSpecular).rgb * u_LightColor * pow(NH, r_SpecularExponent) * r_SpecularScale;
+	//vec3  specular = texture2D(u_SpecularMap, texSpecular).rgb * u_LightColor * pow(NH, r_SpecularExponent) * r_SpecularScale;
+	vec3  specular = texture2D(u_SpecularMap, texSpecular).rgb * u_LightColor * pow(max(dot(V, R), 0.0), r_SpecularExponent) * r_SpecularScale;
 
 #endif // end USE_REFLECTIVE_SPECULAR
 
@@ -153,8 +159,6 @@ void main()
 	{
 		N = normalize(var_Normal);
 	}
-
-	vec3 specular = vec3(0.0);
 
 #endif // end USE_NORMAL_MAPPING
 
@@ -209,7 +213,9 @@ void main()
     // compute final color
     vec4 color = diffuse;
     color.rgb *= light;
+#if defined(USE_NORMAL_MAPPING)
 	color.rgb += specular; // FIXME?
+#endif
 #if defined(r_rimLighting)
 	color.rgb += emission;
 #endif

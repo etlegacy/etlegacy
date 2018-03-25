@@ -124,6 +124,8 @@ void main()
 	// compute half angle in tangent space
 	vec3 H = normalize(L + V);
 
+	vec3 R = reflect(-L, N);
+
 	// compute the light term
 #if defined(r_WrapAroundLighting)
 	float NL = clamp(dot(N, L) + u_LightWrapAround, 0.0, 1.0) / clamp(1.0 + u_LightWrapAround, 0.0, 1.0);
@@ -133,7 +135,8 @@ void main()
 	vec3 light = var_LightColor.rgb * NL;
 
 	// compute the specular term
-	vec3 specular = texture2D(u_SpecularMap, texSpecular).rgb * var_LightColor.rgb * pow(clamp(dot(N, H), 0.0, 1.0), r_SpecularExponent) * r_SpecularScale;
+	//vec3 specular = texture2D(u_SpecularMap, texSpecular).rgb * var_LightColor.rgb * pow(clamp(dot(N, H), 0.0, 1.0), r_SpecularExponent) * r_SpecularScale;
+	vec3 specular = texture2D(u_SpecularMap, texSpecular).rgb * var_LightColor.rgb * pow(max(dot(V, R), 0.0), r_SpecularExponent) * r_SpecularScale;
 	
 	// compute final color
 	vec4 color = vec4(diffuse.rgb, var_LightColor.a);

@@ -994,8 +994,9 @@ void    main()
 	// transform normal into world space
 	N = normalize(tangentToWorldMatrix * N);
 
+	vec3 R = reflect(-L, N);
 
-#else // USE_NORMAL_MAPPING
+#else // else USE_NORMAL_MAPPING 
 
 	vec3 N;
 #if defined(TWOSIDED)
@@ -1009,7 +1010,7 @@ void    main()
 		N = normalize(var_Normal.xyz);
 	}
 
-#endif // USE_NORMAL_MAPPING
+#endif // end USE_NORMAL_MAPPING
 
 	// compute the light term
 #if defined(r_WrapAroundLighting)
@@ -1041,9 +1042,9 @@ void    main()
 
 #if defined(USE_NORMAL_MAPPING)
 	// compute the specular term
-	vec3 specular = texture2D(u_SpecularMap, texSpecular).rgb * u_LightColor * pow(clamp(dot(N, H), 0.0, 1.0), r_SpecularExponent) * r_SpecularScale;
+	//vec3 specular = texture2D(u_SpecularMap, texSpecular).rgb * u_LightColor * pow(clamp(dot(N, H), 0.0, 1.0), r_SpecularExponent) * r_SpecularScale;
+	vec3 specular = texture2D(u_SpecularMap, texSpecular).rgb * u_LightColor * pow(max(dot(V, R), 0.0), r_SpecularExponent) * r_SpecularScale;
 #endif
-
 
 
 	// compute light attenuation
