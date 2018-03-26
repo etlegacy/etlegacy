@@ -1,7 +1,7 @@
 /* liquid_fp.glsl */
 
 uniform sampler2D u_CurrentMap;
-uniform sampler2D u_PortalMap;
+uniform samplerCube u_PortalMap;
 uniform sampler2D u_DepthMap;
 uniform sampler2D u_NormalMap;
 uniform vec3      u_ViewOrigin;
@@ -86,12 +86,15 @@ void main()
 	// compute incident ray
 	vec3 I = normalize(u_ViewOrigin - var_Position);
 
+	// invert tangent space for twosided surfaces
 	mat3 tangentToWorldMatrix;
-	if (gl_FrontFacing)
+#if defined(TWOSIDED)
+	if(gl_FrontFacing)
 	{
 		tangentToWorldMatrix = mat3(-var_Tangent.xyz, -var_Binormal.xyz, -var_Normal.xyz);
 	}
 	else
+#endif
 	{
 		tangentToWorldMatrix = mat3(var_Tangent.xyz, var_Binormal.xyz, var_Normal.xyz);
 	}
@@ -124,20 +127,27 @@ void main()
 #endif //USE_PARALLAX_MAPPING
 
 	// compute normals
-
-	vec3 N = normalize(var_Normal);
+	vec3 N = normalize(var_Normal.xyz);
+#if defined(r_NormalScale)
+	N.z *= r_NormalScale;
+	normalize(N);
+#endif
 
 	vec3 N2 = 2.0 * (texture2D(u_NormalMap, texNormal).xyz - 0.5);
 	N2 = normalize(tangentToWorldMatrix * N2);
 
+	vec3 N3 = normalize(N + I);
+
 	// compute fresnel term
-	float fresnel = clamp(u_FresnelBias + pow(1.0 - dot(I, N), u_FresnelPower) *
-	                      u_FresnelScale, 0.0, 1.0);
+	float fresnel = clamp(u_FresnelBias + pow(1.0 - dot(N2, N3), u_FresnelPower) * u_FresnelScale, 0.0, 1.0);
 
 	texScreen += u_NormalScale * N2.xy;
 
 	vec3 refractColor = texture2D(u_CurrentMap, texScreen).rgb;
-	vec3 reflectColor = texture2D(u_PortalMap, texScreen).rgb;
+
+	// compute reflection ray
+	vec3 R = reflect(I, N2);
+	vec3 reflectColor = textureCube(u_PortalMap, R).rgb;
 
 	vec4 color;
 
@@ -172,7 +182,7 @@ void main()
 	vec3 light = var_LightColor.rgb * clamp(dot(N2, L), 0.0, 1.0);
 
 	// compute the specular term
-	vec3 specular = reflectColor * var_LightColor.rgb * pow(clamp(dot(N2, H), 0.0, 1.0), r_SpecularExponent) * r_SpecularScale;
+	vec3 specular = reflectColor * light * pow(clamp(dot(N2, H), 0.0, 1.0), r_SpecularExponent) * r_SpecularScale;
 	color.rgb += specular;
 
 	gl_FragColor = color;
