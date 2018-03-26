@@ -1264,7 +1264,7 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		Com_Error(ERR_DROP, "Bad UI system trap: %ld", (long int) args[0]);
 	}
 
-	return 0;
+	return 0; // never reached, Com_Error quits ...
 }
 
 /**
