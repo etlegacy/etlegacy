@@ -87,6 +87,8 @@ typedef struct flare_s
 	float eyeZ;
 
 	vec3_t color;
+
+	qboolean isCorona;
 } flare_t;
 
 #define         MAX_FLARES 128
@@ -123,7 +125,7 @@ void R_ClearFlares(void)
  * @param[in] normal
  * @param[in] visible
  */
-void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t normal, qboolean visible)
+void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t normal, qboolean visible, qboolean isCorona)
 {
 	int     i;
 	flare_t *f; // *oldest;
@@ -185,6 +187,7 @@ void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t n
 		f->frameSceneNum = backEnd.viewParms.frameSceneNum;
 		f->inPortal      = backEnd.viewParms.isPortal;
 		f->addedFrame    = -1;
+		f->isCorona      = isCorona;
 	}
 
 	f->cgvisible = visible;
@@ -282,7 +285,7 @@ void RB_AddLightFlares(void)
 			j = 0;
 		}
 
-		RB_AddFlare((void *)l, j, l->l.origin, l->l.color, NULL, qtrue);
+		RB_AddFlare((void *)l, j, l->l.origin, l->l.color, NULL, qtrue, qfalse);
 	}
 }
 
@@ -330,7 +333,7 @@ void RB_AddCoronaFlares(void)
 			j = 0;
 		}
 		//RB_AddFlare((void *)cor, j, cor->origin, cor->color, cor->scale, NULL, cor->id, cor->visible);
-		RB_AddFlare((void *)cor, j, cor->origin, cor->color, NULL, cor->visible); // cor->scale -> eye
+		RB_AddFlare((void *)cor, j, cor->origin, cor->color, NULL, cor->visible, qtrue); // cor->scale -> eye
 	}
 }
 
@@ -410,40 +413,48 @@ void RB_RenderFlare(flare_t *f)
 
 	backEnd.pc.c_flareRenders++;
 
-	/*
-	   As flare sizes stay nearly constant with increasing distance we must decrease the intensity
-	   to achieve a reasonable visual result. The intensity is ~ (size^2 / distance^2) which can be
-	   got by considering the ratio of  (flaresurface on screen) : (Surface of sphere defined by flare origin and distance from flare)
-	   An important requirement is: intensity <= 1 for all distances.
-
-	   The formula used here to compute the intensity is as follows:
-	   intensity = flareCoeff * size^2 / (distance + size*sqrt(flareCoeff))^2.
-	   As you can see, the intensity will have a max. of 1 when the distance is 0.
-
-	   The coefficient flareCoeff will determine the falloff speed with increasing distance.
-	 */
-
-	// We don't want too big values anyways when dividing by distance
-	if (f->eyeZ > -1.0f)
+	if (f->isCorona) // FIXME: corona case
 	{
-		distance = 1.0f;
+		VectorScale(colorWhite, f->drawIntensity, color);
+
+		size = backEnd.viewParms.viewportWidth * (r_flareSize->value / 640.0f + 8 / -f->eyeZ);
 	}
 	else
 	{
-		distance = -f->eyeZ;
+		/*
+		   As flare sizes stay nearly constant with increasing distance we must decrease the intensity
+		   to achieve a reasonable visual result. The intensity is ~ (size^2 / distance^2) which can be
+		   got by considering the ratio of  (flaresurface on screen) : (Surface of sphere defined by flare origin and distance from flare)
+		   An important requirement is: intensity <= 1 for all distances.
+
+		   The formula used here to compute the intensity is as follows:
+		   intensity = flareCoeff * size^2 / (distance + size*sqrt(flareCoeff))^2.
+		   As you can see, the intensity will have a max. of 1 when the distance is 0.
+
+		   The coefficient flareCoeff will determine the falloff speed with increasing distance.
+		 */
+
+		// We don't want too big values anyways when dividing by distance
+		if (f->eyeZ > -1.0f)
+		{
+			distance = 1.0f;
+		}
+		else
+		{
+			distance = -f->eyeZ;
+		}
+
+		// calculate the flare size
+		size = backEnd.viewParms.viewportWidth * (r_flareSize->value / 640.0f + 8 / distance);
+
+		factor    = distance + size * sqrt(flareCoeff);
+		intensity = flareCoeff * size * size / (factor * factor);
+
+		VectorScale(f->color, f->drawIntensity * intensity, color);
+		iColor[0] = color[0] * 255;
+		iColor[1] = color[1] * 255;
+		iColor[2] = color[2] * 255;
 	}
-
-	// calculate the flare size
-	size = backEnd.viewParms.viewportWidth * (r_flareSize->value / 640.0f + 8 / distance);
-
-	factor    = distance + size * sqrt(flareCoeff);
-	intensity = flareCoeff * size * size / (factor * factor);
-
-	VectorScale(f->color, f->drawIntensity * intensity, color);
-	iColor[0] = color[0] * 255;
-	iColor[1] = color[1] * 255;
-	iColor[2] = color[2] * 255;
-
 	Tess_Begin(Tess_StageIteratorGeneric, NULL, tr.flareShader, NULL, qfalse, qfalse, -1, f->fogNum);
 
 	// FIXME: use quadstamp?
@@ -536,11 +547,11 @@ void RB_RenderFlares(void)
 		return;
 	}
 
-	if ( r_flareCoeff->modified )
+	if (r_flareCoeff->modified)
 	{
-		if ( r_flareCoeff->value == 0.0f )
+		if (r_flareCoeff->value == 0.0f)
 		{
-			flareCoeff = atof( "150" );
+			flareCoeff = atof("150");
 		}
 		else
 		{

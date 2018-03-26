@@ -2781,7 +2781,7 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 	}
 
 	// implicitly assume that a GL_ONE GL_ZERO blend mask disables blending
-	if ((blendSrcBits == GLS_SRCBLEND_ONE) && (blendDstBits == GLS_DSTBLEND_ZERO))
+	if (blendSrcBits == GLS_SRCBLEND_ONE && blendDstBits == GLS_DSTBLEND_ZERO)
 	{
 		blendDstBits  = blendSrcBits = 0;
 		depthMaskBits = GLS_DEPTHMASK_TRUE;
@@ -4041,12 +4041,6 @@ static qboolean ParseShader(char *_text)
 		else if (!Q_stricmp(token, "polygonOffset"))
 		{
 			shader.polygonOffset = qtrue;
-
-			token = COM_ParseExt2(text, qfalse);
-			if (token[0])
-			{
-				shader.polygonOffsetValue = atof(token);
-			}
 			continue;
 		}
 		// parallax mapping
@@ -4505,7 +4499,6 @@ static qboolean ParseShader(char *_text)
 		else if (!Q_stricmp(token, "DECAL_MACRO"))
 		{
 			shader.polygonOffset      = qtrue;
-			shader.polygonOffsetValue = 1;
 			shader.sort               = SS_DECAL;
 			SurfaceParm("discrete");
 			SurfaceParm("noShadows");
@@ -4516,7 +4509,6 @@ static qboolean ParseShader(char *_text)
 		{
 			// what's different?
 			shader.polygonOffset      = qtrue;
-			shader.polygonOffsetValue = 1;
 			shader.sort               = SS_DECAL;
 			SurfaceParm("discrete");
 			SurfaceParm("noShadows");

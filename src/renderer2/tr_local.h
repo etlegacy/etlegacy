@@ -1473,7 +1473,6 @@ typedef struct shader_s
 
 	cullType_t cullType;                ///< CT_FRONT_SIDED, CT_BACK_SIDED, or CT_TWO_SIDED
 	qboolean polygonOffset;             ///< set for decals and other items that must be offset
-	float polygonOffsetValue;
 
 	qboolean uncompressed;
 	qboolean noPicMip;                  ///< for images that must always be full resolution
@@ -4287,7 +4286,7 @@ FLARES, tr_flares.c
 
 void R_ClearFlares(void);
 
-void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t normal, qboolean visible);
+void RB_AddFlare(void *surface, int fogNum, vec3_t point, vec3_t color, vec3_t normal, qboolean visible, qboolean isCorona);
 void RB_AddLightFlares(void);
 void RB_RenderFlares(void);
 

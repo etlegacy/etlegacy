@@ -378,12 +378,6 @@ qboolean ParseShaderR1(char *_text)
 		else if (!Q_stricmp(token, "polygonOffset"))
 		{
 			shader.polygonOffset = qtrue;
-
-			token = COM_ParseExt2(text, qfalse);
-			if (token[0])
-			{
-				shader.polygonOffsetValue = atof(token);
-			}
 			continue;
 		}
 		// parallax mapping
@@ -838,7 +832,6 @@ qboolean ParseShaderR1(char *_text)
 		else if (!Q_stricmp(token, "DECAL_MACRO"))
 		{
 			shader.polygonOffset      = qtrue;
-			shader.polygonOffsetValue = 1;
 			shader.sort               = SS_DECAL;
 			SurfaceParm("discrete");
 			SurfaceParm("noShadows");
@@ -849,7 +842,6 @@ qboolean ParseShaderR1(char *_text)
 		{
 			// what's different?
 			shader.polygonOffset      = qtrue;
-			shader.polygonOffsetValue = 1;
 			shader.sort               = SS_DECAL;
 			SurfaceParm("discrete");
 			SurfaceParm("noShadows");
