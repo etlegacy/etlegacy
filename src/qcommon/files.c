@@ -454,6 +454,8 @@ static fileHandle_t FS_HandleForFile(void)
 		}
 	}
 	Com_Error(ERR_DROP, "FS_HandleForFile: none free");
+	
+	return 0;
 }
 
 /**

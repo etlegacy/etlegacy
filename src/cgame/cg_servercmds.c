@@ -2037,7 +2037,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 		Q_strncpyz(gs->strRank, va("%-20s %-12d", GetRankTableData(ci->team, ci->rank)->names, xp), sizeof(gs->strRank));
 	}
 #else
-	Q_strncpyz(gs->strRank, va("%-20s %d", ((ci->team == TEAM_AXIS) ? rankNames_Axis : rankNames_Allies)[ci->rank], xp), sizeof(gs->strRank));
+	Q_strncpyz(gs->strRank, va("%-20s %-12d", GetRankTableData(ci->team, ci->rank)->names, xp), sizeof(gs->strRank));#endif
 #endif
 
 	if (skillMask != 0)

@@ -41,11 +41,6 @@ void main()
 
 	color *= var_Color;
 
-	//Dushan added this. Why?
-//#if defined(USE_TCGEN_ENVIRONMENT)
-#if 0
-	gl_FragColor = vec4(vec3(1.0, 0.0, 0.0), color.a);
-#else
 	gl_FragColor = color;
-#endif
 }
+

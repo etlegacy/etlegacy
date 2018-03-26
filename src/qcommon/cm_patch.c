@@ -795,6 +795,8 @@ static int CM_EdgePlaneNum(cGrid_t *grid, int gridPlanes[MAX_GRID_SIZE][MAX_GRID
 	}
 
 	Com_Error(ERR_DROP, "CM_EdgePlaneNum: bad k");
+	
+	return -1;	
 }
 
 /**

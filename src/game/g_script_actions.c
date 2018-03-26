@@ -122,6 +122,8 @@ qboolean G_ScriptAction_SetModelFromBrushmodel(gentity_t *ent, char *params)
 	}
 
 	G_Error("G_ScriptAction_SetModelFromBrushmodel: setmodelfrombrushmodel target not found %s\n", modelname);
+
+	return qtrue;
 }
 
 /**
