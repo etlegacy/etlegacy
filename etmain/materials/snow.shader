@@ -1,12 +1,24 @@
 textures/snow/alpha_ice2
 {		
-    diffusemap textures/snow/alpha_ice2s
-	bumpmap textures/snow/alpha_ice2s_n
-	specularmap textures/snow/alpha_ice2s_s
+    qer_editorimage textures/snow/alpha_ice2s
 	surfaceparm alphashadow
+	surfaceparm trans
 	cull none
 	{
-		map textures/snow/alpha_ice2s.tga
+	    stage diffusemap
+		map textures/snow/alpha_ice2s
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+	{
+	   stage bumpmap
+	   map textures/snow/alpha_ice2s_n
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+	{
+	   stage specularmap
+	   map textures/snow/alpha_ice2s_s
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen vertex
 	}
