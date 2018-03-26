@@ -114,6 +114,9 @@ extern int      maxAnisotropy;
 extern cvar_t *r_flareSize;
 extern cvar_t *r_flareFade;
 
+#define FLARE_STDCOEFF "150"
+extern cvar_t *r_flareCoeff;
+
 extern cvar_t *r_railWidth;
 extern cvar_t *r_railSegmentLength;
 

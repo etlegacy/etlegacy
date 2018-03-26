@@ -51,6 +51,7 @@ cvar_t *r_glDebugProfile;
 cvar_t *r_flares;
 cvar_t *r_flareSize;
 cvar_t *r_flareFade;
+cvar_t *r_flareCoeff;
 
 cvar_t *r_railWidth;
 cvar_t *r_railCoreWidth;
@@ -1315,6 +1316,7 @@ void R_Register(void)
 
 	r_flareSize = ri.Cvar_Get("r_flareSize", "40", CVAR_CHEAT);
 	r_flareFade = ri.Cvar_Get("r_flareFade", "7", CVAR_CHEAT);
+	r_flareCoeff = ri.Cvar_Get("r_flareCoeff", FLARE_STDCOEFF, CVAR_CHEAT);
 
 	r_skipBackEnd     = ri.Cvar_Get("r_skipBackEnd", "0", CVAR_CHEAT);
 	r_skipLightBuffer = ri.Cvar_Get("r_skipLightBuffer", "0", CVAR_CHEAT);

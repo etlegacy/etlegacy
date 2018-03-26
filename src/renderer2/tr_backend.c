@@ -6906,6 +6906,8 @@ const void *RB_SwapBuffers(const void *data)
 
 	backEnd.projection2D = qfalse;
 
+	glState.finishCalled = qfalse;
+
 	return (const void *)(cmd + 1);
 }
 
