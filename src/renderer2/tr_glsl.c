@@ -1603,10 +1603,8 @@ void GLSL_SelectTexture(shaderProgram_t *program, texture_def_t tex)
 	if (program->textureBinds[tex] == -1)
 	{
 		//Ren_Fatal("GLSL_SelectTexture: Trying to select non existing texture %i %s\n", tex, program->name);
-		//Dushan - SPAM!!!!!!!!!!!!!!!
-#ifdef _DEBUG
 		Ren_Warning("GLSL_SelectTexture: Trying to select non existing texture %i - program name:'%s'\n", tex, program->name);
-#endif
+
 		GL_SelectTexture(0);
 		return;
 	}
