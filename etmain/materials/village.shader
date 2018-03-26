@@ -6,15 +6,15 @@
 textures/village/villwin_c12m_glass
 {
 	qer_editorimage textures/village/villwin_c12m
-	diffusemap textures/village/villwin_c12m
-	specularmap textures/village/villwin_c12m_s
-	bumpmap textures/village/villwin_c12m_n
+	
+		
 	qer_trans 0.7
 	cull disable
 	surfaceparm glass
 	surfaceparm pointlight
 	surfaceparm trans
 	{
+	    stage diffusemap
 		map textures/village/villwin_c12m
 		//blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		blendfunc blend
@@ -22,29 +22,40 @@ textures/village/villwin_c12m_glass
 		rgbgen vertex
 		depthWrite
 	}
+	{
+	   stage bumpmap
+	    map textures/village/villwin_c12m_n
+	    //blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendfunc blend
+		//alphaFunc GE128
+		rgbgen vertex
+		depthWrite
+	}
+	{
+	   stage specularmap
+	   map textures/village/villwin_c12m_s
+       //blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendfunc blend
+		//alphaFunc GE128
+		rgbgen vertex
+		depthWrite
 }
 
-textures/village/villwin_c15
+textures/village/villwin_c12m_glass
 {
-	qer_editorimage textures/village/villwin_c15
-	diffusemap textures/village/villwin_c15
-	specularmap textures/village/villwin_c15_s
-	bumpmap textures/village/villwin_c15_n
-	q3map_surfacelight 300
-	surfaceparm nomarks
+	qer_editorimage textures/village/villwin_c12m.tga
+	qer_trans 0.7
+	cull disable
+	surfaceparm glass
+	surfaceparm pointlight
+	surfaceparm trans
 	{
-		map $lightmap
-		rgbGen identity
-	}
-	{
-		map textures/village/villwin_c15
-		blendFunc GL_DST_COLOR GL_ZERO
-		rgbGen identity
-	}
-	{
-		map textures/village/villwin_c15.blend
-		blendfunc GL_ONE GL_ONE
-		rgbGen identity
+		map textures/village/villwin_c12m.tga
+		//blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		blendfunc blend
+		//alphaFunc GE128
+		rgbgen vertex
+		depthWrite
 	}
 }
 
