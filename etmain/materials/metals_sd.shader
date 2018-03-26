@@ -11,16 +11,15 @@ textures/metals_sd/grate_a
 textures/metals_sd/grate_b
 {
 	qer_editorimage textures/metals_sd/grate_b
-	diffusemap textures/metals_sd/grate_b
-	bumpmap textures/metals_sd/grate_b_n
-	specularmap textures/metals_sd/grate_b_s
-	surfaceparm alphashadow
+    surfaceparm alphashadow
 	surfaceparm metalsteps
 	nomipmaps
 	nopicmip
 	cull disable
 	{
-		map textures/metals_sd/grate_b
+	diffusemap textures/metals_sd/grate_b
+	bumpmap textures/metals_sd/grate_b_n
+	specularmap textures/metals_sd/grate_b_s
 		alphaFunc GE128
 		depthWrite
 		rgbGen vertex
