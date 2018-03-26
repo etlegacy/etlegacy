@@ -2215,7 +2215,7 @@ static void Tess_SurfaceFlare(srfFlare_t *surf)
 		return;
 	}
 
-	RB_AddFlare((void *)surf, tess.fogNum, origin, surf->color, surf->normal, qtrue);
+	RB_AddFlare((void *)surf, tess.fogNum, origin, surf->color, surf->normal, qtrue, qfalse);
 }
 
 /**
