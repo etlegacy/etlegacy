@@ -2381,7 +2381,8 @@ void RB_RenderBloom()
 
 	Ren_LogComment("--- RB_RenderBloom ---\n");
 
-	if ((backEnd.refdef.rdflags & (RDF_NOWORLDMODEL | RDF_NOBLOOM)) || !r_bloom->integer || backEnd.viewParms.isPortal || !glConfig2.framebufferObjectAvailable)
+	// hdr requires bloom renderer
+	if ((backEnd.refdef.rdflags & (RDF_NOWORLDMODEL | RDF_NOBLOOM)) || (!r_bloom->integer && !HDR_ENABLED()) || backEnd.viewParms.isPortal || !glConfig2.framebufferObjectAvailable)
 	{
 		return;
 	}
