@@ -33,7 +33,7 @@ install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/legacy/omni-bot/"
 # ensure unique permissions and bot user path has write permission set
 if(UNIX)
 	execute_process(
-		COMMAND chmod -R 755 "${INSTALL_DEFAULT_MODDIR}/legacy/omni-bot"
+		COMMAND chmod -R 644 "${INSTALL_DEFAULT_MODDIR}/legacy/omni-bot/"
 		WORKING_DIRECTORY "${INSTALL_DEFAULT_MODDIR}/legacy/omni-bot"
 	)
 endif(UNIX)
