@@ -1057,11 +1057,11 @@ void Cmd_List_f(void)
 
 		if (cmd->description)
 		{
-			Com_Printf("%s : %s\n", cmd->name, cmd->description);
+			Com_Printf("%-18s : %s\n", cmd->name, cmd->description);
 		}
 		else
 		{
-			Com_Printf("%s\n", cmd->name);
+			Com_Printf("%-18s\n", cmd->name);
 		}
 		i++;
 	}
