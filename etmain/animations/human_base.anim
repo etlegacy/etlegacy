@@ -1,0 +1,43 @@
+animgroup
+{
+	animfile "animations/human/base/body.mdx"
+	{
+		#include "animations/human/base/body.aninc"
+	}
+	animfile "animations/human/base/mortar.mdx"
+	{
+		#include "animations/human/base/mortar.aninc"
+	}
+	animfile "animations/human/base/akimbo.mdx"
+	{
+		#include "animations/human/base/akimbo.aninc"
+	}
+	animfile "animations/human/base/prone_pistol.mdx"
+	{
+		#include "animations/human/base/prone_pistol.aninc"
+	}	
+	animfile "animations/human/base/prone_rifle.mdx"
+	{
+		#include "animations/human/base/prone_rifle.aninc"
+	}	
+	animfile "animations/human/base/prone_dual_pistols.mdx"
+	{
+		#include "animations/human/base/prone_dual_pistols.aninc"
+	}		
+	animfile "animations/human/base/prone_mortar.mdx"
+	{
+		#include "animations/human/base/prone_mortar.aninc"
+	}
+	animfile "animations/human/base/binocs.mdx"
+	{
+		#include "animations/human/base/binocs.aninc"
+	}
+	animfile "animations/human/base/no_juice.mdx"
+	{
+		#include "animations/human/base/no_juice.aninc"
+	}
+	animfile "animations/human/base/swim.mdx"
+	{
+		#include "animations/human/base/swim.aninc"
+	}
+}
