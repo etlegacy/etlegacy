@@ -1195,7 +1195,7 @@ void CL_Snd_Restart_f(void)
  */
 void CL_OpenedPK3List_f(void)
 {
-	Com_Printf("Opened PK3 Names: %s\n", FS_LoadedPakNames());
+	Com_Printf("Opened PK3 names: %s\n", FS_LoadedPakNames());
 }
 
 /**
@@ -1203,7 +1203,7 @@ void CL_OpenedPK3List_f(void)
  */
 void CL_ReferencedPK3List_f(void)
 {
-	Com_Printf("Referenced PK3 Names: %s\n", FS_ReferencedPakNames());
+	Com_Printf("Referenced PK3 names: %s\n", FS_ReferencedPakNames());
 }
 
 /**
@@ -2823,52 +2823,52 @@ void CL_Init(void)
 	com_updatefiles     = Cvar_Get("com_updatefiles", "", CVAR_ROM);
 
 	// register our commands
-	Cmd_AddCommand("cmd", CL_ForwardToServer_f);
-	Cmd_AddCommand("configstrings", CL_Configstrings_f);
-	Cmd_AddCommand("clientinfo", CL_Clientinfo_f);
-	Cmd_AddCommand("snd_restart", CL_Snd_Restart_f);
-	Cmd_AddCommand("vid_restart", CL_Vid_Restart_f);
-	Cmd_AddCommand("ui_restart", CL_UI_Restart_f);
-	Cmd_AddCommand("disconnect", CL_Disconnect_f);
-	Cmd_AddCommand("connect", CL_Connect_f);
-	Cmd_AddCommand("reconnect", CL_Reconnect_f);
-	Cmd_AddCommand("localservers", CL_LocalServers_f);
-	Cmd_AddCommand("globalservers", CL_GlobalServers_f);
-	Cmd_AddCommand("rcon", CL_Rcon_f);
-	Cmd_SetCommandCompletionFunc("rcon", CL_CompleteRcon);
-	Cmd_AddCommand("ping", CL_Ping_f);
-	Cmd_AddCommand("serverstatus", CL_ServerStatus_f);
-	Cmd_AddCommand("showip", CL_ShowIP_f);
-	Cmd_AddCommand("fs_openedList", CL_OpenedPK3List_f);
-	Cmd_AddCommand("fs_referencedList", CL_ReferencedPK3List_f);
+	Cmd_AddCommand("cmd", CL_ForwardToServer_f, "Executes a reliable server command.");
+	Cmd_AddCommand("configstrings", CL_Configstrings_f, "Prints configstrings.");
+	Cmd_AddCommand("clientinfo", CL_Clientinfo_f, "Prints client info.");
+	Cmd_AddCommand("snd_restart", CL_Snd_Restart_f, "Restarts the audio subsystem.");
+	Cmd_AddCommand("vid_restart", CL_Vid_Restart_f, "Restarts the video subsystem.");
+	Cmd_AddCommand("ui_restart", CL_UI_Restart_f, "Restarts the user interface.");
+	Cmd_AddCommand("disconnect", CL_Disconnect_f, "Disconnects from a server.");
+	Cmd_AddCommand("connect", CL_Connect_f, "Connects to a given server.");
+	Cmd_AddCommand("reconnect", CL_Reconnect_f, "Reconnects to last server.");
+	Cmd_AddCommand("localservers", CL_LocalServers_f, "Scans the local network for servers.");
+	Cmd_AddCommand("globalservers", CL_GlobalServers_f, "Scans the global network for servers.");
+	Cmd_AddCommand("rcon", CL_Rcon_f, "Remote console. Sending commands as an 'unconnected' command.", CL_CompleteRcon);
+	Cmd_AddCommand("ping", CL_Ping_f, "Sends a ping to server.");
+	Cmd_AddCommand("serverstatus", CL_ServerStatus_f, "Prints the server status.");
+	Cmd_AddCommand("showip", CL_ShowIP_f, "Prints local network IP addresses.");
+	Cmd_AddCommand("fs_openedList", CL_OpenedPK3List_f, "Prints a list of opened PK3 names.");
+	Cmd_AddCommand("fs_referencedList", CL_ReferencedPK3List_f, "Prints a list of referrenced PK3 names.");
 
 #ifdef FEATURE_IRC_CLIENT
-	Cmd_AddCommand("irc_connect", IRC_Connect);
-	Cmd_AddCommand("irc_disconnect", IRC_InitiateShutdown);
-	Cmd_AddCommand("irc_say", IRC_Say);
+	Cmd_AddCommand("irc_connect", IRC_Connect, "Connects to IRC server.");
+	Cmd_AddCommand("irc_disconnect", IRC_InitiateShutdown, "Disconnects from IRC server.");
+	Cmd_AddCommand("irc_say", IRC_Say, "Sends an IRC message.");
 #endif
 
 	// startup-caching system
-	Cmd_AddCommand("cache_startgather", CL_Cache_StartGather_f);
-	Cmd_AddCommand("cache_usedfile", CL_Cache_UsedFile_f);
-	Cmd_AddCommand("cache_setindex", CL_Cache_SetIndex_f);
-	Cmd_AddCommand("cache_mapchange", CL_Cache_MapChange_f);
-	Cmd_AddCommand("cache_endgather", CL_Cache_EndGather_f);
+	// FIXME: remove caching system
+	Cmd_AddCommand("cache_startgather", CL_Cache_StartGather_f, "Obsolete - will be removed.");
+	Cmd_AddCommand("cache_usedfile", CL_Cache_UsedFile_f, "Obsolete - will be removed.");
+	Cmd_AddCommand("cache_setindex", CL_Cache_SetIndex_f, "Obsolete - will be removed.");
+	Cmd_AddCommand("cache_mapchange", CL_Cache_MapChange_f, "Obsolete - will be removed.");
+	Cmd_AddCommand("cache_endgather", CL_Cache_EndGather_f, "Obsolete - will be removed.");
 
-	Cmd_AddCommand("updatehunkusage", CL_UpdateLevelHunkUsage);
-	Cmd_AddCommand("updatescreen", SCR_UpdateScreen);
+	Cmd_AddCommand("updatehunkusage", CL_UpdateLevelHunkUsage, "Updates the hunk usage file.");
+	Cmd_AddCommand("updatescreen", SCR_UpdateScreen, "Updades the screen.");
 
-	Cmd_AddCommand("setRecommended", CL_SetRecommended_f);
+	Cmd_AddCommand("setRecommended", CL_SetRecommended_f, "Sets recommended cvar values.");
 
 	// we eat these commands to prevent exploits
 	//Cmd_AddCommand("userinfo", CL_EatMe_f);
 
-	Cmd_AddCommand("wav_record", CL_WavRecord_f);
-	Cmd_AddCommand("wav_stoprecord", CL_WavStopRecord_f);
+	Cmd_AddCommand("wav_record", CL_WavRecord_f, "Starts WAV recording.");
+	Cmd_AddCommand("wav_stoprecord", CL_WavStopRecord_f, "Stops WAV recording.");
 
 	// Avi recording
-	Cmd_AddCommand("video", CL_Video_f);
-	Cmd_AddCommand("stopvideo", CL_StopVideo_f);
+	Cmd_AddCommand("video", CL_Video_f, "Starts AVI recording during demo view.");
+	Cmd_AddCommand("stopvideo", CL_StopVideo_f, "Stops AVI recording.");
 
 	CIN_Init();
 

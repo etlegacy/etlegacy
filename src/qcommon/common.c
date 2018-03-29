@@ -2977,7 +2977,7 @@ void Com_Init(char *commandLine)
 	Cmd_AddCommand("wget", Com_Download_f, "Downloads a map from etlegacy.com.");
 
 #ifdef FEATURE_DBMS
-	Cmd_AddCommand("saveDB", DB_SaveMemDB_f);
+	Cmd_AddCommand("saveDB", DB_SaveMemDB_f, "Saves the internal memory database to disk.");
 #endif
 
 	com_version = Cvar_Get("version", FAKE_VERSION, CVAR_ROM | CVAR_SERVERINFO);
