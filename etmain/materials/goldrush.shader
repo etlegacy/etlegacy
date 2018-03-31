@@ -12,11 +12,19 @@ textures/goldrush/lmterrain_0
 	q3map_baseshader textures/goldrush/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
-	diffusemap textures/temperate_sd/sand_bubbles_bright
-	bumpmap textures/temperate_sd/sand_bubbles_bright_n
-	specularmap textures/temperate_sd/sand_bubbles_bright_s
 	{
+	    stage diffusemap
 		map textures/temperate_sd/sand_bubbles_bright
+		rgbgen identity
+	}
+	{
+	    stage bumpmap
+		map textures/temperate_sd/sand_bubbles_bright_n
+		rgbgen identity
+	}
+	{
+	    stage specularmap
+		map textures/temperate_sd/sand_bubbles_bright_s
 		rgbgen identity
 	}
 	{
@@ -32,36 +40,43 @@ textures/goldrush/lmterrain_0to1
 	{
 	    stage diffusemap
 		map textures/temperate_sd/sand_bubbles_bright
-		VertexColor
-		
+		tcMod scale 1.75 1.75
 	}
 	{
 	    stage bumpmap 
 		map textures/temperate_sd/sand_bubbles_bright_n
-		VertexColor
-		blend blend
+		tcMod scale 1.75 1.75
+	}
+	{
+	    stage specularmap
+		map textures/temperate_sd/sand_bubbles_bright_s
+		tcMod scale 1.75 1.75
 	}
 	{
 	    stage diffusemap
 		map textures/desert_sd/pavement_quad_sandy
-		blend blend
-		VertexColor
-		tcmod scale 1.75 1.75
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
 		
 	}
 	{
 	    stage bumpmap
 		map textures/desert_sd/pavement_quad_sandy_n
-		blend blend
-		VertexColor
-		tcmod scale 1.75 1.75
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
 	}
 	{
 	    stage specularmap
 		map textures/desert_sd/pavement_quad_sandy_s
-		blend blend
-		VertexColor
-		tcmod scale 1.75 1.75
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
+	{
+		map $lightmap
+		blendFunc GL_DST_COLOR GL_ZERO
 	}
 	
 }
@@ -73,46 +88,48 @@ textures/goldrush/lmterrain_0to2
 	{
 	    stage diffusemap
 		map textures/temperate_sd/sand_bubbles_bright
-		VertexColor
+		tcMod scale 1.75 1.75
 		
 	}
 	{
 	    stage bumpmap
 		map textures/temperate_sd/sand_bubbles_bright_n
-		VertexColor
-		blend blend
+		tcMod scale 1.75 1.75
 	}
 	{
 	    stage specularmap
 		map textures/temperate_sd/sand_bubbles_bright_s
-	    VertexColor
-		blend blend
+	    tcMod scale 1.75 1.75
 	}
 		
 	{
 	    stage diffusemap
 		map textures/desert_sd/pavement_tris_sandy
-		blend blend
-		VertexColor
-		tcmod scale 1.75 1.75
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
 		
 		
 	}
 	{
 	    stage bumpmap
 		map textures/desert_sd/pavement_tris_sandy_n
-		blend blend
-		VertexColor
-		tcmod scale 1.75 1.75
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
 		
 	}
 	{
 	    stage specularmap
 		map textures/desert_sd/pavement_tris_sandy_s
-		blend blend
-		VertexColor
-		tcmod scale 1.75 1.75
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
 		
+	}
+	{
+		map $lightmap
+		blendFunc GL_DST_COLOR GL_ZERO
 	}
 }
 
@@ -124,41 +141,43 @@ textures/goldrush/lmterrain_0to3
 	{
 	    stage diffusemap
 		map textures/temperate_sd/sand_bubbles_bright
-        VertexColor
+        tcMod scale 1.75 1.75
 	}
 	{
 	    stage bumpmap
 		map textures/temperate_sd/sand_bubbles_bright_n
-		VertexColor
-		blend blend
+		tcMod scale 1.75 1.75
 	}
 	{
 	    stage specularmap
 		map textures/temperate_sd/sand_bubbles_bright_s
-		VertexColor
-		blend blend
+		tcMod scale 1.75 1.75
 	}
 	{
 	    stage diffusemap
 		map textures/desert_sd/road_dirty_gravel
-	    blend blend
-		VertexColor
-		tcmod scale 1.75 1.75
+	    blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
 	}
 	{
 	    stage bumpmap
 		map textures/desert_sd/road_dirty_gravel_n
-		blend blend
-		VertexColor
-		tcmod scale 1.75 1.75
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
 		
 	}
 	{
 	    stage specularmap
 		map textures/desert_sd/road_dirty_gravel_s
-	    blend blend
-		VertexColor
-		tcmod scale 1.75 1.75
+	    blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
+	{
+		map $lightmap
+		blendFunc GL_DST_COLOR GL_ZERO
 	}
 	
 }
@@ -166,12 +185,21 @@ textures/goldrush/lmterrain_0to3
 textures/goldrush/lmterrain_1
 {
 	q3map_baseshader textures/goldrush/lmterrain_base
-	diffusemap textures/desert_sd/pavement_quad_sandy
-	bumpmap textures/desert_sd/pavement_quad_sandy_n
-	specularmap textures/desert_sd/pavement_quad_sandy_s
 	{
-	    
+	    stage diffusemap
 		map textures/desert_sd/pavement_quad_sandy
+		rgbgen identity
+		tcmod scale 1.75 1.75
+	}
+	{
+	    stage bumpmap
+		map textures/desert_sd/pavement_quad_sandy_n
+		rgbgen identity
+		tcmod scale 1.75 1.75
+	}
+	{
+	    stage specularmap
+		map textures/desert_sd/pavement_quad_sandy_s
 		rgbgen identity
 		tcmod scale 1.75 1.75
 	}
@@ -189,45 +217,44 @@ textures/goldrush/lmterrain_1to2
 	{
 	    stage diffusemap
 		map textures/desert_sd/pavement_quad_sandy
-		VertexColor
-		tcmod scale 1.75 1.75
+		tcMod scale 1.75 1.75
 	}
 	{
 	    stage bumpmap
 		map textures/desert_sd/pavement_quad_sandy_n
-		VertexColor
-		blend blend
-		tcmod scale 1.75 1.75
+		tcMod scale 1.75 1.75
 	}
 	{
 	    stage specularmap
 		map textures/desert_sd/pavement_quad_sandy_s
-		VertexColor
-		blend blend
-		tcmod scale 1.75 1.75
+		tcMod scale 1.75 1.75
 	}
 	{
 	    stage diffusemap
 		map textures/desert_sd/pavement_tris_sandy
-		blend blend
-		VertexColor
-		tcmod scale 1.75 1.75
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
 	}
 	{
 	    stage bumpmap
         map textures/desert_sd/pavement_tris_sandy_n
-		blend blend
-		VertexColor
-		tcmod scale 1.75 1.75
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
 	}
 	{
 	    stage specularmap
 		map textures/desert_sd/pavement_tris_sandy_s
-		blend blend
-		VertexColor
-		tcmod scale 1.75 1.75
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
 		
     }
+	{
+		map $lightmap
+		blendFunc GL_DST_COLOR GL_ZERO
+	}
 }
 
 textures/goldrush/lmterrain_1to3
@@ -236,44 +263,43 @@ textures/goldrush/lmterrain_1to3
 	{
 	    stage diffusemap
 		map textures/desert_sd/pavement_quad_sandy
-		VertexColor
 		tcmod scale 1.75 1.75
 		
 	}
 	{
 	    stage bumpmap
 		map textures/desert_sd/pavement_quad_sandy_n
-		VertexColor
-		blend blend
 		tcmod scale 1.75 1.75
 	}
 	{
 	    stage specularmap
 		map textures/desert_sd/pavement_quad_sandy_s
-		VertexColor
-		blend blend
 		tcmod scale 1.75 1.75
 	}
 	{
 	    stage diffusemap
 		map textures/desert_sd/road_dirty_gravel
-		blend blend
-		VertexColor
-		tcmod scale 1.75 1.75
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
 	}
 	{
 	    stage bumpmap
 		map textures/desert_sd/road_dirty_gravel_n
-		blend blend
-		VertexColor
-		tcmod scale 1.75 1.75
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
 	}
 	{
 	    stage specularmap
 		map textures/desert_sd/road_dirty_gravel_s
-		blend blend
-		VertexColor
-		tcmod scale 1.75 1.75
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
+	{
+		map $lightmap
+		blendFunc GL_DST_COLOR GL_ZERO
 	}
 	
 
@@ -282,15 +308,24 @@ textures/goldrush/lmterrain_1to3
 textures/goldrush/lmterrain_2
 {
 	q3map_baseshader textures/goldrush/lmterrain_base
-	diffusemap textures/desert_sd/pavement_tris_sandy
-	bumpmap textures/desert_sd/pavement_tris_sandy_n
-	specularmap textures/desert_sd/pavement_tris_sandy_s
 	{
+	    stage diffusemap
 		map textures/desert_sd/pavement_tris_sandy
 		rgbgen identity
 		tcmod scale 1.75 1.75
 	}
-	
+	{
+	    stage bumpmap
+		map textures/desert_sd/pavement_tris_sandy_n
+		rgbgen identity
+		tcmod scale 1.75 1.75
+	}
+	{
+	    stage specularmap
+		map textures/desert_sd/pavement_tris_sandy_s
+		rgbgen identity
+		tcmod scale 1.75 1.75
+	}
 	{
 		map $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
@@ -304,44 +339,43 @@ textures/goldrush/lmterrain_2to3
 	{
 	    stage diffusemap
 		map textures/desert_sd/pavement_tris_sandy
-		VertexColor
 		tcmod scale 1.75 1.75
 	}
 	{
 	    stage bumpmap
 		map textures/desert_sd/pavement_tris_sandy_n
-		VertexColor
-		blend blend
 		tcmod scale 1.75 1.75
 	}
 	{
 	    stage specularmap 
 		map textures/desert_sd/pavement_tris_sandy_s
-		VertexColor
-		blend blend
 		tcmod scale 1.75 1.75
 	}
 	{
 	    stage diffusemap
 		map textures/desert_sd/road_dirty_gravel
-		blend blend
-		VertexColor
-		tcmod scale 1.75 1.75
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
 		
 	}
 	{
 	    stage bumpmap
 		map textures/desert_sd/road_dirty_gravel_n
-		blend blend
-		VertexColor
-		tcmod scale 1.75 1.75
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
 	}
 	{
 	    stage specularmap
 		map textures/desert_sd/road_dirty_gravel_s
-		blend blend
-		VertexColor
-		tcmod scale 1.75 1.75
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
+	{
+		map $lightmap
+		blendFunc GL_DST_COLOR GL_ZERO
 	}
 	
 	
@@ -351,18 +385,27 @@ textures/goldrush/lmterrain_2to3
 textures/goldrush/lmterrain_3
 {
 	q3map_baseshader textures/goldrush/lmterrain_base
-	diffusemap textures/desert_sd/road_dirty_gravel
-	bumpmap textures/desert_sd/road_dirty_gravel_n
-	specularmap textures/desert_sd/road_dirty_gravel_s
 	surfaceparm gravelsteps
 	surfaceparm landmine
 	
 	{
+	    stage diffusemap
 		map textures/desert_sd/road_dirty_gravel
 		rgbgen identity
 		tcmod scale 1.75 1.75
 	}
-	
+	{
+	    stage bumpmap
+		map textures/desert_sd/road_dirty_gravel_n
+		rgbgen identity
+		tcmod scale 1.75 1.75
+	}
+	{
+	    stage specularmap
+		map textures/desert_sd/road_dirty_gravel_s
+		rgbgen identity
+		tcmod scale 1.75 1.75
+	}
 	{
 		map $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
@@ -373,19 +416,24 @@ textures/goldrush/lmterrain_3
 textures/goldrush/pavement_quad
 {
 	qer_editorimage textures/desert_sd/pavement_quad_sandy
-	diffusemap textures/desert_sd/pavement_quad_sandy
-	bumpmap textures/desert_sd/pavement_quad_sandy_n
-	specularmap textures/desert_sd/pavement_quad_sandy_s
 	{
 		map $lightmap
 		rgbGen identity
 	}
 	{
+	    stage diffusemap
 		map textures/desert_sd/pavement_quad_sandy
-		blendFunc filter
 		tcmod scale 1.75 1.75
-		
-		
+	}
+	{
+	    stage bumpmap
+		map textures/desert_sd/pavement_quad_sandy_n
+		tcmod scale 1.75 1.75
+	}
+	{
+	    stage specularmap
+		map textures/desert_sd/pavement_quad_sandy_s
+		tcmod scale 1.75 1.75
 	}
 	
 }
@@ -430,18 +478,24 @@ textures/goldrush/canvas_nondeform
  textures/desert_sd/road_dirty_gravel
  {
   qer_editorimage  textures/desert_sd/road_dirty_gravel
-  diffusemap  textures/desert_sd/road_dirty_gravel
-  bumpmap  textures/desert_sd/road_dirty_gravel_n
-  specularmap  textures/desert_sd/road_dirty_gravel_s
+    
     {
-		map $lightmap
+	    stage diffusemap
+		map textures/desert_sd/road_dirty_gravel
 		rgbGen identity
 	}
-	
 	{
-		map textures/desert_sd/road_dirty_gravel
-		blendFunc filter
-		
-		
+	    stage bumpmap
+		map textures/desert_sd/road_dirty_gravel_n
+		rgbGen identity
+	}
+	{
+	    stage specularmap
+		map textures/desert_sd/road_dirty_gravel_s
+		rgbGen identity
+	}
+	{
+		map $lightmap
+		blendFunc GL_DST_COLOR GL_ZERO
 	}
 }
