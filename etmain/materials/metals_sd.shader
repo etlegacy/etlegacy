@@ -17,9 +17,22 @@ textures/metals_sd/grate_b
 	nopicmip
 	cull disable
 	{
-	diffusemap textures/metals_sd/grate_b
-	bumpmap textures/metals_sd/grate_b_n
-	specularmap textures/metals_sd/grate_b_s
+		stage diffusemap
+	    map textures/metals_sd/grate_b
+		alphaFunc GE128
+		depthWrite
+		rgbGen vertex
+    }
+	{
+		stage bumpmap
+	    map textures/metals_sd/grate_b_n
+		alphaFunc GE128
+		depthWrite
+		rgbGen vertex
+    }
+	{
+		stage specularmap
+	    map textures/metals_sd/grate_b_s
 		alphaFunc GE128
 		depthWrite
 		rgbGen vertex
