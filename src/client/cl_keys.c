@@ -1200,12 +1200,12 @@ static void Key_CompleteBind(char *args, int argNum)
 void CL_InitKeyCommands(void)
 {
 	// register our functions
-	Cmd_AddCommand("bind", Key_Bind_f);
+	Cmd_AddCommand("bind", Key_Bind_f, "Binds a key.");
 	Cmd_SetCommandCompletionFunc("bind", Key_CompleteBind);
-	Cmd_AddCommand("unbind", Key_Unbind_f);
+	Cmd_AddCommand("unbind", Key_Unbind_f, "Unbinds a key.");
 	Cmd_SetCommandCompletionFunc("unbind", Key_CompleteUnbind);
-	Cmd_AddCommand("unbindall", Key_Unbindall_f);
-	Cmd_AddCommand("bindlist", Key_Bindlist_f);
+	Cmd_AddCommand("unbindall", Key_Unbindall_f, "Unbinds all keys.");
+	Cmd_AddCommand("bindlist", Key_Bindlist_f, "Prints a list of all key bindings.");
 }
 
 qboolean consoleButtonWasPressed = qfalse;

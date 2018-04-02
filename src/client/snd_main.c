@@ -831,13 +831,13 @@ void S_Init(void)
 
 		S_CodecInit();
 
-		Cmd_AddCommand("play", S_Play_f);
-		Cmd_AddCommand("music", S_Music_f);
-		Cmd_AddCommand("stopmusic", S_StopMusic_f);
-		Cmd_AddCommand("stream", S_Stream_f);
-		Cmd_AddCommand("s_list", S_SoundList);
-		Cmd_AddCommand("s_stop", S_StopAllSounds);
-		Cmd_AddCommand("s_info", S_SoundInfo);
+		Cmd_AddCommand("play", S_Play_f, "Plays a given sound file.");
+		Cmd_AddCommand("music", S_Music_f, "Starts background track.");
+		Cmd_AddCommand("stopmusic", S_StopMusic_f, "Stops background track.");
+		Cmd_AddCommand("stream", S_Stream_f, "Starts streaming sound.");
+		Cmd_AddCommand("s_list", S_SoundList, "Prints a list of available sounds.");
+		Cmd_AddCommand("s_stop", S_StopAllSounds, "Stops all sounds.");
+		Cmd_AddCommand("s_info", S_SoundInfo, "Prints sound info.");
 
 #ifdef FEATURE_OPENAL
 		if (cv->integer == 2)
