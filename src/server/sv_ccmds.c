@@ -456,7 +456,7 @@ qboolean SV_TempBanIsBanned(netadr_t address)
 static void SV_Status_f(void)
 {
 	int           i;
-	unsigned int  j, l;
+	unsigned int  j;
 	client_t      *cl;
 	playerState_t *ps;
 	const char    *s;
@@ -482,8 +482,6 @@ static void SV_Status_f(void)
 	           Sys_Milliseconds(),
 	           sv_mapname->string);
 
-	// FIXME: extend player name length (>16 chars) ? - they are printed!
-	// FIXME: do a Com_Printf per line! ... create the row at first
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
 	{
 		if (!cl->state && !cl->demoClient)
@@ -512,27 +510,13 @@ static void SV_Status_f(void)
 			Com_Printf("%4i ", ping);
 		}
 
-		Com_Printf("%s", rc(cl->name));
-		l = 16 - strlen(cl->name);
-		for (j = 0 ; j < l ; j++)
-		{
-			Com_Printf(" ");
-		}
-
-		Com_Printf("%7i ", svs.time - cl->lastPacketTime); // FIXME: print lastConnectTime ?
-
 		s = NET_AdrToString(cl->netchan.remoteAddress);
-		Com_Printf("%s", s);
 
-		l = 22 - strlen(s);
-		for (j = 0 ; j < l ; j++)
-		{
-			Com_Printf(" ");
-		}
-
-		Com_Printf("%5i", cl->netchan.qport);
-
-		Com_Printf(" %5i\n", cl->rate);
+		// FIXME: format output
+		// FIXME: extend player name length (>16 chars)?
+		// FIXME: do a Com_Printf per line! ... create the row at first
+		// print lastConnectTime ?
+		Com_Printf("%16s %i %s %i %i\n", rc(cl->name), svs.time - cl->lastPacketTime, s, cl->netchan.qport, cl->rate);
 	}
 
 	Com_Printf("\n");
@@ -720,37 +704,33 @@ void SV_AddOperatorCommands(void)
 	}
 	initialized = qtrue;
 
-	Cmd_AddCommand("heartbeat", SV_Heartbeat_f);
-	Cmd_AddCommand("status", SV_Status_f);
-	Cmd_AddCommand("serverinfo", SV_Serverinfo_f);
-	Cmd_AddCommand("systeminfo", SV_Systeminfo_f);
-	Cmd_AddCommand("dumpuser", SV_DumpUser_f);
-	Cmd_AddCommand("map_restart", SV_MapRestart_f);
-	Cmd_AddCommand("fieldinfo", SV_FieldInfo_f);
-	Cmd_AddCommand("sectorlist", SV_SectorList_f);
-	Cmd_AddCommand("gameCompleteStatus", SV_GameCompleteStatus_f);
-
-	Cmd_AddCommand("map", SV_Map_f);
-	Cmd_SetCommandCompletionFunc("map", SV_CompleteMapName);
-	Cmd_AddCommand("devmap", SV_Map_f);
-	Cmd_SetCommandCompletionFunc("devmap", SV_CompleteMapName);
-
-	Cmd_AddCommand("killserver", SV_KillServer_f);
+	Cmd_AddCommand("heartbeat", SV_Heartbeat_f, "Sends an heartbeat to master server.");
+	Cmd_AddCommand("status", SV_Status_f, "Prints server status info.");
+	Cmd_AddCommand("serverinfo", SV_Serverinfo_f, "Prints an info of server settings.");
+	Cmd_AddCommand("systeminfo", SV_Systeminfo_f, "Prints an info of game settings. ");
+	Cmd_AddCommand("dumpuser", SV_DumpUser_f, "Dumps user info to disk.");
+	Cmd_AddCommand("map_restart", SV_MapRestart_f, "Restarts given map.");
+	Cmd_AddCommand("fieldinfo", SV_FieldInfo_f, "Prints field info.");
+	Cmd_AddCommand("sectorlist", SV_SectorList_f, "Prints sector list.");
+	Cmd_AddCommand("gameCompleteStatus", SV_GameCompleteStatus_f, "Sends a game complete status message to all master servers.");
+	Cmd_AddCommand("map", SV_Map_f, "Loads a specific map.", SV_CompleteMapName);
+	Cmd_AddCommand("devmap", SV_Map_f, "Loads a specific map in developer mode.", SV_CompleteMapName);
+	Cmd_AddCommand("killserver", SV_KillServer_f, "Kills the server.");
 	if (com_dedicated->integer)
 	{
-		Cmd_AddCommand("say", SV_ConSay_f);
+		Cmd_AddCommand("say", SV_ConSay_f, "Prints console messages on dedicated servers.");
 	}
 
 #ifdef FEATURE_DBMS
-	Cmd_AddCommand("sql", DB_ExecSQLCommand_f);
+	Cmd_AddCommand("sql", DB_ExecSQLCommand_f, "Executes an sql command.");
 #endif
 
-	Cmd_AddCommand("uptime", SV_Uptime_f);
+	Cmd_AddCommand("uptime", SV_Uptime_f, "Prints uptime info.");
 
 #if defined(FEATURE_IRC_SERVER) && defined(DEDICATED)
-	Cmd_AddCommand("irc_connect", IRC_Connect);
-	Cmd_AddCommand("irc_disconnect", IRC_InitiateShutdown);
-	Cmd_AddCommand("irc_say", IRC_Say);
+	Cmd_AddCommand("irc_connect", IRC_Connect, "Connects to an IRC server.");
+	Cmd_AddCommand("irc_disconnect", IRC_InitiateShutdown, "Disconnects from an IRC seerver.");
+	Cmd_AddCommand("irc_say", IRC_Say, "Sends a message to selected IRC channel.");
 #endif
 
 	SV_DemoInit();

@@ -236,8 +236,8 @@ static void GLimp_InitCvars(void)
 	Cvar_Get("r_oldFullscreen", "", CVAR_ARCHIVE);
 	Cvar_Get("r_oldMode", "", CVAR_ARCHIVE);
 
-	Cmd_AddCommand("modelist", GLimp_ModeList_f, "Prints a list of available resolutions/modes" );
-	Cmd_AddCommand("minimize", GLimp_Minimize, "Minimizes the game.");
+	Cmd_AddCommand("modelist", GLimp_ModeList_f, "Prints a list of available resolutions/modes.");
+	Cmd_AddCommand("minimize", GLimp_Minimize, "Minimizes the game window.");
 }
 
 /**

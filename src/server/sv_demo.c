@@ -2060,11 +2060,9 @@ static void SV_CompleteDemoName(char *args, int argNum)
  */
 void SV_DemoInit(void)
 {
-	Cmd_AddCommand("demo_record", SV_Demo_Record_f);
-	Cmd_AddCommand("demo_play", SV_Demo_Play_f);
-	Cmd_AddCommand("demo_stop", SV_Demo_Stop_f);
-
-	Cmd_SetCommandCompletionFunc("demo_play", SV_CompleteDemoName);
+	Cmd_AddCommand("demo_record", SV_Demo_Record_f, "Starts demo recording.");
+	Cmd_AddCommand("demo_play", SV_Demo_Play_f, "Plays a demo record.", SV_CompleteDemoName);
+	Cmd_AddCommand("demo_stop", SV_Demo_Stop_f, "Stops a demo record.");
 }
 
 /**
