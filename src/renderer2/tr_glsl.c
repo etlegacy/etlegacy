@@ -2829,6 +2829,7 @@ void GLSL_SetUniform_DeformParms(deformStage_t deforms[], int numDeforms)
 
 	if (numDeforms > MAX_SHADER_DEFORMS)
 	{
+		Ren_Warning("GLSL_SetUniform_DeformParms: max MAX_SHADER_DEFORMS reached.");
 		numDeforms = MAX_SHADER_DEFORMS;
 	}
 
