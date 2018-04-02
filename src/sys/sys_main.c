@@ -256,9 +256,9 @@ extern void Sys_ClearViewlog_f(void);
  */
 void Sys_Init(void)
 {
-	Cmd_AddCommand("in_restart", Sys_In_Restart_f);
+	Cmd_AddCommand("in_restart", Sys_In_Restart_f, "Restarts input system.");
 #ifdef USE_WINDOWS_CONSOLE
-	Cmd_AddCommand("clearviewlog", Sys_ClearViewlog_f);
+	Cmd_AddCommand("clearviewlog", Sys_ClearViewlog_f, "Clears view log.");
 #endif
 
 	Cvar_Set("arch", OS_STRING " " ARCH_STRING);
