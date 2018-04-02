@@ -289,44 +289,6 @@ static void R_SetupEntityLightingGrid(trRefEntity_t *ent, vec3_t forcedOrigin)
 }
 
 /**
- * @brief LogLight
- * @param[in] ent
- *
- * @fixme FIXME rework this
- */
-static void LogLight(trRefEntity_t *ent)
-{
-    int max1, max2;
-
-    if (!(ent->e.renderfx & RF_FIRST_PERSON))
-    {
-        return;
-    }
-
-    max1 = ent->ambientLight[0];
-    if (ent->ambientLight[1] > max1)
-    {
-        max1 = ent->ambientLight[1];
-    }
-    else if (ent->ambientLight[2] > max1)
-    {
-        max1 = ent->ambientLight[2];
-    }
-
-    max2 = ent->directedLight[0];
-    if (ent->directedLight[1] > max2)
-    {
-        max2 = ent->directedLight[1];
-    }
-    else if (ent->directedLight[2] > max2)
-    {
-        max2 = ent->directedLight[2];
-    }
-
-    Ren_Print("amb:%i  dir:%i\n", max1, max2);
-}
-
-/**
  * @brief Calculates all the lighting values that will be used by the Calc_* functions
  * @param[in] refdef
  * @param[in,out] ent
@@ -419,7 +381,8 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 		// This has to be done so brushes use ET material ambient lighting and r_ambientScale has r1 behavior
 		if (pModel->bsp)
 		{
-			VectorScale(ent->ambientLight, 0.5f, ent->ambientLight); // default r_ambientscale
+			// don't scale bsp models
+			//VectorScale(ent->ambientLight, 0.5f, ent->ambientLight); // default r_ambientscale
 		}
 		else
 		{
@@ -440,7 +403,9 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 
 	if (r_debugLight->integer)
 	{
-		LogLight(ent);
+		 Ren_Print("amb: %f %f %f dir: %f %f %f\n",
+				 ent->ambientLight[0], ent->ambientLight[1], ent->ambientLight[2],
+				 ent->directedLight[0], ent->directedLight[1], ent->directedLight[2]);
 	}
 }
 
