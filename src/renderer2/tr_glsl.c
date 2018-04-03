@@ -327,6 +327,25 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 					goto parseerror;
 				}
 			}
+			else if (!Q_stricmp(token, "bool"))
+			{
+				if (def->numUniformValues < MAX_UNIFORM_VALUES - 1)
+				{
+					def->uniformValues[def->numUniformValues].type.type = GLSL_BOOL;
+					GLSL_CopyNextToken(text, &def->uniformValues[def->numUniformValues].type.name);
+					token                                           = COM_ParseExt(text, qtrue);
+					valptr                                          = Com_Allocate(sizeof(qboolean));
+					*((qboolean *)valptr)                                = atoi(token);
+					def->uniformValues[def->numUniformValues].value = valptr;
+					//Ren_Print("%d\n",*((qboolean*)valptr));
+					def->numUniformValues++;
+				}
+				else
+				{
+					Ren_Warning("GLSL_ParseDefinition: MAX_UNIFORM_VALUES reached.\n");
+					goto parseerror;
+				}
+			}
 			else
 			{
 				// FIXME: implement other formats
@@ -2115,22 +2134,52 @@ static void GLSL_SetInitialUniformValues(programInfo_t *info, int permutation)
 
 		if (location == -1)
 		{
+			Ren_Warning("Cannot find uniform \"%s\" from program: %s %d\n", info->uniformValues[i].type.name, info->name, location);
 			Ren_LogComment("Cannot find uniform \"%s\" from program: %s %d\n", info->uniformValues[i].type.name, info->name, location);
-		}
-		else
-		{
-			Ren_LogComment("Setting initial uniform \"%s\" value: %d\n", info->uniformValues[i].type.name, *((int *)info->uniformValues[i].value));
 		}
 
 		switch (info->uniformValues[i].type.type)
 		{
-		case GLSL_INT:
-			//GLSL_SetUniformInt(&info->list->programs[permutation],location,*((int *)info->uniformValues[i].value));
-			glUniform1i(location, *((int *)info->uniformValues[i].value));
+		case GLSL_BOOL:
+			GLSL_SetUniformBoolean(&info->list->programs[permutation],location,*((GLboolean *)info->uniformValues[i].value));
 			break;
+		case GLSL_INT:
+			GLSL_SetUniformInt(&info->list->programs[permutation],location,*((GLint *)info->uniformValues[i].value));
+			break;
+		case GLSL_FLOAT:
+			GLSL_SetUniformFloat(&info->list->programs[permutation],location,*((GLfloat *)info->uniformValues[i].value));
+			break;
+		case GLSL_FLOAT5:
+			GLSL_SetUniformFloat5(&info->list->programs[permutation],location,*((vec5_t *)info->uniformValues[i].value));
+			break;
+		case GLSL_VEC2:
+			GLSL_SetUniformVec2(&info->list->programs[permutation],location,*((vec2_t *)info->uniformValues[i].value));
+			break;
+		case GLSL_VEC3:
+			GLSL_SetUniformVec3(&info->list->programs[permutation],location,*((vec3_t *)info->uniformValues[i].value));
+			break;
+		case GLSL_VEC4:
+			GLSL_SetUniformVec4(&info->list->programs[permutation],location,*((vec4_t *)info->uniformValues[i].value));
+			break;
+/*	FIXME:		
+		case GLSL_MAT16:
+			GLSL_SetUniformMatrix16(&info->list->programs[permutation],location,**((mat4_t *)info->uniformValues[i].value));
+			break;
+		case GLSL_FLOATARR:
+			GLSL_SetUniformFloatARR(&info->list->programs[permutation],location,**((float *)info->uniformValues[i].value));
+			break;
+		case GLSL_VEC4ARR:
+			GLSL_SetUniformVec4ARR(&info->list->programs[permutation],location,**((vec4_t *)info->uniformValues[i].value));
+			break;
+		case GLSL_MAT16ARR:
+			GLSL_SetUniformMatrix16ARR(&info->list->programs[permutation],location,**((mat4_t *)info->uniformValues[i].value));
+			break;
+*/
 		default:
 			Ren_Fatal("Only INT supported atm");
 		}
+
+		Ren_LogComment("Setting initial uniform \"%s\" value: %d\n", info->uniformValues[i].type.name, *((int *)info->uniformValues[i].value));
 	}
 }
 
@@ -2187,6 +2236,7 @@ static qboolean GLSL_CompilePermutation(programInfo_t *info, int offset)
 			GLSL_BindNullProgram();
 
 			GLSL_FinishGPUShader(&info->list->programs[offset]);
+			Ren_Warning("FINISH 5%s\n", info->name);
 			info->list->programs[offset].compiled = qtrue;
 		}
 		else
