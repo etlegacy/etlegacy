@@ -413,9 +413,12 @@ void RB_RenderFlare(flare_t *f)
 
 	backEnd.pc.c_flareRenders++;
 
-	if (f->isCorona) // FIXME: corona case
+	if (f->isCorona) // corona case
 	{
 		VectorScale(colorWhite, f->drawIntensity, color);
+		iColor[0] = color[0];
+		iColor[1] = color[1];
+		iColor[2] = color[2];
 
 		size = backEnd.viewParms.viewportWidth * (r_flareSize->value / 640.0f + 8 / -f->eyeZ);
 	}
@@ -466,9 +469,9 @@ void RB_RenderFlare(flare_t *f)
 	tess.texCoords[tess.numVertexes][1] = 0;
 	tess.texCoords[tess.numVertexes][2] = 0;
 	tess.texCoords[tess.numVertexes][3] = 1;
-	tess.colors[tess.numVertexes][0]    = color[0];
-	tess.colors[tess.numVertexes][1]    = color[1];
-	tess.colors[tess.numVertexes][2]    = color[2];
+	tess.colors[tess.numVertexes][0]    = iColor[0];
+	tess.colors[tess.numVertexes][1]    = iColor[1];
+	tess.colors[tess.numVertexes][2]    = iColor[2];
 	tess.colors[tess.numVertexes][3]    = 1;
 	tess.numVertexes++;
 
@@ -480,9 +483,9 @@ void RB_RenderFlare(flare_t *f)
 	tess.texCoords[tess.numVertexes][1] = 1;
 	tess.texCoords[tess.numVertexes][2] = 0;
 	tess.texCoords[tess.numVertexes][3] = 1;
-	tess.colors[tess.numVertexes][0]    = color[0];
-	tess.colors[tess.numVertexes][1]    = color[1];
-	tess.colors[tess.numVertexes][2]    = color[2];
+	tess.colors[tess.numVertexes][0]    = iColor[0];
+	tess.colors[tess.numVertexes][1]    = iColor[1];
+	tess.colors[tess.numVertexes][2]    = iColor[2];
 	tess.colors[tess.numVertexes][3]    = 1;
 	tess.numVertexes++;
 
@@ -494,9 +497,9 @@ void RB_RenderFlare(flare_t *f)
 	tess.texCoords[tess.numVertexes][1] = 1;
 	tess.texCoords[tess.numVertexes][2] = 0;
 	tess.texCoords[tess.numVertexes][3] = 1;
-	tess.colors[tess.numVertexes][0]    = color[0];
-	tess.colors[tess.numVertexes][1]    = color[1];
-	tess.colors[tess.numVertexes][2]    = color[2];
+	tess.colors[tess.numVertexes][0]    = iColor[0];
+	tess.colors[tess.numVertexes][1]    = iColor[1];
+	tess.colors[tess.numVertexes][2]    = iColor[2];
 	tess.colors[tess.numVertexes][3]    = 1;
 	tess.numVertexes++;
 
@@ -508,9 +511,9 @@ void RB_RenderFlare(flare_t *f)
 	tess.texCoords[tess.numVertexes][1] = 0;
 	tess.texCoords[tess.numVertexes][2] = 0;
 	tess.texCoords[tess.numVertexes][3] = 1;
-	tess.colors[tess.numVertexes][0]    = color[0];
-	tess.colors[tess.numVertexes][1]    = color[1];
-	tess.colors[tess.numVertexes][2]    = color[2];
+	tess.colors[tess.numVertexes][0]    = iColor[0];
+	tess.colors[tess.numVertexes][1]    = iColor[1];
+	tess.colors[tess.numVertexes][2]    = iColor[2];
 	tess.colors[tess.numVertexes][3]    = 1;
 	tess.numVertexes++;
 

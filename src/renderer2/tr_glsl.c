@@ -2236,7 +2236,6 @@ static qboolean GLSL_CompilePermutation(programInfo_t *info, int offset)
 			GLSL_BindNullProgram();
 
 			GLSL_FinishGPUShader(&info->list->programs[offset]);
-			Ren_Warning("FINISH 5%s\n", info->name);
 			info->list->programs[offset].compiled = qtrue;
 		}
 		else
