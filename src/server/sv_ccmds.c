@@ -456,7 +456,6 @@ qboolean SV_TempBanIsBanned(netadr_t address)
 static void SV_Status_f(void)
 {
 	int           i;
-	unsigned int  j;
 	client_t      *cl;
 	playerState_t *ps;
 	const char    *s;

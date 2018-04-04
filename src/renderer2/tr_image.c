@@ -2575,7 +2575,7 @@ image_t *R_FindCubeImage(const char *imageName, int bits, filterType_t filterTyp
 	int         width  = 0, height = 0;
 	byte        *pic[6];
 	long        hash;
-	static char *openglSuffices[6] = { "px", "nx", "py", "ny", "pz", "nz" };
+	//static char *openglSuffices[6] = { "px", "nx", "py", "ny", "pz", "nz" };
 
 	/*
 	    convert $1_forward.tga -flip -rotate 90 $1_px.png
@@ -2587,10 +2587,10 @@ image_t *R_FindCubeImage(const char *imageName, int bits, filterType_t filterTyp
 	    convert $1_up.tga -flip -rotate 90 $1_pz.png
 	    convert $1_down.tga -flop -rotate -90 $1_nz.png
 	 */
-	static char     *doom3Suffices[6] = { "forward", "back", "left", "right", "up", "down" };
-	static qboolean doom3FlipX[6]     = { qtrue, qtrue, qfalse, qtrue, qtrue, qfalse };
-	static qboolean doom3FlipY[6]     = { qfalse, qfalse, qtrue, qfalse, qfalse, qtrue };
-	static int      doom3Rot[6]       = { 90, -90, 0, 0, 90, -90 };
+	//static char     *doom3Suffices[6] = { "forward", "back", "left", "right", "up", "down" };
+	//static qboolean doom3FlipX[6]     = { qtrue, qtrue, qfalse, qtrue, qtrue, qfalse };
+	//static qboolean doom3FlipY[6]     = { qfalse, qfalse, qtrue, qfalse, qfalse, qtrue };
+	//static int      doom3Rot[6]       = { 90, -90, 0, 0, 90, -90 };
 
 	/*
 	    convert $1_rt.tga -flip -rotate 90 $1_px.tga
@@ -2717,6 +2717,7 @@ tryQuakeSuffices:
 
 		R_Rotate(pic[i], width, height, quakeRot[i]);
 	}
+/*
 	goto createCubeImage;
 
 tryOpenGLSuffices:
@@ -2734,6 +2735,7 @@ tryOpenGLSuffices:
 		}
 	}
 	goto createCubeImage;
+
 
 tryDoom3Suffices:
 	for (i = 0; i < 6; i++)
@@ -2762,7 +2764,7 @@ tryDoom3Suffices:
 		R_Rotate(pic[i], width, height, doom3Rot[i]);
 	}
 	//goto createCubeImage;
-
+*/
 createCubeImage:
 	image = R_CreateCubeImage((char *)buffer, (const byte **)pic, width, height, bits, filterType, wrapType);
 

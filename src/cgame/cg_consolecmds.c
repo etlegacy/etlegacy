@@ -1710,7 +1710,7 @@ static void CG_NoClip_f(void)
 }
 #endif
 
-static void CG_PrintObjectiveInfo()
+static void CG_PrintObjectiveInfo_f(void)
 {
 	int i;
 
@@ -1838,7 +1838,7 @@ static consoleCommand_t commands[] =
 	{ "noclip",              CG_NoClip_f               },
 #endif
 	// objective info list for mappers/scripters (and players? - we might extend it)
-	{ "oinfo",               CG_PrintObjectiveInfo     },
+	{ "oinfo",               CG_PrintObjectiveInfo_f   },
 	{ "resetmaxspeed",       CG_ResetMaxSpeed_f        }
 };
 
