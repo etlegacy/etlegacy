@@ -711,6 +711,18 @@ cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force)
 			return var;
 		}
 
+		if ((var->flags & CVAR_CHEAT) && !cvar_cheats->integer)
+		{
+			Com_Printf("%s is cheat protected.\n", var_name);
+			return var;
+		}
+
+		if (var->flags & CVAR_SHADER)
+		{
+			Com_Printf("%s will be changed upon recompiling shaders.\n", var_name);
+			Cvar_Set("r_recompileShaders", "1");
+		}
+
 		if (var->flags & CVAR_LATCH)
 		{
 			if (var->latchedString)
@@ -734,18 +746,6 @@ cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force)
 			var->modified      = qtrue;
 			var->modificationCount++;
 			return var;
-		}
-
-		if ((var->flags & CVAR_CHEAT) && !cvar_cheats->integer)
-		{
-			Com_Printf("%s is cheat protected.\n", var_name);
-			return var;
-		}
-
-		if (var->flags & CVAR_SHADER)
-		{
-			Com_Printf("%s will be changed upon recompiling shaders.\n", var_name);
-			Cvar_Set("r_recompileShaders", "1");
 		}
 	}
 	else
