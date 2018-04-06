@@ -2705,7 +2705,6 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	case EV_SHAKE:
 	{
-		vec3_t v;
 		float  len;
 
 #ifdef FEATURE_EDV
@@ -2715,8 +2714,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		}
 #endif
 
-		VectorSubtract(cg.snap->ps.origin, cent->lerpOrigin, v);
-		len = VectorLength(v);
+		len = VectorDistance(cg.snap->ps.origin, cent->lerpOrigin);
 
 		if (len > cent->currentState.onFireStart)
 		{

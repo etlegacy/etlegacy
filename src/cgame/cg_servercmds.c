@@ -126,9 +126,9 @@ static void CG_ParseScore(team_t team)
  */
 static void CG_ParseTeamInfo(void)
 {
-	int i;
-	int client;
-	int numSortedTeamPlayers;
+	int       i;
+	int       client;
+	int       numSortedTeamPlayers;
 
 	numSortedTeamPlayers = atoi(CG_Argv(1));
 
@@ -148,6 +148,10 @@ static void CG_ParseTeamInfo(void)
 			return;
 		}
 
+		// FIXME: get origin/location from somewhere else and shorten tinfo
+		// cg_entities[client]>lerpOrigin works on first view and small distances
+		// but isn't updated for unknown reasons when current client is inactive and other players are far away
+		// check cent->currentState.origin
 		cgs.clientinfo[client].location[0] = atoi(CG_Argv(i * TEAMINFOARGS + 3));
 		cgs.clientinfo[client].location[1] = atoi(CG_Argv(i * TEAMINFOARGS + 4));
 		cgs.clientinfo[client].location[2] = atoi(CG_Argv(i * TEAMINFOARGS + 5));
@@ -1168,7 +1172,6 @@ static void CG_MapRestart(void)
 	// clear zoom (so no warpies)
 	cg.zoomedBinoc = qfalse;
 	cg.zoomed      = qfalse;
-	// cg.zoomedScope = qfalse;
 	cg.zoomTime = 0;
 	cg.zoomval  = 0;
 

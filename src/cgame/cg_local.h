@@ -596,7 +596,7 @@ typedef struct clientInfo_s
 
 	int botSkill;                   ///< OBSOLETE remove!
 	int score;                      ///< updated by score servercmds
-	int location[3];                ///< location in 3d for team mode (was 2d before)
+	vec3_t location;                ///< location (currentOrigin casted int values!) for team mode
 	int health;                     ///< you only get this info about your teammates
 	int powerups;                   ///< so can display quad/flag status
 	int breathPuffTime;
@@ -958,9 +958,8 @@ typedef struct
 	vec3_t refdefViewAngles;                ///< will be converted to refdef.viewaxis
 
 	// zoom key
-	qboolean zoomed;                     ///< TODO: unused
+	qboolean zoomed;                     ///< zoomed by sniper/snooper (zoomedScope)
 	qboolean zoomedBinoc;
-	// int zoomedScope;
 	int zoomTime;
 	float zoomSensitivity;
 	float zoomval;

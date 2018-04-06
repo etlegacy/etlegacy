@@ -390,9 +390,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 	clientInfo_t   *ci = NULL;
 	fireteamData_t *f  = NULL;
 	char           *locStr[MAX_FIRETEAM_MEMBERS];
-	vec3_t         origin;
-
-	int curWeap;
+	int            curWeap;
 
 	// assign fireteam data, and early out if not on one
 	if (!(f = CG_IsOnFireteam(cg.clientNum)))
@@ -415,11 +413,7 @@ void CG_DrawFireTeamOverlay(rectDef_t *rect)
 
 		if (cg_locations.integer & LOC_FTEAM)
 		{
-			origin[0] = ci->location[0];
-			origin[1] = ci->location[1];
-			origin[2] = ci->location[2];
-
-			locStr[i] = CG_BuildLocationString(ci->clientNum, origin, LOC_FTEAM);
+			locStr[i] = CG_BuildLocationString(ci->clientNum, ci->location, LOC_FTEAM);
 
 			if (!locStr[i][1] || !*locStr[i])
 			{

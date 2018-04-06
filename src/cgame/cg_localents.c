@@ -60,7 +60,6 @@ location_t *CG_GetLocation(int client, vec3_t origin)
 	location_t *bestLoc = NULL;
 	float      bestdist = 200000000.f;
 	float      len;
-	vec3_t     lenVec;
 	int        i;
 
 	if (ISVALIDCLIENTNUM(client) && cgs.clientLocation[client].lastLocation)
@@ -77,9 +76,7 @@ location_t *CG_GetLocation(int client, vec3_t origin)
 	for (i = 0; i < cgs.numLocations; ++i)
 	{
 		curLoc = &cgs.location[i];
-
-		VectorSubtract(origin, curLoc->origin, lenVec);
-		len = VectorLength(lenVec);
+		len    = VectorDistance(origin, curLoc->origin);
 
 		if (len > bestdist || !trap_R_inPVS(origin, curLoc->origin))
 		{
@@ -87,7 +84,6 @@ location_t *CG_GetLocation(int client, vec3_t origin)
 			//CG_Printf("^6OR %i  %i   --  %i   %i\n", origin[0], origin[1], curLoc->origin[0], curLoc->origin[1]);
 			continue;
 		}
-
 
 		bestdist = len;
 		bestLoc  = curLoc;
@@ -153,16 +149,8 @@ char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag)
 			}
 			else
 			{
-				vec3_t myOrigin, v;
-				float  dist;
-
-				myOrigin[0] = cgs.clientinfo[cg.clientNum].location[0];
-				myOrigin[1] = cgs.clientinfo[cg.clientNum].location[1];
-				myOrigin[2] = cgs.clientinfo[cg.clientNum].location[2];
-
-				VectorSubtract(origin, myOrigin, v);
-				dist   = VectorLength(v);
-				locStr = va("^3%5i", (int)dist);
+				//locStr = va("^3%7.2f", VectorDistance(origin, cgs.clientinfo[cg.clientNum].location) / 40.f); // meter
+				locStr = va("^3%7.2f", VectorDistance(origin, cgs.clientinfo[cg.clientNum].location));        // game units
 			}
 		}
 		else
@@ -1458,7 +1446,6 @@ static void CG_AddMoveScaleFade(localEntity_t *le)
 {
 	refEntity_t *re = &le->refEntity;
 	float       c;
-	vec3_t      delta;
 	float       len;
 
 	// fade / grow time
@@ -1489,8 +1476,7 @@ static void CG_AddMoveScaleFade(localEntity_t *le)
 
 	// if the view would be "inside" the sprite, kill the sprite
 	// so it doesn't add too much overdraw
-	VectorSubtract(re->origin, cg.refdef_current->vieworg, delta);
-	len = VectorLength(delta);
+	len = VectorDistance(re->origin, cg.refdef_current->vieworg);
 	if (len < le->radius)
 	{
 		CG_FreeLocalEntity(le);
@@ -1511,7 +1497,6 @@ static void CG_AddScaleFade(localEntity_t *le)
 {
 	refEntity_t *re = &le->refEntity;
 	float       c   = (le->endTime - cg.time) * le->lifeRate; // fade / grow time
-	vec3_t      delta;
 	float       len;
 
 	re->shaderRGBA[3] = (byte)(0xff * c * le->color[3]);
@@ -1522,8 +1507,7 @@ static void CG_AddScaleFade(localEntity_t *le)
 
 	// if the view would be "inside" the sprite, kill the sprite
 	// so it doesn't add too much overdraw
-	VectorSubtract(re->origin, cg.refdef_current->vieworg, delta);
-	len = VectorLength(delta);
+	len = VectorDistance(re->origin, cg.refdef_current->vieworg);
 	if (len < le->radius)
 	{
 		CG_FreeLocalEntity(le);
@@ -1545,7 +1529,6 @@ static void CG_AddFallScaleFade(localEntity_t *le)
 {
 	refEntity_t *re = &le->refEntity;
 	float       c   = (le->endTime - cg.time) * le->lifeRate; // fade time
-	vec3_t      delta;
 	float       len;
 
 	re->shaderRGBA[3] = (byte)(0xff * c * le->color[3]);
@@ -1556,8 +1539,7 @@ static void CG_AddFallScaleFade(localEntity_t *le)
 
 	// if the view would be "inside" the sprite, kill the sprite
 	// so it doesn't add too much overdraw
-	VectorSubtract(re->origin, cg.refdef_current->vieworg, delta);
-	len = VectorLength(delta);
+	len = VectorDistance(re->origin, cg.refdef_current->vieworg);
 	if (len < le->radius)
 	{
 		CG_FreeLocalEntity(le);
