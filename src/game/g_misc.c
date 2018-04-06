@@ -1522,15 +1522,12 @@ void mg42_track(gentity_t *self, gentity_t *other)
  */
 void mg42_think(gentity_t *self)
 {
-	vec3_t    vec;
 	gentity_t *owner;
 
 	if (g_gamestate.integer == GS_INTERMISSION)
 	{
 		return;
 	}
-
-	VectorClear(vec);
 
 	owner = &g_entities[self->r.ownerNum];
 
@@ -1571,12 +1568,7 @@ void mg42_think(gentity_t *self)
 
 	if (owner->client)
 	{
-		float len;
-
-		VectorSubtract(self->r.currentOrigin, owner->r.currentOrigin, vec);
-		len = VectorLength(vec);
-
-		if (len < USEDIST && owner->active && owner->health > 0)
+		if (VectorDistance(self->r.currentOrigin, owner->r.currentOrigin) < USEDIST && owner->active && owner->health > 0)
 		{
 			// ATVI Wolfenstein Misc #433
 			owner->client->ps.pm_flags &= ~PMF_DUCKED;
@@ -1632,7 +1624,8 @@ void mg42_think(gentity_t *self)
 
 	if (self->timestamp > level.time)
 	{
-		int i;
+		int    i;
+		vec3_t vec;
 
 		// slowly rotate back to position
 		clamp_hweapontofirearc(self, vec);

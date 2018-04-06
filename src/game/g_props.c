@@ -1136,8 +1136,7 @@ void Props_Chair_Die(gentity_t *ent, gentity_t *inflictor, gentity_t *attacker, 
  */
 void Just_Got_Thrown(gentity_t *self)
 {
-	float  len = 0;
-	vec3_t vec;
+	float len = 0;
 
 	if (self->s.groundEntityNum == -1)
 	{
@@ -1156,8 +1155,7 @@ void Just_Got_Thrown(gentity_t *self)
 	}
 	else
 	{
-		VectorSubtract(self->r.currentOrigin, self->s.origin2, vec);
-		len = VectorLength(vec);
+		len = Distance(self->r.currentOrigin, self->s.origin2);
 
 		{
 			trace_t trace;

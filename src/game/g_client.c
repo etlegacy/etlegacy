@@ -165,14 +165,12 @@ qboolean SpotWouldTelefrag(gentity_t *spot)
 gentity_t *SelectNearestDeathmatchSpawnPoint(vec3_t from)
 {
 	gentity_t *spot = NULL;
-	vec3_t    delta;
 	float     dist, nearestDist = 999999;
 	gentity_t *nearestSpot = NULL;
 
 	while ((spot = G_Find(spot, FOFS(classname), "info_player_deathmatch")) != NULL)
 	{
-		VectorSubtract(spot->r.currentOrigin, from, delta);
-		dist = VectorLength(delta);
+		dist = VectorDistance(spot->r.currentOrigin, from);
 		if (dist < nearestDist)
 		{
 			nearestDist = dist;

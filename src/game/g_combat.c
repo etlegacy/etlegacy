@@ -1453,11 +1453,9 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		if (dflags & DAMAGE_DISTANCEFALLOFF)
 		{
 			vec_t  dist;
-			vec3_t shotvec;
 			float  scale;
 
-			VectorSubtract(point, muzzleTrace, shotvec);
-			dist = VectorLength(shotvec);
+			dist = VectorDistance(point, muzzleTrace);
 
 			// start at 100% at 1500 units (and before),
 			// and go to 20% at 2500 units (and after)
@@ -2059,7 +2057,7 @@ qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker
 			{
 				VectorSubtract(dest, origin, dest);
 				dist = VectorLength(dest);
-				if (dist < radius * 0.2f)     // closer than 1/4 dist
+				if (dist < radius * 0.2f)     // closer than 1/4 dist (actually 1/5)
 				{
 					if (ent->dmgparent)
 					{

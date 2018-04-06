@@ -2964,7 +2964,6 @@ void Reached_Train(gentity_t *ent)
 	// copy the apropriate values
 	gentity_t *next = ent->nextTrain;
 	float     speed;
-	vec3_t    move;
 	float     length;
 
 	if (!next || !next->nextTrain)
@@ -3007,8 +3006,7 @@ void Reached_Train(gentity_t *ent)
 	}
 
 	// calculate duration
-	VectorSubtract(ent->pos2, ent->pos1, move);
-	length = VectorLength(move);
+	length = VectorDistance(ent->pos2, ent->pos1);
 
 	ent->s.pos.trDuration = (int)(length * 1000.f / speed);
 	ent->gDuration        = ent->s.pos.trDuration;
@@ -3377,7 +3375,6 @@ void Reached_Train_rotating(gentity_t *ent)
 	// copy the apropriate values
 	gentity_t *next = ent->nextTrain;
 	float     speed;
-	vec3_t    move;
 	float     length;
 	float     frames;
 
@@ -3414,8 +3411,7 @@ void Reached_Train_rotating(gentity_t *ent)
 	ent->rotate[2] = next->rotate[1];
 
 	// calculate duration
-	VectorSubtract(ent->pos2, ent->pos1, move);
-	length = VectorLength(move);
+	length = VectorDistance(ent->pos2, ent->pos1);
 
 	if (next->duration != 0.f)
 	{
