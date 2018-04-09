@@ -2411,8 +2411,6 @@ static void Render_fog_brushes()
  */
 static void Render_volumetricFog()
 {
-	//vec3_t fogColor; not used anymore
-
 	Ren_LogComment("--- Render_volumetricFog---\n");
 
 	if (glConfig2.framebufferBlitAvailable)
@@ -2475,18 +2473,11 @@ static void Render_volumetricFog()
 		glVertexAttrib4fv(ATTR_INDEX_COLOR, tr.fogColor);
 
 		// set uniforms
-		
-		{
-			//get in from shaders and bsp
-			fogDensity = tess.surfaceShader->fogParms.tcScale;
-			VectorCopy(tess.surfaceShader->fogParms.color, tr.fogColor);
-		}
-
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 		SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 		SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
-		SetUniformFloat(UNIFORM_FOGDENSITY, fogDensity);
-		SetUniformVec3(UNIFORM_FOGCOLOR, tr.fogColor);
+		SetUniformFloat(UNIFORM_FOGDENSITY, tess.surfaceShader->fogParms.density);
+		SetUniformVec3(UNIFORM_FOGCOLOR, tess.surfaceShader->fogParms.color);
 
 		// bind u_DepthMap
 		SelectTexture(TEX_DEPTH);
