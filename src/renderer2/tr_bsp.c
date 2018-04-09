@@ -4424,7 +4424,7 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 	int          planeNum;
 	shader_t     *shader;
 	float        d;
-	int          firstSide = 0;
+	int          firstSide;
 
 	Ren_Print("...loading fogs\n");
 
@@ -4471,6 +4471,7 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 		{
 			VectorSet(out->bounds[0], MIN_WORLD_COORD, MIN_WORLD_COORD, MIN_WORLD_COORD);
 			VectorSet(out->bounds[1], MAX_WORLD_COORD, MAX_WORLD_COORD, MAX_WORLD_COORD);
+			firstSide = 0;
 		}
 		else
 		{
@@ -4633,8 +4634,8 @@ void R_LoadLightGrid(lump_t *l)
 
 		for (j = 0; j < 3; j++)
 		{
-			gridPoint->ambientColor[j]  = tmpAmbient[j] * (1.0f / 255.0f);
-			gridPoint->directedColor[j] = tmpDirected[j] * (1.0f / 255.0f);
+			gridPoint->ambientColor[j]  = tmpAmbient[j] / 255.0f;
+			gridPoint->directedColor[j] = tmpDirected[j] / 255.0f;
 		}
 
 		gridPoint->ambientColor[3]  = 1.0f;
