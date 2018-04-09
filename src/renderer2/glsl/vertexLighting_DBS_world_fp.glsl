@@ -7,7 +7,6 @@ uniform sampler2D u_SpecularMap;
 uniform int       u_AlphaTest;
 uniform vec3      u_ViewOrigin;
 uniform float     u_DepthScale;
-uniform int       u_PortalClipping;
 uniform vec4      u_PortalPlane;
 uniform float     u_LightWrapAround;
 
@@ -22,15 +21,14 @@ varying vec3 var_Normal;
 
 void main()
 {
-	if (bool(u_PortalClipping))
-	{
+	#if defined(USE_PORTAL_CLIPPING)
 		float dist = dot(var_Position.xyz, u_PortalPlane.xyz) - u_PortalPlane.w;
 		if (dist < 0.0)
 		{
 			discard;
 			return;
 		}
-	}
+	#endif
 
 #if defined(USE_NORMAL_MAPPING)
 
