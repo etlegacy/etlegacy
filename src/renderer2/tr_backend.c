@@ -2170,12 +2170,12 @@ void RB_RenderScreenSpaceAmbientOcclusion()
 {
 	Ren_LogComment("--- RB_RenderScreenSpaceAmbientOcclusion ---\n");
 
-	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
+	if (!r_screenSpaceAmbientOcclusion->integer)
 	{
 		return;
 	}
 
-	if (!r_screenSpaceAmbientOcclusion->integer)
+	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
 		return;
 	}
@@ -2218,12 +2218,12 @@ void RB_RenderDepthOfField()
 {
 	Ren_LogComment("--- RB_RenderDepthOfField ---\n");
 
-	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
+	if (!r_depthOfField->integer)
 	{
 		return;
 	}
 
-	if (!r_depthOfField->integer)
+	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
 	{
 		return;
 	}
@@ -2335,6 +2335,7 @@ void RB_RenderGlobalFog()
 
 		SetUniformVec4(UNIFORM_FOGDISTANCEVECTOR, fogDistanceVector);
 		SetUniformVec4(UNIFORM_COLOR, fog->color);
+		SetUniformFloat(UNIFORM_FOGDENSITY, 0.6f);
 	}
 
 	SetUniformMatrix16(UNIFORM_VIEWMATRIX, backEnd.viewParms.world.viewMatrix);
@@ -2382,7 +2383,12 @@ void RB_RenderBloom()
 	Ren_LogComment("--- RB_RenderBloom ---\n");
 
 	// hdr requires bloom renderer
-	if ((backEnd.refdef.rdflags & (RDF_NOWORLDMODEL | RDF_NOBLOOM)) || (!r_bloom->integer && !HDR_ENABLED()) || backEnd.viewParms.isPortal || !glConfig2.framebufferObjectAvailable)
+	if (!r_bloom->integer && !HDR_ENABLED())
+	{
+		return;
+	}
+
+	if ((backEnd.refdef.rdflags & (RDF_NOWORLDMODEL | RDF_NOBLOOM)) || backEnd.viewParms.isPortal || !glConfig2.framebufferObjectAvailable)
 	{
 		return;
 	}
@@ -2534,7 +2540,12 @@ void RB_RenderRotoscope(void)
 {
 	Ren_LogComment("--- RB_RenderRotoscope ---\n");
 
-	if ((backEnd.refdef.rdflags & RDF_NOWORLDMODEL) || !r_rotoscope->integer || backEnd.viewParms.isPortal)
+	if (!r_rotoscope->integer)
+	{
+		return;
+	}
+	
+	if ((backEnd.refdef.rdflags & RDF_NOWORLDMODEL) || backEnd.viewParms.isPortal)
 	{
 		return;
 	}
@@ -2572,8 +2583,12 @@ void RB_CameraPostFX(void)
 
 	Ren_LogComment("--- RB_CameraPostFX ---\n");
 
-	if ((backEnd.refdef.rdflags & RDF_NOWORLDMODEL) || !r_cameraPostFX->integer || backEnd.viewParms.isPortal ||
-	    !tr.grainImage || !tr.vignetteImage)
+	if (!r_cameraPostFX->integer)
+	{
+		return;
+	}
+
+	if ((backEnd.refdef.rdflags & RDF_NOWORLDMODEL) || backEnd.viewParms.isPortal)
 	{
 		return;
 	}
@@ -2607,8 +2622,14 @@ void RB_CameraPostFX(void)
 
 	// bind u_GrainMap
 	SelectTexture(TEX_GRAIN);
-	GL_Bind(tr.grainImage);
-	//GL_Bind(tr.defaultImage);
+	if (tr.grainImage)
+	{
+		GL_Bind(tr.grainImage);
+	}
+	else
+	{
+		GL_Bind(tr.defaultImage);
+	}
 
 	// bind u_VignetteMap
 	SelectTexture(TEX_VIGNETTE);

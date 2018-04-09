@@ -8,6 +8,7 @@ uniform vec4      u_FogDepthVector;
 uniform vec4      u_Color;
 uniform mat4      u_ViewMatrix;
 uniform mat4      u_UnprojectMatrix;
+uniform float     u_FogDensity;
 
 void main()
 {
@@ -25,7 +26,7 @@ void main()
 	// calculate the length in fog (t is always 0 if eye is in fog)
 	st.s = dot(P.xyz, u_FogDistanceVector.xyz) + u_FogDistanceVector.w;
 	// st.s = vertexDistanceToCamera;
-	st.t = 0.6;
+	st.t = u_FogDensity;
 
 	gl_FragColor = u_Color * texture2D(u_ColorMap, st);
 }
