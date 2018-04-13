@@ -354,8 +354,6 @@ typedef struct
 
 	int pingUpdateSource;           ///< source currently pinging or updating
 
-	int masterNum;
-
 	char updateInfoString[MAX_INFO_STRING];
 
 	// rendering info

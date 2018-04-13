@@ -1724,7 +1724,7 @@ void CL_ConnectionlessPacket(netadr_t from, msg_t *msg)
 	{
 		if (cls.state != CA_CONNECTING)
 		{
-			Com_Printf("Unwanted challenge response received.  Ignored.\n");
+			Com_Printf("Unwanted challenge response received. '%s' ignored.\n", c);
 		}
 		else
 		{
@@ -3467,35 +3467,62 @@ void CL_LocalServers_f(void)
 }
 
 /**
-* @brief Sends a request for server list to the chosen master server
-*/
+ * @brief Sends a request for server list to the chosen master server. 0 fetch all master servers and 1-5 request a single master server.
+ */
 void CL_GlobalServers_f(void)
 {
 	netadr_t to;
-	int      count, i;
+	int      count, i, masterNum;
 	char     command[1024], *masteraddress;
 
-	if ((count = Cmd_Argc()) < 3 || (cls.masterNum = atoi(Cmd_Argv(1))) < 0 || cls.masterNum > MAX_MASTER_SERVERS - 1)
+	if ((count = Cmd_Argc()) < 3 || (masterNum = atoi(Cmd_Argv(1))) < 0 || masterNum > MAX_MASTER_SERVERS)
 	{
-		Com_Printf("usage: globalservers <master# 0-%i> <protocol> [keywords]\n", MAX_MASTER_SERVERS - 1);
+		Com_Printf("usage: globalservers <master# 0-%d> <protocol> [keywords]\n", MAX_MASTER_SERVERS);
 		return;
 	}
 
-	sprintf(command, "sv_master%d", cls.masterNum + 1);
+	// request from all master servers
+	if ( masterNum == 0 )
+	{
+		int numAddress = 0;
+
+		for (i = 1; i <= MAX_MASTER_SERVERS; i++)
+		{
+			sprintf(command, "sv_master%d", i);
+			masteraddress = Cvar_VariableString(command);
+
+			if (!*masteraddress)
+			{
+				continue;
+			}
+
+			numAddress++;
+
+			Com_sprintf(command, sizeof(command), "globalservers %d %s %s\n", i, Cmd_Argv(2), Cmd_ArgsFrom(3));
+			Cbuf_AddText(command);
+		}
+
+		if (!numAddress)
+		{
+			Com_Printf("CL_GlobalServers_f Error: No master server addresses.\n");
+		}
+		return;
+	}
+
+	sprintf(command, "sv_master%d", masterNum);
 	masteraddress = Cvar_VariableString(command);
 
 	if (!*masteraddress)
 	{
-		Com_Printf("CL_GlobalServers_f: Error: No master server address given.\n");
+		Com_Printf("CL_GlobalServers_f Error: Could not resolve address of master %s\n", masteraddress);
 		return;
 	}
-
 
 	i = NET_StringToAdr(masteraddress, &to, NA_UNSPEC);
 
 	if (!i)
 	{
-		Com_Printf("CL_GlobalServers_f: Error: could not resolve address of master %s\n", masteraddress);
+		Com_Printf("CL_GlobalServers_f Error: could not resolve address of master %s\n", masteraddress);
 		return;
 	}
 	else if (i == 2)
@@ -3514,10 +3541,16 @@ void CL_GlobalServers_f(void)
 	// Use the extended query for IPv6 masters
 	if (to.type == NA_IP6 || to.type == NA_MULTICAST6)
 	{
-		Com_sprintf(command, sizeof(command), "getserversExt %s %s", GAMENAME_FOR_MASTER, Cmd_Argv(2));
+		int v4enabled = Cvar_VariableIntegerValue("net_enabled") & NET_ENABLEV4;
 
-		// TODO: test if we only have an IPv6 connection. If it's the case,
-		//       request IPv6 servers only by appending " ipv6" to the command
+		if(v4enabled)
+		{
+			Com_sprintf(command, sizeof(command), "getserversExt %s %s", GAMENAME_FOR_MASTER, Cmd_Argv(2));
+		}
+		else
+		{
+			Com_sprintf(command, sizeof(command), "getserversExt %s %s ipv6", GAMENAME_FOR_MASTER, Cmd_Argv(2));
+		}
 	}
 	else
 #endif
@@ -3532,7 +3565,7 @@ void CL_GlobalServers_f(void)
 		Q_strcat(command, sizeof(command), Cmd_Argv(i));
 	}
 
-	NET_OutOfBandPrint(NS_SERVER, to, command);
+	NET_OutOfBandPrint(NS_SERVER, to, "%s", command);
 }
 
 /**
