@@ -158,7 +158,10 @@ void RB_FogOn(void)
 		return;
 	}
 
-	glEnable(GL_FOG);
+	// fixed pipeline functionality - deactivated
+	// see https://stackoverflow.com/questions/41253246/glenablegl-fog-does-work-gives-invalid-enumerant-error
+	// this fixes invalid enum errors on maps using map fog and r_ignoreGLErrors is disabled
+	//glEnable(GL_FOG);
 
 	fogIsOn = qtrue;
 }
