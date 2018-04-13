@@ -1467,7 +1467,7 @@ void R_Register(void)
 	// make sure all the commands added here are also removed in R_Shutdown
 	ri.Cmd_AddSystemCommand("imagelist", R_ImageList_f, "Prints the list of loaded images.", NULL);
 	ri.Cmd_AddSystemCommand("shaderlist", R_ShaderList_f, "Prints the list of loaded shaders.", NULL);
-	ri.Cmd_AddSystemCommand("shaderexp", R_ShaderExp_f, "Exports the shaders.", NULL);
+	ri.Cmd_AddSystemCommand("shaderexp", R_ShaderExp_f, "Evaluates shader expressions.", NULL);
 	ri.Cmd_AddSystemCommand("skinlist", R_SkinList_f, "Prints the list of skins", NULL);
 	ri.Cmd_AddSystemCommand("modellist", R_Modellist_f, "Prints the list of loaded models.", NULL);
 
@@ -1614,7 +1614,7 @@ void RE_Shutdown(qboolean destroyWindow)
 	ri.Cmd_RemoveSystemCommand("animationlist");
 	ri.Cmd_RemoveSystemCommand("fbolist");
 	ri.Cmd_RemoveSystemCommand("vbolist");
-	ri.Cmd_RemoveSystemCommand("generatemtr");
+	//ri.Cmd_RemoveSystemCommand("generatemtr");
 	ri.Cmd_RemoveSystemCommand("buildcubemaps");
 
 	ri.Cmd_RemoveSystemCommand("glsl_restart");
