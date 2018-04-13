@@ -460,6 +460,7 @@ static void SV_Status_f(void)
 	playerState_t *ps;
 	const char    *s;
 	int           ping;
+	unsigned int  maxNameLength;
 
 	// make sure server is running
 	if (!com_sv_running->integer)
@@ -473,8 +474,8 @@ static void SV_Status_f(void)
 	           "server time           : %i\n"
 	           "internal time         : %i\n"
 	           "map                   : %s\n\n"
-	           "num score ping name            lastmsg address               qport rate\n"
-	           "--- ----- ---- --------------- ------- --------------------- ----- -----\n",
+	           "num score ping name                                lastmsg address               qport rate  lastConnectTime\n"
+	           "--- ----- ---- ----------------------------------- ------- --------------------- ----- ----- ---------------\n",
 	           ( int ) svs.stats.cpu,
 	           ( int ) svs.stats.avg,
 	           svs.time,
@@ -511,11 +512,10 @@ static void SV_Status_f(void)
 
 		s = NET_AdrToString(cl->netchan.remoteAddress);
 
-		// FIXME: format output
-		// FIXME: extend player name length (>16 chars)?
-		// FIXME: do a Com_Printf per line! ... create the row at first
-		// print lastConnectTime ?
-		Com_Printf("%16s %i %s %i %i\n", rc(cl->name), svs.time - cl->lastPacketTime, s, cl->netchan.qport, cl->rate);
+		// extend the name length by couting extra color characters to keep well formated output
+		maxNameLength = sizeof(cl->name) + (strlen(cl->name) - Q_PrintStrlen(cl->name)) + 1;
+
+		Com_Printf("%-*s %7i %-21s %5i %5i %i\n", maxNameLength, rc(cl->name), svs.time - cl->lastPacketTime, s, cl->netchan.qport, cl->rate, svs.time - cl->lastConnectTime);
 	}
 
 	Com_Printf("\n");
@@ -543,7 +543,8 @@ static void SV_ConSay_f(void)
 
 	p = Cmd_Args();
 
-	if (strlen(p) > 1000) {
+	if (strlen(p) > 1000)
+	{
 		return;
 	}
 
