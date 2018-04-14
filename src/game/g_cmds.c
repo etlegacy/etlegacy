@@ -651,6 +651,11 @@ void Cmd_Give_f(gentity_t *ent)
 	int      amount;
 	qboolean hasAmount = qfalse;
 
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
 	if (!CheatsOk(ent))
 	{
 		return;
@@ -679,7 +684,13 @@ void Cmd_Give_f(gentity_t *ent)
 	{
 		skillType_t skill;
 
-		if (hasAmount)
+		if ((ent->client->sess.sessionTeam != TEAM_ALLIES && ent->client->sess.sessionTeam != TEAM_AXIS) || g_gamestate.integer != GS_PLAYING)
+		{
+			trap_SendServerCommand(ent - g_entities, va("print \"give skill: Command not available - player is spectator or game isn't started.\n\""));
+			return;
+		}
+
+		if (hasAmount) // skill number given
 		{
 			skill = (skillType_t)amount; // Change amount to skill, so that we can use amount properly
 
@@ -694,6 +705,12 @@ void Cmd_Give_f(gentity_t *ent)
 
 				G_AddSkillPoints(ent, skill, amount);
 				G_DebugAddSkillPoints(ent, skill, amount, "give skill");
+
+				trap_SendServerCommand(ent - g_entities, va("print \"give skill: Skill %i increased - %i points have been added.\n\"", skill, amount));
+			}
+			else
+			{
+				trap_SendServerCommand(ent - g_entities, va("print \"give skill <skill_no>: No valid skill '%i' (0-5).\n\"", skill));
 			}
 		}
 		else
@@ -711,6 +728,7 @@ void Cmd_Give_f(gentity_t *ent)
 				G_AddSkillPoints(ent, skill, amount);
 				G_DebugAddSkillPoints(ent, skill, amount, "give skill");
 			}
+			trap_SendServerCommand(ent - g_entities, va("print \"give skill: All skills increased by 1 level.\n\""));
 		}
 		return;
 	}
