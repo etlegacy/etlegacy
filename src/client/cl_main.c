@@ -3545,11 +3545,11 @@ void CL_GlobalServers_f(void)
 
 		if(v4enabled)
 		{
-			Com_sprintf(command, sizeof(command), "getserversExt %s %s", GAMENAME_FOR_MASTER, Cmd_Argv(2));
+			Com_sprintf(command, sizeof(command), "getserversExt %s %s", GAMENAME_STRING, Cmd_Argv(2));
 		}
 		else
 		{
-			Com_sprintf(command, sizeof(command), "getserversExt %s %s ipv6", GAMENAME_FOR_MASTER, Cmd_Argv(2));
+			Com_sprintf(command, sizeof(command), "getserversExt %s %s ipv6", GAMENAME_STRING, Cmd_Argv(2));
 		}
 	}
 	else
