@@ -1249,19 +1249,10 @@ static void ParseFace(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, int
 
 	R_CalcSurfaceTrianglePlanes(numTriangles, cv->triangles, cv->verts);
 
-	// take the plane information from the lightmap vector
-	for (i = 0; i < 3; i++)
-	{
-		cv->plane.normal[i] = LittleFloat(ds->lightmapVecs[2][i]);
-	}
-	cv->plane.dist = DotProduct(cv->verts[0].xyz, cv->plane.normal);
-	SetPlaneSignbits(&cv->plane);
-	cv->plane.type = PlaneTypeForNormal(cv->plane.normal);
-
 	surf->data = (surfaceType_t *) cv;
 
 	// calc tangent spaces
-#if 0
+#if 0 // example: oasis wall
 	{
 		float       *v;
 		const float *v0, *v1, *v2;
