@@ -476,13 +476,15 @@ void RB_CalcDeformVertexes(deformStage_t *ds)
 {
 	unsigned int i;
 	vec3_t       offset;
-	float        scale, off, dot;
+	float        scale;
 	float        *xyz    = (float *)tess.xyz;
 	float        *normal = (float *)tess.normals;
 	float        *table;
 
 	if (ds->deformationWave.frequency < 0)
 	{
+		float    off;
+		float    dot;
 		qboolean inverse = qfalse;
 		vec3_t   worldUp;
 
@@ -554,11 +556,13 @@ void RB_CalcDeformVertexes(deformStage_t *ds)
 	}
 	else
 	{
+		float off;
+
 		table = TableForFunc(ds->deformationWave.func);
 
 		for (i = 0; i < tess.numVertexes; i++, xyz += 4, normal += 4)
 		{
-			float off = (xyz[0] + xyz[1] + xyz[2]) * ds->deformationSpread;
+			off = (xyz[0] + xyz[1] + xyz[2]) * ds->deformationSpread;
 
 			scale = WAVEVALUE(table, ds->deformationWave.base,
 			                  ds->deformationWave.amplitude, ds->deformationWave.phase + off, ds->deformationWave.frequency);
