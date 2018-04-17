@@ -174,7 +174,7 @@ static void R_MD3_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 					}
 
 					// R_CompareVert
-					if (R_CompareVert(vertexes[j].normal, vertexes[k].normal, qfalse))
+					if (VectorCompare(surf->verts[j].xyz, surf->verts[k].xyz))
 					{
 						VectorAdd(vertexes[j].normal, vertexes[k].normal, vertexes[j].normal);
 					}
@@ -559,6 +559,8 @@ qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, int bufferSize, const ch
 			v->xyz[0] = LittleShort(md3xyz->xyz[0]) * MD3_XYZ_SCALE;
 			v->xyz[1] = LittleShort(md3xyz->xyz[1]) * MD3_XYZ_SCALE;
 			v->xyz[2] = LittleShort(md3xyz->xyz[2]) * MD3_XYZ_SCALE;
+
+			md3xyz->normal = LittleShort(md3xyz->normal); // from r1
 		}
 
 		// swap all the ST
