@@ -102,6 +102,14 @@ static void R_MDC_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 	int vertexesNum;
 	int f;
 
+	const float *v0, *v1, *v2;
+	const float *t0, *t1, *t2;
+	vec3_t      tangent;
+	vec3_t      binormal;
+	vec3_t      normal;
+
+	float *v;
+
 	Com_InitGrowList(&vboSurfaces, 10);
 
 	for (i = 0, surf = mdvModel->surfaces; i < mdvModel->numSurfaces; i++, surf++)
@@ -111,12 +119,6 @@ static void R_MDC_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 
 		// calc tangent spaces
 		{
-			const float *v0, *v1, *v2;
-			const float *t0, *t1, *t2;
-			vec3_t      tangent = { 0, 0, 0 };
-			vec3_t      binormal;
-			vec3_t      normal;
-
 			for (j = 0, vert = vertexes; j < (surf->numVerts * mdvModel->numFrames); j++, vert++)
 			{
 				VectorClear(vert->tangent);
@@ -145,8 +147,6 @@ static void R_MDC_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 
 					for (k = 0; k < 3; k++)
 					{
-						float *v;
-
 						v = vertexes[surf->numVerts * f + tri->indexes[k]].tangent;
 						VectorAdd(v, tangent, v);
 
@@ -165,6 +165,27 @@ static void R_MDC_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 				VectorNormalize(vert->binormal);
 				VectorNormalize(vert->normal);
 			}
+
+#if 1
+			// do another extra smoothing for normals to avoid flat shading
+			for (j = 0; j < surf->numVerts; j++)
+			{
+				for (k = 0; k < surf->numVerts; k++)
+				{
+					if (j == k)
+					{
+						continue;
+					}
+
+					if (VectorCompare(surf->verts[j].xyz, surf->verts[k].xyz))
+					{
+						VectorAdd(vertexes[j].normal, vertexes[k].normal, vertexes[j].normal);
+					}
+				}
+
+				VectorNormalize(vertexes[j].normal);
+			}
+#endif
 		}
 
 		//Ren_Print("...calculating MDC mesh VBOs ( '%s', %i verts %i tris )\n", surf->name, surf->numVerts, surf->numTriangles);
