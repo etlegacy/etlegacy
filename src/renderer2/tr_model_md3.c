@@ -173,7 +173,8 @@ static void R_MD3_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 						continue;
 					}
 
-					if (VectorCompare(surf->verts[j].xyz, surf->verts[k].xyz))
+					// R_CompareVert
+					if (R_CompareVert(vertexes[j].normal, vertexes[k].normal, qfalse))
 					{
 						VectorAdd(vertexes[j].normal, vertexes[k].normal, vertexes[j].normal);
 					}

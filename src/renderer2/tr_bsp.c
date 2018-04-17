@@ -1247,7 +1247,7 @@ static void ParseFace(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, int
 		}
 	}
 
-	R_CalcSurfaceTrianglePlanes(numTriangles, cv->triangles, cv->verts);
+	//R_CalcSurfaceTrianglePlanes(numTriangles, cv->triangles, cv->verts);
 
 	surf->data = (surfaceType_t *) cv;
 
@@ -1532,7 +1532,7 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 		AddPointToBounds(cv->verts[tri->indexes[2]].xyz, cv->bounds[0], cv->bounds[1]);
 	}
 
-	R_CalcSurfaceTrianglePlanes(numTriangles, cv->triangles, cv->verts);
+	//R_CalcSurfaceTrianglePlanes(numTriangles, cv->triangles, cv->verts);
 
 	// calc tangent spaces
 #if 0
@@ -1612,7 +1612,7 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 	}
 #endif
 
-#if 0
+#if 1
 	// do another extra smoothing for normals to avoid flat shading
 	for (i = 0; i < numVerts; i++)
 	{
@@ -1743,7 +1743,7 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 		R_ColorShiftLightingBytes(verts[i].color, foliage->instances[i].color);
 	}
 
-	R_CalcSurfaceTrianglePlanes(numTriangles, foliage->triangles, foliage->verts);
+	//R_CalcSurfaceTrianglePlanes(numTriangles, foliage->triangles, foliage->verts);
 
 	// finish surface
 	FinishGenericSurface(ds, (srfGeneric_t *)foliage, foliage->verts[0].xyz);

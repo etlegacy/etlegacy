@@ -590,7 +590,7 @@ qboolean R_CalcTangentVectors(srfVert_t *dv[3])
 }
 
 /**
- * @brief R_CalcSurfaceTrianglePlanes
+ * @brief R_CalcSurfaceTrianglePlanes calculates planeNormal
  * @param[in] numTriangles
  * @param[in] triangles
  * @param[in] verts
@@ -608,11 +608,11 @@ void R_CalcSurfaceTrianglePlanes(int numTriangles, srfTriangle_t *triangles, srf
 		v2 = verts[tri->indexes[1]].xyz;
 		v3 = verts[tri->indexes[2]].xyz;
 
+		// calculate normal vector
 		VectorSubtract(v2, v1, d1);
 		VectorSubtract(v3, v1, d2);
-
-		CrossProduct(d2, d1, tri->plane);
-		tri->plane[3] = DotProduct(tri->plane, v1);
+		CrossProduct(d2, d1, tri->planeNormal); // planeNormal isn't used for real?!
+		tri->planeNormal[3] = DotProduct(tri->planeNormal, v1); // ... and vect4 is for?
 	}
 }
 

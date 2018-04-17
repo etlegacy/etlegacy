@@ -4606,7 +4606,7 @@ static void CollapseStages()
 	shaderStage_t tmpColorStage;
 
 	//int           idxLightmapStage;
-	shaderStage_t tmpLightmapStage;
+	//shaderStage_t tmpLightmapStage;
 
 	shader_t tmpShader;
 
@@ -4640,7 +4640,7 @@ static void CollapseStages()
 		Com_Memset(&tmpColorStage, 0, sizeof(shaderStage_t));
 
 		//idxLightmapStage = -1;
-		Com_Memset(&tmpLightmapStage, 0, sizeof(shaderStage_t));
+		//Com_Memset(&tmpLightmapStage, 0, sizeof(shaderStage_t));
 
 		if (!stages[j].active)
 		{

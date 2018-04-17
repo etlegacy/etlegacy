@@ -2260,7 +2260,7 @@ typedef struct
 typedef struct
 {
 	int indexes[3];
-	vec4_t plane;
+	vec4_t planeNormal; // unused
 	qboolean facingLight;
 	qboolean degenerated;
 } srfTriangle_t;
