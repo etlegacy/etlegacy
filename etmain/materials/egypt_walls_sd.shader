@@ -252,6 +252,31 @@ textures/egypt_walls_sd/stucco09f
 	implicitMap -
 }
 
+textures/egypt_walls_sd/stucco09g
+{
+    qer_editorimage textures/egypt_walls_sd/stucco09g
+	diffusemap textures/egypt_walls_sd/stucco09g
+	bumpmap textures/egypt_walls_sd/stucco09g_n
+	specularmap textures/egypt_walls_sd/stucco09g_s
+	q3map_nonplanar
+	q3map_shadeangle 90
+	implicitMap -
+	
+	// test
+	//cull twosided
+}
+
+textures/egypt_walls_sd/stucco09h
+{
+    qer_editorimage textures/egypt_walls_sd/stucco09h
+	diffusemap textures/egypt_walls_sd/stucco09h
+	bumpmap textures/egypt_walls_sd/stucco09h_n
+	specularmap textures/egypt_walls_sd/stucco09h_s
+	q3map_nonplanar
+	q3map_shadeangle 90
+	implicitMap -
+}
+
 textures/egypt_walls_sd/wood_c05
 {
     qer_editorimage textures/egypt_walls_sd/wood_c05
