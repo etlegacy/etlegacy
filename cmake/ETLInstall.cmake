@@ -2,6 +2,12 @@
 # Install
 #-----------------------------------------------------------------
 
+# description file - see FS_GetModList
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/misc/description.txt"
+	DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy"
+	PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+)
+
 # misc/etmain/ adds
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/misc/etmain/"
 	DESTINATION "${INSTALL_DEFAULT_MODDIR}/etmain"
