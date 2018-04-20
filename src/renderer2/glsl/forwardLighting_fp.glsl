@@ -138,11 +138,11 @@ float ChebyshevUpperBound(vec2 shadowMoments, float vertexDistance, float minVar
 	float d    = vertexDistance - shadowDistance;
 	float pMax = variance / (variance + (d * d));
 
-	/*
+/*
 	#if defined(r_LightBleedReduction)
 	pMax = smoothstep(r_LightBleedReduction, 1.0, pMax);
 	#endif
-	*/
+*/
 
 	// one-tailed Chebyshev with k > 0
 	return (vertexDistance <= shadowDistance ? 1.0 : pMax);

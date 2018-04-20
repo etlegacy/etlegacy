@@ -991,10 +991,10 @@ static void GLSL_BuildShaderExtraDef()
 			BUFFEXT("#ifndef VSM_EPSILON\n#define VSM_EPSILON 0.0001\n#endif\n");
 		}
 
-		if (r_lightBleedReduction->value)
-		{
-			BUFFEXT("#ifndef r_LightBleedReduction\n#define r_LightBleedReduction %f\n#endif\n", r_lightBleedReduction->value);
-		}
+		//if (r_lightBleedReduction->value)
+		//{
+		//	BUFFEXT("#ifndef r_LightBleedReduction\n#define r_LightBleedReduction %f\n#endif\n", r_lightBleedReduction->value);
+		//}
 
 		if (r_overDarkeningFactor->value)
 		{
