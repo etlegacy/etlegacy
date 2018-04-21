@@ -508,6 +508,12 @@ void GL_Cull(int cullType)
 		GL_FrontFace(GL_CCW);
 	}
 
+	// allow culling to be disabled
+	if (r_noCull->integer)
+	{
+		glDisable(GL_CULL_FACE);
+	}
+
 	if (glState.faceCulling == cullType)
 	{
 		return;
