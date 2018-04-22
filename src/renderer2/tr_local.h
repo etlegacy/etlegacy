@@ -3325,8 +3325,8 @@ typedef struct
 
 #define DEFAULT_FOG_EXP_DENSITY         0.5
 
-#define FUNCTABLE_SIZE      1024
-#define FUNCTABLE_SIZE2     10
+#define FUNCTABLE_SIZE      4096    ///< % 1024
+#define FUNCTABLE_SIZE2     12      ///< % 10
 #define FUNCTABLE_MASK      (FUNCTABLE_SIZE - 1)
 
 #define MAX_GLSTACK         5
