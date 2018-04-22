@@ -946,11 +946,10 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	}
 #endif
 
-#if 0
+	if (r_smoothNormals->integer &FLAGS_SMOOTH_MDM) // do another extra smoothing for normals to avoid flat shading
 	{
 		md5Vertex_t *v0, *v1;
 
-		// do another extra smoothing for normals to avoid flat shading
 		for (j = 0; j < vboVertexes.currentElements; j++)
 		{
 			v0 = Com_GrowListElement(&vboVertexes, j);
@@ -973,7 +972,6 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 			VectorNormalize(v0->normal);
 		}
 	}
-#endif
 
 	// split the surfaces into VBO surfaces by the maximum number of GPU vertex skinning bones
 	Com_InitGrowList(&vboSurfaces, 10);

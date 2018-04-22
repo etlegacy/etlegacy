@@ -2803,6 +2803,17 @@ typedef struct
 	qboolean hasSkyboxPortal;
 } world_t;
 
+typedef enum
+{
+	FLAGS_SMOOTH_TRISURF = BIT(0),
+	FLAGS_SMOOTH_MESH    = BIT(1),
+	FLAGS_SMOOTH_MD3     = BIT(2),
+	FLAGS_SMOOTH_MD5     = BIT(3),
+	FLAGS_SMOOTH_MDC     = BIT(4),
+	FLAGS_SMOOTH_MDM     = BIT(5),
+	FLAGS_SMOOTH_PSK     = BIT(6)
+} smooth_flags;
+
 /*
 ==============================================================================
 MDV MODELS - meta format for vertex animation models like .md2, .md3, .mdc
@@ -3903,6 +3914,8 @@ extern cvar_t *r_recompileShaders;
 extern cvar_t *r_rotoscopeBlur;
 
 extern cvar_t *r_materialScan;
+
+extern cvar_t *r_smoothNormals;
 
 //====================================================================
 

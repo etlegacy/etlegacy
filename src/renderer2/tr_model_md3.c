@@ -162,27 +162,79 @@ static void R_MD3_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 				VectorNormalize(vert->normal);
 			}
 
-#if 1
-			// do another extra smoothing for normals to avoid flat shading
-			for (j = 0; j < surf->numVerts; j++)
+			if (r_smoothNormals->integer & FLAGS_SMOOTH_MD3) // do another extra smoothing for normals to avoid flat shading
 			{
-				for (k = 0; k < surf->numVerts; k++)
+				int vf, vfj, vfk;
+				vec3_t   vertexj, vertexk, avgVector;
+				qboolean done[surf->numVerts]; // points to already done ....
+				int same[surf->numVerts];      // array with length surf->numVerts for points that are the same
+				int numSame;                   // so many vertices are found to be the same
+
+				for (f = 0; f < mdvModel->numFrames; f++)
 				{
-					if (j == k)
+					// clear 'done' array:
+					for (j = 0; j < surf->numVerts; j++)
 					{
-						continue;
+						done[j] = qfalse; // use memset(@done, 0, surf->numVerts) ?
 					}
 
-					// R_CompareVert
-					if (VectorCompare(surf->verts[j].xyz, surf->verts[k].xyz))
+					vf = surf->numVerts * f;
+					for (j = 0; j < surf->numVerts; j++)
 					{
-						VectorAdd(vertexes[j].normal, vertexes[k].normal, vertexes[j].normal);
+						if (done[j])
+						{
+							continue; // skip what is done
+						}
+
+						done[j] = qtrue; // , mark as done, and process..
+
+						vfj = vf + j;
+
+						numSame = 0; // new test, so reset the count..
+
+						// store this vertex number, and increment the found total of same vertices
+						same[numSame++] = vfj;
+
+						VectorCopy(surf->verts[vfj].xyz, vertexj);
+
+						// so far, there is only 1 vertex, so the average normal is simply the vertex's normal
+						VectorCopy(avgVector, vertexes[vfj].normal);
+
+						for (k = j + 1; k < surf->numVerts; k++)
+						{
+							if (done[k])
+							{
+								continue;
+							}
+
+							vfk = vf + k;
+
+							VectorCopy(surf->verts[vfk].xyz, vertexk);
+
+							// if (VectorCompare(vertexj, vertexk))
+							if (VectorCompareEpsilon(vertexj, vertexk, 0.02f))
+							{
+								done[k] = qtrue;
+
+								VectorAdd(avgVector, vertexes[vfk].normal, avgVector);
+
+								// store this vertex number, and increment the found total of same vertices
+								same[numSame++] = vfk;
+							}
+						}
+
+						// average the vector
+						VectorScale(avgVector, 1.0 / (float)numSame, avgVector);
+						//VectorNormalize(avgVector); //?!
+
+						// now write back the newly calculated average normal for all the same vertices
+						for (k = 0; k < numSame; k++)
+						{
+							VectorCopy(avgVector, vertexes[same[k]].normal);
+						}
 					}
 				}
-
-				VectorNormalize(vertexes[j].normal);
 			}
-#endif
 		}
 
 		//Ren_Print("...calculating MD3 mesh VBOs ( '%s', %i verts %i tris )\n", surf->name, surf->numVerts, surf->numTriangles);

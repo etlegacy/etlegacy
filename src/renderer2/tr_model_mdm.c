@@ -848,28 +848,26 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 		}
 #endif
 
-#if 0
-
-		// do another extra smoothing for normals to avoid flat shading
-		for (j = 0; j < surf->numVerts; j++)
+		if (r_smoothNormals->integer & FLAGS_SMOOTH_MDM) // do another extra smoothing for normals to avoid flat shading
 		{
-			for (k = 0; k < surf->numVerts; k++)
+			for (j = 0; j < surf->numVerts; j++)
 			{
-				if (j == k)
+				for (k = 0; k < surf->numVerts; k++)
 				{
-					continue;
+					if (j == k)
+					{
+						continue;
+					}
+
+					if (VectorCompare(surf->verts[j].position, surf->verts[k].position))
+					{
+						VectorAdd(surf->verts[j].normal, surf->verts[k].normal, surf->verts[j].normal);
+					}
 				}
 
-				if (VectorCompare(surf->verts[j].position, surf->verts[k].position))
-				{
-					VectorAdd(surf->verts[j].normal, surf->verts[k].normal, surf->verts[j].normal);
-				}
+				VectorNormalize(surf->verts[j].normal);
 			}
-
-			VectorNormalize(surf->verts[j].normal);
 		}
-
-#endif
 	}
 
 	// split the surfaces into VBO surfaces by the maximum number of GPU vertex skinning bones

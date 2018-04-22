@@ -1612,26 +1612,27 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 	}
 #endif
 
-#if 1
 	// do another extra smoothing for normals to avoid flat shading
-	for (i = 0; i < numVerts; i++)
+	if (r_smoothNormals->integer & FLAGS_SMOOTH_TRISURF)
 	{
-		for (j = 0; j < numVerts; j++)
+		for (i = 0; i < numVerts; i++)
 		{
-			if (i == j)
+			for (j = 0; j < numVerts; j++)
 			{
-				continue;
+				if (i == j)
+				{
+					continue;
+				}
+
+				if (R_CompareVert(&cv->verts[i], &cv->verts[j], qfalse))
+				{
+					VectorAdd(cv->verts[i].normal, cv->verts[j].normal, cv->verts[i].normal);
+				}
 			}
 
-			if (R_CompareVert(&cv->verts[i], &cv->verts[j], qfalse))
-			{
-				VectorAdd(cv->verts[i].normal, cv->verts[j].normal, cv->verts[i].normal);
-			}
+			VectorNormalize(cv->verts[i].normal);
 		}
-
-		VectorNormalize(cv->verts[i].normal);
 	}
-#endif
 
 	// finish surface
 	FinishGenericSurface(ds, (srfGeneric_t *) cv, cv->verts[0].xyz);
