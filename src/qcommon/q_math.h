@@ -580,6 +580,21 @@ void _MatrixMultiply(float in1[3][3], float in2[3][3], float out[3][3]);
 #define VectorRotate vec3_rotate
 #define VectorCompare vec3_compare
 
+static ID_INLINE int VectorCompareEpsilon(const vec3_t v1, const vec3_t v2, float epsilon)
+{
+	vec3_t d;
+
+	VectorSubtract(v1, v2, d);
+	d[0] = fabs(d[0]);
+	d[1] = fabs(d[1]);
+	d[2] = fabs(d[2]);
+
+	if(d[0] > epsilon || d[1] > epsilon || d[2] > epsilon)
+		return 0;
+
+	return 1;
+}
+
 #define AngleMod angle_mod
 #define LerpAngle angle_lerp
 #define LerpPosition vec3_lerp
