@@ -2282,7 +2282,7 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 	int          sideNum;
 	int          planeNum;
 	shader_t     *shader;
-	int          firstSide = 0;
+	int          firstSide;
 
 	fogs = ( void * )(fileBase + l->fileofs);
 	if (l->filelen % sizeof(*fogs))
