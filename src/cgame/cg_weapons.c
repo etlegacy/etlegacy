@@ -358,7 +358,8 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
 			ent->miscTime = 0;
 			return;
 		}
-		else if (ent->currentState.teamNum < 12)
+
+		if (ent->currentState.teamNum < 12)
 		{
 			if (!ent->miscTime)
 			{
@@ -1069,10 +1070,8 @@ static qboolean CG_RW_ParseWeaponLinkPart(int handle, weaponInfo_t *weaponInfo, 
 			{
 				return CG_RW_ParseError(handle, "expected model filename");
 			}
-			else
-			{
-				partModel->model = trap_R_RegisterModel(filename);
-			}
+
+			partModel->model = trap_R_RegisterModel(filename);
 		}
 		else if (!Q_stricmp(token.string, "skin"))
 		{
@@ -1080,10 +1079,8 @@ static qboolean CG_RW_ParseWeaponLinkPart(int handle, weaponInfo_t *weaponInfo, 
 			{
 				return CG_RW_ParseError(handle, "expected skin filename");
 			}
-			else
-			{
-				partModel->skin[0] = trap_R_RegisterSkin(filename);
-			}
+
+			partModel->skin[0] = trap_R_RegisterSkin(filename);
 		}
 		else if (!Q_stricmp(token.string, "axisSkin"))
 		{
@@ -1091,10 +1088,8 @@ static qboolean CG_RW_ParseWeaponLinkPart(int handle, weaponInfo_t *weaponInfo, 
 			{
 				return CG_RW_ParseError(handle, "expected skin filename");
 			}
-			else
-			{
-				partModel->skin[TEAM_AXIS] = trap_R_RegisterSkin(filename);
-			}
+
+			partModel->skin[TEAM_AXIS] = trap_R_RegisterSkin(filename);
 		}
 		else if (!Q_stricmp(token.string, "alliedSkin"))
 		{
@@ -1102,10 +1097,8 @@ static qboolean CG_RW_ParseWeaponLinkPart(int handle, weaponInfo_t *weaponInfo, 
 			{
 				return CG_RW_ParseError(handle, "expected skin filename");
 			}
-			else
-			{
-				partModel->skin[TEAM_ALLIES] = trap_R_RegisterSkin(filename);
-			}
+
+			partModel->skin[TEAM_ALLIES] = trap_R_RegisterSkin(filename);
 		}
 		else
 		{
@@ -1195,10 +1188,8 @@ static qboolean CG_RW_ParseViewType(int handle, weaponInfo_t *weaponInfo, modelV
 			{
 				return CG_RW_ParseError(handle, "expected model filename");
 			}
-			else
-			{
-				weaponInfo->weaponModel[viewType].model = trap_R_RegisterModel(filename);
-			}
+
+			weaponInfo->weaponModel[viewType].model = trap_R_RegisterModel(filename);
 		}
 		else if (!Q_stricmp(token.string, "skin"))
 		{
@@ -1206,10 +1197,8 @@ static qboolean CG_RW_ParseViewType(int handle, weaponInfo_t *weaponInfo, modelV
 			{
 				return CG_RW_ParseError(handle, "expected skin filename");
 			}
-			else
-			{
-				weaponInfo->weaponModel[viewType].skin[0] = trap_R_RegisterSkin(filename);
-			}
+
+			weaponInfo->weaponModel[viewType].skin[0] = trap_R_RegisterSkin(filename);
 		}
 		else if (!Q_stricmp(token.string, "axisSkin"))
 		{
@@ -1217,10 +1206,8 @@ static qboolean CG_RW_ParseViewType(int handle, weaponInfo_t *weaponInfo, modelV
 			{
 				return CG_RW_ParseError(handle, "expected skin filename");
 			}
-			else
-			{
-				weaponInfo->weaponModel[viewType].skin[TEAM_AXIS] = trap_R_RegisterSkin(filename);
-			}
+
+			weaponInfo->weaponModel[viewType].skin[TEAM_AXIS] = trap_R_RegisterSkin(filename);
 		}
 		else if (!Q_stricmp(token.string, "alliedSkin"))
 		{
@@ -1228,10 +1215,8 @@ static qboolean CG_RW_ParseViewType(int handle, weaponInfo_t *weaponInfo, modelV
 			{
 				return CG_RW_ParseError(handle, "expected skin filename");
 			}
-			else
-			{
-				weaponInfo->weaponModel[viewType].skin[TEAM_ALLIES] = trap_R_RegisterSkin(filename);
-			}
+
+			weaponInfo->weaponModel[viewType].skin[TEAM_ALLIES] = trap_R_RegisterSkin(filename);
 		}
 		else if (!Q_stricmp(token.string, "flashModel"))
 		{
@@ -1239,10 +1224,8 @@ static qboolean CG_RW_ParseViewType(int handle, weaponInfo_t *weaponInfo, modelV
 			{
 				return CG_RW_ParseError(handle, "expected flashModel filename");
 			}
-			else
-			{
-				weaponInfo->flashModel[viewType] = trap_R_RegisterModel(filename);
-			}
+
+			weaponInfo->flashModel[viewType] = trap_R_RegisterModel(filename);
 		}
 		else if (!Q_stricmp(token.string, "weaponLink"))
 		{
@@ -1285,25 +1268,23 @@ static qboolean CG_RW_ParseModModel(int handle, weaponInfo_t *weaponInfo)
 	{
 		return CG_RW_ParseError(handle, "expected model filename");
 	}
+
+	// maybe it's a shader ...
+	// check extensions of file name and register shader OR model
+	if (!strstr(filename, ".md3") && !strstr(filename, ".mdc")) // FIXME: add more model formats?
+	{   // we assume it's a shader
+		weaponInfo->modModels[mod] = trap_R_RegisterShader(filename);
+	}
 	else
 	{
-		// maybe it's a shader ...
-		// check extensions of file name and register shader OR model
-		if (!strstr(filename, ".md3") && !strstr(filename, ".mdc")) // FIXME: add more model formats?
-		{   // we assume it's a shader
-			weaponInfo->modModels[mod] = trap_R_RegisterShader(filename);
-		}
-		else
-		{
-			weaponInfo->modModels[mod] = trap_R_RegisterModel(filename);
-		}
+		weaponInfo->modModels[mod] = trap_R_RegisterModel(filename);
+	}
 
-		// still no q_handle_t
-		if (!weaponInfo->modModels[mod])
-		{
-			Com_Printf(S_COLOR_RED "ERROR: CG_RW_ParseModModel() no model or shader for %s registered.\n", filename);
-			return qfalse; // this isn't vanilla behaviour
-		}
+	// still no q_handle_t
+	if (!weaponInfo->modModels[mod])
+	{
+		Com_Printf(S_COLOR_RED "ERROR: CG_RW_ParseModModel() no model or shader for %s registered.\n", filename);
+		return qfalse; // this isn't vanilla behaviour
 	}
 
 	return qtrue;
@@ -1344,10 +1325,8 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected standModel filename");
 			}
-			else
-			{
-				weaponInfo->standModel = trap_R_RegisterModel(filename);
-			}
+
+			weaponInfo->standModel = trap_R_RegisterModel(filename);
 		}
 		else if (!Q_stricmp(token.string, "droppedAnglesHack"))
 		{
@@ -1359,10 +1338,8 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected pickupModel filename");
 			}
-			else
-			{
-				weaponInfo->weaponModel[W_PU_MODEL].model = trap_R_RegisterModel(filename);
-			}
+
+			weaponInfo->weaponModel[W_PU_MODEL].model = trap_R_RegisterModel(filename);
 		}
 		else if (!Q_stricmp(token.string, "pickupSound"))
 		{
@@ -1370,10 +1347,8 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected pickupSound filename");
 			}
-			else
-			{
-				//weaponInfo->pickupSound = trap_S_RegisterSound( filename, qfalse );
-			}
+
+			//weaponInfo->pickupSound = trap_S_RegisterSound( filename, qfalse );
 		}
 		else if (!Q_stricmp(token.string, "weaponConfig"))
 		{
@@ -1381,12 +1356,10 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected weaponConfig filename");
 			}
-			else
+
+			if (!CG_ParseWeaponConfig(filename, weaponInfo))
 			{
-				if (!CG_ParseWeaponConfig(filename, weaponInfo))
-				{
-					CG_Error("Couldn't register weapon (failed to parse %s)", filename);
-				}
+				CG_Error("Couldn't register weapon (failed to parse %s)", filename);
 			}
 		}
 		else if (!Q_stricmp(token.string, "handsModel"))
@@ -1395,10 +1368,8 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected handsModel filename");
 			}
-			else
-			{
-				weaponInfo->handsModel = trap_R_RegisterModel(filename);
-			}
+
+			weaponInfo->handsModel = trap_R_RegisterModel(filename);
 		}
 		else if (!Q_stricmp(token.string, "flashDlightColor"))
 		{
@@ -1413,21 +1384,19 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected flashSound filename");
 			}
-			else
-			{
-				for (i = 0; i < 4; i++)
-				{
-					if (!weaponInfo->flashSound[i])
-					{
-						weaponInfo->flashSound[i] = trap_S_RegisterSound(filename, qfalse);
-						break;
-					}
-				}
 
-				if (i == 4)
+			for (i = 0; i < 4; i++)
+			{
+				if (!weaponInfo->flashSound[i])
 				{
-					CG_Printf(S_COLOR_YELLOW "WARNING: only up to 4 flashSounds supported per weapon\n");
+					weaponInfo->flashSound[i] = trap_S_RegisterSound(filename, qfalse);
+					break;
 				}
+			}
+
+			if (i == 4)
+			{
+				CG_Printf(S_COLOR_YELLOW "WARNING: only up to 4 flashSounds supported per weapon\n");
 			}
 		}
 		else if (!Q_stricmp(token.string, "flashEchoSound"))
@@ -1436,21 +1405,19 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected flashEchoSound filename");
 			}
-			else
-			{
-				for (i = 0; i < 4; i++)
-				{
-					if (!weaponInfo->flashEchoSound[i])
-					{
-						weaponInfo->flashEchoSound[i] = trap_S_RegisterSound(filename, qfalse);
-						break;
-					}
-				}
 
-				if (i == 4)
+			for (i = 0; i < 4; i++)
+			{
+				if (!weaponInfo->flashEchoSound[i])
 				{
-					CG_Printf(S_COLOR_YELLOW "WARNING: only up to 4 flashEchoSounds supported per weapon\n");
+					weaponInfo->flashEchoSound[i] = trap_S_RegisterSound(filename, qfalse);
+					break;
 				}
+			}
+
+			if (i == 4)
+			{
+				CG_Printf(S_COLOR_YELLOW "WARNING: only up to 4 flashEchoSounds supported per weapon\n");
 			}
 		}
 		else if (!Q_stricmp(token.string, "lastShotSound"))
@@ -1459,21 +1426,19 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected lastShotSound filename");
 			}
-			else
-			{
-				for (i = 0; i < 4; i++)
-				{
-					if (!weaponInfo->lastShotSound[i])
-					{
-						weaponInfo->lastShotSound[i] = trap_S_RegisterSound(filename, qfalse);
-						break;
-					}
-				}
 
-				if (i == 4)
+			for (i = 0; i < 4; i++)
+			{
+				if (!weaponInfo->lastShotSound[i])
 				{
-					CG_Printf(S_COLOR_YELLOW "WARNING: only up to 4 lastShotSound supported per weapon\n");
+					weaponInfo->lastShotSound[i] = trap_S_RegisterSound(filename, qfalse);
+					break;
 				}
+			}
+
+			if (i == 4)
+			{
+				CG_Printf(S_COLOR_YELLOW "WARNING: only up to 4 lastShotSound supported per weapon\n");
 			}
 		}
 		else if (!Q_stricmp(token.string, "readySound"))
@@ -1482,10 +1447,8 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected readySound filename");
 			}
-			else
-			{
-				weaponInfo->readySound = trap_S_RegisterSound(filename, qfalse);
-			}
+
+			weaponInfo->readySound = trap_S_RegisterSound(filename, qfalse);
 		}
 		else if (!Q_stricmp(token.string, "firingSound"))
 		{
@@ -1493,10 +1456,8 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected firingSound filename");
 			}
-			else
-			{
-				weaponInfo->firingSound = trap_S_RegisterSound(filename, qfalse);
-			}
+
+			weaponInfo->firingSound = trap_S_RegisterSound(filename, qfalse);
 		}
 		else if (!Q_stricmp(token.string, "overheatSound"))
 		{
@@ -1504,10 +1465,8 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected overheatSound filename");
 			}
-			else
-			{
-				weaponInfo->overheatSound = trap_S_RegisterSound(filename, qfalse);
-			}
+
+			weaponInfo->overheatSound = trap_S_RegisterSound(filename, qfalse);
 		}
 		else if (!Q_stricmp(token.string, "reloadSound"))
 		{
@@ -1515,10 +1474,8 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected reloadSound filename");
 			}
-			else
-			{
-				weaponInfo->reloadSound = trap_S_RegisterSound(filename, qfalse);
-			}
+
+			weaponInfo->reloadSound = trap_S_RegisterSound(filename, qfalse);
 		}
 		else if (!Q_stricmp(token.string, "reloadFastSound"))
 		{
@@ -1526,10 +1483,8 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected reloadFastSound filename");
 			}
-			else
-			{
-				weaponInfo->reloadFastSound = trap_S_RegisterSound(filename, qfalse);
-			}
+
+			weaponInfo->reloadFastSound = trap_S_RegisterSound(filename, qfalse);
 		}
 		else if (!Q_stricmp(token.string, "spinupSound"))
 		{
@@ -1537,10 +1492,8 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected spinupSound filename");
 			}
-			else
-			{
-				weaponInfo->spinupSound = trap_S_RegisterSound(filename, qfalse);
-			}
+
+			weaponInfo->spinupSound = trap_S_RegisterSound(filename, qfalse);
 		}
 		else if (!Q_stricmp(token.string, "spindownSound"))
 		{
@@ -1548,10 +1501,8 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected spindownSound filename");
 			}
-			else
-			{
-				weaponInfo->spindownSound = trap_S_RegisterSound(filename, qfalse);
-			}
+
+			weaponInfo->spindownSound = trap_S_RegisterSound(filename, qfalse);
 		}
 		else if (!Q_stricmp(token.string, "switchSound"))
 		{
@@ -1559,10 +1510,8 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected switchSound filename");
 			}
-			else
-			{
-				weaponInfo->switchSound = trap_S_RegisterSound(filename, qfalse);
-			}
+
+			weaponInfo->switchSound = trap_S_RegisterSound(filename, qfalse);
 		}
 		else if (!Q_stricmp(token.string, "weaponIcon"))
 		{
@@ -1570,10 +1519,8 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected weaponIcon filename");
 			}
-			else
-			{
-				weaponInfo->weaponIcon[0] = trap_R_RegisterShader(filename);
-			}
+
+			weaponInfo->weaponIcon[0] = trap_R_RegisterShader(filename);
 		}
 		else if (!Q_stricmp(token.string, "weaponIconScale"))
 		{
@@ -1588,10 +1535,8 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected weaponSelectedIcon filename");
 			}
-			else
-			{
-				weaponInfo->weaponIcon[1] = trap_R_RegisterShader(filename);
-			}
+
+			weaponInfo->weaponIcon[1] = trap_R_RegisterShader(filename);
 		}
 		else if (!Q_stricmp(token.string, "missileModel"))
 		{
@@ -1599,10 +1544,8 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected missileModel filename");
 			}
-			else
-			{
-				weaponInfo->missileModel = trap_R_RegisterModel(filename);
-			}
+
+			weaponInfo->missileModel = trap_R_RegisterModel(filename);
 		}
 		else if (!Q_stricmp(token.string, "missileAlliedSkin"))
 		{
@@ -1610,10 +1553,8 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected skin filename");
 			}
-			else
-			{
-				weaponInfo->missileAlliedSkin = trap_R_RegisterSkin(filename);
-			}
+
+			weaponInfo->missileAlliedSkin = trap_R_RegisterSkin(filename);
 		}
 		else if (!Q_stricmp(token.string, "missileAxisSkin"))
 		{
@@ -1621,10 +1562,8 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected skin filename");
 			}
-			else
-			{
-				weaponInfo->missileAxisSkin = trap_R_RegisterSkin(filename);
-			}
+
+			weaponInfo->missileAxisSkin = trap_R_RegisterSkin(filename);
 		}
 		else if (!Q_stricmp(token.string, "missileSound"))
 		{
@@ -1632,10 +1571,8 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected missileSound filename");
 			}
-			else
-			{
-				weaponInfo->missileSound = trap_S_RegisterSound(filename, qfalse);
-			}
+
+			weaponInfo->missileSound = trap_S_RegisterSound(filename, qfalse);
 		}
 		else if (!Q_stricmp(token.string, "missileTrailFunc"))
 		{
@@ -1643,24 +1580,22 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected missileTrailFunc");
 			}
-			else
+
+			if (!Q_stricmp(filename, "GrenadeTrail"))
 			{
-				if (!Q_stricmp(filename, "GrenadeTrail"))
-				{
-					weaponInfo->missileTrailFunc = CG_GrenadeTrail;
-				}
-				else if (!Q_stricmp(filename, "RocketTrail"))
-				{
-					weaponInfo->missileTrailFunc = CG_RocketTrail;
-				}
-				else if (!Q_stricmp(filename, "PyroSmokeTrail"))
-				{
-					weaponInfo->missileTrailFunc = CG_PyroSmokeTrail;
-				}
-				else if (!Q_stricmp(filename, "DynamiteTrail"))
-				{
-					weaponInfo->missileTrailFunc = CG_DynamiteTrail;
-				}
+				weaponInfo->missileTrailFunc = CG_GrenadeTrail;
+			}
+			else if (!Q_stricmp(filename, "RocketTrail"))
+			{
+				weaponInfo->missileTrailFunc = CG_RocketTrail;
+			}
+			else if (!Q_stricmp(filename, "PyroSmokeTrail"))
+			{
+				weaponInfo->missileTrailFunc = CG_PyroSmokeTrail;
+			}
+			else if (!Q_stricmp(filename, "DynamiteTrail"))
+			{
+				weaponInfo->missileTrailFunc = CG_DynamiteTrail;
 			}
 		}
 		else if (!Q_stricmp(token.string, "missileDlight"))
@@ -1683,16 +1618,14 @@ static qboolean CG_RW_ParseClient(int handle, weaponInfo_t *weaponInfo)
 			{
 				return CG_RW_ParseError(handle, "expected ejectBrassFunc");
 			}
-			else
+
+			if (!Q_stricmp(filename, "MachineGunEjectBrass"))
 			{
-				if (!Q_stricmp(filename, "MachineGunEjectBrass"))
-				{
-					weaponInfo->ejectBrassFunc = CG_MachineGunEjectBrass;
-				}
-				else if (!Q_stricmp(filename, "PanzerFaustEjectBrass"))
-				{
-					weaponInfo->ejectBrassFunc = CG_PanzerFaustEjectBrass;
-				}
+				weaponInfo->ejectBrassFunc = CG_MachineGunEjectBrass;
+			}
+			else if (!Q_stricmp(filename, "PanzerFaustEjectBrass"))
+			{
+				weaponInfo->ejectBrassFunc = CG_PanzerFaustEjectBrass;
 			}
 		}
 		else if (!Q_stricmp(token.string, "modModel"))
@@ -3401,10 +3334,9 @@ static int getNextWeapInBank(int bank, int cycle)
 	{
 		return weapBanksMultiPlayer[bank][cycle];
 	}
-	else                                    // return first in bank
-	{
-		return weapBanksMultiPlayer[bank][0];
-	}
+
+	// return first in bank
+	return weapBanksMultiPlayer[bank][0];
 }
 
 /**
@@ -3490,10 +3422,8 @@ static int getNextBankWeap(int bank, int cycle, qboolean sameBankPosition)
 	{
 		return weapBanksMultiPlayer[bank][cycle];
 	}
-	else
-	{
-		return weapBanksMultiPlayer[bank][0];
-	}
+
+	return weapBanksMultiPlayer[bank][0];
 }
 
 /**
@@ -3901,7 +3831,7 @@ void CG_AltWeapon_f(void)
  */
 void CG_NextWeap(qboolean switchBanks)
 {
-	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean nextbank = qfalse;     // need to switch to the next bank of weapons?
@@ -3942,7 +3872,8 @@ void CG_NextWeap(qboolean switchBanks)
 			{
 				break;
 			}
-			else if (GetWeaponTableData(num)->isRifle)
+
+			if (GetWeaponTableData(num)->isRifle)
 			{
 				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
 				{
@@ -3992,7 +3923,8 @@ void CG_NextWeap(qboolean switchBanks)
 			{
 				break;
 			}
-			else if (GetWeaponTableData(num)->isRifle)
+
+			if (GetWeaponTableData(num)->isRifle)
 			{
 				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
 				{
@@ -4015,7 +3947,8 @@ void CG_NextWeap(qboolean switchBanks)
 				{
 					break;
 				}
-				else if (GetWeaponTableData(num)->isRifle)
+
+				if (GetWeaponTableData(num)->isRifle)
 				{
 					if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
 					{
@@ -4045,7 +3978,7 @@ void CG_NextWeap(qboolean switchBanks)
  */
 void CG_PrevWeap(qboolean switchBanks)
 {
-	int      bank     = 0, cycle = 0, newbank = 0, newcycle = 0;
+	int      bank = 0, cycle = 0, newbank = 0, newcycle = 0;
 	int      num      = cg.weaponSelect;
 	int      curweap  = cg.weaponSelect;
 	qboolean prevbank = qfalse;     // need to switch to the next bank of weapons?
@@ -4091,7 +4024,8 @@ void CG_PrevWeap(qboolean switchBanks)
 			{
 				break;
 			}
-			else if (GetWeaponTableData(num)->isRifle)
+
+			if (GetWeaponTableData(num)->isRifle)
 			{
 				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
 				{
@@ -4135,7 +4069,8 @@ void CG_PrevWeap(qboolean switchBanks)
 			{
 				break;
 			}
-			else if (GetWeaponTableData(num)->isRifle)
+
+			if (GetWeaponTableData(num)->isRifle)
 			{
 				if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
 				{
@@ -4154,7 +4089,8 @@ void CG_PrevWeap(qboolean switchBanks)
 				{
 					break;
 				}
-				else if (GetWeaponTableData(num)->isRifle)
+
+				if (GetWeaponTableData(num)->isRifle)
 				{
 					if (CG_WeaponSelectable(GetWeaponTableData(num)->weapAlts))
 					{
@@ -4262,7 +4198,8 @@ qboolean CG_ZoomRequired(qboolean isNextWeap)
 			CG_ZoomIn_f();
 			return qtrue;
 		}
-		else if (cg_useWeapsForZoom.integer == (isNextWeap ? 2 : 1))
+
+		if (cg_useWeapsForZoom.integer == (isNextWeap ? 2 : 1))
 		{
 			CG_ZoomOut_f();
 			return qtrue;
@@ -4445,7 +4382,8 @@ void CG_WeaponBank_f(void)
 		{
 			break;
 		}
-		else if (GetWeaponTableData(newWeapon)->isRifle)
+
+		if (GetWeaponTableData(newWeapon)->isRifle)
 		{
 			if (CG_WeaponSelectable(GetWeaponTableData(newWeapon)->weapAlts))
 			{
@@ -4477,7 +4415,6 @@ void CG_Weapon_f(void)
 	{
 		CG_WeaponBank_f();
 	}
-	return;
 }
 
 int weapBankSwitchOrder[MAX_WEAP_BANK_SWITCH_ORDER] = { 3, 2, 4, 1 };   // rifle, pistol, grenade, knife
@@ -4505,17 +4442,20 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 			CG_FinishWeaponChange(cg.predictedPlayerState.weapon, WP_PLIERS);
 			return;
 		}
-		else if (cg.weaponSelect == WP_SATCHEL && CG_WeaponSelectable(WP_SATCHEL_DET))
+
+		if (cg.weaponSelect == WP_SATCHEL && CG_WeaponSelectable(WP_SATCHEL_DET))
 		{
 			cg.weaponSelect = WP_SATCHEL_DET;
 			return;
 		}
-		else if (GetWeaponTableData(cg.weaponSelect)->isSetWeapon)
+
+		if (GetWeaponTableData(cg.weaponSelect)->isSetWeapon)
 		{
 			cg.weaponSelect = GetWeaponTableData(cg.weaponSelect)->weapAlts;
 			return;
 		}
-		else if (GetWeaponTableData(cg.weaponSelect)->isPanzer || cg.weaponSelect == WP_SMOKE_BOMB || cg.weaponSelect == WP_MEDIC_ADRENALINE)
+
+		if (GetWeaponTableData(cg.weaponSelect)->isPanzer || cg.weaponSelect == WP_SMOKE_BOMB || cg.weaponSelect == WP_MEDIC_ADRENALINE)
 		{
 			for (i = 0; i < MAX_WEAP_BANK_SWITCH_ORDER; i++)
 			{
@@ -4808,11 +4748,13 @@ void CG_FireWeapon(centity_t *cent)
 	{
 		return;
 	}
-	else if (GetWeaponTableData(ent->weapon)->isThrowable && GetWeaponTableData(ent->weapon)->isExplosive && ent->apos.trBase[0] > 0)
+
+	if (GetWeaponTableData(ent->weapon)->isThrowable && GetWeaponTableData(ent->weapon)->isExplosive && ent->apos.trBase[0] > 0)
 	{
 		return;
 	}
-	else if (GetWeaponTableData(ent->weapon)->isRiflenade && ent->clientNum == cg.snap->ps.clientNum)
+
+	if (GetWeaponTableData(ent->weapon)->isRiflenade && ent->clientNum == cg.snap->ps.clientNum)
 	{
 		cg.weaponSelect = GetWeaponTableData(ent->weapon)->weapAlts;
 	}
@@ -5246,13 +5188,13 @@ void CG_WaterRipple(qhandle_t shader, vec3_t loc, vec3_t dir, int size, int life
  */
 void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir, int surfFlags)     // modified to send missilehitwall surface parameters
 {
-	qhandle_t   mod      = 0, mark = 0, shader = 0;
-	sfxHandle_t sfx      = 0, sfx2 = 0;
+	qhandle_t   mod = 0, mark = 0, shader = 0;
+	sfxHandle_t sfx = 0, sfx2 = 0;
 	qboolean    isSprite = qfalse;
 	int         duration = 600, i, j, markDuration = -1, volume = 127; // keep -1 markDuration for temporary marks
 	trace_t     trace;
 	vec3_t      lightColor = { 1, 1, 0 }, tmpv, tmpv2, sprOrg, sprVel;
-	float       radius     = 32, light = 0, sfx2range = 0;
+	float       radius = 32, light = 0, sfx2range = 0;
 	vec4_t      projection;
 
 	if (surfFlags & SURF_SKY)
@@ -5838,7 +5780,7 @@ void CG_SpawnTracer(int sourceEnt, vec3_t pstart, vec3_t pend)
  * @param[in] start
  * @param[in] finish
  */
-void CG_DrawTracer(vec3_t start, vec3_t finish)
+void CG_DrawTracer(const vec3_t start, const vec3_t finish)
 {
 	vec3_t     forward, right;
 	polyVert_t verts[4];
@@ -5894,7 +5836,7 @@ void CG_DrawTracer(vec3_t start, vec3_t finish)
  * @param[in] dest
  * @param[in] sparks
  */
-void CG_Tracer(vec3_t source, vec3_t dest, int sparks)
+void CG_Tracer(const vec3_t source, const vec3_t dest, int sparks)
 {
 	float  len, begin, end;
 	vec3_t start, finish;
@@ -6109,10 +6051,10 @@ void CG_DrawBulletTracer(vec3_t pstart, vec3_t pend, int sourceEntityNum, int ot
 	{
 		return; // Only own tracers
 	}
-	else if (cg_tracers.integer == 3 && sourceEntityNum == cg.clientNum)
+
+	if (cg_tracers.integer == 3 && sourceEntityNum == cg.clientNum)
 	{
 		return; // Only others tracers
-
 	}
 
 	if (otherEntityNum >= 0 && otherEntityNum != ENTITYNUM_NONE)
