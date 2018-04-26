@@ -135,7 +135,7 @@ void alarmbox_use(gentity_t *ent, gentity_t *other, gentity_t *foo)
 		return;
 	}
 
-	ent->s.frame = (qboolean)ent->s.frame;
+	ent->s.frame = !(qboolean)ent->s.frame;
 
 	alarmbox_updateparts(ent, qtrue);
 	if (other->client)
