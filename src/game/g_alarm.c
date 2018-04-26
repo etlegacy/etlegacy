@@ -43,12 +43,18 @@ void propExplosion(gentity_t *ent);
  */
 void alarmbox_updateparts(gentity_t *ent, qboolean matestoo)
 {
-	gentity_t *t, *mate;
-	qboolean  alarming = (ent->s.frame == 1);
+	gentity_t *t = NULL;
+
+	if (!ent)
+	{
+		return;
+	}
 
 	// update teammates
 	if (matestoo)
 	{
+		gentity_t *mate;
+
 		for (mate = ent->teammaster; mate; mate = mate->teamchain)
 		{
 			if (mate == ent)
@@ -56,12 +62,12 @@ void alarmbox_updateparts(gentity_t *ent, qboolean matestoo)
 				continue;
 			}
 
-			if (!(mate->active))       // don't update dead alarm boxes, they stay dead
+			if (!mate->active)       // don't update dead alarm boxes, they stay dead
 			{
 				continue;
 			}
 
-			if (!(ent->active))       // destroyed, so just turn teammates off
+			if (!ent->active)       // destroyed, so just turn teammates off
 			{
 				mate->s.frame = 0;
 			}
@@ -80,43 +86,37 @@ void alarmbox_updateparts(gentity_t *ent, qboolean matestoo)
 		return;
 	}
 
-	t = NULL;
 	while ((t = G_FindByTargetname(t, ent->target)) != NULL)
 	{
 		if (t == ent)
 		{
 			G_Printf("WARNING: Entity used itself.\n");
+			continue;
 		}
-		else
-		{
-			// give the dlight the sound
-			if (!Q_stricmp(t->classname, "dlight"))
-			{
-				t->soundLoop = ent->soundLoop;
 
-				if (alarming)
-				{
-					if (!(t->r.linked))
-					{
-						G_UseEntity(t, ent, 0);
-					}
-				}
-				else
-				{
-					if (t->r.linked)
-					{
-						G_UseEntity(t, ent, 0);
-					}
-				}
-			}
-			// alarmbox can tell script_trigger about activation
-			// (but don't trigger if dying, only activation)
-			else if (!Q_stricmp(t->classname, "target_script_trigger"))
+		if (!Q_stricmp(t->classname, "dlight"))    // give the dlight the sound
+		{
+			t->soundLoop = ent->soundLoop;
+
+			if (ent->s.frame == 1)
 			{
-				if (ent->active)     // not dead
+				if (!t->r.linked)
 				{
 					G_UseEntity(t, ent, 0);
 				}
+			}
+			else if (t->r.linked)
+			{
+				G_UseEntity(t, ent, 0);
+			}
+		}
+		// alarmbox can tell script_trigger about activation
+		// (but don't trigger if dying, only activation)
+		else if (!Q_stricmp(t->classname, "target_script_trigger"))
+		{
+			if (ent->active)     // not dead
+			{
+				G_UseEntity(t, ent, 0);
 			}
 		}
 	}
@@ -135,14 +135,7 @@ void alarmbox_use(gentity_t *ent, gentity_t *other, gentity_t *foo)
 		return;
 	}
 
-	if (ent->s.frame)
-	{
-		ent->s.frame = 0;
-	}
-	else
-	{
-		ent->s.frame = 1;
-	}
+	ent->s.frame = (qboolean)ent->s.frame;
 
 	alarmbox_updateparts(ent, qtrue);
 	if (other->client)
