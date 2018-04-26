@@ -102,7 +102,13 @@ void main()
 #endif // end USE_PARALLAX_MAPPING
 
 	// compute normal in world space from normalmap
-	vec3 N = normalize(tangentToWorldMatrix * (2.0 * (texture2D(u_NormalMap, texNormal).xyz - 0.5)));
+	vec3 N = tangentToWorldMatrix * (2.0 * (texture2D(u_NormalMap, texNormal).xyz - 0.5));
+
+#if defined(r_NormalScale)
+	N.z *= r_NormalScale;
+#endif
+
+	N = normalize(N);
 
 	// compute half angle in world space
 	vec3 H = normalize(L + V);
