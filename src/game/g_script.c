@@ -51,7 +51,7 @@ vmCvar_t g_scriptDebug;
  * @var gScriptActions
  * @brief These are the actions that each event can call
  */
-g_script_stack_action_t gScriptActions[] =
+static g_script_stack_action_t gScriptActions[] =
 {
 	{ "gotomarker",                     G_ScriptAction_GotoMarker,                    GOTOMARKER_HASH                     },
 	{ "playsound",                      G_ScriptAction_PlaySound,                     PLAYSOUND_HASH                      },
@@ -159,7 +159,7 @@ qboolean G_Script_EventMatch_IntInRange(g_script_event_t *event, const char *eve
  * @var gScriptEvents
  * @details The list of events that can start an action sequence
  */
-g_script_event_define_t gScriptEvents[] =
+static g_script_event_define_t gScriptEvents[] =
 {
 	{ "spawn",       NULL,                            SPAWN_HASH       }, ///< called as each character is spawned into the game
 	{ "trigger",     G_Script_EventMatch_StringEqual, TRIGGER_HASH     }, ///< something has triggered us (always followed by an identifier)
@@ -191,14 +191,7 @@ g_script_event_define_t gScriptEvents[] =
  */
 qboolean G_Script_EventMatch_StringEqual(g_script_event_t *event, const char *eventParm)
 {
-	if (eventParm && !Q_stricmp(event->params, eventParm))
-	{
-		return qtrue;
-	}
-	else
-	{
-		return qfalse;
-	}
+	return eventParm && !Q_stricmp(event->params, eventParm);
 }
 
 /**
@@ -221,14 +214,7 @@ qboolean G_Script_EventMatch_IntInRange(g_script_event_t *event, const char *eve
 
 	eInt = atoi(event->params);
 
-	if (eventParm && eInt > int1 && eInt <= int2)
-	{
-		return qtrue;
-	}
-	else
-	{
-		return qfalse;
-	}
+	return eventParm && eInt > int1 && eInt <= int2;
 }
 
 /**
@@ -631,8 +617,6 @@ void G_Script_ScriptParse(gentity_t *ent)
 		ent->numScriptEvents = numEventItems;
 	}
 }
-
-qboolean G_Script_ScriptRun(gentity_t *ent);
 
 /**
  * @brief G_Script_ScriptChange
