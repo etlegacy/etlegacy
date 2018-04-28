@@ -1151,7 +1151,6 @@ void G_TeamDataForString(const char *teamstr, int clientNum, team_t *team, spect
 		if (playerCount > 1)
 		{
 			*sState = SPECTATOR_FOLLOW;
-
 		}
 		// if there is no 2nd player to follow, follow the first one
 		else if (playerCount > 0)
