@@ -1125,19 +1125,35 @@ void Cmd_Kill_f(gentity_t *ent)
 void G_TeamDataForString(const char *teamstr, int clientNum, team_t *team, spectatorState_t *sState, int *specClient)
 {
 	*sState = SPECTATOR_NOT;
-	if (!Q_stricmp(teamstr, "follow1"))
+	if (!Q_stricmp(teamstr, "follow1")) // follow player 1 as a spectator (we do require at least 1 playing client)
 	{
 		*team   = TEAM_SPECTATOR;
-		*sState = SPECTATOR_FOLLOW;
+		if (TeamCount(clientNum, TEAM_AXIS) + TeamCount(clientNum, TEAM_ALLIES) > 0)
+		{
+			*sState = SPECTATOR_FOLLOW;
+		}
+		else
+		{
+			*sState = SPECTATOR_FREE;
+		}
+
 		if (specClient)
 		{
 			*specClient = -1;
 		}
 	}
-	else if (!Q_stricmp(teamstr, "follow2"))
+	else if (!Q_stricmp(teamstr, "follow2")) // follow player 2 as a spectator (we do require at least 2 playing clients)
 	{
 		*team   = TEAM_SPECTATOR;
-		*sState = SPECTATOR_FOLLOW;
+		if (TeamCount(clientNum, TEAM_AXIS) + TeamCount(clientNum, TEAM_ALLIES) > 1)
+		{
+			*sState = SPECTATOR_FOLLOW;
+		}
+		else
+		{
+			*sState = SPECTATOR_FREE;
+		}
+
 		if (specClient)
 		{
 			*specClient = -2;
@@ -1854,6 +1870,7 @@ qboolean G_IsClassFull(gentity_t *ent, int playerType, team_t team)
 	{
 		tcount++;
 	}
+
 	switch (playerType)
 	{
 	case PC_SOLDIER:
