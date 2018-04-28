@@ -1781,7 +1781,7 @@ void SpectatorClientEndFrame(gentity_t *ent)
 	}
 
 	// if we are doing a chase cam or a remote view, grab the latest info
-	if ((ent->client->sess.spectatorState == SPECTATOR_FOLLOW) || (ent->client->ps.pm_flags & PMF_LIMBO))
+	if (ent->client->sess.spectatorState == SPECTATOR_FOLLOW || (ent->client->ps.pm_flags & PMF_LIMBO))
 	{
 		int       clientNum, testtime;
 		gclient_t *cl;
@@ -1925,6 +1925,14 @@ void SpectatorClientEndFrame(gentity_t *ent)
 					ent->client->sess.spectatorState = SPECTATOR_FREE;
 					ClientBegin(ent->client - level.clients);
 				}
+			}
+		}
+		else
+		{
+			if (clientNum == -1) // level.follow1/follow2 couldn't be found
+			{
+				ent->client->sess.spectatorState = SPECTATOR_FREE;
+				ClientBegin(ent->client - level.clients);
 			}
 		}
 	}
@@ -2135,7 +2143,7 @@ void ClientEndFrame(gentity_t *ent)
 	}
 
 	// don't count skulled player time
-	if (g_gamestate.integer == GS_PLAYING && !(ent->client->sess.sessionTeam == TEAM_SPECTATOR || ent->client->ps.pm_flags & PMF_LIMBO || ent->client->ps.stats[STAT_HEALTH] <= 0))
+	if (g_gamestate.integer == GS_PLAYING && !(ent->client->sess.sessionTeam == TEAM_SPECTATOR || (ent->client->ps.pm_flags & PMF_LIMBO) || ent->client->ps.stats[STAT_HEALTH] <= 0))
 	{
 		ent->client->sess.time_played += level.time - level.previousTime;
 	}
