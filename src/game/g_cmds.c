@@ -1144,10 +1144,19 @@ void G_TeamDataForString(const char *teamstr, int clientNum, team_t *team, spect
 	}
 	else if (!Q_stricmp(teamstr, "follow2")) // follow player 2 as a spectator (we do require at least 2 playing clients)
 	{
-		*team   = TEAM_SPECTATOR;
-		if (TeamCount(clientNum, TEAM_AXIS) + TeamCount(clientNum, TEAM_ALLIES) > 1)
+		int specClientNum = -2;
+		int playerCount = TeamCount(clientNum, TEAM_AXIS) + TeamCount(clientNum, TEAM_ALLIES);
+
+		*team = TEAM_SPECTATOR;
+		if (playerCount > 1)
 		{
 			*sState = SPECTATOR_FOLLOW;
+		}
+		// if there is no 2nd player to follow, follow the first one
+		else if (playerCount > 0)
+		{
+			*sState = SPECTATOR_FOLLOW;
+			specClientNum = -1;
 		}
 		else
 		{
@@ -1156,7 +1165,7 @@ void G_TeamDataForString(const char *teamstr, int clientNum, team_t *team, spect
 
 		if (specClient)
 		{
-			*specClient = -2;
+			*specClient = specClientNum;
 		}
 	}
 	else if (!Q_stricmp(teamstr, "spectator") || !Q_stricmp(teamstr, "s"))
