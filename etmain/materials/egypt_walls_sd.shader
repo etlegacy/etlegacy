@@ -64,6 +64,17 @@ textures/egypt_walls_sd/stucco03
 	implicitMap -
 }
 
+textures/egypt_walls_sd/stucco03b
+{
+    qer_editorimage textures/egypt_walls_sd/stucco03b
+	diffusemap textures/egypt_walls_sd/stucco03b
+	bumpmap textures/egypt_walls_sd/stucco03b_n
+	specularmap textures/egypt_walls_sd/stucco03b_s
+	q3map_nonplanar
+	q3map_shadeangle 60
+	implicitMap -
+}
+
 textures/egypt_walls_sd/stucco04
 {
     qer_editorimage textures/egypt_walls_sd/stucco04
@@ -131,6 +142,17 @@ textures/egypt_walls_sd/stucco07d
 	implicitMap -
 }
 
+textures/egypt_walls_sd/stucco07f
+{
+    qer_editorimage textures/egypt_walls_sd/stucco07f
+	diffusemap textures/egypt_walls_sd/stucco07f
+	bumpmap textures/egypt_walls_sd/stucco07f_n
+	specularmap textures/egypt_walls_sd/stucco07f_s
+	q3map_nonplanar
+	q3map_shadeangle 90
+	implicitMap -
+}
+
 textures/egypt_walls_sd/stucco08a
 {
     qer_editorimage textures/egypt_walls_sd/stucco08a
@@ -181,6 +203,17 @@ textures/egypt_walls_sd/stucco08e
 	diffusemap textures/egypt_walls_sd/stucco08e
 	bumpmap textures/egypt_walls_sd/stucco08e_n
 	specularmap textures/egypt_walls_sd/stucco08e_s
+	q3map_nonplanar
+	q3map_shadeangle 90
+	implicitMap -
+}
+
+textures/egypt_walls_sd/stucco09_bigexp
+{
+    qer_editorimage textures/egypt_walls_sd/stucco09_bigexp
+	diffusemap textures/egypt_walls_sd/stucco09_bigexp
+	bumpmap textures/egypt_walls_sd/stucco09_bigexp_n
+	specularmap textures/egypt_walls_sd/stucco09_bigexp_s
 	q3map_nonplanar
 	q3map_shadeangle 90
 	implicitMap -
@@ -272,6 +305,17 @@ textures/egypt_walls_sd/stucco09h
 	diffusemap textures/egypt_walls_sd/stucco09h
 	bumpmap textures/egypt_walls_sd/stucco09h_n
 	specularmap textures/egypt_walls_sd/stucco09h_s
+	q3map_nonplanar
+	q3map_shadeangle 90
+	implicitMap -
+}
+
+textures/egypt_walls_sd/white01
+{
+    qer_editorimage textures/egypt_walls_sd/white01
+	diffusemap textures/egypt_walls_sd/white01
+	bumpmap textures/egypt_walls_sd/white01_n
+	specularmap textures/egypt_walls_sd/white01_s
 	q3map_nonplanar
 	q3map_shadeangle 90
 	implicitMap -
