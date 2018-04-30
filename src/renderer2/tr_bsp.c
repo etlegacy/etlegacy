@@ -3491,8 +3491,11 @@ static void R_CreateWorldVBO()
 		{
 			srfFoliage_t *srf = (srfFoliage_t *) surface->data;
 
-			srf->vbo = s_worldData.vbo;
-			srf->ibo = s_worldData.ibo;
+			//if(r_vboFoliage->integer && srf->numVerts && srf->numTriangles)
+			{
+				srf->vbo = s_worldData.vbo;
+				srf->ibo = s_worldData.ibo;
+			}
 		}
 	}
 
@@ -3617,7 +3620,7 @@ static void R_CreateSubModelVBOs()
 			numSurfaces++;
 		}
 
-		Com_InitGrowList(&vboSurfaces, 100);
+		Com_InitGrowList(&vboSurfaces, 1024);
 
 		// sort surfaces by shader
 		qsort(surfacesSorted, numSurfaces, sizeof(*surfacesSorted), BSPSurfaceCompare);
@@ -3690,6 +3693,20 @@ static void R_CreateSubModelVBOs()
 						if (tri->numTriangles)
 						{
 							numTriangles += tri->numTriangles;
+						}
+					}
+					else if (*surface2->data == SF_FOLIAGE)
+					{
+						srfFoliage_t *fol = (srfFoliage_t *) surface2->data;
+
+						if (fol->numVerts)
+						{
+							numVerts += fol->numVerts;
+						}
+
+						if (fol->numTriangles)
+						{
+							numTriangles += fol->numTriangles;
 						}
 					}
 				}
@@ -3806,6 +3823,30 @@ static void R_CreateSubModelVBOs()
 							numVerts += srf->numVerts;
 						}
 					}
+					else if (*surface2->data == SF_FOLIAGE)
+					{
+						srfFoliage_t *srf = (srfFoliage_t *) surface2->data;
+
+						if (srf->numTriangles)
+						{
+							srfTriangle_t *tri;
+
+							for (i = 0, tri = srf->triangles; i < srf->numTriangles; i++, tri++)
+							{
+								for (j = 0; j < 3; j++)
+								{
+									triangles[numTriangles + i].indexes[j] = numVerts + tri->indexes[j];
+								}
+							}
+
+							numTriangles += srf->numTriangles;
+						}
+
+						if (srf->numVerts)
+						{
+							numVerts += srf->numVerts;
+						}
+					}
 				}
 
 				// build vertices
@@ -3854,6 +3895,22 @@ static void R_CreateSubModelVBOs()
 					else if (*surface2->data == SF_TRIANGLES)
 					{
 						srfTriangles_t *cv = (srfTriangles_t *) surface2->data;
+
+						if (cv->numVerts)
+						{
+							for (i = 0; i < cv->numVerts; i++)
+							{
+								CopyVert(&cv->verts[i], &verts[numVerts + i]);
+
+								AddPointToBounds(cv->verts[i].xyz, vboSurf->bounds[0], vboSurf->bounds[1]);
+							}
+
+							numVerts += cv->numVerts;
+						}
+					}
+					else if (*surface2->data == SF_FOLIAGE)
+					{
+						srfFoliage_t *cv = (srfFoliage_t *) surface2->data;
 
 						if (cv->numVerts)
 						{
