@@ -146,6 +146,10 @@ void R_AddBrushModelInteractions(trRefEntity_t *ent, trRefLight_t *light)
 			   {
 			   ((srfTriangles_t *) surf->data)->dlightBits = mask;
 			   }
+			   else if(*surf->data == SF_FOLIAGE)
+			   {
+			   ((srfFoliage_t *) surf->data)->dlightBits = mask;
+			   }
 			 */
 
 			// skip all surfaces that don't matter for lighting only pass

@@ -687,7 +687,7 @@ qboolean R_LoadMD5(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	}
 
 	// split the surfaces into VBO surfaces by the maximum number of GPU vertex skinning bones
-	Com_InitGrowList(&vboSurfaces, 10);
+	Com_InitGrowList(&vboSurfaces, 32);
 
 	for (i = 0, surf = md5->surfaces; i < md5->numSurfaces; i++, surf++)
 	{

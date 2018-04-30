@@ -110,7 +110,7 @@ static void R_MDC_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 
 	float *v;
 
-	Com_InitGrowList(&vboSurfaces, 10);
+	Com_InitGrowList(&vboSurfaces, 32);
 
 	for (i = 0, surf = mdvModel->surfaces; i < mdvModel->numSurfaces; i++, surf++)
 	{

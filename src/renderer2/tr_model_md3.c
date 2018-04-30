@@ -107,7 +107,7 @@ static void R_MD3_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 
 	float       *v;
 
-	Com_InitGrowList(&vboSurfaces, 10);
+	Com_InitGrowList(&vboSurfaces, 32);
 
 	for (i = 0, surf = mdvModel->surfaces; i < mdvModel->numSurfaces; i++, surf++)
 	{
@@ -161,21 +161,28 @@ static void R_MD3_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 				VectorNormalize(vert->binormal);
 				VectorNormalize(vert->normal);
 			}
-
+/* FIXME: Hunk_FreeTempMemory: not the final block
+ 	 	 	// Note: This does basically work - vanilla truck is fine with smoothed normals
+ 	 	 	//       ... but new r2 truck model fails ... :/ looks better w/o
 			if (r_smoothNormals->integer & FLAGS_SMOOTH_MD3) // do another extra smoothing for normals to avoid flat shading
 			{
-				int vf, vfj, vfk;
+				int vf, vfj, vfk, numSame;
 				vec3_t   vertexj, vertexk, avgVector;
-				qboolean done[surf->numVerts]; // points to already done ....
-				int same[surf->numVerts];      // array with length surf->numVerts for points that are the same
-				int numSame;                   // so many vertices are found to be the same
+				int *same;
+				qboolean *done;
+
+				// allocate temp memory for the "points already checked" array
+				done = (qboolean *)ri.Hunk_AllocateTempMemory(sizeof(done) * surf->numVerts);
+
+				 // allocate temp memory for the "points are the same" array
+				same = (int *)ri.Hunk_AllocateTempMemory(sizeof(same) * surf->numVerts);
 
 				for (f = 0; f < mdvModel->numFrames; f++)
 				{
 					// clear 'done' array:
 					for (j = 0; j < surf->numVerts; j++)
 					{
-						done[j] = qfalse; // use memset(@done, 0, surf->numVerts) ?
+						done[j] = qfalse; // use memset(&done[0], 0, surf->numVerts) ?
 					}
 
 					vf = surf->numVerts * f;
@@ -211,7 +218,7 @@ static void R_MD3_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 
 							VectorCopy(surf->verts[vfk].xyz, vertexk);
 
-							// if (VectorCompare(vertexj, vertexk))
+							//if (VectorCompare(vertexj, vertexk))
 							if (VectorCompareEpsilon(vertexj, vertexk, 0.02f))
 							{
 								done[k] = qtrue;
@@ -234,7 +241,10 @@ static void R_MD3_CreateVBO_Surfaces(mdvModel_t *mdvModel)
 						}
 					}
 				}
+				ri.Hunk_FreeTempMemory(done);
+				ri.Hunk_FreeTempMemory(same);
 			}
+*/
 		}
 
 		//Ren_Print("...calculating MD3 mesh VBOs ( '%s', %i verts %i tris )\n", surf->name, surf->numVerts, surf->numTriangles);

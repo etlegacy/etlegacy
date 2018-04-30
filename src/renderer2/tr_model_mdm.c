@@ -880,7 +880,7 @@ qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 		int numBoneReferences;
 		int boneReferences[MAX_BONES];
 
-		Com_InitGrowList(&vboSurfaces, 10);
+		Com_InitGrowList(&vboSurfaces, 32);
 
 		for (i = 0, surf = mdmModel->surfaces; i < mdmModel->numSurfaces; i++, surf++)
 		{
