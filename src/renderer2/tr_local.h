@@ -3930,6 +3930,8 @@ void R_AddBeamSurfaces(trRefEntity_t *ent);
 void R_AddRailSurfaces(trRefEntity_t *ent, qboolean isUnderwater);
 void R_AddLightningBoltSurfaces(trRefEntity_t *ent);
 
+int BSPSurfaceCompare(const void *a, const void *b);
+
 void R_AddPolygonSurfaces(void);
 void R_AddPolygonBufferSurfaces(void);
 

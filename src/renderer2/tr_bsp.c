@@ -57,7 +57,7 @@ static int c_vboShadowSurfaces;
  * @param[in] v
  * @param[out] rgb
  */
-void HSVtoRGB(float h, float s, float v, float rgb[3])
+static void HSVtoRGB(float h, float s, float v, float rgb[3])
 {
 	int   i;
 	float f;
@@ -1861,7 +1861,7 @@ int R_MergedHeightPoints(srfGridMesh_t *grid, int offset)
  *
  * @todo FIXME: write generalized version that also avoids cracks between a patch and one that meets half way?
  */
-void R_FixSharedVertexLodError_r(int start, srfGridMesh_t *grid1)
+static void R_FixSharedVertexLodError_r(int start, srfGridMesh_t *grid1)
 {
 	int           j, k, l, m, n, offset1, offset2, touch;
 	srfGridMesh_t *grid2;
@@ -2087,7 +2087,7 @@ void R_FixSharedVertexLodError_r(int start, srfGridMesh_t *grid1)
  * @brief This function assumes that all patches in one group are nicely stitched together for the highest LoD.
  * If this is not the case this function will still do its job but won't fix the highest LoD cracks.
  */
-void R_FixSharedVertexLodError(void)
+static void R_FixSharedVertexLodError(void)
 {
 	int           i;
 	srfGridMesh_t *grid1;
@@ -2118,7 +2118,7 @@ void R_FixSharedVertexLodError(void)
  * @param[in] grid2num
  * @return
  */
-int R_StitchPatches(int grid1num, int grid2num)
+static int R_StitchPatches(int grid1num, int grid2num)
 {
 	float         *v1, *v2;
 	int           k, l, m, n, offset1, offset2, row, column;
@@ -2773,7 +2773,7 @@ int R_StitchPatches(int grid1num, int grid2num)
  * @param[in] grid1num
  * @return
  */
-int R_TryStitchingPatch(int grid1num)
+static int R_TryStitchingPatch(int grid1num)
 {
 	int           j, numstitches = 0;
 	srfGridMesh_t *grid1 = (srfGridMesh_t *) s_worldData.surfaces[grid1num].data;
@@ -2818,7 +2818,7 @@ int R_TryStitchingPatch(int grid1num)
 /**
  * @brief R_StitchAllPatches
  */
-void R_StitchAllPatches(void)
+static void R_StitchAllPatches(void)
 {
 	int           i, numstitches = 0;
 	srfGridMesh_t *grid1;
@@ -2856,7 +2856,7 @@ void R_StitchAllPatches(void)
 /**
  * @brief R_MovePatchSurfacesToHunk
  */
-void R_MovePatchSurfacesToHunk(void)
+static void R_MovePatchSurfacesToHunk(void)
 {
 	int           i;
 	unsigned int  size;
@@ -2902,7 +2902,7 @@ void R_MovePatchSurfacesToHunk(void)
  * @param[in] b
  * @return
  */
-static int BSPSurfaceCompare(const void *a, const void *b)
+int BSPSurfaceCompare(const void *a, const void *b)
 {
 	bspSurface_t *aa = *(bspSurface_t **) a;
 	bspSurface_t *bb = *(bspSurface_t **) b;
@@ -3154,8 +3154,6 @@ static void R_CreateClusters()
 
 /**
  * @brief R_CreateWorldVBO
- *
- * @todo FIXME: adjust for foliage (consider foliage instances/triangles. adjust positions)
  */
 static void R_CreateWorldVBO()
 {

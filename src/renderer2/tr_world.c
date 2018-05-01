@@ -832,42 +832,6 @@ qboolean R_inPVS(const vec3_t p1, const vec3_t p2)
 
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
 /**
- * @brief Compare function for qsort()
- * @param[in] a
- * @param[in] b
- * @return
- */
-static int BSPSurfaceCompare(const void *a, const void *b)
-{
-	bspSurface_t *aa, *bb;
-
-	aa = *(bspSurface_t **) a;
-	bb = *(bspSurface_t **) b;
-
-	// shader first
-	if (aa->shader < bb->shader)
-	{
-		return -1;
-	}
-	else if (aa->shader > bb->shader)
-	{
-		return 1;
-	}
-
-	// by lightmap
-	if (aa->lightmapNum < bb->lightmapNum)
-	{
-		return -1;
-	}
-	else if (aa->lightmapNum > bb->lightmapNum)
-	{
-		return 1;
-	}
-
-	return 0;
-}
-
-/**
  * @brief R_UpdateClusterSurfaces
  */
 static void R_UpdateClusterSurfaces()
