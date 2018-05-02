@@ -311,28 +311,28 @@ static int QDECL LightmapNameCompare(const void *a, const void *b)
  * @note Unused
 static ID_INLINE void rgbe2float(float *red, float *green, float *blue, unsigned char rgbe[4])
 {
-	float e;
-	float f;
+    float e;
+    float f;
 
-	if (rgbe[3])    // nonzero pixel
-	{
-		f = ldexp(1.0, rgbe[3] - (int)(128 + 8));   // FIXME: never read
-		//f = ldexp(1.0, rgbe[3] - 128) / 10.0;
-		e = (rgbe[3] - 128) / 4.0f;
+    if (rgbe[3])    // nonzero pixel
+    {
+        f = ldexp(1.0, rgbe[3] - (int)(128 + 8));   // FIXME: never read
+        //f = ldexp(1.0, rgbe[3] - 128) / 10.0;
+        e = (rgbe[3] - 128) / 4.0f;
 
-		// RB: exp2 not defined by MSVC
-		//f = exp2(e);
-		f = pow(2, e);
+        // RB: exp2 not defined by MSVC
+        //f = exp2(e);
+        f = pow(2, e);
 
-		//decoded = rgbe.rgb * exp2(fExp);
-		*red   = (rgbe[0] / 255.0f) * f;
-		*green = (rgbe[1] / 255.0f) * f;
-		*blue  = (rgbe[2] / 255.0f) * f;
-	}
-	else
-	{
-		*red = *green = *blue = 0.0;
-	}
+        //decoded = rgbe.rgb * exp2(fExp);
+        *red   = (rgbe[0] / 255.0f) * f;
+        *green = (rgbe[1] / 255.0f) * f;
+        *blue  = (rgbe[2] / 255.0f) * f;
+    }
+    else
+    {
+        *red = *green = *blue = 0.0;
+    }
 }
 */
 
@@ -599,7 +599,7 @@ void LoadRGBEToFloats(const char *name, float **pic, int *width, int *height, qb
 			finalLuminance = (scaledLuminance * (scaledLuminance / maxLuminance + 1.0)) / (scaledLuminance + 1.0);
 #elif 0
 			finalLuminance =
-			    (scaledLuminance * ((scaledLuminance / (maxLuminance * maxLuminance)) + 1.0)) / (scaledLuminance + 1.0);
+				(scaledLuminance * ((scaledLuminance / (maxLuminance * maxLuminance)) + 1.0)) / (scaledLuminance + 1.0);
 #else
 			// exponential tone mapping
 			finalLuminance = 1.0 - exp(-scaledLuminance);
@@ -1654,7 +1654,7 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 	float         foliageHeightScale;
 
 	foliageHeightScale = Com_Clamp(0.1f, 2.0f, r_drawFoliage->value);
-	
+
 	surf->fogIndex = LittleLong(ds->fogNum) + 1;
 	surf->shader   = ShaderForShaderNum(ds->shaderNum);
 	if (r_singleShader->integer && !surf->shader->isSky)
@@ -1675,7 +1675,7 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 	// get memory
 	foliage = (srfFoliage_t *)ri.Hunk_Alloc(sizeof(*foliage), h_low);
 	// set up surface
-	foliage->surfaceType  = SF_FOLIAGE;
+	foliage->surfaceType = SF_FOLIAGE;
 	// allocate space for tris
 	foliage->numTriangles = numTriangles;
 	foliage->triangles    = (srfTriangle_t *)ri.Hunk_Alloc(numTriangles * sizeof(foliage->triangles[0]), h_low);
@@ -3166,9 +3166,11 @@ static void R_CreateWorldVBO()
 	//int             numSurfaces;
 	bspSurface_t *surface;
 	//trRefLight_t   *light;
+#ifdef LEGACY_DEBUG
 	int startTime, endTime;
 
 	startTime = ri.Milliseconds();
+#endif
 
 	for (s = 0, surface = &s_worldData.surfaces[0]; s < s_worldData.numWorldSurfaces; s++, surface++)
 	{
@@ -3339,7 +3341,7 @@ static void R_CreateWorldVBO()
 			{
 				srfTriangle_t *tri;
 
-				for (i = 0; i < srf->numInstances; i++) 
+				for (i = 0; i < srf->numInstances; i++)
 				{
 					for (j = 0, tri = srf->triangles; j < srf->numTriangles; j++, tri++)
 					{
@@ -3446,8 +3448,10 @@ static void R_CreateWorldVBO()
 
 	s_worldData.ibo = R_CreateIBO2(va("staticBspModel0_IBO %i", 0), numTriangles, triangles, VBO_USAGE_STATIC);
 
+#ifdef LEGACY_DEBUG
 	endTime = ri.Milliseconds();
 	Ren_Developer("world VBO calculation time = %5.2f seconds\n", (endTime - startTime) / 1000.0);
+#endif
 
 	// point triangle surfaces to world VBO
 	for (s = 0, surface = &s_worldData.surfaces[0]; s < s_worldData.numWorldSurfaces; s++, surface++)
@@ -3500,7 +3504,7 @@ static void R_CreateWorldVBO()
 	// FIXME move this to somewhere else?
 #if CALC_REDUNDANT_SHADOWVERTS
 
-    startTime = ri.Milliseconds();
+	startTime = ri.Milliseconds();
 
 	s_worldData.redundantVertsCalculationNeeded = 0;
 	for (i = 0; i < s_worldData.numLights; i++)
@@ -3624,7 +3628,7 @@ static void R_CreateSubModelVBOs()
 		qsort(surfacesSorted, numSurfaces, sizeof(*surfacesSorted), BSPSurfaceCompare);
 
 		// create a VBO for each shader
-		oldShader = NULL;
+		oldShader      = NULL;
 		oldLightmapNum = LIGHTMAP_NONE;
 
 		for (k = 0; k < numSurfaces; k++)
@@ -3925,14 +3929,14 @@ static void R_CreateSubModelVBOs()
 				}
 
 				vboSurf->vbo =
-				    R_CreateVBO2(va("staticBspModel%i_VBO %i", m, vboSurfaces.currentElements), numVerts, verts,
-				                 ATTR_POSITION | ATTR_TEXCOORD | ATTR_LIGHTCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL
-				                 | ATTR_COLOR
-				                 , VBO_USAGE_STATIC);
+					R_CreateVBO2(va("staticBspModel%i_VBO %i", m, vboSurfaces.currentElements), numVerts, verts,
+					             ATTR_POSITION | ATTR_TEXCOORD | ATTR_LIGHTCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL
+					             | ATTR_COLOR
+					             , VBO_USAGE_STATIC);
 
 				vboSurf->ibo =
-				    R_CreateIBO2(va("staticBspModel%i_IBO %i", m, vboSurfaces.currentElements), numTriangles, triangles,
-				                 VBO_USAGE_STATIC);
+					R_CreateIBO2(va("staticBspModel%i_IBO %i", m, vboSurfaces.currentElements), numTriangles, triangles,
+					             VBO_USAGE_STATIC);
 
 				ri.Hunk_FreeTempMemory(triangles);
 				ri.Hunk_FreeTempMemory(optimizedVerts);
@@ -4028,7 +4032,7 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 	}
 
 	Ren_Print("...loaded %d faces, %i meshes, %i trisurfs, %i flares, %i foliages\n", numFaces, numMeshes, numTriSurfs,
-	              numFlares, numFoliages);
+	          numFlares, numFoliages);
 
 	if (r_stitchCurves->integer)
 	{
@@ -4179,7 +4183,7 @@ static void R_LoadNodesAndLeafs(lump_t *nodeLump, lump_t *leafLump)
 	dleaf_t       *inLeaf;
 	bspNode_t     *out;
 	int           numNodes, numLeafs;
-	srfVert_t     *verts     = NULL;
+	srfVert_t     *verts = NULL;
 	srfTriangle_t *triangles = NULL;
 	IBO_t         *volumeIBO = NULL;
 	vec3_t        mins, maxs;
@@ -6281,7 +6285,7 @@ static void R_CreateVBOLightMeshes(trRefLight_t *light)
 #endif
 			vboSurf->vbo = s_worldData.vbo;
 			vboSurf->ibo =
-			    R_CreateIBO2(va("staticLightMesh_IBO %i", c_vboLightSurfaces), numTriangles, triangles, VBO_USAGE_STATIC);
+				R_CreateIBO2(va("staticLightMesh_IBO %i", c_vboLightSurfaces), numTriangles, triangles, VBO_USAGE_STATIC);
 
 			ri.Hunk_FreeTempMemory(triangles);
 
@@ -6897,8 +6901,8 @@ static void R_CreateVBOShadowCubeMeshes(trRefLight_t *light)
 						if (srf->numTriangles)
 						{
 							numTriangles +=
-							    UpdateLightTriangles(s_worldData.verts, srf->numTriangles,
-							                         s_worldData.triangles + srf->firstTriangle, surface->shader, light);
+								UpdateLightTriangles(s_worldData.verts, srf->numTriangles,
+								                     s_worldData.triangles + srf->firstTriangle, surface->shader, light);
 						}
 
 						if (srf->numVerts)
@@ -6913,8 +6917,8 @@ static void R_CreateVBOShadowCubeMeshes(trRefLight_t *light)
 						if (srf->numTriangles)
 						{
 							numTriangles +=
-							    UpdateLightTriangles(s_worldData.verts, srf->numTriangles,
-							                         s_worldData.triangles + srf->firstTriangle, surface->shader, light);
+								UpdateLightTriangles(s_worldData.verts, srf->numTriangles,
+								                     s_worldData.triangles + srf->firstTriangle, surface->shader, light);
 						}
 
 						if (srf->numVerts)
@@ -6929,8 +6933,8 @@ static void R_CreateVBOShadowCubeMeshes(trRefLight_t *light)
 						if (srf->numTriangles)
 						{
 							numTriangles +=
-							    UpdateLightTriangles(s_worldData.verts, srf->numTriangles,
-							                         s_worldData.triangles + srf->firstTriangle, surface->shader, light);
+								UpdateLightTriangles(s_worldData.verts, srf->numTriangles,
+								                     s_worldData.triangles + srf->firstTriangle, surface->shader, light);
 						}
 
 						if (srf->numVerts)
@@ -7060,8 +7064,8 @@ static void R_CreateVBOShadowCubeMeshes(trRefLight_t *light)
 				if (c_redundantVertexes)
 				{
 					Ren_Developer(
-					    "...removed %i redundant vertices from staticShadowPyramidMesh %i ( %s, %i verts %i tris )\n",
-					    c_redundantVertexes, c_vboShadowSurfaces, shader->name, numVerts, numTriangles);
+						"...removed %i redundant vertices from staticShadowPyramidMesh %i ( %s, %i verts %i tris )\n",
+						c_redundantVertexes, c_vboShadowSurfaces, shader->name, numVerts, numTriangles);
 				}
 #endif
 				vboSurf->vbo = s_worldData.vbo;
@@ -7174,12 +7178,11 @@ void R_PrecacheInteractions()
 	int          i;
 	trRefLight_t *light;
 	bspSurface_t *surface;
-	int          startTime, endTime;
-
-	//if(r_precomputedLighting->integer)
-	//  return;
+#ifdef LEGACY_DEBUG
+	int startTime, endTime;
 
 	startTime = ri.Milliseconds();
+#endif
 
 	// reset surfaces' viewCount
 	s_lightCount = 0;
@@ -7190,9 +7193,9 @@ void R_PrecacheInteractions()
 
 	Com_InitGrowList(&s_interactions, 100);
 
-	c_vboWorldSurfaces      = 0;
-	c_vboLightSurfaces      = 0;
-	c_vboShadowSurfaces     = 0;
+	c_vboWorldSurfaces  = 0;
+	c_vboLightSurfaces  = 0;
+	c_vboShadowSurfaces = 0;
 
 	Ren_Developer("...precaching %i lights\n", s_worldData.numLights);
 
@@ -7275,7 +7278,7 @@ void R_PrecacheInteractions()
 
 	Com_DestroyGrowList(&s_interactions);
 
-
+#ifdef LEGACY_DEBUG
 	Ren_Developer("%i interactions precached\n", s_worldData.numInteractions);
 
 	if (r_shadows->integer >= SHADOWING_ESM16)
@@ -7290,6 +7293,7 @@ void R_PrecacheInteractions()
 	endTime = ri.Milliseconds();
 
 	Ren_Developer("lights precaching time = %5.2f seconds\n", (endTime - startTime) / 1000.0);
+#endif
 }
 
 #define HASHTABLE_SIZE 7919 // 32749 // 2039    /* prime, use % */
@@ -7616,11 +7620,13 @@ void R_BuildCubeMaps(void)
 	//qboolean        bad;
 
 	//srfSurfaceStatic_t *sv;
-	int    startTime, endTime;
 	size_t tics         = 0;
 	size_t nextTicCount = 0;
+#ifdef LEGACY_DEBUG
+	int startTime, endTime;
 
 	startTime = ri.Milliseconds();
+#endif
 
 	Com_Memset(&rf, 0, sizeof(refdef_t));
 
@@ -8129,9 +8135,11 @@ void R_BuildCubeMaps(void)
 	}
 #endif
 
+#ifdef LEGACY_DEBUG
 	endTime = ri.Milliseconds();
 	Ren_Developer("cubemap probes pre-rendering time of %i cubes = %5.2f seconds\n", tr.cubeProbes.currentElements,
 	              (endTime - startTime) / 1000.0);
+#endif
 }
 
 /**
@@ -8278,7 +8286,7 @@ void RE_LoadWorldMap(const char *name)
 	tr.world = &s_worldData;
 
 	tr.world->hasSkyboxPortal = qfalse;
-	
+
 	// reset fog to world fog (if present)
 	RE_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 20, 0, 0, 0, 0);
 

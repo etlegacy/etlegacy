@@ -105,28 +105,28 @@ typedef struct GLShaderHeader_s
 /*
 enum GLShaderTypeEnum
 {
-	LEGACY_VERTEX,
-	LEGACY_FRAGMENT,
-	LEGACY_GEOMETRY,
-	LEGACY_TESS_CONTROL,
-	LEGACY_TESS_EVAL,
+    LEGACY_VERTEX,
+    LEGACY_FRAGMENT,
+    LEGACY_GEOMETRY,
+    LEGACY_TESS_CONTROL,
+    LEGACY_TESS_EVAL,
 };
 
 typedef struct GLShaderType_s
 {
-	unsigned int type;
-	unsigned int gltype;
-	char *typetext;
-	char *extension;
+    unsigned int type;
+    unsigned int gltype;
+    char *typetext;
+    char *extension;
 } GLShaderType_t;
 
 const GLShaderType_t shaderTypes[] =
 {
-	{ LEGACY_VERTEX,       GL_VERTEX_SHADER,          "vert",     "_vp.glsl"  },
-	{ LEGACY_FRAGMENT,     GL_FRAGMENT_SHADER,        "frag",     "_fp.glsl"  },
-	{ LEGACY_GEOMETRY,     GL_GEOMETRY_SHADER,        "geom",     "_gm.glsl"  },
-	{ LEGACY_TESS_CONTROL, GL_TESS_CONTROL_SHADER,    "tesscont", "_tsc.glsl" },
-	{ LEGACY_TESS_EVAL,    GL_TESS_EVALUATION_SHADER, "tesseval", "_tse.glsl" },
+    { LEGACY_VERTEX,       GL_VERTEX_SHADER,          "vert",     "_vp.glsl"  },
+    { LEGACY_FRAGMENT,     GL_FRAGMENT_SHADER,        "frag",     "_fp.glsl"  },
+    { LEGACY_GEOMETRY,     GL_GEOMETRY_SHADER,        "geom",     "_gm.glsl"  },
+    { LEGACY_TESS_CONTROL, GL_TESS_CONTROL_SHADER,    "tesscont", "_tsc.glsl" },
+    { LEGACY_TESS_EVAL,    GL_TESS_EVALUATION_SHADER, "tesseval", "_tse.glsl" },
 };
 
 const int numberofshaderTypes = ARRAY_LEN(shaderTypes);
@@ -335,7 +335,7 @@ programInfo_t *GLSL_ParseDefinition(char **text, const char *defname)
 					GLSL_CopyNextToken(text, &def->uniformValues[def->numUniformValues].type.name);
 					token                                           = COM_ParseExt(text, qtrue);
 					valptr                                          = Com_Allocate(sizeof(qboolean));
-					*((qboolean *)valptr)                                = atoi(token);
+					*((qboolean *)valptr)                           = atoi(token);
 					def->uniformValues[def->numUniformValues].value = valptr;
 					//Ren_Print("%d\n",*((qboolean*)valptr));
 					def->numUniformValues++;
@@ -461,7 +461,7 @@ void GLSL_LoadDefinitions(void)
 	// FIXME: Also load from external files in the future...
 	// For now just copy the existing data to our search able string
 	const char *defaultShaderDef = GetFallbackShaderDef();
-	int size = strlen(defaultShaderDef) * sizeof(char);
+	int        size              = strlen(defaultShaderDef) * sizeof(char);
 
 	definitionText = (char *)Com_Allocate(size + 1);
 	Com_Memset(definitionText, '\0', size + 1);
@@ -907,23 +907,23 @@ static void GLSL_BuildShaderExtraDef()
 	        DGEN_BULGE,
 	        DGEN_MOVE);
 
-	
-	 BUFFEXT("#ifndef colorGen_t\n"
-	 "#define colorGen_t\n"
-	 "#define CGEN_VERTEX %i\n"
-	 "#define CGEN_ONE_MINUS_VERTEX %i\n"
-	 "#endif\n",
-	 CGEN_VERTEX,
-	 CGEN_ONE_MINUS_VERTEX);
 
-	 BUFFEXT("#ifndef alphaGen_t\n"
-	 "#define alphaGen_t\n"
-	 "#define AGEN_VERTEX %i\n"
-	 "#define AGEN_ONE_MINUS_VERTEX %i\n"
-	 "#endif\n",
-	 AGEN_VERTEX,
-	 AGEN_ONE_MINUS_VERTEX);
-	 
+	BUFFEXT("#ifndef colorGen_t\n"
+	        "#define colorGen_t\n"
+	        "#define CGEN_VERTEX %i\n"
+	        "#define CGEN_ONE_MINUS_VERTEX %i\n"
+	        "#endif\n",
+	        CGEN_VERTEX,
+	        CGEN_ONE_MINUS_VERTEX);
+
+	BUFFEXT("#ifndef alphaGen_t\n"
+	        "#define alphaGen_t\n"
+	        "#define AGEN_VERTEX %i\n"
+	        "#define AGEN_ONE_MINUS_VERTEX %i\n"
+	        "#endif\n",
+	        AGEN_VERTEX,
+	        AGEN_ONE_MINUS_VERTEX);
+
 
 	BUFFEXT("#ifndef alphaTest_t\n"
 	        "#define alphaTest_t\n"
@@ -1458,7 +1458,7 @@ static qboolean GLSL_GenerateMacroString(shaderProgramList_t *program, const cha
 
 				if (GLSL_MissesRequiredMacros(i, macroatrib))
 				{
-					Ren_Print("GLSL_GenerateMacroString Info: Missing required macros program '%s' macros: '%s' macroattrib: %i\n",  complieMacroNames[i], macros, macroatrib);
+					Ren_Print("GLSL_GenerateMacroString Info: Missing required macros program '%s' macros: '%s' macroattrib: %i\n", complieMacroNames[i], macros, macroatrib);
 					return qfalse;
 				}
 
@@ -1554,7 +1554,7 @@ static void GLSL_ShowProgramUniforms(GLhandleARB program)
  */
 void GLSL_InitUniforms(shaderProgram_t *program)
 {
-	int   i, size   = 0;
+	int   i, size = 0;
 	GLint *uniforms = program->uniforms;
 
 	for (i = 0; i < UNIFORM_COUNT; i++)
@@ -2141,40 +2141,40 @@ static void GLSL_SetInitialUniformValues(programInfo_t *info, int permutation)
 		switch (info->uniformValues[i].type.type)
 		{
 		case GLSL_BOOL:
-			GLSL_SetUniformBoolean(&info->list->programs[permutation],location,*((GLboolean *)info->uniformValues[i].value));
+			GLSL_SetUniformBoolean(&info->list->programs[permutation], location, *((GLboolean *)info->uniformValues[i].value));
 			break;
 		case GLSL_INT:
-			GLSL_SetUniformInt(&info->list->programs[permutation],location,*((GLint *)info->uniformValues[i].value));
+			GLSL_SetUniformInt(&info->list->programs[permutation], location, *((GLint *)info->uniformValues[i].value));
 			break;
 		case GLSL_FLOAT:
-			GLSL_SetUniformFloat(&info->list->programs[permutation],location,*((GLfloat *)info->uniformValues[i].value));
+			GLSL_SetUniformFloat(&info->list->programs[permutation], location, *((GLfloat *)info->uniformValues[i].value));
 			break;
 		case GLSL_FLOAT5:
-			GLSL_SetUniformFloat5(&info->list->programs[permutation],location,*((vec5_t *)info->uniformValues[i].value));
+			GLSL_SetUniformFloat5(&info->list->programs[permutation], location, *((vec5_t *)info->uniformValues[i].value));
 			break;
 		case GLSL_VEC2:
-			GLSL_SetUniformVec2(&info->list->programs[permutation],location,*((vec2_t *)info->uniformValues[i].value));
+			GLSL_SetUniformVec2(&info->list->programs[permutation], location, *((vec2_t *)info->uniformValues[i].value));
 			break;
 		case GLSL_VEC3:
-			GLSL_SetUniformVec3(&info->list->programs[permutation],location,*((vec3_t *)info->uniformValues[i].value));
+			GLSL_SetUniformVec3(&info->list->programs[permutation], location, *((vec3_t *)info->uniformValues[i].value));
 			break;
 		case GLSL_VEC4:
-			GLSL_SetUniformVec4(&info->list->programs[permutation],location,*((vec4_t *)info->uniformValues[i].value));
+			GLSL_SetUniformVec4(&info->list->programs[permutation], location, *((vec4_t *)info->uniformValues[i].value));
 			break;
-/*	FIXME:		
-		case GLSL_MAT16:
-			GLSL_SetUniformMatrix16(&info->list->programs[permutation],location,**((mat4_t *)info->uniformValues[i].value));
-			break;
-		case GLSL_FLOATARR:
-			GLSL_SetUniformFloatARR(&info->list->programs[permutation],location,**((float *)info->uniformValues[i].value));
-			break;
-		case GLSL_VEC4ARR:
-			GLSL_SetUniformVec4ARR(&info->list->programs[permutation],location,**((vec4_t *)info->uniformValues[i].value));
-			break;
-		case GLSL_MAT16ARR:
-			GLSL_SetUniformMatrix16ARR(&info->list->programs[permutation],location,**((mat4_t *)info->uniformValues[i].value));
-			break;
-*/
+        /*	FIXME:
+                case GLSL_MAT16:
+                    GLSL_SetUniformMatrix16(&info->list->programs[permutation],location,**((mat4_t *)info->uniformValues[i].value));
+                    break;
+                case GLSL_FLOATARR:
+                    GLSL_SetUniformFloatARR(&info->list->programs[permutation],location,**((float *)info->uniformValues[i].value));
+                    break;
+                case GLSL_VEC4ARR:
+                    GLSL_SetUniformVec4ARR(&info->list->programs[permutation],location,**((vec4_t *)info->uniformValues[i].value));
+                    break;
+                case GLSL_MAT16ARR:
+                    GLSL_SetUniformMatrix16ARR(&info->list->programs[permutation],location,**((mat4_t *)info->uniformValues[i].value));
+                    break;
+        */
 		default:
 			Ren_Fatal("Only INT supported atm");
 		}
@@ -2269,7 +2269,7 @@ qboolean GLSL_CompileShaderProgram(programInfo_t *info)
 	size_t numCompiled = 0, tics = 0;
 #endif
 	size_t numPermutations = 0;
-	int    i               = 0, x = 0;
+	int    i = 0, x = 0;
 
 	GLSL_GenerateCheckSum(info, info->vertexShaderText, info->fragmentShaderText);
 
@@ -2711,21 +2711,27 @@ void GLSL_DeleteShaderProgramInfo(programInfo_t *program)
  */
 void GLSL_InitGPUShaders(void)
 {
+#ifdef LEGACY_DEBUG
 	int startTime, endTime;
+#endif
 
 	Ren_LogComment("------- GLSL_InitGPUShaders -------\n");
 
 	R_IssuePendingRenderCommands();
 
+#ifdef LEGACY_DEBUG
 	startTime = ri.Milliseconds();
+#endif
 
 	// Load all definitions
 	GLSL_LoadDefinitions();
 	GLSL_BuildShaderExtraDef();
 
+#ifdef LEGACY_DEBUG
 	endTime = ri.Milliseconds();
 
 	Ren_Developer("Initialized GLSL system in %5.2f seconds\n", (endTime - startTime) / 1000.0);
+#endif
 }
 
 /**
@@ -2733,7 +2739,9 @@ void GLSL_InitGPUShaders(void)
  */
 void GLSL_CompileGPUShaders(void)
 {
+#ifdef LEGACY_DEBUG
 	int startTime, endTime;
+#endif
 
 	Ren_LogComment("------- GLSL_CompileGPUShaders -------\n");
 
@@ -2742,8 +2750,9 @@ void GLSL_CompileGPUShaders(void)
 	//R_BindFBO(tr.deferredRenderFBO);
 
 	// Init simple shader and draw loading screen
-
+#ifdef LEGACY_DEBUG
 	startTime = ri.Milliseconds();
+#endif
 
 	Com_Memset(&trProg, 0, sizeof(trPrograms_t));
 
@@ -2786,9 +2795,11 @@ void GLSL_CompileGPUShaders(void)
 
 	trProg.gl_colorCorrection = GLSL_GetShaderProgram("colorCorrection");
 
+#ifdef LEGACY_DEBUG
 	endTime = ri.Milliseconds();
 
 	Ren_Developer("Compiled default shader programs in %5.2f seconds\n", (endTime - startTime) / 1000.0);
+#endif
 
 	if (r_recompileShaders->integer)
 	{
@@ -3216,7 +3227,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 	{
 		// FIXME: this occures on maps with portal skies (uje_marketgarden) and r_wolffog 0
 		// and on radar when R_BuildCcubemaps is called at start
-		// beside the general fog issue with portal skies it seems there is no valid portal sky VBO 
+		// beside the general fog issue with portal skies it seems there is no valid portal sky VBO
 		Ren_Fatal("GLSL_VertexAttribPointers: no current VBO bound");
 		//return;
 	}
