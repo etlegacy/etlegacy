@@ -43,10 +43,10 @@
 typedef struct
 {
 	unsigned int dwColorSpaceLowValue;      ///< low boundary of color space that is to
-	                                        ///< be treated as Color Key, inclusive
+	///< be treated as Color Key, inclusive
 
 	unsigned int dwColorSpaceHighValue;     ///< high boundary of color space that is
-	                                        ///< to be treated as Color Key, inclusive
+	///< to be treated as Color Key, inclusive
 } DDCOLORKEY_t;
 
 /**
@@ -84,7 +84,7 @@ typedef struct
 		unsigned int dwLuminanceBitCount;       ///< how many bits per pixel
 		unsigned int dwBumpBitCount;            ///< how many bits per "buxel", total
 		unsigned int dwPrivateFormatBitCount;   ///< Bits per pixel of private driver formats. Only valid in texture
-		                                        ///< format list and if DDPF_D3DFORMAT is set
+		///< format list and if DDPF_D3DFORMAT is set
 	} u0;
 
 	union
@@ -154,7 +154,7 @@ typedef struct
 	union
 	{
 		unsigned int dwMipMapCount;         ///< number of mip-map levels requestde
-		                                    ///< dwZBufferBitDepth removed, use ddpfPixelFormat one instead
+		///< dwZBufferBitDepth removed, use ddpfPixelFormat one instead
 		unsigned int dwRefreshRate;         ///< refresh rate (used when display mode is described)
 		unsigned int dwSrcVBHandle;         ///< The source used in VB::Optimize
 	} u2;
@@ -787,19 +787,19 @@ image_t *R_LoadDDSImageData(void *pImageData, const char *name, int bits, filter
 		switch (ddsd->u4.ddpfPixelFormat.dwFourCC)
 		{
 		case FOURCC_DXT1:
-			blockSize  = 8;
-			usingAlpha = qtrue;
-			format     = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+			blockSize = 8;
+			//usingAlpha = qtrue;                           // FIXME: Unused
+			format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
 			break;
 		case FOURCC_DXT3:
-			blockSize  = 16;
-			usingAlpha = qtrue;
-			format     = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+			blockSize = 16;
+			//usingAlpha = qtrue;                           // FIXME: Unused
+			format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
 			break;
 		case FOURCC_DXT5:
-			blockSize  = 16;
-			usingAlpha = qtrue;
-			format     = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+			blockSize = 16;
+			//usingAlpha = qtrue;                           // FIXME: Unused
+			format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 			break;
 		default:
 			Ren_Warning("R_LoadDDSImage: unsupported FOURCC 0x%16x, \"%s\"\n",
