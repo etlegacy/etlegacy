@@ -40,8 +40,6 @@
 
 #define MISSILE_PRESTEP_TIME    50
 
-void G_ExplodeMissile(gentity_t *ent);
-
 /**
  * @brief G_BounceMissile
  * @param[in,out] ent
