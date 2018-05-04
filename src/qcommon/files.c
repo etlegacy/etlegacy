@@ -3144,10 +3144,11 @@ int FS_GetModList(char *listbuf, int bufsize)
 				// nLen is the length of the mod path
 				// we need to see if there is a description available
 				descPath[0] = '\0';
-				strcpy(descPath, name);
-				strcat(descPath, "/description.txt");
+				
+				Com_sprintf(descPath, sizeof (descPath), "%s%cdescription.txt", name, PATH_SEP);
+				
 				nDescLen = FS_SV_FOpenFileRead(descPath, &descHandle);
-				if (nDescLen > 0 && descHandle)
+				if (nDescLen > 0)
 				{
 					FILE *file;
 
@@ -3164,6 +3165,12 @@ int FS_GetModList(char *listbuf, int bufsize)
 				{
 					strcpy(descPath, name);
 				}
+
+				if (descHandle)
+				{
+					FS_FCloseFile(descHandle);
+				}
+
 				nDescLen = strlen(descPath) + 1;
 
 				if (nTotal + nLen + 1 + nDescLen + 1 < bufsize)
