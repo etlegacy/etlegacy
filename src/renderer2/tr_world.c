@@ -298,6 +298,7 @@ static void R_AddInteractionSurface(bspSurface_t *surf, trRefLight_t *light)
 	case SF_FACE:
 	case SF_GRID:
 	case SF_TRIANGLES:
+	case SF_FOLIAGE:
 		intersects = R_LightSurfaceGeneric((srfGeneric_t *) surf->data, light, &cubeSideBits);
 		break;
 	default:
@@ -442,11 +443,11 @@ void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 	ent->cull    = R_CullPointAndRadius(ent->e.origin, boundsRadius);
 #else
 	ent->cull = R_CullLocalBox(bspModel->bounds);
+#endif
 	if (ent->cull == CULL_OUT)
 	{
 		return;
 	}
-#endif
 
 	// setup world bounds for intersection tests
 	ClearBounds(ent->worldBounds[0], ent->worldBounds[1]);
