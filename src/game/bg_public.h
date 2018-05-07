@@ -1413,10 +1413,11 @@ typedef enum
 
 extern const char *eventnames[EV_MAX_EVENTS];
 
-/**
+/*
  * @enum animNumber_t
  * @brief
- */
+ * @note unused
+ *
 typedef enum
 {
 	BOTH_DEATH1 = 0,
@@ -1575,9 +1576,9 @@ typedef enum
 
 	MAX_ANIMATIONS  ///< 130
 } animNumber_t;
+*/
 
-/// text represenation for scripting
-extern const char *animStrings[];    ///< defined in bg_misc.c
+//extern const char *animStrings[];    ///< unused - text representation for scripting - defined in bg_misc.c
 
 /**
  * @enum weapAnimNumber_t

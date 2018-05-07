@@ -355,7 +355,11 @@ modTable_t modTable[MOD_NUM_MODS] =
 	{ MOD_BACKSTAB,                           WP_NONE,                 qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qtrue,       "was backstabbed by",        "'s knife arts",                  "killed himself",                        NULL,                                     "MOD_BACKSTAB",                           SK_LIGHT_WEAPONS,                            5.f,             0.f,             {0.f, 0.f, 0.f, 0.f}, qfalse,      "backstab",            WS_KNIFE           },
 };
 // *INDENT-ON*
-
+/*
+ * @var animStrings
+ * @brief text representation for scripting
+ * @note unused 
+ *  
 const char *animStrings[] =
 {
 	"BOTH_DEATH1",
@@ -512,6 +516,7 @@ const char *animStrings[] =
 	"LEGS_EXTRA9",
 	"LEGS_EXTRA10",
 };
+*/
 
 /*QUAKED item_***** ( 0 0 0 ) (-16 -16 -16) (16 16 16) SUSPENDED SPIN PERSISTANT
 DO NOT USE THIS CLASS, IT JUST HOLDS GENERAL INFORMATION.
