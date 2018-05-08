@@ -402,9 +402,9 @@ void G_SendScore(gentity_t *ent)
 #endif
 
 	Q_strncpyz(startbuffer, va(
-	               "sc0 %i %i",
-	               level.teamScores[TEAM_AXIS],
-	               level.teamScores[TEAM_ALLIES]),
+				   "sc0 %i %i",
+				   level.teamScores[TEAM_AXIS],
+				   level.teamScores[TEAM_ALLIES]),
 	           sizeof(startbuffer));
 
 	// keep adding scores to the sc0 command until we fill
@@ -1127,7 +1127,7 @@ void G_TeamDataForString(const char *teamstr, int clientNum, team_t *team, spect
 	*sState = SPECTATOR_NOT;
 	if (!Q_stricmp(teamstr, "follow1")) // follow player 1 as a spectator (we do require at least 1 playing client)
 	{
-		*team   = TEAM_SPECTATOR;
+		*team = TEAM_SPECTATOR;
 		if (TeamCount(clientNum, TEAM_AXIS) + TeamCount(clientNum, TEAM_ALLIES) > 0)
 		{
 			*sState = SPECTATOR_FOLLOW;
@@ -1145,7 +1145,7 @@ void G_TeamDataForString(const char *teamstr, int clientNum, team_t *team, spect
 	else if (!Q_stricmp(teamstr, "follow2")) // follow player 2 as a spectator (we do require at least 2 playing clients)
 	{
 		int specClientNum = -2;
-		int playerCount = TeamCount(clientNum, TEAM_AXIS) + TeamCount(clientNum, TEAM_ALLIES);
+		int playerCount   = TeamCount(clientNum, TEAM_AXIS) + TeamCount(clientNum, TEAM_ALLIES);
 
 		*team = TEAM_SPECTATOR;
 		if (playerCount > 1)
@@ -1155,7 +1155,7 @@ void G_TeamDataForString(const char *teamstr, int clientNum, team_t *team, spect
 		// if there is no 2nd player to follow, follow the first one
 		else if (playerCount > 0)
 		{
-			*sState = SPECTATOR_FOLLOW;
+			*sState       = SPECTATOR_FOLLOW;
 			specClientNum = -1;
 		}
 		else
@@ -3518,8 +3518,6 @@ qboolean G_TankIsMountable(gentity_t *ent, gentity_t *other)
  */
 qboolean Do_Activate2_f(gentity_t *ent, gentity_t *traceEnt)
 {
-	qboolean found = qfalse;
-
 	// Check the class and health state of the player trying to steal the uniform.
 	if (ent->client->sess.playerType == PC_COVERTOPS && ent->health > 0)
 	{
@@ -3529,8 +3527,6 @@ qboolean Do_Activate2_f(gentity_t *ent, gentity_t *traceEnt)
 			{
 				if (BODY_TEAM(traceEnt) < 4 && BODY_TEAM(traceEnt) != ent->client->sess.sessionTeam)
 				{
-					found = qtrue;
-
 					if (BODY_VALUE(traceEnt) >= 250)
 					{
 						traceEnt->nextthink = traceEnt->timestamp + BODY_TIME(BODY_TEAM(traceEnt));
@@ -3566,12 +3562,14 @@ qboolean Do_Activate2_f(gentity_t *ent, gentity_t *traceEnt)
 					{
 						BODY_VALUE(traceEnt) += 5;
 					}
+
+					return qtrue;
 				}
 			}
 		}
 	}
 
-	return found;
+	return qfalse;
 }
 
 /**
@@ -3584,156 +3582,144 @@ qboolean Do_Activate2_f(gentity_t *ent, gentity_t *traceEnt)
  */
 qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 {
-	qboolean found   = qfalse;
-	qboolean walking = qfalse;
-
 	// invisible entities can't be used
 	if (traceEnt->entstate == STATE_INVISIBLE || traceEnt->entstate == STATE_UNDERCONSTRUCTION)
 	{
 		return qfalse;
 	}
 
-	if ((ent->client->pers.cmd.buttons & BUTTON_WALKING) || (ent->client->ps.pm_flags & PMF_DUCKED))
-	{
-		walking = qtrue;
-	}
-
 	if (traceEnt->classname)
 	{
-		traceEnt->flags &= ~FL_SOFTACTIVATE;    // FL_SOFTACTIVATE will be set if the user is holding 'walk' key
-
-		if (traceEnt->s.eType == ET_ALARMBOX)
-		{
-			trace_t trace;
-
-			if (ent->client->sess.sessionTeam == TEAM_SPECTATOR)
-			{
-				return qfalse;
-			}
-
-			Com_Memset(&trace, 0, sizeof(trace));
-
-			if (traceEnt->use)
-			{
-				G_UseEntity(traceEnt, ent, 0);
-			}
-			found = qtrue;
-		}
-		else if (traceEnt->s.eType == ET_ITEM)
-		{
-			trace_t trace;
-
-			if (ent->client->sess.sessionTeam == TEAM_SPECTATOR)
-			{
-				return qfalse;
-			}
-
-			Com_Memset(&trace, 0, sizeof(trace));
-
-			if (traceEnt->touch)
-			{
-				if (ent->client->pers.autoActivate == PICKUP_ACTIVATE)
-				{
-					ent->client->pers.autoActivate = PICKUP_FORCE;      // force pickup
-				}
-				traceEnt->active = qtrue;
-				traceEnt->touch(traceEnt, ent, &trace);
-			}
-
-			found = qtrue;
-		}
-		else if (traceEnt->s.eType == ET_MOVER && G_TankIsMountable(traceEnt, ent))
-		{
-			G_Script_ScriptEvent(traceEnt, "mg42", "mount");
-			ent->tagParent = traceEnt->nextTrain;
-			Q_strncpyz(ent->tagName, "tag_player", MAX_QPATH);
-			ent->backupWeaponTime                   = ent->client->ps.weaponTime;
-			ent->client->ps.weaponTime              = traceEnt->backupWeaponTime;
-			ent->client->ps.weapHeat[WP_DUMMY_MG42] = traceEnt->mg42weapHeat;
-
-			ent->tankLink      = traceEnt;
-			traceEnt->tankLink = ent;
-
-			G_ProcessTagConnect(ent, qtrue);
-			found = qtrue;
-		}
-		else if (G_EmplacedGunIsMountable(traceEnt, ent))
-		{
-			vec3_t    point;
-			vec3_t    forward;      //, offset, end;
-			gclient_t *cl = &level.clients[ent->s.clientNum];
-
-			AngleVectors(traceEnt->s.apos.trBase, forward, NULL, NULL);
-			VectorMA(traceEnt->r.currentOrigin, -36, forward, point);
-			point[2] = ent->r.currentOrigin[2];
-
-			// Save initial position
-			VectorCopy(point, ent->TargetAngles);
-
-			// Zero out velocity
-			VectorCopy(vec3_origin, ent->client->ps.velocity);
-			VectorCopy(vec3_origin, ent->s.pos.trDelta);
-
-			traceEnt->active     = qtrue;
-			ent->active          = qtrue;
-			traceEnt->r.ownerNum = ent->s.number;
-			VectorCopy(traceEnt->s.angles, traceEnt->TargetAngles);
-			traceEnt->s.otherEntityNum = ent->s.number;
-
-			cl->pmext.harc = traceEnt->harc;
-			cl->pmext.varc = traceEnt->varc;
-			VectorCopy(traceEnt->s.angles, cl->pmext.centerangles);
-			cl->pmext.centerangles[PITCH] = AngleNormalize180(cl->pmext.centerangles[PITCH]);
-			cl->pmext.centerangles[YAW]   = AngleNormalize180(cl->pmext.centerangles[YAW]);
-			cl->pmext.centerangles[ROLL]  = AngleNormalize180(cl->pmext.centerangles[ROLL]);
-
-			ent->backupWeaponTime                   = ent->client->ps.weaponTime;
-			ent->client->ps.weaponTime              = traceEnt->backupWeaponTime;
-			ent->client->ps.weapHeat[WP_DUMMY_MG42] = traceEnt->mg42weapHeat;
-
-			G_UseTargets(traceEnt, ent);     // added for Mike so mounting an MG42 can be a trigger event (let me know if there's any issues with this)
-			found = qtrue;
-		}
-		else if (((Q_stricmp(traceEnt->classname, "func_door") == 0) || (Q_stricmp(traceEnt->classname, "func_door_rotating") == 0)))
-		{
-			if (walking)
-			{
-				traceEnt->flags |= FL_SOFTACTIVATE;     // no noise
-			}
-			G_TryDoor(traceEnt, ent, ent);        // (door,other,activator)
-			found = qtrue;
-		}
-		else if ((Q_stricmp(traceEnt->classname, "team_WOLF_checkpoint") == 0))
-		{
-			if (traceEnt->count != ent->client->sess.sessionTeam)
-			{
-				traceEnt->health++;
-			}
-			found = qtrue;
-		}
-		else if ((Q_stricmp(traceEnt->classname, "func_button") == 0) && (traceEnt->s.apos.trType == TR_STATIONARY && traceEnt->s.pos.trType == TR_STATIONARY) && traceEnt->active == qfalse)
-		{
-			Use_BinaryMover(traceEnt, ent, ent);
-			traceEnt->active = qtrue;
-			found            = qtrue;
-		}
-		else if (!Q_stricmp(traceEnt->classname, "func_invisible_user"))
-		{
-			if (walking)
-			{
-				traceEnt->flags |= FL_SOFTACTIVATE;     // no noise
-			}
-			G_UseEntity(traceEnt, ent, ent);
-			found = qtrue;
-		}
-		else if (!Q_stricmp(traceEnt->classname, "props_footlocker"))
-		{
-			G_UseEntity(traceEnt, ent, ent);
-			found = qtrue;
-		}
+		return qfalse;
 	}
 
-	return found;
+	traceEnt->flags &= ~FL_SOFTACTIVATE;    // FL_SOFTACTIVATE will be set if the user is holding 'walk' key
+
+	if (traceEnt->s.eType == ET_ALARMBOX)
+	{
+		trace_t trace;
+
+		if (ent->client->sess.sessionTeam == TEAM_SPECTATOR)
+		{
+			return qfalse;
+		}
+
+		Com_Memset(&trace, 0, sizeof(trace));
+
+		if (traceEnt->use)
+		{
+			G_UseEntity(traceEnt, ent, 0);
+		}
+	}
+	else if (traceEnt->s.eType == ET_ITEM)
+	{
+		trace_t trace;
+
+		if (ent->client->sess.sessionTeam == TEAM_SPECTATOR)
+		{
+			return qfalse;
+		}
+
+		Com_Memset(&trace, 0, sizeof(trace));
+
+		if (traceEnt->touch)
+		{
+			if (ent->client->pers.autoActivate == PICKUP_ACTIVATE)
+			{
+				ent->client->pers.autoActivate = PICKUP_FORCE;      // force pickup
+			}
+			traceEnt->active = qtrue;
+			traceEnt->touch(traceEnt, ent, &trace);
+		}
+	}
+	else if (traceEnt->s.eType == ET_MOVER && G_TankIsMountable(traceEnt, ent))
+	{
+		G_Script_ScriptEvent(traceEnt, "mg42", "mount");
+		ent->tagParent = traceEnt->nextTrain;
+		Q_strncpyz(ent->tagName, "tag_player", MAX_QPATH);
+		ent->backupWeaponTime                   = ent->client->ps.weaponTime;
+		ent->client->ps.weaponTime              = traceEnt->backupWeaponTime;
+		ent->client->ps.weapHeat[WP_DUMMY_MG42] = traceEnt->mg42weapHeat;
+
+		ent->tankLink      = traceEnt;
+		traceEnt->tankLink = ent;
+
+		G_ProcessTagConnect(ent, qtrue);
+	}
+	else if (G_EmplacedGunIsMountable(traceEnt, ent))
+	{
+		vec3_t    point;
+		vec3_t    forward;      //, offset, end;
+		gclient_t *cl = &level.clients[ent->s.clientNum];
+
+		AngleVectors(traceEnt->s.apos.trBase, forward, NULL, NULL);
+		VectorMA(traceEnt->r.currentOrigin, -36, forward, point);
+		point[2] = ent->r.currentOrigin[2];
+
+		// Save initial position
+		VectorCopy(point, ent->TargetAngles);
+
+		// Zero out velocity
+		VectorCopy(vec3_origin, ent->client->ps.velocity);
+		VectorCopy(vec3_origin, ent->s.pos.trDelta);
+
+		traceEnt->active     = qtrue;
+		ent->active          = qtrue;
+		traceEnt->r.ownerNum = ent->s.number;
+		VectorCopy(traceEnt->s.angles, traceEnt->TargetAngles);
+		traceEnt->s.otherEntityNum = ent->s.number;
+
+		cl->pmext.harc = traceEnt->harc;
+		cl->pmext.varc = traceEnt->varc;
+		VectorCopy(traceEnt->s.angles, cl->pmext.centerangles);
+		cl->pmext.centerangles[PITCH] = AngleNormalize180(cl->pmext.centerangles[PITCH]);
+		cl->pmext.centerangles[YAW]   = AngleNormalize180(cl->pmext.centerangles[YAW]);
+		cl->pmext.centerangles[ROLL]  = AngleNormalize180(cl->pmext.centerangles[ROLL]);
+
+		ent->backupWeaponTime                   = ent->client->ps.weaponTime;
+		ent->client->ps.weaponTime              = traceEnt->backupWeaponTime;
+		ent->client->ps.weapHeat[WP_DUMMY_MG42] = traceEnt->mg42weapHeat;
+
+		G_UseTargets(traceEnt, ent);     // added for Mike so mounting an MG42 can be a trigger event (let me know if there's any issues with this)
+	}
+	else if (((Q_stricmp(traceEnt->classname, "func_door") == 0) || (Q_stricmp(traceEnt->classname, "func_door_rotating") == 0)))
+	{
+		if ((ent->client->pers.cmd.buttons & BUTTON_WALKING) || (ent->client->ps.pm_flags & PMF_DUCKED))
+		{
+			traceEnt->flags |= FL_SOFTACTIVATE;     // no noise
+		}
+		G_TryDoor(traceEnt, ent, ent);        // (door,other,activator)
+	}
+	else if ((Q_stricmp(traceEnt->classname, "team_WOLF_checkpoint") == 0))
+	{
+		if (traceEnt->count != ent->client->sess.sessionTeam)
+		{
+			traceEnt->health++;
+		}
+	}
+	else if ((Q_stricmp(traceEnt->classname, "func_button") == 0) && (traceEnt->s.apos.trType == TR_STATIONARY && traceEnt->s.pos.trType == TR_STATIONARY) && traceEnt->active == qfalse)
+	{
+		Use_BinaryMover(traceEnt, ent, ent);
+		traceEnt->active = qtrue;
+	}
+	else if (!Q_stricmp(traceEnt->classname, "func_invisible_user"))
+	{
+		if ((ent->client->pers.cmd.buttons & BUTTON_WALKING) || (ent->client->ps.pm_flags & PMF_DUCKED))
+		{
+			traceEnt->flags |= FL_SOFTACTIVATE;     // no noise
+		}
+		G_UseEntity(traceEnt, ent, ent);
+	}
+	else if (!Q_stricmp(traceEnt->classname, "props_footlocker"))
+	{
+		G_UseEntity(traceEnt, ent, ent);
+	}
+	else
+	{
+		return qfalse;
+	}
+
+	return qtrue;
 }
 
 /**
@@ -3817,12 +3803,10 @@ void G_LeaveTank(gentity_t *ent, qboolean position)
  */
 void Cmd_Activate_f(gentity_t *ent)
 {
-	trace_t   tr;
-	vec3_t    end;
-	gentity_t *traceEnt;
-	vec3_t    forward, right, up, offset;
-	qboolean  found;
-	qboolean  pass2 = qfalse;
+	trace_t  tr;
+	vec3_t   end;
+	vec3_t   forward, right, up, offset;
+	qboolean pass2 = qfalse;
 
 	if (ent->health <= 0)
 	{
@@ -3872,7 +3856,8 @@ void Cmd_Activate_f(gentity_t *ent)
 		}
 		return;
 	}
-	else if ((ent->client->ps.eFlags & EF_MOUNTEDTANK) && (ent->s.eFlags & EF_MOUNTEDTANK) && !level.disableTankExit)
+
+	if ((ent->client->ps.eFlags & EF_MOUNTEDTANK) && (ent->s.eFlags & EF_MOUNTEDTANK) && !level.disableTankExit)
 	{
 		G_LeaveTank(ent, qtrue);
 		return;
@@ -3900,22 +3885,19 @@ void Cmd_Activate_f(gentity_t *ent)
 		pass2 = qtrue;
 	}
 
-tryagain:
-
-	if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.entityNum == ENTITYNUM_WORLD)
+	while ((tr.surfaceFlags & SURF_NOIMPACT) || tr.entityNum == ENTITYNUM_WORLD)
 	{
-		return;
-	}
+		qboolean found;
 
-	traceEnt = &g_entities[tr.entityNum];
+		found = Do_Activate_f(ent, &g_entities[tr.entityNum]);
 
-	found = Do_Activate_f(ent, traceEnt);
+		if (found || pass2)
+		{
+			break;
+		}
 
-	if (!found && !pass2)
-	{
 		pass2 = qtrue;
 		trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_MISSILECLIP | CONTENTS_BODY | CONTENTS_CORPSE | CONTENTS_TRIGGER));
-		goto tryagain;
 	}
 }
 
@@ -4014,12 +3996,10 @@ qboolean G_PushPlayer(gentity_t *ent, gentity_t *victim)
  */
 void Cmd_Activate2_f(gentity_t *ent)
 {
-	trace_t   tr;
-	vec3_t    end;
-	gentity_t *traceEnt;
-	vec3_t    forward, right, up, offset;
-	qboolean  found;
-	qboolean  pass2 = qfalse;
+	trace_t  tr;
+	vec3_t   end;
+	vec3_t   forward, right, up, offset;
+	qboolean pass2 = qfalse;
 
 	if (ent->health <= 0)  // uch
 	{
@@ -4051,7 +4031,8 @@ void Cmd_Activate2_f(gentity_t *ent)
 	trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, CONTENTS_BODY);
 	if (tr.entityNum >= 0)
 	{
-		traceEnt = &g_entities[tr.entityNum];
+		gentity_t *traceEnt = &g_entities[tr.entityNum];
+
 		if (traceEnt->client)
 		{
 			G_PushPlayer(ent, traceEnt);
@@ -4062,22 +4043,19 @@ void Cmd_Activate2_f(gentity_t *ent)
 }
 #endif
 
-tryagain:
-
-	if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.entityNum == ENTITYNUM_WORLD)
+	while ((tr.surfaceFlags & SURF_NOIMPACT) || tr.entityNum == ENTITYNUM_WORLD)
 	{
-		return;
-	}
+		qboolean found;
 
-	traceEnt = &g_entities[tr.entityNum];
+		found = Do_Activate2_f(ent, &g_entities[tr.entityNum]);
 
-	found = Do_Activate2_f(ent, traceEnt);
+		if (found || pass2)
+		{
+			break;
+		}
 
-	if (!found && !pass2)
-	{
 		pass2 = qtrue;
 		trap_Trace(&tr, offset, NULL, NULL, end, ent->s.number, (CONTENTS_SOLID | CONTENTS_BODY | CONTENTS_CORPSE | CONTENTS_TRIGGER));
-		goto tryagain;
 	}
 }
 
