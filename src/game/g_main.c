@@ -4725,7 +4725,6 @@ void G_DrawEntBBox(gentity_t *ent)
 		VectorCopy(ent->r.maxs, maxs);
 		VectorCopy(ent->r.mins, mins);
 		break;
-	case ET_MOVERSCALED:
 	case ET_MOVER:
 		if (g_debugHitboxes.integer != 7)
 		{
@@ -4752,9 +4751,7 @@ void G_DrawEntBBox(gentity_t *ent)
 		VectorCopy(ent->r.maxs, maxs);
 		VectorCopy(ent->r.mins, mins);
 		break;
-	case ET_PUSH_TRIGGER:
 	case ET_TELEPORT_TRIGGER:
-	case ET_CONCUSSIVE_TRIGGER:
 	case ET_OID_TRIGGER:
 	case ET_TRIGGER_MULTIPLE:
 	case ET_TRIGGER_FLAGONLY:
@@ -4778,7 +4775,6 @@ void G_DrawEntBBox(gentity_t *ent)
 		VectorCopy(ent->r.mins, mins);
 		break;
 	case ET_ALARMBOX:
-	case ET_FOOTLOCKER:
 	case ET_PROP:
 	case ET_TRAP:
 		if (g_debugHitboxes.integer != 12)
@@ -4928,10 +4924,6 @@ void G_RunEntity(gentity_t *ent, int msec)
 	{
 	case ET_MISSILE:
 	case ET_FLAMEBARREL:
-	case ET_FP_PARTS:
-	case ET_FIRE_COLUMN:
-	case ET_FIRE_COLUMN_SMOKE:
-	case ET_EXPLO_PART:
 	case ET_RAMJET:
 		// pausing
 		if (level.match_pause == PAUSE_NONE)

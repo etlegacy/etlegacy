@@ -486,50 +486,50 @@ const char *enttypenames[] =
 	"ET_BEAM",
 	"ET_PORTAL",
 	"ET_SPEAKER",
-	"ET_PUSH_TRIGGER",
+	"unused ent type",              // ET_PUSH_TRIGGER
 	"ET_TELEPORT_TRIGGER",
 	"ET_INVISIBLE",
-	"ET_CONCUSSIVE_TRIGGER",
+	"unused ent type",              // ET_CONCUSSIVE_TRIGGER
 	"ET_OID_TRIGGER",
 	"ET_EXPLOSIVE_INDICATOR",
 
 	"ET_EXPLOSIVE",
-	"ET_EF_SPOTLIGHT",             // unused
+	"unused ent type",              // ET_EF_SPOTLIGHT
 	"ET_ALARMBOX",
 	"ET_CORONA",
 	"ET_TRAP",
 
 	"ET_GAMEMODEL",
-	"ET_FOOTLOCKER",
+	"unused ent type",              // ET_FOOTLOCKER
 
 	"ET_FLAMEBARREL",
-	"ET_FP_PARTS",
+	"unused ent type",              // ET_FP_PARTS
 
-	"ET_FIRE_COLUMN",
-	"ET_FIRE_COLUMN_SMOKE",
+	"unused ent type",              // ET_FIRE_COLUMN
+	"unused ent type",              // ET_FIRE_COLUMN_SMOKE
 	"ET_RAMJET",
 
 	"ET_FLAMETHROWER_CHUNK",
 
-	"ET_EXPLO_PART",
+	"unused ent type",              // ET_EXPLO_PART
 
 	"ET_PROP",
 
-	"ET_AI_EFFECT",
+	"unused ent type",              // ET_AI_EFFECT
 
 	"ET_CAMERA",
-	"ET_MOVERSCALED",
+	"unused ent type",              // ET_MOVERSCALED
 
 	"ET_CONSTRUCTIBLE_INDICATOR",
 	"ET_CONSTRUCTIBLE",
 	"ET_CONSTRUCTIBLE_MARKER",
-	"ET_BOMB",
-	"ET_WAYPOINT",
+	"unused ent type",              // ET_BOMB
+	"unused ent type",              // ET_WAYPOINT
 	"ET_BEAM_2",
 	"ET_TANK_INDICATOR",
 	"ET_TANK_INDICATOR_DEAD",
 
-	"ET_BOTGOAL_INDICATOR",
+	"unused ent type",              // ET_BOTGOAL_INDICATOR
 	"ET_CORPSE",
 	"ET_SMOKER",
 
@@ -546,10 +546,10 @@ const char *enttypenames[] =
 	"ET_HEALER",
 	"ET_SUPPLIER",
 
-	"ET_LANDMINE_HINT",
-	"ET_ATTRACTOR_HINT",
-	"ET_SNIPER_HINT",
-	"ET_LANDMINESPOT_HINT",
+	"unused ent type",             // ET_LANDMINE_HINT
+	"unused ent type",             // ET_ATTRACTOR_HINT
+	"unused ent type",             // ET_SNIPER_HINT
+	"unused ent type",             // ET_LANDMINESPOT_HINT
 
 	"ET_COMMANDMAP_MARKER",
 

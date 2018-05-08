@@ -1367,79 +1367,78 @@ typedef enum
 	ET_BEAM,
 	ET_PORTAL,
 	ET_SPEAKER,
-	ET_PUSH_TRIGGER,
-	ET_TELEPORT_TRIGGER,
-	ET_INVISIBLE,           ///< 10
-	ET_CONCUSSIVE_TRIGGER,  ///< trigger for concussive dust particles
-	ET_OID_TRIGGER,         ///< Objective Info Display
+	//ET_PUSH_TRIGGER,          /// unused
+	ET_TELEPORT_TRIGGER = 9,
+	ET_INVISIBLE,               ///< 10
+	//ET_CONCUSSIVE_TRIGGER,    ///< unused - trigger for concussive dust particles
+	ET_OID_TRIGGER = 12,        ///< Objective Info Display
 	ET_EXPLOSIVE_INDICATOR,
 
-	ET_EXPLOSIVE,           ///< brush that will break into smaller bits when damaged
-	ET_EF_SPOTLIGHT,        ///< unused
-	ET_ALARMBOX,
+	ET_EXPLOSIVE,               ///< brush that will break into smaller bits when damaged
+	//ET_EF_SPOTLIGHT,          ///< unused
+	ET_ALARMBOX = 16,
 	ET_CORONA,
 	ET_TRAP,
 
-	ET_GAMEMODEL,           ///< misc_gamemodel.  similar to misc_model, but it's a dynamic model so we have LOD
-	ET_FOOTLOCKER,          ///< 20
+	ET_GAMEMODEL,               ///< misc_gamemodel.  similar to misc_model, but it's a dynamic model so we have LOD
+	//ET_FOOTLOCKER,            ///< 20 - unused
 
-	ET_FLAMEBARREL,
-	ET_FP_PARTS,
+	ET_FLAMEBARREL = 21,
+	//ET_FP_PARTS,
 
 	// FIRE PROPS
-	ET_FIRE_COLUMN,
-	ET_FIRE_COLUMN_SMOKE,
-	ET_RAMJET,
+	//ET_FIRE_COLUMN,
+	//ET_FIRE_COLUMN_SMOKE,
+	ET_RAMJET = 25,
 
-	ET_FLAMETHROWER_CHUNK,  ///< used in server side collision detection for flamethrower
+	ET_FLAMETHROWER_CHUNK,      ///< used in server side collision detection for flamethrower
 
-	ET_EXPLO_PART,
+	//ET_EXPLO_PART,
 
-	ET_PROP,
+	ET_PROP = 28,
 
-	ET_AI_EFFECT,
+	//ET_AI_EFFECT,             ///< unused
 
-	ET_CAMERA,              ///< 30
-	ET_MOVERSCALED,
+	ET_CAMERA = 30,             ///< 30
+	//ET_MOVERSCALED,           // unused
 
 	ET_CONSTRUCTIBLE_INDICATOR,
 	ET_CONSTRUCTIBLE,
 	ET_CONSTRUCTIBLE_MARKER,
-	ET_BOMB,                ///< obsolete/unused (tripmines)
-	ET_WAYPOINT,            ///< obsolete/unused
-	ET_BEAM_2,
+	//ET_BOMB,                  ///< obsolete/unused (tripmines)
+	//ET_WAYPOINT,              ///< obsolete/unused
+	ET_BEAM_2 = 37,
 	ET_TANK_INDICATOR,
 	ET_TANK_INDICATOR_DEAD,
-	/// An indicator object created by the bot code to show where the bots are moving to
-	ET_BOTGOAL_INDICATOR,   ///< obsolete/unused
-	ET_CORPSE,              ///< 40 - dead player
-	ET_SMOKER,              ///< target_smoke entity
+	//ET_BOTGOAL_INDICATOR,     ///< obsolete/unused - An indicator object created by the bot code to show where the bots are moving to
+	ET_CORPSE = 40,             ///< 40 - dead player
+	ET_SMOKER,                  ///< target_smoke entity
 
-	ET_TEMPHEAD,            ///< temporary head for clients for bullet traces
-	ET_MG42_BARREL,         ///< MG42 barrel
-	ET_TEMPLEGS,            ///< temporary leg for clients for bullet traces
+	ET_TEMPHEAD,                ///< temporary head for clients for bullet traces
+	ET_MG42_BARREL,             ///< MG42 barrel
+	ET_TEMPLEGS,                ///< temporary leg for clients for bullet traces
 	ET_TRIGGER_MULTIPLE,
 	ET_TRIGGER_FLAGONLY,
 	ET_TRIGGER_FLAGONLY_MULTIPLE,
 	ET_GAMEMANAGER,
 	ET_AAGUN,
-	ET_CABINET_H,
+	ET_CABINET_H,               ///< 50
 	ET_CABINET_A,
 	ET_HEALER,
 	ET_SUPPLIER,
 
-	ET_LANDMINE_HINT,       ///< obsolete/unused (landmine hint for botsetgoalstate filter)
-	ET_ATTRACTOR_HINT,      ///< obsolete/unused (attractor hint for botsetgoalstate filter)
-	ET_SNIPER_HINT,         ///< obsolete/unused (sniper hint for botsetgoalstate filter)
-	ET_LANDMINESPOT_HINT,   ///< obsolete/unused (landminespot hint for botsetgoalstate filter)
+	//ET_LANDMINE_HINT,         ///< obsolete/unused (landmine hint for botsetgoalstate filter)
+	//ET_ATTRACTOR_HINT,        ///< obsolete/unused (attractor hint for botsetgoalstate filter)
+	//ET_SNIPER_HINT,           ///< obsolete/unused (sniper hint for botsetgoalstate filter)
+	//ET_LANDMINESPOT_HINT,     ///< obsolete/unused (landminespot hint for botsetgoalstate filter)
 
-	ET_COMMANDMAP_MARKER,
+	ET_COMMANDMAP_MARKER = 58,
 
 	ET_WOLF_OBJECTIVE,
 
-	ET_EVENTS               ///< any of the EV_* events can be added freestanding
-	                        ///< by setting eType to ET_EVENTS + eventNum
-	                        ///< this avoids having to set eFlags and eventNum
+	ET_EVENTS                   ///< any of the EV_* events can be added freestanding
+                                ///< by setting eType to ET_EVENTS + eventNum
+                                ///< this avoids having to set eFlags and eventNum
 } entityType_t;
 
 /**

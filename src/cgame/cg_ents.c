@@ -1021,10 +1021,7 @@ static void CG_Missile(centity_t *cent)
 	}
 
 	// add trails
-	if (cent->currentState.eType == ET_FP_PARTS
-	    || cent->currentState.eType == ET_FIRE_COLUMN
-	    || cent->currentState.eType == ET_FIRE_COLUMN_SMOKE
-	    || cent->currentState.eType == ET_RAMJET)
+	if (cent->currentState.eType == ET_RAMJET)
 	{
 		CG_RocketTrail(cent, NULL);
 	}
@@ -1098,22 +1095,9 @@ static void CG_Missile(centity_t *cent)
 	// flicker between two skins
 	ent.skinNum = cg.clientFrame & 1;
 
-	if (cent->currentState.eType == ET_FP_PARTS)
-	{
-		ent.hModel = cgs.gameModels[cent->currentState.modelindex];
-	}
-	else if (cent->currentState.eType == ET_EXPLO_PART)
-	{
-		ent.hModel = cgs.gameModels[cent->currentState.modelindex];
-	}
-	else if (cent->currentState.eType == ET_FLAMEBARREL)
+	if (cent->currentState.eType == ET_FLAMEBARREL)
 	{
 		ent.hModel = cgs.media.flamebarrel;
-	}
-	else if (cent->currentState.eType == ET_FIRE_COLUMN || cent->currentState.eType == ET_FIRE_COLUMN_SMOKE)
-	{
-		// it may have a model sometime in the future
-		ent.hModel = 0;
 	}
 	else if (cent->currentState.eType == ET_RAMJET)
 	{
@@ -1196,20 +1180,20 @@ static void CG_Missile(centity_t *cent)
 	}
 
 	// convert direction of travel into axis
-    if (GetWeaponTableData(cent->currentState.weapon)->isExplosive
-            && (GetWeaponTableData(cent->currentState.weapon)->isMortarSet  // TODO: once the the below FIXME solved, remove this
-            || cent->currentState.weapon == WP_MAPMORTAR))                  // TODO: once the the below FIXME solved, remove this
-		// reverted to vanilla behaviour
-		// FIXME: check FEATURE_EDV weapon cam (see default case of switch)
-		//case WP_PANZERFAUST:
-		//case WP_BAZOOKA:
-		//case WP_GPG40:
-		//case WP_M7:
-		//case WP_SMOKE_MARKER:
-		//case WP_SMOKE_BOMB:
-		//case WP_DYNAMITE:
-		//case WP_GRENADE_LAUNCHER:
-		//case WP_GRENADE_PINEAPPLE:
+	if (GetWeaponTableData(cent->currentState.weapon)->isExplosive
+	    && (GetWeaponTableData(cent->currentState.weapon)->isMortarSet      // TODO: once the the below FIXME solved, remove this
+	        || cent->currentState.weapon == WP_MAPMORTAR))                  // TODO: once the the below FIXME solved, remove this
+	// reverted to vanilla behaviour
+	// FIXME: check FEATURE_EDV weapon cam (see default case of switch)
+	//case WP_PANZERFAUST:
+	//case WP_BAZOOKA:
+	//case WP_GPG40:
+	//case WP_M7:
+	//case WP_SMOKE_MARKER:
+	//case WP_SMOKE_BOMB:
+	//case WP_DYNAMITE:
+	//case WP_GRENADE_LAUNCHER:
+	//case WP_GRENADE_PINEAPPLE:
 	{
 		vec3_t delta;
 
@@ -1252,8 +1236,8 @@ static void CG_Missile(centity_t *cent)
 			ent.axis[0][2] = 1;
 		}
 	}
-    else
-    {
+	else
+	{
 		// FIXME: anything to do/save for edv?
 		if (VectorNormalize2(s1->pos.trDelta, ent.axis[0]) == 0.f)
 		{
@@ -1342,12 +1326,12 @@ static void CG_Trap(centity_t *cent)
 	if (!traplf->oldFrameTime)
 	{
 		traplf->frameTime        =
-		    traplf->oldFrameTime = cg.time;
+			traplf->oldFrameTime = cg.time;
 
 		CG_TrapSetAnim(cent, traplf, cs->frame);
 
 		traplf->frame        =
-		    traplf->oldFrame = traplf->animation->firstFrame;
+			traplf->oldFrame = traplf->animation->firstFrame;
 	}
 
 	// transition to new anim if requested
@@ -2270,13 +2254,10 @@ static void CG_ProcessEntity(centity_t *cent)
 			CG_Error("Bad entity type: %i\n", cent->currentState.eType);
 		}
 		break;
-	case ET_CONCUSSIVE_TRIGGER:
 	case ET_CAMERA:
 	case ET_INVISIBLE:
-	case ET_PUSH_TRIGGER:
 	case ET_TELEPORT_TRIGGER:
 	case ET_OID_TRIGGER:
-	case ET_AI_EFFECT:
 	case ET_EXPLOSIVE_INDICATOR:
 	case ET_CONSTRUCTIBLE_INDICATOR:
 	case ET_TANK_INDICATOR:
@@ -2293,7 +2274,6 @@ static void CG_ProcessEntity(centity_t *cent)
 		break;
 	case ET_GAMEMODEL:
 	case ET_MG42_BARREL:
-	case ET_FOOTLOCKER:
 	case ET_GENERAL:
 	case ET_AAGUN:
 		CG_General(cent);
@@ -2317,10 +2297,6 @@ static void CG_ProcessEntity(centity_t *cent)
 		break;
 	case ET_MISSILE:
 	case ET_FLAMEBARREL:
-	case ET_FP_PARTS:
-	case ET_FIRE_COLUMN:
-	case ET_FIRE_COLUMN_SMOKE:
-	case ET_EXPLO_PART:
 	case ET_RAMJET:
 		CG_Missile(cent);
 		break;

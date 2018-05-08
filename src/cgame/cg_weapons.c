@@ -473,25 +473,12 @@ void CG_PyroSmokeTrail(centity_t *ent, const weaponInfo_t *wi)
  */
 void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 {
-	int           step;
+	int           step = (ent->currentState.eType == ET_FLAMEBARREL) ? 30 : 10;
 	vec3_t        origin, lastPos;
 	int           contents;
 	int           lastContents, startTime = ent->trailTime;
 	entityState_t *es = &ent->currentState;
 	int           t;
-
-	if (ent->currentState.eType == ET_FLAMEBARREL)
-	{
-		step = 30;
-	}
-	else if (ent->currentState.eType == ET_FP_PARTS)
-	{
-		step = 50;
-	}
-	else // ent->currentState.eType == ET_RAMJET & others
-	{
-		step = 10;
-	}
 
 	t = step * ((startTime + step) / step);
 
@@ -527,25 +514,16 @@ void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 		BG_EvaluateTrajectory(&es->pos, t, lastPos, qfalse, es->effect2Time);
 		rnd = random();
 
-		switch (ent->currentState.eType)
+		if (ent->currentState.eType == ET_FLAMEBARREL)
 		{
-		case ET_FLAMEBARREL:
 			if ((rand() % 100) > 50)
 			{
 				CG_ParticleExplosion("twiltb2", lastPos, vec3_origin, 100 + (int)(rnd * 400), 5, 7 + (int)(rnd * 10), qfalse);       // fire
 
 			}
 			CG_ParticleExplosion("blacksmokeanim", lastPos, vec3_origin, 800 + (int)(rnd * 1500), 5, 12 + (int)(rnd * 30), qfalse);          // smoke
-			break;
-		case ET_FP_PARTS:
-			if ((rand() % 100) > 50)
-			{
-				CG_ParticleExplosion("twiltb2", lastPos, vec3_origin, 100 + (int)(rnd * 400), 5, 7 + (int)(rnd * 10), qfalse);       // fire
-
-			}
-			CG_ParticleExplosion("blacksmokeanim", lastPos, vec3_origin, 800 + (int)(rnd * 1500), 5, 12 + (int)(rnd * 30), qfalse);          // smoke
-			break;
-		case ET_RAMJET:
+		}
+		else if (ent->currentState.eType == ET_RAMJET)
 		{
 			int duration;
 
@@ -554,58 +532,10 @@ void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 			CG_ParticleExplosion("twiltb2", lastPos, vec3_origin, duration + (int)(rnd * 100), 5, 5 + (int)(rnd * 10), qfalse);       // fire
 			CG_ParticleExplosion("blacksmokeanim", lastPos, vec3_origin, 400 + (int)(rnd * 750), 12, 24 + (int)(rnd * 30), qfalse);          // smoke
 		}
-		break;
-		case ET_FIRE_COLUMN:
-		case ET_FIRE_COLUMN_SMOKE:
+		else
 		{
-			int duration;
-			int sizeStart;
-			int sizeEnd;
-
-			//VectorCopy (ent->lerpOrigin, lastPos);
-
-			if (ent->currentState.density)     // corkscrew effect
-			{
-				vec3_t right;
-				vec3_t angles;
-
-				VectorCopy(ent->currentState.apos.trBase, angles);
-				angles[ROLL] += cg.time % 360;
-				AngleVectors(angles, NULL, right, NULL);
-				VectorMA(lastPos, ent->currentState.density, right, lastPos);
-			}
-
-			duration  = (int)ent->currentState.angles[0];
-			sizeStart = (int)ent->currentState.angles[1];
-			sizeEnd   = (int)ent->currentState.angles[2];
-
-			if (!duration)
-			{
-				duration = 100;
-			}
-
-			if (!sizeStart)
-			{
-				sizeStart = 5;
-			}
-
-			if (!sizeEnd)
-			{
-				sizeEnd = 7;
-			}
-
-			CG_ParticleExplosion("twiltb2", lastPos, vec3_origin, duration + (int)(rnd * 400), sizeStart, sizeEnd + (int)(rnd * 10), qfalse);         // fire
-
-			if (ent->currentState.eType == ET_FIRE_COLUMN_SMOKE && (rand() % 100) > 50)
-			{
-				CG_ParticleExplosion("blacksmokeanim", lastPos, vec3_origin, 800 + (int)(rnd * 1500), 5, 12 + (int)(rnd * 30), qfalse);          // smoke
-			}
-		}
-		break;
-		default:
 			//CG_ParticleExplosion( "twiltb", lastPos, vec3_origin, 300+(int)(rnd*100), 4, 14+(int)(rnd*8) );   // fire
 			CG_ParticleExplosion("blacksmokeanim", lastPos, vec3_origin, 800 + (int)(rnd * 1500), 5, 12 + (int)(rnd * 30), qfalse);          // smoke
-			break;
 		}
 	}
 	/*
