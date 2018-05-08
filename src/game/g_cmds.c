@@ -3588,7 +3588,7 @@ qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 		return qfalse;
 	}
 
-	if (traceEnt->classname)
+	if (!traceEnt->classname)
 	{
 		return qfalse;
 	}
@@ -3885,7 +3885,7 @@ void Cmd_Activate_f(gentity_t *ent)
 		pass2 = qtrue;
 	}
 
-	while ((tr.surfaceFlags & SURF_NOIMPACT) || tr.entityNum == ENTITYNUM_WORLD)
+	while (!(tr.surfaceFlags & SURF_NOIMPACT) && !(tr.entityNum == ENTITYNUM_WORLD))
 	{
 		qboolean found;
 
@@ -4043,7 +4043,7 @@ void Cmd_Activate2_f(gentity_t *ent)
 }
 #endif
 
-	while ((tr.surfaceFlags & SURF_NOIMPACT) || tr.entityNum == ENTITYNUM_WORLD)
+	while (!(tr.surfaceFlags & SURF_NOIMPACT) && !(tr.entityNum == ENTITYNUM_WORLD))
 	{
 		qboolean found;
 
