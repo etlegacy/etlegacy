@@ -729,8 +729,9 @@ static void R_RecursiveInteractionNode(bspNode_t *node, trRefLight_t *light, int
 			node = node->children[1];
 			break;
 		}
-	}
-	while (1);
+	} while (1);
+
+
 	{
 		// leaf node, so add mark surfaces
 		int          c;
@@ -2154,7 +2155,7 @@ static void R_CoherentHierachicalCulling()
 					}
 				}
 			}
-			#if 1
+#if 1
 			else if (r_dynamicBspOcclusionCulling->integer == 1)
 			{
 				if (!QueueEmpty(&visibleQueue))
@@ -2164,7 +2165,7 @@ static void R_CoherentHierachicalCulling()
 					IssueOcclusionQuery(&occlusionQueryQueue, node, qtrue);
 				}
 			}
-			#endif
+#endif
 
 		} // end while(!QueueEmpty(&occlusionQueryQueue))
 
