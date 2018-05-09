@@ -4698,13 +4698,16 @@ void R_LoadLightGrid(lump_t *l)
 		// decode Y as sin( lat ) * sin( long )
 		// decode Z as cos( long )
 
-		// RB: having a look in NormalToLatLong used by q3map2 shows the order of latLong
-
 		// Lat = 0 at (1,0,0) to 360 (-1,0,0), encoded in 8-bit sine table format
-		// Lng = 0 at (0,0,1) to 180 (0,0,-1), encoded in 8-bit sine table format
+		// Lng = 0 at (0,0,1) to 180 (0,0,-1), encoded in 8-bit sine table format <--- 180°?!
 
-		lat = DEG2RAD(in->latLong[1] * (360.0 / 255.0));
-		lng = DEG2RAD(in->latLong[0] * (360.0 / 255.0));
+		lat = DEG2RAD(in->latLong[1] * (360.0 / 256.0)); // calculate with 256 instead of 255 to hit exact PI
+		lng = DEG2RAD(in->latLong[0] * (360.0 / 256.0));
+		//lng = DEG2RAD(in->latLong[0] * (180.0 / 256.0)); // oasis wall: back ok, front has issues
+		//  or
+		//lng = DEG2RAD(in->latLong[0] * ((180.0 + 360) / 256.0)); // oasis wall: front ok, back too dark
+
+		//Ren_Print((" %i %i %f %f\n" , in->latLong[1], in->latLong[0], lat , lng);
 
 		gridPoint->direction[0] = cos(lat) * sin(lng);
 		gridPoint->direction[1] = sin(lat) * sin(lng);
@@ -4712,7 +4715,7 @@ void R_LoadLightGrid(lump_t *l)
 
 		// debug print to see if the XBSP format is correct
 		//Ren_Print("%9d Amb: (%03.1f %03.1f %03.1f) Dir: (%03.1f %03.1f %03.1f)\n",
-		//  i, gridPoint->ambient[0], gridPoint->ambient[1], gridPoint->ambient[2], gridPoint->directed[0], gridPoint->directed[1], gridPoint->directed[2]);
+		//  i, gridPoint->ambientColor[0], gridPoint->ambientColor[1], gridPoint->ambientColor[2], gridPoint->direction[0], gridPoint->direction[1], gridPoint->direction[2]);
 	}
 
 	// calculate grid point positions
@@ -7628,6 +7631,9 @@ void R_BuildCubeMaps(void)
 	startTime = ri.Milliseconds();
 #endif
 
+	size_t ticsNeeded;
+	byte   r, g, b, best;
+
 	Com_Memset(&rf, 0, sizeof(refdef_t));
 
 	for (i = 0; i < 6; i++)
@@ -7785,7 +7791,7 @@ void R_BuildCubeMaps(void)
 
 		if ((j + 1) >= nextTicCount)
 		{
-			size_t ticsNeeded = (size_t)(((double)(j + 1) / tr.cubeProbes.currentElements) * 50.0);
+			ticsNeeded = (size_t)(((double)(j + 1) / tr.cubeProbes.currentElements) * 50.0);
 
 			do
 			{
@@ -7968,10 +7974,8 @@ void R_BuildCubeMaps(void)
 			}
 
 			// encode the pixel intensity into the alpha channel, saves work in the shader
-			if (qtrue)
+			//if (qtrue)
 			{
-				byte r, g, b, best;
-
 				dest = tr.cubeTemp[i];
 				for (y = 0; y < REF_CUBEMAP_SIZE; y++)
 				{
@@ -8046,6 +8050,7 @@ void R_BuildCubeMaps(void)
 		cubeProbe->cubemap = R_AllocImage(va("_autoCube%d", j), qfalse);
 		if (!cubeProbe->cubemap)
 		{
+			Ren_Print("R_BuildCubeMaps: Aborted - can't allocate image.\n");
 			return;
 		}
 
