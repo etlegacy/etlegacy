@@ -99,7 +99,8 @@ int Com_AddToGrowList(growList_t *list, void *data)
 
 	list->maxElements *= 2;
 
-	//Com_DPrintf("Resizing growlist to %i maxElements\n", list->maxElements);
+	// whenever we are seeing this we might increase affected growlist
+	Com_DPrintf("Resizing growlist to %i maxElements\n", list->maxElements);
 
 	list->elements = (void **)Com_Allocate(list->maxElements * sizeof(void *));
 
