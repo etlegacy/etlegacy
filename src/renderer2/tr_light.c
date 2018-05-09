@@ -378,30 +378,17 @@ void R_SetupEntityLighting(const trRefdef_t *refdef, trRefEntity_t *ent, vec3_t 
 	}
 	else
 	{
-		model_t *pModel;
-
-		pModel = R_GetModelByHandle(ent->e.hModel);
-
-		// This has to be done so brushes use ET material ambient lighting and r_ambientScale has r1 behavior
-		if (pModel->bsp)
+		if (refdef->rdflags & RDF_NOWORLDMODEL) // no scaling for no world models set world ambient light instead
 		{
-			// don't scale bsp models
-			//VectorScale(ent->ambientLight, 0.5f, ent->ambientLight); // default r_ambientscale
+			VectorCopy(tr.worldEntity.ambientLight, ent->ambientLight);
+		}
+		if (refdef->rdflags & RDF_SNOOPERVIEW) // nightscope
+		{
+			VectorSet(ent->ambientLight, 0.96f, 0.96f, 0.96f);  // allow a little room for flicker from directed light
 		}
 		else
 		{
-			if (refdef->rdflags & RDF_NOWORLDMODEL) // no scaling for no world models set world ambient light instead
-			{
-				VectorCopy(tr.worldEntity.ambientLight, ent->ambientLight);
-			}
-			if (refdef->rdflags & RDF_SNOOPERVIEW) // nightscope
-			{
-				VectorSet(ent->ambientLight, 0.96f, 0.96f, 0.96f);  // allow a little room for flicker from directed light
-			}
-			else
-			{
-				VectorScale(ent->ambientLight, r_ambientScale->value, ent->ambientLight);
-			}
+			VectorScale(ent->ambientLight, r_ambientScale->value, ent->ambientLight);
 		}
 	}
 
