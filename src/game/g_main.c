@@ -2595,14 +2595,10 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 		G_Printf("^1ERROR No 'script_multiplayer' found in map\n");
 	}
 
-	level.tracemapLoaded = qfalse;
-	if (!BG_LoadTraceMap(level.rawmapname, level.mapcoordsMins, level.mapcoordsMaxs))
+	level.tracemapLoaded = BG_LoadTraceMap(level.rawmapname, level.mapcoordsMins, level.mapcoordsMaxs);
+	if (!level.tracemapLoaded)
 	{
 		G_Printf("^1ERROR No tracemap found for map\n");
-	}
-	else
-	{
-		level.tracemapLoaded = qtrue;
 	}
 
 	// Link all the splines up
@@ -2648,11 +2644,9 @@ void G_ShutdownGame(int restart)
 	G_LuaShutdown();
 #endif
 	// gametype latching
-	if  (
-	    ((g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_CAMPAIGN  || g_gametype.integer == GT_WOLF_MAPVOTE) && (g_entities[ENTITYNUM_WORLD].r.worldflags & NO_GT_WOLF)) ||
+	if (((g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_CAMPAIGN  || g_gametype.integer == GT_WOLF_MAPVOTE) && (g_entities[ENTITYNUM_WORLD].r.worldflags & NO_GT_WOLF)) ||
 	    (g_gametype.integer == GT_WOLF_STOPWATCH && (g_entities[ENTITYNUM_WORLD].r.worldflags & NO_STOPWATCH)) ||
-	    (g_gametype.integer == GT_WOLF_LMS && (g_entities[ENTITYNUM_WORLD].r.worldflags & NO_LMS))
-	    )
+	    (g_gametype.integer == GT_WOLF_LMS && (g_entities[ENTITYNUM_WORLD].r.worldflags & NO_LMS)))
 	{
 		if (!(g_entities[ENTITYNUM_WORLD].r.worldflags & NO_GT_WOLF))
 		{
@@ -4039,8 +4033,8 @@ void CheckExitRules(void)
 	if (g_timelimit.integer < 0 || g_timelimit.integer > INT_MAX / 60000)
 	{
 		G_Printf("timelimit %i is out of range, defaulting to 0\n", g_timelimit.integer);
-		trap_Cvar_Set( "timelimit", "0" );
-		trap_Cvar_Update( &g_timelimit );
+		trap_Cvar_Set("timelimit", "0");
+		trap_Cvar_Update(&g_timelimit);
 	}
 
 	if (g_timelimit.value != 0.f && !level.warmupTime)
