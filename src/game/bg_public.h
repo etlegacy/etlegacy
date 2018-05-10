@@ -617,7 +617,7 @@ typedef struct
 } pmove_t;
 
 // if a full pmove isn't done on the client, you can just update the angles
-void PM_UpdateViewAngles(playerState_t * ps, pmoveExt_t * pmext, usercmd_t * cmd, void(trace) (trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask);
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask);
 int Pmove(pmove_t *pmove);
 void PmovePredict(pmove_t *pmove, float frametime);
 
@@ -1167,6 +1167,7 @@ typedef struct weapontable_s
 	int reloadTime;                 ///<
 	int fireDelayTime;              ///<
 	int nextShotTime;               ///<
+	int grenadeTime;                ///<
 	int aimSpreadScaleAdd;          ///<
 
 	int maxHeat;                    ///< max active firing time before weapon 'overheats' (at which point the weapon will fail)
@@ -1420,161 +1421,161 @@ extern const char *eventnames[EV_MAX_EVENTS];
  *
 typedef enum
 {
-	BOTH_DEATH1 = 0,
-	BOTH_DEAD1,
-	BOTH_DEAD1_WATER,
-	BOTH_DEATH2,
-	BOTH_DEAD2,
-	BOTH_DEAD2_WATER,
-	BOTH_DEATH3,
-	BOTH_DEAD3,
-	BOTH_DEAD3_WATER,
+    BOTH_DEATH1 = 0,
+    BOTH_DEAD1,
+    BOTH_DEAD1_WATER,
+    BOTH_DEATH2,
+    BOTH_DEAD2,
+    BOTH_DEAD2_WATER,
+    BOTH_DEATH3,
+    BOTH_DEAD3,
+    BOTH_DEAD3_WATER,
 
-	BOTH_CLIMB,
-	BOTH_CLIMB_DOWN,    ///< 10
-	BOTH_CLIMB_DISMOUNT,
+    BOTH_CLIMB,
+    BOTH_CLIMB_DOWN,    ///< 10
+    BOTH_CLIMB_DISMOUNT,
 
-	BOTH_SALUTE,
+    BOTH_SALUTE,
 
-	BOTH_PAIN1,    ///< head
-	BOTH_PAIN2,    ///< chest
-	BOTH_PAIN3,    ///< groin
-	BOTH_PAIN4,    ///< right shoulder
-	BOTH_PAIN5,    ///< left shoulder
-	BOTH_PAIN6,    ///< right knee
-	BOTH_PAIN7,    ///< left knee
-	BOTH_PAIN8,    ///< 20 dazed
+    BOTH_PAIN1,    ///< head
+    BOTH_PAIN2,    ///< chest
+    BOTH_PAIN3,    ///< groin
+    BOTH_PAIN4,    ///< right shoulder
+    BOTH_PAIN5,    ///< left shoulder
+    BOTH_PAIN6,    ///< right knee
+    BOTH_PAIN7,    ///< left knee
+    BOTH_PAIN8,    ///< 20 dazed
 
-	BOTH_GRAB_GRENADE,
+    BOTH_GRAB_GRENADE,
 
-	BOTH_ATTACK1,
-	BOTH_ATTACK2,
-	BOTH_ATTACK3,
-	BOTH_ATTACK4,
-	BOTH_ATTACK5,
+    BOTH_ATTACK1,
+    BOTH_ATTACK2,
+    BOTH_ATTACK3,
+    BOTH_ATTACK4,
+    BOTH_ATTACK5,
 
-	BOTH_EXTRA1,
-	BOTH_EXTRA2,
-	BOTH_EXTRA3,
-	BOTH_EXTRA4,    ///< 30
-	BOTH_EXTRA5,
-	BOTH_EXTRA6,
-	BOTH_EXTRA7,
-	BOTH_EXTRA8,
-	BOTH_EXTRA9,
-	BOTH_EXTRA10,
-	BOTH_EXTRA11,
-	BOTH_EXTRA12,
-	BOTH_EXTRA13,
-	BOTH_EXTRA14,    ///< 40
-	BOTH_EXTRA15,
-	BOTH_EXTRA16,
-	BOTH_EXTRA17,
-	BOTH_EXTRA18,
-	BOTH_EXTRA19,
-	BOTH_EXTRA20,
+    BOTH_EXTRA1,
+    BOTH_EXTRA2,
+    BOTH_EXTRA3,
+    BOTH_EXTRA4,    ///< 30
+    BOTH_EXTRA5,
+    BOTH_EXTRA6,
+    BOTH_EXTRA7,
+    BOTH_EXTRA8,
+    BOTH_EXTRA9,
+    BOTH_EXTRA10,
+    BOTH_EXTRA11,
+    BOTH_EXTRA12,
+    BOTH_EXTRA13,
+    BOTH_EXTRA14,    ///< 40
+    BOTH_EXTRA15,
+    BOTH_EXTRA16,
+    BOTH_EXTRA17,
+    BOTH_EXTRA18,
+    BOTH_EXTRA19,
+    BOTH_EXTRA20,
 
-	TORSO_GESTURE,
-	TORSO_GESTURE2,
-	TORSO_GESTURE3,
-	TORSO_GESTURE4, ///< 50
+    TORSO_GESTURE,
+    TORSO_GESTURE2,
+    TORSO_GESTURE3,
+    TORSO_GESTURE4, ///< 50
 
-	TORSO_DROP,
+    TORSO_DROP,
 
-	TORSO_RAISE,   ///< (low)
-	TORSO_ATTACK,
-	TORSO_STAND,
-	TORSO_STAND_ALT1,
-	TORSO_STAND_ALT2,
-	TORSO_READY,
-	TORSO_RELAX,
+    TORSO_RAISE,   ///< (low)
+    TORSO_ATTACK,
+    TORSO_STAND,
+    TORSO_STAND_ALT1,
+    TORSO_STAND_ALT2,
+    TORSO_READY,
+    TORSO_RELAX,
 
-	TORSO_RAISE2,  ///< (high)
-	TORSO_ATTACK2,  ///< 60
-	TORSO_STAND2,
-	TORSO_STAND2_ALT1,
-	TORSO_STAND2_ALT2,
-	TORSO_READY2,
-	TORSO_RELAX2,
+    TORSO_RAISE2,  ///< (high)
+    TORSO_ATTACK2,  ///< 60
+    TORSO_STAND2,
+    TORSO_STAND2_ALT1,
+    TORSO_STAND2_ALT2,
+    TORSO_READY2,
+    TORSO_RELAX2,
 
-	TORSO_RAISE3,  ///< (pistol)
-	TORSO_ATTACK3,
-	TORSO_STAND3,
-	TORSO_STAND3_ALT1,
-	TORSO_STAND3_ALT2,  ///< 70
-	TORSO_READY3,
-	TORSO_RELAX3,
+    TORSO_RAISE3,  ///< (pistol)
+    TORSO_ATTACK3,
+    TORSO_STAND3,
+    TORSO_STAND3_ALT1,
+    TORSO_STAND3_ALT2,  ///< 70
+    TORSO_READY3,
+    TORSO_RELAX3,
 
-	TORSO_RAISE4,  ///< (shoulder)
-	TORSO_ATTACK4,
-	TORSO_STAND4,
-	TORSO_STAND4_ALT1,
-	TORSO_STAND4_ALT2,
-	TORSO_READY4,
-	TORSO_RELAX4,
+    TORSO_RAISE4,  ///< (shoulder)
+    TORSO_ATTACK4,
+    TORSO_STAND4,
+    TORSO_STAND4_ALT1,
+    TORSO_STAND4_ALT2,
+    TORSO_READY4,
+    TORSO_RELAX4,
 
-	TORSO_RAISE5,   ///< 80 (throw)
-	TORSO_ATTACK5,
-	TORSO_ATTACK5B,
-	TORSO_STAND5,
-	TORSO_STAND5_ALT1,
-	TORSO_STAND5_ALT2,
-	TORSO_READY5,
-	TORSO_RELAX5,
+    TORSO_RAISE5,   ///< 80 (throw)
+    TORSO_ATTACK5,
+    TORSO_ATTACK5B,
+    TORSO_STAND5,
+    TORSO_STAND5_ALT1,
+    TORSO_STAND5_ALT2,
+    TORSO_READY5,
+    TORSO_RELAX5,
 
-	TORSO_RELOAD1, ///< (low)
-	TORSO_RELOAD2, ///< (high)
-	TORSO_RELOAD3,  ///< 90 (pistol)
-	TORSO_RELOAD4, ///< (shoulder)
+    TORSO_RELOAD1, ///< (low)
+    TORSO_RELOAD2, ///< (high)
+    TORSO_RELOAD3,  ///< 90 (pistol)
+    TORSO_RELOAD4, ///< (shoulder)
 
-	TORSO_MG42,    ///< firing tripod mounted weapon animation
+    TORSO_MG42,    ///< firing tripod mounted weapon animation
 
-	TORSO_MOVE,    ///< torso anim to play while moving and not firing (swinging arms type thing)
-	TORSO_MOVE_ALT,
+    TORSO_MOVE,    ///< torso anim to play while moving and not firing (swinging arms type thing)
+    TORSO_MOVE_ALT,
 
-	TORSO_EXTRA,
-	TORSO_EXTRA2,
-	TORSO_EXTRA3,
-	TORSO_EXTRA4,
-	TORSO_EXTRA5,
-	TORSO_EXTRA6,   ///< 100
-	TORSO_EXTRA7,
-	TORSO_EXTRA8,
-	TORSO_EXTRA9,
-	TORSO_EXTRA10,
+    TORSO_EXTRA,
+    TORSO_EXTRA2,
+    TORSO_EXTRA3,
+    TORSO_EXTRA4,
+    TORSO_EXTRA5,
+    TORSO_EXTRA6,   ///< 100
+    TORSO_EXTRA7,
+    TORSO_EXTRA8,
+    TORSO_EXTRA9,
+    TORSO_EXTRA10,
 
-	LEGS_WALKCR,
-	LEGS_WALKCR_BACK,
-	LEGS_WALK,
-	LEGS_RUN,
-	LEGS_BACK,
-	LEGS_SWIM,      ///< 110
-	LEGS_SWIM_IDLE,
+    LEGS_WALKCR,
+    LEGS_WALKCR_BACK,
+    LEGS_WALK,
+    LEGS_RUN,
+    LEGS_BACK,
+    LEGS_SWIM,      ///< 110
+    LEGS_SWIM_IDLE,
 
-	LEGS_JUMP,
-	LEGS_JUMPB,
-	LEGS_LAND,
+    LEGS_JUMP,
+    LEGS_JUMPB,
+    LEGS_LAND,
 
-	LEGS_IDLE,
-	LEGS_IDLE_ALT,///< LEGS_IDLE2
-	LEGS_IDLECR,
+    LEGS_IDLE,
+    LEGS_IDLE_ALT,///< LEGS_IDLE2
+    LEGS_IDLECR,
 
-	LEGS_TURN,
+    LEGS_TURN,
 
-	LEGS_BOOT,     ///< kicking animation
+    LEGS_BOOT,     ///< kicking animation
 
-	LEGS_EXTRA1,    ///< 120
-	LEGS_EXTRA2,
-	LEGS_EXTRA3,
-	LEGS_EXTRA4,
-	LEGS_EXTRA5,
-	LEGS_EXTRA6,
-	LEGS_EXTRA7,
-	LEGS_EXTRA8,
-	LEGS_EXTRA9,
-	LEGS_EXTRA10,
+    LEGS_EXTRA1,    ///< 120
+    LEGS_EXTRA2,
+    LEGS_EXTRA3,
+    LEGS_EXTRA4,
+    LEGS_EXTRA5,
+    LEGS_EXTRA6,
+    LEGS_EXTRA7,
+    LEGS_EXTRA8,
+    LEGS_EXTRA9,
+    LEGS_EXTRA10,
 
-	MAX_ANIMATIONS  ///< 130
+    MAX_ANIMATIONS  ///< 130
 } animNumber_t;
 */
 
@@ -2489,9 +2490,9 @@ typedef enum
  */
 typedef struct ranktable_s
 {
-    const char *names;
-    const char *miniNames;
-    const char *soundNames;
+	const char *names;
+	const char *miniNames;
+	const char *soundNames;
 
 } ranktable_t;
 
@@ -2821,8 +2822,8 @@ typedef enum popupMessageBigType_e
 #define HITBOXBIT_LEGS   2048
 #define HITBOXBIT_CLIENT 4096
 
-void PM_TraceLegs(trace_t * trace, float *legsOffset, vec3_t start, vec3_t end, trace_t * bodytrace, vec3_t viewangles, void(tracefunc)(trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
-void PM_TraceHead(trace_t * trace, vec3_t start, vec3_t end, trace_t * bodytrace, vec3_t viewangles, void(tracefunc)(trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
+void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
 void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end);
 void PM_TraceAll(trace_t *trace, vec3_t start, vec3_t end);
 

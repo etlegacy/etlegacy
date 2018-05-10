@@ -2376,12 +2376,6 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 			PM_AddEvent(EV_CHANGE_WEAPON);
 		}
 	}
-	else if (GetWeaponTableData(newWeapon)->isGrenade || newWeapon == WP_DYNAMITE || newWeapon == WP_SMOKE_BOMB)
-	{
-		// initialize the timer on the potato you're switching to
-		pm->ps->grenadeTimeLeft = 0;
-		PM_AddEvent(EV_CHANGE_WEAPON);
-	}
 	else if (GetWeaponTableData(newWeapon)->isMortarSet)
 	{
 		if (pm->ps->eFlags & EF_PRONE)
@@ -2422,26 +2416,30 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 			CrossProduct(axis[0], axis[2], axis[1]);
 			AxisToAngles(axis, pm->pmext->mountedWeaponAngles);
 		}
+
+		// special case for silenced pistol
+		if (GetWeaponTableData(oldWeapon)->isSilencedPistol)
+		{
+			if (pm->ps->eFlags & EF_PRONE)
+			{
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_UNDO_ALT_WEAPON_MODE_PRONE, qfalse, qfalse);
+			}
+			else
+			{
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_UNDO_ALT_WEAPON_MODE, qfalse, qfalse);
+			}
+		}
+		else
+		{
+			// play an animation
+			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_DROPWEAPON, qfalse, qfalse);
+		}
 	}
 	else
 	{
 		PM_StartWeaponAnim(GetWeaponTableData(oldWeapon)->dropAnim);
-	}
 
-	// play an animation
-	if (GetWeaponTableData(oldWeapon)->isSilencedPistol)
-	{
-		if (pm->ps->eFlags & EF_PRONE)
-		{
-			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_UNDO_ALT_WEAPON_MODE_PRONE, qfalse, qfalse);
-		}
-		else
-		{
-			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_UNDO_ALT_WEAPON_MODE, qfalse, qfalse);
-		}
-	}
-	else
-	{
+		// play an animation
 		BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_DROPWEAPON, qfalse, qfalse);
 	}
 
@@ -3153,62 +3151,23 @@ static qboolean PM_MountedFire(void)
  */
 static qboolean PM_CheckGrenade()
 {
-	switch (pm->ps->weapon)
-	{
-	case WP_GRENADE_LAUNCHER:
-	case WP_GRENADE_PINEAPPLE:
-	case WP_DYNAMITE:
-	case WP_SMOKE_BOMB:
-		//case WP_LANDMINE:
-		//case WP_KNIFE:
-		//case WP_SATCHEL_DET:
-		break;
-	default:
-		return qfalse;
-	}
-
 	if (pm->ps->grenadeTimeLeft > 0)
 	{
-		qboolean forcethrow = qfalse;
+		pm->ps->grenadeTimeLeft -= pml.msec;
 
-		if (pm->ps->weapon == WP_DYNAMITE)
+		if (pm->ps->grenadeTimeLeft <= 100)         // give two frames advance notice so there's time to launch and detonate
 		{
-			pm->ps->grenadeTimeLeft += pml.msec;
-
-			// in multiplayer, dynamite becomes strategic, so start timer @ 30 seconds
-			if (pm->ps->grenadeTimeLeft < 5000)
-			{
-				pm->ps->grenadeTimeLeft = 5000;
-			}
+			pm->ps->grenadeTimeLeft = 100;
 		}
-		else
+		else if ((pm->cmd.buttons & BUTTON_ATTACK) && !(pm->ps->eFlags & EF_PRONE_MOVING))
 		{
-			pm->ps->grenadeTimeLeft -= pml.msec;
-
-			if (pm->ps->grenadeTimeLeft <= 100)         // give two frames advance notice so there's time to launch and detonate
-			{
-				forcethrow = qtrue;
-
-				pm->ps->grenadeTimeLeft = 100;
-			}
+			return qtrue;
 		}
-
-		if (!(pm->cmd.buttons & BUTTON_ATTACK) || forcethrow || (pm->ps->eFlags & EF_PRONE_MOVING))
-		{
-			if (pm->ps->weaponDelay == GetWeaponTableData(pm->ps->weapon)->fireDelayTime || forcethrow)
-			{
-				// released fire button.  Fire!!!
-				if (pm->ps->eFlags & EF_PRONE)
-				{
-					BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPONPRONE, qfalse, qtrue);
-				}
-				else
-				{
-					BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
-				}
-			}
-		}
-		else
+	}
+	else if (pm->ps->weapon == WP_DYNAMITE)
+	{
+		// keep dynamite in hand until fire button is released
+		if ((pm->cmd.buttons & BUTTON_ATTACK) && !(pm->ps->eFlags & EF_PRONE_MOVING) && weaponstateFiring)
 		{
 			return qtrue;
 		}
@@ -3527,7 +3486,7 @@ static void PM_Weapon(void)
 	// if not on fire button and there's not a delayed shot this frame...
 	// consider also leaning, with delayed attack reset
 	if ((!(pm->cmd.buttons & BUTTON_ATTACK) && !(pm->cmd.wbuttons & WBUTTON_ATTACK2) && !delayedFire) ||
-	    (pm->ps->leanf != 0.f && !GetWeaponTableData(pm->ps->weapon)->isGrenade && pm->ps->weapon != WP_SMOKE_BOMB))
+	    (pm->ps->leanf != 0.f && !pm->ps->grenadeTimeLeft))
 	{
 		pm->ps->weaponTime  = 0;
 		pm->ps->weaponDelay = 0;
@@ -3619,46 +3578,44 @@ static void PM_Weapon(void)
 	}
 
 	// start the animation even if out of ammo
-	if (GetWeaponTableData(pm->ps->weapon)->isMeleeWeapon || pm->ps->weapon == WP_LANDMINE)
+	if (GetWeaponTableData(pm->ps->weapon)->isMeleeWeapon)
 	{
 		if (!delayedFire)
 		{
-			qboolean isLandmine = pm->ps->weapon == WP_LANDMINE;
-
 			if (pm->ps->eFlags & EF_PRONE)
 			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPONPRONE, qfalse, isLandmine);
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPONPRONE, qfalse, qfalse);
 			}
 			else
 			{
-				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, isLandmine);
-			}
-
-			if (isLandmine)
-			{
-				pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qfalse);
 			}
 		}
 	}
-	else if (GetWeaponTableData(pm->ps->weapon)->isGrenade || pm->ps->weapon == WP_DYNAMITE || pm->ps->weapon == WP_SMOKE_BOMB || pm->ps->weapon == WP_SATCHEL)
+	else if (GetWeaponTableData(pm->ps->weapon)->isThrowable && GetWeaponTableData(pm->ps->weapon)->isExplosive)
 	{
 		if (!delayedFire)
 		{
 			if (PM_WeaponAmmoAvailable(pm->ps->weapon))
 			{
-				if (pm->ps->weapon == WP_DYNAMITE)
-				{
-					pm->ps->grenadeTimeLeft = 50;
-				}
-				else if (pm->ps->weapon != WP_SATCHEL)      // satchel don't have counter
-				{
-					pm->ps->grenadeTimeLeft = 4000;         // start at four seconds and count down
-				}
+                // start at and count down
+                pm->ps->grenadeTimeLeft = GetWeaponTableData(pm->ps->weapon)->grenadeTime;         
 
 				PM_StartWeaponAnim(GetWeaponTableData(pm->ps->weapon)->attackAnim);
 			}
 
 			pm->ps->weaponDelay = GetWeaponTableData(pm->ps->weapon)->fireDelayTime;
+		}
+		else
+		{
+			if (pm->ps->eFlags & EF_PRONE)
+			{
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPONPRONE, qfalse, qtrue);
+			}
+			else
+			{
+				BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
+			}
 		}
 	}
 	else

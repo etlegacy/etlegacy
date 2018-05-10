@@ -271,34 +271,24 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 	icon = cg_weapons[realweap].weaponIcon[1];
 
 	// pulsing grenade icon to help the player 'count' in their head
-	if (cg.predictedPlayerState.grenadeTimeLeft)       // grenades and dynamite set this
-	{   // these time differently
-		if (realweap == WP_DYNAMITE)
+	if (cg.predictedPlayerState.grenadeTimeLeft)
+	{
+		if (((cg.grenLastTime) % 1000) < ((cg.predictedPlayerState.grenadeTimeLeft) % 1000))
 		{
-			if (((cg.grenLastTime) % 1000) > ((cg.predictedPlayerState.grenadeTimeLeft) % 1000))
+			switch (cg.predictedPlayerState.grenadeTimeLeft / 1000)
 			{
+			case 3:
 				trap_S_StartLocalSound(cgs.media.grenadePulseSound[3], CHAN_LOCAL_SOUND);
-			}
-		}
-		else
-		{
-			if (((cg.grenLastTime) % 1000) < ((cg.predictedPlayerState.grenadeTimeLeft) % 1000))
-			{
-				switch (cg.predictedPlayerState.grenadeTimeLeft / 1000)
-				{
-				case 3:
-					trap_S_StartLocalSound(cgs.media.grenadePulseSound[3], CHAN_LOCAL_SOUND);
-					break;
-				case 2:
-					trap_S_StartLocalSound(cgs.media.grenadePulseSound[2], CHAN_LOCAL_SOUND);
-					break;
-				case 1:
-					trap_S_StartLocalSound(cgs.media.grenadePulseSound[1], CHAN_LOCAL_SOUND);
-					break;
-				case 0:
-					trap_S_StartLocalSound(cgs.media.grenadePulseSound[0], CHAN_LOCAL_SOUND);
-					break;
-				}
+				break;
+			case 2:
+				trap_S_StartLocalSound(cgs.media.grenadePulseSound[2], CHAN_LOCAL_SOUND);
+				break;
+			case 1:
+				trap_S_StartLocalSound(cgs.media.grenadePulseSound[1], CHAN_LOCAL_SOUND);
+				break;
+			case 0:
+				trap_S_StartLocalSound(cgs.media.grenadePulseSound[0], CHAN_LOCAL_SOUND);
+				break;
 			}
 		}
 
@@ -306,6 +296,17 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, qboolean drawHighlighted, int alig
 		halfScale = scale * 0.5f;
 
 		cg.grenLastTime = cg.predictedPlayerState.grenadeTimeLeft;
+	}
+	else if (realweap == WP_DYNAMITE && cg.predictedPlayerState.weaponDelay > 0)    // keep the dynamite tick sound ... in memory of good old time
+	{
+		if (cg.grenLastTime < cg.time)
+		{
+			trap_S_StartLocalSound(cgs.media.grenadePulseSound[3], CHAN_LOCAL_SOUND);
+			cg.grenLastTime = cg.time + 1000;
+		}
+
+		scale     = (float)((cg.grenLastTime - cg.time) % 1000) / 100.0f;
+		halfScale = scale * 0.5f;
 	}
 	else
 	{
@@ -709,7 +710,7 @@ void CG_MouseEvent(int x, int y)
 	{
 		// mousemovement *should* feel the same as ingame
 		char buffer[64];
-		int  mx          = 0, my = 0;
+		int  mx = 0, my = 0;
 		int  mouse_x_pos = 0, mouse_y_pos = 0;
 
 		float sensitivity, m_pitch, m_yaw;

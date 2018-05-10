@@ -256,9 +256,9 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 {
 	weapon_t  weap;
 	gclient_t *client;
-	int       contents     = 0, i, killer = ENTITYNUM_WORLD;
-	char      *killerName  = "<world>";
-	qboolean  nogib        = qtrue;
+	int       contents = 0, i, killer = ENTITYNUM_WORLD;
+	char      *killerName = "<world>";
+	qboolean  nogib = qtrue;
 	qboolean  killedintank = qfalse;
 	qboolean  attackerClient, dieFromSameTeam = qfalse;
 
@@ -460,7 +460,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	self->client->ps.persistant[PERS_KILLED]++;
 
 	// if player is holding ticking grenade, drop it
-	if ((self->client->ps.grenadeTimeLeft) && (self->s.weapon != WP_DYNAMITE) && (self->s.weapon != WP_LANDMINE) && (self->s.weapon != WP_SATCHEL))
+	if (self->client->ps.grenadeTimeLeft)
 	{
 		vec3_t launchvel, launchspot;
 
@@ -471,10 +471,8 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		VectorCopy(self->r.currentOrigin, launchspot);
 		launchspot[2] += 40;
 
-		{
-			// fixes premature grenade explosion, ta bani ;)
-			fire_grenade(self, launchspot, launchvel, self->s.weapon);
-		}
+		// fixes premature grenade explosion, ta bani ;)
+		fire_grenade(self, launchspot, launchvel, self->s.weapon);
 	}
 
 	if (attackerClient)
@@ -1452,8 +1450,8 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 		}
 		if (dflags & DAMAGE_DISTANCEFALLOFF)
 		{
-			vec_t  dist;
-			float  scale;
+			vec_t dist;
+			float scale;
 
 			dist = VectorDistance(point, muzzleTrace);
 
