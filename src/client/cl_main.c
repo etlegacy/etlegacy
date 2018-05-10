@@ -2713,7 +2713,7 @@ void CL_Init(void)
 	// register our variables
 	cl_noprint = Cvar_Get("cl_noprint", "0", 0);
 
-	cl_timeout = Cvar_Get("cl_timeout", "30", 0);
+	cl_timeout = Cvar_Get("cl_timeout", "200", 0);
 
 	cl_wavefilerecord = Cvar_Get("cl_wavefilerecord", "0", CVAR_TEMP);
 
