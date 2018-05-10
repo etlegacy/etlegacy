@@ -471,7 +471,8 @@ void G_RunMissile(gentity_t *ent)
 	vec3_t  origin;
 	trace_t tr;
 
-	if (ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_DYNAMITE || ent->s.weapon == WP_SATCHEL)
+	// shootable ent (i.e landmine, dynamite, satchel)
+	if (ent->r.contents == CONTENTS_CORPSE)
 	{
 		Landmine_Check_Ground(ent);
 
@@ -488,10 +489,8 @@ void G_RunMissile(gentity_t *ent)
 	// get current position
 	BG_EvaluateTrajectory(&ent->s.pos, level.time, origin, qfalse, ent->s.effect2Time);
 
-	if ((ent->clipmask & CONTENTS_BODY) && (ent->s.weapon == WP_DYNAMITE || ent->s.weapon == WP_ARTY || ent->s.weapon == WP_SMOKE_MARKER
-	                                        || GetWeaponTableData(ent->s.weapon)->isGrenade
-	                                        || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL || ent->s.weapon == WP_SMOKE_BOMB
-	                                        ))
+	// ignore body
+	if ((ent->clipmask & CONTENTS_BODY) && (GetWeaponTableData(ent->s.weapon)->isThrowable || ent->s.weapon == WP_ARTY))
 	{
 		if (ent->s.pos.trDelta[0] == 0.f && ent->s.pos.trDelta[1] == 0.f && ent->s.pos.trDelta[2] == 0.f)
 		{
@@ -506,6 +505,7 @@ void G_RunMissile(gentity_t *ent)
 	{
 		if (ent->count)
 		{
+            // is ent outside worldspace (X or Y coord)
 			if (ent->r.currentOrigin[0] < level.mapcoordsMins[0] ||
 			    ent->r.currentOrigin[1] > level.mapcoordsMins[1] ||
 			    ent->r.currentOrigin[0] > level.mapcoordsMaxs[0] ||
@@ -519,7 +519,7 @@ void G_RunMissile(gentity_t *ent)
 				tent->s.density   = 1;  // angular
 
 				G_FreeEntity(ent);
-				return;
+				return;     // delete it and play explode sound
 			}
 			else
 			{
@@ -527,6 +527,7 @@ void G_RunMissile(gentity_t *ent)
 
 				skyHeight = BG_GetSkyHeightAtPoint(origin);
 
+                // is ent under the ground limit
 				if (origin[2] < BG_GetTracemapGroundFloor())
 				{
 					gentity_t *tent;
@@ -537,18 +538,19 @@ void G_RunMissile(gentity_t *ent)
 					tent->s.density   = 0;  // direct
 
 					G_FreeEntity(ent);
-					return;
+					return; // delete it and play explode sound
 				}
 
 				// are we in worldspace again - or did we hit a ceiling from the outside of the world
 				if (skyHeight == MAX_MAP_SIZE)
 				{
 					G_RunThink(ent);
-					VectorCopy(origin, ent->r.currentOrigin);
+					VectorCopy(origin, ent->r.currentOrigin);   // keep the previous origin to don't go too far
 
 					return;     // keep flying
 				}
 
+                // is ent above the sky limit
 				if (skyHeight <= origin[2])
 				{
 					G_RunThink(ent);
@@ -657,10 +659,9 @@ void G_RunMissile(gentity_t *ent)
 		else
 		{
 			impactDamage = 20;  // "grenade"/"dynamite"     // probably adjust this based on velocity
-
 		}
 
-		if (ent->s.weapon == WP_DYNAMITE || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL)
+		if (ent->r.contents == CONTENTS_CORPSE)
 		{
 			if (ent->s.pos.trType != TR_STATIONARY)
 			{
