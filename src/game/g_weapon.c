@@ -165,7 +165,7 @@ void MagicSink(gentity_t *self)
  */
 void Weapon_Medic(gentity_t *ent, gentity_t **firedShot)
 {
-	vec3_t velocity, offset, angles, tosspos, viewpos;
+	vec3_t velocity, angles, tosspos, viewpos;
 
 	VectorCopy(ent->client->ps.viewangles, angles);
 
@@ -180,8 +180,6 @@ void Weapon_Medic(gentity_t *ent, gentity_t **firedShot)
 	}
 
 	AngleVectors(angles, velocity, NULL, NULL);
-	VectorScale(velocity, 64, offset);
-	offset[2] += ent->client->ps.viewheight / 2;
 	VectorScale(velocity, 75, velocity);
 	velocity[2] += 50 + crandom() * 25;
 
@@ -244,7 +242,7 @@ void Weapon_Medic_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t vel
  */
 void Weapon_MagicAmmo(gentity_t *ent, gentity_t **firedShot)
 {
-	vec3_t velocity, offset, tosspos, viewpos, angles;
+	vec3_t velocity, tosspos, viewpos, angles;
 
 	VectorCopy(ent->client->ps.viewangles, angles);
 
@@ -259,8 +257,6 @@ void Weapon_MagicAmmo(gentity_t *ent, gentity_t **firedShot)
 	}
 
 	AngleVectors(angles, velocity, NULL, NULL);
-	VectorScale(velocity, 64, offset);
-	offset[2] += ent->client->ps.viewheight / 2;
 	VectorScale(velocity, 75, velocity);
 	velocity[2] += 50 + crandom() * 25;
 
