@@ -39,9 +39,9 @@
 #include "g_etbot_interface.h"
 #endif
 
-vec3_t forward, right, up;
-vec3_t muzzleEffect;
-vec3_t muzzleTrace;
+static vec3_t forward, right, up;
+static vec3_t muzzleEffect;
+vec3_t muzzleTrace;         // used in G_Damage from g_combat.c
 
 // forward dec
 void Bullet_Fire(gentity_t *ent, gentity_t **firedShot);
@@ -138,8 +138,6 @@ void Weapon_Knife(gentity_t *ent, gentity_t **firedShot)
 	}
 
 	G_Damage(traceEnt, ent, ent, vec3_origin, tr.endpos, (damage + rand() % 5), 0, mod);
-
-	return;
 }
 
 /**
@@ -560,8 +558,6 @@ void Weapon_Syringe(gentity_t *ent, gentity_t **firedShot)
 			G_DebugAddSkillPoints(ent, SK_FIRST_AID, 2.f, "syringe heal a player");
 		}
 	}
-
-	return;
 }
 
 /**
@@ -573,8 +569,6 @@ void Weapon_AdrenalineSyringe(gentity_t *ent, gentity_t **firedShot)
 {
 	ent->client->ps.powerups[PW_ADRENALINE] = level.time + 10000;
 }
-
-void G_ExplodeMissile(gentity_t *ent);
 
 /**
  * @brief Crude version of G_RadiusDamage to see if the dynamite can damage a func_constructible
@@ -1535,14 +1529,7 @@ void AutoBuildConstruction(gentity_t *constructible)
  */
 qboolean G_LandmineTriggered(gentity_t *ent)
 {
-	if (ent->s.teamNum == (TEAM_AXIS + 8) || ent->s.teamNum == (TEAM_ALLIES + 8))
-	{
-		return qtrue;
-	}
-	else
-	{
-		return qfalse;
-	}
+    return (ent->s.teamNum == (TEAM_AXIS + 8) || ent->s.teamNum == (TEAM_ALLIES + 8));
 }
 
 /**
@@ -1552,14 +1539,7 @@ qboolean G_LandmineTriggered(gentity_t *ent)
  */
 qboolean G_LandmineArmed(gentity_t *ent)
 {
-	if (ent->s.teamNum == TEAM_AXIS || ent->s.teamNum == TEAM_ALLIES)
-	{
-		return qtrue;
-	}
-	else
-	{
-		return qfalse;
-	}
+    return (ent->s.teamNum == TEAM_AXIS || ent->s.teamNum == TEAM_ALLIES);
 }
 
 /**
@@ -2534,15 +2514,7 @@ weapengineergoto3:
 			}
 		}
 	}
-
-	return;
 }
-
-/**
- * Launch airstrike as line of bombs mostly-perpendicular to line of grenade travel
- * (close air support should *always* drop parallel to friendly lines, tho accidents do happen)
-*/
-extern void G_ExplodeMissile(gentity_t *ent);
 
 /**
  * @brief G_AirStrikeExplode
@@ -2756,7 +2728,8 @@ qboolean weapon_checkAirStrike(gentity_t *ent)
 }
 
 /**
- * @brief weapon_callAirStrike
+ * @brief Launch airstrike as line of bombs mostly-perpendicular to line of grenade travel
+ * (close air support should *always* drop parallel to friendly lines, tho accidents do happen)
  * @param[in,out] ent
  */
 void weapon_callAirStrike(gentity_t *ent)
