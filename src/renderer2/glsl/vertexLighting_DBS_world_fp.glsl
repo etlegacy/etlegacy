@@ -125,7 +125,10 @@ void main()
 	vec3 R = reflect(-L, N);
 
 	// compute the light term
-#if defined(r_WrapAroundLighting)
+#if defined(r_HalfLambertLighting)
+	// http://developer.valvesoftware.com/wiki/Half_Lambert
+	float NL = dot(N, L) * 0.5 + 0.5;
+#elif defined(r_WrapAroundLighting)
 	float NL = clamp(dot(N, L) + u_LightWrapAround, 0.0, 1.0) / clamp(1.0 + u_LightWrapAround, 0.0, 1.0);
 #else
 	float NL = clamp(dot(N, L), 0.0, 1.0);
