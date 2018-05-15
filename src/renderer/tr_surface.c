@@ -1222,7 +1222,7 @@ void RB_SurfaceMesh(md3Surface_t *surface)
  * @brief R_LatLongToNormal
  * @param[in] outNormal
  * @param[in] latLong
- */
+ * unused
 void R_LatLongToNormal(vec3_t outNormal, short latLong)
 {
 	unsigned lat = (latLong >> 8) & 0xff;
@@ -1239,6 +1239,7 @@ void R_LatLongToNormal(vec3_t outNormal, short latLong)
 	outNormal[1] = tr.sinTable[lat] * tr.sinTable[lng];
 	outNormal[2] = tr.sinTable[(lng + (FUNCTABLE_SIZE / 4)) & FUNCTABLE_MASK];
 }
+*/
 
 /**
  * @brief LerpCMeshVertexes

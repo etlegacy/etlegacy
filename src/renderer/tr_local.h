@@ -2210,7 +2210,7 @@ void R_AddMDCSurfaces(trRefEntity_t *ent);
 
 //------------------------------------------------------------------------------
 
-void R_LatLongToNormal(vec3_t outNormal, short latLong);
+//void R_LatLongToNormal(vec3_t outNormal, short latLong);
 
 /*
  * GL FOG
