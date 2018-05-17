@@ -28,7 +28,7 @@ textures/egypt_windows_sd/siwa_windows5
 {
    qer_editorimage textures/egypt_windows_sd/siwa_windows5
    diffusemap textures/egypt_windows_sd/siwa_windows5
-   bumpmap textures/egypt_windows_sd/siwa_windows5 
+   bumpmap textures/egypt_windows_sd/siwa_windows5_n
    specularmap textures/egypt_windows_sd/siwa_windows5_s
    nomipmaps
    implicitMask -
