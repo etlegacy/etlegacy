@@ -2574,7 +2574,10 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 
 #ifdef FEATURE_LUA
 	G_LuaInit();
+#else
+	G_Printf("%sNo Lua API available.\n", S_COLOR_BLUE);
 #endif
+
 	// parse the key/value pairs and spawn gentities
 	G_SpawnEntitiesFromString();
 

@@ -524,7 +524,7 @@ static int _et_trap_FS_Read(lua_State *L)
 
 	if (filedata == NULL)
 	{
-		G_Printf("Lua: Memory allocation error for _et_trap_FS_Read file data\n");
+		G_Printf("%s Lua: %sMemory allocation error for _et_trap_FS_Read file data\n", LUA_VERSION, S_COLOR_BLUE);
 		return 0;
 	}
 
@@ -1913,6 +1913,7 @@ qboolean G_LuaInit(void)
 
 	if (!lua_modules.string[0])
 	{
+		G_Printf("%s API: %sno Lua files set\n", LUA_VERSION, S_COLOR_BLUE);
 		return qtrue;
 	}
 
@@ -1937,13 +1938,13 @@ qboolean G_LuaInit(void)
 			flen = trap_FS_FOpenFile(crt, &f, FS_READ);
 			if (flen < 0)
 			{
-				G_Printf("Lua API: can not open file %s\n", crt);
+				G_Printf("%s API: %scan not open file '%s'\n", LUA_VERSION, S_COLOR_BLUE, crt);
 			}
 			else if (flen > LUA_MAX_FSIZE)
 			{
 				// Let's not load arbitrarily big files to memory.
 				// If your lua file exceeds the limit, let me know.
-				G_Printf("Lua API: ignoring file %s (too big)\n", crt);
+				G_Printf("%s API: %signoring file '%s' (too big)\n", LUA_VERSION, S_COLOR_BLUE, crt);
 				trap_FS_FCloseFile(f);
 			}
 			else
@@ -1952,7 +1953,7 @@ qboolean G_LuaInit(void)
 
 				if (code == NULL)
 				{
-					G_Error("Lua API: memory allocation error for %s data\n", crt);
+					G_Error("%s API: %smemory allocation error for '%s' data\n", LUA_VERSION, S_COLOR_BLUE, crt);
 				}
 
 				trap_FS_Read(code, flen, f);
@@ -1964,7 +1965,7 @@ qboolean G_LuaInit(void)
 				{
 					// don't load disallowed lua modules into vm
 					Com_Dealloc(code); // fixed memory leaking in Lua API - thx ETPub/goesa
-					G_Printf("Lua API: Lua module [%s] [%s] disallowed by ACL\n", crt, signature);
+					G_Printf("%s API: %sLua module [%s] [%s] disallowed by ACL\n", LUA_VERSION, S_COLOR_BLUE, crt, signature);
 				}
 				else
 				{
@@ -1973,7 +1974,7 @@ qboolean G_LuaInit(void)
 
 					if (vm == NULL)
 					{
-						G_Error("Lua API: vm memory allocation error for %s data\n", crt);
+						G_Error("%s API: %svm memory allocation error for %s data\n", LUA_VERSION, S_COLOR_BLUE, crt);
 					}
 
 					vm->id = -1;
@@ -2010,7 +2011,7 @@ qboolean G_LuaInit(void)
 			}
 			if (num_vm >= LUA_NUM_VM)
 			{
-				G_Printf("Lua API: too many lua files specified, only the first %d have been loaded\n", LUA_NUM_VM);
+				G_Printf("%s API: %stoo many lua files specified, only the first %d have been loaded\n", LUA_VERSION, S_COLOR_BLUE, LUA_NUM_VM);
 				break;
 			}
 		}
@@ -2028,16 +2029,16 @@ qboolean G_LuaCall(lua_vm_t *vm, const char *func, int nargs, int nresults)
 	{
 	case LUA_ERRRUN:
 		// made output more ETPro compatible
-		G_Printf("Lua API: %s error running lua script: %s\n", func, lua_tostring(vm->L, -1));
+		G_Printf("%s API: %s%s error running lua script: '%s'\n", LUA_VERSION, S_COLOR_BLUE, func, lua_tostring(vm->L, -1));
 		lua_pop(vm->L, 1);
 		vm->err++;
 		return qfalse;
 	case LUA_ERRMEM:
-		G_Printf("Lua API: memory allocation error #2 ( %s )\n", vm->file_name);
+		G_Printf("%s API: %smemory allocation error #2 ( %s )\n", LUA_VERSION, S_COLOR_BLUE, vm->file_name);
 		vm->err++;
 		return qfalse;
 	case LUA_ERRERR:
-		G_Printf("Lua API: traceback error ( %s )\n", vm->file_name);
+		G_Printf("%s API: %straceback error ( %s )\n", LUA_VERSION, S_COLOR_BLUE, vm->file_name);
 		vm->err++;
 		return qfalse;
 	default:
@@ -2079,7 +2080,7 @@ void G_LuaStackDump()
 
 	if (vm == NULL)
 	{
-		G_Printf("ERROR Lua API: memory allocation error");
+		G_Printf("%s API: %smemory allocation error\n", LUA_VERSION, S_COLOR_BLUE);
 		return;
 	}
 
@@ -2096,7 +2097,7 @@ void G_LuaStackDump()
 		lua_getglobal(L, "et");
 		if (!lua_istable(L, -1))
 		{
-			G_Printf("ERROR Lua API: et prefix is not correctly registered");
+			G_Printf("%s API: %serror - et prefix is not correctly registered\n", LUA_VERSION, S_COLOR_BLUE);
 		}
 		else
 		{
@@ -2436,7 +2437,7 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 	vm->L = luaL_newstate();
 	if (!vm->L)
 	{
-		G_Printf("%s API: Lua failed to initialise.\n", LUA_VERSION);
+		G_Printf("%s API: %sLua failed to initialise.\n", LUA_VERSION, S_COLOR_BLUE);
 		return qfalse;
 	}
 
@@ -2500,9 +2501,6 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 	lua_pushvalue(vm->L, -1);
 	lua_setglobal(vm->L, "et");
 
-	// Load the code
-	G_Printf("%s API: %sLoading %s\n", LUA_VERSION, S_COLOR_BLUE, vm->file_name);
-
 	res = luaL_loadbuffer(vm->L, vm->code, vm->code_size, vm->file_name);
 
 	switch (res)
@@ -2510,20 +2508,20 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 	case LUA_OK:
 		break;
 	case LUA_ERRSYNTAX:
-		G_Printf("%s API: syntax error during pre-compilation: %s\n", LUA_VERSION, lua_tostring(vm->L, -1));
+		G_Printf("%s API: %ssyntax error during pre-compilation: %s\n", LUA_VERSION, S_COLOR_BLUE,lua_tostring(vm->L, -1));
 		lua_pop(vm->L, 1);
 		vm->err++;
 		return qfalse;
 	case LUA_ERRMEM:
-		G_Printf("%s API: memory allocation error #1 ( %s )\n", LUA_VERSION, vm->file_name);
+		G_Printf("%s API: %smemory allocation error #1 ( %s )\n", LUA_VERSION, S_COLOR_BLUE, vm->file_name);
 		vm->err++;
 		return qfalse;
 	case LUA_ERRGCMM:
-		G_Printf("%s API: error while running a __gc metamethod caused by garbage collector ( %s )\n", LUA_VERSION, vm->file_name);
+		G_Printf("%s API: %serror while running a __gc metamethod caused by garbage collector ( %s )\n", LUA_VERSION, vm->file_name);
 		vm->err++;
 		return qfalse;
 	default:
-		G_Printf("%s API: unknown error %i ( %s )\n", LUA_VERSION, res, vm->file_name);
+		G_Printf("%s API: %sunknown error %i ( %s )\n", LUA_VERSION, S_COLOR_BLUE, res, vm->file_name);
 		vm->err++;
 		return qfalse;
 	}
@@ -2531,9 +2529,12 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 	// Execute the code
 	if (!G_LuaCall(vm, "G_LuaStartVM", 0, 0))
 	{
-		G_Printf("%s API: Lua VM start failed ( %s ) \n", LUA_VERSION, vm->file_name);
+		G_Printf("%s API: %sLua VM start failed ( %s )\n", LUA_VERSION, S_COLOR_BLUE, vm->file_name);
 		return qfalse;
 	}
+
+	// Load the code
+	G_Printf("%s API: %sfile '%s' loaded into Lua VM\n", LUA_VERSION, S_COLOR_BLUE, vm->file_name);
 
 	return qtrue;
 }
@@ -2570,7 +2571,7 @@ void G_LuaStopVM(lua_vm_t *vm)
 		}
 		if (!vm->err)
 		{
-			G_Printf("%s API: Lua module [%s] [%s] unloaded.\n", LUA_VERSION, vm->file_name, vm->mod_signature);
+			G_Printf("%s API: %sLua module [%s] [%s] unloaded.\n", LUA_VERSION, S_COLOR_BLUE, vm->file_name, vm->mod_signature);
 		}
 	}
 	Com_Dealloc(vm);
@@ -2613,16 +2614,16 @@ void G_LuaStatus(gentity_t *ent)
 
 	if (cnt == 0)
 	{
-		G_refPrintf(ent, "%s API: no scripts loaded.", LUA_VERSION);
+		G_refPrintf(ent, "%s API: %sno scripts loaded.", LUA_VERSION, S_COLOR_BLUE);
 		return;
 	}
 	else if (cnt == 1)
 	{
-		G_refPrintf(ent, "%s API: showing lua information ( 1 module loaded )", LUA_VERSION);
+		G_refPrintf(ent, "%s API: %sshowing lua information ( 1 module loaded )", LUA_VERSION, S_COLOR_BLUE);
 	}
 	else
 	{
-		G_refPrintf(ent, "%s API: showing lua information ( %d modules loaded )", LUA_VERSION, cnt);
+		G_refPrintf(ent, "%s API: %sshowing lua information ( %d modules loaded )", LUA_VERSION, S_COLOR_BLUE, cnt);
 	}
 	G_refPrintf(ent, "%-2s %-24s %-40s %-24s", "VM", "Modname", "Signature", "Filename");
 	G_refPrintf(ent, "-- ------------------------ ---------------------------------------- ------------------------");
