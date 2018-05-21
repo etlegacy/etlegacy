@@ -4624,6 +4624,7 @@ void R_LoadLightGrid(lump_t *l)
 	int            gridStep[3];
 	int            pos[3];
 	float          posFloat[3];
+	byte           tmpAmbient[4], tmpDirected[4];
 
 	Ren_Print("...loading light grid\n");
 
@@ -4667,9 +4668,6 @@ void R_LoadLightGrid(lump_t *l)
 
 	for (i = 0; i < w->numLightGridPoints; i++, in++, gridPoint++)
 	{
-		byte tmpAmbient[4];
-		byte tmpDirected[4];
-
 		tmpAmbient[0] = in->ambient[0];
 		tmpAmbient[1] = in->ambient[1];
 		tmpAmbient[2] = in->ambient[2];
@@ -4701,17 +4699,23 @@ void R_LoadLightGrid(lump_t *l)
 		// Lat = 0 at (1,0,0) to 360 (-1,0,0), encoded in 8-bit sine table format
 		// Lng = 0 at (0,0,1) to 180 (0,0,-1), encoded in 8-bit sine table format <--- 180°?!
 
-		lat = DEG2RAD(in->latLong[1] * (360.0 / 256.0)); // calculate with 256 instead of 255 to hit exact PI
-		lng = DEG2RAD(in->latLong[0] * (360.0 / 256.0));
-		//lng = DEG2RAD(in->latLong[0] * (180.0 / 256.0)); // oasis wall: back ok, front has issues
-		//  or
-		//lng = DEG2RAD(in->latLong[0] * ((180.0 + 360) / 256.0)); // oasis wall: front ok, back too dark
+		if (in->latLong[0] == 0x80 && in->latLong[1] == 0x00)
+		{
+			 gridPoint->direction[0] = 0.0f;
+			 gridPoint->direction[1] = 0.0f;
+			 gridPoint->direction[2] = -1.0f;
+		}
+		else
+		{
+			lat = DEG2RAD(in->latLong[1] * (360.0 / 256.0)); // calculate with 256 instead of 255 to hit exact PI
+			lng = DEG2RAD(in->latLong[0] * (360.0 / 256.0));
 
-		//Ren_Print((" %i %i %f %f\n" , in->latLong[1], in->latLong[0], lat , lng);
+			gridPoint->direction[0] = cos(lat) * sin(lng);
+			gridPoint->direction[1] = sin(lat) * sin(lng);
+			gridPoint->direction[2] = cos(lng);
+		}
 
-		gridPoint->direction[0] = cos(lat) * sin(lng);
-		gridPoint->direction[1] = sin(lat) * sin(lng);
-		gridPoint->direction[2] = cos(lng);
+		//Ren_Print(" %i %i %f %f\n" , in->latLong[1], in->latLong[0], lat , lng);
 
 		// debug print to see if the XBSP format is correct
 		//Ren_Print("%9d Amb: (%03.1f %03.1f %03.1f) Dir: (%03.1f %03.1f %03.1f)\n",
@@ -5932,13 +5936,17 @@ static int UpdateLightTriangles(const srfVert_t *verts, int numTriangles, srfTri
 	srfTriangle_t *tri;
 	int           numFacing = 0;
 
+#if 1
+	vec3_t lightDirection;
+
+	vec3_t pos[3];
+	vec4_t triPlane;
+	float  d;
+#endif
+
 	for (i = 0, tri = triangles; i < numTriangles; i++, tri++)
 	{
 #if 1
-		vec3_t pos[3];
-		vec4_t triPlane;
-		float  d;
-
 		VectorCopy(verts[tri->indexes[0]].xyz, pos[0]);
 		VectorCopy(verts[tri->indexes[1]].xyz, pos[1]);
 		VectorCopy(verts[tri->indexes[2]].xyz, pos[2]);
@@ -5947,8 +5955,6 @@ static int UpdateLightTriangles(const srfVert_t *verts, int numTriangles, srfTri
 		{
 			if (light->l.rlType == RL_DIRECTIONAL)
 			{
-				vec3_t lightDirection;
-
 				// light direction is from surface to light
 #if 1
 				VectorCopy(tr.sunDirection, lightDirection); // use sun light
@@ -6122,8 +6128,7 @@ static void R_CreateVBOLightMeshes(trRefLight_t *light)
 			for (l = k; l < numCaches; l++)
 			{
 				iaCache2 = iaCachesSorted[l];
-
-				surface = iaCache2->surface;
+				surface  = iaCache2->surface;
 
 				if (surface->shader != shader)
 				{
@@ -6217,8 +6222,7 @@ static void R_CreateVBOLightMeshes(trRefLight_t *light)
 			for (l = k; l < numCaches; l++)
 			{
 				iaCache2 = iaCachesSorted[l];
-
-				surface = iaCache2->surface;
+				surface  = iaCache2->surface;
 
 				if (surface->shader != shader)
 				{
@@ -6459,8 +6463,7 @@ static void R_CreateVBOShadowMeshes(trRefLight_t *light)
 
 	for (k = 0; k < numCaches; k++)
 	{
-		iaCache = iaCachesSorted[k];
-
+		iaCache                = iaCachesSorted[k];
 		iaCache->mergedIntoVBO = qtrue;
 
 		shader    = iaCache->surface->shader;
@@ -6481,8 +6484,7 @@ static void R_CreateVBOShadowMeshes(trRefLight_t *light)
 			for (l = k; l < numCaches; l++)
 			{
 				iaCache2 = iaCachesSorted[l];
-
-				surface = iaCache2->surface;
+				surface  = iaCache2->surface;
 
 #if 0
 				if (surface->shader != shader)
