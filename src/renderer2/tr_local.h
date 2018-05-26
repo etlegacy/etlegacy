@@ -3827,7 +3827,6 @@ extern cvar_t *r_overDarkeningFactor;
 extern cvar_t *r_shadowMapDepthScale;
 extern cvar_t *r_parallelShadowSplits;
 extern cvar_t *r_parallelShadowSplitWeight;
-extern cvar_t *r_lightSpacePerspectiveWarping;
 
 extern cvar_t *r_stitchCurves;
 

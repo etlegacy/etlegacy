@@ -157,7 +157,6 @@ cvar_t *r_overDarkeningFactor;
 cvar_t *r_shadowMapDepthScale;
 cvar_t *r_parallelShadowSplits;
 cvar_t *r_parallelShadowSplitWeight;
-cvar_t *r_lightSpacePerspectiveWarping;
 
 cvar_t *r_collapseStages;
 cvar_t *r_noBind;
@@ -1218,8 +1217,6 @@ void R_Register(void)
 	r_parallelShadowSplitWeight = ri.Cvar_Get("r_parallelShadowSplitWeight", "0.9", CVAR_CHEAT);
 	r_parallelShadowSplits      = ri.Cvar_Get("r_parallelShadowSplits", "2", CVAR_LATCH);
 	ri.Cvar_CheckRange(r_parallelShadowSplits, 0, MAX_SHADOWMAPS - 1, qtrue);
-
-	r_lightSpacePerspectiveWarping = ri.Cvar_Get("r_lightSpacePerspectiveWarping", "1", CVAR_CHEAT);
 
 	r_screenshotJpegQuality = ri.Cvar_Get("r_screenshotJpegQuality", "90", CVAR_ARCHIVE);
 
