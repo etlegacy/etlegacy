@@ -103,6 +103,8 @@ extern vmCvar_t cg_crosshairSize;
 
 extern vmCvar_t cl_bypassMouseInput;
 
+extern vmCvar_t ui_serverRedirect;
+
 // ui_qmenu.c
 #define RCOLUMN_OFFSET          (BIGCHAR_WIDTH)
 #define LCOLUMN_OFFSET          (-BIGCHAR_WIDTH)

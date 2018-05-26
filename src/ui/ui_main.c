@@ -8187,13 +8187,21 @@ void UI_SetActiveMenu(uiMenuCommand_t menu)
 					trap_Cvar_Set("com_errorMessage", trap_TranslateString(buf));
 					Menus_ActivateByName("popupPassword", qtrue);
 				}
-				else if (strlen(buf) > 5 && !Q_stricmpn(buf, "ET://", 5))
+				else if (strlen(buf) > 5 && !Q_stricmpn(buf, "ET://", 5) && strlen(buf) < 200)
 				{
-					Q_strncpyz(buf, buf + 5, sizeof(buf));
-					Com_Printf(trap_TranslateString("Server is full, redirect to: %s\n"), buf);
-					// always prompt
-					trap_Cvar_Set("com_errorMessage", buf);
-					Menus_ActivateByName("popupServerRedirect", qtrue);
+					if (ui_serverRedirect.integer)
+					{
+						Q_strncpyz(buf, buf + 5, sizeof(buf));
+						Com_Printf(trap_TranslateString("Server is full, redirect to: %s\n"), buf);
+						// always prompt
+						trap_Cvar_Set("com_errorMessage", buf);
+						Menus_ActivateByName("popupServerRedirect", qtrue);
+					}
+					else
+					{
+						trap_Cvar_Set("com_errorMessage", "Server is full.\nRedirecting denied by cvar setting.");
+						Menus_ActivateByName("popupError", qtrue);
+					}
 				}
 				else
 				{
@@ -8494,6 +8502,8 @@ vmCvar_t cg_crosshairSize;
 
 vmCvar_t cl_bypassMouseInput;
 
+vmCvar_t ui_serverRedirect;
+
 cvarTable_t cvarTable[] =
 {
 	{ NULL,                             "ui_textfield_temp",                   "",                           CVAR_TEMP,                      0 },
@@ -8665,6 +8675,8 @@ cvarTable_t cvarTable[] =
 	{ NULL,                             "ui_showtooltips",                     "1",                          CVAR_ARCHIVE,                   0 },
 
 	{ NULL,                             "cg_locations",                        "3",                          CVAR_ARCHIVE,                   0 },
+
+	{ &ui_serverRedirect,               "ui_serverRedirect",                   "0",                          CVAR_INIT,                      0 },
 };
 
 const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);
