@@ -132,7 +132,6 @@ textures/goldrush/lmterrain_0to2
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		alphaGen vertex
 		tcMod scale 1.75 1.75
-		
 	}
 	{
 	    stage specularmap
@@ -140,7 +139,6 @@ textures/goldrush/lmterrain_0to2
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		alphaGen vertex
 		tcMod scale 1.75 1.75
-		
 	}
 	{
 		map $lightmap
@@ -217,6 +215,27 @@ textures/goldrush/lmterrain_1
 		tcmod scale 1.75 1.75
 	}
 
+	{
+	    stage diffusemap
+		map textures/desert_sd/pavement_quad_sandy
+	    blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
+	{
+	    stage bumpmap
+		map textures/desert_sd/pavement_quad_sandy_n
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
+	{
+	    stage specularmap
+		map textures/desert_sd/pavement_quad_sandy_s
+	    blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
 	{
 		map $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
@@ -505,11 +524,13 @@ textures/goldrush/pavement_quad
 textures/goldrush/sandygrass_b_phong
 {
 	qer_editorimage textures/egypt_floor_sd/sandygrass_b
+	q3map_nonplanar
+	q3map_shadeangle 135
+	
 	diffusemap textures/egypt_floor_sd/sandygrass_b
     bumpmap textures/egypt_floor_sd/sandygrass_b_n
 	specularmap textures/egypt_floor_sd/sandygrass_b_s
-	q3map_nonplanar
-	q3map_shadeangle 135
+	
 	surfaceparm landmine
 	surfaceparm grasssteps
 	implicitMap textures/egypt_floor_sd/sandygrass_b
@@ -526,9 +547,11 @@ textures/goldrush/camp_map
 textures/goldrush/canvas_nondeform
 {
 	qer_editorimage textures/egypt_props_sd/siwa_canvas1
+	
 	diffusemap textures/egypt_props_sd/siwa_canvas1
 	bumpmap textures/egypt_props_sd/siwa_canvas1_n
 	specularmap textures/egypt_props_sd/siwa_canvas1_s
+	
 	cull disable
 	nofog
 	surfaceparm alphashadow
