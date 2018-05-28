@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Wolfenstein: Enemy Territory GPL Source Code
  * Copyright (C) 1999-2010 id Software LLC, a ZeniMax Media company.
  *
@@ -1070,7 +1070,7 @@ static void GLSL_BuildShaderExtraDef()
 		BUFFEXT("#ifndef r_ParallaxMapping\n#define r_ParallaxMapping 1\n#endif\n");
 	}
 
-	if (r_wrapAroundLighting->value)
+	if (r_wrapAroundLighting->integer)
 	{
 		BUFFEXT("#ifndef r_WrapAroundLighting\n#define r_WrapAroundLighting %f\n#endif\n", r_wrapAroundLighting->value);
 	}
