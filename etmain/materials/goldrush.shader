@@ -12,6 +12,7 @@ textures/goldrush/lmterrain_0
 	q3map_baseshader textures/goldrush/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
+
 	{
 	    stage diffusemap
 		map textures/temperate_sd/sand_bubbles_bright
@@ -28,10 +29,30 @@ textures/goldrush/lmterrain_0
 		rgbgen identity
 	}
 	{
+	    stage diffusemap
+		map textures/temperate_sd/sand_bubbles_bright
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
+	{
+	    stage bumpmap
+		map textures/temperate_sd/sand_bubbles_bright_n
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
+	{
+	    stage specularmap
+		map textures/temperate_sd/sand_bubbles_bright_s
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
+	{
 		map $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
 	}
-	
 }
 
 textures/goldrush/lmterrain_0to1
@@ -58,7 +79,6 @@ textures/goldrush/lmterrain_0to1
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		alphaGen vertex
 		tcMod scale 1.75 1.75
-		
 	}
 	{
 	    stage bumpmap
@@ -78,7 +98,6 @@ textures/goldrush/lmterrain_0to1
 		map $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
 	}
-	
 }
 
 textures/goldrush/lmterrain_0to2
@@ -89,7 +108,6 @@ textures/goldrush/lmterrain_0to2
 	    stage diffusemap
 		map textures/temperate_sd/sand_bubbles_bright
 		tcMod scale 1.75 1.75
-		
 	}
 	{
 	    stage bumpmap
@@ -101,15 +119,12 @@ textures/goldrush/lmterrain_0to2
 		map textures/temperate_sd/sand_bubbles_bright_s
 	    tcMod scale 1.75 1.75
 	}
-		
 	{
 	    stage diffusemap
 		map textures/desert_sd/pavement_tris_sandy
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		alphaGen vertex
 		tcMod scale 1.75 1.75
-		
-		
 	}
 	{
 	    stage bumpmap
@@ -166,7 +181,6 @@ textures/goldrush/lmterrain_0to3
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		alphaGen vertex
 		tcMod scale 1.75 1.75
-		
 	}
 	{
 	    stage specularmap
@@ -179,7 +193,6 @@ textures/goldrush/lmterrain_0to3
 		map $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
 	}
-	
 }
 
 textures/goldrush/lmterrain_1
@@ -208,7 +221,6 @@ textures/goldrush/lmterrain_1
 		map $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
 	}
-	
 }
 
 textures/goldrush/lmterrain_1to2
@@ -249,7 +261,6 @@ textures/goldrush/lmterrain_1to2
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		alphaGen vertex
 		tcMod scale 1.75 1.75
-		
     }
 	{
 		map $lightmap
@@ -264,7 +275,6 @@ textures/goldrush/lmterrain_1to3
 	    stage diffusemap
 		map textures/desert_sd/pavement_quad_sandy
 		tcmod scale 1.75 1.75
-		
 	}
 	{
 	    stage bumpmap
@@ -301,8 +311,6 @@ textures/goldrush/lmterrain_1to3
 		map $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
 	}
-	
-
 }
 
 textures/goldrush/lmterrain_2
@@ -327,10 +335,30 @@ textures/goldrush/lmterrain_2
 		tcmod scale 1.75 1.75
 	}
 	{
+	    stage diffusemap
+		map textures/desert_sd/pavement_tris_sandy
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
+	{
+	    stage bumpmap
+		map textures/desert_sd/pavement_tris_sandy_n
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
+	{
+	    stage specularmap
+		map textures/desert_sd/pavement_tris_sandy_s
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
+	{
 		map $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
 	}
-	
 }
 
 textures/goldrush/lmterrain_2to3
@@ -357,7 +385,6 @@ textures/goldrush/lmterrain_2to3
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		alphaGen vertex
 		tcMod scale 1.75 1.75
-		
 	}
 	{
 	    stage bumpmap
@@ -377,9 +404,6 @@ textures/goldrush/lmterrain_2to3
 		map $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
 	}
-	
-	
-	
 }
 
 textures/goldrush/lmterrain_3
@@ -407,10 +431,30 @@ textures/goldrush/lmterrain_3
 		tcmod scale 1.75 1.75
 	}
 	{
+	    stage diffusemap
+		map textures/desert_sd/road_dirty_gravel
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
+	{
+	    stage bumpmap
+		map textures/desert_sd/road_dirty_gravel_n
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
+	{
+	    stage specularmap
+		map textures/desert_sd/road_dirty_gravel_s
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
+	{
 		map $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
 	}
-	
 }
 
 textures/goldrush/pavement_quad
@@ -435,7 +479,27 @@ textures/goldrush/pavement_quad
 		map textures/desert_sd/pavement_quad_sandy_s
 		tcmod scale 1.75 1.75
 	}
-	
+	{
+	    stage diffusemap
+		map textures/desert_sd/pavement_quad_sandy
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
+	{
+	    stage bumpmap
+		map textures/desert_sd/pavement_quad_sandy_n
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
+	{
+	    stage specularmap
+		map textures/desert_sd/pavement_quad_sandy_s
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
 }
 
 textures/goldrush/sandygrass_b_phong
@@ -475,9 +539,9 @@ textures/goldrush/canvas_nondeform
 
 //Needs to be there for bridge...
 
- textures/desert_sd/road_dirty_gravel
- {
-  qer_editorimage  textures/desert_sd/road_dirty_gravel
+textures/desert_sd/road_dirty_gravel
+{
+    qer_editorimage  textures/desert_sd/road_dirty_gravel
     
     {
 	    stage diffusemap
@@ -493,6 +557,27 @@ textures/goldrush/canvas_nondeform
 	    stage specularmap
 		map textures/desert_sd/road_dirty_gravel_s
 		rgbGen identity
+	}
+	{
+	    stage diffusemap
+		map textures/desert_sd/road_dirty_gravel
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
+	{
+	    stage bumpmap
+		map textures/desert_sd/road_dirty_gravel_n
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
+	}
+	{
+	    stage specularmap
+		map textures/desert_sd/road_dirty_gravel_s
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		alphaGen vertex
+		tcMod scale 1.75 1.75
 	}
 	{
 		map $lightmap
