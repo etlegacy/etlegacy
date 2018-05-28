@@ -74,12 +74,33 @@ textures/fueldump/terrain1_0
 		map textures/stone/mxsnow2_s
 		rgbGen identity
 	}
+	
+	{
+		stage diffusemap
+		map textures/stone/mxsnow2
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+	    stage bumpmap
+		map textures/stone/mxsnow2_n
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+	    stage specularmap
+		map textures/stone/mxsnow2_s
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
 	{
 		lightmap $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/fueldump/terrain1_1
@@ -100,6 +121,28 @@ textures/fueldump/terrain1_1
 		stage specularmap
 		map textures/snow_sd/mxrock4b_snow_s
 		rgbGen identity
+	}
+	{
+		stage diffusemap
+		map textures/snow_sd/mxrock4b_snow
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+		
+	}
+	{
+	    stage bumpmap
+		map textures/snow_sd/mxrock4b_snow_n
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+	    stage specularmap
+		map textures/snow_sd/mxrock4b_snow_s
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		lightmap $lightmap
@@ -127,6 +170,28 @@ textures/fueldump/terrain1_2
 		map textures/stone/mxsnow3_s
 		rgbGen identity
 	}
+	
+	{
+		stage diffusemap
+		map textures/stone/mxsnow3
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+	    stage bumpmap
+		map textures/stone/mxsnow3_n
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+	    stage specularmap
+		map textures/stone/mxsnow3_s
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
 	{
 		lightmap $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
@@ -138,6 +203,7 @@ textures/fueldump/terrain1_3
 {
     qer_editorimage textures/stone/mxrock3h_snow
 	q3map_baseshader textures/fueldump/terrain_base
+	
 	{
 		stage diffusemap
 		map textures/stone/mxrock3h_snow
@@ -152,6 +218,28 @@ textures/fueldump/terrain1_3
 		stage specularmap
 		map textures/stone/mxrock3h_snow_s
 		rgbgen identity
+	}
+	
+	{
+		stage diffusemap
+		map textures/stone/mxrock3h_snow
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+	    stage bumpmap
+		map textures/stone/mxrock3h_snow_n
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+	    stage specularmap
+		map textures/stone/mxrock3h_snow_s
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
 	}
 	{
 		lightmap $lightmap
@@ -173,21 +261,18 @@ textures/fueldump/terrain1_0to1
 	   stage bumpmap
 	   map textures/stone/mxsnow2_n
 	   rgbgen identity
-		
 	}
 	{
 	    stage specularmap
 		map textures/stone/mxsnow2
 		rgbgen identity
 	}
-	
 	{
 		stage diffusemap
 		map textures/snow_sd/mxrock4b_snow
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 		alphaGen vertex
-		
 	}
 	{
 	    stage bumpmap
@@ -195,7 +280,6 @@ textures/fueldump/terrain1_0to1
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 		alphaGen vertex
-		
 	}
 	{
 	    stage specularmap
