@@ -17,7 +17,8 @@ textures/liquids_sd/siwa_water
 	nofog
 
 	waterfogvars ( 0.11 0.13 0.15 ) 0.2
-		{ 
+	{ 
+		stage liquidmap
 		fog on
 		map textures/liquids_sd/siwa_water
 		blendFunc blend
@@ -70,6 +71,7 @@ textures/liquids_sd/siwa_water_2
 	waterfogvars ( 0.11 0.13 0.15 ) 0.2
 	nopicmip
 	{
+		stage liquidmap
 		map textures/liquids_sd/siwa_water
 		blendFunc blend
 		alphaFunc GE128
