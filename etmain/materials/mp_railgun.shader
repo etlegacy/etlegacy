@@ -65,6 +65,27 @@ textures/mp_railgun/lmterrain_0
 		rgbgen identity
 	}
 	{
+		stage diffusemap
+		map textures/snow_sd/s_dirt_m03i_2_big
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+		stage bumpmap
+		map textures/snow_sd/s_dirt_m03i_2_big_n
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+		stage specularmap
+		map textures/snow_sd/s_dirt_m03i_2_big_s
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
 		lightmap $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
@@ -116,7 +137,6 @@ textures/mp_railgun/lmterrain_0to1
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_0to2
@@ -163,7 +183,6 @@ textures/mp_railgun/lmterrain_0to2
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_0to3
@@ -210,7 +229,6 @@ textures/mp_railgun/lmterrain_0to3
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_0to4
@@ -373,11 +391,31 @@ textures/mp_railgun/lmterrain_1
 		rgbgen identity
 	}
 	{
+		stage diffusemap
+		map textures/snow_sd/bigrock_rounded_faint
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+		stage bumpmap
+		map textures/snow_sd/bigrock_rounded_faint_n
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+		stage specularmap
+		map textures/snow_sd/bigrock_rounded_faint_s
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
 		lightmap $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_1to2
@@ -424,7 +462,6 @@ textures/mp_railgun/lmterrain_1to2
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_1to3
@@ -471,7 +508,6 @@ textures/mp_railgun/lmterrain_1to3
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_1to4
@@ -518,7 +554,6 @@ textures/mp_railgun/lmterrain_1to4
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_1to5
@@ -565,7 +600,6 @@ textures/mp_railgun/lmterrain_1to5
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_1to6
@@ -612,7 +646,6 @@ textures/mp_railgun/lmterrain_1to6
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_2
@@ -633,12 +666,33 @@ textures/mp_railgun/lmterrain_2
 		map textures/snow_sd/snow_var01_big_s
 		rgbgen identity
 	}
+	
+	{
+		stage diffusemap
+		map textures/snow_sd/snow_var01_big
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+		stage bumpmap
+		map textures/snow_sd/snow_var01_big_n
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+		stage specularmap
+		map textures/snow_sd/snow_var01_big_s
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
 	{
 		lightmap $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_2to3
@@ -685,7 +739,6 @@ textures/mp_railgun/lmterrain_2to3
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_2to4
@@ -732,7 +785,6 @@ textures/mp_railgun/lmterrain_2to4
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_2to5
@@ -779,7 +831,6 @@ textures/mp_railgun/lmterrain_2to5
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_2to6
@@ -826,7 +877,6 @@ textures/mp_railgun/lmterrain_2to6
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_3
@@ -848,11 +898,31 @@ textures/mp_railgun/lmterrain_3
 		rgbgen identity
 	}
 	{
+		stage diffusemap
+		map textures/snow_sd/snow_muddy
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+		stage bumpmap
+		map textures/snow_sd/snow_muddy_n
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+		stage specularmap
+		map textures/snow_sd/snow_muddy_s
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
 		lightmap $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_3to4
@@ -899,7 +969,6 @@ textures/mp_railgun/lmterrain_3to4
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_3to5
@@ -946,7 +1015,6 @@ textures/mp_railgun/lmterrain_3to5
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_3to6
@@ -993,7 +1061,6 @@ textures/mp_railgun/lmterrain_3to6
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_4
@@ -1015,11 +1082,31 @@ textures/mp_railgun/lmterrain_4
 		rgbgen identity
 	}
 	{
+		stage diffusemap
+		map textures/snow_sd/mxrock4b_snow
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+		stage bumpmap
+		map textures/snow_sd/mxrock4b_snow_n
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+		stage specularmap
+		map textures/snow_sd/mxrock4b_snow_s
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
 		lightmap $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_4to5
@@ -1066,7 +1153,6 @@ textures/mp_railgun/lmterrain_4to5
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_4to6
@@ -1113,7 +1199,6 @@ textures/mp_railgun/lmterrain_4to6
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_5
@@ -1135,11 +1220,31 @@ textures/mp_railgun/lmterrain_5
 		rgbgen identity
 	}
 	{
+		stage diffusemap
+		map textures/snow_sd/snow_noisy
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+		stage bumpmap
+		map textures/snow_sd/snow_noisy_n
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+		stage specularmap
+		map textures/snow_sd/snow_noisy_s
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
 		lightmap $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_5to6
@@ -1186,7 +1291,6 @@ textures/mp_railgun/lmterrain_5to6
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_6
@@ -1208,11 +1312,31 @@ textures/mp_railgun/lmterrain_6
 		rgbgen identity
 	}
 	{
+		stage diffusemap
+		map textures/snow_sd/s_grass_ml03b_big
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+		stage bumpmap
+		map textures/snow_sd/s_grass_ml03b_big_n
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
+		stage specularmap
+		map textures/snow_sd/s_grass_ml03b_big_s
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen identity
+		alphaGen vertex
+	}
+	{
 		lightmap $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/sky
