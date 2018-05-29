@@ -1008,6 +1008,10 @@ void GfxInfo_f(void)
 		"fullscreen"
 	};
 
+	Ren_Print("GL_VENDOR: %s\n", glConfig.vendor_string);
+	Ren_Print("GL_RENDERER: %s\n", glConfig.renderer_string);
+	Ren_Print("GL_VERSION: %s\n", glConfig.version_string);
+
 	// FIXME: implicit declaration
 	//Ren_Print("SDL using driver \"%s\"\n", SDL_GetCurrentVideoDriver());
 
@@ -1239,7 +1243,7 @@ void R_Register(void)
 	r_railSegmentLength = ri.Cvar_Get("r_railSegmentLength", "32", CVAR_ARCHIVE);
 
 	r_ambientScale = ri.Cvar_Get("r_ambientScale", "0.5", CVAR_CHEAT);
-	r_lightScale   = ri.Cvar_Get("r_lightScale", "2", CVAR_CHEAT);
+	r_lightScale   = ri.Cvar_Get("r_lightScale", "2", CVAR_CHEAT | CVAR_LATCH);
 
 	r_vboFaces            = ri.Cvar_Get("r_vboFaces", "1", CVAR_CHEAT);
 	r_vboCurves           = ri.Cvar_Get("r_vboCurves", "1", CVAR_CHEAT);
@@ -1343,7 +1347,7 @@ void R_Register(void)
 	r_specularExponent2 = ri.Cvar_Get("r_specularExponent2", "3", CVAR_CHEAT | CVAR_LATCH);
 	//this one sets the power of specular, the higher the brighter
 	r_specularScale      = ri.Cvar_Get("r_specularScale", "0.2", CVAR_CHEAT | CVAR_LATCH);
-	r_normalScale        = ri.Cvar_Get("r_normalScale", "1.1", CVAR_CHEAT | CVAR_LATCH);
+	r_normalScale        = ri.Cvar_Get("r_normalScale", "1.0", CVAR_CHEAT | CVAR_LATCH); // why do we scale this?
 	r_normalMapping      = ri.Cvar_Get("r_normalMapping", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_parallaxDepthScale = ri.Cvar_Get("r_parallaxDepthScale", "0.03", CVAR_CHEAT);
 	// toon lightning
