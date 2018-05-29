@@ -212,6 +212,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 		{
 			if (surfnum >= bmodel->numSurfaces)
 			{                   // if it's out of range, return the first surface
+				Ren_Print("RE_GetShaderFromModel warning: surface is our of range.");
 				surfnum = 0;
 			}
 
@@ -219,6 +220,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 			// RF, check for null shader (can happen on func_explosive's with botclips attached)
 			if (!surf->shader)
 			{
+				Ren_Print("RE_GetShaderFromModel warning: missing first surface shader.");
 				return 0;
 			}
 			//if(surf->shader->lightmapIndex != LIGHTMAP_NONE) {
@@ -253,6 +255,8 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 			return shd->index;
 		}
 	}
+
+	Ren_Print("RE_GetShaderFromModel warning: no model.");
 
 	return 0;
 }
