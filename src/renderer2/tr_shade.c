@@ -369,7 +369,7 @@ static rgbaGen_t getRgbaGen(shaderStage_t *pStage, int lightmapNum)
     }
     else
     {
-        qboolean isVertexLit           = (qboolean) (lightmapNum == LIGHTMAP_BY_VERTEX);
+        qboolean isVertexLit           = (qboolean) (lightmapNum == LIGHTMAP_BY_VERTEX || lightmapNum == LIGHTMAP_WHITEIMAGE);
         qboolean shouldForceCgenVertex = (qboolean) (isVertexLit && pStage->rgbGen == CGEN_IDENTITY);
         qboolean shouldForceAgenVertex = (qboolean) (isVertexLit && pStage->alphaGen == AGEN_IDENTITY);
         int colorGen                   = shouldForceCgenVertex ? CGEN_VERTEX : pStage->rgbGen;
@@ -524,7 +524,6 @@ static void Render_vertexLighting_DBS_entity(int stage)
 	                          USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
 	                          USE_REFLECTIVE_SPECULAR, normalMapping && tr.cubeHashTable != NULL);
 
-
 	if (tess.surfaceShader->numDeforms)
 	{
 		// u_DeformGen
@@ -606,7 +605,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 
 		SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
 
-		if(tr.cubeHashTable != NULL)
+		if (tr.cubeHashTable != NULL)
 		{
 			cubemapProbe_t *cubeProbeNearest;
 			cubemapProbe_t *cubeProbeSecondNearest;
@@ -617,7 +616,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 			}
 			else
 			{
-				// FIXME position
+				// FIXME position (this shouldn't occure - we are in entity renderer)
 				R_FindTwoNearestCubeMaps(backEnd.viewParms.orientation.origin, &cubeProbeNearest, &cubeProbeSecondNearest);
 			}
 
@@ -642,6 +641,9 @@ static void Render_vertexLighting_DBS_entity(int stage)
 				SelectTexture(TEX_ENVMAP0);
 				GL_Bind(cubeProbeSecondNearest->cubemap);
 
+				SelectTexture(TEX_ENVMAP1);
+				GL_Bind(tr.whiteCubeImage);
+
 				// u_EnvironmentInterpolation
 				SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, 0.0);
 			}
@@ -654,8 +656,8 @@ static void Render_vertexLighting_DBS_entity(int stage)
 				GL_Bind(cubeProbeNearest->cubemap);
 
 				// bind u_EnvironmentMap1
-				//SelectTexture(TEX_ENVMAP1);
-				//GL_Bind(cubeProbeNearest->cubemap);
+				SelectTexture(TEX_ENVMAP1);
+				GL_Bind(tr.whiteCubeImage);
 
 				// u_EnvironmentInterpolation
 				SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, 0.0);
@@ -671,7 +673,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 				}
 				else
 				{
-					// FIXME position
+					// FIXME position (this shouldn't occure - we are in entity renderer)
 					cubeProbeNearestDistance       = Distance(backEnd.viewParms.orientation.origin, cubeProbeNearest->origin);
 					cubeProbeSecondNearestDistance = Distance(backEnd.viewParms.orientation.origin, cubeProbeSecondNearest->origin);
 				}
@@ -3162,7 +3164,6 @@ void Tess_StageIteratorGeneric()
 					else if (backEnd.currentEntity != &tr.worldEntity)
 					{
 						Render_vertexLighting_DBS_entity(stage);
-
 					}
 					else
 					{
