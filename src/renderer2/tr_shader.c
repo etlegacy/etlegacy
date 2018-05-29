@@ -2480,6 +2480,9 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 			{
 				stage->tcGen_Environment = qtrue;
 				stage->tcGen_Lightmap    = qfalse;
+				
+				// testing cube map reflection on osis water pump
+				//stage->type = ST_REFLECTIONMAP;
 			}
 			else if (!Q_stricmp(token, "lightmap"))
 			{
@@ -5058,7 +5061,7 @@ static shader_t *FinishShader(void)
 		{
 			if (!pStage->bundle[0].image[0])
 			{
-				Ren_Warning("Shader %s has a colormap stage with no image\n", shader.name);
+				Ren_Warning("Shader %s has a colormap stage with no image or an invalid stage type - stage isn't active\n", shader.name);
 				pStage->active = qfalse;
 				continue;
 			}
@@ -5073,7 +5076,7 @@ static shader_t *FinishShader(void)
 
 			if (!pStage->bundle[0].image[0])
 			{
-				Ren_Warning("Shader %s has a diffusemap stage with no image\n", shader.name);
+				Ren_Warning("Shader %s has a diffusemap stage with no image - default image set\n", shader.name);
 				pStage->bundle[0].image[0] = tr.defaultImage;
 			}
 			break;
@@ -5087,7 +5090,7 @@ static shader_t *FinishShader(void)
 
 			if (!pStage->bundle[0].image[0])
 			{
-				Ren_Warning("Shader %s has a normalmap stage with no image\n", shader.name);
+				Ren_Warning("Shader %s has a normalmap stage with no image - flat image set\n", shader.name);
 				pStage->bundle[0].image[0] = tr.flatImage;
 			}
 			break;
@@ -5096,7 +5099,7 @@ static shader_t *FinishShader(void)
 		{
 			if (!pStage->bundle[0].image[0])
 			{
-				Ren_Warning("Shader %s has a specularmap stage with no image\n", shader.name);
+				Ren_Warning("Shader %s has a specularmap stage with no image - black image set\n", shader.name);
 				pStage->bundle[0].image[0] = tr.blackImage;
 			}
 			break;
@@ -5105,7 +5108,7 @@ static shader_t *FinishShader(void)
 		{
 			if (!pStage->bundle[0].image[0])
 			{
-				Ren_Warning("Shader %s has a xy attenuationmap stage with no image\n", shader.name);
+				Ren_Warning("Shader %s has a xy attenuationmap stage with no image - stage isn't active\n", shader.name);
 				pStage->active = qfalse;
 				continue;
 			}
@@ -5115,7 +5118,7 @@ static shader_t *FinishShader(void)
 		{
 			if (!pStage->bundle[0].image[0])
 			{
-				Ren_Warning("Shader %s has a z attenuationmap stage with no image\n", shader.name);
+				Ren_Warning("Shader %s has a z attenuationmap stage with no image - stage isn't active\n", shader.name);
 				pStage->active = qfalse;
 				continue;
 			}
