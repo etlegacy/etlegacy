@@ -4160,7 +4160,7 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill)
 			maxAmmo += GetWeaponTableData(weaponNum)->maxClip;
 		}
 	}
-	else if (weaponNum == WP_MP40 || weaponNum == WP_THOMPSON)
+	else if (GetWeaponTableData(weaponNum)->isSMG)
 	{
 		if (skill[SK_FIRST_AID] >= 1 || skill[SK_LIGHT_WEAPONS] >= 1)
 		{

@@ -212,7 +212,7 @@ weapon_t G_GetPrimaryWeaponForClient(gclient_t *client)
 
 		for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 		{
-			if (classInfo->classPrimaryWeapons[i] == WP_MP40 || classInfo->classPrimaryWeapons[i] == WP_THOMPSON)
+			if (GetWeaponTableData(classInfo->classPrimaryWeapons[i])->isSMG)
 			{
 				continue;
 			}
@@ -325,7 +325,7 @@ weapon_t G_GetPrimaryWeaponForClientSoldier(weapon_t weapon, gclient_t *client)
 
 			for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 			{
-				if (classInfo->classPrimaryWeapons[i] == WP_MP40 || classInfo->classPrimaryWeapons[i] == WP_THOMPSON)
+				if (GetWeaponTableData(classInfo->classPrimaryWeapons[i])->isSMG)
 				{
 					continue;
 				}

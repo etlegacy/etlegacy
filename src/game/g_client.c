@@ -1015,7 +1015,7 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
 		}
 	}
-	else if (weaponNum == WP_MP40 || weaponNum == WP_THOMPSON)
+	else if (GetWeaponTableData(weaponNum)->isSMG)
 	{
 		if (client->sess.playerType == PC_SOLDIER)
 		{
@@ -1264,7 +1264,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	}
 
 	// SMG as secondary weapon is available when soldier reach the given skill lvl
-	if (client->sess.playerWeapon2 == WP_MP40 || client->sess.playerWeapon2 == WP_THOMPSON)
+	if (GetWeaponTableData(client->sess.playerWeapon2)->isSMG)
 	{
 		if (pc != PC_SOLDIER || client->sess.skill[SK_HEAVY_WEAPONS] < 4)
 		{

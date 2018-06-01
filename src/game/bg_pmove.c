@@ -3798,7 +3798,7 @@ static void PM_Weapon(void)
 
 	// Aim Spread Scale handle
 	// add randomness
-	if (pm->ps->weapon == WP_MP40 || pm->ps->weapon == WP_THOMPSON || pm->ps->weapon == WP_STEN)
+	if (GetWeaponTableData(pm->ps->weapon)->isSMG || pm->ps->weapon == WP_STEN)
 	{
 		aimSpreadScaleAdd += rand() % 10;
 	}
