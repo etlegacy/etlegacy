@@ -170,8 +170,8 @@ static panel_button_t rightLimboPannel =
 	static panel_button_t medalPic ## number = {         \
 		NULL,                                   \
 		NULL,                                   \
-		{ MEDAL_PIC_X + MEDAL_PIC_GAP + (number * (MEDAL_PIC_GAP + MEDAL_PIC_WIDTH)),119,                                                                         MEDAL_PIC_WIDTH, 26 }, \
-		{ number,                  0,                                                                           0,               0, 0, 0, 0, 0},        \
+		{ MEDAL_PIC_X + MEDAL_PIC_GAP + ((number) * (MEDAL_PIC_GAP + MEDAL_PIC_WIDTH)),119,                                                                           MEDAL_PIC_WIDTH, 26 }, \
+		{ number,                  0,                                                                             0,               0, 0, 0, 0, 0},        \
 		NULL,                      /* font       */              \
 		NULL,                      /* keyDown    */                  \
 		NULL,                      /* keyUp  */                  \
@@ -193,15 +193,15 @@ MEDAL_PIC(6);
 #define TEAM_COUNTER_WIDTH  20.f
 #define TEAM_COUNTER_X      432.f
 #define TEAM_COUNTER_SIZE   (660.f - TEAM_COUNTER_X)
-#define TEAM_COUNTER_BUTTON_DIFF -24.f
+#define TEAM_COUNTER_BUTTON_DIFF (-24.f)
 #define TEAM_COUNTER_SPACING    4.f
 
 #define TEAM_COUNTER(number)             \
 	static panel_button_t teamCounter ## number = {      \
 		NULL,                                   \
 		NULL,                                   \
-		{ TEAM_COUNTER_X + TEAM_COUNTER_GAP + (number * (TEAM_COUNTER_GAP + TEAM_COUNTER_WIDTH)),236,                                                                                     TEAM_COUNTER_WIDTH, 14 },  \
-		{ 1,                         number,                                                                                  0,                  0, 0, 0, 0, 0},        \
+		{ TEAM_COUNTER_X + TEAM_COUNTER_GAP + ((number) * (TEAM_COUNTER_GAP + TEAM_COUNTER_WIDTH)),236,                                                                                       TEAM_COUNTER_WIDTH, 14 },  \
+		{ 1,                         number,                                                                                    0,                  0, 0, 0, 0, 0},        \
 		NULL,                        /* font       */              \
 		NULL,                        /* keyDown    */                  \
 		NULL,                        /* keyUp  */                  \
@@ -212,8 +212,8 @@ MEDAL_PIC(6);
 	static panel_button_t teamCounterLight ## number = { \
 		NULL,                                   \
 		NULL,                                   \
-		{ TEAM_COUNTER_X + TEAM_COUNTER_GAP + (number * (TEAM_COUNTER_GAP + TEAM_COUNTER_WIDTH)) - 20,236,                                                                                          16, 16 }, \
-		{ 1,                       number,                                                                                       0,  0, 0, 0, 0, 0},        \
+		{ TEAM_COUNTER_X + TEAM_COUNTER_GAP + ((number) * (TEAM_COUNTER_GAP + TEAM_COUNTER_WIDTH)) - 20,236,                                                                                            16, 16 }, \
+		{ 1,                       number,                                                                                         0,  0, 0, 0, 0, 0},        \
 		NULL,                      /* font       */              \
 		NULL,                      /* keyDown    */                  \
 		NULL,                      /* keyUp  */                  \
@@ -224,7 +224,7 @@ MEDAL_PIC(6);
 	static panel_button_t teamButton ## number = {       \
 		NULL,                                   \
 		NULL,                                   \
-		{ TEAM_COUNTER_X + TEAM_COUNTER_GAP + (number * (TEAM_COUNTER_GAP + TEAM_COUNTER_WIDTH) + (TEAM_COUNTER_BUTTON_DIFF / 2.f)) - 17 + TEAM_COUNTER_SPACING, \
+		{ TEAM_COUNTER_X + TEAM_COUNTER_GAP + ((number) * (TEAM_COUNTER_GAP + TEAM_COUNTER_WIDTH) + (TEAM_COUNTER_BUTTON_DIFF / 2.f)) - 17 + TEAM_COUNTER_SPACING, \
 		  188 + TEAM_COUNTER_SPACING, \
 		  TEAM_COUNTER_WIDTH - TEAM_COUNTER_BUTTON_DIFF + 20 - 2 * TEAM_COUNTER_SPACING, \
 		  44 - 2 * TEAM_COUNTER_SPACING },  \
@@ -247,13 +247,13 @@ TEAM_COUNTER(2);
 #define CLASS_COUNTER_X     435.f
 #define CLASS_COUNTER_SIZE  (645.f - CLASS_COUNTER_X)
 //#define CLASS_COUNTER_LIGHT_DIFF 4.f
-#define CLASS_COUNTER_BUTTON_DIFF -18.f
+#define CLASS_COUNTER_BUTTON_DIFF (-18.f)
 #define CLASS_COUNTER(number)            \
 	static panel_button_t classCounter ## number = {     \
 		NULL,                                   \
 		NULL,                                   \
-		{ CLASS_COUNTER_X + CLASS_COUNTER_GAP + (number * (CLASS_COUNTER_GAP + CLASS_COUNTER_WIDTH)),302,                                                                                         CLASS_COUNTER_WIDTH, 14 }, \
-		{ 0,                         number,                                                                                      0,                   0, 0, 0, 0, 0},        \
+		{ CLASS_COUNTER_X + CLASS_COUNTER_GAP + ((number) * (CLASS_COUNTER_GAP + CLASS_COUNTER_WIDTH)),302,                                                                                           CLASS_COUNTER_WIDTH, 14 }, \
+		{ 0,                         number,                                                                                        0,                   0, 0, 0, 0, 0},        \
 		NULL,                        /* font       */              \
 		NULL,                        /* keyDown    */                  \
 		NULL,                        /* keyUp  */                  \
@@ -264,8 +264,8 @@ TEAM_COUNTER(2);
 	static panel_button_t classButton ## number = {      \
 		NULL,                                   \
 		NULL,                                   \
-		{ CLASS_COUNTER_X + CLASS_COUNTER_GAP + (number * (CLASS_COUNTER_GAP + CLASS_COUNTER_WIDTH)) + (CLASS_COUNTER_BUTTON_DIFF / 2.f),266,                                                                                                                             CLASS_COUNTER_WIDTH - CLASS_COUNTER_BUTTON_DIFF, 34 },   \
-		{ 0,                             number,                                                                                                                          0,                                               0, 0, 0, 0, 0},        \
+		{ CLASS_COUNTER_X + CLASS_COUNTER_GAP + ((number) * (CLASS_COUNTER_GAP + CLASS_COUNTER_WIDTH)) + (CLASS_COUNTER_BUTTON_DIFF / 2.f),266,                                                                                                                               CLASS_COUNTER_WIDTH - CLASS_COUNTER_BUTTON_DIFF, 34 },   \
+		{ 0,                             number,                                                                                                                            0,                                               0, 0, 0, 0, 0},        \
 		NULL,                            /* font       */              \
 		CG_LimboPanel_ClassButton_KeyDown,/* keyDown   */  \
 		NULL,                            /* keyUp  */                  \
@@ -312,8 +312,8 @@ CLASS_COUNTER(4);
 	static panel_button_t filterButton ## number = { \
 		NULL,                               \
 		NULL,                               \
-		{ 14,                      50 + (number * 30), 26, 26 },     \
-		{ number,                  0,                  0,  0, 0, 0, 0, 0},    \
+		{ 14,                      50 + ((number) * 30), 26, 26 },     \
+		{ number,                  0,                    0,  0, 0, 0, 0, 0},    \
 		NULL,                      /* font       */          \
 		CG_LimboPanel_Filter_KeyDown,/* keyDown    */              \
 		NULL,                      /* keyUp  */              \
@@ -681,7 +681,7 @@ static panel_button_t weaponLight1 =
 	NULL,
 	NULL,
 	{ 605,                     362,   20, 20 },
-	{ 0,                       0,     0,  0, 0, 0, 0, 0},
+	{ SECONDARY_SLOT,          0,     0,  0, 0, 0, 0, 0},
 	NULL,                      // font
 	CG_LimboPanel_WeaponLights_KeyDown,// keyDown
 	NULL,                      // keyUp
@@ -709,7 +709,7 @@ static panel_button_t weaponLight2 =
 	NULL,
 	NULL,
 	{ 605,                     386,   20, 20 },
-	{ 1,                       0,     0,  0, 0, 0, 0, 0},
+	{ PRIMARY_SLOT,            0,     0,  0, 0, 0, 0, 0},
 	NULL,                      // font
 	CG_LimboPanel_WeaponLights_KeyDown,// keyDown
 	NULL,                      // keyUp
@@ -1337,8 +1337,8 @@ void CG_LimboPanel_SendSetupMsg(qboolean forceteam)
 		return;
 	}
 
-	weap1 = CG_LimboPanel_GetSelectedWeaponForSlot(1);
-	weap2 = CG_LimboPanel_GetSelectedWeaponForSlot(0);
+	weap1 = cgs.ccSelectedPrimaryWeapon;
+	weap2 = cgs.ccSelectedSecondaryWeapon;
 
 	// TODO: handle all case ?
 	switch (team)
@@ -1449,7 +1449,8 @@ qboolean CG_LimboPanel_TeamButton_KeyDown(panel_button_t *button, int key)
 				cgs.ccSelectedClass = CG_LimboPanel_FindFreeClass(teamOrder[button->data[0]]);
 			}
 
-			CG_LimboPanel_SetSelectedWeaponNumForSlot(0, 0);
+			CG_LimboPanel_SetDefaultWeapon(PRIMARY_SLOT);
+			CG_LimboPanel_SetDefaultWeapon(SECONDARY_SLOT);
 
 			CG_LimboPanel_RequestWeaponStats();
 
@@ -1462,8 +1463,8 @@ qboolean CG_LimboPanel_TeamButton_KeyDown(panel_button_t *button, int key)
 	return qfalse;
 }
 
-vec4_t clrRenderTeamButton2 = { 1.f, 1.f, 1.f, 0.4f };
-vec4_t clrRenderTeamButton4 = { 1.f, 0.f, 0.f, 0.75f };
+static vec4_t clrRenderTeamButton2 = { 1.f, 1.f, 1.f, 0.4f };
+static vec4_t clrRenderTeamButton4 = { 1.f, 0.f, 0.f, 0.75f };
 
 /**
  * @brief CG_LimboPanel_RenderTeamButton
@@ -1561,7 +1562,8 @@ qboolean CG_LimboPanel_ClassButton_KeyDown(panel_button_t *button, int key)
 		{
 			cgs.ccSelectedClass = button->data[1];
 
-			CG_LimboPanel_SetSelectedWeaponNumForSlot(0, 0);
+			CG_LimboPanel_SetDefaultWeapon(PRIMARY_SLOT);
+			CG_LimboPanel_SetDefaultWeapon(SECONDARY_SLOT);
 
 			CG_LimboPanel_RequestWeaponStats();
 
@@ -1649,10 +1651,10 @@ void CG_LimboPanel_ClassBar_Draw(panel_button_t *button)
 	CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString(buffer), 0, 0, button->font->style, button->font->font);
 }
 
-vec4_t clrRenderClassButton = { 1.f, 1.f, 1.f, 0.4f };
-vec4_t clrRenderClassButton2 = { 1.f, 1.f, 1.f, 0.75f };
-vec4_t clrRenderClassButton3 = { 1.f, 1.f, 1.f, 0.6f };
-vec4_t clrRenderClassButton4 = { 1.f, 0.f, 0.f, 0.5f };
+static vec4_t clrRenderClassButton = { 1.f, 1.f, 1.f, 0.4f };
+static vec4_t clrRenderClassButton2 = { 1.f, 1.f, 1.f, 0.75f };
+static vec4_t clrRenderClassButton3 = { 1.f, 1.f, 1.f, 0.6f };
+static vec4_t clrRenderClassButton4 = { 1.f, 0.f, 0.f, 0.5f };
 
 /**
  * @brief CG_LimboPanel_RenderClassButton
@@ -2282,7 +2284,7 @@ qboolean CG_LimboPanel_WeaponLights_KeyDown(panel_button_t *button, int key)
 	{
 		SOUND_SELECT;
 
-		cgs.ccSelectedWeaponNumber = button->data[0];
+		cgs.ccSelectedWeaponSlot = button->data[0];
 		CG_LimboPanel_RequestWeaponStats();
 		return qtrue;
 	}
@@ -2302,7 +2304,7 @@ void CG_LimboPanel_WeaponLights(panel_button_t *button)
 	}
 	else
 	{
-		CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, button->data[0] == cgs.ccSelectedWeaponNumber ? cgs.media.limboWeaponNumber_on : cgs.media.limboWeaponNumber_off);
+		CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, button->data[0] == cgs.ccSelectedWeaponSlot ? cgs.media.limboWeaponNumber_on : cgs.media.limboWeaponNumber_off);
 	}
 }
 
@@ -2350,38 +2352,28 @@ qboolean CG_LimboPanel_WeaponPanel_KeyUp(panel_button_t *button, int key)
 		if (BG_PanelButtons_GetFocusButton() == button)
 		{
 			rectDef_t rect;
-			int       i, cnt;
-
-			cnt = CG_LimboPanel_WeaponCount();
+			int       cnt;
 
 			Com_Memcpy(&rect, &button->rect, sizeof(rect));
-			rect.y -= rect.h;
+			rect.y -= rect.h;   // skip first (0) weap
 
-			for (i = 1; i < cnt; i++, rect.y -= rect.h)
+			for (cnt = 1; button->data[cnt] != 0; cnt++, rect.y -= rect.h)
 			{
 				if (!BG_CursorInRect(&rect))
 				{
 					continue;
 				}
 
-				if (!CG_LimboPanel_GetSelectedWeaponNum())
+				CG_LimboPanel_SetSelectedWeaponNum(cgs.ccSelectedWeaponSlot, (weapon_t)button->data[cnt]);
+
+				if (CG_LimboPanel_IsValidSelectedWeapon(SECONDARY_SLOT))
 				{
-					CG_LimboPanel_SetSelectedWeaponNum(i);
-					CG_LimboPanel_SendSetupMsg(qfalse);
+					CG_LimboPanel_SetDefaultWeapon(SECONDARY_SLOT);
 				}
-				else
-				{
-					if (i <= CG_LimboPanel_GetSelectedWeaponNum())
-					{
-						CG_LimboPanel_SetSelectedWeaponNum(i - 1);
-						CG_LimboPanel_SendSetupMsg(qfalse);
-					}
-					else
-					{
-						CG_LimboPanel_SetSelectedWeaponNum(i);
-						CG_LimboPanel_SendSetupMsg(qfalse);
-					}
-				}
+
+				CG_LimboPanel_RequestWeaponStats();
+
+				break;
 			}
 
 			BG_PanelButtons_SetFocusButton(NULL);
@@ -2393,7 +2385,7 @@ qboolean CG_LimboPanel_WeaponPanel_KeyUp(panel_button_t *button, int key)
 	return qfalse;
 }
 
-vec4_t clrDrawWeapon = { 1.f, 1.f, 1.f, 0.6f };
+static vec4_t clrDrawWeapon = { 1.f, 1.f, 1.f, 0.6f };
 
 /**
  * @brief CG_LimboPanel_WeaponPanel_DrawWeapon
@@ -2451,8 +2443,8 @@ void CG_LimboPanel_WeaponPanel_DrawWeapon(rectDef_t *rect, weapon_t weap, qboole
 	CG_Text_Paint_Ext(x, rect->y + rect->h - 2, 0.2f, 0.2f, colorBlack, ofTxt, 0, 0, 0, &cgs.media.limboFont2);
 }
 
-vec4_t clrBackBorder = { 0.1f, 0.1f, 0.1f, 1.f };
-vec4_t clrBackBorder2 = { 0.2f, 0.2f, 0.2f, 1.f };
+static vec4_t clrBackBorder = { 0.1f, 0.1f, 0.1f, 1.f };
+static vec4_t clrBackBorder2 = { 0.2f, 0.2f, 0.2f, 1.f };
 
 #define BRDRSIZE 4
 
@@ -2515,8 +2507,8 @@ void CG_LimboPanel_Border_Draw(panel_button_t *button)
 	CG_DrawBorder(button->rect.x, button->rect.y, button->rect.w, button->rect.h, qtrue, qtrue);
 }
 
-vec4_t clrWeaponPanel = { 0.f, 0.f, 0.f, 0.4f };
-vec4_t clrWeaponPanel2 = { 1.f, 1.f, 1.f, 0.4f };
+static vec4_t clrWeaponPanel = { 0.f, 0.f, 0.f, 0.4f };
+static vec4_t clrWeaponPanel2 = { 1.f, 1.f, 1.f, 0.4f };
 
 /**
  * @brief CG_LimboPanel_WeaponPanel
@@ -2524,16 +2516,10 @@ vec4_t clrWeaponPanel2 = { 1.f, 1.f, 1.f, 0.4f };
  */
 void CG_LimboPanel_WeaponPanel(panel_button_t *button)
 {
-	weapon_t weap;
-	int      cnt;
-
-	weap = CG_LimboPanel_GetSelectedWeapon();
-	cnt  = CG_LimboPanel_WeaponCount();
-
-	if (cgs.ccSelectedWeapon2 >= CG_LimboPanel_WeaponCount_ForSlot(0))
-	{
-		cgs.ccSelectedWeapon2 = CG_LimboPanel_WeaponCount_ForSlot(0) - 1;
-	}
+	bg_playerclass_t *classInfo;
+	weapon_t         weap;
+	int              i, x, cnt = 0, totalCnt;
+	rectDef_t        rect;
 
 	if (CG_LimboPanel_GetTeam() == TEAM_SPECTATOR)
 	{
@@ -2548,53 +2534,77 @@ void CG_LimboPanel_WeaponPanel(panel_button_t *button)
 		return;
 	}
 
-	if (BG_PanelButtons_GetFocusButton() == button && cnt > 1)
+	classInfo = CG_LimboPanel_GetPlayerClass();
+	if (!classInfo)
 	{
-		int       i, x;
-		rectDef_t rect;
+		return;
+	}
 
-		Com_Memcpy(&rect, &button->rect, sizeof(rect));
+	weap     = CG_LimboPanel_GetSelectedWeapon(cgs.ccSelectedWeaponSlot);
+	totalCnt = CG_LimboPanel_WeaponCount(cgs.ccSelectedWeaponSlot);
 
-		CG_LimboPanel_WeaponPanel_DrawWeapon(&rect, weap, qtrue, va(CG_TranslateString("%iof%i"), CG_LimboPanel_GetSelectedWeaponNum() + 1, cnt), CG_LimboPanel_RealWeaponIsDisabled(weap));
-		if (BG_CursorInRect(&rect))
+	Com_Memcpy(&rect, &button->rect, sizeof(rect));
+	rect.y -= rect.h;
+
+	Com_Memset(button->data, 0, sizeof(button->data));
+
+	for (i = 0, x = 1; i < MAX_WEAPS_PER_CLASS; i++)
+	{
+		weapon_t cycleWeap;
+
+		if (cgs.ccSelectedWeaponSlot == PRIMARY_SLOT)
 		{
-			if (button->data[7] != 0)
-			{
-				button->data[7] = 0;
-			}
+			cycleWeap = classInfo->classPrimaryWeapons[i];
 		}
-		rect.y -= rect.h;
-
-		// render in expanded mode ^
-		for (i = 0, x = 1; i < cnt; i++)
+		else
 		{
-			weapon_t cycleWeap = CG_LimboPanel_GetWeaponForNumber(i, cgs.ccSelectedWeaponNumber, qtrue);
-
-			if (cycleWeap != weap)
+			if (GetWeaponTableData(classInfo->classSecondaryWeapons[i])->isSMG)
 			{
-				CG_LimboPanel_WeaponPanel_DrawWeapon(&rect, cycleWeap, qtrue, va(CG_TranslateString("%iof%i"), i + 1, cnt), CG_LimboPanel_RealWeaponIsDisabled(cycleWeap));
-
-				if (BG_CursorInRect(&rect))
+				if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] < 4 || CG_LimboPanel_GetClass() != PC_SOLDIER || GetWeaponTableData(cgs.ccSelectedPrimaryWeapon)->isSMG)
 				{
-					if (button->data[7] != x)
-					{
-						button->data[7] = x;
-					}
+					continue;
 				}
+			}
+			else if (GetWeaponTableData(classInfo->classSecondaryWeapons[i])->isAkimbo)
+			{
+				if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] < 4)
+				{
+					continue;
+				}
+			}
+
+			cycleWeap = classInfo->classSecondaryWeapons[i];
+		}
+
+		if (cycleWeap)
+		{
+			++cnt;
+
+			if (cycleWeap == weap)
+			{
+				CG_LimboPanel_WeaponPanel_DrawWeapon(&button->rect, weap, totalCnt > 1 ? qtrue : qfalse, va(CG_TranslateString("%iof%i"), cnt, totalCnt), CG_LimboPanel_RealWeaponIsDisabled(weap));
+				button->data[0] = weap;
+			}
+			else if (BG_PanelButtons_GetFocusButton() == button)
+			{
+				CG_LimboPanel_WeaponPanel_DrawWeapon(&rect, cycleWeap, qtrue, va(CG_TranslateString("%iof%i"), cnt, totalCnt), CG_LimboPanel_RealWeaponIsDisabled(cycleWeap));
+
+				button->data[x] = cycleWeap;
 
 				rect.y -= rect.h;
 				x++;
 			}
 		}
-
-		CG_DrawBorder(button->rect.x, button->rect.y - ((cnt - 1) * button->rect.h), button->rect.w, button->rect.h * cnt, qfalse, qfalse);
 	}
-	else
-	{
-		// render in normal mode
-		CG_LimboPanel_WeaponPanel_DrawWeapon(&button->rect, weap, cnt > 1 ? qtrue : qfalse, va(CG_TranslateString("%iof%i"), CG_LimboPanel_GetSelectedWeaponNum() + 1, cnt), CG_LimboPanel_RealWeaponIsDisabled(weap));
 
-		if (cnt <= 1 || !BG_CursorInRect(&button->rect))
+	// render in expanded mode ^
+	if (BG_PanelButtons_GetFocusButton() == button && totalCnt > 1)
+	{
+		CG_DrawBorder(button->rect.x, button->rect.y - ((totalCnt - 1) * button->rect.h), button->rect.w, button->rect.h * totalCnt, qfalse, qfalse);
+	}
+	else    // render in normal mode
+	{
+		if (totalCnt <= 1 || !BG_CursorInRect(&button->rect))
 		{
 			trap_R_SetColor(clrWeaponPanel2);
 		}
@@ -2683,10 +2693,8 @@ int CG_LimboPanel_RenderCounter_ValueForButton(panel_button_t *button)
 			{
 				return (cg.warmup - cg.time) / 1000;
 			}
-			else
-			{
-				return 0;
-			}
+
+			return 0;
 		}
 		if (CG_LimboPanel_GetTeam() == TEAM_SPECTATOR)
 		{
@@ -2784,10 +2792,8 @@ int CG_LimboPanel_RenderCounter_RollTimeForButton(panel_button_t *button)
 		{
 			return (int)(200.f / diff);
 		}
-		else
-		{
-			return 50;
-		}
+
+		return 50;
 	}
 	case 5:     // clock
 	case 3:     // respawn time
@@ -3193,24 +3199,16 @@ void CG_LimboPanel_Setup(void)
 
 		classInfo = CG_LimboPanel_GetPlayerClass();
 
-		for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
-		{
-			if (!classInfo->classPrimaryWeapons[i])
-			{
-				cgs.ccSelectedWeapon = 0;
-				break;
-			}
+		CG_LimboPanel_SetSelectedWeaponNum(PRIMARY_SLOT, (weapon_t)cgs.clientinfo[cg.clientNum].latchedweapon);
 
-			if (classInfo->classPrimaryWeapons[i] == cgs.clientinfo[cg.clientNum].latchedweapon)
-			{
-				cgs.ccSelectedWeapon = i;
-				break;
-			}
+		if (CG_LimboPanel_IsValidSelectedWeapon(PRIMARY_SLOT) || CG_LimboPanel_RealWeaponIsDisabled(cgs.ccSelectedPrimaryWeapon))
+		{
+			CG_LimboPanel_SetDefaultWeapon(PRIMARY_SLOT);
 		}
 
-		if (cgs.ccSelectedWeapon2 >= CG_LimboPanel_WeaponCount_ForSlot(0))
+		if (CG_LimboPanel_IsValidSelectedWeapon(SECONDARY_SLOT))
 		{
-			cgs.ccSelectedWeapon2 = CG_LimboPanel_WeaponCount_ForSlot(0) - 1;
+			CG_LimboPanel_SetDefaultWeapon(SECONDARY_SLOT);
 		}
 
 		for (i = 0; i < 3; i++)
@@ -3227,19 +3225,13 @@ void CG_LimboPanel_Setup(void)
 		}
 	}
 
-	CG_LimboPanel_RequestWeaponStats();
 	cgs.ccRequestedObjective = cgs.ccSelectedObjective = CG_LimboPanel_GetMaxObjectives();
 	CG_LimboPanel_RequestObjective();
 
-	cgs.ccSelectedObjective    = CG_LimboPanel_GetMaxObjectives();
-	cgs.ccSelectedWeaponNumber = 1;
+	cgs.ccSelectedObjective  = CG_LimboPanel_GetMaxObjectives();
+	cgs.ccSelectedWeaponSlot = PRIMARY_SLOT;
 
-	if (CG_LimboPanel_WeaponIsDisabled(cgs.ccSelectedWeapon))
-	{
-		// set weapon to default if disabled
-		// NOTE classWeapons[0] must NEVER be disabled
-		cgs.ccSelectedWeapon = 0; //classinfo->classWeapons[0];
-	}
+	CG_LimboPanel_RequestWeaponStats();
 }
 
 /**
@@ -3426,25 +3418,16 @@ bg_playerclass_t *CG_LimboPanel_GetPlayerClass(void)
 
 /**
  * @brief CG_LimboPanel_WeaponCount
+ * @param[in] slotNumber primary or secondary slot weapon
  * @return
  */
-int CG_LimboPanel_WeaponCount(void)
+int CG_LimboPanel_WeaponCount(int slotNumber)
 {
-	return CG_LimboPanel_WeaponCount_ForSlot(cgs.ccSelectedWeaponNumber);
-}
+	bg_playerclass_t *classInfo = CG_LimboPanel_GetPlayerClass();
+	int              cnt = 0, i;
 
-/**
- * @brief CG_LimboPanel_WeaponCount_ForSlot
- * @param[in] number
- * @return
- */
-int CG_LimboPanel_WeaponCount_ForSlot(int number)
-{
-	if (number == 1)
+	if (slotNumber == PRIMARY_SLOT)
 	{
-		bg_playerclass_t *classInfo = CG_LimboPanel_GetPlayerClass();
-		int              cnt        = 0, i;
-
 		for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 		{
 			if (!classInfo->classPrimaryWeapons[i])
@@ -3454,181 +3437,138 @@ int CG_LimboPanel_WeaponCount_ForSlot(int number)
 
 			cnt++;
 		}
-		return cnt;
 	}
 	else
 	{
-		if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 && CG_LimboPanel_GetClass() == PC_SOLDIER)
+		for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 		{
-			if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] >= 4 && CG_LimboPanel_GetSelectedWeaponForSlot(1) != WP_THOMPSON && CG_LimboPanel_GetSelectedWeaponForSlot(1) != WP_MP40)
+			if (!classInfo->classSecondaryWeapons[i])
 			{
-				return 3;
+				break;
 			}
-			else
+
+			if (GetWeaponTableData(classInfo->classSecondaryWeapons[i])->isSMG)
 			{
-				return 2;
+				if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] < 4 || CG_LimboPanel_GetClass() != PC_SOLDIER || GetWeaponTableData(cgs.ccSelectedPrimaryWeapon)->isSMG)
+				{
+					continue;
+				}
 			}
-		}
-		else
-		{
-			if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] >= 4)
+			else if (GetWeaponTableData(classInfo->classSecondaryWeapons[i])->isAkimbo)
 			{
-				return 2;
+				if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] < 4)
+				{
+					continue;
+				}
 			}
-			else
-			{
-				return 1;
-			}
-		}
-	}
-}
 
-/**
- * @brief CG_LimboPanel_GetWeaponNumberForPos
- * @param[in] pos
- * @return
- *
- * @note Unused
- */
-int CG_LimboPanel_GetWeaponNumberForPos(int pos)
-{
-	int i, cnt = 0;
-
-	if (cgs.ccSelectedWeaponNumber == 0)
-	{
-		return pos;
-	}
-
-	if (pos < 0 || pos > CG_LimboPanel_WeaponCount())
-	{
-		return 0;
-	}
-
-	for (i = 0; i <= pos; i++)
-	{
-		while (CG_LimboPanel_WeaponIsDisabled(i + cnt))
-		{
 			cnt++;
 		}
 	}
 
-	return pos + cnt;
+	return cnt;
 }
 
 /**
- * @brief CG_LimboPanel_GetWeaponForNumber
- * @param[in] number
+ * @brief CG_LimboPanel_IsValidSelectedWeapon
  * @param[in] slot
- * @param[in] ignoreDisabled
  * @return
  */
-weapon_t CG_LimboPanel_GetWeaponForNumber(int number, int slot, qboolean ignoreDisabled)
+qboolean CG_LimboPanel_IsValidSelectedWeapon(int slot)
+{
+	bg_playerclass_t *classInfo;
+	int              i, cnt = 0;
+	weapon_t         weap;
+
+	classInfo = CG_LimboPanel_GetPlayerClass();
+	weap      = CG_LimboPanel_GetSelectedWeapon(slot);
+
+	if (slot == PRIMARY_SLOT)
+	{
+		for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
+		{
+			if (!classInfo->classPrimaryWeapons[i])
+			{
+				return qfalse;
+			}
+
+			if (classInfo->classPrimaryWeapons[i] == weap)
+			{
+				return i >= CG_LimboPanel_WeaponCount(slot);
+			}
+		}
+	}
+
+	for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
+	{
+		if (!classInfo->classSecondaryWeapons[i])
+		{
+			return qfalse;
+		}
+
+		if (GetWeaponTableData(classInfo->classSecondaryWeapons[i])->isSMG)
+		{
+			if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] < 4 || CG_LimboPanel_GetClass() != PC_SOLDIER || GetWeaponTableData(cgs.ccSelectedPrimaryWeapon)->isSMG)
+			{
+				continue;
+			}
+		}
+		else if (GetWeaponTableData(classInfo->classSecondaryWeapons[i])->isAkimbo)
+		{
+			if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] < 4)
+			{
+				continue;
+			}
+		}
+
+		if (weap == classInfo->classSecondaryWeapons[i])
+		{
+			break;
+		}
+
+		cnt++;
+	}
+
+	return cnt >= CG_LimboPanel_WeaponCount(slot);
+}
+
+/**
+ * @brief CG_LimboPanel_SetSelectedDefaultWeapon
+ * @param[in] slot
+ */
+void CG_LimboPanel_SetDefaultWeapon(int slot)
 {
 	bg_playerclass_t *classInfo;
 
 	if (CG_LimboPanel_GetTeam() == TEAM_SPECTATOR)
 	{
-		return WP_NONE;
+		return;
 	}
 
 	classInfo = CG_LimboPanel_GetPlayerClass();
 	if (!classInfo)
 	{
-		return WP_NONE;
+		return;
 	}
 
-	if (slot == 1)
+	if (slot == PRIMARY_SLOT)
 	{
-		if (!ignoreDisabled && CG_LimboPanel_WeaponIsDisabled(number))
-		{
-			if (!number)
-			{
-				CG_Error("ERROR: Class weapon 0 disabled\n");
-				return WP_NONE;
-			}
-			else
-			{
-				return classInfo->classPrimaryWeapons[0];
-			}
-		}
-
-		return classInfo->classPrimaryWeapons[number];
+		cgs.ccSelectedPrimaryWeapon = classInfo->classPrimaryWeapons[0];
 	}
 	else
 	{
-		if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 && CG_LimboPanel_GetClass() == PC_SOLDIER)
+		int cnt;
+
+		cnt = CG_LimboPanel_WeaponCount(SECONDARY_SLOT);
+
+		if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] < 4)
 		{
-			if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] >= 4)
+			if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 && CG_LimboPanel_GetClass() == PC_SOLDIER && !GetWeaponTableData(cgs.ccSelectedPrimaryWeapon)->isSMG)
 			{
-				if (number == 2)
-				{
-					return CG_LimboPanel_GetTeam() == TEAM_AXIS ? WP_MP40 : WP_THOMPSON;
-				}
-			}
-			else
-			{
-				if (number == 1)
-				{
-					return CG_LimboPanel_GetTeam() == TEAM_AXIS ? WP_MP40 : WP_THOMPSON;
-				}
+				cnt++;
 			}
 		}
-
-		if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] >= 4)
-		{
-			if (number >= 1)
-			{
-				if (CG_LimboPanel_GetClass() == PC_COVERTOPS)
-				{
-					return CG_LimboPanel_GetTeam() == TEAM_AXIS ? WP_AKIMBO_SILENCEDLUGER : WP_AKIMBO_SILENCEDCOLT;
-				}
-				else
-				{
-					return CG_LimboPanel_GetTeam() == TEAM_AXIS ? WP_AKIMBO_LUGER : WP_AKIMBO_COLT;
-				}
-			}
-		}
-
-		if (number == 0)
-		{
-			if (CG_LimboPanel_GetClass() == PC_COVERTOPS)
-			{
-				return CG_LimboPanel_GetTeam() == TEAM_AXIS ? WP_SILENCER : WP_SILENCED_COLT;
-			}
-			else
-			{
-				return CG_LimboPanel_GetTeam() == TEAM_AXIS ? WP_LUGER : WP_COLT;
-			}
-		}
-
-		return WP_NONE;
-	}
-}
-
-/**
- * @brief CG_LimboPanel_GetSelectedWeaponForSlot
- * @param[in] index
- * @return
- */
-weapon_t CG_LimboPanel_GetSelectedWeaponForSlot(int index)
-{
-	return CG_LimboPanel_GetWeaponForNumber(index == 1 ? cgs.ccSelectedWeapon : cgs.ccSelectedWeapon2, index, qfalse);
-}
-
-/**
- * @brief CG_LimboPanel_SetSelectedWeaponNumForSlot
- * @param[in] index
- * @param[in] number
- */
-void CG_LimboPanel_SetSelectedWeaponNumForSlot(int index, int number)
-{
-	if (index == 0)
-	{
-		cgs.ccSelectedWeapon = number;
-	}
-	else
-	{
-		cgs.ccSelectedWeapon2 = number;
+		cgs.ccSelectedSecondaryWeapon = classInfo->classSecondaryWeapons[cnt - 1];
 	}
 }
 
@@ -3636,28 +3576,19 @@ void CG_LimboPanel_SetSelectedWeaponNumForSlot(int index, int number)
  * @brief CG_LimboPanel_GetSelectedWeapon
  * @return
  */
-weapon_t CG_LimboPanel_GetSelectedWeapon(void)
+weapon_t CG_LimboPanel_GetSelectedWeapon(int slot)
 {
-	return CG_LimboPanel_GetWeaponForNumber(CG_LimboPanel_GetSelectedWeaponNum(), cgs.ccSelectedWeaponNumber, qfalse);
-}
-
-/**
- * @brief CG_LimboPanel_GetSelectedWeaponNum
- * @return
- */
-int CG_LimboPanel_GetSelectedWeaponNum(void)
-{
-	if (!cgs.ccSelectedWeaponNumber)
+	if (slot == PRIMARY_SLOT)
 	{
-		return cgs.ccSelectedWeapon2;
+		if (CG_LimboPanel_RealWeaponIsDisabled(cgs.ccSelectedPrimaryWeapon))
+		{
+			CG_LimboPanel_SetDefaultWeapon(PRIMARY_SLOT);
+		}
+
+		return cgs.ccSelectedPrimaryWeapon;
 	}
 
-	if (CG_LimboPanel_WeaponIsDisabled(cgs.ccSelectedWeapon))
-	{
-		CG_LimboPanel_SetSelectedWeaponNumForSlot(0, 0);
-	}
-
-	return cgs.ccSelectedWeapon;
+	return cgs.ccSelectedSecondaryWeapon;
 }
 
 /**
@@ -3666,8 +3597,10 @@ int CG_LimboPanel_GetSelectedWeaponNum(void)
 void CG_LimboPanel_RequestWeaponStats(void)
 {
 	extWeaponStats_t weapStat;
+	weapon_t         weapon;
 
-	weapStat = CG_LimboPanel_GetSelectedWeaponStat();
+	weapon   = CG_LimboPanel_GetSelectedWeapon(cgs.ccSelectedWeaponSlot);
+	weapStat = GetWeaponTableData(weapon)->indexWeaponStat;
 
 	if (weapStat == WS_MAX)
 	{
@@ -3703,30 +3636,19 @@ void CG_LimboPanel_RequestObjective(void)
  * @brief CG_LimboPanel_SetSelectedWeaponNum
  * @param[in] number
  */
-void CG_LimboPanel_SetSelectedWeaponNum(int number)
+void CG_LimboPanel_SetSelectedWeaponNum(int slot, weapon_t weapon)
 {
-	if (cgs.ccSelectedWeaponNumber == 1)
+	if (slot == PRIMARY_SLOT)
 	{
-		if (!CG_LimboPanel_WeaponIsDisabled(number))
+		if (!CG_LimboPanel_RealWeaponIsDisabled(weapon))
 		{
-			cgs.ccSelectedWeapon = number;
+			cgs.ccSelectedPrimaryWeapon = weapon;
 		}
 	}
 	else
 	{
-		cgs.ccSelectedWeapon2 = number;
+		cgs.ccSelectedSecondaryWeapon = weapon;
 	}
-
-	CG_LimboPanel_RequestWeaponStats();
-}
-
-/**
- * @brief CG_LimboPanel_GetSelectedWeaponStat
- * @return
- */
-extWeaponStats_t CG_LimboPanel_GetSelectedWeaponStat(void)
-{
-	return GetWeaponTableData(CG_LimboPanel_GetSelectedWeapon())->indexWeaponStat;
 }
 
 /**
@@ -3776,20 +3698,6 @@ int CG_LimboPanel_TeamCount(int weap)
 	}
 
 	return cnt;
-}
-
-/**
- * @brief CG_LimboPanel_WeaponIsDisabled
- * @param index
- * @return
- */
-qboolean CG_LimboPanel_WeaponIsDisabled(int index)
-{
-	weapon_t weapon;
-
-	weapon = CG_LimboPanel_GetPlayerClass()->classPrimaryWeapons[index];
-
-	return CG_LimboPanel_RealWeaponIsDisabled(weapon);
 }
 
 /**

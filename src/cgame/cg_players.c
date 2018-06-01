@@ -322,41 +322,16 @@ void CG_NewClientInfo(int clientNum)
 				// slick hack so that funcs we call use teh new value now
 				cgs.clientinfo[cg.clientNum].skill[i] = newInfo.skill[i];
 
-				if (newInfo.skill[i] == 4 && i == SK_HEAVY_WEAPONS)
+				if (newInfo.skill[i] == 4 && (i == SK_HEAVY_WEAPONS || i == SK_LIGHT_WEAPONS))
 				{
-					if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] >= 4)
+					// Only select SMG (2) if using the single gun (0)
+					if (GetWeaponTableData(cgs.ccSelectedSecondaryWeapon)->isPistol)
 					{
-						// Only select SMG (2) if using the single gun (0)
-						if (cgs.ccSelectedWeapon2 == 0)
-						{
-							CG_LimboPanel_SetSelectedWeaponNumForSlot(1, 2); // Selects SMG
-							CG_LimboPanel_SendSetupMsg(qfalse);
-						}
-					}
-					else
-					{
-						CG_LimboPanel_SetSelectedWeaponNumForSlot(1, 1); // Selects SMG
+                        CG_LimboPanel_SetDefaultWeapon(SECONDARY_SLOT);
 						CG_LimboPanel_SendSetupMsg(qfalse);
 					}
 				}
 
-				if (newInfo.skill[i] == 4 && i == SK_LIGHT_WEAPONS)
-				{
-					if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4)
-					{
-						// Only select Akimbo guns (1) if using the single gun (0)
-						if (cgs.ccSelectedWeapon2 == 0)
-						{
-							CG_LimboPanel_SetSelectedWeaponNumForSlot(1, 1); // Selects Akimbo guns
-							CG_LimboPanel_SendSetupMsg(qfalse);
-						}
-					}
-					else
-					{
-						CG_LimboPanel_SetSelectedWeaponNumForSlot(1, 1); // Selects Akimbo guns
-						CG_LimboPanel_SendSetupMsg(qfalse);
-					}
-				}
 #ifdef FEATURE_EDV
 				if (!cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 				{

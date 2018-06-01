@@ -2623,18 +2623,9 @@ void PM_CheckForReload(weapon_t weapon)
 		return;
 	}
 
-	switch (pm->ps->weaponstate)
+	if (pm->ps->weaponstate != WEAPON_READY && pm->ps->weaponstate != WEAPON_FIRING)
 	{
-	case WEAPON_RAISING:
-	case WEAPON_RAISING_TORELOAD:
-	case WEAPON_DROPPING:
-	case WEAPON_DROPPING_TORELOAD:
-	//case WEAPON_READYING:
-	//case WEAPON_RELAXING:
-	case WEAPON_RELOADING:
 		return;
-	default:
-		break;
 	}
 
 	if (pm->ps->weaponTime <= 0)
@@ -2791,20 +2782,16 @@ int PM_WeaponAmmoAvailable(weapon_t wp)
 	{
 		return pm->ps->ammo[GetWeaponTableData(wp)->ammoIndex];
 	}
-	else
+
+	if (GetWeaponTableData(wp)->isAkimbo)
 	{
-		int takeweapon = GetWeaponTableData(wp)->clipIndex;
-
-		if (GetWeaponTableData(wp)->isAkimbo)
+		if (!BG_AkimboFireSequence(wp, pm->ps->ammoclip[GetWeaponTableData(wp)->clipIndex], pm->ps->ammoclip[GetWeaponTableData(GetWeaponTableData(wp)->akimboSideArm)->clipIndex]))
 		{
-			if (!BG_AkimboFireSequence(wp, pm->ps->ammoclip[GetWeaponTableData(wp)->clipIndex], pm->ps->ammoclip[GetWeaponTableData(GetWeaponTableData(wp)->akimboSideArm)->clipIndex]))
-			{
-				takeweapon = GetWeaponTableData(wp)->akimboSideArm;
-			}
+			return pm->ps->ammoclip[GetWeaponTableData(wp)->akimboSideArm];
 		}
-
-		return pm->ps->ammoclip[takeweapon];
 	}
+
+	return pm->ps->ammoclip[GetWeaponTableData(wp)->clipIndex];
 }
 
 /**
@@ -2812,24 +2799,14 @@ int PM_WeaponAmmoAvailable(weapon_t wp)
  * @param[in] wp
  * @return
  */
-int PM_WeaponClipEmpty(weapon_t wp)
+qboolean PM_WeaponClipEmpty(weapon_t wp)
 {
 	if (pm->noWeapClips)
 	{
-		if (!(pm->ps->ammo[GetWeaponTableData(wp)->ammoIndex]))
-		{
-			return 1;
-		}
-	}
-	else
-	{
-		if (!(pm->ps->ammoclip[GetWeaponTableData(wp)->clipIndex]))
-		{
-			return 1;
-		}
+		return !pm->ps->ammo[GetWeaponTableData(wp)->ammoIndex];
 	}
 
-	return 0;
+	return !pm->ps->ammoclip[GetWeaponTableData(wp)->clipIndex];
 }
 
 /**
@@ -3598,8 +3575,8 @@ static void PM_Weapon(void)
 		{
 			if (PM_WeaponAmmoAvailable(pm->ps->weapon))
 			{
-                // start at and count down
-                pm->ps->grenadeTimeLeft = GetWeaponTableData(pm->ps->weapon)->grenadeTime;         
+				// start at and count down
+				pm->ps->grenadeTimeLeft = GetWeaponTableData(pm->ps->weapon)->grenadeTime;
 
 				PM_StartWeaponAnim(GetWeaponTableData(pm->ps->weapon)->attackAnim);
 			}

@@ -198,9 +198,9 @@ typedef struct
 	int time;                           ///< Current window time
 	float w;                            ///< Width
 	float x;                            ///< Target x-coordinate
-	                                    ///< negative values will align the window from the right minus the (window width + offset(x))
+	///< negative values will align the window from the right minus the (window width + offset(x))
 	float y;                            ///< Target y-coordinate
-	                                    ///< negative values will align the window from the bottom minus the (window height + offset(y))
+	///< negative values will align the window from the bottom minus the (window height + offset(y))
 } cg_window_t;
 
 /**
@@ -1100,12 +1100,12 @@ typedef struct
 
 	// kick angles
 	vec3_t kickAVel;                            ///< for damage feedback, weapon recoil, etc
-	                                            ///< This is the angular velocity, to give a smooth
-	                                            ///< rotational feedback, rather than sudden jerks
+	///< This is the angular velocity, to give a smooth
+	///< rotational feedback, rather than sudden jerks
 	vec3_t kickAngles;                          ///< for damage feedback, weapon recoil, etc
-	                                            /// NOTE: this is not transmitted through MSG.C stream
-	                                            /// since weapon kicks are client-side, and damage feedback
-	                                            /// is rare enough that we can transmit that as an event
+	/// NOTE: this is not transmitted through MSG.C stream
+	/// since weapon kicks are client-side, and damage feedback
+	/// is rare enough that we can transmit that as an event
 	float recoilPitch, recoilPitchAngle;
 
 	// Objective info display
@@ -2020,6 +2020,9 @@ typedef enum
 } mlType_t;
 #endif
 
+#define SECONDARY_SLOT 0
+#define	PRIMARY_SLOT 1
+
 /**
  * @struct cgs_s
  * @typedef cgs_t
@@ -2174,10 +2177,10 @@ typedef struct cgs_s
 	int ccSelectedObjective;
 	int ccSelectedSpawnPoint;
 	int ccSelectedTeam;                                 ///< ( 1 = ALLIES, 0 = AXIS )
-	int ccSelectedWeaponNumber;
+	int ccSelectedWeaponSlot;                           ///< ( 0 = secondary, 1 = primary)
 	int ccSelectedClass;
-	int ccSelectedWeapon;
-	int ccSelectedWeapon2;
+	weapon_t ccSelectedPrimaryWeapon;                   ///< Selected primary weapon from limbo panel
+	weapon_t ccSelectedSecondaryWeapon;                 ///< Selected secondary weapon from limbo panel
 	int ccWeaponShots;
 	int ccWeaponHits;
 	vec3_t ccPortalPos;
@@ -2500,7 +2503,7 @@ extern vmCvar_t cg_scoreboard;
 
 extern vmCvar_t cg_quickchat;
 
-extern vmCvar_t	cg_drawspeed;
+extern vmCvar_t cg_drawspeed;
 
 // local clock flags
 #define LOCALTIME_ON                0x01
@@ -2822,7 +2825,7 @@ char *CG_BuildLocationString(int clientNum, vec3_t origin, int flag);
 void CG_LoadLocations(void);
 
 // cg_effects.c
-int CG_GetOriginForTag(centity_t * cent, refEntity_t * parent, const char *tagName, int startIndex, vec3_t org, vec3_t axis[3]);
+int CG_GetOriginForTag(centity_t *cent, refEntity_t *parent, const char *tagName, int startIndex, vec3_t org, vec3_t axis[3]);
 localEntity_t *CG_SmokePuff(const vec3_t p,
                             const vec3_t vel,
                             float radius,
@@ -2942,7 +2945,7 @@ void CG_PlayBufferedVoiceChats(void);
 const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
 
-void CG_parseWeaponStats_cmd(void(txt_dump) (const char *));
+void CG_parseWeaponStats_cmd(void (txt_dump) (const char *));
 //void CG_parseBestShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
 //void CG_parseTopShotsStats_cmd(qboolean doTop, void(txt_dump) (const char *));
 //void CG_scores_cmd(void);
@@ -3405,23 +3408,18 @@ team_t CG_LimboPanel_GetTeam(void);
 team_t CG_LimboPanel_GetRealTeam(void);
 bg_character_t *CG_LimboPanel_GetCharacter(void);
 int CG_LimboPanel_GetClass(void);
-int CG_LimboPanel_WeaponCount(void);
-int CG_LimboPanel_WeaponCount_ForSlot(int number);
-int CG_LimboPanel_GetSelectedWeaponNum(void);
-void CG_LimboPanel_SetSelectedWeaponNum(int number);
+int CG_LimboPanel_WeaponCount(int number);
+weapon_t CG_LimboPanel_GetSelectedWeapon(int slot);
+void CG_LimboPanel_SetSelectedWeaponNum(int slot, weapon_t weapon);
 bg_playerclass_t *CG_LimboPanel_GetPlayerClass(void);
-weapon_t CG_LimboPanel_GetSelectedWeapon(void);
 weapon_t CG_LimboPanel_GetWeaponForNumber(int number, int slot, qboolean ignoreDisabled);
-extWeaponStats_t CG_LimboPanel_GetSelectedWeaponStat(void);
-qboolean CG_LimboPanel_WeaponIsDisabled(int index);
+qboolean CG_LimboPanel_IsValidSelectedWeapon(int slot);
+void CG_LimboPanel_SetDefaultWeapon(int slot);
 qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon);
 qboolean CG_LimboPanel_ClassIsDisabled(team_t selectedTeam, int classIndex);
 qboolean CG_LimboPanel_TeamIsDisabled(team_t checkTeam);
 int CG_LimboPanel_FindFreeClass(team_t checkTeam);
 int CG_LimboPanel_GetWeaponNumberForPos(int pos);
-
-void CG_LimboPanel_SetSelectedWeaponNumForSlot(int index, int number);
-weapon_t CG_LimboPanel_GetSelectedWeaponForSlot(int index);
 
 /**
  * @struct mapScissor_s
