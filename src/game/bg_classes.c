@@ -35,185 +35,188 @@
 #include "../qcommon/q_shared.h"
 #include "bg_public.h"
 
-bg_playerclass_t bg_allies_playerclasses[NUM_PLAYER_CLASSES] =
+bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 {
+	// Axis player classes
 	{
-		PC_SOLDIER,
-		"characters/temperate/allied/soldier.char",
-		"ui/assets/mp_gun_blue.tga",
-		"ui/assets/mp_arrow_blue.tga",
 		{
-			WP_THOMPSON,
-			WP_MOBILE_BROWNING,
-			WP_FLAMETHROWER,
-			WP_BAZOOKA,
-			WP_MORTAR
+			PC_SOLDIER,
+			"characters/temperate/axis/soldier.char",
+			"ui/assets/mp_gun_red.tga",
+			"ui/assets/mp_arrow_red.tga",
+			{
+				WP_MP40,
+				WP_MOBILE_MG42,
+				WP_FLAMETHROWER,
+				WP_PANZERFAUST,
+				WP_MORTAR2
+			},
+			{
+				WP_LUGER,
+				WP_AKIMBO_LUGER,
+				WP_MP40,
+			},
+			0,
+			0,
 		},
+
 		{
-			WP_COLT,
-			WP_AKIMBO_COLT,
-			WP_THOMPSON,
+			PC_MEDIC,
+			"characters/temperate/axis/medic.char",
+			"ui/assets/mp_health_red.tga",
+			"ui/assets/mp_arrow_red.tga",
+			{
+				WP_MP40,
+			},
+			{
+				WP_LUGER,
+				WP_AKIMBO_LUGER,
+			},
+			0,
+			0,
 		},
-		0,
-		0,
+
+		{
+			PC_ENGINEER,
+			"characters/temperate/axis/engineer.char",
+			"ui/assets/mp_wrench_red.tga",
+			"ui/assets/mp_arrow_red.tga",
+			{
+				WP_MP40,
+				WP_KAR98,
+			},
+			{
+				WP_LUGER,
+				WP_AKIMBO_LUGER,
+			},
+			0,
+			0,
+		},
+
+		{
+			PC_FIELDOPS,
+			"characters/temperate/axis/fieldops.char",
+			"ui/assets/mp_ammo_red.tga",
+			"ui/assets/mp_arrow_red.tga",
+			{
+				WP_MP40,
+			},
+			{
+				WP_LUGER,
+				WP_AKIMBO_LUGER,
+			},
+			0,
+			0,
+		},
+
+		{
+			PC_COVERTOPS,
+			"characters/temperate/axis/cvops.char",
+			"ui/assets/mp_spy_red.tga",
+			"ui/assets/mp_arrow_red.tga",
+			{
+				WP_STEN,
+				WP_FG42,
+				WP_K43,
+			},
+			{
+				WP_SILENCER,
+				WP_AKIMBO_SILENCEDLUGER,
+			},
+			0,
+			0,
+		},
 	},
 
+	// Allies player classes
 	{
-		PC_MEDIC,
-		"characters/temperate/allied/medic.char",
-		"ui/assets/mp_health_blue.tga",
-		"ui/assets/mp_arrow_blue.tga",
 		{
-			WP_THOMPSON,
+			PC_SOLDIER,
+			"characters/temperate/allied/soldier.char",
+			"ui/assets/mp_gun_blue.tga",
+			"ui/assets/mp_arrow_blue.tga",
+			{
+				WP_THOMPSON,
+				WP_MOBILE_BROWNING,
+				WP_FLAMETHROWER,
+				WP_BAZOOKA,
+				WP_MORTAR
+			},
+			{
+				WP_COLT,
+				WP_AKIMBO_COLT,
+				WP_THOMPSON,
+			},
+			0,
+			0,
 		},
-		{
-			WP_COLT,
-			WP_AKIMBO_COLT,
-		},
-		0,
-		0,
-	},
 
-	{
-		PC_ENGINEER,
-		"characters/temperate/allied/engineer.char",
-		"ui/assets/mp_wrench_blue.tga",
-		"ui/assets/mp_arrow_blue.tga",
 		{
-			WP_THOMPSON,
-			WP_CARBINE,
+			PC_MEDIC,
+			"characters/temperate/allied/medic.char",
+			"ui/assets/mp_health_blue.tga",
+			"ui/assets/mp_arrow_blue.tga",
+			{
+				WP_THOMPSON,
+			},
+			{
+				WP_COLT,
+				WP_AKIMBO_COLT,
+			},
+			0,
+			0,
 		},
-		{
-			WP_COLT,
-			WP_AKIMBO_COLT,
-		},
-		0,
-		0,
-	},
 
-	{
-		PC_FIELDOPS,
-		"characters/temperate/allied/fieldops.char",
-		"ui/assets/mp_ammo_blue.tga",
-		"ui/assets/mp_arrow_blue.tga",
 		{
-			WP_THOMPSON,
+			PC_ENGINEER,
+			"characters/temperate/allied/engineer.char",
+			"ui/assets/mp_wrench_blue.tga",
+			"ui/assets/mp_arrow_blue.tga",
+			{
+				WP_THOMPSON,
+				WP_CARBINE,
+			},
+			{
+				WP_COLT,
+				WP_AKIMBO_COLT,
+			},
+			0,
+			0,
 		},
-		{
-			WP_COLT,
-			WP_AKIMBO_COLT,
-		},
-		0,
-		0,
-	},
 
-	{
-		PC_COVERTOPS,
-		"characters/temperate/allied/cvops.char",
-		"ui/assets/mp_spy_blue.tga",
-		"ui/assets/mp_arrow_blue.tga",
 		{
-			WP_STEN,
-			WP_FG42,
-			WP_GARAND,
+			PC_FIELDOPS,
+			"characters/temperate/allied/fieldops.char",
+			"ui/assets/mp_ammo_blue.tga",
+			"ui/assets/mp_arrow_blue.tga",
+			{
+				WP_THOMPSON,
+			},
+			{
+				WP_COLT,
+				WP_AKIMBO_COLT,
+			},
+			0,
+			0,
 		},
-		{
-			WP_SILENCED_COLT,
-			WP_AKIMBO_SILENCEDCOLT,
-		},
-		0,
-		0,
-	},
-};
 
-bg_playerclass_t bg_axis_playerclasses[NUM_PLAYER_CLASSES] =
-{
-	{
-		PC_SOLDIER,
-		"characters/temperate/axis/soldier.char",
-		"ui/assets/mp_gun_red.tga",
-		"ui/assets/mp_arrow_red.tga",
 		{
-			WP_MP40,
-			WP_MOBILE_MG42,
-			WP_FLAMETHROWER,
-			WP_PANZERFAUST,
-			WP_MORTAR2
+			PC_COVERTOPS,
+			"characters/temperate/allied/cvops.char",
+			"ui/assets/mp_spy_blue.tga",
+			"ui/assets/mp_arrow_blue.tga",
+			{
+				WP_STEN,
+				WP_FG42,
+				WP_GARAND,
+			},
+			{
+				WP_SILENCED_COLT,
+				WP_AKIMBO_SILENCEDCOLT,
+			},
+			0,
+			0,
 		},
-		{
-			WP_LUGER,
-			WP_AKIMBO_LUGER,
-			WP_MP40,
-		},
-		0,
-		0,
-	},
-
-	{
-		PC_MEDIC,
-		"characters/temperate/axis/medic.char",
-		"ui/assets/mp_health_red.tga",
-		"ui/assets/mp_arrow_red.tga",
-		{
-			WP_MP40,
-		},
-		{
-			WP_LUGER,
-			WP_AKIMBO_LUGER,
-		},
-		0,
-		0,
-	},
-
-	{
-		PC_ENGINEER,
-		"characters/temperate/axis/engineer.char",
-		"ui/assets/mp_wrench_red.tga",
-		"ui/assets/mp_arrow_red.tga",
-		{
-			WP_MP40,
-			WP_KAR98,
-		},
-		{
-			WP_LUGER,
-			WP_AKIMBO_LUGER,
-		},
-		0,
-		0,
-	},
-
-	{
-		PC_FIELDOPS,
-		"characters/temperate/axis/fieldops.char",
-		"ui/assets/mp_ammo_red.tga",
-		"ui/assets/mp_arrow_red.tga",
-		{
-			WP_MP40,
-		},
-		{
-			WP_LUGER,
-			WP_AKIMBO_LUGER,
-		},
-		0,
-		0,
-	},
-
-	{
-		PC_COVERTOPS,
-		"characters/temperate/axis/cvops.char",
-		"ui/assets/mp_spy_red.tga",
-		"ui/assets/mp_arrow_red.tga",
-		{
-			WP_STEN,
-			WP_FG42,
-			WP_K43,
-		},
-		{
-			WP_SILENCER,
-			WP_AKIMBO_SILENCEDLUGER,
-		},
-		0,
-		0,
 	},
 };
 
@@ -225,25 +228,17 @@ bg_playerclass_t bg_axis_playerclasses[NUM_PLAYER_CLASSES] =
  */
 bg_playerclass_t *BG_GetPlayerClassInfo(int team, int cls)
 {
-	bg_playerclass_t *teamList;
-
 	if (cls < PC_SOLDIER || cls >= NUM_PLAYER_CLASSES)
 	{
 		cls = PC_SOLDIER;
 	}
 
-	switch (team)
+	if (team != TEAM_AXIS && team != TEAM_ALLIES)
 	{
-	default:
-	case TEAM_AXIS:
-		teamList = bg_axis_playerclasses;
-		break;
-	case TEAM_ALLIES:
-		teamList = bg_allies_playerclasses;
-		break;
+		team = TEAM_AXIS;
 	}
 
-	return &teamList[cls];
+	return GetPlayerClassesData(team, cls);
 }
 
 /**
@@ -290,25 +285,9 @@ qboolean BG_ClassHasWeapon(bg_playerclass_t *classInfo, weapon_t weap)
  */
 qboolean BG_WeaponIsPrimaryForClassAndTeam(int classnum, team_t team, weapon_t weapon)
 {
-	bg_playerclass_t *classInfo;
-
-	if (team == TEAM_ALLIES)
+	if (team == TEAM_AXIS || team == TEAM_ALLIES)
 	{
-		classInfo = &bg_allies_playerclasses[classnum];
-
-		if (BG_ClassHasWeapon(classInfo, weapon))
-		{
-			return qtrue;
-		}
-	}
-	else if (team == TEAM_AXIS)
-	{
-		classInfo = &bg_axis_playerclasses[classnum];
-
-		if (BG_ClassHasWeapon(classInfo, weapon))
-		{
-			return qtrue;
-		}
+		return BG_ClassHasWeapon(GetPlayerClassesData(team, classnum), weapon);
 	}
 
 	return qfalse;

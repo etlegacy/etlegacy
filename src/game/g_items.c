@@ -121,10 +121,10 @@ void Fill_Clip(playerState_t *ps, weapon_t weapon)
 
 /**
  * @brief Add ammo.
- * @param ent
- * @param weapon
- * @param count
- * @param fillClip
+ * @param[in,out] ent
+ * @param[in] weapon
+ * @param[in] count
+ * @param[in] fillClip
  * @return whether any ammo was added
  */
 int Add_Ammo(gentity_t *ent, weapon_t weapon, int count, qboolean fillClip)
@@ -189,8 +189,7 @@ qboolean AddMagicAmmo(gentity_t *receiver, int numOfClips)
  */
 weapon_t G_GetPrimaryWeaponForClient(gclient_t *client)
 {
-	int              i;
-	bg_playerclass_t *classInfo;
+	int i, team;
 
 	if (client->sess.sessionTeam != TEAM_ALLIES && client->sess.sessionTeam != TEAM_AXIS)
 	{
@@ -201,36 +200,27 @@ weapon_t G_GetPrimaryWeaponForClient(gclient_t *client)
 	{
 		return WP_THOMPSON;
 	}
+
 	if (COM_BitCheck(client->ps.weapons, WP_MP40))
 	{
 		return WP_MP40;
 	}
 
-	classInfo = &bg_allies_playerclasses[client->sess.playerType];
-	for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
+	for (team = TEAM_AXIS; team <= TEAM_ALLIES; team++)
 	{
-		if (classInfo->classPrimaryWeapons[i] == WP_MP40 || classInfo->classPrimaryWeapons[i] == WP_THOMPSON)
-		{
-			continue;
-		}
+		bg_playerclass_t *classInfo = GetPlayerClassesData(team, client->sess.playerType);
 
-		if (COM_BitCheck(client->ps.weapons, classInfo->classPrimaryWeapons[i]))
+		for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 		{
-			return classInfo->classPrimaryWeapons[i];
-		}
-	}
+			if (classInfo->classPrimaryWeapons[i] == WP_MP40 || classInfo->classPrimaryWeapons[i] == WP_THOMPSON)
+			{
+				continue;
+			}
 
-	classInfo = &bg_axis_playerclasses[client->sess.playerType];
-	for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
-	{
-		if (classInfo->classPrimaryWeapons[i] == WP_MP40 || classInfo->classPrimaryWeapons[i] == WP_THOMPSON)
-		{
-			continue;
-		}
-
-		if (COM_BitCheck(client->ps.weapons, classInfo->classPrimaryWeapons[i]))
-		{
-			return classInfo->classPrimaryWeapons[i];
+			if (COM_BitCheck(client->ps.weapons, classInfo->classPrimaryWeapons[i]))
+			{
+				return classInfo->classPrimaryWeapons[i];
+			}
 		}
 	}
 
@@ -302,8 +292,7 @@ weapon_t G_GetSecondaryWeaponForClient(gclient_t *client, weapon_t primary)
  */
 weapon_t G_GetPrimaryWeaponForClientSoldier(weapon_t weapon, gclient_t *client)
 {
-	int              i;
-	bg_playerclass_t *classInfo;
+	int i, team;
 
 	if (client->sess.sessionTeam != TEAM_ALLIES && client->sess.sessionTeam != TEAM_AXIS)
 	{
@@ -323,28 +312,17 @@ weapon_t G_GetPrimaryWeaponForClientSoldier(weapon_t weapon, gclient_t *client)
 		{
 			return WP_MP40;
 		}
-		else if (COM_BitCheck(client->ps.weapons, WP_THOMPSON) && weapon == WP_MP40)
+
+		if (COM_BitCheck(client->ps.weapons, WP_THOMPSON) && weapon == WP_MP40)
 		{
 			return WP_THOMPSON;
 		}
-		else
+
+		for (team = TEAM_AXIS; team <= TEAM_ALLIES; team++)
 		{
 			// if weapons are SMS & HW, return HW if picking up HW
-			classInfo = &bg_allies_playerclasses[client->sess.playerType];
-			for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
-			{
-				if (classInfo->classPrimaryWeapons[i] == WP_MP40 || classInfo->classPrimaryWeapons[i] == WP_THOMPSON)
-				{
-					continue;
-				}
+			bg_playerclass_t *classInfo = GetPlayerClassesData(team, client->sess.playerType);
 
-				if (COM_BitCheck(client->ps.weapons, classInfo->classPrimaryWeapons[i]))
-				{
-					return classInfo->classPrimaryWeapons[i];
-				}
-			}
-
-			classInfo = &bg_axis_playerclasses[client->sess.playerType];
 			for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 			{
 				if (classInfo->classPrimaryWeapons[i] == WP_MP40 || classInfo->classPrimaryWeapons[i] == WP_THOMPSON)

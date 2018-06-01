@@ -559,7 +559,7 @@ typedef struct pmoveExt_s
 	qboolean releasedFire;
 
 } pmoveExt_t;  ///< data used both in client and server - store it here
-               ///< instead of playerstate to prevent different engine versions of playerstate between XP and MP
+///< instead of playerstate to prevent different engine versions of playerstate between XP and MP
 
 #define MAXTOUCH    32
 
@@ -608,7 +608,7 @@ typedef struct
 
 	// callbacks to test the world
 	// these will be different functions during game and cgame
-	void (*trace)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask);
+	void (*trace)(trace_t * results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask);
 	int (*pointcontents)(const vec3_t point, int passEntityNum);
 
 	/// used to determine if the player move is for prediction if it is, the movement should trigger no events
@@ -617,7 +617,7 @@ typedef struct
 } pmove_t;
 
 // if a full pmove isn't done on the client, you can just update the angles
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask);
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void (trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask);
 int Pmove(pmove_t *pmove);
 void PmovePredict(pmove_t *pmove, float frametime);
 
@@ -869,7 +869,7 @@ typedef enum
 	WP_BAZOOKA,                ///< 53
 
 	WP_NUM_WEAPONS             ///< 54
-	                           ///< NOTE: this cannot be larger than 64 for AI/player weapons!
+	///< NOTE: this cannot be larger than 64 for AI/player weapons!
 } weapon_t;
 
 /**
@@ -1116,9 +1116,10 @@ typedef struct weapontable_s
 	qboolean isAutoReload;          ///< bg
 	qboolean noAmmoSound;           ///<
 	qboolean noAmmoAutoSwitch;      ///<
+
+	qboolean isSMG;                 ///<
 	qboolean isExplosive;           ///<
 	qboolean isSyringe;             ///<
-
 	qboolean isPistol;              ///<
 	qboolean isAkimbo;              ///< bg
 	qboolean isPanzer;              ///< bg
@@ -1127,7 +1128,6 @@ typedef struct weapontable_s
 	qboolean isRifleWithScope;      ///<
 	qboolean isMortar;              ///< bg
 	qboolean isMortarSet;           ///< bg
-
 	qboolean isMG;                  ///< bg
 	qboolean isMGSet;               ///< bg
 
@@ -1789,7 +1789,7 @@ typedef enum
 	IT_ARMOR,              ///< EFX: rotate + minlight
 	IT_HEALTH,             ///< EFX: static external sphere + rotating internal
 	IT_HOLDABLE,           ///< #100 obsolete - remove! (also HINT_HOLDABLE)
-	                       ///< EFX: rotate + bob
+	///< EFX: rotate + bob
 	IT_KEY,
 	IT_TREASURE,           ///< #100 obsolete - remove! gold bars, etc.  things that can be picked up and counted for a tally at end-level
 	IT_TEAM,
@@ -2352,7 +2352,7 @@ typedef enum
 
 #define MAX_GIB_MODELS      16
 
-#define MAX_WEAPS_PER_CLASS 10
+#define MAX_WEAPS_PER_CLASS 8   ///< was 10
 
 /**
  * @struct bg_playerclass_t
@@ -2444,8 +2444,8 @@ const char *BG_ClassnameForNumberFilename(int classNum);
 const char *BG_ClassLetterForNumber(int classNum);
 const char *BG_TeamnameForNumber(team_t teamNum);
 
-extern bg_playerclass_t bg_allies_playerclasses[NUM_PLAYER_CLASSES];
-extern bg_playerclass_t bg_axis_playerclasses[NUM_PLAYER_CLASSES];
+extern bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES];
+#define GetPlayerClassesData(team, classe) ((bg_playerclass_t *)(&bg_playerClasses[(team) - 1][classe]))
 
 #define MAX_PATH_CORNERS        512
 
@@ -2822,8 +2822,8 @@ typedef enum popupMessageBigType_e
 #define HITBOXBIT_LEGS   2048
 #define HITBOXBIT_CLIENT 4096
 
-void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
-void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void (tracefunc)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
+void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void (tracefunc)(trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask);
 void PM_TraceAllParts(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end);
 void PM_TraceAll(trace_t *trace, vec3_t start, vec3_t end);
 
