@@ -648,8 +648,8 @@ void CG_ReadHudScripts(void)
 // HUD DRAWING FUNCTIONS BELLOW
 
 vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.8f };
-vec4_t HUD_Border = { 0.5f, 0.5f, 0.5f, 0.5f };
-vec4_t HUD_Text = { 0.6f, 0.6f, 0.6f, 1.0f };
+vec4_t HUD_Border     = { 0.5f, 0.5f, 0.5f, 0.5f };
+vec4_t HUD_Text       = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 /**
  * @brief CG_DrawPicShadowed
@@ -1039,9 +1039,9 @@ static void CG_DrawGunIcon(rectDef_t location)
 
 	if (
 #ifdef FEATURE_MULTIVIEW
-	    cg.mvTotalClients < 1 &&
+		cg.mvTotalClients < 1 &&
 #endif
-	    cg_drawWeaponIconFlash.integer == 0)
+		cg_drawWeaponIconFlash.integer == 0)
 	{
 		CG_DrawPlayerWeaponIcon(&rect, qtrue, ITEM_ALIGN_RIGHT, &colorWhite);
 	}
@@ -1049,9 +1049,9 @@ static void CG_DrawGunIcon(rectDef_t location)
 	{
 		int ws =
 #ifdef FEATURE_MULTIVIEW
-		    (cg.mvTotalClients > 0) ? cgs.clientinfo[cg.snap->ps.clientNum].weaponState :
+			(cg.mvTotalClients > 0) ? cgs.clientinfo[cg.snap->ps.clientNum].weaponState :
 #endif
-		    BG_simpleWeaponState(cg.snap->ps.weaponstate);
+			BG_simpleWeaponState(cg.snap->ps.weaponstate);
 
 		CG_DrawPlayerWeaponIcon(&rect, (qboolean)(ws != WSTATE_IDLE), ITEM_ALIGN_RIGHT, ((ws == WSTATE_SWITCH || ws == WSTATE_RELOAD) ? &colorYellow : (ws == WSTATE_FIRE) ? &colorRed : &colorWhite));
 	}
@@ -1131,8 +1131,6 @@ static void CG_DrawSkillBar(float x, float y, float w, float h, int skill)
 	}
 }
 
-extern pmove_t *pm;
-
 /**
  * @brief CG_ClassSkillForPosition
  * @param[in] ci
@@ -1149,7 +1147,7 @@ skillType_t CG_ClassSkillForPosition(clientInfo_t *ci, int pos)
 		return SK_BATTLE_SENSE;
 	case 2:
 		// draw soldier level if using a heavy weapon instead of light weapons icon
-		if ((pm && (BG_PlayerMounted(pm->ps->eFlags) || GetWeaponTableData(pm->ps->weapon)->isHeavyWeapon)) && ci->cls != PC_SOLDIER)
+		if ((BG_PlayerMounted(cg.snap->ps.eFlags) || GetWeaponTableData(cg.snap->ps.weapon)->isHeavyWeapon) && ci->cls != PC_SOLDIER)
 		{
 			return SK_HEAVY_WEAPONS;
 		}
@@ -1866,14 +1864,14 @@ vec4_t       tclr = { 0.625f, 0.625f, 0.6f, 1.0f };
  */
 static float CG_DrawSpeed(float y)
 {
-	char			*s;
-	int				w, w2;
-	int				thistime;
-	int				x;
+	char *s;
+	int  w, w2;
+	int  thistime;
+	int  x;
 
 	if (resetmaxspeed)
 	{
-		highestSpeed = 0;
+		highestSpeed  = 0;
 		resetmaxspeed = qfalse;
 	}
 
@@ -1891,44 +1889,44 @@ static float CG_DrawSpeed(float y)
 		lasttime = thistime;
 	}
 
-	switch(cg_drawspeed.integer)
+	switch (cg_drawspeed.integer)
 	{
-		case 1:
-			// Units per second
-			s = va("%.1f UPS", speed);
-			break;
-		case 2:
-			// Kilometers per hour
-			s = va("%.1f KPH", (speed / SPEED_US_TO_KPH));
-			break;
-		case 3:
-			// Miles per hour
-			s = va("%.1f MPH", (speed / SPEED_US_TO_MPH));
-			break;
-		case 4:
-			// Units per second + highestSpeed
-			s = va("%.1f UPS (%.1f MAX)", speed, highestSpeed);
-			break;
-		case 5:
-			// Kilometers per hour  + highestSpeed
-			s = va("%.1f KPH (%.1f MAX)", (speed / SPEED_US_TO_KPH), (highestSpeed / SPEED_US_TO_KPH));
-			break;
-		case 6:
-			// Miles per hour  + highestSpeed
-			s = va("%.1f MPH (%.1f MAX)", (speed / SPEED_US_TO_MPH), (highestSpeed / SPEED_US_TO_MPH));
-			break;
-		default:
-			s = "";
-			break;
+	case 1:
+		// Units per second
+		s = va("%.1f UPS", speed);
+		break;
+	case 2:
+		// Kilometers per hour
+		s = va("%.1f KPH", (speed / SPEED_US_TO_KPH));
+		break;
+	case 3:
+		// Miles per hour
+		s = va("%.1f MPH", (speed / SPEED_US_TO_MPH));
+		break;
+	case 4:
+		// Units per second + highestSpeed
+		s = va("%.1f UPS (%.1f MAX)", speed, highestSpeed);
+		break;
+	case 5:
+		// Kilometers per hour  + highestSpeed
+		s = va("%.1f KPH (%.1f MAX)", (speed / SPEED_US_TO_KPH), (highestSpeed / SPEED_US_TO_KPH));
+		break;
+	case 6:
+		// Miles per hour  + highestSpeed
+		s = va("%.1f MPH (%.1f MAX)", (speed / SPEED_US_TO_MPH), (highestSpeed / SPEED_US_TO_MPH));
+		break;
+	default:
+		s = "";
+		break;
 	}
 
-	w = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
-	w2 = (UPPERRIGHT_W > w)? UPPERRIGHT_W : w;
+	w  = CG_Text_Width_Ext(s, 0.19f, 0, &cgs.media.limboFont1);
+	w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
 
 	x = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
 	CG_FillRect(x, y, w2 + 5, 12 + 2, HUD_Background);
-	CG_DrawRect_FixedBorder( x, y, w2 + 5, 12 + 2, 1, HUD_Border);
-	CG_Text_Paint_Ext(x + ((w2-w)/2) + 2, y + 11, 0.19f, 0.19f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
+	CG_DrawRect_FixedBorder(x, y, w2 + 5, 12 + 2, 1, HUD_Border);
+	CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, tclr, s, 0, 0, 0, &cgs.media.limboFont1);
 
 	return y + 12 + 4;
 }
@@ -2907,7 +2905,7 @@ void CG_DrawUpperRight(void)
 	{
 		y = CG_DrawSpeed(y);
 	}
-	
+
 	if (cg_lagometer.integer)
 	{
 		CG_DrawLagometer(y);
