@@ -886,7 +886,7 @@ char *FindShaderInShaderTextR1(const char *shaderName)
 	for (i = 0; shaderTextHashTableR1[hash][i]; i++)
 	{
 		p     = shaderTextHashTableR1[hash][i];
-		token = COM_ParseExt2(&p, qtrue);
+		token = COM_ParseExt(&p, qtrue);
 		if (!Q_stricmp(token, shaderName))
 		{
 			//Ren_Print("found shader '%s' by hashing\n", shaderName);
@@ -904,7 +904,7 @@ char *FindShaderInShaderTextR1(const char *shaderName)
 	// look for label
 	while (1)
 	{
-		token = COM_ParseExt2(&p, qtrue);
+		token = COM_ParseExt(&p, qtrue);
 		if (token[0] == 0)
 		{
 			break;
@@ -919,7 +919,7 @@ char *FindShaderInShaderTextR1(const char *shaderName)
 		else if (!Q_stricmp(token, "table"))
 		{
 			// skip table name
-			(void) COM_ParseExt2(&p, qtrue);
+			(void)COM_ParseExt(&p, qtrue);
 
 			SkipBracedSection(&p);
 		}
@@ -927,7 +927,7 @@ char *FindShaderInShaderTextR1(const char *shaderName)
 		else if (!Q_stricmp(token, "guide"))
 		{
 			// parse shader name
-			token = COM_ParseExt2(&p, qtrue);
+			token = COM_ParseExt(&p, qtrue);
 
 			if (!Q_stricmp(token, shaderName))
 			{
@@ -936,10 +936,10 @@ char *FindShaderInShaderTextR1(const char *shaderName)
 			}
 
 			// skip guide name
-			token = COM_ParseExt2(&p, qtrue);
+			token = COM_ParseExt(&p, qtrue);
 
 			// skip parameters
-			token = COM_ParseExt2(&p, qtrue);
+			token = COM_ParseExt(&p, qtrue);
 			if (Q_stricmp(token, "("))
 			{
 				break;
@@ -947,7 +947,7 @@ char *FindShaderInShaderTextR1(const char *shaderName)
 
 			while (1)
 			{
-				token = COM_ParseExt2(&p, qtrue);
+				token = COM_ParseExt(&p, qtrue);
 
 				if (!token[0])
 				{
