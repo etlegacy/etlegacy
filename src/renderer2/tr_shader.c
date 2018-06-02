@@ -5788,7 +5788,7 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 			}
 			else
 			{
-				Ren_Warning("R_FindShader Warning: Normalmap image '%s' type %i not found.\n", va("%s_n.tga", strippedName), shader.type);
+				Ren_Developer("R_FindShader Warning: Normalmap image '%s' type %i not found.\n", va("%s_n.tga", strippedName), shader.type);
 			}
 
 			// Note/FIXME: image file name has to be including extension, we use tga - make this more generic one day
@@ -5805,7 +5805,8 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 			}
 			else
 			{
-				Ren_Warning("R_FindShader Warning: Specularmap image '%s' type %i not found.\n", va("%s_s.tga", strippedName), shader.type);
+			
+				Ren_Developer("R_FindShader Warning: Specularmap image '%s' type %i not found.\n", va("%s_s.tga", strippedName), shader.type);
 			}
 
 			//tmpImage = R_FindImageFile(va("%s_disp", fileName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
