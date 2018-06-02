@@ -56,6 +56,16 @@ shader_t *shaderHashTable[FILE_HASH_SIZE];
 
 shader_t shader;
 
+// dynamic shader list
+typedef struct dynamicShader dynamicShader_t;
+struct dynamicShader
+{
+	char *shadertext;
+	dynamicShader_t *next;
+};
+
+dynamicShader_t *dshader;
+
 // the shader is parsed into these global variables, then copied into
 // dynamically allocated memory if it is valid.
 shaderTable_t table;
