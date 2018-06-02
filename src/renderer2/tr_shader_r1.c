@@ -881,6 +881,36 @@ char *FindShaderInShaderTextR1(const char *shaderName)
 	char *token, *p;
 	int  i, hash;
 
+	// if we have any dynamic shaders loaded, check them first
+	if (dshader)
+	{
+		dynamicShader_t *dptr = dshader;
+		char            *q;
+		i = 0;
+
+		while (dptr)
+		{
+			if (!dptr->shadertext || !strlen(dptr->shadertext))
+			{
+				Ren_Warning("WARNING: dynamic shader %s(%d) has no shadertext\n", shaderName, i);
+			}
+			else
+			{
+				q = dptr->shadertext;
+
+				token = COM_ParseExt(&q, qtrue);
+
+				if ((token[0] != 0) && !Q_stricmp(token, shaderName))
+				{
+					//ri.Printf( PRINT_ALL, "Found dynamic shader [%s] with shadertext [%s]\n", shadername, dptr->shadertext );
+					return q;
+				}
+			}
+			i++;
+			dptr = dptr->next;
+		}
+	}
+
 	hash = generateHashValue(shaderName, MAX_SHADERTEXT_HASH);
 
 	for (i = 0; shaderTextHashTableR1[hash][i]; i++)

@@ -5249,17 +5249,6 @@ static shader_t *FinishShader(void)
 	return GeneratePermanentShader();
 }
 
-//========================================================================================
-
-// dynamic shader list
-typedef struct dynamicshader dynamicshader_t;
-struct dynamicshader
-{
-	char *shadertext;
-	dynamicshader_t *next;
-};
-static dynamicshader_t *dshader = NULL;
-
 /**
  * @brief Load a new dynamic shader.
  * If shadertext is NULL, looks for matching shadername and removes it.
@@ -5270,7 +5259,7 @@ static dynamicshader_t *dshader = NULL;
 qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 {
 	const char      *func_err = "WARNING: RE_LoadDynamicShader";
-	dynamicshader_t *dptr, *lastdptr;
+	dynamicShader_t *dptr, *lastdptr;
 	char            *q, *token;
 
 	Ren_Warning("RE_LoadDynamicShader( name = '%s', text = '%s' )\n", shadername, shadertext);
@@ -5343,7 +5332,7 @@ qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 	}
 
 	// create a new shader
-	dptr = (dynamicshader_t *) ri.Z_Malloc(sizeof(*dptr));
+	dptr = (dynamicShader_t *) ri.Z_Malloc(sizeof(*dptr));
 	if (!dptr)
 	{
 		Ren_Fatal("Couldn't allocate struct for dynamic shader %s\n", shadername);
@@ -5381,6 +5370,36 @@ static char *FindShaderInShaderText(const char *shaderName)
 {
 	char *token, *p;
 	int  i, hash;
+
+	// if we have any dynamic shaders loaded, check them first
+	if (dshader)
+	{
+		dynamicShader_t *dptr = dshader;
+		char            *q;
+		i = 0;
+
+		while (dptr)
+		{
+			if (!dptr->shadertext || !strlen(dptr->shadertext))
+			{
+				Ren_Warning("WARNING: dynamic shader %s(%d) has no shadertext\n", shaderName, i);
+			}
+			else
+			{
+				q = dptr->shadertext;
+
+				token = COM_ParseExt(&q, qtrue);
+
+				if ((token[0] != 0) && !Q_stricmp(token, shaderName))
+				{
+					//ri.Printf( PRINT_ALL, "Found dynamic shader [%s] with shadertext [%s]\n", shadername, dptr->shadertext );
+					return q;
+				}
+			}
+			i++;
+			dptr = dptr->next;
+		}
+	}
 
 	hash = generateHashValue(shaderName, MAX_SHADERTEXT_HASH);
 
@@ -6915,6 +6934,8 @@ void R_InitShaders(void)
 {
 	Com_Memset(shaderTableHashTable, 0, sizeof(shaderTableHashTable));
 	Com_Memset(shaderHashTable, 0, sizeof(shaderHashTable));
+
+	dshader = NULL;
 
 	CreateInternalShaders();
 
