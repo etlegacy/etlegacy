@@ -1098,6 +1098,11 @@ void AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammocli
 #ifdef FEATURE_OMNIBOT
 	Bot_Event_AddWeapon(client->ps.clientNum, Bot_WeaponGameToBot(weapon));
 #endif
+    
+    if (weapon == WP_BINOCULARS)
+    {
+        client->ps.stats[STAT_KEYS] |= (1 << INV_BINOCS);
+    }
 }
 
 /**
@@ -1108,7 +1113,6 @@ void SetWolfSpawnWeapons(gclient_t *client)
 {
 	int              pc           = client->sess.playerType;
 	int              team         = client->sess.sessionTeam;
-	int              grenadeCount = 0;
 	int              i;
 	weapon_t         weapon;
 	bg_playerclass_t *classInfo;
@@ -1143,88 +1147,37 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	client->ps.weaponstate = WEAPON_READY;
 
 	// knife
-	AddWeaponToPlayer(client, team == TEAM_AXIS ? WP_KNIFE : WP_KNIFE_KABAR, 1, 0, qtrue);
-
-	// binocular
-	if (client->sess.skill[SK_BATTLE_SENSE] >= 1 || pc == PC_FIELDOPS || pc == PC_COVERTOPS)
-	{
-		AddWeaponToPlayer(client, WP_BINOCULARS, 1, 0, qfalse);
-		client->ps.stats[STAT_KEYS] |= (1 << INV_BINOCS);
-	}
-
-	// Engineer gets dynamite, pliers, landmines and four grenades
-	if (pc == PC_ENGINEER)
-	{
-		AddWeaponToPlayer(client, WP_DYNAMITE, 0, 1, qfalse);
-		AddWeaponToPlayer(client, WP_PLIERS, 0, 1, qfalse);
-		AddWeaponToPlayer(client, WP_LANDMINE, GetWeaponTableData(WP_LANDMINE)->defaultStartingAmmo, GetWeaponTableData(WP_LANDMINE)->defaultStartingClip, qfalse);
-
-		grenadeCount = 4;
-	}
-	// Field ops gets binoculars, ammo pack, artillery, and a grenade
-	else if (pc == PC_FIELDOPS)
-	{
-		AddWeaponToPlayer(client, WP_AMMO, 0, 1, qfalse);
-		AddWeaponToPlayer(client, WP_SMOKE_MARKER, GetWeaponTableData(WP_SMOKE_MARKER)->defaultStartingAmmo, GetWeaponTableData(WP_SMOKE_MARKER)->defaultStartingClip, qfalse);
-
-		grenadeCount = 1;
-	}
-	// Medic gets medic pack, syringe, adrenaline and a grenade
-	else if (pc == PC_MEDIC)
-	{
-		AddWeaponToPlayer(client, WP_MEDIC_SYRINGE, GetWeaponTableData(WP_MEDIC_SYRINGE)->defaultStartingAmmo, GetWeaponTableData(WP_MEDIC_SYRINGE)->defaultStartingClip, qfalse);
-		if (client->sess.skill[SK_FIRST_AID] >= 4)
-		{
-			AddWeaponToPlayer(client, WP_MEDIC_ADRENALINE, GetWeaponTableData(WP_MEDIC_ADRENALINE)->defaultStartingAmmo, GetWeaponTableData(WP_MEDIC_ADRENALINE)->defaultStartingClip, qfalse);
-		}
-
-		AddWeaponToPlayer(client, WP_MEDKIT, GetWeaponTableData(WP_MEDKIT)->defaultStartingAmmo, GetWeaponTableData(WP_MEDKIT)->defaultStartingClip, qfalse);
-
-		grenadeCount = 1;
-	}
-	// Soldier get four grenades
-	else if (pc == PC_SOLDIER)
-	{
-		grenadeCount = 4;
-	}
-	// Convert ops get smoke bomb, satchel and two grenades
-	else if (pc == PC_COVERTOPS)
-	{
-		AddWeaponToPlayer(client, WP_SMOKE_BOMB, GetWeaponTableData(WP_SMOKE_BOMB)->defaultStartingAmmo, GetWeaponTableData(WP_SMOKE_BOMB)->defaultStartingClip, qfalse);
-
-		// See if we already have a satchel charge placed - NOTE: maybe we want to change this so the thing voids on death
-		if (G_FindSatchel(&g_entities[client->ps.clientNum]))
-		{
-			AddWeaponToPlayer(client, WP_SATCHEL, 0, 0, qfalse);        // Big Bang \o/
-			AddWeaponToPlayer(client, WP_SATCHEL_DET, 0, 1, qfalse);    // Big Red Button for tha Big Bang
-		}
-		else
-		{
-			AddWeaponToPlayer(client, WP_SATCHEL, 0, 1, qfalse);        // Big Bang \o/
-			AddWeaponToPlayer(client, WP_SATCHEL_DET, 0, 0, qfalse);    // Big Red Button for tha Big Bang
-		}
-
-		grenadeCount = 2;
-	}
+    weapon = classInfo->classKnifeWeapon;
+	AddWeaponToPlayer(client, weapon, GetWeaponTableData(weapon)->defaultStartingAmmo, GetWeaponTableData(weapon)->defaultStartingClip, qtrue);
+    
+    // specifics weapon following class
+    for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classMiscWeapons[i].weapon; i++)
+    {
+        weapon = classInfo->classMiscWeapons[i].weapon;
+        
+        if ()
+        
+        AddWeaponToPlayer(client, weapon, GetWeaponTableData(weapon)->defaultStartingAmmo, GetWeaponTableData(weapon)->defaultStartingClip, qfalse);
+    }
 
 	// grenade
-	AddWeaponToPlayer(client, team == TEAM_AXIS ? WP_GRENADE_LAUNCHER : WP_GRENADE_PINEAPPLE, 0, grenadeCount, qfalse);
+	AddWeaponToPlayer(client, classInfo->classGrenadeWeapon, 0, classInfo->defaultGrenadeCount, qfalse);
 
 	//
 	// primary weapon
 	//
-	weapon = classInfo->classPrimaryWeapons[0]; // default primary weapon
+	weapon = classInfo->classPrimaryWeapons[0].weapon; // default primary weapon
 
 	// parse available primary weapons and check is valid for current class
-	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classPrimaryWeapons[i] != 0; i++)
+	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classPrimaryWeapons[i].weapon; i++)
 	{
-		if (classInfo->classPrimaryWeapons[i] == client->sess.playerWeapon)
+		if (classInfo->classPrimaryWeapons[i].weapon == client->sess.playerWeapon)
 		{
 			weapon = client->sess.playerWeapon;
 			break;
 		}
 		// check for an equivalent if the team are not correct following the weapon
-		else if (classInfo->classPrimaryWeapons[i] == GetWeaponTableData(client->sess.playerWeapon)->weapEquiv)
+		else if (classInfo->classPrimaryWeapons[i].weapon == GetWeaponTableData(client->sess.playerWeapon)->weapEquiv)
 		{
 			weapon = GetWeaponTableData(client->sess.playerWeapon)->weapEquiv;
 			break;
@@ -1245,18 +1198,18 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	//
 	// secondary weapon
 	//
-	weapon = classInfo->classSecondaryWeapons[0];   // default secondary weapon
+	weapon = classInfo->classSecondaryWeapons[0].weapon;   // default secondary weapon
 
 	// parse available secondary weapons and check is valid for current class
-	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classSecondaryWeapons[i] != 0; i++)
+	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classSecondaryWeapons[i].weapon; i++)
 	{
-		if (classInfo->classSecondaryWeapons[i] == client->sess.playerWeapon2)
+		if (classInfo->classSecondaryWeapons[i].weapon == client->sess.playerWeapon2)
 		{
 			weapon = client->sess.playerWeapon2;
 			break;
 		}
 		// check for an equivalent if the team are not correct following the weapon
-		else if (classInfo->classSecondaryWeapons[i] == GetWeaponTableData(client->sess.playerWeapon2)->weapEquiv)
+		else if (classInfo->classSecondaryWeapons[i].weapon == GetWeaponTableData(client->sess.playerWeapon2)->weapEquiv)
 		{
 			weapon = GetWeaponTableData(client->sess.playerWeapon2)->weapEquiv;
 			break;
@@ -1268,7 +1221,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	{
 		if (pc != PC_SOLDIER || client->sess.skill[SK_HEAVY_WEAPONS] < 4)
 		{
-			weapon = classInfo->classSecondaryWeapons[0];                    // back to default secondary weapon
+			weapon = classInfo->classSecondaryWeapons[0].weapon;                    // back to default secondary weapon
 		}
 	}
 	// akimbo is available with the given skill level
@@ -1276,7 +1229,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	{
 		if (client->sess.skill[SK_LIGHT_WEAPONS] < 4)
 		{
-			weapon = classInfo->classSecondaryWeapons[0];                    // back to default secondary weapon
+			weapon = classInfo->classSecondaryWeapons[0].weapon;                    // back to default secondary weapon
 		}
 		else
 		{

@@ -2354,6 +2354,19 @@ typedef enum
 
 #define MAX_WEAPS_PER_CLASS 8   ///< was 10
 
+
+/**
+ * @struct bg_weaponclass_t
+ * @brief store weapon for class specificity
+ */   
+typedef struct
+{
+    weapon_t weapon;    ///< weapon
+    skillType_t skill;  ///< skill related
+    int minSkillLevel;  ///< minimum skill level needed to handle it
+    
+} bg_weaponclass_t; 
+
 /**
  * @struct bg_playerclass_t
  * @brief
@@ -2365,8 +2378,12 @@ typedef struct
 	const char *iconName;
 	const char *iconArrow;
 
-	weapon_t classPrimaryWeapons[MAX_WEAPS_PER_CLASS];
-	weapon_t classSecondaryWeapons[MAX_WEAPS_PER_CLASS];
+    weapon_t classKnifeWeapon;
+	bg_weaponclass_t classPrimaryWeapons[MAX_WEAPS_PER_CLASS];
+	bg_weaponclass_t classSecondaryWeapons[MAX_WEAPS_PER_CLASS];   
+    weapon_t classGrenadeWeapon;
+    int defaultGrenadeCount;
+    bg_weaponclass_t classMiscWeapons[MAX_WEAPS_PER_CLASS];
 
 	qhandle_t icon;
 	qhandle_t arrow;
