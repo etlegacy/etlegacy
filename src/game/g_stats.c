@@ -265,7 +265,6 @@ void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 	if (skill == SK_BATTLE_SENSE && ent->client->sess.skill[skill] == 1)
 	{
 		AddWeaponToPlayer(ent->client, WP_BINOCULARS, 1, 0, qfalse);
-		ent->client->ps.stats[STAT_KEYS] |= (1 << INV_BINOCS);
 	}
 	else if (skill == SK_FIRST_AID && ent->client->sess.playerType == PC_MEDIC && ent->client->sess.skill[skill] == 4)
 	{
@@ -679,7 +678,7 @@ void G_BuildEndgameStats(void)
 {
 	char      buffer[1024];
 	int       i, j;
-	gclient_t *best         = NULL;
+	gclient_t *best = NULL;
 	int       bestClientNum = -1;
 	float     mapXP, bestMapXP = 0.f;
 

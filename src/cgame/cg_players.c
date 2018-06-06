@@ -319,15 +319,18 @@ void CG_NewClientInfo(int clientNum)
 		{
 			if (newInfo.skill[i] > cgs.clientinfo[cg.clientNum].skill[i])
 			{
-				// slick hack so that funcs we call use teh new value now
+				// NOTE: slick hack so that funcs we call use the new value now
 				cgs.clientinfo[cg.clientNum].skill[i] = newInfo.skill[i];
 
 				if (newInfo.skill[i] == 4 && (i == SK_HEAVY_WEAPONS || i == SK_LIGHT_WEAPONS))
 				{
-					// Only select SMG (2) if using the single gun (0)
-					if (GetWeaponTableData(cgs.ccSelectedSecondaryWeapon)->isPistol)
+					bg_playerclass_t *classinfo;
+					classinfo = BG_GetPlayerClassInfo(cgs.clientinfo[cg.clientNum].team, cgs.clientinfo[cg.clientNum].cls);
+
+					// Only select new weapon if using the first weapon (pistol 0)
+					if (cgs.ccSelectedSecondaryWeapon == classinfo->classSecondaryWeapons[0].weapon)
 					{
-                        CG_LimboPanel_SetDefaultWeapon(SECONDARY_SLOT);
+						CG_LimboPanel_SetDefaultWeapon(SECONDARY_SLOT);
 						CG_LimboPanel_SendSetupMsg(qfalse);
 					}
 				}

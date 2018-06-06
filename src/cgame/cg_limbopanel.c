@@ -1651,7 +1651,7 @@ void CG_LimboPanel_ClassBar_Draw(panel_button_t *button)
 	CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString(buffer), 0, 0, button->font->style, button->font->font);
 }
 
-static vec4_t clrRenderClassButton = { 1.f, 1.f, 1.f, 0.4f };
+static vec4_t clrRenderClassButton  = { 1.f, 1.f, 1.f, 0.4f };
 static vec4_t clrRenderClassButton2 = { 1.f, 1.f, 1.f, 0.75f };
 static vec4_t clrRenderClassButton3 = { 1.f, 1.f, 1.f, 0.6f };
 static vec4_t clrRenderClassButton4 = { 1.f, 0.f, 0.f, 0.5f };
@@ -2366,7 +2366,7 @@ qboolean CG_LimboPanel_WeaponPanel_KeyUp(panel_button_t *button, int key)
 
 				CG_LimboPanel_SetSelectedWeaponNum(cgs.ccSelectedWeaponSlot, (weapon_t)button->data[cnt]);
 
-				if (CG_LimboPanel_IsValidSelectedWeapon(SECONDARY_SLOT))
+				if (!CG_LimboPanel_IsValidSelectedWeapon(SECONDARY_SLOT))
 				{
 					CG_LimboPanel_SetDefaultWeapon(SECONDARY_SLOT);
 				}
@@ -2443,7 +2443,7 @@ void CG_LimboPanel_WeaponPanel_DrawWeapon(rectDef_t *rect, weapon_t weap, qboole
 	CG_Text_Paint_Ext(x, rect->y + rect->h - 2, 0.2f, 0.2f, colorBlack, ofTxt, 0, 0, 0, &cgs.media.limboFont2);
 }
 
-static vec4_t clrBackBorder = { 0.1f, 0.1f, 0.1f, 1.f };
+static vec4_t clrBackBorder  = { 0.1f, 0.1f, 0.1f, 1.f };
 static vec4_t clrBackBorder2 = { 0.2f, 0.2f, 0.2f, 1.f };
 
 #define BRDRSIZE 4
@@ -2507,7 +2507,7 @@ void CG_LimboPanel_Border_Draw(panel_button_t *button)
 	CG_DrawBorder(button->rect.x, button->rect.y, button->rect.w, button->rect.h, qtrue, qtrue);
 }
 
-static vec4_t clrWeaponPanel = { 0.f, 0.f, 0.f, 0.4f };
+static vec4_t clrWeaponPanel  = { 0.f, 0.f, 0.f, 0.4f };
 static vec4_t clrWeaponPanel2 = { 1.f, 1.f, 1.f, 0.4f };
 
 /**
@@ -2554,26 +2554,29 @@ void CG_LimboPanel_WeaponPanel(panel_button_t *button)
 
 		if (cgs.ccSelectedWeaponSlot == PRIMARY_SLOT)
 		{
-			cycleWeap = classInfo->classPrimaryWeapons[i];
+			// is player had the minimum level required to use this weapon
+			if (cgs.clientinfo[cg.clientNum].skill[classInfo->classPrimaryWeapons[i].skill] < classInfo->classPrimaryWeapons[i].minSkillLevel)
+			{
+				continue;
+			}
+
+			cycleWeap = classInfo->classPrimaryWeapons[i].weapon;
 		}
 		else
 		{
-			if (GetWeaponTableData(classInfo->classSecondaryWeapons[i])->isSMG)
+			// is player had the minimum level required to use this weapon
+			if (cgs.clientinfo[cg.clientNum].skill[classInfo->classSecondaryWeapons[i].skill] < classInfo->classSecondaryWeapons[i].minSkillLevel)
 			{
-				if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] < 4 || CG_LimboPanel_GetClass() != PC_SOLDIER || GetWeaponTableData(cgs.ccSelectedPrimaryWeapon)->isSMG)
-				{
-					continue;
-				}
-			}
-			else if (GetWeaponTableData(classInfo->classSecondaryWeapons[i])->isAkimbo)
-			{
-				if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] < 4)
-				{
-					continue;
-				}
+				continue;
 			}
 
-			cycleWeap = classInfo->classSecondaryWeapons[i];
+			// if player handling a similar weapon in primary slot, don't show it
+			if (classInfo->classSecondaryWeapons[i].weapon == cgs.ccSelectedPrimaryWeapon)
+			{
+				continue;
+			}
+
+			cycleWeap = classInfo->classSecondaryWeapons[i].weapon;
 		}
 
 		if (cycleWeap)
@@ -3195,18 +3198,14 @@ void CG_LimboPanel_Setup(void)
 
 	if (!cgs.limboLoadoutSelected)
 	{
-		bg_playerclass_t *classInfo;
-
-		classInfo = CG_LimboPanel_GetPlayerClass();
-
 		CG_LimboPanel_SetSelectedWeaponNum(PRIMARY_SLOT, (weapon_t)cgs.clientinfo[cg.clientNum].latchedweapon);
 
-		if (CG_LimboPanel_IsValidSelectedWeapon(PRIMARY_SLOT) || CG_LimboPanel_RealWeaponIsDisabled(cgs.ccSelectedPrimaryWeapon))
+		if (!CG_LimboPanel_IsValidSelectedWeapon(PRIMARY_SLOT) || CG_LimboPanel_RealWeaponIsDisabled(cgs.ccSelectedPrimaryWeapon))
 		{
 			CG_LimboPanel_SetDefaultWeapon(PRIMARY_SLOT);
 		}
 
-		if (CG_LimboPanel_IsValidSelectedWeapon(SECONDARY_SLOT))
+		if (!CG_LimboPanel_IsValidSelectedWeapon(SECONDARY_SLOT))
 		{
 			CG_LimboPanel_SetDefaultWeapon(SECONDARY_SLOT);
 		}
@@ -3430,7 +3429,13 @@ int CG_LimboPanel_WeaponCount(int slotNumber)
 	{
 		for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 		{
-			if (!classInfo->classPrimaryWeapons[i])
+			// is player had the minimum level required to use this weapon
+			if (cgs.clientinfo[cg.clientNum].skill[classInfo->classPrimaryWeapons[i].skill] < classInfo->classPrimaryWeapons[i].minSkillLevel)
+			{
+				continue;
+			}
+
+			if (!classInfo->classPrimaryWeapons[i].weapon)
 			{
 				break;
 			}
@@ -3442,24 +3447,21 @@ int CG_LimboPanel_WeaponCount(int slotNumber)
 	{
 		for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 		{
-			if (!classInfo->classSecondaryWeapons[i])
+			if (!classInfo->classSecondaryWeapons[i].weapon)
 			{
 				break;
 			}
 
-			if (GetWeaponTableData(classInfo->classSecondaryWeapons[i])->isSMG)
+			// is player had the minimum level required to use this weapon
+			if (cgs.clientinfo[cg.clientNum].skill[classInfo->classSecondaryWeapons[i].skill] < classInfo->classSecondaryWeapons[i].minSkillLevel)
 			{
-				if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] < 4 || CG_LimboPanel_GetClass() != PC_SOLDIER || GetWeaponTableData(cgs.ccSelectedPrimaryWeapon)->isSMG)
-				{
-					continue;
-				}
+				continue;
 			}
-			else if (GetWeaponTableData(classInfo->classSecondaryWeapons[i])->isAkimbo)
+
+			// if player handling a similar weapon in primary slot, don't show it
+			if (classInfo->classSecondaryWeapons[i].weapon == cgs.ccSelectedPrimaryWeapon)
 			{
-				if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] < 4)
-				{
-					continue;
-				}
+				continue;
 			}
 
 			cnt++;
@@ -3477,7 +3479,7 @@ int CG_LimboPanel_WeaponCount(int slotNumber)
 qboolean CG_LimboPanel_IsValidSelectedWeapon(int slot)
 {
 	bg_playerclass_t *classInfo;
-	int              i, cnt = 0;
+	int              i;
 	weapon_t         weap;
 
 	classInfo = CG_LimboPanel_GetPlayerClass();
@@ -3487,49 +3489,50 @@ qboolean CG_LimboPanel_IsValidSelectedWeapon(int slot)
 	{
 		for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 		{
-			if (!classInfo->classPrimaryWeapons[i])
+			if (!classInfo->classPrimaryWeapons[i].weapon)
 			{
-				return qfalse;
+				break;
 			}
 
-			if (classInfo->classPrimaryWeapons[i] == weap)
+			if (classInfo->classPrimaryWeapons[i].weapon == weap)
 			{
-				return i >= CG_LimboPanel_WeaponCount(slot);
+				// is player had the minimum level required to use this weapon
+				if (cgs.clientinfo[cg.clientNum].skill[classInfo->classPrimaryWeapons[i].skill] < classInfo->classPrimaryWeapons[i].minSkillLevel)
+				{
+					break;
+				}
+
+				return qtrue;
 			}
 		}
 	}
 
 	for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 	{
-		if (!classInfo->classSecondaryWeapons[i])
-		{
-			return qfalse;
-		}
-
-		if (GetWeaponTableData(classInfo->classSecondaryWeapons[i])->isSMG)
-		{
-			if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] < 4 || CG_LimboPanel_GetClass() != PC_SOLDIER || GetWeaponTableData(cgs.ccSelectedPrimaryWeapon)->isSMG)
-			{
-				continue;
-			}
-		}
-		else if (GetWeaponTableData(classInfo->classSecondaryWeapons[i])->isAkimbo)
-		{
-			if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] < 4)
-			{
-				continue;
-			}
-		}
-
-		if (weap == classInfo->classSecondaryWeapons[i])
+		if (!classInfo->classSecondaryWeapons[i].weapon)
 		{
 			break;
 		}
 
-		cnt++;
+		if (classInfo->classSecondaryWeapons[i].weapon == weap)
+		{
+			// is player had the minimum level required to use this weapon
+			if (cgs.clientinfo[cg.clientNum].skill[classInfo->classSecondaryWeapons[i].skill] < classInfo->classSecondaryWeapons[i].minSkillLevel)
+			{
+				break;
+			}
+
+			// if player handling a similar weapon in primary slot, don't show it
+			if (classInfo->classSecondaryWeapons[i].weapon == cgs.ccSelectedPrimaryWeapon)
+			{
+				break;
+			}
+
+			return qtrue;
+		}
 	}
 
-	return cnt >= CG_LimboPanel_WeaponCount(slot);
+	return qfalse;
 }
 
 /**
@@ -3553,22 +3556,35 @@ void CG_LimboPanel_SetDefaultWeapon(int slot)
 
 	if (slot == PRIMARY_SLOT)
 	{
-		cgs.ccSelectedPrimaryWeapon = classInfo->classPrimaryWeapons[0];
+		cgs.ccSelectedPrimaryWeapon = classInfo->classPrimaryWeapons[0].weapon;
 	}
 	else
 	{
-		int cnt;
+		int i, lastValidWeaponPos = 0;
 
-		cnt = CG_LimboPanel_WeaponCount(SECONDARY_SLOT);
-
-		if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] < 4)
+		for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 		{
-			if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 && CG_LimboPanel_GetClass() == PC_SOLDIER && !GetWeaponTableData(cgs.ccSelectedPrimaryWeapon)->isSMG)
+			if (!classInfo->classSecondaryWeapons[i].weapon)
 			{
-				cnt++;
+				break;
 			}
+
+			// is player had the minimum level required to use this weapon
+			if (cgs.clientinfo[cg.clientNum].skill[classInfo->classSecondaryWeapons[i].skill] < classInfo->classSecondaryWeapons[i].minSkillLevel)
+			{
+				continue;
+			}
+
+			// if player handling a similar weapon in primary slot, don't show it
+			if (classInfo->classSecondaryWeapons[i].weapon == cgs.ccSelectedPrimaryWeapon)
+			{
+				continue;
+			}
+
+			lastValidWeaponPos = i;
 		}
-		cgs.ccSelectedSecondaryWeapon = classInfo->classSecondaryWeapons[cnt - 1];
+
+		cgs.ccSelectedSecondaryWeapon = classInfo->classSecondaryWeapons[lastValidWeaponPos].weapon;
 	}
 }
 

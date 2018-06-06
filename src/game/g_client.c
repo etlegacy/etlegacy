@@ -1087,6 +1087,17 @@ void AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammocli
 	COM_BitSet(client->ps.weapons, weapon);
 	client->ps.ammoclip[GetWeaponTableData(weapon)->clipIndex] = ammoclip;
 	client->ps.ammo[GetWeaponTableData(weapon)->ammoIndex]     = ammo;
+
+	if (GetWeaponTableData(weapon)->isAkimbo)
+	{
+		client->ps.ammoclip[GetWeaponTableData(GetWeaponTableData(weapon)->akimboSideArm)->clipIndex] = GetWeaponTableData(weapon)->defaultStartingClip;
+	}
+
+	if (weapon == WP_BINOCULARS)
+	{
+		client->ps.stats[STAT_KEYS] |= (1 << INV_BINOCS);
+	}
+
 	if (setcurrent)
 	{
 		client->ps.weapon = weapon;
@@ -1098,11 +1109,6 @@ void AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammocli
 #ifdef FEATURE_OMNIBOT
 	Bot_Event_AddWeapon(client->ps.clientNum, Bot_WeaponGameToBot(weapon));
 #endif
-    
-    if (weapon == WP_BINOCULARS)
-    {
-        client->ps.stats[STAT_KEYS] |= (1 << INV_BINOCS);
-    }
 }
 
 /**
@@ -1111,8 +1117,8 @@ void AddWeaponToPlayer(gclient_t *client, weapon_t weapon, int ammo, int ammocli
  */
 void SetWolfSpawnWeapons(gclient_t *client)
 {
-	int              pc           = client->sess.playerType;
-	int              team         = client->sess.sessionTeam;
+	int              pc   = client->sess.playerType;
+	int              team = client->sess.sessionTeam;
 	int              i;
 	weapon_t         weapon;
 	bg_playerclass_t *classInfo;
@@ -1146,21 +1152,29 @@ void SetWolfSpawnWeapons(gclient_t *client)
 
 	client->ps.weaponstate = WEAPON_READY;
 
+	//
 	// knife
-    weapon = classInfo->classKnifeWeapon;
+	//
+	weapon = classInfo->classKnifeWeapon;
 	AddWeaponToPlayer(client, weapon, GetWeaponTableData(weapon)->defaultStartingAmmo, GetWeaponTableData(weapon)->defaultStartingClip, qtrue);
-    
-    // specifics weapon following class
-    for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classMiscWeapons[i].weapon; i++)
-    {
-        weapon = classInfo->classMiscWeapons[i].weapon;
-        
-        if ()
-        
-        AddWeaponToPlayer(client, weapon, GetWeaponTableData(weapon)->defaultStartingAmmo, GetWeaponTableData(weapon)->defaultStartingClip, qfalse);
-    }
 
+	//
+	// special weapons and items
+	//
+	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classMiscWeapons[i].weapon; i++)
+	{
+		weapon = classInfo->classMiscWeapons[i].weapon;
+
+		if (client->sess.skill[classInfo->classMiscWeapons[i].skill] >= classInfo->classMiscWeapons[i].minSkillLevel)
+		{
+			// add each
+			AddWeaponToPlayer(client, weapon, GetWeaponTableData(weapon)->defaultStartingAmmo, GetWeaponTableData(weapon)->defaultStartingClip, qfalse);
+		}
+	}
+
+	//
 	// grenade
+	//
 	AddWeaponToPlayer(client, classInfo->classGrenadeWeapon, 0, classInfo->defaultGrenadeCount, qfalse);
 
 	//
@@ -1171,20 +1185,24 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	// parse available primary weapons and check is valid for current class
 	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classPrimaryWeapons[i].weapon; i++)
 	{
-		if (classInfo->classPrimaryWeapons[i].weapon == client->sess.playerWeapon)
+		if (client->sess.skill[classInfo->classPrimaryWeapons[i].skill] >= classInfo->classPrimaryWeapons[i].minSkillLevel)
 		{
-			weapon = client->sess.playerWeapon;
-			break;
-		}
-		// check for an equivalent if the team are not correct following the weapon
-		else if (classInfo->classPrimaryWeapons[i].weapon == GetWeaponTableData(client->sess.playerWeapon)->weapEquiv)
-		{
-			weapon = GetWeaponTableData(client->sess.playerWeapon)->weapEquiv;
-			break;
+			if (classInfo->classPrimaryWeapons[i].weapon == client->sess.playerWeapon)
+			{
+				weapon = client->sess.playerWeapon;
+				break;
+			}
+
+			// check for an equivalent if the team are not correct following the weapon
+			if (classInfo->classPrimaryWeapons[i].weapon == GetWeaponTableData(client->sess.playerWeapon)->weapEquiv)
+			{
+				weapon = GetWeaponTableData(client->sess.playerWeapon)->weapEquiv;
+				break;
+			}
 		}
 	}
 
-	// add primary weapon
+	// add primary weapon (set to current weapon)
 	AddWeaponToPlayer(client, weapon, GetWeaponTableData(weapon)->defaultStartingAmmo, GetWeaponTableData(weapon)->defaultStartingClip, qtrue);
 
 	// add alternative weapon if exist for primary weapon
@@ -1203,37 +1221,20 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	// parse available secondary weapons and check is valid for current class
 	for (i = 0; i < MAX_WEAPS_PER_CLASS && classInfo->classSecondaryWeapons[i].weapon; i++)
 	{
-		if (classInfo->classSecondaryWeapons[i].weapon == client->sess.playerWeapon2)
+		if (client->sess.skill[classInfo->classSecondaryWeapons[i].skill] >= classInfo->classSecondaryWeapons[i].minSkillLevel)
 		{
-			weapon = client->sess.playerWeapon2;
-			break;
-		}
-		// check for an equivalent if the team are not correct following the weapon
-		else if (classInfo->classSecondaryWeapons[i].weapon == GetWeaponTableData(client->sess.playerWeapon2)->weapEquiv)
-		{
-			weapon = GetWeaponTableData(client->sess.playerWeapon2)->weapEquiv;
-			break;
-		}
-	}
+			if (classInfo->classSecondaryWeapons[i].weapon == client->sess.playerWeapon2)
+			{
+				weapon = client->sess.playerWeapon2;
+				break;
+			}
 
-	// SMG as secondary weapon is available when soldier reach the given skill lvl
-	if (GetWeaponTableData(client->sess.playerWeapon2)->isSMG)
-	{
-		if (pc != PC_SOLDIER || client->sess.skill[SK_HEAVY_WEAPONS] < 4)
-		{
-			weapon = classInfo->classSecondaryWeapons[0].weapon;                    // back to default secondary weapon
-		}
-	}
-	// akimbo is available with the given skill level
-	else if (GetWeaponTableData(client->sess.playerWeapon2)->isAkimbo)
-	{
-		if (client->sess.skill[SK_LIGHT_WEAPONS] < 4)
-		{
-			weapon = classInfo->classSecondaryWeapons[0].weapon;                    // back to default secondary weapon
-		}
-		else
-		{
-			client->ps.ammoclip[GetWeaponTableData(GetWeaponTableData(client->sess.playerWeapon2)->akimboSideArm)->clipIndex] = GetWeaponTableData(client->sess.playerWeapon2)->defaultStartingClip;
+			// check for an equivalent if the team are not correct following the weapon
+			if (classInfo->classSecondaryWeapons[i].weapon == GetWeaponTableData(client->sess.playerWeapon2)->weapEquiv)
+			{
+				weapon = GetWeaponTableData(client->sess.playerWeapon2)->weapEquiv;
+				break;
+			}
 		}
 	}
 
@@ -2557,7 +2558,7 @@ void ClientBegin(int clientNum)
  */
 gentity_t *SelectSpawnPointFromList(char *list, vec3_t spawn_origin, vec3_t spawn_angles)
 {
-	char      *pStr       = list, *token;
+	char      *pStr = list, *token;
 	gentity_t *spawnPoint = NULL, *trav;
 	int       valid[MAX_SPAWNPOINTFROMLIST_POINTS];
 	int       numValid = 0;
@@ -2826,7 +2827,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 			classInfo = BG_PlayerClassForPlayerState(&ent->client->ps);
 
-			client->sess.latchPlayerWeapon = classInfo->classPrimaryWeapons[0];
+			client->sess.latchPlayerWeapon = classInfo->classPrimaryWeapons[0].weapon;
 			update                         = qtrue;
 		}
 
@@ -2842,7 +2843,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 			classInfo = BG_PlayerClassForPlayerState(&ent->client->ps);
 
-			client->sess.playerWeapon = classInfo->classPrimaryWeapons[0];
+			client->sess.playerWeapon = classInfo->classPrimaryWeapons[0].weapon;
 			update                    = qtrue;
 		}
 

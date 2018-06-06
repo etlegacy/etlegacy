@@ -83,7 +83,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 				{ WP_MEDIC_SYRINGE,        SK_FIRST_AID,                                0 },
 				{ WP_MEDIC_ADRENALINE,     SK_FIRST_AID,                                4 },
 				{ WP_MEDKIT,               SK_FIRST_AID,                                0 },
-                { WP_BINOCULARS,           SK_BATTLE_SENSE,                             1 },
+				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             1 },
 			},
 			0,
 			0,
@@ -108,7 +108,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 				{ WP_DYNAMITE,             SK_EXPLOSIVES_AND_CONSTRUCTION,              0 },
 				{ WP_PLIERS,               SK_EXPLOSIVES_AND_CONSTRUCTION,              0 },
 				{ WP_LANDMINE,             SK_EXPLOSIVES_AND_CONSTRUCTION,              0 },
-                { WP_BINOCULARS,           SK_BATTLE_SENSE,                             1 },
+				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             1 },
 			},
 			0,
 			0,
@@ -131,7 +131,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			{
 				{ WP_AMMO,                 SK_SIGNALS,                                  0 },
 				{ WP_SMOKE_MARKER,         SK_SIGNALS,                                  0 },
-                { WP_BINOCULARS,           SK_BATTLE_SENSE,                             0 },
+				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             0 },
 			},
 			0,
 			0,
@@ -151,11 +151,13 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			{
 				{ WP_SILENCER,             SK_LIGHT_WEAPONS,                            0 },
 				{ WP_AKIMBO_SILENCEDLUGER, SK_LIGHT_WEAPONS,                            4 },
-                { WP_BINOCULARS,           SK_BATTLE_SENSE,                             0 },
 			},
 			WP_GRENADE_LAUNCHER, 2,
 			{
-				{ 0,                       0,                                           0 },
+				{ WP_SMOKE_BOMB,           SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0 },
+				{ WP_SATCHEL,              SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0 },
+				{ WP_SATCHEL_DET,          SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0 },
+				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             0 },
 			},
 			0,
 			0,
@@ -208,7 +210,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 				{ WP_MEDIC_SYRINGE,        SK_FIRST_AID,                                0 },
 				{ WP_MEDIC_ADRENALINE,     SK_FIRST_AID,                                4 },
 				{ WP_MEDKIT,               SK_FIRST_AID,                                0 },
-                { WP_BINOCULARS,           SK_BATTLE_SENSE,                             1 },
+				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             1 },
 			},
 			0,
 			0,
@@ -233,7 +235,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 				{ WP_DYNAMITE,             SK_EXPLOSIVES_AND_CONSTRUCTION,              0 },
 				{ WP_PLIERS,               SK_EXPLOSIVES_AND_CONSTRUCTION,              0 },
 				{ WP_LANDMINE,             SK_EXPLOSIVES_AND_CONSTRUCTION,              0 },
-                { WP_BINOCULARS,           SK_BATTLE_SENSE,                             1 },
+				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             1 },
 			},
 			0,
 			0,
@@ -256,7 +258,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			{
 				{ WP_AMMO,                 SK_SIGNALS,                                  0 },
 				{ WP_SMOKE_MARKER,         SK_SIGNALS,                                  0 },
-                { WP_BINOCULARS,           SK_BATTLE_SENSE,                             0 },
+				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             0 },
 			},
 			0,
 			0,
@@ -282,7 +284,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 				{ WP_SMOKE_BOMB,           SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0 },
 				{ WP_SATCHEL,              SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0 },
 				{ WP_SATCHEL_DET,          SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0 },
-                { WP_BINOCULARS,           SK_BATTLE_SENSE,                             0 },
+				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             0 },
 			},
 			0,
 			0,
@@ -338,7 +340,7 @@ qboolean BG_ClassHasWeapon(bg_playerclass_t *classInfo, weapon_t weap)
 
 	for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 	{
-		if (classInfo->classPrimaryWeapons[i] == weap)
+		if (classInfo->classPrimaryWeapons[i].weapon == weap)
 		{
 			return qtrue;
 		}

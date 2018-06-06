@@ -70,9 +70,9 @@ static void CG_StatsDown_f(void)
 	{
 		if (
 #ifdef FEATURE_MULTIVIEW
-		    cg.mvTotalClients < 1 &&
+			cg.mvTotalClients < 1 &&
 #endif
-		    cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+			cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 		{
 			Pri("You must be a player or following a player to use +stats\n");
 			return;
@@ -93,9 +93,9 @@ static void CG_StatsDown_f(void)
 		{
 			int i =
 #ifdef FEATURE_MULTIVIEW
-			    (cg.mvTotalClients > 0) ? (cg.mvCurrentActive->mvInfo & MV_PID) :
+				(cg.mvTotalClients > 0) ? (cg.mvCurrentActive->mvInfo & MV_PID) :
 #endif
-			    cg.snap->ps.clientNum;
+				cg.snap->ps.clientNum;
 
 			cgs.gamestats.requestTime = cg.time + 2000;
 			trap_SendClientCommand(va("sgstats %d", i));
@@ -886,13 +886,13 @@ void CG_dumpStats_f(void)
 		cgs.dumpStatsTime = cg.time + 2000;
 		trap_SendClientCommand(
 #ifdef FEATURE_MULTIVIEW
-		    (cg.mvTotalClients < 1) ?
+			(cg.mvTotalClients < 1) ?
 #endif
-		    "weaponstats"
+			"weaponstats"
 #ifdef FEATURE_MULTIVIEW
 			: "statsall"
 #endif
-		    );
+			);
 	}
 }
 
@@ -1229,70 +1229,39 @@ static void CG_TimerReset_f(void)
  */
 static int CG_GetSecondaryWeapon(int weapon, team_t team, int playerclass)
 {
-	int outputWeapon;
+	bg_playerclass_t *classInfo;
+	classInfo = BG_GetPlayerClassInfo(team, playerclass);
 
-	if (cgs.clientinfo[cg.clientNum].skill[SK_HEAVY_WEAPONS] >= 4 && playerclass == PC_SOLDIER)
+	int i, lastValidWeaponPos = 0;
+
+	for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 	{
-		switch (weapon)
+		if (!classInfo->classSecondaryWeapons[i].weapon)
 		{
-		case 1:
-			outputWeapon = (team == TEAM_AXIS) ? WP_LUGER : WP_COLT;
-			break;
-		case 2:
-			if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] >= 4)
-			{
-				outputWeapon = (team == TEAM_AXIS) ? WP_AKIMBO_LUGER : WP_AKIMBO_COLT;
-			}
-			else
-			{
-				outputWeapon = (team == TEAM_AXIS) ? WP_MP40 : WP_THOMPSON;
-			}
-			break;
-		case 3:
-		default:
-			outputWeapon = (team == TEAM_AXIS) ? WP_MP40 : WP_THOMPSON;
 			break;
 		}
-	}
-	else if (cgs.clientinfo[cg.clientNum].skill[SK_LIGHT_WEAPONS] >= 4)
-	{
-		switch (weapon)
+
+		// is player had the minimum level required to use this weapon
+		if (cgs.clientinfo[cg.clientNum].skill[classInfo->classSecondaryWeapons[i].skill] < classInfo->classSecondaryWeapons[i].minSkillLevel)
 		{
-		case 1:
-			goto single_pistol;
-		case 2:
-		default:
-			goto akimbo_pistols;
+			continue;
 		}
-	}
-	else
-	{
-		goto single_pistol;
+
+		// if player handling a similar weapon in primary slot, don't show it
+		if (classInfo->classSecondaryWeapons[i].weapon == cgs.ccSelectedPrimaryWeapon)
+		{
+			continue;
+		}
+
+		lastValidWeaponPos = i;
 	}
 
-	return outputWeapon;
+	if (weapon < 0 || weapon > lastValidWeaponPos)
+	{
+		return classInfo->classSecondaryWeapons[lastValidWeaponPos].weapon;
+	}
 
-single_pistol:
-	if (playerclass == PC_COVERTOPS)
-	{
-		outputWeapon = (team == TEAM_AXIS) ? WP_SILENCER : WP_SILENCED_COLT;
-	}
-	else
-	{
-		outputWeapon = (team == TEAM_AXIS) ? WP_LUGER : WP_COLT;
-	}
-	return outputWeapon;
-
-akimbo_pistols:
-	if (playerclass == PC_COVERTOPS)
-	{
-		outputWeapon = (team == TEAM_AXIS) ? WP_AKIMBO_SILENCEDLUGER : WP_AKIMBO_SILENCEDCOLT;
-	}
-	else
-	{
-		outputWeapon = (team == TEAM_AXIS) ? WP_AKIMBO_LUGER : WP_AKIMBO_COLT;
-	}
-	return outputWeapon;
+	return classInfo->classSecondaryWeapons[weapon].weapon;
 }
 
 /**
@@ -1398,21 +1367,21 @@ static void CG_Class_f(void)
 		weapon1 = atoi(cls);
 		if (weapon1 <= 0 || weapon1 > MAX_WEAPS_PER_CLASS)
 		{
-			weapon1 = classinfo->classPrimaryWeapons[0];
+			weapon1 = classinfo->classPrimaryWeapons[0].weapon;
 		}
-		else if (!classinfo->classPrimaryWeapons[weapon1 - 1])
+		else if (!classinfo->classPrimaryWeapons[weapon1 - 1].weapon)
 		{
 			CG_Printf("Invalid command format for weapon.\n");
 			return;
 		}
 		else
 		{
-			weapon1 = classinfo->classPrimaryWeapons[weapon1 - 1];
+			weapon1 = classinfo->classPrimaryWeapons[weapon1 - 1].weapon;
 		}
 	}
 	else
 	{
-		weapon1 = classinfo->classPrimaryWeapons[0];
+		weapon1 = classinfo->classPrimaryWeapons[0].weapon;
 	}
 
 	if (trap_Argc() > 3)

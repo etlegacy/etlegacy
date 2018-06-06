@@ -212,14 +212,14 @@ weapon_t G_GetPrimaryWeaponForClient(gclient_t *client)
 
 		for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 		{
-			if (GetWeaponTableData(classInfo->classPrimaryWeapons[i])->isSMG)
+			if (GetWeaponTableData(classInfo->classPrimaryWeapons[i].weapon)->isSMG)
 			{
 				continue;
 			}
 
-			if (COM_BitCheck(client->ps.weapons, classInfo->classPrimaryWeapons[i]))
+			if (COM_BitCheck(client->ps.weapons, classInfo->classPrimaryWeapons[i].weapon))
 			{
-				return classInfo->classPrimaryWeapons[i];
+				return classInfo->classPrimaryWeapons[i].weapon;
 			}
 		}
 	}
@@ -325,14 +325,14 @@ weapon_t G_GetPrimaryWeaponForClientSoldier(weapon_t weapon, gclient_t *client)
 
 			for (i = 0; i < MAX_WEAPS_PER_CLASS; i++)
 			{
-				if (GetWeaponTableData(classInfo->classPrimaryWeapons[i])->isSMG)
+				if (GetWeaponTableData(classInfo->classPrimaryWeapons[i].weapon)->isSMG)
 				{
 					continue;
 				}
 
-				if (COM_BitCheck(client->ps.weapons, classInfo->classPrimaryWeapons[i]))
+				if (COM_BitCheck(client->ps.weapons, classInfo->classPrimaryWeapons[i].weapon))
 				{
-					return classInfo->classPrimaryWeapons[i];
+					return classInfo->classPrimaryWeapons[i].weapon;
 				}
 			}
 		}
