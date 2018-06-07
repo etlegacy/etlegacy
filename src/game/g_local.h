@@ -1647,7 +1647,7 @@ float ClientHitboxMaxZ(gentity_t *hitEnt);
 void ClientThink(int clientNum);
 void ClientEndFrame(gentity_t *ent);
 void G_RunClient(gentity_t *ent);
-void ClientThink_cmd(gentity_t *ent, usercmd_t *cmd);
+void ClientThink_cmd(gentity_t *ent, usercmd_t *cmd, qboolean skipServerTime);
 
 // et-antiwarp.c
 void etpro_AddUsercmd(int clientNum, usercmd_t *cmd);
