@@ -744,13 +744,12 @@ static void CG_DrawPlayerStatusHead(hudComponent_t comp)
 }
 
 /**
- * @brief CG_PlayerAmmoValue
- * @param[out] ammo
- * @param[out] clips
- * @param[out] akimboammo
- * @return
+ * @brief Get the current ammo and/or clip count of the holded weapon (if using ammo).
+ * @param[out] ammo - the number of ammo left (in the current clip if using clip)
+ * @param[out] clips - the total ammount of ammo in all clips (if using clip)
+ * @param[out] akimboammo - the number of ammo left in the second pistol of akimbo (if using akimbo)
  */
-static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
+static void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 {
 	centity_t     *cent;
 	playerState_t *ps;
@@ -770,27 +769,20 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 
 	weap = (weapon_t)cent->currentState.weapon;
 
-	if (!weap)
+	if (!IS_VALID_WEAPON(weap))
 	{
-		return weap;
+		return;
 	}
 
 	// some weapons don't draw ammo count
 	if (!GetWeaponTableData(weap)->useAmmo)
 	{
-		return weap;
+		return;
 	}
 
 	if (BG_PlayerMounted(cg.snap->ps.eFlags))
 	{
-		if (IS_MOUNTED_TANK_BROWNING(cg.snap->ps.clientNum))
-		{
-			return WP_MOBILE_BROWNING;
-		}
-		else
-		{
-			return WP_MOBILE_MG42;
-		}
+		return;
 	}
 
 	// total ammo in clips
@@ -836,8 +828,6 @@ static int CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 	{
 		*clips = -1;
 	}
-
-	return weap;
 }
 
 vec4_t bgcolor = { 1.f, 1.f, 1.f, .3f };    // bars backgound
@@ -1065,7 +1055,7 @@ static void CG_DrawGunIcon(rectDef_t location)
 static void CG_DrawAmmoCount(float x, float y)
 {
 	int  value, value2, value3;
-	char buffer[32];
+	char buffer[16];
 
 	// Draw ammo
 	CG_PlayerAmmoValue(&value, &value2, &value3);
