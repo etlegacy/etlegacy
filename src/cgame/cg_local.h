@@ -144,7 +144,7 @@
 #define MV_SELECTED         0x0100  ///< MultiView selected window flag is the 9th bit
 #endif
 
-#define ISVALIDCLIENTNUM(clientNum) (clientNum >= 0 && clientNum < MAX_CLIENTS)
+#define ISVALIDCLIENTNUM(clientNum) ((clientNum) >= 0 && (clientNum) < MAX_CLIENTS)
 
 /**
  * @struct specName_s
@@ -2643,7 +2643,7 @@ void CG_RunMenuScript(char **args);
 void CG_GetTeamColor(vec4_t *color);
 
 // cg_draw_hud.c
-void CG_ReadHudScripts();
+void CG_ReadHudScripts(void);
 void CG_Hud_Setup(void);
 void CG_DrawUpperRight(void);
 void CG_SetHud(void);
@@ -2966,8 +2966,6 @@ typedef struct
 void CG_Respawn(qboolean revived);
 void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops);
 
-void CG_GenerateTracemap(void);
-
 //===============================================
 
 // system traps
@@ -3260,8 +3258,6 @@ typedef struct
 } rankicon_t;
 
 extern rankicon_t rankicons[NUM_EXPERIENCE_LEVELS][2][2];
-
-fireteamData_t *CG_IsOnSameFireteam(int clientNum, int clientNum2);
 
 // merged the common UI elements
 #define UI_CAMPAIGN_BRIEFING 0
