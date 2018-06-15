@@ -4188,7 +4188,7 @@ public:
 					if (pEnt->r.ownerNum != pEnt->s.number)
 					{
 						gentity_t *pOwner = &g_entities[pEnt->r.ownerNum];
-						if (pOwner && pOwner->active && pOwner->client && pOwner->s.eFlags & EF_MG42_ACTIVE)
+						if (pOwner && pOwner->active && pOwner->client && (pOwner->s.eFlags & EF_MG42_ACTIVE))
 						{
 							owner = HandleFromEntity(pOwner);
 						}

@@ -80,7 +80,7 @@ hash(register const char *str, register unsigned int len)
 	{
 	default:
 		hval += asso_values[(unsigned char)str[1]];
-	/*FALLTHROUGH*/
+	// FALLTHROUGH
 	case 1:
 		hval += asso_values[(unsigned char)str[0]];
 		break;

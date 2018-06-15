@@ -3502,7 +3502,7 @@ static void PM_Weapon(void)
 			// check if there is enough charge to fire
 			if (pm->cmd.serverTime - pm->ps->classWeaponTime < chargeTime * coeff)
 			{
-				if ((pm->ps->weapon == WP_MEDKIT || pm->ps->weapon == WP_AMMO) && pm->cmd.buttons & BUTTON_ATTACK)
+				if ((pm->ps->weapon == WP_MEDKIT || pm->ps->weapon == WP_AMMO) && (pm->cmd.buttons & BUTTON_ATTACK))
 				{
 					BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_NOPOWER, qtrue, qfalse);
 				}
@@ -3532,7 +3532,7 @@ static void PM_Weapon(void)
 
 	// player is zooming or using binocular - no fire
 	// PC_FIELDOPS needs to zoom to call artillery
-	if (pm->ps->eFlags & EF_ZOOMING || pm->ps->weapon == WP_BINOCULARS)
+	if ((pm->ps->eFlags & EF_ZOOMING) || pm->ps->weapon == WP_BINOCULARS)
 	{
 #ifdef GAMEDLL
 		if (pm->ps->stats[STAT_PLAYER_CLASS] == PC_FIELDOPS)

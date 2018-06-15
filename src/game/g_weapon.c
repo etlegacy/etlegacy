@@ -1610,7 +1610,7 @@ void Weapon_Engineer(gentity_t *ent, gentity_t **firedShot)
 	VectorMA(muzzleTrace, 64, forward, end);             // CH_BREAKABLE_DIST
 	trap_EngineerTrace(&tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT | CONTENTS_TRIGGER);
 
-	if (tr.surfaceFlags & SURF_NOIMPACT || tr.fraction == 1.0f || tr.entityNum == ENTITYNUM_NONE || tr.entityNum == ENTITYNUM_WORLD)
+	if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.fraction == 1.0f || tr.entityNum == ENTITYNUM_NONE || tr.entityNum == ENTITYNUM_WORLD)
 	{
 		// might be constructible
 		if (!ent->client->touchingTOI)
@@ -1702,7 +1702,7 @@ weapengineergoto1:
 	{
 		trap_EngineerTrace(&tr, muzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
 
-		if (tr.surfaceFlags & SURF_NOIMPACT || tr.fraction == 1.0f || tr.entityNum == ENTITYNUM_NONE || tr.entityNum == ENTITYNUM_WORLD)
+		if ((tr.surfaceFlags & SURF_NOIMPACT) || tr.fraction == 1.0f || tr.entityNum == ENTITYNUM_NONE || tr.entityNum == ENTITYNUM_WORLD)
 		{
 			// might be constructible
 			if (!ent->client->touchingTOI)
