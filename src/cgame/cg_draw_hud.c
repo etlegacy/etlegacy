@@ -648,8 +648,8 @@ void CG_ReadHudScripts(void)
 // HUD DRAWING FUNCTIONS BELLOW
 
 vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.8f };
-vec4_t HUD_Border     = { 0.5f, 0.5f, 0.5f, 0.5f };
-vec4_t HUD_Text       = { 0.6f, 0.6f, 0.6f, 1.0f };
+vec4_t HUD_Border = { 0.5f, 0.5f, 0.5f, 0.5f };
+vec4_t HUD_Text = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 /**
  * @brief CG_DrawPicShadowed
@@ -2251,6 +2251,7 @@ LAGOMETER
 ===============================================================================
 */
 
+#define PERIOD_SAMPLES 5000
 #define LAG_SAMPLES     128
 #define MAX_LAGOMETER_PING  900
 #define MAX_LAGOMETER_RANGE 300
@@ -2266,6 +2267,32 @@ typedef struct
 } lagometer_t;
 
 lagometer_t lagometer;
+
+/**
+ * @enum sample_s
+ * @typedef sample_t
+ * @brief
+ */
+typedef struct sample_s
+{
+	float value;
+	float elapsed;
+	float time;
+} sample_t;
+
+typedef struct sampledStat_s
+{
+	float period;
+	int value;
+	int count;
+	float avg;
+
+	float lastSampleTime;
+	sample_t samples[LAG_SAMPLES];
+	sample_t samplesTotal;
+} sampledStat_t;
+
+sampledStat_t sampledStat;
 
 /**
  * @brief Adds the current interpolate / extrapolate bar for this frame
@@ -2310,6 +2337,59 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 	lagometer.snapshotAntiwarp[index] = snap->ping;  // TODO: check this for demoPlayback
 	lagometer.snapshotFlags[index]    = snap->snapFlags;
 	lagometer.snapshotCount++;
+
+	index = sampledStat.count;
+
+	if (sampledStat.count <= LAG_SAMPLES)
+	{
+		sampledStat.count++;
+	}
+	else
+	{
+		index -= 1;
+	}
+
+	sampledStat.samples[index].value   = 1;
+	sampledStat.samples[index].elapsed = snap->serverTime - sampledStat.lastSampleTime;
+	sampledStat.samples[index].time    = snap->serverTime;
+
+	if (sampledStat.samples[index].elapsed < 0)
+	{
+		sampledStat.samples[index].elapsed = 0;
+	}
+
+	sampledStat.lastSampleTime = snap->serverTime;
+
+	sampledStat.samplesTotal.value   += sampledStat.samples[index].value;
+	sampledStat.samplesTotal.elapsed += sampledStat.samples[index].elapsed;
+
+	const int oldest = snap->serverTime - PERIOD_SAMPLES;
+	int       i;
+	for (i = 0; i < sampledStat.count; i++)
+	{
+		if (sampledStat.samples[i].value == 0.f)
+		{
+			break;
+		}
+
+		if (sampledStat.samples[i].time > oldest)
+		{
+			break;
+		}
+
+		sampledStat.samplesTotal.value   -= sampledStat.samples[i].value;
+		sampledStat.samplesTotal.elapsed -= sampledStat.samples[i].elapsed;
+	}
+
+	if (i)
+	{
+		memmove(sampledStat.samples, sampledStat.samples + i, sizeof(sample_t) * (sampledStat.count - i));
+		sampledStat.count -= i;
+	}
+
+	sampledStat.avg = sampledStat.samplesTotal.elapsed > 0
+	                  ? sampledStat.count / (sampledStat.samplesTotal.elapsed / 1000.0f)
+					  : 0.0f;
 }
 
 /**
@@ -2543,6 +2623,50 @@ static float CG_DrawLagometer(float y)
 	if (!cg.demoPlayback)
 	{
 		CG_DrawDisconnect(y);
+	}
+
+	// add snapshots/s in top-right corner of meter
+	{
+		const int avg = (int)(sampledStat.avg + 0.5f);
+		char      buf[8];
+		int       fps;
+
+		trap_Cvar_VariableStringBuffer("sv_fps", buf, sizeof(buf));
+		fps = atoi(buf);
+
+		vec4_t *color;
+		if (avg < fps * 0.5)
+		{
+			//trap_R_SetColor(colorRed);
+			color = &colorRed;
+		}
+		else if (avg < fps * 0.75)
+		{
+			//trap_R_SetColor(colorYellow);
+			color = &colorYellow;
+		}
+		else
+		{
+			//trap_R_SetColor(colorGreen);
+			color = &colorGreen;
+		}
+
+		itoa(avg, buf, sizeof(buf));
+        
+		//w = CG_Text_Width_Ext(buf, 0.19f, 0, &cgs.media.limboFont1);
+
+        // FIXME : display nothing (bad position certainly) .... but the debuged value is ok 
+		//const int x = (int)(ax + aw) - w - 2;
+		//CG_Text_Paint_Ext(x, ay + 2, 0.19f, 0.19f, *color, buf, 0, 0, 0, &cgs.media.limboFont1);
+        
+        w  = CG_Text_Width_Ext(buf, 0.19f, 0, &cgs.media.limboFont1);
+        w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
+        x = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
+        
+        CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, *color, buf, 0, 0, 0, &cgs.media.limboFont1);
+        
+		//const int x = int(ax+aw) - s.length()*console.fontShadowed.charWidth - 2;
+		//console.fontShadowed.drawLine( x, int(ay+2), s, *color );
 	}
 
 	return y + w + 13;
