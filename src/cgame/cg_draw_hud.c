@@ -2630,11 +2630,11 @@ static float CG_DrawLagometer(float y)
 		const int avg = (int)(sampledStat.avg + 0.5f);
 		char      buf[8];
 		int       fps;
+		vec4_t    *color;
 
 		trap_Cvar_VariableStringBuffer("sv_fps", buf, sizeof(buf));
 		fps = atoi(buf);
 
-		vec4_t *color;
 		if (avg < fps * 0.5)
 		{
 			//trap_R_SetColor(colorRed);
@@ -2642,16 +2642,12 @@ static float CG_DrawLagometer(float y)
 		}
 		else if (avg < fps * 0.75)
 		{
-			//trap_R_SetColor(colorYellow);
 			color = &colorYellow;
 		}
 		else
 		{
-			//trap_R_SetColor(colorGreen);
 			color = &colorGreen;
 		}
-
-		itoa(avg, buf, sizeof(buf));
         
 		//w = CG_Text_Width_Ext(buf, 0.19f, 0, &cgs.media.limboFont1);
 
@@ -2659,11 +2655,11 @@ static float CG_DrawLagometer(float y)
 		//const int x = (int)(ax + aw) - w - 2;
 		//CG_Text_Paint_Ext(x, ay + 2, 0.19f, 0.19f, *color, buf, 0, 0, 0, &cgs.media.limboFont1);
         
-        w  = CG_Text_Width_Ext(buf, 0.19f, 0, &cgs.media.limboFont1);
+        w  = CG_Text_Width_Ext(va("%i", avg), 0.19f, 0, &cgs.media.limboFont1);
         w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
         x = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
         
-        CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, *color, buf, 0, 0, 0, &cgs.media.limboFont1);
+        CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, *color, va("%i", avg), 0, 0, 0, &cgs.media.limboFont1);
         
 		//const int x = int(ax+aw) - s.length()*console.fontShadowed.charWidth - 2;
 		//console.fontShadowed.drawLine( x, int(ay+2), s, *color );

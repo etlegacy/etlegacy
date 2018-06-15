@@ -106,9 +106,6 @@ static const char *shaderAnimNames[MAX_SHADER_ANIMS] =
 	"blacksmokeanim",
 	"twiltb2",
 	"blacksmokeanimc",
-	//"expblue",
-	//"blacksmokeanimb",	// uses 'explode1' sequence // pulled
-	//"blood",
 	NULL
 };
 

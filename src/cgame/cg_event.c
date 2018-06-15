@@ -1414,7 +1414,6 @@ void CG_Effect(centity_t *cent, vec3_t origin, vec3_t dir)
 		VectorMA(origin, 16, dir, sprOrg);
 		VectorScale(dir, 100, sprVel);
 		CG_ParticleExplosion("explode1", sprOrg, sprVel, 500, 20, 160, qtrue);
-		//CG_ParticleExplosion( "blueexp", sprOrg, sprVel, 1200, 9, 300 );
 
 		if (cg_markTime.integer)
 		{

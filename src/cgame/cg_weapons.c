@@ -478,9 +478,7 @@ void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 	int           contents;
 	int           lastContents, startTime = ent->trailTime;
 	entityState_t *es = &ent->currentState;
-	int           t;
-
-	t = step * ((startTime + step) / step);
+	int           t = step * ((startTime + step) / step);
 
 	BG_EvaluateTrajectory(&es->pos, cg.time, origin, qfalse, es->effect2Time);
 	contents = CG_PointContents(origin, -1);
@@ -534,21 +532,10 @@ void CG_RocketTrail(centity_t *ent, const weaponInfo_t *wi)
 		}
 		else
 		{
-			//CG_ParticleExplosion( "twiltb", lastPos, vec3_origin, 300+(int)(rnd*100), 4, 14+(int)(rnd*8) );   // fire
+			//CG_ParticleExplosion( "twiltb2", lastPos, vec3_origin, 300+(int)(rnd*100), 4, 14+(int)(rnd*8) );   // fire
 			CG_ParticleExplosion("blacksmokeanim", lastPos, vec3_origin, 800 + (int)(rnd * 1500), 5, 12 + (int)(rnd * 30), qfalse);          // smoke
 		}
 	}
-	/*
-	    // spawn a smoke junction
-	    if ((cg.time - ent->lastTrailTime) >= 50 + rand()%50) {
-	        ent->headJuncIndex = CG_AddSmokeJunc( ent->headJuncIndex,
-	                                                ent, // rain - zinx's trail fix
-	                                                cgs.media.smokeTrailShader,
-	                                                origin,
-	                                                4500, 0.4, 20, 80 );
-	        ent->lastTrailTime = cg.time;
-	    }
-	*/
 }
 
 /**
@@ -3443,9 +3430,9 @@ void CG_FinishWeaponChange(int lastWeapon, int newWeapon)
 
 	if (lastWeapon != GetWeaponTableData(newWeapon)->weapAlts)
 	{
-		if ((GetWeaponTableData(newWeapon)->isPistol            && cg.pmext.silencedSideArm & 1)
+		if ((GetWeaponTableData(newWeapon)->isPistol            && (cg.pmext.silencedSideArm & 1))
 		    || (GetWeaponTableData(newWeapon)->isSilencedPistol && !(cg.pmext.silencedSideArm & 1))
-		    || (GetWeaponTableData(newWeapon)->isRifle          && cg.pmext.silencedSideArm & 2)
+		    || (GetWeaponTableData(newWeapon)->isRifle          && (cg.pmext.silencedSideArm & 2))
 		    || (GetWeaponTableData(newWeapon)->isRiflenade      && !(cg.pmext.silencedSideArm & 2)))
 		{
 			newWeapon       = GetWeaponTableData(newWeapon)->weapAlts;
@@ -4069,7 +4056,7 @@ qboolean CG_CheckCanSwitch(void)
 		return qfalse;
 	}
 
-	if (cg.snap->ps.pm_flags & PMF_FOLLOW || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
+	if ((cg.snap->ps.pm_flags & PMF_FOLLOW) || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
 		return qfalse;
 	}
@@ -5352,7 +5339,7 @@ void CG_MissileHitWall(int weapon, int missileEffect, vec3_t origin, vec3_t dir,
 
 				VectorAdd(sprVel, trace.plane.normal, sprVel);
 				VectorScale(sprVel, 130, sprVel);
-				CG_ParticleExplosion("blacksmokeanim", sprOrg, sprVel, (int)(6000 + random() * 2000), 40, (int)(400 + random() * 200), qfalse);   // JPW NERVE was blacksmokeanimb
+				CG_ParticleExplosion("blacksmokeanim", sprOrg, sprVel, (int)(6000 + random() * 2000), 40, (int)(400 + random() * 200), qfalse);
 			}
 
 			for (i = 0; i < 4; i++)     // random vector based on plane normal so explosions move away from walls/dirt/etc

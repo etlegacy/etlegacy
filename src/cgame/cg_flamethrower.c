@@ -82,8 +82,6 @@ typedef struct flameChunk_s
 static flameChunk_t flameChunks[MAX_FLAME_CHUNKS];
 static flameChunk_t *freeFlameChunks, *activeFlameChunks, *headFlameChunks;
 
-//static qboolean initFlameChunks = qfalse;
-
 static int numFlameChunksInuse;
 
 // this structure stores information relevant to each cent in the game, this way we keep
@@ -414,7 +412,6 @@ void CG_ClearFlameChunks(void)
 	}
 	flameChunks[MAX_FLAME_CHUNKS - 1].nextGlobal = NULL;
 
-	//initFlameChunks     = qtrue;
 	numFlameChunksInuse = 0;
 }
 
@@ -1200,7 +1197,7 @@ void CG_InitFlameChunks(void)
 	                   "GL_ONE",
 	                   "\t\talphaGen vertex\n\t\trgbGen vertex\n",
 	                   qtrue, qtrue);
-
+	/*
 	CG_GenerateShaders("scripts/twiltb.shader",
 	                   "twiltb",
 	                   "twiltb",
@@ -1209,7 +1206,7 @@ void CG_InitFlameChunks(void)
 	                   "GL_ONE_MINUS_SRC_COLOR",
 	                   "",
 	                   qtrue, qfalse);
-
+	*/
 	CG_GenerateShaders("scripts/twiltb2.shader",
 	                   "twiltb2",
 	                   "twiltb2",
@@ -1227,7 +1224,7 @@ void CG_InitFlameChunks(void)
 	                        "GL_ONE_MINUS_SRC_COLOR",
 	                        "",
 	                        qfalse, qfalse );
-	*/
+
 	CG_GenerateShaders("scripts/firest.shader",
 	                   "firest",
 	                   "firest",
@@ -1236,7 +1233,7 @@ void CG_InitFlameChunks(void)
 	                   "GL_ONE_MINUS_SRC_COLOR",
 	                   "",
 	                   qtrue, qfalse);
-
+	*/
 	CG_GenerateShaders("scripts/explode1.shader",
 	                   "explode1",
 	                   "explode1",
@@ -1245,7 +1242,7 @@ void CG_InitFlameChunks(void)
 	                   "GL_ONE_MINUS_SRC_COLOR",
 	                   "",
 	                   qtrue, qfalse);
-
+	/*
 	CG_GenerateShaders("scripts/funnel.shader",
 	                   "funnel",
 	                   "funnel",
@@ -1254,6 +1251,7 @@ void CG_InitFlameChunks(void)
 	                   "GL_ONE_MINUS_SRC_COLOR",
 	                   "",
 	                   qfalse, qfalse);
+	 */
 #endif
 
 	for (i = 0; i < NUM_FLAME_SPRITES; i++)

@@ -669,7 +669,7 @@ void CG_MouseEvent(int x, int y)
 		if (x != 0 || y != 0)
 		{
 			cgs.cursorUpdate = cg.time + 5000;
-		}
+		} // fall through
 	case CGAME_EVENT_SPEAKEREDITOR:
 	case CGAME_EVENT_GAMEVIEW:
 	case CGAME_EVENT_CAMPAIGNBREIFING:
