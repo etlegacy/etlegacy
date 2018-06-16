@@ -2275,21 +2275,17 @@ lagometer_t lagometer;
  */
 typedef struct sample_s
 {
-	float value;
 	float elapsed;
 	float time;
 } sample_t;
 
 typedef struct sampledStat_s
 {
-	float period;
-	int value;
-	int count;
+	unsigned int count;
 	float avg;
-
 	float lastSampleTime;
 	sample_t samples[LAG_SAMPLES];
-	sample_t samplesTotal;
+	float samplesTotalElpased;
 } sampledStat_t;
 
 sampledStat_t sampledStat;
@@ -2304,12 +2300,14 @@ void CG_AddLagometerFrameInfo(void)
 }
 
 /**
- * @brief Log the ping time and number of dropped snapshots before it each time a snapshot is received
- * @param snap
+ * @brief Log the ping time, server framerate and number of dropped snapshots
+ * before it each time a snapshot is received.
+ * @param[in] snap
  */
 void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 {
-	int index = lagometer.snapshotCount & (LAG_SAMPLES - 1);
+	unsigned int index = lagometer.snapshotCount & (LAG_SAMPLES - 1);
+	int          oldest;
 
 	// dropped packet
 	if (!snap)
@@ -2338,6 +2336,7 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 	lagometer.snapshotFlags[index]    = snap->snapFlags;
 	lagometer.snapshotCount++;
 
+	// compute server framerate
 	index = sampledStat.count;
 
 	if (sampledStat.count <= LAG_SAMPLES)
@@ -2349,7 +2348,6 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 		index -= 1;
 	}
 
-	sampledStat.samples[index].value   = 1;
 	sampledStat.samples[index].elapsed = snap->serverTime - sampledStat.lastSampleTime;
 	sampledStat.samples[index].time    = snap->serverTime;
 
@@ -2360,35 +2358,27 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 
 	sampledStat.lastSampleTime = snap->serverTime;
 
-	sampledStat.samplesTotal.value   += sampledStat.samples[index].value;
-	sampledStat.samplesTotal.elapsed += sampledStat.samples[index].elapsed;
+	sampledStat.samplesTotalElpased += sampledStat.samples[index].elapsed;
 
-	const int oldest = snap->serverTime - PERIOD_SAMPLES;
-	int       i;
-	for (i = 0; i < sampledStat.count; i++)
+	oldest = snap->serverTime - PERIOD_SAMPLES;
+	for (index = 0; index < sampledStat.count; index++)
 	{
-		if (sampledStat.samples[i].value == 0.f)
+		if (sampledStat.samples[index].time > oldest)
 		{
 			break;
 		}
 
-		if (sampledStat.samples[i].time > oldest)
-		{
-			break;
-		}
-
-		sampledStat.samplesTotal.value   -= sampledStat.samples[i].value;
-		sampledStat.samplesTotal.elapsed -= sampledStat.samples[i].elapsed;
+		sampledStat.samplesTotalElpased -= sampledStat.samples[index].elapsed;
 	}
 
-	if (i)
+	if (index)
 	{
-		memmove(sampledStat.samples, sampledStat.samples + i, sizeof(sample_t) * (sampledStat.count - i));
-		sampledStat.count -= i;
+		memmove(sampledStat.samples, sampledStat.samples + index, sizeof(sample_t) * (sampledStat.count - index));
+		sampledStat.count -= index;
 	}
 
-	sampledStat.avg = sampledStat.samplesTotal.elapsed > 0
-	                  ? sampledStat.count / (sampledStat.samplesTotal.elapsed / 1000.0f)
+	sampledStat.avg = sampledStat.samplesTotalElpased > 0
+	                  ? sampledStat.count / (sampledStat.samplesTotalElpased / 1000.0f)
 					  : 0.0f;
 }
 
@@ -2637,7 +2627,6 @@ static float CG_DrawLagometer(float y)
 
 		if (avg < fps * 0.5)
 		{
-			//trap_R_SetColor(colorRed);
 			color = &colorRed;
 		}
 		else if (avg < fps * 0.75)
@@ -2648,21 +2637,12 @@ static float CG_DrawLagometer(float y)
 		{
 			color = &colorGreen;
 		}
-        
-		//w = CG_Text_Width_Ext(buf, 0.19f, 0, &cgs.media.limboFont1);
 
-        // FIXME : display nothing (bad position certainly) .... but the debuged value is ok 
-		//const int x = (int)(ax + aw) - w - 2;
-		//CG_Text_Paint_Ext(x, ay + 2, 0.19f, 0.19f, *color, buf, 0, 0, 0, &cgs.media.limboFont1);
-        
-        w  = CG_Text_Width_Ext(va("%i", avg), 0.19f, 0, &cgs.media.limboFont1);
-        w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
-        x = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
-        
-        CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, *color, va("%i", avg), 0, 0, 0, &cgs.media.limboFont1);
-        
-		//const int x = int(ax+aw) - s.length()*console.fontShadowed.charWidth - 2;
-		//console.fontShadowed.drawLine( x, int(ay+2), s, *color );
+		w  = CG_Text_Width_Ext(va("%i", avg), 0.19f, 0, &cgs.media.limboFont1);
+		w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
+		x  = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
+
+		CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, *color, va("%i", avg), 0, 0, 0, &cgs.media.limboFont1);
 	}
 
 	return y + w + 13;
