@@ -271,7 +271,7 @@ void CL_WriteAVIHeader(void)
 					WRITE_4BYTES(afd.numVideoFrames);   //dwDataLength
 
 					WRITE_4BYTES(afd.maxRecordSize);    //dwSuggestedBufferSize
-					WRITE_4BYTES(-1);   //dwQuality
+					WRITE_4BYTES(0);    //dwQuality
 					WRITE_4BYTES(0);    //dwSampleSize
 					WRITE_2BYTES(0);    //rcFrame
 					WRITE_2BYTES(0);    //rcFrame
@@ -323,7 +323,7 @@ void CL_WriteAVIHeader(void)
 						WRITE_4BYTES(afd.a.totalBytes / afd.a.sampleSize);  //dwDataLength
 
 						WRITE_4BYTES(0);    //dwSuggestedBufferSize
-						WRITE_4BYTES(-1);   //dwQuality
+						WRITE_4BYTES(0);    //dwQuality
 						WRITE_4BYTES(afd.a.sampleSize); //dwSampleSize
 						WRITE_2BYTES(0);    //rcFrame
 						WRITE_2BYTES(0);    //rcFrame
