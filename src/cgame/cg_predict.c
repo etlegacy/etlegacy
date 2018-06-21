@@ -557,7 +557,7 @@ static void CG_InterpolatePlayerState(qboolean grabAngles)
 		if (!grabAngles)
 		{
 			out->viewangles[i] = LerpAngle(
-			    prev->ps.viewangles[i], next->ps.viewangles[i], f);
+				prev->ps.viewangles[i], next->ps.viewangles[i], f);
 		}
 		out->velocity[i] = prev->ps.velocity[i] +
 		                   f * (next->ps.velocity[i] - prev->ps.velocity[i]);
@@ -864,7 +864,7 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 	{
 		if (ps2->ammo[i] != ps1->ammo[i] || ps2->ammoclip[i] != ps1->ammoclip[i])
 		{
-			if (i != WP_KNIFE && i != WP_KNIFE_KABAR) // FIXME: predict knife?
+			if (!GetWeaponTableData(i)->isMeleeWeapon) // FIXME: predict knife?
 			{
 				return 22;
 			}
@@ -971,7 +971,7 @@ void CG_PredictPlayerState(void)
 	vec3_t        deltaAngles;
 	pmoveExt_t    pmext;
 	// unlagged - optimized prediction
-	int stateIndex   = 0, predictCmd = 0;
+	int stateIndex = 0, predictCmd = 0;
 	int numPredicted = 0, numPlayedBack = 0; // debug code
 
 	cg.hyperspace = qfalse; // will be set if touching a trigger_teleport
@@ -1479,12 +1479,12 @@ void CG_PredictPlayerState(void)
 
 		// move
 		cg.predictedPlayerState.origin[2] +=
-		    (float)sin(M_PI * 8 * 13 + (double)cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+			(float)sin(M_PI * 8 * 13 + (double)cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
 
 		cg.predictedPlayerState.origin[1] +=
-		    (float)sin(M_PI * 17 * (double)x + (double)cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+			(float)sin(M_PI * 17 * (double)x + (double)cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
 
 		cg.predictedPlayerState.origin[0] +=
-		    (float)cos(M_PI * 7 * (double)x + (double)cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+			(float)cos(M_PI * 7 * (double)x + (double)cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
 	}
 }
