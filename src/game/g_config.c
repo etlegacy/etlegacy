@@ -167,26 +167,24 @@ qboolean G_ParseSettings(int handle, qboolean setvars, config_t *config)
 			{
 				return G_ConfigError(handle, "expected cvar to set");
 			}
-			else
+
+			if (!PC_String_ParseNoAlloc(handle, value, sizeof(value)))
 			{
-				if (!PC_String_ParseNoAlloc(handle, value, sizeof(value)))
-				{
-					return G_ConfigError(handle, "expected cvar value");
-				}
-
-				if (value[0] == '-')
-				{
-					if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
-					{
-						return G_ConfigError(handle, "expected value after '-'");
-					}
-
-					Q_strncpyz(value, va("-%s", text), sizeof(value));
-				}
-
-				trap_Cvar_Set(text, value);
-				G_Printf("set %s %s\n", text, value);
+				return G_ConfigError(handle, "expected cvar value");
 			}
+
+			if (value[0] == '-')
+			{
+				if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
+				{
+					return G_ConfigError(handle, "expected value after '-'");
+				}
+
+				Q_strncpyz(value, va("-%s", text), sizeof(value));
+			}
+
+			trap_Cvar_Set(text, value);
+			G_Printf("set %s %s\n", text, value);
 		}
 		else if (!Q_stricmp(token.string, "setl"))
 		{
@@ -197,22 +195,20 @@ qboolean G_ParseSettings(int handle, qboolean setvars, config_t *config)
 			{
 				return G_ConfigError(handle, "expected cvar to set");
 			}
-			else
+
+			if (!PC_String_ParseNoAlloc(handle, value, sizeof(value)))
 			{
-				if (!PC_String_ParseNoAlloc(handle, value, sizeof(value)))
+				return G_ConfigError(handle, "expected cvar value");
+			}
+
+			if (value[0] == '-')
+			{
+				if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
 				{
-					return G_ConfigError(handle, "expected cvar value");
+					return G_ConfigError(handle, "expected value after '-'");
 				}
 
-				if (value[0] == '-')
-				{
-					if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
-					{
-						return G_ConfigError(handle, "expected value after '-'");
-					}
-
-					Q_strncpyz(value, va("-%s", text), sizeof(value));
-				}
+				Q_strncpyz(value, va("-%s", text), sizeof(value));
 			}
 
 			for (; i < config->numSetl; i++)
@@ -292,7 +288,8 @@ qboolean G_ParseMapSettings(int handle, config_t *config)
 		G_Printf("Setting rules for map: %s\n", token.string);
 		return G_ParseSettings(handle, qtrue, config);
 	}
-	else if (!Q_stricmp(token.string, mapname))
+
+	if (!Q_stricmp(token.string, mapname))
 	{
 		fileHandle_t f;
 		char         *code, *signature;
@@ -334,11 +331,9 @@ qboolean G_ParseMapSettings(int handle, config_t *config)
 
 		return res;
 	}
-	else
-	{
-		G_Printf("Ignoring rules for map: %s\n", token.string);
-		return G_ParseSettings(handle, qfalse, config);
-	}
+
+	G_Printf("Ignoring rules for map: %s\n", token.string);
+	return G_ParseSettings(handle, qfalse, config);
 }
 
 /**
