@@ -1345,9 +1345,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 				case IT_HEALTH:
 					hintType = HINT_HEALTH;
 					break;
-				case IT_TREASURE:
-					hintType = HINT_TREASURE;
-					break;
 				case IT_WEAPON: {
 					qboolean canPickup = COM_BitCheck(ent->client->ps.weapons, it->giWeapon);
 
@@ -1372,15 +1369,6 @@ void G_CheckForCursorHints(gentity_t *ent)
 				}
 				case IT_AMMO:
 					hintType = HINT_AMMO;
-					break;
-				case IT_ARMOR:
-					hintType = HINT_ARMOR;
-					break;
-				case IT_HOLDABLE:
-					hintType = HINT_HOLDABLE;
-					break;
-				case IT_KEY:
-					hintType = HINT_INVENTORY;
 					break;
 				case IT_TEAM:
 					if (!Q_stricmp(traceEnt->classname, "team_CTF_redflag") && ent->client->sess.sessionTeam == TEAM_ALLIES)
@@ -1506,23 +1494,11 @@ void G_CheckForCursorHints(gentity_t *ent)
 	{
 		hintDist = CH_MAX_DIST_ZOOM;
 
-		// zooming can eat a lot of potential hints
-		switch (hintType)
-		{
-		// allow while zooming
-		case HINT_PLAYER:
-		case HINT_TREASURE:
-		case HINT_LADDER:
-		case HINT_EXIT:
-		case HINT_NOEXIT:
-		case HINT_PLYR_FRIEND:
-		case HINT_PLYR_NEUTRAL:
-		case HINT_PLYR_ENEMY:
-		case HINT_PLYR_UNKNOWN:
-			break;
-		default:
-			return;
-		}
+		// allow hint ladder while zooming
+        if (hintType != HINT_LADDER)
+        { 
+            return;
+        }
 	}
 
 	// set hint distance

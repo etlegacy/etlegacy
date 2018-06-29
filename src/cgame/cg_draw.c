@@ -1178,12 +1178,6 @@ static void CG_DrawCrosshair(void)
 		return;
 	}
 
-	// Don't draw crosshair if have exit hintcursor
-	if (cg.snap->ps.serverCursorHint >= HINT_EXIT && cg.snap->ps.serverCursorHint <= HINT_NOEXIT)
-	{
-		return;
-	}
-
 	// set color based on health
 	if (cg_crosshairHealth.integer)
 	{
@@ -1240,10 +1234,7 @@ static void CG_DrawNoShootIcon(void)
 	{
 		trap_R_SetColor(colorRed);
 	}
-	else if (cg.crosshairClientNoShoot
-	         // don't shoot friend or civilian
-	         || cg.snap->ps.serverCursorHint == HINT_PLYR_NEUTRAL
-	         || cg.snap->ps.serverCursorHint == HINT_PLYR_FRIEND)
+	else if (cg.crosshairClientNoShoot)
 	{
 		float *color = CG_FadeColor(cg.crosshairClientTime, 1000);
 
@@ -1252,10 +1243,8 @@ static void CG_DrawNoShootIcon(void)
 			trap_R_SetColor(NULL);
 			return;
 		}
-		else
-		{
-			trap_R_SetColor(color);
-		}
+
+		trap_R_SetColor(color);
 	}
 	else
 	{

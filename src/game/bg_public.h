@@ -1777,22 +1777,20 @@ extern const weap_ws_t aWeaponInfo[WS_MAX];
 /**
  * @enum itemType_t
  * @brief gitem_t->type.
- *
- * @todo Need cleanup
  */
 typedef enum
 {
 	IT_BAD = 0,
-	IT_WEAPON,             ///< EFX: rotate + upscale + minlight
+	IT_WEAPON,                 ///< EFX: rotate + upscale + minlight
 
-	IT_AMMO,               ///< EFX: rotate
-	IT_ARMOR,              ///< EFX: rotate + minlight
-	IT_HEALTH,             ///< EFX: static external sphere + rotating internal
-	IT_HOLDABLE,           ///< #100 obsolete - remove! (also HINT_HOLDABLE)
-	///< EFX: rotate + bob
-	IT_KEY,
-	IT_TREASURE,           ///< #100 obsolete - remove! gold bars, etc.  things that can be picked up and counted for a tally at end-level
-	IT_TEAM,
+	IT_AMMO,                   ///< EFX: rotate
+	//IT_ARMOR,                ///< EFX: rotate + minlight, unused
+	IT_HEALTH = 4,                 ///< EFX: static external sphere + rotating internal
+	//IT_HOLDABLE,             ///< #100 obsolete
+	
+	//IT_KEY,                  ///< EFX: rotate + bob, unused
+	//IT_TREASURE,             ///< #100 obsolete gold bars, etc. things that can be picked up and counted for a tally at end-level
+	IT_TEAM = 8,
 } itemType_t;
 
 #define MAX_ITEM_MODELS 3
@@ -1879,65 +1877,61 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 /**
  * @enum hintType_t
  * @brief cursorhints (stored in ent->s.dmgFlags since that's only used for players at the moment)
- *
- * @todo FIXME: clean this - many hint types are obsolete but keep enum numbers!
- *
- * @note Adjust omnibot while cleaning this see OB ET_Config.h
  */
 typedef enum
 {
-	HINT_NONE = 0,     ///< reserved
-	HINT_FORCENONE,    ///< reserved
-	HINT_PLAYER,
-	HINT_ACTIVATE,
+	HINT_NONE = 0,              ///< reserved
+	HINT_FORCENONE,             ///< reserved
+	// HINT_PLAYER,             ///< unused
+	HINT_ACTIVATE = 3,
 	HINT_DOOR,
-	HINT_DOOR_ROTATING,
+	HINT_DOOR_ROTATING,			///< 5
 	HINT_DOOR_LOCKED,
 	HINT_DOOR_ROTATING_LOCKED,
 	HINT_MG42,
 	HINT_BREAKABLE,
-	HINT_BREAKABLE_DYNAMITE,
+	HINT_BREAKABLE_DYNAMITE,    ///< 10
 	HINT_CHAIR,
-	HINT_ALARM,
-	HINT_HEALTH,
-	HINT_TREASURE,
-	HINT_KNIFE,
+	// HINT_ALARM,              ///< unused
+	HINT_HEALTH = 13,
+	// HINT_TREASURE,
+	HINT_KNIFE = 15,            ///< 15
 	HINT_LADDER,
 	HINT_BUTTON,
 	HINT_WATER,
-	HINT_CAUTION,
-	HINT_DANGER,
-	HINT_SECRET,
-	HINT_QUESTION,
-	HINT_EXCLAMATION,
-	HINT_CLIPBOARD,
-	HINT_WEAPON,
-	HINT_AMMO,
-	HINT_ARMOR,
-	HINT_POWERUP,
+	//HINT_CAUTION,             ///< unused
+	//HINT_DANGER,				///< 20 unused
+	//HINT_SECRET,              ///< unused
+	//HINT_QUESTION,            ///< unused
+	//HINT_EXCLAMATION,         ///< unused
+	//HINT_CLIPBOARD,           ///< unused
+	HINT_WEAPON = 25,           ///< 25
+	HINT_AMMO,                  
+	//HINT_ARMOR,				///< unused
+	HINT_POWERUP = 28,
 	HINT_HOLDABLE,
-	HINT_INVENTORY,
-	HINT_SCENARIC,
-	HINT_EXIT,        ///< FIXME: remove me - never set!
-	HINT_NOEXIT,      ///< FIXME: remove me - never set!
-	HINT_PLYR_FRIEND, ///< FIXME: remove this!
-	HINT_PLYR_NEUTRAL,///< FIXME: remove this!
-	HINT_PLYR_ENEMY,
-	HINT_PLYR_UNKNOWN,
-	HINT_BUILD,
+	//HINT_INVENTORY,           ///< unused
+	//HINT_SCENARIC,            ///< 30 unused
+	//HINT_EXIT,                ///< unused
+	//HINT_NOEXIT,              ///< unused
+	//HINT_PLYR_FRIEND,         ///< unused
+	//HINT_PLYR_NEUTRAL,        ///< 35 unused
+	//HINT_PLYR_ENEMY,          ///< unused
+	//HINT_PLYR_UNKNOWN,        ///< unused
+	HINT_BUILD = 38,
 	HINT_DISARM,
-	HINT_REVIVE,
-	HINT_DYNAMITE,
+	HINT_REVIVE,                ///< 40
+	HINT_DYNAMITE,              
 	HINT_CONSTRUCTIBLE,
 	HINT_UNIFORM,
 	HINT_LANDMINE,
-	HINT_TANK,
-	HINT_SATCHELCHARGE,
-	HINT_LOCKPICK,///< @brief unused
+	HINT_TANK,                  ///< 45
+	HINT_SATCHELCHARGE,         
+	//HINT_LOCKPICK,            ///< unused
 
-	HINT_BAD_USER, ///< invisible user with no target
+	HINT_BAD_USER = 48,         ///< invisible user with no target
 
-	HINT_NUM_HINTS
+	HINT_NUM_HINTS = 49,              
 } hintType_t;
 
 void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qboolean isAngle, int splinePath);

@@ -1659,25 +1659,25 @@ static void CG_RegisterGraphics(void)
 	cgs.media.doorLockHintShader    = trap_R_RegisterShader("gfx/2d/lockedhint");
 	cgs.media.mg42HintShader        = trap_R_RegisterShader("gfx/2d/mg42Hint");
 	cgs.media.breakableHintShader   = trap_R_RegisterShader("gfx/2d/breakableHint");
-	cgs.media.alarmHintShader       = trap_R_RegisterShader("gfx/2d/alarmHint");
+	//cgs.media.alarmHintShader       = trap_R_RegisterShader("gfx/2d/alarmHint");
 	cgs.media.healthHintShader      = trap_R_RegisterShader("gfx/2d/healthHint");
-	cgs.media.treasureHintShader    = trap_R_RegisterShader("gfx/2d/treasureHint");
+	//cgs.media.treasureHintShader    = trap_R_RegisterShader("gfx/2d/treasureHint");
 	cgs.media.knifeHintShader       = trap_R_RegisterShader("gfx/2d/knifeHint");
 	cgs.media.ladderHintShader      = trap_R_RegisterShader("gfx/2d/ladderHint");
 	cgs.media.buttonHintShader      = trap_R_RegisterShader("gfx/2d/buttonHint");
 	cgs.media.waterHintShader       = trap_R_RegisterShader("gfx/2d/waterHint");
-	cgs.media.cautionHintShader     = trap_R_RegisterShader("gfx/2d/cautionHint");
-	cgs.media.dangerHintShader      = trap_R_RegisterShader("gfx/2d/dangerHint");
-	cgs.media.secretHintShader      = trap_R_RegisterShader("gfx/2d/secretHint");
-	cgs.media.qeustionHintShader    = trap_R_RegisterShader("gfx/2d/questionHint");
-	cgs.media.exclamationHintShader = trap_R_RegisterShader("gfx/2d/exclamationHint");
-	cgs.media.clipboardHintShader   = trap_R_RegisterShader("gfx/2d/clipboardHint");
+	//cgs.media.cautionHintShader     = trap_R_RegisterShader("gfx/2d/cautionHint");
+	//cgs.media.dangerHintShader      = trap_R_RegisterShader("gfx/2d/dangerHint");
+	//cgs.media.secretHintShader      = trap_R_RegisterShader("gfx/2d/secretHint");
+	//cgs.media.qeustionHintShader    = trap_R_RegisterShader("gfx/2d/questionHint");
+	//cgs.media.exclamationHintShader = trap_R_RegisterShader("gfx/2d/exclamationHint");
+	//cgs.media.clipboardHintShader   = trap_R_RegisterShader("gfx/2d/clipboardHint");
 	cgs.media.weaponHintShader      = trap_R_RegisterShader("gfx/2d/weaponHint");
 	cgs.media.ammoHintShader        = trap_R_RegisterShader("gfx/2d/ammoHint");
-	cgs.media.armorHintShader       = trap_R_RegisterShader("gfx/2d/armorHint");
+	//cgs.media.armorHintShader       = trap_R_RegisterShader("gfx/2d/armorHint");
 	cgs.media.powerupHintShader     = trap_R_RegisterShader("gfx/2d/powerupHint");
-	cgs.media.holdableHintShader    = trap_R_RegisterShader("gfx/2d/holdableHint");
-	cgs.media.inventoryHintShader   = trap_R_RegisterShader("gfx/2d/inventoryHint");
+	//cgs.media.holdableHintShader    = trap_R_RegisterShader("gfx/2d/holdableHint");
+	//cgs.media.inventoryHintShader   = trap_R_RegisterShader("gfx/2d/inventoryHint");
 
 	cgs.media.friendShader = trap_R_RegisterShaderNoMip("gfx/2d/friendlycross.tga");
 

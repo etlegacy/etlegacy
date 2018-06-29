@@ -917,8 +917,10 @@ static int Bot_HintGameToBot(gentity_t *_ent)
 	{
 		switch (_ent->client->ps.serverCursorHint)
 		{
+#ifndef LEGACY   
 		case HINT_PLAYER:
 			return CURSOR_HINT_PLAYER;
+#endif
 		case HINT_ACTIVATE:
 			return CURSOR_HINT_ACTIVATE;
 		case HINT_DOOR:
@@ -937,11 +939,13 @@ static int Bot_HintGameToBot(gentity_t *_ent)
 			return CURSOR_HINT_BREAKABLE_DYNAMITE;
 		case HINT_CHAIR:
 			return CURSOR_HINT_CHAIR;
+#ifndef LEGACY         
 		case HINT_ALARM:
 			return CURSOR_HINT_ALARM;
+#endif
 		case HINT_HEALTH:
 			return CURSOR_HINT_HEALTH;
-#ifndef NOQUARTER
+#if !defined(NOQUARTER) && !defined(LEGACY)
 		case HINT_TREASURE:
 			return CURSOR_HINT_TREASURE;
 			break;
@@ -954,7 +958,7 @@ static int Bot_HintGameToBot(gentity_t *_ent)
 			return CURSOR_HINT_BUTTON;
 		case HINT_WATER:
 			return CURSOR_HINT_WATER;
-#ifndef NOQUARTER
+#if !defined(NOQUARTER) && !defined(LEGACY)
 		case HINT_CAUTION:
 			return CURSOR_HINT_CAUTION;
 		case HINT_DANGER:
@@ -972,18 +976,19 @@ static int Bot_HintGameToBot(gentity_t *_ent)
 			return CURSOR_HINT_WEAPON;
 		case HINT_AMMO:
 			return CURSOR_HINT_AMMO;
-#ifndef NOQUARTER
+#if !defined(NOQUARTER) && !defined(LEGACY)
 		case HINT_ARMOR:
 			return CURSOR_HINT_ARMOR;
 #endif
 		case HINT_POWERUP:
 			return CURSOR_HINT_POWERUP;
-#ifndef NOQUARTER
+#if !defined(NOQUARTER) && !defined(LEGACY)
 		case HINT_HOLDABLE:
 			return CURSOR_HINT_HOLDABLE;
 #endif
+#ifndef LEGACY             
 		case HINT_INVENTORY:
-			return CURSOR_HINT_INVENTORY;
+			return CURSOR_HINT_INVENTORY;            
 		case HINT_SCENARIC:
 			return CURSOR_HINT_SCENARIC;
 		case HINT_EXIT:
@@ -993,11 +998,12 @@ static int Bot_HintGameToBot(gentity_t *_ent)
 		case HINT_PLYR_FRIEND:
 			return CURSOR_HINT_PLYR_FRIEND;
 		case HINT_PLYR_NEUTRAL:
-			return CURSOR_HINT_PLYR_NEUTRAL;
+			return CURSOR_HINT_PLYR_NEUTRAL;         
 		case HINT_PLYR_ENEMY:
 			return CURSOR_HINT_PLYR_ENEMY;
 		case HINT_PLYR_UNKNOWN:
 			return CURSOR_HINT_PLYR_UNKNOWN;
+#endif               
 		case HINT_BUILD:
 			return CURSOR_HINT_BUILD;
 		case HINT_DISARM:
@@ -1016,7 +1022,7 @@ static int Bot_HintGameToBot(gentity_t *_ent)
 			return CURSOR_HINT_TANK;
 		case HINT_SATCHELCHARGE:
 			return CURSOR_HINT_SATCHELCHARGE;
-#ifndef NOQUARTER
+#if !defined(NOQUARTER) && !defined(LEGACY)
 		case HINT_LOCKPICK:
 			return CURSOR_HINT_LOCKPICK;
 #endif

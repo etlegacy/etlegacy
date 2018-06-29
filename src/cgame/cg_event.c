@@ -348,11 +348,7 @@ static void CG_ItemPickup(int itemNum)
 	case IT_TEAM:
 		giType = PM_OBJECTIVE;
 		break;
-	//  case IT_BAD:
-	//	case IT_WEAPON:
-	//	case IT_HOLDABLE:
-	//	case IT_KEY:
-	//	case IT_TREASURE:
+	case IT_BAD:
 	default:
 		giType = PM_MESSAGE;
 		break;

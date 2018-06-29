@@ -421,14 +421,8 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	case HINT_CHAIR:
 		icon = cgs.media.notUsableHintShader;
 		break;
-	case HINT_ALARM:
-		icon = cgs.media.alarmHintShader;
-		break;
 	case HINT_HEALTH:
 		icon = cgs.media.healthHintShader;
-		break;
-	case HINT_TREASURE:
-		icon = cgs.media.treasureHintShader;
 		break;
 	case HINT_KNIFE:
 		icon = cgs.media.knifeHintShader;
@@ -442,48 +436,16 @@ void CG_DrawCursorhint(rectDef_t *rect)
 	case HINT_WATER:
 		icon = cgs.media.waterHintShader;
 		break;
-	case HINT_CAUTION:
-		icon = cgs.media.cautionHintShader;
-		break;
-	case HINT_DANGER:
-		icon = cgs.media.dangerHintShader;
-		break;
-	case HINT_SECRET:
-		icon = cgs.media.secretHintShader;
-		break;
-	case HINT_QUESTION:
-		icon = cgs.media.qeustionHintShader;
-		break;
-	case HINT_EXCLAMATION:
-		icon = cgs.media.exclamationHintShader;
-		break;
-	case HINT_CLIPBOARD:
-		icon = cgs.media.clipboardHintShader;
-		break;
 	case HINT_WEAPON:
 		icon = cgs.media.weaponHintShader;
 		break;
 	case HINT_AMMO:
 		icon = cgs.media.ammoHintShader;
 		break;
-	case HINT_ARMOR:
-		icon = cgs.media.armorHintShader;
-		break;
 	case HINT_POWERUP:
 		icon = cgs.media.powerupHintShader;
 		break;
-	case HINT_HOLDABLE:
-		icon = cgs.media.holdableHintShader;
-		break;
-	case HINT_INVENTORY:
-		icon = cgs.media.inventoryHintShader;
-		break;
-	case HINT_PLYR_FRIEND:
-	case HINT_PLYR_NEUTRAL:
-	case HINT_PLYR_ENEMY:
-	case HINT_PLYR_UNKNOWN:
-		return;
-
+        
 	// multiplayer hints
 	case HINT_BUILD:
 		icon = cgs.media.buildHintShader;
@@ -499,7 +461,6 @@ void CG_DrawCursorhint(rectDef_t *rect)
 		break;
 
 	case HINT_ACTIVATE:
-	case HINT_PLAYER:
 	default:
 		icon = cgs.media.usableHintShader;
 		break;

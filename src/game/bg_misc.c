@@ -572,6 +572,7 @@ gitem_t bg_itemlist[] =
 	/*
 	"scriptName"
 	*/
+/*    
 	{
 		"item_treasure",
 		"", // was "sound/pickup/treasure/gold.wav",
@@ -582,16 +583,16 @@ gitem_t bg_itemlist[] =
 		},
 		NULL,   // placeholder
 		NULL,                   // ammo icon
-		"Treasure Item",     // placeholder
+		"Treasure Item",        // placeholder
 		5,
-		IT_TREASURE,
+		IT_TREASURE,            // was IT_TREASURE
 		WP_NONE,
 		PW_NONE,
 #ifdef CGAMEDLL
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-
+*/
 	// ARMOR/HEALTH/STAMINA
 
 	/*QUAKED item_health_small (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -2727,8 +2728,6 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 		return qtrue;
 	case IT_AMMO:
 		return qfalse;
-	case IT_ARMOR:
-		return qfalse;
 	case IT_HEALTH:
 		// ps->teamNum is really class.... thx whoever decided on that...
 		if (ps->teamNum == PC_MEDIC)
@@ -2779,12 +2778,6 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 
 		return qfalse;
 
-	case IT_HOLDABLE:
-		return qtrue;
-	case IT_TREASURE:     // treasure always picked up
-		return qtrue;
-	case IT_KEY:
-		return qtrue;     // keys are always picked up
 	case IT_BAD:
 		Com_Error(ERR_DROP, "BG_CanItemBeGrabbed: IT_BAD");
 	}

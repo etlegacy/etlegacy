@@ -1387,25 +1387,25 @@ typedef struct
 	qhandle_t doorLockHintShader;
 	qhandle_t mg42HintShader;
 	qhandle_t breakableHintShader;
-	qhandle_t alarmHintShader;
+	//qhandle_t alarmHintShader;
 	qhandle_t healthHintShader;
-	qhandle_t treasureHintShader;
+	//qhandle_t treasureHintShader;
 	qhandle_t knifeHintShader;
 	qhandle_t ladderHintShader;
 	qhandle_t buttonHintShader;
 	qhandle_t waterHintShader;
-	qhandle_t cautionHintShader;
-	qhandle_t dangerHintShader;
-	qhandle_t secretHintShader;
-	qhandle_t qeustionHintShader;
-	qhandle_t exclamationHintShader;
-	qhandle_t clipboardHintShader;
+	//qhandle_t cautionHintShader;
+	//qhandle_t dangerHintShader;
+	//qhandle_t secretHintShader;
+	//qhandle_t qeustionHintShader;
+	//qhandle_t exclamationHintShader;
+	//qhandle_t clipboardHintShader;
 	qhandle_t weaponHintShader;
 	qhandle_t ammoHintShader;
-	qhandle_t armorHintShader;
+	//qhandle_t armorHintShader;
 	qhandle_t powerupHintShader;
-	qhandle_t holdableHintShader;
-	qhandle_t inventoryHintShader;
+	//qhandle_t holdableHintShader;
+	//qhandle_t inventoryHintShader;
 
 	// Multiplayer hints
 	qhandle_t buildHintShader;
