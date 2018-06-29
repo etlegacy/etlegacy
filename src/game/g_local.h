@@ -1426,7 +1426,6 @@ void G_ClientSound(gentity_t *ent, int soundIndex);
 
 void G_TouchTriggers(gentity_t *ent);
 
-float *tv(float x, float y, float z);
 char *vtos(const vec3_t v);
 
 void G_AddPredictableEvent(gentity_t *ent, int event, int eventParm);
@@ -1692,7 +1691,6 @@ char *Q_AddCR(char *s);
 // g_script.c
 void G_Script_ScriptParse(gentity_t *ent);
 qboolean G_Script_ScriptRun(gentity_t *ent);
-void G_Script_ScriptEvent(gentity_t *ent, const char *eventStr, const char *params);
 void G_Script_ScriptLoad(void);
 
 void mountedmg42_fire(gentity_t *other);
@@ -2137,8 +2135,6 @@ int trap_RealTime(qtime_t *qtime);
 
 int trap_DebugPolygonCreate(int color, int numPoints, vec3_t *points);
 void trap_DebugPolygonDelete(int id);
-
-int trap_BotGetServerCommand(int clientNum, char *message, int size);
 
 void trap_SnapVector(float *v);
 
