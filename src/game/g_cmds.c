@@ -4624,8 +4624,8 @@ void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum)
 	// make sure they dont respawn immediately after they die
 	client->pers.lastReinforceTime = 0;
 }
-#endif
-#endif
+#endif  // FEATURE_OMNIBOT
+#endif  // LEGACY_DEBUG
 
 /**
  * @brief ClientCommand

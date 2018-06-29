@@ -688,7 +688,6 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 	         (((client->buttons & BUTTON_ACTIVATE) && !(client->oldbuttons & BUTTON_ACTIVATE)) || ucmd->upmove > 0) &&
 	         G_allowFollow(ent, TEAM_AXIS) && G_allowFollow(ent, TEAM_ALLIES))
 	{
-
 		StopFollowing(ent);
 	}
 #ifdef FEATURE_MULTIVIEW
