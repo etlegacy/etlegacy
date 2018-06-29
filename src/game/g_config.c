@@ -514,7 +514,7 @@ qboolean G_configSet(const char *configname)
 /**
  * @brief G_ConfigCheckLocked
  */
-void G_ConfigCheckLocked()
+void G_ConfigCheckLocked(void)
 {
 	int      i;
 	config_t *config = &level.config;
@@ -545,6 +545,4 @@ void G_ConfigCheckLocked()
 			break;
 		}
 	}
-
-	return;
 }
