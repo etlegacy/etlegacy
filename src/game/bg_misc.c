@@ -355,6 +355,7 @@ modTable_t modTable[MOD_NUM_MODS] =
 	{ MOD_BACKSTAB,                           WP_NONE,                 qfalse,    qfalse,     WEAPON_CLASS_FOR_MOD_NO,        qtrue,       "was backstabbed by",        "'s knife arts",                  "killed himself",                        NULL,                                     "MOD_BACKSTAB",                           SK_LIGHT_WEAPONS,                            5.f,             0.f,             {0.f, 0.f, 0.f, 0.f}, qfalse,      "backstab",            WS_KNIFE           },
 };
 // *INDENT-ON*
+
 /*
  * @var animStrings
  * @brief text representation for scripting
@@ -518,28 +519,30 @@ const char *animStrings[] =
 };
 */
 
-/*QUAKED item_***** ( 0 0 0 ) (-16 -16 -16) (16 16 16) SUSPENDED SPIN PERSISTANT
-DO NOT USE THIS CLASS, IT JUST HOLDS GENERAL INFORMATION.
-SUSPENDED - will allow items to hang in the air, otherwise they are dropped to the next surface.
-SPIN - will allow items to spin in place.
-PERSISTANT - some items (ex. clipboards) can be picked up, but don't disappear
-
-If an item is the target of another entity, it will not spawn in until fired.
-
-An item fires all of its targets when it is picked up.  If the toucher can't carry it, the targets won't be fired.
-
-"notfree" if set to 1, don't spawn in free for all games
-"notteam" if set to 1, don't spawn in team games
-"notsingle" if set to 1, don't spawn in single player games
-"wait"  override the default wait before respawning.  -1 = never respawn automatically, which can be used with targeted spawning.
-"random" random number of plus or minus seconds varied from the respawn time
-"count" override quantity or duration on most items.
-"stand" if the item has a stand (ex: mp40_stand.md3) this specifies which stand tag to attach the weapon to ("stand":"4" would mean "tag_stand4" for example)  only weapons support stands currently
-*/
-
-// Important notes:
-// - whenever you add new items update ITEM_MAX_ITEMS, FIRST_WEAPON_ITEM, ITEM_AMMO_PACK, ITEM_MEGA_AMMO_PACK, ITEM_RED_FLAG, ITEM_BLUE_FLAG
-// - bg_itemlist has additional client members
+/**
+ * @var bg_itemlist
+ * @brief QUAKED item_***** ( 0 0 0 ) (-16 -16 -16) (16 16 16) SUSPENDED SPIN PERSISTANT
+ * DO NOT USE THIS CLASS, IT JUST HOLDS GENERAL INFORMATION.
+ * SUSPENDED - will allow items to hang in the air, otherwise they are dropped to the next surface.
+ * SPIN - will allow items to spin in place.
+ * PERSISTANT - some items (ex. clipboards) can be picked up, but don't disappear
+ * 
+ * If an item is the target of another entity, it will not spawn in until fired.
+ * 
+ * An item fires all of its targets when it is picked up.  If the toucher can't carry it, the targets won't be fired.
+ * 
+ * "notfree" if set to 1, don't spawn in free for all games
+ * "notteam" if set to 1, don't spawn in team games
+ * "notsingle" if set to 1, don't spawn in single player games
+ * "wait"  override the default wait before respawning.  -1 = never respawn automatically, which can be used with targeted spawning.
+ * "random" random number of plus or minus seconds varied from the respawn time
+ * "count" override quantity or duration on most items.
+ * "stand" if the item has a stand (ex: mp40_stand.md3) this specifies which stand tag to attach the weapon to ("stand":"4" would mean "tag_stand4" for example)  only weapons support stands currently
+ *
+ * @note Important notes:
+ * - whenever you add new items update ITEM_MAX_ITEMS, FIRST_WEAPON_ITEM, ITEM_AMMO_PACK, ITEM_MEGA_AMMO_PACK, ITEM_RED_FLAG, ITEM_BLUE_FLAG
+ * - bg_itemlist has additional client members                                                                                              
+ */   
 gitem_t bg_itemlist[] =
 {
 	{
@@ -1898,26 +1901,6 @@ gitem_t bg_itemlist[] =
 		50,
 		IT_WEAPON,
 		WP_SILENCED_COLT,
-		PW_NONE,
-#ifdef CGAMEDLL
-		{ 0, { 0 }, { 0 } },
-#endif
-	},
-	// weapon_medic_heal
-	{
-		"weapon_medic_heal",
-		"sound/misc/w_pkup.wav",
-		{
-			"models/multiplayer/medpack/medpack.md3",
-			"models/multiplayer/medpack/v_medpack.md3",
-			0
-		},
-		"icons/iconw_medheal_1", // icon
-		"icons/ammo2",           // ammo icon
-		"medicheal",             // pickup
-		50,
-		IT_WEAPON,
-		WP_MEDKIT,
 		PW_NONE,
 #ifdef CGAMEDLL
 		{ 0, { 0 }, { 0 } },
