@@ -371,7 +371,7 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 		return;
 	}
 
-	item = BG_FindItemForWeapon(weapon);
+	item = BG_GetItemForWeapon(weapon);
 	VectorCopy(client->ps.viewangles, angles);
 
 	// clamp pitch

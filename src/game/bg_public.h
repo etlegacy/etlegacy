@@ -1077,6 +1077,7 @@ typedef enum
 typedef struct weapontable_s
 {
 	int weapon;                     ///< reference
+	int item;                       ///< item
 	int team;                       ///<
 	skillType_t skillBased;         ///<
 	weapon_t weapAlts;              ///< bg
@@ -1109,7 +1110,7 @@ typedef struct weapontable_s
 	qboolean quickFireMode;         ///<
 	qboolean firingAuto;            ///<
 
-	qboolean neverLoseDisguise;    ///< g
+	qboolean neverLoseDisguise;     ///< g
 	qboolean keepDisguise;          ///< g
 
 	qboolean isThrowable;           ///<
@@ -1818,7 +1819,6 @@ typedef struct
 typedef enum item_s
 {
     ITEM_NONE,
-    //ITEM_TREASURE,
     ITEM_HEALTH_SMALL,
     ITEM_HEALTH,
     ITEM_HEALTH_LARGE,
@@ -1829,20 +1829,20 @@ typedef enum item_s
     ITEM_WEAPON_KNIFE,
     ITEM_WEAPON_KNIFE_KABAR,
     ITEM_WEAPON_LUGER,
-    ITEM_WEAPON_AKIMBOLUGER,
-    ITEM_WEAPON_AKIMBOSILENCEDLUGER,
+    ITEM_WEAPON_AKIMBO_LUGER,
+    ITEM_WEAPON_AKIMBO_SILENCED_LUGER,
     ITEM_WEAPON_THOMPSON,
-    ITEM_WEAPON_DUMMY,
+    ITEM_WEAPON_DUMMY_MG42,
     ITEM_WEAPON_STEN,
     ITEM_WEAPON_COLT,
-    ITEM_WEAPON_AKIMBOCOLT,
-    ITEM_WEAPON_AKIMBOSILENCEDCOLT,
+    ITEM_WEAPON_AKIMBO_COLT,
+    ITEM_WEAPON_AKIMBO_SILENCED_COLT,
     ITEM_WEAPON_MP40,
     ITEM_WEAPON_PANZERFAUST,
     ITEM_WEAPON_BAZOOKA,
-    ITEM_WEAPON_GRENADELAUNCHER,
+    ITEM_WEAPON_GRENADE_LAUNCHER,
     ITEM_WEAPON_GRENADEPINEAPPLE,
-    ITEM_WEAPON_GRENADESMOKE,
+    ITEM_WEAPON_SMOKE_MARKER,
     ITEM_WEAPON_SMOKETRAIL,
     ITEM_WEAPON_MEDIC_HEAL,
     ITEM_WEAPON_DYNAMITE,
@@ -1855,14 +1855,14 @@ typedef enum item_s
     ITEM_WEAPON_MAGICAMMO,
     ITEM_WEAPON_MAGICAMMO2,
     ITEM_WEAPON_BINOCULARS,
-    ITEM_WEAPON_KAR43,
-    ITEM_WEAPON_KAR43_SCOPE,
-    ITEM_WEAPON_KAR98RIFLE,
+    ITEM_WEAPON_K43,
+    ITEM_WEAPON_K43_SCOPE,
+    ITEM_WEAPON_KAR98,
     ITEM_WEAPON_GPG40,
-    ITEM_WEAPON_GPG40_ALLIED,
-    ITEM_WEAPON_M1CARBINERIFLE,
-    ITEM_WEAPON_GARANDRIFLE,
-    ITEM_WEAPON_GARANDRIFLESCOPE,
+    ITEM_WEAPON_M7,
+    ITEM_WEAPON_CARBINE,
+    ITEM_WEAPON_GARAND,
+    ITEM_WEAPON_GARAND_SCOPE,
     ITEM_WEAPON_FG42,
     ITEM_WEAPON_FG42SCOPE,
     ITEM_WEAPON_MORTAR,
@@ -1871,14 +1871,14 @@ typedef enum item_s
     ITEM_WEAPON_MORTAR2_SET,
     ITEM_WEAPON_LANDMINE,
     ITEM_WEAPON_SATCHEL,
-    ITEM_WEAPON_SATCHELDETONATOR,
-    ITEM_WEAPON_SMOKEBOMB,
+    ITEM_WEAPON_SATCHELDET,
+    ITEM_WEAPON_SMOKE_BOMB,
     ITEM_WEAPON_MOBILE_MG42,
     ITEM_WEAPON_MOBILE_MG42_SET,
     ITEM_WEAPON_MOBILE_BROWNING_SET,
     ITEM_WEAPON_MOBILE_BROWNING,
     ITEM_WEAPON_SILENCER,
-    ITEM_WEAPON_SILENCEDCOLT,
+    ITEM_WEAPON_SILENCED_COLT,
     ITEM_AMMO_SYRINGE,
     ITEM_AMMO_SMOKE_GRENADE,
     ITEM_AMMO_DYNAMITE,
@@ -1932,11 +1932,9 @@ typedef struct gitem_s
 // included in both the game dll and the client
 extern gitem_t bg_itemlist[];
 
-#define FIRST_WEAPON_ITEM ITEM_WEAPON_KNIFE     ///< bg_itemlist is sorted and weapons start at ITEM_WEAPON_KNIFE
-
 gitem_t *BG_FindItem(const char *pickupName);
-gitem_t *BG_FindItemForClassName(const char *className);
-gitem_t *BG_FindItemForWeapon(weapon_t weapon);
+//gitem_t *BG_FindItemForClassName(const char *className); ///< unsued
+gitem_t *BG_GetItemForWeapon(weapon_t weapon);
 gitem_t *BG_GetItem(int index);
 
 qboolean BG_AkimboFireSequence(int weapon, int akimboClip, int mainClip);
