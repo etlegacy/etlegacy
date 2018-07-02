@@ -65,18 +65,19 @@ skilltable_t skillTable[SK_NUM_SKILLS] =
 };
 // *INDENT-ON*
 
-sysMessage_t HQMessages[SM_NUM_SYS_MSGS] = {
-	{"SYS_NeedMedic",		 "_hq_need_medic",			"^7(HQ): ^3We need a Medic!"           },
-	{"SYS_NeedEngineer",	 "_hq_need_engineer",		"^7(HQ): ^3We need an Engineer!"       },
-	{"SYS_NeedFieldops",	 "_hq_need_fieldops",		"^7(HQ): ^3We need an Field Ops!"      },
-	{"SYS_NeedCovertOps",	 "_hq_need_covertops",		"^7(HQ): ^3We need an Covert Ops!"     },
-	{"SYS_MenDown",			 "_hq_men_down",			"^7(HQ): ^3We've lost most of our men!"},
-	{"SYS_ObjCaptured",		 "_hq_objective_captured",	"^7(HQ): ^3Objective captured!"        },
-	{"SYS_ObjLost",			 "_hq_objective_lost",		"^7(HQ): ^3Objective lost!"            },
-	{"SYS_ObjDestroyed",	 "_hq_objective_destroyed",	"^7(HQ): ^3Objective destroyed!"       },
-	{"SYS_ConstructComplete","_hq_const_completed",		"^7(HQ): ^3Construction complete!"     },
-	{"SYS_ConstructFailed",	 "_hq_const_failed",		"^7(HQ): ^3Construction failed!"       },
-	{"SYS_Destroyed",		 "_hq_const_destroyed",		"^7(HQ): ^3Construction destroyed!"    },
+sysMessage_t HQMessages[SM_NUM_SYS_MSGS] =
+{
+	{ "SYS_NeedMedic",         "_hq_need_medic",          "^7(HQ): ^3We need a Medic!"            },
+	{ "SYS_NeedEngineer",      "_hq_need_engineer",       "^7(HQ): ^3We need an Engineer!"        },
+	{ "SYS_NeedFieldops",      "_hq_need_fieldops",       "^7(HQ): ^3We need an Field Ops!"       },
+	{ "SYS_NeedCovertOps",     "_hq_need_covertops",      "^7(HQ): ^3We need an Covert Ops!"      },
+	{ "SYS_MenDown",           "_hq_men_down",            "^7(HQ): ^3We've lost most of our men!" },
+	{ "SYS_ObjCaptured",       "_hq_objective_captured",  "^7(HQ): ^3Objective captured!"         },
+	{ "SYS_ObjLost",           "_hq_objective_lost",      "^7(HQ): ^3Objective lost!"             },
+	{ "SYS_ObjDestroyed",      "_hq_objective_destroyed", "^7(HQ): ^3Objective destroyed!"        },
+	{ "SYS_ConstructComplete", "_hq_const_completed",     "^7(HQ): ^3Construction complete!"      },
+	{ "SYS_ConstructFailed",   "_hq_const_failed",        "^7(HQ): ^3Construction failed!"        },
+	{ "SYS_Destroyed",         "_hq_const_destroyed",     "^7(HQ): ^3Construction destroyed!"     },
 };
 
 vec3_t playerlegsProneMins = { -13.5f, -13.5f, -24.f };
@@ -192,7 +193,7 @@ weaponTable_t weaponTable[WP_NUM_WEAPONS] =
 	{ WP_COLT,                 TEAM_ALLIES, SK_LIGHT_WEAPONS,                            WP_SILENCED_COLT,       WP_LUGER,                WP_NONE,  WP_COLT,              WP_COLT,              ET_GENERAL,            EF_NONE,                    SVF_NONE,      TR_LINEAR,      0,     MASK_SHOT,        qfalse,  qtrue,  18,    qfalse, qtrue,   600,   0.4f,       0,           0,           qtrue,        qfalse,    qfalse,           qfalse,      qfalse,     qtrue,        qtrue,      qfalse,          qfalse, qfalse,     qfalse,   qtrue,   qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qtrue,        qfalse,       qfalse,          qfalse,       qfalse,   qfalse,          qfalse,       qfalse,     qfalse, 0,      0,     0,          "COLT",                WS_COLT,            qtrue,  qtrue,  qtrue,   qtrue,    24,     1,   8,      24,       8,        1500,      DELAY_PISTOL,  400,         0,          20,               0,      0,       250,            250,             0,                 0,                  0,        { 24, -4, 36 },  0,        0,       1.0f,      0,              0,            100,               { .45f, .15f }, { 0, 0 },      "",                "colt",                  WEAPON_CARD_2,    { 0.5f, 1.f, 0.f, 0.5f, 3 / 8.f, 4 / 8.f }, WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qfalse,       {1, 1, 1, 1, 1},                     MOD_COLT,                 MOD_COLT                 },  // WP_COLT                  // 7    // equivalent american weapon to german luger
 	{ WP_THOMPSON,             TEAM_ALLIES, SK_LIGHT_WEAPONS,                            WP_NONE,                WP_MP40,                 WP_NONE,  WP_THOMPSON,          WP_THOMPSON,          ET_GENERAL,            EF_NONE,                    SVF_NONE,      TR_LINEAR,      0,     MASK_SHOT,        qfalse,  qtrue,  18,    qfalse, qtrue,   400,   0.6f,       0,           0,           qfalse,       qtrue,     qfalse,           qfalse,      qfalse,     qtrue,        qtrue,      qfalse,          qtrue,  qfalse,     qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qtrue,        qfalse,       qfalse,          qfalse,       qfalse,   qfalse,          qfalse,       qfalse,     qfalse, 0,      0,     0,          "THOMPSON",            WS_THOMPSON,        qtrue,  qtrue,  qtrue,   qtrue,    90,     1,   30,     30,       30,       2400,      DELAY_LOW,     150,         0,          15,               0,      0,       250,            250,             250,               250,                0,        { 16, -4, 24 },  0,        0,       1.0f,      0.3f,           0.6f,         0,                 { 0, 0 },       { 0, 0 },      "",                "thompson",              WEAPON_CARD_1,    { 1.f, 1.f, 0.f, 1.f, 7 / 8.f, 8 / 8.f },   WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qfalse,       {1, 1, 1, 1, 1},                     MOD_THOMPSON,             MOD_THOMPSON             },  // WP_THOMPSON              // 8    // equivalent american weapon to german mp40
 	{ WP_GRENADE_PINEAPPLE,    TEAM_ALLIES, SK_EXPLOSIVES_AND_CONSTRUCTION,              WP_NONE,                WP_GRENADE_LAUNCHER,     WP_NONE,  WP_GRENADE_PINEAPPLE, WP_GRENADE_PINEAPPLE, ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST, TR_GRAVITY,     -50,   MASK_MISSILESHOT, qfalse,  qfalse, 0,     qtrue,  qfalse,  0,     0,          250,         250,         qfalse,       qfalse,    qfalse,           qtrue,       qtrue,      qfalse,       qfalse,     qtrue,           qfalse, qtrue,      qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,       qfalse,          qfalse,       qtrue,    qtrue,           qtrue,        qtrue,      qfalse, 0,      0,     0,          "",                    WS_GRENADE,         qfalse, qtrue,  qfalse,  qfalse,   45,     1,   15,     0,        4,        1000,      DELAY_THROW,   1600,        4000,       0,                0,      0,       250,            250,             250,               250,                0,        { 16, -4, 24 },  2500,     0,       1.0f,      0,              0,            0,                 { 0, 0 },       { 0, 0 },      "grenade",         "pineapple",             WEAPON_CARD_NONE, { 1.f, 1.f, 0.f, 1.f, 0.f, 1.f },           WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qfalse,       {1, 1, 1, 1, 1},                     MOD_GRENADE_PINEAPPLE,    MOD_GRENADE_PINEAPPLE    },  // WP_GRENADE_PINEAPPLE     // 9
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+
 	{ WP_STEN,                 TEAM_FREE,   SK_LIGHT_WEAPONS,                            WP_NONE,                WP_NONE,                 WP_NONE,  WP_STEN,              WP_STEN,              ET_GENERAL,            EF_NONE,                    SVF_NONE,      TR_LINEAR,      0,     MASK_SHOT,        qfalse,  qtrue,  14,    qfalse, qtrue,   200,   0.6f,       0,           0,           qfalse,       qtrue,     qfalse,           qtrue,       qfalse,     qtrue,        qtrue,      qfalse,          qfalse, qfalse,     qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qtrue,        qfalse,       qfalse,          qfalse,       qfalse,   qfalse,          qfalse,       qfalse,     qtrue,  0,      0,     0,          "STEN",                WS_STEN,            qtrue,  qtrue,  qtrue,   qtrue,    96,     1,   32,     32,       32,       3100,      DELAY_LOW,     150,         0,          15,               1200,   450,     250,            250,             250,               250,                0,        { 16, -4, 24 },  0,        0,       1.0f,      0.3f,           0.6f,         0,                 { 0, 0 },       { 0, 0 },      "",                "sten",                  WEAPON_CARD_1,    { 1.f, 1.f, 0.f, 1.f, 6 / 8.f, 7 / 8.f },   WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qfalse,       {1, 1, 1, 1, 1},                     MOD_STEN,                 MOD_STEN                 },  // WP_STEN                  // 10   // silenced sten sub-machinegun
 	{ WP_MEDIC_SYRINGE,        TEAM_FREE,   SK_FIRST_AID,                                WP_NONE,                WP_NONE,                 WP_NONE,  WP_MEDIC_SYRINGE,     WP_MEDIC_SYRINGE,     ET_GENERAL,            EF_NONE,                    SVF_NONE,      TR_LINEAR,      0,     MASK_SHOT,        qfalse,  qfalse, 1,     qfalse, qfalse,  0,     0,          0,           0,           qfalse,       qfalse,    qfalse,           qfalse,      qfalse,     qfalse,       qfalse,     qtrue,           qfalse, qfalse,     qtrue,    qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,       qfalse,          qfalse,       qfalse,   qtrue,           qtrue,        qfalse,     qfalse, 0,      0,     0,          "MEDIC",               WS_MAX,             qfalse, qtrue,  qfalse,  qfalse,   10,     1,   1,      0,        10,       1500,      50,            1000,        0,          0,                0,      0,       250,            250,             250,               250,                0,        { 16, -4, 24 },  0,        0,       1.0f,      0,              0,            0,                 { 0, 0 },       { 0, 0 },      "",                "syringe",               WEAPON_CARD_NONE, { 1.f, 1.f, 0.f, 1.f, 0.f, 1.f },           WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qfalse,       {1, 1, 1, 1, 1},                     MOD_SYRINGE,              MOD_SYRINGE              },  // WP_MEDIC_SYRINGE         // 11   // broken out from CLASS_SPECIAL per Id request
 	{ WP_AMMO,                 TEAM_FREE,   SK_SIGNALS,                                  WP_NONE,                WP_NONE,                 WP_NONE,  WP_AMMO,              WP_AMMO,              ET_GENERAL,            EF_NONE,                    SVF_NONE,      TR_LINEAR,      0,     MASK_SHOT,        qfalse,  qfalse, 1,     qfalse, qfalse,  0,     0,          0,           0,           qfalse,       qfalse,    qfalse,           qfalse,      qtrue,      qfalse,       qfalse,     qtrue,           qfalse, qfalse,     qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,       qfalse,          qfalse,       qfalse,   qfalse,          qfalse,       qfalse,     qfalse, 0,      0,     0,          "AMMO",                WS_MAX,             qfalse, qfalse, qfalse,  qfalse,   1,      0,   1,      0,        1,        3000,      50,            1000,        0,          0,                0,      0,       250,            250,             250,               250,                0,        { 16, -4, 24 },  0,        0,       1.0f,      0,              0,            0,                 { 0, 0 },       { 0, 0 },      "",                "ammopack",              WEAPON_CARD_NONE, { 1.f, 1.f, 0.f, 1.f, 0.f, 1.f },           WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qtrue,        {0.25f, 0.15f, 0.15f, 0.15f, 0.15f}, MOD_AMMO,                 MOD_AMMO                 },  // WP_AMMO                  // 12   // likewise
@@ -203,7 +204,7 @@ weaponTable_t weaponTable[WP_NUM_WEAPONS] =
 	{ WP_MAPMORTAR,            TEAM_FREE,   SK_HEAVY_WEAPONS,                            WP_NONE,                WP_NONE,                 WP_NONE,  WP_MAPMORTAR,         WP_MAPMORTAR,         ET_MISSILE,            EF_NONE,                    SVF_BROADCAST, TR_GRAVITY,     -50,   MASK_MISSILESHOT, qfalse,  qfalse, 250,   qtrue,  qfalse,  0,     0,          250,         120,         qfalse,       qfalse,    qfalse,           qfalse,      qfalse,     qfalse,       qtrue,      qfalse,          qfalse, qtrue,      qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,       qfalse,          qfalse,       qfalse,   qfalse,          qfalse,       qtrue,      qfalse, 0,      0,     0,          "",                    WS_MORTAR,          qfalse, qtrue,  qfalse,  qfalse,   999,    0,   999,    0,        0,        0,         50,            0,           0,          0,                0,      0,       250,            250,             250,               250,                0,        { 16, -4, 24 },  20000,    4,       1.0f,      0,              0,            0,                 { 0, 0 },       { 0, 0 },      "mortar",          "mapmortar",             WEAPON_CARD_NONE, { 1.f, 1.f, 0.f, 1.f, 0.f, 1.f },           WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qfalse,       {1, 1, 1, 1, 1},                     MOD_UNKNOWN,              MOD_UNKNOWN              },  // WP_MAPMORTAR             // 17
 	{ VERYBIGEXPLOSION,        TEAM_FREE,   SK_NUM_SKILLS,                               WP_NONE,                WP_NONE,                 WP_NONE,  WP_NONE,              WP_NONE,              ET_GENERAL,            EF_NONE,                    SVF_NONE,      TR_LINEAR,      0,     MASK_SHOT,        qfalse,  qfalse, 1,     qtrue,  qfalse,  0,     0,          0,           0,           qfalse,       qfalse,    qfalse,           qfalse,      qfalse,     qfalse,       qtrue,      qfalse,          qfalse, qfalse,     qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,       qfalse,          qfalse,       qfalse,   qfalse,          qfalse,       qfalse,     qfalse, 0,      0,     0,          "",                    WS_MAX,             qfalse, qfalse, qfalse,  qfalse,   999,    0,   999,    0,        0,        0,         50,            0,           0,          0,                0,      0,       250,            250,             250,               250,                0,        { 16, -4, 24 },  0,        0,       1.0f,      0,              0,            0,                 { 0, 0 },       { 0, 0 },      "",                NULL,                    WEAPON_CARD_NONE, { 1.f, 1.f, 0.f, 1.f, 0.f, 1.f },           WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qfalse,       {1, 1, 1, 1, 1},                     MOD_UNKNOWN,              MOD_UNKNOWN              },  // VERYBIGEXPLOSION         // 18   // explosion effect for airplanes
 	{ WP_MEDKIT,               TEAM_FREE,   SK_FIRST_AID,                                WP_NONE,                WP_NONE,                 WP_NONE,  WP_MEDKIT,            WP_MEDKIT,            ET_GENERAL,            EF_NONE,                    SVF_NONE,      TR_LINEAR,      0,     MASK_SHOT,        qfalse,  qfalse, 1,     qfalse, qfalse,  0,     0,          0,           0,           qfalse,       qfalse,    qfalse,           qfalse,      qtrue,      qfalse,       qfalse,     qtrue,           qfalse, qfalse,     qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,       qfalse,          qfalse,       qfalse,   qfalse,          qfalse,       qfalse,     qfalse, 0,      0,     0,          "",                    WS_MAX,             qfalse, qfalse, qfalse,  qfalse,   999,    0,   999,    1,        1,        0,         50,            1000,        0,          0,                0,      0,       250,            250,             250,               250,                0,        { 16, -4, 24 },  0,        0,       1.0f,      0,              0,            0,                 { 0, 0 },       { 0, 0 },      "",                "medpack",               WEAPON_CARD_NONE, { 1.f, 1.f, 0.f, 1.f, 0.f, 1.f },           WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qtrue,        {0.25f, 0.25f, 0.15f, 0.15f, 0.15f}, MOD_UNKNOWN,              MOD_UNKNOWN              },  // WP_MEDKIT                // 19
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+
 	{ WP_BINOCULARS,           TEAM_FREE,   SK_NUM_SKILLS,                               WP_NONE,                WP_NONE,                 WP_NONE,  WP_BINOCULARS,        WP_BINOCULARS,        ET_GENERAL,            EF_NONE,                    SVF_NONE,      TR_LINEAR,      0,     MASK_SHOT,        qfalse,  qfalse, 1,     qfalse, qfalse,  0,     0,          0,           0,           qfalse,       qfalse,    qtrue,            qtrue,       qfalse,     qfalse,       qtrue,      qfalse,          qfalse, qfalse,     qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,       qfalse,          qfalse,       qfalse,   qtrue,           qfalse,       qfalse,     qfalse, 20/*36*/, 4/*8*/,     0,   "",                    WS_MAX,             qfalse, qfalse, qfalse,  qfalse,   999,    0,   999,    1,        0,        0,         50,            0,           0,          0,                0,      0,       250,            250,             250,               250,                0,        { 16, -4, 24 },  0,        0,       1.0f,      0,              0,            0,                 { 0, 0 },       { 0, 0 },      "",                "binocs",                WEAPON_CARD_NONE, { 1.f, 1.f, 0.f, 1.f, 0.f, 1.f },           WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qfalse,       {1, 1, 1, 1, 1},                     MOD_UNKNOWN,              MOD_UNKNOWN              },  // WP_BINOCULARS            // 20   // per atvi request all use same vals to match menu {36 8}
 	{ WP_PLIERS,               TEAM_FREE,   SK_EXPLOSIVES_AND_CONSTRUCTION,              WP_NONE,                WP_NONE,                 WP_NONE,  WP_PLIERS,            WP_PLIERS,            ET_GENERAL,            EF_NONE,                    SVF_NONE,      TR_LINEAR,      0,     MASK_SHOT,        qfalse,  qfalse, 1,     qfalse, qfalse,  0,     0,          0,           0,           qfalse,       qtrue,     qfalse,           qfalse,      qfalse,     qfalse,       qtrue,      qfalse,          qfalse, qfalse,     qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,       qfalse,          qfalse,       qfalse,   qtrue,           qtrue,        qfalse,     qfalse, 0,      0,     0,          "PLIERS",              WS_MAX,             qfalse, qfalse, qfalse,  qfalse,   999,    0,   999,    0,        1,        0,         50,            50,          0,          0,                0,      0,       250,            250,             250,               250,                0,        { 16, -4, 24 },  0,        0,       1.0f,      0,              0,            0,                 { 0, 0 },       { 0, 0 },      "",                "pliers",                WEAPON_CARD_NONE, { 1.f, 1.f, 0.f, 1.f, 0.f, 1.f },           WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qfalse,       {1, 1, 1, 1, 1},                     MOD_UNKNOWN,              MOD_UNKNOWN              },  // WP_PLIERS                // 21
 	{ WP_SMOKE_MARKER,         TEAM_FREE,   SK_SIGNALS,                                  WP_NONE,                WP_NONE,                 WP_NONE,  WP_SMOKE_MARKER,      WP_SMOKE_MARKER,      ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST, TR_GRAVITY,     -50,   MASK_MISSILESHOT, qfalse,  qfalse, 0,     qtrue,  qfalse,  0,     0,          400,         400,         qfalse,       qtrue,     qfalse,           qfalse,      qtrue,      qfalse,       qtrue,      qtrue,           qfalse, qtrue,      qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,       qfalse,          qfalse,       qfalse,   qfalse,          qfalse,       qtrue,      qfalse, 0,      0,     0,          "",                    WS_AIRSTRIKE,       qfalse, qfalse, qfalse,  qfalse,   999,    0,   999,    0,        1,        0,         50,            1000,        0,          0,                0,      0,       250,            250,             250,               250,                0,        { 16, -4, 24 },  2500,     0,       1.0f,      0,              0,            0,                 { 0, 0 },       { 0, 0 },      "grenade",         "smokemarker",           WEAPON_CARD_NONE, { 1.f, 1.f, 0.f, 1.f, 0.f, 1.f },           WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qtrue,        {1, 1, .66f, .66f, .66f},            MOD_AIRSTRIKE,            MOD_AIRSTRIKE            },  // WP_SMOKE_MARKER          // 22   // changed name to cause less confusion // damage was 140
@@ -214,7 +215,7 @@ weaponTable_t weaponTable[WP_NUM_WEAPONS] =
 	{ WP_SATCHEL,              TEAM_FREE,   SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, WP_NONE,                WP_NONE,                 WP_NONE,  WP_SATCHEL,           WP_SATCHEL,           ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST, TR_GRAVITY,     -50,   MASK_MISSILESHOT, qfalse,  qfalse, 0,     qtrue,  qfalse,  0,     0,          250,         250,         qfalse,       qfalse,    qtrue,            qfalse,      qtrue,      qfalse,       qfalse,     qtrue,           qfalse, qtrue,      qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,       qfalse,          qfalse,       qfalse,   qfalse,          qtrue,        qfalse,     qfalse, 0,      0,     0,          "SATCHEL",             WS_MAX,             qfalse, qfalse, qfalse,  qfalse,   1,      0,   1,      0,        1,        3000,      DELAY_LOW,     0/*2000*/,   0,          0,                0,      0,       250,            250,             250,               250,                0,        { 16, -4, 24 },  0,        0,       1.0f,      0,              0,            0,                 { 0, 0 },       { 0, 0 },      "satchel_charge",  "satchel",               WEAPON_CARD_NONE, { 1.f, 1.f, 0.f, 1.f, 0.f, 1.f },           WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qtrue,        {1, 1, .66f, .66f, .66f},            MOD_SATCHEL,              MOD_SATCHEL              },  // WP_SATCHEL               // 27
 	{ WP_SATCHEL_DET,          TEAM_FREE,   SK_NUM_SKILLS,                               WP_NONE,                WP_NONE,                 WP_NONE,  WP_SATCHEL_DET,       WP_SATCHEL_DET,       ET_GENERAL,            EF_NONE,                    SVF_NONE,      TR_LINEAR,      0,     MASK_SHOT,        qfalse,  qfalse, 1,     qtrue,  qfalse,  0,     0,          0,           0,           qfalse,       qfalse,    qtrue,            qtrue,       qfalse,     qfalse,       qfalse,     qtrue,           qfalse, qfalse,     qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,       qfalse,          qfalse,       qfalse,   qfalse,          qtrue,        qtrue,      qfalse, 0,      0,     0,          "SATCHEL",             WS_SATCHEL,         qfalse, qfalse, qfalse,  qfalse,   1,      0,   1,      0,        0,        3000,      722,           0/*2000*/,   0,          0,                0,      0,       250,            250,             250,               250,                0,        { 16, -4, 24 },  0,        0,       1.0f,      0,              0,            0,                 { 0, 0 },       { 0, 0 },      "",                "satchel_det",           WEAPON_CARD_NONE, { 1.f, 1.f, 0.f, 1.f, 0.f, 1.f },           WEAP_IDLE2, WEAP_ATTACK2, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RELOAD2, WEAP_RELOAD1, qfalse,       {1, 1, 1, 1, 1},                     MOD_UNKNOWN,              MOD_UNKNOWN              },  // WP_SATCHEL_DET           // 28
 	{ WP_SMOKE_BOMB,           TEAM_FREE,   SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, WP_NONE,                WP_NONE,                 WP_NONE,  WP_SMOKE_BOMB,        WP_SMOKE_BOMB,        ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST, TR_GRAVITY,     -50,   MASK_MISSILESHOT, qfalse,  qfalse, 0,     qfalse, qfalse,  0,     0,          0,           0,           qfalse,       qfalse,    qtrue,            qtrue,       qtrue,      qfalse,       qfalse,     qtrue,           qfalse, qtrue,      qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,       qfalse,          qfalse,       qfalse,   qtrue,           qtrue,        qfalse,     qfalse, 0,      0,     0,          "",                    WS_MAX,             qfalse, qfalse, qfalse,  qfalse,   1,      0,   10,     0,        1,        1000,      DELAY_THROW,   1600,        4000,       0,                0,      0,       250,            250,             250,               250,                0,        { 16, -4, 24 },  2500,     0,       1.0f,      0,              0,            0,                 { 0, 0 },       { 0, 0 },      "smoke_bomb",      "smokegrenade",          WEAPON_CARD_NONE, { 1.f, 1.f, 0.f, 1.f, 0.f, 1.f },           WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qtrue,        {1, 1, .66f, .66f, .66f},            MOD_SMOKEBOMB,            MOD_SMOKEBOMB            },  // WP_SMOKE_BOMB            // 29
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+
 	{ WP_MOBILE_MG42,          TEAM_AXIS,   SK_HEAVY_WEAPONS,                            WP_MOBILE_MG42_SET,     WP_MOBILE_BROWNING,      WP_NONE,  WP_MOBILE_MG42,       WP_MOBILE_MG42,       ET_GENERAL,            EF_NONE,                    SVF_NONE,      TR_LINEAR,      0,     MASK_SHOT,        qfalse,  qfalse, 18,    qfalse, qtrue,   2500,  0.9f,       0,           0,           qfalse,       qtrue,     qfalse,           qfalse,      qfalse,     qtrue,        qtrue,      qfalse,          qfalse, qfalse,     qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qtrue,  qfalse, qfalse,     qfalse,       qtrue,        qfalse,          qfalse,       qfalse,   qfalse,          qfalse,       qfalse,     qtrue,  0,      0,     0,          "MOBILE MG 42",        WS_MG42,            qfalse, qtrue,  qtrue,   qtrue,    450,    1,   150,    0,        150,      3000,      DELAY_LOW,     66,          0,          20,               1500,   300,     250,            250,             0,                 1722,               4000.f,   { 12, -4, 24 },  0,        0,       1.0f,      0.3f,           0.6f,         200,               { .75f, .2f },  { 1.f, .25f }, "",                "mg42",                  WEAPON_CARD_1,    { 1.f, 1.f, 0.f, 1.f, 4 / 8.f, 5 / 8.f },   WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHFROM, WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qfalse,       {1, 1, 1, 1, 1},                     MOD_MOBILE_MG42,          MOD_MOBILE_MG42          },  // WP_MOBILE_MG42           // 30
     { WP_K43,                  TEAM_AXIS,   SK_LIGHT_WEAPONS,                            WP_K43_SCOPE,           WP_GARAND,               WP_NONE,  WP_K43,               WP_K43,               ET_GENERAL,            EF_NONE,                    SVF_NONE,      TR_LINEAR,      0,     MASK_SHOT,        qfalse,  qfalse, 34,    qfalse, qtrue,   250,   0.5f,       0,           0,           qtrue,        qfalse,    qfalse,           qtrue,       qfalse,     qtrue,        qtrue,      qfalse,          qfalse, qfalse,     qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qtrue,           qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,       qfalse,          qfalse,       qfalse,   qfalse,          qfalse,       qfalse,     qfalse, 0,      0,     0,          "SCOPED K43",          WS_K43,             qfalse, qtrue,  qtrue,   qtrue,    30,     1,   10,     20,       10,       1500,      DELAY_LOW,     400,         0,          50,               0,      0,       250,            250,             250,               250,                0,        { 16, -4, 24 },  0,        0,       2.0f,      2.f,            1.f,          0,                 { 0, 0 },       { 0, 0 },      "",                "k43",                   WEAPON_CARD_2,    { 1.f, 1.f, 0.f, 1.f, 6 / 8.f, 7 / 8.f },   WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qfalse,       {1, 1, 1, 1, 1},                     MOD_K43,                  MOD_K43                  },  // WP_K43                   // 31    // K43
 	{ WP_FG42,                 TEAM_FREE,   SK_LIGHT_WEAPONS,                            WP_FG42SCOPE,           WP_NONE,                 WP_NONE,  WP_FG42,              WP_FG42,              ET_GENERAL,            EF_NONE,                    SVF_NONE,      TR_LINEAR,      0,     MASK_SHOT,        qfalse,  qtrue,  16,    qfalse, qtrue,   500,   0.6f,       0,           0,           qfalse,       qtrue,     qfalse,           qfalse,      qfalse,     qtrue,        qtrue,      qfalse,          qfalse, qfalse,     qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,       qfalse,          qfalse,       qfalse,   qfalse,          qfalse,       qfalse,     qfalse, 0,      0,     0,          "FG 42",               WS_FG42,            qtrue,  qtrue,  qtrue,   qtrue,    60,     1,   20,     40,       20,       2000,      DELAY_LOW,     100,         0,          100,              0,      0,       250,            250,             50,                50,                 0,        { 16, -4, 24 },  0,        0,       1.0f,      0.3f,           0.6f,         0,                 { 0, 0 },       { 0, 0 },      "",                "fg42",                  WEAPON_CARD_1,    { 1.f, 1.f, 0.f, 1.f, 3 / 8.f, 4 / 8.f },   WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qfalse,       {1, 1, 1, 1, 1},                     MOD_FG42,                 MOD_FG42                 },  // WP_FG42                  // 32
@@ -222,11 +223,11 @@ weaponTable_t weaponTable[WP_NUM_WEAPONS] =
 	{ WP_MORTAR,               TEAM_ALLIES, SK_HEAVY_WEAPONS,                            WP_MORTAR_SET,          WP_MORTAR2,              WP_NONE,  WP_MORTAR,            WP_MORTAR,            ET_GENERAL,            EF_NONE,                    SVF_NONE,      TR_LINEAR,      0,     MASK_MISSILESHOT, qfalse,  qfalse, 1,     qtrue,  qtrue,   0,     0,          0,           0,           qfalse,       qfalse,    qfalse,           qfalse,      qfalse,     qfalse,       qtrue,      qfalse,          qfalse, qfalse,     qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qtrue,   qfalse,     qfalse, qfalse, qfalse,     qfalse,       qtrue,        qfalse,          qfalse,       qfalse,   qfalse,          qfalse,       qfalse,     qfalse, 0,      0,     0,          "MORTAR",              WS_MORTAR,          qfalse, qtrue,  qfalse,  qfalse,   15,     1,   1,      0,        0,        0,         DELAY_HW,      1600,        0,          0,                0,      0,       250,            250,             0,                 1000,               0,        { 16, -4, 24 },  0,        0,       1.0f,      0,              0,            0,                 { 0, 0 },       { 0, 0 },      "",                "mortar",                WEAPON_CARD_1,    { 1.f, 1.f, 0.f, 1.f, 0 / 8.f, 1 / 8.f },   WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHFROM, WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qfalse,       {1, 1, 1, 1, 1},                     MOD_MORTAR,               MOD_MORTAR               },  // WP_MORTAR                // 34
 	{ WP_AKIMBO_COLT,          TEAM_ALLIES, SK_LIGHT_WEAPONS,                            WP_NONE,                WP_AKIMBO_LUGER,         WP_COLT,  WP_COLT,              WP_AKIMBO_COLT,       ET_GENERAL,            EF_NONE,                    SVF_NONE,      TR_LINEAR,      0,     MASK_SHOT,        qfalse,  qfalse, 18,    qfalse, qtrue,   600,   0.4f,       0,           0,           qtrue,        qfalse,    qfalse,           qfalse,      qfalse,     qtrue,        qtrue,      qfalse,          qfalse, qfalse,     qfalse,   qfalse,  qtrue,   qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qtrue,        qfalse,       qfalse,          qfalse,       qfalse,   qfalse,          qfalse,       qfalse,     qfalse, 0,      0,     0,          "AKIMBO COLTS",        WS_COLT,            qtrue,  qtrue,  qtrue,   qtrue,    48,     1,   8,      48,       8,        2700,      DELAY_PISTOL,  200,         0,          20,               0,      0,       250,            250,             250,               250,                0,        { 16, -4, 24 },  0,        0,       1.0f,      0,              0,            100,               { .45f, .15f }, { 0, 0 },      "",                "akimbo_colt",           WEAPON_CARD_2,    { 1.f, 1.f, 0.f, 1.f, 3 / 8.f, 4 / 8.f },   WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qfalse,       {1, 1, 1, 1, 1},                     MOD_AKIMBO_COLT ,         MOD_AKIMBO_COLT          },  // WP_AKIMBO_COLT           // 35
 	{ WP_AKIMBO_LUGER,         TEAM_AXIS,   SK_LIGHT_WEAPONS,                            WP_NONE,                WP_AKIMBO_COLT,          WP_LUGER, WP_LUGER,             WP_AKIMBO_LUGER,      ET_GENERAL,            EF_NONE,                    SVF_NONE,      TR_LINEAR,      0,     MASK_SHOT,        qfalse,  qfalse, 18,    qfalse, qtrue,   600,   0.4f,       0,           0,           qtrue,        qfalse,    qfalse,           qfalse,      qfalse,     qtrue,        qtrue,      qfalse,          qfalse, qfalse,     qfalse,   qfalse,  qtrue,   qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qtrue,        qfalse,       qfalse,          qfalse,       qfalse,   qfalse,          qfalse,       qfalse,     qfalse, 0,      0,     0,          "AKIMBO LUGERS",       WS_LUGER,           qtrue,  qtrue,  qtrue,   qtrue,    48,     1,   8,      48,       8,        2700,      DELAY_PISTOL,  200,         0,          20,               0,      0,       250,            250,             250,               250,                0,        { 16, -4, 24 },  0,        0,       1.0f,      0,              0,            100,               { .45f, .15f }, { 0, 0 },      "",                "akimbo_luger",          WEAPON_CARD_2,    { 1.f, 1.f, 0.f, 1.f, 2 / 8.f, 3 / 8.f },   WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qfalse,       {1, 1, 1, 1, 1},                     MOD_AKIMBO_LUGER,         MOD_AKIMBO_LUGER         },  // WP_AKIMBO_LUGER          // 36
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+
 	{ WP_GPG40,                TEAM_AXIS,   SK_EXPLOSIVES_AND_CONSTRUCTION,              WP_KAR98,               WP_NONE,                 WP_NONE,  WP_GPG40,             WP_GPG40,             ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST, TR_GRAVITY,     -50,   MASK_MISSILESHOT, qfalse,  qfalse, 0,     qtrue,  qfalse,  0,     0,          250,         250,         qfalse,       qfalse,    qfalse,           qfalse,      qfalse,     qtrue,        qtrue,      qfalse,          qfalse, qtrue,      qfalse,   qfalse,  qfalse,  qfalse,  qtrue,      qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,       qfalse,          qfalse,       qfalse,   qfalse,          qtrue,        qfalse,     qfalse, 0,      0,     0,          "",                    WS_GRENADELAUNCHER, qfalse, qtrue,  qtrue,   qfalse,   4,      1,   1,      4,        1,        3000,      DELAY_LOW,     400,         0,          0,                0,      0,       250,            250,             0,                 2350,               0,        { 16, -4, 24 },  4000,     0,       2.0f,      0,              0,            0,                 { 0, 0 },       { 0, 0 },      "gpg40_grenade",   "gpg40",                 WEAPON_CARD_NONE, { 1.f, 1.f, 0.f, 1.f, 0.f, 1.f },           WEAP_IDLE2, WEAP_ATTACK2, WEAP_ATTACK2,         WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHFROM, WEAP_RELOAD2, WEAP_RELOAD3, WEAP_DROP2,   qtrue,        {.5f, .5f, .5f, .5f, .5f},           MOD_GPG40,                MOD_GPG40                },  // WP_GPG40                 // 37
     { WP_M7,                   TEAM_ALLIES, SK_EXPLOSIVES_AND_CONSTRUCTION,              WP_CARBINE,             WP_NONE,                 WP_NONE,  WP_M7,                WP_M7,                ET_MISSILE,            EF_BOUNCE_HALF | EF_BOUNCE, SVF_BROADCAST, TR_GRAVITY,     -50,   MASK_MISSILESHOT, qfalse,  qfalse, 0,     qtrue,  qfalse,  0,     0,          250,         250,         qfalse,       qfalse,    qfalse,           qfalse,      qfalse,     qtrue,        qtrue,      qfalse,          qfalse, qtrue,      qfalse,   qfalse,  qfalse,  qfalse,  qtrue,      qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,       qfalse,          qfalse,       qfalse,   qfalse,          qtrue,        qfalse,     qfalse, 0,      0,     0,          "",                    WS_GRENADELAUNCHER, qfalse, qtrue,  qtrue,   qfalse,   4,      1,   1,      4,        1,        3000,      DELAY_LOW,     400,         0,          0,                0,      0,       250,            250,             0,                 2350,               0,        { 16, -4, 24 },  4000,     0,       2.0f,      0,              0,            0,                 { 0, 0 },       { 0, 0 },      "m7_grenade",      "m7",                    WEAPON_CARD_NONE, { 1.f, 1.f, 0.f, 1.f, 0.f, 1.f },           WEAP_IDLE2, WEAP_ATTACK2, WEAP_ATTACK2,         WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHFROM, WEAP_RELOAD2, WEAP_RELOAD3, WEAP_DROP2,   qtrue,        {.5f, .5f, .5f, .5f, .5f},           MOD_M7,                   MOD_M7                   },  // WP_M7                    // 38
 	{ WP_SILENCED_COLT,        TEAM_ALLIES, SK_LIGHT_WEAPONS,                            WP_COLT,                WP_SILENCER,             WP_NONE,  WP_COLT,              WP_COLT,              ET_GENERAL,            EF_NONE,                    SVF_NONE,      TR_LINEAR,      0,     MASK_SHOT,        qfalse,  qfalse, 18,    qfalse, qtrue,   600,   0.4f,       0,           0,           qtrue,        qfalse,    qfalse,           qtrue,       qfalse,     qtrue,        qtrue,      qfalse,          qfalse, qfalse,     qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qtrue,        qfalse,       qtrue,           qfalse,       qfalse,   qfalse,          qfalse,       qfalse,     qfalse, 0,      0,     0,          "SILENCED COLT",       WS_COLT,            qtrue,  qtrue,  qtrue,   qtrue,    24,     1,   8,      24,       8,        1500,      DELAY_PISTOL,  400,         0,          20,               0,      0,       250,            250,             1000,              1190,               0,        { 24, -4, 36 },  0,        0,       1.0f,      0,              0,            100,               { .45f, .15f }, { 0, 0 },      "",                "silenced_colt",         WEAPON_CARD_2,    { 0.5f, 1.f, 0.f, 0.5f, 1 / 8.f, 2 / 8.f }, WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qfalse,       {1, 1, 1, 1, 1},                     MOD_SILENCED_COLT,        MOD_SILENCED_COLT        },  // WP_SILENCED_COLT         // 39
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+
 	{ WP_GARAND_SCOPE,         TEAM_ALLIES, SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, WP_GARAND,              WP_K43_SCOPE,            WP_NONE,  WP_GARAND,            WP_GARAND,            ET_GENERAL,            EF_NONE,                    SVF_NONE,      TR_LINEAR,      0,     MASK_SHOT,        qtrue,   qfalse, 50,    qfalse, qtrue,   700,   10.f,       0,           0,           qtrue,        qfalse,    qfalse,           qtrue,       qfalse,     qtrue,        qtrue,      qfalse,          qfalse, qfalse,     qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,       qfalse,          qfalse,       qfalse,   qfalse,          qfalse,       qfalse,     qfalse, 20,     4,     900,        "",                    WS_GARAND,          qfalse, qtrue,  qtrue,   qtrue,    30,     1,   10,     20,       10,       1500,      0,             400,         0,          200,              0,      0,       250,            250,             250,               250,                0,        { 16, -4, 24 },  0,        0,       1.0f,      0.3f,           0,            300,               { 0, 0 },       { 1.f, .5f },  "",                "m1_garand_s",           WEAPON_CARD_NONE, { 1.f, 1.f, 0.f, 1.f, 0.f, 1.f },           WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qfalse,       {1, 1, 1, 1, 1},                     MOD_GARAND_SCOPE,         MOD_GARAND_SCOPE         },  // WP_GARAND_SCOPE          // 40    // GARAND  old max ammo 24 max clip size 8 start ammo 16 start clip 8
     { WP_K43_SCOPE,            TEAM_AXIS,   SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, WP_K43,                 WP_GARAND_SCOPE,         WP_NONE,  WP_K43,               WP_K43,               ET_GENERAL,            EF_NONE,                    SVF_NONE,      TR_LINEAR,      0,     MASK_SHOT,        qtrue,   qfalse, 50,    qfalse, qtrue,   700,   10.f,       0,           0,           qtrue,        qfalse,    qfalse,           qtrue,       qfalse,     qtrue,        qtrue,      qfalse,          qfalse, qfalse,     qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,       qfalse,          qfalse,       qfalse,   qfalse,          qfalse,       qfalse,     qfalse, 20,     4,     900,        "",                    WS_K43,             qfalse, qtrue,  qtrue,   qtrue,    30,     1,   10,     20,       10,       1500,      0,             400,         0,          200,              0,      0,       250,            250,             250,               50,                 0,        { 16, -4, 24 },  0,        0,       1.0f,      0.3f,           0,            300,               { 0, 0 },       { 1.f, .5f },  "",                "k43",                   WEAPON_CARD_NONE, { 1.f, 1.f, 0.f, 1.f, 0.f, 1.f },           WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qfalse,       {1, 1, 1, 1, 1},                     MOD_K43_SCOPE,            MOD_K43_SCOPE            },  // WP_K43_SCOPE             // 41    // K43
 	{ WP_FG42SCOPE,            TEAM_ALLIES, SK_LIGHT_WEAPONS,                            WP_FG42,                WP_NONE,                 WP_NONE,  WP_FG42,              WP_FG42,              ET_GENERAL,            EF_NONE,                    SVF_NONE,      TR_LINEAR,      0,     MASK_SHOT,        qtrue,   qfalse, 30,    qfalse, qtrue,   200,   10.f,       0,           0,           qfalse,       qtrue,     qfalse,           qfalse,      qfalse,     qtrue,        qtrue,      qfalse,          qfalse, qfalse,     qfalse,   qfalse,  qfalse,  qfalse,  qfalse,     qfalse, qfalse,          qfalse,  qfalse,     qfalse, qfalse, qfalse,     qfalse,       qfalse,       qfalse,          qfalse,       qfalse,   qfalse,          qfalse,       qfalse,     qfalse, 55,     55,    1,          "FG 42",               WS_FG42,            qfalse, qtrue,  qtrue,   qtrue,    60,     1,   20,     40,       20,       2000,      DELAY_LOW,     400,         0,          100,              0,      0,       250,            250,             50,                250,                0,        { 16, -4, 24 },  0,        0,       1.0f,      0.3f,           0.6f,         100,               { .45f, .15f }, { 0, 0 },      "",                "fg42",                  WEAPON_CARD_NONE, { 1.f, 1.f, 0.f, 1.f, 0.f, 1.f },           WEAP_IDLE1, WEAP_ATTACK1, WEAP_ATTACK_LASTSHOT, WEAP_ALTSWITCHFROM, WEAP_ALTSWITCHTO,   WEAP_RELOAD1, WEAP_RAISE,   WEAP_DROP,    qfalse,       {1, 1, 1, 1, 1},                     MOD_FG42SCOPE,            MOD_FG42SCOPE            },  // WP_FG42SCOPE             // 42
@@ -359,163 +360,163 @@ modTable_t modTable[MOD_NUM_MODS] =
 /*
  * @var animStrings
  * @brief text representation for scripting
- * @note unused 
- *  
+ * @note unused
+ *
 const char *animStrings[] =
 {
-	"BOTH_DEATH1",
-	"BOTH_DEAD1",
-	"BOTH_DEAD1_WATER",
-	"BOTH_DEATH2",
-	"BOTH_DEAD2",
-	"BOTH_DEAD2_WATER",
-	"BOTH_DEATH3",
-	"BOTH_DEAD3",
-	"BOTH_DEAD3_WATER",
+    "BOTH_DEATH1",
+    "BOTH_DEAD1",
+    "BOTH_DEAD1_WATER",
+    "BOTH_DEATH2",
+    "BOTH_DEAD2",
+    "BOTH_DEAD2_WATER",
+    "BOTH_DEATH3",
+    "BOTH_DEAD3",
+    "BOTH_DEAD3_WATER",
 
-	"BOTH_CLIMB",
-	"BOTH_CLIMB_DOWN",
-	"BOTH_CLIMB_DISMOUNT",
+    "BOTH_CLIMB",
+    "BOTH_CLIMB_DOWN",
+    "BOTH_CLIMB_DISMOUNT",
 
-	"BOTH_SALUTE",
+    "BOTH_SALUTE",
 
-	"BOTH_PAIN1",
-	"BOTH_PAIN2",
-	"BOTH_PAIN3",
-	"BOTH_PAIN4",
-	"BOTH_PAIN5",
-	"BOTH_PAIN6",
-	"BOTH_PAIN7",
-	"BOTH_PAIN8",
+    "BOTH_PAIN1",
+    "BOTH_PAIN2",
+    "BOTH_PAIN3",
+    "BOTH_PAIN4",
+    "BOTH_PAIN5",
+    "BOTH_PAIN6",
+    "BOTH_PAIN7",
+    "BOTH_PAIN8",
 
-	"BOTH_GRAB_GRENADE",
+    "BOTH_GRAB_GRENADE",
 
-	"BOTH_ATTACK1",
-	"BOTH_ATTACK2",
-	"BOTH_ATTACK3",
-	"BOTH_ATTACK4",
-	"BOTH_ATTACK5",
+    "BOTH_ATTACK1",
+    "BOTH_ATTACK2",
+    "BOTH_ATTACK3",
+    "BOTH_ATTACK4",
+    "BOTH_ATTACK5",
 
-	"BOTH_EXTRA1",
-	"BOTH_EXTRA2",
-	"BOTH_EXTRA3",
-	"BOTH_EXTRA4",
-	"BOTH_EXTRA5",
-	"BOTH_EXTRA6",
-	"BOTH_EXTRA7",
-	"BOTH_EXTRA8",
-	"BOTH_EXTRA9",
-	"BOTH_EXTRA10",
-	"BOTH_EXTRA11",
-	"BOTH_EXTRA12",
-	"BOTH_EXTRA13",
-	"BOTH_EXTRA14",
-	"BOTH_EXTRA15",
-	"BOTH_EXTRA16",
-	"BOTH_EXTRA17",
-	"BOTH_EXTRA18",
-	"BOTH_EXTRA19",
-	"BOTH_EXTRA20",
+    "BOTH_EXTRA1",
+    "BOTH_EXTRA2",
+    "BOTH_EXTRA3",
+    "BOTH_EXTRA4",
+    "BOTH_EXTRA5",
+    "BOTH_EXTRA6",
+    "BOTH_EXTRA7",
+    "BOTH_EXTRA8",
+    "BOTH_EXTRA9",
+    "BOTH_EXTRA10",
+    "BOTH_EXTRA11",
+    "BOTH_EXTRA12",
+    "BOTH_EXTRA13",
+    "BOTH_EXTRA14",
+    "BOTH_EXTRA15",
+    "BOTH_EXTRA16",
+    "BOTH_EXTRA17",
+    "BOTH_EXTRA18",
+    "BOTH_EXTRA19",
+    "BOTH_EXTRA20",
 
-	"TORSO_GESTURE",
-	"TORSO_GESTURE2",
-	"TORSO_GESTURE3",
-	"TORSO_GESTURE4",
+    "TORSO_GESTURE",
+    "TORSO_GESTURE2",
+    "TORSO_GESTURE3",
+    "TORSO_GESTURE4",
 
-	"TORSO_DROP",
+    "TORSO_DROP",
 
-	"TORSO_RAISE",        // (low)
-	"TORSO_ATTACK",
-	"TORSO_STAND",
-	"TORSO_STAND_ALT1",
-	"TORSO_STAND_ALT2",
-	"TORSO_READY",
-	"TORSO_RELAX",
+    "TORSO_RAISE",        // (low)
+    "TORSO_ATTACK",
+    "TORSO_STAND",
+    "TORSO_STAND_ALT1",
+    "TORSO_STAND_ALT2",
+    "TORSO_READY",
+    "TORSO_RELAX",
 
-	"TORSO_RAISE2",       // (high)
-	"TORSO_ATTACK2",
-	"TORSO_STAND2",
-	"TORSO_STAND2_ALT1",
-	"TORSO_STAND2_ALT2",
-	"TORSO_READY2",
-	"TORSO_RELAX2",
+    "TORSO_RAISE2",       // (high)
+    "TORSO_ATTACK2",
+    "TORSO_STAND2",
+    "TORSO_STAND2_ALT1",
+    "TORSO_STAND2_ALT2",
+    "TORSO_READY2",
+    "TORSO_RELAX2",
 
-	"TORSO_RAISE3",       // (pistol)
-	"TORSO_ATTACK3",
-	"TORSO_STAND3",
-	"TORSO_STAND3_ALT1",
-	"TORSO_STAND3_ALT2",
-	"TORSO_READY3",
-	"TORSO_RELAX3",
+    "TORSO_RAISE3",       // (pistol)
+    "TORSO_ATTACK3",
+    "TORSO_STAND3",
+    "TORSO_STAND3_ALT1",
+    "TORSO_STAND3_ALT2",
+    "TORSO_READY3",
+    "TORSO_RELAX3",
 
-	"TORSO_RAISE4",       // (shoulder)
-	"TORSO_ATTACK4",
-	"TORSO_STAND4",
-	"TORSO_STAND4_ALT1",
-	"TORSO_STAND4_ALT2",
-	"TORSO_READY4",
-	"TORSO_RELAX4",
+    "TORSO_RAISE4",       // (shoulder)
+    "TORSO_ATTACK4",
+    "TORSO_STAND4",
+    "TORSO_STAND4_ALT1",
+    "TORSO_STAND4_ALT2",
+    "TORSO_READY4",
+    "TORSO_RELAX4",
 
-	"TORSO_RAISE5",       // (throw)
-	"TORSO_ATTACK5",
-	"TORSO_ATTACK5B",
-	"TORSO_STAND5",
-	"TORSO_STAND5_ALT1",
-	"TORSO_STAND5_ALT2",
-	"TORSO_READY5",
-	"TORSO_RELAX5",
+    "TORSO_RAISE5",       // (throw)
+    "TORSO_ATTACK5",
+    "TORSO_ATTACK5B",
+    "TORSO_STAND5",
+    "TORSO_STAND5_ALT1",
+    "TORSO_STAND5_ALT2",
+    "TORSO_READY5",
+    "TORSO_RELAX5",
 
-	"TORSO_RELOAD1",      // (low)
-	"TORSO_RELOAD2",      // (high)
-	"TORSO_RELOAD3",      // (pistol)
-	"TORSO_RELOAD4",      // (shoulder)
+    "TORSO_RELOAD1",      // (low)
+    "TORSO_RELOAD2",      // (high)
+    "TORSO_RELOAD3",      // (pistol)
+    "TORSO_RELOAD4",      // (shoulder)
 
-	"TORSO_MG42",         // firing tripod mounted weapon animation
+    "TORSO_MG42",         // firing tripod mounted weapon animation
 
-	"TORSO_MOVE",         // torso anim to play while moving and not firing (swinging arms type thing)
-	"TORSO_MOVE_ALT",     // torso anim to play while moving and not firing (swinging arms type thing)
+    "TORSO_MOVE",         // torso anim to play while moving and not firing (swinging arms type thing)
+    "TORSO_MOVE_ALT",     // torso anim to play while moving and not firing (swinging arms type thing)
 
-	"TORSO_EXTRA",
-	"TORSO_EXTRA2",
-	"TORSO_EXTRA3",
-	"TORSO_EXTRA4",
-	"TORSO_EXTRA5",
-	"TORSO_EXTRA6",
-	"TORSO_EXTRA7",
-	"TORSO_EXTRA8",
-	"TORSO_EXTRA9",
-	"TORSO_EXTRA10",
+    "TORSO_EXTRA",
+    "TORSO_EXTRA2",
+    "TORSO_EXTRA3",
+    "TORSO_EXTRA4",
+    "TORSO_EXTRA5",
+    "TORSO_EXTRA6",
+    "TORSO_EXTRA7",
+    "TORSO_EXTRA8",
+    "TORSO_EXTRA9",
+    "TORSO_EXTRA10",
 
-	"LEGS_WALKCR",
-	"LEGS_WALKCR_BACK",
-	"LEGS_WALK",
-	"LEGS_RUN",
-	"LEGS_BACK",
-	"LEGS_SWIM",
-	"LEGS_SWIM_IDLE",
+    "LEGS_WALKCR",
+    "LEGS_WALKCR_BACK",
+    "LEGS_WALK",
+    "LEGS_RUN",
+    "LEGS_BACK",
+    "LEGS_SWIM",
+    "LEGS_SWIM_IDLE",
 
-	"LEGS_JUMP",
-	"LEGS_JUMPB",
-	"LEGS_LAND",
+    "LEGS_JUMP",
+    "LEGS_JUMPB",
+    "LEGS_LAND",
 
-	"LEGS_IDLE",
-	"LEGS_IDLE_ALT",      // "LEGS_IDLE2"
-	"LEGS_IDLECR",
+    "LEGS_IDLE",
+    "LEGS_IDLE_ALT",      // "LEGS_IDLE2"
+    "LEGS_IDLECR",
 
-	"LEGS_TURN",
+    "LEGS_TURN",
 
-	"LEGS_BOOT",          // kicking animation
+    "LEGS_BOOT",          // kicking animation
 
-	"LEGS_EXTRA1",
-	"LEGS_EXTRA2",
-	"LEGS_EXTRA3",
-	"LEGS_EXTRA4",
-	"LEGS_EXTRA5",
-	"LEGS_EXTRA6",
-	"LEGS_EXTRA7",
-	"LEGS_EXTRA8",
-	"LEGS_EXTRA9",
-	"LEGS_EXTRA10",
+    "LEGS_EXTRA1",
+    "LEGS_EXTRA2",
+    "LEGS_EXTRA3",
+    "LEGS_EXTRA4",
+    "LEGS_EXTRA5",
+    "LEGS_EXTRA6",
+    "LEGS_EXTRA7",
+    "LEGS_EXTRA8",
+    "LEGS_EXTRA9",
+    "LEGS_EXTRA10",
 };
 */
 
@@ -526,11 +527,11 @@ const char *animStrings[] =
  * SUSPENDED - will allow items to hang in the air, otherwise they are dropped to the next surface.
  * SPIN - will allow items to spin in place.
  * PERSISTANT - some items (ex. clipboards) can be picked up, but don't disappear
- * 
+ *
  * If an item is the target of another entity, it will not spawn in until fired.
- * 
+ *
  * An item fires all of its targets when it is picked up.  If the toucher can't carry it, the targets won't be fired.
- * 
+ *
  * "notfree" if set to 1, don't spawn in free for all games
  * "notteam" if set to 1, don't spawn in team games
  * "notsingle" if set to 1, don't spawn in single player games
@@ -540,12 +541,12 @@ const char *animStrings[] =
  * "stand" if the item has a stand (ex: mp40_stand.md3) this specifies which stand tag to attach the weapon to ("stand":"4" would mean "tag_stand4" for example)  only weapons support stands currently
  *
  * @note Important notes:
- * - whenever you add new items update ITEM_MAX_ITEMS, FIRST_WEAPON_ITEM, ITEM_AMMO_PACK, ITEM_MEGA_AMMO_PACK, ITEM_RED_FLAG, ITEM_BLUE_FLAG
- * - bg_itemlist has additional client members                                                                                              
- */   
+ * - bg_itemlist has additional client members
+ */
 gitem_t bg_itemlist[] =
 {
 	{
+		ITEM_NONE,
 		NULL,                   // classname
 		NULL,                   // pickup_sound
 		{
@@ -563,46 +564,14 @@ gitem_t bg_itemlist[] =
 #ifdef CGAMEDLL
 		{ 0, { 0 }, { 0 } },
 #endif
-	},  // leave index 0 alone
-	/*QUAKED item_treasure (1 1 0) (-8 -8 -8) (8 8 8) suspended
-	Items the player picks up that are just used to tally a score at end-level
-	"model" defaults to 'models/powerups/treasure/goldbar.md3'
-	"noise" sound to play on pickup.  defaults to 'sound/pickup/treasure/gold.wav'
-	"message" what to call the item when it's picked up.  defaults to "Treasure Item" (SA: temp)
-	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
-	model="models/powerups/treasure/goldbar.md3"
-	*/
-	/*
-	"scriptName"
-	*/
-/*    
-	{
-		"item_treasure",
-		"", // was "sound/pickup/treasure/gold.wav",
-		{
-			0, // not in path "models/powerups/treasure/goldbar.md3",
-			0,
-			0
-		},
-		NULL,   // placeholder
-		NULL,                   // ammo icon
-		"Treasure Item",        // placeholder
-		5,
-		IT_TREASURE,            // was IT_TREASURE
-		WP_NONE,
-		PW_NONE,
-#ifdef CGAMEDLL
-		{ 0, { 0 }, { 0 } },
-#endif
-	},
-*/
-	// ARMOR/HEALTH/STAMINA
+	},  ///< leave index 0 alone
 
-	/*QUAKED item_health_small (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED item_health_small (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/health/health_s.md3"
 	*/
 	{
+		ITEM_HEALTH_SMALL,
 		"item_health_small",
 		"sound/misc/health_pickup.wav", // was "sound/items/n_health.wav"
 		{
@@ -621,11 +590,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED item_health (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED item_health (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/health/health_m.md3"
 	*/
 	{
+		ITEM_HEALTH,
 		"item_health",
 		"sound/misc/health_pickup.wav", //      "sound/multiplayer/health_pickup.wav",
 		{
@@ -644,11 +614,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED item_health_large (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED item_health_large (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/health/health_m.md3"
 	*/
 	{
+		ITEM_HEALTH_LARGE,
 		"item_health_large",
 		"sound/misc/health_pickup.wav", //      "sound/multiplayer/health_pickup.wav",
 		{
@@ -669,6 +640,7 @@ gitem_t bg_itemlist[] =
 	},
 
 	{
+		ITEM_HEALTH_CABINET,
 		"item_health_cabinet",
 		"sound/misc/health_pickup.wav",
 		{
@@ -687,7 +659,7 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED item_health_turkey (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED item_health_turkey (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	multi-stage health item.
 	gives 40 on first use, then gives 20 on "finishing up"
 
@@ -696,6 +668,7 @@ gitem_t bg_itemlist[] =
 	model="models/powerups/health/health_t1.md3"
 	*/
 	{
+		ITEM_HEALTH_TURKEY,
 		"item_health_turkey",
 		"sound/items/hot_pickup.wav",
 		{
@@ -714,13 +687,14 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED item_health_breadandmeat (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
+	/** QUAKED item_health_breadandmeat (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	multi-stage health item.
 	gives 30 on first use, then gives 15 on "finishing up"
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/health/health_b1.md3"
 	*/
 	{
+		ITEM_HEALTH_BREADANDMEAT,
 		"item_health_breadandmeat",
 		"sound/items/cold_pickup.wav",
 		{
@@ -739,13 +713,14 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED item_health_wall (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED item_health_wall (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	defaults to 50 pts health
 	you will probably want to check the 'suspended' box to keep it from falling to the ground
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/health/health_w.md3"
 	*/
 	{
+		ITEM_HEALTH_WALL,
 		"item_health_wall",
 		"sound/misc/health_pickup.wav", // was "sound/items/n_health.wav"
 		{
@@ -768,11 +743,12 @@ gitem_t bg_itemlist[] =
 
 	// WEAPONS - wolf weapons
 
-	/*QUAKED weapon_knife (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED weapon_knife (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/knife/knife.md3"
 	*/
 	{
+		ITEM_WEAPON_KNIFE,
 		"weapon_knife",
 		"sound/misc/w_pkup.wav",
 		{
@@ -792,6 +768,7 @@ gitem_t bg_itemlist[] =
 #endif
 	},
 	{
+		ITEM_WEAPON_KNIFE_KABAR,
 		"weapon_knife_kabar",
 		"sound/misc/w_pkup.wav",
 		{
@@ -810,11 +787,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_luger (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED weapon_luger (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/luger/luger.md3"
 	*/
 	{
+		ITEM_WEAPON_LUGER,
 		"weapon_luger",
 		"sound/misc/w_pkup.wav",
 		{
@@ -833,11 +811,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_akimboluger (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED weapon_akimboluger (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/akimbo_luger/luger.md3"
 	*/
 	{
+		ITEM_WEAPON_AKIMBOLUGER,
 		"weapon_akimboluger",
 		"sound/misc/w_pkup.wav",
 		{
@@ -856,11 +835,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_akimbosilencedluger (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED weapon_akimbosilencedluger (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/akimbo_luger/luger.md3"
 	*/
 	{
+		ITEM_WEAPON_AKIMBOSILENCEDLUGER,
 		"weapon_akimbosilencedluger",
 		"sound/misc/w_pkup.wav",
 		{
@@ -879,11 +859,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_thompson (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED weapon_thompson (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/thompson/thompson.md3"
 	*/
 	{
+		ITEM_WEAPON_THOMPSON,
 		"weapon_thompson",
 		"sound/misc/w_pkup.wav",
 		{
@@ -903,6 +884,7 @@ gitem_t bg_itemlist[] =
 #endif
 	},
 	{
+		ITEM_WEAPON_DUMMY,
 		"weapon_dummy",
 		"",
 		{
@@ -921,11 +903,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_sten (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED weapon_sten (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/sten/sten.md3"
 	*/
 	{
+		ITEM_WEAPON_STEN,
 		"weapon_sten",
 		"sound/misc/w_pkup.wav",
 		{
@@ -944,11 +927,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_colt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED weapon_colt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/colt/colt.md3"
 	*/
 	{
+		ITEM_WEAPON_COLT,
 		"weapon_colt",
 		"sound/misc/w_pkup.wav",
 		{
@@ -967,11 +951,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_akimbocolt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED weapon_akimbocolt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/akimbo_colt/colt.md3"
 	*/
 	{
+		ITEM_WEAPON_AKIMBOCOLT,
 		"weapon_akimbocolt",
 		"sound/misc/w_pkup.wav",
 		{
@@ -990,11 +975,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_akimbosilencedcolt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED weapon_akimbosilencedcolt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/akimbo_colt/colt.md3"
 	*/
 	{
+		ITEM_WEAPON_AKIMBOSILENCEDCOLT,
 		"weapon_akimbosilencedcolt",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1006,14 +992,13 @@ gitem_t bg_itemlist[] =
 		"icons/ammo2",           // ammo icon
 		"Silenced Akimbo Colt",          // pickup
 		50,
-		IT_WEAPON,
-		WP_AKIMBO_SILENCEDCOLT,
+		IT_WEAPON, WP_AKIMBO_SILENCEDCOLT,
 		PW_NONE,
 #ifdef CGAMEDLL
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_mp40 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED weapon_mp40 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	"stand" values:
 	    no value:   laying in a default position on it's side (default)
 	    2:          upright, barrel pointing up, slightly angled (rack mount)
@@ -1021,6 +1006,7 @@ gitem_t bg_itemlist[] =
 	model="models\weapons2\mp40\mp40.md3"
 	*/
 	{
+		ITEM_WEAPON_MP40,
 		"weapon_mp40",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1039,11 +1025,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_panzerfaust (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED weapon_panzerfaust (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/panzerfaust/pf.md3"
 	*/
 	{
+		ITEM_WEAPON_PANZERFAUST,
 		"weapon_panzerfaust",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1062,11 +1049,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_bazooka (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED weapon_bazooka (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/bazooka/bazooka.md3"
 	*/
 	{
+		ITEM_WEAPON_BAZOOKA,
 		"weapon_bazooka",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1090,6 +1078,7 @@ gitem_t bg_itemlist[] =
 
 	// weapon_grenadelauncher
 	{
+		ITEM_WEAPON_GRENADELAUNCHER,
 		"weapon_grenadelauncher",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1110,6 +1099,7 @@ gitem_t bg_itemlist[] =
 	},
 	// weapon_grenadePineapple
 	{
+		ITEM_WEAPON_GRENADEPINEAPPLE,
 		"weapon_grenadepineapple",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1130,6 +1120,7 @@ gitem_t bg_itemlist[] =
 	},
 	// weapon_grenadesmoke
 	{
+		ITEM_WEAPON_GRENADESMOKE,
 		"weapon_grenadesmoke",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1150,6 +1141,7 @@ gitem_t bg_itemlist[] =
 	},
 	// weapon_smoketrail -- only used as a special effects emitter for smoke trails (artillery spotter etc)
 	{
+		ITEM_WEAPON_SMOKETRAIL,
 		"weapon_smoketrail",
 		"",
 		{
@@ -1170,6 +1162,7 @@ gitem_t bg_itemlist[] =
 	},
 	// weapon_medic_heal
 	{
+		ITEM_WEAPON_MEDIC_HEAL,
 		"weapon_medic_heal",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1190,6 +1183,7 @@ gitem_t bg_itemlist[] =
 	},
 	// weapon_dynamite
 	{
+		ITEM_WEAPON_DYNAMITE,
 		"weapon_dynamite",
 		"",
 		{
@@ -1208,11 +1202,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_flamethrower (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED weapon_flamethrower (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/flamethrower/flamethrower.md3"
 	*/
 	{
+		ITEM_WEAPON_FLAMETHROWER,
 		"weapon_flamethrower",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1233,6 +1228,7 @@ gitem_t bg_itemlist[] =
 	},
 	// weapon_mortar (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
+		ITEM_WEAPON_MAPMORTAR,
 		"weapon_mapmortar",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1253,6 +1249,7 @@ gitem_t bg_itemlist[] =
 	},
 	// weapon_class_special (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
+		ITEM_WEAPON_PLIERS,
 		"weapon_class_special",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1273,6 +1270,7 @@ gitem_t bg_itemlist[] =
 	},
 	// weapon_arty (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
+		ITEM_WEAPON_ARTY,
 		"weapon_arty",
 		"",
 		{
@@ -1293,6 +1291,7 @@ gitem_t bg_itemlist[] =
 	},
 	// weapon_medic_syringe (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
+		ITEM_WEAPON_MEDIC_SYRINGE,
 		"weapon_medic_syringe",
 		"",
 		{
@@ -1313,6 +1312,7 @@ gitem_t bg_itemlist[] =
 	},
 	// weapon_medic_adrenaline (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
+		ITEM_WEAPON_MEDIC_ADRENALINE,
 		"weapon_medic_adrenaline",
 		"",
 		{
@@ -1333,6 +1333,7 @@ gitem_t bg_itemlist[] =
 	},
 	// weapon_magicammo (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
+		ITEM_WEAPON_MAGICAMMO,
 		"weapon_magicammo",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1352,6 +1353,7 @@ gitem_t bg_itemlist[] =
 #endif
 	},
 	{
+		ITEM_WEAPON_MAGICAMMO2,
 		"weapon_magicammo2",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1375,6 +1377,7 @@ gitem_t bg_itemlist[] =
 	},
 	// weapon_binoculars (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
+		ITEM_WEAPON_BINOCULARS,
 		"weapon_binoculars",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1393,11 +1396,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_k43 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED weapon_k43 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model=""
 	*/
 	{
+		ITEM_WEAPON_KAR43,
 		"weapon_kar43",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1416,11 +1420,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_kar43_scope (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED weapon_kar43_scope (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model=""
 	*/
 	{
+		ITEM_WEAPON_KAR43_SCOPE,
 		"weapon_kar43_scope",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1439,11 +1444,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_kar98Rifle (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED weapon_kar98Rifle (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/mauser/mauser.md3"
 	*/
 	{
+		ITEM_WEAPON_KAR98RIFLE,
 		"weapon_kar98Rifle",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1462,11 +1468,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_gpg40 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED weapon_gpg40 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/mauser/mauser.md3"
 	*/
 	{
+		ITEM_WEAPON_GPG40,
 		"weapon_gpg40",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1485,11 +1492,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_gpg40_allied (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED weapon_gpg40_allied (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/mauser/mauser.md3"
 	*/
 	{
+		ITEM_WEAPON_GPG40_ALLIED,
 		"weapon_gpg40_allied",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1508,11 +1516,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_M1CarbineRifle (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED weapon_M1CarbineRifle (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/mauser/mauser.md3"
 	*/
 	{
+		ITEM_WEAPON_M1CARBINERIFLE,
 		"weapon_M1CarbineRifle",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1531,12 +1540,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*
-	weapon_garandRifle (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN
+	/** QUAKED weapon_garandRifle (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/garand/garand.md3"
 	*/
 	{
+		ITEM_WEAPON_GARANDRIFLE,
 		"weapon_garandRifle",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1555,12 +1564,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*
-	weapon_garandRifleScope (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN
+	/** QUAKED weapon_garandRifleScope (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/garand/garand.md3"
 	*/
 	{
+		ITEM_WEAPON_GARANDRIFLESCOPE,
 		"weapon_garandRifleScope",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1579,11 +1588,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_fg42 (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED
+	/** QUAKED weapon_fg42 (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/fg42/fg42.md3"
 	*/
 	{
+		ITEM_WEAPON_FG42,
 		"weapon_fg42",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1602,11 +1612,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_fg42scope (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED
+	/** QUAKED weapon_fg42scope (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/fg42/fg42.md3"
 	*/
 	{
+		ITEM_WEAPON_FG42SCOPE,
 		"weapon_fg42scope",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1631,6 +1642,7 @@ gitem_t bg_itemlist[] =
 	model="models/weapons2/bla?bla?/bla!.md3"
 	*/
 	{
+		ITEM_WEAPON_MORTAR,
 		"weapon_mortar",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1650,6 +1662,7 @@ gitem_t bg_itemlist[] =
 #endif
 	},
 	{
+		ITEM_WEAPON_MORTAR_SET,
 		"weapon_mortar_set",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1669,6 +1682,7 @@ gitem_t bg_itemlist[] =
 #endif
 	},
 	{
+		ITEM_WEAPON_MORTAR2,
 		"weapon_mortar2",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1688,6 +1702,7 @@ gitem_t bg_itemlist[] =
 #endif
 	},
 	{
+		ITEM_WEAPON_MORTAR2_SET,
 		"weapon_mortar2_set",
 		"sound/misc/w_pkup.wav", // FIXME: I've never heard this
 		{
@@ -1708,6 +1723,7 @@ gitem_t bg_itemlist[] =
 	},
 	// weapon_landmine
 	{
+		ITEM_WEAPON_LANDMINE,
 		"weapon_landmine",
 		"",
 		{
@@ -1728,6 +1744,7 @@ gitem_t bg_itemlist[] =
 	},
 	// weapon_satchel (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	{
+		ITEM_WEAPON_SATCHEL,
 		"weapon_satchel",
 		"",
 		{
@@ -1747,6 +1764,7 @@ gitem_t bg_itemlist[] =
 #endif
 	},
 	{
+		ITEM_WEAPON_SATCHELDETONATOR,
 		"weapon_satchelDetonator",
 		"",
 		{
@@ -1766,6 +1784,7 @@ gitem_t bg_itemlist[] =
 #endif
 	},
 	{
+		ITEM_WEAPON_SMOKEBOMB,
 		"weapon_smokebomb",
 		"",
 		{
@@ -1784,11 +1803,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_mobile_mg42 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended spin - respawn
+	/** QUAKED weapon_mobile_mg42 (.3 .3 1) (-16 -16 -16) (16 16 16) suspended spin - respawn
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/multiplayer/mg42/v_mg42.md3"
 	*/
 	{
+		ITEM_WEAPON_MOBILE_MG42,
 		"weapon_mobile_mg42",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1808,6 +1828,7 @@ gitem_t bg_itemlist[] =
 #endif
 	},
 	{
+		ITEM_WEAPON_MOBILE_MG42_SET,
 		"weapon_mobile_mg42_set",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1827,6 +1848,7 @@ gitem_t bg_itemlist[] =
 #endif
 	},
 	{
+		ITEM_WEAPON_MOBILE_BROWNING_SET,
 		"weapon_mobile_browning_set",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1846,6 +1868,7 @@ gitem_t bg_itemlist[] =
 #endif
 	},
 	{
+		ITEM_WEAPON_MOBILE_BROWNING,
 		"weapon_mobile_browning",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1865,6 +1888,7 @@ gitem_t bg_itemlist[] =
 #endif
 	},
 	{
+		ITEM_WEAPON_SILENCER,
 		"weapon_silencer",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1883,11 +1907,12 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED weapon_colt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
+	/** QUAKED weapon_colt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/weapons2/colt/colt.md3"
 	*/
 	{
+		ITEM_WEAPON_SILENCEDCOLT,
 		"weapon_silencedcolt",
 		"sound/misc/w_pkup.wav",
 		{
@@ -1906,12 +1931,13 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED ammo_syringe (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
+	/** QUAKED ammo_syringe (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: medic
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/ammo/syringe/syringe.md3
 	*/
 	{
+		ITEM_AMMO_SYRINGE,
 		"ammo_syringe",
 		"sound/misc/am_pkup.wav",
 		{
@@ -1930,12 +1956,13 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED ammo_smoke_grenade (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
+	/** QUAKED ammo_smoke_grenade (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: engineer
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/ammo/smoke_grenade/smoke_grenade.md3"
 	*/
 	{
+		ITEM_AMMO_SMOKE_GRENADE,
 		"ammo_smoke_grenade",
 		"sound/misc/am_pkup.wav",
 		{
@@ -1954,12 +1981,13 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED ammo_dynamite (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
+	/** QUAKED ammo_dynamite (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: engineer
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/ammo/dynamite/dynamite.md3"
 	*/
 	{
+		ITEM_AMMO_DYNAMITE,
 		"ammo_dynamite",
 		"sound/misc/am_pkup.wav",
 		{
@@ -1978,12 +2006,13 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED ammo_disguise (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
+	/** QUAKED ammo_disguise (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: covertops
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/ammo/disguise/disguise.md3"
 	*/
 	{
+		ITEM_AMMO_DISGUISE,
 		"ammo_disguise",
 		"sound/misc/am_pkup.wav",
 		{
@@ -2002,12 +2031,13 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED ammo_airstrike (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
+	/** QUAKED ammo_airstrike (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: LT
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/ammo/airstrike/airstrike.md3"
 	*/
 	{
+		ITEM_AMMO_AIRSTRIKE,
 		"ammo_airstrike",
 		"sound/misc/am_pkup.wav",
 		{
@@ -2026,12 +2056,13 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED ammo_landmine (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
+	/** QUAKED ammo_landmine (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: LT
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/ammo/landmine/landmine.md3"
 	*/
 	{
+		ITEM_AMMO_LANDMINE,
 		"ammo_landmine",
 		"sound/misc/am_pkup.wav",
 		{
@@ -2050,12 +2081,13 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED ammo_satchel_charge (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
+	/** QUAKED ammo_satchel_charge (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: LT
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/ammo/satchel/satchel.md3"
 	*/
 	{
+		ITEM_AMMO_SATCHEL_CHARGE,
 		"ammo_satchel_charge",
 		"sound/misc/am_pkup.wav",
 		{
@@ -2076,12 +2108,13 @@ gitem_t bg_itemlist[] =
 	},
 	// AMMO ITEMS
 
-	/*QUAKED ammo_9mm_small (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
+	/** QUAKED ammo_9mm_small (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Luger pistol, MP40 machinegun
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/ammo/am9mm_s.md3"
 	*/
 	{
+		ITEM_AMMO_9MM_SMALL,
 		"ammo_9mm_small",
 		"sound/misc/am_pkup.wav",
 		{
@@ -2100,12 +2133,13 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED ammo_9mm (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
+	/** QUAKED ammo_9mm (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Luger pistol, MP40 machinegun
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/ammo/am9mm_m.md3"
 	*/
 	{
+		ITEM_AMMO_9MM,
 		"ammo_9mm",
 		"sound/misc/am_pkup.wav",
 		{
@@ -2124,12 +2158,13 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED ammo_9mm_large (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
+	/** QUAKED ammo_9mm_large (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Luger pistol, MP40 machinegun
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/ammo/am9mm_l.md3"
 	*/
 	{
+		ITEM_AMMO_9MM_LARGE,
 		"ammo_9mm_large",
 		"sound/misc/am_pkup.wav",
 		{
@@ -2148,12 +2183,13 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED ammo_45cal_small (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
+	/** QUAKED ammo_45cal_small (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Thompson, Colt
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/ammo/am45cal_s.md3"
 	*/
 	{
+		ITEM_AMMO_45CAL_SMALL,
 		"ammo_45cal_small",
 		"sound/misc/am_pkup.wav",
 		{
@@ -2172,12 +2208,13 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED ammo_45cal (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
+	/** QUAKED ammo_45cal (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Thompson, Colt
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/ammo/am45cal_m.md3"
 	*/
 	{
+		ITEM_AMMO_45CAL,
 		"ammo_45cal",
 		"sound/misc/am_pkup.wav",
 		{
@@ -2196,12 +2233,13 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED ammo_45cal_large (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
+	/** QUAKED ammo_45cal_large (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Thompson, Colt
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/ammo/am45cal_l.md3"
 	*/
 	{
+		ITEM_AMMO_45CAL_LARGE,
 		"ammo_45cal_large",
 		"sound/misc/am_pkup.wav",
 		{
@@ -2220,12 +2258,13 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED ammo_30cal_small (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
+	/** QUAKED ammo_30cal_small (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Garand rifle
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/ammo/am30cal_s.md3"
 	*/
 	{
+		ITEM_AMMO_30CAL_SMALL,
 		"ammo_30cal_small",
 		"sound/misc/am_pkup.wav",
 		{
@@ -2244,12 +2283,13 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED ammo_30cal (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
+	/** QUAKED ammo_30cal (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Garand rifle
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/ammo/am30cal_m.md3"
 	*/
 	{
+		ITEM_AMMO_30CAL,
 		"ammo_30cal",
 		"sound/misc/am_pkup.wav",
 		{
@@ -2268,12 +2308,13 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED ammo_30cal_large (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
+	/** QUAKED ammo_30cal_large (.3 .3 1) (-16 -16 -16) (16 16 16) SUSPENDED SPIN - RESPAWN
 	used by: Garand rifle
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/powerups/ammo/am30cal_l.md3"
 	*/
 	{
+		ITEM_AMMO_30CAL_LARGE,
 		"ammo_30cal_large",
 		"sound/misc/am_pkup.wav",
 		{
@@ -2294,12 +2335,13 @@ gitem_t bg_itemlist[] =
 	},
 	// POWERUP ITEMS
 
-	/*QUAKED team_CTF_redflag (1 0 0) (-16 -16 -16) (16 16 16)
+	/** QUAKED team_CTF_redflag (1 0 0) (-16 -16 -16) (16 16 16)
 	Only in CTF games
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/flags/r_flag.md3"
 	*/
 	{
+		ITEM_RED_FLAG,
 		"team_CTF_redflag",
 		"sound/misc/w_pkup.wav",
 		{
@@ -2318,12 +2360,13 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	/*QUAKED team_CTF_blueflag (0 0 1) (-16 -16 -16) (16 16 16)
+	/** QUAKED team_CTF_blueflag (0 0 1) (-16 -16 -16) (16 16 16)
 	Only in CTF games
 	-------- MODEL FOR RADIANT ONLY - DO NOT SET THIS AS A KEY --------
 	model="models/flags/b_flag.md3"
 	*/
 	{
+		ITEM_BLUE_FLAG,
 		"team_CTF_blueflag",
 		"sound/misc/w_pkup.wav",
 		{
@@ -2342,8 +2385,9 @@ gitem_t bg_itemlist[] =
 		{ 0, { 0 }, { 0 } },
 #endif
 	},
-	// end of list marker
+	/// end of list marker
 	{
+		ITEM_MAX_ITEMS,
 		NULL,                   // classname
 		NULL,                   // pickup_sound
 		{
@@ -2363,8 +2407,6 @@ gitem_t bg_itemlist[] =
 #endif
 	}
 };
-
-int bg_numItems = ARRAY_LEN(bg_itemlist) - 1;     // keep in sync with ITEM_MAX_ITEMS!
 
 /**
  * @brief BG_FindItemForWeapon
@@ -2689,7 +2731,7 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 {
 	gitem_t *item;
 
-	if (ent->modelindex < 1 || ent->modelindex >= bg_numItems)
+	if (ent->modelindex < 1 || ent->modelindex >= ITEM_MAX_ITEMS)
 	{
 		Com_Error(ERR_DROP, "BG_CanItemBeGrabbed: index out of range");
 	}
@@ -4532,8 +4574,8 @@ int BG_simpleWeaponState(int ws)
 	switch (ws)
 	{
 	case WEAPON_READY:
-	//case WEAPON_READYING:
-	//case WEAPON_RELAXING:
+		//case WEAPON_READYING:
+		//case WEAPON_RELAXING:
 		return WSTATE_IDLE;
 	case WEAPON_RAISING:
 	case WEAPON_DROPPING:

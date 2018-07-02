@@ -2003,7 +2003,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	{
 		int index = es->eventParm;              // player predicted
 
-		if (index < 1 || index >= bg_numItems)
+		if (index < 1 || index >= ITEM_MAX_ITEMS)
 		{
 			break;
 		}
@@ -2026,7 +2026,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		gitem_t *item;
 		int     index = es->eventParm;          // player predicted
 
-		if (index < 1 || index >= bg_numItems)
+		if (index < 1 || index >= ITEM_MAX_ITEMS)
 		{
 			break;
 		}

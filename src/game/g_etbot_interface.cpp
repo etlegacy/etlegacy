@@ -5752,7 +5752,7 @@ public:
 				if (pEnt && pEnt->client && pFlagEnt)
 				{
 					// DUPLICATE ERROR CHECK, so BG_CanItemBeGrabbed doesn't screw up.
-					if (pFlagEnt->s.modelindex < 1 || pFlagEnt->s.modelindex >= bg_numItems)
+					if (pFlagEnt->s.modelindex < 1 || pFlagEnt->s.modelindex >= ITEM_MAX_ITEMS)
 					{
 						//Com_Error( ERR_DROP, "BG_CanItemBeGrabbed: index out of range" );
 						pMsg->m_CanBeGrabbed = Invalid;

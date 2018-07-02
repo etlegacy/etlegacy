@@ -1811,12 +1811,104 @@ typedef struct
 #endif
 
 /**
+ * @struct item_s
+ * @typedef item_t
+ * @brief 
+ */
+typedef enum item_s
+{
+    ITEM_NONE,
+    //ITEM_TREASURE,
+    ITEM_HEALTH_SMALL,
+    ITEM_HEALTH,
+    ITEM_HEALTH_LARGE,
+    ITEM_HEALTH_CABINET,
+    ITEM_HEALTH_TURKEY,
+    ITEM_HEALTH_BREADANDMEAT,
+    ITEM_HEALTH_WALL,
+    ITEM_WEAPON_KNIFE,
+    ITEM_WEAPON_KNIFE_KABAR,
+    ITEM_WEAPON_LUGER,
+    ITEM_WEAPON_AKIMBOLUGER,
+    ITEM_WEAPON_AKIMBOSILENCEDLUGER,
+    ITEM_WEAPON_THOMPSON,
+    ITEM_WEAPON_DUMMY,
+    ITEM_WEAPON_STEN,
+    ITEM_WEAPON_COLT,
+    ITEM_WEAPON_AKIMBOCOLT,
+    ITEM_WEAPON_AKIMBOSILENCEDCOLT,
+    ITEM_WEAPON_MP40,
+    ITEM_WEAPON_PANZERFAUST,
+    ITEM_WEAPON_BAZOOKA,
+    ITEM_WEAPON_GRENADELAUNCHER,
+    ITEM_WEAPON_GRENADEPINEAPPLE,
+    ITEM_WEAPON_GRENADESMOKE,
+    ITEM_WEAPON_SMOKETRAIL,
+    ITEM_WEAPON_MEDIC_HEAL,
+    ITEM_WEAPON_DYNAMITE,
+    ITEM_WEAPON_FLAMETHROWER,
+    ITEM_WEAPON_MAPMORTAR,
+    ITEM_WEAPON_PLIERS,
+    ITEM_WEAPON_ARTY,
+    ITEM_WEAPON_MEDIC_SYRINGE,
+    ITEM_WEAPON_MEDIC_ADRENALINE,
+    ITEM_WEAPON_MAGICAMMO,
+    ITEM_WEAPON_MAGICAMMO2,
+    ITEM_WEAPON_BINOCULARS,
+    ITEM_WEAPON_KAR43,
+    ITEM_WEAPON_KAR43_SCOPE,
+    ITEM_WEAPON_KAR98RIFLE,
+    ITEM_WEAPON_GPG40,
+    ITEM_WEAPON_GPG40_ALLIED,
+    ITEM_WEAPON_M1CARBINERIFLE,
+    ITEM_WEAPON_GARANDRIFLE,
+    ITEM_WEAPON_GARANDRIFLESCOPE,
+    ITEM_WEAPON_FG42,
+    ITEM_WEAPON_FG42SCOPE,
+    ITEM_WEAPON_MORTAR,
+    ITEM_WEAPON_MORTAR_SET,
+    ITEM_WEAPON_MORTAR2,
+    ITEM_WEAPON_MORTAR2_SET,
+    ITEM_WEAPON_LANDMINE,
+    ITEM_WEAPON_SATCHEL,
+    ITEM_WEAPON_SATCHELDETONATOR,
+    ITEM_WEAPON_SMOKEBOMB,
+    ITEM_WEAPON_MOBILE_MG42,
+    ITEM_WEAPON_MOBILE_MG42_SET,
+    ITEM_WEAPON_MOBILE_BROWNING_SET,
+    ITEM_WEAPON_MOBILE_BROWNING,
+    ITEM_WEAPON_SILENCER,
+    ITEM_WEAPON_SILENCEDCOLT,
+    ITEM_AMMO_SYRINGE,
+    ITEM_AMMO_SMOKE_GRENADE,
+    ITEM_AMMO_DYNAMITE,
+    ITEM_AMMO_DISGUISE,
+    ITEM_AMMO_AIRSTRIKE,
+    ITEM_AMMO_LANDMINE,
+    ITEM_AMMO_SATCHEL_CHARGE,
+    ITEM_AMMO_9MM_SMALL,
+    ITEM_AMMO_9MM,
+    ITEM_AMMO_9MM_LARGE,
+    ITEM_AMMO_45CAL_SMALL,
+    ITEM_AMMO_45CAL,
+    ITEM_AMMO_45CAL_LARGE,
+    ITEM_AMMO_30CAL_SMALL,
+    ITEM_AMMO_30CAL,
+    ITEM_AMMO_30CAL_LARGE,
+    ITEM_RED_FLAG,
+    ITEM_BLUE_FLAG,
+    ITEM_MAX_ITEMS,
+    
+} item_t;
+
+/**
  * @struct gitem_s
  * @typedef gitem_t
  * @brief
  */
 typedef struct gitem_s
 {
+    item_t item;                ///< identifier
 	const char *classname;      ///< spawning name
 	const char *pickup_sound;
 	const char *world_model[MAX_ITEM_MODELS];
@@ -1839,18 +1931,8 @@ typedef struct gitem_s
 
 // included in both the game dll and the client
 extern gitem_t bg_itemlist[];
-extern int     bg_numItems;
 
-#define FIRST_WEAPON_ITEM 9     ///< bg_itemlist is sorted and weapons start at 9
-
-// FIXME: create enum for this with all items so we don't have to adjust this for item changes ... see bg_itemlist
-#define ITEM_HEALTH 3
-#define ITEM_HEALTH_CABINET 5
-#define ITEM_AMMO_PACK 35
-#define ITEM_MEGA_AMMO_PACK 36
-#define ITEM_RED_FLAG 79
-#define ITEM_BLUE_FLAG 80
-#define ITEM_MAX_ITEMS 81       ///< keep in sync with bg_numItems!
+#define FIRST_WEAPON_ITEM ITEM_WEAPON_KNIFE     ///< bg_itemlist is sorted and weapons start at ITEM_WEAPON_KNIFE
 
 gitem_t *BG_FindItem(const char *pickupName);
 gitem_t *BG_FindItemForClassName(const char *className);

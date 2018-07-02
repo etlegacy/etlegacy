@@ -645,7 +645,7 @@ static void CG_Item(centity_t *cent)
 	gitem_t       *item;
 
 	// (item index is stored in es->modelindex for item)
-	if (es->modelindex >= bg_numItems)
+	if (es->modelindex >= ITEM_MAX_ITEMS)
 	{
 		CG_Error("Bad item index %i on entity\n", es->modelindex);
 	}

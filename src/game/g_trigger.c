@@ -977,7 +977,7 @@ void ammo_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 		if (AddMagicAmmo(touchClients[i], self->damage))
 		{
 			// add the ammo pack event (to get sound, etc.)
-			G_AddPredictableEvent(touchClients[i], EV_ITEM_PICKUP, BG_GetItem(ITEM_AMMO_PACK) - bg_itemlist);
+			G_AddPredictableEvent(touchClients[i], EV_ITEM_PICKUP, BG_GetItem(ITEM_WEAPON_MAGICAMMO) - bg_itemlist);
 			if (self->health != -9999)
 			{
 				// reduce the ammount of available ammo by the added clip number

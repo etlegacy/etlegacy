@@ -1383,7 +1383,7 @@ static void CG_RegisterSounds(void)
 		cgs.media.footsteps[FOOTSTEP_CARPET][i] = trap_S_RegisterSound(name, qfalse);
 	}
 
-	for (i = 1 ; i < bg_numItems ; i++)
+	for (i = 1 ; i < ITEM_MAX_ITEMS ; i++)
 	{
 		CG_RegisterItemSounds(i);
 	}
@@ -1916,7 +1916,7 @@ static void CG_RegisterGraphics(void)
 	}
 
 	CG_LoadingString(" - items -");
-	for (i = 1 ; i < bg_numItems ; i++)
+	for (i = 1 ; i < ITEM_MAX_ITEMS ; i++)
 	{
 		CG_RegisterItemVisuals(i);
 	}

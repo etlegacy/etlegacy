@@ -300,7 +300,7 @@ void Weapon_MagicAmmo_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t
 		SnapVectorTowards(tosspos, viewpos);
 	}
 
-	ent2            = LaunchItem(BG_GetItem(ent->client->sess.skill[SK_SIGNALS] >= 1 ? ITEM_MEGA_AMMO_PACK : ITEM_AMMO_PACK), tosspos, velocity, ent->s.number);
+	ent2            = LaunchItem(BG_GetItem(ent->client->sess.skill[SK_SIGNALS] >= 1 ? ITEM_WEAPON_MAGICAMMO2 : ITEM_WEAPON_MAGICAMMO), tosspos, velocity, ent->s.number);
 	ent2->think     = MagicSink;
 	ent2->nextthink = level.time + 30000;
 
