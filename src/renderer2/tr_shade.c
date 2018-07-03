@@ -821,32 +821,12 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 {
 	shaderStage_t *pStage   = tess.surfaceStages[stage];
 	uint32_t      stateBits = pStage->stateBits;
-	colorGen_t    rgbGen;
-	alphaGen_t    alphaGen;
+	rgbaGen_t     rgbaGen;
 
 	Ren_LogComment("--- Render_lightMapping ---\n");
 
-	switch (pStage->rgbGen)
-	{
-	case CGEN_VERTEX:
-	case CGEN_ONE_MINUS_VERTEX:
-		rgbGen = pStage->rgbGen;
-		break;
-	default:
-		rgbGen = CGEN_CONST;
-		break;
-	}
+	rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
 
-	switch (pStage->alphaGen)
-	{
-	case AGEN_VERTEX:
-	case AGEN_ONE_MINUS_VERTEX:
-		alphaGen = pStage->alphaGen;
-		break;
-	default:
-		alphaGen = AGEN_CONST;
-		break;
-	}
 
 	if (r_showLightMaps->integer)
 	{
@@ -879,7 +859,7 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
-	GLSL_SetUniform_ColorModulate(trProg.gl_lightMappingShader, rgbGen, alphaGen);
+	GLSL_SetUniform_ColorModulate(trProg.gl_lightMappingShader, rgbaGen.color, rgbaGen.alpha);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 
 	if (r_parallaxMapping->integer)
@@ -968,8 +948,11 @@ static void Render_depthFill(int stage)
 {
 	shaderStage_t *pStage = tess.surfaceStages[stage];
 	vec4_t        ambientColor;
+	rgbaGen_t     rgbaGen;
 
 	Ren_LogComment("--- Render_depthFill ---\n");
+
+	rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
 
 	GL_State(pStage->stateBits);
 
@@ -990,7 +973,7 @@ static void Render_depthFill(int stage)
 	}
 
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
-	GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_CONST, AGEN_CONST);
+	GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, rgbaGen.color, rgbaGen.alpha);
 
 	// u_Color
 	if (r_precomputedLighting->integer)
@@ -2011,10 +1994,13 @@ static void Render_heatHaze(int stage)
 
 	if (r_heatHazeFix->integer && glConfig2.framebufferBlitAvailable)
 	{
-		FBO_t    *previousFBO;
-		uint32_t stateBits;
+		FBO_t     *previousFBO;
+		uint32_t  stateBits;
+		rgbaGen_t rgbaGen;
 
 		Ren_LogComment("--- HEATHAZE FIX BEGIN ---\n");
+
+		rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
 
 		// capture current color buffer for u_CurrentMap
 		/*
@@ -2069,7 +2055,7 @@ static void Render_heatHaze(int stage)
 		                          USE_TCGEN_ENVIRONMENT, qfalse);
 		// end choose right shader program ------------------------------
 
-		GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, CGEN_CONST, AGEN_CONST);
+		GLSL_SetUniform_ColorModulate(trProg.gl_genericShader, rgbaGen.color, rgbaGen.alpha);
 		SetUniformVec4(UNIFORM_COLOR, colorRed);
 		SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 		SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
@@ -2417,10 +2403,7 @@ static void Render_volumetricFog()
 
 	if (glConfig2.framebufferBlitAvailable)
 	{
-		float fogDensity;
-		FBO_t *previousFBO;
-
-		previousFBO = glState.currentFBO;
+		FBO_t *previousFBO = glState.currentFBO;
 
 		if (r_hdrRendering->integer && glConfig2.framebufferObjectAvailable && glConfig2.textureFloatAvailable)
 		{
