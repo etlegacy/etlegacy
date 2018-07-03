@@ -1336,21 +1336,19 @@ void G_CheckForCursorHints(gentity_t *ent)
 				break;
 			case ET_ITEM:
 			{
-				gitem_t *it = &bg_itemlist[checkEnt->item - bg_itemlist];
-
 				hintDist = CH_ACTIVATE_DIST;
 
-				switch (it->giType)
+				switch (checkEnt->item->giType)
 				{
 				case IT_HEALTH:
 					hintType = HINT_HEALTH;
 					break;
 				case IT_WEAPON: {
-					qboolean canPickup = COM_BitCheck(ent->client->ps.weapons, it->giWeapon);
+					qboolean canPickup = COM_BitCheck(ent->client->ps.weapons, checkEnt->item->giWeapon);
 
 					if (!canPickup)
 					{
-						if (it->giWeapon == WP_AMMO)
+						if (checkEnt->item->giWeapon == WP_AMMO)
 						{
 							canPickup = qtrue;
 						}
@@ -1358,7 +1356,7 @@ void G_CheckForCursorHints(gentity_t *ent)
 
 					if (!canPickup)
 					{
-						canPickup = G_CanPickupWeapon(it->giWeapon, ent);
+						canPickup = G_CanPickupWeapon(checkEnt->item->giWeapon, ent);
 					}
 
 					if (canPickup)
@@ -1495,10 +1493,10 @@ void G_CheckForCursorHints(gentity_t *ent)
 		hintDist = CH_MAX_DIST_ZOOM;
 
 		// allow hint ladder while zooming
-        if (hintType != HINT_LADDER)
-        { 
-            return;
-        }
+		if (hintType != HINT_LADDER)
+		{
+			return;
+		}
 	}
 
 	// set hint distance
