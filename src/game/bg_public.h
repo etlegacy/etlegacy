@@ -1841,7 +1841,7 @@ typedef enum item_s
     ITEM_WEAPON_PANZERFAUST,
     ITEM_WEAPON_BAZOOKA,
     ITEM_WEAPON_GRENADE_LAUNCHER,
-    ITEM_WEAPON_GRENADEPINEAPPLE,
+    ITEM_WEAPON_GRENADE_PINEAPPLE,
     ITEM_WEAPON_SMOKE_MARKER,
     ITEM_WEAPON_SMOKETRAIL,
     ITEM_WEAPON_MEDIC_HEAL,
@@ -1908,7 +1908,7 @@ typedef enum item_s
  */
 typedef struct gitem_s
 {
-    item_t item;                ///< identifier
+    item_t ident;               ///< identifier
 	const char *classname;      ///< spawning name
 	const char *pickup_sound;
 	const char *world_model[MAX_ITEM_MODELS];

@@ -152,97 +152,97 @@ qboolean G_SpawnVector2DExt(const char *key, const char *defaultString, float *o
 
 field_t fields[] =
 {
-	{ "classname",    FOFS(classname),      F_LSTRING   , 0},
-	{ "origin",       FOFS(s.origin),       F_VECTOR    , 0},
-	{ "model",        FOFS(model),          F_LSTRING   , 0},
-	{ "model2",       FOFS(model2),         F_LSTRING   , 0},
-	{ "spawnflags",   FOFS(spawnflags),     F_INT       , 0},
-	{ "eflags",       FOFS(s.eFlags),       F_INT       , 0},
-	{ "svflags",      FOFS(r.svFlags),      F_INT       , 0},
-	{ "maxs",         FOFS(r.maxs),         F_VECTOR    , 0},
-	{ "mins",         FOFS(r.mins),         F_VECTOR    , 0},
-	{ "speed",        FOFS(speed),          F_FLOAT     , 0},
-	{ "closespeed",   FOFS(closespeed),     F_FLOAT     , 0},
-	{ "target",       FOFS(target),         F_LSTRING   , 0},
-	{ "targetname",   FOFS(targetname),     F_LSTRING   , 0},
-	{ "message",      FOFS(message),        F_LSTRING   , 0},
-	{ "popup",        FOFS(message),        F_LSTRING   , 0}, // mutually exclusive from 'message', but makes the ent more logical for the level designer
-	{ "book",         FOFS(message),        F_LSTRING   , 0}, // mutually exclusive from 'message', but makes the ent more logical for the level designer
-	{ "team",         FOFS(team),           F_LSTRING   , 0},
-	{ "wait",         FOFS(wait),           F_FLOAT     , 0},
-	{ "random",       FOFS(random),         F_FLOAT     , 0},
-	{ "count",        FOFS(count),          F_INT       , 0},
-	{ "health",       FOFS(health),         F_INT       , 0},
-	{ "light",        0,                    F_IGNORE    , 0},
-	{ "dmg",          FOFS(damage),         F_INT       , 0},
-	{ "angles",       FOFS(s.angles),       F_VECTOR    , 0},
-	{ "angle",        FOFS(s.angles),       F_ANGLEHACK , 0},
+	{ "classname",    FOFS(classname),      F_LSTRING,   0 },
+	{ "origin",       FOFS(s.origin),       F_VECTOR,    0 },
+	{ "model",        FOFS(model),          F_LSTRING,   0 },
+	{ "model2",       FOFS(model2),         F_LSTRING,   0 },
+	{ "spawnflags",   FOFS(spawnflags),     F_INT,       0 },
+	{ "eflags",       FOFS(s.eFlags),       F_INT,       0 },
+	{ "svflags",      FOFS(r.svFlags),      F_INT,       0 },
+	{ "maxs",         FOFS(r.maxs),         F_VECTOR,    0 },
+	{ "mins",         FOFS(r.mins),         F_VECTOR,    0 },
+	{ "speed",        FOFS(speed),          F_FLOAT,     0 },
+	{ "closespeed",   FOFS(closespeed),     F_FLOAT,     0 },
+	{ "target",       FOFS(target),         F_LSTRING,   0 },
+	{ "targetname",   FOFS(targetname),     F_LSTRING,   0 },
+	{ "message",      FOFS(message),        F_LSTRING,   0 },
+	{ "popup",        FOFS(message),        F_LSTRING,   0 }, // mutually exclusive from 'message', but makes the ent more logical for the level designer
+	{ "book",         FOFS(message),        F_LSTRING,   0 }, // mutually exclusive from 'message', but makes the ent more logical for the level designer
+	{ "team",         FOFS(team),           F_LSTRING,   0 },
+	{ "wait",         FOFS(wait),           F_FLOAT,     0 },
+	{ "random",       FOFS(random),         F_FLOAT,     0 },
+	{ "count",        FOFS(count),          F_INT,       0 },
+	{ "health",       FOFS(health),         F_INT,       0 },
+	{ "light",        0,                    F_IGNORE,    0 },
+	{ "dmg",          FOFS(damage),         F_INT,       0 },
+	{ "angles",       FOFS(s.angles),       F_VECTOR,    0 },
+	{ "angle",        FOFS(s.angles),       F_ANGLEHACK, 0 },
 
-	{ "duration",     FOFS(duration),       F_FLOAT     , 0},
-	{ "rotate",       FOFS(rotate),         F_VECTOR    , 0},
+	{ "duration",     FOFS(duration),       F_FLOAT,     0 },
+	{ "rotate",       FOFS(rotate),         F_VECTOR,    0 },
 
-	{ "degrees",      FOFS(angle),          F_FLOAT     , 0},
-	{ "time",         FOFS(speed),          F_FLOAT     , 0},
+	{ "degrees",      FOFS(angle),          F_FLOAT,     0 },
+	{ "time",         FOFS(speed),          F_FLOAT,     0 },
 
 	// additional ai field
-	{ "skin",         FOFS(aiSkin),         F_LSTRING   , 0},
+	{ "skin",         FOFS(aiSkin),         F_LSTRING,   0 },
 
 	// dlight lightstyles (made all these unique variables for testing)
-	{ "_color",       FOFS(dl_color),       F_VECTOR    , 0}, // color of the light	(the underscore is inserted by the color picker in QER)
-	{ "color",        FOFS(dl_color),       F_VECTOR    , 0}, // color of the light
-	{ "stylestring",  FOFS(dl_stylestring), F_LSTRING   , 0}, // user defined stylestring "fffndlsfaaaaaa" for example
+	{ "_color",       FOFS(dl_color),       F_VECTOR,    0 }, // color of the light	(the underscore is inserted by the color picker in QER)
+	{ "color",        FOFS(dl_color),       F_VECTOR,    0 }, // color of the light
+	{ "stylestring",  FOFS(dl_stylestring), F_LSTRING,   0 }, // user defined stylestring "fffndlsfaaaaaa" for example
 
-	{ "shader",       FOFS(dl_shader),      F_LSTRING   , 0}, // shader to use for a target_effect or dlight
+	{ "shader",       FOFS(dl_shader),      F_LSTRING,   0 }, // shader to use for a target_effect or dlight
 
 	// for target_unlock
-	{ "key",          FOFS(key),            F_INT       , 0},
+	{ "key",          FOFS(key),            F_INT,       0 },
 
 	// mg42
-	{ "harc",         FOFS(harc),           F_FLOAT     , 0},
-	{ "varc",         FOFS(varc),           F_FLOAT     , 0},
+	{ "harc",         FOFS(harc),           F_FLOAT,     0 },
+	{ "varc",         FOFS(varc),           F_FLOAT,     0 },
 
 	// sniper
-	{ "delay",        FOFS(delay),          F_FLOAT     , 0},
-	{ "radius",       FOFS(radius),         F_INT       , 0},
+	{ "delay",        FOFS(delay),          F_FLOAT,     0 },
+	{ "radius",       FOFS(radius),         F_INT,       0 },
 
 	// for reloading savegames at correct mission spot
-	{ "missionlevel", FOFS(missionLevel),   F_INT       , 0},
+	{ "missionlevel", FOFS(missionLevel),   F_INT,       0 },
 
-	{ "start_size",   FOFS(start_size),     F_INT       , 0},
-	{ "end_size",     FOFS(end_size),       F_INT       , 0},
+	{ "start_size",   FOFS(start_size),     F_INT,       0 },
+	{ "end_size",     FOFS(end_size),       F_INT,       0 },
 
-	{ "shard",        FOFS(count),          F_INT       , 0},
+	{ "shard",        FOFS(count),          F_INT,       0 },
 
-	{ "spawnitem",    FOFS(spawnitem),      F_LSTRING   , 0},
+	{ "spawnitem",    FOFS(spawnitem),      F_LSTRING,   0 },
 
-	{ "track",        FOFS(track),          F_LSTRING   , 0},
+	{ "track",        FOFS(track),          F_LSTRING,   0 },
 
-	{ "scriptName",   FOFS(scriptName),     F_LSTRING   , 0},
+	{ "scriptName",   FOFS(scriptName),     F_LSTRING,   0 },
 
-	{ "shortname",    FOFS(message),        F_LSTRING   , 0},
-	{ "constages",    FOFS(constages),      F_LSTRING   , 0},
-	{ "desstages",    FOFS(desstages),      F_LSTRING   , 0},
-	{ "partofstage",  FOFS(partofstage),    F_INT       , 0},
-	{ "override",     FOFS(spawnitem),      F_LSTRING   , 0},
+	{ "shortname",    FOFS(message),        F_LSTRING,   0 },
+	{ "constages",    FOFS(constages),      F_LSTRING,   0 },
+	{ "desstages",    FOFS(desstages),      F_LSTRING,   0 },
+	{ "partofstage",  FOFS(partofstage),    F_INT,       0 },
+	{ "override",     FOFS(spawnitem),      F_LSTRING,   0 },
 
-	{ "damageparent", FOFS(damageparent),   F_LSTRING   , 0},
+	{ "damageparent", FOFS(damageparent),   F_LSTRING,   0 },
 
-	{ "numPlayers",   FOFS(numPlayers),     F_INT       , 0}, // number of players needed to trigger this
+	{ "numPlayers",   FOFS(numPlayers),     F_INT,       0 }, // number of players needed to trigger this
 
-	{ "contents",     FOFS(r.contents),     F_INT       , 0},
-	{ "clipmask",     FOFS(clipmask),       F_INT       , 0},
-	{ "count2",       FOFS(count2),         F_INT       , 0},
+	{ "contents",     FOFS(r.contents),     F_INT,       0 },
+	{ "clipmask",     FOFS(clipmask),       F_INT,       0 },
+	{ "count2",       FOFS(count2),         F_INT,       0 },
 	// doors need this one
-	{ "baseAngle",    FOFS(s.apos.trBase),  F_VECTOR    , 0},
-	{ "baseOrigin",   FOFS(s.pos.trBase),   F_VECTOR    , 0},
+	{ "baseAngle",    FOFS(s.apos.trBase),  F_VECTOR,    0 },
+	{ "baseOrigin",   FOFS(s.pos.trBase),   F_VECTOR,    0 },
 
-	{ NULL , 0, F_IGNORE, 0}
+	{ NULL,           0,                    F_IGNORE,    0 }
 };
 
 typedef struct
 {
 	char *name;
-	void (*spawn)(gentity_t *ent);
+	void (*spawn)(gentity_t * ent);
 } spawn_t;
 
 void SP_info_player_start(gentity_t *ent);
@@ -640,24 +640,21 @@ qboolean G_CallSpawn(gentity_t *ent)
 	}
 
 	// check item spawn functions
-	for (item = bg_itemlist + 1 ; item->classname ; item++)
-	{
-		if (!strcmp(item->classname, ent->classname))
-		{
-			// found it
-			if (g_gametype.integer != GT_WOLF_LMS)     // lets not have items in last man standing for the moment
-			{
-				G_SpawnItem(ent, item);
+	item = BG_FindItem(ent->classname);
 
-				G_Script_ScriptParse(ent);
-				G_Script_ScriptEvent(ent, "spawn", "");
-			}
-			else
-			{
-				return qfalse;
-			}
+	if (item)
+	{
+		// found it
+		if (g_gametype.integer != GT_WOLF_LMS)     // lets not have items in last man standing for the moment
+		{
+			G_SpawnItem(ent, item);
+
+			G_Script_ScriptParse(ent);
+			G_Script_ScriptEvent(ent, "spawn", "");
 			return qtrue;
 		}
+
+		return qfalse;
 	}
 
 	// check normal spawn functions
@@ -697,8 +694,8 @@ qboolean G_CallSpawn(gentity_t *ent)
  */
 char *G_NewString(const char *string)
 {
-	char *newb, *new_p;
-	unsigned int  i, l;
+	char         *newb, *new_p;
+	unsigned int i, l;
 
 	l = strlen(string) + 1;
 
@@ -858,7 +855,7 @@ gentity_t *G_SpawnGEntityFromSpawnVars(void)
 char *G_AddSpawnVarToken(const char *string)
 {
 	size_t l;
-	char *dest;
+	char   *dest;
 
 	l = strlen(string);
 	if (level.numSpawnVarChars + l + 1 > MAX_SPAWN_VARS_CHARS)
