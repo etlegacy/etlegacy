@@ -372,6 +372,12 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 	}
 
 	item = BG_GetItemForWeapon(weapon);
+
+	if (item->giType != IT_WEAPON || item->giWeapon != weapon)
+	{
+		Com_Error(ERR_DROP, "Couldn't get item for weapon %i", weapon);
+	}
+
 	VectorCopy(client->ps.viewangles, angles);
 
 	// clamp pitch
