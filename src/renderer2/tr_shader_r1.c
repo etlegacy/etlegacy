@@ -952,11 +952,11 @@ int ScanAndLoadShaderFilesR1()
 
 	if (!shaderFiles || !numShaderFiles)
 	{
-		Ren_Print("----- ScanAndLoadShaderFilesR1 (no files)-----\n");
+		Ren_Print("...no vanilla shader files found!\n");
 		return 0;
 	}
 
-	Ren_Print("----- ScanAndLoadShaderFilesR1 (%i files)-----\n", numShaderFiles);
+	Ren_Print("...scanning %i vanilla shader files\n", numShaderFiles);
 
 	if (numShaderFiles >= MAX_SHADER_FILES)
 	{

@@ -6555,11 +6555,11 @@ static int ScanAndLoadShaderFiles(void)
 
 	if (!shaderFiles || !numShaderFiles)
 	{
-		Ren_Print("----- ScanAndLoadShaderFiles (no files) -----\n");
+		Ren_Print("...no legacy shader files found!\n");
 		return 0;
 	}
 
-	Ren_Print("----- ScanAndLoadShaderFiles (%i files) -----\n", numShaderFiles);
+	Ren_Print("...scanning %i legacy shader files\n", numShaderFiles);
 
 	if (numShaderFiles >= MAX_SHADER_FILES)
 	{
@@ -6879,7 +6879,7 @@ static int ScanAndLoadShaderFiles(void)
  */
 static void CreateInternalShaders(void)
 {
-	Ren_Print("----- CreateInternalShaders -----\n");
+	Ren_Developer("----- CreateInternalShaders -----\n");
 
 	tr.numShaders = 0;
 
@@ -6917,7 +6917,7 @@ static void CreateInternalShaders(void)
  */
 static void CreateExternalShaders(void)
 {
-	Ren_Print("----- CreateExternalShaders -----\n");
+	Ren_Developer("----- CreateExternalShaders -----\n");
 
 	tr.flareShader = R_FindShader("flareShader", SHADER_3D_DYNAMIC, qtrue);
 	//use wolf image
@@ -6933,6 +6933,8 @@ static void CreateExternalShaders(void)
  */
 void R_InitShaders(void)
 {
+	Ren_Print("----- R_InitShaders -----\n");
+
 	Com_Memset(shaderTableHashTable, 0, sizeof(shaderTableHashTable));
 	Com_Memset(shaderHashTable, 0, sizeof(shaderHashTable));
 
@@ -6948,7 +6950,7 @@ void R_InitShaders(void)
 	}
 	else
 	{
-		Ren_Print("----- ScanAndLoadShaderFiles (disabled) -----\n");
+		Ren_Print("...scanning of legacy shader files disabled by CVAR r_materialScan\n");
 	}
 	
 	if(r_materialScan->integer & R_SCAN_SCRIPTS_FOLDER)
@@ -6957,7 +6959,7 @@ void R_InitShaders(void)
 	}
 	else
 	{
-		Ren_Print("----- ScanAndLoadShaderFilesR1 (disabled) -----\n");
+		Ren_Print("...scanning of vanilla shader files disabled by CVAR r_materialScan\n");
 	}
 	
 	if (numMaterialFiles + numShaderFiles == 0)

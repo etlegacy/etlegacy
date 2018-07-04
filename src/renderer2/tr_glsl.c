@@ -1183,37 +1183,35 @@ static int GLSL_CompileGPUShader(GLhandleARB program, GLhandleARB *prevShader, c
 }
 
 /**
- * @brief GLSL_GetShaderText
+ * @brief GLSL_GetShaderText loads shader text into data buffer
  * @param[in] name
  * @param[in] shaderType
  * @param[out] data
  * @param[out] size
  * @param[in] append
+ *
+ * @note We don't ship glsl files anymore - GetFallbackShader() does the job
  */
 static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data, size_t *size, qboolean append)
 {
 	char   fullname[MAX_QPATH];
 	size_t dataSize = 0;
-	char   *dataBuffer;
+	char   *dataBuffer = NULL;
 
 	if (shaderType == GL_VERTEX_SHADER)
 	{
 		Com_sprintf(fullname, sizeof(fullname), "%s_vp", name);
-		Ren_Print("...loading vertex shader '%s'\n", fullname);
+		Ren_Developer("...loading vertex shader '%s'\n", fullname);
 	}
 	else
 	{
 		Com_sprintf(fullname, sizeof(fullname), "%s_fp", name);
-		Ren_Print("...loading vertex shader '%s'\n", fullname);
+		Ren_Developer("...loading other/fragment shader '%s'\n", fullname);
 	}
 
 	if (ri.FS_FOpenFileRead(va("glsl/%s.glsl", fullname), NULL, qfalse) > 0)
 	{
 		dataSize = ri.FS_ReadFile(va("glsl/%s.glsl", fullname), ( void ** ) &dataBuffer);
-	}
-	else
-	{
-		dataBuffer = NULL;
 	}
 
 	if (!dataBuffer)
@@ -1265,14 +1263,11 @@ static void GLSL_GetShaderText(const char *name, GLenum shaderType, char **data,
 
 		Q_strcat(*data, *size, dataBuffer);
 		Q_strcat(*data, *size, "\n");
-	}
 
-	if (dataBuffer)
-	{
 		ri.FS_FreeFile(dataBuffer);
 	}
 
-	Ren_Print("Loaded shader '%s'\n", fullname);
+	Ren_Developer("Loaded shader '%s'\n", fullname);
 }
 
 /**
