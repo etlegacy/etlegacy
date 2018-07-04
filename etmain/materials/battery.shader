@@ -195,6 +195,7 @@ textures/battery/ocean_0to1
 	}
 	
 }
+
 textures/battery/rock_graynoise
 {
     q3map_nonplanar
@@ -209,7 +210,7 @@ textures/battery/rock_graynoise
     {
 	    stage diffusemap
         map textures/temperate_sd/rock_grayvar
-        rgbGen identitylightning
+        rgbGen identity
     }
 	{
 	    stage bumpmap
