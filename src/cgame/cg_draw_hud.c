@@ -2275,17 +2275,17 @@ lagometer_t lagometer;
  */
 typedef struct sample_s
 {
-	float elapsed;
-	float time;
+	int elapsed;
+	int time;
 } sample_t;
 
 typedef struct sampledStat_s
 {
 	unsigned int count;
-	float avg;
-	float lastSampleTime;
+	int avg; // full int frames for output
+	int lastSampleTime;
 	sample_t samples[LAG_SAMPLES];
-	float samplesTotalElpased;
+	int samplesTotalElpased;
 } sampledStat_t;
 
 sampledStat_t sampledStat;
@@ -2378,8 +2378,8 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 	}
 
 	sampledStat.avg = sampledStat.samplesTotalElpased > 0
-	                  ? sampledStat.count / (sampledStat.samplesTotalElpased / 1000.0f)
-					  : 0.0f;
+	                  ? (int) (sampledStat.count / (sampledStat.samplesTotalElpased / 1000.0f) + 0.5f)
+					  : 0;
 }
 
 /**
@@ -2617,32 +2617,34 @@ static float CG_DrawLagometer(float y)
 
 	// add snapshots/s in top-right corner of meter
 	{
-		const int avg = (int)(sampledStat.avg + 0.5f);
 		char      buf[8];
 		int       fps;
 		vec4_t    *color;
 
 		trap_Cvar_VariableStringBuffer("sv_fps", buf, sizeof(buf));
-		fps = atoi(buf);
+		fps     = atoi(buf);
 
-		if (avg < fps * 0.5)
+		if (sampledStat.avg < fps * 0.5f)
 		{
 			color = &colorRed;
 		}
-		else if (avg < fps * 0.75)
+		else if (sampledStat.avg < fps * 0.75f)
 		{
 			color = &colorYellow;
 		}
 		else
 		{
-			color = &colorGreen;
+			color = &HUD_Text;
 		}
 
-		w  = CG_Text_Width_Ext(va("%i", avg), 0.19f, 0, &cgs.media.limboFont1);
+		// reuse buffer for output
+		Com_sprintf(buf, sizeof(buf), "%i", sampledStat.avg);
+
+		w  = CG_Text_Width_Ext(buf, 0.19f, 0, &cgs.media.limboFont1);
 		w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
 		x  = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
 
-		CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, *color, va("%i", avg), 0, 0, 0, &cgs.media.limboFont1);
+		CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, *color, buf, 0, 0, 0, &cgs.media.limboFont1);
 	}
 
 	return y + w + 13;
