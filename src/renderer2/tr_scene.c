@@ -377,9 +377,9 @@ void RE_AddRefEntityToScene(const refEntity_t *ent)
  * @brief RE_AddRefLightToScene
  * @param[in] l
  */
-void RE_AddRefLightToScene(const refLight_t *l)
+void RE_AddRefLightToScene(const refLight_t *light)
 {
-	trRefLight_t *light;
+	trRefLight_t *trlight;
 
 	if (!tr.registered)
 	{
@@ -392,38 +392,38 @@ void RE_AddRefLightToScene(const refLight_t *l)
 		return;
 	}
 
-	if (l->radius[0] <= 0 && VectorLength(l->radius) == 0.f && VectorLength(l->projTarget) == 0.f)
+	if (light->radius[0] <= 0 && VectorLength(light->radius) == 0.f && VectorLength(light->projTarget) == 0.f)
 	{
 		return;
 	}
 
-	if ((unsigned)l->rlType >= RL_MAX_REF_LIGHT_TYPE)
+	if ((unsigned)light->rlType >= RL_MAX_REF_LIGHT_TYPE)
 	{
-		Ren_Drop("RE_AddRefLightToScene: bad rlType %i", l->rlType);
+		Ren_Drop("RE_AddRefLightToScene: bad rlType %i", light->rlType);
 	}
 
-	light = &backEndData->lights[r_numLights++];
-	Com_Memcpy(&light->l, l, sizeof(light->l));
+	trlight = &backEndData->lights[r_numLights++];
+	Com_Memcpy(&trlight->l, light, sizeof(trlight->l));
 
-	light->isStatic = qfalse;
-	light->additive = qtrue;
+	trlight->isStatic = qfalse;
+	trlight->additive = qtrue;
 
-	if (light->l.scale <= 0)
+	if (trlight->l.scale <= 0)
 	{
-		light->l.scale = r_lightScale->value;
+		trlight->l.scale = r_lightScale->value;
 	}
 
 	if (!HDR_ENABLED())
 	{
-		if (light->l.scale >= r_lightScale->value)
+		if (trlight->l.scale >= r_lightScale->value)
 		{
-			light->l.scale = r_lightScale->value;
+			trlight->l.scale = r_lightScale->value;
 		}
 	}
 
-	if (!r_dynamicLightShadows->integer && !light->l.inverseShadows)
+	if (!r_dynamicLightShadows->integer && !trlight->l.inverseShadows)
 	{
-		light->l.noShadows = qtrue;
+		trlight->l.noShadows = qtrue;
 	}
 }
 #endif

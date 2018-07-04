@@ -135,7 +135,10 @@ typedef enum
 #define REFLAG_DEAD_LOD     32  ///< allow the LOD to go lower than recommended
 
 // renderer2 BEGIN
-/// RB: having bone names for each refEntity_t takes several MiBs
+
+//#define USE_REFLIGHT 1
+
+/// having bone names for each refEntity_t takes several MiBs
 /// in backEndData_t so only use it for debugging and development
 /// enabling this will show the bone names with r_showSkeleton 1
 #define USE_REFENTITY_ANIMATIONSYSTEM 1 // renderer2

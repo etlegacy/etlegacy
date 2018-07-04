@@ -147,9 +147,10 @@ typedef struct
 
 #if defined(USE_REFLIGHT)
 	void (*AddRefLightToScene)(const refLight_t *light);
+	qhandle_t (*RegisterShaderLightAttenuation)(const char *name);
 #endif
 
-	/// RB: alternative skeletal animation system
+	/// alternative skeletal animation system
 #if defined(USE_REFENTITY_ANIMATIONSYSTEM)
 	qhandle_t (*RegisterAnimation)(const char *name);
 	int (*CheckSkeleton)(refSkeleton_t *skel, qhandle_t model, qhandle_t anim);
