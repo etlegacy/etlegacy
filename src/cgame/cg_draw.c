@@ -479,28 +479,29 @@ static void CG_DrawTeamInfo(void)
  * @param[in] item
  * @return
  */
-const char *CG_PickupItemText(int item)
+const char *CG_PickupItemText(int itemNum)
 {
-	if (bg_itemlist[item].giType == IT_HEALTH)
+	gitem_t *item;
+
+	item = BG_GetItem(itemNum);
+
+	if (item->giType == IT_HEALTH)
 	{
-		return va(CG_TranslateString("a %s"), bg_itemlist[item].pickup_name);
+		return va(CG_TranslateString("a %s"), item->pickup_name);
 	}
-	else if (bg_itemlist[item].giType == IT_TEAM)
+
+	if (item->giType == IT_TEAM)
 	{
 		return CG_TranslateString("an Objective");
 	}
-	else
+
+	// FIXME: this is just related to english
+	if (item->pickup_name[0] == 'a' || item->pickup_name[0] == 'A')
 	{
-		// FIXME: this is just related to english
-		if (bg_itemlist[item].pickup_name[0] == 'a' ||  bg_itemlist[item].pickup_name[0] == 'A')
-		{
-			return va(CG_TranslateString("an %s"), bg_itemlist[item].pickup_name);
-		}
-		else
-		{
-			return va(CG_TranslateString("a %s"), bg_itemlist[item].pickup_name);
-		}
+		return va(CG_TranslateString("an %s"), item->pickup_name);
 	}
+
+	return va(CG_TranslateString("a %s"), item->pickup_name);
 }
 
 /*
@@ -767,10 +768,10 @@ static void CG_DrawScopedReticle(void)
  */
 static void CG_DrawMortarReticle(void)
 {
-	vec4_t   color             = { 1.f, 1.f, 1.f, .5f };
-	vec4_t   color_back        = { 0.f, 0.f, 0.f, .25f };
-	vec4_t   color_extends     = { .77f, .73f, .1f, 1.f };
-	vec4_t   color_lastfire    = { .77f, .1f, .1f, 1.f };
+	vec4_t   color = { 1.f, 1.f, 1.f, .5f };
+	vec4_t   color_back = { 0.f, 0.f, 0.f, .25f };
+	vec4_t   color_extends = { .77f, .73f, .1f, 1.f };
+	vec4_t   color_lastfire = { .77f, .1f, .1f, 1.f };
 	vec4_t   color_firerequest = { 1.f, 1.f, 1.f, 1.f };
 	float    offset, localOffset;
 	int      i, min, majorOffset, val, printval, fadeTime, requestFadeTime;
@@ -1144,9 +1145,9 @@ static void CG_DrawCrosshair(void)
             }
             else */if (
 #ifdef FEATURE_MULTIVIEW
-			    cg.mvTotalClients < 1 ||
+				cg.mvTotalClients < 1 ||
 #endif
-			    cg.snap->ps.stats[STAT_HEALTH] > 0)
+				cg.snap->ps.stats[STAT_HEALTH] > 0)
 			{
 				CG_DrawScopedReticle();
 			}
@@ -2282,7 +2283,7 @@ static void CG_DrawSpectatorMessage(void)
 {
 	const char *str, *str2;
 	static int lastconfigGet = 0;
-	float      fontScale     = cg_fontScaleSP.value;
+	float      fontScale = cg_fontScaleSP.value;
 	int        y, charHeight;
 
 	charHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
@@ -2830,9 +2831,9 @@ static void CG_DrawFlashFade(void)
 	{
 		if (
 #ifdef FEATURE_MULTIVIEW
-		    cg.mvTotalClients < 1 &&
+			cg.mvTotalClients < 1 &&
 #endif
-		    cg.snap->ps.powerups[PW_BLACKOUT] > 0)
+			cg.snap->ps.powerups[PW_BLACKOUT] > 0)
 		{
 			trap_Cvar_Set("ui_blackout", va("%d", cg.snap->ps.powerups[PW_BLACKOUT]));
 		}

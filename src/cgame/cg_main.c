@@ -1254,7 +1254,7 @@ void CG_SetupDlightstyles(void)
  */
 static void CG_RegisterItemSounds(int itemNum)
 {
-	gitem_t *item = &bg_itemlist[itemNum];
+	gitem_t *item = BG_GetItem(itemNum);
 
 	if (item->pickup_sound && *item->pickup_sound)
 	{

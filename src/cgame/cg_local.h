@@ -3523,7 +3523,7 @@ void CG_Debriefing_ParseSkillRating(void);
 
 void CG_TeamDebriefingTeamSkillXP_Draw(panel_button_t *button);
 
-const char *CG_PickupItemText(int item);
+const char *CG_PickupItemText(int itemNum);
 
 void CG_LoadPanel_DrawPin(const char *text, float px, float py, float sx, float sy, qhandle_t shader, float pinsize, float backheight);
 void CG_LoadPanel_RenderCampaignPins(panel_button_t *button);
