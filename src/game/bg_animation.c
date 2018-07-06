@@ -521,7 +521,7 @@ void BG_InitWeaponStrings(void)
 	for (i = WP_NONE; i < WP_NUM_WEAPONS; i++)
 	{
 		// find this weapon in the itemslist, and extract the name
-		item = BG_GetItemForWeapon(i);
+		item = BG_GetItem(GetWeaponTableData(i)->item);
 
 		if (item && item->classname && item->giType == IT_WEAPON && item->giWeapon == i)
 		{

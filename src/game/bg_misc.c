@@ -2409,16 +2409,6 @@ gitem_t bg_itemlist[] =
 };
 
 /**
- * @brief BG_GetItemForWeapon
- * @param[in] weapon
- * @return
- */
-gitem_t *BG_GetItemForWeapon(weapon_t weapon)
-{
-    return BG_GetItem(GetWeaponTableData(weapon)->item);
-}
-
-/**
  * @brief BG_AkimboFireSequence
  * @param[in] weapon
  * @param[in] akimboClip
@@ -2459,7 +2449,7 @@ qboolean BG_AkimboFireSequence(int weapon, int akimboClip, int mainClip)
  * @param[in] index
  * @return
  */
-gitem_t *BG_GetItem(int index)
+ID_INLINE gitem_t *BG_GetItem(int index)
 {
 	return &bg_itemlist[index];
 }
@@ -2725,7 +2715,7 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 		Com_Error(ERR_DROP, "BG_CanItemBeGrabbed: index out of range");
 	}
 
-	item = &bg_itemlist[ent->modelindex];
+	item = BG_GetItem(ent->modelindex);
 
 	switch (item->giType)
 	{
