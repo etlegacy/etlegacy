@@ -2517,7 +2517,7 @@ qboolean G_LuaStartVM(lua_vm_t *vm)
 		vm->err++;
 		return qfalse;
 	case LUA_ERRGCMM:
-		G_Printf("%s API: %serror while running a __gc metamethod caused by garbage collector ( %s )\n", LUA_VERSION, vm->file_name);
+		G_Printf("%s API: %serror while running a __gc metamethod caused by garbage collector ( %s )\n", LUA_VERSION, S_COLOR_BLUE, vm->file_name);
 		vm->err++;
 		return qfalse;
 	default:
