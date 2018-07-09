@@ -891,7 +891,7 @@ static int NameToSrcBlendMode(const char *name)
 		return GLS_SRCBLEND_ALPHA_SATURATE;
 	}
 
-	Ren_Warning("WARNING: unknown blend mode '%s' in shader '%s', substituting GL_ONE\n", name, shader.name);
+	Ren_Warning("WARNING: unknown src blend mode '%s' in shader '%s', substituting GL_ONE\n", name, shader.name);
 	return GLS_SRCBLEND_ONE;
 }
 
@@ -935,7 +935,7 @@ static int NameToDstBlendMode(const char *name)
 		return GLS_DSTBLEND_ONE_MINUS_SRC_COLOR;
 	}
 
-	Ren_Warning("WARNING: unknown blend mode '%s' in shader '%s', substituting GL_ONE\n", name, shader.name);
+	Ren_Warning("WARNING: unknown dst blend mode '%s' in shader '%s', substituting GL_ONE\n", name, shader.name);
 	return GLS_DSTBLEND_ONE;
 }
 
