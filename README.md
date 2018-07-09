@@ -281,22 +281,6 @@ Be sure to set the CMake variables (see above) beforehand.
   (and can safely be renamed), while the dedicated server is just a command-line binary named "etlded".
 
 
-### Android
-
-Cross compiling for Android on Linux:
-
-1. Download latest NDK from https://developer.android.com/ndk/downloads/index.html?hl=ko
-2. Set up enviroment variables
-* export ANDROID_NDK=/absolute/path/to/the/android-ndk
-3. Run Cmake GUI with android-toolchain.cmake
-
-
-**NOTES**:
-
-  * Compiling etl executable doesn't compile at this moment isuees with X11, iconv.h. Download ifaddrs.h from
-  https://github.com/morristech/android-ifaddrs NDK SDK doesn't comes with this one.
-
-
 LICENSE
 =======
 
