@@ -262,7 +262,7 @@ void SP_misc_gamemodel(gentity_t *ent)
 	// #2 fix all invalid fps
 	if (ent->s.weapon <= 0)
 	{
-		if (g_cheats.integer)
+		if (g_developer.integer)
 		{
 			G_Printf("SP_misc_gamemodel: fps rate of entity %s %s at %s must have a value > 0 - <fps> is set to 20\n", ent->classname, ent->targetname, vtos(ent->r.currentOrigin));
 		}
