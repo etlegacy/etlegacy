@@ -1995,7 +1995,8 @@ static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int 
 	*width  = 0;
 	*height = 0;
 
-	token = COM_ParseExt2(buffer, qfalse);
+	// was COM_ParseExt2 which is too strict and drops valid/used chars  in image names ('+' in map et_carentan)
+	token = COM_ParseExt(buffer, qfalse);
 	if (!token[0])
 	{
 		Ren_Warning("WARNING: NULL parameter in R_LoadImage for material/shader '%s'\n", materialName);
@@ -2332,6 +2333,9 @@ image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterTyp
 	R_LoadImage(&buffer_p, &pic, &width, &height, &bits, materialName);
 	if (pic == NULL)
 	{
+		// this will occure in mods for default light shaders until we add our material pk3 to the common search path
+		// or modders add the light shaders (+ related images) to their mod.
+		Ren_Warning("WARNING R_FindImageFile: can't load material '%s'\n", materialName);
 		return NULL;
 	}
 
