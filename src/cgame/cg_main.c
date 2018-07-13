@@ -770,12 +770,12 @@ void CG_setClientFlags(void)
 	cg.pmext.bAutoReload = (qboolean)(cg_autoReload.integer > 0);
 	trap_Cvar_Set("cg_uinfo", va("%d %d %d",
 	                             // Client Flags
-	                             (
-	                                 ((cg_autoReload.integer > 0) ? CGF_AUTORELOAD : 0) |
-	                                 ((cg_autoAction.integer & AA_STATSDUMP) ? CGF_STATSDUMP : 0) |
-	                                 ((cg_autoactivate.integer > 0) ? CGF_AUTOACTIVATE : 0) |
-	                                 ((cg_predictItems.integer > 0) ? CGF_PREDICTITEMS : 0)
-	                                 // Add more in here, as needed
+								 (
+									 ((cg_autoReload.integer > 0) ? CGF_AUTORELOAD : 0) |
+									 ((cg_autoAction.integer & AA_STATSDUMP) ? CGF_STATSDUMP : 0) |
+									 ((cg_autoactivate.integer > 0) ? CGF_AUTOACTIVATE : 0) |
+									 ((cg_predictItems.integer > 0) ? CGF_PREDICTITEMS : 0)
+									 // Add more in here, as needed
 	                             ),
 
 	                             // Timenudge
@@ -970,7 +970,7 @@ char *CG_generateFilename(void)
 #endif
 	          ""
 #ifdef FEATURE_MULTIVIEW
-			  : "-MVD"
+	          : "-MVD"
 #endif
 	          ));
 }
@@ -1330,17 +1330,17 @@ static void CG_RegisterSounds(void)
 	for (i = 0; i < 2; i++)
 	{
 		cgs.media.grenadebounce[FOOTSTEP_NORMAL][i]         = \
-		    cgs.media.grenadebounce[FOOTSTEP_GRAVEL][i]     = \
-		        cgs.media.grenadebounce[FOOTSTEP_SPLASH][i] = trap_S_RegisterSound(va("sound/weapons/grenade/bounce_hard%i.wav", i + 1), qfalse);
+			cgs.media.grenadebounce[FOOTSTEP_GRAVEL][i]     = \
+				cgs.media.grenadebounce[FOOTSTEP_SPLASH][i] = trap_S_RegisterSound(va("sound/weapons/grenade/bounce_hard%i.wav", i + 1), qfalse);
 
 		cgs.media.grenadebounce[FOOTSTEP_METAL][i]    = \
-		    cgs.media.grenadebounce[FOOTSTEP_ROOF][i] = trap_S_RegisterSound(va("sound/weapons/grenade/bounce_metal%i.wav", i + 1), qfalse);
+			cgs.media.grenadebounce[FOOTSTEP_ROOF][i] = trap_S_RegisterSound(va("sound/weapons/grenade/bounce_metal%i.wav", i + 1), qfalse);
 
 		cgs.media.grenadebounce[FOOTSTEP_WOOD][i] = trap_S_RegisterSound(va("sound/weapons/grenade/bounce_wood%i.wav", i + 1), qfalse);
 
 		cgs.media.grenadebounce[FOOTSTEP_GRASS][i]          = \
-		    cgs.media.grenadebounce[FOOTSTEP_SNOW][i]       = \
-		        cgs.media.grenadebounce[FOOTSTEP_CARPET][i] = trap_S_RegisterSound(va("sound/weapons/grenade/bounce_soft%i.wav", i + 1), qfalse);
+			cgs.media.grenadebounce[FOOTSTEP_SNOW][i]       = \
+				cgs.media.grenadebounce[FOOTSTEP_CARPET][i] = trap_S_RegisterSound(va("sound/weapons/grenade/bounce_soft%i.wav", i + 1), qfalse);
 	}
 
 	cgs.media.landSound[FOOTSTEP_NORMAL] = trap_S_RegisterSound("sound/player/footsteps/stone_jump.wav", qfalse);
@@ -1649,43 +1649,28 @@ static void CG_RegisterGraphics(void)
 	cgs.media.oilSlick               = trap_R_RegisterShader("oilSlick");
 	cgs.media.waterBubbleShader      = trap_R_RegisterShader("waterBubble");
 	cgs.media.tracerShader           = trap_R_RegisterShader("gfx/misc/tracer");
-	cgs.media.usableHintShader       = trap_R_RegisterShader("gfx/2d/usableHint");
-	cgs.media.notUsableHintShader    = trap_R_RegisterShader("gfx/2d/notUsableHint");
-	cgs.media.doorHintShader         = trap_R_RegisterShader("gfx/2d/doorHint");
-	cgs.media.doorRotateHintShader   = trap_R_RegisterShader("gfx/2d/doorRotateHint");
 
-	// these were never used in default wolf
-	//cgs.media.doorRotateLockHintShader = trap_R_RegisterShader("gfx/2d/lockedhint");
-	cgs.media.doorLockHintShader    = trap_R_RegisterShader("gfx/2d/lockedhint");
-	cgs.media.mg42HintShader        = trap_R_RegisterShader("gfx/2d/mg42Hint");
-	cgs.media.breakableHintShader   = trap_R_RegisterShader("gfx/2d/breakableHint");
-	//cgs.media.alarmHintShader       = trap_R_RegisterShader("gfx/2d/alarmHint");
-	cgs.media.healthHintShader      = trap_R_RegisterShader("gfx/2d/healthHint");
-	//cgs.media.treasureHintShader    = trap_R_RegisterShader("gfx/2d/treasureHint");
-	cgs.media.knifeHintShader       = trap_R_RegisterShader("gfx/2d/knifeHint");
-	cgs.media.ladderHintShader      = trap_R_RegisterShader("gfx/2d/ladderHint");
-	cgs.media.buttonHintShader      = trap_R_RegisterShader("gfx/2d/buttonHint");
-	cgs.media.waterHintShader       = trap_R_RegisterShader("gfx/2d/waterHint");
-	//cgs.media.cautionHintShader     = trap_R_RegisterShader("gfx/2d/cautionHint");
-	//cgs.media.dangerHintShader      = trap_R_RegisterShader("gfx/2d/dangerHint");
-	//cgs.media.secretHintShader      = trap_R_RegisterShader("gfx/2d/secretHint");
-	//cgs.media.qeustionHintShader    = trap_R_RegisterShader("gfx/2d/questionHint");
-	//cgs.media.exclamationHintShader = trap_R_RegisterShader("gfx/2d/exclamationHint");
-	//cgs.media.clipboardHintShader   = trap_R_RegisterShader("gfx/2d/clipboardHint");
-	cgs.media.weaponHintShader      = trap_R_RegisterShader("gfx/2d/weaponHint");
-	cgs.media.ammoHintShader        = trap_R_RegisterShader("gfx/2d/ammoHint");
-	//cgs.media.armorHintShader       = trap_R_RegisterShader("gfx/2d/armorHint");
-	cgs.media.powerupHintShader     = trap_R_RegisterShader("gfx/2d/powerupHint");
-	//cgs.media.holdableHintShader    = trap_R_RegisterShader("gfx/2d/holdableHint");
-	//cgs.media.inventoryHintShader   = trap_R_RegisterShader("gfx/2d/inventoryHint");
-
-	cgs.media.friendShader = trap_R_RegisterShaderNoMip("gfx/2d/friendlycross.tga");
-
-	cgs.media.buildHintShader    = trap_R_RegisterShader("gfx/2d/buildHint");
-	cgs.media.disarmHintShader   = trap_R_RegisterShader("gfx/2d/disarmHint");
-	cgs.media.reviveHintShader   = trap_R_RegisterShader("gfx/2d/reviveHint");
-	cgs.media.dynamiteHintShader = trap_R_RegisterShader("gfx/2d/dynamiteHint");
-
+	// hint icon, some of these were never used in default wolf
+	cgs.media.usableHintShader        = trap_R_RegisterShader("gfx/2d/usableHint");
+	cgs.media.notUsableHintShader     = trap_R_RegisterShader("gfx/2d/notUsableHint");
+	cgs.media.doorHintShader          = trap_R_RegisterShader("gfx/2d/doorHint");
+	cgs.media.doorRotateHintShader    = trap_R_RegisterShader("gfx/2d/doorRotateHint");         // TODO: no icon, add it ?
+	cgs.media.doorLockHintShader      = trap_R_RegisterShader("gfx/2d/lockedhint");
+	cgs.media.mg42HintShader          = trap_R_RegisterShader("gfx/2d/mg42Hint");               // TODO: no icon, add it ?
+	cgs.media.breakableHintShader     = trap_R_RegisterShader("gfx/2d/breakableHint");
+	cgs.media.healthHintShader        = trap_R_RegisterShader("gfx/2d/healthHint");             // TODO: no icon, add it ?
+	cgs.media.knifeHintShader         = trap_R_RegisterShader("gfx/2d/knifeHint");
+	cgs.media.ladderHintShader        = trap_R_RegisterShader("gfx/2d/ladderHint");
+	cgs.media.buttonHintShader        = trap_R_RegisterShader("gfx/2d/buttonHint");             // TODO: no icon, add it ?
+	cgs.media.waterHintShader         = trap_R_RegisterShader("gfx/2d/waterHint");
+	cgs.media.weaponHintShader        = trap_R_RegisterShader("gfx/2d/weaponHint");             // TODO: no icon, add it ?
+	cgs.media.ammoHintShader          = trap_R_RegisterShader("gfx/2d/ammoHint");               // TODO: no icon, add it ?
+	cgs.media.powerupHintShader       = trap_R_RegisterShader("gfx/2d/powerupHint");            // TODO: no icon, add it ?
+	cgs.media.friendShader            = trap_R_RegisterShaderNoMip("gfx/2d/friendlycross.tga");
+	cgs.media.buildHintShader         = trap_R_RegisterShader("gfx/2d/buildHint");
+	cgs.media.disarmHintShader        = trap_R_RegisterShader("gfx/2d/disarmHint");             // TODO: no icon, add it ?
+	cgs.media.reviveHintShader        = trap_R_RegisterShader("gfx/2d/reviveHint");
+	cgs.media.dynamiteHintShader      = trap_R_RegisterShader("gfx/2d/dynamiteHint");
 	cgs.media.tankHintShader          = trap_R_RegisterShaderNoMip("gfx/2d/tankHint");
 	cgs.media.satchelchargeHintShader = trap_R_RegisterShaderNoMip("gfx/2d/satchelchargeHint");
 	cgs.media.landmineHintShader      = trap_R_RegisterShaderNoMip("gfx/2d/landmineHint");
