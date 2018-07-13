@@ -1586,7 +1586,7 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
 
 	if (!stage->bundle[0].image[0])
 	{
-		Ren_Warning("WARNING: R_FindImageFile could not find image '%s' in shader '%s'\n", buffer, shader.name);
+		Ren_Warning("WARNING: LoadMap could not find image '%s' in shader '%s'\n", buffer, shader.name);
 		return qfalse;
 	}
 
@@ -1711,13 +1711,13 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 		// remoteRenderMap <int> <int>
 		else if (!Q_stricmp(token, "remoteRenderMap"))
 		{
-			Ren_Warning("WARNING: remoteRenderMap keyword not supported in shader '%s'\n", shader.name);
+			Ren_Warning("WARNING: 'remoteRenderMap' keyword not supported in shader '%s'\n", shader.name);
 			SkipRestOfLine(text);
 		}
 		// mirrorRenderMap <int> <int>
 		else if (!Q_stricmp(token, "mirrorRenderMap"))
 		{
-			Ren_Warning("WARNING: mirrorRenderMap keyword not supported in shader '%s'\n", shader.name);
+			Ren_Warning("WARNING: 'mirrorRenderMap' keyword not supported in shader '%s'\n", shader.name);
 			SkipRestOfLine(text);
 		}
 		// clampmap <name>
@@ -1748,7 +1748,7 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 			stage->bundle[0].image[0] = R_FindImageFile(token, imageBits, filterType, WT_EDGE_CLAMP, shader.name);
 			if (!stage->bundle[0].image[0])
 			{
-				Ren_Warning("WARNING: R_FindImageFile could not find '%s' in shader '%s'\n", token, shader.name);
+				Ren_Warning("WARNING: R_FindImageFile could not find 'clampmap' image '%s' in shader '%s'\n", token, shader.name);
 				return qfalse;
 			}
 		}
@@ -1760,7 +1760,7 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 			token = COM_ParseExt2(text, qfalse);
 			if (!token[0])
 			{
-				Ren_Warning("WARNING: missing parameter for 'animMmap' keyword in shader '%s'\n", shader.name);
+				Ren_Warning("WARNING: missing parameter for 'animMap' keyword in shader '%s'\n", shader.name);
 				return qfalse;
 			}
 			stage->bundle[0].imageAnimationSpeed = atof(token);
@@ -1796,7 +1796,7 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 					stage->bundle[0].image[num] = R_FindImageFile(token, imageBits, filterType, WT_REPEAT, shader.name);
 					if (!stage->bundle[0].image[num])
 					{
-						Ren_Warning("WARNING: R_FindImageFile could not find '%s' in shader '%s'\n", token,
+						Ren_Warning("WARNING: R_FindImageFile could not find 'animMap' image '%s' in shader '%s'\n", token,
 						            shader.name);
 						return qfalse;
 					}
