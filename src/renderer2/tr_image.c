@@ -1999,7 +1999,7 @@ static void R_LoadImage(char **buffer, byte **pic, int *width, int *height, int 
 	token = COM_ParseExt(buffer, qfalse);
 	if (!token[0])
 	{
-		Ren_Warning("WARNING: NULL parameter in R_LoadImage for material/shader '%s'\n", materialName);
+		Ren_Developer("WARNING: NULL parameter in R_LoadImage for material/shader '%s'\n", materialName);
 		return;
 	}
 
@@ -2336,6 +2336,12 @@ image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterTyp
 		// this will occure in mods for default light shaders until we add our material pk3 to the common search path
 		// or modders add the light shaders (+ related images) to their mod.
 		Ren_Warning("WARNING R_FindImageFile: can't load material '%s'\n", materialName);
+		return NULL;
+	}
+
+	if (((width - 1) & width) || ((height - 1) & height))
+	{
+		Ren_Warning("WARNING: Image not power of 2 scaled: %s   %i:%i\n", materialName, width, height);
 		return NULL;
 	}
 
