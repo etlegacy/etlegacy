@@ -4803,7 +4803,7 @@ void PmoveSingle(pmove_t *pmove)
 
 	pm->ps->eFlags &= ~(EF_FIRING | EF_ZOOMING);
 
-	if ((pm->cmd.wbuttons & WBUTTON_ZOOM) && pm->ps->stats[STAT_HEALTH] >= 0 && !pm->ps->weaponTime && pm->ps->weaponstate == WEAPON_READY)
+	if ((pm->cmd.wbuttons & WBUTTON_ZOOM) && pm->ps->stats[STAT_HEALTH] >= 0 && !pm->ps->weaponDelay && pm->ps->weaponstate == WEAPON_READY)
 	{
 		if (pm->ps->stats[STAT_KEYS] & (1 << INV_BINOCS))               // binoculars are an inventory item (inventory==keys)
 		{
