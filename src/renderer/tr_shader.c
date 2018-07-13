@@ -738,7 +738,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				stage->bundle[0].image[0] = R_FindImageFile(token, !shader.noMipMaps, !shader.noPicMip, GL_REPEAT, qfalse);
 				if (!stage->bundle[0].image[0])
 				{
-					Ren_Warning("WARNING: R_FindImageFile could not find '%s' in shader '%s'\n", token, shader.name);
+					Ren_Warning("WARNING: R_FindImageFile could not find 'map' image '%s' in shader '%s'\n", token, shader.name);
 					return qfalse;
 				}
 			}
@@ -756,7 +756,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 			stage->bundle[0].image[0] = R_FindImageFile(token, !shader.noMipMaps, !shader.noPicMip, GL_CLAMP_TO_EDGE, qfalse);
 			if (!stage->bundle[0].image[0])
 			{
-				Ren_Warning("WARNING: R_FindImageFile could not find '%s' in shader '%s'\n", token, shader.name);
+				Ren_Warning("WARNING: R_FindImageFile could not find 'clampmap' image '%s' in shader '%s'\n", token, shader.name);
 				return qfalse;
 			}
 		}
@@ -799,7 +799,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 				stage->bundle[0].image[0] = R_FindImageFile(token, qfalse, qfalse, GL_CLAMP_TO_EDGE, qtrue);
 				if (!stage->bundle[0].image[0])
 				{
-					Ren_Warning("WARNING: R_FindImageFile could not find '%s' in shader '%s'\n", token, shader.name);
+					Ren_Warning("WARNING: R_FindImageFile could not find 'lighmap' image '%s' in shader '%s'\n", token, shader.name);
 					return qfalse;
 				}
 				stage->bundle[0].isLightmap = qtrue;
@@ -834,7 +834,7 @@ static qboolean ParseStage(shaderStage_t *stage, char **text)
 					stage->bundle[0].image[num] = R_FindImageFile(token, !shader.noMipMaps, !shader.noPicMip, GL_REPEAT, qfalse);
 					if (!stage->bundle[0].image[num])
 					{
-						Ren_Warning("WARNING: R_FindImageFile could not find '%s' in shader '%s'\n", token, shader.name);
+						Ren_Warning("WARNING: R_FindImageFile could not find 'animMap' image '%s' in shader '%s'\n", token, shader.name);
 						return qfalse;
 					}
 					stage->bundle[0].numImageAnimations++;
