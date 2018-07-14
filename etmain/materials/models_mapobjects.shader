@@ -26,7 +26,7 @@ models/mapobjects/tanks_sd/mg42turret
 	         	map models/mapobjects/tanks_sd/mg42turret.tga
 	         	blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
 	         	rgbGen lightingdiffuse
-	}		
+	}
 }
 
 models/mapobjects/tanks_sd/churchill_flat
@@ -2986,10 +2986,7 @@ models/mapobjects/tree_desert_sd/palm_leaf1
 {
 	qer_alphafunc gequal 0.5
 	cull twosided
-	//deformVertexes wave 15 sin 0 1 0 0.25
-	deformVertexes wave 211 sin 0 1 0 1.9
-	deformVertexes wave 30  sin 0 2.7 0 2.47
-	deformVertexes wave 42  sin 0 1.4 0 1.1
+	deformVertexes wave 15 sin 0 1 0 0.25
 	surfaceparm alphashadow
 	surfaceparm nomarks
 	surfaceparm trans
