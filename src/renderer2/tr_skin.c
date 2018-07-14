@@ -256,7 +256,7 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 		}
 	}
 
-	Ren_Print("RE_GetShaderFromModel warning: no model for modelid '%i'.\n");
+	Ren_Print("Warning RE_GetShaderFromModel:  no model for modelid '%i'.\n", modelid);
 
 	return 0;
 }
