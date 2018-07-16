@@ -34,6 +34,8 @@
  */
 #include "tr_local.h"
 
+//#define SH_LOADTIMING
+
 static char *s_shaderText;
 
 // the shader is parsed into these global variables, then copied into
@@ -3082,11 +3084,12 @@ static char *FindShaderInShaderText(const char *shadername)
 #ifdef SH_LOADTIMING
 	static int total = 0;
 
-	int start = Sys_Milliseconds();
-#endif // _DEBUG
+	int start = ri.Milliseconds();
+#endif // SH_LOADTIMING
 
 	if (!p)
 	{
+		Ren_Warning("FindShaderInShaderText WARNING: no shadertext found for shader '%s'\n", shadername);
 		return NULL;
 	}
 
@@ -3112,9 +3115,9 @@ static char *FindShaderInShaderText(const char *shadername)
 				if ((token[0] != 0) && !Q_stricmp(token, shadername))
 				{
 #ifdef SH_LOADTIMING
-					total += Sys_Milliseconds() - start;
-					Ren_Print("Shader lookup: %i, total: %i\n", Sys_Milliseconds() - start, total);
-#endif // _DEBUG
+					total += ri.Milliseconds() - start;
+					Ren_Print("Shader lookup dshader '%s': %i, total: %i\n", shadername, ri.Milliseconds() - start, total);
+#endif // SH_LOADTIMING
 					//ri.Printf( PRINT_ALL, "Found dynamic shader [%s] with shadertext [%s]\n", shadername, dptr->shadertext );
 					return q;
 				}
@@ -3127,7 +3130,8 @@ static char *FindShaderInShaderText(const char *shadername)
 	// optimized shader loading
 	if (r_cacheShaders->integer)
 	{
-		/*if (strstr( shadername, "/" ) && !strstr( shadername, "." ))*/ {
+		/*if (strstr( shadername, "/" ) && !strstr( shadername, "." ))*/
+		{
 			unsigned short int    checksum;
 			shaderStringPointer_t *pShaderString;
 
@@ -3144,16 +3148,20 @@ static char *FindShaderInShaderText(const char *shadername)
 				if ((token[0] != 0) && !Q_stricmp(token, shadername))
 				{
 #ifdef SH_LOADTIMING
-					total += Sys_Milliseconds() - start;
-					Ren_Print("Shader lookup: %i, total: %i\n", Sys_Milliseconds() - start, total);
-#endif // _DEBUG
+					total += ri.Milliseconds() - start;
+					Ren_Print("Shader lookup cached '%s': %i, total: %i\n", shadername, ri.Milliseconds() - start, total);
+#endif // SH_LOADTIMING
 					return p;
 				}
 
 				pShaderString = pShaderString->next;
 			}
-
+			
 			// it's not even in our list, so it mustn't exist
+#ifdef SH_LOADTIMING
+			total += ri.Milliseconds() - start;
+			Ren_Print("Shader lookup cached failed '%s': %i, total: %i\n", shadername, ri.Milliseconds() - start, total);
+#endif // SH_LOADTIMING
 			return NULL;
 		}
 	}
@@ -3172,9 +3180,9 @@ static char *FindShaderInShaderText(const char *shadername)
 		if (!Q_stricmp(token, shadername))
 		{
 #ifdef SH_LOADTIMING
-			total += Sys_Milliseconds() - start;
-			Ren_Print("Shader lookup: %i, total: %i\n", Sys_Milliseconds() - start, total);
-#endif // _DEBUG
+			total += ri.Milliseconds() - start;
+			Ren_Print("Shader lookup label '%': %i, total: %i\n", shadername, ri.Milliseconds() - start, total);
+#endif // SH_LOADTIMING
 			return p;
 		}
 
@@ -3182,9 +3190,9 @@ static char *FindShaderInShaderText(const char *shadername)
 	}
 
 #ifdef SH_LOADTIMING
-	total += Sys_Milliseconds() - start;
-	Ren_Print("Shader lookup: %i, total: %i\n", Sys_Milliseconds() - start, total);
-#endif // _DEBUG
+	total += ri.Milliseconds() - start;
+	Ren_Print("Shader lookup '%s' failed: %i, total: %i\n", shadername, ri.Milliseconds() - start, total);
+#endif // SH_LOADTIMING
 	return NULL;
 }
 
