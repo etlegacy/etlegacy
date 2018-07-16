@@ -153,7 +153,7 @@ cvar_t *r_noLightFrustums;
 cvar_t *r_shadowMapLuminanceAlpha;
 cvar_t *r_shadowMapLinearFilter;
 //cvar_t *r_lightBleedReduction;
-cvar_t *r_overDarkeningFactor;
+//cvar_t *r_overDarkeningFactor; // exponential shadow mapping
 cvar_t *r_shadowMapDepthScale;
 cvar_t *r_parallelShadowSplits;
 cvar_t *r_parallelShadowSplitWeight;
@@ -1215,7 +1215,7 @@ void R_Register(void)
 	r_shadowMapLuminanceAlpha = ri.Cvar_Get("r_shadowMapLuminanceAlpha", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_shadowMapLinearFilter   = ri.Cvar_Get("r_shadowMapLinearFilter", "1", CVAR_CHEAT | CVAR_LATCH);
 	//r_lightBleedReduction     = ri.Cvar_Get("r_lightBleedReduction", "0", CVAR_CHEAT | CVAR_LATCH);
-	r_overDarkeningFactor     = ri.Cvar_Get("r_overDarkeningFactor", "30.0", CVAR_CHEAT | CVAR_LATCH);
+	//r_overDarkeningFactor     = ri.Cvar_Get("r_overDarkeningFactor", "30.0", CVAR_CHEAT | CVAR_LATCH); // exponential shadow mapping
 	r_shadowMapDepthScale     = ri.Cvar_Get("r_shadowMapDepthScale", "1.41", CVAR_CHEAT | CVAR_LATCH);
 
 	r_parallelShadowSplitWeight = ri.Cvar_Get("r_parallelShadowSplitWeight", "0.9", CVAR_CHEAT);

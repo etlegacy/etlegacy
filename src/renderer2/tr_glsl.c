@@ -996,10 +996,11 @@ static void GLSL_BuildShaderExtraDef()
 		//	BUFFEXT("#ifndef r_LightBleedReduction\n#define r_LightBleedReduction %f\n#endif\n", r_lightBleedReduction->value);
 		//}
 
-		if (r_overDarkeningFactor->value)
-		{
-			BUFFEXT("#ifndef r_OverDarkeningFactor\n#define r_OverDarkeningFactor %f\n#endif\n", r_overDarkeningFactor->value);
-		}
+		// exponential shadow mapping
+		//if (r_overDarkeningFactor->value)
+		//{
+		//	BUFFEXT("#ifndef r_OverDarkeningFactor\n#define r_OverDarkeningFactor %f\n#endif\n", r_overDarkeningFactor->value);
+		//}
 
 		if (r_shadowMapDepthScale->value)
 		{

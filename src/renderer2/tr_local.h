@@ -884,7 +884,7 @@ typedef enum
 	AGEN_NORMALZFADE,
 	AGEN_VERTEX,
 	AGEN_ONE_MINUS_VERTEX,
-	//AGEN_LIGHTING_SPECULAR,
+	AGEN_LIGHTING_SPECULAR,
 	AGEN_WAVEFORM,
 	AGEN_CONST,
 	AGEN_CUSTOM
@@ -3823,7 +3823,7 @@ extern cvar_t *r_noLightFrustums;
 extern cvar_t *r_shadowMapLuminanceAlpha;
 extern cvar_t *r_shadowMapLinearFilter;
 //extern cvar_t *r_lightBleedReduction;
-extern cvar_t *r_overDarkeningFactor;
+//extern cvar_t *r_overDarkeningFactor; // exponential shadow mapping
 extern cvar_t *r_shadowMapDepthScale;
 extern cvar_t *r_parallelShadowSplits;
 extern cvar_t *r_parallelShadowSplitWeight;
