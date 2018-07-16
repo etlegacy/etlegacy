@@ -767,7 +767,7 @@ void heal_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 
 		touchClients[i]->health += healvalue;
 		// add the medicheal event (to get sound, etc.)
-		G_AddPredictableEvent(other, EV_ITEM_PICKUP, BG_GetItem(ITEM_HEALTH_CABINET) - bg_itemlist);
+		G_AddPredictableEvent(other, EV_ITEM_PICKUP, ITEM_HEALTH_CABINET);
 
 		if (self->health != -9999)
 		{
@@ -977,7 +977,7 @@ void ammo_touch(gentity_t *self, gentity_t *other, trace_t *trace)
 		if (AddMagicAmmo(touchClients[i], self->damage))
 		{
 			// add the ammo pack event (to get sound, etc.)
-			G_AddPredictableEvent(touchClients[i], EV_ITEM_PICKUP, BG_GetItem(ITEM_AMMO_PACK) - bg_itemlist);
+			G_AddPredictableEvent(touchClients[i], EV_ITEM_PICKUP, ITEM_WEAPON_MAGICAMMO);
 			if (self->health != -9999)
 			{
 				// reduce the ammount of available ammo by the added clip number

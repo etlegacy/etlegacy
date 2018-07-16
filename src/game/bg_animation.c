@@ -513,30 +513,26 @@ char *BG_CopyStringIntoBuffer(char *string, char *buffer, unsigned int bufSize, 
  */
 void BG_InitWeaponStrings(void)
 {
-	int     i;
-	gitem_t *item;
+	weapon_t i;
+	gitem_t  *item;
 
 	Com_Memset(weaponStrings, 0, sizeof(weaponStrings));
 
-	for (i = 0; i < WP_NUM_WEAPONS; i++)
+	for (i = WP_NONE; i < WP_NUM_WEAPONS; i++)
 	{
 		// find this weapon in the itemslist, and extract the name
-		for (item = bg_itemlist + 1; item->classname; item++)
-		{
-			if (item->giType == IT_WEAPON && item->giWeapon == i)
-			{
-				// found a match
-				weaponStrings[i].string = item->pickup_name;
-				weaponStrings[i].hash   = BG_StringHashValue(weaponStrings[i].string);
-				break;
-			}
-		}
+		item = BG_GetItem(GetWeaponTableData(i)->item);
 
-		if (!item->classname)
+		if (item && item->classname && item->giType == IT_WEAPON && item->giWeapon == i)
+		{
+			weaponStrings[i].string = item->pickup_name;
+		}
+		else
 		{
 			weaponStrings[i].string = "(unknown)";
-			weaponStrings[i].hash   = BG_StringHashValue(weaponStrings[i].string);
 		}
+
+		weaponStrings[i].hash = BG_StringHashValue(weaponStrings[i].string);
 	}
 }
 
@@ -938,7 +934,7 @@ static animStringItem_t animParseModesStr[] =
  */
 void BG_AnimParseAnimScript(animModelInfo_t *animModelInfo, animScriptData_t *scriptData, const char *filename, char *input)
 {
-	char                  *text_p        = input, *token;
+	char                  *text_p = input, *token;
 	animScriptParseMode_t parseMode      = PARSEMODE_DEFINES; // start at the defines
 	animScript_t          *currentScript = NULL;
 	animScriptItem_t      tempScriptItem;

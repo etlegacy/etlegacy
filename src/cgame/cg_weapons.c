@@ -1699,7 +1699,7 @@ void CG_RegisterWeapon(int weaponNum, qboolean force)
  */
 void CG_RegisterItemVisuals(int itemNum)
 {
-	itemInfo_t *itemInfo = &bg_itemlist[itemNum].itemInfo;
+	itemInfo_t *itemInfo = &BG_GetItem(itemNum)->itemInfo;
 	gitem_t    *item;
 	int        i;
 
@@ -1708,7 +1708,7 @@ void CG_RegisterItemVisuals(int itemNum)
 		return;
 	}
 
-	item = &bg_itemlist[itemNum];
+	item = BG_GetItem(itemNum);
 
 	if (item->giType == IT_WEAPON)
 	{

@@ -40,9 +40,9 @@
 
 const char *hintStrings[HINT_NUM_HINTS] =
 {
-	"",                         // HINT_NONE
-	"HINT_NONE",                // actually HINT_FORCENONE, but since this is being specified in the ent, the designer actually means HINT_FORCENONE
-	"HINT_PLAYER",
+	"",                         ///< HINT_NONE
+	"HINT_NONE",                ///< actually HINT_FORCENONE, but since this is being specified in the ent, the designer actually means HINT_FORCENONE
+	"unused",                   ///< HINT_PLAYER
 	"HINT_ACTIVATE",
 	"HINT_DOOR",
 	"HINT_DOOR_ROTATING",
@@ -52,32 +52,32 @@ const char *hintStrings[HINT_NUM_HINTS] =
 	"HINT_BREAKABLE",
 	"HINT_BREAKABLE_BIG",
 	"HINT_CHAIR",
-	"HINT_ALARM",
+	"unused",                   ///< HINT_ALARM
 	"HINT_HEALTH",
-	"HINT_TREASURE",
+	"unused",                   ///< HINT_TREASURE
 	"HINT_KNIFE",
 	"HINT_LADDER",
 	"HINT_BUTTON",
 	"HINT_WATER",
-	"HINT_CAUTION",
-	"HINT_DANGER",
-	"HINT_SECRET",
-	"HINT_QUESTION",
-	"HINT_EXCLAMATION",
-	"HINT_CLIPBOARD",
+	"unused",                   ///< HINT_CAUTION
+	"unused",                   ///< HINT_DANGER
+	"unused",                   ///< HINT_SECRET
+	"unused",                   ///< HINT_QUESTION
+	"unused",                   ///< HINT_EXCLAMATION
+	"unused",                   ///< HINT_CLIPBOARD
 	"HINT_WEAPON",
 	"HINT_AMMO",
-	"HINT_ARMOR",
+	"unused",                   ///< HINT_ARMOR
 	"HINT_POWERUP",
-	"HINT_HOLDABLE",
-	"HINT_INVENTORY",
-	"HINT_SCENARIC",
-	"HINT_EXIT",
-	"HINT_NOEXIT",
-	"HINT_PLYR_FRIEND",
-	"HINT_PLYR_NEUTRAL",
-	"HINT_PLYR_ENEMY",
-	"HINT_PLYR_UNKNOWN",
+	"unused",                   ///< HINT_HOLDABLE
+	"unused",                   ///< HINT_INVENTORY
+	"unused",                   ///< HINT_SCENARIC
+	"unused",                   ///< HINT_EXIT
+	"unused",                   ///< HINT_NOEXIT
+	"unused",                   ///< HINT_PLYR_FRIEND
+	"unused",                   ///< HINT_PLYR_NEUTRAL
+	"unused",                   ///< HINT_PLYR_ENEMY
+	"unused",                   ///< HINT_PLYR_UNKNOWN
 	"HINT_BUILD",
 	"HINT_DISARM",
 	"HINT_REVIVE",
@@ -89,9 +89,9 @@ const char *hintStrings[HINT_NUM_HINTS] =
 	"HINT_TANK",
 	"HINT_SATCHELCHARGE",
 
-	"HINT_LOCKPICK",            // FIXME: remove
+	"unused",                   ///< HINT_LOCKPICK
 
-	"",                         // HINT_BAD_USER
+	"HINT_BAD_USER",
 };
 
 /*

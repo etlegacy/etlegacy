@@ -1379,7 +1379,7 @@ typedef struct
 	qhandle_t bloodTrailShader;
 
 	// cursor hints
-	// would be nice to specify these in the menu scripts instead of permanent handles...
+	// TODO: would be nice to specify these in the menu scripts instead of permanent handles...
 	qhandle_t usableHintShader;
 	qhandle_t notUsableHintShader;
 	qhandle_t doorHintShader;
@@ -1387,32 +1387,18 @@ typedef struct
 	qhandle_t doorLockHintShader;
 	qhandle_t mg42HintShader;
 	qhandle_t breakableHintShader;
-	qhandle_t alarmHintShader;
 	qhandle_t healthHintShader;
-	qhandle_t treasureHintShader;
 	qhandle_t knifeHintShader;
 	qhandle_t ladderHintShader;
 	qhandle_t buttonHintShader;
 	qhandle_t waterHintShader;
-	qhandle_t cautionHintShader;
-	qhandle_t dangerHintShader;
-	qhandle_t secretHintShader;
-	qhandle_t qeustionHintShader;
-	qhandle_t exclamationHintShader;
-	qhandle_t clipboardHintShader;
 	qhandle_t weaponHintShader;
 	qhandle_t ammoHintShader;
-	qhandle_t armorHintShader;
 	qhandle_t powerupHintShader;
-	qhandle_t holdableHintShader;
-	qhandle_t inventoryHintShader;
-
-	// Multiplayer hints
 	qhandle_t buildHintShader;
 	qhandle_t disarmHintShader;
 	qhandle_t reviveHintShader;
 	qhandle_t dynamiteHintShader;
-
 	qhandle_t tankHintShader;
 	qhandle_t satchelchargeHintShader;
 	qhandle_t uniformHintShader;
@@ -3523,7 +3509,7 @@ void CG_Debriefing_ParseSkillRating(void);
 
 void CG_TeamDebriefingTeamSkillXP_Draw(panel_button_t *button);
 
-const char *CG_PickupItemText(int item);
+const char *CG_PickupItemText(int itemNum);
 
 void CG_LoadPanel_DrawPin(const char *text, float px, float py, float sx, float sy, qhandle_t shader, float pinsize, float backheight);
 void CG_LoadPanel_RenderCampaignPins(panel_button_t *button);

@@ -40,7 +40,7 @@ extern void CG_Tracer(vec3_t source, vec3_t dest, int sparks);
 //==========================================================================
 
 static vec3_t OB_YELLOW = { 1.f, 1.f, 0.f };
-static vec3_t OB_RED = { 1.f, 0.f, 0.f };
+static vec3_t OB_RED    = { 1.f, 0.f, 0.f };
 
 /**
  * @brief CG_GetObituaryIcon
@@ -323,11 +323,12 @@ extern int CG_WeaponIndex(int weapnum, int *bank, int *cycle);
  */
 static void CG_ItemPickup(int itemNum)
 {
-	int                itemid = bg_itemlist[itemNum].giWeapon;
+	gitem_t            *item = BG_GetItem(itemNum);
+	int                itemid = item->giWeapon;
 	int                wpbank_cur, wpbank_pickup;
 	popupMessageType_t giType;
 
-	switch (bg_itemlist[itemNum].giType)
+	switch (item->giType)
 	{
 	case IT_AMMO:
 		giType = PM_AMMOPICKUP;
@@ -348,11 +349,7 @@ static void CG_ItemPickup(int itemNum)
 	case IT_TEAM:
 		giType = PM_OBJECTIVE;
 		break;
-	//  case IT_BAD:
-	//	case IT_WEAPON:
-	//	case IT_HOLDABLE:
-	//	case IT_KEY:
-	//	case IT_TREASURE:
+	case IT_BAD:
 	default:
 		giType = PM_MESSAGE;
 		break;
@@ -368,7 +365,7 @@ static void CG_ItemPickup(int itemNum)
 #endif
 
 	// see if it should be the grabbed weapon
-	if (bg_itemlist[itemNum].giType == IT_WEAPON)
+	if (item->giType == IT_WEAPON)
 	{
 		if (cg_autoswitch.integer && cg.predictedPlayerState.weaponstate != WEAPON_RELOADING)
 		{
@@ -2007,7 +2004,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 	{
 		int index = es->eventParm;              // player predicted
 
-		if (index < 1 || index >= bg_numItems)
+		if (index < 1 || index >= ITEM_MAX_ITEMS)
 		{
 			break;
 		}
@@ -2030,11 +2027,11 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		gitem_t *item;
 		int     index = es->eventParm;          // player predicted
 
-		if (index < 1 || index >= bg_numItems)
+		if (index < 1 || index >= ITEM_MAX_ITEMS)
 		{
 			break;
 		}
-		item = &bg_itemlist[index];
+		item = BG_GetItem(index);
 		if (*item->pickup_sound)
 		{
 			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.itemPickUpSounds[index]);
@@ -2704,7 +2701,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 	case EV_SHAKE:
 	{
-		float  len;
+		float len;
 
 #ifdef FEATURE_EDV
 		if (cgs.demoCamera.renderingFreeCam || cgs.demoCamera.renderingWeaponCam)

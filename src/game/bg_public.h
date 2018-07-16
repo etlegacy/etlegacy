@@ -1077,6 +1077,7 @@ typedef enum
 typedef struct weapontable_s
 {
 	int weapon;                     ///< reference
+	int item;                       ///< item
 	int team;                       ///<
 	skillType_t skillBased;         ///<
 	weapon_t weapAlts;              ///< bg
@@ -1109,7 +1110,7 @@ typedef struct weapontable_s
 	qboolean quickFireMode;         ///<
 	qboolean firingAuto;            ///<
 
-	qboolean neverLoseDisguise;    ///< g
+	qboolean neverLoseDisguise;     ///< g
 	qboolean keepDisguise;          ///< g
 
 	qboolean isThrowable;           ///<
@@ -1252,8 +1253,6 @@ typedef struct modtable_s
 } modTable_t;
 
 extern weaponTable_t *GetWeaponTableData(int weaponIndex);
-
-extern int weapAlts[]; ///< defined in bg_misc.c
 
 #define IS_VALID_WEAPON(w) (w > WP_NONE && w < WP_NUM_WEAPONS)
 #define IS_VALID_MOD(mod) (mod >= MOD_UNKNOWN && mod < MOD_NUM_MODS)
@@ -1777,22 +1776,20 @@ extern const weap_ws_t aWeaponInfo[WS_MAX];
 /**
  * @enum itemType_t
  * @brief gitem_t->type.
- *
- * @todo Need cleanup
  */
 typedef enum
 {
 	IT_BAD = 0,
-	IT_WEAPON,             ///< EFX: rotate + upscale + minlight
+	IT_WEAPON,                 ///< EFX: rotate + upscale + minlight
 
-	IT_AMMO,               ///< EFX: rotate
-	IT_ARMOR,              ///< EFX: rotate + minlight
-	IT_HEALTH,             ///< EFX: static external sphere + rotating internal
-	IT_HOLDABLE,           ///< #100 obsolete - remove! (also HINT_HOLDABLE)
-	///< EFX: rotate + bob
-	IT_KEY,
-	IT_TREASURE,           ///< #100 obsolete - remove! gold bars, etc.  things that can be picked up and counted for a tally at end-level
-	IT_TEAM,
+	IT_AMMO,                   ///< EFX: rotate
+	//IT_ARMOR,                ///< EFX: rotate + minlight, unused
+	IT_HEALTH = 4,                 ///< EFX: static external sphere + rotating internal
+	//IT_HOLDABLE,             ///< #100 obsolete
+	
+	//IT_KEY,                  ///< EFX: rotate + bob, unused
+	//IT_TREASURE,             ///< #100 obsolete gold bars, etc. things that can be picked up and counted for a tally at end-level
+	IT_TEAM = 8,
 } itemType_t;
 
 #define MAX_ITEM_MODELS 3
@@ -1813,12 +1810,103 @@ typedef struct
 #endif
 
 /**
+ * @struct item_s
+ * @typedef item_t
+ * @brief 
+ */
+typedef enum item_s
+{
+    ITEM_NONE,
+    ITEM_HEALTH_SMALL,
+    ITEM_HEALTH,
+    ITEM_HEALTH_LARGE,
+    ITEM_HEALTH_CABINET,
+    ITEM_HEALTH_TURKEY,
+    ITEM_HEALTH_BREADANDMEAT,
+    ITEM_HEALTH_WALL,
+    ITEM_WEAPON_KNIFE,
+    ITEM_WEAPON_KNIFE_KABAR,
+    ITEM_WEAPON_LUGER,
+    ITEM_WEAPON_AKIMBO_LUGER,
+    ITEM_WEAPON_AKIMBO_SILENCED_LUGER,
+    ITEM_WEAPON_THOMPSON,
+    ITEM_WEAPON_DUMMY_MG42,
+    ITEM_WEAPON_STEN,
+    ITEM_WEAPON_COLT,
+    ITEM_WEAPON_AKIMBO_COLT,
+    ITEM_WEAPON_AKIMBO_SILENCED_COLT,
+    ITEM_WEAPON_MP40,
+    ITEM_WEAPON_PANZERFAUST,
+    ITEM_WEAPON_BAZOOKA,
+    ITEM_WEAPON_GRENADE_LAUNCHER,
+    ITEM_WEAPON_GRENADE_PINEAPPLE,
+    ITEM_WEAPON_SMOKE_MARKER,
+    ITEM_WEAPON_SMOKETRAIL,
+    ITEM_WEAPON_MEDIC_HEAL,
+    ITEM_WEAPON_DYNAMITE,
+    ITEM_WEAPON_FLAMETHROWER,
+    ITEM_WEAPON_MAPMORTAR,
+    ITEM_WEAPON_PLIERS,
+    ITEM_WEAPON_ARTY,
+    ITEM_WEAPON_MEDIC_SYRINGE,
+    ITEM_WEAPON_MEDIC_ADRENALINE,
+    ITEM_WEAPON_MAGICAMMO,
+    ITEM_WEAPON_MAGICAMMO2,
+    ITEM_WEAPON_BINOCULARS,
+    ITEM_WEAPON_K43,
+    ITEM_WEAPON_K43_SCOPE,
+    ITEM_WEAPON_KAR98,
+    ITEM_WEAPON_GPG40,
+    ITEM_WEAPON_M7,
+    ITEM_WEAPON_CARBINE,
+    ITEM_WEAPON_GARAND,
+    ITEM_WEAPON_GARAND_SCOPE,
+    ITEM_WEAPON_FG42,
+    ITEM_WEAPON_FG42SCOPE,
+    ITEM_WEAPON_MORTAR,
+    ITEM_WEAPON_MORTAR_SET,
+    ITEM_WEAPON_MORTAR2,
+    ITEM_WEAPON_MORTAR2_SET,
+    ITEM_WEAPON_LANDMINE,
+    ITEM_WEAPON_SATCHEL,
+    ITEM_WEAPON_SATCHELDET,
+    ITEM_WEAPON_SMOKE_BOMB,
+    ITEM_WEAPON_MOBILE_MG42,
+    ITEM_WEAPON_MOBILE_MG42_SET,
+    ITEM_WEAPON_MOBILE_BROWNING_SET,
+    ITEM_WEAPON_MOBILE_BROWNING,
+    ITEM_WEAPON_SILENCER,
+    ITEM_WEAPON_SILENCED_COLT,
+    ITEM_AMMO_SYRINGE,
+    ITEM_AMMO_SMOKE_GRENADE,
+    ITEM_AMMO_DYNAMITE,
+    ITEM_AMMO_DISGUISE,
+    ITEM_AMMO_AIRSTRIKE,
+    ITEM_AMMO_LANDMINE,
+    ITEM_AMMO_SATCHEL_CHARGE,
+    ITEM_AMMO_9MM_SMALL,
+    ITEM_AMMO_9MM,
+    ITEM_AMMO_9MM_LARGE,
+    ITEM_AMMO_45CAL_SMALL,
+    ITEM_AMMO_45CAL,
+    ITEM_AMMO_45CAL_LARGE,
+    ITEM_AMMO_30CAL_SMALL,
+    ITEM_AMMO_30CAL,
+    ITEM_AMMO_30CAL_LARGE,
+    ITEM_RED_FLAG,
+    ITEM_BLUE_FLAG,
+    ITEM_MAX_ITEMS,
+    
+} item_t;
+
+/**
  * @struct gitem_s
  * @typedef gitem_t
  * @brief
  */
 typedef struct gitem_s
 {
+    item_t id;                  ///< identifier
 	const char *classname;      ///< spawning name
 	const char *pickup_sound;
 	const char *world_model[MAX_ITEM_MODELS];
@@ -1841,22 +1929,9 @@ typedef struct gitem_s
 
 // included in both the game dll and the client
 extern gitem_t bg_itemlist[];
-extern int     bg_numItems;
-
-#define FIRST_WEAPON_ITEM 9     ///< bg_itemlist is sorted and weapons start at 9
-
-// FIXME: create enum for this with all items so we don't have to adjust this for item changes ... see bg_itemlist
-#define ITEM_HEALTH 3
-#define ITEM_HEALTH_CABINET 5
-#define ITEM_AMMO_PACK 35
-#define ITEM_MEGA_AMMO_PACK 36
-#define ITEM_RED_FLAG 79
-#define ITEM_BLUE_FLAG 80
-#define ITEM_MAX_ITEMS 81       ///< keep in sync with bg_numItems!
 
 gitem_t *BG_FindItem(const char *pickupName);
-gitem_t *BG_FindItemForClassName(const char *className);
-gitem_t *BG_FindItemForWeapon(weapon_t weapon);
+//gitem_t *BG_FindItemForClassName(const char *className); ///< unsued
 gitem_t *BG_GetItem(int index);
 
 qboolean BG_AkimboFireSequence(int weapon, int akimboClip, int mainClip);
@@ -1879,65 +1954,61 @@ qboolean BG_CanItemBeGrabbed(const entityState_t *ent, const playerState_t *ps, 
 /**
  * @enum hintType_t
  * @brief cursorhints (stored in ent->s.dmgFlags since that's only used for players at the moment)
- *
- * @todo FIXME: clean this - many hint types are obsolete but keep enum numbers!
- *
- * @note Adjust omnibot while cleaning this see OB ET_Config.h
  */
 typedef enum
 {
-	HINT_NONE = 0,     ///< reserved
-	HINT_FORCENONE,    ///< reserved
-	HINT_PLAYER,
-	HINT_ACTIVATE,
+	HINT_NONE = 0,              ///< reserved
+	HINT_FORCENONE,             ///< reserved
+	// HINT_PLAYER,             ///< unused
+	HINT_ACTIVATE = 3,
 	HINT_DOOR,
-	HINT_DOOR_ROTATING,
+	HINT_DOOR_ROTATING,			///< 5
 	HINT_DOOR_LOCKED,
 	HINT_DOOR_ROTATING_LOCKED,
 	HINT_MG42,
 	HINT_BREAKABLE,
-	HINT_BREAKABLE_DYNAMITE,
+	HINT_BREAKABLE_DYNAMITE,    ///< 10
 	HINT_CHAIR,
-	HINT_ALARM,
-	HINT_HEALTH,
-	HINT_TREASURE,
-	HINT_KNIFE,
+	// HINT_ALARM,              ///< unused
+	HINT_HEALTH = 13,
+	// HINT_TREASURE,
+	HINT_KNIFE = 15,            ///< 15
 	HINT_LADDER,
 	HINT_BUTTON,
 	HINT_WATER,
-	HINT_CAUTION,
-	HINT_DANGER,
-	HINT_SECRET,
-	HINT_QUESTION,
-	HINT_EXCLAMATION,
-	HINT_CLIPBOARD,
-	HINT_WEAPON,
-	HINT_AMMO,
-	HINT_ARMOR,
-	HINT_POWERUP,
+	//HINT_CAUTION,             ///< unused
+	//HINT_DANGER,				///< 20 unused
+	//HINT_SECRET,              ///< unused
+	//HINT_QUESTION,            ///< unused
+	//HINT_EXCLAMATION,         ///< unused
+	//HINT_CLIPBOARD,           ///< unused
+	HINT_WEAPON = 25,           ///< 25
+	HINT_AMMO,                  
+	//HINT_ARMOR,				///< unused
+	HINT_POWERUP = 28,
 	HINT_HOLDABLE,
-	HINT_INVENTORY,
-	HINT_SCENARIC,
-	HINT_EXIT,        ///< FIXME: remove me - never set!
-	HINT_NOEXIT,      ///< FIXME: remove me - never set!
-	HINT_PLYR_FRIEND, ///< FIXME: remove this!
-	HINT_PLYR_NEUTRAL,///< FIXME: remove this!
-	HINT_PLYR_ENEMY,
-	HINT_PLYR_UNKNOWN,
-	HINT_BUILD,
+	//HINT_INVENTORY,           ///< unused
+	//HINT_SCENARIC,            ///< 30 unused
+	//HINT_EXIT,                ///< unused
+	//HINT_NOEXIT,              ///< unused
+	//HINT_PLYR_FRIEND,         ///< unused
+	//HINT_PLYR_NEUTRAL,        ///< 35 unused
+	//HINT_PLYR_ENEMY,          ///< unused
+	//HINT_PLYR_UNKNOWN,        ///< unused
+	HINT_BUILD = 38,
 	HINT_DISARM,
-	HINT_REVIVE,
-	HINT_DYNAMITE,
+	HINT_REVIVE,                ///< 40
+	HINT_DYNAMITE,              
 	HINT_CONSTRUCTIBLE,
 	HINT_UNIFORM,
 	HINT_LANDMINE,
-	HINT_TANK,
-	HINT_SATCHELCHARGE,
-	HINT_LOCKPICK,///< @brief unused
+	HINT_TANK,                  ///< 45
+	HINT_SATCHELCHARGE,         
+	//HINT_LOCKPICK,            ///< unused
 
-	HINT_BAD_USER, ///< invisible user with no target
+	HINT_BAD_USER = 48,         ///< invisible user with no target
 
-	HINT_NUM_HINTS
+	HINT_NUM_HINTS = 49,              
 } hintType_t;
 
 void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qboolean isAngle, int splinePath);

@@ -371,7 +371,13 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 		return;
 	}
 
-	item = BG_FindItemForWeapon(weapon);
+	item = BG_GetItem(GetWeaponTableData(weapon)->item);
+
+	if (item->giType != IT_WEAPON || item->giWeapon != weapon)
+	{
+		Com_Error(ERR_DROP, "Couldn't get item for weapon %i", weapon);
+	}
+
 	VectorCopy(client->ps.viewangles, angles);
 
 	// clamp pitch
@@ -890,7 +896,7 @@ gentity_t *LaunchItem(gitem_t *item, vec3_t origin, vec3_t velocity, int ownerNu
 	vec3_t    vec, temp;
 
 	dropped->s.eType           = ET_ITEM;
-	dropped->s.modelindex      = item - bg_itemlist; // store item number in modelindex
+	dropped->s.modelindex      = item->id ; // store item number in modelindex
 	dropped->s.otherEntityNum2 = 1; // this is taking modelindex2's place for a dropped item
 
 	dropped->classname = item->classname;
@@ -1038,7 +1044,7 @@ void FinishSpawningItem(gentity_t *ent)
 	ent->r.contents   = CONTENTS_TRIGGER | CONTENTS_ITEM;
 	ent->touch        = Touch_Item_Auto;
 	ent->s.eType      = ET_ITEM;
-	ent->s.modelindex = ent->item - bg_itemlist;        // store item number in modelindex
+	ent->s.modelindex = ent->item->id;        // store item number in modelindex
 
 	ent->s.otherEntityNum2 = 0;     // takes modelindex2's place in signaling a dropped item
 	// we don't use this (yet, anyway) so I'm taking it so you can specify a model for treasure items and clipboards
