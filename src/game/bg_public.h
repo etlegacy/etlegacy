@@ -1786,7 +1786,7 @@ typedef enum
 	//IT_ARMOR,                ///< EFX: rotate + minlight, unused
 	IT_HEALTH = 4,                 ///< EFX: static external sphere + rotating internal
 	//IT_HOLDABLE,             ///< #100 obsolete
-	
+
 	//IT_KEY,                  ///< EFX: rotate + bob, unused
 	//IT_TREASURE,             ///< #100 obsolete gold bars, etc. things that can be picked up and counted for a tally at end-level
 	IT_TEAM = 8,
@@ -1812,91 +1812,91 @@ typedef struct
 /**
  * @struct item_s
  * @typedef item_t
- * @brief 
+ * @brief
  */
 typedef enum item_s
 {
-    ITEM_NONE,
-    ITEM_HEALTH_SMALL,
-    ITEM_HEALTH,
-    ITEM_HEALTH_LARGE,
-    ITEM_HEALTH_CABINET,
-    ITEM_HEALTH_TURKEY,
-    ITEM_HEALTH_BREADANDMEAT,
-    ITEM_HEALTH_WALL,
-    ITEM_WEAPON_KNIFE,
-    ITEM_WEAPON_KNIFE_KABAR,
-    ITEM_WEAPON_LUGER,
-    ITEM_WEAPON_AKIMBO_LUGER,
-    ITEM_WEAPON_AKIMBO_SILENCED_LUGER,
-    ITEM_WEAPON_THOMPSON,
-    ITEM_WEAPON_DUMMY_MG42,
-    ITEM_WEAPON_STEN,
-    ITEM_WEAPON_COLT,
-    ITEM_WEAPON_AKIMBO_COLT,
-    ITEM_WEAPON_AKIMBO_SILENCED_COLT,
-    ITEM_WEAPON_MP40,
-    ITEM_WEAPON_PANZERFAUST,
-    ITEM_WEAPON_BAZOOKA,
-    ITEM_WEAPON_GRENADE_LAUNCHER,
-    ITEM_WEAPON_GRENADE_PINEAPPLE,
-    ITEM_WEAPON_SMOKE_MARKER,
-    ITEM_WEAPON_SMOKETRAIL,
-    ITEM_WEAPON_MEDIC_HEAL,
-    ITEM_WEAPON_DYNAMITE,
-    ITEM_WEAPON_FLAMETHROWER,
-    ITEM_WEAPON_MAPMORTAR,
-    ITEM_WEAPON_PLIERS,
-    ITEM_WEAPON_ARTY,
-    ITEM_WEAPON_MEDIC_SYRINGE,
-    ITEM_WEAPON_MEDIC_ADRENALINE,
-    ITEM_WEAPON_MAGICAMMO,
-    ITEM_WEAPON_MAGICAMMO2,
-    ITEM_WEAPON_BINOCULARS,
-    ITEM_WEAPON_K43,
-    ITEM_WEAPON_K43_SCOPE,
-    ITEM_WEAPON_KAR98,
-    ITEM_WEAPON_GPG40,
-    ITEM_WEAPON_M7,
-    ITEM_WEAPON_CARBINE,
-    ITEM_WEAPON_GARAND,
-    ITEM_WEAPON_GARAND_SCOPE,
-    ITEM_WEAPON_FG42,
-    ITEM_WEAPON_FG42SCOPE,
-    ITEM_WEAPON_MORTAR,
-    ITEM_WEAPON_MORTAR_SET,
-    ITEM_WEAPON_MORTAR2,
-    ITEM_WEAPON_MORTAR2_SET,
-    ITEM_WEAPON_LANDMINE,
-    ITEM_WEAPON_SATCHEL,
-    ITEM_WEAPON_SATCHELDET,
-    ITEM_WEAPON_SMOKE_BOMB,
-    ITEM_WEAPON_MOBILE_MG42,
-    ITEM_WEAPON_MOBILE_MG42_SET,
-    ITEM_WEAPON_MOBILE_BROWNING_SET,
-    ITEM_WEAPON_MOBILE_BROWNING,
-    ITEM_WEAPON_SILENCER,
-    ITEM_WEAPON_SILENCED_COLT,
-    ITEM_AMMO_SYRINGE,
-    ITEM_AMMO_SMOKE_GRENADE,
-    ITEM_AMMO_DYNAMITE,
-    ITEM_AMMO_DISGUISE,
-    ITEM_AMMO_AIRSTRIKE,
-    ITEM_AMMO_LANDMINE,
-    ITEM_AMMO_SATCHEL_CHARGE,
-    ITEM_AMMO_9MM_SMALL,
-    ITEM_AMMO_9MM,
-    ITEM_AMMO_9MM_LARGE,
-    ITEM_AMMO_45CAL_SMALL,
-    ITEM_AMMO_45CAL,
-    ITEM_AMMO_45CAL_LARGE,
-    ITEM_AMMO_30CAL_SMALL,
-    ITEM_AMMO_30CAL,
-    ITEM_AMMO_30CAL_LARGE,
-    ITEM_RED_FLAG,
-    ITEM_BLUE_FLAG,
-    ITEM_MAX_ITEMS,
-    
+	ITEM_NONE,
+	ITEM_HEALTH_SMALL,
+	ITEM_HEALTH,
+	ITEM_HEALTH_LARGE,
+	ITEM_HEALTH_CABINET,
+	ITEM_HEALTH_TURKEY,
+	ITEM_HEALTH_BREADANDMEAT,
+	ITEM_HEALTH_WALL,
+	ITEM_WEAPON_KNIFE,
+	ITEM_WEAPON_KNIFE_KABAR,
+	ITEM_WEAPON_LUGER,
+	ITEM_WEAPON_AKIMBO_LUGER,
+	ITEM_WEAPON_AKIMBO_SILENCED_LUGER,
+	ITEM_WEAPON_THOMPSON,
+	ITEM_WEAPON_DUMMY_MG42,
+	ITEM_WEAPON_STEN,
+	ITEM_WEAPON_COLT,
+	ITEM_WEAPON_AKIMBO_COLT,
+	ITEM_WEAPON_AKIMBO_SILENCED_COLT,
+	ITEM_WEAPON_MP40,
+	ITEM_WEAPON_PANZERFAUST,
+	ITEM_WEAPON_BAZOOKA,
+	ITEM_WEAPON_GRENADE_LAUNCHER,
+	ITEM_WEAPON_GRENADE_PINEAPPLE,
+	ITEM_WEAPON_SMOKE_MARKER,
+	ITEM_WEAPON_SMOKETRAIL,
+	ITEM_WEAPON_MEDIC_HEAL,
+	ITEM_WEAPON_DYNAMITE,
+	ITEM_WEAPON_FLAMETHROWER,
+	ITEM_WEAPON_MAPMORTAR,
+	ITEM_WEAPON_PLIERS,
+	ITEM_WEAPON_ARTY,
+	ITEM_WEAPON_MEDIC_SYRINGE,
+	ITEM_WEAPON_MEDIC_ADRENALINE,
+	ITEM_WEAPON_MAGICAMMO,
+	ITEM_WEAPON_MAGICAMMO2,
+	ITEM_WEAPON_BINOCULARS,
+	ITEM_WEAPON_K43,
+	ITEM_WEAPON_K43_SCOPE,
+	ITEM_WEAPON_KAR98,
+	ITEM_WEAPON_GPG40,
+	ITEM_WEAPON_M7,
+	ITEM_WEAPON_CARBINE,
+	ITEM_WEAPON_GARAND,
+	ITEM_WEAPON_GARAND_SCOPE,
+	ITEM_WEAPON_FG42,
+	ITEM_WEAPON_FG42SCOPE,
+	ITEM_WEAPON_MORTAR,
+	ITEM_WEAPON_MORTAR_SET,
+	ITEM_WEAPON_MORTAR2,
+	ITEM_WEAPON_MORTAR2_SET,
+	ITEM_WEAPON_LANDMINE,
+	ITEM_WEAPON_SATCHEL,
+	ITEM_WEAPON_SATCHELDET,
+	ITEM_WEAPON_SMOKE_BOMB,
+	ITEM_WEAPON_MOBILE_MG42,
+	ITEM_WEAPON_MOBILE_MG42_SET,
+	ITEM_WEAPON_MOBILE_BROWNING_SET,
+	ITEM_WEAPON_MOBILE_BROWNING,
+	ITEM_WEAPON_SILENCER,
+	ITEM_WEAPON_SILENCED_COLT,
+	ITEM_AMMO_SYRINGE,
+	ITEM_AMMO_SMOKE_GRENADE,
+	ITEM_AMMO_DYNAMITE,
+	ITEM_AMMO_DISGUISE,
+	ITEM_AMMO_AIRSTRIKE,
+	ITEM_AMMO_LANDMINE,
+	ITEM_AMMO_SATCHEL_CHARGE,
+	ITEM_AMMO_9MM_SMALL,
+	ITEM_AMMO_9MM,
+	ITEM_AMMO_9MM_LARGE,
+	ITEM_AMMO_45CAL_SMALL,
+	ITEM_AMMO_45CAL,
+	ITEM_AMMO_45CAL_LARGE,
+	ITEM_AMMO_30CAL_SMALL,
+	ITEM_AMMO_30CAL,
+	ITEM_AMMO_30CAL_LARGE,
+	ITEM_RED_FLAG,
+	ITEM_BLUE_FLAG,
+	ITEM_MAX_ITEMS,
+
 } item_t;
 
 /**
@@ -1906,7 +1906,7 @@ typedef enum item_s
  */
 typedef struct gitem_s
 {
-    item_t id;                  ///< identifier
+	item_t id;                  ///< identifier
 	const char *classname;      ///< spawning name
 	const char *pickup_sound;
 	const char *world_model[MAX_ITEM_MODELS];
@@ -1962,7 +1962,7 @@ typedef enum
 	// HINT_PLAYER,             ///< unused
 	HINT_ACTIVATE = 3,
 	HINT_DOOR,
-	HINT_DOOR_ROTATING,			///< 5
+	HINT_DOOR_ROTATING,         ///< 5
 	HINT_DOOR_LOCKED,
 	HINT_DOOR_ROTATING_LOCKED,
 	HINT_MG42,
@@ -1983,7 +1983,7 @@ typedef enum
 	//HINT_EXCLAMATION,         ///< unused
 	//HINT_CLIPBOARD,           ///< unused
 	HINT_WEAPON = 25,           ///< 25
-	HINT_AMMO,                  
+	HINT_AMMO,
 	//HINT_ARMOR,				///< unused
 	HINT_POWERUP = 28,
 	HINT_HOLDABLE,
@@ -1998,17 +1998,17 @@ typedef enum
 	HINT_BUILD = 38,
 	HINT_DISARM,
 	HINT_REVIVE,                ///< 40
-	HINT_DYNAMITE,              
+	HINT_DYNAMITE,
 	HINT_CONSTRUCTIBLE,
 	HINT_UNIFORM,
 	HINT_LANDMINE,
 	HINT_TANK,                  ///< 45
-	HINT_SATCHELCHARGE,         
+	HINT_SATCHELCHARGE,
 	//HINT_LOCKPICK,            ///< unused
 
 	HINT_BAD_USER = 48,         ///< invisible user with no target
 
-	HINT_NUM_HINTS = 49,              
+	HINT_NUM_HINTS = 49,
 } hintType_t;
 
 void BG_EvaluateTrajectory(const trajectory_t *tr, int atTime, vec3_t result, qboolean isAngle, int splinePath);
@@ -2429,14 +2429,14 @@ typedef enum
 /**
  * @struct bg_weaponclass_t
  * @brief store weapon for class specificity
- */   
+ */
 typedef struct
 {
-    weapon_t weapon;    ///< weapon
-    skillType_t skill;  ///< skill related
-    int minSkillLevel;  ///< minimum skill level needed to handle it
-    
-} bg_weaponclass_t; 
+	weapon_t weapon;    ///< weapon
+	skillType_t skill;  ///< skill related
+	int minSkillLevel;  ///< minimum skill level needed to handle it
+
+} bg_weaponclass_t;
 
 /**
  * @struct bg_playerclass_t
@@ -2449,12 +2449,12 @@ typedef struct
 	const char *iconName;
 	const char *iconArrow;
 
-    weapon_t classKnifeWeapon;
+	weapon_t classKnifeWeapon;
 	bg_weaponclass_t classPrimaryWeapons[MAX_WEAPS_PER_CLASS];
-	bg_weaponclass_t classSecondaryWeapons[MAX_WEAPS_PER_CLASS];   
-    weapon_t classGrenadeWeapon;
-    int defaultGrenadeCount;
-    bg_weaponclass_t classMiscWeapons[MAX_WEAPS_PER_CLASS];
+	bg_weaponclass_t classSecondaryWeapons[MAX_WEAPS_PER_CLASS];
+	weapon_t classGrenadeWeapon;
+	int defaultGrenadeCount;
+	bg_weaponclass_t classMiscWeapons[MAX_WEAPS_PER_CLASS];
 
 	qhandle_t icon;
 	qhandle_t arrow;
