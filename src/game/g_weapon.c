@@ -4251,7 +4251,7 @@ void FireWeapon(gentity_t *ent)
 
 #ifdef FEATURE_OMNIBOT
 	// Omni-bot - Send a fire event.
-	if (pFiredShot && ent->s.weapon != WP_AMMO && ent->s.weapon != WP_MEDKIT)
+	if (pFiredShot)
 	{
 		Bot_Event_FireWeapon(ent - g_entities, Bot_WeaponGameToBot(ent->s.weapon), pFiredShot);
 	}
