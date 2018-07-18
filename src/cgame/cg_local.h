@@ -2881,16 +2881,6 @@ void CG_LoadRankIcons(void);
 qboolean CG_DrawStatsRanksMedals(void);
 void CG_StatsRanksMedalsClick(int key);
 
-/**
- * @enum animType_t
- * @brief
- */
-typedef enum
-{
-	ANIM_IDLE = 0,
-	ANIM_RAISE,
-} animType_t;
-
 void CG_ParseFireteams(void);
 void CG_ParseOIDInfos(void);
 //oidInfo_t *CG_OIDInfoForEntityNum(int num);
