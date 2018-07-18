@@ -3198,18 +3198,8 @@ void CG_LimboPanel_Setup(void)
 
 	if (!cgs.limboLoadoutSelected)
 	{
-		CG_LimboPanel_SetSelectedWeaponNum(PRIMARY_SLOT, (weapon_t)cgs.clientinfo[cg.clientNum].latchedweapon);
-
-		if (!CG_LimboPanel_IsValidSelectedWeapon(PRIMARY_SLOT) || CG_LimboPanel_RealWeaponIsDisabled(cgs.ccSelectedPrimaryWeapon))
-		{
-			CG_LimboPanel_SetDefaultWeapon(PRIMARY_SLOT);
-		}
-
-		if (!CG_LimboPanel_IsValidSelectedWeapon(SECONDARY_SLOT))
-		{
-			CG_LimboPanel_SetDefaultWeapon(SECONDARY_SLOT);
-		}
-
+		// check selected team before selecting weapon to ensure it is properly set after next map / map restart
+		// and to check if the selected weapon is still valid and linked to the correct team
 		for (i = 0; i < 3; i++)
 		{
 			if (teamOrder[i] == ci->team)
@@ -3221,6 +3211,18 @@ void CG_LimboPanel_Setup(void)
 		if (ci->team != TEAM_SPECTATOR)
 		{
 			cgs.ccSelectedClass = ci->cls;
+		}
+
+		CG_LimboPanel_SetSelectedWeaponNum(PRIMARY_SLOT, (weapon_t)cgs.clientinfo[cg.clientNum].latchedweapon);
+
+		if (!CG_LimboPanel_IsValidSelectedWeapon(PRIMARY_SLOT) || CG_LimboPanel_RealWeaponIsDisabled(cgs.ccSelectedPrimaryWeapon))
+		{
+			CG_LimboPanel_SetDefaultWeapon(PRIMARY_SLOT);
+		}
+
+		if (!CG_LimboPanel_IsValidSelectedWeapon(SECONDARY_SLOT))
+		{
+			CG_LimboPanel_SetDefaultWeapon(SECONDARY_SLOT);
 		}
 	}
 
