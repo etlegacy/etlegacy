@@ -56,9 +56,11 @@
 
 /**
  * @def BODY_TIME
- * @brief How long do bodies last? Both teams 10 seconds.
+ * @brief How long do bodies last? (in ms)
+ * 
+ * @todo cvar it ?
  */
-#define BODY_TIME(t) 10000
+#define BODY_TIME 10000
 
 // gentity->flags
 #define FL_GODMODE              0x00000010

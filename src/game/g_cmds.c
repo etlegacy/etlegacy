@@ -3529,7 +3529,7 @@ qboolean Do_Activate2_f(gentity_t *ent, gentity_t *traceEnt)
 				{
 					if (BODY_VALUE(traceEnt) >= 250)
 					{
-						traceEnt->nextthink = traceEnt->timestamp + BODY_TIME(BODY_TEAM(traceEnt));
+						traceEnt->nextthink = traceEnt->timestamp + BODY_TIME;
 
 						//BG_AnimScriptEvent( &ent->client->ps, ent->client->pers.character->animModelInfo, ANIM_ET_PICKUPGRENADE, qfalse, qtrue );
 						//ent->client->ps.pm_flags |= PMF_TIME_LOCKPLAYER;

@@ -652,7 +652,7 @@ void CopyToBodyQue(gentity_t *ent)
 	//}
 
 	body->activator = NULL;
-	body->nextthink = level.time + BODY_TIME(ent->client->sess.sessionTeam);
+	body->nextthink = level.time + BODY_TIME;
 	body->think     = BodySink;
 	body->die       = body_die;
 
