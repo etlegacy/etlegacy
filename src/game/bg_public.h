@@ -2637,7 +2637,7 @@ float BG_SplineLength(splinePath_t *pSpline);
 void BG_AddSplineControl(splinePath_t *spline, const char *name);
 void BG_LinearPathOrigin2(float radius, splinePath_t **pSpline, float *deltaTime, vec3_t result, qboolean backwards);
 
-int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill);
+int BG_MaxAmmoForWeapon(weapon_t weaponNum, const int *skill, int cls);
 
 void BG_InitLocations(vec2_t world_mins, vec2_t world_maxs);
 char *BG_GetLocationString(float xpos, float ypos);

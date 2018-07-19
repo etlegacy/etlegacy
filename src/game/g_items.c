@@ -130,7 +130,7 @@ void Fill_Clip(playerState_t *ps, weapon_t weapon)
 int Add_Ammo(gentity_t *ent, weapon_t weapon, int count, qboolean fillClip)
 {
 	weapon_t ammoweap      = GetWeaponTableData(weapon)->ammoIndex;
-	int      maxammo       = BG_MaxAmmoForWeapon(ammoweap, ent->client->sess.skill);
+	int      maxammo       = BG_MaxAmmoForWeapon(ammoweap, ent->client->sess.skill, ent->client->ps.stats[STAT_PLAYER_CLASS]);
 	int      originalCount = ent->client->ps.ammo[ammoweap];
 
 	if (GetWeaponTableData(ammoweap)->isGrenade || ammoweap == WP_DYNAMITE || ammoweap == WP_SATCHEL_DET) // make sure if he picks it up that he get's the "launcher" too

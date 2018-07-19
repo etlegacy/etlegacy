@@ -2525,43 +2525,11 @@ qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime
 }
 
 /**
- *  @brief if numOfClips is 0, no ammo is added, it just return whether any ammo CAN be added;
- *         otherwise return whether any ammo was ACTUALLY added.
- *         WARNING: when numOfClips is 0, DO NOT CHANGE ANYTHING under ps.
- * @param[in] cls
- * @param[in] skills
- * @return
- */
-int BG_GrenadesForClass(int cls, const int *skills)
-{
-	switch (cls)
-	{
-	case PC_MEDIC:
-		if (skills[SK_FIRST_AID] >= 1)
-		{
-			return 2;
-		}
-		return 1;
-	case PC_SOLDIER:
-		return 4;
-	case PC_ENGINEER:
-		return 8;
-	case PC_FIELDOPS:
-		if (skills[SK_SIGNALS] >= 1)
-		{
-			return 2;
-		}
-		return 1;
-	case PC_COVERTOPS:
-		return 2;
-	}
-
-	return 0;
-}
-
-/**
  * @brief Setting numOfClips = 0 allows you to check if the client needs ammo, but doesnt give any
- * @param[in] ps
+ * @details if numOfClips is 0, no ammo is added, it just return whether any ammo CAN be added
+ * otherwise return whether any ammo was ACTUALLY added.
+ * WARNING: when numOfClips is 0, DO NOT CHANGE ANYTHING under ps.
+ * @param[in,out] ps
  * @param[in] skill
  * @param[in] teamNum
  * @param[in] numOfClips
@@ -2570,13 +2538,15 @@ int BG_GrenadesForClass(int cls, const int *skills)
 qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numOfClips)
 {
 	qboolean ammoAdded = qfalse;
-	int      maxammo;
+	int      maxAmmo;
 	int      weapNumOfClips;
-	int      i      = BG_GrenadesForClass(ps->stats[STAT_PLAYER_CLASS], skill); // handle grenades first
+	int      i;
 	weapon_t weapon = GetPlayerClassesData(teamNum, ps->stats[STAT_PLAYER_CLASS])->classGrenadeWeapon;
 	weapon_t clip   = GetWeaponTableData(weapon)->clipIndex;
 
-	if (ps->ammoclip[clip] < i)
+	maxAmmo = BG_MaxAmmoForWeapon(weapon, skill, ps->stats[STAT_PLAYER_CLASS]); // handle grenades first
+
+	if (ps->ammoclip[clip] < maxAmmo)
 	{
 		// early out
 		if (!numOfClips)
@@ -2590,19 +2560,19 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numO
 
 		COM_BitSet(ps->weapons, weapon);
 
-		if (ps->ammoclip[clip] > i)
+		if (ps->ammoclip[clip] > maxAmmo)
 		{
-			ps->ammoclip[clip] = i;
+			ps->ammoclip[clip] = maxAmmo;
 		}
 	}
 
 	if (COM_BitCheck(ps->weapons, WP_MEDIC_SYRINGE))
 	{
-		i = skill[SK_FIRST_AID] >= 2 ? 12 : 10;
+		maxAmmo = BG_MaxAmmoForWeapon(weapon, skill, ps->stats[STAT_PLAYER_CLASS]);
 
 		clip = GetWeaponTableData(WP_MEDIC_SYRINGE)->clipIndex;
 
-		if (ps->ammoclip[clip] < i)
+		if (ps->ammoclip[clip] < maxAmmo)
 		{
 			if (!numOfClips)
 			{
@@ -2613,9 +2583,9 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numO
 
 			ammoAdded = qtrue;
 
-			if (ps->ammoclip[clip] > i)
+			if (ps->ammoclip[clip] > maxAmmo)
 			{
-				ps->ammoclip[clip] = i;
+				ps->ammoclip[clip] = maxAmmo;
 			}
 		}
 	}
@@ -2626,13 +2596,13 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numO
 		weapon = reloadableWeapons[i];
 		if (COM_BitCheck(ps->weapons, weapon))
 		{
-			maxammo = BG_MaxAmmoForWeapon(weapon, skill);
+			maxAmmo = BG_MaxAmmoForWeapon(weapon, skill, ps->stats[STAT_PLAYER_CLASS]);
 
 			// Handle weapons that just use clip, and not ammo
 			if (weapon == WP_FLAMETHROWER)
 			{
 				clip = GetWeaponTableData(weapon)->ammoIndex;
-				if (ps->ammoclip[clip] < maxammo)
+				if (ps->ammoclip[clip] < maxAmmo)
 				{
 					// early out
 					if (!numOfClips)
@@ -2641,13 +2611,13 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numO
 					}
 
 					ammoAdded          = qtrue;
-					ps->ammoclip[clip] = maxammo;
+					ps->ammoclip[clip] = maxAmmo;
 				}
 			}
 			else if (GetWeaponTableData(weapon)->isPanzer)           //%    || weapon == WP_MORTAR ) {
 			{
 				clip = GetWeaponTableData(weapon)->ammoIndex;
-				if (ps->ammoclip[clip] < maxammo)
+				if (ps->ammoclip[clip] < maxAmmo)
 				{
 					// early out
 					if (!numOfClips)
@@ -2657,16 +2627,16 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numO
 
 					ammoAdded           = qtrue;
 					ps->ammoclip[clip] += numOfClips;
-					if (ps->ammoclip[clip] >= maxammo)
+					if (ps->ammoclip[clip] >= maxAmmo)
 					{
-						ps->ammoclip[clip] = maxammo;
+						ps->ammoclip[clip] = maxAmmo;
 					}
 				}
 			}
 			else
 			{
 				clip = GetWeaponTableData(weapon)->ammoIndex;
-				if (ps->ammo[clip] < maxammo)
+				if (ps->ammo[clip] < maxAmmo)
 				{
 					// early out
 					if (!numOfClips)
@@ -2686,9 +2656,9 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numO
 
 					// add and limit check
 					ps->ammo[clip] += weapNumOfClips * GetWeaponTableData(weapon)->maxClip;
-					if (ps->ammo[clip] > maxammo)
+					if (ps->ammo[clip] > maxAmmo)
 					{
-						ps->ammo[clip] = maxammo;
+						ps->ammo[clip] = maxAmmo;
 					}
 				}
 			}
@@ -4123,9 +4093,10 @@ splinePath_t *BG_GetSplineData(int number, qboolean *backwards)
  * @brief BG_MaxAmmoForWeapon
  * @param[in] weaponNum
  * @param[in] skill
+ * @param[in] class
  * @return
  */
-int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill)
+int BG_MaxAmmoForWeapon(weapon_t weaponNum, const int *skill, int cls)
 {
 	int maxAmmo = GetWeaponTableData(weaponNum)->maxAmmo;
 
@@ -4138,7 +4109,7 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill)
 	}
 	else if (GetWeaponTableData(weaponNum)->isSMG)
 	{
-		if (skill[SK_FIRST_AID] >= 1 || skill[SK_LIGHT_WEAPONS] >= 1)
+		if (skill[SK_LIGHT_WEAPONS] >= 1 || (cls == PC_MEDIC && skill[SK_FIRST_AID] >= 1))
 		{
 			maxAmmo += GetWeaponTableData(weaponNum)->maxClip;
 		}
@@ -4153,14 +4124,20 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill)
 	else if (GetWeaponTableData(weaponNum)->isGrenade)
 	{
 		// FIXME: this is class dependant, not ammo table
-		if (skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 1)
+		maxAmmo = BG_GetPlayerClassInfo(GetWeaponTableData(weaponNum)->team, cls)->defaultGrenadeCount;
+
+		if (cls == PC_ENGINEER && skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 1)
 		{
 			maxAmmo += 4;
 		}
-		else if (skill[SK_FIRST_AID] >= 1)
+		else if (cls == PC_MEDIC && skill[SK_FIRST_AID] >= 1)
 		{
 			maxAmmo += 1;
 		}
+		else if (cls == PC_FIELDOPS && skill[SK_SIGNALS] >= 1)
+		{
+			maxAmmo += 1;
+		} 
 	}
 	// else if (GetWeaponTableData(weaponNum)->isPanzer || GetWeaponTableData(weaponNum)->isMG || GetWeaponTableData(weaponNum)->isMGSet || weaponNum == WP_FLAMETHROWER)
 	// {
@@ -4176,23 +4153,16 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, int *skill)
 	//         maxAmmo += 2;
 	//     }
 	// }
-	else if (weaponNum == WP_MEDIC_SYRINGE /*|| weaponNum == WP_MEDIC_ADRENALINE*/) // FIXME: why adrenaline is not take in count for max ammo?
+	else if (weaponNum == WP_MEDIC_SYRINGE /*|| weaponNum == WP_MEDIC_ADRENALINE*/) // adrenaline share the same ammo count as syringe
 	{
 		if (skill[SK_FIRST_AID] >= 2)
 		{
 			maxAmmo += 2;
 		}
 	}
-	else if (GetWeaponTableData(GetWeaponTableData(weaponNum)->weapAlts)->isScoped)
+	else if (GetWeaponTableData(GetWeaponTableData(weaponNum)->weapAlts)->isScoped || GetWeaponTableData(weaponNum)->isScoped)  // also received ammo when weapon is scoped 
 	{
 		if (skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 1 || skill[SK_LIGHT_WEAPONS] >= 1)
-		{
-			maxAmmo += GetWeaponTableData(weaponNum)->maxClip;
-		}
-	}
-	else if (GetWeaponTableData(weaponNum)->isScoped)
-	{
-		if (skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 1)
 		{
 			maxAmmo += GetWeaponTableData(weaponNum)->maxClip;
 		}

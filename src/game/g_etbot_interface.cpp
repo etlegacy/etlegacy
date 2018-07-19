@@ -4378,7 +4378,7 @@ public:
 #ifdef NOQUARTER
 			_max = maxclip + GetWeaponTableData(ammoIndex)->maxammo;
 #else
-			_max = maxclip + BG_MaxAmmoForWeapon((weapon_t)_weaponId, bot->client->sess.skill);
+			_max = maxclip + BG_MaxAmmoForWeapon((weapon_t)_weaponId, bot->client->sess.skill, bot->client->ps.stats[STAT_PLAYER_CLASS]);
 #endif
 			return Success;
 		}
