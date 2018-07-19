@@ -1022,9 +1022,14 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] *= 2;
 		}
 
-		if ((client->sess.skill[SK_FIRST_AID] >= 1 && client->sess.playerType == PC_MEDIC) || client->sess.skill[SK_LIGHT_WEAPONS] >= 1)
+		if (client->sess.skill[SK_LIGHT_WEAPONS] >= 1)
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
+		}
+        
+		if (client->sess.playerType == PC_MEDIC && client->sess.skill[SK_FIRST_AID] < 1)   // NOTE: medic start with 1 clip less until skill is not reach
+		{
+			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] -= GetWeaponTableData(weaponNum)->maxClip;
 		}
 	}
 	else if (GetWeaponTableData(weaponNum)->isRiflenade)
