@@ -1151,17 +1151,15 @@ static void ParseFace(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, int
 	srfSurfaceFace_t *cv;
 	srfTriangle_t    *tri;
 	int              numVerts, numTriangles;
-	int              realLightmapNum;
 
 	// get lightmap
-	realLightmapNum = LittleLong(ds->lightmapNum);
 	if (r_vertexLighting->integer || !r_precomputedLighting->integer)
 	{
 		surf->lightmapNum = LIGHTMAP_NONE;
 	}
 	else
 	{
-		surf->lightmapNum = realLightmapNum;
+		surf->lightmapNum = LittleLong(ds->lightmapNum);
 	}
 
 	if (tr.worldDeluxeMapping && surf->lightmapNum >= 2)
@@ -1332,17 +1330,15 @@ static void ParseMesh(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf)
 	vec3_t               bounds[2];
 	vec3_t               tmpVec;
 	static surfaceType_t skipData = SF_SKIP;
-	int                  realLightmapNum;
 
 	// get lightmap
-	realLightmapNum = LittleLong(ds->lightmapNum);
 	if (r_vertexLighting->integer || !r_precomputedLighting->integer)
 	{
 		surf->lightmapNum = LIGHTMAP_NONE;
 	}
 	else
 	{
-		surf->lightmapNum = realLightmapNum;
+		surf->lightmapNum = LittleLong(ds->lightmapNum);
 	}
 
 	if (tr.worldDeluxeMapping && surf->lightmapNum >= 2)
@@ -1433,18 +1429,16 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, bspSurface_t *surf, 
 	srfTriangle_t        *tri;
 	int                  i, j;
 	int                  numVerts, numTriangles;
-	int                  realLightmapNum;
 	static surfaceType_t skipData = SF_SKIP;
 
 	// get lightmap
-	realLightmapNum = LittleLong(ds->lightmapNum);
 	if (r_vertexLighting->integer || !r_precomputedLighting->integer)
 	{
 		surf->lightmapNum = LIGHTMAP_NONE;
 	}
 	else
 	{
-		surf->lightmapNum = realLightmapNum;
+		surf->lightmapNum = LittleLong(ds->lightmapNum);
 	}
 
 	if (tr.worldDeluxeMapping && surf->lightmapNum >= 2)
