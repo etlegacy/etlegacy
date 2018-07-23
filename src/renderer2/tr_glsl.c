@@ -1538,7 +1538,7 @@ static void GLSL_ShowProgramUniforms(GLhandleARB program)
 	{
 		glGetActiveUniform(program, i, sizeof(uniformName), NULL, &size, &type, uniformName);
 
-		Ren_LogComment("active uniform: '%s'\n", uniformName)
+		Ren_LogComment("active uniform: '%s'\n", uniformName);
 	}
 
 	glUseProgram(0);
