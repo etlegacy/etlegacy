@@ -129,7 +129,7 @@ void R_AddPolygonSurfaces(void)
 	for (i = 0, poly = tr.refdef.polys; i < tr.refdef.numPolys; i++, poly++)
 	{
 		sh = R_GetShaderByHandle(poly->hShader);
-		R_AddDrawSurf((surfaceType_t *)poly, sh, -1, poly->fogIndex);
+		R_AddDrawSurf((surfaceType_t *)poly, sh, LIGHTMAP_NONE, poly->fogIndex);
 	}
 }
 
@@ -149,7 +149,7 @@ void R_AddPolygonBufferSurfaces(void)
 		sh = R_GetShaderByHandle(polybuffer->pPolyBuffer->shader);
 
 		//R_AddDrawSurf((void *)polybuffer, sh, polybuffer->fogIndex, 0, 0);
-		R_AddDrawSurf((surfaceType_t *)polybuffer, sh, -1, polybuffer->fogIndex);
+		R_AddDrawSurf((surfaceType_t *)polybuffer, sh, LIGHTMAP_NONE, polybuffer->fogIndex);
 	}
 }
 

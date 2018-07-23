@@ -2553,7 +2553,7 @@ void R_AddEntitySurfaces(void)
 			tr.currentModel = R_GetModelByHandle(ent->e.hModel);
 			if (!tr.currentModel)
 			{
-				R_AddDrawSurf(&entitySurface, tr.defaultShader, -1, 0);
+				R_AddDrawSurf(&entitySurface, tr.defaultShader, LIGHTMAP_NONE, 0);
 			}
 			else
 			{
@@ -2586,7 +2586,7 @@ void R_AddEntitySurfaces(void)
 					VectorClear(ent->worldBounds[0]);
 					VectorClear(ent->worldBounds[1]);
 
-					R_AddDrawSurf(&entitySurface, tr.defaultShader, -1, 0);
+					R_AddDrawSurf(&entitySurface, tr.defaultShader, LIGHTMAP_NONE, 0);
 					break;
 				default:
 					Ren_Drop("R_AddEntitySurfaces: Bad modeltype");
@@ -2645,7 +2645,7 @@ void R_AddEntityInteractions(trRefLight_t *light)
 			tr.currentModel = R_GetModelByHandle(ent->e.hModel);
 			if (!tr.currentModel)
 			{
-				//R_AddDrawSurf(&entitySurface, tr.defaultShader, -1, 0);
+				//R_AddDrawSurf(&entitySurface, tr.defaultShader, LIGHTMAP_NONE, 0);
 			}
 			else
 			{

@@ -1006,7 +1006,7 @@ void R_AddMD5Surfaces(trRefEntity_t *ent)
 			// don't add third_person objects if not viewing through a portal
 			if (!personalModel)
 			{
-				R_AddDrawSurf((surfaceType_t *)surface, shader, -1, fogNum);
+				R_AddDrawSurf((surfaceType_t *)surface, shader, LIGHTMAP_NONE, fogNum);
 			}
 		}
 	}
@@ -1056,7 +1056,7 @@ void R_AddMD5Surfaces(trRefEntity_t *ent)
 			// don't add third_person objects if not viewing through a portal
 			if (!personalModel)
 			{
-				R_AddDrawSurf((surfaceType_t *)vboSurface, shader, -1, fogNum);
+				R_AddDrawSurf((surfaceType_t *)vboSurface, shader, LIGHTMAP_NONE, fogNum);
 			}
 		}
 	}

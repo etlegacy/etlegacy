@@ -558,7 +558,7 @@ void R_SetupLightView(trRefLight_t *light)
 
 	    // convert from our coordinate system (looking down X)
 	    // to OpenGL's coordinate system (looking down -Z)
-	    MatrixMultiply(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
+	    mat4_mult(quakeToOpenGLMatrix, viewMatrix, light->viewMatrix);
 	    break;
 	}
 	*/

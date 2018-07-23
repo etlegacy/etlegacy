@@ -3631,7 +3631,7 @@ static void R_CreateSubModelVBOs()
 			shader      = surface->shader;
 			lightmapNum = surface->lightmapNum;
 
-			if (shader != oldShader || (r_precomputedLighting->integer ? lightmapNum != oldLightmapNum : 0))
+			if (shader != oldShader || (r_precomputedLighting->integer ? lightmapNum != oldLightmapNum : qfalse))
 			{
 				oldShader      = shader;
 				oldLightmapNum = lightmapNum;

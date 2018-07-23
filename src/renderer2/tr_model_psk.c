@@ -946,7 +946,7 @@ qboolean R_LoadPSK(model_t *mod, void *buffer, int bufferSize, const char *modNa
 	}
 #endif
 
-	if (r_smoothNormals->integer &FLAGS_SMOOTH_MDM) // do another extra smoothing for normals to avoid flat shading
+	if (r_smoothNormals->integer & FLAGS_SMOOTH_MDM) // do another extra smoothing for normals to avoid flat shading
 	{
 		md5Vertex_t *v0, *v1;
 
