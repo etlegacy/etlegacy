@@ -2610,9 +2610,6 @@ void CG_AssetCache(void)
 	cgDC.Assets.sliderThumb         = trap_R_RegisterShaderNoMip(ASSET_SLIDER_THUMB);
 }
 
-void CG_ClearTrails(void);
-void CG_ClearParticles(void);
-
 #ifdef LEGACY_DEBUG
 #define DEBUG_INITPROFILE_INIT int elapsed, dbgTime = trap_Milliseconds();
 #define DEBUG_INITPROFILE_EXEC(f) if (developer.integer) { CG_Printf("^5%s passed in %i msec\n", f, elapsed = trap_Milliseconds() - dbgTime);  dbgTime += elapsed; }
@@ -2961,11 +2958,7 @@ char *CG_GetRealTime(void)
  */
 void QDECL CG_WriteToLog(const char *fmt, ...)
 {
-	if (!cg.logFile)
-	{
-		return;
-	}
-	else
+	if (cg.logFile)
 	{
 		va_list argptr;
 		char    string[1024];
@@ -2982,5 +2975,3 @@ void QDECL CG_WriteToLog(const char *fmt, ...)
 		trap_FS_Write(string, (int)strlen(string), cg.logFile);
 	}
 }
-
-void QDECL CG_WriteToLog(const char *fmt, ...) _attribute((format(printf, 1, 2)));
