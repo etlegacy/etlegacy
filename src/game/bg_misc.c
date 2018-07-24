@@ -2449,7 +2449,7 @@ qboolean BG_AkimboFireSequence(int weapon, int akimboClip, int mainClip)
  * @param[in] index
  * @return
  */
-ID_INLINE gitem_t *BG_GetItem(int index)
+gitem_t *BG_GetItem(int index)
 {
 	return &bg_itemlist[index];
 }
