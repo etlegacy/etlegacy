@@ -41,7 +41,7 @@
 
 static vec3_t forward, right, up;
 static vec3_t muzzleEffect;
-vec3_t muzzleTrace;         // used in G_Damage from g_combat.c
+vec3_t        muzzleTrace;  // used in G_Damage from g_combat.c
 
 // forward dec
 void Bullet_Fire(gentity_t *ent, gentity_t **firedShot);
@@ -1525,7 +1525,7 @@ void AutoBuildConstruction(gentity_t *constructible)
  */
 qboolean G_LandmineTriggered(gentity_t *ent)
 {
-    return (ent->s.teamNum == (TEAM_AXIS + 8) || ent->s.teamNum == (TEAM_ALLIES + 8));
+	return (ent->s.teamNum == (TEAM_AXIS + 8) || ent->s.teamNum == (TEAM_ALLIES + 8));
 }
 
 /**
@@ -1535,7 +1535,7 @@ qboolean G_LandmineTriggered(gentity_t *ent)
  */
 qboolean G_LandmineArmed(gentity_t *ent)
 {
-    return (ent->s.teamNum == TEAM_AXIS || ent->s.teamNum == TEAM_ALLIES);
+	return (ent->s.teamNum == TEAM_AXIS || ent->s.teamNum == TEAM_ALLIES);
 }
 
 /**
@@ -2328,8 +2328,10 @@ weapengineergoto3:
 						{
 							continue;
 						}
+
 						if (hit->s.eType == ET_OID_TRIGGER)
 						{
+							gentity_t *pm;
 
 							if (!(hit->spawnflags & (AXIS_OBJECTIVE | ALLIED_OBJECTIVE)))
 							{
@@ -2348,60 +2350,25 @@ weapengineergoto3:
 								continue;
 							}
 
-							if (ent->client->sess.sessionTeam == TEAM_AXIS)
+							if ((hit->spawnflags & (ent->client->sess.sessionTeam == TEAM_AXIS ? AXIS_OBJECTIVE : ALLIED_OBJECTIVE)) && (!scored))
 							{
-								if ((hit->spawnflags & AXIS_OBJECTIVE) && (!scored))
-								{
-									G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f);
-									G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing enemy dynamite");
-									scored++;
-								}
-								if (hit->target_ent)
-								{
-									G_Script_ScriptEvent(hit->target_ent, "defused", "");
-								}
-
-								{
-									gentity_t *pm;
-
-									pm = G_PopupMessage(PM_DYNAMITE);
-
-									pm->s.effect2Time = 1;     // 1 = defused
-									pm->s.effect3Time = hit->s.teamNum;
-									pm->s.teamNum     = ent->client->sess.sessionTeam;
-								}
-
-								//trap_SendServerCommand(-1, "cp \"Axis engineer disarmed the Dynamite!\n\"");
-								defusedObj = qtrue;
+								G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f);
+								G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing enemy dynamite");
+								scored++;
 							}
-							else         // TEAM_ALLIES
+
+							if (hit->target_ent)
 							{
-								if ((hit->spawnflags & ALLIED_OBJECTIVE) && (!scored))
-								{
-									G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f);
-									G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing enemy dynamite");
-									scored++;
-									hit->spawnflags &= ~OBJECTIVE_DESTROYED;     // "re-activate" objective since it wasn't destroyed
-								}
-								if (hit->target_ent)
-								{
-									G_Script_ScriptEvent(hit->target_ent, "defused", "");
-								}
-
-								{
-									gentity_t *pm;
-
-									pm = G_PopupMessage(PM_DYNAMITE);
-
-									pm->s.effect2Time = 1;     // 1 = defused
-									pm->s.effect3Time = hit->s.teamNum;
-									pm->s.teamNum     = ent->client->sess.sessionTeam;
-								}
-
-								//trap_SendServerCommand(-1, "cp \"Allied engineer disarmed the Dynamite!\n\"");
-
-								defusedObj = qtrue;
+								G_Script_ScriptEvent(hit->target_ent, "defused", "");
 							}
+
+							pm = G_PopupMessage(PM_DYNAMITE);
+
+							pm->s.effect2Time = 1;     // 1 = defused
+							pm->s.effect3Time = hit->s.teamNum;
+							pm->s.teamNum     = ent->client->sess.sessionTeam;
+
+							defusedObj = qtrue;
 						}
 					}
 					// prevent multiple messages here
@@ -2427,6 +2394,7 @@ weapengineergoto3:
 
 						for (e = 0; e < numListedEntities; e++)
 						{
+							gentity_t *pm;
 							hit = &g_entities[entityList[e]];
 
 							if (hit->s.eType != ET_CONSTRUCTIBLE)
@@ -2451,50 +2419,21 @@ weapengineergoto3:
 							}
 
 							// we got somthing to destroy
-							if (ent->client->sess.sessionTeam == TEAM_AXIS)
+							if (hit->s.teamNum == ent->client->sess.sessionTeam && (!scored))
 							{
-								if (hit->s.teamNum == TEAM_AXIS && (!scored))
-								{
-									G_LogPrintf("Dynamite_Diffuse: %d\n", (int)(ent - g_entities));
-									G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f);
-									G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing enemy dynamite");
-									scored++;
-								}
-								G_Script_ScriptEvent(hit, "defused", "");
-
-								{
-									gentity_t *pm;
-
-									pm = G_PopupMessage(PM_DYNAMITE);
-
-									pm->s.effect2Time = 1;     // 1 = defused
-									pm->s.effect3Time = hit->parent->s.teamNum;
-									pm->s.teamNum     = ent->client->sess.sessionTeam;
-								}
-								//trap_SendServerCommand(-1, "cp \"Axis engineer disarmed the Dynamite!\" 2");
+								G_LogPrintf("Dynamite_Diffuse: %d\n", (int)(ent - g_entities));
+								G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f);
+								G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing enemy dynamite");
+								scored++;
 							}
-							else         // TEAM_ALLIES
-							{
-								if (hit->s.teamNum == TEAM_ALLIES && (!scored))
-								{
-									G_LogPrintf("Dynamite_Diffuse: %d\n", (int)(ent - g_entities));
-									G_AddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f);
-									G_DebugAddSkillPoints(ent, SK_EXPLOSIVES_AND_CONSTRUCTION, 6.f, "defusing enemy dynamite");
-									scored++;
-								}
-								G_Script_ScriptEvent(hit, "defused", "");
 
-								{
-									gentity_t *pm;
+							G_Script_ScriptEvent(hit, "defused", "");
 
-									pm = G_PopupMessage(PM_DYNAMITE);
+							pm = G_PopupMessage(PM_DYNAMITE);
 
-									pm->s.effect2Time = 1;     // 1 = defused
-									pm->s.effect3Time = hit->parent->s.teamNum;
-									pm->s.teamNum     = ent->client->sess.sessionTeam;
-								}
-								//trap_SendServerCommand(-1, "cp \"Allied engineer disarmed the Dynamite!\" 2");
-							}
+							pm->s.effect2Time = 1;     // 1 = defused
+							pm->s.effect3Time = hit->parent->s.teamNum;
+							pm->s.teamNum     = ent->client->sess.sessionTeam;
 
 							return;
 						}
