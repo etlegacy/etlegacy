@@ -3144,7 +3144,7 @@ static qboolean PM_CheckGrenade()
 	else if (pm->ps->weapon == WP_DYNAMITE)
 	{
 		// keep dynamite in hand until fire button is released
-		if ((pm->cmd.buttons & BUTTON_ATTACK) && !(pm->ps->eFlags & EF_PRONE_MOVING) && weaponstateFiring)
+		if ((pm->cmd.buttons & BUTTON_ATTACK) && !(pm->ps->eFlags & EF_PRONE_MOVING) && weaponstateFiring && !pm->ps->weaponTime)
 		{
 			return qtrue;
 		}
