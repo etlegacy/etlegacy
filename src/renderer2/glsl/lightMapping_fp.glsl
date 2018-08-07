@@ -211,8 +211,6 @@ void main()
 	color.a   *= var_Color.a; 
 #endif
 
-	gl_FragColor = color;
-
 	if (SHOW_DELUXEMAP)
 	{
 		color = deluxemapColor;
