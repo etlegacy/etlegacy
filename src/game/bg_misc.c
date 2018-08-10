@@ -4137,7 +4137,7 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, const int *skill, int cls)
 		else if (cls == PC_FIELDOPS && skill[SK_SIGNALS] >= 1)
 		{
 			maxAmmo += 1;
-		} 
+		}
 	}
 	// else if (GetWeaponTableData(weaponNum)->isPanzer || GetWeaponTableData(weaponNum)->isMG || GetWeaponTableData(weaponNum)->isMGSet || weaponNum == WP_FLAMETHROWER)
 	// {
@@ -4160,7 +4160,7 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, const int *skill, int cls)
 			maxAmmo += 2;
 		}
 	}
-	else if (GetWeaponTableData(GetWeaponTableData(weaponNum)->weapAlts)->isScoped || GetWeaponTableData(weaponNum)->isScoped)  // also received ammo when weapon is scoped 
+	else if (GetWeaponTableData(GetWeaponTableData(weaponNum)->weapAlts)->isScoped || GetWeaponTableData(weaponNum)->isScoped)  // also received ammo when weapon is scoped
 	{
 		if (skill[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] >= 1 || skill[SK_LIGHT_WEAPONS] >= 1)
 		{
@@ -4438,14 +4438,26 @@ qboolean PC_String_ParseNoAlloc(int handle, char *out, size_t size)
 	return qtrue;
 }
 
-const char *bg_fireteamNames[MAX_FIRETEAMS / 2] =
+// US/UK Combined Communication Board 1943
+const char *bg_fireteamNamesAllies[MAX_FIRETEAMS / 2] =
 {
-	"Alfa",
-	"Bravo",
+	"Able",
+	"Baker",
 	"Charlie",
-	"Delta",
-	"Echo",
-	"Foxtrot",
+	"Dog",
+	"Easy",
+	"Fox",
+};
+
+// Deutsches Reich 1934
+const char *bg_fireteamNamesAxis[MAX_FIRETEAMS / 2] =
+{
+	"Anton",
+	"Bruno",
+	"Casar",
+	"Dora",
+	"Emil",
+	"Fritz",
 };
 
 const voteType_t voteToggles[] =

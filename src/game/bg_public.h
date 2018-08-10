@@ -2642,7 +2642,8 @@ int BG_MaxAmmoForWeapon(weapon_t weaponNum, const int *skill, int cls);
 void BG_InitLocations(vec2_t world_mins, vec2_t world_maxs);
 char *BG_GetLocationString(float xpos, float ypos);
 
-extern const char *bg_fireteamNames[MAX_FIRETEAMS / 2];
+extern const char *bg_fireteamNamesAllies[MAX_FIRETEAMS / 2];
+extern const char *bg_fireteamNamesAxis[MAX_FIRETEAMS / 2];
 
 /**
  * @struct fireteamData_t

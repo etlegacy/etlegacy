@@ -492,11 +492,11 @@ void CG_DrawFireteamsByTeam(panel_button_t *button, team_t t)
 
 		if (cg_quickMessageAlt.integer)
 		{
-			str = va("%i. %s", (cg.fireTeams[i].ident + 1) % 10, bg_fireteamNames[cg.fireTeams[i].ident]);
+			str = va("%i. %s", (cg.fireTeams[i].ident + 1) % 10, t == TEAM_AXIS ? bg_fireteamNamesAxis[cg.fireTeams[i].ident] : bg_fireteamNamesAllies[cg.fireTeams[i].ident]);
 		}
 		else
 		{
-			str = va("%c. %s", 'A' + cg.fireTeams[i].ident, bg_fireteamNames[cg.fireTeams[i].ident]);
+			str = va("%c. %s", 'A' + cg.fireTeams[i].ident, t == TEAM_AXIS ? bg_fireteamNamesAxis[cg.fireTeams[i].ident] : bg_fireteamNamesAllies[cg.fireTeams[i].ident]);
 		}
 
 		CG_Text_Paint_Ext(button->rect.x, y, button->font->scalex, button->font->scaley, button->font->colour, str, 0, 0, button->font->style, button->font->font);

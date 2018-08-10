@@ -949,7 +949,11 @@ int G_FireteamNumberForString(const char *name, team_t team)
 			continue;
 		}
 
-		if (!Q_stricmp(bg_fireteamNames[level.fireTeams[i].ident - 1], name))
+		if (team == TEAM_AXIS && !Q_stricmp(bg_fireteamNamesAxis[level.fireTeams[i].ident - 1], name))
+		{
+			fireteam = i + 1;
+		}
+		else if (team == TEAM_ALLIES && !Q_stricmp(bg_fireteamNamesAllies[level.fireTeams[i].ident - 1], name))
 		{
 			fireteam = i + 1;
 		}
