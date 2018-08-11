@@ -2583,7 +2583,7 @@ void CG_Player(centity_t *cent)
 	refEntity_t acc;
 	vec3_t playerOrigin = { 0 }, lightorigin = { 0 };
 	int clientNum, i;
-	int renderfx, rank, team;
+	int renderfx = 0, rank, team;
 	qboolean shadow      = qfalse;       // gjd added to make sure it was initialized;
 	float shadowPlane    = 0;
 	qboolean usingBinocs = qfalse;
@@ -2696,7 +2696,6 @@ void CG_Player(centity_t *cent)
 	CG_PlayerSplash(cent);
 
 	// get the player model information
-	renderfx = 0;
 	if (cent->currentState.number == cg.snap->ps.clientNum && !cg.renderingThirdPerson)
 	{
 		renderfx = RF_THIRD_PERSON;         // only draw in mirrors
@@ -2709,9 +2708,6 @@ void CG_Player(centity_t *cent)
 	}
 
 	renderfx |= RF_LIGHTING_ORIGIN;         // use the same origin for all
-
-	// set renderfx for accessories
-	acc.renderfx = renderfx;
 
 	VectorCopy(playerOrigin, lightorigin);
 	lightorigin[2] += 31;
@@ -2745,6 +2741,11 @@ void CG_Player(centity_t *cent)
 	head.hilightIntensity = hilightIntensity;
 	acc.hilightIntensity  = hilightIntensity;
 
+	// set renderfx for all parts
+	acc.renderfx  = renderfx;
+	body.renderfx = renderfx;
+	head.renderfx = renderfx;
+
 	// add the body
 	if (cent->currentState.eType == ET_CORPSE && cent->currentState.time2 == 1)
 	{
@@ -2760,7 +2761,6 @@ void CG_Player(centity_t *cent)
 	VectorCopy(playerOrigin, body.origin);
 	VectorCopy(lightorigin, body.lightingOrigin);
 	body.shadowPlane = shadowPlane;
-	body.renderfx    = renderfx;
 	VectorCopy(body.origin, body.oldorigin);    // don't positionally lerp at all
 
 	cent->pe.bodyRefEnt = body;
@@ -2918,7 +2918,6 @@ void CG_Player(centity_t *cent)
 	CG_PositionRotatedEntityOnTag(&head, &body, "tag_head");
 
 	head.shadowPlane = shadowPlane;
-	head.renderfx    = renderfx;
 
 	if (cent->currentState.eFlags & EF_FIRING)
 	{
@@ -2994,6 +2993,7 @@ void CG_Player(centity_t *cent)
 		CG_AddRefEntityWithPowerups(&acc, cent->currentState.powerups, ci->team, &cent->currentState, cent->fireRiseDir);
 	}
 
+	// adjust rank for disguised player
 	if (cent->currentState.powerups & (1 << PW_OPS_DISGUISED))
 	{
 		rank = cgs.clientinfo[cgs.clientinfo[cent->currentState.number].disguiseClientNum].rank;
