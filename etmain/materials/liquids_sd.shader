@@ -77,7 +77,7 @@ textures/liquids_sd/siwa_water_2
 	nopicmip
 	{
 		stage liquidmap
-		map textures/liquids_sd/siwa_water
+		map textures/liquids_sd/siwa_water_n
 		blendFunc blend
 		alphaFunc GE128
 		rgbgen identity
