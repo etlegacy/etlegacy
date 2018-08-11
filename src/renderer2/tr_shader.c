@@ -4399,7 +4399,8 @@ static qboolean ParseShader(char *_text)
 			// set implicit mapping state
 			if (!Q_stricmp(token, "implicitBlend"))
 			{
-				implicitStateBits = GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA;
+				//implicitStateBits = GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA;
+				implicitStateBits = GLS_DEPTHMASK_TRUE | GLS_ATEST_GE_128;
 				implicitCullType  = CT_TWO_SIDED;
 			}
 			else if (!Q_stricmp(token, "implicitMask"))
