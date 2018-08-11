@@ -20,7 +20,12 @@ textures/liquids_sd/siwa_water
 	{ 
 		stage liquidmap
 		fog on
-		map textures/liquids_sd/siwa_water
+		// these are new default values of Renderer_liquid
+		//refractionIndex 1.3 // water
+        //fresnelPower 2.0
+        //fresnelScale 0.85       // + sinTable[time * 0.4] * 0.25
+        //fresnelBias  0.05
+		map textures/liquids_sd/siwa_water_n
 		blendFunc blend
 		alphaFunc GE128
 		depthWrite
