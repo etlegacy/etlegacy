@@ -2,43 +2,43 @@
 textures/liquids_sd/seawall_specular
 {
     qer_editorimage textures/liquids_sd/seawall_specular
-	
-	diffusemap textures/liquids_sd/seawall_specular
-	bumpmap textures/liquids_sd/seawall_specular_n
-	specularmap textures/liquids_sd/seawall_specular_s
-	
-	refractionIndex 1.3 // water
-                fresnelPower 1.5
-                fresnelScale 0.85        // + sinTable[time * 0.4] * 0.25
-                fresnelBias  0.0
+
+	{ 
+		stage liquidmap
+		map textures/liquids_sd/seawall_specular_n
+		blendFunc blend
+		alphaFunc GE128
+		depthWrite
+		rgbgen identity
+	}
 }
 
 textures/liquids_sd/sea_bright_na
 {
     qer_editorimage textures/liquids_sd/sea_bright_na
 	
-	diffusemap textures/liquids_sd/sea_bright_na
-	bumpmap textures/liquids_sd/sea_bright_na_n
-	specularmap textures/liquids_sd/sea_bright_na_s
-	
-	refractionIndex 1.3 // water
-                fresnelPower 2.0
-                fresnelScale 0.85       // + sinTable[time * 0.4] * 0.25
-                fresnelBias  0.05
+	{ 
+		stage liquidmap
+		map textures/liquids_sd/sea_bright_na_n
+		blendFunc blend
+		alphaFunc GE128
+		depthWrite
+		rgbgen identity
+	}
 }
 
 textures/liquids_sd/seawall_foam
 {
     qer_editorimage textures/liquids_sd/seawall_foam
     
-	diffusemap textures/liquids_sd/seawall_foam
-	bumpmap textures/liquids_sd/seawall_foam_n
-	specularmap textures/liquids_sd/seawall_foam
-	
-	refractionIndex 1.3 // water
-                fresnelPower 2.0
-                fresnelScale 0.85       // + sinTable[time * 0.4] * 0.25
-                fresnelBias  0.05
+	{
+		stage liquidmap
+		map textures/liquids_sd/seawall_foam_n
+		blendFunc blend
+		alphaFunc GE128
+		depthWrite
+		rgbgen identity
+	}
 }
 
 // ocean fog water
