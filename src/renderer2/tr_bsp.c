@@ -8304,7 +8304,10 @@ void RE_LoadWorldMap(const char *name)
 	// build cubemaps after the necessary vbo stuff is done
 	// FIXME: causes missing vbo error on radar (maps with portal sky or foliage )
 	// devmap oasis; set developer 1; set r_showcubeprobs 1
-	//R_BuildCubeMaps();
+	if (r_reflectionMapping->integer)
+	{
+		R_BuildCubeMaps();
+	}
 
 	// never move this to RE_BeginFrame because we need it to set it here for the first frame
 	// but we need the information across 2 frames
