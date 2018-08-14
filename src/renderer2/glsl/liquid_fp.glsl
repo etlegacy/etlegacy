@@ -14,6 +14,7 @@ uniform float     u_FresnelBias;
 uniform float     u_NormalScale;
 uniform mat4      u_ModelMatrix;
 uniform mat4      u_UnprojectMatrix;
+uniform vec3      u_LightDir;
 
 varying vec3 var_Position;
 varying vec2 var_TexNormal;
@@ -21,7 +22,6 @@ varying vec3 var_Tangent;
 varying vec3 var_Binormal;
 varying vec3 var_Normal;
 varying vec4 var_LightColor;
-varying vec3 var_LightDirection;
 
 #if defined(USE_PARALLAX_MAPPING)
 float RayIntersectDisplaceMap(vec2 dp, vec2 ds)
@@ -127,11 +127,13 @@ void main()
 #endif //USE_PARALLAX_MAPPING
 
 	// compute normals
-	vec3 N = normalize(var_Normal.xyz);
+	vec3 N = var_Normal.xyz;
+
 #if defined(r_NormalScale)
 	N.z *= r_NormalScale;
-	normalize(N);
 #endif
+
+	N = normalize(N);
 
 	vec3 N2 = 2.0 * (texture2D(u_NormalMap, texNormal).xyz - 0.5);
 	N2 = normalize(tangentToWorldMatrix * N2);
@@ -173,7 +175,8 @@ void main()
 		color.rgb = mix(u_FogColor, color.rgb, fogFactor);
 	}
 
-	vec3 L = normalize(var_LightDirection);
+	// compute light direction in world space
+	vec3 L = normalize(u_LightDir);
 
 	// compute half angle in world space
 	vec3 H = normalize(L + I);

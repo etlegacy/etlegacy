@@ -264,7 +264,6 @@ void Tess_Begin(void (*stageIteratorFunc)(),
                 int fogNum)
 {
 	shader_t *state;
-	qboolean isSky = qfalse;
 
 	tess.numIndexes          = 0;
 	tess.numVertexes         = 0;
@@ -279,11 +278,6 @@ void Tess_Begin(void (*stageIteratorFunc)(),
 		tess.surfaceShader    = state;
 		tess.surfaceStages    = state->stages;
 		tess.numSurfaceStages = state->numStages;
-
-		if (state->isSky)
-		{
-			isSky = qtrue;
-		}
 	}
 	else
 	{
@@ -307,7 +301,7 @@ void Tess_Begin(void (*stageIteratorFunc)(),
 
 	if (tess.stageIteratorFunc == &Tess_StageIteratorGeneric)
 	{
-		if (isSky)
+		if (state && state->isSky)
 		{
 			tess.stageIteratorFunc  = &Tess_StageIteratorSky;
 			tess.stageIteratorFunc2 = &Tess_StageIteratorGeneric;
@@ -561,10 +555,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 
 	if (r_parallaxMapping->integer && tess.surfaceShader->parallax)
 	{
-		float depthScale;
-
-		depthScale = RB_EvalExpression(&pStage->depthScaleExp, r_parallaxDepthScale->value);
-		SetUniformFloat(UNIFORM_DEPTHSCALE, depthScale);
+		SetUniformFloat(UNIFORM_DEPTHSCALE, RB_EvalExpression(&pStage->depthScaleExp, r_parallaxDepthScale->value));
 	}
 
 	if (backEnd.viewParms.isPortal)
@@ -732,9 +723,9 @@ static void Render_vertexLighting_DBS_world(int stage)
 	                          USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
 	// now we are ready to set the shader program uniforms
 
-	// set uniforms
-	
 	GL_CheckErrors();
+
+	// set uniforms
 
 	// u_DeformGen
 	if (tess.surfaceShader->numDeforms)
@@ -759,10 +750,7 @@ static void Render_vertexLighting_DBS_world(int stage)
 
 	if (r_parallaxMapping->integer)
 	{
-		float depthScale;
-
-		depthScale = RB_EvalExpression(&pStage->depthScaleExp, r_parallaxDepthScale->value);
-		SetUniformFloat(UNIFORM_DEPTHSCALE, depthScale);
+		SetUniformFloat(UNIFORM_DEPTHSCALE, RB_EvalExpression(&pStage->depthScaleExp, r_parallaxDepthScale->value));
 	}
 
 	if (backEnd.viewParms.isPortal)
@@ -827,7 +815,6 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 
 	rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
 
-
 	if (r_showLightMaps->integer)
 	{
 		stateBits &= ~(GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS | GLS_ATEST_BITS);
@@ -855,6 +842,7 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 		SetUniformFloat(UNIFORM_TIME, backEnd.refdef.floatTime);
 	}
 
+	// set uniforms
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
@@ -864,10 +852,7 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 
 	if (r_parallaxMapping->integer)
 	{
-		float depthScale;
-
-		depthScale = RB_EvalExpression(&pStage->depthScaleExp, r_parallaxDepthScale->value);
-		SetUniformFloat(UNIFORM_DEPTHSCALE, depthScale);
+		SetUniformFloat(UNIFORM_DEPTHSCALE, RB_EvalExpression(&pStage->depthScaleExp, r_parallaxDepthScale->value));
 	}
 
 	if (backEnd.viewParms.isPortal)
@@ -1183,11 +1168,7 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 
 	if (r_parallaxMapping->integer)
 	{
-		float depthScale;
-
-		depthScale = RB_EvalExpression(&diffuseStage->depthScaleExp, r_parallaxDepthScale->value);
-
-		SetUniformFloat(UNIFORM_DEPTHSCALE, depthScale);
+		SetUniformFloat(UNIFORM_DEPTHSCALE, RB_EvalExpression(&diffuseStage->depthScaleExp, r_parallaxDepthScale->value));
 	}
 
 	// set uniforms
@@ -1330,7 +1311,7 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	float      shadowTexelSize;
 	qboolean   normalMapping = qfalse;
 	qboolean   shadowCompare = qfalse;
-	rgbaGen_t rgbaGen;
+	rgbaGen_t  rgbaGen;
 
 	Ren_LogComment("--- Render_fowardLighting_DBS_proj ---\n");
 	//let cvar decide
@@ -1366,11 +1347,7 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 
 	if (r_parallaxMapping->integer)
 	{
-		float depthScale;
-
-		depthScale = RB_EvalExpression(&diffuseStage->depthScaleExp, r_parallaxDepthScale->value);
-
-		SetUniformFloat(UNIFORM_DEPTHSCALE, depthScale);
+		SetUniformFloat(UNIFORM_DEPTHSCALE, RB_EvalExpression(&diffuseStage->depthScaleExp, r_parallaxDepthScale->value));
 	}
 
 	// set uniforms
@@ -1551,10 +1528,7 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 
 	if (r_parallaxMapping->integer)
 	{
-		float depthScale;
-
-		depthScale = RB_EvalExpression(&diffuseStage->depthScaleExp, r_parallaxDepthScale->value);
-		SetUniformFloat(UNIFORM_DEPTHSCALE, depthScale);
+		SetUniformFloat(UNIFORM_DEPTHSCALE, RB_EvalExpression(&diffuseStage->depthScaleExp, r_parallaxDepthScale->value));
 	}
 
 	// set uniforms
@@ -2175,8 +2149,8 @@ static void Render_heatHaze(int stage)
  */
 static void Render_liquid(int stage)
 {
-	float         fogDensity;
 	shaderStage_t *pStage = tess.surfaceStages[stage];
+	vec3_t        lightDirection;
 
 	Ren_LogComment("--- Render_liquid ---\n");
 
@@ -2188,19 +2162,25 @@ static void Render_liquid(int stage)
 	GLSL_VertexAttribsState(ATTR_POSITION | ATTR_TEXCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL | ATTR_COLOR);
 
 	// set uniforms
-	fogDensity = RB_EvalExpression(&pStage->fogDensityExp, 0.0005f);
-
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 	SetUniformFloat(UNIFORM_REFRACTIONINDEX, RB_EvalExpression(&pStage->refractionIndexExp, 1.3f));
 	SetUniformFloat(UNIFORM_FRESNELPOWER, RB_EvalExpression(&pStage->fresnelPowerExp, 2.0f));
 	SetUniformFloat(UNIFORM_FRESNELSCALE, RB_EvalExpression(&pStage->fresnelScaleExp, 0.85f));
 	SetUniformFloat(UNIFORM_FRESNELBIAS, RB_EvalExpression(&pStage->fresnelBiasExp, 0.05f));
 	SetUniformFloat(UNIFORM_NORMALSCALE, RB_EvalExpression(&pStage->normalScaleExp, 0.05f));
-	SetUniformFloat(UNIFORM_FOGDENSITY, fogDensity);
+	SetUniformFloat(UNIFORM_FOGDENSITY, RB_EvalExpression(&pStage->fogDensityExp, 0.0005f));
 	SetUniformVec3(UNIFORM_FOGCOLOR, tess.svars.color);
 	SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
+
+#if 1
+	VectorCopy(tr.sunDirection, lightDirection);
+#else
+	VectorCopy(light->direction, lightDirection);
+#endif
+
+	//SetUniformVec3(UNIFORM_LIGHTDIR, lightDirection);
 
 	// capture current color buffer for u_CurrentMap
 	SelectTexture(TEX_CURRENT);
@@ -2496,11 +2476,9 @@ static void Render_volumetricFog()
  */
 void Tess_ComputeColor(shaderStage_t *pStage)
 {
-	float rgb;
-	float red;
-	float green;
-	float blue;
-	float alpha;
+	float     red;
+	float     green;
+	float     blue;
 	rgbaGen_t rgbaGen;
 
 	rgbaGen = getRgbaGen(pStage, tess.lightmapNum);
@@ -2597,9 +2575,7 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	case CGEN_WAVEFORM:
 	{
 		float      glow;
-		waveForm_t *wf;
-
-		wf = &pStage->rgbWave;
+		waveForm_t *wf = &pStage->rgbWave;
 
 		if (wf->func == GF_NOISE)
 		{
@@ -2627,6 +2603,8 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	}
 	case CGEN_CUSTOM_RGB:
 	{
+		float rgb;
+
 		rgb = Q_bound(0.0f, RB_EvalExpression(&pStage->rgbExp, 1.0f), 1.0f);
 
 		tess.svars.color[0] = rgb;
@@ -2829,9 +2807,7 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	case AGEN_WAVEFORM:
 	{
 		float      glow;
-		waveForm_t *wf;
-
-		wf = &pStage->alphaWave;
+		waveForm_t *wf = &pStage->alphaWave;
 
 		glow = RB_EvalWaveFormClamped(wf);
 
@@ -2840,9 +2816,7 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 	}
 	case AGEN_CUSTOM:
 	{
-		alpha = Q_bound(0.0f, RB_EvalExpression(&pStage->alphaExp, 1.0f), 1.0f);
-
-		tess.svars.color[3] = alpha;
+		tess.svars.color[3] = Q_bound(0.0f, RB_EvalExpression(&pStage->alphaExp, 1.0f), 1.0f); // = alpha;
 		break;
 	}
 	}
