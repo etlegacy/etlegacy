@@ -207,9 +207,9 @@ void CG_FireFlameChunks(centity_t *cent, vec3_t origin, vec3_t angles, float spe
 
 		of       = centInfo->lastFlameChunk;
 		timeInc  = 1000.0f * (firing ? 1.0f : 0.5f) * (FLAME_CHUNK_DIST / (FLAME_START_SPEED * speedScale));
-		ft       = ((double)of->timeStart + (double)timeInc);
+		ft       = (double)of->timeStart + timeInc;
 		t        = (int)ft;
-		fracInc  = (double)timeInc / (double)(cg.time - of->timeStart);
+		fracInc  = timeInc / (double)(cg.time - of->timeStart);
 		backLerp = (float)(1.0 - fracInc);
 
 		while (t <= cg.time)

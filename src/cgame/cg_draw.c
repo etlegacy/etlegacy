@@ -3632,6 +3632,9 @@ void CG_StartShakeCamera(float p)
  */
 void CG_ShakeCamera(void)
 {
+	static vec3_t mins = { -16.0f, -16.0f, -16.0f };
+	static vec3_t maxs = { 16.0f, 16.0f, 16.0f };
+
 	if (cg.time > cg.cameraShakeTime)
 	{
 		cg.cameraShakeScale = 0; // all pending explosions resolved, so reset shakescale
@@ -3639,10 +3642,8 @@ void CG_ShakeCamera(void)
 	}
 
 	{
-		float         x    = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength;
-		static vec3_t mins = { -16.0f, -16.0f, -16.0f };
-		static vec3_t maxs = { 16.0f, 16.0f, 16.0f };
-		float         valx = sin(M_PI * 8 * 13 + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
+		double        x    = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength;
+		float         valx = sin(M_PI * 8 * 13.0 + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
 		float         valy = sin(M_PI * 17 * x + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
 		float         valz = cos(M_PI * 7 * x + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
 		vec3_t        vec;

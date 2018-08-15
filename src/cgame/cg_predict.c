@@ -1475,16 +1475,16 @@ void CG_PredictPlayerState(void)
 	}
 	else
 	{
-		float x = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength; // starts at 1, approaches 0 over time
+		double x = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength; // starts at 1, approaches 0 over time
 
 		// move
 		cg.predictedPlayerState.origin[2] +=
-			(float)sin(M_PI * 8 * 13 + (double)cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+			sin(M_PI * 8 * 13.0 + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
 
 		cg.predictedPlayerState.origin[1] +=
-			(float)sin(M_PI * 17 * (double)x + (double)cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+			sin(M_PI * 17 * x + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
 
 		cg.predictedPlayerState.origin[0] +=
-			(float)cos(M_PI * 7 * (double)x + (double)cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
+			cos(M_PI * 7 * x + cg.cameraShakePhase) * x * 6.0f * cg.cameraShakeScale;
 	}
 }
