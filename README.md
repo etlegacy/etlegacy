@@ -234,9 +234,6 @@ and open the resulting project in Visual Studio.
   Unfortunately this file isn't shipped with Windows 8.0 and 8.1 SDK versions.
   Solution: Get the Windows SDK 7 and copy 'win32.mak' to `libs/jpeturbo/`.
 
-  * Compiling renderer 2 on Windows requires GNU sed (gsed) to be installed. It can be downloaded
-  from the [GnuWin](http://gnuwin32.sourceforge.net/packages/sed.htm) website.
-
 
 ### Mac OS X
 
