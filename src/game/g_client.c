@@ -1003,9 +1003,9 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 		return;
 	}
 
-	if (GetWeaponTableData(weaponNum)->isPistol || GetWeaponTableData(weaponNum)->isSilencedPistol || GetWeaponTableData(weaponNum)->isRifle || weaponNum == WP_STEN)
+	if (GetWeaponTableData(weaponNum)->isPistol || GetWeaponTableData(weaponNum)->isSilencedPistol || GetWeaponTableData(weaponNum)->isRifle || weaponNum == WP_STEN || weaponNum == WP_MP34)
 	{
-		if (client->sess.playerType == PC_COVERTOPS && weaponNum == WP_STEN)
+		if (client->sess.playerType == PC_COVERTOPS && (weaponNum == WP_STEN || weaponNum == WP_MP34))
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] *= 2;
 		}

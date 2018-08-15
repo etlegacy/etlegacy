@@ -752,6 +752,8 @@ static weapon_t _weaponBotToGame(int weapon)
 		return WP_KNIFE_KABAR;
 	case 96:
 		return WP_BAZOOKA;
+	case 97:
+		return WP_MP34;
 #endif
 	default:
 		return WP_NONE;
@@ -905,6 +907,8 @@ int Bot_WeaponGameToBot(int weapon)
 		return ET_WP_KNIFE; //cs: was 94
 	case WP_BAZOOKA:
 		return ET_WP_PANZERFAUST; //cs: was 96
+	case WP_MP34:
+		return ET_WP_STEN;
 #endif
 	default:
 		return ET_WP_NONE;
@@ -1261,6 +1265,8 @@ static int _choosePriWeap(gentity_t *bot, int playerClass, int team)
 					ET_WP_STEN,
 #ifdef NOQUARTER
 					86,     //BAR
+#elif defined(LEGACY)
+					97,
 #else
 					ET_WP_FG42,
 #endif

@@ -4131,6 +4131,7 @@ weapFireFunction_t weapFireTable[] =
 	{ WP_MORTAR2,              NULL,                        },
 	{ WP_MORTAR2_SET,          weapon_mortar_fire,          },
 	{ WP_BAZOOKA,              weapon_antitank_fire,        },
+	{ WP_MP34,                 Bullet_Fire,                 },
 };
 
 /**

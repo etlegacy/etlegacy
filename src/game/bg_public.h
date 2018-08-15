@@ -867,8 +867,9 @@ typedef enum
 	WP_MORTAR2,                ///< 51
 	WP_MORTAR2_SET,            ///< 52
 	WP_BAZOOKA,                ///< 53
+	WP_MP34,                   ///< 54
 
-	WP_NUM_WEAPONS             ///< 54
+	WP_NUM_WEAPONS             ///< 55
 	///< NOTE: this cannot be larger than 64 for AI/player weapons!
 } weapon_t;
 
@@ -1005,6 +1006,7 @@ typedef enum
 	MOD_MORTAR2,
 	MOD_BAZOOKA,
 	MOD_BACKSTAB,
+	MOD_MP34,
 
 	MOD_NUM_MODS
 
@@ -1754,6 +1756,7 @@ typedef enum extWeaponStats_e
 	WS_KAR98,          ///< 23
 	WS_GARAND,         ///< 24
 	WS_K43,            ///< 25
+	WS_MP34,           ///< 26
 
 	WS_MAX
 } extWeaponStats_t;
@@ -1832,6 +1835,7 @@ typedef enum item_s
 	ITEM_WEAPON_THOMPSON,
 	ITEM_WEAPON_DUMMY_MG42,
 	ITEM_WEAPON_STEN,
+	ITEM_WEAPON_MP34,
 	ITEM_WEAPON_COLT,
 	ITEM_WEAPON_AKIMBO_COLT,
 	ITEM_WEAPON_AKIMBO_SILENCED_COLT,
