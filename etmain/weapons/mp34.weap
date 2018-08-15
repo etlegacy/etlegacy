@@ -1,8 +1,4 @@
 
-
-//# FIXME: SHADER?!
-
-
 weaponDef
 {
 	// This basically fills out weaponInfo_t
