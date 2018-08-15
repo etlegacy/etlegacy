@@ -1,0 +1,77 @@
+
+
+//# FIXME: SHADER?!
+
+
+weaponDef
+{
+	// This basically fills out weaponInfo_t
+	client {
+		standModel			"models/weapons2/mp34/mp34_3rd.md3"	// weapon pickup 'stand' (do we still use this?)
+		pickupModel			"models/weapons2/mp34/mp34_pickup.md3"
+		//pickupSound		"sound/misc/w_pkup.wav"
+		
+		weaponConfig		"models/weapons2/mp34/weapon.cfg"
+		handsModel			"models/weapons2/mp34/v_mp34_hand.md3"
+		
+		flashDlightColor	1.0 0.6 0.23
+		flashSound			"sound/weapons/mp34/mp34_fire.wav"		// supports up to 4 flash sounds
+		//flashEchoSound	""										// supports up to 4 flash echo sounds
+		//lastShotSound		""										// supports up to 4 last shot sounds
+		
+		//readySound		""
+		//firingSound		""									// no weapons seem to use this, basically it's a replacement hum for readysound, but then when firing
+		overheatSound		"sound/weapons/sten/sten_heat.wav"
+		reloadSound			"sound/weapons/sten/sten_reload.wav"
+		reloadFastSound		"sound/weapons/sten/sten_reload_fast.wav"		// some weapons have fast reloads due to the skill system
+		//spinupSound		""									// sound started when fire button goes down, and stepped on when the first fire event happens
+		//spindownSound		""									// sound called if the above is running but player doesn't follow through and fire
+		//switchSound		""									// allow overriding of weaponswitch sound
+		
+		weaponIcon			"icons/iconw_mp34"
+		weaponIconScale		2
+		weaponSelectedIcon	"icons/iconw_mp34_1_select"
+		
+		//missileModel		""
+		//missileSound		""
+		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
+		//missileDlight		0
+		//missileDlightColor	0 0 0							// do we still use this?
+		
+		ejectBrassFunc		"MachineGunEjectBrass"				// supports "MachineGunEjectBrass" and "PanzerFaustEjectBrass"
+		//brassmodel				"models/weapons2/shells/9mmshell.md3"
+		
+		//modModel 1		""
+		
+		firstPerson {
+			model			"models/weapons2/mp34/v_mp34.md3"
+			//flashModel		"models/weapons2/sten/v_sten_flash.mdc"
+
+			// weapon building
+			// the parts are numbered because there are some hardcoded references for some weapons to certain parts
+			weaponLink
+			{
+				part 0
+				{
+					tag		"tag_barrel"
+					model	"models/weapons2/mp34/v_mp34_barrel.md3"
+				}
+				part 1
+				{
+					tag		"tag_barrel2"
+					model	"models/weapons2/mp34/v_mp34_barrel2.md3"
+				}
+				part 2
+				{
+					tag		"tag_barrel3"
+					model	"models/weapons2/mp34/v_mp34_barrel3.md3"
+				}
+			}
+		}
+		
+		thirdPerson {
+			model			"models/weapons2/mp34/mp34_3rd.md3"
+			//flashmodel		"models/weapons2/sten/sten_flash.mdc"
+		}
+	}
+}
