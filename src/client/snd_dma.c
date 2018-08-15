@@ -975,13 +975,13 @@ void S_Base_AddLoopingSound(const vec3_t origin, const vec3_t velocity, int rang
 		float  lena, lenb;
 
 		// don't do the doppler effect when trumpets of train and station are at the same position
-		if (entityPositions[listener_number] != entityPositions[numLoopSounds])
+		if (VectorCompare(entityPositions[listener_number], entityPositions[numLoopSounds]))
 		{
-			loopSounds[numLoopSounds].doppler = qtrue;
+			loopSounds[numLoopSounds].doppler = qfalse;
 		}
 		else
 		{
-			loopSounds[numLoopSounds].doppler = qfalse;
+			loopSounds[numLoopSounds].doppler = qtrue;
 		}
 
 		lena = vec3_distance_squared(entityPositions[listener_number], entityPositions[numLoopSounds]);
