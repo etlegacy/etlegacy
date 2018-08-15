@@ -752,7 +752,7 @@ static weapon_t _weaponBotToGame(int weapon)
 		return WP_KNIFE_KABAR;
 	case 96:
 		return WP_BAZOOKA;
-	case 97:
+	case 91:
 		return WP_MP34;
 #endif
 	default:
@@ -896,19 +896,19 @@ int Bot_WeaponGameToBot(int weapon)
 #endif
 #ifdef LEGACY
 	case WP_MOBILE_BROWNING:
-		return ET_WP_MOBILE_MG42; //cs: was 88
+		return ET_WP_MOBILE_MG42;
 	case WP_MOBILE_BROWNING_SET:
-		return ET_WP_MOBILE_MG42_SET; //cs: was 89
+		return ET_WP_MOBILE_MG42_SET;
 	case WP_MORTAR2:
-		return ET_WP_MORTAR; //cs: was 92
+		return ET_WP_MORTAR;
 	case WP_MORTAR2_SET:
-		return ET_WP_MORTAR_SET; //cs: was 93
+		return ET_WP_MORTAR_SET;
 	case WP_KNIFE_KABAR:
-		return ET_WP_KNIFE; //cs: was 94
+		return ET_WP_KNIFE;
 	case WP_BAZOOKA:
-		return ET_WP_PANZERFAUST; //cs: was 96
+		return ET_WP_PANZERFAUST;
 	case WP_MP34:
-		return ET_WP_STEN;
+		return 91;
 #endif
 	default:
 		return ET_WP_NONE;
@@ -1265,8 +1265,6 @@ static int _choosePriWeap(gentity_t *bot, int playerClass, int team)
 					ET_WP_STEN,
 #ifdef NOQUARTER
 					86,     //BAR
-#elif defined(LEGACY)
-					97,
 #else
 					ET_WP_FG42,
 #endif
@@ -1281,7 +1279,7 @@ static int _choosePriWeap(gentity_t *bot, int playerClass, int team)
 				int wpns[] =
 				{
 					// add shit as needed
-#ifdef NOQUARTER
+#if defined(NOQUARTER) || defined(LEGACY)
 					91,     //MP34
 #else
 					ET_WP_STEN,

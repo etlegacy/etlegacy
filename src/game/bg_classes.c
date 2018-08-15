@@ -144,7 +144,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			"ui/assets/mp_arrow_red.tga",
 			WP_KNIFE,
 			{
-				{ WP_STEN,                 SK_LIGHT_WEAPONS,                            0 },
+				{ WP_MP34,                 SK_LIGHT_WEAPONS,                            0 },
 				{ WP_FG42,                 SK_LIGHT_WEAPONS,                            0 },
 				{ WP_K43,                  SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0 },
 			},
@@ -271,7 +271,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			"ui/assets/mp_arrow_blue.tga",
 			WP_KNIFE_KABAR,
 			{
-				{ WP_MP34,                 SK_LIGHT_WEAPONS,                            0 },
+				{ WP_STEN,                 SK_LIGHT_WEAPONS,                            0 },
 				{ WP_FG42,                 SK_LIGHT_WEAPONS,                            0 },
 				{ WP_GARAND,               SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS, 0 },
 			},
