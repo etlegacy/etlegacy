@@ -2333,9 +2333,11 @@ image_t *R_FindImageFile(const char *imageName, int bits, filterType_t filterTyp
 	R_LoadImage(&buffer_p, &pic, &width, &height, &bits, materialName);
 	if (pic == NULL)
 	{
+		// FIXME !!!
 		// this will occure in mods for default light shaders until we add our material pk3 to the common search path
-		// or modders add the light shaders (+ related images) to their mod.
-		Ren_Warning("WARNING R_FindImageFile: can't load material '%s'\n", materialName);
+		// or modders add the light shaders (and related images) to their mod.
+		// update: set to dev print - FIXME: there are more cases for some models on vanilla maps! 
+		Ren_Developer("WARNING R_FindImageFile: can't load material '%s'\n", materialName);
 		return NULL;
 	}
 
