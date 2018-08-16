@@ -931,7 +931,7 @@ gitem_t bg_itemlist[] =
 #endif
 	},
 
-	/** 
+	/**
 	weapon_mp34
 	*/
 	{
@@ -2493,7 +2493,7 @@ gitem_t *BG_FindItem(const char *pickupName)
 
 	for (it = bg_itemlist + 1 ; it->classname ; it++)
 	{
-		if (!Q_stricmp(it->classname, pickupName))
+		if (!Q_stricmp(it->pickup_name, pickupName))
 		{
 			return it;
 		}
@@ -2502,27 +2502,25 @@ gitem_t *BG_FindItem(const char *pickupName)
 	return NULL;
 }
 
-/*
+/**
  * @brief BG_FindItemForClassName
  * @param[in] className
  * @return
- *
- * @note Unused
+ */
 gitem_t *BG_FindItemForClassName(const char *className)
 {
-    gitem_t *it;
+	gitem_t *it;
 
-    for (it = bg_itemlist + 1 ; it->classname ; it++)
-    {
-        if (!Q_stricmp(it->classname, className))
-        {
-            return it;
-        }
-    }
+	for (it = bg_itemlist + 1 ; it->classname ; it++)
+	{
+		if (!Q_stricmp(it->classname, className))
+		{
+			return it;
+		}
+	}
 
-    return NULL;
+	return NULL;
 }
-*/
 
 /**
  * @brief Items can be picked up without actually touching their physical bounds to make

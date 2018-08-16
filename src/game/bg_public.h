@@ -1935,7 +1935,7 @@ typedef struct gitem_s
 extern gitem_t bg_itemlist[];
 
 gitem_t *BG_FindItem(const char *pickupName);
-//gitem_t *BG_FindItemForClassName(const char *className); ///< unsued
+gitem_t *BG_FindItemForClassName(const char *className);
 gitem_t *BG_GetItem(int index);
 
 qboolean BG_AkimboFireSequence(int weapon, int akimboClip, int mainClip);

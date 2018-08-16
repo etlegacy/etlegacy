@@ -640,7 +640,7 @@ qboolean G_CallSpawn(gentity_t *ent)
 	}
 
 	// check item spawn functions
-	item = BG_FindItem(ent->classname);
+	item = BG_FindItemForClassName(ent->classname);
 
 	if (item)
 	{
