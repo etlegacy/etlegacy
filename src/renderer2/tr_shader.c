@@ -2425,10 +2425,19 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 			}
 			else if (!Q_stricmp(token, "portal"))
 			{
-				Ren_Warning("WARNING: alphaGen portal keyword not supported in shader '%s'\n", shader.name);
-				stage->alphaGen         = AGEN_CONST;
+				stage->alphaGen         = AGEN_CONST; // AGEN_PORTAL
 				stage->constantColor[3] = 0;
-				SkipRestOfLine(text);
+
+				token           = COM_ParseExt(text, qfalse);
+				if (token[0] == 0)
+				{
+					shader.portalRange = 256;
+					Ren_Warning("WARNING: missing range parameter for alphaGen portal in shader '%s', defaulting to 256\n", shader.name);
+				}
+				else
+				{
+					shader.portalRange = atof(token);
+				}
 			}
 			else
 			{
@@ -4107,15 +4116,6 @@ static qboolean ParseShader(char *_text)
 			shader.sort     = SS_PORTAL;
 			shader.isPortal = qtrue;
 
-			token = COM_ParseExt2(text, qfalse);
-			if (token[0])
-			{
-				shader.portalRange = atof(token);
-			}
-			else
-			{
-				shader.portalRange = 256;
-			}
 			continue;
 		}
 		// portal or mirror
