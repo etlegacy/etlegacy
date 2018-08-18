@@ -438,16 +438,6 @@ qboolean ParseShaderR1(char *_text)
 		{
 			shader.sort     = SS_PORTAL;
 			shader.isPortal = qtrue;
-
-			token = COM_ParseExt2(text, qfalse);
-			if (token[0])
-			{
-				shader.portalRange = atof(token);
-			}
-			else
-			{
-				shader.portalRange = 256;
-			}
 			continue;
 		}
 		// portal or mirror
