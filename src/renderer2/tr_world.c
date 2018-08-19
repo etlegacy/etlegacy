@@ -431,6 +431,12 @@ void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 	pModel   = R_GetModelByHandle(ent->e.hModel);
 	bspModel = pModel->bsp;
 
+	// set model state for decals and dynamic fog
+	VectorCopy(ent->e.origin, bspModel->orientation.origin);
+	VectorCopy(ent->e.axis[0], bspModel->orientation.axis[0]);
+	VectorCopy(ent->e.axis[1], bspModel->orientation.axis[1]);
+	VectorCopy(ent->e.axis[2], bspModel->orientation.axis[2]);
+
 	// copy local bounds
 	for (i = 0; i < 3; i++)
 	{

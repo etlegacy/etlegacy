@@ -2247,7 +2247,10 @@ static void Render_fog_brushes()
 	float  eyeT;
 	vec3_t local;
 	vec4_t fogDistanceVector, fogDepthVector;
-
+ 	// offset fog surface
+	//bspModel_t *model; // get fog stuff
+	//vec4_t fogSurface;
+	
 	Ren_LogComment("--- Render_fog_brushes ---\n");
 
 	if (!r_wolfFog->integer && r_noFog->integer)
@@ -2273,6 +2276,8 @@ static void Render_fog_brushes()
 	}
 
 	fog = tr.world->fogs + tess.fogNum;
+	// offset fog surface
+	//model = tr.world->models + fog->modelNum;
 
 	// use this only to render fog brushes (global fog has a brush number of -1)
 	// disable this to get r_wolffog 'volumetric' fog back but also
@@ -2281,6 +2286,10 @@ static void Render_fog_brushes()
 	{
 		return;
 	}
+
+	// offset fog surface
+	//VectorCopy(fog->surface, fogSurface);
+	//fogSurface[3] = fog->surface[3] + DotProduct(fogSurface, model->orientation.origin);
 
 	Ren_LogComment("--- Render_fog( fogNum = %i, originalBrushNumber = %i ) ---\n", tess.fogNum, fog->originalBrushNumber);
 
@@ -2300,6 +2309,15 @@ static void Render_fog_brushes()
 	// rotate the gradient vector for this orientation
 	if (fog->hasSurface)
 	{
+		// offset fog surface
+		//fogDepthVector[0] = fogSurface[0] * backEnd.orientation.axis[0][0] +
+		//					fogSurface[1] * backEnd.orientation.axis[0][1] + fogSurface[2] * backEnd.orientation.axis[0][2];
+		//fogDepthVector[1] = fogSurface[0] * backEnd.orientation.axis[1][0] +
+		//					fogSurface[1] * backEnd.orientation.axis[1][1] + fogSurface[2] * backEnd.orientation.axis[1][2];
+		//fogDepthVector[2] = fogSurface[0] * backEnd.orientation.axis[2][0] +
+		//					fogSurface[1] * backEnd.orientation.axis[2][1] + fogSurface[2] * backEnd.orientation.axis[2][2];
+		//fogDepthVector[3] = -fogSurface[3] + DotProduct(backEnd.orientation.origin, fogSurface);
+
 		fogDepthVector[0] = fog->surface[0] * backEnd.orientation.axis[0][0] +
 		                    fog->surface[1] * backEnd.orientation.axis[0][1] + fog->surface[2] * backEnd.orientation.axis[0][2];
 		fogDepthVector[1] = fog->surface[0] * backEnd.orientation.axis[1][0] +

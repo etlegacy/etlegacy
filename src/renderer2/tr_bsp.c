@@ -4094,8 +4094,8 @@ static void R_LoadSubmodels(lump_t *l)
 		}
 
 		// for attaching fog brushes to models
-		//out->firstBrush = LittleLong(in->firstBrush);
-		//out->numBrushes = LittleLong(in->numBrushes);
+		out->firstBrush = LittleLong(in->firstBrush);
+		out->numBrushes = LittleLong(in->numBrushes);
 
 		// allocate decal memory
 		j           = (i == 0 ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS);
@@ -4459,7 +4459,7 @@ static void R_LoadPlanes(lump_t *l)
  */
 static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 {
-	int          i;
+	int          i, j;
 	fog_t        *out;
 	dfog_t       *fogs = (dfog_t *)(fileBase + l->fileofs);
 	dbrush_t     *brushes, *brush;
@@ -4531,6 +4531,17 @@ static void R_LoadFogs(lump_t *l, lump_t *brushesLump, lump_t *sidesLump)
 			if ((unsigned)firstSide > sidesCount - 6)
 			{
 				Ren_Drop("fog brush sideNumber out of range");
+			}
+
+			// find which bsp submodel the fog volume belongs to
+			for (j = 0; j < s_worldData.numModels; j++)
+			{
+				if (out->originalBrushNumber >= s_worldData.models[j].firstBrush &&
+				    out->originalBrushNumber < (s_worldData.models[j].firstBrush + s_worldData.models[j].numBrushes))
+				{
+					out->modelNum = j;
+					break;
+				}
 			}
 
 			// brushes are always sorted with the axial sides first
