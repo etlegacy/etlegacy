@@ -143,15 +143,15 @@ void main()
 	// compute light color from world space lightmap
 	vec3 lightColor = lightmapColor.rgb * NdotL;
 
-	float NdotLnobump = clamp(dot(normalize(var_Normal.xyz), L), 0.004, 1.0);
+	//float NdotLnobump = clamp(dot(normalize(var_Normal.xyz), L), 0.004, 1.0);
 	//vec3 lightColorNoNdotL = clamp(lightColor.rgb / NdotLnobump, 0.0, 1.0);
 
 	//float NdotLnobump = dot(normalize(var_Normal.xyz), L);
-	vec3 lightColorNoNdotL = lightColor.rgb / NdotLnobump;
+	//vec3 lightColorNoNdotL = lightColor.rgb / NdotLnobump;
 
 	// compute final color
 	vec4 color = diffuse;
-	// color = vec4(vec3(1.0, 1.0, 1.0), diffuse.a);
+	//color = vec4(vec3(1.0, 1.0, 1.0), diffuse.a);
 	//color.rgb = vec3(NdotLnobump, NdotLnobump, NdotLnobump);
 	//color.rgb *= lightColor.rgb;
 	//color.rgb = lightColorNoNdotL.rgb * NdotL;
