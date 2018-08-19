@@ -173,6 +173,8 @@ unsigned int GLSL_GetAttribByName(const char *name)
 		}
 	}
 
+	Ren_Warning("GLSL_GetAttribByName Warning: No attribute '%s' found.\n", name);
+
 	return -1;
 }
 
@@ -3221,11 +3223,11 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 {
 	if (!glState.currentVBO)
 	{
-		// FIXME: this occures on maps with portal skies (uje_marketgarden) and r_wolffog 0
-		// and on radar when R_BuildCcubemaps is called at start
-		// beside the general fog issue with portal skies it seems there is no valid portal sky VBO
-		Ren_Fatal("GLSL_VertexAttribPointers: no current VBO bound");
-		//return;
+		// FIXME: this occures on maps for unknown reasons (uje_marketgarden + r_wolffog and
+		// and on radar when R_BuildCubemaps is called at start)
+		Ren_Warning("GLSL_VertexAttribPointers: no current VBO bound\n");
+		return;
+		//Ren_Fatal("GLSL_VertexAttribPointers: no current VBO bound\n");
 	}
 
 	Ren_LogComment("--- GLSL_VertexAttribPointers( %s ) ---\n", glState.currentVBO->name);
@@ -3235,7 +3237,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 		attribBits |= (ATTR_BONE_INDEXES | ATTR_BONE_WEIGHTS);
 	}
 
-	if ((attribBits & ATTR_POSITION))
+	if (attribBits & ATTR_POSITION)
 	{
 		Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_POSITION )\n");
 
@@ -3243,7 +3245,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 		glState.vertexAttribPointersSet |= ATTR_POSITION;
 	}
 
-	if ((attribBits & ATTR_TEXCOORD))
+	if (attribBits & ATTR_TEXCOORD)
 	{
 		Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_TEXCOORD )\n");
 
@@ -3251,7 +3253,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 		glState.vertexAttribPointersSet |= ATTR_TEXCOORD;
 	}
 
-	if ((attribBits & ATTR_LIGHTCOORD))
+	if (attribBits & ATTR_LIGHTCOORD)
 	{
 		Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_LIGHTCOORD )\n");
 
@@ -3259,7 +3261,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 		glState.vertexAttribPointersSet |= ATTR_LIGHTCOORD;
 	}
 
-	if ((attribBits & ATTR_TANGENT))
+	if (attribBits & ATTR_TANGENT)
 	{
 		Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_TANGENT )\n");
 
@@ -3267,7 +3269,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 		glState.vertexAttribPointersSet |= ATTR_TANGENT;
 	}
 
-	if ((attribBits & ATTR_BINORMAL))
+	if (attribBits & ATTR_BINORMAL)
 	{
 		Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_BINORMAL )\n");
 
@@ -3275,7 +3277,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 		glState.vertexAttribPointersSet |= ATTR_BINORMAL;
 	}
 
-	if ((attribBits & ATTR_NORMAL))
+	if (attribBits & ATTR_NORMAL)
 	{
 		Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_NORMAL )\n");
 
@@ -3283,7 +3285,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 		glState.vertexAttribPointersSet |= ATTR_NORMAL;
 	}
 
-	if ((attribBits & ATTR_COLOR))
+	if (attribBits & ATTR_COLOR)
 	{
 		Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_COLOR )\n");
 
@@ -3291,7 +3293,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 		glState.vertexAttribPointersSet |= ATTR_COLOR;
 	}
 
-	if ((attribBits & ATTR_BONE_INDEXES))
+	if (attribBits & ATTR_BONE_INDEXES)
 	{
 		Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_BONE_INDEXES )\n");
 
@@ -3299,7 +3301,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 		glState.vertexAttribPointersSet |= ATTR_BONE_INDEXES;
 	}
 
-	if ((attribBits & ATTR_BONE_WEIGHTS))
+	if (attribBits & ATTR_BONE_WEIGHTS)
 	{
 		Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_BONE_WEIGHTS )\n");
 
@@ -3309,7 +3311,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 
 	if (glState.vertexAttribsInterpolation > 0)
 	{
-		if ((attribBits & ATTR_POSITION2))
+		if (attribBits & ATTR_POSITION2)
 		{
 			Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_POSITION2 )\n");
 
@@ -3317,7 +3319,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 			glState.vertexAttribPointersSet |= ATTR_POSITION2;
 		}
 
-		if ((attribBits & ATTR_TANGENT2))
+		if (attribBits & ATTR_TANGENT2)
 		{
 			Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_TANGENT2 )\n");
 
@@ -3325,7 +3327,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 			glState.vertexAttribPointersSet |= ATTR_TANGENT2;
 		}
 
-		if ((attribBits & ATTR_BINORMAL2))
+		if (attribBits & ATTR_BINORMAL2)
 		{
 			Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_BINORMAL2 )\n");
 
@@ -3333,7 +3335,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 			glState.vertexAttribPointersSet |= ATTR_BINORMAL2;
 		}
 
-		if ((attribBits & ATTR_NORMAL2))
+		if (attribBits & ATTR_NORMAL2)
 		{
 			Ren_LogComment("glVertexAttribPointer( ATTR_INDEX_NORMAL2 )\n");
 
