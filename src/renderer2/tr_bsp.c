@@ -7641,6 +7641,11 @@ void R_BuildCubeMaps(void)
 	size_t ticsNeeded;
 	byte   r, g, b, best;
 
+	if (!r_reflectionMapping->integer)
+	{
+		return;
+	}
+
 	Com_Memset(&rf, 0, sizeof(refdef_t));
 
 	for (i = 0; i < 6; i++)
@@ -7785,10 +7790,10 @@ void R_BuildCubeMaps(void)
 		VectorClear(cubeProbe->origin);
 	}
 
-	Ren_Developer("...pre-rendering %d cubemaps\n", tr.cubeProbes.currentElements);
+	Ren_Print("...pre-rendering %d cubemaps\n", tr.cubeProbes.currentElements);
 	ri.Cvar_Set("viewlog", "1");
-	Ren_Developer("0%%  10   20   30   40   50   60   70   80   90   100%%\n");
-	Ren_Developer("|----|----|----|----|----|----|----|----|----|----|\n");
+	Ren_Print("0%%  10   20   30   40   50   60   70   80   90   100%%\n");
+	Ren_Print("|----|----|----|----|----|----|----|----|----|----|\n");
 	for (j = 0; j < tr.cubeProbes.currentElements; j++)
 	{
 		cubeProbe = (cubemapProbe_t *)Com_GrowListElement(&tr.cubeProbes, j);
@@ -7802,7 +7807,7 @@ void R_BuildCubeMaps(void)
 
 			do
 			{
-				Ren_Developer("*");
+				Ren_Print("*");
 				// FIXME: updating screen doesn't work properly, R_BuildCubeMaps during map load causes eye cancer
 				Ren_UpdateScreen();
 			}
@@ -7813,9 +7818,9 @@ void R_BuildCubeMaps(void)
 			{
 				if (tics < 51)
 				{
-					Ren_Developer("*");
+					Ren_Print("*");
 				}
-				Ren_Developer("\n");
+				Ren_Print("\n");
 			}
 		}
 
@@ -8076,7 +8081,7 @@ void R_BuildCubeMaps(void)
 
 		glBindTexture(cubeProbe->cubemap->type, 0);
 	}
-	Ren_Developer("\n");
+	Ren_Print("\n");
 
 #if 0
 	// write buffer if theres any still unwritten
@@ -8315,10 +8320,7 @@ void RE_LoadWorldMap(const char *name)
 	// build cubemaps after the necessary vbo stuff is done
 	// FIXME: causes missing vbo error on radar (maps with portal sky or foliage )
 	// devmap oasis; set developer 1; set r_showcubeprobs 1
-	if (r_reflectionMapping->integer)
-	{
-		R_BuildCubeMaps();
-	}
+	R_BuildCubeMaps();
 
 	// never move this to RE_BeginFrame because we need it to set it here for the first frame
 	// but we need the information across 2 frames
