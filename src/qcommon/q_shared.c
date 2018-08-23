@@ -203,7 +203,7 @@ void COM_DefaultExtension(char *path, size_t maxSize, const char *extension)
  */
 int Com_HashKey(char *string, int maxlen)
 {
-	int register hash = 0, i;
+	int hash = 0, i;
 
 	for (i = 0; i < maxlen && string[i] != '\0'; i++)
 	{
