@@ -2180,7 +2180,7 @@ static void Render_liquid(int stage)
 	VectorCopy(light->direction, lightDirection);
 #endif
 
-	//SetUniformVec3(UNIFORM_LIGHTDIR, lightDirection);
+	SetUniformVec3(UNIFORM_LIGHTDIR, lightDirection);
 
 	// capture current color buffer for u_CurrentMap
 	SelectTexture(TEX_CURRENT);
