@@ -272,7 +272,7 @@ typedef struct
 	vec3_t oldFramePos;
 	float animSpeedScale;
 	int oldFrameSnapshotTime;
-	headAnimation_t *headAnim;
+	//headAnimation_t *headAnim;
 
 } lerpFrame_t;
 

@@ -1662,10 +1662,10 @@ typedef struct animation_s
 	int movetype;
 } animation_t;
 
-/**
+/*
  * @enum animHeadNumber_t
  * @brief Head animations
- */
+ * @note Unused
 typedef enum
 {
 	HEAD_NEUTRAL_CLOSED = 0,
@@ -1686,17 +1686,19 @@ typedef enum
 
 	MAX_HEAD_ANIMS
 } animHeadNumber_t;
+*/
 
-/**
+/*
  * @struct headAnimation_s
  * @typedef headAnimation_t
  * @brief Head animations
- */
+ * @note Unused
 typedef struct headAnimation_s
 {
 	int firstFrame;
 	int numFrames;
 } headAnimation_t;
+*/
 
 /// flip the togglebit every time an animation
 /// changes so a restart of the same anim can be detected
@@ -2286,14 +2288,14 @@ typedef struct
 	qboolean isSkeletal;
 
 	// parsed from animgroup file
-	animation_t *animations[MAX_MODEL_ANIMATIONS];             ///< anim names, frame ranges, etc
-	headAnimation_t headAnims[MAX_HEAD_ANIMS];
-	int numAnimations, numHeadAnims;
+	animation_t *animations[MAX_MODEL_ANIMATIONS];                  ///< anim names, frame ranges, etc
+	//headAnimation_t headAnims[MAX_HEAD_ANIMS];                    ///< unused
+	int numAnimations; /*, numHeadAnims;*/
 
 	// parsed from script file
-	animScript_t scriptAnims[MAX_AISTATES][NUM_ANIM_MOVETYPES];                ///< locomotive anims, etc
-	animScript_t scriptCannedAnims[NUM_ANIM_MOVETYPES];                        ///< played randomly
-	animScript_t scriptEvents[NUM_ANIM_EVENTTYPES];                            ///< events that trigger special anims
+	animScript_t scriptAnims[MAX_AISTATES][NUM_ANIM_MOVETYPES];     ///< locomotive anims, etc
+	animScript_t scriptCannedAnims[NUM_ANIM_MOVETYPES];             ///< played randomly
+	animScript_t scriptEvents[NUM_ANIM_EVENTTYPES];                 ///< events that trigger special anims
 
 	// global list of script items for this model
 	animScriptItem_t scriptItems[MAX_ANIMSCRIPT_ITEMS_PER_MODEL];
