@@ -3139,8 +3139,9 @@ void Tess_StageIteratorGeneric()
 					else if (backEnd.currentEntity != &tr.worldEntity)
 					{
 						model_t *pmodel;
+
 						pmodel = R_GetModelByHandle(backEnd.currentEntity->e.hModel);
-						if (pmodel->bsp && r_worldinlineModels->integer)
+						if (pmodel->bsp && r_worldInlineModels->integer)
 						{
 							Render_vertexLighting_DBS_world(stage);
 						}
@@ -3148,7 +3149,6 @@ void Tess_StageIteratorGeneric()
 						{
 							Render_vertexLighting_DBS_entity(stage);
 						}
-						
 					}
 					else
 					{
