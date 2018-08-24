@@ -3866,7 +3866,7 @@ extern cvar_t *r_vboModels;
 extern cvar_t *r_vboVertexSkinning;
 extern cvar_t *r_vboSmoothNormals;
 extern cvar_t *r_vboFoliage;
-
+extern cvar_t *r_worldinlineModels;
 #if defined(USE_BSP_CLUSTERSURFACE_MERGING)
 extern cvar_t *r_mergeClusterSurfaces;
 extern cvar_t *r_mergeClusterFaces;
