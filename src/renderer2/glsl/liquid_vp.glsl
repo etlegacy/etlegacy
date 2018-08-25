@@ -6,11 +6,12 @@ attribute vec3 attr_Tangent;
 attribute vec3 attr_Binormal;
 attribute vec3 attr_Normal;
 attribute vec4 attr_Color;
-attribute vec3 attr_LightDirection;
+//attribute vec3 attr_LightDirection;
 
 uniform mat4 u_NormalTextureMatrix;
 uniform mat4 u_ModelMatrix;
 uniform mat4 u_ModelViewProjectionMatrix;
+uniform vec3 u_LightDir;
 
 varying vec3 var_Position;
 varying vec2 var_TexNormal;
@@ -38,5 +39,5 @@ void main()
 	var_Normal = (u_ModelMatrix * vec4(attr_Normal, 0.0)).xyz;
 
 	var_LightColor     = attr_Color;
-	var_LightDirection = attr_LightDirection;
+	var_LightDirection = u_LightDir;
 }
