@@ -8316,6 +8316,9 @@ void RE_LoadWorldMap(const char *name)
 	{
 		tr.sunShader = R_FindShader(tr.sunShaderName, SHADER_3D_STATIC, qfalse);
 	}
+	else {
+		tr.sunShader = 0;   // clear sunshader so it's not there if the level doesn't specify it
+	}
 
 	// build cubemaps after the necessary vbo stuff is done
 	// FIXME: causes missing vbo error on radar (maps with portal sky or foliage )
