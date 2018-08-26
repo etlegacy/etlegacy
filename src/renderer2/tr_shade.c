@@ -149,7 +149,7 @@ static void BindLightMap()
 /**
  * @brief BindDeluxeMap
  */
-static void BindDeluxeMap()
+static void BindDeluxeMap(shaderStage_t *pStage)
 {
 	image_t *deluxemap;
 
@@ -164,7 +164,15 @@ static void BindDeluxeMap()
 
 	if (!tr.deluxemaps.currentElements || !deluxemap)
 	{
-		GL_Bind(tr.flatImage);
+		// hack: use TB_NORMALMAP image when r_normalMapping is enabled and there is no deluxe map available
+		if (r_normalMapping->integer && !tr.worldDeluxeMapping && pStage->bundle[TB_NORMALMAP].image[0] != NULL)
+		{
+			GL_Bind(pStage->bundle[TB_NORMALMAP].image[0]);
+		}
+		else
+		{
+			GL_Bind(tr.flatImage);
+		}
 		return;
 	}
 
@@ -822,12 +830,6 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 
 	GL_State(stateBits);
 
-	// enable by cvar - if there's no image tr.flatImage is used
-	if (!r_normalMapping->integer)
-	{
-		normalMapping = qfalse;
-	}
-
 	// choose right shader program ----------------------------------
 	SetMacrosAndSelectProgram(trProg.gl_lightMappingShader,
 	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
@@ -905,12 +907,12 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 
 		// bind u_DeluxeMap
 		SelectTexture(TEX_DELUXE);
-		BindDeluxeMap();
+		BindDeluxeMap(pStage);
 	}
 	else if (r_showDeluxeMaps->integer == 1)
 	{
 		SelectTexture(TEX_DELUXE);
-		BindDeluxeMap();
+		BindDeluxeMap(pStage);
 	}
 
 	// bind u_LightMap
