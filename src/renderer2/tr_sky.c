@@ -938,6 +938,11 @@ void RB_DrawSun(void)
 	mat4_t transformMatrix;
 	mat4_t modelViewMatrix;
 
+	if (!tr.sunShader)
+	{
+		return;
+	}
+
 	if (!backEnd.skyRenderedThisView)
 	{
 		return;
