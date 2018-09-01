@@ -485,8 +485,14 @@ void R_AddBSPModelSurfaces(trRefEntity_t *ent)
 		for (i = 0; i < bspModel->numVBOSurfaces; i++)
 		{
 			vboSurface = bspModel->vboSurfaces[i];
-
-			R_AddDrawSurf((surfaceType_t *) vboSurface, vboSurface->shader, vboSurface->lightmapNum, fogNum);
+			if (ent->e.customShader)
+			{
+				R_AddDrawSurf((surfaceType_t *)vboSurface, R_GetShaderByHandle(ent->e.customShader), vboSurface->lightmapNum, fogNum);
+			}
+			else
+			{
+				R_AddDrawSurf((surfaceType_t *)vboSurface, vboSurface->shader, vboSurface->lightmapNum, fogNum);
+			}
 		}
 
 		// also add surfaces like deform autosprite
