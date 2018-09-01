@@ -106,12 +106,12 @@ void multi_trigger(gentity_t *ent, gentity_t *activator)
 		}
 	}
 
-	G_Script_ScriptEvent(ent, "activate", NULL);
-
 	if (ent->nextthink)
 	{
 		return;     // can't retrigger until the wait is over
 	}
+
+	G_Script_ScriptEvent(ent, "activate", NULL);
 
 	G_UseTargets(ent, ent->activator);
 
