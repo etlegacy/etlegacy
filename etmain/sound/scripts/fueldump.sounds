@@ -1,0 +1,265 @@
+// news reel
+
+news_fueldump
+{
+	sound sound/vo/fueldump/news_fueldump.wav
+	voice
+	streaming
+}
+
+
+// allied commander
+
+fueldump_allies_bridge_construct
+{
+	sound sound/vo/fueldump/allies/hq_bridgecon.wav
+	voice
+	streaming
+}
+
+fueldump_allies_bridge_constructed
+{
+	sound sound/vo/fueldump/allies/hq_bridgeconst.wav
+	voice
+	streaming
+}
+
+fueldump_allies_bridge_reinforce
+{
+	sound sound/vo/fueldump/allies/hq_bridgereinf.wav
+	voice
+	streaming
+}
+
+fueldump_allies_bridge_reinforced
+{
+	sound sound/vo/fueldump/allies/hq_bridgereinfd.wav
+	voice
+	streaming
+}
+
+fueldump_allies_bridge_damaged
+{
+	sound sound/vo/fueldump/allies/hq_bridgedam.wav
+	voice
+	streaming
+}
+
+fueldump_allies_bridge_destroyed
+{
+	sound sound/vo/fueldump/allies/hq_bridgedest.wav
+	voice
+	streaming
+}
+
+fueldump_allies_depotdef_destroy
+{
+	sound sound/vo/fueldump/allies/hq_depotdyn.wav
+	voice
+	streaming
+}
+
+fueldump_allies_depotdef_destroyed
+{
+	sound sound/vo/fueldump/allies/hq_depotdest.wav
+	voice
+	streaming
+}
+
+fueldump_allies_gates_destroyed
+{
+	sound sound/vo/fueldump/allies/hq_gatesdest.wav
+	voice
+	streaming
+}
+
+fueldump_allies_grate_destroyed
+{
+	sound sound/vo/fueldump/allies/hq_gratedest.wav
+	voice
+	streaming
+}
+
+fueldump_allies_tunnel_destroyed
+{
+	sound sound/vo/fueldump/allies/hq_tunneldest.wav
+	voice
+	streaming
+}
+
+fueldump_allies_wall_destroyed
+{
+	sound sound/vo/fueldump/allies/hq_walldest.wav
+	voice
+	streaming
+}
+
+fueldump_allies_fueldump_destroy
+{
+	sound sound/vo/fueldump/allies/hq_dumpdyn.wav
+	voice
+	streaming
+}
+
+fueldump_allies_tank_bridge
+{
+	sound sound/vo/fueldump/allies/hq_tankbridge.wav
+	voice
+	streaming
+}
+
+fueldump_allies_tank_depot
+{
+	sound sound/vo/fueldump/allies/hq_tankgates.wav
+	voice
+	streaming
+}
+
+fueldump_allies_tank_reardepot
+{
+	sound sound/vo/fueldump/allies/hq_tankrear.wav
+	voice
+	streaming
+}
+
+// axis commander
+
+fueldump_axis_bridge_stop
+{
+	sound sound/vo/fueldump/axis/hq_bridgestop.wav
+	voice
+	streaming
+}
+
+fueldump_axis_bridge_destroy
+{
+	sound sound/vo/fueldump/axis/hq_bridgeconst.wav
+	voice
+	streaming
+}
+
+fueldump_axis_bridge_destroyed
+{
+	sound sound/vo/fueldump/axis/hq_bridgedest.wav
+	voice
+	streaming
+}
+
+fueldump_axis_bridge_damaged
+{
+	sound sound/vo/fueldump/axis/hq_bridgedam.wav
+	voice
+	streaming
+}
+
+fueldump_axis_bridge_repaired
+{
+	sound sound/vo/fueldump/axis/hq_bridgerep.wav
+	voice
+	streaming
+}
+
+fueldump_axis_bridge_reinforced
+{
+	sound sound/vo/fueldump/axis/hq_bridgereinf.wav
+	voice
+	streaming
+}
+
+fueldump_axis_depotdef_construct
+{
+	sound sound/vo/fueldump/axis/hq_depotcon.wav
+	voice
+	streaming
+}
+
+fueldump_axis_depotdef_constructed
+{
+	sound sound/vo/fueldump/axis/hq_depotconst.wav
+	voice
+	streaming
+}
+
+fueldump_axis_depotdef_breached
+{
+	sound sound/vo/fueldump/axis/hq_depotbreach.wav
+	voice
+	streaming
+}
+
+fueldump_axis_depotdef_destroyed
+{
+	sound sound/vo/fueldump/axis/hq_depotdest.wav
+	voice
+	streaming
+}
+
+fueldump_axis_gates_stop
+{
+	sound sound/vo/fueldump/axis/hq_gatesstop.wav
+	voice
+	streaming
+}
+
+fueldump_axis_gates_destroyed
+{
+	sound sound/vo/fueldump/axis/hq_gatesdest.wav
+	voice
+	streaming
+}
+
+fueldump_axis_grate_destroyed
+{
+	sound sound/vo/fueldump/axis/hq_gratedest.wav
+	voice
+	streaming
+}
+
+fueldump_axis_tank_bridge
+{
+	sound sound/vo/fueldump/axis/hq_tankbridge.wav
+	voice
+	streaming
+}
+
+fueldump_axis_tank_tunnel
+{
+	sound sound/vo/fueldump/axis/hq_tanktunnels.wav
+	voice
+	streaming
+}
+
+fueldump_axis_tunnel_stop
+{
+	sound sound/vo/fueldump/axis/hq_tunnelstop.wav
+	voice
+	streaming
+}
+
+fueldump_axis_tunnel_destroyed
+{
+	sound sound/vo/fueldump/axis/hq_tunneldest.wav
+	voice
+	streaming
+}
+
+fueldump_axis_wall_stop
+{
+	sound sound/vo/fueldump/axis/hq_wallstop.wav
+	voice
+	streaming
+}
+
+fueldump_axis_wall_destroyed
+{
+	sound sound/vo/fueldump/axis/hq_walldest.wav
+	voice
+	streaming
+}
+
+fueldump_axis_fueldump_defend
+{
+	sound sound/vo/fueldump/axis/hq_dumpdef.wav
+	voice
+	streaming
+}

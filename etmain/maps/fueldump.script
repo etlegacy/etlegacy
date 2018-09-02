@@ -2410,6 +2410,8 @@ tank
 		accum 1 bitreset 2
 		trigger self run_incpos
 		trigger self run_continue
+
+		wm_teamvoiceannounce 0 "fueldump_axis_tank_tunnel"
 	}
 
 	trigger run_62
