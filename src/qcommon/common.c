@@ -3449,8 +3449,6 @@ void Com_Frame(void)
 		timeBeforeClient = timeAfter;
 	}
 
-	NET_FlushPacketQueue();
-
 	// watchdog
 	Com_WatchDog();
 

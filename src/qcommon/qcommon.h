@@ -227,8 +227,6 @@ void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to);
 void QDECL NET_OutOfBandPrint(netsrc_t sock, netadr_t adr, const char *format, ...);
 void QDECL NET_OutOfBandData(netsrc_t sock, netadr_t adr, const char *format, int len);
 
-void NET_FlushPacketQueue(void);
-
 qboolean NET_CompareAdr(netadr_t a, netadr_t b);
 qboolean NET_CompareBaseAdr(netadr_t a, netadr_t b);
 qboolean NET_IsLocalAddress(netadr_t adr);

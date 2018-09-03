@@ -492,93 +492,6 @@ void NET_SendLoopPacket(netsrc_t sock, int length, const void *data, netadr_t to
 
 //=============================================================================
 
-/**
- * @struct packetQueue_s
- */
-typedef struct packetQueue_s
-{
-	struct packetQueue_s *next;
-	int length;
-	byte *data;
-	netadr_t to;
-	int release;
-} packetQueue_t;
-
-packetQueue_t *packetQueue = NULL;
-
-/**
- * @brief NET_QueuePacket
- * @param[in] length
- * @param[in] data
- * @param[in] to
- * @param[in] offset
- */
-static void NET_QueuePacket(int length, const void *data, netadr_t to,
-                            int offset)
-{
-	packetQueue_t *new, *next = packetQueue;
-
-	if (offset > 999)
-	{
-		offset = 999;
-	}
-
-	new       = S_Malloc(sizeof(packetQueue_t));
-	new->data = S_Malloc(length);
-	Com_Memcpy(new->data, data, length);
-	new->length = length;
-	new->to     = to;
-	new->next   = NULL;
-
-	if (com_timescale->value > 0.0f)
-	{
-		new->release = Sys_Milliseconds() + (int)((float)offset / com_timescale->value);
-	}
-	else
-	{
-		new->release = Sys_Milliseconds() + offset;
-	}
-
-	if (!packetQueue)
-	{
-		packetQueue = new;
-		return;
-	}
-	while (next)
-	{
-		if (!next->next)
-		{
-			next->next = new;
-			return;
-		}
-		next = next->next;
-	}
-}
-
-/**
- * @brief NET_FlushPacketQueue
- */
-void NET_FlushPacketQueue(void)
-{
-	packetQueue_t *last;
-	int           now;
-
-	while (packetQueue)
-	{
-		now = Sys_Milliseconds();
-		if (packetQueue->release >= now)
-		{
-			break;
-		}
-		Sys_SendPacket(packetQueue->length, packetQueue->data,
-		               packetQueue->to);
-		last        = packetQueue;
-		packetQueue = packetQueue->next;
-		Z_Free(last->data);
-		Z_Free(last);
-	}
-}
-
 extern cvar_t *sv_packetloss;
 extern cvar_t *sv_packetdelay;
 #ifndef DEDICATED
@@ -613,116 +526,122 @@ static delaybuf_t *cl_delaybuf_tail = NULL;
 void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 {
 	// network debugging
-	int        packetloss, packetdelay;
-	delaybuf_t **delaybuf_head, **delaybuf_tail;
-
-	switch (sock)
-	{
+	if (sv_packetloss->integer || sv_packetdelay->integer
 #ifndef DEDICATED
-	case NS_CLIENT:
-		packetloss = cl_packetloss->integer;
-		packetdelay = cl_packetdelay->integer;
-		delaybuf_head = &cl_delaybuf_head;
-		delaybuf_tail = &cl_delaybuf_tail;
-		break;
+			|| cl_packetloss->integer || cl_packetdelay->integer
 #endif
-	case NS_SERVER:
-		packetloss = sv_packetloss->integer;
-		packetdelay = sv_packetdelay->integer;
-		delaybuf_head = &sv_delaybuf_head;
-		delaybuf_tail = &sv_delaybuf_tail;
-		break;
-	default:
-		// shut up compiler for dedicated
-		packetloss = 0;
-		packetdelay = 0;
-		delaybuf_head = NULL;
-		delaybuf_tail = NULL;
-		break;
-	}
-
-	if (packetloss > 0)
+	)
 	{
-		if (((float)rand() / RAND_MAX) * 100 <= packetloss)
+		int        packetloss, packetdelay;
+		delaybuf_t **delaybuf_head, **delaybuf_tail;
+
+		switch (sock)
 		{
-			if (showpackets->integer)
+#ifndef DEDICATED
+		case NS_CLIENT:
+			packetloss = cl_packetloss->integer;
+			packetdelay = cl_packetdelay->integer;
+			delaybuf_head = &cl_delaybuf_head;
+			delaybuf_tail = &cl_delaybuf_tail;
+			break;
+#endif
+		case NS_SERVER:
+			packetloss = sv_packetloss->integer;
+			packetdelay = sv_packetdelay->integer;
+			delaybuf_head = &sv_delaybuf_head;
+			delaybuf_tail = &sv_delaybuf_tail;
+			break;
+		default:
+			// shut up compiler for dedicated
+			packetloss = 0;
+			packetdelay = 0;
+			delaybuf_head = NULL;
+			delaybuf_tail = NULL;
+			break;
+		}
+
+		if (packetloss > 0)
+		{
+			if (((float)rand() / RAND_MAX) * 100 <= packetloss)
 			{
-				Com_Printf("drop packet %4i\n", length);
+				if (showpackets->integer)
+				{
+					Com_Printf("drop packet %4i\n", length);
+				}
+				return;
 			}
+		}
+
+		if (packetdelay)
+		{
+			int curtime;
+			delaybuf_t *buf, *nextbuf;
+
+			curtime = Sys_Milliseconds();
+
+			//send any scheduled packets, starting from oldest
+			for (buf = *delaybuf_head; buf; buf = nextbuf)
+			{
+				if (buf->time + packetdelay > curtime)
+				{
+					break;
+				}
+
+				if (showpackets->integer)
+				{
+					Com_Printf( "delayed packet(%dms) %4i\n", buf->time - curtime, buf->length);
+				}
+
+				switch (buf->to.type)
+				{
+				case NA_BOT:
+				case NA_BAD:
+					break;
+				case NA_LOOPBACK:
+					NET_SendLoopPacket(buf->sock, buf->length, buf->data, buf->to);
+					break;
+				default:
+					Sys_SendPacket(buf->length, buf->data, buf->to);
+					break;
+				}
+
+				// remove from queue
+				nextbuf = buf->next;
+				*delaybuf_head = nextbuf;
+				if (!*delaybuf_head)
+				{
+					*delaybuf_tail = NULL;
+				}
+				Z_Free(buf);
+			}
+
+			// create buffer and add it to the queue
+			buf = (delaybuf_t *) Z_Malloc(sizeof(*buf));
+			if (!buf)
+			{
+				Com_Error(ERR_FATAL, "Couldn't allocate packet delay buffer\n" );
+			}
+
+			buf->sock = sock;
+			buf->length = length;
+			Com_Memcpy(buf->data, data, length);
+			buf->to = to;
+			buf->time = curtime;
+			buf->next = NULL;
+
+			if (*delaybuf_head)
+			{
+				(*delaybuf_tail)->next = buf;
+			}
+			else
+			{
+				*delaybuf_head = buf;
+			}
+			*delaybuf_tail = buf;
+
 			return;
 		}
 	}
-
-	if (packetdelay)
-	{
-		int curtime;
-		delaybuf_t *buf, *nextbuf;
-
-		curtime = Sys_Milliseconds();
-
-		//send any scheduled packets, starting from oldest
-		for (buf = *delaybuf_head; buf; buf = nextbuf)
-		{
-			if (buf->time + packetdelay > curtime)
-			{
-				break;
-			}
-
-			if (showpackets->integer)
-			{
-				Com_Printf( "delayed packet(%dms) %4i\n", buf->time - curtime, buf->length);
-			}
-
-			switch (buf->to.type)
-			{
-			case NA_BOT:
-			case NA_BAD:
-				break;
-			case NA_LOOPBACK:
-				NET_SendLoopPacket(buf->sock, buf->length, buf->data, buf->to);
-				break;
-			default:
-				Sys_SendPacket(buf->length, buf->data, buf->to);
-				break;
-			}
-
-			// remove from queue
-			nextbuf = buf->next;
-			*delaybuf_head = nextbuf;
-			if (!*delaybuf_head)
-			{
-				*delaybuf_tail = NULL;
-			}
-			Z_Free(buf);
-		}
-
-		// create buffer and add it to the queue
-		buf = (delaybuf_t *) Z_Malloc(sizeof(*buf));
-		if (!buf)
-		{
-			Com_Error(ERR_FATAL, "Couldn't allocate packet delay buffer\n" );
-		}
-
-		buf->sock = sock;
-		buf->length = length;
-		Com_Memcpy(buf->data, data, length);
-		buf->to = to;
-		buf->time = curtime;
-		buf->next = NULL;
-
-		if (*delaybuf_head)
-		{
-			(*delaybuf_tail)->next = buf;
-		}
-		else
-		{
-			*delaybuf_head = buf;
-		}
-		*delaybuf_tail = buf;
-
-		return;
-	}
-	// network debugging end
 
 	// sequenced packets are shown in netchan, so just show oob
 	if (showpackets->integer && *(int *)data == -1)
