@@ -447,6 +447,7 @@ extern cvar_t *sv_wwwDlDisconnected;
 extern cvar_t *sv_wwwFallbackURL;
 
 extern cvar_t *sv_cheats;
+extern cvar_t *sv_packetloss;
 extern cvar_t *sv_packetdelay;
 
 extern cvar_t *sv_dlRate;
