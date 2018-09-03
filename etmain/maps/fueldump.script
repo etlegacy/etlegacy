@@ -211,6 +211,12 @@ game_manager
 		// *---------------------------------------------------------------------------------*
 	}
 
+	trigger objective_tank_enters_tunnel
+	{
+		wm_teamvoiceannounce 0 "fueldump_axis_tank_tunnel"
+		wm_teamvoiceannounce 0 "axis_hq_tank_stop"
+	}
+
 	trigger checkgame
 	{
 		accum 1 abort_if_not_equal 1
@@ -2394,6 +2400,8 @@ tank
 	//-----------------------------------------------------------------------
 	trigger run_60
 	{
+		trigger game_manager objective_tank_enters_tunnel
+
 		accum 1 bitset 2
 		trigger tank_turret2 run_60
 
@@ -2410,8 +2418,6 @@ tank
 		accum 1 bitreset 2
 		trigger self run_incpos
 		trigger self run_continue
-
-		wm_teamvoiceannounce 0 "fueldump_axis_tank_tunnel"
 	}
 
 	trigger run_62
