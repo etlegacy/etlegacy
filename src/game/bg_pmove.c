@@ -2313,7 +2313,11 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 	pm->ps->weaponstate = WEAPON_RELOADING;
 
 	// FIXME: Currently, the rifle nade play an extra reload sound which wasn't used before. Maybe we should get ride of this in pak0.
-	PM_AddEvent(EV_FILL_CLIP);      // play reload sound
+	// once theses sound remove, we can remove this check below
+	if (GetWeaponTableData(weapon)->useClip)
+	{
+		PM_AddEvent(EV_FILL_CLIP);      // play reload sound
+	}
 }
 
 static void PM_ReloadClip(weapon_t weapon);
