@@ -700,7 +700,7 @@ void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 		buf = (delaybuf_t *) Z_Malloc(sizeof(*buf));
 		if (!buf)
 		{
-			Com_Error( ERR_FATAL, "Couldn't allocate packet delay buffer\n" );
+			Com_Error(ERR_FATAL, "Couldn't allocate packet delay buffer\n" );
 		}
 
 		buf->sock = sock;
@@ -744,18 +744,7 @@ void NET_SendPacket(netsrc_t sock, int length, const void *data, netadr_t to)
 		return;
 	}
 
-	if (sock == NS_CLIENT && cl_packetdelay->integer > 0)
-	{
-		NET_QueuePacket(length, data, to, cl_packetdelay->integer);
-	}
-	else if (sock == NS_SERVER && sv_packetdelay->integer > 0)
-	{
-		NET_QueuePacket(length, data, to, sv_packetdelay->integer);
-	}
-	else
-	{
-		Sys_SendPacket(length, data, to);
-	}
+	Sys_SendPacket(length, data, to);
 }
 
 /**
