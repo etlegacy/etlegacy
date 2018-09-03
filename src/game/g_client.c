@@ -1026,7 +1026,7 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += GetWeaponTableData(weaponNum)->maxClip;
 		}
-        
+
 		if (client->sess.playerType == PC_MEDIC && client->sess.skill[SK_FIRST_AID] < 1)   // NOTE: medic start with 1 clip less until skill is not reach
 		{
 			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] -= GetWeaponTableData(weaponNum)->maxClip;
@@ -1045,14 +1045,14 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 		{
 			if (client->sess.skill[SK_EXPLOSIVES_AND_CONSTRUCTION] >= 1)
 			{
-				client->ps.ammoclip[GetWeaponTableData(weaponNum)->ammoIndex] += 4;
+				client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += 4;
 			}
 		}
 		if (client->sess.playerType == PC_MEDIC)
 		{
 			if (client->sess.skill[SK_FIRST_AID] >= 1)
 			{
-				client->ps.ammoclip[GetWeaponTableData(weaponNum)->ammoIndex] += 1;
+				client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += 1;
 			}
 		}
 	}
@@ -1060,7 +1060,7 @@ static void AddExtraSpawnAmmo(gclient_t *client, weapon_t weaponNum)
 	{
 		if (client->sess.skill[SK_FIRST_AID] >= 2)
 		{
-			client->ps.ammoclip[GetWeaponTableData(weaponNum)->ammoIndex] += 2;
+			client->ps.ammo[GetWeaponTableData(weaponNum)->ammoIndex] += 2;
 		}
 	}
 	else if (GetWeaponTableData(GetWeaponTableData(weaponNum)->weapAlts)->isScoped)
@@ -1180,7 +1180,7 @@ void SetWolfSpawnWeapons(gclient_t *client)
 	//
 	// grenade
 	//
-	AddWeaponToPlayer(client, classInfo->classGrenadeWeapon, 0, classInfo->defaultGrenadeCount, qfalse);
+	AddWeaponToPlayer(client, classInfo->classGrenadeWeapon, classInfo->defaultGrenadeCount, 0, qfalse);
 
 	//
 	// primary weapon

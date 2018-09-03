@@ -648,8 +648,8 @@ void CG_ReadHudScripts(void)
 // HUD DRAWING FUNCTIONS BELLOW
 
 vec4_t HUD_Background = { 0.16f, 0.2f, 0.17f, 0.8f };
-vec4_t HUD_Border = { 0.5f, 0.5f, 0.5f, 0.5f };
-vec4_t HUD_Text = { 0.6f, 0.6f, 0.6f, 1.0f };
+vec4_t HUD_Border     = { 0.5f, 0.5f, 0.5f, 0.5f };
+vec4_t HUD_Text       = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 /**
  * @brief CG_DrawPicShadowed
@@ -786,11 +786,21 @@ static void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 	}
 
 	// total ammo in clips
-	*clips = cg.snap->ps.ammo[GetWeaponTableData(weap)->ammoIndex];
+	if (GetWeaponTableData(weap)->useClip)
+	{
+		// current reserve
+		*clips = cg.snap->ps.ammo[GetWeaponTableData(weap)->ammoIndex];
 
-	// current clip
-	*ammo = ps->ammoclip[GetWeaponTableData(weap)->clipIndex];
+		// current clip
+		*ammo = ps->ammoclip[GetWeaponTableData(weap)->clipIndex];
+	}
+	else
+	{
+		// some weapons don't draw ammo clip count text
+		*ammo = ps->ammoclip[GetWeaponTableData(weap)->clipIndex] + cg.snap->ps.ammo[GetWeaponTableData(weap)->ammoIndex];
+	}
 
+	// akimbo ammo clip
 	if (GetWeaponTableData(weap)->isAkimbo)
 	{
 		*akimboammo = ps->ammoclip[GetWeaponTableData(GetWeaponTableData(weap)->akimboSideArm)->clipIndex];
@@ -817,16 +827,6 @@ static void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo)
 				*ammo = cgs.gameManager->currentState.otherEntityNum2;
 			}
 		}
-	}
-	else if (GetWeaponTableData(weap)->isMortar || GetWeaponTableData(weap)->isMortarSet || GetWeaponTableData(weap)->isPanzer)
-	{
-		*ammo += *clips;
-	}
-
-	// some weapons don't draw ammo clip count text
-	if (!GetWeaponTableData(weap)->useClip)
-	{
-		*clips = -1;
 	}
 }
 
@@ -2379,7 +2379,7 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 
 	sampledStat.avg = sampledStat.samplesTotalElpased > 0
 	                  ? (int) (sampledStat.count / (sampledStat.samplesTotalElpased / 1000.0f) + 0.5f)
-					  : 0;
+	                  : 0;
 }
 
 /**
@@ -2617,12 +2617,12 @@ static float CG_DrawLagometer(float y)
 
 	// add snapshots/s in top-right corner of meter
 	{
-		char      buf[8];
-		int       fps;
-		vec4_t    *color;
+		char   buf[8];
+		int    fps;
+		vec4_t *color;
 
 		trap_Cvar_VariableStringBuffer("sv_fps", buf, sizeof(buf));
-		fps     = atoi(buf);
+		fps = atoi(buf);
 
 		if (sampledStat.avg < fps * 0.5f)
 		{
