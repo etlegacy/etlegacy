@@ -618,7 +618,7 @@ int ClientNumberFromString(gentity_t *to, char *s)
  * @param[in] skill
  * @return
  */
-int GetSkillPointUntilLevelUp(gentity_t *ent, skillType_t skill)
+float GetSkillPointUntilLevelUp(gentity_t *ent, skillType_t skill)
 {
 	if (ent->client->sess.skill[skill] < NUM_SKILL_LEVELS - 1)
 	{
@@ -629,7 +629,7 @@ int GetSkillPointUntilLevelUp(gentity_t *ent, skillType_t skill)
 		{
 			if (GetSkillTableData(skill)->skillLevels[ent->client->sess.skill[skill] + x] >= 0)
 			{
-				return (int)(GetSkillTableData(skill)->skillLevels[ent->client->sess.skill[skill] + x] - ent->client->sess.skillpoints[skill]);
+				return GetSkillTableData(skill)->skillLevels[ent->client->sess.skill[skill] + x] - ent->client->sess.skillpoints[skill];
 			}
 		}
 	}
@@ -683,6 +683,7 @@ void Cmd_Give_f(gentity_t *ent)
 	if (Q_stricmpn(name, "skill", 5) == 0)
 	{
 		skillType_t skill;
+        float points;
 
 		if ((ent->client->sess.sessionTeam != TEAM_ALLIES && ent->client->sess.sessionTeam != TEAM_AXIS) || g_gamestate.integer != GS_PLAYING)
 		{
@@ -697,20 +698,20 @@ void Cmd_Give_f(gentity_t *ent)
 			if (skill >= SK_BATTLE_SENSE && skill < SK_NUM_SKILLS)
 			{
 				// Detecting the correct amount to move to the next skill level
-				amount = GetSkillPointUntilLevelUp(ent, skill);
-				if (amount < 0)
+				points = GetSkillPointUntilLevelUp(ent, skill);
+				if (points < 0)
 				{
-					amount = 20;
+					points = 20;
 				}
 
-				G_AddSkillPoints(ent, skill, amount);
-				G_DebugAddSkillPoints(ent, skill, amount, "give skill");
+				G_AddSkillPoints(ent, skill, points);
+				G_DebugAddSkillPoints(ent, skill, points, "give skill");
 
 				trap_SendServerCommand(ent - g_entities, va("print \"give skill: Skill %i increased - %i points have been added.\n\"", skill, amount));
 			}
 			else
 			{
-				trap_SendServerCommand(ent - g_entities, va("print \"give skill <skill_no>: No valid skill '%i' (0-5).\n\"", skill));
+				trap_SendServerCommand(ent - g_entities, va("print \"give skill <skill_no>: No valid skill '%i' (0-6).\n\"", skill));
 			}
 		}
 		else
@@ -719,14 +720,14 @@ void Cmd_Give_f(gentity_t *ent)
 			for (skill = SK_BATTLE_SENSE; skill < SK_NUM_SKILLS; skill++)
 			{
 				// Detecting the correct amount to move to the next skill level
-				amount = GetSkillPointUntilLevelUp(ent, skill);
-				if (amount < 0)
+				points = GetSkillPointUntilLevelUp(ent, skill);
+				if (points < 0)
 				{
-					amount = 20;
+					points = 20;
 				}
 
-				G_AddSkillPoints(ent, skill, amount);
-				G_DebugAddSkillPoints(ent, skill, amount, "give skill");
+				G_AddSkillPoints(ent, skill, points);
+				G_DebugAddSkillPoints(ent, skill, points, "give skill");
 			}
 			trap_SendServerCommand(ent - g_entities, va("print \"give skill: All skills increased by 1 level.\n\""));
 		}
