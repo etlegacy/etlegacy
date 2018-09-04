@@ -2275,7 +2275,6 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 	}
 
 	// easier check now that the animation system handles the specifics
-	// TODO: this check seem useless ! throwable weapon don't enter in this function
 	if (!GetWeaponTableData(weapon)->isThrowable)
 	{
 		// override current animation (so reloading after firing will work)
@@ -2312,7 +2311,13 @@ static void PM_BeginWeaponReload(weapon_t weapon)
 	}
 
 	pm->ps->weaponstate = WEAPON_RELOADING;
-	PM_AddEvent(EV_FILL_CLIP);      // play reload sound
+
+	// FIXME: Currently, the rifle nade play an extra reload sound which wasn't used before. Maybe we should get ride of this in pak0.
+	// once theses sound remove, we can remove this check below
+	if (GetWeaponTableData(weapon)->useClip)
+	{
+		PM_AddEvent(EV_FILL_CLIP);      // play reload sound
+	}
 }
 
 static void PM_ReloadClip(weapon_t weapon);
@@ -2400,14 +2405,7 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 	{
 		PM_StartWeaponAnim(GetWeaponTableData(oldWeapon)->altSwitchFrom);
 
-		if (GetWeaponTableData(oldWeapon)->isRifle)
-		{
-			if (!pm->ps->ammoclip[newWeapon] && pm->ps->ammo[newWeapon])
-			{
-				PM_ReloadClip(newWeapon);
-			}
-		}
-		else if (GetWeaponTableData(oldWeapon)->isMG || GetWeaponTableData(oldWeapon)->isMortar)
+		if (GetWeaponTableData(oldWeapon)->isMG || GetWeaponTableData(oldWeapon)->isMortar)
 		{
 			vec3_t axis[3];
 
@@ -2612,8 +2610,8 @@ void PM_CheckForReload(weapon_t weapon)
 		return;
 	}
 
-	// some weapons don't reload
-	if (!GetWeaponTableData(weapon)->isReload)
+	// some weapons don't use ammo and no need to reload
+	if (!GetWeaponTableData(weapon)->useAmmo)
 	{
 		return;
 	}
@@ -2694,35 +2692,23 @@ static void PM_SwitchIfEmpty(void)
 	}
 
 	// In multiplayer, pfaust fires once then switches to pistol since it's useless for a while
+	// WP_M7 and WP_GPG40 run out of ammo immediately after firing their grenade
 	// after throwing landmine, let switch to pliers
-	if (GetWeaponTableData(pm->ps->weapon)->useAmmo && !GetWeaponTableData(pm->ps->weapon)->isPanzer && pm->ps->weapon != WP_LANDMINE)
+	if (GetWeaponTableData(pm->ps->weapon)->useAmmo
+	    && !GetWeaponTableData(pm->ps->weapon)->isRiflenade
+	    && !GetWeaponTableData(pm->ps->weapon)->isPanzer
+	    && pm->ps->weapon != WP_LANDMINE)
 	{
-		// WP_M7 and WP_GPG40 run out of ammo immediately after firing their last grenade
-		if (GetWeaponTableData(pm->ps->weapon)->isRiflenade)
+		// use clip and still got ammo in clip
+		if (GetWeaponTableData(pm->ps->weapon)->useClip && pm->ps->ammoclip[GetWeaponTableData(pm->ps->weapon)->clipIndex])
 		{
-			if (pm->ps->ammoclip[GetWeaponTableData(pm->ps->weapon)->clipIndex])
-			{
-				return;
-			}
+			return;
 		}
-		else if (GetWeaponTableData(pm->ps->weapon)->isMortarSet)                   // the ammo from mortar are stored in the mortar (not mortar set)
-		{
-			if (pm->ps->ammo[GetWeaponTableData(pm->ps->weapon)->weapAlts])
-			{
-				return;
-			}
-		}
-		else
-		{
-			if (pm->ps->ammoclip[GetWeaponTableData(pm->ps->weapon)->clipIndex])    // still got ammo in clip
-			{
-				return;
-			}
 
-			if (pm->ps->ammo[GetWeaponTableData(pm->ps->weapon)->ammoIndex])        // still got ammo in reserve
-			{
-				return;
-			}
+		// still got ammo in reserve
+		if (pm->ps->ammo[GetWeaponTableData(pm->ps->weapon)->ammoIndex])
+		{
+			return;
 		}
 	}
 
