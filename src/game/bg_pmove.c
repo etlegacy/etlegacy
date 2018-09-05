@@ -2376,9 +2376,10 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 
 	if (GetWeaponTableData(newWeapon)->isRifle)
 	{
-		if (newWeapon != GetWeaponTableData(oldWeapon)->weapAlts)
+        // don't send change weapon event after firing with riflenade
+		if (GetWeaponTableData(oldWeapon)->weapAlts != newWeapon || pm->ps->ammoclip[GetWeaponTableData(oldWeapon)->ammoIndex])
 		{
-			PM_AddEvent(EV_CHANGE_WEAPON);
+		    PM_AddEvent(EV_CHANGE_WEAPON);
 		}
 	}
 	else if (GetWeaponTableData(newWeapon)->isMortarSet)
@@ -2405,7 +2406,7 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 	{
 		PM_StartWeaponAnim(GetWeaponTableData(oldWeapon)->altSwitchFrom);
 
-		if (GetWeaponTableData(oldWeapon)->isMG || GetWeaponTableData(oldWeapon)->isMortar)
+		if (GetWeaponTableData(newWeapon)->isSetWeapon)
 		{
 			vec3_t axis[3];
 
