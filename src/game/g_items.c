@@ -401,7 +401,7 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 	ent2 = LaunchItem(item, org, velocity, client->ps.clientNum);
 	COM_BitClear(client->ps.weapons, weapon);
 
-	if (GetWeaponTableData(weapon)->weapAlts != WP_NONE)
+	if (GetWeaponTableData(weapon)->weapAlts)
 	{
 		weapon_t weapAlts = GetWeaponTableData(weapon)->weapAlts;
 
@@ -571,7 +571,7 @@ int Pickup_Weapon(gentity_t *ent, gentity_t *other)
 				COM_BitSet(other->client->ps.weapons, ent->item->giWeapon);
 
 				// fixup mauser/sniper issues
-				if (GetWeaponTableData(ent->item->giWeapon)->weapAlts != WP_NONE)
+				if (GetWeaponTableData(ent->item->giWeapon)->weapAlts)
 				{
 					weapon_t weapAlts = GetWeaponTableData(ent->item->giWeapon)->weapAlts;
 

@@ -3853,7 +3853,7 @@ qboolean CG_LimboPanel_RealWeaponIsDisabled(weapon_t weapon)
 		return qfalse;
 	}
 
-	if (GetWeaponTableData(weapon)->weapAlts != WP_NONE)
+	if (GetWeaponTableData(weapon)->weapAlts)
 	{
 		// add alt weapons
 		wcount += CG_LimboPanel_TeamCount(GetWeaponTableData(weapon)->weapAlts);

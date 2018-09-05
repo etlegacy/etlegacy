@@ -864,7 +864,7 @@ static int _et_RemoveWeaponFromPlayer(lua_State *L)
 
 	COM_BitClear(ent->client->ps.weapons, weapon);
 
-	if (GetWeaponTableData(weapon)->weapAlts != WP_NONE)
+	if (GetWeaponTableData(weapon)->weapAlts)
 	{
 		weapon_t weapAlts = GetWeaponTableData(weapon)->weapAlts;
 

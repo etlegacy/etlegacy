@@ -1762,7 +1762,7 @@ qboolean G_IsWeaponDisabled(gentity_t *ent, weapon_t weapon)
 		maxCount = ceil(maxCount * playerCount * 0.01);
 	}
 
-	if (GetWeaponTableData(weapon)->weapAlts != WP_NONE)
+	if (GetWeaponTableData(weapon)->weapAlts)
 	{
 		// add basic weapons
 		weaponCount += G_TeamCount(ent, GetWeaponTableData(weapon)->weapAlts);
@@ -1807,7 +1807,7 @@ void G_SetClientWeapons(gentity_t *ent, weapon_t w1, weapon_t w2, qboolean updat
 	}
 	else
 	{
-		if (ent->client->sess.latchPlayerWeapon != WP_NONE)
+		if (ent->client->sess.latchPlayerWeapon)
 		{
 			ent->client->sess.latchPlayerWeapon = WP_NONE;
 			changed                             = qtrue;
