@@ -206,10 +206,7 @@ void CG_AddLightstyle(centity_t *cent)
 	// normal global dlight
 	else
 	{
-		int g = ((cl >> 8) & 0xFF) / 255;
-		int b = ((cl >> 16) & 0xFF) / 255;
-
-		trap_R_AddLightToScene(cent->lerpOrigin, 256, lightval, r, g, b, 0, 0);
+		trap_R_AddLightToScene(cent->lerpOrigin, 256, lightval, r, ((cl >> 8) & 0xFF) / 255.f, ((cl >> 16) & 0xFF) / 255.f, 0, 0);
 	}
 }
 
