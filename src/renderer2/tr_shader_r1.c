@@ -334,8 +334,21 @@ qboolean ParseShaderR1(char *_text)
 			continue;
 		}
 		// skip noFragment
-		if (!Q_stricmp(token, "noFragment"))
+		else if (!Q_stricmp(token, "noFragment"))
 		{
+			continue;
+		}
+		else if (!Q_stricmp(token, "clampTime"))
+		{
+			token = COM_ParseExt(text, qfalse);
+			if (token[0])
+			{
+				shader.clampTime = atof(token);
+			}
+			else
+			{
+				Ren_Warning("WARNING: 'clampTime' incomplete - missing time value in shader '%s' - time not set.\n", shader.name);
+			}
 			continue;
 		}
 		// skip stuff that only the xmap needs

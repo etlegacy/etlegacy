@@ -51,7 +51,7 @@ static int numShaderFiles;   // R1 files
  * @brief R_RemapShader
  * @param[in] shaderName
  * @param[in] newShaderName
- * @param timeOffset - unused
+ * @param timeOffset
  */
 void R_RemapShader(const char *shaderName, const char *newShaderName, const char *timeOffset)
 {
@@ -102,6 +102,11 @@ void R_RemapShader(const char *shaderName, const char *newShaderName, const char
 				sh->remappedShader = NULL;
 			}
 		}
+	}
+	
+	if (timeOffset)
+	{
+		sh2->timeOffset = atoi(timeOffset);
 	}
 }
 
@@ -4009,8 +4014,21 @@ static qboolean ParseShader(char *_text)
 			continue;
 		}
 		// skip noFragment
-		if (!Q_stricmp(token, "noFragment"))
+		else if (!Q_stricmp(token, "noFragment"))
 		{
+			continue;
+		}
+		else if (!Q_stricmp(token, "clampTime"))
+		{
+			token = COM_ParseExt(text, qfalse);
+			if (token[0])
+			{
+				shader.clampTime = atof(token);
+			}
+			else
+			{
+				Ren_Warning("WARNING: 'clampTime' incomplete - missing time value in shader '%s' - time not set.\n", shader.name);
+			}
 			continue;
 		}
 		// skip stuff that only the xmap needs

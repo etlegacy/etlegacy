@@ -1491,6 +1491,9 @@ typedef struct shader_s
 	uint8_t numStages;
 	shaderStage_t *stages[MAX_SHADER_STAGES];
 
+	double clampTime;                                   ///< time this shader is clamped to // FIXME: double for time?
+	int timeOffset;                                     ///< current time offset for this shader
+
 	struct shader_s *remappedShader;    ///< current shader this one is remapped too
 
 	struct shader_s *next;
@@ -4207,6 +4210,8 @@ typedef struct shaderCommands_s
 
 	shader_t *surfaceShader;
 	shader_t *lightShader;
+
+	double shaderTime;
 
 	qboolean skipTangentSpaces;
 	qboolean skipVBO;

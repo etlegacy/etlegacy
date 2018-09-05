@@ -3225,7 +3225,7 @@ void GLSL_VertexAttribPointers(uint32_t attribBits)
 	{
 		// FIXME: this occures on maps for unknown reasons (uje_marketgarden + r_wolffog and
 		// and on radar when R_BuildCubemaps is called at start)
-		Ren_Warning("GLSL_VertexAttribPointers: no current VBO bound\n");
+		Ren_Warning("GLSL_VertexAttribPointers: no current VBO bound (attribBits %u)\n", attribBits);
 		return;
 		//Ren_Fatal("GLSL_VertexAttribPointers: no current VBO bound\n");
 	}

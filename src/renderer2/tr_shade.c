@@ -232,7 +232,7 @@ static void DrawTris()
 	if (tess.surfaceShader->numDeforms)
 	{
 		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
-		SetUniformFloat(UNIFORM_TIME, backEnd.refdef.floatTime);
+		SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
 	}
 
 	// bind u_ColorMap
@@ -330,6 +330,12 @@ void Tess_Begin(void (*stageIteratorFunc)(),
 	tess.skipVBO           = skipVBO;
 	tess.lightmapNum       = lightmapNum;
 	tess.fogNum            = fogNum;
+
+	tess.shaderTime = backEnd.refdef.floatTime - tess.surfaceShader->timeOffset;
+	if (tess.surfaceShader->clampTime && tess.shaderTime >= tess.surfaceShader->clampTime)
+	{
+		tess.shaderTime = tess.surfaceShader->clampTime;
+	}
 
 	Ren_LogComment("--- Tess_Begin( surfaceShader = %s, lightShader = %s, skipTangentSpaces = %i, lightmapNum = %i, fogNum = %i) ---\n", tess.surfaceShader->name, tess.lightShader ? tess.lightShader->name : NULL, tess.skipTangentSpaces, tess.lightmapNum, tess.fogNum);
 }
@@ -476,7 +482,7 @@ static void Render_generic(int stage)
 	if (tess.surfaceShader->numDeforms)
 	{
 		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
-		SetUniformFloat(UNIFORM_TIME, backEnd.refdef.floatTime);
+		SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
 	}
 
 	if (backEnd.viewParms.isPortal)
@@ -530,7 +536,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 	{
 		// u_DeformGen
 		//GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
-		SetUniformFloat(UNIFORM_TIME, backEnd.refdef.floatTime); // u_time
+		SetUniformFloat(UNIFORM_TIME, tess.shaderTime); // u_time
 	}
 
 	// now we are ready to set the shader program uniforms
@@ -739,7 +745,7 @@ static void Render_vertexLighting_DBS_world(int stage)
 	if (tess.surfaceShader->numDeforms)
 	{
 		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
-		SetUniformFloat(UNIFORM_TIME, backEnd.refdef.floatTime);
+		SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
 	}
 
 	rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
@@ -841,7 +847,7 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	if (tess.surfaceShader->numDeforms)
 	{
 		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
-		SetUniformFloat(UNIFORM_TIME, backEnd.refdef.floatTime);
+		SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
 	}
 
 	// set uniforms
@@ -996,7 +1002,7 @@ static void Render_depthFill(int stage)
 	if (tess.surfaceShader->numDeforms)
 	{
 		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
-		SetUniformFloat(UNIFORM_TIME, backEnd.refdef.floatTime);
+		SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
 	}
 
 	if (backEnd.viewParms.isPortal)
@@ -1086,7 +1092,7 @@ static void Render_shadowFill(int stage)
 	if (tess.surfaceShader->numDeforms)
 	{
 		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
-		SetUniformFloat(UNIFORM_TIME, backEnd.refdef.floatTime);
+		SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
 	}
 
 	if (backEnd.viewParms.isPortal)
@@ -1224,7 +1230,7 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	if (tess.surfaceShader->numDeforms)
 	{
 		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
-		SetUniformFloat(UNIFORM_TIME, backEnd.refdef.floatTime);
+		SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
 	}
 
 	if (backEnd.viewParms.isPortal)
@@ -1403,7 +1409,7 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	if (tess.surfaceShader->numDeforms)
 	{
 		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
-		SetUniformFloat(UNIFORM_TIME, backEnd.refdef.floatTime);
+		SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
 	}
 
 	if (backEnd.viewParms.isPortal)
@@ -1593,7 +1599,7 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	if (tess.surfaceShader->numDeforms)
 	{
 		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
-		SetUniformFloat(UNIFORM_TIME, backEnd.refdef.floatTime);
+		SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
 	}
 
 	if (backEnd.viewParms.isPortal)
@@ -2049,7 +2055,7 @@ static void Render_heatHaze(int stage)
 		if (tess.surfaceShader->numDeforms)
 		{
 			GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
-			SetUniformFloat(UNIFORM_TIME, backEnd.refdef.floatTime);
+			SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
 		}
 
 		if (backEnd.viewParms.isPortal)
@@ -2111,7 +2117,7 @@ static void Render_heatHaze(int stage)
 	if (tess.surfaceShader->numDeforms)
 	{
 		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
-		SetUniformFloat(UNIFORM_TIME, backEnd.refdef.floatTime);
+		SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
 	}
 
 	// bind u_NormalMap
@@ -2374,7 +2380,7 @@ static void Render_fog_brushes()
 	if (tess.surfaceShader->numDeforms)
 	{
 		GLSL_SetUniform_DeformParms(tess.surfaceShader->deforms, tess.surfaceShader->numDeforms);
-		SetUniformFloat(UNIFORM_TIME, backEnd.refdef.floatTime);
+		SetUniformFloat(UNIFORM_TIME, tess.shaderTime);
 	}
 
 	if (backEnd.viewParms.isPortal)
@@ -2599,7 +2605,7 @@ void Tess_ComputeColor(shaderStage_t *pStage)
 
 		if (wf->func == GF_NOISE)
 		{
-			glow = wf->base + R_NoiseGet4f(0, 0, 0, (backEnd.refdef.floatTime + wf->phase) * wf->frequency) * wf->amplitude;
+			glow = wf->base + R_NoiseGet4f(0, 0, 0, (tess.shaderTime + wf->phase) * wf->frequency) * wf->amplitude;
 		}
 		else
 		{

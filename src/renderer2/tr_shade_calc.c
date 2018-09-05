@@ -35,7 +35,7 @@
 
 #include "tr_local.h"
 
-#define WAVEVALUE(table, base, amplitude, phase, freq)  ((base) + table[(int64_t)((((phase) + backEnd.refdef.floatTime * (freq)) *FUNCTABLE_SIZE)) & FUNCTABLE_MASK] * (amplitude))
+#define WAVEVALUE(table, base, amplitude, phase, freq)  ((base) + table[(int64_t)((((phase) + tess.shaderTime * (freq)) * FUNCTABLE_SIZE)) & FUNCTABLE_MASK] * (amplitude))
 
 /**
  * @brief TableForFunc
@@ -125,7 +125,7 @@ static float GetOpValue(const expOperation_t *op)
 		value = op->value;
 		break;
 	case OP_TIME:
-		value = backEnd.refdef.floatTime;
+		value = tess.shaderTime;
 		break;
 	case OP_PARM0:
 		if (backEnd.currentLight)
@@ -591,17 +591,17 @@ void RB_CalcDeformNormals(deformStage_t *ds)
 	{
 		scale = 0.98;
 		scale = R_NoiseGet4f(xyz[0] * scale, xyz[1] * scale, xyz[2] * scale,
-		                     backEnd.refdef.floatTime * ds->deformationWave.frequency);
+				            tess.shaderTime * ds->deformationWave.frequency);
 		normal[0] += ds->deformationWave.amplitude * scale;
 
 		scale = 0.98;
 		scale = R_NoiseGet4f(100 + xyz[0] * scale, xyz[1] * scale, xyz[2] * scale,
-		                     backEnd.refdef.floatTime * ds->deformationWave.frequency);
+				             tess.shaderTime * ds->deformationWave.frequency);
 		normal[1] += ds->deformationWave.amplitude * scale;
 
 		scale = 0.98;
 		scale = R_NoiseGet4f(200 + xyz[0] * scale, xyz[1] * scale, xyz[2] * scale,
-		                     backEnd.refdef.floatTime * ds->deformationWave.frequency);
+		                     tess.shaderTime * ds->deformationWave.frequency);
 		normal[2] += ds->deformationWave.amplitude * scale;
 
 		VectorNormalizeFast(normal);
@@ -979,7 +979,7 @@ qboolean ShaderRequiresCPUDeforms(const shader_t *shader)
 			case DEFORM_WAVE:
 			case DEFORM_BULGE:
 				// need CPU deforms at high level-times to avoid floating point percision loss
-				return (backEnd.refdef.floatTime != (float)backEnd.refdef.floatTime);
+				return (backEnd.refdef.floatTime != (float)backEnd.refdef.floatTime); // tess.shaderTime?!
 			case DEFORM_MOVE:
 				break;
 			default:
@@ -1089,12 +1089,10 @@ void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix)
 			break;
 		case TMOD_TURBULENT:
 		{
-			waveForm_t *wf;
-
-			wf = &bundle->texMods[j].wave;
+			waveForm_t *wf = &bundle->texMods[j].wave;
 
 			x = (1.0 / 4.0);
-			y = (wf->phase + backEnd.refdef.floatTime * wf->frequency);
+			y = (wf->phase + tess.shaderTime * wf->frequency);
 
 			MatrixMultiplyScale(matrix, 1 + (wf->amplitude * sin(y) + wf->base) * x,
 			                    1 + (wf->amplitude * sin(y + 0.25f) + wf->base) * x, 0.0);
@@ -1102,8 +1100,8 @@ void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix)
 		}
 		case TMOD_ENTITY_TRANSLATE:
 		{
-			x = backEnd.currentEntity->e.shaderTexCoord[0] * backEnd.refdef.floatTime;
-			y = backEnd.currentEntity->e.shaderTexCoord[1] * backEnd.refdef.floatTime;
+			x = backEnd.currentEntity->e.shaderTexCoord[0] * tess.shaderTime;
+			y = backEnd.currentEntity->e.shaderTexCoord[1] * tess.shaderTime;
 
 			// clamp so coordinates don't continuously get larger, causing problems
 			// with hardware limits
@@ -1115,8 +1113,8 @@ void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix)
 		}
 		case TMOD_SCROLL:
 		{
-			x = bundle->texMods[j].scroll[0] * backEnd.refdef.floatTime;
-			y = bundle->texMods[j].scroll[1] * backEnd.refdef.floatTime;
+			x = bundle->texMods[j].scroll[0] * tess.shaderTime;
+			y = bundle->texMods[j].scroll[1] * tess.shaderTime;
 
 			// clamp so coordinates don't continuously get larger, causing problems
 			// with hardware limits
@@ -1154,7 +1152,7 @@ void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix)
 		}
 		case TMOD_ROTATE:
 		{
-			x = -bundle->texMods[j].rotateSpeed * backEnd.refdef.floatTime;
+			x = -bundle->texMods[j].rotateSpeed * tess.shaderTime;
 
 			MatrixMultiplyTranslation(matrix, 0.5, 0.5, 0.0);
 			MatrixMultiplyZRotation(matrix, x);
@@ -1213,6 +1211,7 @@ void RB_CalcTexMatrix(const textureBundle_t *bundle, mat4_t matrix)
 		}
 
 		default:
+			Ren_Warning("Unknown tex mod %i\n", bundle->texMods[j].type);
 			break;
 		}
 	}

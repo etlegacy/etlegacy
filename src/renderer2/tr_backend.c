@@ -173,6 +173,7 @@ static void RB_RenderDrawSurfaces(qboolean opaque, int drawSurfFilter)
 	qboolean      depthRange = qfalse, oldDepthRange = qfalse;
 	int           i;
 	drawSurf_t    *drawSurf;
+	double	      originalTime = backEnd.refdef.floatTime; // save original time for entity shader offsets
 
 	Ren_LogComment("--- RB_RenderDrawSurfaces ---\n");
 
@@ -260,7 +261,11 @@ static void RB_RenderDrawSurfaces(qboolean opaque, int drawSurfFilter)
 
 			if (entity != &tr.worldEntity)
 			{
-				backEnd.currentEntity = entity;
+				backEnd.currentEntity    = entity;
+				backEnd.refdef.floatTime = originalTime - backEnd.currentEntity->e.shaderTime;
+				// we have to reset the shaderTime as well otherwise image animations start
+				// from the wrong frame
+				tess.shaderTime = backEnd.refdef.floatTime - tess.surfaceShader->timeOffset;
 
 				// set up the transformation matrix
 				R_RotateEntityForViewParms(backEnd.currentEntity, &backEnd.viewParms, &backEnd.orientation);
@@ -273,7 +278,12 @@ static void RB_RenderDrawSurfaces(qboolean opaque, int drawSurfFilter)
 			}
 			else
 			{
-				backEnd.currentEntity = &tr.worldEntity;
+				backEnd.currentEntity    = &tr.worldEntity;
+				backEnd.refdef.floatTime = originalTime;
+				backEnd.orientation      = backEnd.viewParms.world;
+				// we have to reset the shaderTime as well otherwise image animations on
+				// the world (like water) continue with the wrong frame
+				tess.shaderTime       = backEnd.refdef.floatTime - tess.surfaceShader->timeOffset;
 				backEnd.orientation   = backEnd.viewParms.world;
 			}
 
@@ -308,6 +318,9 @@ static void RB_RenderDrawSurfaces(qboolean opaque, int drawSurfFilter)
 
 	// go back to the world modelview matrix
 	GL_LoadModelViewMatrix(backEnd.viewParms.world.modelViewMatrix);
+
+	backEnd.refdef.floatTime = originalTime;
+
 	if (depthRange)
 	{
 		glDepthRange(0, 1);
@@ -2608,10 +2621,10 @@ void RB_CameraPostFX(void)
 	mat4_ident(grain);
 
 	MatrixMultiplyScale(grain, r_cameraFilmGrainScale->value, r_cameraFilmGrainScale->value, 0);
-	MatrixMultiplyTranslation(grain, backEnd.refdef.floatTime * 10, backEnd.refdef.floatTime * 10, 0);
+	MatrixMultiplyTranslation(grain, tess.shaderTime * 10, backEnd.refdef.floatTime * 10, 0);
 
 	MatrixMultiplyTranslation(grain, 0.5, 0.5, 0.0);
-	MatrixMultiplyZRotation(grain, backEnd.refdef.floatTime * (random() * 7));
+	MatrixMultiplyZRotation(grain, tess.shaderTime * (random() * 7));
 	MatrixMultiplyTranslation(grain, -0.5, -0.5, 0.0);
 
 	SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, grain);
