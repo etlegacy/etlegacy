@@ -707,7 +707,9 @@ void Cmd_Give_f(gentity_t *ent)
 				G_AddSkillPoints(ent, skill, points);
 				G_DebugAddSkillPoints(ent, skill, points, "give skill");
 
-				trap_SendServerCommand(ent - g_entities, va("print \"give skill: Skill %i increased - %i points have been added.\n\"", skill, amount));
+				// ceil the given points to keep consistency with the displayed XP value in HUD
+				trap_SendServerCommand(ent - g_entities, va("print \"give skill: Skill %i '%s' increased (+%.0fXP).\n\"", skill, GetSkillTableData(skill)->skillNames, ceil(points)));
+                
 			}
 			else
 			{
