@@ -277,13 +277,9 @@ static void CG_EntityEffects(centity_t *cent)
 		}
 		else
 		{
-			int   cl = cent->currentState.constantLight;
-			float r  = (cl & 0xFF) / 255.0f;
-			float g  = ((cl >> 8) & 0xFF) / 255.0f;
-			float b  = ((cl >> 16) & 0xFF) / 255.0f;
-			float i  = ((cl >> 24) & 0xFF) * 4;
+			int cl = cent->currentState.constantLight;
 
-			trap_R_AddLightToScene(cent->lerpOrigin, i, 1.0f, r, g, b, 0, 0);
+			trap_R_AddLightToScene(cent->lerpOrigin, ((cl >> 24) & 0xFF) * 4, 1.0f, (cl & 0xFF) / 255.0f, ((cl >> 8) & 0xFF) / 255.0f, ((cl >> 16) & 0xFF) / 255.0f, 0, 0);
 		}
 	}
 
@@ -1030,8 +1026,6 @@ static void CG_Missile(centity_t *cent)
 	// add dynamic light
 	if (weapon->missileDlight != 0.f)
 	{
-		//trap_R_AddLightToScene(cent->lerpOrigin, weapon->missileDlight,
-		//weapon->missileDlightColor[0], weapon->missileDlightColor[1], weapon->missileDlightColor[2], 0 );
 		trap_R_AddLightToScene(cent->lerpOrigin, weapon->missileDlight, 1.0,
 		                       weapon->missileDlightColor[0], weapon->missileDlightColor[1], weapon->missileDlightColor[2], 0, 0);
 	}

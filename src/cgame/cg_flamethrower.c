@@ -1112,7 +1112,7 @@ void CG_AddFlameToScene(flameChunk_t *fHead)
 	}
 	else if (isClientFlame || (fHead->ownerCent == cg.snap->ps.clientNum))
 	{
-		trap_R_AddLightToScene(lightOrg, 320, alpha, 1.000000, 0.603922f, 0.207843f, 0, 0);
+		trap_R_AddLightToScene(lightOrg, 320, alpha, 1.0f, 0.603922f, 0.207843f, 0, 0);
 	}
 }
 
