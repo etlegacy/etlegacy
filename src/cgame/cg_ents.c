@@ -1817,7 +1817,7 @@ static void CG_Portal(centity_t *cent)
 	CrossProduct(ent.axis[0], ent.axis[1], ent.axis[2]);
 	ent.reType  = RT_PORTALSURFACE;
 	ent.frame   = s1->frame;    // rotation speed
-	ent.skinNum = s1->clientNum / 256 * 360;    // roll offset
+	ent.skinNum = s1->clientNum / 256.0 * 360;    // roll offset
 
 	// add to refresh list
 	trap_R_AddRefEntityToScene(&ent);
