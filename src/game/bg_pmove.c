@@ -2376,10 +2376,10 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 
 	if (GetWeaponTableData(newWeapon)->isRifle)
 	{
-        // don't send change weapon event after firing with riflenade
+		// don't send change weapon event after firing with riflenade
 		if (GetWeaponTableData(oldWeapon)->weapAlts != newWeapon || pm->ps->ammoclip[GetWeaponTableData(oldWeapon)->ammoIndex])
 		{
-		    PM_AddEvent(EV_CHANGE_WEAPON);
+			PM_AddEvent(EV_CHANGE_WEAPON);
 		}
 	}
 	else if (GetWeaponTableData(newWeapon)->isMortarSet)
@@ -3666,12 +3666,6 @@ static void PM_Weapon(void)
 		}
 	}
 
-	// add weapon heat
-	if (GetWeaponTableData(pm->ps->weapon)->maxHeat)
-	{
-		pm->ps->weapHeat[pm->ps->weapon] += GetWeaponTableData(pm->ps->weapon)->nextShotTime;
-	}
-
 	// first person weapon animations
 
 	// if this was the last round in the clip, play the 'lastshot' animation
@@ -3805,11 +3799,8 @@ static void PM_Weapon(void)
 
 	pm->ps->aimSpreadScale = (int)(pm->ps->aimSpreadScaleFloat);
 
-	if (GetWeaponTableData(pm->ps->weapon)->isMG || GetWeaponTableData(pm->ps->weapon)->isMGSet)
+	if ((GetWeaponTableData(pm->ps->weapon)->isMG || GetWeaponTableData(pm->ps->weapon)->isMGSet))
 	{
-		// sync heat for overheat check
-		pm->ps->weapHeat[GetWeaponTableData(pm->ps->weapon)->weapAlts] = pm->ps->weapHeat[pm->ps->weapon];
-
 		if (weapattackanim == WEAP_ATTACK_LASTSHOT)
 		{
 			addTime = 0;
@@ -3839,13 +3830,24 @@ static void PM_Weapon(void)
 	}
 
 	// check for overheat
-	// the weapon can overheat, and it is overheating
-	if (GetWeaponTableData(pm->ps->weapon)->maxHeat && pm->ps->weapHeat[pm->ps->weapon] >= GetWeaponTableData(pm->ps->weapon)->maxHeat)
+	if (GetWeaponTableData(pm->ps->weapon)->maxHeat)
 	{
-		pm->ps->weapHeat[pm->ps->weapon] = GetWeaponTableData(pm->ps->weapon)->maxHeat;         // cap heat to max
-		PM_AddEvent(EV_WEAP_OVERHEAT);
-		//PM_StartWeaponAnim(WEAP_IDLE1); // removed.  client handles anim in overheat event
-		addTime = 2000;         // force "heat recovery minimum" to 2 sec right now
+		pm->ps->weapHeat[pm->ps->weapon] += GetWeaponTableData(pm->ps->weapon)->nextShotTime;
+
+		// it is overheating
+		if (pm->ps->weapHeat[pm->ps->weapon] >= GetWeaponTableData(pm->ps->weapon)->maxHeat)
+		{
+			pm->ps->weapHeat[pm->ps->weapon] = GetWeaponTableData(pm->ps->weapon)->maxHeat;         // cap heat to max
+			PM_AddEvent(EV_WEAP_OVERHEAT);
+			//PM_StartWeaponAnim(WEAP_IDLE1); // removed.  client handles anim in overheat event
+			addTime = 2000;         // force "heat recovery minimum" to 2 sec right now
+		}
+
+		// sync heat for overheat check
+		if (GetWeaponTableData(pm->ps->weapon)->weapAlts)
+		{
+			pm->ps->weapHeat[GetWeaponTableData(pm->ps->weapon)->weapAlts] = pm->ps->weapHeat[pm->ps->weapon];
+		}
 	}
 
 	pm->ps->weaponTime += addTime;
