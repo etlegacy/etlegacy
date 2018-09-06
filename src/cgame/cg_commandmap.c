@@ -674,7 +674,6 @@ void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, float h,
 
 			trap_R_SetColor(reviveClr);
 			CG_DrawPic(icon_pos[0] + 3, icon_pos[1] + 3, icon_extends[0] - 3, icon_extends[1] - 3, cgs.media.medicIcon);
-			trap_R_SetColor(NULL);
 		}
 		else
 		{
