@@ -2693,10 +2693,8 @@ static void PM_SwitchIfEmpty(void)
 	}
 
 	// In multiplayer, pfaust fires once then switches to pistol since it's useless for a while
-	// WP_M7 and WP_GPG40 run out of ammo immediately after firing their grenade
 	// after throwing landmine, let switch to pliers
 	if (GetWeaponTableData(pm->ps->weapon)->useAmmo
-	    && !GetWeaponTableData(pm->ps->weapon)->isRiflenade
 	    && !GetWeaponTableData(pm->ps->weapon)->isPanzer
 	    && pm->ps->weapon != WP_LANDMINE)
 	{
