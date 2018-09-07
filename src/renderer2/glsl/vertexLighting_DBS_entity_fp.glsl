@@ -75,26 +75,15 @@ void main()
 	mat3 worldToTangentMatrix = transpose(tangentToWorldMatrix);
 
 	// compute view direction in tangent space
-	vec3 Vts = worldToTangentMatrix * (u_ViewOrigin - var_Position.xyz);
-	Vts = normalize(Vts);
+	vec3 Vts = normalize(worldToTangentMatrix * V);
 
 	// size and start position of search in texture space
 	vec2 S = Vts.xy * -u_DepthScale / Vts.z;
 
-#if 0
-	vec2 texOffset = vec2(0.0);
-	for (int i = 0; i < 4; i++)
-	{
-		vec4  Normal = texture2D(u_NormalMap, texNormal.st + texOffset);
-		float height = Normal.a * 0.2 - 0.0125;
-		texOffset += height * Normal.z * S;
-	}
-#else
 	float depth = RayIntersectDisplaceMap(texNormal, S, u_NormalMap);
 
 	// compute texcoords offset
 	vec2 texOffset = S * depth;
-#endif
 
 	texDiffuse.st  += texOffset;
 	texNormal.st   += texOffset;

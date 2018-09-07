@@ -29,6 +29,9 @@ varying vec4 var_Color;
 
 void main()
 {
+	// compute view direction in world space
+	vec3 V = normalize(u_ViewOrigin - var_Position);
+
 	vec4 lightmapColor  = texture2D(u_LightMap, var_TexLight);
 	vec4 deluxemapColor = texture2D(u_DeluxeMap, var_TexLight);
 
@@ -63,36 +66,21 @@ void main()
 		tangentToWorldMatrix = mat3(var_Tangent.xyz, var_Binormal.xyz, var_Normal.xyz);
 	}
 
-	// compute view direction in world space
-	vec3 I = normalize(u_ViewOrigin - var_Position);
-
 #if defined(USE_PARALLAX_MAPPING)
 	// ray intersect in view direction
 
-	mat3 worldToTangentMatrix;
-	worldToTangentMatrix = transpose(tangentToWorldMatrix);
+	mat3 worldToTangentMatrix = transpose(tangentToWorldMatrix);
 
 	// compute view direction in tangent space
-	vec3 V = worldToTangentMatrix * (u_ViewOrigin - var_Position.xyz);
-	V = normalize(V);
+	vec3 Vts = normalize(worldToTangentMatrix * V);
 
 	// size and start position of search in texture space
-	vec2 S = V.xy * -u_DepthScale / V.z;
+	vec2 S = Vts.xy * -u_DepthScale / Vts.z;
 
-#if 0
-	vec2 texOffset = vec2(0.0);
-	for (int i = 0; i < 4; i++)
-	{
-		vec4  Normal = texture2D(u_NormalMap, texNormal.st + texOffset);
-		float height = Normal.a * 0.2 - 0.0125;
-		texOffset += height * Normal.z * S;
-	}
-#else
 	float depth = RayIntersectDisplaceMap(texNormal, S, u_NormalMap);
 
 	// compute texcoords offset
 	vec2 texOffset = S * depth;
-#endif
 
 	texDiffuse.st  += texOffset;
 	texNormal.st   += texOffset;
@@ -120,7 +108,6 @@ void main()
 	}
 #endif
 
-
 	// compute normal in world space from normalmap
 	vec3 N = normalize(2.0 * (texture2D(u_NormalMap, texNormal).xyz - 0.5));
 	//N.x = -N.x;
@@ -130,10 +117,9 @@ void main()
 
 	// compute light direction in world space
 	vec3 L = normalize(2.0 * (deluxemapColor.xyz - 0.5));
-	//L = normalize(L);
 
 	// compute half angle in world space
-	vec3 H = normalize(L + I);
+	vec3 H = normalize(L + V);
 
 	// compute the specular term
 	vec3 specular = texture2D(u_SpecularMap, texSpecular).rgb;
@@ -162,7 +148,6 @@ void main()
 	color.rgb += specular * lightColor * pow(clamp(dot(N, H), 0.0, 1.0), r_SpecularExponent) * r_SpecularScale;
 	// for smooth terrain blending
 	color.a   *= var_Color.a; 
-
 
 #else // USE_NORMAL_MAPPING
 

@@ -15,6 +15,8 @@ uniform float     u_NormalScale;
 uniform mat4      u_ModelMatrix;
 uniform mat4      u_UnprojectMatrix;
 uniform vec3      u_LightDir;
+uniform vec4      u_PortalPlane;
+uniform float     u_DepthScale;
 
 varying vec3 var_Position;
 varying vec2 var_TexNormal;
@@ -83,8 +85,17 @@ float RayIntersectDisplaceMap(vec2 dp, vec2 ds)
 
 void main()
 {
-	// compute incident ray
-	vec3 I = normalize(u_ViewOrigin - var_Position);
+#if defined(USE_PORTAL_CLIPPING)
+	float dist = dot(var_Position.xyz, u_PortalPlane.xyz) - u_PortalPlane.w;
+	if (dist < 0.0)
+	{
+		discard;
+		return;
+	}
+#endif
+
+	// compute view direction in world space/incident ray
+	vec3 V = normalize(u_ViewOrigin - var_Position);
 
 	// invert tangent space for twosided surfaces
 	mat3 tangentToWorldMatrix;
@@ -99,23 +110,20 @@ void main()
 		tangentToWorldMatrix = mat3(var_Tangent.xyz, var_Binormal.xyz, var_Normal.xyz);
 	}
 
-	mat3 worldToTangentMatrix;
-	worldToTangentMatrix = transpose(tangentToWorldMatrix);
-
 	// calculate the screen texcoord in the 0.0 to 1.0 range
 	vec2 texScreen = gl_FragCoord.st * r_FBufScale * r_NPOTScale;
 	vec2 texNormal = var_TexNormal.st;
 
 #if defined(USE_PARALLAX_MAPPING)
-	// compute view direction in tangent space
-	vec3 V = worldToTangentMatrix * (I);
-	V = normalize(V);
-
 	// ray intersect in view direction
 
+	mat3 worldToTangentMatrix = transpose(tangentToWorldMatrix);
+
+	// compute view direction in tangent space
+	vec3 Vts = normalize(worldToTangentMatrix * V);
+
 	// size and start position of search in texture space
-	//vec2 S = V.xy * -u_DepthScale / V.z;
-	vec2 S = V.xy * -0.03 / V.z;
+	vec2 S = Vts.xy * -u_DepthScale / Vts.z;
 
 	float depth = RayIntersectDisplaceMap(texNormal, S);
 
@@ -124,6 +132,7 @@ void main()
 
 	texScreen.st += texOffset;
 	texNormal.st += texOffset;
+	//texSpecular.st += texOffset; FIXME?!
 #endif //USE_PARALLAX_MAPPING
 
 	// compute normals
@@ -135,10 +144,10 @@ void main()
 
 	N = normalize(N);
 
-	vec3 N2 = 2.0 * (texture2D(u_NormalMap, texNormal).xyz - 0.5);
+	vec3 N2 = 2.0 * (texture2D(u_NormalMap, texNormal).xyz - 0.5); // FIXME: normalize?
 	N2 = normalize(tangentToWorldMatrix * N2);
 
-	vec3 N3 = normalize(N + I);
+	vec3 N3 = normalize(N + V);
 
 	// compute fresnel term
 	float fresnel = clamp(u_FresnelBias + pow(1.0 - dot(N2, N3), u_FresnelPower) * u_FresnelScale, 0.0, 1.0);
@@ -148,7 +157,7 @@ void main()
 	vec3 refractColor = texture2D(u_CurrentMap, texScreen).rgb;
 
 	// compute reflection ray
-	vec3 R = reflect(I, N2);
+	vec3 R = reflect(V, N2);
 	vec3 reflectColor = textureCube(u_PortalMap, R).rgb;
 
 	vec4 color;
@@ -179,7 +188,7 @@ void main()
 	vec3 L = normalize(u_LightDir);
 
 	// compute half angle in world space
-	vec3 H = normalize(L + I);
+	vec3 H = normalize(L + V);
 
 	// compute the light term
 	vec3 light = var_LightColor.rgb * clamp(dot(N2, L), 0.0, 1.0);
