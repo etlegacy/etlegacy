@@ -349,6 +349,7 @@ void G_Script_ScriptParse(gentity_t *ent)
 	char                    *pScript;
 	char                    *token;
 	qboolean                wantName;
+	qboolean                wantScript;
 	qboolean                inScript;
 	int                     eventNum;
 	g_script_event_t        events[G_MAX_SCRIPT_STACK_ITEMS];
@@ -374,6 +375,7 @@ void G_Script_ScriptParse(gentity_t *ent)
 
 	pScript  = level.scriptEntity;
 	wantName = qtrue;
+	wantScript = qfalse;
 	inScript = qfalse;
 	COM_BeginParseSession("G_Script_ScriptParse");
 	bracketLevel  = 0;
@@ -413,6 +415,7 @@ void G_Script_ScriptParse(gentity_t *ent)
 			{
 				G_Error("G_Script_ScriptParse(), Error (line %d): '{' found, NAME expected.\n", COM_GetCurrentParseLine());
 			}
+			wantScript = qfalse;
 		}
 		else if (wantName)
 		{
@@ -427,6 +430,7 @@ void G_Script_ScriptParse(gentity_t *ent)
 				numEventItems = 0;
 			}
 			wantName = qfalse;
+			wantScript = qtrue;
 		}
 		else if (inScript)
 		{
@@ -588,6 +592,10 @@ void G_Script_ScriptParse(gentity_t *ent)
 		}
 		else     // skip this character completely
 		{
+			if (wantScript) {
+				G_Error("G_Script_ScriptParse(), Error (line %d): '{' expected, but found '%s'.\n", COM_GetCurrentParseLine(), token);
+			}
+
 			while ((token = COM_Parse(&pScript)) != NULL)
 			{
 				if (!token[0])
