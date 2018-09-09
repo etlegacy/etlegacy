@@ -25,19 +25,10 @@ varying vec3 var_Normal;
 
 varying vec4 var_Color;
 
-#define LIGTMAP_INTENSITY 1
+#define LIGHTMAP_INTENSITY 1
 
 void main()
 {
-	// compute view direction in world space
-	vec3 V = normalize(u_ViewOrigin - var_Position);
-
-	vec4 lightmapColor  = texture2D(u_LightMap, var_TexLight);
-	vec4 deluxemapColor = texture2D(u_DeluxeMap, var_TexLight);
-
-	//lower the lightmap intensity (this should be done on load)
-	lightmapColor.rgb = pow(lightmapColor.rgb, vec3(1.0 / LIGTMAP_INTENSITY));
-
 #if defined(USE_PORTAL_CLIPPING)
 	float dist = dot(var_Position.xyz, u_PortalPlane.xyz) - u_PortalPlane.w;
 	if (dist < 0.0)
@@ -46,6 +37,15 @@ void main()
 		return;
 	}
 #endif
+
+	// compute view direction in world space
+	vec3 V = normalize(u_ViewOrigin - var_Position);
+
+	vec4 lightmapColor  = texture2D(u_LightMap, var_TexLight);
+	vec4 deluxemapColor = texture2D(u_DeluxeMap, var_TexLight);
+
+	//lower the lightmap intensity (this should be done on load)
+	lightmapColor.rgb = pow(lightmapColor.rgb, vec3(1.0 / LIGHTMAP_INTENSITY));
 
 #if defined(USE_NORMAL_MAPPING)
 
