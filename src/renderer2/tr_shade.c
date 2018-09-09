@@ -2216,6 +2216,11 @@ static void Render_liquid(int stage)
 		ImageCopyBackBuffer(tr.currentRenderImage);
 	}
 
+	if (backEnd.viewParms.isPortal)
+	{
+		clipPortalPlane();
+	}
+
 	// bind u_PortalMap
 	SelectTexture(TEX_PORTAL);
 	GL_Bind(tr.portalRenderImage);
