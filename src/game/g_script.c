@@ -373,10 +373,10 @@ void G_Script_ScriptParse(gentity_t *ent)
 
 	buildScript = (qboolean)(trap_Cvar_VariableIntegerValue("com_buildScript"));
 
-	pScript  = level.scriptEntity;
-	wantName = qtrue;
+	pScript    = level.scriptEntity;
+	wantName   = qtrue;
 	wantScript = qfalse;
-	inScript = qfalse;
+	inScript   = qfalse;
 	COM_BeginParseSession("G_Script_ScriptParse");
 	bracketLevel  = 0;
 	numEventItems = 0;
@@ -429,7 +429,7 @@ void G_Script_ScriptParse(gentity_t *ent)
 				inScript      = qtrue;
 				numEventItems = 0;
 			}
-			wantName = qfalse;
+			wantName   = qfalse;
 			wantScript = qtrue;
 		}
 		else if (inScript)
@@ -592,7 +592,8 @@ void G_Script_ScriptParse(gentity_t *ent)
 		}
 		else     // skip this character completely
 		{
-			if (wantScript) {
+			if (wantScript)
+			{
 				G_Error("G_Script_ScriptParse(), Error (line %d): '{' expected, but found '%s'.\n", COM_GetCurrentParseLine(), token);
 			}
 
@@ -921,6 +922,20 @@ void script_linkentity(gentity_t *ent)
 }
 
 /**
+ * Script mover flags
+ */
+
+#define SMF_TRIGGERSPAWN        1
+#define SMF_SOLID               2
+#define SMF_EXPLOSIVEDAMAGEONLY 4
+#define SMF_RESURRECTABLE       8
+#define SMF_COMPASS             16
+#define SMF_ALLIES              32
+#define SMF_AXIS                64
+#define SMF_MOUNTED_GUN         128
+#define SMF_DENSITY             256
+
+/**
  * @brief script_mover_die
  * @param[in,out] self
  * @param inflictor - unused
@@ -932,7 +947,7 @@ void script_mover_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker
 {
 	G_Script_ScriptEvent(self, "death", "");
 
-	if (!(self->spawnflags & 8))
+	if (!(self->spawnflags & SMF_RESURRECTABLE))
 	{
 		G_FreeEntity(self);
 	}
@@ -951,7 +966,7 @@ void script_mover_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker
  */
 void script_mover_think(gentity_t *ent)
 {
-	if (ent->spawnflags & 128)
+	if (ent->spawnflags & SMF_MOUNTED_GUN)
 	{
 		if (!ent->tankLink)
 		{
@@ -984,7 +999,7 @@ void script_mover_think(gentity_t *ent)
  */
 void script_mover_spawn(gentity_t *ent)
 {
-	if (ent->spawnflags & 128)
+	if (ent->spawnflags & SMF_MOUNTED_GUN)
 	{
 		if (ent->tagBuffer[0] == '\0')
 		{
@@ -1009,7 +1024,7 @@ void script_mover_spawn(gentity_t *ent)
 		ent->s.effect3Time = ent->nextTrain - g_entities;
 	}
 
-	if (ent->spawnflags & 2)
+	if (ent->spawnflags & SMF_SOLID)
 	{
 		ent->clipmask   = CONTENTS_SOLID;
 		ent->r.contents = CONTENTS_SOLID;
@@ -1034,7 +1049,7 @@ void script_mover_spawn(gentity_t *ent)
  */
 void script_mover_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
-	if (ent->spawnflags & 8)
+	if (ent->spawnflags & SMF_RESURRECTABLE)
 	{
 		if (ent->count)
 		{
@@ -1083,20 +1098,6 @@ void script_mover_blocked(gentity_t *ent, gentity_t *other)
 	// kill them
 	G_Damage(other, ent, ent, NULL, NULL, GIB_DAMAGE(other->health), 0, MOD_CRUSH);
 }
-
-/**
- * Script mover flags
- */
-
-#define SMF_TRIGGERSPAWN        1
-#define SMF_SOLID               2
-#define SMF_EXPLOSIVEDAMAGEONLY 4
-#define SMF_RESURRECTABLE       8
-#define SMF_COMPASS             16
-#define SMF_ALLIES              32
-#define SMF_AXIS                64
-#define SMF_MOUNTED_GUN         128
-#define SMF_DENSITY             256
 
 /**
  * @brief Scripted brush entity. A simplified means of moving brushes around based on events.
@@ -1270,12 +1271,18 @@ void SP_script_mover(gentity_t *ent)
 //..............................................................................
 
 /**
+ * Script model med spawn flags
+ */
+#define SMMSF_TRIGGERSPAWN 1
+#define SMMSF_SOLID        2
+
+/**
  * @brief script_model_med_spawn
  * @param[in,out] ent
  */
 void script_model_med_spawn(gentity_t *ent)
 {
-	if (ent->spawnflags & 2)
+	if (ent->spawnflags & SMMSF_SOLID)
 	{
 		ent->clipmask   = CONTENTS_SOLID;
 		ent->r.contents = CONTENTS_SOLID;
@@ -1332,7 +1339,7 @@ void SP_script_model_med(gentity_t *ent)
 	VectorCopy(ent->s.angles, ent->s.apos.trBase);
 	VectorClear(ent->s.apos.trDelta);
 
-	if (ent->spawnflags & 1)
+	if (ent->spawnflags & SMMSF_TRIGGERSPAWN)
 	{
 		ent->use = script_model_med_use;
 		trap_UnlinkEntity(ent);   // make sure it's not visible
