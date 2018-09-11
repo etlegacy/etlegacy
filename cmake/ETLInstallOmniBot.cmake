@@ -20,7 +20,7 @@ LEG_DOWNLOAD(
 	"Omni-Bot archive"
 	${ETLEGACY_OMNIBOT_DL_URL}
 	"${CMAKE_CURRENT_BINARY_DIR}/legacy/${ETLEGACY_OMNIBOT_ARCHIVE}"
-	"b5e97796a6b57fe52e9e7e6971dffe53"
+	"ddc91eb5a0a0a245d29cb3a6038c43ef"
 	"${CMAKE_CURRENT_BINARY_DIR}/legacy"
 	"${CMAKE_CURRENT_BINARY_DIR}/legacy/omni-bot"
 )
@@ -28,12 +28,5 @@ LEG_DOWNLOAD(
 message(STATUS "Adding Omni-Bot to installer scripts")
 install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/legacy/omni-bot/"
 	DESTINATION "${INSTALL_DEFAULT_MODDIR}/legacy/omni-bot"
+	DIRECTORY_PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ WORLD_READ
 )
-
-# ensure unique permissions and bot user path has write permission set
-if(UNIX)
-	execute_process(
-		COMMAND chmod -R 755 "${INSTALL_DEFAULT_MODDIR}/legacy/omni-bot"
-		WORKING_DIRECTORY "${INSTALL_DEFAULT_MODDIR}/legacy/omni-bot"
-	)
-endif(UNIX)
