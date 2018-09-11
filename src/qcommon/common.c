@@ -66,7 +66,7 @@ int demo_protocols[] =
 #define MIN_DEDICATED_COMHUNKMEGS   1
 #define MIN_COMHUNKMEGS             64
 
-#define DEF_COMHUNKMEGS             256
+#define DEF_COMHUNKMEGS             128 // renderer2 requires 512
 
 #ifdef DEDICATED
 #define DEF_COMZONEMEGS             24
