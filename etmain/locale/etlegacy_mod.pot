@@ -7160,12 +7160,6 @@ msgstr ""
 msgid "Allow players to vote for teams to be shuffled by SR without a restart"
 msgstr ""
 
-msgid "Allow players to vote for teams to be shuffled by XP"
-msgstr ""
-
-msgid "Allow players to vote for teams to be shuffled by XP"
-msgstr ""
-
 msgid "Voice text:"
 msgstr ""
 
