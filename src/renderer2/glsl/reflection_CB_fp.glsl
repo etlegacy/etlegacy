@@ -4,6 +4,7 @@ uniform samplerCube u_ColorMap;
 uniform sampler2D   u_NormalMap;
 uniform vec3        u_ViewOrigin;
 uniform mat4        u_ModelMatrix;
+uniform vec4        u_PortalPlane;
 
 varying vec3 var_Position;
 varying vec2 var_TexNormal;
@@ -13,17 +14,29 @@ varying vec4 var_Normal;
 
 void main()
 {
+#if defined(USE_PORTAL_CLIPPING)
+	{
+		float dist = dot(var_Position.xyz, u_PortalPlane.xyz) - u_PortalPlane.w;
+		if (dist < 0.0)
+		{
+			discard;
+			return;
+		}
+	}
+#endif
+	
 	// compute incident ray in world space
-	vec3 I = normalize(var_Position - u_ViewOrigin);
-
+	vec3 V = normalize(var_Position - u_ViewOrigin);
 
 #if defined(USE_NORMAL_MAPPING)
 	// compute normal in tangent space from normalmap
 	vec3 N = 2.0 * (texture2D(u_NormalMap, var_TexNormal.st).xyz - 0.5);
-	#if defined(r_NormalScale)
+
+#if defined(r_NormalScale)
 	N.z *= r_NormalScale;
-	normalize(N);
-	#endif
+#endif
+
+	N = normalize(N);
 
 	// invert tangent space for twosided surfaces
 	mat3 tangentToWorldMatrix;
@@ -45,7 +58,7 @@ void main()
 #endif
 
 	// compute reflection ray
-	vec3 R = reflect(I, N);
+	vec3 R = reflect(V, N);
 
 	gl_FragColor = textureCube(u_ColorMap, R).rgba;
 	// gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);

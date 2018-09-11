@@ -958,15 +958,12 @@ void    main()
 	vec3 V = normalize(u_ViewOrigin - var_Position.xyz);
 
 #if defined(USE_PARALLAX_MAPPING)
-
 	// ray intersect in view direction
 
-	mat3 worldToTangentMatrix;
-	worldToTangentMatrix = transpose(tangentToWorldMatrix);
+	mat3 worldToTangentMatrix = transpose(tangentToWorldMatrix);
 
 	// compute view direction in tangent space
-	vec3 Vts = worldToTangentMatrix * V;
-	Vts = normalize(Vts);
+	vec3 Vts = normalize(worldToTangentMatrix * V);
 
 	// size and start position of search in texture space
 	vec2 S = Vts.xy * -u_DepthScale / Vts.z;
@@ -986,10 +983,12 @@ void    main()
 
 	// compute normal in tangent space from normalmap
 	vec3 N = 2.0 * (texture2D(u_NormalMap, texNormal.st).xyz - 0.5);
-	#if defined(r_NormalScale)
+
+#if defined(r_NormalScale)
 	N.z *= r_NormalScale;
-	normalize(N);
-	#endif
+#endif
+
+	N = normalize(N);
 
 	// transform normal into world space
 	N = normalize(tangentToWorldMatrix * N);

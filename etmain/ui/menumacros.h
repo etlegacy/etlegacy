@@ -38,7 +38,7 @@
 
 #define LEGACY_RESOLUTIONS cvarFloatList { "desktop resolution" - 2 "custom resolution" - 1 "640*480" 3 "800*600" 4 "960*720" 5 "1024*768" 6 "1152*864" 7 "1280*1024" 8 "1600*1200" 9 "2048*1536" 10 "856*480 Wide Screen" 11 "1366x768 (16:9)" 12 "1440x900 (16:10)" 13 "1680x1050 (16:10)" 14 "1600x1200" 15 "1920x1080 (16:9)" 16 "1920x1200 (16:10)" 17 "2560x1440 (16:9)" 18 "2560x1600 (16:10)" 19 "3840x2160 (16:9)" 20 }
 #define LEGACY_WINDOWMODES cvarFloatList { "Windowed" 0 "Fullscreen" 1 "Windowed Fullscreen" 2 }
-#define LEGACY_LANGUAGES   cvarStrList { "English (default)  "; "en"; "French"; "fr"; "German"; "de"; "Polish"; "pl"; "Russian"; "ru"; "Dutch"; "nl"; "Czech"; "cs"; "Finnish"; "fi"; "Norwegian"; "no"; "Spanish"; "es"; "Italian"; "it" }
+#define LEGACY_LANGUAGES   cvarStrList { "English (default)  "; "en"; "Czech"; "cs"; "Dutch"; "nl"; "Finnish"; "fi"; "French"; "fr"; "German"; "de"; "Greek"; "el"; "Hungarian"; "hu"; "Italian"; "it"; "Norwegian"; "no"; "Polish"; "pl"; "Portuguese"; "pt";  "Russian"; "ru";  "Spanish"; "es"; "Turkish"; "tr"; }
 #define LEGACY_RENDERERS   cvarStrList { "Vanilla (default)  "; "opengl1"; "ET: Legacy"; "opengl2" }
 
 // Marks text as translatable

@@ -21,14 +21,17 @@ varying vec3 var_Normal;
 
 void main()
 {
-	#if defined(USE_PORTAL_CLIPPING)
+#if defined(USE_PORTAL_CLIPPING)
 		float dist = dot(var_Position.xyz, u_PortalPlane.xyz) - u_PortalPlane.w;
 		if (dist < 0.0)
 		{
 			discard;
 			return;
 		}
-	#endif
+#endif
+
+	// compute view direction in world space
+	vec3 V = normalize(u_ViewOrigin - var_Position);
 
 #if defined(USE_NORMAL_MAPPING)
 
@@ -51,7 +54,7 @@ void main()
 	}
 
 	// compute view direction in tangent space
-	vec3 V = normalize(objectToTangentMatrix * (u_ViewOrigin - var_Position));
+	vec3 Vts = normalize(objectToTangentMatrix * V);
 
 	vec2 texDiffuse  = var_TexDiffuseNormal.st;
 	vec2 texNormal   = var_TexDiffuseNormal.pq;
@@ -62,7 +65,7 @@ void main()
 	// ray intersect in view direction
 
 	// size and start position of search in texture space
-	vec2 S = V.xy * -u_DepthScale / V.z;
+	vec2 S = Vts.xy * -u_DepthScale / Vts.z;
 
 #if 0
 	vec2 texOffset = vec2(0.0);
@@ -120,7 +123,7 @@ void main()
 	vec3 L = N; // fake bump mapping
 		
 	// compute half angle in tangent space
-	vec3 H = normalize(L + V);
+	vec3 H = normalize(L + Vts);
 
 	vec3 R = reflect(-L, N);
 
@@ -137,7 +140,7 @@ void main()
 
 	// compute the specular term
 	//vec3 specular = texture2D(u_SpecularMap, texSpecular).rgb * var_LightColor.rgb * pow(clamp(dot(N, H), 0.0, 1.0), r_SpecularExponent) * r_SpecularScale;
-	vec3 specular = texture2D(u_SpecularMap, texSpecular).rgb * var_LightColor.rgb * pow(max(dot(V, R), 0.0), r_SpecularExponent) * r_SpecularScale;
+	vec3 specular = texture2D(u_SpecularMap, texSpecular).rgb * var_LightColor.rgb * pow(max(dot(Vts, R), 0.0), r_SpecularExponent) * r_SpecularScale;
 	
 	// compute final color
 	vec4 color = vec4(diffuse.rgb, var_LightColor.a);

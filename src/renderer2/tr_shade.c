@@ -1136,7 +1136,7 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	rgbaGen_t  rgbaGen;
 
 	Ren_LogComment("--- Render_forwardLighting_DBS_omni ---\n");
-	//let cvar decide
+	// let cvar decide
 	if (r_normalMapping->integer)
 	{
 		normalMapping = qtrue;
@@ -1322,7 +1322,7 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	rgbaGen_t  rgbaGen;
 
 	Ren_LogComment("--- Render_fowardLighting_DBS_proj ---\n");
-	//let cvar decide
+	// let cvar decide
 	if (r_normalMapping->integer)
 	{
 		normalMapping = qtrue;
@@ -1502,7 +1502,7 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	rgbaGen_t  rgbaGen;
 
 	Ren_LogComment("--- Render_forwardLighting_DBS_directional ---\n");
-	//let cvar decide
+	// let cvar decide
 	if (r_normalMapping->integer)
 	{
 		normalMapping = qtrue;
@@ -2159,13 +2159,23 @@ static void Render_liquid(int stage)
 {
 	shaderStage_t *pStage = tess.surfaceStages[stage];
 	vec3_t        lightDirection;
+	qboolean      normalMapping = qfalse;
 
 	Ren_LogComment("--- Render_liquid ---\n");
+
+	// let cvar decide
+	if (r_normalMapping->integer)
+	{
+		normalMapping = qtrue;
+	}
 
 	GL_State(pStage->stateBits);
 
 	// choose right shader program ----------------------------------
-	SetMacrosAndSelectProgram(trProg.gl_liquidShader, USE_PARALLAX_MAPPING, r_parallaxMapping->integer && tess.surfaceShader->parallax);
+	SetMacrosAndSelectProgram(trProg.gl_liquidShader,
+			USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+			USE_NORMAL_MAPPING, normalMapping,
+			USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
 
 	GLSL_VertexAttribsState(ATTR_POSITION | ATTR_TEXCOORD | ATTR_TANGENT | ATTR_BINORMAL | ATTR_NORMAL | ATTR_COLOR);
 
@@ -2181,6 +2191,11 @@ static void Render_liquid(int stage)
 	SetUniformMatrix16(UNIFORM_UNPROJECTMATRIX, backEnd.viewParms.unprojectionMatrix);
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
+
+	if (r_parallaxMapping->integer)
+	{
+		SetUniformFloat(UNIFORM_DEPTHSCALE, RB_EvalExpression(&pStage->depthScaleExp, r_parallaxDepthScale->value));
+	}
 
 #if 1
 	VectorCopy(tr.sunDirection, lightDirection);
@@ -2201,6 +2216,11 @@ static void Render_liquid(int stage)
 		ImageCopyBackBuffer(tr.currentRenderImage);
 	}
 
+	if (backEnd.viewParms.isPortal)
+	{
+		clipPortalPlane();
+	}
+
 	// bind u_PortalMap
 	SelectTexture(TEX_PORTAL);
 	GL_Bind(tr.portalRenderImage);
@@ -2219,7 +2239,14 @@ static void Render_liquid(int stage)
 
 	// bind u_NormalMap
 	SelectTexture(TEX_NORMAL);
-	GL_Bind(pStage->bundle[TB_COLORMAP].image[0]);
+	if (normalMapping)
+	{
+		GL_Bind(pStage->bundle[TB_COLORMAP].image[0]); // FIXME TB_COLORMAP
+	}
+	else
+	{
+		GL_Bind(pStage->bundle[TB_COLORMAP].image[0]);
+	}
 
 	SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_COLORMAP]);
 
