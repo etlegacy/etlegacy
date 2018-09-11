@@ -899,7 +899,7 @@ void G_FreeEntity(gentity_t *ent)
 
 	if (ent->free)
 	{
-		ent->Com_Dealloc(ent);
+		ent->free(ent);
 	}
 
 	trap_UnlinkEntity(ent);       // unlink from world
