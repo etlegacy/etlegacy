@@ -1621,11 +1621,11 @@ static void CG_RegisterGraphics(void)
 
 	// cannon
 	cgs.media.smokePuffShaderdirty = trap_R_RegisterShader("smokePuffdirty");
-	cgs.media.smokePuffShaderb1    = trap_R_RegisterShader("smokePuffblack1");
-	cgs.media.smokePuffShaderb2    = trap_R_RegisterShader("smokePuffblack2");
-	cgs.media.smokePuffShaderb3    = trap_R_RegisterShader("smokePuffblack3");
-	cgs.media.smokePuffShaderb4    = trap_R_RegisterShader("smokePuffblack4");
-	cgs.media.smokePuffShaderb5    = trap_R_RegisterShader("smokePuffblack5");
+
+	for (i = 0; i < 5; i++)
+	{
+		cgs.media.smokePuffShaderb[i] = trap_R_RegisterShader(va("smokePuffblack%i", i + 1));
+	}
 
 	// bleedanim
 	for (i = 0; i < 5; i++)

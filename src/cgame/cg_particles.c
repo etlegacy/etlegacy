@@ -771,7 +771,7 @@ void CG_AddParticleToScene(cparticle_t *p, vec3_t org, float alpha)
 	{
 		vec3_t point, rr, ru, rotate_ang;
 		float  width, height;
-		float  time  = cg.time - p->time;
+		float  time = cg.time - p->time;
 		float  time2 = p->endtime - p->time;
 		float  ratio = time / time2;
 		int    i, j;
@@ -1330,24 +1330,7 @@ void CG_ParticleSmoke(qhandle_t pshader, centity_t *cent)
 		p->endheight = cent->currentState.angles2[1];
 		p->endwidth  = cent->currentState.angles2[1];
 
-		switch (rand() % 6)
-		{
-		case 1:
-			p->pshader = cgs.media.smokePuffShaderb1;
-			break;
-		case 2:
-			p->pshader = cgs.media.smokePuffShaderb2;
-			break;
-		case 3:
-			p->pshader = cgs.media.smokePuffShaderb3;
-			break;
-		case 4:
-			p->pshader = cgs.media.smokePuffShaderb4;
-			break;
-		default:
-			p->pshader = cgs.media.smokePuffShaderb5;
-			break;
-		}
+		p->pshader = cgs.media.smokePuffShaderb[rand() % 6];
 	}
 
 	p->type = P_SMOKE;

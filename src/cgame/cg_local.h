@@ -1430,11 +1430,7 @@ typedef struct
 
 	// cannon
 	qhandle_t smokePuffShaderdirty;
-	qhandle_t smokePuffShaderb1;
-	qhandle_t smokePuffShaderb2;
-	qhandle_t smokePuffShaderb3;
-	qhandle_t smokePuffShaderb4;
-	qhandle_t smokePuffShaderb5;
+	qhandle_t smokePuffShaderb[5];
 
 	// blood pool
 	qhandle_t bloodPool;
@@ -2007,7 +2003,7 @@ typedef enum
 #endif
 
 #define SECONDARY_SLOT 0
-#define	PRIMARY_SLOT 1
+#define PRIMARY_SLOT 1
 
 /**
  * @struct cgs_s
