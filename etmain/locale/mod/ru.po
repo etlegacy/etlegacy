@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2017-04-15 03:47+0000\n"
-"Last-Translator: Artem Vorotnikov <artem@vorotnikov.me>\n"
+"PO-Revision-Date: 2018-09-11 08:21+0000\n"
+"Last-Translator: IR4T4 <gutzu@gmx.ch>\n"
 "Language-Team: Russian (http://www.transifex.com/etlegacy/etlegacy/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1262,13 +1262,17 @@ msgstr "МЕНЮ"
 msgid "VOTE"
 msgstr "ГОЛОСОВАНИЕ"
 
-#: etmain/ui/ingame_main.menu:39 etmain/ui/ingame_vote.menu:53
+#: etmain/ui/ingame_main.menu:38 etmain/ui/ingame_vote.menu:53
 msgid "REFEREE"
 msgstr "СУДЬЯ"
 
-#: etmain/ui/ingame_main.menu:40 etmain/ui/ingame_vote.menu:71
+#: etmain/ui/ingame_main.menu:39 etmain/ui/ingame_vote.menu:71
 msgid "RCON"
 msgstr "RCON"
+
+#: etmain/ui/ingame_main.menu:40
+msgid "LIMBO MENU"
+msgstr ""
 
 #: etmain/ui/ingame_main.menu:41 etmain/ui/ingame_serverinfo.menu:52
 #: etmain/ui/playonline.menu:650 etmain/ui/playonline_serverinfo.menu:52
@@ -5422,7 +5426,7 @@ msgid "drowned"
 msgstr "утонул"
 
 msgid "slagged"
-msgstr ""
+msgstr "ошлакован"
 
 msgid "was killed"
 msgstr "был убит"
@@ -5918,13 +5922,13 @@ msgid "'s Landmine"
 msgstr " подорвался на мине"
 
 msgid "'s Mobile MG 42"
-msgstr ""
+msgstr "'s Переносной MG 42"
 
 msgid "'s Mobile Browning"
-msgstr ""
+msgstr "'s Браунинг"
 
 msgid "'s rifle grenade"
-msgstr ""
+msgstr "'s винтовочная граната"
 
 msgid "'s support fire"
 msgstr " с помощью огоня авиации"
@@ -5978,7 +5982,7 @@ msgid "Not enough players to start match!\n"
 msgstr "Недостаточно игроков для начала матча!\n"
 
 msgid "'s flamethrower"
-msgstr ""
+msgstr "'s огнемёт"
 
 msgid "'s Satchel Charge"
 msgstr " с помощью взрывпакета"
@@ -5990,7 +5994,7 @@ msgid "'s tank-mounted MG42"
 msgstr " танковым MG42"
 
 msgid "'s dynamite"
-msgstr ""
+msgstr "'s динамит"
 
 msgid "Timelimit hit.\n"
 msgstr "Время истекло.\n"
@@ -6002,7 +6006,7 @@ msgid "'s tank-mounted browning 30cal"
 msgstr " танковым browning 30cal"
 
 msgid "'s grenade"
-msgstr ""
+msgstr "'s граната"
 
 msgid "Competition Settings Loaded!\n"
 msgstr "Настройки соревнования загружены!\n"
@@ -6047,19 +6051,19 @@ msgid "Too many players already on this Fireteam"
 msgstr "Звено переполнено"
 
 msgid "The leader has now left the Fireteam you applied to"
-msgstr ""
+msgstr "Сейчас лидер покинул звено, им стали вы"
 
 msgid "The other player is already on a fireteam"
-msgstr ""
+msgstr "Другой игрок уже в звене"
 
 msgid "You are not on the same team as the other player"
-msgstr ""
+msgstr "Вы в иной команде, чем другой игрок"
 
 msgid "You are not on the same Fireteam as the other player"
-msgstr ""
+msgstr "Вы в ином звене, чем другой игрок"
 
 msgid "Invalid client selected"
-msgstr ""
+msgstr "Выбран неверный клиент"
 
 msgid "usage: fireteam admin <clientname|clientnumber>"
 msgstr "использование: fireteam admin <имяклиента|номерклиента>"
@@ -6094,10 +6098,10 @@ msgid "You must be a fireteam admin to give admin rights to someone else"
 msgstr "Вы должны быть админом звена чтобы передать свои права кому-либо"
 
 msgid "Invalid referee password!\n"
-msgstr ""
+msgstr "Неверный пароль судьи!\n"
 
 msgid "Usage: ref [password]\n"
-msgstr ""
+msgstr "Использование: ref [password]\n"
 
 msgid ""
 "^3Referee commands:^7\n"
@@ -6119,16 +6123,16 @@ msgid "Referee has ^3LOCKED^7 teams\n"
 msgstr " Судья ^3ЗАФИКСИРОВАЛ^7 команды\n"
 
 msgid "You have LOCKED teams\n"
-msgstr ""
+msgstr "Вы ЗАКРЫЛИ команды\n"
 
 msgid "Referee has ^3UNLOCKED^7 teams\n"
-msgstr ""
+msgstr "Судья ^3ОТКРЫЛ^7 команды\n"
 
 msgid "You have UNLOCKED teams\n"
-msgstr ""
+msgstr "Вы ОТКРЫЛИ команды\n"
 
 msgid "The ^4Allies^7 team is LOCKED!\n"
-msgstr ""
+msgstr "^4Союзники^7 ЗАФИКСИРОВАНЫ!\n"
 
 msgid "The ^1Axis^7 team is LOCKED!\n"
 msgstr "^1Фашисты^7 ЗАФИКСИРОВАНЫ!\n"
@@ -6137,10 +6141,10 @@ msgid "^3Referee ^1PAUSED^3 the match^3!\n"
 msgstr "^3Судья ^1ОСТАНОВИЛ^3 матч^3!\n"
 
 msgid "^3Match is ^1PAUSED^3! (^7Referee^3)\n"
-msgstr ""
+msgstr "^3Матч на ^1ПАУЗЕ^3! (^7Судья^3)\n"
 
 msgid "The match is already ^1PAUSED!\n"
-msgstr ""
+msgstr "Матч уже на ^1ПАУЗЕ!\n"
 
 msgid "^3Referee ^5UNPAUSES^3 the match ... resuming in 10 seconds!\n"
 msgstr ""
@@ -6317,28 +6321,28 @@ msgid "Vote cast.\n"
 msgstr "Голос подан.\n"
 
 msgid "'s KA-BAR"
-msgstr ""
+msgstr " (KA-BAR)"
 
 msgid "'s knife arts"
-msgstr ""
+msgstr " (нож)"
 
 msgid "'s .45ACP 1911"
-msgstr ""
+msgstr " (.45ACP 1911)"
 
 msgid "'s Thompson"
-msgstr ""
+msgstr " (Томпсон)"
 
 msgid "'s MP 40"
-msgstr ""
+msgstr " (MP40)"
 
 msgid "'s knife"
-msgstr ""
+msgstr " (нож)"
 
 msgid "'s Luger 9mm"
-msgstr ""
+msgstr " (Люгер 9мм)"
 
 msgid "'s Panzerfaust"
-msgstr ""
+msgstr " (Панцерфауст)"
 
 msgid "'s Garand"
 msgstr ""
@@ -6717,10 +6721,10 @@ msgid "Not Ready:"
 msgstr ""
 
 msgid "CONTROLS: ADVANCED"
-msgstr ""
+msgstr "УПРАВЛЕНИЕ: ДОПОЛНИТЕЛЬНО"
 
 msgid "Deselect All Members:"
-msgstr ""
+msgstr "Снять выделение со всех:"
 
 msgid "Select Member #7:"
 msgstr ""
@@ -6731,28 +6735,28 @@ msgstr ""
 msgid ""
 "Couldn't load an official pak file; verify your installation and make sure "
 "it has been updated to the latest version."
-msgstr ""
+msgstr "Ошибка загрузки официального .pak; проверьте целостность и версию установленной игры."
 
 msgid "Battle Sense"
 msgstr ""
 
 msgid "Engineering"
-msgstr ""
+msgstr "Инженерия"
 
 msgid "First Aid"
-msgstr ""
+msgstr "Полевая медицина"
 
 msgid "Signals"
-msgstr ""
+msgstr "Сигналы"
 
 msgid "Light Weapons"
-msgstr ""
+msgstr "Лёгкое вооружение"
 
 msgid "Heavy Weapons"
-msgstr ""
+msgstr "Тяжёлое вооружение"
 
 msgid "Covert Ops"
-msgstr ""
+msgstr "Маскировка"
 
 msgid "Fire Mission: ^3Firing for effect!"
 msgstr ""
@@ -6764,7 +6768,7 @@ msgid "Fire Mission: ^3Aborting, can't see target."
 msgstr ""
 
 msgid "I need a Medic!"
-msgstr ""
+msgstr "Нужен врач!"
 
 msgid "New version available. Do you want to update now?"
 msgstr ""
@@ -6773,23 +6777,23 @@ msgid "20 Med Health"
 msgstr ""
 
 msgid "Pilot: ^3Aborting, can't see target."
-msgstr ""
+msgstr "Пилот: ^3Отмена, не вижу цели."
 
 msgid "Pilot: ^3Affirmative, on my way!"
-msgstr ""
+msgstr "Пилот: ^3Подтверждаю, я в пути!"
 
 msgid "HQ: ^3All available planes are already en-route."
-msgstr ""
+msgstr "HQ: ^3Авиация занята."
 
 #: src/cgame/cg_draw.c:1830
 msgid "Join a Fireteam?"
-msgstr ""
+msgstr "Присоединиться к звену?"
 
 msgid "Apply"
 msgstr ""
 
 msgid "Create"
-msgstr ""
+msgstr "Создать"
 
 msgid "Attack"
 msgstr ""
@@ -6807,7 +6811,7 @@ msgid "Invite"
 msgstr ""
 
 msgid "Change privacy"
-msgstr ""
+msgstr "Изменить уровень приватности"
 
 msgid "Kick"
 msgstr ""
@@ -6816,25 +6820,25 @@ msgid "Warn"
 msgstr ""
 
 msgid "Change admin"
-msgstr ""
+msgstr "Сменить админа"
 
 msgid "Highest Fragger"
-msgstr ""
+msgstr "Лучший стрелок"
 
 msgid "Highest Experience Points"
-msgstr ""
+msgstr "Самый опытный"
 
 msgid "Highest Ranking Officer"
-msgstr ""
+msgstr "Наивысший ранг"
 
 msgid "Most Highly Decorated"
-msgstr ""
+msgstr "Кавалер орденов"
 
 msgid "Highest Battle Sense"
-msgstr ""
+msgstr "Лучшее полевое чутьё"
 
 msgid "Best Engineer"
-msgstr ""
+msgstr "Лучший инженер"
 
 msgid "Best Medic"
 msgstr ""
@@ -7233,6 +7237,9 @@ msgstr ""
 msgid "IRC nickame in channel"
 msgstr ""
 
+msgid "Kick rejoin time ms:"
+msgstr ""
+
 msgid "Auto rejoin time after kick"
 msgstr ""
 
@@ -7264,4 +7271,115 @@ msgid "FIELD OPS"
 msgstr ""
 
 msgid "COVERT OPS"
+msgstr ""
+
+msgid ""
+"Includes or excludes ET:Legacy servers with humans from the server list"
+msgstr ""
+
+msgid "Specify receiver of quick radio messages"
+msgstr ""
+
+msgid "Renderer:"
+msgstr ""
+
+msgid "High Quality Video:"
+msgstr ""
+
+msgid "Sets high quality video."
+msgstr ""
+
+msgid "Port:"
+msgstr ""
+
+msgid "^1JOIN US"
+msgstr ""
+
+msgid ""
+"ET: Legacy development is a collaborative effort done in an open, "
+"transparent and friendly manner. Anyone is welcome to join our efforts!"
+msgstr ""
+
+msgid "CHOOSE CLASS/WEAPON"
+msgstr ""
+
+msgid "S. Soldier"
+msgstr ""
+
+msgid "M. Medic"
+msgstr ""
+
+msgid "E. Engineer"
+msgstr ""
+
+msgid "F. Field Ops"
+msgstr ""
+
+msgid "C. Covert Ops"
+msgstr ""
+
+msgid "A. Automatic Rifle"
+msgstr ""
+
+msgid "G. Machinegun"
+msgstr ""
+
+msgid "F. Flamethrower"
+msgstr ""
+
+msgid "R. Rocket Launcher"
+msgstr ""
+
+msgid "M. Mortar"
+msgstr ""
+
+msgid "S. SMG"
+msgstr ""
+
+msgid "G. Rifle"
+msgstr ""
+
+msgid "P. Sniper Rifle"
+msgstr ""
+
+msgid "1. Soldier"
+msgstr ""
+
+msgid "2. Medic"
+msgstr ""
+
+msgid "3. Engineer"
+msgstr ""
+
+msgid "4. Field Ops"
+msgstr ""
+
+msgid "5. Covert Ops"
+msgstr ""
+
+msgid "1. Automatic Rifle"
+msgstr ""
+
+msgid "2. Machinegun"
+msgstr ""
+
+msgid "3. Flamethrower"
+msgstr ""
+
+msgid "4. Rocket Launcher"
+msgstr ""
+
+msgid "5. Mortar"
+msgstr ""
+
+msgid "1. SMG"
+msgstr ""
+
+msgid "2. Rifle"
+msgstr ""
+
+msgid "2. Automatic Rifle"
+msgstr ""
+
+msgid "3. Sniper Rifle"
 msgstr ""

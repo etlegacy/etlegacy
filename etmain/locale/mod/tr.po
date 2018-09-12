@@ -2,47 +2,48 @@
 # Copyright (C) 2012-2015 ET: Legacy Team
 # This file is distributed under the same license as the ET:Legacy package.
 # Translators:
+# Bora Erdal, 2017-2018
 msgid ""
 msgstr ""
 "Project-Id-Version: ET:Legacy\n"
 "Report-Msgid-Bugs-To: mail@etlegacy.com\n"
 "POT-Creation-Date: 2015-01-10 20:22+0100\n"
-"PO-Revision-Date: 2016-01-10 20:15+0000\n"
-"Last-Translator: IR4 <gutzu@gmx.ch>\n"
-"Language-Team: Korean (Korea) (http://www.transifex.com/etlegacy/etlegacy/language/ko_KR/)\n"
+"PO-Revision-Date: 2018-09-11 08:10+0000\n"
+"Last-Translator: IR4T4 <gutzu@gmx.ch>\n"
+"Language-Team: Turkish (http://www.transifex.com/etlegacy/etlegacy/language/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ko_KR\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: tr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: etmain/ui/credits_activision.menu:66
 msgid "PRODUCED BY ACTIVISION"
-msgstr ""
+msgstr "ACTIVISION TARAFINDAN ÜRETİLMİŞTİR"
 
 #: etmain/ui/credits_activision.menu:82
 msgid "Producer"
-msgstr ""
+msgstr "Üretici"
 
 #: etmain/ui/credits_activision.menu:84
 msgid "Associate Producer"
-msgstr ""
+msgstr "Ortak üretici"
 
 #: etmain/ui/credits_activision.menu:86
 msgid "Installer"
-msgstr ""
+msgstr "Kurucu"
 
 #: etmain/ui/credits_activision.menu:88
 msgid "Production Coordinator"
-msgstr ""
+msgstr "Proje Koordinatörü"
 
 #: etmain/ui/credits_activision.menu:90
 msgid "Production Tester"
-msgstr ""
+msgstr "Üretim testçisi"
 
 #: etmain/ui/credits_activision.menu:92
 msgid "Sr. Executive Producer"
-msgstr ""
+msgstr "Baş yapımcı"
 
 #: etmain/ui/credits_activision.menu:94
 msgid "VP North American Studios"
@@ -50,35 +51,35 @@ msgstr ""
 
 #: etmain/ui/credits_activision.menu:97 etmain/ui/credits_activision.menu:99
 msgid "QA Project Lead"
-msgstr ""
+msgstr "Kalite Kontrol Proje Yöneticisi"
 
 #: etmain/ui/credits_activision.menu:101
 msgid "QA Senior Project Lead"
-msgstr ""
+msgstr "Kalite Kontrol kıdemli proje lideri"
 
 #: etmain/ui/credits_activision.menu:103
 msgid "QA Floor Lead"
-msgstr ""
+msgstr "Kalite Kontrol Grup Lideri"
 
 #: etmain/ui/credits_activision.menu:104
 msgid "Testers:"
-msgstr ""
+msgstr "Testçiler:"
 
 #: etmain/ui/credits_activision.menu:110
 msgid "Network"
-msgstr ""
+msgstr "Bağlantı"
 
 #: etmain/ui/credits_activision.menu:112
 msgid "Compatibility"
-msgstr ""
+msgstr "Uyumluluk"
 
 #: etmain/ui/credits_activision.menu:114
 msgid "QA Manager"
-msgstr ""
+msgstr "Kalite Kontrol Müdürü"
 
 #: etmain/ui/credits_activision.menu:116
 msgid "Manager, Code Release Group"
-msgstr ""
+msgstr "Müdür, Kod yayın grubu"
 
 #: etmain/ui/credits_activision.menu:118
 msgid "Sr. Lead, Code Release Group"
@@ -90,7 +91,7 @@ msgstr ""
 
 #: etmain/ui/credits_activision.menu:122
 msgid "Manager, Customer Support"
-msgstr ""
+msgstr "Yönetici, Müşteri hizmetleri"
 
 #: etmain/ui/credits_activision.menu:126 etmain/ui/credits_activision.menu:128
 #: etmain/ui/credits_additional.menu:233 etmain/ui/credits_additional.menu:235
@@ -135,7 +136,7 @@ msgstr ""
 
 #: etmain/ui/credits_additional.menu:128
 msgid "ADDITIONAL DEVELOPMENT"
-msgstr ""
+msgstr "EK GELİŞTİRME"
 
 #: etmain/ui/credits_additional.menu:148
 msgid "OSP BY ORANGE SMOOTHIE PRODUCTIONS"
@@ -143,7 +144,7 @@ msgstr ""
 
 #: etmain/ui/credits_additional.menu:161
 msgid "Programming"
-msgstr ""
+msgstr "Programlama"
 
 #: etmain/ui/credits_additional.menu:168
 msgid "PUNKBUSTER BY EVEN BALANCE, INC."
@@ -151,15 +152,15 @@ msgstr ""
 
 #: etmain/ui/credits_additional.menu:181
 msgid "President"
-msgstr ""
+msgstr "Baş Yönetici"
 
 #: etmain/ui/credits_additional.menu:183
 msgid "Senior Project Leader"
-msgstr ""
+msgstr "Sorumlu Proje Yöneticisi"
 
 #: etmain/ui/credits_additional.menu:190
 msgid "VOICE ARTISTS"
-msgstr ""
+msgstr "SES SANATÇILARI"
 
 #: etmain/ui/credits_additional.menu:203
 msgid "Voice of Allied / Axis soldiers"
@@ -175,57 +176,57 @@ msgstr ""
 
 #: etmain/ui/credits_additional.menu:214
 msgid "SPECIAL THANKS TO"
-msgstr ""
+msgstr "TEŞEKKÜRLER"
 
 #: etmain/ui/credits_additional.menu:226
 msgid ""
 "Return to Castle Wolfenstein was developed by Gray Matter Studios & Nerve "
 "Software."
-msgstr ""
+msgstr "Castle Wolfenstein'e dönüş, Gray Matter Studios & Nerve Software tarafından geliştirilmiştir."
 
 #: etmain/ui/credits_additional.menu:227
 msgid "We would like to thank both developers for their help and support"
-msgstr ""
+msgstr "Geliştiricilerimize yardımları ve desteklerinden dolayı teşekkürler"
 
 #: etmain/ui/credits_additional.menu:228
 msgid "during the development of Wolfenstein: Enemy Territory."
-msgstr ""
+msgstr "Wolfenstein: Enemy Territory'nin gelişiminde yer aldıkları için."
 
 #: etmain/ui/credits_additional.menu:229
 msgid "Original Soundtrack by Bill Brown."
-msgstr ""
+msgstr "Orijinal ses dosyası Bill Brown'a aittir."
 
 #: etmain/ui/credits_etlegacy.menu:66 etmain/ui/credits_quit.menu:62
 msgid "DEVELOPED BY ET: LEGACY TEAM"
-msgstr ""
+msgstr "ET: LEGACY EKİBİ TARAFINDAN GELİŞTİRİLMİŞTİR"
 
 #: etmain/ui/credits_etlegacy.menu:85
 msgid "^1PROGRAMMING"
-msgstr ""
+msgstr "^1PROGRAMLAMA"
 
 #: etmain/ui/credits_etlegacy.menu:98
 msgid "Project founder, coding & management"
-msgstr ""
+msgstr "Proje sahibi, kodcu ve idari yönetici"
 
 #: etmain/ui/credits_etlegacy.menu:100
 msgid "Coding, mod development & bad boy"
-msgstr ""
+msgstr "Kodlama, mod geliştirme ve asi çocukluk"
 
 #: etmain/ui/credits_etlegacy.menu:102
 msgid "Main windows coder & renderer"
-msgstr ""
+msgstr "Pencere modu kodlama ve işleme sorumlusu"
 
 #: etmain/ui/credits_etlegacy.menu:104
 msgid "Website, coding & scripts"
-msgstr ""
+msgstr "Websitesi, kodlama & içerik"
 
 #: etmain/ui/credits_etlegacy.menu:106
 msgid "Coding, mod development"
-msgstr ""
+msgstr "Kodlama, mod geliştirme"
 
 #: etmain/ui/credits_etlegacy.menu:113
 msgid "^1PORTS"
-msgstr ""
+msgstr "^1BAGLANTI NOKTALARI"
 
 #: etmain/ui/credits_etlegacy.menu:126
 msgid "AROS and MorphOS"
@@ -248,12 +249,12 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:171
 msgid "See HALL OF FAME below"
-msgstr ""
+msgstr "ONUR LİSTESİ aşağıdadır"
 
 #: etmain/ui/credits_etlegacy.menu:178 etmain/ui/credits_quit.menu:245
 #: etmain/ui/profile_create_initial.menu:127
 msgid "^1WEBSITE"
-msgstr ""
+msgstr "^1WEBSITE"
 
 #: etmain/ui/credits_etlegacy.menu:193 etmain/ui/credits_quit.menu:260
 msgid "© 2012-2015 ET Legacy Team - under the terms of GPL version 3."
@@ -261,15 +262,15 @@ msgstr ""
 
 #: etmain/ui/credits_etlegacy.menu:201
 msgid "HALL OF FAME"
-msgstr ""
+msgstr "ONUR LİSTESİ"
 
 #: etmain/ui/credits_et260.menu:66
 msgid "ET 2.60 UPDATE"
-msgstr ""
+msgstr "ET 2.60 GÜNCELLEME"
 
 #: etmain/ui/credits_et260.menu:86
 msgid "ET PRO DEVELOPMENT TEAM"
-msgstr ""
+msgstr "ET PRO GELİŞTİRME EKİBİ"
 
 #: etmain/ui/credits_et260.menu:114
 msgid "MAC OS X PORT"
@@ -277,7 +278,7 @@ msgstr ""
 
 #: etmain/ui/credits_et260.menu:127 etmain/ui/credits_splashdamage.menu:128
 msgid "Lead Programmer"
-msgstr ""
+msgstr "Baş programcı"
 
 #: etmain/ui/credits_et260.menu:128
 msgid ""
@@ -287,27 +288,27 @@ msgstr ""
 
 #: etmain/ui/credits_halloffame.menu:66
 msgid "ET: LEGACY HALL OF FAME"
-msgstr ""
+msgstr "ET: LEGACY ONUR LİSTESİ"
 
 #: etmain/ui/credits_halloffame.menu:98
 msgid "Advices, Bug reports, Patches"
-msgstr ""
+msgstr "Öneriler, Hata bildirimleri, Yamalar"
 
 #: etmain/ui/credits_halloffame.menu:106
 msgid "^1TRANSLATIONS"
-msgstr ""
+msgstr "^1ÇEVİRİLER"
 
 #: etmain/ui/credits_idsoftware.menu:66
 msgid "EXECUTIVE PRODUCED BY ID SOFTWARE"
-msgstr ""
+msgstr "BAŞ YAPIM, ID SOFTWARE'YE AİTTİR"
 
 #: etmain/ui/credits_idsoftware.menu:82
 msgid "Executive Producer"
-msgstr ""
+msgstr "Baş yapımcı"
 
 #: etmain/ui/credits_idsoftware.menu:84
 msgid "Additional Programming"
-msgstr ""
+msgstr "Ek programlama"
 
 #: etmain/ui/credits_idsoftware.menu:87
 msgid ""
@@ -318,11 +319,11 @@ msgstr ""
 #: etmain/ui/credits_idsoftware.menu:88
 msgid ""
 "Production, development and technical assistance provided by id Software."
-msgstr ""
+msgstr "Üretim, geliştirme ve teknik destek, id Software tarafından sağlanmıştır."
 
 #: etmain/ui/credits_quit.menu:84
 msgid "^1ORIGINAL DEVELOPERS"
-msgstr ""
+msgstr "^1ESAS GELİŞTİRİCİLER"
 
 #: etmain/ui/credits_quit.menu:261
 msgid ""
@@ -336,15 +337,15 @@ msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:66
 msgid "DEVELOPED BY SPLASH DAMAGE"
-msgstr ""
+msgstr "SPLASH DAMAGE TARAFINDAN GELİŞTİRİLMİŞTİR"
 
 #: etmain/ui/credits_splashdamage.menu:82
 msgid "Game Designer / Managing Director"
-msgstr ""
+msgstr "Oyun tasarımcısı / İdari müdür"
 
 #: etmain/ui/credits_splashdamage.menu:84
 msgid "Business Director"
-msgstr ""
+msgstr "İş yöneticisi"
 
 #: etmain/ui/credits_splashdamage.menu:91
 msgid "ART"
@@ -352,11 +353,11 @@ msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:104
 msgid "Lead Artist / Creative Director"
-msgstr ""
+msgstr "Baş sanatçı / Yaratıcı yönetmen"
 
 #: etmain/ui/credits_splashdamage.menu:106
 msgid "Artist / Animator"
-msgstr ""
+msgstr "Sanatçı / Animatör"
 
 #: etmain/ui/credits_splashdamage.menu:108
 msgid "Additional Art"
@@ -364,63 +365,63 @@ msgstr ""
 
 #: etmain/ui/credits_splashdamage.menu:115
 msgid "PROGRAMMING"
-msgstr ""
+msgstr "PROGRAMLAMA"
 
 #: etmain/ui/credits_splashdamage.menu:130
 msgid "Programmer"
-msgstr ""
+msgstr "Programcı"
 
 #: etmain/ui/credits_splashdamage.menu:132
 msgid "Programmer / Artist"
-msgstr ""
+msgstr "Programcı / Sanatçı"
 
 #: etmain/ui/credits_splashdamage.menu:139
 msgid "DESIGN"
-msgstr ""
+msgstr "TASARIM"
 
 #: etmain/ui/credits_splashdamage.menu:152
 msgid "Designer / Audio Engineer"
-msgstr ""
+msgstr "Tasarımcı / Ses mühendisi"
 
 #: etmain/ui/credits_splashdamage.menu:154
 msgid "Designer / Writer"
-msgstr ""
+msgstr "Tasarımcı / Yazar"
 
 #: etmain/ui/credits_splashdamage.menu:161
 msgid "LEVEL DESIGN"
-msgstr ""
+msgstr "BÖLÜM TASARIMI"
 
 #: etmain/ui/credits_splashdamage.menu:174
 msgid "Lead Level Designer"
-msgstr ""
+msgstr "Baş bölüm tasarımcısı"
 
 #: etmain/ui/credits_splashdamage.menu:176
 msgid "Senior Level Designer"
-msgstr ""
+msgstr "Üst düzey bölüm tasarımcısı"
 
 #: etmain/ui/credits_splashdamage.menu:178
 #: etmain/ui/credits_splashdamage.menu:180
 #: etmain/ui/credits_splashdamage.menu:184
 msgid "Level Designer"
-msgstr ""
+msgstr "Bölüm tasarımcısı"
 
 #: etmain/ui/credits_splashdamage.menu:182
 msgid "Level Designer / Artist"
-msgstr ""
+msgstr "Bölüm Tasarımcısı / Sanatçısı"
 
 #: etmain/ui/credits_splashdamage.menu:186
 msgid "Additional Level Design"
-msgstr ""
+msgstr "Ek bölüm tasarımı"
 
 #: etmain/ui/etlegacywebsite.menu:49
 msgid "ET Legacy Website"
-msgstr ""
+msgstr "ET Legacy Web Sitesi"
 
 #: etmain/ui/etlegacywebsite.menu:50
 msgid ""
 "Do you want to open\n"
 " www.etlegacy.com ?"
-msgstr ""
+msgstr "Girip göz atmak ister misin?\nwww.etlegacy.com"
 
 #: etmain/ui/etlegacywebsite.menu:51
 #: etmain/ui/hostgame_advanced_default.menu:126
@@ -433,7 +434,7 @@ msgstr ""
 #: etmain/ui/vid_confirm.menu:84 etmain/ui/vid_confirm.menu:86
 #: etmain/ui/vid_restart.menu:50 etmain/ui/viewreplay_delete.menu:53
 msgid "YES"
-msgstr ""
+msgstr "EVET"
 
 #: etmain/ui/etlegacywebsite.menu:53 etmain/ui/etlegacywebsite.menu:55
 #: etmain/ui/hostgame_advanced_default.menu:127
@@ -446,7 +447,7 @@ msgstr ""
 #: etmain/ui/vid_confirm.menu:89 etmain/ui/vid_restart.menu:51
 #: etmain/ui/viewreplay_delete.menu:54
 msgid "NO"
-msgstr ""
+msgstr "HAYIR"
 
 #: etmain/ui/hostgame_advanced_default.menu:123
 msgid "DEFAULT SERVER SETTINGS"
@@ -491,7 +492,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:35
 msgid "Player Inactivity:"
-msgstr ""
+msgstr "Oyun İnaktifliği:"
 
 #: etmain/ui/hostgame_advanced.menu:35
 msgid ""
@@ -501,7 +502,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:36
 msgid "Spectator Inactivity:"
-msgstr ""
+msgstr "İzleyici inaktifliği:"
 
 #: etmain/ui/hostgame_advanced.menu:36
 msgid ""
@@ -531,7 +532,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:42
 msgid "Wait for Ready:"
-msgstr ""
+msgstr "Hazırla kendini:"
 
 #: etmain/ui/hostgame_advanced.menu:42
 msgid ""
@@ -541,7 +542,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid "Minimum Players:"
-msgstr ""
+msgstr "Minimum oyuncu:"
 
 #: etmain/ui/hostgame_advanced.menu:43
 msgid ""
@@ -550,7 +551,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:44
 msgid "Ready percentage:"
-msgstr ""
+msgstr "Hazır olma yüzdesi:"
 
 #: etmain/ui/hostgame_advanced.menu:44
 msgid ""
@@ -560,7 +561,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Allow Late Joins:"
-msgstr ""
+msgstr "Geç katılanları al:"
 
 #: etmain/ui/hostgame_advanced.menu:45
 msgid "Whether a player can join a team once a match has started"
@@ -568,7 +569,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Mute Spectators:"
-msgstr ""
+msgstr "İzleyicileri sustur:"
 
 #: etmain/ui/hostgame_advanced.menu:46
 msgid "Whether spectators are muted"
@@ -582,16 +583,16 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Nobody"
-msgstr ""
+msgstr "Kimse"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Enemies Only"
-msgstr ""
+msgstr "Sadece düşmanlar"
 
 #: etmain/ui/hostgame_advanced.menu:47 etmain/ui/ingame_vote_misc.menu:61
 #: etmain/ui/ingame_vote_misc_refrcon.menu:60
 msgid "Everyone"
-msgstr ""
+msgstr "Herkes"
 
 #: etmain/ui/hostgame_advanced.menu:47
 msgid "Whether you can damage players during the match's warmup period"
@@ -599,7 +600,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Max Players Per Team:"
-msgstr ""
+msgstr "Takım başına maksimum oyuncu:"
 
 #: etmain/ui/hostgame_advanced.menu:48
 msgid "Specifies the maximum number of players per team"
@@ -607,7 +608,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid "Disable Team Controls:"
-msgstr ""
+msgstr "Takım kontrolünü devre dışı bırak:"
 
 #: etmain/ui/hostgame_advanced.menu:49
 msgid ""
@@ -666,7 +667,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Map Time Limit:"
-msgstr ""
+msgstr "Harita zaman süresi:"
 
 #: etmain/ui/hostgame_advanced.menu:53
 msgid "Override the default time limit"
@@ -767,7 +768,7 @@ msgstr ""
 #: etmain/ui/hostgame_advanced.menu:71 etmain/ui/hostgame.menu:44
 #: etmain/ui/popup_password.menu:84
 msgid "Password:"
-msgstr ""
+msgstr "Şifre:"
 
 #: etmain/ui/hostgame_advanced.menu:71
 msgid "Sets the password required for players to join the server"
@@ -829,7 +830,7 @@ msgstr ""
 #: etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
 msgid "Game Type:"
-msgstr ""
+msgstr "Oyun türü:"
 
 #: etmain/ui/hostgame_advanced.menu:82
 msgid "Allow players to vote for a change in game type"
@@ -845,7 +846,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Map:"
-msgstr ""
+msgstr "Harita:"
 
 #: etmain/ui/hostgame_advanced.menu:84
 msgid "Allow players to vote for a different campaign or map"
@@ -853,7 +854,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Match Reset:"
-msgstr ""
+msgstr "Maç baştan başlatma:"
 
 #: etmain/ui/hostgame_advanced.menu:85
 msgid "Allow players to vote for the match to be reset"
@@ -869,7 +870,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Next Map:"
-msgstr ""
+msgstr "Sonraki harita:"
 
 #: etmain/ui/hostgame_advanced.menu:87
 msgid "Allow players to vote for the next campaign or map"
@@ -877,7 +878,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Balanced Teams:"
-msgstr ""
+msgstr "Dengeli takımlar:"
 
 #: etmain/ui/hostgame_advanced.menu:88
 msgid "Allow players to vote for enforced team balance"
@@ -901,7 +902,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Swap Teams:"
-msgstr ""
+msgstr "Takımları değiştir:"
 
 #: etmain/ui/hostgame_advanced.menu:92
 msgid "Allow players to vote for teams to swap sides"
@@ -909,7 +910,7 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Friendly Fire:"
-msgstr ""
+msgstr "Dost ateşi:"
 
 #: etmain/ui/hostgame_advanced.menu:93
 msgid "Allow players to vote for friendly fire to be enabled or disabled"
@@ -1005,12 +1006,12 @@ msgstr ""
 
 #: etmain/ui/hostgame_advanced.menu:165
 msgid "EXTENDED"
-msgstr ""
+msgstr "GENİŞLETİLMİŞ"
 
 #: etmain/ui/hostgame_advanced.menu:166 etmain/ui/hostgame_extended.menu:37
 #: etmain/ui/options_controls.menu:122
 msgid "DEFAULT"
-msgstr ""
+msgstr "VARSAYILAN"
 
 #: etmain/ui/hostgame_dedicated_warning.menu:52
 msgid "START DEDICATED SERVER"
@@ -1059,16 +1060,16 @@ msgstr ""
 #: etmain/ui/hostgame.menu:43 etmain/ui/options_customise_game.menu:42
 #: etmain/ui/options_system.menu:53
 msgid "No"
-msgstr ""
+msgstr "Hayır"
 
 #: etmain/ui/hostgame_extended.menu:32
 #: etmain/ui/options_customise_game.menu:42
 msgid "Yes"
-msgstr ""
+msgstr "Evet"
 
 #: etmain/ui/hostgame_extended.menu:32
 msgid "Enable Country Flags on the server"
-msgstr ""
+msgstr "Sunucuda ülke bayraklarını aktif hale getir"
 
 #: etmain/ui/hostgame_extended.menu:36 etmain/ui/hostgame.menu:195
 msgid "ADVANCED"
@@ -1084,11 +1085,11 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:37
 msgid "SETTINGS"
-msgstr ""
+msgstr "AYARLAR"
 
 #: etmain/ui/hostgame.menu:38
 msgid "Server Name:"
-msgstr ""
+msgstr "Sunucu ismi:"
 
 #: etmain/ui/hostgame.menu:38
 msgid "Specifies the name of your game server"
@@ -1108,7 +1109,7 @@ msgstr ""
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77 etmain/ui/playonline.menu:83
 #: src/cgame/cg_loadpanel.c:263
 msgid "Map Voting"
-msgstr ""
+msgstr "Harita oylaması"
 
 #: etmain/ui/hostgame.menu:39 etmain/ui/ingame_vote_misc.menu:78
 #: etmain/ui/ingame_vote_misc_refrcon.menu:77
@@ -1127,7 +1128,7 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:40
 msgid "Maximum Players:"
-msgstr ""
+msgstr "Maksimum oyuncu:"
 
 #: etmain/ui/hostgame.menu:40
 msgid "Maximum # of players that can connect to the server"
@@ -1177,7 +1178,7 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:58
 msgid "Friendly Fire"
-msgstr ""
+msgstr "Dost ateşi"
 
 #: etmain/ui/hostgame.menu:59
 msgid "Specifies if teammates can hurt each other"
@@ -1193,7 +1194,7 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:85
 msgid "Max Lives"
-msgstr ""
+msgstr "Maksimum can"
 
 #: etmain/ui/hostgame.menu:86
 msgid "Limits the number of player lives per round"
@@ -1211,7 +1212,7 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:109
 msgid "Balanced Teams"
-msgstr ""
+msgstr "Dengeli takımlar"
 
 #: etmain/ui/hostgame.menu:110
 msgid ""
@@ -1221,7 +1222,7 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:113
 msgid "NAME"
-msgstr ""
+msgstr "AD"
 
 #: etmain/ui/hostgame.menu:133
 msgid "Select the campaign or map that the server should load"
@@ -1233,63 +1234,67 @@ msgstr ""
 
 #: etmain/ui/hostgame.menu:159
 msgid "DETAILS"
-msgstr ""
+msgstr "DETAYLAR"
 
 #: etmain/ui/hostgame.menu:196
 msgid "START SERVER"
-msgstr ""
+msgstr "SUNUCUYU BAŞLAT"
 
 #: etmain/ui/ingame_disconnect.menu:50 etmain/ui/ingame_main.menu:45
 msgid "DISCONNECT"
-msgstr ""
+msgstr "SUNUCUDAN ÇIK"
 
 #: etmain/ui/ingame_disconnect.menu:51
 msgid "Do you want to disconnect"
-msgstr ""
+msgstr "Sunucudan çıkmak"
 
 #: etmain/ui/ingame_disconnect.menu:52
 msgid "from the server?"
-msgstr ""
+msgstr "istiyor musun?"
 
 #: etmain/ui/ingame_main.menu:31 etmain/ui/main.menu:101
 msgid "MENU"
-msgstr ""
+msgstr "MENÜ"
 
 #: etmain/ui/ingame_main.menu:34 etmain/ui/ingame_vote_disabled.menu:50
 #: etmain/ui/ingame_vote.menu:35
 msgid "VOTE"
-msgstr ""
+msgstr "OYLA"
 
-#: etmain/ui/ingame_main.menu:39 etmain/ui/ingame_vote.menu:53
+#: etmain/ui/ingame_main.menu:38 etmain/ui/ingame_vote.menu:53
 msgid "REFEREE"
 msgstr ""
 
-#: etmain/ui/ingame_main.menu:40 etmain/ui/ingame_vote.menu:71
+#: etmain/ui/ingame_main.menu:39 etmain/ui/ingame_vote.menu:71
 msgid "RCON"
+msgstr ""
+
+#: etmain/ui/ingame_main.menu:40
+msgid "LIMBO MENU"
 msgstr ""
 
 #: etmain/ui/ingame_main.menu:41 etmain/ui/ingame_serverinfo.menu:52
 #: etmain/ui/playonline.menu:650 etmain/ui/playonline_serverinfo.menu:52
 msgid "SERVER INFO"
-msgstr ""
+msgstr "SUNUCU BİLGİLENDİRME"
 
 #: etmain/ui/ingame_main.menu:42 etmain/ui/main.menu:108
 #: etmain/ui/options.menu:29
 msgid "OPTIONS"
-msgstr ""
+msgstr "AYARLAR"
 
 #: etmain/ui/ingame_main.menu:43 etmain/ui/main.menu:111
 msgid "CREDITS"
-msgstr ""
+msgstr "EMEĞİ GEÇENLER"
 
 #: etmain/ui/ingame_main.menu:46 etmain/ui/main.menu:113
 #: etmain/ui/quit.menu:54
 msgid "EXIT GAME"
-msgstr ""
+msgstr "OYUNDAN ÇIK"
 
 #: etmain/ui/ingame_messagemode.menu:42
 msgid "SEND MESSAGE"
-msgstr ""
+msgstr "MESAJ GÖNDER"
 
 #: etmain/ui/ingame_messagemode.menu:55 etmain/ui/ingame_messagemode.menu:57
 msgid "Say:"
@@ -1297,7 +1302,7 @@ msgstr ""
 
 #: etmain/ui/ingame_messagemode.menu:55 etmain/ui/ingame_messagemode.menu:57
 msgid "Enter text here - press ESCAPE twice to cancel"
-msgstr ""
+msgstr "Yazmak için burayı kullanın - ESCAPE tuşuna iki kez basarak çıkabilirsiniz"
 
 #: etmain/ui/ingame_messagemode.menu:59
 msgid "To:"
@@ -1327,19 +1332,19 @@ msgstr ""
 
 #: etmain/ui/ingame_messagemode.menu:61
 msgid "SEND"
-msgstr ""
+msgstr "GÖNDER"
 
 #: etmain/ui/ingame_serverinfo.menu:77 etmain/ui/playonline_serverinfo.menu:77
 msgid "REFRESH"
-msgstr ""
+msgstr "YENİLE"
 
 #: etmain/ui/ingame_serverinfo.menu:78
 msgid "ADD TO FAVORITES"
-msgstr ""
+msgstr "SEVDİĞİN OYUNLAR KISMINA EKLE"
 
 #: etmain/ui/ingame_tapoutlms.menu:49 etmain/ui/ingame_tapout.menu:49
 msgid "RESPAWNING"
-msgstr ""
+msgstr "YENİDEN CANLANILIYOR"
 
 #: etmain/ui/ingame_tapoutlms.menu:50
 msgid ""
@@ -1363,11 +1368,11 @@ msgstr ""
 
 #: etmain/ui/ingame_vote_bot.menu:45
 msgid "Difficulty:"
-msgstr ""
+msgstr "Zorluk:"
 
 #: etmain/ui/ingame_vote_bot.menu:53
 msgid "KICK ALL BOTS"
-msgstr ""
+msgstr "YAPAY ZEKALARIN HEPSİNİ ÇIKAR"
 
 #: etmain/ui/ingame_vote_bot.menu:55
 msgid "AXIS BOTS"
@@ -1379,7 +1384,7 @@ msgstr ""
 
 #: etmain/ui/ingame_vote_bot.menu:57
 msgid "BALANCED"
-msgstr ""
+msgstr "DENGELİ"
 
 #: etmain/ui/ingame_vote_bot.menu:59
 msgid "BOTS ON"
@@ -1420,31 +1425,31 @@ msgstr ""
 #: src/cgame/cg_scoreboard.c:811 src/cgame/cg_scoreboard.c:818
 #: src/cgame/cg_scoreboard.c:828 src/cgame/cg_scoreboard.c:832
 msgid "PLAYERS"
-msgstr ""
+msgstr "OYUNCULAR"
 
 #: etmain/ui/ingame_vote.menu:92
 msgid "BOTS"
-msgstr ""
+msgstr "YAPAY ZEKALAR"
 
 #: etmain/ui/ingame_vote_misc.menu:41
 #: etmain/ui/ingame_vote_misc_refrcon.menu:40
 msgid "START MATCH"
-msgstr ""
+msgstr "MAÇA BAŞLA"
 
 #: etmain/ui/ingame_vote_misc.menu:42
 #: etmain/ui/ingame_vote_misc_refrcon.menu:41
 msgid "RESET MATCH"
-msgstr ""
+msgstr "MAÇ YENİLE"
 
 #: etmain/ui/ingame_vote_misc.menu:43
 #: etmain/ui/ingame_vote_misc_refrcon.menu:42
 msgid "RESTART MAP"
-msgstr ""
+msgstr "HARİTA YENİLE"
 
 #: etmain/ui/ingame_vote_misc.menu:44
 #: etmain/ui/ingame_vote_misc_refrcon.menu:43
 msgid "NEXT MAP"
-msgstr ""
+msgstr "SONRAKİ HARİTA"
 
 #: etmain/ui/ingame_vote_misc.menu:45
 #: etmain/ui/ingame_vote_misc_refrcon.menu:44
@@ -1469,42 +1474,42 @@ msgstr ""
 #: etmain/ui/ingame_vote_misc.menu:50
 #: etmain/ui/ingame_vote_misc_refrcon.menu:49
 msgid "SWAP TEAMS"
-msgstr ""
+msgstr "TAKIMLARI DEĞİŞTİR"
 
 #: etmain/ui/ingame_vote_misc.menu:51
 #: etmain/ui/ingame_vote_misc_refrcon.menu:50
 msgid "MUTE SPECS"
-msgstr ""
+msgstr "İZLEYİCİ SUSTUR"
 
 #: etmain/ui/ingame_vote_misc.menu:52
 #: etmain/ui/ingame_vote_misc_refrcon.menu:51
 msgid "UNMUTE SPECS"
-msgstr ""
+msgstr "İZLEYİCİ SES AÇ"
 
 #: etmain/ui/ingame_vote_misc.menu:53
 #: etmain/ui/ingame_vote_misc_refrcon.menu:52
 msgid "FRIENDLY FIRE ON"
-msgstr ""
+msgstr "DOST ATEŞİ AÇIK"
 
 #: etmain/ui/ingame_vote_misc.menu:54
 #: etmain/ui/ingame_vote_misc_refrcon.menu:53
 msgid "FRIENDLY FIRE OFF"
-msgstr ""
+msgstr "DOST ATEŞİ KAPALI"
 
 #: etmain/ui/ingame_vote_misc.menu:55
 #: etmain/ui/ingame_vote_misc_refrcon.menu:54
 msgid "BALANCED TEAMS ON"
-msgstr ""
+msgstr "DENGELİ TAKIMLAR AÇIK"
 
 #: etmain/ui/ingame_vote_misc.menu:56
 #: etmain/ui/ingame_vote_misc_refrcon.menu:55
 msgid "BALANCED TEAMS OFF"
-msgstr ""
+msgstr "DENGELİ TAKIMLAR KAPALI"
 
 #: etmain/ui/ingame_vote_misc.menu:58
 #: etmain/ui/ingame_vote_misc_refrcon.menu:57
 msgid "COMPETITION SETTINGS"
-msgstr ""
+msgstr "MÜCADELE AYARLARI"
 
 #: etmain/ui/ingame_vote_misc.menu:59
 #: etmain/ui/ingame_vote_misc_refrcon.menu:58
@@ -1532,7 +1537,7 @@ msgstr ""
 #: etmain/ui/ingame_vote_misc.menu:75
 #: etmain/ui/ingame_vote_misc_refrcon.menu:74
 msgid "Time Limit:"
-msgstr ""
+msgstr "Zaman kısıtlaması:"
 
 #: etmain/ui/ingame_vote_misc.menu:75
 msgid "Specify a time limit to vote on"
@@ -1556,11 +1561,11 @@ msgstr ""
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:80
 msgid "PAUSE"
-msgstr ""
+msgstr "DURDUR"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:81
 msgid "UNPAUSE"
-msgstr ""
+msgstr "DEVAM ET"
 
 #: etmain/ui/ingame_vote_misc_refrcon.menu:83
 msgid "LOCK TEAMS"
@@ -1581,7 +1586,7 @@ msgstr ""
 #: etmain/ui/ingame_vote_players.menu:49 etmain/ui/ingame_vote_players.menu:50
 #: etmain/ui/ingame_vote_players.menu:51 src/cgame/cg_fireteams.c:359
 msgid "KICK"
-msgstr ""
+msgstr "AT"
 
 #: etmain/ui/ingame_vote_players.menu:52 etmain/ui/ingame_vote_players.menu:53
 #: etmain/ui/ingame_vote_players.menu:54
@@ -1618,15 +1623,15 @@ msgstr ""
 #: etmain/ui/ingame_vote_players.menu:70
 #: etmain/ui/ingame_vote_players_warn.menu:64 src/cgame/cg_fireteams.c:362
 msgid "WARN"
-msgstr ""
+msgstr "UYARI"
 
 #: etmain/ui/ingame_vote_players.menu:71
 msgid "BAN"
-msgstr ""
+msgstr "YASAKLA"
 
 #: etmain/ui/ingame_vote_players_warn.menu:51
 msgid "WARN PLAYER"
-msgstr ""
+msgstr "OYUNCU UYAR"
 
 #: etmain/ui/ingame_vote_players_warn.menu:61
 msgid "Warning:"
@@ -1646,7 +1651,7 @@ msgstr ""
 
 #: etmain/ui/main.menu:109 etmain/ui/profile.menu:29
 msgid "PROFILE"
-msgstr ""
+msgstr "PROFİL"
 
 #: etmain/ui/main.menu:110 etmain/ui/mods.menu:29
 msgid "MODS"
@@ -1769,7 +1774,7 @@ msgstr ""
 
 #: etmain/ui/options_controls_default.menu:52
 msgid "DEFAULT CONTROLS"
-msgstr ""
+msgstr "VARSAYILAN AYARLAR"
 
 #: etmain/ui/options_controls_default.menu:53
 msgid "Reset controls to default?"
@@ -2104,7 +2109,7 @@ msgstr ""
 #: etmain/ui/options_customise_game.menu:36
 #: etmain/ui/profile_create_initial.menu:101 etmain/ui/profile_create.menu:94
 msgid "Language:"
-msgstr ""
+msgstr "Dil:"
 
 #: etmain/ui/options_customise_game.menu:36
 #: etmain/ui/profile_create_initial.menu:101 etmain/ui/profile_create.menu:94
@@ -2385,7 +2390,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Auto-Action:"
-msgstr ""
+msgstr "Otomatik hareket:"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Demo"
@@ -2393,7 +2398,7 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Screenshot"
-msgstr ""
+msgstr "Ekran görüntüsü"
 
 #: etmain/ui/options_customise_game.menu:80
 msgid "Stats Dump"
@@ -2435,11 +2440,6 @@ msgstr ""
 
 #: etmain/ui/options_customise_game.menu:82
 msgid "Display Tool Tips in the UI"
-msgstr ""
-
-#: etmain/ui/options_customise_game.menu:1
-#: etmain/ui/wm_ftquickmessageAlt.menu:1
-msgid "ui/menudef.h"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:28 etmain/ui/options.menu:33
@@ -2894,22 +2894,22 @@ msgstr ""
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "White"
-msgstr ""
+msgstr "Beyaz"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Yellow"
-msgstr ""
+msgstr "Sarı"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Red"
-msgstr ""
+msgstr "Kırmızı"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
 msgid "Green"
-msgstr ""
+msgstr "Yeşil"
 
 #: etmain/ui/options_customise_hud.menu:97
 #: etmain/ui/options_customise_hud.menu:100
@@ -4589,6 +4589,10 @@ msgstr ""
 msgid "SECS TO NEXT MAP"
 msgstr ""
 
+#: src/cgame/cg_debriefing.c:2905
+msgid "SEC TO NEXT MAP"
+msgstr ""
+
 #: src/cgame/cg_debriefing.c:3371
 #, c-format
 msgid "Campaign: %s"
@@ -5039,7 +5043,7 @@ msgstr ""
 
 #: src/cgame/cg_loadpanel.c:251
 msgid "Single Player"
-msgstr ""
+msgstr "Tek oyuncu"
 
 #: src/cgame/cg_loadpanel.c:253
 msgid "Co-op"
@@ -5226,6 +5230,11 @@ msgstr ""
 msgid "Kills:  %3d    Team Kills: %3d    Accuracy:  %5.1f%%"
 msgstr ""
 
+#: src/cgame/cg_servercmds.c:1941
+#, c-format
+msgid "Gibs:   %3d    Team Gibs:  %3d"
+msgstr ""
+
 #: src/cgame/cg_servercmds.c:1879
 #, c-format
 msgid "Deaths: %3d    Self Kills: %3d    Headshots: %5.1f%%"
@@ -5269,7 +5278,7 @@ msgstr ""
 
 #: src/ui/ui_loadpanel.c:196
 msgid "CONNECTING..."
-msgstr ""
+msgstr "BAĞLANIYOR..."
 
 #: src/ui/ui_loadpanel.c:322
 #, c-format
@@ -5585,7 +5594,7 @@ msgstr ""
 msgid "You must be a player or following a player to use +stats\n"
 msgstr ""
 
-msgid "^9You must be alive to use ^3/kill."
+msgid "You must be alive to use ^3/kill^7."
 msgstr ""
 
 msgid "No vote in progress.\n"
@@ -5878,7 +5887,7 @@ msgstr ""
 msgid "Arming landmine..."
 msgstr ""
 
-msgid "Landmine armed..."
+msgid "Landmine armed"
 msgstr ""
 
 msgid "Dynamite is set, but NOT armed!"
@@ -5890,10 +5899,10 @@ msgstr ""
 msgid "Dynamite is now armed with a 30 second timer!"
 msgstr ""
 
-msgid "Defusing landmine"
+msgid "Defusing landmine..."
 msgstr ""
 
-msgid "Landmine defused..."
+msgid "Landmine defused"
 msgstr ""
 
 msgid "Defusing dynamite..."
@@ -6004,7 +6013,7 @@ msgstr ""
 msgid "Public Settings Loaded!\n"
 msgstr ""
 
-msgid "Landmine cannot be armed here..."
+msgid "Landmine cannot be armed here"
 msgstr ""
 
 msgid "Your team has too many landmines placed..."
@@ -6313,6 +6322,9 @@ msgstr ""
 msgid "'s KA-BAR"
 msgstr ""
 
+msgid "'s knife arts"
+msgstr ""
+
 msgid "'s .45ACP 1911"
 msgstr ""
 
@@ -6323,7 +6335,7 @@ msgid "'s MP 40"
 msgstr ""
 
 msgid "'s knife"
-msgstr ""
+msgstr "'nın bıçağı"
 
 msgid "'s Luger 9mm"
 msgstr ""
@@ -6419,7 +6431,7 @@ msgid "Sorry, the ^1Axis^7 team is locked from spectators.\n"
 msgstr ""
 
 msgid "Server quit\n"
-msgstr ""
+msgstr "Sunucudan ayrıl\n"
 
 msgid "You cannot switch during a match, please wait until the round ends."
 msgstr ""
@@ -6467,9 +6479,12 @@ msgid "^3moved to spectator for inactivity!\n"
 msgstr ""
 
 msgid "was killed by"
-msgstr ""
+msgstr "öldürdü"
 
 msgid "was stabbed by"
+msgstr ""
+
+msgid "was backstabbed by"
 msgstr ""
 
 msgid "was blasted by"
@@ -6527,7 +6542,7 @@ msgid "- Med Health"
 msgstr ""
 
 msgid "- Health Pack"
-msgstr ""
+msgstr "Sağlık çantası"
 
 msgid "- Hot Meal"
 msgstr ""
@@ -6536,10 +6551,10 @@ msgid "- Cold Meal"
 msgstr ""
 
 msgid "- Health"
-msgstr ""
+msgstr "- Sağlık"
 
 msgid "- Knife"
-msgstr ""
+msgstr "- Bıçak"
 
 msgid "- Ka-Bar"
 msgstr ""
@@ -6575,10 +6590,10 @@ msgid "- Panzerfaust"
 msgstr ""
 
 msgid "- Bazooka"
-msgstr ""
+msgstr "- Bazuka"
 
 msgid "- Grenade"
-msgstr ""
+msgstr "- Bomba"
 
 msgid "- Pineapple"
 msgstr ""
@@ -6752,7 +6767,7 @@ msgid "Fire Mission: ^3Aborting, can't see target."
 msgstr ""
 
 msgid "I need a Medic!"
-msgstr ""
+msgstr "Tedavi edilmem lazım!"
 
 msgid "New version available. Do you want to update now?"
 msgstr ""
@@ -6848,6 +6863,21 @@ msgstr ""
 msgid "Welcome Newbie! Award"
 msgstr ""
 
+msgid "Highest Headshots Percentage"
+msgstr ""
+
+msgid "Best Survivor"
+msgstr ""
+
+msgid "Most Gibs"
+msgstr ""
+
+msgid "Most Selfkills"
+msgstr ""
+
+msgid "Most Deaths"
+msgstr ""
+
 msgid ""
 "\n"
 "ET: Legacy with OpenGL 3.x renderer can not run on this machine since it is missing one or more required OpenGL extensions. Please update your video card drivers and try again.\n"
@@ -6856,7 +6886,7 @@ msgstr ""
 msgid "Gib command not allowed during intermission.\n"
 msgstr ""
 
-msgid "^9%d players gibbed."
+msgid "^3%d^7 players gibbed."
 msgstr ""
 
 msgid "There is no player to gib."
@@ -6874,7 +6904,7 @@ msgstr ""
 msgid "Die command not allowed during intermission.\n"
 msgstr ""
 
-msgid "^9%d players died."
+msgid "^3%d^7 players died."
 msgstr ""
 
 msgid "There is no player to die.\n"
@@ -6892,7 +6922,7 @@ msgstr ""
 msgid "Freeze command not allowed during intermission.\n"
 msgstr ""
 
-msgid "^9%d players are frozen."
+msgid "^3%d^7 players are frozen."
 msgstr ""
 
 msgid "No players in team or they are already frozen.\n"
@@ -6907,7 +6937,7 @@ msgstr ""
 msgid "^7%s^7 is frozen."
 msgstr ""
 
-msgid "^9%d players are unfrozen."
+msgid "^3%d^7 players are unfrozen."
 msgstr ""
 
 msgid "No players in team or they are already unfrozen.\n"
@@ -6925,7 +6955,7 @@ msgstr ""
 msgid "Burn command not allowed during intermission.\n"
 msgstr ""
 
-msgid "^9%d players burned."
+msgid "^3%d^7 players burned."
 msgstr ""
 
 msgid "No players in team or they are already burned.\n"
@@ -6943,7 +6973,7 @@ msgstr ""
 msgid "Pip command not allowed during intermission.\n"
 msgstr ""
 
-msgid "^9%d players pipped."
+msgid "^3%d^7 players pipped."
 msgstr ""
 
 msgid "No players in team or they are already pipped.\n"
@@ -6961,7 +6991,7 @@ msgstr ""
 msgid "%s command not allowed during intermission.\n"
 msgstr ""
 
-msgid "^9%d players %s."
+msgid "^3%d^7 players %s."
 msgstr ""
 
 msgid "No players in team or they are already %s.\n"
@@ -6975,7 +7005,7 @@ msgstr ""
 
 #: etmain/ui/options_system.menu:48
 msgid "System Sound Control:"
-msgstr ""
+msgstr "Sistem Ses Kontrolü"
 
 #: etmain/ui/options_system.menu:48
 msgid "Base"
@@ -7001,16 +7031,16 @@ msgstr ""
 
 #: src/cgame/cg_scoreboard.c:211
 msgid "MATCH BEGINS NOW!"
-msgstr ""
+msgstr "MAÇ BAŞLIYOR!"
 
 msgid "Mute Players:"
-msgstr ""
+msgstr "Oyuncuları sustur:"
 
 msgid "Allow players to vote for muting players"
 msgstr ""
 
 msgid "Surrender:"
-msgstr ""
+msgstr "Teslim ol:"
 
 msgid "Allow players to vote for surrender"
 msgstr ""
@@ -7034,13 +7064,321 @@ msgid "Allow players to vote for next campaign"
 msgstr ""
 
 msgid "CHANGE SYSTEM SETTINGS"
-msgstr ""
+msgstr "SİSTEM AYARLARINI DEĞİŞTİR"
 
 msgid "RESTART CAMPAIGN"
 msgstr ""
 
 msgid "SURRENDER"
-msgstr ""
+msgstr "TESLİM OL"
 
 msgid "NO XP SHUFFLE"
+msgstr ""
+
+msgid "Multiview:"
+msgstr ""
+
+msgid "Poll:"
+msgstr ""
+
+msgid "Allow players to vote for custom votes"
+msgstr ""
+
+msgid "Log File:"
+msgstr ""
+
+msgid "Sets the name of the log file or if empty logging is disabled"
+msgstr ""
+
+msgid "^7BACKSPACE ^3help on/off"
+msgstr ""
+
+msgid "^7BACKSPACE ^mgo  back"
+msgstr ""
+
+msgid "CURRENT PROFILE"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1504
+msgid "%s^7's dynamite"
+msgstr ""
+
+#: src/cgame/cg_draw.c:1516
+msgid "%s^7's mine"
+msgstr ""
+
+msgid "You are frozen - ^3/kill^7 is disabled."
+msgstr ""
+
+msgid "Renderer:"
+msgstr ""
+
+msgid "Set your desired renderer (does a video restart)"
+msgstr ""
+
+msgid "Custom Width:"
+msgstr ""
+
+msgid ""
+"Specifies custom resolution width - requires custom resolution set. *Use on "
+"your own risk!"
+msgstr ""
+
+msgid "Custom Height:"
+msgstr ""
+
+msgid ""
+"Specifies custom resolution height - requires custom resolution set .*Use on"
+" your own risk!"
+msgstr ""
+
+msgid "Max. Frames Per Second:"
+msgstr ""
+
+msgid ""
+"Sets the limit of frames per second - keep the values between 20 and 333"
+msgstr ""
+
+msgid "JOYSTICK"
+msgstr ""
+
+msgid "Enable Joysticks:"
+msgstr ""
+
+msgid "General joystick initialization. Requires vid_restart."
+msgstr ""
+
+msgid "Use Joystick#:"
+msgstr ""
+
+msgid "Specifies active joystick"
+msgstr ""
+
+msgid "Analog Joystick:"
+msgstr ""
+
+msgid "Use analog joystick?"
+msgstr ""
+
+msgid "Joystick Threshold:"
+msgstr ""
+
+msgid "Sets joystick threshold sensitivity"
+msgstr ""
+
+msgid ""
+"Includes or excludes servers with anti-lag support from the server list"
+msgstr ""
+
+msgid "Allow players to vote for teams to be shuffled by XP"
+msgstr ""
+
+msgid "Allow players to vote for teams to be shuffled by XP without a restart"
+msgstr ""
+
+msgid "SR Shuffle:"
+msgstr ""
+
+msgid "Allow players to vote for teams to be shuffled by SR"
+msgstr ""
+
+msgid "SR Shuffle No Rstrt:"
+msgstr ""
+
+msgid "Allow players to vote for teams to be shuffled by SR without a restart"
+msgstr ""
+
+msgid "Voice text:"
+msgstr "Sesli mesaj:"
+
+msgid "Show voice text in-game"
+msgstr "Oyun içerisinde sesli mesajları göster"
+
+msgid "Voice chat:"
+msgstr "Sesli sohbet:"
+
+msgid "Play voice chat in-game"
+msgstr ""
+
+#: cgame/cg_limbopanel:1907
+msgid "1of%i"
+msgstr ""
+
+#: cgame/cg_limbopanel:1911 cgame/cg_limbopanel:2553 cgame/cg_limbopanel:2570
+#: cgame/cg_limbopanel:2590
+msgid "%iof%i"
+msgstr ""
+
+msgid "IRC CLIENT"
+msgstr ""
+
+msgid "Mode:"
+msgstr ""
+
+msgid "Specifies IRC client behavior"
+msgstr ""
+
+msgid "Name of IRC server"
+msgstr ""
+
+msgid "Channel #:"
+msgstr ""
+
+msgid "Name of IRC channel - no '#' required"
+msgstr ""
+
+msgid "Port of IRC server"
+msgstr ""
+
+msgid "Nickname:"
+msgstr "Kullanıcı:"
+
+msgid "IRC nickame in channel"
+msgstr ""
+
+msgid "Kick rejoin time ms:"
+msgstr ""
+
+msgid "Auto rejoin time after kick"
+msgstr ""
+
+msgid "Reconnect time ms:"
+msgstr ""
+
+msgid "Reconnect time in ms"
+msgstr ""
+
+msgid "SR SHUFFLE"
+msgstr ""
+
+msgid "NO SR SHUFFLE"
+msgstr ""
+
+msgid "JOIN A TEAM"
+msgstr "BİR TAKIMA DAHİL OL"
+
+msgid "SOLDIER"
+msgstr ""
+
+msgid "MEDIC"
+msgstr ""
+
+msgid "ENGINEER"
+msgstr ""
+
+msgid "FIELD OPS"
+msgstr ""
+
+msgid "COVERT OPS"
+msgstr ""
+
+msgid ""
+"Includes or excludes ET:Legacy servers with humans from the server list"
+msgstr ""
+
+msgid "Specify receiver of quick radio messages"
+msgstr ""
+
+msgid "Renderer:"
+msgstr ""
+
+msgid "High Quality Video:"
+msgstr ""
+
+msgid "Sets high quality video."
+msgstr ""
+
+msgid "Port:"
+msgstr ""
+
+msgid "^1JOIN US"
+msgstr ""
+
+msgid ""
+"ET: Legacy development is a collaborative effort done in an open, "
+"transparent and friendly manner. Anyone is welcome to join our efforts!"
+msgstr ""
+
+msgid "CHOOSE CLASS/WEAPON"
+msgstr ""
+
+msgid "S. Soldier"
+msgstr ""
+
+msgid "M. Medic"
+msgstr ""
+
+msgid "E. Engineer"
+msgstr ""
+
+msgid "F. Field Ops"
+msgstr ""
+
+msgid "C. Covert Ops"
+msgstr ""
+
+msgid "A. Automatic Rifle"
+msgstr ""
+
+msgid "G. Machinegun"
+msgstr ""
+
+msgid "F. Flamethrower"
+msgstr ""
+
+msgid "R. Rocket Launcher"
+msgstr ""
+
+msgid "M. Mortar"
+msgstr ""
+
+msgid "S. SMG"
+msgstr ""
+
+msgid "G. Rifle"
+msgstr ""
+
+msgid "P. Sniper Rifle"
+msgstr ""
+
+msgid "1. Soldier"
+msgstr ""
+
+msgid "2. Medic"
+msgstr ""
+
+msgid "3. Engineer"
+msgstr ""
+
+msgid "4. Field Ops"
+msgstr ""
+
+msgid "5. Covert Ops"
+msgstr ""
+
+msgid "1. Automatic Rifle"
+msgstr ""
+
+msgid "2. Machinegun"
+msgstr ""
+
+msgid "3. Flamethrower"
+msgstr ""
+
+msgid "4. Rocket Launcher"
+msgstr ""
+
+msgid "5. Mortar"
+msgstr ""
+
+msgid "1. SMG"
+msgstr ""
+
+msgid "2. Rifle"
+msgstr ""
+
+msgid "2. Automatic Rifle"
+msgstr ""
+
+msgid "3. Sniper Rifle"
 msgstr ""
