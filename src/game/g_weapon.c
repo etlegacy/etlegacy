@@ -3022,6 +3022,7 @@ void Weapon_Artillery(gentity_t *ent)
 		}
 		else
 		{
+			// classname 'air strike'
 			bomb->think      = G_AirStrikeExplode;
 			bomb->nextthink += 2000 * i + crandom() * 800;
 
@@ -3054,13 +3055,14 @@ void Weapon_Artillery(gentity_t *ent)
 		bomb2               = G_Spawn();
 		bomb2->think        = artilleryThink;
 		bomb2->s.eType      = ET_MISSILE;
+		bomb2->s.weapon		= WP_NONE;
 		bomb2->r.svFlags    = SVF_NOCLIENT;
 		bomb2->r.ownerNum   = ent->s.number;
 		bomb2->parent       = ent;
 		bomb2->s.teamNum    = ent->s.teamNum;
 		bomb2->damage       = 0;
 		bomb2->nextthink    = bomb->nextthink - 600;
-		bomb2->classname    = "air strike";
+		bomb2->classname    = "arty_sound_effect";
 		bomb2->clipmask     = MASK_MISSILESHOT;
 		bomb2->s.pos.trType = TR_STATIONARY; // was TR_GRAVITY,  might wanna go back to this and drop from height
 		bomb2->s.pos.trTime = level.time;    // move a bit on the very first frame
