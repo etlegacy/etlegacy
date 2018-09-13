@@ -29,6 +29,7 @@ matrix:
           - nasm
           - libasound2-dev
           - pulseaudio
+          - libpulse-dev
     - os: linux
       compiler: clang
       addons:
@@ -39,6 +40,7 @@ matrix:
           - nasm
           - libasound2-dev
           - pulseaudio
+          - libpulse-dev
     #- os: osx
     #  osx_image: xcode8.3
     #  before_install:
