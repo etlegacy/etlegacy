@@ -1330,7 +1330,7 @@ void CG_ParticleSmoke(qhandle_t pshader, centity_t *cent)
 		p->endheight = cent->currentState.angles2[1];
 		p->endwidth  = cent->currentState.angles2[1];
 
-		p->pshader = cgs.media.smokePuffShaderb[rand() % 6];
+		p->pshader = cgs.media.smokePuffShaderb[rand() % 5];
 	}
 
 	p->type = P_SMOKE;
