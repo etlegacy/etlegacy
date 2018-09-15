@@ -87,6 +87,7 @@ matrix:
         apt:
           packages:
           - nasm:i386
+          - libglib2.0-dev:i386
           - libasound2-dev:i386
           - pulseaudio:i386
           - libpulse-dev:i386
