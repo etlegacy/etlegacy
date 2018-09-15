@@ -20,7 +20,20 @@ env:
 matrix:
   include:
     - os: linux
+      env: RELEASE_TYPE=release
       compiler: gcc
+      addons:
+        sources:
+        - ubuntu-toolchain-r-test
+        apt:
+          packages:
+          - nasm
+          - libasound2-dev
+          - pulseaudio
+          - libpulse-dev
+    - os: linux
+      compiler: gcc
+      env: RELEASE_TYPE=debug
       addons:
         sources:
         - ubuntu-toolchain-r-test
