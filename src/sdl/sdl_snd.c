@@ -385,7 +385,6 @@ int SNDDMA_GetDMAPos(void)
 void SNDDMA_Shutdown(void)
 {
 	Com_Printf("Closing SDL audio device...\n");
-	SDL_PauseAudioDevice(device_id, 1);
 	SDL_CloseAudioDevice(device_id);
 	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 	Com_Dealloc(dma.buffer);
