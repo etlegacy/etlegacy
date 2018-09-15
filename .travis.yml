@@ -80,7 +80,7 @@ matrix:
       compiler: gcc
       env: 
         - RELEASE_TYPE=release
-        - CROSS_COMPILE32=0
+        - CROSS_COMPILE32=1
       addons:
         sources:
         - ubuntu-toolchain-r-test
