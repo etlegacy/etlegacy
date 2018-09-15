@@ -40,6 +40,7 @@ matrix:
           - libglib2.0-dev:i386
           - libglu1-mesa:i386
           - libgl1-mesa-dev:i386
+          - libgl1-mesa-glx:i386
           - libasound2-dev:i386
           - pulseaudio:i386
           - libpulse-dev:i386
