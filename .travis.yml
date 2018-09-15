@@ -20,6 +20,25 @@ env:
 matrix:
   include:
 
+# 32 bit
+     
+    - os: linux
+      compiler: gcc
+      env: 
+        - RELEASE_TYPE=release
+        - CROSS_COMPILE32=1
+      addons:
+        sources:
+        - ubuntu-toolchain-r-test
+        apt:
+          packages:
+          - nasm:i386
+          - libgcc1:i386
+          - libglib2.0-dev:i386
+          - libasound2-dev:i386
+          - pulseaudio:i386
+          - libpulse-dev:i386
+
 # 64 bit
 
     - os: linux
@@ -62,7 +81,7 @@ matrix:
           - libpulse-dev
 
     - os: linux
-      env: RELEASE_TYPE=release
+      env: RELEASE_TYPE=debug
       compiler: clang
       addons:
         sources:
@@ -73,24 +92,6 @@ matrix:
           - libasound2-dev
           - pulseaudio
           - libpulse-dev
-
-# 32 bit
-     
-    - os: linux
-      compiler: gcc
-      env: 
-        - RELEASE_TYPE=release
-        - CROSS_COMPILE32=1
-      addons:
-        sources:
-        - ubuntu-toolchain-r-test
-        apt:
-          packages:
-          - nasm:i386
-          - libglib2.0-dev:i386
-          - libasound2-dev:i386
-          - pulseaudio:i386
-          - libpulse-dev:i386
           
     #- os: osx
     #  osx_image: xcode8.3
