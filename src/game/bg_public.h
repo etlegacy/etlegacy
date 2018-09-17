@@ -1086,8 +1086,8 @@ typedef struct weapontable_s
 	weapon_t weapEquiv;             ///< the id of the opposite team's weapon (but not for WP_GPG40 <-> WP_M7 - see CG_OutOfAmmoChange).
 	weapon_t akimboSideArm;         ///< bg
 
-	weapon_t ammoIndex;             ///< bg type of weapon ammo this uses.  (ex. WP_MP40 and WP_LUGER share 9mm ammo, so they both have WP_LUGER for giAmmoIndex)
-	weapon_t clipIndex;             ///< bg which clip this weapon uses.  this allows the sniper rifle to use the same clip as the garand, etc.
+	weapon_t ammoIndex;             ///< type of weapon ammo this uses.
+	weapon_t clipIndex;             ///< which clip this weapon uses. This allows the sniper rifle to use the same clip as the garand, etc.
 
 	int eType;
 	int eFlags;                     ///< bg
@@ -1102,7 +1102,7 @@ typedef struct weapontable_s
 
 	int damage;                     ///< g
 	qboolean canGib;                ///< g
-	qboolean isReload;              ///< g
+	qboolean isReload;              ///< some weapons don't reload
 
 	float spread;                   ///< g
 	float spreadScale;              ///< bg
@@ -1162,14 +1162,14 @@ typedef struct weapontable_s
 	qboolean useClip;               ///<
 	qboolean useBullet;             ///<
 
-	int maxAmmo;                    ///<
-	int uses;                       ///<
-	int maxClip;                    ///<
-	int defaultStartingAmmo;
-	int defaultStartingClip;
-	int reloadTime;                 ///<
-	int fireDelayTime;              ///<
-	int nextShotTime;               ///<
+	int maxAmmo;                    ///< max player ammo carrying capacity.
+	int uses;                       ///< how many 'rounds' it takes/costs to fire one cycle.
+	int maxClip;                    ///< max 'rounds' in a clip.
+	int defaultStartingAmmo;		///< player ammo when spawning.
+	int defaultStartingClip;		///< player clips when spawning.
+	int reloadTime;                 ///< time from start of reload until ready to fire.
+	int fireDelayTime;              ///< time from pressing 'fire' until first shot is fired. (used for delaying fire while weapon is 'readied' in animation)
+	int nextShotTime;               ///< when firing continuously, this is the time between shots
 	int grenadeTime;                ///<
 	int aimSpreadScaleAdd;          ///<
 
@@ -1215,7 +1215,7 @@ typedef struct weapontable_s
 	float chargeTimeCoeff[NUM_SKILL_LEVELS];      ///<
 
 	meansOfDeath_t mod;                           ///< means of death
-	meansOfDeath_t splashMod;                     ///< means of death
+	meansOfDeath_t splashMod;                     ///< splash means of death
 
 } weaponTable_t;
 
