@@ -24,7 +24,7 @@
 #include <string>
 #include <istream>
 #include <string.h>
-#include <map>
+#include <unordered_map>
 #include <stdlib.h>
 
 #include "tinygettext/language.hpp"
@@ -163,11 +163,13 @@ POParser::get_string_line(std::ostringstream& out, size_t skip)
 
 	// process trailing garbage in line and warn if there is any
 	for (i = i + 1; i < current_line.size(); ++i)
+	{
 		if (!isspace(current_line[i]))
 		{
 			warning("unexpected garbage after string ignoren");
 			break;
 		}
+	}
 }
 
 std::string

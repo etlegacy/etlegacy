@@ -20,7 +20,7 @@
 #include "tinygettext/language.hpp"
 
 #include <assert.h>
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <algorithm>
 
@@ -291,14 +291,14 @@ static const LanguageSpec languages[] =
 std::string
 resolve_language_alias(const std::string& name)
 {
-    typedef std::map<std::string, std::string> Aliases;
-    static Aliases language_aliases;
-    if (language_aliases.empty())
-    {
-        // FIXME: Many of those are not useful for us, since we leave
-        // encoding to the app, not to the language, we could/should
-        // also match against all language names, not just aliases from
-        // locale.alias
+	typedef std::unordered_map<std::string, std::string> Aliases;
+	static Aliases language_aliases;
+	if (language_aliases.empty())
+	{
+		// FIXME: Many of those are not useful for us, since we leave
+		// encoding to the app, not to the language, we could/should
+		// also match against all language names, not just aliases from
+		// locale.alias
 
         // Aliases taken from /etc/locale.alias
         language_aliases["bokmal"]           = "nb_NO.ISO-8859-1";
@@ -369,19 +369,19 @@ resolve_language_alias(const std::string& name)
 Language
 Language::from_spec(const std::string& language, const std::string& country, const std::string& modifier)
 {
-    typedef std::map<std::string, std::vector<const LanguageSpec *> > LanguageSpecMap;
-    static LanguageSpecMap language_map;
+	typedef std::unordered_map<std::string, std::vector<const LanguageSpec *> > LanguageSpecMap;
+	static LanguageSpecMap language_map;
 
-    if (language_map.empty())
-    { // Init language_map
-        for (int i = 0; languages[i].language != NULL; ++i)
+	if (language_map.empty())
+	{ // Init language_map
+		for (int i = 0; languages[i].language != NULL; ++i)
 			language_map[languages[i].language].push_back(&languages[i]);
 	}
 
-    LanguageSpecMap::iterator i = language_map.find(language);
-    if (i != language_map.end())
-    {
-        std::vector<const LanguageSpec *>& lst = i->second;
+	LanguageSpecMap::iterator i = language_map.find(language);
+	if (i != language_map.end())
+	{
+		std::vector<const LanguageSpec *>& lst = i->second;
 
         LanguageSpec tmpspec;
         tmpspec.language = language.c_str();
@@ -389,11 +389,11 @@ Language::from_spec(const std::string& language, const std::string& country, con
         tmpspec.modifier = modifier.c_str();
         Language tmplang(&tmpspec);
 
-        const LanguageSpec *best_match      = 0;
-        int                best_match_score = 0;
-        for (std::vector<const LanguageSpec *>::iterator j = lst.begin(); j != lst.end(); ++j)
-        { // Search for the language that best matches the given spec, value country more then modifier
-            int score = Language::match(Language(*j), tmplang);
+		const LanguageSpec *best_match      = 0;
+		int                best_match_score = 0;
+		for (std::vector<const LanguageSpec*>::iterator j = lst.begin(); j != lst.end(); ++j)
+		{ // Search for the language that best matches the given spec, value country more then modifier
+			int score = Language::match(Language(*j), tmplang);
 
             if (score > best_match_score)
             {
@@ -413,7 +413,7 @@ Language::from_spec(const std::string& language, const std::string& country, con
 Language
 Language::from_name(const std::string& spec_str)
 {
-    return from_env(resolve_language_alias(spec_str));
+	return from_env(resolve_language_alias(spec_str));
 }
 
 Language
@@ -429,26 +429,26 @@ Language::from_env(const std::string& env)
     std::string codeset;
     std::string modifier;
 
-    //std::cout << ln << " " << dt << " " << at << std::endl;
+	//std::cout << ln << " " << dt << " " << at << std::endl;
 
-    language = env.substr(0, std::min(std::min(ln, dt), at));
+	language = env.substr(0, std::min(std::min(ln, dt), at));
 
-    if (ln != std::string::npos && ln + 1 < env.size()) // _
-    {
-        country = env.substr(ln + 1, (std::min(dt, at) == std::string::npos) ? std::string::npos : std::min(dt, at) - (ln + 1));
+	if (ln != std::string::npos && ln + 1 < env.size()) // _
+	{
+		country = env.substr(ln + 1, (std::min(dt, at) == std::string::npos) ? std::string::npos : std::min(dt, at) - (ln + 1));
 	}
 
-    if (dt != std::string::npos && dt + 1 < env.size()) // .
-    {
-        codeset = env.substr(dt + 1, (at == std::string::npos) ? std::string::npos : (at - (dt + 1)));
+	if (dt != std::string::npos && dt + 1 < env.size()) // .
+	{
+		codeset = env.substr(dt + 1, (at == std::string::npos) ? std::string::npos : (at - (dt + 1)));
 	}
 
-    if (at != std::string::npos && at + 1 < env.size()) // @
-    {
-        modifier = env.substr(at + 1);
+	if (at != std::string::npos && at + 1 < env.size()) // @
+	{
+    	modifier = env.substr(at + 1);
 	}
 
-    return from_spec(language, country, modifier);
+	return from_spec(language, country, modifier);
 }
 
 Language::Language(const LanguageSpec *language_spec_)
@@ -565,39 +565,39 @@ Language::get_name()  const
 std::string
 Language::str() const
 {
-    if (language_spec)
-    {
-        std::string var;
-        var += language_spec->language;
-        if (language_spec->country)
-        {
-            var += "_";
-            var += language_spec->country;
+	if (language_spec)
+	{
+		std::string var;
+		var += language_spec->language;
+		if (language_spec->country)
+		{
+			var += "_";
+			var += language_spec->country;
+    	}
+    	
+		if (language_spec->modifier)
+		{
+			var += "@";
+			var += language_spec->modifier;
 		}
-
-        if (language_spec->modifier)
-        {
-            var += "@";
-            var += language_spec->modifier;
-		}
-        return var;
+		return var;
 	}
-    else
-    {
-        return "";
+	else
+	{
+		return "";
 	}
 }
 
 bool
 Language::operator==(const Language& rhs) const
 {
-    return language_spec == rhs.language_spec;
+	return language_spec == rhs.language_spec;
 }
 
 bool
 Language::operator!=(const Language& rhs) const
 {
-    return language_spec != rhs.language_spec;
+	return language_spec != rhs.language_spec;
 }
 
 } // namespace tinygettext

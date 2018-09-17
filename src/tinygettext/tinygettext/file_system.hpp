@@ -35,7 +35,7 @@ public:
 	}
 
 	virtual std::vector<std::string>    open_directory(const std::string& pathname) = 0;
-	virtual std::auto_ptr<std::istream> open_file(const std::string& filename)      = 0;
+	virtual std::unique_ptr<std::istream> open_file(const std::string& filename)    = 0;
 };
 
 } // namespace tinygettext

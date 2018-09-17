@@ -184,9 +184,9 @@ public:
 		return ret;
 	}
 
-	std::auto_ptr<std::istream> open_file(const std::string& filename)
+	std::unique_ptr<std::istream> open_file(const std::string& filename)
 	{
-		return std::auto_ptr<std::istream>(new QIstream(filename));
+		return std::unique_ptr<std::istream>(new QIstream(filename));
 	}
 };
 
@@ -224,8 +224,8 @@ void I18N_Init(void)
 		}
 	}
 
-	dictionary.set_filesystem(std::auto_ptr<tinygettext::FileSystem>(new QFileSystem));
-	dictionary_mod.set_filesystem(std::auto_ptr<tinygettext::FileSystem>(new QFileSystem));
+	dictionary.set_filesystem(std::unique_ptr<tinygettext::FileSystem>(new QFileSystem));
+	dictionary_mod.set_filesystem(std::unique_ptr<tinygettext::FileSystem>(new QFileSystem));
 
 	dictionary.add_directory("locale/client");
 	dictionary_mod.add_directory("locale/mod");
