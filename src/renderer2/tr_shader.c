@@ -3866,7 +3866,7 @@ static qboolean ParseShader(char *_text)
 			continue;
 		}
 		// sun parms
-		else if (!Q_stricmp(token, "xmap_sun") || !Q_stricmp(token, "q3map_sun"))
+		else if (!Q_stricmp(token, "xmap_sun") || !Q_stricmp(token, "q3map_sun") || !Q_stricmp(token, "q3map_sunExt"))
 		{
 			float a, b;
 
@@ -3927,6 +3927,8 @@ static qboolean ParseShader(char *_text)
 			tr.sunDirection[0] = cos(a) * cos(b);
 			tr.sunDirection[1] = sin(a) * cos(b);
 			tr.sunDirection[2] = sin(b);
+
+			SkipRestOfLine(text); // skip q3map_sunExt additional parms
 			continue;
 		}
 		// noShadows
