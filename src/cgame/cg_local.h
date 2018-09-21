@@ -2002,13 +2002,57 @@ typedef enum
 } mlType_t;
 #endif
 
+// limbopanel
 #define SECONDARY_SLOT 0
 #define PRIMARY_SLOT 1
+
+/*
+===============================================================================
+LAGOMETER
+===============================================================================
+*/
+
+#define PERIOD_SAMPLES 5000
+#define LAG_SAMPLES     128
+#define MAX_LAGOMETER_PING  900
+#define MAX_LAGOMETER_RANGE 300
+
+typedef struct
+{
+	int frameSamples[LAG_SAMPLES];
+	int frameCount;
+	int snapshotFlags[LAG_SAMPLES];
+	int snapshotSamples[LAG_SAMPLES];
+	int snapshotAntiwarp[LAG_SAMPLES];
+	int snapshotCount;
+} lagometer_t;
+
+lagometer_t lagometer;
+
+/**
+ * @enum sample_s
+ * @typedef sample_t
+ * @brief
+ */
+typedef struct sample_s
+{
+	int elapsed;
+	int time;
+} sample_t;
+
+typedef struct sampledStat_s
+{
+	unsigned int count;
+	int avg; // full int frames for output
+	int lastSampleTime;
+	sample_t samples[LAG_SAMPLES];
+	int samplesTotalElpased;
+} sampledStat_t;
 
 /**
  * @struct cgs_s
  * @typedef cgs_t
- * @brief The client game static (cgs) structure hold everything
+ * @brief The client game static (cgs) structure should hold everything
  * loaded or calculated from the gamestate.  It will NOT
  * be cleared when a tournement restart is done, allowing
  * all clients to begin playing instantly
@@ -2254,6 +2298,10 @@ typedef struct cgs_s
 	cam_t demoCamera;
 	mlType_t currentMenuLevel;
 #endif
+
+	int sv_fps; 				// FPS server wants to send
+	sampledStat_t sampledStat;	// fps client sample data
+
 } cgs_t;
 
 //==============================================================================
@@ -2902,6 +2950,7 @@ void CG_parseMapVoteTally(void);
 // cg_servercmds.c
 void CG_ExecuteNewServerCommands(int latestSequence);
 void CG_ParseServerinfo(void);
+void CG_ParseSysteminfo(void);
 void CG_ParseLegacyinfo(void);
 void CG_ParseWolfinfo(void);
 void CG_ParseSpawns(void);

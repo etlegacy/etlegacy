@@ -2734,6 +2734,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	cg.warmupCount = -1;
 
+	CG_ParseSysteminfo();
 	CG_ParseServerinfo();
 	CG_ParseWolfinfo();
 

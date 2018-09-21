@@ -2245,51 +2245,6 @@ static float CG_DrawLocalTime(float y)
 	return y + 12 + 4;
 }
 
-/*
-===============================================================================
-LAGOMETER
-===============================================================================
-*/
-
-#define PERIOD_SAMPLES 5000
-#define LAG_SAMPLES     128
-#define MAX_LAGOMETER_PING  900
-#define MAX_LAGOMETER_RANGE 300
-
-typedef struct
-{
-	int frameSamples[LAG_SAMPLES];
-	int frameCount;
-	int snapshotFlags[LAG_SAMPLES];
-	int snapshotSamples[LAG_SAMPLES];
-	int snapshotAntiwarp[LAG_SAMPLES];
-	int snapshotCount;
-} lagometer_t;
-
-lagometer_t lagometer;
-
-/**
- * @enum sample_s
- * @typedef sample_t
- * @brief
- */
-typedef struct sample_s
-{
-	int elapsed;
-	int time;
-} sample_t;
-
-typedef struct sampledStat_s
-{
-	unsigned int count;
-	int avg; // full int frames for output
-	int lastSampleTime;
-	sample_t samples[LAG_SAMPLES];
-	int samplesTotalElpased;
-} sampledStat_t;
-
-sampledStat_t sampledStat;
-
 /**
  * @brief Adds the current interpolate / extrapolate bar for this frame
  */
@@ -2337,48 +2292,48 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap)
 	lagometer.snapshotCount++;
 
 	// compute server framerate
-	index = sampledStat.count;
+	index = cgs.sampledStat.count;
 
-	if (sampledStat.count <= LAG_SAMPLES)
+	if (cgs.sampledStat.count <= LAG_SAMPLES)
 	{
-		sampledStat.count++;
+		cgs.sampledStat.count++;
 	}
 	else
 	{
 		index -= 1;
 	}
 
-	sampledStat.samples[index].elapsed = snap->serverTime - sampledStat.lastSampleTime;
-	sampledStat.samples[index].time    = snap->serverTime;
+	cgs.sampledStat.samples[index].elapsed = snap->serverTime - cgs.sampledStat.lastSampleTime;
+	cgs.sampledStat.samples[index].time    = snap->serverTime;
 
-	if (sampledStat.samples[index].elapsed < 0)
+	if (cgs.sampledStat.samples[index].elapsed < 0)
 	{
-		sampledStat.samples[index].elapsed = 0;
+		cgs.sampledStat.samples[index].elapsed = 0;
 	}
 
-	sampledStat.lastSampleTime = snap->serverTime;
+	cgs.sampledStat.lastSampleTime = snap->serverTime;
 
-	sampledStat.samplesTotalElpased += sampledStat.samples[index].elapsed;
+	cgs.sampledStat.samplesTotalElpased += cgs.sampledStat.samples[index].elapsed;
 
 	oldest = snap->serverTime - PERIOD_SAMPLES;
-	for (index = 0; index < sampledStat.count; index++)
+	for (index = 0; index < cgs.sampledStat.count; index++)
 	{
-		if (sampledStat.samples[index].time > oldest)
+		if (cgs.sampledStat.samples[index].time > oldest)
 		{
 			break;
 		}
 
-		sampledStat.samplesTotalElpased -= sampledStat.samples[index].elapsed;
+		cgs.sampledStat.samplesTotalElpased -= cgs.sampledStat.samples[index].elapsed;
 	}
 
 	if (index)
 	{
-		memmove(sampledStat.samples, sampledStat.samples + index, sizeof(sample_t) * (sampledStat.count - index));
-		sampledStat.count -= index;
+		memmove(cgs.sampledStat.samples, cgs.sampledStat.samples + index, sizeof(sample_t) * (cgs.sampledStat.count - index));
+		cgs.sampledStat.count -= index;
 	}
 
-	sampledStat.avg = sampledStat.samplesTotalElpased > 0
-	                  ? (int) (sampledStat.count / (sampledStat.samplesTotalElpased / 1000.0f) + 0.5f)
+	cgs.sampledStat.avg = cgs.sampledStat.samplesTotalElpased > 0
+	                  ? (int) (cgs.sampledStat.count / (cgs.sampledStat.samplesTotalElpased / 1000.0f) + 0.5f)
 	                  : 0;
 }
 
@@ -2624,11 +2579,11 @@ static float CG_DrawLagometer(float y)
 		trap_Cvar_VariableStringBuffer("sv_fps", buf, sizeof(buf));
 		fps = atoi(buf);
 
-		if (sampledStat.avg < fps * 0.5f)
+		if (cgs.sampledStat.avg < fps * 0.5f)
 		{
 			color = &colorRed;
 		}
-		else if (sampledStat.avg < fps * 0.75f)
+		else if (cgs.sampledStat.avg < fps * 0.75f)
 		{
 			color = &colorYellow;
 		}
@@ -2637,8 +2592,10 @@ static float CG_DrawLagometer(float y)
 			color = &HUD_Text;
 		}
 
+		//fpsInfo = va("%i/%i", cgs.sampledStat.avg, cgs.sv_fps); // FIXME: or do % value?
+
 		// reuse buffer for output
-		Com_sprintf(buf, sizeof(buf), "%i", sampledStat.avg);
+		Com_sprintf(buf, sizeof(buf), "%i", cgs.sampledStat.avg);
 
 		w  = CG_Text_Width_Ext(buf, 0.19f, 0, &cgs.media.limboFont1);
 		w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;

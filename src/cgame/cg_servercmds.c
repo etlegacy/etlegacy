@@ -267,6 +267,36 @@ void CG_UpdateSvCvars(void)
 	}
 }
 
+void CG_ParseSysteminfo(void)
+{
+	const char *info;
+
+    info = CG_ConfigString(CS_SYSTEMINFO);
+
+/*
+	cgs.pmove_fixed = (atoi(Info_ValueForKey(info, "pmove_fixed"))) ? qtrue : qfalse;
+	cgs.pmove_msec  = atoi(Info_ValueForKey(info, "pmove_msec"));
+	if (cgs.pmove_msec < 8)
+	{
+		cgs.pmove_msec = 8;
+	}
+    else if ( cgs.pmove_msec > 33)
+	{
+		cgs.pmove_msec = 33;
+	}
+*/
+    cgs.sv_fps = atoi(Info_ValueForKey(info, "sv_fps"));
+
+/*
+	cgs.sv_cheats = (atoi(Info_ValueForKey( info,"sv_cheats"))) ? qtrue : qfalse;
+
+	cgs.synchronousClients = (atoi(Info_ValueForKey(info, "g_synchronousClients"))) ? qtrue : qfalse;
+
+	bg_evaluategravity = atof(Info_ValueForKey(info, "g_gravity"));
+*/
+}
+
+
 /**
  * @brief CG_ParseLegacyinfo
  */
@@ -947,6 +977,9 @@ static void CG_ConfigStringModified(void)
 		break;
 	case CS_LEGACYINFO:
 		CG_ParseLegacyinfo();
+		break;
+	case CS_SYSTEMINFO:
+		CG_ParseSysteminfo();
 		break;
 
 	default:
