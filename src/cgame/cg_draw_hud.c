@@ -2572,18 +2572,14 @@ static float CG_DrawLagometer(float y)
 
 	// add snapshots/s in top-right corner of meter
 	{
-		char   buf[8];
-		int    fps;
+		char   *result;
 		vec4_t *color;
 
-		trap_Cvar_VariableStringBuffer("sv_fps", buf, sizeof(buf));
-		fps = atoi(buf);
-
-		if (cgs.sampledStat.avg < fps * 0.5f)
+		if (cgs.sampledStat.avg < cgs.sv_fps * 0.5f)
 		{
 			color = &colorRed;
 		}
-		else if (cgs.sampledStat.avg < fps * 0.75f)
+		else if (cgs.sampledStat.avg < cgs.sv_fps * 0.75f)
 		{
 			color = &colorYellow;
 		}
@@ -2592,16 +2588,21 @@ static float CG_DrawLagometer(float y)
 			color = &HUD_Text;
 		}
 
-		//fpsInfo = va("%i/%i", cgs.sampledStat.avg, cgs.sv_fps); // FIXME: or do % value?
+		// FIXME: see warmup blinky blinky
+		//if (cgs.gamestate != GS_PLAYING)
+		//{
+		//	color[3] = fabs(sin(cg.time * 0.002));
+		//}
 
-		// reuse buffer for output
-		Com_sprintf(buf, sizeof(buf), "%i", cgs.sampledStat.avg);
+		// FIXME: we might do different views x/Y or in %
+		//result = va("%i/%i", cgs.sampledStat.avg, cgs.sv_fps);
+		result = va("%i", cgs.sampledStat.avg);
 
-		w  = CG_Text_Width_Ext(buf, 0.19f, 0, &cgs.media.limboFont1);
+		w  = CG_Text_Width_Ext(result, 0.19f, 0, &cgs.media.limboFont1);
 		w2 = (UPPERRIGHT_W > w) ? UPPERRIGHT_W : w;
 		x  = Ccg_WideX(UPPERRIGHT_X) - w2 - 2;
 
-		CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, *color, buf, 0, 0, 0, &cgs.media.limboFont1);
+		CG_Text_Paint_Ext(x + ((w2 - w) / 2) + 2, y + 11, 0.19f, 0.19f, *color, result, 0, 0, 0, &cgs.media.limboFont1);
 	}
 
 	return y + w + 13;
