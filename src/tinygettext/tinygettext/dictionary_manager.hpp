@@ -24,8 +24,11 @@
 #include <memory>
 #include <set>
 #include <string>
-#include <unordered_map>
-
+#if __STDC_VERSION__ >= 201112L // C11
+	#include <unordered_map>
+#else
+	#include <map>
+#endif
 #include "dictionary.hpp"
 #include "language.hpp"
 
@@ -39,7 +42,12 @@ class FileSystem;
 class DictionaryManager
 {
 private:
+
+#if __STDC_VERSION__ >= 201112L // C11
 	typedef std::unordered_map<Language, Dictionary *, Language_hash> Dictionaries;
+#else
+	typedef std::map<Language, Dictionary *> Dictionaries;
+#endif
 	Dictionaries dictionaries;
 
 	typedef std::deque<std::string> SearchPath;
@@ -53,8 +61,11 @@ private:
 
 	Dictionary empty_dict;
 
+#if __STDC_VERSION__ >= 201112L // C11
 	std::unique_ptr<FileSystem> filesystem;
-
+#else
+	std::auto_ptr<FileSystem> filesystem;
+#endif
 	void clear_cache();
 
 public:
@@ -90,8 +101,11 @@ public:
 
 	/** Return a set of the available languages in their country code */
 	std::set<Language> get_languages();
-
+#if __STDC_VERSION__ >= 201112L // C11
 	void set_filesystem(std::unique_ptr<FileSystem> filesystem);
+#else
+	void set_filesystem(std::auto_ptr<FileSystem> filesystem);
+#endif
 	std::string convertFilename2Language(const std::string &s_in) const;
 
 private:

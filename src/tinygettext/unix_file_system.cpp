@@ -54,13 +54,19 @@ UnixFileSystem::open_directory(const std::string& pathname)
 		return files;
 	}
 }
-
+#if __STDC_VERSION__ >= 201112L // C11
 std::unique_ptr<std::istream>
 UnixFileSystem::open_file(const std::string& filename)
 {
 	return std::unique_ptr<std::istream>(new std::ifstream(filename.c_str()));
 }
-
+#else
+std::auto_ptr<std::istream>
+UnixFileSystem::open_file(const std::string& filename)
+{
+	return std::auto_ptr<std::istream>(new std::ifstream(filename.c_str()));
+}
+#endif
 } // namespace tinygettext
 
 /* EOF */

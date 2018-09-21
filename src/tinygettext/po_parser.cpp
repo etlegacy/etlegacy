@@ -24,7 +24,11 @@
 #include <string>
 #include <istream>
 #include <string.h>
-#include <unordered_map>
+#if __STDC_VERSION__ >= 201112L // C11
+	#include <unordered_map>
+#else
+	#include <map>
+#endif
 #include <stdlib.h>
 
 #include "tinygettext/language.hpp"

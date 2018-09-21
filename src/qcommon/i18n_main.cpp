@@ -184,10 +184,17 @@ public:
 		return ret;
 	}
 
+#if __STDC_VERSION__ >= 201112L // C11
 	std::unique_ptr<std::istream> open_file(const std::string& filename)
 	{
 		return std::unique_ptr<std::istream>(new QIstream(filename));
 	}
+#else
+	std::auto_ptr<std::istream> open_file(const std::string& filename)
+	{
+		return std::auto_ptr<std::istream>(new QIstream(filename));
+	}
+#endif
 };
 
 /**
@@ -224,9 +231,13 @@ void I18N_Init(void)
 		}
 	}
 
+#if __STDC_VERSION__ >= 201112L // C11
 	dictionary.set_filesystem(std::unique_ptr<tinygettext::FileSystem>(new QFileSystem));
 	dictionary_mod.set_filesystem(std::unique_ptr<tinygettext::FileSystem>(new QFileSystem));
-
+#else
+	dictionary.set_filesystem(std::auto_ptr<tinygettext::FileSystem>(new QFileSystem));
+	dictionary_mod.set_filesystem(std::auto_ptr<tinygettext::FileSystem>(new QFileSystem));
+#endif
 	dictionary.add_directory("locale/client");
 	dictionary_mod.add_directory("locale/mod");
 

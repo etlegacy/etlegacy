@@ -161,7 +161,11 @@ DictionaryManager::get_dictionary(const Language& language)
 				std::string pofile = *p + "/" + best_filename;
 				try
 				{
+#if __STDC_VERSION__ >= 201112L // C11
           			std::unique_ptr<std::istream> in = filesystem->open_file(pofile);
+#else
+					std::auto_ptr<std::istream> in = filesystem->open_file(pofile);
+#endif
 					if (!in.get())
 					{
 						log_error << "error: failure opening: " << pofile << std::endl;
@@ -270,10 +274,17 @@ DictionaryManager::remove_directory(const std::string& pathname)
 }
 
 void
+#if __STDC_VERSION__ >= 201112L // C11
 DictionaryManager::set_filesystem(std::unique_ptr<FileSystem> filesystem_)
 {
 	filesystem = std::move(filesystem_);
 }
+#else
+DictionaryManager::set_filesystem(std::auto_ptr<FileSystem> filesystem_)
+{
+	filesystem = filesystem_;
+}
+#endif
 // ----------------------------------------------------------------------------
 /** This function converts a .po filename (e.g. zh_TW.po) into a language
  *  specification (zh_TW). On case insensitive file systems (think windows)

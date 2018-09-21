@@ -21,7 +21,11 @@
 #define HEADER_TINYGETTEXT_DICTIONARY_HPP
 
 #include <string>
-#include <unordered_map>
+#if __STDC_VERSION__ >= 201112L // C11
+	#include <unordered_map>
+#else
+	#include <map>
+#endif
 #include <vector>
 
 #include "plural_forms.hpp"
@@ -34,12 +38,20 @@ namespace tinygettext {
 class Dictionary
 {
 private:
+
+#if __STDC_VERSION__ >= 201112L // C11
 	typedef std::unordered_map<std::string, std::vector<std::string> > Entries;
 	Entries entries;
 
 	typedef std::unordered_map<std::string, Entries> CtxtEntries;
 	CtxtEntries ctxt_entries;
+#else
+	typedef std::map<std::string, std::vector<std::string> > Entries;
+	Entries entries;
 
+	typedef std::map<std::string, Entries> CtxtEntries;
+	CtxtEntries ctxt_entries;
+#endif
 	std::string charset;
 	PluralForms plural_forms;
 
@@ -127,9 +139,15 @@ public:
 		return func;
 	}
 
+
+// C11 ...
+// Some features of C11 are supported by the GCC starting with version 4.6,[6] Clang starting with version 3.1,[7] and IBM XL C starting with version 12.1.[8]
+
+#if __STDC_VERSION__ >= 201112L // C11
 private:
 	Dictionary(const Dictionary&) = delete;
 	Dictionary& operator=(const Dictionary&) = delete;
+#endif
 };
 
 } // namespace tinygettext

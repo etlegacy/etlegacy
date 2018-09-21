@@ -21,8 +21,11 @@
 #define HEADER_TINYGETTEXT_LANGUAGE_HPP
 
 #include <string>
-#include <unordered_map>
-
+#if __STDC_VERSION__ >= 201112L // C11
+	#include <unordered_map>
+#else
+	#include <map>
+#endif
 namespace tinygettext {
 
 struct LanguageSpec;
@@ -57,8 +60,11 @@ public:
 
 	/** Create an undefined Language object */
 	Language();
-
+#if __STDC_VERSION__ >= 201112L // C11
 	explicit operator bool() const
+#else
+	operator bool() const
+#endif
 	{
 		return language_spec != NULL;
 	}
@@ -84,7 +90,9 @@ public:
 	bool operator!=(const Language& rhs) const;
 
 	friend bool operator<(const Language& lhs, const Language& rhs);
+#if __STDC_VERSION__ >= 201112L // C11
 	friend struct Language_hash;
+#endif
 };
 
 inline bool operator<(const Language& lhs, const Language& rhs)
@@ -92,6 +100,7 @@ inline bool operator<(const Language& lhs, const Language& rhs)
 	return lhs.language_spec < rhs.language_spec;
 }
 
+#if __STDC_VERSION__ >= 201112L // C11
 struct Language_hash
 {
 	size_t operator()(const Language& v) const
@@ -99,6 +108,7 @@ struct Language_hash
 		return reinterpret_cast<size_t>(v.language_spec);
 	}
 };
+#endif
 
 } // namespace tinygettext
 
