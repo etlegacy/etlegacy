@@ -4,7 +4,7 @@ RUN cd /tmp && \
 	echo "multilib_policy=all" >> /etc/yum.conf && \
 	yum update -y && \
 	yum groupinstall -y "Development tools" && \
-	yum -y install git tar freeglut-devel gmake glibc glibc-devel libX11 libX11-devel mesa-libGL mesa-libGL-devel curl-devel zlib-devel wget nasm which && \
+	yum -y install git tar freeglut-devel gmake glibc glibc-devel libX11 libX11-devel mesa-libGL mesa-libGL-devel alsa-lib-devel pulseaudio-libs-devel curl-devel zlib-devel wget nasm which && \
 	yum clean all
 
 RUN	wget http://ftp.gnu.org/gnu/m4/m4-1.4.18.tar.gz && tar -xvzf m4-1.4.18.tar.gz && cd m4-1.4.18 && ./configure --prefix=/usr/local && make && make install && cd .. && \
