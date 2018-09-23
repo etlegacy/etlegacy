@@ -2108,7 +2108,7 @@ void Svcmd_CSInfo_f(void)
 	}
 	else
 	{
-		G_Printf("Note: csinfo <CS No.> will print the content of given string\n\n");
+		G_Printf("Help:\n'csinfo <CS No.>' will print the content of given string\n'csinfo *' will print all strings & content.\n\n");
 	}
 
 	G_Printf("CS   Length   Type\n--------------------------------------------\n");
