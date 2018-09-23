@@ -969,9 +969,7 @@ static void CG_EditSpeakers_f(void)
 	}
 	else
 	{
-		const char *s = Info_ValueForKey(CG_ConfigString(CS_SYSTEMINFO), "sv_cheats");
-
-		if (s[0] != '1')
+		if (!cgs.sv_cheats)
 		{
 			CG_Printf("editSpeakers is cheat protected.\n");
 			return;
@@ -1938,9 +1936,7 @@ void CG_InitConsoleCommands(void)
 	trap_RemoveCommand("-lookdown");
 
 	// only allow configstrings command when cheats enabled
-	s = Info_ValueForKey(CG_ConfigString(CS_SYSTEMINFO),
-	                     "sv_cheats");
-	if (s[0] != '1')
+	if (!cgs.sv_cheats)
 	{
 		trap_RemoveCommand("configstrings");
 	}

@@ -2299,8 +2299,9 @@ typedef struct cgs_s
 	mlType_t currentMenuLevel;
 #endif
 
-	int sv_fps; 				// FPS server wants to send
-	sampledStat_t sampledStat;	// fps client sample data
+	qboolean sv_cheats;         // server allows cheats
+	int sv_fps;                 // FPS server wants to send
+	sampledStat_t sampledStat;  // fps client sample data
 
 } cgs_t;
 

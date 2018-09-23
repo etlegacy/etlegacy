@@ -287,9 +287,9 @@ void CG_ParseSysteminfo(void)
 */
     cgs.sv_fps = atoi(Info_ValueForKey(info, "sv_fps"));
 
-/*
-	cgs.sv_cheats = (atoi(Info_ValueForKey( info,"sv_cheats"))) ? qtrue : qfalse;
+	cgs.sv_cheats = (atoi(Info_ValueForKey(info,"sv_cheats"))) ? qtrue : qfalse;
 
+/*
 	cgs.synchronousClients = (atoi(Info_ValueForKey(info, "g_synchronousClients"))) ? qtrue : qfalse;
 
 	bg_evaluategravity = atof(Info_ValueForKey(info, "g_gravity"));

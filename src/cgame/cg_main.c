@@ -2723,12 +2723,6 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 		CG_Printf("Not logging client output to disk.\n");
 	}
 
-	CG_InitConsoleCommands();
-
-	// moved this up so it's initialized for the loading screen
-	CG_LoadHudMenu();      // load new hud stuff
-	CG_AssetCache();
-
 	// get the gamestate from the client system
 	trap_GetGameState(&cgs.gameState);
 
@@ -2737,6 +2731,12 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	CG_ParseSysteminfo();
 	CG_ParseServerinfo();
 	CG_ParseWolfinfo();
+
+	CG_InitConsoleCommands();
+
+	// moved this up so it's initialized for the loading screen
+	CG_LoadHudMenu();      // load new hud stuff
+	CG_AssetCache();
 
 	// try execing map autoexec scripts
 	if (!CG_execFile(va("autoexec_%s", cgs.rawmapname)))
