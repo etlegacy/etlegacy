@@ -31,7 +31,7 @@ public:
 
 	std::vector<std::string> open_directory(const std::string& pathname);
 	
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 	std::unique_ptr<std::istream> open_file(const std::string& filename);
 #else
 	std::auto_ptr<std::istream> open_file(const std::string& filename);

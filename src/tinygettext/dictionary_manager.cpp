@@ -161,7 +161,7 @@ DictionaryManager::get_dictionary(const Language& language)
 				std::string pofile = *p + "/" + best_filename;
 				try
 				{
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
           			std::unique_ptr<std::istream> in = filesystem->open_file(pofile);
 #else
 					std::auto_ptr<std::istream> in = filesystem->open_file(pofile);
@@ -274,7 +274,7 @@ DictionaryManager::remove_directory(const std::string& pathname)
 }
 
 void
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 DictionaryManager::set_filesystem(std::unique_ptr<FileSystem> filesystem_)
 {
 	filesystem = std::move(filesystem_);

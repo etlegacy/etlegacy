@@ -184,7 +184,7 @@ public:
 		return ret;
 	}
 
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 	std::unique_ptr<std::istream> open_file(const std::string& filename)
 	{
 		return std::unique_ptr<std::istream>(new QIstream(filename));
@@ -231,7 +231,7 @@ void I18N_Init(void)
 		}
 	}
 
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 	dictionary.set_filesystem(std::unique_ptr<tinygettext::FileSystem>(new QFileSystem));
 	dictionary_mod.set_filesystem(std::unique_ptr<tinygettext::FileSystem>(new QFileSystem));
 #else

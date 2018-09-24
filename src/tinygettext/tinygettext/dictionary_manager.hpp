@@ -24,7 +24,7 @@
 #include <memory>
 #include <set>
 #include <string>
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 	#include <unordered_map>
 #else
 	#include <map>
@@ -43,7 +43,7 @@ class DictionaryManager
 {
 private:
 
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 	typedef std::unordered_map<Language, Dictionary *, Language_hash> Dictionaries;
 #else
 	typedef std::map<Language, Dictionary *> Dictionaries;
@@ -61,7 +61,7 @@ private:
 
 	Dictionary empty_dict;
 
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 	std::unique_ptr<FileSystem> filesystem;
 #else
 	std::auto_ptr<FileSystem> filesystem;
@@ -101,7 +101,7 @@ public:
 
 	/** Return a set of the available languages in their country code */
 	std::set<Language> get_languages();
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 	void set_filesystem(std::unique_ptr<FileSystem> filesystem);
 #else
 	void set_filesystem(std::auto_ptr<FileSystem> filesystem);

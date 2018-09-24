@@ -20,7 +20,7 @@
 #include "tinygettext/language.hpp"
 
 #include <assert.h>
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 	#include <unordered_map>
 #else
 	#include <map>
@@ -295,7 +295,7 @@ static const LanguageSpec languages[] =
 std::string
 resolve_language_alias(const std::string& name)
 {
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 	typedef std::unordered_map<std::string, std::string> Aliases;
 #else
 	typedef std::map<std::string, std::string> Aliases;
@@ -377,7 +377,7 @@ resolve_language_alias(const std::string& name)
 Language
 Language::from_spec(const std::string& language, const std::string& country, const std::string& modifier)
 {
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 	typedef std::unordered_map<std::string, std::vector<const LanguageSpec *> > LanguageSpecMap;
 #else
 	typedef std::map<std::string, std::vector<const LanguageSpec *> > LanguageSpecMap;
