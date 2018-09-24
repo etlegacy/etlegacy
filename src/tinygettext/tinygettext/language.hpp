@@ -21,7 +21,7 @@
 #define HEADER_TINYGETTEXT_LANGUAGE_HPP
 
 #include <string>
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 	#include <unordered_map>
 #else
 	#include <map>
@@ -60,7 +60,7 @@ public:
 
 	/** Create an undefined Language object */
 	Language();
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 	explicit operator bool() const
 #else
 	operator bool() const
@@ -90,7 +90,7 @@ public:
 	bool operator!=(const Language& rhs) const;
 
 	friend bool operator<(const Language& lhs, const Language& rhs);
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 	friend struct Language_hash;
 #endif
 };
@@ -100,7 +100,7 @@ inline bool operator<(const Language& lhs, const Language& rhs)
 	return lhs.language_spec < rhs.language_spec;
 }
 
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 struct Language_hash
 {
 	size_t operator()(const Language& v) const

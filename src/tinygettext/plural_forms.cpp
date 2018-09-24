@@ -19,7 +19,7 @@
 
 #include "tinygettext/plural_forms.hpp"
 
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 	#include <unordered_map>
 #else
 	#include <map>
@@ -93,7 +93,7 @@ unsigned int plural6_ar(int n)
 PluralForms
 PluralForms::from_string(const std::string& str)
 {
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 	typedef std::unordered_map<std::string, PluralForms> PluralFormsMap;
 #else
 	typedef std::map<std::string, PluralForms> PluralFormsMap;

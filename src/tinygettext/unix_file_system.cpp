@@ -54,7 +54,7 @@ UnixFileSystem::open_directory(const std::string& pathname)
 		return files;
 	}
 }
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 std::unique_ptr<std::istream>
 UnixFileSystem::open_file(const std::string& filename)
 {

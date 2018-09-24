@@ -21,7 +21,7 @@
 #define HEADER_TINYGETTEXT_DICTIONARY_HPP
 
 #include <string>
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 	#include <unordered_map>
 #else
 	#include <map>
@@ -39,7 +39,7 @@ class Dictionary
 {
 private:
 
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 	typedef std::unordered_map<std::string, std::vector<std::string> > Entries;
 	Entries entries;
 
@@ -139,11 +139,7 @@ public:
 		return func;
 	}
 
-
-// C11 ...
-// Some features of C11 are supported by the GCC starting with version 4.6,[6] Clang starting with version 3.1,[7] and IBM XL C starting with version 12.1.[8]
-
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 private:
 	Dictionary(const Dictionary&) = delete;
 	Dictionary& operator=(const Dictionary&) = delete;

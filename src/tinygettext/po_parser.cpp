@@ -24,7 +24,7 @@
 #include <string>
 #include <istream>
 #include <string.h>
-#if __STDC_VERSION__ >= 201112L // C11
+#if __cplusplus >= 201103L // C++11
 	#include <unordered_map>
 #else
 	#include <map>
