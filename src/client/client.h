@@ -447,7 +447,6 @@ void CL_AddReliableCommand(const char *cmd);
 
 void CL_StartHunkUsers(void);
 
-void CL_RequestMotd(void);
 void CL_RequestMasterData(qboolean force);
 
 void CL_Disconnect_f(void);

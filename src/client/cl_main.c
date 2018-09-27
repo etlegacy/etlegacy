@@ -727,7 +727,7 @@ void CL_ForwardCommandToServer(const char *string)
 /**
  * @brief Send motd request to the #MOTD_SERVER_NAME
  */
-void CL_RequestMotd(void)
+static void CL_RequestMotd(void)
 {
 	char info[MAX_INFO_STRING];
 
@@ -800,7 +800,7 @@ CONSOLE COMMANDS
 /**
  * @brief CL_ForwardToServer_f
  */
-void CL_ForwardToServer_f(void)
+static void CL_ForwardToServer_f(void)
 {
 	if (cls.state != CA_ACTIVE || clc.demoplaying)
 	{
@@ -831,7 +831,7 @@ void CL_Disconnect_f(void)
 /**
  * @brief CL_Reconnect_f
  */
-void CL_Reconnect_f(void)
+static void CL_Reconnect_f(void)
 {
 	if (!strlen(cls.servername) || !strcmp(cls.servername, "localhost"))
 	{
@@ -844,7 +844,7 @@ void CL_Reconnect_f(void)
 /**
  * @brief CL_Connect_f
  */
-void CL_Connect_f(void)
+static void CL_Connect_f(void)
 {
 	char         *server;
 	const char   *ip_port;
@@ -1011,7 +1011,7 @@ static void CL_CompleteRcon(char *args, int argNum)
 /**
  * @brief Send the rest of the command line over as an unconnected command.
  */
-void CL_Rcon_f(void)
+static void CL_Rcon_f(void)
 {
 	char message[MAX_RCON_MESSAGE];
 
@@ -1202,7 +1202,7 @@ void CL_Snd_Restart_f(void)
 /**
  * @brief CL_OpenedPK3List_f
  */
-void CL_OpenedPK3List_f(void)
+static void CL_OpenedPK3List_f(void)
 {
 	Com_Printf("Opened PK3 names: %s\n", FS_LoadedPakNames());
 }
@@ -1210,7 +1210,7 @@ void CL_OpenedPK3List_f(void)
 /**
  * @brief CL_ReferencedPK3List_f
  */
-void CL_ReferencedPK3List_f(void)
+static void CL_ReferencedPK3List_f(void)
 {
 	Com_Printf("Referenced PK3 names: %s\n", FS_ReferencedPakNames());
 }
@@ -1220,7 +1220,7 @@ void CL_ReferencedPK3List_f(void)
  *
  * @note It may occure some CONFIGSTRINGS are not printed (see print buffer)
  */
-void CL_Configstrings_f(void)
+static void CL_Configstrings_f(void)
 {
 	int i;
 	int ofs;
@@ -1245,7 +1245,7 @@ void CL_Configstrings_f(void)
 /**
  * @brief CL_Clientinfo_f
  */
-void CL_Clientinfo_f(void)
+static void CL_Clientinfo_f(void)
 {
 	Com_Printf("--------- Client Information ---------\n");
 	Com_Printf("state: %i\n", cls.state);
@@ -2072,7 +2072,7 @@ void CL_Video_f(void)
 /**
  * @brief CL_StopVideo_f
  */
-void CL_StopVideo_f(void)
+static void CL_StopVideo_f(void)
 {
 	Cvar_Set("cl_avidemo", "0");
 
@@ -2858,7 +2858,7 @@ void CL_Init(void)
 #endif
 
 	// startup-caching system
-	// FIXME: remove caching system
+	// FIXME: remove caching system? inspect!
 	Cmd_AddCommand("cache_startgather", CL_Cache_StartGather_f, "Obsolete - will be removed.");
 	Cmd_AddCommand("cache_usedfile", CL_Cache_UsedFile_f, "Obsolete - will be removed.");
 	Cmd_AddCommand("cache_setindex", CL_Cache_SetIndex_f, "Obsolete - will be removed.");
