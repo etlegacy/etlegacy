@@ -828,9 +828,11 @@ static void FillCloudBox(const shader_t *shader, int stage)
  */
 static void BuildCloudData()
 {
+#ifdef LEGACY_DEBUG
 	shader_t *shader = tess.surfaceShader;
 
 	etl_assert(shader->isSky);
+#endif
 
 	sky_min = 1.0 / 256.0;     // FIXME: not correct?
 	sky_max = 255.0 / 256.0;
