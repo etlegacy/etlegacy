@@ -1730,6 +1730,11 @@ static void Render_reflection_CB(int stage)
 		SetUniformFloat(UNIFORM_VERTEXINTERPOLATION, glState.vertexAttribsInterpolation);
 	}
 
+	if (backEnd.viewParms.isPortal)
+	{
+		clipPortalPlane();
+	}
+
 	// bind u_ColorMap
 	SelectTexture(TEX_COLOR);
 #if 1
