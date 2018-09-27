@@ -331,10 +331,13 @@ void Tess_Begin(void (*stageIteratorFunc)(),
 	tess.lightmapNum       = lightmapNum;
 	tess.fogNum            = fogNum;
 
-	tess.shaderTime = backEnd.refdef.floatTime - tess.surfaceShader->timeOffset;
-	if (tess.surfaceShader->clampTime && tess.shaderTime >= tess.surfaceShader->clampTime)
+	if (tess.surfaceShader)
 	{
-		tess.shaderTime = tess.surfaceShader->clampTime;
+		tess.shaderTime = backEnd.refdef.floatTime - tess.surfaceShader->timeOffset;
+		if (tess.surfaceShader->clampTime && tess.shaderTime >= tess.surfaceShader->clampTime)
+		{
+			tess.shaderTime = tess.surfaceShader->clampTime;
+		}
 	}
 
 	Ren_LogComment("--- Tess_Begin( surfaceShader = %s, lightShader = %s, skipTangentSpaces = %i, lightmapNum = %i, fogNum = %i) ---\n", tess.surfaceShader->name, tess.lightShader ? tess.lightShader->name : NULL, tess.skipTangentSpaces, tess.lightmapNum, tess.fogNum);
