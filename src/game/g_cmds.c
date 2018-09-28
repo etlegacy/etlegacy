@@ -2738,10 +2738,11 @@ void G_VoiceTo(gentity_t *ent, gentity_t *other, int mode, const char *id, qbool
  * @param[in] id
  * @param[in] voiceonly
  */
-void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, qboolean voiceonly)
+void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, const char *customChat, qboolean voiceonly)
 {
-	int   j;
-	float randomNum = random();
+	int       j;
+	gentity_t *victim;
+	float     randomNum = random();
 
 	// Don't allow excessive spamming of voice chats
 	ent->voiceChatSquelch     -= (level.time - ent->voiceChatPreviousTime);
@@ -2770,7 +2771,16 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, qboole
 
 	if (target)
 	{
-		G_VoiceTo(ent, target, mode, id, voiceonly, randomNum);
+		//if (g_customChat.integer && strlen(customChat) > 1 )
+		if (strlen(customChat) > 1) // custom chat cvar control?
+		{
+			G_Say( ent, target, mode, customChat);
+			G_VoiceTo(ent, target, mode, id, qtrue, randomNum);
+		}
+		else
+		{
+			G_VoiceTo(ent, target, mode, id, voiceonly, randomNum);
+		}
 		return;
 	}
 
@@ -2816,8 +2826,16 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, qboole
 			allowclients[num] = qtrue;
 		}
 
+		//if (g_customChat.integer && strlen(customChat) > 1)
+		if (strlen(customChat) > 1) // custom chat cvar control?
+		{
+			G_Say(ent, NULL, mode, customChat);
+			voiceonly = qtrue;
+		}
+
 		for (j = 0; j < level.numConnectedClients; j++)
 		{
+			victim = &g_entities[level.sortedClients[j]];
 
 			if (level.sortedClients[j] != ent->s.clientNum)
 			{
@@ -2835,15 +2853,32 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, qboole
 				}
 			}
 
-			G_VoiceTo(ent, &g_entities[level.sortedClients[j]], mode, id, voiceonly, randomNum);
+			if (COM_BitCheck(victim->client->sess.ignoreClients, (ent - g_entities)))
+			{
+				continue;
+			}
+
+			G_VoiceTo(ent, victim, mode, id, voiceonly, randomNum);
 		}
 	}
 	else
 	{
+		//if (g_customChat.integer && strlen(customChat) > 1)
+		if (strlen(customChat) > 1) // custom chat cvar control?
+		{
+			G_Say( ent, NULL, mode, customChat );
+			voiceonly = qtrue;
+		}
+
 		// send it to all the apropriate clients
 		for (j = 0; j < level.numConnectedClients; j++)
 		{
-			G_VoiceTo(ent, &g_entities[level.sortedClients[j]], mode, id, voiceonly, randomNum);
+			victim = &g_entities[level.sortedClients[j]];
+			if(COM_BitCheck(victim->client->sess.ignoreClients, (ent - g_entities)))
+			{
+				continue;
+			}
+			G_VoiceTo(ent, victim, mode, id, voiceonly, randomNum);
 		}
 	}
 }
@@ -2857,21 +2892,26 @@ void G_Voice(gentity_t *ent, gentity_t *target, int mode, const char *id, qboole
  */
 static void Cmd_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceonly)
 {
+	char bufferIndexCustom[32];
+
 	if (mode != SAY_BUDDY)
 	{
 		if (trap_Argc() < 2 && !arg0)
 		{
 			return;
 		}
-		G_Voice(ent, NULL, mode, ConcatArgs(((arg0) ? 0 : 1)), voiceonly);
+
+		trap_Argv( (arg0) ? 0 : 1, bufferIndexCustom, sizeof(bufferIndexCustom));
+
+		G_Voice(ent, NULL, mode, bufferIndexCustom , ConcatArgs(((arg0) ? 1 : 2)), voiceonly);
 	}
 	else
 	{
-		char buffer[16];
+		char bufferIndex[32];
 		int  index;
 
-		trap_Argv(2, buffer, sizeof(buffer));
-		index = atoi(buffer);
+		trap_Argv(2, bufferIndex, sizeof(bufferIndex));
+		index = atoi(bufferIndex);
 		if (index < 0)
 		{
 			index = 0;
@@ -2881,7 +2921,10 @@ static void Cmd_Voice_f(gentity_t *ent, int mode, qboolean arg0, qboolean voiceo
 		{
 			return;
 		}
-		G_Voice(ent, NULL, mode, ConcatArgs(((arg0) ? 2 + index : 3 + index)), voiceonly);
+
+		trap_Argv((arg0) ? 2 + index : 3 + index, bufferIndexCustom, sizeof(bufferIndexCustom));
+
+		G_Voice(ent, NULL, mode, bufferIndexCustom, ConcatArgs(((arg0) ? 3 + index : 4 + index)), voiceonly);
 	}
 }
 
