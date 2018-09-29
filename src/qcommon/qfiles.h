@@ -193,7 +193,7 @@ typedef struct
 typedef struct
 {
 	short xyz[3];
-	short normal;
+	short normal; // normals are just stored from file but not used?!
 } md3XyzNormal_t;
 
 /**

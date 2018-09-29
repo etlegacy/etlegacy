@@ -44,6 +44,7 @@ int g_console_field_width = DEFAULT_CONSOLE_WIDTH;
 
 console_t con;
 
+cvar_t *con_notifytime;
 cvar_t *con_openspeed;
 cvar_t *con_autoclear;
 
@@ -63,6 +64,8 @@ void Con_ToggleConsole_f(void)
 	}
 
 	g_consoleField.widthInChars = g_console_field_width;
+
+	Con_ClearNotify();
 
 	// multiple console size support
 	if (cls.keyCatchers & KEYCATCH_CONSOLE)
@@ -200,6 +203,21 @@ void Con_Dump_f(void)
 }
 
 /**
+ * @brief Con_ClearNotify
+ */
+void Con_ClearNotify(void)
+{
+	int i;
+
+	for (i = 0 ; i < NUM_CON_TIMES ; i++)
+	{
+
+		con.times[i] = 0;
+
+	}
+}
+
+/**
  * @brief Reformat the buffer if the line width has changed
  */
 void Con_CheckResize(void)
@@ -271,6 +289,8 @@ void Con_CheckResize(void)
 				           oldtotalLines) * oldwidth + j];
 			}
 		}
+
+		Con_ClearNotify();
 	}
 
 	con.current             = con.maxTotalLines - 1;
@@ -298,6 +318,7 @@ void Con_Init(void)
 {
 	int i;
 
+	con_notifytime = Cvar_Get("con_notifytime", "7", 0); // increased per id req for obits
 	con_openspeed = Cvar_Get("con_openspeed", "3", 0);
 	con_autoclear = Cvar_Get("con_autoclear", "1", CVAR_ARCHIVE);
 
@@ -327,9 +348,23 @@ void Con_Shutdown(void)
 /**
  * @brief Line feed
  */
-void Con_Linefeed(void)
+void Con_Linefeed(qboolean skipnotify)
 {
 	int i;
+
+	// mark time for transparent overlay
+	if (con.current >= 0)
+	{
+		if (skipnotify)
+		{
+			con.times[con.current % NUM_CON_TIMES] = 0;
+		}
+		else
+		{
+			con.times[con.current % NUM_CON_TIMES] = cls.realtime;
+		}
+	}
+
 	con.x = 0;
 
 	if (con.scrollIndex >= con.current)
@@ -363,9 +398,11 @@ void Con_Linefeed(void)
  */
 void CL_ConsolePrint(char *txt)
 {
-	int y;
-	int c, l;
-	int color;
+	int      y;
+	int      c, l;
+	int      color;
+	qboolean skipnotify = qfalse;
+	int      prev;
 
 	// for some demos we don't want to ever show anything on the console
 	if (cl_noprint && cl_noprint->integer)
@@ -417,7 +454,7 @@ void CL_ConsolePrint(char *txt)
 		// word wrap
 		if (l != con.linewidth && (con.x + l >= con.linewidth))
 		{
-			Con_Linefeed();
+			Con_Linefeed(skipnotify);
 		}
 
 		c = Q_UTF8_CodePoint(txt);
@@ -425,7 +462,7 @@ void CL_ConsolePrint(char *txt)
 		switch (c)
 		{
 		case '\n':
-			Con_Linefeed();
+			Con_Linefeed(skipnotify);
 			break;
 		case '\r':
 			con.x = 0;
@@ -441,13 +478,32 @@ void CL_ConsolePrint(char *txt)
 			con.x++;
 			if (con.x >= con.linewidth)
 			{
-				Con_Linefeed();
+				Con_Linefeed(skipnotify);
 				con.x = 0;
 			}
 			break;
 		}
 
 		txt += Q_UTF8_Width(txt);
+	}
+
+	// mark time for transparent overlay
+	if (con.current >= 0)
+	{
+		if (skipnotify)
+		{
+			prev = con.current % NUM_CON_TIMES - 1;
+
+			if (prev < 0)
+			{
+				prev = NUM_CON_TIMES - 1;
+			}
+			con.times[prev] = 0;
+		}
+		else
+		{
+			con.times[con.current % NUM_CON_TIMES] = cls.realtime;
+		}
 	}
 }
 
@@ -517,6 +573,71 @@ void Con_DrawInput(void)
 
 	Field_Draw(&g_consoleField, con.xadjust + 2 * SMALLCHAR_WIDTH, y,
 	           SCREEN_WIDTH - 3 * SMALLCHAR_WIDTH, qtrue, qtrue);
+}
+
+/**
+ * @brief Draws the last few lines of output transparently over the game top
+ */
+void Con_DrawNotify(void)
+{
+	int          x, v = 0;
+	unsigned int *text;
+	byte         *textColor;
+	int          i;
+	int          time;
+	int          currentColor = 7;
+
+	re.SetColor(g_color_table[currentColor]);
+
+	for (i = con.current - NUM_CON_TIMES + 1 ; i <= con.current ; i++)
+	{
+		if (i < 0)
+		{
+			continue;
+		}
+
+		time = con.times[i % NUM_CON_TIMES];
+
+		if (time == 0)
+		{
+			continue;
+		}
+
+		time = cls.realtime - time;
+
+		if (time > con_notifytime->value * 1000)
+		{
+			continue;
+		}
+
+		text      = con.text + (i % con.maxTotalLines) * con.linewidth;
+		textColor = con.textColor + (i % con.maxTotalLines) * con.linewidth;
+
+		if (cl.snap.ps.pm_type != PM_INTERMISSION && (cls.keyCatchers & (KEYCATCH_UI | KEYCATCH_CGAME)))
+		{
+			continue;
+		}
+
+		for (x = 0 ; x < con.linewidth ; x++)
+		{
+			if ((text[x]) == ' ')
+			{
+				continue;
+			}
+
+			if (textColor[x] != currentColor)
+			{
+				currentColor = textColor[x];
+				re.SetColor(g_color_table[currentColor]);
+			}
+
+			SCR_DrawSmallChar(cl_conXOffset->integer + con.xadjust + (x + 1) * SMALLCHAR_WIDTH, v, text[x]);
+		}
+
+		v += SMALLCHAR_HEIGHT;
+	}
+
+	re.SetColor(NULL);
 }
 
 /**
@@ -705,6 +826,8 @@ void Con_DrawSolidConsole(float frac)
 	re.SetColor(NULL);
 }
 
+extern cvar_t *con_drawnotify;
+
 /**
  * @brief Draw console
  */
@@ -721,6 +844,12 @@ void Con_DrawConsole(void)
 	Con_CheckResize();
 
 	Con_DrawSolidConsole(con.displayFrac);
+
+	// draw notify lines
+	if (cls.state == CA_ACTIVE && con_drawnotify->integer)
+	{
+		Con_DrawNotify();
+	}
 }
 
 /**
@@ -882,6 +1011,7 @@ void Con_Close(void)
 	}
 
 	Field_Clear(&g_consoleField);
+	Con_ClearNotify();
 	cls.keyCatchers &= ~KEYCATCH_CONSOLE;
 	con.finalFrac    = 0;
 	con.displayFrac  = 0;

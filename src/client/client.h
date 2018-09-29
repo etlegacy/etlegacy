@@ -584,6 +584,8 @@ void CL_Ping_f(void);
 qboolean CL_UpdateVisiblePings_f(int source);
 
 /// console
+#define NUM_CON_TIMES   4
+
 #define CON_TEXTSIZE    131072
 
 /**
@@ -614,6 +616,8 @@ typedef struct
 	int scanLines;                      ///< in scan lines
 	int visibleLines;                   ///< amount of visible lines
 
+	int times[NUM_CON_TIMES];           // cls.realtime time the line was generated
+	                                    // for transparent notify lines
 	vec4_t color;                       ///< for transparent lines
 
 	int highlightOffset;                ///< highligting start offset (if == 0) then no hightlight
@@ -624,13 +628,15 @@ extern console_t con;
 void Con_DrawCharacter(int cx, int line, int num);
 
 void Con_ToggleConsole_f(void);
+void Con_DrawNotify(void);
+void Con_ClearNotify(void);
 void Con_Clear_f(void);
 void Con_Dump_f(void);
 void Con_CheckResize(void);
 void Cmd_CompleteTxtName(char *args, int argNum);
 void Con_Init(void);
 void Con_Shutdown(void);
-void Con_Linefeed(void);
+void Con_Linefeed(qboolean skipnotify);
 void CL_ConsolePrint(char *txt);
 
 void Con_DrawVersion(void);
