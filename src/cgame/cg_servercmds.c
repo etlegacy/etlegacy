@@ -290,7 +290,6 @@ void CG_ParseSysteminfo(void)
 	cgs.sv_cheats = (atoi(Info_ValueForKey(info,"sv_cheats"))) ? qtrue : qfalse;
 
 /*
-	cgs.synchronousClients = (atoi(Info_ValueForKey(info, "g_synchronousClients"))) ? qtrue : qfalse;
 
 	bg_evaluategravity = atof(Info_ValueForKey(info, "g_gravity"));
 */
@@ -1168,6 +1167,97 @@ static void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disgu
 	if (cgs.teamChatPos - cgs.teamLastChatPos > chatHeight)
 	{
 		cgs.teamLastChatPos = cgs.teamChatPos - chatHeight;
+	}
+}
+
+
+/*
+=======================
+CG_AddToNotify
+=======================
+*/
+void CG_AddToNotify(const char *str)
+{
+	int   len;
+	char  *p, *ls;
+	int   lastcolor;
+	int   chatHeight;
+	float notifytime;
+	char  var[MAX_TOKEN_CHARS];
+
+	trap_Cvar_VariableStringBuffer("con_notifytime", var, sizeof(var));
+	notifytime = atof(var) * 1000;
+
+	chatHeight = NOTIFY_HEIGHT;
+
+	if (chatHeight <= 0 || notifytime <= 0)
+	{
+		// team chat disabled, dump into normal chat
+		cgs.notifyPos = cgs.notifyLastPos = 0;
+		return;
+	}
+
+	len = 0;
+
+	p = cgs.notifyMsgs[cgs.notifyPos % chatHeight];
+	*p = 0;
+
+	lastcolor = '7';
+
+	ls = NULL;
+	while (*str)
+	{
+		if (len > NOTIFY_WIDTH - 1 || (*str == '\n' && (*(str + 1) != 0)))
+		{
+			if (ls)
+			{
+				str -= (p - ls);
+				str++;
+				p -= (p - ls);
+			}
+			*p = 0;
+
+			//cgs.notifyMsgTimes[cgs.notifyPos % chatHeight] = cg.time;
+
+			cgs.notifyPos++;
+			p    = cgs.notifyMsgs[cgs.notifyPos % chatHeight];
+			*p   = 0;
+			*p++ = Q_COLOR_ESCAPE;
+			*p++ = lastcolor;
+			len  = 0;
+			ls   = NULL;
+		}
+
+		if (Q_IsColorString(str))
+		{
+			*p++      = *str++;
+			lastcolor = *str;
+			*p++      = *str++;
+			continue;
+		}
+		if (*str == ' ')
+		{
+			ls = p;
+		}
+		while ( *str == '\n')
+		{
+			str++;
+		}
+
+		if (*str)
+		{
+			*p++ = *str++;
+			len++;
+		}
+	}
+	*p = 0;
+
+	//cgs.notifyMsgTimes[cgs.notifyPos % chatHeight] = cg.time;
+	cgs.notifyPos++;
+
+	if (cgs.notifyPos - cgs.notifyLastPos > chatHeight)
+	{
+		cgs.notifyLastPos = cgs.notifyPos - chatHeight;
 	}
 }
 

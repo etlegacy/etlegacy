@@ -1620,23 +1620,23 @@ void CG_LimboPanel_ClassBar_Draw(panel_button_t *button)
 	}
 	else if (BG_CursorInRect(&classButton0.rect))
 	{
-		text = BG_ClassnameForNumber(0);
+		text = BG_ClassnameForNumber(PC_SOLDIER);
 	}
 	else if (BG_CursorInRect(&classButton1.rect))
 	{
-		text = BG_ClassnameForNumber(1);
+		text = BG_ClassnameForNumber(PC_MEDIC);
 	}
 	else if (BG_CursorInRect(&classButton2.rect))
 	{
-		text = BG_ClassnameForNumber(2);
+		text = BG_ClassnameForNumber(PC_ENGINEER);
 	}
 	else if (BG_CursorInRect(&classButton3.rect))
 	{
-		text = BG_ClassnameForNumber(3);
+		text = BG_ClassnameForNumber(PC_FIELDOPS);
 	}
 	else if (BG_CursorInRect(&classButton4.rect))
 	{
-		text = BG_ClassnameForNumber(4);
+		text = BG_ClassnameForNumber(PC_COVERTOPS);
 	}
 
 	if (!text)

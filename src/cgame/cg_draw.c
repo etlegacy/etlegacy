@@ -2666,7 +2666,7 @@ static void CG_DrawWarmup(void)
 	}
 	else
 	{
-		s = CG_TranslateString("^3WARMUP:^7 Match begins now!");
+		s = CG_TranslateString("^3WARMUP:^7 Match begins now!"); // " Timelimit at start: ^3%i min", cgs.timelimit
 	}
 
 	w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);

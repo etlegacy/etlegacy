@@ -71,6 +71,9 @@
 
 #define STAT_MINUS          10      ///< num frame for '-' stats digit
 
+#define	NOTIFY_WIDTH        80
+#define NOTIFY_HEIGHT       5
+
 #define TEAMCHAT_WIDTH      70
 #define TEAMCHAT_HEIGHT     8
 
@@ -2111,6 +2114,12 @@ typedef struct cgs_s
 	int teamChatPos;
 	int teamLastChatPos;
 
+	// New notify mechanism for obits
+	char notifyMsgs[NOTIFY_HEIGHT][NOTIFY_WIDTH*3+1];
+	//int notifyMsgTimes[NOTIFY_HEIGHT];
+	int notifyPos;
+	int notifyLastPos;
+
 	int cursorX;
 	int cursorY;
 	int eventHandling;
@@ -2964,6 +2973,7 @@ void CG_TeamRestrictionsChanged(void);
 void CG_SkillLevelsChanged(void);
 void CG_LoadVoiceChats(void);
 void CG_PlayBufferedVoiceChats(void);
+void CG_AddToNotify(const char *str);
 const char *CG_LocalizeServerCommand(const char *buf);
 void CG_wstatsParse_cmd(void);
 
