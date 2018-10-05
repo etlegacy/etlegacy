@@ -44,9 +44,17 @@ if(BUILD_CLIENT)
 	endif()
 
 	if(NOT BUNDLED_SDL)
-		find_package(SDL2 2.0.8 REQUIRED) # FindSDL doesn't detect 32bit lib when crosscompiling
-		list(APPEND SDL_LIBRARIES ${SDL2_LIBRARY})
-		include_directories(SYSTEM ${SDL2_INCLUDE_DIR})
+		# specials for ARM - currently set for RPI raspdian/ubuntu mate
+		# system sdl lib isn't latest & sndio lib is required
+		if(ARM)
+			find_package(SDL2 2.0.4 REQUIRED) # sdl2-dev
+			list(APPEND SDL_LIBRARIES ${SDL32_BUNDLED_LIBRARIES} sndio) 
+			include_directories(SYSTEM ${SDL2_INCLUDE_DIR})
+		else()
+			find_package(SDL2 2.0.8 REQUIRED) # FindSDL doesn't detect 32bit lib when crosscompiling
+			list(APPEND SDL_LIBRARIES ${SDL2_LIBRARY})
+			include_directories(SYSTEM ${SDL2_INCLUDE_DIR})		
+		endif(ARM)
 	else() # BUNDLED_SDL
 		if(MINGW AND WIN32)
 			# We append the mingw32 library to the client list since SDL2Main requires it
