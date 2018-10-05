@@ -261,7 +261,9 @@ parse_commandline() {
 			einfo "Will enable Raspberry PI build ..."
 			ARM=1
 			CROSS_COMPILE32=0
-			FEATURE_RENDERER_GLES=1
+			x86_build=false
+			FEATURE_RENDERER_GLES=0
+			RENDERER_DYNAMIC=0
 			FEATURE_RENDERER2=0
 			FEATURE_JANSSON=0
 			BUNDLED_JANSSON=0
