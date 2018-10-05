@@ -623,7 +623,7 @@ void RB_SurfaceBeam(void)
 
 	qglColor3f(1, 0, 0);
 
-	// OpenGLES implementation 
+	// OpenGLES implementation
 	GLboolean text  = qglIsEnabled(GL_TEXTURE_COORD_ARRAY);
 	GLboolean glcol = qglIsEnabled(GL_COLOR_ARRAY);
 	if (glcol)
@@ -909,8 +909,8 @@ static void LerpMeshVertexes(md3Surface_t *surf, float backlerp)
 	unsigned lat, lng;
 	int      numVerts;
 
-	outXyz    = tess.xyz[tess.numVertexes].v;
-	outNormal = tess.normal[tess.numVertexes].v;
+	outXyz    = tess.xyz[tess.numVertexes];
+	outNormal = tess.normal[tess.numVertexes];
 
 	newXyz = ( short * )((byte *)surf + surf->ofsXyzNormals)
 	         + (backEnd.currentEntity->e.frame * surf->numVerts * 4);
@@ -1581,7 +1581,7 @@ NULL MODEL
  */
 void RB_SurfaceAxis(void)
 {
-	// OpenGLES implementation 
+	// OpenGLES implementation
 	GL_Bind(tr.whiteImage);
 	GL_State(GLS_DEFAULT);
 	qglLineWidth(3);
