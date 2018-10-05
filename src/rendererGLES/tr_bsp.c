@@ -217,7 +217,7 @@ static void R_LoadLightmaps(lump_t *l)
 	byte         *buf;
 	unsigned int len;
 	byte         image[LIGHTMAP_SIZE * LIGHTMAP_SIZE * 4];
-	int          i //, j;
+	int          i; //, j;
 	float        intensity, maxIntensity = 0;
 
 	// clear lightmaps first
@@ -282,7 +282,7 @@ static void R_LoadVisibility(lump_t *l)
 	byte *buf;
 
 	len = PAD(s_worldData.numClusters, 64);
-	
+
 	s_worldData.novis = ri.Hunk_Alloc(len, h_low);
 	Com_Memset(s_worldData.novis, 0xff, len);
 
