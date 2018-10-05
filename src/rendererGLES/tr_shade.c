@@ -189,7 +189,7 @@ static void DrawTris(shaderCommands_t *input)
 	{
 		stateBits |= (GLS_POLYMODE_LINE);
 		GL_State(stateBits);
-		qglEnable(GL_POLYGON_OFFSET_LINE);
+		qglEnable(GL_POLYGON_OFFSET_FILL);
 		qglPolygonOffset(r_offsetFactor->value, r_offsetUnits->value);
 	}
 
@@ -212,7 +212,7 @@ static void DrawTris(shaderCommands_t *input)
 		Ren_LogComment("glUnlockArraysEXT\n");
 	}
 	qglDepthRange(0, 1);
-	qglDisable(GL_POLYGON_OFFSET_LINE);
+	qglDisable(GL_POLYGON_OFFSET_FILL);
 }
 
 /**
@@ -348,7 +348,7 @@ static void DrawMultitextured(shaderCommands_t *input, int stage)
 	// bug with multitexture and clip planes
 	if (backEnd.viewParms.isPortal)
 	{
-		qglPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		qglPolygonMode(GL_FRONT_AND_BACK, GL_LINES);
 	}
 
 	// base

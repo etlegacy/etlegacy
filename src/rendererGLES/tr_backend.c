@@ -341,14 +341,7 @@ void GL_State(unsigned long stateBits)
 	// fill/line mode
 	if (diff & GLS_POLYMODE_LINE)
 	{
-		if (stateBits & GLS_POLYMODE_LINE)
-		{
-			qglPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		}
-		else
-		{
-			qglPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		}
+			qglPolygonMode(GL_FRONT_AND_BACK, GL_LINES);	
 	}
 
 	// depthtest
@@ -849,8 +842,6 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 		start = ri.Milliseconds();
 	}
 
-	if (!GL_ARB_texture_non_power_of_two)
-	{
 		// make sure rows and cols are powers of 2
 		for (i = 0; (1 << i) < cols; i++)
 		{
@@ -862,7 +853,6 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 		{
 			Ren_Drop("Draw_StretchRaw: size not a power of 2: %i by %i", cols, rows);
 		}
-	}
 
 	GL_Bind(tr.scratchImage[client]);
 
@@ -1526,7 +1516,7 @@ const void *RB_SwapBuffers(const void *data)
 		unsigned char *stencilReadback;
 
 		stencilReadback = ri.Hunk_AllocateTempMemory(glConfig.vidWidth * glConfig.vidHeight);
-		qglReadPixels(0, 0, glConfig.vidWidth, glConfig.vidHeight, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, stencilReadback);
+		qglReadPixels(0, 0, glConfig.vidWidth, glConfig.vidHeight, GL_STENCIL_REF, GL_UNSIGNED_BYTE, stencilReadback);
 
 		for (i = 0; i < glConfig.vidWidth * glConfig.vidHeight; i++)
 		{
@@ -1565,7 +1555,7 @@ const void *RB_RenderToTexture(const void *data)
 	GL_Bind(cmd->image);
 	qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR);
 	qglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR);
-	qglTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
+	qglTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_HINT, GL_TRUE);
 	qglCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, cmd->x, cmd->y, cmd->w, cmd->h, 0);
 	//qglCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, cmd->x, cmd->y, cmd->w, cmd->h );
 

@@ -347,7 +347,7 @@ byte *RB_ReadZBuffer(int x, int y, int width, int height, int *padlen)
 
 	bufstart = PADP(( intptr_t ) buffer, packAlign);
 	qglDepthRange(0.0f, 1.0f);
-	qglReadPixels(x, y, width, height, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, bufstart);
+	qglReadPixels(x, y, width, height, GL_DEPTH_COMPONENT32_OES, GL_UNSIGNED_BYTE, bufstart);
 
 	*padlen = padwidth - linelen;
 
@@ -873,7 +873,7 @@ void GL_SetDefaultState(void)
 	// make sure our GL state vector is set correctly
 	glState.glStateBits = GLS_DEPTHTEST_DISABLE | GLS_DEPTHMASK_TRUE;
 
-	qglPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	qglPolygonMode(GL_FRONT_AND_BACK, GL_LINES);
 	qglDepthMask(GL_TRUE);
 	qglDisable(GL_DEPTH_TEST);
 	qglEnable(GL_SCISSOR_TEST);
