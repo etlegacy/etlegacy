@@ -948,7 +948,7 @@ typedef struct srfTriangles_s
 
 	// triangle definitions
 	int numIndexes;
-	int *indexes;
+	short *indexes;
 
 	int numVerts;
 	drawVert_t *verts;
