@@ -204,7 +204,7 @@ static void DrawTris(shaderCommands_t *input)
 		Ren_LogComment("glLockArraysEXT\n");
 	}
 
-	R_DrawElements(input->numIndexes, input->indexes);
+	qglDrawElements(GL_LINE_STRIP, input->numIndexes, GL_INDEX_TYPE, input->indexes );
 
 	if (qglUnlockArraysEXT)
 	{
@@ -212,7 +212,7 @@ static void DrawTris(shaderCommands_t *input)
 		Ren_LogComment("glUnlockArraysEXT\n");
 	}
 	qglDepthRange(0, 1);
-	qglDisable(GL_POLYGON_OFFSET_FILL);
+	//qglDisable(GL_POLYGON_OFFSET_FILL);
 }
 
 /**
@@ -343,13 +343,6 @@ static void DrawMultitextured(shaderCommands_t *input, int stage)
 	}
 
 	GL_State(pStage->stateBits);
-
-	// this is an ugly hack to work around a GeForce driver
-	// bug with multitexture and clip planes
-	if (backEnd.viewParms.isPortal)
-	{
-		qglPolygonMode(GL_FRONT_AND_BACK, GL_LINES);
-	}
 
 	// base
 	GL_SelectTexture(0);
