@@ -439,7 +439,7 @@ static void DrawSkySide(struct image_s *image, const int mins[2], const int maxs
 {
 	int s, t;
 
-	// OpenGLES implementation 
+	// OpenGLES implementation
 	GL_Bind(image);
 	GLfloat vtx[3 * 1024];    // arbitrary sized
 	GLfloat tex[2 * 1024];
@@ -486,7 +486,7 @@ static void DrawSkySideInner(struct image_s *image, const int mins[2], const int
 {
 	int s, t;
 
-	// OpenGLES implementation 
+	// OpenGLES implementation
 	GL_Bind(image);
 	GLfloat vtx[3 * 1024];    // arbitrary sized
 	GLfloat tex[2 * 1024];

@@ -122,7 +122,7 @@ void R_RenderShadowEdges(void)
 			// triangle, it is a sil edge
 			if (hit[1] == 0)
 			{
-				// OpenGLES implementation 
+				// OpenGLES implementation
 				// A single drawing call is better than many. So I prefer a singe TRIANGLES call than many TRAINGLE_STRIP call
 				// even if it seems less efficiant, it's faster on the PANDORA
 				indexes[idx++] = i;
@@ -234,6 +234,18 @@ void RB_ShadowTessEnd(void)
 	qglEnable(GL_STENCIL_TEST);
 	qglStencilFunc(GL_ALWAYS, 1, 255);
 
+	qglVertexPointer(3, GL_FLOAT, 16, tess.xyz);
+	GLboolean text = qglIsEnabled(GL_TEXTURE_COORD_ARRAY);
+	GLboolean glcol = qglIsEnabled(GL_COLOR_ARRAY);
+	if (text)
+	{
+		qglDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	}
+	if (glcol)
+	{
+		qglDisableClientState(GL_COLOR_ARRAY);
+	}
+
 	// mirrors have the culling order reversed
 	if (backEnd.viewParms.isMirror)
 	{
@@ -245,7 +257,7 @@ void RB_ShadowTessEnd(void)
 		qglCullFace(GL_BACK);
 		qglStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
 
-		R_RenderShadowEdges();
+		qglDrawElements(GL_TRIANGLES, idx, GL_UNSIGNED_SHORT, indexes);
 	}
 	else
 	{
@@ -257,7 +269,16 @@ void RB_ShadowTessEnd(void)
 		qglCullFace(GL_FRONT);
 		qglStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
 
-		R_RenderShadowEdges();
+		qglDrawElements(GL_TRIANGLES, idx, GL_UNSIGNED_SHORT, indexes);
+	}
+
+	if (text)
+	{
+		qglEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	}
+	if (glcol)
+	{
+		qglEnableClientState(GL_COLOR_ARRAY);
 	}
 
 	// reenable writing to the color buffer
@@ -294,7 +315,7 @@ void RB_ShadowFinish(void)
 	qglColor3f(0.6f, 0.6f, 0.6f);
 	GL_State(GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO);
 
-	// OpenGLES implementation 
+	// OpenGLES implementation
 	GLboolean text  = qglIsEnabled(GL_TEXTURE_COORD_ARRAY);
 	GLboolean glcol = qglIsEnabled(GL_COLOR_ARRAY);
 	if (text)
