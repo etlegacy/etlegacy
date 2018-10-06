@@ -185,7 +185,7 @@ void RB_AddQuadStampFadingCornersExt(vec3_t origin, vec3_t left, vec3_t up, byte
 void RB_AddQuadStampExt(vec3_t origin, vec3_t left, vec3_t up, byte *color, float s1, float t1, float s2, float t2)
 {
 	vec3_t normal;
-	int    ndx;
+	short    ndx;
 
 	RB_CHECKOVERFLOW(4, 6);
 
@@ -322,8 +322,8 @@ static void RB_SurfaceSprite(void)
  */
 void RB_SurfacePolychain(srfPoly_t *p)
 {
-	int i;
-	int numv;
+	short i;
+	short numv;
 
 	RB_CHECKOVERFLOW(p->numVerts, 3 * (p->numVerts - 2));
 
@@ -665,7 +665,7 @@ void RB_SurfaceBeam(void)
 static void DoRailCore(const vec3_t start, const vec3_t end, const vec3_t up, float len, float spanWidth)
 {
 	float spanWidth2;
-	int   vbase = tess.numVertexes;
+	short   vbase = tess.numVertexes;
 	float t;       // = len / 256.0f;
 
 	// configurable tile
@@ -1748,14 +1748,14 @@ void RB_SurfaceFlare(srfFlare_t *surf)
 /**
  * @brief RB_SurfaceDisplayList
  * @param[in] surf
- */
+
 void RB_SurfaceDisplayList(srfDisplayList_t *surf)
 {
 	// all apropriate state must be set in RB_BeginSurface
 	// this isn't implemented yet...
 	qglCallList(surf->listNum);
 }
-
+*/
 /**
  * @brief RB_SurfacePolyBuffer
  * @param[in] surf
@@ -1844,7 +1844,7 @@ void(*rb_surfaceTable[SF_NUM_SURFACE_TYPES]) (void *) =
 	(void (*)(void *))RB_MDM_SurfaceAnim,          // SF_MDM,
 	(void (*)(void *))RB_SurfaceFlare,             // SF_FLARE,
 	(void (*)(void *))RB_SurfaceEntity,            // SF_ENTITY
-	(void (*)(void *))RB_SurfaceDisplayList,       // SF_DISPLAY_LIST
+//	(void (*)(void *))RB_SurfaceDisplayList,       // SF_DISPLAY_LIST
 	(void (*)(void *))RB_SurfacePolyBuffer,        // SF_POLYBUFFER
 	(void (*)(void *))RB_SurfaceDecal,             // SF_DECAL
 };
