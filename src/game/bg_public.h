@@ -644,7 +644,7 @@ typedef enum
 	STAT_HEALTH = 0,
 	STAT_KEYS,                     ///< 16 bit fields
 	STAT_DEAD_YAW,                 ///< look this direction when dead
-	STAT_MAX_HEALTH,               ///< health / armor limit, changable by handicap
+	STAT_MAX_HEALTH,               ///< health / armor limit
 	STAT_PLAYER_CLASS,             ///< player class in multiplayer
 	STAT_XP,                       ///< "realtime" version of xp that doesnt need to go thru the scoreboard
 	STAT_PS_FLAGS,

@@ -749,7 +749,7 @@ typedef struct
 
 	int autoActivate;                   ///< based on cg_autoactivate userinfo        (uses the PICKUP_ values above)
 
-	int maxHealth;                      ///< for handicapping
+	int maxHealth;                      ///<
 	int enterTime;                      ///< level.time the client entered the game
 	int connectTime;                    ///< level.time the client first connected to the server
 	playerTeamState_t teamState;        ///< status in teamplay games

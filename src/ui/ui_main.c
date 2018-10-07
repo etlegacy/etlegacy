@@ -1244,7 +1244,7 @@ qboolean Load_Menu(int handle)
 			return qfalse;
 		}
 
-		if (token.string[0] == 0)
+		if (token.string[0] == '\0')
 		{
 			return qfalse;
 		}
@@ -1306,7 +1306,7 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 		{
 			break;
 		}
-		if (token.string[0] == 0 || token.string[0] == '}')
+		if (token.string[0] == '\0' || token.string[0] == '}')
 		{
 			break;
 		}
@@ -1361,23 +1361,6 @@ void UI_Load(void)
 	UI_LoadMenus(menuSet, qtrue);
 	Menus_CloseAll();
 	Menus_ActivateByName(lastName, qtrue);
-}
-
-static const char *handicapValues[] = { "None", "95", "90", "85", "80", "75", "70", "65", "60", "55", "50", "45", "40", "35", "30", "25", "20", "15", "10", "5", NULL };
-
-/**
- * @brief UI_DrawHandicap
- * @param[in] rect
- * @param[in] scale
- * @param[in] color
- * @param[in] textStyle
- */
-static void UI_DrawHandicap(rectDef_t *rect, float scale, vec4_t color, int textStyle)
-{
-	int h = Com_Clamp(5, 100, (int)(trap_Cvar_VariableValue("handicap")));
-	int i = 20 - h / 5;
-
-	Text_Paint(rect->x, rect->y, scale, color, handicapValues[i], 0, 0, textStyle);
 }
 
 /**
@@ -2728,11 +2711,6 @@ static int UI_OwnerDrawWidth(int ownerDraw, float scale)
 
 	switch (ownerDraw)
 	{
-	case UI_HANDICAP:
-		h = Com_Clamp(5, 100, (int)(trap_Cvar_VariableValue("handicap")));
-		i = 20 - h / 5;
-		s = handicapValues[i];
-		break;
 	case UI_CLANNAME:
 		s = UI_Cvar_VariableString("ui_teamName");
 		break;
@@ -3194,10 +3172,8 @@ static void UI_OwnerDraw(float x, float y, float w, float h, float text_x, float
 	//case UI_REDTEAM5:
 	//case UI_ALLMAPS_SELECTION:
 	//case UI_MAPS_SELECTION:
+	//case UI_HANDICAP:
 
-	case UI_HANDICAP:
-		UI_DrawHandicap(&rect, scale, color, textStyle);
-		break;
 	case UI_EFFECTS:
 		UI_DrawEffects(&rect, scale, color);
 		break;
@@ -3520,42 +3496,6 @@ qboolean UI_OwnerDrawVisible(int flags)
 		}
 	}
 	return vis;
-}
-
-/**
- * @brief UI_Handicap_HandleKey
- * @param flags - unused
- * @param special - unused
- * @param[in] key
- * @return
- */
-static qboolean UI_Handicap_HandleKey(int flags, int *special, int key)
-{
-	if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER)
-	{
-		int h;
-
-		h = Com_Clamp(5, 100, (int)(trap_Cvar_VariableValue("handicap")));
-		if (key == K_MOUSE2)
-		{
-			h -= 5;
-		}
-		else
-		{
-			h += 5;
-		}
-		if (h > 100)
-		{
-			h = 5;
-		}
-		else if (h < 0)
-		{
-			h = 100;
-		}
-		trap_Cvar_Set("handicap", va("%i", h));
-		return qtrue;
-	}
-	return qfalse;
 }
 
 /**
@@ -3940,8 +3880,6 @@ static qboolean UI_OwnerDrawHandleKey(int ownerDraw, int flags, int *special, in
 {
 	switch (ownerDraw)
 	{
-	case UI_HANDICAP:
-		return UI_Handicap_HandleKey(flags, special, key);
 	case UI_EFFECTS:
 		return UI_Effects_HandleKey(flags, special, key);
 	case UI_CLANNAME:
@@ -6317,7 +6255,7 @@ static void UI_BuildServerDisplayList(int force)
 					}
 					break;
 				case 12:
-					if (Q_stristr(gamename, "etmain") == 0 || gamename[0] == 0)
+					if (Q_stristr(gamename, "etmain") == 0 || gamename[0] == '\0')
 					{
 						trap_LAN_MarkServerVisible(ui_netSource.integer, i, qfalse);
 						continue;
@@ -7167,7 +7105,7 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 						{
 							handles[3] = uiInfo.modFilter_tjmod;
 						}
-						else if (Q_stristr(gamename, "etmain") != 0 || gamename[0] == 0)
+						else if (Q_stristr(gamename, "etmain") != 0 || gamename[0] == '\0')
 						{
 							handles[3] = uiInfo.modFilter_etmain;
 						}
