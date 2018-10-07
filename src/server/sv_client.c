@@ -201,10 +201,9 @@ static qboolean SV_isClientIPValidToConnect(netadr_t from)
  * @param[in] from
  * @param[in] userinfo
  */
-static qboolean SV_IsValidUserinfo(netadr_t from,const char *userinfo)
+static qboolean SV_IsValidUserinfo(netadr_t from, const char *userinfo)
 {
 	// FIXME: add some logging in for admins? we only do developer prints when a client is filtered
-
 	int version;
 
 	// NOTE: but we might need to store the protocol around for potential non http/ftp clients
@@ -312,9 +311,20 @@ void SV_DirectConnect(netadr_t from)
 
 	Com_DPrintf("SVC_DirectConnect ()\n");
 
+	// Prevent using connect as an amplifier
+	if (sv_protect->integer & SVP_IOQ3)
+	{
+		if(SVC_RateLimitAddress(from, 10, 1000))
+		{
+			SV_WriteAttackLog(va("Bad direct connect - rate limit from %s exceeded, dropping request\n",
+		                     NET_AdrToString(from)));
+			return;
+		}
+	}
+
 	Q_strncpyz(userinfo, Cmd_Argv(1), sizeof(userinfo));
 
-	// sort out clients we don't want to have in game
+	// sort out clients we don't want to have in game/does temp ban!
 	if (!SV_isValidClient(from, userinfo))
 	{
 		return;
@@ -1656,7 +1666,9 @@ void SV_UserinfoChanged(client_t *cl)
 			cl->rate = 5000;
 		}
 	}
-	val = Info_ValueForKey(cl->userinfo, "handicap"); // FIXME: unused?
+
+	/*
+	val = Info_ValueForKey(cl->userinfo, "handicap");
 	if (strlen(val))
 	{
 		i = atoi(val);
@@ -1665,6 +1677,7 @@ void SV_UserinfoChanged(client_t *cl)
 			Info_SetValueForKey(cl->userinfo, "handicap", "0");
 		}
 	}
+	*/
 
 	// snaps command
 	val = Info_ValueForKey(cl->userinfo, "snaps");
