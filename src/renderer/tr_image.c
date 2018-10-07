@@ -1671,6 +1671,10 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 			msurface_t *surf;
 			shader_t   *shd;
 
+			if (bmodel->numSurfaces == 0) {
+				return 0;
+			}
+
 			if (surfnum >= bmodel->numSurfaces)     // if it's out of range, return the first surface
 			{
 				surfnum = 0;

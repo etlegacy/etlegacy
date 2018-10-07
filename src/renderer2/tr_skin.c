@@ -210,9 +210,15 @@ qhandle_t RE_GetShaderFromModel(qhandle_t modelid, int surfnum, int withlightmap
 		bmodel = model->bsp;
 		if (bmodel && bmodel->firstSurface)
 		{
+			if (bmodel->numSurfaces == 0) {
+				Ren_Print("RE_GetShaderFromModel warning: no surface was found.\n");
+				return 0;
+			}
+
+			// if it's out of range, use the first surface
 			if (surfnum >= bmodel->numSurfaces)
-			{                   // if it's out of range, return the first surface
-				Ren_Print("RE_GetShaderFromModel warning: surface is our of range.\n");
+			{                   
+				Ren_Print("RE_GetShaderFromModel warning: surface is out of range.\n");
 				surfnum = 0;
 			}
 
