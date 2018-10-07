@@ -355,7 +355,7 @@ typedef struct keywordHash_s
  */
 int KeywordHash_Key(const char *keyword)
 {
-	int register hash = 0, i;
+	int hash = 0, i;
 
 	for (i = 0; keyword[i] != '\0'; i++)
 	{
