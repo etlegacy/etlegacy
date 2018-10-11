@@ -513,77 +513,85 @@ CENTER PRINTING
 #define CP_LINEWIDTH (int)(Ccg_WideX(56))
 
 /**
- * @brief Called for important messages that should stay in the center of the screen
- * for a few moments
- * @param str
- * @param y
- * @param fontScale
+ * @brief Format the message by turning spaces into newlines, if we've run over the linewidth
+ * @param[in,out] s The message to format
+ * @return The number of line needed to display the messages
  */
-void CG_CenterPrint(const char *str, int y, float fontScale)
+int CG_FormatCenterPrint(char *s)
 {
-	char     *s;
-	int      i, len;
+	char     *lastSpace = NULL;
+	int      i, len, lastLR = 0;
+	int      lineNumber  = 1;
 	qboolean neednewline = qfalse;
-	int      priority    = 0;
 
-	// don't draw if this print message is less important
-	if (cg.centerPrintTime && priority < cg.centerPrintPriority)
-	{
-		return;
-	}
-
-	Q_strncpyz(cg.centerPrint, str, sizeof(cg.centerPrint));
-	cg.centerPrintPriority = priority;
-
-	// turn spaces into newlines, if we've run over the linewidth
-	len = Q_UTF8_Strlen(cg.centerPrint);
+	len = Q_UTF8_PrintStrlen(s);
 	for (i = 0; i < len; i++)
 	{
-		// NOTE: subtract a few chars here so long words still get displayed properly
-		if (i % (CP_LINEWIDTH - 20) == 0 && i > 0)
+		if (Q_IsColorString(s))
+		{
+			s += 2;
+		}
+
+		if ((i - lastLR) >= CP_LINEWIDTH)
 		{
 			neednewline = qtrue;
 		}
-		if (cg.centerPrint[i] == ' ' && neednewline)
+
+		if (*s == ' ')
 		{
-			cg.centerPrint[i] = '\n';
-			neednewline       = qfalse;
+			lastSpace = s;
 		}
-	}
 
-	cg.centerPrintTime       = cg.time;
-	cg.centerPrintY          = y;
-	cg.centerPrintCharHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-	cg.centerPrintCharWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
-	cg.centerPrintFontScale  = fontScale;
+		if (neednewline && lastSpace)
+		{
+			*lastSpace  = '\n';
+			lastSpace   = NULL;
+			neednewline = qfalse;
+		}
 
-	// count the number of lines for centering
-	cg.centerPrintLines = 1;
-	s                   = cg.centerPrint;
-	while (*s)
-	{
+		// count the number of lines for centering
 		if (*s == '\n')
 		{
-			cg.centerPrintLines++;
+			lastLR = i;
+			lineNumber++;
 		}
+
 		s += Q_UTF8_Width(s);
 	}
+
+	// we reach the end of the string and it doesn't fit in on line
+	if (neednewline && lastSpace)
+	{
+		*lastSpace = '\n';
+		lineNumber++;
+	}
+
+	return lineNumber;
 }
 
 /**
  * @brief Called for important messages that should stay in the center of the screen
  * for a few moments
- * @param str
- * @param y
- * @param fontScale
- * @param priority
+ * @param[in] str
+ * @param[in] y
+ * @param[in] fontScale
+ */
+void CG_CenterPrint(const char *str, int y, float fontScale)
+{
+	CG_PriorityCenterPrint(str, y, fontScale, 0);
+	cg.centerPrintTime = cg.time;  // overwrite
+}
+
+/**
+ * @brief Called for important messages that should stay in the center of the screen
+ * for a few moments
+ * @param[in] str
+ * @param[in] y
+ * @param[in] fontScale
+ * @param[in] priority
  */
 void CG_PriorityCenterPrint(const char *str, int y, float fontScale, int priority)
 {
-	char     *s;
-	int      i, len;
-	qboolean neednewline = qfalse;
-
 	// don't draw if this print message is less important
 	if (cg.centerPrintTime && priority < cg.centerPrintPriority)
 	{
@@ -591,42 +599,14 @@ void CG_PriorityCenterPrint(const char *str, int y, float fontScale, int priorit
 	}
 
 	Q_strncpyz(cg.centerPrint, str, sizeof(cg.centerPrint));
-	cg.centerPrintPriority = priority;
-
-	// turn spaces into newlines, if we've run over the linewidth
-	len = strlen(cg.centerPrint);
-	for (i = 0; i < len; i++)
-	{
-
-		// NOTE: subtract a few chars here so long words still get displayed properly
-		if (i % (CP_LINEWIDTH - 20) == 0 && i > 0)
-		{
-			neednewline = qtrue;
-		}
-		if (cg.centerPrint[i] == ' ' && neednewline)
-		{
-			cg.centerPrint[i] = '\n';
-			neednewline       = qfalse;
-		}
-	}
-
+	cg.centerPrintLines      = CG_FormatCenterPrint(cg.centerPrint);
+	cg.centerPrintPriority   = priority;
+	cg.centerPrintLines      = 1;
 	cg.centerPrintTime       = cg.time + 2000;
 	cg.centerPrintY          = y;
 	cg.centerPrintCharHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 	cg.centerPrintCharWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 	cg.centerPrintFontScale  = fontScale;
-
-	// count the number of lines for centering
-	cg.centerPrintLines = 1;
-	s                   = cg.centerPrint;
-	while (*s)
-	{
-		if (*s == '\n')
-		{
-			cg.centerPrintLines++;
-		}
-		s++;
-	}
 }
 
 /**
@@ -634,8 +614,10 @@ void CG_PriorityCenterPrint(const char *str, int y, float fontScale, int priorit
  */
 static void CG_DrawCenterString(void)
 {
-	char  *start;
-	int   l;
+	char  *start, *end;
+	int   len;
+	char  currentColor[3] = S_COLOR_WHITE;
+	char  nextColor[3] = { 0, 0, 0 };
 	int   x, y, w;
 	float *color;
 
@@ -654,40 +636,55 @@ static void CG_DrawCenterString(void)
 
 	trap_R_SetColor(color);
 
-	start = cg.centerPrint;
-
 	y = cg.centerPrintY - cg.centerPrintLines * cg.centerPrintCharHeight / 2;
 
-	while (1)
+	for (start = end = cg.centerPrint; *start; end += len)
 	{
-		char linebuffer[1024];
-
-		for (l = 0; l < CP_LINEWIDTH; l++) // added CP_LINEWIDTH
+		if (Q_IsColorString(end))
 		{
-			if (!start[l] || start[l] == '\n')
+			// don't store color if the line start with a color
+			if (start == end)
 			{
-				break;
+				Com_Memset(currentColor, 0, 3);
 			}
-			linebuffer[l] = start[l];
+
+			// store the used color to reused it in case the line is splitted on multi line
+			Q_strncpyz(nextColor, end, 3);
+			len = 2;
 		}
-		linebuffer[l] = 0;
-
-		w = CG_Text_Width_Ext(linebuffer, cg.centerPrintFontScale, 0, &cgs.media.limboFont2);
-		x = Ccg_WideX(320) - w / 2;
-
-		CG_Text_Paint_Ext(x, y, cg.centerPrintFontScale, cg.centerPrintFontScale, colorWhite, linebuffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-
-		y += cg.centerPrintCharHeight * 1.5f;
-
-		while (*start && (*start != '\n'))
+		else
 		{
-			start++;
+			len = Q_UTF8_Width(end);
 		}
-		if (!*start)
+
+		if (!*end || *end == '\n')
 		{
-			break;
+			char linebuffer[1024] = { 0 };
+
+			if (*currentColor)
+			{
+				Q_strncpyz(linebuffer, currentColor, 3);
+				Q_strcat(linebuffer, (end - start) + 3, start);
+			}
+			else
+			{
+				Q_strncpyz(linebuffer, start, (end - start) + 1);
+			}
+
+			w = CG_Text_Width_Ext(linebuffer, cg.centerPrintFontScale, 0, &cgs.media.limboFont2);
+			x = Ccg_WideX(320) - w / 2;
+
+			CG_Text_Paint_Ext(x, y, cg.centerPrintFontScale, cg.centerPrintFontScale, colorWhite, linebuffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+
+			y += cg.centerPrintCharHeight * 1.5f;
+
+			if (nextColor[0])
+			{
+				Q_strncpyz(currentColor, nextColor, 3);
+			}
+
+			start = end + len;
 		}
-		start++;
 	}
 
 	trap_R_SetColor(NULL);
@@ -3046,8 +3043,6 @@ static void CG_DrawFlashBlend(void)
 void CG_ObjectivePrint(const char *str, float fontScale)
 {
 	const char *s;
-	int        i, len;
-	qboolean   neednewline = qfalse;
 
 	if (cg.centerPrintTime)
 	{
@@ -3057,40 +3052,12 @@ void CG_ObjectivePrint(const char *str, float fontScale)
 	s = CG_TranslateString(str);
 
 	Q_strncpyz(cg.oidPrint, s, sizeof(cg.oidPrint));
-
-	// turn spaces into newlines, if we've run over the linewidth
-	len = strlen(cg.oidPrint);
-	for (i = 0; i < len; i++)
-	{
-		// NOTE: subtract a few chars here so long words still get displayed properly
-		if (i % (CP_LINEWIDTH - 20) == 0 && i > 0)
-		{
-			neednewline = qtrue;
-		}
-		if (cg.oidPrint[i] == ' ' && neednewline)
-		{
-			cg.oidPrint[i] = '\n';
-			neednewline    = qfalse;
-		}
-	}
-
+	cg.oidPrintLines      = CG_FormatCenterPrint(cg.oidPrint);
 	cg.oidPrintTime       = cg.time;
 	cg.oidPrintY          = OID_TOP;
 	cg.oidPrintCharHeight = CG_Text_Height_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 	cg.oidPrintCharWidth  = CG_Text_Width_Ext("A", fontScale, 0, &cgs.media.limboFont2);
 	cg.oidPrintFontScale  = fontScale;
-
-	// count the number of lines for oiding
-	cg.oidPrintLines = 1;
-	s                = cg.oidPrint;
-	while (*s)
-	{
-		if (*s == '\n')
-		{
-			cg.oidPrintLines++;
-		}
-		s++;
-	}
 }
 
 /**
@@ -3098,8 +3065,10 @@ void CG_ObjectivePrint(const char *str, float fontScale)
  */
 static void CG_DrawObjectiveInfo(void)
 {
-	char   *start;
-	int    l;
+	char   *start, *end;
+	int    len;
+	char   currentColor[3] = S_COLOR_WHITE;
+	char   nextColor[3] = { 0, 0, 0 };
 	int    x, y, w;
 	int    x1, y1, x2, y2;
 	float  *color;
@@ -3119,8 +3088,6 @@ static void CG_DrawObjectiveInfo(void)
 
 	trap_R_SetColor(color);
 
-	start = cg.oidPrint;
-
 	y = 400 - cg.oidPrintLines * cg.oidPrintCharHeight / 2;
 
 	x1 = 319;
@@ -3128,43 +3095,32 @@ static void CG_DrawObjectiveInfo(void)
 	x2 = 321;
 
 	// first just find the bounding rect
-	while (1)
+	for (start = end = cg.oidPrint; *start; end += len)
 	{
-		char linebuffer[1024];
+		len = Q_UTF8_Width(end);
 
-		for (l = 0; l < CP_LINEWIDTH; l++)
+		if (!*end || *end == '\n')
 		{
-			if (!start[l] || start[l] == '\n')
+			char linebuffer[1024] = { 0 };
+
+			Q_strncpyz(linebuffer, start, (end - start) + 1);
+
+			w = CG_Text_Width_Ext(va("%s  ", linebuffer), cg.oidPrintFontScale, 0, &cgs.media.limboFont2);
+
+			if (320 - w / 2 < x1)
 			{
-				break;
+				x1 = 320 - w / 2;
+				x2 = 320 + w / 2;
 			}
-			linebuffer[l] = start[l];
-		}
-		linebuffer[l] = 0;
 
-		w = CG_Text_Width_Ext(va("%s  ", linebuffer), cg.oidPrintFontScale, 0, &cgs.media.limboFont2);
+			//x  = 320 - w / 2; // no need to calculate x - it's not used and overwritten in next loop
+			y += cg.oidPrintCharHeight * 1.5;
 
-		if (320 - w / 2 < x1)
-		{
-			x1 = 320 - w / 2;
-			x2 = 320 + w / 2;
+			start = end + len;
 		}
-
-		//x  = 320 - w / 2; // no need to calculate x - it's not used and overwritten in next loop
-		y += cg.oidPrintCharHeight * 1.5;
-
-		while (*start && (*start != '\n'))
-		{
-			start++;
-		}
-		if (!*start)
-		{
-			break;
-		}
-		start++;
 	}
 
-	y2 = y - cg.oidPrintCharHeight * 1.5 - 2;
+	y2 = y - 2;
 
 	VectorCopy(color, backColor);
 	backColor[3] = 0.5f * color[3];
@@ -3178,45 +3134,61 @@ static void CG_DrawObjectiveInfo(void)
 	trap_R_SetColor(color);
 
 	// do the actual drawing
-	start = cg.oidPrint;
-	y     = 400 - cg.oidPrintLines * cg.oidPrintCharHeight / 2;
+	y = 400 - cg.oidPrintLines * cg.oidPrintCharHeight / 2;
 
-	while (1)
+	for (start = end = cg.oidPrint; *start; end += len)
 	{
-		char linebuffer[1024];
-
-		for (l = 0; l < CP_LINEWIDTH; l++)
+		if (Q_IsColorString(end))
 		{
-			if (!start[l] || start[l] == '\n')
+			// don't store color if the line start with a color
+			if (start == end)
 			{
-				break;
+				Com_Memset(currentColor, 0, 3);
 			}
-			linebuffer[l] = start[l];
+
+			// store the used color to reused it in case the line is splitted on multi line
+			Q_strncpyz(nextColor, end, 3);
+			len = 2;
 		}
-		linebuffer[l] = 0;
-
-		w = CG_Text_Width_Ext(linebuffer, cg.oidPrintFontScale, 0, &cgs.media.limboFont2);
-
-		if (x1 + w > x2)
+		else
 		{
-			x2 = x1 + w;
+			len = Q_UTF8_Width(end);
 		}
 
-		x = 320 - w / 2;
-
-		CG_Text_Paint_Ext(x + cgs.wideXoffset, y, cg.oidPrintFontScale, cg.oidPrintFontScale, color, linebuffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
-
-		y += cg.oidPrintCharHeight * 1.5;
-
-		while (*start && (*start != '\n'))
+		if (!*end || *end == '\n')
 		{
-			start++;
+			char linebuffer[1024] = { 0 };
+
+			if (*currentColor)
+			{
+				Q_strncpyz(linebuffer, currentColor, 3);
+				Q_strcat(linebuffer, (end - start) + 3, start);
+			}
+			else
+			{
+				Q_strncpyz(linebuffer, start, (end - start) + 1);
+			}
+
+			w = CG_Text_Width_Ext(linebuffer, cg.oidPrintFontScale, 0, &cgs.media.limboFont2);
+
+			if (x1 + w > x2)
+			{
+				x2 = x1 + w;
+			}
+
+			x = 320 - w / 2;
+
+			CG_Text_Paint_Ext(x + cgs.wideXoffset, y, cg.oidPrintFontScale, cg.oidPrintFontScale, color, linebuffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
+
+			y += cg.oidPrintCharHeight * 1.5;
+
+			if (nextColor[0])
+			{
+				Q_strncpyz(currentColor, nextColor, 3);
+			}
+
+			start = end + len;
 		}
-		if (!*start)
-		{
-			break;
-		}
-		start++;
 	}
 
 	trap_R_SetColor(NULL);
@@ -3642,12 +3614,12 @@ void CG_ShakeCamera(void)
 	}
 
 	{
-		double        x    = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength;
-		float         valx = sin(M_PI * 8 * 13.0 + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
-		float         valy = sin(M_PI * 17 * x + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
-		float         valz = cos(M_PI * 7 * x + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
-		vec3_t        vec;
-		trace_t       tr;
+		double  x    = (cg.cameraShakeTime - cg.time) / cg.cameraShakeLength;
+		float   valx = sin(M_PI * 8 * 13.0 + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
+		float   valy = sin(M_PI * 17 * x + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
+		float   valz = cos(M_PI * 7 * x + cg.cameraShakePhase) * x * 6 * cg.cameraShakeScale;
+		vec3_t  vec;
+		trace_t tr;
 
 		VectorAdd(cg.refdef.vieworg, tv(valx, valy, valz), vec);
 		CG_Trace(&tr, cg.refdef.vieworg, mins, maxs, vec, cg.predictedPlayerState.clientNum, MASK_SOLID);
