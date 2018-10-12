@@ -1685,8 +1685,21 @@ static void CG_PrintObjectiveInfo_f(void)
 
 	for (i = 0; i < MAX_OID_TRIGGERS; i++)
 	{
-		CG_Printf("[%2i] %-26s -> num: %3i - spawnflags: %3i - objflags: %3i\n", i, cgs.oidInfo[i].name, cgs.oidInfo[i].entityNum, cgs.oidInfo[i].spawnflags, cgs.oidInfo[i].objflags);
+		if (cgs.oidInfo[i].name[0] != '\0')
+		{
+			// add
+			// - customimageallies
+			// - customimageaxis
+			// - origin ?!
+			CG_Printf("[%2i] %-26s -> num: %3i - spawnflags: %3i - objflags: %3i\n", i + 1, cgs.oidInfo[i].name, cgs.oidInfo[i].entityNum, cgs.oidInfo[i].spawnflags, cgs.oidInfo[i].objflags);
+		}
+		else
+		{
+			break;
+		}
 	}
+
+	CG_Printf("^2%i from %i objectives defined\n", i, MAX_OID_TRIGGERS);
 }
 
 static consoleCommand_t commands[] =
