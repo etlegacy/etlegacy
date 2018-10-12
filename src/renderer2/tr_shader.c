@@ -1293,14 +1293,14 @@ qboolean ParseTexMod(char **text, shaderStage_t *stage)
 		token = COM_ParseExt2(text, qfalse);
 		if (token[0] == 0)
 		{
-			Ren_Warning("WARNING: missing scale scroll parms in shader '%s'\n", shader.name);
+			Ren_Warning("WARNING: missing 1st scale scroll parms in shader '%s'\n", shader.name);
 			return qfalse;
 		}
 		tmi->scroll[0] = atof(token);
 		token          = COM_ParseExt2(text, qfalse);
 		if (token[0] == 0)
 		{
-			Ren_Warning("WARNING: missing scale scroll parms in shader '%s'\n", shader.name);
+			Ren_Warning("WARNING: missing 2nd scale scroll parms in shader '%s'\n", shader.name);
 			return qfalse;
 		}
 		tmi->scroll[1] = atof(token);
@@ -4679,7 +4679,11 @@ static void CollapseStages()
 		    stages[j].type == ST_HEATHAZEMAP ||
 		    stages[j].type == ST_LIQUIDMAP ||
 		    stages[j].type == ST_ATTENUATIONMAP_XY ||
-		    stages[j].type == ST_ATTENUATIONMAP_Z)
+		    stages[j].type == ST_ATTENUATIONMAP_Z
+		    // ||
+			//stages[j].type == ST_DIFFUSEMAP || // FIXME: inspect! ST_COLORMAP os creating
+			//stages[j].type == ST_COLORMAP      //                 nice reflections on radar puddles
+			)
 		{
 			// only merge lighting relevant stages
 			tmpStages[numStages] = stages[j];

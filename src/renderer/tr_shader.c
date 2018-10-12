@@ -461,14 +461,14 @@ static void ParseTexMod(char *_text, shaderStage_t *stage)
 		token = COM_ParseExt(text, qfalse);
 		if (token[0] == 0)
 		{
-			Ren_Warning("WARNING: missing scale scroll parms in shader '%s'\n", shader.name);
+			Ren_Warning("WARNING: missing 1st scale scroll parms in shader '%s'\n", shader.name);
 			return;
 		}
 		tmi->scroll[0] = atof(token);
 		token          = COM_ParseExt(text, qfalse);
 		if (token[0] == 0)
 		{
-			Ren_Warning("WARNING: missing scale scroll parms in shader '%s'\n", shader.name);
+			Ren_Warning("WARNING: missing 2nd scale scroll parms in shader '%s'\n", shader.name);
 			return;
 		}
 		tmi->scroll[1] = atof(token);
