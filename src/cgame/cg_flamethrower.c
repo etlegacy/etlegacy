@@ -395,22 +395,16 @@ void CG_ClearFlameChunks(void)
 	activeFlameChunks = NULL;
 	headFlameChunks   = NULL;
 
-	for (i = 0 ; i < MAX_FLAME_CHUNKS ; i++)
+    flameChunks[0].nextGlobal = &flameChunks[1];
+
+	for (i = 1 ; i < MAX_FLAME_CHUNKS - 1 ; i++)
 	{
-		flameChunks[i].nextGlobal = &flameChunks[i + 1]; // FIXME: Array 'flameChunks[1024]' index 1024 out of bounds
-
-		if (i > 0)
-		{
-			flameChunks[i].prevGlobal = &flameChunks[i - 1];
-		}
-		else
-		{
-			flameChunks[i].prevGlobal = NULL;
-		}
-
-		flameChunks[i].inuse = qfalse;
+		flameChunks[i].nextGlobal = &flameChunks[i + 1];
+		flameChunks[i].prevGlobal = &flameChunks[i - 1];
+		flameChunks[i].inuse      = qfalse;
 	}
-	flameChunks[MAX_FLAME_CHUNKS - 1].nextGlobal = NULL;
+
+	flameChunks[i].prevGlobal = &flameChunks[i - 1];
 
 	numFlameChunksInuse = 0;
 }
