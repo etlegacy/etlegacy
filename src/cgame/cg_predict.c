@@ -690,6 +690,11 @@ static void CG_TouchTriggerPrediction(void)
 
 			continue;
 		}
+
+		if (ent->eType == ET_TELEPORT_TRIGGER)
+		{
+			cg.hyperspace = qtrue;
+		}
 	}
 }
 
