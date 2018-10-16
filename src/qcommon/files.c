@@ -1458,17 +1458,31 @@ long FS_FOpenFileReadDir(const char *fileName, searchpath_t *search, fileHandle_
 
 					if (!(pak->referenced & FS_GENERAL_REF))
 					{
+						// blacklist
 						if (!FS_IsExt(fileName, ".shader", len) &&
 						    !FS_IsExt(fileName, ".txt", len) &&
 						    !FS_IsExt(fileName, ".cfg", len) &&
 						    !FS_IsExt(fileName, ".config", len) &&
-						    !FS_IsExt(fileName, ".bot", len) &&
+						    !FS_IsExt(fileName, ".bot", len) && // not used in ET for real
 						    !FS_IsExt(fileName, ".arena", len) &&
-						    !FS_IsExt(fileName, ".menu", len) && // FIXME: remove from ETL ? *.bot files are obsolete
+						    !FS_IsExt(fileName, ".menu", len) &&
 						    Q_stricmp(fileName, Sys_GetDLLName("qagame")) != 0 &&
-						    !strstr(fileName, "levelshots"))
+						    !strstr(fileName, "levelshots") &&
+							!FS_IsExt(fileName, ".campaign", len) // don't reference for gametype != 4 - see below
+							)
 						{
 							pak->referenced |= FS_GENERAL_REF;
+						}
+
+						// special whitelist - objective gametype still has to reference 'campaign' pk3s
+						// FIXME: dedicated campaign servers require an additional map restart when switching gametype to 4 while server is running with other gametypes
+						// this won't trigger for the first map because g_gametype is latched cvar and cvar modfifications are processed later on
+						// ... but this is better than populating the CS with not needed references and forcing players to download
+						// maps/pk3s containing campaign files in other gametypes - delete the print after fix
+						if (FS_IsExt(fileName, ".campaign", len) &&  (Cvar_VariableIntegerValue("g_gametype") == 4 || com_dedicated->integer == 0)) // keep old behavoiur for listen servers
+						{
+							pak->referenced |= FS_GENERAL_REF;
+							Com_Printf("Campaign files in PK3s are referenced!\n");
 						}
 					}
 
