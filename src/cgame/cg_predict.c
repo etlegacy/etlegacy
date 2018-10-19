@@ -822,14 +822,6 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 
 	for (i = 0; i < MAX_STATS; i++)
 	{
-		//if (i == STAT_HEALTH || i == STAT_DEAD_YAW) // FIXME: predict health?! STAT_DEAD_YAW?
-		//{                                           //        we got tons of prediction issues here
-		//	if (cg_showmiss.integer & 8)
-		//	{
-		//		CG_Printf("CG_PredictionOk info: skipping health/stat_dead_yaw\n");
-		//	}
-		//	continue;
-		//}
 		if (ps2->stats[i] != ps1->stats[i])
 		{
 			if (cg_showmiss.integer & 8)
@@ -847,25 +839,25 @@ int CG_PredictionOk(playerState_t *ps1, playerState_t *ps2)
 		{
 			if (cg_showmiss.integer & 8)
 			{
-				CG_Printf("CG_PredictionOk info: return 20 - MAX_PERSISTANT[%i]\n", i);
+				CG_Printf("CG_PredictionOk info: return 20 - MAX_PERSISTANT[%i] ps1: %i ps2: %i\n", i, ps1->persistant[i], ps2->persistant[i]);
 			}
 			return 20;
 		}
 	}
 
-	for (i = 0; i < MAX_POWERUPS; i++)
+	for (i = 1; i < MAX_POWERUPS; i++)  // start at PW_NONE + 1 (unused)
 	{
 		if (ps2->powerups[i] != ps1->powerups[i])
 		{
 			if (cg_showmiss.integer & 8)
 			{
-				CG_Printf("CG_PredictionOk info: return 21 - MAX_POWERUPS[%i]\n", i);
+				CG_Printf("CG_PredictionOk info: return 21 - MAX_POWERUPS[%i] ps1: %i ps2: %i\n", i, ps1->powerups[i], ps2->powerups[i]);
 			}
 			return 21;
 		}
 	}
 
-	for (i = 0; i < MAX_WEAPONS; i++)
+	for (i = 1; i < MAX_WEAPONS; i++)   // start at WP_NONE + 1 (unused)
 	{
 		if (ps2->ammo[i] != ps1->ammo[i] || ps2->ammoclip[i] != ps1->ammoclip[i])
 		{
