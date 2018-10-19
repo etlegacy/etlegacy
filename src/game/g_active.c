@@ -1130,7 +1130,6 @@ void WolfFindMedic(gentity_t *self)
 
 	self->client->ps.viewlocked_entNum    = 0;
 	self->client->ps.viewlocked           = VIEWLOCK_NONE;
-	self->client->ps.stats[STAT_DEAD_YAW] = 999;
 
 	VectorCopy(self->s.pos.trBase, start);
 	start[2] += self->client->ps.viewheight;
