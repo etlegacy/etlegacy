@@ -1078,145 +1078,145 @@ typedef enum
  */
 typedef struct weapontable_s
 {
-	int weapon;                     ///< reference
-	int item;                       ///< item
-	int team;                       ///<
-	skillType_t skillBased;         ///<
-	weapon_t weapAlts;              ///< bg
-	weapon_t weapEquiv;             ///< the id of the opposite team's weapon (but not for WP_GPG40 <-> WP_M7 - see CG_OutOfAmmoChange).
+	int weapon;                     ///< bg - reference
+	int item;                       ///< bg - item
+	int team;                       ///< bg - 
+	skillType_t skillBased;         ///< bg - 
+	weapon_t weapAlts;              ///< bg - 
+	weapon_t weapEquiv;             ///< bg - the id of the opposite team's weapon (but not for WP_GPG40 <-> WP_M7 - see CG_OutOfAmmoChange).
 	weapon_t akimboSideArm;         ///< bg
 
-	weapon_t ammoIndex;             ///< type of weapon ammo this uses.
-	weapon_t clipIndex;             ///< which clip this weapon uses. This allows the sniper rifle to use the same clip as the garand, etc.
+	weapon_t ammoIndex;             ///< bg - type of weapon ammo this uses.
+	weapon_t clipIndex;             ///< bg - which clip this weapon uses. This allows the sniper rifle to use the same clip as the garand, etc.
 
-	int eType;
-	int eFlags;                     ///< bg
-	int svFlags;
-	int trType;
-	int trTime;
-	int clipMask;
+	int eType;                      ///< g -  
+	int eFlags;                     ///< g - 
+	int svFlags;                    ///< g - 
+	int trType;                     ///< g -  
+	int trTime;                     ///< g - 
+	int clipMask;                   ///< g - 
 
-	qboolean isScoped;              ///< bg
+	qboolean isScoped;              ///< bg - 
 
-	qboolean isLightWeaponSupportingFastReload; ///< bg
+	qboolean isLightWeaponSupportingFastReload; ///< bg - 
 
-	int damage;                     ///< g
-	qboolean canGib;                ///< g
-	qboolean isReload;              ///< some weapons don't reload
+	int damage;                     ///< g -
+	qboolean canGib;                ///< g -
+	qboolean isReload;              ///< g - some weapons don't reload NOTE: unused ??
 
-	float spread;                   ///< g
-	float spreadScale;              ///< bg
-	int splashDamage;               ///< g
-	int splashRadius;               ///< g
+	float spread;                   ///< bg - 
+	float spreadScale;              ///< bg - 
+	int splashDamage;               ///< g - 
+	int splashRadius;               ///< g - 
 
-	qboolean quickFireMode;         ///<
-	qboolean firingAuto;            ///<
+	qboolean quickFireMode;         ///< bg - 
+	qboolean firingAuto;            ///< bg - 
 
-	qboolean neverLoseDisguise;     ///< g
-	qboolean keepDisguise;          ///< g
+	qboolean neverLoseDisguise;     ///< g -
+	qboolean keepDisguise;          ///< g -
 
-	qboolean isThrowable;           ///<
-	qboolean isAutoReload;          ///< bg
-	qboolean noAmmoSound;           ///<
-	qboolean noAmmoAutoSwitch;      ///<
+	qboolean isThrowable;           ///< bg -
+	qboolean isAutoReload;          ///< bg -
+	qboolean noAmmoSound;           ///< cg -
+	qboolean noAmmoAutoSwitch;      ///< cg -
 
-	qboolean isSMG;                 ///<
-	qboolean isExplosive;           ///<
-	qboolean isSyringe;             ///<
-	qboolean isPistol;              ///<
-	qboolean isAkimbo;              ///< bg
-	qboolean isPanzer;              ///< bg
-	qboolean isRiflenade;           ///< bg
-	qboolean isRifle;               ///< bg
-	qboolean isRifleWithScope;      ///<
-	qboolean isMortar;              ///< bg
-	qboolean isMortarSet;           ///< bg
-	qboolean isMG;                  ///< bg
-	qboolean isMGSet;               ///< bg
+	qboolean isSMG;                 ///< bg -
+	qboolean isExplosive;           ///< bg -
+	qboolean isSyringe;             ///< bg -
+	qboolean isPistol;              ///< bg -
+	qboolean isAkimbo;              ///< bg -
+	qboolean isPanzer;              ///< bg -
+	qboolean isRiflenade;           ///< bg -
+	qboolean isRifle;               ///< bg -
+	qboolean isRifleWithScope;      ///< bg -
+	qboolean isMortar;              ///< bg -
+	qboolean isMortarSet;           ///< bg -
+	qboolean isMG;                  ///< bg -
+	qboolean isMGSet;               ///< bg -
 
-	qboolean isSetWeapon;           ///< bg
-	qboolean isLightWeapon;         ///< g
-	qboolean isHeavyWeapon;         ///< bg/g
-	qboolean isSilencedPistol;      ///< bg
-	qboolean isMeleeWeapon;         ///<
-	qboolean isGrenade;             ///<
+	qboolean isSetWeapon;           ///< bg - 
+	qboolean isLightWeapon;         ///< g  - 
+	qboolean isHeavyWeapon;         ///< bg - 
+	qboolean isSilencedPistol;      ///< bg - 
+	qboolean isMeleeWeapon;         ///< bg - 
+	qboolean isGrenade;             ///< bg - 
 
-	qboolean isUnderWaterFire;      ///< bg
-	qboolean noMuzzleFlash;         ///< cg
-	qboolean shakeEffect;           ///< g
-	qboolean canHeat;               ///< bg
+	qboolean isUnderWaterFire;      ///< bg -
+	qboolean noMuzzleFlash;         ///< cg -
+	qboolean shakeEffect;           ///< g  -
+	qboolean canHeat;               ///< bg -
 
-	int zoomOut;                    ///< cg
-	int zoomIn;                     ///< cg
-	int zoomedScope;                ///< cg
+	int zoomOut;                    ///< cg -
+	int zoomIn;                     ///< cg -
+	int zoomedScope;                ///< cg - NOTE: unused ???
 
 	// client
 	// icons
-	const char *desc;               ///< c - description for spawn weapons
+	const char *desc;               ///< bg - description for spawn weapons
 
 	unsigned int indexWeaponStat;   ///< bg - index for weapon stat info
 
-	qboolean fallOff;               ///<
+	qboolean fallOff;               ///< g - 
 
-	qboolean useAmmo;               ///<
-	qboolean useClip;               ///<
-	qboolean useBullet;             ///<
+	qboolean useAmmo;               ///< bg -
+	qboolean useClip;               ///< bg -
+	qboolean useBullet;             ///< cg -
 
-	int maxAmmo;                    ///< max player ammo carrying capacity.
-	int uses;                       ///< how many 'rounds' it takes/costs to fire one cycle.
-	int maxClip;                    ///< max 'rounds' in a clip.
-	int defaultStartingAmmo;		///< player ammo when spawning.
-	int defaultStartingClip;		///< player clips when spawning.
-	int reloadTime;                 ///< time from start of reload until ready to fire.
-	int fireDelayTime;              ///< time from pressing 'fire' until first shot is fired. (used for delaying fire while weapon is 'readied' in animation)
-	int nextShotTime;               ///< when firing continuously, this is the time between shots
-	int grenadeTime;                ///<
-	int aimSpreadScaleAdd;          ///<
+	int maxAmmo;                    ///< bg - max player ammo carrying capacity.
+	int uses;                       ///< bg - how many 'rounds' it takes/costs to fire one cycle.
+	int maxClip;                    ///< bg - max 'rounds' in a clip.
+	int defaultStartingAmmo;		///< g - player ammo when spawning.
+	int defaultStartingClip;		///< g - player clips when spawning.
+	int reloadTime;                 ///< bg - time from start of reload until ready to fire.
+	int fireDelayTime;              ///< bg - time from pressing 'fire' until first shot is fired. (used for delaying fire while weapon is 'readied' in animation)
+	int nextShotTime;               ///< bg - when firing continuously, this is the time between shots
+	int grenadeTime;                ///< bg - 
+	int aimSpreadScaleAdd;          ///< bg - 
 
-	int maxHeat;                    ///< max active firing time before weapon 'overheats' (at which point the weapon will fail)
-	int coolRate;                   ///< how fast the weapon cools down. (per second)
-	int heatRecoveryTime;           ///< time from overheats until weapon fully cool down
+	int maxHeat;                    ///< bg - max active firing time before weapon 'overheats' (at which point the weapon will fail)
+	int coolRate;                   ///< bg - how fast the weapon cools down. (per second)
+	int heatRecoveryTime;           ///< bg - time from overheats until weapon fully cool down
 
-	int switchTimeBegin;            ///<
-	int switchTimeFinish;           ///<
-	int altSwitchTimeBegin;         ///<
-	int altSwitchTimeFinish;        ///<
+	int switchTimeBegin;            ///< bg -
+	int switchTimeFinish;           ///< bg -
+	int altSwitchTimeBegin;         ///< bg -
+	int altSwitchTimeFinish;        ///< bg -
 
-	float knockback;                ///<
-	int ejectBrassOffset[3];        ///< forward, left, up
+	float knockback;                ///< bg -
+	int ejectBrassOffset[3];        ///< cg - forward, left, up
 
-	int nextThink;                  ///<
-	int accuracy;                   ///<
+	int nextThink;                  ///< g -
+	int accuracy;                   ///< g - NOTE: unused ???
 
-	float adjustLean;               ///<
+	float adjustLean;               ///< cg - 
 
-	float fireRecoilPitch;          ///< cg
-	float fireRecoilYaw;            ///< cg
+	float fireRecoilPitch;          ///< cg -
+	float fireRecoilYaw;            ///< cg -
+                                            
+	int weapRecoilDuration;         ///< bg -
+	float weapRecoilPitch[2];       ///< bg -
+	float weapRecoilYaw[2];         ///< bg -
 
-	int weapRecoilDuration;         ///< bg
-	float weapRecoilPitch[2];       ///< bg
-	float weapRecoilYaw[2];         ///< bg
+	const char *className;          ///< g - 
+	const char *weapFile;           ///< cg - 
 
-	const char *className;          ///<
-	const char *weapFile;           ///<
+	weaponCardIconId_t weaponCardIcon;            ///< cg -
+	float weaponCardCoord[WEAPON_CARD_CORRD_NUM]; ///< cg -
 
-	weaponCardIconId_t weaponCardIcon;            ///<
-	float weaponCardCoord[WEAPON_CARD_CORRD_NUM]; ///<
+	int idleAnim;                   ///< bg - 
+	int attackAnim;                 ///< bg - 
+	int lastAttackAnim;             ///< bg - 
+	int altSwitchFrom;              ///< bg - 
+	int altSwitchTo;                ///< bg - 
+	int reloadAnim;                 ///< bg - 
+	int raiseAnim;                  ///< bg - 
+	int dropAnim;                   ///< bg - 
 
-	int idleAnim;
-	int attackAnim;
-	int lastAttackAnim;
-	int altSwitchFrom;
-	int altSwitchTo;
-	int reloadAnim;
-	int raiseAnim;
-	int dropAnim;
+	qboolean useChargeTime;                       ///< bg - 
+	float chargeTimeCoeff[NUM_SKILL_LEVELS];      ///< bg - 
 
-	qboolean useChargeTime;                       ///<
-	float chargeTimeCoeff[NUM_SKILL_LEVELS];      ///<
-
-	meansOfDeath_t mod;                           ///< means of death
-	meansOfDeath_t splashMod;                     ///< splash means of death
+	meansOfDeath_t mod;                           ///< g - means of death
+	meansOfDeath_t splashMod;                     ///< g - splash means of death
 
 } weaponTable_t;
 
