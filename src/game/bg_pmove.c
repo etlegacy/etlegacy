@@ -2799,13 +2799,13 @@ qboolean PM_WeaponClipEmpty(weapon_t wp)
  */
 void PM_CoolWeapons(void)
 {
-	int wp, maxHeat;
+	weapon_t wp;
 
-	// FIXME: non bullet weapons don't have to be cooled - this loop is a waste
 	for (wp = WP_KNIFE; wp < WP_NUM_WEAPONS; wp++)
 	{
 		// if the weapon can heat and you have the weapon
-		if (GetWeaponTableData(wp)->canHeat && COM_BitCheck(pm->ps->weapons, wp))
+		// dummy MG42 can't be equipped but still have a cool down
+		if (GetWeaponTableData(wp)->canHeat && (COM_BitCheck(pm->ps->weapons, wp) || wp == WP_DUMMY_MG42))
 		{
 			// and it's hot
 			if (pm->ps->weapHeat[wp])
@@ -2827,34 +2827,26 @@ void PM_CoolWeapons(void)
 		}
 	}
 
-	// a weapon is currently selected and can heat, convert current heat value to 0-255 range for client transmission
-	// note: we are still cooling WP_NONE and other non bullet weapons
-	if (pm->ps->weapon && GetWeaponTableData(pm->ps->weapon)->canHeat)
+	// current weapon can heat, convert current heat value to 0-255 range for client transmission
+	if (BG_PlayerMounted(pm->ps->eFlags))
 	{
-		if (BG_PlayerMounted(pm->ps->eFlags))
-		{
-			// floor to prevent 8-bit wrap
-			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / (float)GetWeaponTableData(WP_DUMMY_MG42)->maxHeat) * 255.0f);
-		}
-		else
-		{
-			// don't divide by 0
-			maxHeat = GetWeaponTableData(pm->ps->weapon)->maxHeat;
-
-			// floor to prevent 8-bit wrap
-			if (maxHeat != 0)
-			{
-				pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[pm->ps->weapon] / (float)maxHeat) * 255.0f);
-			}
-			else
-			{
-				pm->ps->curWeapHeat = 0;
-			}
-		}
-		//if(pm->ps->weapHeat[pm->ps->weapon])
-		//  Com_Printf("pm heat: %d, %d\n", pm->ps->weapHeat[pm->ps->weapon], pm->ps->curWeapHeat);
+		pm->ps->curWeapHeat = (int)(floor((pm->ps->weapHeat[WP_DUMMY_MG42] / (double)GetWeaponTableData(WP_DUMMY_MG42)->maxHeat) * 255));
+	}
+	else if (GetWeaponTableData(pm->ps->weapon)->canHeat)
+	{
+		pm->ps->curWeapHeat = (int)(floor((pm->ps->weapHeat[pm->ps->weapon] / (double)GetWeaponTableData(pm->ps->weapon)->maxHeat) * 255));
 	}
 	else
+	{
+		pm->ps->curWeapHeat = 0;
+	}
+
+	// sanity check weapon heat
+	if (pm->ps->curWeapHeat > 255)
+	{
+		pm->ps->curWeapHeat = 255;
+	}
+	else if (pm->ps->curWeapHeat < 0)
 	{
 		pm->ps->curWeapHeat = 0;
 	}
@@ -2974,19 +2966,6 @@ static qboolean PM_MountedFire(void)
 	switch (pm->ps->persistant[PERS_HWEAPON_USE])
 	{
 	case 1:
-		if (pm->ps->weapHeat[WP_DUMMY_MG42])
-		{
-			pm->ps->weapHeat[WP_DUMMY_MG42] -= (300.f * pml.frametime);
-
-			if (pm->ps->weapHeat[WP_DUMMY_MG42] < 0)
-			{
-				pm->ps->weapHeat[WP_DUMMY_MG42] = 0;
-			}
-
-			// floor() to prevent 8-bit wrap
-			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / (float)GetWeaponTableData(WP_DUMMY_MG42)->maxHeat) * 255.0f);
-		}
-
 		if (pm->ps->weaponTime > 0)
 		{
 			pm->ps->weaponTime -= pml.msec;
@@ -3054,19 +3033,6 @@ static qboolean PM_MountedFire(void)
 
 	if (pm->ps->eFlags & EF_MOUNTEDTANK)
 	{
-		if (pm->ps->weapHeat[WP_DUMMY_MG42])
-		{
-			pm->ps->weapHeat[WP_DUMMY_MG42] -= (300.f * pml.frametime);
-
-			if (pm->ps->weapHeat[WP_DUMMY_MG42] < 0)
-			{
-				pm->ps->weapHeat[WP_DUMMY_MG42] = 0;
-			}
-
-			// floor() to prevent 8-bit wrap
-			pm->ps->curWeapHeat = floor(((float)pm->ps->weapHeat[WP_DUMMY_MG42] / (float)GetWeaponTableData(WP_DUMMY_MG42)->maxHeat) * 255.0f);
-		}
-
 		if (pm->ps->weaponTime > 0)
 		{
 			pm->ps->weaponTime -= pml.msec;
@@ -3095,7 +3061,7 @@ static qboolean PM_MountedFire(void)
 
 			if (pm->ps->weapHeat[WP_DUMMY_MG42] >= GetWeaponTableData(WP_DUMMY_MG42)->maxHeat)
 			{
-				pm->ps->weaponTime = GetWeaponTableData(WP_DUMMY_MG42)->maxHeat; // cap heat to max
+				pm->ps->weapHeat[WP_DUMMY_MG42] = GetWeaponTableData(WP_DUMMY_MG42)->maxHeat; // cap heat to max
 				PM_AddEvent(EV_WEAP_OVERHEAT);
 				pm->ps->weaponTime = 2000;      // force "heat recovery minimum" to 2 sec right now
 			}
@@ -5184,16 +5150,6 @@ int Pmove(pmove_t *pmove)
 		{
 			pmove->cmd.upmove = 20;
 		}
-	}
-
-	// sanity check weapon heat
-	if (pmove->ps->curWeapHeat > 255)
-	{
-		pmove->ps->curWeapHeat = 255;
-	}
-	else if (pmove->ps->curWeapHeat < 0)
-	{
-		pmove->ps->curWeapHeat = 0;
 	}
 
 	if ((pm->ps->stats[STAT_HEALTH] <= 0 || pm->ps->pm_type == PM_DEAD) && (pml.groundTrace.surfaceFlags & SURF_MONSTERSLICK))
