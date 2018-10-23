@@ -1175,6 +1175,7 @@ typedef struct weapontable_s
 
 	int maxHeat;                    ///< max active firing time before weapon 'overheats' (at which point the weapon will fail)
 	int coolRate;                   ///< how fast the weapon cools down. (per second)
+	int heatRecoveryTime;           ///< time from overheats until weapon fully cool down
 
 	int switchTimeBegin;            ///<
 	int switchTimeFinish;           ///<

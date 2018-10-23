@@ -2996,7 +2996,7 @@ static qboolean PM_MountedFire(void)
 			{
 				pm->ps->weapHeat[WP_DUMMY_MG42] = GetWeaponTableData(WP_DUMMY_MG42)->maxHeat;    // cap heat to max
 				PM_AddEvent(EV_WEAP_OVERHEAT);
-				pm->ps->weaponTime = 2000;          // force "heat recovery minimum" to 2 sec right now
+				pm->ps->weaponTime = GetWeaponTableData(WP_DUMMY_MG42)->heatRecoveryTime;     // force "heat recovery minimum" right now
 			}
 		}
 		return qtrue;
@@ -3063,7 +3063,7 @@ static qboolean PM_MountedFire(void)
 			{
 				pm->ps->weapHeat[WP_DUMMY_MG42] = GetWeaponTableData(WP_DUMMY_MG42)->maxHeat; // cap heat to max
 				PM_AddEvent(EV_WEAP_OVERHEAT);
-				pm->ps->weaponTime = 2000;      // force "heat recovery minimum" to 2 sec right now
+				pm->ps->weaponTime = GetWeaponTableData(WP_DUMMY_MG42)->heatRecoveryTime;     // force "heat recovery minimum" right now
 			}
 
 		}
@@ -3804,7 +3804,7 @@ static void PM_Weapon(void)
 			pm->ps->weapHeat[pm->ps->weapon] = GetWeaponTableData(pm->ps->weapon)->maxHeat;         // cap heat to max
 			PM_AddEvent(EV_WEAP_OVERHEAT);
 			//PM_StartWeaponAnim(WEAP_IDLE1); // removed.  client handles anim in overheat event
-			addTime = 2000;         // force "heat recovery minimum" to 2 sec right now
+			addTime = GetWeaponTableData(pm->ps->weapon)->heatRecoveryTime;     // force "heat recovery minimum" right now
 		}
 
 		// sync heat for overheat check
