@@ -238,7 +238,7 @@ void PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
  * @param[in] ignoreent
  * @param[in] tracemask
  */
-void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void (tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
+void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles, void(tracefunc) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int ignoreent, int tracemask)
 {
 	vec3_t ofs, org, point;
 	vec3_t flatforward;
@@ -319,13 +319,13 @@ void PM_TraceLegs(trace_t *trace, float *legsOffset, vec3_t start, vec3_t end, t
  * @param[in] tracemask
  */
 void PM_TraceHead(trace_t *trace, vec3_t start, vec3_t end, trace_t *bodytrace, vec3_t viewangles,
-                  void (tracefunc) (trace_t *results,
-                                    const vec3_t start,
-                                    const vec3_t mins,
-                                    const vec3_t maxs,
-                                    const vec3_t end,
-                                    int passEntityNum,
-                                    int contentMask),
+                  void(tracefunc) (trace_t *results,
+                                   const vec3_t start,
+                                   const vec3_t mins,
+                                   const vec3_t maxs,
+                                   const vec3_t end,
+                                   int passEntityNum,
+                                   int contentMask),
                   int ignoreent,
                   int tracemask)
 {
@@ -2795,7 +2795,7 @@ qboolean PM_WeaponClipEmpty(weapon_t wp)
 }
 
 /**
- * @brief[in] PM_CoolWeapons
+ * @brief PM_CoolWeapons
  */
 void PM_CoolWeapons(void)
 {
@@ -2963,62 +2963,32 @@ void PM_AdjustAimSpreadScale(void)
  */
 static qboolean PM_MountedFire(void)
 {
-	switch (pm->ps->persistant[PERS_HWEAPON_USE])
+	// player is not using mounted weapon
+	if (!BG_PlayerMounted(pm->ps->eFlags))
 	{
-	case 1:
-		if (pm->ps->weaponTime > 0)
+		return qfalse;
+	}
+
+	if (pm->ps->weaponTime > 0)
+	{
+		pm->ps->weaponTime -= pml.msec;
+		if (pm->ps->weaponTime <= 0)
 		{
-			pm->ps->weaponTime -= pml.msec;
-			if (pm->ps->weaponTime <= 0)
+			if (!(pm->cmd.buttons & BUTTON_ATTACK))
 			{
-				if (!(pm->cmd.buttons & BUTTON_ATTACK))
-				{
-					pm->ps->weaponTime = 0;
-					return qtrue;
-				}
-			}
-			else
-			{
+				pm->ps->weaponTime = 0;
 				return qtrue;
 			}
 		}
-
-		if (pm->cmd.buttons & BUTTON_ATTACK)
+		else
 		{
-			pm->ps->weapHeat[WP_DUMMY_MG42] += GetWeaponTableData(WP_DUMMY_MG42)->nextShotTime;
-			PM_AddEvent(EV_FIRE_WEAPON_MG42);
-			pm->ps->weaponTime += GetWeaponTableData(WP_DUMMY_MG42)->nextShotTime;
-
-			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
-			pm->ps->viewlocked = VIEWLOCK_JITTER;         // this enable screen jitter when firing
-
-			if (pm->ps->weapHeat[WP_DUMMY_MG42] >= GetWeaponTableData(WP_DUMMY_MG42)->maxHeat)
-			{
-				pm->ps->weapHeat[WP_DUMMY_MG42] = GetWeaponTableData(WP_DUMMY_MG42)->maxHeat;    // cap heat to max
-				PM_AddEvent(EV_WEAP_OVERHEAT);
-				pm->ps->weaponTime = GetWeaponTableData(WP_DUMMY_MG42)->heatRecoveryTime;     // force "heat recovery minimum" right now
-			}
+			return qtrue;
 		}
-		return qtrue;
-	case 2:
-		if (pm->ps->weaponTime > 0)
-		{
-			pm->ps->weaponTime -= pml.msec;
-			if (pm->ps->weaponTime <= 0)
-			{
-				if (!(pm->cmd.buttons & BUTTON_ATTACK))
-				{
-					pm->ps->weaponTime = 0;
-					return qtrue;
-				}
-			}
-			else
-			{
-				return qtrue;
-			}
-		}
+	}
 
-		if (pm->cmd.buttons & BUTTON_ATTACK)
+	if (pm->cmd.buttons & BUTTON_ATTACK)
+	{
+		if (pm->ps->eFlags & EF_AAGUN_ACTIVE)
 		{
 			PM_AddEvent(EV_FIRE_WEAPON_AAGUN);
 			pm->ps->weaponTime += AAGUN_RATE_OF_FIRE;
@@ -3026,51 +2996,35 @@ static qboolean PM_MountedFire(void)
 			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
 			//pm->ps->viewlocked = VIEWLOCK_JITTER;     // this enable screen jitter when firing
 		}
-		return qtrue;
-	default:
-		break;
-	}
-
-	if (pm->ps->eFlags & EF_MOUNTEDTANK)
-	{
-		if (pm->ps->weaponTime > 0)
+		else    // EF_MOUNTEDTANK | EF_MG42_ACTIVE
 		{
-			pm->ps->weaponTime -= pml.msec;
-			if (pm->ps->weaponTime <= 0)
+			pm->ps->weaponTime += GetWeaponTableData(WP_DUMMY_MG42)->nextShotTime;
+			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
+
+			if (pm->ps->eFlags & EF_MG42_ACTIVE)
 			{
-				if (!(pm->cmd.buttons & BUTTON_ATTACK))
-				{
-					pm->ps->weaponTime = 0;
-					return qtrue;
-				}
+				PM_AddEvent(EV_FIRE_WEAPON_MG42);
+				pm->ps->viewlocked = VIEWLOCK_JITTER;             // this enable screen jitter when firing
 			}
 			else
 			{
-				return qtrue;
+				PM_AddEvent(EV_FIRE_WEAPON_MOUNTEDMG42);
+				//pm->ps->viewlocked = VIEWLOCK_JITTER;             // this enable screen jitter when firing
 			}
-		}
 
-		if (pm->cmd.buttons & BUTTON_ATTACK)
-		{
 			pm->ps->weapHeat[WP_DUMMY_MG42] += GetWeaponTableData(WP_DUMMY_MG42)->nextShotTime;
-			PM_AddEvent(EV_FIRE_WEAPON_MOUNTEDMG42);
-			pm->ps->weaponTime += GetWeaponTableData(WP_DUMMY_MG42)->nextShotTime;
 
-			BG_AnimScriptEvent(pm->ps, pm->character->animModelInfo, ANIM_ET_FIREWEAPON, qfalse, qtrue);
-			//pm->ps->viewlocked = VIEWLOCK_JITTER;       // this enable screen jitter when firing
-
+			// check for overheat
 			if (pm->ps->weapHeat[WP_DUMMY_MG42] >= GetWeaponTableData(WP_DUMMY_MG42)->maxHeat)
 			{
-				pm->ps->weapHeat[WP_DUMMY_MG42] = GetWeaponTableData(WP_DUMMY_MG42)->maxHeat; // cap heat to max
+				pm->ps->weapHeat[WP_DUMMY_MG42] = GetWeaponTableData(WP_DUMMY_MG42)->maxHeat;        // cap heat to max
 				PM_AddEvent(EV_WEAP_OVERHEAT);
-				pm->ps->weaponTime = GetWeaponTableData(WP_DUMMY_MG42)->heatRecoveryTime;     // force "heat recovery minimum" right now
+				pm->ps->weaponTime = GetWeaponTableData(WP_DUMMY_MG42)->heatRecoveryTime;         // force "heat recovery minimum" right now
 			}
-
 		}
-		return qtrue;
 	}
 
-	return qfalse;
+	return qtrue;
 }
 
 /**
@@ -3998,7 +3952,7 @@ void PM_UpdateLean(playerState_t *ps, usercmd_t *cmd, pmove_t *tpm)
  *
  * @note Tnused trace parameter
  */
-void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void (trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)              //   modified
+void PM_UpdateViewAngles(playerState_t *ps, pmoveExt_t *pmext, usercmd_t *cmd, void(trace) (trace_t *results, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int passEntityNum, int contentMask), int tracemask)               //   modified
 {
 	short  temp;
 	int    i;
