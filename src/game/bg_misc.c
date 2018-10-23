@@ -2608,6 +2608,12 @@ qboolean BG_AddMagicAmmo(playerState_t *ps, int *skill, team_t teamNum, int numO
 				{
 					continue;
 				}
+
+				// add grenade only if we ask for
+				if (numOfClips)
+				{
+					COM_BitSet(ps->weapons, weapon);
+				}
 			}
 			else if (!COM_BitCheck(ps->weapons, weapon))
 			{
