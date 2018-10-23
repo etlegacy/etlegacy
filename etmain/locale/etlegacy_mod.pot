@@ -7394,6 +7394,15 @@ msgstr ""
 msgid "Turkish"
 msgstr ""
 
+msgid "Bulgarian"
+msgstr ""
+
+msgid "Serbian"
+msgstr ""
+
+msgid "Swedisch"
+msgstr ""
+
 msgid "desktop resolution"
 msgstr ""
 
@@ -7455,4 +7464,7 @@ msgid "Override + Mute"
 msgstr ""
 
 msgid "Direct + Over. + Mute"
+msgstr ""
+
+msgid "Custom"
 msgstr ""
