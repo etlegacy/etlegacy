@@ -1299,7 +1299,7 @@ gentity_t *G_Lua_CreateEntity(char *params)
 		{
 			// note: we migth do more than a simple return here
 			// nextmap?
-			G_Printf("%s API: spawn key \"%s\" has no valu\n", key);
+			G_Printf("%s API: spawn key \"%s\" has no valu\n", LUA_VERSION, key);
 			return;
 		}
 
