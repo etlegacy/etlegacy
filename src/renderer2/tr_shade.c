@@ -126,24 +126,21 @@ shaderCommands_t tess;
  */
 static void BindLightMap()
 {
-	image_t *lightmap;
+	image_t *lightmap = NULL;
 
-	if (tess.lightmapNum >= 0 && tess.lightmapNum < tr.lightmaps.currentElements)
+	if (tr.lightmaps.currentElements && tess.lightmapNum >= 0 && tess.lightmapNum < tr.lightmaps.currentElements)
 	{
-		lightmap = (image_t *) Com_GrowListElement(&tr.lightmaps, tess.lightmapNum);
+		lightmap = (image_t *)Com_GrowListElement(&tr.lightmaps, tess.lightmapNum);
+	}
+
+	if (lightmap)
+	{
+		GL_Bind(lightmap);
 	}
 	else
 	{
-		lightmap = NULL;
-	}
-
-	if (!tr.lightmaps.currentElements || !lightmap)
-	{
 		GL_Bind(tr.whiteImage);
-		return;
 	}
-
-	GL_Bind(lightmap);
 }
 
 /**
@@ -533,7 +530,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
 	                          USE_NORMAL_MAPPING, normalMapping,
 	                          USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
-	                          USE_REFLECTIVE_SPECULAR, normalMapping && tr.cubeHashTable != NULL);
+                              USE_REFLECTIVE_SPECULAR, normalMapping && tr.cubeHashTable != NULL && !tr.refdef.pixelTarget); // !tr.refdef.pixelTarget to prevent using reflections before buildcubemaps() has finished. This is anti eye-cancer..
 
 	if (tess.surfaceShader->numDeforms)
 	{
@@ -559,7 +556,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
 	SetUniformVec3(UNIFORM_AMBIENTCOLOR, backEnd.currentEntity->ambientLight);
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
-	SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir); // = L vector which means surface to light
+	SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir);
 	SetUniformVec3(UNIFORM_LIGHTCOLOR, backEnd.currentEntity->directedLight);
 
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
@@ -587,31 +584,31 @@ static void Render_vertexLighting_DBS_entity(int stage)
 
 	if (normalMapping)
 	{
-		// bind u_NormalMap
-		SelectTexture(TEX_NORMAL);
-		if (pStage->bundle[TB_NORMALMAP].image[0])
 		{
-			GL_Bind(pStage->bundle[TB_NORMALMAP].image[0]);
-		}
-		else
-		{
-			GL_Bind(tr.flatImage);
-		}
+			image_t* image = pStage->bundle[TB_NORMALMAP].image[0];
 
-		SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
-
-		// bind u_SpecularMap
-		SelectTexture(TEX_SPECULAR);
-		if (pStage->bundle[TB_SPECULARMAP].image[0])
-		{
-			GL_Bind(pStage->bundle[TB_SPECULARMAP].image[0]);
+			// bind u_NormalMap
+			SelectTexture(TEX_NORMAL);
+			if (!image)
+			{
+				image = tr.flatImage;
+			}
+			GL_Bind(image);
+			SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
 		}
-		else
 		{
-			GL_Bind(tr.blackImage);
-		}
+			image_t* image = pStage->bundle[TB_SPECULARMAP].image[0];
 
-		SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
+			// bind u_SpecularMap
+			SelectTexture(TEX_SPECULAR);
+			
+			if (!image)
+			{
+				image = tr.blackImage;
+			}
+			GL_Bind(image);
+			SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
+		}
 
 		if (tr.cubeHashTable != NULL)
 		{
@@ -640,6 +637,8 @@ static void Render_vertexLighting_DBS_entity(int stage)
 				// bind u_EnvironmentMap1
 				SelectTexture(TEX_ENVMAP1);
 				GL_Bind(tr.whiteCubeImage);
+
+				SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, 0.0);
 			}
 			else if (cubeProbeNearest == NULL)
 			{
@@ -752,13 +751,18 @@ static void Render_vertexLighting_DBS_world(int stage)
 	}
 
 	rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
-
 	GLSL_SetUniform_ColorModulate(trProg.gl_vertexLightingShader_DBS_world, rgbaGen.color, rgbaGen.alpha);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.viewOrigin);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
+
+	// FIXME: use lightgrid? 
+	// SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir);
+	// SetUniformVec3(UNIFORM_LIGHTCOLOR, backEnd.currentEntity->directedLight);
+	SetUniformVec3(UNIFORM_LIGHTDIR, tr.sunDirection); // i need to provide _some_ direction.. not all world is lit by the sun..
+	SetUniformVec3(UNIFORM_LIGHTCOLOR, tr.sunLight); // the sun again..
 
 	if (r_wrapAroundLighting->integer)
 	{
@@ -782,31 +786,31 @@ static void Render_vertexLighting_DBS_world(int stage)
 
 	if (normalMapping)
 	{
-		// bind u_NormalMap
-		SelectTexture(TEX_NORMAL);
-		if (pStage->bundle[TB_NORMALMAP].image[0])
 		{
-			GL_Bind(pStage->bundle[TB_NORMALMAP].image[0]);
-		}
-		else
-		{
-			GL_Bind(tr.flatImage);
-		}
+			image_t* image = pStage->bundle[TB_NORMALMAP].image[0];
 
-		SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
+			// bind u_NormalMap
+			SelectTexture(TEX_NORMAL);
 
-		// bind u_SpecularMap
-		SelectTexture(TEX_SPECULAR);
-		if (pStage->bundle[TB_SPECULARMAP].image[0])
-		{
-			GL_Bind(pStage->bundle[TB_SPECULARMAP].image[0]);
+			if (!image)
+			{
+				image = tr.flatImage;
+			}
+			GL_Bind(image);
+			SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
 		}
-		else
 		{
-			GL_Bind(tr.blackImage);
-		}
+			image_t* image = pStage->bundle[TB_SPECULARMAP].image[0];
+			// bind u_SpecularMap
+			SelectTexture(TEX_SPECULAR);
 
-		SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
+			if (!image)
+			{
+				image = tr.blackImage;
+			}
+			GL_Bind(image);
+			SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
+		}
 	}
 
 	GLSL_SetRequiredVertexPointers(trProg.gl_vertexLightingShader_DBS_world);
@@ -829,8 +833,6 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	rgbaGen_t     rgbaGen;
 
 	Ren_LogComment("--- Render_lightMapping ---\n");
-
-	rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
 
 	if (r_showLightMaps->integer)
 	{
@@ -857,7 +859,9 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
+
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
+	rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
 	GLSL_SetUniform_ColorModulate(trProg.gl_lightMappingShader, rgbaGen.color, rgbaGen.alpha);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 
@@ -871,60 +875,78 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 		clipPortalPlane();
 	}
 
-	// bind u_DiffuseMap
-	SelectTexture(TEX_DIFFUSE);
-	if (asColorMap)
-	{
-		GL_Bind(tr.whiteImage);
-	}
-	else
-	{
-		GL_Bind(pStage->bundle[TB_DIFFUSEMAP].image[0]);
-		SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrices[TB_DIFFUSEMAP]);
-	}
-
 	SetUniformBoolean(UNIFORM_B_SHOW_LIGHTMAP, (r_showLightMaps->integer == 1 ? GL_TRUE : GL_FALSE));
 	SetUniformBoolean(UNIFORM_B_SHOW_DELUXEMAP, (r_showDeluxeMaps->integer == 1 ? GL_TRUE : GL_FALSE));
 
+	//SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir);
+	// FIXME: lightgrid
+	SetUniformVec3(UNIFORM_LIGHTDIR, tr.sunDirection);
+
+	if (asColorMap)
+	{
+		// putting a texture in the TEX_COLOR unit, and providing the UNIFORM_COLORTEXTUREMATRIX, seems not correct.
+		// A texture is expected in the TEX_DIFFUSE unit, otherwise a message floods the console (and framerate goed down a lot).
+		//
+		//	SelectTexture(TEX_COLOR);
+		//	GL_Bind(tr.whiteImage);
+		//	SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
+		//
+		//SelectTexture(TEX_DIFFUSE);
+		//GL_Bind(tr.whiteImage);
+		//SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, matrixIdentity);
+		
+		image_t* image = pStage->bundle[TB_DIFFUSEMAP].image[0];
+		SelectTexture(TEX_DIFFUSE);
+		
+		if (image)
+		{
+			GL_Bind(image);
+			SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, tess.svars.texMatrices[TB_DIFFUSEMAP]);
+		}
+		else
+		{
+			GL_Bind(tr.whiteImage);
+			SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, matrixIdentity);
+		}
+	}
+
 	if (normalMapping)
 	{
-		// bind u_NormalMap
-		SelectTexture(TEX_NORMAL);
-		if (pStage->bundle[TB_NORMALMAP].image[0])
 		{
-			GL_Bind(pStage->bundle[TB_NORMALMAP].image[0]);
+			image_t* image = pStage->bundle[TB_NORMALMAP].image[0];
+			
+			// bind u_NormalMap
+			SelectTexture(TEX_NORMAL);
+			
+			if (!image)
+			{
+				image = tr.flatImage;
+			}
+			GL_Bind(image);
+			SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
 		}
-		else
 		{
-			GL_Bind(tr.flatImage);
+			image_t* image = pStage->bundle[TB_SPECULARMAP].image[0];
+			
+			// bind u_SpecularMap
+			SelectTexture(TEX_SPECULAR);
+			if (!image)
+			{
+				image = tr.blackImage;
+			}
+			GL_Bind(image);
+			SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
 		}
-
-		SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
-
-		// bind u_SpecularMap
-		SelectTexture(TEX_SPECULAR);
-		if (pStage->bundle[TB_SPECULARMAP].image[0])
-		{
-			GL_Bind(pStage->bundle[TB_SPECULARMAP].image[0]);
-		}
-		else
-		{
-			GL_Bind(tr.blackImage);
-		}
-
-		SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
-
-		// bind u_DeluxeMap
-		SelectTexture(TEX_DELUXE);
-		BindDeluxeMap(pStage);
 	}
-	else if (r_showDeluxeMaps->integer == 1)
+
+	// only deluxe if enabled
+	if (r_showDeluxeMaps->integer == 1)
 	{
 		SelectTexture(TEX_DELUXE);
 		BindDeluxeMap(pStage);
 	}
 
-	// bind u_LightMap
+	// bind u_DeluxeMap
 	SelectTexture(TEX_LIGHTMAP);
 	BindLightMap();
 
@@ -2258,6 +2280,26 @@ static void Render_liquid(int stage)
 
 	SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_COLORMAP]);
 
+/* FIXME	
+	SelectTexture(TEX_NORMAL);
+	if (normalMapping)
+	{
+		image_t *image = pStage->bundle[TB_NORMALMAP].image[0];
+
+		if (!image)
+		{
+			image = tr.whiteImage;
+		}
+		GL_Bind(image);
+		SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
+	}
+	else
+	{
+		GL_Bind(pStage->bundle[TB_COLORMAP].image[0]);
+		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, tess.svars.texMatrices[TB_COLORMAP]);
+	}
+*/
+
 	Tess_DrawElements();
 
 	GL_CheckErrors();
@@ -3165,26 +3207,36 @@ void Tess_StageIteratorGeneric()
 		case ST_COLLAPSE_lighting_DBS:
 		{
 			//if(tess.surfaceShader->sort <= SS_OPAQUE)
+			if (r_vertexLighting->integer || r_precomputedLighting->integer)
 			{
-				if (r_precomputedLighting->integer || r_vertexLighting->integer)
-				{
-					if (!r_vertexLighting->integer && tess.lightmapNum >= 0 && tess.lightmapNum < tr.lightmaps.currentElements)
-					{
-						if (tr.worldDeluxeMapping || r_normalMapping->integer)
-						{
-							Render_lightMapping(stage, qfalse, qtrue);
-						}
-						else
-						{
-							Render_lightMapping(stage, qfalse, qfalse);
-						}
-					}
-					else if (backEnd.currentEntity != &tr.worldEntity)
-					{
-						model_t *pmodel;
+				qboolean isWorld = (backEnd.currentEntity == &tr.worldEntity);
 
-						pmodel = R_GetModelByHandle(backEnd.currentEntity->e.hModel);
-						if (pmodel->bsp && r_worldInlineModels->integer)
+				if (!isWorld)
+				{
+					// treat brushmodels as world
+					model_t *pmodel = R_GetModelByHandle(backEnd.currentEntity->e.hModel);
+					isWorld = (pmodel && pmodel->type == MOD_BSP && pmodel->bsp); // FIXME_ check r_worldInlineModels
+				}
+
+				// vertex lighting superseeds precomputed lighting (lightmap rendering)
+				if (r_vertexLighting->integer)
+				{
+					// render vertex lit
+					if (isWorld)
+					{
+						Render_vertexLighting_DBS_world(stage);
+					}
+					else
+					{
+						Render_vertexLighting_DBS_entity(stage);
+					}
+				}
+				else
+				{
+					if (r_precomputedLighting->integer)
+					{
+						// render lightmapped
+						if (isWorld)
 						{
 							Render_vertexLighting_DBS_world(stage);
 						}
@@ -3195,12 +3247,9 @@ void Tess_StageIteratorGeneric()
 					}
 					else
 					{
-						Render_vertexLighting_DBS_world(stage);
+						// when we get here.. eer? gaming like this seems pointless
+						Render_depthFill(stage);  // Render_generic(stage) maybe?
 					}
-				}
-				else
-				{
-					Render_depthFill(stage);
 				}
 			}
 			break;

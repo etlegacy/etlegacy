@@ -4719,7 +4719,7 @@ static void CollapseStages()
 		// try to merge color/lightmap to diffuse
 		if (idxColorStage != -1 &&
 		    idxLightmapStage != -1 &&
-		    // TODO check color stage no alphaGen
+		    // TODO check color stage no alphaGen  // | GLS_SRCBLEND_SRC_ALPHA | GLS_SRCBLEND_ONE_MINUS_SRC_ALPHA
 		    (tmpLightmapStage.stateBits & (GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO))
 		    )
 		{
@@ -5133,7 +5133,7 @@ static shader_t *FinishShader(void)
 		{
 			if (!pStage->bundle[0].image[0])
 			{
-				Ren_Warning("Shader %s has a xy attenuationmap stage with no image - stage isn't active\n", shader.name);
+				Ren_Warning("Shader %s has an xy attenuationmap stage with no image - stage isn't active\n", shader.name);
 				pStage->active = qfalse;
 				continue;
 			}
