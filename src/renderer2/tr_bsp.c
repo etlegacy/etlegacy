@@ -7604,6 +7604,157 @@ void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbeN
 }
 
 /**
+ * @brief This is saving our cube probes to special uncompressed pixeldata tga rgb format
+ *
+ * 	Optimize: - Remove the alpha channel (25% less data)? or use pixel intensity in the alpha channel?
+ *
+ * @param[in] filename
+ * @param[in] data
+ * @param[in] width
+ * @param[in] height
+ */
+void R_SaveCubeProbes(const char *filename, byte *data, int width, int height)
+{
+	byte          *buffer;
+	int           i, c;
+	int           row;
+	unsigned char *flip;
+	unsigned char *src, *dst;
+
+	buffer = (byte *)ri.Z_Malloc(width * height * 4 + 18);
+	Com_Memset(buffer, 0, 18);
+	buffer[2]  = 2;     // uncompressed type
+	buffer[12] = width & 255;
+	buffer[13] = width >> 8;
+	buffer[14] = height & 255;
+	buffer[15] = height >> 8;
+	buffer[16] = 32;    // pixel size
+
+	// special format
+	c = 18 + width * height * 4;
+	for (i = 18 ; i < c ; i += 4)
+	{
+		buffer[i]     = data[i - 18 + 0]; // red
+		buffer[i + 1] = data[i - 18 + 1]; // green
+		buffer[i + 2] = data[i - 18 + 2]; // blue
+		buffer[i + 3] = data[i - 18 + 3]; // alpha
+	}
+
+	// flip upside down
+	flip = (unsigned char *)ri.Z_Malloc(width * 4);
+	for (row = 0; row < height / 2; row++)
+	{
+		src = buffer + 18 + row * 4 * width;
+		dst = buffer + 18 + (height - row - 1) * 4 * width;
+
+		Com_Memcpy(flip, src, width * 4);
+		Com_Memcpy(src, dst, width * 4);
+		Com_Memcpy(dst, flip, width * 4);
+	}
+
+	ri.Free(flip);
+	ri.FS_WriteFile(filename, buffer, c);
+	ri.Free(buffer);
+}
+
+/**
+ * @brief This is loading a single cube (6 probes) from our file into buffer.
+ * 
+ * Optimize: - Cube probe data is sequential so we don't have to open, (read) and close 
+ *           the file each call. But this is muuuch faster than using TGA loader (or creating cubes on load).
+ *           Passing pixeldata only or externalizing read/close will again gain performance.
+ *           
+ *           - Remove the alpha channel (25% less data)? or use pixel intensity in the alpha channel?
+ * 
+ * @param[in] number of cube probe
+ * @param[in, out] buffer 
+ */
+qboolean R_LoadCubeProbe(int cubeProbeNum, byte *cubeTemp[6])
+{
+	byte *buffer = NULL;
+	byte *buffer_pixeldata = NULL;
+
+	int i;
+	int totalPos = cubeProbeNum * 6;
+	int fileNum = totalPos / REF_CUBEMAP_STORE_SIZE;
+	int insidePos = insidePos =  totalPos % 1024, cubeSidesInThisFile, cubeSidesInNextFile;
+	char *filename;
+
+	if (REF_CUBEMAP_STORE_SIZE  - insidePos >= 6) 
+	{		
+		cubeSidesInThisFile = 6;
+	}	
+	else
+	{	
+		cubeSidesInThisFile = (REF_CUBEMAP_STORE_SIZE  - insidePos);
+	}
+
+	cubeSidesInNextFile = 6 - cubeSidesInThisFile;
+	
+	//Ren_Print("-> FileNum %i totalPos %i insidepos %i %i (%i)\n", fileNum, totalPos, insidePos , cubeSidesInThisFile, cubeSidesInNextFile);
+
+	filename = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileNum);
+	//Ren_Print("-> index %i, %s\n", fileNum, filename);
+
+	ri.FS_ReadFile(filename, (void **)&buffer);
+
+	if (buffer)
+	{
+		buffer_pixeldata = buffer + 18; // skip header
+
+		for (i = 0; i< cubeSidesInThisFile ; i++)
+		{
+			// copy this cube map into buffer
+			R_SubImageCpy(buffer_pixeldata,
+							insidePos % REF_CUBEMAP_SIZE, insidePos / REF_CUBEMAP_SIZE,
+							REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
+							cubeTemp[i],
+							REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
+							4, qfalse);
+		}
+
+		ri.FS_FreeFile(buffer);
+	}
+	else
+	{
+		//Ren_Print("loadCubeProbes: %s not found", filename);
+		return qfalse;
+	}
+
+	if (cubeSidesInNextFile > 0) 
+	{
+		filename = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileNum + 1);
+		//Ren_Print("-> index %i, %s\n", fileNum, filename);
+		ri.FS_ReadFile(filename, (void **)&buffer);
+
+		if (buffer)
+		{
+			buffer_pixeldata = buffer + 18; // skip header
+
+			for (i = cubeSidesInThisFile; i < 6 ; i++)
+			{
+				// copy this cube map into buffer
+				R_SubImageCpy(buffer_pixeldata,
+								0, 0,
+								REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
+								tr.cubeTemp[i],
+								REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
+								4, qfalse);
+			}
+
+			ri.FS_FreeFile(buffer);
+		}
+		else
+		{
+			//Ren_Print("loadCubeProbes: %s not found", filename);
+			return qfalse;
+		}
+	}
+
+	return qtrue;
+}
+	
+/**
  * @brief R_BuildCubeMaps
  */
 void R_BuildCubeMaps(void)
@@ -7611,25 +7762,19 @@ void R_BuildCubeMaps(void)
 	int            i, j; // k;
 	int            ii, jj;
 	refdef_t       rf;
-	qboolean       flipx;
-	qboolean       flipy;
-	int            x, y, xy, xy2;
 	cubemapProbe_t *cubeProbe;
-	byte           temp[REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4];
-	byte           *dest;
+	//int            x, y, xy; // encode the pixel intensity into the alpha channel
+	//byte           *dest;    // encode the pixel intensity into the alpha channel
+	//byte   r, g, b, best;    // encode the pixel intensity into the alpha channel
 
-#if 0
-	byte *fileBuf;
+	byte *fileBuf  = NULL;
 	char *fileName = NULL;
 	int  fileCount = 0;
 	int  fileBufX  = 0;
 	int  fileBufY  = 0;
-#endif
+	
+	qboolean createCM = qfalse;
 
-	//int             distance = 512;
-	//qboolean        bad;
-
-	//srfSurfaceStatic_t *sv;
 	size_t tics         = 0;
 	size_t nextTicCount = 0;
 #ifdef LEGACY_DEBUG
@@ -7639,7 +7784,6 @@ void R_BuildCubeMaps(void)
 #endif
 
 	size_t ticsNeeded;
-	byte   r, g, b, best;
 
 	if (!r_reflectionMapping->integer)
 	{
@@ -7653,8 +7797,19 @@ void R_BuildCubeMaps(void)
 		tr.cubeTemp[i] = (byte *)ri.Z_Malloc(REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4);
 	}
 
-	//fileBuf = ri.Z_Malloc(REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4);
-
+	// let's see if we have to create cm images again
+	fileName = va("cm/%s/cm_0000.tga", s_worldData.baseName);
+	if (!ri.FS_FileExists(fileName))
+	{
+		fileBuf = ri.Z_Malloc(REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4);
+		createCM = qtrue;
+		Ren_Developer("Cubemaps not found!\n");
+	}
+	else
+	{
+		Ren_Developer("Cubemaps found!\n");
+	}
+	
 	// calculate origins for our probes
 	Com_InitGrowList(&tr.cubeProbes, 4000);
 	tr.cubeHashTable = NewVertexHashTable();
@@ -7696,7 +7851,7 @@ void R_BuildCubeMaps(void)
 		for (i = 0; i < tr.world->numnodes; i++)
 		{
 			node = &tr.world->nodes[i];
-
+			
 			// check to see if this is a shit location
 			if (node->contents == CONTENTS_NODE)
 			{
@@ -7808,12 +7963,12 @@ void R_BuildCubeMaps(void)
 			do
 			{
 				Ren_Print("*");
-				// FIXME: updating screen doesn't work properly, R_BuildCubeMaps during map load causes eye cancer
+				// FIXME: updating screen doesn't work properly, R_BuildCubeMaps during map load causes eye cancer (on widescreen only)
 				Ren_UpdateScreen();
 			}
 			while (++tics < ticsNeeded);
 
-			nextTicCount = (size_t)((tics / 50.0) * tr.cubeProbes.currentElements);
+			nextTicCount = (size_t)((tics / 50.0f) * tr.cubeProbes.currentElements); // loading screen doesn't do 20fps?!
 			if ((j + 1) == tr.cubeProbes.currentElements)
 			{
 				if (tics < 51)
@@ -7824,241 +7979,217 @@ void R_BuildCubeMaps(void)
 			}
 		}
 
-		VectorCopy(cubeProbe->origin, rf.vieworg);
-
-		AxisClear(rf.viewaxis);
-
-		rf.fov_x  = 90;
-		rf.fov_y  = 90;
-		rf.x      = 0;
-		rf.y      = 0;
-		rf.width  = REF_CUBEMAP_SIZE;
-		rf.height = REF_CUBEMAP_SIZE;
-		rf.time   = 0;
-
-		rf.rdflags = RDF_NOCUBEMAP | RDF_NOBLOOM;
-
-		for (i = 0; i < 6; i++)
+		if (!createCM)
 		{
-			flipx = qfalse;
-			flipy = qfalse;
-			switch (i)
+			// load the cubemap from file
+			createCM = !R_LoadCubeProbe(j, tr.cubeTemp);
+		}
+
+		if (createCM)
+		{
+			// render the cubemap
+			VectorCopy(cubeProbe->origin, rf.vieworg);
+		
+			AxisClear(rf.viewaxis);
+		
+			rf.fov_x  = 90;
+			rf.fov_y  = 90;
+			rf.x      = 0;
+			rf.y      = 0;
+			rf.width  = REF_CUBEMAP_SIZE;
+			rf.height = REF_CUBEMAP_SIZE;
+			rf.time   = 0;
+		
+			rf.rdflags = RDF_NOCUBEMAP | RDF_NOBLOOM;
+		
+			for (i = 0; i < 6; i++)
 			{
-			case 0:
-			{
-				//X+
-				rf.viewaxis[0][0] = 1;
-				rf.viewaxis[0][1] = 0;
-				rf.viewaxis[0][2] = 0;
-
-				rf.viewaxis[1][0] = 0;
-				rf.viewaxis[1][1] = 0;
-				rf.viewaxis[1][2] = 1;
-
-				CrossProduct(rf.viewaxis[0], rf.viewaxis[1], rf.viewaxis[2]);
-				//flipx=qtrue;
-				break;
-			}
-			case 1:
-			{
-				//X-
-				rf.viewaxis[0][0] = -1;
-				rf.viewaxis[0][1] = 0;
-				rf.viewaxis[0][2] = 0;
-
-				rf.viewaxis[1][0] = 0;
-				rf.viewaxis[1][1] = 0;
-				rf.viewaxis[1][2] = -1;
-
-				CrossProduct(rf.viewaxis[0], rf.viewaxis[1], rf.viewaxis[2]);
-				//flipx=qtrue;
-				break;
-			}
-			case 2:
-			{
-				//Y+
-				rf.viewaxis[0][0] = 0;
-				rf.viewaxis[0][1] = 1;
-				rf.viewaxis[0][2] = 0;
-
-				rf.viewaxis[1][0] = -1;
-				rf.viewaxis[1][1] = 0;
-				rf.viewaxis[1][2] = 0;
-
-				CrossProduct(rf.viewaxis[0], rf.viewaxis[1], rf.viewaxis[2]);
-				//flipx=qtrue;
-				break;
-			}
-			case 3:
-			{
-				//Y-
-				rf.viewaxis[0][0] = 0;
-				rf.viewaxis[0][1] = -1;
-				rf.viewaxis[0][2] = 0;
-
-				rf.viewaxis[1][0] = -1;     //-1
-				rf.viewaxis[1][1] = 0;
-				rf.viewaxis[1][2] = 0;
-
-				CrossProduct(rf.viewaxis[0], rf.viewaxis[1], rf.viewaxis[2]);
-				//flipx=qtrue;
-				break;
-			}
-			case 4:
-			{
-				//Z+
-				rf.viewaxis[0][0] = 0;
-				rf.viewaxis[0][1] = 0;
-				rf.viewaxis[0][2] = 1;
-
-				rf.viewaxis[1][0] = -1;
-				rf.viewaxis[1][1] = 0;
-				rf.viewaxis[1][2] = 0;
-
-				CrossProduct(rf.viewaxis[0], rf.viewaxis[1], rf.viewaxis[2]);
-				//  flipx=qtrue;
-				break;
-			}
-			case 5:
-			{
-				//Z-
-				rf.viewaxis[0][0] = 0;
-				rf.viewaxis[0][1] = 0;
-				rf.viewaxis[0][2] = -1;
-
-				rf.viewaxis[1][0] = 1;
-				rf.viewaxis[1][1] = 0;
-				rf.viewaxis[1][2] = 0;
-
-				CrossProduct(rf.viewaxis[0], rf.viewaxis[1], rf.viewaxis[2]);
-				//flipx=qtrue;
-				break;
-			}
-			}
-
-			tr.refdef.pixelTarget = tr.cubeTemp[i];
-			Com_Memset(tr.cubeTemp[i], 255, REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4);
-			tr.refdef.pixelTargetWidth  = REF_CUBEMAP_SIZE;
-			tr.refdef.pixelTargetHeight = REF_CUBEMAP_SIZE;
-
-			RE_BeginFrame();
-			RE_RenderScene(&rf);
-			RE_EndFrame(&ii, &jj);
-
-			if (flipx)
-			{
-				dest = tr.cubeTemp[i];
-				Com_Memcpy(temp, dest, REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4);
-
-				for (y = 0; y < REF_CUBEMAP_SIZE; y++)
+				switch (i)
 				{
-					for (x = 0; x < REF_CUBEMAP_SIZE; x++)
-					{
-						xy            = ((y * REF_CUBEMAP_SIZE) + x) * 4;
-						xy2           = ((y * REF_CUBEMAP_SIZE) + ((REF_CUBEMAP_SIZE - 1) - x)) * 4;
-						dest[xy2 + 0] = temp[xy + 0];
-						dest[xy2 + 1] = temp[xy + 1];
-						dest[xy2 + 2] = temp[xy + 2];
-						dest[xy2 + 3] = temp[xy + 3];
+				case 0:
+				{
+					// X-
+					rf.viewaxis[0][0] = -1;
+					rf.viewaxis[0][1] = 0;
+					rf.viewaxis[0][2] = 0;
+		
+					rf.viewaxis[1][0] = 0;
+					rf.viewaxis[1][1] = 0;
+					rf.viewaxis[1][2] = -1;
+		
+					rf.viewaxis[2][0] = 0;
+					rf.viewaxis[2][1] = -1;
+					rf.viewaxis[2][2] = 0;
 
+					break;
+				}
+				case 1:
+				{
+					// X+
+					rf.viewaxis[0][0] = 1;
+					rf.viewaxis[0][1] = 0;
+					rf.viewaxis[0][2] = 0;
+		
+					rf.viewaxis[1][0] = 0;
+					rf.viewaxis[1][1] = 0;
+					rf.viewaxis[1][2] = 1;
+		
+					rf.viewaxis[2][0] = 0;
+					rf.viewaxis[2][1] = -1;
+					rf.viewaxis[2][2] = 0;
+					break;
+				}
+				case 2:
+				{
+					// Y+
+					rf.viewaxis[0][0] = 0;
+					rf.viewaxis[0][1] = 1;
+					rf.viewaxis[0][2] = 0;
+		
+					rf.viewaxis[1][0] = 1;
+					rf.viewaxis[1][1] = 0;
+					rf.viewaxis[1][2] = 0;
+		
+					rf.viewaxis[2][0] = 0;
+					rf.viewaxis[2][1] = 0;
+					rf.viewaxis[2][2] = -1;
+					break;
+				}
+				case 3:
+				{
+					// Y-
+					rf.viewaxis[0][0] = 0;
+					rf.viewaxis[0][1] = -1;
+					rf.viewaxis[0][2] = 0;
+		
+					rf.viewaxis[1][0] = 1;
+					rf.viewaxis[1][1] = 0;
+					rf.viewaxis[1][2] = 0;
+		
+					rf.viewaxis[2][0] = 0;
+					rf.viewaxis[2][1] = 0;
+					rf.viewaxis[2][2] = 1;
+					break;
+				}
+				case 4:
+				{
+					// Z- down
+					rf.viewaxis[0][0] = 0;
+					rf.viewaxis[0][1] = 0;
+					rf.viewaxis[0][2] = -1;
+		
+					rf.viewaxis[1][0] = 1;
+					rf.viewaxis[1][1] = 0;
+					rf.viewaxis[1][2] = 0;
+		
+					rf.viewaxis[2][0] = 0;
+					rf.viewaxis[2][1] = -1;
+					rf.viewaxis[2][2] = 0;
+					break;
+				}
+				case 5:
+				{
+					// Z+ up
+					rf.viewaxis[0][0] = 0;
+					rf.viewaxis[0][1] = 0;
+					rf.viewaxis[0][2] = 1;
+		
+					rf.viewaxis[1][0] = -1;
+					rf.viewaxis[1][1] = 0;
+					rf.viewaxis[1][2] = 0;
+		
+					rf.viewaxis[2][0] = 0;
+					rf.viewaxis[2][1] = -1;
+					rf.viewaxis[2][2] = 0;
+		
+					break;
+				}
+				}
+		
+				tr.refdef.pixelTarget = tr.cubeTemp[i];
+				Com_Memset(tr.cubeTemp[i], 255, REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4);
+
+				tr.refdef.pixelTargetWidth  = REF_CUBEMAP_SIZE;
+				tr.refdef.pixelTargetHeight = REF_CUBEMAP_SIZE;
+		
+				if (createCM)
+				{
+					RE_BeginFrame();
+					RE_RenderScene(&rf);
+					RE_EndFrame(&ii, &jj);
+
+#if 0 // encode the pixel intensity into the alpha channel, saves work in the shader		
+				//if (qtrue)
+				{
+					dest = tr.cubeTemp[i];
+					for (y = 0; y < REF_CUBEMAP_SIZE; y++)
+					{
+						for (x = 0; x < REF_CUBEMAP_SIZE; x++)
+						{
+							xy = ((y * REF_CUBEMAP_SIZE) + x) * 4;
+		
+							r = dest[xy + 0];
+							g = dest[xy + 1];
+							b = dest[xy + 2];
+		
+							if ((r > g) && (r > b))
+							{
+								best = r;
+							}
+							else if ((g > r) && (g > b))
+							{
+								best = g;
+							}
+							else
+							{
+								best = b;
+							}
+		
+							dest[xy + 3] = best;
+						}
 					}
 				}
-			}
-
-			if (flipy)
-			{
-				dest = tr.cubeTemp[i];
-				Com_Memcpy(temp, dest, REF_CUBEMAP_SIZE * REF_CUBEMAP_SIZE * 4);
-
-				for (y = 0; y < REF_CUBEMAP_SIZE; y++)
-				{
-					for (x = 0; x < REF_CUBEMAP_SIZE; x++)
-					{
-						xy            = ((y * REF_CUBEMAP_SIZE) + x) * 4;
-						xy2           = ((((REF_CUBEMAP_SIZE - 1) - y) * REF_CUBEMAP_SIZE) + x) * 4;
-						dest[xy2 + 0] = temp[xy + 0];
-						dest[xy2 + 1] = temp[xy + 1];
-						dest[xy2 + 2] = temp[xy + 2];
-						dest[xy2 + 3] = temp[xy + 3];
-
-					}
-				}
-			}
-
-			// encode the pixel intensity into the alpha channel, saves work in the shader
-			//if (qtrue)
-			{
-				dest = tr.cubeTemp[i];
-				for (y = 0; y < REF_CUBEMAP_SIZE; y++)
-				{
-					for (x = 0; x < REF_CUBEMAP_SIZE; x++)
-					{
-						xy = ((y * REF_CUBEMAP_SIZE) + x) * 4;
-
-						r = dest[xy + 0];
-						g = dest[xy + 1];
-						b = dest[xy + 2];
-
-						if ((r > g) && (r > b))
-						{
-							best = r;
-						}
-						else if ((g > r) && (g > b))
-						{
-							best = g;
-						}
-						else
-						{
-							best = b;
-						}
-
-						dest[xy + 3] = best;
-					}
-				}
-			}
-
-			// collate cubemaps into one large image and write it out
-#if 0
-			if (qfalse)
-			{
-				// Initialize output buffer
-				if (fileBufX == 0 && fileBufY == 0)
-				{
-					Com_Memset(fileBuf, 255, REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4);
-				}
-
-				// Copy this cube map into buffer
-				R_SubImageCpy(fileBuf,
-				              fileBufX * REF_CUBEMAP_SIZE, fileBufY * REF_CUBEMAP_SIZE,
-				              REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
-				              tr.cubeTemp[i],
-				              REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
-				              4, qtrue);
-
-				// Increment everything
-				fileBufX++;
-				if (fileBufX >= REF_CUBEMAP_STORE_SIDE)
-				{
-					fileBufY++;
-					fileBufX = 0;
-				}
-				if (fileBufY >= REF_CUBEMAP_STORE_SIDE)
-				{
-					// File is full, write it
-					fileName = va("maps/%s/cm_%04d.png", s_worldData.baseName, fileCount);
-					Ren_Print("\nwriting %s\n", fileName);
-					ri.FS_WriteFile(fileName, fileBuf, 1);  // create path
-					SavePNG(fileName, fileBuf, REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE, 4, qfalse);
-
-					fileCount++;
-					fileBufY = 0;
-				}
-			}
 #endif
+
+					// collate cubemaps into one large image and write it out
+
+					// Initialize output buffer
+					if (fileBufX == 0 && fileBufY == 0)
+					{
+						Com_Memset(fileBuf, 255, REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4);
+					}
+		
+					// Copy this cube map into buffer
+					R_SubImageCpy(fileBuf,
+								  fileBufX * REF_CUBEMAP_SIZE, fileBufY * REF_CUBEMAP_SIZE,
+								  REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
+								  tr.cubeTemp[i],
+								  REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
+								  3, qtrue);
+		
+					// Increment everything
+					fileBufX++;
+					if (fileBufX >= REF_CUBEMAP_STORE_SIDE)
+					{
+						fileBufY++;
+						fileBufX = 0;
+					}
+					if (fileBufY >= REF_CUBEMAP_STORE_SIDE)
+					{
+						// File is full, write it
+						fileName = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileCount);
+						//Ren_Print("\nwriting %s\n", fileName);
+						ri.FS_WriteFile(fileName, fileBuf, 1);  // create path
+		
+						R_SaveCubeProbes(fileName, fileBuf, REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE);
+						fileCount++;
+						fileBufY = 0;
+					}
+				}
+			}
 		}
 
 		// build the cubemap
-		//cubeProbe->cubemap = R_CreateCubeImage(va("_autoCube%d", j), (const byte **)tr.cubeTemp, REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE, IF_NOPICMIP, FT_LINEAR, WT_EDGE_CLAMP);
 		cubeProbe->cubemap = R_AllocImage(va("_autoCube%d", j), qfalse);
 		if (!cubeProbe->cubemap)
 		{
@@ -8083,18 +8214,24 @@ void R_BuildCubeMaps(void)
 	}
 	Ren_Print("\n");
 
-#if 0
-	// write buffer if theres any still unwritten
-	if (fileBufX != 0 || fileBufY != 0)
+	if (createCM)
 	{
-		fileName = va("maps/%s/cm_%04d.png", s_worldData.baseName, fileCount);
-		Ren_Print("writing %s\n", fileName);
-		ri.FS_WriteFile(fileName, fileBuf, 1);  // create path
-		SavePNG(fileName, fileBuf, REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE, 4, qfalse);
+		// write buffer if theres any still unwritten
+		if (fileBufX != 0 || fileBufY != 0)
+		{
+			fileName = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileCount);
+			//Ren_Print("writing %s\n", fileName);
+			ri.FS_WriteFile(fileName, fileBuf, 1);  // create path
+			R_SaveCubeProbes(fileName, fileBuf, REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE);
+		}
+
+		Ren_Print("Wrote %d cubemaps in %d files.\n", j, fileCount + 1);
+		ri.Free(fileBuf);
 	}
-	Ren_Print("Wrote %d cubemaps in %d files.\n", j, fileCount + 1);
-	ri.Free(fileBuf);
-#endif
+	else
+	{
+		Ren_Print("Read %d cubemaps from files.\n", tr.cubeProbes.currentElements -1);
+	}
 
 	// turn pixel targets off
 	tr.refdef.pixelTarget = NULL;
@@ -8316,13 +8453,17 @@ void RE_LoadWorldMap(const char *name)
 	{
 		tr.sunShader = R_FindShader(tr.sunShaderName, SHADER_3D_STATIC, qfalse);
 	}
-	else {
+	else
+	{
 		tr.sunShader = 0;   // clear sunshader so it's not there if the level doesn't specify it
 	}
 
 	// build cubemaps after the necessary vbo stuff is done
 	// FIXME: causes missing vbo error on radar (maps with portal sky or foliage )
 	// devmap oasis; set developer 1; set r_showcubeprobs 1
+	//
+	// disable creating cubemaps automatically (from next code line: R_BuildCubeMaps();).
+	// one can always do it manually from console: buildcubemaps
 	R_BuildCubeMaps();
 
 	// never move this to RE_BeginFrame because we need it to set it here for the first frame
