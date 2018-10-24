@@ -887,7 +887,7 @@ models/mapobjects/props_sd/fuel_can
 models/mapobjects/furniture/sherman_s
 {
 	{
-		map models/mapobjects/furniture/sherman_s
+		map models/mapobjects/furniture/sherman_s.tga
 		blendfunc blend
 		rgbGen identity
 	}
@@ -901,7 +901,7 @@ models/mapobjects/furniture/xsink
 		tcGen environment
 	}
 	{
-		map models/mapobjects/furniture/xsink
+		map models/mapobjects/furniture/xsink.tga
 		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
 		rgbGen vertex
 	}
@@ -917,7 +917,7 @@ models/mapobjects/goldbox_sd/goldbox
 	qer_editorimage models/mapobjects/goldbox_sd/goldbox
 	surfaceparm metalsteps
 	{
-		map models/mapobjects/goldbox_sd/goldbox
+		map models/mapobjects/goldbox_sd/goldbox.tga
 		rgbGen lightingDiffuse
 	}
 }
@@ -932,7 +932,7 @@ models/mapobjects/grass_sd/grass
 	surfaceparm trans
 	nopicmip
 	{
-		map models/mapobjects/grass_sd/grass
+		map models/mapobjects/grass_sd/grass.tga
 		rgbGen const ( 0.3 0.3 0.3 )
 		detail
 	}
@@ -964,7 +964,7 @@ models/mapobjects/knight/knt
 		tcGen environment
 	}
 	{
-		map models/mapobjects/knight/knt
+		map models/mapobjects/knight/knt.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen vertex
 	}
@@ -977,11 +977,11 @@ models/mapobjects/lamps/bel_lamp2k
 	q3map_surfaceLight 1000
 	surfaceparm nomarks
 	{
-		map models/mapobjects/light/bel_lamp
+		map models/mapobjects/light/bel_lamp.tga
 		rgbGen vertex
 	}
 	{
-		map models/mapobjects/light/bel_lamp.blend
+		map models/mapobjects/light/bel_lamp.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -994,11 +994,11 @@ models/mapobjects/lamps/bel_lamp2k_gm		// for misc_gamemodel
 	q3map_surfaceLight 1000
 	surfaceparm nomarks
 	{
-		map models/mapobjects/light/bel_lamp
+		map models/mapobjects/light/bel_lamp.tga
 		rgbgen lightingDiffuse
 	}
 	{
-		map models/mapobjects/light/bel_lamp.blend
+		map models/mapobjects/light/bel_lamp.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -1006,15 +1006,15 @@ models/mapobjects/lamps/bel_lamp2k_gm		// for misc_gamemodel
 
 models/mapobjects/light/bel_lamp
 {
-	q3map_lightimage models/colors/amber
+	q3map_lightimage models/colors/amber.tga
 	q3map_surfaceLight 5000
 	surfaceparm nomarks
 	{
-		map models/mapobjects/light/bel_lamp
+		map models/mapobjects/light/bel_lamp.tga
 		rgbGen vertex
 	}
 	{
-		map models/mapobjects/light/bel_lamp.blend
+		map models/mapobjects/light/bel_lamp.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -1022,16 +1022,16 @@ models/mapobjects/light/bel_lamp
 
 models/mapobjects/light/bel_lamp_gm		// for misc_gamemodels
 {
-	qer_editorimage models/mapobjects/light/bel_lamp
+	qer_editorimage models/mapobjects/light/bel_lamp.tga
 	q3map_lightimage models/colors/amber
 	q3map_surfaceLight 5000
 	surfaceparm nomarks
 	{
-		map models/mapobjects/light/bel_lamp
+		map models/mapobjects/light/bel_lamp.tga
 		rgbgen lightingDiffuse
 	}
 	{
-		map models/mapobjects/light/bel_lamp.blend
+		map models/mapobjects/light/bel_lamp.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -1039,16 +1039,16 @@ models/mapobjects/light/bel_lamp_gm		// for misc_gamemodels
 
 models/mapobjects/light/bel_lampb
 {
-	qer_editorimage models/mapobjects/light/bel_lamp
+	qer_editorimage models/mapobjects/light/bel_lamp.tga
 	q3map_lightimage models/colors/amber
 	q3map_surfaceLight 10000
 	surfaceparm nomarks
 	{
-		map models/mapobjects/light/bel_lamp
+		map models/mapobjects/light/bel_lamp.tga
 		rgbGen vertex
 	}
 	{
-		map models/mapobjects/light/bel_lamp.blend
+		map models/mapobjects/light/bel_lamp.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -1056,16 +1056,16 @@ models/mapobjects/light/bel_lampb
 
 models/mapobjects/light/bel_lampm
 {
-	qer_editorimage models/mapobjects/light/bel_lamp
+	qer_editorimage models/mapobjects/light/bel_lamp.tga
 	q3map_lightimage models/colors/amber
 	q3map_surfaceLight 7000
 	surfaceparm nomarks
 	{
-		map models/mapobjects/light/bel_lamp
+		map models/mapobjects/light/bel_lamp.tga
 		rgbGen vertex
 	}
 	{
-		map models/mapobjects/light/bel_lamp.blend
+		map models/mapobjects/light/bel_lamp.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -1078,11 +1078,11 @@ models/mapobjects/light/bel_lampm_gm		// for misc_gamemodels
 	q3map_surfaceLight 7000
 	surfaceparm nomarks
 	{
-		map models/mapobjects/light/bel_lamp
+		map models/mapobjects/light/bel_lamp.tga
 		rgbgen lightingDiffuse
 	}
 	{
-		map models/mapobjects/light/bel_lamp.blend
+		map models/mapobjects/light/bel_lamp.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -1090,15 +1090,15 @@ models/mapobjects/light/bel_lampm_gm		// for misc_gamemodels
 
 models/mapobjects/light/cage_lightn
 {
-	q3map_lightimage models/mapobjects/light/cage_lightn
+	q3map_lightimage models/mapobjects/light/cage_lightn.tga
 	q3map_lightrgb 0.80 0.72 0.60
 	surfaceparm nomarks
 	{
-		map models/mapobjects/light/cage_lightn
+		map models/mapobjects/light/cage_lightn.tga
 		rgbGen vertex
 	}
 	{
-		map models/mapobjects/light/cage_light.blendn
+		map models/mapobjects/light/cage_light.blendn.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -1108,21 +1108,21 @@ models/mapobjects/light/cage_lightna
 {
 	cull twosided
 	surfaceparm nomarks
-	implicitMask models/mapobjects/light/cage_lightna
+	implicitMask models/mapobjects/light/cage_lightna.tga
 }
 
 models/mapobjects/light/cage_light1k
 {
-	q3map_lightimage models/mapobjects/light/cagelight_a
+	q3map_lightimage models/mapobjects/light/cagelight_a.tga
 	q3map_lightrgb 0.80 0.72 0.60
 	q3map_surfacelight 1000
 	surfaceparm nomarks
 	{
-		map models/mapobjects/light/cagelight_a
+		map models/mapobjects/light/cagelight_a.tga
 		rgbGen vertex
 	}
 	{
-		map models/mapobjects/light/cagelight.blenda
+		map models/mapobjects/light/cagelight.blenda.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -1130,16 +1130,16 @@ models/mapobjects/light/cage_light1k
 
 models/mapobjects/light/cage_light2k
 {
-	q3map_lightimage models/mapobjects/light/cagelight_a
+	q3map_lightimage models/mapobjects/light/cagelight_a.tga
 	q3map_lightrgb 0.80 0.72 0.60
 	q3map_surfacelight 2000
 	surfaceparm nomarks
 	{
-		map models/mapobjects/light/cagelight_a
+		map models/mapobjects/light/cagelight_a.tga
 		rgbGen vertex
 	}
 	{
-		map models/mapobjects/light/cagelight.blenda
+		map models/mapobjects/light/cagelight.blenda.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -1147,16 +1147,16 @@ models/mapobjects/light/cage_light2k
 
 models/mapobjects/light/cage_light3k
 {
-	q3map_lightimage models/mapobjects/light/cagelight_a
+	q3map_lightimage models/mapobjects/light/cagelight_a.tga
 	q3map_lightrgb 0.80 0.72 0.60
 	q3map_surfacelight 3000
 	surfaceparm nomarks
 	{
-		map models/mapobjects/light/cagelight_a
+		map models/mapobjects/light/cagelight_a.tga
 		rgbGen vertex
 	}
 	{
-		map models/mapobjects/light/cagelight.blenda
+		map models/mapobjects/light/cagelight.blenda.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -1164,16 +1164,16 @@ models/mapobjects/light/cage_light3k
 
 models/mapobjects/light/cage_light4k
 {
-	q3map_lightimage models/mapobjects/light/cagelight_a
+	q3map_lightimage models/mapobjects/light/cagelight_a.tga
 	q3map_lightrgb 0.80 0.72 0.60
 	q3map_surfacelight 4000
 	surfaceparm nomarks
 	{
-		map models/mapobjects/light/cagelight_a
+		map models/mapobjects/light/cagelight_a.tga
 		rgbGen vertex
 	}
 	{
-		map models/mapobjects/light/cagelight.blenda
+		map models/mapobjects/light/cagelight.blenda.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -1181,16 +1181,16 @@ models/mapobjects/light/cage_light4k
 
 models/mapobjects/light/cage_light5k
 {
-	q3map_lightimage models/mapobjects/light/cagelight_a
+	q3map_lightimage models/mapobjects/light/cagelight_a.tga
 	q3map_lightrgb 0.80 0.72 0.60
 	q3map_surfacelight 5000
 	surfaceparm nomarks
 	{
-		map models/mapobjects/light/cagelight_a
+		map models/mapobjects/light/cagelight_a.tga
 		rgbGen vertex
 	}
 	{
-		map models/mapobjects/light/cagelight.blenda
+		map models/mapobjects/light/cagelight.blenda.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -1198,16 +1198,16 @@ models/mapobjects/light/cage_light5k
 
 models/mapobjects/light/cage_light7k
 {
-	q3map_lightimage models/mapobjects/light/cagelight_a
+	q3map_lightimage models/mapobjects/light/cagelight_a.tga
 	q3map_lightrgb 0.80 0.72 0.60
 	q3map_surfacelight 7000
 	surfaceparm nomarks
 	{
-		map models/mapobjects/light/cagelight_a
+		map models/mapobjects/light/cagelight_a.tga
 		rgbGen vertex
 	}
 	{
-		map models/mapobjects/light/cagelight.blenda
+		map models/mapobjects/light/cagelight.blenda.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -1215,16 +1215,16 @@ models/mapobjects/light/cage_light7k
 
 models/mapobjects/light/cage_light9k
 {
-	q3map_lightimage models/mapobjects/light/cagelight_a
+	q3map_lightimage models/mapobjects/light/cagelight_a.tga
 	q3map_lightrgb 0.80 0.72 0.60
 	q3map_surfacelight 9000
 	surfaceparm nomarks
 	{
-		map models/mapobjects/light/cagelight_a
+		map models/mapobjects/light/cagelight_a.tga
 		rgbGen vertex
 	}
 	{
-		map models/mapobjects/light/cagelight.blenda
+		map models/mapobjects/light/cagelight.blenda.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -1232,16 +1232,16 @@ models/mapobjects/light/cage_light9k
 
 models/mapobjects/light/cage_light12k
 {
-	q3map_lightimage models/mapobjects/light/cagelight_a
+	q3map_lightimage models/mapobjects/light/cagelight_a.tga
 	q3map_lightrgb 0.80 0.72 0.60
 	q3map_surfacelight 12000
 	surfaceparm nomarks
 	{
-		map models/mapobjects/light/cagelight_a
+		map models/mapobjects/light/cagelight_a.tga
 		rgbGen vertex
 	}
 	{
-		map models/mapobjects/light/cagelight.blenda
+		map models/mapobjects/light/cagelight.blenda.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -1249,16 +1249,16 @@ models/mapobjects/light/cage_light12k
 
 models/mapobjects/light/cagelight_a
 {
-	q3map_lightimage models/mapobjects/light/cagelight_a
+	q3map_lightimage models/mapobjects/light/cagelight_a.tga
 	q3map_lightrgb 0.80 0.72 0.60
 	q3map_surfacelight 7000
 	surfaceparm nomarks
 	{
-		map models/mapobjects/light/cagelight_a
+		map models/mapobjects/light/cagelight_a.tga
 		rgbGen vertex
 	}
 	{
-		map models/mapobjects/light/cagelight.blenda
+		map models/mapobjects/light/cagelight.blenda.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -1266,16 +1266,16 @@ models/mapobjects/light/cagelight_a
 
 models/mapobjects/light/cagelight_r
 {
-	q3map_lightimage models/mapobjects/light/cagelight_r
+	q3map_lightimage models/mapobjects/light/cagelight_r.tga
 	q3map_lightrgb 1.0 0.1 0.1
 	q3map_surfacelight 7000
 	surfaceparm nomarks
 	{
-		map models/mapobjects/light/cagelight_r
+		map models/mapobjects/light/cagelight_r.tga
 		rgbGen vertex
 	}
 	{
-		map models/mapobjects/light/cagelight.blendr
+		map models/mapobjects/light/cagelight.blendr.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -1295,11 +1295,11 @@ models/mapobjects/light/light_m4
 	q3map_surfacelight 5000
 	surfaceparm nomarks
 	{
-		map models/mapobjects/light/light_m4
+		map models/mapobjects/light/light_m4.tga
 		rgbGen vertex
 	}
 	{
-		map textures/lights/light_m4.blend
+		map textures/lights/light_m4.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -1325,11 +1325,11 @@ models/mapobjects/light/sconce
 
 models/mapobjects/light/sconce2
 {
-	q3map_lightimage models/mapobjects/light/sconce2
+	q3map_lightimage models/mapobjects/light/sconce2.tga
 	q3map_surfacelight 5000
 	surfaceparm nomarks
 	{
-		map models/mapobjects/light/sconce2
+		map models/mapobjects/light/sconce2.tga
 		rgbGen identity
 	}
 }
@@ -1385,12 +1385,12 @@ models/mapobjects/miltary_trim/metal_m05
 
 models/mapobjects/miltary_trim/metal_m05_wils
 {
-	qer_editorimage models/mapobjects/miltary_trim/metal_m05
+	qer_editorimage models/mapobjects/miltary_trim/metal_m05.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm nomarks
 	surfaceparm trans
-	implicitMask models/mapobjects/miltary_trim/metal_m05
+	implicitMask models/mapobjects/miltary_trim/metal_m05.tga
 }
 
 models/mapobjects/pak75_sd/pak75-a
@@ -1427,7 +1427,7 @@ models/mapobjects/plants/bushes3
 // Plants 
 //**********************************************************************
 
-models/mapobjects/plants_sd/bush_desert1
+models/mapobjects/plants_sd/bush_desert1.tga
 {
 	qer_alphafunc greater 0.5
 	qer_editorimage models/mapobjects/plants_sd/bush_desert1
@@ -1439,10 +1439,10 @@ models/mapobjects/plants_sd/bush_desert1
 	implicitMask -
 }
 
-models/mapobjects/plants_sd/bush_desert2
+models/mapobjects/plants_sd/bush_desert2.tga
 { 
      qer_alphafunc greater 0.5 
-     qer_editorimage models/mapobjects/plants_sd/bush_desert2 
+     qer_editorimage models/mapobjects/plants_sd/bush_desert2.tga
      cull disable 
      q3map_bounceScale 0.25
      surfaceparm alphashadow 
@@ -1456,7 +1456,7 @@ models/mapobjects/plants_sd/bush_desert2
 models/mapobjects/plants_sd/bush_snow1
 {
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/bush_snow1
+	qer_editorimage models/mapobjects/plants_sd/bush_snow1.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1468,7 +1468,7 @@ models/mapobjects/plants_sd/bush_snow1
 models/mapobjects/plants_sd/bush_snow2
 {
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/bush_snow2
+	qer_editorimage models/mapobjects/plants_sd/bush_snow2.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1480,7 +1480,7 @@ models/mapobjects/plants_sd/bush_snow2
 models/mapobjects/plants_sd/catail1
 {
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/catail1
+	qer_editorimage models/mapobjects/plants_sd/catail1.tga
 	cull disable
 	nopicmip
 	surfaceparm alphashadow
@@ -1494,7 +1494,7 @@ models/mapobjects/plants_sd/catail2
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/catail2
+	qer_editorimage models/mapobjects/plants_sd/catail2.tga
 	cull disable
 	nopicmip
 	surfaceparm alphashadow
@@ -1508,7 +1508,7 @@ models/mapobjects/plants_sd/catail3
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/catail3
+	qer_editorimage models/mapobjects/plants_sd/catail3.tga
 	cull disable
 	nopicmip
 	surfaceparm alphashadow
@@ -1522,7 +1522,7 @@ models/mapobjects/plants_sd/deadbranch1
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/deadbranch1
+	qer_editorimage models/mapobjects/plants_sd/deadbranch1.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1534,7 +1534,7 @@ models/mapobjects/plants_sd/deadbranch2
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/deadbranch2
+	qer_editorimage models/mapobjects/plants_sd/deadbranch2.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1546,7 +1546,7 @@ models/mapobjects/plants_sd/deadbranch3
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/deadbranch3
+	qer_editorimage models/mapobjects/plants_sd/deadbranch3.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1558,7 +1558,7 @@ models/mapobjects/plants_sd/deadbranch1_damp
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/deadbranch1_damp
+	qer_editorimage models/mapobjects/plants_sd/deadbranch1_damp.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1570,7 +1570,7 @@ models/mapobjects/plants_sd/deadbranch2_damp
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/deadbranch2_damp
+	qer_editorimage models/mapobjects/plants_sd/deadbranch2_damp.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1582,7 +1582,7 @@ models/mapobjects/plants_sd/deadbranch3_damp
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/deadbranch3_damp
+	qer_editorimage models/mapobjects/plants_sd/deadbranch3_damp.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1594,7 +1594,7 @@ models/mapobjects/plants_sd/shrub_green1
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/shrub_green1
+	qer_editorimage models/mapobjects/plants_sd/shrub_green1.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1602,11 +1602,11 @@ models/mapobjects/plants_sd/shrub_green1
 	implicitMask -
 }
 
-models/mapobjects/plants_sd/shrub_green2
+models/mapobjects/plants_sd/shrub_green2.tga
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/shrub_green2
+	qer_editorimage models/mapobjects/plants_sd/shrub_green2.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1618,7 +1618,7 @@ models/mapobjects/plants_sd/leaf1
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/leaf1
+	qer_editorimage models/mapobjects/plants_sd/leaf1.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1630,7 +1630,7 @@ models/mapobjects/plants_sd/leaf2
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/leaf2
+	qer_editorimage models/mapobjects/plants_sd/leaf2.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1642,7 +1642,7 @@ models/mapobjects/plants_sd/leaf3
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/leaf3
+	qer_editorimage models/mapobjects/plants_sd/leaf3.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1654,7 +1654,7 @@ models/mapobjects/plants_sd/grass_dry1
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/grass_dry1
+	qer_editorimage models/mapobjects/plants_sd/grass_dry1.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1666,7 +1666,7 @@ models/mapobjects/plants_sd/grass_dry2
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/grass_dry2
+	qer_editorimage models/mapobjects/plants_sd/grass_dry2.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1678,7 +1678,7 @@ models/mapobjects/plants_sd/grass_dry3
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/grass_dry3
+	qer_editorimage models/mapobjects/plants_sd/grass_dry3.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1690,7 +1690,7 @@ models/mapobjects/plants_sd/grass_green1
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/grass_green1
+	qer_editorimage models/mapobjects/plants_sd/grass_green1.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1702,7 +1702,7 @@ models/mapobjects/plants_sd/grass_green2
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/grass_green2
+	qer_editorimage models/mapobjects/plants_sd/grass_green2.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1714,7 +1714,7 @@ models/mapobjects/plants_sd/grass_green3
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/grass_green3
+	qer_editorimage models/mapobjects/plants_sd/grass_green3.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1726,7 +1726,7 @@ models/mapobjects/plants_sd/mil1
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/mil1
+	qer_editorimage models/mapobjects/plants_sd/mil1.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1738,7 +1738,7 @@ models/mapobjects/plants_sd/mil2
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/mil2
+	qer_editorimage models/mapobjects/plants_sd/mil2.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1750,7 +1750,7 @@ models/mapobjects/plants_sd/grassfoliage1
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/plants_sd/grassfoliage1
+	qer_editorimage models/mapobjects/plants_sd/grassfoliage1.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1761,21 +1761,21 @@ models/mapobjects/plants_sd/grassfoliage1
 models/mapobjects/tree_temperate_sd/trunk_temperate
 {
 	surfaceparm nomarks
-	implicitMap models/mapobjects/tree_temperate_sd/trunk_temperate
+	implicitMap models/mapobjects/tree_temperate_sd/trunk_temperate.tga
 }
 
 models/mapobjects/tree_temperate_sd/trunk_cut
 {
 
 	surfaceparm nomarks
-	implicitMap models/mapobjects/tree_temperate_sd/trunk_cut
+	implicitMap models/mapobjects/tree_temperate_sd/trunk_cut.tga
 }
 
 models/mapobjects/tree_temperate_sd/leaves_temperate1
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/tree_temperate_sd/leaves_temperate1
+	qer_editorimage models/mapobjects/tree_temperate_sd/leaves_temperate1.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1787,7 +1787,7 @@ models/mapobjects/tree_temperate_sd/leaves_temperate2
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/tree_temperate_sd/leaves_temperate2
+	qer_editorimage models/mapobjects/tree_temperate_sd/leaves_temperate2.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1799,7 +1799,7 @@ models/mapobjects/tree_temperate_sd/leaves_temperate3
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/tree_temperate_sd/leaves_temperate3
+	qer_editorimage models/mapobjects/tree_temperate_sd/leaves_temperate3.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1811,7 +1811,7 @@ models/mapobjects/tree_temperate_sd/floor_leaf1
 {
 	nopicmip
 	qer_alphafunc greater 0.5
-	qer_editorimage models/mapobjects/tree_temperate_sd/floor_leaf1
+	qer_editorimage models/mapobjects/tree_temperate_sd/floor_leaf1.tga
 	cull disable
 	surfaceparm alphashadow
 	surfaceparm trans
@@ -1831,7 +1831,7 @@ models/mapobjects/portable_radar_sd/portable_radar_sd
 	         tcGen environment
 	}
 	{
-	         map models/mapobjects/portable_radar_sd/portable_radar_sd
+	         map models/mapobjects/portable_radar_sd/portable_radar_sd.tga
 	         blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
 	         //blendfunc blend
 	         rgbGen lightingdiffuse
@@ -1849,25 +1849,25 @@ models/mapobjects/portable_radar_sd/portable_radar_t_sd
 models/mapobjects/props_sd/basket
 {
 	surfaceparm nomarks
-	implicitMap models/mapobjects/props_sd/basket
+	implicitMap models/mapobjects/props_sd/basket.tga
 }
 
 models/mapobjects/props_sd/basketsand
 {
 	qer_editorimage textures/props_sd/basketsand
-	implicitMap textures/props_sd/basketsand
+	implicitMap textures/props_sd/basketsand.tga
 }
 
 models/mapobjects/props_sd/sandlevel
 {
 	qer_editorimage textures/desert_sd/sand_disturb_desert
-	implicitMap textures/desert_sd/sand_disturb_desert
+	implicitMap textures/desert_sd/sand_disturb_desert.tga
 }
 
 models/mapobjects/props_sd/lid
 {
 	surfaceparm nomarks
-	implicitMap models/mapobjects/props_sd/lid
+	implicitMap models/mapobjects/props_sd/lid.tga
 }
 
 models/mapobjects/props_sd/bunk_sd1
@@ -1909,7 +1909,7 @@ models/mapobjects/props_sd/drape_wood
 models/mapobjects/props_sd/vase
 {
 	surfaceparm nomarks
-	implicitMap models/mapobjects/props_sd/vase
+	implicitMap models/mapobjects/props_sd/vase.tga
 }
 
 // radio sign
@@ -1925,25 +1925,25 @@ models/mapobjects/radios_sd/sign
 models/mapobjects/rocks_sd/rock_desert
 {
 	qer_editorimage models/mapobjects/rocks_sd/rock_desert
-	implicitMap models/mapobjects/rocks_sd/rock_desert
+	implicitMap models/mapobjects/rocks_sd/rock_desert.tga
 }
 
 models/mapobjects/rocks_sd/rock_desert_small
 {
 	qer_editorimage models/mapobjects/rocks_sd/rock_desert_small
-	implicitMap models/mapobjects/rocks_sd/rock_desert_small
+	implicitMap models/mapobjects/rocks_sd/rock_desert_small.tga
 }
 
 models/mapobjects/rocks_sd/rock_desert_big
 {
 	qer_editorimage models/mapobjects/rocks_sd/rock_desert_big
-	implicitMap models/mapobjects/rocks_sd/rock_desert_big
+	implicitMap models/mapobjects/rocks_sd/rock_desert_big.tga
 }
 
 models/mapobjects/rocks_sd/rock_snow
 {
 	qer_editorimage models/mapobjects/rocks_sd/rock_snow
-	implicitMap models/mapobjects/rocks_sd/rock_snow
+	implicitMap models/mapobjects/rocks_sd/rock_snow.tga
 	q3map_clipModel
 }
 
@@ -1956,7 +1956,7 @@ models/mapobjects/rocks_sd/rock_snow_small
 models/mapobjects/rocks_sd/rock_snow_big
 {
 	qer_editorimage models/mapobjects/rocks_sd/rock_snow_big
-	implicitMap models/mapobjects/rocks_sd/rock_snow_big
+	implicitMap models/mapobjects/rocks_sd/rock_snow_big.tga
 	q3map_clipModel
 }
 
@@ -1964,54 +1964,54 @@ models/mapobjects/rocks_sd/rock_temperate
 {
 	q3map_clipModel
 	qer_editorimage models/mapobjects/rocks_sd/rock_temperate
-	implicitMap models/mapobjects/rocks_sd/rock_temperate
+	implicitMap models/mapobjects/rocks_sd/rock_temperate.tga
 }
 
 models/mapobjects/rocks_sd/rock_temperate_small
 {
 	q3map_clipModel
 	qer_editorimage models/mapobjects/rocks_sd/rock_temperate_small
-	implicitMap models/mapobjects/rocks_sd/rock_temperate_small
+	implicitMap models/mapobjects/rocks_sd/rock_temperate_small.tga
 }
 
 models/mapobjects/rocks_sd/rock_temperate_big
 {
 	q3map_clipModel
 	qer_editorimage models/mapobjects/rocks_sd/rock_temperate_big
-	implicitMap models/mapobjects/rocks_sd/rock_temperate_big
+	implicitMap models/mapobjects/rocks_sd/rock_temperate_big.tga
 }
 
 models/mapobjects/rocks_sd/rock_temperate2
 {
 	q3map_clipModel
 	qer_editorimage models/mapobjects/rocks_sd/rock_temperate2
-	implicitMap models/mapobjects/rocks_sd/rock_temperate2
+	implicitMap models/mapobjects/rocks_sd/rock_temperate2.tga
 }
 
 models/mapobjects/rocks_sd/rock_temperate2_small
 {
 	q3map_clipModel
 	qer_editorimage models/mapobjects/rocks_sd/rock_temperate2_small
-	implicitMap models/mapobjects/rocks_sd/rock_temperate2_small
+	implicitMap models/mapobjects/rocks_sd/rock_temperate2_small.tga
 }
 
 models/mapobjects/rocks_sd/rock_temperate2_big
 {
 	q3map_clipModel
 	qer_editorimage models/mapobjects/rocks_sd/rock_temperate2_big
-	implicitMap models/mapobjects/rocks_sd/rock_temperate2_big
+	implicitMap models/mapobjects/rocks_sd/rock_temperate2_big.tga
 }
 
 models/mapobjects/rocks_sd/rock_tunnelsiwa
 {
 	qer_editorimage models/mapobjects/rocks_sd/rock_tunnelsiwa
-	implicitMap models/mapobjects/rocks_sd/rock_tunnelsiwa
+	implicitMap models/mapobjects/rocks_sd/rock_tunnelsiwa.tga
 }
 
 models/mapobjects/rocks_sd/rock_tunnelsiwa_small
 {
 	qer_editorimage models/mapobjects/rocks_sd/rock_tunnelsiwa_small
-	implicitMap models/mapobjects/rocks_sd/rock_tunnelsiwa_small
+	implicitMap models/mapobjects/rocks_sd/rock_tunnelsiwa_small.tga
 }
 
 //**********************************************************************
@@ -2089,7 +2089,7 @@ models/mapobjects/supplystands/frame
 		tcGen environment
 	}
 	{
-		map models/mapobjects/supplystands/frame
+		map models/mapobjects/supplystands/frame.tga
 		blendFunc GL_ONE GL_ONE_MINUS_SRC_ALPHA
 		rgbGen lightingDiffuse
 	}
@@ -2238,17 +2238,17 @@ models/mapobjects/tanks_sd/bits_static_a
 models/mapobjects/tanks_sd/churchill_flat_oasis
 {
 	{
-		map models/mapobjects/tanks_sd/churchill_flat_oasis
+		map models/mapobjects/tanks_sd/churchill_flat_oasis.tga
 		rgbGen lightingDiffuse
 	}
 }
 
 models/mapobjects/tanks_sd/explosive
 {
-	qer_editorimage models/mapobjects/tanks_sd/explosive
+	qer_editorimage models/mapobjects/tanks_sd/explosive.tga
 	surfaceparm metalsteps
 	{
-		map models/mapobjects/tanks_sd/explosive
+		map models/mapobjects/tanks_sd/explosive.tga
 		rgbGen lightingDiffuse
 	}
 }
@@ -2551,31 +2551,31 @@ models/mapobjects/tanks_sd/jagdpanther
 {
 	qer_editorimage models/mapobjects/tanks_sd/jagdpanther
 
-	diffuseMap models/mapobjects/tanks_sd/jagdpanther
-	bumpMap models/mapobjects/tanks_sd/jagdpanther_n
-	specularMap models/mapobjects/tanks_sd/jagdpanther_s
+	diffuseMap models/mapobjects/tanks_sd/jagdpanther.tga
+	bumpMap models/mapobjects/tanks_sd/jagdpanther_n.tga
+	specularMap models/mapobjects/tanks_sd/jagdpanther_s.tga
 }
 
 models/mapobjects/tanks_sd/jagdpanther_additions_des_s
 {
 	qer_editorimage models/mapobjects/tanks_sd/jagdpanther_additions_desert
-	diffuseMap models/mapobjects/tanks_sd/jagdpanther_additions_desert
-	bumpMap models/mapobjects/tanks_sd/jagdpanther_additions_desert_n
-	specularMap models/mapobjects/tanks_sd/jagdpanther_additions_desert_s
+	diffuseMap models/mapobjects/tanks_sd/jagdpanther_additions_desert.tga
+	bumpMap models/mapobjects/tanks_sd/jagdpanther_additions_desert_n.tga
+	specularMap models/mapobjects/tanks_sd/jagdpanther_additions_desert_s.tga
 }
 
 models/mapobjects/tanks_sd/jagdpanther_additions_desert
 {
-	diffuseMap models/mapobjects/tanks_sd/jagdpanther_additions_desert
-	bumpMap models/mapobjects/tanks_sd/jagdpanther_additions_desert_n
-	specularMap models/mapobjects/tanks_sd/jagdpanther_additions_desert_s
+	diffuseMap models/mapobjects/tanks_sd/jagdpanther_additions_desert.tga
+	bumpMap models/mapobjects/tanks_sd/jagdpanther_additions_desert_n.tga
+	specularMap models/mapobjects/tanks_sd/jagdpanther_additions_desert_s.tga
 }
 
 models/mapobjects/tanks_sd/jagdpanther_additions_temperate
 {
-	diffuseMap models/mapobjects/tanks_sd/jagdpanther_additions_temperate
-	bumpMap models/mapobjects/tanks_sd/jagdpanther_additions_temperate_n
-	specularMap models/mapobjects/tanks_sd/jagdpanther_additions_temperate_s
+	diffuseMap models/mapobjects/tanks_sd/jagdpanther_additions_temperate.tga
+	bumpMap models/mapobjects/tanks_sd/jagdpanther_additions_temperate_n.tga
+	specularMap models/mapobjects/tanks_sd/jagdpanther_additions_temperate_s.tga
 }
 
 models/mapobjects/tanks_sd/jagdpanther_additions_snow
@@ -2590,7 +2590,7 @@ models/mapobjects/tanks_sd/jagdpanther_full
 {
 	qer_editorimage models/mapobjects/tanks_sd/jagdpanther_full
 
-	diffuseMap models/mapobjects/tanks_sd/jagdpanther_full
+	diffuseMap models/mapobjects/tanks_sd/jagdpanther_full.tga
 	bumpMap models/mapobjects/tanks_sd/jagdpanther_full_n
 	specularMap models/mapobjects/tanks_sd/jagdpanther_full_s
 }
@@ -2600,7 +2600,7 @@ models/mapobjects/tanks_sd/mg42turret_2
 {
 	diffuseMap models/mapobjects/tanks_sd/mg42turret_2
 	bumpMap models/mapobjects/tanks_sd/mg42turret_2_n
-	specularMap models/mapobjects/tanks_sd/mg42turret_2_s
+	specularMap models/mapobjects/tanks_sd/mg42turret_2_s.tga
 }
 
 models/mapobjects/tanks_sd/jagdpanther_full_temperate
@@ -2609,7 +2609,7 @@ models/mapobjects/tanks_sd/jagdpanther_full_temperate
 
 	diffuseMap models/mapobjects/tanks_sd/jagdpanther_full_temperate
 	bumpMap models/mapobjects/tanks_sd/jagdpanther_full_temperate_n
-	specularMap models/mapobjects/tanks_sd/jagdpanther_full_temperate_s
+	specularMap models/mapobjects/tanks_sd/jagdpanther_full_temperate_s.tga
 }
 
 models/mapobjects/tanks_sd/jagdpanther_full_s
@@ -2618,7 +2618,7 @@ models/mapobjects/tanks_sd/jagdpanther_full_s
 
 	diffuseMap models/mapobjects/tanks_sd/jagdpanther_full
 	bumpMap models/mapobjects/tanks_sd/jagdpanther_full_n
-	specularMap models/mapobjects/tanks_sd/jagdpanther_full_s
+	specularMap models/mapobjects/tanks_sd/jagdpanther_full_s.tga
 }
 
 models/mapobjects/tanks_sd/jag2_cogs_alt_backward
@@ -2758,7 +2758,7 @@ models/mapobjects/tanks_sd/wheel_backward
 	qer_alphafunc gequal 0.5
 	cull disable
 	{
-		clampmap models/mapobjects/tanks_sd/wheel
+		clampmap models/mapobjects/tanks_sd/wheel.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 		tcMod rotate -60
@@ -2770,7 +2770,7 @@ models/mapobjects/tanks_sd/wheel_backward_a
 	qer_alphafunc gequal 0.5
 	cull disable
 	{
-		clampmap models/mapobjects/tanks_sd/wheel_a
+		clampmap models/mapobjects/tanks_sd/wheel_a.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 		tcMod rotate -60
@@ -2782,7 +2782,7 @@ models/mapobjects/tanks_sd/wheel_forward
 	qer_alphafunc gequal 0.5
 	cull disable
 	{
-		clampmap models/mapobjects/tanks_sd/wheel
+		clampmap models/mapobjects/tanks_sd/wheel.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 		tcMod rotate 60
@@ -2794,7 +2794,7 @@ models/mapobjects/tanks_sd/wheel_forward_oasis
 	qer_alphafunc gequal 0.5
 	cull disable
 	{
-		clampmap models/mapobjects/tanks_sd/wheel
+		clampmap models/mapobjects/tanks_sd/wheel.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 		tcMod rotate 90
@@ -2806,7 +2806,7 @@ models/mapobjects/tanks_sd/wheel_forward_a
 	qer_alphafunc gequal 0.5
 	cull disable
 	{
-		clampmap models/mapobjects/tanks_sd/wheel_a
+		clampmap models/mapobjects/tanks_sd/wheel_a.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 		tcMod rotate 60
@@ -2818,7 +2818,7 @@ models/mapobjects/tanks_sd/wheel_l
 	qer_alphafunc gequal 0.5
 	cull disable
 	{
-		clampmap models/mapobjects/tanks_sd/wheel
+		clampmap models/mapobjects/tanks_sd/wheel.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
@@ -2829,7 +2829,7 @@ models/mapobjects/tanks_sd/wheel_l_a
 	qer_alphafunc gequal 0.5
 	cull disable
 	{
-		clampmap models/mapobjects/tanks_sd/wheel_a
+		clampmap models/mapobjects/tanks_sd/wheel_a.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
@@ -2840,7 +2840,7 @@ models/mapobjects/tanks_sd/wheel_r
 	qer_alphafunc gequal 0.5
 	cull disable
 	{
-		clampmap models/mapobjects/tanks_sd/wheel
+		clampmap models/mapobjects/tanks_sd/wheel.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
@@ -2851,7 +2851,7 @@ models/mapobjects/tanks_sd/wheel_r_a
 	qer_alphafunc gequal 0.5
 	cull disable
 	{
-		clampmap models/mapobjects/tanks_sd/wheel_a
+		clampmap models/mapobjects/tanks_sd/wheel_a.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
@@ -2862,7 +2862,7 @@ models/mapobjects/tanks_sd/wheel2_backward_a
 	qer_alphafunc gequal 0.5
 	cull disable
 	{
-		clampmap models/mapobjects/tanks_sd/wheel2_a
+		clampmap models/mapobjects/tanks_sd/wheel2_a.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 		tcMod rotate -60
@@ -2874,7 +2874,7 @@ models/mapobjects/tanks_sd/wheel2_forward_a
 	qer_alphafunc gequal 0.5
 	cull disable
 	{
-		clampmap models/mapobjects/tanks_sd/wheel2_a
+		clampmap models/mapobjects/tanks_sd/wheel2_a.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 		tcMod rotate 60
@@ -2886,7 +2886,7 @@ models/mapobjects/tanks_sd/wheel2_l_a
 	qer_alphafunc gequal 0.5
 	cull disable
 	{
-		clampmap models/mapobjects/tanks_sd/wheel2_a
+		clampmap models/mapobjects/tanks_sd/wheel2_a.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
@@ -2897,7 +2897,7 @@ models/mapobjects/tanks_sd/wheel2_r_a
 	qer_alphafunc gequal 0.5
 	cull disable
 	{
-		clampmap models/mapobjects/tanks_sd/wheel2_a
+		clampmap models/mapobjects/tanks_sd/wheel2_a.tga
 		alphaFunc GE128
 		rgbGen lightingDiffuse
 	}
@@ -2912,7 +2912,7 @@ models/mapobjects/torture/glass
 		tcmod scroll .05 .05
 	}
 	{
-		map models/mapobjects/torture/glass
+		map models/mapobjects/torture/glass.tga
 		blendfunc blend
 		rgbGen vertex
 	}
@@ -2953,7 +2953,7 @@ models/mapobjects/tree/branch8
 
 models/mapobjects/tree_desert_sd/palm_trunk
 {
-	diffuseMap models/mapobjects/tree_desert_sd/palm_trunk
+	diffuseMap models/mapobjects/tree_desert_sd/palm_trunk.tga
 	bumpMap models/mapobjects/tree_desert_sd/palm_trunk_n
 	specularMap models/mapobjects/tree_desert_sd/palm_trunk_s
 	surfaceparm woodsteps
@@ -2961,7 +2961,7 @@ models/mapobjects/tree_desert_sd/palm_trunk
 
 models/mapobjects/tree_desert_sd/palm_leaf1
 {
-	diffuseMap models/mapobjects/tree_desert_sd/palm_leaf1
+	diffuseMap models/mapobjects/tree_desert_sd/palm_leaf1.tga
 	bumpMap models/mapobjects/tree_desert_sd/palm_leaf1_n
 	specularMap models/mapobjects/tree_desert_sd/palm_leaf1_s
 	qer_alphafunc gequal 0.5
@@ -3050,7 +3050,7 @@ models/mapobjects/ui/flame
 	nomipmaps
 	nopicmip
 	{
-		map ui_mp/assets/flame
+		map ui_mp/assets/flame.tga
 		blendfunc blend
 		rgbGen identity
 		tcmod scale .4 .4
@@ -3058,7 +3058,7 @@ models/mapobjects/ui/flame
 		tcmod turb .5 .02 0 .1
 	}
 	{
-		map ui_mp/assets/flame
+		map ui_mp/assets/flame.tga
 		blendfunc blend
 		tcmod scale .3 .3
 		tcmod scroll 0.001 .04
@@ -3146,7 +3146,7 @@ models/mapobjects/xp_sarcophagus/dsarcophagus
 		tcGen environment
 	}
 	{
-		map models/mapobjects/xp_sarcophagus/dsarcophagus
+		map models/mapobjects/xp_sarcophagus/dsarcophagus.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen vertex
 	}

@@ -58,7 +58,7 @@ textures/village/villwin_c15
 		rgbGen identity
 	}
 	{
-		map textures/village/villwin_c15.blend
+		map textures/village/villwin_c15.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -83,7 +83,7 @@ textures/village/villwin_c18
 		rgbGen identity
 	}
 	{
-		map textures/village/villwin_c18.blend
+		map textures/village/villwin_c18.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}

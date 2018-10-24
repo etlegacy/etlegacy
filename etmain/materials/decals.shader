@@ -121,7 +121,7 @@ textures/decals/light_c01_d
 		rgbGen vertex
 	}
 	{
-		map textures/lights/light_c01.blend
+		map textures/lights/light_c01.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -130,7 +130,7 @@ textures/decals/light_c01_d
 textures/decals/light_c01_10k
 {
 	qer_editorimage textures/lights/light_c01
-	q3map_lightimage textures/lightimage/light_c01.blend
+	q3map_lightimage textures/lightimage/light_c01.blend.tga
 	q3map_surfacelight 10000
 	
 	polygonOffset
@@ -141,7 +141,7 @@ textures/decals/light_c01_10k
 		rgbGen vertex
 	}
 	{
-		map textures/lights/light_c01.blend
+		map textures/lights/light_c01.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -162,7 +162,7 @@ textures/decals/light_m01b
 		rgbGen vertex
 	}
 	{
-		map textures/lights/light_m01b.blend
+		map textures/lights/light_m01b.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -182,7 +182,7 @@ textures/decals/light_m11_redd
 		rgbGen vertex
 	}
 	{
-		map textures/lights/light_m11.blend
+		map textures/lights/light_m11.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -202,7 +202,7 @@ textures/decals/light_m16_10kd
 		rgbGen vertex
 	}
 	{
-		map textures/lights/light_m16.blend
+		map textures/lights/light_m16.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -222,7 +222,7 @@ textures/decals/light_m32
 		rgbGen vertex
 	}
 	{
-		map textures/lights/light_m32.blend
+		map textures/lights/light_m32.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}

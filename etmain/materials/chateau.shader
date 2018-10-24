@@ -208,7 +208,7 @@ textures/chateau/window_c03a
 		rgbGen identity
 	}
 	{
-		map textures/chateau/window_c01.blend
+		map textures/chateau/window_c01.blend.tga
 		blendfunc GL_ONE GL_ONE
 	}
 }
@@ -235,7 +235,7 @@ textures/chateau/window_c03a_750
 		rgbGen identity
 	}
 	{
-		map textures/chateau/window_c01.blend
+		map textures/chateau/window_c01.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -257,7 +257,7 @@ textures/chateau/window_c03a_1250
 		rgbGen identity
 	}
 	{
-		map textures/chateau/window_c01.blend
+		map textures/chateau/window_c01.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -279,7 +279,7 @@ textures/chateau/window_c03a_2500
 		rgbGen identity
 	}
 	{
-		map textures/chateau/window_c01.blend
+		map textures/chateau/window_c01.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -301,7 +301,7 @@ textures/chateau/window_c04a
 		rgbGen identity
 	}
 	{
-		map textures/chateau/window_c02.blend
+		map textures/chateau/window_c02.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -323,7 +323,7 @@ textures/chateau/window_c07a
 		rgbGen identity
 	}
 	{
-		map textures/chateau/window_c05.blend
+		map textures/chateau/window_c05.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
@@ -345,7 +345,7 @@ textures/chateau/window_director
 		rgbGen identity
 	}
 	{
-		map textures/chateau/window_c01.blend
+		map textures/chateau/window_c01.blend.tga
 		blendfunc GL_ONE GL_ONE
 		rgbGen identity
 	}
