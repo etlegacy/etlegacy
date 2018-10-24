@@ -1297,20 +1297,24 @@ gentity_t *G_Lua_CreateEntity(char *params)
 		token = COM_ParseExt(&p, qfalse);
 		if (!token[0])
 		{
-			G_Error("Lua API: spawn key \"%s\" has no value", key);
-			break;
+			// note: we migth do more than a simple return here
+			// nextmap?
+			G_Printf("%s API: spawn key \"%s\" has no valu\n", key);
+			return;
 		}
 
 		strcpy(value, token);
 
 		if (g_scriptDebug.integer)
 		{
-			G_Printf("Lua API: %d : %s: set [%s] [%s] [%s]\n", level.time, GAMEVERSION, LUA_VERSION, key, value);
+			G_Printf("%s API %d: set [%s] [%s] [%s]\n", LUA_VERSION , level.time, GAMEVERSION, key, value);
 		}
 
 		if (level.numSpawnVars == MAX_SPAWN_VARS)
 		{
-			G_Error("Lua API: can't spawn and entity - MAX_SPAWN_VARS reached");
+			// see above note
+			G_Printf("%s API: can't spawn and entity - MAX_SPAWN_VARS reached.\n", LUA_VERSION);
+			return;
 		}
 
 		level.spawnVars[level.numSpawnVars][0] = G_AddSpawnVarToken(key);
