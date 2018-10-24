@@ -8,17 +8,19 @@ attribute vec4 attr_TexCoord0;
 attribute vec3 attr_Tangent;
 attribute vec3 attr_Binormal;
 attribute vec3 attr_Normal;
-
 attribute vec4 attr_Position2;
 attribute vec3 attr_Tangent2;
 attribute vec3 attr_Binormal2;
 attribute vec3 attr_Normal2;
 
 uniform float u_VertexInterpolation;
-
 uniform mat4 u_DiffuseTextureMatrix;
+
+#if defined(USE_NORMAL_MAPPING)
 uniform mat4 u_NormalTextureMatrix;
 uniform mat4 u_SpecularTextureMatrix;
+#endif
+
 uniform mat4 u_ModelMatrix;
 uniform mat4 u_ModelViewProjectionMatrix;
 

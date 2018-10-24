@@ -2,12 +2,14 @@
 #include "lib/reliefMapping"
 
 uniform sampler2D u_DiffuseMap;
+#if defined(USE_NORMAL_MAPPING)
 uniform sampler2D u_NormalMap;
 uniform sampler2D u_SpecularMap;
-#if defined(USE_NORMAL_MAPPING)
+#if defined(USE_REFLECTIVE_SPECULAR)
 uniform samplerCube u_EnvironmentMap0;
 uniform samplerCube u_EnvironmentMap1;
 uniform float       u_EnvironmentInterpolation;
+#endif
 #endif
 uniform int   u_AlphaTest;
 uniform vec3  u_ViewOrigin;
@@ -69,10 +71,6 @@ void main()
 #endif // end USE_ALPHA_TESTING
 
 
-	// texture coordinates
-	vec2 texNormal   = var_TexNormal.st; // the current texture coordinates st for the normalmap
-	vec2 texSpecular = var_TexSpecular.st; // the current texture coordinates st for the specularmap
-
 	// compute view direction in world space
 	vec3 V = normalize(u_ViewOrigin - var_Position);
 
@@ -88,6 +86,10 @@ void main()
 
 
 #if defined(USE_NORMAL_MAPPING)
+
+	// texture coordinates
+	vec2 texNormal   = var_TexNormal.st; // the current texture coordinates st for the normalmap
+	vec2 texSpecular = var_TexSpecular.st; // the current texture coordinates st for the specularmap
 
 	// invert tangent space for two sided surfaces which are looked at on the back side of that surface (surfaces which are backfacing).
 	// Create the usual tangent space matrix in case we're dealing with a front-facing surface, or when the surface is not two-sided (the usual case).
