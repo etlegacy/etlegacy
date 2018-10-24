@@ -1300,7 +1300,7 @@ gentity_t *G_Lua_CreateEntity(char *params)
 			// note: we migth do more than a simple return here
 			// nextmap?
 			G_Printf("%s API: spawn key \"%s\" has no valu\n", LUA_VERSION, key);
-			return;
+			return NULL;
 		}
 
 		strcpy(value, token);
@@ -1314,7 +1314,7 @@ gentity_t *G_Lua_CreateEntity(char *params)
 		{
 			// see above note
 			G_Printf("%s API: can't spawn and entity - MAX_SPAWN_VARS reached.\n", LUA_VERSION);
-			return;
+			return NULL;
 		}
 
 		level.spawnVars[level.numSpawnVars][0] = G_AddSpawnVarToken(key);
@@ -1341,6 +1341,12 @@ static int _et_G_Lua_CreateEntity(lua_State *L)
 
 	entnum = G_Lua_CreateEntity(params);
 
+	if (entnum == NULL)
+	{
+		//luaL_error(L, "can't create entity");
+		return 0;
+	}
+	
 	lua_pushinteger(L, entnum - g_entities);
 
 	return 1;
