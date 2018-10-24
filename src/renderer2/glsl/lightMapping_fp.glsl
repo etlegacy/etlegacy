@@ -13,6 +13,7 @@ uniform int       u_AlphaTest;
 uniform vec3      u_ViewOrigin;
 uniform float     u_DepthScale;
 uniform vec4      u_PortalPlane;
+uniform vec3      u_LightDir;
 
 varying vec3 var_Position;
 varying vec4 var_TexDiffuseNormal;
@@ -24,8 +25,6 @@ varying vec3 var_Binormal;
 varying vec3 var_Normal;
 
 varying vec4 var_Color;
-
-#define LIGHTMAP_INTENSITY 1
 
 void main()
 {
@@ -40,12 +39,13 @@ void main()
 
 	// compute view direction in world space
 	vec3 V = normalize(u_ViewOrigin - var_Position);
-
 	vec4 lightmapColor  = texture2D(u_LightMap, var_TexLight);
-	vec4 deluxemapColor = texture2D(u_DeluxeMap, var_TexLight);
 
-	//lower the lightmap intensity (this should be done on load)
-	lightmapColor.rgb = pow(lightmapColor.rgb, vec3(1.0 / LIGHTMAP_INTENSITY));
+	//fixme: must be done when there IS a deluxemap. not when we want-to-see (show) deluxemaps (and just pass -some- normalmap as a substitude :S)
+	vec4 deluxemapColor = vec4(0.0, 0.0, 0.0, 1.0);
+	if (SHOW_DELUXEMAP) { // should become something like:  if (USE_DELUXE_MAPPING)
+		deluxemapColor = texture2D(u_DeluxeMap, var_TexLight);
+	}
 
 #if defined(USE_NORMAL_MAPPING)
 
@@ -53,26 +53,27 @@ void main()
 	vec2 texNormal   = var_TexDiffuseNormal.pq;
 	vec2 texSpecular = var_TexSpecular.st;
 
-	// invert tangent space for two sided surfaces
-	mat3 tangentToWorldMatrix;
+
+	// Create the matrix that will transform coordinates from world to tangent space.
+	// invert tangent space for two sided surfaces (if that surface is backfaced).
+	mat3 tangentSpaceMatrix;
 #if defined(TWOSIDED)
-	if (gl_FrontFacing)
-	{
-		tangentToWorldMatrix = mat3(-var_Tangent.xyz, -var_Binormal.xyz, -var_Normal.xyz);
+	if (!gl_FrontFacing) {
+		tangentSpaceMatrix = mat3(-var_Tangent.xyz, -var_Binormal.xyz, -var_Normal.xyz);
 	}
 	else
 #endif
-	{
-		tangentToWorldMatrix = mat3(var_Tangent.xyz, var_Binormal.xyz, var_Normal.xyz);
-	}
+		tangentSpaceMatrix = mat3(var_Tangent.xyz, var_Binormal.xyz, var_Normal.xyz);
+
+	// We invert the view vector V, so we end up with a vector Vts that points away from the surface (to the camera/eye/view).. like the normal N
+	vec3 Vts = normalize(tangentSpaceMatrix * -V);
+
 
 #if defined(USE_PARALLAX_MAPPING)
 	// ray intersect in view direction
 
-	mat3 worldToTangentMatrix = transpose(tangentToWorldMatrix);
-
-	// compute view direction in tangent space
-	vec3 Vts = normalize(worldToTangentMatrix * V);
+	// We invert the view vector V, so we end up with a vector Vts that points away from the surface (to the camera/eye/view).. like the normal N
+	//vec3 Vts = normalize(tangentSpaceMatrix * -V);
 
 	// size and start position of search in texture space
 	vec2 S = Vts.xy * -u_DepthScale / Vts.z;
@@ -108,49 +109,60 @@ void main()
 	}
 #endif
 
-	// compute normal in world space from normalmap
-	vec3 N = normalize(2.0 * (texture2D(u_NormalMap, texNormal).xyz - 0.5));
-	//N.x = -N.x;
-	//N = normalize(N);
-	//N = normalize(var_Normal.xyz);
-	// too expensive in fragment : N = normalize(tangentToWorldMatrix * N);
+	// compute normal in tangent space from normalmap and multiply with tangenttoworldmatrix so it gets to world
+	// each colour component is between 0 and 1, and each vector component is between -1 and 1,
+	//so this simple mapping goes from the texel to the normal
+	vec3 Ntex = texture2D(u_NormalMap, texNormal).xyz * 2.0 - 1.0;
+//	vec3 N = normalize(tangentSpaceMatrix * Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
+vec3 N = Ntex;
+#if defined(r_NormalScale)
+	if (r_NormalScale != 1.0) N.z *= r_NormalScale;
+#endif
 
 	// compute light direction in world space
-	vec3 L = normalize(2.0 * (deluxemapColor.xyz - 0.5));
+	vec3 L = -normalize(u_LightDir);
 
-	// compute half angle in world space
-	vec3 H = normalize(L + V);
+	float dotNL = dot(N, L);
 
-	// compute the specular term
-	vec3 specular = texture2D(u_SpecularMap, texSpecular).rgb;
 
-	float NdotL = clamp(dot(N, L), 0.0, 1.0);
+	// the specular reflections
+	vec3 specular;
+	if (dotNL > 0.0)
+	{
+		// phong
+		vec3 R = reflect(L, N);
+		float shininess = pow(max(0.0, dot(R, Vts)), 64.0); // r_SpecularExponent //) * r_SpecularScale;
+		specular = texture2D(u_SpecularMap, texSpecular).rgb * shininess;
+	}
+	else
+	{
+		specular = vec3(0.0);
+	}
 
-	// compute light color from world space lightmap
-	vec3 lightColor = lightmapColor.rgb * NdotL;
 
-	//float NdotLnobump = clamp(dot(normalize(var_Normal.xyz), L), 0.004, 1.0);
-	//vec3 lightColorNoNdotL = clamp(lightColor.rgb / NdotLnobump, 0.0, 1.0);
+	// light term
+	vec3 light = lightmapColor.rgb;
+//#if defined(r_HalfLambertLighting)	
+//	// compute the light term (half lambert)
+//	float halfLambert = dotNL * 0.5 + 0.5;
+//	halfLambert *= halfLambert;
+//	// compute light color from world space lightmap
+//	light = lightmapColor.rgb * halfLambert;
+//#endif
 
-	//float NdotLnobump = dot(normalize(var_Normal.xyz), L);
-	//vec3 lightColorNoNdotL = lightColor.rgb / NdotLnobump;
 
 	// compute final color
 	vec4 color = diffuse;
-	//color = vec4(vec3(1.0, 1.0, 1.0), diffuse.a);
-	//color.rgb = vec3(NdotLnobump, NdotLnobump, NdotLnobump);
-	//color.rgb *= lightColor.rgb;
-	//color.rgb = lightColorNoNdotL.rgb * NdotL;
-	//color.rgb *= clamp(lightColorNoNdotL.rgb * NdotL, lightColor.rgb * 1.0, lightColor.rgb);
-	//color.rgb *= diffuse.rgb;
-	//color.rgb = L * 0.5 + 0.5;
-	color.rgb *= lightColor;
-	color.rgb += specular * lightColor * pow(clamp(dot(N, H), 0.0, 1.0), r_SpecularExponent) * r_SpecularScale;
-	// for smooth terrain blending
-	color.a   *= var_Color.a; 
+//vec4 color = vec4(diffuse, var_Color.a);
+	color.rgb += specular;
+	color.rgb *= light;
 
-#else // USE_NORMAL_MAPPING
+	// for smooth terrain blending else there is no blending of lightmapped
+//	color.a *= var_Color.a; 
 
+
+#else // DO_NOT_NORMAL_MAPPING
+																  
 	// compute the diffuse term
 	vec4 diffuse = texture2D(u_DiffuseMap, var_TexDiffuseNormal.st);
 
@@ -172,37 +184,26 @@ void main()
 	}
 #endif
 
-	vec3 N;
-
-#if defined(TWOSIDED)
-	if (gl_FrontFacing)
-	{
-		N = -normalize(var_Normal);
-	}
-	else
-#endif
-	{
-		N = normalize(var_Normal);
-	}
-
-	vec3 specular = vec3(0.0, 0.0, 0.0);
-
-	// compute light color from object space lightmap
-	vec3 lightColor = lightmapColor.rgb;
-
+	// compute the final color
 	vec4 color = diffuse;
-	color.rgb *= lightColor;
-	// for smooth terrain blending
-	color.a   *= var_Color.a; 
-#endif
+	color.rgb *= lightmapColor.rgb;
+//	// for smooth terrain blending else there is no blending of lightmapped
+//	color.a *= var_Color.a;
 
+#endif // DO_NOT_NORMAL_MAPPING
+
+	// show only the lightmap?
+	if (SHOW_LIGHTMAP)
+	{
+		gl_FragColor = texture2D(u_LightMap, var_TexLight);
+		return;
+	}
+
+	// show only the deluxemap?
 	if (SHOW_DELUXEMAP)
 	{
-		color = deluxemapColor;
-	}
-	else if (SHOW_LIGHTMAP)
-	{
-		color = lightmapColor;
+		gl_FragColor = texture2D(u_DeluxeMap, var_TexLight);
+		return;
 	}
 
 	gl_FragColor = color;

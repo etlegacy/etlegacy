@@ -16,7 +16,7 @@ uniform float u_VertexInterpolation;
 
 uniform mat4 u_ColorTextureMatrix;
 uniform vec3 u_ViewOrigin;
-uniform int  u_TCGen_Environment;
+//uniform int  u_TCGen_Environment;
 
 uniform float u_Time;
 

@@ -19,6 +19,7 @@ uniform float u_Time;
 
 uniform vec4 u_ColorModulate;
 uniform vec4 u_Color;
+uniform vec3 u_LightDir;
 
 varying vec3 var_Position;
 varying vec4 var_TexDiffuseNormal;

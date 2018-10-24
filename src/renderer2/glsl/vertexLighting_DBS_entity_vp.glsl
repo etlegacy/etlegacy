@@ -24,6 +24,8 @@ uniform mat4 u_ModelViewProjectionMatrix;
 
 uniform float u_Time;
 
+uniform vec3  u_LightColor;
+
 varying vec3 var_Position;
 varying vec2 var_TexDiffuse;
 #if defined(USE_NORMAL_MAPPING)
@@ -33,6 +35,7 @@ varying vec3 var_Tangent;
 varying vec3 var_Binormal;
 #endif
 varying vec3 var_Normal;
+varying vec4 var_LightColor;
 
 void main()
 {
@@ -95,7 +98,6 @@ void main()
 	var_Tangent.xyz  = (u_ModelMatrix * vec4(tangent, 0.0)).xyz;
 	var_Binormal.xyz = (u_ModelMatrix * vec4(binormal, 0.0)).xyz;
 	#endif
-
 	var_Normal.xyz = (u_ModelMatrix * vec4(normal, 0.0)).xyz;
 
 	// transform diffusemap texcoords
@@ -108,4 +110,7 @@ void main()
 	// transform specularmap texture coords
 	var_TexSpecular = (u_SpecularTextureMatrix * attr_TexCoord0).st;
 #endif
+
+
+	var_LightColor = vec4(u_LightColor, 1.0);
 }
