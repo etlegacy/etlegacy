@@ -1859,7 +1859,6 @@ qboolean CG_ConsoleCommand(void)
 void CG_InitConsoleCommands(void)
 {
 	unsigned int i;
-	const char   *s;
 
 	for (i = 0 ; i < sizeof(commands) / sizeof(commands[0]) ; i++)
 	{

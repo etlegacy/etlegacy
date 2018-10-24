@@ -1087,8 +1087,6 @@ void *Display_CaptureItem(int x, int y)
  * @param[in] x
  * @param[in] y
  * @return
- *
- * @todo FIXME: what to fix here?
  */
 qboolean Display_MouseMove(void *p, int x, int y)
 {

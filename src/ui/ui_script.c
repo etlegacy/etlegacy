@@ -1338,12 +1338,10 @@ void Script_ToggleCvarBit(itemDef_t *item, qboolean *bAbort, char **args)
  * @param item - unused
  * @param bAbort - unused
  * @param args - unused
- *
- * @todo TODO: this function does nothing
  */
 void Script_Skip(itemDef_t *item, qboolean *bAbort, char **args)
 {
-	//We do nothing here..
+	// We do nothing here..
 }
 
 commandDef_t commandList[] =

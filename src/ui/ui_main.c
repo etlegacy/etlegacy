@@ -2705,7 +2705,7 @@ static void UI_DrawOpponentName(rectDef_t *rect, float scale, vec4_t color, int 
  */
 static int UI_OwnerDrawWidth(int ownerDraw, float scale)
 {
-	int        i, h, value;
+	int        i, value;
 	const char *text;
 	const char *s = NULL;
 
