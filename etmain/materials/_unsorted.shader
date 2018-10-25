@@ -4,7 +4,27 @@
 
 // ydnar: removed a ton of redundant "alphaGen vertex" directives
 
-//removed leftovers from rtcw 23.02.2017 -Thunder
+axishelmet
+{
+	nomipmap
+	nopicmip
+	{
+		clampmap gfx/2d/lives_axis.tga
+		blendfunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen vertex
+	}
+}
+
+alliedhelmet
+{
+	nomipmap
+	nopicmip
+	{
+		clampmap gfx/2d/lives_allies.tga
+		blendfunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbgen vertex
+	}
+}
 
 blacksmokeanimb1
 {
