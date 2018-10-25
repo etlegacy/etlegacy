@@ -7610,50 +7610,56 @@ void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbeN
  *
  * @param[in] filename
  * @param[in] data
- * @param[in] width
- * @param[in] height
+ * @param[in] width in pixels
+ * @param[in] height in pixels
  */
-void R_SaveCubeProbes(const char *filename, byte *data, int width, int height)
+void R_SaveCubeProbes(const char *filename, byte *pixeldata, int width, int height)
 {
-	byte          *buffer;
-	int           i, c;
-	int           row;
-	unsigned char *flip;
-	unsigned char *src, *dst;
+	byte *buffer, *src, *dst, *flip;
+	int  i, row;
+	int  pixeldataBytes = width * height * 4;
+	int  fileBytes      = 18 + pixeldataBytes;
+	int  w4             = width * 4; // number of bytes for 1 row of pixels;
 
-	buffer = (byte *)ri.Z_Malloc(width * height * 4 + 18);
+	buffer = (byte *)ri.Z_Malloc(fileBytes);
 	Com_Memset(buffer, 0, 18);
-	buffer[2]  = 2;     // uncompressed type
+	buffer[2]  = 2;     // Uncompressed, RGB images
+	//buffer[8] = 0 & 255; // X Origin: X coordinate of the lower left corner of the image
+	//buffer[9] = 0 >> 8;
+	//buffer[10] = (height-1) & 255; // X Origin: X coordinate of the lower left corner of the image
+	//buffer[11] = (height-1) >> 8;
 	buffer[12] = width & 255;
 	buffer[13] = width >> 8;
 	buffer[14] = height & 255;
 	buffer[15] = height >> 8;
-	buffer[16] = 32;    // pixel size
+	buffer[16] = 32;	// Number of bits per pixel
+	//buffer[17] = 8;	// number of attribute bits associated with each pixel (alpha uses 8 bits)
 
-	// special format
-	c = 18 + width * height * 4;
-	for (i = 18 ; i < c ; i += 4)
+	// copy pixel data
+	src = pixeldata;
+	dst = buffer + 18; // we don't write the image identification field, so our dest image only needs to skip the fileheader-length
+	for (i = 0 ; i < pixeldataBytes; i += 4, src += 4, dst += 4)
 	{
-		buffer[i]     = data[i - 18 + 0]; // red
-		buffer[i + 1] = data[i - 18 + 1]; // green
-		buffer[i + 2] = data[i - 18 + 2]; // blue
-		buffer[i + 3] = data[i - 18 + 3]; // alpha
+		dst[0] = src[2]; // b
+		dst[1] = src[1]; // g
+		dst[2] = src[0]; // r
+		//dst[3] = src[3]; // a
+		dst[3] = 255; // alpha = opaque
 	}
 
 	// flip upside down
-	flip = (unsigned char *)ri.Z_Malloc(width * 4);
+	flip = (unsigned char *)ri.Z_Malloc(w4);
 	for (row = 0; row < height / 2; row++)
 	{
-		src = buffer + 18 + row * 4 * width;
-		dst = buffer + 18 + (height - row - 1) * 4 * width;
+		src = buffer + 18 + row * w4;
+		dst = buffer + 18 + (height - row - 1) * w4;
 
-		Com_Memcpy(flip, src, width * 4);
-		Com_Memcpy(src, dst, width * 4);
-		Com_Memcpy(dst, flip, width * 4);
+		Com_Memcpy(flip, src, w4);
+		Com_Memcpy(src, dst, w4);
+		Com_Memcpy(dst, flip, w4);
 	}
-
 	ri.Free(flip);
-	ri.FS_WriteFile(filename, buffer, c);
+	ri.FS_WriteFile(filename, buffer, fileBytes); // this will close the file as well
 	ri.Free(buffer);
 }
 
@@ -7662,7 +7668,7 @@ void R_SaveCubeProbes(const char *filename, byte *data, int width, int height)
  * 
  * Optimize: - Cube probe data is sequential so we don't have to open, (read) and close 
  *           the file each call. But this is muuuch faster than using TGA loader (or creating cubes on load).
- *           Passing pixeldata only or externalizing read/close will again gain performance.
+ *           Pass pixeldata only or externalize read/close will again gain performance.
  *           
  *           - Remove the alpha channel (25% less data)? or use pixel intensity in the alpha channel?
  * 
@@ -7671,55 +7677,54 @@ void R_SaveCubeProbes(const char *filename, byte *data, int width, int height)
  */
 qboolean R_LoadCubeProbe(int cubeProbeNum, byte *cubeTemp[6])
 {
-	byte *buffer = NULL;
-	byte *buffer_pixeldata = NULL;
+	byte *buffer	= NULL;
+	byte *pixeldata	= NULL;
 
 	int i;
 	int totalPos = cubeProbeNum * 6;
-	int fileNum = totalPos / REF_CUBEMAP_STORE_SIZE;
-	int insidePos = insidePos =  totalPos % 1024, cubeSidesInThisFile, cubeSidesInNextFile;
+	int fileNum = totalPos / REF_CUBEMAPS_PER_FILE;    // divide by howmany images fit in one bigger image on file
+	int insidePos = totalPos % REF_CUBEMAPS_PER_FILE;  // the Nth image inside the big texture
+	int sidesFree = REF_CUBEMAPS_PER_FILE - insidePos; // current number of images that still can be fit into the current big texture
+	int cubeSidesInThisFile = (sidesFree >= 6) ? 6 : sidesFree;
+	int cubeSidesInNextFile = 6 - cubeSidesInThisFile;
 	char *filename;
-
-	if (REF_CUBEMAP_STORE_SIZE  - insidePos >= 6) 
-	{		
-		cubeSidesInThisFile = 6;
-	}	
-	else
-	{	
-		cubeSidesInThisFile = (REF_CUBEMAP_STORE_SIZE  - insidePos);
-	}
-
-	cubeSidesInNextFile = 6 - cubeSidesInThisFile;
+	qboolean result = qtrue;
 	
 	//Ren_Print("-> FileNum %i totalPos %i insidepos %i %i (%i)\n", fileNum, totalPos, insidePos , cubeSidesInThisFile, cubeSidesInNextFile);
 
 	filename = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileNum);
 	//Ren_Print("-> index %i, %s\n", fileNum, filename);
 
-	ri.FS_ReadFile(filename, (void **)&buffer);
+	ri.FS_ReadFile(filename, (void **)&buffer); // this lso closes he file after reading the full file into the buffer
 
 	if (buffer)
 	{
-		buffer_pixeldata = buffer + 18; // skip header
+		pixeldata = buffer + 18; // +buffer[0]; // skip header + skip possibly given image identifier field (usually 0 length)
 
-		for (i = 0; i< cubeSidesInThisFile ; i++)
+		for (i = 0; i < cubeSidesInThisFile; i++)
 		{
+/*			// just copy the read pixel data
+			for (int y = 0; y < REF_CUBEMAP_SIZE; y++) {
+				int row = y * REF_CUBEMAP_SIZE * 4;
+				Com_Memcpy(cubeTemp[i] + row, pixeldata + row, REF_CUBEMAP_SIZE * 4);
+			}*/
+
 			// copy this cube map into buffer
-			R_SubImageCpy(buffer_pixeldata,
-							insidePos % REF_CUBEMAP_SIZE, insidePos / REF_CUBEMAP_SIZE,
-							REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
+			R_SubImageCpy(pixeldata,
+							((insidePos + i) % REF_CUBEMAP_SIZE) * REF_CUBEMAP_SIZE, ((insidePos + i) / REF_CUBEMAP_SIZE) * REF_CUBEMAP_SIZE,
+							REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
 							cubeTemp[i],
 							REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
 							4, qfalse);
 		}
 
-		ri.FS_FreeFile(buffer);
 	}
 	else
 	{
 		//Ren_Print("loadCubeProbes: %s not found", filename);
-		return qfalse;
+		result = qfalse;
 	}
+	ri.FS_FreeFile(buffer);
 
 	if (cubeSidesInNextFile > 0) 
 	{
@@ -7729,29 +7734,28 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, byte *cubeTemp[6])
 
 		if (buffer)
 		{
-			buffer_pixeldata = buffer + 18; // skip header
+			pixeldata = buffer + 18; // skip header
 
-			for (i = cubeSidesInThisFile; i < 6 ; i++)
+			for (i = 0; i < cubeSidesInThisFile; i++) //(i = cubeSidesInThisFile; i < 6 ; i++)
 			{
 				// copy this cube map into buffer
-				R_SubImageCpy(buffer_pixeldata,
-								0, 0,
-								REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
+				R_SubImageCpy(pixeldata,
+								((insidePos + i) % REF_CUBEMAP_SIZE) * REF_CUBEMAP_SIZE, ((insidePos + i) / REF_CUBEMAP_SIZE) * REF_CUBEMAP_SIZE,
+								REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
 								tr.cubeTemp[i],
 								REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
 								4, qfalse);
 			}
-
-			ri.FS_FreeFile(buffer);
 		}
 		else
 		{
 			//Ren_Print("loadCubeProbes: %s not found", filename);
-			return qfalse;
+			result = qfalse;
 		}
+		ri.FS_FreeFile(buffer);
 	}
 
-	return qtrue;
+	return result; // result == true if all the sides of the cube could be loaded,
 }
 	
 /**
@@ -7767,11 +7771,12 @@ void R_BuildCubeMaps(void)
 	//byte           *dest;    // encode the pixel intensity into the alpha channel
 	//byte   r, g, b, best;    // encode the pixel intensity into the alpha channel
 
-	byte *fileBuf  = NULL;
-	char *fileName = NULL;
-	int  fileCount = 0;
-	int  fileBufX  = 0;
-	int  fileBufY  = 0;
+	byte		*pixeldata	= NULL;
+	char		*fileName	= NULL;
+	int			fileCount	= 0; // the cm_ file numbering
+	int			sideX		= 0; // this cube side image is the Nth image from the left (in the bigger texture)
+	int			sideY		= 0; // this cube side image is the Nth image from the top (in the bigger texture)
+	qboolean	dirtyBuf	= qfalse; // true if there is something in the fileBuf, and the fileBuf has not been written to disk yet.
 	
 	qboolean createCM = qfalse;
 
@@ -7801,7 +7806,8 @@ void R_BuildCubeMaps(void)
 	fileName = va("cm/%s/cm_0000.tga", s_worldData.baseName);
 	if (!ri.FS_FileExists(fileName))
 	{
-		fileBuf = ri.Z_Malloc(REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4);
+		pixeldata = ri.Z_Malloc(REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4);
+		Com_Memset(pixeldata, 255, REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4); // Initialize output buffer
 		createCM = qtrue;
 		Ren_Developer("Cubemaps not found!\n");
 	}
@@ -8112,11 +8118,9 @@ void R_BuildCubeMaps(void)
 				tr.refdef.pixelTargetWidth  = REF_CUBEMAP_SIZE;
 				tr.refdef.pixelTargetHeight = REF_CUBEMAP_SIZE;
 		
-				if (createCM)
-				{
-					RE_BeginFrame();
-					RE_RenderScene(&rf);
-					RE_EndFrame(&ii, &jj);
+				RE_BeginFrame();
+				RE_RenderScene(&rf);
+				RE_EndFrame(&ii, &jj);
 
 #if 0 // encode the pixel intensity into the alpha channel, saves work in the shader		
 				//if (qtrue)
@@ -8151,39 +8155,36 @@ void R_BuildCubeMaps(void)
 				}
 #endif
 
-					// collate cubemaps into one large image and write it out
-
-					// Initialize output buffer
-					if (fileBufX == 0 && fileBufY == 0)
-					{
-						Com_Memset(fileBuf, 255, REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4);
-					}
+				// collate cubemaps into one large image and write it out
 		
-					// Copy this cube map into buffer
-					R_SubImageCpy(fileBuf,
-								  fileBufX * REF_CUBEMAP_SIZE, fileBufY * REF_CUBEMAP_SIZE,
-								  REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
-								  tr.cubeTemp[i],
-								  REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
-								  4, qtrue);
+				// Copy this cube map into buffer
+				R_SubImageCpy(pixeldata,
+								sideX * REF_CUBEMAP_SIZE, sideY * REF_CUBEMAP_SIZE,
+								REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
+								tr.cubeTemp[i],
+								REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
+								4, qtrue);
 		
-					// Increment everything
-					fileBufX++;
-					if (fileBufX >= REF_CUBEMAP_STORE_SIDE)
+				dirtyBuf = qtrue;
+				// Increment everything
+				sideX++;
+				if (sideX >= REF_CUBEMAP_STORE_SIDE)
+				{
+					sideX = 0;
+					sideY++;
+					if (sideY >= REF_CUBEMAP_STORE_SIDE)
 					{
-						fileBufY++;
-						fileBufX = 0;
-					}
-					if (fileBufY >= REF_CUBEMAP_STORE_SIDE)
-					{
+						sideY = 0;
 						// File is full, write it
 						fileName = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileCount);
-						//Ren_Print("\nwriting %s\n", fileName);
-						ri.FS_WriteFile(fileName, fileBuf, 1);  // create path
-		
-						R_SaveCubeProbes(fileName, fileBuf, REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE);
+						// provide a pointer to the pixeldata (not to the start of the header)
+						R_SaveCubeProbes(fileName, pixeldata, REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE);
+
 						fileCount++;
-						fileBufY = 0;
+						dirtyBuf = qfalse;
+
+						// Initialize output buffer
+						Com_Memset(pixeldata, 255, REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4);
 					}
 				}
 			}
@@ -8217,16 +8218,15 @@ void R_BuildCubeMaps(void)
 	if (createCM)
 	{
 		// write buffer if theres any still unwritten
-		if (fileBufX != 0 || fileBufY != 0)
+		if (dirtyBuf)
 		{
 			fileName = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileCount);
 			//Ren_Print("writing %s\n", fileName);
-			ri.FS_WriteFile(fileName, fileBuf, 1);  // create path
-			R_SaveCubeProbes(fileName, fileBuf, REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE);
+			R_SaveCubeProbes(fileName, pixeldata, REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE);
 		}
 
 		Ren_Print("Wrote %d cubemaps in %d files.\n", j, fileCount + 1);
-		ri.Free(fileBuf);
+		ri.Free(pixeldata);
 	}
 	else
 	{
