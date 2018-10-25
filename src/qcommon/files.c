@@ -1468,7 +1468,7 @@ long FS_FOpenFileReadDir(const char *fileName, searchpath_t *search, fileHandle_
 						    !FS_IsExt(fileName, ".menu", len) &&
 						    Q_stricmp(fileName, Sys_GetDLLName("qagame")) != 0 &&
 						    !strstr(fileName, "levelshots") &&
-							!FS_IsExt(fileName, ".campaign", len) // don't reference for gametype != 4 - see below
+							!FS_IsExt(fileName, ".campaign", len) // don't referernce for gametype != 4 - see below
 							)
 						{
 							pak->referenced |= FS_GENERAL_REF;
@@ -1479,7 +1479,7 @@ long FS_FOpenFileReadDir(const char *fileName, searchpath_t *search, fileHandle_
 						// this won't trigger for the first map because g_gametype is latched cvar and cvar modfifications are processed later on
 						// ... but this is better than populating the CS with not needed references and forcing players to download
 						// maps/pk3s containing campaign files in other gametypes - delete the print after fix
-						if (FS_IsExt(fileName, ".campaign", len) &&  (Cvar_VariableIntegerValue("g_gametype") == 4 || com_dedicated->integer == 0)) // keep old behavoiur for listen servers
+						if (FS_IsExt(fileName, ".campaign", len) &&  (Cvar_VariableIntegerValue("g_gametype") == 4 || com_dedicated->integer == 0)) // keep old behaviour for listen servers
 						{
 							pak->referenced |= FS_GENERAL_REF;
 							Com_Printf("Campaign files in PK3s are referenced!\n");
@@ -4882,6 +4882,11 @@ int FS_FTell(fileHandle_t f)
 	if (fsh[f].zipFile == qtrue)
 	{
 		pos = unztell(fsh[f].handleFiles.file.z);
+
+		if (pos == UNZ_PARAMERROR)
+		{
+			Com_Error(ERR_FATAL, "FS_FTell: Cannot get current position in zip\n");
+		}
 	}
 	else
 	{
@@ -4889,8 +4894,7 @@ int FS_FTell(fileHandle_t f)
 
 		if (pos == -1)
 		{
-			// FIXME: change to com error?
-			Com_Printf(S_COLOR_YELLOW "FS_FTell WARNING: cannot get current position in stream\n");
+			Com_Error(ERR_FATAL, "FS_FTell: Cannot get current position in file stream\n");
 		}
 	}
 
