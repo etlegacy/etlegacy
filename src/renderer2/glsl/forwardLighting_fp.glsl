@@ -982,13 +982,11 @@ void    main()
 	vec3 H = normalize(L + V);
 
 	// compute normal in tangent space from normalmap
-	vec3 N = 2.0 * (texture2D(u_NormalMap, texNormal.st).xyz - 0.5);
+	vec3 N = normalize(2.0 * (texture2D(u_NormalMap, texNormal.st).xyz - 0.5));
 
 #if defined(r_NormalScale)
-	N.z *= r_NormalScale;
+	if (r_NormalScale != 1.0) N.z *= r_NormalScale;
 #endif
-
-	N = normalize(N);
 
 	// transform normal into world space
 	N = normalize(tangentToWorldMatrix * N);

@@ -2233,7 +2233,9 @@ static void Render_liquid(int stage)
 	VectorCopy(light->direction, lightDirection);
 #endif
 
+	// FIXME: lightgrid
 	SetUniformVec3(UNIFORM_LIGHTDIR, lightDirection);
+	SetUniformVec3(UNIFORM_LIGHTCOLOR, tr.sunLight); // the sun again..
 
 	// capture current color buffer for u_CurrentMap
 	SelectTexture(TEX_CURRENT);
@@ -3215,7 +3217,7 @@ void Tess_StageIteratorGeneric()
 				{
 					// treat brushmodels as world
 					model_t *pmodel = R_GetModelByHandle(backEnd.currentEntity->e.hModel);
-					isWorld = (pmodel && pmodel->type == MOD_BSP && pmodel->bsp); // FIXME_ check r_worldInlineModels
+					isWorld = (pmodel && pmodel->type == MOD_BSP && pmodel->bsp && r_worldInlineModels->integer); // FIXME_ check r_worldInlineModels
 				}
 
 				// vertex lighting superseeds precomputed lighting (lightmap rendering)

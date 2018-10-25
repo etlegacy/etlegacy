@@ -1139,6 +1139,11 @@ static void GLSL_restart_f(void)
 	GLSL_CompileGPUShaders();
 }
 
+void R_BuildCubeMaps_f(void)
+{
+	R_BuildCubeMaps(); // qtrue
+}
+
 /**
  * @brief R_Register
  */
@@ -1487,7 +1492,7 @@ void R_Register(void)
 	ri.Cmd_AddSystemCommand("screenshotPNG", R_ScreenShotPNG_f, "Takes a PNG screenshot of current frame.", NULL);
 	ri.Cmd_AddSystemCommand("gfxinfo", GfxInfo_f, "Prints GFX info of current system.", NULL);
 	//ri.Cmd_AddSystemCommand("generatemtr", R_GenerateMaterialFile_f, "Generate material file", NULL);
-	ri.Cmd_AddSystemCommand("buildcubemaps", R_BuildCubeMaps, "Builds cubemaps for the current loaded map.", NULL);
+	ri.Cmd_AddSystemCommand("buildcubemaps", R_BuildCubeMaps_f, "Builds cubemaps for the current loaded map.", NULL);
 
 	ri.Cmd_AddSystemCommand("glsl_restart", GLSL_restart_f, "Restarts the GLSL subsystem.", NULL);
 }

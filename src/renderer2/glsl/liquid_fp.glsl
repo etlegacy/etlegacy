@@ -15,6 +15,7 @@ uniform float     u_NormalScale;
 uniform mat4      u_ModelMatrix;
 uniform mat4      u_UnprojectMatrix;
 uniform vec3      u_LightDir;
+uniform vec3      u_LightColor;
 uniform vec4      u_PortalPlane;
 uniform float     u_DepthScale;
 
@@ -23,7 +24,6 @@ varying vec2 var_TexNormal;
 varying vec3 var_Tangent;
 varying vec3 var_Binormal;
 varying vec3 var_Normal;
-varying vec4 var_LightColor;
 
 #if defined(USE_PARALLAX_MAPPING)
 float RayIntersectDisplaceMap(vec2 dp, vec2 ds)
@@ -139,10 +139,8 @@ void main()
 	vec3 N = var_Normal.xyz;
 
 #if defined(r_NormalScale)
-	N.z *= r_NormalScale;
+	if (r_NormalScale != 1.0) N.z *= r_NormalScale;
 #endif
-
-	N = normalize(N);
 
 	vec3 N2 = 2.0 * (texture2D(u_NormalMap, texNormal).xyz - 0.5); // FIXME: normalize?
 	N2 = normalize(tangentToWorldMatrix * N2);
@@ -185,13 +183,13 @@ void main()
 	}
 
 	// compute light direction in world space
-	vec3 L = normalize(u_LightDir);
+	vec3 L = normalize(u_LightDir); // don't do -L
 
 	// compute half angle in world space
 	vec3 H = normalize(L + V);
 
 	// compute the light term
-	vec3 light = var_LightColor.rgb * clamp(dot(N2, L), 0.0, 1.0);
+	vec3 light = u_LightColor * clamp(dot(N2, L), 0.0, 1.0);
 
 	// compute the specular term
 	vec3 specular = reflectColor * light * pow(clamp(dot(N2, H), 0.0, 1.0), r_SpecularExponent) * r_SpecularScale;

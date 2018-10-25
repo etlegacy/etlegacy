@@ -30,13 +30,11 @@ void main()
 
 #if defined(USE_NORMAL_MAPPING)
 	// compute normal in tangent space from normalmap
-	vec3 N = 2.0 * (texture2D(u_NormalMap, var_TexNormal.st).xyz - 0.5);
+	vec3 N = normalize(2.0 * (texture2D(u_NormalMap, var_TexNormal.st).xyz - 0.5));
 
 #if defined(r_NormalScale)
-	N.z *= r_NormalScale;
+	if (r_NormalScale != 1.0) N.z *= r_NormalScale;
 #endif
-
-	N = normalize(N);
 
 	// invert tangent space for twosided surfaces
 	mat3 tangentToWorldMatrix;
