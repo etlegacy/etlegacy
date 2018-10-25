@@ -2683,7 +2683,7 @@ image_t *R_FindCubeImage(const char *imageName, int bits, filterType_t filterTyp
 		pic[i] = NULL;
 	}
 
-tryQuakeSuffices:
+//tryQuakeSuffices:
 	for (i = 0; i < 6; i++)
 	{
 		Com_sprintf(filename, sizeof(filename), "%s_%s", buffer, quakeSuffices[i]);
@@ -2776,8 +2776,9 @@ tryDoom3Suffices:
 		R_Rotate(pic[i], width, height, doom3Rot[i]);
 	}
 	//goto createCubeImage;
-*/
+
 createCubeImage:
+*/
 	image = R_CreateCubeImage((char *)buffer, (const byte **)pic, width, height, bits, filterType, wrapType);
 
 skipCubeImage:
@@ -3638,12 +3639,10 @@ void R_SetColorMappings(void)
 		s_intensitytable[i] = j;
 	}
 
-	/*
-	if (glConfig.deviceSupportsGamma)
-	{
-	    GLimp_SetGamma(s_gammatable, s_gammatable, s_gammatable);
-	}
-	*/
+	//if (glConfig.deviceSupportsGamma)
+	//{
+	//   ri.GLimp_SetGamma(s_gammatable, s_gammatable, s_gammatable);
+	//}
 }
 
 /**
