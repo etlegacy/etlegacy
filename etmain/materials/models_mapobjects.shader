@@ -1427,7 +1427,7 @@ models/mapobjects/plants/bushes3
 // Plants 
 //**********************************************************************
 
-models/mapobjects/plants_sd/bush_desert1.tga
+models/mapobjects/plants_sd/bush_desert1
 {
 	qer_alphafunc greater 0.5
 	qer_editorimage models/mapobjects/plants_sd/bush_desert1
@@ -1439,7 +1439,7 @@ models/mapobjects/plants_sd/bush_desert1.tga
 	implicitMask -
 }
 
-models/mapobjects/plants_sd/bush_desert2.tga
+models/mapobjects/plants_sd/bush_desert2
 { 
      qer_alphafunc greater 0.5 
      qer_editorimage models/mapobjects/plants_sd/bush_desert2.tga
@@ -1602,7 +1602,7 @@ models/mapobjects/plants_sd/shrub_green1
 	implicitMask -
 }
 
-models/mapobjects/plants_sd/shrub_green2.tga
+models/mapobjects/plants_sd/shrub_green2
 {
 	nopicmip
 	qer_alphafunc greater 0.5
@@ -1950,7 +1950,7 @@ models/mapobjects/rocks_sd/rock_snow
 models/mapobjects/rocks_sd/rock_snow_small
 {
 	qer_editorimage models/mapobjects/rocks_sd/rock_snow_small
-	implicitMap models/mapobjects/rocks_sd/rock_snow_small
+	implicitMap models/mapobjects/rocks_sd/rock_snow_small.tga
 }
 
 models/mapobjects/rocks_sd/rock_snow_big
