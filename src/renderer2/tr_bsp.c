@@ -7809,7 +7809,7 @@ void R_BuildCubeMaps(void)
 	{
 		Ren_Developer("Cubemaps found!\n");
 	}
-	
+
 	// calculate origins for our probes
 	Com_InitGrowList(&tr.cubeProbes, 4000);
 	tr.cubeHashTable = NewVertexHashTable();
@@ -8165,7 +8165,7 @@ void R_BuildCubeMaps(void)
 								  REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
 								  tr.cubeTemp[i],
 								  REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
-								  3, qtrue);
+								  4, qtrue);
 		
 					// Increment everything
 					fileBufX++;
@@ -8212,7 +8212,7 @@ void R_BuildCubeMaps(void)
 
 		glBindTexture(cubeProbe->cubemap->type, 0);
 	}
-	Ren_Print("\n");
+	//Ren_Print("\n");
 
 	if (createCM)
 	{
