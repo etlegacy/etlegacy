@@ -126,8 +126,8 @@ void G_BounceMissile(gentity_t *ent, trace_t *trace)
 		//if ( trace->plane.normal[2] > 0.2 && VectorLengthSquared( ent->s.pos.trDelta ) < Square(40) )
 		if (trace->plane.normal[2] > 0.2f && VectorLengthSquared(relativeDelta) < 1600) // Square(40)
 		{
-			// make the world the owner of the dynamite, so the player can shoot it after it stops moving
-			if (ent->s.weapon == WP_DYNAMITE || ent->s.weapon == WP_LANDMINE || ent->s.weapon == WP_SATCHEL)
+			// make the world the owner of the ent, so the player can shoot it after it stops moving
+			if (ent->r.contents == CONTENTS_CORPSE)
 			{
 				ent->r.ownerNum = ENTITYNUM_WORLD;
 			}
@@ -505,7 +505,7 @@ void G_RunMissile(gentity_t *ent)
 	{
 		if (ent->count)
 		{
-            // is ent outside worldspace (X or Y coord)
+			// is ent outside worldspace (X or Y coord)
 			if (ent->r.currentOrigin[0] < level.mapcoordsMins[0] ||
 			    ent->r.currentOrigin[1] > level.mapcoordsMins[1] ||
 			    ent->r.currentOrigin[0] > level.mapcoordsMaxs[0] ||
@@ -527,7 +527,7 @@ void G_RunMissile(gentity_t *ent)
 
 				skyHeight = BG_GetSkyHeightAtPoint(origin);
 
-                // is ent under the ground limit
+				// is ent under the ground limit
 				if (origin[2] < BG_GetTracemapGroundFloor())
 				{
 					gentity_t *tent;
@@ -550,7 +550,7 @@ void G_RunMissile(gentity_t *ent)
 					return;     // keep flying
 				}
 
-                // is ent above the sky limit
+				// is ent above the sky limit
 				if (skyHeight <= origin[2])
 				{
 					G_RunThink(ent);
