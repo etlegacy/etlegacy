@@ -923,9 +923,9 @@ gitem_t bg_itemlist[] =
 			0,
 			0
 		},
-		"",                      // icon
-		"",                      // ammo icon
-		"BLANK",             // pickup
+		"",                     // icon
+		"",                     // ammo icon
+		"BLANK",                // pickup
 		0,                      // quantity
 		IT_WEAPON,              // item type
 		WP_DUMMY_MG42,          // giTag
@@ -1286,7 +1286,7 @@ gitem_t bg_itemlist[] =
 	{
 		ITEM_WEAPON_MAPMORTAR,
 		"weapon_mapmortar",
-		"sound/misc/w_pkup.wav",
+		"",
 		{
 			"models/weapons2/grenade/grenade.md3",
 			"models/weapons2/grenade/v_grenade.md3",
@@ -1483,7 +1483,7 @@ gitem_t bg_itemlist[] =
 	{
 		ITEM_WEAPON_K43_SCOPE,
 		"weapon_kar43_scope",
-		"sound/misc/w_pkup.wav",
+		"",
 		{
 			"models/multiplayer/kar98/kar98_3rd.md3",
 			"models/multiplayer/kar98/v_kar98.md3",
@@ -1627,7 +1627,7 @@ gitem_t bg_itemlist[] =
 	{
 		ITEM_WEAPON_GARAND_SCOPE,
 		"weapon_garandRifleScope",
-		"sound/misc/w_pkup.wav",
+		"",
 		{
 			"models/multiplayer/m1_garand/m1_garand_3rd.md3",
 			"models/multiplayer/m1_garand/v_m1_garand.md3",
@@ -1675,7 +1675,7 @@ gitem_t bg_itemlist[] =
 	{
 		ITEM_WEAPON_FG42SCOPE,
 		"weapon_fg42scope",
-		"sound/misc/w_pkup.wav",
+		"",
 		{
 			"models/weapons2/fg42/fg42.md3",
 			"models/weapons2/fg42/v_fg42.md3",
@@ -1720,7 +1720,7 @@ gitem_t bg_itemlist[] =
 	{
 		ITEM_WEAPON_MORTAR_SET,
 		"weapon_mortar_set",
-		"sound/misc/w_pkup.wav",
+		"",
 		{
 			"models/multiplayer/mortar/mortar_3rd.md3",
 			"models/multiplayer/mortar/v_mortar.md3",
@@ -1760,7 +1760,7 @@ gitem_t bg_itemlist[] =
 	{
 		ITEM_WEAPON_MORTAR2_SET,
 		"weapon_mortar2_set",
-		"sound/misc/w_pkup.wav", // FIXME: I've never heard this
+		"",
 		{
 			"models/multiplayer/mortar/mortar_3rd.md3",
 			"models/multiplayer/mortar/v_mortar.md3",
@@ -1886,7 +1886,7 @@ gitem_t bg_itemlist[] =
 	{
 		ITEM_WEAPON_MOBILE_MG42_SET,
 		"weapon_mobile_mg42_set",
-		"sound/misc/w_pkup.wav",
+		"",
 		{
 			"models/multiplayer/mg42/mg42_3rd.md3",
 			"models/multiplayer/mg42/v_mg42.md3",
@@ -1906,7 +1906,7 @@ gitem_t bg_itemlist[] =
 	{
 		ITEM_WEAPON_MOBILE_BROWNING_SET,
 		"weapon_mobile_browning_set",
-		"sound/misc/w_pkup.wav",
+		"",
 		{
 			"models/weapons2/browning/brown30cal_3rd.md3",
 			"models/weapons2/browning/v_brown30cal.md3",
