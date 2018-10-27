@@ -6,15 +6,17 @@
 attribute vec4 attr_Position;
 attribute vec4 attr_TexCoord0;
 attribute vec3 attr_Normal;
+#if defined(USE_VERTEX_ANIMATION)
+attribute vec4 attr_Position2;
+attribute vec3 attr_Normal2;
+#endif // USE_VERTEX_ANIMATION
 #if defined(USE_NORMAL_MAPPING)
 attribute vec3 attr_Tangent;
 attribute vec3 attr_Binormal;
 #if defined(USE_VERTEX_ANIMATION)
-attribute vec4 attr_Position2;
 attribute vec3 attr_Tangent2;
 attribute vec3 attr_Binormal2;
-attribute vec3 attr_Normal2;
-#endif // USE_VERTEX_ANIMATION
+#endif // USE_VERTEX_ANIMATION 
 #endif // USE_NORMAL_MAPPING
 
 uniform mat4 u_ModelMatrix;
