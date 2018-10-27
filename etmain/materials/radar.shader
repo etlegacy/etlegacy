@@ -1,9 +1,9 @@
 textures/radar/dirt_m03icmp_brown
 {
 	qer_editorimage textures/temperate_sd/dirt_m03icmp_brown.tga
-	diffusemap textures/radar/dirt_m03icmp_brown.tga
-	bumpmap textures/radar/dirt_m03icmp_brown_n.tga
-	specularmap textures/radar/dirt_m03icmp_brown_s.tga
+	diffuseMap textures/radar/dirt_m03icmp_brown.tga
+	bumpMap textures/radar/dirt_m03icmp_brown_n.tga
+	specularMap textures/radar/dirt_m03icmp_brown_s.tga
 	cull twosided
 	surfaceparm trans
 	rgbGen identity	
@@ -17,9 +17,9 @@ textures/radar/dirt_m03icmp_brown
 textures/radar/dirt_m04cmp_brown
 {
 	qer_editorimage textures/temperate_sd/dirt_m04cmp_brown.tga
-	diffusemap textures/radar/dirt_m04cmp_brown.tga
-	bumpmap textures/radar/dirt_m04cmp_brown_n.tga
-	specularmap textures/radar/dirt_m04cmp_brown_s.tga
+	diffuseMap textures/radar/dirt_m04cmp_brown.tga
+	bumpMap textures/radar/dirt_m04cmp_brown_n.tga
+	specularMap textures/radar/dirt_m04cmp_brown_s.tga
 	cull twosided
 	surfaceparm trans
 	rgbGen identity	
@@ -44,7 +44,7 @@ textures/radar/fog
 
 textures/radar/lmterrain2_base
 {
-	q3map_normalimage textures/sd_bumpmaps/normalmap_terrain
+	q3map_normalimage textures/sd_bumpMaps/normalmap_terrain
 	
 	q3map_lightmapsize 512 512
 	q3map_lightmapMergable
@@ -81,36 +81,36 @@ textures/radar/lmterrain2_0
 	q3map_baseshader textures/radar/lmterrain2_base
 	
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/master_grass_dirt3.tga
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/master_grass_dirt3_n.tga
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/master_grass_dirt3_s.tga
 		rgbgen identity
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/master_grass_dirt3.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/master_grass_dirt3_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/master_grass_dirt3_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -127,37 +127,37 @@ textures/radar/lmterrain2_1
 {
 	q3map_baseshader textures/radar/lmterrain2_foliage_base
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/grass_path1.tga
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/grass_path1_n.tga
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/grass_path1_s.tga
 		rgbgen identity
 	}
 	
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/grass_path1.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/grass_path1_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/grass_path1_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -175,37 +175,37 @@ textures/radar/lmterrain2_2
 {
 	q3map_baseshader textures/radar/lmterrain2_base
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/grass_dense1.tga
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/grass_dense1_n.tga
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/grass_dense1_s.tga
 		rgbgen identity
 	}
 	
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/grass_dense1.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/grass_dense1_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/grass_dense1_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -223,36 +223,36 @@ textures/radar/lmterrain2_3
 {
 	q3map_baseshader textures/radar/lmterrain2_base
     {
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/rock_ugly_brown.tga
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/rock_ugly_brown_n.tga
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/rock_ugly_brown_s.tga
 		rgbgen identity
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/rock_ugly_brown.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/rock_ugly_brown_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/rock_ugly_brown_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -270,35 +270,35 @@ textures/radar/lmterrain2_4
 	q3map_baseshader textures/radar/lmterrain2_base
    
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/dirt3.tga
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/dirt3_n.tga
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/dirt3_s.tga
 		rgbgen identity
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/dirt3.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
-	{   stage bumpmap
+	{   stage bumpMap
 	    map textures/temperate_sd/dirt3_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 	    map textures/temperate_sd/dirt3_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -315,33 +315,33 @@ textures/radar/lmterrain2_5
 {
 	q3map_baseshader textures/radar/lmterrain2_base
     {
-	   stage diffusemap
+	   stage diffuseMap
 		map textures/temperate_sd/grass_ml03cmp.tga
 		rgbgen identity
 	}
-	{   stage bumpmap
+	{   stage bumpMap
 		map textures/temperate_sd/grass_ml03cmp_n.tga
 		rgbgen identity
 	}
-	{   stage specularmap
+	{   stage specularMap
 		map textures/temperate_sd/grass_ml03cmp_s.tga
 		rgbgen identity
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/grass_ml03cmp.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
-	{   stage bumpmap
+	{   stage bumpMap
 	    map textures/temperate_sd/grass_ml03cmp_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 	    map textures/temperate_sd/grass_ml03cmp_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -359,35 +359,35 @@ textures/radar/lmterrain2_0to1
 	q3map_baseshader textures/radar/lmterrain2_foliage_fade
 
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/master_grass_dirt3.tga
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/master_grass_dirt3_n.tga
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/master_grass_dirt3_s.tga
 		rgbgen identity
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/grass_path1.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
-	{   stage bumpmap
+	{   stage bumpMap
 	    map textures/temperate_sd/grass_path1_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 	    map textures/temperate_sd/grass_path1_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -405,36 +405,36 @@ textures/radar/lmterrain2_0to2
 	q3map_baseshader textures/radar/lmterrain2_base
 
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/master_grass_dirt3.tga
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/master_grass_dirt3_n.tga
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/master_grass_dirt3_s.tga
 		rgbgen identity
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/grass_dense1.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/grass_dense1_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/grass_dense1_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -452,36 +452,36 @@ textures/radar/lmterrain2_0to3
 	q3map_baseshader textures/radar/lmterrain2_base
 	
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/master_grass_dirt3.tga
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/master_grass_dirt3_n.tga
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/master_grass_dirt3_s.tga
 		rgbgen identity
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/rock_ugly_brown.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/rock_ugly_brown_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/rock_ugly_brown_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -499,36 +499,36 @@ textures/radar/lmterrain2_0to4
 	q3map_baseshader textures/radar/lmterrain2_base
 	
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/master_grass_dirt3.tga
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/master_grass_dirt3_n.tga
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/master_grass_dirt3_s.tga
 		rgbgen identity
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/dirt3.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/dirt3_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/dirt3_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -545,36 +545,36 @@ textures/radar/lmterrain2_0to5
 	q3map_baseshader textures/radar/lmterrain2_base
 	
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/master_grass_dirt3.tga
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/master_grass_dirt3_n.tga
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/master_grass_dirt3_s.tga
 		rgbgen identity
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/grass_ml03cmp.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/grass_ml03cmp_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/grass_ml03cmp_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -592,35 +592,35 @@ textures/radar/lmterrain2_1to2
 	q3map_baseshader textures/radar/lmterrain2_foliage_base
 	
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/grass_path1.tga
 		rgbgen identity
 	}
-	{   stage bumpmap
+	{   stage bumpMap
 	    map textures/temperate_sd/grass_path1_n.tga
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 	    map textures/temperate_sd/grass_path1_s.tga
 		rgbgen identity
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/grass_dense1.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/grass_dense1_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/grass_dense1_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -638,35 +638,35 @@ textures/radar/lmterrain2_1to3
 	q3map_baseshader textures/radar/lmterrain2_foliage_base
 	
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/grass_path1.tga
 		rgbgen identity
 	}
-	{   stage bumpmap
+	{   stage bumpMap
 	    map textures/temperate_sd/grass_path1_n.tga
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 	    map textures/temperate_sd/grass_path1_s.tga
 		rgbgen identity
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/rock_ugly_brown.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/rock_ugly_brown_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/rock_ugly_brown_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -684,35 +684,35 @@ textures/radar/lmterrain2_1to4
 	q3map_baseshader textures/radar/lmterrain2_foliage_base
 	
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/grass_path1.tga
 		rgbgen identity
 	}
-	{   stage bumpmap
+	{   stage bumpMap
 	    map textures/temperate_sd/grass_path1_n.tga
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 	    map textures/temperate_sd/grass_path1_s.tga
 		rgbgen identity
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/dirt3.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/dirt3_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/dirt3_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -730,35 +730,35 @@ textures/radar/lmterrain2_1to5
 	q3map_baseshader textures/radar/lmterrain2_foliage_base
 	
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/grass_path1.tga
 		rgbgen identity
 	}
-	{   stage bumpmap
+	{   stage bumpMap
 	    map textures/temperate_sd/grass_path1_n.tga
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 	    map textures/temperate_sd/grass_path1_s.tga
 		rgbgen identity
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/grass_ml03cmp.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/grass_ml03cmp_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/grass_ml03cmp_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -776,37 +776,37 @@ textures/radar/lmterrain2_2to3
 	q3map_baseshader textures/radar/lmterrain2_base
 	
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/grass_dense1.tga
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/grass_dense1_n.tga
 		rgbgen identity
 		
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/grass_dense1_s.tga
 		rgbgen identity
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/rock_ugly_brown.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/rock_ugly_brown_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/rock_ugly_brown_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -824,36 +824,36 @@ textures/radar/lmterrain2_2to4
 	q3map_baseshader textures/radar/lmterrain2_base
 	
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/grass_dense1.tga
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/grass_dense1_n.tga
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/grass_dense1_s.tga
 		rgbgen identity
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/dirt3.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/dirt3_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/dirt3_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -871,37 +871,37 @@ textures/radar/lmterrain2_2to5
 	q3map_baseshader textures/radar/lmterrain2_base
 	
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/grass_dense1.tga
 		rgbgen identity
 		
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/grass_dense1_n.tga
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/grass_dense1_s.tga
 		rgbgen identity
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/grass_ml03cmp.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/grass_ml03cmp_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/grass_ml03cmp_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -919,36 +919,36 @@ textures/radar/lmterrain2_3to4
 	q3map_baseshader textures/radar/lmterrain2_base
 	
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/rock_ugly_brown.tga
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/rock_ugly_brown_n.tga
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/rock_ugly_brown_s.tga
 		rgbgen identity
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/dirt3.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/dirt3_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/dirt3_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -966,36 +966,36 @@ textures/radar/lmterrain2_3to5
 	q3map_baseshader textures/radar/lmterrain2_base
 	
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/rock_ugly_brown.tga
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/rock_ugly_brown_n.tga
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/rock_ugly_brown_s.tga
 		rgbgen identity
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/grass_ml03cmp.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/grass_ml03cmp_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/grass_ml03cmp_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -1013,36 +1013,36 @@ textures/radar/lmterrain2_4to5
 	q3map_baseshader textures/radar/lmterrain2_base
 	
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/dirt3.tga
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/dirt3_n.tga
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/dirt3_s.tga
 		rgbgen identity
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/grass_ml03cmp.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/grass_ml03cmp_n.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbgen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/grass_ml03cmp_s.tga
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -1074,17 +1074,17 @@ textures/radar/road_wet
 	
 	surfaceparm trans
 	{
-	    stage diffusemap
+	    stage diffuseMap
 	    Map textures/temperate_sd/dirt_m03icmp_brown.tga
 		rgbGen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 	    Map textures/temperate_sd/dirt_m03icmp_brown.tga
 		rgbGen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 	    Map textures/temperate_sd/dirt_m03icmp_brown.tga
 		rgbGen identity
 	}
@@ -1102,17 +1102,17 @@ textures/radar/road
 	surfaceparm trans
 	
 	{
-		stage diffusemap 
+		stage diffuseMap 
 		map textures/temperate_sd/dirt_m03icmp_brown.tga
 		rgbGen identity	
 	}
 	{	
-		stage bumpmap
+		stage bumpMap
 		map textures/temperate_sd/dirt_m03icmp_brown_n.tga
 		rgbGen identity	
 	}
 	{
-		stage specularmap
+		stage specularMap
 		map textures/temperate_sd/dirt_m03icmp_brown_s.tga
 		rgbGen identity	
 	}
@@ -1148,19 +1148,19 @@ textures/radar/road_puddle1
 		tcGen environment
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/road_puddle1.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/road_puddle1_n.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen identity
 	}
 	{   
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/road_puddle1_s.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen identity
@@ -1200,19 +1200,19 @@ textures/radar/road_bigpuddle
 		tcGen environment
 	}
 	{
-	    stage diffusemap
+	    stage diffuseMap
 		map textures/temperate_sd/road_bigpuddle.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen identity
 	}
 	{
-	    stage bumpmap
+	    stage bumpMap
 		map textures/temperate_sd/road_bigpuddle_n.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen identity
 	}
 	{
-	    stage specularmap
+	    stage specularMap
 		map textures/temperate_sd/road_bigpuddle_s.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen identity
@@ -1229,9 +1229,9 @@ textures/radar/borderroad
 {
 	qer_editorimage textures/temperate_sd/dirt_m04cmp_brown.tga
 	
-	diffusemap textures/temperate_sd/dirt_m04cmp_brown.tga
-	bumpmap textures/temperate_sd/dirt_m04cmp_brown_n.tga
-	specularmap textures/temperate_sd/dirt_m04cmp_brown_s.tga
+	diffuseMap textures/temperate_sd/dirt_m04cmp_brown.tga
+	bumpMap textures/temperate_sd/dirt_m04cmp_brown_n.tga
+	specularMap textures/temperate_sd/dirt_m04cmp_brown_s.tga
 	surfaceparm trans
 	{
 		lightmap $lightmap
@@ -1250,9 +1250,9 @@ textures/radar/wood_m02_wet
 //	q3map_foliage models/foliage/raincircle5.md3 0.5 64 0.1 2
 	qer_editorimage textures/wood/wood_m02.tga
 	
-	diffusemap textures/wood/wood_m02.tga
-	bumpmap textures/wood/wood_m02_n.tga
-	specularmap textures/wood/wood_m02_s.tga
+	diffuseMap textures/wood/wood_m02.tga
+	bumpMap textures/wood/wood_m02_n.tga
+	specularMap textures/wood/wood_m02_s.tga
 	{
 		lightmap $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
@@ -1270,9 +1270,9 @@ textures/radar/gy_ml03a_wet
 //	q3map_foliage models/foliage/raincircle5.md3 0.5 64 0.1 2
 	qer_editorimage textures/graveyard/gy_ml03a.tga
 	
-	diffusemap textures/graveyard/gy_ml03a.tga
-	bumpmap textures/graveyard/gy_ml03a_n.tga
-	specularmap textures/graveyard/gy_ml03a_s.tga
+	diffuseMap textures/graveyard/gy_ml03a.tga
+	bumpMap textures/graveyard/gy_ml03a_n.tga
+	specularMap textures/graveyard/gy_ml03a_s.tga
 	{
 		lightmap $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
@@ -1291,9 +1291,9 @@ textures/radar/debri_m05_wet
 //	q3map_foliage models/foliage/raincircle5.md3 0.5 64 0.1 2
 	qer_editorimage textures/rubble/debri_m05.tga
 	
-	diffusemap textures/rubble/debri_m05.tga
-	bumpmap textures/rubble/debri_m05_n.tga
-	specularmap textures/rubble/debri_m05_s.tga
+	diffuseMap textures/rubble/debri_m05.tga
+	bumpMap textures/rubble/debri_m05_n.tga
+	specularMap textures/rubble/debri_m05_s.tga
 	{
 		lightmap $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
@@ -1311,9 +1311,9 @@ textures/radar/wood_m16_wet
 //	q3map_foliage models/foliage/raincircle5.md3 0.5 64 0.1 2
 	qer_editorimage textures/wood/wood_m16.tga
 	
-	diffusemap textures/wood/wood_m16.tga
-	bumpmap textures/wood/wood_m16_n.tga
-	specularmap textures/wood/wood_m16_s.tga
+	diffuseMap textures/wood/wood_m16.tga
+	bumpMap textures/wood/wood_m16_n.tga
+	specularMap textures/wood/wood_m16_s.tga
 	{
 		lightmap $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
@@ -1331,9 +1331,9 @@ textures/radar/wall_c01_wet
 //	q3map_foliage models/foliage/raincircle5.md3 0.5 64 0.1 2
 	qer_editorimage textures/sleepy/wall_c01.tga
 
-	diffusemap textures/sleepy/wall_c01.tga
-	bumpmap textures/sleepy/wall_c01_n.tga
-	specularmap textures/sleepy/wall_c01_s.tga
+	diffuseMap textures/sleepy/wall_c01.tga
+	bumpMap textures/sleepy/wall_c01_n.tga
+	specularMap textures/sleepy/wall_c01_s.tga
 	{
 		lightmap $lightmap
 		blendFunc GL_DST_COLOR GL_ZERO
