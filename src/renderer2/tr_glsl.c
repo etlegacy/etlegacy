@@ -755,12 +755,9 @@ static qboolean GLSL_MissesRequiredMacros(int compilemacro, int usedmacros)
 	switch (compilemacro)
 	{
 	case USE_PARALLAX_MAPPING:
-		if (!(usedmacros & BIT(USE_NORMAL_MAPPING)))
-		{
-			return qtrue;
-		}
-		break;
-	case USE_REFLECTIVE_SPECULAR:
+	case USE_DELUXE_MAPPING:
+	case USE_REFLECTIONS:
+	case USE_SPECULAR:
 		if (!(usedmacros & BIT(USE_NORMAL_MAPPING)))
 		{
 			return qtrue;

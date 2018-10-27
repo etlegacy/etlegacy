@@ -7677,8 +7677,8 @@ void R_SaveCubeProbes(const char *filename, byte *pixeldata, int width, int heig
  */
 qboolean R_LoadCubeProbe(int cubeProbeNum, byte *cubeTemp[6])
 {
-	byte *buffer	= NULL;
-	byte *pixeldata	= NULL;
+	byte *buffer	= NULL; // pointer to the file buffer (including the 18 byte long header)
+	byte *pixeldata	= NULL; // the pointer to the actual pixel colors
 
 	int i;
 	int totalPos = cubeProbeNum * 6;
@@ -7703,15 +7703,9 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, byte *cubeTemp[6])
 
 		for (i = 0; i < cubeSidesInThisFile; i++)
 		{
-/*			// just copy the read pixel data
-			for (int y = 0; y < REF_CUBEMAP_SIZE; y++) {
-				int row = y * REF_CUBEMAP_SIZE * 4;
-				Com_Memcpy(cubeTemp[i] + row, pixeldata + row, REF_CUBEMAP_SIZE * 4);
-			}*/
-
 			// copy this cube map into buffer
 			R_SubImageCpy(pixeldata,
-							((insidePos + i) % REF_CUBEMAP_SIZE) * REF_CUBEMAP_SIZE, ((insidePos + i) / REF_CUBEMAP_SIZE) * REF_CUBEMAP_SIZE,
+							((insidePos + i) % REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE, ((insidePos + i) / REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE,
 							REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
 							cubeTemp[i],
 							REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
@@ -7736,13 +7730,13 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, byte *cubeTemp[6])
 		{
 			pixeldata = buffer + 18; // skip header
 
-			for (i = 0; i < cubeSidesInThisFile; i++) //(i = cubeSidesInThisFile; i < 6 ; i++)
+			for (i = 0; i < cubeSidesInNextFile; i++) //(i = cubeSidesInThisFile; i < 6 ; i++)
 			{
 				// copy this cube map into buffer
 				R_SubImageCpy(pixeldata,
-								((insidePos + i) % REF_CUBEMAP_SIZE) * REF_CUBEMAP_SIZE, ((insidePos + i) / REF_CUBEMAP_SIZE) * REF_CUBEMAP_SIZE,
+								(i % REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE, (i / REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE,
 								REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
-								tr.cubeTemp[i],
+								tr.cubeTemp[cubeSidesInThisFile + i],
 								REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
 								4, qfalse);
 			}
@@ -7777,8 +7771,7 @@ void R_BuildCubeMaps(void)
 	int			sideX		= 0; // this cube side image is the Nth image from the left (in the bigger texture)
 	int			sideY		= 0; // this cube side image is the Nth image from the top (in the bigger texture)
 	qboolean	dirtyBuf	= qfalse; // true if there is something in the fileBuf, and the fileBuf has not been written to disk yet.
-	
-	qboolean createCM = qfalse;
+	qboolean	createCM	= qfalse;
 
 	size_t tics         = 0;
 	size_t nextTicCount = 0;

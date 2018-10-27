@@ -177,6 +177,103 @@ static void BindDeluxeMap(shaderStage_t *pStage)
 }
 
 /**
+* @brief BindCubeMaps
+*/
+static void BindCubeMaps()
+{
+	cubemapProbe_t *cubeProbeNearest;
+	cubemapProbe_t *cubeProbeSecondNearest;
+
+	if (backEnd.currentEntity && (backEnd.currentEntity != &tr.worldEntity))
+	{
+		R_FindTwoNearestCubeMaps(backEnd.currentEntity->e.origin, &cubeProbeNearest, &cubeProbeSecondNearest);
+	}
+	else
+	{
+		// FIXME position (this shouldn't occure - we are in entity renderer)
+		R_FindTwoNearestCubeMaps(backEnd.viewParms.orientation.origin, &cubeProbeNearest, &cubeProbeSecondNearest);
+	}
+
+
+	if (cubeProbeNearest == NULL && cubeProbeSecondNearest == NULL)
+	{
+		Ren_LogComment("cubeProbeNearest && cubeProbeSecondNearest == NULL\n");
+
+		// bind u_EnvironmentMap0
+		SelectTexture(TEX_ENVMAP0);
+		GL_Bind(tr.whiteCubeImage);
+
+		// bind u_EnvironmentMap1
+		SelectTexture(TEX_ENVMAP1);
+		GL_Bind(tr.whiteCubeImage);
+
+		SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, 0.0);
+	}
+	else if (cubeProbeNearest == NULL)
+	{
+		Ren_LogComment("cubeProbeNearest == NULL\n");
+
+		// bind u_EnvironmentMap0
+		SelectTexture(TEX_ENVMAP0);
+		GL_Bind(cubeProbeSecondNearest->cubemap);
+
+		// bind u_EnvironmentMap1
+		SelectTexture(TEX_ENVMAP1);
+		GL_Bind(tr.whiteCubeImage);
+
+		// u_EnvironmentInterpolation
+		SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, 0.0);
+	}
+	else if (cubeProbeSecondNearest == NULL)
+	{
+		Ren_LogComment("cubeProbeSecondNearest == NULL\n");
+
+		// bind u_EnvironmentMap0
+		SelectTexture(TEX_ENVMAP0);
+		GL_Bind(cubeProbeNearest->cubemap);
+
+		// bind u_EnvironmentMap1
+		SelectTexture(TEX_ENVMAP1);
+		GL_Bind(tr.whiteCubeImage);
+
+		// u_EnvironmentInterpolation
+		SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, 0.0);
+	}
+	else
+	{
+		float cubeProbeNearestDistance, cubeProbeSecondNearestDistance, interpolate;
+
+		if (backEnd.currentEntity && (backEnd.currentEntity != &tr.worldEntity))
+		{
+			cubeProbeNearestDistance = Distance(backEnd.currentEntity->e.origin, cubeProbeNearest->origin);
+			cubeProbeSecondNearestDistance = Distance(backEnd.currentEntity->e.origin, cubeProbeSecondNearest->origin);
+		}
+		else
+		{
+			// FIXME position (this shouldn't occure - we are in entity renderer)
+			cubeProbeNearestDistance = Distance(backEnd.viewParms.orientation.origin, cubeProbeNearest->origin);
+			cubeProbeSecondNearestDistance = Distance(backEnd.viewParms.orientation.origin, cubeProbeSecondNearest->origin);
+		}
+
+		interpolate = cubeProbeNearestDistance / (cubeProbeNearestDistance + cubeProbeSecondNearestDistance);
+
+		Ren_LogComment("cubeProbeNearestDistance = %f, cubeProbeSecondNearestDistance = %f, interpolation = %f\n",
+			cubeProbeNearestDistance, cubeProbeSecondNearestDistance, interpolate);
+
+		// bind u_EnvironmentMap0
+		SelectTexture(TEX_ENVMAP0);
+		GL_Bind(cubeProbeNearest->cubemap);
+
+		// bind u_EnvironmentMap1
+		SelectTexture(TEX_ENVMAP1);
+		GL_Bind(cubeProbeSecondNearest->cubemap);
+
+		// u_EnvironmentInterpolation
+		SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, interpolate);
+	}
+}
+
+/**
  * @brief Draws triangle outlines for debugging
  */
 static void DrawTris()
@@ -510,6 +607,7 @@ static void Render_vertexLighting_DBS_entity(int stage)
 {
 	shaderStage_t *pStage       = tess.surfaceStages[stage];
 	qboolean      normalMapping = qfalse;
+	qboolean      use_parallaxMapping, use_reflections, use_specular;
 
 	Ren_LogComment("--- Render_vertexLighting_DBS_entity ---\n");
 
@@ -522,16 +620,23 @@ static void Render_vertexLighting_DBS_entity(int stage)
 		normalMapping = qtrue;
 	}
 
-	SetMacrosAndSelectProgram(trProg.gl_vertexLightingShader_DBS_entity,
-	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-	                          USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
-	                          USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
-	                          USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
-	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-	                          USE_NORMAL_MAPPING, normalMapping,
-	                          USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax,
-                              USE_REFLECTIVE_SPECULAR, normalMapping && tr.cubeHashTable != NULL && !tr.refdef.pixelTarget); // !tr.refdef.pixelTarget to prevent using reflections before buildcubemaps() has finished. This is anti eye-cancer..
+	use_parallaxMapping = (normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
+	use_specular = normalMapping;
+	use_reflections = (normalMapping && tr.cubeHashTable != NULL && !tr.refdef.pixelTarget); // TODO: and when surface has something environment mappy assigned..
+	// !tr.refdef.pixelTarget to prevent using reflections before buildcubemaps() has finished. This is anti eye-cancer..
 
+	SetMacrosAndSelectProgram(trProg.gl_vertexLightingShader_DBS_entity,
+								USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+								USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
+								USE_VERTEX_SKINNING, glConfig2.vboVertexSkinningAvailable && tess.vboVertexSkinning,
+								USE_VERTEX_ANIMATION, glState.vertexAttribsInterpolation > 0,
+								USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+								USE_NORMAL_MAPPING, normalMapping,
+								USE_PARALLAX_MAPPING, use_parallaxMapping,
+								USE_REFLECTIONS, use_reflections,
+								USE_SPECULAR, use_specular);
+
+	// set uniforms
 	if (tess.surfaceShader->numDeforms)
 	{
 		// u_DeformGen
@@ -550,24 +655,21 @@ static void Render_vertexLighting_DBS_entity(int stage)
 		SetUniformFloat(UNIFORM_LIGHTWRAPAROUND, RB_EvalExpression(&pStage->wrapAroundLightingExp, 0));
 	}
 
-	// set uniforms
-	//ClampColor(ambientColor);
-	// u_AlphaTest
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
-	SetUniformVec3(UNIFORM_AMBIENTCOLOR, backEnd.currentEntity->ambientLight);
-	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
-	SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir);
-	SetUniformVec3(UNIFORM_LIGHTCOLOR, backEnd.currentEntity->directedLight);
 
+	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 	SetUniformMatrix16(UNIFORM_MODELMATRIX, backEnd.orientation.transformMatrix);
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
+	SetUniformVec3(UNIFORM_AMBIENTCOLOR, backEnd.currentEntity->ambientLight);
+	SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir);
+	SetUniformVec3(UNIFORM_LIGHTCOLOR, backEnd.currentEntity->directedLight);
 
 	if (glState.vertexAttribsInterpolation > 0)
 	{
 		SetUniformFloat(UNIFORM_VERTEXINTERPOLATION, glState.vertexAttribsInterpolation);
 	}
 
-	if (r_parallaxMapping->integer && tess.surfaceShader->parallax)
+	if (use_parallaxMapping)
 	{
 		SetUniformFloat(UNIFORM_DEPTHSCALE, RB_EvalExpression(&pStage->depthScaleExp, r_parallaxDepthScale->value));
 	}
@@ -596,112 +698,25 @@ static void Render_vertexLighting_DBS_entity(int stage)
 			GL_Bind(image);
 			SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
 		}
+		if (use_reflections || use_specular)
 		{
 			image_t* image = pStage->bundle[TB_SPECULARMAP].image[0];
 
 			// bind u_SpecularMap
 			SelectTexture(TEX_SPECULAR);
-			
 			if (!image)
 			{
 				image = tr.blackImage;
 			}
 			GL_Bind(image);
 			SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
-		}
 
-		if (tr.cubeHashTable != NULL)
-		{
-			cubemapProbe_t *cubeProbeNearest;
-			cubemapProbe_t *cubeProbeSecondNearest;
-
-			if (backEnd.currentEntity && (backEnd.currentEntity != &tr.worldEntity))
+			if (use_reflections)
 			{
-				R_FindTwoNearestCubeMaps(backEnd.currentEntity->e.origin, &cubeProbeNearest, &cubeProbeSecondNearest);
-			}
-			else
-			{
-				// FIXME position (this shouldn't occure - we are in entity renderer)
-				R_FindTwoNearestCubeMaps(backEnd.viewParms.orientation.origin, &cubeProbeNearest, &cubeProbeSecondNearest);
-			}
-
-
-			if (cubeProbeNearest == NULL && cubeProbeSecondNearest == NULL)
-			{
-				Ren_LogComment("cubeProbeNearest && cubeProbeSecondNearest == NULL\n");
-
-				// bind u_EnvironmentMap0
-				SelectTexture(TEX_ENVMAP0);
-				GL_Bind(tr.whiteCubeImage);
-
-				// bind u_EnvironmentMap1
-				SelectTexture(TEX_ENVMAP1);
-				GL_Bind(tr.whiteCubeImage);
-
-				SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, 0.0);
-			}
-			else if (cubeProbeNearest == NULL)
-			{
-				Ren_LogComment("cubeProbeNearest == NULL\n");
-
-				// bind u_EnvironmentMap0
-				SelectTexture(TEX_ENVMAP0);
-				GL_Bind(cubeProbeSecondNearest->cubemap);
-
-				SelectTexture(TEX_ENVMAP1);
-				GL_Bind(tr.whiteCubeImage);
-
-				// u_EnvironmentInterpolation
-				SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, 0.0);
-			}
-			else if (cubeProbeSecondNearest == NULL)
-			{
-				Ren_LogComment("cubeProbeSecondNearest == NULL\n");
-
-				// bind u_EnvironmentMap0
-				SelectTexture(TEX_ENVMAP0);
-				GL_Bind(cubeProbeNearest->cubemap);
-
-				// bind u_EnvironmentMap1
-				SelectTexture(TEX_ENVMAP1);
-				GL_Bind(tr.whiteCubeImage);
-
-				// u_EnvironmentInterpolation
-				SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, 0.0);
-			}
-			else
-			{
-				float cubeProbeNearestDistance, cubeProbeSecondNearestDistance, interpolate;
-
-				if (backEnd.currentEntity && (backEnd.currentEntity != &tr.worldEntity))
-				{
-					cubeProbeNearestDistance       = Distance(backEnd.currentEntity->e.origin, cubeProbeNearest->origin);
-					cubeProbeSecondNearestDistance = Distance(backEnd.currentEntity->e.origin, cubeProbeSecondNearest->origin);
-				}
-				else
-				{
-					// FIXME position (this shouldn't occure - we are in entity renderer)
-					cubeProbeNearestDistance       = Distance(backEnd.viewParms.orientation.origin, cubeProbeNearest->origin);
-					cubeProbeSecondNearestDistance = Distance(backEnd.viewParms.orientation.origin, cubeProbeSecondNearest->origin);
-				}
-
-				interpolate = cubeProbeNearestDistance / (cubeProbeNearestDistance + cubeProbeSecondNearestDistance);
-
-				Ren_LogComment("cubeProbeNearestDistance = %f, cubeProbeSecondNearestDistance = %f, interpolation = %f\n",
-				               cubeProbeNearestDistance, cubeProbeSecondNearestDistance, interpolate);
-
-				// bind u_EnvironmentMap0
-				SelectTexture(TEX_ENVMAP0);
-				GL_Bind(cubeProbeNearest->cubemap);
-
-				// bind u_EnvironmentMap1
-				SelectTexture(TEX_ENVMAP1);
-				GL_Bind(cubeProbeSecondNearest->cubemap);
-
-				// u_EnvironmentInterpolation
-				SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, interpolate);
+				BindCubeMaps();
 			}
 		}
+
 	}
 	GLSL_SetRequiredVertexPointers(trProg.gl_vertexLightingShader_DBS_entity);
 
@@ -719,6 +734,7 @@ static void Render_vertexLighting_DBS_world(int stage)
 	shaderStage_t *pStage       = tess.surfaceStages[stage];
 	qboolean      normalMapping = qfalse;
 	rgbaGen_t     rgbaGen;
+	qboolean      use_parallaxMapping, use_reflections, use_specular;
 
 	Ren_LogComment("--- Render_vertexLighting_DBS_world ---\n");
 
@@ -731,13 +747,18 @@ static void Render_vertexLighting_DBS_world(int stage)
 		normalMapping = qtrue;
 	}
 
+	use_parallaxMapping = (normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
+	use_specular = normalMapping;
+	use_reflections = qfalse; // (normalMapping && tr.cubeHashTable != NULL && !tr.refdef.pixelTarget);
+
 	SetMacrosAndSelectProgram(trProg.gl_vertexLightingShader_DBS_world,
 	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
 	                          USE_ALPHA_TESTING, (pStage->stateBits & GLS_ATEST_BITS) != 0,
 	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
 	                          USE_NORMAL_MAPPING, normalMapping,
-	                          USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
-	// now we are ready to set the shader program uniforms
+	                          USE_PARALLAX_MAPPING, use_parallaxMapping,
+                              USE_REFLECTIONS, use_reflections,
+							  USE_SPECULAR, use_specular);
 
 	GL_CheckErrors();
 
@@ -754,7 +775,8 @@ static void Render_vertexLighting_DBS_world(int stage)
 	GLSL_SetUniform_ColorModulate(trProg.gl_vertexLightingShader_DBS_world, rgbaGen.color, rgbaGen.alpha);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 
-	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.viewOrigin);
+	//SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.viewOrigin);
+	SetUniformVec3(UNIFORM_VIEWORIGIN, backEnd.viewParms.orientation.origin); // in world space
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
 
@@ -769,7 +791,7 @@ static void Render_vertexLighting_DBS_world(int stage)
 		SetUniformFloat(UNIFORM_LIGHTWRAPAROUND, RB_EvalExpression(&pStage->wrapAroundLightingExp, 0));
 	}
 
-	if (r_parallaxMapping->integer)
+	if (use_parallaxMapping)
 	{
 		SetUniformFloat(UNIFORM_DEPTHSCALE, RB_EvalExpression(&pStage->depthScaleExp, r_parallaxDepthScale->value));
 	}
@@ -787,29 +809,25 @@ static void Render_vertexLighting_DBS_world(int stage)
 	if (normalMapping)
 	{
 		{
-			image_t* image = pStage->bundle[TB_NORMALMAP].image[0];
-
 			// bind u_NormalMap
 			SelectTexture(TEX_NORMAL);
-
-			if (!image)
-			{
-				image = tr.flatImage;
-			}
+			image_t* image = pStage->bundle[TB_NORMALMAP].image[0];
+			if (!image) image = tr.flatImage;
 			GL_Bind(image);
 			SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
 		}
-		{
-			image_t* image = pStage->bundle[TB_SPECULARMAP].image[0];
+		if (use_reflections || use_specular) {
 			// bind u_SpecularMap
 			SelectTexture(TEX_SPECULAR);
-
-			if (!image)
-			{
-				image = tr.blackImage;
-			}
+			image_t* image = pStage->bundle[TB_SPECULARMAP].image[0];
+			if (!image) image = tr.blackImage;
 			GL_Bind(image);
 			SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
+
+			if (use_reflections)
+			{
+				BindCubeMaps();
+			}
 		}
 	}
 
@@ -828,11 +846,14 @@ static void Render_vertexLighting_DBS_world(int stage)
  */
 static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalMapping)
 {
-	shaderStage_t *pStage   = tess.surfaceStages[stage];
+	shaderStage_t *pStage = tess.surfaceStages[stage];
 	uint32_t      stateBits = pStage->stateBits;
 	rgbaGen_t     rgbaGen;
+	qboolean      use_parallaxMapping, use_deluxeMapping, use_reflections, use_specular;
 
 	Ren_LogComment("--- Render_lightMapping ---\n");
+
+//	rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
 
 	if (r_showLightMaps->integer)
 	{
@@ -841,13 +862,22 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 
 	GL_State(stateBits);
 
+	use_parallaxMapping = (normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
+	use_deluxeMapping = qfalse; // r_showDeluxeMaps->integer == 1
+	use_specular = normalMapping;
+	use_reflections = qfalse; // (normalMapping && tr.cubeHashTable != NULL && !tr.refdef.pixelTarget); // TODO: and when surface has something environment mappy assigned..
+	// !tr.refdef.pixelTarget to prevent using reflections before buildcubemaps() has finished. This is anti eye-cancer..
+
 	// choose right shader program ----------------------------------
 	SetMacrosAndSelectProgram(trProg.gl_lightMappingShader,
-	                          USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
-	                          USE_ALPHA_TESTING, pStage->stateBits & GLS_ATEST_BITS,
-	                          USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
-	                          USE_NORMAL_MAPPING, normalMapping,
-	                          USE_PARALLAX_MAPPING, normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
+								USE_PORTAL_CLIPPING, backEnd.viewParms.isPortal,
+								USE_ALPHA_TESTING, pStage->stateBits & GLS_ATEST_BITS,
+								USE_DEFORM_VERTEXES, tess.surfaceShader->numDeforms,
+								USE_NORMAL_MAPPING, normalMapping,
+								USE_PARALLAX_MAPPING, use_parallaxMapping,
+								USE_DELUXE_MAPPING, use_deluxeMapping,
+								USE_REFLECTIONS, use_reflections,
+								USE_SPECULAR, use_specular);
 
 	if (tess.surfaceShader->numDeforms)
 	{
@@ -861,11 +891,12 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	SetUniformMatrix16(UNIFORM_MODELVIEWPROJECTIONMATRIX, GLSTACK_MVPM);
 
 	GLSL_SetUniform_AlphaTest(pStage->stateBits);
+
 	rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
 	GLSL_SetUniform_ColorModulate(trProg.gl_lightMappingShader, rgbaGen.color, rgbaGen.alpha);
 	SetUniformVec4(UNIFORM_COLOR, tess.svars.color);
 
-	if (r_parallaxMapping->integer)
+	if (use_parallaxMapping)
 	{
 		SetUniformFloat(UNIFORM_DEPTHSCALE, RB_EvalExpression(&pStage->depthScaleExp, r_parallaxDepthScale->value));
 	}
@@ -875,11 +906,12 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 		clipPortalPlane();
 	}
 
+
+	// ..
 	SetUniformBoolean(UNIFORM_B_SHOW_LIGHTMAP, (r_showLightMaps->integer == 1 ? GL_TRUE : GL_FALSE));
 	SetUniformBoolean(UNIFORM_B_SHOW_DELUXEMAP, (r_showDeluxeMaps->integer == 1 ? GL_TRUE : GL_FALSE));
 
-	//SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir);
-	// FIXME: lightgrid
+	//	SetUniformVec3(UNIFORM_LIGHTDIR, backEnd.currentEntity->lightDir);
 	SetUniformVec3(UNIFORM_LIGHTDIR, tr.sunDirection);
 
 	if (asColorMap)
@@ -894,10 +926,10 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 		//SelectTexture(TEX_DIFFUSE);
 		//GL_Bind(tr.whiteImage);
 		//SetUniformMatrix16(UNIFORM_DIFFUSETEXTUREMATRIX, matrixIdentity);
-		
+
 		image_t* image = pStage->bundle[TB_DIFFUSEMAP].image[0];
 		SelectTexture(TEX_DIFFUSE);
-		
+
 		if (image)
 		{
 			GL_Bind(image);
@@ -914,10 +946,10 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	{
 		{
 			image_t* image = pStage->bundle[TB_NORMALMAP].image[0];
-			
+
 			// bind u_NormalMap
 			SelectTexture(TEX_NORMAL);
-			
+
 			if (!image)
 			{
 				image = tr.flatImage;
@@ -925,9 +957,9 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 			GL_Bind(image);
 			SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
 		}
+		if (use_reflections || use_specular)
 		{
 			image_t* image = pStage->bundle[TB_SPECULARMAP].image[0];
-			
 			// bind u_SpecularMap
 			SelectTexture(TEX_SPECULAR);
 			if (!image)
@@ -936,17 +968,20 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 			}
 			GL_Bind(image);
 			SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
+
+			if (use_reflections)
+			{
+				BindCubeMaps();
+			}
+		}
+		if (use_deluxeMapping)
+		{
+			SelectTexture(TEX_DELUXE);
+			BindDeluxeMap(pStage);
 		}
 	}
 
-	// only deluxe if enabled
-	if (r_showDeluxeMaps->integer == 1)
-	{
-		SelectTexture(TEX_DELUXE);
-		BindDeluxeMap(pStage);
-	}
-
-	// bind u_DeluxeMap
+	// bind lightMap
 	SelectTexture(TEX_LIGHTMAP);
 	BindLightMap();
 
@@ -2273,19 +2308,6 @@ static void Render_liquid(int stage)
 	SelectTexture(TEX_NORMAL);
 	if (normalMapping)
 	{
-		GL_Bind(pStage->bundle[TB_COLORMAP].image[0]); // FIXME TB_COLORMAP
-	}
-	else
-	{
-		GL_Bind(pStage->bundle[TB_COLORMAP].image[0]);
-	}
-
-	SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_COLORMAP]);
-
-/* FIXME	
-	SelectTexture(TEX_NORMAL);
-	if (normalMapping)
-	{
 		image_t *image = pStage->bundle[TB_NORMALMAP].image[0];
 
 		if (!image)
@@ -2298,9 +2320,9 @@ static void Render_liquid(int stage)
 	else
 	{
 		GL_Bind(pStage->bundle[TB_COLORMAP].image[0]);
-		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, tess.svars.texMatrices[TB_COLORMAP]);
+		//SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, tess.svars.texMatrices[TB_COLORMAP]); //  fake
+		SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_COLORMAP]);  // fake
 	}
-*/
 
 	Tess_DrawElements();
 
