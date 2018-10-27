@@ -194,7 +194,6 @@ static void BindCubeMaps()
 		R_FindTwoNearestCubeMaps(backEnd.viewParms.orientation.origin, &cubeProbeNearest, &cubeProbeSecondNearest);
 	}
 
-
 	if (cubeProbeNearest == NULL && cubeProbeSecondNearest == NULL)
 	{
 		Ren_LogComment("cubeProbeNearest && cubeProbeSecondNearest == NULL\n");
@@ -271,6 +270,21 @@ static void BindCubeMaps()
 		// u_EnvironmentInterpolation
 		SetUniformFloat(UNIFORM_ENVIRONMENTINTERPOLATION, interpolate);
 	}
+}
+
+/**
+ * @brief Binds a texture or the given default if image is NULL
+ *        This is basically used to ensure a texture for GL_Bind
+ * @param[in]
+ * @param[in]
+ */
+static void BindTexture(image_t *image, image_t *defaultImage)
+{
+	if (!image)
+	{
+		image = defaultImage;
+	}
+	GL_Bind(image);
 }
 
 /**
@@ -686,29 +700,16 @@ static void Render_vertexLighting_DBS_entity(int stage)
 
 	if (normalMapping)
 	{
-		{
-			image_t* image = pStage->bundle[TB_NORMALMAP].image[0];
+		// bind u_NormalMap
+		SelectTexture(TEX_NORMAL);
+		BindTexture(pStage->bundle[TB_NORMALMAP].image[0], tr.flatImage);
+		SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
 
-			// bind u_NormalMap
-			SelectTexture(TEX_NORMAL);
-			if (!image)
-			{
-				image = tr.flatImage;
-			}
-			GL_Bind(image);
-			SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
-		}
 		if (use_reflections || use_specular)
 		{
-			image_t* image = pStage->bundle[TB_SPECULARMAP].image[0];
-
 			// bind u_SpecularMap
 			SelectTexture(TEX_SPECULAR);
-			if (!image)
-			{
-				image = tr.blackImage;
-			}
-			GL_Bind(image);
+			BindTexture(pStage->bundle[TB_SPECULARMAP].image[0], tr.blackImage);
 			SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
 
 			if (use_reflections)
@@ -808,20 +809,15 @@ static void Render_vertexLighting_DBS_world(int stage)
 
 	if (normalMapping)
 	{
-		{
-			// bind u_NormalMap
-			SelectTexture(TEX_NORMAL);
-			image_t* image = pStage->bundle[TB_NORMALMAP].image[0];
-			if (!image) image = tr.flatImage;
-			GL_Bind(image);
-			SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
-		}
-		if (use_reflections || use_specular) {
+		// bind u_NormalMap
+		SelectTexture(TEX_NORMAL);
+		BindTexture(pStage->bundle[TB_NORMALMAP].image[0], tr.flatImage);
+		SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
+
+		if (use_reflections || use_specular){
 			// bind u_SpecularMap
 			SelectTexture(TEX_SPECULAR);
-			image_t* image = pStage->bundle[TB_SPECULARMAP].image[0];
-			if (!image) image = tr.blackImage;
-			GL_Bind(image);
+			BindTexture(pStage->bundle[TB_SPECULARMAP].image[0], tr.blackImage);
 			SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
 
 			if (use_reflections)
@@ -849,11 +845,15 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	shaderStage_t *pStage = tess.surfaceStages[stage];
 	uint32_t      stateBits = pStage->stateBits;
 	rgbaGen_t     rgbaGen;
-	qboolean      use_parallaxMapping, use_deluxeMapping, use_reflections, use_specular;
+	qboolean      use_parallaxMapping = (normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
+	qboolean      use_deluxeMapping   = qfalse; // r_showDeluxeMaps->integer == 1
+	qboolean      	use_reflections  = qfalse; // (normalMapping && tr.cubeHashTable != NULL && !tr.refdef.pixelTarget); // TODO: and when surface has something environment mappy assigned..
+	// !tr.refdef.pixelTarget to prevent using reflections before buildcubemaps() has finished. This is anti eye-cancer..
+	qboolean      use_specular = normalMapping;
 
 	Ren_LogComment("--- Render_lightMapping ---\n");
 
-//	rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
+	//rgbaGen = getRgbaGenForColorModulation(pStage, tess.lightmapNum);
 
 	if (r_showLightMaps->integer)
 	{
@@ -861,12 +861,6 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 	}
 
 	GL_State(stateBits);
-
-	use_parallaxMapping = (normalMapping && r_parallaxMapping->integer && tess.surfaceShader->parallax);
-	use_deluxeMapping = qfalse; // r_showDeluxeMaps->integer == 1
-	use_specular = normalMapping;
-	use_reflections = qfalse; // (normalMapping && tr.cubeHashTable != NULL && !tr.refdef.pixelTarget); // TODO: and when surface has something environment mappy assigned..
-	// !tr.refdef.pixelTarget to prevent using reflections before buildcubemaps() has finished. This is anti eye-cancer..
 
 	// choose right shader program ----------------------------------
 	SetMacrosAndSelectProgram(trProg.gl_lightMappingShader,
@@ -906,8 +900,6 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 		clipPortalPlane();
 	}
 
-
-	// ..
 	SetUniformBoolean(UNIFORM_B_SHOW_LIGHTMAP, (r_showLightMaps->integer == 1 ? GL_TRUE : GL_FALSE));
 	SetUniformBoolean(UNIFORM_B_SHOW_DELUXEMAP, (r_showDeluxeMaps->integer == 1 ? GL_TRUE : GL_FALSE));
 
@@ -944,29 +936,16 @@ static void Render_lightMapping(int stage, qboolean asColorMap, qboolean normalM
 
 	if (normalMapping)
 	{
-		{
-			image_t* image = pStage->bundle[TB_NORMALMAP].image[0];
+		// bind u_NormalMap
+		SelectTexture(TEX_NORMAL);
+		BindTexture(pStage->bundle[TB_NORMALMAP].image[0], tr.flatImage);
+		SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
 
-			// bind u_NormalMap
-			SelectTexture(TEX_NORMAL);
-
-			if (!image)
-			{
-				image = tr.flatImage;
-			}
-			GL_Bind(image);
-			SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
-		}
 		if (use_reflections || use_specular)
 		{
-			image_t* image = pStage->bundle[TB_SPECULARMAP].image[0];
 			// bind u_SpecularMap
 			SelectTexture(TEX_SPECULAR);
-			if (!image)
-			{
-				image = tr.blackImage;
-			}
-			GL_Bind(image);
+			BindTexture(pStage->bundle[TB_SPECULARMAP].image[0], tr.blackImage);
 			SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
 
 			if (use_reflections)
@@ -1310,15 +1289,7 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 	{
 		// bind u_NormalMap
 		SelectTexture(TEX_NORMAL);
-		if (diffuseStage->bundle[TB_NORMALMAP].image[0])
-		{
-			GL_Bind(diffuseStage->bundle[TB_NORMALMAP].image[0]);
-		}
-		else
-		{
-			GL_Bind(tr.flatImage);
-		}
-
+		BindTexture(diffuseStage->bundle[TB_NORMALMAP].image[0], tr.flatImage);
 		SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
 
 		// bind u_SpecularMap
@@ -1327,15 +1298,10 @@ static void Render_forwardLighting_DBS_omni(shaderStage_t *diffuseStage,
 		{
 			GL_Bind(diffuseStage->bundle[TB_DIFFUSEMAP].image[0]);
 		}
-		else if (diffuseStage->bundle[TB_SPECULARMAP].image[0])
-		{
-			GL_Bind(diffuseStage->bundle[TB_SPECULARMAP].image[0]);
-		}
 		else
 		{
-			GL_Bind(tr.blackImage);
+			BindTexture(diffuseStage->bundle[TB_SPECULARMAP].image[0], tr.blackImage);
 		}
-
 		SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
 	}
 
@@ -1489,15 +1455,7 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 	{
 		// bind u_NormalMap
 		SelectTexture(TEX_NORMAL);
-		if (diffuseStage->bundle[TB_NORMALMAP].image[0])
-		{
-			GL_Bind(diffuseStage->bundle[TB_NORMALMAP].image[0]);
-		}
-		else
-		{
-			GL_Bind(tr.flatImage);
-		}
-
+		BindTexture(diffuseStage->bundle[TB_NORMALMAP].image[0], tr.flatImage);
 		SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
 
 		// bind u_SpecularMap
@@ -1506,13 +1464,9 @@ static void Render_forwardLighting_DBS_proj(shaderStage_t *diffuseStage,
 		{
 			GL_Bind(diffuseStage->bundle[TB_DIFFUSEMAP].image[0]);
 		}
-		else if (diffuseStage->bundle[TB_SPECULARMAP].image[0])
-		{
-			GL_Bind(diffuseStage->bundle[TB_SPECULARMAP].image[0]);
-		}
 		else
 		{
-			GL_Bind(tr.blackImage);
+			BindTexture(diffuseStage->bundle[TB_SPECULARMAP].image[0], tr.blackImage);
 		}
 
 		SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
@@ -1679,15 +1633,7 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 	{
 		// bind u_NormalMap
 		SelectTexture(TEX_NORMAL);
-		if (diffuseStage->bundle[TB_NORMALMAP].image[0])
-		{
-			GL_Bind(diffuseStage->bundle[TB_NORMALMAP].image[0]);
-		}
-		else
-		{
-			GL_Bind(tr.flatImage);
-		}
-
+		BindTexture(diffuseStage->bundle[TB_NORMALMAP].image[0],tr.flatImage);
 		SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
 
 		// bind u_SpecularMap
@@ -1696,15 +1642,10 @@ static void Render_forwardLighting_DBS_directional(shaderStage_t *diffuseStage,
 		{
 			GL_Bind(diffuseStage->bundle[TB_DIFFUSEMAP].image[0]);
 		}
-		else if (diffuseStage->bundle[TB_SPECULARMAP].image[0])
-		{
-			GL_Bind(diffuseStage->bundle[TB_SPECULARMAP].image[0]);
-		}
 		else
 		{
-			GL_Bind(tr.blackImage);
+			BindTexture(diffuseStage->bundle[TB_SPECULARMAP].image[0],tr.blackImage);
 		}
-
 		SetUniformMatrix16(UNIFORM_SPECULARTEXTUREMATRIX, tess.svars.texMatrices[TB_SPECULARMAP]);
 	}
 
@@ -2308,13 +2249,7 @@ static void Render_liquid(int stage)
 	SelectTexture(TEX_NORMAL);
 	if (normalMapping)
 	{
-		image_t *image = pStage->bundle[TB_NORMALMAP].image[0];
-
-		if (!image)
-		{
-			image = tr.whiteImage;
-		}
-		GL_Bind(image);
+		BindTexture(pStage->bundle[TB_NORMALMAP].image[0], tr.whiteImage);
 		SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
 	}
 	else
