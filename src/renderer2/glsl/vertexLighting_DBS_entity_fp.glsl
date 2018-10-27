@@ -2,35 +2,45 @@
 #include "lib/reliefMapping"
 
 uniform sampler2D u_DiffuseMap;
+uniform vec4  u_PortalPlane;
+uniform int   u_AlphaTest;
+uniform vec3  u_ViewOrigin;
+uniform vec3  u_LightDir;
+uniform vec3  u_LightColor;
+uniform float u_LightWrapAround;
+uniform vec3  u_AmbientColor;
+uniform float u_DepthScale;
 #if defined(USE_NORMAL_MAPPING)
 uniform sampler2D u_NormalMap;
+#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
 uniform sampler2D u_SpecularMap;
-#if defined(USE_REFLECTIVE_SPECULAR)
+#endif // USE_REFLECTIONS || USE_SPECULAR
+#if defined(USE_REFLECTIONS)
 uniform samplerCube u_EnvironmentMap0;
 uniform samplerCube u_EnvironmentMap1;
 uniform float       u_EnvironmentInterpolation;
-#endif
-#endif
-uniform int   u_AlphaTest;
-uniform vec3  u_ViewOrigin;
-uniform vec3  u_AmbientColor;
-uniform vec3  u_LightDir;
-uniform vec3  u_LightColor;
+#endif // USE_REFLECTIONS
+#endif // USE_NORMAL_MAPPING
 //uniform float u_SpecularExponent;
-uniform float u_DepthScale;
-uniform vec4  u_PortalPlane;
-uniform float u_LightWrapAround;
 
 varying vec3 var_Position;
 varying vec2 var_TexDiffuse;
+varying vec4 var_LightColor;
+varying vec3 var_Normal;
 #if defined(USE_NORMAL_MAPPING)
 varying vec2 var_TexNormal;
-varying vec2 var_TexSpecular;
 varying vec3 var_Tangent;
 varying vec3 var_Binormal;
-#endif
-varying vec3 var_Normal;
-varying vec4 var_LightColor;
+#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
+varying vec2 var_TexSpecular;
+#endif // USE_REFLECTIONS || USE_SPECULAR
+#endif // USE_NORMAL_MAPPING
+
+
+// We define a compiler directive if we want the faster transform code.
+// If you comment the next line, a matrix is created and used.
+#define transformFast
+
 
 void main()
 {
@@ -79,9 +89,11 @@ void main()
 	// We must also normalize the vector, because the reflect() function needs it.
 	vec3 L = -normalize(u_LightDir);
 
+#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
 	// we start with a specular value of 0
 	// Depending on the usage of reflections and/or specular highlights, we later only add to this specular.
 	vec3 specular = vec3(0.0);
+#endif // USE_REFLECTIONS || USE_SPECULAR
 
 
 
@@ -89,8 +101,14 @@ void main()
 
 	// texture coordinates
 	vec2 texNormal   = var_TexNormal.st; // the current texture coordinates st for the normalmap
+#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
 	vec2 texSpecular = var_TexSpecular.st; // the current texture coordinates st for the specularmap
+#endif // USE_REFLECTIONS || USE_SPECULAR
 
+
+#if defined(transformFast) // do not use a matrix, but do the necesarry calculations. it should be just a bit faster.
+	// EEH.. no prep needed. 
+#else // transformFast
 	// invert tangent space for two sided surfaces which are looked at on the back side of that surface (surfaces which are backfacing).
 	// Create the usual tangent space matrix in case we're dealing with a front-facing surface, or when the surface is not two-sided (the usual case).
 	mat3 tangentSpaceMatrix;
@@ -102,6 +120,7 @@ void main()
 	else
 #endif // end TWOSIDED
 		tangentSpaceMatrix = mat3(var_Tangent.xyz, var_Binormal.xyz, var_Normal.xyz);
+#endif // transformFast
 
 
 #if defined(USE_PARALLAX_MAPPING)
@@ -110,7 +129,24 @@ void main()
 
 	// compute view direction in tangent space
 	// We invert the view vector V, so we end up with a vector Vts that points away from the surface (to the camera/eye/view).. like the normal N
-	vec3 Vts = normalize(tangentSpaceMatrix * -V);
+#if defined(transformFast) // do not use a matrix, but do the necesarry calculations. it should be just a bit faster.
+	vec3 Vts;
+#if defined(TWOSIDED)
+	if (!gl_FrontFacing) {
+		Vts.x = dot(-V, -var_Tangent);
+		Vts.y = dot(-V, -var_Binormal);
+		Vts.z = dot(-V, -var_Normal);
+	} else
+#endif// TWOSIDED
+	{
+		Vts.x = dot(-V, var_Tangent);
+		Vts.y = dot(-V, var_Binormal);
+		Vts.z = dot(-V, var_Normal);
+	}
+#else // transformFast
+	vec3 Vts = -normalize(tangentSpaceMatrix * V);
+#endif // transformFast
+
 
 	// size and start position of search in texture space
 	vec2 S = Vts.xy * -u_DepthScale / Vts.z;
@@ -122,41 +158,66 @@ void main()
 
 	texDiffuse.st  += texOffset;
 	texNormal.st   += texOffset;
+#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
 	texSpecular.st += texOffset;
+#endif // USE_REFLECTIONS || USE_SPECULAR
 #endif // end USE_PARALLAX_MAPPING
+
 
 	// compute normal (from normalmap texture) in tangent space
 	// N is the normal (at every .st of the normalmap texture)
 	// We convert normalmap texture values from range[0.0,1.0] to range[-1.0,1.0]
 	// and then tranform N into tangent space.
 	vec3 Ntex = texture2D(u_NormalMap, texNormal).xyz * 2.0 - 1.0;
-	vec3 N = normalize(tangentSpaceMatrix * Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
+	vec3 N;
+#if defined(transformFast) // do not use a matrix, but do the necesarry calculations. it should be just a bit faster.
+	// transform Ntex to tangent space
+#if defined(TWOSIDED)
+	if (!gl_FrontFacing) {
+		N.x = dot(Ntex, -var_Tangent);
+		N.y = dot(Ntex, -var_Binormal);
+		N.z = dot(Ntex, -var_Normal);
+	} else
+#endif // TWOSIDED
+	{
+		N.x = dot(Ntex, var_Tangent);
+		N.y = dot(Ntex, var_Binormal);
+		N.z = dot(Ntex, var_Normal);
+	}
+	// we must normalize N because otherwise we see white artifacts visible in game
+	N = normalize(N);
+#else // transformFast
+	N = normalize(tangentSpaceMatrix * Ntex); // we must normalize to get a vector of unit-length..  reflect() needs it
+#endif // transformFast
+
 
 	float dotNL = dot(N, L);
 	vec3 R = reflect(L, N); // reflect() needs two unit-vectors, so we use reflect() first before possibly scaling the normal later on..
 
-#if defined(r_rimLighting) || defined(USE_REFLECTIVE_SPECULAR)
+#if defined(r_rimLighting) || defined(USE_REFLECTIONS)
 	// this is the reflection vector used on the cubeMaps
 	// it's also used for rimLighting.
 	// Because we read pixels from a cubemap, the reflect() needs two vectors in world-space.
 	// Also, the view-vector must be in the direction: from eye/camera to object. (don't use Vts).
 	vec3 Renv = reflect(V, Ntex);
-#endif // r_rimLighting or USE_REFLECTIVE_SPECULAR
+#endif // r_rimLighting || USE_REFLECTIONS
 
 #if defined(r_NormalScale)
 	if (r_NormalScale != 1.0) N.z *= r_NormalScale;
 #endif // end r_NormalScale
 
 
-#if defined(USE_REFLECTIVE_SPECULAR)
+#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
+#if defined(USE_REFLECTIONS)
 	// This is the cubeProbes way of rendering reflections.
-	vec3 envColor0 = textureCube(u_EnvironmentMap0, Renv).rgb; // old code used .rgba?  check<--
-	vec3 envColor1 = textureCube(u_EnvironmentMap1, Renv).rgb;
-	specular = mix(envColor0, envColor1, u_EnvironmentInterpolation);
+	vec4 envColor0 = textureCube(u_EnvironmentMap0, Renv).rgba; // old code used .rgba?  check<--
+	vec4 envColor1 = textureCube(u_EnvironmentMap1, Renv).rgba;
+	specular = mix(envColor0, envColor1, u_EnvironmentInterpolation).rgb;
 //	specular *= pow(max(0.0, dot(R, Vts)), r_SpecularExponent) * r_SpecularScale; // shininess is dependent on R & V
 //	specular *= texture2D(u_SpecularMap, texSpecular).rgb;
-#endif // end USE_REFLECTIVE_SPECULAR
+#endif // USE_REFLECTIONS
 
+#if defined(USE_SPECULAR)
 	// the specular highlights
 	// These are only visible, at certain angles between normal, light-direction & view-direction.
 	if (dotNL > 0.0) {
@@ -166,8 +227,10 @@ void main()
 //		specular += texture2D(u_SpecularMap, texSpecular).rgb * reflectance;
 		specular = min(specular + reflectance, 1.0);
 	}
+#endif // USE_SPECULAR
 
 	specular *= texture2D(u_SpecularMap, texSpecular).rgb;
+#endif // USE_REFLECTIONS || USE_SPECULAR
 
 #endif // end USE_NORMAL_MAPPING
 
@@ -195,7 +258,7 @@ void main()
 	vec3  emission = r_rimColor.rgb * pow(rim, r_rimExponent);
 #endif // end r_rimLighting
 #endif // USE_NORMAL_MAPPING
-	// add ambient color
+	// add ambient color :P..
 	light += u_AmbientColor;
 
 
@@ -203,11 +266,13 @@ void main()
     // compute final color
     vec4 color = diffuse;
 #if defined(USE_NORMAL_MAPPING)
+#if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
 	color.rgb += specular;
 #if defined(r_rimLighting)
 	color.rgb += emission;
 #endif // end r_rimLighting
-#endif // end USE_NORMAL_MAPPING
+#endif // end USE_REFLECTIONS || USE_SPECULAR
+#endif // USE_NORMAL_MAPPING
     color.rgb *= light;
 
 	gl_FragColor = color;
