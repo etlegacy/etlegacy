@@ -7810,10 +7810,11 @@ void R_BuildCubeMaps(void)
 	}
 
 	// calculate origins for our probes
-	Com_InitGrowList(&tr.cubeProbes, 4000);
+	Com_InitGrowList(&tr.cubeProbes, 5000);
 	tr.cubeHashTable = NewVertexHashTable();
 
 #if 0
+#if defined(USE_BSP_CLUSTERSURFACE_MERGING)
 	if (tr.world->vis)
 	{
 		bspCluster_t *cluster;
@@ -7843,10 +7844,17 @@ void R_BuildCubeMaps(void)
 			}
 		}
 	}
-#elif 1
+#endif
+#endif
+
+	if (qtrue) // cubes based on nodes
 	{
 		bspNode_t *node;
 
+		Ren_Print("...trying to allocate %d cubemaps from world nodes\n", tr.world->numnodes);
+
+		// FIXME: this doesn't create cubes on important locations
+		//        f.e. oasis (about 2600 cubes in total) water pump near allies spawn
 		for (i = 0; i < tr.world->numnodes; i++)
 		{
 			node = &tr.world->nodes[i];
@@ -7874,36 +7882,31 @@ void R_BuildCubeMaps(void)
 			}
 		}
 	}
-#else
+	else // cubes based on lightgrid
 	{
-		int            numGridPoints;
-		bspGridPoint_t *gridPoint;
-		int            gridStep[3];
-		int            pos[3];
+		int            numGridPoints, k;
+		//bspGridPoint_t *gridPoint;
+		//int            gridStep[3];
 		float          posFloat[3];
 
-		gridStep[0] = 1;
-		gridStep[1] = tr.world->lightGridBounds[0];
-		gridStep[2] = tr.world->lightGridBounds[0] * tr.world->lightGridBounds[1];
+		//gridStep[0] = 1;
+		//gridStep[1] = tr.world->lightGridBounds[0];
+		//gridStep[2] = tr.world->lightGridBounds[0] * tr.world->lightGridBounds[1];
 
 		numGridPoints = tr.world->lightGridBounds[0] * tr.world->lightGridBounds[1] * tr.world->lightGridBounds[2];
 
 		Ren_Print("...trying to allocate %d cubemaps", numGridPoints);
-		Ren_Print(" with gridsize (%i %i %i)", (int)tr.world->lightGridSize[0], (int)tr.world->lightGridSize[1],
-		          (int)tr.world->lightGridSize[2]);
-		Ren_Print(" and gridbounds (%i %i %i)\n", (int)tr.world->lightGridBounds[0], (int)tr.world->lightGridBounds[1],
-		          (int)tr.world->lightGridBounds[2]);
+		Ren_Print(" with gridsize (%i %i %i)", (int)tr.world->lightGridSize[0], (int)tr.world->lightGridSize[1], (int)tr.world->lightGridSize[2]);
+		Ren_Print(" and gridbounds (%i %i %i)\n", (int)tr.world->lightGridBounds[0], (int)tr.world->lightGridBounds[1], (int)tr.world->lightGridBounds[2]);
 
+		// FIXME: don't use every grid position
+		//        this is creating about 60000 cubes on oasis with about 500MB data per map!
 		for (i = 0; i < tr.world->lightGridBounds[0]; i += 1)
 		{
 			for (j = 0; j < tr.world->lightGridBounds[1]; j += 1)
 			{
 				for (k = 0; k < tr.world->lightGridBounds[2]; k += 1)
 				{
-					pos[0] = i;
-					pos[1] = j;
-					pos[2] = k;
-
 					posFloat[0] = i * tr.world->lightGridSize[0];
 					posFloat[1] = j * tr.world->lightGridSize[1];
 					posFloat[2] = k * tr.world->lightGridSize[2];
@@ -7925,7 +7928,7 @@ void R_BuildCubeMaps(void)
 
 						AddVertexToHashTable(tr.cubeHashTable, posFloat, cubeProbe);
 
-						gridPoint = tr.world->lightGridData + pos[0] * gridStep[0] + pos[1] * gridStep[1] + pos[2] * gridStep[2];
+						//gridPoint = tr.world->lightGridData + pos[0] * gridStep[0] + pos[1] * gridStep[1] + pos[2] * gridStep[2];
 
 						// TODO connect cubeProbe with gridPoint
 					}
@@ -7933,7 +7936,6 @@ void R_BuildCubeMaps(void)
 			}
 		}
 	}
-#endif
 
 	// if we can't find one, fake one
 	if (tr.cubeProbes.currentElements == 0)
