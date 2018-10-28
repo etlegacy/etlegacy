@@ -1573,6 +1573,9 @@ void GLSL_InitUniforms(shaderProgram_t *program)
 		case GLSL_FLOAT:
 			size += sizeof(GLfloat);
 			break;
+		case GLSL_DOUBLE:
+			size += sizeof(GLdouble);
+			break;
 		case GLSL_FLOAT5:
 			size += sizeof(vec_t) * 5;
 			break;
@@ -1718,6 +1721,38 @@ void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat valu
 
 	glUniform1f(uniforms[uniformNum], value);
 }
+
+/**
+ * @brief GLSL_SetUniformDouble
+ * @param[in] program
+ * @param[in] uniformNum
+ * @param[in] value
+ */
+void GLSL_SetUniformDouble(shaderProgram_t *program, int uniformNum, GLdouble value)
+{
+	GLint   *uniforms = program->uniforms;
+	GLfloat *compare  = (GLfloat *)(program->uniformBuffer + program->uniformBufferOffsets[uniformNum]);
+
+	if (uniforms[uniformNum] == -1)
+	{
+		return;
+	}
+
+	if (uniformsInfo[uniformNum].type != GLSL_DOUBLE)
+	{
+		Ren_Fatal("GLSL_SetUniformDouble: wrong type for uniform %i in program %s\n", uniformNum, program->name);
+	}
+
+	if (value == *compare)
+	{
+		return;
+	}
+
+	*compare = value;
+
+	glUniform1f(uniforms[uniformNum], value);
+}
+
 
 /**
  * @brief GLSL_SetUniformVec2
@@ -2146,6 +2181,9 @@ static void GLSL_SetInitialUniformValues(programInfo_t *info, int permutation)
 			break;
 		case GLSL_FLOAT5:
 			GLSL_SetUniformFloat5(&info->list->programs[permutation], location, *((vec5_t *)info->uniformValues[i].value));
+			break;
+		case GLSL_DOUBLE:
+			GLSL_SetUniformDouble(&info->list->programs[permutation], location, *((GLdouble *)info->uniformValues[i].value));
 			break;
 		case GLSL_VEC2:
 			GLSL_SetUniformVec2(&info->list->programs[permutation], location, *((vec2_t *)info->uniformValues[i].value));

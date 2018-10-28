@@ -1679,6 +1679,7 @@ enum
 	GLSL_INT,
 	GLSL_FLOAT,
 	GLSL_FLOAT5,
+	GLSL_DOUBLE,
 	GLSL_VEC2,
 	GLSL_VEC3,
 	GLSL_VEC4,
@@ -4888,6 +4889,7 @@ void GLSL_SelectTexture(shaderProgram_t *program, texture_def_t tex);
 void GLSL_SetUniformBoolean(shaderProgram_t *program, int uniformNum, GLboolean value);
 void GLSL_SetUniformInt(shaderProgram_t *program, int uniformNum, GLint value);
 void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat value);
+void GLSL_SetUniformDouble(shaderProgram_t *program, int uniformNum, GLdouble value);
 void GLSL_SetUniformFloat5(shaderProgram_t *program, int uniformNum, const vec5_t v);
 void GLSL_SetUniformVec2(shaderProgram_t *program, int uniformNum, const vec2_t v);
 void GLSL_SetUniformVec3(shaderProgram_t *program, int uniformNum, const vec3_t v);
