@@ -1,14 +1,11 @@
-//======================================================================
 // snow_sd.shader
-// Last edit: 20/04/03 Sock
-//
-//======================================================================
+
 textures/snow_sd/alphatree_snow
 {
-    qer_editorimage textures/snow_sd/alphatree_snow
-	diffusemap textures/snow_sd/alphatree_snow
-	specularmap textures/snow_sd/alphatree_snow_s
-	bumpmap textures/snow_sd/alphatree_snow_n
+    qer_editorimage textures/snow_sd/alphatree_snow.tga
+	diffusemap textures/snow_sd/alphatree_snow.tga
+	specularmap textures/snow_sd/alphatree_snow_s.tga
+	bumpmap textures/snow_sd/alphatree_snow_n.tga
 	qer_alphafunc gequal 0.5
 	cull none
 	surfaceparm alphashadow
@@ -20,10 +17,10 @@ textures/snow_sd/alphatree_snow
 
 textures/snow_sd/alphatree_snow2
 {
-    qer_editorimage textures/snow_sd/alphatree_snow2
-	diffusemap textures/snow_sd/alphatree_snow2
-	specularmap textures/snow_sd/alphatree_snow2_s
-	bumpmap textures/snow_sd/alphatree_snow2_n
+    qer_editorimage textures/snow_sd/alphatree_snow2.tga
+	diffusemap textures/snow_sd/alphatree_snow2.tga
+	specularmap textures/snow_sd/alphatree_snow2_s.tga
+	bumpmap textures/snow_sd/alphatree_snow2_n.tga
 	qer_alphafunc gequal 0.5
 	cull none
 	surfaceparm alphashadow
@@ -35,10 +32,10 @@ textures/snow_sd/alphatree_snow2
 
 textures/snow_sd/alphatree_snow3
 {
-    qer_editorimage textures/snow_sd/alphatree_snow3
-	diffusemap textures/snow_sd/alphatree_snow3
-	specularmap textures/snow_sd/alphatree_snow3_s
-	bumpmap textures/snow_sd/alphatree_snow3_n
+    qer_editorimage textures/snow_sd/alphatree_snow3.tga
+	diffusemap textures/snow_sd/alphatree_snow3.tga
+	specularmap textures/snow_sd/alphatree_snow3_s.tga
+	bumpmap textures/snow_sd/alphatree_snow3_n.tga
 	qer_alphafunc gequal 0.5
 	cull none
 	surfaceparm alphashadow
@@ -50,10 +47,10 @@ textures/snow_sd/alphatree_snow3
 
 textures/snow_sd/alphatree_snow4
 {
-    qer_editorimage textures/snow_sd/alphatree_snow4
-	diffusemap textures/snow_sd/alphatree_snow4
-	specularmap textures/snow_sd/alphatree_snow4_s
-	bumpmap textures/snow_sd/alphatree_snow4_n
+    qer_editorimage textures/snow_sd/alphatree_snow4.tga
+	diffusemap textures/snow_sd/alphatree_snow4.tga
+	specularmap textures/snow_sd/alphatree_snow4_s.tga
+	bumpmap textures/snow_sd/alphatree_snow4_n.tga
 	qer_alphafunc gequal 0.5
 	cull none
 	surfaceparm alphashadow
@@ -65,10 +62,10 @@ textures/snow_sd/alphatree_snow4
 
 textures/snow_sd/alphatreeline_snow
 {
-    qer_editorimage textures/snow_sd/alphatreeline_snow
-	diffusemap textures/snow_sd/alphatreeline_snow
-	specularmap textures/snow_sd/alphatreeline_snow_s
-	bumpmap textures/snow_sd/alphatreeline_snow_n
+    qer_editorimage textures/snow_sd/alphatreeline_snow.tga
+	diffusemap textures/snow_sd/alphatreeline_snow.tga
+	specularmap textures/snow_sd/alphatreeline_snow_s.tga
+	bumpmap textures/snow_sd/alphatreeline_snow_n.tga
 	qer_alphafunc gequal 0.5
 	cull none
 	surfaceparm alphashadow
@@ -80,40 +77,40 @@ textures/snow_sd/alphatreeline_snow
 
 textures/snow_sd/ametal_m03_snow
 {
-    qer_editorimage textures/snow_sd/ametal_m03_snow
-	diffusemap textures/snow_sd/ametal_m03_snow
-	specularmap textures/snow_sd/ametal_m03_snow_s
-	bumpmap textures/snow_sd/ametal_m03_snow_n
+    qer_editorimage textures/snow_sd/ametal_m03_snow.tga
+	diffusemap textures/snow_sd/ametal_m03_snow.tga
+	specularmap textures/snow_sd/ametal_m03_snow_s.tga
+	bumpmap textures/snow_sd/ametal_m03_snow_n.tga
 	surfaceparm metalsteps
 	implicitMap -
 }
 
 textures/snow_sd/ametal_m04a_snow
 {
-    qer_editorimage textures/snow_sd/ametal_m04a_snow
-	diffusemap textures/snow_sd/ametal_m04a_snow
-	specularmap textures/snow_sd/ametal_m04a_snow_s
-	bumpmap textures/snow_sd/ametal_m04a_snow_n
+    qer_editorimage textures/snow_sd/ametal_m04a_snow.tga
+	diffusemap textures/snow_sd/ametal_m04a_snow.tga
+	specularmap textures/snow_sd/ametal_m04a_snow_s.tga
+	bumpmap textures/snow_sd/ametal_m04a_snow_n.tga
 	surfaceparm metalsteps
 	implicitMap -
 }
 
 textures/snow_sd/ametal_m04a_snowfade
 {
-    qer_editorimage textures/snow_sd/ametal_m04a_snowfade
-	diffusemap textures/snow_sd/ametal_m04a_snowfade
-	specularmap textures/snow_sd/ametal_m04a_snowfade_s
-	bumpmap textures/snow_sd/ametal_m04a_snowfade_n
+    qer_editorimage textures/snow_sd/ametal_m04a_snowfade.tga
+	diffusemap textures/snow_sd/ametal_m04a_snowfade.tga
+	specularmap textures/snow_sd/ametal_m04a_snowfade_s.tga
+	bumpmap textures/snow_sd/ametal_m04a_snowfade_n.tga
 	surfaceparm metalsteps
 	implicitMap -
 }
 
 textures/snow_sd/bunkertrim_snow
 {
-    diffusemap textures/snow_sd/bunkertrim_snow
-	bumpmap textures/snow_sd/bunkertrim_snow_n
-	specularmap textures/snow_sd/bunkertrim_snow_s
-	qer_editorimage textures/snow_sd/bunkertrim_snow
+    diffusemap textures/snow_sd/bunkertrim_snow.tga
+	bumpmap textures/snow_sd/bunkertrim_snow_n.tga
+	specularmap textures/snow_sd/bunkertrim_snow_s.tga
+	qer_editorimage textures/snow_sd/bunkertrim_snow.tga
 	q3map_nonplanar
 	q3map_shadeangle 160
 	implicitMap -
@@ -126,26 +123,26 @@ textures/snow_sd/bunkertrim3_snow
 {
 	q3map_nonplanar
 	q3map_shadeangle 179
-	qer_editorimage textures/snow_sd/bunkertrim3_snow
-	diffusemap textures/snow_sd/bunkertrim3_snow
-	specularmap textures/snow_sd/bunkertrim3_snow_s
-	bumpmap textures/snow_sd/bunkertrim3_snow_n
+	qer_editorimage textures/snow_sd/bunkertrim3_snow.tga
+	diffusemap textures/snow_sd/bunkertrim3_snow.tga
+	specularmap textures/snow_sd/bunkertrim3_snow_s.tga
+	bumpmap textures/snow_sd/bunkertrim3_snow_n.tga
 	{
 		map $lightmap
 		rgbGen identity
 	}
 	{
-		map textures/snow_sd/bunkertrim3_snow
+		map textures/snow_sd/bunkertrim3_snow.tga
 		blendFunc filter
 	}
 }
 
 textures/snow_sd/bunkerwall_lrg02
 {
-	qer_editorimage textures/snow_sd/bunkerwall_lrg02
-	diffusemap textures/snow_sd/bunkerwall_lrg02
-	specularmap textures/snow_sd/bunkerwall_lrg02_s
-	bumpmap textures/snow_sd/bunkerwall_lrg02_n
+	qer_editorimage textures/snow_sd/bunkerwall_lrg02.tga
+	diffusemap textures/snow_sd/bunkerwall_lrg02.tga
+	specularmap textures/snow_sd/bunkerwall_lrg02_s.tga
+	bumpmap textures/snow_sd/bunkerwall_lrg02_n.tga
 	q3map_nonplanar
 	q3map_shadeangle 80
 	implicitMap -
@@ -153,18 +150,18 @@ textures/snow_sd/bunkerwall_lrg02
 
 textures/snow_sd/icey_lake
 {
-    diffusemap textures/snow_sd/icelake
-	specularmap textures/snow_sd/icelake_s
-	bumpmap textures/snow_sd/icelake_n
+    diffusemap textures/snow_sd/icelake.tga
+	specularmap textures/snow_sd/icelake_s.tga
+	bumpmap textures/snow_sd/icelake_n.tga
 	qer_trans 0.80
-	qer_editorimage textures/snow_sd/icelake
+	qer_editorimage textures/snow_sd/icelake.tga
 	surfaceparm slick
 	{
-		map textures/effects/envmap_ice
+		map textures/effects/envmap_ice.tga
 		tcgen environment
 	}
 	{
-		map textures/snow_sd/icelake
+		map textures/snow_sd/icelake.tga
 		blendfunc blend
 		tcmod scale 0.35 0.35
 	}
@@ -181,22 +178,22 @@ textures/snow_sd/icey_lake
 textures/snow_sd/icelake2
 {
 	qer_trans 0.80
-	qer_editorimage textures/snow_sd/icelake2
+	qer_editorimage textures/snow_sd/icelake2.tga
 	sort seethrough
 	surfaceparm slick
 	surfaceparm trans
 	tesssize 256
-	diffusemap textures/snow_sd/icelake2
-	bumpmap textures/snow_sd/icelake2_n
-	specularmap textures/snow_sd/icelake2_s
+	diffusemap textures/snow_sd/icelake2.tga
+	bumpmap textures/snow_sd/icelake2_n.tga
+	specularmap textures/snow_sd/icelake2_s.tga
 
 	{
-		map textures/effects/envmap_ice2
+		map textures/effects/envmap_ice2.tga
 		tcgen environment
 		blendfunc blend
 	}
 	{
-		map textures/snow_sd/icelake2
+		map textures/snow_sd/icelake2.tga
 		blendfunc blend
 	}
 	{
@@ -211,20 +208,20 @@ textures/snow_sd/icelake2
 // Note: Apply this at a scale of 2.0x2.0 so it aligns correctly
 textures/snow_sd/icelake2_opaque
 {
-	qer_editorimage textures/snow_sd/icelake2
-	diffusemap textures/snow_sd/icelake2
-	bumpmap textures/snow_sd/icelake2_n
-	specularmap textures/snow_sd/icelake2_s
+	qer_editorimage textures/snow_sd/icelake2.tga
+	diffusemap textures/snow_sd/icelake2.tga
+	bumpmap textures/snow_sd/icelake2_n.tga
+	specularmap textures/snow_sd/icelake2_s.tga
 	surfaceparm slick
 	tesssize 256
 
 	{
-		map textures/effects/envmap_ice2
+		map textures/effects/envmap_ice2.tga
 		tcgen environment
 		rgbGen identity
 	}
 	{
-		map textures/snow_sd/icelake2
+		map textures/snow_sd/icelake2.tga
 		blendfunc blend
 	}
 	{
@@ -237,10 +234,10 @@ textures/snow_sd/icelake2_opaque
 
 textures/snow_sd/mesh_c03_snow
 {
-    qer_editorimage textures/snow_sd/mesh_c03_snow
-	diffusemap textures/snow_sd/mesh_c03_snow
-	specularmap textures/snow_sd/mesh_c03_snow_s
-	bumpmap textures/snow_sd/mesh_c03_snow_n
+    qer_editorimage textures/snow_sd/mesh_c03_snow.tga
+	diffusemap textures/snow_sd/mesh_c03_snow.tga
+	specularmap textures/snow_sd/mesh_c03_snow_s.tga
+	bumpmap textures/snow_sd/mesh_c03_snow_n.tga
 	qer_alphafunc gequal 0.5
 	cull none
 	nomipmaps
@@ -254,50 +251,50 @@ textures/snow_sd/mesh_c03_snow
 
 textures/snow_sd/metal_m04g2_snow
 {
-    qer_editorimage textures/snow_sd/metal_m04g2_snow
-	diffusemap textures/snow_sd/metal_m04g2_snow
-	specularmap textures/snow_sd/metal_m04g2_snow_s
-	bumpmap textures/snow_sd/metal_m04g2_snow_n
+    qer_editorimage textures/snow_sd/metal_m04g2_snow.tga
+	diffusemap textures/snow_sd/metal_m04g2_snow.tga
+	specularmap textures/snow_sd/metal_m04g2_snow_s.tga
+	bumpmap textures/snow_sd/metal_m04g2_snow_n.tga
 	surfaceparm metalsteps
 	implicitMap -
 }
 
 textures/snow_sd/mroof_snow
 {
-    qer_editorimage textures/snow_sd/mroof_snow
-	diffusemap textures/snow_sd/mroof_snow
-	bumpmap textures/snow_sd/mroof_snow_n
-	specularmap textures/snow_sd/mroof_snow_s
+    qer_editorimage textures/snow_sd/mroof_snow.tga
+	diffusemap textures/snow_sd/mroof_snow.tga
+	bumpmap textures/snow_sd/mroof_snow_n.tga
+	specularmap textures/snow_sd/mroof_snow_s.tga
 	surfaceparm roofsteps
 	implicitMap -
 }
 
 textures/snow_sd/sub1_snow
 {
-    qer_Editorimage textures/snow_sd/sub1_snow
-	diffusemap textures/snow_sd/sub1_snow
-	specularmap textures/snow_sd/sub1_snow_s
-	bumpmap textures/snow_sd/sub1_snow_n
+    qer_Editorimage textures/snow_sd/sub1_snow.tga
+	diffusemap textures/snow_sd/sub1_snow.tga
+	specularmap textures/snow_sd/sub1_snow_s.tga
+	bumpmap textures/snow_sd/sub1_snow_n.tga
 	surfaceparm metalsteps
 	implicitMap -
 }
 
 textures/snow_sd/sub1_snow2
 {
-    qer_editorimage textures/snow_sd/sub1_snow2
-	diffusemap textures/snow_sd/sub1_snow2
-	specularmap textures/snow_sd/sub1_snow2_s
-	bumpmap textures/snow_sd/sub1_snow2_n
+    qer_editorimage textures/snow_sd/sub1_snow2.tga
+	diffusemap textures/snow_sd/sub1_snow2.tga
+	specularmap textures/snow_sd/sub1_snow2_s.tga
+	bumpmap textures/snow_sd/sub1_snow2_n.tga
 	surfaceparm metalsteps
 	implicitMap -
 }
 
 textures/snow_sd/wirefence01_snow
 {
-    qer_editorimage textures/snow_sd/wirefence01_snow
-	diffusemap textures/snow_sd/wirefence01_snow
-	specularmap textures/snow_sd/wirefence01_snow_s
-	bumpmap textures/snow_sd/wirefence01_snow_n
+    qer_editorimage textures/snow_sd/wirefence01_snow.tga
+	diffusemap textures/snow_sd/wirefence01_snow.tga
+	specularmap textures/snow_sd/wirefence01_snow_s.tga
+	bumpmap textures/snow_sd/wirefence01_snow_n.tga
 	cull none
 	surfaceparm alphashadow
 	surfaceparm nomarks
@@ -308,50 +305,50 @@ textures/snow_sd/wirefence01_snow
 
 textures/snow_sd/wood_m05a_snow
 {
-    qer_editorimage textures/snow_sd/wood_m05a_snow
-	diffusemap textures/snow_sd/wood_m05a_snow
-	specularmap textures/snow_sd/wood_m05a_snow_s
-	bumpmap textures/snow_sd/wood_m05a_snow_n
+    qer_editorimage textures/snow_sd/wood_m05a_snow.tga
+	diffusemap textures/snow_sd/wood_m05a_snow.tga
+	specularmap textures/snow_sd/wood_m05a_snow_s.tga
+	bumpmap textures/snow_sd/wood_m05a_snow_n.tga
 	surfaceparm woodsteps
 	implicitMap -
 }
 
 textures/snow_sd/wood_m06b_snow
 {
-    qer_editorimage textures/snow_sd/wood_m06b_snow
-	diffusemap textures/snow_sd/wood_m06b_snow
-	specularmap textures/snow_sd/wood_m06b_snow_s
-	bumpmap textures/snow_sd/wood_m06b_snow_n
+    qer_editorimage textures/snow_sd/wood_m06b_snow.tga
+	diffusemap textures/snow_sd/wood_m06b_snow.tga
+	specularmap textures/snow_sd/wood_m06b_snow_s.tga
+	bumpmap textures/snow_sd/wood_m06b_snow_n.tga
 	surfaceparm woodsteps
 	implicitMap -
 }
 
 textures/snow_sd/fuse_box_snow
 {
-    qer_editorimage textures/snow_sd/fuse_box_snow
-	diffusemap textures/snow_sd/fuse_box_snow
-	specularmap textures/snow_sd/fuse_box_snow_s
-	bumpmap textures/snow_sd/fuse_box_snow_n
+    qer_editorimage textures/snow_sd/fuse_box_snow.tga
+	diffusemap textures/snow_sd/fuse_box_snow.tga
+	specularmap textures/snow_sd/fuse_box_snow_s.tga
+	bumpmap textures/snow_sd/fuse_box_snow_n.tga
 	surfaceparm metalsteps
 	implicitMap -
 }
 
 textures/snow_sd/xmetal_m02_snow
 {
-    qer_editorimage textures/snow_sd/xmetal_m02_snow
-	diffusemap textures/snow_sd/xmetal_m02_snow
-	specularmap textures/snow_sd/xmetal_m02_snow_s
-	bumpmap textures/snow_sd/xmetal_m02_snow_n
+    qer_editorimage textures/snow_sd/xmetal_m02_snow.tga
+	diffusemap textures/snow_sd/xmetal_m02_snow.tga
+	specularmap textures/snow_sd/xmetal_m02_snow_s.tga
+	bumpmap textures/snow_sd/xmetal_m02_snow_n.tga
 	surfaceparm metalsteps
 	implicitMap -
 }
 
 textures/snow_sd/xmetal_m02t_snow
 {
-    qer_editorimage textures/snow_sd/xmetal_m02t_snow
-	diffusemap textures/snow_sd/xmetal_m02t_snow
-	specularmap textures/snow_sd/xmetal_m02t_snow_s
-	bumpmap textures/snow_sd/xmetal_m02t_snow_n
+    qer_editorimage textures/snow_sd/xmetal_m02t_snow.tga
+	diffusemap textures/snow_sd/xmetal_m02t_snow.tga
+	specularmap textures/snow_sd/xmetal_m02t_snow_s.tga
+	bumpmap textures/snow_sd/xmetal_m02t_snow_n.tga
 	surfaceparm metalsteps
 	implicitMap -
 }
@@ -366,10 +363,10 @@ textures/snow_sd/xmetal_m02t_snow
 
 textures/snow_sd/snow_track03 
 { 
-	qer_editorimage textures/snow_sd/snow_track03
-	//diffusemap textures/snow_sd/snow_track03
-	//specularmap textures/snow_sd/snow_track03_s
-	//bumpmap textures/snow_sd/snow_track03_n
+	qer_editorimage textures/snow_sd/snow_track03.tga
+	//diffusemap textures/snow_sd/snow_track03.tga
+	//specularmap textures/snow_sd/snow_track03_s.tga
+	//bumpmap textures/snow_sd/snow_track03_n.tga
 	q3map_nonplanar 
 	q3map_shadeangle 120 
 	surfaceparm trans 
@@ -381,7 +378,7 @@ textures/snow_sd/snow_track03
 	sort decal
 	
 	{
-		map textures/snow_sd/snow_track03
+		map textures/snow_sd/snow_track03.tga
        	blendFunc GL_ZERO GL_ONE_MINUS_SRC_COLOR
 		rgbGen identity
 	}
@@ -389,10 +386,10 @@ textures/snow_sd/snow_track03
 
 textures/snow_sd/snow_track03_faint
 { 
-	qer_editorimage textures/snow_sd/snow_track03
-	//diffusemap textures/snow_sd/snow_track03
-	//specularmap textures/snow_sd/snow_track03_s
-	//bumpmap textures/snow_sd/snow_track03_n
+	qer_editorimage textures/snow_sd/snow_track03.tga
+	//diffusemap textures/snow_sd/snow_track03.tga
+	//specularmap textures/snow_sd/snow_track03_s.tga
+	//bumpmap textures/snow_sd/snow_track03_n.tga
 	q3map_nonplanar 
 	q3map_shadeangle 120 
 	surfaceparm trans 
@@ -404,7 +401,7 @@ textures/snow_sd/snow_track03_faint
 	sort decal
 	
 	{
-		map textures/snow_sd/snow_track03
+		map textures/snow_sd/snow_track03.tga
        		blendFunc GL_ZERO GL_ONE_MINUS_SRC_COLOR
 		rgbGen const ( 0.5 0.5 0.5 )
 	}
@@ -412,10 +409,10 @@ textures/snow_sd/snow_track03_faint
 
 textures/snow_sd/snow_track03_end 
 { 
-	qer_editorimage textures/snow_sd/snow_track03_end
-	//diffusemap textures/snow_sd/snow_track03_end
-	//specularmap textures/snow_sd/snow_track03_end_s
-	//bumpmap textures/snow_sd/snow_track03_end_n
+	qer_editorimage textures/snow_sd/snow_track03_end.tga
+	//diffusemap textures/snow_sd/snow_track03_end.tga
+	//specularmap textures/snow_sd/snow_track03_end_s.tga
+	//bumpmap textures/snow_sd/snow_track03_end_n.tga
 	q3map_nonplanar 
 	q3map_shadeangle 120 
 	surfaceparm trans 
@@ -427,18 +424,18 @@ textures/snow_sd/snow_track03_end
 	sort decal
 	
 	{
-		map textures/snow_sd/snow_track03_end
-        	blendFunc GL_ZERO GL_ONE_MINUS_SRC_COLOR
+		map textures/snow_sd/snow_track03_end.tga
+        blendFunc GL_ZERO GL_ONE_MINUS_SRC_COLOR
 		rgbGen identity
 	}
 }
 
 textures/snow_sd/snow_track03_end_faint 
 { 
-	qer_editorimage textures/snow_sd/snow_track03_end
-	//diffusemap textures/snow_sd/snow_track03_end
-	//specularmap textures/snow_sd/snow_track03_end_s
-	//bumpmap textures/snow_sd/snow_track03_end_n
+	qer_editorimage textures/snow_sd/snow_track03_end.tga
+	//diffusemap textures/snow_sd/snow_track03_end.tga
+	//specularmap textures/snow_sd/snow_track03_end_s.tga
+	//bumpmap textures/snow_sd/snow_track03_end_n.tga
 	q3map_nonplanar 
 	q3map_shadeangle 120 
 	surfaceparm trans 
@@ -450,18 +447,18 @@ textures/snow_sd/snow_track03_end_faint
 	sort decal
 	
 	{
-		map textures/snow_sd/snow_track03_end
-        	blendFunc GL_ZERO GL_ONE_MINUS_SRC_COLOR
+		map textures/snow_sd/snow_track03_end.tga
+        blendFunc GL_ZERO GL_ONE_MINUS_SRC_COLOR
 		rgbGen const ( 0.5 0.5 0.5 )
 	}
 }
 
 textures/snow_sd/river_edge_snowy 
 { 
-	qer_editorimage textures/snow_sd/river_edge_snowy
-	//diffusemap textures/snow_sd/river_edge_snowy
-	//specularmap textures/snow_sd/river_edge_snowy_s
-	//bumpmap textures/snow_sd/river_edge_snowy_n
+	qer_editorimage textures/snow_sd/river_edge_snowy.tga
+	//diffusemap textures/snow_sd/river_edge_snowy.tga
+	//specularmap textures/snow_sd/river_edge_snowy_s.tga
+	//bumpmap textures/snow_sd/river_edge_snowy_n.tga
 	q3map_nonplanar 
 	q3map_shadeangle 120 
 	surfaceparm trans 
@@ -470,7 +467,7 @@ textures/snow_sd/river_edge_snowy
 	surfaceparm nomarks
 	polygonOffset
 	{
-		map textures/snow_sd/river_edge_snowy
+		map textures/snow_sd/river_edge_snowy.tga
         blendFunc GL_ZERO GL_ONE_MINUS_SRC_COLOR
 		rgbGen identity
 	}

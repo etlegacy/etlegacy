@@ -6,37 +6,37 @@
 // so what? because of use in maps I fix it....
 textures/seawall_wall/metal_trim1
 {
-    qer_editorimage textures/seawall_wall/metal_trim1
-	diffusemap textures/seawall_wall/metal_trim1
-	bumpmap textures/seawall_wall/metal_trim1_n
-	specularmap textures/seawall_wall/metal_trim1_s
+    qer_editorimage textures/seawall_wall/metal_trim1.tga
+	diffusemap textures/seawall_wall/metal_trim1.tga
+	bumpmap textures/seawall_wall/metal_trim1_n.tga
+	specularmap textures/seawall_wall/metal_trim1_s.tga
 	surfaceparm metalsteps
 	implicitMap -
 }
 
 textures/seawall_wall/wall02_mid
 {
-    qer_editorimage textures/seawall_wall/wall02_mid
-	diffusemap textures/seawall_wall/wall02_mid
-	bumpmap textures/seawall_wall/wall02_mid_n
-	specularmap textures/seawall_wall/wall02_mid_s
+    qer_editorimage textures/seawall_wall/wall02_mid.tga
+	diffusemap textures/seawall_wall/wall02_mid.tga
+	bumpmap textures/seawall_wall/wall02_mid_n.tga
+	specularmap textures/seawall_wall/wall02_mid_s.tga
 	implicitMap -
 }
 
 textures/seawall_wall/wall03_mid
 {
-    qer_editorimage textures/seawall_wall/wall03_mid
-	diffusemap textures/seawall_wall/wall03_mid
-	bumpmap textures/seawall_wall/wall03_mid_n
-	specularmap textures/seawall_wall/wall03_mid_s
+    qer_editorimage textures/seawall_wall/wall03_mid.tga
+	diffusemap textures/seawall_wall/wall03_mid.tga
+	bumpmap textures/seawall_wall/wall03_mid_n.tga
+	specularmap textures/seawall_wall/wall03_mid_s.tga
 	implicitMap -
 }
 
 textures/seawall_wall/wall03_top
 {
-    qer_editorimage textures/seawall_wall/wall03_top
-	diffusemap textures/seawall_wall/wall03_top
-	bumpmap textures/seawall_wall/wall03_top_n
-	specularmap textures/seawall_wall/wall03_top_s
+    qer_editorimage textures/seawall_wall/wall03_top.tga
+	diffusemap textures/seawall_wall/wall03_top.tga
+	bumpmap textures/seawall_wall/wall03_top_n.tga
+	specularmap textures/seawall_wall/wall03_top_s.tga
 	implicitMap -
 }

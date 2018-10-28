@@ -1,3 +1,5 @@
+// skies_sd.shader
+
 textures/skies_sd/full_moon
 {
 	cull none

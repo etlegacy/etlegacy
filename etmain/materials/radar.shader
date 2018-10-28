@@ -1,3 +1,5 @@
+// radar.shader
+
 textures/radar/dirt_m03icmp_brown
 {
 	qer_editorimage textures/temperate_sd/dirt_m03icmp_brown.tga
@@ -33,7 +35,7 @@ textures/radar/dirt_m04cmp_brown
 // could be fun to make this move... thoughts for later
 textures/radar/fog
 {
-	qer_editorimage textures/sfx/fog_grey1
+	qer_editorimage textures/sfx/fog_grey1.tga
 	
 	surfaceparm nodraw
 	surfaceparm nonsolid
@@ -44,7 +46,7 @@ textures/radar/fog
 
 textures/radar/lmterrain2_base
 {
-	q3map_normalimage textures/sd_bumpMaps/normalmap_terrain
+	q3map_normalimage textures/sd_bumpMaps/normalmap_terrain.tga
 	
 	q3map_lightmapsize 512 512
 	q3map_lightmapMergable
@@ -60,7 +62,7 @@ textures/radar/lmterrain2_base
 
 textures/radar/lmterrain2_foliage_base
 {
-	q3map_baseShader textures/radar/lmterrain2_base
+	q3map_baseShader textures/radar/lmterrain2_base.tga
 
 	q3map_foliage models/foliage/grassfoliage1.md3 1.25 48 0.1 2
 	q3map_foliage models/foliage/grassfoliage2.md3 1.1 48 0.1 2
@@ -69,7 +71,7 @@ textures/radar/lmterrain2_foliage_base
 
 textures/radar/lmterrain2_foliage_fade
 {
-	q3map_baseShader textures/radar/lmterrain2_base
+	q3map_baseShader textures/radar/lmterrain2_base.tga
 
 	q3map_foliage models/foliage/grassfoliage1.md3 1.25 64 0.1 2
 	q3map_foliage models/foliage/grassfoliage2.md3 1.1 64 0.1 2
@@ -78,7 +80,7 @@ textures/radar/lmterrain2_foliage_fade
 
 textures/radar/lmterrain2_0
 {
-	q3map_baseshader textures/radar/lmterrain2_base
+	q3map_baseshader textures/radar/lmterrain2_base.tga
 	
 	{
 	    stage diffuseMap
@@ -125,7 +127,7 @@ textures/radar/lmterrain2_0
 
 textures/radar/lmterrain2_1
 {
-	q3map_baseshader textures/radar/lmterrain2_foliage_base
+	q3map_baseshader textures/radar/lmterrain2_foliage_base.tga
 	{
 	    stage diffuseMap
 		map textures/temperate_sd/grass_path1.tga
@@ -173,7 +175,7 @@ textures/radar/lmterrain2_1
 
 textures/radar/lmterrain2_2
 {
-	q3map_baseshader textures/radar/lmterrain2_base
+	q3map_baseshader textures/radar/lmterrain2_base.tga
 	{
 	    stage diffuseMap
 		map textures/temperate_sd/grass_dense1.tga
@@ -221,7 +223,7 @@ textures/radar/lmterrain2_2
 
 textures/radar/lmterrain2_3
 {
-	q3map_baseshader textures/radar/lmterrain2_base
+	q3map_baseshader textures/radar/lmterrain2_base.tga
     {
 	    stage diffuseMap
 		map textures/temperate_sd/rock_ugly_brown.tga
@@ -267,7 +269,7 @@ textures/radar/lmterrain2_3
 
 textures/radar/lmterrain2_4
 {
-	q3map_baseshader textures/radar/lmterrain2_base
+	q3map_baseshader textures/radar/lmterrain2_base.tga
    
 	{
 	    stage diffuseMap
@@ -313,7 +315,7 @@ textures/radar/lmterrain2_4
 
 textures/radar/lmterrain2_5
 {
-	q3map_baseshader textures/radar/lmterrain2_base
+	q3map_baseshader textures/radar/lmterrain2_base.tga
     {
 	   stage diffuseMap
 		map textures/temperate_sd/grass_ml03cmp.tga
@@ -356,7 +358,7 @@ textures/radar/lmterrain2_5
 
 textures/radar/lmterrain2_0to1
 {
-	q3map_baseshader textures/radar/lmterrain2_foliage_fade
+	q3map_baseshader textures/radar/lmterrain2_foliage_fade.tga
 
 	{
 	    stage diffuseMap
@@ -402,7 +404,7 @@ textures/radar/lmterrain2_0to1
 
 textures/radar/lmterrain2_0to2
 {
-	q3map_baseshader textures/radar/lmterrain2_base
+	q3map_baseshader textures/radar/lmterrain2_base.tga
 
 	{
 	    stage diffuseMap
@@ -449,7 +451,7 @@ textures/radar/lmterrain2_0to2
 
 textures/radar/lmterrain2_0to3
 {
-	q3map_baseshader textures/radar/lmterrain2_base
+	q3map_baseshader textures/radar/lmterrain2_base.tga
 	
 	{
 	    stage diffuseMap
@@ -542,7 +544,7 @@ textures/radar/lmterrain2_0to4
 }
 textures/radar/lmterrain2_0to5
 {
-	q3map_baseshader textures/radar/lmterrain2_base
+	q3map_baseshader textures/radar/lmterrain2_base.tga
 	
 	{
 	    stage diffuseMap
@@ -589,7 +591,7 @@ textures/radar/lmterrain2_0to5
 
 textures/radar/lmterrain2_1to2
 {
-	q3map_baseshader textures/radar/lmterrain2_foliage_base
+	q3map_baseshader textures/radar/lmterrain2_foliage_base.tga
 	
 	{
 	    stage diffuseMap
@@ -635,7 +637,7 @@ textures/radar/lmterrain2_1to2
 
 textures/radar/lmterrain2_1to3
 {
-	q3map_baseshader textures/radar/lmterrain2_foliage_base
+	q3map_baseshader textures/radar/lmterrain2_foliage_base.tga
 	
 	{
 	    stage diffuseMap
@@ -681,7 +683,7 @@ textures/radar/lmterrain2_1to3
 
 textures/radar/lmterrain2_1to4
 {
-	q3map_baseshader textures/radar/lmterrain2_foliage_base
+	q3map_baseshader textures/radar/lmterrain2_foliage_base.tga
 	
 	{
 	    stage diffuseMap
@@ -727,7 +729,7 @@ textures/radar/lmterrain2_1to4
 
 textures/radar/lmterrain2_1to5
 {
-	q3map_baseshader textures/radar/lmterrain2_foliage_base
+	q3map_baseshader textures/radar/lmterrain2_foliage_base.tga
 	
 	{
 	    stage diffuseMap
@@ -773,7 +775,7 @@ textures/radar/lmterrain2_1to5
 
 textures/radar/lmterrain2_2to3
 {
-	q3map_baseshader textures/radar/lmterrain2_base
+	q3map_baseshader textures/radar/lmterrain2_base.tga
 	
 	{
 	    stage diffuseMap
@@ -821,7 +823,7 @@ textures/radar/lmterrain2_2to3
 
 textures/radar/lmterrain2_2to4
 {
-	q3map_baseshader textures/radar/lmterrain2_base
+	q3map_baseshader textures/radar/lmterrain2_base.tga
 	
 	{
 	    stage diffuseMap
@@ -868,7 +870,7 @@ textures/radar/lmterrain2_2to4
 
 textures/radar/lmterrain2_2to5
 {
-	q3map_baseshader textures/radar/lmterrain2_base
+	q3map_baseshader textures/radar/lmterrain2_base.tga
 	
 	{
 	    stage diffuseMap
@@ -916,7 +918,7 @@ textures/radar/lmterrain2_2to5
 
 textures/radar/lmterrain2_3to4
 {
-	q3map_baseshader textures/radar/lmterrain2_base
+	q3map_baseshader textures/radar/lmterrain2_base.tga
 	
 	{
 	    stage diffuseMap
@@ -963,7 +965,7 @@ textures/radar/lmterrain2_3to4
 
 textures/radar/lmterrain2_3to5
 {
-	q3map_baseshader textures/radar/lmterrain2_base
+	q3map_baseshader textures/radar/lmterrain2_base.tga
 	
 	{
 	    stage diffuseMap
@@ -1010,7 +1012,7 @@ textures/radar/lmterrain2_3to5
 
 textures/radar/lmterrain2_4to5
 {
-	q3map_baseshader textures/radar/lmterrain2_base
+	q3map_baseshader textures/radar/lmterrain2_base.tga
 	
 	{
 	    stage diffuseMap
@@ -1137,7 +1139,7 @@ textures/radar/road_puddle1
 	surfaceparm splash
 		
 	{
-		map textures/effects/envmap_radar
+		map textures/effects/envmap_radar.tga
 		rgbGen identity
 		tcGen environment
 	}
@@ -1187,7 +1189,7 @@ textures/radar/road_bigpuddle
 	surfaceparm splash
 	
 	{
-		map textures/effects/envmap_radar
+		map textures/effects/envmap_radar.tga
 		rgbGen identity
 		tcMod scale 0.5 0.5
 		tcGen environment
@@ -1346,7 +1348,7 @@ textures/radar/metal_wet1
 	qer_editorimage textures/metals_sd/metal_ref1.tga
 
 	{
-		map textures/effects/envmap_radar
+		map textures/effects/envmap_radar.tga
 		rgbGen identity
 		tcMod scale 0.5 0.5
 		tcGen environment
@@ -1381,7 +1383,7 @@ textures/radar/metal_wet2
 	qer_editorimage textures/metals_sd/metal_ref1.tga
 
 	{
-		map textures/effects/envmap_radar
+		map textures/effects/envmap_radar.tga
 		rgbGen identity
 		tcMod scale 0.5 0.5
 		tcGen environment

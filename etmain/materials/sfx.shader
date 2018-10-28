@@ -2,7 +2,7 @@
 
 textures/sfx/beam_dusty2
 {
-	qer_editorimage textures/sfx/beam_1
+	qer_editorimage textures/sfx/beam_1.tga
 	cull none
 	nocompress
 	surfaceparm nomarks
@@ -10,7 +10,7 @@ textures/sfx/beam_dusty2
 	surfaceparm pointlight
 	surfaceparm trans
 	{
-		map textures/sfx/beam_1
+		map textures/sfx/beam_1.tga
 		blendFunc add
 	}
 }
@@ -23,7 +23,7 @@ textures/sfx/construction
      noPicmip 
      surfaceparm trans 
      { 
-          map textures/sfx/construction 
+          map textures/sfx/construction.tga
           blendFunc GL_SRC_ALPHA GL_ONE 
           rgbGen const ( 0.25 0.25 0.25 )
           tcGen environment 
@@ -34,15 +34,15 @@ textures/sfx/construction
 textures/sfx/fan
 {
     qer_editorimage
-	diffusemap textures/sfx/fan
-	bumpmap textures/sfx/fan_n
-	specularmap textures/sfx/fan_s
+	diffusemap textures/sfx/fan.tga
+	bumpmap textures/sfx/fan_n.tga
+	specularmap textures/sfx/fan_s.tga
 	cull none
 	nopicmip
 	surfaceparm nomarks
 	surfaceparm trans
 	{
-		clampmap textures/sfx/fan
+		clampmap textures/sfx/fan.tga
 		blendFunc GL_ONE GL_ZERO
 		alphaFunc GE128
 		rgbGen identity
@@ -58,16 +58,16 @@ textures/sfx/fan
 
 textures/sfx/fan_static
 {
-    qer_editorimage textures/sfx/fan
-	diffusemap textures/sfx/fan
-	bumpmap textures/sfx/fan_n
-	specularmap textures/sfx/fan_s
+    qer_editorimage textures/sfx/fan.tga
+	diffusemap textures/sfx/fan.tga
+	bumpmap textures/sfx/fan_n.tga
+	specularmap textures/sfx/fan_s.tga
 	cull none
 	nopicmip
 	surfaceparm nomarks
 	surfaceparm trans
 	{
-		clampmap textures/sfx/fan
+		clampmap textures/sfx/fan.tga
 		blendFunc GL_ONE GL_ZERO
 		alphaFunc GE128
 		rgbGen identity
@@ -82,7 +82,7 @@ textures/sfx/fan_static
 
 textures/sfx/fog_water
 {
-	qer_editorimage textures/sfx/fog_grey1
+	qer_editorimage textures/sfx/fog_grey1.tga
 	q3map_globaltexture
 	q3map_surfacelight 0
 	fogparms ( .05 .10 .13 ) 128
@@ -92,14 +92,14 @@ textures/sfx/fog_water
 	surfaceparm pointlight
 	surfaceparm trans
 	{
-		map textures/liquids/kc_fogcloud3
+		map textures/liquids/kc_fogcloud3.tga
 		blendfunc gl_dst_color gl_zero
 		rgbgen identity
 		tcmod scale -.05 -.05
 		tcmod scroll .01 -.01
 	}
 	{
-		map textures/liquids/kc_fogcloud3
+		map textures/liquids/kc_fogcloud3.tga
 		blendfunc gl_dst_color gl_zero
 		rgbgen identity
 		tcmod scale .05 .05
@@ -109,13 +109,13 @@ textures/sfx/fog_water
 
 textures/sfx/glass
 {
-	qer_editorimage textures/common/dirtymirror
+	qer_editorimage textures/common/dirtymirror.tga
 	qer_trans 0.5
 	cull none
 	surfaceparm glass
 	surfaceparm trans
 	{
-		map textures/common/dirtymirror
+		map textures/common/dirtymirror.tga
 		blendFunc GL_ONE GL_ONE
 		rgbGen identity
 		tcgen environment
@@ -129,14 +129,14 @@ textures/sfx/glass
 
 textures/sfx/tramglass2
 {
-	qer_editorimage textures/common/dirtymirror2
+	qer_editorimage textures/common/dirtymirror2.tga
 	qer_trans 0.5
 	surfaceparm alphashadow
 	surfaceparm glass
 	surfaceparm pointlight
 	surfaceparm trans
 	{
-		map textures/common/dirtymirror2
+		map textures/common/dirtymirror2.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen vertex
 	}
@@ -145,7 +145,7 @@ textures/sfx/tramglass2
 textures/sfx/safety_glass
 {
 	qer_trans 0.5
-	qer_editorimage textures/common/s_glass
+	qer_editorimage textures/common/s_glass.tga
 	cull disable
 	nomipmaps
 	nopicmip
@@ -153,7 +153,7 @@ textures/sfx/safety_glass
 	surfaceparm alphashadow
 	surfaceparm trans
 	{
-		map textures/common/s_glass
+		map textures/common/s_glass.tga
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 		rgbGen vertex
 	}
@@ -178,7 +178,7 @@ textures/sfx/lightmap
 
 textures/sfx/wilsflame1
 {
-	qer_editorimage textures/sfx/flame1
+	qer_editorimage textures/sfx/flame1.tga
 	q3map_surfacelight 1482
 	cull none
 	nofog
@@ -187,12 +187,12 @@ textures/sfx/wilsflame1
 	surfaceparm pointlight
 	surfaceparm trans
 	{
-		animMap 10 textures/sfx/flame1 textures/sfx/flame2 textures/sfx/flame3 textures/sfx/flame4 textures/sfx/flame5 textures/sfx/flame6 textures/sfx/flame7 textures/sfx/flame8
+		animMap 10 textures/sfx/flame1.tga textures/sfx/flame2.tga textures/sfx/flame3.tga textures/sfx/flame4.tga textures/sfx/flame5.tga textures/sfx/flame6.tga textures/sfx/flame7.tga textures/sfx/flame8.tga
 		blendFunc GL_ONE GL_ONE
 		rgbGen wave inverseSawtooth 0 1 0 10
 	}
 	{
-		animMap 10 textures/sfx/flame2 textures/sfx/flame3 textures/sfx/flame4 textures/sfx/flame5 textures/sfx/flame6 textures/sfx/flame7 textures/sfx/flame8 textures/sfx/flame1
+		animMap 10 textures/sfx/flame2.tga textures/sfx/flame3.tga textures/sfx/flame4.tga textures/sfx/flame5.tga textures/sfx/flame6.tga textures/sfx/flame7.tga textures/sfx/flame8.tga textures/sfx/flame1.tga
 		blendFunc GL_ONE GL_ONE
 		rgbGen wave sawtooth 0 1 0 10
 	}
@@ -205,7 +205,7 @@ textures/sfx/wilsflame1
 
 textures/sfx/wilsflame2
 {
-	qer_editorimage textures/sfx/flame1
+	qer_editorimage textures/sfx/flame1.tga
 	cull none
 	nofog
 	surfaceparm nomarks
@@ -213,17 +213,17 @@ textures/sfx/wilsflame2
 	surfaceparm pointlight
 	surfaceparm trans
 	{
-		animMap 10 textures/sfx/flame1 textures/sfx/flame2 textures/sfx/flame3 textures/sfx/flame4 textures/sfx/flame5 textures/sfx/flame6 textures/sfx/flame7 textures/sfx/flame8
+		animMap 10 textures/sfx/flame1.tga textures/sfx/flame2.tga textures/sfx/flame3.tga textures/sfx/flame4.tga textures/sfx/flame5.tga textures/sfx/flame6.tga textures/sfx/flame7.tga textures/sfx/flame8.tga
 		blendFunc GL_ONE GL_ONE
 		rgbGen wave inverseSawtooth 0 1 0 10
 	}
 	{
-		animMap 10 textures/sfx/flame2 textures/sfx/flame3 textures/sfx/flame4 textures/sfx/flame5 textures/sfx/flame6 textures/sfx/flame7 textures/sfx/flame8 textures/sfx/flame1
+		animMap 10 textures/sfx/flame2.tga textures/sfx/flame3.tga textures/sfx/flame4.tga textures/sfx/flame5.tga textures/sfx/flame6.tga textures/sfx/flame7.tga textures/sfx/flame8.tga textures/sfx/flame1.tga
 		blendFunc GL_ONE GL_ONE
 		rgbGen wave sawtooth 0 1 0 10
 	}
 	{
-		map textures/sfx/flameball
+		map textures/sfx/flameball.tga
 		blendFunc GL_ONE GL_ONE
 		rgbGen wave sin .6 .2 0 .6
 	}

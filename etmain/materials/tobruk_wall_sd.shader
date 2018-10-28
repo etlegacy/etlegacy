@@ -1,6 +1,4 @@
 // tobruk_wall_sd.shader
-// updated from textures duplicate shader -thunder
-// 1 total shaders
 
 textures/tobruk_wall_base7_phong
 {

@@ -1,17 +1,16 @@
-// legacy_r2.shader
-// Shader definitions for ET: Legacy renderer2
+// legacy_r2.shader - shader definitions for ET: Legacy renderer2
 
 lights/defaultDynamicLight
 {
 	{
 		stage attenuationMapZ
-		map lights/squarelight1a
+		map lights/squarelight1a.tga
 		edgeClamp
 	}
 	{
 		stage attenuationMapXY
 		forceHighQuality
-		map lights/round
+		map lights/round.tga
 		colored
 		zeroClamp
 	}
@@ -21,11 +20,11 @@ lights/defaultPointLight
 {
 	// this will also be the falloff for any
 	// point light shaders that don't specify one
-	lightFalloffImage	lights/squarelight1a
+	lightFalloffImage	lights/squarelight1a.tga
 	{
 		stage attenuationMapXY
 		forceHighQuality
-		map lights/squarelight1
+		map lights/squarelight1.tga
 		colored
 		zeroClamp
 	}
@@ -37,13 +36,13 @@ lights/defaultProjectedLight
 	//lightFalloffImage	_noFalloff
 
 	//lightFalloffImage	lights/skyline1
-	lightFalloffImage	lights/squarelight1b
+	lightFalloffImage	lights/squarelight1b.tga
 	//lightFalloffImage	makeintensity(lights/flashoff)
 
 	{
 		stage attenuationMapXY
 		forceHighQuality
-		map lights/squarelight1
+		map lights/squarelight1.tga
 		colored
 		zeroClamp
 	}

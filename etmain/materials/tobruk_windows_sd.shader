@@ -1,13 +1,11 @@
 // tobruk_windows_sd.shader
-//thunder 2017
-// 5 total shaders
 
 textures/tobruk_windows_sd/tobruk_moucha1
 {
-    qer_editorimage textures/tobruk_windows_sd/tobruk_moucha1
-	diffusemap textures/tobruk_windows_sd/tobruk_moucha1
-	specularmap textures/tobruk_windows_sd/tobruk_moucha1_s
-	bumpmap textures/tobruk_windows_sd/tobruk_moucha1_n
+    qer_editorimage textures/tobruk_windows_sd/tobruk_moucha1.tga
+	diffusemap textures/tobruk_windows_sd/tobruk_moucha1.tga
+	specularmap textures/tobruk_windows_sd/tobruk_moucha1_s.tga
+	bumpmap textures/tobruk_windows_sd/tobruk_moucha1_n.tga
 	cull none
 	nomipmaps
 	surfaceparm alphashadow
@@ -19,21 +17,21 @@ textures/tobruk_windows_sd/tobruk_moucha1
 
 textures/tobruk_windows_sd/tobruk_shutterbrown
 {
-    qer_editorimage textures/tobruk_windows_sd/tobruk_shutterbrown
-	diffusemap textures/tobruk_windows_sd/tobruk_shutterbrown
-	specularmap textures/tobruk_windows_sd/tobruk_shutterbrown_s
-	bumpmap textures/tobruk_windows_sd/tobruk_shutterbrown_n
+    qer_editorimage textures/tobruk_windows_sd/tobruk_shutterbrown.tga
+	diffusemap textures/tobruk_windows_sd/tobruk_shutterbrown.tga
+	specularmap textures/tobruk_windows_sd/tobruk_shutterbrown_s.tga
+	bumpmap textures/tobruk_windows_sd/tobruk_shutterbrown_n.tga
 	surfaceparm woodsteps
 	implicitMap -
 }
 
 textures/tobruk_windows_sd/tobruk_tobruk_lwind
 {
-	qer_editorimage textures/tobruk_windows_sd/tobruk_lwind1
-	q3map_lightimage textures/tobruk_windows_sd/tobruk_lwind2
-	diffusemap textures/tobruk_windows_sd/tobruk_lwind1
-	bumpmap textures/tobruk_windows_sd/tobruk_lwind1_n
-	specularmap textures/tobruk_windows_sd/tobruk_lwind1_s
+	qer_editorimage textures/tobruk_windows_sd/tobruk_lwind1.tga
+	q3map_lightimage textures/tobruk_windows_sd/tobruk_lwind2.tga
+	diffusemap textures/tobruk_windows_sd/tobruk_lwind1.tga
+	bumpmap textures/tobruk_windows_sd/tobruk_lwind1_n.tga
+	specularmap textures/tobruk_windows_sd/tobruk_lwind1_s.tga
 	q3map_surfacelight 175
 	surfaceparm nomarks
 	{
@@ -41,23 +39,23 @@ textures/tobruk_windows_sd/tobruk_tobruk_lwind
 		rgbGen identity
 	}
 	{
-		map textures/tobruk_windows_sd/tobruk_lwind1
+		map textures/tobruk_windows_sd/tobruk_lwind1.tga
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbGen identity
 	}
 	{
-		map textures/tobruk_windows_sd/tobruk_lwind2
+		map textures/tobruk_windows_sd/tobruk_lwind2.tga
 		blendfunc GL_ONE GL_ONE
 	}
 }
 
 textures/tobruk_windows_sd/tobruk_tobruk_mwind
 {
-	qer_editorimage textures/tobruk_windows_sd/tobruk_mwind1
-	q3map_lightimage textures/tobruk_windows_sd/tobruk_mwind2
-	diffusemap textures/tobruk_windows_sd/tobruk_mwind1
-	specularmap textures/tobruk_windows_sd/tobruk_mwind1_s
-	bumpmap textures/tobruk_windows_sd/tobruk_mwind1_n
+	qer_editorimage textures/tobruk_windows_sd/tobruk_mwind1.tga
+	q3map_lightimage textures/tobruk_windows_sd/tobruk_mwind2.tga
+	diffusemap textures/tobruk_windows_sd/tobruk_mwind1.tga
+	specularmap textures/tobruk_windows_sd/tobruk_mwind1_s.tga
+	bumpmap textures/tobruk_windows_sd/tobruk_mwind1_n.tga
 	q3map_surfacelight 175
 	surfaceparm nomarks
 	{
@@ -65,22 +63,22 @@ textures/tobruk_windows_sd/tobruk_tobruk_mwind
 		rgbGen identity
 	}
 	{
-		map textures/tobruk_windows_sd/tobruk_mwind1
+		map textures/tobruk_windows_sd/tobruk_mwind1.tga
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbGen identity
 	}
 	{
-		map textures/tobruk_windows_sd/tobruk_mwind2
+		map textures/tobruk_windows_sd/tobruk_mwind2.tga
 		blendfunc GL_ONE GL_ONE
 	}
 }
 
 textures/tobruk_windows_sd/tobruk_windows_bright
 {
-	qer_editorimage textures/tobruk_windows_sd/tobruk_windows_on2
-	diffusemap textures/tobruk_windows_sd/tobruk_windows_on2
-	specularmap textures/tobruk_windows_sd/tobruk_windows_on2_s
-	bumpmap textures/tobruk_windows_sd/tobruk_windows_on2_n
+	qer_editorimage textures/tobruk_windows_sd/tobruk_windows_on2.tga
+	diffusemap textures/tobruk_windows_sd/tobruk_windows_on2.tga
+	specularmap textures/tobruk_windows_sd/tobruk_windows_on2_s.tga
+	bumpmap textures/tobruk_windows_sd/tobruk_windows_on2_n.tga
 	q3map_surfacelight 120
 	surfaceparm nomarks
 	{
@@ -88,22 +86,22 @@ textures/tobruk_windows_sd/tobruk_windows_bright
 		rgbGen identity
 	}
 	{
-		map textures/tobruk_windows_sd/tobruk_windows_on2
+		map textures/tobruk_windows_sd/tobruk_windows_on2.tga
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbGen identity
 	}
 	{
-		map textures/tobruk_windows_sd/tobruk_windows_on1
+		map textures/tobruk_windows_sd/tobruk_windows_on1.tga
 		blendfunc GL_ONE GL_ONE
 	}
 }
 
 textures/tobruk_windows_sd/tobruk_windows_medium
 {
-	qer_editorimage textures/tobruk_windows_sd/tobruk_windows_on1
-	diffusemap textures/tobruk_windows_sd/tobruk_windows_on1
-	specularmap textures/tobruk_windows_sd/tobruk_windows_on1_s
-	bumpmap textures/tobruk_windows_sd/tobruk_windows_on1_n
+	qer_editorimage textures/tobruk_windows_sd/tobruk_windows_on1.tga
+	diffusemap textures/tobruk_windows_sd/tobruk_windows_on1.tga
+	specularmap textures/tobruk_windows_sd/tobruk_windows_on1_s.tga
+	bumpmap textures/tobruk_windows_sd/tobruk_windows_on1_n.tga
 	q3map_surfacelight 45
 	surfaceparm nomarks
 	{
@@ -111,12 +109,12 @@ textures/tobruk_windows_sd/tobruk_windows_medium
 		rgbGen identity
 	}
 	{
-		map textures/tobruk_windows_sd/tobruk_windows_off
+		map textures/tobruk_windows_sd/tobruk_windows_off.tga
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbGen identity
 	}
 	{
-		map textures/tobruk_windows_sd/tobruk_windows_on1
+		map textures/tobruk_windows_sd/tobruk_windows_on1.tga
 		blendfunc GL_ONE GL_ONE
 	}
 }

@@ -1,3 +1,5 @@
+// skies.shader
+
 textures/skies/sd_goldrush
 {
 	qer_editorimage textures/skies/sky_8.tga

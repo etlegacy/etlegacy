@@ -1,6 +1,4 @@
 // textures.shader
-// removed one duplicate -thunder
-// 3 total shaders
 
 textures/region
 {
@@ -54,5 +52,3 @@ textures/test_autosprite2
 		rgbGen wave sin .6 .2 0 .6
 	}
 }
-
-

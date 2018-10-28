@@ -1,4 +1,4 @@
-// model projection shadow shaders
+// shadows.shader - model projection shadow shaders
 
 models/mapobjects/tanks_sd/shadow_tank
 {
