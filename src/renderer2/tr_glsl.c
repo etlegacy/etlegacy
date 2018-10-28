@@ -1731,7 +1731,7 @@ void GLSL_SetUniformFloat(shaderProgram_t *program, int uniformNum, GLfloat valu
 void GLSL_SetUniformDouble(shaderProgram_t *program, int uniformNum, GLdouble value)
 {
 	GLint   *uniforms = program->uniforms;
-	GLfloat *compare  = (GLfloat *)(program->uniformBuffer + program->uniformBufferOffsets[uniformNum]);
+	GLdouble *compare  = (GLdouble *)(program->uniformBuffer + program->uniformBufferOffsets[uniformNum]);
 
 	if (uniforms[uniformNum] == -1)
 	{
