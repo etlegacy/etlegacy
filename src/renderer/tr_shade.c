@@ -277,6 +277,12 @@ static void DrawTris(shaderCommands_t *input)
 	vec4_t       trisColor = { 1, 1, 1, 1 };
 	unsigned int stateBits = 0;
 
+	// exclude 2d from drawing tris
+	if (backEnd.projection2D == qtrue)
+	{
+		return;
+	}
+
 	GL_Bind(tr.whiteImage);
 
 	if (*s == '0' && (*(s + 1) == 'x' || *(s + 1) == 'X'))
