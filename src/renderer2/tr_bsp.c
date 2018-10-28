@@ -7615,50 +7615,38 @@ void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbeN
  */
 void R_SaveCubeProbes(const char *filename, byte *pixeldata, int width, int height)
 {
-	byte *buffer, *src, *dst, *flip;
-	int  i, row;
-	int  pixeldataBytes = width * height * 4;
-	int  fileBytes      = 18 + pixeldataBytes;
-	int  w4             = width * 4; // number of bytes for 1 row of pixels;
+	byte *buffer;
+	byte *src, *dst;
+	int  i, pixeldataBytes, fileBytes;
 
+	pixeldataBytes = width * height * 4;
+	fileBytes = 18 + pixeldataBytes;
 	buffer = (byte *)ri.Z_Malloc(fileBytes);
 	Com_Memset(buffer, 0, 18);
 	buffer[2]  = 2;     // Uncompressed, RGB images
-	//buffer[8] = 0 & 255; // X Origin: X coordinate of the lower left corner of the image
-	//buffer[9] = 0 >> 8;
-	//buffer[10] = (height-1) & 255; // X Origin: X coordinate of the lower left corner of the image
-	//buffer[11] = (height-1) >> 8;
+//	buffer[8] = 0 & 255; // X Origin: X coordinate of the lower left corner of the image
+//	buffer[9] = 0 >> 8;
+//	buffer[10] = (height-1) & 255; // X Origin: X coordinate of the lower left corner of the image
+//	buffer[11] = (height-1) >> 8;
 	buffer[12] = width & 255;
 	buffer[13] = width >> 8;
 	buffer[14] = height & 255;
 	buffer[15] = height >> 8;
 	buffer[16] = 32;	// Number of bits per pixel
-	//buffer[17] = 8;	// number of attribute bits associated with each pixel (alpha uses 8 bits)
+//	buffer[17] = 8;		// number of attribute bits associated with each pixel (alpha uses 8 bits)
 
 	// copy pixel data
 	src = pixeldata;
-	dst = buffer + 18; // we don't write the image identification field, so our dest image only needs to skip the fileheader-length
+	dst = buffer + 18; // we never write the Image Identification Field, so our dest image only needs to skip the fileheader-length
 	for (i = 0 ; i < pixeldataBytes; i += 4, src += 4, dst += 4)
 	{
-		dst[0] = src[2]; // b
+		dst[0] = src[0]; // r
 		dst[1] = src[1]; // g
-		dst[2] = src[0]; // r
+		dst[2] = src[2]; // b
 		//dst[3] = src[3]; // a
 		dst[3] = 255; // alpha = opaque
 	}
 
-	// flip upside down
-	flip = (unsigned char *)ri.Z_Malloc(w4);
-	for (row = 0; row < height / 2; row++)
-	{
-		src = buffer + 18 + row * w4;
-		dst = buffer + 18 + (height - row - 1) * w4;
-
-		Com_Memcpy(flip, src, w4);
-		Com_Memcpy(src, dst, w4);
-		Com_Memcpy(dst, flip, w4);
-	}
-	ri.Free(flip);
 	ri.FS_WriteFile(filename, buffer, fileBytes); // this will close the file as well
 	ri.Free(buffer);
 }
@@ -7682,76 +7670,63 @@ qboolean R_LoadCubeProbe(int cubeProbeNum, byte *cubeTemp[6])
 
 	int i;
 	int totalPos = cubeProbeNum * 6;
-	int fileNum = totalPos / REF_CUBEMAPS_PER_FILE;    // divide by howmany images fit in one bigger image on file
-	int insidePos = totalPos % REF_CUBEMAPS_PER_FILE;  // the Nth image inside the big texture
+	int fileNum = totalPos / REF_CUBEMAPS_PER_FILE; // divide by howmany images fit in one bigger image on file
+	int insidePos = totalPos % REF_CUBEMAPS_PER_FILE; // the Nth image inside the big texture
 	int sidesFree = REF_CUBEMAPS_PER_FILE - insidePos; // current number of images that still can be fit into the current big texture
-	int cubeSidesInThisFile = (sidesFree >= 6) ? 6 : sidesFree;
-	int cubeSidesInNextFile = 6 - cubeSidesInThisFile;
+	int cubeSidesInFile1 = (sidesFree >= 6) ? 6 : sidesFree;
+	int cubeSidesInFile2 = 6 - cubeSidesInFile1;
 	char *filename;
-	qboolean result = qtrue;
+	int bytesRead;
 	
 	//Ren_Print("-> FileNum %i totalPos %i insidepos %i %i (%i)\n", fileNum, totalPos, insidePos , cubeSidesInThisFile, cubeSidesInNextFile);
 
 	filename = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileNum);
-	//Ren_Print("-> index %i, %s\n", fileNum, filename);
-
-	ri.FS_ReadFile(filename, (void **)&buffer); // this lso closes he file after reading the full file into the buffer
-
-	if (buffer)
-	{
-		pixeldata = buffer + 18; // +buffer[0]; // skip header + skip possibly given image identifier field (usually 0 length)
-
-		for (i = 0; i < cubeSidesInThisFile; i++)
-		{
-			// copy this cube map into buffer
-			R_SubImageCpy(pixeldata,
-							((insidePos + i) % REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE, ((insidePos + i) / REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE,
-							REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
-							cubeTemp[i],
-							REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
-							4, qfalse);
-		}
-
-	}
-	else
+	bytesRead = ri.FS_ReadFile(filename, (void **)&buffer); // this lso closes he file after reading the full file into the buffer
+	if (bytesRead <= 0)
 	{
 		//Ren_Print("loadCubeProbes: %s not found", filename);
-		result = qfalse;
+		return qfalse;
+	}
+	pixeldata = buffer + 18; // +buffer[0]; // skip header + skip possibly given image identifier field (usually 0 length)
+	for (i = 0; i < cubeSidesInFile1; i++)
+	{
+		// copy this cube map into buffer
+		R_SubImageCpy(pixeldata,
+			((insidePos + i) % REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE, ((insidePos + i) / REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE,
+			REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
+			cubeTemp[i],
+			REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
+			4, qfalse);
 	}
 	ri.FS_FreeFile(buffer);
 
-	if (cubeSidesInNextFile > 0) 
+	if (cubeSidesInFile2 > 0)
 	{
 		filename = va("cm/%s/cm_%04d.tga", s_worldData.baseName, fileNum + 1);
-		//Ren_Print("-> index %i, %s\n", fileNum, filename);
-		ri.FS_ReadFile(filename, (void **)&buffer);
-
-		if (buffer)
-		{
-			pixeldata = buffer + 18; // skip header
-
-			for (i = 0; i < cubeSidesInNextFile; i++) //(i = cubeSidesInThisFile; i < 6 ; i++)
-			{
-				// copy this cube map into buffer
-				R_SubImageCpy(pixeldata,
-								(i % REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE, (i / REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE,
-								REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
-								tr.cubeTemp[cubeSidesInThisFile + i],
-								REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
-								4, qfalse);
-			}
-		}
-		else
+		bytesRead = ri.FS_ReadFile(filename, (void **)&buffer);
+		if (bytesRead <= 0)
 		{
 			//Ren_Print("loadCubeProbes: %s not found", filename);
-			result = qfalse;
+			return qfalse;
+		}
+		pixeldata = buffer + 18; // skip header
+		for (i = 0; i < cubeSidesInFile2; i++)
+		{
+			// copy this cube map into buffer
+			R_SubImageCpy(pixeldata,
+							(i % REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE, (i / REF_CUBEMAP_STORE_SIDE) * REF_CUBEMAP_SIZE,
+							REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
+							tr.cubeTemp[cubeSidesInFile1 + i],
+							REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
+							4, qfalse);
 		}
 		ri.FS_FreeFile(buffer);
 	}
 
-	return result; // result == true if all the sides of the cube could be loaded,
+	return qtrue; // result is true if all the sides of the cube could be loaded, 
 }
-	
+
+
 /**
  * @brief R_BuildCubeMaps
  */
@@ -7761,10 +7736,11 @@ void R_BuildCubeMaps(void)
 	int            ii, jj;
 	refdef_t       rf;
 	cubemapProbe_t *cubeProbe;
-	//int            x, y, xy; // encode the pixel intensity into the alpha channel
-	//byte           *dest;    // encode the pixel intensity into the alpha channel
-	//byte   r, g, b, best;    // encode the pixel intensity into the alpha channel
-
+#if 0
+	int            x, y, xy; // encode the pixel intensity into the alpha channel
+	byte           *dest;    // encode the pixel intensity into the alpha channel
+	byte   r, g, b, best;    // encode the pixel intensity into the alpha channel
+#endif
 	byte		*pixeldata	= NULL;
 	char		*fileName	= NULL;
 	int			fileCount	= 0; // the cm_ file numbering
@@ -7800,21 +7776,19 @@ void R_BuildCubeMaps(void)
 	if (!ri.FS_FileExists(fileName))
 	{
 		pixeldata = ri.Z_Malloc(REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4);
-		Com_Memset(pixeldata, 255, REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4); // Initialize output buffer
 		createCM = qtrue;
-		Ren_Developer("Cubemaps not found!\n");
+//		Ren_Developer("Cubemaps not found!\n");
 	}
-	else
-	{
-		Ren_Developer("Cubemaps found!\n");
-	}
-
+//	else
+//	{
+//		Ren_Developer("Cubemaps found!\n");
+//	}
+	
 	// calculate origins for our probes
-	Com_InitGrowList(&tr.cubeProbes, 5000);
+	Com_InitGrowList(&tr.cubeProbes, 4000);
 	tr.cubeHashTable = NewVertexHashTable();
 
 #if 0
-#if defined(USE_BSP_CLUSTERSURFACE_MERGING)
 	if (tr.world->vis)
 	{
 		bspCluster_t *cluster;
@@ -7844,17 +7818,10 @@ void R_BuildCubeMaps(void)
 			}
 		}
 	}
-#endif
-#endif
-
-	if (qtrue) // cubes based on nodes
+#elif 1
 	{
 		bspNode_t *node;
 
-		Ren_Print("...trying to allocate %d cubemaps from world nodes\n", tr.world->numnodes);
-
-		// FIXME: this doesn't create cubes on important locations
-		//        f.e. oasis (about 2600 cubes in total) water pump near allies spawn
 		for (i = 0; i < tr.world->numnodes; i++)
 		{
 			node = &tr.world->nodes[i];
@@ -7882,31 +7849,36 @@ void R_BuildCubeMaps(void)
 			}
 		}
 	}
-	else // cubes based on lightgrid
+#else
 	{
-		int            numGridPoints, k;
-		//bspGridPoint_t *gridPoint;
-		//int            gridStep[3];
+		int            numGridPoints;
+		bspGridPoint_t *gridPoint;
+		int            gridStep[3];
+		int            pos[3];
 		float          posFloat[3];
 
-		//gridStep[0] = 1;
-		//gridStep[1] = tr.world->lightGridBounds[0];
-		//gridStep[2] = tr.world->lightGridBounds[0] * tr.world->lightGridBounds[1];
+		gridStep[0] = 1;
+		gridStep[1] = tr.world->lightGridBounds[0];
+		gridStep[2] = tr.world->lightGridBounds[0] * tr.world->lightGridBounds[1];
 
 		numGridPoints = tr.world->lightGridBounds[0] * tr.world->lightGridBounds[1] * tr.world->lightGridBounds[2];
 
 		Ren_Print("...trying to allocate %d cubemaps", numGridPoints);
-		Ren_Print(" with gridsize (%i %i %i)", (int)tr.world->lightGridSize[0], (int)tr.world->lightGridSize[1], (int)tr.world->lightGridSize[2]);
-		Ren_Print(" and gridbounds (%i %i %i)\n", (int)tr.world->lightGridBounds[0], (int)tr.world->lightGridBounds[1], (int)tr.world->lightGridBounds[2]);
+		Ren_Print(" with gridsize (%i %i %i)", (int)tr.world->lightGridSize[0], (int)tr.world->lightGridSize[1],
+		          (int)tr.world->lightGridSize[2]);
+		Ren_Print(" and gridbounds (%i %i %i)\n", (int)tr.world->lightGridBounds[0], (int)tr.world->lightGridBounds[1],
+		          (int)tr.world->lightGridBounds[2]);
 
-		// FIXME: don't use every grid position
-		//        this is creating about 60000 cubes on oasis with about 500MB data per map!
 		for (i = 0; i < tr.world->lightGridBounds[0]; i += 1)
 		{
 			for (j = 0; j < tr.world->lightGridBounds[1]; j += 1)
 			{
 				for (k = 0; k < tr.world->lightGridBounds[2]; k += 1)
 				{
+					pos[0] = i;
+					pos[1] = j;
+					pos[2] = k;
+
 					posFloat[0] = i * tr.world->lightGridSize[0];
 					posFloat[1] = j * tr.world->lightGridSize[1];
 					posFloat[2] = k * tr.world->lightGridSize[2];
@@ -7928,7 +7900,7 @@ void R_BuildCubeMaps(void)
 
 						AddVertexToHashTable(tr.cubeHashTable, posFloat, cubeProbe);
 
-						//gridPoint = tr.world->lightGridData + pos[0] * gridStep[0] + pos[1] * gridStep[1] + pos[2] * gridStep[2];
+						gridPoint = tr.world->lightGridData + pos[0] * gridStep[0] + pos[1] * gridStep[1] + pos[2] * gridStep[2];
 
 						// TODO connect cubeProbe with gridPoint
 					}
@@ -7936,6 +7908,7 @@ void R_BuildCubeMaps(void)
 			}
 		}
 	}
+#endif
 
 	// if we can't find one, fake one
 	if (tr.cubeProbes.currentElements == 0)
@@ -7980,9 +7953,11 @@ void R_BuildCubeMaps(void)
 			}
 		}
 
+		// Load the cubemap from file if possible, else render a new cubemap
 		if (!createCM)
 		{
-			// load the cubemap from file
+			// try to load the cubemap from file
+			// when loading failed, set a flag to render a new cubemap
 			createCM = !R_LoadCubeProbe(j, tr.cubeTemp);
 		}
 
@@ -8013,15 +7988,14 @@ void R_BuildCubeMaps(void)
 					rf.viewaxis[0][0] = -1;
 					rf.viewaxis[0][1] = 0;
 					rf.viewaxis[0][2] = 0;
-		
+
 					rf.viewaxis[1][0] = 0;
 					rf.viewaxis[1][1] = 0;
-					rf.viewaxis[1][2] = -1;
-		
-					rf.viewaxis[2][0] = 0;
-					rf.viewaxis[2][1] = -1;
-					rf.viewaxis[2][2] = 0;
+					rf.viewaxis[1][2] = 1;
 
+					rf.viewaxis[2][0] = 0;
+					rf.viewaxis[2][1] = 1;
+					rf.viewaxis[2][2] = 0;
 					break;
 				}
 				case 1:
@@ -8033,30 +8007,15 @@ void R_BuildCubeMaps(void)
 		
 					rf.viewaxis[1][0] = 0;
 					rf.viewaxis[1][1] = 0;
-					rf.viewaxis[1][2] = 1;
+					rf.viewaxis[1][2] = -1;
 		
 					rf.viewaxis[2][0] = 0;
-					rf.viewaxis[2][1] = -1;
+					rf.viewaxis[2][1] = 1;
 					rf.viewaxis[2][2] = 0;
+
 					break;
 				}
 				case 2:
-				{
-					// Y+
-					rf.viewaxis[0][0] = 0;
-					rf.viewaxis[0][1] = 1;
-					rf.viewaxis[0][2] = 0;
-		
-					rf.viewaxis[1][0] = 1;
-					rf.viewaxis[1][1] = 0;
-					rf.viewaxis[1][2] = 0;
-		
-					rf.viewaxis[2][0] = 0;
-					rf.viewaxis[2][1] = 0;
-					rf.viewaxis[2][2] = -1;
-					break;
-				}
-				case 3:
 				{
 					// Y-
 					rf.viewaxis[0][0] = 0;
@@ -8072,37 +8031,53 @@ void R_BuildCubeMaps(void)
 					rf.viewaxis[2][2] = 1;
 					break;
 				}
-				case 4:
+				case 3:
 				{
-					// Z- down
+					// Y+
 					rf.viewaxis[0][0] = 0;
-					rf.viewaxis[0][1] = 0;
-					rf.viewaxis[0][2] = -1;
-		
+					rf.viewaxis[0][1] = 1;
+					rf.viewaxis[0][2] = 0;
+
 					rf.viewaxis[1][0] = 1;
 					rf.viewaxis[1][1] = 0;
 					rf.viewaxis[1][2] = 0;
-		
+
 					rf.viewaxis[2][0] = 0;
-					rf.viewaxis[2][1] = -1;
+					rf.viewaxis[2][1] = 0;
+					rf.viewaxis[2][2] =- 1; 
+					break;
+				}
+				case 4:
+				{
+					// Z up
+					rf.viewaxis[0][0] = 0;
+					rf.viewaxis[0][1] = 0;
+					rf.viewaxis[0][2] = 1;
+
+					rf.viewaxis[1][0] = 1;
+					rf.viewaxis[1][1] = 0;
+					rf.viewaxis[1][2] = 0;
+
+					rf.viewaxis[2][0] = 0;
+					rf.viewaxis[2][1] = 1;
 					rf.viewaxis[2][2] = 0;
+
 					break;
 				}
 				case 5:
 				{
-					// Z+ up
+					// Z down
 					rf.viewaxis[0][0] = 0;
 					rf.viewaxis[0][1] = 0;
-					rf.viewaxis[0][2] = 1;
+					rf.viewaxis[0][2] = -1;
 		
 					rf.viewaxis[1][0] = -1;
 					rf.viewaxis[1][1] = 0;
 					rf.viewaxis[1][2] = 0;
 		
 					rf.viewaxis[2][0] = 0;
-					rf.viewaxis[2][1] = -1;
+					rf.viewaxis[2][1] = 1;
 					rf.viewaxis[2][2] = 0;
-		
 					break;
 				}
 				}
@@ -8155,13 +8130,13 @@ void R_BuildCubeMaps(void)
 				// Copy this cube map into buffer
 				R_SubImageCpy(pixeldata,
 								sideX * REF_CUBEMAP_SIZE, sideY * REF_CUBEMAP_SIZE,
-								REF_CUBEMAP_STORE_SIZE, REF_CUBEMAP_STORE_SIZE,
+								REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
 								tr.cubeTemp[i],
 								REF_CUBEMAP_SIZE, REF_CUBEMAP_SIZE,
 								4, qtrue);
 		
 				dirtyBuf = qtrue;
-				// Increment everything
+				// Increment counters, and write file if it's full
 				sideX++;
 				if (sideX >= REF_CUBEMAP_STORE_SIDE)
 				{
@@ -8177,9 +8152,6 @@ void R_BuildCubeMaps(void)
 
 						fileCount++;
 						dirtyBuf = qfalse;
-
-						// Initialize output buffer
-						Com_Memset(pixeldata, 255, REF_CUBEMAP_STORE_SIZE * REF_CUBEMAP_STORE_SIZE * 4);
 					}
 				}
 			}
@@ -8208,7 +8180,7 @@ void R_BuildCubeMaps(void)
 
 		glBindTexture(cubeProbe->cubemap->type, 0);
 	}
-	//Ren_Print("\n");
+	Ren_Print("\n");
 
 	if (createCM)
 	{
@@ -8456,6 +8428,8 @@ void RE_LoadWorldMap(const char *name)
 	// build cubemaps after the necessary vbo stuff is done
 	// FIXME: causes missing vbo error on radar (maps with portal sky or foliage )
 	// devmap oasis; set developer 1; set r_showcubeprobs 1
+	//
+	// one can always do it manually from console: buildcubemaps
 	R_BuildCubeMaps();
 
 	// never move this to RE_BeginFrame because we need it to set it here for the first frame
