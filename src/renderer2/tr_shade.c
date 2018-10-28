@@ -293,6 +293,15 @@ static void BindTexture(image_t *image, image_t *defaultImage)
 static void DrawTris()
 {
 	vec_t *color;
+
+	// exclude 2d from drawing tris
+	// we might add a flag for r_showtris to show 2D again but who wants to see this?!
+	// (values 2 + 3  are used by r1!) 
+	if (tess.surfaceShader->type == SHADER_2D)
+	{
+		return;
+	}
+
 	Ren_LogComment("--- DrawTris ---\n");
 
 	SetMacrosAndSelectProgram(trProg.gl_genericShader,
@@ -346,8 +355,7 @@ static void DrawTris()
 	// bind u_ColorMap
 	SelectTexture(TEX_COLOR);
 	GL_Bind(tr.whiteImage);
-
-	SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, tess.svars.texMatrices[TB_COLORMAP]);
+	SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
 
 	glDepthRange(0, 0);
 
@@ -1141,7 +1149,6 @@ static void Render_shadowFill(int stage)
 
 	// bind u_ColorMap
 	SelectTexture(TEX_COLOR);
-
 	if ((pStage->stateBits & GLS_ATEST_BITS) != 0)
 	{
 		GL_Bind(pStage->bundle[TB_COLORMAP].image[0]);
@@ -1151,6 +1158,7 @@ static void Render_shadowFill(int stage)
 	else
 	{
 		GL_Bind(tr.whiteImage);
+		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
 	}
 
 	Tess_DrawElements();
@@ -2072,7 +2080,7 @@ static void Render_heatHaze(int stage)
 		// bind u_ColorMap
 		SelectTexture(TEX_COLOR);
 		GL_Bind(tr.whiteImage);
-		//gl_genericShader->SetUniform_ColorTextureMatrix(tess.svars.texMatrices[TB_COLORMAP]);
+		SetUniformMatrix16(UNIFORM_COLORTEXTUREMATRIX, matrixIdentity);
 
 		GLSL_SetRequiredVertexPointers(trProg.gl_genericShader);
 
