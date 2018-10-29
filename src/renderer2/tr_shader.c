@@ -4620,11 +4620,13 @@ static void CollapseStages()
 	qboolean hasNormalStage;
 	qboolean hasSpecularStage;
 	qboolean hasReflectionStage;
+	qboolean hasLiquidStage;
 
 	shaderStage_t tmpDiffuseStage;
 	shaderStage_t tmpNormalStage;
 	shaderStage_t tmpSpecularStage;
 	shaderStage_t tmpReflectionStage;
+	shaderStage_t tmpLiquidStage;
 
 	//int           idxColorStage;
 	shaderStage_t tmpColorStage;
@@ -4655,10 +4657,12 @@ static void CollapseStages()
 		hasNormalStage     = qfalse;
 		hasSpecularStage   = qfalse;
 		hasReflectionStage = qfalse;
+		hasLiquidStage     = qfalse;
 
 		Com_Memset(&tmpDiffuseStage, 0, sizeof(shaderStage_t));
 		Com_Memset(&tmpNormalStage, 0, sizeof(shaderStage_t));
 		Com_Memset(&tmpSpecularStage, 0, sizeof(shaderStage_t));
+		Com_Memset(&tmpLiquidStage, 0, sizeof(shaderStage_t));
 
 		//idxColorStage = -1;
 		Com_Memset(&tmpColorStage, 0, sizeof(shaderStage_t));
@@ -4677,7 +4681,7 @@ static void CollapseStages()
 		    stages[j].type == ST_SCREENMAP ||
 		    stages[j].type == ST_PORTALMAP ||
 		    stages[j].type == ST_HEATHAZEMAP ||
-		    stages[j].type == ST_LIQUIDMAP ||
+		    //stages[j].type == ST_LIQUIDMAP ||
 		    stages[j].type == ST_ATTENUATIONMAP_XY ||
 		    stages[j].type == ST_ATTENUATIONMAP_Z
 		    // ||
@@ -4794,6 +4798,11 @@ static void CollapseStages()
 				hasReflectionStage = qtrue;
 				tmpReflectionStage = stages[ji];
 			}
+			else if (stages[ji].type == ST_LIQUIDMAP && !hasLiquidStage)
+			{
+				hasLiquidStage = qtrue;
+				tmpLiquidStage = stages[ji];
+			}
 		}
 
 		// NOTE: merge as many stages as possible
@@ -4840,6 +4849,22 @@ static void CollapseStages()
 
 			tmpStages[numStages]      = tmpReflectionStage;
 			tmpStages[numStages].type = ST_COLLAPSE_reflection_CB;
+
+			tmpStages[numStages].bundle[TB_NORMALMAP] = tmpNormalStage.bundle[0];
+
+			numStages++;
+			j += 1;
+			continue;
+		}
+		// try to merge liquid/normal
+		else if (hasLiquidStage && hasNormalStage)
+		{
+			//Ren_Print("liquid_DB\n");
+
+			tmpShader.collapseType = COLLAPSE_none;
+
+			tmpStages[numStages]      = tmpLiquidStage;
+			tmpStages[numStages].type = ST_LIQUIDMAP;
 
 			tmpStages[numStages].bundle[TB_NORMALMAP] = tmpNormalStage.bundle[0];
 
