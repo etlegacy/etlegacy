@@ -1,3 +1,5 @@
+// gdc_limbo.shader
+
 gfx/limbo/number_roll
 {
 	nomipmaps

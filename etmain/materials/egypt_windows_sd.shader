@@ -1,12 +1,11 @@
-// egypt_windows_sd.shader 2017
-
+// egypt_windows_sd.shader
 
 textures/egypt_windows_sd/windowtrim01
 {
-    qer_editorimage textures/egypt_windows_sd/windowtrim01
-	diffusemap textures/egypt_windows_sd/windowtrim01
-	bumpmap textures/egypt_windows_sd/windowtrim01_n
-	specularmap textures/egypt_windows_sd/windowtrim01_s
+    qer_editorimage textures/egypt_windows_sd/windowtrim01.tga
+	diffusemap textures/egypt_windows_sd/windowtrim01.tga
+	bumpmap textures/egypt_windows_sd/windowtrim01_n.tga
+	specularmap textures/egypt_windows_sd/windowtrim01_s.tga
 	cull disable
 	nomipmaps
 	surfaceparm metalsteps
@@ -15,10 +14,10 @@ textures/egypt_windows_sd/windowtrim01
 
 textures/egypt_windows_sd/siwa_windows2
 {
-    qer_editorimage textures/egypt_windows_sd/siwa_windows2
-	diffusemap textures/egypt_windows_sd/siwa_windows2
-	bumpmap textures/egypt_windows_sd/siwa_windows2_n
-	specularmap textures/egypt_windows_sd/siwa_windows2_s
+    qer_editorimage textures/egypt_windows_sd/siwa_windows2.tga
+	diffusemap textures/egypt_windows_sd/siwa_windows2.tga
+	bumpmap textures/egypt_windows_sd/siwa_windows2_n.tga
+	specularmap textures/egypt_windows_sd/siwa_windows2_s.tga
 	cull disable
 	nomipmaps
 	implicitMask -
@@ -26,46 +25,46 @@ textures/egypt_windows_sd/siwa_windows2
 
 textures/egypt_windows_sd/siwa_windows5
 {
-   qer_editorimage textures/egypt_windows_sd/siwa_windows5
-   diffusemap textures/egypt_windows_sd/siwa_windows5
-   bumpmap textures/egypt_windows_sd/siwa_windows5_n
-   specularmap textures/egypt_windows_sd/siwa_windows5_s
+   qer_editorimage textures/egypt_windows_sd/siwa_windows5.tga
+   diffusemap textures/egypt_windows_sd/siwa_windows5.tga
+   bumpmap textures/egypt_windows_sd/siwa_windows5_n.tga
+   specularmap textures/egypt_windows_sd/siwa_windows5_s.tga
    nomipmaps
    implicitMask -
  }
 
 textures/egypt_windows_sd/siwa_windows6
 {
-    qer_editorimage textures/egypt_windows_sd/siwa_windows6
-	diffusemap textures/egypt_windows_sd/siwa_windows6
-	bumpmap textures/egypt_windows_sd/siwa_windows6_n
-	specularmap textures/egypt_windows_sd/siwa_windows6_s
+    qer_editorimage textures/egypt_windows_sd/siwa_windows6.tga
+	diffusemap textures/egypt_windows_sd/siwa_windows6.tga
+	bumpmap textures/egypt_windows_sd/siwa_windows6_n.tga
+	specularmap textures/egypt_windows_sd/siwa_windows6_s.tga
 	implicitMap -
 }
 
 textures/egypt_windows_sd/siwa_windows7
 {
-    qer_editorimage textures/egypt_windows_sd/siwa_windows7
-	diffusemap textures/egypt_windows_sd/siwa_windows7
-	bumpmap textures/egypt_windows_sd/siwa_windows7_n
-	specularmap textures/egypt_windows_sd/siwa_windows7_s
+    qer_editorimage textures/egypt_windows_sd/siwa_windows7.tga
+	diffusemap textures/egypt_windows_sd/siwa_windows7.tga
+	bumpmap textures/egypt_windows_sd/siwa_windows7_n.tga
+	specularmap textures/egypt_windows_sd/siwa_windows7_s.tga
 	implicitMap -
 }
 
 textures/egypt_windows_sd/siwa_windows8
 {
-    qer_editorimage textures/egypt_windows_sd/siwa_windows8
-	diffusemap textures/egypt_windows_sd/siwa_windows8
-	bumpmap textures/egypt_windows_sd/siwa_windows8_n
-	specularmap textures/egypt_windows_sd/siwa_windows8_s
+    qer_editorimage textures/egypt_windows_sd/siwa_windows8.tga
+	diffusemap textures/egypt_windows_sd/siwa_windows8.tga
+	bumpmap textures/egypt_windows_sd/siwa_windows8_n.tga
+	specularmap textures/egypt_windows_sd/siwa_windows8_s.tga
 	implicitMap -
 }
 
 textures/egypt_windows_sd/window02a
 {
-    qer_editorimage textures/egypt_windows_sd/window02a
-	diffusemap textures/egypt_windows_sd/window02a
-	bumpmap textures/egypt_windows_sd/window02a_n
-	specularmap textures/egypt_windows_sd/window02a_s
+    qer_editorimage textures/egypt_windows_sd/window02a.tga
+	diffusemap textures/egypt_windows_sd/window02a.tga
+	bumpmap textures/egypt_windows_sd/window02a_n.tga
+	specularmap textures/egypt_windows_sd/window02a_s.tga
 	implicitMap -
 }

@@ -1,9 +1,11 @@
+// factory_sd.shader
+
 textures/factory_sd/metal_wall1
 {
-    qer_editorimage textures/factory_sd/metal_wall1
-	diffusemap textures/factory_sd/metal_wall1
-	bumpmap textures/factory_sd/metal_wall1_n
-	specularmap textures/factory_sd/metal_wall1_s
+    qer_editorimage textures/factory_sd/metal_wall1.tga
+	diffusemap textures/factory_sd/metal_wall1.tga
+	bumpmap textures/factory_sd/metal_wall1_n.tga
+	specularmap textures/factory_sd/metal_wall1_s.tga
 	surfaceparm metalsteps
 	implicitMap -
 }

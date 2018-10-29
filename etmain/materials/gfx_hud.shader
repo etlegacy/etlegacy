@@ -1,3 +1,5 @@
+// gfx_hus.shader
+
 models/players/hud/damagedskins/blood01
 {	
 	polygonoffset
