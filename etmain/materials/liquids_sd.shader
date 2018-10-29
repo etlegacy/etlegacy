@@ -40,7 +40,7 @@ table sinTable { {
 textures/liquids_sd/siwa_water
 {
 	nocompress
-	qer_editorimage textures/liquids_sd/siwa_water
+	qer_editorimage textures/liquids_sd/siwa_water.tga
 	qer_trans .5
 	q3map_globaltexture
 	surfaceparm trans
@@ -52,15 +52,13 @@ textures/liquids_sd/siwa_water
 	nofog
 
 	waterfogvars ( 0.11 0.13 0.15 ) 0.2
-/*	
-	diffusemap textures/liquids_sd/siwa_water_n
-	bumpmap textures/liquids_sd/siwa_water_n
-	specularmap textures/liquids_sd/siwa_water_s // ?
-*/	
+
+	bumpmap textures/liquids_sd/siwa_water_n.tga
+
 	{ 
 		stage liquidmap
 		fog on
-		map textures/liquids_sd/siwa_water_n
+		map textures/liquids_sd/siwa_water_n.tga
 		// these are new default values of Renderer_liquid
 		//refractionIndex 1.3 // water
         //fresnelPower 2.0
@@ -77,7 +75,7 @@ textures/liquids_sd/siwa_water
 
 	{ 
 		fog on
-		map textures/liquids_sd/seawall_ripple1
+		map textures/liquids_sd/seawall_ripple1.tga
 		blendFunc GL_ONE GL_ONE
 		rgbGen wave sin 0.3 0.02 0 0.25 
 		tcmod scale 0.01 0.01
@@ -86,7 +84,7 @@ textures/liquids_sd/siwa_water
 	
 	{
 		fog on
-		map textures/liquids_sd/seawall_ripple1
+		map textures/liquids_sd/seawall_ripple1.tga
 		blendFunc GL_ONE GL_ONE
 		rgbGen wave sin 0.1 0.03 0 0.4
 		tcmod scale 1 1
@@ -94,7 +92,7 @@ textures/liquids_sd/siwa_water
 	}
 	{
 		fog on
-		map textures/liquids_sd/siwa_shimshim1
+		map textures/liquids_sd/siwa_shimshim1.tga
 		blendFunc GL_ONE GL_ONE
 		rgbGen wave sin 0.4 0.02 0 0.3
 		tcmod transform 0 1.5 1 1.5 2 1
@@ -104,7 +102,7 @@ textures/liquids_sd/siwa_water
 
 textures/liquids_sd/siwa_water_2
 {
-	qer_editorimage textures/liquids_sd/siwa_water
+	qer_editorimage textures/liquids_sd/siwa_water.tga
 	qer_trans .5
 	q3map_globaltexture
 	cull disable
@@ -116,10 +114,13 @@ textures/liquids_sd/siwa_water_2
 	surfaceparm water
 	waterfogvars ( 0.11 0.13 0.15 ) 0.2
 	color 0.1, 0.1, 0.1, 0.5 // underwater fog color
+
+	bumpmap textures/liquids_sd/siwa_water_n.tga
+
 	nopicmip
 	{
 		stage liquidmap
-		map textures/liquids_sd/siwa_water_n
+		map textures/liquids_sd/siwa_water_n.tga
 		blendFunc blend
 		alphaFunc GE128
 		rgbgen identity
@@ -128,7 +129,7 @@ textures/liquids_sd/siwa_water_2
 		fog on
 	}
 	{
-		map textures/liquids_sd/seawall_ripple1
+		map textures/liquids_sd/seawall_ripple1.tga
 		blendFunc GL_ONE GL_ONE
 		rgbGen wave sin 0.3 0.02 0 0.25
 		tcmod scale 0.01 0.01
@@ -136,7 +137,7 @@ textures/liquids_sd/siwa_water_2
 		fog on
 	}
 	{
-		map textures/liquids_sd/seawall_ripple1
+		map textures/liquids_sd/seawall_ripple1.tga
 		blendFunc GL_ONE GL_ONE
 		rgbGen wave sin 0.1 0.03 0 0.4
 		tcmod scale 1 1
@@ -144,7 +145,7 @@ textures/liquids_sd/siwa_water_2
 		fog on
 	}
 	{
-		map textures/liquids_sd/siwa_shimshim1
+		map textures/liquids_sd/siwa_shimshim1.tga
 		blendFunc GL_ONE GL_ONE
 		rgbGen wave sin 0.4 0.02 0 0.3
 		tcmod transform 0 1.5 1 1.5 2 1
@@ -155,7 +156,7 @@ textures/liquids_sd/siwa_water_2
 
 textures/liquids_sd/siwa_waternodraw
 {
-	qer_editorimage textures/liquids_sd/siwa_waternodraw
+	qer_editorimage textures/liquids_sd/siwa_waternodraw.tga
 	qer_trans .75
 	surfaceparm nodraw
 	surfaceparm water
