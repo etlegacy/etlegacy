@@ -31,7 +31,7 @@ textures/mp_siwa/lmterrain_base
 
 textures/mp_siwa/lmterrain_0
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	qer_editorimage textures/desert_sd/sand_wave_desert.tga
 	surfaceparm landmine
 	surfaceparm gravelsteps
@@ -81,7 +81,7 @@ textures/mp_siwa/lmterrain_0
 
 textures/mp_siwa/lmterrain_1
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	qer_editorimage textures/desert_sd/grass_sand_flat.tga
 	surfaceparm landmine
 	surfaceparm gravelsteps
@@ -131,7 +131,7 @@ textures/mp_siwa/lmterrain_1
 
 textures/mp_siwa/lmterrain_2
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	qer_editorimage textures/desert_sd/sand_patchy.tga
 	surfaceparm landmine
 	surfaceparm gravelsteps
@@ -182,7 +182,7 @@ textures/mp_siwa/lmterrain_2
 
 textures/mp_siwa/lmterrain_3
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	qer_editorimage textures/desert_sd/sand_disturb_desert.tga
 	surfaceparm landmine
 	surfaceparm gravelsteps
@@ -232,7 +232,7 @@ textures/mp_siwa/lmterrain_3
 
 textures/mp_siwa/lmterrain_4
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	qer_editorimage textures/desert_sd/grass_desert_flat.tga
 	surfaceparm landmine
 	surfaceparm gravelsteps
@@ -282,7 +282,7 @@ textures/mp_siwa/lmterrain_4
 
 textures/mp_siwa/lmterrain_5
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	qer_editorimage textures/desert_sd/rock_edged_smooth.tga
 	{
 	    stage diffuseMap
@@ -329,7 +329,7 @@ textures/mp_siwa/lmterrain_5
 
 textures/mp_siwa/lmterrain_6
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	qer_editorimage textures/desert_sd/sand_gravels_bright.tga
 	surfaceparm landmine
 	surfaceparm gravelsteps
@@ -379,7 +379,7 @@ textures/mp_siwa/lmterrain_6
 
 textures/mp_siwa/lmterrain_7
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	qer_editorimage textures/desert_sd/sand_dirt_medium.tga
 	surfaceparm landmine
 	surfaceparm gravelsteps
@@ -430,7 +430,7 @@ textures/mp_siwa/lmterrain_7
 
 textures/mp_siwa/lmterrain_0to1
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -479,7 +479,7 @@ textures/mp_siwa/lmterrain_0to1
 
 textures/mp_siwa/lmterrain_0to2
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -528,7 +528,7 @@ textures/mp_siwa/lmterrain_0to2
 
 textures/mp_siwa/lmterrain_0to3
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -577,7 +577,7 @@ textures/mp_siwa/lmterrain_0to3
 
 textures/mp_siwa/lmterrain_0to4
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -626,7 +626,7 @@ textures/mp_siwa/lmterrain_0to4
 
 textures/mp_siwa/lmterrain_0to5
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -675,7 +675,7 @@ textures/mp_siwa/lmterrain_0to5
 
 textures/mp_siwa/lmterrain_0to6
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -725,7 +725,7 @@ textures/mp_siwa/lmterrain_0to6
 
 textures/mp_siwa/lmterrain_0to7
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -774,7 +774,7 @@ textures/mp_siwa/lmterrain_0to7
 
 textures/mp_siwa/lmterrain_1to2
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -823,7 +823,7 @@ textures/mp_siwa/lmterrain_1to2
 
 textures/mp_siwa/lmterrain_1to3
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -872,7 +872,7 @@ textures/mp_siwa/lmterrain_1to3
 
 textures/mp_siwa/lmterrain_1to4
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 	{
@@ -920,7 +920,7 @@ textures/mp_siwa/lmterrain_1to4
 
 textures/mp_siwa/lmterrain_1to5
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -969,7 +969,7 @@ textures/mp_siwa/lmterrain_1to5
 
 textures/mp_siwa/lmterrain_1to6
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -1018,7 +1018,7 @@ textures/mp_siwa/lmterrain_1to6
 
 textures/mp_siwa/lmterrain_1to7
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -1067,7 +1067,7 @@ textures/mp_siwa/lmterrain_1to7
 
 textures/mp_siwa/lmterrain_2to3
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -1115,7 +1115,7 @@ textures/mp_siwa/lmterrain_2to3
 }
 textures/mp_siwa/lmterrain_2to4
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -1164,7 +1164,7 @@ textures/mp_siwa/lmterrain_2to4
 
 textures/mp_siwa/lmterrain_2to5
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -1213,7 +1213,7 @@ textures/mp_siwa/lmterrain_2to5
 
 textures/mp_siwa/lmterrain_2to6
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -1262,7 +1262,7 @@ textures/mp_siwa/lmterrain_2to6
 
 textures/mp_siwa/lmterrain_2to7
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -1311,7 +1311,7 @@ textures/mp_siwa/lmterrain_2to7
 
 textures/mp_siwa/lmterrain_3to4
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -1360,7 +1360,7 @@ textures/mp_siwa/lmterrain_3to4
 
 textures/mp_siwa/lmterrain_3to5
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -1409,7 +1409,7 @@ textures/mp_siwa/lmterrain_3to5
 
 textures/mp_siwa/lmterrain_3to6
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -1458,7 +1458,7 @@ textures/mp_siwa/lmterrain_3to6
 
 textures/mp_siwa/lmterrain_3to7
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -1507,7 +1507,7 @@ textures/mp_siwa/lmterrain_3to7
 
 textures/mp_siwa/lmterrain_4to5
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
    {
@@ -1555,7 +1555,7 @@ textures/mp_siwa/lmterrain_4to5
 
 textures/mp_siwa/lmterrain_4to6
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -1603,7 +1603,7 @@ textures/mp_siwa/lmterrain_4to6
 
 textures/mp_siwa/lmterrain_4to7
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -1652,7 +1652,7 @@ textures/mp_siwa/lmterrain_4to7
 
 textures/mp_siwa/lmterrain_5to6
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -1701,7 +1701,7 @@ textures/mp_siwa/lmterrain_5to6
 
 textures/mp_siwa/lmterrain_5to7
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 
@@ -1750,7 +1750,7 @@ textures/mp_siwa/lmterrain_5to7
 
 textures/mp_siwa/lmterrain_6to7
 {
-	q3map_baseshader textures/mp_siwa/lmterrain_base.tga
+	q3map_baseshader textures/mp_siwa/lmterrain_base
 	surfaceparm landmine
 	surfaceparm gravelsteps
 

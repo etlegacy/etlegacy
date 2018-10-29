@@ -1,11 +1,12 @@
-//Updated for renderer2 by Thunder 25.02.2017
+// battery.shader
+
 textures/liquids_sd/seawall_specular
 {
-    qer_editorimage textures/liquids_sd/seawall_specular
+    qer_editorimage textures/liquids_sd/seawall_specular.tga
 
 	{ 
 		stage liquidmap
-		map textures/liquids_sd/seawall_specular_n
+		map textures/liquids_sd/seawall_specular_n.tga
 		blendFunc blend
 		alphaFunc GE128
 		depthWrite
@@ -15,11 +16,11 @@ textures/liquids_sd/seawall_specular
 
 textures/liquids_sd/sea_bright_na
 {
-    qer_editorimage textures/liquids_sd/sea_bright_na
+    qer_editorimage textures/liquids_sd/sea_bright_na.tga
 	
 	{ 
 		stage liquidmap
-		map textures/liquids_sd/sea_bright_na_n
+		map textures/liquids_sd/sea_bright_na_n.tga
 		blendFunc blend
 		alphaFunc GE128
 		depthWrite
@@ -29,11 +30,11 @@ textures/liquids_sd/sea_bright_na
 
 textures/liquids_sd/seawall_foam
 {
-    qer_editorimage textures/liquids_sd/seawall_foam
+    qer_editorimage textures/liquids_sd/seawall_foam.tga
     
 	{
 		stage liquidmap
-		map textures/liquids_sd/seawall_foam_n
+		map textures/liquids_sd/seawall_foam_n.tga
 		blendFunc blend
 		alphaFunc GE128
 		depthWrite
@@ -44,7 +45,7 @@ textures/liquids_sd/seawall_foam
 // ocean fog water
 textures/battery/fog_water
 {
-	qer_editorimage textures/common/fog_water
+	qer_editorimage textures/common/fog_water.tga
 	
 	surfaceparm nodraw
   	surfaceparm nonsolid
@@ -59,11 +60,11 @@ textures/battery/fog_water
 // abstract shader for subclassed shaders
 textures/battery/ocean_base
 {
-	qer_editorimage textures/liquids_sd/seawall_ocean
+	qer_editorimage textures/liquids_sd/seawall_ocean.tga
 	
-	diffusemap textures/liquids_sd/sea_bright_na
-	bumpmap textures/liquids_sd/sea_bright_na_n
-	specularmap textures/liquids_sd/sea_bright_na_s
+	diffusemap textures/liquids_sd/sea_bright_na.tga
+	bumpmap textures/liquids_sd/sea_bright_na_n.tga
+	specularmap textures/liquids_sd/sea_bright_na_s.tga
 	
 	qer_trans 0.75
 	//q3map_tcGen ivector ( 512 0 0 ) ( 0 512 0 )
@@ -79,7 +80,7 @@ textures/battery/ocean_base
 // nonsolid terrain shader
 textures/battery/ocean_terrain
 {
-	qer_editorimage textures/common/terrain_nonsolid
+	qer_editorimage textures/common/terrain_nonsolid.tga
 	
 	q3map_terrain
 	qer_trans .5
@@ -99,14 +100,14 @@ textures/battery/ocean_0
  	deformVertexes wave 317 sin 0 1.5 0 0.30
 	
 	{
-		map textures/liquids_sd/seawall_specular
+		map textures/liquids_sd/seawall_specular.tga
 		blendFunc GL_ONE GL_ONE
 		rgbGen vertex
 		tcGen environment
 		depthWrite
 	}
 	{ 
-		map textures/liquids_sd/sea_bright_na
+		map textures/liquids_sd/sea_bright_na.tga
 		blendFunc blend
 		rgbGen identity
 		alphaGen const 0.8
@@ -123,21 +124,21 @@ textures/battery/ocean_1
  	deformVertexes wave 317 sin 0 1.5 0 0.30
 	
 	{
-		map textures/liquids_sd/seawall_specular
+		map textures/liquids_sd/seawall_specular.tga
 		blendFunc GL_ONE GL_ONE
 		rgbGen vertex
 		tcGen environment
 		depthWrite
 	}
 	{ 
-		map textures/liquids_sd/sea_bright_na
+		map textures/liquids_sd/sea_bright_na.tga
 		blendFunc blend
 		rgbGen identity
 		alphaGen const .8
 		tcmod scroll 0.005 0.03
 	}
 	{
-		map textures/liquids_sd/seawall_foam
+		map textures/liquids_sd/seawall_foam.tga
 		blendFunc GL_SRC_ALPHA GL_ONE
 		rgbGen wave sin 0.2 0.1 0 0.2
 		alphaGen vertex
@@ -145,7 +146,7 @@ textures/battery/ocean_1
 		tcmod scroll -0.01 0.08
 	}
 	{ 
-		map textures/liquids_sd/seawall_foam
+		map textures/liquids_sd/seawall_foam.tga
 		blendFunc GL_SRC_ALPHA GL_ONE
 		rgbGen wave sin 0.15 0.1 0.1 0.15
 		alphaGen vertex
@@ -163,7 +164,7 @@ textures/battery/ocean_0to1
  	deformVertexes wave 317 sin 0 1.5 0 0.30 	
 	
 	{
-		map textures/liquids_sd/seawall_specular
+		map textures/liquids_sd/seawall_specular.tga
 		blendFunc GL_ONE GL_ONE
 		rgbGen vertex
 		tcGen environment
@@ -171,14 +172,14 @@ textures/battery/ocean_0to1
 	}
 	
 	{ 
-		map textures/liquids_sd/sea_bright_na
+		map textures/liquids_sd/sea_bright_na.tga
 		blendFunc blend
 		rgbGen identity
 		alphaGen const .8
 		tcmod scroll 0.005 0.03
 	}
 	{
-		map textures/liquids_sd/seawall_foam
+		map textures/liquids_sd/seawall_foam.tga
 		blendFunc GL_SRC_ALPHA GL_ONE
 		rgbGen wave sin 0.2 0.1 0 0.2
 		alphaGen vertex
@@ -186,7 +187,7 @@ textures/battery/ocean_0to1
 		tcmod scroll -0.01 0.08
 	}
 	{ 
-		map textures/liquids_sd/seawall_foam
+		map textures/liquids_sd/seawall_foam.tga
 		blendFunc GL_SRC_ALPHA GL_ONE
 		rgbGen wave sin 0.15 0.1 0.1 0.15
 		alphaGen vertex
@@ -201,7 +202,7 @@ textures/battery/rock_graynoise
     q3map_nonplanar
     q3map_shadeangle 180
     //q3map_tcmodscale 1.5 1.5
-    qer_editorimage textures/temperate_sd/rock_grayvar
+    qer_editorimage textures/temperate_sd/rock_grayvar.tga
     
     {
         map $lightmap
@@ -209,17 +210,17 @@ textures/battery/rock_graynoise
     }
     {
 	    stage diffusemap
-        map textures/temperate_sd/rock_grayvar
+        map textures/temperate_sd/rock_grayvar.tga
         rgbGen identity
     }
 	{
 	    stage bumpmap
-        map textures/temperate_sd/rock_grayvar_n
+        map textures/temperate_sd/rock_grayvar_n.tga
         rgbGen identity
     }
 	{
 	    stage specularmap
-        map textures/temperate_sd/rock_grayvar_s
+        map textures/temperate_sd/rock_grayvar_s.tga
         rgbGen identity
     }
 }
@@ -229,7 +230,7 @@ textures/battery/sand_disturb
     q3map_nonplanar
     q3map_shadeangle 180
     //q3map_tcmodscale 1.5 1.5
-    qer_editorimage textures/temperate_sd/sand_disturb_bright
+    qer_editorimage textures/temperate_sd/sand_disturb_bright.tga
     
     surfaceparm landmine
     surfaceparm gravelsteps
@@ -240,17 +241,17 @@ textures/battery/sand_disturb
     }
     {
 	    stage diffusemap
-		map textures/temperate_sd/sand_disturb_bright
+		map textures/temperate_sd/sand_disturb_bright.tga
         rgbGen identity
     }
 	{
 	    stage bumpmap
-		map textures/temperate_sd/sand_disturb_bright_n
+		map textures/temperate_sd/sand_disturb_bright_n.tga
         rgbGen identity
     }
 	{
 	    stage specularmap
-		map textures/temperate_sd/sand_disturb_bright_s
+		map textures/temperate_sd/sand_disturb_bright_s.tga
         rgbGen identity
     }
    
@@ -275,36 +276,36 @@ textures/battery/terrain_0
 	
 	{
         stage diffusemap
-		map textures/temperate_sd/sand_disturb_bright
+		map textures/temperate_sd/sand_disturb_bright.tga
 		rgbgen identity
 	}
 	{
         stage bumpmap
-		map textures/temperate_sd/sand_disturb_bright_n
+		map textures/temperate_sd/sand_disturb_bright_n.tga
 		rgbgen identity
 	}
 	{
         stage specularmap
-		map textures/temperate_sd/sand_disturb_bright_s
+		map textures/temperate_sd/sand_disturb_bright_s.tga
 		rgbgen identity
 	}
 	{
 		stage diffusemap
-		map textures/temperate_sd/sand_disturb_bright
+		map textures/temperate_sd/sand_disturb_bright.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{ 
 	    stage bumpmap
-        map textures/temperate_sd/sand_disturb_bright_n
+        map textures/temperate_sd/sand_disturb_bright_n.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage specularmap
-	    map textures/temperate_sd/sand_disturb_bright_s
+	    map textures/temperate_sd/sand_disturb_bright_s.tga
 	    rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -324,36 +325,36 @@ textures/battery/terrain_1
 	
 	{
 	    stage diffusemap
-		map textures/temperate_sd/sand_wave_bright
+		map textures/temperate_sd/sand_wave_bright.tga
 		rgbgen identity
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/sand_wave_bright_n
+		map textures/temperate_sd/sand_wave_bright_n.tga
 		rgbgen identity
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/sand_wave_bright_s
+		map textures/temperate_sd/sand_wave_bright_s.tga
 		rgbgen identity
 	}
 	{
 		stage diffusemap
-		map textures/temperate_sd/sand_wave_bright
+		map textures/temperate_sd/sand_wave_bright.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{ 
 	    stage bumpmap
-        map textures/temperate_sd/sand_wave_bright_n
+        map textures/temperate_sd/sand_wave_bright_n.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage specularmap
-	    map textures/temperate_sd/sand_wave_bright_s
+	    map textures/temperate_sd/sand_wave_bright_s.tga
 	    rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -373,36 +374,36 @@ textures/battery/terrain_2
 	
 	{
 	    stage diffusemap
-		map textures/temperate_sd/rocky_sand
+		map textures/temperate_sd/rocky_sand.tga
 		rgbgen identity
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/rocky_sand_n
+		map textures/temperate_sd/rocky_sand_n.tga
 		rgbgen identity
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/rocky_sand_s
+		map textures/temperate_sd/rocky_sand_s.tga
 		rgbgen identity
 	}
 	{
 		stage diffusemap
-		map textures/temperate_sd/rocky_sand
+		map textures/temperate_sd/rocky_sand.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{ 
 	    stage bumpmap
-        map textures/temperate_sd/rocky_sand_n
+        map textures/temperate_sd/rocky_sand_n.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage specularmap
-	    map textures/temperate_sd/rocky_sand_s
+	    map textures/temperate_sd/rocky_sand_s.tga
 	    rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -416,40 +417,40 @@ textures/battery/terrain_2
 textures/battery/terrain_3
 {
 	q3map_baseshader textures/battery/terrain_base
-	qer_editorimage textures/temperate_sd/rock_grayvar
+	qer_editorimage textures/temperate_sd/rock_grayvar.tga
 	
 	{
 	    stage diffusemap
-		map textures/temperate_sd/rock_graynoise
+		map textures/temperate_sd/rock_graynoise.tga
 		rgbgen identity
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/rock_graynoise_n
+		map textures/temperate_sd/rock_graynoise_n.tga
 		rgbgen identity
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/rock_graynoise_s
+		map textures/temperate_sd/rock_graynoise_s.tga
 		rgbgen identity
 	}
 	{
 		stage diffusemap
-		map textures/temperate_sd/rock_graynoise
+		map textures/temperate_sd/rock_graynoise.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{ 
 	    stage bumpmap
-        map textures/temperate_sd/rock_graynoise_n
+        map textures/temperate_sd/rock_graynoise_n.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage specularmap
-	    map textures/temperate_sd/rock_graynoise_s
+	    map textures/temperate_sd/rock_graynoise_s.tga
 	    rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -463,40 +464,40 @@ textures/battery/terrain_3
 textures/battery/terrain_4
 {
 	q3map_baseshader textures/battery/terrain_base
-	qer_editorimage textures/temperate_sd/rock_grayvar
+	qer_editorimage textures/temperate_sd/rock_grayvar.tga
 	
 	{
 	    stage diffusemap
-		map textures/temperate_sd/rock_grayvar
+		map textures/temperate_sd/rock_grayvar.tga
 		rgbgen identity
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/rock_grayvar_n
+		map textures/temperate_sd/rock_grayvar_n.tga
 		rgbgen identity
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/rock_grayvar_s
+		map textures/temperate_sd/rock_grayvar_s.tga
 		rgbgen identity
 	}
 	{
 		stage diffusemap
-		map textures/temperate_sd/rock_grayvar
+		map textures/temperate_sd/rock_grayvar.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{ 
 	    stage bumpmap
-        map textures/temperate_sd/rock_grayvar_n
+        map textures/temperate_sd/rock_grayvar_n.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage specularmap
-	    map textures/temperate_sd/rock_grayvar_s
+	    map textures/temperate_sd/rock_grayvar_s.tga
 	    rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -510,42 +511,42 @@ textures/battery/terrain_4
 textures/battery/terrain_5
 {
 	q3map_baseshader textures/battery/terrain_base
-	qer_editorimage textures/temperate_sd/sand_patchnoise
+	qer_editorimage textures/temperate_sd/sand_patchnoise.tga
 	
 	surfaceparm landmine
 	surfaceparm gravelsteps
 	{
 	    stage diffusemap
-		map textures/temperate_sd/sand_patchnoise
+		map textures/temperate_sd/sand_patchnoise.tga
 		rgbgen identity
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/sand_patchnoise_n
+		map textures/temperate_sd/sand_patchnoise_n.tga
 		rgbgen identity
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/sand_patchnoise_s
+		map textures/temperate_sd/sand_patchnoise_s.tga
 		rgbgen identity
 	}
 	{
 		stage diffusemap
-		map textures/temperate_sd/sand_patchnoise
+		map textures/temperate_sd/sand_patchnoise.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{ 
 	    stage bumpmap
-        map textures/temperate_sd/sand_patchnoise_n
+        map textures/temperate_sd/sand_patchnoise_n.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage specularmap
-	    map textures/temperate_sd/sand_patchnoise_s
+	    map textures/temperate_sd/sand_patchnoise_s.tga
 	    rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -565,40 +566,40 @@ textures/battery/terrain_0to1
 	
 	{
 		stage diffusemap
-		map textures/temperate_sd/sand_disturb_bright
+		map textures/temperate_sd/sand_disturb_bright.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 		stage bumpmap
-		map textures/temperate_sd/sand_disturb_bright_n
+		map textures/temperate_sd/sand_disturb_bright_n.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	
 	{
 		stage specularmap
-		map textures/temperate_sd/sand_disturb_bright_s
+		map textures/temperate_sd/sand_disturb_bright_s.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 		stage diffusemap
-		map textures/temperate_sd/sand_wave_bright
+		map textures/temperate_sd/sand_wave_bright.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{ 
 	    stage bumpmap
-        map textures/temperate_sd/sand_wave_bright_n
+        map textures/temperate_sd/sand_wave_bright_n.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage specularmap
-	    map textures/temperate_sd/sand_wave_bright_s
+	    map textures/temperate_sd/sand_wave_bright_s.tga
 	    rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -617,39 +618,39 @@ textures/battery/terrain_0to2
 	surfaceparm gravelsteps
 	{
 	    stage diffusemap
-		map textures/temperate_sd/sand_disturb_bright
+		map textures/temperate_sd/sand_disturb_bright.tga
 		rgbgen identity
 		alphaGen vertex		
 	}
 	{
 	    stage bumpmap 
-		map textures/temperate_sd/sand_disturb_bright_n
+		map textures/temperate_sd/sand_disturb_bright_n.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	   stage specularmap
-	   map textures/temperate_sd/sand_disturb_bright_s
+	   map textures/temperate_sd/sand_disturb_bright_s.tga
 	   rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage diffusemap
-		map textures/temperate_sd/rocky_sand
+		map textures/temperate_sd/rocky_sand.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage bumpmap 
-		map textures/temperate_sd/rocky_sand_n
+		map textures/temperate_sd/rocky_sand_n.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/rocky_sand_s
+		map textures/temperate_sd/rocky_sand_s.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -666,39 +667,39 @@ textures/battery/terrain_0to3
 	
 	{
 	    stage diffusemap
-		map textures/temperate_sd/sand_disturb_bright
+		map textures/temperate_sd/sand_disturb_bright.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	   	stage bumpmap
-	   	map textures/temperate_sd/sand_disturb_bright_n
+	   	map textures/temperate_sd/sand_disturb_bright_n.tga
 	   	rgbgen identity
 		alphaGen vertex
 	}
 	{
 	   	stage specularmap
-	   	map textures/temperate_sd/sand_disturb_bright_s
+	   	map textures/temperate_sd/sand_disturb_bright_s.tga
 	   	rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage diffusemap
-		map textures/temperate_sd/rock_graynoise
+		map textures/temperate_sd/rock_graynoise.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/rock_graynoise_n
+		map textures/temperate_sd/rock_graynoise_n.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/rock_graynoise_s
+		map textures/temperate_sd/rock_graynoise_s.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -715,38 +716,39 @@ textures/battery/terrain_0to4
 	
 	{
 	    stage diffusemap
-		map textures/temperate_sd/sand_disturb_bright
+		map textures/temperate_sd/sand_disturb_bright.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage bumpmap 
-		map textures/temperate_sd/sand_disturb_bright_n
+		map textures/temperate_sd/sand_disturb_bright_n.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/sand_disturb_bright_s
+		map textures/temperate_sd/sand_disturb_bright_s.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage diffusemap
-		map textures/temperate_sd/rock_grayvar
+		map textures/temperate_sd/rock_grayvar.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage bumpmap
-	    map textures/temperate_sd/rock_grayvar_n
+	    map textures/temperate_sd/rock_grayvar_n.tga
 	    rgbgen identity
 		alphaGen vertex
-		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA	}
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA	
+	}
 	{
 	    stage specularmap 
-	    map textures/temperate_sd/rock_grayvar_s
+	    map textures/temperate_sd/rock_grayvar_s.tga
 	    rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -765,39 +767,39 @@ textures/battery/terrain_0to5
 	surfaceparm gravelsteps
 	{
 	    stage diffusemap
-		map textures/temperate_sd/sand_disturb_bright
+		map textures/temperate_sd/sand_disturb_bright.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/sand_disturb_bright_n
+		map textures/temperate_sd/sand_disturb_bright_n.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage specularmap
-	    map textures/temperate_sd/sand_disturb_bright_s
+	    map textures/temperate_sd/sand_disturb_bright_s.tga
 	    rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage diffusemap
-		map textures/temperate_sd/sand_patchnoise
+		map textures/temperate_sd/sand_patchnoise.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage bumpmap
-	    map textures/temperate_sd/sand_patchnoise_n
+	    map textures/temperate_sd/sand_patchnoise_n.tga
 	    rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage specularmap
-	    map textures/temperate_sd/sand_patchnoise_n
+	    map textures/temperate_sd/sand_patchnoise_n.tga
 	    rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -818,39 +820,39 @@ textures/battery/terrain_1to2
 	
 	{
 	    stage diffusemap
-		map textures/temperate_sd/sand_wave_bright
+		map textures/temperate_sd/sand_wave_bright.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/sand_wave_bright_n
+		map textures/temperate_sd/sand_wave_bright_n.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/sand_wave_bright_s
+		map textures/temperate_sd/sand_wave_bright_s.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage diffusemap
-		map textures/temperate_sd/rocky_sand
+		map textures/temperate_sd/rocky_sand.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/rocky_sand_n
+		map textures/temperate_sd/rocky_sand_n.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/rocky_sand_s
+		map textures/temperate_sd/rocky_sand_s.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -867,39 +869,39 @@ textures/battery/terrain_1to3
 	
 	{
 	    stage diffusemap
-		map textures/temperate_sd/sand_wave_bright
+		map textures/temperate_sd/sand_wave_bright.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/sand_wave_bright_n
+		map textures/temperate_sd/sand_wave_bright_n.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/sand_wave_bright_s
+		map textures/temperate_sd/sand_wave_bright_s.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage diffusemap
-		map textures/temperate_sd/rock_graynoise
+		map textures/temperate_sd/rock_graynoise.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/rock_graynoise_n
+		map textures/temperate_sd/rock_graynoise_n.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/rock_graynoise_s
+		map textures/temperate_sd/rock_graynoise_s.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -916,39 +918,39 @@ textures/battery/terrain_1to4
 
 	{
 	    stage diffusemap
-		map textures/temperate_sd/sand_wave_bright
+		map textures/temperate_sd/sand_wave_bright.tga
 		rgbgen identity
 		alphaGen vertex	
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/sand_wave_bright_n
+		map textures/temperate_sd/sand_wave_bright_n.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/sand_wave_bright_s
+		map textures/temperate_sd/sand_wave_bright_s.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage diffusemap
-		map textures/temperate_sd/rock_grayvar
+		map textures/temperate_sd/rock_grayvar.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/rock_grayvar_n
+		map textures/temperate_sd/rock_grayvar_n.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/rock_grayvar_s
+		map textures/temperate_sd/rock_grayvar_s.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -967,39 +969,39 @@ textures/battery/terrain_1to5
 	surfaceparm gravelsteps
 	{
 	    stage diffusemap
-		map textures/temperate_sd/sand_wave_bright
+		map textures/temperate_sd/sand_wave_bright.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/sand_wave_bright_n
+		map textures/temperate_sd/sand_wave_bright_n.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/sand_wave_bright_s
+		map textures/temperate_sd/sand_wave_bright_s.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage diffusemap
-		map textures/temperate_sd/sand_patchnoise
+		map textures/temperate_sd/sand_patchnoise.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/sand_patchnoise_n
+		map textures/temperate_sd/sand_patchnoise_n.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/sand_patchnoise_s
+		map textures/temperate_sd/sand_patchnoise_s.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -1016,39 +1018,39 @@ textures/battery/terrain_2to3
 	
 	{
 	    stage diffusemap
-		map textures/temperate_sd/rocky_sand
+		map textures/temperate_sd/rocky_sand.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/rocky_sand_n
+		map textures/temperate_sd/rocky_sand_n.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/rocky_sand_s
+		map textures/temperate_sd/rocky_sand_s.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage diffusemap
-		map textures/temperate_sd/rock_graynoise
+		map textures/temperate_sd/rock_graynoise.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/rock_graynoise_n
+		map textures/temperate_sd/rock_graynoise_n.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/rock_graynoise_s
+		map textures/temperate_sd/rock_graynoise_s.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -1065,40 +1067,40 @@ textures/battery/terrain_2to4
 	
 	{
 	    stage diffusemap
-		map textures/temperate_sd/rocky_sand
+		map textures/temperate_sd/rocky_sand.tga
 		rgbgen identity
 		alphaGen vertex	
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/rocky_sand_n
+		map textures/temperate_sd/rocky_sand_n.tga
 	    rgbgen identity
 		alphaGen vertex
 	}
 	
 	{
 	    stage specularmap
-		map textures/temperate_sd/rocky_sand_s
+		map textures/temperate_sd/rocky_sand_s.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage diffusemap
-		map textures/temperate_sd/rock_grayvar
+		map textures/temperate_sd/rock_grayvar.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA	
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/rock_grayvar_n
+		map textures/temperate_sd/rock_grayvar_n.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHAd	
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/rock_grayvar_n
+		map textures/temperate_sd/rock_grayvar_n.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -1117,39 +1119,39 @@ textures/battery/terrain_2to5
 	surfaceparm gravelsteps
 	{
 	    stage diffusemap
-		map textures/temperate_sd/rocky_sand
+		map textures/temperate_sd/rocky_sand.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/rocky_sand_n
+		map textures/temperate_sd/rocky_sand_n.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/rocky_sand_s
+		map textures/temperate_sd/rocky_sand_s.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage diffusemap
-		map textures/temperate_sd/sand_patchnoise
+		map textures/temperate_sd/sand_patchnoise.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/sand_patchnoise_n
+		map textures/temperate_sd/sand_patchnoise_n.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/sand_patchnoise_s
+		map textures/temperate_sd/sand_patchnoise_s.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -1166,39 +1168,39 @@ textures/battery/terrain_3to4
 	
 	{
 	    stage diffusemap
-		map textures/temperate_sd/rock_graynoise
+		map textures/temperate_sd/rock_graynoise.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/rock_graynoise_n
+		map textures/temperate_sd/rock_graynoise_n.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/rock_graynoise_s
+		map textures/temperate_sd/rock_graynoise_s.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage diffusemap
-		map textures/temperate_sd/rock_grayvar
+		map textures/temperate_sd/rock_grayvar.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/rock_grayvar_n
+		map textures/temperate_sd/rock_grayvar_n.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/rock_grayvar_s
+		map textures/temperate_sd/rock_grayvar_s.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -1215,39 +1217,39 @@ textures/battery/terrain_3to5
 	
 	{
 	    stage diffusemap
-		map textures/temperate_sd/rock_graynoise
+		map textures/temperate_sd/rock_graynoise.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/rock_graynoise_n
+		map textures/temperate_sd/rock_graynoise_n.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/rock_graynoise_s
+		map textures/temperate_sd/rock_graynoise_s.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage diffusemap
-		map textures/temperate_sd/sand_patchnoise
+		map textures/temperate_sd/sand_patchnoise.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/sand_patchnoise_n
+		map textures/temperate_sd/sand_patchnoise_n.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/sand_patchnoise_s
+		map textures/temperate_sd/sand_patchnoise_s.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -1264,39 +1266,39 @@ textures/battery/terrain_4to5
 	
 	{
 	    stage diffusemap
-		map textures/temperate_sd/rock_grayvar
+		map textures/temperate_sd/rock_grayvar.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/rock_grayvar_n
+		map textures/temperate_sd/rock_grayvar_n.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/rock_grayvar_s
+		map textures/temperate_sd/rock_grayvar_s.tga
 		rgbgen identity
 		alphaGen vertex
 	}
 	{
 	    stage diffusemap
-		map textures/temperate_sd/sand_patchnoise
+		map textures/temperate_sd/sand_patchnoise.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage bumpmap
-		map textures/temperate_sd/sand_patchnoise_n
+		map textures/temperate_sd/sand_patchnoise_n.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/sand_patchnoise_s
+		map textures/temperate_sd/sand_patchnoise_s.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -1310,7 +1312,7 @@ textures/battery/terrain_4to5
 
 textures/battery/water_nodraw
 {
-	qer_editorimage textures/common/nodraw
+	qer_editorimage textures/common/nodraw.tga
 	
 	surfaceparm nodraw
   	surfaceparm nonsolid
@@ -1320,7 +1322,7 @@ textures/battery/water_nodraw
 
 textures/battery/water_fog
 {
-	qer_editorimage textures/common/fog_water
+	qer_editorimage textures/common/fog_water.tga
 	
 	surfaceparm nodraw
   	surfaceparm nonsolid
