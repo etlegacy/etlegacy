@@ -2257,7 +2257,7 @@ static void Render_liquid(int stage)
 	SelectTexture(TEX_NORMAL);
 	if (normalMapping)
 	{
-		BindTexture(pStage->bundle[TB_NORMALMAP].image[0], tr.whiteImage);
+		BindTexture(pStage->bundle[TB_NORMALMAP].image[0], tr.flatImage);
 		SetUniformMatrix16(UNIFORM_NORMALTEXTUREMATRIX, tess.svars.texMatrices[TB_NORMALMAP]);
 	}
 	else
