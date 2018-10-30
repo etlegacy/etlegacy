@@ -554,9 +554,9 @@ void Cbuf_AddText(const char *text); ///< Adds command text at the end of the bu
 void Cbuf_ExecuteText(int exec_when, const char *text); ///< this can be used in place of either Cbuf_AddText or Cbuf_InsertText
 
 void Cbuf_Execute(void);    ///< Pulls off \n terminated lines of text from the command buffer and sends
-                            ///< them through Cmd_ExecuteString.  Stops when the buffer is empty.
-                            ///< Normally called once per frame, but may be explicitly invoked.
-                            ///< Do not call inside a command function, or current args will be destroyed.
+							///< them through Cmd_ExecuteString.  Stops when the buffer is empty.
+							///< Normally called once per frame, but may be explicitly invoked.
+							///< Do not call inside a command function, or current args will be destroyed.
 
 //===========================================================================
 
@@ -928,7 +928,7 @@ qboolean FS_InvalidGameDir(const char *gamedir);
 void FS_Rename(const char *from, const char *to);
 
 void FS_FilenameCompletion(const char *dir, int numext, const char **ext,
-                           qboolean stripExt, void (*callback)(const char *s), qboolean allowNonPureFilesOnDisk);
+						   qboolean stripExt, void (*callback)(const char *s), qboolean allowNonPureFilesOnDisk);
 
 #if !defined(DEDICATED)
 extern int cl_connectedToPureServer;
