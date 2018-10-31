@@ -258,7 +258,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	gclient_t *client;
 	int       contents = 0, i, killer = ENTITYNUM_WORLD;
 	char      *killerName = "<world>";
-	qboolean  nogib = qtrue;
 	qboolean  killedintank = qfalse;
 	qboolean  attackerClient, dieFromSameTeam = qfalse;
 
@@ -617,10 +616,8 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	if (self->health <= GIB_HEALTH && !(contents & CONTENTS_NODROP))
 	{
 		GibEntity(self, killer);
-		nogib = qfalse;
 	}
-
-	if (nogib && meansOfDeath != MOD_SWAP_PLACES)
+	else if (meansOfDeath != MOD_SWAP_PLACES)
 	{
 		// normal death
 		// for the no-blood option, we need to prevent the health
