@@ -1,5 +1,4 @@
-// battery.shader
-
+//Updated for renderer2 by Thunder 25.02.2017
 textures/liquids_sd/seawall_specular
 {
     qer_editorimage textures/liquids_sd/seawall_specular.tga
@@ -45,7 +44,7 @@ textures/liquids_sd/seawall_foam
 // ocean fog water
 textures/battery/fog_water
 {
-	qer_editorimage textures/common/fog_water.tga
+	qer_editorimage textures/common/fog_water
 	
 	surfaceparm nodraw
   	surfaceparm nonsolid
@@ -204,10 +203,7 @@ textures/battery/rock_graynoise
     //q3map_tcmodscale 1.5 1.5
     qer_editorimage textures/temperate_sd/rock_grayvar.tga
     
-    {
-        map $lightmap
-        rgbGen identity
-    }
+   
     {
 	    stage diffusemap
         map textures/temperate_sd/rock_grayvar.tga
@@ -223,6 +219,10 @@ textures/battery/rock_graynoise
         map textures/temperate_sd/rock_grayvar_s.tga
         rgbGen identity
     }
+	{
+		map $lightmap
+		blendFunc GL_DST_COLOR GL_ZERO
+	}
 }
 
 textures/battery/sand_disturb
@@ -1100,7 +1100,7 @@ textures/battery/terrain_2to4
 	}
 	{
 	    stage specularmap
-		map textures/temperate_sd/rock_grayvar_n.tga
+		map textures/temperate_sd/rock_grayvar_s.tga
 		rgbgen identity
 		alphaGen vertex
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -1312,7 +1312,7 @@ textures/battery/terrain_4to5
 
 textures/battery/water_nodraw
 {
-	qer_editorimage textures/common/nodraw.tga
+	qer_editorimage textures/common/nodraw
 	
 	surfaceparm nodraw
   	surfaceparm nonsolid
@@ -1322,7 +1322,7 @@ textures/battery/water_nodraw
 
 textures/battery/water_fog
 {
-	qer_editorimage textures/common/fog_water.tga
+	qer_editorimage textures/common/fog_water
 	
 	surfaceparm nodraw
   	surfaceparm nonsolid
