@@ -1017,16 +1017,6 @@ typedef enum
 #define MAX_DLIGHT_CONFIGSTRINGS    16
 #define MAX_SPLINE_CONFIGSTRINGS    8
 
-#define PARTICLE_SNOW128    1
-#define PARTICLE_SNOW64     2
-#define PARTICLE_SNOW32     3
-#define PARTICLE_SNOW256    0
-
-#define PARTICLE_BUBBLE8    4
-#define PARTICLE_BUBBLE16   5
-#define PARTICLE_BUBBLE32   6
-#define PARTICLE_BUBBLE64   7
-
 // these are the only configstrings that the system reserves, all the
 // other ones are strictly for servergame to clientgame communication
 #define CS_SERVERINFO       0       ///< an info string with all the serverinfo cvars
