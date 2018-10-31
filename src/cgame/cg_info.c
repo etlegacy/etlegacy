@@ -628,7 +628,7 @@ void CG_DemoClick(int key, qboolean down)
 	// Window controls
 	case K_LSHIFT:
 	case K_RSHIFT:
-  //case K_CTRL:
+	//case K_CTRL:
 	case K_MOUSE4:
 		cgs.fResize = down;
 		return;
@@ -1034,7 +1034,7 @@ void CG_GameStatsDraw(void)
 
 #define TS_X    -80     // spacing from right
 #define TS_Y    -60     // spacing from bottom
-#define TS_W    308
+#define TS_W    396     // was 308
 
 /**
  * @brief CG_TopShotsDraw
@@ -1141,7 +1141,11 @@ void CG_TopShotsDraw(void)
 		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Hits / Shots"), 0.0f, 0, hStyle2, hFont2);
 		x += 62;
 		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Kills"), 0.0f, 0, hStyle2, hFont2);
-		x += 29;
+		x += 31;
+		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Deaths"), 0.0f, 0, hStyle2, hFont2);
+		x += 37;
+		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("HeadShots"), 0.0f, 0, hStyle2, hFont2);
+		x += 52;
 		CG_Text_Paint_Ext(x, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Player"), 0.0f, 0, hStyle2, hFont2);
 
 		x  = Ccg_WideX(SCREEN_WIDTH) + TS_X - TS_W + 4;

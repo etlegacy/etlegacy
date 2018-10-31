@@ -49,7 +49,7 @@ typedef struct
 	char *pszCommandName;
 	qboolean fAnytime;
 	qboolean fValue;
-	void (*pCommand)(gentity_t *ent, unsigned int dwCommand, qboolean fValue);
+	void (*pCommand)(gentity_t * ent, unsigned int dwCommand, qboolean fValue);
 	const char *pszHelpInfo;
 } cmd_reference_t;
 
@@ -966,11 +966,12 @@ void G_weaponStatsLeaders_cmd(gentity_t *ent, qboolean doTop, qboolean doWindow)
 
 			if (((doTop) ? acc : (float)wBestAcc + 0.999f) >= ((doTop) ? wBestAcc : acc))
 			{
-				Q_strcat(z, sizeof(z), va(" %d %d %d %d %d %d", iWeap + 1, aClients[i],
+				Q_strcat(z, sizeof(z), va(" %d %d %d %d %d %d %d", iWeap + 1, aClients[i],
 				                          cl->sess.aWeaponStats[iWeap].hits,
 				                          cl->sess.aWeaponStats[iWeap].atts,
 				                          cl->sess.aWeaponStats[iWeap].kills,
-				                          cl->sess.aWeaponStats[iWeap].deaths));
+				                          cl->sess.aWeaponStats[iWeap].deaths,
+				                          cl->sess.aWeaponStats[iWeap].headshots));
 			}
 		}
 	}
@@ -1044,11 +1045,12 @@ void G_weaponRankings_cmd(gentity_t *ent, unsigned int dwCommand, qboolean state
 
 			c++;
 			wBestAcc = (((state) ? acc : wBestAcc) > ((state) ? wBestAcc : acc)) ? (int)acc : wBestAcc;
-			Q_strcat(z, sizeof(z), va(" %d %d %d %d %d", level.sortedStats[i],
+			Q_strcat(z, sizeof(z), va(" %d %d %d %d %d %d", level.sortedStats[i],
 			                          cl->sess.aWeaponStats[iWeap].hits,
 			                          shots,
 			                          cl->sess.aWeaponStats[iWeap].kills,
-			                          cl->sess.aWeaponStats[iWeap].deaths));
+			                          cl->sess.aWeaponStats[iWeap].deaths,
+			                          cl->sess.aWeaponStats[iWeap].headshots));
 		}
 	}
 
