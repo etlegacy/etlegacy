@@ -1432,6 +1432,8 @@ long FS_FOpenFileReadDir(const char *fileName, searchpath_t *search, fileHandle_
 
 		if (search->pack->hashTable[hash])
 		{
+			qboolean excludeCampaigns = (Cvar_VariableIntegerValue("g_gametype") == 4 || com_dedicated->integer == 0); // keep old behaviour for listen servers
+
 			// disregard if it doesn't match one of the allowed pure pak files
 			if (!unpure && !FS_PakIsPure(search->pack))
 			{
@@ -1479,7 +1481,7 @@ long FS_FOpenFileReadDir(const char *fileName, searchpath_t *search, fileHandle_
 						// this won't trigger for the first map because g_gametype is latched cvar and cvar modfifications are processed later on
 						// ... but this is better than populating the CS with not needed references and forcing players to download
 						// maps/pk3s containing campaign files in other gametypes - delete the print after fix
-						if (FS_IsExt(fileName, ".campaign", len) &&  (Cvar_VariableIntegerValue("g_gametype") == 4 || com_dedicated->integer == 0)) // keep old behaviour for listen servers
+						if (FS_IsExt(fileName, ".campaign", len) &&  excludeCampaigns)
 						{
 							pak->referenced |= FS_GENERAL_REF;
 							Com_Printf("Campaign files in PK3s are referenced!\n");
