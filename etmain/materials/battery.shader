@@ -1,4 +1,4 @@
-//Updated for renderer2 by Thunder 25.02.2017
+
 textures/liquids_sd/seawall_specular
 {
     qer_editorimage textures/liquids_sd/seawall_specular.tga
