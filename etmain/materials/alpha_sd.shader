@@ -18,4 +18,3 @@ textures/alpha_sd/truss_m06grn
 		rgbGen vertex
 	}
 }
-

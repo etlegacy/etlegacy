@@ -1,3 +1,4 @@
+// mp_railgun.shader
 
 textures/mp_railgun/cable
 {
@@ -22,7 +23,7 @@ textures/mp_railgun/cable
 
 textures/mp_railgun/fog
 {
-	qer_editorimage textures/sfx/fog_grey1
+	qer_editorimage textures/sfx/fog_grey1.tga
 	fogparms ( 0.6 0.6 0.6 ) 2560
 	surfaceparm fog
 	surfaceparm nodraw
@@ -35,7 +36,7 @@ textures/mp_railgun/lmterrain_base
 	q3map_lightmapMergable
 	q3map_lightmapaxis z
 	q3map_lightmapsize 512 512
-	q3map_normalimage textures/sd_bumpmaps/normalmap_terrain
+	q3map_normalimage textures/sd_bumpmaps/normalmap_terrain.tga
 	q3map_tcGen ivector ( 512 0 0 ) ( 0 512 0 )
 	q3map_tcMod rotate 37
 	q3map_tcMod scale 1 1
@@ -45,7 +46,7 @@ textures/mp_railgun/lmterrain_base
 
 textures/mp_railgun/lmterrain_0
 {
-	q3map_baseshader textures/mp_railgun/lmterrain_base
+	q3map_baseshader textures/mp_railgun/lmterrain_base.tga
 	{
 		stage diffusemap
 		map textures/snow_sd/s_dirt_m03i_2_big.tga
@@ -87,7 +88,6 @@ textures/mp_railgun/lmterrain_0
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_0to1
@@ -272,7 +272,6 @@ textures/mp_railgun/lmterrain_0to4
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_0to5
@@ -319,7 +318,6 @@ textures/mp_railgun/lmterrain_0to5
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_0to6
@@ -366,7 +364,6 @@ textures/mp_railgun/lmterrain_0to6
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-	
 }
 
 textures/mp_railgun/lmterrain_1

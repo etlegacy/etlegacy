@@ -14,22 +14,18 @@ textures/skies/sd_goldrush
 	
 	skyparms textures/skies_sd/wurzburg_env/sky 512 -
  
-	
 	{	fog off
 		map textures/skies_sd/goldrush_clouds.tga
 		tcMod scale 5 5
 		tcMod scroll 0.0015 -0.003
 		rgbGen identityLighting
 	}
-
-
 	{	fog off
-		map textures/skies/nightsky1.jpg
+		map textures/skies/nightsky1.tga
 		tcMod scale 10 10
 		blendfunc add
 		rgbGen identityLighting
 	}
-
 	{
 		fog off
 		clampmap textures/skies_sd/goldrush_mask.tga
@@ -57,6 +53,7 @@ textures/skies/sd_railgun
 }
 
 // -----------------------------------------------------------------------------------
+
 // these should be deleted at some point ... the new "battery" equivalents are below
 textures/skies/sd_seawallfog
 {
@@ -111,14 +108,13 @@ textures/skies/sd_seawallsky
 textures/skies/sd_seawallunderseasky
 {
 	qer_editorimage textures/skies_sd/white.tga
-	
 	{ 
 		fog off
 		map $whiteimage
 		rgbGen const ( 0.4 0.4 0.4 )
 	}	
-	
 }
+
 // -----------------------------------------------------------------------------------
 
 textures/skies/sd_batteryfog
@@ -151,14 +147,12 @@ textures/skies/sd_batterysky
  
 	sunshader textures/skies_sd/batterysunfog
  
-	
 	{	fog off
 		map textures/skies_sd/battery_clouds.tga
 		tcMod scale 2.5 2.5
 		tcMod scroll 0.0015 -0.003
 		rgbGen identityLighting
 	}
-
 	{
 		fog off
 		clampmap textures/skies_sd/battery_mask_ydnar.tga
@@ -179,8 +173,7 @@ textures/skies/sd_batteryunderseasky
 		fog off
 		map $whiteimage
 		rgbGen const ( 0.4 0.4 0.4 )
-	}	
-	
+	}
 }
 
 textures/skies/sd_siwa
