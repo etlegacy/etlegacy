@@ -40,7 +40,10 @@ models/mapobjects/barrel_sd/barrel_top
 	specularMap textures/props/barrel_m02_s.tga
 }
 //*****************************************************
-//Blitz truck
+
+// Blitz truck
+// specular exception 
+
 models/mapobjects/blitz_sd/blitz_sd_arches
 {
 	qer_editorimage models/mapobjects/blitz_sd/blitz_sd.tga
@@ -58,7 +61,6 @@ models/mapobjects/blitz_sd/blitz_sd_arches_mm
 	bumpMap models/mapobjects/blitz_sd/blitz_sd_n.tga
 	specularMap models/mapobjects/blitz_sd/blitz_sd_spec.tga
 }
-
 
 models/mapobjects/blitz_sd/blitz_sd_arches_s
 {
@@ -93,7 +95,6 @@ models/mapobjects/blitz_sd/blitz_sd_body_mm
 	bumpMap models/mapobjects/blitz_sd/blitz_sd_n.tga
 	specularMap models/mapobjects/blitz_sd/blitz_sd_spec.tga
 }
-
 
 models/mapobjects/blitz_sd/blitz_sd_body_s
 {
@@ -1049,25 +1050,30 @@ models/mapobjects/miltary_trim/metal_m05_wils
 }
 //**************************************************************************
 
-//Pak guns
+// Pak guns
+// specular exception because of _s suffix
+
 models/mapobjects/pak75_sd/pak75
 {
 	diffuseMap models/mapobjects/pak75_sd/pak75.tga
 	bumpMap models/mapobjects/pak75_sd/pak75_n.tga
 	specularMap models/mapobjects/pak75_sd/pak75_spec.tga
 }
+
 models/mapobjects/pak75_sd/pak75_s
 {
 	diffuseMap models/mapobjects/pak75_sd/pak75_s.tga
 	bumpMap models/mapobjects/pak75_sd/pak75_n.tga
 	specularMap models/mapobjects/pak75_sd/pak75_spec.tga
 }
+
 models/mapobjects/pak75_sd/pak75-a
 {
 	diffuseMap models/mapobjects/pak75_sd/pak75-a.tga
 	bumpMap models/mapobjects/pak75_sd/pak75-a_n.tga
 	specularMap models/mapobjects/pak75_sd/pak75-a_spec.tga
 }
+
 models/mapobjects/pak75_sd/pak75-a_s
 {
 	diffuseMap models/mapobjects/pak75_sd/pak75-a_s.tga
@@ -1077,7 +1083,7 @@ models/mapobjects/pak75_sd/pak75-a_s
 
 //**********************************************************************
 
-//plants_sd
+// plants_sd
 models/mapobjects/plants_sd/bush_desert1
 {
 	qer_alphafunc greater 0.5
@@ -1109,7 +1115,6 @@ models/mapobjects/plants_sd/bush_desert2
      nopicmip 
      implicitMask - 
 }
-
 
 models/mapobjects/plants_sd/bush_snow1
 {
@@ -1332,7 +1337,6 @@ models/mapobjects/plants_sd/deadbranch3_damp
 //	implicitMask -
 //}
 
-
 //models/mapobjects/plants_sd/leaf3
 //{
 //	nopicmip
@@ -1344,7 +1348,6 @@ models/mapobjects/plants_sd/deadbranch3_damp
 //	surfaceparm nomarks
 //	implicitMask -
 //}
-
 
 models/mapobjects/plants_sd/grass_dry1
 {
@@ -1612,7 +1615,7 @@ models/mapobjects/props_sd/fuel_can
 }
 //****************************************************************
 
-//PUMP_SD
+// PUMP_SD
 models/mapobjects/pump_sd/bottom
 {
 	 diffuseMap models/mapobjects/pump_sd/bottom.tga

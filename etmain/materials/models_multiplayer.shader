@@ -65,6 +65,7 @@ models/multiplayer/satchel/lightgreen_on
 		rgbGen wave noise 0.2 0.8 0.5 10
 	}
 }
+
 models/multiplayer/satchel/lightred_off
 {
 	{
@@ -88,93 +89,93 @@ models/multiplayer/satchel/lightred_on
 
 models/multiplayer/supplies/healthbox
 {
-    diffusemap models/multiplayer/supplies/healthbox
-	bumpmap models/multiplayer/supplies/healthbox_n
-	specularmap models/multiplayer/supplies/healthbox_s
+    diffusemap models/multiplayer/supplies/healthbox.tga
+	bumpmap models/multiplayer/supplies/healthbox_n.tga
+	specularmap models/multiplayer/supplies/healthbox_s.tga
 }
 
 models/multiplayer/supplies/ammobox
 {
-	diffusemap models/multiplayer/supplies/ammobox
-	bumpmap models/multiplayer/supplies/ammobox_n
-	specularmap models/multiplayer/supplies/ammobox_s
+	diffusemap models/multiplayer/supplies/ammobox.tga
+	bumpmap models/multiplayer/supplies/ammobox_n.tga
+	specularmap models/multiplayer/supplies/ammobox_s.tga
 }
 
 models/multiplayer/supplies/ammobox_2
 {
-	diffusemap models/multiplayer/supplies/ammobox_2
-	bumpmap models/multiplayer/supplies/ammobox_2_n
-	specularmap models/multiplayer/supplies/ammobox_2_s
+	diffusemap models/multiplayer/supplies/ammobox_2.tga
+	bumpmap models/multiplayer/supplies/ammobox_2_n.tga
+	specularmap models/multiplayer/supplies/ammobox_2_s.tga
 }
 
 models/multiplayer/smokebomb/smoke_bomb
 {
-	diffusemap models/multiplayer/smokebomb/smoke_bomb
-	bumpmap models/multiplayer/smokebomb/smoke_bomb_n
-	specularmap models/multiplayer/smokebomb/smoke_bomb_s
+	diffusemap models/multiplayer/smokebomb/smoke_bomb.tga
+	bumpmap models/multiplayer/smokebomb/smoke_bomb_n.tga
+	specularmap models/multiplayer/smokebomb/smoke_bomb_s.tga
 }
 
 models/multiplayer/smokegrenade/smoke_grenade
 {
-	diffusemap models/multiplayer/smokegrenade/smoke_grenade
-	bumpmap models/multiplayer/smokegrenade/smoke_grenade_n
-	specularmap models/multiplayer/smokegrenade/smoke_grenade_s
+	diffusemap models/multiplayer/smokegrenade/smoke_grenade.tga
+	bumpmap models/multiplayer/smokegrenade/smoke_grenade_n.tga
+	specularmap models/multiplayer/smokegrenade/smoke_grenade_s.tga
 }
 
 models/multiplayer/landmine/landmine
 {
-	diffusemap models/multiplayer/landmine/landmine
-	bumpmap models/multiplayer/landmine/landmine_n
-	specularmap models/multiplayer/landmine/landmine_s
+	diffusemap models/multiplayer/landmine/landmine.tga
+	bumpmap models/multiplayer/landmine/landmine_n.tga
+	specularmap models/multiplayer/landmine/landmine_s.tga
 }
 
 models/multiplayer/pliers/pliers
 {
-    diffusemap models/multiplayer/pliers/pliers
-	bumpmap models/multiplayer/pliers/pliers_n
-	specularmap models/multiplayer/pliers/pliers_s
+    diffusemap models/multiplayer/pliers/pliers.tga
+	bumpmap models/multiplayer/pliers/pliers_n.tga
+	specularmap models/multiplayer/pliers/pliers_s.tga
 }
 
 models/multiplayer/binocs/binoculars
 {
-	diffusemap models/multiplayer/binocs/binoculars
-	bumpmap models/multiplayer/binocs/binoculars_n
-	specularmap models/multiplayer/binocs/binoculars_s
+	diffusemap models/multiplayer/binocs/binoculars.tga
+	bumpmap models/multiplayer/binocs/binoculars_n.tga
+	specularmap models/multiplayer/binocs/binoculars_s.tga
 }
 
 models/multiplayer/mortar/mortar_sd
 {
-	diffusemap models/multiplayer/mortar/mortar_sd
-	bumpmap models/multiplayer/mortar/mortar_sd_n
-	specularmap models/multiplayer/mortar/mortar_sd_s
+	diffusemap models/multiplayer/mortar/mortar_sd.tga
+	bumpmap models/multiplayer/mortar/mortar_sd_n.tga
+	specularmap models/multiplayer/mortar/mortar_sd_s.tga
 }
 
 models/multiplayer/mg42/s_mg42
 {
-	diffusemap models/multiplayer/mg42/s_mg42
-	bumpmap models/multiplayer/mg42/s_mg42_n
-	specularmap models/multiplayer/mg42/s_mg42_s
+	diffusemap models/multiplayer/mg42/s_mg42.tga
+	bumpmap models/multiplayer/mg42/s_mg42_n.tga
+	specularmap models/multiplayer/mg42/s_mg42_s.tga
 }
 
 models/multiplayer/browning/handle
 {
-    diffusemap models/multiplayer/browning/handle
-	bumpmap models/multiplayer/browning/handle_n
-	specularmap models/multiplayer/browning/handle_s
+    diffusemap models/multiplayer/browning/handle.tga
+	bumpmap models/multiplayer/browning/handle_n.tga
+	specularmap models/multiplayer/browning/handle_s.tga
 }
 
 models/multiplayer/browning/browning
 {
-	diffusemap models/multiplayer/browning/browning
-	bumpmap models/multiplayer/browning/browning_n
-	specularmap models/multiplayer/browning/browning_s
+	diffusemap models/multiplayer/browning/browning.tga
+	bumpmap models/multiplayer/browning/browning_n.tga
+	specularmap models/multiplayer/browning/browning_s.tga
 }
 
 models/multiplayer/browning/barrel
 {
 	cull none
-	diffusemap models/multiplayer/browning/barrel
-	bumpmap models/multiplayer/browning/barrel_n
+	diffusemap models/multiplayer/browning/barrel.tga
+	bumpmap models/multiplayer/browning/barrel_n.tga
 	specularmap models/multiplayer/browning/barrel_s
 	
 	{
@@ -187,9 +188,9 @@ models/multiplayer/browning/barrel
 
 models/multiplayer/gold/gold
 {
-	diffusemap models/multiplayer/gold/gold
-	bumpmap models/multiplayer/gold/gold_n
-	specularmap models/multiplayer/gold/gold_s
+	diffusemap models/multiplayer/gold/gold.tga
+	bumpmap models/multiplayer/gold/gold_n.tga
+	specularmap models/multiplayer/gold/gold_s.tga
 	{
 		map textures/effects/envmap_gold.tga
 		blendFunc GL_ONE GL_ONE
@@ -217,27 +218,27 @@ models/multiplayer/flagpole/american
 {
 	cull disable
 
-	diffusemap models/multiplayer/flagpole/american
-	bumpmap models/multiplayer/flagpole/american_n
-	specularmap models/multiplayer/flagpole/american_s
+	diffusemap models/multiplayer/flagpole/american.tga
+	bumpmap models/multiplayer/flagpole/american_n.tga
+	specularmap models/multiplayer/flagpole/american_s.tga
 }
 
 models/multiplayer/flagpole/american_reinforce
 {
 	cull disable
 	
-	diffusemap models/multiplayer/flagpole/american_reinforce
-	bumpmap models/multiplayer/flagpole/american_reinforce_n
-	specularmap models/multiplayer/flagpole/american_reinforce_s
+	diffusemap models/multiplayer/flagpole/american_reinforce.tga
+	bumpmap models/multiplayer/flagpole/american_reinforce_n.tga
+	specularmap models/multiplayer/flagpole/american_reinforce_s.tga
 }
 
 models/multiplayer/flagpole/disc
 {
-	diffusemap models/multiplayer/flagpole/disc
-	bumpmap models/multiplayer/flagpole/disc_n
-	specularmap models/multiplayer/flagpole/disc_s
+	diffusemap models/multiplayer/flagpole/disc.tga
+	bumpmap models/multiplayer/flagpole/disc_n.tga
+	specularmap models/multiplayer/flagpole/disc_s.tga
 	{
-		clampmap models/multiplayer/flagpole/disc
+		clampmap models/multiplayer/flagpole/disc.tga
 		rgbGen lightingDiffuse
 		tcMod rotate 30
 		blenfunc blend
@@ -246,27 +247,27 @@ models/multiplayer/flagpole/disc
 
 models/multiplayer/flagpole/flagpole
 {
-	diffusemap models/multiplayer/flagpole/flag_clouds
-	bumpmap models/multiplayer/flagpole/flag_clouds_n
-	specularmap models/multiplayer/flagpole/flag_clouds_s	
+	diffusemap models/multiplayer/flagpole/flag_clouds.tga
+	bumpmap models/multiplayer/flagpole/flag_clouds_n.tga
+	specularmap models/multiplayer/flagpole/flag_clouds_s.tga
 }
 
 models/multiplayer/flagpole/german
 {
 	cull disable
 	
-	diffusemap models/multiplayer/flagpole/german
-	bumpmap models/multiplayer/flagpole/german_n
-	specularmap models/multiplayer/flagpole/german_s
+	diffusemap models/multiplayer/flagpole/german.tga
+	bumpmap models/multiplayer/flagpole/german_n.tga
+	specularmap models/multiplayer/flagpole/german_s.tga
 }
 
 models/multiplayer/flagpole/german_reinforce
 {
 	cull disable
 
-	diffusemap models/multiplayer/flagpole/german_reinforce
-	bumpmap models/multiplayer/flagpole/german_reinforce_n
-	specularmap models/multiplayer/flagpole/german_reinforce_s
+	diffusemap models/multiplayer/flagpole/german_reinforce.tga
+	bumpmap models/multiplayer/flagpole/german_reinforce_n.tga
+	specularmap models/multiplayer/flagpole/german_reinforce_s.tga
 }
 
 // waypoint marker
@@ -282,24 +283,24 @@ models/multiplayer/flagpole/german_reinforce
 
 models/multiplayer/kar98/kar98silencer
 {
-	diffusemap models/multiplayer/m1_garand/m1garandsilencer_yd
-	bumpmap models/multiplayer/m1_garand/m1garandsilencer_yd_n
-	specularmap models/multiplayer/m1_garand/m1garandsilencer_yd_s
+	diffusemap models/multiplayer/m1_garand/m1garandsilencer_yd.tga
+	bumpmap models/multiplayer/m1_garand/m1garandsilencer_yd_n.tga
+	specularmap models/multiplayer/m1_garand/m1garandsilencer_yd_s.tga
 }
 
 models/multiplayer/kar98/mauser3 
 { 
-	diffusemap models/weapons2/mauser/mauser3_yd
-	bumpmap models/weapons2/mauser/mauser3_yd_n
-	specularmap models/weapons2/mauser/mauser3_yd_s      
+	diffusemap models/weapons2/mauser/mauser3_yd.tga
+	bumpmap models/weapons2/mauser/mauser3_yd_n.tga
+	specularmap models/weapons2/mauser/mauser3_yd_s.tga
 }
 
 // FIXME: gold effect
 models/multiplayer/mg42/bullet
 {
-	diffusemap models/multiplayer/mg42/bullet_yd
-	bumpmap models/multiplayer/mg42/bullet_yd_n
-	specularmap models/multiplayer/mg42/bullet_yd_s
+	diffusemap models/multiplayer/mg42/bullet_yd.tga
+	bumpmap models/multiplayer/mg42/bullet_yd_n.tga
+	specularmap models/multiplayer/mg42/bullet_yd_s.tga
 }
 
 models/multiplayer/mine_marker/allied_marker
@@ -308,9 +309,9 @@ models/multiplayer/mine_marker/allied_marker
 	nomipmaps
 	nopicmip
 
-	diffusemap models/multiplayer/mine_marker/allied_marker
-	bumpmap models/multiplayer/mine_marker/allied_marker_n
-	specularmap models/multiplayer/mine_marker/allied_marker_s
+	diffusemap models/multiplayer/mine_marker/allied_marker.tga
+	bumpmap models/multiplayer/mine_marker/allied_marker_n.tga
+	specularmap models/multiplayer/mine_marker/allied_marker_s.tga
 }
 
 models/multiplayer/mine_marker/axis_marker
@@ -319,30 +320,30 @@ models/multiplayer/mine_marker/axis_marker
 	nomipmaps
 	nopicmip
 
-	diffusemap models/multiplayer/mine_marker/axis_marker
-	bumpmap models/multiplayer/mine_marker/axis_marker_n
-	specularmap models/multiplayer/mine_marker/axis_marker_s
+	diffusemap models/multiplayer/mine_marker/axis_marker.tga
+	bumpmap models/multiplayer/mine_marker/axis_marker_n.tga
+	specularmap models/multiplayer/mine_marker/axis_marker_s.tga
 }
 
 models/multiplayer/m1_garand/m1_garand
 {
-	diffusemap models/multiplayer/m1_garand/m1_garand_yd
-	bumpmap models/multiplayer/m1_garand/m1_garand_yd_n
-	specularmap models/multiplayer/m1_garand/m1_garand_yd_s
+	diffusemap models/multiplayer/m1_garand/m1_garand_yd.tga
+	bumpmap models/multiplayer/m1_garand/m1_garand_yd_n.tga
+	specularmap models/multiplayer/m1_garand/m1_garand_yd_s.tga
 }
 
 models/multiplayer/m1_garand/m1garandscope
 {
-	diffusemap models/multiplayer/m1_garand/m1garandscope_yd
-	bumpmap models/multiplayer/m1_garand/m1garandscope_yd_n
-	specularmap models/multiplayer/m1_garand/m1garandscope_yd_s
+	diffusemap models/multiplayer/m1_garand/m1garandscope_yd.tga
+	bumpmap models/multiplayer/m1_garand/m1garandscope_yd_n.tga
+	specularmap models/multiplayer/m1_garand/m1garandscope_yd_s.tga
 }
 
 models/multiplayer/m1_garand/m1garandsilencer
 {
-	diffusemap models/multiplayer/m1_garand/m1garandsilencer_yd
-	bumpmap models/multiplayer/m1_garand/m1garandsilencer_yd_n
-	specularmap models/multiplayer/m1_garand/m1garandsilencer_yd_s
+	diffusemap models/multiplayer/m1_garand/m1garandsilencer_yd.tga
+	bumpmap models/multiplayer/m1_garand/m1garandsilencer_yd_n.tga
+	specularmap models/multiplayer/m1_garand/m1garandsilencer_yd_s.tga
 }
 
 models/multiplayer/syringe/adrenaline
@@ -463,8 +464,6 @@ models/multiplayer/satchel/satchel_axis
 	}
 }
 
-
-
 models/multiplayer/satchel/light_ref
 {
 
@@ -480,7 +479,6 @@ models/multiplayer/satchel/light_ref
 	}
 }
 
-
 models/multiplayer/satchel/lightgreen_off
 {
 
@@ -489,7 +487,6 @@ models/multiplayer/satchel/lightgreen_off
 		rgbgen lightingdiffuse
 	}
 }
-
 
 models/multiplayer/satchel/lightgreen_off
 {
@@ -515,6 +512,7 @@ models/multiplayer/satchel/lightgreen_on
 
 	}
 }
+
 models/multiplayer/satchel/lightred_off
 {
 
@@ -609,7 +607,6 @@ models/multiplayer/smokegrenade/smoke_grenade
 	}
 }
 
-
 models/multiplayer/landmine/landmine
 {
 	{
@@ -665,7 +662,6 @@ models/multiplayer/mortar/mortar_sd
 		rgbGen lightingdiffuse
 	}
 }
-
 
 models/multiplayer/mg42/s_mg42
 {

@@ -1172,7 +1172,6 @@ textures/radar/road_puddle1
 		blendFunc GL_DST_COLOR GL_ZERO
 		rgbgen identity
 	}
-
 }
 
 textures/radar/road_bigpuddle
@@ -1187,6 +1186,13 @@ textures/radar/road_bigpuddle
 	
 	surfaceparm trans
 	surfaceparm splash
+
+/*
+	// this will fix specular but no puddle shown
+	diffusemap textures/temperate_sd/road_bigpuddle.tga
+	bumpmap textures/temperate_sd/road_bigpuddle_n.tga
+	specularmap textures/temperate_sd/road_bigpuddle_s.tga
+*/
 	
 	{
 		map textures/effects/envmap_radar.tga
