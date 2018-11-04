@@ -7616,7 +7616,7 @@ void R_FindTwoNearestCubeMaps(const vec3_t position, cubemapProbe_t **cubeProbeN
 void R_SaveCubeProbes(const char *filename, byte *pixeldata, int width, int height)
 {
 	byte *buffer, *src, *dst;
-	int  i, row;
+	int  i;
 	int  pixeldataBytes = width * height * 4;
 	int  fileBytes      = 18 + pixeldataBytes;
 
@@ -8181,7 +8181,7 @@ void R_BuildCubeMaps(void)
 
 		glBindTexture(cubeProbe->cubemap->type, 0);
 	}
-	//Ren_Print("\n");
+	Ren_Print("\n");
 
 	if (createCM)
 	{
