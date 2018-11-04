@@ -4,7 +4,7 @@ textures/villa_sd/villawindow_a
 {
     qer_editorimage textures/villa_sd/villawindow_a.tga
 	diffusemap textures/villa_sd/villawindow_a.tga
-	specularmap textures/villa_sd/villawindow_a_s.tga
+	specularmap textures/villa_sd/villawindow_a_r.tga
 	bumpmap textures/villa_sd/villawindow_a_n.tga
 	surfaceparm alphashadow
 	surfaceparm glass

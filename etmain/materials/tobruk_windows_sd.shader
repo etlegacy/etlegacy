@@ -4,7 +4,7 @@ textures/tobruk_windows_sd/tobruk_moucha1
 {
     qer_editorimage textures/tobruk_windows_sd/tobruk_moucha1.tga
 	diffusemap textures/tobruk_windows_sd/tobruk_moucha1.tga
-	specularmap textures/tobruk_windows_sd/tobruk_moucha1_s.tga
+	specularmap textures/tobruk_windows_sd/tobruk_moucha1_r.tga
 	bumpmap textures/tobruk_windows_sd/tobruk_moucha1_n.tga
 	cull none
 	nomipmaps
@@ -19,7 +19,7 @@ textures/tobruk_windows_sd/tobruk_shutterbrown
 {
     qer_editorimage textures/tobruk_windows_sd/tobruk_shutterbrown.tga
 	diffusemap textures/tobruk_windows_sd/tobruk_shutterbrown.tga
-	specularmap textures/tobruk_windows_sd/tobruk_shutterbrown_s.tga
+	specularmap textures/tobruk_windows_sd/tobruk_shutterbrown_r.tga
 	bumpmap textures/tobruk_windows_sd/tobruk_shutterbrown_n.tga
 	surfaceparm woodsteps
 	implicitMap -
@@ -31,7 +31,7 @@ textures/tobruk_windows_sd/tobruk_tobruk_lwind
 	q3map_lightimage textures/tobruk_windows_sd/tobruk_lwind2.tga
 	diffusemap textures/tobruk_windows_sd/tobruk_lwind1.tga
 	bumpmap textures/tobruk_windows_sd/tobruk_lwind1_n.tga
-	specularmap textures/tobruk_windows_sd/tobruk_lwind1_s.tga
+	specularmap textures/tobruk_windows_sd/tobruk_lwind1_r.tga
 	q3map_surfacelight 175
 	surfaceparm nomarks
 	{
@@ -54,7 +54,7 @@ textures/tobruk_windows_sd/tobruk_tobruk_mwind
 	qer_editorimage textures/tobruk_windows_sd/tobruk_mwind1.tga
 	q3map_lightimage textures/tobruk_windows_sd/tobruk_mwind2.tga
 	diffusemap textures/tobruk_windows_sd/tobruk_mwind1.tga
-	specularmap textures/tobruk_windows_sd/tobruk_mwind1_s.tga
+	specularmap textures/tobruk_windows_sd/tobruk_mwind1_r.tga
 	bumpmap textures/tobruk_windows_sd/tobruk_mwind1_n.tga
 	q3map_surfacelight 175
 	surfaceparm nomarks
@@ -77,7 +77,7 @@ textures/tobruk_windows_sd/tobruk_windows_bright
 {
 	qer_editorimage textures/tobruk_windows_sd/tobruk_windows_on2.tga
 	diffusemap textures/tobruk_windows_sd/tobruk_windows_on2.tga
-	specularmap textures/tobruk_windows_sd/tobruk_windows_on2_s.tga
+	specularmap textures/tobruk_windows_sd/tobruk_windows_on2_r.tga
 	bumpmap textures/tobruk_windows_sd/tobruk_windows_on2_n.tga
 	q3map_surfacelight 120
 	surfaceparm nomarks
@@ -100,7 +100,7 @@ textures/tobruk_windows_sd/tobruk_windows_medium
 {
 	qer_editorimage textures/tobruk_windows_sd/tobruk_windows_on1.tga
 	diffusemap textures/tobruk_windows_sd/tobruk_windows_on1.tga
-	specularmap textures/tobruk_windows_sd/tobruk_windows_on1_s.tga
+	specularmap textures/tobruk_windows_sd/tobruk_windows_on1_r.tga
 	bumpmap textures/tobruk_windows_sd/tobruk_windows_on1_n.tga
 	q3map_surfacelight 45
 	surfaceparm nomarks

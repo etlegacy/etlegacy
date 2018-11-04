@@ -92,7 +92,7 @@ textures/decals/hay
 	qer_editorimage textures/props/hay.tga
 	diffusemap textures/props/hay.tga
 	bumpmap textures/props/hay_n.tga
-	specularmap textures/props/hay_s.tga
+	specularmap textures/props/hay_r.tga
 	polygonOffset
 	surfaceparm pointlight
 	implicitBlend -
@@ -234,7 +234,7 @@ textures/decals/oil_slick
     qer_editorimage textures/decals/oil_slick.tga
 	diffusemap textures/decals/oil_slick.tga
 	bumpmap textures/decals/oil_slick_n.tga
-	specularmap textures/decals/oil_slick_s.tga
+	specularmap textures/decals/oil_slick_r.tga
 	surfaceparm slick
 	surfaceparm trans 
 	surfaceparm nonsolid 
@@ -302,7 +302,7 @@ textures/decals/s_ident_required_2r
     qer_editorimage textures/decals/s_ident_required_2r.tga
 	diffusemap textures/decals/S_IDENT_REQUIRED_2R.tga
 	bumpmap textures/decals/S_IDENT_REQUIRED_2R_n.tga
-	specularmap textures/decals/S_IDENT_REQUIRED_2R_s.tga
+	specularmap textures/decals/S_IDENT_REQUIRED_2R_r.tga
 	polygonOffset
 	surfaceparm pointlight
 	implicitBlend textures/decals/S_IDENT_REQUIRED_2R.tga
@@ -380,7 +380,7 @@ textures/decals/trim_m01
     qer_editorimage textures/decals/trim_m01.tga
 	diffusemap textures/decals/trim_m01.tga
 	bumpmap textures/decals/trim_m01_n.tga
-	specularmap textures/decals/trim_m01_s.tga
+	specularmap textures/decals/trim_m01_r.tga
 	polygonOffset
 	surfaceparm pointlight
 	implicitBlend -
@@ -402,7 +402,7 @@ textures/decals/vent
 	qer_editorimage textures/decals/vent.tga
 	diffusemap textures/decals/vent.tga
 	bumpmap textures/decals/vent_n.tga
-	specularmap textures/decals/vent_s.tga
+	specularmap textures/decals/vent_r.tga
 	polygonOffset
 	surfaceparm pointlight
 	implicitBlend -
