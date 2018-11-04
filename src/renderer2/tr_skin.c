@@ -339,6 +339,7 @@ qhandle_t RE_RegisterSkin(const char *name)
 	ri.FS_ReadFile(name, (void **)&text);
 	if (!text)
 	{
+		Ren_Developer("WARNING: RE_RegisterSkin '%s' - empty skin or file not in path\n", name);
 		return 0;
 	}
 
