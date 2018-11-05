@@ -1629,8 +1629,8 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
 		}
 
 		// Note/FIXME: image file name has to be including extension, we use tga - make this more generic one day
-		// ETL: suffix for specularmaps is '_s'
-		tmpImage = R_FindImageFile(va("%s_s.tga", strippedName), imageBits, filterType, wrapType, shader.name);
+		// ETL: suffix for specularmaps is '_r'
+		tmpImage = R_FindImageFile(va("%s_r.tga", strippedName), imageBits, filterType, wrapType, shader.name);
 		if (tmpImage)
 		{
 			stages[stageOffset].active             = qtrue;
@@ -1642,7 +1642,7 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
 		}
 		else
 		{
-			Ren_Warning("LoadMap Warning: Specularmap image '%s' type %i not found.\n", va("%s_s.tga", strippedName), shader.type);
+			Ren_Warning("LoadMap Warning: Specularmap image '%s' type %i not found.\n", va("%s_r.tga", strippedName), shader.type);
 		}
 	}
 */
@@ -5861,8 +5861,8 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 			}
 
 			// Note/FIXME: image file name has to be including extension, we use tga - make this more generic one day
-			// ETL: suffix for specularmaps is '_s'
-			tmpImage = R_FindImageFile(va("%s_s.tga", strippedName), !shader.noPicMip ? IF_NONE : IF_NOPICMIP, !shader.noPicMip ? FT_DEFAULT : FT_LINEAR, !shader.noPicMip ? WT_REPEAT : WT_EDGE_CLAMP, shader.name);
+			// ETL: suffix for specularmaps is '_r'
+			tmpImage = R_FindImageFile(va("%s_r.tga", strippedName), !shader.noPicMip ? IF_NONE : IF_NOPICMIP, !shader.noPicMip ? FT_DEFAULT : FT_LINEAR, !shader.noPicMip ? WT_REPEAT : WT_EDGE_CLAMP, shader.name);
 			if (tmpImage)
 			{
 				stages[i].active             = qtrue;
@@ -5875,7 +5875,7 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 			else
 			{
 			
-				Ren_Developer("R_FindShader Warning: Specularmap image '%s' type %i not found.\n", va("%s_s.tga", strippedName), shader.type);
+				Ren_Developer("R_FindShader Warning: Specularmap image '%s' type %i not found.\n", va("%s_r.tga", strippedName), shader.type);
 			}
 
 			//tmpImage = R_FindImageFile(va("%s_disp", fileName), mipRawImage ? IF_NONE : IF_NOPICMIP, mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_CLAMP, shader.name);
