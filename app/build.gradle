@@ -1,10 +1,10 @@
 def buildAsLibrary = project.hasProperty('BUILD_AS_LIBRARY');
 def buildAsApplication = !buildAsLibrary
 if (buildAsApplication) {
-    apply plugin: 'com.etlegacy.application'
+    apply plugin: 'com.android.application'
 }
 else {
-    apply plugin: 'com.etlegacy.library'
+    apply plugin: 'com.android.library'
 }
 
 android {
