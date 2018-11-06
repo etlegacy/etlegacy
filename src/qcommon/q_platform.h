@@ -212,7 +212,13 @@
 #elif defined __sparc__
 #define ARCH_STRING "sparc"
 #elif defined __arm__
-#define ARCH_STRING "arm" // __ARM_ARCH_'V'__ FIXME: add ARM version to the ARCH_STRING
+  #if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_6J__) || defined(__ARM_ARCH_6K__) || defined(__ARM_ARCH_6Z__) || defined(__ARM_ARCH_6ZK__) || defined(__ARM_ARCH_6T2__)
+    #define ARCH_STRING "armv6"
+  #elif defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7R__) || defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7S__)
+    #define ARCH_STRING "armv7"
+  #endif
+#elif defined __aarch64__
+#define ARCH_STRING "armv_64"
 #elif defined __cris__
 #define ARCH_STRING "cris"
 #elif defined __hppa__
