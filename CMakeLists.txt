@@ -84,7 +84,7 @@ cmake_dependent_option(INSTALL_OMNIBOT		"Install Omni-bot"							ON "INSTALL_EXT
 cmake_dependent_option(INSTALL_GEOIP		"Install GeoLite geolocation database"		ON "INSTALL_EXTRA" OFF)
 cmake_dependent_option(INSTALL_WOLFADMIN	"Install WolfAdmin enhancement suite"		ON "INSTALL_EXTRA" OFF)
 
-option(ARM						"Build ARM version"										OFF)
+option(RPI						"Build RPI version"										OFF)
 
 set(ET_FS_BASEPATH "" CACHE STRING "Copy required genuine ET files from ET_FS_BASEPATH")
 cmake_dependent_option(ET_KEY	"Copy existing etkey file from ET_FS_BASEPATH)"			ON "ET_FS_BASEPATH" OFF)
