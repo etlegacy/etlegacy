@@ -218,7 +218,9 @@
     #define ARCH_STRING "armv7"
   #endif
 #elif defined __aarch64__
-#define ARCH_STRING "armv_64"
+  #if defined(__ARM_ARCH_ISA_A64)
+    #define ARCH_STRING "armv_64"
+  #endif
 #elif defined __cris__
 #define ARCH_STRING "cris"
 #elif defined __hppa__
