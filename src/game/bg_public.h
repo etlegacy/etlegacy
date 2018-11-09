@@ -1094,6 +1094,7 @@ typedef struct weapontable_s
 	int svFlags;                    ///< g -
 	int trType;                     ///< g -
 	int trTime;                     ///< g -
+	float boudingBox[2][3];         ///< g - mins / maxs bounding box vectors (for missile ent)
 	int clipMask;                   ///< g -
 
 	qboolean isScoped;              ///< bg -

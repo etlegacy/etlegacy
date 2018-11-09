@@ -1133,8 +1133,8 @@ gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->s.pos.trDuration = 800;
 	bolt->speed            = FLAME_START_SIZE; // 'speed' will be the current size radius of the chunk
 
-	VectorSet(bolt->r.mins, -4, -4, -4);
-	VectorSet(bolt->r.maxs, 4, 4, 4);
+	VectorCopy(GetWeaponTableData(WP_FLAMETHROWER)->boudingBox[0], bolt->r.mins);
+	VectorCopy(GetWeaponTableData(WP_FLAMETHROWER)->boudingBox[1], bolt->r.maxs);
 	VectorCopy(start, bolt->s.pos.trBase);
 	VectorScale(dir, FLAME_START_SPEED, bolt->s.pos.trDelta);
 
@@ -1782,11 +1782,6 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		{
 			bolt->s.otherEntityNum2 = 0;
 		}
-
-		VectorSet(bolt->r.mins, -16, -16, 0);
-		VectorCopy(bolt->r.mins, bolt->r.absmin);
-		VectorSet(bolt->r.maxs, 16, 16, 16);
-		VectorCopy(bolt->r.maxs, bolt->r.absmax);
 	}
 	else if (grenadeWPID == WP_SATCHEL || grenadeWPID == WP_DYNAMITE)
 	{
@@ -1817,11 +1812,13 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 			bolt->free        = G_FreeSatchel;
 			// is there think set for satchel?
 		}
+	}
 
-		// small target cube
-		VectorSet(bolt->r.mins, -12, -12, 0);
+	if (bolt->r.contents == CONTENTS_CORPSE)
+	{
+		VectorCopy(GetWeaponTableData(grenadeWPID)->boudingBox[0], bolt->r.mins);
 		VectorCopy(bolt->r.mins, bolt->r.absmin);
-		VectorSet(bolt->r.maxs, 12, 12, 20);
+		VectorCopy(GetWeaponTableData(grenadeWPID)->boudingBox[1], bolt->r.maxs);
 		VectorCopy(bolt->r.maxs, bolt->r.absmax);
 	}
 
@@ -1859,7 +1856,7 @@ gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType
 	gentity_t *bolt;
 
 	bolt = G_Spawn();
-	G_PreFilledMissileEntity(bolt, rocketType, self->s.weapon, self->s.number, self->client ? self->client->sess.sessionTeam : TEAM_FREE, -1, self);
+	G_PreFilledMissileEntity(bolt, rocketType, rocketType, self->s.number, self->client ? self->client->sess.sessionTeam : TEAM_FREE, -1, self);
 
 	bolt->think = G_ExplodeMissile;
 

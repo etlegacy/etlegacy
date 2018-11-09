@@ -2363,11 +2363,11 @@ void landmine_setup(gentity_t *ent)
 {
 	trace_t tr;
 	vec3_t  end;
-
-	VectorSet(ent->r.mins, -16, -16, 0);
-	VectorCopy(ent->r.mins, ent->r.absmin);
-	VectorSet(ent->r.maxs, 16, 16, 16);
-	VectorCopy(ent->r.maxs, ent->r.absmax);
+    
+    VectorCopy(GetWeaponTableData(WP_LANDMINE)->boudingBox[0], ent->r.mins);
+    VectorCopy(ent->r.mins, ent->r.absmin);
+    VectorCopy(GetWeaponTableData(WP_LANDMINE)->boudingBox[1], ent->r.maxs);
+    VectorCopy(ent->r.maxs, ent->r.absmax);
 
 	// drop to floor
 	VectorCopy(ent->s.origin, end);

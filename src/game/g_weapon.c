@@ -3508,7 +3508,7 @@ void weapon_gpg40_fire(gentity_t *ent, gentity_t **firedShot)
 	VectorMA(viewpos, 32, forward, viewpos);
 
 	// to prevent nade-through-teamdoor sploit
-	trap_Trace(&tr, orig_viewpos, tv(-4.f, -4.f, 0.f), tv(4.f, 4.f, 6.f), viewpos, ent->s.number, MASK_MISSILESHOT);
+	trap_Trace(&tr, orig_viewpos, GetWeaponTableData(ent->s.weapon)->boudingBox[0], GetWeaponTableData(ent->s.weapon)->boudingBox[1], viewpos, ent->s.number, MASK_MISSILESHOT);
 	if (tr.fraction < 1)     // oops, bad launch spot
 	{
 		VectorCopy(tr.endpos, tosspos);
@@ -3516,7 +3516,7 @@ void weapon_gpg40_fire(gentity_t *ent, gentity_t **firedShot)
 	}
 	else
 	{
-		trap_Trace(&tr, viewpos, tv(-4.f, -4.f, 0.f), tv(4.f, 4.f, 6.f), tosspos, ent->s.number, MASK_MISSILESHOT);
+		trap_Trace(&tr, viewpos, GetWeaponTableData(ent->s.weapon)->boudingBox[0], GetWeaponTableData(ent->s.weapon)->boudingBox[1], tosspos, ent->s.number, MASK_MISSILESHOT);
 		if (tr.fraction < 1)     // oops, bad launch spot
 		{
 			VectorCopy(tr.endpos, tosspos);
@@ -3557,7 +3557,7 @@ void weapon_mortar_fire(gentity_t *ent, gentity_t **firedShot)
 	forward[1] *= 3000 * 1.1f;
 	forward[2] *= 1500 * 1.1f;
 
-	trap_Trace(&tr, testPos, tv(-4.f, -4.f, 0.f), tv(4.f, 4.f, 6.f), launchPos, ent->s.number, MASK_MISSILESHOT);
+	trap_Trace(&tr, testPos, GetWeaponTableData(ent->s.weapon)->boudingBox[0], GetWeaponTableData(ent->s.weapon)->boudingBox[1], launchPos, ent->s.number, MASK_MISSILESHOT);
 
 	if (tr.fraction < 1)     // oops, bad launch spot
 	{
@@ -3642,18 +3642,7 @@ void weapon_grenadelauncher_fire(gentity_t *ent, gentity_t **firedShot)
 	VectorCopy(ent->s.pos.trBase, viewpos);
 	viewpos[2] += ent->client->ps.viewheight;
 
-	if (grenType == WP_DYNAMITE || grenType == WP_SATCHEL)
-	{
-		trap_Trace(&tr, viewpos, tv(-12.f, -12.f, 0.f), tv(12.f, 12.f, 20.f), tosspos, ent->s.number, MASK_MISSILESHOT);
-	}
-	else if (grenType == WP_LANDMINE)
-	{
-		trap_Trace(&tr, viewpos, tv(-16.f, -16.f, 0.f), tv(16.f, 16.f, 16.f), tosspos, ent->s.number, MASK_MISSILESHOT);
-	}
-	else
-	{
-		trap_Trace(&tr, viewpos, tv(-4.f, -4.f, 0.f), tv(4.f, 4.f, 6.f), tosspos, ent->s.number, MASK_MISSILESHOT);
-	}
+	trap_Trace(&tr, viewpos, GetWeaponTableData(grenType)->boudingBox[0], GetWeaponTableData(grenType)->boudingBox[1], tosspos, ent->s.number, MASK_MISSILESHOT);
 
 	if (tr.startsolid)
 	{
@@ -3662,18 +3651,7 @@ void weapon_grenadelauncher_fire(gentity_t *ent, gentity_t **firedShot)
 		VectorNormalizeFast(viewpos);
 		VectorMA(ent->r.currentOrigin, -24.f, viewpos, viewpos);
 
-		if (grenType == WP_DYNAMITE || grenType == WP_SATCHEL)
-		{
-			trap_Trace(&tr, viewpos, tv(-12.f, -12.f, 0.f), tv(12.f, 12.f, 20.f), tosspos, ent->s.number, MASK_MISSILESHOT);
-		}
-		else if (grenType == WP_LANDMINE)
-		{
-			trap_Trace(&tr, viewpos, tv(-16.f, -16.f, 0.f), tv(16.f, 16.f, 16.f), tosspos, ent->s.number, MASK_MISSILESHOT);
-		}
-		else
-		{
-			trap_Trace(&tr, viewpos, tv(-4.f, -4.f, 0.f), tv(4.f, 4.f, 6.f), tosspos, ent->s.number, MASK_MISSILESHOT);
-		}
+		trap_Trace(&tr, viewpos, GetWeaponTableData(grenType)->boudingBox[0], GetWeaponTableData(grenType)->boudingBox[1], tosspos, ent->s.number, MASK_MISSILESHOT);
 
 		VectorCopy(tr.endpos, tosspos);
 	}
@@ -3788,10 +3766,6 @@ void G_BurnMeGood(gentity_t *self, gentity_t *body, gentity_t *chunk)
 	}
 }
 
-// for traces calls
-static vec3_t flameChunkMins = { -4, -4, -4 };
-static vec3_t flameChunkMaxs = { 4, 4, 4 };
-
 /**
  * @brief Weapon_FlamethrowerFire
  * @param[in,out] ent
@@ -3816,7 +3790,7 @@ void Weapon_FlamethrowerFire(gentity_t *ent, gentity_t **firedShot)
 	// prevent flame thrower cheat, run & fire while aiming at the ground, don't get hurt
 	// 72 total box height, 18 xy -> 77 trace radius (from view point towards the ground) is enough to cover the area around the feet
 	VectorMA(trace_start, 77.0f, forward, trace_end);
-	trap_Trace(&trace, trace_start, flameChunkMins, flameChunkMaxs, trace_end, ent->s.number, MASK_SHOT | MASK_WATER);
+	trap_Trace(&trace, trace_start, GetWeaponTableData(ent->s.weapon)->boudingBox[0], GetWeaponTableData(ent->s.weapon)->boudingBox[1], trace_end, ent->s.number, MASK_SHOT | MASK_WATER);
 	if (trace.fraction != 1.0f)
 	{
 		// additional checks to filter out false positives
