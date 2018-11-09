@@ -2738,7 +2738,7 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		// continuous smoke after firing
 		if (ps || !isFirstPerson)
 		{
-			if (GetWeaponTableData(weaponNum)->canHeat)
+			if (GetWeaponTableData(weaponNum)->maxHeat)
 			{
 				// hot smoking gun
 				if ((cg.time - cent->overheatTime < 3000) && !(cent->currentState.powerups & (1 << PW_INVULNERABLE)))

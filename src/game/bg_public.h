@@ -1078,39 +1078,39 @@ typedef enum
  */
 typedef struct weapontable_s
 {
-	int weapon;                     ///< bg - reference
-	int item;                       ///< bg - item
-	int team;                       ///< bg - 
-	skillType_t skillBased;         ///< bg - 
-	weapon_t weapAlts;              ///< bg - 
+	int weapon;                     ///< bg - the weapon id reference
+	int item;                       ///< bg - the item id linked to the weapon entity
+	int team;                       ///< bg -
+	skillType_t skillBased;         ///< bg -
+	weapon_t weapAlts;              ///< bg - the id of the alternative weapon
 	weapon_t weapEquiv;             ///< bg - the id of the opposite team's weapon (but not for WP_GPG40 <-> WP_M7 - see CG_OutOfAmmoChange).
 	weapon_t akimboSideArm;         ///< bg
 
 	weapon_t ammoIndex;             ///< bg - type of weapon ammo this uses.
 	weapon_t clipIndex;             ///< bg - which clip this weapon uses. This allows the sniper rifle to use the same clip as the garand, etc.
 
-	int eType;                      ///< g -  
-	int eFlags;                     ///< g - 
-	int svFlags;                    ///< g - 
-	int trType;                     ///< g -  
-	int trTime;                     ///< g - 
-	int clipMask;                   ///< g - 
+	int eType;                      ///< g -
+	int eFlags;                     ///< g -
+	int svFlags;                    ///< g -
+	int trType;                     ///< g -
+	int trTime;                     ///< g -
+	int clipMask;                   ///< g -
 
-	qboolean isScoped;              ///< bg - 
+	qboolean isScoped;              ///< bg -
 
-	qboolean isLightWeaponSupportingFastReload; ///< bg - 
+	qboolean isLightWeaponSupportingFastReload; ///< bg -
 
 	int damage;                     ///< g -
 	qboolean canGib;                ///< g -
 	qboolean isReload;              ///< g - some weapons don't reload NOTE: unused ??
 
-	float spread;                   ///< bg - 
-	float spreadScale;              ///< bg - 
-	int splashDamage;               ///< g - 
-	int splashRadius;               ///< g - 
+	float spread;                   ///< bg -
+	float spreadScale;              ///< bg -
+	int splashDamage;               ///< g -
+	int splashRadius;               ///< g -
 
-	qboolean quickFireMode;         ///< bg - 
-	qboolean firingAuto;            ///< bg - 
+	qboolean quickFireMode;         ///< bg -
+	qboolean firingAuto;            ///< bg -
 
 	qboolean neverLoseDisguise;     ///< g -
 	qboolean keepDisguise;          ///< g -
@@ -1134,17 +1134,16 @@ typedef struct weapontable_s
 	qboolean isMG;                  ///< bg -
 	qboolean isMGSet;               ///< bg -
 
-	qboolean isSetWeapon;           ///< bg - 
-	qboolean isLightWeapon;         ///< g  - 
-	qboolean isHeavyWeapon;         ///< bg - 
-	qboolean isSilencedPistol;      ///< bg - 
-	qboolean isMeleeWeapon;         ///< bg - 
-	qboolean isGrenade;             ///< bg - 
+	qboolean isSetWeapon;           ///< bg -
+	qboolean isLightWeapon;         ///< g  -
+	qboolean isHeavyWeapon;         ///< bg -
+	qboolean isSilencedPistol;      ///< bg -
+	qboolean isMeleeWeapon;         ///< bg -
+	qboolean isGrenade;             ///< bg -
 
 	qboolean isUnderWaterFire;      ///< bg -
 	qboolean noMuzzleFlash;         ///< cg -
 	qboolean shakeEffect;           ///< g  -
-	qboolean canHeat;               ///< bg -
 
 	int zoomOut;                    ///< cg -
 	int zoomIn;                     ///< cg -
@@ -1156,7 +1155,7 @@ typedef struct weapontable_s
 
 	unsigned int indexWeaponStat;   ///< bg - index for weapon stat info
 
-	qboolean fallOff;               ///< g - 
+	qboolean fallOff;               ///< g -
 
 	qboolean useAmmo;               ///< bg -
 	qboolean useClip;               ///< bg -
@@ -1165,17 +1164,17 @@ typedef struct weapontable_s
 	int maxAmmo;                    ///< bg - max player ammo carrying capacity.
 	int uses;                       ///< bg - how many 'rounds' it takes/costs to fire one cycle.
 	int maxClip;                    ///< bg - max 'rounds' in a clip.
-	int defaultStartingAmmo;		///< g - player ammo when spawning.
-	int defaultStartingClip;		///< g - player clips when spawning.
+	int defaultStartingAmmo;        ///< g - player ammo when spawning.
+	int defaultStartingClip;        ///< g - player clips when spawning.
 	int reloadTime;                 ///< bg - time from start of reload until ready to fire.
 	int fireDelayTime;              ///< bg - time from pressing 'fire' until first shot is fired. (used for delaying fire while weapon is 'readied' in animation)
 	int nextShotTime;               ///< bg - when firing continuously, this is the time between shots
-	int grenadeTime;                ///< bg - 
-	int aimSpreadScaleAdd;          ///< bg - 
+	int grenadeTime;                ///< bg -
+	int aimSpreadScaleAdd;          ///< bg -
 
 	int maxHeat;                    ///< bg - max active firing time before weapon 'overheats' (at which point the weapon will fail)
 	int coolRate;                   ///< bg - how fast the weapon cools down. (per second)
-	int heatRecoveryTime;           ///< bg - time from overheats until weapon fully cool down
+	int heatRecoveryTime;           ///< bg - time from overheats until weapon can fire again
 
 	int switchTimeBegin;            ///< bg -
 	int switchTimeFinish;           ///< bg -
@@ -1188,32 +1187,32 @@ typedef struct weapontable_s
 	int nextThink;                  ///< g -
 	int accuracy;                   ///< g - NOTE: unused ???
 
-	float adjustLean;               ///< cg - 
+	float adjustLean;               ///< cg -
 
 	float fireRecoilPitch;          ///< cg -
 	float fireRecoilYaw;            ///< cg -
-                                            
+
 	int weapRecoilDuration;         ///< bg -
 	float weapRecoilPitch[2];       ///< bg -
 	float weapRecoilYaw[2];         ///< bg -
 
-	const char *className;          ///< g - 
-	const char *weapFile;           ///< cg - 
+	const char *className;          ///< g -
+	const char *weapFile;           ///< cg -
 
 	weaponCardIconId_t weaponCardIcon;            ///< cg -
 	float weaponCardCoord[WEAPON_CARD_CORRD_NUM]; ///< cg -
 
-	int idleAnim;                   ///< bg - 
-	int attackAnim;                 ///< bg - 
-	int lastAttackAnim;             ///< bg - 
-	int altSwitchFrom;              ///< bg - 
-	int altSwitchTo;                ///< bg - 
-	int reloadAnim;                 ///< bg - 
-	int raiseAnim;                  ///< bg - 
-	int dropAnim;                   ///< bg - 
+	int idleAnim;                   ///< bg -
+	int attackAnim;                 ///< bg -
+	int lastAttackAnim;             ///< bg -
+	int altSwitchFrom;              ///< bg -
+	int altSwitchTo;                ///< bg -
+	int reloadAnim;                 ///< bg -
+	int raiseAnim;                  ///< bg -
+	int dropAnim;                   ///< bg -
 
-	qboolean useChargeTime;                       ///< bg - 
-	float chargeTimeCoeff[NUM_SKILL_LEVELS];      ///< bg - 
+	qboolean useChargeTime;                       ///< bg -
+	float chargeTimeCoeff[NUM_SKILL_LEVELS];      ///< bg -
 
 	meansOfDeath_t mod;                           ///< g - means of death
 	meansOfDeath_t splashMod;                     ///< g - splash means of death
@@ -1669,23 +1668,23 @@ typedef struct animation_s
  * @note Unused
 typedef enum
 {
-	HEAD_NEUTRAL_CLOSED = 0,
-	HEAD_NEUTRAL_A,
-	HEAD_NEUTRAL_O,
-	HEAD_NEUTRAL_I,
-	HEAD_NEUTRAL_E,
-	HEAD_HAPPY_CLOSED,
-	HEAD_HAPPY_O,
-	HEAD_HAPPY_I,
-	HEAD_HAPPY_E,
-	HEAD_HAPPY_A,
-	HEAD_ANGRY_CLOSED,
-	HEAD_ANGRY_O,
-	HEAD_ANGRY_I,
-	HEAD_ANGRY_E,
-	HEAD_ANGRY_A,
+    HEAD_NEUTRAL_CLOSED = 0,
+    HEAD_NEUTRAL_A,
+    HEAD_NEUTRAL_O,
+    HEAD_NEUTRAL_I,
+    HEAD_NEUTRAL_E,
+    HEAD_HAPPY_CLOSED,
+    HEAD_HAPPY_O,
+    HEAD_HAPPY_I,
+    HEAD_HAPPY_E,
+    HEAD_HAPPY_A,
+    HEAD_ANGRY_CLOSED,
+    HEAD_ANGRY_O,
+    HEAD_ANGRY_I,
+    HEAD_ANGRY_E,
+    HEAD_ANGRY_A,
 
-	MAX_HEAD_ANIMS
+    MAX_HEAD_ANIMS
 } animHeadNumber_t;
 */
 
@@ -1696,8 +1695,8 @@ typedef enum
  * @note Unused
 typedef struct headAnimation_s
 {
-	int firstFrame;
-	int numFrames;
+    int firstFrame;
+    int numFrames;
 } headAnimation_t;
 */
 

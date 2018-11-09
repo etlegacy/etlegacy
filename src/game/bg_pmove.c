@@ -2805,7 +2805,7 @@ void PM_CoolWeapons(void)
 	{
 		// if the weapon can heat and you have the weapon
 		// dummy MG42 can't be equipped but still have a cool down
-		if (GetWeaponTableData(wp)->canHeat && (COM_BitCheck(pm->ps->weapons, wp) || wp == WP_DUMMY_MG42))
+		if (GetWeaponTableData(wp)->maxHeat && (COM_BitCheck(pm->ps->weapons, wp) || wp == WP_DUMMY_MG42))
 		{
 			// and it's hot
 			if (pm->ps->weapHeat[wp])
@@ -2832,7 +2832,7 @@ void PM_CoolWeapons(void)
 	{
 		pm->ps->curWeapHeat = (int)(floor((pm->ps->weapHeat[WP_DUMMY_MG42] / (double)GetWeaponTableData(WP_DUMMY_MG42)->maxHeat) * 255));
 	}
-	else if (GetWeaponTableData(pm->ps->weapon)->canHeat)
+	else if (GetWeaponTableData(pm->ps->weapon)->maxHeat)
 	{
 		pm->ps->curWeapHeat = (int)(floor((pm->ps->weapHeat[pm->ps->weapon] / (double)GetWeaponTableData(pm->ps->weapon)->maxHeat) * 255));
 	}
