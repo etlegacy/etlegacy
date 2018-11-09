@@ -3055,7 +3055,7 @@ void Weapon_Artillery(gentity_t *ent)
 		bomb2               = G_Spawn();
 		bomb2->think        = artilleryThink;
 		bomb2->s.eType      = ET_MISSILE;
-		bomb2->s.weapon		= WP_NONE;
+		bomb2->s.weapon     = WP_NONE;
 		bomb2->r.svFlags    = SVF_NOCLIENT;
 		bomb2->r.ownerNum   = ent->s.number;
 		bomb2->parent       = ent;
@@ -3920,29 +3920,14 @@ void CalcMuzzlePoint(gentity_t *ent, int weapon, vec3_t forward, vec3_t right, v
 {
 	VectorCopy(ent->r.currentOrigin, muzzlePoint);
 	muzzlePoint[2] += ent->client->ps.viewheight;
+
 	// this puts the start point outside the bounding box, isn't necessary
-	//VectorMA( muzzlePoint, 14, forward, muzzlePoint );
+	//VectorMA(muzzlePoint, GetWeaponTableData(weapon)->muzzlePointOffset[0], forward, muzzlePoint);
 
 	// offset for more realistic firing from actual gun position
 	// changed this so I can predict weapons
-	if (GetWeaponTableData(weapon)->isPanzer)
-	{
-		VectorMA(muzzlePoint, 10, right, muzzlePoint);
-	}
-	else if (GetWeaponTableData(weapon)->isAkimbo)
-	{
-		VectorMA(muzzlePoint, -6, right, muzzlePoint);
-		VectorMA(muzzlePoint, -4, up, muzzlePoint);
-	}
-	else if (GetWeaponTableData(weapon)->isGrenade || weapon == WP_DYNAMITE || weapon == WP_SATCHEL || weapon == WP_SMOKE_BOMB)
-	{
-		VectorMA(muzzlePoint, 20, right, muzzlePoint);
-	}
-	else
-	{
-		VectorMA(muzzlePoint, 6, right, muzzlePoint);
-		VectorMA(muzzlePoint, -4, up, muzzlePoint);
-	}
+	VectorMA(muzzlePoint, GetWeaponTableData(weapon)->muzzlePointOffset[1], right, muzzlePoint);
+	VectorMA(muzzlePoint, GetWeaponTableData(weapon)->muzzlePointOffset[2], up, muzzlePoint);
 
 	// actually, this is sort of moot right now since
 	// you're not allowed to fire when leaning.  Leave in

@@ -1183,6 +1183,7 @@ typedef struct weapontable_s
 
 	float knockback;                ///< bg -
 	int ejectBrassOffset[3];        ///< cg - forward, left, up
+	int muzzlePointOffset[3];       ///< g - forward, left, up
 
 	int nextThink;                  ///< g -
 	int accuracy;                   ///< g - NOTE: unused ???
