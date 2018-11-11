@@ -73,7 +73,7 @@ textures/egypt_floor_sd/sandy_dirt_02
 	qer_editorimage textures/egypt_floor_sd/sandy_dirt_01.tga
 	diffusemap textures/egypt_floor_sd/sandy_dirt_01.tga
 	bumpmap textures/egypt_floor_sd/sandy_dirt_01_n.tga
-	specularmap textures/egypt_floor_sd/sandy_dirt_01_s
+	specularmap textures/egypt_floor_sd/sandy_dirt_01_r.tga
 	q3map_nonplanar.tga
 	q3map_shadeangle 100
 	surfaceparm gravelsteps
