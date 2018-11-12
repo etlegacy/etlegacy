@@ -19,7 +19,7 @@ android {
         versionName "1.0"
         externalNativeBuild {
             cmake {
-                arguments "-DCROSS_COMPILE32=OFF"
+                arguments "-DCROSS_COMPILE32=OFF", "-DFEATURE_RENDERER2=OFF", "-DFEATURE_RENDERER_GLES=ON"
             }
         }
         ndk {
