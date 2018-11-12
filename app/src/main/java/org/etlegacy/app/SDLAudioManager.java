@@ -1,4 +1,4 @@
-package org.libsdl.app;
+package org.etlegacy.app;
 
 import android.media.*;
 import android.util.Log;
