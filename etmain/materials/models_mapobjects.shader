@@ -101,7 +101,7 @@ models/mapobjects/blitz_sd/blitz_sd_body_s
 	qer_editorimage models/mapobjects/blitz_sd/blitz_sd_s.tga
 	diffuseMap models/mapobjects/blitz_sd/blitz_sd_s.tga
 	bumpMap models/mapobjects/blitz_sd/blitz_sd_s_n.tga
-	specularMap models/mapobjects/blitz_sd/blitz_sd_r.tga
+	specularMap models/mapobjects/blitz_sd/blitz_sd_s_r.tga
 }
 
 models/mapobjects/blitz_sd/blitz_sd_body_s_mm
@@ -109,7 +109,7 @@ models/mapobjects/blitz_sd/blitz_sd_body_s_mm
 	qer_editorimage models/mapobjects/blitz_sd/blitz_sd_s.tga
 	diffuseMap models/mapobjects/blitz_sd/blitz_sd_s.tga
 	bumpMap models/mapobjects/blitz_sd/blitz_sd_s_n.tga
-	specularMap models/mapobjects/blitz_sd/blitz_sd_r.tga
+	specularMap models/mapobjects/blitz_sd/blitz_sd_s_r.tga
 }
 
 models/mapobjects/blitz_sd/blitz_sd_interior_mm
