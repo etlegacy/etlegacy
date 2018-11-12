@@ -252,6 +252,159 @@ icons/iconw_mp34_1_select
 	}
 }
 
+icons/iconw_knife_kbar
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_knife_kbar.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
+
+icons/iconw_knife_kbar_1_select
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_knife_kbar_1_select.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
+
+icons/iconw_akimbocolts
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_akimbocolts.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
+
+icons/iconw_akimbocolts_1_select
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_akimbocolts_1_select.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
+
+icons/iconw_akimbolugers
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_akimbolugers.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
+
+icons/iconw_akimbolugers_1_select
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_akimbolugers_1_select.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
+
+icons/iconw_silencedcolt
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_silencedcolt.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
+
+icons/iconw_silencedcolt_1_select
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_silencedcolt_1_select.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
+
+icons/iconw_silencedakimbocolts
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_silencedakimbocolts.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
+
+icons/iconw_silencedakimbocolts_1_select
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_silencedakimbocolts_1_select.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
+
+icons/iconw_silencedluger
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_silencedluger.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
+
+icons/iconw_silencedluger_1_select
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_silencedluger_1_select.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
+
+icons/iconw_silencedakimbolugers
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_silencedakimbolugers.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
+
+icons/iconw_silencedakimbolugers_1_select
+{
+	nomipmaps
+	nopicmip
+	{
+		map icons/iconw_silencedakimbolugers_1_select.tga
+		blendFunc blend
+		rgbGen vertex
+	}
+}
 
 // KA-BAR
 models/weapons2/knife_kbar/knife_yd
