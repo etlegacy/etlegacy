@@ -1040,6 +1040,65 @@ typedef enum
 
 } ammunitionType_t;
 
+/**
+ * @struct weaponType_s
+ * @typedef weaponType_t
+ * @brief
+ */
+typedef enum weaponType_s
+{
+	WEAPON_TYPE_MELEE     = BIT(0),
+	WEAPON_TYPE_PISTOL    = BIT(1),
+	WEAPON_TYPE_SMG       = BIT(2),
+	WEAPON_TYPE_RIFLE     = BIT(3),
+	WEAPON_TYPE_GRENADE   = BIT(4),
+	WEAPON_TYPE_RIFLENADE = BIT(5),
+	WEAPON_TYPE_MORTAR    = BIT(6),
+	WEAPON_TYPE_MG        = BIT(7),
+	WEAPON_TYPE_PANZER    = BIT(8),
+	WEAPON_TYPE_SYRINGUE  = BIT(9)
+
+} weaponType_t;
+
+/**
+ * @struct weaponFiringMode_s
+ * @typedef weaponFiringMode_t
+ * @brief
+ */
+typedef enum weaponFiringMode_s
+{
+	WEAPON_FIRING_MODE_THROWABLE      = BIT(0),
+	WEAPON_FIRING_MODE_ONE_SHOT       = BIT(1),
+	WEAPON_FIRING_MODE_MANUAL         = BIT(2),
+	WEAPON_FIRING_MODE_SEMI_AUTOMATIC = BIT(3),
+	WEAPON_FIRING_MODE_AUTOMATIC      = BIT(4)
+
+} weaponFiringMode_t;
+
+/**
+ * @struct weaponAttribut_s
+ * @typedef weaponAttribut_t
+ * @brief
+ */
+typedef enum weaponAttribut_s
+{
+	WEAPON_ATTRIBUT_EXPLOSIVE           = BIT(0),
+	WEAPON_ATTRIBUT_SCOPABLE            = BIT(1),
+	WEAPON_ATTRIBUT_SCOPED              = BIT(2),
+	WEAPON_ATTRIBUT_SILENCED            = BIT(3),
+	WEAPON_ATTRIBUT_SETTABLE            = BIT(4),
+	WEAPON_ATTRIBUT_SET                 = BIT(5),
+	WEAPON_ATTRIBUT_FAST_RELOAD         = BIT(6),
+	WEAPON_ATTRIBUT_AKIMBO              = BIT(7),
+	WEAPON_ATTRIBUT_FIRE_UNDERWATER     = BIT(8),
+	WEAPON_ATTRIBUT_NEVER_LOST_DESGUISE = BIT(9),
+	WEAPON_ATTRIBUT_KEEP_DESGUISE       = BIT(10),
+	WEAPON_ATTRIBUT_SHAKE               = BIT(11),
+	WEAPON_ATTRIBUT_GIB                 = BIT(12),
+	WEAPON_ATTRIBUT_CHARGE_TIME         = BIT(13)
+
+} weaponAttribut_t;
+
 #define NUM_SKILL_LEVELS 5
 
 /**
