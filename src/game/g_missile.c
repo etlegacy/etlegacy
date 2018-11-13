@@ -1124,7 +1124,7 @@ gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir)
 	VectorNormalize(dir);
 
 	bolt = G_Spawn();
-	G_PreFilledMissileEntity(bolt, WP_FLAMETHROWER, self->s.weapon, self->s.number, TEAM_FREE, -1, self);
+	G_PreFilledMissileEntity(bolt, WP_FLAMETHROWER, self->s.weapon, self->s.number, TEAM_FREE, -1, self, start, dir);
 
 	bolt->timestamp        = level.time;
 	bolt->flameQuotaTime   = level.time + 50;
@@ -1133,13 +1133,8 @@ gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->s.pos.trDuration = 800;
 	bolt->speed            = FLAME_START_SIZE; // 'speed' will be the current size radius of the chunk
 
-	VectorCopy(GetWeaponTableData(WP_FLAMETHROWER)->boudingBox[0], bolt->r.mins);
-	VectorCopy(GetWeaponTableData(WP_FLAMETHROWER)->boudingBox[1], bolt->r.maxs);
-	VectorCopy(start, bolt->s.pos.trBase);
-	VectorScale(dir, FLAME_START_SPEED, bolt->s.pos.trDelta);
-
+	VectorScale(bolt->s.pos.trDelta, FLAME_START_SPEED, bolt->s.pos.trDelta);
 	SnapVector(bolt->s.pos.trDelta);            // save net bandwidth
-	VectorCopy(start, bolt->r.currentOrigin);
 
 	return bolt;
 }
@@ -1708,22 +1703,25 @@ qboolean G_LandmineSnapshotCallback(int entityNum, int clientNum)
 }
 
 /**
- * @brief fire_grenade
+ * @brief fire_missile
  * @param[in] self
  * @param[in] start
  * @param[in] dir
- * @param[in] grenadeWPID
+ * @param[in] weapon
  * @return
  *
  * @note IMPORTANT!!! : This accepts a /non-normalized/ direction vector to allow specification
  * of how hard it's thrown.  Please scale the vector before calling.
  */
-gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWPID)
+gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir, int weapon)
 {
 	gentity_t *bolt;
 
 	bolt = G_Spawn();
-	G_PreFilledMissileEntity(bolt, grenadeWPID, grenadeWPID, self->s.number, self->client ? self->client->sess.sessionTeam : TEAM_FREE, -1, self);  // store team so we can generate red or blue smoke
+	G_PreFilledMissileEntity(bolt, weapon, weapon,
+	                         self->s.number, self->client ? self->client->sess.sessionTeam : TEAM_FREE, // store team so we can generate red or blue smoke
+	                         self->client ? self->client->ps.clientNum : -1,
+	                         self, start, dir);
 
 	// no self->client for shooter_grenade's
 	// if grenade time left, add it to next think and reset it, else add default value
@@ -1733,41 +1731,33 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 		self->client->ps.grenadeTimeLeft = 0;   // reset grenade timer
 	}
 
-	if (!GetWeaponTableData(grenadeWPID)->isExplosive)
+	if (!GetWeaponTableData(weapon)->isExplosive)
 	{
 		G_Printf("WARNING: fire_grenade called for undefined weapon\n");
 	}
-	else if (GetWeaponTableData(grenadeWPID)->isRiflenade || GetWeaponTableData(grenadeWPID)->isGrenade)
+	else if (GetWeaponTableData(weapon)->isRiflenade || GetWeaponTableData(weapon)->isGrenade || GetWeaponTableData(weapon)->isPanzer)
 	{
 		bolt->think = G_ExplodeMissile;
 	}
-	else if (grenadeWPID == WP_SMOKE_BOMB)
+	else if (weapon == WP_SMOKE_BOMB)
 	{
-		bolt->s.effect1Time = 16;
-		bolt->think         = weapon_smokeBombExplode; // overwrite G_ExplodeMissile
+		bolt->think = weapon_smokeBombExplode;         // overwrite G_ExplodeMissile
 	}
-	else if (grenadeWPID == WP_SMOKE_MARKER)
+	else if (weapon == WP_SMOKE_MARKER)
 	{
 		if (self->client && self->client->sess.skill[SK_SIGNALS] >= 3)
 		{
-			bolt->count      = 2;
 			bolt->nextthink += 1000;
 			bolt->think      = weapon_checkAirStrikeThink2; // overwrite G_ExplodeMissile
 		}
 		else
 		{
-			bolt->count = 1;
 			bolt->think = weapon_checkAirStrikeThink1;     // overwrite G_ExplodeMissile
 		}
 	}
-	else if (grenadeWPID == WP_LANDMINE)
+	else if (weapon == WP_LANDMINE)
 	{
-		bolt->think     = DynaSink;
-		bolt->timestamp = level.time + 16500;
-
-		bolt->health     = 5;
-		bolt->takedamage = qtrue;
-		bolt->r.contents = CONTENTS_CORPSE;                 // (player can walk through)
+		bolt->think = DynaSink;
 
 		bolt->r.snapshotCallback = qtrue;
 
@@ -1783,92 +1773,33 @@ gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWP
 			bolt->s.otherEntityNum2 = 0;
 		}
 	}
-	else if (grenadeWPID == WP_SATCHEL || grenadeWPID == WP_DYNAMITE)
+	if (weapon == WP_SATCHEL)
 	{
-		bolt->health     = 5;
-		bolt->takedamage = qfalse;
-		bolt->r.contents = CONTENTS_CORPSE;                 // (player can walk through)
+		bolt->s.clientNum = self->s.clientNum;
+		bolt->free        = G_FreeSatchel;
+		// is there think set for satchel?
+	}
+	else if (weapon == WP_DYNAMITE)
+	{
+		bolt->think = DynaSink;
+		bolt->free  = DynaFree;
 
-		if (grenadeWPID == WP_DYNAMITE)
+		trap_SendServerCommand(self - g_entities, "cp \"Dynamite is set, but NOT armed!\"");
+		// differentiate non-armed dynamite with non-pulsing dlight
+		if (self->client)
 		{
-			bolt->think     = DynaSink;
-			bolt->timestamp = level.time + 16500;
-			bolt->free      = DynaFree;
-
-			trap_SendServerCommand(self - g_entities, "cp \"Dynamite is set, but NOT armed!\"");
-			// differentiate non-armed dynamite with non-pulsing dlight
-			if (self->client)
-			{
-				bolt->s.teamNum += 4;   // overwrite
-			}
-
-			// nope - this causes the dynamite to impact on the players bb when he throws it.
-			// will try setting it when it settles
-			//bolt->r.ownerNum            = ENTITYNUM_WORLD;  // make the world the owner of the dynamite, so the player can shoot it without modifying the bullet code to ignore players id for hits
+			bolt->s.teamNum += 4;   // overwrite
 		}
-		else
-		{
-			bolt->s.clientNum = self->s.clientNum;
-			bolt->free        = G_FreeSatchel;
-			// is there think set for satchel?
-		}
+
+		// nope - this causes the dynamite to impact on the players bb when he throws it.
+		// will try setting it when it settles
+		//bolt->r.ownerNum            = ENTITYNUM_WORLD;  // make the world the owner of the dynamite, so the player can shoot it without modifying the bullet code to ignore players id for hits
 	}
-
-	if (bolt->r.contents == CONTENTS_CORPSE)
-	{
-		VectorCopy(GetWeaponTableData(grenadeWPID)->boudingBox[0], bolt->r.mins);
-		VectorCopy(bolt->r.mins, bolt->r.absmin);
-		VectorCopy(GetWeaponTableData(grenadeWPID)->boudingBox[1], bolt->r.maxs);
-		VectorCopy(bolt->r.maxs, bolt->r.absmax);
-	}
-
-	VectorCopy(start, bolt->s.pos.trBase);
-	VectorCopy(dir, bolt->s.pos.trDelta);
-
-	// add velocity of player (:sigh: guess people don't like it)
-	//VectorAdd( bolt->s.pos.trDelta, self->s.pos.trDelta, bolt->s.pos.trDelta );
-
-	// add velocity of ground entity
-	if (self->s.groundEntityNum != ENTITYNUM_NONE && self->s.groundEntityNum != ENTITYNUM_WORLD)
-	{
-		VectorAdd(bolt->s.pos.trDelta, g_entities[self->s.groundEntityNum].instantVelocity, bolt->s.pos.trDelta);
-	}
-
-	SnapVector(bolt->s.pos.trDelta);            // save net bandwidth
-
-	VectorCopy(start, bolt->r.currentOrigin);
 
 	return bolt;
 }
 
 //=============================================================================
-
-/**
- * @brief fire_rocket
- * @param[in] self
- * @param[in] start
- * @param[in] dir
- * @param[in] rocketType weapon id
- * @return
- */
-gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType)
-{
-	gentity_t *bolt;
-
-	bolt = G_Spawn();
-	G_PreFilledMissileEntity(bolt, rocketType, rocketType, self->s.number, self->client ? self->client->sess.sessionTeam : TEAM_FREE, -1, self);
-
-	bolt->think = G_ExplodeMissile;
-
-	VectorNormalize(dir);
-
-	VectorCopy(start, bolt->s.pos.trBase);
-	VectorScale(dir, 2500, bolt->s.pos.trDelta);
-	SnapVector(bolt->s.pos.trDelta);            // save net bandwidth
-	VectorCopy(start, bolt->r.currentOrigin);
-
-	return bolt;
-}
 
 /**
  * @brief fire_flamebarrel
@@ -1910,43 +1841,6 @@ gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir)
 	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME;     // move a bit on the very first frame
 	VectorCopy(start, bolt->s.pos.trBase);
 	VectorScale(dir, 900 + (crandom() * 100), bolt->s.pos.trDelta);
-	SnapVector(bolt->s.pos.trDelta);            // save net bandwidth
-	VectorCopy(start, bolt->r.currentOrigin);
-
-	return bolt;
-}
-
-/**
- * @brief fire_mortar
- * @param[in] self
- * @param[in] start
- * @param[in] dir is a non-normalized direction/power vector
- * @return
- */
-gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir)
-{
-	gentity_t *bolt;
-
-	bolt = G_Spawn();
-	G_PreFilledMissileEntity(bolt, WP_MAPMORTAR, WP_MAPMORTAR, self->s.number, TEAM_FREE, self->client ? self->client->ps.clientNum : -1, self);
-
-	bolt->think = G_ExplodeMissile;
-
-	//  VectorNormalize (dir);
-
-	if (self->spawnflags)
-	{
-		gentity_t *tent;
-
-		tent            = G_TempEntity(self->s.pos.trBase, EV_MORTAREFX);
-		tent->s.density = self->spawnflags; // send smoke and muzzle flash flags
-		VectorCopy(self->s.pos.trBase, tent->s.origin);
-		VectorCopy(self->s.apos.trBase, tent->s.angles);
-	}
-
-	VectorCopy(start, bolt->s.pos.trBase);
-
-	VectorCopy(dir, bolt->s.pos.trDelta);
 	SnapVector(bolt->s.pos.trDelta);            // save net bandwidth
 	VectorCopy(start, bolt->r.currentOrigin);
 

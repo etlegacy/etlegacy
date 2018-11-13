@@ -471,7 +471,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		launchspot[2] += 40;
 
 		// fixes premature grenade explosion, ta bani ;)
-		fire_grenade(self, launchspot, launchvel, self->s.weapon);
+		fire_missile(self, launchspot, launchvel, self->s.weapon);
 	}
 
 	if (attackerClient)

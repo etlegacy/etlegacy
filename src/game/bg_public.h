@@ -1012,6 +1012,34 @@ typedef enum
 
 } meansOfDeath_t;
 
+/**
+ * @enum ammunitionType_t
+ * @brief Ammunition
+ */
+typedef enum
+{
+	AMMUN_NONE,
+	AMMUN_MELEE,
+	AMMUN_BULLET,
+	AMMUN_GRENADE,
+	AMMUN_RIFLENADE,
+	AMMUN_ROCKET,
+	AMMUN_SHELL,
+	AMMUN_MAPMORTAR,
+	AMMUN_FLAME,
+	AMMUN_ARTY,
+	AMMUN_AIRSTRIKE,
+	AMMUN_CANISTER,
+	AMMUN_SMOKEGRENADE,
+	AMMUN_DYNAMITE,
+	AMMUN_LANDMINE,
+	AMMUN_SATCHEL,
+	AMMUN_BOX,
+	AMMUN_SYRINGUE,
+	AMMUN_NUM_AMMUNITIONS,
+
+} ammunitionType_t;
+
 #define NUM_SKILL_LEVELS 5
 
 /**
@@ -1072,6 +1100,31 @@ typedef enum
 } weaponCardIconCoord_t;
 
 /**
+ * @struct ammunitionTable_s
+ * @typedef ammunitionTable_
+ * @brief
+ */
+typedef struct ammunitionTable_s
+{
+	ammunitionType_t ammunition;    ///< reference
+	int eType;                      ///< g -
+	int eFlags;                     ///< g -
+	int svFlags;                    ///< g -
+	int contents;                   ///< g -
+	int trType;                     ///< g -
+	int trTime;                     ///< g -
+	float boudingBox[2][3];         ///< g - mins / maxs bounding box vectors (for missile ent)
+	int clipMask;                   ///< g -
+	int nextThink;                  ///< g -
+	int accuracy;                   ///< g - NOTE: unused ???
+	int effect1Time;                ///< g - (i.e) smoke grenade start at 16, until this value doesn't change we know the smoke doesn't start to appear
+	qboolean takedamage;            ///< g -
+	int health;                     ///< g -
+	int timeStamp;                  ///< g -
+
+} ammunitionTable_t;
+
+/**
  * @struct weaponTable_s
  * @typedef weaponTable_t
  * @brief
@@ -1084,18 +1137,11 @@ typedef struct weapontable_s
 	skillType_t skillBased;         ///< bg -
 	weapon_t weapAlts;              ///< bg - the id of the alternative weapon
 	weapon_t weapEquiv;             ///< bg - the id of the opposite team's weapon (but not for WP_GPG40 <-> WP_M7 - see CG_OutOfAmmoChange).
-	weapon_t akimboSideArm;         ///< bg
+	weapon_t akimboSideArm;         ///< bg -
 
 	weapon_t ammoIndex;             ///< bg - type of weapon ammo this uses.
 	weapon_t clipIndex;             ///< bg - which clip this weapon uses. This allows the sniper rifle to use the same clip as the garand, etc.
-
-	int eType;                      ///< g -
-	int eFlags;                     ///< g -
-	int svFlags;                    ///< g -
-	int trType;                     ///< g -
-	int trTime;                     ///< g -
-	float boudingBox[2][3];         ///< g - mins / maxs bounding box vectors (for missile ent)
-	int clipMask;                   ///< g -
+	ammunitionType_t ammunType;     ///< g -  type of ammo fired by the weapon
 
 	qboolean isScoped;              ///< bg -
 
@@ -1186,9 +1232,6 @@ typedef struct weapontable_s
 	int ejectBrassOffset[3];        ///< cg - forward, left, up
 	int muzzlePointOffset[3];       ///< g - forward, left, up
 
-	int nextThink;                  ///< g -
-	int accuracy;                   ///< g - NOTE: unused ???
-
 	float adjustLean;               ///< cg -
 
 	float fireRecoilPitch;          ///< cg -
@@ -1258,8 +1301,9 @@ typedef struct modtable_s
 
 extern weaponTable_t *GetWeaponTableData(int weaponIndex);
 
-#define IS_VALID_WEAPON(w) (w > WP_NONE && w < WP_NUM_WEAPONS)
-#define IS_VALID_MOD(mod) (mod >= MOD_UNKNOWN && mod < MOD_NUM_MODS)
+#define IS_VALID_WEAPON(w) ((w) > WP_NONE && (w) < WP_NUM_WEAPONS)
+#define IS_VALID_MOD(mod) ((mod) >= MOD_UNKNOWN && (mod) < MOD_NUM_MODS)
+#define IS_VALID_AMMUNITION(a) ((a) >= MISSILE_NONE && (a) < MOD_NUM_MISIILES)
 
 // entityState_t->event values
 // entity events are for effects that take place reletive
@@ -2867,6 +2911,10 @@ extern weaponTable_t weaponTable[WP_NUM_WEAPONS];
 // Lookup table to find mod properties
 extern modTable_t modTable[MOD_NUM_MODS];
 #define GetMODTableData(modIndex) ((modTable_t *)(&modTable[modIndex]))
+
+// Lookup table to find ammunition properties
+extern ammunitionTable_t ammunitionTable[AMMUN_NUM_AMMUNITIONS];
+#define GetAmmunitionTableData(ammunitionIndex) ((ammunitionTable_t *)(&ammunitionTable[ammunitionIndex]))
 
 // Lookup table to find skill properties
 extern skilltable_t skillTable[SK_NUM_SKILLS];

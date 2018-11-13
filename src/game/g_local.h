@@ -1508,12 +1508,10 @@ int G_PredictMissile(gentity_t *ent, int duration, vec3_t endPos, qboolean allow
 void G_RunFlamechunk(gentity_t *ent);
 
 gentity_t *fire_flamechunk(gentity_t *self, vec3_t start, vec3_t dir);
-gentity_t *fire_grenade(gentity_t *self, vec3_t start, vec3_t dir, int grenadeWPID);
-gentity_t *fire_rocket(gentity_t *self, vec3_t start, vec3_t dir, int rocketType);
+gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir, int weapon);
 
 void Fire_Lead_Ext(gentity_t *ent, gentity_t *activator, float spread, int damage, vec3_t muzzle, vec3_t forward, vec3_t right, vec3_t up, meansOfDeath_t mod);
 
-gentity_t *fire_mortar(gentity_t *self, vec3_t start, vec3_t dir);
 gentity_t *fire_flamebarrel(gentity_t *self, vec3_t start, vec3_t dir);
 
 // g_mover.c
@@ -1544,7 +1542,7 @@ void aagun_stopusing(gentity_t *self);
 float AngleDifference(float ang1, float ang2);
 qboolean G_FlingClient(gentity_t *vic, int flingType);
 
-void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int ownerNum, int teamNum, int clientNum, gentity_t *parent);
+void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int ownerNum, int teamNum, int clientNum, gentity_t *parent, const vec3_t start, const vec3_t dir);
 
 // g_weapon.c
 qboolean AccuracyHit(gentity_t *target, gentity_t *attacker);
@@ -2713,7 +2711,7 @@ void G_RailBox(vec_t *origin, vec_t *mins, vec_t *maxs, vec_t *color, int index)
 typedef struct weapFireFunction_s
 {
 	weapon_t weapon;
-	void (*fire)(gentity_t *ent, gentity_t **firedShot);
+	gentity_t* (*fire)(gentity_t *ent);
 
 } weapFireFunction_t;
 

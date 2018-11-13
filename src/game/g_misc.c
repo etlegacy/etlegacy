@@ -563,19 +563,28 @@ void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	{
 		VectorScale(dir, 700, dir);                   // had to add this as fire_grenade now expects a non-normalized direction vector
 		                                              // FIXME: why we do normalize the vector before this switch? See comment of fire_grenade
-		fire_grenade(ent, ent->s.origin, dir, ent->s.weapon);
+		fire_missile(ent, ent->s.origin, dir, ent->s.weapon);
 	}
 	else if (GetWeaponTableData(ent->s.weapon)->isPanzer)
 	{
-		fire_rocket(ent, ent->s.origin, dir, ent->s.weapon);
-		VectorScale(ent->s.pos.trDelta, 2, ent->s.pos.trDelta);
-		SnapVector(ent->s.pos.trDelta);             // save net bandwidth
+		VectorNormalize(dir);
+		VectorScale(dir, 5000, dir);
+		fire_missile(ent, ent->s.origin, dir, ent->s.weapon);
 	}
 	else if (ent->s.weapon == WP_MAPMORTAR)
 	{
-		AimAtTarget(ent);     // store in ent->s.origin2 the direction/force needed to pass through the target
 		VectorScale(dir, VectorLength(ent->s.origin2), dir);
-		fire_mortar(ent, ent->s.origin, dir);
+		fire_missile(ent, ent->s.origin, dir, ent->s.weapon);
+
+		if (ent->spawnflags)
+		{
+			gentity_t *tent;
+
+			tent            = G_TempEntity(ent->s.pos.trBase, EV_MORTAREFX);
+			tent->s.density = ent->spawnflags; // send smoke and muzzle flash flags
+			VectorCopy(ent->s.pos.trBase, tent->s.origin);
+			VectorCopy(ent->s.apos.trBase, tent->s.angles);
+		}
 	}
 
 	G_AddEvent(ent, EV_FIRE_WEAPON, 0);
@@ -2363,16 +2372,16 @@ void landmine_setup(gentity_t *ent)
 {
 	trace_t tr;
 	vec3_t  end;
-    
-    VectorCopy(GetWeaponTableData(WP_LANDMINE)->boudingBox[0], ent->r.mins);
-    VectorCopy(ent->r.mins, ent->r.absmin);
-    VectorCopy(GetWeaponTableData(WP_LANDMINE)->boudingBox[1], ent->r.maxs);
-    VectorCopy(ent->r.maxs, ent->r.absmax);
+
+	VectorCopy(GetAmmunitionTableData(AMMUN_LANDMINE)->boudingBox[0], ent->r.mins);
+	VectorCopy(ent->r.mins, ent->r.absmin);
+	VectorCopy(GetAmmunitionTableData(AMMUN_LANDMINE)->boudingBox[1], ent->r.maxs);
+	VectorCopy(ent->r.maxs, ent->r.absmax);
 
 	// drop to floor
 	VectorCopy(ent->s.origin, end);
 	end[2] -= 64;
-	trap_Trace(&tr, ent->s.origin, NULL, NULL, end, ent->s.number, GetWeaponTableData(WP_LANDMINE)->clipMask);
+	trap_Trace(&tr, ent->s.origin, NULL, NULL, end, ent->s.number, GetAmmunitionTableData(AMMUN_LANDMINE)->clipMask);
 
 	if (tr.startsolid || tr.fraction == 1.f || !(tr.surfaceFlags & (SURF_GRASS | SURF_SNOW | SURF_GRAVEL | SURF_LANDMINE)) ||
 	    (tr.entityNum != ENTITYNUM_WORLD && (!g_entities[tr.entityNum].inuse || g_entities[tr.entityNum].s.eType != ET_CONSTRUCTIBLE)))
@@ -2382,11 +2391,11 @@ void landmine_setup(gentity_t *ent)
 		return;
 	}
 
+	G_PreFilledMissileEntity(ent, WP_LANDMINE, WP_LANDMINE, ENTITYNUM_WORLD, ent->s.teamNum, ent->s.clientNum, ent->parent, tr.endpos, tr.endpos);
+
 	G_SetOrigin(ent, tr.endpos);
 	ent->s.pos.trDelta[2] = 1.f;
 	ent->s.time           = ent->s.angles[1] + 90;
-
-	G_PreFilledMissileEntity(ent, WP_LANDMINE, WP_LANDMINE, ENTITYNUM_WORLD, ent->s.teamNum, ent->s.clientNum, ent->parent);
 
 	// all fine
 	ent->takedamage    = qtrue;
@@ -2789,25 +2798,75 @@ qboolean G_FlingClient(gentity_t *vic, int flingType)
  * @param[in] clientNum
  * @param[in] parent
  */
-void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int ownerNum, int teamNum, int clientNum, gentity_t *parent)
+void G_PreFilledMissileEntity(gentity_t *ent, int weaponNum, int realWeapon, int ownerNum, int teamNum, int clientNum, gentity_t *parent, const vec3_t start, const vec3_t dir)
 {
-	ent->s.weapon            = realWeapon;
-	ent->r.ownerNum          = ownerNum;
+	ammunitionType_t ammunType = GetWeaponTableData(weaponNum)->ammunType;
+
+	//
+	// weapon depend
+	//
+
+	// generic
 	ent->parent              = parent;
-	ent->s.teamNum           = teamNum;
-	ent->s.clientNum         = clientNum;
 	ent->classname           = GetWeaponTableData(weaponNum)->className;
-	ent->s.eType             = GetWeaponTableData(weaponNum)->eType;
-	ent->r.svFlags           = GetWeaponTableData(weaponNum)->svFlags;
-	ent->nextthink           = GetWeaponTableData(weaponNum)->nextThink ? level.time + GetWeaponTableData(weaponNum)->nextThink : 0;
-	ent->s.eFlags            = GetWeaponTableData(weaponNum)->eFlags;
 	ent->classname           = GetWeaponTableData(weaponNum)->className;
 	ent->damage              = GetWeaponTableData(weaponNum)->damage;
 	ent->splashDamage        = GetWeaponTableData(weaponNum)->splashDamage;
 	ent->methodOfDeath       = GetWeaponTableData(weaponNum)->mod;
 	ent->splashMethodOfDeath = GetWeaponTableData(weaponNum)->splashMod;
 	ent->splashRadius        = GetWeaponTableData(weaponNum)->splashRadius;  // blast radius proportional to damage for ALL weapons
-	ent->clipmask            = GetWeaponTableData(weaponNum)->clipMask;
-	ent->s.pos.trType        = GetWeaponTableData(weaponNum)->trType;
-	ent->s.pos.trTime        = GetWeaponTableData(weaponNum)->trTime ? level.time + GetWeaponTableData(weaponNum)->trTime : 0;   // move a bit on the very first frame
+
+	// state
+	ent->s.weapon    = realWeapon;
+	ent->s.teamNum   = teamNum;
+	ent->s.clientNum = clientNum;
+
+	// shared
+	ent->r.ownerNum = ownerNum;
+
+	//
+	// ammun depend
+	//
+
+	// generic
+	ent->nextthink  = GetAmmunitionTableData(ammunType)->nextThink ? level.time + GetAmmunitionTableData(ammunType)->nextThink : 0;
+	ent->clipmask   = GetAmmunitionTableData(ammunType)->clipMask;
+	ent->accuracy   = GetAmmunitionTableData(ammunType)->accuracy;
+    ent->takedamage = GetAmmunitionTableData(ammunType)->takedamage;
+    ent->health     = GetAmmunitionTableData(ammunType)->health;
+    ent->timestamp  = GetAmmunitionTableData(ammunType)->timeStamp;
+
+	// state
+	ent->s.eFlags      = GetAmmunitionTableData(ammunType)->eFlags;
+	ent->s.pos.trType  = GetAmmunitionTableData(ammunType)->trType;
+	ent->s.pos.trTime  = GetAmmunitionTableData(ammunType)->trTime ? level.time + GetAmmunitionTableData(ammunType)->trTime : 0;          // move a bit on the very first frame
+	ent->s.eType       = GetAmmunitionTableData(ammunType)->eType;
+    ent->s.effect1Time = GetAmmunitionTableData(ammunType)->effect1Time;
+
+	// shared
+	ent->r.svFlags  = GetAmmunitionTableData(ammunType)->svFlags;
+	ent->r.contents = GetAmmunitionTableData(ammunType)->contents;
+
+	if (ent->r.contents == CONTENTS_CORPSE)
+	{
+		VectorCopy(GetAmmunitionTableData(ammunType)->boudingBox[0], ent->r.mins);
+		VectorCopy(GetAmmunitionTableData(ammunType)->boudingBox[0], ent->r.absmin);
+		VectorCopy(GetAmmunitionTableData(ammunType)->boudingBox[1], ent->r.maxs);
+		VectorCopy(GetAmmunitionTableData(ammunType)->boudingBox[1], ent->r.absmax);
+	}
+
+    VectorCopy(start, ent->r.currentOrigin);
+	VectorCopy(start, ent->s.pos.trBase);
+	VectorCopy(dir, ent->s.pos.trDelta);
+
+	// add velocity of player (:sigh: guess people don't like it)
+	//VectorAdd( bolt->s.pos.trDelta, self->s.pos.trDelta, bolt->s.pos.trDelta );
+
+	// add velocity of ground entity
+	if (ent->s.pos.trType == TR_GRAVITY && ent->s.groundEntityNum != ENTITYNUM_NONE && ent->s.groundEntityNum != ENTITYNUM_WORLD)
+	{
+		VectorAdd(ent->s.pos.trDelta, g_entities[ent->s.groundEntityNum].instantVelocity, ent->s.pos.trDelta);
+	}
+
+	SnapVector(ent->s.pos.trDelta);            // save net bandwidth
 }
