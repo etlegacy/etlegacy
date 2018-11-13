@@ -201,6 +201,7 @@ vmCvar_t vote_allow_surrender;
 vmCvar_t vote_allow_restartcampaign;
 vmCvar_t vote_allow_nextcampaign;
 vmCvar_t vote_allow_poll;
+vmCvar_t vote_allow_maprestart;
 
 vmCvar_t refereePassword;
 vmCvar_t g_debugConstruct;
@@ -496,6 +497,7 @@ cvarTable_t gameCvarTable[] =
 	{ &vote_allow_restartcampaign,          "vote_allow_restartcampaign",          "1",                          0,                                               0, qfalse, qfalse },
 	{ &vote_allow_nextcampaign,             "vote_allow_nextcampaign",             "1",                          0,                                               0, qfalse, qfalse },
 	{ &vote_allow_poll,                     "vote_allow_poll",                     "1",                          0,                                               0, qfalse, qfalse },
+	{ &vote_allow_maprestart,				"vote_allow_maprestart",               "1",                          0,                                               0, qfalse, qfalse },
 
 	{ &g_voting,                            "g_voting",                            "0",                          0,                                               0, qfalse, qfalse },
 
@@ -1747,9 +1749,12 @@ void G_RegisterCvars(void)
 	// Gametype is currently restricted to supported types only
 	if ((g_gametype.integer < GT_WOLF || g_gametype.integer >= GT_MAX_GAME_TYPE))
 	{
-		G_Printf("g_gametype %i is out of range, defaulting to GT_WOLF(%i)\n", g_gametype.integer, GT_WOLF);
 		trap_Cvar_Set("g_gametype", va("%i", GT_WOLF));
 		trap_Cvar_Update(&g_gametype);
+		// FIXME: auto restart?
+		// g_gametype is latched and won't use the above value for current game. but running legacy with invalid gametype is resulting in bad behaviour 
+		// let's drop the game... (unfortunately we can't immediately restart the server here (exec map_restart isn't working)
+		G_Error("Invalid game type %i detected - defaulting to %s (%i). Start your server again with no gametype set!\n", g_gametype.integer, gameNames[GT_WOLF] , GT_WOLF);
 	}
 
 	trap_SetConfigstring(CS_SERVERTOGGLES, va("%d", level.server_settings));
@@ -1978,7 +1983,7 @@ void G_UpdateCvars(void)
 				    cv->vmCvar == &vote_allow_antilag        || cv->vmCvar == &vote_allow_balancedteams ||
 				    cv->vmCvar == &vote_allow_muting || cv->vmCvar == &vote_allow_surrender ||
 				    cv->vmCvar == &vote_allow_restartcampaign || cv->vmCvar == &vote_allow_nextcampaign ||
-				    cv->vmCvar == &vote_allow_poll
+				    cv->vmCvar == &vote_allow_poll || cv->vmCvar == &vote_allow_maprestart
 				    )
 				{
 					fVoteFlags = qtrue;
@@ -2372,6 +2377,9 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 
 	G_Printf("map: %s\n", level.rawmapname);
 
+	// array acces check is done in G_RegisterCvars - we won't execute this with invalid gametype
+	G_Printf("gametype: %s\n", gameNames[g_gametype.integer]);
+
 	G_ParseCampaigns();
 	if (g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
@@ -2389,6 +2397,11 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int legacyServer, in
 		{
 			G_GetMapXP();
 		}
+
+		//FIXME? - print more info about campaign status? current map/total map num
+		//int campaignCount;
+		//int currentCampaign;
+		//qboolean newCampaign;
 	}
 
 	trap_SetConfigstring(CS_SCRIPT_MOVER_NAMES, "");     // clear out

@@ -1962,6 +1962,7 @@ extern vmCvar_t vote_allow_surrender;
 extern vmCvar_t vote_allow_restartcampaign;
 extern vmCvar_t vote_allow_nextcampaign;
 extern vmCvar_t vote_allow_poll;
+extern vmCvar_t vote_allow_maprestart;
 
 extern vmCvar_t g_debugSkills;
 extern vmCvar_t g_heavyWeaponRestriction;

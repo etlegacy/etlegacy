@@ -51,18 +51,6 @@ static const char *DEACTIVATED = "DEACTIVATED";
 static const char *ENABLED     = "ENABLED";
 static const char *DISABLED    = "DISABLED";
 
-static const char *gameNames[] =
-{
-	"Single Player",    // Obsolete
-	"Cooperative",      // Obsolete
-	"Objective",
-	"Stopwatch",
-	"Campaign",
-	"Last Man Standing",
-	"Map Voting"        // GT_WOLF_MAPVOTE
-	// GT_MAX_GAME_TYPE
-};
-
 // Update info:
 //  1. Add line to aVoteInfo w/appropriate info
 //  2. Add implementation for attempt and success (see an existing command for an example)
@@ -800,15 +788,15 @@ int G_MapRestart_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *ar
 	// Vote request (vote is being initiated)
 	if (arg)
 	{
-		if (trap_Argc() > 2)
+		if (!vote_allow_maprestart.integer && ent && !ent->client->sess.referee)
 		{
-			if (!Q_stricmp(arg2, "?"))
-			{
-				G_refPrintf(ent, "Usage: ^3%s %s%s\n", ((fRefereeCmd) ? "\\ref" : "\\callvote"), arg, aVoteInfo[dwVoteIndex].pszVoteHelp);
-				return G_INVALID;
-			}
+			G_voteDisableMessage(ent, arg);
+			return G_INVALID;
 		}
-
+		else if (trap_Argc() != 2 && G_voteDescription(ent, fRefereeCmd, dwVoteIndex))
+		{
+			return G_INVALID;
+		}
 		// Vote action (vote has passed)
 	}
 	else

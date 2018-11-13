@@ -4481,7 +4481,8 @@ const voteType_t voteToggles[] =
 	{ "vote_allow_surrender",                CV_SVF_SURRENDER                },
 	{ "vote_allow_restartcampaign",          CV_SVF_RESTARTCAMPAIGN          },
 	{ "vote_allow_nextcampaign",             CV_SVF_NEXTCAMPAIGN             },
-	{ "vote_allow_poll",                     CV_SVF_POLL                     }
+	{ "vote_allow_poll",                     CV_SVF_POLL                     },
+	{ "vote_allow_maprestart",               CV_SVF_MAPRESTART               }
 };
 
 int numVotesAvailable = sizeof(voteToggles) / sizeof(voteType_t);
