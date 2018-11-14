@@ -782,24 +782,26 @@ void QDECL G_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
  */
 void QDECL G_DPrintf(const char *fmt, ...)
 {
-	va_list argptr;
-	char    text[1024];
-
 	if (!g_developer.integer)
 	{
 		return;
 	}
+	else
+	{
+		va_list argptr;
+		char    text[1024];
 
-	va_start(argptr, fmt);
-	Q_vsnprintf(text, sizeof(text), fmt, argptr);
-	va_end(argptr);
+		va_start(argptr, fmt);
+		Q_vsnprintf(text, sizeof(text), fmt, argptr);
+		va_end(argptr);
 
 #ifdef FEATURE_LUA
-	// LUA* API callbacks
-	G_LuaHook_Print(GPRINT_DEVELOPER, text);
+		// LUA* API callbacks
+		G_LuaHook_Print(GPRINT_DEVELOPER, text);
 #endif
 
-	trap_Printf(text);
+		trap_Printf(text);
+	}
 }
 
 void QDECL G_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));

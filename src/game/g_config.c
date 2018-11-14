@@ -131,6 +131,10 @@ qboolean G_isValidConfig(gentity_t *ent, const char *configname)
  * @param[in] setvars
  * @param[in] config
  * @return
+ *
+ * @fixme FIXME: - this parser requires quotes set for values (negative values are causing issues)
+ *               - map names with numbers in name (at start?!) have issues see legacy1.config map 1v1dm
+ *               rewrite parser by using bg tools ...
  */
 qboolean G_ParseSettings(int handle, qboolean setvars, config_t *config)
 {
@@ -155,7 +159,7 @@ qboolean G_ParseSettings(int handle, qboolean setvars, config_t *config)
 			break;
 		}
 
-		//If we want to skip the settings
+		// If we want to skip the settings
 		if (!setvars)
 		{
 			continue;
@@ -173,15 +177,15 @@ qboolean G_ParseSettings(int handle, qboolean setvars, config_t *config)
 				return G_ConfigError(handle, "expected cvar value");
 			}
 
-			if (value[0] == '-')
-			{
-				if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
-				{
-					return G_ConfigError(handle, "expected value after '-'");
-				}
-
-				Q_strncpyz(value, va("-%s", text), sizeof(value));
-			}
+			// let cvar system deal with negative values
+			//if (value[0] == '-')
+			//{
+			//	if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
+			//	{
+			//		return G_ConfigError(handle, "expected value after '-'");
+			//	}
+			//	Q_strncpyz(value, va("-%s", text), sizeof(value));
+			//}
 
 			trap_Cvar_Set(text, value);
 			G_Printf("set %s %s\n", text, value);
@@ -201,15 +205,15 @@ qboolean G_ParseSettings(int handle, qboolean setvars, config_t *config)
 				return G_ConfigError(handle, "expected cvar value");
 			}
 
-			if (value[0] == '-')
-			{
-				if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
-				{
-					return G_ConfigError(handle, "expected value after '-'");
-				}
-
-				Q_strncpyz(value, va("-%s", text), sizeof(value));
-			}
+			// let cvar system deal with negative values
+			//if (value[0] == '-')
+			//{
+			//	if (!PC_String_ParseNoAlloc(handle, text, sizeof(text)))
+			//	{
+			//		return G_ConfigError(handle, "expected value after '-'");
+			//	}
+			//	Q_strncpyz(value, va("-%s", text), sizeof(value));
+			//}
 
 			for (; i < config->numSetl; i++)
 			{
@@ -253,7 +257,7 @@ qboolean G_ParseSettings(int handle, qboolean setvars, config_t *config)
 		}
 		else
 		{
-			return G_ConfigError(handle, "unknown token: %s", token.string);
+			return G_ConfigError(handle, "unknown/unexpected token: %s", token.string);
 		}
 	}
 
@@ -280,12 +284,12 @@ qboolean G_ParseMapSettings(int handle, config_t *config)
 		G_Printf("Malformed map config\n");
 	}
 
-	G_Printf("Map settings for: %s\n", token.string);
-	G_Printf("Current map: %s\n", mapname);
+	G_DPrintf("Map settings for: %s\n", token.string);
+	G_DPrintf("Current map: %s\n", mapname);
 
 	if (!Q_stricmp(token.string, "default"))
 	{
-		G_Printf("Setting rules for map: %s\n", token.string);
+		G_Printf("Setting default rules for map: %s\n", mapname);
 		return G_ParseSettings(handle, qtrue, config);
 	}
 
@@ -326,7 +330,7 @@ qboolean G_ParseMapSettings(int handle, config_t *config)
 				return G_ConfigError(handle, "Invalid mapscript hash for map: %s hash given in config: \"%s\" scripts actual hash \"%s\"", mapname, config->mapscripthash, signature);
 			}
 
-			G_Printf("Hash is valid for map: %s\n", mapname);
+			G_DPrintf("Hash is valid for map: %s\n", mapname);
 		}
 
 		return res;

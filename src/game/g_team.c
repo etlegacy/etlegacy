@@ -728,19 +728,13 @@ void Use_Team_Spawnpoint(gentity_t *ent, gentity_t *other, gentity_t *activator)
 	{
 		ent->spawnflags &= ~2;
 
-		if (g_developer.integer)
-		{
-			G_Printf("setting %s %s inactive\n", ent->classname, ent->targetname);
-		}
+		G_DPrintf("setting %s %s inactive\n", ent->classname, ent->targetname);
 	}
 	else
 	{
 		ent->spawnflags |= 2;
 
-		if (g_developer.integer)
-		{
-			G_Printf("setting %s %s active\n", ent->classname, ent->targetname);
-		}
+		G_DPrintf("setting %s %s active\n", ent->classname, ent->targetname);
 	}
 }
 
