@@ -432,19 +432,6 @@ typedef enum
 	GT_MAX_GAME_TYPE
 } gametype_t;
 
-
-static const char *gameNames[] =
-{
-		"Single Player",    // Obsolete
-		"Cooperative",      // Obsolete
-		"Objective",
-		"Stopwatch",
-		"Campaign",
-		"Last Man Standing",
-		"Map Voting"        // GT_WOLF_MAPVOTE
-		// GT_MAX_GAME_TYPE
-};
-
 /**
  * @enum gender_t
  * @brief

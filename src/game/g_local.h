@@ -2720,4 +2720,17 @@ typedef struct weapFireFunction_s
 
 extern weapFireFunction_t weapFireTable[WP_NUM_WEAPONS];
 
+
+static const char *gameNames[] =
+{
+		"Single Player",    // Obsolete
+		"Cooperative",      // Obsolete
+		"Objective",
+		"Stopwatch",
+		"Campaign",
+		"Last Man Standing",
+		"Map Voting"        // GT_WOLF_MAPVOTE
+		// GT_MAX_GAME_TYPE
+};
+
 #endif // #ifndef INCLUDE_G_LOCAL_H
