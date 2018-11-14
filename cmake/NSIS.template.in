@@ -60,7 +60,7 @@ InstallDir "$PROGRAMFILES\Enemy Territory - Legacy\"
 ; Language files
 !insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_LANGUAGE "Polish"
-;!insertmacro MUI_LANGUAGE "German"
+!insertmacro MUI_LANGUAGE "German"
 ;!insertmacro MUI_LANGUAGE "Spanish"
 ;!insertmacro MUI_LANGUAGE "Japanese"
 ;!insertmacro MUI_LANGUAGE "Korean"
