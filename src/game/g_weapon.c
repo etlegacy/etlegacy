@@ -1943,13 +1943,13 @@ weapengineergoto3:
 			int       i, num;
 
 			// not armed
-			if (traceEnt->s.teamNum >= 4)
+			if (!traceEnt->s.effect1Time)
 			{
 				qboolean friendlyObj = qfalse;
 				qboolean enemyObj    = qfalse;
 
 				// Opposing team cannot accidentally arm it
-				if ((traceEnt->s.teamNum - 4) != ent->client->sess.sessionTeam)
+				if (traceEnt->s.teamNum != ent->client->sess.sessionTeam)
 				{
 					return NULL;
 				}
@@ -2000,7 +2000,7 @@ weapengineergoto3:
 						}
 
 						// is it a friendly constructible
-						if (hit->s.teamNum == traceEnt->s.teamNum - 4)
+						if (hit->s.teamNum == traceEnt->s.teamNum)
 						{
 							// G_FreeEntity( traceEnt );
 							// trap_SendServerCommand( ent-g_entities, "cp \"You cannot arm dynamite near a friendly construction!\" 1");
@@ -2077,8 +2077,6 @@ weapengineergoto3:
 				traceEnt->timestamp = level.time + 1000;
 				traceEnt->health    = 5;
 
-				// set teamnum so we can check it for drop/defuse exploit
-				traceEnt->s.teamNum = ent->client->sess.sessionTeam;
 				// for dynamic light pulsing
 				traceEnt->s.effect1Time = level.time;
 

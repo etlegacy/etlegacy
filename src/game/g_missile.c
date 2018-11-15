@@ -1773,12 +1773,6 @@ gentity_t *fire_missile(gentity_t *self, vec3_t start, vec3_t dir, int weapon)
 		bolt->free  = DynaFree;
 
 		trap_SendServerCommand(self - g_entities, "cp \"Dynamite is set, but NOT armed!\"");
-		// differentiate non-armed dynamite with non-pulsing dlight
-		if (self->client)
-		{
-			bolt->s.teamNum += 4;   // overwrite
-		}
-
 		// nope - this causes the dynamite to impact on the players bb when he throws it.
 		// will try setting it when it settles
 		//bolt->r.ownerNum            = ENTITYNUM_WORLD;  // make the world the owner of the dynamite, so the player can shoot it without modifying the bullet code to ignore players id for hits

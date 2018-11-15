@@ -1064,7 +1064,7 @@ static void CG_Missile(centity_t *cent)
 	// Don't tick until armed
 	if (cent->currentState.weapon == WP_DYNAMITE)
 	{
-		if (cent->currentState.teamNum < 4)
+		if (cent->currentState.effect1Time)
 		{
 			vec3_t velocity;
 
